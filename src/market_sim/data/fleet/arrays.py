@@ -4162,6 +4162,47 @@ def generators_to_fleet_arrays(
                 dropped,
             )
 
+    # Balancing-authority JOIN month mask (lane R-SOCO-B, owner ruling (B)
+    # 2026-09-25; constants.ISO_BA_JOINS). In a joining BA's join year its
+    # plants — admitted by the fleet loader from the join-year vintage, which
+    # still codes them to the joining BA — are inside the region only from the
+    # join month, because the region's EIA-930 demand includes their load only
+    # from then (SOCO: PowerSouth ``AEC``, 2021-09-01). The same month-grain
+    # 0/1 mask the COD ramp applies, applied AFTER it so nothing re-raises a
+    # pre-join month, with min_gen scaled likewise. Backcast-only (a forecast
+    # year is past every registered join); an empty map for every other region
+    # and year, so they are byte-identical.
+    if (
+        config is not None
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _cod_year is not None
+        and _iso is not None
+    ):
+        from market_sim.data.ba_membership import ba_join_first_month
+
+        _join = ba_join_first_month(_iso, int(_cod_year))
+        if _join:
+            first = np.array(
+                [_join.get(int(g.plant_code), 1) for g in generators], dtype=int
+            )
+            if (first > 1).any():
+                month_idx = _hour_to_month_index(hours)
+                member = (
+                    (month_idx[np.newaxis, :] + 1) >= first[:, np.newaxis]
+                ).astype(float)
+                availability *= member
+                if min_gen is not None:
+                    min_gen *= member
+                    clear_where_unfloored(min_gen_mech, min_gen)
+                logger.info(
+                    "BA join (%s %s): %d unit(s), %.0f MW admitted from a joining "
+                    "balancing authority, offline before their join month",
+                    _iso,
+                    _cod_year,
+                    int((first > 1).sum()),
+                    float(pmax[first > 1].sum()),
+                )
+
     # Measured ramp/fast-start capability (GATED config.measured_ramp_capability,
     # default off): reconcile the class 10-minute fractions against the
     # ramp-capability clean datatype (EIA-860 "10M" fast-start floor + CAMPD

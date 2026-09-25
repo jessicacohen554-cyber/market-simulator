@@ -44,6 +44,10 @@ from market_sim.config.plant_taxonomy import (
     OIL_ENERGY_SOURCES,
     classify_plant,
 )
+from market_sim.data.ba_membership import (
+    drop_current_ba_recoded_rows,
+    joining_ba_codes,
+)
 from market_sim.data.coal import _coal_class_for
 from market_sim.data.disk_memo import memoized_mapping
 from market_sim.data.egrid_sheets import read_egrid_sheet
@@ -1822,11 +1826,20 @@ def _load_fleet_from_parquet(
 
     df = _normalize_columns(pd.read_parquet(parquet_path))
     # Membership over every BA the region comprises (a pool region such as
-    # NWPP has 17; the 1:1 regions select exactly the rows ``== code`` did).
-    codes = ba_codes(iso)
+    # NWPP has 17; the 1:1 regions select exactly the rows ``== code`` did),
+    # plus any BA that JOINED the region by ``year`` (constants.ISO_BA_JOINS —
+    # SOCO: PowerSouth ``AEC`` from 2021; its pre-join months are masked
+    # offline by the COD-ramp seam in ``fleet.arrays``). Empty for every other
+    # region, so their filter is unchanged.
+    codes = ba_codes(iso) + joining_ba_codes(iso, year)
     if codes and "balancing_authority_code" in df.columns:
         ba = df["balancing_authority_code"].astype(str).str.strip()
         df = df[ba.isin(codes)]
+    # One membership rule for benchmark, injection and fleet (rule 19): plants
+    # the CURRENT EIA-860 recodes out of the region leave the vintage fleet too
+    # (constants.ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE — SOCO's former Gulf
+    # Power plants). Same object back for every unregistered region.
+    df = drop_current_ba_recoded_rows(df, iso)
 
     # Join the plant-level CHP flag (dropped from the processed generators
     # parquet) from the raw EIA-860 operable sheet, so gas cogens are grouped
@@ -3046,6 +3059,10 @@ def load_retired_within_window(
     if not frames:
         return []
     df = pd.concat(frames, ignore_index=True) if len(frames) > 1 else frames[0]
+    # Same membership rule as the operable loader (rule 19; SOCO Gulf plants).
+    df = drop_current_ba_recoded_rows(df, iso)
+    if df.empty:
+        return []
 
     df = df.copy()
     if vintage_status_scope and year is not None:
@@ -3221,6 +3238,8 @@ def load_mothballed_but_operating(
     if codes and "balancing_authority_code" in snap.columns:
         ba = snap["balancing_authority_code"].astype(str).str.strip()
         snap = snap[ba.isin(codes)]
+    # Same membership rule as the operable loader (rule 19; SOCO Gulf plants).
+    snap = drop_current_ba_recoded_rows(snap, iso)
     status = snap["status"].astype(str).str.strip().str.upper()
     # OA only by default (out of service, expected to return — the mothball
     # status the Cottonwood charter scopes this channel to); OS/SB join the
