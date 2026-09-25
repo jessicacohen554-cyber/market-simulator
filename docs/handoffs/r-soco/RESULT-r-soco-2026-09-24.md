@@ -117,3 +117,17 @@ frame hash moves because it keys on fleet plants.
   unserved moves; those two are root-cause leads.
   If promoted, the rule-35 prune removes `2026-09-24-soco61-dark-unit` and the long-unruled
   `2026-09-20-soco53g-prb-own-iso`. The year union {2023, 2024, 2025} is covered.
+
+## Addendum — rebase onto `main` @ `3321109c` (G-DRIFT, rule 29(b))
+
+The lane was rebased onto `main` for merge. Between the pinned SHA `455e0021` and `3321109c`, one
+lane (R-NEISO, `c265c1c3`) touched the solve path. Every hunk is INERT for this run:
+
+| hunk | class | reason |
+|---|---|---|
+| `data/outages.py` + `fleet/arrays.py`: gas sub-5-day scope armable without the coal scope (`coal_scope`) | INERT | both flags are armed here, so the call is byte-identical (`coal_scope` defaults True) |
+| `fleet/eia860.py` `_mid_vintage_exit_rows_from_window` | INERT | only reached under `mid_vintage_exit_carry`, which is `False` in this run's resolved config |
+| `results/cache.py` epoch note | INERT | prose only, no `SolveEpoch` |
+
+The registered run therefore stands at the rebased head with no re-solve. The only conflict was the
+append-only `docs/calibration-log/soco.md`; both sides' entries were kept.
