@@ -35,9 +35,7 @@ DEFAULT_BUNDLE = REPO / "results/calibration/rnwpp_span"
 # The NWPP-49 keeper bundle was pruned at the R-NWPP promotion (rule 35), so its
 # attestation — the source of the inherited switches block — is read from
 # git history at the last commit that carried it (the promotion's parent).
-KEEPER_ATTESTATION_REF = (
-    "909cdd30bfdd8a398b10a4255b1340d0d9ef1943:results/calibration/nwpp49_ror_span/calibration_attestation.json"
-)
+KEEPER_ATTESTATION_REF = "909cdd30bfdd8a398b10a4255b1340d0d9ef1943:results/calibration/nwpp49_ror_span/calibration_attestation.json"
 OFFER_CURVE_SHA256 = "ac3344c3ef16e3ae63673a92886aa2873fc7090543eb04e6d6abf89fb52c73c2"
 
 #: This lane's arms (all must read True in every year's run_config).
