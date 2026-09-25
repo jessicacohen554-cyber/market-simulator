@@ -14662,3 +14662,20 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Matrix:** `measured_chp_heat_rates` O → **R** on ERCOT's bin path; the shard and the §5.1 header are re-stamped.
 
 **ERCOT's headline moves NOT-YET → CALIBRATED.** The frontier declarations stay in `frontier_history`, because the owner did not ask to re-declare them.
+
+## R-ERCOT-3 — 2026-09-25 — the 2019/2020 coal shortfall (zero LP)
+
+**The mechanism is named:** coal offer prices are frozen at 2024–25 levels.
+- The keeper's committed and econ coal offers are the ERCOT-144 per-plant curves, measured on 2024–25 disclosures. They carry no fuel term, and 2023 is the only year with its own table.
+- 2019–2022 therefore price coal at 2024–25 owner conduct, and the fallback writes no log line.
+- In 2020, with HH at $2.03, 4,624 MW of coal sits above the CC_REGULAR p75. The figure is 1,663 MW in 2019 and 1,945 MW in 2023.
+- The miss is concentrated on W A Parish, Fayette, Martin Lake and Sandy Creek. Coal availability, the RT basis and the fast-start pool were checked and cleared.
+
+**No arm was launched.**
+- The only admissible repair is measured 2019/2020 SCED per-plant curves. They are not on disk: the MIS window is rolling and the API archive needs credentials. That makes it an owner data decision.
+- Re-coupling the coal level to fuel is DO-NOT-REDO (`coal_offer_level_rebasis` is R).
+
+**Record:**
+- Finding: `docs/handoffs/FINDING-r-ercot-3-coal-2019-2020-2026-09-25.md`
+- Probe: `scripts/probes/_r_ercot3_coal_census.py`
+- Matrix: census note on `coal_perplant_offer_level`; the cell stays K.
