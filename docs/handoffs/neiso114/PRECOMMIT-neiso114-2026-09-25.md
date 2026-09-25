@@ -152,4 +152,16 @@ composes, attests, scores and registers (`--no-prune`); it never solves (rule 32
 
 ## 7. Launch record
 
-(filled at launch)
+All 16 pinned to **`9db30b45a55bf4bbd9cdbc3b2a7f51aa37dc7466`** (this doc's first commit), created
+2026-09-25 04:19–04:23 UTC, tag `neiso114`. Branch `claude/neiso114-<arm>-<Y>`, out-dir `neiso114<arm>_<Y>`.
+
+| leg | shard session | leg | shard session |
+|---|---|---|---|
+| A-2019 | `session_01V4VVsR423YDt9zXd1gLmXe` | B-2019 | `session_01KKWU9855UR7ueshT1bj7BN` |
+| A-2020 | `session_01Wm2xhokRKUdhmsuXySBNjh` | B-2020 | `session_01KBDBsm7xsEMmL1LxAeSdXS` |
+| A-2021 | `session_017EujoMRErRS5Cd3YQV2bpY` | B-2021 | `session_01GUV7wG7dNUZ7VW6jWKqUx9` |
+| A-2022 | `session_01MiWgDvtytiG9hkwxxxVPpG` | B-2022 | `session_01Ktgf6vbkJMKzoNVQ1ZKTSo` |
+| A-2023 | `session_018xZ8oPXmqzgkq45vpxpV7B` | B-2023 | `session_018jWeArftj6oKV5LPA9u4SF` |
+| A-2024 | `session_01VizsRtHqC6kNU1jco9BugP` | B-2024 | `session_01SSDkXdZZqacMzsEne2SyMx` |
+| A-2025 | `session_01XuGGPSfY13tV1tqUgFyWur` | B-2025 | `session_012G29DWufYACVYxDfWoSGMM` |
+| C-2019 | `session_01AhXeVx6nkdYkYiQsNUn6Dg` | C-2020 | `session_01SfuGFdftrXhcWiPH31ewWk` |
