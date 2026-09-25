@@ -1,4 +1,17 @@
-# FINDING — capx gate-(a) re-key r#65: chartered on SIX red rows; audit lane Y-29 landed the six re-keys mid-lane, then SPP went red AGAIN on the spp-78 promotion before the push — this lane re-keys SPP (the one row red at its HEAD), verifies Y-29's five, re-keys the six row-level `keeper` fields Y-29 left stale, restores one boolean, and records the THIRTY-TWO-promotion chain the rows were stale across (2026-09-24)
+# FINDING — capx gate-(a) re-key r#65: chartered on SIX red rows; audit lane Y-29 landed the six re-keys mid-lane, then SPP went red AGAIN on the spp-78 promotion before the push and PJM went red AGAIN on the pjm-h22 promotion before the merge rebase — this lane re-keys SPP and PJM (the two rows red at its HEADs), verifies Y-29's other four, re-keys the six row-level `keeper` fields Y-29 left stale, restores one boolean, and records the THIRTY-THREE-promotion chain the rows were stale across (2026-09-24)
+
+**ADDENDUM 2026-09-25 (merge rebase onto `3321109c`).** Between the push (`8ebb7805` base) and the
+rebase for merge, the **pjm-h22 promotion** landed (`cf394e7d`, merged `3321109c` in PR #6596)
+without touching `program-status.json`, so the guard read **EXIT 1 on PJM** at `3321109c`
+(`2026-09-23-pjm-h19-dbs-span` → `2026-09-24-pjm-h22-rggi-span`). Re-keyed here the same way as
+SPP: new head keyed to pjm-h22, Y-29's prior detail and `corrected_by` chain carried verbatim
+beneath, `isos.PJM.keeper` and the provenance stamp re-derived at `3321109c`. **The live PJM keeper
+reads NOT-YET** (rubric v3.8, 8/7/0/1: C1 CC_REGULAR 2024 322.0 vs 335.6 TWh, band 8; the outgoing
+pjm-h19 was CALIBRATED 8/8), promoted on the owner's structure-over-gates ruling; leg (a) stays
+**pass** on the literal §2.1b(2)(a) test (full-span keeper + `complete` entry, both held), and the
+determination is concurring evidence that no longer concurs — reported, not adjudicated, exactly the
+NYISO case (§6.2). The twenty-first firing. Counts below are updated in place: PJM EIGHT promotions,
+THIRTY-THREE in total. Gate EXIT 0 on all seven rows after the edit; 41 tests pass.
 
 **Lane:** capx GATE-(a) RE-KEY r#65 (pack `docs/handoffs/capx-director-prompt-pack-2026-08.md`
 "GATE-(a) RE-KEY r#65"; ledger §0bj). **Model:** Fable. **Data profile:** code.
@@ -50,6 +63,8 @@ status, determination or grade moves.** Two things are reported and deliberately
 | after this lane's first edit (six `keeper` fields, one boolean, the stamp) | `3affcd71` + edit | **EXIT 0** (7 rows) |
 | after the pre-push rebase, before the second edit | `8ebb7805` | **EXIT 1** — **SPP** cites `2026-09-22-hydro-5-spp-floor`; live keeper `2026-09-24-spp78-hr-span` (PR #6580 landed mid-lane) |
 | after this lane's SPP re-key | `8ebb7805` + edit | **EXIT 0** (7 rows) |
+| after the merge rebase, before the third edit | `3321109c` | **EXIT 1** — **PJM** cites `2026-09-23-pjm-h19-dbs-span`; live keeper `2026-09-24-pjm-h22-rggi-span` (PR #6596 landed mid-lane) |
+| after this lane's PJM re-key | `3321109c` + edit | **EXIT 0** (7 rows) |
 | tests | — | `tests/scoring/test_gate_a_provenance.py` + `tests/scoring/test_forecast_staleness.py`: **41 passed** at each edit |
 
 ### 1.1 What the guard said at `6640becc` (the nineteenth firing), verbatim ids
@@ -85,7 +100,8 @@ the `sha256[:12]` of the prior detail each Y-29 row quotes reproduces from `6640
 | ERCOT | `2026-09-19-ercot266-mer-five-year` | 2021–2025 · `ercot_mer20260919_five_year` | CALIBRATED 8/7/1/0 (ISO-level AND registered, agreeing; config-partition rollup; all five years CALIBRATED) | same | `969cdb2096ed` ✓ |
 | NEISO | `2026-09-22-hydro-5-neiso-ror` | 2020–2025 · `hydro5_neiso_ror_span` | CALIBRATED 8/7/1/0 (2020–2024 CALIBRATED; 2025 CALIBRATED-WITH-CAVEATS) | same | `1ce8e42174a7` ✓ |
 | NYISO | `2026-09-22-nyiso-hydro3-ror-split` | 2022–2025 · `hydro3_nyiso_ror_span` | **NOT-YET** 8/6/0/2 (2023 NOT-YET: fuelmix, price_tail; 2022/2024 CALIBRATED; 2025 CALIBRATED-WITH-CAVEATS) | same; entry's own `determination` = `"NOT-YET"` | `cd3c899387b1` ✓ |
-| PJM | `2026-09-23-pjm-h19-dbs-span` (+ folded `…-dbs-touchpoint` 2020–2022) | 2023–2025 · `pjm_h19_dbs_span` | CALIBRATED 8/8/0/0 (touchpoint 2020/21/22 NOT-YET, reported under rule 30(c)) | same | `9bfd2a5d7160` ✓ |
+| PJM at `3affcd71` (Y-29's row) | `2026-09-23-pjm-h19-dbs-span` (+ folded `…-dbs-touchpoint` 2020–2022) | 2023–2025 · `pjm_h19_dbs_span` | CALIBRATED 8/8/0/0 (touchpoint 2020/21/22 NOT-YET, reported under rule 30(c)) | same | `9bfd2a5d7160` ✓ |
+| **PJM at `3321109c` (this lane's row)** | **`2026-09-24-pjm-h22-rggi-span`** (+ folded `2026-09-24-pjm-h22-rggi-touchpoint` 2020–2022, `holdout.keeper` = the span) | 2023–2025 · `pjm_h22_rggi_span` | **NOT-YET** 8/7/0/1, rubric v3.8, sidecar generated 2026-09-24 18:08 (2023 CALIBRATED; 2024 NOT-YET fuelmix — C1 CC_REGULAR 322.0 vs 335.6 TWh; 2025 CALIBRATED-WITH-CAVEATS; touchpoint 2020 fuelmix+price_mean, 2021 fuelmix, 2022 price_shape, all NOT-YET) | same (`complete.PJM.keeper` = pjm-h22; `rekeyed` re-verified NOT-YET; `determination` prose updated by the promoting lane) | — (Y-29's detail carried verbatim beneath the new head) |
 | SPP at `3affcd71` (Y-29's row) | `2026-09-22-hydro-5-spp-floor` (+ folded `…-spp-rung` 2019–2022) | 2023–2025 · `hydro5_spp_floor_span` | CALIBRATED 8/7/1/0 (rung 2019 CALIBRATED; 2020/21/22 NOT-YET, reported under rule 30(c)) | same | `8b749c0fbba8` ✓ |
 | **SPP at `8ebb7805` (this lane's row)** | **`2026-09-24-spp78-hr-span`** (+ folded `2026-09-24-spp78-hr-rung` 2019–2022, `holdout.keeper` = the span) | 2023–2025 · `spp78_hr_span` | CALIBRATED 8/7/1/0, rubric v3.8, sidecar generated 2026-09-24 17:39 (2023/2024 CALIBRATED; 2025 CALIBRATED-WITH-CAVEATS; rung 2019 CALIBRATED, 2020 NOT-YET price_mean+price_shape, 2021 NOT-YET price_shape, 2022 NOT-YET fuelmix+dispatch_corr) | same (`complete.SPP.keeper` = spp78; `rekeyed_spp78` present, determination re-verified CALIBRATED) | — (Y-29's detail carried verbatim beneath the new head) |
 
@@ -145,7 +161,8 @@ ASCII-escaped and stays so; every other byte is identical.
 | `isos.ERCOT.keeper` | `2026-08-25-234-eastex-identity` | `2026-09-19-ercot266-mer-five-year` | as above (this one was FOUR keepers stale: 234 → ercot248 → ercot256 → ercot261 → ercot265 → ercot266) |
 | `isos.NEISO.keeper` | `2026-09-06-neiso-106-fossil-offer` | `2026-09-22-hydro-5-neiso-ror` | as above |
 | `isos.NYISO.keeper` | `2026-09-09-nyiso-221-fuelvintage-span` | `2026-09-22-nyiso-hydro3-ror-split` | as above |
-| `isos.PJM.keeper` | `2026-08-15-pjm-162-inputclock` | `2026-09-23-pjm-h19-dbs-span` | as above |
+| `isos.PJM.keeper` | `2026-08-15-pjm-162-inputclock` | `2026-09-24-pjm-h22-rggi-span` (set to pjm-h19 at the first edit, then to pjm-h22 at the merge rebase) | as above |
+| `isos.PJM.gate.a_keeper_marker.detail` / `read_live_at` / `corrected_by` | Y-29's row keyed to `2026-09-23-pjm-h19-dbs-span` | new head keyed to `2026-09-24-pjm-h22-rggi-span` (NOT-YET, reported), Y-29's detail carried verbatim beneath; `3321109c (…)`; this lane's sentence + `Supersedes: ` + Y-29's text | the row red at the merge-rebase HEAD — the pjm-h22 promotion (`cf394e7d`, PR #6596) landed between the push and the merge rebase and did not touch this file; `status`, `closed_on`, `note` unchanged |
 | `isos.SPP.keeper` | `2026-09-07-spp-2-crosswalk-hydro` | `2026-09-24-spp78-hr-span` (set to hydro-5 at the first edit, then to spp78 at the second) | as above |
 | `isos.SPP.marker_complete` | `"True"` (a JSON **string**, written by Y-29; the field was the boolean `false` at `6640becc`) | `true` (boolean) | type restoration: every other row carries a boolean; a string is truthy in JS and Python so nothing broke, but a records file should not carry two types in one field |
 | `gate_a_provenance.derived_at_sha` | `6f2d7332` | `8ebb7805` | the file-level derivation stamp records the sha the keeper/marker read was taken at; every prior re-key lane (r#64, r#57, D56-R, …) re-stamped it; Y-29 did not |
@@ -158,7 +175,7 @@ each declares backcast `complete`); anything outside this file.
 
 ---
 
-## 4. The full chain each row was stale across — 32 promotions in 15 days, all promoter misses on this file
+## 4. The full chain each row was stale across — 33 promotions in 15 days, all promoter misses on this file (`cf394e7d`, the pjm-h22 promotion, verified the same way: zero `program-status.json` hunks)
 
 Sources per arrow: the keeper shard's own history fields (`keepers/<ISO>.json`), the marker file's
 re-key fields (`complete.<ISO>.*`), `docs/calibration-log/<iso>.md`, and the RESULT/PRECOMMIT docs
@@ -219,6 +236,7 @@ established from the shards, the marker file and the logs — and the fact that 
 | 5 | → `2026-09-22-pjm-h16-coalgrain-span` | 2026-09-22 · pjm-h16 (commit `49c237e9`) | COAL-scoped whole-operating-day commitment grain | `docs/RESULT-pjm-h16-2026-09-22.md` |
 | 6 | → `2026-09-22-pjm-hydro2-ror-span` | 2026-09-23 · hydro-2 (commit `9c8b1d6e`) | `hydro_ror_split`; owner *"Does it improve or is it more structurally sound if so yes"* / *"Promote it"* | `docs/RESULT-hydro-2-pjm-2026-09-22.md` |
 | 7 | → `2026-09-23-pjm-h19-dbs-span` (+ folded `…-touchpoint` 2020–2022) | 2026-09-24 · pjm-h19 (commit `d9cdfc1a`) | `demand_balance_screen` False → True; owner *"Promote"*; all eight criteria PASS, zero status changes in either span | `docs/RESULT-pjm-h19-demand-balance-screen-2026-09-23.md`; `complete.PJM.rekeyed` + `determination` |
+| **8** | → **`2026-09-24-pjm-h22-rggi-span`** (+ folded `2026-09-24-pjm-h22-rggi-touchpoint` 2020–2022) — **landed between the push and the merge rebase; re-keyed by this lane** | 2026-09-24 · pjm-h22 (commit `cf394e7d`, merged `3321109c`, PR #6596) | `pjm_rggi_allowance_pricing` False → True (RGGI-member fossil units charged the published auction clearing price × own emission rate; zero free parameters, DOF 19 → 20 measured-external); **gates regress**: span CALIBRATED → NOT-YET on C1 CC_REGULAR 2024 (322.0 vs 335.6 TWh, band 8); touchpoint 2022 C1/C3a FAIL → PASS, 2020 C3a worsens; owner *"Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper.."* | `docs/RESULT-pjm-h22-card-e-rggi-six-years-2026-09-24.md`; `## pjm-h22 — 2026-09-24` in `docs/calibration-log/pjm.md`; `keepers/PJM.json` `promotion_note`; `complete.PJM.rekeyed` + `keeper_history` |
 
 ### 4.6 SPP — SEVEN keeper promotions (keepers 10 → spp-78; the seventh landed mid-lane), plus rung re-solves that are NOT keeper promotions
 
@@ -288,7 +306,10 @@ membership.** MISO fails on the absent marker (owner declined it at Q49), unchan
    still opens on `2026-09-20-spp-51-coal-sync` (four keepers behind at `8ebb7805`; the SPP-78
    promotion added `rekeyed_spp78` with its own re-verification and left the prose as it was). Narrative, not identity;
    `audit_keepers` M1 passes (Y-29 §1.4 concurs). Not repaired: not this lane's file.
-2. **NYISO holds `complete` on a NOT-YET keeper (NYISO desk / owner).** Leg (a) stays **pass** on the
+2. **NYISO — and, since pjm-h22 at `3321109c`, PJM — hold `complete` on a NOT-YET keeper (NYISO / PJM
+   desks / owner).** For PJM the marker entry's own `determination` prose says it plainly (*"NOT-YET on
+   2026-09-24-pjm-h22-rggi-span … Superseded keeper 2026-09-23-pjm-h19-dbs-span was CALIBRATED 8/8"*),
+   promoted on the structure-over-gates ruling. For NYISO: leg (a) stays **pass** on the
    literal test — both limbs hold — and the determination is concurring evidence, never the gate
    test; but it no longer concurs. The marker file's own entry says so (`determination: "NOT-YET"`;
    `keeper_rekey_2026_09_22.by`: *"the rekey designates the keeper and does not re-declare
