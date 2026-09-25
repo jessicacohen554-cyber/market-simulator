@@ -1,4 +1,4 @@
-# RESULT — miso-272: the Edwardsport 481 MW phantom. v1 is withdrawn on measured evidence; v2 (Edwardsport only) has solved 6 of 7 years
+# RESULT — miso-272: the Edwardsport 481 MW phantom removed (v2, Edwardsport only). No gate flips, train tier stays CALIBRATED. RECOMMENDED for promotion; the owner decides. v1 is withdrawn on measured evidence.
 
 ```
 LANE     : miso-272 (charter candidate 1)
@@ -6,8 +6,8 @@ PREREG   : docs/PRECOMMIT-miso272-cc-block-summer-rating-2026-09-25.md (v1 pin 8
 KEEPER   : 2026-09-25-miso-271-wefor-stack (miso271_span, 2019-2025) — unchanged
 DELTA    : cc_block_summer_rating=true (new ScenarioConfig field, default off). DOF +0; multipliers unchanged
 CONTROL  : keeper bundle (G-DRIFT: all upstream hunks INERT, rule 29(b) form 4); no control solves
-STATUS   : v1 registered (2026-09-25-miso-272-cc-block) and NOT recommended.
-           v2: 6/7 legs verified; 2022 still solving at 11:15 UTC (see §4)
+STATUS   : v2 registered 2026-09-25-miso-272-edwardsport-block (miso272b_span, 2019-2025). RECOMMENDED.
+           v1 registered 2026-09-25-miso-272-cc-block (miso272_span). NOT recommended.
 ```
 
 ## 1. The defect
@@ -71,28 +71,61 @@ LMP.
 | 2019 | `913b5917` | −0.274 | +0.092 | +0.304 | +0.031 | +0.150 | −0.243 | 29.272 → 29.319 (+0.047) |
 | 2020 | `19c9c225` | +0.117 | −1.109 | +0.419 | +0.180 | +0.280 | −0.031 | 25.505 → 25.594 (+0.089) |
 | 2021 | `b4e4a7bf` | +0.021 | −0.098 | −0.274 | +0.134 | +0.124 | +0.040 | 42.312 → 42.475 (+0.162) |
-| 2022 | still solving | | | | | | | |
+| 2022 | `a09e729d` | −0.100 | −0.073 | −0.081 | +0.104 | +0.080 | +0.080 | 62.591 → 62.667 (+0.076) |
 | 2023 | `8f83d7ae` | −0.335 | −0.227 | +0.120 | +0.350 | +0.139 | −0.006 | 34.682 → 34.750 (+0.068) |
 | 2024 | `a178595d` | −0.148 | −0.990 | +0.320 | +0.472 | +0.160 | +0.172 | 31.858 → 31.974 (+0.115) |
 | 2025 | `17b0b38c` | −0.356 | −1.513 | +0.425 | +0.580 | +0.257 | +0.367 | 43.703 → 44.002 (+0.299) |
 
-**Expected gate outcome (arithmetic on the keeper's scored values, not yet the scorer's):**
-- C1 CC_REGULAR moves at most 0.36 TWh in any year, so 2021 and 2023 stay PASS (2023 ≈ −5.40).
-- C3a 2019/2020 rises about 0.2–0.4 pp. It stays FAIL at about +11.0 / +11.2 %.
-- Train-tier inputs move by hundredths of a TWh and cents per MWh, so no train-tier criterion is expected to flip.
-- The composite still has to be scored before any claim is made.
+### 3.1 Scored (live scorer, same bench parts for both runs)
 
-## 4. Open
+| criterion | keeper miso-271 | v2 miso-272 |
+|---|---|---|
+| C1 fuel mix (all classes, all years) | PASS | PASS |
+| C1 CC_REGULAR TWh model / actual 2021 · 2022 · 2023 | 96.55 / 104.47 · 118.58 / 125.57 · 136.82 / 142.25 | 96.56 · 118.48 · 136.49 |
+| C1 COAL_BIT TWh 2020 · 2023 (model / actual) | 61.60 / 66.37 · 52.99 / 57.14 | 60.49 · 52.76 |
+| C2 / C4 / C6 / C8 | PASS | PASS |
+| C3a 2019 · 2020 | +10.8 % · +10.9 % FAIL | +11.0 % · +11.3 % FAIL |
+| C3b 2021 | 0.304 FAIL | 0.305 FAIL |
+| C3c | ledgered caveat | ledgered caveat |
+| **train tier 2023–2025** | **CALIBRATED 8 / 7 / 1 / 0** | **CALIBRATED 8 / 7 / 1 / 0** |
+| full span | NOT-YET (price_mean, price_shape) | NOT-YET (same set) |
 
-- **2022 v2 leg.** Session `session_01BZSju52WUzgmx77WVTjGRP`, branch `claude/miso272b-arm-2022`.
-  - Launched 08:28. It has restarted at least once and was still in its P1 solve at 11:14 UTC, at about 18.4 GiB,
-    swap-bound.
-  - A backup shard never got a container and was archived.
-  - When it lands, the steps are: compose `miso272b_span` → stamp → attestation → register → score.
-  - If it fails, the cost is one more 2022 re-solve, about 60–70 min.
-- **Promotion question.** Pending the full v2 score, which is the owner's decision (rule 31).
-- **v1 bundle and legs.** The bundle is registered here, and the v1 legs sit on `claude/miso272-arm-<Y>`. Its
-  per-year dispatch exists on this session's local disk only (gitignored). A promotion of v1 is not recommended.
+**What the scores show:**
+- **No criterion flips in any year.**
+- **The cost:**
+  - +0.2 / +0.4 pp on the already-failing C3a 2019 / 2020 (+$0.05–0.30/MWh in load-weighted price).
+  - +0.001 on C3b 2021.
+  - Removing 473–481 MW of available coal raises price slightly, which is the declared direction.
+- **Composite legitimacy diagnostics:** the D-1 row for COAL_BIT 2024 reports a FAIL. C8 reaches D-1 only for a
+  class above its forced-energy budget, and COAL_BIT is well under it, so C8 PASSES. The row is reported, not gated.
+- **The recipe is identical to the keeper's apart from the one field.**
+  - `stamp_config_partition --check` passes, and the partition is byte-identical to the keeper's.
+  - DOF +0.
+
+### 3.2 Recommendation
+
+**Promote v2.** It removes a physically impossible 481 MW of coal capacity, confirmed by the plant's own CAMPD
+record, through a zero-parameter reconciliation of EIA-860's block-on-one-row filing (rules 13, 14 and 19).
+
+It flips no criterion and leaves the train tier CALIBRATED. The only gate cost is a few tenths of a point on C3a,
+which is already failing (rule 1: structure first).
+
+This is the owner's decision (rule 31). Nothing has been promoted or pruned.
+
+## 4. Where the bytes are and what a promotion costs
+
+**v2 composite `miso272b_span`.** It holds the slim bundle, the `hourly/` sidecars, the attestation, the diagnostics,
+the registry sidecar and the run payload. It lands on `main` with this lane's PR, so **promoting from there costs
+zero re-solves.**
+
+Its per-year dispatch exists on this session's local disk only (gitignored). The v2 legs are on
+`claude/miso272b-arm-<Y>`. Those SHAs are provenance, not storage (rule 33(d)); they are in the attestation.
+
+**v1** (`miso272_span`) is registered and superseded by v2. If v2 is promoted, rule 35 prunes the keeper
+`miso271_span` and v1 together.
+
+**2022 leg.** It took about 3 h 7 min, with at least one container restart and a swap-bound P1. The backup shard
+never received a container and was archived. All 15 shards are archived: 7 v1, 7 v2, and the backup.
 
 ## 5. Routed, not fixed (unchanged from PRECOMMIT §7)
 
