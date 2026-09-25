@@ -1,5 +1,63 @@
 {
  "years": {
+  "2021": {
+   "CC_REGULAR": {
+    "AEP_Ohio": {
+     "actual": 54.55,
+     "keeper_err": 0.88,
+     "arm_err": 2.9,
+     "delta": 2.02
+    },
+    "ATSI": {
+     "actual": 15.6,
+     "keeper_err": -0.36,
+     "arm_err": 0.38,
+     "delta": 0.74
+    },
+    "Central_PA": {
+     "actual": 78.89,
+     "keeper_err": 0.72,
+     "arm_err": 3.11,
+     "delta": 2.39
+    },
+    "ComEd": {
+     "actual": 10.43,
+     "keeper_err": 0.14,
+     "arm_err": 1.0,
+     "delta": 0.86
+    },
+    "Dominion": {
+     "actual": 49.21,
+     "keeper_err": -4.36,
+     "arm_err": -8.61,
+     "delta": -4.25
+    },
+    "EMAAC": {
+     "actual": 35.44,
+     "keeper_err": 14.32,
+     "arm_err": 5.96,
+     "delta": -8.36
+    },
+    "SWMAAC": {
+     "actual": 12.19,
+     "keeper_err": -1.88,
+     "arm_err": -3.56,
+     "delta": -1.68
+    },
+    "West_APS": {
+     "actual": 23.96,
+     "keeper_err": 0.48,
+     "arm_err": 0.98,
+     "delta": 0.5
+    },
+    "_bench_total": {
+     "actual": 280.27,
+     "keeper_err": 9.94,
+     "arm_err": 2.16,
+     "delta": -7.78
+    }
+   }
+  },
   "2022": {
    "CC_REGULAR": {
     "AEP_Ohio": {
@@ -55,164 +113,6 @@
      "keeper_err": 20.19,
      "arm_err": 11.96,
      "delta": -8.23
-    }
-   },
-   "COAL_BIT": {
-    "AEP_Ohio": {
-     "actual": 78.99,
-     "keeper_err": 6.54,
-     "arm_err": -78.99,
-     "delta": -85.53
-    },
-    "Dominion": {
-     "actual": 2.01,
-     "keeper_err": 0.55,
-     "arm_err": -2.01,
-     "delta": -2.56
-    },
-    "SWMAAC": {
-     "actual": 2.08,
-     "keeper_err": 1.33,
-     "arm_err": -2.08,
-     "delta": -3.41
-    },
-    "West_APS": {
-     "actual": 53.16,
-     "keeper_err": -1.36,
-     "arm_err": -53.16,
-     "delta": -51.8
-    },
-    "_bench_total": {
-     "actual": 136.24,
-     "keeper_err": 7.06,
-     "arm_err": -136.24,
-     "delta": -143.3
-    }
-   },
-   "COAL_WC": {
-    "Central_PA": {
-     "actual": 3.55,
-     "keeper_err": -0.43,
-     "arm_err": -3.55,
-     "delta": -3.12
-    },
-    "West_APS": {
-     "actual": 3.67,
-     "keeper_err": -0.48,
-     "arm_err": -3.67,
-     "delta": -3.19
-    },
-    "_bench_total": {
-     "actual": 7.22,
-     "keeper_err": -0.91,
-     "arm_err": -7.22,
-     "delta": -6.31
-    }
-   },
-   "CT_PEAKER": {
-    "AEP_Ohio": {
-     "actual": 6.13,
-     "keeper_err": -1.59,
-     "arm_err": -0.91,
-     "delta": 0.68
-    },
-    "ATSI": {
-     "actual": 2.47,
-     "keeper_err": -0.91,
-     "arm_err": -0.71,
-     "delta": 0.2
-    },
-    "Central_PA": {
-     "actual": 0.37,
-     "keeper_err": 0.07,
-     "arm_err": 0.15,
-     "delta": 0.08
-    },
-    "ComEd": {
-     "actual": 1.52,
-     "keeper_err": 2.59,
-     "arm_err": 3.09,
-     "delta": 0.5
-    },
-    "Dominion": {
-     "actual": 3.54,
-     "keeper_err": -1.8,
-     "arm_err": -2.13,
-     "delta": -0.33
-    },
-    "EMAAC": {
-     "actual": 0.88,
-     "keeper_err": 0.4,
-     "arm_err": 0.07,
-     "delta": -0.33
-    },
-    "SWMAAC": {
-     "actual": 0.82,
-     "keeper_err": -0.4,
-     "arm_err": -0.42,
-     "delta": -0.02
-    },
-    "West_APS": {
-     "actual": 2.63,
-     "keeper_err": -0.54,
-     "arm_err": -0.26,
-     "delta": 0.28
-    },
-    "_bench_total": {
-     "actual": 18.36,
-     "keeper_err": -2.18,
-     "arm_err": -1.12,
-     "delta": 1.06
-    }
-   },
-   "ST_GAS": {
-    "AEP_Ohio": {
-     "actual": 0.51,
-     "keeper_err": -0.08,
-     "arm_err": -0.08,
-     "delta": 0.0
-    },
-    "Central_PA": {
-     "actual": 6.3,
-     "keeper_err": 0.97,
-     "arm_err": 1.99,
-     "delta": 1.02
-    },
-    "ComEd": {
-     "actual": 0.49,
-     "keeper_err": -0.15,
-     "arm_err": -0.12,
-     "delta": 0.03
-    },
-    "Dominion": {
-     "actual": 0.1,
-     "keeper_err": 0.0,
-     "arm_err": -0.04,
-     "delta": -0.04
-    },
-    "EMAAC": {
-     "actual": 0.36,
-     "keeper_err": -0.25,
-     "arm_err": -0.27,
-     "delta": -0.02
-    },
-    "SWMAAC": {
-     "actual": 0.23,
-     "keeper_err": -0.15,
-     "arm_err": -0.17,
-     "delta": -0.02
-    },
-    "West_APS": {
-     "actual": 0.49,
-     "keeper_err": 0.44,
-     "arm_err": 0.52,
-     "delta": 0.08
-    },
-    "_bench_total": {
-     "actual": 8.48,
-     "keeper_err": 0.78,
-     "arm_err": 1.83,
-     "delta": 1.05
     }
    }
   },
@@ -272,163 +172,179 @@
      "arm_err": -7.76,
      "delta": -11.33
     }
-   },
-   "COAL_BIT": {
+   }
+  },
+  "2024": {
+   "CC_REGULAR": {
     "AEP_Ohio": {
-     "actual": 62.62,
-     "keeper_err": 2.39,
-     "arm_err": -62.62,
-     "delta": -65.01
-    },
-    "Dominion": {
-     "actual": 1.0,
-     "keeper_err": 0.59,
-     "arm_err": -1.0,
-     "delta": -1.59
-    },
-    "SWMAAC": {
-     "actual": 1.04,
-     "keeper_err": 0.55,
-     "arm_err": -1.04,
-     "delta": -1.59
-    },
-    "West_APS": {
-     "actual": 38.21,
-     "keeper_err": -2.53,
-     "arm_err": -38.21,
-     "delta": -35.68
-    },
-    "_bench_total": {
-     "actual": 102.87,
-     "keeper_err": 1.0,
-     "arm_err": -102.87,
-     "delta": -103.87
-    }
-   },
-   "COAL_WC": {
-    "Central_PA": {
-     "actual": 3.5,
-     "keeper_err": -0.76,
-     "arm_err": -3.5,
-     "delta": -2.74
-    },
-    "West_APS": {
-     "actual": 2.92,
-     "keeper_err": -1.25,
-     "arm_err": -2.92,
-     "delta": -1.67
-    },
-    "_bench_total": {
-     "actual": 6.42,
-     "keeper_err": -2.01,
-     "arm_err": -6.42,
-     "delta": -4.41
-    }
-   },
-   "CT_PEAKER": {
-    "AEP_Ohio": {
-     "actual": 7.09,
-     "keeper_err": -3.1,
-     "arm_err": -1.51,
-     "delta": 1.59
+     "actual": 85.72,
+     "keeper_err": -2.13,
+     "arm_err": -0.88,
+     "delta": 1.25
     },
     "ATSI": {
-     "actual": 2.33,
-     "keeper_err": -1.36,
-     "arm_err": -0.92,
-     "delta": 0.44
+     "actual": 16.92,
+     "keeper_err": 0.11,
+     "arm_err": 0.33,
+     "delta": 0.22
     },
     "Central_PA": {
-     "actual": 0.39,
-     "keeper_err": 0.32,
-     "arm_err": 0.44,
-     "delta": 0.12
+     "actual": 81.83,
+     "keeper_err": 0.87,
+     "arm_err": 1.94,
+     "delta": 1.07
     },
     "ComEd": {
-     "actual": 2.81,
-     "keeper_err": 1.55,
-     "arm_err": 2.85,
-     "delta": 1.3
+     "actual": 22.6,
+     "keeper_err": 2.85,
+     "arm_err": 3.75,
+     "delta": 0.9
     },
     "Dominion": {
-     "actual": 3.02,
-     "keeper_err": -2.19,
-     "arm_err": -2.24,
-     "delta": -0.05
+     "actual": 53.94,
+     "keeper_err": -12.33,
+     "arm_err": -9.86,
+     "delta": 2.47
     },
     "EMAAC": {
-     "actual": 0.69,
-     "keeper_err": 1.56,
-     "arm_err": -0.09,
-     "delta": -1.65
+     "actual": 35.7,
+     "keeper_err": 13.77,
+     "arm_err": -3.36,
+     "delta": -17.13
     },
     "SWMAAC": {
-     "actual": 0.96,
-     "keeper_err": -0.44,
-     "arm_err": -0.66,
-     "delta": -0.22
+     "actual": 11.51,
+     "keeper_err": -3.09,
+     "arm_err": -6.53,
+     "delta": -3.44
     },
     "West_APS": {
-     "actual": 3.72,
-     "keeper_err": 3.06,
-     "arm_err": 3.66,
-     "delta": 0.6
+     "actual": 27.18,
+     "keeper_err": 0.86,
+     "arm_err": 1.23,
+     "delta": 0.37
     },
     "_bench_total": {
-     "actual": 21.01,
-     "keeper_err": -0.6,
-     "arm_err": 1.53,
-     "delta": 2.13
+     "actual": 335.4,
+     "keeper_err": 0.91,
+     "arm_err": -13.38,
+     "delta": -14.29
     }
-   },
-   "ST_GAS": {
+   }
+  },
+  "2025": {
+   "CC_REGULAR": {
     "AEP_Ohio": {
-     "actual": 1.17,
-     "keeper_err": -0.51,
-     "arm_err": -0.47,
-     "delta": 0.04
+     "actual": 80.86,
+     "keeper_err": 0.92,
+     "arm_err": 1.34,
+     "delta": 0.42
+    },
+    "ATSI": {
+     "actual": 16.17,
+     "keeper_err": 1.14,
+     "arm_err": 1.22,
+     "delta": 0.08
     },
     "Central_PA": {
-     "actual": 5.36,
-     "keeper_err": 3.34,
-     "arm_err": 5.59,
-     "delta": 2.25
+     "actual": 80.95,
+     "keeper_err": 2.34,
+     "arm_err": 2.91,
+     "delta": 0.57
     },
     "ComEd": {
-     "actual": 0.71,
-     "keeper_err": -0.2,
-     "arm_err": -0.09,
-     "delta": 0.11
+     "actual": 23.7,
+     "keeper_err": 4.2,
+     "arm_err": 4.6,
+     "delta": 0.4
     },
     "Dominion": {
-     "actual": 0.09,
-     "keeper_err": -0.07,
-     "arm_err": -0.08,
-     "delta": -0.01
+     "actual": 53.7,
+     "keeper_err": -4.02,
+     "arm_err": -2.91,
+     "delta": 1.11
     },
     "EMAAC": {
-     "actual": 0.25,
-     "keeper_err": 0.16,
-     "arm_err": 0.06,
-     "delta": -0.1
+     "actual": 36.68,
+     "keeper_err": 3.79,
+     "arm_err": -8.15,
+     "delta": -11.94
     },
     "SWMAAC": {
-     "actual": 0.67,
-     "keeper_err": -0.44,
-     "arm_err": -0.61,
-     "delta": -0.17
+     "actual": 12.42,
+     "keeper_err": -6.44,
+     "arm_err": -7.7,
+     "delta": -1.26
     },
     "West_APS": {
-     "actual": 0.9,
-     "keeper_err": -0.14,
-     "arm_err": -0.02,
-     "delta": 0.12
+     "actual": 26.26,
+     "keeper_err": 0.63,
+     "arm_err": 0.85,
+     "delta": 0.22
     },
     "_bench_total": {
-     "actual": 9.15,
-     "keeper_err": 2.14,
-     "arm_err": 4.38,
-     "delta": 2.24
+     "actual": 330.74,
+     "keeper_err": 2.56,
+     "arm_err": -7.84,
+     "delta": -10.4
+    }
+   }
+  },
+  "2020": {
+   "CC_REGULAR": {
+    "AEP_Ohio": {
+     "actual": 54.95,
+     "keeper_err": 2.46,
+     "arm_err": 3.25,
+     "delta": 0.79
+    },
+    "ATSI": {
+     "actual": 15.28,
+     "keeper_err": -0.83,
+     "arm_err": -0.55,
+     "delta": 0.28
+    },
+    "Central_PA": {
+     "actual": 75.5,
+     "keeper_err": -0.18,
+     "arm_err": 1.15,
+     "delta": 1.33
+    },
+    "ComEd": {
+     "actual": 13.09,
+     "keeper_err": -1.66,
+     "arm_err": -1.2,
+     "delta": 0.46
+    },
+    "Dominion": {
+     "actual": 56.58,
+     "keeper_err": -10.51,
+     "arm_err": -8.89,
+     "delta": 1.62
+    },
+    "EMAAC": {
+     "actual": 38.14,
+     "keeper_err": 12.95,
+     "arm_err": 2.69,
+     "delta": -10.26
+    },
+    "SWMAAC": {
+     "actual": 11.77,
+     "keeper_err": -2.71,
+     "arm_err": -4.61,
+     "delta": -1.9
+    },
+    "West_APS": {
+     "actual": 19.65,
+     "keeper_err": 1.11,
+     "arm_err": 1.32,
+     "delta": 0.21
+    },
+    "_bench_total": {
+     "actual": 284.96,
+     "keeper_err": 0.63,
+     "arm_err": -6.84,
+     "delta": -7.47
     }
    }
   }

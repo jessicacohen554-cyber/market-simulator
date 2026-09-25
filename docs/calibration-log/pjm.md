@@ -6612,6 +6612,22 @@ locate that defect at zero LP (CC online hours/CF vs CEMS by plant) before any C
 re-arm the CT max-seam until pjm-123's tight-bin ranking is resolved.
 Record: `docs/RESULT-pjm-h20-card-c-2026-09-24.md`.
 
+## pjm-h22 — 2026-09-24 — Card E: RGGI on the keeper, all six years — PROMOTED (gates regress)
+
+Zero-LP data build: `RGGI_MEMBER_STATES_BY_YEAR` 2020/2022, `PJM_RGGI_ZONE_SHARE` 2020–22 (derive script
+reproduces 2023–25 exactly), `PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE` 2020–22 = 7.07/10.44/14.84 $/t (NEISO
+series, re-derived from the auction CSV by test). Six shards at `d58121c3` (2020 relaunched once: first shard
+went idle in setup), keeper + `pjm_rggi_allowance_pricing=true`. Registered
+`2026-09-24-pjm-h22-rggi-span` (NOT-YET: C1 CC_REGULAR 2024 322.0 vs 335.6) + `-touchpoint` (NOT-YET).
+**EMAAC CC over-run closes every year; Dominion worsens 2021–23 (VA taxed)** — the phase-0 direction held
+everywhere. Price: C3a 2024 −3.0 → +1.3 %, 2025 −6.8 → −4.1 %, 2023 +0.6 → +4.9 %. Touchpoint: 2022 C1 CC and
+C3a FAIL → PASS; 2020 C3a +14.5 → +17.3 %, COAL_BIT 2020/21 +25.5/+19.2 → +29.2/+22.4.
+
+**PROMOTED** on the owner ruling (*"If so plz promote. If structural integrity improves but gates regress that
+may still be a keeper"*). Rule-35 order: re-key, `audit_keepers` E1 pass, prune h19 pair
+(`--keep 2026-09-24-pjm-h22-rggi-touchpoint --force-uncite`), audit 0/0. **PJM headline CALIBRATED → NOT-YET.**
+Record: `docs/RESULT-pjm-h22-card-e-rggi-six-years-2026-09-24.md`.
+
 ## pjm-h21 — 2026-09-24 — owner ruling on pjm-h20: NOT PROMOTED
 
 Owner confirmed the pjm-h20 recommendation. `prune_iso_runs.py --iso PJM --keep 2026-09-23-pjm-h19-dbs-touchpoint

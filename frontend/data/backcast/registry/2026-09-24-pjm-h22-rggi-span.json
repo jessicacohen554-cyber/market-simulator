@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-24-pjm-h22-rggi-span",
+  "label": "pjm h22 rggi span",
+  "date": "2026-09-24",
+  "shorthand": "pjm-h22-rggi-span",
+  "definition": "pjm-h22 Card E RGGI, 2023",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-09-24-pjm-h22-rggi-span.js",
+  "bundle": "results/calibration/pjm_h22_rggi_span"
+}
