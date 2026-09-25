@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-25-caiso-r3-coupling-ladder",
+  "label": "caiso r3 coupling ladder",
+  "date": "2026-09-25",
+  "shorthand": "caiso-r3-coupling-ladder",
+  "definition": "R-CAISO-3 A 2022: keeper recipe + coupling scoped to static-ladder tranches (PRECOMMIT-r-caiso-3-2026-09-25 \u00a74)",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-25-caiso-r3-coupling-ladder.js",
+  "bundle": "results/calibration/rcaiso3_A_span"
+}
