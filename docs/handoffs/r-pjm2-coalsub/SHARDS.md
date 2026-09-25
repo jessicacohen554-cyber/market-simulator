@@ -43,3 +43,14 @@ merged, so it is an ancestor of `main`). Five v1 shards hit hard stop 1 and stop
 |---|---|---|---|---|
 | 2021 | `77877b565af55172c5a7530c6b13c980501fed90` | 17 (incl. `dispatch/2021_P1.parquet`) | OK (bare COAL folded) | COAL 16.97 → 0; COAL_BIT +11.25; COAL_PRB +4.98 (Waukegan); coal family total −0.73; CC_REGULAR +0.60 |
 | 2024 | `d4772ab2c1e7221d6477b3c9da105b80b310bc20` | 17 (incl. `dispatch/2024_P1.parquet`) | OK | every class byte-equal to the keeper (as G-DRIFT predicted) |
+
+## 05:19Z — 2019 / 2020 landed; 2022 / 2023 / 2025 relaunched (v3)
+
+| year | shard commit (provenance) | files | class TWh vs keeper |
+|---|---|---|---|
+| 2019 | `808869cc44fe03e6de3a9a67995074cce825eaf8` | 17 | COAL 18.22 → 0; COAL_BIT +16.32; COAL_PRB +3.76; COAL_WC +0.16; coal family +2.02; CC_REGULAR −1.32; CT_PEAKER −0.24 |
+| 2020 | `e1682c13bbbd10c8c909c12e33b4d339523db189` | 17 | COAL 7.33 → 0; COAL_BIT +6.50; COAL_PRB +3.17; coal family +2.29; CC_REGULAR −1.28; CT_PEAKER −0.42 |
+
+Recipe check OK on 2019/2020/2021/2024. 2025 v2 failed at load (same OOM pattern as 2020 v2); 2022/2023 v2 never
+left PENDING. v3: 2022 `session_01KsL3ruKYWorRHSxcdBLygT`, 2023 `session_0111UC4YT7exYybZY7fGPj57`,
+2025 `session_01TkRN51LFBitT7ZCp1GBq7R`. Shards whose bytes are in hand are archived.
