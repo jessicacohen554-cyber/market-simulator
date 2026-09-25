@@ -596,4 +596,5 @@ DECLARED: dict[str, str | dict[str, str]] = {
     "COAL_ARTIFACT_FAMILY": "e1fc364feeda8ad8",
     "COAL_CLASSES": "debae8c77579f94d",
     "ISO_BA_EXITS": {"SOCO": "a4d0fee78b233797"},
+    "EIA930_REMOTE_GENERATION_DOUBLE_BOOKED": "b90c9e86758ef245",
 }
