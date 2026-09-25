@@ -480,3 +480,17 @@ coal regression (0.720 → 0.691) is reported at full magnitude.
 - `audit_keepers` E1 passed before the prune. `2026-09-25-nwpp-next-ferc714-partial` and arm A
   `2026-09-25-nwppnext2-psei-colstrip` were then pruned with `prune_iso_runs.py --force-uncite`, and the audit
   after it passed.
+
+## nwpp-next-3 — 2026-09-25 — plant-basis demand anchor (FINDING-nwpp-45 §8, framing 2) → KEEPER #10
+
+Owner ruled framing 2. New default-off field `nwpp_demand_plant_basis` (zero DOF): each EIA-930 fuel family's
+annual energy in the served requirement is moved onto its EIA-923 plant-basis total on its own 930 hourly shape
+(wind/solar untouched; 2025 preliminary vintage: coal and gas only). Requirement +4.59 / +7.47 / +5.55 / +5.08 /
++7.73 / +10.40 / +11.83 TWh 2019–2025. Seven year-isolated shards at `dad798cd`, parent zero LP.
+
+Run `2026-09-25-nwppnext3-plant-basis`: NOT-YET on {dispatch_corr} only. C1 FAIL → PASS (CC_REGULAR 2022 −11.23 →
+−7.36, 2023 −8.32 → −2.57 TWh); C4 2020 coal FAIL → PASS (0.691 → 0.718); zero regressions. Reported costs:
+unserved load up every year (2020 113 → 194 GWh, 2024 13 → 46), gas long in 2020/2024/2025, coal still long 2021–23.
+
+**Promoted 2026-09-25 (owner standing ruling):** keeper #10; NWPP-NEXT-2's keeper #9 pruned (rule 35), audit PASS.
+Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext3-plant-basis-2019-2025-2026-09-25.md`.
