@@ -50,11 +50,15 @@ class TestDoubleBookedRepair(unittest.TestCase):
         out = frames._repair_double_booked_generation(df, "PSEI")
         self.assertIsNot(out, df)
         np.testing.assert_array_equal(out["Net generation"], [200.0, 400.0, np.nan])
-        np.testing.assert_array_equal(out["Demand (Adjusted)"], [1700.0, 1900.0, np.nan])
+        np.testing.assert_array_equal(
+            out["Demand (Adjusted)"], [1700.0, 1900.0, np.nan]
+        )
         np.testing.assert_array_equal(out["Total interchange"], df["Total interchange"])
         np.testing.assert_array_equal(out["NG: COL"], [0.0, np.nan, 0.0])
         # identity D = NG - TI preserved where it held
-        self.assertEqual(out["Demand"][0], out["Net generation"][0] - out["Total interchange"][0])
+        self.assertEqual(
+            out["Demand"][0], out["Net generation"][0] - out["Total interchange"][0]
+        )
         self.assertEqual(df["NG: COL"][0], 300.0)  # input never edited
 
 
@@ -105,7 +109,9 @@ class TestMeasuredEffect(unittest.TestCase):
                     continue
                 d = frames._mask_unbalanced_demand(df)
                 raw = df["Demand (Adjusted)"].to_numpy(dtype=float)
-                np.testing.assert_array_equal(np.isnan(d), np.isnan(raw), err_msg=f"{ba} {year}")
+                np.testing.assert_array_equal(
+                    np.isnan(d), np.isnan(raw), err_msg=f"{ba} {year}"
+                )
 
     def test_zonal_regroup_reproduces_pool_demand(self):
         from market_sim.config.iso_configs import get_iso_config
@@ -114,7 +120,9 @@ class TestMeasuredEffect(unittest.TestCase):
         zones = get_iso_config("NWPP").zone_names
         for year in (2019, 2020, 2021):
             frames._pool_hourly_frame.cache_clear()
-            pool = frames._pool_hourly_frame("NWPP", year)["Demand"].to_numpy(dtype=float)
+            pool = frames._pool_hourly_frame("NWPP", year)["Demand"].to_numpy(
+                dtype=float
+            )
             members = frames._pool_member_frames("NWPP", year)
             utc = pd.DatetimeIndex(members["BPAT"]["UTC time"])
             psei = frames._pool_member_demand(
