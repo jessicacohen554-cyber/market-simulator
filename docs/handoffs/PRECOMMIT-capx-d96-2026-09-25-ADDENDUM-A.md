@@ -27,3 +27,13 @@ shard must not end its turn while a build or solve is still running.**
 Already done and recorded in the PRECOMMIT: scorer control (NON-PROVENANCE IDENTICAL), both D92 instruments
 re-validated at this HEAD, the FC-5 and whole-verdict dry runs over `d94/vre_short`, and the key-provenance
 census (245 / 188 / 28 = 16 KNOWN + 10 LAG + 2 UNKNOWN).
+
+## A.3 The `base` shard never started — relaunched (2026-09-25 16:56Z)
+
+`session_01XQC64M1Fyvk8VdYo9nuSPq` stayed `SESSION_STATUS_PENDING` with no container for 65 min (the same
+failure the lane's first launch had for 11 h), while the other three legs were provisioned and running. It was
+archived — it had produced nothing, so nothing is lost (rule 31) — and relaunched with the identical prompt, the
+identical pinned SHA `5a48f43787c3ec0d29ae451680ab62a5e53b5156` and the identical `--out-dir`, on branch
+**`claude/capx-d96-base-r`**: `session_01Ce33uMgJe2AiUNLJdaA8au`. No recipe, prediction or scoring rule moves.
+`gasup150` ended a turn with its data build still in the background (D92 §7's failure mode) and was resumed by
+a scheduled nudge at 16:55Z.
