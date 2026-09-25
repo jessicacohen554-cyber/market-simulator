@@ -153,7 +153,7 @@ class DamOutageWiringTest(unittest.TestCase):
             self.skipTest("PJM outage data not present in this checkout")
         gens = [
             _gen(70001, "CC_REGULAR", "gas_cc", 1, 300.0),
-            _gen(70002, "COAL", "coal", 1, 400.0),
+            _gen(70002, "COAL_BIT", "coal", 1, 400.0),
         ]
         off = _build(gens, "PJM")
         on = _build(gens, "PJM", pjm_dam_availability=True)

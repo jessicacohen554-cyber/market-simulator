@@ -57,7 +57,7 @@ def _coal_gen() -> Generator:
         zone="SPP-North",
         fuel_type="coal",
         pmax_mw=300.0,
-        plant_group="COAL",
+        plant_group="COAL_BIT",
         plant_code=_COAL_CODE,
         is_campd_bin=True,
         coal_sync_pmin_mw=150.0,

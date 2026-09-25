@@ -58,7 +58,7 @@ def _gen(
 def _fleet(gas_price: float):
     """(generators, fuel_prices): coal `_peak` row 0, CC_REGULAR row 1."""
     gens = [
-        _gen("COAL_N_p1_peak", "coal", "COAL", COAL_HR),
+        _gen("COAL_N_p1_peak", "coal", "COAL_BIT", COAL_HR),
         _gen("CC_N_p1_committed", "gas_cc", "CC_REGULAR", 7.0),
     ]
     fuel = np.vstack(
@@ -122,7 +122,7 @@ class TestCoalPeakOfferMargin(unittest.TestCase):
     def test_armed_without_cc_rows_is_a_hard_error(self):
         # No CC_REGULAR CAMPD row → the gas reference series is undefined.
         cfg = _armed()
-        gens = [_gen("COAL_N_p1_peak", "coal", "COAL", COAL_HR)]
+        gens = [_gen("COAL_N_p1_peak", "coal", "COAL_BIT", COAL_HR)]
         fuel = np.full((1, HOURS), COAL_FUEL)
         fa = generators_to_fleet_arrays(gens, ["N"], config=cfg, hours=HOURS)
         mc = assemble_mc(fa, fuel, 0.0, 0.0)
@@ -132,7 +132,7 @@ class TestCoalPeakOfferMargin(unittest.TestCase):
     def test_non_peak_coal_tranches_untouched(self):
         cfg = _armed()
         gens, fuel = _fleet(ANCHOR)
-        gens[0] = _gen("COAL_N_p1_econ01", "coal", "COAL", COAL_HR)
+        gens[0] = _gen("COAL_N_p1_econ01", "coal", "COAL_BIT", COAL_HR)
         fa = generators_to_fleet_arrays(gens, ["N"], config=cfg, hours=HOURS)
         mc = assemble_mc(fa, fuel, 0.0, 0.0)
         apply_coal_tranches(mc, gens, fa, [1.0, 1.0], fuel, cfg)
@@ -143,7 +143,7 @@ class TestCoalPeakOfferMargin(unittest.TestCase):
     def test_legacy_non_campd_peak_row_is_inert(self):
         cfg = _armed()
         gens, fuel = _fleet(ANCHOR)
-        gens[0] = _gen("COAL_N_p1_peak", "coal", "COAL", COAL_HR, campd=False)
+        gens[0] = _gen("COAL_N_p1_peak", "coal", "COAL_BIT", COAL_HR, campd=False)
         fa = generators_to_fleet_arrays(gens, ["N"], config=cfg, hours=HOURS)
         mc = assemble_mc(fa, fuel, 0.0, 0.0)
         apply_coal_tranches(mc, gens, fa, [1.0, 1.0], fuel, cfg)
@@ -164,7 +164,7 @@ class TestCoalPeakOfferMargin(unittest.TestCase):
     def test_peak_ladder_suffixes_covered(self):
         cfg = _armed()
         gens, fuel = _fleet(ANCHOR)
-        gens[0] = _gen("COAL_N_p1_peak2", "coal", "COAL", COAL_HR)
+        gens[0] = _gen("COAL_N_p1_peak2", "coal", "COAL_BIT", COAL_HR)
         fa = generators_to_fleet_arrays(gens, ["N"], config=cfg, hours=HOURS)
         mc = assemble_mc(fa, fuel, 0.0, 0.0)
         apply_coal_tranches(mc, gens, fa, [1.0, 1.0], fuel, cfg)

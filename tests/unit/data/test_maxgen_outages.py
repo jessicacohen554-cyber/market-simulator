@@ -418,7 +418,7 @@ class FleetGateByteIdentityTest(unittest.TestCase):
             online_year=1975,
             plant_code=889,
             is_campd_bin=True,
-            plant_group="COAL",
+            plant_group="COAL_BIT",
         )
         return generators_to_fleet_arrays(
             [gen],

@@ -69,9 +69,9 @@ def _gen(unit_id: str, pmax: float, fuel: str, group: str) -> Generator:
 def _fleet():
     """Three coal tranches plus the CC_REGULAR row gas_cc(t) is built from."""
     return [
-        _gen(f"COAL_N_{PLANT}_mustrun", 300.0, "coal", "COAL"),
-        _gen(f"COAL_N_{PLANT}_econhi", 150.0, "coal", "COAL"),
-        _gen(f"COAL_N_{PLANT}_peak", 150.0, "coal", "COAL"),
+        _gen(f"COAL_N_{PLANT}_mustrun", 300.0, "coal", "COAL_BIT"),
+        _gen(f"COAL_N_{PLANT}_econhi", 150.0, "coal", "COAL_BIT"),
+        _gen(f"COAL_N_{PLANT}_peak", 150.0, "coal", "COAL_BIT"),
         _gen("CC_N_9999_committed", 400.0, "gas_cc", "CC_REGULAR"),
     ]
 
