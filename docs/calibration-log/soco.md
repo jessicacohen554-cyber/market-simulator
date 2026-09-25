@@ -1519,7 +1519,7 @@ SOCO RE-SOLVED ON THE CORRECTED BACKCAST INPUTS (audit AUDIT-backcast-inputs-860
 canonical), measured CHP heat rates, CAMPD short-coal / short-gas / partial outage families;
 multipliers unchanged. Three year-isolated shards, composed at zero LP.
 
-RESULT (run 2026-09-24-r-soco-corrected-inputs, REGISTERED, promotion owner-pending): determination
+RESULT (run 2026-09-24-r-soco-corrected-inputs, PROMOTED 2026-09-25 on the owner's ruling "Yes promote"; soco61 + soco53g pruned per rule 35): determination
 unchanged (PHYSICALLY-CALIBRATED, PRICE UNSCORED); C1 14/14 free 10/10, C2/C4/C6/C8 PASS, grade
 5/5/0, DOF n_residual 1. Better: 2024 CC_REGULAR +2.19 -> +1.09 pp; CHP on EIA-923 every year.
 Worse: 2024 CT_PEAKER +0.98 -> +1.85 pp (+2.17 TWh); 2025 unserved 267.4 -> 813.8 MWh; 2025 ST_GAS

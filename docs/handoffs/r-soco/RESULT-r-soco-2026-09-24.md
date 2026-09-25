@@ -131,3 +131,17 @@ lane (R-NEISO, `c265c1c3`) touched the solve path. Every hunk is INERT for this 
 
 The registered run therefore stands at the rebased head with no re-solve. The only conflict was the
 append-only `docs/calibration-log/soco.md`; both sides' entries were kept.
+
+## Promotion — EXECUTED 2026-09-25 (owner: "Yes promote")
+
+Rule 35 `[R-PROMOTE]`, in order:
+1. **(b)** Year union over every SOCO sidecar: {2023, 2024, 2025} (r-soco, soco61, soco53g).
+2. **(c)** The incoming run covers the union.
+3. **(e)** `keepers/SOCO.json` → `2026-09-24-r-soco-corrected-inputs`, with the five recipe changes
+   declared by field name (audit E11). `build_status --iso SOCO` rebuilt. `audit_keepers` E1 PASS.
+4. **(a)** `prune_iso_runs --iso SOCO --force-uncite` removed `2026-09-24-soco61-dark-unit` and
+   `2026-09-20-soco53g-prb-own-iso` (all three stores each). `audit_keepers --iso SOCO`: 0 failures.
+   The one warning is the post-prune E11 lineage baseline, which was checked before the prune.
+
+SOCO has no `calibration-complete.json` entry, so nothing was re-keyed there. The matrix shard is
+re-stamped with the new keeper and gates, and its four cells move O → **K**.
