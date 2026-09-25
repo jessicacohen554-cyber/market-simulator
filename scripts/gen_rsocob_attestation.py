@@ -47,6 +47,7 @@ from scripts.probes.rsocob_compose_span import (  # noqa: E402
 
 WINDOWS = {"SOCO": (("2019-01-01 07:00", "2019-09-11 05:00"),)}
 JOINS = {"SOCO": {"AEC": (2021, 9)}}
+EXITS = {"SOCO": {"FPL": "2022-07-13 12:00"}}
 
 #: The lane's ledger entries: each a categorical registry repair onto a published
 #: record, zero scalars (rules 21/24).
@@ -58,8 +59,17 @@ NEW_ENTRIES = {
     ),
     "ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE (LP fleet)": (
         "R2. The SOCO-60 membership partition (plants the current EIA-860 codes to "
-        "another BA) now also reaches the vintage LP fleet: the former Gulf Power "
-        "plants, 1,826.6 MW in 2019-2020, 2,760.8 MW in 2021, 2,524.9 MW in 2022-2023."
+        "another BA) now also reaches the vintage LP fleet, DATED by ISO_BA_EXITS "
+        "(R-SOCO-B2): the former Gulf Power plants leave from hour-ending UTC "
+        "2022-07-13 12:00 (2,524.9 MW off the 2023 fleet)."
+    ),
+    "ISO_BA_EXITS": (
+        "R4 (R-SOCO-B2). The former Gulf Power plants and load were inside SOCO's "
+        "EIA-930 BA until hour-ending UTC 2022-07-13 12:00 (FERC-714 load step, Gulf "
+        "Power's last FERC-714 hour, hourly CEMS fit 0.83-0.89 -> 0.014); members "
+        "through the exit in fleet (hour mask) and benchmark (July 2022 by CAMPD "
+        "in-BA share): 1,826.6 MW in 2019-2020, 2,760.8 MW in 2021-2022. Owner "
+        "ruling (C), hour grain."
     ),
     "ISO_BA_JOINS": (
         "R3. PowerSouth (AEC) joined the SOCO BA on 2021-09-01 (its interchange leg "
@@ -80,6 +90,8 @@ def verify(bundle: Path, pinned_sha: str) -> dict:
         raise SystemExit("ISO_BA_JOINS drifted")
     if K.ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE != {"SOCO": True}:
         raise SystemExit("ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE drifted")
+    if K.ISO_BA_EXITS != EXITS:
+        raise SystemExit("ISO_BA_EXITS drifted")
     cfg = json.loads((bundle / "run_config.json").read_text())
     moved = (cfg.get("solve_surface") or {}).get("moved") or {}
     live = surface_rows("SOCO")
@@ -131,14 +143,16 @@ def main() -> None:
     ev = verify(bundle, a.pinned_sha)
     print(json.dumps(ev, indent=1))
     att["governance"]["attested_by"] = (
-        "R-SOCO-B (lane; owner rulings (A)/(B) 2026-09-25). Against keeper "
-        "2026-09-24-r-soco-corrected-inputs the recipe is UNCHANGED; the only changes "
-        "are three boundary repairs, machine-verified by execution in "
+        "R-SOCO-B / R-SOCO-B2 (lanes; owner rulings (A)/(B)/(C) 2026-09-25). Against "
+        "keeper 2026-09-24-r-soco-corrected-inputs the recipe is UNCHANGED; the only "
+        "changes are four boundary repairs, machine-verified by execution in "
         "scripts/gen_rsocob_attestation.py: R1 the 2019 EIA-930 SOCO Total interchange "
         "sign window (constants.EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC); R2 the "
         "SOCO-60 current-BA-recode partition extended to the LP fleet (former Gulf "
-        "Power plants); R3 PowerSouth's 2021-09-01 join (constants.ISO_BA_JOINS). Every "
-        f"leg solved at {a.pinned_sha[:12]}; both new solve-surface rows present at "
+        "Power plants); R3 PowerSouth's 2021-09-01 join (constants.ISO_BA_JOINS); R4 "
+        "R2 DATED to Gulf's measured exit, hour-ending UTC 2022-07-13 12:00 "
+        "(constants.ISO_BA_EXITS). Every "
+        f"leg solved at {a.pinned_sha[:12]}; all three new solve-surface rows present at "
         f"their live hashes; 2019 demand-with-interchange {ev['demand_2019_twh']} TWh. "
         "RULES 13/14: each is a published record reconciled to the boundary EIA-930 "
         "measures SOCO's load on; nothing measured about dispatch is fed back. RULES "
@@ -147,7 +161,8 @@ def main() -> None:
         + att["governance"]["attested_by"]
     )
     att["disclosures"]["precommit"] = (
-        "docs/handoffs/r-soco/PRECOMMIT-r-soco-b-2026-09-25.md"
+        "docs/handoffs/r-soco/PRECOMMIT-r-soco-b-2026-09-25.md; "
+        "docs/handoffs/r-soco/PRECOMMIT-r-soco-b2-2026-09-25.md"
     )
     att["disclosures"]["rsoco_scope"] = (
         "2019-2025, one year-isolated shard per year (rule 36). The 2019-2022 inputs "
