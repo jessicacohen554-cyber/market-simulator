@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-25-pjm-next-c1",
+  "label": "pjm next c1",
+  "date": "2026-09-25",
+  "shorthand": "pjm-next-c1",
+  "definition": "PJM-NEXT card 1 arm, 2019",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-09-25-pjm-next-c1.js",
+  "bundle": "results/calibration/pjmnext_c1_span"
+}
