@@ -105,3 +105,48 @@ DATA NEEDED (extension): NYISO / ISO-NE SOM conduct sections, to extend
 the datatype further when their offer structures are examined. (ERCOT
 net-revenue/CONE rows seeded 2026-08-05; the ERCOT SOM *conduct* sections
 — price-cost mark-up, output gap — remain untranscribed.)
+
+## Authoritative sources (SPP) — added 2026-09-25 by lane SPP-80
+
+SPP Market Monitoring Unit annual State of the Market reports, 2019-2025, all
+from `www.spp.org` (anonymous HTTPS, fetched 2026-09-25). **The PDFs are NOT
+committed** (charter: commit the numbers, not the PDFs); each row's
+`source_doc` + `source_page` (PDF pagination, 1-based) re-checks against the
+PDF identified by the sha256 below.
+
+| Year | URL | sha256 |
+|---|---|---|
+| 2019 | <https://www.spp.org/documents/62150/2019%20annual%20state%20of%20the%20market%20report.pdf> | `1eb25ba14a50ab3e65c130662acea5b66841493e1c68f2deb40fae88c6f5e770` |
+| 2020 | <https://www.spp.org/documents/65161/2020%20annual%20state%20of%20the%20market%20report.pdf> | `5a0d3e10b662c8a9ccc6879f40c09b7c2c82718c8b3265b939ff11536ac95f29` |
+| 2021 | <https://www.spp.org/documents/67104/2021%20annual%20state%20of%20the%20market%20report.pdf> | `c636aae8e237847984625145ed0810f1e59f7ca03cadedb9baaa7291ec5d862a` |
+| 2022 | <https://www.spp.org/documents/69330/2022%20annual%20state%20of%20the%20market%20report.pdf> | `e5f9aff1c0badde3d8ee042a2456611df9f2ca0f2e695fb4ccac4e2737b5f327` |
+| 2023 | <https://www.spp.org/documents/71645/2023%20annual%20state%20of%20the%20market%20report%20v2.pdf> | `87ca19c5b4e58e0a49dc5e9c4f3f7c43696feb2100c73382bceab29cd834824b` |
+| 2024 | <https://www.spp.org/documents/73953/2024_annual_state_of_the_market_report.pdf> | `16fd07233b8dad8d1277c3a490341940a80b9ea4a10ce48a97578eb3aaebe149` |
+| 2025 | <https://www.spp.org/documents/76798/2025_annual_state_of_the_market_report.pdf> | `752bd068980c2d39f7772f7333c5f984e161aa1a1e46cb61ed21710fd62b192d` |
+
+What is transcribed (`iso == SPP`): on-/off-peak marginal-resource offer
+markup ($/MWh — SPP's construct, market-based minus mitigated offer, NOT
+MISO's fractional price-cost mark-up), coal and wind markups, DA+RT
+congestion payments, RT scarcity-interval totals, and annual DA/RT average
+prices. Restatements by a later vintage are in `note`.
+
+**Two transcription limits, stated rather than hidden.**
+- The SPP SOM prints 2021 (full year) and 2022 annual markups **only as a
+  chart marker with no data label**. Those four rows carry `_digitized_` in the
+  metric code: read from the PDF's vector geometry (marker centre against the
+  axis-tick fit), then bias-corrected against the same chart's printed years
+  (+0.25 to +0.57 $/MWh). **The 2022 and 2023 vintages disagree on 2022
+  on-peak** (+6.35 vs +12.03 $/MWh); both are recorded in the note, and no
+  value was chosen to fit anything.
+- From 2022 the SOM reports scarcity per product as monthly charts, with no
+  annual total. `rt_scarcity_intervals` therefore stops at 2021; the SPP-80
+  FINDING counts scarcity for every year directly from the landed RTBM MCPs
+  (`data/raw/spp-or-mcp/`).
+
+Scarcity-design dates (SPP MMU's own statements): ramp capability product
+implemented **2022-03-01** (2022 SOM PDF p.122); fast-start pricing **May 2022**
+(2022 SOM p.91); uncertainty product FERC-approved mid-August 2022 (2022 SOM
+p.170) and implemented **2023-07-06** (2023 SOM p.120); uncertainty design
+enhancement **October 2024** (2024 SOM p.226). The landed RTBM MCP data agrees:
+the first non-zero ramp-up MCP is 2022-03-01, and the first non-zero uncertainty
+MCP is 2023-10-09.

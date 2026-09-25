@@ -149,3 +149,21 @@ makes and records"* — is recorded in FINDING-spp-14 section 4.1, area code by 
   rows = `State ∈ {BINDING, BREACHED, ACTIVATED}` × 14-column days × group ∈ {`oklahoma_internal`,
   `sps_tie`, `other`/"other areas: CSWS"}; 1,083,301 rows, 2026-03-17 05:05 → 2026-09-06 05:00 UTC;
   sha256 in `SHA256SUMS.txt`. Licence: SPP Terms & Conditions as quoted above.
+
+## Appended 2026-09-25 by lane SPP-80 — the RTBM 2019–2022 yearly roll-ups (landed)
+
+- `https://portal.spp.org/file-browser-api/download/rtbm-binding-constraints?path=%2F<yr>%2F<yr>.zip`
+  for 2019 (161,777,119 B), 2020 (139,132,459 B), 2021 (126,077,359 B), 2022 (65,660,974 B).
+  Only the yearly roll-up member was range-read out of each archive (central directory over
+  `Range:`, never the body), exactly as SPP-14 did for 2023–2024:
+  `2019/RTBM-BC-YEARLY-2019.csv.zip` (13,068,192 B), `2020/RTBM-BC-YEARLY-2020.csv.zip`
+  (10,882,285 B), `2021/RTBM-BC-YEARLY-2021.csv.zip` (17,249,564 B), and
+  **`2022/RTBM-BC-YEARLY-2022.zip`** (20,481,650 B) — SPP names the 2022 member without the
+  `.csv` infix and nests the CSV one folder deep (`RTBM-BC-YEARLY-2022/RTBM-BC-YEARLY-2022.csv`);
+  landed under SPP's own name, unmodified.
+- Schema: the same 10 columns as 2023–2024 (`Interval, GMTIntervalEnd, Constraint Name,
+  Constraint Type, NERCID, TLR Level, State, Shadow Price, Monitored Facility, Contingent
+  Facility`), verified on the first row of every year. No effective-limit column, as for 2023–25.
+- Producer: `fetch_spp_alt_portal.central_directory` / `read_member` (unmodified) driven for
+  2019–2022. Checksums appended to `SHA256SUMS.txt`. Use: the SPP-80 FINDING
+  (`docs/handoffs/FINDING-spp-80-upper-tercile-premium-2026-09-25.md`).

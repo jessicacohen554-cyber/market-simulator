@@ -88,7 +88,8 @@ columns:
       hypothetical new-entrant proxies: CT 10.5 / CC 7.0 MMBtu/MWh heat
       rate, $4/MWh VOM, 10% outage rate), or "coal_existing" /
       "nuclear_existing" (the SOM existing-unit profitability
-      discussions' cost benchmarks).
+      discussions' cost benchmarks). SPP adds "coal" / "wind" (the SPP
+      MMU's fuel-type marginal-resource markup averages).
   - name: metric
     dtype: string
     unit: none
@@ -119,7 +120,17 @@ columns:
       "peaker_net_margin_usd_per_kw_yr", and existing-unit cost
       benchmarks "fixed_om_usd_per_kw_yr", "vom_usd_per_mwh",
       "fuel_cost_usd_per_mwh", "marginal_cost_usd_per_mwh",
-      "total_generating_cost_usd_per_mwh".
+      "total_generating_cost_usd_per_mwh". SPP MMU SOM rows (SPP-80, 2026-09-25)
+      add: "offer_markup_{onpeak,offpeak}_usd_per_mwh" (MW-weighted average
+      marginal-resource offer markup, market-based minus mitigated offer, $/MWh
+      — a DIFFERENT construct from MISO's fractional "price_cost_markup"),
+      "_exfeb_" variants (the 2021 SOM's own February-excluded averages),
+      "_digitized_" variants (read from the SOM bar chart's average marker where
+      the report prints no value — the note carries the bias correction),
+      "offer_markup_usd_per_mwh" on the "coal"/"wind" segments,
+      "congestion_payments_usd" (DA+RT congestion payments),
+      "rt_scarcity_intervals" (five-minute RT intervals with any reserve
+      scarcity), and "avg_{da,rt}_price_usd_per_mwh" (+ "_exfeb_").
   - name: value
     dtype: float64
     unit: mixed
@@ -130,7 +141,7 @@ columns:
     unit: none
     nullable: false
     description: >-
-      One of "fraction", "count", "usd_per_mwh", "usd_per_kw_yr", "mw".
+      One of "fraction", "count", "usd_per_mwh", "usd_per_kw_yr", "mw", "usd".
   - name: source_doc
     dtype: string
     unit: none

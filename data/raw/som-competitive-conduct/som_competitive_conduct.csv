@@ -90,3 +90,53 @@ MISO,2025,annual,coal_merchant,starts_mustrun_unprofitable_share,0.00,fraction,2
 MISO,2025,annual,coal_merchant,net_revenue_usd_per_mwh,18.37,usd_per_mwh,2025-MISO-SOM_Report.pdf,72,
 MISO,2025,annual,system,price_cost_markup,-0.0107,fraction,2025-MISO-SOM_Report.pdf,118,"average system marginal price-cost mark-up -1.07 percent; 'very small, negative ... highly competitive overall'"
 MISO,2025,annual,system,output_gap_share_of_load,0.0008,fraction,2025-MISO-SOM_Report.pdf,118,"average monthly output gap 0.08 percent of load, 'effectively de minimis'"
+SPP,2019,annual,system,offer_markup_offpeak_usd_per_mwh,-8.78,usd_per_mwh,2019 annual state of the market report.pdf,268,"Fig 7-8 text: MW-weighted avg marginal-resource offer markup (market-based minus mitigated offer); SPP-80"
+SPP,2019,annual,system,offer_markup_onpeak_usd_per_mwh,-8.48,usd_per_mwh,2019 annual state of the market report.pdf,268,"exec summary p.25 prints -8.49"
+SPP,2020,annual,system,offer_markup_offpeak_usd_per_mwh,-9.54,usd_per_mwh,2020 annual state of the market report.pdf,258,"Fig 7-8 text"
+SPP,2020,annual,system,offer_markup_onpeak_usd_per_mwh,-8.70,usd_per_mwh,2020 annual state of the market report.pdf,258,"exec summary p.22 prints -8.71"
+SPP,2021,annual,system,offer_markup_offpeak_exfeb_usd_per_mwh,-3.99,usd_per_mwh,2021 annual state of the market report.pdf,260,"excluding February 2021 (Uri), as printed"
+SPP,2021,annual,system,offer_markup_onpeak_exfeb_usd_per_mwh,-2.97,usd_per_mwh,2021 annual state of the market report.pdf,260,"excluding February 2021 (Uri), as printed"
+SPP,2021,annual,system,offer_markup_offpeak_digitized_usd_per_mwh,-3.37,usd_per_mwh,2023 annual state of the market report v2.pdf,237,"DIGITIZED (no data label): Fig 6-7 avg marker, bias-corrected +0.43 against the printed 2023 values; 2021 SOM Fig 6-8 (p.261) gives -3.39 after its own bias (+0.25 vs printed 2019/2020); +-0.1"
+SPP,2021,annual,system,offer_markup_onpeak_digitized_usd_per_mwh,-1.73,usd_per_mwh,2023 annual state of the market report v2.pdf,237,"DIGITIZED as above; 2021 SOM Fig 6-8 gives -1.73"
+SPP,2022,annual,system,offer_markup_offpeak_digitized_usd_per_mwh,4.22,usd_per_mwh,2023 annual state of the market report v2.pdf,237,"DIGITIZED Fig 6-7, bias-corrected; 2022 SOM Fig 6-7 (p.234) gives 4.24 (bias +0.57 vs printed 2020)"
+SPP,2022,annual,system,offer_markup_onpeak_digitized_usd_per_mwh,12.03,usd_per_mwh,2023 annual state of the market report v2.pdf,237,"DIGITIZED Fig 6-7, bias-corrected. The 2022 SOM's own Fig 6-7 (p.234) gives +6.35: the two vintages DISAGREE for 2022 on-peak (restatement or chart revision); 2022 SOM p.234 text: yearly markups above $0 for the first time in several years"
+SPP,2023,annual,system,offer_markup_offpeak_usd_per_mwh,-8.58,usd_per_mwh,2023 annual state of the market report v2.pdf,238,"printed"
+SPP,2023,annual,system,offer_markup_onpeak_usd_per_mwh,-12.27,usd_per_mwh,2023 annual state of the market report v2.pdf,238,"printed"
+SPP,2024,annual,system,offer_markup_offpeak_usd_per_mwh,-14.66,usd_per_mwh,2024_annual_state_of_the_market_report.pdf,210,"printed"
+SPP,2024,annual,system,offer_markup_onpeak_usd_per_mwh,-11.01,usd_per_mwh,2024_annual_state_of_the_market_report.pdf,210,"printed"
+SPP,2025,annual,system,offer_markup_offpeak_usd_per_mwh,-5.94,usd_per_mwh,2025_annual_state_of_the_market_report.pdf,207,"printed"
+SPP,2025,annual,system,offer_markup_onpeak_usd_per_mwh,-3.15,usd_per_mwh,2025_annual_state_of_the_market_report.pdf,207,"printed"
+SPP,2021,annual,coal,offer_markup_usd_per_mwh,6.02,usd_per_mwh,2023 annual state of the market report v2.pdf,23,"marginal coal resources"
+SPP,2022,annual,coal,offer_markup_usd_per_mwh,21.12,usd_per_mwh,2023 annual state of the market report v2.pdf,23,"coal rail-deliverability limits (2022 SOM p.234)"
+SPP,2023,annual,coal,offer_markup_usd_per_mwh,6.88,usd_per_mwh,2023 annual state of the market report v2.pdf,23,
+SPP,2024,annual,coal,offer_markup_usd_per_mwh,4.29,usd_per_mwh,2024_annual_state_of_the_market_report.pdf,22,
+SPP,2025,annual,coal,offer_markup_usd_per_mwh,5.81,usd_per_mwh,2025_annual_state_of_the_market_report.pdf,21,
+SPP,2021,annual,wind,offer_markup_usd_per_mwh,-29.03,usd_per_mwh,2023 annual state of the market report v2.pdf,24,
+SPP,2022,annual,wind,offer_markup_usd_per_mwh,-38.75,usd_per_mwh,2023 annual state of the market report v2.pdf,24,
+SPP,2023,annual,wind,offer_markup_usd_per_mwh,-41.50,usd_per_mwh,2023 annual state of the market report v2.pdf,24,
+SPP,2024,annual,wind,offer_markup_usd_per_mwh,-37.99,usd_per_mwh,2024_annual_state_of_the_market_report.pdf,22,
+SPP,2025,annual,wind,offer_markup_usd_per_mwh,-37.81,usd_per_mwh,2025_annual_state_of_the_market_report.pdf,21,
+SPP,2019,annual,system,congestion_payments_usd,457000000,usd,2019 annual state of the market report.pdf,16,"DA+RT congestion costs totaled over $457 million"
+SPP,2020,annual,system,congestion_payments_usd,442000000,usd,2020 annual state of the market report.pdf,16,"over $442 million; 2021 SOM p.17 restates $450 million"
+SPP,2021,annual,system,congestion_payments_usd,1200000000,usd,2021 annual state of the market report.pdf,17,"nearly $1.2 billion"
+SPP,2022,annual,system,congestion_payments_usd,2000000000,usd,2022 annual state of the market report.pdf,16,"nearly $2.0 billion"
+SPP,2023,annual,system,congestion_payments_usd,1400000000,usd,2023 annual state of the market report v2.pdf,16,"$1.4 billion"
+SPP,2024,annual,system,congestion_payments_usd,1800000000,usd,2024_annual_state_of_the_market_report.pdf,15,"over $1.8 billion; 2025 SOM p.15 restates $1.9 billion"
+SPP,2025,annual,system,congestion_payments_usd,1600000000,usd,2025_annual_state_of_the_market_report.pdf,15,"over $1.6 billion"
+SPP,2019,annual,system,rt_scarcity_intervals,1220,count,2019 annual state of the market report.pdf,16,"five-minute RT intervals of scarcity, all products"
+SPP,2020,annual,system,rt_scarcity_intervals,1346,count,2020 annual state of the market report.pdf,18,
+SPP,2021,annual,system,rt_scarcity_intervals,3700,count,2021 annual state of the market report.pdf,22,"nearly 3,700 incl. February; 2022-2025 SOMs report per-product monthly charts only, no annual total"
+SPP,2019,annual,system,avg_da_price_usd_per_mwh,22,usd_per_mwh,2019 annual state of the market report.pdf,15,"around $22"
+SPP,2019,annual,system,avg_rt_price_usd_per_mwh,21,usd_per_mwh,2019 annual state of the market report.pdf,15,"around $21"
+SPP,2020,annual,system,avg_da_price_usd_per_mwh,17.69,usd_per_mwh,2020 annual state of the market report.pdf,15,
+SPP,2020,annual,system,avg_rt_price_usd_per_mwh,16.62,usd_per_mwh,2020 annual state of the market report.pdf,15,
+SPP,2021,annual,system,avg_da_price_exfeb_usd_per_mwh,27,usd_per_mwh,2021 annual state of the market report.pdf,16,"winter weather event excluded"
+SPP,2021,annual,system,avg_rt_price_exfeb_usd_per_mwh,25,usd_per_mwh,2021 annual state of the market report.pdf,16,"winter weather event excluded"
+SPP,2022,annual,system,avg_da_price_usd_per_mwh,48,usd_per_mwh,2022 annual state of the market report.pdf,15,
+SPP,2022,annual,system,avg_rt_price_usd_per_mwh,43,usd_per_mwh,2022 annual state of the market report.pdf,15,"2023 SOM p.15 restates $44"
+SPP,2023,annual,system,avg_da_price_usd_per_mwh,26,usd_per_mwh,2023 annual state of the market report v2.pdf,15,"2024 SOM p.19 restates $28.45"
+SPP,2023,annual,system,avg_rt_price_usd_per_mwh,24,usd_per_mwh,2023 annual state of the market report v2.pdf,15,
+SPP,2024,annual,system,avg_da_price_usd_per_mwh,27.56,usd_per_mwh,2024_annual_state_of_the_market_report.pdf,19,"2025 SOM p.17 restates $30.43"
+SPP,2024,annual,system,avg_rt_price_usd_per_mwh,26.18,usd_per_mwh,2024_annual_state_of_the_market_report.pdf,19,"2025 SOM p.17 restates $28.34"
+SPP,2025,annual,system,avg_da_price_usd_per_mwh,34.40,usd_per_mwh,2025_annual_state_of_the_market_report.pdf,17,
+SPP,2025,annual,system,avg_rt_price_usd_per_mwh,32.78,usd_per_mwh,2025_annual_state_of_the_market_report.pdf,17,
