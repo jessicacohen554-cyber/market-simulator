@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-25-pjm-r-pjm-2",
+  "label": "pjm r pjm 2",
+  "date": "2026-09-25",
+  "shorthand": "pjm-r-pjm-2",
+  "definition": "R-PJM-2 h22 RGGI keeper on corrected inputs, 2019",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-09-25-pjm-r-pjm-2.js",
+  "bundle": "results/calibration/rpjm2_span"
+}
