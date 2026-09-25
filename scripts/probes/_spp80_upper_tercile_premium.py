@@ -88,12 +88,21 @@ def reserve_hourly(year: int) -> pd.DataFrame:
 
 def binding_hourly(year: int) -> pd.DataFrame:
     """Hourly RTBM binding-constraint shadow-price mass and binding count."""
-    name = (
-        f"RTBM-BC-YEARLY-{year}.zip"
-        if (RAW_DATA_DIR / f"spp-binding-constraints/RTBM-BC-YEARLY-{year}.zip").exists()
-        else f"RTBM-BC-YEARLY-{year}.csv.zip"
+    bc = RAW_DATA_DIR / "spp-binding-constraints"
+    # 2019-2024 are one yearly roll-up (2022 without the ``.csv`` infix); 2025 is
+    # landed as 12 monthly roll-ups (SPP-14).
+    files = sorted(bc.glob(f"RTBM-BC-YEARLY-{year}*.zip")) or sorted(
+        bc.glob(f"RTBM-BC-MONTHLY-{year}??.csv.zip")
     )
-    z = zipfile.ZipFile(RAW_DATA_DIR / "spp-binding-constraints" / name)
+    parts = []
+    for path in files:
+        parts += _binding_parts(zipfile.ZipFile(path), year)
+    iv = pd.concat(parts).groupby(level=[0, 1]).sum()
+    return iv.groupby(level=0).mean().rename(columns={"sum": "bc_sp", "count": "bc_n"}).reindex(range(8760))
+
+
+def _binding_parts(z: zipfile.ZipFile, year: int) -> list[pd.DataFrame]:
+    """Per-(hour, interval) binding shadow-price sum and count from one BC zip."""
     member = next(n for n in z.namelist() if n.lower().endswith(".csv"))
     parts = []
     with z.open(member) as fh:
@@ -106,8 +115,7 @@ def binding_hourly(year: int) -> pd.DataFrame:
             ch = ch.assign(hour=model_hour(ch["GMTIntervalEnd"], year))
             ch["sp"] = pd.to_numeric(ch["Shadow Price"], errors="coerce").abs()
             parts.append(ch[ch.hour >= 0].groupby(["hour", "GMTIntervalEnd"]).sp.agg(["sum", "count"]))
-    iv = pd.concat(parts).groupby(level=[0, 1]).sum()
-    return iv.groupby(level=0).mean().rename(columns={"sum": "bc_sp", "count": "bc_n"}).reindex(range(8760))
+    return parts
 
 
 def genmix_hourly(year: int) -> pd.DataFrame:
@@ -171,6 +179,29 @@ def summarize(y: int, f: pd.DataFrame, hh: float) -> dict:
     }
 
 
+def delivered_fuel_exfeb(year: int) -> tuple[float, float]:
+    """(SPP-core delivered gas, SWPP delivered coal) $/MMBtu, quantity-weighted, ex-Feb.
+
+    Gas: EIA-923 monthly delivered cost to KS/OK/NE plants (the SPP core states;
+    ``_processed-legacy/eia923_monthly_fuel_costs.parquet``). Coal: EIA-923 Schedule 5
+    receipts for plants whose ``Balancing Authority Code`` is ``SWPP``
+    (``coal-receipts/``; FUEL_COST is cents/MMBtu). 2025 receipts are not landed.
+    """
+    g = pd.read_parquet(RAW_DATA_DIR / "_processed-legacy/eia923_monthly_fuel_costs.parquet")
+    g = g[(g.fuel_group == "Natural Gas") & g.state.isin(["KS", "OK", "NE"])
+          & (g.year == year) & (g.month != 2)].dropna(subset=["price_per_mmbtu"])
+    gas = (g.price_per_mmbtu * g.quantity).sum() / g.quantity.sum()
+    path = RAW_DATA_DIR / f"coal-receipts/coal_receipts_{year}.csv"
+    if not path.exists():
+        return gas, float("nan")
+    c = pd.read_csv(path, low_memory=False)
+    c = c[(c["Balancing Authority Code"] == "SWPP") & (c.FUEL_GROUP == "Coal") & (c.MONTH != 2)]
+    mmbtu = c.QUANTITY * c["Average Heat Content"]
+    cost = pd.to_numeric(c.FUEL_COST, errors="coerce") / 100
+    ok = cost.notna()
+    return gas, float((cost[ok] * mmbtu[ok]).sum() / mmbtu[ok].sum())
+
+
 def matched_netload(frames: dict, hh: dict) -> pd.DataFrame:
     """MEC heat rate (MEC / HH) by net-load band, all ex-Feb hours, per year."""
     edges = [0, 15e3, 20e3, 25e3, 30e3, 35e3, 60e3]
@@ -199,6 +230,15 @@ def main() -> None:
     t["d_scar"] = t.scar_uplift / t.hh - (base.scar_uplift / base.hh).mean()
     t["d_mec_noscar"] = t.hr_mec_noscar - base.hr_mec_noscar.mean()
     t["d_sidecar_gap"] = t.prem_hr - t.d_cong - t.d_scar - t.d_mec_noscar
+    # The same ex-scarcity MEC against DELIVERED fuel, so regional basis is not
+    # counted as premium (the gas-basis leg SPP-79 checked on annual averages).
+    fuel = {y: delivered_fuel_exfeb(y) for y in YEARS}
+    t["gas_deliv"] = [fuel[y][0] for y in YEARS]
+    t["coal_deliv"] = [fuel[y][1] for y in YEARS]
+    t["hr_mec_noscar_deliv"] = t.hr_mec_noscar * t.hh / t.gas_deliv
+    # Reported beside, not inside, the HH-basis split: a delivered-gas HR is on a
+    # different denominator, so the two are never differenced into a "basis" term.
+    t["d_mec_noscar_deliv"] = t.hr_mec_noscar_deliv - t.hr_mec_noscar_deliv.loc[list(BASE_YEARS)].mean()
     pd.set_option("display.width", 250)
     print(t.round(3).T.to_string())
     print("\nMEC / Henry Hub, median by net-load band (MW), ex-Feb, all hours:")
