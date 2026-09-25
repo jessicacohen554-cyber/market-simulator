@@ -15498,3 +15498,13 @@ short gas outages at hour grain, with offer curves unchanged. The CC derive now 
 stays CALIBRATED. The cause is the standing CC-under-dispatch / over-import residual, which the new inputs
 expose. 2019–2021 are blocked on data intakes. Promotion open to the owner.
 `docs/handoffs/r-caiso/RESULT-r-caiso-2026-09-24.md`.
+
+## R-CAISO promotion — 2026-09-25
+
+Owner ruling ("And yes promote"): **`2026-09-24-caiso-r-inputs-vintage` (bundle `rcaiso_inputs_span`, 2022–2025) is the
+CAISO keeper.** Year union before prune {2022, 2023, 2024, 2025}, covered. `keepers/CAISO.json` and
+`calibration-complete.json` re-keyed (determination NOT-YET: C1 2023 CC_REGULAR −5.36 vs ±5.27 TWh). `status/CAISO.js`
+rebuilt. The outgoing `2026-09-20-caiso-290-leftedge` (bundle `xiso8_leftedge_span`) was pruned via `prune_iso_runs.py
+--force-uncite`, per rule 35 (a)/(d). The matrix shard was re-stamped: `eia860_vintage_tracks_solve_year`,
+`measured_st_heat_rates`, `measured_cc_heat_rates` and `unit_outage_short_windows_gas` went O → K. `audit_keepers
+--iso CAISO` PASS. The per-year shard legs were removed from local disk after the ruling (rule 31 trigger (i)).
