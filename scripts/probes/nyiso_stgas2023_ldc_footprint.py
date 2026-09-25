@@ -5,6 +5,11 @@ Fleet-only rebuild of the keeper recipe (``replay_keeper.run_year_kwargs`` ->
 generator row whose assembled fuel price or ``mc_base`` differs (plant, class, MW, mean
 $/MMBtu and $/MWh deltas) and asserts nothing else in the fleet arrays moves.
 Writes ``results/calibration/_nyiso_stgas2023_ldc_footprint.json``.
+
+2021 inputs (``results/calibration/rnyiso_2021``, run payload ``2026-09-25-nyiso-r-inputs-2021``
+and ``bench/NYISO/2021.json.gz``) come from R-NYISO-2021's branch head
+``8671806374d1c08a945f497769b65783cc2fc70e`` (PR #6636, closed unmerged); check them out from
+that SHA to re-run 2021. They are not on ``main``.
 """
 
 from __future__ import annotations

@@ -7,6 +7,11 @@ LP solved on) per tranche, availability, min-gen floor MW by mechanism, and comp
 plant's offer against the keeper's committed hourly zonal price (``hourly/system_<y>``) and
 the measured NYISO RT zonal price (clean ``lmp``). Writes
 ``results/calibration/_nyiso_stgas2023_offers.json``.
+
+2021 inputs (``results/calibration/rnyiso_2021``, run payload ``2026-09-25-nyiso-r-inputs-2021``
+and ``bench/NYISO/2021.json.gz``) come from R-NYISO-2021's branch head
+``8671806374d1c08a945f497769b65783cc2fc70e`` (PR #6636, closed unmerged); check them out from
+that SHA to re-run 2021. They are not on ``main``.
 """
 
 from __future__ import annotations
