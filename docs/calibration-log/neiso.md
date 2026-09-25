@@ -3547,3 +3547,13 @@ is benchmark-side (`ad42fe43`, EIA-923 dual-fuel oil re-attribution). NEISO benc
 regenerated (6 STALE → 0), keeper re-scored: **CALIBRATED unchanged, 0 status flips**,
 largest move C1 2022 ST_GAS actual 0.302 → 0.212 TWh. `docs/RESULT-neiso113-bench-refresh-2026-09-24.md`.
 **Next shorthand: `neiso-114`.**
+
+## R-NEISO — 2026-09-25 — PROMOTED `2026-09-24-r-neiso-inputs-2019` (owner: "yes promote")
+
+The hydro-5 recipe re-solved 2019–2025 (one shard per year) on the audit-ordered corrected backcast
+inputs: year-matched EIA-860, measured CAMPD coal/ST/CC heat rates, CAMPD gas sub-5-day outages,
+mid-vintage and partial-plant exit carries. Offer curves byte-identical, zero free parameters.
+Train tier 2023–2025 **CALIBRATED** (C3c ledgered); full span **NOT-YET** on C1 CC_REGULAR
+2019/2021/2022 (−4.66/−3.17/−3.12 TWh) — restored coal and ST_GAS over-dispatch, open successors.
+Outgoing keeper `2026-09-22-hydro-5-neiso-ror` pruned (rule 35); year set 2020–2025 → 2019–2025.
+Record: `docs/handoffs/r-neiso/RESULT-r-neiso-2026-09-24.md`.
