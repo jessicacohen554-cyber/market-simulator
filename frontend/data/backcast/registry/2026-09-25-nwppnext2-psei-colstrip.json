@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-25-nwppnext2-psei-colstrip",
+  "label": "nwppnext2 psei colstrip",
+  "date": "2026-09-25",
+  "shorthand": "nwppnext2-psei-colstrip",
+  "definition": "NWPP-NEXT-2: keeper #8 recipe + PSEI Colstrip double-booking + non-balance demand repair",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-09-25-nwppnext2-psei-colstrip.js",
+  "bundle": "results/calibration/nwppnext2_span"
+}
