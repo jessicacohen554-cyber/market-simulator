@@ -52,6 +52,15 @@ def _rc(bundle: Path, year: int) -> dict:
     return json.loads((per if per.exists() else bundle / "run_config.json").read_text())
 
 
+def _overrides(rc: dict):
+    """The run's ``offer_curve_overrides``: recorded under ``calibration_flags``
+    (the ``--offer-curve-json`` CLI path), else under ``scenario_config``."""
+    cf = rc.get("calibration_flags") or {}
+    if cf.get("offer_curve_overrides") is not None:
+        return cf["offer_curve_overrides"]
+    return (rc.get("scenario_config") or {}).get("offer_curve_overrides")
+
+
 def classifier_sha() -> str | None:
     """Content hash of the on-disk NEISO ``hydro-plant-modes`` partition."""
     import pandas as pd
@@ -79,8 +88,9 @@ def main() -> int:
         if f.default is not dataclasses.MISSING
     }
     rc_leg = _rc(leg, args.year)
+    rc_k = _rc(KEEPER, args.year)
     a = rc_leg["scenario_config"]
-    k = _rc(KEEPER, args.year)["scenario_config"]
+    k = rc_k["scenario_config"]
     ok = True
     # COAL-SUB (#6619): replay_keeper folds the keeper's legacy bare "COAL"
     # entry out of the resolved offer_curve_by_group (G-DRIFT, PRECOMMIT §2),
@@ -118,10 +128,14 @@ def main() -> int:
         print(f"weather_year {a.get('weather_year')} != {args.year}: FAIL")
         ok = False
 
-    want = k.get("offer_curve_overrides")
+    want = _overrides(rc_k)
     if args.arm == "B":
         want = json.loads(ARM_B_CURVE.read_text())
-    got = a.get("offer_curve_overrides")
+    got = _overrides(rc_leg)
+    yrs = (rc_leg.get("calibration_flags") or {}).get("years")
+    if yrs != [args.year]:
+        print(f"calibration_flags.years {yrs} != [{args.year}]: FAIL")
+        ok = False
     if got != want:
         print(f"OFFER CURVE CHECK: FAIL\n  got  {got}\n  want {want}")
         ok = False
@@ -138,7 +152,11 @@ def main() -> int:
 
     sha = classifier_sha()
     print(f"classifier content sha: {sha} (pinned {CLASSIFIER_SHA})")
-    if sha != CLASSIFIER_SHA:
+    if sha is None:
+        # The partition is a solve-container artifact (data/clean, gitignored);
+        # a parent verifying a fetched leg has none. Report, don't fail.
+        print("CLASSIFIER CHECK: SKIP (partition not built in this checkout)")
+    elif sha != CLASSIFIER_SHA:
         print("CLASSIFIER CHECK: FAIL")
         ok = False
     else:
