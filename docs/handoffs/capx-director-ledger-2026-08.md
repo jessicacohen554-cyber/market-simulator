@@ -8,8 +8,9 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 
 **CROSS-DESK NOTICE (SPP-21, 2026-09-06, branch `claude/spp-21-matrix-shard-ti2gy3`):** SPP shard exists from this commit — **seven** shards; every rule-28(c) cell line now includes SPP. *(A self-referential sha cannot be written inside its own single commit — G2 requires one — so the lane and branch are the citation; `git log --grep=SPP-21` resolves the sha.)*
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-24 (refresh #65) ·
-**r#65 (HEAD `40f4ed7a`):** fourteen days without a sitting; both r#64 lanes LANDED (re-key partial: 3 of 4) and nothing capx has merged since · gate (a) RED on SIX ISOs + SPP's marker claim · Q66 (class rule) / Q67 (charter D94) / Q68 (NWPP+SOCO board rows after `complete`) RULED live · GATE-(a) RE-KEY r#65, D93, D94 issued and dispatched · NEXT FREE LABEL: D95 ·
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-25 (refresh #66) ·
+**r#66 (HEAD `a1b8ebd9`):** all three r#65 lanes LANDED (re-key · D93 · D94 HOLD→HOLD) · gate (a) red again on FIVE ISOs (R-* promotions) · D94's two legs are the new key-provenance UNKNOWNs · Q69 (re-solve neiso-t3 post-F1) / Q70 (T1.6 design lane first) RULED · re-key r#66, D95, D96, D97 dispatched · NEXT FREE LABEL: D98 ·
+*(previous)* **r#65 (HEAD `40f4ed7a`):** fourteen days without a sitting; both r#64 lanes LANDED (re-key partial: 3 of 4) and nothing capx has merged since · gate (a) RED on SIX ISOs + SPP's marker claim · Q66 (class rule) / Q67 (charter D94) / Q68 (NWPP+SOCO board rows after `complete`) RULED live · GATE-(a) RE-KEY r#65, D93, D94 issued and dispatched · NEXT FREE LABEL: D95 ·
 *(previous)* **r#64 (HEAD `5fa3a07f`):** **THE LARGEST WINDOW THIS DESK HAS EVER GRADED — 573 commits, nearly 5× the previous record — ALL SEVEN KEEPERS MOVED, and six of eleven gates are RED** · **BOTH CHARTERS LAND AND BOTH CLOSE THEIR QUESTION** · **D91: all 200 keyed payloads derived to their recorded literal, ZERO UNCLASSIFIED** on a population **13× D85's**, and **the other 95 are NOT a second key move** — established by an exhaustive ladder, exact payload differencing (**no value ever differs**), and **brute force over 546 unregistered fields where exactly one single-field drop reproduces the pinned literal and the search terminates at size 1** · **AND IT ANSWERED §0bh.2(b), WHICH WAS MINE: THE GATE WAS GREEN BECAUSE THE CENSUS IS PAYLOAD-DRIVEN AND `cache_key()` IS DATACLASS-DRIVEN** — a field added after a bundle solved is absent from its payload **by construction**, so G1_UNKNOWN is **structurally blind** to the defect class that produces its own stated condition (**1 of 232** payloads even contains the field name) · **THE CAUSAL FINDING: the guard that should have caught it was silenced by its OWN drifted helper, and EITHER of its two drifted baselines alone suffices** — proved across all four combinations · repair registers the field (**not a default flip**), fixes both helper halves, **advances NO pin literal**, and adds a **sixth gate with BOTH directions proved by test**; **orphan count ONE, counted before the edit**; pins **33 → 2 red, fixed 31, newly broken 0** · **AND WITHIN ONE DAY THAT NEW GATE FIRED ON A REAL DEFECT IN ANOTHER DESK'S LANE** (`caiso_dsw_lateevening_clean`) — the answer a green tick could never have given, and §0bh.2(b) closed by construction rather than argument · **D90-R: `neiso-t3` re-scores HOLD → HOLD and D88 moves ZERO of 19 scored rows**; predictions graded **5 HIT / 3 MISS / 3 PARTIAL** with the **headline P1 a MISS** and **P6 declined by the lane as "a hit on a technicality"** · **AND THE FINDING THAT MATTERS MORE THAN ITS CHARTER'S: capx D77 moves that run far more than D88 does**, reproducing D77's own published A/B **to four decimals** (2029 **14.021 → 6.795 Mt, −51.5 %**) — **the scores were sound and the numbers are stale**, for a repair nobody flagged · **AGAINST INTEREST: that is the THIRD capx document deferring to the already-closed D65-B batch, and the EARLIEST — my §0bg doctrine line was written a sitting too late to catch its own first instance** → adopted upstream: **a lane that DEFERS work names a LIVE owner or states that none exists** · **AGAINST INTEREST: six of eleven gates red is the worst state this desk has recorded, and my duties do not scale with the window** — Q34 fires once per sitting whether one ISO promoted or seven, which is why gate (a) is red on **FOUR ISOs at once, the EIGHTEENTH firing and the FIRST QUADRUPLE** · **RULED: the CAISO marker defect is ROUTED AND FLAGGED, not converted into my card** — its `complete` entry asserts CALIBRATED while the live verdict of the keeper it names is **NOT-YET** and that keeper's bundle dir is **missing**, which rule 22 D-5(b) says must stop a promotion and escalate; but *"should CAISO be complete"* is the parked Q50 question I may not re-serve, while *"the marker asserts something never scored"* is a repair · **Q65 SERVED AND RULED: D77's named residue only** · `final` still EMPTY · 2 charters issued, **no diagnosis run at this desk**
 **r#63 (HEAD `ad197380`):** **A LANE AUDITING ITS OWN INPUTS BEFORE SPENDING AN LP FINDS THAT NOTHING IN THE PROGRAM REPRODUCES ITS OWN CACHE KEY** (64 commits) — **0 of 173 committed run payloads** reproduce their recorded key at HEAD and the default key is off its pin (`72341e34fd261997` vs `547053bdfccd4264`) · **ATTRIBUTED TO ONE FIELD BY EXPERIMENT, NOT INSPECTION**: `pjm_seam_neighbour_hourly_ladder`, added by `f2a834de` **with no `_CACHE_KEY_OPTIONAL_FIELDS` entry**, so it always enters the hash; an **in-memory** frozen-`"False"` registration restores **0/173 → 78/173** and recovers **D88's own reported control key to the character** · **AND THE LANE REFUSED TO REPAIR IT** on the charter boundary, establishing instead that it cannot confound its own re-score (PJM-scoped, `False`, inert for a NEISO solve) · **AGAINST INTEREST: THIS DESK'S OWN STANDING GATE IS GREEN STRAIGHT THROUGH IT** — `check_key_provenance.py`, D85-R's deliverable on my charter, banked as the eleventh check for four sittings, reports EXIT 0 and *"every mismatch is a known, cited, recipe-verified exception"* while 173 of 173 fail to reproduce → **§0bd's vacuous-guard finding one layer up**, and sharper, because D85-R DID demonstrate both failure directions by test · **D90 ALSO: the scorer VALIDATED** (`forecast_verdict.py --tier t3` reproduces the committed verdict **exactly — every category, row, status and detail string, only `provenance` differing**), the pre-solve STOP passed at **zero field diffs** with the pinned key equal to the scored key, all **29** schema-growth fields agreeing, a **four-clause FC-7 handling rule fixed before the solve**, and its own **P9 pre-graded a likely MISS** — then it stopped, **ZERO LP spent and almost nothing lost, because it had pushed all of it** · it **tightened my charter** (one committed `known_defect` record, not four — I carried D88's *generated*-namespace number onto the *committed* surface) and **disclosed that d60's standing FC-6 is CARRIED from d46 and was never measured on d60's own solve** · **D88 LANDED AND MERGED**, its re-mint and guard verified in-tree by the successor rather than assumed · **D91 NEVER DISPATCHED — and the call was made LAST, after the push rebase, per §0bg's own repair**; re-emitted whole and sharpened with D90's attribution · **Q64 SERVED AND RULED: diagnose fully, THEN repair** (accept-and-re-pin refused as blessing an accident into a design decision; the other **95** payloads are unaccounted and are where a second key move would come from) · **RULED: D91 and D90-R are INDEPENDENT and I refuse to manufacture a dependency** — a registered field gives the arm a better address, not a different score · gates **10 of 11**, the matrix red another desk's rule-28(c) miss (**ROUTED**) · no keeper moved, `final` still EMPTY · 2 charters issued, **no diagnosis run at this desk**
 **r#62 (HEAD `1393fdd2`):** **THE DELTA Q62 RECORDED AS UNMEASURED IS MEASURED, AND IT IS A 2.16× TIMING SHIFT** — D88's screen finds the control retiring four `gas_cc_ccs` units, 955.076 MW, in **2040** and the arm retiring the **identical four at the identical MW in 2038**, then a further **1,115.861 MW** in 2040; cumulative through 2040 **962.7 → 2,078.6 MW**, the exit clock having run on the wrong dispatch exactly as the read predicted · **PHASE 0: THE GUARD IS SILENT ON ALL SEVEN ISOs' KEEPERS ACROSS 23 KEEPER-YEARS**, so no keeper can be touched and there is no second population · the Q62 flag is **verified not asserted** — 180 re-indexed sidecars, **4 differ, each by exactly one path** · **D87 FINDS A POLICY INSTRUMENT THAT BOUGHT EXACTLY WHAT NO POLICY BOUGHT**: a **$50/MWh CES target row** left NYISO's retrofit trajectory **identical to `REF` to 0.1 MW in all five years** while a **$20/MWh premium bought +1,475.8 MW** — and its own pre-solve bracket MISSED, which is the finding: **a target row is not a constant premium**, its dual capped at the $50 ACP while the standard cannot be met and **collapsing to $7.5636 the moment it binds**, 85 % in one year · **D88's METHODOLOGICAL FINDING, ADOPTED AS DOCTRINE AND CORRECTING MY OWN CHARTER LANGUAGE: G-DRIFT FORM 4 AUDITS *CODE* DRIFT AND CANNOT SEE *DERIVED-INPUT* DRIFT** — the audit passed on the recorded key and the committed bundle still was not a byte-level control, a 2027 delta in a provably-inert year attributing **100 % to this container's `data/clean`** · **AGAINST INTEREST: MY r#61 NEVER-DISPATCHED CALL WAS A FALSE NEGATIVE ON BOTH LANES, AND MY OWN REBASE PULLED THE PROOF IN** — D83 and D89 merged after my HEAD read and before my push, under branch stems matching no charter, and I did not re-audit the rebase delta though that is this desk's own doctrine → **THE CALL IS NOW MADE AFTER THE REBASE, AND IT SEARCHES FOR THE LANE'S OBJECT, NEVER ITS BRANCH STEM** · both re-emissions still earned their keep (D89-R re-derived 27 of 27 from scratch and added a **mutation test the first lane never ran**; D83 generalised the (i) proof to **26 missing ⟺ bridge exactly over 72 ledgers, zero key moves over 230 payloads**) · **AGAINST INTEREST: my G6 criterion was in the wrong units** (ledger rows against a mechanism that reports decisions) and **I propagated a dead routing destination** — D65-B-R closed at r#55, so "routed to the D63/D65-B batch" has meant nobody · **RULED: G6's letter fails and its purpose holds; D88 is not blocked** · **Q63 SERVED AND RULED: charter the re-score as its own lane now** · gates **ELEVEN of ELEVEN** and **MISO promoted WITH its own gate-(a) row already re-keyed — no Q34 firing**, the first such promotion in several windows · `final` still EMPTY · 2 charters issued, **no diagnosis run at this desk**
@@ -69,6 +70,74 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 *(previous)* **Last refresh #26:**
 **HEAD at refresh:** `8462da22` — the nine-writer wave lands 7-of-9 with two clean mid-lane checkpoints (§0w.1); **D27 vindicates D17's arithmetic and refutes it as a remedy — coal ate all 14.7 GW** (§0w.1); CAISO promotes caiso-231 (§0w.5); the Q22/R-H duplication recorded AGAINST INTEREST (§0w.2); Q24 funds the MISO PRA/RBDC intake; D26-S/D31/D33 issued (§0w.4) · **Owner cards A/B/C SIGNED 2026-08-25; Q20–Q23 r#25; Q24 r#26** (§3)
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (rewritten whole at r#36; the ledger wins where they diverge)
+
+---
+
+## 0bk. Refresh #66 (2026-09-25, main HEAD `a1b8ebd9`) — all three r#65 lanes landed; the gate-(a) re-key is stale again within hours (five ISOs re-promoted); D94's own two legs are the new key-provenance UNKNOWNs; Q69/Q70 ruled; four lanes issued
+
+**0. FIRST ACT.** Handoff claim (§0bj = r#65) **matched**. main `40f4ed7a` → **`a1b8ebd9`**, 239 commits
+since 2026-09-24 12:00, most of them the owner's R-* backcast input-vintage lanes.
+
+### 1. GRADED BY CONTENT — 3 of 3 dispatched, all LANDED
+
+* **GATE-(a) RE-KEY r#65 (Fable) — LANDED** (PR #6582). EXIT 0 on all seven rows at its merge. It
+  re-keyed PJM to pjm-h22 and SPP to spp78 mid-rebase because both had promoted again, and SPP's leg
+  (a) was re-derived on its `complete` marker. **Stale again within hours** (§3).
+* **D93 (Opus) — LANDED** (PRs #6579/#6581). The Q66 lag class rule is encoded as data, one row per
+  registration, with rows for `pjm_seam_neighbour_hourly_ladder` (`ee2275d2`),
+  `caiso_dsw_lateevening_clean` (`15beb03c`) and `coal_mustrun_requires_measured_row` (`bb749a94`).
+  Part 1(b) was attributed by experiment: **the four `d92/*` legs are the `caiso_dsw_lateevening_clean`
+  lag, NOT the G6 field** (the charter's expectation was wrong and the lane said so). 18/18 tests pass,
+  in both directions. G6 now reads 0 fields off the ratchet.
+* **D94 (Opus, neiso) — LANDED** (PR #6590). **HOLD → HOLD, byte-identical verdict text**, predictions
+  11/12. The carried 2026-09-03 battery was a **third model**: `run_driver_battery.py` defaults, legacy
+  bins and neither `neiso-t3` pin. It is now re-solved on the golden recipe. CO2 is −38.6 % / −42.0 % per
+  rung, and the deltas mix D77, the recipe correction and HEAD drift. **T1.6 still cannot discriminate:**
+  `entry_rate_limits` does not reach NEISO VRE (33.0 GW in both rungs), and the REC dual is at the ACP
+  in every year → **Q70**. **Its G-DRIFT found the one LIVE hunk, F1 (eGRID-2024 heat rates, merged
+  2026-09-24). So `neiso-t3` now sits on two vintages** → **Q69**. The shards and all three lane
+  sessions are archived. PR #6592 (the `vre_long` shard's own PR) holds only 49 per-year parquets and
+  retentions that nothing reads. **Recommended: close it unmerged and delete the branch** (owner
+  action; branch deletion returns 403 from a session).
+
+### 2. RULINGS (served live)
+
+**Q69 RULED: RE-SOLVE NOW.** **Q70 RULED: DESIGN LANE FIRST.** Register entries at §3.
+
+### 3. GATES AT `a1b8ebd9` — SEVEN of NINE read GREEN
+
+**RED:**
+* **`check_gate_a_provenance` on FIVE ISOs** (twentieth Q34 firing): CAISO → `caiso-r-inputs-vintage` ·
+  ERCOT → `r-inputs-2019-2025` · MISO → `rmiso-arm-b-mid` · NEISO → `r-neiso-inputs-2019` · PJM →
+  `pjm-r-pjm-2`. Every one is an R-* input-vintage promotion that did not re-key its board row.
+  **The promoting-lane duty (keepers/README step 4) is being missed wholesale.** → GATE-(a) RE-KEY r#66.
+* **`check_key_provenance`**: 10 LAG (the class rule working as designed), 16 KNOWN, and **2 UNKNOWN —
+  D94's own `vre_short` / `vre_long` run_configs.** They reproduced their own keys at D94's merge.
+  Something registered after pin `924017c8` has moved them. Capx's own → **D95**.
+* **`audit_keepers`**: ERCOT E13 ×2 (`r-ercot2-dam-restored`, `r-ercot2-chp-off` left registered behind
+  the R-ERCOT promotion). **ROUTED → the ERCOT R-lane**, rule 35(a).
+
+**GREEN:** parity · mechanism matrix · forecast staleness · golden manifest · **ruff check · ruff
+format** (both green again). **UNREAD:** bench freshness (shallow clone), forecast invariants (no numpy).
+
+### 4. THE QUEUE — issued and DISPATCHED
+
+| lane | act | model | profile | writes |
+|---|---|---|---|---|
+| **GATE-(a) RE-KEY r#66** (Q34) | five rows | Opus (R-AK records lane) | code | `program-status.json` |
+| **D95** — D94's two UNKNOWNs | attribute by single-field drop search; class-rule row if it is a lag; STOP otherwise | Opus | code | `docs/governance/` lag table + tests |
+| **D96** (Q69) — `neiso-t3` onto post-F1 | 4 sharded legs (base / carbon_plus25 / gaspm5 / gasup150), FC-5 re-base, re-score; prior preserved at `neiso-t3-pre-d96` | Opus | neiso | `results/ff-t3-neiso-golden/d96/`, `ff-verdicts.json` (sole writer) |
+| **D97** (Q70) — T1.6 re-point DESIGN | zero LP; a lever that moves NEISO VRE supply, rungs pre-declared, one owner card | Fable | code | `docs/handoffs/DESIGN-capx-d97-*` |
+
+The four write disjoint files. **NEXT FREE LABEL: D98.**
+
+### 5. DOCTRINE
+
+* **A RE-KEY IS STALE BY THE TIME IT MERGES WHEN THE BACKCAST TRACK PROMOTES DAILY.** r#65's re-key
+  merged green and read red five promotions later the same day. This desk cannot out-run the promoters.
+  The duty sits with the promoting lane (keepers/README step 4), and five R-* lanes missed it in one
+  day. Recorded here for the owner, who owns the R-* prompts. A standing gate-(a) re-key line in every
+  promoting prompt would close it at source.
 
 ---
 
@@ -8897,6 +8966,18 @@ reaches shared solve machinery (S-1), per its charter.
 
 ## 3. Owner-tier questions — Q52/Q53 r#47, Q54 r#50, Q55 r#51, **Q56 r#53 (RULED ARM, registration required)**, **Q57 r#54 (RULED ARM via the D50 (b′-1) route)**, **Q58 r#55 (Q57's route VOID — RULED VARIANT B on the precedent standard)**, **Q59 r#57 (RULED all three: D82 + SPP onboarding + D85)**, **Q60 r#59 (RULED D84 first, D83 after — the empty-queue priority card)**, **Q61 r#60 (RULED capx's own 27 reds, none of the other 28)**, **Q62 r#61 (RULED fix first, flag the `neiso-t3` verdict now)**, **Q63 r#62 (RULED charter the `neiso-t3` re-score as its own lane now)**, **Q64 r#63 (RULED diagnose the key defect fully, THEN repair)**, **Q65 r#64 (RULED D77's named CO2 residue only)** (2026-09-10) added below; **Q56 was RESERVED at r#52 and deliberately NOT served — D78-R3 is at PRECOMMIT with its control-P re-solve owed, and an arming card on a lane that has not produced its derivation asks the owner to rule on an argument that does not yet exist (§0aw.3(b))**; THIRTY-SEVEN ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30; Q16/Q17/Q18/Q19 r#22, 2026-08-31; Q20/Q21/Q22/Q23 r#25 + **Q24/Q25/Q26 r#26 + Q27 r#27**, 2026-09-01; **Q28/Q29 r#30 + Q30/Q31 r#31, 2026-09-02**. Q22 carries an r#26 primacy correction — audit ruling R-H ruled the same card first; see §0w.2)
 
+### Q70 (refresh #66) — T1.6 cannot discriminate in NEISO
+
+**RULED 2026-09-25: DESIGN LANE FIRST** (recommended). D97 designs, at zero LP, a lever that moves NEISO
+VRE supply, pre-declares its rungs, and returns ONE card. Rejected: retiring T1.6 for NEISO, and
+keeping the vacuous CAVEAT.
+
+### Q69 (refresh #66) — `neiso-t3` on two data vintages
+
+**RULED 2026-09-25: RE-SOLVE NOW** (recommended). D94 §3/§7: the driver battery is post-F1 (eGRID-2024
+heat rates), while the primary bundle, paired arms and FC-5 table are pre-F1. D96 re-solves the four
+legs (~2.5 h LP, sharded) and re-scores. Rejected: flag-only, and leave.
+
 ### Q68 (refresh #65) — NWPP and SOCO on the forecast board
 
 **RULED 2026-09-24: AFTER BACKCAST `complete`** (the recommended option). Each ISO's board row is
@@ -9582,6 +9663,10 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-09-24 | **GATE-(a) RE-KEY r#65 (Q34) — SIX ISOs + SPP marker** | `claude/capx-gate-a-rekey-r65` | **Fable** | code | r#65 — nineteenth firing; DISPATCHED by the desk |
 | 2026-09-24 | **D93 — key-provenance lag CLASS RULE + G6 registration** | `claude/capx-d93-key-lag-class` | **Opus** | code | r#65 — Q66; DISPATCHED by the desk |
 | 2026-09-24 | **D94 — neiso-t3 FC-6 driver battery, post-D77** | `claude/capx-d94-fc6-driver-battery` | **Opus** | neiso | r#65 — Q67; DISPATCHED by the desk |
+| 2026-09-25 | **GATE-(a) RE-KEY r#66 (Q34) — FIVE ISOs** | `claude/capx-gate-a-rekey-r66` | **Opus** | code | r#66 — twentieth firing; DISPATCHED |
+| 2026-09-25 | **D95 — D94's two key-provenance UNKNOWNs** | `claude/capx-d95-d94-key-unknowns` | **Opus** | code | r#66 — DISPATCHED |
+| 2026-09-25 | **D96 — neiso-t3 onto post-F1 (Q69)** | `claude/capx-d96-neiso-t3-postf1` | **Opus** | neiso | r#66 — DISPATCHED |
+| 2026-09-25 | **D97 — T1.6 re-point DESIGN (Q70)** | `claude/capx-d97-t16-design` | **Fable** | code | r#66 — DISPATCHED |
 
 ## 5. History (compacted)
 
