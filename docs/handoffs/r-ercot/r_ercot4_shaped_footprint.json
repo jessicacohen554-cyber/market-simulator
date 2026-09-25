@@ -1,0 +1,492 @@
+{
+ "2019": {
+  "COAL": {
+   "plateau_days": 754,
+   "days_capped_below_own_peak": 72,
+   "sum_daily_MW_gap": 18609
+  },
+  "CC_REGULAR": {
+   "plateau_days": 321,
+   "days_capped_below_own_peak": 11,
+   "sum_daily_MW_gap": 3546
+  },
+  "top": [
+   [
+    637,
+    "2019-04-24",
+    "Martin Lake",
+    0.375,
+    0.643
+   ],
+   [
+    616,
+    "2019-02-08",
+    "W A Parish [COAL]",
+    0.601,
+    0.853
+   ],
+   [
+    558,
+    "2019-03-15",
+    "Odessa-Ector Power Plant",
+    0.476,
+    0.96
+   ],
+   [
+    532,
+    "2019-01-09",
+    "Guadalupe Generating Station",
+    0.51,
+    0.999
+   ],
+   [
+    531,
+    "2019-01-10",
+    "Guadalupe Generating Station",
+    0.512,
+    1.0
+   ],
+   [
+    526,
+    "2019-01-08",
+    "Limestone",
+    0.501,
+    0.785
+   ],
+   [
+    518,
+    "2019-12-23",
+    "W A Parish [COAL]",
+    0.569,
+    0.781
+   ],
+   [
+    510,
+    "2019-03-04",
+    "W A Parish [COAL]",
+    0.574,
+    0.783
+   ]
+  ]
+ },
+ "2020": {
+  "COAL": {
+   "plateau_days": 643,
+   "days_capped_below_own_peak": 96,
+   "sum_daily_MW_gap": 31237
+  },
+  "CC_REGULAR": {
+   "plateau_days": 378,
+   "days_capped_below_own_peak": 9,
+   "sum_daily_MW_gap": 1728
+  },
+  "top": [
+   [
+    948,
+    "2020-04-08",
+    "Martin Lake",
+    0.566,
+    0.965
+   ],
+   [
+    872,
+    "2020-04-07",
+    "Martin Lake",
+    0.566,
+    0.932
+   ],
+   [
+    871,
+    "2020-02-28",
+    "J K Spruce",
+    0.415,
+    1.0
+   ],
+   [
+    816,
+    "2020-02-06",
+    "Limestone",
+    0.509,
+    0.95
+   ],
+   [
+    813,
+    "2020-02-05",
+    "Limestone",
+    0.509,
+    0.949
+   ],
+   [
+    812,
+    "2020-03-17",
+    "Limestone",
+    0.552,
+    0.991
+   ],
+   [
+    736,
+    "2020-05-04",
+    "Limestone",
+    0.544,
+    0.942
+   ],
+   [
+    701,
+    "2020-01-30",
+    "Limestone",
+    0.612,
+    0.991
+   ]
+  ]
+ },
+ "2021": {
+  "COAL": {
+   "plateau_days": 949,
+   "days_capped_below_own_peak": 79,
+   "sum_daily_MW_gap": 26680
+  },
+  "CC_REGULAR": {
+   "plateau_days": 226,
+   "days_capped_below_own_peak": 8,
+   "sum_daily_MW_gap": 3424
+  },
+  "top": [
+   [
+    1457,
+    "2021-10-21",
+    "Martin Lake",
+    0.385,
+    0.997
+   ],
+   [
+    1452,
+    "2021-10-20",
+    "Martin Lake",
+    0.385,
+    0.995
+   ],
+   [
+    1290,
+    "2021-10-25",
+    "Martin Lake",
+    0.446,
+    0.988
+   ],
+   [
+    928,
+    "2021-10-24",
+    "Martin Lake",
+    0.553,
+    0.943
+   ],
+   [
+    913,
+    "2021-06-10",
+    "Limestone",
+    0.484,
+    0.978
+   ],
+   [
+    896,
+    "2021-04-08",
+    "Forney Energy Center",
+    0.503,
+    0.976
+   ],
+   [
+    844,
+    "2021-04-09",
+    "Forney Energy Center",
+    0.503,
+    0.948
+   ],
+   [
+    768,
+    "2021-04-28",
+    "W A Parish [COAL]",
+    0.594,
+    0.908
+   ]
+  ]
+ },
+ "2022": {
+  "COAL": {
+   "plateau_days": 686,
+   "days_capped_below_own_peak": 71,
+   "sum_daily_MW_gap": 20185
+  },
+  "CC_REGULAR": {
+   "plateau_days": 247,
+   "days_capped_below_own_peak": 19,
+   "sum_daily_MW_gap": 4292
+  },
+  "top": [
+   [
+    1068,
+    "2022-06-02",
+    "Martin Lake",
+    0.525,
+    0.974
+   ],
+   [
+    951,
+    "2022-05-26",
+    "Martin Lake",
+    0.259,
+    0.659
+   ],
+   [
+    739,
+    "2022-11-16",
+    "W A Parish [COAL]",
+    0.465,
+    0.768
+   ],
+   [
+    628,
+    "2022-11-15",
+    "W A Parish [COAL]",
+    0.465,
+    0.722
+   ],
+   [
+    615,
+    "2022-11-21",
+    "W A Parish [COAL]",
+    0.454,
+    0.706
+   ],
+   [
+    564,
+    "2022-11-20",
+    "W A Parish [COAL]",
+    0.476,
+    0.707
+   ],
+   [
+    535,
+    "2022-03-30",
+    "Odessa-Ector Power Plant",
+    0.477,
+    0.941
+   ],
+   [
+    531,
+    "2022-10-30",
+    "W A Parish [COAL]",
+    0.451,
+    0.669
+   ]
+  ]
+ },
+ "2023": {
+  "COAL": {
+   "plateau_days": 683,
+   "days_capped_below_own_peak": 120,
+   "sum_daily_MW_gap": 35721
+  },
+  "CC_REGULAR": {
+   "plateau_days": 374,
+   "days_capped_below_own_peak": 28,
+   "sum_daily_MW_gap": 6986
+  },
+  "top": [
+   [
+    993,
+    "2023-03-17",
+    "W A Parish [COAL]",
+    0.466,
+    0.872
+   ],
+   [
+    875,
+    "2023-01-17",
+    "Martin Lake",
+    0.305,
+    0.673
+   ],
+   [
+    840,
+    "2023-04-07",
+    "J K Spruce",
+    0.322,
+    0.886
+   ],
+   [
+    747,
+    "2023-03-31",
+    "W A Parish [COAL]",
+    0.541,
+    0.847
+   ],
+   [
+    730,
+    "2023-04-03",
+    "W A Parish [COAL]",
+    0.552,
+    0.851
+   ],
+   [
+    696,
+    "2023-02-25",
+    "J K Spruce",
+    0.471,
+    0.939
+   ],
+   [
+    687,
+    "2023-04-04",
+    "W A Parish [COAL]",
+    0.361,
+    0.642
+   ],
+   [
+    666,
+    "2023-04-10",
+    "W A Parish [COAL]",
+    0.398,
+    0.671
+   ]
+  ]
+ },
+ "2024": {
+  "COAL": {
+   "plateau_days": 776,
+   "days_capped_below_own_peak": 110,
+   "sum_daily_MW_gap": 29728
+  },
+  "CC_REGULAR": {
+   "plateau_days": 539,
+   "days_capped_below_own_peak": 25,
+   "sum_daily_MW_gap": 7079
+  },
+  "top": [
+   [
+    858,
+    "2024-08-18",
+    "J K Spruce",
+    0.417,
+    0.994
+   ],
+   [
+    853,
+    "2024-04-14",
+    "W A Parish [COAL]",
+    0.295,
+    0.644
+   ],
+   [
+    805,
+    "2024-02-12",
+    "Martin Lake",
+    0.631,
+    0.969
+   ],
+   [
+    728,
+    "2024-05-01",
+    "J K Spruce",
+    0.208,
+    0.697
+   ],
+   [
+    718,
+    "2024-08-19",
+    "J K Spruce",
+    0.417,
+    0.9
+   ],
+   [
+    702,
+    "2024-06-14",
+    "J K Spruce",
+    0.319,
+    0.791
+   ],
+   [
+    641,
+    "2024-04-16",
+    "Fayette Power Project",
+    0.621,
+    1.0
+   ],
+   [
+    630,
+    "2024-05-02",
+    "J K Spruce",
+    0.207,
+    0.63
+   ]
+  ]
+ },
+ "2025": {
+  "COAL": {
+   "plateau_days": 662,
+   "days_capped_below_own_peak": 59,
+   "sum_daily_MW_gap": 18521
+  },
+  "CC_REGULAR": {
+   "plateau_days": 571,
+   "days_capped_below_own_peak": 37,
+   "sum_daily_MW_gap": 7394
+  },
+  "top": [
+   [
+    1156,
+    "2025-02-28",
+    "Martin Lake",
+    0.514,
+    1.0
+   ],
+   [
+    1156,
+    "2025-02-27",
+    "Martin Lake",
+    0.514,
+    1.0
+   ],
+   [
+    984,
+    "2025-08-27",
+    "Limestone",
+    0.468,
+    1.0
+   ],
+   [
+    971,
+    "2025-08-26",
+    "Limestone",
+    0.468,
+    0.993
+   ],
+   [
+    895,
+    "2025-09-16",
+    "Oak Grove (TX)",
+    0.501,
+    0.999
+   ],
+   [
+    880,
+    "2025-02-23",
+    "Oak Grove (TX)",
+    0.43,
+    0.92
+   ],
+   [
+    721,
+    "2025-03-01",
+    "Martin Lake",
+    0.444,
+    0.747
+   ],
+   [
+    715,
+    "2025-04-02",
+    "Temple Power Station",
+    0.484,
+    0.929
+   ]
+  ]
+ }
+}

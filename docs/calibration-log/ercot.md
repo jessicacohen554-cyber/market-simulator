@@ -14679,3 +14679,22 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - Finding: `docs/handoffs/FINDING-r-ercot-3-coal-2019-2020-2026-09-25.md`
 - Probe: `scripts/probes/_r_ercot3_coal_census.py`
 - Matrix: census note on `coal_perplant_offer_level`; the cell stays K.
+
+## R-ERCOT-4 — 2026-09-25 — validation-year failures: coal data declined, PRB proxy not material, 2021 C3b re-attributed (zero LP)
+
+**Headline unchanged:** ERCOT is CALIBRATED on the train tier; keeper `2026-09-25-r-ercot2-chp-off`. No shard was launched, nothing was registered, and no matrix verdict moved.
+
+- **Step 0.** Owner, verbatim: "No — go to Steps 1–2". The 2019–2022 60-Day SCED coal disclosures will not be procured, so the 2019/2020 coal shortfall stays data-blocked on the R-ERCOT-3 mechanism.
+- **Step 1.** Extending the measured ERCOT PRB proxy to 2020 moves fuel on 20 coal rows but offers on only the 5 `_mustrun` tranches (1,773 MW, −$2.44 to −$2.67/MWh). Committed, econ and peak tranches are unchanged. Not material, so no arm.
+  - Correction: a first pass reported zero changed rows. That was the census probe's `(plant, tranche=None)` key collapse, not the model.
+- **Step 2 re-attributes 2021 C3b 0.203.** February (Uri) is now only 22% of the SSE; **October is 63.8%** (model $154.69 vs $52.31 actual). With October exact, the year scores ~0.12.
+  - October is a model scarcity event on Oct 20–25 (load shed up to 1.74 GW at the $5,000 cap).
+  - **Cause:** the day-shaped CAMPD partial-outage layer (ercot-185) caps Martin Lake at **0.385** on Oct 20–22. CAMPD shows all three units at ~860 MW from noon to 19:00 on Oct 20–21, and the ERCOT DAM disclosure has the plant at 1.0.
+  - **Mechanism:** plateau membership and the per-day derate both read a 7-day rolling median of daily max, so a cycling plant's full-load days are capped.
+  - **Present in every year:** 59–120 coal plant-days/yr capped more than 0.05 below the plant's own same-day peak, 2023 the largest.
+- **Proposed, not armed:** a day-grain guard, `shaped(d) ≥ min(1, dmax[d]/ref)`, with zero new scalars. It breaks SP-6 (it is a net lift), needs a PRECOMMIT under rule 23, and moves the train tier. The owner decides; the cost is 7 shards.
+
+**Record:**
+- Finding: `docs/handoffs/FINDING-r-ercot-4-validation-years-2026-09-25.md`
+- Probe: `scripts/probes/_r_ercot4_shaped_derate_footprint.py`
+- Matrix: `ercot_partial_outage_shaped_derate` stays K; the open defect is appended to its evidence.
