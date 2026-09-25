@@ -26,6 +26,11 @@ Usage::
     python3 scripts/probes/rnyiso_compose_span.py \\
         --legs results/calibration/rnyiso_{2022,2023,2024,2025} \\
         --out  results/calibration/rnyiso_span
+
+    # leg acceptance only (R-NYISO-2021: a held-out year registered on its own and
+    # stamped to the keeper, never composed into it):
+    python3 scripts/probes/rnyiso_compose_span.py --check-only \\
+        --legs results/calibration/rnyiso_2021
 """
 
 from __future__ import annotations
@@ -41,8 +46,13 @@ if str(_REPO) not in sys.path:  # run as a script, like every other probe
 
 from scripts.probes.nyiso238_compose_span import compose as _compose  # noqa: E402
 
-KEEPER = _REPO / "results" / "calibration" / "hydro3_nyiso_ror_span"
-PIN = "e95436d5024fc14096eed558d6dd15a65128e524"
+#: The keeper the legs are checked against. R-NYISO checked its 2022-2025 legs against
+#: ``hydro3_nyiso_ror_span`` (pinned ``e95436d5``); that bundle was pruned at the
+#: 2026-09-25 promotion, so R-NYISO-2021 checks against the promoted keeper, whose
+#: offer block is byte-identical to hydro3's (R-NYISO S1).
+KEEPER = _REPO / "results" / "calibration" / "rnyiso_span"
+#: R-NYISO-2021 PRECOMMIT (docs/PRECOMMIT-r-nyiso-2021-2026-09-25.md) commit SHA.
+PIN = "__PIN__"
 #: (resolved scenario_config field, required value) -- PRECOMMIT §6 S1.
 EXPECTED = (
     ("eia860_vintage_tracks_solve_year", True),
@@ -111,10 +121,15 @@ def main() -> None:
     """Check every leg, then compose the span bundle."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--legs", nargs="+", required=True)
-    ap.add_argument("--out", required=True)
+    ap.add_argument("--out")
+    ap.add_argument("--check-only", action="store_true", help="S0-S2 only; compose nothing")
     args = ap.parse_args()
     legs = [Path(x) for x in args.legs]
     check_legs(legs)
+    if args.check_only:
+        return
+    if not args.out:
+        ap.error("--out is required unless --check-only")
     _compose(legs, Path(args.out))
 
 
