@@ -3474,3 +3474,8 @@ results/calibration/rmiso_20*/**
 results/calibration/rmiso_b_20*/**
 # R-PJM per-year shard legs: kept out of main (rules 29(c)/32(d)); the composite rpjm_inputs_span is registered.
 results/calibration/rpjm_inputs_20[0-9][0-9]/
+# R-SOCO per-year shard legs (rule 32(d): kept out of main; the composite is registered).
+# Provenance: 2023 bf7309eed7866f0b8d7080f81ac808a2beb40930, 2024 4734ccb3d39c1c0a6f910f56fd07cad1b20bd2ad, 2025 17d33d1a60f593cae9d8cb1861ccf1f3b6964365
+results/calibration/rsoco_2023/
+results/calibration/rsoco_2024/
+results/calibration/rsoco_2025/
