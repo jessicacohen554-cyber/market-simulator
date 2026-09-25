@@ -375,3 +375,7 @@ row (158,275) — the OK↔S and Oklahoma-entry candidate set of `PRECOMMIT-spp-
 What it fed (FINDING-spp-57 §3): the per-constituent limit-at-bind `L_f` for the Oklahoma-set,
 SPS-tie and CSWS constituents of both links; the corridor constituents keep SPP-53's committed
 `L_f`. The four-group spec above is untouched.
+
+## Span extended to 2019 — lane SPP-80, 2026-09-25
+
+The RTBM binding-constraint roll-ups for **2019, 2020, 2021 and 2022** are now landed beside 2023–2025, fetched over the same anonymous portal route, unmodified. URLs, member names, byte counts and the measured schema drift are in `SOURCES.md` (SPP-80 appendix), and sha256 values are in `SHA256SUMS.txt`. Use: `docs/handoffs/FINDING-spp-80-upper-tercile-premium-2026-09-25.md`.
