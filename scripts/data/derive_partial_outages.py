@@ -49,6 +49,7 @@ import sys
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
+from market_sim.config.plant_taxonomy import artifact_class  # noqa: E402
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.fleet import load_campd_bins  # noqa: E402
 
@@ -61,6 +62,7 @@ from scripts.lib.outage_detect import (  # noqa: E402
     _RUN_FLOOR_CF,
     _detect,
     detect_shaped,
+    detect_shaped_dayguard,
     detect_shaped_raw,
 )
 
@@ -243,7 +245,11 @@ def _shaped_rows(
 
 
 def _write_shaped(
-    plant: pd.DataFrame, shaped_rows: list[dict], path: str, raw: bool
+    plant: pd.DataFrame,
+    shaped_rows: list[dict],
+    path: str,
+    raw: bool,
+    day_floor_min: float | None = None,
 ) -> None:
     """Write the day-shaped extract, asserting SP-2 and SP-6 in the deriver.
 
@@ -260,6 +266,12 @@ def _write_shaped(
       rounding, i.e. the arm is neither a net lift nor a net cut (precommit
       §2a-bis). Skipped for the reported-only RAW variant, which by design
       does not preserve the level.
+
+    With ``day_floor_min`` given (the R-ERCOT-4 ``--emit-shaped-dayguard``
+    extract) SP-6 is REPLACED by the day-grain floor property: the caller has
+    already checked ``guarded(d) >= floor(d)`` on every plateau day and passes
+    the minimum margin, which must be non-negative. The guard is a net lift by
+    design, so median preservation is not asserted for it.
     """
     shaped = pd.DataFrame(shaped_rows, columns=_PLANT_COLUMNS).sort_values(
         [*_SORT_KEY, "outage_start"]
@@ -292,7 +304,7 @@ def _write_shaped(
                     f"SP-2 FAILED: shaped sub-windows do not tile plateau "
                     f"{k} {r.outage_start} -> {r.outage_stop}"
                 )
-            if raw:
+            if raw or day_floor_min is not None:
                 continue
             # Day-weighted median of the profile == the incumbent flat factor.
             days = [
@@ -303,18 +315,28 @@ def _write_shaped(
             max_med_dev = max(
                 max_med_dev, abs(float(np.median(prof)) - r.derate_factor)
             )
-    if not raw and max_med_dev > 0.002:
+    if day_floor_min is not None and day_floor_min < -1e-9:
+        raise SystemExit(
+            f"DAY-FLOOR FAILED: a guarded day sits {day_floor_min:.4f} below the "
+            f"plant's own same-day measured ceiling"
+        )
+    if not raw and day_floor_min is None and max_med_dev > 0.002:
         raise SystemExit(
             f"SP-6 FAILED: shaped profile is not median-preserving "
             f"(max deviation {max_med_dev:.4f} > 0.002) — the arm is a level "
             f"change, not a re-shaping"
         )
     shaped.to_csv(path, index=False)
-    variant = "RAW (reported-only)" if raw else "NORMALIZED"
+    if day_floor_min is not None:
+        variant = "DAY-GUARDED"
+        sp6 = f"replaced by DAY-FLOOR PASS (min margin {day_floor_min:.4f})"
+    elif raw:
+        variant, sp6 = "RAW (reported-only)", "skipped for RAW"
+    else:
+        variant, sp6 = "NORMALIZED", f"PASS: max median dev {max_med_dev:.4f}"
     print(
         f"wrote {len(shaped)} day-shaped sub-windows to {path} [{variant}] "
-        f"(SP-2 PASS: {len(plant)} plateaus tile exactly; "
-        f"SP-6 {'skipped for RAW' if raw else f'PASS: max median dev {max_med_dev:.4f}'})"
+        f"(SP-2 PASS: {len(plant)} plateaus tile exactly; SP-6 {sp6})"
     )
 
 
@@ -362,6 +384,20 @@ def main() -> None:
         default=str(RAW_DATA_DIR / "campd-partial-outages-shaped.csv"),
     )
     ap.add_argument(
+        "--emit-shaped-dayguard",
+        action="store_true",
+        help=(
+            "also write the DAY-GUARDED shaped companion (R-ERCOT-4): the same "
+            "shaped plateaus and tiling with each day's derate floored at the "
+            "plant's own same-day measured ceiling min(1, dmax/ref). Consumed "
+            "only under ScenarioConfig.ercot_partial_outage_day_guard."
+        ),
+    )
+    ap.add_argument(
+        "--out-shaped-dayguard",
+        default=str(RAW_DATA_DIR / "campd-partial-outages-shaped-dayguard.csv"),
+    )
+    ap.add_argument(
         "--shaped-raw",
         action="store_true",
         help=(
@@ -375,7 +411,15 @@ def main() -> None:
     bins = load_campd_bins("data/raw/reference/custom-bin-assignments.csv")
     cap = dict(zip(bins["Plant_Code"].astype(int), bins["capacity_mw"]))
     name = dict(zip(bins["Plant_Code"].astype(int), bins["Plant_Name"]))
-    group = dict(zip(bins["Plant_Code"].astype(int), bins["Plant_Group"]))
+    # COAL-SUB (2026-09-25) relabelled the bin sheet's coal rows to their
+    # subclass (COAL_PRB / COAL_LIGNITE); the partial-outage extracts are
+    # committed artifacts keyed on the coal-FAMILY token, so the group is read
+    # through the one artifact seam. Without it the deriver silently dropped
+    # every coal plateau (_DETECT_GROUPS names the family token "COAL").
+    group = {
+        int(c): artifact_class(g)
+        for c, g in zip(bins["Plant_Code"].astype(int), bins["Plant_Group"])
+    }
     candidates = [c for c in cap if group.get(c) in _DETECT_GROUPS]
 
     # Unit-attribution index (--emit-units only): the EIA-860 capacity ladder
@@ -389,6 +433,8 @@ def main() -> None:
     rows = []
     unit_rows: list[dict] = []
     shaped_rows: list[dict] = []
+    guard_rows: list[dict] = []
+    guard_margin = float("inf")
     for yr in args.years:
         df = campd.load_campd_hourly(campd.states_for_iso(args.iso), [yr])
         if df.empty:
@@ -436,6 +482,11 @@ def main() -> None:
             if args.emit_shaped:
                 _fn = detect_shaped_raw if args.shaped_raw else detect_shaped
                 shaped_index = {(s, e): p for s, e, p in _fn(cf)}
+            guard_index: dict[tuple[int, int], tuple[np.ndarray, np.ndarray]] = {}
+            if args.emit_shaped_dayguard:
+                guard_index = {
+                    (s, e): (p, f) for s, e, p, f in detect_shaped_dayguard(cf)
+                }
             for s, e, factor in _detect(cf):
                 row = {
                     "oris_code": code,
@@ -457,6 +508,15 @@ def main() -> None:
                             f"[{s},{e}) — the two plateau populations diverged"
                         )
                     shaped_rows.extend(_shaped_rows(row, full, s, e, prof))
+                if args.emit_shaped_dayguard:
+                    gp = guard_index.get((s, e))
+                    if gp is None:
+                        raise SystemExit(
+                            f"day-guard detector lost plateau {code} {yr} "
+                            f"[{s},{e}) — the two plateau populations diverged"
+                        )
+                    guard_margin = min(guard_margin, float(np.min(gp[0] - gp[1])))
+                    guard_rows.extend(_shaped_rows(row, full, s, e, gp[0]))
                 if not args.emit_units:
                     continue
                 # Attribute this plateau to the units that carry it. The
@@ -506,6 +566,14 @@ def main() -> None:
         )
     if args.emit_shaped:
         _write_shaped(out, shaped_rows, args.out_shaped, raw=args.shaped_raw)
+    if args.emit_shaped_dayguard:
+        _write_shaped(
+            out,
+            guard_rows,
+            args.out_shaped_dayguard,
+            raw=False,
+            day_floor_min=guard_margin if guard_rows else 0.0,
+        )
 
     if not args.emit_units:
         return

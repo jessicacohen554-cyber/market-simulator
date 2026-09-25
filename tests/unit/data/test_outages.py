@@ -2247,5 +2247,121 @@ class ShapedPartialOutageDerateTest(unittest.TestCase):
                 )
 
 
+class ShapedPartialOutageDayGuardTest(unittest.TestCase):
+    """The R-ERCOT-4 same-day CEMS guard on the shaped partial-outage layer.
+
+    A cycling plant's full-load days inside a low-loading week sit inside the
+    plateau (membership reads the 7-day smoothed ceiling) and were capped at the
+    week's level. The guard floors each day at the plant's own same-day ceiling.
+    What must hold: (a) same plateau population, (b) the floor is exactly the
+    detector's own statistic and every guarded day clears it, (c) the guard
+    only ever LIFTS, and lifts the full-load days, (d) the loader falls back to
+    the unguarded extract for a year the guarded extract does not carry.
+    """
+
+    @staticmethod
+    def _cf_cycling_plateau() -> np.ndarray:
+        """Baseload year with a 20-day low-loading week-block and two full days."""
+        nd = 120
+        daily = np.full(nd, 0.95)
+        daily[50:70] = 0.30
+        daily[58:60] = 0.95  # two full-load days inside the plateau
+        cf = np.repeat(daily, 24) * np.tile(np.linspace(0.8, 1.0, 24), nd)
+        return cf
+
+    def test_same_plateaus_and_floor_is_the_detector_statistic(self):
+        from scripts.lib.outage_detect import (
+            _plateau_state,
+            detect_shaped,
+            detect_shaped_dayguard,
+        )
+
+        cf = self._cf_cycling_plateau()
+        base, guard = detect_shaped(cf), detect_shaped_dayguard(cf)
+        self.assertTrue(base, "the synthetic plateau must be detected")
+        self.assertEqual([(i, j) for i, j, _ in base], [(i, j) for i, j, _, _ in guard])
+        dmax, ref, _sm, _p = _plateau_state(cf)
+        for (i, j, prof), (_gi, _gj, gprof, floor) in zip(base, guard):
+            want_floor = np.round(np.minimum(1.0, dmax[i:j] / ref), 3)
+            np.testing.assert_allclose(floor, want_floor, atol=1e-12)
+            np.testing.assert_allclose(gprof, np.maximum(prof, want_floor), atol=1e-12)
+            self.assertTrue((gprof >= floor - 1e-12).all())
+            self.assertTrue((gprof >= prof - 1e-12).all())  # lift only
+
+    def test_full_load_days_inside_the_plateau_are_lifted(self):
+        from scripts.lib.outage_detect import detect_shaped, detect_shaped_dayguard
+
+        cf = self._cf_cycling_plateau()
+        ((i, j, prof),) = [p for p in detect_shaped(cf) if p[0] <= 58 < p[1]]
+        ((_, _, gprof, _),) = [p for p in detect_shaped_dayguard(cf) if p[0] == i]
+        full = [58 - i, 59 - i]
+        self.assertTrue(
+            (prof[full] < 0.65).all(), "the defect: capped on full-load days"
+        )
+        np.testing.assert_allclose(gprof[full], 1.0, atol=1e-9)
+
+    def test_loader_falls_back_for_a_year_the_guarded_extract_lacks(self):
+        """A year absent from the guarded file keeps the unguarded shaped layer."""
+        import tempfile
+        from unittest.mock import patch
+
+        from market_sim.data import outages
+
+        with tempfile.TemporaryDirectory() as td:
+            empty = Path(td) / "dayguard.csv"
+            pd.DataFrame(
+                columns=[
+                    "oris_code",
+                    "plant_name",
+                    "plant_group",
+                    "year",
+                    "outage_start",
+                    "outage_stop",
+                    "derate_factor",
+                ]
+            ).to_csv(empty, index=False)
+            outages.partial_outage_derate_factors.cache_clear()
+            try:
+                shaped = outages.partial_outage_derate_factors(
+                    2024, HOURS_PER_YEAR, shaped=True
+                )
+                outages.partial_outage_derate_factors.cache_clear()
+                with patch.object(outages, "PARTIAL_OUTAGE_SHAPED_DAYGUARD_CSV", empty):
+                    guarded = outages.partial_outage_derate_factors(
+                        2024, HOURS_PER_YEAR, shaped=True, day_guard=True
+                    )
+                self.assertEqual(set(shaped), set(guarded))
+                for k in shaped:
+                    np.testing.assert_array_equal(shaped[k], guarded[k])
+            finally:
+                outages.partial_outage_derate_factors.cache_clear()
+
+    def test_committed_guarded_extract_is_a_lift_over_the_same_hours(self):
+        """Shipped pair: same plants per year, and the guard never cuts an hour."""
+        from market_sim.data.outages import (
+            PARTIAL_OUTAGE_SHAPED_CSV,
+            PARTIAL_OUTAGE_SHAPED_DAYGUARD_CSV,
+            partial_outage_derate_factors,
+        )
+
+        if not (
+            PARTIAL_OUTAGE_SHAPED_DAYGUARD_CSV.exists()
+            and PARTIAL_OUTAGE_SHAPED_CSV.exists()
+        ):
+            self.skipTest("extracts not present")
+        for year in range(2019, 2026):
+            partial_outage_derate_factors.cache_clear()
+            s = partial_outage_derate_factors(year, HOURS_PER_YEAR, shaped=True)
+            g = partial_outage_derate_factors(
+                year, HOURS_PER_YEAR, shaped=True, day_guard=True
+            )
+            self.assertEqual(set(s), set(g), year)
+            for k in s:
+                self.assertTrue(
+                    (g[k] >= s[k] - 1e-12).all(), f"{k} {year} guard cut a day"
+                )
+        partial_outage_derate_factors.cache_clear()
+
+
 if __name__ == "__main__":
     unittest.main()

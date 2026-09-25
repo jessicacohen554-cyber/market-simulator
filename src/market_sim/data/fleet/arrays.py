@@ -1669,7 +1669,12 @@ def _apply_outage_overlays(
             # block below both see ONE repaired layer (rule 19 [R-ONE-MECH]).
             _pshaped = getattr(config, "ercot_partial_outage_shaped_derate", False)
             pfac = partial_outage_derate_factors(
-                config.weather_year, hours, class_grain=_pgrain, shaped=_pshaped
+                config.weather_year,
+                hours,
+                class_grain=_pgrain,
+                shaped=_pshaped,
+                # R-ERCOT-4 same-day CEMS guard on the shaped layer.
+                day_guard=getattr(config, "ercot_partial_outage_day_guard", False),
             )
             if pfac:
                 applied_p = 0
@@ -2110,6 +2115,7 @@ def _apply_outage_overlays(
                 # consumer reads (arrays.py ~1333) — one construction, one
                 # layer, both seams.
                 shaped=getattr(config, "ercot_partial_outage_shaped_derate", False),
+                day_guard=getattr(config, "ercot_partial_outage_day_guard", False),
             )
             _w_units = (
                 unit_outage_active_units(int(_yr), hours, iso="ERCOT")

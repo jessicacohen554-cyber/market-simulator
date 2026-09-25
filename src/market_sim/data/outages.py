@@ -2006,6 +2006,12 @@ PARTIAL_OUTAGE_CSV: Path = RAW_DATA_DIR / "campd-partial-outages.csv"
 # file is consumed by the same loader and needs no separate accumulator.
 # Raw-only, like campd-partial-outages-units.csv: no curated datatype is minted.
 PARTIAL_OUTAGE_SHAPED_CSV: Path = RAW_DATA_DIR / "campd-partial-outages-shaped.csv"
+# R-ERCOT-4 day-grain guard companion (ScenarioConfig.ercot_partial_outage_day_guard):
+# the same shaped plateaus with each day floored at the plant's own same-day
+# measured ceiling. Written by derive_partial_outages.py --emit-shaped-dayguard.
+PARTIAL_OUTAGE_SHAPED_DAYGUARD_CSV: Path = (
+    RAW_DATA_DIR / "campd-partial-outages-shaped-dayguard.csv"
+)
 
 
 @lru_cache(maxsize=None)
@@ -2015,6 +2021,7 @@ def partial_outage_derate_factors(
     iso: str = "ERCOT",
     class_grain: bool = False,
     shaped: bool = False,
+    day_guard: bool = False,
 ) -> dict[int, np.ndarray] | dict[tuple[int, str], np.ndarray]:
     """Return the CAMPD-derived partial-outage plateau availability multipliers.
 
@@ -2042,6 +2049,13 @@ def partial_outage_derate_factors(
     fail-safe. The curated ``partial-outages`` clean partition carries the FLAT
     extract only, so the shaped path deliberately does not read it.
 
+    With ``shaped=True`` AND ``day_guard=True`` (R-ERCOT-4, gated by
+    ``ScenarioConfig.ercot_partial_outage_day_guard``) reads
+    :data:`PARTIAL_OUTAGE_SHAPED_DAYGUARD_CSV` — the same shaped sub-windows with
+    each day's derate floored at the plant's own same-day measured ceiling —
+    falling back to the unguarded shaped extract when that file is absent.
+    ``day_guard`` without ``shaped`` is inert.
+
     When ``MARKET_SIM_USE_CLEAN`` is set and the ISO's curated
     ``partial-outages`` clean partition exists (written by
     ``scripts/data/curate_partial_outages.py``), reads from there; otherwise reads
@@ -2052,7 +2066,21 @@ def partial_outage_derate_factors(
     cols = ["plant_id", "year", "outage_start", "outage_stop", "derate_factor"]
     if class_grain:
         cols.insert(1, "plant_group")
-    if shaped and PARTIAL_OUTAGE_SHAPED_CSV.exists():
+    if shaped and day_guard and PARTIAL_OUTAGE_SHAPED_DAYGUARD_CSV.exists():
+        df = pd.read_csv(PARTIAL_OUTAGE_SHAPED_DAYGUARD_CSV)
+        if not (df["year"] == year).any():
+            # A year the guarded extract does not carry (its CAMPD vintage was
+            # absent at derive time, e.g. 2018) keeps the unguarded shaped
+            # layer rather than silently losing every plateau — logged, never
+            # silent.
+            logger.warning(
+                "partial-outage day guard: %d absent from %s; using the "
+                "unguarded shaped extract for this year",
+                year,
+                PARTIAL_OUTAGE_SHAPED_DAYGUARD_CSV.name,
+            )
+            df = None
+    if df is None and shaped and PARTIAL_OUTAGE_SHAPED_CSV.exists():
         df = pd.read_csv(PARTIAL_OUTAGE_SHAPED_CSV)
     if df is None and _use_clean():
         clean_io = _clean_io()
