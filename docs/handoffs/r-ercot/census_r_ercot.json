@@ -1,0 +1,1115 @@
+{
+ "2019": {
+  "bin_hr_mw_by_source": {
+   "measured": 70096.8,
+   "egrid": 8560.7,
+   "sheet": 1917.0,
+   "default": 1129.9
+  },
+  "class_default_plants": [
+   "55545 Hidalgo Energy Center (CC_REGULAR, 551.3 MW)",
+   "7512 Arthur Von Rosenberg (CC_REGULAR, 575.0 MW)",
+   "64884 WAL1801 (CT_PEAKER, 1.2 MW)",
+   "64958 WAL5479 (CT_PEAKER, 1.2 MW)",
+   "64796 WAL537 (CT_PEAKER, 1.2 MW)"
+  ],
+  "bin_hr_capw_by_class": {
+   "CC_CHP": {
+    "sheet": 7.884,
+    "arm": 8.908
+   },
+   "CC_REGULAR": {
+    "sheet": 7.817,
+    "arm": 7.897
+   },
+   "COAL": {
+    "sheet": 10.341,
+    "arm": 10.914
+   },
+   "CT_CHP": {
+    "sheet": 9.505,
+    "arm": 8.818
+   },
+   "CT_PEAKER": {
+    "sheet": 10.922,
+    "arm": 11.658
+   },
+   "ST_CHP": {
+    "sheet": 5.41,
+    "arm": 5.328
+   },
+   "ST_GAS": {
+    "sheet": 11.18,
+    "arm": 11.463
+   }
+  },
+  "incumbent": {
+   "": {
+    "mw": 5655.6,
+    "avail_mw_mean": 5250.3,
+    "n_units": 299,
+    "mc_base_capw_median": 2.5
+   },
+   "CC_CHP": {
+    "mw": 5762.1,
+    "avail_mw_mean": 4681.4,
+    "n_units": 274,
+    "mc_base_capw_median": 22.551
+   },
+   "CC_REGULAR": {
+    "mw": 33120.0,
+    "avail_mw_mean": 23974.4,
+    "n_units": 643,
+    "mc_base_capw_median": 17.583
+   },
+   "COAL": {
+    "mw": 13963.9,
+    "avail_mw_mean": 9844.5,
+    "n_units": 40,
+    "mc_base_capw_median": 18.469
+   },
+   "CT_CHP": {
+    "mw": 771.7,
+    "avail_mw_mean": 615.5,
+    "n_units": 138,
+    "mc_base_capw_median": 39.489
+   },
+   "CT_PEAKER": {
+    "mw": 8253.7,
+    "avail_mw_mean": 4014.5,
+    "n_units": 699,
+    "mc_base_capw_median": 40.532
+   },
+   "ST_CHP": {
+    "mw": 8.7,
+    "avail_mw_mean": 8.2,
+    "n_units": 2,
+    "mc_base_capw_median": 14.763
+   },
+   "ST_GAS": {
+    "mw": 12709.1,
+    "avail_mw_mean": 8827.0,
+    "n_units": 239,
+    "mc_base_capw_median": 31.414
+   },
+   "hydro": {
+    "mw": 523.6,
+    "avail_mw_mean": 523.6,
+    "n_units": 18,
+    "mc_base_capw_median": 1.4
+   }
+  },
+  "incumbent_eia860_dir": "",
+  "arm": {
+   "": {
+    "mw": 5043.0,
+    "avail_mw_mean": 4704.3,
+    "n_units": 20,
+    "mc_base_capw_median": 2.5
+   },
+   "CC_CHP": {
+    "mw": 5762.3,
+    "avail_mw_mean": 4687.6,
+    "n_units": 264,
+    "mc_base_capw_median": 31.747
+   },
+   "CC_REGULAR": {
+    "mw": 33120.0,
+    "avail_mw_mean": 23386.8,
+    "n_units": 653,
+    "mc_base_capw_median": 17.931
+   },
+   "COAL": {
+    "mw": 13963.9,
+    "avail_mw_mean": 9716.7,
+    "n_units": 40,
+    "mc_base_capw_median": 18.469
+   },
+   "CT_CHP": {
+    "mw": 771.7,
+    "avail_mw_mean": 656.4,
+    "n_units": 138,
+    "mc_base_capw_median": 23.9
+   },
+   "CT_PEAKER": {
+    "mw": 8253.7,
+    "avail_mw_mean": 4014.7,
+    "n_units": 699,
+    "mc_base_capw_median": 43.639
+   },
+   "ST_CHP": {
+    "mw": 8.7,
+    "avail_mw_mean": 8.2,
+    "n_units": 2,
+    "mc_base_capw_median": 14.484
+   },
+   "ST_GAS": {
+    "mw": 12709.1,
+    "avail_mw_mean": 8564.4,
+    "n_units": 239,
+    "mc_base_capw_median": 32.37
+   },
+   "hydro": {
+    "mw": 523.6,
+    "avail_mw_mean": 523.6,
+    "n_units": 18,
+    "mc_base_capw_median": 1.4
+   }
+  },
+  "arm_eia860_dir": ""
+ },
+ "2020": {
+  "bin_hr_mw_by_source": {
+   "measured": 70289.6,
+   "egrid": 8367.9,
+   "sheet": 1917.0,
+   "default": 1129.9
+  },
+  "class_default_plants": [
+   "55545 Hidalgo Energy Center (CC_REGULAR, 551.3 MW)",
+   "7512 Arthur Von Rosenberg (CC_REGULAR, 575.0 MW)",
+   "64884 WAL1801 (CT_PEAKER, 1.2 MW)",
+   "64958 WAL5479 (CT_PEAKER, 1.2 MW)",
+   "64796 WAL537 (CT_PEAKER, 1.2 MW)"
+  ],
+  "bin_hr_capw_by_class": {
+   "CC_CHP": {
+    "sheet": 7.884,
+    "arm": 9.124
+   },
+   "CC_REGULAR": {
+    "sheet": 7.817,
+    "arm": 7.763
+   },
+   "COAL": {
+    "sheet": 10.341,
+    "arm": 10.978
+   },
+   "CT_CHP": {
+    "sheet": 9.505,
+    "arm": 8.397
+   },
+   "CT_PEAKER": {
+    "sheet": 10.922,
+    "arm": 11.678
+   },
+   "ST_CHP": {
+    "sheet": 5.41,
+    "arm": 5.366
+   },
+   "ST_GAS": {
+    "sheet": 11.18,
+    "arm": 11.39
+   }
+  },
+  "incumbent": {
+   "": {
+    "mw": 5655.6,
+    "avail_mw_mean": 5255.9,
+    "n_units": 299,
+    "mc_base_capw_median": 2.5
+   },
+   "CC_CHP": {
+    "mw": 5713.5,
+    "avail_mw_mean": 4582.5,
+    "n_units": 258,
+    "mc_base_capw_median": 19.784
+   },
+   "CC_REGULAR": {
+    "mw": 33120.0,
+    "avail_mw_mean": 22978.9,
+    "n_units": 643,
+    "mc_base_capw_median": 14.476
+   },
+   "COAL": {
+    "mw": 13963.9,
+    "avail_mw_mean": 9662.2,
+    "n_units": 40,
+    "mc_base_capw_median": 18.469
+   },
+   "CT_CHP": {
+    "mw": 820.3,
+    "avail_mw_mean": 692.3,
+    "n_units": 149,
+    "mc_base_capw_median": 33.446
+   },
+   "CT_PEAKER": {
+    "mw": 8365.9,
+    "avail_mw_mean": 4229.6,
+    "n_units": 716,
+    "mc_base_capw_median": 39.139
+   },
+   "ST_CHP": {
+    "mw": 8.7,
+    "avail_mw_mean": 8.1,
+    "n_units": 2,
+    "mc_base_capw_median": 12.074
+   },
+   "ST_GAS": {
+    "mw": 12596.9,
+    "avail_mw_mean": 7681.9,
+    "n_units": 222,
+    "mc_base_capw_median": 25.872
+   },
+   "hydro": {
+    "mw": 565.2,
+    "avail_mw_mean": 565.2,
+    "n_units": 19,
+    "mc_base_capw_median": 1.4
+   }
+  },
+  "incumbent_eia860_dir": "",
+  "arm": {
+   "": {
+    "mw": 5065.3,
+    "avail_mw_mean": 4725.8,
+    "n_units": 22,
+    "mc_base_capw_median": 2.5
+   },
+   "CC_CHP": {
+    "mw": 5713.7,
+    "avail_mw_mean": 4589.0,
+    "n_units": 253,
+    "mc_base_capw_median": 27.582
+   },
+   "CC_REGULAR": {
+    "mw": 33120.0,
+    "avail_mw_mean": 22475.8,
+    "n_units": 653,
+    "mc_base_capw_median": 14.609
+   },
+   "COAL": {
+    "mw": 13963.9,
+    "avail_mw_mean": 9574.4,
+    "n_units": 40,
+    "mc_base_capw_median": 18.469
+   },
+   "CT_CHP": {
+    "mw": 820.3,
+    "avail_mw_mean": 707.7,
+    "n_units": 149,
+    "mc_base_capw_median": 15.554
+   },
+   "CT_PEAKER": {
+    "mw": 8365.9,
+    "avail_mw_mean": 4227.5,
+    "n_units": 716,
+    "mc_base_capw_median": 41.892
+   },
+   "ST_CHP": {
+    "mw": 8.7,
+    "avail_mw_mean": 8.1,
+    "n_units": 2,
+    "mc_base_capw_median": 11.973
+   },
+   "ST_GAS": {
+    "mw": 12596.9,
+    "avail_mw_mean": 7534.0,
+    "n_units": 222,
+    "mc_base_capw_median": 26.596
+   },
+   "hydro": {
+    "mw": 565.2,
+    "avail_mw_mean": 565.2,
+    "n_units": 19,
+    "mc_base_capw_median": 1.4
+   }
+  },
+  "arm_eia860_dir": ""
+ },
+ "2021": {
+  "bin_hr_mw_by_source": {
+   "measured": 70289.6,
+   "egrid": 8367.9,
+   "sheet": 1917.0,
+   "default": 1129.9
+  },
+  "class_default_plants": [
+   "55545 Hidalgo Energy Center (CC_REGULAR, 551.3 MW)",
+   "7512 Arthur Von Rosenberg (CC_REGULAR, 575.0 MW)",
+   "64884 WAL1801 (CT_PEAKER, 1.2 MW)",
+   "64958 WAL5479 (CT_PEAKER, 1.2 MW)",
+   "64796 WAL537 (CT_PEAKER, 1.2 MW)"
+  ],
+  "bin_hr_capw_by_class": {
+   "CC_CHP": {
+    "sheet": 7.884,
+    "arm": 9.254
+   },
+   "CC_REGULAR": {
+    "sheet": 7.817,
+    "arm": 7.806
+   },
+   "COAL": {
+    "sheet": 10.341,
+    "arm": 10.914
+   },
+   "CT_CHP": {
+    "sheet": 9.505,
+    "arm": 7.237
+   },
+   "CT_PEAKER": {
+    "sheet": 10.922,
+    "arm": 11.507
+   },
+   "ST_CHP": {
+    "sheet": 5.41,
+    "arm": 5.387
+   },
+   "ST_GAS": {
+    "sheet": 11.18,
+    "arm": 11.522
+   }
+  },
+  "incumbent": {
+   "": {
+    "mw": 5655.6,
+    "avail_mw_mean": 5167.8,
+    "n_units": 299,
+    "mc_base_capw_median": 2.5
+   },
+   "CC_CHP": {
+    "mw": 5713.5,
+    "avail_mw_mean": 4555.8,
+    "n_units": 258,
+    "mc_base_capw_median": 45.541
+   },
+   "CC_REGULAR": {
+    "mw": 33120.0,
+    "avail_mw_mean": 22595.0,
+    "n_units": 643,
+    "mc_base_capw_median": 51.801
+   },
+   "COAL": {
+    "mw": 13963.9,
+    "avail_mw_mean": 9662.0,
+    "n_units": 40,
+    "mc_base_capw_median": 18.469
+   },
+   "CT_CHP": {
+    "mw": 965.2,
+    "avail_mw_mean": 819.5,
+    "n_units": 162,
+    "mc_base_capw_median": 99.445
+   },
+   "CT_PEAKER": {
+    "mw": 8172.3,
+    "avail_mw_mean": 4194.6,
+    "n_units": 683,
+    "mc_base_capw_median": 82.893
+   },
+   "ST_CHP": {
+    "mw": 8.7,
+    "avail_mw_mean": 8.1,
+    "n_units": 2,
+    "mc_base_capw_median": 40.064
+   },
+   "ST_GAS": {
+    "mw": 12596.9,
+    "avail_mw_mean": 7899.1,
+    "n_units": 222,
+    "mc_base_capw_median": 87.248
+   },
+   "hydro": {
+    "mw": 558.9,
+    "avail_mw_mean": 558.9,
+    "n_units": 17,
+    "mc_base_capw_median": 1.4
+   }
+  },
+  "incumbent_eia860_dir": "",
+  "arm": {
+   "": {
+    "mw": 5200.9,
+    "avail_mw_mean": 4758.6,
+    "n_units": 291,
+    "mc_base_capw_median": 2.5
+   },
+   "CC_CHP": {
+    "mw": 5713.5,
+    "avail_mw_mean": 4585.4,
+    "n_units": 253,
+    "mc_base_capw_median": 70.738
+   },
+   "CC_REGULAR": {
+    "mw": 33120.0,
+    "avail_mw_mean": 22248.3,
+    "n_units": 653,
+    "mc_base_capw_median": 52.715
+   },
+   "COAL": {
+    "mw": 13963.9,
+    "avail_mw_mean": 9602.6,
+    "n_units": 40,
+    "mc_base_capw_median": 18.469
+   },
+   "CT_CHP": {
+    "mw": 965.2,
+    "avail_mw_mean": 834.9,
+    "n_units": 162,
+    "mc_base_capw_median": 48.78
+   },
+   "CT_PEAKER": {
+    "mw": 8172.3,
+    "avail_mw_mean": 4194.9,
+    "n_units": 683,
+    "mc_base_capw_median": 86.227
+   },
+   "ST_CHP": {
+    "mw": 8.7,
+    "avail_mw_mean": 8.1,
+    "n_units": 2,
+    "mc_base_capw_median": 39.549
+   },
+   "ST_GAS": {
+    "mw": 12596.9,
+    "avail_mw_mean": 7815.5,
+    "n_units": 222,
+    "mc_base_capw_median": 89.174
+   },
+   "hydro": {
+    "mw": 558.9,
+    "avail_mw_mean": 558.9,
+    "n_units": 17,
+    "mc_base_capw_median": 1.4
+   }
+  },
+  "arm_eia860_dir": ""
+ },
+ "2022": {
+  "bin_hr_mw_by_source": {
+   "measured": 70096.8,
+   "egrid": 8560.7,
+   "sheet": 1917.0,
+   "default": 1129.9
+  },
+  "class_default_plants": [
+   "55545 Hidalgo Energy Center (CC_REGULAR, 551.3 MW)",
+   "7512 Arthur Von Rosenberg (CC_REGULAR, 575.0 MW)",
+   "64884 WAL1801 (CT_PEAKER, 1.2 MW)",
+   "64958 WAL5479 (CT_PEAKER, 1.2 MW)",
+   "64796 WAL537 (CT_PEAKER, 1.2 MW)"
+  ],
+  "bin_hr_capw_by_class": {
+   "CC_CHP": {
+    "sheet": 7.884,
+    "arm": 9.264
+   },
+   "CC_REGULAR": {
+    "sheet": 7.817,
+    "arm": 7.769
+   },
+   "COAL": {
+    "sheet": 10.341,
+    "arm": 11.039
+   },
+   "CT_CHP": {
+    "sheet": 9.505,
+    "arm": 7.123
+   },
+   "CT_PEAKER": {
+    "sheet": 10.922,
+    "arm": 11.633
+   },
+   "ST_CHP": {
+    "sheet": 5.41,
+    "arm": 5.478
+   },
+   "ST_GAS": {
+    "sheet": 11.18,
+    "arm": 11.528
+   }
+  },
+  "incumbent": {
+   "": {
+    "mw": 5655.6,
+    "avail_mw_mean": 5295.3,
+    "n_units": 299,
+    "mc_base_capw_median": 2.5
+   },
+   "CC_CHP": {
+    "mw": 5713.5,
+    "avail_mw_mean": 4288.6,
+    "n_units": 258,
+    "mc_base_capw_median": 41.205
+   },
+   "CC_REGULAR": {
+    "mw": 33120.0,
+    "avail_mw_mean": 24429.1,
+    "n_units": 643,
+    "mc_base_capw_median": 43.161
+   },
+   "COAL": {
+    "mw": 13963.9,
+    "avail_mw_mean": 9921.4,
+    "n_units": 40,
+    "mc_base_capw_median": 18.469
+   },
+   "CT_CHP": {
+    "mw": 965.2,
+    "avail_mw_mean": 817.7,
+    "n_units": 162,
+    "mc_base_capw_median": 83.784
+   },
+   "CT_PEAKER": {
+    "mw": 8172.3,
+    "avail_mw_mean": 5231.1,
+    "n_units": 683,
+    "mc_base_capw_median": 73.487
+   },
+   "ST_CHP": {
+    "mw": 8.7,
+    "avail_mw_mean": 8.1,
+    "n_units": 2,
+    "mc_base_capw_median": 33.604
+   },
+   "ST_GAS": {
+    "mw": 12596.9,
+    "avail_mw_mean": 8843.2,
+    "n_units": 222,
+    "mc_base_capw_median": 72.836
+   },
+   "hydro": {
+    "mw": 553.9,
+    "avail_mw_mean": 553.9,
+    "n_units": 15,
+    "mc_base_capw_median": 1.4
+   }
+  },
+  "incumbent_eia860_dir": "",
+  "arm": {
+   "": {
+    "mw": 5597.9,
+    "avail_mw_mean": 5243.3,
+    "n_units": 297,
+    "mc_base_capw_median": 2.5
+   },
+   "CC_CHP": {
+    "mw": 5713.5,
+    "avail_mw_mean": 4286.9,
+    "n_units": 253,
+    "mc_base_capw_median": 62.811
+   },
+   "CC_REGULAR": {
+    "mw": 33120.0,
+    "avail_mw_mean": 24230.7,
+    "n_units": 653,
+    "mc_base_capw_median": 43.699
+   },
+   "COAL": {
+    "mw": 13963.9,
+    "avail_mw_mean": 9826.0,
+    "n_units": 40,
+    "mc_base_capw_median": 18.469
+   },
+   "CT_CHP": {
+    "mw": 965.2,
+    "avail_mw_mean": 833.2,
+    "n_units": 162,
+    "mc_base_capw_median": 37.376
+   },
+   "CT_PEAKER": {
+    "mw": 8172.3,
+    "avail_mw_mean": 5248.4,
+    "n_units": 683,
+    "mc_base_capw_median": 76.593
+   },
+   "ST_CHP": {
+    "mw": 8.7,
+    "avail_mw_mean": 8.1,
+    "n_units": 2,
+    "mc_base_capw_median": 34.242
+   },
+   "ST_GAS": {
+    "mw": 12596.9,
+    "avail_mw_mean": 8734.7,
+    "n_units": 222,
+    "mc_base_capw_median": 75.637
+   },
+   "hydro": {
+    "mw": 553.9,
+    "avail_mw_mean": 553.9,
+    "n_units": 15,
+    "mc_base_capw_median": 1.4
+   }
+  },
+  "arm_eia860_dir": ""
+ },
+ "2023": {
+  "bin_hr_mw_by_source": {
+   "measured": 70096.8,
+   "egrid": 8560.7,
+   "sheet": 1917.0,
+   "default": 1129.9
+  },
+  "class_default_plants": [
+   "55545 Hidalgo Energy Center (CC_REGULAR, 551.3 MW)",
+   "7512 Arthur Von Rosenberg (CC_REGULAR, 575.0 MW)",
+   "64884 WAL1801 (CT_PEAKER, 1.2 MW)",
+   "64958 WAL5479 (CT_PEAKER, 1.2 MW)",
+   "64796 WAL537 (CT_PEAKER, 1.2 MW)"
+  ],
+  "bin_hr_capw_by_class": {
+   "CC_CHP": {
+    "sheet": 7.884,
+    "arm": 9.115
+   },
+   "CC_REGULAR": {
+    "sheet": 7.817,
+    "arm": 7.694
+   },
+   "COAL": {
+    "sheet": 10.341,
+    "arm": 11.197
+   },
+   "CT_CHP": {
+    "sheet": 9.505,
+    "arm": 7.392
+   },
+   "CT_PEAKER": {
+    "sheet": 10.922,
+    "arm": 11.593
+   },
+   "ST_CHP": {
+    "sheet": 5.41,
+    "arm": 5.411
+   },
+   "ST_GAS": {
+    "sheet": 11.18,
+    "arm": 11.345
+   }
+  },
+  "incumbent": {
+   "": {
+    "mw": 5655.6,
+    "avail_mw_mean": 5216.4,
+    "n_units": 299,
+    "mc_base_capw_median": 2.5
+   },
+   "CC_CHP": {
+    "mw": 5713.5,
+    "avail_mw_mean": 4585.6,
+    "n_units": 258,
+    "mc_base_capw_median": 23.244
+   },
+   "CC_REGULAR": {
+    "mw": 33120.0,
+    "avail_mw_mean": 24614.6,
+    "n_units": 643,
+    "mc_base_capw_median": 18.944
+   },
+   "COAL": {
+    "mw": 13963.9,
+    "avail_mw_mean": 9639.4,
+    "n_units": 40,
+    "mc_base_capw_median": 20.754
+   },
+   "CT_CHP": {
+    "mw": 965.2,
+    "avail_mw_mean": 816.0,
+    "n_units": 162,
+    "mc_base_capw_median": 40.785
+   },
+   "CT_PEAKER": {
+    "mw": 8469.3,
+    "avail_mw_mean": 6406.3,
+    "n_units": 700,
+    "mc_base_capw_median": 42.118
+   },
+   "ST_CHP": {
+    "mw": 8.7,
+    "avail_mw_mean": 8.1,
+    "n_units": 2,
+    "mc_base_capw_median": 15.676
+   },
+   "ST_GAS": {
+    "mw": 12299.9,
+    "avail_mw_mean": 8313.6,
+    "n_units": 205,
+    "mc_base_capw_median": 33.227
+   },
+   "hydro": {
+    "mw": 551.5,
+    "avail_mw_mean": 551.5,
+    "n_units": 14,
+    "mc_base_capw_median": 1.4
+   }
+  },
+  "incumbent_eia860_dir": "",
+  "arm": {
+   "": {
+    "mw": 5660.2,
+    "avail_mw_mean": 5223.2,
+    "n_units": 297,
+    "mc_base_capw_median": 2.5
+   },
+   "CC_CHP": {
+    "mw": 5713.5,
+    "avail_mw_mean": 4540.0,
+    "n_units": 258,
+    "mc_base_capw_median": 33.691
+   },
+   "CC_REGULAR": {
+    "mw": 33120.0,
+    "avail_mw_mean": 24265.7,
+    "n_units": 648,
+    "mc_base_capw_median": 19.059
+   },
+   "COAL": {
+    "mw": 13963.9,
+    "avail_mw_mean": 9574.9,
+    "n_units": 40,
+    "mc_base_capw_median": 20.754
+   },
+   "CT_CHP": {
+    "mw": 965.2,
+    "avail_mw_mean": 831.4,
+    "n_units": 162,
+    "mc_base_capw_median": 20.703
+   },
+   "CT_PEAKER": {
+    "mw": 8469.3,
+    "avail_mw_mean": 6553.3,
+    "n_units": 700,
+    "mc_base_capw_median": 45.049
+   },
+   "ST_CHP": {
+    "mw": 8.7,
+    "avail_mw_mean": 8.1,
+    "n_units": 2,
+    "mc_base_capw_median": 15.673
+   },
+   "ST_GAS": {
+    "mw": 12299.9,
+    "avail_mw_mean": 8278.6,
+    "n_units": 205,
+    "mc_base_capw_median": 33.999
+   },
+   "hydro": {
+    "mw": 551.5,
+    "avail_mw_mean": 551.5,
+    "n_units": 14,
+    "mc_base_capw_median": 1.4
+   }
+  },
+  "arm_eia860_dir": ""
+ },
+ "2024": {
+  "bin_hr_mw_by_source": {
+   "measured": 70096.8,
+   "egrid": 8560.7,
+   "sheet": 1917.0,
+   "default": 1129.9
+  },
+  "class_default_plants": [
+   "55545 Hidalgo Energy Center (CC_REGULAR, 551.3 MW)",
+   "7512 Arthur Von Rosenberg (CC_REGULAR, 575.0 MW)",
+   "64884 WAL1801 (CT_PEAKER, 1.2 MW)",
+   "64958 WAL5479 (CT_PEAKER, 1.2 MW)",
+   "64796 WAL537 (CT_PEAKER, 1.2 MW)"
+  ],
+  "bin_hr_capw_by_class": {
+   "CC_CHP": {
+    "sheet": 7.884,
+    "arm": 9.079
+   },
+   "CC_REGULAR": {
+    "sheet": 7.817,
+    "arm": 7.733
+   },
+   "COAL": {
+    "sheet": 10.341,
+    "arm": 11.131
+   },
+   "CT_CHP": {
+    "sheet": 9.505,
+    "arm": 7.108
+   },
+   "CT_PEAKER": {
+    "sheet": 10.923,
+    "arm": 11.515
+   },
+   "ST_CHP": {
+    "sheet": 5.41,
+    "arm": 5.489
+   },
+   "ST_GAS": {
+    "sheet": 11.18,
+    "arm": 11.27
+   }
+  },
+  "incumbent": {
+   "": {
+    "mw": 5655.6,
+    "avail_mw_mean": 4976.0,
+    "n_units": 299,
+    "mc_base_capw_median": 2.5
+   },
+   "CC_CHP": {
+    "mw": 5713.5,
+    "avail_mw_mean": 4764.8,
+    "n_units": 258,
+    "mc_base_capw_median": 20.795
+   },
+   "CC_REGULAR": {
+    "mw": 33120.0,
+    "avail_mw_mean": 24041.7,
+    "n_units": 643,
+    "mc_base_capw_median": 16.557
+   },
+   "COAL": {
+    "mw": 13963.9,
+    "avail_mw_mean": 9221.9,
+    "n_units": 40,
+    "mc_base_capw_median": 18.469
+   },
+   "CT_CHP": {
+    "mw": 965.2,
+    "avail_mw_mean": 824.4,
+    "n_units": 162,
+    "mc_base_capw_median": 33.092
+   },
+   "CT_PEAKER": {
+    "mw": 8378.3,
+    "avail_mw_mean": 6544.0,
+    "n_units": 700,
+    "mc_base_capw_median": 38.502
+   },
+   "ST_CHP": {
+    "mw": 8.7,
+    "avail_mw_mean": 8.1,
+    "n_units": 2,
+    "mc_base_capw_median": 13.672
+   },
+   "ST_GAS": {
+    "mw": 12390.9,
+    "avail_mw_mean": 7871.2,
+    "n_units": 205,
+    "mc_base_capw_median": 30.741
+   },
+   "hydro": {
+    "mw": 546.3,
+    "avail_mw_mean": 546.3,
+    "n_units": 12,
+    "mc_base_capw_median": 1.4
+   }
+  },
+  "incumbent_eia860_dir": "",
+  "arm": {
+   "": {
+    "mw": 5658.8,
+    "avail_mw_mean": 4981.6,
+    "n_units": 296,
+    "mc_base_capw_median": 2.5
+   },
+   "CC_CHP": {
+    "mw": 5713.5,
+    "avail_mw_mean": 4716.8,
+    "n_units": 258,
+    "mc_base_capw_median": 29.206
+   },
+   "CC_REGULAR": {
+    "mw": 33120.0,
+    "avail_mw_mean": 23825.8,
+    "n_units": 648,
+    "mc_base_capw_median": 16.921
+   },
+   "COAL": {
+    "mw": 13963.9,
+    "avail_mw_mean": 9123.1,
+    "n_units": 40,
+    "mc_base_capw_median": 18.469
+   },
+   "CT_CHP": {
+    "mw": 965.2,
+    "avail_mw_mean": 824.4,
+    "n_units": 162,
+    "mc_base_capw_median": 16.671
+   },
+   "CT_PEAKER": {
+    "mw": 8378.3,
+    "avail_mw_mean": 6544.0,
+    "n_units": 700,
+    "mc_base_capw_median": 40.483
+   },
+   "ST_CHP": {
+    "mw": 8.7,
+    "avail_mw_mean": 8.1,
+    "n_units": 2,
+    "mc_base_capw_median": 13.901
+   },
+   "ST_GAS": {
+    "mw": 12390.9,
+    "avail_mw_mean": 7809.9,
+    "n_units": 205,
+    "mc_base_capw_median": 31.262
+   },
+   "hydro": {
+    "mw": 546.3,
+    "avail_mw_mean": 546.3,
+    "n_units": 12,
+    "mc_base_capw_median": 1.4
+   }
+  },
+  "arm_eia860_dir": ""
+ },
+ "2025": {
+  "bin_hr_mw_by_source": {
+   "measured": 70096.8,
+   "egrid": 8560.7,
+   "sheet": 1917.0,
+   "default": 1129.9
+  },
+  "class_default_plants": [
+   "55545 Hidalgo Energy Center (CC_REGULAR, 551.3 MW)",
+   "7512 Arthur Von Rosenberg (CC_REGULAR, 575.0 MW)",
+   "64884 WAL1801 (CT_PEAKER, 1.2 MW)",
+   "64958 WAL5479 (CT_PEAKER, 1.2 MW)",
+   "64796 WAL537 (CT_PEAKER, 1.2 MW)"
+  ],
+  "bin_hr_capw_by_class": {
+   "CC_CHP": {
+    "sheet": 7.884,
+    "arm": 9.079
+   },
+   "CC_REGULAR": {
+    "sheet": 7.817,
+    "arm": 7.702
+   },
+   "COAL": {
+    "sheet": 10.341,
+    "arm": 11.157
+   },
+   "CT_CHP": {
+    "sheet": 9.505,
+    "arm": 7.108
+   },
+   "CT_PEAKER": {
+    "sheet": 10.923,
+    "arm": 11.53
+   },
+   "ST_CHP": {
+    "sheet": 5.41,
+    "arm": 5.489
+   },
+   "ST_GAS": {
+    "sheet": 11.18,
+    "arm": 11.35
+   }
+  },
+  "incumbent": {
+   "": {
+    "mw": 5655.6,
+    "avail_mw_mean": 5319.1,
+    "n_units": 299,
+    "mc_base_capw_median": 2.5
+   },
+   "CC_CHP": {
+    "mw": 5713.5,
+    "avail_mw_mean": 4666.6,
+    "n_units": 258,
+    "mc_base_capw_median": 24.762
+   },
+   "CC_REGULAR": {
+    "mw": 32984.0,
+    "avail_mw_mean": 24088.6,
+    "n_units": 626,
+    "mc_base_capw_median": 23.772
+   },
+   "COAL": {
+    "mw": 13963.9,
+    "avail_mw_mean": 8892.2,
+    "n_units": 40,
+    "mc_base_capw_median": 18.469
+   },
+   "CT_CHP": {
+    "mw": 965.2,
+    "avail_mw_mean": 827.9,
+    "n_units": 162,
+    "mc_base_capw_median": 42.868
+   },
+   "CT_PEAKER": {
+    "mw": 8514.3,
+    "avail_mw_mean": 6662.9,
+    "n_units": 717,
+    "mc_base_capw_median": 45.771
+   },
+   "ST_CHP": {
+    "mw": 8.7,
+    "avail_mw_mean": 8.1,
+    "n_units": 2,
+    "mc_base_capw_median": 17.658
+   },
+   "ST_GAS": {
+    "mw": 12390.9,
+    "avail_mw_mean": 7703.6,
+    "n_units": 205,
+    "mc_base_capw_median": 42.692
+   },
+   "hydro": {
+    "mw": 9.6,
+    "avail_mw_mean": 9.6,
+    "n_units": 1,
+    "mc_base_capw_median": 1.4
+   }
+  },
+  "incumbent_eia860_dir": "",
+  "arm": {
+   "": {
+    "mw": 5655.6,
+    "avail_mw_mean": 5319.1,
+    "n_units": 299,
+    "mc_base_capw_median": 2.5
+   },
+   "CC_CHP": {
+    "mw": 5713.5,
+    "avail_mw_mean": 4593.8,
+    "n_units": 258,
+    "mc_base_capw_median": 36.57
+   },
+   "CC_REGULAR": {
+    "mw": 32984.0,
+    "avail_mw_mean": 23801.2,
+    "n_units": 626,
+    "mc_base_capw_median": 23.909
+   },
+   "COAL": {
+    "mw": 13963.9,
+    "avail_mw_mean": 8750.5,
+    "n_units": 40,
+    "mc_base_capw_median": 18.469
+   },
+   "CT_CHP": {
+    "mw": 965.2,
+    "avail_mw_mean": 827.9,
+    "n_units": 162,
+    "mc_base_capw_median": 20.654
+   },
+   "CT_PEAKER": {
+    "mw": 8514.3,
+    "avail_mw_mean": 6662.9,
+    "n_units": 717,
+    "mc_base_capw_median": 48.363
+   },
+   "ST_CHP": {
+    "mw": 8.7,
+    "avail_mw_mean": 8.1,
+    "n_units": 2,
+    "mc_base_capw_median": 17.982
+   },
+   "ST_GAS": {
+    "mw": 12390.9,
+    "avail_mw_mean": 7668.2,
+    "n_units": 205,
+    "mc_base_capw_median": 44.065
+   },
+   "hydro": {
+    "mw": 9.6,
+    "avail_mw_mean": 9.6,
+    "n_units": 1,
+    "mc_base_capw_median": 1.4
+   }
+  },
+  "arm_eia860_dir": ""
+ }
+}

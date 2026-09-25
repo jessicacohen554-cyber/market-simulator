@@ -87,6 +87,20 @@ committed ``run_config*.json`` carries that state (checked 2026-09-24 over every
 invalidated. **PROSE-ONLY** (no ``SolveEpoch``): there is nothing to re-key.
 Record: ``docs/handoffs/r-neiso/PRECOMMIT-r-neiso-2026-09-24.md``.
 
+**Epoch 2026-09-24 — R-ERCOT: ERCOT's curated-bin heat rates re-resolved per
+backcast solve year. A SAME-KEY INVALIDATION for ERCOT backcasts only.**
+Record: ``docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md``.
+WHAT CHANGED (code): ``run_calibration.run_year`` passes the solve year and the
+five F1 measured-heat-rate flags + ``eia860_vintage_tracks_solve_year`` to
+``load_campd_bins``, which now re-resolves every sheet row (measured CAMPD year
+row → pooled → year-matched eGRID → sheet → class default) instead of reading
+the one-snapshot ``Plant_Avg_HR_MMBtu_MWh``. The flags were already key-moving
+(F1), but under the F1 key the ERCOT bin path ignored them. WHAT IS
+INVALIDATED: every ERCOT ``mode == "backcast"`` bundle cached on or after the
+F1 epoch. WHAT IS NOT: every non-ERCOT ISO, and every ERCOT forecast /
+hindcast (``heat_rate_year`` is passed only in backcast, and the flags are
+coerced off outside it).
+
 **Epoch 2026-09-24 — F1 (owner instruction 2026-09-24): vintage-matched eGRID
 heat rates in every EIA-860 table, and per-year measured heat-rate artifacts
 for every ISO. A SAME-KEY INVALIDATION for every config whose key the

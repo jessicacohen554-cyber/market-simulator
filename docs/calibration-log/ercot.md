@@ -14578,3 +14578,49 @@ differenced against a superseded availability envelope.
 `uv pip install tzdata` was required).
 
 **Next shorthand: ercot-269** (ercot-199 and ercot-257 remain unclaimed).
+
+## R-ERCOT — 2026-09-24
+
+**Re-solved ERCOT 2019–2025 on corrected backcast inputs (AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24
+§5.3.2). REGISTERED `2026-09-24-r-inputs-2019-2025`; NOT PROMOTED — owner ruling pending.** Keeper
+`2026-09-19-ercot266-mer-five-year` untouched.
+
+- **Inputs changed (multipliers unchanged, rule 1(c)):**
+  - year-matched EIA-860 vintage;
+  - **year-matched plant heat rates on ERCOT's curated bins.** This is new code, `campd_bins.resolve_bin_heat_rates`, applying the F1 hierarchy. The sheet's single snapshot was 71 % eGRID-2023 `PLHTRT` plus hand CAMPD-gross rows;
+  - <5-day CAMPD coal/gas outage windows (F2).
+- **Recipe partition:** 2019/2020 take carve-out A, on structural grounds (pre-ECRS market design).
+- **Solves:** 7 arm and 5 control legs, one year per shard, at `b1f800e8`.
+- **Control ≡ keeper to within $0.03/MWh** in all five control years, so the engine drift since `5926ca52` is inert.
+- **Result (arm):**
+  - forward 2024–2025 **CALIBRATED** (holds);
+  - 2023 C3b 0.146 → **0.232 FAIL**, so train-tier 2023–2025 reads NOT-YET;
+  - 2021 C3a +10.0 % / C3b 0.202 FAIL;
+  - 2022 improves (−7.7 % → −0.2 %) and reads CALIBRATED;
+  - 2019/2020 NOT-YET: C3a +364 % / +114 %, 101 / 11 GWh slack, COAL_PRB −12 / −14 TWh.
+- **Arm − control price:** +$1.1 to +$6.7/MWh in every year. The main driver is CC_CHP (−2.6 to −3.9 TWh), which the power-only CHP heat rate pushes up the stack.
+- **Open, routed:**
+  - (a) the composition of the power-only CHP rate with the bins' separate host-steam must-run tranche (rule 19);
+  - (b) the 60-Day DAM thermal availability covers 2021–2025 only, so 2019/2020 run on a stack no keeper year has used;
+  - (c) Hidalgo's sheet code 55545 ≠ eGRID ORISPL 7762, which leaves 1,126 MW at the class-default heat rate.
+
+Records: `docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md`,
+`docs/handoffs/RESULT-r-ercot-2019-2025-inputs-2026-09-24.md`.
+
+**PROMOTED 2026-09-25 — owner instruction, verbatim: *"Yes promote"*** (against this session's hold recommendation).
+- New keeper: `2026-09-24-r-inputs-2019-2025` (bundle `results/calibration/r_ercot_arm_span`, years 2019–2025).
+- Supersedes `2026-09-19-ercot266-mer-five-year`.
+
+Rule 35 was followed in order:
+- **(b)** Year union enumerated before the prune: {2021..2025}. The incoming keeper covers {2019..2025}.
+- **(e)** Keeper shard and `calibration-complete.json` re-keyed; status rebuilt; `audit_keepers --iso ERCOT` E1 resolved.
+- Only then was the old keeper pruned with `prune_iso_runs --iso ERCOT --force-uncite`, which removed all three stores.
+- `audit_keepers` afterwards: **PASS, 0 / 0**.
+
+**ERCOT's headline moves CALIBRATED → NOT-YET.** The 2023 carve-out fails C3b at 0.232; the forward span 2024–2025 stays CALIBRATED. The D-5(b) worse-determination escalation was put to the owner before the ruling.
+
+The `frontier` and `frontier_touchpoint` declarations **lapsed**. Their stated basis was "ERCOT calibrated" and "2021 + 2022 calibrated", which no longer holds. Both are moved verbatim into `frontier_history`, and the owner may re-declare them.
+
+Matrix: the eight tested cells move O → K, and the shard is re-stamped.
+
+**New finding, recorded in the keeper shard:** the ERCOT 60-Day DAM thermal-availability CSVs carry only 2021–2025 at HEAD. `calibration-complete.json`'s intake_log records a 2018–2022 derive (+7,304 rows), so the back-years were derived once and are no longer on main. A re-derive is owed, and it is the leading fix for 2019/2020.
