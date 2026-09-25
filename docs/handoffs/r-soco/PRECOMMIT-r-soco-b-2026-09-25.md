@@ -212,3 +212,19 @@ promoted, rule 35 prunes `2026-09-24-r-soco-corrected-inputs`. The incoming run 
 - PowerSouth's 2021 hydro budget is booked under `AEC` in EIA-923 (≤ 0.01 TWh; §3).
 - The EPA↔EIA facility-ID crosswalk (Dahlberg / Hartwell) remains routed, from R-SOCO §5.
 - `test_persisted_identity` surface pins: pre-existing (§4), for the lane that moved `RGGI_MEMBER_STATES_BY_YEAR`.
+
+## Addendum — rebase onto `main` @ `6edbeb61` (G-DRIFT, rule 29(b))
+
+The lane was rebased onto `main` after #6585 (R-SOCO) and #6589 (I-SOCO) merged there under rebased SHAs. The
+seven legs were solved at the pinned `f2a5412e` (base `b5e3b914`); that pin stays as their provenance. Between
+`b5e3b914` and `6edbeb61`, `git diff` over the §5 paths touches 14 files, and every hunk is INERT for SOCO:
+
+| hunk | reason |
+|---|---|
+| i-caiso `data/eia930/caiso_hydro_backfill.py` + `frames._repair_measured_gaps` | `MEASURED_GAP_SOURCES` registers `CISO` only; returns the frame object unchanged for `SOCO`. The one rebase conflict: both helpers kept side by side, and each read seam applies R1 first and the gap repair last, as before. |
+| `constants.NUCLEAR_MONTHLY_CF_BY_YEAR` (CAISO 2019–21), `fuel_trajectories` (CAISO / PJM carbon rows), `capacity_market` (PJM RGGI), `interchange/spec.py` (MISO / PJM seam ladders) | other regions' rows; `solve_surface_register.py --diff b5e3b914 origin/main` moves only `RGGI_MEMBER_STATES_BY_YEAR` for SOCO, already declared inert (no SOCO state is a RGGI member) |
+| `scenarios.py` `COAL_SIGMOID_DEFAULTS` (MISO rows) | MISO only |
+| `run_calibration.py` fleet_only return gains `iso_config` | the `fleet_only` exit only; never reached by a solve |
+| `paths.CAISO_OUTLOOK_FUELSOURCE_DIR`; `_validation-source` CAISO / MISO LMP files | CAISO / MISO only |
+
+No re-solve is owed. The legs stand at the rebased head.
