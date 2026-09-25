@@ -150,3 +150,26 @@ p.170) and implemented **2023-07-06** (2023 SOM p.120); uncertainty design
 enhancement **October 2024** (2024 SOM p.226). The landed RTBM MCP data agrees:
 the first non-zero ramp-up MCP is 2022-03-01, and the first non-zero uncertainty
 MCP is 2023-10-09.
+
+### Added 2026-09-25 by lane SPP-81 (same seven PDFs, same sha256)
+
+- `rt_marginal_interval_share_digitized` (unit `fraction`, fleet_segment `wind` /
+  `coal` / `gas_combined_cycle` / `gas_simple_cycle` / `other`): the annual bars of
+  the SOM figure "Generation on the margin, real-time" (share of RT intervals each
+  technology was marginal and price-setting). The figure prints no data labels, so
+  every value is digitized: 2019–2023 vintages from the PDF vector geometry
+  (bar-segment height over the stacked total), 2024–2025 vintages from the embedded
+  raster (pixel runs at the bar centre, classified to the legend colours). Each year
+  is taken from the **latest** vintage that charts it; every other vintage's reading
+  is in `note`. Checks: digitized values reproduce every share the SOM prints in
+  prose to within 0.4 pt, and overlapping vintages agree to within 0.4 pt except
+  2022, which the 2023 SOM **restated** (gas simple-cycle 21.5 → 24.1 %). The 2025
+  SOM prose states gas simple-cycle / combined-cycle *decreased* 5 / 6 pts from DA to
+  RT, which contradicts its own chart (RT 23.1 / 20.4 vs DA 18 / 14); the chart is
+  recorded and the contradiction noted.
+- `rt_implied_heat_rate` (unit `btu_per_kwh`, fleet_segment `system`): the MMU's
+  annual RT implied heat rate ((RT price − representative VOM) / gas price), as
+  printed in prose, 2020–2025. The 2024 SOM restates 2023 (nearly 11,000 → over
+  12,600); both are in `note`.
+- Consumer: `scripts/probes/_spp81_residual_upper_tercile.py` /
+  `docs/handoffs/FINDING-spp-81-residual-upper-tercile-2026-09-25.md`.
