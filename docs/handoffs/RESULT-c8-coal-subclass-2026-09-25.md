@@ -6,7 +6,8 @@
 
 ## 1. Headline
 
-- **No C8 criterion status changed and no determination changed** on any of the 11 registered runs, which covers all 9 designated keepers, including PJM's newest (`2026-09-25-pjm-next-c1`).
+- **No C8 criterion status changed and no determination changed** on any of the 11 runs registered at session start, which covers all 9 designated keepers, including PJM's newest (`2026-09-25-pjm-next-c1`).
+- One of those 11, CAISO `2026-09-24-caiso-r-inputs-vintage`, was pruned on `main` by R-CAISO-3 (rule 35) while this session ran. It stays in the tables as scored, but its artifact is not part of this change. 10 runs remain registered.
 - Every non-C8 criterion, every non-coal C8 record, every reason line and every top-level verdict field is byte-identical before and after. The only change in the verdicts is the `rubric_version` field.
 - **No coal subclass is over its 30 % cap in any material year of any run.** The highest material share is ERCOT `COAL_PRB` 2020 at **15.3 %** (5.48 of 35.93 TWh). Under the family row it was 13.4 %.
 - **Per-year record changes** are reported at full magnitude in §4. There are two kinds:
@@ -311,7 +312,7 @@ In every one of those years the material subclasses PASS, as the family did.
 - `scripts/calibration_verdict.py`: v3.9 genealogy and the legacy family reader repair
 - `docs/calibration-determination-rubric.md`: C8 per-subclass paragraph and the §9 v3.9 entry
 - `tests/scoring/test_c8_coal_subclass.py`: a trivial two-subclass fixture where one subclass is over its cap and one is under, on a family whose pooled share passes; per-subclass materiality; the splice; blind-year relabel and keep; legacy npz re-split; the legacy reader
-- `results/calibration/*/legitimacy_diagnostics.json` × 10 (every registered bundle except NYISO's, §3.3), `frontend/data/backcast/status/*.js`, `frontend/data/backcast/rubric-consts.js`
+- `results/calibration/*/legitimacy_diagnostics.json` × 9: every bundle still registered on `main` except NYISO's (§3.3), `frontend/data/backcast/status/*.js`, `frontend/data/backcast/rubric-consts.js`
 
 ## 6. Reproduce
 
