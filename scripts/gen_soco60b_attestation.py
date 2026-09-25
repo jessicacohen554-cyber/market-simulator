@@ -67,13 +67,21 @@ def verify(sc: dict, meta: dict) -> None:
 
 
 def verify_scope(
-    bundle: Path, years: list[int], inert_moved: frozenset[str] = frozenset()
+    bundle: Path,
+    years: list[int],
+    inert_moved: frozenset[str] = frozenset(),
+    lane_added: frozenset[str] = frozenset(),
 ) -> dict:
     """Raise unless the hydro budgets, B1 and B2 are as claimed; return the evidence.
 
     ``inert_moved`` names extra solve-surface keys a LATER lane has classified
     INERT for SOCO in its own G-DRIFT (rule 29(b)); each must be passed
     explicitly, so the surface check never widens silently.
+
+    ``lane_added`` names solve-surface keys a LATER lane ADDED as its own LIVE,
+    declared delta (e.g. R-SOCO-B's two boundary registries): each adds one SOCO
+    row and must appear in ``moved``. They are attested by that lane's own layer
+    (``gen_rsocob_attestation.py``), never as inert.
     """
     import numpy as np  # noqa: PLC0415
     import pandas as pd  # noqa: PLC0415
@@ -168,9 +176,9 @@ def verify_scope(
     rows = (
         json.loads((bundle / "run_config.json").read_text()).get("solve_surface") or {}
     )
-    if rows.get("rows") != 185 or set(rows.get("moved") or {}) != {
+    if rows.get("rows") != 185 + len(lane_added) or set(rows.get("moved") or {}) != {
         "ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE"
-    } | set(inert_moved):
+    } | set(inert_moved) | set(lane_added):
         raise SystemExit(
             f"bundle solve_surface {rows.get('rows')} / {rows.get('moved')}"
         )
@@ -190,6 +198,15 @@ def main() -> None:
         "SOCO (e.g. R-SOCO: RGGI_MEMBER_STATES_BY_YEAR, no SOCO state is a "
         "member); repeatable, never implied",
     )
+    ap.add_argument(
+        "--lane-added-moved",
+        action="append",
+        default=[],
+        metavar="KEY",
+        help="a solve-surface key a later lane ADDED as its own live, declared "
+        "delta (R-SOCO-B: EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC, "
+        "ISO_BA_JOINS); adds one SOCO row each; attested by that lane's layer",
+    )
     a = ap.parse_args()
     bundle = Path(a.bundle)
     att_path = bundle / "calibration_attestation.json"
@@ -198,7 +215,12 @@ def main() -> None:
     meta = json.loads((bundle / "meta.json").read_text())
     verify(sc, meta)
     years = sorted(int(y) for y in meta["years"])
-    ev = verify_scope(bundle, years, frozenset(a.declared_inert_moved))
+    ev = verify_scope(
+        bundle,
+        years,
+        frozenset(a.declared_inert_moved),
+        frozenset(a.lane_added_moved),
+    )
     print(json.dumps(ev, indent=1))
     b, bd = ev["budgets"], ev["boundary"]
     att["schema"] = "calibration-attestation/v1"

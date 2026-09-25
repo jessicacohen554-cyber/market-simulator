@@ -2282,33 +2282,17 @@ def _eia860_vintage_ba_plants(iso: str, year: int) -> frozenset[int]:
     return frozenset(int(p) for p in plants)
 
 
-@lru_cache(maxsize=8)
 def _eia860_current_ba_recoded(iso: str) -> frozenset[int]:
     """Plants the CURRENT EIA-860 plant file codes to a BA other than ``iso``'s.
 
-    Read only for an ISO in ``ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE`` (see that
-    constant for the measurement). A plant absent from the current file, or
-    carrying no BA code there, is NOT returned: only an explicit recode to
-    another balancing authority removes a plant from ``iso``'s membership.
+    Thin alias of :func:`market_sim.data.ba_membership.current_ba_recoded_plants`
+    (moved to ``src`` by lane R-SOCO-B so the LP fleet loaders read the SAME
+    function the benchmark does — rule 19). Read only for an ISO in
+    ``ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE``.
     """
-    from market_sim.config.paths import EIA_860_DIR
-    from market_sim.data.zone_assignment import _iso_ba_codes
+    from market_sim.data.ba_membership import current_ba_recoded_plants
 
-    path = EIA_860_DIR / "eia860_plant.parquet"
-    codes = set(_iso_ba_codes(iso))
-    if not codes or not path.exists():
-        return frozenset()
-    df = pd.read_parquet(path, columns=["Plant Code", "Balancing Authority Code"])
-    ba = df["Balancing Authority Code"].astype(str).str.strip()
-    other = df[(ba != "") & ~ba.isin(["nan", "None"]) & ~ba.isin(codes)]
-    ours = set(
-        pd.to_numeric(df[ba.isin(codes)]["Plant Code"], errors="coerce")
-        .dropna()
-        .astype(int)
-    )
-    plants = pd.to_numeric(other["Plant Code"], errors="coerce").dropna().astype(int)
-    # A plant with generator rows coded to BOTH this ISO and another stays in.
-    return frozenset(int(p) for p in plants if int(p) not in ours)
+    return current_ba_recoded_plants(iso)
 
 
 @lru_cache(maxsize=128)
@@ -2331,8 +2315,21 @@ def _iso_plant_ids(
     For an ISO in ``constants.ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE`` the
     plants the current EIA-860 file recodes to ANOTHER BA are then removed
     (:func:`_eia860_current_ba_recoded`; SOCO-60, the former Gulf Power plants).
+
+    For an ISO in ``constants.ISO_BA_JOINS`` and a ``year`` BEFORE a joining
+    BA's join year, the plants that year's EIA-860 vintage codes to the joining
+    BA are removed too (lane R-SOCO-B: PowerSouth ``AEC`` before 2021 — the
+    eGRID-2023 base codes them SOCO, but their load is outside SOCO's EIA-930
+    demand until 2021-09-01). The join year's pre-join MONTHS are zeroed in
+    :func:`_eia923_frame`. Both are the same rule the LP fleet reads
+    (``market_sim.data.ba_membership``), so fleet, benchmark and injection
+    share one boundary (rule 19).
     """
     from market_sim.config.constants import ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE
+    from market_sim.data.ba_membership import (
+        NOT_A_MEMBER_THIS_YEAR,
+        ba_join_first_month,
+    )
 
     base = frozenset(build_zone_lookup(iso))
     if vintage_union and year is not None:
@@ -2342,6 +2339,16 @@ def _iso_plant_ids(
         # and the must-run injection all read (rule 19), so the three move
         # together. Off for every other ISO: byte-identical.
         base = base - _eia860_current_ba_recoded(iso)
+    if year is not None:
+        # R-SOCO-B: a joining BA's plants are outside the region before its
+        # join year. Empty (no-op) for every region ISO_BA_JOINS does not name.
+        outside = {
+            p
+            for p, m in ba_join_first_month(iso, int(year)).items()
+            if m >= NOT_A_MEMBER_THIS_YEAR
+        }
+        if outside:
+            base = base - frozenset(outside)
     return base
 
 
@@ -2405,6 +2412,25 @@ def _eia923_frame(
             )
         df = df[~_host].copy()
     cols = monthly_netgen_columns()
+    # R-SOCO-B: in a joining BA's join year its plants are inside the region
+    # only from the join month (ISO_BA_JOINS; PowerSouth into SOCO 2021-09):
+    # their earlier months are zeroed and their annual re-summed from the kept
+    # months, so the benchmark, its class shares and the injection count only
+    # the load-boundary months EIA-930 measures. Empty map (no-op) elsewhere.
+    from market_sim.data.ba_membership import ba_join_first_month
+
+    _join = {
+        p: m for p, m in ba_join_first_month(iso, int(year)).items() if 1 < m <= 12
+    }
+    if _join:
+        first = df["plant_id"].map(_join)
+        hit = first.notna().to_numpy(dtype=bool)
+        if hit.any():
+            df = df.copy()
+            for i, c in enumerate(cols):
+                before = (first > (i + 1)).fillna(False).to_numpy(dtype=bool)
+                df.loc[before, c] = 0.0
+            df.loc[hit, "netgen_annual_mwh"] = df.loc[hit, cols].sum(axis=1)
     agg = {"netgen_annual_mwh": "sum", **{c: "sum" for c in cols}}
     grouped = df.groupby(["plant_id", "klass"], as_index=False).agg(agg)
     grouped.insert(0, "year", np.int16(year))

@@ -279,6 +279,7 @@ def build_generator_table(zip_path: Path, egrid_vintage: int) -> pd.DataFrame:
 
 def rescope_generator_table_from_parquet(
     vintage_dir: Path,
+    admit_bas: tuple[str, ...] = (),
 ) -> tuple[int, int, list[str]]:
     """Re-derive ``eia860_generators.parquet`` from a vintage's OWN committed sheets.
 
@@ -310,8 +311,24 @@ def rescope_generator_table_from_parquet(
     this function was written: the six-BA rebuild reproduces the committed 14,043 keys
     exactly — 0 committed-only, 0 rebuilt-only — and adds 1,512 SWPP rows.
 
+    **``admit_bas`` — a balancing authority that JOINED a modelled region**
+    (lane R-SOCO-B, owner ruling (B) 2026-09-25). A BA listed in
+    ``constants.ISO_BA_JOINS`` merged into a modelled region part-way through a
+    backcast year — PowerSouth (``AEC``) into SOCO on 2021-09-01 — so its
+    generators are coded to the joining BA in the join-year vintage and are
+    absent from that vintage's table (the modelled-BA filter dropped them). It is
+    deliberately NOT registered in ``BA_CODE_TO_ISO`` (that would leak it into
+    zone lookup, eGRID, retirees and demand pools for every year). Passing it
+    here appends ONLY that BA's rows, by exactly the construction above; when
+    ``admit_bas`` is given, no OTHER BA's rows are appended, so the rebuild
+    cannot move any region the call did not name. The fleet loader admits the
+    rows only from the join year and masks them offline before the join month
+    (``market_sim.data.ba_membership``).
+
     Args:
         vintage_dir: An ``eia-860`` vintage directory (or the canonical snapshot).
+        admit_bas: Extra EIA BA codes to append (joining BAs only; see above).
+            Empty keeps the original behaviour byte-for-byte.
 
     Returns:
         ``(rows_before, rows_after, added_bas)``.
@@ -342,7 +359,10 @@ def rescope_generator_table_from_parquet(
     df["balancing_authority_code"] = (
         df["plant_id"].map(ba_by_plant).astype("string").str.strip()
     )
+    joining = df[df["balancing_authority_code"].isin(admit_bas)]
     df = _admit_footprint(df, plant)
+    if admit_bas:
+        df = pd.concat([df, joining])
 
     df["plant_id"] = df["plant_id"].astype("int64")
     df["generator_id"] = df["generator_id"].map(_stringify)
@@ -384,6 +404,9 @@ def rescope_generator_table_from_parquet(
     # columns; ONLY rows of the newly registered balancing authorities are
     # appended, heat-rate-joined the way the canonical build joins them when
     # the committed file carries that column.
+    if admit_bas:
+        # Only the named joining BAs — never another region's rows.
+        added = [ba for ba in added if ba in admit_bas]
     new_rows = df[df["balancing_authority_code"].astype(str).isin(added)].copy()
     if "heat_rate" in committed.columns:
         _join_egrid_heat_rate(new_rows, egrid_vintage_for_eia860_dir(vintage_dir))
@@ -810,6 +833,15 @@ def main() -> None:
         "key. Runs this mode alone and exits.",
     )
     parser.add_argument(
+        "--admit-ba",
+        nargs="+",
+        default=(),
+        metavar="BA",
+        help="With --rescope-from-parquet: append ONLY these joining balancing "
+        "authorities' rows (constants.ISO_BA_JOINS; e.g. AEC into vintage_2021). "
+        "No other BA's rows are appended.",
+    )
+    parser.add_argument(
         "--retired-window-from",
         type=Path,
         nargs="+",
@@ -894,7 +926,9 @@ def main() -> None:
 
     if args.rescope_from_parquet:
         for vintage_dir in args.rescope_from_parquet:
-            before, after, added = rescope_generator_table_from_parquet(vintage_dir)
+            before, after, added = rescope_generator_table_from_parquet(
+                vintage_dir, tuple(args.admit_ba)
+            )
             note = f" (+{', '.join(added)})" if added else " (no BA added)"
             print(f"{vintage_dir.name}: {before} -> {after} generator rows{note}")
         return

@@ -2279,6 +2279,41 @@ EIA930_PS_FOLDED_INTO_WAT: frozenset[str] = frozenset({"MISO", "PJM"})
 # pin would double-represent its discharge exactly as NEISO's did.
 EIA930_PS_SPLIT_COMPLETE_FROM: dict[str, int] = {"NEISO": 2025, "SOCO": 2025}
 
+# --- EIA-930 published sign-inverted ``Total interchange`` windows ----------
+# Per EIA-930 BA code: the inclusive ``(first, last)`` ``UTC time`` stamps of
+# the extract's own clock inside which the PUBLISHED ``Total interchange``
+# column carries the WRONG SIGN. Inside a window the column is negated at the
+# frame-construction seam (``data.eia930.frames._repair_inverted_interchange``)
+# so every reader — the served net-interchange schedule, the demand balance
+# screen (``S = NG - TI``) and the hourly interchange benchmark — sees EIA's
+# own sign convention (positive = net export). The raw extract is never
+# modified (data/raw is immutable). Zero free parameters: the window edges are
+# where the published identity flips, measured hour by hour (rule 21 / 24).
+# Rule 14 [R-ACCURATE] source repair — the identity ``TI = NG - D`` and the
+# independent BA-to-BA book both give the correct sign; the column is kept
+# and reconciled, never replaced by an estimate.
+#
+# SOCO (lane R-SOCO-B, 2026-09-25, owner ruling (A) "Yes" — repair, do not
+# touch the raw file; I-SOCO intake FINDING §4.1). Measured on
+# ``data/raw/eia-930-hourly/SOCO hourly.parquet`` over local-year 2019
+# (8,760 rows, UTC 2019-01-01 07:00 .. 2020-01-01 06:00): in EVERY one of the
+# 6,071 hours from the first row through UTC 2019-09-11 05:00,
+# ``Total interchange == -(Net generation - Demand)`` within 1 MW, and no hour
+# there agrees with the correct sign alone (2 hours sit within 1 MW of zero
+# and satisfy both); from UTC 2019-09-11 06:00 on, 2,664 of the 2,689 hours
+# satisfy ``TI == NG - D`` (the other 25 are NaN) and none is inverted. The
+# nine-DIBA BA-to-BA book (``eia-930-interchange/SOCO interchange
+# hourly.parquet``) corroborates: inside the window corr(TI, sum of legs) =
+# -1.0000 with median |TI + legs| = 0 MW (TI -4.114 TWh vs legs +4.114 TWh);
+# after it median |TI - legs| = 0 MW. EIA's live BALANCE file carries the
+# same inversion (FINDING-i-soco §4.1), so it is the publisher's. The window
+# opens at the extract's first 2019 row because the corpus holds no earlier
+# SOCO hour; nothing before it is asserted. Re-derive only when the source
+# extract changes (rule 23 [R-FROZEN-DERIVE]).
+EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC: dict[str, tuple[tuple[str, str], ...]] = {
+    "SOCO": (("2019-01-01 07:00", "2019-09-11 05:00"),)
+}
+
 # --- ISO plant membership: drop plants the current EIA-860 recodes elsewhere --
 # ``run_calibration_full._iso_plant_ids`` is the single membership seam the
 # EIA-923 benchmark frame, its class shares and the must-run (biomass / OTHER)
@@ -2307,6 +2342,50 @@ EIA930_PS_SPLIT_COMPLETE_FROM: dict[str, int] = {"NEISO": 2025, "SOCO": 2025}
 # Solve-affecting only through the injection (Perdido landfill gas,
 # 0.014 TWh/yr of biomass).
 ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE: dict[str, bool] = {"SOCO": True}
+# EXTENDED 2026-09-25 (lane R-SOCO-B): the same partition now also applies to
+# the LP FLEET (``data.ba_membership.drop_current_ba_recoded_rows`` at the
+# operable, retiree and mothball loaders), so benchmark, injection and fleet
+# read ONE membership rule (rule 19 [R-ONE-MECH]). With
+# ``eia860_vintage_tracks_solve_year`` on, vintages 2019-2023 code the former
+# Gulf Power plants to SOCO, so the vintage fleet carried them although
+# EIA-930's SOCO demand never included them — measured on the R-SOCO keeper
+# recipe, 2,525 MW in 2023 (Crist 641 1,858 MW ST_GAS/CT, Lansing Smith 643
+# 652 MW CC, Pea Ridge 7715 12 MW, Perdido 57502 3 MW) and 641 as 924 MW of
+# COAL + 643 in 2019. Vintage 2024 and the canonical snapshot already code
+# them FPL, so 2024/2025 are unchanged by construction.
+
+# --- Balancing authorities that JOINED a modelled region mid-backcast --------
+# ``{iso: {joining_ba: (year, month)}}``: the EIA-930 BA code whose load and
+# plants joined ``iso``'s balancing authority on the first day of ``month`` of
+# ``year``. Read by ``data.ba_membership`` at three seams so supply and the
+# measured load stay on one boundary (rule 19 [R-ONE-MECH]):
+#   * LP fleet — in the join year the join-year EIA-860 vintage still codes the
+#     plants to the joining BA; they are admitted and masked offline before the
+#     join month (the COD-ramp month mask); before the join year they are not
+#     admitted (the vintages code them to the joining BA and its load is outside
+#     the ISO's EIA-930 demand); after it the vintages code them to ``iso``;
+#   * EIA-923 benchmark (and the must-run injection that reads it) — the
+#     eGRID-2023 membership base codes them to ``iso`` in every year, so they
+#     are excluded before the join year and their months before the join month
+#     are zeroed in the join year.
+# The joining BA is deliberately NOT registered in ``BA_CODE_TO_ISO`` (that
+# would leak it into zone lookup, eGRID, retirees and demand pools for every
+# year). Zero free parameters: the date is the publisher's own record (rules
+# 21 / 24); per-ISO (rule 25).
+#
+# SOCO (lane R-SOCO-B, 2026-09-25, owner ruling (B) "Yes"): PowerSouth Energy
+# Cooperative (EIA-930 BA ``AEC``) joined the Southern Company BA on
+# 2021-09-01. Measured: the SOCO<->AEC interchange leg in
+# ``eia-930-interchange/SOCO interchange hourly.parquet`` runs 2019-01-01 ..
+# 2021-09-01 00:00 and stops; EIA-860 vintages 2019-2021 code PowerSouth's
+# plants {53, 55, 56, 533, 6192, 7063, 56522, 64469} ``AEC`` and vintages
+# 2022+ code them ``SOCO`` (FINDING-i-soco-2019-2022-intake §4.2). Vintage
+# 2021's operable PowerSouth generators — McWilliams 533 (653 MW CT/CA),
+# McIntosh 7063 (676 MW GT/CE), Gantt 53 / Point A 55 hydro (8.2 MW),
+# Springhill 56522 LFG (4.8 MW) — are appended to that vintage's processed
+# table by ``scripts/data/process_eia860.py --rescope-from-parquet
+# data/raw/eia-860/vintage_2021 --admit-ba AEC``.
+ISO_BA_JOINS: dict[str, dict[str, tuple[int, int]]] = {"SOCO": {"AEC": (2021, 9)}}
 
 # --- Hydro hourly deliverability envelope (caiso-72 STEP-2) ------------------
 # Percentile of the measured EIA-930 NG:WAT hourly output, per (month x

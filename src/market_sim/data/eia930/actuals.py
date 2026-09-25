@@ -37,6 +37,7 @@ from .frames import (
     _ercot_hourly_frame,
     _filter_iso_year,
     _read_clean_iso_year,
+    _repair_inverted_interchange,
     _use_clean,
 )
 
@@ -526,7 +527,7 @@ def load_eia_hourly_benchmark(iso: str, year: int) -> dict[str, np.ndarray] | No
     path = _eia_hourly_path(ba_code)
     if not path.exists():
         return None
-    df = pd.read_parquet(path)
+    df = _repair_inverted_interchange(pd.read_parquet(path), ba_code)
     local = df["Local date"]
     df = df[
         (local.dt.year == year) & ~((local.dt.month == 2) & (local.dt.day == 29))

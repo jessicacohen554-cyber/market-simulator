@@ -76,6 +76,28 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-25 — R-SOCO-B: SOCO's balancing-authority boundary (owner
+rulings (A) and (B), 2026-09-25). KEY-MOVING for SOCO only, so NOT a same-key
+invalidation; recorded here because part of it is a code-level change a value
+hash cannot see.** Record: ``docs/handoffs/r-soco/PRECOMMIT-r-soco-b-2026-09-25.md``.
+WHAT CHANGED: (R1) ``EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC`` negates
+EIA's published sign-inverted SOCO ``Total interchange`` for UTC 2019-01-01
+07:00 .. 2019-09-11 05:00 at the frame seam; (R2) the existing
+``ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE`` partition now also reaches the LP
+fleet (``data.ba_membership``), dropping the former Gulf Power plants that
+EIA-860 vintages 2019-2023 code SOCO; (R3) ``ISO_BA_JOINS`` admits PowerSouth
+(``AEC``) from 2021-09-01 in the fleet and the EIA-923 benchmark, with
+``vintage_2021/eia860_generators.parquet`` gaining the 23 ``AEC`` rows
+(strictly additive; every committed row byte-identical). The two new tables are
+DECLARED at their INERT values (``{"SOCO": ()}`` / ``{"SOCO": {}}``), so their
+live SOCO rows sit off the declaration and every SOCO key moves — the soco60b
+precedent. WHAT IS INVALIDATED: SOCO backcasts that read 2019-2023 (the code
+change R2 rides the SOCO key move). WHAT IS NOT: every other ISO — both tables
+project to SOCO only, the fleet/benchmark helpers return their input unchanged
+for an unregistered region, and ``solve_surface_register.py --diff`` reports
+zero moved values for them. **PROSE + KEY MOVE** (no ``SolveEpoch``): the SOCO
+key move already separates the bundles.
+
 **Epoch 2026-09-24 — R-NEISO: the gas sub-5-day outage scope
 (``unit_outage_short_windows_gas``) is armable WITHOUT the coal scope
 (``unit_outage_short_windows``).** Before, the gas flag was read only inside the

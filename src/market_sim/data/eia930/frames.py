@@ -291,6 +291,48 @@ def _repair_measured_gaps(
     return repair_measured_gaps(frame, ba_code, year)
 
 
+def _repair_inverted_interchange(df: pd.DataFrame, ba_code: str) -> pd.DataFrame:
+    """Negate a BA's PUBLISHED sign-inverted ``Total interchange`` windows.
+
+    Applied wherever this package reads a ``<BA> hourly`` extract straight off
+    disk (the strict frame, the gap-filled reconstruction and the hourly
+    benchmark), so every reader of the column — the served net-interchange
+    schedule, the demand balance screen and the interchange benchmark — sees
+    EIA's own sign convention (positive = net export). The windows are the
+    registry :data:`~market_sim.config.constants.
+    EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC` (inclusive ``UTC time``
+    stamps, measured; SOCO 2019, lane R-SOCO-B). Rule 14 [R-ACCURATE] source
+    repair; zero fitted parameters; the raw extract is never modified.
+
+    A BA with no registered window, or a frame without the two columns, is
+    returned UNCHANGED (the same object), so every other BA is byte-identical.
+    Otherwise a copy is returned; the input is never edited in place.
+    """
+    from market_sim.config.constants import (
+        EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC,
+    )
+
+    windows = EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC.get(ba_code)
+    if (
+        not windows
+        or "Total interchange" not in df.columns
+        or "UTC time" not in df.columns
+    ):
+        return df
+    utc = pd.DatetimeIndex(df["UTC time"])
+    if utc.tz is not None:
+        utc = utc.tz_convert("UTC").tz_localize(None)
+    inside = np.zeros(len(df), dtype=bool)
+    for first, last in windows:
+        inside |= (utc >= pd.Timestamp(first)) & (utc <= pd.Timestamp(last))
+    if not inside.any():
+        return df
+    out = df.copy()
+    ti = out["Total interchange"]
+    out["Total interchange"] = ti.where(~inside, -ti)
+    return out
+
+
 def _eia_hourly_frame_raw(ba_code: str, year: int) -> pd.DataFrame | None:
     """Return the strict BA-year frame BEFORE the ``NG:`` unit-slip screen.
 
@@ -319,7 +361,7 @@ def _eia_hourly_frame_raw(ba_code: str, year: int) -> pd.DataFrame | None:
     path = _eia_hourly_path(ba_code)
     if not path.exists():
         return None
-    df = pd.read_parquet(path)
+    df = _repair_inverted_interchange(pd.read_parquet(path), ba_code)
     local = df["Local date"]
     df = df[
         (local.dt.year == year) & ~((local.dt.month == 2) & (local.dt.day == 29))
@@ -585,7 +627,7 @@ def _eia_hourly_frame_filled(ba_code: str, year: int) -> pd.DataFrame | None:
     path = _eia_hourly_path(ba_code)
     if not path.exists():
         return None
-    df = pd.read_parquet(path)
+    df = _repair_inverted_interchange(pd.read_parquet(path), ba_code)
     if "Local time" not in df.columns:
         return None
     local = df["Local date"]
