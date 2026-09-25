@@ -1,0 +1,1520 @@
+{
+ "before_vs_after": {
+  "CAISO_2022": {
+   "n_gen_before": 1651,
+   "n_gen_after": 1651,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    10684
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 8,
+    "plant_group:COAL->COAL_BIT": 8
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "CAISO_2023": {
+   "n_gen_before": 1633,
+   "n_gen_after": 1633,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    10684
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 8,
+    "plant_group:COAL->COAL_BIT": 8
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "CAISO_2024": {
+   "n_gen_before": 1625,
+   "n_gen_after": 1625,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    10684
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 8,
+    "plant_group:COAL->COAL_BIT": 8
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "CAISO_2025": {
+   "n_gen_before": 1710,
+   "n_gen_after": 1710,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    10684
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 8,
+    "plant_group:COAL->COAL_BIT": 8
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "ERCOT_2019": {
+   "n_gen_before": 2073,
+   "n_gen_after": 2073,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 28,
+    "efficiency_bin:COAL->COAL_LIGNITE": 12,
+    "plant_group:COAL->COAL_PRB": 28,
+    "plant_group:COAL->COAL_LIGNITE": 12
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "ERCOT_2020": {
+   "n_gen_before": 2076,
+   "n_gen_after": 2076,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 28,
+    "efficiency_bin:COAL->COAL_LIGNITE": 12,
+    "plant_group:COAL->COAL_PRB": 28,
+    "plant_group:COAL->COAL_LIGNITE": 12
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "ERCOT_2021": {
+   "n_gen_before": 2323,
+   "n_gen_after": 2323,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 28,
+    "efficiency_bin:COAL->COAL_LIGNITE": 12,
+    "plant_group:COAL->COAL_PRB": 28,
+    "plant_group:COAL->COAL_LIGNITE": 12
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "ERCOT_2022": {
+   "n_gen_before": 2327,
+   "n_gen_after": 2327,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 28,
+    "efficiency_bin:COAL->COAL_LIGNITE": 12,
+    "plant_group:COAL->COAL_PRB": 28,
+    "plant_group:COAL->COAL_LIGNITE": 12
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "ERCOT_2023": {
+   "n_gen_before": 2326,
+   "n_gen_after": 2326,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 28,
+    "efficiency_bin:COAL->COAL_LIGNITE": 12,
+    "plant_group:COAL->COAL_PRB": 28,
+    "plant_group:COAL->COAL_LIGNITE": 12
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "ERCOT_2024": {
+   "n_gen_before": 2323,
+   "n_gen_after": 2323,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 28,
+    "efficiency_bin:COAL->COAL_LIGNITE": 12,
+    "plant_group:COAL->COAL_PRB": 28,
+    "plant_group:COAL->COAL_LIGNITE": 12
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "ERCOT_2025": {
+   "n_gen_before": 2310,
+   "n_gen_after": 2310,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 28,
+    "efficiency_bin:COAL->COAL_LIGNITE": 12,
+    "plant_group:COAL->COAL_PRB": 28,
+    "plant_group:COAL->COAL_LIGNITE": 12
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "MISO_2019": {
+   "n_gen_before": 2995,
+   "n_gen_after": 2995,
+   "n_movers": 47,
+   "mover_plants": [
+    1104,
+    1702,
+    1943,
+    2790,
+    6089,
+    10686,
+    10861
+   ],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    1104,
+    1702,
+    1943,
+    2790,
+    6089,
+    6137,
+    6639,
+    10234,
+    10686,
+    10861,
+    10863,
+    10867,
+    50933,
+    54098,
+    54201
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_LIGNITE": 45,
+    "efficiency_bin:COAL->COAL_PRB": 442,
+    "efficiency_bin:COAL->COAL_BIT": 268,
+    "plant_group:COAL->COAL_LIGNITE": 45,
+    "plant_group:COAL->COAL_PRB": 442,
+    "plant_group:COAL->COAL_BIT": 268
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "MISO_2020": {
+   "n_gen_before": 2989,
+   "n_gen_after": 2989,
+   "n_movers": 41,
+   "mover_plants": [
+    1104,
+    1702,
+    1943,
+    2790,
+    6089,
+    10861
+   ],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    1104,
+    1702,
+    1943,
+    2790,
+    6089,
+    6137,
+    6639,
+    10234,
+    10861,
+    10863,
+    10867,
+    50933,
+    54098
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_LIGNITE": 45,
+    "efficiency_bin:COAL->COAL_PRB": 434,
+    "efficiency_bin:COAL->COAL_BIT": 232,
+    "plant_group:COAL->COAL_LIGNITE": 45,
+    "plant_group:COAL->COAL_PRB": 434,
+    "plant_group:COAL->COAL_BIT": 232
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "MISO_2021": {
+   "n_gen_before": 2981,
+   "n_gen_after": 2981,
+   "n_movers": 27,
+   "mover_plants": [
+    1104,
+    1702,
+    2790,
+    10861
+   ],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    1104,
+    1702,
+    2790,
+    6137,
+    6639,
+    10234,
+    10861,
+    10863,
+    50933,
+    54098,
+    56786
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 425,
+    "efficiency_bin:COAL->COAL_BIT": 241,
+    "efficiency_bin:COAL->COAL_LIGNITE": 45,
+    "plant_group:COAL->COAL_PRB": 425,
+    "plant_group:COAL->COAL_BIT": 241,
+    "plant_group:COAL->COAL_LIGNITE": 45
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "MISO_2022": {
+   "n_gen_before": 2982,
+   "n_gen_after": 2982,
+   "n_movers": 13,
+   "mover_plants": [
+    1702,
+    10861
+   ],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    1702,
+    6137,
+    6639,
+    10234,
+    10861,
+    10863,
+    50933,
+    54098,
+    56786
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 398,
+    "efficiency_bin:COAL->COAL_BIT": 232,
+    "efficiency_bin:COAL->COAL_LIGNITE": 45,
+    "plant_group:COAL->COAL_PRB": 398,
+    "plant_group:COAL->COAL_BIT": 232,
+    "plant_group:COAL->COAL_LIGNITE": 45
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "MISO_2023": {
+   "n_gen_before": 2736,
+   "n_gen_after": 2736,
+   "n_movers": 12,
+   "mover_plants": [
+    10234,
+    10861
+   ],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    6639,
+    10234,
+    10861,
+    10863,
+    50933
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 343,
+    "efficiency_bin:COAL->COAL_BIT": 135,
+    "efficiency_bin:COAL->COAL_LIGNITE": 18,
+    "plant_group:COAL->COAL_PRB": 343,
+    "plant_group:COAL->COAL_BIT": 135,
+    "plant_group:COAL->COAL_LIGNITE": 18
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "MISO_2024": {
+   "n_gen_before": 2720,
+   "n_gen_after": 2720,
+   "n_movers": 6,
+   "mover_plants": [
+    10234
+   ],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    10234
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 326,
+    "efficiency_bin:COAL->COAL_BIT": 119,
+    "efficiency_bin:COAL->COAL_LIGNITE": 18,
+    "plant_group:COAL->COAL_PRB": 326,
+    "plant_group:COAL->COAL_BIT": 119,
+    "plant_group:COAL->COAL_LIGNITE": 18
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "MISO_2025": {
+   "n_gen_before": 3217,
+   "n_gen_after": 3217,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 443,
+    "efficiency_bin:COAL->COAL_BIT": 262,
+    "efficiency_bin:COAL->COAL_LIGNITE": 54,
+    "plant_group:COAL->COAL_PRB": 443,
+    "plant_group:COAL->COAL_BIT": 262,
+    "plant_group:COAL->COAL_LIGNITE": 54
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NEISO_2019": {
+   "n_gen_before": 759,
+   "n_gen_after": 759,
+   "n_movers": 9,
+   "mover_plants": [
+    568
+   ],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    568,
+    2367
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 9,
+    "efficiency_bin:COAL->COAL_BIT": 17,
+    "plant_group:COAL->COAL_PRB": 9,
+    "plant_group:COAL->COAL_BIT": 17
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NEISO_2020": {
+   "n_gen_before": 780,
+   "n_gen_after": 780,
+   "n_movers": 9,
+   "mover_plants": [
+    568
+   ],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    568,
+    2367
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 9,
+    "efficiency_bin:COAL->COAL_BIT": 17,
+    "plant_group:COAL->COAL_PRB": 9,
+    "plant_group:COAL->COAL_BIT": 17
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NEISO_2021": {
+   "n_gen_before": 789,
+   "n_gen_after": 789,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 8,
+    "efficiency_bin:COAL->COAL_PRB": 9,
+    "plant_group:COAL->COAL_BIT": 8,
+    "plant_group:COAL->COAL_PRB": 9
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NEISO_2022": {
+   "n_gen_before": 767,
+   "n_gen_after": 767,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 8,
+    "efficiency_bin:COAL->COAL_PRB": 9,
+    "plant_group:COAL->COAL_BIT": 8,
+    "plant_group:COAL->COAL_PRB": 9
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NEISO_2023": {
+   "n_gen_before": 743,
+   "n_gen_after": 743,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 8,
+    "plant_group:COAL->COAL_BIT": 8
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NEISO_2024": {
+   "n_gen_before": 736,
+   "n_gen_after": 736,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 8,
+    "plant_group:COAL->COAL_BIT": 8
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NEISO_2025": {
+   "n_gen_before": 835,
+   "n_gen_after": 835,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 17,
+    "efficiency_bin:COAL->COAL_PRB": 9,
+    "plant_group:COAL->COAL_BIT": 17,
+    "plant_group:COAL->COAL_PRB": 9
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NWPP_2019": {
+   "n_gen_before": 623,
+   "n_gen_after": 623,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    10504
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 33,
+    "efficiency_bin:COAL->COAL_PRB": 42,
+    "efficiency_bin:COAL->COAL_WC": 9,
+    "plant_group:COAL->COAL_BIT": 33,
+    "plant_group:COAL->COAL_PRB": 42,
+    "plant_group:COAL->COAL_WC": 9
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NWPP_2020": {
+   "n_gen_before": 775,
+   "n_gen_after": 775,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    10504
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 33,
+    "efficiency_bin:COAL->COAL_PRB": 42,
+    "efficiency_bin:COAL->COAL_WC": 9,
+    "plant_group:COAL->COAL_BIT": 33,
+    "plant_group:COAL->COAL_PRB": 42,
+    "plant_group:COAL->COAL_WC": 9
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NWPP_2021": {
+   "n_gen_before": 634,
+   "n_gen_after": 634,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    10504
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 33,
+    "efficiency_bin:COAL->COAL_PRB": 37,
+    "efficiency_bin:COAL->COAL_WC": 9,
+    "plant_group:COAL->COAL_BIT": 33,
+    "plant_group:COAL->COAL_PRB": 37,
+    "plant_group:COAL->COAL_WC": 9
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NWPP_2022": {
+   "n_gen_before": 628,
+   "n_gen_after": 628,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 30,
+    "efficiency_bin:COAL->COAL_PRB": 37,
+    "efficiency_bin:COAL->COAL_WC": 9,
+    "plant_group:COAL->COAL_BIT": 30,
+    "plant_group:COAL->COAL_PRB": 37,
+    "plant_group:COAL->COAL_WC": 9
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NWPP_2023": {
+   "n_gen_before": 629,
+   "n_gen_after": 629,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 30,
+    "efficiency_bin:COAL->COAL_PRB": 37,
+    "efficiency_bin:COAL->COAL_WC": 9,
+    "plant_group:COAL->COAL_BIT": 30,
+    "plant_group:COAL->COAL_PRB": 37,
+    "plant_group:COAL->COAL_WC": 9
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NWPP_2024": {
+   "n_gen_before": 652,
+   "n_gen_after": 652,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 30,
+    "efficiency_bin:COAL->COAL_PRB": 37,
+    "efficiency_bin:COAL->COAL_WC": 9,
+    "plant_group:COAL->COAL_BIT": 30,
+    "plant_group:COAL->COAL_PRB": 37,
+    "plant_group:COAL->COAL_WC": 9
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NWPP_2025": {
+   "n_gen_before": 653,
+   "n_gen_after": 653,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 30,
+    "efficiency_bin:COAL->COAL_PRB": 42,
+    "efficiency_bin:COAL->COAL_WC": 9,
+    "plant_group:COAL->COAL_BIT": 30,
+    "plant_group:COAL->COAL_PRB": 42,
+    "plant_group:COAL->COAL_WC": 9
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NYISO_2021": {
+   "n_gen_before": 805,
+   "n_gen_after": 805,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {},
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NYISO_2022": {
+   "n_gen_before": 696,
+   "n_gen_after": 696,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {},
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NYISO_2023": {
+   "n_gen_before": 685,
+   "n_gen_after": 685,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {},
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NYISO_2024": {
+   "n_gen_before": 678,
+   "n_gen_after": 678,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {},
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NYISO_2025": {
+   "n_gen_before": 709,
+   "n_gen_after": 709,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 18,
+    "efficiency_bin:COAL->COAL_PRB": 9,
+    "plant_group:COAL->COAL_BIT": 18,
+    "plant_group:COAL->COAL_PRB": 9
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "PJM_2019": {
+   "n_gen_before": 2672,
+   "n_gen_after": 2672,
+   "n_movers": 96,
+   "mover_plants": [
+    876,
+    879,
+    883,
+    1554,
+    1571,
+    1572,
+    1573,
+    3118,
+    3140,
+    3797,
+    3943,
+    3944,
+    10743,
+    50366,
+    54081,
+    54556
+   ],
+   "movers_outside_generic_bucket": [
+    "COAL_PJM_ComEd_p876_committed",
+    "COAL_PJM_ComEd_p876_econc02",
+    "COAL_PJM_ComEd_p876_econc03",
+    "COAL_PJM_ComEd_p876_econc04",
+    "COAL_PJM_ComEd_p879_econc01",
+    "COAL_PJM_ComEd_p879_econc02",
+    "COAL_PJM_West_APS_p3118_econc01",
+    "COAL_PJM_West_APS_p3943_econc01",
+    "COAL_PJM_West_APS_p3944_econc01"
+   ],
+   "generic_bucket_plants": [
+    883,
+    1554,
+    1571,
+    1572,
+    1573,
+    3140,
+    3797,
+    10743,
+    50366,
+    54081,
+    54556
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 401,
+    "efficiency_bin:COAL->COAL_PRB": 34,
+    "efficiency_bin:COAL->COAL_WC": 89,
+    "plant_group:COAL->COAL_BIT": 401,
+    "plant_group:COAL->COAL_PRB": 34,
+    "plant_group:COAL->COAL_WC": 89
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "PJM_2020": {
+   "n_gen_before": 2665,
+   "n_gen_after": 2665,
+   "n_movers": 54,
+   "mover_plants": [
+    876,
+    879,
+    883,
+    1554,
+    1571,
+    1573,
+    3797,
+    54556
+   ],
+   "movers_outside_generic_bucket": [
+    "COAL_PJM_ComEd_p876_committed",
+    "COAL_PJM_ComEd_p876_econc02",
+    "COAL_PJM_ComEd_p876_econc03",
+    "COAL_PJM_ComEd_p876_econc04",
+    "COAL_PJM_ComEd_p879_econc00",
+    "COAL_PJM_ComEd_p879_econc01"
+   ],
+   "generic_bucket_plants": [
+    883,
+    1554,
+    1571,
+    1573,
+    3797,
+    54556
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 362,
+    "efficiency_bin:COAL->COAL_PRB": 34,
+    "efficiency_bin:COAL->COAL_WC": 68,
+    "plant_group:COAL->COAL_BIT": 362,
+    "plant_group:COAL->COAL_PRB": 34,
+    "plant_group:COAL->COAL_WC": 68
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "PJM_2021": {
+   "n_gen_before": 2675,
+   "n_gen_after": 2675,
+   "n_movers": 45,
+   "mover_plants": [
+    876,
+    879,
+    883,
+    1554,
+    1573,
+    3140,
+    3797
+   ],
+   "movers_outside_generic_bucket": [
+    "COAL_PJM_ComEd_p876_committed",
+    "COAL_PJM_ComEd_p876_econc03",
+    "COAL_PJM_ComEd_p876_econc04",
+    "COAL_PJM_ComEd_p879_econc00",
+    "COAL_PJM_ComEd_p879_econc01"
+   ],
+   "generic_bucket_plants": [
+    883,
+    1554,
+    1573,
+    3140,
+    3797
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 365,
+    "efficiency_bin:COAL->COAL_PRB": 34,
+    "efficiency_bin:COAL->COAL_WC": 68,
+    "plant_group:COAL->COAL_BIT": 365,
+    "plant_group:COAL->COAL_PRB": 34,
+    "plant_group:COAL->COAL_WC": 68
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "PJM_2022": {
+   "n_gen_before": 2594,
+   "n_gen_after": 2594,
+   "n_movers": 16,
+   "mover_plants": [
+    1554,
+    3797
+   ],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    1554,
+    3797
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 309,
+    "efficiency_bin:COAL->COAL_PRB": 18,
+    "efficiency_bin:COAL->COAL_WC": 68,
+    "plant_group:COAL->COAL_BIT": 309,
+    "plant_group:COAL->COAL_PRB": 18,
+    "plant_group:COAL->COAL_WC": 68
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "PJM_2023": {
+   "n_gen_before": 2556,
+   "n_gen_after": 2556,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 285,
+    "efficiency_bin:COAL->COAL_PRB": 18,
+    "efficiency_bin:COAL->COAL_WC": 68,
+    "plant_group:COAL->COAL_BIT": 285,
+    "plant_group:COAL->COAL_PRB": 18,
+    "plant_group:COAL->COAL_WC": 68
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "PJM_2024": {
+   "n_gen_before": 2514,
+   "n_gen_after": 2514,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 269,
+    "efficiency_bin:COAL->COAL_PRB": 18,
+    "efficiency_bin:COAL->COAL_WC": 68,
+    "plant_group:COAL->COAL_BIT": 269,
+    "plant_group:COAL->COAL_PRB": 18,
+    "plant_group:COAL->COAL_WC": 68
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "PJM_2025": {
+   "n_gen_before": 2953,
+   "n_gen_after": 2953,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 411,
+    "efficiency_bin:COAL->COAL_PRB": 26,
+    "efficiency_bin:COAL->COAL_WC": 85,
+    "plant_group:COAL->COAL_BIT": 411,
+    "plant_group:COAL->COAL_PRB": 26,
+    "plant_group:COAL->COAL_WC": 85
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SOCO_2019": {
+   "n_gen_before": 430,
+   "n_gen_after": 430,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 18,
+    "efficiency_bin:COAL->COAL_PRB": 15,
+    "plant_group:COAL->COAL_BIT": 18,
+    "plant_group:COAL->COAL_PRB": 15
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SOCO_2020": {
+   "n_gen_before": 426,
+   "n_gen_after": 426,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 18,
+    "efficiency_bin:COAL->COAL_PRB": 15,
+    "plant_group:COAL->COAL_BIT": 18,
+    "plant_group:COAL->COAL_PRB": 15
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SOCO_2021": {
+   "n_gen_before": 435,
+   "n_gen_after": 435,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 18,
+    "efficiency_bin:COAL->COAL_PRB": 15,
+    "plant_group:COAL->COAL_BIT": 18,
+    "plant_group:COAL->COAL_PRB": 15
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SOCO_2022": {
+   "n_gen_before": 433,
+   "n_gen_after": 433,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 13,
+    "efficiency_bin:COAL->COAL_PRB": 15,
+    "plant_group:COAL->COAL_BIT": 13,
+    "plant_group:COAL->COAL_PRB": 15
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SOCO_2023": {
+   "n_gen_before": 331,
+   "n_gen_after": 331,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 13,
+    "efficiency_bin:COAL->COAL_PRB": 15,
+    "plant_group:COAL->COAL_BIT": 13,
+    "plant_group:COAL->COAL_PRB": 15
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SOCO_2024": {
+   "n_gen_before": 332,
+   "n_gen_after": 332,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 13,
+    "efficiency_bin:COAL->COAL_PRB": 15,
+    "plant_group:COAL->COAL_BIT": 13,
+    "plant_group:COAL->COAL_PRB": 15
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SOCO_2025": {
+   "n_gen_before": 359,
+   "n_gen_after": 359,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 28,
+    "efficiency_bin:COAL->COAL_PRB": 15,
+    "plant_group:COAL->COAL_BIT": 28,
+    "plant_group:COAL->COAL_PRB": 15
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SPP_2019": {
+   "n_gen_before": 1156,
+   "n_gen_after": 1156,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    57937
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 152,
+    "efficiency_bin:COAL->COAL_LIGNITE": 15,
+    "plant_group:COAL->COAL_PRB": 152,
+    "plant_group:COAL->COAL_LIGNITE": 15
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SPP_2020": {
+   "n_gen_before": 1149,
+   "n_gen_after": 1149,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    57937
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 152,
+    "efficiency_bin:COAL->COAL_LIGNITE": 15,
+    "plant_group:COAL->COAL_PRB": 152,
+    "plant_group:COAL->COAL_LIGNITE": 15
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SPP_2021": {
+   "n_gen_before": 1131,
+   "n_gen_after": 1131,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [
+    57937
+   ],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 142,
+    "efficiency_bin:COAL->COAL_LIGNITE": 15,
+    "plant_group:COAL->COAL_PRB": 142,
+    "plant_group:COAL->COAL_LIGNITE": 15
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SPP_2022": {
+   "n_gen_before": 1131,
+   "n_gen_after": 1131,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 139,
+    "efficiency_bin:COAL->COAL_LIGNITE": 15,
+    "plant_group:COAL->COAL_PRB": 139,
+    "plant_group:COAL->COAL_LIGNITE": 15
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SPP_2023": {
+   "n_gen_before": 1117,
+   "n_gen_after": 1117,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 139,
+    "efficiency_bin:COAL->COAL_LIGNITE": 15,
+    "plant_group:COAL->COAL_PRB": 139,
+    "plant_group:COAL->COAL_LIGNITE": 15
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SPP_2024": {
+   "n_gen_before": 1133,
+   "n_gen_after": 1133,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 136,
+    "efficiency_bin:COAL->COAL_LIGNITE": 10,
+    "plant_group:COAL->COAL_PRB": 136,
+    "plant_group:COAL->COAL_LIGNITE": 10
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SPP_2025": {
+   "n_gen_before": 1188,
+   "n_gen_after": 1188,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 141,
+    "efficiency_bin:COAL->COAL_LIGNITE": 15,
+    "plant_group:COAL->COAL_PRB": 141,
+    "plant_group:COAL->COAL_LIGNITE": 15
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  }
+ },
+ "counterfactual_vs_after": {
+  "CAISO_2022": {
+   "n_gen_before": 1651,
+   "n_gen_after": 1651,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 8,
+    "plant_group:COAL->COAL_BIT": 8
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "CAISO_2023": {
+   "n_gen_before": 1633,
+   "n_gen_after": 1633,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 8,
+    "plant_group:COAL->COAL_BIT": 8
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "CAISO_2024": {
+   "n_gen_before": 1625,
+   "n_gen_after": 1625,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 8,
+    "plant_group:COAL->COAL_BIT": 8
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "CAISO_2025": {
+   "n_gen_before": 1710,
+   "n_gen_after": 1710,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 8,
+    "plant_group:COAL->COAL_BIT": 8
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "MISO_2019": {
+   "n_gen_before": 2995,
+   "n_gen_after": 2995,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_LIGNITE": 45,
+    "efficiency_bin:COAL->COAL_PRB": 442,
+    "efficiency_bin:COAL->COAL_BIT": 268,
+    "plant_group:COAL->COAL_LIGNITE": 45,
+    "plant_group:COAL->COAL_PRB": 442,
+    "plant_group:COAL->COAL_BIT": 268
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "MISO_2020": {
+   "n_gen_before": 2989,
+   "n_gen_after": 2989,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_LIGNITE": 45,
+    "efficiency_bin:COAL->COAL_PRB": 434,
+    "efficiency_bin:COAL->COAL_BIT": 232,
+    "plant_group:COAL->COAL_LIGNITE": 45,
+    "plant_group:COAL->COAL_PRB": 434,
+    "plant_group:COAL->COAL_BIT": 232
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "MISO_2021": {
+   "n_gen_before": 2981,
+   "n_gen_after": 2981,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 425,
+    "efficiency_bin:COAL->COAL_BIT": 241,
+    "efficiency_bin:COAL->COAL_LIGNITE": 45,
+    "plant_group:COAL->COAL_PRB": 425,
+    "plant_group:COAL->COAL_BIT": 241,
+    "plant_group:COAL->COAL_LIGNITE": 45
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "MISO_2022": {
+   "n_gen_before": 2982,
+   "n_gen_after": 2982,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 398,
+    "efficiency_bin:COAL->COAL_BIT": 232,
+    "efficiency_bin:COAL->COAL_LIGNITE": 45,
+    "plant_group:COAL->COAL_PRB": 398,
+    "plant_group:COAL->COAL_BIT": 232,
+    "plant_group:COAL->COAL_LIGNITE": 45
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "MISO_2023": {
+   "n_gen_before": 2736,
+   "n_gen_after": 2736,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 343,
+    "efficiency_bin:COAL->COAL_BIT": 135,
+    "efficiency_bin:COAL->COAL_LIGNITE": 18,
+    "plant_group:COAL->COAL_PRB": 343,
+    "plant_group:COAL->COAL_BIT": 135,
+    "plant_group:COAL->COAL_LIGNITE": 18
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "MISO_2024": {
+   "n_gen_before": 2720,
+   "n_gen_after": 2720,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 326,
+    "efficiency_bin:COAL->COAL_BIT": 119,
+    "efficiency_bin:COAL->COAL_LIGNITE": 18,
+    "plant_group:COAL->COAL_PRB": 326,
+    "plant_group:COAL->COAL_BIT": 119,
+    "plant_group:COAL->COAL_LIGNITE": 18
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NEISO_2019": {
+   "n_gen_before": 759,
+   "n_gen_after": 759,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 9,
+    "efficiency_bin:COAL->COAL_BIT": 17,
+    "plant_group:COAL->COAL_PRB": 9,
+    "plant_group:COAL->COAL_BIT": 17
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NEISO_2020": {
+   "n_gen_before": 780,
+   "n_gen_after": 780,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 9,
+    "efficiency_bin:COAL->COAL_BIT": 17,
+    "plant_group:COAL->COAL_PRB": 9,
+    "plant_group:COAL->COAL_BIT": 17
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NWPP_2019": {
+   "n_gen_before": 623,
+   "n_gen_after": 623,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 33,
+    "efficiency_bin:COAL->COAL_PRB": 42,
+    "efficiency_bin:COAL->COAL_WC": 9,
+    "plant_group:COAL->COAL_BIT": 33,
+    "plant_group:COAL->COAL_PRB": 42,
+    "plant_group:COAL->COAL_WC": 9
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NWPP_2020": {
+   "n_gen_before": 775,
+   "n_gen_after": 775,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 33,
+    "efficiency_bin:COAL->COAL_PRB": 42,
+    "efficiency_bin:COAL->COAL_WC": 9,
+    "plant_group:COAL->COAL_BIT": 33,
+    "plant_group:COAL->COAL_PRB": 42,
+    "plant_group:COAL->COAL_WC": 9
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "NWPP_2021": {
+   "n_gen_before": 634,
+   "n_gen_after": 634,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 33,
+    "efficiency_bin:COAL->COAL_PRB": 37,
+    "efficiency_bin:COAL->COAL_WC": 9,
+    "plant_group:COAL->COAL_BIT": 33,
+    "plant_group:COAL->COAL_PRB": 37,
+    "plant_group:COAL->COAL_WC": 9
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "PJM_2019": {
+   "n_gen_before": 2672,
+   "n_gen_after": 2672,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 401,
+    "efficiency_bin:COAL->COAL_PRB": 34,
+    "efficiency_bin:COAL->COAL_WC": 89,
+    "plant_group:COAL->COAL_BIT": 401,
+    "plant_group:COAL->COAL_PRB": 34,
+    "plant_group:COAL->COAL_WC": 89
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "PJM_2020": {
+   "n_gen_before": 2665,
+   "n_gen_after": 2665,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 362,
+    "efficiency_bin:COAL->COAL_PRB": 34,
+    "efficiency_bin:COAL->COAL_WC": 68,
+    "plant_group:COAL->COAL_BIT": 362,
+    "plant_group:COAL->COAL_PRB": 34,
+    "plant_group:COAL->COAL_WC": 68
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "PJM_2021": {
+   "n_gen_before": 2675,
+   "n_gen_after": 2675,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 365,
+    "efficiency_bin:COAL->COAL_PRB": 34,
+    "efficiency_bin:COAL->COAL_WC": 68,
+    "plant_group:COAL->COAL_BIT": 365,
+    "plant_group:COAL->COAL_PRB": 34,
+    "plant_group:COAL->COAL_WC": 68
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "PJM_2022": {
+   "n_gen_before": 2594,
+   "n_gen_after": 2594,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_BIT": 309,
+    "efficiency_bin:COAL->COAL_PRB": 18,
+    "efficiency_bin:COAL->COAL_WC": 68,
+    "plant_group:COAL->COAL_BIT": 309,
+    "plant_group:COAL->COAL_PRB": 18,
+    "plant_group:COAL->COAL_WC": 68
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SPP_2019": {
+   "n_gen_before": 1156,
+   "n_gen_after": 1156,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 152,
+    "efficiency_bin:COAL->COAL_LIGNITE": 15,
+    "plant_group:COAL->COAL_PRB": 152,
+    "plant_group:COAL->COAL_LIGNITE": 15
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SPP_2020": {
+   "n_gen_before": 1149,
+   "n_gen_after": 1149,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 152,
+    "efficiency_bin:COAL->COAL_LIGNITE": 15,
+    "plant_group:COAL->COAL_PRB": 152,
+    "plant_group:COAL->COAL_LIGNITE": 15
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  },
+  "SPP_2021": {
+   "n_gen_before": 1131,
+   "n_gen_after": 1131,
+   "n_movers": 0,
+   "mover_plants": [],
+   "movers_outside_generic_bucket": [],
+   "generic_bucket_plants": [],
+   "label_changes": {
+    "efficiency_bin:COAL->COAL_PRB": 142,
+    "efficiency_bin:COAL->COAL_LIGNITE": 15,
+    "plant_group:COAL->COAL_PRB": 142,
+    "plant_group:COAL->COAL_LIGNITE": 15
+   },
+   "bad_label_changes": [],
+   "missing_fields": []
+  }
+ }
+}

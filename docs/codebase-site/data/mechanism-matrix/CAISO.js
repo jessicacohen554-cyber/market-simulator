@@ -28,6 +28,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     cc_steam_part_capacity: { cell: "U", ev: "54912 Martinez Refining STG1 20.0 MW OG — MISSING against CAISO's fleet (80.0 MW held vs 100.0 MW EIA-860), vintage-coherent (STG1 1995 = GTG1 1995). REPORTED AND HANDED OFF UNSTAMPED by miso-126 (rule 25): CAISO's lane runs its own P1-P3 and adds CAISO to CC_STEAM_PART_REPAIR_ISOS if it clears." },
     cc_steam_part_reclass: { cell: "." },
     use_campd_bins: { cell: "K" },
+    coal_subclass_at_load: { cell: "I", ev: "COAL-SUB (2026-09-25) zero-LP proof: 2022-2025 keeper years byte-identical. The one generic-bucket plant (10684 Argus Cogen, 15 MW, EIA-860 BIT) resolves to COAL_BIT, whose CAISO curve equals the deleted COAL curve and whose output is CHP-routed, so nothing moves." },
     thermal_tranche_artifact_coverage: { cell: "O", ev: "xiso-5 §1 (70 blank ok rows; non-monotone schema) + §4.3; xiso-6 2026-08-25 (FINDING-xiso6-tranche-vintage-sidecar-2026-08-25.md): vintage sidecar backfilled + arm-over-gap guard armed at bins_to_fleet — cell UNCHANGED" },
     plant_level_fleet: { cell: "K" },
     p1_bidcost_pass: { cell: "K" },
