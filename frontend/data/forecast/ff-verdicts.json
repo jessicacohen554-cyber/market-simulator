@@ -4840,18 +4840,28 @@
    "solve_surface": {
     "schema": 1,
     "iso": "NEISO",
-    "fingerprint": "9d35c270c69e9eee",
-    "rows": 197,
-    "moved": {},
+    "fingerprint": "8f90ae4dca904a66",
+    "rows": 202,
+    "moved": {
+     "GENERIC_BASE_OFFER_CURVE": "bdc2b348ec6144d1",
+     "LABELS": "600aeac5bbcd256c",
+     "MAINTENANCE_MONTHLY_SHAPE": "b4da945d5a2e8f77",
+     "MIN_STABLE_PCT_PHYSICAL": "262e67a17cf047e0",
+     "PLANT_CLASSES": "3c91d80e901b878c",
+     "RGGI_MEMBER_STATES_BY_YEAR": "e432156b179ff182",
+     "THERMAL_AVAILABILITY": "34ff308290e18439"
+    },
     "epochs": [],
-    "git_sha": "aac390a6"
+    "git_sha": "5a48f4378"
    },
-   "scored_at_sha": "1c38b49aa2c3",
-   "scored_at_date": "2026-09-25T01:55:35Z",
-   "cache_epoch": "dd8203a8bf1546b9",
-   "run_id": "neiso-2026-2050-t3-golden3-d92-base",
-   "session": "capx-D94 (FC-6 driver battery re-measured on the neiso-t3 golden recipe, post-D77 basis; owner ruling Q67)",
-   "driver_battery": "results/ff-t3-neiso-golden/d94/driver-battery-neiso-2026-09-24.json"
+   "scored_at_sha": "ce915d48c76d",
+   "scored_at_date": "2026-09-25T18:36:00Z",
+   "cache_epoch": "dbef1ecac9596c90",
+   "run_id": "neiso-2026-2050-t3-golden3-d96-base",
+   "session": "capx-D96 (neiso-t3 put back on one data vintage: primary bundle, FC-6 paired arms and FC-5 table re-solved post-F1; owner ruling Q69)",
+   "driver_battery": "results/ff-t3-neiso-golden/d94/driver-battery-neiso-2026-09-24.json",
+   "paired_invariants": "results/ff-t3-neiso-golden/d96/paired_invariants.json",
+   "corridor": "results/ff-corridor/dispositions/neiso-t3.json"
   },
   "tier": "t3",
   "iso": "NEISO",
@@ -4868,17 +4878,12 @@
    "FC-6 driver response"
   ],
   "notes": [
-   "capx D94 (2026-09-24, owner ruling Q67) \u2014 THE FC-6 DRIVER BATTERY IS RE-MEASURED. The carried input (bau-d46/fc6/driver-battery-neiso-2026-09-03.json, the T1.6 RPS/ACP ladder) had been solved by run_driver_battery.py on dataclass defaults + legacy bins with NEITHER neiso-t3 pin, on pre-D77 code: a third model. Both rungs (vre_short entry_rate_limits=True, vre_long =False) are re-solved on THIS verdict's golden recipe with both pins (ccs_retrofit_vom_adder 8.0, ccs_retrofit_fixed_cost_co2_scaling False), keys 1be407901f4f8000 / df7b178ae9ccbe41, and the prior record is preserved byte-equal at neiso-t3-pre-d94.",
-   "CONTROLLED SWAP: only --driver-battery changed; the scorer was first shown to reproduce the standing record NON-PROVENANCE IDENTICAL at the scoring HEAD. DETERMINATION HOLD -> HOLD; every FC-1..FC-8 status, row, detail, reason and caveat IDENTICAL \u2014 the FC-6 battery row's detail is byte-identical because both rungs still read rps_dual_over_acp = 1.0.",
-   "AT FULL MAGNITUDE (pre-D77 2026-09-03 -> D94): vre_short co2_mt_total 246.39 -> 151.27 Mt, retired_thermal_gw 2.012 -> 5.741, reserve_margin_final 0.0837 -> 0.0611; vre_long 275.50 -> 159.68 Mt, 3.005 -> 4.788 GW, 0.0635 -> 0.0558; rps_dual_over_acp 1.0 -> 1.0 on both; renewable_build_gw 33.0 on both, before and after.",
-   "THE LADDER CANNOT DISCRIMINATE ON THIS BASIS: entry_rate_limits does not reach NEISO VRE supply (renewable_build_gw 33.0 in both rungs \u2014 bound by QUEUE_CAP_PER_TECH_GW['NEISO'] netted against the 2-year commissioning pipeline before the growth ladder binds), and the REC dual sits at the 0 ACP in every year. T1.6a/T1.6b stay VACUOUS CAVEAT. Re-pointing the ladder is an owner (Q27-class) call.",
-   "DATA VINTAGE, STATED: the battery was solved at 924017c8, which carries F1 (eGRID-2024 heat rates, a same-key invalidation for every forecast); this record's primary bundle (d92/base) is pre-F1. Measured on the config-identical vre_short rung: 293 differing trajectory cells, cumulative CO2 154.42 -> 151.27 Mt (-2.04 %). See docs/handoffs/FINDING-capx-d94-2026-09-24.md.",
-   "capx D92 (2026-09-10, owner ruling Q65) \u2014 D77's NAMED RESIDUE IS CLOSED. This record's PRIMARY bundle (neiso-2026-2050-t3-golden3-d90) already postdated capx D77's CCS emission-rate repair, but its two CARRIED inputs did not: FC-5 was scored on a disposition table keyed to `bau` (cache_key 706e7ba8e6582d42, solved 2026-09-01) and FC-6 on `bau-d46/fc6` (67678e58b2d0526c / 56019f3b0850e9f9, solved 2026-09-03) \u2014 the exact cells D77 named as \"the only SCORED cells mis-stated\". Both are re-based here onto four NEISO 2026-2050 legs solved on post-D77 code at one pinned HEAD. The prior record is preserved byte-equal at neiso-t3-pre-d92.",
-   "CONTROLLED SWAP: only --corridor and --paired-invariants changed; the summary, run-config, DOF ledger, attestation, hindcast score, crossover score and driver battery are held byte-identical, and the scorer was first shown to reproduce the standing record NON-PROVENANCE IDENTICAL in the same container. DETERMINATION HOLD -> HOLD; every FC-1..FC-8 STATUS, every reason and every caveat unchanged. THE NUMBERS MOVED, THE SCORES DID NOT.",
-   "AT FULL MAGNITUDE. FC-6 paired P1: cumulative CO2 base 284.42 -> 154.42 Mt, high 273.92 -> 103.50 Mt; the base-vs-high MARGIN goes 10.50 -> 50.92 Mt (3.69 % -> 32.97 % of base). The seam was SUPPRESSING the model's carbon response: pre-repair the retrofit screen saturated at ~9 GW in BOTH arms (2030: 8942.6 vs 8983.2 MW), so +$25/t had nothing left to convert; post-repair the base wave is smaller (6648.3 MW at 2030) and the carbon arm converts 1173.0 MW more, rising to +5877.6 MW by 2050. P2 33.83->32.60 TWh gas-fired, LW price 79.64->92.05 $/MWh. P3 builds moved 0.0 % -> 1.7 %. FC-5 co2@2030 +60.6 % -> -25.0 % (SIGN REVERSED), co2@2035 -2.0 % -> -57.0 %, co2@2040 -57.4 % -> -60.0 %; capacity:gas_cc@2040 and generation:total@2040 became divergent and were given new explanations, three rows became IN CORRIDOR and had theirs retired, 25 explained divergences and ZERO unexplained.",
-   "REPORTED, NOT SMOOTHED: against the AEO2025 anchor the repaired model is 35.6 points CLOSER at 2030 (the sign flips but the magnitude shrinks), 55.0 points FURTHER at 2035 and 2.6 points further at 2040 \u2014 mixed, not the uniform \"further from the anchor\" this lane predicted. The FC-6 P2 row is ONE SUB-CHECK WEAKER than the row it replaces: the summary grain carries no objective value, so `objective` reads not-scored. See docs/handoffs/FINDING-capx-d92-2026-09-10.md.",
-   "RE-POINTED onto capx D92 leg L0 (neiso-2026-2050-t3-golden3-d92-base, cache_key dd8203a8bf1546b9), replacing neiso-2026-2050-t3-golden3-d90 / ae317e63263c8eef. THIS MOVES NO NUMBER: L0 reproduces that bundle EXACTLY \u2014 zero differing cells across 25 years x every trajectory field, identical invariants \u2014 over the 573-commit window between them, which is the G-DRIFT measurement this lane spent a control solve to establish. It is a change of ADDRESS, not of result.",
-   "WHY: (a) the FC-5 disposition is keyed to L0, so the record now names the bundle its own corridor table is computed from; (b) L0's run_config REPRODUCES its own cache key at HEAD while d90-rescore's does not, so the board now points at a bundle with intact key provenance. STATED PRECISELY, BECAUSE THE FIRST DRAFT OF THIS NOTE OVERCLAIMED IT: this does NOT reduce the check_key_provenance.py G1_UNKNOWN count, which stays at SIX. That gate scans committed run_config.json files, not registry references, and results/ff-t3-neiso-golden/d90-rescore/run_config.json remains committed \u2014 it is capx D90-R's artifact, not this lane's to prune. All six rows are still owned to the key-provenance desk and the exceptions record is untouched. NO GATE REGRESSES: determination HOLD -> HOLD, every FC-1..FC-8 status, reason and caveat identical, and L0's DOF ledger is the same 9 entries with the same 2 UNIDENTIFIED, so FC-7 reads exactly what it read before. The only diffs are cosmetic: FC-7's run_config row 828 -> 837 config keys (schema growth) and FC-8 wall 31.1 -> 31.9 min, both PASS either way."
+   "capx D96 (2026-09-25, owner ruling Q69) -- ONE DATA VINTAGE AGAIN. capx D94 left neiso-t3 split: its FC-6 driver battery (d94/) post-F1 (eGRID-2024 heat rates), its primary bundle, FC-6 paired arms and FC-5 table (d92/) pre-F1. The four D92 legs are re-solved on the D92 recipe with both pins (ccs_retrofit_vom_adder 8.0, ccs_retrofit_fixed_cost_co2_scaling False), only the HEAD changed, in four shards pinned to the pushed PRECOMMIT 5a48f43787c3ec0d29ae451680ab62a5e53b5156: base dbef1ecac9596c90, carbon_plus25 f66e7b51d3731465, gasup150 d3ff933838e3fb12, gaspm5 8d23ff10a99c4a8a (all four predicted before the solve). The prior record is preserved byte-equal at neiso-t3-pre-d96.",
+   "CONTROLLED SWAP: the scorer first reproduced the standing record NON-PROVENANCE IDENTICAL at the scoring HEAD; then --summary/--run-config/--dof-ledger/--attestation -> d96/base, --paired-invariants -> d96/paired_invariants.json, --corridor -> the D96 re-base (prior at dispositions/neiso-t3-pre-d96.json); the d94 driver battery, the T1-H and the T1-X scores are carried. DETERMINATION HOLD -> HOLD; every FC-1..FC-8 status, reason and caveat IDENTICAL.",
+   "base REPRODUCES d94/vre_short on every trajectory cell (0 differing across 25 years x every field); the G-DRIFT hunk audit 924017c8..c64e69eb found every hunk INERT for a NEISO forecast, measured by an identical 2026 fleet at both commits. F1 is therefore the whole of the D92 -> D96 difference.",
+   "AT FULL MAGNITUDE (D92 pre-F1 -> D96 post-F1), cumulative CO2 2026-2050: base 154.42 -> 151.27 Mt (-2.04 %); carbon_plus25 103.50 -> 108.85 (+5.17 %); gasup150 208.96 -> 209.29 (+0.16 %); gaspm5 168.03 -> 162.55 (-3.26 %). FC-6 P1 margin 50.92 -> 42.42 Mt (still PASS); the carbon arm's 2050 CCS fleet 8,636.9 -> 4,404.5 MW. 2030 CCS: base 6,648.3 -> 6,979.7 MW. RM2050: base 0.0639 -> 0.0611.",
+   "Detail strings that moved: FC-2 final RM 6.4 -> 6.1 % and backstop share 1.0 -> 1.2 %; FC-2 cobweb lists the same two classes in the opposite ORDER (gas_cc(7); gas_ct(4)) -- an ordering nondeterminism in the I13 detail, content identical; FC-6 P1/P2/P3 operands; FC-7 837 -> 879 config keys (schema growth); FC-8 wall 31.9 -> 33.4 min. FC-5: 0 of 54 rows changed class; 25 EXPLAINED / 29 IN CORRIDOR / 0 UNEXPLAINED; six explanations had their quoted figures refreshed.",
+   "Evidence: docs/handoffs/FINDING-capx-d96-2026-09-25.md; PRECOMMIT-capx-d96-2026-09-25.md (+ Addendum A)."
   ],
   "categories": {
    "FC-1": {
@@ -4908,19 +4913,19 @@
      {
       "row": "row2",
       "status": "PASS",
-      "detail": "final RM 6.4% in [3.8%, 38.8%]",
+      "detail": "final RM 6.1% in [3.8%, 38.8%]",
       "gating": true
      },
      {
       "row": "row3",
       "status": "FAIL",
-      "detail": "cobweb (I13 WARN \u21d2 row FAIL): gas_ct(4); gas_cc(7)",
+      "detail": "cobweb (I13 WARN \u21d2 row FAIL): gas_cc(7); gas_ct(4)",
       "gating": true
      },
      {
       "row": "row4",
       "status": "PASS",
-      "detail": "backstop share 1.0% \u2264 10%",
+      "detail": "backstop share 1.2% \u2264 10%",
       "gating": true
      }
     ]
@@ -4990,19 +4995,19 @@
      {
       "row": "paired P1",
       "status": "PASS",
-      "detail": "P1 CO2 monotone vs carbon: cumulative CO2 base 154.42 Mt vs high 103.50 Mt [premise: strictly positive delta in all 25 years (min +25.00, max +25.00 $/t)]",
+      "detail": "P1 CO2 monotone vs carbon: cumulative CO2 base 151.27 Mt vs high 108.85 Mt [premise: strictly positive delta in all 25 years (min +25.00, max +25.00 $/t)]",
       "gating": true
      },
      {
       "row": "paired P2",
       "status": "PASS",
-      "detail": "P2 merit-order sign: year 2050: all signs correct; gas-fired 33.83\u219232.60 TWh, LW price 79.64\u219292.05 $/MWh [not scored at this grain: objective\u2191]",
+      "detail": "P2 merit-order sign: year 2050: all signs correct; gas-fired 33.93\u219232.61 TWh, LW price 79.44\u219293.15 $/MWh [not scored at this grain: objective\u2191]",
       "gating": true
      },
      {
       "row": "paired P3",
       "status": "PASS",
-      "detail": "P3 cumulative builds moved 1.7% (base 41149 MW, pert 40429 MW)",
+      "detail": "P3 cumulative builds moved 0.0% (base 41204 MW, pert 41203 MW)",
       "gating": true
      }
     ]
@@ -5015,7 +5020,7 @@
      {
       "row": "run_config",
       "status": "PASS",
-      "detail": "mode=forecast; 837 config keys; gates ['capacity_market_clearing']",
+      "detail": "mode=forecast; 879 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {
@@ -5046,7 +5051,7 @@
      {
       "row": "runtime",
       "status": "PASS",
-      "detail": "wall 31.9 min within budget",
+      "detail": "wall 33.4 min within budget",
       "gating": true
      }
     ]
@@ -13870,6 +13875,227 @@
    "FC-6 driver response"
   ],
   "notes": [
+   "capx D92 (2026-09-10, owner ruling Q65) \u2014 D77's NAMED RESIDUE IS CLOSED. This record's PRIMARY bundle (neiso-2026-2050-t3-golden3-d90) already postdated capx D77's CCS emission-rate repair, but its two CARRIED inputs did not: FC-5 was scored on a disposition table keyed to `bau` (cache_key 706e7ba8e6582d42, solved 2026-09-01) and FC-6 on `bau-d46/fc6` (67678e58b2d0526c / 56019f3b0850e9f9, solved 2026-09-03) \u2014 the exact cells D77 named as \"the only SCORED cells mis-stated\". Both are re-based here onto four NEISO 2026-2050 legs solved on post-D77 code at one pinned HEAD. The prior record is preserved byte-equal at neiso-t3-pre-d92.",
+   "CONTROLLED SWAP: only --corridor and --paired-invariants changed; the summary, run-config, DOF ledger, attestation, hindcast score, crossover score and driver battery are held byte-identical, and the scorer was first shown to reproduce the standing record NON-PROVENANCE IDENTICAL in the same container. DETERMINATION HOLD -> HOLD; every FC-1..FC-8 STATUS, every reason and every caveat unchanged. THE NUMBERS MOVED, THE SCORES DID NOT.",
+   "AT FULL MAGNITUDE. FC-6 paired P1: cumulative CO2 base 284.42 -> 154.42 Mt, high 273.92 -> 103.50 Mt; the base-vs-high MARGIN goes 10.50 -> 50.92 Mt (3.69 % -> 32.97 % of base). The seam was SUPPRESSING the model's carbon response: pre-repair the retrofit screen saturated at ~9 GW in BOTH arms (2030: 8942.6 vs 8983.2 MW), so +$25/t had nothing left to convert; post-repair the base wave is smaller (6648.3 MW at 2030) and the carbon arm converts 1173.0 MW more, rising to +5877.6 MW by 2050. P2 33.83->32.60 TWh gas-fired, LW price 79.64->92.05 $/MWh. P3 builds moved 0.0 % -> 1.7 %. FC-5 co2@2030 +60.6 % -> -25.0 % (SIGN REVERSED), co2@2035 -2.0 % -> -57.0 %, co2@2040 -57.4 % -> -60.0 %; capacity:gas_cc@2040 and generation:total@2040 became divergent and were given new explanations, three rows became IN CORRIDOR and had theirs retired, 25 explained divergences and ZERO unexplained.",
+   "REPORTED, NOT SMOOTHED: against the AEO2025 anchor the repaired model is 35.6 points CLOSER at 2030 (the sign flips but the magnitude shrinks), 55.0 points FURTHER at 2035 and 2.6 points further at 2040 \u2014 mixed, not the uniform \"further from the anchor\" this lane predicted. The FC-6 P2 row is ONE SUB-CHECK WEAKER than the row it replaces: the summary grain carries no objective value, so `objective` reads not-scored. See docs/handoffs/FINDING-capx-d92-2026-09-10.md.",
+   "RE-POINTED onto capx D92 leg L0 (neiso-2026-2050-t3-golden3-d92-base, cache_key dd8203a8bf1546b9), replacing neiso-2026-2050-t3-golden3-d90 / ae317e63263c8eef. THIS MOVES NO NUMBER: L0 reproduces that bundle EXACTLY \u2014 zero differing cells across 25 years x every trajectory field, identical invariants \u2014 over the 573-commit window between them, which is the G-DRIFT measurement this lane spent a control solve to establish. It is a change of ADDRESS, not of result.",
+   "WHY: (a) the FC-5 disposition is keyed to L0, so the record now names the bundle its own corridor table is computed from; (b) L0's run_config REPRODUCES its own cache key at HEAD while d90-rescore's does not, so the board now points at a bundle with intact key provenance. STATED PRECISELY, BECAUSE THE FIRST DRAFT OF THIS NOTE OVERCLAIMED IT: this does NOT reduce the check_key_provenance.py G1_UNKNOWN count, which stays at SIX. That gate scans committed run_config.json files, not registry references, and results/ff-t3-neiso-golden/d90-rescore/run_config.json remains committed \u2014 it is capx D90-R's artifact, not this lane's to prune. All six rows are still owned to the key-provenance desk and the exceptions record is untouched. NO GATE REGRESSES: determination HOLD -> HOLD, every FC-1..FC-8 status, reason and caveat identical, and L0's DOF ledger is the same 9 entries with the same 2 UNIDENTIFIED, so FC-7 reads exactly what it read before. The only diffs are cosmetic: FC-7's run_config row 828 -> 837 config keys (schema growth) and FC-8 wall 31.1 -> 31.9 min, both PASS either way."
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "FAIL",
+      "detail": "FAIL ['I3']: I3: 2043: dump 2.36% of renewable pot.; 2044: dump 2.79% of renewable pot.; 2045: dump 3.96% of renewable pot.; 2046: dump 4.54% of renewable pot.; 2047: dump 5.89% of renewable pot.; 2048: dump 6.57% of renewable pot.; 2049: dump 8.03% of renewable pot.; 2050: dump 7.97% of renewable pot.",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "row1",
+      "status": "PASS",
+      "detail": "reserve-margin band (I12 PASS)",
+      "gating": true
+     },
+     {
+      "row": "row2",
+      "status": "PASS",
+      "detail": "final RM 6.4% in [3.8%, 38.8%]",
+      "gating": true
+     },
+     {
+      "row": "row3",
+      "status": "FAIL",
+      "detail": "cobweb (I13 WARN \u21d2 row FAIL): gas_ct(4); gas_cc(7)",
+      "gating": true
+     },
+     {
+      "row": "row4",
+      "status": "PASS",
+      "detail": "backstop share 1.0% \u2264 10%",
+      "gating": true
+     }
+    ]
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "quarantine",
+      "status": "PASS",
+      "detail": "\u22652026 refusal marker present and clean",
+      "gating": true
+     },
+     {
+      "row": "dispatch skill",
+      "status": "FAIL",
+      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.3%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.3%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |13.2%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |84.0%|>7.5%=K1.5\u00d75% FAIL",
+      "gating": true
+     },
+     {
+      "row": "input-gap ratio",
+      "status": "PASS",
+      "detail": "forecast/keeper input-gap ratios reported (report-only)",
+      "gating": false
+     }
+    ]
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "corridor",
+      "status": "CAVEAT",
+      "detail": "explained divergences: ['capacity:total@2030', 'capacity:solar@2030', 'capacity:wind_total@2030', 'capacity:storage@2030', 'capacity:biomass_waste@2030', 'co2@2030', 'generation:gas@2030', 'generation:oil@2030', 'generation:renewables@2030', 'capacity:solar@2035', 'capacity:wind_total@2035', 'capacity:storage@2035', 'capacity:biomass_waste@2035', 'co2@2035', 'generation:oil@2035', 'generation:renewables@2035', 'capacity:gas_cc@2040', 'capacity:solar@2040', 'capacity:wind_total@2040', 'capacity:storage@2040', 'capacity:biomass_waste@2040', 'co2@2040', 'generation:total@2040', 'generation:oil@2040', 'generation:renewables@2040']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "battery gate rows",
+      "status": "CAVEAT",
+      "detail": "no gate FAIL but 2 vacuous row(s) (SKIP, or PASS on an empty/all-constant series): ['T1.6/T1.6a (all-constant series [1.0, 1.0])', 'T1.6/T1.6b (all-constant series [1.0, 1.0])']",
+      "gating": true
+     },
+     {
+      "row": "paired P1",
+      "status": "PASS",
+      "detail": "P1 CO2 monotone vs carbon: cumulative CO2 base 154.42 Mt vs high 103.50 Mt [premise: strictly positive delta in all 25 years (min +25.00, max +25.00 $/t)]",
+      "gating": true
+     },
+     {
+      "row": "paired P2",
+      "status": "PASS",
+      "detail": "P2 merit-order sign: year 2050: all signs correct; gas-fired 33.83\u219232.60 TWh, LW price 79.64\u219292.05 $/MWh [not scored at this grain: objective\u2191]",
+      "gating": true
+     },
+     {
+      "row": "paired P3",
+      "status": "PASS",
+      "detail": "P3 cumulative builds moved 1.7% (base 41149 MW, pert 40429 MW)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 837 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "FAIL",
+      "detail": "DOF ledger present as an UNATTESTED SKELETON: 2 of 9 entries carry identification='unattested' (ccs_retrofit_fixed_cost_co2_scaling, ccs_retrofit_vom_adder). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+      "gating": true
+     },
+     {
+      "row": "attestation",
+      "status": "PASS",
+      "detail": "all \u00a75 checklist assertions present and true",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "PASS",
+      "detail": "wall 31.9 min within budget",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "neiso-t3-pre-d96": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.1",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "solve_surface": {
+    "schema": 1,
+    "iso": "NEISO",
+    "fingerprint": "9d35c270c69e9eee",
+    "rows": 197,
+    "moved": {},
+    "epochs": [],
+    "git_sha": "aac390a6"
+   },
+   "scored_at_sha": "1c38b49aa2c3",
+   "scored_at_date": "2026-09-25T01:55:35Z",
+   "cache_epoch": "dd8203a8bf1546b9",
+   "run_id": "neiso-2026-2050-t3-golden3-d92-base",
+   "session": "capx-D94 (FC-6 driver battery re-measured on the neiso-t3 golden recipe, post-D77 basis; owner ruling Q67)",
+   "driver_battery": "results/ff-t3-neiso-golden/d94/driver-battery-neiso-2026-09-24.json"
+  },
+  "tier": "t3",
+  "iso": "NEISO",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) FAIL",
+   "FC-2 adequacy & equilibrium behavior FAIL",
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+   "FC-4 crossover dispatch skill (T1-X) FAIL",
+   "FC-7 provenance & DOF FAIL"
+  ],
+  "caveats": [
+   "FC-5 external corridor",
+   "FC-6 driver response"
+  ],
+  "notes": [
+   "capx D94 (2026-09-24, owner ruling Q67) \u2014 THE FC-6 DRIVER BATTERY IS RE-MEASURED. The carried input (bau-d46/fc6/driver-battery-neiso-2026-09-03.json, the T1.6 RPS/ACP ladder) had been solved by run_driver_battery.py on dataclass defaults + legacy bins with NEITHER neiso-t3 pin, on pre-D77 code: a third model. Both rungs (vre_short entry_rate_limits=True, vre_long =False) are re-solved on THIS verdict's golden recipe with both pins (ccs_retrofit_vom_adder 8.0, ccs_retrofit_fixed_cost_co2_scaling False), keys 1be407901f4f8000 / df7b178ae9ccbe41, and the prior record is preserved byte-equal at neiso-t3-pre-d94.",
+   "CONTROLLED SWAP: only --driver-battery changed; the scorer was first shown to reproduce the standing record NON-PROVENANCE IDENTICAL at the scoring HEAD. DETERMINATION HOLD -> HOLD; every FC-1..FC-8 status, row, detail, reason and caveat IDENTICAL \u2014 the FC-6 battery row's detail is byte-identical because both rungs still read rps_dual_over_acp = 1.0.",
+   "AT FULL MAGNITUDE (pre-D77 2026-09-03 -> D94): vre_short co2_mt_total 246.39 -> 151.27 Mt, retired_thermal_gw 2.012 -> 5.741, reserve_margin_final 0.0837 -> 0.0611; vre_long 275.50 -> 159.68 Mt, 3.005 -> 4.788 GW, 0.0635 -> 0.0558; rps_dual_over_acp 1.0 -> 1.0 on both; renewable_build_gw 33.0 on both, before and after.",
+   "THE LADDER CANNOT DISCRIMINATE ON THIS BASIS: entry_rate_limits does not reach NEISO VRE supply (renewable_build_gw 33.0 in both rungs \u2014 bound by QUEUE_CAP_PER_TECH_GW['NEISO'] netted against the 2-year commissioning pipeline before the growth ladder binds), and the REC dual sits at the 0 ACP in every year. T1.6a/T1.6b stay VACUOUS CAVEAT. Re-pointing the ladder is an owner (Q27-class) call.",
+   "DATA VINTAGE, STATED: the battery was solved at 924017c8, which carries F1 (eGRID-2024 heat rates, a same-key invalidation for every forecast); this record's primary bundle (d92/base) is pre-F1. Measured on the config-identical vre_short rung: 293 differing trajectory cells, cumulative CO2 154.42 -> 151.27 Mt (-2.04 %). See docs/handoffs/FINDING-capx-d94-2026-09-24.md.",
    "capx D92 (2026-09-10, owner ruling Q65) \u2014 D77's NAMED RESIDUE IS CLOSED. This record's PRIMARY bundle (neiso-2026-2050-t3-golden3-d90) already postdated capx D77's CCS emission-rate repair, but its two CARRIED inputs did not: FC-5 was scored on a disposition table keyed to `bau` (cache_key 706e7ba8e6582d42, solved 2026-09-01) and FC-6 on `bau-d46/fc6` (67678e58b2d0526c / 56019f3b0850e9f9, solved 2026-09-03) \u2014 the exact cells D77 named as \"the only SCORED cells mis-stated\". Both are re-based here onto four NEISO 2026-2050 legs solved on post-D77 code at one pinned HEAD. The prior record is preserved byte-equal at neiso-t3-pre-d92.",
    "CONTROLLED SWAP: only --corridor and --paired-invariants changed; the summary, run-config, DOF ledger, attestation, hindcast score, crossover score and driver battery are held byte-identical, and the scorer was first shown to reproduce the standing record NON-PROVENANCE IDENTICAL in the same container. DETERMINATION HOLD -> HOLD; every FC-1..FC-8 STATUS, every reason and every caveat unchanged. THE NUMBERS MOVED, THE SCORES DID NOT.",
    "AT FULL MAGNITUDE. FC-6 paired P1: cumulative CO2 base 284.42 -> 154.42 Mt, high 273.92 -> 103.50 Mt; the base-vs-high MARGIN goes 10.50 -> 50.92 Mt (3.69 % -> 32.97 % of base). The seam was SUPPRESSING the model's carbon response: pre-repair the retrofit screen saturated at ~9 GW in BOTH arms (2030: 8942.6 vs 8983.2 MW), so +$25/t had nothing left to convert; post-repair the base wave is smaller (6648.3 MW at 2030) and the carbon arm converts 1173.0 MW more, rising to +5877.6 MW by 2050. P2 33.83->32.60 TWh gas-fired, LW price 79.64->92.05 $/MWh. P3 builds moved 0.0 % -> 1.7 %. FC-5 co2@2030 +60.6 % -> -25.0 % (SIGN REVERSED), co2@2035 -2.0 % -> -57.0 %, co2@2040 -57.4 % -> -60.0 %; capacity:gas_cc@2040 and generation:total@2040 became divergent and were given new explanations, three rows became IN CORRIDOR and had theirs retired, 25 explained divergences and ZERO unexplained.",

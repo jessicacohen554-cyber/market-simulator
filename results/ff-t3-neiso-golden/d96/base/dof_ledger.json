@@ -1,0 +1,138 @@
+{
+  "schema": "dof-ledger/v1",
+  "lane": "forecast",
+  "status": "INSTRUMENT — 7 IDENTIFIED / 2 UNIDENTIFIED",
+  "run_id": "base",
+  "iso": "NEISO",
+  "run_git_sha": "5a48f4378",
+  "generated_by": "scripts/build_forecast_dof_ledger.py (capx-D8, 2026-08-30) — the FC-7 DOF-ledger instrument, grown from the FFR-3B FR-27 skeleton. It REPORTS identifications committed to the repository (rule 21); it never supplies one. An UNIDENTIFIED entry keeps the `unattested` token and FC-7 keeps its CAVEAT.",
+  "how_to_fill": "Per UNIDENTIFIED entry: add a curated row to CURATED_IDENTIFICATIONS in scripts/build_forecast_dof_ledger.py citing committed evidence (registry citation, frozen derive script, or published-source intake finding), with its expected value or registry cross-check, then regenerate the ledger. A `residual` identification MUST carry `root_cause` naming an OPEN issue (CLAUDE.md rule 21 [R-DOF]). dispatch_mechanism entries should CITE the ISO's backcast keeper ledger entry and state whether the identification survives extrapolation forward. Never hand-edit the emitted JSON: the curated table is the reviewed, committed surface.",
+  "verdict_effect": "None from emission alone — this lane re-scores nothing. On a chartered FC-7 re-score: any UNIDENTIFIED entry keeps the same CAVEAT an absent ledger draws (forecast_verdict.py treats `unattested` as not-identified); only a ledger whose every entry carries a real identification can retire it.",
+  "scope": "NON-DEFAULT solve-affecting ScenarioConfig fields — the parameters THIS run chose relative to the shipped registry (tuple/list representation normalized). Registry defaults inherited by the run keep their identification burden in the registry citations and the backcast keeper DOF ledger (see registry_identification). Epoch drift is reported separately, never scored.",
+  "defaults_available": true,
+  "n_entries": 9,
+  "n_identified": 7,
+  "n_unidentified": 2,
+  "n_unattested": 2,
+  "n_by_group": {
+    "dispatch_mechanism": 6,
+    "other": 3
+  },
+  "entries": [
+    {
+      "name": "ccs_retrofit_fixed_cost_co2_scaling",
+      "where": "ScenarioConfig",
+      "group": "other",
+      "identification": "unattested",
+      "status": "UNIDENTIFIED",
+      "source": "",
+      "evidence": "",
+      "value": false,
+      "attestation_question": "Ungrouped solve-affecting parameter. Attest individually, or extend GROUPS in scripts/build_forecast_dof_ledger.py if a family emerges."
+    },
+    {
+      "name": "ccs_retrofit_vom_adder",
+      "where": "ScenarioConfig",
+      "group": "other",
+      "identification": "unattested",
+      "status": "UNIDENTIFIED",
+      "source": "",
+      "evidence": "",
+      "n_scalars": 1,
+      "value": 8.0,
+      "attestation_question": "Ungrouped solve-affecting parameter. Attest individually, or extend GROUPS in scripts/build_forecast_dof_ledger.py if a family emerges."
+    },
+    {
+      "name": "forecast_xyear_warmstart",
+      "where": "ScenarioConfig",
+      "group": "other",
+      "identification": "design-decision",
+      "status": "IDENTIFIED",
+      "source": "Owner decision D-10 (signed 2026-08-04, docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum K.3): forecast bundles run cross-year LP warm start OFF so a killed-and-resumed forecast reproduces from its own cache",
+      "evidence": "market_sim.config.scenarios.FORECAST_BUNDLE_XYEAR_WARMSTART (the one registry carrier) read through scripts/lib/forecast_posture.py::shipped_forecast_xyear_warmstart; measurement docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md",
+      "value": false,
+      "provenance": "runner-posture"
+    },
+    {
+      "name": "ordc_lolp_shift_sigma",
+      "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_neiso_config)",
+      "group": "dispatch_mechanism",
+      "identification": "published",
+      "status": "IDENTIFIED",
+      "source": "No administrative ORDC curve shift applies to ISO-NE (the shift is an ERCOT PUCT instrument); 0.0 is the documented absence, not a tuned magnitude",
+      "evidence": "src/market_sim/config/iso_configs.py::_neiso_config default_scenario_overrides cite block",
+      "provenance": "iso-registry",
+      "n_scalars": 1,
+      "value": 0.0
+    },
+    {
+      "name": "ordc_lolp_sigma_mw",
+      "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_neiso_config)",
+      "group": "dispatch_mechanism",
+      "identification": "published",
+      "status": "IDENTIFIED",
+      "source": "ISO-NE Probabilistic Energy Adequacy (PAF) Study 2022 winter reserve-error std dev, bounded by the 10-min reserve requirement 1,000-1,200 MW",
+      "evidence": "src/market_sim/config/iso_configs.py::_neiso_config default_scenario_overrides cite block",
+      "provenance": "iso-registry",
+      "n_scalars": 1,
+      "value": 900.0
+    },
+    {
+      "name": "ordc_mcl_mw",
+      "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_neiso_config)",
+      "group": "dispatch_mechanism",
+      "identification": "published",
+      "status": "IDENTIFIED",
+      "source": "Millstone 3 largest single contingency (~1,233 MW nameplate) — ISO-NE RSP Table 4.1 / NPCC Directory #1",
+      "evidence": "src/market_sim/config/iso_configs.py::_neiso_config default_scenario_overrides cite block",
+      "provenance": "iso-registry",
+      "n_scalars": 1,
+      "value": 1200.0
+    },
+    {
+      "name": "ordc_multistep_floor",
+      "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_neiso_config)",
+      "group": "dispatch_mechanism",
+      "identification": "published",
+      "status": "IDENTIFIED",
+      "source": "No OBDRR048 multi-step floor exists in ISO-NE (ERCOT-specific market rule); False is the documented absence",
+      "evidence": "src/market_sim/config/iso_configs.py::_neiso_config default_scenario_overrides cite block",
+      "provenance": "iso-registry",
+      "value": false
+    },
+    {
+      "name": "ordc_voll",
+      "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_neiso_config)",
+      "group": "dispatch_mechanism",
+      "identification": "published",
+      "status": "IDENTIFIED",
+      "source": "ISO-NE Tariff §III.1.10.1A energy offer cap, $2,000/MWh",
+      "evidence": "src/market_sim/config/iso_configs.py::_neiso_config default_scenario_overrides cite block",
+      "provenance": "iso-registry",
+      "n_scalars": 1,
+      "value": 2000.0
+    },
+    {
+      "name": "scarcity_price_overlay",
+      "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_neiso_config)",
+      "group": "dispatch_mechanism",
+      "identification": "published",
+      "status": "IDENTIFIED",
+      "source": "ISO-NE winter scarcity pricing exists as market design (post-solve ORDC overlay recovering the reserve-shortage tail the perfect-foresight LP structurally misses); arming it for NEISO is the registered production footing",
+      "evidence": "src/market_sim/config/iso_configs.py::_neiso_config default_scenario_overrides cite block (ISO-NE Tariff §III.1.10.1A; FERC Order 831)",
+      "provenance": "iso-registry",
+      "value": true
+    }
+  ],
+  "epoch_field_gaps": {
+    "fields_added_since_epoch": [
+      "nwpp_demand_plant_basis",
+      "nyiso_ldc_generator_delivered_gas"
+    ]
+  },
+  "registry_identification": {
+    "note": "Registry defaults inherited by this run (offer surfaces, floors, passthrough sigmoids, ...) carry their identification in the registry's rule-5 citations and in the designated backcast keeper's rule-21 DOF ledger (calibration_attestation.json `free_parameters`); they are not re-enumerated per forecast bundle. Whether each identification survives extrapolation forward is the standing question the dispatch_mechanism group's guidance records.",
+    "backcast_keeper_at_build": "2026-09-25-neiso114-coal-mustrun-measured",
+    "keeper_shard": "frontend/data/backcast/keepers/NEISO.json"
+  }
+}

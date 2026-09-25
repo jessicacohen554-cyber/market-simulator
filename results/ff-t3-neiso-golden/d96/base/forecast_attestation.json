@@ -1,0 +1,40 @@
+{
+ "schema": "forecast-attestation/v1",
+ "bundle": "results/ff-t3-neiso-golden/d96/base",
+ "run_id": "neiso-2026-2050-t3-golden3-d96-base",
+ "attested_by": "capx D96, 2026-09-25 (owner ruling Q69) \u2014 THE PRODUCING SESSION (rubric \u00a75's default author): this lane solved the bundle it attests, as leg `base` of the four-leg post-F1 re-solve, through a pinned shard. Assertions are read from committed bytes, not judged at authoring time; an assertion that reads FALSE is recorded FALSE and FC-7 fails on it at full magnitude rather than the attestation being re-scoped to fit.",
+ "predeclaration": "docs/handoffs/PRECOMMIT-capx-d96-2026-09-25.md (+ Addendum A), pushed at 5a48f43787c3ec0d29ae451680ab62a5e53b5156 before any LP",
+ "assertions": {
+  "dof_ledger_complete": {
+   "value": false,
+   "read_from": "dof_ledger.json built by the committed scripts/build_forecast_dof_ledger.py from this bundle's own run_config.json",
+   "evidence": "9 entries, 7 IDENTIFIED, 2 UNIDENTIFIED \u2014 the same 9 names and the same 2 UNIDENTIFIED as results/ff-t3-neiso-golden/d92/base/dof_ledger.json (built here by the committed scripts/build_forecast_dof_ledger.py; it additionally carries the instrument's epoch_field_gaps block, schema growth only). The two UNIDENTIFIED entries are the neiso-t3 recipe pins this leg carries by design \u2014 ccs_retrofit_fixed_cost_co2_scaling=false and ccs_retrofit_vom_adder=8.0 \u2014 capx D90-R \u00a73.4's program-wide CURATED_IDENTIFICATIONS desynchronization, routed and NOT repaired here."
+  },
+  "run_config_reproducible": {
+   "value": true,
+   "read_from": "run_config.json",
+   "evidence": "mode=forecast; basis sha 5a48f43787c3ec0d29ae451680ab62a5e53b5156; cache_key dbef1ecac9596c90, predicted in the PRECOMMIT before the solve and REPRODUCED by head_key(payload, surface=True) at the rebased scoring HEAD. The key literal moved from D94's 1be407901f4f8000 for an identical config only because the NEISO solve surface is off its declaration on 7 rows (the coal-subclass change); scripts/check_key_provenance.py census reported in FINDING-capx-d96-2026-09-25.md \u00a75."
+  },
+  "honest_unfit_referenced": {
+   "value": true,
+   "read_from": "full_horizon_summary.json invariants + docs/handoffs/FINDING-capx-d96-2026-09-25.md",
+   "evidence": "14 invariants carried into the verdict; every failing FC row reported at full magnitude; every pre-registered prediction graded in the FINDING with each miss named (the three arm-level cumulative-CO2 and terminal-margin directions, the FC-6 P1 margin bracket), and the summary-grain FC-6 P2 row's missing objective sub-check is disclosed on the row and cross-checked at cache grain in the FINDING."
+  },
+  "quarantine_attested": {
+   "value": true,
+   "read_from": "run_config.json solved_years",
+   "evidence": "25 solved years, 2026..2050 inclusive \u2014 forecast mode, no measured actuals, no holdout tier touched."
+  },
+  "no_off_registry_knobs": {
+   "value": true,
+   "read_from": "run_config.json scenario_config vs ScenarioConfig fields",
+   "evidence": "Every solve-affecting field is a declared ScenarioConfig field; zero stray keys; no env knob, no per-plant dict, no getattr fallback (rule 24 [R-REGISTRY]). The two set_overrides are registered fields carried through the declared --set / --no-... CLI surface and are the two ledgered entries above."
+  },
+  "registered": {
+   "value": true,
+   "read_from": "frontend/data/forecast/ff-verdicts.json",
+   "evidence": "Registered under verdict key neiso-t3; the pre-D96 record is preserved byte-equal at neiso-t3-pre-d96."
+  }
+ },
+ "what_this_attestation_does_not_claim": "It does NOT claim this leg is a new forecast relative to the post-F1 FC-6 driver battery: it reproduces results/ff-t3-neiso-golden/d94/vre_short on every trajectory cell (0 differing across 25 years x every field; the invariants block differs only in the ORDER of two items inside one I13 detail string). It does NOT claim FC-3, FC-4 or the FC-6 driver battery were measured here: the T1-H and T1-X scores and the d94 battery are CARRIED. It does NOT claim the summary-grain FC-6 P2 row equals a cache-grain one; the cache-grain cross-check is reported, not registered. And it does NOT claim the model moved toward the AEO2025 corridor: all three co2 rows moved further below their anchors (-25.0 -> -28.2, -57.0 -> -58.6, -60.0 -> -61.5 %)."
+}
