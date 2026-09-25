@@ -71,6 +71,7 @@ def verify_scope(
     years: list[int],
     inert_moved: frozenset[str] = frozenset(),
     lane_added: frozenset[str] = frozenset(),
+    main_rows_added: int = 0,
 ) -> dict:
     """Raise unless the hydro budgets, B1 and B2 are as claimed; return the evidence.
 
@@ -176,9 +177,11 @@ def verify_scope(
     rows = (
         json.loads((bundle / "run_config.json").read_text()).get("solve_surface") or {}
     )
-    if rows.get("rows") != 185 + len(lane_added) or set(rows.get("moved") or {}) != {
-        "ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE"
-    } | set(inert_moved) | set(lane_added):
+    if rows.get("rows") != 185 + len(lane_added) + main_rows_added or set(
+        rows.get("moved") or {}
+    ) != {"ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE"} | set(inert_moved) | set(
+        lane_added
+    ):
         raise SystemExit(
             f"bundle solve_surface {rows.get('rows')} / {rows.get('moved')}"
         )
@@ -207,6 +210,15 @@ def main() -> None:
         "delta (R-SOCO-B: EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC, "
         "ISO_BA_JOINS); adds one SOCO row each; attested by that lane's layer",
     )
+    ap.add_argument(
+        "--main-rows-added",
+        type=int,
+        default=0,
+        metavar="N",
+        help="solve-surface rows a cross-ISO change on main ADDED that this lane "
+        "did not (soco-67: COAL-SUB added 2); each such change's moved keys are "
+        "declared with --declared-inert-moved after a measured G-DRIFT; never implied",
+    )
     a = ap.parse_args()
     bundle = Path(a.bundle)
     att_path = bundle / "calibration_attestation.json"
@@ -220,6 +232,7 @@ def main() -> None:
         years,
         frozenset(a.declared_inert_moved),
         frozenset(a.lane_added_moved),
+        a.main_rows_added,
     )
     print(json.dumps(ev, indent=1))
     b, bd = ev["budgets"], ev["boundary"]
