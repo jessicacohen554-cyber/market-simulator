@@ -1,0 +1,91 @@
+{
+  "adequacy_requirement_mw": 32039.095,
+  "announced_derates": [],
+  "bridge": false,
+  "capacity_reserve_position": 1.038255,
+  "ccs_retrofits": [],
+  "confirmed_derates": [],
+  "entry_decided_mw_by_tech": {
+    "solar": 500.0
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2048,
+      "decision_year": 2046,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 500.0,
+      "seq": 1,
+      "tech": "solar",
+      "zone": "Connecticut"
+    },
+    {
+      "cod_year": 2046,
+      "decision_year": 2044,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 500.0,
+      "seq": 1,
+      "tech": "solar",
+      "zone": "Connecticut"
+    }
+  ],
+  "firm_clean_accredited_mw": 1396.472,
+  "firm_clean_mw": 1899.5,
+  "fleet_by_fuel_after": {
+    "biomass": 1047.2,
+    "gas_cc": 7347.1116,
+    "gas_cc_ccs": 3758.02637,
+    "gas_ct": 3240.208533,
+    "gas_st": 63.61,
+    "nuclear": 3355.4,
+    "oil": 5083.6
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 1047.2,
+    "gas_cc": 7347.1116,
+    "gas_cc_ccs": 3758.02637,
+    "gas_ct": 3240.208533,
+    "gas_st": 63.61,
+    "nuclear": 3355.4,
+    "oil": 5083.6
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "NEISO",
+  "ledger_version": 1,
+  "locality_capacity": [],
+  "mode": "forecast",
+  "peak_demand_mw": 31148.044,
+  "pipeline_events": [],
+  "renewable_additions": [
+    {
+      "mw": 500.0,
+      "tech": "solar",
+      "zone": "Connecticut"
+    }
+  ],
+  "renewable_credit_applied": {
+    "solar": 0.18,
+    "wind": 0.16
+  },
+  "reserve_margin": 0.070846,
+  "retirements": [],
+  "rps_dual": 50.0,
+  "screen_adequacy_requirement_mw": 32039.095,
+  "screen_entering_firm_mw": 33264.764,
+  "screen_peak_demand_mw": 31148.044,
+  "screen_reserve_position": 1.038255,
+  "solar_cap_mw": 20700.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 2263.825,
+  "storage_power_mw": 2635.0,
+  "thermal_additions": [],
+  "wind_cap_mw": 10400.0,
+  "year": 2046
+}

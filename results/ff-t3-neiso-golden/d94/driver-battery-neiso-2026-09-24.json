@@ -1,0 +1,99 @@
+{
+  "iso": "NEISO",
+  "start_year": 2026,
+  "end_year": 2050,
+  "max_rungs": null,
+  "elapsed_s": 4257.6,
+  "ladders": [
+    {
+      "test_id": "T1.6",
+      "iso": "NEISO",
+      "driver": "RPS/ACP vs VRE supply (short\u2192long)",
+      "note": "rps_dual_over_acp is the final-year REC dual divided by the ISO's ACP ceiling; \u2264 1 means the ACP escape column caps the dual as designed, and it should fall as physical VRE covers the target.",
+      "rungs": [
+        {
+          "rung_id": "T1.6:NEISO:vre_short",
+          "test_id": "T1.6",
+          "iso": "NEISO",
+          "rung_label": "vre_short",
+          "overrides": {
+            "entry_rate_limits": true
+          },
+          "status": "ok",
+          "metrics": {
+            "coal_twh": 0.0,
+            "gas_cc_twh": 266.669,
+            "co2_mt_total": 151.2747,
+            "lw_price": 61.123,
+            "scarcity_hours": 0,
+            "entry_thermal_gw": 7.4839,
+            "renewable_build_gw": 33.0,
+            "total_build_gw": 41.2039,
+            "retired_thermal_gw": 5.741,
+            "economic_retired_thermal_gw": 2.6476,
+            "exogenous_retired_thermal_gw": 0.1432,
+            "reserve_margin_final": 0.06107,
+            "rps_dual_over_acp": 1.0,
+            "storage_fleet_mw": 3355.0,
+            "storage_cap_value_per_mw": 0.38343,
+            "storage_fleet_avg_elcc": 0.88937,
+            "storage_new_longdur_share": 1.0,
+            "net_cone": 108.94
+          },
+          "cached": false
+        },
+        {
+          "rung_id": "T1.6:NEISO:vre_long",
+          "test_id": "T1.6",
+          "iso": "NEISO",
+          "rung_label": "vre_long",
+          "overrides": {
+            "entry_rate_limits": false
+          },
+          "status": "ok",
+          "metrics": {
+            "coal_twh": 0.0,
+            "gas_cc_twh": 294.8396,
+            "co2_mt_total": 159.6764,
+            "lw_price": 61.298,
+            "scarcity_hours": 0,
+            "entry_thermal_gw": 8.4371,
+            "renewable_build_gw": 33.0,
+            "total_build_gw": 42.1571,
+            "retired_thermal_gw": 4.788,
+            "economic_retired_thermal_gw": 2.6941,
+            "exogenous_retired_thermal_gw": 0.1432,
+            "reserve_margin_final": 0.05575,
+            "rps_dual_over_acp": 1.0,
+            "storage_fleet_mw": 3355.0,
+            "storage_cap_value_per_mw": 0.38343,
+            "storage_fleet_avg_elcc": 0.88937,
+            "storage_new_longdur_share": 1.0,
+            "net_cone": 108.94
+          },
+          "cached": false
+        }
+      ],
+      "expectations": [
+        {
+          "expr_id": "T1.6a",
+          "description": "REC dual \u2264 ACP ceiling",
+          "metric": "rps_dual_over_acp",
+          "rule": "le_target",
+          "gate": true,
+          "status": "PASS",
+          "detail": "all \u2264 1.0"
+        },
+        {
+          "expr_id": "T1.6b",
+          "description": "REC dual \u2193 as VRE builds toward the target",
+          "metric": "rps_dual_over_acp",
+          "rule": "monotone_down",
+          "gate": true,
+          "status": "PASS",
+          "detail": "\u2193 [1.0, 1.0]"
+        }
+      ]
+    }
+  ]
+}

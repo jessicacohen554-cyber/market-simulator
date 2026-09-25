@@ -3491,3 +3491,11 @@ results/calibration/rnyiso_2025/
 # R-ERCOT-2 per-year shard legs (rule 32(d)): kept out of main; composites are registered.
 results/calibration/r_ercot2_chpoff_20*/
 results/calibration/r_ercot2_dam_20*/
+# capx D94 (PRECOMMIT-capx-d94-2026-09-24.md §3): the two T1.6 rung shards push their FULL
+# out-dirs to their own branches (rule 34); on the parent tree only the slim bundle, the rung
+# metrics rows and the assembled battery reach main — the per-year cache payloads stay off it.
+/results/ff-t3-neiso-golden/d94/*/NEISO/*/*.parquet
+/results/ff-t3-neiso-golden/d94/*/NEISO/*/*.npz
+/results/ff-t3-neiso-golden/d94/*/NEISO/*/hourly/
+/results/ff-t3-neiso-golden/d94/*/NEISO/*/year_*_floor_retentions.json
+/results/ff-t3-neiso-golden/d94/*.log
