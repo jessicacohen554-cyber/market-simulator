@@ -2172,13 +2172,13 @@
    "iso": "SOCO",
    "year": 2019,
    "source": "keeper-recipe fleet_only rebuild",
-   "coal_rows": 38,
+   "coal_rows": 33,
    "mw": {
     "COAL_LIGNITE": 0.0,
     "COAL_PRB": 7223.8,
     "COAL_BIT": 6926.5,
     "COAL_WC": 0.0,
-    "UNRESOLVED": 924.0
+    "UNRESOLVED": 0.0
    },
    "plants": {
     "COAL_BIT": [
@@ -2186,9 +2186,6 @@
      "3 Barry",
      "6052 Wansley",
      "703 Bowen"
-    ],
-    "UNRESOLVED": [
-     "641 Crist"
     ],
     "COAL_PRB": [
      "6002 James H Miller Jr",
@@ -2201,13 +2198,13 @@
    "iso": "SOCO",
    "year": 2020,
    "source": "keeper-recipe fleet_only rebuild",
-   "coal_rows": 38,
+   "coal_rows": 33,
    "mw": {
     "COAL_LIGNITE": 0.0,
     "COAL_PRB": 7221.5,
     "COAL_BIT": 6926.5,
     "COAL_WC": 0.0,
-    "UNRESOLVED": 924.0
+    "UNRESOLVED": 0.0
    },
    "plants": {
     "COAL_BIT": [
@@ -2215,9 +2212,6 @@
      "3 Barry",
      "6052 Wansley",
      "703 Bowen"
-    ],
-    "UNRESOLVED": [
-     "641 Crist"
     ],
     "COAL_PRB": [
      "6002 James H Miller Jr",
@@ -3165,17 +3159,6 @@
    "energy_sources": [
     "NG"
    ]
-  },
-  "641": {
-   "name": "Crist",
-   "isos": [
-    "SOCO"
-   ],
-   "years": [
-    2019,
-    2020
-   ],
-   "energy_sources": []
   },
   "57937": {
    "name": "Western Sugar Coop - Scottsbluff",
