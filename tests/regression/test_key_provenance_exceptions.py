@@ -70,7 +70,9 @@ def exceptions() -> dict:
 
 def _fatal(failures: list[dict]) -> list[dict]:
     """Gate failures that are not merely 'this recipe needs a blob we lack'."""
-    return [f for f in failures if f["gate"] != "G3_UNVERIFIED"]
+    return [
+        f for f in failures if f["gate"] not in ("G3_UNVERIFIED", "G1_LAG_UNVERIFIED")
+    ]
 
 
 def test_exception_record_is_well_formed(exceptions):
@@ -104,7 +106,14 @@ def test_census_has_zero_unknown_mismatches(record, exceptions):
     """
     listed = {e["run_config"] for e in exceptions["entries"]}
     mismatch = {r["run_config"] for r in record["mismatch_detail"]}
-    unknown = sorted(mismatch - listed)
+    # Q66 (capx D93): a class-rule record whose three legs hold — or whose
+    # ancestry is merely undecidable offline — is not a sixteenth.
+    classed = {
+        p
+        for p, v in K.lag_classifications(record, exceptions).items()
+        if v["status"] in ("lag", "unverified")
+    }
+    unknown = sorted(mismatch - listed - classed)
     assert not unknown, (
         f"{len(unknown)} committed record(s) do not reproduce their cache_key and "
         f"are not in {K.EXCEPTIONS_PATH.name}: {unknown}. This is a SIXTEENTH — "
@@ -294,3 +303,129 @@ def test_exception_record_json_is_committed_and_parses():
     """The record is a committed artifact, not something a run regenerates."""
     assert K.EXCEPTIONS_PATH.exists(), f"{K.EXCEPTIONS_PATH} is not committed"
     json.loads(K.EXCEPTIONS_PATH.read_text())
+
+
+# --------------------------------------------------------------------------- #
+# The Q66 ``lag`` CLASS RULE (capx D93) — both directions, synthetic, offline
+# --------------------------------------------------------------------------- #
+# "A gate seen only green is indistinguishable from one that cannot fail"
+# (capx D91). These build one synthetic record from the live dataclass and an
+# injected ancestry oracle, so they need no census, no commits and no network
+# and run in the fast tier.
+_LAG_FIELD = "pjm_seam_neighbour_hourly_ladder"
+_REG_SHA = "a" * 40
+_SOLVE_SHA = "b" * 40
+
+
+def _lag_row(**over) -> dict:
+    """A record that hashed ``_LAG_FIELD`` at its drop value before registration."""
+    from dataclasses import asdict
+
+    payload = K._jsonable(asdict(K.ScenarioConfig()))
+    drop_at = K._jsonable(K.cache_key_drop_defaults()[_LAG_FIELD])
+    payload[_LAG_FIELD] = drop_at
+    recorded = K.head_key(payload, undrop=(_LAG_FIELD,))
+    assert recorded != K.head_key(payload), "synthetic record would reproduce"
+    row = {
+        "run_config": "results/_synthetic_lag/run_config.json",
+        "reproduces_recorded_key": False,
+        "recorded_cache_key": recorded,
+        "scenario_config": payload,
+        "git_sha": _SOLVE_SHA,
+        "git_basis_sha": _SOLVE_SHA,
+        "git_dirty": False,
+        "git_changed_files": [],
+    }
+    row.update(over)
+    return row
+
+
+def _gates(row: dict, ancestor) -> tuple[dict, list[str]]:
+    record = {"rows": [row], "mismatch_detail": [row]}
+    table = [{"field": _LAG_FIELD, "registration_sha": _REG_SHA}]
+    lag = K.lag_classifications(
+        record,
+        {"entries": []},
+        table,
+        ancestry=lambda reg, solve: ancestor,
+        resolve=lambda sha: sha,
+    )
+    failures = K.check_exceptions(record, {"entries": []}, fetch=False, lag=lag)
+    return lag, [f["gate"] for f in failures]
+
+
+def test_q66_lag_record_classifies_lag_and_does_not_fail():
+    """All three legs hold: classified ``lag``, reported, no gate failure."""
+    lag, gates = _gates(_lag_row(), ancestor=False)
+    verdict = lag["results/_synthetic_lag/run_config.json"]
+    assert verdict["status"] == "lag" and verdict["field"] == _LAG_FIELD
+    assert gates == [], f"a genuine lag record failed: {gates}"
+
+
+def test_q66_perturbed_literal_fails_as_lag_signature_without_reproduction():
+    """Payload + sha legs hold, the literal does not reproduce: a FAILURE."""
+    _, gates = _gates(_lag_row(recorded_cache_key="deadbeefdeadbeef"), ancestor=False)
+    assert gates == ["G1_LAG_NO_REPRODUCE"], gates
+
+
+def test_q66_record_not_carrying_the_field_fails_normally():
+    """No payload leg (field absent) — the class never applies: ``G1_UNKNOWN``."""
+    row = _lag_row()
+    row["scenario_config"] = dict(row["scenario_config"])
+    row["scenario_config"].pop(_LAG_FIELD)
+    lag, gates = _gates(row, ancestor=False)
+    assert not lag and gates == ["G1_UNKNOWN"], (lag, gates)
+
+
+def test_q66_post_registration_sha_fails_normally():
+    """The registration IS in the solve's history: not a lag, ``G1_UNKNOWN``."""
+    lag, gates = _gates(_lag_row(), ancestor=True)
+    assert not lag and gates == ["G1_UNKNOWN"], (lag, gates)
+
+
+def test_q66_declared_fallbacks_fail_the_sha_leg():
+    """No sha, or a dirty tree that may carry scenarios.py: ``G1_UNKNOWN``."""
+    for over in (
+        {"git_sha": None, "git_basis_sha": None},
+        {"git_dirty": True, "git_changed_files": None},
+        {
+            "git_dirty": True,
+            "git_changed_files": ["src/market_sim/config/scenarios.py"],
+        },
+    ):
+        lag, gates = _gates(_lag_row(**over), ancestor=False)
+        assert not lag and gates == ["G1_UNKNOWN"], (over, lag, gates)
+    # A tree dirty only OUTSIDE the registration file keeps the leg (addendum A1).
+    lag, gates = _gates(
+        _lag_row(git_dirty=True, git_changed_files=["docs/x.md"]), ancestor=False
+    )
+    assert gates == [], gates
+
+
+def test_q66_undecidable_ancestry_is_unverified_not_silent():
+    """Reproduces, ancestry undecidable here: ``G1_LAG_UNVERIFIED``, never a pass."""
+    _, gates = _gates(_lag_row(), ancestor=None)
+    assert gates == ["G1_LAG_UNVERIFIED"], gates
+
+
+def test_q66_registration_table_is_well_formed():
+    """Every row is one registration: a registered field and a full commit sha."""
+    rows = K.load_lag_registrations()
+    assert rows, "the class-rule table is empty"
+    fields_seen = set()
+    for r in rows:
+        assert r["field"] in K._CACHE_KEY_OPTIONAL_FIELDS, (
+            f"{r['field']} is not registered — a row names a REGISTRATION"
+        )
+        assert len(r["registration_sha"]) == 40, r
+        assert r["field"] not in fields_seen, f"{r['field']} listed twice"
+        fields_seen.add(r["field"])
+        assert r.get("citation"), r
+
+
+def test_q66_field_carried_off_its_drop_value_is_not_lag():
+    """An ARMED value was never dropped by either rule: the class cannot apply."""
+    row = _lag_row()
+    row["scenario_config"] = dict(row["scenario_config"], **{_LAG_FIELD: True})
+    lag, gates = _gates(row, ancestor=False)
+    assert not lag and gates == ["G1_UNKNOWN"], (lag, gates)

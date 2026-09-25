@@ -1,0 +1,24 @@
+{
+  "what_this_is": "The Q66 class-rule table (owner ruling Q66, 2026-09-24, capx ledger §0bj: \"Class rule.\"; executed by capx D93). One row per cache-key REGISTRATION of a ScenarioConfig field that had already landed unregistered. An UNLISTED committed run_config.json whose recorded cache_key does not reproduce is classified `lag` — REPORTED, not a failure — iff, for some row: (1) its payload CARRIES the field at its frozen drop value; (2) the row's registration_sha is NOT an ancestor of the record's recorded solve sha (git.sha, else git.basis_sha; no sha or a dirty tree fails this leg); and (3) scripts/lib/key_provenance.head_key(payload, undrop=(field,)) equals the recorded literal EXACTLY. Legs (1)+(2) without (3) FAIL as G1_LAG_NO_REPRODUCE. Statement and derivation: docs/handoffs/PRECOMMIT-capx-d93-2026-09-24.md §2.",
+  "what_this_is_not": "NOT a place to park a mismatch. A row names a REGISTRATION COMMIT, never a record, and every record it covers must still reproduce its own literal exactly under the undrop — a row cannot excuse a record it does not derive. NOT a substitute for registering a field: the G6 gate still fails any unregistered field, and a row is added only by the lane that registers the field (or that diagnoses a registration's orphans by single-field experiment, as capx D93 did for caiso_dsw_lateevening_clean). NOT key-provenance-exceptions.json and NOT key-provenance-unregistered-baseline.json, neither of which may be appended to.",
+  "rows": [
+    {
+      "field": "pjm_seam_neighbour_hourly_ladder",
+      "registration_sha": "ee2275d2197965609fe23f79d0e3005e720beed3",
+      "registered_by": "capx D91 (owner ruling Q64), 2026-09-09T03:06:51Z",
+      "citation": "docs/handoffs/FINDING-capx-d91-2026-09-09.md; orphans: docs/handoffs/FINDING-capx-d92-2026-09-10.md §2"
+    },
+    {
+      "field": "caiso_dsw_lateevening_clean",
+      "registration_sha": "15beb03c68eb6409416cf35a19a7bfb9d08c975d",
+      "registered_by": "\"Repair three CI gates that are red on main itself\" (the caiso-269 field's repair), 2026-09-10T06:24:41Z",
+      "citation": "docs/handoffs/FINDING-capx-d93-2026-09-24.md Part 1(b): the four capx D92 legs results/ff-t3-neiso-golden/d92/*, solved at pinned aac390a6 (which lacks 15beb03c), reproduce under this undrop and no other single-field experiment"
+    },
+    {
+      "field": "coal_mustrun_requires_measured_row",
+      "registration_sha": "bb749a9418fdc95d4f256883e6ee60b040e89dbe",
+      "registered_by": "Y-28, 2026-09-24T15:33:23Z (the pjm-h14 field, f7d6112c)",
+      "citation": "docs/handoffs/FINDING-capx-d93-2026-09-24.md Part 3: zero keyed orphans at registration (all 9 carrying records have cache_key null); the row pre-classifies any pinned shard still solving on a pre-bb749a94 sha"
+    }
+  ]
+}
