@@ -1584,3 +1584,21 @@ ruling; 2026-09-25-r-soco-b2-boundary pruned per rule 35): Barry CC 2023 availab
 (PRICE UNSCORED). Next lever: CC capability basis (6.76 / 7.67 TWh residual 2023/2024). Records:
 docs/handoffs/r-soco/{FINDING,PRECOMMIT,RESULT}-soco-67-2026-09-25.md. Leftover refs for the owner:
 claude/soco67-2019..2025.
+
+## soco-68 — 2026-09-25
+
+CC CAPABILITY LEAD RE-ATTRIBUTED; SUMMER-DERATE DOUBLE COUNT REPAIRED; PROMOTED ON STRUCTURE. G-DRIFT (measured, zero LP,
+labels now hashed): every LP input bit-identical at HEAD vs keeper sha b2397ae0 in all seven years. Decomposition: of the
+5.7-9.0 TWh/yr plant-grain CC excess only 0.2-0.6 TWh is CEMS above LP pmax (the routed "capability basis"); ~90% is
+CEMS inside pmax but above derated availability, and its largest parameter-free part is the flat Jun-Sep
+SUMMER_CLASS_DERATE (CC 10%, CT 12.5%) re-applied on a pmax that is already the EIA-860 net-summer rating (CT 93-100%,
+CC 62-76% of capacity) - the miso-141 double count. Armed the existing registered field summer_derate_basis_aware
+(zero free parameters): only summer availability moves on 167-172 units.
+
+RESULT (run 2026-09-25-soco68-summer-basis, seven year-isolated shards at 34f3d4aa, PROMOTED on the owner's standing
+ruling; 2026-09-25-soco67-precod-clip pruned per rule 35): CC_REGULAR +1.48..+2.50, CT_PEAKER -0.55..-1.38, ST_GAS
+-0.34..-0.72, coal -0.07..-0.62 TWh/yr; 2025 unserved 813.8 -> 0 MWh. 2023 C1 CT_PEAKER +5.95/+2.5pp -> +4.60/+1.9pp;
+2024 +4.52/+1.8pp -> +3.15/+1.3pp. ONE REGRESSION: 2019 ST_GAS -7.28/-2.8pp PASS -> -7.94/-3.1pp FAIL -> NOT-YET
+(C2/C4/C6/C8 PASS, C3 unscorable). Next lever: ST_GAS under-dispatch (commitment hours, soco-62 §3). Records:
+docs/handoffs/r-soco/{FINDING,PRECOMMIT,RESULT}-soco-68-2026-09-25.md. Leftover refs for the owner:
+claude/soco68-2019..2025.
