@@ -84,7 +84,39 @@ short-coal 113 / 87 / 125 / 134 / 94 / 85 / 106, short-gas 246 / 283 / 291 / 409
 
 ## 4. G-DRIFT `651fac08` → this pin (rule 29(b)) — zero LP
 
-{GDRIFT}
+`git diff 651fac08 HEAD -- src/market_sim scripts/run_calibration.py scripts/run_calibration_full.py scripts/lib
+scripts/replay_keeper.py data/raw/_validation-source data/raw/reference data/raw/_processed-legacy/bin_assignments_PJM.csv`
+(61 files, 26 commits: capx D93, R-ERCOT, R-NWPP, R-MISO, I-SOCO, CAISO 2019–21 intake, R-SOCO-B, COAL-SUB ×2).
+Every hunk was classified; the summary:
+
+| hunk | PJM verdict |
+|---|---|
+| **COAL-SUB** `data/coal.py` link 5 (unit's own EIA-860 energy-source code), `fleet/eia860.py` coal group = `coal_subclass`, `data/offer_curves.py` (COAL fallback gone), `pipeline/backcast_config.py` (`_PJM_OFFER_CURVE["COAL"]` deleted, bare COAL refused), `plant_taxonomy.py`, `scenarios._retire_bare_coal_class`, `replay_keeper.translate_legacy_coal_keys` | **LIVE by design — the treatment. 2019–2022 only.** |
+| COAL-SUB value-preserving re-keys: `MIN_STABLE_PCT_PHYSICAL`, `THERMAL_AVAILABILITY`, ramp / HR-mult / tranche tables, AS groups, outage-overlay joins via `artifact_class`, PJM midcurve map (all subclasses → LONG_RUN), reserves coal startup, interchange floor limbs, `bin_assignments_PJM.csv` relabel (read only for CT_PEAKER rows) | INERT: identical values for every PJM coal unit |
+| R-ERCOT year-matched bin heat rates (`run_calibration.py`, `campd_bins.py`) | INERT: gated `iso=="ERCOT"` |
+| `interchange/spec.py` 2019 `PJM_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR` row | INERT: `pjm_seam_neighbour_hourly_ladder=False` in the recipe |
+| R-SOCO-B / I-SOCO / R-NWPP / R-MISO / CAISO intake (constants, ba_membership, eia930 repairs, LMP parquets, calibration_reference NWPP/SOCO blocks, vintage_2021 AEC rows) | INERT: other ISOs; no PJM benchmark row changed |
+| capx D93 `key_provenance.py`; `results/cache.py` prose | INERT: governance / docstring |
+
+**What the LIVE hunk does to PJM (2019–2022):** the 11 former generic-bucket plants (Waukegan → PRB; Wagner,
+Chalk Point, Dickerson, Morgantown GS, Brunner Island, Chesterfield, Notre Dame, Spruance, Ingredion → BIT;
+Morgantown EF → WC; 5,468 / 3,917 / 4,616 / 1,311 MW by the audit's unit-level count, 5,373 / 3,888 / 4,616 /
+1,311 by §3a's plant-name match) (i) read their subclass band instead of the COAL band, and (ii) get a
+`coal_supply` tag, so the BIT units now take the armed `coal_bit_passthrough_sigmoid` (floor 0.65) on their
+above-must-run tranches instead of a flat 1.0, and Waukegan (`prb`, no PJM prb sigmoid) is re-priced to the PRB
+delivered proxy where EIA-923 has no plant-month price. The keeper's own class sidecars put generic-COAL energy at
+**18.22 / 7.33 / 16.97 / 3.70 TWh** in 2019–2022 and zero in 2023–2025. Expected sign: more coal from these plants.
+
+**Cache re-key (not an LP change):** `solve_surface.moved_rows("PJM")` gains six COAL-SUB tables, so every PJM
+cache key moves; no stale cache can be reused.
+
+**Scoring surface:** re-scoring the committed keeper with the pin and HEAD `calibration_verdict.py` gives
+identical criterion records. On a re-solve, the generic-COAL model energy lands in its subclass row of C1, and
+the EIA-923 backfill books these plants by fleet group, so the 2019–2022 subclass *benchmark* cells may move too —
+reported per year in the RESULT.
+
+**Form 4 holds for 2023–2025** (no LIVE hunk reaches them: prediction = byte-identical class energy); for
+2019–2022 the only LIVE hunk is the treatment. No control solve is spent.
 
 ## 5. Gates and predictions — declared before any solve
 
@@ -98,8 +130,8 @@ magnitude either way.
 - **G2 predictions.** 2023–2025: no generic-bucket coal, so class TWh within ±0.1 TWh of the keeper and
   C1–C8 unchanged, unless a §4 LIVE hunk other than COAL-SUB reaches them. 2019–2022: the former bucket
   (5.4 / 3.9 / 4.6 / 1.3 GW) mostly moves to COAL_BIT, whose committed and econ_low bands are ~15 % / ~4 %
-  cheaper than the old COAL band and whose econ_high is ~60 % dearer; its net sign on coal energy is **not
-  predicted**. The known 2020/21 COAL_BIT over-run (R-PJM-2: +21.45 / +25.70 TWh) is at risk of worsening,
+  cheaper than the old COAL band and whose econ_high is ~60 % dearer, and the BIT units newly take the
+  passthrough sigmoid discount; **predicted sign: coal energy rises in 2019–2021**, magnitude not predicted. The known 2020/21 COAL_BIT over-run (R-PJM-2: +21.45 / +25.70 TWh) is at risk of worsening,
   and a worsening is an offers finding (pjm-168), reported, never re-tuned. The C1 bench is by subclass, so
   the old bare-COAL model energy now lands in its subclass row — a scoring move, not a physics move.
 - **G3:** full rubric C1–C8 every year, vs the keeper re-scored on the same benchmark.
