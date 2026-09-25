@@ -97,7 +97,9 @@ def cmd_metrics(out_dir: Path, rung: str) -> int:
     if sc.get("mode") != "forecast" or sc.get("iso") != ISO:
         bad["mode/iso"] = (sc.get("mode"), sc.get("iso"))
     if bad:
-        print(f"REFUSED — config signature mismatch {{field: (solved, required)}}: {bad}")
+        print(
+            f"REFUSED — config signature mismatch {{field: (solved, required)}}: {bad}"
+        )
         return 2
     key = rc["cache_key"]
     if _cache_dir(out_dir).name != key:
