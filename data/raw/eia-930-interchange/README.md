@@ -225,3 +225,10 @@ this directory. Analysis: `docs/handoffs/FINDING-nwpp-11-2026-09-13.md` §4.
 
 2,278,882 rows over 30 distinct counterparties, 13 of them outside the
 footprint: `CISO BCHA WACM SRP LDWP PNM BANC AZPS WALC WWA GWA SWPP AESO`.
+
+**GRID 2019-2022 added (2026-09-24, lane R-NWPP)** — the only NWPP member file a
+backcast reads (the `nwpp_grid_carried_wind_served` Southwest-leg correction):
+`fetch_eia930_interchange.py --ba GRID --source bulk --years 2019 2020 2021 2022
+--merge`, 97,921 rows added; the committed 2023-2026 rows are byte-identical after
+the merge. GRID's PNM leg is 0 in 2019 and its SRP leg starts mid-2020 (the
+Grid West wind build-out), both as EIA published them.

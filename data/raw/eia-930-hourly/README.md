@@ -21,23 +21,23 @@ the BA reports. Consumed by `src/market_sim/data/eia_loader.py`
 | MISO | MISO | 2018-01-01 .. 2026-06-30 (2019-2021 backfilled 2026-07-06; 2018 + H1-2026 landed 2026-07-08; **2022 filled 2026-07-31**) |
 | SOCO | — (Southern Co, not a modeled ISO) | 2022-12-31 .. 2025-12-31 |
 | FLA | — (Florida, not a modeled ISO) | 2022-12-31 .. 2025-01-31 |
-| BPAT | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
-| PACE | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
-| PACW | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
-| PGE | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
-| PSEI | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
-| AVA | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
-| IPCO | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
-| NWMT | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
-| CHPD | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
-| DOPD | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
-| GCPD | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
-| SCL | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
-| TPWR | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
-| AVRN | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
-| GRID | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
-| WAUW | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
-| NEVP | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| BPAT | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
+| PACE | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
+| PACW | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
+| PGE | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
+| PSEI | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
+| AVA | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
+| IPCO | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
+| NWMT | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
+| CHPD | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
+| DOPD | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
+| GCPD | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
+| SCL | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
+| TPWR | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
+| AVRN | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
+| GRID | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
+| WAUW | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
+| NEVP | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
 
 2018 H1 (Jan-Jun) carries demand/net-generation/total-interchange only — EIA-930
 per-fuel reporting hadn't started yet for any of these three BAs (`NG: *` columns
@@ -310,3 +310,23 @@ in all 26,304 hours of each, in the source and therefore in these files. That is
 structure, not a gap: they hold generation (AVRN 2,848.7 MW wind/solar, GRID
 689.4 MW) and no load, and they are not zone candidates on the load side.
 Nothing is padded or interpolated to hide it.
+
+### 2019-2022 added (2026-09-24, lane R-NWPP)
+
+Same script, same BALANCE archive, run over 2019-2025:
+
+    python scripts/data/build_nwpp_ba_hourly_from_balance.py --all-nwpp --force \
+        --year 2019 --year 2020 --year 2021 --year 2022 --year 2023 --year 2024 --year 2025
+
+Every BA-year reconciles to the BALANCE source with zero residual (raw and
+`(Adjusted)`), and every committed 2023-2025 row is **byte-identical** after the
+rebuild (verified row-for-row, all 17 files). Owner instruction 2026-09-24: every
+backcast year 2019-2025 (`docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md`
+§5.3.5).
+
+**A source gap, carried as-is and never padded:** PSEI's `Demand (Adjusted)` is
+missing for **8,659 of 8,784 hours of 2020** (raw `Demand`: 8,734 missing) and for
+384 hours of 2019 (longest run 192 h). Its fuel-type `NG:` columns are complete.
+The NWPP pool frame's member fill interpolates across gaps with no maximum, so
+2020 pool demand would be a linear bridge over ~100 points — NWPP 2020 is
+therefore not a solvable backcast year from this archive (lane R-NWPP PRECOMMIT).

@@ -408,3 +408,27 @@ not adopted. Records: `docs/handoffs/{FINDING-nwpp-49-pondage-design-2026-09-23,
 
 **Promoted 2026-09-24 (owner pre-authorization):** `2026-09-24-nwpp-49-ror-split` is NWPP keeper #6;
 the NWPP-47 predecessor was pruned (rule 35).
+
+## r-nwpp — 2026-09-24 — corrected backcast inputs, 2019 + 2021–2025 (registered, promotion unruled)
+
+`2026-09-24-rnwpp-inputs-span` (`results/calibration/rnwpp_span`): the NWPP-49 recipe plus year-matched EIA-860,
+measured CT/coal/ST/CC/CHP heat rates, CAMPD short-coal and unit-partial outages, and mid-vintage exit carry.
+Offer curves are unchanged. Six year-isolated shards; 2020 is data-blocked (PSEI EIA-930 demand absent).
+
+Zero-LP intake this lane:
+* the 17 member EIA-930 extracts and GRID interchange for 2019–22 (2023–25 byte-identical);
+* the NWPP 2019/21/22 calibration reference;
+* the NWPP measured heat-rate artifacts, re-derived on F2's raw CAMPD.
+
+Result: NOT-YET on {fuelmix, dispatch_corr}.
+* C1 CC_REGULAR: 2023 −7.21 → −8.32 FAIL; 2022 −11.23 FAIL. This is the standing gas-short / coal-long demand-basis
+  gap, now on a year-correct coal fleet.
+* C4 coal r: 0.671 / 0.622 / 0.687 (+0.011 / +0.004 / +0.049). 2019/21/22 pass (0.774 / 0.740 / 0.772).
+
+Records: `docs/handoffs/{PRECOMMIT,RESULT}-r-nwpp-2019-2025-inputs-2026-09-24.md`.
+
+---
+
+**Promoted 2026-09-25 (owner ruling "Yes promote"):** `2026-09-24-rnwpp-inputs-span` is NWPP keeper #7. It covers
+2019 and 2021–2025, a superset of the outgoing keeper's {2023, 2024, 2025} (rule 35(c)). The NWPP-49 predecessor
+was pruned (rule 35), with `audit_keepers` E1 run before the prune and E13 after it (both PASS).

@@ -1,0 +1,109 @@
+{
+ "2019": [],
+ "2020": [
+  {
+   "plant": 6106,
+   "name": "Boardman committed",
+   "mw_off": 0.0,
+   "twh_off": 0.0,
+   "mw_on": 29.25,
+   "twh_on": 0.196,
+   "d": 0.196
+  },
+  {
+   "plant": 6106,
+   "name": "Boardman econhi",
+   "mw_off": 0.0,
+   "twh_off": 0.0,
+   "mw_on": 126.36,
+   "twh_on": 0.848,
+   "d": 0.848
+  },
+  {
+   "plant": 6106,
+   "name": "Boardman econlo",
+   "mw_off": 0.0,
+   "twh_off": 0.0,
+   "mw_on": 154.44,
+   "twh_on": 1.036,
+   "d": 1.036
+  },
+  {
+   "plant": 6106,
+   "name": "Boardman mustrun",
+   "mw_off": 0.0,
+   "twh_off": 0.0,
+   "mw_on": 263.25,
+   "twh_on": 1.766,
+   "d": 1.766
+  },
+  {
+   "plant": 6106,
+   "name": "Boardman peak",
+   "mw_off": 0.0,
+   "twh_off": 0.0,
+   "mw_on": 11.7,
+   "twh_on": 0.079,
+   "d": 0.079
+  },
+  {
+   "plant": 59281,
+   "name": "eBay - South Jordan econhi",
+   "mw_off": 0.0,
+   "twh_off": 0.0,
+   "mw_on": 4.32,
+   "twh_on": 0.019,
+   "d": 0.019
+  },
+  {
+   "plant": 59281,
+   "name": "eBay - South Jordan econlo",
+   "mw_off": 0.0,
+   "twh_off": 0.0,
+   "mw_on": 4.794,
+   "twh_on": 0.021,
+   "d": 0.021
+  },
+  {
+   "plant": 59281,
+   "name": "eBay - South Jordan peak",
+   "mw_off": 0.0,
+   "twh_off": 0.0,
+   "mw_on": 0.686,
+   "twh_on": 0.003,
+   "d": 0.003
+  }
+ ],
+ "2021": [
+  {
+   "plant": 56223,
+   "name": "Alden Bailey Power Plant econhi",
+   "mw_off": 0.0,
+   "twh_off": 0.0,
+   "mw_on": 4.32,
+   "twh_on": 0.029,
+   "d": 0.029
+  },
+  {
+   "plant": 56223,
+   "name": "Alden Bailey Power Plant econlo",
+   "mw_off": 0.0,
+   "twh_off": 0.0,
+   "mw_on": 4.794,
+   "twh_on": 0.032,
+   "d": 0.032
+  },
+  {
+   "plant": 56223,
+   "name": "Alden Bailey Power Plant peak",
+   "mw_off": 0.0,
+   "twh_off": 0.0,
+   "mw_on": 0.686,
+   "twh_on": 0.005,
+   "d": 0.005
+  }
+ ],
+ "2022": [],
+ "2023": [],
+ "2024": []
+}

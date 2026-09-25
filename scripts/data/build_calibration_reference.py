@@ -285,7 +285,17 @@ CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     # Substituting a neighbouring hub -- SP15, NP15 or Palo Verde, each one
     # column away in the same ICE workbook -- is the load proxy rule 13
     # ``[R-MEASURED]`` forbids and stays refused (plan gate G17).
-    "NWPP": (2023, 2024, 2025),
+    #
+    # 2019, 2021, 2022 ADDED (lane R-NWPP, 2026-09-24): the seventeen member
+    # extracts were re-derived from the committed BALANCE archive over
+    # 2019-2025 (``build_nwpp_ba_hourly_from_balance.py --all-nwpp --year
+    # 2019..2025``, zero reconciliation residual, 2023-2025 rows
+    # byte-identical), which is exactly the NWPP-11-class derive named above.
+    # 2020 is deliberately ABSENT: PSEI's ``Demand (Adjusted)`` is missing for
+    # 8,659 of 8,784 hours of 2020 in EIA's own BALANCE files, and the pool
+    # frame's member fill would interpolate 101 points into a fabricated
+    # series (rule 13). It returns when a measured PSEI 2020 load lands.
+    "NWPP": (2019, 2021, 2022, 2023, 2024, 2025),
     # SOCO (registered 2026-09-14 lane SOCO-20; this block landed 2026-09-16 by
     # lane SOCO-31). 2023-2025 is the whole span the DATA supports, not a tier
     # choice: ``data/raw/eia-930-hourly/SOCO hourly.parquet`` carries 26,304
