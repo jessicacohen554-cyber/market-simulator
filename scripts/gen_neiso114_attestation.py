@@ -49,7 +49,9 @@ def _offer_sha(bundle: Path, skip: frozenset = frozenset({"COAL"})) -> str:
     """Hash of the resolved ``offer_curve_by_group`` with ``skip`` groups set aside."""
     cfg = json.loads((bundle / "run_config.json").read_text())["scenario_config"]
     curve = {
-        g: v for g, v in (cfg.get("offer_curve_by_group") or {}).items() if g not in skip
+        g: v
+        for g, v in (cfg.get("offer_curve_by_group") or {}).items()
+        if g not in skip
     }
     return hashlib.sha256(json.dumps(curve, sort_keys=True).encode()).hexdigest()[:16]
 
