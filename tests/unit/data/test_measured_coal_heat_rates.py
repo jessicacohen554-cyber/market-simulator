@@ -360,7 +360,7 @@ class TestConfigPlumbing(unittest.TestCase):
             with mock.patch.object(
                 fleet_pkg, "bins_to_fleet", lambda *a, **k: ([], None)
             ):
-                bins = pd.DataFrame({"Plant_Code": [1], "Plant_Group": ["COAL"]})
+                bins = pd.DataFrame({"Plant_Code": [1], "Plant_Group": ["COAL_BIT"]})
                 build_base_fleet(bins, "NYISO", None, ["z"], config, [], [], 2023)
 
         self.assertEqual(len(calls), 2)

@@ -46,7 +46,7 @@ def _coal_mustrun(unit_id: str = "COAL_N_p1_mustrun", campd: bool = True) -> Gen
         eford=0.05,
         online_year=1980,
         is_campd_bin=campd,
-        plant_group="COAL",
+        plant_group="COAL_BIT",
         bin_label="X",
         plant_code=1,
     )
