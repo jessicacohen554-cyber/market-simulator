@@ -26,3 +26,13 @@ merged, so it is an ancestor of `main`). Five v1 shards hit hard stop 1 and stop
 | 2023 | session_01No7EwGTkMgTXYqitUkXcd5 |
 | 2024 | session_01BV7NUfrhPBwSdyxwQmXBFR |
 | 2025 | session_01KGmFh8jcezDB341dTvz4DH |
+
+## v2 outcomes / v3 (2026-09-25 04:48Z)
+
+- 2019 v2: blocked — `hydro-plant-modes` clean partition absent (its curate script runs in ~30 s, no LP; the
+  shard's "LP solver OOM" reading was a misdiagnosis). Archived.
+- 2020 v2: solve OOM-killed 69 s in (container ceiling reported 18.4 GiB vs the preflight's 24 GiB swap
+  target). Archived.
+- 2021 / 2024 / 2025 v2: solving. 2022 / 2023 v2: waiting for container capacity.
+- v3 relaunch for 2019 / 2020 adds the hydro-modes curate step and a one-heavy-process rule:
+  2019 `session_01CNy1qVn74MRUpx1Qr8MV3V`, 2020 `session_012qwxpdikWgHduvgJhSRc9V`.
