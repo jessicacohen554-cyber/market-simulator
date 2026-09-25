@@ -82,11 +82,22 @@ def main() -> int:
     a = rc_leg["scenario_config"]
     k = _rc(KEEPER, args.year)["scenario_config"]
     ok = True
+    # COAL-SUB (#6619): replay_keeper folds the keeper's legacy bare "COAL"
+    # entry out of the resolved offer_curve_by_group (G-DRIFT, PRECOMMIT §2),
+    # and arm B's ST_GAS entry differs by design (checked via the overrides
+    # below). Compare the resolved curve with those two entries set aside.
+    skip_groups = {"COAL"} | ({"ST_GAS"} if args.arm == "B" else set())
+
+    def _curve(cfg: dict) -> dict:
+        return {g: v for g, v in (cfg.get("offer_curve_by_group") or {}).items() if g not in skip_groups}
+
     diff = {
         key: (k[key], a[key])
         for key in sorted(set(a) & set(k))
-        if a[key] != k[key] and key != "offer_curve_overrides"
+        if a[key] != k[key] and key not in ("offer_curve_overrides", "offer_curve_by_group")
     }
+    if _curve(a) != _curve(k):
+        diff["offer_curve_by_group"] = ("keeper", "moved outside COAL/ST_GAS")
     new_only = {key: a[key] for key in sorted(set(a) - set(k))}
     new_nondefault = {
         key: v
