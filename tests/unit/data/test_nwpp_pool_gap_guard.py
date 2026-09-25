@@ -159,12 +159,17 @@ def _hydrated() -> bool:
 class TestMeasuredEffect(unittest.TestCase):
     def test_2020_assembles_on_the_reconciled_basis(self):
         """Pre-guard, PSEI 2020 was drawn through ~100 points; now it is FERC
-        714 x the member's own 2020 EIA/FERC ratio at the measured -1 h clock."""
+        714 x the member's own 2020 EIA/FERC ratio at the measured -1 h clock.
+
+        270.30 since lane NWPP-NEXT-2: PSEI's double-booked Colstrip share
+        (``NG: COL``, 2.15 TWh in 2020) is removed from its NG and Demand
+        before the ratio is measured, so the ratio is 1.06 rather than 1.19
+        (was 273.37 on the double-booked basis)."""
         frames._pool_hourly_frame.cache_clear()
         frame = frames._pool_hourly_frame("NWPP", 2020)
         self.assertIsNotNone(frame)
         twh = float(frame["Demand"].sum()) / 1e6
-        self.assertAlmostEqual(twh, 273.37, delta=0.05)
+        self.assertAlmostEqual(twh, 270.30, delta=0.05)
 
     def test_2019_psei_gap_is_filled_not_interpolated(self):
         frames._pool_hourly_frame.cache_clear()
