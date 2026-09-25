@@ -6692,3 +6692,14 @@ Determination unchanged year-for-year vs h22 on the same benchmark: 2023–25 NO
 2024 −14.36 TWh vs −13.61). 2021 coal over-run persists (+25.70 TWh COAL_BIT), CC −17.42 newly FAIL; 2020 improves
 (+29.23 → +21.45). Pruned h22 span/touchpoint and r-pjm-corrected (rule 35). Record:
 `docs/RESULT-r-pjm-2-rggi-keeper-corrected-inputs-2026-09-25.md`.
+
+## PJM-NEXT-2 — 2026-09-25 — coal over-dispatch, CC_REGULAR 2024, TMI 2019 (NOT promoted)
+
+Run `2026-09-25-pjm-next-2-joint` (bundle `pjmnext2_joint_span`, one shard per year 2019–2025, composed at zero LP;
+control = keeper `2026-09-25-pjm-next-c1` committed bundle, G-DRIFT byte-identical). Three gated, zero-DOF fields:
+`unit_outage_membership_repair` (21 never-scanned facilities get CAMPD windows via a companion extract; also the
+deriver's COAL-SUB token fix), `pjm_zonal_gas_basis_skip_923_priced` (basis no longer stacked on EIA-923 prints),
+`nuclear_dormancy_defers_to_vintage_exit` (TMI-1 2019). Both runs NOT-YET. COAL_BIT 2019–22 +28.4/+19.4/+32.6/+10.3 →
++12.9/+10.5/+20.7/+8.1; CC_REGULAR 2024 −14.68 → −10.07 (still FAIL); nuclear 2019 −5.9 → −0.9. Costs: C3a 2019
+PASS → FAIL (+10.7 %), C3b 2020 PASS → FAIL, CC_REGULAR 2022 +10.9 → +14.9. Registered `--no-prune`; promotion is
+the owner's call. Record: `docs/RESULT-pjm-next-2-2026-09-25.md`.
