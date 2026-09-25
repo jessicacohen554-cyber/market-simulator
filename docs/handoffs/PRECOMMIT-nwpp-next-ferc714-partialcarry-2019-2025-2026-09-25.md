@@ -111,7 +111,32 @@ python3 scripts/replay_keeper.py /tmp/n49/results/calibration/nwpp49_ror_span \
 
 ## 4. G-DRIFT (keeper legs at `b6ce536ad1e7e41e083b81f784f8e94084bbce2f` → pin), rule 29(b)
 
-See §4 addendum below. It is written from the parent's hunk audit before any leg is solved.
+The parent ran this hunk audit before any leg was solved. The command was `git diff b6ce536a HEAD --` over
+`src/market_sim`, the `run_calibration*` / `replay_keeper` scripts, `scripts/lib`, `_validation-source` and
+`reference`.
+
+* **LIVE, and this lane's object:** `9e3b40d1`. It covers the frames.py gap guard, `ferc714.py`, `FERC_714_DIR`,
+  and the NWPP calibration reference (2020 added; 2019 demand +0.0225 TWh).
+* **INERT for NWPP:**
+
+  | Change | Why it does not reach NWPP |
+  |---|---|
+  | COAL-SUB class split (`plant_taxonomy`, `coal.py`, `eia860.py`, `arrays.py`, offer curves, per-class tables) | Labels only. NWPP's `offer_curve_by_group` gives COAL and every subclass identical bands, and each table carries COAL's value to its subclasses. The keeper sidecars already carry COAL_BIT / PRB / WC. |
+  | R-NEISO `_mid_vintage_exit_rows_from_window` | Fires for NWPP 2023/24 only on hydro, wind and battery rows, which never reach the LP arrays. 2019–22 keep the old path. |
+  | `unit_outage_short_windows_gas` split | The flag is off in the recipe. |
+  | R-SOCO-B BA joins and interchange sign windows | SOCO-keyed. |
+  | ERCOT bin heat rates | Gated to `iso == "ERCOT"`. |
+  | CISO hydro gap | Keyed to CISO. |
+  | MISO seam curves and sigmoids | MISO-keyed. |
+  | PJM RGGI | PJM-keyed. |
+  | `cache.py` epoch, cache-key surface, `scripts/lib` scoring / benchmark | Accounting only. |
+  | Other ISOs' data files | Not NWPP data. |
+
+* **Empirical check.** A zero-LP `fleet_only` NWPP build at `b6ce536a` and at HEAD, under this arm's recipe, is
+  **identical in every LP array** in 2023 (629 units) and 2024 (652 units): ids, pmax, pmin, heat rate, VOM,
+  emissions, availability, min_gen, `mc_base`, fuel prices, demand, VRE CF, storage and the hydro fleet. Only the
+  `plant_group` labels differ.
+* **Verdict:** form 4 is valid, and the committed `rnwpp_span` bundle is the control. No control solve is spent.
 
 ## 5. Shard hard stops (any miss = STOP, no push)
 
