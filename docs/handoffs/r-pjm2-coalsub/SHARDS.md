@@ -9,3 +9,20 @@
 | 2023 | session_01EjQ3r5YJM2c9cdnjPedGQg | claude/rpjm2cs-2023 | results/calibration/rpjm2cs_2023 |
 | 2024 | session_01KGfbCcpVFZ19EfduPJrsbU | claude/rpjm2cs-2024 | results/calibration/rpjm2cs_2024 |
 | 2025 | session_01TA5TD6XPdzKDFizdmvPqqk | claude/rpjm2cs-2025 | results/calibration/rpjm2cs_2025 |
+
+## v2 relaunch (2026-09-25 04:20Z)
+
+The v1 containers cloned `main` rather than the pin (the pin sat on an unmerged branch at launch; it has since
+merged, so it is an ancestor of `main`). Five v1 shards hit hard stop 1 and stopped cleanly without solving; the
+2022/2023 v1 shards never left PENDING. All seven v1 sessions are archived. v2 adds a sanctioned
+`git fetch origin <pin> && git checkout --detach <pin>` step before the HEAD check.
+
+| year | v2 session |
+|---|---|
+| 2019 | session_01HJo24HdeKDGyidE5MiqwJR |
+| 2020 | session_01FCjc6NkbHzhGkqVxZKTvju |
+| 2021 | session_01LdbB3sMUVMNb6XdieRvFmn |
+| 2022 | session_017ZCEAycDiroTmy7LHhqojD |
+| 2023 | session_01No7EwGTkMgTXYqitUkXcd5 |
+| 2024 | session_01BV7NUfrhPBwSdyxwQmXBFR |
+| 2025 | session_01KGmFh8jcezDB341dTvz4DH |
