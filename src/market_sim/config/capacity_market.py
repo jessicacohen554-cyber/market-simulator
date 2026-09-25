@@ -139,16 +139,44 @@ class CapAndTradeProgram:
 # below) so the adder path stays $0 regardless of membership, and the
 # mass-cap row only activates when a user explicitly sets
 # `mass_cap_enabled=True` (default off, rule 24).
+# 2019 ADDED (R-PJM, 2026-09-25): same script on vintage_2019 (NJ not yet a
+# member, so EMAAC falls to its Delaware share); the same run reproduces
+# 2020-2025 exactly.
 # 2020-2022 ADDED (pjm-h22, 2026-09-24): same script, same recipe, run over
 # 2020-2025 against the year-matched `vintage_2020..2022` EIA-860 tables; the
 # rerun reproduces the committed 2023-2025 values EXACTLY. Without these rows
 # `_zone_share_for_year` held 2023's Dominion 0.9881 into 2020, a year Virginia
 # was not a member.
 PJM_RGGI_ZONE_SHARE: dict[str, dict[int, float]] = {
-    "PJM_ComEd": {2020: 0.0, 2021: 0.0, 2022: 0.0, 2023: 0.0, 2024: 0.0, 2025: 0.0},
-    "PJM_AEP_Ohio": {2020: 0.0, 2021: 0.0, 2022: 0.0, 2023: 0.0, 2024: 0.0, 2025: 0.0},
-    "PJM_ATSI": {2020: 0.0, 2021: 0.0, 2022: 0.0, 2023: 0.0, 2024: 0.0, 2025: 0.0},
+    "PJM_ComEd": {
+        2019: 0.0,
+        2020: 0.0,
+        2021: 0.0,
+        2022: 0.0,
+        2023: 0.0,
+        2024: 0.0,
+        2025: 0.0,
+    },
+    "PJM_AEP_Ohio": {
+        2019: 0.0,
+        2020: 0.0,
+        2021: 0.0,
+        2022: 0.0,
+        2023: 0.0,
+        2024: 0.0,
+        2025: 0.0,
+    },
+    "PJM_ATSI": {
+        2019: 0.0,
+        2020: 0.0,
+        2021: 0.0,
+        2022: 0.0,
+        2023: 0.0,
+        2024: 0.0,
+        2025: 0.0,
+    },
     "PJM_West_APS": {
+        2019: 0.0112,
         2020: 0.0107,
         2021: 0.0102,
         2022: 0.0102,
@@ -157,6 +185,7 @@ PJM_RGGI_ZONE_SHARE: dict[str, dict[int, float]] = {
         2025: 0.0,
     },
     "PJM_Central_PA": {
+        2019: 0.0,
         2020: 0.0,
         2021: 0.0,
         2022: 0.0,
@@ -165,6 +194,7 @@ PJM_RGGI_ZONE_SHARE: dict[str, dict[int, float]] = {
         2025: 0.0,
     },
     "PJM_Dominion": {
+        2019: 0.0,
         2020: 0.0,
         2021: 0.9893,
         2022: 0.9894,
@@ -173,6 +203,7 @@ PJM_RGGI_ZONE_SHARE: dict[str, dict[int, float]] = {
         2025: 0.0,
     },
     "PJM_EMAAC": {
+        2019: 0.1716,
         2020: 0.7336,
         2021: 0.7346,
         2022: 0.7331,
@@ -181,6 +212,7 @@ PJM_RGGI_ZONE_SHARE: dict[str, dict[int, float]] = {
         2025: 0.7221,
     },
     "PJM_SWMAAC": {
+        2019: 0.9981,
         2020: 0.998,
         2021: 0.9979,
         2022: 0.9976,
@@ -313,7 +345,13 @@ CARB_FLOOR_PRICE: dict[int, float] = {
 # 2020-01-01) and Virginia was a member 2021-2023 (sources above). 2020 is the
 # 2025 set exactly (NJ in, VA not yet), so the 2020 row is byte-neutral for
 # every consumer; the 2022 row adds VA.
+# 2019 ADDED (R-PJM, 2026-09-25) so PJM's corrected-inputs keeper can carry RGGI
+# in every year it solves (rules 16/34(c)/35(c)). Published legal fact: New
+# Jersey rejoined only effective 2020-01-01 and Virginia joined 2021-01-01
+# (sources above), so 2019 is the 2020 set without NJ. Before this row a 2019
+# lookup fell back to the 2025 set, enrolling NJ a year early.
 RGGI_MEMBER_STATES_BY_YEAR: dict[int, frozenset[str]] = {
+    2019: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE"}),
     2020: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ"}),
     2021: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ", "VA"}),
     2022: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ", "VA"}),

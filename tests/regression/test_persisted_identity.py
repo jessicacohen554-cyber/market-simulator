@@ -657,13 +657,34 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   rows without advancing the pin — the same defect the 2026-09-08 and
 #   2026-09-10 blocks name. Full record:
 #   docs/handoffs/FINDING-y28-cache-key-identity-2026-09-24.md.
+#
+# 2026-09-25 ALL SIX ADVANCED (R-PJM) — pjm-h22's RGGI rows (whose pin advance
+#   never landed) PLUS R-PJM's 2019 rows. Measured: every one of the six pins
+#   already FAILED at main 9210075/3321109 before this change (pjm-h22 added
+#   the 2020/2022 membership rows, the 2020-2022 PJM price and zone-share rows,
+#   and ledgered the names below, but left these literals at their Y-28
+#   values). This lane then ADDED the 2019 row to RGGI_MEMBER_STATES_BY_YEAR
+#   (MD/DE in, NJ not until 2020, VA not until 2021), PJM_RGGI_ALLOWANCE_
+#   PRICE_PER_TONNE (5.97 $/t = NEISO's 2019 metric value) and
+#   PJM_RGGI_ZONE_SHARE (derive_pjm_rggi_zone_share.py on vintage_2019, the
+#   same run reproducing 2020-2025 exactly). `solve_surface_register.py --diff
+#   9210075` -> worktree: "310 -> 310 names; 4 value(s) moved, 0 added":
+#   CAP_AND_TRADE_PROGRAMS / PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE /
+#   PJM_RGGI_ZONE_SHARE (PJM) and RGGI_MEMBER_STATES_BY_YEAR (every ISO). All
+#   four were already in LEDGERED_SURFACE_MOVES_BY_ISO (notes appended). Row
+#   counts unchanged.
+#   WHAT IT COSTS: a cache miss in every ISO (the membership table is shared).
+#   No existing year's row moved, so no committed number changes; only PJM
+#   reads membership in an armed path, and the 2019 rows are what let the
+#   RGGI keeper recipe solve 2019 with Delaware and Maryland priced (before,
+#   2019 fell back to the 2025 set and a None price -> zero adder).
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("2cdbcd6c3ab52c81", 231),
-    "CAISO": ("0b6c20ac2fb77cee", 206),
-    "MISO": ("c3ff7c56ddbb573d", 212),
-    "PJM": ("5c08117448da7c28", 216),
-    "NYISO": ("211ef7751502c924", 213),
-    "NEISO": ("54e04ca0b469de51", 199),
+    "ERCOT": ("f7eb5b223ed7501e", 231),
+    "CAISO": ("88af0eef72c1512b", 206),
+    "MISO": ("f3b6eb45df6c7a40", 212),
+    "PJM": ("26c3bd73b4d63ce4", 216),
+    "NYISO": ("ede243cc587b692d", 213),
+    "NEISO": ("ff94bedff0196bf8", 199),
 }
 
 
@@ -719,7 +740,7 @@ def test_solve_surface_fingerprint_is_pinned(iso: str) -> None:
 LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
     "ERCOT": {
         "RGGI_MEMBER_STATES_BY_YEAR": (
-            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only"
+            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only | R-PJM 2026-09-25: the 2019 row ADDED as well (see the 2026-09-25 cause block); no existing row moved"
         ),
         "NUCLEAR_MONTHLY_CF_BY_YEAR": (
             "ercot-253 2026-09-06: the 2021 row ADDED for the rule-22 "
@@ -729,7 +750,7 @@ LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
     },
     "CAISO": {
         "RGGI_MEMBER_STATES_BY_YEAR": (
-            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only"
+            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only | R-PJM 2026-09-25: the 2019 row ADDED as well (see the 2026-09-25 cause block); no existing row moved"
         ),
         "STATE_CARBON_PRICE_BY_ISO": (
             "caiso-262 2026-09-07: the 2022 row ADDED for the rule-22 "
@@ -748,31 +769,31 @@ LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
     },
     "MISO": {
         "RGGI_MEMBER_STATES_BY_YEAR": (
-            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only"
+            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only | R-PJM 2026-09-25: the 2019 row ADDED as well (see the 2026-09-25 cause block); no existing row moved"
         ),
     },
     "PJM": {
         "RGGI_MEMBER_STATES_BY_YEAR": (
-            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only"
+            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only | R-PJM 2026-09-25: the 2019 row ADDED as well (see the 2026-09-25 cause block); no existing row moved"
         ),
         "PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE": (
-            "pjm-h22 2026-09-24: 2020-2022 rows ADDED (7.07/10.44/14.84 $/t, the NEISO metric series, same recipe); read only under the default-off pjm_rggi_allowance_pricing gate"
+            "pjm-h22 2026-09-24: 2020-2022 rows ADDED (7.07/10.44/14.84 $/t, the NEISO metric series, same recipe); read only under the default-off pjm_rggi_allowance_pricing gate | R-PJM 2026-09-25: the 2019 row ADDED as well (see the 2026-09-25 cause block); no existing row moved"
         ),
         "PJM_RGGI_ZONE_SHARE": (
-            "pjm-h22 2026-09-24: 2020-2022 rows ADDED via derive_pjm_rggi_zone_share.py, which reproduces 2023-2025 exactly; synthetic-row fallback only"
+            "pjm-h22 2026-09-24: 2020-2022 rows ADDED via derive_pjm_rggi_zone_share.py, which reproduces 2023-2025 exactly; synthetic-row fallback only | R-PJM 2026-09-25: the 2019 row ADDED as well (see the 2026-09-25 cause block); no existing row moved"
         ),
         "CAP_AND_TRADE_PROGRAMS": (
-            "pjm-h22 2026-09-24: moves only because the PJM program embeds PJM_RGGI_ZONE_SHARE by value"
+            "pjm-h22 2026-09-24: moves only because the PJM program embeds PJM_RGGI_ZONE_SHARE by value | R-PJM 2026-09-25: the 2019 row ADDED as well (see the 2026-09-25 cause block); no existing row moved"
         ),
     },
     "NYISO": {
         "RGGI_MEMBER_STATES_BY_YEAR": (
-            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only"
+            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only | R-PJM 2026-09-25: the 2019 row ADDED as well (see the 2026-09-25 cause block); no existing row moved"
         ),
     },
     "NEISO": {
         "RGGI_MEMBER_STATES_BY_YEAR": (
-            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only"
+            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only | R-PJM 2026-09-25: the 2019 row ADDED as well (see the 2026-09-25 cause block); no existing row moved"
         ),
     },
 }
