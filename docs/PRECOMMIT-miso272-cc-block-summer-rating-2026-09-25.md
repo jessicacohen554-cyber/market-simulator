@@ -296,3 +296,34 @@ The §2.3 caveat on the outage-numerator basis still applies to Edwardsport and 
 - COAL_BIT down about 0.47 GW, and 0.33 GW in 2025.
 - Price up slightly.
 - C1 CC_REGULAR close to the keeper, because the NG blocks are untouched. 2025 loses 153 MW of Edwardsport CC.
+
+### 9.3 v2 launch record
+
+Launched 2026-09-25 08:27–08:29 UTC. All seven shards are pinned to `5efb86f352c3495b90fe41556d57731b45fc7b6e`.
+
+| year | session |
+|---|---|
+| 2019 | `session_01ScneQJnSXV5Q8D8GAc7tSX` |
+| 2020 | `session_017edzdLRVPttQvKZfdNBbG9` |
+| 2021 | `session_01Ss7ctZ3nFtU1Tx6wKK7rzR` |
+| 2022 | `session_01BZSju52WUzgmx77WVTjGRP` |
+| 2023 | `session_01DELwx98X6LkWhcSeg1xa3f` |
+| 2024 | `session_01X1MTKh3mbzfutAxUhGSwJy` |
+| 2025 | `session_01NzdnwG6srgj9rqhgGDffzT` |
+
+Each shard pushes to branch `claude/miso272b-arm-<Y>` from out-dir `miso272b_arm_<Y>`.
+
+**v1 legs.** The seven shards are archived. Their branches `claude/miso272-arm-<Y>` hold the full bundles, recorded
+here as provenance:
+
+| year | commit |
+|---|---|
+| 2019 | `fe0d3d61e0d2631097e61d5aeec3f9d85b4d52d6` |
+| 2020 | `67675fb94de3d32afbf0ccb1127728d28a9e88c8` |
+| 2021 | `a2bd3c07fcd00d9250cd5f678281d00fd6e715a3` |
+| 2022 | `1e6bed850d2e5bde1ef0c3f0cecf348a7d7080c0` |
+| 2023 | `a4f8c2b336183dcc99acdeab517cb09316325818` |
+| 2024 | `8e6ebf921493f8da700d56ac901d6676a33064b6` |
+| 2025 | `fd529df4a99d59074e75d027d294b39cf76b4f07` |
+
+The v1 composite `miso272_span` is registered on `main`-bound history.
