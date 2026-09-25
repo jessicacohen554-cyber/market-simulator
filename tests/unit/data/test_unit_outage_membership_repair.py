@@ -110,7 +110,7 @@ def test_deriver_membership_speaks_the_artifact_coal_token():
     for sub in ("COAL_BIT", "COAL_PRB", "COAL_WC", "COAL_LIGNITE"):
         assert artifact_class(sub) in QUALIFYING_PLANT_GROUPS
     src = (_ROOT / "scripts/data/derive_campd_unit_outages.py").read_text()
-    assert "ag = artifact_class(g.plant_group)" in src
+    assert "= artifact_class(g.plant_group)" in src
 
 
 class TestNuclearDormancyDefersToVintageExit:

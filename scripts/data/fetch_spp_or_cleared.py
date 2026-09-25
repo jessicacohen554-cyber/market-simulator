@@ -161,7 +161,9 @@ def sampled_year(year: int, workers: int) -> pd.DataFrame:
         for k in range(5):
             try:
                 data = urllib.request.urlopen(u, timeout=60).read()
-                return pd.read_csv(io.BytesIO(data), skipinitialspace=True, dtype={"Reserve Zone": str})
+                return pd.read_csv(
+                    io.BytesIO(data), skipinitialspace=True, dtype={"Reserve Zone": str}
+                )
             except urllib.error.HTTPError as e:
                 if e.code == 404:
                     return None

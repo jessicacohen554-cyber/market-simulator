@@ -98,6 +98,7 @@ from market_sim.config.paths import (  # noqa: E402
     PROCESSED_DIR,
     RAW_DATA_DIR,
 )
+from market_sim.config.plant_taxonomy import artifact_class  # noqa: E402
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.outages import (  # noqa: E402
     QUALIFYING_PLANT_GROUPS,
@@ -1495,6 +1496,16 @@ def main() -> None:
         "filed years) is a full-stop window (default "
         f"{EIA923_FALLBACK_OUTAGE_RATIO}).",
     )
+    ap.add_argument(
+        "--emit-screened-set",
+        action="store_true",
+        help="DEFAULT-OFF, --short-windows coal scope only (miso-273): also "
+        "write the companion campd-unit-outages-short-screened[-{ISO}].csv, one "
+        "row per coal unit-year that PASSED the SHORT_BASELOAD_CF when-operable "
+        "guard, events or not. The window extract is byte-identical with or "
+        "without it. Consumed under ScenarioConfig."
+        "wefor_residual_short_screened_coal.",
+    )
     args = ap.parse_args()
     if args.short_windows and args.partial_windows:
         raise SystemExit("--short-windows and --partial-windows are mutually exclusive")
@@ -1515,6 +1526,11 @@ def main() -> None:
         raise SystemExit(
             "--short-window-groups gas requires --merit-order-guard "
             "(the gas scope's economic-idling separator)"
+        )
+    if args.emit_screened_set and (not args.short_windows or short_gas):
+        raise SystemExit(
+            "--emit-screened-set requires --short-windows with the coal scope "
+            "(the screened set is the baseload guard's admission list)"
         )
     if args.no_fullstop_override:
         args.fullstop_override_days = 10**9
@@ -1610,7 +1626,8 @@ def main() -> None:
     if iso == "ERCOT":
         bins = pd.read_csv(args.bins)
         group_by_code = {
-            int(c): str(g) for c, g in zip(bins["Plant_Code"], bins["Plant_Group"])
+            int(c): artifact_class(str(g))
+            for c, g in zip(bins["Plant_Code"], bins["Plant_Group"])
         }
     else:
         from market_sim.config.iso_configs import get_iso_config
@@ -1631,16 +1648,17 @@ def main() -> None:
 
         for g in fleet:
             if int(g.plant_code) > 0 and g.plant_group:
-                # Artifact vocabulary (COAL-SUB): the fleet carries coal
-                # SUBCLASSES, but QUALIFYING_PLANT_GROUPS, the unit router and
-                # the extract's plant_group column all speak the COAL family
-                # token. Without this translation every coal-only facility
-                # fails the qualifying-group test and is silently skipped
-                # (PJM-NEXT-2: a HEAD re-derive lost ~83 % of coal outage-days).
-                ag = artifact_class(g.plant_group)
-                group_by_code[int(g.plant_code)] = ag
+                # COAL-SUB (2026-09-25): the fleet carries coal SUBCLASSES
+                # (COAL_BIT / COAL_PRB / ...), but this map feeds the artifact
+                # vocabulary (QUALIFYING_PLANT_GROUPS, the extract's
+                # plant_group), where coal is the family token. Without the
+                # translation every coal-only facility fails the qualifying
+                # test and its windows vanish (miso-273: short-coal MISO 2023
+                # regenerated 6 of 109 committed rows).
+                pgroup = artifact_class(g.plant_group)
+                group_by_code[int(g.plant_code)] = pgroup
                 name_by_code[int(g.plant_code)] = g.name
-                groups_by_code.setdefault(int(g.plant_code), set()).add(ag)
+                groups_by_code.setdefault(int(g.plant_code), set()).add(pgroup)
                 if g.plant_group in ("ST_GAS", "ST_CHP"):
                     steam_np_by_code[int(g.plant_code)] = steam_np_by_code.get(
                         int(g.plant_code), 0.0
@@ -1717,6 +1735,9 @@ def main() -> None:
     # defined so the row sink below is unconditional; stays empty (and no
     # companion file is written) unless --merit-order-guard is passed.
     layup_rows: list[dict] = []
+    # --emit-screened-set (miso-273): every coal unit-year that passed the
+    # short-window baseload guard. Stays empty unless the flag is passed.
+    screened_rows: list[dict] = []
     # year -> MeritOrderPanel. Built once per year from the measured CAMPD
     # operation of the WHOLE ISO fleet (not just the units with windows), so the
     # revealed marginal cost is set by the capacity that was actually running.
@@ -2039,6 +2060,25 @@ def main() -> None:
                         )
                         if oper_cf < SHORT_BASELOAD_CF:
                             continue
+                        if args.short_windows and args.emit_screened_set:
+                            # miso-273: the unit-year PASSED the baseload
+                            # guard, so the short family measures its < 5-day
+                            # full stops whether or not it had any. Recorded
+                            # HERE, before detection, because a screened unit
+                            # with zero events is otherwise indistinguishable
+                            # from one the guard never admitted.
+                            screened_rows.append(
+                                {
+                                    "facility_name": fac_name,
+                                    "facility_id": int(fac_id),
+                                    "unit_id": uid,
+                                    "year": int(year),
+                                    "unit_capacity_mw": round(derate_cap, 1),
+                                    "plant_group": ugroup,
+                                    "capacity_source": cap_src,
+                                    "when_operable_cf": round(oper_cf, 4),
+                                }
+                            )
                     # Partial mode: unit-grain CF-ceiling plateaus (>= 5-day
                     # sustained derates) from the plant-level detector's frozen
                     # rule, run on THIS unit's own CEMS (the guard above has
@@ -2331,6 +2371,34 @@ def main() -> None:
         )
     out.to_csv(args.out, index=False)
     _write_outage_sidecar(Path(str(args.out)), args, out)
+
+    if args.emit_screened_set:
+        out_p = Path(str(args.out))
+        scr_name = (
+            out_p.name.replace(
+                "campd-unit-outages-short", "campd-unit-outages-short-screened", 1
+            )
+            if "campd-unit-outages-short" in out_p.name
+            else f"{out_p.stem}-screened{out_p.suffix}"
+        )
+        scr_path = out_p.with_name(scr_name)
+        if scr_path.resolve() == out_p.resolve():
+            raise SystemExit(f"screened-set path collides with --out ({out_p})")
+        scr = pd.DataFrame(
+            screened_rows,
+            columns=[
+                "facility_name",
+                "facility_id",
+                "unit_id",
+                "year",
+                "unit_capacity_mw",
+                "plant_group",
+                "capacity_source",
+                "when_operable_cf",
+            ],
+        ).sort_values(["year", "facility_id", "unit_id"])
+        scr.to_csv(scr_path, index=False)
+        print(f"\nscreened set: {len(scr)} coal unit-years -> {scr_path}")
 
     if args.merit_order_guard:
         # Labelled companion: the windows the guard reclassified as economic

@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-25-soco68-summer-basis",
+  "label": "soco68 summer basis",
+  "date": "2026-09-25",
+  "shorthand": "soco68-summer-basis",
+  "definition": "soco-68 2019: soco-67 keeper recipe + summer_derate_basis_aware (flat summer class derate suppressed on net-summer-rated plants; rule 19)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-09-25-soco68-summer-basis.js",
+  "bundle": "results/calibration/soco68_span"
+}

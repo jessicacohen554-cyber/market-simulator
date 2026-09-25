@@ -498,6 +498,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # via zone_assignment.set_fleet_zone_vintage_coords, so the off path is
     # byte-inert). Registered IN THE SAME COMMIT as the field.
     "fleet_zone_vintage_coords",
+    # NYISO-STGAS-2023 LDC-served generator delivery leg (GATED default-off; the
+    # single consumer, fuel.apply_nyiso_ldc_generator_delivered_gas, reads it via
+    # getattr and returns before touching fuel_prices when it is off, so the off
+    # path is byte-inert). Registered IN THE SAME COMMIT as the field.
+    "nyiso_ldc_generator_delivered_gas",
     # caiso-186 published seasonal capability basis for combined cycles (GATED
     # default-off; every consumer reads it via getattr, and it additionally
     # requires cc_nameplate_summer_derate, so the off path is byte-inert).
@@ -1259,6 +1264,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the wind the pool supply carries, a different demand array, and hashes
     # distinctly. Registered IN THE SAME COMMIT as the field.
     "nwpp_grid_carried_wind_served",
+    # NWPP-NEXT-3 plant-basis demand anchor (GATED default off): dropped from
+    # the hash at its default so every pre-existing cache key stays
+    # byte-stable (the off path never reads the artifact); an armed run
+    # serves a different demand array and hashes distinctly. Registered IN
+    # THE SAME COMMIT as the field.
+    "nwpp_demand_plant_basis",
     # pjm-h19 EIA-930 balance-identity demand screen (GATED default off):
     # dropped from the hash at its default so every pre-existing cache key
     # stays byte-stable (the off path never calls the screen); an armed run
@@ -2034,6 +2045,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # keeper's True) is non-default and keeps its key unchanged. SHARED field
     # -- very end, per HOUSE-3.
     "coal_mustrun_requires_measured_row",
+    # Short-screened coal WEFOR relief (miso-273, default off): dropped from
+    # the hash at its default so every pre-existing cached run keeps its key;
+    # an armed run carries different coal availability and gets a distinct
+    # key. SHARED field -- very end, per HOUSE-3.
+    "wefor_residual_short_screened_coal",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2215,6 +2231,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by PJM-NEXT WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "fleet_zone_vintage_coords": "False",
+    # Added by NYISO-STGAS-2023 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "nyiso_ldc_generator_delivered_gas": "False",
     # Added by caiso-186 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "cc_winter_capability_basis": "False",
@@ -2441,6 +2460,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_tie_zonal_interchange": "False",
     "nwpp_grid_carried_wind_served": "False",
+    # Added by NWPP-NEXT-3 WITH the field (the nyiso-119 discipline).
+    "nwpp_demand_plant_basis": "False",
     # Added by pjm-h19 WITH the field (the nyiso-119 discipline).
     "demand_balance_screen": "False",
     # Added by ercot-236 WITH the field, in the same commit as its
@@ -2756,6 +2777,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by SPP-71 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "coal_sync_ensemble_level": "False",
+    # Added by miso-273 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "wefor_residual_short_screened_coal": "False",
 }
 
 
@@ -12531,6 +12555,27 @@ class ScenarioConfig:
     # displace it).
     wefor_residual_groups: frozenset[str] | None = None
 
+    # Short-screened coal WEFOR relief (miso-273, default off). The statistical
+    # WEFOR carries every forced outage, sub-5-day ones included; for a coal
+    # unit-year that passed the short family's SHORT_BASELOAD_CF when-operable
+    # guard, those sub-5-day stops are MEASURED by unit_outage_short_windows, so
+    # the full statistical term counts them twice (rule 19 [R-ONE-MECH]) — the
+    # coal twin of miso-271's gas finding. When True, each coal bin takes
+    # wefor_eff = (1 - s) * wefor + s * min(wefor, wefor_residual), where s is
+    # the bin's screened capacity share (the screened units' extract MW over the
+    # dispatched bin's pmax, clipped at 1 — the short overlay's own numerator and
+    # denominator; outages.short_screened_coal_shares). Unscreened (cycling)
+    # coal keeps the full statistical term. Reads the derive output
+    # campd-unit-outages-short-screened-<ISO>.csv (derive_campd_unit_outages.py
+    # --short-windows --emit-screened-set; rule 23: new output, same source,
+    # same guard). ZERO free parameters: it reuses wefor_residual, whose value
+    # is identified by the caiso-187 residual formula max(0, W - X) on the ISO's
+    # own fleet (docs/PRECOMMIT-miso273-short-screened-coal-wefor-2026-09-25.md).
+    # Requires outage_source="historic", wefor_residual set,
+    # unit_outage_short_windows and unit_outage_dispatched_bin_denominator
+    # (fail-closed in fleet.arrays). Non-ERCOT only.
+    wefor_residual_short_screened_coal: bool = False
+
     # Legacy gas-steam (ST_GAS) summer reliability treatment. When
     # gas_st_summer_mustrun > 0, the base (non-peak) ST_GAS tranches carry a
     # hard minimum-generation floor of that fraction of capacity in May-Sep
@@ -18191,6 +18236,26 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_nyiso_downstate_ct_gas_daily.
     nyiso_downstate_ct_gas_daily: bool = False
 
+    # Tier 3 (calibration) — LDC-SERVED GENERATOR DELIVERY LEG (NYISO-STGAS-2023,
+    # 2026-09-25, owner ruling on the lane's lever question). Every NYISO gas
+    # unit is priced at its zone's pipeline hub, the COMMODITY; a plant that
+    # EIA-860 Schedule 2 records as LDC-served ("Natural Gas LDC Name") also pays
+    # that LDC's filed power-generation transportation charge to carry the gas
+    # from the city gate (rule 14 [R-ACCURATE]). When on, every gas row other
+    # than CT_PEAKER (the CT daily leg already SETS those; rule 19) at a plant
+    # whose active-vintage EIA-860 LDC has a filed rate in
+    # data/raw/gas-prices/nyiso_ldc_generator_transport_monthly.csv, and whose
+    # capacity meets that class's filed threshold, is priced hub x filed loss
+    # factor + filed transport. Intaken: Con Edison PSC No. 9 SC 9 Rate D(2)
+    # (>= 50 MW generators; 1.92 c/therm + 0.5 % losses; the customer-specific
+    # Value Added Charge is not published and is omitted, so the leg is a lower
+    # bound). LDCs whose generator class is not intaken stay on the hub — a
+    # stated scope limit. Zero free parameters (rules 21 / 24); forward-native
+    # filed tariff (rule 13); an additive delivery leg on the hub, not a second
+    # hub (rule 19). See
+    # market_sim.data.fuel.apply_nyiso_ldc_generator_delivered_gas.
+    nyiso_ldc_generator_delivered_gas: bool = False
+
     # Tier 3 (calibration) — PJM per-zone gas basis. PJM is priced off a single
     # ISO-wide delivered-gas series, so every gas-CC carries the same marginal
     # cost, all 8 zones clear at one LMP (0.000 zonal spread in every hour), no
@@ -19498,6 +19563,20 @@ class ScenarioConfig:
     # definition, never a level rescale; regenerates for any year the
     # EIA-930 pool frame exists. FINDING-nwpp-47-2026-09-22.md.
     nwpp_grid_carried_wind_served: bool = False
+    # NWPP-NEXT-3 plant-basis demand anchor (GATED default off, NWPP-only,
+    # backcast-measured, ZERO fitted scalars). Owner ruling 2026-09-25 on
+    # FINDING-nwpp-45 §8 = framing 2: anchor the served requirement to the
+    # plant basis C1 scores on — EIA-930 hourly shape, EIA-923 plant energy.
+    # Per EIA-930 fuel family the served schedule's footprint series is
+    # rescaled additively to its annual grid-delivered EIA-923 plant total
+    # (data/raw/reference/nwpp_plant_basis_energy.csv, derived from the
+    # committed bench parts by scripts/data/derive_nwpp_plant_basis_energy.py)
+    # on its own EIA-930 hourly shape. Closes EIA-930's under-book of the
+    # footprint's own fossil plants (FINDING-nwpp-47 §3). Rule 14 misalignment
+    # reconciliation of a measured input; requires
+    # nwpp_grid_carried_wind_served. A year the artifact lacks FAILS rather
+    # than falling back. envelopes.nwpp_plant_basis_correction.
+    nwpp_demand_plant_basis: bool = False
     # pjm-h19 EIA-930 balance-identity demand repair (GATED default off,
     # ISO-agnostic, ZERO fitted scalars). Repairs an hour whose metered
     # Demand makes an isolated reversal larger than the BA-year's own Tukey
@@ -22836,6 +22915,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_adaptive_fixed_point": 1,
     "ercot_tie_zonal_interchange": 1,
     "nwpp_grid_carried_wind_served": 1,
+    "nwpp_demand_plant_basis": 1,
     "demand_balance_screen": 1,
     "ercot_offer_swcap_clip": 1,
     "caiso_storage_adaptive_expectation": 1,
@@ -23046,6 +23126,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_zonal_gas_basis": 3,
     "nyiso_downstate_ct_gas_basis": 3,
     "nyiso_downstate_ct_gas_daily": 3,
+    "nyiso_ldc_generator_delivered_gas": 3,
     "pjm_zonal_gas_basis": 3,
     "miso_zonal_gas_basis": 3,
     "miso_zonal_gas_basis_skip_923_priced": 3,

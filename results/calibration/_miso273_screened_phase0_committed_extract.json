@@ -1,0 +1,401 @@
+{
+ "2019": {
+  "screened_unit_years": 111,
+  "screened_extract_mw": 49536.8,
+  "coal_bins_with_share": 52,
+  "coal_lp_mw": 58396.5,
+  "screened_lp_mw": 45812.3,
+  "W_screened_twh": 25.0631,
+  "X_screened_twh": {
+   "ge5d": 105.1844,
+   "short": 5.6468,
+   "maxgen": 0.0
+  },
+  "residual_share": 0.0,
+  "W_share": 0.06245,
+  "X_share": 0.27617,
+  "avail_twh_by_variant": {
+   "B": {
+    "COAL_BIT": 112.3731,
+    "COAL_PRB": 212.8648,
+    "COAL_LIGNITE": 12.898,
+    "COAL_WC": 0.0
+   },
+   "ARM": {
+    "COAL_BIT": 119.8349,
+    "COAL_PRB": 229.7668,
+    "COAL_LIGNITE": 13.5974,
+    "COAL_WC": 0.0
+   },
+   "noWc": {
+    "COAL_BIT": 123.6161,
+    "COAL_PRB": 234.4153,
+    "COAL_LIGNITE": 14.1669,
+    "COAL_WC": 0.0
+   },
+   "noSc": {
+    "COAL_BIT": 114.0693,
+    "COAL_PRB": 215.2763,
+    "COAL_LIGNITE": 13.1517,
+    "COAL_WC": 0.0
+   }
+  },
+  "arm_minus_B_twh": {
+   "COAL_BIT": 7.4618,
+   "COAL_PRB": 16.902,
+   "COAL_LIGNITE": 0.6994,
+   "COAL_WC": 0.0
+  },
+  "noWc_minus_B_twh": {
+   "COAL_BIT": 11.243,
+   "COAL_PRB": 21.5505,
+   "COAL_LIGNITE": 1.2689,
+   "COAL_WC": 0.0
+  },
+  "non_coal_units_moved": 0,
+  "pmax_identical": true,
+  "heat_rate_identical": true
+ },
+ "2020": {
+  "screened_unit_years": 101,
+  "screened_extract_mw": 45030.2,
+  "coal_bins_with_share": 47,
+  "coal_lp_mw": 55745.2,
+  "screened_lp_mw": 42113.7,
+  "W_screened_twh": 20.6633,
+  "X_screened_twh": {
+   "ge5d": 125.3104,
+   "short": 4.3424,
+   "maxgen": 0.0
+  },
+  "residual_share": 0.0,
+  "W_share": 0.05601,
+  "X_share": 0.35144,
+  "avail_twh_by_variant": {
+   "B": {
+    "COAL_BIT": 87.7323,
+    "COAL_PRB": 182.2976,
+    "COAL_LIGNITE": 14.0484,
+    "COAL_WC": 0.0
+   },
+   "ARM": {
+    "COAL_BIT": 93.8936,
+    "COAL_PRB": 195.9732,
+    "COAL_LIGNITE": 14.8748,
+    "COAL_WC": 0.0
+   },
+   "noWc": {
+    "COAL_BIT": 96.7054,
+    "COAL_PRB": 200.6425,
+    "COAL_LIGNITE": 15.4385,
+    "COAL_WC": 0.0
+   },
+   "noSc": {
+    "COAL_BIT": 89.2611,
+    "COAL_PRB": 183.8652,
+    "COAL_LIGNITE": 14.3312,
+    "COAL_WC": 0.0
+   }
+  },
+  "arm_minus_B_twh": {
+   "COAL_BIT": 6.1613,
+   "COAL_PRB": 13.6756,
+   "COAL_LIGNITE": 0.8264,
+   "COAL_WC": 0.0
+  },
+  "noWc_minus_B_twh": {
+   "COAL_BIT": 8.9731,
+   "COAL_PRB": 18.3449,
+   "COAL_LIGNITE": 1.3901,
+   "COAL_WC": 0.0
+  },
+  "non_coal_units_moved": 0,
+  "pmax_identical": true,
+  "heat_rate_identical": true
+ },
+ "2021": {
+  "screened_unit_years": 110,
+  "screened_extract_mw": 50131.4,
+  "coal_bins_with_share": 54,
+  "coal_lp_mw": 55343.9,
+  "screened_lp_mw": 46541.1,
+  "W_screened_twh": 25.3103,
+  "X_screened_twh": {
+   "ge5d": 109.9045,
+   "short": 6.4404,
+   "maxgen": 0.0232
+  },
+  "residual_share": 0.0,
+  "W_share": 0.06208,
+  "X_share": 0.28543,
+  "avail_twh_by_variant": {
+   "B": {
+    "COAL_BIT": 95.0935,
+    "COAL_PRB": 198.0037,
+    "COAL_LIGNITE": 13.017,
+    "COAL_WC": 0.0
+   },
+   "ARM": {
+    "COAL_BIT": 101.7982,
+    "COAL_PRB": 215.8105,
+    "COAL_LIGNITE": 13.8159,
+    "COAL_WC": 0.0
+   },
+   "noWc": {
+    "COAL_BIT": 104.5394,
+    "COAL_PRB": 218.8663,
+    "COAL_LIGNITE": 14.3466,
+    "COAL_WC": 0.0
+   },
+   "noSc": {
+    "COAL_BIT": 96.7656,
+    "COAL_PRB": 200.9934,
+    "COAL_LIGNITE": 13.3878,
+    "COAL_WC": 0.0
+   }
+  },
+  "arm_minus_B_twh": {
+   "COAL_BIT": 6.7047,
+   "COAL_PRB": 17.8068,
+   "COAL_LIGNITE": 0.7989,
+   "COAL_WC": 0.0
+  },
+  "noWc_minus_B_twh": {
+   "COAL_BIT": 9.4459,
+   "COAL_PRB": 20.8626,
+   "COAL_LIGNITE": 1.3296,
+   "COAL_WC": 0.0
+  },
+  "non_coal_units_moved": 0,
+  "pmax_identical": true,
+  "heat_rate_identical": true
+ },
+ "2022": {
+  "screened_unit_years": 97,
+  "screened_extract_mw": 43374.4,
+  "coal_bins_with_share": 49,
+  "coal_lp_mw": 53313.0,
+  "screened_lp_mw": 40465.7,
+  "W_screened_twh": 23.5541,
+  "X_screened_twh": {
+   "ge5d": 87.1268,
+   "short": 6.5225,
+   "maxgen": 0.0
+  },
+  "residual_share": 0.0,
+  "W_share": 0.06645,
+  "X_share": 0.26419,
+  "avail_twh_by_variant": {
+   "B": {
+    "COAL_BIT": 88.2749,
+    "COAL_PRB": 194.0623,
+    "COAL_LIGNITE": 6.4277,
+    "COAL_WC": 0.0
+   },
+   "ARM": {
+    "COAL_BIT": 94.5908,
+    "COAL_PRB": 210.608,
+    "COAL_LIGNITE": 7.1202,
+    "COAL_WC": 0.0
+   },
+   "noWc": {
+    "COAL_BIT": 97.6443,
+    "COAL_PRB": 213.9306,
+    "COAL_LIGNITE": 7.1318,
+    "COAL_WC": 0.0
+   },
+   "noSc": {
+    "COAL_BIT": 90.3625,
+    "COAL_PRB": 196.874,
+    "COAL_LIGNITE": 6.69,
+    "COAL_WC": 0.0
+   }
+  },
+  "arm_minus_B_twh": {
+   "COAL_BIT": 6.3159,
+   "COAL_PRB": 16.5457,
+   "COAL_LIGNITE": 0.6925,
+   "COAL_WC": 0.0
+  },
+  "noWc_minus_B_twh": {
+   "COAL_BIT": 9.3694,
+   "COAL_PRB": 19.8683,
+   "COAL_LIGNITE": 0.7041,
+   "COAL_WC": 0.0
+  },
+  "non_coal_units_moved": 0,
+  "pmax_identical": true,
+  "heat_rate_identical": true
+ },
+ "2023": {
+  "screened_unit_years": 86,
+  "screened_extract_mw": 39150.4,
+  "coal_bins_with_share": 40,
+  "coal_lp_mw": 45713.7,
+  "screened_lp_mw": 35065.3,
+  "W_screened_twh": 18.7258,
+  "X_screened_twh": {
+   "ge5d": 106.3999,
+   "short": 5.1012,
+   "maxgen": 0.0373
+  },
+  "residual_share": 0.0,
+  "W_share": 0.06096,
+  "X_share": 0.36311,
+  "avail_twh_by_variant": {
+   "B": {
+    "COAL_BIT": 72.2445,
+    "COAL_PRB": 148.7145,
+    "COAL_LIGNITE": 7.2587,
+    "COAL_WC": 0.0
+   },
+   "ARM": {
+    "COAL_BIT": 77.1643,
+    "COAL_PRB": 161.6286,
+    "COAL_LIGNITE": 8.1506,
+    "COAL_WC": 0.0
+   },
+   "noWc": {
+    "COAL_BIT": 79.6012,
+    "COAL_PRB": 164.0108,
+    "COAL_LIGNITE": 8.1506,
+    "COAL_WC": 0.0
+   },
+   "noSc": {
+    "COAL_BIT": 73.636,
+    "COAL_PRB": 151.0012,
+    "COAL_LIGNITE": 7.6142,
+    "COAL_WC": 0.0
+   }
+  },
+  "arm_minus_B_twh": {
+   "COAL_BIT": 4.9198,
+   "COAL_PRB": 12.9141,
+   "COAL_LIGNITE": 0.8919,
+   "COAL_WC": 0.0
+  },
+  "noWc_minus_B_twh": {
+   "COAL_BIT": 7.3567,
+   "COAL_PRB": 15.2963,
+   "COAL_LIGNITE": 0.8919,
+   "COAL_WC": 0.0
+  },
+  "non_coal_units_moved": 0,
+  "pmax_identical": true,
+  "heat_rate_identical": true
+ },
+ "2024": {
+  "screened_unit_years": 81,
+  "screened_extract_mw": 37375.6,
+  "coal_bins_with_share": 37,
+  "coal_lp_mw": 44590.9,
+  "screened_lp_mw": 34138.4,
+  "W_screened_twh": 19.4088,
+  "X_screened_twh": {
+   "ge5d": 91.236,
+   "short": 3.5311,
+   "maxgen": 0.0087
+  },
+  "residual_share": 0.0,
+  "W_share": 0.0649,
+  "X_share": 0.31692,
+  "avail_twh_by_variant": {
+   "B": {
+    "COAL_BIT": 67.8825,
+    "COAL_PRB": 149.7549,
+    "COAL_LIGNITE": 7.148,
+    "COAL_WC": 0.0
+   },
+   "ARM": {
+    "COAL_BIT": 73.6499,
+    "COAL_PRB": 162.5387,
+    "COAL_LIGNITE": 8.0055,
+    "COAL_WC": 0.0
+   },
+   "noWc": {
+    "COAL_BIT": 74.9195,
+    "COAL_PRB": 165.5971,
+    "COAL_LIGNITE": 8.0055,
+    "COAL_WC": 0.0
+   },
+   "noSc": {
+    "COAL_BIT": 68.8281,
+    "COAL_PRB": 151.3047,
+    "COAL_LIGNITE": 7.333,
+    "COAL_WC": 0.0
+   }
+  },
+  "arm_minus_B_twh": {
+   "COAL_BIT": 5.7674,
+   "COAL_PRB": 12.7838,
+   "COAL_LIGNITE": 0.8575,
+   "COAL_WC": 0.0
+  },
+  "noWc_minus_B_twh": {
+   "COAL_BIT": 7.037,
+   "COAL_PRB": 15.8422,
+   "COAL_LIGNITE": 0.8575,
+   "COAL_WC": 0.0
+  },
+  "non_coal_units_moved": 0,
+  "pmax_identical": true,
+  "heat_rate_identical": true
+ },
+ "2025": {
+  "screened_unit_years": 86,
+  "screened_extract_mw": 41985.2,
+  "coal_bins_with_share": 45,
+  "coal_lp_mw": 55566.9,
+  "screened_lp_mw": 38511.6,
+  "W_screened_twh": 23.8565,
+  "X_screened_twh": {
+   "ge5d": 90.5617,
+   "short": 5.1757,
+   "maxgen": 0.1609
+  },
+  "residual_share": 0.0,
+  "W_share": 0.07071,
+  "X_share": 0.28426,
+  "avail_twh_by_variant": {
+   "B": {
+    "COAL_BIT": 67.4485,
+    "COAL_PRB": 157.3649,
+    "COAL_LIGNITE": 5.7549,
+    "COAL_WC": 0.0
+   },
+   "ARM": {
+    "COAL_BIT": 74.0052,
+    "COAL_PRB": 173.9438,
+    "COAL_LIGNITE": 6.4758,
+    "COAL_WC": 0.0
+   },
+   "noWc": {
+    "COAL_BIT": 74.9307,
+    "COAL_PRB": 175.958,
+    "COAL_LIGNITE": 6.4758,
+    "COAL_WC": 0.0
+   },
+   "noSc": {
+    "COAL_BIT": 68.9808,
+    "COAL_PRB": 159.4247,
+    "COAL_LIGNITE": 5.8401,
+    "COAL_WC": 0.0
+   }
+  },
+  "arm_minus_B_twh": {
+   "COAL_BIT": 6.5567,
+   "COAL_PRB": 16.5789,
+   "COAL_LIGNITE": 0.7209,
+   "COAL_WC": 0.0
+  },
+  "noWc_minus_B_twh": {
+   "COAL_BIT": 7.4822,
+   "COAL_PRB": 18.5931,
+   "COAL_LIGNITE": 0.7209,
+   "COAL_WC": 0.0
+  },
+  "non_coal_units_moved": 0,
+  "pmax_identical": true,
+  "heat_rate_identical": true
+ }
+}
