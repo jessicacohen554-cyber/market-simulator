@@ -73,13 +73,27 @@ INPUT_SHA = {
 }
 
 
-def _offer_block(rc: dict) -> str:
-    """Canonical JSON of every offer-curve surface a run_config carries."""
+#: The ONE key a HEAD solve may lack relative to the keeper: #6611 retired the bare
+#: ``COAL`` class, so ``scenarios._retire_bare_coal_class`` folds (drops) it when the
+#: four subclasses are also present -- which they are in the keeper, with their own
+#: bands. No NYISO unit reads it (0 coal units 2020-2024; R-NYISO-2021 PRECOMMIT §3).
+FOLDED_KEYS = ("COAL",)
+
+
+def _offer_block(rc: dict, fold: bool = False) -> str:
+    """Canonical JSON of every offer-curve surface a run_config carries.
+
+    ``fold=True`` drops :data:`FOLDED_KEYS` from ``offer_curve_by_group`` (used on
+    the keeper side, which was solved before the bare-coal fold existed).
+    """
     sc = rc.get("scenario_config") or {}
     cf = rc.get("calibration_flags") or {}
+    ocg = sc.get("offer_curve_by_group")
+    if fold and isinstance(ocg, dict):
+        ocg = {k: v for k, v in ocg.items() if k not in FOLDED_KEYS}
     return json.dumps(
         {
-            "offer_curve_by_group": sc.get("offer_curve_by_group"),
+            "offer_curve_by_group": ocg,
             "offer_curve_overrides": cf.get("offer_curve_overrides"),
             "offer_curve_deltas": cf.get("offer_curve_deltas"),
         },
@@ -89,7 +103,9 @@ def _offer_block(rc: dict) -> str:
 
 def check_legs(legs: list[Path]) -> None:
     """Fail loud if any leg misses the PRECOMMIT's S0-S2 acceptance."""
-    keeper_offers = _offer_block(json.loads((KEEPER / "run_config.json").read_text()))
+    keeper_offers = _offer_block(
+        json.loads((KEEPER / "run_config.json").read_text()), fold=True
+    )
     bad: list[str] = []
     for leg in legs:
         rc = json.loads((leg / "run_config.json").read_text())
