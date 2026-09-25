@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-24-r-spp-corrected-inputs",
+  "label": "r spp corrected inputs",
+  "date": "2026-09-24",
+  "shorthand": "r-spp-corrected-inputs",
+  "definition": "R-SPP 2019: corrected backcast inputs (F1 vintage eGRID + measured HR all classes, F2 outages, unit partial derate)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-24-r-spp-corrected-inputs.js",
+  "bundle": "results/calibration/rspp_span"
+}
