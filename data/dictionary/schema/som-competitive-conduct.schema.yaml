@@ -89,7 +89,9 @@ columns:
       rate, $4/MWh VOM, 10% outage rate), or "coal_existing" /
       "nuclear_existing" (the SOM existing-unit profitability
       discussions' cost benchmarks). SPP adds "coal" / "wind" (the SPP
-      MMU's fuel-type marginal-resource markup averages).
+      MMU's fuel-type marginal-resource markup averages); SPP-81 adds
+      "gas_combined_cycle" / "gas_simple_cycle" / "other" for the
+      marginal-technology shares.
   - name: metric
     dtype: string
     unit: none
@@ -130,7 +132,13 @@ columns:
       "offer_markup_usd_per_mwh" on the "coal"/"wind" segments,
       "congestion_payments_usd" (DA+RT congestion payments),
       "rt_scarcity_intervals" (five-minute RT intervals with any reserve
-      scarcity), and "avg_{da,rt}_price_usd_per_mwh" (+ "_exfeb_").
+      scarcity), and "avg_{da,rt}_price_usd_per_mwh" (+ "_exfeb_"). SPP-81
+      (2026-09-25) adds "rt_marginal_interval_share_digitized" (share of RT
+      intervals each technology segment was marginal, digitized from the SOM
+      "Generation on the margin, real-time" bars, fraction) and
+      "rt_implied_heat_rate" (the MMU's annual implied heat rate, btu_per_kwh),
+      and "gas_hub_price_annual_avg" on the "panhandle_eastern" /
+      "southern_star" / "henry_hub" segments (usd_per_mmbtu).
   - name: value
     dtype: float64
     unit: mixed
@@ -141,7 +149,9 @@ columns:
     unit: none
     nullable: false
     description: >-
-      One of "fraction", "count", "usd_per_mwh", "usd_per_kw_yr", "mw", "usd".
+      One of "fraction", "count", "usd_per_mwh", "usd_per_kw_yr", "mw", "usd",
+      "btu_per_kwh" (SPP MMU implied heat rate), "usd_per_mmbtu" (SPP MMU gas-hub
+      averages); both added by SPP-81.
   - name: source_doc
     dtype: string
     unit: none

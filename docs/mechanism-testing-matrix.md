@@ -17971,6 +17971,23 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-81 (2026-09-25, THE RESIDUAL UPPER-TERCILE OBJECT, DATA INTAKE, ZERO LP —
+`docs/handoffs/FINDING-spp-81-residual-upper-tercile-2026-09-25.md`).** SPP-80's residual (+3.19 / +3.43 HR on
+delivered gas, 2023 / 2024), measured against its three named candidates on SPP-80's exact hour set:
+- **Marginal heat-rate mix carries ≤ ~14 %.** MMU RT marginal frequencies (now transcribed,
+  `som-competitive-conduct`) move simple-cycle from 49 % to 63 / 62 % of gas-marginal intervals (+0.46 / +0.42 HR);
+  CAMPD SWPP-BA per-class heat rates are flat and the dispatchable-range p90 rose only +0.22 / +0.44.
+- **Gas timing widens it.** Monthly delivered +3.70 / +4.04; HH-daily-shaped +3.80 / +4.50; on Panhandle Eastern
+  (SOM hub averages) +4.32 / +8.99, because SPP hubs cleared BELOW delivered cost (delivered ÷ hub 1.68 in 2024).
+- **Ramp / uncertainty dispatch carries nothing.** Cleared MW now landed (`spp_rtbm_or_cleared_hourly.parquet`);
+  within-net-load-band slope is negative and |r| ≤ 0.07; ramp live all of Mar–Dec 2022 with residual −0.09; the
+  2023 step starts in April, before the uncertainty product; uncertainty MW peaked in 2025 when the residual was smallest.
+- **What is left:** MEC ex-scarcity sits **$7.1 / $7.4/MWh above the fuel cost of the p90 running dispatchable gas
+  unit** (2019–20: +1.2 / −0.3), concentrated Mar–May 2024 (+10 HR) and Apr–Sep 2023. SPP-79's body-lever coupling
+  stands. Do not re-open heat-rate mix, gas timing/basis or ramp/uncertainty procurement for this object. Re-open
+  only on mitigated-offer content (SPP fuel-cost-policy / mitigated-energy-offer rule changes 2023+), a paid daily
+  Mid-Con gas index, or spring wind-margin evidence.
+
 **DO-NOT-REDO, added by SPP-80 (2026-09-25, THE 2022+ UPPER-TERCILE PREMIUM, DATA INTAKE, ZERO LP —
 `docs/handoffs/FINDING-spp-80-upper-tercile-premium-2026-09-25.md`).** SPP-79's upper-tercile object
 (RT p67–p99, ex-Feb; HR/HH 12.5–13.7 in 2019–21 → 16.4 / 21.0 in 2023–24), split by measurement into
