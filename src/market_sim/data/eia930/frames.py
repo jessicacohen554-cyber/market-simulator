@@ -123,6 +123,134 @@ _POOL_CLOCK_BA: dict[str, str] = {"NWPP": "BPAT"}
 # per-member dropout screen skips them (an all-NaN series is not a dropout).
 _POOL_GENERATION_ONLY_BAS: frozenset[str] = frozenset({"AVRN", "GRID"})
 
+# Clock offsets (hours) tried when reconciling a member's FERC 714 substitute
+# onto its EIA-930 series (:func:`_measured_member_demand`). Measured need, not
+# a tolerance: PSEI's EIA-930 demand matches FERC 714 at lag 0 from 2021-01-01
+# but at lag -1 h in 2019-2020 (first-difference r 0.961-0.988 at -1 against
+# 0.69-0.81 at 0 over 8,304 overlapping 2019 hours; the 96 good overlap hours
+# of 2020 read the same) — lane NWPP-NEXT FINDING §2.
+_FERC714_ALIGN_LAGS_H: tuple[int, ...] = (-1, 0, 1)
+
+
+def _longest_nan_run(values: np.ndarray) -> int:
+    """Return the length (hours) of the longest run of NaNs in ``values``."""
+    mask = np.isnan(values).astype(np.int8)
+    if not mask.any():
+        return 0
+    edges = np.diff(np.concatenate(([0], mask, [0])))
+    return int((np.flatnonzero(edges == -1) - np.flatnonzero(edges == 1)).max())
+
+
+def _measured_member_demand(
+    demand: np.ndarray, utc: pd.DatetimeIndex, *, member: str, year: int
+) -> np.ndarray:
+    """Fill a member's missing demand hours from its FERC 714 planning-area load.
+
+    The substitute is reconciled onto the member's OWN same-year EIA-930 basis
+    before it fills anything (rule 14's misalignment clause: a reconciled
+    measured series, never a raw splice and never a guess). Both terms are
+    measured from the hours where the two series overlap, so nothing is
+    tuned: the clock offset is the :data:`_FERC714_ALIGN_LAGS_H` candidate
+    with the highest first-difference correlation, and the level is the
+    MEDIAN hourly ratio EIA-930 / FERC 714 at that offset (robust to the
+    handful of EIA-930 artifact hours a partial year carries). The level term
+    is not cosmetic: PSEI's 2019 EIA-930 demand runs 1.21 x its FERC 714 load
+    in every month, and it is that basis the member's own net generation and
+    interchange are reported on, so the pool's ``Σ(NG − D)`` stays
+    internally consistent only if the fill shares it. A year with no
+    overlapping hour cannot be reconciled and takes the raw FERC 714 series,
+    logged as such.
+
+    Args:
+        demand: The member's ``Demand (Adjusted)`` on the pool clock (NaN where
+            missing).
+        utc: The pool clock's ``UTC time`` stamps, one per row of ``demand``.
+        member: EIA-930 BA code.
+        year: Pool year (logging only).
+
+    Returns:
+        ``demand`` with every NaN hour the substitute covers filled; the input
+        unchanged when the member has no registered substitute.
+    """
+    from market_sim.data.ferc714 import load_ferc714_hourly_demand
+
+    ferc = load_ferc714_hourly_demand(member)
+    if ferc is None:
+        return demand
+    have = ~np.isnan(demand)
+    best: tuple[float, int, np.ndarray] | None = None
+    for lag in _FERC714_ALIGN_LAGS_H:
+        x = ferc.reindex(utc + pd.Timedelta(hours=lag)).to_numpy(dtype=float)
+        pair = have[1:] & have[:-1] & ~np.isnan(x[1:]) & ~np.isnan(x[:-1])
+        if pair.sum() < 2:
+            continue
+        r = float(np.corrcoef(np.diff(demand)[pair], np.diff(x)[pair])[0, 1])
+        if best is None or r > best[0]:
+            best = (r, lag, x)
+    if best is None:
+        r, lag = float("nan"), 0
+        x = ferc.reindex(utc).to_numpy(dtype=float)
+        scale = 1.0
+        n_overlap = 0
+    else:
+        r, lag, x = best
+        ok = have & ~np.isnan(x) & (x > 0)
+        n_overlap = int(ok.sum())
+        scale = float(np.median(demand[ok] / x[ok]))
+    out = demand.copy()
+    fill = np.isnan(out) & ~np.isnan(x)
+    out[fill] = scale * x[fill]
+    logger.warning(
+        "pool %d: %s EIA-930 demand missing %d h (longest run %d h) -- "
+        "filled %d h from FERC 714 planning-area load reconciled to the "
+        "member's EIA-930 basis: lag %+d h (first-diff r %.3f), scale %.4f "
+        "(median over %d overlapping h)",
+        year,
+        member,
+        int((~have).sum()),
+        _longest_nan_run(demand),
+        int(fill.sum()),
+        lag,
+        r,
+        scale,
+        n_overlap,
+    )
+    return out
+
+
+def _measured_member_net_generation(
+    net_gen: np.ndarray, df: pd.DataFrame, *, member: str, year: int
+) -> np.ndarray:
+    """Fill a member's missing net-generation hours from its own fuel columns.
+
+    EIA-930 net generation IS the sum of the by-fuel ``NG:`` columns — the
+    identity holds to 0.0027 TWh on PSEI's 8,367 reported 2019 hours and to
+    0.000 TWh in 2022-2024 — and a member whose ``Net generation`` row is
+    missing frequently still reports its fuel columns (PSEI: all 384 missing
+    2019 hours, all 8,659 missing 2020 hours). The fuel columns are the
+    member's SCREENED ones (:func:`_screen_pool_member_frame`), so a unit-slip
+    hour is not re-introduced. Hours where every fuel column is also missing
+    stay NaN for the caller's guard.
+    """
+    fuel = [c for c in df.columns if str(c).startswith("NG: ")]
+    if not fuel:
+        return net_gen
+    total = df[fuel].sum(axis=1, min_count=1).to_numpy(dtype=float)
+    out = net_gen.copy()
+    fill = np.isnan(out) & ~np.isnan(total)
+    out[fill] = total[fill]
+    logger.warning(
+        "pool %d: %s EIA-930 net generation missing %d h (longest run "
+        "%d h) -- filled %d h from the member's own screened NG: fuel columns",
+        year,
+        member,
+        int(np.isnan(net_gen).sum()),
+        _longest_nan_run(net_gen),
+        int(fill.sum()),
+    )
+    return out
+
+
 # ERCOT extract path, kept as a named constant for the ERCOT-specific helpers.
 _ERCO_HOURLY_FILE: Path = EIA_HOURLY_DIR / "ERCO hourly.parquet"
 
@@ -525,7 +653,18 @@ def _pool_hourly_frame(pool: str, year: int) -> pd.DataFrame | None:
       premise) — applying it would delete a real regional peak, a rule-14
       violation by construction. Generation-only members (AVRN, GRID) enter as
       0.0. Nothing is padded, interpolated or rescaled beyond the two repairs
-      named here (rule 13).
+      named here (rule 13) and the gap guard below.
+    * **Gap guard** (lane NWPP-NEXT): a member's demand or net-generation
+      hole is bridged by interpolation only up to
+      :data:`_HOURLY_FRAME_MAX_GAP` hours (the single-BA frame's bar). A
+      longer hole is filled from a MEASURED substitute — demand from the
+      member's FERC 714 planning-area load reconciled to its EIA-930 basis
+      (:func:`_measured_member_demand`), net generation from its own fuel
+      columns (:func:`_measured_member_net_generation`) — and if the
+      substitute does not close it the pool is REFUSED (``None``, logged at
+      ERROR) rather than served a fabricated series. Inert on 2021-2025 (no
+      member gap exceeds 1 h); it rewrites PSEI's 384 missing 2019 hours and
+      makes 2020 assemblable.
     * ``Total interchange`` is **NOT** the sum of the members' interchange
       columns. That sum is broken for this pool: BPAT's ``Total interchange``
       carried a ~4,000 MW over-report on its internal legs until 2025-06 (the
@@ -556,15 +695,51 @@ def _pool_hourly_frame(pool: str, year: int) -> pd.DataFrame | None:
 
     demand = np.zeros(HOURS_PER_YEAR, dtype=float)
     net_gen = np.zeros(HOURS_PER_YEAR, dtype=float)
+    utc = pd.DatetimeIndex(clock["UTC time"])
     for member, df in members.items():
         d = df["Demand (Adjusted)"].to_numpy(dtype=float)
-        if member in _POOL_GENERATION_ONLY_BAS or np.isnan(d).all():
+        if member in _POOL_GENERATION_ONLY_BAS:
             d = np.zeros(HOURS_PER_YEAR, dtype=float)
         else:
+            # Gap guard [R-ACCURATE]: interpolation bridges at most
+            # _HOURLY_FRAME_MAX_GAP hours, the single-BA frame's own bar. A
+            # longer hole takes the member's measured substitute or refuses
+            # the pool — never a straight line drawn across weeks (PSEI 2020:
+            # 8,659 of 8,760 hours missing; 2019: a 192 h run).
+            if _longest_nan_run(d) > _HOURLY_FRAME_MAX_GAP:
+                d = _measured_member_demand(d, utc, member=member, year=year)
+            if _longest_nan_run(d) > _HOURLY_FRAME_MAX_GAP:
+                logger.error(
+                    "%s pool %d: member %s demand has a %d h gap (> %d h) and "
+                    "no measured substitute covers it -- refusing the pool "
+                    "rather than interpolating it",
+                    pool,
+                    year,
+                    member,
+                    _longest_nan_run(d),
+                    _HOURLY_FRAME_MAX_GAP,
+                )
+                return None
             d = pd.Series(d).interpolate().bfill().ffill().to_numpy(dtype=float)
             d = _screen_demand_dropouts(d, ba_code=member, year=year)
         demand += d
-        ng = pd.Series(df["Net generation (Adjusted)"].to_numpy(dtype=float))
+        ng_raw = df["Net generation (Adjusted)"].to_numpy(dtype=float)
+        if _longest_nan_run(ng_raw) > _HOURLY_FRAME_MAX_GAP:
+            ng_raw = _measured_member_net_generation(
+                ng_raw, df, member=member, year=year
+            )
+            if _longest_nan_run(ng_raw) > _HOURLY_FRAME_MAX_GAP:
+                logger.error(
+                    "%s pool %d: member %s net generation has a %d h gap "
+                    "(> %d h) its fuel columns do not cover -- refusing the pool",
+                    pool,
+                    year,
+                    member,
+                    _longest_nan_run(ng_raw),
+                    _HOURLY_FRAME_MAX_GAP,
+                )
+                return None
+        ng = pd.Series(ng_raw)
         net_gen += ng.interpolate().bfill().ffill().fillna(0.0).to_numpy(dtype=float)
     out["Demand forecast"] = sum(
         df["Demand forecast"].to_numpy(dtype=float) for df in members.values()

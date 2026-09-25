@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -31,7 +32,10 @@ sys.path.insert(0, str(REPO))
 from scripts.build_dof_ledger import update_attestation  # noqa: E402
 
 DEFAULT_BUNDLE = REPO / "results/calibration/rnwpp_span"
-KEEPER_BUNDLE = REPO / "results/calibration/nwpp49_ror_span"
+# The NWPP-49 keeper bundle was pruned at the R-NWPP promotion (rule 35), so its
+# attestation — the source of the inherited switches block — is read from
+# git history at the last commit that carried it (the promotion's parent).
+KEEPER_ATTESTATION_REF = "909cdd30bfdd8a398b10a4255b1340d0d9ef1943:results/calibration/nwpp49_ror_span/calibration_attestation.json"
 OFFER_CURVE_SHA256 = "ac3344c3ef16e3ae63673a92886aa2873fc7090543eb04e6d6abf89fb52c73c2"
 
 #: This lane's arms (all must read True in every year's run_config).
@@ -118,7 +122,15 @@ def build(bundle: Path = DEFAULT_BUNDLE) -> dict:
     years = _check_recipe(bundle)
     update_attestation(bundle, "NWPP")
     att = json.loads((bundle / "calibration_attestation.json").read_text())
-    keeper = json.loads((KEEPER_BUNDLE / "calibration_attestation.json").read_text())
+    keeper = json.loads(
+        subprocess.run(
+            ["git", "show", KEEPER_ATTESTATION_REF],
+            cwd=REPO,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+    )
     att["schema"] = "calibration-attestation/v1"
     att["lane"] = "R-NWPP"
     att["bundle"] = bundle.name
