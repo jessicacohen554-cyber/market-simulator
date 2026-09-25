@@ -3509,8 +3509,8 @@ results/calibration/rpjm2_20[0-9][0-9]/
 results/calibration/miso271_arm_20*/
 results/calibration/miso271_ctl_20*/
 
-# R-CAISO-2 per-year shard legs: kept out of main (rule 32(d)); on local disk until the owner rules (rule 31)
-results/calibration/rcaiso2_ccid_*/
+# R-CAISO-2 per-year shard legs: kept out of main (rule 32(d)); the composite rcaiso2_ccid_span is registered.
+results/calibration/rcaiso2_ccid_20*/
 # NWPP-NEXT (2026-09-25) per-year shard legs, composed into the registered keeper
 # bundle results/calibration/nwppnext_span (rule 32(d): per-year dirs stay out of
 # main). Provenance only (rule 33(d)) — shard branches are transport, not storage:
