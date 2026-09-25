@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-25-r-pjm2-coal-sub",
+  "label": "r pjm2 coal sub",
+  "date": "2026-09-25",
+  "shorthand": "r-pjm2-coal-sub",
+  "definition": "R-PJM2-CS 2019: PJM keeper recipe (h22 RGGI + corrected inputs) on COAL-SUB HEAD",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-09-25-r-pjm2-coal-sub.js",
+  "bundle": "results/calibration/rpjm2cs_span"
+}
