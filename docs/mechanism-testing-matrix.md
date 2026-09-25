@@ -17969,6 +17969,18 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-79 (2026-09-25, THE 2019–21 C3a OVER-LEVEL, ZERO LP —
+`docs/handoffs/FINDING-spp-79-c3a-is-a-cancellation-2026-09-25.md`).** On the R-SPP keeper
+(`2026-09-24-r-spp-corrected-inputs`), the 2019–21 C3a over-level is **not a year-specific defect**:
+- The body over-price (low side RT ≤ $10 **+5–14 %**, ordinary hours **+8–16 %**) is present in
+  **every** year, 2023–25 included. 2023–25 pass C3a by **cancellation** against an upper-tercile
+  under-price (RT p67–p99 **−15 to −19 %**), which is only **−5 to −8 %** in 2019–21.
+- The differential is the **real market's** upper tercile: RT-implied HR 12–14 (2019–21) →
+  16–21 (2023–24); the model's stays 10–15. Do not look for a 2019–21 input to fix.
+- **Fixing the body alone breaks the train tier** (2023–25 C3a to about −15 to −20 %). A successor
+  proposing a body lever (SPP-74/75 objects) must pair it with the upper-tercile object (SPP-74's
+  xiso-refused offer shape) or show why C3a 2023–25 survives.
+
 **DO-NOT-REDO, added by SPP-75 (2026-09-23, THE GAS LOW SIDE, ZERO LP —
 `docs/handoffs/RESULT-spp-75-gas-low-side-2026-09-23.md`).** SPP-74's gas half of the RT<0 thermal
 deficit (G = 1,757 / 2,453 MW, 2020 / 2022) attributed to CAMPD SWPP-BA units (coverage κ ≈ 1.00):
