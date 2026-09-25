@@ -19,6 +19,7 @@ alone would price the gas-converted units at the coal rate and trade one
 attribution error for another.
 """
 
+from market_sim.config.plant_taxonomy import COAL_CLASSES
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -276,7 +277,7 @@ class TestFleetSeam(unittest.TestCase):
         loaded = self._load(True)
         coal_group, coal_hr = loaded["8066_3"]
         gas_group, gas_hr = loaded["8066_1"]
-        self.assertEqual(coal_group, "COAL")
+        self.assertIn(coal_group, COAL_CLASSES)
         self.assertEqual(gas_group, "ST_GAS")
         self.assertAlmostEqual(coal_hr, measured[8066], places=3)
         self.assertAlmostEqual(gas_hr, 11.2457, places=3)

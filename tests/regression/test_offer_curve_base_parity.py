@@ -115,13 +115,10 @@ def _frozen_inline_curve(iso: str) -> dict[str, dict[str, float]]:
             "peak": 1.20,
             "econ_low_share": 0.55,
         },
-        "COAL": {
-            "committed": 0.90,
-            "econ_low": 0.95,
-            "econ_high": 1.10,
-            "peak": 1.45,
-            "econ_low_share": 0.55,
-        },
+        # The frozen construction's bare "COAL" fallback entry is DELETED by
+        # COAL-SUB (owner instruction 2026-09-25: every coal unit carries its
+        # subclass, so no unit reads a bare-COAL curve). Every other value
+        # stays frozen byte-for-byte.
     }
 
 

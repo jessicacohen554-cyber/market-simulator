@@ -130,13 +130,12 @@ def test_a_multi_class_plant_splits_a_negative_row_by_its_shares():
 
 
 # --------------------------------------------------------------------------- #
-# generic COAL
+# coal subclass group (COAL-SUB, 2026-09-25: no bare COAL model group)
 # --------------------------------------------------------------------------- #
-def test_b_generic_coal_group_books_to_the_supply_class(monkeypatch):
-    """No share entry + the bare ``COAL`` model group -> the supply class."""
-    monkeypatch.setattr(rcf, "_coal_supply_class", lambda pid, fuel_code="": "COAL_PRB")
+def test_b_coal_subclass_group_books_to_the_supply_class():
+    """No share entry + a coal model group -> that group, which IS the supply class."""
     e923 = pd.DataFrame([_row(5, "COAL_PRB", 400_000.0), _row(5, "oil", 800.0)])
-    out = rcf._reattribute_dual_fuel_oil(e923, {5: "COAL"})
+    out = rcf._reattribute_dual_fuel_oil(e923, {5: "COAL_PRB"})
     assert _annual(out, 5, "COAL_PRB") == pytest.approx(400_800.0)
     assert "COAL" not in set(out["klass"])
 

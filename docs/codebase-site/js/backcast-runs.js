@@ -78,7 +78,7 @@
     // (the verdict scores VRE report-only), shown in the tables but never
     // gated. Green = within 1x the C1 band, amber = 2x.
     let SUM_TOL_LOAD_FRAC, SUM_TOL_GEN_FLOOR_FRAC, SUM_TOL_LOAD_CAP, SUM_TOL_SHARE_PP;
-    let NONFOSSIL, GAS_CLASSES, COAL_CLASSES, FUELMIX_EXCLUDED;
+    let NONFOSSIL, GAS_CLASSES, COAL_CLASSES, COAL_FAMILY_KEYS, FUELMIX_EXCLUDED;
 
     /** Bind the scorer-derived constants. Called once from boot(), after
         initBC() has loaded the generated part. Throws (into boot's #diag
@@ -103,6 +103,8 @@
       NONFOSSIL = rc.nonfossilFuels;
       GAS_CLASSES = rc.gasClasses;
       COAL_CLASSES = rc.coalClasses;
+      // Family totals also read a pre-COAL-SUB payload's legacy bare-COAL row.
+      COAL_FAMILY_KEYS = rc.coalFamilyKeys || rc.coalClasses;
       FUELMIX_EXCLUDED = new Set(rc.fuelmixExcluded);
     }
 
@@ -2228,7 +2230,7 @@
         if (!r) continue;
         let m = r.m, b = r.b;
         if (hasGm && (f === 'gas' || f === 'coal')) {
-          const cls = f === 'gas' ? GAS_CLASSES : COAL_CLASSES;
+          const cls = f === 'gas' ? GAS_CLASSES : COAL_FAMILY_KEYS;
           m = cls.reduce((s, c) => s + (gm[c] || 0), 0);
           if (e930[f] != null) {
             b = e930[f];

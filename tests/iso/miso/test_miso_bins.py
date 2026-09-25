@@ -16,6 +16,7 @@ lignite supercriticals (Monroe, Labadie, Rush Island, ...) hold a measured
 synchronization floor that the dispatch must respect instead of cycling them off.
 """
 
+from market_sim.config.plant_taxonomy import COAL_CLASSES
 import unittest
 
 import pandas as pd
@@ -104,7 +105,7 @@ class TestMisoFleetToBins(unittest.TestCase):
     def test_coal_mustrun_positive(self):
         """Synthesized coal bins carry a positive must-run floor (pct_mr > 0),
         so coal holds its overnight/morning floor instead of cycling to zero."""
-        coal = self.bins[self.bins["Plant_Group"] == "COAL"]
+        coal = self.bins[self.bins["Plant_Group"].isin(COAL_CLASSES)]
         self.assertGreater(len(coal), 20)
         self.assertTrue((coal["pct_mr"] > 0.0).any())
         # The capacity-weighted coal must-run is a meaningful baseload floor.

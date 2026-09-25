@@ -39,6 +39,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.paths import RAW_DATA_DIR
+from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY, artifact_class
 
 logger = logging.getLogger(__name__)
 
@@ -503,8 +504,11 @@ _PARASITIC_MAX: float = 1.00
 # Class-default parasitic-load fractions (1 − net/gross) keyed by the
 # registry ``plant_group``, used when a plant's measured factor is missing
 # or implausible. Sources: EPRI / EIA station-service typicals by technology.
+# Keyed in the registry's (artifact) class vocabulary, where coal is the
+# family token; a model coal subclass reads it through
+# plant_taxonomy.artifact_class (COAL-SUB, 2026-09-25).
 DEFAULT_PARASITIC_LOAD_PCT: dict[str, float] = {
-    "COAL": 0.070,
+    COAL_ARTIFACT_FAMILY: 0.070,
     "ST_GAS": 0.050,
     "ST_CHP": 0.050,
     "CC_REGULAR": 0.025,
@@ -984,7 +988,9 @@ def compute_parasitic_factors(
         raw = net / gross if gross > 0.0 and net > 0.0 else float("nan")
         group = groups.get(int(plant_id), "")
         if np.isnan(raw) or raw < _PARASITIC_MIN or raw > _PARASITIC_MAX:
-            pct = DEFAULT_PARASITIC_LOAD_PCT.get(group, _DEFAULT_PARASITIC_LOAD_PCT)
+            pct = DEFAULT_PARASITIC_LOAD_PCT.get(
+                artifact_class(group), _DEFAULT_PARASITIC_LOAD_PCT
+            )
             factor = 1.0 - pct
             source = "class_default"
             flag = "no_net" if np.isnan(raw) else "out_of_band"

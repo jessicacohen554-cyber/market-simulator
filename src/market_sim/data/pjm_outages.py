@@ -32,6 +32,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.paths import RAW_DATA_DIR
 
@@ -74,7 +75,17 @@ PJM_OUTAGE_ALL_TYPES: tuple[str, ...] = ("forced", "maintenance", "planned")
 # capacity denominator is the model fleet's nameplate in these groups; nuclear /
 # hydro / renewables / storage are excluded (own availability treatment).
 PJM_OUTAGE_COVERED_GROUPS: frozenset[str] = frozenset(
-    {"COAL", "CC_REGULAR", "CT_PEAKER", "ST_GAS", "CC_CHP", "CT_CHP", "ST_CHP"}
+    # Artifact class vocabulary (the extract / capacity-map keys): coal is its
+    # family token; a fleet unit is matched through artifact_class (COAL-SUB).
+    {
+        COAL_ARTIFACT_FAMILY,
+        "CC_REGULAR",
+        "CT_PEAKER",
+        "ST_GAS",
+        "CC_CHP",
+        "CT_CHP",
+        "ST_CHP",
+    }
 )
 
 _PJM_TYPE_COLUMN: dict[str, str] = {

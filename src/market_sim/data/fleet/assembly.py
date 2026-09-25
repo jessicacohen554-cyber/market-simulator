@@ -27,6 +27,7 @@ from market_sim.config.constants import (
     START_YEAR,
 )
 from market_sim.config.iso_configs import ISOConfig
+from market_sim.config.plant_taxonomy import artifact_class
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.chp import (
     chp_btm_pct,
@@ -698,7 +699,13 @@ def bins_to_fleet(
         plant_name = str(b.get("Plant_Name") or label)
         # One bin = one plant, so the unit id is anchored on the plant
         # code; the tranche suffix keeps the four sub-generators distinct.
-        bin_id = f"{group}_{zone}_p{plant_code}"
+        # The id token is the group's ARTIFACT class (plant_taxonomy.
+        # artifact_class): a coal bin keeps its historical ``COAL_<zone>_p…``
+        # id while its plant_group is the subclass (COAL-SUB, 2026-09-25), so
+        # every committed bundle's per-unit artifacts (dispatch parquets,
+        # floors npz, hourly sidecars, regression goldens) stay joinable. The
+        # id is an identifier, never read back as a class.
+        bin_id = f"{artifact_class(group)}_{zone}_p{plant_code}"
         # Exit-cohort bin (miso-191, PREREG-miso191 §1-§2): a synthesized bin
         # carrying its own retirement (fleet_to_bins' date-scoped cohort of
         # leg-1 partial-exit units) keeps the `_p{plant}_` token — every

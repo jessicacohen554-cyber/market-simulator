@@ -60,6 +60,10 @@ from pathlib import Path
 import numpy as np
 
 from market_sim.config.constants import MMBTU_PER_BBL_DISTILLATE
+from market_sim.config.plant_taxonomy import (
+    COAL_ARTIFACT_FAMILY,
+    artifact_class_array,
+)
 from market_sim.data.fleet import (
     FUEL_TYPE_MAP,
     FleetArrays,
@@ -316,11 +320,15 @@ def build_winter_fuel_budget(
 # posture targets, and it is exactly the classes the disabled reliability-floor
 # tmin cold limbs named (NEISO North COAL, Connecticut ST_GAS) — Component B
 # re-grounds that phenomenon on the program posture rather than a thin-sample
-# temperature correlation. Both coal taxonomy labels are included: the NEISO
-# fleet tags its (bituminous) coal fleet "COAL" (plant_taxonomy fallback), while
-# "COAL_BIT" is carried where the CAMPD coal-class resolver fires — Component B
-# must floor the fuel-secure coal fleet whichever label it wears.
-_WINTER_FUELSEC_CLASSES: tuple[str, ...] = ("COAL", "COAL_BIT", "ST_GAS")
+# temperature correlation. Coal is named by its FAMILY token (COAL-SUB,
+# 2026-09-25): the floor is sized on, and distributed cheapest-first across, a
+# class's AGGREGATE available capacity per zone (``_distribute_group_floor``),
+# and it always floored the whole coal fleet as ONE group (the units carried
+# the bare ``COAL`` group then). Splitting that aggregate by rank would move
+# the answer, so the fleet's coal subclasses are matched to the family through
+# plant_taxonomy.artifact_class_array below. (The former ``COAL_BIT`` entry
+# matched no unit — every coal unit carried ``COAL`` — and is dropped.)
+_WINTER_FUELSEC_CLASSES: tuple[str, ...] = (COAL_ARTIFACT_FAMILY, "ST_GAS")
 
 # Steam commitment spans a multi-day cold event (a committed boiler is not cycled
 # on the single coldest calendar day). Mirrors the reliability engine's steam
@@ -403,7 +411,8 @@ def apply_winter_fuelsec_mustrun(
         iso: ISO identifier (NEISO).
         year: Weather year for the pinned zone temperature series.
         zone_names: Ordered model-zone names (index-aligned with ``zone_idx``).
-        plant_classes: Fuel-secure classes to floor (default COAL_BIT + ST_GAS).
+        plant_classes: Fuel-secure class families to floor (default the coal
+            family + ST_GAS).
         min_stable_pct: Physical minimum-stable fraction of a committed steam
             boiler (default 0.40 — standard subcritical steam turndown).
         commit_frac: Fraction of each class under the winter program posture
@@ -435,7 +444,9 @@ def apply_winter_fuelsec_mustrun(
         hours = int(avail.shape[1]) if avail is not None and avail.ndim == 2 else 8760
     T = int(hours)
 
-    groups = np.asarray(fleet_arrays.plant_group)
+    # Class families: a coal subclass reads as the coal family (see
+    # _WINTER_FUELSEC_CLASSES); every other class is itself.
+    groups = artifact_class_array(fleet_arrays.plant_group)
     zone_idx = np.asarray(fleet_arrays.zone_idx)
     pmax = np.asarray(fleet_arrays.pmax)
 

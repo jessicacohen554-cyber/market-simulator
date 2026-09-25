@@ -69,7 +69,12 @@ from market_sim.data.eia923 import (  # noqa: E402
 # widen SCORED_CLASSES to include it — do not assume renewables are 930-scored.
 # results/calibration/FINDING-nyiso106-solar-benchmark-vintage-2026-07-31.md §A.5
 GAS_CLASSES = ("CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP")
-COAL_CLASSES = ("COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC", "COAL")
+COAL_CLASSES = (
+    "COAL_PRB",
+    "COAL_LIGNITE",
+    "COAL_BIT",
+    "COAL_WC",
+)  # COAL-SUB: no bare COAL
 SCORED_CLASSES = tuple(c for c in (*GAS_CLASSES, *COAL_CLASSES))
 
 # --- completeness thresholds ------------------------------------------------

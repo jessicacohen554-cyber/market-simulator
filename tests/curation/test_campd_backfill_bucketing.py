@@ -108,13 +108,14 @@ class TestSingleClassAndFallback(unittest.TestCase):
         self.assertAlmostEqual(_annual(b, 710, "CC_REGULAR"), net, places=3)
 
     def test_coal_fallback_uses_supply_class(self):
-        # group=="COAL" with no shares -> _coal_supply_class(pid) (rule/constraint
-        # 4 preserved for the fallback path).
+        # A coal plant's group IS its supply subclass since COAL-SUB
+        # (2026-09-25), resolved at load by the same chain; with no shares the
+        # fallback books the whole plant to it (rule/constraint 4 preserved).
         net = 10.0 * _MIN
         pid = 999901
-        klass = rcf._coal_supply_class(pid)  # generic COAL for an unknown plant
+        klass = "COAL_BIT"
         out = rcf._backfill_eia923_with_campd(
-            _e923([]), _campd_year({pid: net}), {pid: "COAL"}, 2025, class_shares=None
+            _e923([]), _campd_year({pid: net}), {pid: klass}, 2025, class_shares=None
         )
         self.assertAlmostEqual(_annual(out, pid, klass), net, places=3)
         self.assertAlmostEqual(_plant_total(out, pid), net, places=3)
@@ -179,12 +180,16 @@ class TestMixedPlantSplit(unittest.TestCase):
 
     def test_coal_gas_split_by_shares_mass_preserved(self):
         # WA-Parish pattern: coal share -> its coal supply subclass, gas share ->
-        # ST_GAS. group maps the whole plant to COAL.
+        # ST_GAS. group maps the whole plant to its coal subclass (COAL-SUB).
         net = 20.0 * _MIN
         pid = 820
         shares = {pid: {"COAL_BIT": 0.7, "ST_GAS": 0.3}}
         out = rcf._backfill_eia923_with_campd(
-            _e923([]), _campd_year({pid: net}), {pid: "COAL"}, 2025, class_shares=shares
+            _e923([]),
+            _campd_year({pid: net}),
+            {pid: "COAL_BIT"},
+            2025,
+            class_shares=shares,
         )
         coal = _annual(out, pid, "COAL_BIT")
         gas = _annual(out, pid, "ST_GAS")

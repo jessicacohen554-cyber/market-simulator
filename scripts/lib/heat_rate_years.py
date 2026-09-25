@@ -33,6 +33,7 @@ from collections.abc import Callable, Iterable
 import pandas as pd
 
 from market_sim.config.iso_configs import get_iso_config
+from market_sim.config.plant_taxonomy import artifact_class
 from market_sim.config.paths import EIA_860_DIR, set_eia860_vintage
 from market_sim.data.fleet import load_fleet_from_csv
 from market_sim.data.fleet.eia860 import load_retired_within_window
@@ -138,7 +139,9 @@ def class_capacity(fleet: list, klass: str) -> dict[int, float]:
     """Return ``{plant_code: MW}`` over a fleet's generators of one class."""
     caps: dict[int, float] = {}
     for gen in fleet:
-        if gen.plant_group != klass:
+        # ``klass`` may be a class FAMILY (the coal derive passes the coal
+        # family token): a coal subclass matches it (COAL-SUB).
+        if artifact_class(gen.plant_group) != klass and gen.plant_group != klass:
             continue
         code = int(gen.plant_code or 0)
         if code:
@@ -151,7 +154,7 @@ def class_heat_rates(fleet: list, klass: str) -> dict[int, float]:
     num: dict[int, float] = {}
     den: dict[int, float] = {}
     for gen in fleet:
-        if gen.plant_group != klass:
+        if artifact_class(gen.plant_group) != klass and gen.plant_group != klass:
             continue
         code = int(gen.plant_code or 0)
         if not code:

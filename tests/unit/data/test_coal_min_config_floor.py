@@ -48,7 +48,7 @@ _LIMESTONE = 298
 _PARISH = 3470
 
 
-def _bin_row(code: int, name: str, group: str = "COAL") -> dict:
+def _bin_row(code: int, name: str, group: str = "COAL_PRB") -> dict:
     """One synthetic per-plant bin row in the schema ``bins_to_fleet`` consumes."""
     return {
         "Plant_Group": group,
@@ -72,7 +72,7 @@ def _bin_row(code: int, name: str, group: str = "COAL") -> dict:
         "hr_peak": 12.0,
         "plant_count": 1,
         "plant_codes": [code],
-        "fuel": "coal" if group == "COAL" else "gas_st",
+        "fuel": "coal" if group.startswith("COAL") else "gas_st",
     }
 
 

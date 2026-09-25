@@ -1055,7 +1055,12 @@ THERMAL_AVAILABILITY: dict[str, tuple[float, ...]] = {
     "CT_PEAKER": (0.03, 0.07, 0.003, 20, 0.05, 0.002, 20),
     "ST_GAS": (0.06, 0.21, 0.003, 30, 0.04, 0.002, 30),
     "ST_CHP": (0.05, 0.08, 0.002, 25, 0.03, 0.0015, 25),
-    "COAL": (0.07, 0.12, 0.005, 40, 0.03, 0.002, 35),
+    # Coal subclasses carry the deleted bare ``COAL`` key's GADS tuple
+    # (COAL-SUB, owner instruction 2026-09-25).
+    "COAL_LIGNITE": (0.07, 0.12, 0.005, 40, 0.03, 0.002, 35),
+    "COAL_PRB": (0.07, 0.12, 0.005, 40, 0.03, 0.002, 35),
+    "COAL_BIT": (0.07, 0.12, 0.005, 40, 0.03, 0.002, 35),
+    "COAL_WC": (0.07, 0.12, 0.005, 40, 0.03, 0.002, 35),
     # Oil and biomass entries apply when a unit carries a matching plant-group
     # tag; EIA-classified oil/biomass units (no plant_group) fall back to the
     # flat 1 - EFORD derate. Source: NERC GADS by unit type and age.
@@ -1192,20 +1197,26 @@ COAL_MAX_CF_BY_PLANT: dict[int, float] = {
 # CT_PEAKER — combustion turbines are excluded from the unit-outage detector)
 # fall back to the pooled all-thermal shape "_POOLED".
 MAINTENANCE_MONTHLY_SHAPE: dict[str, tuple[float, ...]] = {
-    "COAL": (
-        0.239,
-        1.125,
-        1.757,
-        1.923,
-        1.559,
-        0.568,
-        0.000,
-        0.174,
-        1.003,
-        1.442,
-        1.481,
-        0.772,
-    ),
+    # The coal shape measured from the CAMPD unit-outage extracts (derived on
+    # the artifacts' coal-family rows); every coal subclass reads the SAME
+    # tuple the deleted bare ``COAL`` key carried (COAL-SUB, 2026-09-25).
+    **{
+        _cls: (
+            0.239,
+            1.125,
+            1.757,
+            1.923,
+            1.559,
+            0.568,
+            0.000,
+            0.174,
+            1.003,
+            1.442,
+            1.481,
+            0.772,
+        )
+        for _cls in ("COAL_LIGNITE", "COAL_PRB", "COAL_BIT", "COAL_WC")
+    },
     "CC_REGULAR": (
         0.608,
         0.961,

@@ -35,7 +35,7 @@ Plant_Code,Plant_Name,Plant_Group,Zone,Nameplate_MW,Plant_Avg_HR_MMBtu_MWh,Pct_M
 56047,CPV Towantic Energy Center,CC_REGULAR,Connecticut,743.8,6.677,0.0,55.7,41.2,3.1,none,campd,campd,
 56798,Kleen Energy Systems,CC_REGULAR,Connecticut,622.0,7.112,0.0,63.8,35.7,0.5,none,campd,campd,
 60903,Salem Harbor Power Development LP,CC_REGULAR,Boston,798.2,7.377,0.0,11.7,83.2,5.1,none,campd,campd,
-2364,Merrimack,COAL,North,108.0,11.337,0.0,70.0,28.0,2.0,campd,campd,class_default,
+2364,Merrimack,COAL_BIT,North,108.0,11.337,0.0,70.0,28.0,2.0,campd,campd,class_default,
 10108,Hampton Facility,CT_CHP,North,3.8,6.07,70.0,30.0,0.0,0.0,chp_eia923_cf,class_default,class_default,
 10408,Clark University,CT_CHP,Central,2.0,5.861,65.0,30.0,0.0,5.0,chp_eia923_cf,class_default,class_default,
 10883,Medical Area Total Energy Plant,CT_CHP,Boston,38.5,5.357,65.0,30.0,0.0,5.0,chp_eia923_cf,class_default,class_default,CT+ST

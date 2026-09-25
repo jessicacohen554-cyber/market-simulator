@@ -21,6 +21,7 @@ dispatch economically — switching to the oil price under ``dual_fuel_switching
 when winter gas spikes past distillate parity — with no must-run pin.
 """
 
+from market_sim.config.plant_taxonomy import COAL_CLASSES
 import unittest
 
 import pandas as pd
@@ -175,7 +176,7 @@ class TestNeisoBinAssignments(unittest.TestCase):
 
     def test_coal_row_carries_no_mustrun(self):
         """The single COAL row (Merrimack) carries a zero must-run share."""
-        coal = self.bins[self.bins["Plant_Group"] == "COAL"]
+        coal = self.bins[self.bins["Plant_Group"].isin(COAL_CLASSES)]
         self.assertEqual(len(coal), 1)
         self.assertEqual(float(coal["Pct_Must_Run"].iloc[0]), 0.0)
 

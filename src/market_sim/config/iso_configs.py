@@ -2444,7 +2444,8 @@ class ReliabilityFloorSpec:
     """
 
     zone: str  # model zone name
-    plant_class: str  # plant_group: "ST_GAS", "CT_PEAKER", "COAL", "oil", …
+    plant_class: str  # class FAMILY: "ST_GAS", "CT_PEAKER", "COAL" (the coal family
+    # token, plant_taxonomy.COAL_ARTIFACT_FAMILY — matches every coal subclass), "oil", …
     driver: str  # "tmax" (hot gate) | "tmin" (cold gate) | "netload"
     threshold: float  # °C for tmax/tmin; MW for netload
     floor_pct: float  # = commit_frac × min_stable_pct (see plan §B.3)

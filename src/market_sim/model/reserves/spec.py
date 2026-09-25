@@ -18,6 +18,11 @@ from typing import Optional
 import numpy as np
 
 from market_sim.config.constants import ERCOT_AS_PLAN_HOLD_EPS, MISO_RPE_DEMAND_VALUE
+from market_sim.config.plant_taxonomy import (
+    COAL_CLASSES,
+    artifact_class,
+    artifact_class_array,
+)
 from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
 
 logger = logging.getLogger(__name__)
@@ -1176,7 +1181,7 @@ def _posture_pool_params(
 
     * **Startup cost / min-down** per member from the NREL/SR-5500-55433 class
       tables (``COMMITMENT_PARAMS_BY_FUEL`` keyed by heat rate for gas
-      CC/CT/ST; ``BIN_STARTUP_COST_PER_MW['COAL']`` +
+      CC/CT/ST; ``BIN_STARTUP_COST_PER_MW`` (every coal subclass) +
       ``COAL_BIN_MIN_DOWN_HOURS`` for coal). Fuels with no table (oil — the
       quick-start IC/CT class ``_commitment_params`` never screens) count as
       fast-start.
@@ -1213,7 +1218,10 @@ def _posture_pool_params(
     for j in range(gidx.size):
         f = fuels[j]
         if f == "coal":
-            startup[j] = BIN_STARTUP_COST_PER_MW["COAL"]
+            # Every coal subclass carries the one coal startup cost (COAL-SUB);
+            # read through the canonical subclass so a coal row whose group is
+            # empty still resolves.
+            startup[j] = BIN_STARTUP_COST_PER_MW[COAL_CLASSES[0]]
             min_down[j] = float(COAL_BIN_MIN_DOWN_HOURS)
             continue
         table = COMMITMENT_PARAMS_BY_FUEL.get(f)
@@ -1235,7 +1243,8 @@ def _posture_pool_params(
     )
     mlf = np.zeros(gidx.size)
     for j in range(gidx.size):
-        row = overrides.get((int(plants[j]), str(groups[j])))
+        # The tranche artifact keys coal by its family token (COAL-SUB).
+        row = overrides.get((int(plants[j]), artifact_class(groups[j])))
         if row is not None:
             mlf[j] = float(row[0]) / 100.0
         else:
@@ -1504,11 +1513,11 @@ def _ercot_design(
 #: the target hours, ercot226_helddepth_phase0.json).
 ERCOT_HELD_CLASS_GROUPS: dict[str, tuple[str, ...]] = {
     "gas_cc": ("CC_REGULAR", "CC_CHP"),
-    # The fleet's plant_group token for coal is the single "COAL" (the
-    # COAL_LIGNITE/COAL_PRB split is the class_hourly sidecar's REPORTING
-    # vocabulary, not the fleet grain — measured on the armed run's own
-    # skip log, ercot-226).
-    "coal": ("COAL",),
+    # Every coal subclass (COAL-SUB, 2026-09-25: the fleet's plant_group IS
+    # the subclass). This token was ("COAL",) when the fleet carried the
+    # single bare class (ercot-226's skip log); the held-class membership is
+    # the same coal units either way.
+    "coal": COAL_CLASSES,
     "gas_st": ("ST_GAS", "ST_CHP"),
 }
 
@@ -2120,8 +2129,11 @@ def _ercot_multiproduct_design(
             env_classes = ercot_online_capacity_envelope_classes(config)
             plant_group = getattr(fleet_arrays, "plant_group", None)
             if plant_group is not None:
+                # The envelope tables are keyed by class FAMILY (coal = the
+                # family token): read the fleet's coal subclasses through it
+                # so coal stays eligible as before COAL-SUB (2026-09-25).
                 online_capacity_pricing_elig = responsive & np.isin(
-                    np.asarray(plant_group), sorted(env_classes)
+                    artifact_class_array(plant_group), sorted(env_classes)
                 )
 
     # Storage AS duration gate (config.ercot_storage_as_duration_gate): the

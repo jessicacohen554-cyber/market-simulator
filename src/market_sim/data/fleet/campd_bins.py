@@ -19,7 +19,12 @@ from market_sim.config.paths import (
     PROCESSED_DIR,
     active_eia860_dir,
 )
-from market_sim.config.plant_taxonomy import COAL_SUPPLY_TO_CLASS
+from market_sim.config.plant_taxonomy import (
+    COAL_ARTIFACT_FAMILY,
+    COAL_SUPPLY_TO_CLASS,
+    artifact_class,
+    is_coal_class,
+)
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.campd import (
     DEFAULT_PARASITIC_LOAD_PCT,
@@ -481,7 +486,11 @@ _RAMP_BUCKET_BY_GROUP: dict[str, str] = {
     "CC_CHP": "CC",
     "ST_GAS": "ST",
     "ST_CHP": "ST",
-    "COAL": "ST",
+    # Coal subclasses carry the deleted bare ``COAL`` key's bucket (COAL-SUB).
+    "COAL_LIGNITE": "ST",
+    "COAL_PRB": "ST",
+    "COAL_BIT": "ST",
+    "COAL_WC": "ST",
     "CT_PEAKER": "CT",
     "CT_CHP": "CT",
 }
@@ -656,7 +665,9 @@ def build_ramp_groups(
             g = str(plant_groups[i])
             by_group[g] = by_group.get(g, 0.0) + float(pmax[i])
         dominant = max(by_group, key=by_group.get) if by_group else ""
-        pct = DEFAULT_PARASITIC_LOAD_PCT.get(dominant, _DEFAULT_PARASITIC_LOAD_PCT)
+        pct = DEFAULT_PARASITIC_LOAD_PCT.get(
+            artifact_class(dominant), _DEFAULT_PARASITIC_LOAD_PCT
+        )
         return 1.0 - pct
 
     gen_idx: list[int] = []
@@ -1012,7 +1023,13 @@ _DEFAULT_HR_MULT_BY_GROUP: dict[str, dict[str, float]] = {
     "CT_PEAKER": {"mr": 1.05, "mc": 1.12, "econ": 1.00, "peak": 1.10},
     "ST_GAS": {"mr": 1.10, "mc": 1.15, "econ": 1.00, "peak": 1.10},
     "ST_CHP": {"mr": 1.05, "mc": 1.10, "econ": 1.00, "peak": 1.10},
-    "COAL": {"mr": 1.00, "mc": 1.15, "econ": 1.00, "peak": 1.05},
+    # Coal subclasses carry the deleted bare ``COAL`` key's multipliers
+    # (COAL-SUB, 2026-09-25) — without them a coal bin would silently fall
+    # back to the CC_REGULAR default below.
+    "COAL_LIGNITE": {"mr": 1.00, "mc": 1.15, "econ": 1.00, "peak": 1.05},
+    "COAL_PRB": {"mr": 1.00, "mc": 1.15, "econ": 1.00, "peak": 1.05},
+    "COAL_BIT": {"mr": 1.00, "mc": 1.15, "econ": 1.00, "peak": 1.05},
+    "COAL_WC": {"mr": 1.00, "mc": 1.15, "econ": 1.00, "peak": 1.05},
 }
 
 
@@ -1138,7 +1155,11 @@ _CAMPD_BINS_CACHE: dict[tuple, pd.DataFrame] = {}
 #: identical measured population the rest of the program reads.
 _BIN_GROUP_MEASURED_FAMILY: dict[str, str] = {
     "CT_PEAKER": "measured_ct_heat_rates",
-    "COAL": "measured_coal_heat_rates",
+    # Each coal subclass routes to the coal derive (COAL-SUB).
+    "COAL_LIGNITE": "measured_coal_heat_rates",
+    "COAL_PRB": "measured_coal_heat_rates",
+    "COAL_BIT": "measured_coal_heat_rates",
+    "COAL_WC": "measured_coal_heat_rates",
     "ST_GAS": "measured_st_heat_rates",
     "CC_REGULAR": "measured_cc_heat_rates",
     "CC_CHP": "measured_chp_heat_rates",
@@ -1468,7 +1489,11 @@ _DEFAULT_TRANCHE_PCT_BY_GROUP: dict[str, tuple[float, float, float]] = {
     "CT_CHP": (0.0, 30.0, 7.0),
     "ST_GAS": (0.0, 30.0, 15.0),
     "ST_CHP": (0.0, 30.0, 15.0),
-    "COAL": (45.0, 5.0, 2.0),
+    # Coal subclasses carry the deleted bare ``COAL`` key's shares (COAL-SUB).
+    "COAL_LIGNITE": (45.0, 5.0, 2.0),
+    "COAL_PRB": (45.0, 5.0, 2.0),
+    "COAL_BIT": (45.0, 5.0, 2.0),
+    "COAL_WC": (45.0, 5.0, 2.0),
 }
 
 
@@ -1571,7 +1596,11 @@ def thermal_tranche_overrides(
         if str(getattr(r, "status", "ok")) != "ok":
             continue
         mustrun = float(r.mustrun_pct)
-        if coal_online_pmin and has_online and str(r.plant_group) == "COAL":
+        if (
+            coal_online_pmin
+            and has_online
+            and str(r.plant_group) == COAL_ARTIFACT_FAMILY
+        ):
             online_v = getattr(r, "mustrun_online_pct", float("nan"))
             if online_v == online_v:  # not NaN
                 mustrun = float(online_v)
@@ -1710,8 +1739,9 @@ def thermal_tranche_online_frac(
 _TRANCHE_GATE_COLUMNS: tuple[tuple[str, tuple[str, ...], tuple[str, ...]], ...] = (
     ("cc_mustrun_per_plant", ("online_frac",), ("CC_REGULAR",)),
     ("st_gas_mustrun_per_plant", ("online_frac",), ("ST_GAS",)),
-    ("coal_sync_srmc_tranche", ("online_frac",), ("COAL",)),
-    ("coal_mustrun_online_pmin", ("mustrun_online_pct",), ("COAL",)),
+    # Coal rows carry the artifact family token (plant_taxonomy.COAL_ARTIFACT_FAMILY).
+    ("coal_sync_srmc_tranche", ("online_frac",), (COAL_ARTIFACT_FAMILY,)),
+    ("coal_mustrun_online_pmin", ("mustrun_online_pct",), (COAL_ARTIFACT_FAMILY,)),
     ("st_gas_mustrun_p25_level", ("p25_cf",), ("ST_GAS",)),
     ("cc_peaking_per_plant", ("peaking_pct",), ("CC_REGULAR", "CC_CHP")),
     (
@@ -2785,10 +2815,14 @@ def fleet_to_bins(
             if _ratio is not None and _ratio > 0.0:
                 cap = cap / _ratio
         d_mr, d_mc, d_peak = _DEFAULT_TRANCHE_PCT_BY_GROUP.get(group, (0.0, 30.0, 8.0))
-        _measured_row = (code, group) in overrides
-        committed, mustrun = overrides.get((code, group), (d_mc, d_mr))
+        # The thermal-tranche artifact keys coal rows by its family token, so
+        # the join reads the bin's group through plant_taxonomy.artifact_class
+        # (identity for every non-coal group; COAL-SUB).
+        _akey = (code, artifact_class(group))
+        _measured_row = _akey in overrides
+        committed, mustrun = overrides.get(_akey, (d_mc, d_mr))
         pct_mc = committed
-        pct_mr = mustrun if group == "COAL" else d_mr
+        pct_mr = mustrun if is_coal_class(group) else d_mr
         # COAL MUST-RUN REQUIRES A MEASURED ROW (config.coal_mustrun_requires_
         # measured_row, pjm-h14). Rule 17 [R-FLOOR-WINDOW]: a min-gen floor owes
         # (a) an external driver, (b) the hours it may bind, (c) a forward story.
@@ -2814,12 +2848,12 @@ def fleet_to_bins(
         # default off, so every other ISO's keeper is byte-identical
         # (rule 25 [R-ISO-SCOPE]).
         if (
-            group == "COAL"
+            is_coal_class(group)
             and not _measured_row
             and getattr(config, "coal_mustrun_requires_measured_row", False)
         ):
             pct_mr = 0.0
-        pct_peak = peaking.get((code, group), d_peak)
+        pct_peak = peaking.get(_akey, d_peak)
         # Keep the split feasible: clip committed + peaking to leave room for an
         # economic band above the must-run floor.
         room = max(0.0, 100.0 - pct_mr)

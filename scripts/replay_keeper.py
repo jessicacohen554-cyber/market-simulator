@@ -374,7 +374,43 @@ def build_kwargs(meta: dict) -> dict:
         and "coal_econ_marginal_hr_bound" not in meta
     ):
         kwargs["coal_econ_marginal_hr_bound"] = False
+    translate_legacy_coal_keys(kwargs)
     return kwargs
+
+
+def translate_legacy_coal_keys(kwargs: dict) -> None:
+    """Translate a pre-COAL-SUB recipe's bare ``"COAL"`` class keys, in place.
+
+    COAL-SUB (owner instruction 2026-09-25, verbatim: "we need to completely
+    eliminate the class Coal From the model altogether all coal should be
+    sorted into its subclass") deleted the bare ``COAL`` class, and the
+    calibration channels now REFUSE it
+    (``pipeline/backcast_config._deep_merge_offer_curve``). A keeper recorded
+    before that carries it in ``offer_curve_overrides`` (PJM, SPP) and in the
+    full ``prb_overrides["offer_curve_by_group"]`` curve (MISO). Its semantics at
+    record time: the ``COAL`` entry reached exactly the coal units whose
+    SUBCLASS had no curve of its own. Every base curve those patches merge
+    onto carries all four subclasses (``offer_curve_base/generic.py`` and the
+    ``backcast_config`` base block), so a patch's ``COAL`` entry reached no
+    rank-resolved unit, and a full recorded curve's ``COAL`` entry reached none
+    whose subclass it also names. Both are therefore folded by
+    :func:`~market_sim.config.plant_taxonomy.fold_legacy_coal_key`, which
+    carries the value only onto a subclass nothing else covers — so every
+    rank-resolved unit replays byte-identically, and the only units that move
+    are the former generic-bucket ones, which now read their own subclass.
+    """
+    from market_sim.config.plant_taxonomy import COAL_CLASSES, fold_legacy_coal_key
+
+    for key in ("offer_curve_overrides", "offer_curve_deltas"):
+        if kwargs.get(key):
+            kwargs[key] = fold_legacy_coal_key(dict(kwargs[key]), covered=COAL_CLASSES)
+    prb = kwargs.get("prb_overrides")
+    if prb and prb.get("offer_curve_by_group"):
+        # DEFENSIVE COPY: prb_overrides is bound straight off meta.json.
+        kwargs["prb_overrides"] = dict(prb)
+        kwargs["prb_overrides"]["offer_curve_by_group"] = fold_legacy_coal_key(
+            dict(prb["offer_curve_by_group"])
+        )
 
 
 #: ``meta.json`` schema tag of the composite per-year recipe overlay

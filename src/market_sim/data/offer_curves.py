@@ -23,6 +23,7 @@ from market_sim.config.constants import (
     MISO_OFFER_SPREAD_ANCHOR_RANK,
     MISO_OFFER_SPREAD_ARTIFACT_SHA256,
 )
+from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY, is_coal_class
 from market_sim.config.scenarios import ScenarioConfig
 
 if TYPE_CHECKING:
@@ -214,9 +215,10 @@ def _with_intermediate_phys(
 #: (``ScenarioConfig.committed_band_measured_basis``). The artifact's class
 #: vocabulary is the model's BASE classes, so:
 #:
-#: * every coal supply class reads the single ``COAL`` row -- the artifact
-#:   carries exactly one (PJM n=65), which is why there is no per-supply value
-#:   to select between (rule 21 [R-DOF]);
+#: * every coal subclass reads the artifact's single coal-family row
+#:   (:data:`~market_sim.config.plant_taxonomy.COAL_ARTIFACT_FAMILY`) -- the
+#:   artifact carries exactly one (PJM n=65), which is why there is no
+#:   per-supply value to select between (rule 21 [R-DOF]);
 #: * a duty-split cohort reads its PARENT class's row, the same borrowing
 #:   ``_INTERMEDIATE_PHYS_PARENT`` already registers for ``phys_*``.
 #:
@@ -231,11 +233,12 @@ _COMMITTED_MEASURED_ROW: dict[str, str] = {
     "CT_INTERMEDIATE": "CT_PEAKER",
     "ST_GAS": "ST_GAS",
     "ST_GAS_INTERMEDIATE": "ST_GAS",
-    "COAL": "COAL",
-    "COAL_BIT": "COAL",
-    "COAL_PRB": "COAL",
-    "COAL_LIGNITE": "COAL",
-    "COAL_WC": "COAL",
+    # Model coal subclasses -> the artifact's coal-family row (COAL-SUB: the
+    # bare ``COAL`` model class is deleted; the VALUE is the artifact's token).
+    "COAL_BIT": COAL_ARTIFACT_FAMILY,
+    "COAL_PRB": COAL_ARTIFACT_FAMILY,
+    "COAL_LIGNITE": COAL_ARTIFACT_FAMILY,
+    "COAL_WC": COAL_ARTIFACT_FAMILY,
 }
 
 #: The artifact column the ``committed`` band reads. Fixed by the convention
@@ -374,9 +377,7 @@ def _offer_curve_for_group(
     :func:`gas_offer_margin_markup_mult` returns its rule-24 neutral 0.0 and
     ``gas_offer_net_revenue_margin`` silently skips the whole cohort.
     """
-    from market_sim.data.coal import coal_supply_class
     from market_sim.data.fleet import (
-        _COAL_SUPPLY_TO_CURVE,
         cc_intermediate_plants,
         ct_intermediate_plants,
         st_gas_intermediate_plants,
@@ -384,11 +385,12 @@ def _offer_curve_for_group(
     from market_sim.data.outages import ST_GAS_PEAKER_PLANTS
 
     curves = getattr(config, "offer_curve_by_group", None) or {}
-    if group == "COAL":
-        key = _COAL_SUPPLY_TO_CURVE.get(coal_supply_class(int(plant_code)))
-        return (
-            curves.get(key) if key and curves.get(key) else curves.get("COAL")
-        ) or None
+    if is_coal_class(group):
+        # COAL-SUB (2026-09-25): the coal bin's group IS its subclass, resolved
+        # at load by the same coal_supply_class chain this lookup used to run
+        # here, so the subclass curve is read directly. There is no generic
+        # ``COAL`` curve to fall back to.
+        return curves.get(group) or None
     if group == "ST_GAS" and plant_code in ST_GAS_PEAKER_PLANTS:
         return None
     if group == "ST_GAS" and getattr(config, "st_gas_intermediate_split", False):

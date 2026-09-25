@@ -68,7 +68,8 @@ grid-facing capacity.
 ## Plant groups
 
 `Plant_Group` is the primary classifier (`config/plant_taxonomy.py`). The
-seven dispatched groups and their model fuel type:
+dispatched groups and their model fuel type (six gas classes and the four coal
+subclasses):
 
 | Group        | Fuel type | Notes                                  |
 |--------------|-----------|----------------------------------------|
@@ -78,7 +79,20 @@ seven dispatched groups and their model fuel type:
 | `CT_PEAKER`  | `gas_ct`  | Peaking combustion turbines            |
 | `ST_GAS`     | `gas_st`  | Legacy natural-gas steam boilers       |
 | `ST_CHP`     | `gas_st`  | Gas steam cogeneration                 |
-| `COAL`       | `coal`    | Coal steam (taxonomy splits coal into ranks `COAL_LIGNITE`/`COAL_PRB`/`COAL_BIT`/`COAL_WC` for fuel pricing) |
+| `COAL_LIGNITE` / `COAL_PRB` / `COAL_BIT` / `COAL_WC` | `coal` | Coal steam, one group per supply rank (mine-mouth lignite, Powder River / sub-bituminous, bituminous, waste coal) |
+
+**There is no bare `COAL` group** (COAL-SUB, owner instruction 2026-09-25:
+*"we need to completely eliminate the class Coal From the model altogether all
+coal should be sorted into its subclass"*). A coal bin's `Plant_Group` is its
+subclass: the curated ERCOT sheet carries it directly (`COAL_PRB` / `COAL_LIGNITE`
+per `data/coal.py::COAL_PLANT_SUPPLY`), and the EIA-860 fleet resolves it at load
+through `data/coal.py::coal_subclass`. The derived artifacts written before
+COAL-SUB (CAMPD outage extracts, `thermal_tranches_<ISO>.csv`, reliability-floor
+coefficients, ERCOT DAM availability, marginal-HR summaries) still label coal
+rows with the fuel-family token `COAL`; they are joined to the fleet through
+`plant_taxonomy.artifact_class`, which folds the four subclasses onto that
+token, so the artifacts stay byte-identical. A coal unit's id keeps the
+historical `COAL_<zone>_p<plant>_<tranche>` token for the same reason.
 
 `gas_st` is a dedicated fuel type for legacy gas steam boilers (W A
 Parish, Cedar Bayou, Handley, ...); both `ST_GAS` and `ST_CHP` map to it. It pays the Henry Hub gas price and
@@ -383,7 +397,7 @@ Commitment parameters (`min_run_hours`, `min_down_hours`,
   |-------------|-----|-------|-------|-------|---------|----------|
   | CC_CHP      | 60  | 15    | 15    | 10    | 24h     | 4h       |
   | CC_REGULAR  | 0   | 48-50 | 30-35 | 15-20 | 10-12h  | 4-6h     |
-  | COAL        | 0   | 40    | 45    | 15    | 36h     | 16h      |
+  | COAL_* (every subclass) | 0 | 40 | 45 | 15 | 36h     | 16h      |
   | CT_CHP      | 62-65 | 15-17 | 15-16 | 5-6 | 23h     | 2h       |
   | CT_PEAKER   | 0   | 30-40 | 25-27 | 25-45 | 1h     | 1h       |
   | ST_GAS      | 0   | 20    | 40    | 40    | 4h      | 4h       |

@@ -554,11 +554,16 @@ def fuel_basis_by_year(years: tuple[int, ...] = (2024, 2025, 2023)) -> dict:
         :data:`FOOTING_TOL`, else the basis moved between ERCOT-138 and the
         keeper and no year's value is comparable to the identification's.
     """
+    from market_sim.config.plant_taxonomy import COAL_CLASSES
     from scripts.probes.ercot138_coal_gas_ranking import (
         MODEL_CC_GROUPS,
-        MODEL_COAL_GROUPS,
         _tranche_role,
     )
+
+    # The model's coal rows carry their coal SUBCLASS (COAL-SUB, 2026-09-25);
+    # the SCED corpus's COAL control class pools every rank, as the former bare
+    # ``COAL`` group did.
+    MODEL_COAL_GROUPS = COAL_CLASSES
 
     from scripts import run_calibration as rc
     from scripts.lib.bundle_fleet import reconstruct_bundle_fleet

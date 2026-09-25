@@ -33,6 +33,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.paths import RAW_DATA_DIR, REFERENCE_DIR
 from market_sim.data.outages import _iso_plant_capacity, outage_hour_mask
@@ -49,7 +50,9 @@ DAM_OUTAGE_WINDOWS_PARQUET: Path = (
 # decision variables bounded by CF, storage/CTs dispatch economically) — the
 # thermal set routed by outages._generic_unit_outage_target.
 _OVERLAY_GROUPS: frozenset[str] = frozenset(
-    {"COAL", "CC_REGULAR", "CC_CHP", "ST_GAS", "ST_CHP"}
+    # Artifact class vocabulary (the extract / capacity-map keys): coal is its
+    # family token; a fleet unit is matched through artifact_class (COAL-SUB).
+    {COAL_ARTIFACT_FAMILY, "CC_REGULAR", "CC_CHP", "ST_GAS", "ST_CHP"}
 )
 
 

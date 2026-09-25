@@ -217,7 +217,10 @@ def _refine_coal(comp: dict[int, dict[str, float]]) -> dict[int, dict[str, float
             continue
         refined = dict(by)
         mw = refined.pop("COAL")
-        k = str(rcf._coal_supply_class(int(code)))
+        # A composition cached before COAL-SUB (2026-09-25) can still carry
+        # the bare COAL group; an unresolvable plant keeps that legacy key (the
+        # historical residual bucket) rather than an empty one.
+        k = str(rcf._coal_supply_class(int(code)) or "COAL")
         refined[k] = refined.get(k, 0.0) + mw
         out[code] = refined
     return out

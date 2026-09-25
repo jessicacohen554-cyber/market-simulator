@@ -175,10 +175,10 @@ class TestForcedDerateBackcastGate(unittest.TestCase):
         """
         cfg = ScenarioConfig(mode="backcast", weather_year=2025, hours=_HOURS)
         binned = _thermal_gen(
-            unit_id="ml", plant_group="COAL", fuel_type="coal", bin_label="N_COAL4"
+            unit_id="ml", plant_group="COAL_BIT", fuel_type="coal", bin_label="N_COAL4"
         )
         plain = _thermal_gen(
-            unit_id="ml0", plant_group="COAL", fuel_type="coal", bin_label=""
+            unit_id="ml0", plant_group="COAL_BIT", fuel_type="coal", bin_label=""
         )
         avail = _availability(cfg, [binned, plain], year=2025)
         ratio = float(np.mean(avail[0]) / np.mean(avail[1]))

@@ -197,7 +197,7 @@ class TestNoDoubleCountWithCampdBackfill(_MembershipPatch):
             }
         )
         out = rcf._backfill_eia923_with_campd(
-            e923, campd, {_RETIREE: "COAL"}, year, class_shares=None
+            e923, campd, {_RETIREE: "COAL_PRB"}, year, class_shares=None
         )
         after = float(out[out["plant_id"] == _RETIREE]["annual_mwh"].sum())
         self.assertAlmostEqual(after, before, places=3)
@@ -216,7 +216,7 @@ class TestNoDoubleCountWithCampdBackfill(_MembershipPatch):
             }
         )
         out = rcf._backfill_eia923_with_campd(
-            e923, campd, {_RETIREE: "COAL"}, year, class_shares=None
+            e923, campd, {_RETIREE: "COAL_PRB"}, year, class_shares=None
         )
         after = float(out[out["plant_id"] == _RETIREE]["annual_mwh"].sum())
         self.assertGreater(after, rcf._CAMPD_BACKFILL_MIN_MWH)

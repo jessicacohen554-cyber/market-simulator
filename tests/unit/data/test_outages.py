@@ -9,6 +9,7 @@ import pandas as pd
 
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.paths import RAW_DATA_DIR
+from market_sim.config.plant_taxonomy import COAL_CLASSES
 from market_sim.data.outages import (
     QUALIFYING_PLANT_GROUPS,
     _hour_of_year,
@@ -396,7 +397,7 @@ class NEISOFloorOutageExemptTest(unittest.TestCase):
         )
         groups = np.asarray(fa.plant_group)
         codes = np.asarray(fa.plant_code)
-        rows = np.flatnonzero((codes == 2364) & (groups == "COAL"))
+        rows = np.flatnonzero((codes == 2364) & np.isin(groups, COAL_CLASSES))
         self.assertGreater(rows.size, 0, "Merrimack COAL tranche must exist")
         return fa.availability[rows].mean(axis=0)
 
@@ -1112,7 +1113,7 @@ class ErcotThermalDamAvailabilityTest(unittest.TestCase):
                 online_year=1978,
                 plant_code=6146,
                 is_campd_bin=True,
-                plant_group="COAL",
+                plant_group="COAL_BIT",
             )
 
         gens = [coal(1, 800.0), coal(2, 800.0), coal(3, 780.0)]

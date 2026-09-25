@@ -16,6 +16,7 @@ import pandas as pd
 
 from functools import lru_cache
 from market_sim.config.paths import RAW_DATA_DIR
+from market_sim.config.plant_taxonomy import COAL_CLASSES, artifact_class
 from pathlib import Path
 from market_sim.data.fleet.models import (
     Generator,
@@ -38,7 +39,7 @@ _AS_THERMAL_GROUPS: frozenset[str] = frozenset(
         "CT_CHP",
         "ST_GAS",
         "ST_CHP",
-        "COAL",
+        *COAL_CLASSES,
     }
 )
 
@@ -46,7 +47,7 @@ _AS_THERMAL_GROUPS: frozenset[str] = frozenset(
 # runs flat for energy, carrying little upward AS in ERCOT (reserve sits on
 # part-loaded gas headroom, peakers and — increasingly — storage/load), so it
 # is excluded from the withdrawal so the probe does not strand baseload.
-_AS_GAS_GROUPS: frozenset[str] = _AS_THERMAL_GROUPS - {"COAL"}
+_AS_GAS_GROUPS: frozenset[str] = _AS_THERMAL_GROUPS - set(COAL_CLASSES)
 
 # PJM AS-withholding pool: gas thermal + flexible oil (steam/CT). PJM's Primary
 # Reserve sits on synchronized, part-loaded thermal headroom; the flexible oil
@@ -74,7 +75,7 @@ _AS_RESTYPE_TO_GROUPS: dict[str, frozenset[str]] = {
     "gas_cc": frozenset({"CC_REGULAR", "CC_CHP"}),
     "gas_ct": frozenset({"CT_PEAKER", "CT_CHP"}),
     "gas_st": frozenset({"ST_GAS", "ST_CHP"}),
-    "coal": frozenset({"COAL"}),
+    "coal": frozenset(COAL_CLASSES),
 }
 
 # CAISO formula-based upward operating-reserve requirement (used by the
@@ -331,7 +332,11 @@ def _withdraw_top_of_merit(
 # the model plant group; the per-fuel fallback covers non-binned fleets. These
 # depend only on capacity and class, so ramp10 regenerates for a forecast year.
 RAMP10_FRAC_BY_GROUP: dict[str, float] = {
-    "COAL": 0.15,  # steam, ~1.5 %/min
+    # Coal steam, ~1.5 %/min — every coal subclass (COAL-SUB).
+    "COAL_LIGNITE": 0.15,
+    "COAL_PRB": 0.15,
+    "COAL_BIT": 0.15,
+    "COAL_WC": 0.15,
     "CC_REGULAR": 0.40,  # combined cycle, ~4 %/min
     "CC_CHP": 0.40,
     "CT_PEAKER": 1.00,  # simple-cycle fast-start, full in <10 min
@@ -503,7 +508,14 @@ def _ercot_dam_plant_hourly_apply(
     plant_of_unit = {gi: int(g.plant_code) for gi, g in enumerate(generators)}
     for cls, t_full in meas_h.items():
         idx = np.array(
-            [gi for gi, g in enumerate(generators) if g.plant_group == cls], dtype=int
+            # ``meas_h`` is keyed by the artifact's class token (the coal
+            # family for coal), so the fleet side reads its artifact class.
+            [
+                gi
+                for gi, g in enumerate(generators)
+                if artifact_class(g.plant_group) == cls
+            ],
+            dtype=int,
         )
         if idx.size == 0:
             continue

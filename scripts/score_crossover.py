@@ -58,6 +58,7 @@ _REPO_BOOT = Path(__file__).resolve().parent.parent  # repo root: canonical
 if str(_REPO_BOOT) not in sys.path:  # scripts.* sibling imports on direct run
     sys.path.insert(0, str(_REPO_BOOT))
 
+from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY  # noqa: E402
 from market_sim.model.dispatch import DispatchResult  # noqa: E402
 from market_sim.results.evolution_ledger import load_ledgers_for_run  # noqa: E402
 from market_sim.results.outputs import (  # noqa: E402
@@ -99,7 +100,7 @@ _FUEL_TO_CLASS = {
     "geothermal": "OTHER",
     "import": "imports",
     # Fallbacks used only when plant_groups is absent for a fossil generator:
-    "coal": "COAL",
+    "coal": COAL_ARTIFACT_FAMILY,  # family token, resolved to the subclass below
     "gas_cc": "CC_REGULAR",
     "gas_cc_ccs": "CC_REGULAR",
     "gas_ct": "CT_PEAKER",
@@ -241,8 +242,12 @@ def build_gmmodel(res: DispatchResult, ctx, iso: str) -> dict[str, float]:
         else:
             ft = fuels[g] if g < len(fuels) else ""
             cls = _FUEL_TO_CLASS.get(ft, "OTHER")
-        if cls == "COAL":
-            cls = _coal_supply_class(int(plant_codes[g]))
+        if cls == COAL_ARTIFACT_FAMILY:
+            # A group-less coal row, or a bundle recorded before COAL-SUB
+            # (2026-09-25) whose fleet carried the bare class: resolve the
+            # plant's rank; a plant the chain cannot resolve keeps the legacy
+            # token, the historical residual bucket (never a wrong rank).
+            cls = _coal_supply_class(int(plant_codes[g])) or COAL_ARTIFACT_FAMILY
         gm[cls] = gm.get(cls, 0.0) + float(gen_twh[g])
     gm["wind"] = (
         gm.get("wind", 0.0) + float(np.asarray(res.wind_dispatched).sum()) / 1e6
@@ -442,7 +447,9 @@ def _scalar(cid: str, recs: list[dict]) -> dict | None:
 # buckets C1 itself never gates.
 _FAMILY_CLASSES: dict[str, tuple[str, ...]] = {
     "gas_twh": tuple(c for c in V.GAS_CLASSES if c not in V.FUELMIX_EXCLUDED),
-    "coal_twh": tuple(c for c in V.COAL_CLASSES if c not in V.FUELMIX_EXCLUDED),
+    # Coal FAMILY keys: the subclasses plus the legacy bare-COAL row a bundle
+    # solved before COAL-SUB (2026-09-25) carries — read, never gated.
+    "coal_twh": tuple(c for c in V.COAL_FAMILY_KEYS if c not in V.FUELMIX_EXCLUDED),
 }
 
 

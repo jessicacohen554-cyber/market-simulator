@@ -1098,9 +1098,13 @@ _PJM_MINLOAD_SUFFIXES = frozenset({"mustrun", "committed"})
 _PJM_MIDCURVE_SEGMENT_OF = {
     "CC_REGULAR": "CC_LIKE",
     "CT_PEAKER": "CT_FAST",
-    "COAL": "LONG_RUN",
-    "COAL_BIT": "LONG_RUN",
+    # Every coal subclass is LONG_RUN (COAL-SUB, 2026-09-25): the fleet's coal
+    # rows carried the bare ``COAL`` group before, which read LONG_RUN for all
+    # four ranks; the COAL_BIT / COAL_PRB entries were never reached.
+    "COAL_LIGNITE": "LONG_RUN",
     "COAL_PRB": "LONG_RUN",
+    "COAL_BIT": "LONG_RUN",
+    "COAL_WC": "LONG_RUN",
     "ST_GAS": "LONG_RUN",
 }
 

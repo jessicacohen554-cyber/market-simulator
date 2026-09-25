@@ -90,6 +90,8 @@ from market_sim.config.interchange_config import (  # noqa: E402
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.paths import CALIBRATION_DIR, PROCESSED_DIR  # noqa: E402
 from market_sim.config.plant_taxonomy import (  # noqa: E402
+    COAL_ARTIFACT_FAMILY,
+    artifact_class,
     classes_for_fuel930,
     classify_plant,
     coal_code_to_class,
@@ -234,10 +236,12 @@ def _coal_supply_class(plant_code: int, fuel_code: str = "") -> str:
     merges the curated ERCOT lignite/PRB map with the EIA-923-derived per-ISO
     ranks) so the model and the EIA-923 benchmark split coal the same way. For
     a plant not in either map, fall back to the EIA-923 receipt fuel code
-    (``LIG``/``SUB``/``WC``/``BIT``); unknown -> generic ``COAL``.
+    (``LIG``/``SUB``/``WC``/``BIT``). There is no generic ``COAL`` class
+    (COAL-SUB, 2026-09-25): an unresolved plant returns ``""``, which
+    :func:`classify_plant` answers from the row's own coal code.
     """
     key = _COAL_SUPPLY_TO_CURVE.get(coal_supply_class(int(plant_code)))
-    return key or coal_code_to_class(fuel_code) or "COAL"
+    return key or coal_code_to_class(fuel_code) or ""
 
 
 def _model_class_for_unit(unit_id: str, fuel: str, eff_bin: str) -> str:
@@ -245,10 +249,12 @@ def _model_class_for_unit(unit_id: str, fuel: str, eff_bin: str) -> str:
 
     CAMPD generator ids carry their Plant_Group through ``efficiency_bin``
     (e.g. ``CC_REGULAR_Houston_p60122_econ``). Non-CAMPD generators fall back
-    to a class derived from the fuel type. Coal is returned as the bare
-    ``COAL`` here; the caller splits it into the supply class.
+    to a class derived from the fuel type. A CAMPD coal bin carries its coal
+    SUBCLASS in ``eff_bin`` (COAL-SUB, 2026-09-25); a fuel-classified coal row
+    with no group returns the coal family token, which the caller resolves to
+    the plant's subclass.
     """
-    if eff_bin in {*_GAS_CLASSES, "COAL"}:
+    if eff_bin in {*_GAS_CLASSES, *_COAL_CLASSES}:
         return eff_bin
     # Non-CAMPD fleets (every non-ERCOT ISO, e.g. PJM's per-plant EIA-860
     # fleet) carry no Plant_Group in ``eff_bin``, so derive the class from the
@@ -256,7 +262,7 @@ def _model_class_for_unit(unit_id: str, fuel: str, eff_bin: str) -> str:
     # instead of collapsing the thermal fleet into OTHER. ERCOT is unaffected:
     # its CAMPD units return at the ``eff_bin`` branch above.
     if fuel == "coal":
-        return "COAL"
+        return COAL_ARTIFACT_FAMILY
     if fuel == "import":
         return "import"
     if fuel in {"gas_cc", "gas_cc_ccs"}:
@@ -421,12 +427,21 @@ def _dispatch_frame(
             k = pgroups[g]
         else:
             k = _model_class_for_unit(unit_ids[g], fuels[g], bins[g])
-        if k == "COAL":
-            # Split coal into its supply class — ERCOT mine-mouth lignite /
-            # PRB-by-rail, and the EIA-923-derived bituminous / sub-bituminous /
-            # waste ranks for other ISOs (a single COAL only for unclassified
-            # plants). The raw supply string rides along in ``supply``.
-            k = _coal_supply_class(int(plant_codes[g]))
+        if k in _COAL_CLASSES or k == COAL_ARTIFACT_FAMILY:
+            # Coal carries its supply class — ERCOT mine-mouth lignite /
+            # PRB-by-rail, and the EIA-923-derived bituminous / sub-bituminous
+            # / waste ranks for other ISOs. Since COAL-SUB (2026-09-25) the
+            # fleet's plant_group IS that subclass, resolved at load by the
+            # same coal_supply_class chain; only a group-less fuel-classified
+            # coal row (the family token) is resolved here. The raw supply
+            # string rides along in ``supply``.
+            if k == COAL_ARTIFACT_FAMILY:
+                k = _coal_supply_class(int(plant_codes[g]))
+                if not k:
+                    raise ValueError(
+                        f"coal unit {unit_ids[g]} resolves to no coal subclass "
+                        "(COAL-SUB forbids a generic COAL class)"
+                    )
             supply.append(coal_supply_class(int(plant_codes[g])))
         else:
             supply.append("")
@@ -2175,8 +2190,8 @@ def _fleet_group_by_code(
 
     The non-ERCOT analogue of the ERCOT CAMPD bin sheet's plant->group map,
     used to bucket the CAMPD/EIA-923 benchmark backfill. Built from the fleet's
-    ``plant_group`` (COAL / CC_REGULAR / CT_PEAKER / ST_GAS / their CHP
-    variants), so it matches the dispatch frame's classes. ``year`` selects that
+    ``plant_group`` (a coal subclass / CC_REGULAR / CT_PEAKER / ST_GAS / their
+    CHP variants), so it matches the dispatch frame's classes. ``year`` selects that
     vintage's EIA-860 CHP designation, so the benchmark backfill buckets a plant
     CHP-vs-merchant the same way the year's dispatch fleet does.
     """
@@ -2557,8 +2572,10 @@ def _must_run_profiles(
 _CAMPD_BACKFILL_MIN_MWH: float = 50_000.0  # 50 GWh
 # Non-CHP grid groups eligible for CAMPD backfill (CHP kept on EIA-923 — the
 # host-steam split is absent from CAMPD net).
+# Coal enters as its four subclasses (COAL-SUB, 2026-09-25): the fleet /
+# bin-sheet plant_group a plant is bucketed by IS its subclass now.
 _BACKFILL_GROUPS: frozenset[str] = frozenset(
-    {"COAL", "CC_REGULAR", "ST_GAS", "CT_PEAKER"}
+    {*_COAL_CLASSES, "CC_REGULAR", "ST_GAS", "CT_PEAKER"}
 )
 # The fine EIA-923 klasses those groups resolve to — the classes a mixed plant's
 # CAMPD net may be split across: the non-CHP gas grid classes (CC_REGULAR /
@@ -2667,7 +2684,9 @@ def _backfill_eia923_with_campd(
         net_total = float(net.sum())
         if net_total < _CAMPD_BACKFILL_MIN_MWH:
             continue
-        mapped = _coal_supply_class(pid) if group == "COAL" else group
+        # A coal plant's group is already its subclass (COAL-SUB) — the class
+        # _coal_supply_class resolved here before, by the same chain.
+        mapped = group
         # Firing test unchanged from the single-class code: only when the plant's
         # mapped grid class is under-reported. Keeps the touched-plant set (hence
         # every left-alone plant) byte-identical; the split changes only HOW a
@@ -2839,7 +2858,9 @@ def _backfill_eia923_missing_months(
         mask = mask_by_plant.get(pid)
         if mask is None or not mask.any():
             continue
-        mapped = _coal_supply_class(pid) if group == "COAL" else group
+        # A coal plant's group is already its subclass (COAL-SUB) — the class
+        # _coal_supply_class resolved here before, by the same chain.
+        mapped = group
         # The annual backfill already rebuilt this plant from CAMPD for all twelve
         # months; a second fill would double-count it.
         if _plant_klass_annual(e923, pid, mapped) < _CAMPD_BACKFILL_MIN_MWH:
@@ -2951,11 +2972,12 @@ def _reattribute_dual_fuel_oil(
     amount. The residual ``oil`` class is now exactly the non-fleet plants' rows,
     both signs, which is what the paragraph above always said it was.
 
-    The generic ``COAL`` model group is booked to the plant's coal SUPPLY class
-    (:func:`_coal_supply_class`), exactly as :func:`_backfill_eia923_with_campd`
-    and :func:`_backfill_eia923_missing_months` book it; booking it to ``COAL``
-    itself created a class no other benchmark row carries and no C1 cell
-    scores (0.1-0.8 GWh/yr in MISO).
+    A coal plant's model group IS its coal SUPPLY class (COAL-SUB, 2026-09-25:
+    there is no generic ``COAL`` model group), so its oil MWh book to that
+    subclass exactly as :func:`_backfill_eia923_with_campd` and
+    :func:`_backfill_eia923_missing_months` book it. (Before COAL-SUB the bare
+    ``COAL`` group was remapped here; booking to it had created a class no
+    other benchmark row carries and no C1 cell scores, 0.1-0.8 GWh/yr in MISO.)
     """
     oil_rows = e923[e923["klass"] == "oil"]
     if oil_rows.empty:
@@ -2972,7 +2994,9 @@ def _reattribute_dual_fuel_oil(
         group = group_by_code.get(pid)
         if not group:
             continue  # not in the model fleet -> genuinely `oil`, leave it
-        mapped = _coal_supply_class(pid) if group == "COAL" else group
+        # A coal plant's group is already its subclass (COAL-SUB) — the class
+        # _coal_supply_class resolved here before, by the same chain.
+        mapped = group
         shares = (class_shares or {}).get(pid) or {mapped: 1.0}
         shares = {k: v for k, v in shares.items() if v > 0.0}
         if not shares:
@@ -9543,7 +9567,12 @@ def _class_map_for_gate(iso: str) -> dict[int, str]:
     from market_sim.data.fleet import load_campd_bins
 
     b = load_campd_bins(ScenarioConfig().campd_bins_path)
-    return dict(zip(b["Plant_Code"].astype(int), b["Plant_Group"].astype(str)))
+    # The committed cf_emd baseline is keyed by class FAMILY (coal = the family
+    # token), so a coal bin's subclass reads as the family (COAL-SUB).
+    return {
+        int(c): artifact_class(g)
+        for c, g in zip(b["Plant_Code"].astype(int), b["Plant_Group"].astype(str))
+    }
 
 
 def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:

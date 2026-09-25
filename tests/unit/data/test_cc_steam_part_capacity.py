@@ -279,7 +279,7 @@ class TestRowLoop(unittest.TestCase):
                 g.unit_id: g for g in self._run({(55088, "ST1"), (1004, "ST")}, flag)
             }
             self.assertIn("1004_ST", by_id, f"flag={flag}")
-            self.assertEqual(by_id["1004_ST"].plant_group, "COAL", f"flag={flag}")
+            self.assertEqual(by_id["1004_ST"].plant_group, "COAL_BIT", f"flag={flag}")
             self.assertEqual(by_id["1004_ST"].fuel_type, "coal", f"flag={flag}")
 
     def test_an_empty_predicate_is_byte_identical(self) -> None:

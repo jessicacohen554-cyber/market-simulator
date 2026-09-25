@@ -658,6 +658,30 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   2026-09-10 blocks name. Full record:
 #   docs/handoffs/FINDING-y28-cache-key-identity-2026-09-24.md.
 #
+# 2026-09-25 ALL SIX ADVANCED (COAL-SUB) — THE BARE `COAL` CLASS IS DELETED.
+#   Owner instruction 2026-09-25, verbatim: "we need to completely eliminate
+#   the class Coal From the model altogether all coal should be sorted into its
+#   subclass". Every coal generator's plant_group is now its subclass
+#   (COAL_LIGNITE / COAL_PRB / COAL_BIT / COAL_WC), resolved at load.
+#   WHAT MOVED: `solve_surface_register.py --diff origin/main` -> worktree:
+#   "310 -> 312 names; 7 value(s) moved, 2 added". Added, and declared at
+#   their live hash (they move no key): `COAL_CLASSES`,
+#   `COAL_ARTIFACT_FAMILY` (plant_taxonomy). Moved, every ISO unless named:
+#     * `PLANT_CLASSES` / `LABELS` — the "COAL" PlantClass row deleted.
+#     * `GENERIC_BASE_OFFER_CURVE` — the generic "COAL" fallback curve deleted
+#       (every subclass already carried its own curve).
+#     * `THERMAL_AVAILABILITY` / `MAINTENANCE_MONTHLY_SHAPE` /
+#       `MIN_STABLE_PCT_PHYSICAL` — the "COAL" entry deleted and its value
+#       carried to each of the four subclasses, byte-identical.
+#     * `CORRELATED_OUTAGE_CURVE` (ERCOT only) — likewise carried to the four
+#       subclasses.
+#   Row counts +2 everywhere (the two added names).
+#   WHAT IT COSTS: a cache miss in every ISO. The zero-LP proof (fleet_only
+#   rebuild of every keeper year before/after, every per-generator array
+#   compared exactly — docs/handoffs/RESULT-coal-sub-2026-09-25.md) shows every
+#   coal unit whose subclass already resolved is byte-identical; the only
+#   movers are the plants that previously fell into the generic COAL bucket,
+#   which now read their own subclass's curve and parameters.
 # 2026-09-25 ALL SIX ADVANCED (R-PJM) — pjm-h22's RGGI rows (whose pin advance
 #   never landed) PLUS R-PJM's 2019 rows. Measured: every one of the six pins
 #   already FAILED at main 9210075/3321109 before this change (pjm-h22 added
@@ -698,12 +722,12 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   committed CAISO bundle reproduces it; the new rows are read only by a
 #   2019-2021 solve, which previously resolved $0/t and a static nuclear CF.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("f7eb5b223ed7501e", 231),
-    "CAISO": ("1f52716f0e774460", 206),
-    "MISO": ("f3b6eb45df6c7a40", 212),
-    "PJM": ("26c3bd73b4d63ce4", 216),
-    "NYISO": ("ede243cc587b692d", 213),
-    "NEISO": ("ff94bedff0196bf8", 199),
+    "ERCOT": ("693e45713f9d969c", 233),
+    "CAISO": ("f595f11775baf556", 208),
+    "MISO": ("2bd8ffa308659c46", 214),
+    "PJM": ("db5546cdc27e2f36", 218),
+    "NYISO": ("066ec59d081609d8", 215),
+    "NEISO": ("d2d76036034ff03e", 201),
 }
 
 
@@ -758,6 +782,27 @@ def test_solve_surface_fingerprint_is_pinned(iso: str) -> None:
 #: registry value that changed while every reader still believes the pin.
 LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
     "ERCOT": {
+        "CORRELATED_OUTAGE_CURVE": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "GENERIC_BASE_OFFER_CURVE": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "LABELS": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "MAINTENANCE_MONTHLY_SHAPE": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "MIN_STABLE_PCT_PHYSICAL": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "PLANT_CLASSES": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "THERMAL_AVAILABILITY": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
         "RGGI_MEMBER_STATES_BY_YEAR": (
             "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only | R-PJM 2026-09-25: the 2019 row ADDED as well (see the 2026-09-25 cause block); no existing row moved"
         ),
@@ -768,6 +813,24 @@ LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
         ),
     },
     "CAISO": {
+        "GENERIC_BASE_OFFER_CURVE": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "LABELS": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "MAINTENANCE_MONTHLY_SHAPE": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "MIN_STABLE_PCT_PHYSICAL": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "PLANT_CLASSES": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "THERMAL_AVAILABILITY": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
         "RGGI_MEMBER_STATES_BY_YEAR": (
             "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only | R-PJM 2026-09-25: the 2019 row ADDED as well (see the 2026-09-25 cause block); no existing row moved"
         ),
@@ -787,11 +850,47 @@ LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
         ),
     },
     "MISO": {
+        "GENERIC_BASE_OFFER_CURVE": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "LABELS": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "MAINTENANCE_MONTHLY_SHAPE": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "MIN_STABLE_PCT_PHYSICAL": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "PLANT_CLASSES": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "THERMAL_AVAILABILITY": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
         "RGGI_MEMBER_STATES_BY_YEAR": (
             "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only | R-PJM 2026-09-25: the 2019 row ADDED as well (see the 2026-09-25 cause block); no existing row moved"
         ),
     },
     "PJM": {
+        "GENERIC_BASE_OFFER_CURVE": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "LABELS": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "MAINTENANCE_MONTHLY_SHAPE": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "MIN_STABLE_PCT_PHYSICAL": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "PLANT_CLASSES": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "THERMAL_AVAILABILITY": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
         "RGGI_MEMBER_STATES_BY_YEAR": (
             "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only | R-PJM 2026-09-25: the 2019 row ADDED as well (see the 2026-09-25 cause block); no existing row moved"
         ),
@@ -806,11 +905,47 @@ LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
         ),
     },
     "NYISO": {
+        "GENERIC_BASE_OFFER_CURVE": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "LABELS": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "MAINTENANCE_MONTHLY_SHAPE": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "MIN_STABLE_PCT_PHYSICAL": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "PLANT_CLASSES": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "THERMAL_AVAILABILITY": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
         "RGGI_MEMBER_STATES_BY_YEAR": (
             "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only | R-PJM 2026-09-25: the 2019 row ADDED as well (see the 2026-09-25 cause block); no existing row moved"
         ),
     },
     "NEISO": {
+        "GENERIC_BASE_OFFER_CURVE": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "LABELS": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "MAINTENANCE_MONTHLY_SHAPE": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "MIN_STABLE_PCT_PHYSICAL": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "PLANT_CLASSES": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "THERMAL_AVAILABILITY": (
+            "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
         "RGGI_MEMBER_STATES_BY_YEAR": (
             "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only | R-PJM 2026-09-25: the 2019 row ADDED as well (see the 2026-09-25 cause block); no existing row moved"
         ),

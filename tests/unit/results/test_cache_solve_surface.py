@@ -126,7 +126,11 @@ class SolveSurfaceSidecarTest(unittest.TestCase):
             table["MISO"] = original
             S.reset_caches()
         self.assertNotEqual(first["fingerprint"], second["fingerprint"])
-        self.assertEqual(list(second["moved"]), ["DEMAND_GROWTH_RATES"])
+        # The sentinel is the only row THIS test moves; rows already moved and
+        # ledgered on the live surface (RGGI, COAL-SUB, ...) are in both stamps.
+        self.assertEqual(
+            sorted(set(second["moved"]) - set(first["moved"])), ["DEMAND_GROWTH_RATES"]
+        )
 
     def test_a_bundle_solved_on_S1_is_not_addressed_on_S2(self):
         """The addressing half — and its inverse, which is the (b′-1) promise."""

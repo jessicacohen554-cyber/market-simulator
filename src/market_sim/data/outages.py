@@ -57,6 +57,7 @@ from market_sim.config.paths import (
     RAW_DATA_DIR,
     REFERENCE_DIR,
 )
+from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY, artifact_class
 
 logger = logging.getLogger(__name__)
 
@@ -111,7 +112,8 @@ BINS_CSV_DEFAULT: str = str(CAMPD_BINS_CSV)
 # plant qualifies if it has any bin in this set (e.g. Barney M Davis carries both
 # a CC and an ST_GAS bin — each unit routes to the matching bin).
 QUALIFYING_PLANT_GROUPS: frozenset[str] = frozenset(
-    {"COAL", "CC_REGULAR", "CC_CHP", "CT_CHP", "ST_GAS", "ST_CHP"}
+    # Artifact vocabulary: coal rows carry the family token (COAL-SUB).
+    {COAL_ARTIFACT_FAMILY, "CC_REGULAR", "CC_CHP", "CT_CHP", "ST_GAS", "ST_CHP"}
 )
 
 # Peaker-class ST_GAS plants: patchy / spiky run rate (run only when called),
@@ -292,10 +294,14 @@ def _unit_outage_target(
     if g in ("CT_PEAKER", "CT_CHP"):
         return None
     if facility_id == 3470:  # W A Parish: coal units vs gas-steam (code 34702)
-        return (3470, "COAL") if str(unit_id) in _WAP_COAL_UNITS else (34702, "ST_GAS")
+        return (
+            (3470, COAL_ARTIFACT_FAMILY)
+            if str(unit_id) in _WAP_COAL_UNITS
+            else (34702, "ST_GAS")
+        )
     if facility_id == 4939:  # Barney M Davis: steam unit 1 (49392) vs CC
         return (49392, "ST_GAS") if str(unit_id) == "1" else (4939, "CC_REGULAR")
-    if g in ("CC_REGULAR", "CC_CHP", "COAL"):
+    if g in ("CC_REGULAR", "CC_CHP", COAL_ARTIFACT_FAMILY):
         return (facility_id, g)
     return (facility_id, "ST_GAS")
 
@@ -728,7 +734,9 @@ def _iso_plant_unit_capacity_cached(
         key = _norm_partial_unit_id(gid)
         if not key:
             continue
-        bin_units = out.setdefault((code, str(g.plant_group)), {})
+        # Keyed in artifact vocabulary (the coal family token for a coal
+        # subclass) so it joins the extract rows it apportions (COAL-SUB).
+        bin_units = out.setdefault((code, artifact_class(g.plant_group)), {})
         bin_units[key] = bin_units.get(key, 0.0) + float(g.pmax_mw)
     return out
 
@@ -959,9 +967,10 @@ def _iso_plant_capacity_cached(
         code = int(g.plant_code)
         if code <= 0 or not g.plant_group:
             continue
-        cap[(code, g.plant_group)] = cap.get((code, g.plant_group), 0.0) + float(
-            g.pmax_mw
-        )
+        # Artifact vocabulary (coal subclass -> family token), matching the
+        # extract rows this denominator is joined against (COAL-SUB).
+        _key = (code, artifact_class(g.plant_group))
+        cap[_key] = cap.get(_key, 0.0) + float(g.pmax_mw)
     if cc_nameplate_basis:
         # Reproduce fleet_to_bins' CC nameplate raise EXACTLY (campd_bins.py,
         # `cap = cap / _ratio` under cc_nameplate_summer_derate) so this
@@ -1112,6 +1121,8 @@ def lp_bin_capacity_index(
         group = str(getattr(gen, "plant_group", "") or "")
         if code <= 0 or not group:
             continue
+        # Artifact vocabulary, matching the extract rows (COAL-SUB).
+        group = artifact_class(group)
         mw = float(pmax[i]) if pmax is not None else float(getattr(gen, "pmax_mw", 0.0))
         if not mw > 0.0:
             continue
@@ -1438,8 +1449,10 @@ def _unit_outage_factors_from_events(
         from market_sim.data.fleet import load_campd_bins
 
         bins = load_campd_bins(str(bins_path))
+        # Artifact vocabulary: a coal bin's subclass reads as the family token
+        # the unit-outage extract rows carry (COAL-SUB).
         cap = {
-            (int(c), str(g)): float(m)
+            (int(c), artifact_class(g)): float(m)
             for c, g, m in zip(
                 bins["Plant_Code"], bins["Plant_Group"], bins["capacity_mw"]
             )
@@ -1659,7 +1672,7 @@ def unit_outage_short_derate_factors(
     basis = (
         _extract_basis_index(df) if (extract_basis_share and iso != "ERCOT") else None
     )
-    scopes = ({"COAL"} if coal_scope else set()) | (
+    scopes = ({COAL_ARTIFACT_FAMILY} if coal_scope else set()) | (
         set(_SHORT_GAS_GROUPS) if gas_scope else set()
     )
     df = df[

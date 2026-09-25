@@ -48,7 +48,7 @@ Plant_Code,Plant_Name,Plant_Group,Zone,Nameplate_MW,Plant_Avg_HR_MMBtu_MWh,Pct_M
 57978,Lodi Energy Center,CC_REGULAR,NP15,273.0,7.102,0.0,38.5,60.5,1.0,none,campd,campd,
 62115,AES Alamitos Energy Center,CC_REGULAR,SP15,603.0,6.3,0.0,23.7,76.2,0.1,none,campd,campd,
 62116,AES Huntington Beach Energy Project,CC_REGULAR,SP15,630.0,6.3,0.0,23.3,76.6,0.1,none,campd,campd,
-10684,Argus Cogen Plant,COAL,ZP26,50.0,5.613,45.0,5.0,48.0,2.0,class_default,class_default,class_default,
+10684,Argus Cogen Plant,COAL_BIT,ZP26,50.0,5.613,45.0,5.0,48.0,2.0,class_default,class_default,class_default,
 10115,Grossmont Hospital,CT_CHP,SP15,4.2,10.398,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,
 10156,Fresno Cogen Partners,CT_CHP,NP15,70.8,10.685,35.0,7.1,50.9,7.0,chp_sector_default,campd,class_default,
 10175,Childrens Hospital,CT_CHP,SP15,4.8,13.111,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,

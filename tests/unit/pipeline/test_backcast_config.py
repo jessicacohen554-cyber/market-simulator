@@ -132,17 +132,17 @@ if __name__ == "__main__":
 
 class TestSppNeutralCoalBands(unittest.TestCase):
     """Rule 25 [R-ISO-SCOPE] for SPP (lane SPP-40, 2026-09-07): the generic
-    ``COAL`` bands are ERCOT-fitted and a fallback ISO carries 1.0. The
-    correction is SPP-scoped — every other ISO's coal bands are untouched."""
+    coal bands are ERCOT-fitted and a fallback ISO carries 1.0. The
+    correction is SPP-scoped — every other ISO's coal bands are untouched.
+    Since COAL-SUB (2026-09-25) there is no bare ``COAL`` entry: the coal
+    bands live on the four subclass keys."""
 
     _BANDS = ("committed", "econ_low", "econ_high", "peak")
 
-    def test_spp_coal_bands_are_neutral(self):
-        coal = backcast_config(2024, "SPP", 24, 3.0).offer_curve_by_group["COAL"]
-        for band in self._BANDS:
-            self.assertEqual(coal[band], 1.0, band)
-        # The structural share is not a band and stays generic.
-        self.assertEqual(coal["econ_low_share"], 0.55)
+    def test_spp_curve_carries_no_bare_coal_class(self):
+        # COAL-SUB (owner instruction 2026-09-25): the bare class is deleted.
+        curve = backcast_config(2024, "SPP", 24, 3.0).offer_curve_by_group
+        self.assertNotIn("COAL", curve)
 
     def test_spp_supply_class_coal_entries_are_neutral(self):
         # SPP-42 (2026-09-07): once coal_supply_SPP.csv tags each plant
@@ -152,7 +152,7 @@ class TestSppNeutralCoalBands(unittest.TestCase):
         # never the offer. The structural share stays the value SPP coal read
         # from the generic COAL entry before the crosswalk.
         curve = backcast_config(2024, "SPP", 24, 3.0).offer_curve_by_group
-        for cls in ("COAL", "COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC"):
+        for cls in ("COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC"):
             for band in self._BANDS:
                 self.assertEqual(curve[cls][band], 1.0, (cls, band))
             self.assertEqual(curve[cls]["econ_low_share"], 0.55, cls)
@@ -167,11 +167,11 @@ class TestSppNeutralCoalBands(unittest.TestCase):
         # CAISO / NEISO / NYISO keep the generic ERCOT-fitted coal entry by
         # design ("coal keep the generic defaults"); MISO carries its own.
         for iso in ("CAISO", "NEISO", "NYISO"):
-            coal = backcast_config(2024, iso, 24, 3.0).offer_curve_by_group["COAL"]
+            coal = backcast_config(2024, iso, 24, 3.0).offer_curve_by_group["COAL_BIT"]
             self.assertEqual(
                 [coal[b] for b in self._BANDS], [0.90, 0.95, 1.10, 1.45], iso
             )
-        miso = backcast_config(2024, "MISO", 24, 3.0).offer_curve_by_group["COAL"]
+        miso = backcast_config(2024, "MISO", 24, 3.0).offer_curve_by_group["COAL_BIT"]
         self.assertEqual([miso[b] for b in self._BANDS], [1.00, 1.00, 1.10, 1.45])
 
 
@@ -213,7 +213,7 @@ class TestSocoIdentityBands(unittest.TestCase):
 
     def test_other_isos_are_untouched_by_the_soco_branch(self):
         # ERCOT keeps its fitted generic coal entry; SPP its own identity.
-        ercot = backcast_config(2024, "ERCOT", 24, 3.0).offer_curve_by_group["COAL"]
+        ercot = backcast_config(2024, "ERCOT", 24, 3.0).offer_curve_by_group["COAL_BIT"]
         self.assertEqual([ercot[b] for b in self._BANDS], [0.90, 0.95, 1.10, 1.45])
-        spp = backcast_config(2024, "SPP", 24, 3.0).offer_curve_by_group["COAL"]
+        spp = backcast_config(2024, "SPP", 24, 3.0).offer_curve_by_group["COAL_BIT"]
         self.assertEqual([spp[b] for b in self._BANDS], [1.0, 1.0, 1.0, 1.0])

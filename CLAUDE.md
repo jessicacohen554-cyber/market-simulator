@@ -894,6 +894,8 @@ The ERCOT offer-surface and negative-price variants (`ercot_offer_surface_lowcur
 
 ERCOT default is **CAMPD per-plant binning** (`use_campd_bins=True`): one LP unit per plant, each split into must-run / committed / economic / peaking tranches forming a rising offer curve (coal take-or-pay + PRB sigmoid passthrough). See `docs/binning-methodology.md`. Other ISOs / `use_campd_bins=False` use legacy equal-width heat-rate bins.
 
+**Coal always carries its subclass; there is no `COAL` class** (owner instruction 2026-09-25, verbatim: *"we need to completely eliminate the class Coal From the model altogether all coal should be sorted into its subclass"*). Every coal generator's `plant_group` is `COAL_LIGNITE` / `COAL_PRB` / `COAL_BIT` / `COAL_WC` (`plant_taxonomy.COAL_CLASSES`), resolved at load by `data.coal.coal_subclass` through the `coal_supply_class` chain: curated ERCOT map → EIA-923 receipts → EIA-860 retiree rank → partial-exit registry → the unit's own EIA-860 energy-source code (the benchmark's own fuel-code map). A unit none of these reaches raises; a subclass is never invented. `"COAL"` survives only as the committed artifacts' coal-family token (`plant_taxonomy.COAL_ARTIFACT_FAMILY`), matched through `artifact_class` by the artifact joins and the across-coal aggregates (reliability-floor limbs, ERCOT class availability, online-capacity envelopes, winter fuel security). No generator ever carries that token, and a config naming it is refused (`BareCoalClassError`); `replay_keeper` translates older keeper recipes. Record: `docs/handoffs/RESULT-coal-sub-2026-09-25.md`.
+
 ## Naming Conventions
 
 - Python: snake_case. Functions: verb_noun (solve_dispatch, evolve_fleet, load_eia_profiles).

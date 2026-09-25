@@ -294,7 +294,7 @@ class TestThermalAvailability(unittest.TestCase):
         # Coal, age 47 (online 1977, run 2024): POF 7%, WEFOR 12 + 7*0.5 =
         # 15.5%, derate 3 + 12*0.2 = 5.4%. In the summer peak POF is removed
         # and only 30% of WEFOR applies; the annual average is conserved.
-        fa = self._arrays("COAL", 1977, "coal")
+        fa = self._arrays("COAL_BIT", 1977, "coal")
         self.assertAlmostEqual(
             fa.availability[0, self._JULY_H],
             1.0 - _SUMMER_WEFOR_SHARE * 0.155 - 0.054,
@@ -390,8 +390,8 @@ class TestMaintenanceMonthlyShape(unittest.TestCase):
         # availability of a coal unit is identical to the legacy flat-block model
         # (only the seasonal distribution moves). Coal has no summer ambient
         # derate, so the conservation is exact.
-        on = self._fa("COAL", 1977, "coal", shape=True)
-        off = self._fa("COAL", 1977, "coal", shape=False)
+        on = self._fa("COAL_BIT", 1977, "coal", shape=True)
+        off = self._fa("COAL_BIT", 1977, "coal", shape=False)
         # places=5: the baked shape weights are rounded to 3 decimals, so the
         # mean-1 normalization (and thus budget conservation) holds to ~1e-6.
         self.assertAlmostEqual(
@@ -402,8 +402,8 @@ class TestMaintenanceMonthlyShape(unittest.TestCase):
         # July weight is ~0 for the thermal groups, so the firm summer-peak
         # capacity is unchanged from the flat-block model (which also has no
         # summer POF).
-        on = self._fa("COAL", 1977, "coal", shape=True)
-        off = self._fa("COAL", 1977, "coal", shape=False)
+        on = self._fa("COAL_BIT", 1977, "coal", shape=True)
+        off = self._fa("COAL_BIT", 1977, "coal", shape=False)
         self.assertAlmostEqual(
             on.availability[0, self._JULY_H], off.availability[0, self._JULY_H]
         )
@@ -422,8 +422,8 @@ class TestMaintenanceMonthlyShape(unittest.TestCase):
         # a modest amount of maintenance in winter — so January availability is
         # slightly below the flat-block January for a group with a nonzero winter
         # weight (coal Jan weight 0.239 > 0).
-        on = self._fa("COAL", 1977, "coal", shape=True)
-        off = self._fa("COAL", 1977, "coal", shape=False)
+        on = self._fa("COAL_BIT", 1977, "coal", shape=True)
+        off = self._fa("COAL_BIT", 1977, "coal", shape=False)
         self.assertLess(
             on.availability[0, self._JAN_H], off.availability[0, self._JAN_H]
         )
@@ -431,8 +431,8 @@ class TestMaintenanceMonthlyShape(unittest.TestCase):
     def test_backcast_unaffected_by_flag(self):
         # In backcast mode the maintenance shape never engages (POF there comes
         # from the historic overlay path), so the flag is a no-op.
-        on = self._fa("COAL", 1977, "coal", shape=True, mode="backcast")
-        off = self._fa("COAL", 1977, "coal", shape=False, mode="backcast")
+        on = self._fa("COAL_BIT", 1977, "coal", shape=True, mode="backcast")
+        off = self._fa("COAL_BIT", 1977, "coal", shape=False, mode="backcast")
         np.testing.assert_allclose(on.availability[0], off.availability[0])
 
 
@@ -1521,11 +1521,11 @@ class TestAggregateFleet(unittest.TestCase):
                 name="3470_coal_mustrun",
                 zone="north",
                 fuel_type="coal",
-                efficiency_bin="COAL",
+                efficiency_bin="COAL_BIT",
                 pmax_mw=300.0,
                 heat_rate=9.5,
                 is_campd_bin=True,
-                plant_group="COAL",
+                plant_group="COAL_BIT",
                 plant_code=3470,
             ),
             Generator(
@@ -1533,11 +1533,11 @@ class TestAggregateFleet(unittest.TestCase):
                 name="6146_coal_econ",
                 zone="north",
                 fuel_type="coal",
-                efficiency_bin="COAL",
+                efficiency_bin="COAL_BIT",
                 pmax_mw=500.0,
                 heat_rate=10.2,
                 is_campd_bin=True,
-                plant_group="COAL",
+                plant_group="COAL_BIT",
                 plant_code=6146,
             ),
             Generator(
@@ -1570,7 +1570,7 @@ class TestAggregateFleet(unittest.TestCase):
                 name="3470_coal_mustrun",
                 zone="north",
                 fuel_type="coal",
-                efficiency_bin="COAL",
+                efficiency_bin="COAL_BIT",
                 pmax_mw=300.0,
                 heat_rate=9.5,
                 is_campd_bin=True,
@@ -1581,7 +1581,7 @@ class TestAggregateFleet(unittest.TestCase):
                 name="6146_coal_econ",
                 zone="north",
                 fuel_type="coal",
-                efficiency_bin="COAL",
+                efficiency_bin="COAL_BIT",
                 pmax_mw=500.0,
                 heat_rate=10.2,
                 is_campd_bin=True,
@@ -2448,7 +2448,7 @@ class TestTemperatureDependentDerate(unittest.TestCase):
         gens = [
             self._gen("cc1", "CC_REGULAR", "gas_cc"),
             self._gen("ct1", "CT_PEAKER", "gas_ct"),
-            self._gen("coal1", "COAL", "coal"),
+            self._gen("coal1", "COAL_BIT", "coal"),
         ]
         cfg = ScenarioConfig(
             mode="backcast",
@@ -2544,7 +2544,7 @@ class TestCoalNameplateSummerDerate(unittest.TestCase):
             heat_rate=10.0,
             eford=0.05,
             online_year=2010,
-            plant_group="COAL",
+            plant_group="COAL_BIT",
             plant_code=plant_code,
         )
         cfg = ScenarioConfig(
@@ -2776,7 +2776,7 @@ class TestCoalSyncOnlineFracPerYear(unittest.TestCase):
             fuel_type="coal",
             pmax_mw=300.0,
             heat_rate=10.0,
-            plant_group="COAL",
+            plant_group="COAL_BIT",
             plant_code=self._PLANT,
         )
         g.coal_sync_pmin_mw = 100.0

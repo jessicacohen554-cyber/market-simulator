@@ -36,7 +36,6 @@ GAS_CLASSES: tuple[str, ...] = (
     "ST_CHP",
 )
 COAL_CLASSES: tuple[str, ...] = (
-    "COAL",
     "COAL_LIGNITE",
     "COAL_PRB",
     "COAL_BIT",

@@ -55,6 +55,7 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
+from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY  # noqa: E402
 from market_sim.config.reserve_config import (  # noqa: E402
     QUICK_START_FUEL_TYPES,
     RESERVE_FUEL_TYPES,
@@ -85,8 +86,9 @@ PRODUCTS = ("REGUP", "RRS", "ECRS", "NSPIN")
 LEVEL_TOL = 0.10  # annual-mean |error| target
 COVERAGE_MIN, COVERAGE_MAX = 1.5, 2.5  # median RTOLCAP ÷ AS-requirement band
 COVERAGE_ARTIFACT = 1.2  # median coverage ≤ this ⇒ the ercot27 1.0× artifact
+# Class FAMILIES (the envelope derive's vocabulary; coal = its family token).
 ONLINE_CAP_CLASSES = (
-    "COAL",
+    COAL_ARTIFACT_FAMILY,
     "CC_REGULAR",
     "CC_CHP",
     "CT_PEAKER",

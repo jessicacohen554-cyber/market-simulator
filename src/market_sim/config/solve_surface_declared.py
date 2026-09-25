@@ -593,4 +593,6 @@ DECLARED: dict[str, str | dict[str, str]] = {
     "ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE": {"SOCO": "38d36ce273c7be1c"},
     "EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC": {"SOCO": "2a5c44ea15cb1c79"},
     "ISO_BA_JOINS": {"SOCO": "a4d0fee78b233797"},
+    "COAL_ARTIFACT_FAMILY": "e1fc364feeda8ad8",
+    "COAL_CLASSES": "debae8c77579f94d",
 }
