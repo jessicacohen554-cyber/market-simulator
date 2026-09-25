@@ -6663,3 +6663,13 @@ Determination unchanged year-for-year vs h22 on the same benchmark: 2023–25 NO
 2024 −14.36 TWh vs −13.61). 2021 coal over-run persists (+25.70 TWh COAL_BIT), CC −17.42 newly FAIL; 2020 improves
 (+29.23 → +21.45). Pruned h22 span/touchpoint and r-pjm-corrected (rule 35). Record:
 `docs/RESULT-r-pjm-2-rggi-keeper-corrected-inputs-2026-09-25.md`.
+
+## R-PJM2-CS — 2026-09-25 — PROMOTED: the PJM keeper recipe on COAL-SUB HEAD, 2019–2025
+
+Owner standing instruction "If so plz promote". New keeper `2026-09-25-r-pjm2-coal-sub` (bundle `rpjm2cs_span`): the
+R-PJM-2 recipe replayed unchanged (no config delta) on a HEAD carrying COAL-SUB. 2023–25 byte-identical class energy;
+2019–22 the former generic COAL bucket (18.22/7.33/16.97/3.70 TWh of model coal C1 never scored) now lands in its
+subclass — coal family +2.02/+2.29/−0.73/−0.53 TWh. Per-year pass/fail pattern identical; C1 COAL_BIT reads
++27.69/+27.95/+36.95 (was +11.36/+21.45/+25.70) because that energy is now visible. Determination NOT-YET (C1
+CC_REGULAR 2024 −14.36, unchanged). Pruned `2026-09-25-pjm-r-pjm-2` (rule 35). Record:
+`docs/handoffs/r-pjm2-coalsub/RESULT.md`.
