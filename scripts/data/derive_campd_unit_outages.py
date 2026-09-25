@@ -393,6 +393,49 @@ def _unit_year_grid(
     return series.reindex(full).fillna(0.0).to_numpy(dtype=float)
 
 
+def _union_vintage_membership(
+    iso: str,
+    iso_config,
+    years,
+    group_by_code: dict[int, str],
+    groups_by_code: dict[int, set[str]],
+    name_by_code: dict[int, str],
+) -> None:
+    """Union each derive year's OWN EIA-860 vintage fleet into the membership.
+
+    The default membership is the canonical (latest) fleet plus the canonical
+    within-window whole-plant retirees, so a PARTIAL-plant exit — coal units
+    retired while the site's CTs survive (PJM: Morgantown 1573, Dickerson 1572,
+    Wagner 1554, Indian River 594) — is keyed on its SURVIVING class (CT_PEAKER,
+    or an empty oil group) and its coal units are never scanned, although the
+    year's own vintage fleet dispatches them. This is the outage-extract twin of
+    ``benchmark_membership_vintage_union``: the facility's class set becomes the
+    union over the vintages of the years derived. The canonical primary group is
+    kept where present (it only drives the fallback router); per-unit routing
+    still reads the unit's own CAMPD fuel, so a coal unit routes to the coal
+    family and a surviving CT to CT_PEAKER (skipped) exactly as before. Zero
+    free parameters. Mutates the three maps in place; restores the canonical
+    EIA-860 directory on exit.
+    """
+    from market_sim.config.paths import set_eia860_vintage
+    from market_sim.config.plant_taxonomy import artifact_class
+    from market_sim.data.fleet import load_fleet_from_csv
+
+    try:
+        for y in sorted({int(v) for v in years}):
+            set_eia860_vintage(y)
+            for g in load_fleet_from_csv(iso, iso_config):
+                pc = int(g.plant_code)
+                if pc <= 0 or not g.plant_group:
+                    continue
+                ag = artifact_class(g.plant_group)
+                groups_by_code.setdefault(pc, set()).add(ag)
+                group_by_code.setdefault(pc, ag)
+                name_by_code.setdefault(pc, g.name)
+    finally:
+        set_eia860_vintage(None)
+
+
 def _merit_member_facilities(
     detection_states: tuple[str, ...],
     panel_states: tuple[str, ...],
@@ -1377,6 +1420,14 @@ def main() -> None:
         "(ERCOT) or campd-unit-outages-{ISO}.csv.",
     )
     ap.add_argument(
+        "--membership-vintage-union",
+        action="store_true",
+        help="DEFAULT-OFF: union each derived year's own EIA-860 vintage fleet "
+        "into the facility membership (non-ERCOT), so partial-plant exits whose "
+        "surviving class is a CT still have their retired coal/steam units "
+        "scanned. The flag-absent extract is unchanged.",
+    )
+    ap.add_argument(
         "--hour-grain",
         action="store_true",
         help="DEFAULT-OFF: also emit outage_start_hour / outage_end_hour, the "
@@ -1576,15 +1627,28 @@ def main() -> None:
         fleet = load_fleet_from_csv(iso, iso_config) + load_retired_within_window(
             iso, iso_config
         )
+        from market_sim.config.plant_taxonomy import artifact_class
+
         for g in fleet:
             if int(g.plant_code) > 0 and g.plant_group:
-                group_by_code[int(g.plant_code)] = g.plant_group
+                # Artifact vocabulary (COAL-SUB): the fleet carries coal
+                # SUBCLASSES, but QUALIFYING_PLANT_GROUPS, the unit router and
+                # the extract's plant_group column all speak the COAL family
+                # token. Without this translation every coal-only facility
+                # fails the qualifying-group test and is silently skipped
+                # (PJM-NEXT-2: a HEAD re-derive lost ~83 % of coal outage-days).
+                ag = artifact_class(g.plant_group)
+                group_by_code[int(g.plant_code)] = ag
                 name_by_code[int(g.plant_code)] = g.name
-                groups_by_code.setdefault(int(g.plant_code), set()).add(g.plant_group)
+                groups_by_code.setdefault(int(g.plant_code), set()).add(ag)
                 if g.plant_group in ("ST_GAS", "ST_CHP"):
                     steam_np_by_code[int(g.plant_code)] = steam_np_by_code.get(
                         int(g.plant_code), 0.0
                     ) + float(g.pmax_mw)
+        if getattr(args, "membership_vintage_union", False):
+            _union_vintage_membership(
+                iso, iso_config, args.years, group_by_code, groups_by_code, name_by_code
+            )
     # Facility names for units re-keyed by the CEMS->EIA split-plant remap
     # (their CAMPD facilityName is the legacy plant's).
     remap_names = {

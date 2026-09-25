@@ -1284,6 +1284,12 @@ def _apply_outage_overlays(
             # flag; selects '-perunitdark-' and is byte-inert while off.
             dark_unit_years=bool(getattr(config, "campd_per_unit_attribution", False))
             and bool(getattr(config, "campd_dark_unit_year_windows", False)),
+            # PJM-NEXT-2 (rule 14 [R-ACCURATE]): the standard extract plus the
+            # windows of the facilities its membership never scanned. Selects
+            # '-memberrepair-'; byte-inert while off.
+            membership_repair=bool(
+                getattr(config, "unit_outage_membership_repair", False)
+            ),
             # miso-266: the dispatched bin's own capacity as the denominator.
             lp_bin_capacity=_lp_bins,
             # soco-67 (rule 19 [R-ONE-MECH]): drop a new unit's pre-commercial
