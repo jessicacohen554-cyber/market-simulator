@@ -1836,6 +1836,87 @@ def unit_outage_short_derate_factors(
     )
 
 
+def unit_outage_short_screened_csv_for_iso(iso: str | None) -> Path:
+    """Return the short-coal SCREENED-SET CSV path for an ISO (miso-273).
+
+    Written by ``scripts/data/derive_campd_unit_outages.py --short-windows
+    --emit-screened-set``: one row per coal unit-year that passed the
+    ``SHORT_BASELOAD_CF`` when-operable baseload guard, whether or not it had a
+    < 5-day event — the set of unit-years whose sub-5-day forced outages the
+    short extract MEASURES. Consumed by :func:`short_screened_coal_shares`
+    under ``ScenarioConfig.wefor_residual_short_screened_coal``.
+    """
+    if iso is None or iso.upper() == "ERCOT":
+        return UNIT_OUTAGE_CSV.with_name("campd-unit-outages-short-screened.csv")
+    return UNIT_OUTAGE_CSV.with_name(
+        f"campd-unit-outages-short-screened-{iso.upper()}.csv"
+    )
+
+
+def short_screened_coal_shares(
+    year: int,
+    iso: str,
+    lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...],
+) -> dict[tuple[int, str], float]:
+    """Return each coal bin's capacity share whose short outages are MEASURED.
+
+    ``ScenarioConfig.wefor_residual_short_screened_coal`` (miso-273). The
+    statistical forced-outage rate (WEFOR) represents every forced outage,
+    including the sub-5-day ones the >= 5-day CAMPD overlay cannot see. For a
+    coal unit-year that passed the short family's baseload guard, those
+    sub-5-day stops are MEASURED by ``unit_outage_short_windows``, so applying
+    the full statistical WEFOR on top counts them twice (rule 19
+    ``[R-ONE-MECH]``) — the coal twin of the miso-271 gas finding. A unit the
+    guard did not admit (a cycling unit) has no measured short family and keeps
+    the full statistical term.
+
+    The share is built on the SAME construction the short overlay uses for its
+    numerator and denominator — each screened unit's extract ``unit_capacity_mw``
+    routed by :func:`_generic_unit_outage_target`, divided by the DISPATCHED
+    bin's own capacity (:func:`lp_bin_capacity_index`, miso-266) — and clipped at
+    1. Zero free parameters (rule 21): every number is a CAMPD/EIA-860 field or
+    the fleet's own ``pmax``. Non-ERCOT only; requires the dispatched-bin
+    roster (fail-closed: the reconstructed map would divide by a different
+    capacity than the one the relief is applied to).
+
+    Args:
+        year: Solve year; only that year's screened rows count.
+        iso: ISO code (non-ERCOT).
+        lp_bin_capacity: The dispatched fleet's ``(plant_code, group) -> MW``
+            roster.
+
+    Returns:
+        ``{(plant_code, "COAL"): share in [0, 1]}``; empty when the ISO has no
+        screened-set file.
+
+    Raises:
+        ValueError: ERCOT, or no ``lp_bin_capacity``.
+    """
+    iso = (iso or "").upper()
+    if iso in ("", "ERCOT") or lp_bin_capacity is None:
+        raise ValueError(
+            "wefor_residual_short_screened_coal is non-ERCOT only and requires "
+            "unit_outage_dispatched_bin_denominator (the share must divide by "
+            "the capacity the relief is applied to)"
+        )
+    path = unit_outage_short_screened_csv_for_iso(iso)
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    df = df[(df["year"] == int(year)) & (df["plant_group"] == COAL_ARTIFACT_FAMILY)]
+    cap = dict(lp_bin_capacity)
+    acc: dict[tuple[int, str], float] = {}
+    for r in df.itertuples(index=False):
+        tgt = _generic_unit_outage_target(int(r.facility_id), r.unit_id, r.plant_group)
+        if tgt is None or tgt not in cap or cap[tgt] <= 0.0:
+            continue
+        ucap = r.unit_capacity_mw
+        if pd.isna(ucap) or float(ucap) <= 0.0:
+            continue
+        acc[tgt] = acc.get(tgt, 0.0) + float(ucap)
+    return {k: min(1.0, v / cap[k]) for k, v in acc.items()}
+
+
 def unit_layup_csv_for_iso(iso: str | None) -> Path:
     """Return the ECONOMIC-LAYUP companion CSV path for an ISO.
 

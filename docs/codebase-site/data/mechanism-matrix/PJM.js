@@ -148,6 +148,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     fleet_zone_vintage_coords: { cell: "K", ev: "PJM-NEXT card 1 (2026-09-25): PROMOTED TO THE KEEPER with run 2026-09-25-pjm-next-c1 (bundle pjmnext_c1_span, 2019-2025, one shard per year at 7f095384) on the owner ruling. Armed together with mid_vintage_exit_carry + benchmark_membership_vintage_union as one year-correct-membership package (PRECOMMIT-pjm-next-c1 + G1 addendum; RESULT-pjm-next-c1-year-correct-membership-2026-09-25.md). Zero criterion flips vs the prior keeper on the same (union) benchmark; card effect on the COAL_BIT C1 error vs a same-pin control -4.94/-8.55/-9.83/+0.28 TWh 2019-22. Wrong-zone MW 3,824/3,561/2,900/18/0/5 (2019-24) and 4,529 inert in 2025 -> 0 in every year; fallback branch only, membership untouched." },
     nyiso_ldc_generator_delivered_gas: { cell: ".", ev: "n/a — NYISO-exclusive (config.iso gate); row minted by NYISO-STGAS-2023 (2026-09-25). Rule 28(d): nothing transfers." },
     wefor_residual: { cell: "K", ev: "registration only — read from the PJM keeper's run_config.json (0.015); no PJM evidence, no verdict" },
+    wefor_residual_short_screened_coal: { cell: "U" },
     cc_winter_capability_basis: { cell: "U" },
     cc_capacity_reconcile: { cell: "K", ev: "registration only — read from pjm152_collapse_A/run_config.json; no PJM evidence, no verdict" },
     cc_capacity_reconcile_path: { cell: "U" },

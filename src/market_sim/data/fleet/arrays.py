@@ -60,6 +60,7 @@ from market_sim.data.outages import (
     reliability_deployment_floor_for_year,
     retiree_availability_caps,
     shared_unit_hours,
+    short_screened_coal_shares,
     unit_outage_active_units,
     lp_bin_capacity_index,
     unit_outage_derate_factors,
@@ -766,6 +767,38 @@ def _availability_matrix(
                     _iso or "?",
                     len(_recon_summer_ratio),
                 )
+        # miso-273 (ScenarioConfig.wefor_residual_short_screened_coal): the
+        # coal bins whose sub-5-day forced outages the short family MEASURES
+        # (unit-years that passed its baseload guard) take the WEFOR residual
+        # cap on that measured capacity share only; the rest of the bin keeps
+        # the full statistical term. Empty (byte-inert) while off.
+        _screened_share: dict[tuple[int, str], float] = {}
+        if wefor_res is not None and getattr(
+            config, "wefor_residual_short_screened_coal", False
+        ):
+            if not getattr(config, "unit_outage_short_windows", False):
+                raise ValueError(
+                    "wefor_residual_short_screened_coal requires "
+                    "unit_outage_short_windows: the relief is justified only "
+                    "where the short coal family is armed (rule 19)"
+                )
+            if not getattr(config, "unit_outage_dispatched_bin_denominator", False):
+                raise ValueError(
+                    "wefor_residual_short_screened_coal requires "
+                    "unit_outage_dispatched_bin_denominator"
+                )
+            _roster = lp_bin_capacity_index(generators)
+            _screened_share = short_screened_coal_shares(
+                int(fleet_year), _iso or "", _roster
+            )
+            logger.info(
+                "short-screened coal WEFOR relief (%s %d): %d coal bin(s), "
+                "%.1f MW measured-short capacity",
+                _iso,
+                int(fleet_year),
+                len(_screened_share),
+                sum(s * dict(_roster).get(k, 0.0) for k, s in _screened_share.items()),
+            )
         for g_idx, gen in enumerate(generators):
             if gen.plant_group not in THERMAL_AVAILABILITY:
                 continue
@@ -806,6 +839,12 @@ def _availability_matrix(
             )
             if wefor_res is not None and _covered:
                 wefor = min(wefor, wefor_res)
+            elif _screened_share and gen.fuel_type == "coal":
+                _s = _screened_share.get(
+                    (int(gen.plant_code), artifact_class(gen.plant_group)), 0.0
+                )
+                if _s > 0.0:
+                    wefor = (1.0 - _s) * wefor + _s * min(wefor, wefor_res)
             if is_cc_np and cc_np_derate_backcast:
                 # CC nameplate, historic backcast: the CAMPD outage overlay below
                 # carries every SUSTAINED outage, so the statistical POF and the
