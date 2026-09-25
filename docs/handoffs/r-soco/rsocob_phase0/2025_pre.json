@@ -1,0 +1,119 @@
+{
+ "year": 2025,
+ "side": "pre",
+ "eia860_dir": "data/raw/eia-860",
+ "groups": {
+  "": {
+   "units": 152,
+   "mw": 11181.2,
+   "avail_twh": 86.9296
+  },
+  "CC_CHP": {
+   "units": 14,
+   "mw": 474.8,
+   "avail_twh": 2.0584
+  },
+  "CC_REGULAR": {
+   "units": 67,
+   "mw": 18652.9,
+   "avail_twh": 114.8002
+  },
+  "COAL": {
+   "units": 43,
+   "mw": 15158.7,
+   "avail_twh": 58.8959
+  },
+  "CT_CHP": {
+   "units": 14,
+   "mw": 148.0,
+   "avail_twh": 1.1438
+  },
+  "CT_PEAKER": {
+   "units": 93,
+   "mw": 9639.8,
+   "avail_twh": 71.6666
+  },
+  "ST_CHP": {
+   "units": 11,
+   "mw": 58.3,
+   "avail_twh": 0.2373
+  },
+  "ST_GAS": {
+   "units": 24,
+   "mw": 3261.1,
+   "avail_twh": 12.0142
+  },
+  "hydro": {
+   "units": 42,
+   "mw": 3314.0,
+   "avail_twh": 22.8655
+  }
+ },
+ "demand_twh": 252.5897,
+ "served_interchange_twh": 13.0321,
+ "gulf": {
+  "units": 0,
+  "mw": 0.0,
+  "by_plant_group_mw": {},
+  "avail_twh": 0.0,
+  "avail_gwh_by_month": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ]
+ },
+ "aec": {
+  "units": 20,
+  "mw": 1882.0,
+  "by_plant_group_mw": {
+   "56522:": 4.8,
+   "56:CC_REGULAR": 639.1,
+   "533:CC_REGULAR": 650.0,
+   "7063:CT_PEAKER": 580.0,
+   "53:hydro": 3.0,
+   "55:hydro": 5.2
+  },
+  "avail_twh": 12.2562,
+  "avail_gwh_by_month": [
+   1201.4,
+   974.8,
+   908.9,
+   913.7,
+   1119.9,
+   1104.3,
+   1167.8,
+   703.1,
+   1078.1,
+   1021.7,
+   932.9,
+   1129.7
+  ]
+ },
+ "eia923_frame_twh": {
+  "CC_CHP": 0.169,
+  "CC_REGULAR": 109.5706,
+  "COAL_BIT": 14.942,
+  "COAL_PRB": 28.3332,
+  "CT_CHP": 1.7764,
+  "CT_PEAKER": 0.2229,
+  "OTHER": -0.6477,
+  "ST_CHP": 0.5757,
+  "ST_GAS": 6.0313,
+  "biomass": 4.1714,
+  "hydro": 0.3275,
+  "nuclear": 64.2324,
+  "oil": 0.1042,
+  "solar": 10.3165
+ },
+ "eia923_gulf_twh": 0.0,
+ "eia923_aec_twh": 8.0241
+}

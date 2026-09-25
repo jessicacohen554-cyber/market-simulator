@@ -1,0 +1,126 @@
+{
+ "year": 2023,
+ "side": "pre",
+ "eia860_dir": "data/raw/eia-860/vintage_2023",
+ "groups": {
+  "": {
+   "units": 141,
+   "mw": 9902.9,
+   "avail_twh": 75.3819
+  },
+  "CC_CHP": {
+   "units": 14,
+   "mw": 474.8,
+   "avail_twh": 2.1824
+  },
+  "CC_REGULAR": {
+   "units": 70,
+   "mw": 19291.7,
+   "avail_twh": 116.8253
+  },
+  "COAL": {
+   "units": 28,
+   "mw": 11512.0,
+   "avail_twh": 56.8121
+  },
+  "CT_CHP": {
+   "units": 14,
+   "mw": 148.0,
+   "avail_twh": 1.1438
+  },
+  "CT_PEAKER": {
+   "units": 96,
+   "mw": 10823.5,
+   "avail_twh": 80.5157
+  },
+  "ST_CHP": {
+   "units": 11,
+   "mw": 56.9,
+   "avail_twh": 0.45
+  },
+  "ST_GAS": {
+   "units": 28,
+   "mw": 4065.1,
+   "avail_twh": 20.1257
+  },
+  "hydro": {
+   "units": 42,
+   "mw": 3314.0,
+   "avail_twh": 23.2665
+  }
+ },
+ "demand_twh": 239.6251,
+ "served_interchange_twh": 10.1562,
+ "gulf": {
+  "units": 16,
+  "mw": 2524.9,
+  "by_plant_group_mw": {
+   "643:": 32.0,
+   "57502:": 1.5,
+   "641:ST_GAS": 138.6,
+   "641:CT_PEAKER": 65.4,
+   "643:CC_REGULAR": 170.4,
+   "7715:CT_PEAKER": 0.8
+  },
+  "avail_twh": 18.8512,
+  "avail_gwh_by_month": [
+   1652.4,
+   1492.5,
+   1546.6,
+   1496.7,
+   1546.6,
+   1578.9,
+   1631.5,
+   1631.5,
+   1578.9,
+   1546.6,
+   1496.7,
+   1652.4
+  ]
+ },
+ "aec": {
+  "units": 19,
+  "mw": 2013.9,
+  "by_plant_group_mw": {
+   "56522:": 0.8,
+   "56:CC_REGULAR": 66.5,
+   "533:CC_REGULAR": 249.2,
+   "7063:CT_PEAKER": 48.2,
+   "53:hydro": 3.0,
+   "55:hydro": 5.2
+  },
+  "avail_twh": 10.4236,
+  "avail_gwh_by_month": [
+   759.0,
+   719.1,
+   751.5,
+   580.2,
+   792.4,
+   798.8,
+   849.3,
+   804.7,
+   1050.5,
+   962.3,
+   1201.4,
+   1154.4
+  ]
+ },
+ "eia923_frame_twh": {
+  "CC_CHP": 3.4032,
+  "CC_REGULAR": 109.8022,
+  "COAL_BIT": 13.5916,
+  "COAL_PRB": 23.6518,
+  "CT_CHP": 2.1365,
+  "CT_PEAKER": 4.1158,
+  "OTHER": -0.5093,
+  "ST_CHP": 1.5534,
+  "ST_GAS": 9.2203,
+  "biomass": 8.8042,
+  "hydro": 6.815,
+  "nuclear": 52.1354,
+  "oil": 0.2102,
+  "solar": 8.6063
+ },
+ "eia923_gulf_twh": 0.0,
+ "eia923_aec_twh": 5.6466
+}
