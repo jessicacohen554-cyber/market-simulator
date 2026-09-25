@@ -15189,3 +15189,5 @@ Multipliers unchanged. Both runs are NOT-YET on the full span (8/4/1/3), and the
 C3a +10.0 %). B fixes 2019 C1 COAL_BIT (−13.17 TWh FAIL → PASS) by carrying the mid-year retirees the vintage
 default drops (3.1/1.0/1.5/2.8 GW in 2019–2022). S-2 fails: new slack sits inside the declared 2023/2024 Max Gen events.
 Escalated to the owner. Record: `docs/RESULT-rmiso-corrected-inputs-2019-2025-2026-09-24.md`.
+
+**PROMOTED 2026-09-25** on the owner's ruling (*"Rebase for merge And promote"*): MISO keeper → `2026-09-24-rmiso-arm-b-mid` (2019–2025); `miso-268` and arm A pruned (rule 35). MISO headline CALIBRATED → **NOT-YET** (train 8/5/1/2). Forecast gate-(a) row in `program-status.json` not re-keyed (permission-blocked).

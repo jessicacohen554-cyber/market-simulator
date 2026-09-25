@@ -147,3 +147,23 @@ still be a keeper") makes B the candidate to rule on. A is superseded by B.
   of a leg would cost a re-solve (~20–60 min per year).
 * **Shards:** all 17 archived after their bytes were verified here (7 A, 3 A-relaunch, 7 B). The three stranded
   A legs are recorded in PRECOMMIT §8.
+
+## 8. Promotion (rule 31 trigger (i), rule 35) — 2026-09-25
+
+Owner ruling, verbatim: *"Rebase for merge And promote"* — on this RESULT, which escalated and named
+arm B as the structurally more faithful candidate. Executed in rule 35's order:
+
+1. **Year set before any delete:** outgoing keeper {2020–2025} ∪ arm A {2019–2025} = **{2019–2025}**;
+   the incoming keeper covers all of it (rule 35(c)).
+2. **Promote:** `keepers/MISO.json` → `2026-09-24-rmiso-arm-b-mid`. Both partition tiers were re-keyed; the
+   validation tier is now 2019–2022, and the headline is declared **NOT-YET**. Also updated: the matrix
+   keeper/gates stamps, cells `unit_outage_short_windows_gas` and `mid_vintage_exit_carry` O → K, the §5.4
+   header, the attestation (re-stamped with the ruling), and `status/MISO.js` rebuilt (**MISO:NOT-YET**).
+3. **Verify:** `audit_keepers --iso MISO` E1 resolved the incoming keeper before deletion.
+4. **Delete:** `prune_iso_runs.py --iso MISO --force-uncite` removed the outgoing keeper
+   (`miso268_yard_span`) and arm A (`rmiso_span`), each with its sidecar, payload and bundle. Git history holds them.
+5. **After:** `audit_keepers` 0/0; matrix gate green; registry parity has no non-local RED.
+
+**Not done — blocked:** the forecast gate-(a) row in `frontend/data/forecast/program-status.json` still names
+`2026-09-24-miso-268-coal-yard`. The session's permission policy refused edits to that shared forecast file,
+so it needs the owner's go-ahead (or a forecast-lane session) to re-key it.

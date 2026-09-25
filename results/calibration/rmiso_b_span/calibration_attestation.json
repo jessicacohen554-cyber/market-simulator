@@ -501,7 +501,7 @@
   "no_fit_to_price_residuals": false,
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
-  "attested_by": "R-MISO ARM B (2026-09-24) -- recipe A (below) PLUS mid_vintage_exit_carry=true (SPP-48 mid-vintage-year exit carry, zero free parameters; PRECOMMIT \u00a79, pinned bef12b51). Recipe A: keeper 2026-09-24-miso-268-coal-yard's recipe replayed UNCHANGED via scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), 2019-2025, with the corrected backcast inputs of AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24 \u00a75.3.3: F1's backcast defaults (eia860_vintage_tracks_solve_year, measured_{coal,st,cc}_heat_rates; ct/chp already armed) plus unit_outage_short_windows_gas=true and unit_partial_outage_windows=true. The offer_curve_by_group multipliers are UNCHANGED (input correction, rule 1(c)); zero free parameters added. Input intake this lane (all measured, zero DOF): MISO 2019 hub LMPs, MISO 2019 BA-to-BA interchange, the 2019 seam Q-Q ladder (frozen derive), EIA-923 2017 coal receipts, maxgen 2021 windows (chunk reader), and the rule-23 re-derive of the MISO coal passthrough sigmoids (source change = F1 eGRID-2024 fleet coal heat rate). Every leg verified by scripts/probes/_rmiso_shard_check.py in the shard and re-verified in the parent; composed by scripts/probes/_rmiso_compose_span.py. Zero LP in the parent. Pre-registered in docs/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md (pinned 6a8d1794). NOT promoted: the promotion decision is the owner's (rule 31).",
+  "attested_by": "R-MISO ARM B (2026-09-24) -- recipe A (below) PLUS mid_vintage_exit_carry=true (SPP-48 mid-vintage-year exit carry, zero free parameters; PRECOMMIT \u00a79, pinned bef12b51). Recipe A: keeper 2026-09-24-miso-268-coal-yard's recipe replayed UNCHANGED via scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), 2019-2025, with the corrected backcast inputs of AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24 \u00a75.3.3: F1's backcast defaults (eia860_vintage_tracks_solve_year, measured_{coal,st,cc}_heat_rates; ct/chp already armed) plus unit_outage_short_windows_gas=true and unit_partial_outage_windows=true. The offer_curve_by_group multipliers are UNCHANGED (input correction, rule 1(c)); zero free parameters added. Input intake this lane (all measured, zero DOF): MISO 2019 hub LMPs, MISO 2019 BA-to-BA interchange, the 2019 seam Q-Q ladder (frozen derive), EIA-923 2017 coal receipts, maxgen 2021 windows (chunk reader), and the rule-23 re-derive of the MISO coal passthrough sigmoids (source change = F1 eGRID-2024 fleet coal heat rate). Every leg verified by scripts/probes/_rmiso_shard_check.py in the shard and re-verified in the parent; composed by scripts/probes/_rmiso_compose_span.py. Zero LP in the parent. Pre-registered in docs/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md (pinned 6a8d1794). PROMOTED 2026-09-25 on the owner's ruling (verbatim): 'Rebase for merge And promote'.",
   "authorized_price_tuning": {
    "channel": "offer_curve_by_group",
    "ruling": "owner ruling 2026-09-05: 'the offer curve multipliers are meant to allow us to tune on price & adjust merit order\u2026 as long as it's the same config across the 3 years'; steam gas scoped to ST_GAS + ST_GAS_INTERMEDIATE by the owner's follow-up answer the same day",
@@ -660,6 +660,11 @@
    "2025": "faa9c962181b8908f54d94611c6c0731eff2615b"
   },
   "dof_added": 0,
-  "multipliers": "unchanged from the keeper"
+  "multipliers": "unchanged from the keeper",
+  "promotion": {
+   "ruling": "Rebase for merge And promote",
+   "date": "2026-09-25",
+   "superseded": "2026-09-24-miso-268-coal-yard"
+  }
  }
 }
