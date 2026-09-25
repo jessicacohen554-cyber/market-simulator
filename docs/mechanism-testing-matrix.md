@@ -5762,7 +5762,9 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — keeper `2026-09-24-miso-268-coal-yard` (**PROMOTED 2026-09-24, miso-268**, on the owner ruling *"Is this a recommended keeper candidate? If so plz promote"*; single delta on miso-267: `coal_fuel_inventory_plant_grain=true`, one annual coal-fuel row per coal yard at its own stock + prior receipts; C1 passes every year (2022 COAL_PRB +10.04 → −0.24, CC_REGULAR −8.99 → −3.66 TWh), C3a 2022 −8.4 % PASS; open: C3a 2020 +13.4 % (overnight price body), C3b 2021 0.309 (February); record `docs/RESULT-miso268-coal-yard-grain-2026-09-24.md`)
+### 5.4 MISO — keeper `2026-09-24-rmiso-arm-b-mid` (**PROMOTED 2026-09-25, R-MISO**, on the owner ruling *"Rebase for merge And promote"*; the miso-268 recipe re-solved 2019–2025 on the corrected backcast inputs of AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24 §5.3.3 — F1's year-matched EIA-860 with `mid_vintage_exit_carry`, measured coal/ST/CC heat rates, short-gas and unit-partial CAMPD outages; multipliers unchanged. Train tier NOT-YET 8/5/1/2 (2023 C1 CC_REGULAR −10.38 TWh, C3a +10.0 %), promoted on structure; record `docs/RESULT-rmiso-corrected-inputs-2019-2025-2026-09-24.md`)
+
+**Predecessor header, kept as history:** 5.4 MISO — keeper `2026-09-24-miso-268-coal-yard` (**PROMOTED 2026-09-24, miso-268**, on the owner ruling *"Is this a recommended keeper candidate? If so plz promote"*; single delta on miso-267: `coal_fuel_inventory_plant_grain=true`, one annual coal-fuel row per coal yard at its own stock + prior receipts; C1 passes every year (2022 COAL_PRB +10.04 → −0.24, CC_REGULAR −8.99 → −3.66 TWh), C3a 2022 −8.4 % PASS; open: C3a 2020 +13.4 % (overnight price body), C3b 2021 0.309 (February); record `docs/RESULT-miso268-coal-yard-grain-2026-09-24.md`)
 
 > **QUEUE STAMP miso-270 (2026-09-24) — ZERO LP, NO SOLVE EARNED, keeper unchanged.** No owner
 > ruling on D1 (storm-month gas) or D2 (thin prints), so Task C only. **Oct–Nov 2021 localized**

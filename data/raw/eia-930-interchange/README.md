@@ -6,7 +6,7 @@ EIA-930 BA-to-BA net interchange product (`TI` interchange family), long form
 per directly-interconnected balancing authority (DIBA): columns
 `diba, mw, local_time`. EIA sign convention: positive = the named BA exports
 to the DIBA. `local_time` is the hour-ending timestamp on the BA's local
-clock, spanning the covered local calendar years — 2023-2025 for MISO/ISNE;
+clock, spanning the covered local calendar years — 2023-2025 for ISNE; **2019-2025 for MISO** (2020-2022 back-filled 2026-09-13; 2019 added 2026-09-24 by R-MISO with `fetch_eia930_interchange.py --ba MISO --source bulk --years 2019 --merge` — 11 DIBAs x 8,759 h, all 516,600 pre-existing rows byte-identical, plus the 11 local-2020-01-01 00:00 rows the UTC-2020 fetch had not carried);
 **2019 - H1-2026 for PJM and CISO**, both extended 2026-07-31 under the
 rule-22 intake authorizations logged in `calibration-complete.json`.
 
