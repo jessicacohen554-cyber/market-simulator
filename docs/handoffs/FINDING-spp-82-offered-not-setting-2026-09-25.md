@@ -111,6 +111,14 @@ not.** SPP-81b's caveat was right, and it is now quantified.
 | **`max(0, B10 − C_th)`, floor on offline MW below MEC** | **7.48** | **8.20** | **15.84** | **15.62** |
 | net load (sampled hours) | 28.11 | 27.66 | 25.94 | 26.46 |
 
+**2021 / 2022 (run after, same sample: 304 / 332 hours, position 0.680 / 0.707 = SPP-81b's):**
+`B10` 41.20 / 42.87, online thermal `C_th` 31.13 / 32.35, `G_th` 27.07 / 26.91, headroom 4.05 / 5.44,
+**offline floor 10.66 / 11.30 GW**, 5-min mean − median $3.30 / 1.97, position at the median 0.655 / 0.693.
+The floor sits **between** the pairs in the high-gas years, where SPP-81b found the residual smallest.
+So cheap uncommitted capacity below the MEC is **necessary but not sufficient**: the 2023–24 floor is
+still +4.5 GW above 2021–22 and +8 GW above 2019–20. That is stated as a limit on how far the
+attribution goes, not as a contradiction.
+
 ### 2.3 Attribution of the step (2023/24 mean − 2019/20 mean)
 
 `B10 = (a) dispatched + (b) online-undispatched + (c) offline (+ (d) not deliverable, inside the
