@@ -472,3 +472,11 @@ was pruned (rule 35), with `audit_keepers` E1 run before the prune and E13 after
   - SB-status units are excluded from the fleet while the benchmark counts their output, which is systemic.
 - **Records:** `docs/handoffs/{PRECOMMIT-nwppnext2-psei-colstrip-2019-2025,PRECOMMIT-nwppnext2h-cascade-2019-2022,RESULT-nwppnext2-psei-colstrip-cascade-2019-2025}-2026-09-25.md`
   and the four `FINDING-nwppnext2-*` docs.
+
+**Promoted 2026-09-25:** `2026-09-25-nwppnext2h-cascade-2019` is NWPP keeper #9. The owner ruled *"If structural
+integrity improves but gates regress that may still be a keeper"*, so it is promoted for structure. The 2020 C4
+coal regression (0.720 → 0.691) is reported at full magnitude.
+- It covers the full outgoing year union, 2019–2025 (rule 35(c)).
+- `audit_keepers` E1 passed before the prune. `2026-09-25-nwpp-next-ferc714-partial` and arm A
+  `2026-09-25-nwppnext2-psei-colstrip` were then pruned with `prune_iso_runs.py --force-uncite`, and the audit
+  after it passed.
