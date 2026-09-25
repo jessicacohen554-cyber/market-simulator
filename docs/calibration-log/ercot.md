@@ -14698,3 +14698,36 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - Finding: `docs/handoffs/FINDING-r-ercot-4-validation-years-2026-09-25.md`
 - Probe: `scripts/probes/_r_ercot4_shaped_derate_footprint.py`
 - Matrix: `ercot_partial_outage_shaped_derate` stays K; the open defect is appended to its evidence.
+
+## R-ERCOT-4 (arm + promotion) — 2026-09-25 — same-day CEMS guard on the shaped partial-outage layer — PROMOTED
+
+- **Owner rulings:**
+  - "Yes to arming".
+  - "If so plz promote. If structural integrity improves but gates regress that may still be a keeper".
+- **New keeper:** `2026-09-25-r-4-day-guard` (bundle `results/calibration/r_ercot4_dayguard_span`, 2019–2025).
+  - Supersedes `2026-09-25-r-ercot2-chp-off`, which was pruned.
+- **Mechanism:** `ercot_partial_outage_day_guard`, default off. It floors each day of the ercot-185 shaped partial-outage derate at the plant's own same-day CEMS ceiling.
+  - Zero new scalars.
+  - Multipliers are unchanged leg-for-leg; the DOF ledger is carried verbatim.
+- **Solves:** seven shards at `845ca5f1`, one per year (rule 36).
+  - G-DRIFT found all 61 files inert, so the committed keeper bundle was the control. No control solves.
+- **Result:**
+  - Train tier stays **CALIBRATED**.
+    - C3b 2023 0.137 → 0.122.
+    - C3b 2024 0.141 → 0.116.
+    - C3b 2025 0.096 → 0.097.
+  - **2021 NOT-YET → CALIBRATED**: C3b 0.203 → 0.137, C3a +9.4 % → +5.8 %.
+    - The October 2021 phantom scarcity is removed: Martin Lake is available at 2,368 MW, not 916, on Oct 20–21.
+  - 2022 stays CALIBRATED (C3b 0.100 → 0.128).
+  - 2019 and 2020 stay NOT-YET (C3a +99.4 % / +19.0 %; C1 COAL_PRB −10.54 / −13.56 TWh). This is the offer-conduct object, and the owner declined the SCED procurement.
+  - **Reported regression:** 2024 C3c PASS → ledgered caveat (26 vs 53 h). Non-downgrading.
+  - Every sealed prediction was met.
+- **Also fixed:** `derive_partial_outages.py` after COAL-SUB, which had silently lost every coal plateau. It now goes through `artifact_class`, and the extracts reproduce line-for-line.
+- **Promotion checks:**
+  - Rule 35 order: year union {2019..2025} read before the prune; `audit_keepers` E1 passed before the prune.
+  - After the prune: 0/0. The parity gate is clean apart from the local shard-leg dirs.
+- **Matrix:** `ercot_partial_outage_day_guard` → **K**.
+- **Records:**
+  - `docs/handoffs/FINDING-r-ercot-4-validation-years-2026-09-25.md`
+  - `docs/handoffs/PRECOMMIT-r-ercot-4-day-guard-2026-09-25.md`
+  - `docs/handoffs/RESULT-r-ercot-4-day-guard-2026-09-25.md`
