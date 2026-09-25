@@ -37,6 +37,7 @@ from market_sim.data.fleet.eia860 import _rows_to_generators
 from scripts.data.derive_campd_cc_heat_rates import (
     _BOUNDARY_MAX,
     _BOUNDARY_MIN,
+    _GROSS_NET_IDENTITY_MIN,
     _HR_MAX_NET,
     _HR_MIN_NET,
     TARGET_CLASS,
@@ -230,6 +231,31 @@ class TestBoundaryGuard(unittest.TestCase):
         self.assertGreater(_BOUNDARY_MIN, 0.72)
         self.assertLess(_BOUNDARY_MIN, 1.01)
         self.assertGreater(_BOUNDARY_MAX, 1.116)
+
+    def test_gross_below_net_is_refused_by_name(self) -> None:
+        """Gross < net is impossible when the whole CC is metered (R-CAISO-2).
+
+        A ratio above the steam-missing cluster but below 1.0 means part of
+        the plant's output left CAMPD's gross load (Pastoria 55656, 2020+), so
+        its rate is over-stated and must not be applied.
+        """
+        table = plant_table(
+            _unit_rows(),
+            "FAKEISO",
+            [2024],
+            caps={},
+            model_hr={},
+            factors={},
+            boundary={1: 1.03, 2: 0.93, 3: 1.01, 4: 0.675},
+        ).set_index("plant_code")
+        self.assertEqual(table.loc[2, "flag"], "gross_below_net")
+        self.assertEqual(table.loc[4, "flag"], "steam_not_metered")
+        self.assertEqual(table.loc[1, "flag"], "ok")
+
+    def test_identity_floor_is_physics(self) -> None:
+        """The identity floor is exactly 1.0 and sits above the steam band."""
+        self.assertEqual(_GROSS_NET_IDENTITY_MIN, 1.0)
+        self.assertGreater(_GROSS_NET_IDENTITY_MIN, _BOUNDARY_MIN)
 
     def test_boundary_ratio_is_always_reported(self) -> None:
         """Written for every plant so a refusal is legible without re-deriving."""

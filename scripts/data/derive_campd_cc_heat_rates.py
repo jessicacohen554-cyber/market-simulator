@@ -209,6 +209,21 @@ _HR_MAX_NET: float = 22.0
 _BOUNDARY_MIN: float = 0.90
 _BOUNDARY_MAX: float = 1.25
 
+#: THE GROSS-NET IDENTITY (R-CAISO-2, 2026-09-25). Gross generation is net
+#: generation PLUS station service, so a plant whose whole CC output is in
+#: CAMPD's meter cannot read ``gross/net < 1`` — the identity, not a fit. A
+#: ratio in ``[_BOUNDARY_MIN, 1.0)`` therefore means CAMPD's gross load holds
+#: only PART of the plant's output (one steam train of several dropped from the
+#: meter), and ``heatInput / grossLoad`` over-states the plant's rate by the
+#: missing share. The ``[0.75, 1.00]`` "empty gap" claim above was measured on
+#: SOCO, which has no row there; CAISO does — Pastoria 55656 reads 1.029 in
+#: 2019 and 0.927-0.946 in 2020-2025 with its output unchanged, because from
+#: 2020 its CT001/CT002 gross stopped carrying their shared steam turbine (per
+#: unit gross rate 7.1 -> 8.8 while CT004 holds 7.45). Such a row is flagged
+#: and NOT applied, falling back like every other refused row (pooled row,
+#: else eGRID). Physics-fixed ex ante, never swept (rules 14 / 21 / 23).
+_GROSS_NET_IDENTITY_MIN: float = 1.0
+
 #: Reported-only comparison window: the near-HSL rate, for the reader's sense
 #: of the plant's range. NEVER the applied column (see the module docstring).
 _HSL_PCTILE: float = 90.0
@@ -456,6 +471,11 @@ def plant_table(
             # The steam turbine is not in CAMPD's gross load, so hr_gross is
             # the COMBUSTION-TURBINE rate, not this plant's CC rate.
             flag = "steam_not_metered"
+        elif ratio < _GROSS_NET_IDENTITY_MIN:
+            # Gross below net is impossible for a fully metered plant: part
+            # of the output is missing from CAMPD's gross load (see the
+            # constant), so hr_gross over-states the plant's CC rate.
+            flag = "gross_below_net"
         elif ratio > _BOUNDARY_MAX:
             flag = "boundary_above_band"
         elif hr_net < _HR_MIN_NET:
