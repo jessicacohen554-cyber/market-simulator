@@ -1,0 +1,394 @@
+{
+ "2019": {
+  "per_plant": {
+   "1004/COAL_BIT": {
+    "dMW": -473.0,
+    "dTWh": -3.683
+   },
+   "55218/CC_REGULAR": {
+    "dMW": -77.5,
+    "dTWh": -0.405
+   },
+   "55220/CC_REGULAR": {
+    "dMW": -66.2,
+    "dTWh": -0.181
+   },
+   "55380/CC_REGULAR": {
+    "dMW": -303.7,
+    "dTWh": -2.131
+   },
+   "55418/CC_REGULAR": {
+    "dMW": 0.0,
+    "dTWh": 0.167
+   },
+   "55467/CC_REGULAR": {
+    "dMW": -114.6,
+    "dTWh": -0.541
+   },
+   "55620/CC_REGULAR": {
+    "dMW": -111.7,
+    "dTWh": -0.548
+   },
+   "55620/CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.049
+   }
+  },
+  "by_class": {
+   "CC_REGULAR": {
+    "dMW": -673.7,
+    "dTWh": -3.639
+   },
+   "COAL_BIT": {
+    "dMW": -473.0,
+    "dTWh": -3.683
+   },
+   "CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.049
+   }
+  },
+  "outside_block_units": 0,
+  "avail_frac_maxdiff": 320.54536200000075
+ },
+ "2020": {
+  "per_plant": {
+   "1004/COAL_BIT": {
+    "dMW": -473.0,
+    "dTWh": -3.256
+   },
+   "55218/CC_REGULAR": {
+    "dMW": -72.8,
+    "dTWh": -0.328
+   },
+   "55218/CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.009
+   },
+   "55220/CC_REGULAR": {
+    "dMW": -57.5,
+    "dTWh": -0.138
+   },
+   "55380/CC_REGULAR": {
+    "dMW": -302.0,
+    "dTWh": -1.898
+   },
+   "55418/CC_REGULAR": {
+    "dMW": 0.0,
+    "dTWh": 0.042
+   },
+   "55467/CC_REGULAR": {
+    "dMW": -122.2,
+    "dTWh": -0.705
+   },
+   "55620/CC_REGULAR": {
+    "dMW": -111.6,
+    "dTWh": -0.593
+   },
+   "55620/CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.048
+   }
+  },
+  "by_class": {
+   "CC_REGULAR": {
+    "dMW": -666.1,
+    "dTWh": -3.62
+   },
+   "COAL_BIT": {
+    "dMW": -473.0,
+    "dTWh": -3.256
+   },
+   "CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.057
+   }
+  },
+  "outside_block_units": 0,
+  "avail_frac_maxdiff": 639.6853953918871
+ },
+ "2021": {
+  "per_plant": {
+   "1004/COAL_BIT": {
+    "dMW": -473.0,
+    "dTWh": -3.688
+   },
+   "55218/CC_REGULAR": {
+    "dMW": -72.8,
+    "dTWh": -0.398
+   },
+   "55218/CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.009
+   },
+   "55220/CC_REGULAR": {
+    "dMW": -57.5,
+    "dTWh": -0.228
+   },
+   "55380/CC_REGULAR": {
+    "dMW": -302.0,
+    "dTWh": -1.873
+   },
+   "55418/CC_REGULAR": {
+    "dMW": 0.0,
+    "dTWh": 0.127
+   },
+   "55467/CC_REGULAR": {
+    "dMW": -122.2,
+    "dTWh": -0.562
+   },
+   "55620/CC_REGULAR": {
+    "dMW": -111.6,
+    "dTWh": -0.494
+   },
+   "55620/CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.048
+   }
+  },
+  "by_class": {
+   "CC_REGULAR": {
+    "dMW": -666.1,
+    "dTWh": -3.427
+   },
+   "COAL_BIT": {
+    "dMW": -473.0,
+    "dTWh": -3.688
+   },
+   "CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.057
+   }
+  },
+  "outside_block_units": 0,
+  "avail_frac_maxdiff": 320.54536200000166
+ },
+ "2022": {
+  "per_plant": {
+   "1004/COAL_BIT": {
+    "dMW": -473.0,
+    "dTWh": -3.688
+   },
+   "55218/CC_REGULAR": {
+    "dMW": -77.5,
+    "dTWh": -0.347
+   },
+   "55218/CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.009
+   },
+   "55220/CC_REGULAR": {
+    "dMW": -60.8,
+    "dTWh": -0.318
+   },
+   "55380/CC_REGULAR": {
+    "dMW": -305.4,
+    "dTWh": -1.929
+   },
+   "55418/CC_REGULAR": {
+    "dMW": 0.0,
+    "dTWh": 0.162
+   },
+   "55467/CC_REGULAR": {
+    "dMW": -113.8,
+    "dTWh": -0.581
+   },
+   "55620/CC_REGULAR": {
+    "dMW": -59.4,
+    "dTWh": -0.163
+   },
+   "55620/CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.048
+   }
+  },
+  "by_class": {
+   "CC_REGULAR": {
+    "dMW": -616.9,
+    "dTWh": -3.177
+   },
+   "COAL_BIT": {
+    "dMW": -473.0,
+    "dTWh": -3.688
+   },
+   "CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.057
+   }
+  },
+  "outside_block_units": 0,
+  "avail_frac_maxdiff": 320.54536200000075
+ },
+ "2023": {
+  "per_plant": {
+   "1004/COAL_BIT": {
+    "dMW": -481.2,
+    "dTWh": -3.688
+   },
+   "55218/CC_REGULAR": {
+    "dMW": -80.0,
+    "dTWh": -0.425
+   },
+   "55218/CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.009
+   },
+   "55220/CC_REGULAR": {
+    "dMW": -61.4,
+    "dTWh": -0.258
+   },
+   "55380/CC_REGULAR": {
+    "dMW": -286.7,
+    "dTWh": -1.756
+   },
+   "55418/CC_REGULAR": {
+    "dMW": -19.4,
+    "dTWh": 0.015
+   },
+   "55467/CC_REGULAR": {
+    "dMW": -117.7,
+    "dTWh": -0.694
+   },
+   "55620/CC_REGULAR": {
+    "dMW": -61.1,
+    "dTWh": -0.309
+   },
+   "55620/CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.047
+   }
+  },
+  "by_class": {
+   "CC_REGULAR": {
+    "dMW": -626.3,
+    "dTWh": -3.427
+   },
+   "COAL_BIT": {
+    "dMW": -481.2,
+    "dTWh": -3.688
+   },
+   "CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.056
+   }
+  },
+  "outside_block_units": 0,
+  "avail_frac_maxdiff": 698.6283174134196
+ },
+ "2024": {
+  "per_plant": {
+   "1004/COAL_BIT": {
+    "dMW": -481.2,
+    "dTWh": -3.2
+   },
+   "55218/CC_REGULAR": {
+    "dMW": -86.6,
+    "dTWh": -0.486
+   },
+   "55218/CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.009
+   },
+   "55220/CC_REGULAR": {
+    "dMW": -57.5,
+    "dTWh": -0.255
+   },
+   "55380/CC_REGULAR": {
+    "dMW": -280.7,
+    "dTWh": -1.627
+   },
+   "55418/CC_REGULAR": {
+    "dMW": -19.4,
+    "dTWh": 0.042
+   },
+   "55467/CC_REGULAR": {
+    "dMW": -119.4,
+    "dTWh": -0.683
+   },
+   "55620/CC_REGULAR": {
+    "dMW": -60.9,
+    "dTWh": -0.292
+   },
+   "55620/CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.047
+   }
+  },
+  "by_class": {
+   "CC_REGULAR": {
+    "dMW": -624.5,
+    "dTWh": -3.301
+   },
+   "COAL_BIT": {
+    "dMW": -481.2,
+    "dTWh": -3.2
+   },
+   "CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.056
+   }
+  },
+  "outside_block_units": 0,
+  "avail_frac_maxdiff": 626.8099641538493
+ },
+ "2025": {
+  "per_plant": {
+   "1004/CC_REGULAR": {
+    "dMW": -152.584,
+    "dTWh": -1.31
+   },
+   "1004/COAL_BIT": {
+    "dMW": -328.616,
+    "dTWh": -2.262
+   },
+   "55218/CC_REGULAR": {
+    "dMW": -74.4,
+    "dTWh": -0.238
+   },
+   "55218/CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.009
+   },
+   "55220/CC_REGULAR": {
+    "dMW": -58.1,
+    "dTWh": -0.17
+   },
+   "55380/CC_REGULAR": {
+    "dMW": -269.1,
+    "dTWh": -1.391
+   },
+   "55418/CC_REGULAR": {
+    "dMW": -22.9,
+    "dTWh": 0.02
+   },
+   "55467/CC_REGULAR": {
+    "dMW": -122.1,
+    "dTWh": -0.672
+   },
+   "55620/CC_REGULAR": {
+    "dMW": -63.1,
+    "dTWh": -0.299
+   },
+   "55620/CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.048
+   }
+  },
+  "by_class": {
+   "CC_REGULAR": {
+    "dMW": -762.284,
+    "dTWh": -4.06
+   },
+   "COAL_BIT": {
+    "dMW": -328.616,
+    "dTWh": -2.262
+   },
+   "CT_PEAKER": {
+    "dMW": 0.0,
+    "dTWh": 0.057
+   }
+  },
+  "outside_block_units": 0,
+  "avail_frac_maxdiff": 314.8580514000014
+ }
+}

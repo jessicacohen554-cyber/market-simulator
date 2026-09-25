@@ -1199,6 +1199,23 @@ def _apply_outage_overlays(
             )
             else None
         )
+        # miso-272 point-of-use guard (ScenarioConfig.cc_block_summer_rating):
+        # the reconstructed outage-capacity map (_iso_plant_capacity) is built
+        # WITHOUT the block reconciliation, so dividing an overlay by it would
+        # read the very phantom the flag removes. The dispatched-bin denominator
+        # divides by the LP's own pmax and is the only construction that
+        # composes with it — refuse the pair rather than no-op (rule 24).
+        if (
+            getattr(config, "cc_block_summer_rating", False)
+            and not is_ercot
+            and _lp_bins is None
+        ):
+            raise ValueError(
+                "cc_block_summer_rating requires unit_outage_dispatched_bin_"
+                "denominator under a non-ERCOT historic outage overlay: the "
+                "reconstructed outage-capacity map does not carry the block "
+                "reconciliation (rule 19 [R-ONE-MECH])"
+            )
         # Unit-level outage derate (backcast): partial availability cut per
         # unit outage >= 5 days, sized by the unit's share of its plant's
         # capacity (CTs excluded; ERCOT split plants routed to the right asset

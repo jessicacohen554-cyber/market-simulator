@@ -3950,6 +3950,7 @@ def run_year(
                 egrid_identity_heat_rates=config.egrid_identity_heat_rates,
                 egrid_family_heat_rates=config.egrid_family_heat_rates,
                 egrid_steam_collapse_heat_rates=config.egrid_steam_collapse_heat_rates,
+                cc_block_summer_rating=config.cc_block_summer_rating,
             )
             + retired_units,
             iso,

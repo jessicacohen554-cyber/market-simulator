@@ -1626,6 +1626,7 @@ def load_or_synthesize_bins(
             egrid_steam_collapse_heat_rates=config.egrid_steam_collapse_heat_rates,
             cc_steam_part_capacity=config.cc_steam_part_capacity,
             cc_steam_part_reclass=config.cc_steam_part_reclass,
+            cc_block_summer_rating=config.cc_block_summer_rating,
         )
         + retired_within_window,
         iso,
@@ -1724,6 +1725,7 @@ def build_base_fleet(
                 egrid_steam_collapse_heat_rates=config.egrid_steam_collapse_heat_rates,
                 cc_steam_part_capacity=config.cc_steam_part_capacity,
                 cc_steam_part_reclass=config.cc_steam_part_reclass,
+                cc_block_summer_rating=config.cc_block_summer_rating,
             )
             + retired_within_window
         )
@@ -1771,6 +1773,7 @@ def build_base_fleet(
                 egrid_steam_collapse_heat_rates=config.egrid_steam_collapse_heat_rates,
                 cc_steam_part_capacity=config.cc_steam_part_capacity,
                 cc_steam_part_reclass=config.cc_steam_part_reclass,
+                cc_block_summer_rating=config.cc_block_summer_rating,
             )
             + retired_within_window,
             n_bins=(
