@@ -44,6 +44,19 @@ Outputs (``data/raw/nwpp-hydro/crohms/``):
 Usage:
     python scripts/data/fetch_nwpp_crohms_hourly.py             # full 2023-01-01 -> 2026-01-01
     python scripts/data/fetch_nwpp_crohms_hourly.py --end 2024-01-01   # shorter range
+
+Extending the committed pull (NWPP-NEXT-2, 2019-2022). The fetch OVERWRITES its
+``--out-dir``, so a new range is pulled into a SCRATCH dir and then merged::
+
+    python scripts/data/fetch_nwpp_crohms_hourly.py --start 2019-01-01 \
+        --end 2023-01-01 --out-dir /tmp/crohms1922
+    python scripts/data/fetch_nwpp_crohms_hourly.py --merge-only /tmp/crohms1922
+
+``--merge-only`` adds the scratch pull's hourly and daily rows to the committed
+parquets (no network). Every committed row is kept unchanged; an overlapping
+``(station, series, ts)`` key is refused unless value and quality agree exactly.
+The committed catalog is kept (it is the celerity check's coordinate source,
+frozen with the links it produced) and ``SHA256SUMS.txt`` is rewritten.
 """
 
 from __future__ import annotations
@@ -201,13 +214,73 @@ def _sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def _write_sums(out: Path) -> Path:
+    sums = out / "SHA256SUMS.txt"
+    with open(sums, "w") as f:
+        for p in sorted(out.iterdir()):
+            if p.name != sums.name and p.is_file():
+                f.write(f"{_sha256(p)}  {p.name}\n")
+    return sums
+
+
+def merge_frames(existing: pd.DataFrame, new: pd.DataFrame) -> pd.DataFrame:
+    """Union two long pulls; every ``existing`` row is kept, overlaps must agree."""
+    key = ["station", "series", "ts"]
+    both = existing.merge(new, on=key, how="inner", suffixes=("_old", "_new"))
+    bad = both[
+        ~(
+            (both["value_old"] == both["value_new"])
+            | (both["value_old"].isna() & both["value_new"].isna())
+        )
+        | (both["quality_old"] != both["quality_new"])
+    ]
+    if len(bad):
+        raise ValueError(
+            f"{len(bad)} overlapping (station, series, ts) keys disagree between "
+            f"the committed pull and the new one, e.g. {bad.head(3).to_dict('records')}"
+        )
+    add = new.merge(existing[key], on=key, how="left", indicator=True)
+    add = add[add["_merge"] == "left_only"].drop(columns="_merge")
+    out = pd.concat([existing, add[existing.columns]], ignore_index=True)
+    out = out.astype(existing.dtypes.to_dict())
+    return out.sort_values(key, kind="mergesort").reset_index(drop=True)
+
+
+def merge_only(new_dir: Path, out: Path) -> int:
+    """Merge a scratch pull in ``new_dir`` into the committed pull in ``out``."""
+    for name in ("nwpp_crohms_hourly.parquet", "nwpp_crohms_daily_idp.parquet"):
+        existing = pd.read_parquet(out / name)
+        new = pd.read_parquet(new_dir / name)
+        merged = merge_frames(existing, new)
+        merged.to_parquet(out / name, index=False)
+        logger.info(
+            "%s: %d committed + %d new = %d rows (%s -> %s)",
+            name,
+            len(existing),
+            len(merged) - len(existing),
+            len(merged),
+            merged["ts"].min(),
+            merged["ts"].max(),
+        )
+    logger.info("kept the committed catalog; wrote %s", _write_sums(out))
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     ap.add_argument("--start", default="2023-01-01")
     ap.add_argument("--end", default="2026-01-01")
     ap.add_argument("--out-dir", default=str(OUT_DIR))
+    ap.add_argument(
+        "--merge-only",
+        default=None,
+        metavar="NEW_DIR",
+        help="no fetch: merge the pull in NEW_DIR into --out-dir (committed rows kept)",
+    )
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
+    if args.merge_only:
+        return merge_only(Path(args.merge_only), Path(args.out_dir))
 
     start = date.fromisoformat(args.start)
     end = date.fromisoformat(args.end)
@@ -233,12 +306,7 @@ def main() -> int:
     daily.to_parquet(out / "nwpp_crohms_daily_idp.parquet", index=False)
     logger.info("daily IDP: %d rows", len(daily))
 
-    sums = out / "SHA256SUMS.txt"
-    with open(sums, "w") as f:
-        for p in sorted(out.iterdir()):
-            if p.name != sums.name and p.is_file():
-                f.write(f"{_sha256(p)}  {p.name}\n")
-    logger.info("wrote %s", sums)
+    logger.info("wrote %s", _write_sums(out))
     return 0
 
 

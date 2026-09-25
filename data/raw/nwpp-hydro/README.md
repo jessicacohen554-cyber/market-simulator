@@ -179,3 +179,38 @@ CROHMS forebay elevations (`nwpp_hydro_cascade_links.csv` `pond_kcfsh`) is **5�
 NID gross volume (e.g. The Dalles 2.6 vs 62 h of mean output). Which one a given plant should carry,
 and under what inflow, is the design question in
 `docs/handoffs/FINDING-nwpp-49-pondage-design-2026-09-23.md`.
+
+## NWPP-NEXT-2 extension — 2019–2022 coverage (2026-09-25)
+
+The cascade was armed in the keeper but INERT before 2023 because these artifacts covered 2023–2025
+only. They now cover **2019–2025**. Record: `docs/handoffs/FINDING-nwppnext2-hydro-cascade-2019-2022-2026-09-25.md`.
+
+**Rule 23 `[R-FROZEN-DERIVE]`: only the per-year MONTHLY rows are extended.** τ per link, the
+pondage band, the NID areas and the `coupled` verdicts stay exactly as NWPP-36 derived them on
+2023–2024 (and checked on 2025). `nwpp_hydro_cascade_links.csv` is byte-identical. The new source
+years extend coverage; they are not a licence to refit.
+
+| file | rows before → after | 2023–2025 content |
+|---|---:|---|
+| `crohms/nwpp_crohms_hourly.parquet` | 2,103,124 → 4,905,303 | value-identical row for row (same dtypes, same sort) |
+| `crohms/nwpp_crohms_daily_idp.parquet` | 2,192 → 5,117 | value-identical |
+| `crohms/nwpp_crohms_catalog.json` | unchanged | byte-identical (the 2019–22 pull returned the same catalog) |
+| `nwpp_hydro_monthly_923.parquet` | 7,212 → 21,036 | value-identical |
+| `nwpp_hydro_monthly_923_flags.csv` | 601 → 1,753 | lines verbatim |
+| `nwpp_hydro_budget.parquet` / `nwpp_hydro_reconciliation.csv` | 877 → 2,056 | value-identical / lines verbatim |
+| `nwpp_hydro_cascade_monthly.csv` | 576 → 1,344 | lines verbatim |
+
+Unchanged: `nwpp_hydro_cascade_links.csv`, `nwpp_hydro_cascade_nid.csv`, `nwpp_hydro_chain*.csv`
+(the chain reach table keeps its 2023–2025 columns), `nwpp_hydro_within_month_930.csv`.
+
+Rebuild:
+
+    python scripts/data/fetch_nwpp_crohms_hourly.py --start 2019-01-01 --end 2023-01-01 --out-dir <scratch>
+    python scripts/data/fetch_nwpp_crohms_hourly.py --merge-only <scratch>
+    python scripts/data/build_nwpp_hydro_monthly.py --year 2019 --year 2020 --year 2021 --year 2022 --year 2023 --year 2024 --year 2025
+    python scripts/data/build_nwpp_hydro_budget.py --skip-930
+    python scripts/data/build_nwpp_hydro_cascade.py --extend-years 2019 2020 2021 2022
+
+The default `build_nwpp_hydro_cascade.py` run (the NWPP-36 derivation) is pinned to the
+2023-01-01 → 2026-01-01 window. On the merged pull it still reproduces the committed links and
+monthly csvs byte for byte.

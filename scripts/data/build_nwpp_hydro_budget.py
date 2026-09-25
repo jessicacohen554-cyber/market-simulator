@@ -53,6 +53,11 @@ asserts it equals the clipped artifact for every kept plant.
 Usage:
     python scripts/data/build_nwpp_hydro_budget.py
     python scripts/data/build_nwpp_hydro_budget.py --skip-930   # budget + chain only
+    python scripts/data/build_nwpp_hydro_budget.py --years 2019 2020 2021 2022 2023 2024 2025 --skip-930
+
+The budget year set defaults to every year the NWPP-11 extract carries; each
+year is an independent filter of that extract, so extending it (NWPP-NEXT-2:
+2019-2022) leaves every existing year's rows value-identical.
 """
 
 from __future__ import annotations
@@ -83,7 +88,16 @@ OUT_CHAIN = HYDRO_DIR / "nwpp_hydro_chain.csv"
 OUT_930 = HYDRO_DIR / "nwpp_hydro_within_month_930.csv"
 
 ISO = "NWPP"
+# The NWPP-32 build years. The DEFAULT year set is every year the NWPP-11 extract
+# carries (``--years`` overrides); NWPP-NEXT-2 extended the extract to 2019-2022
+# so the NWPP-36 cascade builder has an EIA-923 series for those years. Each
+# year is built independently (a per-year filter of the same extract), so adding
+# a year never moves another year's rows.
 YEARS: tuple[int, ...] = (2023, 2024, 2025)
+# The NWPP-36 reach table (``nwpp_hydro_chain.csv``) is a FROZEN input to the
+# cascade-link derivation (rule 23 ``[R-FROZEN-DERIVE]``): its per-year energy
+# columns stay the three years it was built on, whatever ``--years`` builds.
+CHAIN_YEARS: tuple[int, ...] = (2023, 2024, 2025)
 # EIA files whole MWh; 1 MWh is the rounding tolerance and nothing else (PRECOMMIT §2).
 RECONCILE_TOL_MWH = 1.0
 # EHA `Water` values that place a plant on the U.S. Columbia mainstem (PRECOMMIT §5a).
@@ -198,7 +212,14 @@ def chain_membership(row: pd.Series, published: pd.DataFrame) -> str:
     return "INDEPENDENT_OR_TRIBUTARY"
 
 
-def build_budget(log: logging.Logger) -> tuple[pd.DataFrame, pd.DataFrame]:
+def extract_years() -> tuple[int, ...]:
+    """Return every year the NWPP-11 extract carries, ascending."""
+    return tuple(sorted(int(y) for y in load_extract()["year"].unique()))
+
+
+def build_budget(
+    log: logging.Logger, years: tuple[int, ...] = YEARS
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Build the per-plant-year budget + envelope table and its reconciliation."""
     from market_sim.data.fleet import EIA_860_DIR, EIA_860_PARQUET_NAME
     from market_sim.data.hydro import (
@@ -222,7 +243,14 @@ def build_budget(log: logging.Logger) -> tuple[pd.DataFrame, pd.DataFrame]:
 
     p860 = set(nameplate.index)
     rows: list[pd.DataFrame] = []
-    for year in YEARS:
+    missing_years = sorted(set(years) - set(int(y) for y in ext["year"].unique()))
+    if missing_years:
+        raise ValueError(
+            f"years {missing_years} are not in the NWPP-11 extract {EXTRACT_PATH} — "
+            "rebuild it with scripts/data/build_nwpp_hydro_monthly.py --year ...; "
+            "nothing is filled here"
+        )
+    for year in years:
         e = ext[ext["year"] == year]
         piv = e.pivot_table(
             index="plant_id", columns="month", values="netgen_mwh", aggfunc="sum"
@@ -388,6 +416,8 @@ def build_budget(log: logging.Logger) -> tuple[pd.DataFrame, pd.DataFrame]:
 def build_chain(budget: pd.DataFrame) -> pd.DataFrame:
     """Join the published chain transcription to nameplate, energy and mode: NWPP-36's reach table."""
     published = pd.read_csv(CHAIN_PUBLISHED_PATH)
+    if not set(CHAIN_YEARS) <= set(budget.year.unique()):
+        raise ValueError(f"the chain reach table needs budget years {CHAIN_YEARS}")
     b23 = budget[budget.year == 2023].set_index("plant_id")
     b24 = budget[budget.year == 2024].set_index("plant_id")
     b25 = budget[budget.year == 2025].set_index("plant_id")
@@ -416,13 +446,15 @@ def build_chain(budget: pd.DataFrame) -> pd.DataFrame:
     return out.sort_values(["chain", "order_upstream_to_downstream"])
 
 
-def build_within_month_930(log: logging.Logger) -> pd.DataFrame:
+def build_within_month_930(
+    log: logging.Logger, years: tuple[int, ...] = YEARS
+) -> pd.DataFrame:
     """Per (BA, year, month) within-month shaping statistics off EIA-930 ``NG: WAT``."""
     from market_sim.data.eia930.frames import _eia_hourly_frame_filled
 
     rows: list[dict] = []
     for ba in BA_SERIES:
-        for year in YEARS:
+        for year in years:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 f = _eia_hourly_frame_filled(ba, year)
@@ -485,10 +517,29 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="skip the EIA-930 within-month statistics",
     )
+    ap.add_argument(
+        "--years",
+        type=int,
+        nargs="+",
+        default=None,
+        help="budget years to build (default: every year the NWPP-11 extract "
+        "carries). The chain reach table always uses 2023-2025.",
+    )
+    ap.add_argument(
+        "--years-930",
+        type=int,
+        nargs="+",
+        default=None,
+        help="years for the EIA-930 within-month statistics (default: the "
+        "original 2023-2025 set, so a budget-year extension does not re-derive "
+        "the 930 table)",
+    )
     args = ap.parse_args(argv)
     log = _log()
+    years = tuple(sorted(args.years)) if args.years else extract_years()
+    log.info("budget years: %s", list(years))
 
-    budget, recon = build_budget(log)
+    budget, recon = build_budget(log, years)
     chain = build_chain(budget)
     budget.to_parquet(OUT_BUDGET, index=False)
     recon.to_csv(OUT_RECON, index=False)
@@ -502,7 +553,9 @@ def main(argv: list[str] | None = None) -> int:
         len(chain),
     )
     if not args.skip_930:
-        wm = build_within_month_930(log)
+        wm = build_within_month_930(
+            log, tuple(sorted(args.years_930)) if args.years_930 else YEARS
+        )
         wm.to_csv(OUT_930, index=False)
         log.info("wrote %s", OUT_930.name)
 

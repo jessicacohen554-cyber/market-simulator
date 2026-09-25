@@ -448,3 +448,35 @@ was pruned (rule 35), with `audit_keepers` E1 run before the prune and E13 after
 - **Promotion:** promoted on the owner's standing instruction to promote a recommended candidate.
   `2026-09-24-rnwpp-inputs-span` was pruned.
 - **Records:** `docs/handoffs/{PRECOMMIT,RESULT}-nwpp-next-ferc714-partialcarry-2019-2025-2026-09-25.md`.
+
+## nwpp-next-2 — 2026-09-25 — PSEI Colstrip double-booking + non-balance repair; hydro cascade 2019–2022 (PROMOTION OPEN)
+
+- **Two arms, both registered:**
+  - `2026-09-25-nwppnext2-psei-colstrip` (A) is the keeper recipe on corrected PSEI inputs:
+    - PSEI's Colstrip share, which NWMT already books, is removed;
+    - PSEI's 2021-08 non-balance demand hours are filled from FERC 714;
+    - one member-demand builder now serves the pool total and its zonal regroup.
+  - `2026-09-25-nwppnext2h-cascade-2019` (H) is A plus the hydro cascade binding in 2019–2022, with CROHMS coverage
+    extended and τ and links frozen (rule 23).
+- **Determination:** both read NOT-YET on {fuelmix, dispatch_corr}, the same set as the keeper. 2022–2025 are
+  identical to the keeper.
+  - **2019:** CC_REGULAR +3.06 → +0.40 TWh.
+  - **2020:** CC_REGULAR +3.47 → +2.48 TWh; CT_PEAKER +1.08 → +0.78 TWh.
+  - **2020 C4 coal r: 0.720 PASS → 0.691 FAIL.** About −0.010 of that comes from the benchmark correction and
+    about −0.018 from the model.
+- **Not promoted.** One year-level gate regresses, so the owner's standing instruction does not apply. Arm H is
+  recommended, and the promotion is put to the owner (rule 31).
+- **Zero-LP findings:**
+  - mainstem coupling is not worth an LP (the NWPP-50 ruling stands);
+  - the CT_PEAKER shortfall is price/merit formation plus missing standby units;
+  - SB-status units are excluded from the fleet while the benchmark counts their output, which is systemic.
+- **Records:** `docs/handoffs/{PRECOMMIT-nwppnext2-psei-colstrip-2019-2025,PRECOMMIT-nwppnext2h-cascade-2019-2022,RESULT-nwppnext2-psei-colstrip-cascade-2019-2025}-2026-09-25.md`
+  and the four `FINDING-nwppnext2-*` docs.
+
+**Promoted 2026-09-25:** `2026-09-25-nwppnext2h-cascade-2019` is NWPP keeper #9. The owner ruled *"If structural
+integrity improves but gates regress that may still be a keeper"*, so it is promoted for structure. The 2020 C4
+coal regression (0.720 → 0.691) is reported at full magnitude.
+- It covers the full outgoing year union, 2019–2025 (rule 35(c)).
+- `audit_keepers` E1 passed before the prune. `2026-09-25-nwpp-next-ferc714-partial` and arm A
+  `2026-09-25-nwppnext2-psei-colstrip` were then pruned with `prune_iso_runs.py --force-uncite`, and the audit
+  after it passed.

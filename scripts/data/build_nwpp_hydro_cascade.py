@@ -40,6 +40,20 @@ never against a residual.
 Usage:
     python scripts/data/build_nwpp_hydro_cascade.py
     python scripts/data/build_nwpp_hydro_cascade.py --nid-national /path/nid_nation.csv
+    python scripts/data/build_nwpp_hydro_cascade.py --extend-years 2019 2020 2021 2022
+
+**Two modes, and only one of them derives anything (rule 23).** The default mode is
+the NWPP-36 derivation: τ, the band, the ``coupled`` verdicts AND the 2023-2025
+monthly rows, all measured on the DERIVE window ``2023-01-01 -> 2026-01-01``
+(pinned, so a CROHMS pull that now also carries 2019-2022 re-derives exactly what
+NWPP-36 did). ``--extend-years`` (NWPP-NEXT-2) derives NOTHING: it reads τ per
+link, the NID areas and the ``coupled`` verdicts FROZEN from the committed
+``nwpp_hydro_cascade_links.csv`` (never rewritten in this mode), measures only the
+per-plant-month rows (η, outflow / spill means, side inflow) for the named years on
+the SAME construction, and merges them into ``nwpp_hydro_cascade_monthly.csv`` with
+every committed row kept verbatim. A 2019-2022 side-inflow STOP is REPORTED in its
+row and in the log; it never re-opens a link's verdict, because new source years
+extend coverage and are not a licence to refit.
 """
 
 from __future__ import annotations
@@ -155,6 +169,12 @@ ACRE_FT_PER_KCFS_H = 82.6446  # 1 kcfs·h = 3.6e6 ft³ = 82.6446 acre-ft
 MAX_LAG_H = 72
 TRAIN_YEARS = (2023, 2024)
 CHECK_YEAR = 2025
+# The NWPP-36 derivation window: τ, the band and the 2023-2025 monthly rows are
+# measured on exactly these hours (the original pull), whatever else the hourly
+# parquet carries. Pinning it is what keeps the frozen derivation reproducible
+# after NWPP-NEXT-2 extended the pull back to 2019 (rule 23).
+DERIVE_WINDOW = ("2023-01-01", "2026-01-01")
+DERIVE_YEARS = (2023, 2024, 2025)
 R_MIN = 0.30
 CELERITY_MPH = (1.0, 30.0)
 FED_ROR_BAND_FT = (0.5, 15.0)
@@ -168,11 +188,19 @@ SENTINEL_MIN = -9000.0
 # --------------------------------------------------------------------------- #
 # Loading
 # --------------------------------------------------------------------------- #
-def load_hourly() -> dict[str, pd.DataFrame]:
-    """Return ``{station: wide frame indexed by hourly ts with one column per series}``."""
+def load_hourly(
+    window: tuple[str, str] = DERIVE_WINDOW,
+) -> dict[str, pd.DataFrame]:
+    """Return ``{station: wide frame indexed by hourly ts with one column per series}``.
+
+    ``window`` is the inclusive hourly index ``[start, end]`` every series is
+    reindexed onto; hours outside it are dropped, missing hours inside it are NaN
+    (never filled).
+    """
     raw = pd.read_parquet(HOURLY_PATH)
     raw = raw[raw["quality"] == 0]
-    full = pd.date_range("2023-01-01", "2026-01-01", freq="h")
+    full = pd.date_range(window[0], window[1], freq="h")
+    raw = raw[(raw["ts"] >= full[0]) & (raw["ts"] <= full[-1])]
     out: dict[str, pd.DataFrame] = {}
     for st, grp in raw.groupby("station"):
         wide = grp.pivot(index="ts", columns="series", values="value").reindex(full)
@@ -528,7 +556,15 @@ def measure_monthly(
     budget: dict[tuple[int, int], np.ndarray | None],
     links: pd.DataFrame,
     band: pd.DataFrame,
+    years: tuple[int, ...] = DERIVE_YEARS,
+    eta_years: tuple[int, ...] = DERIVE_YEARS,
 ) -> pd.DataFrame:
+    """Per plant-month η, flow means and side inflow for ``years`` (§4.3 / §4.4).
+
+    ``links`` supplies τ per link and ``band`` the NID surface area per station;
+    neither is modified. ``eta_years`` is the candidate set for the nearest-year
+    η substitution of a plant-month with no EIA-923 series.
+    """
     area = band.set_index("station")["area_acres"].to_dict()
     tau_by_link = {int(r.link): int(r.tau_h) for r in links.itertuples()}
     up_of: dict[str, list[tuple[str, int]]] = {}
@@ -548,12 +584,12 @@ def measure_monthly(
         arriving = None
         if st in up_of:
             arriving = sum(hourly[u][S_OUT].shift(tau) for u, tau in up_of[st])
-        for y in (2023, 2024, 2025):
+        for y in years:
             e923 = budget.get((pid, y))
             e_src_year = y
             if e923 is None:
                 # Nearest year with a series, same month (PRECOMMIT §4.3).
-                for alt in sorted((2023, 2024, 2025), key=lambda a: abs(a - y)):
+                for alt in sorted(eta_years, key=lambda a: abs(a - y)):
                     if budget.get((pid, alt)) is not None:
                         e923, e_src_year = budget[(pid, alt)], alt
                         break
@@ -639,6 +675,114 @@ def measure_monthly(
 
 
 # --------------------------------------------------------------------------- #
+# NWPP-NEXT-2: extend the monthly rows to new years, derivation FROZEN
+# --------------------------------------------------------------------------- #
+def _frozen_links_and_band(nid: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """The committed links (τ, verdicts) and the per-station NID area — read, never derived."""
+    links = pd.read_csv(OUT_LINKS)
+    nid_by_st = nid.set_index("station")
+    band = pd.DataFrame(
+        {
+            "station": list(STATIONS),
+            "area_acres": [
+                float(nid_by_st.loc[st, "Surface Area (Acres)"]) for st in STATIONS
+            ],
+        }
+    )
+    return links, band
+
+
+def extend_monthly(years: tuple[int, ...], nid: pd.DataFrame) -> pd.DataFrame:
+    """Measure the plant-month rows for ``years`` on the frozen τ / area; return them."""
+    committed = pd.read_csv(OUT_MONTHLY)
+    clash = sorted(set(years) & set(committed["year"].unique()))
+    if clash:
+        raise ValueError(
+            f"years {clash} are already in {OUT_MONTHLY.name}; --extend-years "
+            "only ADDS years (re-deriving a committed year is the default mode)"
+        )
+    raw_years = set(pd.read_parquet(HOURLY_PATH, columns=["ts"])["ts"].dt.year)
+    absent = sorted(set(years) - raw_years)
+    if absent:
+        raise ValueError(f"CROHMS hourly pull carries no rows for {absent}")
+    links, band = _frozen_links_and_band(nid)
+    budget = load_budget_923()
+    budget_years = tuple(sorted({y for (_, y) in budget}))
+    no923 = sorted(y for y in years if y not in budget_years)
+    if no923:
+        raise ValueError(
+            f"{BUDGET_PATH.name} carries no rows for {no923} — rebuild it with "
+            "build_nwpp_hydro_budget.py first; η is never filled from another year's "
+            "series wholesale"
+        )
+    window = (f"{min(years)}-01-01", f"{max(years) + 1}-01-01")
+    hourly = load_hourly(window)
+    missing_st = sorted(set(STATIONS) - set(hourly))
+    if missing_st:
+        raise ValueError(f"CROHMS pull has no series for stations {missing_st}")
+    # η substitution stays within the extension years themselves, so an
+    # extension row is never η'd from a year outside its own block.
+    return measure_monthly(
+        hourly, budget, links, band, years=tuple(years), eta_years=tuple(years)
+    )
+
+
+def merge_monthly_text(new_rows: pd.DataFrame) -> tuple[str, int]:
+    """Merge ``new_rows`` into the committed monthly csv, committed lines VERBATIM.
+
+    Ordering is the builder's own (station in ``STATIONS`` order, then year, then
+    month). Returns ``(csv text, number of committed lines preserved)``.
+    """
+    lines = OUT_MONTHLY.read_text().splitlines()
+    header, body = lines[0], lines[1:]
+    cols = header.split(",")
+    if list(new_rows.columns) != cols:
+        raise AssertionError(
+            f"extension columns {list(new_rows.columns)} != committed {cols}"
+        )
+    new_lines = new_rows.to_csv(index=False).splitlines()[1:]
+    st_rank = {st: i for i, st in enumerate(STATIONS)}
+
+    def key(line: str) -> tuple[int, int, int]:
+        f = line.split(",", 4)
+        return st_rank[f[0]], int(f[2]), int(f[3])
+
+    merged = sorted(body + new_lines, key=key)
+    return "\n".join([header] + merged) + "\n", len(body)
+
+
+def main_extend(years: tuple[int, ...], nid: pd.DataFrame) -> int:
+    """``--extend-years``: write the merged monthly csv; links csv untouched."""
+    links_bytes = OUT_LINKS.read_bytes()
+    new_rows = extend_monthly(years, nid)
+    text, n_kept = merge_monthly_text(new_rows)
+    OUT_MONTHLY.write_text(text)
+    if OUT_LINKS.read_bytes() != links_bytes:  # pragma: no cover - defensive
+        raise AssertionError("links csv changed in --extend-years mode")
+    links = pd.read_csv(OUT_LINKS)
+    coupled_d = set(links.loc[links["coupled"].astype(bool), "d_station"])
+    stops = new_rows[new_rows["side_inflow_stop"].astype(bool)]
+    logger.info(
+        "extended %s by %d plant-months for %s (%d committed rows kept verbatim); "
+        "links csv untouched (frozen: %d coupled)",
+        OUT_MONTHLY.name,
+        len(new_rows),
+        list(years),
+        n_kept,
+        len(coupled_d),
+    )
+    logger.info(
+        "side-inflow STOP months in the extension (reported, verdicts NOT re-opened): "
+        "%s; on coupled downstream plants: %s",
+        stops.groupby("station").size().to_dict(),
+        stops[stops["station"].isin(coupled_d)]
+        .groupby(["station", "year"])
+        .size()
+        .to_dict(),
+    )
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     ap.add_argument(
@@ -646,8 +790,21 @@ def main() -> int:
         default=None,
         help="NID national CSV to regenerate the committed NID rows from",
     )
+    ap.add_argument(
+        "--extend-years",
+        type=int,
+        nargs="+",
+        default=None,
+        help="NWPP-NEXT-2: ADD monthly rows for these years on the FROZEN τ / "
+        "verdicts of the committed links csv (which is not rewritten); derives "
+        "nothing (rule 23)",
+    )
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
+    if args.extend_years:
+        if args.nid_national:
+            ap.error("--extend-years reads the committed NID rows; drop --nid-national")
+        return main_extend(tuple(sorted(args.extend_years)), load_nid(None))
 
     hourly = load_hourly()
     coords = load_catalog_coords()
