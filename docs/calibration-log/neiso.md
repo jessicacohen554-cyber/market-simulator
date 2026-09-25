@@ -3557,3 +3557,7 @@ Train tier 2023–2025 **CALIBRATED** (C3c ledgered); full span **NOT-YET** on C
 2019/2021/2022 (−4.66/−3.17/−3.12 TWh) — restored coal and ST_GAS over-dispatch, open successors.
 Outgoing keeper `2026-09-22-hydro-5-neiso-ror` pruned (rule 35); year set 2020–2025 → 2019–2025.
 Record: `docs/handoffs/r-neiso/RESULT-r-neiso-2026-09-24.md`.
+
+## neiso-114 — 2026-09-25
+
+KEEPER → `2026-09-25-neiso114-coal-mustrun-measured` (arm A; R-NEISO recipe + `coal_mustrun_requires_measured_row`, zero DOF), 2019–2025, one shard per year at pinned `9db30b45`. C1 CC_REGULAR 2019 −4.66 → −3.54, 2021 −3.17 → −2.88 (FAIL → PASS), 2022 −3.12 unchanged; all other criteria PASS; train tier CALIBRATED. Root cause: NEISO CAMPD artifacts derived on the canonical 2025ER fleet, so restored coal plants took the unmeasured 45 % must-run default. Successors: Merrimack delivered coal price (2022), ST_GAS bands on the corrected class (arm B, unsolved), tranche re-derive. Outgoing keeper prune pending (classifier-denied). Record: `docs/handoffs/neiso114/RESULT-neiso114-2026-09-25.md`.
