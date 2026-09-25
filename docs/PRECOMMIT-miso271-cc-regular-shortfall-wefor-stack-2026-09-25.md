@@ -191,3 +191,25 @@ decision is the owner's (rule 31).
    lane's controls and reported.
 4. The out-of-lane items the charter lists (forecast gate-(a) row; the cross-ISO `mid_vintage_exit_carry` pairing;
    the `filter_revealed_outages` partial defect; the std-unitroute / short-coal non-reproduction). Status only.
+
+## 8. Launch record (appended after the pin; §1–§7 unchanged)
+
+Launched 2026-09-25 03:55–03:58 UTC, all 13 pinned to `40d995ba6740bf36e4ed9af6a560666322497bcd`, tagged
+`miso-271`, `shard`; auto-PR off; harness-tracked background + in-turn wait; full bundle pushed via `.gitignore`
+negation + plain `git add` (rule 34(a)).
+
+| leg | session | branch / out-dir |
+|---|---|---|
+| arm 2019 | `session_01E28nSd5t4U4x61WDjgjFZM` | `claude/miso271-arm-2019` / `miso271_arm_2019` |
+| arm 2020 | `session_01JNZ7xwtsxwbypCpSJxNs8J` | `claude/miso271-arm-2020` |
+| arm 2021 | `session_01WykdGt8RB8mrB2Ye4jvoLv` | `claude/miso271-arm-2021` |
+| arm 2022 | `session_01ULQqQgv1ZvgNoi9ADHs3v6` | `claude/miso271-arm-2022` |
+| arm 2023 | `session_01XzkUNP9ejQH3taHW2Aoqrj` | `claude/miso271-arm-2023` |
+| arm 2024 | `session_01JgubyRd3VZ5zcEzrxAFGSQ` | `claude/miso271-arm-2024` |
+| arm 2025 | `session_01U26a2StpfSSKGrhGe3xq4A` | `claude/miso271-arm-2025` |
+| ctl 2019 | `session_016trQPXPn2yYaxXHZN4LNL8` | `claude/miso271-ctl-2019` / `miso271_ctl_2019` |
+| ctl 2020 | `session_01BxdB3P1ZxGd6SBPTV2LqAk` | `claude/miso271-ctl-2020` |
+| ctl 2021 | `session_01DdunXNNtXNCQCDXDX6jwJB` | `claude/miso271-ctl-2021` |
+| ctl 2022 | `session_014FDJN4XtQCR2NJiyumGpTh` | `claude/miso271-ctl-2022` |
+| ctl 2023 | `session_016FDtMFUZKFHm3M1TjPsfXN` | `claude/miso271-ctl-2023` |
+| ctl 2024 | `session_01SYmxVDc4BC1Cvs33LKXrQW` | `claude/miso271-ctl-2024` |
