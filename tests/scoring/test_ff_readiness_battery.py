@@ -12,6 +12,8 @@ The battery and the runner guard live under ``scripts/`` (a namespace package on
 ``sys.path`` via the root conftest), so they import as ``scripts.*``.
 """
 
+import json
+
 import pytest
 
 import scripts.ff_readiness_battery as B
@@ -302,11 +304,6 @@ def test_marker_state_reflects_committed_markers():
     # the same day, `withdrawn` is EMPTY for the first time. Assertion moved
     # in the same commit as the marker
     # (docs/FINDING-nyiso209-redeclaration-and-2022-touchpoint-2026-09-06.md).
-    for iso in ("ERCOT", "NEISO", "NYISO", "PJM", "CAISO"):
-        assert B._marker_state(iso)["marker"] == "complete", iso
-    assert B._marker_state("MISO")["marker"] == "none"
-    caiso = B._marker_state("CAISO")
-    assert caiso["keeper"] == "2026-09-06-caiso-260-b1-demand"
     #
     # NYISO RE-KEYED 2026-09-07 (session nyiso-213, rule 22 D-5(b)): the
     # `complete` marker's `keeper` field tracks NYISO's CURRENT designated
@@ -341,9 +338,34 @@ def test_marker_state_reflects_committed_markers():
     # to do (nyiso-213's was corrected later by SPP-38; nyiso-202's by the merge
     # of #4516). The desync class this file keeps recording is closed here rather
     # than handed to the next lane.
+    #
+    # KEEPER IDS ARE READ FROM THE SHARDS, NOT PINNED AS LITERALS (owner ruling
+    # R-BE, director board v43, 2026-09-25; proposal
+    # docs/handoffs/FINDING-y29-promotion-provenance-2026-09-24.md §4; audit
+    # lane Y-31). Every re-key above was a promotion that had to edit this
+    # test, and several promoters skipped it. For every `complete` ISO the
+    # marker's `keeper` must equal keepers/<ISO>.json `keeper`: a promotion
+    # that re-keys the marker keeps this green, and one that forgets fails it.
+    #
+    # The `complete` set moves with the marker file: SPP IN (declared
+    # 2026-09-13, owner, session spp-40, "Complete then run"; Y-29 §1.2,
+    # confirmed R-BD); NYISO OUT (WITHDRAWN 2026-09-25 by owner ruling R-BC,
+    # the Q5 uniform rule on a NOT-YET keeper -- its fourth withdrawal; the
+    # prior entry nested whole as `withdrawn.NYISO.prior_record_complete_entry`).
+    complete = {"ERCOT", "NEISO", "PJM", "CAISO", "SPP"}
+    marker_doc = json.loads(B._MARKER_PATH.read_text())
+    assert set(marker_doc["complete"]) == complete
+    keepers_dir = B._MARKER_PATH.parent / "keepers"
+    for iso in sorted(complete):
+        state = B._marker_state(iso)
+        assert state["marker"] == "complete", iso
+        shard = json.loads((keepers_dir / f"{iso}.json").read_text())
+        assert state["keeper"] == shard["keeper"], iso
+    assert B._marker_state("MISO")["marker"] == "none"
     nyiso = B._marker_state("NYISO")
-    assert nyiso["keeper"] == "2026-09-09-nyiso-221-fuelvintage-span"
-    assert nyiso["declared"] == "2026-09-06"
+    assert nyiso["marker"] == "withdrawn"
+    assert nyiso["withdrawn"] == "2026-09-25"
+    assert nyiso["keeper"] == "2026-09-06-nyiso-202-startup-aware"
 
 
 def test_t1f_verdict_reads_ff2d_hold():

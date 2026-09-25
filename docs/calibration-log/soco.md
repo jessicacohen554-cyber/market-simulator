@@ -1529,3 +1529,18 @@ forced share 18.3 -> 20.2 %.
 renewable-capacity inputs (addition plan manifest row 9 never landed) - routed as an intake lane.
 Residual class-table CTs Dahlberg 7709 / Hartwell 54538 (1,045 MW) are an EPA<->EIA facility-id
 crosswalk defect (CAMD 7765 / 70454) - routed. Records: docs/handoffs/r-soco/.
+
+## Y-31 — 2026-09-25 — owner ruling R-BB: `2026-09-20-soco53g-prb-own-iso` DECLINED
+
+**Ruling** (director board v43, 2026-09-25, card Y-29 §2): *decline + prune*
+`2026-09-20-soco53g-prb-own-iso` — rule 31 `[R-RETAIN]` trigger (i), the owner has ruled. This
+closes the SECOND RULING SOCO-56 asked for and every SOCO promotion since SOCO-54 carried forward
+with `--keep`.
+
+- **The prune was already done.** The R-SOCO promotion (commit `adf4498a`, 2026-09-25) pruned
+  soco53g together with soco61 under rule 35. `prune_iso_runs.py --iso SOCO --dry-run` in this
+  lane shows one registered SOCO run, the keeper `2026-09-24-r-soco-corrected-inputs`, and
+  nothing to prune. No file was deleted by this lane.
+- **E13:** `audit_keepers --check` PASS, 0 failures. SOCO E13 is clean. The one SOCO warning is
+  the E11 lineage note: soco61's bundle has already been retention-pruned.
+- The ruling makes the decline explicit on the record. Git history holds the pruned run.

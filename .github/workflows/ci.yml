@@ -320,6 +320,38 @@ jobs:
       - name: check_forecast_parity
         run: python3 scripts/check_forecast_parity.py
 
+  promotion-completeness:
+    name: Promotion completeness (changed keepers)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/data/raw/
+      - name: Fetch PR base
+        run: git fetch --no-tags --depth=1 origin ${{ github.event.pull_request.base.sha }}
+      # Owner ruling R-BF (director board v43, 2026-09-25; proposal
+      # docs/handoffs/FINDING-y29-promotion-provenance-2026-09-24.md §6). The
+      # whole-tree guards (gate-(a) provenance, FR-22 parity, audit_keepers
+      # E13) all run above, yet promotion debt piled up. Each promoter left a
+      # stale gate-(a) row, a stale marker or an unpruned predecessor, and the
+      # red then showed on whichever unrelated PR ran next. This job is scoped
+      # to the ISOs whose keepers/<ISO>.json `keeper` changed against the PR
+      # base, so the failure lands on the PROMOTER's PR. For each such ISO it
+      # requires (a) gate-(a) provenance passes, (b) complete.<ISO>.keeper
+      # names the new keeper, (c) 0 FR-22 UNACCOUNTED, and (d) E13 clean.
+      # A PR that changes no keeper passes in seconds.
+      #
+      # FAILS on pull_request. Branch protection stays OFF (owner ruling R-BG),
+      # so it is advisory in effect: a red on the promoting PR, not a blocked
+      # merge. Stdlib-only, no uv sync, no LP.
+      - name: check_promotion_completeness
+        run: python3 scripts/check_promotion_completeness.py --base ${{ github.event.pull_request.base.sha }}
+
   mechanism-matrix-guard:
     name: Rule-28 mechanism-matrix guard
     runs-on: ubuntu-latest

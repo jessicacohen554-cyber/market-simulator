@@ -247,6 +247,27 @@ changes:
    a cheap CI/pre-commit guard. **Never touch another ISO's shard or status
    part in a promotion commit** — per-ISO lane isolation is what keeps
    parallel promotions conflict-free.
+4. **Promotion completeness: the same PR carries all four records** (owner
+   ruling R-BF, 2026-09-25). CI job `promotion-completeness` checks them for
+   every ISO whose keeper shard changed, and FAILS your PR if any is missing:
+   - **(a) Gate (a) re-keyed.** `frontend/data/forecast/program-status.json`
+     `isos.<ISO>.gate.a_keeper_marker` cites the new keeper and the right
+     `marker complete=… final=…`. Check with
+     `python3 scripts/check_gate_a_provenance.py --iso <ISO>`.
+   - **(b) Marker re-keyed.** If the ISO holds `complete`,
+     `calibration-complete.json` `complete.<ISO>.keeper` names the new keeper.
+     If the new keeper reads NOT-YET, raise Q5 (withdraw) with the owner
+     rather than re-keying silently.
+   - **(c) FR-22 clean.** `python3 scripts/check_forecast_parity.py --iso <ISO>`
+     shows 0 UNACCOUNTED.
+   - **(d) E13 clean.** The outgoing keeper is pruned
+     (`scripts/prune_iso_runs.py --iso <ISO>`, rule 35), so
+     `python scripts/audit_keepers.py --iso <ISO>` shows no E13 failure.
+
+   Run all four at once before pushing:
+   ```bash
+   python3 scripts/check_promotion_completeness.py --base origin/main
+   ```
 
 `build_manifest.py` never regenerates the status parts — they are committed on
 their own via `build_status.py` (above); the Pages deploy publishes the
