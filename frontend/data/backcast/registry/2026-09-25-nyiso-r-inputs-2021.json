@@ -1,0 +1,96 @@
+{
+ "id": "2026-09-25-nyiso-r-inputs-2021",
+ "label": "nyiso r inputs 2021",
+ "date": "2026-09-25",
+ "shorthand": "nyiso-r-inputs-2021",
+ "definition": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
+ "years": [
+  2021
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-09-25-nyiso-r-inputs-2021.js",
+ "bundle": "results/calibration/rnyiso_2021",
+ "holdout": {
+  "tier": "validation",
+  "year": 2021,
+  "keeper": "2026-09-24-nyiso-r-inputs-860vintage",
+  "keeperDetermination": "NOT-YET",
+  "keeperYears": [
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "holdoutDetermination": "CALIBRATED",
+  "criteria": [
+   {
+    "key": "fuelmix",
+    "label": "C1 fuel-mix by class (grid-delivered)",
+    "tier": "load-bearing",
+    "inSample": "FAIL",
+    "holdout": "PASS",
+    "verdict": "improved"
+   },
+   {
+    "key": "price_tail",
+    "label": "C3c price tail / scarcity (RT hourly)",
+    "tier": "supporting",
+    "inSample": "FAIL",
+    "holdout": "PASS",
+    "verdict": "improved"
+   },
+   {
+    "key": "dispatch_corr",
+    "label": "C4 fleet hourly dispatch correlation",
+    "tier": "supporting",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "forced_share",
+    "label": "C8 forced-energy share (D-2)",
+    "tier": "protective",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "governance",
+    "label": "C6 governance gate",
+    "tier": "protective",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "price_mean",
+    "label": "C3a mean LMP",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "price_shape",
+    "label": "C3b price duration/shape",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "sysvol",
+    "label": "C2 system volume (gas/coal families)",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   }
+  ],
+  "nDegraded": 0,
+  "nCarried": 0,
+  "tierCaveat": "Validation tier: ITERABLE model-SELECTION evidence. This is NOT a certified out-of-sample skill number and must never be quoted as one \u2014 the year may be re-spent after the open availability-envelope defect lands. The touch-once locked test (2019 / H1-2026) is NOT spent here.",
+  "envelopeCaveat": "Availability-envelope parity: 2021 reads the SAME uniform CAMPD outage extract as the keeper's 2022-2025 (campd-unit-outages-perunitmerithour-NYISO.csv, one 2019-2026 pass, sha256 ee778a87...aa21fa, byte-identical to the keeper's resolved input) and the same thermal tranches (a3bbd6ef...d8376). The only 2021-specific inputs are the year's own EIA-860 vintage and eGRID/CAMPD heat rates (the keeper recipe's F1 posture) and NYISO_reserve_requirements_2021.csv (#6587; SENY/NYC LRR regime switch at the sourced 2021-06-17 effective date). Recipe identity is machine-checked (gen_touchpoint_attestation: 0 differing meta keys). docs/PRECOMMIT-r-nyiso-2021-2026-09-25.md."
+ }
+}

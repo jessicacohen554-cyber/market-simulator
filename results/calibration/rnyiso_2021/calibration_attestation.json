@@ -1,0 +1,235 @@
+{
+  "schema": "calibration-attestation/v1",
+  "free_parameters": {
+    "schema": "dof-ledger/v1",
+    "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+    "n_entries": 8,
+    "n_residual": 6,
+    "entries": [
+      {
+        "name": "offer_curve_by_group",
+        "where": "run_config.scenario_config.offer_curve_by_group",
+        "identification": "residual",
+        "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+        "value": {
+          "CC_CHP": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak",
+            "phys_committed",
+            "phys_econ_high",
+            "phys_econ_low",
+            "phys_peak"
+          ],
+          "CC_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CC_REGULAR": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak",
+            "phys_committed",
+            "phys_econ_high",
+            "phys_econ_low",
+            "phys_peak"
+          ],
+          "COAL": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_BIT": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_LIGNITE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_PRB": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_WC": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "CT_CHP": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "CT_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CT_PEAKER": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak",
+            "phys_committed",
+            "phys_econ_high",
+            "phys_econ_low",
+            "phys_peak"
+          ],
+          "ST_GAS": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak",
+            "phys_committed",
+            "phys_econ_high",
+            "phys_econ_low",
+            "phys_peak"
+          ],
+          "ST_GAS_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ]
+        },
+        "n_scalars": 88,
+        "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page \u00b7 NYISO B-NYI-1/C-13: CC_REGULAR econ_high de-leaked 1.21 -> 1.0 (ERCOT cross-borrowed markup removed); the exposed C3a hole is missing NYISO reserve/scarcity price formation, not a CC markup \u2014 open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1344"
+      },
+      {
+        "name": "offer_curve_committed_below_floor[NYISO]",
+        "where": "run_config.scenario_config.offer_curve_by_group[*].committed",
+        "identification": "residual",
+        "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+        "value": {
+          "CT_PEAKER": 0.843
+        },
+        "n_scalars": 1,
+        "source": "committed-tranche multiplier(s) below the audit \u00a72 0.85 physical-floor flag with no written rationale in the config \u2014 pulled out of the R6 bulk offer-curve population per plan \u00a72.1 (docs/handoffs/scalar-remediation-plan-2026-07.md)",
+        "root_cause": "open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1302 (per-ISO evening-merit-style diagnosis before any value is touched \u2014 rules #1/#18/#19/#26 apply, no blanket fix)"
+      },
+      {
+        "name": "offer_curve_smoothing",
+        "where": "run_config.scenario_config.offer_curve_smoothing_*",
+        "identification": "residual",
+        "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+        "value": {
+          "offer_curve_smoothing_n": 6,
+          "offer_curve_smoothing_exp": 1.0
+        },
+        "n_scalars": 2,
+        "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "wefor_multiplier",
+        "where": "run_config.scenario_config.wefor_multiplier",
+        "identification": "residual",
+        "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+        "value": 0.7,
+        "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+        "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "reliability_floor coefficients",
+        "where": "data/raw/reference/reliability_floor_coeffs_NYISO.csv",
+        "identification": "measured-physical",
+        "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+        "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+        "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+      },
+      {
+        "name": "NYISO_LOCAL_SELFSUPPLY_FRAC['Long_Island']",
+        "where": "constants.py NYISO_LOCAL_SELFSUPPLY_FRAC",
+        "identification": "residual",
+        "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+        "value": 0.45,
+        "source": "LI self-supply floor set 'a touch below' the 2023 realized share ~0.48 (audit C-17; W1d marker) \u2014 the LMIC rule is market design but the fraction is outcome-anchored",
+        "root_cause": "audit C-17 / B-NYI-1: the published Zone-K LCR is now on disk (data/raw/capacity-deliverability/nyiso/nyiso.csv, value_pu 1.052/1.053/1.065) but it is a PEAK-capacity ratio, while this is an all-hours energy self-supply fraction \u2014 a rule-14 boundary mismatch: substituting the LCR% (~1.05) or the TSL-implied ~0.94 peak fraction over-forces ~2x the physical LI generation, and any scalar reproducing ~0.45 requires a load-duration haircut tuned to the realized share (rule-12 pin). The faithful fix is a peak-capacity/TSL MECHANISM, not a scalar re-ground; 0.45 left in place \u2014 open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1345"
+      },
+      {
+        "name": "campd_ct_run_lengths_NYISO.csv (fast-start v3 horizon)",
+        "where": "data/raw/_processed-legacy/campd_ct_run_lengths_NYISO.csv via fleet.campd_ct_run_lengths",
+        "identification": "measured-physical",
+        "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+        "source": "EPA CAMPD unit-level hourly grossLoad start-to-stop run blocks (simple-cycle CT units, pooled 2023-2025), frozen scripts/data/derive_campd_ct_run_lengths.py; start cost is the published NREL/SR-5500-55433 CT_STARTUP_PARAMS (constants.py)",
+        "note": "re-derive trigger is a source-data change only (rule 23), never a residual; representation bound: monthly-granularity amortization (compute_monthly_markup), no within-day run-length variation"
+      },
+      {
+        "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[NYISO]",
+        "where": "interchange_config.py per-ISO seam supply-curve ladders",
+        "identification": "residual",
+        "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
+        "source": "fitted seam price/volume ladders (audit C-6/L7/L8); CAISO's keeper supersedes the fitted ladder with measured hub prices on the binding path but the static ladder remains the fallback; NEISO closed this item (see the NEISO-only entry, measured-physical), MISO closes it under miso_seam_measured_ladder and PJM under pjm_seam_measured_ladder (their own measured-physical rows) \u2014 remaining scope for this item is NYISO/CAISO's static ladder (and the MISO/PJM formula seams only when their measured ladders are off)",
+        "root_cause": "audit C-6/#1350 open item: replace year-keyed rungs with measured hub prices / published wheeling costs per seam, following the NEISO precedent (scripts/data/derive_neiso_import_tranches.py); identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      }
+    ]
+  },
+  "exceptions": [],
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "rule-22 validation-tier TOUCHPOINT for NYISO [2021] \u2014 a frozen-recipe replay of the designated keeper 2026-09-24-nyiso-r-inputs-860vintage (rnyiso_span) through the sanctioned replay_keeper channel (the keeper bundle's own meta.json supplies every solve kwarg, so the recipe is reproduced rather than re-expressed flag-by-flag). RECIPE IDENTITY IS COMPUTED, NOT ASSERTED: scripts/gen_touchpoint_attestation.py compared every shared meta.json key and found ZERO differences outside the provenance set (run stamps, the solve span, and the per-year Henry Hub actual, which is a year-scoped measured input rather than a recipe knob) \u2014 the generator refuses to write this file otherwise. ZERO free parameters introduced or moved, so the rule-20 [R-DOF] ledger, the disclosures and the exceptions ledger carry from the keeper unchanged and this run spends NO new ledger slot. NOTHING WAS TUNED FOR, AGAINST, OR IN RESPONSE TO the held-out year(s): the recipe was frozen before the solve and no parameter is identified against them (rule 22 step 3 \u2014 fitting happens only on 2023-2025). STATED LIMIT ON THE COMPARISON: the keeper solved at git e95436d5 and this replay at 24cf43280, and 0 solve kwarg(s) were added to the surface in between; each is verified here to sit at its ScenarioConfig default (a non-default would be a hard error), but the in-sample column this touchpoint is read against was measured on the earlier HEAD. Any in-sample-to-holdout delta should be read with that drift in mind unless a same-HEAD in-sample control is registered alongside. VALIDATION-TIER RESULT: ITERABLE model-SELECTION evidence, NEVER a certified out-of-sample skill number."
+  },
+  "touchpoint": {
+    "tier": "validation",
+    "holdout_years": [
+      2021
+    ],
+    "keeper_run_id": "2026-09-24-nyiso-r-inputs-860vintage",
+    "keeper_bundle": "results/calibration/rnyiso_span",
+    "keeper_git_sha": "e95436d5",
+    "touchpoint_git_sha": "24cf43280",
+    "recipe_identity": "PASS \u2014 0 differing shared meta.json keys outside the provenance set",
+    "declared_degradations": null,
+    "declared_degradation_reason": null,
+    "carried_sections": [
+      "free_parameters",
+      "exceptions"
+    ],
+    "solve_surface_added_since_keeper": [],
+    "solve_surface_removed_since_keeper": [
+      "composed_from"
+    ],
+    "added_kwargs_all_at_scenario_default": true,
+    "supersedes": null,
+    "generator": "scripts/gen_touchpoint_attestation.py"
+  }
+}
