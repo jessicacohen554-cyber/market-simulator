@@ -1,0 +1,135 @@
+{
+ "units": [
+  {
+   "cap": 86.0,
+   "avg_committed": 30.2167,
+   "avg_econ_low": 19.8769,
+   "avg_econ_high": 11.1149,
+   "marg_committed": 8.7718,
+   "marg_econ_low": 9.6749,
+   "marg_econ_high": 10.3974,
+   "uid": "546_5",
+   "plant": 546,
+   "hours": 3544,
+   "own_avg_hr": 11.6026
+  },
+  {
+   "cap": 370.98,
+   "avg_committed": 30.2105,
+   "avg_econ_low": 11.7239,
+   "avg_econ_high": 9.8354,
+   "marg_committed": 9.0203,
+   "marg_econ_low": 10.1845,
+   "marg_econ_high": 11.1159,
+   "uid": "546_6",
+   "plant": 546,
+   "hours": 1218,
+   "own_avg_hr": 11.6987
+  },
+  {
+   "cap": 121.0,
+   "avg_committed": 12.0143,
+   "avg_econ_low": 10.6286,
+   "avg_econ_high": 10.0739,
+   "marg_committed": 9.7101,
+   "marg_econ_low": 9.9261,
+   "marg_econ_high": 10.0989,
+   "uid": "562_2",
+   "plant": 562,
+   "hours": 7591,
+   "own_avg_hr": 10.1049
+  },
+  {
+   "cap": 228.0,
+   "avg_committed": 26.8111,
+   "avg_econ_low": 10.6078,
+   "avg_econ_high": 9.7088,
+   "marg_committed": 6.7678,
+   "marg_econ_low": 8.2724,
+   "marg_econ_high": 9.4761,
+   "uid": "562_3",
+   "plant": 562,
+   "hours": 4286,
+   "own_avg_hr": 10.0801
+  },
+  {
+   "cap": 395.62,
+   "avg_committed": 24.7073,
+   "avg_econ_low": 12.5748,
+   "avg_econ_high": 11.7148,
+   "marg_committed": 8.7996,
+   "marg_econ_low": 12.1344,
+   "marg_econ_high": 14.8022,
+   "uid": "562_4",
+   "plant": 562,
+   "hours": 1147,
+   "own_avg_hr": 13.0576
+  },
+  {
+   "cap": 460.0,
+   "avg_committed": 27.1908,
+   "avg_econ_low": 11.3148,
+   "avg_econ_high": 10.6715,
+   "marg_committed": 6.3802,
+   "marg_econ_low": 9.4518,
+   "marg_econ_high": 11.9091,
+   "uid": "6156_NHB1",
+   "plant": 6156,
+   "hours": 1912,
+   "own_avg_hr": 11.1047
+  },
+  {
+   "cap": 419.0,
+   "avg_committed": 26.1235,
+   "avg_econ_low": 13.774,
+   "avg_econ_high": 11.6364,
+   "marg_committed": 9.2932,
+   "marg_econ_low": 10.6222,
+   "marg_econ_high": 11.6854,
+   "uid": "8002_1",
+   "plant": 8002,
+   "hours": 2305,
+   "own_avg_hr": 12.1376
+  }
+ ],
+ "montville_only": {
+  "n_units": 2,
+  "class_base_hr": 11.681,
+  "class_committed_p50": 0.768,
+  "own_committed_p50": 0.768,
+  "class_econ_low_p50": 0.864,
+  "own_econ_low_p50": 0.864,
+  "class_econ_high_p50": 0.94,
+  "own_econ_high_p50": 0.94,
+  "class_bands_x_reach": [
+   0.939,
+   1.057,
+   1.15
+  ],
+  "own_bands_x_reach": [
+   0.939,
+   1.057,
+   1.15
+  ]
+ },
+ "corrected_class": {
+  "n_units": 7,
+  "class_base_hr": 11.64,
+  "class_committed_p50": 0.759,
+  "own_committed_p50": 0.727,
+  "class_econ_low_p50": 0.871,
+  "own_econ_low_p50": 0.872,
+  "class_econ_high_p50": 1.005,
+  "own_econ_high_p50": 0.983,
+  "class_bands_x_reach": [
+   0.928,
+   1.065,
+   1.229
+  ],
+  "own_bands_x_reach": [
+   0.889,
+   1.066,
+   1.202
+  ]
+ }
+}
