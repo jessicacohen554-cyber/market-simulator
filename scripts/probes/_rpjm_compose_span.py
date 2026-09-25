@@ -51,9 +51,14 @@ MUST_BE_TRUE = (
 )
 
 
+#: Incumbent bundles replayed per year: (<=2022, >=2023). R-PJM replayed the
+#: h19 keeper; R-PJM-2 (2026-09-25) replays the h22 RGGI keeper (--incumbent).
+INCUMBENT = ["pjm_h19_dbs_touchpoint", "pjm_h19_dbs_span"]
+
+
 def _incumbent(year: int) -> Path:
     """Return the incumbent bundle whose recipe year ``year`` replays."""
-    return CAL / ("pjm_h19_dbs_touchpoint" if year <= 2022 else "pjm_h19_dbs_span")
+    return CAL / (INCUMBENT[0] if year <= 2022 else INCUMBENT[1])
 
 
 def check_recipes(legs: dict[str, list[int]]) -> None:
@@ -128,6 +133,12 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--leg", action="append", required=True, help="YEAR=bundle_name")
     ap.add_argument("--out", required=True)
+    ap.add_argument(
+        "--incumbent",
+        nargs=2,
+        metavar=("EARLY", "LATE"),
+        help="incumbent bundle names for <=2022 and >=2023 years",
+    )
     args = ap.parse_args()
     legs: dict[str, list[int]] = {}
     for spec in args.leg:
@@ -135,6 +146,8 @@ def main() -> int:
         legs[name] = sorted(int(y) for y in ys.split(","))
     out = Path(args.out)
     out = out if out.is_absolute() else REPO / out
+    if args.incumbent:
+        INCUMBENT[:] = args.incumbent
     check_recipes(legs)
     compose(legs, out)
     years = sorted({y for ys in legs.values() for y in ys})
