@@ -291,11 +291,15 @@ CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     # 2019-2025 (``build_nwpp_ba_hourly_from_balance.py --all-nwpp --year
     # 2019..2025``, zero reconciliation residual, 2023-2025 rows
     # byte-identical), which is exactly the NWPP-11-class derive named above.
-    # 2020 is deliberately ABSENT: PSEI's ``Demand (Adjusted)`` is missing for
-    # 8,659 of 8,784 hours of 2020 in EIA's own BALANCE files, and the pool
-    # frame's member fill would interpolate 101 points into a fabricated
-    # series (rule 13). It returns when a measured PSEI 2020 load lands.
-    "NWPP": (2019, 2021, 2022, 2023, 2024, 2025),
+    # 2020 ADDED (lane NWPP-NEXT, 2026-09-25): PSEI's ``Demand (Adjusted)``
+    # is missing for 8,659 of 8,784 hours of 2020 in EIA's own BALANCE files.
+    # The measured PSEI load has now landed — FERC Form 714 Part III Schedule 2
+    # (``data/raw/ferc-714/``) — and the pool frame's gap guard fills the hole
+    # from it, reconciled to PSEI's own 2020 EIA-930 basis (lag -1 h, scale
+    # 1.1905 over 101 overlapping hours), and fills PSEI's net generation from
+    # its own fuel columns. A hole no measured substitute closes now REFUSES the
+    # pool instead of being interpolated (``frames._pool_hourly_frame``).
+    "NWPP": (2019, 2020, 2021, 2022, 2023, 2024, 2025),
     # SOCO (registered 2026-09-14 lane SOCO-20; this block landed 2026-09-16 by
     # lane SOCO-31 for 2023-2025, the span the EIA-930 extract then carried).
     # Widened to 2019-2025 by lane I-SOCO (2026-09-24, owner instruction: every

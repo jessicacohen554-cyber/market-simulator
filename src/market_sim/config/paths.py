@@ -172,6 +172,10 @@ def resolve_backcast_eia860_vintage(
 
 
 EIA_930_DIR: Path = RAW_DATA_DIR / "eia-930"
+# FERC Form 714 Part III Schedule 2 hourly planning-area demand, per respondent
+# (PUDL ``out_ferc714__hourly_planning_area_demand``). The measured substitute
+# for an NWPP pool member whose EIA-930 demand is missing (lane NWPP-NEXT).
+FERC_714_DIR: Path = RAW_DATA_DIR / "ferc-714"
 ZONE_DEMAND_DIR: Path = RAW_DATA_DIR / "zone-specific-demand"
 # PJM Day-Ahead energy market offers from DataMiner2 (energy_market_offers feed).
 # Monthly raw parquets: pjm_energy_offers_YYYY_MM.parquet.  Files are gitignored
