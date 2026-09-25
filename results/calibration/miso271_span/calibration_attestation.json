@@ -683,6 +683,11 @@
       "2025": "f4d4966868124da9ea4836484d0983e953e3f275"
     },
     "dof_added": 0,
-    "multipliers": "unchanged from the keeper (offer_curve_by_group sha c5ab11d9b26d2abf)"
+    "multipliers": "unchanged from the keeper (offer_curve_by_group sha c5ab11d9b26d2abf)",
+    "promotion": {
+      "ruling": "Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper..",
+      "date": "2026-09-25",
+      "superseded": "2026-09-24-rmiso-arm-b-mid"
+    }
   }
 }

@@ -83,3 +83,20 @@ The matrix cell `wefor_residual` is updated to **O** (tested, recommended, promo
 **Where the bytes are:** the registered composite (slim bundle, `hourly/` sidecars, attestation, diagnostics, registry sidecar, run payload) lands on `main` with this lane's PR, so promoting from there costs **zero re-solves**. The per-year legs with `dispatch/` are on this session's local disk only, gitignored; shard SHAs are in the attestation as provenance.
 
 All 13 shards are archived.
+
+## 7. Promotion executed (rule 35) — 2026-09-25
+
+Owner ruling, repeated after §6, verbatim: *"Is this a recommended keeper candidate? If so plz promote. If
+structural integrity improves but gates regress that may still be a keeper.."* On that instruction the keeper-shard edit was retried and went through.
+
+1. **Year set before delete:** outgoing {2019–2025}; incoming {2019–2025}. Covered (rule 35(c)).
+2. **Promote:** `keepers/MISO.json` → `2026-09-25-miso-271-wefor-stack`.
+   - Both `config_partition` tiers were re-keyed.
+   - The ISO headline was re-verified on the live scorer: **CALIBRATED** (train 8/7/1/0).
+   - `status/MISO.js` was rebuilt, and now reads **MISO: CALIBRATED**.
+   - Attestation stamped with the ruling. Matrix keeper/gates stamp updated; `wefor_residual` O → **K**; §5.4 header updated.
+3. **Verify:** `audit_keepers --iso MISO` resolved the incoming keeper.
+4. **Delete:** `prune_iso_runs.py --iso MISO --force-uncite` removed `rmiso_b_span` together with its sidecar and payload. Git history holds them.
+5. **After:** `audit_keepers` PASS 0/0.
+   - Registry parity has **no non-local RED**. The only unmapped dirs are this session's gitignored per-year legs `miso271_{arm,ctl}_<Y>` on local disk (rule 31).
+   - Not done: the forecast gate-(a) row in `program-status.json` still names miso-268. That is a forecast-lane file.
