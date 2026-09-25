@@ -88,6 +88,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
+from market_sim.config.plant_taxonomy import artifact_class_array  # noqa: E402
 from market_sim.data.floor_mechanisms import (  # noqa: E402
     D2_EXEMPT_MECHS,
     MECH_CAISO_GAS_COMMITMENT_FLOOR,
@@ -3127,7 +3128,15 @@ def aggregate_floors_by_plant(
     keep = plant_code > 0
     pos = np.clip(np.asarray(arrays["min_gen"], dtype=float)[keep], 0.0, None)
     mech = np.asarray(arrays["mechanism"])[keep]
-    groups = np.asarray(arrays["plant_group"]).astype(str)[keep]
+    # Class FAMILY vote (plant_taxonomy.artifact_class_array): the D-2 / D-4
+    # forced share, class denominator and rule-20 materiality are measured on
+    # ALL coal as one class, exactly as when the fleet carried the bare COAL
+    # group. Since COAL-SUB (2026-09-25) a floors npz written by a new solve
+    # labels coal by subclass while a committed one says COAL; folding both to
+    # the family keeps C8 byte-identical across old and new bundles. (Scoring
+    # C8 per coal SUBCLASS instead would be a rubric change — an owner ruling,
+    # not a relabel.)
+    groups = artifact_class_array(np.asarray(arrays["plant_group"]).astype(str)[keep])
     pc = plant_code[keep]
     order = np.argsort(pc, kind="stable")
     pos, mech, groups, pc = pos[order], mech[order], groups[order], pc[order]
@@ -3190,7 +3199,9 @@ def aggregate_floors_by_plant(
         floored = pos_d.max(axis=1) > D2_FLOOR_MIN_MW
         if floored.any():
             uids = np.asarray(arrays["unit_ids"]).astype(str)[dropped][floored]
-            groups_d = np.asarray(arrays["plant_group"]).astype(str)[dropped][floored]
+            groups_d = artifact_class_array(
+                np.asarray(arrays["plant_group"]).astype(str)[dropped][floored]
+            )
             mech_d = np.asarray(arrays["mechanism"])[dropped][floored].copy()
             pos_f = pos_d[floored]
             mech_d[pos_f <= 0.0] = 0

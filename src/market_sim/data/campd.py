@@ -39,7 +39,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.paths import RAW_DATA_DIR
-from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY
+from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY, artifact_class
 
 logger = logging.getLogger(__name__)
 
@@ -988,7 +988,9 @@ def compute_parasitic_factors(
         raw = net / gross if gross > 0.0 and net > 0.0 else float("nan")
         group = groups.get(int(plant_id), "")
         if np.isnan(raw) or raw < _PARASITIC_MIN or raw > _PARASITIC_MAX:
-            pct = DEFAULT_PARASITIC_LOAD_PCT.get(group, _DEFAULT_PARASITIC_LOAD_PCT)
+            pct = DEFAULT_PARASITIC_LOAD_PCT.get(
+                artifact_class(group), _DEFAULT_PARASITIC_LOAD_PCT
+            )
             factor = 1.0 - pct
             source = "class_default"
             flag = "no_net" if np.isnan(raw) else "out_of_band"

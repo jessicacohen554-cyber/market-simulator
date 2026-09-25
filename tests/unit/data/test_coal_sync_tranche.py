@@ -25,9 +25,9 @@ ZONES = ["AEP"]
 
 
 def _coal_row(code: int, name: str) -> dict:
-    """One synthetic COAL bin row (one plant) at a 27% online-Pmin floor."""
+    """One synthetic coal (COAL_PRB) bin row (one plant) at a 27% online-Pmin floor."""
     return {
-        "Plant_Group": "COAL",
+        "Plant_Group": "COAL_PRB",
         "ERCOT_Zone": "AEP",
         "Bin_Number": 1,
         "Bin_Label": name,
@@ -85,7 +85,7 @@ class TestFuelFrac(unittest.TestCase):
             zone="X",
             fuel_type="coal",
             pmax_mw=100,
-            plant_group="COAL",
+            plant_group="COAL_PRB",
         )
         self.assertEqual(
             campd_tranche_fuel_frac(g, {"bituminous": 0.9}, {2832: 0.0}), 1.0
@@ -98,7 +98,7 @@ class TestFuelFrac(unittest.TestCase):
             zone="X",
             fuel_type="coal",
             pmax_mw=100,
-            plant_group="COAL",
+            plant_group="COAL_PRB",
         )
         self.assertEqual(campd_tranche_fuel_frac(g, {"bituminous": 0.9}, None), 0.0)
 
@@ -113,7 +113,7 @@ class TestCommittedTakeorpayBit(unittest.TestCase):
             zone="X",
             fuel_type="coal",
             pmax_mw=100,
-            plant_group="COAL",
+            plant_group="COAL_PRB",
             plant_code=pc,
             coal_supply=supply,
         )
@@ -202,7 +202,7 @@ class TestCommittedTakeorpayRegulated(unittest.TestCase):
             zone="X",
             fuel_type="coal",
             pmax_mw=100,
-            plant_group="COAL",
+            plant_group="COAL_PRB",
             plant_code=pc,
             coal_supply=supply,
         )
@@ -379,7 +379,7 @@ class TestRamp10(unittest.TestCase):
                 zone="X",
                 fuel_type="coal",
                 pmax_mw=1000,
-                plant_group="COAL",
+                plant_group="COAL_PRB",
             ),
             Generator(
                 unit_id="CT_b",
@@ -399,7 +399,7 @@ class TestRamp10(unittest.TestCase):
             ),
         ]
         r = _ramp10_capability(gens, np.array([1000.0, 200.0, 1300.0]))
-        self.assertAlmostEqual(r[0], RAMP10_FRAC_BY_GROUP["COAL"] * 1000.0)
+        self.assertAlmostEqual(r[0], RAMP10_FRAC_BY_GROUP["COAL_PRB"] * 1000.0)
         self.assertAlmostEqual(r[1], RAMP10_FRAC_BY_GROUP["CT_PEAKER"] * 200.0)
         self.assertEqual(r[2], 0.0)  # nuclear carries no upward reserve
 
@@ -425,7 +425,7 @@ class TestCommittedTakeorpaySunkFixed(unittest.TestCase):
             zone="X",
             fuel_type="coal",
             pmax_mw=100,
-            plant_group="COAL",
+            plant_group="COAL_PRB",
             plant_code=pc,
             coal_supply=supply,
         )
@@ -520,7 +520,7 @@ class TestPrbCommittedDispatchable(unittest.TestCase):
             zone="X",
             fuel_type="coal",
             pmax_mw=100,
-            plant_group="COAL",
+            plant_group="COAL_PRB",
             plant_code=pc,
             coal_supply=supply,
         )

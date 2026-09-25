@@ -15,6 +15,7 @@ Big Cajun 2-1 / Warrick-2), byte-inertness with the flag off, the exit
 timing through effective_cod, and the gated coal supply registry.
 """
 
+from market_sim.config.plant_taxonomy import COAL_CLASSES
 import unittest
 
 from market_sim.config.iso_configs import get_iso_config
@@ -158,7 +159,7 @@ class TestExitCohortBinning(unittest.TestCase):
             mode="backcast", weather_year=2023, partial_plant_exit_carry=True
         )
         bins = fleet_to_bins(self.channel, "MISO", cfg)
-        coal = bins[bins["Plant_Group"] == "COAL"]
+        coal = bins[bins["Plant_Group"].isin(COAL_CLASSES)]
         # Sherco-2's cohort: its own row, its own retirement.
         sherco = coal[(coal["Plant_Code"] == 6090) & (coal["Retirement_Year"].notna())]
         self.assertEqual(len(sherco), 1)

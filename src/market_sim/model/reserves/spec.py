@@ -18,7 +18,11 @@ from typing import Optional
 import numpy as np
 
 from market_sim.config.constants import ERCOT_AS_PLAN_HOLD_EPS, MISO_RPE_DEMAND_VALUE
-from market_sim.config.plant_taxonomy import COAL_CLASSES, artifact_class
+from market_sim.config.plant_taxonomy import (
+    COAL_CLASSES,
+    artifact_class,
+    artifact_class_array,
+)
 from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
 
 logger = logging.getLogger(__name__)
@@ -2125,8 +2129,11 @@ def _ercot_multiproduct_design(
             env_classes = ercot_online_capacity_envelope_classes(config)
             plant_group = getattr(fleet_arrays, "plant_group", None)
             if plant_group is not None:
+                # The envelope tables are keyed by class FAMILY (coal = the
+                # family token): read the fleet's coal subclasses through it
+                # so coal stays eligible as before COAL-SUB (2026-09-25).
                 online_capacity_pricing_elig = responsive & np.isin(
-                    np.asarray(plant_group), sorted(env_classes)
+                    artifact_class_array(plant_group), sorted(env_classes)
                 )
 
     # Storage AS duration gate (config.ercot_storage_as_duration_gate): the

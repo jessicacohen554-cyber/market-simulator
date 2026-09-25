@@ -77,8 +77,10 @@ class TestOperand:
 
     def test_every_coal_class_reads_the_single_COAL_row(self):
         """The artifact carries ONE COAL row, so no per-supply value exists."""
+        # Keys are the four model subclasses (COAL-SUB: no bare COAL class);
+        # the VALUE is the artifact's single coal-family row.
         coal = {c for c in _COMMITTED_MEASURED_ROW if c.startswith("COAL")}
-        assert coal == {"COAL", "COAL_BIT", "COAL_PRB", "COAL_LIGNITE", "COAL_WC"}
+        assert coal == {"COAL_BIT", "COAL_PRB", "COAL_LIGNITE", "COAL_WC"}
         assert {_COMMITTED_MEASURED_ROW[c] for c in coal} == {"COAL"}
 
     def test_pjm_operands_reproduce_the_committed_artifact(self):

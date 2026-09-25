@@ -16,6 +16,7 @@ from unittest import mock
 import numpy as np
 import pandas as pd
 
+from market_sim.config.plant_taxonomy import artifact_class
 from market_sim.config.constants import MIN_STABLE_PCT_PHYSICAL
 from market_sim.config.iso_configs import (
     NYISO_PEAK_WINDOW_FLOORS_OFF,
@@ -46,7 +47,9 @@ _LOADER = "market_sim.data.eia_loader.iso_zone_tmax"
 _FLEET_SPEC = [
     ("st", "gas_st", "ST_GAS", 100.0, 10.0),
     ("ct", "gas_ct", "CT_PEAKER", 80.0, 11.0),
-    ("coal", "coal", "COAL", 300.0, 9.5),
+    # A coal unit carries its subclass (COAL-SUB); the registry limbs below
+    # name the coal FAMILY token "COAL", which spans every subclass.
+    ("coal", "coal", "COAL_BIT", 300.0, 9.5),
     ("cc", "gas_cc", "CC_REGULAR", 200.0, 7.0),
     ("oil", "oil", "oil", 60.0, 12.0),
 ]
@@ -68,7 +71,9 @@ def _build_fleet(hours, pmin_mw=0.0):
         for uid, fuel, grp, pmax, hr in _FLEET_SPEC
     ]
     fa = generators_to_fleet_arrays(gens, ["Z"], hours=hours)
-    rows = {g.plant_group: i for i, g in enumerate(gens)}
+    # Keyed by class FAMILY (plant_taxonomy.artifact_class), the vocabulary the
+    # registry limbs use: rows["COAL"] is the COAL_BIT unit.
+    rows = {artifact_class(g.plant_group): i for i, g in enumerate(gens)}
     return fa, rows
 
 

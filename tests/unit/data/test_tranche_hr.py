@@ -233,7 +233,7 @@ class TestCoalPaths(unittest.TestCase):
         fleet, _ = bins_to_fleet(
             _bins(
                 _bin_row(
-                    Plant_Group="COAL",
+                    Plant_Group="COAL_PRB",
                     hr_weighted=9.5,
                     hr_mc=9.5 * 1.15,
                     hr_econ=9.5,

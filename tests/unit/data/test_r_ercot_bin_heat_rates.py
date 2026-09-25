@@ -18,7 +18,7 @@ def _detail() -> pd.DataFrame:
     return pd.DataFrame(
         {
             "Plant_Code": [1, 2, 3, 4, 5],
-            "Plant_Group": ["COAL", "CC_REGULAR", "CT_PEAKER", "CC_CHP", "ST_GAS"],
+            "Plant_Group": ["COAL_PRB", "CC_REGULAR", "CT_PEAKER", "CC_CHP", "ST_GAS"],
             "Plant_Avg_HR_MMBtu_MWh": [10.0, 7.0, float("nan"), 6.0, float("nan")],
         }
     )

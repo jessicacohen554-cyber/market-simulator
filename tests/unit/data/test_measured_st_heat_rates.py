@@ -25,6 +25,7 @@ plant's own model boiler rows by descending capacity and keeps only the units
 whose partner is ``ST_GAS``.
 """
 
+from market_sim.config.plant_taxonomy import COAL_CLASSES
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -430,7 +431,7 @@ class TestFleetSeam(unittest.TestCase):
         loaded = self._load(True)
         coal_group, coal_hr = loaded["26_5"]
         gas_group, gas_hr = loaded["26_1"]
-        self.assertEqual(coal_group, "COAL")
+        self.assertIn(coal_group, COAL_CLASSES)
         self.assertEqual(gas_group, "ST_GAS")
         self.assertAlmostEqual(gas_hr, measured[26], places=3)
         self.assertAlmostEqual(coal_hr, 11.5505, places=3)

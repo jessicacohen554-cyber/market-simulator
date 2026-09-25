@@ -430,7 +430,9 @@ def _min_stable_pct(plant_class: str) -> float:
     if plant_class in MIN_STABLE_PCT_PHYSICAL:
         return MIN_STABLE_PCT_PHYSICAL[plant_class]
     if plant_class.startswith("COAL"):
-        return MIN_STABLE_PCT_PHYSICAL["COAL"]
+        # The coal family token (and any coal subclass): every coal subclass
+        # carries the one coal value (COAL-SUB, 2026-09-25).
+        return MIN_STABLE_PCT_PHYSICAL["COAL_BIT"]
     return 0.0
 
 

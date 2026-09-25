@@ -243,7 +243,7 @@ class TestIsoScope(unittest.TestCase):
         for flag in (False, True):
             by_id = {g.unit_id: g for g in _run("MISO", flag=flag)}
             self.assertEqual(by_id["1004_ST"].fuel_type, "coal", f"flag={flag}")
-            self.assertEqual(by_id["1004_ST"].plant_group, "COAL", f"flag={flag}")
+            self.assertEqual(by_id["1004_ST"].plant_group, "COAL_BIT", f"flag={flag}")
 
     def test_edwardsport_stays_coal_even_in_an_enrolled_iso(self) -> None:
         """Belt and braces: the ISO gate is the guard, but the row is MISO's.

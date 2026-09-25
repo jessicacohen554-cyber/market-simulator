@@ -19,7 +19,7 @@ subclasses: consumers (``results/scarcity.py``) read the fleet's
 No generator carries the family token.
 """
 
-from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY
+from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY as _COAL_FAMILY
 
 # ---------------------------------------------------------------------------
 # ERCOT forward RTOLCAP/RTOFFCAP online-responsive reserve-supply shares (WS-A)
@@ -54,7 +54,7 @@ ERCOT_RTOLCAP_FWD_SEASON_BY_MONTH: tuple[int, ...] = (
 )
 # Reserve-eligible thermal classes forming on-line RTOLCAP.
 ERCOT_RTOLCAP_FWD_ONLINE_CLASSES: tuple[str, ...] = (
-    COAL_ARTIFACT_FAMILY,
+    _COAL_FAMILY,
     "CC_REGULAR",
     "CC_CHP",
     "CT_PEAKER",
@@ -68,7 +68,7 @@ ERCOT_RTOLCAP_FWD_OFFLINE_CLASSES: tuple[str, ...] = (
     "CT_CHP",
 )
 ERCOT_RTOLCAP_FWD_ONLINE_SHARE: dict[str, tuple[tuple[float, ...], ...]] = {
-    COAL_ARTIFACT_FAMILY: (
+    _COAL_FAMILY: (
         (
             0.6110,
             0.5678,
@@ -556,7 +556,7 @@ ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC: float = 0.35
 # Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON);
 # each inner tuple is the 10 net-load-percentile deciles (low→high).
 ERCOT_ONLINE_CAP_SHARE: dict[str, tuple[tuple[float, ...], ...]] = {
-    COAL_ARTIFACT_FAMILY: (
+    _COAL_FAMILY: (
         (
             0.9525,
             0.9717,
@@ -978,7 +978,7 @@ ERCOT_ONLINE_CAP_DELIV_COEF: float = 1.0830
 # each inner tuple is the 14 extreme-resolved net-load bins (deciles 0-8 +
 # five 2-pp sub-bins of the top decile, low->high).
 ERCOT_ONLINE_CAP_SHARE_EXTREME: dict[str, tuple[tuple[float, ...], ...]] = {
-    COAL_ARTIFACT_FAMILY: (
+    _COAL_FAMILY: (
         (
             0.9525,
             0.9717,
@@ -1489,7 +1489,7 @@ ERCOT_ONLINE_CAP_MEASURED_AVAIL_CLASSES: tuple[str, ...] = (
 # Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON);
 # each inner tuple is the 14 extreme-resolved net-load bins (deciles 0-8 + five 2-pp sub-bins of the top decile, low->high).
 ERCOT_ONLINE_CAP_SHARE_MEASURED: dict[str, tuple[tuple[float, ...], ...]] = {
-    COAL_ARTIFACT_FAMILY: (
+    _COAL_FAMILY: (
         (
             0.9525,
             0.9717,
@@ -1968,3 +1968,7 @@ ERCOT_ONLINE_CAP_DELIV_PROFILE_MEASURED: tuple[float, ...] = (
     0.9839,
     0.9939,
 )
+
+# The family token is imported only to key the tables above; it is not part
+# of this module's surface (the constants facade re-exports every name here).
+del _COAL_FAMILY

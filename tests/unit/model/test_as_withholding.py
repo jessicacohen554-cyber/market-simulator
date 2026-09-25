@@ -69,7 +69,7 @@ class TestWithholding:
         # both should be cut) plus a wind unit that must stay untouched.
         gens = [
             _gen("cc1", "CC_REGULAR", "gas_cc", 60_000.0, 1),
-            _gen("co1", "COAL", "coal", 30_000.0, 2),
+            _gen("co1", "COAL_BIT", "coal", 30_000.0, 2),
             _gen("wind1", "WIND", "wind", 5_000.0, 3),
         ]
         return generators_to_fleet_arrays(
@@ -137,7 +137,7 @@ class TestPjmWithholding:
         gens = [
             _gen("cc1", "CC_REGULAR", "gas_cc", 40_000.0, 1),
             _gen("oil1", "oil", "oil", 4_000.0, 2),
-            _gen("co1", "COAL", "coal", 20_000.0, 3),
+            _gen("co1", "COAL_BIT", "coal", 20_000.0, 3),
             _gen("wind1", "WIND", "wind", 5_000.0, 4),
         ]
         gens[1].heat_rate = 12.0  # oil dearer than gas (8.0) -> withdrawn first
@@ -224,7 +224,7 @@ class TestCaisoReserveFormula:
         gens = [
             self._gen("cc1", "CC_REGULAR", "gas_cc", 20_000.0, 1, hr=7.0),
             self._gen("ct1", "CT_PEAKER", "gas_ct", 20_000.0, 2, hr=12.0),
-            self._gen("co1", "COAL", "coal", 10_000.0, 3, hr=9.0),
+            self._gen("co1", "COAL_BIT", "coal", 10_000.0, 3, hr=9.0),
             self._gen("nuc1", "", "nuclear", 1_122.0, 4, hr=10.0),
             self._gen("wind1", "WIND", "wind", 5_000.0, 5, hr=0.0),
         ]
@@ -352,7 +352,7 @@ class TestCaisoReserveFormula:
             self._gen("ct_exp", "CT_PEAKER", "gas_ct", 1_000.0, 3, hr=15.0),
             # Coal is outside the gas pool: never withheld, stays as the dear
             # marginal unit the tight hour climbs to once gas headroom is gone.
-            self._gen("co", "COAL", "coal", 1_000.0, 4, hr=9.0),
+            self._gen("co", "COAL_BIT", "coal", 1_000.0, 4, hr=9.0),
         ]
         # Marginal costs decoupled from heat rate so the clearing order is
         # explicit: cc 20 < ct_mid 50 < ct_exp 100 < coal 200.

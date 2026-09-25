@@ -91,6 +91,7 @@ from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.paths import CALIBRATION_DIR, PROCESSED_DIR  # noqa: E402
 from market_sim.config.plant_taxonomy import (  # noqa: E402
     COAL_ARTIFACT_FAMILY,
+    artifact_class,
     classes_for_fuel930,
     classify_plant,
     coal_code_to_class,
@@ -2971,11 +2972,12 @@ def _reattribute_dual_fuel_oil(
     amount. The residual ``oil`` class is now exactly the non-fleet plants' rows,
     both signs, which is what the paragraph above always said it was.
 
-    The generic ``COAL`` model group is booked to the plant's coal SUPPLY class
-    (:func:`_coal_supply_class`), exactly as :func:`_backfill_eia923_with_campd`
-    and :func:`_backfill_eia923_missing_months` book it; booking it to ``COAL``
-    itself created a class no other benchmark row carries and no C1 cell
-    scores (0.1-0.8 GWh/yr in MISO).
+    A coal plant's model group IS its coal SUPPLY class (COAL-SUB, 2026-09-25:
+    there is no generic ``COAL`` model group), so its oil MWh book to that
+    subclass exactly as :func:`_backfill_eia923_with_campd` and
+    :func:`_backfill_eia923_missing_months` book it. (Before COAL-SUB the bare
+    ``COAL`` group was remapped here; booking to it had created a class no
+    other benchmark row carries and no C1 cell scores, 0.1-0.8 GWh/yr in MISO.)
     """
     oil_rows = e923[e923["klass"] == "oil"]
     if oil_rows.empty:
@@ -9565,7 +9567,12 @@ def _class_map_for_gate(iso: str) -> dict[int, str]:
     from market_sim.data.fleet import load_campd_bins
 
     b = load_campd_bins(ScenarioConfig().campd_bins_path)
-    return dict(zip(b["Plant_Code"].astype(int), b["Plant_Group"].astype(str)))
+    # The committed cf_emd baseline is keyed by class FAMILY (coal = the family
+    # token), so a coal bin's subclass reads as the family (COAL-SUB).
+    return {
+        int(c): artifact_class(g)
+        for c, g in zip(b["Plant_Code"].astype(int), b["Plant_Group"].astype(str))
+    }
 
 
 def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:

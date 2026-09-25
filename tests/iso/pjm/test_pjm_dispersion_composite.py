@@ -98,8 +98,8 @@ class TestPjmMidcurvePeakScope(_SurfaceCase):
             _gen("CCA_committed", "CC_REGULAR"),  # never touched
             _gen("CCA_econ", "CC_REGULAR"),  # CC_LIKE econ row
             _gen("CCA_peak", "CC_REGULAR"),  # CC_LIKE peak row (leg 2)
-            _gen("COALA_econ", "COAL"),  # LONG_RUN econ row
-            _gen("COALA_peak", "COAL"),  # LONG_RUN peak row (pre-existing)
+            _gen("COALA_econ", "COAL_BIT"),  # LONG_RUN econ row
+            _gen("COALA_peak", "COAL_BIT"),  # LONG_RUN peak row (pre-existing)
         ]
         self.fa = types.SimpleNamespace(pmax=np.full(5, 100.0))
         # committed / CC econ / CC peak / coal econ / coal peak. The CC peak

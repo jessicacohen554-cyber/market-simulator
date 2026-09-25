@@ -1,5 +1,6 @@
 """Tests for CAMPD operational binning and 4-tranche dispatch."""
 
+from market_sim.config.plant_taxonomy import COAL_CLASSES
 import unittest
 
 import numpy as np
@@ -131,14 +132,14 @@ class TestBinsToFleet(unittest.TestCase):
         # Coal must-run (mine-mouth take-or-pay, cycling avoidance, ERCOT
         # RUC) is an LP tranche, so the bin's total LP capacity equals
         # its full nameplate.
-        coal = self.bins[self.bins["Plant_Group"] == "COAL"]
+        coal = self.bins[self.bins["Plant_Group"].isin(COAL_CLASSES)]
         nameplate = coal["capacity_mw"].sum()
-        lp_total = sum(g.pmax_mw for g in self.fleet if g.plant_group == "COAL")
+        lp_total = sum(g.pmax_mw for g in self.fleet if g.plant_group in COAL_CLASSES)
         self.assertAlmostEqual(lp_total, nameplate, places=3)
         mustrun = [
             g
             for g in self.fleet
-            if g.plant_group == "COAL" and g.unit_id.endswith("_mustrun")
+            if g.plant_group in COAL_CLASSES and g.unit_id.endswith("_mustrun")
         ]
         self.assertGreater(len(mustrun), 0)
 
@@ -155,7 +156,7 @@ class TestBinsToFleet(unittest.TestCase):
     def test_coal_committed_tranche_is_40pct_grid_cap(self):
         # CAMPD coal MC% is 40: the _committed tranche is 40% of grid cap.
         b = _synthetic_bin(
-            Plant_Group="COAL",
+            Plant_Group="COAL_PRB",
             pct_mc=40,
             pct_econ=45,
             pct_peak=15,
@@ -232,12 +233,12 @@ class TestBinsToFleet(unittest.TestCase):
     def test_coal_bins_tagged_with_fuel_supply(self):
         # Every coal tranche carries a fuel-supply tag (mine-mouth lignite
         # or PRB by rail) resolved from its plant code.
-        coal = [g for g in self.fleet if g.plant_group == "COAL"]
+        coal = [g for g in self.fleet if g.plant_group in COAL_CLASSES]
         self.assertGreater(len(coal), 0)
         for g in coal:
             self.assertIn(g.coal_supply, ("lignite", "prb"))
         # Non-coal generators carry no supply tag.
-        gas = [g for g in self.fleet if g.plant_group != "COAL"]
+        gas = [g for g in self.fleet if g.plant_group not in COAL_CLASSES]
         self.assertTrue(all(g.coal_supply == "" for g in gas))
 
     def test_gas_steam_maps_to_gas_st(self):
@@ -452,7 +453,7 @@ class TestCommitmentParams(unittest.TestCase):
         # _committed tranche carries the bin's 36h minimum run and a
         # startup cost, while ECON and PEAK stay out of the screen.
         bins = load_campd_bins(BINS_CSV)
-        coal = bins[bins["Plant_Group"] == "COAL"]
+        coal = bins[bins["Plant_Group"].isin(COAL_CLASSES)]
         fleet, _ = bins_to_fleet(coal, ZONE_NAMES, self.config)
         committed = [g for g in fleet if g.unit_id.endswith("_committed")]
         others = [g for g in fleet if not g.unit_id.endswith("_committed")]
@@ -476,7 +477,7 @@ class TestCommitmentParams(unittest.TestCase):
         # as other capacity in the zone covers the P1 load, so the adequacy
         # backstop does not need to restore it.
         bins = load_campd_bins(BINS_CSV)
-        coal = bins[bins["Plant_Group"] == "COAL"].head(1)
+        coal = bins[bins["Plant_Group"].isin(COAL_CLASSES)].head(1)
         fleet, _ = bins_to_fleet(coal, ZONE_NAMES, self.config)
         base = next(g for g in fleet if g.unit_id.endswith("_committed"))
         # A large gas unit in the same zone, committed every hour, covers the
@@ -507,7 +508,7 @@ class TestCommitmentParams(unittest.TestCase):
         # thermal level, the adequacy backstop restores coal to its P1
         # availability so P2 cannot create unmet demand.
         bins = load_campd_bins(BINS_CSV)
-        coal = bins[bins["Plant_Group"] == "COAL"].head(1)
+        coal = bins[bins["Plant_Group"].isin(COAL_CLASSES)].head(1)
         fleet, _ = bins_to_fleet(coal, ZONE_NAMES, self.config)
         base = next(g for g in fleet if g.unit_id.endswith("_committed"))
         arrays = generators_to_fleet_arrays([base], ZONE_NAMES, hours=8)

@@ -243,7 +243,11 @@ def build_gmmodel(res: DispatchResult, ctx, iso: str) -> dict[str, float]:
             ft = fuels[g] if g < len(fuels) else ""
             cls = _FUEL_TO_CLASS.get(ft, "OTHER")
         if cls == COAL_ARTIFACT_FAMILY:
-            cls = _coal_supply_class(int(plant_codes[g]))
+            # A group-less coal row, or a bundle recorded before COAL-SUB
+            # (2026-09-25) whose fleet carried the bare class: resolve the
+            # plant's rank; a plant the chain cannot resolve keeps the legacy
+            # token, the historical residual bucket (never a wrong rank).
+            cls = _coal_supply_class(int(plant_codes[g])) or COAL_ARTIFACT_FAMILY
         gm[cls] = gm.get(cls, 0.0) + float(gen_twh[g])
     gm["wind"] = (
         gm.get("wind", 0.0) + float(np.asarray(res.wind_dispatched).sum()) / 1e6
@@ -443,7 +447,9 @@ def _scalar(cid: str, recs: list[dict]) -> dict | None:
 # buckets C1 itself never gates.
 _FAMILY_CLASSES: dict[str, tuple[str, ...]] = {
     "gas_twh": tuple(c for c in V.GAS_CLASSES if c not in V.FUELMIX_EXCLUDED),
-    "coal_twh": tuple(c for c in V.COAL_CLASSES if c not in V.FUELMIX_EXCLUDED),
+    # Coal FAMILY keys: the subclasses plus the legacy bare-COAL row a bundle
+    # solved before COAL-SUB (2026-09-25) carries — read, never gated.
+    "coal_twh": tuple(c for c in V.COAL_FAMILY_KEYS if c not in V.FUELMIX_EXCLUDED),
 }
 
 

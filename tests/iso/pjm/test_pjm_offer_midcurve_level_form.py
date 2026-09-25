@@ -74,7 +74,7 @@ class TestPjmMidcurveLevelForm(unittest.TestCase):
         self.gens = [
             _gen("CCA_committed", "CC_REGULAR"),  # never touched
             _gen("CCA_econ", "CC_REGULAR"),  # CC_LIKE target row
-            _gen("COALA_econ", "COAL"),  # LONG_RUN target row
+            _gen("COALA_econ", "COAL_BIT"),  # LONG_RUN target row
         ]
         self.fa = types.SimpleNamespace(pmax=np.array([100.0, 100.0, 100.0]))
         self.net = np.arange(T, dtype=float)  # rising net load -> 2 clean bins
