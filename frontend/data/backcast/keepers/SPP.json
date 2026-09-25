@@ -43,5 +43,44 @@
    2024,
    2025
   ]
+ },
+ "config_partition": {
+  "declared": "2026-09-25",
+  "ruling": "Owner authorization 2026-09-25 (session SPP-79). NOT a verbatim quote: the owner selected 'Authorize' in reply to the question \"Should SPP get the same config_partition MISO has, so its status headline shows the 2023-25 train-tier verdict (CALIBRATED)? The 2019-22 validation years would be reported per year, and nothing would be re-scored.\" The stated effect: SPP's card reads the train-tier verdict, 2019-2022 stay published per year at full magnitude on the status ladder, zero LP, no scored number moves, no other ISO touched.",
+  "ruling_source": "Owner, session SPP-79, 2026-09-25. Executed the same session.",
+  "iso_determination": "CALIBRATED",
+  "iso_determination_ruling": "The ISO-LEVEL determination is the TRAIN-TIER verdict and nothing else: rule 30(c) [R-TOUCHPOINT-FOLD], verbatim 'An iso can stay calibrated even if it degrades on holdout years.' SPP's one keeper bundle (rspp_span) carries 2019-2025 because rules 16 [R-ALLYEARS] and 34(c) [R-SHARD-PROMOTABLE] require it to, so its registered seven-year record pools the four validation rungs into one NOT-YET. This block moves only the headline to the train-tier read; the registered seven-year determination is preserved untouched in registered_determination, and no criterion record, grade, caveat budget or magnitude is touched.",
+  "structure_note": "SPP IS ONE RECIPE OVER TWO TIERS, NOT TWO CONFIGS, exactly as MISO's partition is (keepers/MISO.json, miso-258). Both spans are the SAME keeper recipe on the same bundle; the partition designates TIERS, not configs. No config, flag or scalar differs between the spans, and none is claimed to.",
+  "coverage_invariant": "Every year of the 2023-2025 TRAINING window is covered by EXACTLY ONE designated config. The four VALIDATION years 2019-2022 are carried by the same run and rendered at full magnitude with their own determination; they gate nothing (rule 30(c)). Union of designated years = {2019..2025} = SPP's full registered year set (rule 35(c) [R-PROMOTE]).",
+  "configs": [
+   {
+    "role": "train-2023-2025",
+    "label": "TRAIN TIER (2023-2025) - the keeper recipe on the training window; this span alone determines SPP's ISO-level headline (rule 30(c))",
+    "run_id": "2026-09-24-r-spp-corrected-inputs",
+    "bundle": "results/calibration/rspp_span",
+    "years": [
+     2023,
+     2024,
+     2025
+    ],
+    "tier": "train",
+    "determination_at_declaration": "CALIBRATED; every criterion PASS except the lone ledgered, non-downgrading C3c (RT >$200 hours 0/8/2 vs 42/59/68)."
+   },
+   {
+    "role": "validation-2019-2022",
+    "label": "VALIDATION RUNGS (2019-2022) - the SAME keeper recipe on the four out-of-training years. Iterable model-SELECTION evidence, NEVER a certified out-of-sample skill number.",
+    "run_id": "2026-09-24-r-spp-corrected-inputs",
+    "bundle": "results/calibration/rspp_span",
+    "years": [
+     2019,
+     2020,
+     2021,
+     2022
+    ],
+    "tier": "validation",
+    "determination_at_declaration": "NOT-YET: C1 COAL_PRB 2022 +9.58 TWh; C3a 2019 +13.3 % / 2020 +21.2 % / 2021 +10.0 %; C3b 2020 0.286; C4 gas 2022 NRMSE 0.320. Passing: C3b 2021 0.132 and 2022 0.182; C1 CC_REGULAR 2022 -7.94 TWh. C8 clean (ST_GAS 2022 29.4 %).",
+    "registered_determination_at_declaration": "The seven-year run-level record reads NOT-YET because it pools these rungs. Preserved and published at full magnitude."
+   }
+  ]
  }
 }
