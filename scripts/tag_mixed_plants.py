@@ -38,6 +38,7 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.paths import CAMPD_BINS_CSV, PLANT_REGISTRY_CSV  # noqa: E402
+from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY, COAL_CLASSES  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("tag_mixed_plants")
@@ -50,7 +51,8 @@ DEFAULT_REGISTRY = PLANT_REGISTRY_CSV
 
 # Plant_Group -> (fuel tag, code digit). Same digit groups configs of one fuel.
 _GROUP_TAG: dict[str, tuple[str, int]] = {
-    "COAL": ("COAL", 1),
+    # Every coal subclass tags as the registry's coal family token (COAL-SUB).
+    **{c: (COAL_ARTIFACT_FAMILY, 1) for c in COAL_CLASSES},
     "ST_GAS": ("ST", 2),
     "ST_CHP": ("ST", 2),
     "CT_PEAKER": ("CT", 3),
@@ -61,7 +63,7 @@ _GROUP_TAG: dict[str, tuple[str, int]] = {
 
 # Per-tag registry metadata (fuel_type, prime_mover, primary_fuel, technology).
 _TAG_META: dict[str, dict[str, str]] = {
-    "COAL": {
+    COAL_ARTIFACT_FAMILY: {
         "fuel_type": "SUB",
         "prime_mover": "ST",
         "primary_fuel": "SUB",

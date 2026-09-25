@@ -153,7 +153,9 @@ SCRATCH = _REPO / "results" / "calibration" / "_ercot138_scratch"
 #: ``derive_dam_offer_hrmults.CC_RESOURCE_TYPES`` — the merchant CC lineage. The
 #: model's CC_CHP rows are reported as a sensitivity in §C, never pooled in.
 MODEL_CC_GROUPS: tuple[str, ...] = ("CC_REGULAR",)
-MODEL_COAL_GROUPS: tuple[str, ...] = ("COAL",)
+# Every coal subclass (COAL-SUB, 2026-09-25: the fleet's coal plant_group is
+# its subclass; this tuple was ("COAL",) while the fleet carried the bare class).
+MODEL_COAL_GROUPS: tuple[str, ...] = ("COAL_LIGNITE", "COAL_PRB", "COAL_BIT", "COAL_WC")
 
 #: Price grid. The lane's own bands are ercot127's fixed edges (15/20/25/30/35/
 #: 50); $4.50 is kept as an edge because it is the RETIRED tranche-1 bid the

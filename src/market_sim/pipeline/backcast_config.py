@@ -24,6 +24,7 @@ from market_sim.config.constants import (
     ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR,
     GAS_BASIS_DIFFERENTIAL,
 )
+from market_sim.config.plant_taxonomy import assert_not_bare_coal
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.pipeline.offer_curve_base.generic import GENERIC_BASE_OFFER_CURVE
 
@@ -47,6 +48,11 @@ def _deep_merge_offer_curve(
     """
     merged = {cls: dict(bands) for cls, bands in base.items()}
     for cls, bands in overrides.items():
+        # COAL-SUB (owner instruction 2026-09-25): the bare ``COAL`` class is
+        # deleted, so an override naming it is refused — a legacy keeper
+        # recipe is translated BEFORE it gets here (scripts/replay_keeper.py,
+        # plant_taxonomy.fold_legacy_coal_key).
+        assert_not_bare_coal(cls, "offer-curve override")
         if not isinstance(bands, dict):
             raise ValueError(
                 f"offer-curve override for {cls!r} must be an object of "
@@ -71,6 +77,7 @@ def _apply_offer_curve_deltas(
     """
     merged = {cls: dict(bands) for cls, bands in base.items()}
     for cls, bands in deltas.items():
+        assert_not_bare_coal(cls, "offer-curve delta")
         if cls not in merged:
             raise ValueError(
                 f"offer-curve delta for unknown class {cls!r}; valid classes: "
@@ -178,8 +185,9 @@ _SPP_COAL_IDENTITY_BANDS: dict[str, float] = {
     "econ_high": 1.0,
     "peak": 1.0,
 }
+# (The bare ``COAL`` entry is deleted — COAL-SUB, 2026-09-25: every SPP coal
+# plant resolves to a subclass, and the identity already sits on all four.)
 _SPP_OFFER_CURVE: dict[str, dict[str, float]] = {
-    "COAL": dict(_SPP_COAL_IDENTITY_BANDS),
     **{
         cls: {**_SPP_COAL_IDENTITY_BANDS, "econ_low_share": 0.55}
         for cls in ("COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC")
@@ -346,13 +354,10 @@ _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 0.864,
         "econ_low_share": 0.55,
     },
-    "COAL": {
-        "committed": 0.648,
-        "econ_low": 0.684,
-        "econ_high": 0.792,
-        "peak": 1.044,
-        "econ_low_share": 0.55,
-    },
+    # (The bare ``COAL`` fallback entry {0.648, 0.684, 0.792, 1.044} is DELETED
+    # — COAL-SUB, owner instruction 2026-09-25. It reached only coal plants
+    # whose rank did not resolve; every PJM coal plant now resolves at load to
+    # one of the four subclasses above. Rule 26 [R-DELETE].)
 }
 
 
@@ -1007,13 +1012,8 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 1.20,  # kept
         "econ_low_share": 0.55,
     },
-    "COAL": {
-        "committed": 1.00,  # was 0.90 (generic fallback for unranked plants)
-        "econ_low": 1.00,  # was 0.95
-        "econ_high": 1.10,  # kept
-        "peak": 1.45,  # kept
-        "econ_low_share": 0.55,
-    },
+    # (The bare ``COAL`` fallback for unranked plants is DELETED — COAL-SUB,
+    # 2026-09-25: every MISO coal plant resolves to a subclass at load.)
 }
 
 
@@ -2249,15 +2249,9 @@ def backcast_config(
                 "peak": 1.20,
                 "econ_low_share": 0.55,
             },
-            # Generic fallback for coal plants with no EIA-923 receipts / rank
-            # (and ISOs not yet derived). Flat baseload curve.
-            "COAL": {
-                "committed": 0.90,
-                "econ_low": 0.95,
-                "econ_high": 1.10,
-                "peak": 1.45,
-                "econ_low_share": 0.55,
-            },
+            # (The generic ``COAL`` fallback curve is DELETED — COAL-SUB,
+            # owner instruction 2026-09-25: every coal unit resolves to one of
+            # the subclasses above at load. Rule 26 [R-DELETE].)
         },
         chp_steam_following=True,  # model CC/CT/ST_CHP as steam-host cogens:
         #   a per-plant sector-keyed BTM pull-out (fleet.chp_btm_pct) plus a

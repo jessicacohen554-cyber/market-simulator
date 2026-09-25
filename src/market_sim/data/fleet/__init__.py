@@ -52,7 +52,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from market_sim.config.constants import (
     CAMPD_BINNING_ISOS,
@@ -163,6 +163,21 @@ from market_sim.data.fleet.models import (  # noqa: F401  (historical namespace 
 class Generator(BaseModel):
     """Attributes of a single generating unit."""
 
+    @field_validator("plant_group")
+    @classmethod
+    def _no_bare_coal_class(cls, v: str) -> str:
+        """Refuse the deleted bare ``COAL`` class (COAL-SUB, owner instruction 2026-09-25).
+
+        Every coal generator carries its subclass (``COAL_LIGNITE`` /
+        ``COAL_PRB`` / ``COAL_BIT`` / ``COAL_WC``), resolved at load by
+        :func:`market_sim.data.coal.coal_subclass`; ``"COAL"`` is only the
+        committed artifacts' coal-family token and never a generator's class.
+        """
+        from market_sim.config.plant_taxonomy import assert_not_bare_coal
+
+        assert_not_bare_coal(v, "Generator.plant_group")
+        return v
+
     unit_id: str
     name: str
     zone: str
@@ -240,7 +255,10 @@ class Generator(BaseModel):
     # carry the per-bin commitment parameters and must-run accounting that
     # used to live in lookup-table constants.
     is_campd_bin: bool = False
-    plant_group: str = ""  # CC_CHP, CC_REGULAR, COAL, CT_CHP, CT_PEAKER, ST_GAS, ST_CHP
+    # CC_CHP, CC_REGULAR, CT_CHP, CT_PEAKER, ST_GAS, ST_CHP, or a coal SUBCLASS
+    # (COAL_LIGNITE / COAL_PRB / COAL_BIT / COAL_WC). Never the bare ``COAL``
+    # class — see :meth:`_no_bare_coal_class` (COAL-SUB, 2026-09-25).
+    plant_group: str = ""
     bin_label: str = ""  # human-readable bin id, e.g. H_CC1
     min_run_hours: int = 0  # minimum committed run length
     min_down_hours: int = 0  # minimum downtime between runs

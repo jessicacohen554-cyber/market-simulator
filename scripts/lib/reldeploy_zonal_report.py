@@ -13,7 +13,19 @@ from pathlib import Path
 import pandas as pd
 
 # CEMS-covered thermal classes (the dispatch klass / bin-sheet Plant_Group).
-THERMAL = {"CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP", "COAL"}
+THERMAL = {
+    "CC_REGULAR",
+    "CC_CHP",
+    "CT_PEAKER",
+    "CT_CHP",
+    "ST_GAS",
+    "ST_CHP",
+    # The four coal subclasses (COAL-SUB, 2026-09-25: no bare COAL class).
+    "COAL_LIGNITE",
+    "COAL_PRB",
+    "COAL_BIT",
+    "COAL_WC",
+}
 
 
 def _zone_map(bins_path: Path) -> tuple[dict[int, str], dict[int, str]]:

@@ -58,6 +58,7 @@ _REPO_BOOT = Path(__file__).resolve().parent.parent  # repo root: canonical
 if str(_REPO_BOOT) not in sys.path:  # scripts.* sibling imports on direct run
     sys.path.insert(0, str(_REPO_BOOT))
 
+from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY  # noqa: E402
 from market_sim.model.dispatch import DispatchResult  # noqa: E402
 from market_sim.results.evolution_ledger import load_ledgers_for_run  # noqa: E402
 from market_sim.results.outputs import (  # noqa: E402
@@ -99,7 +100,7 @@ _FUEL_TO_CLASS = {
     "geothermal": "OTHER",
     "import": "imports",
     # Fallbacks used only when plant_groups is absent for a fossil generator:
-    "coal": "COAL",
+    "coal": COAL_ARTIFACT_FAMILY,  # family token, resolved to the subclass below
     "gas_cc": "CC_REGULAR",
     "gas_cc_ccs": "CC_REGULAR",
     "gas_ct": "CT_PEAKER",
@@ -241,7 +242,7 @@ def build_gmmodel(res: DispatchResult, ctx, iso: str) -> dict[str, float]:
         else:
             ft = fuels[g] if g < len(fuels) else ""
             cls = _FUEL_TO_CLASS.get(ft, "OTHER")
-        if cls == "COAL":
+        if cls == COAL_ARTIFACT_FAMILY:
             cls = _coal_supply_class(int(plant_codes[g]))
         gm[cls] = gm.get(cls, 0.0) + float(gen_twh[g])
     gm["wind"] = (

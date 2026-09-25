@@ -568,7 +568,18 @@ GAS_CLASSES = bs.GAS_CLASSES
 # in COAL_CLASSES iteration order, so the historical record ORDER is frozen here
 # for verdict byte-parity (bs is the taxonomy roll-up order, which differs). The
 # set is drift-guarded against the taxonomy via bs (tests/test_benchmark_semantics).
-COAL_CLASSES = ("COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC", "COAL")
+COAL_CLASSES = ("COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC")
+# COAL-SUB (owner instruction 2026-09-25, "we need to completely eliminate the
+# class Coal From the model altogether all coal should be sorted into its
+# subclass"): the bare ``COAL`` class is gone from every per-class table and
+# the C1 per-class records above, so a run solved after COAL-SUB can never
+# emit one. A payload COMMITTED before it can still carry a ``COAL`` row (the
+# former generic bucket of plants whose rank did not resolve); the coal FAMILY
+# totals below still read that row so no committed keeper's family number
+# moves on a re-score — only the per-class record for the deleted label is
+# gone. This is a reader of the historical record, never a scored class.
+LEGACY_COAL_TOKEN = "COAL"
+COAL_FAMILY_KEYS = (*COAL_CLASSES, LEGACY_COAL_TOKEN)
 # Classes excluded from the per-class fuel-mix gate (C1), each justified in the
 # rubric: CT_CHP is a BTM peaker the grid LP zeroes by construction; OTHER /
 # OTHER_FOSSIL are the mixed-plant reconciliation bucket, not merit-order classes.
@@ -853,15 +864,16 @@ PROTECTIVE_MIN_LOAD_FRAC = 0.02
 # over its forced-energy budget — a wider test than a fixed class tuple, and
 # the one CLAUDE.md rule 20 [R-FORCED-BUDGET] actually requires.)
 # D-2 rows/summary label classes by CAMPD plant_group (the floor-attribution
-# vocabulary: coal plants are "COAL"), while the run payload's gmModel and
-# the bench classFull carry the scored-class rank split. _class_load_share
-# bridges the aggregate to its members (mirrors
-# config/plant_taxonomy.COAL_SUPPLY_TO_CLASS values + the bare-COAL parent;
-# kept literal here because this scorer is deliberately stdlib-only). Without
+# vocabulary: coal plants are "COAL" in every artifact written before COAL-SUB
+# 2026-09-25; after it the D-2 row carries the unit's coal subclass directly),
+# while the run payload's gmModel and the bench classFull carry the
+# scored-class rank split. _class_load_share bridges the historical family
+# token to its members (mirrors config/plant_taxonomy.COAL_CLASSES; kept
+# literal here because this scorer is deliberately stdlib-only). Without
 # the bridge the C8 materiality lookup read 0.0 TWh on both sides for "COAL"
 # and skipped the whole coal fleet as immaterial (v2.8).
 PLANT_GROUP_MEMBERS = {
-    "COAL": ("COAL_LIGNITE", "COAL_PRB", "COAL_BIT", "COAL_WC"),
+    LEGACY_COAL_TOKEN: COAL_CLASSES,
 }
 # C8 forced-share caps (rubric v2.1): the peaker cap was raised 0.10 -> 0.15
 # by the same owner amendment (CLAUDE.md rule 20 amended in-place); merchant
@@ -1781,7 +1793,7 @@ def _fallback_coal_anchor(
         if cems2 <= 0.0 or not family_is_complete(iso, "coal", int(y2)):
             continue
         grid2 = sum(
-            float((yb2.get("classFull") or {}).get(c, 0.0)) for c in COAL_CLASSES
+            float((yb2.get("classFull") or {}).get(c, 0.0)) for c in COAL_FAMILY_KEYS
         )
         if grid2 > 0.0:
             ratios.append(grid2 / cems2)
@@ -1861,7 +1873,7 @@ def score_sysvol(
     total_load = _total_load(ypay, a_gen)
     vol_band = _fuelmix_vol_band(total_load, a_gen)
     out = []
-    for fam, classes in (("gas", GAS_CLASSES), ("coal", COAL_CLASSES)):
+    for fam, classes in (("gas", GAS_CLASSES), ("coal", COAL_FAMILY_KEYS)):
         scored = [c for c in classes if c not in FUELMIX_EXCLUDED]
         m = sum(float(gm.get(c, 0.0)) for c in scored)
         a923 = sum(float(cf.get(c, 0.0)) for c in scored)
@@ -1957,7 +1969,7 @@ def score_sysvol(
                 coal930 = float(e930.get("coal", 0.0) or 0.0)
                 coal_anchor = None
                 if family_is_complete(iso, "coal", year):
-                    _grid = sum(float(cf.get(c, 0.0)) for c in COAL_CLASSES)
+                    _grid = sum(float(cf.get(c, 0.0)) for c in COAL_FAMILY_KEYS)
                     coal_anchor = _grid if _grid > 0.0 else None
                 elif anchor is not None:
                     coal_anchor = anchor[0]

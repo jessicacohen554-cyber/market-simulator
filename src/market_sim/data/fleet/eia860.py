@@ -43,12 +43,13 @@ from market_sim.config.plant_taxonomy import (
     CC_STEAM_PART_REPAIR_ISOS,
     OIL_ENERGY_SOURCES,
     classify_plant,
+    is_coal_class,
 )
 from market_sim.data.ba_membership import (
     drop_current_ba_recoded_rows,
     joining_ba_codes,
 )
-from market_sim.data.coal import _coal_class_for
+from market_sim.data.coal import _coal_class_for, coal_subclass
 from market_sim.data.disk_memo import memoized_mapping
 from market_sim.data.egrid_sheets import read_egrid_sheet
 from pathlib import Path
@@ -284,7 +285,8 @@ def _to_month(value: object) -> int | None:
 # keep the statistical availability model. ERCOT is unaffected: its fleet
 # comes from bins_to_fleet, which sets plant_group directly.
 _EIA860_PLANT_GROUP_BY_FUEL: dict[str, str] = {
-    "coal": "COAL",
+    # No coal row: a coal unit's group is its subclass, resolved per plant by
+    # :func:`market_sim.data.coal.coal_subclass` (COAL-SUB, 2026-09-25).
     "gas_cc": "CC_REGULAR",
     "gas_cc_ccs": "CC_REGULAR",
     "gas_ct": "CT_PEAKER",
@@ -1436,13 +1438,18 @@ def _rows_to_generators(
         # construction across the model fleet and the benchmark. Combined-heat-
         # and-power cogens (EIA-860 "Associated with Combined Heat and Power
         # System" = Y) take the cogen variant; gas steam boilers resolve to
-        # ST_GAS rather than being folded into CT_PEAKER. Coal keeps the bare
-        # ``COAL`` group (its supply rank is split downstream from
-        # :func:`coal_supply_class`); nuclear / oil / biomass carry no group and
-        # keep the statistical availability model.
+        # ST_GAS rather than being folded into CT_PEAKER. Coal takes its
+        # SUBCLASS as its group (COAL-SUB, owner instruction 2026-09-25: "we
+        # need to completely eliminate the class Coal From the model
+        # altogether all coal should be sorted into its subclass"), resolved
+        # per plant by :func:`coal_subclass` — the coal_supply_class chain,
+        # whose last link is this unit's own EIA-860 energy-source code. A
+        # unit none of the links reaches raises rather than being guessed.
+        # Nuclear / oil / biomass carry no group and keep the statistical
+        # availability model.
         chp_flag = str(data.get("chp") or "").strip().upper().startswith("Y")
         if fuel_type == "coal":
-            group = "COAL"
+            group = coal_subclass(plant_code, data.get("energy_source"))
         elif fuel_type in ("gas_cc", "gas_cc_ccs", "gas_ct", "gas_st"):
             group = classify_plant(
                 data.get("energy_source"),
@@ -1481,7 +1488,7 @@ def _rows_to_generators(
         # which the machine burns fuel while it is running. Gated on ``group``
         # so only coal rows take it (rule 19 [R-ONE-MECH]: disjoint from the
         # CT branch above by construction — a row resolves to one group).
-        if coal_heat_rates and group == "COAL":
+        if coal_heat_rates and is_coal_class(group):
             measured_coal_hr = coal_heat_rates.get(plant_code)
             if measured_coal_hr is not None:
                 heat_rate = measured_coal_hr
@@ -3652,7 +3659,12 @@ BIN_GROUP_TO_FUEL: dict[str, str] = {
     "CT_PEAKER": "gas_ct",
     "ST_GAS": "gas_st",
     "ST_CHP": "gas_st",
-    "COAL": "coal",
+    # The four coal subclasses (COAL-SUB, 2026-09-25): the deleted bare
+    # ``COAL`` key's value carried to each, so every coal bin maps as before.
+    "COAL_LIGNITE": "coal",
+    "COAL_PRB": "coal",
+    "COAL_BIT": "coal",
+    "COAL_WC": "coal",
 }
 
 # Startup cost ($/MW per start) by CAMPD plant group, used to amortize
@@ -3668,7 +3680,11 @@ BIN_STARTUP_COST_PER_MW: dict[str, float] = {
     "CT_PEAKER": 20.0,
     "ST_GAS": 35.0,
     "ST_CHP": 35.0,
-    "COAL": 100.0,
+    # Coal subclasses carry the deleted bare ``COAL`` key's cost (COAL-SUB).
+    "COAL_LIGNITE": 100.0,
+    "COAL_PRB": 100.0,
+    "COAL_BIT": 100.0,
+    "COAL_WC": 100.0,
 }
 
 # Coal boiler minimum run / minimum downtime for the P2 commitment screen. A
@@ -3683,9 +3699,8 @@ BIN_STARTUP_COST_PER_MW: dict[str, float] = {
 COAL_BIN_MIN_RUN_HOURS: int = 36
 COAL_BIN_MIN_DOWN_HOURS: int = 16
 # The gas dispatch classes the EIA-923 override may assign to an ERCOT bin.
-# Coal bins keep their bare ``COAL`` group (the supply rank is split downstream
-# from :func:`coal_supply_class`), so the override only ever moves a plant among
-# the gas classes — never into or out of coal.
+# Coal bins carry their coal subclass (COAL-SUB), so the override only ever
+# moves a plant among the gas classes — never into or out of coal.
 _GAS_BIN_GROUPS: frozenset[str] = frozenset(
     {"CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP"}
 )
@@ -4377,7 +4392,11 @@ BIN_GROUP_HR_DEFAULT: dict[str, float] = {
     "CT_PEAKER": 13.0,
     "ST_GAS": 11.0,
     "ST_CHP": 7.0,
-    "COAL": 9.5,
+    # Coal subclasses carry the deleted bare ``COAL`` key's default (COAL-SUB).
+    "COAL_LIGNITE": 9.5,
+    "COAL_PRB": 9.5,
+    "COAL_BIT": 9.5,
+    "COAL_WC": 9.5,
 }
 
 # The composite key that uniquely identifies one CAMPD bin. Bin_Label alone

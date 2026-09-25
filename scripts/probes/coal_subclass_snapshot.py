@@ -63,8 +63,15 @@ def _row_hashes(arr: np.ndarray) -> np.ndarray:
     return np.array([hashlib.sha1(a[i].tobytes()).hexdigest() for i in range(a.shape[0])])
 
 
-def rebuild(iso: str, year: int) -> dict:
-    """Rebuild ``iso``/``year`` under its keeper recipe, no LP."""
+def rebuild(iso: str, year: int, sets: dict | None = None) -> dict:
+    """Rebuild ``iso``/``year`` under its keeper recipe, no LP.
+
+    ``sets`` overrides recipe keys (``ScenarioConfig`` fields / ``run_year``
+    kwargs), applied identically to the BEFORE and AFTER rebuilds — used only
+    to switch off an input whose gitignored corpus is absent from the
+    container (PJM ``pjm_da_virtual_bids``: its pseudo-units are appended
+    virtual-bid rungs, never coal rows, so the coal comparison is unaffected).
+    """
     from scripts.lib.bundle_fleet import (
         bundle_gas_price,
         full_run_year_kwargs,
@@ -77,6 +84,7 @@ def rebuild(iso: str, year: int) -> dict:
     meta = json.loads((bundle / "meta.json").read_text())
     kwargs = full_run_year_kwargs(meta)
     overlay = config_partition_overlay(meta, year)
+    overlay = {**overlay, **(sets or {})}
     if overlay:
         params = set(inspect.signature(run_year).parameters)
         fields = {f.name for f in dataclasses.fields(ScenarioConfig)}
@@ -102,13 +110,35 @@ def main() -> None:
     ap.add_argument("--iso", required=True)
     ap.add_argument("--year", type=int, required=True)
     ap.add_argument("--out", required=True, type=Path)
+    ap.add_argument(
+        "--register-supply",
+        type=Path,
+        help="JSON {plant_code: supply_class} registered through "
+        "data.coal.register_partial_exit_coal_supply BEFORE the rebuild — the "
+        "COUNTERFACTUAL that hands the pre-COAL-SUB code the generic-bucket "
+        "plants' post-change ranks, isolating their resolution as the only "
+        "difference",
+    )
+    ap.add_argument(
+        "--set",
+        action="append",
+        default=[],
+        help="KEY=JSON recipe override, applied to both BEFORE and AFTER",
+    )
     a = ap.parse_args()
+    sets = {k: json.loads(v) for k, v in (x.split("=", 1) for x in a.set)}
     a.out.mkdir(parents=True, exist_ok=True)
 
     from market_sim.data.coal import coal_supply_class
     from market_sim.config.plant_taxonomy import COAL_SUPPLY_TO_CLASS
 
-    state = rebuild(a.iso, a.year)
+    if a.register_supply:
+        from market_sim.data.coal import register_partial_exit_coal_supply
+
+        register_partial_exit_coal_supply(
+            {int(k): v for k, v in json.loads(a.register_supply.read_text()).items()}
+        )
+    state = rebuild(a.iso, a.year, sets)
     fa = state["fleet_arrays"]
     n = len(fa.unit_ids)
 

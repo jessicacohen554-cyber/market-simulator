@@ -61,6 +61,7 @@ import logging
 
 import numpy as np
 
+from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY, COAL_CLASSES
 from market_sim.model.commitment import (
     apply_commitment_with_coal_pin,
     as_adequacy_commit,
@@ -644,7 +645,9 @@ _ERCOT_RUC_CLASS_GROUPS: dict[str, tuple[str, ...]] = {
     "CC_REGULAR": ("CC_REGULAR",),
     "ST_GAS": ("ST_GAS",),
     "CT_PEAKER": ("CT_PEAKER",),
-    "COAL": ("COAL",),
+    # The measured-class token stays the artifact's coal family; its members
+    # are the four coal subclasses (COAL-SUB, 2026-09-25).
+    COAL_ARTIFACT_FAMILY: COAL_CLASSES,
 }
 
 
@@ -1565,7 +1568,7 @@ def _pjm_unit_commitment_physics(fleet_arrays) -> tuple[np.ndarray, np.ndarray]:
 
     The same member derivation as ``reserve_config._posture_pool_params``
     (rule 18 — commitment eligibility gates on unit physics, never class
-    names): coal from ``BIN_STARTUP_COST_PER_MW['COAL']`` +
+    names): coal from ``BIN_STARTUP_COST_PER_MW`` (every coal subclass) +
     ``COAL_BIN_MIN_DOWN_HOURS``, gas CC/CT/ST from the NREL/SR-5500-55433
     class tables (``COMMITMENT_PARAMS_BY_FUEL``) keyed by heat rate. Fuels
     with no table (the oil quick-start IC/CT class ``_commitment_params``
@@ -1586,7 +1589,8 @@ def _pjm_unit_commitment_physics(fleet_arrays) -> tuple[np.ndarray, np.ndarray]:
     for g in range(n_gen):
         f = fuels[g]
         if f == "coal":
-            startup[g] = BIN_STARTUP_COST_PER_MW["COAL"]
+            # One coal startup cost across the subclasses (COAL-SUB).
+            startup[g] = BIN_STARTUP_COST_PER_MW[COAL_CLASSES[0]]
             min_down[g] = float(COAL_BIN_MIN_DOWN_HOURS)
             continue
         table = COMMITMENT_PARAMS_BY_FUEL.get(f)

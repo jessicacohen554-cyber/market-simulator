@@ -541,7 +541,12 @@ MIN_STABLE_PCT_PHYSICAL: dict[str, float] = {
     "CT_CHP": 0.38,  # simple-cycle CT cogeneration — same CT physics
     "CC_REGULAR": 0.52,  # combined cycle — WWSIS-2 52% (least-flexible fossil)
     "CC_CHP": 0.52,  # combined-cycle cogeneration — same CC physics
-    "COAL": 0.40,  # subcritical/supercritical steam — WWSIS-2 40%
+    # Subcritical/supercritical coal steam — WWSIS-2 40%; every coal subclass
+    # (COAL-SUB, 2026-09-25: the bare ``COAL`` class is deleted).
+    "COAL_LIGNITE": 0.40,
+    "COAL_PRB": 0.40,
+    "COAL_BIT": 0.40,
+    "COAL_WC": 0.40,
     "oil": 0.12,  # oil / oil-steam — steam physics (taxonomy lumps oil into one)
 }
 
@@ -3016,7 +3021,29 @@ EFORD: dict[str, float] = {
 CORRELATED_OUTAGE_CURVE: dict[str, dict[str, dict[str, dict[str, float]]]] = {
     "ERCOT": {
         "pre": {
-            "COAL": {"slope_per_c": 0.0381, "cap": 0.270, "winter_event_share": 0.0018},
+            # The ERCOT coal curve, carried to every coal subclass (COAL-SUB):
+            # the excess is a per-unit function of TMIN alone, so each
+            # subclass's units read exactly the value the bare class gave.
+            "COAL_LIGNITE": {
+                "slope_per_c": 0.0381,
+                "cap": 0.270,
+                "winter_event_share": 0.0018,
+            },
+            "COAL_PRB": {
+                "slope_per_c": 0.0381,
+                "cap": 0.270,
+                "winter_event_share": 0.0018,
+            },
+            "COAL_BIT": {
+                "slope_per_c": 0.0381,
+                "cap": 0.270,
+                "winter_event_share": 0.0018,
+            },
+            "COAL_WC": {
+                "slope_per_c": 0.0381,
+                "cap": 0.270,
+                "winter_event_share": 0.0018,
+            },
             "CC_REGULAR": {
                 "slope_per_c": 0.0618,
                 "cap": 0.438,
@@ -3034,7 +3061,29 @@ CORRELATED_OUTAGE_CURVE: dict[str, dict[str, dict[str, dict[str, float]]]] = {
             },
         },
         "post": {
-            "COAL": {"slope_per_c": 0.0204, "cap": 0.077, "winter_event_share": 0.0004},
+            # The ERCOT coal curve, carried to every coal subclass (COAL-SUB):
+            # the excess is a per-unit function of TMIN alone, so each
+            # subclass's units read exactly the value the bare class gave.
+            "COAL_LIGNITE": {
+                "slope_per_c": 0.0204,
+                "cap": 0.077,
+                "winter_event_share": 0.0004,
+            },
+            "COAL_PRB": {
+                "slope_per_c": 0.0204,
+                "cap": 0.077,
+                "winter_event_share": 0.0004,
+            },
+            "COAL_BIT": {
+                "slope_per_c": 0.0204,
+                "cap": 0.077,
+                "winter_event_share": 0.0004,
+            },
+            "COAL_WC": {
+                "slope_per_c": 0.0204,
+                "cap": 0.077,
+                "winter_event_share": 0.0004,
+            },
             "CC_REGULAR": {
                 "slope_per_c": 0.0605,
                 "cap": 0.157,

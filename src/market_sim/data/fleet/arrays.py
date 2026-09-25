@@ -26,6 +26,12 @@ from market_sim.config.constants import (
     THERMAL_AVAILABILITY,
 )
 from market_sim.config.paths import CAMPD_BINS_CSV
+from market_sim.config.plant_taxonomy import (
+    COAL_ARTIFACT_FAMILY,
+    COAL_CLASSES,
+    artifact_class,
+    is_coal_class,
+)
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.cod_ramp import (
     class_cod_coverage,
@@ -685,10 +691,14 @@ def _availability_matrix(
                     ),
                     _ref,
                 ),
-                "COAL": (
-                    float(config.temp_derate_slope_coal),
-                    float(config.temp_derate_ref_c_coal),
-                ),
+                # Every coal subclass reads the coal slope/reference (COAL-SUB).
+                **{
+                    _cc: (
+                        float(config.temp_derate_slope_coal),
+                        float(config.temp_derate_ref_c_coal),
+                    )
+                    for _cc in COAL_CLASSES
+                },
             }
             # Class scope (config.temp_derate_classes): an ISO arms only the
             # classes it has identified on its own fleet (rule 25 [R-ISO-SCOPE]).
@@ -936,7 +946,7 @@ def _availability_matrix(
                         availability[g_idx, summer] *= 1.0 - summer_derate
             # Per-plant coal max-CF ceilings: cap availability so the unit
             # cannot dispatch above its sustained operating limit.
-            if gen.plant_group == "COAL":
+            if is_coal_class(gen.plant_group):
                 _pc = int(gen.plant_code)
                 cap = COAL_MAX_CF_BY_PLANT.get(_pc)
                 if cap is not None:
@@ -1347,14 +1357,14 @@ def _apply_outage_overlays(
             neiso_floor_exempt = _iso == "NEISO" and getattr(
                 config, "reliability_floor", False
             )
-            exempt_groups = {"COAL", "ST_GAS"}
+            exempt_groups = {*COAL_CLASSES, "ST_GAS"}
             applied_u = 0
             exempted_u = 0
             for g_idx, gen in enumerate(generators):
                 if neiso_floor_exempt and gen.plant_group in exempt_groups:
                     exempted_u += 1
                     continue
-                f = ufac.get((int(gen.plant_code), gen.plant_group))
+                f = ufac.get((int(gen.plant_code), artifact_class(gen.plant_group)))
                 if f is not None:
                     availability[g_idx, :] *= f
                     applied_u += 1
@@ -1430,7 +1440,7 @@ def _apply_outage_overlays(
             if sfac:
                 applied_s = 0
                 for g_idx, gen in enumerate(generators):
-                    f = sfac.get((int(gen.plant_code), gen.plant_group))
+                    f = sfac.get((int(gen.plant_code), artifact_class(gen.plant_group)))
                     if f is not None:
                         availability[g_idx, :] *= f
                         applied_s += 1
@@ -1484,7 +1494,9 @@ def _apply_outage_overlays(
             if ppfac:
                 applied_pp = 0
                 for g_idx, gen in enumerate(generators):
-                    f = ppfac.get((int(gen.plant_code), gen.plant_group))
+                    f = ppfac.get(
+                        (int(gen.plant_code), artifact_class(gen.plant_group))
+                    )
                     if f is not None:
                         availability[g_idx, :] *= f
                         applied_pp += 1
@@ -1552,7 +1564,9 @@ def _apply_outage_overlays(
             if mgfac:
                 applied_mg = 0
                 for g_idx, gen in enumerate(generators):
-                    f = mgfac.get((int(gen.plant_code), gen.plant_group))
+                    f = mgfac.get(
+                        (int(gen.plant_code), artifact_class(gen.plant_group))
+                    )
                     if f is not None:
                         availability[g_idx, :] *= f
                         applied_mg += 1
@@ -1661,7 +1675,7 @@ def _apply_outage_overlays(
                 applied_p = 0
                 for g_idx, gen in enumerate(generators):
                     _pkey = (
-                        (int(gen.plant_code), gen.plant_group)
+                        (int(gen.plant_code), artifact_class(gen.plant_group))
                         if _pgrain
                         else int(gen.plant_code)
                     )
@@ -1844,7 +1858,11 @@ def _apply_outage_overlays(
                 if _cls in _hourly_done:
                     continue  # ERCOT-97: handled at the finer plant grain
                 _idx = np.array(
-                    [gi for gi, g in enumerate(generators) if g.plant_group == _cls],
+                    [
+                        gi
+                        for gi, g in enumerate(generators)
+                        if artifact_class(g.plant_group) == _cls
+                    ],
                     dtype=int,
                 )
                 if _idx.size == 0:
@@ -1892,7 +1910,11 @@ def _apply_outage_overlays(
             if _cls in _hourly_done:
                 continue  # ERCOT-96: already applied at the finer hour grain
             _idx = np.array(
-                [gi for gi, g in enumerate(generators) if g.plant_group == _cls],
+                [
+                    gi
+                    for gi, g in enumerate(generators)
+                    if artifact_class(g.plant_group) == _cls
+                ],
                 dtype=int,
             )
             if _idx.size == 0:
@@ -2006,11 +2028,12 @@ def _apply_outage_overlays(
         # docs/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md. CT_PEAKER is
         # in scope on principle and provably inert (peakers carry no windows
         # by the detector's design). Coal-only arms stay byte-identical: for
-        # a COAL generator the (plant_code, plant_group) layer key below is
-        # exactly the former (plant_code, "COAL") literal.
+        # a coal generator the (plant_code, artifact_class(plant_group)) layer
+        # key below is exactly the former (plant_code, "COAL") literal — the
+        # artifact family token, while the unit carries its subclass (COAL-SUB).
         _evcap_scope: set[str] = set()
         if getattr(config, "ercot_dam_availability_coal_event_cap", False):
-            _evcap_scope.add("COAL")
+            _evcap_scope.update(COAL_CLASSES)
         if getattr(config, "ercot_dam_availability_gas_event_cap", False):
             _evcap_scope.update(("CC_REGULAR", "ST_GAS", "CT_PEAKER"))
         if (
@@ -2106,7 +2129,9 @@ def _apply_outage_overlays(
                     continue
                 _ceil_w: np.ndarray | None = None
                 for _layer in _cap_layers:
-                    _f = _layer.get((int(gen.plant_code), gen.plant_group))
+                    _f = _layer.get(
+                        (int(gen.plant_code), artifact_class(gen.plant_group))
+                    )
                     if _f is not None:
                         if _ceil_w is None:
                             _ceil_w = np.array(_f, dtype=float, copy=True)
@@ -2114,7 +2139,7 @@ def _apply_outage_overlays(
                             _ceil_w = np.minimum(_ceil_w, _f)
                         else:
                             _ceil_w = _ceil_w * _f
-                _binkey = (int(gen.plant_code), gen.plant_group)
+                _binkey = (int(gen.plant_code), artifact_class(gen.plant_group))
                 _ppkey = _binkey if (_reconc or _unit_scoped) else int(gen.plant_code)
                 _fp = _plant_partial.get(_ppkey)
                 if _fp is not None:
@@ -2269,7 +2294,11 @@ def _apply_outage_overlays(
         _n_days = hours // 24
         for _cls, _target_h in _meas_pjm.items():
             _idx = np.array(
-                [gi for gi, g in enumerate(generators) if g.plant_group == _cls],
+                [
+                    gi
+                    for gi, g in enumerate(generators)
+                    if artifact_class(g.plant_group) == _cls
+                ],
                 dtype=int,
             )
             if _idx.size == 0:
@@ -2368,7 +2397,11 @@ def _apply_outage_overlays(
         )
         _pub = _pub_h[: _n_days * 24].reshape(_n_days, 24).mean(axis=1)  # (days,)
         _cov = np.array(
-            [g.plant_group in PJM_OUTAGE_COVERED_GROUPS for g in generators], dtype=bool
+            [
+                artifact_class(g.plant_group) in PJM_OUTAGE_COVERED_GROUPS
+                for g in generators
+            ],
+            dtype=bool,
         )
         if _cov.any() and np.isfinite(_pub).any():
             _idx = np.flatnonzero(_cov)
@@ -2751,7 +2784,7 @@ def _compose_min_gen_floors(
         _coal_per_year_frac = {
             pc: frac
             for (pc, grp, yr), frac in _coal_by_year.items()
-            if yr == int(_yr) and grp == "COAL"
+            if yr == int(_yr) and grp == COAL_ARTIFACT_FAMILY
         }
         logger.info(
             "coal_sync_online_frac_per_year ARMED (%s %s): %d per-year coal "

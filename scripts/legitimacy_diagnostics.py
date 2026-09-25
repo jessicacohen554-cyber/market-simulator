@@ -159,7 +159,7 @@ D1_OFFPEAK_LAST_HOUR: int = 14  # off-peak window = local hours 0..14 inclusive
 D1_GATED_CLASSES: tuple[str, ...] = (
     "CT_PEAKER",
     "ST_GAS",
-    "COAL",
+    # The four coal subclasses (COAL-SUB, 2026-09-25: no bare COAL class).
     "COAL_LIGNITE",
     "COAL_PRB",
     "COAL_BIT",

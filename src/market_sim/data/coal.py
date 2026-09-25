@@ -16,10 +16,12 @@ import pandas as pd
 
 from market_sim.config.paths import EIA_860_DIR, PROCESSED_DIR, REFERENCE_DIR
 from market_sim.config.plant_taxonomy import (
+    COAL_ARTIFACT_FAMILY,
     COAL_CODE_TO_SUPPLY,
     COAL_SUPPLY_TO_CLASS,
     classify_plant,
     coal_code_to_class,
+    is_coal_class,
 )
 from market_sim.utils.hour_calendar import DAYS_IN_MONTH_NOLEAP
 
@@ -165,6 +167,75 @@ def register_partial_exit_coal_supply(mapping: dict[int, str]) -> None:
     _PARTIAL_EXIT_COAL_SUPPLY.update({int(k): str(v) for k, v in mapping.items()})
 
 
+# COAL-SUB (owner instruction 2026-09-25, verbatim: "we need to completely
+# eliminate the class Coal From the model altogether all coal should be sorted
+# into its subclass"). The FINAL fallback of the coal-rank chain: the EIA-860
+# ``Energy Source 1`` code of the coal unit itself, read off the row the fleet
+# loader is building (so it is the unit's OWN vintage — a coal-to-gas
+# conversion carries its coal code only in the vintages in which it burned
+# coal), mapped through the canonical COAL_CODE_TO_SUPPLY — the identical map
+# the EIA-923 benchmark classifies by, so the fleet and the benchmark bucket a
+# plant the same way by construction. Populated ONLY by
+# ``data/fleet/eia860.py::_rows_to_generators`` through
+# :func:`register_unit_coal_supply`, and consulted LAST in
+# :func:`coal_supply_class`, so it can never override any existing resolution:
+# the only plants it reaches are the ones that previously fell into the deleted
+# generic ``COAL`` bucket. Plant-grained (first registered code wins) because
+# every per-plant artifact join and the plant's offer curve are plant-grained —
+# one plant, one subclass.
+_UNIT_ENERGY_SOURCE_COAL_SUPPLY: dict[int, str] = {}
+
+
+def register_unit_coal_supply(plant_code: int, energy_source: object) -> str:
+    """Register a coal unit's EIA-860 energy-source rank as its plant's last-resort supply.
+
+    Args:
+        plant_code: EIA plant code of the unit.
+        energy_source: The unit's EIA-860 ``Energy Source 1`` code.
+
+    Returns:
+        The supply class registered for the plant (the pre-existing one when
+        the plant already carries a registration), or ``""`` when the code is
+        not a coal code.
+    """
+    supply = COAL_CODE_TO_SUPPLY.get(str(energy_source or "").strip().upper(), "")
+    if not supply:
+        return _UNIT_ENERGY_SOURCE_COAL_SUPPLY.get(int(plant_code), "")
+    return _UNIT_ENERGY_SOURCE_COAL_SUPPLY.setdefault(int(plant_code), supply)
+
+
+def coal_subclass(plant_code: int, energy_source: object = "") -> str:
+    """Return the model coal class (``COAL_LIGNITE`` / ``COAL_PRB`` / ``COAL_BIT`` / ``COAL_WC``).
+
+    The ONE resolver every coal generator's ``plant_group`` comes from: the
+    :func:`coal_supply_class` chain, whose last link is the unit's own EIA-860
+    energy-source code (registered here first when ``energy_source`` is given).
+    There is no generic coal class, so a unit none of the links reaches is an
+    error, never a guess.
+
+    Raises:
+        ValueError: when no link resolves the plant.
+    """
+    if not int(plant_code):
+        # No plant identity to resolve at plant grain (and nothing to register
+        # without colliding every code-less row onto plant 0): the unit's own
+        # energy-source code is the only evidence.
+        cls = coal_code_to_class(str(energy_source or "")) or ""
+    else:
+        if energy_source:
+            register_unit_coal_supply(plant_code, energy_source)
+        cls = COAL_SUPPLY_TO_CLASS.get(coal_supply_class(int(plant_code)), "")
+    if not cls:
+        raise ValueError(
+            f"coal plant {int(plant_code)} resolves to NO coal subclass (curated "
+            "map, EIA-923 receipts, EIA-860 retiree rank, partial-exit registry "
+            f"and its own EIA-860 energy_source {energy_source!r} all empty); "
+            "COAL-SUB forbids inventing one — add its rank to the curated map "
+            "or derive its receipts"
+        )
+    return cls
+
+
 def coal_supply_class(plant_code: int) -> str:
     """Return a plant's coal supply class, or ``""`` if unclassified.
 
@@ -183,6 +254,10 @@ def coal_supply_class(plant_code: int) -> str:
        (:data:`_PARTIAL_EXIT_COAL_SUPPLY`) — the same energy-source-code
        fallback for units the gated miso-190 channel injects; empty while
        ``partial_plant_exit_carry`` is off.
+    5. The coal unit's OWN EIA-860 energy-source code
+       (:data:`_UNIT_ENERGY_SOURCE_COAL_SUPPLY`, COAL-SUB) — registered by the
+       fleet loader, so every coal plant in a loaded fleet resolves; ``""``
+       only for a plant no fleet row has registered.
     """
     base = COAL_PLANT_SUPPLY.get(int(plant_code))
     if base:
@@ -193,7 +268,10 @@ def coal_supply_class(plant_code: int) -> str:
     retiree = _eia860_retiree_coal_supply().get(int(plant_code))
     if retiree:
         return retiree
-    return _PARTIAL_EXIT_COAL_SUPPLY.get(int(plant_code), "")
+    partial = _PARTIAL_EXIT_COAL_SUPPLY.get(int(plant_code))
+    if partial:
+        return partial
+    return _UNIT_ENERGY_SOURCE_COAL_SUPPLY.get(int(plant_code), "")
 
 
 # ---------------------------------------------------------------------------
@@ -244,13 +322,15 @@ def _coal_class_for(plant_code: int, fuel_code: str = "") -> str:
     The coal-rank resolver :func:`classify_plant` uses: the authoritative model
     supply map (:func:`coal_supply_class`, curated ERCOT lignite/PRB plus the
     EIA-923-derived per-ISO ranks), falling back to the EIA-923 receipt fuel
-    code and finally the bare ``COAL`` class. Mirrors the calibration
-    benchmark's coal resolver so the model and benchmark split coal identically.
+    code. Mirrors the calibration benchmark's coal resolver so the model and
+    benchmark split coal identically. Returns ``""`` only for a non-coal
+    ``fuel_code`` on an unresolved plant (the caller's fuel-code map then
+    decides); there is no generic ``COAL`` class (COAL-SUB, 2026-09-25).
     """
     return (
         COAL_SUPPLY_TO_CLASS.get(coal_supply_class(int(plant_code)))
         or coal_code_to_class(fuel_code)
-        or "COAL"
+        or ""
     )
 
 
@@ -403,7 +483,11 @@ def coal_sync_online_frac(
         return {}
     out: dict[int, float] = {}
     for r in df.itertuples(index=False):
-        if str(getattr(r, "status", "ok")) != "ok" or str(r.plant_group) != "COAL":
+        # The artifact's coal-family token (plant_taxonomy.COAL_ARTIFACT_FAMILY).
+        if (
+            str(getattr(r, "status", "ok")) != "ok"
+            or str(r.plant_group) != COAL_ARTIFACT_FAMILY
+        ):
             continue
         if pd.isna(r.online_frac):
             continue
@@ -452,7 +536,8 @@ def coal_marginal_hr_bounds(iso: str) -> dict[str, float]:
     if not path.exists():
         return {}
     df = pd.read_csv(path)
-    row = df[df["class"].astype(str).str.upper() == "COAL"]
+    # The summary's coal row carries the artifact family token.
+    row = df[df["class"].astype(str).str.upper() == COAL_ARTIFACT_FAMILY]
     if row.empty:
         return {}
     r = row.iloc[0]
@@ -496,7 +581,7 @@ def apply_coal_econ_marginal_hr_floor(
     merged = {cls: dict(bands) for cls, bands in offer_curve_by_group.items()}
     lifted: list[tuple[str, str, float, float]] = []
     for cls, bands in merged.items():
-        if not cls.upper().startswith("COAL"):
+        if not is_coal_class(cls):
             continue
         for band, floor in floors.items():
             cur = bands.get(band)

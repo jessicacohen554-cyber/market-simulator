@@ -20268,6 +20268,7 @@ class ScenarioConfig:
                 f"ScenarioConfig.mode must be 'forecast' or 'backcast', "
                 f"got {self.mode!r}"
             )
+        self._retire_bare_coal_class()
         from market_sim.config.constants import HYDRO_YEAR_MULTIPLIER
 
         if self.hydro_year not in HYDRO_YEAR_MULTIPLIER:
@@ -21696,6 +21697,50 @@ class ScenarioConfig:
         payload_dict = _normalize_cache_key_paths(payload_dict, _cache_key_path_roots())
         payload = json.dumps(payload_dict, sort_keys=True)
         return hashlib.sha256(payload.encode()).hexdigest()[:16]
+
+    def _retire_bare_coal_class(self) -> None:
+        """Enforce COAL-SUB on the class-keyed fields (owner instruction 2026-09-25).
+
+        The bare ``COAL`` class is deleted: every coal unit carries its subclass
+        (``COAL_LIGNITE`` / ``COAL_PRB`` / ``COAL_BIT`` / ``COAL_WC``). A
+        class-keyed field naming ``COAL`` is refused with
+        :class:`~market_sim.config.plant_taxonomy.BareCoalClassError` — with ONE
+        exception that makes every committed bundle's recorded config readable:
+        an ``offer_curve_by_group`` that carries ``COAL`` ALONGSIDE all four
+        subclasses. There the ``COAL`` curve could only ever reach a unit whose
+        subclass had no curve, which no longer exists, so the key is dropped
+        (:func:`~market_sim.config.plant_taxonomy.fold_legacy_coal_key` with
+        every subclass covered) — the recorded subclass curves are untouched.
+        New configs never reach that branch through the calibration CLI, whose
+        ``--offer-curve-json`` / ``--offer-curve-delta-json`` channels refuse
+        the key outright (``pipeline/backcast_config._deep_merge_offer_curve``).
+        """
+        from market_sim.config.plant_taxonomy import (
+            COAL_ARTIFACT_FAMILY,
+            COAL_CLASSES,
+            BareCoalClassError,
+            assert_not_bare_coal,
+            fold_legacy_coal_key,
+        )
+
+        curve = self.offer_curve_by_group or {}
+        if COAL_ARTIFACT_FAMILY in curve:
+            if not all(c in curve for c in COAL_CLASSES):
+                raise BareCoalClassError(
+                    "ScenarioConfig.offer_curve_by_group carries the deleted bare "
+                    "'COAL' class without all four coal subclasses "
+                    f"({', '.join(COAL_CLASSES)}); name the subclasses instead "
+                    "(COAL-SUB, owner instruction 2026-09-25)"
+                )
+            self.offer_curve_by_group = fold_legacy_coal_key(
+                curve, covered=COAL_CLASSES
+            )
+        for name in ("econ_split_by_group", "class_commitment_overrides"):
+            for key in getattr(self, name) or {}:
+                assert_not_bare_coal(key, f"ScenarioConfig.{name}")
+        for name in ("wefor_residual_groups", "temp_derate_classes"):
+            for key in getattr(self, name) or ():
+                assert_not_bare_coal(key, f"ScenarioConfig.{name}")
 
     def with_overrides(self, **kwargs) -> "ScenarioConfig":
         """Return a copy of this config with the given fields replaced.

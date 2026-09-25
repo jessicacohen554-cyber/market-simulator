@@ -39,6 +39,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.paths import RAW_DATA_DIR
+from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY
 
 logger = logging.getLogger(__name__)
 
@@ -503,8 +504,11 @@ _PARASITIC_MAX: float = 1.00
 # Class-default parasitic-load fractions (1 − net/gross) keyed by the
 # registry ``plant_group``, used when a plant's measured factor is missing
 # or implausible. Sources: EPRI / EIA station-service typicals by technology.
+# Keyed in the registry's (artifact) class vocabulary, where coal is the
+# family token; a model coal subclass reads it through
+# plant_taxonomy.artifact_class (COAL-SUB, 2026-09-25).
 DEFAULT_PARASITIC_LOAD_PCT: dict[str, float] = {
-    "COAL": 0.070,
+    COAL_ARTIFACT_FAMILY: 0.070,
     "ST_GAS": 0.050,
     "ST_CHP": 0.050,
     "CC_REGULAR": 0.025,

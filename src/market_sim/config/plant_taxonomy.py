@@ -24,6 +24,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+import numpy as np
+
 # EIA-930 "net generation by energy source" reporting buckets. Model classes
 # roll up to exactly one of these (PlantClass.fuel930).
 EIA930_FUELS: tuple[str, ...] = (
@@ -53,8 +55,11 @@ class PlantClass:
 # (coal ranks, then gas classes, then non-fossil). Add a class here and every
 # consumer that derives from the helpers below updates automatically.
 PLANT_CLASSES: tuple[PlantClass, ...] = (
-    # Coal — generic, ERCOT supply classes, and EIA-923-derived ranks.
-    PlantClass("COAL", "coal", "Coal", True),
+    # Coal — the four supply ranks. There is NO generic ``COAL`` class (owner
+    # instruction 2026-09-25, "we need to completely eliminate the class Coal
+    # From the model altogether all coal should be sorted into its subclass"):
+    # every coal unit carries its rank, resolved at load by
+    # :func:`market_sim.data.coal.coal_subclass`.
     PlantClass("COAL_LIGNITE", "coal", "Coal Lignite", True),
     PlantClass("COAL_PRB", "coal", "Coal PRB", True),
     PlantClass("COAL_BIT", "coal", "Coal Bituminous", True),
@@ -147,6 +152,117 @@ COAL_SUPPLY_TO_CLASS: dict[str, str] = {
 def coal_code_to_class(code: str) -> str | None:
     """Map an EIA-923 coal ENERGY_SOURCE code straight to its model class."""
     return COAL_SUPPLY_TO_CLASS.get(COAL_CODE_TO_SUPPLY.get(str(code).upper()))
+
+
+# --- The coal subclass family (COAL-SUB, owner instruction 2026-09-25) ------
+# The four coal model classes, in canonical display order. A coal generator's
+# ``plant_group`` is ALWAYS one of these; the bare ``COAL`` class is deleted,
+# not aliased (rule 26 [R-DELETE]) — see :func:`assert_not_bare_coal`.
+COAL_CLASSES: tuple[str, ...] = ("COAL_LIGNITE", "COAL_PRB", "COAL_BIT", "COAL_WC")
+
+# The coal FUEL-FAMILY token of the committed data artifacts — NEVER a
+# generator class. The frozen derive scripts (rule 23 [R-FROZEN-DERIVE]) wrote
+# ``plant_group`` / ``class`` / ``plant_class`` = ``"COAL"`` into the CAMPD
+# outage, thermal-tranche, bin-assignment, reliability-floor, ERCOT DAM
+# availability and marginal-HR artifacts, and several solve-path mechanisms
+# compute ONE quantity across all coal and distribute it (the reliability
+# floor's cheapest-first limb, the ERCOT class-availability water-fill, the
+# online-capacity envelopes). Re-deriving those artifacts to rename a token is
+# not a data change, and splitting an across-coal aggregate into four
+# per-rank aggregates changes the answer. So every such join / aggregate reads
+# the fleet's subclass through :func:`artifact_class`, which folds the four
+# ranks onto this token: the artifacts stay byte-identical and the fleet never
+# carries it.
+COAL_ARTIFACT_FAMILY: str = "COAL"
+
+
+def is_coal_class(key: object) -> bool:
+    """True iff ``key`` is one of the four coal model classes (:data:`COAL_CLASSES`)."""
+    return str(key) in COAL_CLASSES
+
+
+def artifact_class(group: object) -> str:
+    """Return the committed-artifact class token for a model ``plant_group``.
+
+    A coal subclass maps to :data:`COAL_ARTIFACT_FAMILY` (the fuel-family token
+    the derived artifacts and the across-coal aggregates are keyed on); every
+    other class is returned unchanged. The ONE seam through which a model
+    class meets artifact vocabulary, so a join can never drift.
+    """
+    g = str(group)
+    return COAL_ARTIFACT_FAMILY if g in COAL_CLASSES else g
+
+
+def artifact_class_array(groups) -> np.ndarray:
+    """Vectorized :func:`artifact_class` over an array of ``plant_group`` values."""
+    arr = np.asarray(groups).astype(object)
+    out = arr.copy()
+    out[np.isin(arr, COAL_CLASSES)] = COAL_ARTIFACT_FAMILY
+    return out
+
+
+def with_coal_subclasses(table: dict, value) -> dict:
+    """Return ``table`` with ``value`` under every coal subclass key.
+
+    The carry-over used where a per-unit parameter table was keyed by the
+    deleted ``COAL`` class: each subclass receives the identical value, so a
+    unit that was already subclass-resolved reads byte-identically.
+    """
+    out = dict(table)
+    for cls in COAL_CLASSES:
+        out[cls] = value
+    return out
+
+
+class BareCoalClassError(ValueError):
+    """A configuration or fleet row names the deleted bare ``COAL`` class."""
+
+
+def assert_not_bare_coal(key: object, where: str) -> None:
+    """Refuse the deleted bare ``COAL`` class with a clear error.
+
+    Raises:
+        BareCoalClassError: when ``key == "COAL"``.
+    """
+    if str(key) == COAL_ARTIFACT_FAMILY:
+        raise BareCoalClassError(
+            f"{where}: the bare 'COAL' class no longer exists (owner instruction "
+            "2026-09-25: every coal unit carries its subclass). Name the "
+            f"subclass(es) instead: {', '.join(COAL_CLASSES)}. A legacy keeper "
+            "recipe is translated by plant_taxonomy.fold_legacy_coal_key "
+            "(replay_keeper does this); a NEW config may not carry the key."
+        )
+
+
+def fold_legacy_coal_key(mapping: dict | None, covered=()) -> dict | None:
+    """Translate a legacy class-keyed mapping carrying a bare ``"COAL"`` key.
+
+    Before COAL-SUB the ``"COAL"`` entry of a class-keyed table (an
+    ``offer_curve_by_group`` curve, an ``offer_curve_overrides`` patch) reached
+    exactly the coal units whose subclass had NO entry of its own (the
+    subclass entry won whenever present). That semantics is preserved: the
+    ``"COAL"`` value is carried to each coal subclass that has no entry in
+    ``mapping`` AND is not in ``covered`` (the subclasses the base table the
+    mapping is merged onto already carries), and the ``"COAL"`` key is dropped.
+
+    Args:
+        mapping: The class-keyed mapping (returned unchanged when it has no
+            ``"COAL"`` key; ``None`` passes through).
+        covered: Coal subclasses already carried by the table ``mapping`` is
+            merged onto.
+
+    Returns:
+        A new mapping with no ``"COAL"`` key.
+    """
+    if not mapping or COAL_ARTIFACT_FAMILY not in mapping:
+        return mapping
+    out = {k: v for k, v in mapping.items() if k != COAL_ARTIFACT_FAMILY}
+    legacy = mapping[COAL_ARTIFACT_FAMILY]
+    skip = set(covered)
+    for cls in COAL_CLASSES:
+        if cls not in out and cls not in skip:
+            out[cls] = legacy
+    return out
 
 
 # --- Per-plant model-class assignment (single source of truth) -------------
@@ -252,8 +368,9 @@ def classify_plant(
     * Coal is split into its supply rank (``COAL_LIGNITE`` / ``COAL_PRB`` /
       ``COAL_BIT`` / ``COAL_WC``) via ``coal_class_resolver(plant_id, fuel)``
       when given — the model's curated-plus-EIA-923 coal map — else straight
-      from the fuel code (:func:`coal_code_to_class`), falling back to the bare
-      ``COAL`` class.
+      from the fuel code (:func:`coal_code_to_class`). Every code in
+      :data:`COAL_CODE_TO_SUPPLY` maps to a subclass, so there is no generic
+      coal class (COAL-SUB, 2026-09-25).
     * Natural gas (``NG``) is split by prime mover and CHP flag into the six
       gas classes (CC / CT / ST, merchant vs CHP).
     * Wind, solar, nuclear, oil, biomass and hydro are their own classes;
@@ -299,7 +416,9 @@ def classify_plant(
             resolved = coal_class_resolver(int(plant_id), fuel)
             if resolved:
                 return resolved
-        return coal_code_to_class(fuel) or "COAL"
+        # Every coal code maps to a subclass (COAL_CODE_TO_SUPPLY values are
+        # all COAL_SUPPLY_TO_CLASS keys) — there is no generic coal class.
+        return COAL_SUPPLY_TO_CLASS[COAL_CODE_TO_SUPPLY[fuel]]
     if fuel == "NG":
         if pm in NG_CC_PRIME_MOVERS:
             return "CC_CHP" if chp else "CC_REGULAR"

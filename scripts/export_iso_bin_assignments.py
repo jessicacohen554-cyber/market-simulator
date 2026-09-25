@@ -53,6 +53,7 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
+from market_sim.config.plant_taxonomy import COAL_CLASSES  # noqa: E402
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.chp import chp_btm_pct, chp_overrides  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
@@ -136,7 +137,7 @@ def build_bin_assignments(iso: str) -> pd.DataFrame:
             pct_peak = max(0.0, min(pct_peak, grid - pct_mc))
             pct_econ = max(0.0, grid - pct_mc - pct_peak)
             mr_src = _floor_tag.get(floor_status.get(code, ""), "chp_sector_default")
-        elif group == "COAL":
+        elif group in COAL_CLASSES:
             mr_src = "campd" if key in measured else "class_default"
         else:
             mr_src = "none"

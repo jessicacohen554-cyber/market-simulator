@@ -68,6 +68,7 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
+from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY, artifact_class  # noqa: E402
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.eia_loader import load_demand  # noqa: E402
@@ -84,7 +85,7 @@ YEARS = (2023, 2024, 2025)
 # The responsive thermal classes whose on-line headroom forms RTOLCAP (the model
 # plant groups carrying a 10-min ramp fraction — i.e. reserve-eligible thermal).
 RTOLCAP_CLASSES = (
-    "COAL",
+    COAL_ARTIFACT_FAMILY,
     "CC_REGULAR",
     "CC_CHP",
     "CT_PEAKER",
@@ -170,6 +171,11 @@ def _fleet_class_maps(year: int):
         grp = _OTHER_GROUP_GAS_STEAM_RECLASS.get(pc, grp)
         if RAMP10_FRAC_BY_GROUP.get(grp) is None:
             continue  # non-responsive (nuclear/hydro/wind/solar/storage)
+        # The envelope tables are keyed by class FAMILY: a coal subclass reads
+        # as the coal family token, exactly the bare COAL group the fleet
+        # carried before COAL-SUB (2026-09-25) — the derive's output is
+        # unchanged.
+        grp = artifact_class(grp)
         if pc <= 0:
             continue
         plant_cap[pc] = plant_cap.get(pc, 0.0) + float(g.pmax_mw)

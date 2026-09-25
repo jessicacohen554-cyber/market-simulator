@@ -1,0 +1,3195 @@
+{
+ "rows": [
+  {
+   "iso": "CAISO",
+   "year": 2019,
+   "source": "raw EIA-860 fleet load (keeper recipe not rebuildable)",
+   "coal_rows": 2,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 50.0
+   },
+   "plants": {
+    "UNRESOLVED": [
+     "10684 Argus Cogen Plant"
+    ]
+   }
+  },
+  {
+   "iso": "CAISO",
+   "year": 2020,
+   "source": "raw EIA-860 fleet load (keeper recipe not rebuildable)",
+   "coal_rows": 2,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 50.0
+   },
+   "plants": {
+    "UNRESOLVED": [
+     "10684 Argus Cogen Plant"
+    ]
+   }
+  },
+  {
+   "iso": "CAISO",
+   "year": 2021,
+   "source": "raw EIA-860 fleet load (keeper recipe not rebuildable)",
+   "coal_rows": 2,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 50.0
+   },
+   "plants": {
+    "UNRESOLVED": [
+     "10684 Argus Cogen Plant"
+    ]
+   }
+  },
+  {
+   "iso": "CAISO",
+   "year": 2022,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 8,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 15.0
+   },
+   "plants": {
+    "UNRESOLVED": [
+     "10684 Argus Cogen Plant"
+    ]
+   }
+  },
+  {
+   "iso": "CAISO",
+   "year": 2023,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 8,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 15.0
+   },
+   "plants": {
+    "UNRESOLVED": [
+     "10684 Argus Cogen Plant"
+    ]
+   }
+  },
+  {
+   "iso": "CAISO",
+   "year": 2024,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 8,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 15.0
+   },
+   "plants": {
+    "UNRESOLVED": [
+     "10684 Argus Cogen Plant"
+    ]
+   }
+  },
+  {
+   "iso": "CAISO",
+   "year": 2025,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 8,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 15.0
+   },
+   "plants": {
+    "UNRESOLVED": [
+     "10684 Argus Cogen Plant"
+    ]
+   }
+  },
+  {
+   "iso": "ERCOT",
+   "year": 2019,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 40,
+   "mw": {
+    "COAL_LIGNITE": 2554.6,
+    "COAL_PRB": 11409.3,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_PRB": [
+     "298 Limestone",
+     "298 Limestone econ",
+     "3470 W A Parish [COAL]",
+     "3470 W A Parish [COAL] econ",
+     "56611 Sandy Creek Energy Station",
+     "56611 Sandy Creek Energy Station econ",
+     "6146 Martin Lake",
+     "6146 Martin Lake econ",
+     "6178 Coleto Creek",
+     "6178 Coleto Creek econ",
+     "6179 Fayette Power Project",
+     "6179 Fayette Power Project econ",
+     "7097 J K Spruce",
+     "7097 J K Spruce econ"
+    ],
+    "COAL_LIGNITE": [
+     "6180 Oak Grove (TX)",
+     "6180 Oak Grove (TX) econ",
+     "6183 San Miguel",
+     "6183 San Miguel econ",
+     "7030 Major Oak Power",
+     "7030 Major Oak Power econ"
+    ]
+   }
+  },
+  {
+   "iso": "ERCOT",
+   "year": 2020,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 40,
+   "mw": {
+    "COAL_LIGNITE": 2554.6,
+    "COAL_PRB": 11409.3,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_PRB": [
+     "298 Limestone",
+     "298 Limestone econ",
+     "3470 W A Parish [COAL]",
+     "3470 W A Parish [COAL] econ",
+     "56611 Sandy Creek Energy Station",
+     "56611 Sandy Creek Energy Station econ",
+     "6146 Martin Lake",
+     "6146 Martin Lake econ",
+     "6178 Coleto Creek",
+     "6178 Coleto Creek econ",
+     "6179 Fayette Power Project",
+     "6179 Fayette Power Project econ",
+     "7097 J K Spruce",
+     "7097 J K Spruce econ"
+    ],
+    "COAL_LIGNITE": [
+     "6180 Oak Grove (TX)",
+     "6180 Oak Grove (TX) econ",
+     "6183 San Miguel",
+     "6183 San Miguel econ",
+     "7030 Major Oak Power",
+     "7030 Major Oak Power econ"
+    ]
+   }
+  },
+  {
+   "iso": "ERCOT",
+   "year": 2021,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 40,
+   "mw": {
+    "COAL_LIGNITE": 2554.6,
+    "COAL_PRB": 11409.3,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_PRB": [
+     "298 Limestone",
+     "298 Limestone econ",
+     "3470 W A Parish [COAL]",
+     "3470 W A Parish [COAL] econ",
+     "56611 Sandy Creek Energy Station",
+     "56611 Sandy Creek Energy Station econ",
+     "6146 Martin Lake",
+     "6146 Martin Lake econ",
+     "6178 Coleto Creek",
+     "6178 Coleto Creek econ",
+     "6179 Fayette Power Project",
+     "6179 Fayette Power Project econ",
+     "7097 J K Spruce",
+     "7097 J K Spruce econ"
+    ],
+    "COAL_LIGNITE": [
+     "6180 Oak Grove (TX)",
+     "6180 Oak Grove (TX) econ",
+     "6183 San Miguel",
+     "6183 San Miguel econ",
+     "7030 Major Oak Power",
+     "7030 Major Oak Power econ"
+    ]
+   }
+  },
+  {
+   "iso": "ERCOT",
+   "year": 2022,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 40,
+   "mw": {
+    "COAL_LIGNITE": 2554.6,
+    "COAL_PRB": 11409.3,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_PRB": [
+     "298 Limestone",
+     "298 Limestone econ",
+     "3470 W A Parish [COAL]",
+     "3470 W A Parish [COAL] econ",
+     "56611 Sandy Creek Energy Station",
+     "56611 Sandy Creek Energy Station econ",
+     "6146 Martin Lake",
+     "6146 Martin Lake econ",
+     "6178 Coleto Creek",
+     "6178 Coleto Creek econ",
+     "6179 Fayette Power Project",
+     "6179 Fayette Power Project econ",
+     "7097 J K Spruce",
+     "7097 J K Spruce econ"
+    ],
+    "COAL_LIGNITE": [
+     "6180 Oak Grove (TX)",
+     "6180 Oak Grove (TX) econ",
+     "6183 San Miguel",
+     "6183 San Miguel econ",
+     "7030 Major Oak Power",
+     "7030 Major Oak Power econ"
+    ]
+   }
+  },
+  {
+   "iso": "ERCOT",
+   "year": 2023,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 40,
+   "mw": {
+    "COAL_LIGNITE": 2554.6,
+    "COAL_PRB": 11409.3,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_PRB": [
+     "298 Limestone",
+     "298 Limestone econ",
+     "3470 W A Parish [COAL]",
+     "3470 W A Parish [COAL] econ",
+     "56611 Sandy Creek Energy Station",
+     "56611 Sandy Creek Energy Station econ",
+     "6146 Martin Lake",
+     "6146 Martin Lake econ",
+     "6178 Coleto Creek",
+     "6178 Coleto Creek econ",
+     "6179 Fayette Power Project",
+     "6179 Fayette Power Project econ",
+     "7097 J K Spruce",
+     "7097 J K Spruce econ"
+    ],
+    "COAL_LIGNITE": [
+     "6180 Oak Grove (TX)",
+     "6180 Oak Grove (TX) econ",
+     "6183 San Miguel",
+     "6183 San Miguel econ",
+     "7030 Major Oak Power",
+     "7030 Major Oak Power econ"
+    ]
+   }
+  },
+  {
+   "iso": "ERCOT",
+   "year": 2024,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 40,
+   "mw": {
+    "COAL_LIGNITE": 2554.6,
+    "COAL_PRB": 11409.3,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_PRB": [
+     "298 Limestone",
+     "298 Limestone econ",
+     "3470 W A Parish [COAL]",
+     "3470 W A Parish [COAL] econ",
+     "56611 Sandy Creek Energy Station",
+     "56611 Sandy Creek Energy Station econ",
+     "6146 Martin Lake",
+     "6146 Martin Lake econ",
+     "6178 Coleto Creek",
+     "6178 Coleto Creek econ",
+     "6179 Fayette Power Project",
+     "6179 Fayette Power Project econ",
+     "7097 J K Spruce",
+     "7097 J K Spruce econ"
+    ],
+    "COAL_LIGNITE": [
+     "6180 Oak Grove (TX)",
+     "6180 Oak Grove (TX) econ",
+     "6183 San Miguel",
+     "6183 San Miguel econ",
+     "7030 Major Oak Power",
+     "7030 Major Oak Power econ"
+    ]
+   }
+  },
+  {
+   "iso": "ERCOT",
+   "year": 2025,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 40,
+   "mw": {
+    "COAL_LIGNITE": 2554.6,
+    "COAL_PRB": 11409.3,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_PRB": [
+     "298 Limestone",
+     "298 Limestone econ",
+     "3470 W A Parish [COAL]",
+     "3470 W A Parish [COAL] econ",
+     "56611 Sandy Creek Energy Station",
+     "56611 Sandy Creek Energy Station econ",
+     "6146 Martin Lake",
+     "6146 Martin Lake econ",
+     "6178 Coleto Creek",
+     "6178 Coleto Creek econ",
+     "6179 Fayette Power Project",
+     "6179 Fayette Power Project econ",
+     "7097 J K Spruce",
+     "7097 J K Spruce econ"
+    ],
+    "COAL_LIGNITE": [
+     "6180 Oak Grove (TX)",
+     "6180 Oak Grove (TX) econ",
+     "6183 San Miguel",
+     "6183 San Miguel econ",
+     "7030 Major Oak Power",
+     "7030 Major Oak Power econ"
+    ]
+   }
+  },
+  {
+   "iso": "MISO",
+   "year": 2019,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 755,
+   "mw": {
+    "COAL_LIGNITE": 1758.3,
+    "COAL_PRB": 36081.729,
+    "COAL_BIT": 18889.695,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 2139.804
+   },
+   "plants": {
+    "COAL_LIGNITE": [
+     "2823 Milton R Young",
+     "51 Dolet Hills",
+     "8222 Coyote"
+    ],
+    "COAL_PRB": [
+     "1047 Lansing",
+     "1073 Prairie Creek",
+     "1082 Walter Scott Jr Energy Center",
+     "10860 Archer Daniels Midland Clinton",
+     "10864 Archer Daniels Midland Cedar Rapids",
+     "1091 George Neal North",
+     "1167 Muscatine Plant #1",
+     "1393 R S Nelson",
+     "1710 J H Campbell",
+     "1733 Monroe (MI)",
+     "1740 River Rouge",
+     "1745 Trenton Channel",
+     "1769 Presque Isle",
+     "1831 Eckert Station",
+     "1832 Erickson Station",
+     "1893 Clay Boswell",
+     "1915 Allen S King",
+     "2103 Labadie",
+     "2104 Meramec",
+     "2107 Sioux",
+     "4041 South Oak Creek",
+     "4050 Edgewater",
+     "4078 Weston",
+     "4143 Genoa",
+     "4271 John P Madgett",
+     "54210 American Crystal Sugar Hillsboro",
+     "54212 American Crystal Sugar Crookston",
+     "54213 American Crystal Sugar Drayton",
+     "54214 American Crystal Sugar East Grand Forks",
+     "54533 Southern Minnesota Beet Sugar",
+     "56068 Elm Road Generating Station",
+     "56456 Plum Point Energy Station",
+     "6009 White Bluff",
+     "6017 Newton",
+     "6034 Belle River",
+     "6055 Big Cajun 2",
+     "6090 Sherburne County",
+     "6098 Big Stone",
+     "6155 Rush Island",
+     "6190 Brame Energy Center",
+     "6254 Ottumwa",
+     "6641 Independence Steam Electric Station",
+     "6664 Louisa",
+     "7343 George Neal South",
+     "8023 Columbia (WI)",
+     "856 E D Edwards",
+     "889 Baldwin Energy Complex",
+     "997 Michigan City"
+    ],
+    "COAL_BIT": [
+     "1001 Cayuga",
+     "1004 Edwardsport",
+     "1008 R Gallagher",
+     "1012 F B Culley",
+     "10865 Archer Daniels Midland Decatur",
+     "1382 HMP&L Station Two Henderson",
+     "1743 St Clair",
+     "1825 J B Sims",
+     "2123 Columbia (MO)",
+     "50835 TES Filer City Station",
+     "55856 Prairie State Generating Station",
+     "57928 SIUC",
+     "57949 MSC Sebewaing",
+     "6016 Duck Creek",
+     "6030 Coal Creek",
+     "6085 R M Schahfer",
+     "6113 Gibson",
+     "6213 Merom",
+     "6705 Warrick",
+     "6823 D B Wilson",
+     "861 Coffeen",
+     "891 Havana",
+     "892 Hennepin Power Station",
+     "963 Dallman",
+     "976 Marion",
+     "994 AES Petersburg"
+    ],
+    "UNRESOLVED": [
+     "10234 Biron Mill",
+     "10686 Rapids Energy Center",
+     "10861 Archer Daniels Midland Des Moines",
+     "10863 Archer Daniels Midland Mankato",
+     "10867 Tate & Lyle Decatur Plant Cogen",
+     "1104 Burlington (IA)",
+     "1702 Dan E Karn",
+     "1943 Hoot Lake",
+     "2790 R M Heskett",
+     "50933 Rhinelander Mill",
+     "54098 Kaukauna Paper Mill",
+     "54201 Iowa State University",
+     "6089 Lewis & Clark",
+     "6137 A B Brown",
+     "6639 R D Green"
+    ]
+   }
+  },
+  {
+   "iso": "MISO",
+   "year": 2020,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 711,
+   "mw": {
+    "COAL_LIGNITE": 1747.8,
+    "COAL_PRB": 35874.829,
+    "COAL_BIT": 16539.795,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 2055.756
+   },
+   "plants": {
+    "COAL_LIGNITE": [
+     "2823 Milton R Young",
+     "51 Dolet Hills",
+     "8222 Coyote"
+    ],
+    "COAL_PRB": [
+     "1047 Lansing",
+     "1073 Prairie Creek",
+     "1082 Walter Scott Jr Energy Center",
+     "10860 Archer Daniels Midland Clinton",
+     "10864 Archer Daniels Midland Cedar Rapids",
+     "1091 George Neal North",
+     "1167 Muscatine Plant #1",
+     "1393 R S Nelson",
+     "1710 J H Campbell",
+     "1733 Monroe (MI)",
+     "1740 River Rouge",
+     "1745 Trenton Channel",
+     "1831 Eckert Station",
+     "1832 Erickson Station",
+     "1893 Clay Boswell",
+     "1915 Allen S King",
+     "2103 Labadie",
+     "2104 Meramec",
+     "2107 Sioux",
+     "4041 South Oak Creek",
+     "4050 Edgewater",
+     "4078 Weston",
+     "4143 Genoa",
+     "4271 John P Madgett",
+     "54210 American Crystal Sugar Hillsboro",
+     "54212 American Crystal Sugar Crookston",
+     "54213 American Crystal Sugar Drayton",
+     "54214 American Crystal Sugar East Grand Forks",
+     "54533 Southern Minnesota Beet Sugar",
+     "56068 Elm Road Generating Station",
+     "56456 Plum Point Energy Station",
+     "6009 White Bluff",
+     "6017 Newton",
+     "6034 Belle River",
+     "6055 Big Cajun 2",
+     "6090 Sherburne County",
+     "6098 Big Stone",
+     "6155 Rush Island",
+     "6190 Brame Energy Center",
+     "6254 Ottumwa",
+     "6641 Independence Steam Electric Station",
+     "6664 Louisa",
+     "7343 George Neal South",
+     "8023 Columbia (WI)",
+     "856 E D Edwards",
+     "889 Baldwin Energy Complex",
+     "997 Michigan City"
+    ],
+    "COAL_BIT": [
+     "1001 Cayuga",
+     "1004 Edwardsport",
+     "1008 R Gallagher",
+     "1012 F B Culley",
+     "10865 Archer Daniels Midland Decatur",
+     "1743 St Clair",
+     "1825 J B Sims",
+     "2123 Columbia (MO)",
+     "50835 TES Filer City Station",
+     "55856 Prairie State Generating Station",
+     "57928 SIUC",
+     "57949 MSC Sebewaing",
+     "6030 Coal Creek",
+     "6085 R M Schahfer",
+     "6113 Gibson",
+     "6213 Merom",
+     "6705 Warrick",
+     "6823 D B Wilson",
+     "963 Dallman",
+     "976 Marion",
+     "994 AES Petersburg"
+    ],
+    "UNRESOLVED": [
+     "10234 Biron Mill",
+     "10861 Archer Daniels Midland Des Moines",
+     "10863 Archer Daniels Midland Mankato",
+     "10867 Tate & Lyle Decatur Plant Cogen",
+     "1104 Burlington (IA)",
+     "1702 Dan E Karn",
+     "1943 Hoot Lake",
+     "2790 R M Heskett",
+     "50933 Rhinelander Mill",
+     "54098 Kaukauna Paper Mill",
+     "6089 Lewis & Clark",
+     "6137 A B Brown",
+     "6639 R D Green"
+    ]
+   }
+  },
+  {
+   "iso": "MISO",
+   "year": 2021,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 711,
+   "mw": {
+    "COAL_LIGNITE": 1800.9,
+    "COAL_PRB": 35672.429,
+    "COAL_BIT": 16480.895,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 1862.656
+   },
+   "plants": {
+    "COAL_PRB": [
+     "1047 Lansing",
+     "1073 Prairie Creek",
+     "1082 Walter Scott Jr Energy Center",
+     "10860 Archer Daniels Midland Clinton",
+     "10864 Archer Daniels Midland Cedar Rapids",
+     "1091 George Neal North",
+     "1167 Muscatine Plant #1",
+     "1393 R S Nelson",
+     "1710 J H Campbell",
+     "1733 Monroe (MI)",
+     "1740 River Rouge",
+     "1745 Trenton Channel",
+     "1831 Eckert Station",
+     "1832 Erickson Station",
+     "1893 Clay Boswell",
+     "1915 Allen S King",
+     "1943 Hoot Lake",
+     "2103 Labadie",
+     "2104 Meramec",
+     "2107 Sioux",
+     "4041 South Oak Creek",
+     "4050 Edgewater",
+     "4078 Weston",
+     "4143 Genoa",
+     "4271 John P Madgett",
+     "54210 American Crystal Sugar Hillsboro",
+     "54212 American Crystal Sugar Crookston",
+     "54213 American Crystal Sugar Drayton",
+     "54214 American Crystal Sugar East Grand Forks",
+     "54533 Southern Minnesota Beet Sugar",
+     "56068 Elm Road Generating Station",
+     "56456 Plum Point Energy Station",
+     "6009 White Bluff",
+     "6017 Newton",
+     "6034 Belle River",
+     "6055 Big Cajun 2",
+     "6090 Sherburne County",
+     "6098 Big Stone",
+     "6155 Rush Island",
+     "6190 Brame Energy Center",
+     "6254 Ottumwa",
+     "6641 Independence Steam Electric Station",
+     "6664 Louisa",
+     "7343 George Neal South",
+     "8023 Columbia (WI)",
+     "856 E D Edwards",
+     "889 Baldwin Energy Complex",
+     "997 Michigan City"
+    ],
+    "COAL_BIT": [
+     "1001 Cayuga",
+     "1004 Edwardsport",
+     "1008 R Gallagher",
+     "1012 F B Culley",
+     "10865 Archer Daniels Midland Decatur",
+     "1743 St Clair",
+     "2123 Columbia (MO)",
+     "50835 TES Filer City Station",
+     "55856 Prairie State Generating Station",
+     "57928 SIUC",
+     "57949 MSC Sebewaing",
+     "6030 Coal Creek",
+     "6085 R M Schahfer",
+     "6113 Gibson",
+     "6213 Merom",
+     "6705 Warrick",
+     "6823 D B Wilson",
+     "963 Dallman",
+     "976 Marion",
+     "994 AES Petersburg"
+    ],
+    "UNRESOLVED": [
+     "10234 Biron Mill",
+     "10861 Archer Daniels Midland Des Moines",
+     "10863 Archer Daniels Midland Mankato",
+     "1104 Burlington (IA)",
+     "1702 Dan E Karn",
+     "2790 R M Heskett",
+     "50933 Rhinelander Mill",
+     "54098 Kaukauna Paper Mill",
+     "56786 Spiritwood Station",
+     "6137 A B Brown",
+     "6639 R D Green"
+    ],
+    "COAL_LIGNITE": [
+     "2823 Milton R Young",
+     "51 Dolet Hills",
+     "6089 Lewis & Clark",
+     "8222 Coyote"
+    ]
+   }
+  },
+  {
+   "iso": "MISO",
+   "year": 2022,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 675,
+   "mw": {
+    "COAL_LIGNITE": 1268.4,
+    "COAL_PRB": 35092.329,
+    "COAL_BIT": 16064.095,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 1361.156
+   },
+   "plants": {
+    "COAL_PRB": [
+     "1047 Lansing",
+     "1073 Prairie Creek",
+     "1082 Walter Scott Jr Energy Center",
+     "10860 Archer Daniels Midland Clinton",
+     "10864 Archer Daniels Midland Cedar Rapids",
+     "1091 George Neal North",
+     "1167 Muscatine Plant #1",
+     "1393 R S Nelson",
+     "1710 J H Campbell",
+     "1733 Monroe (MI)",
+     "1740 River Rouge",
+     "1745 Trenton Channel",
+     "1832 Erickson Station",
+     "1893 Clay Boswell",
+     "1915 Allen S King",
+     "1943 Hoot Lake",
+     "2103 Labadie",
+     "2104 Meramec",
+     "2107 Sioux",
+     "4041 South Oak Creek",
+     "4050 Edgewater",
+     "4078 Weston",
+     "4271 John P Madgett",
+     "54210 American Crystal Sugar Hillsboro",
+     "54212 American Crystal Sugar Crookston",
+     "54213 American Crystal Sugar Drayton",
+     "54214 American Crystal Sugar East Grand Forks",
+     "54533 Southern Minnesota Beet Sugar",
+     "56068 Elm Road Generating Station",
+     "56456 Plum Point Energy Station",
+     "6009 White Bluff",
+     "6017 Newton",
+     "6034 Belle River",
+     "6055 Big Cajun 2",
+     "6090 Sherburne County",
+     "6098 Big Stone",
+     "6155 Rush Island",
+     "6190 Brame Energy Center",
+     "6254 Ottumwa",
+     "6641 Independence Steam Electric Station",
+     "6664 Louisa",
+     "7343 George Neal South",
+     "8023 Columbia (WI)",
+     "856 E D Edwards",
+     "889 Baldwin Energy Complex",
+     "997 Michigan City"
+    ],
+    "COAL_BIT": [
+     "1001 Cayuga",
+     "1004 Edwardsport",
+     "1012 F B Culley",
+     "10865 Archer Daniels Midland Decatur",
+     "1743 St Clair",
+     "2123 Columbia (MO)",
+     "50835 TES Filer City Station",
+     "55856 Prairie State Generating Station",
+     "57928 SIUC",
+     "57949 MSC Sebewaing",
+     "6030 Coal Creek",
+     "6085 R M Schahfer",
+     "6113 Gibson",
+     "6213 Merom",
+     "6705 Warrick",
+     "6823 D B Wilson",
+     "963 Dallman",
+     "976 Marion",
+     "994 AES Petersburg"
+    ],
+    "UNRESOLVED": [
+     "10234 Biron Mill",
+     "10861 Archer Daniels Midland Des Moines",
+     "10863 Archer Daniels Midland Mankato",
+     "1702 Dan E Karn",
+     "50933 Rhinelander Mill",
+     "54098 Kaukauna Paper Mill",
+     "56786 Spiritwood Station",
+     "6137 A B Brown",
+     "6639 R D Green"
+    ],
+    "COAL_LIGNITE": [
+     "2790 R M Heskett",
+     "2823 Milton R Young",
+     "6089 Lewis & Clark",
+     "8222 Coyote"
+    ]
+   }
+  },
+  {
+   "iso": "MISO",
+   "year": 2023,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 496,
+   "mw": {
+    "COAL_LIGNITE": 1111.0,
+    "COAL_PRB": 31905.729,
+    "COAL_BIT": 12911.535,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 266.596
+   },
+   "plants": {
+    "COAL_PRB": [
+     "1047 Lansing",
+     "1073 Prairie Creek",
+     "1082 Walter Scott Jr Energy Center",
+     "10860 Archer Daniels Midland Clinton",
+     "10864 Archer Daniels Midland Cedar Rapids",
+     "1091 George Neal North",
+     "1167 Muscatine Plant #1",
+     "1393 R S Nelson",
+     "1710 J H Campbell",
+     "1733 Monroe (MI)",
+     "1893 Clay Boswell",
+     "1915 Allen S King",
+     "2103 Labadie",
+     "2107 Sioux",
+     "4041 South Oak Creek",
+     "4050 Edgewater",
+     "4078 Weston",
+     "4271 John P Madgett",
+     "54210 American Crystal Sugar Hillsboro",
+     "54212 American Crystal Sugar Crookston",
+     "54213 American Crystal Sugar Drayton",
+     "54214 American Crystal Sugar East Grand Forks",
+     "54533 Southern Minnesota Beet Sugar",
+     "56068 Elm Road Generating Station",
+     "56456 Plum Point Energy Station",
+     "6009 White Bluff",
+     "6017 Newton",
+     "6034 Belle River",
+     "6055 Big Cajun 2",
+     "6090 Sherburne County",
+     "6098 Big Stone",
+     "6155 Rush Island",
+     "6190 Brame Energy Center",
+     "6254 Ottumwa",
+     "6641 Independence Steam Electric Station",
+     "6664 Louisa",
+     "7343 George Neal South",
+     "8023 Columbia (WI)",
+     "889 Baldwin Energy Complex",
+     "997 Michigan City"
+    ],
+    "COAL_BIT": [
+     "1001 Cayuga",
+     "1004 Edwardsport",
+     "1012 F B Culley",
+     "10865 Archer Daniels Midland Decatur",
+     "50835 TES Filer City Station",
+     "55856 Prairie State Generating Station",
+     "57928 SIUC",
+     "57949 MSC Sebewaing",
+     "6030 Coal Creek",
+     "6085 R M Schahfer",
+     "6113 Gibson",
+     "6213 Merom",
+     "6705 Warrick",
+     "6823 D B Wilson",
+     "963 Dallman",
+     "976 Marion",
+     "994 AES Petersburg"
+    ],
+    "COAL_LIGNITE": [
+     "2823 Milton R Young",
+     "8222 Coyote"
+    ],
+    "UNRESOLVED": [
+     "10234 Biron Mill",
+     "10861 Archer Daniels Midland Des Moines",
+     "10863 Archer Daniels Midland Mankato",
+     "50933 Rhinelander Mill",
+     "6639 R D Green"
+    ]
+   }
+  },
+  {
+   "iso": "MISO",
+   "year": 2024,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 463,
+   "mw": {
+    "COAL_LIGNITE": 1110.4,
+    "COAL_PRB": 31156.409,
+    "COAL_BIT": 12785.735,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 19.6
+   },
+   "plants": {
+    "COAL_PRB": [
+     "1073 Prairie Creek",
+     "1082 Walter Scott Jr Energy Center",
+     "10860 Archer Daniels Midland Clinton",
+     "10864 Archer Daniels Midland Cedar Rapids",
+     "1091 George Neal North",
+     "1167 Muscatine Plant #1",
+     "1393 R S Nelson",
+     "1710 J H Campbell",
+     "1733 Monroe (MI)",
+     "1893 Clay Boswell",
+     "1915 Allen S King",
+     "2103 Labadie",
+     "2107 Sioux",
+     "4041 South Oak Creek",
+     "4050 Edgewater",
+     "4078 Weston",
+     "4271 John P Madgett",
+     "54210 American Crystal Sugar Hillsboro",
+     "54212 American Crystal Sugar Crookston",
+     "54213 American Crystal Sugar Drayton",
+     "54214 American Crystal Sugar East Grand Forks",
+     "54533 Southern Minnesota Beet Sugar",
+     "56068 Elm Road Generating Station",
+     "56456 Plum Point Energy Station",
+     "6009 White Bluff",
+     "6017 Newton",
+     "6034 Belle River",
+     "6055 Big Cajun 2",
+     "6090 Sherburne County",
+     "6098 Big Stone",
+     "6155 Rush Island",
+     "6190 Brame Energy Center",
+     "6254 Ottumwa",
+     "6641 Independence Steam Electric Station",
+     "6664 Louisa",
+     "7343 George Neal South",
+     "8023 Columbia (WI)",
+     "889 Baldwin Energy Complex",
+     "997 Michigan City"
+    ],
+    "COAL_BIT": [
+     "1001 Cayuga",
+     "1004 Edwardsport",
+     "1012 F B Culley",
+     "10865 Archer Daniels Midland Decatur",
+     "50835 TES Filer City Station",
+     "55856 Prairie State Generating Station",
+     "57928 SIUC",
+     "57949 MSC Sebewaing",
+     "6030 Coal Creek",
+     "6085 R M Schahfer",
+     "6113 Gibson",
+     "6213 Merom",
+     "6705 Warrick",
+     "6823 D B Wilson",
+     "963 Dallman",
+     "976 Marion",
+     "994 AES Petersburg"
+    ],
+    "COAL_LIGNITE": [
+     "2823 Milton R Young",
+     "8222 Coyote"
+    ],
+    "UNRESOLVED": [
+     "10234 Biron Mill"
+    ]
+   }
+  },
+  {
+   "iso": "MISO",
+   "year": 2025,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 759,
+   "mw": {
+    "COAL_LIGNITE": 1901.7,
+    "COAL_PRB": 35513.537,
+    "COAL_BIT": 18480.295,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_PRB": [
+     "1047 Lansing",
+     "1073 Prairie Creek",
+     "1082 Walter Scott Jr Energy Center",
+     "10860 Archer Daniels Midland Clinton",
+     "10864 Archer Daniels Midland Cedar Rapids",
+     "1091 George Neal North",
+     "1167 Muscatine Plant #1",
+     "1393 R S Nelson",
+     "1702 Dan E Karn",
+     "1710 J H Campbell",
+     "1733 Monroe (MI)",
+     "1740 River Rouge",
+     "1745 Trenton Channel",
+     "1769 Presque Isle",
+     "1831 Eckert Station",
+     "1832 Erickson Station",
+     "1893 Clay Boswell",
+     "1915 Allen S King",
+     "1943 Hoot Lake",
+     "2103 Labadie",
+     "2104 Meramec",
+     "2107 Sioux",
+     "4041 South Oak Creek",
+     "4050 Edgewater",
+     "4078 Weston",
+     "4143 Genoa",
+     "4271 John P Madgett",
+     "54210 American Crystal Sugar Hillsboro",
+     "54212 American Crystal Sugar Crookston",
+     "54213 American Crystal Sugar Drayton",
+     "54214 American Crystal Sugar East Grand Forks",
+     "54533 Southern Minnesota Beet Sugar",
+     "56068 Elm Road Generating Station",
+     "56456 Plum Point Energy Station",
+     "6009 White Bluff",
+     "6017 Newton",
+     "6034 Belle River",
+     "6055 Big Cajun 2",
+     "6090 Sherburne County",
+     "6098 Big Stone",
+     "6155 Rush Island",
+     "6190 Brame Energy Center",
+     "6254 Ottumwa",
+     "6641 Independence Steam Electric Station",
+     "6664 Louisa",
+     "7343 George Neal South",
+     "8023 Columbia (WI)",
+     "856 E D Edwards",
+     "889 Baldwin Energy Complex",
+     "997 Michigan City"
+    ],
+    "COAL_BIT": [
+     "1001 Cayuga",
+     "1004 Edwardsport",
+     "1008 R Gallagher",
+     "1012 F B Culley",
+     "10865 Archer Daniels Midland Decatur",
+     "1382 HMP&L Station Two Henderson",
+     "1743 St Clair",
+     "1825 J B Sims",
+     "2123 Columbia (MO)",
+     "50835 TES Filer City Station",
+     "55856 Prairie State Generating Station",
+     "57928 SIUC",
+     "57949 MSC Sebewaing",
+     "6016 Duck Creek",
+     "6030 Coal Creek",
+     "6085 R M Schahfer",
+     "6113 Gibson",
+     "6137 A B Brown",
+     "6213 Merom",
+     "6705 Warrick",
+     "6823 D B Wilson",
+     "861 Coffeen",
+     "891 Havana",
+     "892 Hennepin Power Station",
+     "963 Dallman",
+     "976 Marion",
+     "994 AES Petersburg"
+    ],
+    "COAL_LIGNITE": [
+     "2790 R M Heskett",
+     "2823 Milton R Young",
+     "51 Dolet Hills",
+     "6089 Lewis & Clark",
+     "8222 Coyote"
+    ]
+   }
+  },
+  {
+   "iso": "NEISO",
+   "year": 2019,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 26,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 438.5,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 478.8
+   },
+   "plants": {
+    "UNRESOLVED": [
+     "2367 Schiller",
+     "568 Bridgeport Station"
+    ],
+    "COAL_BIT": [
+     "2364 Merrimack"
+    ]
+   }
+  },
+  {
+   "iso": "NEISO",
+   "year": 2020,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 26,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 438.5,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 353.0
+   },
+   "plants": {
+    "UNRESOLVED": [
+     "2367 Schiller",
+     "568 Bridgeport Station"
+    ],
+    "COAL_BIT": [
+     "2364 Merrimack"
+    ]
+   }
+  },
+  {
+   "iso": "NEISO",
+   "year": 2021,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 17,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 257.6,
+    "COAL_BIT": 438.5,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "2364 Merrimack"
+    ],
+    "COAL_PRB": [
+     "568 Bridgeport Station"
+    ]
+   }
+  },
+  {
+   "iso": "NEISO",
+   "year": 2022,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 17,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 257.6,
+    "COAL_BIT": 438.5,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "2364 Merrimack"
+    ],
+    "COAL_PRB": [
+     "568 Bridgeport Station"
+    ]
+   }
+  },
+  {
+   "iso": "NEISO",
+   "year": 2023,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 8,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 438.5,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "2364 Merrimack"
+    ]
+   }
+  },
+  {
+   "iso": "NEISO",
+   "year": 2024,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 8,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 438.5,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "2364 Merrimack"
+    ]
+   }
+  },
+  {
+   "iso": "NEISO",
+   "year": 2025,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 26,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 257.6,
+    "COAL_BIT": 203.4,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "2364 Merrimack",
+     "2367 Schiller"
+    ],
+    "COAL_PRB": [
+     "568 Bridgeport Station"
+    ]
+   }
+  },
+  {
+   "iso": "NWPP",
+   "year": 2019,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 84,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 6933.075,
+    "COAL_BIT": 4622.0,
+    "COAL_WC": 89.0,
+    "UNRESOLVED": 7.905
+   },
+   "plants": {
+    "COAL_BIT": [
+     "3845 Transalta Centralia Generation",
+     "54318 General Chemical",
+     "6165 Hunter",
+     "7790 Bonanza",
+     "8069 Huntington",
+     "8224 North Valmy"
+    ],
+    "COAL_PRB": [
+     "4158 Dave Johnston",
+     "4162 Naughton",
+     "55749 Hardin Generator Project",
+     "56224 TS Power Plant",
+     "57915 Genesis Alkali",
+     "6076 Colstrip",
+     "6101 Wyodak",
+     "6106 Boardman",
+     "62319 Western Sugar Cooperative - Billings",
+     "8066 Jim Bridger"
+    ],
+    "UNRESOLVED": [
+     "10504 Amalgamated Sugar Twin Falls"
+    ],
+    "COAL_WC": [
+     "10784 Colstrip Energy LP",
+     "50951 Sunnyside Cogen Associates"
+    ]
+   }
+  },
+  {
+   "iso": "NWPP",
+   "year": 2020,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 84,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 5975.075,
+    "COAL_BIT": 3952.0,
+    "COAL_WC": 89.0,
+    "UNRESOLVED": 4.65
+   },
+   "plants": {
+    "COAL_BIT": [
+     "3845 Transalta Centralia Generation",
+     "54318 General Chemical",
+     "6165 Hunter",
+     "7790 Bonanza",
+     "8069 Huntington",
+     "8224 North Valmy"
+    ],
+    "COAL_PRB": [
+     "4158 Dave Johnston",
+     "4162 Naughton",
+     "55749 Hardin Generator Project",
+     "56224 TS Power Plant",
+     "57915 Genesis Alkali",
+     "6076 Colstrip",
+     "6101 Wyodak",
+     "6106 Boardman",
+     "62319 Western Sugar Cooperative - Billings",
+     "8066 Jim Bridger"
+    ],
+    "UNRESOLVED": [
+     "10504 Amalgamated Sugar Twin Falls"
+    ],
+    "COAL_WC": [
+     "10784 Colstrip Energy LP",
+     "50951 Sunnyside Cogen Associates"
+    ]
+   }
+  },
+  {
+   "iso": "NWPP",
+   "year": 2021,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 79,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 5390.075,
+    "COAL_BIT": 3952.0,
+    "COAL_WC": 89.0,
+    "UNRESOLVED": 4.65
+   },
+   "plants": {
+    "COAL_BIT": [
+     "3845 Transalta Centralia Generation",
+     "54318 General Chemical",
+     "6165 Hunter",
+     "7790 Bonanza",
+     "8069 Huntington",
+     "8224 North Valmy"
+    ],
+    "COAL_PRB": [
+     "4158 Dave Johnston",
+     "4162 Naughton",
+     "55749 Hardin Generator Project",
+     "56224 TS Power Plant",
+     "57915 Genesis Alkali",
+     "6076 Colstrip",
+     "6101 Wyodak",
+     "62319 Western Sugar Cooperative - Billings",
+     "8066 Jim Bridger"
+    ],
+    "UNRESOLVED": [
+     "10504 Amalgamated Sugar Twin Falls"
+    ],
+    "COAL_WC": [
+     "10784 Colstrip Energy LP",
+     "50951 Sunnyside Cogen Associates"
+    ]
+   }
+  },
+  {
+   "iso": "NWPP",
+   "year": 2022,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 76,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 5390.075,
+    "COAL_BIT": 3952.0,
+    "COAL_WC": 89.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "3845 Transalta Centralia Generation",
+     "54318 General Chemical",
+     "6165 Hunter",
+     "7790 Bonanza",
+     "8069 Huntington",
+     "8224 North Valmy"
+    ],
+    "COAL_PRB": [
+     "4158 Dave Johnston",
+     "4162 Naughton",
+     "55749 Hardin Generator Project",
+     "56224 TS Power Plant",
+     "57915 Genesis Alkali",
+     "6076 Colstrip",
+     "6101 Wyodak",
+     "62319 Western Sugar Cooperative - Billings",
+     "8066 Jim Bridger"
+    ],
+    "COAL_WC": [
+     "10784 Colstrip Energy LP",
+     "50951 Sunnyside Cogen Associates"
+    ]
+   }
+  },
+  {
+   "iso": "NWPP",
+   "year": 2023,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 76,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 5386.575,
+    "COAL_BIT": 3952.0,
+    "COAL_WC": 89.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "3845 Transalta Centralia Generation",
+     "54318 General Chemical",
+     "6165 Hunter",
+     "7790 Bonanza",
+     "8069 Huntington",
+     "8224 North Valmy"
+    ],
+    "COAL_PRB": [
+     "4158 Dave Johnston",
+     "4162 Naughton",
+     "55749 Hardin Generator Project",
+     "56224 TS Power Plant",
+     "57915 Genesis Alkali",
+     "6076 Colstrip",
+     "6101 Wyodak",
+     "62319 Western Sugar Cooperative - Billings",
+     "8066 Jim Bridger"
+    ],
+    "COAL_WC": [
+     "10784 Colstrip Energy LP",
+     "50951 Sunnyside Cogen Associates"
+    ]
+   }
+  },
+  {
+   "iso": "NWPP",
+   "year": 2024,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 76,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 4316.575,
+    "COAL_BIT": 3952.0,
+    "COAL_WC": 89.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "3845 Transalta Centralia Generation",
+     "54318 General Chemical",
+     "6165 Hunter",
+     "7790 Bonanza",
+     "8069 Huntington",
+     "8224 North Valmy"
+    ],
+    "COAL_PRB": [
+     "4158 Dave Johnston",
+     "4162 Naughton",
+     "55749 Hardin Generator Project",
+     "56224 TS Power Plant",
+     "57915 Genesis Alkali",
+     "6076 Colstrip",
+     "6101 Wyodak",
+     "62319 Western Sugar Cooperative - Billings",
+     "8066 Jim Bridger"
+    ],
+    "COAL_WC": [
+     "10784 Colstrip Energy LP",
+     "50951 Sunnyside Cogen Associates"
+    ]
+   }
+  },
+  {
+   "iso": "NWPP",
+   "year": 2025,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 81,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 4901.575,
+    "COAL_BIT": 3698.0,
+    "COAL_WC": 89.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "3845 Transalta Centralia Generation",
+     "54318 General Chemical",
+     "6165 Hunter",
+     "7790 Bonanza",
+     "8069 Huntington",
+     "8224 North Valmy"
+    ],
+    "COAL_PRB": [
+     "4158 Dave Johnston",
+     "4162 Naughton",
+     "55749 Hardin Generator Project",
+     "56224 TS Power Plant",
+     "57915 WE Soda Alkalai LLC",
+     "6076 Colstrip",
+     "6101 Wyodak",
+     "6106 Boardman",
+     "62319 Western Sugar Cooperative - Billings",
+     "8066 Jim Bridger"
+    ],
+    "COAL_WC": [
+     "10784 Colstrip Energy LP",
+     "50951 Sunnyside Cogen Associates"
+    ]
+   }
+  },
+  {
+   "iso": "NYISO",
+   "year": 2019,
+   "source": "raw EIA-860 fleet load (keeper recipe not rebuildable)",
+   "coal_rows": 0,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {}
+  },
+  {
+   "iso": "NYISO",
+   "year": 2020,
+   "source": "raw EIA-860 fleet load (keeper recipe not rebuildable)",
+   "coal_rows": 0,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {}
+  },
+  {
+   "iso": "NYISO",
+   "year": 2021,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 0,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {}
+  },
+  {
+   "iso": "NYISO",
+   "year": 2022,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 0,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {}
+  },
+  {
+   "iso": "NYISO",
+   "year": 2023,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 0,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {}
+  },
+  {
+   "iso": "NYISO",
+   "year": 2024,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 0,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 0.0,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {}
+  },
+  {
+   "iso": "NYISO",
+   "year": 2025,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 27,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 520.0,
+    "COAL_BIT": 967.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "2535 Cayuga Operating Company",
+     "6082 Somerset Operating Co LLC"
+    ],
+    "COAL_PRB": [
+     "2554 Dunkirk Generating Plant"
+    ]
+   }
+  },
+  {
+   "iso": "PJM",
+   "year": 2019,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 524,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 3156.0,
+    "COAL_BIT": 39330.524,
+    "COAL_WC": 1231.45,
+    "UNRESOLVED": 5372.822
+   },
+   "plants": {
+    "COAL_BIT": [
+     "10043 Logan Generating Plant",
+     "1040 Whitewater Valley",
+     "10566 Chambers Cogeneration LP",
+     "10678 AES Warrior Run Cogeneration Facility",
+     "1384 Cooper",
+     "2828 Cardinal",
+     "2832 Miami Fort",
+     "2836 Avon Lake",
+     "2840 Conesville",
+     "2866 FirstEnergy W H Sammis",
+     "2914 Dover",
+     "2935 Orrville",
+     "2936 Painesville",
+     "3118 Conemaugh",
+     "3122 Homer City Generating Station",
+     "3136 Keystone",
+     "3149 TalenEnergy Montour",
+     "3935 John E Amos",
+     "3943 FirstEnergy Fort Martin Power Station",
+     "3944 FirstEnergy Harrison Power Station",
+     "3948 Mitchell (WV)",
+     "3954 Mt Storm",
+     "50397 Pixelle Specialty Solutions LLC - Spring Grove Facility",
+     "50481 Tennessee Eastman Operations",
+     "50900 Covington Facility",
+     "54304 Birchwood Power",
+     "56671 Longview Power Plant",
+     "56808 Virginia City Hybrid Energy Center",
+     "594 Indian River Generating Station",
+     "6004 FirstEnergy Pleasants Power Station",
+     "6018 East Bend",
+     "6019 W H Zimmer",
+     "602 Brandon Shores",
+     "6041 H L Spurlock",
+     "6166 Rockport",
+     "6264 Mountaineer",
+     "7213 Clover",
+     "8102 Gavin Power, LLC",
+     "8226 Cheswick Power Plant"
+    ],
+    "COAL_PRB": [
+     "876 Kincaid Generation LLC",
+     "879 Powerton",
+     "884 Will County"
+    ],
+    "UNRESOLVED": [
+     "10743 Morgantown Energy Facility",
+     "1554 Herbert A Wagner",
+     "1571 Chalk Point LLC",
+     "1572 Dickerson",
+     "1573 Morgantown Generating Plant",
+     "3140 Brunner Island",
+     "3797 Chesterfield",
+     "50366 University of Notre Dame",
+     "54081 Spruance Operating Services LLC",
+     "54556 Ingredion Incorporated",
+     "883 Waukegan"
+    ],
+    "COAL_WC": [
+     "10113 John B Rich Memorial Power Station",
+     "10143 Colver Power Project",
+     "10151 Grant Town Power Plant",
+     "10343 Foster Wheeler Mt Carmel Cogen",
+     "10603 Ebensburg Power",
+     "3130 Seward (PA)",
+     "50611 Westwood Generation LLC",
+     "50776 Panther Creek Energy Facility",
+     "50879 Wheelabrator Frackville Energy",
+     "50888 Northampton Generating Company LP",
+     "50974 Scrubgrass Generating Plant",
+     "54634 St Nicholas Cogen Project"
+    ]
+   }
+  },
+  {
+   "iso": "PJM",
+   "year": 2020,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 464,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 3156.0,
+    "COAL_BIT": 37835.624,
+    "COAL_WC": 1206.45,
+    "UNRESOLVED": 3887.66
+   },
+   "plants": {
+    "COAL_BIT": [
+     "10043 Logan Generating Plant",
+     "1040 Whitewater Valley",
+     "10566 Chambers Cogeneration LP",
+     "10678 AES Warrior Run Cogeneration Facility",
+     "1384 Cooper",
+     "2828 Cardinal",
+     "2832 Miami Fort",
+     "2836 Avon Lake",
+     "2866 W H Sammis",
+     "2914 Dover",
+     "2935 Orrville",
+     "2936 Painesville",
+     "3118 Conemaugh",
+     "3122 Homer City Generating Station",
+     "3136 Keystone",
+     "3149 TalenEnergy Montour",
+     "3935 John E Amos",
+     "3943 FirstEnergy Fort Martin Power Station",
+     "3944 FirstEnergy Harrison Power Station",
+     "3948 Mitchell (WV)",
+     "3954 Mt Storm",
+     "50397 Pixelle Specialty Solutions LLC - Spring Grove Facility",
+     "50481 Tennessee Eastman Operations",
+     "50900 Covington Facility",
+     "54304 Birchwood Power",
+     "56671 Longview Power Plant",
+     "56808 Virginia City Hybrid Energy Center",
+     "594 Indian River Generating Station",
+     "6004 Pleasants Power Station",
+     "6018 East Bend",
+     "6019 W H Zimmer",
+     "602 Brandon Shores",
+     "6041 H L Spurlock",
+     "6166 Rockport",
+     "6264 Mountaineer",
+     "7213 Clover",
+     "8102 Gavin Power, LLC",
+     "8226 Cheswick Power Plant"
+    ],
+    "COAL_PRB": [
+     "876 Kincaid Generation LLC",
+     "879 Powerton",
+     "884 Will County"
+    ],
+    "UNRESOLVED": [
+     "1554 Herbert A Wagner",
+     "1571 Chalk Point LLC",
+     "1573 Morgantown Generating Plant",
+     "3797 Chesterfield",
+     "54556 Ingredion Incorporated",
+     "883 Waukegan"
+    ],
+    "COAL_WC": [
+     "10113 John B Rich Memorial Power Station",
+     "10143 Colver Green Energy",
+     "10151 Grant Town Power Plant",
+     "10343 Foster Wheeler Mt Carmel Cogen",
+     "10603 Ebensburg Power",
+     "3130 Seward (PA)",
+     "50611 Westwood Generation LLC",
+     "50776 Panther Creek Energy Facility",
+     "50888 Northampton Generating Company LP",
+     "50974 Scrubgrass Generating Plant",
+     "54634 St Nicholas Cogen Project"
+    ]
+   }
+  },
+  {
+   "iso": "PJM",
+   "year": 2021,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 467,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 3156.0,
+    "COAL_BIT": 39734.724,
+    "COAL_WC": 1202.05,
+    "UNRESOLVED": 4616.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "10043 Logan Generating Plant",
+     "1040 Whitewater Valley",
+     "10566 Chambers Cogeneration LP",
+     "10678 AES Warrior Run Cogeneration Facility",
+     "1384 Cooper",
+     "2828 Cardinal",
+     "2832 Miami Fort",
+     "2836 Avon Lake",
+     "2866 W H Sammis",
+     "2876 Kyger Creek",
+     "2914 Dover",
+     "2935 Orrville",
+     "2936 Painesville",
+     "3118 Conemaugh",
+     "3122 Homer City Generating Station",
+     "3136 Keystone",
+     "3149 TalenEnergy Montour",
+     "3935 John E Amos",
+     "3943 FirstEnergy Fort Martin Power Station",
+     "3944 FirstEnergy Harrison Power Station",
+     "3948 Mitchell (WV)",
+     "3954 Mt Storm",
+     "50397 Pixelle Specialty Solutions LLC - Spring Grove Facility",
+     "50481 Tennessee Eastman Operations",
+     "50900 Covington Facility",
+     "56671 Longview Power Plant",
+     "56808 Virginia City Hybrid Energy Center",
+     "594 Indian River Generating Station",
+     "6004 Pleasants Power Station",
+     "6018 East Bend",
+     "6019 W H Zimmer",
+     "602 Brandon Shores",
+     "6041 H L Spurlock",
+     "6166 Rockport",
+     "6264 Mountaineer",
+     "7213 Clover",
+     "8102 Gavin Power, LLC",
+     "8226 Cheswick Power Plant",
+     "983 Clifty Creek"
+    ],
+    "COAL_PRB": [
+     "876 Kincaid Generation LLC",
+     "879 Powerton",
+     "884 Will County"
+    ],
+    "UNRESOLVED": [
+     "1554 Herbert A Wagner",
+     "1573 Morgantown Generating Plant",
+     "3140 Brunner Island",
+     "3797 Chesterfield",
+     "883 Waukegan"
+    ],
+    "COAL_WC": [
+     "10113 John B Rich Memorial Power Station",
+     "10143 Colver Green Energy",
+     "10151 Grant Town Power Plant",
+     "10343 Foster Wheeler Mt Carmel Cogen",
+     "10603 Ebensburg Power",
+     "3130 Seward (PA)",
+     "50611 Westwood Generation LLC",
+     "50776 Panther Creek Energy Facility",
+     "50888 Northampton Generating Company LP",
+     "50974 Scrubgrass Reclamation CO. LP.",
+     "54634 St Nicholas Cogen Project"
+    ]
+   }
+  },
+  {
+   "iso": "PJM",
+   "year": 2022,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 395,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 2646.0,
+    "COAL_BIT": 36786.484,
+    "COAL_WC": 1201.65,
+    "UNRESOLVED": 1311.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "1040 Whitewater Valley",
+     "10678 AES Warrior Run Cogeneration Facility",
+     "1384 Cooper",
+     "2828 Cardinal",
+     "2832 Miami Fort",
+     "2866 W H Sammis",
+     "2876 Kyger Creek",
+     "2914 Dover",
+     "2935 Orrville",
+     "2936 Painesville",
+     "3118 Conemaugh",
+     "3122 Homer City Generating Station",
+     "3136 Keystone",
+     "3149 TalenEnergy Montour",
+     "3935 John E Amos",
+     "3943 FirstEnergy Fort Martin Power Station",
+     "3944 FirstEnergy Harrison Power Station",
+     "3948 Mitchell (WV)",
+     "3954 Mt Storm",
+     "50397 Pixelle Specialty Solutions LLC - Spring Grove Facility",
+     "50481 Tennessee Eastman Operations",
+     "50900 Covington Facility",
+     "56671 Longview Power Plant",
+     "56808 Virginia City Hybrid Energy Center",
+     "594 Indian River Generating Station",
+     "6004 Pleasants Power Station",
+     "6018 East Bend",
+     "602 Brandon Shores",
+     "6041 H L Spurlock",
+     "6166 Rockport",
+     "6264 Mountaineer",
+     "7213 Clover",
+     "8102 Gavin Power, LLC",
+     "983 Clifty Creek"
+    ],
+    "COAL_PRB": [
+     "876 Kincaid Generation LLC",
+     "879 Powerton"
+    ],
+    "UNRESOLVED": [
+     "1554 Herbert A Wagner",
+     "3797 Chesterfield"
+    ],
+    "COAL_WC": [
+     "10113 John B Rich Memorial Power Station",
+     "10143 Colver Green Energy",
+     "10151 Grant Town Power Plant",
+     "10343 Foster Wheeler Mt Carmel Cogen",
+     "10603 Ebensburg Power",
+     "3130 Seward (PA)",
+     "50611 Westwood Generation LLC",
+     "50776 Panther Creek Energy Facility",
+     "50888 Northampton Generating Company LP",
+     "50974 Scrubgrass Reclamation CO. LP.",
+     "54634 St Nicholas Cogen Project"
+    ]
+   }
+  },
+  {
+   "iso": "PJM",
+   "year": 2023,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 371,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 2650.0,
+    "COAL_BIT": 33266.784,
+    "COAL_WC": 1201.35,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "1040 Whitewater Valley",
+     "10678 AES Warrior Run Cogeneration Facility",
+     "1384 Cooper",
+     "2828 Cardinal",
+     "2832 Miami Fort",
+     "2876 Kyger Creek",
+     "2914 Dover",
+     "2935 Orrville",
+     "2936 Painesville",
+     "3118 Conemaugh",
+     "3122 Homer City Generating Station",
+     "3136 Keystone",
+     "3149 TalenEnergy Montour",
+     "3935 John E Amos",
+     "3943 FirstEnergy Fort Martin Power Station",
+     "3944 FirstEnergy Harrison Power Station",
+     "3948 Mitchell (WV)",
+     "3954 Mt Storm",
+     "50397 Pixelle Specialty Solutions LLC - Spring Grove Facility",
+     "50481 Tennessee Eastman Operations",
+     "50900 Covington Facility",
+     "56671 Longview Power Plant",
+     "56808 Virginia City Hybrid Energy Center",
+     "594 Indian River Generating Station",
+     "6004 Pleasants Power Station",
+     "6018 East Bend",
+     "602 Brandon Shores",
+     "6041 H L Spurlock",
+     "6166 Rockport",
+     "6264 Mountaineer",
+     "7213 Clover",
+     "8102 Gavin Power, LLC",
+     "983 Clifty Creek"
+    ],
+    "COAL_PRB": [
+     "876 Kincaid Generation LLC",
+     "879 Powerton"
+    ],
+    "COAL_WC": [
+     "10113 John B Rich Memorial Power Station",
+     "10143 Colver Green Energy",
+     "10151 Grant Town Power Plant",
+     "10343 Foster Wheeler Mt Carmel Cogen",
+     "10603 Ebensburg Power",
+     "3130 Seward (PA)",
+     "50611 Westwood Generation LLC",
+     "50776 Panther Creek Energy Facility",
+     "50888 Northampton Generating Company LP",
+     "50974 Scrubgrass Reclamation CO. LP.",
+     "54634 St Nicholas Cogen Project"
+    ]
+   }
+  },
+  {
+   "iso": "PJM",
+   "year": 2024,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 355,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 2650.0,
+    "COAL_BIT": 32536.784,
+    "COAL_WC": 1201.35,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "1040 Whitewater Valley",
+     "1384 Cooper",
+     "2828 Cardinal",
+     "2832 Miami Fort",
+     "2876 Kyger Creek",
+     "2914 Dover (OH)",
+     "2935 Orrville",
+     "2936 Painesville",
+     "3118 Conemaugh",
+     "3136 Keystone",
+     "3149 TalenEnergy Montour",
+     "3935 John E Amos",
+     "3943 FirstEnergy Fort Martin Power Station",
+     "3944 FirstEnergy Harrison Power Station",
+     "3948 Mitchell (WV)",
+     "3954 Mt Storm",
+     "50397 Pixelle Specialty Solutions LLC - Spring",
+     "50481 Tennessee Eastman Operations",
+     "50900 Covington Facility",
+     "56671 Longview Power Plant",
+     "56808 Virginia City Hybrid Energy Center",
+     "594 Indian River Generating Station",
+     "6004 Pleasants Power Station",
+     "6018 East Bend",
+     "602 Brandon Shores",
+     "6041 H L Spurlock",
+     "6166 Rockport",
+     "6264 Mountaineer",
+     "7213 Clover",
+     "8102 Gavin Power, LLC",
+     "983 Clifty Creek"
+    ],
+    "COAL_PRB": [
+     "876 Kincaid Generation LLC",
+     "879 Powerton"
+    ],
+    "COAL_WC": [
+     "10113 John B Rich Memorial Power Station",
+     "10143 Colver Green Energy",
+     "10151 Grant Town Power Plant",
+     "10343 Foster Wheeler Mt Carmel Cogen",
+     "10603 Ebensburg Power",
+     "3130 Seward (PA)",
+     "50611 Westwood Generation LLC",
+     "50776 Panther Creek Energy Facility",
+     "50888 Northampton Generating Company LP",
+     "50974 Scrubgrass Reclamation CO. LP.",
+     "54634 St Nicholas Cogen Project"
+    ]
+   }
+  },
+  {
+   "iso": "PJM",
+   "year": 2025,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 522,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 3160.0,
+    "COAL_BIT": 44941.959,
+    "COAL_WC": 1376.22,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "10043 Logan Generating Plant",
+     "10377 James River Genco LLC",
+     "10384 Edgecombe Genco LLC",
+     "1040 Whitewater Valley",
+     "10566 Chambers Cogeneration LP",
+     "10678 AES Warrior Run Cogeneration Facility",
+     "1384 Cooper",
+     "2378 B L England",
+     "2828 Cardinal",
+     "2832 Miami Fort",
+     "2836 Avon Lake",
+     "2840 Conesville",
+     "2866 W H Sammis",
+     "2876 Kyger Creek",
+     "2914 Dover (OH)",
+     "2935 Orrville",
+     "2936 Painesville",
+     "3118 Conemaugh",
+     "3122 Homer City Generating Station",
+     "3136 Keystone",
+     "3809 Yorktown",
+     "3935 John E Amos",
+     "3943 FirstEnergy Fort Martin Power Station",
+     "3944 FirstEnergy Harrison Power Station",
+     "3948 Mitchell (WV)",
+     "3954 Mt Storm",
+     "50282 Luke Mill",
+     "50397 Pixelle Specialty Solutions LLC - Spring",
+     "50481 Tennessee Eastman Operations",
+     "50900 Covington Facility",
+     "52007 Mecklenburg Power Station",
+     "54304 Birchwood Power",
+     "56671 Longview Power Plant",
+     "56808 Virginia City Hybrid Energy Center",
+     "57940 Wausau Paper Middletown",
+     "6004 Pleasants Power Station",
+     "6018 East Bend",
+     "6019 W H Zimmer",
+     "602 Brandon Shores",
+     "6041 H L Spurlock",
+     "6094 FirstEnergy Bruce Mansfield",
+     "6166 Rockport",
+     "6264 Mountaineer",
+     "65284 Dickerson",
+     "65285 Chalk Point Steam",
+     "7213 Clover",
+     "8102 Gavin Power, LLC",
+     "8226 Cheswick Power Plant",
+     "983 Clifty Creek"
+    ],
+    "COAL_PRB": [
+     "876 Kincaid Generation LLC",
+     "879 Powerton",
+     "884 Will County"
+    ],
+    "COAL_WC": [
+     "10113 John B Rich Memorial Power Station",
+     "10143 Colver Green Energy",
+     "10151 Grant Town Power Plant",
+     "10343 Foster Wheeler Mt Carmel Cogen",
+     "10603 Ebensburg Power",
+     "10641 Cambria Cogen",
+     "3130 Seward (PA)",
+     "50611 Westwood Generation LLC",
+     "50776 Panther Creek Energy Facility",
+     "50879 Wheelabrator Frackville Energy",
+     "50888 Northampton Generating Company LP",
+     "50974 Scrubgrass Reclamation CO. LP.",
+     "54634 St Nicholas Cogen Project"
+    ]
+   }
+  },
+  {
+   "iso": "SOCO",
+   "year": 2019,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 38,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 7223.8,
+    "COAL_BIT": 6926.5,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 924.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "26 E C Gaston",
+     "3 Barry",
+     "6052 Wansley",
+     "703 Bowen"
+    ],
+    "UNRESOLVED": [
+     "641 Crist"
+    ],
+    "COAL_PRB": [
+     "6002 James H Miller Jr",
+     "6073 Victor J Daniel Jr",
+     "6257 Scherer"
+    ]
+   }
+  },
+  {
+   "iso": "SOCO",
+   "year": 2020,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 38,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 7221.5,
+    "COAL_BIT": 6926.5,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 924.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "26 E C Gaston",
+     "3 Barry",
+     "6052 Wansley",
+     "703 Bowen"
+    ],
+    "UNRESOLVED": [
+     "641 Crist"
+    ],
+    "COAL_PRB": [
+     "6002 James H Miller Jr",
+     "6073 Victor J Daniel Jr",
+     "6257 Scherer"
+    ]
+   }
+  },
+  {
+   "iso": "SOCO",
+   "year": 2021,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 33,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 7221.5,
+    "COAL_BIT": 6894.5,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "26 E C Gaston",
+     "3 Barry",
+     "6052 Wansley",
+     "703 Bowen"
+    ],
+    "COAL_PRB": [
+     "6002 James H Miller Jr",
+     "6073 Victor J Daniel Jr",
+     "6257 Scherer"
+    ]
+   }
+  },
+  {
+   "iso": "SOCO",
+   "year": 2022,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 28,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 6361.5,
+    "COAL_BIT": 5150.5,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "26 E C Gaston",
+     "3 Barry",
+     "703 Bowen"
+    ],
+    "COAL_PRB": [
+     "6002 James H Miller Jr",
+     "6073 Victor J Daniel Jr",
+     "6257 Scherer"
+    ]
+   }
+  },
+  {
+   "iso": "SOCO",
+   "year": 2023,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 28,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 6361.5,
+    "COAL_BIT": 5150.5,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "26 E C Gaston",
+     "3 Barry",
+     "703 Bowen"
+    ],
+    "COAL_PRB": [
+     "6002 James H Miller Jr",
+     "6073 Victor J Daniel Jr",
+     "6257 Scherer"
+    ]
+   }
+  },
+  {
+   "iso": "SOCO",
+   "year": 2024,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 28,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 6361.5,
+    "COAL_BIT": 5150.5,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "26 E C Gaston",
+     "3 Barry",
+     "703 Bowen"
+    ],
+    "COAL_PRB": [
+     "6002 James H Miller Jr",
+     "6073 Victor J Daniel Jr",
+     "6257 Scherer"
+    ]
+   }
+  },
+  {
+   "iso": "SOCO",
+   "year": 2025,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 43,
+   "mw": {
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": 6361.5,
+    "COAL_BIT": 8797.2,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_BIT": [
+     "26 E C Gaston",
+     "3 Barry",
+     "6052 Wansley",
+     "703 Bowen",
+     "708 Hammond",
+     "8 Gorgas"
+    ],
+    "COAL_PRB": [
+     "6002 James H Miller Jr",
+     "6073 Victor J Daniel Jr",
+     "6257 Scherer"
+    ]
+   }
+  },
+  {
+   "iso": "SPP",
+   "year": 2019,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 167,
+   "mw": {
+    "COAL_LIGNITE": 2241.0,
+    "COAL_PRB": 19578.097,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 4.65
+   },
+   "plants": {
+    "COAL_PRB": [
+     "10671 River Valley",
+     "108 Holcomb",
+     "10862 Archer Daniels Midland Lincoln",
+     "1241 La Cygne",
+     "1250 Lawrence Energy Center",
+     "127 Oklaunion",
+     "165 GREC",
+     "2076 Asbury",
+     "2079 Hawthorn",
+     "2240 Lon Wright",
+     "2277 Sheldon",
+     "2291 North Omaha",
+     "2952 Muskogee",
+     "2963 Northeastern",
+     "54211 American Crystal Sugar Moorhead",
+     "56564 John W Turk Jr Power Plant",
+     "57046 Archer Daniels Midland Columbus",
+     "59 Platte",
+     "60 Whelan Energy Center",
+     "6064 Nearman Creek",
+     "6065 Iatan",
+     "6068 Jeffrey Energy Center",
+     "6077 Gerald Gentleman",
+     "6095 Sooner",
+     "6096 Nebraska City",
+     "6138 Flint Creek",
+     "6139 Welsh",
+     "6193 Harrington",
+     "6194 Tolk",
+     "6195 John Twitty Energy Center",
+     "6772 Hugo"
+    ],
+    "COAL_LIGNITE": [
+     "2817 Leland Olds",
+     "6469 Antelope Valley",
+     "7902 Pirkey"
+    ],
+    "UNRESOLVED": [
+     "57937 Western Sugar Coop - Scottsbluff"
+    ]
+   }
+  },
+  {
+   "iso": "SPP",
+   "year": 2020,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 167,
+   "mw": {
+    "COAL_LIGNITE": 2216.0,
+    "COAL_PRB": 19322.697,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 4.65
+   },
+   "plants": {
+    "COAL_PRB": [
+     "10671 River Valley",
+     "108 Holcomb",
+     "10862 Archer Daniels Midland Lincoln",
+     "1241 La Cygne",
+     "1250 Lawrence Energy Center",
+     "127 Oklaunion",
+     "165 GREC",
+     "2076 Asbury",
+     "2079 Hawthorn",
+     "2240 Lon Wright",
+     "2277 Sheldon",
+     "2291 North Omaha",
+     "2952 Muskogee",
+     "2963 Northeastern",
+     "54211 American Crystal Sugar Moorhead",
+     "56564 John W Turk Jr Power Plant",
+     "57046 Archer Daniels Midland Columbus",
+     "59 Platte",
+     "60 Whelan Energy Center",
+     "6064 Nearman Creek",
+     "6065 Iatan",
+     "6068 Jeffrey Energy Center",
+     "6077 Gerald Gentleman",
+     "6095 Sooner",
+     "6096 Nebraska City",
+     "6138 Flint Creek",
+     "6139 Welsh",
+     "6193 Harrington",
+     "6194 Tolk",
+     "6195 John Twitty Energy Center",
+     "6772 Hugo"
+    ],
+    "COAL_LIGNITE": [
+     "2817 Leland Olds",
+     "6469 Antelope Valley",
+     "7902 Pirkey"
+    ],
+    "UNRESOLVED": [
+     "57937 Western Sugar Coop - Scottsbluff"
+    ]
+   }
+  },
+  {
+   "iso": "SPP",
+   "year": 2021,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 157,
+   "mw": {
+    "COAL_LIGNITE": 2216.0,
+    "COAL_PRB": 18457.897,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 4.65
+   },
+   "plants": {
+    "COAL_PRB": [
+     "10671 River Valley",
+     "108 Holcomb",
+     "10862 Archer Daniels Midland Lincoln",
+     "1241 La Cygne",
+     "1250 Lawrence Energy Center",
+     "165 GREC",
+     "2079 Hawthorn",
+     "2240 Lon Wright",
+     "2277 Sheldon",
+     "2291 North Omaha",
+     "2952 Muskogee",
+     "2963 Northeastern",
+     "54211 American Crystal Sugar Moorhead",
+     "56564 John W Turk Jr Power Plant",
+     "57046 Archer Daniels Midland Columbus",
+     "59 Platte",
+     "60 Whelan Energy Center",
+     "6064 Nearman Creek",
+     "6065 Iatan",
+     "6068 Jeffrey Energy Center",
+     "6077 Gerald Gentleman",
+     "6095 Sooner",
+     "6096 Nebraska City",
+     "6138 Flint Creek",
+     "6139 Welsh",
+     "6193 Harrington",
+     "6194 Tolk",
+     "6195 John Twitty Energy Center",
+     "6772 Hugo"
+    ],
+    "COAL_LIGNITE": [
+     "2817 Leland Olds",
+     "6469 Antelope Valley",
+     "7902 Pirkey"
+    ],
+    "UNRESOLVED": [
+     "57937 Western Sugar Coop - Scottsbluff"
+    ]
+   }
+  },
+  {
+   "iso": "SPP",
+   "year": 2022,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 154,
+   "mw": {
+    "COAL_LIGNITE": 2216.0,
+    "COAL_PRB": 18459.797,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_PRB": [
+     "10671 River Valley",
+     "108 Holcomb",
+     "10862 Archer Daniels Midland Lincoln",
+     "1241 La Cygne",
+     "1250 Lawrence Energy Center",
+     "165 GREC",
+     "2079 Hawthorn",
+     "2240 Lon Wright",
+     "2277 Sheldon",
+     "2291 North Omaha",
+     "2952 Muskogee",
+     "2963 Northeastern",
+     "54211 American Crystal Sugar Moorhead",
+     "56564 John W Turk Jr Power Plant",
+     "57046 Archer Daniels Midland Columbus",
+     "59 Platte",
+     "60 Whelan Energy Center",
+     "6064 Nearman Creek",
+     "6065 Iatan",
+     "6068 Jeffrey Energy Center",
+     "6077 Gerald Gentleman",
+     "6095 Sooner",
+     "6096 Nebraska City",
+     "6138 Flint Creek",
+     "6139 Welsh",
+     "6193 Harrington",
+     "6194 Tolk",
+     "6195 John Twitty Energy Center",
+     "6772 Hugo"
+    ],
+    "COAL_LIGNITE": [
+     "2817 Leland Olds",
+     "6469 Antelope Valley",
+     "7902 Pirkey"
+    ]
+   }
+  },
+  {
+   "iso": "SPP",
+   "year": 2023,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 154,
+   "mw": {
+    "COAL_LIGNITE": 2210.0,
+    "COAL_PRB": 18476.297,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_PRB": [
+     "10671 River Valley",
+     "108 Holcomb",
+     "10862 Archer Daniels Midland Lincoln",
+     "1241 La Cygne",
+     "1250 Lawrence Energy Center",
+     "165 GREC",
+     "2079 Hawthorn",
+     "2240 Lon Wright",
+     "2277 Sheldon",
+     "2291 North Omaha",
+     "2952 Muskogee",
+     "2963 Northeastern",
+     "54211 American Crystal Sugar Moorhead",
+     "56564 John W Turk Jr Power Plant",
+     "57046 Archer Daniels Midland Columbus",
+     "59 Platte",
+     "60 Whelan Energy Center",
+     "6064 Nearman Creek",
+     "6065 Iatan",
+     "6068 Jeffrey Energy Center",
+     "6077 Gerald Gentleman",
+     "6095 Sooner",
+     "6096 Nebraska City",
+     "6138 Flint Creek",
+     "6139 Welsh",
+     "6193 Harrington",
+     "6194 Tolk",
+     "6195 John Twitty Energy Center",
+     "6772 Hugo"
+    ],
+    "COAL_LIGNITE": [
+     "2817 Leland Olds",
+     "6469 Antelope Valley",
+     "7902 Pirkey"
+    ]
+   }
+  },
+  {
+   "iso": "SPP",
+   "year": 2024,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 146,
+   "mw": {
+    "COAL_LIGNITE": 1560.0,
+    "COAL_PRB": 18289.63,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_PRB": [
+     "10671 River Valley",
+     "108 Holcomb",
+     "1241 La Cygne",
+     "1250 Lawrence Energy Center",
+     "165 GREC",
+     "2079 Hawthorn",
+     "2240 Lon Wright",
+     "2277 Sheldon",
+     "2291 North Omaha",
+     "2952 Muskogee",
+     "2963 Northeastern",
+     "54211 American Crystal Sugar Moorhead",
+     "56564 John W Turk Jr Power Plant",
+     "57046 Archer Daniels Midland Columbus",
+     "59 Platte",
+     "60 Whelan Energy Center",
+     "6064 Nearman Creek",
+     "6065 Iatan",
+     "6068 Jeffrey Energy Center",
+     "6077 Gerald Gentleman",
+     "6095 Sooner",
+     "6096 Nebraska City",
+     "6138 Flint Creek",
+     "6139 Welsh",
+     "6193 Harrington",
+     "6194 Tolk",
+     "6195 John Twitty Energy Center",
+     "6772 Hugo"
+    ],
+    "COAL_LIGNITE": [
+     "2817 Leland Olds",
+     "6469 Antelope Valley"
+    ]
+   }
+  },
+  {
+   "iso": "SPP",
+   "year": 2025,
+   "source": "keeper-recipe fleet_only rebuild",
+   "coal_rows": 156,
+   "mw": {
+    "COAL_LIGNITE": 2210.0,
+    "COAL_PRB": 18484.75,
+    "COAL_BIT": 0.0,
+    "COAL_WC": 0.0,
+    "UNRESOLVED": 0.0
+   },
+   "plants": {
+    "COAL_PRB": [
+     "10671 River Valley",
+     "108 Holcomb",
+     "1241 La Cygne",
+     "1250 Lawrence Energy Center",
+     "127 Oklaunion",
+     "165 GREC",
+     "2076 Asbury",
+     "2079 Hawthorn",
+     "2240 Lon Wright",
+     "2277 Sheldon",
+     "2291 North Omaha",
+     "2952 Muskogee",
+     "2963 Northeastern",
+     "54211 American Crystal Sugar Moorhead",
+     "56564 John W Turk Jr Power Plant",
+     "57046 Archer Daniels Midland Columbus",
+     "59 Platte",
+     "60 Whelan Energy Center",
+     "6064 Nearman Creek",
+     "6065 Iatan",
+     "6068 Jeffrey Energy Center",
+     "6077 Gerald Gentleman",
+     "6095 Sooner",
+     "6096 Nebraska City",
+     "6138 Flint Creek",
+     "6139 Welsh",
+     "6194 Tolk",
+     "6195 John Twitty Energy Center",
+     "6772 Hugo"
+    ],
+    "COAL_LIGNITE": [
+     "2817 Leland Olds",
+     "6469 Antelope Valley",
+     "7902 Pirkey"
+    ]
+   }
+  }
+ ],
+ "unresolved_plants": {
+  "10684": {
+   "name": "Argus Cogen Plant",
+   "isos": [
+    "CAISO"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "energy_sources": [
+    "BIT"
+   ]
+  },
+  "1104": {
+   "name": "Burlington (IA)",
+   "isos": [
+    "MISO"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "1702": {
+   "name": "Dan E Karn",
+   "isos": [
+    "MISO"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021,
+    2022
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "1943": {
+   "name": "Hoot Lake",
+   "isos": [
+    "MISO"
+   ],
+   "years": [
+    2019,
+    2020
+   ],
+   "energy_sources": [
+    "WAT"
+   ]
+  },
+  "2790": {
+   "name": "R M Heskett",
+   "isos": [
+    "MISO"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "6089": {
+   "name": "Lewis & Clark",
+   "isos": [
+    "MISO"
+   ],
+   "years": [
+    2019,
+    2020
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "6137": {
+   "name": "A B Brown",
+   "isos": [
+    "MISO"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021,
+    2022
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "6639": {
+   "name": "R D Green",
+   "isos": [
+    "MISO"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "10234": {
+   "name": "Biron Mill",
+   "isos": [
+    "MISO"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024
+   ],
+   "energy_sources": [
+    "BIT",
+    "NG",
+    "SUB"
+   ]
+  },
+  "10686": {
+   "name": "Rapids Energy Center",
+   "isos": [
+    "MISO"
+   ],
+   "years": [
+    2019
+   ],
+   "energy_sources": [
+    "NG",
+    "WAT"
+   ]
+  },
+  "10861": {
+   "name": "Archer Daniels Midland Des Moines",
+   "isos": [
+    "MISO"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "10863": {
+   "name": "Archer Daniels Midland Mankato",
+   "isos": [
+    "MISO"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "10867": {
+   "name": "Tate & Lyle Decatur Plant Cogen",
+   "isos": [
+    "MISO"
+   ],
+   "years": [
+    2019,
+    2020
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "50933": {
+   "name": "Rhinelander Mill",
+   "isos": [
+    "MISO"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+   ],
+   "energy_sources": [
+    "BIT",
+    "NG",
+    "WAT"
+   ]
+  },
+  "54098": {
+   "name": "Kaukauna Paper Mill",
+   "isos": [
+    "MISO"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021,
+    2022
+   ],
+   "energy_sources": [
+    "BLQ",
+    "NG"
+   ]
+  },
+  "54201": {
+   "name": "Iowa State University",
+   "isos": [
+    "MISO"
+   ],
+   "years": [
+    2019
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "56786": {
+   "name": "Spiritwood Station",
+   "isos": [
+    "MISO"
+   ],
+   "years": [
+    2021,
+    2022
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "568": {
+   "name": "Bridgeport Station",
+   "isos": [
+    "NEISO"
+   ],
+   "years": [
+    2019,
+    2020
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "2367": {
+   "name": "Schiller",
+   "isos": [
+    "NEISO"
+   ],
+   "years": [
+    2019,
+    2020
+   ],
+   "energy_sources": [
+    "JF"
+   ]
+  },
+  "10504": {
+   "name": "Amalgamated Sugar Twin Falls",
+   "isos": [
+    "NWPP"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "883": {
+   "name": "Waukegan",
+   "isos": [
+    "PJM"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021
+   ],
+   "energy_sources": [
+    "DFO"
+   ]
+  },
+  "1554": {
+   "name": "Herbert A Wagner",
+   "isos": [
+    "PJM"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021,
+    2022
+   ],
+   "energy_sources": [
+    "DFO"
+   ]
+  },
+  "1571": {
+   "name": "Chalk Point LLC",
+   "isos": [
+    "PJM"
+   ],
+   "years": [
+    2019,
+    2020
+   ],
+   "energy_sources": [
+    "DFO",
+    "NG"
+   ]
+  },
+  "1572": {
+   "name": "Dickerson",
+   "isos": [
+    "PJM"
+   ],
+   "years": [
+    2019
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "1573": {
+   "name": "Morgantown Generating Plant",
+   "isos": [
+    "PJM"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021
+   ],
+   "energy_sources": [
+    "DFO"
+   ]
+  },
+  "3140": {
+   "name": "Brunner Island",
+   "isos": [
+    "PJM"
+   ],
+   "years": [
+    2019,
+    2021
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "3797": {
+   "name": "Chesterfield",
+   "isos": [
+    "PJM"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021,
+    2022
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "10743": {
+   "name": "Morgantown Energy Facility",
+   "isos": [
+    "PJM"
+   ],
+   "years": [
+    2019
+   ],
+   "energy_sources": [
+    "WC"
+   ]
+  },
+  "50366": {
+   "name": "University of Notre Dame",
+   "isos": [
+    "PJM"
+   ],
+   "years": [
+    2019
+   ],
+   "energy_sources": [
+    "DFO",
+    "NG"
+   ]
+  },
+  "54081": {
+   "name": "Spruance Operating Services LLC",
+   "isos": [
+    "PJM"
+   ],
+   "years": [
+    2019
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "54556": {
+   "name": "Ingredion Incorporated",
+   "isos": [
+    "PJM"
+   ],
+   "years": [
+    2019,
+    2020
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  },
+  "641": {
+   "name": "Crist",
+   "isos": [
+    "SOCO"
+   ],
+   "years": [
+    2019,
+    2020
+   ],
+   "energy_sources": []
+  },
+  "57937": {
+   "name": "Western Sugar Coop - Scottsbluff",
+   "isos": [
+    "SPP"
+   ],
+   "years": [
+    2019,
+    2020,
+    2021
+   ],
+   "energy_sources": [
+    "NG"
+   ]
+  }
+ }
+}

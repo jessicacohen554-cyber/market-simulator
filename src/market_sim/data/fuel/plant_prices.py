@@ -16,6 +16,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from market_sim.config.plant_taxonomy import artifact_class
 from market_sim.config.constants import F923_GAS_PRICE_PLAUSIBILITY_BAND
 from market_sim.config.paths import GAS_PRICES_DIR
 from market_sim.config.scenarios import ScenarioConfig
@@ -687,7 +688,13 @@ def apply_plant_monthly_fuel_prices(
         # 2) Nearby-plant fallback fills the still-unreported months.
         if nearby is not None and not reported.all():
             st = str(states[g]) if states is not None else ""
-            klass = str(fleet.plant_group[g]) if fleet.plant_group is not None else None
+            # Donor class FAMILY: coal pools across its subclasses as ONE class,
+            # exactly as the bare COAL group pooled before COAL-SUB (2026-09-25).
+            klass = (
+                artifact_class(fleet.plant_group[g])
+                if fleet.plant_group is not None
+                else None
+            )
             fill = nearby.month_prices(fuel_group, st, int(fleet.zone_idx[g]), klass)
             applied = False
             for m in np.nonzero(~reported)[0]:
@@ -786,7 +793,9 @@ class _NearbyFuelPrices:
                 fg = _F923_FUEL_GROUP_BY_FUEL.get(_fuel_name(fleet.fuel_type_idx[g]))
                 if fg is None:
                     continue
-                klass = str(fleet.plant_group[g])
+                # Class family (a coal subclass pools as the coal family, the
+                # recipient-side key above; COAL-SUB).
+                klass = artifact_class(fleet.plant_group[g])
                 by = cap.setdefault(fg, {}).setdefault(p, {})
                 by[klass] = by.get(klass, 0.0) + float(fleet.pmax[g])
             self._plant_class = {

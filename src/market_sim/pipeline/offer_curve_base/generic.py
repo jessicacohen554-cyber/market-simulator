@@ -226,13 +226,8 @@ GENERIC_BASE_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 1.20,
         "econ_low_share": 0.55,
     },
-    # Generic fallback for coal plants with no EIA-923 receipts / rank
-    # (and ISOs not yet derived). Flat baseload curve.
-    "COAL": {
-        "committed": 0.90,
-        "econ_low": 0.95,
-        "econ_high": 1.10,
-        "peak": 1.45,
-        "econ_low_share": 0.55,
-    },
+    # (The generic ``COAL`` fallback curve for plants with no resolved rank is
+    # DELETED — COAL-SUB, owner instruction 2026-09-25: every coal unit now
+    # resolves to one of the four subclasses above at load, so no unit reads a
+    # bare-``COAL`` curve. Rule 26 [R-DELETE]: deleted, not aliased.)
 }

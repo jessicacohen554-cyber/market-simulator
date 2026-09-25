@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -39,6 +40,12 @@ for _p in (REPO, REPO / "src", REPO / "scripts"):
 ISOS = ("CAISO", "ERCOT", "MISO", "NEISO", "NWPP", "NYISO", "PJM", "SOCO", "SPP")
 YEARS = tuple(range(2019, 2026))
 SUBCLASSES = ("COAL_LIGNITE", "COAL_PRB", "COAL_BIT", "COAL_WC")
+_TRANCHE_WORD = re.compile(r"\s+(mustrun|committed|sync|econlo|econhi|econc\d+|peak)$")
+
+
+def _plant_name(name: str) -> str:
+    """Strip the tranche suffix a binned unit's display name carries."""
+    return _TRANCHE_WORD.sub("", str(name)).strip()
 
 
 def _raw_coal_units(iso: str, year: int) -> list[dict]:
@@ -120,10 +127,10 @@ def main() -> None:
             for u in units:
                 k = u["resolved_subclass"] or "UNRESOLVED"
                 mw[k] += u["pmax_mw"]
-                plants[k].add((u["plant_code"], u["name"]))
+                plants[k].add((u["plant_code"], _plant_name(u["name"])))
                 if k == "UNRESOLVED":
                     rec = unresolved_plants.setdefault(
-                        u["plant_code"], {"name": u["name"], "isos": set(), "years": set()}
+                        u["plant_code"], {"name": _plant_name(u["name"]), "isos": set(), "years": set()}
                     )
                     rec["isos"].add(iso)
                     rec["years"].add(year)

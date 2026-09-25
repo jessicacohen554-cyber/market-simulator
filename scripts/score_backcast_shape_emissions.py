@@ -54,6 +54,7 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
+from market_sim.config.plant_taxonomy import COAL_CLASSES  # noqa: E402
 from market_sim.config import paths  # noqa: E402
 
 # Absolute CO2 gates (audit §D3 / peer-review §D.3). NOx/SO2 reuse the same
@@ -74,7 +75,7 @@ _BIN_SHEET = paths.RAW_DATA_DIR / "reference" / "custom-bin-assignments.csv"
 _RATES = paths.PROCESSED_DIR / "plant_emission_rates_v2.parquet"
 
 # Plant_Group -> coarse fuel for the coal/gas split.
-_COAL_GROUPS = {"COAL"}
+_COAL_GROUPS = set(COAL_CLASSES)  # the coal subclasses (COAL-SUB, 2026-09-25)
 
 
 def _class_map() -> dict[int, str]:

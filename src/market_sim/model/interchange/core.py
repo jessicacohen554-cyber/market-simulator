@@ -14,6 +14,7 @@ the full-surface facade.
 import numpy as np
 import scipy.sparse as sp
 
+from market_sim.config.plant_taxonomy import artifact_class_array
 from market_sim.config.iso_configs import (
     InterfaceLimit,
     TransferLink,
@@ -257,7 +258,12 @@ def inject_reliability_floor(
         return False
     from market_sim.data.eia_loader import iso_zone_tmax
 
-    groups = np.asarray(fleet_arrays.plant_group)
+    # Registry limbs name a class FAMILY (``ReliabilityFloorSpec.plant_class``
+    # comes from reliability_floor_coeffs_<ISO>.csv, whose coal limbs carry the
+    # coal family token): the limb is sized on, and distributed cheapest-first
+    # across, the family's aggregate capacity, so a coal limb spans every coal
+    # subclass exactly as it spanned the former bare ``COAL`` group (COAL-SUB).
+    groups = artifact_class_array(fleet_arrays.plant_group)
     hours = int(fleet_arrays.availability.shape[1])
     applied = False
 

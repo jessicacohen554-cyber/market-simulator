@@ -83,6 +83,10 @@ def rubric_consts() -> dict:
         # its per-class records in this order); the page only tests membership.
         "gasClasses": list(cv.GAS_CLASSES),
         "coalClasses": list(cv.COAL_CLASSES),
+        # Coal FAMILY-total keys: the subclasses plus the legacy bare-COAL row
+        # a payload committed before COAL-SUB (2026-09-25) may carry — read for
+        # the family total only, never gated as a class.
+        "coalFamilyKeys": list(cv.COAL_FAMILY_KEYS),
         # frozenset -> sorted list: set order is not a wire format.
         "fuelmixExcluded": sorted(cv.FUELMIX_EXCLUDED),
         # Non-fossil fuels whose actual comes from EIA-930, not 923.

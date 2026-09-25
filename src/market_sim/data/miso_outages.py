@@ -52,6 +52,7 @@ from functools import lru_cache
 import numpy as np
 import pandas as pd
 
+from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.paths import RAW_DATA_DIR
 from market_sim.data.outages import _hour_of_year
@@ -123,7 +124,17 @@ ESTIMATED_PARQUET = MISO_OUTAGES_DIR / "miso_generation_outages_estimated.parque
 # thermal-only application cannot net out — an inherent aggregate approximation
 # documented in the module docstring.
 _THERMAL_GROUPS: frozenset[str] = frozenset(
-    {"COAL", "CC_REGULAR", "CC_CHP", "ST_GAS", "ST_CHP", "CT_PEAKER", "CT_CHP"}
+    # Artifact class vocabulary (the extract / capacity-map keys): coal is its
+    # family token; a fleet unit is matched through artifact_class (COAL-SUB).
+    {
+        COAL_ARTIFACT_FAMILY,
+        "CC_REGULAR",
+        "CC_CHP",
+        "ST_GAS",
+        "ST_CHP",
+        "CT_PEAKER",
+        "CT_CHP",
+    }
 )
 
 

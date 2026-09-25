@@ -82,6 +82,7 @@ from market_sim.config.constants import (
     ERCOT_RTOLCAP_FWD_SEASON_BY_MONTH,
     ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC,
 )
+from market_sim.config.plant_taxonomy import artifact_class_array
 from market_sim.config.reserve_config import (
     ERCOT_AS_ECRS_BASE_MW,
     ERCOT_AS_ECRS_MAX_MW,
@@ -1689,7 +1690,11 @@ def ercot_rtolcap_forward_supply_cap_mw(
     plant_group = getattr(fleet_arrays, "plant_group", None)
     if plant_group is None:
         return None
-    plant_group = np.asarray(plant_group)
+    # The envelope share tables are keyed in the derive's class vocabulary,
+    # where coal is ONE aggregate (the family token): read the fleet's coal
+    # subclasses through artifact_class so coal capacity aggregates across
+    # them exactly as before (COAL-SUB, 2026-09-25).
+    plant_group = artifact_class_array(plant_group)
     pmax = np.asarray(fleet_arrays.pmax, dtype=float)
 
     nl = np.asarray(net_load, dtype=float)
@@ -2140,7 +2145,11 @@ def ercot_online_capacity_envelope_mw(
     plant_group = getattr(fleet_arrays, "plant_group", None)
     if plant_group is None:
         return None
-    plant_group = np.asarray(plant_group)
+    # The envelope share tables are keyed in the derive's class vocabulary,
+    # where coal is ONE aggregate (the family token): read the fleet's coal
+    # subclasses through artifact_class so coal capacity aggregates across
+    # them exactly as before (COAL-SUB, 2026-09-25).
+    plant_group = artifact_class_array(plant_group)
     pmax = np.asarray(fleet_arrays.pmax, dtype=float)
     elig = np.atleast_2d(np.asarray(headroom_eligible, dtype=bool))  # (n_hr, n_gen)
     prod = np.atleast_2d(np.asarray(headroom_products, dtype=bool))  # (n_hr, n_prod)
