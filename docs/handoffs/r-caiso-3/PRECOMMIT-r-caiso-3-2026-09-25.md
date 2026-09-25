@@ -211,3 +211,49 @@ Offer-curve multipliers are unchanged, the DOF ledger stays 9/6, and there is no
 - **Dec 2022 in-state gas operand:** N3050CA3 citygate + HH gives 11.42 $/MMBtu, while N3045CA gives 27.7
   and F923 delivered gives 23.10. The in-state gas level in December 2022 is a separate question, and this
   lane does not open it.
+
+## 7. ADDENDUM (written before any wave-2 solve) — lever C, Pastoria: the EIA-923 identity fallback
+
+**The design needs no threshold.** R-CAISO-2's gross-net identity already *refuses* Pastoria's 2020–2025
+rows: their CEMS record is inconsistent with the owner's filing. The refused rows then fell back to eGRID.
+But eGRID is **CEMS heat input** ÷ EIA-923 net (`HTIANSRC = EPA/CAMD`), so the same refused CEMS record
+came back in through the numerator. Pastoria's CEMS heat input reads ×1.090–1.093 of EIA-923 fuel in
+every year 2020–2025 (§1).
+
+**Repair C** is an input correction on the path the keeper already arms (`measured_cc_heat_rates`), the
+same route R-CAISO-2 took. It adds no ScenarioConfig field.
+
+* **Intake:** `data/raw/eia-923-generation-fuel/eia923_generation_fuel_2019_2025.csv`. This is EIA-923
+  Page 1, every US plant, with total fuel MMBtu and net MWh per plant × prime mover × fuel. It is fetched
+  by `scripts/data/fetch_eia923_generation_fuel.py`, with a README and SHA256SUMS (CSV `24f6f341…`).
+* **Derive:** `derive_campd_cc_heat_rates.py::apply_eia923_identity`. A row flagged `gross_below_net`
+  gets `heat_rate = Σ fuel ÷ Σ net` over the plant's CT/CA/CS prime movers for that year (the pooled row
+  uses 2019–2025), provided the rate is inside the existing net physical band. Its flag becomes
+  `eia923_identity`. Every row also carries `heat_rate_eia923_identity` as provenance.
+* **Model:** `campd_bins._APPLIED_MEASURED_FLAGS = {"ok", "eia923_identity"}`. Every other ISO's artifact
+  carries no such row, so it reads byte-identically (rule 25: only CAISO's artifact is re-derived).
+* **Rule 23:** the re-derivation cites a data change, the new EIA-923 intake. It does not cite a
+  residual.
+
+**Artifact delta** (re-derived with the keeper's provenance posture
+`--egrid-family-heat-rates --measured-ct-heat-rates`; new sha256 `ab976786…`). **Exactly the 12
+previously refused rows flip, and nothing else moves**, not even the eGRID provenance column:
+
+| plant | rows | applied before (fallback) | applied now |
+|---|---|---|---|
+| Pastoria 55656 | 2020–2025 + pooled | eGRID 7.67–7.72 | **7.079 / 7.079 / 7.036 / 7.036 / 7.039 / 7.077**, pooled 7.056 |
+| Carson 10169 (56 MW) | pooled | eGRID 8.54–8.69 | 9.724 |
+| Sanger 57564 | 2024 | eGRID 9.197 | 8.970 |
+| Desert Star 55077 | 2024 | pooled 7.587 | 7.646 |
+| Alamitos 62115 / Huntington Beach 62116 | 2020 only | pooled | 7.100 / 7.192 (outside the solved span) |
+
+**Zero-LP offer check** (2023 fleet rebuild): Pastoria's committed tranche goes 7.691 → **7.036**. Its
+in-the-money share against the keeper's SP15_rest price goes 0.39 → **0.68**, against High Desert's 0.76.
+
+**Wave-2 shards: ABC.** These are pinned to the commit carrying the new artifact, with A and B set by
+`--set`. There is one per year, 2022–2025, in `results/calibration/rcaiso3_ABC_<Y>`. ABC − AB (2023) and
+ABC − A (2022, 2024, 2025) attribute C. The stop gates and not-a-keeper rules are §5's.
+
+**Direction, not a gate:** Pastoria rises toward its 3.3–4.3 TWh/yr actual, SP15_rest CC rises, and
+imports and CT fall. C1 CC_REGULAR 2022 is already +0.64, so expect it to move further positive; that
+is reported at full magnitude either way.
