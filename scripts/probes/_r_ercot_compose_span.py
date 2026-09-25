@@ -82,7 +82,10 @@ def check_recipes(legs: dict[str, list[int]]) -> None:
     for name, years in legs.items():
         sc = _leg_config(CAL / name)["scenario_config"]
         for f in FIELDS:
-            if bool(sc.get(f)) != SIDE["value"]:
+            want_f = SIDE["value"] and not (
+                SIDE.get("chp_off") and f == "measured_chp_heat_rates"
+            )
+            if bool(sc.get(f)) != want_f:
                 raise SystemExit(
                     f"ABORT: {name} {f}={sc.get(f)!r} — not the {SIDE['name']} side"
                 )
@@ -253,8 +256,13 @@ def main() -> int:
     ap.add_argument("--out", required=True)
     ap.add_argument("--side", choices=("arm", "control"), required=True)
     ap.add_argument("--skip-diagnostics", action="store_true")
+    ap.add_argument(
+        "--chp-off",
+        action="store_true",
+        help="R-ERCOT-2: the arm side with measured_chp_heat_rates=False on every leg",
+    )
     args = ap.parse_args()
-    SIDE.update(name=args.side, value=args.side == "arm")
+    SIDE.update(name=args.side, value=args.side == "arm", chp_off=args.chp_off)
     legs: dict[str, list[int]] = {}
     for spec in args.leg:
         ys, _, name = spec.partition("=")
