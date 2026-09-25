@@ -5779,13 +5779,17 @@ class ScenarioConfig:
     # When True, a block qualifies iff (same plant, same non-empty ``Unit
     # Code``, operating) it has >= 1 CT and >= 1 CA row, every CT summer is
     # blank, every CA summer is positive and at least one exceeds its own
-    # nameplate (impossible for one generator — EIA-860's schema bound); the
-    # block's reported total is then allocated across its rows by nameplate
-    # (``fleet.eia860._cc_block_summer_ratings``). MISO census 2019-2025:
-    # seven plants every vintage (1004, 55218, 55220, 55380, 55418, 55467,
-    # 55620). Rule 19 [R-ONE-MECH]: applied upstream of the merchant-CC guard
-    # and the ``cc_capacity_reconcile`` cap, which then see a block at its
-    # published rating and do not fire on it. Rule 13/14: every number is an
+    # nameplate (impossible for one generator — EIA-860's schema bound), and
+    # no CA row is NG-fuelled; the block's reported total is then allocated
+    # across its rows by nameplate (``fleet.eia860._cc_block_summer_ratings``).
+    # NG blocks are EXCLUDED (miso-272 v2): the merchant-CC guard and the
+    # ``cc_capacity_reconcile`` cap already bound them by MEASURED CAMPD
+    # capability, which outranks the published rating — MISO's six NG blocks
+    # (55218, 55220, 55380, 55418, 55467, 55620) run above their summer rating
+    # 51-4,143 h/yr (rule 13; v1 cut them and under-rated them). Rule 19
+    # [R-ONE-MECH]: one construction per plant. MISO reach 2019-2025: 1004
+    # Edwardsport only (syngas IGCC; CAMPD max 480 MW gross corroborates the
+    # 555 MW block rating). Rule 13/14: every number is an
     # EIA-860 field of the vintage loaded, regenerating for any year; ZERO free
     # parameters. Requires ``unit_outage_dispatched_bin_denominator`` under a
     # non-ERCOT historic outage overlay (enforced at the point of use,

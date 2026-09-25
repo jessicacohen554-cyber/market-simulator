@@ -1751,7 +1751,20 @@ def _cc_block_summer_ratings(eia860_dir: Path) -> dict[tuple[int, str], float]:
     * EVERY ``CA`` row reports a positive summer rating, and at least one
       exceeds its own nameplate by more than :data:`_CC_NAMEPLATE_GUARD_TOL` —
       a physical impossibility for a single generator (EIA-860's schema:
-      summer capability <= nameplate), so the row can only be the block's.
+      summer capability <= nameplate), so the row can only be the block's;
+    * NO ``CA`` row's ``Energy Source 1`` is ``NG``. A natural-gas block is
+      already owned by the merchant-CC guard
+      (:func:`_reconcile_cc_pmax_to_nameplate`) and the ``cc_capacity_reconcile``
+      demonstrated-peak cap, which bound it by its MEASURED CAMPD capability —
+      and measured capability outranks the published rating here: MISO's six
+      NG blocks run above their reported summer rating for 51-4,143 hours a
+      year (CAMPD 2023, gross x 0.97), so replacing the measured bound with the
+      published one would under-rate them (rule 13; miso-272 v1, RESULT §3).
+      Rule 19 [R-ONE-MECH]: one construction per plant, and for gas blocks it
+      is the measured one. What remains is the block the guard cannot reach —
+      MISO 1004 Edwardsport's syngas IGCC, whose CAMPD record (max 480 MW
+      gross, 2023) corroborates the 555 MW block rating and refutes the
+      1,036 MW the fill carried.
 
     The block's reported summer total (the sum of its ``CA`` ratings) is then
     allocated across ALL of the block's rows in proportion to nameplate, so
@@ -1783,6 +1796,7 @@ def _cc_block_summer_ratings(eia860_dir: Path) -> dict[tuple[int, str], float]:
         "Status",
         "Nameplate Capacity (MW)",
         "Summer Capacity (MW)",
+        "Energy Source 1",
     ]
     try:
         raw = pd.read_parquet(path, columns=cols)
@@ -1808,6 +1822,7 @@ def _cc_block_summer_ratings(eia860_dir: Path) -> dict[tuple[int, str], float]:
             "uc": uc,
             "np": pd.to_numeric(raw["Nameplate Capacity (MW)"], errors="coerce"),
             "su": pd.to_numeric(raw["Summer Capacity (MW)"], errors="coerce"),
+            "es": raw["Energy Source 1"].astype(str).str.strip().str.upper(),
         }
     )[keep]
     blk = blk[blk["plant"].notna()]
@@ -1824,6 +1839,8 @@ def _cc_block_summer_ratings(eia860_dir: Path) -> dict[tuple[int, str], float]:
             continue
         if not (ca["su"] > ca["np"] * _CC_NAMEPLATE_GUARD_TOL).any():
             continue  # no row reports more than its own nameplate
+        if (ca["es"] == "NG").any():
+            continue  # gas block: owned by the measured CC guard / cap (rule 19)
         np_sum = float(grp["np"].fillna(0.0).sum())
         if np_sum <= 0.0:
             continue

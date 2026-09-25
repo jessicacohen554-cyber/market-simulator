@@ -227,3 +227,72 @@ Each builds the three curate partitions first, then pushes its full bundle via a
 | arm 2023 | `session_01MyTHMuMHWzCaD5AjFFU854` | `claude/miso272-arm-2023` |
 | arm 2024 | `session_01TpLwT3jaKT8K6gfCsCCxKz` | `claude/miso272-arm-2024` |
 | arm 2025 | `session_012UQHWz8dusum5EmachNCsQ` | `claude/miso272-arm-2025` |
+
+## 9. ADDENDUM — v1 result, and the v2 arm (appended after the v1 solves; §1–§8 unchanged)
+
+### 9.1 v1 as solved (registered `2026-09-25-miso-272-cc-block`, not recommended)
+
+All 7 legs passed S-1 on the parent's bytes. Every direction matched §5.
+
+| run | C1 CC_REGULAR 2021 / 2022 / 2023 (TWh) | C3a 2019 / 2020 | C3b 2021 | full span |
+|---|---|---|---|---|
+| keeper | −7.69 / −6.77 / −5.06 PASS | +10.8 / +10.9 % | 0.304 | NOT-YET |
+| v1 | −9.63 / −8.73 / −8.23 **FAIL** | +11.7 / +12.1 % | 0.310 | NOT-YET |
+
+The 2023 FAIL is a train year, so v1's train tier would read NOT-YET. **The gate regression is not the reason
+v1 is withdrawn.** The reason is measured data that contradicts half of v1's construction (rule 13).
+
+That evidence is CAMPD 2023: plant-hour gross load summed over units. "Hours above" counts hours where
+gross × 0.97 exceeds the reported rating.
+
+| plant | reported block summer rating | keeper carried | CAMPD p99 / max gross | hours above the reported rating |
+|---|---:|---:|---|---:|
+| 1004 Edwardsport | 555.0 | 1,036.2 | 477 / 480 | **0** |
+| 55218 Hinds | 452.1 | 532.1 | 510 / 537 | 3,566 |
+| 55220 Attala | 455.4 | 516.8 | 522 / 530 | 4,143 |
+| 55380 Union | 2,031.0 | 2,317.7 | 2,174 / 2,398 | 653 |
+| 55418 Hot Spring | 562.7 | 582.1 | 570 / 599 | 51 |
+| 55467 Ouachita | 723.7 | 841.4 | 825 / 879 | 1,187 |
+| 55620 Perryville | 576.8 | 637.9 | 730 / 823 | 858 |
+
+**What the table shows:**
+- **The six NG blocks** demonstrably produce more than their published summer rating.
+  - The keeper's measured CAMPD-p999 cap (the `cc_capacity_reconcile` table) is the more accurate bound for
+    five of them.
+  - The CC guard's own doctrine is "never clip below demonstrated capability".
+  - v1's cut **under-rated measured capability**, which is a rule-13 defect in v1, not in the keeper.
+- **Edwardsport's** record corroborates the 555 MW block rating and refutes 1,036 MW.
+- **§2.1's claim was wrong.** It said the NG blocks sat "on the wrong basis", and the measurement refutes it.
+  The charter had it right: *"the NG ones are already capped by cc_capacity_reconcile — rule 19: reconcile, don't
+  stack."*
+
+### 9.2 v2 — the same flag, the predicate scoped to blocks the measured CC guard cannot reach
+
+The v2 predicate adds one condition: **no `CA` row's `Energy Source 1` is `NG`.**
+- The gas blocks stay with the merchant-CC guard and the `cc_capacity_reconcile` cap, which are measured
+  constructions (rule 19: one mechanism per plant, and for gas it is the measured one).
+- Zero free parameters.
+- MISO reach 2019–2025: **1004 Edwardsport only.** The canonical 2025 file labels its CTs NG, but its CA row is
+  SGC, so it still qualifies.
+
+**Zero-LP fleet rebuild, v2 − keeper recipe, same environment** (§2.3 method, with `data/clean` built for both
+sides):
+
+| year | pmax change | availability change | every other unit and plant |
+|---|---|---|---|
+| 2019 | 1004 COAL_BIT −473.0 MW | −3.683 TWh | byte-identical, heat rates included |
+| 2023 | 1004 COAL_BIT −481.2 MW | −3.688 TWh | byte-identical |
+| 2025 | 1004 COAL_BIT −328.6 MW, CC_REGULAR −152.6 MW | −2.262 / −1.310 TWh | byte-identical |
+
+The §2.3 caveat on the outage-numerator basis still applies to Edwardsport and is still routed (§7 item 2).
+
+**Arm, shards and gates:**
+- The arm is identical to §4 except for the out-dirs (`miso272b_arm_<Y>`) and the branches (`claude/miso272b-arm-<Y>`).
+- One shard per year 2019–2025, pinned to this addendum's commit SHA.
+- **G-DRIFT:** upstream hunks are unchanged from §3, all INERT. The only new hunk is this predicate line.
+- **Decision rule:** §6 unchanged. S-2 now expects only plant 1004 to move.
+
+**Predictions:**
+- COAL_BIT down about 0.47 GW, and 0.33 GW in 2025.
+- Price up slightly.
+- C1 CC_REGULAR close to the keeper, because the NG blocks are untouched. 2025 loses 153 MW of Edwardsport CC.

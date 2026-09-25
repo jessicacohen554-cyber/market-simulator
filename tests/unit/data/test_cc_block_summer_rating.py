@@ -30,7 +30,7 @@ from market_sim.data.fleet.eia860 import (
 )
 
 
-def _raw_row(plant, gen, pm, uc, np_mw, su_mw, status="OP"):
+def _raw_row(plant, gen, pm, uc, np_mw, su_mw, status="OP", es="SGC"):
     """One row of the raw EIA-860 operable sheet (the columns the predicate reads)."""
     return {
         "Plant Code": plant,
@@ -40,6 +40,7 @@ def _raw_row(plant, gen, pm, uc, np_mw, su_mw, status="OP"):
         "Status": status,
         "Nameplate Capacity (MW)": np_mw,
         "Summer Capacity (MW)": su_mw,
+        "Energy Source 1": es,
     }
 
 
@@ -60,9 +61,9 @@ def _raw_sheet() -> pd.DataFrame:
             _raw_row(55380, "STG2", "CA", "BL02", 255.0, 504.0),
             # A standalone peaker at a qualifying plant: no unit code, never moves.
             _raw_row(55620, "2-CT", "GT", None, 186.2, 148.5),
-            _raw_row(55620, "CT-1", "CT", "PB01", 198.9, None),
-            _raw_row(55620, "CT-2", "CT", "PB01", 198.9, None),
-            _raw_row(55620, "ST-1", "CA", "PB01", 240.1, 576.8),
+            _raw_row(55620, "CT-1", "CT", "PB01", 198.9, None, es="NG"),
+            _raw_row(55620, "CT-2", "CT", "PB01", 198.9, None, es="NG"),
+            _raw_row(55620, "ST-1", "CA", "PB01", 240.1, 576.8, es="NG"),
             # Component filing: every row carries its own rating -> untouched.
             _raw_row(7000, "CT1", "CT", "A", 200.0, 180.0),
             _raw_row(7000, "ST1", "CA", "A", 120.0, 110.0),
@@ -142,7 +143,7 @@ class TestPredicate(unittest.TestCase):
         with _SheetDir() as d:
             ratings = _cc_block_summer_ratings(d)
         plants = {p for p, _ in ratings}
-        self.assertEqual(plants, {1004, 55380, 55620})
+        self.assertEqual(plants, {1004, 55380})
 
     def test_block_sums_to_reported_rating(self) -> None:
         with _SheetDir() as d:
@@ -160,6 +161,12 @@ class TestPredicate(unittest.TestCase):
             r = _cc_block_summer_ratings(d)
         self.assertAlmostEqual(r[(1004, "CT1")], 555.0 * 240.6 / 812.7)
         self.assertAlmostEqual(r[(1004, "ST")], 555.0 * 331.5 / 812.7)
+
+    def test_ng_block_is_left_to_the_measured_cc_guard(self) -> None:
+        """v2 (rule 19/13): an NG block is owned by the measured CC guard / cap."""
+        with _SheetDir() as d:
+            r = _cc_block_summer_ratings(d)
+        self.assertFalse(any(p == 55620 for p, _ in r))
 
     def test_standalone_peaker_never_moves(self) -> None:
         with _SheetDir() as d:
@@ -194,8 +201,8 @@ class TestLoaderSeam(unittest.TestCase):
         self.assertAlmostEqual(sum(g.pmax_mw for g in before), 1036.2, places=1)
         self.assertAlmostEqual(sum(g.pmax_mw for g in after), 555.0, places=6)
 
-    def test_cc_guard_does_not_fire_on_reconciled_block(self) -> None:
-        """Rule 19: an NG block reconciled upstream is never clipped again."""
+    def test_ng_block_keeps_the_measured_guard(self) -> None:
+        """v2, rule 19: an NG block is NOT rewritten, so the CC guard still owns it."""
         frame = _fleet_frame().assign(
             plant_id=55620,
             energy_source="NG",
@@ -206,10 +213,12 @@ class TestLoaderSeam(unittest.TestCase):
         frame.loc[2, "net_summer_capacity_mw"] = 576.8
         with _SheetDir() as d:
             fixed = _apply_cc_block_summer_rating(frame, d, "MISO")
+        pd.testing.assert_frame_equal(fixed, frame)
         mod._CC_PMAX_RECONCILED_PLANTS.pop("MISO", None)
         gens = _rows_to_generators(fixed, "MISO", None)
-        self.assertAlmostEqual(sum(g.pmax_mw for g in gens), 576.8, places=6)
-        self.assertNotIn(55620, mod.cc_pmax_reconciled_plants("MISO"))
+        # the guard clips the fill (576.8 + 2 x 198.9) to the nameplate bound
+        self.assertAlmostEqual(sum(g.pmax_mw for g in gens), 637.9, places=6)
+        self.assertIn(55620, mod.cc_pmax_reconciled_plants("MISO"))
 
 
 class TestFlag(unittest.TestCase):
