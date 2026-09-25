@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-25-r-soco-b-boundary",
+  "label": "r soco b boundary",
+  "date": "2026-09-25",
+  "shorthand": "r-soco-b-boundary",
+  "definition": "R-SOCO-B 2019: R-SOCO keeper recipe on the repaired SOCO BA boundary (R1 2019 interchange sign, R2 Gulf plants out of the LP fleet, R3 PowerSouth AEC from 2021-09-01); multipliers unchanged",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-09-25-r-soco-b-boundary.js",
+  "bundle": "results/calibration/rsocob_boundary_span"
+}
