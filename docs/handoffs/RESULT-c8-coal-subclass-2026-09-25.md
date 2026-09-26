@@ -332,7 +332,8 @@ The new keepers were handled the same way as the rest, with before scores from `
 | NWPP | `2026-09-25-nwppnext3-plant-basis` | PASS → PASS | NOT-YET → NOT-YET | re-split: `COAL_BIT` and `COAL_PRB` PASS (0.0 % forced), `COAL_WC` SKIPPED (immaterial); family cross-check gap ≤ 0.12 TWh total, 0 forced |
 | SOCO | `2026-09-25-soco68-summer-basis` | PASS → PASS | NOT-YET → NOT-YET | re-split: `COAL_BIT` and `COAL_PRB` PASS (0.0 % forced); gap ≤ 0.0001 TWh |
 | NEISO | `2026-09-25-neiso114-arm-b-stgas` | PASS → PASS | NOT-YET → NOT-YET | re-split: all NEISO coal is `COAL_BIT`; per-year statuses identical to the family's (2022 PASS, others SKIPPED immaterial); forced gap ≤ 0.0074 TWh |
+| MISO | `2026-09-25-miso-273-screened-coal` (registered 2026-09-25, not yet the keeper) | PASS → PASS | NOT-YET → NOT-YET | re-split: `COAL_BIT` and `COAL_PRB` PASS every year, `COAL_LIGNITE` SKIPPED (immaterial); forced gap ≤ 0.077 TWh |
 | NYISO | `2026-09-25-nyiso-stgas-ldc-leg` | PASS → PASS | CALIBRATED → CALIBRATED | none (no coal energy) |
 | NYISO | `2026-09-25-nyiso-stgas-ldc-2021` | PASS → PASS | CALIBRATED → CALIBRATED | none (no coal energy) |
 
-Across all 10 runs registered after the rebase, no C8 status and no determination changed. Every non-C8 criterion and every non-coal C8 record is byte-identical before and after.
+Across all 11 runs registered after the final rebase, no C8 status and no determination changed. Every non-C8 criterion and every non-coal C8 record is byte-identical before and after.
