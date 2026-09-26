@@ -731,13 +731,21 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   ISO's surface gains that one row: +1 row everywhere, fingerprints advance.
 #   WHAT IT COSTS: nothing solved — no registry value moved, so no committed
 #   bundle's numbers change; the digest moves only because the row set grew.
+# 2026-09-26 ALL SIX ADVANCED (neiso-119) — ONE ROW ADDED, NO VALUE MOVED.
+#   neiso-119 added constants.WINTER_FUELSEC_CONDUCT_MIN_ONLINE_SHARE (0.5, the
+#   D-4 conduct test, read only under the default-off
+#   neiso_winter_fuelsec_conduct_roster). `solve_surface_register.py --diff
+#   origin/main` -> "316 -> 317 names; 0 value(s) moved, 1 added"; declared at
+#   its live hash (`--declare-missing`, moves no key). +1 row everywhere.
+#   WHAT IT COSTS: nothing solved — no registry value moved, so no committed
+#   bundle's numbers change; the digest moves only because the row set grew.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("e81bc2748990b1e3", 234),
-    "CAISO": ("490ff78425f818f7", 209),
-    "MISO": ("932cc6e2132cc8ce", 215),
-    "PJM": ("31e84b1db802efc6", 219),
-    "NYISO": ("de96e0a38fe2c2c5", 216),
-    "NEISO": ("8f90ae4dca904a66", 202),
+    "ERCOT": ("542d797ba061b435", 235),
+    "CAISO": ("ea426b82660d270e", 210),
+    "MISO": ("754991ac8927d9f7", 216),
+    "PJM": ("82f6053c8964444d", 220),
+    "NYISO": ("fd0d853c93a9babc", 217),
+    "NEISO": ("910cd732ce01c3fb", 203),
 }
 
 
