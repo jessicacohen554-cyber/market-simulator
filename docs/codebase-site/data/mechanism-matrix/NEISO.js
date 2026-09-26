@@ -313,6 +313,8 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     caiso_dsw_lateevening_clean: { cell: ".", ev: "n/a \u2014 CAISO-only by construction (the CAISO per-hub corridor family; rule 25 [R-ISO-SCOPE]). Row minted caiso-269 (2026-09-10) with its field per rule 28(c); no verdict transfers here." },
     caiso_import_gas_coupling_ladder_only: { cell: ".", ev: "n/a \u2014 CAISO-only by construction (the coupling and the measured-hub injectors gate on CAISO). Minted by the rule-28(c) same-PR duty (R-CAISO-3, 2026-09-25); no adjudication made or implied." },
     caiso_intertie_gap_fill_measured_gas: { cell: ".", ev: "n/a \u2014 CAISO-only by construction (measured_import_hub_prices returns None for any other ISO). Minted by the rule-28(c) same-PR duty (R-CAISO-3, 2026-09-25); no adjudication made or implied." },
+    caiso_intertie_gap_fill_measured_dam: { cell: ".", ev: "n/a \u2014 CAISO-only by construction (the intertie loaders return None for any other ISO). Minted by the rule-28(c) same-PR duty (R-CAISO-4, 2026-09-26); no adjudication made or implied." },
+    cc_eia923_identity_emission_basis: { cell: ".", ev: "n/a \u2014 inert by construction here: this ISO's measured-CC artifact carries no eia923_identity row (only CAISO's does, R-CAISO-3 lever C). Becomes U if this ISO's own lane re-derives its artifact with the EIA-923 identity (rule 25). Minted by the rule-28(c) same-PR duty (R-CAISO-4, 2026-09-26); no adjudication made or implied." },
     import_hub_pricing: { cell: "K" },
     import_shape_lever: { cell: "." },
     nyiso_import_sil_retire: { cell: "." },
