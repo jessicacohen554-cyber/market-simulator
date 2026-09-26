@@ -428,7 +428,9 @@ def main() -> None:
         # not arm ScenarioConfig.caiso_intertie_gap_fill_measured_dam reads
         # byte-identical inputs. Re-running replaces only the requested years.
         if existing is None:
-            print("--fill-gaps needs the main parquet to find its gaps.", file=sys.stderr)
+            print(
+                "--fill-gaps needs the main parquet to find its gaps.", file=sys.stderr
+            )
             sys.exit(1)
         key = ["year", "hub", "hour"]
         merged = existing.merge(

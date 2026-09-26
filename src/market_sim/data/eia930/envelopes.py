@@ -488,7 +488,9 @@ def measured_gas_floor_profile(
 _CAISO_IMPORT_TRANCHE_HUB: dict[str, str] = CAISO_IMPORT_TRANCHE_HUB
 
 
-def _intertie_gap_fill_dam(iso: str, year: int, hub: str, hours: int) -> np.ndarray | None:
+def _intertie_gap_fill_dam(
+    iso: str, year: int, hub: str, hours: int
+) -> np.ndarray | None:
     """Return one hub's MEASURED DAM prints for the main series' gap hours.
 
     R-CAISO-4 (``ScenarioConfig.caiso_intertie_gap_fill_measured_dam``). Reads
@@ -501,7 +503,10 @@ def _intertie_gap_fill_dam(iso: str, year: int, hub: str, hours: int) -> np.ndar
     Returns ``(hours,)`` $/MWh, NaN where no print exists, or ``None`` when the
     artifact or the (year, hub) is absent.
     """
-    path = _calibration_dir() / f"wecc_intertie_lmp_hourly_{iso.upper()}_gapfill_dam.parquet"
+    path = (
+        _calibration_dir()
+        / f"wecc_intertie_lmp_hourly_{iso.upper()}_gapfill_dam.parquet"
+    )
     if not path.exists():
         return None
     frame = pd.read_parquet(path)
@@ -511,7 +516,9 @@ def _intertie_gap_fill_dam(iso: str, year: int, hub: str, hours: int) -> np.ndar
     out = np.full(hours, np.nan)
     hrs = frame["hour"].to_numpy(dtype=int)
     keep = (hrs >= 0) & (hrs < hours)
-    out[hrs[keep]] = pd.to_numeric(frame["price"], errors="coerce").to_numpy(dtype=float)[keep]
+    out[hrs[keep]] = pd.to_numeric(frame["price"], errors="coerce").to_numpy(
+        dtype=float
+    )[keep]
     return out
 
 
