@@ -1,10 +1,11 @@
 {
   "artifact": "campd-unit-outages-perunitmerithour-NYISO.csv",
-  "artifact_rows": 3734,
+  "artifact_rows": 3615,
   "derive_invocation": {
     "fullstop_override_cf": 0.02,
     "fullstop_override_days": 5,
     "high_load_pctl": 0.85,
+    "hour_grain": true,
     "iso": "NYISO",
     "merit_order_guard": true,
     "min_inmerit_hours": 24,
@@ -38,13 +39,13 @@
   ],
   "sidecar_schema_version": 1,
   "windows_by_start_year": {
-    "2019": 540,
-    "2020": 519,
-    "2021": 526,
-    "2022": 512,
-    "2023": 519,
-    "2024": 461,
-    "2025": 492,
+    "2019": 523,
+    "2020": 501,
+    "2021": 513,
+    "2022": 497,
+    "2023": 499,
+    "2024": 441,
+    "2025": 476,
     "2026": 165
   }
 }

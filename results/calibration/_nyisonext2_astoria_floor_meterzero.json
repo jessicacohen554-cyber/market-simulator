@@ -1,0 +1,77 @@
+{
+ "2021": {
+  "ast_relfloor_twh": [
+   0.0473,
+   0.2524
+  ],
+  "ast_relfloor_meterzero_twh": [
+   0.0,
+   0.0039
+  ],
+  "ast_meter_twh": 0.7307,
+  "nyc_st_relfloor_twh": [
+   0.5219,
+   0.727
+  ]
+ },
+ "2022": {
+  "ast_relfloor_twh": [
+   0.1016,
+   0.3018
+  ],
+  "ast_relfloor_meterzero_twh": [
+   0.0,
+   0.0033
+  ],
+  "ast_meter_twh": 0.9028,
+  "nyc_st_relfloor_twh": [
+   0.6554,
+   0.8556
+  ]
+ },
+ "2023": {
+  "ast_relfloor_twh": [
+   0.1119,
+   0.2854
+  ],
+  "ast_relfloor_meterzero_twh": [
+   0.0,
+   0.0091
+  ],
+  "ast_meter_twh": 0.7803,
+  "nyc_st_relfloor_twh": [
+   0.7176,
+   0.8912
+  ]
+ },
+ "2024": {
+  "ast_relfloor_twh": [
+   0.1578,
+   0.3227
+  ],
+  "ast_relfloor_meterzero_twh": [
+   0.0,
+   0.0101
+  ],
+  "ast_meter_twh": 0.9295,
+  "nyc_st_relfloor_twh": [
+   0.8413,
+   1.0061
+  ]
+ },
+ "2025": {
+  "ast_relfloor_twh": [
+   0.276,
+   0.4394
+  ],
+  "ast_relfloor_meterzero_twh": [
+   0.0,
+   0.0021
+  ],
+  "ast_meter_twh": 1.359,
+  "nyc_st_relfloor_twh": [
+   1.1223,
+   1.2857
+  ]
+ }
+}
