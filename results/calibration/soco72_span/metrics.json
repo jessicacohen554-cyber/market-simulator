@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-26-soco71-coal-hr-window",
+  "run_id": "2026-09-26-soco72-gas-basis-window",
   "iso": "SOCO",
-  "label": "soco71 coal hr window",
+  "label": "soco72 gas basis window",
   "target_years": [
     2019,
     2020,
@@ -33,8 +33,8 @@
   "rubric_version": 3.9,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix",
-    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for SOCO, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2019, 2020, 2021, 2022, 2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2019: $32.78/MWh, 2020: $28.03/MWh, 2021: $38.63/MWh, 2022: $64.27/MWh, 2023: $31.83/MWh, 2024: $29.30/MWh, 2025: $40.61/MWh."
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, dispatch_corr",
+    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for SOCO, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2019, 2020, 2021, 2022, 2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2019: $30.79/MWh, 2020: $25.73/MWh, 2021: $36.59/MWh, 2022: $68.78/MWh, 2023: $31.83/MWh, 2024: $29.30/MWh, 2025: $40.61/MWh."
   ],
   "notes": [],
   "criteria": {
@@ -66,7 +66,7 @@
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "governance": {
       "label": "C6 governance gate",
@@ -90,19 +90,19 @@
   },
   "grade_summary": {
     "scored": 5,
-    "target_grade": 4,
+    "target_grade": 3,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 1
+    "fails": 2
   },
   "reported": {
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2019": "-5.1%",
-        "2020": "-6.3%",
-        "2021": "+0.3%",
-        "2022": "+1.1%",
+        "2019": "-7.8%",
+        "2020": "-7.6%",
+        "2021": "-1.4%",
+        "2022": "+1.4%",
         "2023": "-4.6%",
         "2024": "-7.1%",
         "2025": "+2.4%"
@@ -161,10 +161,10 @@
       "forced_share"
     ],
     "model_mean_lmp_by_year": {
-      "2019": 32.78,
-      "2020": 28.03,
-      "2021": 38.63,
-      "2022": 64.27,
+      "2019": 30.79,
+      "2020": 25.73,
+      "2021": 36.59,
+      "2022": 68.78,
       "2023": 31.83,
       "2024": 29.3,
       "2025": 40.61
