@@ -1,0 +1,243 @@
+[
+ {
+  "year": 2019,
+  "yards": {
+   "568": [
+    568
+   ],
+   "2364": [
+    2364
+   ],
+   "2367": [
+    2367
+   ]
+  },
+  "rows": [
+   {
+    "row": 0,
+    "plants": [
+     568
+    ],
+    "budget_tbtu": 3.112,
+    "census_tbtu": [
+     3.112
+    ]
+   },
+   {
+    "row": 1,
+    "plants": [
+     2364
+    ],
+    "budget_tbtu": 6.354,
+    "census_tbtu": [
+     6.354
+    ]
+   },
+   {
+    "row": 2,
+    "plants": [
+     2367
+    ],
+    "budget_tbtu": 3.003,
+    "census_tbtu": [
+     3.003
+    ]
+   }
+  ],
+  "config_seen": true
+ },
+ {
+  "year": 2020,
+  "yards": {
+   "568": [
+    568
+   ],
+   "2364": [
+    2364
+   ],
+   "2367": [
+    2367
+   ]
+  },
+  "rows": [
+   {
+    "row": 0,
+    "plants": [
+     568
+    ],
+    "budget_tbtu": 3.942,
+    "census_tbtu": [
+     3.942
+    ]
+   },
+   {
+    "row": 1,
+    "plants": [
+     2364
+    ],
+    "budget_tbtu": 7.212,
+    "census_tbtu": [
+     7.212
+    ]
+   },
+   {
+    "row": 2,
+    "plants": [
+     2367
+    ],
+    "budget_tbtu": 2.508,
+    "census_tbtu": [
+     2.508
+    ]
+   }
+  ],
+  "config_seen": true
+ },
+ {
+  "year": 2021,
+  "yards": {
+   "568": [
+    568
+   ],
+   "2364": [
+    2364
+   ]
+  },
+  "rows": [
+   {
+    "row": 0,
+    "plants": [
+     568
+    ],
+    "budget_tbtu": 4.093,
+    "census_tbtu": [
+     4.093
+    ]
+   },
+   {
+    "row": 1,
+    "plants": [
+     2364
+    ],
+    "budget_tbtu": 9.234,
+    "census_tbtu": [
+     9.234
+    ]
+   }
+  ],
+  "config_seen": true
+ },
+ {
+  "year": 2022,
+  "yards": {
+   "568": [
+    568
+   ],
+   "2364": [
+    2364
+   ]
+  },
+  "rows": [
+   {
+    "row": 0,
+    "plants": [
+     568
+    ],
+    "budget_tbtu": 0.0,
+    "census_tbtu": [
+     0.0
+    ]
+   },
+   {
+    "row": 1,
+    "plants": [
+     2364
+    ],
+    "budget_tbtu": 7.678,
+    "census_tbtu": [
+     7.678
+    ]
+   }
+  ],
+  "config_seen": true
+ },
+ {
+  "year": 2023,
+  "yards": {
+   "2364": [
+    2364
+   ]
+  },
+  "rows": [
+   {
+    "row": 0,
+    "plants": [
+     2364
+    ],
+    "budget_tbtu": 9.645,
+    "census_tbtu": [
+     9.645
+    ]
+   }
+  ],
+  "config_seen": true
+ },
+ {
+  "year": 2024,
+  "yards": {
+   "2364": [
+    2364
+   ]
+  },
+  "rows": [
+   {
+    "row": 0,
+    "plants": [
+     2364
+    ],
+    "budget_tbtu": 9.698,
+    "census_tbtu": [
+     9.698
+    ]
+   }
+  ],
+  "config_seen": true
+ },
+ {
+  "year": 2025,
+  "yards": {
+   "568": [
+    568
+   ],
+   "2364": [
+    2364
+   ],
+   "2367": [
+    2367
+   ]
+  },
+  "rows": [
+   {
+    "row": 0,
+    "plants": [
+     2364
+    ],
+    "budget_tbtu": 4.813,
+    "census_tbtu": [
+     4.813
+    ]
+   },
+   {
+    "row": 1,
+    "plants": [
+     2367
+    ],
+    "budget_tbtu": 0.0,
+    "census_tbtu": [
+     0.0
+    ]
+   }
+  ],
+  "config_seen": true
+ }
+]
