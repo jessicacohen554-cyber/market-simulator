@@ -2058,6 +2058,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SHARED field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as
     # the field (the nyiso-119 discipline).
     "coal_committed_nested_on_mustrun",
+    # R-CAISO-3 (2026-09-25), both default off, registered IN THE SAME COMMIT
+    # as the fields (the nyiso-119 discipline). Byte-identical off by
+    # construction: the coupling's skip set is computed only inside
+    # `getattr(config, "caiso_import_gas_coupling_ladder_only", False)`, and the
+    # measured-gas fill is reached only when the per-hub injector is handed
+    # gap_fill_measured_gas=True from the flag. An armed run prices different
+    # import rows and earns a distinct key. CAISO-only.
+    "caiso_import_gas_coupling_ladder_only",
+    "caiso_intertie_gap_fill_measured_gas",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2790,6 +2799,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "wefor_residual_short_screened_coal": "False",
     # Added by NWPP-NEXT-4 WITH the field (the nyiso-119 discipline).
     "coal_committed_nested_on_mustrun": "False",
+    # Added by R-CAISO-3 WITH the fields, in the same commit as their
+    # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
+    "caiso_import_gas_coupling_ladder_only": "False",
+    "caiso_intertie_gap_fill_measured_gas": "False",
 }
 
 
@@ -9109,6 +9122,47 @@ class ScenarioConfig:
     # (byte-identical); CAISO-only; pairs with --gas-hub-basis-overlay; no-op for
     # forecast years (no measured gas basis). Does NOT address the negative
     # midday tail — that is caiso_import_solar_shape below.
+    caiso_import_gas_coupling_ladder_only: bool = False  # R-CAISO-3 (2026-09-25):
+    # scope caiso_import_gas_coupling to the tranches it was built for — the
+    # ones still on the STATIC ladder. The coupling's own premise is that a
+    # tranche's level "was fitted against the F923 delivered world", so it is
+    # shifted by (commodity spot - F923 delivered) x HR when the overlay moves
+    # in-state gas. Under caiso_per_hub_intertie (and the legacy
+    # caiso_import_hub_prices) the spot-traded DSW gas tranches are REPRICED to
+    # the measured Palo Verde intertie LMP, which already carries the region's
+    # gas cost; the coupling then ADDS its CA-series delta on top of a measured
+    # price that was never fitted to anything (the per-hub injector's docstring
+    # says those rows are "overwritten off measured gas" by the coupling — the
+    # code adds instead). Measured on the R-CAISO-2 keeper: the delta is
+    # -11.68 / -11.06 $/MMBtu in Dec-2022 / Jan-2023 (N3050 citygate lagging
+    # F923 delivered), so DSW_CCGT / DSW_CT were offered -81 / -121 $/MWh BELOW
+    # their hub in the western gas spike and went NEGATIVE in Jan-2023.
+    # With the flag, a tranche repriced by a measured hub series is skipped;
+    # static-ladder rows (the caiso_perhub_firm_base DSW_solar_PV block) keep
+    # the coupling exactly as before. Zero new parameters (rule 19 [R-ONE-MECH]:
+    # the measured hub is the ONE gas channel for a hub-priced row). Requires
+    # caiso_import_gas_coupling; default off (byte-identical); CAISO-only.
+    # docs/handoffs/r-caiso-3/PRECOMMIT-r-caiso-3-2026-09-25.md.
+    caiso_intertie_gap_fill_measured_gas: bool = False  # R-CAISO-3 (2026-09-25):
+    # the measured WECC intertie hub series (Malin / Palo Verde) has a bulk
+    # OASIS retention gap (2023-01-01..03-26, 2,040 h) that
+    # eia930.envelopes.measured_import_hub_prices fills with the FORWARD
+    # reference formula (HENRY_HUB_TRAJECTORIES annual + static basis) x HR x
+    # load shape — a forecast estimate inside a backcast year, which prices
+    # Palo Verde at ~$39/MWh through the Jan-2023 western gas crisis. With the
+    # flag, the SAME formula takes the MEASURED monthly delivered-to-electric-
+    # power gas of the hub's host state (EIA N3045AZ3 for Palo Verde, N3045OR3
+    # for Malin; interchange.spec.CAISO_INTERTIE_HUB_GAS_STATE) in place of the
+    # forward HH + static basis. Rule 14 [R-ACCURATE]: measured over estimate.
+    # Identified OUT OF SAMPLE, never on a model residual: in fully measured
+    # months the regional-gas formula reproduces the measured hub at monthly
+    # correlation 0.94 / 0.96 (PV / Malin, 2022) vs 0.47 / 0.16 for the
+    # forward fill, and has lower monthly MAE in every year 2022-2025. Rule 13:
+    # the forward analogue is the forward monthly gas curve through the same
+    # formula. Only fills gap hours (2023 alone in 2022-2025); a month the
+    # state series does not print falls back to the forward fill. Zero new
+    # parameters (HR, shape unchanged). Default off (byte-identical);
+    # CAISO-only; reaches the per-hub injector.
     caiso_import_solar_shape: bool = False  # Restore the CAISO negative midday
     # tail. The desert-SW solar import block (DSW_solar_PV / Palo Verde hub) is
     # the marginal CAISO import midday, but its level is priced flat (gas-coupled

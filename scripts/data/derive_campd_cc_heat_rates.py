@@ -147,7 +147,11 @@ REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
-from market_sim.config.paths import PROCESSED_DIR, RAW_DIR  # noqa: E402
+from market_sim.config.paths import (  # noqa: E402
+    EIA_923_GENERATION_FUEL_PATH,
+    PROCESSED_DIR,
+    RAW_DIR,
+)
 from market_sim.data import campd  # noqa: E402
 from scripts.lib.heat_rate_years import (  # noqa: E402
     BACKCAST_YEARS,
@@ -223,6 +227,87 @@ _BOUNDARY_MAX: float = 1.25
 #: and NOT applied, falling back like every other refused row (pooled row,
 #: else eGRID). Physics-fixed ex ante, never swept (rules 14 / 21 / 23).
 _GROSS_NET_IDENTITY_MIN: float = 1.0
+
+#: THE EIA-923 IDENTITY FALLBACK (R-CAISO-3, 2026-09-25). A row refused by
+#: the gross-net identity above has a CEMS record that is internally
+#: inconsistent with the owner's own filing, so the measured rate that
+#: replaces it is the one built ENTIRELY from that filing: EIA-923 total fuel
+#: consumption / EIA-923 net generation over the plant's combined-cycle prime
+#: movers (data/raw/eia-923-generation-fuel), numerator and denominator on one
+#: boundary. The former terminal, eGRID, is CEMS heat input / EIA-923 net —
+#: the same refused CEMS record in the numerator. Measured on Pastoria 55656:
+#: CEMS heat input reads x1.090-1.093 of EIA-923 fuel in every year 2020-2025
+#: (x1.041 in 2019; all three units step together in 2020, CT004 7.14 -> 7.50
+#: gross with no steam-turbine change), so eGRID gives 7.69 while EIA-923 fuel
+#: / net holds at 7.04-7.08. Applies ONLY to rows already flagged
+#: ``gross_below_net``; no threshold, no parameter; the physical net band still
+#: binds. Written with flag ``eia923_identity``, which the model applies
+#: (data/fleet/campd_bins._APPLIED_MEASURED_FLAGS). Rules 14 / 19 / 23.
+_EIA923_IDENTITY_FLAG: str = "eia923_identity"
+_EIA923_IDENTITY_REFUSALS: frozenset[str] = frozenset({"gross_below_net"})
+_CC_PRIME_MOVERS: tuple[str, ...] = ("CT", "CA", "CS")
+
+
+def eia923_identity_rates(
+    codes: set[int], years: list[int], path: Path = EIA_923_GENERATION_FUEL_PATH
+) -> dict[int, dict[int, float]]:
+    """Return ``{year: {plant: EIA-923 fuel / EIA-923 net}}``; ``year 0`` is pooled.
+
+    Sums total fuel consumption (MMBtu) and net generation (MWh) over the
+    plant's combined-cycle prime movers (``CT``/``CA``/``CS``) in the committed
+    EIA-923 Page 1 intake. A plant-year with no positive fuel or generation is
+    omitted. Empty when the intake is absent (the derive then behaves exactly
+    as before this fallback existed).
+    """
+    if not Path(path).exists():
+        return {}
+    frame = pd.read_csv(path)
+    frame = frame[
+        frame["plant_id"].isin(codes)
+        & frame["prime_mover"].isin(_CC_PRIME_MOVERS)
+        & frame["year"].isin(years)
+    ]
+    cols = ["total_fuel_mmbtu", "net_generation_mwh"]
+    out: dict[int, dict[int, float]] = {}
+    for (year, code), r in frame.groupby(["year", "plant_id"])[cols].sum().iterrows():
+        if r["total_fuel_mmbtu"] > 0.0 and r["net_generation_mwh"] > 0.0:
+            out.setdefault(int(year), {})[int(code)] = float(
+                r["total_fuel_mmbtu"] / r["net_generation_mwh"]
+            )
+    for code, r in frame.groupby("plant_id")[cols].sum().iterrows():
+        if r["total_fuel_mmbtu"] > 0.0 and r["net_generation_mwh"] > 0.0:
+            out.setdefault(0, {})[int(code)] = float(
+                r["total_fuel_mmbtu"] / r["net_generation_mwh"]
+            )
+    return out
+
+
+def apply_eia923_identity(
+    table: pd.DataFrame, rates: dict[int, dict[int, float]]
+) -> pd.DataFrame:
+    """Replace refused gross-net rows with the EIA-923 identity rate.
+
+    Writes ``heat_rate_eia923_identity`` on every row (provenance) and, for a
+    row whose flag is in :data:`_EIA923_IDENTITY_REFUSALS` and whose identity
+    rate is inside the net physical band, sets ``heat_rate`` to that rate and
+    ``flag`` to :data:`_EIA923_IDENTITY_FLAG`. Every other row is unchanged.
+    """
+    table = table.copy()
+    ident = [
+        rates.get(int(y), {}).get(int(c), float("nan"))
+        for y, c in zip(table["year"], table["plant_code"])
+    ]
+    table["heat_rate_eia923_identity"] = np.round(np.asarray(ident, dtype=float), 4)
+    swap = table["flag"].isin(_EIA923_IDENTITY_REFUSALS) & table[
+        "heat_rate_eia923_identity"
+    ].between(_HR_MIN_NET, _HR_MAX_NET)
+    table.loc[swap, "heat_rate"] = table.loc[swap, "heat_rate_eia923_identity"]
+    table.loc[swap, "model_over_measured"] = np.round(
+        table.loc[swap, "model_heat_rate_egrid"] / table.loc[swap, "heat_rate"], 4
+    )
+    table.loc[swap, "flag"] = _EIA923_IDENTITY_FLAG
+    return table
+
 
 #: Reported-only comparison window: the near-HSL rate, for the reader's sense
 #: of the plant's range. NEVER the applied column (see the module docstring).
@@ -628,6 +713,7 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     table = stack_year_tables(table, per_year_tables(years, _year_table))
+    table = apply_eia923_identity(table, eia923_identity_rates(set(caps), years))
 
     out = (
         Path(args.out) if args.out else PROCESSED_DIR / f"campd_cc_heat_rates_{iso}.csv"
@@ -641,7 +727,7 @@ def main(argv: list[str] | None = None) -> int:
         )
     )
     table = table[table["year"] == 0]
-    ok = table[table["flag"] == "ok"]
+    ok = table[table["flag"].isin(("ok", _EIA923_IDENTITY_FLAG))]
     covered = float(ok["class_capacity_mw"].sum())
     total = float(sum(caps.values()))
     print(f"wrote {out}  ({len(table)} plants, {len(ok)} applied)")
@@ -650,7 +736,7 @@ def main(argv: list[str] | None = None) -> int:
         f"({100.0 * covered / total:.1f} %)"
     )
     for _, r in table.iterrows():
-        mark = " " if r["flag"] == "ok" else "*"
+        mark = " " if r["flag"] in ("ok", _EIA923_IDENTITY_FLAG) else "*"
         print(
             f"  {mark}{int(r['plant_code']):>6d} {str(r['plant_name'])[:26]:26s} "
             f"model {r['model_heat_rate_egrid']:7.4f} -> meas {r['heat_rate']:7.4f} "

@@ -86,6 +86,15 @@ def cc_capacity_reconcile_path(iso: str) -> Path:
 # inputs/raw-data/ subdirectories -----------------------------------------
 EIA_860_DIR: Path = RAW_DATA_DIR / "eia-860"
 
+# EIA-923 Schedules 2-5 Page 1 "Generation and Fuel Data", annual per plant x
+# prime mover x reported fuel: total / electric fuel consumption (MMBtu) and
+# net generation (MWh). R-CAISO-3 intake; the owner's own fuel filing, which is
+# independent of CEMS heat input (scripts/data/fetch_eia923_generation_fuel.py).
+EIA_923_GENERATION_FUEL_DIR: Path = RAW_DATA_DIR / "eia-923-generation-fuel"
+EIA_923_GENERATION_FUEL_PATH: Path = (
+    EIA_923_GENERATION_FUEL_DIR / "eia923_generation_fuel_2019_2025.csv"
+)
+
 # --- EIA-860 vintage selection -------------------------------------------
 # The committed EIA-860 parquets in EIA_860_DIR are the 2025 Early Release
 # (operating years through 2025) — a single recent snapshot the COD ramp

@@ -624,6 +624,40 @@ def caiso_hub_reference_price(
     return baseload * shape
 
 
+def caiso_hub_measured_gas_reference_price(
+    spec: "CaisoHubNeighbor",
+    year: int,
+    hours: int,
+) -> np.ndarray | None:
+    """Return a CAISO corridor's reference price on MEASURED regional gas ($/MWh).
+
+    The backcast twin of :func:`caiso_hub_reference_price` (R-CAISO-3,
+    ``ScenarioConfig.caiso_intertie_gap_fill_measured_gas``): the identical
+    ``gas × marginal_heat_rate × load_shape`` construction, with the gas term the
+    measured monthly delivered-to-electric-power price of the hub's host state
+    (EIA N3045, :data:`~market_sim.model.interchange.spec.CAISO_INTERTIE_HUB_GAS_STATE`)
+    in place of the forward annual Henry Hub + static ``gas_basis``. Heat rate
+    and shape are unchanged, so no parameter is added. Hours in a month the
+    state does not print are ``NaN`` (the caller falls back to the forward fill
+    there); ``None`` when the hub has no mapped state, the state prints nothing
+    for ``year``, or the load shape cannot be resolved.
+    """
+    from market_sim.data.fuel.electric_power import state_electric_power_monthly_gas
+    from market_sim.model.interchange.spec import CAISO_INTERTIE_HUB_GAS_STATE
+
+    state = CAISO_INTERTIE_HUB_GAS_STATE.get(spec.hub)
+    if state is None:
+        return None
+    gas = state_electric_power_monthly_gas(state, year)
+    if gas is None:
+        return None
+    shape = caiso_hub_load_shape(spec, year, hours)
+    if shape is None:
+        return None
+    month = pd.date_range(f"{year}-01-01", periods=hours, freq="h").month.to_numpy()
+    return gas[month - 1] * spec.marginal_heat_rate * shape
+
+
 @dataclass
 class InterfacePrices:
     """Resolved per-neighbor reference prices for one ISO-year seam.

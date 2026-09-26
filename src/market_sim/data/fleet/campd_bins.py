@@ -253,6 +253,16 @@ def campd_ct_run_lengths(iso: str) -> dict[int, float]:
     }
 
 
+#: The ``flag`` values a measured heat-rate artifact row may carry and still be
+#: APPLIED. ``ok`` is the CAMPD-measured rate; ``eia923_identity`` (R-CAISO-3,
+#: 2026-09-25) is a row the CC derive's gross-net identity REFUSED on its CEMS
+#: record and re-priced at the owner's own EIA-923 fuel / EIA-923 net
+#: (``scripts/data/derive_campd_cc_heat_rates.py``). Every other flag is a
+#: refusal and falls back (pooled row, else eGRID). An artifact that carries no
+#: ``eia923_identity`` row reads exactly as before.
+_APPLIED_MEASURED_FLAGS: frozenset[str] = frozenset({"ok", "eia923_identity"})
+
+
 def _measured_rate_map(path: Path, year: int | None, class_keyed: bool = False) -> dict:
     """Read one measured-heat-rate artifact into ``{key: rate}`` for a solve year.
 
@@ -282,7 +292,7 @@ def _measured_rate_map(path: Path, year: int | None, class_keyed: bool = False) 
     if "year" not in df.columns:
         df["year"] = 0
     rate = pd.to_numeric(df["heat_rate"], errors="coerce")
-    df = df[(df["flag"].astype(str) == "ok") & (rate > 0.0)]
+    df = df[df["flag"].astype(str).isin(_APPLIED_MEASURED_FLAGS) & (rate > 0.0)]
 
     def _key(r):
         code = int(r.plant_code)

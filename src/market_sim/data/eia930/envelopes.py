@@ -489,7 +489,7 @@ _CAISO_IMPORT_TRANCHE_HUB: dict[str, str] = CAISO_IMPORT_TRANCHE_HUB
 
 
 def measured_import_hub_prices(
-    iso: str, year: int, hours: int
+    iso: str, year: int, hours: int, gap_fill_measured_gas: bool = False
 ) -> dict[str, np.ndarray] | None:
     """Return each CAISO import tranche's measured hourly neighbor-hub price.
 
@@ -514,6 +514,13 @@ def measured_import_hub_prices(
     the per-tranche CARB border carbon is re-added by the injector (so a clean
     hydro/solar tranche still pays none), matching the static-ladder carbon
     treatment.
+
+    ``gap_fill_measured_gas`` (``ScenarioConfig.caiso_intertie_gap_fill_measured_gas``,
+    R-CAISO-3, default off = byte-identical) fills a bulk retention gap from
+    :func:`market_sim.data.neighbor_price.caiso_hub_measured_gas_reference_price`
+    — the same formula on the hub host state's MEASURED monthly delivered gas —
+    instead of the forward Henry Hub trajectory; any gap hour that measured
+    fill cannot price (an unprinted state-month) keeps the forward fill.
 
     Returns ``{tranche_name: (hours,) $/MWh}`` for every tranche whose hub has a
     measured series, or ``None`` when the ISO is not CAISO, the parquet is
@@ -574,6 +581,16 @@ def measured_import_hub_prices(
             )
             if ref is None or not np.all(np.isfinite(ref[gap])):
                 continue  # no forward fill available — leave on the ladder
+            if gap_fill_measured_gas and spec is not None:
+                from market_sim.data.neighbor_price import (
+                    caiso_hub_measured_gas_reference_price,
+                )
+
+                measured_ref = caiso_hub_measured_gas_reference_price(spec, year, hours)
+                if measured_ref is not None:
+                    # Measured regional gas where the state printed; the
+                    # forward fill only where it did not (rule 14).
+                    ref = np.where(np.isfinite(measured_ref), measured_ref, ref)
             price[gap] = ref[gap]
         for tranche, mapped_hub in _CAISO_IMPORT_TRANCHE_HUB.items():
             if mapped_hub == hub:

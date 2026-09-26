@@ -26,6 +26,8 @@
       "caiso_firm_import_selfschedule": true,
       "caiso_firm_import_shape": true,
       "caiso_import_gas_coupling": true,
+      "caiso_import_gas_coupling_ladder_only": true,
+      "caiso_intertie_gap_fill_measured_gas": true,
       "caiso_per_year_import_caps": true,
       "caiso_ps_plant_params": true,
       "caiso_ra_bridge_startup_aware": true,
@@ -75,7 +77,7 @@
       "2024": 2.19,
       "2025": 3.52
     },
-    "git_sha": "640c9fe3f",
+    "git_sha": "d666fd94",
     "hours": 8760,
     "iso": "CAISO",
     "nyiso_dynamic_reserve_requirements": null,
@@ -99,10 +101,10 @@
     ]
   },
   "composed_from": [
-    "rcaiso2_ccid_2022",
-    "rcaiso2_ccid_2023",
-    "rcaiso2_ccid_2024",
-    "rcaiso2_ccid_2025"
+    "rcaiso3_ABC_2022",
+    "rcaiso3_ABC_2023",
+    "rcaiso3_ABC_2024",
+    "rcaiso3_ABC_2025"
   ],
   "environment": {
     "cache_key_path_roots": [
@@ -124,58 +126,58 @@
     "python_version": "3.11.15"
   },
   "git": {
-    "basis_sha": "640c9fe3ff88001f25c3988e2b7acf7063f282da",
+    "basis_sha": "cb9d32ece9634f85db58974608d424473fdbf5b3",
     "branch": "HEAD",
     "changed_files": [],
     "diffstat": "",
     "dirty": false,
-    "sha": "640c9fe3f"
+    "sha": "d666fd94"
   },
-  "model_changes_note": "R-CAISO-2 2022: keeper recipe + CC gross-net identity repair (PRECOMMIT-r-caiso-2-2026-09-25 \u00a74)",
+  "model_changes_note": "R-CAISO-3 ABC 2022: keeper recipe + A + B + EIA-923 identity CC heat-rate artifact (C) (PRECOMMIT-r-caiso-3-2026-09-25 \u00a74)",
   "per_leg_provenance": {
     "2022": {
       "git": {
-        "basis_sha": "640c9fe3ff88001f25c3988e2b7acf7063f282da",
+        "basis_sha": "cb9d32ece9634f85db58974608d424473fdbf5b3",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "640c9fe3f"
+        "sha": "d666fd94"
       },
-      "timestamp": "2026-09-25T04:27:41"
+      "timestamp": "2026-09-25T19:52:22"
     },
     "2023": {
       "git": {
-        "basis_sha": "40f4ed7a5e3159b909022747c7c8aa7d9be47f0d",
+        "basis_sha": "cb9d32ece9634f85db58974608d424473fdbf5b3",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "640c9fe3"
+        "sha": "d666fd94"
       },
-      "timestamp": "2026-09-25T05:15:00"
+      "timestamp": "2026-09-25T19:48:09"
     },
     "2024": {
       "git": {
-        "basis_sha": "40f4ed7a5e3159b909022747c7c8aa7d9be47f0d",
+        "basis_sha": "cb9d32ece9634f85db58974608d424473fdbf5b3",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "640c9fe3"
+        "sha": "d666fd94"
       },
-      "timestamp": "2026-09-25T05:12:51"
+      "timestamp": "2026-09-25T19:47:13"
     },
     "2025": {
       "git": {
-        "basis_sha": "40f4ed7a5e3159b909022747c7c8aa7d9be47f0d",
+        "basis_sha": "cb9d32ece9634f85db58974608d424473fdbf5b3",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "640c9fe3"
+        "sha": "d666fd94"
       },
-      "timestamp": "2026-09-25T05:22:14"
+      "timestamp": "2026-09-25T19:52:40"
     }
   },
   "resolved_inputs": {
@@ -254,8 +256,10 @@
     "caiso_gas_commitment_floor": false,
     "caiso_gas_floor_frac": 0.8,
     "caiso_import_gas_coupling": true,
+    "caiso_import_gas_coupling_ladder_only": true,
     "caiso_import_hub_prices": false,
     "caiso_import_solar_shape": false,
+    "caiso_intertie_gap_fill_measured_gas": true,
     "caiso_intertie_reference_price": false,
     "caiso_lcr_commitment_credit": false,
     "caiso_locational_as_families": false,
@@ -325,6 +329,7 @@
     "carbon_price_path": "zero",
     "carbon_program_price_path": null,
     "carry_operating_mothballs": false,
+    "cc_block_summer_rating": false,
     "cc_capacity_reconcile": false,
     "cc_capacity_reconcile_path": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_CAISO.csv",
     "cc_committed_hr_mult": 1.23,
@@ -610,6 +615,7 @@
     "ercot_online_capacity_envelope_measured": false,
     "ercot_ordc_only_scarcity": false,
     "ercot_ordc_total_reserve": false,
+    "ercot_partial_outage_day_guard": false,
     "ercot_partial_outage_shaped_derate": false,
     "ercot_reserve_supply_cap": false,
     "ercot_reserve_supply_cap_from_year": 2023,
@@ -682,6 +688,7 @@
     "fixed_om_nuclear": 130.0,
     "fixed_om_oil": 25.0,
     "fleet_state_from_eia860": true,
+    "fleet_zone_vintage_coords": false,
     "forecast_fossil_retirement_economic": true,
     "forecast_xyear_warmstart": true,
     "fossil_announced_exits_enabled": true,
@@ -990,13 +997,6 @@
         "phys_econ_low": 0.836,
         "phys_peak": 2.25
       },
-      "COAL": {
-        "committed": 0.9,
-        "econ_high": 1.1,
-        "econ_low": 0.95,
-        "econ_low_share": 0.55,
-        "peak": 1.45
-      },
       "COAL_BIT": {
         "committed": 0.9,
         "econ_high": 1.1,
@@ -1274,6 +1274,7 @@
     "unit_outage_maxgen_events": false,
     "unit_outage_mixed_gas_routing": false,
     "unit_outage_per_unit_clip": false,
+    "unit_outage_precod_clip": false,
     "unit_outage_short_windows": true,
     "unit_outage_short_windows_gas": true,
     "unit_outage_st_capacity_basis": false,
@@ -1301,16 +1302,22 @@
   },
   "solve_surface": {
     "epochs": [],
-    "fingerprint": "1f52716f0e774460",
-    "git_sha": "640c9fe3f",
+    "fingerprint": "490ff78425f818f7",
+    "git_sha": "d666fd94",
     "iso": "CAISO",
     "moved": {
+      "GENERIC_BASE_OFFER_CURVE": "bdc2b348ec6144d1",
+      "LABELS": "600aeac5bbcd256c",
+      "MAINTENANCE_MONTHLY_SHAPE": "b4da945d5a2e8f77",
+      "MIN_STABLE_PCT_PHYSICAL": "262e67a17cf047e0",
       "NUCLEAR_MONTHLY_CF_BY_YEAR": "e06aa2f4f9e742e8",
+      "PLANT_CLASSES": "3c91d80e901b878c",
       "RGGI_MEMBER_STATES_BY_YEAR": "e432156b179ff182",
-      "STATE_CARBON_PRICE_BY_ISO": "ea913868b7dbf5c1"
+      "STATE_CARBON_PRICE_BY_ISO": "ea913868b7dbf5c1",
+      "THERMAL_AVAILABILITY": "34ff308290e18439"
     },
-    "rows": 206,
+    "rows": 209,
     "schema": 1
   },
-  "timestamp": "2026-09-25T04:27:41"
+  "timestamp": "2026-09-25T19:52:22"
 }

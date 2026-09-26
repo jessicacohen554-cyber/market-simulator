@@ -3568,3 +3568,5 @@ results/calibration/pjmnext2_joint_20[0-9][0-9]/
 results/calibration/pjmnext2_c[123]_20[0-9][0-9]/
 # miso-273 per-year arm legs (rule 32(d): composite only reaches main; bytes provenance in PRECOMMIT §8)
 results/calibration/miso273_arm_*/
+# R-CAISO-3 per-year shard legs: kept out of main (rule 32(d)); provenance SHAs in docs/handoffs/r-caiso-3/RESULT
+results/calibration/rcaiso3_*_20*/
