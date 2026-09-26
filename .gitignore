@@ -3638,3 +3638,12 @@ results/calibration/nwppnext5_20*/
 results/calibration/miso276_arm_*/
 # R-CAISO-4 2019-21 keeper touchpoint composite IS committed (it folds into the keeper, rule 30):
 !results/calibration/rcaiso4_tp_2019_2021/
+
+# PJM-NEXT-4 card 1 per-year legs (parent tree only; composite is what reaches main). Provenance, not recovery (rule 33(d)):
+#   2019 1f3d1da160a5eea27b752885a7e2a975b2e27685 (claude/pjmnext4-c1-2019)
+#   2020 e1146013c00ec3428703e7827ed7a4f7348d8109 (claude/pjmnext4-c1-2020)
+#   2022 7aebde939c9171400516caeee5b88f6f429e3c0e (claude/pjmnext4-c1-2022)
+#   2023 844649a845cfeda3a5b1246dc25ee197a19a1608 (claude/pjmnext4-c1-2023)
+#   2024 55a6a47d89f19d8de7769b271ec026e40c0fc26b (claude/pjmnext4-c1-2024)
+#   2025 9b2f10f775b3d6955a87bc2e8a52266d0e8c9215 (claude/pjmnext4-c1-2025)
+results/calibration/pjmnext4_c1_20*/
