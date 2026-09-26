@@ -119,3 +119,18 @@ All seven pinned to **`faa5bd591040e58e31a33e3c3369c1de7d4f31ea`** (this doc's c
 | 2023 | `session_014DUBDmJt9jYnXrCovsvoSv` |
 | 2024 | `session_01XEFYqtCNCJ63KNYbunRNTS` |
 | 2025 | `session_01RJ2fAJrxporgn694kG7svP` |
+
+**Relaunch (14:18 UTC).** All seven first-launch shards stopped cleanly at hard stop 1: the container clone
+ignored the SHA `source_revision` and landed on `main` (`a151c5b1`). Nothing solved, nothing pushed; all seven
+archived. Relaunched with `source_revision` = this branch and an explicit step 0 (`git fetch origin <sha> && git
+checkout --detach <sha>`); the pin and every other instruction are unchanged.
+
+| year | shard session (v2) |
+|---|---|
+| 2019 | `session_01V8Mgijkrzcis5dG3Uektvo` |
+| 2020 | `session_01DCWUoQ7VGrW2XSACEs3ria` |
+| 2021 | `session_01Ktm8dZq1mgB3puqFhHSsu8` |
+| 2022 | `session_01YVSjZWbPz8YTmRLjiR3DTt` |
+| 2023 | `session_0141P1GkNf8WTv53362tNLV6` |
+| 2024 | `session_01QdmHTq6ueFyNcJivjEBYS7` |
+| 2025 | `session_01GWcK4V5PxyjpL64shTFQjm` |
