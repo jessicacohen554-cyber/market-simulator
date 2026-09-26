@@ -464,10 +464,38 @@ GAS_BASIS_DIFFERENTIAL: dict[str, float] = {
 # forward basis is used unchanged — so this is a measured INPUT, never an
 # outcome fed back.
 #
+# WINDOW EXTENDED TO 2019-2022 — lane soco-72 (2026-09-26), rule 23
+# [R-FROZEN-DERIVE] on a SOURCE-COVERAGE citation, never a residual. The SOCO
+# keeper's span became 2019-2025 at R-SOCO (2026-09-24), but this table kept
+# only the three rows SOCO-55 derived for the 2023-2025 span it then served,
+# so every 2019-2022 SOCO gas unit fell through to the 2024 scalar 0.64 — the
+# "year whose receipts are not yet filed" fall-through applied to four years
+# whose receipts ARE filed. The SAME construction, unchanged (it reproduces
+# the three committed rows above byte-for-byte: 26 / 27 / 27 plants and the
+# exact MMBtu), run on the already-committed 2019-2022 receipts:
+#
+#   year  plants  quantity (MMBtu)  q-wt delivered   Henry Hub   basis
+#   2019      23       588,591,336          2.8337      2.5651  +0.2686
+#   2020      24       571,328,321          2.3546      2.0337  +0.3209
+#   2021      25       592,859,329          4.2121      3.9097  +0.3024
+#   2022      26       626,610,774          7.6213      6.4191  +1.2023
+#
+# Declared misalignment (rule 14): the plant set is the current EIA-860 plant
+# file's BA code, so the former Gulf Power plants the 2019-2022 runs still
+# carry are excluded. Measured sensitivity, not selected: the run's own gas
+# fleet gives +0.2774 / +0.3164 / +0.3028 / +1.2622, the per-year EIA-860
+# vintage BA gives +0.2834 / +0.3218 / +0.3187 / +1.2650 — the committed
+# construction is kept because it is the one that reproduces 2023-2025.
+# Record: docs/handoffs/r-soco/PRECOMMIT-soco-72-2026-09-26.md.
+#
 # Rule 25 [R-ISO-SCOPE]: SOCO's derivation is SOCO's. No other ISO has a row
 # here, and a peer lane that wants one derives it from its OWN receipts.
 GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR: dict[str, dict[int, float]] = {
     "SOCO": {
+        2019: 0.27,
+        2020: 0.32,
+        2021: 0.30,
+        2022: 1.20,
         2023: 0.49,
         2024: 0.64,
         2025: 0.65,

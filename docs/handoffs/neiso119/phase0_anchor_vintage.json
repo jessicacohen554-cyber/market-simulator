@@ -1,0 +1,37 @@
+{
+ "2019": {
+  "frozen_anchor": 4.0763,
+  "vintage_anchor": 3.1751,
+  "delta": -0.9012
+ },
+ "2020": {
+  "frozen_anchor": 4.0763,
+  "vintage_anchor": 2.0025,
+  "delta": -2.0738
+ },
+ "2021": {
+  "frozen_anchor": 4.0763,
+  "vintage_anchor": 4.5344,
+  "delta": 0.4581
+ },
+ "2022": {
+  "frozen_anchor": 4.0763,
+  "vintage_anchor": 9.1574,
+  "delta": 5.0811
+ },
+ "2023": {
+  "frozen_anchor": 4.0763,
+  "vintage_anchor": 2.9365,
+  "delta": -1.1398
+ },
+ "2024": {
+  "frozen_anchor": 4.0763,
+  "vintage_anchor": 3.0304,
+  "delta": -1.0459
+ },
+ "2025": {
+  "frozen_anchor": 4.0763,
+  "vintage_anchor": 6.2264,
+  "delta": 2.1501
+ }
+}
