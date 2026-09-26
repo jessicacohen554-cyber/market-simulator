@@ -1,0 +1,595 @@
+{
+ "schema": "legitimacy-diagnostics/v1",
+ "bundle": "/home/user/market-simulator/results/calibration/rcaiso4_DE_2023",
+ "iso": "CAISO",
+ "years": [
+  2023
+ ],
+ "plant_class_vote_basis": {
+  "2023": "capacity"
+ },
+ "dispatch_source": {
+  "2023": "dispatch/2023_P1.parquet"
+ },
+ "diagnostics": {
+  "D1": {
+   "name": "D-1 diurnal shape",
+   "passed": true,
+   "rows": [
+    {
+     "year": 2023,
+     "class": "CC_CHP",
+     "profile_r": 0.952,
+     "model_offpeak_cv": 0.013,
+     "actual_offpeak_cv": 0.048,
+     "cv_ratio": 0.268,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "CC_REGULAR",
+     "profile_r": 0.989,
+     "model_offpeak_cv": 0.379,
+     "actual_offpeak_cv": 0.25,
+     "cv_ratio": 1.517,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "CT_CHP",
+     "profile_r": 0.939,
+     "model_offpeak_cv": 0.055,
+     "actual_offpeak_cv": 0.12,
+     "cv_ratio": 0.461,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "CT_PEAKER",
+     "profile_r": 0.893,
+     "model_offpeak_cv": 0.997,
+     "actual_offpeak_cv": 0.451,
+     "cv_ratio": 2.214,
+     "gated": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "OTHER_FOSSIL",
+     "profile_r": 0.972,
+     "model_offpeak_cv": 0.207,
+     "actual_offpeak_cv": 0.606,
+     "cv_ratio": 0.341,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "ST_GAS",
+     "profile_r": 0.834,
+     "model_offpeak_cv": 2.431,
+     "actual_offpeak_cv": 0.175,
+     "cv_ratio": 13.903,
+     "gated": true,
+     "verdict": "pass"
+    }
+   ],
+   "summary": [],
+   "failures": [],
+   "notes": []
+  },
+  "D2": {
+   "name": "D-2 forced-energy attribution",
+   "passed": true,
+   "rows": [
+    {
+     "year": 2023,
+     "class": "",
+     "mechanism": "nuclear_mustrun",
+     "forced_twh": 17.6263,
+     "class_total_twh": 35.5641,
+     "share_of_class": 0.4956
+    },
+    {
+     "year": 2023,
+     "class": "",
+     "mechanism": "firm_import",
+     "forced_twh": 17.9378,
+     "class_total_twh": 35.5641,
+     "share_of_class": 0.5044
+    },
+    {
+     "year": 2023,
+     "class": "CC_CHP",
+     "mechanism": "chp_steam",
+     "forced_twh": 4.4231,
+     "class_total_twh": 8.4165,
+     "share_of_class": 0.5255
+    },
+    {
+     "year": 2023,
+     "class": "CC_REGULAR",
+     "mechanism": "ra_mustoffer_bridge",
+     "forced_twh": 3.1125,
+     "class_total_twh": 51.6269,
+     "share_of_class": 0.0603
+    },
+    {
+     "year": 2023,
+     "class": "CT_CHP",
+     "mechanism": "chp_steam",
+     "forced_twh": 1.1839,
+     "class_total_twh": 1.2669,
+     "share_of_class": 0.9345
+    },
+    {
+     "year": 2023,
+     "class": "hydro",
+     "mechanism": "hydro_min_flow",
+     "forced_twh": 5.3865,
+     "class_total_twh": 24.3316,
+     "share_of_class": 0.2214
+    }
+   ],
+   "summary": [
+    {
+     "year": 2023,
+     "class": "CC_REGULAR",
+     "forced_twh": 3.1125,
+     "class_total_twh": 51.6269,
+     "forced_share": 0.0603,
+     "limit": 0.3,
+     "load_share": 0.2525,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "COAL_BIT",
+     "forced_twh": 0.0,
+     "class_total_twh": 0.0895,
+     "forced_share": 0.0,
+     "limit": 0.3,
+     "load_share": 0.0004,
+     "immaterial": true,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "CT_PEAKER",
+     "forced_twh": 0.0,
+     "class_total_twh": 2.4842,
+     "forced_share": 0.0,
+     "limit": 0.15,
+     "load_share": 0.0149,
+     "immaterial": true,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "ST_GAS",
+     "forced_twh": 0.0,
+     "class_total_twh": 0.0919,
+     "forced_share": 0.0,
+     "limit": 0.3,
+     "load_share": 0.0053,
+     "immaterial": true,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "hydro",
+     "forced_twh": 0.0,
+     "class_total_twh": 24.3316,
+     "forced_share": 0.0,
+     "limit": 0.3,
+     "load_share": 0.1173,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    }
+   ],
+   "failures": [],
+   "notes": [
+    "2023: 2 floored pseudo-unit row(s) (plant_code <= 0 interchange tranches) scored under the floor-energy convention (dispatch := min_gen; PREREG-caiso155 \u00a73) \u2014 reported TWh is the mandated floor energy, an upper bound on at-floor dispatch: u:WECC_DSW_DSW_solar_PV, u:WECC_PNW_PNW_hydro_base",
+    "2023: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds."
+   ]
+  },
+  "D4": {
+   "name": "D-4 off-window binding",
+   "passed": false,
+   "rows": [
+    {
+     "year": 2023,
+     "check": "window",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "",
+     "floored_twh": 5.607,
+     "offwindow_twh": 0.0,
+     "offwindow_share": 0.0,
+     "binding_hours": "",
+     "measured_median_mw": "",
+     "measured_zero_share": "",
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "10034",
+     "floored_twh": 0.0248,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0044,
+     "binding_hours": 6988,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.9468,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2023,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "10294",
+     "floored_twh": 0.021,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0037,
+     "binding_hours": 1425,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.5165,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2023,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "10649",
+     "floored_twh": 0.0211,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0038,
+     "binding_hours": 7269,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.9078,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2023,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "10650",
+     "floored_twh": 0.01,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0018,
+     "binding_hours": 8329,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.9316,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2023,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "50612",
+     "floored_twh": 0.0127,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0023,
+     "binding_hours": 8651,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.8872,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2023,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "50865",
+     "floored_twh": 0.1379,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0246,
+     "binding_hours": 8760,
+     "measured_median_mw": 31.116,
+     "measured_zero_share": 0.265,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "54749",
+     "floored_twh": 0.0027,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0005,
+     "binding_hours": 486,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.7428,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2023,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "54768",
+     "floored_twh": 0.0153,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0027,
+     "binding_hours": 8682,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.908,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2023,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "55217",
+     "floored_twh": 1.6865,
+     "offwindow_twh": "",
+     "offwindow_share": 0.3008,
+     "binding_hours": 7955,
+     "measured_median_mw": 379.847,
+     "measured_zero_share": 0.0664,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "55400",
+     "floored_twh": 0.59,
+     "offwindow_twh": "",
+     "offwindow_share": 0.1052,
+     "binding_hours": 1904,
+     "measured_median_mw": 411.031,
+     "measured_zero_share": 0.0095,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "check": "window",
+     "floor": "firm_import",
+     "window": "h0-23",
+     "plant": "",
+     "floored_twh": 17.9378,
+     "offwindow_twh": 0.0,
+     "offwindow_share": 0.0,
+     "binding_hours": "",
+     "measured_median_mw": "",
+     "measured_zero_share": "",
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "check": "window",
+     "floor": "hydro_min_flow",
+     "window": "h0-23",
+     "plant": "",
+     "floored_twh": 5.3865,
+     "offwindow_twh": 0.0,
+     "offwindow_share": 0.0,
+     "binding_hours": "",
+     "measured_median_mw": "",
+     "measured_zero_share": "",
+     "verdict": "pass"
+    }
+   ],
+   "summary": [],
+   "failures": [
+    "2023 chp_steam: plant 10034 is floored for 0.0248 TWh (0.4% of the mechanism's forced energy) while its own measured median output over the 6988 hours the floor actually binds for it (inside h0-23) is 0.000 MW (94.7% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2023 chp_steam: plant 10294 is floored for 0.0210 TWh (0.4% of the mechanism's forced energy) while its own measured median output over the 1425 hours the floor actually binds for it (inside h0-23) is 0.000 MW (51.6% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2023 chp_steam: plant 10649 is floored for 0.0211 TWh (0.4% of the mechanism's forced energy) while its own measured median output over the 7269 hours the floor actually binds for it (inside h0-23) is 0.000 MW (90.8% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2023 chp_steam: plant 10650 is floored for 0.0100 TWh (0.2% of the mechanism's forced energy) while its own measured median output over the 8329 hours the floor actually binds for it (inside h0-23) is 0.000 MW (93.2% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2023 chp_steam: plant 50612 is floored for 0.0127 TWh (0.2% of the mechanism's forced energy) while its own measured median output over the 8651 hours the floor actually binds for it (inside h0-23) is 0.000 MW (88.7% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2023 chp_steam: plant 54749 is floored for 0.0027 TWh (0.0% of the mechanism's forced energy) while its own measured median output over the 486 hours the floor actually binds for it (inside h0-23) is 0.000 MW (74.3% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2023 chp_steam: plant 54768 is floored for 0.0153 TWh (0.3% of the mechanism's forced energy) while its own measured median output over the 8682 hours the floor actually binds for it (inside h0-23) is 0.000 MW (90.8% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)"
+   ],
+   "notes": [
+    "2023: ct_only vintage guard extended the flag from sibling-year vintages for 2 plant(s): 10349, 422",
+    "2023: 2 floored pseudo-unit row(s) (plant_code <= 0 interchange tranches) scored under the floor-energy convention (dispatch := min_gen; PREREG-caiso155 \u00a73) \u2014 reported TWh is the mandated floor energy, an upper bound on at-floor dispatch: u:WECC_DSW_DSW_solar_PV, u:WECC_PNW_PNW_hydro_base",
+    "2023: per-unit conduct rider skipped 2 floored plant(s) carrying the benchmark's CT-only CEMS flag (EIA-923 net > 1.1x CAMPD gross \u21d2 scored on EIA-923 MONTHLY, hourly CAMPD incomplete) \u2014 a zero median in a series the benchmark itself declines to trust is a metering artifact, not conduct: 10349, 10405",
+    "2023: per-unit conduct rider skipped 2 floored row(s) whose dispatch is SUBSTITUTED by their own floor (no series in the active source) \u2014 their at-floor set is the whole floor-positive set by construction, so a conduct verdict on them would be an artifact: u:WECC_DSW_DSW_solar_PV, u:WECC_PNW_PNW_hydro_base",
+    "2023: per-unit conduct rider skipped 152 floored row(s) with no measured series (hydro / nuclear / renewables / interchange pseudo-units) \u2014 the rider is a measured-conduct test and never fails a mechanism for a missing meter: 10213, 10253, 10282, 10342, 10458, 10496, 10706, 10707, 10881, 10882, 217, 218, 219, 220, 221, 222, 223, 225, 227, 231 \u2026"
+   ]
+  },
+  "D5": {
+   "name": "D-5 forecast/backcast parity",
+   "passed": true,
+   "rows": [
+    {
+     "mechanism": "historic_outage_overlay",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "CAMPD outage windows (physical availability events)",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "eia860_vintage_snapshot",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "historical fleet vintage pin (runner.py:239 mode gate)",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "retired_within_window_fleet",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "within-window plant exits injected into the base fleet",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "planned_additions_pipeline",
+     "difference": "forecast-only",
+     "declared_overlay": true,
+     "note": "EIA-860 construction-committed pipeline \u2014 the declared forecast complement of the backcast fleet boundary",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "renewable_cf_measured",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "delivered EIA-930/HSL renewable CF upper bound (leakage L1)",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "nuclear_flat_mustrun",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "measured monthly nuclear CF + flat must-run floor (L3)",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "ordc_floor_active_mask",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "ERCOT scarcity-floor measured active-hours mask",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "gas_monthly_actuals",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "F923 delivered monthly gas (admissible fuel input)",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "gas_hub_basis_overlay",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "measured monthly hub-spot basis overlay",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "coal_plant_monthly_pricing",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "F923 per-plant delivered coal cost",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "reliability_floor",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "declared admissible overlay (2026-06 audit); a wiring gap in the forecast entry is reported but sanctioned by the declaration",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "caiso_ra_mustoffer",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "RA must-offer is market design (mode-independent) and rule-13 admissible in BOTH modes \u2014 the bridge is detected from the model's own base-cost P0 run pattern against the physical CC_COMMITMENT_PARAMS min-down time, so no measured outcome enters. The parity difference is the known w2-caiso-ra-p2 WIRING GAP: caiso_ra_mustoffer_min_gen is called from scripts/run_calibration.py and never from runner.py, so the mechanism is backcast-only in practice though not by intent. DECLARED 2026-09-20 (caiso-294) in docs/backcast-measured-data-audit-2026-06.md \u2014 same posture as the reliability_floor row above: the gap is reported and sanctioned by the declaration, NOT claimed harmless. Closing it is a forecast-path model change (docs/audit-wiring-iso-gaps/prompt-pack/w2-caiso-ra-p2.md) needing its own PRECOMMIT and an owner ruling; it is deliberately not bundled into the declaration",
+     "verdict": "declared"
+    }
+   ],
+   "summary": [],
+   "failures": [],
+   "notes": []
+  },
+  "D9": {
+   "name": "D-9 overlay quarantine",
+   "passed": true,
+   "rows": [
+    {
+     "bundle": "rcaiso4_DE_2023",
+     "check": "ct_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "rcaiso4_DE_2023",
+     "check": "reliability_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "rcaiso4_DE_2023",
+     "check": "ct_mustrun_per_plant",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "rcaiso4_DE_2023",
+     "check": "ordc_reliability_deployment_mw",
+     "value": null,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "rcaiso4_DE_2023",
+     "check": "caiso_gas_commitment_floor",
+     "value": false,
+     "verdict": "pass"
+    }
+   ],
+   "summary": [],
+   "failures": [],
+   "notes": []
+  },
+  "D10": {
+   "name": "D-10 free-class-only rescore (renewable-bound provenance)",
+   "passed": true,
+   "rows": [
+    {
+     "year": 2023,
+     "fuel": "wind",
+     "provenance": "measured_potential",
+     "pinned": false,
+     "verdict": "free"
+    },
+    {
+     "year": 2023,
+     "fuel": "solar",
+     "provenance": "measured_potential",
+     "pinned": false,
+     "verdict": "free"
+    }
+   ],
+   "summary": [],
+   "failures": [],
+   "notes": [
+    "CAISO: 0/2 wind/solar (year, fuel) rows ride the L1 delivered-outcome bound; their advisory-only C1 rows measure plumbing, not model skill (never gate the keeper verdict)."
+   ]
+  }
+ },
+ "gates": {
+  "d1_min_profile_r": 0.8,
+  "d1_min_cv_ratio": 0.5,
+  "d1_offpeak_last_hour": 14,
+  "d1_gated_classes": [
+   "CT_PEAKER",
+   "ST_GAS",
+   "COAL_LIGNITE",
+   "COAL_PRB",
+   "COAL_BIT",
+   "COAL_WC"
+  ],
+  "d2_peaker_max_share": 0.15,
+  "d2_merchant_max_share": 0.3,
+  "d2_exempt_classes": [
+   "CC_CHP",
+   "CT_CHP",
+   "ST_CHP",
+   "nuclear"
+  ],
+  "d4_max_offwindow_share": 0.05
+ }
+}
