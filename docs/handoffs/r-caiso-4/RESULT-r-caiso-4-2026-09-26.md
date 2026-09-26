@@ -79,3 +79,36 @@ construction**, and DE-2022 reproduces the keeper's 2022 to 0.000 TWh in every c
   - Shard commits for provenance: DE `846d2de8` / `3affb7ae` / `36566c27` / `9dcaefc0`; E-2023 `8fa07fa6`.
   - Re-solving any leg costs about 20 min.
   - The shard branches are the owner's to delete; this session cannot delete refs.
+
+## D-only span and PROMOTION (2026-09-26)
+
+The D+E candidate would have forced withdrawal of the `complete` marker, so D was also solved alone. That took four
+more shards (D-2022 `7b9d57c1`, D-2023 `3695e739`, D-2024 `594fb5d3`, D-2025 `ed3c6a73`). All four passed G-IDENT,
+and the 2022/2024/2025 legs reproduce the outgoing keeper to 0.000 TWh.
+
+**`2026-09-26-caiso-r4-intertie-dam` (bundle `rcaiso4_D_span`) — CALIBRATED, PROMOTED** on the owner's instruction
+"Is this a recommended keeper candidate? If so plz promote".
+
+| | outgoing keeper | **D (keeper)** |
+|---|---|---|
+| C1 CC_REGULAR 2023 | +1.60 TWh | **−0.38** |
+| C3a 2023 | +9.7 % | **+7.1 %** |
+| C3b 2023 | 0.162 | **0.114** |
+| C3c 2023 (actual 47 h) | 82 h | **55 h** |
+| C4 2023 / 2025 | 0.255 / 0.299 | 0.251 / 0.299 |
+| every 2022 / 2024 / 2025 number | — | identical |
+
+What was done at promotion:
+
+- **Re-keyed:** `keepers/CAISO.json`, `calibration-complete.json` `complete.CAISO` (re-verified CALIBRATED, not
+  worse, so no D-5(b) escalation), and the `program-status.json` gate-(a) row. `status/CAISO.js` was rebuilt, and
+  the matrix stamp and §5.2 header were updated.
+- **Matrix cells:** D is now **K**. E stays **O**: it is structurally correct but blocked on the C4 2025 midday
+  loading shape.
+- **Pruned (rule 35):** the outgoing `2026-09-25-caiso-r3-abc-import` and the D+E candidate
+  `2026-09-26-caiso-r4-dam-gapfill`. The D+E bytes stay in git history (commit `b71b42bc`) and the numbers above.
+- **Checks:** `audit_keepers` PASS (E13 clean); `check_promotion_completeness` OK on (a) through (d).
+- **Year set:** unchanged at 2022–2025.
+
+**Retrievability:** the keeper composite `rcaiso4_D_span` (slim set, hourly sidecars, attestation, diagnostics) is on
+`main` with this PR. The per-year legs are gitignored and on local disk only; re-solving one costs about 20 min.

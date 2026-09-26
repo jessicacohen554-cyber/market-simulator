@@ -15533,3 +15533,27 @@ arm (rule 36), and the parent spent zero LP.
 
 **Pruned (rule 35):** `2026-09-25-caiso-r2-cc-gross` and the A-only probe. Record:
 `docs/handoffs/r-caiso-3/`.
+
+## R-CAISO-4 — 2026-09-26 — PROMOTED `2026-09-26-caiso-r4-intertie-dam`
+
+The keeper is now the R-CAISO-3 recipe plus one measured-input repair. It was solved as 9 shards, one per year per
+arm (rule 36), and the parent spent zero LP.
+
+- **(D) `caiso_intertie_gap_fill_measured_dam`.** 1,488 of the 2,040 hours in the 2023 intertie retention gap are
+  PRINTED in the tracked OASIS DAM aggregate. They now land in a sibling artifact and are read before B's
+  formula fill, which sat +99 / +83 $/MWh above the Jan-2023 Malin / Palo Verde prints.
+
+**Result: CALIBRATED.**
+
+- 2023 CC_REGULAR: +1.60 → −0.38 TWh.
+- C3a 2023: +9.7 → +7.1 %.
+- C3b 2023: 0.162 → 0.114.
+- C3c 2023: 82 → 55 h (actual 47).
+- 2022, 2024 and 2025 are byte-reproduced.
+
+**Not promoted: the (E) `cc_eia923_identity_emission_basis` candidate (D + E).** E re-bases Pastoria's CO2 on its
+EIA-923 fuel: 0.446 → 0.379 t/MWh, and Pastoria 2024/25 goes 2.37/2.14 → 3.67/3.15 TWh against 4.01/3.62 actual.
+It read NOT-YET on C4 2025 (0.301 vs 0.30), and promoting it would have withdrawn the `complete` marker.
+
+**Pruned (rule 35):** the outgoing `2026-09-25-caiso-r3-abc-import` and the D+E candidate. Record:
+`docs/handoffs/r-caiso-4/`.

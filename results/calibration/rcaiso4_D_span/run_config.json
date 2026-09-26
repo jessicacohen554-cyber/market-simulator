@@ -38,7 +38,6 @@
       "caiso_supply_consistent_demand": true,
       "caiso_zonal_loss_surface": true,
       "capacity_deliverability_limits": true,
-      "cc_eia923_identity_emission_basis": true,
       "chp_steam_floor_p25": true,
       "dump_cost_full_offer_domain": true,
       "eia860_vintage_tracks_solve_year": true,
@@ -103,10 +102,10 @@
     ]
   },
   "composed_from": [
-    "rcaiso4_DE_2022",
-    "rcaiso4_DE_2023",
-    "rcaiso4_DE_2024",
-    "rcaiso4_DE_2025"
+    "rcaiso4_D_2022",
+    "rcaiso4_D_2023",
+    "rcaiso4_D_2024",
+    "rcaiso4_D_2025"
   ],
   "environment": {
     "cache_key_path_roots": [
@@ -135,7 +134,7 @@
     "dirty": false,
     "sha": "9a1980bc"
   },
-  "model_changes_note": "R-CAISO-4 DE 2022: keeper recipe + D (DAM-print intertie gap fill) + E (EIA-923-identity CC CO2 basis) (PRECOMMIT-r-caiso-4-2026-09-26 \u00a76)",
+  "model_changes_note": "R-CAISO-4 D 2022: keeper recipe + D only (DAM-print intertie gap fill) (PRECOMMIT-r-caiso-4-2026-09-26 \u00a76)",
   "per_leg_provenance": {
     "2022": {
       "git": {
@@ -146,7 +145,7 @@
         "dirty": false,
         "sha": "9a1980bc"
       },
-      "timestamp": "2026-09-26T01:40:56"
+      "timestamp": "2026-09-26T02:34:14"
     },
     "2023": {
       "git": {
@@ -157,7 +156,7 @@
         "dirty": false,
         "sha": "9a1980bc"
       },
-      "timestamp": "2026-09-26T01:47:43"
+      "timestamp": "2026-09-26T02:11:17"
     },
     "2024": {
       "git": {
@@ -168,7 +167,7 @@
         "dirty": false,
         "sha": "9a1980bc"
       },
-      "timestamp": "2026-09-26T01:38:05"
+      "timestamp": "2026-09-26T02:30:49"
     },
     "2025": {
       "git": {
@@ -179,7 +178,7 @@
         "dirty": false,
         "sha": "9a1980bc"
       },
-      "timestamp": "2026-09-26T01:47:41"
+      "timestamp": "2026-09-26T02:36:29"
     }
   },
   "resolved_inputs": {
@@ -345,7 +344,7 @@
     "cc_duct_peaking_row_scoped": false,
     "cc_econ_hr_mult": 0.96,
     "cc_econ_hr_override": null,
-    "cc_eia923_identity_emission_basis": true,
+    "cc_eia923_identity_emission_basis": false,
     "cc_intermediate_cf_threshold": 50.0,
     "cc_intermediate_split": false,
     "cc_mustrun_per_plant": false,
@@ -1331,5 +1330,5 @@
     "rows": 209,
     "schema": 1
   },
-  "timestamp": "2026-09-26T01:40:56"
+  "timestamp": "2026-09-26T02:34:14"
 }
