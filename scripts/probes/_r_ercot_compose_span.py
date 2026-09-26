@@ -59,6 +59,8 @@ MUST_AGREE = (
     "ercot_partial_outage_day_guard",
     # R-ERCOT-5: the detected-hour window grain must be uniform across legs.
     "unit_outage_window_hour_grain",
+    # R-ERCOT-6: the unit-scoped window x partial composition must be uniform.
+    "ercot_dam_availability_event_cap_unit_scoped",
     "outage_source",
 ) + FIELDS
 
