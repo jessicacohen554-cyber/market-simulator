@@ -3640,5 +3640,5 @@ results/calibration/miso276_arm_*/
 !results/calibration/rcaiso4_tp_2019_2021/
 
 # NWPP-NEXT-6 per-year shard legs (rule 32(d)/31): kept on local disk, never on main.
-results/calibration/nwppnext6a_*/
-results/calibration/nwppnext6ab_*/
+results/calibration/nwppnext6a_20*/
+results/calibration/nwppnext6ab_20*/

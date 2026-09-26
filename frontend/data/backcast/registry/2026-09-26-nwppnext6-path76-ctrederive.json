@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-26-nwppnext6-path76-ctrederive",
+  "label": "nwppnext6 path76 ctrederive",
+  "date": "2026-09-26",
+  "shorthand": "nwppnext6-path76-ctrederive",
+  "definition": "NWPP-NEXT-6 arm AB: keeper #12 recipe + nwpp_path76_alturas_link + SB-population CT re-derive",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-09-26-nwppnext6-path76-ctrederive.js",
+  "bundle": "results/calibration/nwppnext6ab_span"
+}
