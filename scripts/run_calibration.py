@@ -3053,6 +3053,7 @@ def run_year(
     # renewable / COD-map load below so they all read the same vintage.
     from market_sim.config.paths import (
         resolve_backcast_eia860_vintage,
+        set_eia860_standby_admission,
         set_eia860_vintage,
     )
 
@@ -3065,6 +3066,9 @@ def run_year(
         if config.mode == "backcast"
         else None
     )
+    # Standby (SB) admission for the same loaders, set every solve so a prior
+    # armed run in this process can never leak into this one (NWPP-NEXT-5).
+    set_eia860_standby_admission(config.admit_standby_units)
     # Arm/disarm the CAISO FSNO sub-zonal partition for this solve BEFORE the
     # first get_iso_config / zone-lookup call, so the LP and every bare
     # get_iso_config() consumer (renewables shares, hydro budgets, storage

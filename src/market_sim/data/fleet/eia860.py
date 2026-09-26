@@ -35,6 +35,8 @@ from market_sim.config.iso_configs import (
 from market_sim.config.paths import (
     PROCESSED_DIR,
     active_eia860_dir,
+    eia860_operable_statuses,
+    eia860_standby_admitted,
 )
 from market_sim.config.plant_taxonomy import (
     BIOMASS_ENERGY_SOURCES,
@@ -1258,7 +1260,9 @@ def _rows_to_generators(
     """
     if "status" in df.columns:
         status = df["status"].astype(str).str.strip().str.upper()
-        df = df[status == "OP"]
+        # {"OP"} unless ScenarioConfig.admit_standby_units arms {"OP", "SB"}
+        # (paths.set_eia860_standby_admission; byte-identical while off).
+        df = df[status.isin(eia860_operable_statuses())]
 
     # Boundary-reconcile eGRID plant heat rates double-counted across co-located
     # CEMS facilities (Riverside 55641). Single seam: every fleet read path — the
@@ -3524,6 +3528,11 @@ def load_mothballed_but_operating(
     # never qualify (retired units leave the operable sheet entirely and are
     # the retiree channel's domain).
     scope = {"OA", "OS", "SB"} if partial_plant_exit_carry else {"OA"}
+    # admit_standby_units already carries every snapshot-SB unit through the
+    # operable loader, so SB leaves this re-carry scope while it is armed —
+    # one admission per unit, never two (rule 19 [R-ONE-MECH]).
+    if eia860_standby_admitted():
+        scope.discard("SB")
     oa = snap[status.isin(scope)]
     if oa.empty:
         return []
