@@ -15508,3 +15508,28 @@ rebuilt. The outgoing `2026-09-20-caiso-290-leftedge` (bundle `xiso8_leftedge_sp
 --force-uncite`, per rule 35 (a)/(d). The matrix shard was re-stamped: `eia860_vintage_tracks_solve_year`,
 `measured_st_heat_rates`, `measured_cc_heat_rates` and `unit_outage_short_windows_gas` went O → K. `audit_keepers
 --iso CAISO` PASS. The per-year shard legs were removed from local disk after the ruling (rule 31 trigger (i)).
+
+## R-CAISO-3 — 2026-09-25/26 — PROMOTED `2026-09-25-caiso-r3-abc-import`
+
+The keeper is now the R-CAISO-2 recipe plus three repairs. It was solved as 9 shards, one per year per
+arm (rule 36), and the parent spent zero LP.
+
+- **(A) `caiso_import_gas_coupling_ladder_only`.** The DSW gas coupling had been stacking
+  `(N3050 − F923) × HR` onto rows already priced at the measured Palo Verde LMP. That put Jan-2023
+  DSW_CCGT at −$21.5/MWh.
+- **(B) `caiso_intertie_gap_fill_measured_gas`.** The 2023 Jan–Mar OASIS gap is now filled on EIA N3045
+  gas for AZ and OR, not the forward HH trajectory. Checked out of sample, its monthly correlation is
+  0.94/0.96 against 0.47/0.16.
+- **(C) EIA-923 identity fallback for CC rows refused by the gross-net identity.** Pastoria goes
+  7.69 → 7.04; its CEMS heat input reads ×1.09 of EIA-923 fuel. This adds the new intake
+  `data/raw/eia-923-generation-fuel`.
+
+**Result: CALIBRATED.**
+
+- 2023 CC_REGULAR: −5.14 → +1.60 TWh.
+- C4 2023 NRMSE: 0.298 → 0.255.
+- C3a 2023: +4.2 → +9.7 % (the new thin margin).
+- Pastoria 2022/2023: 3.39 / 3.58 TWh (keeper 1.84 / 1.81; actual 3.29 / 4.34).
+
+**Pruned (rule 35):** `2026-09-25-caiso-r2-cc-gross` and the A-only probe. Record:
+`docs/handoffs/r-caiso-3/`.

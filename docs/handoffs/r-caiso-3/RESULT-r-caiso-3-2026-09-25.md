@@ -82,3 +82,17 @@ The 2024/25 gap that remains is Pastoria's own residual. It is not absorbed here
    re-deriving the fold-in for all years. See `INTAKE-i-caiso-2019-2021-2026-09-24.md` §1.
 3. **Routed (rule 25).** Each other ISO's CC artifact inherits the same CEMS-heat-input basis, and its
    gross < net rows are routed to its own lane.
+
+## PROMOTED 2026-09-26
+
+The owner's instruction was "Is this a recommended keeper candidate? If so plz promote". The session
+recommended it, and it is promoted: `2026-09-25-caiso-r3-abc-import` is the CAISO keeper.
+
+- **Re-keyed:** `keepers/CAISO.json`, `calibration-complete.json` `complete.CAISO`, and the
+  `program-status.json` gate-(a) row. The matrix shard stamp and the §5.2 header are updated, and both
+  new cells are now **K**. `status/CAISO.js` is rebuilt and reads CALIBRATED.
+- **Pruned (rule 35):** the outgoing keeper `2026-09-25-caiso-r2-cc-gross` (bundle `rcaiso2_ccid_span`)
+  and the A-only probe `2026-09-25-caiso-r3-coupling-ladder` (bundle `rcaiso3_A_span`).
+  - The year set is unchanged at 2022–2025.
+  - `audit_keepers` passes with E13 clean, and `check_promotion_completeness` is OK on (a) through (d).
+  - Git history is the record; the A-only numbers remain in the table above.
