@@ -84,7 +84,7 @@ window. Own-year sync fractions (same frozen estimator, `derive_thermal_tranche_
 **0.706 / 0.691 / 0.670 / 0.648** in 2019–22 against a pooled **0.548**.
 - This is new evidence on the `R` cell `mustrun_online_frac_per_year`. miso-172 rejected it on a predictor band over
   2023–25 only, where own-year ≈ pooled by construction.
-- **Footprint measured and small:** ST_GAS floor energy 9.659 → 9.764 TWh (2019), 10.066 → 10.238 (2020). Seven live
+- **Footprint measured and small:** ST_GAS floor energy 9.659 → 9.764 TWh (2019), 10.066 → 10.238 (2020), 9.150 → 9.207 (2021), 10.099 → 9.965 (2022), 9.172 → 9.263 (2023). Seven live
   plants. Sabine / Little Gypsy / Lewis Creek / Nine Mile rise; Harding Street 990 falls (−0.36; its own 2019 sync
   0.557 vs pooled 0.974).
 - So the floored plants' 2019 shortfall is **economic dispatch above the floor** in a $2.5-gas year, not the window.
