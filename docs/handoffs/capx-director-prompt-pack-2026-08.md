@@ -11122,3 +11122,84 @@ EXIT: docs/handoffs/DESIGN-capx-d97-t16-repoint-2026-09-25.md, ending in ONE own
 re-point, the alternatives, and "retire T1.6 for NEISO" as the named fallback. Open a PR to main. If you
 defer anything, name a LIVE owner or state that none exists.
 ```
+
+---
+
+## r#67 NOTE
+
+Two charters, issued 2026-09-26 at main `cf0950dc` against ledger §0bl, dispatched by the desk. They write disjoint files. **NEXT FREE LABEL: D100.**
+
+---
+
+## D98 — the solve_surface construction, Q71 (Opus, code, zero LP)
+
+```
+You are the D98 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: code. ZERO LP. Branch: claude/capx-d98-surface-construction, fresh off origin/main.
+Authority: OWNER RULING Q71 (2026-09-26, capx ledger §0bl / §3): "Add the construction."
+Binding charter: docs/handoffs/capx-director-prompt-pack-2026-08.md "D98".
+
+WHY. check_key_provenance.py is EXIT 1 on two records, results/ff-t3-neiso-golden/d94/{vre_short,vre_long}/run_config.json.
+capx D95 (docs/handoffs/FINDING-capx-d95-2026-09-25.md) attributed them to a SOLVE-SURFACE re-key (capx D79),
+not to a field. After their pin, R-PJM-2's a669e4a4 and COAL-SUB's 5f8d153c moved NEISO's surface rows. Hashing
+each record with the `moved` block from ITS OWN committed <ISO>/<key>/solve_surface.json reproduces its recorded
+literal. D95's zero-code probe reproduced 9 of 10 committed solve_surface.json bundles that way; the 10th,
+d90-rescore, is already a Q66 LAG.
+
+THE ACT. Add that third construction to the census ladder, beside "declaration" and "live":
+ - It applies ONLY when the record's own committed solve_surface.json exists and carries a `moved` block. The block
+   is read from the record's bundle and never synthesized, so a record without one cannot reach it.
+ - A record reproducing under it is classified by a new REPORTED class (name it, e.g. `surface-recorded`), printed
+   as a line like the LAG rows. It is never silent and never a pass-through for a record that fails to reproduce.
+ - Pre-declare in docs/handoffs/PRECOMMIT-capx-d98-2026-09-26.md, pushed before code: the expected census before
+   and after, and which of the 10 bundles move class.
+TESTS, BOTH DIRECTIONS (D91 doctrine): a synthetic record with a moved block that reproduces classifies; the same
+record with a perturbed literal fails; a record with NO solve_surface.json cannot use it; and a tampered moved block
+fails. Do not append to key-provenance-exceptions.json. Rule 27: blob-verify files of 300+ lines.
+EXIT: check_key_provenance EXIT 0 at your final HEAD, or every residual named with a LIVE owner.
+docs/handoffs/FINDING-capx-d98-2026-09-26.md leads with the census line before and after. Open a PR to main and merge
+it once CI is green. Concurrent capx lane D99 will add new run_configs; re-run the census after your final rebase.
+```
+
+---
+
+## D99 — T1.6 re-point execution, Q72 (Opus, neiso)
+
+```
+You are the D99 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: neiso (python3 scripts/hydrate_data.py --profile neiso).
+Branch: claude/capx-d99-t16-repoint, fresh off origin/main.
+Authority: OWNER RULING Q72 (2026-09-26, capx ledger §0bl / §3): "Re-point, 2041–2050 mean" = DESIGN-capx-d97 §6
+option (a) with sub-choice (a-2).
+Binding charter: docs/handoffs/capx-director-prompt-pack-2026-08.md "D99". The DESIGN is
+docs/handoffs/DESIGN-capx-d97-t16-repoint-2026-09-25.md. Read it WHOLE. Its §3 outcome map (A–E), its honesty
+clause and "no third lever" all BIND you.
+
+THE ACT.
+ 1. Re-point the T1.6 ladder to `entry_pipeline_aware_signal`: vre_short = False (the golden's own posture),
+    vre_long = True. This is a ladder-definition change, done the way D35 and T16-A did theirs; cite both.
+ 2. Implement (a-2): T1.6b's metric becomes the 2041–2050 horizon mean of rps_dual_over_acp. Make the plan-§2 edit
+    and the one metric construction, and update the T16-A pin test. Do NOT change T1.6a or any other FC element.
+    This is a scorer change, so run the whole scorer test lane and re-score every OTHER registered verdict
+    artifact-only to prove none of them moves (cross-lane re-grade doctrine). Report that table.
+ 3. PRECOMMIT, pushed before any LP (docs/handoffs/PRECOMMIT-capx-d99-2026-09-26.md). Include the two rung recipes
+    (the neiso-t3 golden recipe at D96's vintage, both pins ccs_retrofit_vom_adder 8.0 and
+    ccs_retrofit_fixed_cost_co2_scaling False, plus the rung override), a G-DRIFT hunk audit against D96's pin, and
+    predictions for each outcome A–E. vre_short IS D96's `base` recipe, so if G-DRIFT is all-INERT, reuse D96/base as
+    the vre_short rung and solve ONE rung only. State this in the PRECOMMIT.
+ 4. SOLVE IN SHARDS (rule 32; you never run an LP): one 2026-2050 invocation per rung (rule 36(c)), pinned to the
+    PRECOMMIT's full 40-char SHA. The first hard stop is `git rev-parse HEAD` == that SHA, with no rebase or pull.
+    Give each its own --out-dir results/ff-t3-neiso-golden/d99/<rung>/ and its own branch. Push the full bundle
+    (rule 34: a .gitignore negation plus plain `git add`, never -f or -A). No src/ or scripts/ edits in the shard,
+    no frontend/data/**, no PR from the shard. "A shard that stops with a clear report is a SUCCESS; a shard that
+    repairs infrastructure is a FAILURE." Budget ~35-45 min. Land the slim bundle on YOUR branch and verify it,
+    then archive the shard. Do NOT merge shard cache-parquet PRs; D94/D96 precedent is that they stay off main.
+ 5. RE-SCORE: controlled swap as in D90-R A.2 (reproduce the standing neiso-t3 first), then swap in the new battery.
+    Preserve the prior at neiso-t3-pre-d99 byte-equal. You are the SOLE writer of ff-verdicts.json. Score after your
+    final rebase.
+REPORT per rung at full magnitude, the outcome letter A–E realized, and the verdict transition. Rule 31: never rm a
+solved bundle. Rule 27: blob-verify files of 300+ lines. If you defer anything, name a LIVE owner or state that none
+exists.
+EXIT: docs/handoffs/FINDING-capx-d99-2026-09-26.md leads with the verdict transition and the outcome letter. Open a
+PR to main and merge it once CI is green.
+```
