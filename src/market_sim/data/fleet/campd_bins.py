@@ -2779,8 +2779,15 @@ def fleet_to_bins(
     the fleet has no thermal plants.
     """
     _pu, _mg = campd_attribution_selectors(config)
+    # NYISO-NEXT-3 (rule 19 [R-ONE-MECH]): the committed share rides the SAME
+    # artifact selector pair as every other tranche consumer. The call omitted
+    # ``_mg``, so under campd_outage_merit_order_guard the bin's committed_pct
+    # was read off the UNGUARDED '-perunit-' artifact while online_frac /
+    # peaking / p25 / the reserve pool mlf read '-perunitmerit-' — two
+    # availability bases inside one LP, the exact state nyiso-177 made the
+    # selector pair to prevent. Only NYISO arms the guard, so no other ISO moves.
     overrides = thermal_tranche_overrides(
-        iso, getattr(config, "coal_mustrun_online_pmin", False), _pu
+        iso, getattr(config, "coal_mustrun_online_pmin", False), _pu, _mg
     )
     peaking = thermal_tranche_peaking(iso, _pu, _mg)
     if getattr(config, "cc_reserve_duty_split", False):
