@@ -77,6 +77,10 @@ Table: `docs/handoffs/r-ercot/r_ercot6_unitscoped_seam.txt` (variant `Bh`).
 - `outages.unit_outage_active_units(hour_grain=)` and the `arrays.py` call site.
 - They are gated by `ercot_dam_availability_event_cap_unit_scoped`, which is `false` in all seven keeper years. A/A null: byte-identical.
 
+**Addendum (rebase onto main `d2256cef` before pinning).** Four further files on the path, all INERT:
+- neiso-117 `reconcile_floors_to_yard_budget` (`coal_fuel_inventory.py` plus its call in `run_calibration.py`): runs only inside `if _coal_plant_armed:`. `resolve_coal_budget_arms` returns (False, False) for ERCOT because both coal-inventory flags are false in all seven keeper years.
+- `scripts/lib/key_provenance.py` and `forecast_parity_registry.py`: governance census / parity tooling, not the solve path.
+
 **Verdict: nothing LIVE. Form 4 is valid; the committed keeper is the control.** The subagent-run audit was spot-checked by the parent on the ungated hunk.
 
 ## 4. Sealed predictions (arm vs keeper, per year, P1)
