@@ -602,6 +602,60 @@ def _reliability_floor_layup_shares(
     return shares
 
 
+# ISOs whose own evidence armed the per-coal-yard ANNUAL budget rows
+# (coal_fuel_inventory_plant_grain). Rule 25 [R-ISO-SCOPE]: the construction is
+# generic (every sizing quantity is the yard's own EIA-923 Page 2/5 record), but
+# a new ISO enters only on its own measured case — MISO: miso-268; NEISO:
+# neiso-117 (owner ruling 2026-09-26 on docs/handoffs/neiso116/PRECOMMIT-neiso116-
+# 2026-09-26.md §5.1(a): arm the annual yard rows WITHOUT the pooled monthly
+# limb, which spreads Merrimack's winter burn flat and binds in 2023/2024).
+COAL_PLANT_GRAIN_ISOS: tuple[str, ...] = ("MISO", "NEISO")
+
+
+def resolve_coal_budget_arms(config: ScenarioConfig, iso: str) -> tuple[bool, bool]:
+    """Validate and resolve the two coal fuel-budget row families for ``iso``.
+
+    Returns ``(pooled_monthly, plant_annual)``: whether the pooled fleet
+    MONTHLY rows (``coal_fuel_inventory``) and the per-coal-yard ANNUAL rows
+    (``coal_fuel_inventory_plant_grain``) are built. The two are separable
+    limbs of one annual identity (rule 19 [R-ONE-MECH]): the yard rows are the
+    identity's plant partition and the pooled rows add its month grain, so
+    either may be armed alone (neiso-117) or both together (the MISO keeper).
+
+    Raises ``ValueError`` when a limb is armed outside the ISOs that carry its
+    own evidence (the pooled monthly limb: MISO only; the yard rows:
+    :data:`COAL_PLANT_GRAIN_ISOS`), or outside ``mode="backcast"`` — a forecast
+    year's opening stock is the model's own carried inventory, not built yet.
+    """
+    pooled = bool(getattr(config, "coal_fuel_inventory", False))
+    plant = bool(getattr(config, "coal_fuel_inventory_plant_grain", False))
+    iso_u = iso.upper()
+    if pooled and iso_u != "MISO":
+        raise ValueError(
+            "coal_fuel_inventory (the pooled MONTHLY limb) is MISO-gated "
+            "(rule 25 [R-ISO-SCOPE]): its budget/12 month grain was identified "
+            f"on MISO's own market, not {iso}'s. Arming it for another ISO "
+            "needs that ISO's own evidence and its own matrix cell, which "
+            "enters as U. The per-yard annual rows "
+            "(coal_fuel_inventory_plant_grain) arm separately."
+        )
+    if plant and iso_u not in COAL_PLANT_GRAIN_ISOS:
+        raise ValueError(
+            "coal_fuel_inventory_plant_grain (per-coal-yard annual rows) is "
+            f"gated to {COAL_PLANT_GRAIN_ISOS} (rule 25 [R-ISO-SCOPE]); {iso} "
+            "needs its own measured case and matrix cell first."
+        )
+    if (pooled or plant) and config.mode != "backcast":
+        raise ValueError(
+            "the coal fuel-inventory budget is backcast-only: a forecast year's "
+            "opening stock is the model's OWN carried inventory from the prior "
+            "simulated year, and that carry is not built yet. Arming it in "
+            "forecast mode would read a measured prior-year stock into a "
+            "forward run."
+        )
+    return pooled, plant
+
+
 def run_year(
     year: int,
     iso: str,
@@ -6079,23 +6133,8 @@ def run_year(
     coal_budget_month_index = UNSET
     coal_budget_gen_hour_coeff = UNSET
     coal_budget_group_index = UNSET
-    if getattr(config, "coal_fuel_inventory", False):
-        if iso.upper() != "MISO":
-            raise ValueError(
-                "coal_fuel_inventory is MISO-gated (rule 25 [R-ISO-SCOPE]): its "
-                "footprint crosswalk and delivery-rate construction were "
-                f"identified on MISO's own market, not {iso}'s. Arming it for "
-                "another ISO needs that ISO's own evidence and its own matrix "
-                "cell, which enters as U."
-            )
-        if config.mode != "backcast":
-            raise ValueError(
-                "coal_fuel_inventory is backcast-only: a forecast year's "
-                "opening stock is the model's OWN carried inventory from the "
-                "prior simulated year, and that carry is not built yet. "
-                "Arming it in forecast mode would read a measured prior-year "
-                "stock into a forward run."
-            )
+    _coal_pooled_armed, _coal_plant_armed = resolve_coal_budget_arms(config, iso)
+    if _coal_pooled_armed:
         from market_sim.data.coal_fuel_inventory import build_coal_fuel_budget
 
         _coal_result = build_coal_fuel_budget(
@@ -6150,13 +6189,10 @@ def run_year(
     coal_plant_month_index = UNSET
     coal_plant_gen_hour_coeff = UNSET
     coal_plant_group_index = UNSET
-    if getattr(config, "coal_fuel_inventory_plant_grain", False):
-        if not getattr(config, "coal_fuel_inventory", False):
-            raise ValueError(
-                "coal_fuel_inventory_plant_grain is the plant grain OF "
-                "coal_fuel_inventory and is inert without it: arm both, or "
-                "neither (rule 19 [R-ONE-MECH])."
-            )
+    # Armable WITHOUT the pooled monthly rows since neiso-117 (the yard rows
+    # alone are the annual identity's plant partition; resolve_coal_budget_arms
+    # holds both limbs' ISO and backcast-only gates).
+    if _coal_plant_armed:
         from market_sim.data.coal_fuel_inventory import build_coal_plant_budget
 
         _cp = build_coal_plant_budget(fleet_arrays, year, hours=config.hours)

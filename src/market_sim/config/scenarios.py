@@ -7920,8 +7920,11 @@ class ScenarioConfig:
     # identity, so it is a refinement, not a second mechanism (rule 19). The
     # pooled MONTHLY rows are untouched (timing limb); no month grain is added at
     # the yard. A yard with no curated record gets no row (never substituted).
-    # ZERO free parameters. Requires coal_fuel_inventory (raises otherwise);
-    # inherits its MISO gate and backcast-only guard. Default off, byte-identical.
+    # ZERO free parameters. Armable ALONE since neiso-117 (the yard rows are the
+    # annual identity's plant partition; the pooled rows add only its month
+    # grain), so NEISO arms the annual rows without the pooled monthly limb
+    # (owner ruling 2026-09-26). ISO gate run_calibration.COAL_PLANT_GRAIN_ISOS
+    # (MISO, NEISO); backcast-only. Default off, byte-identical.
     # See data/coal_fuel_inventory.py:build_coal_plant_budget.
     nyiso_local_selfsupply: bool = False  # NYISO Long Island (zone K) local
     # self-supply floor: zone K is cable-islanded (NYC->LI 1,650 MW + ~1.2 GW
