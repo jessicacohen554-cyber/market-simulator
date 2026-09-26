@@ -351,6 +351,97 @@ class TestWinterFuelsecMustrun(unittest.TestCase):
         total = fa.min_gen[0, jan] + fa.min_gen[1, jan]
         np.testing.assert_allclose(total, 50.0)
 
+    def test_conduct_roster_narrows_to_eligible_plants(self):
+        """neiso-119: eligible_plants floors only roster plants; the class floor
+        is sized on the roster's own capacity (0.4 x 100 MW)."""
+        import market_sim.data.eia_loader as eia_loader
+
+        hours = 8760
+        fa = self._fleet(hours)
+        fa.plant_code = np.array([101, 202, 303])
+        orig = eia_loader.iso_zone_tmax
+        eia_loader.iso_zone_tmax = self._patch_tmin([0], hours=hours)
+        try:
+            apply_winter_fuelsec_mustrun(
+                fa,
+                "NEISO",
+                2024,
+                ["Central"],
+                hours=hours,
+                eligible_plants=frozenset({202}),
+            )
+        finally:
+            eia_loader.iso_zone_tmax = orig
+        from market_sim.data.fleet import _hour_to_month_index
+
+        jan = _hour_to_month_index(hours) == 0
+        np.testing.assert_allclose(fa.min_gen[0, :], 0.0)
+        np.testing.assert_allclose(fa.min_gen[1, jan], 40.0)
+
+    def test_conduct_roster_none_is_byte_identical(self):
+        import market_sim.data.eia_loader as eia_loader
+
+        hours = 8760
+        a, b = self._fleet(hours), self._fleet(hours)
+        orig = eia_loader.iso_zone_tmax
+        eia_loader.iso_zone_tmax = self._patch_tmin([0, 1], hours=hours)
+        try:
+            apply_winter_fuelsec_mustrun(a, "NEISO", 2024, ["Central"], hours=hours)
+            apply_winter_fuelsec_mustrun(
+                b, "NEISO", 2024, ["Central"], hours=hours, eligible_plants=None
+            )
+        finally:
+            eia_loader.iso_zone_tmax = orig
+        np.testing.assert_array_equal(a.min_gen, b.min_gen)
+        np.testing.assert_array_equal(a.min_gen_mechanism, b.min_gen_mechanism)
+
+
+class TestWinterFuelsecConductRoster(unittest.TestCase):
+    """neiso-119: leave-one-year-out roster over the frozen conduct derive."""
+
+    def test_leave_one_year_out_and_threshold(self):
+        import tempfile
+        from pathlib import Path
+
+        import pandas as pd
+
+        from market_sim.data.winter_fuel_inventory import (
+            winter_fuelsec_conduct_roster,
+        )
+
+        rows = [
+            # plant 1: online 90 % in 2019 only, 10 % in 2020 -> solved-year
+            # conduct never enters, so 2020 pools 2019 (kept), 2019 pools 2020.
+            (1, 2019, 100, 90),
+            (1, 2020, 100, 10),
+            # plant 2: exactly 50 % pooled -> kept (median output > 0 test).
+            (2, 2019, 100, 50),
+            (2, 2020, 100, 50),
+            # plant 3: evidence only in 2019 -> solving 2019 it has none (not
+            # kept); solving 2020 it pools 2019 (kept).
+            (3, 2019, 100, 100),
+            # plant 4: solving 2020 its other year has zero window hours -> not
+            # kept; solving 2019 it pools 2020 (kept).
+            (4, 2019, 0, 0),
+            (4, 2020, 100, 100),
+        ]
+        df = pd.DataFrame(
+            rows, columns=["plant_code", "year", "window_hours", "online_hours"]
+        )
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "c.csv"
+            df.to_csv(p, index=False)
+            self.assertEqual(
+                winter_fuelsec_conduct_roster("NEISO", 2020, path=p), {1, 2, 3}
+            )
+            self.assertEqual(
+                winter_fuelsec_conduct_roster("NEISO", 2019, path=p), {2, 4}
+            )
+            # A year outside the derive pools every year.
+            self.assertEqual(
+                winter_fuelsec_conduct_roster("NEISO", 2030, path=p), {1, 2, 3, 4}
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
