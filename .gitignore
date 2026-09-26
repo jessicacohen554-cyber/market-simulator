@@ -3638,3 +3638,6 @@ results/calibration/nwppnext5_20*/
 results/calibration/miso276_arm_*/
 # R-CAISO-4 2019-21 keeper touchpoint composite IS committed (it folds into the keeper, rule 30):
 !results/calibration/rcaiso4_tp_2019_2021/
+# NYISO-NEXT-3 per-year shard legs 2022-2025 (rule 32(d): kept out of main; the composite nyisonext3_span is registered; the 2021 leg IS its own registered bundle).
+# Legs (provenance, rule 33(d)): 2021 1f411bffe6104d096a3faa44fb4f51be47bf55c6 · 2022 6ad45aec642c6ae1b58698fd3abe93bc947a8c1c · 2024 6be240a8c97410e94e0a8dd1439a11f78b309dd0 · 2025 8b2063744565ffeb8229f1385c51792a10cc1d0a
+results/calibration/nyisonext3_202[2-5]/
