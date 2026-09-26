@@ -77,3 +77,16 @@ Shard check: `scripts/probes/_miso277_shard_check.py --leg results/calibration/m
 ## 8. Launch record
 
 (appended after the pin)
+
+Launched 2026-09-26 17:46 UTC, all pinned to `bd0329ed1e6ae134a124acf4c998a0102d5986d2`, tagged `miso-277` / `shard`,
+auto-PR off. Each pushes `claude/miso277-arm-<Y>` from out-dir `miso277_arm_<Y>`.
+
+| year | session |
+|---|---|
+| 2022 (first, slow leg) | `session_0173bFn15sPQdin5UuRWonHq` |
+| 2021 | `session_01NQmft3uJCNjojgcW61mAzJ` |
+| 2019 | `session_01ANRnWQSqCKDKpiypV5w4GG` |
+| 2020 | `session_012prnDqoQAEKfTiBNBwac4n` |
+| 2023 | `session_01Cdzx9cNeLsSnC7W3c4i8NF` |
+| 2024 | `session_01XnvoRKoCoQP2DghvQ5yv2X` |
+| 2025 | `session_01QtHdTTAvFcHC3GT9kuJo6L` |
