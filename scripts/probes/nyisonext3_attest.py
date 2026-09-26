@@ -65,8 +65,12 @@ def main() -> None:
     )
     if not g["attested_by"].startswith("session NYISO-NEXT-3"):
         g["attested_by"] = head + g["attested_by"]
-    (a.out / "calibration_attestation.json").write_text(json.dumps(att, indent=1) + "\n")
-    print(f"wrote {a.out / 'calibration_attestation.json'} ({fp['n_entries']} DOF entries)")
+    (a.out / "calibration_attestation.json").write_text(
+        json.dumps(att, indent=1) + "\n"
+    )
+    print(
+        f"wrote {a.out / 'calibration_attestation.json'} ({fp['n_entries']} DOF entries)"
+    )
 
 
 if __name__ == "__main__":

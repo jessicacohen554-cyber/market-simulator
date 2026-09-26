@@ -29,9 +29,17 @@ def _payload(rid: str, ref: str) -> dict:
     """Decode a gzip+base64 run payload from the tree or from ``ref``."""
     rel = f"frontend/data/backcast/runs/{rid}.js"
     p = REPO / rel
-    s = p.read_text() if p.exists() else subprocess.run(
-        ["git", "show", f"{ref}:{rel}"], cwd=REPO, capture_output=True, text=True, check=True
-    ).stdout
+    s = (
+        p.read_text()
+        if p.exists()
+        else subprocess.run(
+            ["git", "show", f"{ref}:{rel}"],
+            cwd=REPO,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout
+    )
     b = re.search(r'="([A-Za-z0-9+/=]+)"', s).group(1)
     return json.loads(gzip.decompress(base64.b64decode(b)))
 
@@ -41,14 +49,18 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--pair", nargs=2, action="append", required=True)
     ap.add_argument("--ref", default="origin/main")
-    ap.add_argument("--out", default=str(REPO / "results/calibration/_nyisonext3_ccregular.json"))
+    ap.add_argument(
+        "--out", default=str(REPO / "results/calibration/_nyisonext3_ccregular.json")
+    )
     a = ap.parse_args()
     res: dict = {}
     for k, x in a.pair:
         pk, px = _payload(k, a.ref), _payload(x, a.ref)
         for y in sorted(px["years"]):
             bench = json.loads(
-                gzip.open(REPO / f"frontend/data/backcast/bench/NYISO/{y}.json.gz").read()
+                gzip.open(
+                    REPO / f"frontend/data/backcast/bench/NYISO/{y}.json.gz"
+                ).read()
             )["bench"]["plants"]
             zone = defaultdict(lambda: [0.0, 0.0, 0.0])
             moved = {}
@@ -65,7 +77,9 @@ def main() -> None:
                 z[2] += bp["e_ann"] or 0.0
                 if abs(mx["m_ann"] - mk["m_ann"]) > 0.05:
                     moved[f"{key} {bp['name']}"] = [
-                        round(mk["m_ann"], 2), round(mx["m_ann"], 2), round(bp["e_ann"] or 0.0, 2)
+                        round(mk["m_ann"], 2),
+                        round(mx["m_ann"], 2),
+                        round(bp["e_ann"] or 0.0, 2),
                     ]
             res[y] = {
                 "zone": {z: [round(v, 2) for v in vals] for z, vals in zone.items()},

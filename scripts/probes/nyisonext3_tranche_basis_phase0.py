@@ -55,8 +55,15 @@ DEFAULT_BUNDLE = "results/calibration/nyisonext2_span"
 RUNS = {2021: "2026-09-26-nyisonext2-astoria-pair-2021"}
 DEFAULT_RUN = "2026-09-26-nyisonext2-astoria-pair-span"
 #: NYC (Con Ed LDC) steam, then LI / Hudson steam for contrast.
-PLANTS = {8906: "Astoria", 2500: "Ravenswood", 2490: "Arthur Kill", 2516: "Northport",
-          2511: "Barrett", 2625: "Bowline", 8006: "Roseton"}
+PLANTS = {
+    8906: "Astoria",
+    2500: "Ravenswood",
+    2490: "Arthur Kill",
+    2516: "Northport",
+    2511: "Barrett",
+    2625: "Bowline",
+    8006: "Roseton",
+}
 ARRAYS = ("pmax", "pmin", "heat_rate", "availability", "min_gen", "zone_idx", "vom")
 #: file name in --arm-dir -> destination relative to data/raw
 DEST = {
@@ -91,7 +98,9 @@ def _build(year: int) -> dict:
     from scripts.replay_keeper import run_year_kwargs
     from scripts.run_calibration import run_year
 
-    meta = json.loads((REPO / BUNDLES.get(year, DEFAULT_BUNDLE) / "meta.json").read_text())
+    meta = json.loads(
+        (REPO / BUNDLES.get(year, DEFAULT_BUNDLE) / "meta.json").read_text()
+    )
     kw = run_year_kwargs(meta)
     ref = rcf._load_reference()
     gp = rcf._henry_hub_actual(ref, year)
@@ -136,7 +145,9 @@ def _prices(year: int) -> dict[int, np.ndarray]:
     p = REPO / BUNDLES.get(year, DEFAULT_BUNDLE) / "hourly" / f"system_{year}.parquet"
     d = pd.read_parquet(p)
     d = d[d["pass"] == "P1"]
-    return {z: g.sort_values("hour")["price"].to_numpy()[:T] for z, g in d.groupby("zone")}
+    return {
+        z: g.sort_values("hour")["price"].to_numpy()[:T] for z, g in d.groupby("zone")
+    }
 
 
 def _diff(ctl: dict, arm: dict) -> dict:
@@ -162,7 +173,9 @@ def _diff(ctl: dict, arm: dict) -> dict:
     neq = ~np.isclose(ma, mb, rtol=0, atol=1e-9)
     foot["mc_base"] = {
         "identical": not bool(neq.any()),
-        "plants_moved": sorted({f"{pc[r]}:{pg[r]}" for r in np.flatnonzero(neq.any(1))}),
+        "plants_moved": sorted(
+            {f"{pc[r]}:{pg[r]}" for r in np.flatnonzero(neq.any(1))}
+        ),
     }
     return foot
 
@@ -208,8 +221,12 @@ def _plant_detail(year: int, ctl: dict, arm: dict, extra: set[str]) -> dict:
             "tranche_mc_mean_arm": [round(float(v), 2) for v in mb[rows].mean(1)],
             "avail_twh_control": round(float(cap_a.sum()) / 1e6, 4),
             "avail_twh_arm": round(float(cap_b.sum()) / 1e6, 4),
-            "min_gen_twh_control": round(float(np.asarray(fa.min_gen)[rows].sum()) / 1e6, 4),
-            "min_gen_twh_arm": round(float(np.asarray(fb.min_gen)[rows].sum()) / 1e6, 4),
+            "min_gen_twh_control": round(
+                float(np.asarray(fa.min_gen)[rows].sum()) / 1e6, 4
+            ),
+            "min_gen_twh_arm": round(
+                float(np.asarray(fb.min_gen)[rows].sum()) / 1e6, 4
+            ),
         }
         if zname in price:
             p = price[zname]
@@ -219,7 +236,9 @@ def _plant_detail(year: int, ctl: dict, arm: dict, extra: set[str]) -> dict:
             rec["inmerit_twh_control"] = round(float(ina.sum()) / 1e6, 4)
             rec["inmerit_twh_arm"] = round(float(inb.sum()) / 1e6, 4)
             rec["econ_reach_up_twh"] = round(float(np.clip(d, 0, None).sum()) / 1e6, 4)
-            rec["econ_reach_down_twh"] = round(float(np.clip(d, None, 0).sum()) / 1e6, 4)
+            rec["econ_reach_down_twh"] = round(
+                float(np.clip(d, None, 0).sum()) / 1e6, 4
+            )
         key = f"{code}:{cls}" if f"{code}:{cls}" in pay else str(code)
         bp = bench.get(key)
         if bp is not None and key in pay and bp.get("group", cls) == cls:
@@ -242,7 +261,9 @@ def measure(year: int, arm_dir: Path, selector: bool) -> dict:
     ctl = _build_on(year, None, False)
     arm = _build_on(year, arm_dir, False)
     res = {}
-    for name, b in (("arm", arm),) + ((("arm_sel", _build_on(year, arm_dir, True)),) if selector else ()):
+    for name, b in (("arm", arm),) + (
+        (("arm_sel", _build_on(year, arm_dir, True)),) if selector else ()
+    ):
         foot = _diff(ctl, b)
         moved = set()
         for v in foot.values():
@@ -255,10 +276,13 @@ def main() -> None:
     """CLI."""
     ap = argparse.ArgumentParser()
     ap.add_argument("--arm-dir", type=Path, required=True)
-    ap.add_argument("--years", nargs="+", type=int, default=[2021, 2022, 2023, 2024, 2025])
+    ap.add_argument(
+        "--years", nargs="+", type=int, default=[2021, 2022, 2023, 2024, 2025]
+    )
     ap.add_argument("--with-selector", action="store_true")
     ap.add_argument(
-        "--out", type=Path,
+        "--out",
+        type=Path,
         default=REPO / "results/calibration/_nyisonext3_tranche_basis_phase0.json",
     )
     a = ap.parse_args()
