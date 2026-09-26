@@ -249,6 +249,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     ercot_dam_availability_gas_event_cap: { cell: "." },
     ercot_dam_availability_event_cap_reconciliation: { cell: "." },
     ercot_dam_availability_event_cap_unit_scoped: { cell: "." },
+    ercot_dam_availability_event_cap_per_unit: { cell: "." },
     ercot_partial_outage_shaped_derate: { cell: "." },
     ercot_partial_outage_day_guard: { cell: "." },
     unit_outage_short_windows: { cell: "I", ev: "R-CAISO (2026-09-24, run 2026-09-24-caiso-r-inputs-vintage, bundle rcaiso_inputs_span, 2022-2025 one shard per year at pin 18bb99b1; docs/handoffs/r-caiso/PRECOMMIT-r-caiso-2026-09-24.md + RESULT-r-caiso-2026-09-24.md): coal family (and the unit_partial_outage_windows leg) re-confirmed INERT: 0 windows every year 2019-2025 (no baseload coal). Armed only as the gate carrier for the gas scope. Prior: caiso-136 (results/calibration/FINDING-caiso136-unit-availability-windows-2026-07-28.md)" },
