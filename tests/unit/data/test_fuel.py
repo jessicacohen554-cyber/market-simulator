@@ -3551,3 +3551,27 @@ def test_nyiso_total_east_cutset_ttc_replaces_central_east():
     # The cutset the link represents is strictly wider than its nested
     # sub-cutset in every month of 2022 — the misalignment this arm repairs.
     assert all(e > c for e, c in zip(envelope, incumbent))
+
+
+def test_miso_zone_hub_kind_maps_south_to_henry_in_years_without_a_south_row():
+    """miso-277: the hub is geographic, so a zone missing from a year keeps its hub.
+
+    The committed hub table carries MISO-South (Gulf Coast) only from 2022; the
+    callers' ``"chicago"`` default then priced South on the Chicago Uri print in
+    2021 under the D1 arm, against the owner's ruling (South = Henry Hub).
+    """
+    from market_sim.data.fuel.basis import miso as fuel_basis_miso
+
+    for year in (2019, 2020, 2021, 2022, 2025):
+        kinds = fuel_basis_miso._miso_zone_hub_kind(year)
+        assert kinds["MISO-South"] == "henry", year
+        for zone in (
+            "MISO-West",
+            "MISO-Plains",
+            "MISO-Illinois",
+            "MISO-Indiana",
+            "MISO-East",
+        ):
+            assert kinds[zone] == "chicago", (year, zone)
+    # A year absent from the table still maps nothing (callers fail closed).
+    assert fuel_basis_miso._miso_zone_hub_kind(1990) == {}
