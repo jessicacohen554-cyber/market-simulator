@@ -528,6 +528,8 @@ def _unit_gross_years(
             if df.empty or "grossLoad" not in df.columns:
                 continue
             g = pd.to_numeric(df["grossLoad"], errors="coerce").fillna(0.0)
+            # The detector loop drops stack-duplicate twins; match it here.
+            g = g.mask(campd.stack_duplicate_mask(df["facilityId"], df["unitId"]), 0.0)
             pos = df.loc[g > 0.0, ["facilityId", "unitId"]].drop_duplicates()
             for f, u in zip(pos["facilityId"].astype(int), pos["unitId"].astype(str)):
                 f = campd.CAMPD_UNIT_PLANT_REMAP.get((f, u), f)
@@ -1820,6 +1822,20 @@ def main() -> None:
             df["facilityId"] = [
                 campd.CAMPD_UNIT_PLANT_REMAP.get((f, u), f)
                 for f, u in zip(df["facilityId"].astype(int), df["unitId"].astype(str))
+            ]
+            # Stack-duplicate twins (campd.CAMPD_STACK_DUPLICATE_UNITS; Astoria
+            # 8906 32SH/52SH, FINDING-nyiso141): the duplicate row repeats its
+            # primary's full grossLoad, so detecting on it books ONE generator
+            # twice -- each twin at the generator's full observed peak (the
+            # plant basis double-counted, 1,705 vs 938 MW) and the duplicate,
+            # absent from the merit panel that already folds it onto its
+            # primary (nyiso-192), fails OPEN to "outage" on every stop its
+            # primary's own merit test classifies as lay-up. Dropping the
+            # duplicate rows leaves the primary as the one unit it physically
+            # is. Outage detection reads only grossLoad/opTime, never heat or
+            # mass, so nothing per-path is lost. NYISO-NEXT-2.
+            df = df.loc[
+                ~campd.stack_duplicate_mask(df["facilityId"], df["unitId"]).to_numpy()
             ]
             for fac_id, fac in df.groupby("facilityId", observed=True):
                 group = group_by_code.get(int(fac_id))

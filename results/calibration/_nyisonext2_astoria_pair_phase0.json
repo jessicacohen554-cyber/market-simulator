@@ -1,0 +1,330 @@
+{
+ "2021": {
+  "footprint": {
+   "pmax": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "pmin": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "heat_rate": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "availability": {
+    "identical": false,
+    "identical_outside_8906": true
+   },
+   "min_gen": {
+    "identical": false,
+    "identical_outside_8906": true
+   },
+   "zone_idx": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "vom": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "mc_base_identical": true
+  },
+  "classes": {
+   "CT_PEAKER": {
+    "rows": 3,
+    "pmax_mw": 13.6,
+    "avail_mean_control": 0.8493,
+    "avail_mean_arm": 0.8493,
+    "avail_twh_control": 0.1012,
+    "avail_twh_arm": 0.1012,
+    "min_gen_twh_control": 0.0,
+    "min_gen_twh_arm": 0.0,
+    "hours_avail_up": 0,
+    "hours_avail_down": 0,
+    "model_twh_keeper": 0.0009,
+    "e923_twh": 0.0,
+    "binding_h_keeper": 0,
+    "binding_bound_add_twh": 0.0,
+    "removal_twh_where_down": 0.0
+   },
+   "ST_GAS": {
+    "rows": 4,
+    "pmax_mw": 918.8,
+    "avail_mean_control": 0.3774,
+    "avail_mean_arm": 0.7991,
+    "avail_twh_control": 3.0373,
+    "avail_twh_arm": 6.4314,
+    "min_gen_twh_control": 0.0473,
+    "min_gen_twh_arm": 0.2524,
+    "hours_avail_up": 8295,
+    "hours_avail_down": 0,
+    "model_twh_keeper": 1.7099,
+    "e923_twh": 0.6619,
+    "binding_h_keeper": 0,
+    "binding_bound_add_twh": 0.0,
+    "removal_twh_where_down": 0.0
+   }
+  }
+ },
+ "2022": {
+  "footprint": {
+   "pmax": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "pmin": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "heat_rate": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "availability": {
+    "identical": false,
+    "identical_outside_8906": true
+   },
+   "min_gen": {
+    "identical": false,
+    "identical_outside_8906": true
+   },
+   "zone_idx": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "vom": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "mc_base_identical": true
+  },
+  "classes": {
+   "CT_PEAKER": {
+    "rows": 3,
+    "pmax_mw": 15.7,
+    "avail_mean_control": 0.8493,
+    "avail_mean_arm": 0.8493,
+    "avail_twh_control": 0.1168,
+    "avail_twh_arm": 0.1168,
+    "min_gen_twh_control": 0.0,
+    "min_gen_twh_arm": 0.0,
+    "hours_avail_up": 0,
+    "hours_avail_down": 0,
+    "model_twh_keeper": 0.0019,
+    "e923_twh": 0.0011,
+    "binding_h_keeper": 0,
+    "binding_bound_add_twh": 0.0,
+    "removal_twh_where_down": 0.0
+   },
+   "ST_GAS": {
+    "rows": 4,
+    "pmax_mw": 923.2,
+    "avail_mean_control": 0.4411,
+    "avail_mean_arm": 0.813,
+    "avail_twh_control": 3.5676,
+    "avail_twh_arm": 6.5749,
+    "min_gen_twh_control": 0.1016,
+    "min_gen_twh_arm": 0.3018,
+    "hours_avail_up": 7875,
+    "hours_avail_down": 0,
+    "model_twh_keeper": 2.1158,
+    "e923_twh": 0.8277,
+    "binding_h_keeper": 10,
+    "binding_bound_add_twh": 0.0028,
+    "removal_twh_where_down": 0.0
+   }
+  }
+ },
+ "2023": {
+  "footprint": {
+   "pmax": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "pmin": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "heat_rate": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "availability": {
+    "identical": false,
+    "identical_outside_8906": true
+   },
+   "min_gen": {
+    "identical": false,
+    "identical_outside_8906": true
+   },
+   "zone_idx": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "vom": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "mc_base_identical": true
+  },
+  "classes": {
+   "CT_PEAKER": {
+    "rows": 3,
+    "pmax_mw": 15.7,
+    "avail_mean_control": 0.8493,
+    "avail_mean_arm": 0.8493,
+    "avail_twh_control": 0.1168,
+    "avail_twh_arm": 0.1168,
+    "min_gen_twh_control": 0.0,
+    "min_gen_twh_arm": 0.0,
+    "hours_avail_up": 0,
+    "hours_avail_down": 0,
+    "model_twh_keeper": 0.0003,
+    "e923_twh": 0.0009,
+    "binding_h_keeper": 0,
+    "binding_bound_add_twh": 0.0,
+    "removal_twh_where_down": 0.0
+   },
+   "ST_GAS": {
+    "rows": 4,
+    "pmax_mw": 923.2,
+    "avail_mean_control": 0.3248,
+    "avail_mean_arm": 0.7351,
+    "avail_twh_control": 2.6265,
+    "avail_twh_arm": 5.9449,
+    "min_gen_twh_control": 0.1119,
+    "min_gen_twh_arm": 0.2854,
+    "hours_avail_up": 7818,
+    "hours_avail_down": 0,
+    "model_twh_keeper": 1.7151,
+    "e923_twh": 0.7289,
+    "binding_h_keeper": 1260,
+    "binding_bound_add_twh": 0.4233,
+    "removal_twh_where_down": 0.0
+   }
+  }
+ },
+ "2024": {
+  "footprint": {
+   "pmax": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "pmin": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "heat_rate": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "availability": {
+    "identical": false,
+    "identical_outside_8906": true
+   },
+   "min_gen": {
+    "identical": false,
+    "identical_outside_8906": true
+   },
+   "zone_idx": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "vom": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "mc_base_identical": true
+  },
+  "classes": {
+   "CT_PEAKER": {
+    "rows": 3,
+    "pmax_mw": 15.7,
+    "avail_mean_control": 0.8493,
+    "avail_mean_arm": 0.8493,
+    "avail_twh_control": 0.1168,
+    "avail_twh_arm": 0.1168,
+    "min_gen_twh_control": 0.0,
+    "min_gen_twh_arm": 0.0,
+    "hours_avail_up": 0,
+    "hours_avail_down": 0,
+    "model_twh_keeper": 0.0001,
+    "e923_twh": 0.0005,
+    "binding_h_keeper": 0,
+    "binding_bound_add_twh": 0.0,
+    "removal_twh_where_down": 0.0
+   },
+   "ST_GAS": {
+    "rows": 4,
+    "pmax_mw": 923.2,
+    "avail_mean_control": 0.4313,
+    "avail_mean_arm": 0.8004,
+    "avail_twh_control": 3.4883,
+    "avail_twh_arm": 6.4732,
+    "min_gen_twh_control": 0.1578,
+    "min_gen_twh_arm": 0.3227,
+    "hours_avail_up": 7333,
+    "hours_avail_down": 0,
+    "model_twh_keeper": 1.7123,
+    "e923_twh": 0.8704,
+    "binding_h_keeper": 209,
+    "binding_bound_add_twh": 0.1162,
+    "removal_twh_where_down": 0.0
+   }
+  }
+ },
+ "2025": {
+  "footprint": {
+   "pmax": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "pmin": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "heat_rate": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "availability": {
+    "identical": false,
+    "identical_outside_8906": true
+   },
+   "min_gen": {
+    "identical": false,
+    "identical_outside_8906": true
+   },
+   "zone_idx": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "vom": {
+    "identical": true,
+    "identical_outside_8906": true
+   },
+   "mc_base_identical": true
+  },
+  "classes": {
+   "ST_GAS": {
+    "rows": 4,
+    "pmax_mw": 923.2,
+    "avail_mean_control": 0.3936,
+    "avail_mean_arm": 0.6777,
+    "avail_twh_control": 3.1829,
+    "avail_twh_arm": 5.4806,
+    "min_gen_twh_control": 0.276,
+    "min_gen_twh_arm": 0.4394,
+    "hours_avail_up": 6356,
+    "hours_avail_down": 0,
+    "model_twh_keeper": 1.9837,
+    "e923_twh": 1.359,
+    "binding_h_keeper": 1318,
+    "binding_bound_add_twh": 0.5351,
+    "removal_twh_where_down": 0.0
+   }
+  }
+ }
+}
