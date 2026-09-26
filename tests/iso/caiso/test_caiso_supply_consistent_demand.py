@@ -61,7 +61,7 @@ class TestCaisoSupplyConsistentDemand(unittest.TestCase):
 
     def test_missing_year_fails_loudly(self) -> None:
         with self.assertRaises(FileNotFoundError):
-            _load_caiso_hourly_demand(2019, supply_consistent=True)
+            _load_caiso_hourly_demand(2018, supply_consistent=True)
 
 
 if __name__ == "__main__":
