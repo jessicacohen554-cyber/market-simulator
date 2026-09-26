@@ -1643,3 +1643,22 @@ CT_PEAKER -1.32..+0.18, ST_GAS -0.38..+0.03. C4 coal NRMSE 2020 0.347 -> 0.285, 
 COAL_BIT -3.83 -> -3.4pp still FAIL (Barry/Crist/Wansley cycle, must-run 0, their committed band keeps the coal start
 markup); D-2 FAIL -> PASS. Grade 5/3/2 -> 5/4/1, NOT-YET. Records:
 docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-70-2026-09-26.md. Leftover refs for the owner: claude/soco70-2019..2025.
+
+## soco-71 — 2026-09-26
+
+COAL HEAT-RATE ARTIFACT RE-DERIVED OVER ITS DECLARED WINDOW; PROMOTED; FAILING ROW IMPROVES. G-DRIFT (measured, zero LP):
+every LP input bit-identical vs keeper sha e3cea99b; code/data drift on main INERT (default-off fields, other ISOs'
+artifacts). Decomposition of 2019 COAL_BIT (Barry/Crist/Wansley): not availability, not the start markup (stripping it
+entirely caps at ~+0.4 TWh) — the cyclers' base offer is above the 2019 price in 78-97% of their CEMS-synced hours. Fuel
+matches own-plant F923 receipts (<3%). Heat rate did NOT: campd_coal_heat_rates_SOCO.csv never read AL/FL/GA 2019-2022
+CAMPD (pooled rows = 2023-2025 sums) and its latest-record union dropped Crist 641 (neiso-118 defect; now
+union_fleet(klass=COAL)). Re-derived, unchanged estimator, all 30 committed rows byte-identical (sha 369a58ba -> a5579637),
+zero scalars; Wansley 2019 12.75 -> 10.92, Crist 11.24 -> 10.55, Bowen 10.24 -> 10.67.
+
+RESULT (run 2026-09-26-soco71-coal-hr-window, seven year-isolated shards at ae5fb43a; 2020/2024 re-solved on the pinned
+dependency set after their first shards installed highspy 1.15.1; PROMOTED on the owner's standing ruling;
+2026-09-26-soco70-coal-rows-measured pruned per rule 35): COAL_BIT +0.87/+1.52/+2.00/-0.19 TWh 2019-2022; 2023-2025
+byte-identical; unserved 0. 2019 COAL_BIT -3.45 -> -3.09pp (-8.43 TWh vs +/-7.64) still FAIL, the only failing row; C4 PASS
+every year; D-1 2020 COAL_BIT r 0.284 -> 0.779. Grade 5/4/1, NOT-YET. Records:
+docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-71-2026-09-26.md. Leftover refs: claude/soco71-2019..2025,
+claude/soco71b-2020, claude/soco71b-2024, claude/soco70-2019..2025.
