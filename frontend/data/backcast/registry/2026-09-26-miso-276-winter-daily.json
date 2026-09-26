@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-26-miso-276-winter-daily",
+  "label": "miso 276 winter daily",
+  "date": "2026-09-26",
+  "shorthand": "miso-276-winter-daily",
+  "definition": "miso-276 arm 2019: winter daily delivered gas (owner rulings D1 + Chicago proxy 2026-09-26)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-26-miso-276-winter-daily.js",
+  "bundle": "results/calibration/miso276_span"
+}
