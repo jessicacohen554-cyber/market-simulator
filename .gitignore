@@ -3619,3 +3619,6 @@ results/calibration/spp85_arm_20*/
 results/calibration/pjmnext3_c2_20*/
 # NWPP-NEXT-5 per-year shard legs (rule 32(d)): kept out of main; the composite is registered.
 results/calibration/nwppnext5_20*/
+
+!results/calibration/rcaiso4_K_2021/**
+!results/calibration/rcaiso4_K_2021/
