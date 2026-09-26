@@ -71,8 +71,11 @@ def _instrument():
         return out
 
     A._ercot_dam_plant_hourly_apply = pin
-    for name in ("unit_outage_derate_factors", "unit_outage_short_derate_factors",
-                 "partial_outage_derate_factors"):
+    for name in (
+        "unit_outage_derate_factors",
+        "unit_outage_short_derate_factors",
+        "partial_outage_derate_factors",
+    ):
         f = getattr(A, name)
 
         def wrap(*a, _f=f, _n=name, **k):
@@ -97,7 +100,11 @@ def _instrument():
     orig_pf = A.partial_outage_derate_factors
 
     def pf(*a, **k):
-        if "gen_codes" in rec and "dam" not in rec and rec.get("_avail_ref") is not None:
+        if (
+            "gen_codes" in rec
+            and "dam" not in rec
+            and rec.get("_avail_ref") is not None
+        ):
             rec["dam"] = rec["_avail_ref"].copy()
         return orig_pf(*a, **k)
 
@@ -119,24 +126,42 @@ def measured_net(year: int, H: int, keys) -> dict:
     import pandas as pd
     from market_sim.data.campd import DEFAULT_PARASITIC_LOAD_PCT, _hour_index_8760
 
-    d = pd.read_parquet(REPO / f"data/raw/campd-unit-level/TX_{year}.parquet",
-                        columns=["facilityId", "unitId", "date", "hour", "grossLoad",
-                                 "primaryFuelInfo", "unitType"])
+    d = pd.read_parquet(
+        REPO / f"data/raw/campd-unit-level/TX_{year}.parquet",
+        columns=[
+            "facilityId",
+            "unitId",
+            "date",
+            "hour",
+            "grossLoad",
+            "primaryFuelInfo",
+            "unitType",
+        ],
+    )
     d = d[d["grossLoad"].fillna(0) > 0]
     fac = d["facilityId"].astype(int).to_numpy()
     fuel = d["primaryFuelInfo"].astype(str).str.lower()
     ut = d["unitType"].astype(str).str.lower()
-    cls = np.where(fuel.str.contains("coal|lignite").to_numpy(), "COAL",
-                   np.where(ut.str.startswith("combined cycle").to_numpy(), "CC_REGULAR",
-                            np.where(ut.str.startswith("combustion turbine").to_numpy(), "CT", "ST_GAS")))
+    cls = np.where(
+        fuel.str.contains("coal|lignite").to_numpy(),
+        "COAL",
+        np.where(
+            ut.str.startswith("combined cycle").to_numpy(),
+            "CC_REGULAR",
+            np.where(
+                ut.str.startswith("combustion turbine").to_numpy(), "CT", "ST_GAS"
+            ),
+        ),
+    )
     code = fac.copy()
     code[(fac == 3470) & (cls != "COAL")] = 34702
     uid = d["unitId"].astype(str).to_numpy()
     b1 = (fac == 4939) & (uid == "1")
     code[b1] = 49392
     cls = np.where(b1, "ST_GAS", cls)
-    hoy = _hour_index_8760(d["date"].dt.month.to_numpy(), d["date"].dt.day.to_numpy(),
-                           d["hour"].to_numpy())
+    hoy = _hour_index_8760(
+        d["date"].dt.month.to_numpy(), d["date"].dt.day.to_numpy(), d["hour"].to_numpy()
+    )
     g = d["grossLoad"].to_numpy(float)
     want = {(int(c), k) for c, k in keys}
     out = {}
@@ -219,13 +244,25 @@ def build_stages(year: int, cache: Path, overlay: dict | None = None) -> dict:
         if c in dp:
             lay[f"D_{c}"] = np.asarray(dp[c], float)[:H]
     sel = np.isin(grp, CLASSES)
-    out = dict(all_codes=codes, all_grp=np.array([str(g) for g in fa.plant_group]),
-               all_pmax=np.asarray(fa.pmax, float), all_avail_mean=fin.mean(1),
-               pre=pre[sel], dam=dam[sel], fin=fin[sel], pmax=np.asarray(fa.pmax, float)[sel],
-               grp=grp[sel], codes=codes[sel], mc=np.asarray(st["mc_base"], float)[sel].mean(1)
-               if np.ndim(st["mc_base"]) == 2 else np.asarray(st["mc_base"], float)[sel],
-               mg=np.asarray(fa.min_gen, float)[sel] if np.ndim(fa.min_gen) == 2 else
-               np.repeat(np.asarray(fa.min_gen, float)[sel][:, None], H, 1), **lay)
+    out = dict(
+        all_codes=codes,
+        all_grp=np.array([str(g) for g in fa.plant_group]),
+        all_pmax=np.asarray(fa.pmax, float),
+        all_avail_mean=fin.mean(1),
+        pre=pre[sel],
+        dam=dam[sel],
+        fin=fin[sel],
+        pmax=np.asarray(fa.pmax, float)[sel],
+        grp=grp[sel],
+        codes=codes[sel],
+        mc=np.asarray(st["mc_base"], float)[sel].mean(1)
+        if np.ndim(st["mc_base"]) == 2
+        else np.asarray(st["mc_base"], float)[sel],
+        mg=np.asarray(fa.min_gen, float)[sel]
+        if np.ndim(fa.min_gen) == 2
+        else np.repeat(np.asarray(fa.min_gen, float)[sel][:, None], H, 1),
+        **lay,
+    )
     np.savez_compressed(cache, **out)
     return out
 
@@ -258,31 +295,59 @@ def census(year: int, stages: dict, hours_subset: np.ndarray | None = None) -> d
         v = hmask & (meas > f_mw + tol)
         if not v.any():
             continue
-        cat = np.where(meas > p_mw + tol, "stack", np.where(meas > d_mw + tol, "dam_remove", "event_cap"))
+        cat = np.where(
+            meas > p_mw + tol,
+            "stack",
+            np.where(meas > d_mw + tol, "dam_remove", "event_cap"),
+        )
         lw = stages.get(f"W_{c}_{g}", one) * pm
         ls = stages.get(f"S_{c}_{g}", one) * pm
         pp = stages.get(f"P_{c}_{g}", one) * pm
         dp = stages.get(f"D_{c}")
-        sub = np.where(meas > lw + tol, "W", np.where(meas > ls + tol, "S", np.where(meas > pp + tol, "P", "")))
+        sub = np.where(
+            meas > lw + tol,
+            "W",
+            np.where(meas > ls + tol, "S", np.where(meas > pp + tol, "P", "")),
+        )
         for h in np.where(v)[0]:
             lab = cat[h]
             if lab in ("stack", "event_cap"):
-                lab = lab + (":" + sub[h] if sub[h] else (":stat" if lab == "stack" else ":product"))
+                lab = lab + (
+                    ":" + sub[h]
+                    if sub[h]
+                    else (":stat" if lab == "stack" else ":product")
+                )
             gap = float(meas[h] - f_mw[h])
             t = tot.setdefault(g, {}).setdefault(lab, [0, 0.0, set()])
             t[0] += 1
             t[1] += gap
             t[2].add(h // 24)
-            out_rows.append({
-                "code": int(c), "cls": g, "hour": int(h), "meas_net": round(float(meas[h]), 1),
-                "final_mw": round(float(f_mw[h]), 1), "dam_mw": round(float(d_mw[h]), 1),
-                "pre_mw": round(float(p_mw[h]), 1), "pmax": round(pm, 1),
-                "W": round(float(lw[h]), 1), "S": round(float(ls[h]), 1), "P": round(float(pp[h]), 1),
-                "dam_frac": None if dp is None or not np.isfinite(dp[h]) else round(float(dp[h]), 3),
-                "stage": lab,
-            })
-    summ = {g: {k: {"plant_hours": v[0], "MWh_gap": round(v[1]), "plant_days": len(v[2])}
-                for k, v in d.items()} for g, d in tot.items()}
+            out_rows.append(
+                {
+                    "code": int(c),
+                    "cls": g,
+                    "hour": int(h),
+                    "meas_net": round(float(meas[h]), 1),
+                    "final_mw": round(float(f_mw[h]), 1),
+                    "dam_mw": round(float(d_mw[h]), 1),
+                    "pre_mw": round(float(p_mw[h]), 1),
+                    "pmax": round(pm, 1),
+                    "W": round(float(lw[h]), 1),
+                    "S": round(float(ls[h]), 1),
+                    "P": round(float(pp[h]), 1),
+                    "dam_frac": None
+                    if dp is None or not np.isfinite(dp[h])
+                    else round(float(dp[h]), 3),
+                    "stage": lab,
+                }
+            )
+    summ = {
+        g: {
+            k: {"plant_hours": v[0], "MWh_gap": round(v[1]), "plant_days": len(v[2])}
+            for k, v in d.items()
+        }
+        for g, d in tot.items()
+    }
     return {"summary": summ, "rows": out_rows}
 
 
@@ -292,14 +357,18 @@ def main() -> None:
     ap.add_argument("--out", required=True)
     ap.add_argument("--hours-file", default=None)
     ap.add_argument("--cache-dir", default=".")
-    ap.add_argument("--set", action="append", default=[], help="KEY=JSON config overlay")
+    ap.add_argument(
+        "--set", action="append", default=[], help="KEY=JSON config overlay"
+    )
     a = ap.parse_args()
     hs = np.load(a.hours_file) if a.hours_file else None
     res = {}
     for y in a.years:
         ov = {k: json.loads(v) for k, v in (x.split("=", 1) for x in a.set)}
         tag = "".join(f"_{k}" for k in sorted(ov))
-        st = build_stages(y, Path(a.cache_dir) / f"r_ercot5_stages_{y}{tag}.npz", ov or None)
+        st = build_stages(
+            y, Path(a.cache_dir) / f"r_ercot5_stages_{y}{tag}.npz", ov or None
+        )
         res[str(y)] = census(y, st, hs)
         print(y, json.dumps(res[str(y)]["summary"]), flush=True)
     Path(a.out).write_text(json.dumps(res, indent=1))
