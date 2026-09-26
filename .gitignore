@@ -3679,3 +3679,5 @@ results/calibration/nyisonext3_202[2-5]/
 results/calibration/pjmnext4_c1_20*/
 # soco-73 zero-LP probe outputs (G-DRIFT json/log, coal-retargeted campaign derive; FINDING-soco-73 carries every number)
 results/calibration/_soco73/
+# miso-277 per-year shard legs: parent-local only (rule 32(d)); provenance SHAs in docs/PRECOMMIT-miso277-d1-as-ruled-2026-09-26.md
+results/calibration/miso277_arm_*/
