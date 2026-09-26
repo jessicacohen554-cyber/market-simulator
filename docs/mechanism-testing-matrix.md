@@ -5772,6 +5772,17 @@ loss.
 
 **Predecessor header, kept as history:** 5.4 MISO — keeper `2026-09-24-miso-268-coal-yard` (**PROMOTED 2026-09-24, miso-268**, on the owner ruling *"Is this a recommended keeper candidate? If so plz promote"*; single delta on miso-267: `coal_fuel_inventory_plant_grain=true`, one annual coal-fuel row per coal yard at its own stock + prior receipts; C1 passes every year (2022 COAL_PRB +10.04 → −0.24, CC_REGULAR −8.99 → −3.66 TWh), C3a 2022 −8.4 % PASS; open: C3a 2020 +13.4 % (overnight price body), C3b 2021 0.309 (February); record `docs/RESULT-miso268-coal-yard-grain-2026-09-24.md`)
 
+> **QUEUE STAMP miso-274 (2026-09-26) — ZERO LP, NO SOLVE EARNED, keeper unchanged.** The CC_REGULAR
+> shortfall the miso-273 relief exposed is a **merit** object
+> (`FINDING-miso274-cc-regular-shortfall-is-merit-2026-09-26.md`): fleet CC availability binds in 0–13 h/yr
+> with 32–53 TWh of headroom, all of it in hours coal runs above its committed band. **Candidate 1** (CC
+> outage numerator basis) is real, 2–5 TWh/yr of availability over-removed, but not a C1 lever. Its largest
+> bin, Riverside 55641, is a CAMPD-facility ≠ EIA-plant **mis-route** (West Riverside 64020's CTs), which
+> needs a CAMPD-unit → EIA-plant crosswalk (data ask). **Candidate 2** (plant clipped below EIA-923) is
+> 0.4–3.9 TWh/yr, also not a lever. EIA-930 imports are not the displacer. **What remains is the coal vs CC
+> `offer_curve_by_group` level**, the owner's rule-1 channel (CC econ offers sit ~×1.12 over the measured
+> 7.1–7.3 MMBtu/MWh), plus D1 for C3b 2021. **Both are ASKED, not swept.**
+
 > **QUEUE STAMP miso-270 (2026-09-24) — ZERO LP, NO SOLVE EARNED, keeper unchanged.** No owner
 > ruling on D1 (storm-month gas) or D2 (thin prints), so Task C only. **Oct–Nov 2021 localized**
 > (`FINDING-miso270-octnov2021-localized-2026-09-24.md`): a northern-zone, daytime merit-depth object.

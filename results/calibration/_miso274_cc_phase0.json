@@ -1,0 +1,257 @@
+{
+ "2021": {
+  "cc_mw": 24804.1,
+  "cc_avail_twh": 146.72,
+  "cc_disp_twh": 94.335,
+  "cc_923_ng_twh_same_plants": 106.303,
+  "binding_hours": 0,
+  "disp_in_binding_twh": 0.0,
+  "coal_above_committed_hours": 8760,
+  "coal_above_committed_twh": 151.316,
+  "headroom_while_coal_econ_twh": 52.385,
+  "cc_headroom_twh": 52.385,
+  "plants_clipped_below_923": {
+   "1404": {
+    "avail_twh": 0.0,
+    "ng_twh": 0.008,
+    "mw": 44.0
+   },
+   "55641": {
+    "avail_twh": 1.475,
+    "ng_twh": 3.227,
+    "mw": 552.7
+   },
+   "55714": {
+    "avail_twh": 0.95,
+    "ng_twh": 1.265,
+    "mw": 641.5
+   }
+  },
+  "clipped_shortfall_twh": 2.075
+ },
+ "2022": {
+  "cc_mw": 26413.2,
+  "cc_avail_twh": 171.703,
+  "cc_disp_twh": 118.552,
+  "cc_923_ng_twh_same_plants": 128.355,
+  "binding_hours": 0,
+  "disp_in_binding_twh": 0.0,
+  "coal_above_committed_hours": 8760,
+  "coal_above_committed_twh": 136.359,
+  "headroom_while_coal_econ_twh": 53.151,
+  "cc_headroom_twh": 53.151,
+  "plants_clipped_below_923": {
+   "55641": {
+    "avail_twh": 2.415,
+    "ng_twh": 2.751,
+    "mw": 560.4
+   },
+   "55714": {
+    "avail_twh": 2.795,
+    "ng_twh": 3.311,
+    "mw": 641.5
+   },
+   "63259": {
+    "avail_twh": 0.424,
+    "ng_twh": 0.466,
+    "mw": 177.6
+   }
+  },
+  "clipped_shortfall_twh": 0.894
+ },
+ "2023": {
+  "cc_mw": 26845.6,
+  "cc_avail_twh": 181.456,
+  "cc_disp_twh": 137.907,
+  "cc_923_ng_twh_same_plants": 144.95,
+  "binding_hours": 3,
+  "disp_in_binding_twh": 0.069,
+  "coal_above_committed_hours": 8760,
+  "coal_above_committed_twh": 97.872,
+  "headroom_while_coal_econ_twh": 43.548,
+  "cc_headroom_twh": 43.548,
+  "plants_clipped_below_923": {
+   "55620": {
+    "avail_twh": 3.806,
+    "ng_twh": 4.124,
+    "mw": 637.9
+   },
+   "55641": {
+    "avail_twh": 3.16,
+    "ng_twh": 3.543,
+    "mw": 535.9
+   },
+   "55714": {
+    "avail_twh": 3.169,
+    "ng_twh": 3.378,
+    "mw": 641.5
+   },
+   "63259": {
+    "avail_twh": 0.829,
+    "ng_twh": 0.877,
+    "mw": 177.6
+   }
+  },
+  "clipped_shortfall_twh": 0.958
+ },
+ "2019": {
+  "cc_mw": 22639.2,
+  "cc_avail_twh": 138.343,
+  "cc_disp_twh": 103.934,
+  "cc_923_ng_twh_same_plants": 106.967,
+  "binding_hours": 0,
+  "disp_in_binding_twh": 0.0,
+  "coal_above_committed_hours": 8760,
+  "coal_above_committed_twh": 148.499,
+  "headroom_while_coal_econ_twh": 34.409,
+  "cc_headroom_twh": 34.409,
+  "plants_clipped_below_923": {
+   "55620": {
+    "avail_twh": 2.599,
+    "ng_twh": 2.795,
+    "mw": 637.9
+   },
+   "55714": {
+    "avail_twh": 1.54,
+    "ng_twh": 1.706,
+    "mw": 641.5
+   }
+  },
+  "clipped_shortfall_twh": 0.362
+ },
+ "2020": {
+  "cc_mw": 24208.8,
+  "cc_avail_twh": 140.589,
+  "cc_disp_twh": 104.666,
+  "cc_923_ng_twh_same_plants": 110.679,
+  "binding_hours": 0,
+  "disp_in_binding_twh": 0.0,
+  "coal_above_committed_hours": 8760,
+  "coal_above_committed_twh": 113.861,
+  "headroom_while_coal_econ_twh": 35.923,
+  "cc_headroom_twh": 35.923,
+  "plants_clipped_below_923": {
+   "862": {
+    "avail_twh": 0.222,
+    "ng_twh": 1.142,
+    "mw": 264.0
+   },
+   "1404": {
+    "avail_twh": 0.0,
+    "ng_twh": 0.001,
+    "mw": 44.0
+   },
+   "55620": {
+    "avail_twh": 2.931,
+    "ng_twh": 3.2,
+    "mw": 637.9
+   },
+   "55641": {
+    "avail_twh": 0.502,
+    "ng_twh": 2.662,
+    "mw": 564.3
+   },
+   "55714": {
+    "avail_twh": 1.196,
+    "ng_twh": 1.711,
+    "mw": 641.5
+   }
+  },
+  "clipped_shortfall_twh": 3.866
+ },
+ "2024": {
+  "cc_mw": 27168.8,
+  "cc_avail_twh": 181.135,
+  "cc_disp_twh": 146.368,
+  "cc_923_ng_twh_same_plants": 147.359,
+  "binding_hours": 4,
+  "disp_in_binding_twh": 0.094,
+  "coal_above_committed_hours": 8760,
+  "coal_above_committed_twh": 90.958,
+  "headroom_while_coal_econ_twh": 34.767,
+  "cc_headroom_twh": 34.767,
+  "plants_clipped_below_923": {
+   "1007": {
+    "avail_twh": 1.732,
+    "ng_twh": 1.8,
+    "mw": 264.0
+   },
+   "55087": {
+    "avail_twh": 3.85,
+    "ng_twh": 3.963,
+    "mw": 524.5
+   },
+   "55620": {
+    "avail_twh": 3.266,
+    "ng_twh": 3.723,
+    "mw": 637.9
+   },
+   "55641": {
+    "avail_twh": 3.185,
+    "ng_twh": 3.386,
+    "mw": 530.0
+   },
+   "55714": {
+    "avail_twh": 3.916,
+    "ng_twh": 4.259,
+    "mw": 641.5
+   },
+   "63259": {
+    "avail_twh": 0.787,
+    "ng_twh": 0.802,
+    "mw": 177.6
+   }
+  },
+  "clipped_shortfall_twh": 1.197
+ },
+ "2025": {
+  "cc_mw": 27805.2,
+  "cc_avail_twh": 170.726,
+  "cc_disp_twh": 138.702,
+  "cc_923_ng_twh_same_plants": 138.191,
+  "binding_hours": 13,
+  "disp_in_binding_twh": 0.288,
+  "coal_above_committed_hours": 8760,
+  "coal_above_committed_twh": 111.005,
+  "headroom_while_coal_econ_twh": 32.024,
+  "cc_headroom_twh": 32.024,
+  "plants_clipped_below_923": {
+   "1004": {
+    "avail_twh": 2.821,
+    "ng_twh": 3.544,
+    "mw": 328.6
+   },
+   "1007": {
+    "avail_twh": 1.624,
+    "ng_twh": 1.69,
+    "mw": 264.0
+   },
+   "55087": {
+    "avail_twh": 3.478,
+    "ng_twh": 3.952,
+    "mw": 524.5
+   },
+   "55358": {
+    "avail_twh": 3.968,
+    "ng_twh": 4.597,
+    "mw": 580.4
+   },
+   "55620": {
+    "avail_twh": 3.602,
+    "ng_twh": 3.711,
+    "mw": 637.9
+   },
+   "55714": {
+    "avail_twh": 3.433,
+    "ng_twh": 3.594,
+    "mw": 641.5
+   },
+   "63259": {
+    "avail_twh": 1.218,
+    "ng_twh": 1.318,
+    "mw": 177.6
+   }
+  },
+  "clipped_shortfall_twh": 2.261
+ }
+}
