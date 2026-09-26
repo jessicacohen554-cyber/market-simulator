@@ -587,6 +587,9 @@ def _reliability_floor_layup_shares(
         st_capacity_basis=getattr(config, "unit_outage_st_capacity_basis", False),
         per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
         extract_basis_share=getattr(config, "unit_outage_extract_basis_share", False),
+        coal_extract_basis_share=getattr(
+            config, "unit_outage_coal_extract_basis_share", False
+        ),
         lp_bin_capacity=lp_bins,
         per_unit_crosswalk=per_unit,
         merit_order_guard=merit,

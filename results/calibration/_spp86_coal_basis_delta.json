@@ -1,0 +1,1311 @@
+[
+ {
+  "year": 2019,
+  "identical": {
+   "availability": false,
+   "min_gen": false,
+   "min_gen_mechanism": false,
+   "pmax": true,
+   "heat_rate": true,
+   "vom": true
+  },
+  "d_avail_twh_by_class": {
+   "COAL_LIGNITE": 0.0266,
+   "COAL_PRB": 1.7393
+  },
+  "d_avail_gw_mean": 0.2016,
+  "coal_mustrun_floor_twh": [
+   31.6696,
+   32.1319
+  ],
+  "by_plant": {
+   "1241": {
+    "d_avail_gwh": 400.1,
+    "lp_pmax_mw": 1408.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6195": {
+    "d_avail_gwh": 277.6,
+    "lp_pmax_mw": 563.0,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "6065": {
+    "d_avail_gwh": 272.1,
+    "lp_pmax_mw": 1597.5,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6095": {
+    "d_avail_gwh": 144.9,
+    "lp_pmax_mw": 1031.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6193": {
+    "d_avail_gwh": 139.5,
+    "lp_pmax_mw": 1018.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6194": {
+    "d_avail_gwh": 130.3,
+    "lp_pmax_mw": 1067.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6064": {
+    "d_avail_gwh": 125.5,
+    "lp_pmax_mw": 316.0,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "6139": {
+    "d_avail_gwh": 77.2,
+    "lp_pmax_mw": 1056.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2079": {
+    "d_avail_gwh": 71.6,
+    "lp_pmax_mw": 951.9,
+    "classes": [
+     "CC_REGULAR",
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "6068": {
+    "d_avail_gwh": -62.4,
+    "lp_pmax_mw": 2185.7,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6096": {
+    "d_avail_gwh": 53.7,
+    "lp_pmax_mw": 1345.3,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6469": {
+    "d_avail_gwh": 38.0,
+    "lp_pmax_mw": 900.0,
+    "classes": [
+     "COAL_LIGNITE"
+    ]
+   },
+   "10671": {
+    "d_avail_gwh": 32.9,
+    "lp_pmax_mw": 320.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2291": {
+    "d_avail_gwh": 22.3,
+    "lp_pmax_mw": 577.9,
+    "classes": [
+     "COAL_PRB",
+     "ST_GAS"
+    ]
+   },
+   "2277": {
+    "d_avail_gwh": 21.3,
+    "lp_pmax_mw": 219.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "1250": {
+    "d_avail_gwh": 17.8,
+    "lp_pmax_mw": 486.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "108": {
+    "d_avail_gwh": -14.3,
+    "lp_pmax_mw": 358.8,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "60": {
+    "d_avail_gwh": 14.1,
+    "lp_pmax_mw": 309.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2817": {
+    "d_avail_gwh": -11.4,
+    "lp_pmax_mw": 666.0,
+    "classes": [
+     "COAL_LIGNITE"
+    ]
+   },
+   "2240": {
+    "d_avail_gwh": 9.4,
+    "lp_pmax_mw": 156.5,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "2963": {
+    "d_avail_gwh": 7.4,
+    "lp_pmax_mw": 1370.0,
+    "classes": [
+     "CC_REGULAR",
+     "COAL_PRB",
+     "ST_GAS",
+     "oil"
+    ]
+   },
+   "6077": {
+    "d_avail_gwh": -1.6,
+    "lp_pmax_mw": 1365.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   }
+  },
+  "n_plants_up": 18,
+  "n_plants_down": 4
+ },
+ {
+  "year": 2020,
+  "identical": {
+   "availability": false,
+   "min_gen": false,
+   "min_gen_mechanism": false,
+   "pmax": true,
+   "heat_rate": true,
+   "vom": true
+  },
+  "d_avail_twh_by_class": {
+   "COAL_LIGNITE": 0.0334,
+   "COAL_PRB": 2.4742
+  },
+  "d_avail_gw_mean": 0.2863,
+  "coal_mustrun_floor_twh": [
+   28.4832,
+   29.1129
+  ],
+  "by_plant": {
+   "6065": {
+    "d_avail_gwh": 410.3,
+    "lp_pmax_mw": 1580.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6195": {
+    "d_avail_gwh": 366.8,
+    "lp_pmax_mw": 563.0,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "1241": {
+    "d_avail_gwh": 314.9,
+    "lp_pmax_mw": 1426.6,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6068": {
+    "d_avail_gwh": 243.8,
+    "lp_pmax_mw": 2010.6,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6139": {
+    "d_avail_gwh": 226.3,
+    "lp_pmax_mw": 1000.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6193": {
+    "d_avail_gwh": 136.3,
+    "lp_pmax_mw": 1018.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6064": {
+    "d_avail_gwh": 134.9,
+    "lp_pmax_mw": 316.0,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "6095": {
+    "d_avail_gwh": 130.3,
+    "lp_pmax_mw": 1031.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6194": {
+    "d_avail_gwh": 118.3,
+    "lp_pmax_mw": 1067.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2952": {
+    "d_avail_gwh": 85.6,
+    "lp_pmax_mw": 1368.0,
+    "classes": [
+     "COAL_PRB",
+     "ST_GAS"
+    ]
+   },
+   "2079": {
+    "d_avail_gwh": 78.1,
+    "lp_pmax_mw": 951.2,
+    "classes": [
+     "CC_REGULAR",
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "2963": {
+    "d_avail_gwh": 59.4,
+    "lp_pmax_mw": 1351.0,
+    "classes": [
+     "CC_REGULAR",
+     "COAL_PRB",
+     "ST_GAS",
+     "oil"
+    ]
+   },
+   "6469": {
+    "d_avail_gwh": 48.9,
+    "lp_pmax_mw": 900.0,
+    "classes": [
+     "COAL_LIGNITE"
+    ]
+   },
+   "1250": {
+    "d_avail_gwh": 43.7,
+    "lp_pmax_mw": 485.3,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2291": {
+    "d_avail_gwh": 38.3,
+    "lp_pmax_mw": 577.9,
+    "classes": [
+     "COAL_PRB",
+     "ST_GAS"
+    ]
+   },
+   "60": {
+    "d_avail_gwh": 33.2,
+    "lp_pmax_mw": 309.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "108": {
+    "d_avail_gwh": -25.0,
+    "lp_pmax_mw": 359.1,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6096": {
+    "d_avail_gwh": 22.7,
+    "lp_pmax_mw": 1345.3,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "10671": {
+    "d_avail_gwh": 21.9,
+    "lp_pmax_mw": 320.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2240": {
+    "d_avail_gwh": 21.6,
+    "lp_pmax_mw": 156.5,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "2277": {
+    "d_avail_gwh": 15.9,
+    "lp_pmax_mw": 219.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2817": {
+    "d_avail_gwh": -15.4,
+    "lp_pmax_mw": 666.0,
+    "classes": [
+     "COAL_LIGNITE"
+    ]
+   },
+   "6077": {
+    "d_avail_gwh": -3.2,
+    "lp_pmax_mw": 1365.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   }
+  },
+  "n_plants_up": 20,
+  "n_plants_down": 3
+ },
+ {
+  "year": 2021,
+  "identical": {
+   "availability": false,
+   "min_gen": false,
+   "min_gen_mechanism": false,
+   "pmax": true,
+   "heat_rate": true,
+   "vom": true
+  },
+  "d_avail_twh_by_class": {
+   "COAL_LIGNITE": 0.0585,
+   "COAL_PRB": 2.0419
+  },
+  "d_avail_gw_mean": 0.2398,
+  "coal_mustrun_floor_twh": [
+   30.2966,
+   30.7983
+  ],
+  "by_plant": {
+   "6068": {
+    "d_avail_gwh": 337.3,
+    "lp_pmax_mw": 2010.6,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "1241": {
+    "d_avail_gwh": 305.8,
+    "lp_pmax_mw": 1426.6,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6195": {
+    "d_avail_gwh": 227.7,
+    "lp_pmax_mw": 563.0,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "6065": {
+    "d_avail_gwh": 211.9,
+    "lp_pmax_mw": 1580.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6095": {
+    "d_avail_gwh": 178.4,
+    "lp_pmax_mw": 1031.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6139": {
+    "d_avail_gwh": 149.2,
+    "lp_pmax_mw": 1000.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6193": {
+    "d_avail_gwh": 132.9,
+    "lp_pmax_mw": 1018.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6064": {
+    "d_avail_gwh": 98.7,
+    "lp_pmax_mw": 319.0,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "6469": {
+    "d_avail_gwh": 82.4,
+    "lp_pmax_mw": 900.0,
+    "classes": [
+     "COAL_LIGNITE"
+    ]
+   },
+   "6194": {
+    "d_avail_gwh": 79.3,
+    "lp_pmax_mw": 1067.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "10671": {
+    "d_avail_gwh": 77.4,
+    "lp_pmax_mw": 321.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6096": {
+    "d_avail_gwh": 59.8,
+    "lp_pmax_mw": 1345.3,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2952": {
+    "d_avail_gwh": 37.7,
+    "lp_pmax_mw": 1475.0,
+    "classes": [
+     "COAL_PRB",
+     "ST_GAS"
+    ]
+   },
+   "1250": {
+    "d_avail_gwh": 33.9,
+    "lp_pmax_mw": 485.3,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2079": {
+    "d_avail_gwh": 31.9,
+    "lp_pmax_mw": 930.1,
+    "classes": [
+     "CC_REGULAR",
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "60": {
+    "d_avail_gwh": 29.5,
+    "lp_pmax_mw": 309.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2817": {
+    "d_avail_gwh": -23.9,
+    "lp_pmax_mw": 666.0,
+    "classes": [
+     "COAL_LIGNITE"
+    ]
+   },
+   "2240": {
+    "d_avail_gwh": 20.1,
+    "lp_pmax_mw": 156.5,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "2277": {
+    "d_avail_gwh": 17.7,
+    "lp_pmax_mw": 219.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2291": {
+    "d_avail_gwh": 17.1,
+    "lp_pmax_mw": 577.9,
+    "classes": [
+     "COAL_PRB",
+     "ST_GAS"
+    ]
+   },
+   "108": {
+    "d_avail_gwh": -14.3,
+    "lp_pmax_mw": 359.1,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2963": {
+    "d_avail_gwh": 12.3,
+    "lp_pmax_mw": 1342.0,
+    "classes": [
+     "CC_REGULAR",
+     "COAL_PRB",
+     "ST_GAS",
+     "oil"
+    ]
+   },
+   "6077": {
+    "d_avail_gwh": -2.4,
+    "lp_pmax_mw": 1365.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   }
+  },
+  "n_plants_up": 20,
+  "n_plants_down": 3
+ },
+ {
+  "year": 2022,
+  "identical": {
+   "availability": false,
+   "min_gen": false,
+   "min_gen_mechanism": false,
+   "pmax": true,
+   "heat_rate": true,
+   "vom": true
+  },
+  "d_avail_twh_by_class": {
+   "COAL_LIGNITE": 0.0239,
+   "COAL_PRB": 1.9746
+  },
+  "d_avail_gw_mean": 0.2281,
+  "coal_mustrun_floor_twh": [
+   30.3554,
+   30.8607
+  ],
+  "by_plant": {
+   "1241": {
+    "d_avail_gwh": 273.0,
+    "lp_pmax_mw": 1426.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6068": {
+    "d_avail_gwh": 269.0,
+    "lp_pmax_mw": 2008.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6065": {
+    "d_avail_gwh": 249.6,
+    "lp_pmax_mw": 1599.6,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6195": {
+    "d_avail_gwh": 247.3,
+    "lp_pmax_mw": 563.0,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "6193": {
+    "d_avail_gwh": 175.2,
+    "lp_pmax_mw": 1018.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6139": {
+    "d_avail_gwh": 159.0,
+    "lp_pmax_mw": 1000.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6064": {
+    "d_avail_gwh": 125.3,
+    "lp_pmax_mw": 319.0,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "6095": {
+    "d_avail_gwh": 116.6,
+    "lp_pmax_mw": 1031.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6194": {
+    "d_avail_gwh": 79.2,
+    "lp_pmax_mw": 1067.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "10671": {
+    "d_avail_gwh": 61.2,
+    "lp_pmax_mw": 318.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2079": {
+    "d_avail_gwh": 54.3,
+    "lp_pmax_mw": 949.7,
+    "classes": [
+     "CC_REGULAR",
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "6096": {
+    "d_avail_gwh": 41.2,
+    "lp_pmax_mw": 1341.3,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2240": {
+    "d_avail_gwh": 39.1,
+    "lp_pmax_mw": 156.5,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "60": {
+    "d_avail_gwh": 35.6,
+    "lp_pmax_mw": 296.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6469": {
+    "d_avail_gwh": 26.9,
+    "lp_pmax_mw": 900.0,
+    "classes": [
+     "COAL_LIGNITE"
+    ]
+   },
+   "2291": {
+    "d_avail_gwh": 25.4,
+    "lp_pmax_mw": 572.8,
+    "classes": [
+     "COAL_PRB",
+     "ST_GAS"
+    ]
+   },
+   "2277": {
+    "d_avail_gwh": 17.7,
+    "lp_pmax_mw": 217.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "108": {
+    "d_avail_gwh": -16.1,
+    "lp_pmax_mw": 359.1,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2963": {
+    "d_avail_gwh": 12.9,
+    "lp_pmax_mw": 1342.0,
+    "classes": [
+     "CC_REGULAR",
+     "COAL_PRB",
+     "ST_GAS",
+     "oil"
+    ]
+   },
+   "1250": {
+    "d_avail_gwh": 10.8,
+    "lp_pmax_mw": 485.3,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2817": {
+    "d_avail_gwh": -3.0,
+    "lp_pmax_mw": 666.0,
+    "classes": [
+     "COAL_LIGNITE"
+    ]
+   },
+   "6077": {
+    "d_avail_gwh": -1.7,
+    "lp_pmax_mw": 1365.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   }
+  },
+  "n_plants_up": 19,
+  "n_plants_down": 3
+ },
+ {
+  "year": 2023,
+  "identical": {
+   "availability": false,
+   "min_gen": false,
+   "min_gen_mechanism": false,
+   "pmax": true,
+   "heat_rate": true,
+   "vom": true
+  },
+  "d_avail_twh_by_class": {
+   "COAL_LIGNITE": 0.0725,
+   "COAL_PRB": 2.5238
+  },
+  "d_avail_gw_mean": 0.2964,
+  "coal_mustrun_floor_twh": [
+   25.844,
+   26.5868
+  ],
+  "by_plant": {
+   "6068": {
+    "d_avail_gwh": 454.3,
+    "lp_pmax_mw": 2011.5,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6064": {
+    "d_avail_gwh": 351.8,
+    "lp_pmax_mw": 319.0,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "6195": {
+    "d_avail_gwh": 278.5,
+    "lp_pmax_mw": 563.0,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "6065": {
+    "d_avail_gwh": 245.3,
+    "lp_pmax_mw": 1599.6,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "1241": {
+    "d_avail_gwh": 234.4,
+    "lp_pmax_mw": 1426.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6139": {
+    "d_avail_gwh": 227.0,
+    "lp_pmax_mw": 1000.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6193": {
+    "d_avail_gwh": 223.4,
+    "lp_pmax_mw": 1018.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6194": {
+    "d_avail_gwh": 88.1,
+    "lp_pmax_mw": 1067.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6469": {
+    "d_avail_gwh": 79.5,
+    "lp_pmax_mw": 900.0,
+    "classes": [
+     "COAL_LIGNITE"
+    ]
+   },
+   "6096": {
+    "d_avail_gwh": 76.0,
+    "lp_pmax_mw": 1337.5,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2079": {
+    "d_avail_gwh": 71.3,
+    "lp_pmax_mw": 960.8,
+    "classes": [
+     "CC_REGULAR",
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "2963": {
+    "d_avail_gwh": 63.7,
+    "lp_pmax_mw": 1342.0,
+    "classes": [
+     "CC_REGULAR",
+     "COAL_PRB",
+     "ST_GAS",
+     "oil"
+    ]
+   },
+   "6095": {
+    "d_avail_gwh": 56.1,
+    "lp_pmax_mw": 1038.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "60": {
+    "d_avail_gwh": 54.4,
+    "lp_pmax_mw": 296.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2291": {
+    "d_avail_gwh": 49.6,
+    "lp_pmax_mw": 562.8,
+    "classes": [
+     "COAL_PRB",
+     "ST_GAS"
+    ]
+   },
+   "2277": {
+    "d_avail_gwh": 17.8,
+    "lp_pmax_mw": 216.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "10671": {
+    "d_avail_gwh": 17.1,
+    "lp_pmax_mw": 321.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "1250": {
+    "d_avail_gwh": 13.0,
+    "lp_pmax_mw": 485.3,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2240": {
+    "d_avail_gwh": 9.7,
+    "lp_pmax_mw": 156.5,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "2817": {
+    "d_avail_gwh": -7.0,
+    "lp_pmax_mw": 660.0,
+    "classes": [
+     "COAL_LIGNITE"
+    ]
+   },
+   "108": {
+    "d_avail_gwh": -5.3,
+    "lp_pmax_mw": 358.9,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6077": {
+    "d_avail_gwh": -2.4,
+    "lp_pmax_mw": 1365.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   }
+  },
+  "n_plants_up": 19,
+  "n_plants_down": 3
+ },
+ {
+  "year": 2024,
+  "identical": {
+   "availability": false,
+   "min_gen": false,
+   "min_gen_mechanism": false,
+   "pmax": true,
+   "heat_rate": true,
+   "vom": true
+  },
+  "d_avail_twh_by_class": {
+   "COAL_LIGNITE": 0.0621,
+   "COAL_PRB": 2.7122
+  },
+  "d_avail_gw_mean": 0.3167,
+  "coal_mustrun_floor_twh": [
+   23.6091,
+   24.6136
+  ],
+  "by_plant": {
+   "6193": {
+    "d_avail_gwh": 1101.5,
+    "lp_pmax_mw": 1018.0,
+    "classes": [
+     "COAL_PRB",
+     "ST_GAS"
+    ]
+   },
+   "1241": {
+    "d_avail_gwh": 378.8,
+    "lp_pmax_mw": 1426.3,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6064": {
+    "d_avail_gwh": 281.5,
+    "lp_pmax_mw": 315.0,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "6195": {
+    "d_avail_gwh": 201.1,
+    "lp_pmax_mw": 563.0,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "6139": {
+    "d_avail_gwh": 168.1,
+    "lp_pmax_mw": 1000.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6065": {
+    "d_avail_gwh": 134.5,
+    "lp_pmax_mw": 1602.2,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6194": {
+    "d_avail_gwh": 85.7,
+    "lp_pmax_mw": 1067.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2291": {
+    "d_avail_gwh": 79.7,
+    "lp_pmax_mw": 563.9,
+    "classes": [
+     "COAL_PRB",
+     "ST_GAS"
+    ]
+   },
+   "6095": {
+    "d_avail_gwh": 76.9,
+    "lp_pmax_mw": 1038.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6068": {
+    "d_avail_gwh": -73.1,
+    "lp_pmax_mw": 2178.8,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "1250": {
+    "d_avail_gwh": 70.3,
+    "lp_pmax_mw": 488.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6469": {
+    "d_avail_gwh": 67.5,
+    "lp_pmax_mw": 900.0,
+    "classes": [
+     "COAL_LIGNITE"
+    ]
+   },
+   "6096": {
+    "d_avail_gwh": 66.7,
+    "lp_pmax_mw": 1337.5,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2079": {
+    "d_avail_gwh": 45.4,
+    "lp_pmax_mw": 954.9,
+    "classes": [
+     "CC_REGULAR",
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "60": {
+    "d_avail_gwh": 41.6,
+    "lp_pmax_mw": 296.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "10671": {
+    "d_avail_gwh": 31.0,
+    "lp_pmax_mw": 321.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "108": {
+    "d_avail_gwh": -22.8,
+    "lp_pmax_mw": 358.9,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2963": {
+    "d_avail_gwh": 16.7,
+    "lp_pmax_mw": 1342.0,
+    "classes": [
+     "CC_REGULAR",
+     "COAL_PRB",
+     "ST_GAS",
+     "oil"
+    ]
+   },
+   "2277": {
+    "d_avail_gwh": 15.9,
+    "lp_pmax_mw": 216.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2240": {
+    "d_avail_gwh": 15.7,
+    "lp_pmax_mw": 156.5,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "2817": {
+    "d_avail_gwh": -5.4,
+    "lp_pmax_mw": 660.0,
+    "classes": [
+     "COAL_LIGNITE"
+    ]
+   },
+   "6077": {
+    "d_avail_gwh": -3.0,
+    "lp_pmax_mw": 1365.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   }
+  },
+  "n_plants_up": 18,
+  "n_plants_down": 4
+ },
+ {
+  "year": 2025,
+  "identical": {
+   "availability": false,
+   "min_gen": false,
+   "min_gen_mechanism": false,
+   "pmax": true,
+   "heat_rate": true,
+   "vom": true
+  },
+  "d_avail_twh_by_class": {
+   "COAL_LIGNITE": 0.0134,
+   "COAL_PRB": 1.6361
+  },
+  "d_avail_gw_mean": 0.1883,
+  "coal_mustrun_floor_twh": [
+   25.3242,
+   25.7043
+  ],
+  "by_plant": {
+   "6065": {
+    "d_avail_gwh": 309.9,
+    "lp_pmax_mw": 1616.4,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "1241": {
+    "d_avail_gwh": 259.1,
+    "lp_pmax_mw": 1437.8,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6195": {
+    "d_avail_gwh": 232.7,
+    "lp_pmax_mw": 563.0,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "6139": {
+    "d_avail_gwh": 214.8,
+    "lp_pmax_mw": 1000.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6095": {
+    "d_avail_gwh": 120.8,
+    "lp_pmax_mw": 1038.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6064": {
+    "d_avail_gwh": 99.9,
+    "lp_pmax_mw": 315.0,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "1250": {
+    "d_avail_gwh": 82.7,
+    "lp_pmax_mw": 491.3,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6096": {
+    "d_avail_gwh": 68.5,
+    "lp_pmax_mw": 1337.5,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2291": {
+    "d_avail_gwh": 58.8,
+    "lp_pmax_mw": 563.9,
+    "classes": [
+     "COAL_PRB",
+     "ST_GAS"
+    ]
+   },
+   "6194": {
+    "d_avail_gwh": 56.3,
+    "lp_pmax_mw": 1067.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2079": {
+    "d_avail_gwh": 51.8,
+    "lp_pmax_mw": 960.3,
+    "classes": [
+     "CC_REGULAR",
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "60": {
+    "d_avail_gwh": 49.3,
+    "lp_pmax_mw": 296.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6068": {
+    "d_avail_gwh": -43.7,
+    "lp_pmax_mw": 2178.8,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "10671": {
+    "d_avail_gwh": 30.6,
+    "lp_pmax_mw": 321.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2240": {
+    "d_avail_gwh": 28.0,
+    "lp_pmax_mw": 156.5,
+    "classes": [
+     "COAL_PRB",
+     "CT_PEAKER"
+    ]
+   },
+   "6469": {
+    "d_avail_gwh": 25.8,
+    "lp_pmax_mw": 900.0,
+    "classes": [
+     "COAL_LIGNITE"
+    ]
+   },
+   "2277": {
+    "d_avail_gwh": 25.1,
+    "lp_pmax_mw": 214.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "2817": {
+    "d_avail_gwh": -12.4,
+    "lp_pmax_mw": 660.0,
+    "classes": [
+     "COAL_LIGNITE"
+    ]
+   },
+   "108": {
+    "d_avail_gwh": -4.9,
+    "lp_pmax_mw": 358.9,
+    "classes": [
+     "COAL_PRB"
+    ]
+   },
+   "6077": {
+    "d_avail_gwh": -3.6,
+    "lp_pmax_mw": 1365.0,
+    "classes": [
+     "COAL_PRB"
+    ]
+   }
+  },
+  "n_plants_up": 16,
+  "n_plants_down": 4
+ }
+]
