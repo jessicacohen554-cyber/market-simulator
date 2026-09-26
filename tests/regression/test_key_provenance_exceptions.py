@@ -113,7 +113,13 @@ def test_census_has_zero_unknown_mismatches(record, exceptions):
         for p, v in K.lag_classifications(record, exceptions).items()
         if v["status"] in ("lag", "unverified")
     }
-    unknown = sorted(mismatch - listed - classed)
+    # Q71 (capx D98): a record its own committed solve_surface.json derives.
+    recorded_surface = {
+        p
+        for p, v in K.surface_recorded_classifications(record).items()
+        if v["status"] == K.SURFACE_RECORDED_CLASS
+    }
+    unknown = sorted(mismatch - listed - classed - recorded_surface)
     assert not unknown, (
         f"{len(unknown)} committed record(s) do not reproduce their cache_key and "
         f"are not in {K.EXCEPTIONS_PATH.name}: {unknown}. This is a SIXTEENTH — "

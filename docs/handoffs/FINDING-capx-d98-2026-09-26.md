@@ -76,7 +76,7 @@ Six new tests are in `tests/regression/test_key_provenance_exceptions.py`, prefi
 * **tampered `moved` block:** `G1_UNKNOWN`, and an empty block is also `G1_UNKNOWN`;
 * a listed entry that the construction derives gives `G2_STALE`.
 
-The whole file passes (see the PR). `ruff check` and `ruff format` are clean.
+The whole file passes: 24 passed, including the slow census-backed tests (`test_census_has_zero_unknown_mismatches` now also subtracts `surface-recorded` rows). `ruff check` and `ruff format` are clean.
 
 ## 4. BOUNDARIES AND RESIDUALS
 
