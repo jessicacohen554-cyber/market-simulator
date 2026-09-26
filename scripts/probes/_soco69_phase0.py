@@ -270,6 +270,63 @@ if __name__ == "__main__" and len(sys.argv) > 1 and sys.argv[1] == "greedy":
     main_greedy([int(a) for a in sys.argv[2:]] or [2019, 2020, 2021, 2022, 2023, 2024, 2025])
     sys.exit(0)
 
+# ---------------------------------------------------------------------------
+# Post-solve comparison (zero LP): the soco-69 legs against the keeper legs.
+# ---------------------------------------------------------------------------
+ARM_LEG = _ROOT / "results/calibration/soco69_{y}"
+
+
+def compare(year: int) -> dict:
+    """Class TWh deltas, unserved, and the PRECOMMIT §5 mechanism checks for one year."""
+    k, a = Path(str(LEG).format(y=year)), Path(str(ARM_LEG).format(y=year))
+    ck = pd.read_parquet(k / f"hourly/class_hourly_{year}.parquet")
+    ca = pd.read_parquet(a / f"hourly/class_hourly_{year}.parquet")
+    tk = ck.groupby(ck.klass.astype(str)).mw.sum() / 1e6
+    ta = ca.groupby(ca.klass.astype(str)).mw.sum() / 1e6
+    d = ta.sub(tk, fill_value=0.0)
+    sk = pd.read_parquet(k / f"hourly/system_{year}.parquet", columns=["slack"]).slack.sum()
+    sa = pd.read_parquet(a / f"hourly/system_{year}.parquet", columns=["slack"]).slack.sum()
+    cols = ["unit_id", "plant_code", "plant_group", "hour", "mw", "cap_mw"]
+    uk = pd.read_parquet(k / f"hourly/unit_hourly_{year}.parquet", columns=cols)
+    ua = pd.read_parquet(a / f"hourly/unit_hourly_{year}.parquet", columns=cols)
+    meas = measured_coal()
+
+    def mr(u: pd.DataFrame) -> pd.DataFrame:
+        u = u[u.plant_group.astype(str).str.startswith("COAL") & u.unit_id.astype(str).str.endswith("_mustrun")]
+        return u
+
+    rk, ra = mr(uk), mr(ua)
+    removed = sorted(set(rk.plant_code.unique()) - set(ra.plant_code.unique()))
+    left_unmeasured = sorted(set(ra.plant_code.unique()) - meas)
+    mk = rk[rk.plant_code.isin(meas)].sort_values(["unit_id", "hour"])
+    ma = ra[ra.plant_code.isin(meas)].sort_values(["unit_id", "hour"])
+    cap_identical = bool(np.array_equal(mk.cap_mw.to_numpy(), ma.cap_mw.to_numpy())
+                         and list(mk.unit_id.astype(str)) == list(ma.unit_id.astype(str)))
+    mr_energy = (mk.mw.sum() / 1e6, ma.mw.sum() / 1e6)
+    return dict(year=year, delta=d, keeper=tk, arm=ta, slack_k=sk, slack_a=sa, removed=removed,
+                left_unmeasured=left_unmeasured, measured_cap_identical=cap_identical,
+                measured_mr_twh=mr_energy)
+
+
+def main_compare(years: list[int]) -> None:
+    """Print the post-solve comparison for every year."""
+    keys = ("CC_REGULAR", "CT_PEAKER", "ST_GAS", "COAL_BIT", "COAL_PRB", "CC_CHP", "CT_CHP", "ST_CHP",
+            "nuclear", "hydro", "wind", "solar")
+    rows = []
+    for y in years:
+        r = compare(y)
+        rows.append({"year": y, **{k: round(float(r["delta"].get(k, 0.0)), 3) for k in keys},
+                     "slack_k_MWh": round(r["slack_k"], 1), "slack_a_MWh": round(r["slack_a"], 1)})
+        print(f"{y}: removed mustrun at {r['removed']}  unmeasured left {r['left_unmeasured']}  "
+              f"measured cap identical {r['measured_cap_identical']}  "
+              f"measured mustrun TWh {r['measured_mr_twh'][0]:.3f} -> {r['measured_mr_twh'][1]:.3f}")
+    print(pd.DataFrame(rows).to_string(index=False))
+
+
+if __name__ == "__main__" and len(sys.argv) > 1 and sys.argv[1] == "compare":
+    main_compare([int(a) for a in sys.argv[2:]] or [2019, 2020, 2021, 2022, 2023, 2024, 2025])
+    sys.exit(0)
+
 
 if __name__ == "__main__":
     main()
