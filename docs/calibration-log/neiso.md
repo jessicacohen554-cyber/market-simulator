@@ -3593,3 +3593,13 @@ yard's own budget; inert 2019–2024) and 2025 re-solved. Result: no criterion c
 −3.03 → PASS, 2019 −2.87/−4.0 pp → −2.35/−3.5 pp (share still FAIL); CO2 2022 CAVEAT → PASS. Train tier CALIBRATED;
 full span NOT-YET on 2019 share only. `neiso114-arm-b-stgas` pruned (rule 35). Record:
 `docs/handoffs/neiso117/RESULT-neiso117-2026-09-26.md`. **Next shorthand: `neiso-118`.**
+
+## neiso-118 — 2026-09-26 — PROMOTED `2026-09-26-neiso-118-canal-ct` (Canal 3 heat rate)
+
+Phase 0: 2019's CT_PEAKER excess (+1.18 TWh) is Canal 3 (1599) at an impossible 3.95 MMBtu/MWh — eGRID-2019's
+boundary-broken plant rate, because the measured-CT derive's `union_fleet` kept each unit's LATEST vintage class and
+Canal 3 is oil in 2023–2025. Owner ruling "CT only": class-preserving `union_fleet(klass=)`, NEISO CT artifact
+re-derived (+Canal 3 rows only, pooled 10.76). Seven single-year shards (first launch cloned `main`; relaunched with an
+explicit SHA checkout). Result: C1 CC_REGULAR 2019 −3.46 pp FAIL → −2.3 pp PASS; C3a price_mean 2019 +9.3 % → +10.03 %
+PASS → FAIL ($0.01 over). Full span NOT-YET on that one line; train tier CALIBRATED. `neiso-117-coal-yard` pruned
+(rule 35). Record: `docs/handoffs/neiso118/RESULT-neiso118-2026-09-26.md`. **Next shorthand: `neiso-119`.**

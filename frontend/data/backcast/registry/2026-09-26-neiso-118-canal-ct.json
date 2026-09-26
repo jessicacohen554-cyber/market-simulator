@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-26-neiso-118-canal-ct",
+  "label": "neiso 118 canal ct",
+  "date": "2026-09-26",
+  "shorthand": "neiso-118-canal-ct",
+  "definition": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-09-26-neiso-118-canal-ct.js",
+  "bundle": "results/calibration/neiso118_span"
+}
