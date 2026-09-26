@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-26-spp-86-coal-extract",
+  "label": "spp 86 coal extract",
+  "date": "2026-09-26",
+  "shorthand": "spp-86-coal-extract",
+  "definition": "SPP-86 arm 2019: coal outage share on the extract's own basis",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-26-spp-86-coal-extract.js",
+  "bundle": "results/calibration/spp86_arm_span"
+}
