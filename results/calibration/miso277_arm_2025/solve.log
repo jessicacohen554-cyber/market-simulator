@@ -1,0 +1,471 @@
+replaying results/calibration/miso275_span (MISO [2019, 2020, 2021, 2022, 2023, 2024, 2025]) ...
+INFO: container preflight: memory ceiling 13.36 GiB (/sys/fs/cgroup/memory/process_api/01a0ded3-2a0f-74d0-a78c-6fc15ecd9618/claude-code-bash/memory.limit_in_bytes; MemTotal 15.72 GiB), swap 0.0 GiB, target ceiling+swap 24 GiB
+INFO: container preflight: provisioned 10 GiB swap at /swapfile-marketsim — ceiling 13.36 + swap 10.0 = 23.4 GiB
+INFO: container preflight: solve profile MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1
+WARNING: container preflight: ceiling+swap 23.4 GiB is below the 24 GiB target; a per-plant ISO-year LP (MISO, PJM) may be OOM-killed here
+WARNING: eGRID plant 7350 heat rate 13.769 MMBtu/MWh exceeds the combined-cycle physical ceiling 11.500 (PLHTIAN spans co-located plant 7931, 6 m away, whose 1 unit(s) eGRID double-counts) — reconciled to 6.808
+WARNING: eGRID plant 55641 heat rate 16.736 MMBtu/MWh exceeds the combined-cycle physical ceiling 11.500 (PLHTIAN spans co-located plant 64020, 454 m away, whose 2 unit(s) eGRID double-counts) — reconciled to 6.836
+WARNING: eGRID boundary heat-rate reconciliation active for 2 plant(s): 7350->6.808, 55641->6.836
+WARNING: eGRID plant 955 heat rate 6.537 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1145 heat rate 7.980 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1154 heat rate 7.737 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1966 heat rate 5.987 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1967 heat rate 7.312 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1980 heat rate 8.584 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1982 heat rate 8.100 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2013 heat rate 4.885 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2068 heat rate 8.454 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7818 heat rate 8.118 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 6 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7865 heat rate 6.714 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56194 heat rate 8.900 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60254 heat rate 8.760 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60559 heat rate 8.384 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60564 heat rate 8.594 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61267 heat rate 8.098 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61391 heat rate 8.571 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61392 heat rate 8.675 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 66059 heat rate 8.488 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+WARNING: MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+WARNING: MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+WARNING: MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+WARNING: MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+WARNING: MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+WARNING: MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Rebuilt binned fleet cache for MISO — 1975 plants → miso_fleet_binned.parquet
+INFO: solving MISO 2025 (hours=8760, Henry Hub=$3.52/MMBtu, commitment=False)
+INFO: gas offer margin anchor VINTAGE 2025: 3.8190 $/MMBtu (window anchor 3.818953424657533) — the solve year's own mean delivered-gas series
+INFO: MISO 2025: miso_south_seam_split — South seam re-homed onto its own external zone (RDT wheel-through bypass severed)
+INFO: MISO 2025: miso_rdt_tcdc — RDT pair replaced with 92% default derate + $40/$500 TCDC tiers (2024 SOM §III.B) + RPE $200 additive on violation tiers (miso_rpe_pricing, 2024 SOM §II.E/§III.B)
+WARNING: capacity-deliverability: clean partition for MISO absent; run scripts/data/curate_capacity_deliverability.py. Returning no limits.
+WARNING: MISO 2025: capacity-deliverability clean partition absent — falling back to static PY2025-26 summer CIL/CEL caps; run scripts/data/curate_capacity_deliverability.py
+INFO: MISO 2025: aggregate simultaneous-transfer limit REPLACED by the measured coincident boundary envelope -- declared scalar 8700 MW -> import mean 4229 / max 8649 MW, export mean 629 / max 3015 MW; import below the scalar in 8760 h, export in 8760 h
+INFO: partial-plant exit carry (MISO): injecting 146 unit(s), 8054 MW — plants [889, 937, 946, 948, 963, 969, 976, 992, 994, 1073, 1142, 1150, 1154, 1163, 1167, 1177, 1191, 1192, 1200, 1206, 1383, 1400, 1404, 1702, 1730, 1734, 1743, 1852, 1868, 1880, 1943, 1969, 1980, 1996, 1998, 2020, 2023, 2039, 2123, 2790, 3982, 4014, 4041, 4078, 4102, 6085, 6089, 6090, 6137, 8027, 8056, 8106, 10360, 10397, 10606, 50190, 50260, 50935, 50936, 50969, 51008, 54091, 54201, 54224, 54262, 54415, 54536, 54731, 54775, 57625, 58043, 58265, 59260, 61647]
+INFO: retiree vintage-status scope (MISO 2025): dropped 131 unit(s), 3195 MW — [(202, '1', 'OS'), (862, '1', 'OS'), (862, '2', 'OS'), (862, '3', 'OS'), (862, '4', 'OS'), (889, '3', 'OS'), (937, '11', 'OA'), (946, 'IC5', 'SB'), (946, 'IC6', 'SB'), (948, '8', 'SB'), (948, '9', 'SB'), (963, '3', 'OS'), (969, '4', 'SB'), (969, '6', 'SB'), (995, '10', 'OS'), (1024, '4', 'OS'), (1024, '5', 'SB'), (1024, 'D1', 'SB'), (1167, '8A', 'OS'), (1177, '4', 'OS'), (1177, '5', 'OA'), (1192, '5', 'SB'), (1200, '2', 'SB'), (1381, '1', 'OS'), (1381, '2', 'OS'), (1381, '3', 'OS'), (1383, '1', 'OS'), (1818, '1', 'SB'), (1818, '2', 'SB'), (1843, '1', 'OS'), (1843, '2', 'OS'), (1843, '3', 'OS'), (1846, '1', 'OS'), (1846, '2', 'OS'), (1846, '4', 'OS'), (1852, '2', 'SB'), (1852, '3', 'SB'), (1943, 'D1', 'SB'), (1943, 'D2', 'SB'), (1971, '1', 'SB'), (1971, '2', 'SB'), (1971, '3', 'SB'), (1971, '4', 'SB'), (2022, 'ST2', 'OS'), (2023, 'GT1', 'SB'), (2050, '1', 'SB'), (2067, '2', 'SB'), (4057, '6', 'OS'), (4078, '2', 'OS'), (4102, '1A', 'SB'), (4102, '2A', 'SB'), (4102, '3A', 'SB'), (4102, '4', 'SB'), (4102, '7', 'OS'), (4102, '8', 'SB'), (4102, '9', 'SB'), (7505, '1', 'SB'), (10075, 'GEN1', 'SB'), (10075, 'GEN2', 'SB'), (10148, 'GEN3', 'OS'), (10397, 'GEN5', 'SB'), (10397, 'GEN6', 'SB'), (10466, 'GEN2', 'OS'), (10477, 'GEN1', 'OS'), (10477, 'GEN2', 'OS'), (10698, 'GEN1', 'OS'), (50260, '500KW', 'SB'), (50424, 'GEN1', 'OS'), (50935, '3516', 'SB'), (50937, 'GENA', 'SB'), (50937, 'GENB', 'SB'), (50969, 'GEN6', 'SB'), (50990, 'P2-3', 'SB'), (50990, 'P2-4', 'SB'), (51008, '2000', 'SB'), (52006, 'GEN1', 'OS'), (54201, 'GEN4', 'SB'), (54224, 'DG6', 'SB'), (54224, 'DG7', 'SB'), (54262, '6', 'SB'), (54705, 'EG-1', 'SB'), (54705, 'EG-3', 'SB'), (54705, 'EG-4', 'SB'), (54705, 'EG2A', 'SB'), (54714, '1265', 'SB'), (54714, '1270', 'SB'), (54714, '1794', 'SB'), (54731, 'GEO1', 'SB'), (54731, 'GEO2', 'SB'), (54731, 'GEO3', 'SB'), (54775, 'GEN1', 'OS'), (54775, 'GEN2', 'OS'), (54842, 'G1', 'OA'), (54842, 'G2', 'OA'), (54842, 'G3', 'OA'), (54842, 'G4', 'OA'), (54967, '7906', 'SB'), (55099, '02', 'OS'), (55099, '03', 'OS'), (55099, '08', 'OS'), (55245, 'TG1', 'OS'), (56074, '01', 'SB'), (56123, '1', 'OS'), (56182, 'Kato', 'OA'), (56247, '1', 'SB'), (56247, '2', 'SB'), (56247, '3', 'SB'), (56247, '4', 'SB'), (56937, 'IPE', 'SB'), (56978, '2', 'OS'), (56978, '3', 'OS'), (56978, '4', 'OS'), (57208, '1', 'SB'), (57208, '2', 'SB'), (57208, '3', 'SB'), (57208, '4', 'SB'), (58043, '1', 'SB'), (58043, '2', 'SB'), (58129, 'GEN1', 'SB'), (58265, 'EP-6', 'SB'), (59260, 'HV1', 'OS'), (62782, 'PEMWT', 'OS'), (63097, 'EP-01', 'SB'), (63097, 'EP-02', 'SB'), (63097, 'EP-03', 'SB'), (63097, 'EP-04', 'SB'), (63097, 'EP-05', 'SB'), (63097, 'EP-06', 'SB'), (63097, 'EP-07', 'SB'), (63097, 'EP-08', 'SB'), (63099, 'EP-10', 'SB')]
+WARNING: eGRID plant 54748 heat rate 5.226 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 58663 heat rate 8.162 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 59559 heat rate 5.532 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 59931 heat rate 4.548 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: 49 of 233 MISO generators not in eGRID lookup — assigned fallback zone
+INFO: MISO: measured power-only CHP heat rates applied to 1 generator(s) across 30 (plant, class) pair(s)
+INFO: loaded 233 within-window retiree units for MISO (17196 MW, plants [51, 856, 861, 891, 892, 940, 963, 976, 992, 994, 1008, 1011, 1013, 1047, 1060, 1073, 1081, 1142, 1150, 1154, 1163, 1191, 1206, 1382, 1400, 1404, 1702, 1730, 1734, 1740, 1741, 1743, 1745, 1769, 1818, 1825, 1826, 1831, 1832, 1868, 1880, 1910, 1943, 1969, 1971, 1980, 1996, 1998, 2020, 2022, 2039, 2053, 2067, 2104, 2123, 2790, 3982, 4014, 4041, 4057, 4059, 4078, 4143, 6016, 6085, 6089, 6090, 6137, 6155, 6356, 7842, 8019, 8027, 8056, 8106, 10033, 10149, 10346, 10360, 10606, 10612, 10698, 50318, 50620, 50935, 50936, 50969, 52006, 54091, 54415, 54531, 54536, 54549, 54748, 54939, 55099, 55104, 55245, 55556, 55770, 55998, 56079, 56266, 57625, 58200, 58219, 58555, 58663, 59260, 59559, 59808, 59931, 62019, 63709, 65494])
+INFO: EIA-860: 1 combined-cycle block(s) rated on one row resolved for the cc_block_summer_rating reconciliation (eia-860)
+INFO: MISO: CC block summer rating (plant 1004): 1036.2 MW carried -> 555.0 MW reported block rating (481.2 MW nameplate-fill phantom removed)
+WARNING: eGRID plant 955 heat rate 6.537 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1145 heat rate 7.980 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1154 heat rate 7.737 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1966 heat rate 5.987 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1967 heat rate 7.312 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1980 heat rate 8.584 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1982 heat rate 8.100 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2013 heat rate 4.885 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2068 heat rate 8.454 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7818 heat rate 8.118 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 6 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7865 heat rate 6.714 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56194 heat rate 8.900 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60254 heat rate 8.760 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60559 heat rate 8.384 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60564 heat rate 8.594 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61267 heat rate 8.098 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61391 heat rate 8.571 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61392 heat rate 8.675 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 66059 heat rate 8.488 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+INFO: EIA-860: 4 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+WARNING: MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+WARNING: MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+WARNING: MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+WARNING: MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+WARNING: MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+WARNING: MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+WARNING: MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+INFO: Loaded MISO fleet from EIA-860 parquet (1976 generators)
+INFO: MISO: measured power-only CHP heat rates applied to 81 generator(s) across 30 (plant, class) pair(s)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: CC capacity reconcile: raised 16 / capped 7 plant(s) to demonstrated peak (+10 MW total) from cc_capacity_reconcile_MISO.csv
+INFO: MISO nuclear unit-availability overlay (2025): 0 reactor(s) on measured daily windows (uncovered dates keep the monthly CF)
+INFO: basis-aware summer derate (MISO): flat _SUMMER_CLASS_DERATE SUPPRESSED for 1250 of 1366 flat-derate units (pmax already the published net-summer rating); KEPT for 116 unit(s) across 22 plant(s) still on a nameplate-like basis [1011, 1013, 1403, 1826, 1910, 2067, 2104, 4057, 4059, 7842, 50318, 52006, 54531, 54748, 55099, 55104, 55218, 55220, 55380, 55418]
+INFO: short-screened coal WEFOR relief (MISO 2025): 45 coal bin(s), 38511.6 MW measured-short capacity
+WARNING: eGRID plant 955 heat rate 6.537 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1145 heat rate 7.980 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1154 heat rate 7.737 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1966 heat rate 5.987 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1967 heat rate 7.312 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1980 heat rate 8.584 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1982 heat rate 8.100 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2013 heat rate 4.885 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2068 heat rate 8.454 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7818 heat rate 8.118 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 6 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7865 heat rate 6.714 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56194 heat rate 8.900 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60254 heat rate 8.760 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60559 heat rate 8.384 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60564 heat rate 8.594 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61267 heat rate 8.098 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61391 heat rate 8.571 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61392 heat rate 8.675 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 66059 heat rate 8.488 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+WARNING: MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+WARNING: MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+WARNING: MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+WARNING: MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+WARNING: MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+WARNING: MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+WARNING: eGRID plant 54748 heat rate 5.226 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 54842 heat rate 8.293 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56937 heat rate 7.800 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 58663 heat rate 8.162 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 59559 heat rate 5.532 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 59931 heat rate 4.548 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 63097 heat rate 4.800 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 8 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: 77 of 217 MISO generators not in eGRID lookup — assigned fallback zone
+INFO: loaded 217 within-window retiree units for MISO (12294 MW, plants [51, 202, 856, 861, 862, 891, 892, 940, 995, 1008, 1011, 1013, 1024, 1047, 1060, 1081, 1381, 1382, 1740, 1741, 1745, 1769, 1818, 1825, 1826, 1831, 1832, 1843, 1846, 1910, 1971, 2022, 2050, 2053, 2067, 2104, 4057, 4059, 4143, 6016, 6155, 6356, 7505, 7842, 8019, 10033, 10075, 10148, 10149, 10346, 10477, 10612, 10698, 50318, 50620, 50937, 50990, 52006, 54531, 54549, 54705, 54714, 54748, 54842, 54939, 54967, 55099, 55104, 55245, 55556, 55770, 55998, 56074, 56079, 56182, 56247, 56266, 56937, 57208, 58129, 58200, 58219, 58555, 58663, 59559, 59808, 59931, 62019, 63097, 63099, 63709, 65494])
+WARNING: eGRID plant 955 heat rate 6.537 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1145 heat rate 7.980 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1154 heat rate 7.737 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1966 heat rate 5.987 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1967 heat rate 7.312 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1980 heat rate 8.584 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1982 heat rate 8.100 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2013 heat rate 4.885 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2068 heat rate 8.454 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7818 heat rate 8.118 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 6 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7865 heat rate 6.714 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56194 heat rate 8.900 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60254 heat rate 8.760 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60559 heat rate 8.384 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60564 heat rate 8.594 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61267 heat rate 8.098 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61391 heat rate 8.571 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61392 heat rate 8.675 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 66059 heat rate 8.488 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+WARNING: MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+WARNING: MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+WARNING: MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+WARNING: MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+WARNING: MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+WARNING: MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+WARNING: eGRID plant 54748 heat rate 5.226 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 54842 heat rate 8.293 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56937 heat rate 7.800 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 58663 heat rate 8.162 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 59559 heat rate 5.532 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 59931 heat rate 4.548 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 63097 heat rate 4.800 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 8 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: 77 of 217 MISO generators not in eGRID lookup — assigned fallback zone
+INFO: loaded 217 within-window retiree units for MISO (12294 MW, plants [51, 202, 856, 861, 862, 891, 892, 940, 995, 1008, 1011, 1013, 1024, 1047, 1060, 1081, 1381, 1382, 1740, 1741, 1745, 1769, 1818, 1825, 1826, 1831, 1832, 1843, 1846, 1910, 1971, 2022, 2050, 2053, 2067, 2104, 4057, 4059, 4143, 6016, 6155, 6356, 7505, 7842, 8019, 10033, 10075, 10148, 10149, 10346, 10477, 10612, 10698, 50318, 50620, 50937, 50990, 52006, 54531, 54549, 54705, 54714, 54748, 54842, 54939, 54967, 55099, 55104, 55245, 55556, 55770, 55998, 56074, 56079, 56182, 56247, 56266, 56937, 57208, 58129, 58200, 58219, 58555, 58663, 59559, 59808, 59931, 62019, 63097, 63099, 63709, 65494])
+INFO: unit-outage derate (MISO 2025): 967 plant-tranches derated
+INFO: short unit-outage derate (MISO 2025): 656 plant-tranches derated (< 5-day windows; coal on, gas on)
+WARNING: eGRID plant 955 heat rate 6.537 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1145 heat rate 7.980 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1154 heat rate 7.737 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1966 heat rate 5.987 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1967 heat rate 7.312 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1980 heat rate 8.584 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1982 heat rate 8.100 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2013 heat rate 4.885 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2068 heat rate 8.454 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7818 heat rate 8.118 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 6 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7865 heat rate 6.714 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56194 heat rate 8.900 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60254 heat rate 8.760 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60559 heat rate 8.384 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60564 heat rate 8.594 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61267 heat rate 8.098 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61391 heat rate 8.571 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61392 heat rate 8.675 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 66059 heat rate 8.488 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+WARNING: MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+WARNING: MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+WARNING: MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+WARNING: MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+WARNING: MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+WARNING: MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+WARNING: eGRID plant 54748 heat rate 5.226 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 54842 heat rate 8.293 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56937 heat rate 7.800 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 58663 heat rate 8.162 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 59559 heat rate 5.532 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 59931 heat rate 4.548 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 63097 heat rate 4.800 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 8 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: 77 of 217 MISO generators not in eGRID lookup — assigned fallback zone
+INFO: loaded 217 within-window retiree units for MISO (12294 MW, plants [51, 202, 856, 861, 862, 891, 892, 940, 995, 1008, 1011, 1013, 1024, 1047, 1060, 1081, 1381, 1382, 1740, 1741, 1745, 1769, 1818, 1825, 1826, 1831, 1832, 1843, 1846, 1910, 1971, 2022, 2050, 2053, 2067, 2104, 4057, 4059, 4143, 6016, 6155, 6356, 7505, 7842, 8019, 10033, 10075, 10148, 10149, 10346, 10477, 10612, 10698, 50318, 50620, 50937, 50990, 52006, 54531, 54549, 54705, 54714, 54748, 54842, 54939, 54967, 55099, 55104, 55245, 55556, 55770, 55998, 56074, 56079, 56182, 56247, 56266, 56937, 57208, 58129, 58200, 58219, 58555, 58663, 59559, 59808, 59931, 62019, 63097, 63099, 63709, 65494])
+WARNING: eGRID plant 955 heat rate 6.537 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1145 heat rate 7.980 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1154 heat rate 7.737 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1966 heat rate 5.987 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1967 heat rate 7.312 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1980 heat rate 8.584 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1982 heat rate 8.100 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2013 heat rate 4.885 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2068 heat rate 8.454 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7818 heat rate 8.118 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 6 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7865 heat rate 6.714 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56194 heat rate 8.900 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60254 heat rate 8.760 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60559 heat rate 8.384 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60564 heat rate 8.594 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61267 heat rate 8.098 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61391 heat rate 8.571 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61392 heat rate 8.675 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 66059 heat rate 8.488 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+WARNING: MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+WARNING: MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+WARNING: MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+WARNING: MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+WARNING: MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+WARNING: MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+WARNING: eGRID plant 54748 heat rate 5.226 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 54842 heat rate 8.293 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56937 heat rate 7.800 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 58663 heat rate 8.162 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 59559 heat rate 5.532 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 59931 heat rate 4.548 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 63097 heat rate 4.800 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 8 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: 77 of 217 MISO generators not in eGRID lookup — assigned fallback zone
+INFO: loaded 217 within-window retiree units for MISO (12294 MW, plants [51, 202, 856, 861, 862, 891, 892, 940, 995, 1008, 1011, 1013, 1024, 1047, 1060, 1081, 1381, 1382, 1740, 1741, 1745, 1769, 1818, 1825, 1826, 1831, 1832, 1843, 1846, 1910, 1971, 2022, 2050, 2053, 2067, 2104, 4057, 4059, 4143, 6016, 6155, 6356, 7505, 7842, 8019, 10033, 10075, 10148, 10149, 10346, 10477, 10612, 10698, 50318, 50620, 50937, 50990, 52006, 54531, 54549, 54705, 54714, 54748, 54842, 54939, 54967, 55099, 55104, 55245, 55556, 55770, 55998, 56074, 56079, 56182, 56247, 56266, 56937, 57208, 58129, 58200, 58219, 58555, 58663, 59559, 59808, 59931, 62019, 63097, 63099, 63709, 65494])
+INFO: maxgen event-window derate (MISO 2025): 1327 plant-tranches derated (declared-window revealed unit derates)
+INFO: mustrun_plant_exclusions ARMED (MISO): 15 laid-up plant(s) carry no per-plant must-run floor (mechanism-blind CAMPD lay-up census)
+INFO: mustrun_layup_window_mask ARMED (MISO 2025): 28 plant-tranche lay-up share series mask the per-plant must-run floors
+INFO: st_gas_mustrun_p25_measured_level ARMED (MISO): 134 measured-MW level(s) replace the p25_cf x nameplate reconstruction
+INFO: st_gas_mustrun_oom_level ARMED (MISO): 133 out-of-merit level(s) re-condition the measured-MW level
+INFO: ST_GAS p25-level floor (MISO 2025): floored 7 plant(s), 11.49 TWh in measured online windows (level = p25_cf x nameplate, cheapest-first, clipped to pmax*availability)
+INFO: COD ramp (MISO 2025): 6164 unit-months masked offline (mid-year COD / retirement), 489 unit(s) fully not-yet-built/retired
+INFO: MISO: CC block summer rating (plant 1004): 1036.2 MW carried -> 555.0 MW reported block rating (481.2 MW nameplate-fill phantom removed)
+WARNING: eGRID plant 955 heat rate 6.537 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1145 heat rate 7.980 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1154 heat rate 7.737 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1966 heat rate 5.987 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1967 heat rate 7.312 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1980 heat rate 8.584 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1982 heat rate 8.100 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2013 heat rate 4.885 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2068 heat rate 8.454 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7818 heat rate 8.118 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 6 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7865 heat rate 6.714 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56194 heat rate 8.900 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60254 heat rate 8.760 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60559 heat rate 8.384 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 60564 heat rate 8.594 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61267 heat rate 8.098 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61391 heat rate 8.571 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61392 heat rate 8.675 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 66059 heat rate 8.488 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+WARNING: MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+WARNING: MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+WARNING: MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+WARNING: MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+WARNING: MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+WARNING: MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+INFO: Loaded MISO fleet from EIA-860 parquet (1976 generators)
+INFO: MISO: measured power-only CHP heat rates applied to 81 generator(s) across 30 (plant, class) pair(s)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: MISO 2025: EIA-930 NG: WAT level pin REFUSED — this BA folds pumped storage into NG: WAT (no NG: PS column); the monthly hydro level stays on EIA-923 HY, the same population as the LP units (rule 14)
+INFO: MISO 2025 hydro budget: backfilled 146 non-reporting plants (8107.5 GWh) from 2024
+INFO: Loaded MISO 2025 hydro budget: 160 plants, 9077.2 GWh annual, 2372 MW nameplate
+WARNING: MISO 2025: RoR flat level exceeds nameplate on 13 plant-month(s) — clipped to nameplate (source-data inconsistency: monthly budget above nameplate-hours)
+INFO: MISO 2025: RoR split — 98/160 plants flat at their monthly water (58.8% of the 9.08 TWh budget; fleet flat base 331-766 MW by month; 1 plants unclassified -> shapeable)
+INFO: MISO 2025: 160 hydro plants in LP (2372 MW, 9.08 TWh monthly budget)
+INFO: MISO 2025: priced import/export node — 32 import tranches (17200 MW), 32 export sinks (17200 MW)
+INFO: MISO nuclear unit-availability overlay (2025): 13 reactor(s) on measured daily windows (uncovered dates keep the monthly CF)
+INFO: basis-aware summer derate (MISO): flat _SUMMER_CLASS_DERATE SUPPRESSED for 1250 of 1366 flat-derate units (pmax already the published net-summer rating); KEPT for 116 unit(s) across 22 plant(s) still on a nameplate-like basis [1011, 1013, 1403, 1826, 1910, 2067, 2104, 4057, 4059, 7842, 50318, 52006, 54531, 54748, 55099, 55104, 55218, 55220, 55380, 55418]
+INFO: short-screened coal WEFOR relief (MISO 2025): 45 coal bin(s), 38511.6 MW measured-short capacity
+INFO: unit-outage derate (MISO 2025): 967 plant-tranches derated
+INFO: short unit-outage derate (MISO 2025): 656 plant-tranches derated (< 5-day windows; coal on, gas on)
+INFO: maxgen event-window derate (MISO 2025): 1327 plant-tranches derated (declared-window revealed unit derates)
+INFO: mustrun_plant_exclusions ARMED (MISO): 15 laid-up plant(s) carry no per-plant must-run floor (mechanism-blind CAMPD lay-up census)
+INFO: mustrun_layup_window_mask ARMED (MISO 2025): 28 plant-tranche lay-up share series mask the per-plant must-run floors
+INFO: st_gas_mustrun_p25_measured_level ARMED (MISO): 134 measured-MW level(s) replace the p25_cf x nameplate reconstruction
+INFO: st_gas_mustrun_oom_level ARMED (MISO): 133 out-of-merit level(s) re-condition the measured-MW level
+INFO: ST_GAS p25-level floor (MISO 2025): floored 7 plant(s), 10.56 TWh in measured online windows (level = p25_cf x nameplate, cheapest-first, clipped to pmax*availability)
+INFO: COD ramp (MISO 2025): 6672 unit-months masked offline (mid-year COD / retirement), 529 unit(s) fully not-yet-built/retired
+INFO: MISO 2025: CT_PEAKER net-load reliability-drag floor applied (frac = clip(0.01303*netGW -0.8108, 0, 0.44) in ramp 10h-21h)
+INFO: MISO 2025: reference-price seam import capped at measured EIA-930 BA-to-BA deliverability envelope (p90; SPP/South clip toward ~0 import, PJM keeps its measured eastern transfer)
+INFO: MISO 2025: reference-price seam export capped at measured EIA-930 BA-to-BA net-export envelope (p90; PJM seam clips export toward ~0, SPP/South keep their measured export headroom)
+INFO: MISO 2025: reliability floor — dropped 18 drag-owned limb(s) (CLAUDE.md rule 19: net-load drag owns the class commitment)
+INFO: MISO 2025: reliability floor — 43 plant exclusion(s) ARMED (CLAUDE.md rule 17: laid-up units are not floored)
+INFO: MISO 2025: reliability floor — 6 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 gas-price plausibility screen for 2025 (MISO, band [0.5, 2.0] x state N3045 reference): 1044 plant-months in band, 1 low, 0 negative, 86 high -> reference (18 plants); 373 months on the US fallback reference, 0 unscreened (no reference), 0 unscreened (reference <= 0)
+INFO: F923 fuel costs for 2025: 1077 generators priced from their own plant, 2180 gap-filled from nearby (state/zone) plants
+INFO: MISO winter daily delivered hub map (2025): MISO-West=chicago MISO-Plains=chicago MISO-Illinois=chicago MISO-Indiana=chicago MISO-East=chicago MISO-South=henry
+INFO: MISO winter daily delivered gas (2025): 1614 gas units repriced in 2160 winter hours at the measured daily hub (Chicago 2.72..9.92, Henry Hub 2.93..9.86 $/MMBtu) plus per-plant variable transport (mean +0.726); winter shape overlay and zonal increment superseded on these cells (rule 19)
+INFO: MISO zonal gas basis (2025): 1614 gas units; cap-weighted mean +0.06 removed, zonal spread -0.65..0.28 $/MMBtu; 100.0% of gas cells skipped as print-derived
+INFO: EIA-860 multifuel: 577 (plant, group) dual-fuel gas keys flagged
+INFO: dual-fuel switching (MISO 2025): 385 gas tranches (16437 MW) capped at the delivered oil price
+INFO: gas offer net-revenue margin: 1262 tranches compressed at anchor 3.8190 $/MMBtu (median fixed margin 15.65 $/MWh, max 389.30)
+WARNING: SOCO 2025: repairing 4 EIA-930 NG: NG spike hour(s) [1172, 1240, 2751, 7527] (max 70683 MW vs p99.9 26642 MW) -- unit-slip artifact
+INFO: MISO 2025: reference-price interface — 3 neighbor seams priced from gas x heat-rate x load-shape (hurdle in $/MWh); PJM seam re-anchored to its western (ComEd/AEP/ATSI) border hubs
+INFO: MISO 2025: seam bands repriced to the MEASURED per-seam Q-Q ladders (EIA-930 flow durations x HOURLY PJM western-border DA + measured spread offsets on the PJM seam (miso-231) AND HOURLY SPP NORTH hub DA + measured spread offsets on the SPP seam (miso-233), MISO DA hub quantiles on South; PJM/SPP/South, import + export; no added hurdle)
+INFO: coal fuel-inventory budget (MISO 2025): 759 coal gens over 83 plants (1 shared-storage), opening stock 34.73 Mt + delivery rate 114.08 Mt/yr (from 2023+2024) @ 18.081 MMBtu/ton -> annual 252.4 TWh-equiv @HR10.661, monthly cap 224.21 M MMBtu
+INFO: coal per-yard budget (MISO 2025): 57 yards, 548 coal gens rowed (211 unrowed: no curated record), annual 254.0 TWh-equiv @HR10.661 (rate from 2023+2024)
+wrote /home/user/market-simulator/data/clean/maxgen-events/MISO/maxgen-events.parquet  (12 rows)
+INFO: maxgen tier pricing (MISO 2025): maxgen_event_step1 midwest 2025-06-22 23:00:00 -> 2025-06-23 23:00:00, 24 hours x 5 zones at $500 slack floor
+INFO: maxgen tier pricing (MISO 2025): maxgen_warning midwest 2025-06-23 23:00:00 -> 2025-06-24 23:00:00, 24 hours x 5 zones at $500 slack floor
+INFO: maxgen tier pricing (MISO 2025): maxgen_warning footprint 2025-07-28 23:00:00 -> 2025-07-29 23:00:00, 24 hours x 6 zones at $500 slack floor
+INFO: MISO gated reserve class 'miso_reg_spin': MEASURED online_rho=0.1764 (RHO_CLIP banded — floorless since the 2026-08-22 owner ruling; pre-clip 0.1764; min-load sensitivity 0.6863, full-hour 0.1705) over 5276357 online unit-hours, CAMPD coverage 93.1%, vintages 2023-2024-2025
+INFO: energy+reserve co-opt (MISO): RBDC market-wide requirement 2665 MW at h0 (measured hourly cleared reg+spin+supp), 14 ORDC steps ($65-$3500), 2993 reserve-eligible units
+INFO:   MISO zonal reserve family miso_zonal_or_miso_south: requirement 412 MW at h0 (measured hourly South reservation), published zonal curve steps ['343MW@$200', '1201MW@$1100', '172MW@$3300']
+INFO:   MISO zonal reserve family miso_subregional_or_midwest: requirement 2253 MW at h0 (measured hourly Midwest reservation), published zonal curve steps ['2948MW@$200']
+INFO:   MISO zonal reserve family miso_rbdc_regspin: requirement 1556 MW at h0 (measured hourly South reservation), published zonal curve steps ['258MW@$65', '2321MW@$98']
+INFO:   MISO PER-ASSET reserve columns (miso_reserve_pergen): 2979 members pooled into 60 (zone, fuel-class) R columns, availability-scaled 10-min deliverable ramp cap mean 73749 / min 66019 MW
+INFO: Matrix build: 10.523s, Solve: 660.774s (cold, simplex iterations 392484, objective 6731164222.5448)
+INFO: Matrix build: 10.523s, Solve: 366.804s (warm, simplex iterations 235141, objective 6843183608.7899)
+INFO: EIA-923 dual-fuel oil re-attribution: 0.344 TWh across 55 modelled plant(s) moved from the `oil` class into the classes their units dispatch in (-0.021 TWh of it from net-negative rows)
+INFO: EIA-923 2025: CAMPD-backfilled 57 under-reported plant(s) across 59 class-row(s) (1 replaced, 58 added)
+INFO: EIA-923 2025: filled 8 plant(s) with EIA-923-withheld month(s) from CAMPD net (1.929 TWh added to the class benchmark)
+INFO: EIA-923 2025 wind 70.36 TWh under-counts EIA-930 98.94 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 hydro 0.97 TWh under-counts EIA-930 9.88 TWh; using EIA-930 grid total
+INFO: year 2025 phase timing: data_prep=68.0s solve_p0=660.8s markup=88.3s solve_p1=366.8s results_write=66.3s total=1250.2s (markup: setup=0.0s p0_post=42.7s markup=0.9s seam=1.1s p1_post=43.4s tail=0.0s other=0.3s) (results_write: state=1.4s frames=7.3s parquet=6.7s bench=13.1s sidecars=37.8s)
+INFO: year 2025 memory after release: resident=0.33 GB peak=13.33 GB (malloc_trim=yes) | accumulators 0.07 GB (campd=0.05)
+INFO: year 2025 glibc arena: total=0.95 GB in_use=0.18 GB free_retained=0.77 GB mmapped=0.00 GB trim_top=0.00 GB
+INFO: year 2025 retained heap: ndarray=0.13 GB (n=1167) [pandas=0.10 GB n=16, sparse=0.00 GB n=0 — slices, not additions] | 55 populated cache(s), 85 entries | top: _vintage_status_index_for=7, ba_exit_month_share=5, ba_join_first_month=5, _eia_hourly_frame=4, _eia_hourly_frame_filled=4
+INFO: year 2025 retained frame: 55.4 MB  4152240 x 4  cols=year,plant_id,hour,net_mw
+INFO: year 2025 retained frame: 22.9 MB  126342 x 20  cols=plant_id,plant_name,prime_mover,fuel_type,chp,netgen_annual_mwh,ba_code,netgen_january_mwh,netgen_february_mwh,netgen_march_mwh,netgen_april_mwh,netgen_may_mwh
+INFO: year 2025 retained frame: 9.2 MB  148920 x 6  cols=year,pass,from_zone,to_zone,hour,mw
+INFO: year 2025 retained frame: 5.6 MB  70080 x 10  cols=year,pass,zone,hour,price,slack,dump,demand,reserve_price,marginal_emission_rate
+INFO: year 2025 retained frame: 4.4 MB  68919 x 7  cols=year,month,plant_id,state,fuel_group,price_per_mmbtu,quantity
+INFO: year 2025 retained frame: 2.3 MB  87600 x 4  cols=year,series,hour,mw
+WARNING: capacity-deliverability: clean partition for MISO absent; run scripts/data/curate_capacity_deliverability.py. Returning no limits.
+INFO: wrote calibration bundle to results/calibration/miso277_arm_2025
+INFO: memory peak: cgroup_peak_rss_gib=13.36, cgroup_peak_rss_plus_swap_gib=16.63, process_vmhwm_gib=13.33, process_vmswap_now_gib=0.11
+solved into results/calibration/miso277_arm_2025
+INFO: MISO 2025: model dispatch from dispatch/2025_P1.parquet (710 plants)
+# Legitimacy diagnostics report
+
+Bundle: `/home/user/market-simulator/results/calibration/miso277_arm_2025` · ISO: MISO · years: [2025]
+Overall: **FAIL**
+
+Diagnostics per `docs/model-legitimacy-audit-2026-07.md` §7; generated by `scripts/legitimacy_diagnostics.py`.
+
+## D-1 diurnal shape — PASS
+
+| year | class | profile_r | model_offpeak_cv | actual_offpeak_cv | cv_ratio | gated | verdict |
+|---|---|---|---|---|---|---|---|
+| 2025 | CC_CHP | 0.973 | 0.087 | 0.027 | 3.274 | False | pass |
+| 2025 | CC_REGULAR | 0.957 | 0.024 | 0.031 | 0.779 | False | pass |
+| 2025 | COAL_BIT | 0.868 | 0.05 | 0.03 | 1.677 | True | pass |
+| 2025 | COAL_LIGNITE | 0.885 | 0.026 | 0.03 | 0.866 | True | pass |
+| 2025 | COAL_PRB | 0.969 | 0.047 | 0.074 | 0.64 | True | pass |
+| 2025 | CT_CHP | 0.365 | 0.019 | 0.01 | 1.885 | False | pass |
+| 2025 | CT_PEAKER | 0.984 | 0.903 | 0.476 | 1.9 | True | pass |
+| 2025 | OTHER_FOSSIL | 0.963 | 0.04 | 0.133 | 0.302 | False | pass |
+| 2025 | ST_CHP | 0.285 | 0.002 | 0.014 | 0.145 | False | pass |
+| 2025 | ST_GAS | 0.985 | 0.413 | 0.223 | 1.851 | True | pass |
+
+## D-2 forced-energy attribution — FAIL
+
+**Gate failures:**
+- 2025 CT_PEAKER: forced share 25.7% > 15% (3.59 of 13.99 TWh at binding non-exempt floors)
+
+_2025: floors reconstructed via run_year(fleet_only=True) — the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds._
+
+**Per-class gate summary:**
+
+| year | class | forced_twh | class_total_twh | forced_share | limit | load_share | immaterial | lower_bound | upper_bound | verdict |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 2025 | CC_REGULAR | 0.0 | 142.3162 | 0.0 | 0.3 | 0.2144 | False | True | False | pass |
+| 2025 | COAL_BIT | 0.1955 | 56.6334 | 0.0035 | 0.3 | 0.0853 | False | True | False | pass |
+| 2025 | COAL_LIGNITE | 0.0 | 5.8017 | 0.0 | 0.3 | 0.0097 | True | True | False | pass |
+| 2025 | COAL_PRB | 0.2778 | 138.9413 | 0.002 | 0.3 | 0.2304 | False | True | False | pass |
+| 2025 | CT_PEAKER | 3.59 | 13.9945 | 0.2565 | 0.15 | 0.0228 | False | True | False | FAIL |
+| 2025 | ST_GAS | 3.886 | 21.7663 | 0.1785 | 0.3 | 0.0338 | False | True | False | pass |
+| 2025 | hydro | 0.0 | 9.0053 | 0.0 | 0.3 | 0.0136 | True | True | False | pass |
+
+| year | class | mechanism | forced_twh | class_total_twh | share_of_class |
+|---|---|---|---|---|---|
+| 2025 |  | nuclear_mustrun | 90.4465 | 90.4556 | 0.9999 |
+| 2025 | CC_CHP | chp_steam | 4.7753 | 17.5108 | 0.2727 |
+| 2025 | COAL_BIT | reliability_floor | 0.1955 | 56.6334 | 0.0035 |
+| 2025 | COAL_PRB | reliability_floor | 0.2778 | 138.9413 | 0.002 |
+| 2025 | CT_CHP | chp_steam | 2.4352 | 5.34 | 0.456 |
+| 2025 | CT_PEAKER | ct_netload_drag | 3.59 | 13.9945 | 0.2565 |
+| 2025 | ST_CHP | chp_steam | 0.0483 | 2.5473 | 0.019 |
+| 2025 | ST_GAS | reliability_floor | 0.0003 | 21.7663 | 0.0 |
+| 2025 | ST_GAS | st_gas_mustrun_per_plant | 3.8858 | 21.7663 | 0.1785 |
+| 2025 | hydro | hydro_ror_flat | 5.1789 | 9.0053 | 0.5751 |
+
+## D-4 off-window binding — FAIL
+
+**Gate failures:**
+- 2025 reliability_floor × ST_GAS: plant 1122 is floored for 0.0002 TWh (71.4% of the mechanism's forced energy) while its own measured median output over the 28 hours the floor actually binds for it (inside h0-23) is 0.000 MW (75.0% of them at zero) — the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)
+
+_2025: ct_only vintage guard extended the flag from sibling-year vintages for 14 plant(s): 1001, 1007, 1104, 1206, 1393, 1400, 1730, 2001, 55096, 55148, 55799, 6058, 7818, 7985_
+_2025: per-unit conduct rider skipped 3 floored plant(s) carrying the benchmark's CT-only CEMS flag (EIA-923 net > 1.1x CAMPD gross ⇒ scored on EIA-923 MONTHLY, hourly CAMPD incomplete) — a zero median in a series the benchmark itself declines to trust is a metering artifact, not conduct: 10745, 55089, 55259_
+_2025: per-unit conduct rider skipped 93 floored row(s) with no measured series (hydro / nuclear / renewables / interchange pseudo-units) — the rider is a measured-conduct test and never fails a mechanism for a missing meter: 1005, 10195, 10328, 10360, 10487, 10520, 10686, 10789, 1109, 1693, 1694, 1698, 1700, 1701, 1705, 1707, 1708, 1712, 1714, 1716 …_
+
+| year | check | floor | window | plant | floored_twh | offwindow_twh | offwindow_share | binding_hours | measured_median_mw | measured_zero_share | verdict |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2025 | window | chp_steam | h0-23 |  | 7.2587 | 0.0 | 0.0 |  |  |  | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 1391 | 0.5548 |  | 0.0764 | 8700 | 387.769 | 0.0 | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 50625 | 1.438 |  | 0.1981 | 8760 | 700.142 | 0.0 | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 55117 | 0.2745 |  | 0.0378 | 7424 | 374.667 | 0.0051 | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 55404 | 0.4877 |  | 0.0672 | 4131 | 244.142 | 0.0 | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 55419 | 2.1017 |  | 0.2895 | 8760 | 1225.898 | 0.0 | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 59093 | 0.0931 |  | 0.0128 | 2719 | 124.006 | 0.0118 | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 64854 | 0.1021 |  | 0.0141 | 8416 | 78.463 | 0.0013 | pass |
+| 2025 | window | ct_netload_drag | h10-20 |  | 3.59 | 0.0 | 0.0 |  |  |  | pass |
+| 2025 | window | reliability_floor × ST_GAS | h0-23 |  | 0.0003 | 0.0 | 0.0 |  |  |  | pass |
+| 2025 | unit-conduct | reliability_floor × ST_GAS | h0-23 | 990 | 0.0001 |  | 0.2859 | 2 | 362.025 | 0.0 | pass |
+| 2025 | unit-conduct | reliability_floor × ST_GAS | h0-23 | 1122 | 0.0002 |  | 0.7141 | 28 | 0.0 | 0.75 | FAIL |
+| 2025 | window | st_gas_mustrun_per_plant × ST_GAS | h0-23 |  | 3.8858 | 0.0 | 0.0 |  |  |  | pass |
+| 2025 | unit-conduct | st_gas_mustrun_per_plant × ST_GAS | h0-23 | 990 | 1.4841 |  | 0.3819 | 7003 | 341.533 | 0.0301 | pass |
+| 2025 | unit-conduct | st_gas_mustrun_per_plant × ST_GAS | h0-23 | 1122 | 0.2262 |  | 0.0582 | 7014 | 32.841 | 0.0458 | pass |
+| 2025 | unit-conduct | st_gas_mustrun_per_plant × ST_GAS | h0-23 | 1402 | 0.1072 |  | 0.0276 | 2144 | 49.936 | 0.0714 | pass |
+| 2025 | unit-conduct | st_gas_mustrun_per_plant × ST_GAS | h0-23 | 1403 | 0.7165 |  | 0.1844 | 1040 | 487.913 | 0.0 | pass |
+| 2025 | unit-conduct | st_gas_mustrun_per_plant × ST_GAS | h0-23 | 3457 | 0.3301 |  | 0.085 | 3066 | 108.578 | 0.0731 | pass |
+| 2025 | unit-conduct | st_gas_mustrun_per_plant × ST_GAS | h0-23 | 3459 | 0.9413 |  | 0.2422 | 3669 | 308.28 | 0.0809 | pass |
+| 2025 | unit-conduct | st_gas_mustrun_per_plant × ST_GAS | h0-23 | 6035 | 0.0803 |  | 0.0207 | 1126 | 105.749 | 0.1181 | pass |
+| 2025 | window | hydro_ror_flat | h0-23 |  | 5.1789 | 0.0 | 0.0 |  |  |  | pass |
+
+## D-5 forecast/backcast parity — PASS
+
+| mechanism | difference | declared_overlay | note | verdict |
+|---|---|---|---|---|
+| historic_outage_overlay | backcast-only | True | CAMPD outage windows (physical availability events) | declared |
+| unit_outage_maxgen_events | backcast-only | True | declared capacity-emergency event-window revealed derates (M-2): CAMPD per-unit derates inside the maxgen-events registry's declared windows only, under the frozen guards of scripts/data/derive_campd_maxgen_outages.py ($150 DA in-merit certificate, ±45d capability basis, best-event-hour credit, disjointness vs std/short) — same CAMPD outage-window admissibility family as the parent overlay; the D-4 window declaration for this channel is the registry window set itself (see the D4_WINDOWS availability-overlay note) | declared |
+| maxgen_emergency_tier_pricing | backcast-only | True | declared-window ELMP emergency-tier pricing (F5): load-slack repriced to min(voll, SOM-footnoted tier offer floor — $500 Tier 1 Warning/Step 1, $1,000 Tier 2 Step 2+) inside the maxgen-events registry's declared Warning+ windows only; the RBDC/zonal-ORDC curves are never edited (rule 19) and the cost never rises (min). Same declared-instrument admissibility family as the maxgen derates; the D-4 window declaration is the registry Warning+ window set itself (see the D4_WINDOWS availability-overlay note); frozen design docs/handoffs/miso-f5-scarcity-depth-design-2026-07.md | declared |
+| eia860_vintage_snapshot | backcast-only | True | historical fleet vintage pin (runner.py:239 mode gate) | declared |
+| retired_within_window_fleet | backcast-only | True | within-window plant exits injected into the base fleet | declared |
+| planned_additions_pipeline | forecast-only | True | EIA-860 construction-committed pipeline — the declared forecast complement of the backcast fleet boundary | declared |
+| renewable_cf_measured | backcast-only | True | delivered EIA-930/HSL renewable CF upper bound (leakage L1) | declared |
+| nuclear_flat_mustrun | backcast-only | True | measured monthly nuclear CF + flat must-run floor (L3) | declared |
+| ordc_floor_active_mask | backcast-only | True | ERCOT scarcity-floor measured active-hours mask | declared |
+| coal_plant_monthly_pricing | backcast-only | True | F923 per-plant delivered coal cost | declared |
+| reliability_floor | backcast-only | True | declared admissible overlay (2026-06 audit); a wiring gap in the forecast entry is reported but sanctioned by the declaration | declared |
+
+## D-9 overlay quarantine — PASS
+
+| bundle | check | value | verdict |
+|---|---|---|---|
+| miso277_arm_2025 | ct_deployment_overlay | False | pass |
+| miso277_arm_2025 | reliability_deployment_overlay | False | pass |
+| miso277_arm_2025 | ct_mustrun_per_plant | False | pass |
+| miso277_arm_2025 | ordc_reliability_deployment_mw | None | pass |
+| miso277_arm_2025 | caiso_gas_commitment_floor | False | pass |
+
+## D-10 free-class-only rescore (renewable-bound provenance) — PASS
+
+_MISO: 1/2 wind/solar (year, fuel) rows ride the L1 delivered-outcome bound; their advisory-only C1 rows measure plumbing, not model skill (never gate the keeper verdict)._
+
+| year | fuel | provenance | pinned | verdict |
+|---|---|---|---|---|
+| 2025 | wind | forecast_uncurtailed | False | free |
+| 2025 | solar | delivered_pinned | True | PINNED (advisory-only, excluded from skill claims) |
+
+INFO: machine artifact written to results/calibration/miso277_arm_2025/legitimacy_diagnostics.json
+legitimacy diagnostics written -> results/calibration/miso277_arm_2025/legitimacy_diagnostics.json
+WARNING: legitimacy diagnostics gate FAIL on the replayed bundle (artifact still written; C7/C8 score from its contents — see the report above)
+exit 0
