@@ -2853,6 +2853,19 @@ def fleet_to_bins(
             and getattr(config, "coal_mustrun_requires_measured_row", False)
         ):
             pct_mr = 0.0
+        # COAL COMMITTED BAND NESTED ON MUST-RUN (config.coal_committed_nested_
+        # on_mustrun, NWPP-NEXT-4). The artifact's committed_pct and
+        # mustrun_pct are both LEVELS from 0 MW (P5 of online-hour / all-hour
+        # CF), while bins_to_fleet stacks _committed ON TOP of _mustrun. Armed,
+        # a measured coal row's committed band is the increment above the
+        # must-run level, so the two cheap bands sum to the measured committed
+        # level (rule 14 [R-ACCURATE]); the difference falls to the econ band.
+        if (
+            is_coal_class(group)
+            and _measured_row
+            and getattr(config, "coal_committed_nested_on_mustrun", False)
+        ):
+            pct_mc = max(0.0, pct_mc - pct_mr)
         pct_peak = peaking.get(_akey, d_peak)
         # Keep the split feasible: clip committed + peaking to leave room for an
         # economic band above the must-run floor.

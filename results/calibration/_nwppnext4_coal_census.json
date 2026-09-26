@@ -1,0 +1,5777 @@
+{
+ "census": {
+  "2019": {
+   "3845": {
+    "model_twh": 1.311,
+    "cheap_share": 0.294,
+    "cheap_cap_mw": 447.1,
+    "model_sd_daily": 321.8,
+    "model_sd_intra": 30.8,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.377,
+      "cap_mean_mw": 446.2,
+      "mc_mean": 108.54,
+      "h_avail": 7368,
+      "h_at_cap": 653,
+      "h_at_zero": 6700,
+      "h_partial": 15
+     },
+     "econhi": {
+      "twh": 0.4,
+      "cap_mean_mw": 193.2,
+      "mc_mean": 36.23,
+      "h_avail": 7368,
+      "h_at_cap": 1701,
+      "h_at_zero": 5619,
+      "h_partial": 48
+     },
+     "econlo": {
+      "twh": 0.489,
+      "cap_mean_mw": 236.1,
+      "mc_mean": 36.23,
+      "h_avail": 7368,
+      "h_at_cap": 1701,
+      "h_at_zero": 5609,
+      "h_partial": 58
+     },
+     "mustrun": {
+      "twh": 0.008,
+      "cap_mean_mw": 0.9,
+      "mc_mean": 4.5,
+      "h_avail": 7056,
+      "h_at_cap": 7056,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.038,
+      "cap_mean_mw": 17.9,
+      "mc_mean": 36.23,
+      "h_avail": 7368,
+      "h_at_cap": 1747,
+      "h_at_zero": 5620,
+      "h_partial": 1
+     }
+    },
+    "campd_twh": 7.629,
+    "campd_sd_daily": 478.9,
+    "campd_sd_intra": 69.5,
+    "campd_p05": 0.0,
+    "campd_p10_running": 479.0,
+    "campd_max": 1380.0,
+    "r_hourly": 0.263
+   },
+   "4158": {
+    "model_twh": 5.023,
+    "cheap_share": 0.962,
+    "cheap_cap_mw": 551.7,
+    "model_sd_daily": 143.6,
+    "model_sd_intra": 0.0,
+    "model_p05": 324.3,
+    "bands": {
+     "committed": {
+      "twh": 2.426,
+      "cap_mean_mw": 277.0,
+      "mc_mean": 4.64,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.041,
+      "cap_mean_mw": 4.6,
+      "mc_mean": 15.68,
+      "h_avail": 8760,
+      "h_at_cap": 8758,
+      "h_at_zero": 2,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.05,
+      "cap_mean_mw": 5.7,
+      "mc_mean": 15.68,
+      "h_avail": 8760,
+      "h_at_cap": 8758,
+      "h_at_zero": 2,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 2.406,
+      "cap_mean_mw": 274.7,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.1,
+      "cap_mean_mw": 11.5,
+      "mc_mean": 15.68,
+      "h_avail": 8760,
+      "h_at_cap": 8758,
+      "h_at_zero": 2,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 5.152,
+    "campd_sd_daily": 129.4,
+    "campd_sd_intra": 54.5,
+    "campd_p05": 339.0,
+    "campd_p10_running": 394.0,
+    "campd_max": 815.0,
+    "r_hourly": 0.71
+   },
+   "4162": {
+    "model_twh": 3.832,
+    "cheap_share": 0.858,
+    "cheap_cap_mw": 375.4,
+    "model_sd_daily": 108.1,
+    "model_sd_intra": 10.7,
+    "model_p05": 262.0,
+    "bands": {
+     "committed": {
+      "twh": 1.649,
+      "cap_mean_mw": 188.3,
+      "mc_mean": 4.64,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.231,
+      "cap_mean_mw": 93.8,
+      "mc_mean": 31.27,
+      "h_avail": 8760,
+      "h_at_cap": 2442,
+      "h_at_zero": 6263,
+      "h_partial": 55
+     },
+     "econlo": {
+      "twh": 0.283,
+      "cap_mean_mw": 114.7,
+      "mc_mean": 31.27,
+      "h_avail": 8760,
+      "h_at_cap": 2446,
+      "h_at_zero": 6254,
+      "h_partial": 60
+     },
+     "mustrun": {
+      "twh": 1.639,
+      "cap_mean_mw": 187.1,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.029,
+      "cap_mean_mw": 11.9,
+      "mc_mean": 31.27,
+      "h_avail": 8760,
+      "h_at_cap": 2475,
+      "h_at_zero": 6275,
+      "h_partial": 10
+     }
+    },
+    "campd_twh": 3.097,
+    "campd_sd_daily": 118.5,
+    "campd_sd_intra": 35.9,
+    "campd_p05": 109.0,
+    "campd_p10_running": 166.0,
+    "campd_max": 699.0,
+    "r_hourly": 0.539
+   },
+   "6076": {
+    "model_twh": 13.498,
+    "cheap_share": 0.993,
+    "cheap_cap_mw": 1529.8,
+    "model_sd_daily": 495.5,
+    "model_sd_intra": 1.7,
+    "model_p05": 513.4,
+    "bands": {
+     "committed": {
+      "twh": 6.55,
+      "cap_mean_mw": 747.7,
+      "mc_mean": 4.66,
+      "h_avail": 8616,
+      "h_at_cap": 8615,
+      "h_at_zero": 0,
+      "h_partial": 1
+     },
+     "mustrun": {
+      "twh": 6.851,
+      "cap_mean_mw": 782.1,
+      "mc_mean": 4.5,
+      "h_avail": 8616,
+      "h_at_cap": 8616,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.097,
+      "cap_mean_mw": 31.2,
+      "mc_mean": 33.8,
+      "h_avail": 8616,
+      "h_at_cap": 2846,
+      "h_at_zero": 5758,
+      "h_partial": 12
+     }
+    },
+    "campd_twh": 14.777,
+    "campd_sd_daily": 580.5,
+    "campd_sd_intra": 91.8,
+    "campd_p05": 428.0,
+    "campd_p10_running": 793.0,
+    "campd_max": 2244.0,
+    "r_hourly": 0.901
+   },
+   "6101": {
+    "model_twh": 2.254,
+    "cheap_share": 0.486,
+    "cheap_cap_mw": 125.0,
+    "model_sd_daily": 109.1,
+    "model_sd_intra": 1.2,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 1.095,
+      "cap_mean_mw": 125.0,
+      "mc_mean": 4.75,
+      "h_avail": 7440,
+      "h_at_cap": 7438,
+      "h_at_zero": 2,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.502,
+      "cap_mean_mw": 57.4,
+      "mc_mean": 18.22,
+      "h_avail": 7440,
+      "h_at_cap": 7420,
+      "h_at_zero": 16,
+      "h_partial": 4
+     },
+     "econlo": {
+      "twh": 0.613,
+      "cap_mean_mw": 70.2,
+      "mc_mean": 18.22,
+      "h_avail": 7440,
+      "h_at_cap": 7418,
+      "h_at_zero": 18,
+      "h_partial": 4
+     },
+     "peak": {
+      "twh": 0.045,
+      "cap_mean_mw": 5.2,
+      "mc_mean": 18.22,
+      "h_avail": 7440,
+      "h_at_cap": 7423,
+      "h_at_zero": 16,
+      "h_partial": 1
+     }
+    },
+    "campd_twh": 2.123,
+    "campd_sd_daily": 100.7,
+    "campd_sd_intra": 33.5,
+    "campd_p05": 0.0,
+    "campd_p10_running": 193.0,
+    "campd_max": 376.0,
+    "r_hourly": 0.811
+   },
+   "6106": {
+    "model_twh": 3.036,
+    "cheap_share": 0.719,
+    "cheap_cap_mw": 267.3,
+    "model_sd_daily": 125.7,
+    "model_sd_intra": 13.0,
+    "model_p05": 233.2,
+    "bands": {
+     "committed": {
+      "twh": 0.075,
+      "cap_mean_mw": 26.7,
+      "mc_mean": 83.19,
+      "h_avail": 8760,
+      "h_at_cap": 2900,
+      "h_at_zero": 5859,
+      "h_partial": 1
+     },
+     "econhi": {
+      "twh": 0.368,
+      "cap_mean_mw": 115.5,
+      "mc_mean": 28.14,
+      "h_avail": 8760,
+      "h_at_cap": 3269,
+      "h_at_zero": 5466,
+      "h_partial": 25
+     },
+     "econlo": {
+      "twh": 0.45,
+      "cap_mean_mw": 141.2,
+      "mc_mean": 28.14,
+      "h_avail": 8760,
+      "h_at_cap": 3265,
+      "h_at_zero": 5459,
+      "h_partial": 36
+     },
+     "mustrun": {
+      "twh": 2.108,
+      "cap_mean_mw": 240.6,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.034,
+      "cap_mean_mw": 10.7,
+      "mc_mean": 28.14,
+      "h_avail": 8760,
+      "h_at_cap": 3291,
+      "h_at_zero": 5469,
+      "h_partial": 0
+     }
+    }
+   },
+   "6165": {
+    "model_twh": 7.951,
+    "cheap_share": 0.567,
+    "cheap_cap_mw": 514.8,
+    "model_sd_daily": 270.2,
+    "model_sd_intra": 85.8,
+    "model_p05": 493.2,
+    "bands": {
+     "committed": {
+      "twh": 2.254,
+      "cap_mean_mw": 257.4,
+      "mc_mean": 5.0,
+      "h_avail": 8760,
+      "h_at_cap": 8758,
+      "h_at_zero": 2,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 1.492,
+      "cap_mean_mw": 277.4,
+      "mc_mean": 23.22,
+      "h_avail": 8760,
+      "h_at_cap": 5484,
+      "h_at_zero": 3001,
+      "h_partial": 275
+     },
+     "econlo": {
+      "twh": 1.826,
+      "cap_mean_mw": 339.0,
+      "mc_mean": 23.22,
+      "h_avail": 8760,
+      "h_at_cap": 5448,
+      "h_at_zero": 2965,
+      "h_partial": 347
+     },
+     "mustrun": {
+      "twh": 2.254,
+      "cap_mean_mw": 257.4,
+      "mc_mean": 4.84,
+      "h_avail": 8760,
+      "h_at_cap": 8758,
+      "h_at_zero": 2,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.124,
+      "cap_mean_mw": 23.1,
+      "mc_mean": 23.22,
+      "h_avail": 8760,
+      "h_at_cap": 5606,
+      "h_at_zero": 3128,
+      "h_partial": 26
+     }
+    },
+    "campd_twh": 9.415,
+    "campd_sd_daily": 254.5,
+    "campd_sd_intra": 140.8,
+    "campd_p05": 436.0,
+    "campd_p10_running": 584.0,
+    "campd_max": 1449.0,
+    "r_hourly": 0.521
+   },
+   "7790": {
+    "model_twh": 3.494,
+    "cheap_share": 0.983,
+    "cheap_cap_mw": 392.0,
+    "model_sd_daily": 71.7,
+    "model_sd_intra": 1.5,
+    "model_p05": 392.0,
+    "bands": {
+     "committed": {
+      "twh": 1.717,
+      "cap_mean_mw": 196.0,
+      "mc_mean": 4.67,
+      "h_avail": 8496,
+      "h_at_cap": 8494,
+      "h_at_zero": 1,
+      "h_partial": 1
+     },
+     "econhi": {
+      "twh": 0.011,
+      "cap_mean_mw": 2.6,
+      "mc_mean": 25.07,
+      "h_avail": 8496,
+      "h_at_cap": 4330,
+      "h_at_zero": 4166,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.014,
+      "cap_mean_mw": 3.1,
+      "mc_mean": 25.07,
+      "h_avail": 8496,
+      "h_at_cap": 4329,
+      "h_at_zero": 4163,
+      "h_partial": 4
+     },
+     "mustrun": {
+      "twh": 1.717,
+      "cap_mean_mw": 196.0,
+      "mc_mean": 4.5,
+      "h_avail": 8496,
+      "h_at_cap": 8496,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.035,
+      "cap_mean_mw": 8.1,
+      "mc_mean": 25.07,
+      "h_avail": 8496,
+      "h_at_cap": 4327,
+      "h_at_zero": 4165,
+      "h_partial": 4
+     }
+    },
+    "campd_twh": 3.975,
+    "campd_sd_daily": 74.4,
+    "campd_sd_intra": 23.3,
+    "campd_p05": 274.0,
+    "campd_p10_running": 401.0,
+    "campd_max": 492.0,
+    "r_hourly": 0.632
+   },
+   "8066": {
+    "model_twh": 9.112,
+    "cheap_share": 0.869,
+    "cheap_cap_mw": 904.3,
+    "model_sd_daily": 328.3,
+    "model_sd_intra": 48.2,
+    "model_p05": 519.4,
+    "bands": {
+     "committed": {
+      "twh": 0.792,
+      "cap_mean_mw": 90.4,
+      "mc_mean": 4.64,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.513,
+      "cap_mean_mw": 390.7,
+      "mc_mean": 32.93,
+      "h_avail": 8760,
+      "h_at_cap": 1236,
+      "h_at_zero": 7387,
+      "h_partial": 137
+     },
+     "econlo": {
+      "twh": 0.629,
+      "cap_mean_mw": 477.5,
+      "mc_mean": 32.93,
+      "h_avail": 8760,
+      "h_at_cap": 1222,
+      "h_at_zero": 7358,
+      "h_partial": 180
+     },
+     "mustrun": {
+      "twh": 7.13,
+      "cap_mean_mw": 813.9,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.048,
+      "cap_mean_mw": 36.2,
+      "mc_mean": 32.93,
+      "h_avail": 8760,
+      "h_at_cap": 1312,
+      "h_at_zero": 7436,
+      "h_partial": 12
+     }
+    },
+    "campd_twh": 12.159,
+    "campd_sd_daily": 385.2,
+    "campd_sd_intra": 220.0,
+    "campd_p05": 567.0,
+    "campd_p10_running": 736.0,
+    "campd_max": 2255.0,
+    "r_hourly": 0.518
+   },
+   "8069": {
+    "model_twh": 4.125,
+    "cheap_share": 0.597,
+    "cheap_cap_mw": 281.2,
+    "model_sd_daily": 239.7,
+    "model_sd_intra": 30.9,
+    "model_p05": 135.3,
+    "bands": {
+     "committed": {
+      "twh": 1.232,
+      "cap_mean_mw": 140.6,
+      "mc_mean": 4.89,
+      "h_avail": 8760,
+      "h_at_cap": 8758,
+      "h_at_zero": 2,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.724,
+      "cap_mean_mw": 191.5,
+      "mc_mean": 25.18,
+      "h_avail": 8760,
+      "h_at_cap": 3838,
+      "h_at_zero": 4830,
+      "h_partial": 92
+     },
+     "econlo": {
+      "twh": 0.883,
+      "cap_mean_mw": 234.0,
+      "mc_mean": 25.18,
+      "h_avail": 8760,
+      "h_at_cap": 3812,
+      "h_at_zero": 4814,
+      "h_partial": 134
+     },
+     "mustrun": {
+      "twh": 1.232,
+      "cap_mean_mw": 140.6,
+      "mc_mean": 4.73,
+      "h_avail": 8760,
+      "h_at_cap": 8758,
+      "h_at_zero": 2,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.055,
+      "cap_mean_mw": 14.4,
+      "mc_mean": 25.18,
+      "h_avail": 8760,
+      "h_at_cap": 3886,
+      "h_at_zero": 4867,
+      "h_partial": 7
+     }
+    },
+    "campd_twh": 5.35,
+    "campd_sd_daily": 213.6,
+    "campd_sd_intra": 150.0,
+    "campd_p05": 209.0,
+    "campd_p10_running": 223.0,
+    "campd_max": 971.0,
+    "r_hourly": 0.578
+   },
+   "8224": {
+    "model_twh": 1.998,
+    "cheap_share": 0.91,
+    "cheap_cap_mw": 207.6,
+    "model_sd_daily": 152.7,
+    "model_sd_intra": 4.8,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.909,
+      "cap_mean_mw": 103.8,
+      "mc_mean": 16.77,
+      "h_avail": 7464,
+      "h_at_cap": 7464,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.072,
+      "cap_mean_mw": 19.1,
+      "mc_mean": 31.96,
+      "h_avail": 7464,
+      "h_at_cap": 2980,
+      "h_at_zero": 4471,
+      "h_partial": 13
+     },
+     "econlo": {
+      "twh": 0.088,
+      "cap_mean_mw": 23.3,
+      "mc_mean": 31.96,
+      "h_avail": 7464,
+      "h_at_cap": 2976,
+      "h_at_zero": 4474,
+      "h_partial": 14
+     },
+     "mustrun": {
+      "twh": 0.909,
+      "cap_mean_mw": 103.8,
+      "mc_mean": 16.55,
+      "h_avail": 7464,
+      "h_at_cap": 7464,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.019,
+      "cap_mean_mw": 5.1,
+      "mc_mean": 31.96,
+      "h_avail": 7464,
+      "h_at_cap": 2980,
+      "h_at_zero": 4480,
+      "h_partial": 4
+     }
+    },
+    "campd_twh": 1.913,
+    "campd_sd_daily": 144.6,
+    "campd_sd_intra": 35.7,
+    "campd_p05": 0.0,
+    "campd_p10_running": 105.0,
+    "campd_max": 541.0,
+    "r_hourly": 0.894
+   },
+   "54318": {
+    "model_twh": 0.24,
+    "cheap_share": 0.5,
+    "cheap_cap_mw": 13.7,
+    "model_sd_daily": 1.2,
+    "model_sd_intra": 0.0,
+    "model_p05": 26.6,
+    "bands": {
+     "committed": {
+      "twh": 0.012,
+      "cap_mean_mw": 1.4,
+      "mc_mean": 15.69,
+      "h_avail": 8760,
+      "h_at_cap": 8758,
+      "h_at_zero": 2,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.052,
+      "cap_mean_mw": 5.9,
+      "mc_mean": 15.53,
+      "h_avail": 8760,
+      "h_at_cap": 8758,
+      "h_at_zero": 2,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.063,
+      "cap_mean_mw": 7.2,
+      "mc_mean": 15.53,
+      "h_avail": 8760,
+      "h_at_cap": 8758,
+      "h_at_zero": 2,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 0.108,
+      "cap_mean_mw": 12.3,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.005,
+      "cap_mean_mw": 0.5,
+      "mc_mean": 15.53,
+      "h_avail": 8760,
+      "h_at_cap": 8758,
+      "h_at_zero": 2,
+      "h_partial": 0
+     }
+    }
+   },
+   "56163": {
+    "model_twh": 0.422,
+    "cheap_share": 0.666,
+    "cheap_cap_mw": 34.3,
+    "model_sd_daily": 15.9,
+    "model_sd_intra": 3.4,
+    "model_p05": 29.9,
+    "bands": {
+     "committed": {
+      "twh": 0.011,
+      "cap_mean_mw": 3.4,
+      "mc_mean": 43.78,
+      "h_avail": 8760,
+      "h_at_cap": 3412,
+      "h_at_zero": 5348,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.061,
+      "cap_mean_mw": 14.8,
+      "mc_mean": 25.79,
+      "h_avail": 8760,
+      "h_at_cap": 4195,
+      "h_at_zero": 4562,
+      "h_partial": 3
+     },
+     "econlo": {
+      "twh": 0.074,
+      "cap_mean_mw": 18.1,
+      "mc_mean": 25.79,
+      "h_avail": 8760,
+      "h_at_cap": 4186,
+      "h_at_zero": 4560,
+      "h_partial": 14
+     },
+     "mustrun": {
+      "twh": 0.27,
+      "cap_mean_mw": 30.9,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.006,
+      "cap_mean_mw": 1.4,
+      "mc_mean": 25.79,
+      "h_avail": 8760,
+      "h_at_cap": 4197,
+      "h_at_zero": 4563,
+      "h_partial": 0
+     }
+    }
+   },
+   "56224": {
+    "model_twh": 0.743,
+    "cheap_share": 0.899,
+    "cheap_cap_mw": 124.8,
+    "model_sd_daily": 56.2,
+    "model_sd_intra": 7.7,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.122,
+      "cap_mean_mw": 62.4,
+      "mc_mean": 60.23,
+      "h_avail": 7968,
+      "h_at_cap": 1474,
+      "h_at_zero": 6435,
+      "h_partial": 59
+     },
+     "econhi": {
+      "twh": 0.029,
+      "cap_mean_mw": 9.2,
+      "mc_mean": 33.27,
+      "h_avail": 7968,
+      "h_at_cap": 2737,
+      "h_at_zero": 5215,
+      "h_partial": 16
+     },
+     "econlo": {
+      "twh": 0.036,
+      "cap_mean_mw": 11.2,
+      "mc_mean": 33.27,
+      "h_avail": 7968,
+      "h_at_cap": 2736,
+      "h_at_zero": 5215,
+      "h_partial": 17
+     },
+     "mustrun": {
+      "twh": 0.546,
+      "cap_mean_mw": 62.4,
+      "mc_mean": 7.24,
+      "h_avail": 7968,
+      "h_at_cap": 7968,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.009,
+      "cap_mean_mw": 3.0,
+      "mc_mean": 33.27,
+      "h_avail": 7968,
+      "h_at_cap": 2742,
+      "h_at_zero": 5225,
+      "h_partial": 1
+     }
+    },
+    "campd_twh": 1.168,
+    "campd_sd_daily": 51.0,
+    "campd_sd_intra": 18.7,
+    "campd_p05": 0.0,
+    "campd_p10_running": 94.0,
+    "campd_max": 239.0,
+    "r_hourly": 0.633
+   },
+   "57915": {
+    "model_twh": 0.328,
+    "cheap_share": 0.5,
+    "cheap_cap_mw": 18.8,
+    "model_sd_daily": 1.6,
+    "model_sd_intra": 0.0,
+    "model_p05": 36.3,
+    "bands": {
+     "committed": {
+      "twh": 0.016,
+      "cap_mean_mw": 1.9,
+      "mc_mean": 15.57,
+      "h_avail": 8760,
+      "h_at_cap": 8758,
+      "h_at_zero": 2,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.071,
+      "cap_mean_mw": 8.1,
+      "mc_mean": 15.41,
+      "h_avail": 8760,
+      "h_at_cap": 8758,
+      "h_at_zero": 2,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.087,
+      "cap_mean_mw": 9.9,
+      "mc_mean": 15.41,
+      "h_avail": 8760,
+      "h_at_cap": 8758,
+      "h_at_zero": 2,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 0.148,
+      "cap_mean_mw": 16.9,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.007,
+      "cap_mean_mw": 0.7,
+      "mc_mean": 15.41,
+      "h_avail": 8760,
+      "h_at_cap": 8758,
+      "h_at_zero": 2,
+      "h_partial": 0
+     }
+    }
+   }
+  },
+  "2020": {
+   "3845": {
+    "model_twh": 0.231,
+    "cheap_share": 0.026,
+    "cheap_cap_mw": 284.0,
+    "model_sd_daily": 75.6,
+    "model_sd_intra": 22.2,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.001,
+      "cap_mean_mw": 283.4,
+      "mc_mean": 122.2,
+      "h_avail": 4128,
+      "h_at_cap": 0,
+      "h_at_zero": 4125,
+      "h_partial": 3
+     },
+     "econhi": {
+      "twh": 0.099,
+      "cap_mean_mw": 122.7,
+      "mc_mean": 37.1,
+      "h_avail": 4128,
+      "h_at_cap": 213,
+      "h_at_zero": 3566,
+      "h_partial": 349
+     },
+     "econlo": {
+      "twh": 0.117,
+      "cap_mean_mw": 150.0,
+      "mc_mean": 37.1,
+      "h_avail": 4128,
+      "h_at_cap": 201,
+      "h_at_zero": 3584,
+      "h_partial": 343
+     },
+     "mustrun": {
+      "twh": 0.005,
+      "cap_mean_mw": 0.6,
+      "mc_mean": 4.5,
+      "h_avail": 4008,
+      "h_at_cap": 4007,
+      "h_at_zero": 1,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.01,
+      "cap_mean_mw": 11.4,
+      "mc_mean": 37.1,
+      "h_avail": 4128,
+      "h_at_cap": 246,
+      "h_at_zero": 3565,
+      "h_partial": 317
+     }
+    },
+    "campd_twh": 5.455,
+    "campd_sd_daily": 512.7,
+    "campd_sd_intra": 85.8,
+    "campd_p05": 0.0,
+    "campd_p10_running": 367.0,
+    "campd_max": 1365.0,
+    "r_hourly": 0.324
+   },
+   "4158": {
+    "model_twh": 4.988,
+    "cheap_share": 0.962,
+    "cheap_cap_mw": 548.0,
+    "model_sd_daily": 151.9,
+    "model_sd_intra": 0.4,
+    "model_p05": 282.0,
+    "bands": {
+     "committed": {
+      "twh": 2.41,
+      "cap_mean_mw": 275.1,
+      "mc_mean": 4.64,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.04,
+      "cap_mean_mw": 4.6,
+      "mc_mean": 16.0,
+      "h_avail": 8760,
+      "h_at_cap": 8673,
+      "h_at_zero": 86,
+      "h_partial": 1
+     },
+     "econlo": {
+      "twh": 0.049,
+      "cap_mean_mw": 5.6,
+      "mc_mean": 16.0,
+      "h_avail": 8760,
+      "h_at_cap": 8674,
+      "h_at_zero": 86,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 2.39,
+      "cap_mean_mw": 272.9,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.099,
+      "cap_mean_mw": 11.4,
+      "mc_mean": 16.0,
+      "h_avail": 8760,
+      "h_at_cap": 8674,
+      "h_at_zero": 85,
+      "h_partial": 1
+     }
+    },
+    "campd_twh": 4.767,
+    "campd_sd_daily": 133.4,
+    "campd_sd_intra": 68.6,
+    "campd_p05": 290.0,
+    "campd_p10_running": 338.0,
+    "campd_max": 819.0,
+    "r_hourly": 0.539
+   },
+   "4162": {
+    "model_twh": 1.703,
+    "cheap_share": 0.92,
+    "cheap_cap_mw": 178.8,
+    "model_sd_daily": 59.7,
+    "model_sd_intra": 13.6,
+    "model_p05": 77.8,
+    "bands": {
+     "committed": {
+      "twh": 0.785,
+      "cap_mean_mw": 89.7,
+      "mc_mean": 4.66,
+      "h_avail": 8712,
+      "h_at_cap": 8708,
+      "h_at_zero": 3,
+      "h_partial": 1
+     },
+     "econhi": {
+      "twh": 0.058,
+      "cap_mean_mw": 44.7,
+      "mc_mean": 31.19,
+      "h_avail": 8712,
+      "h_at_cap": 1240,
+      "h_at_zero": 7430,
+      "h_partial": 42
+     },
+     "econlo": {
+      "twh": 0.071,
+      "cap_mean_mw": 54.6,
+      "mc_mean": 31.19,
+      "h_avail": 8712,
+      "h_at_cap": 1235,
+      "h_at_zero": 7431,
+      "h_partial": 46
+     },
+     "mustrun": {
+      "twh": 0.781,
+      "cap_mean_mw": 89.1,
+      "mc_mean": 4.5,
+      "h_avail": 8712,
+      "h_at_cap": 8712,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.007,
+      "cap_mean_mw": 5.7,
+      "mc_mean": 31.19,
+      "h_avail": 8712,
+      "h_at_cap": 1261,
+      "h_at_zero": 7446,
+      "h_partial": 5
+     }
+    },
+    "campd_twh": 2.711,
+    "campd_sd_daily": 82.3,
+    "campd_sd_intra": 44.9,
+    "campd_p05": 97.0,
+    "campd_p10_running": 161.0,
+    "campd_max": 390.0,
+    "r_hourly": 0.481
+   },
+   "6076": {
+    "model_twh": 5.753,
+    "cheap_share": 0.997,
+    "cheap_cap_mw": 655.1,
+    "model_sd_daily": 407.6,
+    "model_sd_intra": 0.8,
+    "model_p05": 134.3,
+    "bands": {
+     "committed": {
+      "twh": 2.804,
+      "cap_mean_mw": 320.2,
+      "mc_mean": 50.35,
+      "h_avail": 8544,
+      "h_at_cap": 8537,
+      "h_at_zero": 5,
+      "h_partial": 2
+     },
+     "mustrun": {
+      "twh": 2.933,
+      "cap_mean_mw": 334.9,
+      "mc_mean": 4.5,
+      "h_avail": 8544,
+      "h_at_cap": 8544,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.016,
+      "cap_mean_mw": 13.4,
+      "mc_mean": 33.25,
+      "h_avail": 8544,
+      "h_at_cap": 1408,
+      "h_at_zero": 7132,
+      "h_partial": 4
+     }
+    },
+    "campd_twh": 8.86,
+    "campd_sd_daily": 441.6,
+    "campd_sd_intra": 102.9,
+    "campd_p05": 270.0,
+    "campd_p10_running": 377.0,
+    "campd_max": 1959.0,
+    "r_hourly": 0.765
+   },
+   "6101": {
+    "model_twh": 2.353,
+    "cheap_share": 0.504,
+    "cheap_cap_mw": 135.6,
+    "model_sd_daily": 82.8,
+    "model_sd_intra": 13.2,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 1.187,
+      "cap_mean_mw": 135.6,
+      "mc_mean": 4.74,
+      "h_avail": 8064,
+      "h_at_cap": 8064,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.505,
+      "cap_mean_mw": 62.3,
+      "mc_mean": 18.96,
+      "h_avail": 8064,
+      "h_at_cap": 7455,
+      "h_at_zero": 571,
+      "h_partial": 38
+     },
+     "econlo": {
+      "twh": 0.616,
+      "cap_mean_mw": 76.1,
+      "mc_mean": 18.96,
+      "h_avail": 8064,
+      "h_at_cap": 7448,
+      "h_at_zero": 560,
+      "h_partial": 56
+     },
+     "peak": {
+      "twh": 0.045,
+      "cap_mean_mw": 5.6,
+      "mc_mean": 18.96,
+      "h_avail": 8064,
+      "h_at_cap": 7469,
+      "h_at_zero": 592,
+      "h_partial": 3
+     }
+    },
+    "campd_twh": 2.005,
+    "campd_sd_daily": 71.8,
+    "campd_sd_intra": 41.4,
+    "campd_p05": 0.0,
+    "campd_p10_running": 182.0,
+    "campd_max": 371.0,
+    "r_hourly": 0.519
+   },
+   "6106": {
+    "model_twh": 1.832,
+    "cheap_share": 0.875,
+    "cheap_cap_mw": 224.1,
+    "model_sd_daily": 134.7,
+    "model_sd_intra": 14.9,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.002,
+      "cap_mean_mw": 22.4,
+      "mc_mean": 97.95,
+      "h_avail": 7296,
+      "h_at_cap": 85,
+      "h_at_zero": 7208,
+      "h_partial": 3
+     },
+     "econhi": {
+      "twh": 0.099,
+      "cap_mean_mw": 96.8,
+      "mc_mean": 32.31,
+      "h_avail": 7296,
+      "h_at_cap": 869,
+      "h_at_zero": 6403,
+      "h_partial": 24
+     },
+     "econlo": {
+      "twh": 0.122,
+      "cap_mean_mw": 118.3,
+      "mc_mean": 32.31,
+      "h_avail": 7296,
+      "h_at_cap": 872,
+      "h_at_zero": 6401,
+      "h_partial": 23
+     },
+     "mustrun": {
+      "twh": 1.6,
+      "cap_mean_mw": 201.7,
+      "mc_mean": 4.5,
+      "h_avail": 7296,
+      "h_at_cap": 6628,
+      "h_at_zero": 644,
+      "h_partial": 24
+     },
+     "peak": {
+      "twh": 0.009,
+      "cap_mean_mw": 9.0,
+      "mc_mean": 32.31,
+      "h_avail": 7296,
+      "h_at_cap": 884,
+      "h_at_zero": 6409,
+      "h_partial": 3
+     }
+    }
+   },
+   "6165": {
+    "model_twh": 7.419,
+    "cheap_share": 0.596,
+    "cheap_cap_mw": 505.2,
+    "model_sd_daily": 334.4,
+    "model_sd_intra": 93.3,
+    "model_p05": 342.8,
+    "bands": {
+     "committed": {
+      "twh": 2.21,
+      "cap_mean_mw": 252.6,
+      "mc_mean": 5.01,
+      "h_avail": 8760,
+      "h_at_cap": 8744,
+      "h_at_zero": 7,
+      "h_partial": 9
+     },
+     "econhi": {
+      "twh": 1.301,
+      "cap_mean_mw": 272.1,
+      "mc_mean": 23.28,
+      "h_avail": 8760,
+      "h_at_cap": 4522,
+      "h_at_zero": 4029,
+      "h_partial": 209
+     },
+     "econlo": {
+      "twh": 1.589,
+      "cap_mean_mw": 332.6,
+      "mc_mean": 23.28,
+      "h_avail": 8760,
+      "h_at_cap": 4484,
+      "h_at_zero": 4000,
+      "h_partial": 276
+     },
+     "mustrun": {
+      "twh": 2.212,
+      "cap_mean_mw": 252.6,
+      "mc_mean": 4.85,
+      "h_avail": 8760,
+      "h_at_cap": 8754,
+      "h_at_zero": 4,
+      "h_partial": 2
+     },
+     "peak": {
+      "twh": 0.108,
+      "cap_mean_mw": 22.7,
+      "mc_mean": 23.28,
+      "h_avail": 8760,
+      "h_at_cap": 4621,
+      "h_at_zero": 4125,
+      "h_partial": 14
+     }
+    },
+    "campd_twh": 8.718,
+    "campd_sd_daily": 230.2,
+    "campd_sd_intra": 160.4,
+    "campd_p05": 401.0,
+    "campd_p10_running": 566.9,
+    "campd_max": 1451.0,
+    "r_hourly": 0.588
+   },
+   "7790": {
+    "model_twh": 3.461,
+    "cheap_share": 0.994,
+    "cheap_cap_mw": 392.6,
+    "model_sd_daily": 71.7,
+    "model_sd_intra": 1.5,
+    "model_p05": 392.0,
+    "bands": {
+     "committed": {
+      "twh": 1.72,
+      "cap_mean_mw": 196.3,
+      "mc_mean": 4.67,
+      "h_avail": 8496,
+      "h_at_cap": 8495,
+      "h_at_zero": 0,
+      "h_partial": 1
+     },
+     "econhi": {
+      "twh": 0.004,
+      "cap_mean_mw": 2.6,
+      "mc_mean": 29.96,
+      "h_avail": 8496,
+      "h_at_cap": 1568,
+      "h_at_zero": 6928,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.005,
+      "cap_mean_mw": 3.1,
+      "mc_mean": 29.96,
+      "h_avail": 8496,
+      "h_at_cap": 1565,
+      "h_at_zero": 6929,
+      "h_partial": 2
+     },
+     "mustrun": {
+      "twh": 1.72,
+      "cap_mean_mw": 196.3,
+      "mc_mean": 4.5,
+      "h_avail": 8496,
+      "h_at_cap": 8496,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.013,
+      "cap_mean_mw": 8.1,
+      "mc_mean": 29.96,
+      "h_avail": 8496,
+      "h_at_cap": 1564,
+      "h_at_zero": 6925,
+      "h_partial": 7
+     }
+    },
+    "campd_twh": 3.465,
+    "campd_sd_daily": 98.5,
+    "campd_sd_intra": 54.0,
+    "campd_p05": 230.0,
+    "campd_p10_running": 234.0,
+    "campd_max": 492.0,
+    "r_hourly": 0.443
+   },
+   "8066": {
+    "model_twh": 8.399,
+    "cheap_share": 0.956,
+    "cheap_cap_mw": 916.6,
+    "model_sd_daily": 159.8,
+    "model_sd_intra": 52.0,
+    "model_p05": 688.9,
+    "bands": {
+     "committed": {
+      "twh": 0.803,
+      "cap_mean_mw": 91.7,
+      "mc_mean": 4.64,
+      "h_avail": 8760,
+      "h_at_cap": 8759,
+      "h_at_zero": 0,
+      "h_partial": 1
+     },
+     "econhi": {
+      "twh": 0.159,
+      "cap_mean_mw": 396.0,
+      "mc_mean": 34.93,
+      "h_avail": 8760,
+      "h_at_cap": 317,
+      "h_at_zero": 8268,
+      "h_partial": 175
+     },
+     "econlo": {
+      "twh": 0.197,
+      "cap_mean_mw": 483.9,
+      "mc_mean": 34.93,
+      "h_avail": 8760,
+      "h_at_cap": 301,
+      "h_at_zero": 8260,
+      "h_partial": 199
+     },
+     "mustrun": {
+      "twh": 7.226,
+      "cap_mean_mw": 824.9,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.015,
+      "cap_mean_mw": 36.7,
+      "mc_mean": 34.93,
+      "h_avail": 8760,
+      "h_at_cap": 401,
+      "h_at_zero": 8347,
+      "h_partial": 12
+     }
+    },
+    "campd_twh": 11.307,
+    "campd_sd_daily": 329.6,
+    "campd_sd_intra": 258.7,
+    "campd_p05": 590.0,
+    "campd_p10_running": 720.0,
+    "campd_max": 2210.0,
+    "r_hourly": 0.334
+   },
+   "8069": {
+    "model_twh": 4.437,
+    "cheap_share": 0.611,
+    "cheap_cap_mw": 309.4,
+    "model_sd_daily": 216.8,
+    "model_sd_intra": 69.2,
+    "model_p05": 248.2,
+    "bands": {
+     "committed": {
+      "twh": 1.355,
+      "cap_mean_mw": 154.7,
+      "mc_mean": 4.88,
+      "h_avail": 8760,
+      "h_at_cap": 8754,
+      "h_at_zero": 6,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.753,
+      "cap_mean_mw": 210.7,
+      "mc_mean": 25.04,
+      "h_avail": 8760,
+      "h_at_cap": 3424,
+      "h_at_zero": 5149,
+      "h_partial": 187
+     },
+     "econlo": {
+      "twh": 0.916,
+      "cap_mean_mw": 257.5,
+      "mc_mean": 25.04,
+      "h_avail": 8760,
+      "h_at_cap": 3377,
+      "h_at_zero": 5136,
+      "h_partial": 247
+     },
+     "mustrun": {
+      "twh": 1.355,
+      "cap_mean_mw": 154.7,
+      "mc_mean": 4.73,
+      "h_avail": 8760,
+      "h_at_cap": 8757,
+      "h_at_zero": 2,
+      "h_partial": 1
+     },
+     "peak": {
+      "twh": 0.057,
+      "cap_mean_mw": 15.9,
+      "mc_mean": 25.04,
+      "h_avail": 8760,
+      "h_at_cap": 3506,
+      "h_at_zero": 5234,
+      "h_partial": 20
+     }
+    },
+    "campd_twh": 4.947,
+    "campd_sd_daily": 221.3,
+    "campd_sd_intra": 165.2,
+    "campd_p05": 177.0,
+    "campd_p10_running": 188.0,
+    "campd_max": 985.0,
+    "r_hourly": 0.371
+   },
+   "8224": {
+    "model_twh": 1.733,
+    "cheap_share": 0.931,
+    "cheap_cap_mw": 184.4,
+    "model_sd_daily": 203.9,
+    "model_sd_intra": 12.9,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.807,
+      "cap_mean_mw": 92.2,
+      "mc_mean": 48.35,
+      "h_avail": 4560,
+      "h_at_cap": 4560,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.047,
+      "cap_mean_mw": 16.9,
+      "mc_mean": 29.77,
+      "h_avail": 4560,
+      "h_at_cap": 1472,
+      "h_at_zero": 3068,
+      "h_partial": 20
+     },
+     "econlo": {
+      "twh": 0.058,
+      "cap_mean_mw": 20.7,
+      "mc_mean": 29.77,
+      "h_avail": 4560,
+      "h_at_cap": 1465,
+      "h_at_zero": 3066,
+      "h_partial": 29
+     },
+     "mustrun": {
+      "twh": 0.807,
+      "cap_mean_mw": 92.2,
+      "mc_mean": 15.59,
+      "h_avail": 4560,
+      "h_at_cap": 4560,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.013,
+      "cap_mean_mw": 4.5,
+      "mc_mean": 29.77,
+      "h_avail": 4560,
+      "h_at_cap": 1473,
+      "h_at_zero": 3078,
+      "h_partial": 9
+     }
+    },
+    "campd_twh": 1.085,
+    "campd_sd_daily": 131.4,
+    "campd_sd_intra": 21.4,
+    "campd_p05": 0.0,
+    "campd_p10_running": 111.0,
+    "campd_max": 498.0,
+    "r_hourly": 0.924
+   },
+   "54318": {
+    "model_twh": 0.239,
+    "cheap_share": 0.502,
+    "cheap_cap_mw": 13.7,
+    "model_sd_daily": 1.2,
+    "model_sd_intra": 0.2,
+    "model_p05": 26.6,
+    "bands": {
+     "committed": {
+      "twh": 0.012,
+      "cap_mean_mw": 1.4,
+      "mc_mean": 16.21,
+      "h_avail": 8760,
+      "h_at_cap": 8481,
+      "h_at_zero": 278,
+      "h_partial": 1
+     },
+     "econhi": {
+      "twh": 0.052,
+      "cap_mean_mw": 5.9,
+      "mc_mean": 15.92,
+      "h_avail": 8760,
+      "h_at_cap": 8700,
+      "h_at_zero": 60,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.063,
+      "cap_mean_mw": 7.2,
+      "mc_mean": 15.92,
+      "h_avail": 8760,
+      "h_at_cap": 8700,
+      "h_at_zero": 60,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 0.108,
+      "cap_mean_mw": 12.3,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.005,
+      "cap_mean_mw": 0.5,
+      "mc_mean": 15.92,
+      "h_avail": 8760,
+      "h_at_cap": 8700,
+      "h_at_zero": 60,
+      "h_partial": 0
+     }
+    }
+   },
+   "56224": {
+    "model_twh": 0.716,
+    "cheap_share": 0.905,
+    "cheap_cap_mw": 124.8,
+    "model_sd_daily": 49.9,
+    "model_sd_intra": 13.1,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.101,
+      "cap_mean_mw": 62.4,
+      "mc_mean": 67.82,
+      "h_avail": 8304,
+      "h_at_cap": 1229,
+      "h_at_zero": 7016,
+      "h_partial": 59
+     },
+     "econhi": {
+      "twh": 0.027,
+      "cap_mean_mw": 9.2,
+      "mc_mean": 32.04,
+      "h_avail": 8304,
+      "h_at_cap": 2307,
+      "h_at_zero": 5989,
+      "h_partial": 8
+     },
+     "econlo": {
+      "twh": 0.033,
+      "cap_mean_mw": 11.3,
+      "mc_mean": 32.04,
+      "h_avail": 8304,
+      "h_at_cap": 2304,
+      "h_at_zero": 5983,
+      "h_partial": 17
+     },
+     "mustrun": {
+      "twh": 0.547,
+      "cap_mean_mw": 62.4,
+      "mc_mean": 7.12,
+      "h_avail": 8304,
+      "h_at_cap": 8304,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.009,
+      "cap_mean_mw": 3.0,
+      "mc_mean": 32.04,
+      "h_avail": 8304,
+      "h_at_cap": 2311,
+      "h_at_zero": 5990,
+      "h_partial": 3
+     }
+    },
+    "campd_twh": 1.14,
+    "campd_sd_daily": 42.9,
+    "campd_sd_intra": 20.3,
+    "campd_p05": 92.0,
+    "campd_p10_running": 93.0,
+    "campd_max": 240.0,
+    "r_hourly": 0.443
+   },
+   "57915": {
+    "model_twh": 0.247,
+    "cheap_share": 0.502,
+    "cheap_cap_mw": 14.2,
+    "model_sd_daily": 1.3,
+    "model_sd_intra": 0.2,
+    "model_p05": 27.5,
+    "bands": {
+     "committed": {
+      "twh": 0.012,
+      "cap_mean_mw": 1.4,
+      "mc_mean": 16.13,
+      "h_avail": 8760,
+      "h_at_cap": 8510,
+      "h_at_zero": 250,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.053,
+      "cap_mean_mw": 6.1,
+      "mc_mean": 15.84,
+      "h_avail": 8760,
+      "h_at_cap": 8701,
+      "h_at_zero": 58,
+      "h_partial": 1
+     },
+     "econlo": {
+      "twh": 0.065,
+      "cap_mean_mw": 7.5,
+      "mc_mean": 15.84,
+      "h_avail": 8760,
+      "h_at_cap": 8702,
+      "h_at_zero": 58,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 0.112,
+      "cap_mean_mw": 12.8,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.005,
+      "cap_mean_mw": 0.6,
+      "mc_mean": 15.84,
+      "h_avail": 8760,
+      "h_at_cap": 8702,
+      "h_at_zero": 58,
+      "h_partial": 0
+     }
+    }
+   }
+  },
+  "2021": {
+   "3845": {
+    "model_twh": 1.408,
+    "cheap_share": 0.484,
+    "cheap_cap_mw": 186.3,
+    "model_sd_daily": 261.4,
+    "model_sd_intra": 11.0,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.678,
+      "cap_mean_mw": 185.9,
+      "mc_mean": 107.26,
+      "h_avail": 5304,
+      "h_at_cap": 2230,
+      "h_at_zero": 3058,
+      "h_partial": 16
+     },
+     "econhi": {
+      "twh": 0.314,
+      "cap_mean_mw": 80.5,
+      "mc_mean": 36.52,
+      "h_avail": 5304,
+      "h_at_cap": 2374,
+      "h_at_zero": 2911,
+      "h_partial": 19
+     },
+     "econlo": {
+      "twh": 0.385,
+      "cap_mean_mw": 98.3,
+      "mc_mean": 36.52,
+      "h_avail": 5304,
+      "h_at_cap": 2380,
+      "h_at_zero": 2904,
+      "h_partial": 20
+     },
+     "mustrun": {
+      "twh": 0.003,
+      "cap_mean_mw": 0.4,
+      "mc_mean": 4.5,
+      "h_avail": 5304,
+      "h_at_cap": 5304,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.029,
+      "cap_mean_mw": 7.5,
+      "mc_mean": 36.52,
+      "h_avail": 5304,
+      "h_at_cap": 2387,
+      "h_at_zero": 2915,
+      "h_partial": 2
+     }
+    },
+    "campd_twh": 3.339,
+    "campd_sd_daily": 302.6,
+    "campd_sd_intra": 36.5,
+    "campd_p05": 0.0,
+    "campd_p10_running": 381.0,
+    "campd_max": 712.0,
+    "r_hourly": 0.515
+   },
+   "4158": {
+    "model_twh": 4.199,
+    "cheap_share": 0.962,
+    "cheap_cap_mw": 461.1,
+    "model_sd_daily": 189.8,
+    "model_sd_intra": 0.0,
+    "model_p05": 149.3,
+    "bands": {
+     "committed": {
+      "twh": 2.028,
+      "cap_mean_mw": 231.5,
+      "mc_mean": 4.66,
+      "h_avail": 8736,
+      "h_at_cap": 8736,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.034,
+      "cap_mean_mw": 3.9,
+      "mc_mean": 16.56,
+      "h_avail": 8712,
+      "h_at_cap": 8712,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.042,
+      "cap_mean_mw": 4.7,
+      "mc_mean": 16.56,
+      "h_avail": 8712,
+      "h_at_cap": 8712,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 2.011,
+      "cap_mean_mw": 229.6,
+      "mc_mean": 4.5,
+      "h_avail": 8736,
+      "h_at_cap": 8736,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.084,
+      "cap_mean_mw": 9.6,
+      "mc_mean": 16.56,
+      "h_avail": 8712,
+      "h_at_cap": 8712,
+      "h_at_zero": 0,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 4.01,
+    "campd_sd_daily": 156.5,
+    "campd_sd_intra": 54.4,
+    "campd_p05": 175.0,
+    "campd_p10_running": 220.0,
+    "campd_max": 779.0,
+    "r_hourly": 0.797
+   },
+   "4162": {
+    "model_twh": 1.856,
+    "cheap_share": 0.762,
+    "cheap_cap_mw": 161.5,
+    "model_sd_daily": 92.8,
+    "model_sd_intra": 9.3,
+    "model_p05": 77.8,
+    "bands": {
+     "committed": {
+      "twh": 0.71,
+      "cap_mean_mw": 81.0,
+      "mc_mean": 4.65,
+      "h_avail": 8736,
+      "h_at_cap": 8736,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.188,
+      "cap_mean_mw": 40.4,
+      "mc_mean": 33.49,
+      "h_avail": 8736,
+      "h_at_cap": 4436,
+      "h_at_zero": 4271,
+      "h_partial": 29
+     },
+     "econlo": {
+      "twh": 0.23,
+      "cap_mean_mw": 49.4,
+      "mc_mean": 33.49,
+      "h_avail": 8736,
+      "h_at_cap": 4431,
+      "h_at_zero": 4264,
+      "h_partial": 41
+     },
+     "mustrun": {
+      "twh": 0.705,
+      "cap_mean_mw": 80.5,
+      "mc_mean": 4.5,
+      "h_avail": 8736,
+      "h_at_cap": 8736,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.024,
+      "cap_mean_mw": 5.1,
+      "mc_mean": 33.49,
+      "h_avail": 8736,
+      "h_at_cap": 4447,
+      "h_at_zero": 4286,
+      "h_partial": 3
+     }
+    },
+    "campd_twh": 2.47,
+    "campd_sd_daily": 86.0,
+    "campd_sd_intra": 26.6,
+    "campd_p05": 147.0,
+    "campd_p10_running": 164.0,
+    "campd_max": 389.0,
+    "r_hourly": 0.667
+   },
+   "6076": {
+    "model_twh": 9.392,
+    "cheap_share": 0.988,
+    "cheap_cap_mw": 1059.4,
+    "model_sd_daily": 387.6,
+    "model_sd_intra": 1.2,
+    "model_p05": 569.9,
+    "bands": {
+     "committed": {
+      "twh": 4.536,
+      "cap_mean_mw": 517.8,
+      "mc_mean": 54.59,
+      "h_avail": 8496,
+      "h_at_cap": 8496,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 4.744,
+      "cap_mean_mw": 541.6,
+      "mc_mean": 4.5,
+      "h_avail": 8496,
+      "h_at_cap": 8496,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.111,
+      "cap_mean_mw": 21.6,
+      "mc_mean": 32.9,
+      "h_avail": 8496,
+      "h_at_cap": 4623,
+      "h_at_zero": 3864,
+      "h_partial": 9
+     }
+    },
+    "campd_twh": 11.012,
+    "campd_sd_daily": 392.1,
+    "campd_sd_intra": 56.8,
+    "campd_p05": 692.0,
+    "campd_p10_running": 783.0,
+    "campd_max": 1624.0,
+    "r_hourly": 0.91
+   },
+   "6101": {
+    "model_twh": 2.27,
+    "cheap_share": 0.485,
+    "cheap_cap_mw": 125.7,
+    "model_sd_daily": 105.1,
+    "model_sd_intra": 0.1,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 1.101,
+      "cap_mean_mw": 125.7,
+      "mc_mean": 4.82,
+      "h_avail": 7608,
+      "h_at_cap": 7608,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.506,
+      "cap_mean_mw": 57.7,
+      "mc_mean": 19.05,
+      "h_avail": 7608,
+      "h_at_cap": 7605,
+      "h_at_zero": 3,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.618,
+      "cap_mean_mw": 70.6,
+      "mc_mean": 19.05,
+      "h_avail": 7608,
+      "h_at_cap": 7605,
+      "h_at_zero": 3,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.045,
+      "cap_mean_mw": 5.2,
+      "mc_mean": 19.05,
+      "h_avail": 7608,
+      "h_at_cap": 7605,
+      "h_at_zero": 3,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 1.985,
+    "campd_sd_daily": 87.8,
+    "campd_sd_intra": 50.6,
+    "campd_p05": 0.0,
+    "campd_p10_running": 163.0,
+    "campd_max": 376.0,
+    "r_hourly": 0.698
+   },
+   "6165": {
+    "model_twh": 10.467,
+    "cheap_share": 0.447,
+    "cheap_cap_mw": 533.8,
+    "model_sd_daily": 153.0,
+    "model_sd_intra": 4.4,
+    "model_p05": 775.0,
+    "bands": {
+     "committed": {
+      "twh": 2.338,
+      "cap_mean_mw": 266.9,
+      "mc_mean": 4.97,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 2.512,
+      "cap_mean_mw": 287.6,
+      "mc_mean": 22.39,
+      "h_avail": 8760,
+      "h_at_cap": 8724,
+      "h_at_zero": 22,
+      "h_partial": 14
+     },
+     "econlo": {
+      "twh": 3.07,
+      "cap_mean_mw": 351.5,
+      "mc_mean": 22.39,
+      "h_avail": 8760,
+      "h_at_cap": 8709,
+      "h_at_zero": 18,
+      "h_partial": 33
+     },
+     "mustrun": {
+      "twh": 2.338,
+      "cap_mean_mw": 266.9,
+      "mc_mean": 4.83,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.209,
+      "cap_mean_mw": 23.9,
+      "mc_mean": 22.39,
+      "h_avail": 8760,
+      "h_at_cap": 8728,
+      "h_at_zero": 29,
+      "h_partial": 3
+     }
+    },
+    "campd_twh": 10.062,
+    "campd_sd_daily": 142.7,
+    "campd_sd_intra": 134.7,
+    "campd_p05": 709.0,
+    "campd_p10_running": 821.0,
+    "campd_max": 1430.0,
+    "r_hourly": 0.411
+   },
+   "7790": {
+    "model_twh": 3.057,
+    "cheap_share": 0.974,
+    "cheap_cap_mw": 340.0,
+    "model_sd_daily": 146.4,
+    "model_sd_intra": 1.5,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 1.489,
+      "cap_mean_mw": 170.0,
+      "mc_mean": 4.74,
+      "h_avail": 7632,
+      "h_at_cap": 7632,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.015,
+      "cap_mean_mw": 2.2,
+      "mc_mean": 29.71,
+      "h_avail": 7632,
+      "h_at_cap": 5546,
+      "h_at_zero": 2086,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.018,
+      "cap_mean_mw": 2.7,
+      "mc_mean": 29.71,
+      "h_avail": 7632,
+      "h_at_cap": 5547,
+      "h_at_zero": 2085,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 1.489,
+      "cap_mean_mw": 170.0,
+      "mc_mean": 4.5,
+      "h_avail": 7632,
+      "h_at_cap": 7632,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.046,
+      "cap_mean_mw": 7.0,
+      "mc_mean": 29.71,
+      "h_avail": 7632,
+      "h_at_cap": 5546,
+      "h_at_zero": 2081,
+      "h_partial": 5
+     }
+    },
+    "campd_twh": 3.112,
+    "campd_sd_daily": 161.5,
+    "campd_sd_intra": 36.7,
+    "campd_p05": 0.0,
+    "campd_p10_running": 212.0,
+    "campd_max": 491.0,
+    "r_hourly": 0.872
+   },
+   "8066": {
+    "model_twh": 10.968,
+    "cheap_share": 0.694,
+    "cheap_cap_mw": 869.3,
+    "model_sd_daily": 457.7,
+    "model_sd_intra": 80.7,
+    "model_p05": 620.5,
+    "bands": {
+     "committed": {
+      "twh": 0.762,
+      "cap_mean_mw": 86.9,
+      "mc_mean": 4.64,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 1.446,
+      "cap_mean_mw": 375.6,
+      "mc_mean": 32.91,
+      "h_avail": 8760,
+      "h_at_cap": 3668,
+      "h_at_zero": 4763,
+      "h_partial": 329
+     },
+     "econlo": {
+      "twh": 1.772,
+      "cap_mean_mw": 459.0,
+      "mc_mean": 32.91,
+      "h_avail": 8760,
+      "h_at_cap": 3659,
+      "h_at_zero": 4719,
+      "h_partial": 382
+     },
+     "mustrun": {
+      "twh": 6.854,
+      "cap_mean_mw": 782.4,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.134,
+      "cap_mean_mw": 34.8,
+      "mc_mean": 32.91,
+      "h_avail": 8760,
+      "h_at_cap": 3813,
+      "h_at_zero": 4908,
+      "h_partial": 39
+     }
+    },
+    "campd_twh": 11.203,
+    "campd_sd_daily": 393.0,
+    "campd_sd_intra": 238.9,
+    "campd_p05": 448.0,
+    "campd_p10_running": 621.0,
+    "campd_max": 2198.0,
+    "r_hourly": 0.415
+   },
+   "8069": {
+    "model_twh": 6.753,
+    "cheap_share": 0.409,
+    "cheap_cap_mw": 315.6,
+    "model_sd_daily": 147.6,
+    "model_sd_intra": 32.5,
+    "model_p05": 314.1,
+    "bands": {
+     "committed": {
+      "twh": 1.382,
+      "cap_mean_mw": 157.8,
+      "mc_mean": 4.87,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 1.735,
+      "cap_mean_mw": 214.9,
+      "mc_mean": 25.09,
+      "h_avail": 8760,
+      "h_at_cap": 8005,
+      "h_at_zero": 658,
+      "h_partial": 97
+     },
+     "econlo": {
+      "twh": 2.123,
+      "cap_mean_mw": 262.6,
+      "mc_mean": 25.09,
+      "h_avail": 8760,
+      "h_at_cap": 8004,
+      "h_at_zero": 640,
+      "h_partial": 116
+     },
+     "mustrun": {
+      "twh": 1.382,
+      "cap_mean_mw": 157.8,
+      "mc_mean": 4.73,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.131,
+      "cap_mean_mw": 16.2,
+      "mc_mean": 25.09,
+      "h_avail": 8760,
+      "h_at_cap": 8044,
+      "h_at_zero": 709,
+      "h_partial": 7
+     }
+    },
+    "campd_twh": 6.792,
+    "campd_sd_daily": 152.5,
+    "campd_sd_intra": 150.7,
+    "campd_p05": 189.0,
+    "campd_p10_running": 315.7,
+    "campd_max": 989.0,
+    "r_hourly": 0.401
+   },
+   "8224": {
+    "model_twh": 2.458,
+    "cheap_share": 0.828,
+    "cheap_cap_mw": 232.4,
+    "model_sd_daily": 189.6,
+    "model_sd_intra": 3.1,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 1.018,
+      "cap_mean_mw": 116.2,
+      "mc_mean": 31.89,
+      "h_avail": 6960,
+      "h_at_cap": 6960,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.169,
+      "cap_mean_mw": 21.3,
+      "mc_mean": 29.8,
+      "h_avail": 6960,
+      "h_at_cap": 5862,
+      "h_at_zero": 1087,
+      "h_partial": 11
+     },
+     "econlo": {
+      "twh": 0.207,
+      "cap_mean_mw": 26.1,
+      "mc_mean": 29.8,
+      "h_avail": 6960,
+      "h_at_cap": 5867,
+      "h_at_zero": 1083,
+      "h_partial": 10
+     },
+     "mustrun": {
+      "twh": 1.018,
+      "cap_mean_mw": 116.2,
+      "mc_mean": 15.6,
+      "h_avail": 6960,
+      "h_at_cap": 6960,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.045,
+      "cap_mean_mw": 5.7,
+      "mc_mean": 29.8,
+      "h_avail": 6960,
+      "h_at_cap": 5869,
+      "h_at_zero": 1087,
+      "h_partial": 4
+     }
+    },
+    "campd_twh": 1.8,
+    "campd_sd_daily": 132.0,
+    "campd_sd_intra": 28.9,
+    "campd_p05": 0.0,
+    "campd_p10_running": 126.0,
+    "campd_max": 529.0,
+    "r_hourly": 0.919
+   },
+   "50951": {
+    "model_twh": 0.232,
+    "cheap_share": 0.651,
+    "cheap_cap_mw": 28.3,
+    "model_sd_daily": 21.4,
+    "model_sd_intra": 2.3,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.151,
+      "cap_mean_mw": 28.3,
+      "mc_mean": 36.49,
+      "h_avail": 7608,
+      "h_at_cap": 4599,
+      "h_at_zero": 2999,
+      "h_partial": 10
+     },
+     "econhi": {
+      "twh": 0.034,
+      "cap_mean_mw": 5.1,
+      "mc_mean": 28.8,
+      "h_avail": 7608,
+      "h_at_cap": 5744,
+      "h_at_zero": 1857,
+      "h_partial": 7
+     },
+     "econlo": {
+      "twh": 0.041,
+      "cap_mean_mw": 6.2,
+      "mc_mean": 28.8,
+      "h_avail": 7608,
+      "h_at_cap": 5744,
+      "h_at_zero": 1856,
+      "h_partial": 8
+     },
+     "peak": {
+      "twh": 0.005,
+      "cap_mean_mw": 0.8,
+      "mc_mean": 28.8,
+      "h_avail": 7608,
+      "h_at_cap": 5748,
+      "h_at_zero": 1860,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 0.457,
+    "campd_sd_daily": 17.6,
+    "campd_sd_intra": 1.6,
+    "campd_p05": 0.0,
+    "campd_p10_running": 58.0,
+    "campd_max": 61.0,
+    "r_hourly": 0.414
+   },
+   "54318": {
+    "model_twh": 0.24,
+    "cheap_share": 0.5,
+    "cheap_cap_mw": 13.7,
+    "model_sd_daily": 1.2,
+    "model_sd_intra": 0.0,
+    "model_p05": 26.6,
+    "bands": {
+     "committed": {
+      "twh": 0.012,
+      "cap_mean_mw": 1.4,
+      "mc_mean": 15.95,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.052,
+      "cap_mean_mw": 5.9,
+      "mc_mean": 15.81,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.063,
+      "cap_mean_mw": 7.2,
+      "mc_mean": 15.81,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 0.108,
+      "cap_mean_mw": 12.3,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.005,
+      "cap_mean_mw": 0.5,
+      "mc_mean": 15.81,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     }
+    }
+   },
+   "56224": {
+    "model_twh": 1.181,
+    "cheap_share": 0.854,
+    "cheap_cap_mw": 137.0,
+    "model_sd_daily": 77.6,
+    "model_sd_intra": 7.5,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.409,
+      "cap_mean_mw": 68.5,
+      "mc_mean": 56.28,
+      "h_avail": 7560,
+      "h_at_cap": 4873,
+      "h_at_zero": 2646,
+      "h_partial": 41
+     },
+     "econhi": {
+      "twh": 0.068,
+      "cap_mean_mw": 10.1,
+      "mc_mean": 33.75,
+      "h_avail": 7560,
+      "h_at_cap": 5540,
+      "h_at_zero": 2009,
+      "h_partial": 11
+     },
+     "econlo": {
+      "twh": 0.083,
+      "cap_mean_mw": 12.4,
+      "mc_mean": 33.75,
+      "h_avail": 7560,
+      "h_at_cap": 5540,
+      "h_at_zero": 2007,
+      "h_partial": 13
+     },
+     "mustrun": {
+      "twh": 0.6,
+      "cap_mean_mw": 68.5,
+      "mc_mean": 7.29,
+      "h_avail": 7560,
+      "h_at_cap": 7560,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.022,
+      "cap_mean_mw": 3.3,
+      "mc_mean": 33.75,
+      "h_avail": 7560,
+      "h_at_cap": 5546,
+      "h_at_zero": 2014,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 1.311,
+    "campd_sd_daily": 74.3,
+    "campd_sd_intra": 22.2,
+    "campd_p05": 0.0,
+    "campd_p10_running": 94.0,
+    "campd_max": 237.0,
+    "r_hourly": 0.845
+   },
+   "57915": {
+    "model_twh": 0.248,
+    "cheap_share": 0.5,
+    "cheap_cap_mw": 14.2,
+    "model_sd_daily": 1.2,
+    "model_sd_intra": 0.0,
+    "model_p05": 27.5,
+    "bands": {
+     "committed": {
+      "twh": 0.012,
+      "cap_mean_mw": 1.4,
+      "mc_mean": 15.83,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.054,
+      "cap_mean_mw": 6.1,
+      "mc_mean": 15.69,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.066,
+      "cap_mean_mw": 7.5,
+      "mc_mean": 15.69,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 0.112,
+      "cap_mean_mw": 12.8,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.005,
+      "cap_mean_mw": 0.6,
+      "mc_mean": 15.69,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     }
+    }
+   }
+  },
+  "2022": {
+   "3845": {
+    "model_twh": 2.761,
+    "cheap_share": 0.488,
+    "cheap_cap_mw": 197.7,
+    "model_sd_daily": 302.1,
+    "model_sd_intra": 11.7,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 1.344,
+      "cap_mean_mw": 197.3,
+      "mc_mean": 96.54,
+      "h_avail": 5664,
+      "h_at_cap": 4364,
+      "h_at_zero": 1294,
+      "h_partial": 6
+     },
+     "econhi": {
+      "twh": 0.61,
+      "cap_mean_mw": 85.4,
+      "mc_mean": 36.52,
+      "h_avail": 5664,
+      "h_at_cap": 4578,
+      "h_at_zero": 1069,
+      "h_partial": 17
+     },
+     "econlo": {
+      "twh": 0.746,
+      "cap_mean_mw": 104.4,
+      "mc_mean": 36.52,
+      "h_avail": 5664,
+      "h_at_cap": 4578,
+      "h_at_zero": 1061,
+      "h_partial": 25
+     },
+     "mustrun": {
+      "twh": 0.003,
+      "cap_mean_mw": 0.4,
+      "mc_mean": 4.5,
+      "h_avail": 5664,
+      "h_at_cap": 5664,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.057,
+      "cap_mean_mw": 7.9,
+      "mc_mean": 36.52,
+      "h_avail": 5664,
+      "h_at_cap": 4592,
+      "h_at_zero": 1070,
+      "h_partial": 2
+     }
+    },
+    "campd_twh": 3.802,
+    "campd_sd_daily": 304.4,
+    "campd_sd_intra": 40.9,
+    "campd_p05": 0.0,
+    "campd_p10_running": 434.3,
+    "campd_max": 770.0,
+    "r_hourly": 0.754
+   },
+   "4158": {
+    "model_twh": 4.67,
+    "cheap_share": 0.962,
+    "cheap_cap_mw": 512.9,
+    "model_sd_daily": 179.6,
+    "model_sd_intra": 0.0,
+    "model_p05": 226.8,
+    "bands": {
+     "committed": {
+      "twh": 2.256,
+      "cap_mean_mw": 257.5,
+      "mc_mean": 4.65,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.038,
+      "cap_mean_mw": 4.3,
+      "mc_mean": 17.64,
+      "h_avail": 8736,
+      "h_at_cap": 8733,
+      "h_at_zero": 3,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.046,
+      "cap_mean_mw": 5.3,
+      "mc_mean": 17.64,
+      "h_avail": 8736,
+      "h_at_cap": 8733,
+      "h_at_zero": 3,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 2.237,
+      "cap_mean_mw": 255.4,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.093,
+      "cap_mean_mw": 10.7,
+      "mc_mean": 17.64,
+      "h_avail": 8736,
+      "h_at_cap": 8733,
+      "h_at_zero": 3,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 3.96,
+    "campd_sd_daily": 151.4,
+    "campd_sd_intra": 55.8,
+    "campd_p05": 204.0,
+    "campd_p10_running": 253.0,
+    "campd_max": 780.0,
+    "r_hourly": 0.684
+   },
+   "4162": {
+    "model_twh": 1.946,
+    "cheap_share": 0.653,
+    "cheap_cap_mw": 145.0,
+    "model_sd_daily": 103.3,
+    "model_sd_intra": 7.0,
+    "model_p05": 67.0,
+    "bands": {
+     "committed": {
+      "twh": 0.637,
+      "cap_mean_mw": 72.7,
+      "mc_mean": 4.67,
+      "h_avail": 8496,
+      "h_at_cap": 8496,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.288,
+      "cap_mean_mw": 36.2,
+      "mc_mean": 31.21,
+      "h_avail": 8496,
+      "h_at_cap": 7492,
+      "h_at_zero": 965,
+      "h_partial": 39
+     },
+     "econlo": {
+      "twh": 0.352,
+      "cap_mean_mw": 44.3,
+      "mc_mean": 31.21,
+      "h_avail": 8496,
+      "h_at_cap": 7485,
+      "h_at_zero": 961,
+      "h_partial": 50
+     },
+     "mustrun": {
+      "twh": 0.633,
+      "cap_mean_mw": 72.3,
+      "mc_mean": 4.5,
+      "h_avail": 8496,
+      "h_at_cap": 8496,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.036,
+      "cap_mean_mw": 4.6,
+      "mc_mean": 31.21,
+      "h_avail": 8496,
+      "h_at_cap": 7501,
+      "h_at_zero": 993,
+      "h_partial": 2
+     }
+    },
+    "campd_twh": 2.059,
+    "campd_sd_daily": 100.2,
+    "campd_sd_intra": 32.8,
+    "campd_p05": 36.0,
+    "campd_p10_running": 100.0,
+    "campd_max": 388.0,
+    "r_hourly": 0.83
+   },
+   "6076": {
+    "model_twh": 10.404,
+    "cheap_share": 0.982,
+    "cheap_cap_mw": 1166.6,
+    "model_sd_daily": 328.0,
+    "model_sd_intra": 1.7,
+    "model_p05": 581.5,
+    "bands": {
+     "committed": {
+      "twh": 4.994,
+      "cap_mean_mw": 570.2,
+      "mc_mean": 54.57,
+      "h_avail": 8760,
+      "h_at_cap": 8751,
+      "h_at_zero": 0,
+      "h_partial": 9
+     },
+     "mustrun": {
+      "twh": 5.225,
+      "cap_mean_mw": 596.4,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.185,
+      "cap_mean_mw": 23.8,
+      "mc_mean": 32.61,
+      "h_avail": 8760,
+      "h_at_cap": 7875,
+      "h_at_zero": 879,
+      "h_partial": 6
+     }
+    },
+    "campd_twh": 11.95,
+    "campd_sd_daily": 352.7,
+    "campd_sd_intra": 58.1,
+    "campd_p05": 655.0,
+    "campd_p10_running": 795.0,
+    "campd_max": 1627.0,
+    "r_hourly": 0.771
+   },
+   "6101": {
+    "model_twh": 2.001,
+    "cheap_share": 0.485,
+    "cheap_cap_mw": 110.8,
+    "model_sd_daily": 132.2,
+    "model_sd_intra": 0.2,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.971,
+      "cap_mean_mw": 110.8,
+      "mc_mean": 13.24,
+      "h_avail": 6576,
+      "h_at_cap": 6576,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.446,
+      "cap_mean_mw": 50.9,
+      "mc_mean": 21.69,
+      "h_avail": 6576,
+      "h_at_cap": 6572,
+      "h_at_zero": 3,
+      "h_partial": 1
+     },
+     "econlo": {
+      "twh": 0.545,
+      "cap_mean_mw": 62.2,
+      "mc_mean": 21.69,
+      "h_avail": 6576,
+      "h_at_cap": 6570,
+      "h_at_zero": 4,
+      "h_partial": 2
+     },
+     "peak": {
+      "twh": 0.04,
+      "cap_mean_mw": 4.6,
+      "mc_mean": 21.69,
+      "h_avail": 6576,
+      "h_at_cap": 6573,
+      "h_at_zero": 3,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 2.022,
+    "campd_sd_daily": 126.1,
+    "campd_sd_intra": 29.8,
+    "campd_p05": 0.0,
+    "campd_p10_running": 254.0,
+    "campd_max": 376.0,
+    "r_hourly": 0.884
+   },
+   "6165": {
+    "model_twh": 9.067,
+    "cheap_share": 0.447,
+    "cheap_cap_mw": 462.6,
+    "model_sd_daily": 268.2,
+    "model_sd_intra": 3.2,
+    "model_p05": 621.7,
+    "bands": {
+     "committed": {
+      "twh": 2.026,
+      "cap_mean_mw": 231.3,
+      "mc_mean": 5.0,
+      "h_avail": 8760,
+      "h_at_cap": 8757,
+      "h_at_zero": 0,
+      "h_partial": 3
+     },
+     "econhi": {
+      "twh": 2.173,
+      "cap_mean_mw": 249.2,
+      "mc_mean": 24.0,
+      "h_avail": 8760,
+      "h_at_cap": 8715,
+      "h_at_zero": 21,
+      "h_partial": 24
+     },
+     "econlo": {
+      "twh": 2.661,
+      "cap_mean_mw": 304.6,
+      "mc_mean": 24.0,
+      "h_avail": 8760,
+      "h_at_cap": 8720,
+      "h_at_zero": 8,
+      "h_partial": 32
+     },
+     "mustrun": {
+      "twh": 2.026,
+      "cap_mean_mw": 231.3,
+      "mc_mean": 4.86,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.181,
+      "cap_mean_mw": 20.7,
+      "mc_mean": 24.0,
+      "h_avail": 8760,
+      "h_at_cap": 8728,
+      "h_at_zero": 30,
+      "h_partial": 2
+     }
+    },
+    "campd_twh": 8.081,
+    "campd_sd_daily": 302.4,
+    "campd_sd_intra": 102.9,
+    "campd_p05": 342.0,
+    "campd_p10_running": 411.0,
+    "campd_max": 1380.0,
+    "r_hourly": 0.797
+   },
+   "7790": {
+    "model_twh": 3.545,
+    "cheap_share": 0.969,
+    "cheap_cap_mw": 392.2,
+    "model_sd_daily": 73.6,
+    "model_sd_intra": 1.0,
+    "model_p05": 392.0,
+    "bands": {
+     "committed": {
+      "twh": 1.718,
+      "cap_mean_mw": 196.1,
+      "mc_mean": 4.68,
+      "h_avail": 8496,
+      "h_at_cap": 8496,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.02,
+      "cap_mean_mw": 2.6,
+      "mc_mean": 30.65,
+      "h_avail": 8496,
+      "h_at_cap": 7670,
+      "h_at_zero": 826,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.025,
+      "cap_mean_mw": 3.1,
+      "mc_mean": 30.65,
+      "h_avail": 8496,
+      "h_at_cap": 7665,
+      "h_at_zero": 827,
+      "h_partial": 4
+     },
+     "mustrun": {
+      "twh": 1.718,
+      "cap_mean_mw": 196.1,
+      "mc_mean": 4.5,
+      "h_avail": 8496,
+      "h_at_cap": 8496,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.064,
+      "cap_mean_mw": 8.1,
+      "mc_mean": 30.65,
+      "h_avail": 8496,
+      "h_at_cap": 7665,
+      "h_at_zero": 826,
+      "h_partial": 5
+     }
+    },
+    "campd_twh": 3.671,
+    "campd_sd_daily": 97.0,
+    "campd_sd_intra": 54.0,
+    "campd_p05": 154.0,
+    "campd_p10_running": 241.0,
+    "campd_max": 490.0,
+    "r_hourly": 0.522
+   },
+   "8066": {
+    "model_twh": 14.137,
+    "cheap_share": 0.53,
+    "cheap_cap_mw": 855.6,
+    "model_sd_daily": 385.8,
+    "model_sd_intra": 68.5,
+    "model_p05": 929.3,
+    "bands": {
+     "committed": {
+      "twh": 0.749,
+      "cap_mean_mw": 85.6,
+      "mc_mean": 4.64,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 2.862,
+      "cap_mean_mw": 369.6,
+      "mc_mean": 31.67,
+      "h_avail": 8760,
+      "h_at_cap": 7551,
+      "h_at_zero": 880,
+      "h_partial": 329
+     },
+     "econlo": {
+      "twh": 3.515,
+      "cap_mean_mw": 451.7,
+      "mc_mean": 31.67,
+      "h_avail": 8760,
+      "h_at_cap": 7530,
+      "h_at_zero": 823,
+      "h_partial": 407
+     },
+     "mustrun": {
+      "twh": 6.745,
+      "cap_mean_mw": 770.0,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.264,
+      "cap_mean_mw": 34.2,
+      "mc_mean": 31.67,
+      "h_avail": 8760,
+      "h_at_cap": 7696,
+      "h_at_zero": 1038,
+      "h_partial": 26
+     }
+    },
+    "campd_twh": 11.537,
+    "campd_sd_daily": 394.3,
+    "campd_sd_intra": 272.2,
+    "campd_p05": 464.0,
+    "campd_p10_running": 612.0,
+    "campd_max": 2222.0,
+    "r_hourly": 0.468
+   },
+   "8069": {
+    "model_twh": 6.452,
+    "cheap_share": 0.394,
+    "cheap_cap_mw": 289.8,
+    "model_sd_daily": 180.7,
+    "model_sd_intra": 9.9,
+    "model_p05": 364.1,
+    "bands": {
+     "committed": {
+      "twh": 1.27,
+      "cap_mean_mw": 144.9,
+      "mc_mean": 4.9,
+      "h_avail": 8712,
+      "h_at_cap": 8712,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 1.704,
+      "cap_mean_mw": 197.3,
+      "mc_mean": 26.88,
+      "h_avail": 8712,
+      "h_at_cap": 8580,
+      "h_at_zero": 94,
+      "h_partial": 38
+     },
+     "econlo": {
+      "twh": 2.081,
+      "cap_mean_mw": 241.2,
+      "mc_mean": 26.88,
+      "h_avail": 8712,
+      "h_at_cap": 8566,
+      "h_at_zero": 88,
+      "h_partial": 58
+     },
+     "mustrun": {
+      "twh": 1.27,
+      "cap_mean_mw": 144.9,
+      "mc_mean": 4.75,
+      "h_avail": 8712,
+      "h_at_cap": 8712,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.128,
+      "cap_mean_mw": 14.9,
+      "mc_mean": 26.88,
+      "h_avail": 8712,
+      "h_at_cap": 8594,
+      "h_at_zero": 116,
+      "h_partial": 2
+     }
+    },
+    "campd_twh": 6.173,
+    "campd_sd_daily": 179.8,
+    "campd_sd_intra": 126.7,
+    "campd_p05": 189.0,
+    "campd_p10_running": 347.0,
+    "campd_max": 972.0,
+    "r_hourly": 0.6
+   },
+   "8224": {
+    "model_twh": 2.93,
+    "cheap_share": 0.819,
+    "cheap_cap_mw": 274.0,
+    "model_sd_daily": 152.3,
+    "model_sd_intra": 3.1,
+    "model_p05": 167.5,
+    "bands": {
+     "committed": {
+      "twh": 1.2,
+      "cap_mean_mw": 137.0,
+      "mc_mean": 20.29,
+      "h_avail": 8352,
+      "h_at_cap": 8352,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.213,
+      "cap_mean_mw": 25.1,
+      "mc_mean": 40.06,
+      "h_avail": 8352,
+      "h_at_cap": 8084,
+      "h_at_zero": 264,
+      "h_partial": 4
+     },
+     "econlo": {
+      "twh": 0.261,
+      "cap_mean_mw": 30.7,
+      "mc_mean": 40.06,
+      "h_avail": 8352,
+      "h_at_cap": 8084,
+      "h_at_zero": 263,
+      "h_partial": 5
+     },
+     "mustrun": {
+      "twh": 1.2,
+      "cap_mean_mw": 137.0,
+      "mc_mean": 20.11,
+      "h_avail": 8352,
+      "h_at_cap": 8352,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.057,
+      "cap_mean_mw": 6.7,
+      "mc_mean": 40.06,
+      "h_avail": 8352,
+      "h_at_cap": 8087,
+      "h_at_zero": 265,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 1.653,
+    "campd_sd_daily": 88.7,
+    "campd_sd_intra": 19.5,
+    "campd_p05": 0.0,
+    "campd_p10_running": 107.0,
+    "campd_max": 524.0,
+    "r_hourly": 0.853
+   },
+   "10784": {
+    "model_twh": 0.253,
+    "cheap_share": 0.574,
+    "cheap_cap_mw": 17.3,
+    "model_sd_daily": 7.9,
+    "model_sd_intra": 2.1,
+    "model_p05": 15.2,
+    "bands": {
+     "committed": {
+      "twh": 0.008,
+      "cap_mean_mw": 1.7,
+      "mc_mean": 60.9,
+      "h_avail": 8760,
+      "h_at_cap": 4585,
+      "h_at_zero": 4173,
+      "h_partial": 2
+     },
+     "econhi": {
+      "twh": 0.047,
+      "cap_mean_mw": 7.5,
+      "mc_mean": 45.02,
+      "h_avail": 8760,
+      "h_at_cap": 6167,
+      "h_at_zero": 2588,
+      "h_partial": 5
+     },
+     "econlo": {
+      "twh": 0.057,
+      "cap_mean_mw": 9.2,
+      "mc_mean": 45.02,
+      "h_avail": 8760,
+      "h_at_cap": 6166,
+      "h_at_zero": 2589,
+      "h_partial": 5
+     },
+     "mustrun": {
+      "twh": 0.137,
+      "cap_mean_mw": 15.6,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.004,
+      "cap_mean_mw": 0.7,
+      "mc_mean": 45.02,
+      "h_avail": 8760,
+      "h_at_cap": 6170,
+      "h_at_zero": 2591,
+      "h_partial": 0
+     }
+    }
+   },
+   "50951": {
+    "model_twh": 0.316,
+    "cheap_share": 0.684,
+    "cheap_cap_mw": 28.9,
+    "model_sd_daily": 18.3,
+    "model_sd_intra": 2.1,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.216,
+      "cap_mean_mw": 28.9,
+      "mc_mean": 31.33,
+      "h_avail": 7728,
+      "h_at_cap": 6584,
+      "h_at_zero": 1133,
+      "h_partial": 11
+     },
+     "econhi": {
+      "twh": 0.042,
+      "cap_mean_mw": 5.2,
+      "mc_mean": 29.55,
+      "h_avail": 7728,
+      "h_at_cap": 7087,
+      "h_at_zero": 638,
+      "h_partial": 3
+     },
+     "econlo": {
+      "twh": 0.051,
+      "cap_mean_mw": 6.4,
+      "mc_mean": 29.55,
+      "h_avail": 7728,
+      "h_at_cap": 7088,
+      "h_at_zero": 638,
+      "h_partial": 2
+     },
+     "peak": {
+      "twh": 0.007,
+      "cap_mean_mw": 0.8,
+      "mc_mean": 29.55,
+      "h_avail": 7728,
+      "h_at_cap": 7091,
+      "h_at_zero": 637,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 0.463,
+    "campd_sd_daily": 16.8,
+    "campd_sd_intra": 1.3,
+    "campd_p05": 0.0,
+    "campd_p10_running": 58.0,
+    "campd_max": 61.0,
+    "r_hourly": 0.628
+   },
+   "54318": {
+    "model_twh": 0.24,
+    "cheap_share": 0.5,
+    "cheap_cap_mw": 13.7,
+    "model_sd_daily": 1.2,
+    "model_sd_intra": 0.0,
+    "model_p05": 26.6,
+    "bands": {
+     "committed": {
+      "twh": 0.012,
+      "cap_mean_mw": 1.4,
+      "mc_mean": 16.08,
+      "h_avail": 8760,
+      "h_at_cap": 8757,
+      "h_at_zero": 3,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.052,
+      "cap_mean_mw": 5.9,
+      "mc_mean": 15.93,
+      "h_avail": 8760,
+      "h_at_cap": 8757,
+      "h_at_zero": 3,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.063,
+      "cap_mean_mw": 7.2,
+      "mc_mean": 15.93,
+      "h_avail": 8760,
+      "h_at_cap": 8757,
+      "h_at_zero": 3,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 0.108,
+      "cap_mean_mw": 12.3,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.005,
+      "cap_mean_mw": 0.5,
+      "mc_mean": 15.93,
+      "h_avail": 8760,
+      "h_at_cap": 8757,
+      "h_at_zero": 3,
+      "h_partial": 0
+     }
+    }
+   },
+   "55749": {
+    "model_twh": 0.345,
+    "cheap_share": 0.489,
+    "cheap_cap_mw": 38.4,
+    "model_sd_daily": 43.5,
+    "model_sd_intra": 4.8,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.169,
+      "cap_mean_mw": 38.4,
+      "mc_mean": 59.4,
+      "h_avail": 6192,
+      "h_at_cap": 3052,
+      "h_at_zero": 3133,
+      "h_partial": 7
+     },
+     "econhi": {
+      "twh": 0.076,
+      "cap_mean_mw": 12.9,
+      "mc_mean": 44.68,
+      "h_avail": 6192,
+      "h_at_cap": 4113,
+      "h_at_zero": 2074,
+      "h_partial": 5
+     },
+     "econlo": {
+      "twh": 0.093,
+      "cap_mean_mw": 15.8,
+      "mc_mean": 44.68,
+      "h_avail": 6192,
+      "h_at_cap": 4113,
+      "h_at_zero": 2072,
+      "h_partial": 7
+     },
+     "peak": {
+      "twh": 0.008,
+      "cap_mean_mw": 1.4,
+      "mc_mean": 44.68,
+      "h_avail": 6192,
+      "h_at_cap": 4118,
+      "h_at_zero": 2074,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 0.566,
+    "campd_sd_daily": 39.4,
+    "campd_sd_intra": 5.1,
+    "campd_p05": 0.0,
+    "campd_p10_running": 65.0,
+    "campd_max": 112.0,
+    "r_hourly": 0.375
+   },
+   "56224": {
+    "model_twh": 1.446,
+    "cheap_share": 0.842,
+    "cheap_cap_mw": 139.8,
+    "model_sd_daily": 71.6,
+    "model_sd_intra": 1.5,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.606,
+      "cap_mean_mw": 69.9,
+      "mc_mean": 37.49,
+      "h_avail": 7608,
+      "h_at_cap": 7517,
+      "h_at_zero": 86,
+      "h_partial": 5
+     },
+     "econhi": {
+      "twh": 0.09,
+      "cap_mean_mw": 10.3,
+      "mc_mean": 36.86,
+      "h_avail": 7608,
+      "h_at_cap": 7552,
+      "h_at_zero": 55,
+      "h_partial": 1
+     },
+     "econlo": {
+      "twh": 0.11,
+      "cap_mean_mw": 12.6,
+      "mc_mean": 36.86,
+      "h_avail": 7608,
+      "h_at_cap": 7551,
+      "h_at_zero": 56,
+      "h_partial": 1
+     },
+     "mustrun": {
+      "twh": 0.612,
+      "cap_mean_mw": 69.9,
+      "mc_mean": 7.58,
+      "h_avail": 7608,
+      "h_at_cap": 7608,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.029,
+      "cap_mean_mw": 3.3,
+      "mc_mean": 36.86,
+      "h_avail": 7608,
+      "h_at_cap": 7553,
+      "h_at_zero": 55,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 1.457,
+    "campd_sd_daily": 75.0,
+    "campd_sd_intra": 16.2,
+    "campd_p05": 0.0,
+    "campd_p10_running": 93.0,
+    "campd_max": 238.0,
+    "r_hourly": 0.874
+   },
+   "57915": {
+    "model_twh": 0.248,
+    "cheap_share": 0.5,
+    "cheap_cap_mw": 14.2,
+    "model_sd_daily": 1.2,
+    "model_sd_intra": 0.0,
+    "model_p05": 27.5,
+    "bands": {
+     "committed": {
+      "twh": 0.012,
+      "cap_mean_mw": 1.4,
+      "mc_mean": 15.94,
+      "h_avail": 8760,
+      "h_at_cap": 8757,
+      "h_at_zero": 3,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.054,
+      "cap_mean_mw": 6.1,
+      "mc_mean": 15.79,
+      "h_avail": 8760,
+      "h_at_cap": 8757,
+      "h_at_zero": 3,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.066,
+      "cap_mean_mw": 7.5,
+      "mc_mean": 15.79,
+      "h_avail": 8760,
+      "h_at_cap": 8757,
+      "h_at_zero": 3,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 0.112,
+      "cap_mean_mw": 12.8,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.005,
+      "cap_mean_mw": 0.6,
+      "mc_mean": 15.79,
+      "h_avail": 8760,
+      "h_at_cap": 8757,
+      "h_at_zero": 3,
+      "h_partial": 0
+     }
+    }
+   }
+  },
+  "2023": {
+   "3845": {
+    "model_twh": 1.872,
+    "cheap_share": 0.467,
+    "cheap_cap_mw": 231.1,
+    "model_sd_daily": 270.6,
+    "model_sd_intra": 25.1,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.87,
+      "cap_mean_mw": 230.6,
+      "mc_mean": 66.5,
+      "h_avail": 6840,
+      "h_at_cap": 2930,
+      "h_at_zero": 3891,
+      "h_partial": 19
+     },
+     "econhi": {
+      "twh": 0.431,
+      "cap_mean_mw": 99.8,
+      "mc_mean": 36.66,
+      "h_avail": 6840,
+      "h_at_cap": 3315,
+      "h_at_zero": 3474,
+      "h_partial": 51
+     },
+     "econlo": {
+      "twh": 0.527,
+      "cap_mean_mw": 122.0,
+      "mc_mean": 36.66,
+      "h_avail": 6840,
+      "h_at_cap": 3307,
+      "h_at_zero": 3467,
+      "h_partial": 66
+     },
+     "mustrun": {
+      "twh": 0.004,
+      "cap_mean_mw": 0.5,
+      "mc_mean": 4.5,
+      "h_avail": 6384,
+      "h_at_cap": 6381,
+      "h_at_zero": 3,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.04,
+      "cap_mean_mw": 9.2,
+      "mc_mean": 36.66,
+      "h_avail": 6840,
+      "h_at_cap": 3339,
+      "h_at_zero": 3495,
+      "h_partial": 6
+     }
+    },
+    "campd_twh": 4.437,
+    "campd_sd_daily": 261.7,
+    "campd_sd_intra": 26.2,
+    "campd_p05": 0.0,
+    "campd_p10_running": 372.0,
+    "campd_max": 712.0,
+    "r_hourly": 0.465
+   },
+   "4158": {
+    "model_twh": 4.559,
+    "cheap_share": 0.962,
+    "cheap_cap_mw": 500.7,
+    "model_sd_daily": 136.3,
+    "model_sd_intra": 0.0,
+    "model_p05": 293.9,
+    "bands": {
+     "committed": {
+      "twh": 2.202,
+      "cap_mean_mw": 251.4,
+      "mc_mean": 4.66,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.037,
+      "cap_mean_mw": 4.2,
+      "mc_mean": 17.94,
+      "h_avail": 8760,
+      "h_at_cap": 8746,
+      "h_at_zero": 14,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.045,
+      "cap_mean_mw": 5.2,
+      "mc_mean": 17.94,
+      "h_avail": 8760,
+      "h_at_cap": 8746,
+      "h_at_zero": 14,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 2.184,
+      "cap_mean_mw": 249.3,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.091,
+      "cap_mean_mw": 10.4,
+      "mc_mean": 17.94,
+      "h_avail": 8760,
+      "h_at_cap": 8746,
+      "h_at_zero": 14,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 3.944,
+    "campd_sd_daily": 111.7,
+    "campd_sd_intra": 58.7,
+    "campd_p05": 258.0,
+    "campd_p10_running": 289.0,
+    "campd_max": 751.0,
+    "r_hourly": 0.674
+   },
+   "4162": {
+    "model_twh": 1.825,
+    "cheap_share": 0.74,
+    "cheap_cap_mw": 154.1,
+    "model_sd_daily": 92.4,
+    "model_sd_intra": 6.6,
+    "model_p05": 77.8,
+    "bands": {
+     "committed": {
+      "twh": 0.677,
+      "cap_mean_mw": 77.3,
+      "mc_mean": 4.69,
+      "h_avail": 8616,
+      "h_at_cap": 8616,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.202,
+      "cap_mean_mw": 38.5,
+      "mc_mean": 32.75,
+      "h_avail": 8616,
+      "h_at_cap": 5366,
+      "h_at_zero": 3235,
+      "h_partial": 15
+     },
+     "econlo": {
+      "twh": 0.247,
+      "cap_mean_mw": 47.1,
+      "mc_mean": 32.75,
+      "h_avail": 8616,
+      "h_at_cap": 5356,
+      "h_at_zero": 3235,
+      "h_partial": 25
+     },
+     "mustrun": {
+      "twh": 0.673,
+      "cap_mean_mw": 76.8,
+      "mc_mean": 4.5,
+      "h_avail": 8616,
+      "h_at_cap": 8616,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.026,
+      "cap_mean_mw": 4.9,
+      "mc_mean": 32.75,
+      "h_avail": 8616,
+      "h_at_cap": 5370,
+      "h_at_zero": 3246,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 2.073,
+    "campd_sd_daily": 101.3,
+    "campd_sd_intra": 41.9,
+    "campd_p05": 41.0,
+    "campd_p10_running": 88.0,
+    "campd_max": 386.0,
+    "r_hourly": 0.714
+   },
+   "6076": {
+    "model_twh": 10.072,
+    "cheap_share": 0.984,
+    "cheap_cap_mw": 1180.9,
+    "model_sd_daily": 330.0,
+    "model_sd_intra": 6.2,
+    "model_p05": 581.5,
+    "bands": {
+     "committed": {
+      "twh": 4.62,
+      "cap_mean_mw": 577.2,
+      "mc_mean": 5.97,
+      "h_avail": 8760,
+      "h_at_cap": 8048,
+      "h_at_zero": 675,
+      "h_partial": 37
+     },
+     "mustrun": {
+      "twh": 5.286,
+      "cap_mean_mw": 603.7,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8756,
+      "h_at_zero": 3,
+      "h_partial": 1
+     },
+     "peak": {
+      "twh": 0.166,
+      "cap_mean_mw": 24.1,
+      "mc_mean": 29.44,
+      "h_avail": 8760,
+      "h_at_cap": 6698,
+      "h_at_zero": 2060,
+      "h_partial": 2
+     }
+    },
+    "campd_twh": 11.914,
+    "campd_sd_daily": 346.0,
+    "campd_sd_intra": 59.9,
+    "campd_p05": 667.0,
+    "campd_p10_running": 788.0,
+    "campd_max": 1624.0,
+    "r_hourly": 0.849
+   },
+   "6101": {
+    "model_twh": 2.24,
+    "cheap_share": 0.49,
+    "cheap_cap_mw": 125.3,
+    "model_sd_daily": 108.5,
+    "model_sd_intra": 2.8,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 1.098,
+      "cap_mean_mw": 125.3,
+      "mc_mean": 4.77,
+      "h_avail": 7488,
+      "h_at_cap": 7488,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.494,
+      "cap_mean_mw": 57.6,
+      "mc_mean": 21.14,
+      "h_avail": 7488,
+      "h_at_cap": 7323,
+      "h_at_zero": 150,
+      "h_partial": 15
+     },
+     "econlo": {
+      "twh": 0.604,
+      "cap_mean_mw": 70.4,
+      "mc_mean": 21.14,
+      "h_avail": 7488,
+      "h_at_cap": 7323,
+      "h_at_zero": 151,
+      "h_partial": 14
+     },
+     "peak": {
+      "twh": 0.044,
+      "cap_mean_mw": 5.2,
+      "mc_mean": 21.14,
+      "h_avail": 7488,
+      "h_at_cap": 7328,
+      "h_at_zero": 159,
+      "h_partial": 1
+     }
+    },
+    "campd_twh": 2.042,
+    "campd_sd_daily": 92.1,
+    "campd_sd_intra": 37.9,
+    "campd_p05": 0.0,
+    "campd_p10_running": 161.0,
+    "campd_max": 376.0,
+    "r_hourly": 0.747
+   },
+   "6165": {
+    "model_twh": 6.765,
+    "cheap_share": 0.563,
+    "cheap_cap_mw": 435.0,
+    "model_sd_daily": 414.2,
+    "model_sd_intra": 40.2,
+    "model_p05": 149.8,
+    "bands": {
+     "committed": {
+      "twh": 1.905,
+      "cap_mean_mw": 217.5,
+      "mc_mean": 5.41,
+      "h_avail": 8688,
+      "h_at_cap": 8682,
+      "h_at_zero": 3,
+      "h_partial": 3
+     },
+     "econhi": {
+      "twh": 1.28,
+      "cap_mean_mw": 234.3,
+      "mc_mean": 33.93,
+      "h_avail": 8688,
+      "h_at_cap": 4714,
+      "h_at_zero": 3870,
+      "h_partial": 104
+     },
+     "econlo": {
+      "twh": 1.569,
+      "cap_mean_mw": 286.4,
+      "mc_mean": 33.93,
+      "h_avail": 8688,
+      "h_at_cap": 4697,
+      "h_at_zero": 3834,
+      "h_partial": 157
+     },
+     "mustrun": {
+      "twh": 1.905,
+      "cap_mean_mw": 217.5,
+      "mc_mean": 5.04,
+      "h_avail": 8688,
+      "h_at_cap": 8685,
+      "h_at_zero": 3,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.107,
+      "cap_mean_mw": 19.5,
+      "mc_mean": 33.93,
+      "h_avail": 8688,
+      "h_at_cap": 4764,
+      "h_at_zero": 3914,
+      "h_partial": 10
+     }
+    },
+    "campd_twh": 4.691,
+    "campd_sd_daily": 268.6,
+    "campd_sd_intra": 111.6,
+    "campd_p05": 175.0,
+    "campd_p10_running": 195.0,
+    "campd_max": 1382.0,
+    "r_hourly": 0.471
+   },
+   "7790": {
+    "model_twh": 3.454,
+    "cheap_share": 0.975,
+    "cheap_cap_mw": 384.6,
+    "model_sd_daily": 86.7,
+    "model_sd_intra": 1.1,
+    "model_p05": 176.8,
+    "bands": {
+     "committed": {
+      "twh": 1.684,
+      "cap_mean_mw": 192.3,
+      "mc_mean": 4.68,
+      "h_avail": 8448,
+      "h_at_cap": 8448,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.016,
+      "cap_mean_mw": 2.5,
+      "mc_mean": 31.69,
+      "h_avail": 8448,
+      "h_at_cap": 6037,
+      "h_at_zero": 2411,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.019,
+      "cap_mean_mw": 3.1,
+      "mc_mean": 31.69,
+      "h_avail": 8448,
+      "h_at_cap": 6033,
+      "h_at_zero": 2413,
+      "h_partial": 2
+     },
+     "mustrun": {
+      "twh": 1.684,
+      "cap_mean_mw": 192.3,
+      "mc_mean": 4.5,
+      "h_avail": 8448,
+      "h_at_cap": 8448,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.05,
+      "cap_mean_mw": 8.0,
+      "mc_mean": 31.69,
+      "h_avail": 8448,
+      "h_at_cap": 6032,
+      "h_at_zero": 2408,
+      "h_partial": 8
+     }
+    },
+    "campd_twh": 3.663,
+    "campd_sd_daily": 105.4,
+    "campd_sd_intra": 39.0,
+    "campd_p05": 229.0,
+    "campd_p10_running": 234.0,
+    "campd_max": 493.0,
+    "r_hourly": 0.697
+   },
+   "8066": {
+    "model_twh": 9.715,
+    "cheap_share": 0.806,
+    "cheap_cap_mw": 894.1,
+    "model_sd_daily": 394.2,
+    "model_sd_intra": 40.6,
+    "model_p05": 435.9,
+    "bands": {
+     "committed": {
+      "twh": 0.783,
+      "cap_mean_mw": 89.4,
+      "mc_mean": 4.64,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.817,
+      "cap_mean_mw": 386.2,
+      "mc_mean": 42.19,
+      "h_avail": 8760,
+      "h_at_cap": 2152,
+      "h_at_zero": 6446,
+      "h_partial": 162
+     },
+     "econlo": {
+      "twh": 0.991,
+      "cap_mean_mw": 472.1,
+      "mc_mean": 42.19,
+      "h_avail": 8760,
+      "h_at_cap": 2134,
+      "h_at_zero": 6440,
+      "h_partial": 186
+     },
+     "mustrun": {
+      "twh": 7.049,
+      "cap_mean_mw": 804.7,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.075,
+      "cap_mean_mw": 35.8,
+      "mc_mean": 42.19,
+      "h_avail": 8760,
+      "h_at_cap": 2204,
+      "h_at_zero": 6539,
+      "h_partial": 17
+     }
+    },
+    "campd_twh": 9.109,
+    "campd_sd_daily": 550.2,
+    "campd_sd_intra": 258.7,
+    "campd_p05": 155.0,
+    "campd_p10_running": 236.0,
+    "campd_max": 2260.0,
+    "r_hourly": 0.114
+   },
+   "8069": {
+    "model_twh": 5.885,
+    "cheap_share": 0.45,
+    "cheap_cap_mw": 302.2,
+    "model_sd_daily": 223.6,
+    "model_sd_intra": 39.5,
+    "model_p05": 314.1,
+    "bands": {
+     "committed": {
+      "twh": 1.324,
+      "cap_mean_mw": 151.1,
+      "mc_mean": 5.09,
+      "h_avail": 8760,
+      "h_at_cap": 8757,
+      "h_at_zero": 0,
+      "h_partial": 3
+     },
+     "econhi": {
+      "twh": 1.41,
+      "cap_mean_mw": 205.8,
+      "mc_mean": 29.96,
+      "h_avail": 8760,
+      "h_at_cap": 6736,
+      "h_at_zero": 1900,
+      "h_partial": 124
+     },
+     "econlo": {
+      "twh": 1.721,
+      "cap_mean_mw": 251.5,
+      "mc_mean": 29.96,
+      "h_avail": 8760,
+      "h_at_cap": 6713,
+      "h_at_zero": 1908,
+      "h_partial": 139
+     },
+     "mustrun": {
+      "twh": 1.324,
+      "cap_mean_mw": 151.1,
+      "mc_mean": 4.79,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.106,
+      "cap_mean_mw": 15.5,
+      "mc_mean": 29.96,
+      "h_avail": 8760,
+      "h_at_cap": 6770,
+      "h_at_zero": 1980,
+      "h_partial": 10
+     }
+    },
+    "campd_twh": 3.831,
+    "campd_sd_daily": 244.4,
+    "campd_sd_intra": 94.2,
+    "campd_p05": 174.0,
+    "campd_p10_running": 178.0,
+    "campd_max": 976.0,
+    "r_hourly": 0.421
+   },
+   "8224": {
+    "model_twh": 1.501,
+    "cheap_share": 0.953,
+    "cheap_cap_mw": 278.8,
+    "model_sd_daily": 138.1,
+    "model_sd_intra": 35.7,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.644,
+      "cap_mean_mw": 139.4,
+      "mc_mean": 38.71,
+      "h_avail": 8664,
+      "h_at_cap": 4668,
+      "h_at_zero": 3928,
+      "h_partial": 68
+     },
+     "econhi": {
+      "twh": 0.028,
+      "cap_mean_mw": 25.6,
+      "mc_mean": 61.88,
+      "h_avail": 8664,
+      "h_at_cap": 1574,
+      "h_at_zero": 7076,
+      "h_partial": 14
+     },
+     "econlo": {
+      "twh": 0.035,
+      "cap_mean_mw": 31.3,
+      "mc_mean": 61.88,
+      "h_avail": 8664,
+      "h_at_cap": 1571,
+      "h_at_zero": 7078,
+      "h_partial": 15
+     },
+     "mustrun": {
+      "twh": 0.787,
+      "cap_mean_mw": 139.4,
+      "mc_mean": 29.68,
+      "h_avail": 8664,
+      "h_at_cap": 5448,
+      "h_at_zero": 3077,
+      "h_partial": 139
+     },
+     "peak": {
+      "twh": 0.008,
+      "cap_mean_mw": 6.9,
+      "mc_mean": 61.88,
+      "h_avail": 8664,
+      "h_at_cap": 1576,
+      "h_at_zero": 7086,
+      "h_partial": 2
+     }
+    },
+    "campd_twh": 1.209,
+    "campd_sd_daily": 71.0,
+    "campd_sd_intra": 16.8,
+    "campd_p05": 58.0,
+    "campd_p10_running": 60.0,
+    "campd_max": 423.0,
+    "r_hourly": 0.422
+   },
+   "54318": {
+    "model_twh": 0.24,
+    "cheap_share": 0.5,
+    "cheap_cap_mw": 13.7,
+    "model_sd_daily": 1.3,
+    "model_sd_intra": 0.1,
+    "model_p05": 26.6,
+    "bands": {
+     "committed": {
+      "twh": 0.012,
+      "cap_mean_mw": 1.4,
+      "mc_mean": 18.63,
+      "h_avail": 8760,
+      "h_at_cap": 8619,
+      "h_at_zero": 141,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.052,
+      "cap_mean_mw": 5.9,
+      "mc_mean": 18.24,
+      "h_avail": 8760,
+      "h_at_cap": 8745,
+      "h_at_zero": 15,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.063,
+      "cap_mean_mw": 7.2,
+      "mc_mean": 18.24,
+      "h_avail": 8760,
+      "h_at_cap": 8745,
+      "h_at_zero": 15,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 0.108,
+      "cap_mean_mw": 12.3,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.005,
+      "cap_mean_mw": 0.5,
+      "mc_mean": 18.24,
+      "h_avail": 8760,
+      "h_at_cap": 8745,
+      "h_at_zero": 15,
+      "h_partial": 0
+     }
+    }
+   },
+   "56224": {
+    "model_twh": 0.599,
+    "cheap_share": 0.939,
+    "cheap_cap_mw": 107.8,
+    "model_sd_daily": 43.3,
+    "model_sd_intra": 3.9,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.09,
+      "cap_mean_mw": 53.9,
+      "mc_mean": 111.6,
+      "h_avail": 7440,
+      "h_at_cap": 2077,
+      "h_at_zero": 5345,
+      "h_partial": 18
+     },
+     "econhi": {
+      "twh": 0.014,
+      "cap_mean_mw": 8.0,
+      "mc_mean": 55.95,
+      "h_avail": 7440,
+      "h_at_cap": 2261,
+      "h_at_zero": 5177,
+      "h_partial": 2
+     },
+     "econlo": {
+      "twh": 0.017,
+      "cap_mean_mw": 9.7,
+      "mc_mean": 55.95,
+      "h_avail": 7440,
+      "h_at_cap": 2261,
+      "h_at_zero": 5178,
+      "h_partial": 1
+     },
+     "mustrun": {
+      "twh": 0.472,
+      "cap_mean_mw": 53.9,
+      "mc_mean": 9.4,
+      "h_avail": 7440,
+      "h_at_cap": 7440,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.005,
+      "cap_mean_mw": 2.6,
+      "mc_mean": 55.95,
+      "h_avail": 7440,
+      "h_at_cap": 2263,
+      "h_at_zero": 5177,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 1.187,
+    "campd_sd_daily": 73.1,
+    "campd_sd_intra": 7.7,
+    "campd_p05": 0.0,
+    "campd_p10_running": 92.0,
+    "campd_max": 235.0,
+    "r_hourly": 0.694
+   },
+   "57915": {
+    "model_twh": 0.22,
+    "cheap_share": 0.5,
+    "cheap_cap_mw": 12.6,
+    "model_sd_daily": 1.1,
+    "model_sd_intra": 0.0,
+    "model_p05": 24.4,
+    "bands": {
+     "committed": {
+      "twh": 0.011,
+      "cap_mean_mw": 1.3,
+      "mc_mean": 18.48,
+      "h_avail": 8760,
+      "h_at_cap": 8619,
+      "h_at_zero": 141,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.047,
+      "cap_mean_mw": 5.4,
+      "mc_mean": 18.09,
+      "h_avail": 8760,
+      "h_at_cap": 8746,
+      "h_at_zero": 14,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.058,
+      "cap_mean_mw": 6.6,
+      "mc_mean": 18.09,
+      "h_avail": 8760,
+      "h_at_cap": 8746,
+      "h_at_zero": 14,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 0.099,
+      "cap_mean_mw": 11.3,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.004,
+      "cap_mean_mw": 0.5,
+      "mc_mean": 18.09,
+      "h_avail": 2928,
+      "h_at_cap": 2916,
+      "h_at_zero": 12,
+      "h_partial": 0
+     }
+    }
+   }
+  },
+  "2024": {
+   "3845": {
+    "model_twh": 0.532,
+    "cheap_share": 0.319,
+    "cheap_cap_mw": 182.9,
+    "model_sd_daily": 150.4,
+    "model_sd_intra": 17.9,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.167,
+      "cap_mean_mw": 182.5,
+      "mc_mean": 86.1,
+      "h_avail": 5304,
+      "h_at_cap": 570,
+      "h_at_zero": 4718,
+      "h_partial": 16
+     },
+     "econhi": {
+      "twh": 0.156,
+      "cap_mean_mw": 79.0,
+      "mc_mean": 38.24,
+      "h_avail": 5304,
+      "h_at_cap": 1278,
+      "h_at_zero": 3994,
+      "h_partial": 32
+     },
+     "econlo": {
+      "twh": 0.191,
+      "cap_mean_mw": 96.6,
+      "mc_mean": 38.24,
+      "h_avail": 5304,
+      "h_at_cap": 1273,
+      "h_at_zero": 3992,
+      "h_partial": 39
+     },
+     "mustrun": {
+      "twh": 0.003,
+      "cap_mean_mw": 0.4,
+      "mc_mean": 4.5,
+      "h_avail": 5136,
+      "h_at_cap": 5136,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.014,
+      "cap_mean_mw": 7.3,
+      "mc_mean": 38.24,
+      "h_avail": 5304,
+      "h_at_cap": 1292,
+      "h_at_zero": 4011,
+      "h_partial": 1
+     }
+    },
+    "campd_twh": 3.025,
+    "campd_sd_daily": 284.8,
+    "campd_sd_intra": 44.4,
+    "campd_p05": 0.0,
+    "campd_p10_running": 334.0,
+    "campd_max": 708.0,
+    "r_hourly": 0.368
+   },
+   "4158": {
+    "model_twh": 4.807,
+    "cheap_share": 0.968,
+    "cheap_cap_mw": 531.2,
+    "model_sd_daily": 142.9,
+    "model_sd_intra": 2.2,
+    "model_p05": 325.9,
+    "bands": {
+     "committed": {
+      "twh": 2.336,
+      "cap_mean_mw": 266.7,
+      "mc_mean": 4.64,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.033,
+      "cap_mean_mw": 4.5,
+      "mc_mean": 18.38,
+      "h_avail": 8760,
+      "h_at_cap": 7129,
+      "h_at_zero": 1627,
+      "h_partial": 4
+     },
+     "econlo": {
+      "twh": 0.04,
+      "cap_mean_mw": 5.5,
+      "mc_mean": 18.38,
+      "h_avail": 8760,
+      "h_at_cap": 7126,
+      "h_at_zero": 1629,
+      "h_partial": 5
+     },
+     "mustrun": {
+      "twh": 2.317,
+      "cap_mean_mw": 264.5,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.081,
+      "cap_mean_mw": 11.0,
+      "mc_mean": 18.38,
+      "h_avail": 8760,
+      "h_at_cap": 7124,
+      "h_at_zero": 1629,
+      "h_partial": 7
+     }
+    },
+    "campd_twh": 4.246,
+    "campd_sd_daily": 131.0,
+    "campd_sd_intra": 58.5,
+    "campd_p05": 261.0,
+    "campd_p10_running": 296.0,
+    "campd_max": 777.0,
+    "r_hourly": 0.643
+   },
+   "4162": {
+    "model_twh": 1.711,
+    "cheap_share": 0.88,
+    "cheap_cap_mw": 171.9,
+    "model_sd_daily": 75.4,
+    "model_sd_intra": 5.0,
+    "model_p05": 77.8,
+    "bands": {
+     "committed": {
+      "twh": 0.755,
+      "cap_mean_mw": 86.2,
+      "mc_mean": 4.65,
+      "h_avail": 8616,
+      "h_at_cap": 8616,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.087,
+      "cap_mean_mw": 43.0,
+      "mc_mean": 35.31,
+      "h_avail": 8616,
+      "h_at_cap": 2013,
+      "h_at_zero": 6595,
+      "h_partial": 8
+     },
+     "econlo": {
+      "twh": 0.107,
+      "cap_mean_mw": 52.5,
+      "mc_mean": 35.31,
+      "h_avail": 8616,
+      "h_at_cap": 2007,
+      "h_at_zero": 6596,
+      "h_partial": 13
+     },
+     "mustrun": {
+      "twh": 0.751,
+      "cap_mean_mw": 85.7,
+      "mc_mean": 4.5,
+      "h_avail": 8616,
+      "h_at_cap": 8616,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.011,
+      "cap_mean_mw": 5.5,
+      "mc_mean": 35.31,
+      "h_avail": 8616,
+      "h_at_cap": 2018,
+      "h_at_zero": 6598,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 1.844,
+    "campd_sd_daily": 90.3,
+    "campd_sd_intra": 59.4,
+    "campd_p05": 65.0,
+    "campd_p10_running": 95.0,
+    "campd_max": 388.0,
+    "r_hourly": 0.561
+   },
+   "6076": {
+    "model_twh": 8.888,
+    "cheap_share": 0.99,
+    "cheap_cap_mw": 1004.4,
+    "model_sd_daily": 452.7,
+    "model_sd_intra": 1.6,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 4.3,
+      "cap_mean_mw": 490.9,
+      "mc_mean": 4.68,
+      "h_avail": 8112,
+      "h_at_cap": 8112,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 4.498,
+      "cap_mean_mw": 513.5,
+      "mc_mean": 4.5,
+      "h_avail": 8112,
+      "h_at_cap": 8112,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.09,
+      "cap_mean_mw": 20.5,
+      "mc_mean": 26.49,
+      "h_avail": 8112,
+      "h_at_cap": 3869,
+      "h_at_zero": 4241,
+      "h_partial": 2
+     }
+    },
+    "campd_twh": 9.924,
+    "campd_sd_daily": 506.1,
+    "campd_sd_intra": 87.4,
+    "campd_p05": 0.0,
+    "campd_p10_running": 598.0,
+    "campd_max": 1619.0,
+    "r_hourly": 0.85
+   },
+   "6101": {
+    "model_twh": 2.014,
+    "cheap_share": 0.569,
+    "cheap_cap_mw": 130.8,
+    "model_sd_daily": 95.9,
+    "model_sd_intra": 16.2,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 1.146,
+      "cap_mean_mw": 130.8,
+      "mc_mean": 4.76,
+      "h_avail": 7920,
+      "h_at_cap": 7920,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.376,
+      "cap_mean_mw": 60.1,
+      "mc_mean": 21.01,
+      "h_avail": 7920,
+      "h_at_cap": 5655,
+      "h_at_zero": 2226,
+      "h_partial": 39
+     },
+     "econlo": {
+      "twh": 0.459,
+      "cap_mean_mw": 73.5,
+      "mc_mean": 21.01,
+      "h_avail": 7920,
+      "h_at_cap": 5648,
+      "h_at_zero": 2227,
+      "h_partial": 45
+     },
+     "peak": {
+      "twh": 0.034,
+      "cap_mean_mw": 5.4,
+      "mc_mean": 21.01,
+      "h_avail": 7920,
+      "h_at_cap": 5670,
+      "h_at_zero": 2247,
+      "h_partial": 3
+     }
+    },
+    "campd_twh": 2.252,
+    "campd_sd_daily": 83.2,
+    "campd_sd_intra": 36.4,
+    "campd_p05": 0.0,
+    "campd_p10_running": 162.0,
+    "campd_max": 376.0,
+    "r_hourly": 0.534
+   },
+   "6165": {
+    "model_twh": 4.629,
+    "cheap_share": 0.937,
+    "cheap_cap_mw": 495.4,
+    "model_sd_daily": 151.9,
+    "model_sd_intra": 32.8,
+    "model_p05": 342.8,
+    "bands": {
+     "committed": {
+      "twh": 2.17,
+      "cap_mean_mw": 247.7,
+      "mc_mean": 5.34,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.127,
+      "cap_mean_mw": 266.9,
+      "mc_mean": 42.61,
+      "h_avail": 8760,
+      "h_at_cap": 386,
+      "h_at_zero": 8275,
+      "h_partial": 99
+     },
+     "econlo": {
+      "twh": 0.152,
+      "cap_mean_mw": 326.3,
+      "mc_mean": 42.61,
+      "h_avail": 8760,
+      "h_at_cap": 366,
+      "h_at_zero": 8265,
+      "h_partial": 129
+     },
+     "mustrun": {
+      "twh": 2.17,
+      "cap_mean_mw": 247.7,
+      "mc_mean": 5.2,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.01,
+      "cap_mean_mw": 22.2,
+      "mc_mean": 42.61,
+      "h_avail": 8760,
+      "h_at_cap": 419,
+      "h_at_zero": 8330,
+      "h_partial": 11
+     }
+    },
+    "campd_twh": 4.641,
+    "campd_sd_daily": 200.1,
+    "campd_sd_intra": 112.2,
+    "campd_p05": 223.0,
+    "campd_p10_running": 231.0,
+    "campd_max": 1363.0,
+    "r_hourly": 0.224
+   },
+   "7790": {
+    "model_twh": 3.501,
+    "cheap_share": 0.995,
+    "cheap_cap_mw": 397.6,
+    "model_sd_daily": 54.2,
+    "model_sd_intra": 0.9,
+    "model_p05": 392.0,
+    "bands": {
+     "committed": {
+      "twh": 1.742,
+      "cap_mean_mw": 198.8,
+      "mc_mean": 4.66,
+      "h_avail": 8616,
+      "h_at_cap": 8616,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.003,
+      "cap_mean_mw": 2.6,
+      "mc_mean": 40.64,
+      "h_avail": 8616,
+      "h_at_cap": 1294,
+      "h_at_zero": 7321,
+      "h_partial": 1
+     },
+     "econlo": {
+      "twh": 0.004,
+      "cap_mean_mw": 3.2,
+      "mc_mean": 40.64,
+      "h_avail": 8616,
+      "h_at_cap": 1295,
+      "h_at_zero": 7320,
+      "h_partial": 1
+     },
+     "mustrun": {
+      "twh": 1.742,
+      "cap_mean_mw": 198.8,
+      "mc_mean": 4.5,
+      "h_avail": 8616,
+      "h_at_cap": 8616,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.011,
+      "cap_mean_mw": 8.2,
+      "mc_mean": 40.64,
+      "h_avail": 8616,
+      "h_at_cap": 1293,
+      "h_at_zero": 7322,
+      "h_partial": 1
+     }
+    },
+    "campd_twh": 3.42,
+    "campd_sd_daily": 86.7,
+    "campd_sd_intra": 68.5,
+    "campd_p05": 210.0,
+    "campd_p10_running": 221.0,
+    "campd_max": 490.0,
+    "r_hourly": 0.281
+   },
+   "8066": {
+    "model_twh": 5.023,
+    "cheap_share": 0.836,
+    "cheap_cap_mw": 479.4,
+    "model_sd_daily": 168.8,
+    "model_sd_intra": 20.7,
+    "model_p05": 464.7,
+    "bands": {
+     "committed": {
+      "twh": 0.42,
+      "cap_mean_mw": 47.9,
+      "mc_mean": 4.64,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.355,
+      "cap_mean_mw": 207.1,
+      "mc_mean": 38.22,
+      "h_avail": 8760,
+      "h_at_cap": 1741,
+      "h_at_zero": 6966,
+      "h_partial": 53
+     },
+     "econlo": {
+      "twh": 0.435,
+      "cap_mean_mw": 253.1,
+      "mc_mean": 38.22,
+      "h_avail": 8760,
+      "h_at_cap": 1729,
+      "h_at_zero": 6955,
+      "h_partial": 76
+     },
+     "mustrun": {
+      "twh": 3.78,
+      "cap_mean_mw": 431.5,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.033,
+      "cap_mean_mw": 19.2,
+      "mc_mean": 38.22,
+      "h_avail": 8760,
+      "h_at_cap": 1766,
+      "h_at_zero": 6990,
+      "h_partial": 4
+     }
+    },
+    "campd_twh": 5.087,
+    "campd_sd_daily": 271.5,
+    "campd_sd_intra": 178.4,
+    "campd_p05": 170.0,
+    "campd_p10_running": 173.0,
+    "campd_max": 1128.0,
+    "r_hourly": 0.421
+   },
+   "8069": {
+    "model_twh": 3.211,
+    "cheap_share": 0.884,
+    "cheap_cap_mw": 324.0,
+    "model_sd_daily": 134.6,
+    "model_sd_intra": 2.0,
+    "model_p05": 314.1,
+    "bands": {
+     "committed": {
+      "twh": 1.419,
+      "cap_mean_mw": 162.0,
+      "mc_mean": 5.1,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.162,
+      "cap_mean_mw": 220.6,
+      "mc_mean": 46.07,
+      "h_avail": 8760,
+      "h_at_cap": 754,
+      "h_at_zero": 8001,
+      "h_partial": 5
+     },
+     "econlo": {
+      "twh": 0.198,
+      "cap_mean_mw": 269.6,
+      "mc_mean": 46.07,
+      "h_avail": 8760,
+      "h_at_cap": 756,
+      "h_at_zero": 7998,
+      "h_partial": 6
+     },
+     "mustrun": {
+      "twh": 1.419,
+      "cap_mean_mw": 162.0,
+      "mc_mean": 4.97,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.012,
+      "cap_mean_mw": 16.6,
+      "mc_mean": 46.07,
+      "h_avail": 8760,
+      "h_at_cap": 759,
+      "h_at_zero": 8000,
+      "h_partial": 1
+     }
+    },
+    "campd_twh": 3.064,
+    "campd_sd_daily": 143.1,
+    "campd_sd_intra": 107.0,
+    "campd_p05": 176.0,
+    "campd_p10_running": 182.0,
+    "campd_max": 983.0,
+    "r_hourly": 0.015
+   },
+   "8224": {
+    "model_twh": 1.34,
+    "cheap_share": 0.992,
+    "cheap_cap_mw": 363.6,
+    "model_sd_daily": 161.6,
+    "model_sd_intra": 39.3,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.573,
+      "cap_mean_mw": 181.8,
+      "mc_mean": 55.68,
+      "h_avail": 8688,
+      "h_at_cap": 3017,
+      "h_at_zero": 5620,
+      "h_partial": 51
+     },
+     "econhi": {
+      "twh": 0.004,
+      "cap_mean_mw": 33.4,
+      "mc_mean": 58.42,
+      "h_avail": 8688,
+      "h_at_cap": 129,
+      "h_at_zero": 8557,
+      "h_partial": 2
+     },
+     "econlo": {
+      "twh": 0.005,
+      "cap_mean_mw": 40.8,
+      "mc_mean": 58.42,
+      "h_avail": 8688,
+      "h_at_cap": 131,
+      "h_at_zero": 8549,
+      "h_partial": 8
+     },
+     "mustrun": {
+      "twh": 0.756,
+      "cap_mean_mw": 181.8,
+      "mc_mean": 28.16,
+      "h_avail": 8688,
+      "h_at_cap": 3920,
+      "h_at_zero": 4657,
+      "h_partial": 111
+     },
+     "peak": {
+      "twh": 0.001,
+      "cap_mean_mw": 8.9,
+      "mc_mean": 58.42,
+      "h_avail": 8688,
+      "h_at_cap": 133,
+      "h_at_zero": 8555,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 1.426,
+    "campd_sd_daily": 46.3,
+    "campd_sd_intra": 13.9,
+    "campd_p05": 105.0,
+    "campd_p10_running": 114.0,
+    "campd_max": 476.0,
+    "r_hourly": 0.116
+   },
+   "54318": {
+    "model_twh": 0.208,
+    "cheap_share": 0.552,
+    "cheap_cap_mw": 13.7,
+    "model_sd_daily": 5.4,
+    "model_sd_intra": 1.8,
+    "model_p05": 12.0,
+    "bands": {
+     "committed": {
+      "twh": 0.007,
+      "cap_mean_mw": 1.4,
+      "mc_mean": 26.46,
+      "h_avail": 8760,
+      "h_at_cap": 5157,
+      "h_at_zero": 3603,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.04,
+      "cap_mean_mw": 5.9,
+      "mc_mean": 19.85,
+      "h_avail": 8760,
+      "h_at_cap": 6786,
+      "h_at_zero": 1972,
+      "h_partial": 2
+     },
+     "econlo": {
+      "twh": 0.049,
+      "cap_mean_mw": 7.2,
+      "mc_mean": 19.85,
+      "h_avail": 8760,
+      "h_at_cap": 6785,
+      "h_at_zero": 1971,
+      "h_partial": 4
+     },
+     "mustrun": {
+      "twh": 0.108,
+      "cap_mean_mw": 12.3,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.004,
+      "cap_mean_mw": 0.5,
+      "mc_mean": 19.85,
+      "h_avail": 8760,
+      "h_at_cap": 6786,
+      "h_at_zero": 1974,
+      "h_partial": 0
+     }
+    }
+   },
+   "56224": {
+    "model_twh": 0.557,
+    "cheap_share": 0.991,
+    "cheap_cap_mw": 124.0,
+    "model_sd_daily": 32.2,
+    "model_sd_intra": 2.9,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.009,
+      "cap_mean_mw": 62.0,
+      "mc_mean": 127.02,
+      "h_avail": 7728,
+      "h_at_cap": 109,
+      "h_at_zero": 7612,
+      "h_partial": 7
+     },
+     "econhi": {
+      "twh": 0.002,
+      "cap_mean_mw": 9.1,
+      "mc_mean": 51.94,
+      "h_avail": 7728,
+      "h_at_cap": 152,
+      "h_at_zero": 7573,
+      "h_partial": 3
+     },
+     "econlo": {
+      "twh": 0.002,
+      "cap_mean_mw": 11.2,
+      "mc_mean": 51.94,
+      "h_avail": 7728,
+      "h_at_cap": 152,
+      "h_at_zero": 7572,
+      "h_partial": 4
+     },
+     "mustrun": {
+      "twh": 0.543,
+      "cap_mean_mw": 62.0,
+      "mc_mean": 9.02,
+      "h_avail": 7728,
+      "h_at_cap": 7728,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.001,
+      "cap_mean_mw": 2.9,
+      "mc_mean": 51.94,
+      "h_avail": 7728,
+      "h_at_cap": 154,
+      "h_at_zero": 7574,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 1.282,
+    "campd_sd_daily": 64.4,
+    "campd_sd_intra": 14.6,
+    "campd_p05": 0.0,
+    "campd_p10_running": 92.0,
+    "campd_max": 236.0,
+    "r_hourly": 0.705
+   }
+  },
+  "2025": {
+   "3845": {
+    "model_twh": 1.467,
+    "cheap_share": 0.407,
+    "cheap_cap_mw": 196.0,
+    "model_sd_daily": 233.4,
+    "model_sd_intra": 35.9,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.594,
+      "cap_mean_mw": 195.6,
+      "mc_mean": 100.26,
+      "h_avail": 5664,
+      "h_at_cap": 2082,
+      "h_at_zero": 3552,
+      "h_partial": 30
+     },
+     "econhi": {
+      "twh": 0.376,
+      "cap_mean_mw": 84.7,
+      "mc_mean": 33.83,
+      "h_avail": 5664,
+      "h_at_cap": 2945,
+      "h_at_zero": 2676,
+      "h_partial": 43
+     },
+     "econlo": {
+      "twh": 0.459,
+      "cap_mean_mw": 103.5,
+      "mc_mean": 33.83,
+      "h_avail": 5664,
+      "h_at_cap": 2949,
+      "h_at_zero": 2685,
+      "h_partial": 30
+     },
+     "mustrun": {
+      "twh": 0.003,
+      "cap_mean_mw": 0.4,
+      "mc_mean": 4.5,
+      "h_avail": 5424,
+      "h_at_cap": 5424,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.035,
+      "cap_mean_mw": 7.8,
+      "mc_mean": 33.83,
+      "h_avail": 5664,
+      "h_at_cap": 2957,
+      "h_at_zero": 2703,
+      "h_partial": 4
+     }
+    },
+    "campd_twh": 3.401,
+    "campd_sd_daily": 287.4,
+    "campd_sd_intra": 41.1,
+    "campd_p05": 0.0,
+    "campd_p10_running": 337.0,
+    "campd_max": 710.0,
+    "r_hourly": 0.543
+   },
+   "4158": {
+    "model_twh": 4.751,
+    "cheap_share": 0.962,
+    "cheap_cap_mw": 521.8,
+    "model_sd_daily": 166.1,
+    "model_sd_intra": 0.1,
+    "model_p05": 251.6,
+    "bands": {
+     "committed": {
+      "twh": 2.295,
+      "cap_mean_mw": 262.0,
+      "mc_mean": 4.64,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.038,
+      "cap_mean_mw": 4.4,
+      "mc_mean": 18.8,
+      "h_avail": 8760,
+      "h_at_cap": 8736,
+      "h_at_zero": 24,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.047,
+      "cap_mean_mw": 5.4,
+      "mc_mean": 18.8,
+      "h_avail": 8760,
+      "h_at_cap": 8736,
+      "h_at_zero": 24,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 2.276,
+      "cap_mean_mw": 259.8,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.095,
+      "cap_mean_mw": 10.8,
+      "mc_mean": 18.8,
+      "h_avail": 8760,
+      "h_at_cap": 8736,
+      "h_at_zero": 24,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 4.711,
+    "campd_sd_daily": 154.9,
+    "campd_sd_intra": 53.6,
+    "campd_p05": 263.0,
+    "campd_p10_running": 314.0,
+    "campd_max": 771.0,
+    "r_hourly": 0.823
+   },
+   "4162": {
+    "model_twh": 1.86,
+    "cheap_share": 0.825,
+    "cheap_cap_mw": 175.2,
+    "model_sd_daily": 72.0,
+    "model_sd_intra": 18.1,
+    "model_p05": 81.8,
+    "bands": {
+     "committed": {
+      "twh": 0.77,
+      "cap_mean_mw": 87.9,
+      "mc_mean": 4.65,
+      "h_avail": 8712,
+      "h_at_cap": 8712,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.138,
+      "cap_mean_mw": 43.8,
+      "mc_mean": 35.42,
+      "h_avail": 8712,
+      "h_at_cap": 3400,
+      "h_at_zero": 5289,
+      "h_partial": 23
+     },
+     "econlo": {
+      "twh": 0.169,
+      "cap_mean_mw": 53.5,
+      "mc_mean": 35.42,
+      "h_avail": 8712,
+      "h_at_cap": 3384,
+      "h_at_zero": 5277,
+      "h_partial": 51
+     },
+     "mustrun": {
+      "twh": 0.765,
+      "cap_mean_mw": 87.3,
+      "mc_mean": 4.5,
+      "h_avail": 8712,
+      "h_at_cap": 8712,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.018,
+      "cap_mean_mw": 5.6,
+      "mc_mean": 35.42,
+      "h_avail": 8712,
+      "h_at_cap": 3412,
+      "h_at_zero": 5298,
+      "h_partial": 2
+     }
+    },
+    "campd_twh": 1.93,
+    "campd_sd_daily": 81.3,
+    "campd_sd_intra": 67.0,
+    "campd_p05": 68.0,
+    "campd_p10_running": 103.0,
+    "campd_max": 384.0,
+    "r_hourly": 0.574
+   },
+   "6076": {
+    "model_twh": 9.067,
+    "cheap_share": 0.982,
+    "cheap_cap_mw": 1016.8,
+    "model_sd_daily": 402.3,
+    "model_sd_intra": 1.4,
+    "model_p05": 569.9,
+    "bands": {
+     "committed": {
+      "twh": 4.353,
+      "cap_mean_mw": 497.0,
+      "mc_mean": 54.58,
+      "h_avail": 8616,
+      "h_at_cap": 8616,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 4.553,
+      "cap_mean_mw": 519.8,
+      "mc_mean": 4.5,
+      "h_avail": 8616,
+      "h_at_cap": 8616,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.16,
+      "cap_mean_mw": 20.8,
+      "mc_mean": 25.79,
+      "h_avail": 8616,
+      "h_at_cap": 7430,
+      "h_at_zero": 1184,
+      "h_partial": 2
+     }
+    },
+    "campd_twh": 10.134,
+    "campd_sd_daily": 428.6,
+    "campd_sd_intra": 76.6,
+    "campd_p05": 426.0,
+    "campd_p10_running": 689.0,
+    "campd_max": 1619.0,
+    "r_hourly": 0.904
+   },
+   "6101": {
+    "model_twh": 2.281,
+    "cheap_share": 0.497,
+    "cheap_cap_mw": 129.4,
+    "model_sd_daily": 100.9,
+    "model_sd_intra": 4.5,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 1.133,
+      "cap_mean_mw": 129.4,
+      "mc_mean": 4.78,
+      "h_avail": 7704,
+      "h_at_cap": 7704,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.496,
+      "cap_mean_mw": 59.4,
+      "mc_mean": 21.11,
+      "h_avail": 7704,
+      "h_at_cap": 7332,
+      "h_at_zero": 367,
+      "h_partial": 5
+     },
+     "econlo": {
+      "twh": 0.607,
+      "cap_mean_mw": 72.6,
+      "mc_mean": 21.11,
+      "h_avail": 7704,
+      "h_at_cap": 7330,
+      "h_at_zero": 366,
+      "h_partial": 8
+     },
+     "peak": {
+      "twh": 0.045,
+      "cap_mean_mw": 5.3,
+      "mc_mean": 21.11,
+      "h_avail": 7704,
+      "h_at_cap": 7333,
+      "h_at_zero": 370,
+      "h_partial": 1
+     }
+    },
+    "campd_twh": 2.389,
+    "campd_sd_daily": 105.6,
+    "campd_sd_intra": 40.4,
+    "campd_p05": 0.0,
+    "campd_p10_running": 194.0,
+    "campd_max": 383.0,
+    "r_hourly": 0.754
+   },
+   "6165": {
+    "model_twh": 4.997,
+    "cheap_share": 0.921,
+    "cheap_cap_mw": 525.2,
+    "model_sd_daily": 140.0,
+    "model_sd_intra": 33.6,
+    "model_p05": 342.8,
+    "bands": {
+     "committed": {
+      "twh": 2.3,
+      "cap_mean_mw": 262.6,
+      "mc_mean": 5.35,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.173,
+      "cap_mean_mw": 283.0,
+      "mc_mean": 43.43,
+      "h_avail": 8760,
+      "h_at_cap": 643,
+      "h_at_zero": 8067,
+      "h_partial": 50
+     },
+     "econlo": {
+      "twh": 0.209,
+      "cap_mean_mw": 345.8,
+      "mc_mean": 43.43,
+      "h_avail": 8760,
+      "h_at_cap": 622,
+      "h_at_zero": 8055,
+      "h_partial": 83
+     },
+     "mustrun": {
+      "twh": 2.3,
+      "cap_mean_mw": 262.6,
+      "mc_mean": 5.22,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.014,
+      "cap_mean_mw": 23.6,
+      "mc_mean": 43.43,
+      "h_avail": 8760,
+      "h_at_cap": 663,
+      "h_at_zero": 8094,
+      "h_partial": 3
+     }
+    },
+    "campd_twh": 7.563,
+    "campd_sd_daily": 155.2,
+    "campd_sd_intra": 192.7,
+    "campd_p05": 521.0,
+    "campd_p10_running": 532.0,
+    "campd_max": 1413.0,
+    "r_hourly": 0.249
+   },
+   "7790": {
+    "model_twh": 2.376,
+    "cheap_share": 0.991,
+    "cheap_cap_mw": 268.8,
+    "model_sd_daily": 191.4,
+    "model_sd_intra": 0.9,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 1.177,
+      "cap_mean_mw": 134.4,
+      "mc_mean": 21.72,
+      "h_avail": 5856,
+      "h_at_cap": 5856,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.004,
+      "cap_mean_mw": 1.8,
+      "mc_mean": 40.84,
+      "h_avail": 5856,
+      "h_at_cap": 1536,
+      "h_at_zero": 4320,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.005,
+      "cap_mean_mw": 2.1,
+      "mc_mean": 40.84,
+      "h_avail": 5856,
+      "h_at_cap": 1538,
+      "h_at_zero": 4316,
+      "h_partial": 2
+     },
+     "mustrun": {
+      "twh": 1.177,
+      "cap_mean_mw": 134.4,
+      "mc_mean": 4.5,
+      "h_avail": 5856,
+      "h_at_cap": 5856,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.013,
+      "cap_mean_mw": 5.6,
+      "mc_mean": 40.84,
+      "h_avail": 5856,
+      "h_at_cap": 1537,
+      "h_at_zero": 4317,
+      "h_partial": 2
+     }
+    },
+    "campd_twh": 2.664,
+    "campd_sd_daily": 213.4,
+    "campd_sd_intra": 28.8,
+    "campd_p05": 0.0,
+    "campd_p10_running": 309.7,
+    "campd_max": 494.0,
+    "r_hourly": 0.939
+   },
+   "8066": {
+    "model_twh": 3.973,
+    "cheap_share": 0.84,
+    "cheap_cap_mw": 381.0,
+    "model_sd_daily": 206.3,
+    "model_sd_intra": 28.6,
+    "model_p05": 214.9,
+    "bands": {
+     "committed": {
+      "twh": 0.334,
+      "cap_mean_mw": 38.1,
+      "mc_mean": 4.64,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.275,
+      "cap_mean_mw": 164.6,
+      "mc_mean": 39.73,
+      "h_avail": 8760,
+      "h_at_cap": 1610,
+      "h_at_zero": 7104,
+      "h_partial": 46
+     },
+     "econlo": {
+      "twh": 0.335,
+      "cap_mean_mw": 201.2,
+      "mc_mean": 39.73,
+      "h_avail": 8760,
+      "h_at_cap": 1595,
+      "h_at_zero": 7101,
+      "h_partial": 64
+     },
+     "mustrun": {
+      "twh": 3.004,
+      "cap_mean_mw": 342.9,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.025,
+      "cap_mean_mw": 15.2,
+      "mc_mean": 39.73,
+      "h_avail": 8760,
+      "h_at_cap": 1628,
+      "h_at_zero": 7125,
+      "h_partial": 7
+     }
+    },
+    "campd_twh": 5.331,
+    "campd_sd_daily": 260.3,
+    "campd_sd_intra": 157.1,
+    "campd_p05": 96.0,
+    "campd_p10_running": 174.0,
+    "campd_max": 1125.0,
+    "r_hourly": 0.448
+   },
+   "8069": {
+    "model_twh": 2.962,
+    "cheap_share": 0.932,
+    "cheap_cap_mw": 315.2,
+    "model_sd_daily": 78.7,
+    "model_sd_intra": 22.4,
+    "model_p05": 207.1,
+    "bands": {
+     "committed": {
+      "twh": 1.38,
+      "cap_mean_mw": 157.6,
+      "mc_mean": 5.1,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.088,
+      "cap_mean_mw": 214.5,
+      "mc_mean": 45.77,
+      "h_avail": 8760,
+      "h_at_cap": 409,
+      "h_at_zero": 8323,
+      "h_partial": 28
+     },
+     "econlo": {
+      "twh": 0.107,
+      "cap_mean_mw": 262.2,
+      "mc_mean": 45.77,
+      "h_avail": 8760,
+      "h_at_cap": 406,
+      "h_at_zero": 8318,
+      "h_partial": 36
+     },
+     "mustrun": {
+      "twh": 1.38,
+      "cap_mean_mw": 157.6,
+      "mc_mean": 4.96,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.007,
+      "cap_mean_mw": 16.2,
+      "mc_mean": 45.77,
+      "h_avail": 8760,
+      "h_at_cap": 423,
+      "h_at_zero": 8334,
+      "h_partial": 3
+     }
+    },
+    "campd_twh": 4.737,
+    "campd_sd_daily": 195.0,
+    "campd_sd_intra": 166.2,
+    "campd_p05": 189.0,
+    "campd_p10_running": 204.0,
+    "campd_max": 960.0,
+    "r_hourly": 0.219
+   },
+   "8224": {
+    "model_twh": 1.018,
+    "cheap_share": 0.938,
+    "cheap_cap_mw": 191.0,
+    "model_sd_daily": 83.2,
+    "model_sd_intra": 28.0,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.368,
+      "cap_mean_mw": 95.5,
+      "mc_mean": 36.31,
+      "h_avail": 8400,
+      "h_at_cap": 3785,
+      "h_at_zero": 4587,
+      "h_partial": 28
+     },
+     "econhi": {
+      "twh": 0.025,
+      "cap_mean_mw": 17.5,
+      "mc_mean": 58.85,
+      "h_avail": 8400,
+      "h_at_cap": 1415,
+      "h_at_zero": 6980,
+      "h_partial": 5
+     },
+     "econlo": {
+      "twh": 0.031,
+      "cap_mean_mw": 21.4,
+      "mc_mean": 58.85,
+      "h_avail": 8400,
+      "h_at_cap": 1415,
+      "h_at_zero": 6981,
+      "h_partial": 4
+     },
+     "mustrun": {
+      "twh": 0.587,
+      "cap_mean_mw": 95.5,
+      "mc_mean": 28.35,
+      "h_avail": 8400,
+      "h_at_cap": 5895,
+      "h_at_zero": 2432,
+      "h_partial": 73
+     },
+     "peak": {
+      "twh": 0.007,
+      "cap_mean_mw": 4.7,
+      "mc_mean": 58.85,
+      "h_avail": 8400,
+      "h_at_cap": 1420,
+      "h_at_zero": 6980,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 1.548,
+    "campd_sd_daily": 58.8,
+    "campd_sd_intra": 23.1,
+    "campd_p05": 88.0,
+    "campd_p10_running": 109.0,
+    "campd_max": 389.0,
+    "r_hourly": -0.095
+   },
+   "54318": {
+    "model_twh": 0.235,
+    "cheap_share": 0.506,
+    "cheap_cap_mw": 13.7,
+    "model_sd_daily": 2.7,
+    "model_sd_intra": 0.4,
+    "model_p05": 25.3,
+    "bands": {
+     "committed": {
+      "twh": 0.011,
+      "cap_mean_mw": 1.4,
+      "mc_mean": 20.94,
+      "h_avail": 8760,
+      "h_at_cap": 8092,
+      "h_at_zero": 668,
+      "h_partial": 0
+     },
+     "econhi": {
+      "twh": 0.05,
+      "cap_mean_mw": 5.9,
+      "mc_mean": 20.01,
+      "h_avail": 8760,
+      "h_at_cap": 8436,
+      "h_at_zero": 324,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.061,
+      "cap_mean_mw": 7.2,
+      "mc_mean": 20.01,
+      "h_avail": 8760,
+      "h_at_cap": 8436,
+      "h_at_zero": 324,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 0.108,
+      "cap_mean_mw": 12.3,
+      "mc_mean": 4.5,
+      "h_avail": 8760,
+      "h_at_cap": 8760,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.005,
+      "cap_mean_mw": 0.5,
+      "mc_mean": 20.01,
+      "h_avail": 8760,
+      "h_at_cap": 8436,
+      "h_at_zero": 324,
+      "h_partial": 0
+     }
+    }
+   },
+   "56224": {
+    "model_twh": 0.827,
+    "cheap_share": 0.934,
+    "cheap_cap_mw": 146.0,
+    "model_sd_daily": 49.7,
+    "model_sd_intra": 6.3,
+    "model_p05": 0.0,
+    "bands": {
+     "committed": {
+      "twh": 0.133,
+      "cap_mean_mw": 73.0,
+      "mc_mean": 102.57,
+      "h_avail": 7824,
+      "h_at_cap": 1851,
+      "h_at_zero": 5966,
+      "h_partial": 7
+     },
+     "econhi": {
+      "twh": 0.021,
+      "cap_mean_mw": 10.8,
+      "mc_mean": 52.32,
+      "h_avail": 7824,
+      "h_at_cap": 2015,
+      "h_at_zero": 5809,
+      "h_partial": 0
+     },
+     "econlo": {
+      "twh": 0.026,
+      "cap_mean_mw": 13.2,
+      "mc_mean": 52.32,
+      "h_avail": 7824,
+      "h_at_cap": 2015,
+      "h_at_zero": 5809,
+      "h_partial": 0
+     },
+     "mustrun": {
+      "twh": 0.64,
+      "cap_mean_mw": 73.0,
+      "mc_mean": 9.06,
+      "h_avail": 7824,
+      "h_at_cap": 7824,
+      "h_at_zero": 0,
+      "h_partial": 0
+     },
+     "peak": {
+      "twh": 0.007,
+      "cap_mean_mw": 3.5,
+      "mc_mean": 52.32,
+      "h_avail": 7824,
+      "h_at_cap": 2015,
+      "h_at_zero": 5809,
+      "h_partial": 0
+     }
+    },
+    "campd_twh": 1.452,
+    "campd_sd_daily": 61.4,
+    "campd_sd_intra": 32.1,
+    "campd_p05": 0.0,
+    "campd_p10_running": 94.0,
+    "campd_max": 227.0,
+    "r_hourly": 0.58
+   }
+  }
+ },
+ "nested_prediction": {
+  "2019": {
+   "r_base": 0.759,
+   "r_arm_full_loss": 0.681,
+   "r_arm_half_loss": 0.723,
+   "coal_twh_base": 57.707,
+   "coal_twh_lost_full": 10.195,
+   "eia930_coal_twh": 54.551,
+   "sd_intra_base_arm_actual": [
+    213,
+    282,
+    528
+   ],
+   "sd_daily_base_arm_actual": [
+    1521,
+    1647,
+    1417
+   ],
+   "hours_with_loss": 8760
+  },
+  "2020": {
+   "r_base": 0.718,
+   "r_arm_full_loss": 0.716,
+   "r_arm_half_loss": 0.729,
+   "coal_twh_base": 43.707,
+   "coal_twh_lost_full": 6.942,
+   "eia930_coal_twh": 51.938,
+   "sd_intra_base_arm_actual": [
+    266,
+    378,
+    622
+   ],
+   "sd_daily_base_arm_actual": [
+    831,
+    906,
+    1026
+   ],
+   "hours_with_loss": 8678
+  },
+  "2021": {
+   "r_base": 0.747,
+   "r_arm_full_loss": 0.731,
+   "r_arm_half_loss": 0.741,
+   "coal_twh_base": 55.144,
+   "coal_twh_lost_full": 5.221,
+   "eia930_coal_twh": 50.141,
+   "sd_intra_base_arm_actual": [
+    143,
+    179,
+    485
+   ],
+   "sd_daily_base_arm_actual": [
+    1245,
+    1207,
+    1056
+   ],
+   "hours_with_loss": 8684
+  },
+  "2022": {
+   "r_base": 0.769,
+   "r_arm_full_loss": 0.756,
+   "r_arm_half_loss": 0.766,
+   "coal_twh_base": 60.767,
+   "coal_twh_lost_full": 5.048,
+   "eia930_coal_twh": 49.406,
+   "sd_intra_base_arm_actual": [
+    106,
+    130,
+    476
+   ],
+   "sd_daily_base_arm_actual": [
+    1107,
+    1055,
+    1025
+   ],
+   "hours_with_loss": 8760
+  },
+  "2023": {
+   "r_base": 0.683,
+   "r_arm_full_loss": 0.631,
+   "r_arm_half_loss": 0.659,
+   "coal_twh_base": 49.491,
+   "coal_twh_lost_full": 6.59,
+   "eia930_coal_twh": 42.266,
+   "sd_intra_base_arm_actual": [
+    180,
+    218,
+    453
+   ],
+   "sd_daily_base_arm_actual": [
+    1443,
+    1463,
+    1257
+   ],
+   "hours_with_loss": 8760
+  },
+  "2024": {
+   "r_base": 0.617,
+   "r_arm_full_loss": 0.557,
+   "r_arm_half_loss": 0.592,
+   "coal_twh_base": 36.983,
+   "coal_twh_lost_full": 10.411,
+   "eia930_coal_twh": 38.301,
+   "sd_intra_base_arm_actual": [
+    137,
+    184,
+    572
+   ],
+   "sd_daily_base_arm_actual": [
+    1048,
+    1013,
+    1156
+   ],
+   "hours_with_loss": 8759
+  },
+  "2025": {
+   "r_base": 0.689,
+   "r_arm_full_loss": 0.581,
+   "r_arm_half_loss": 0.644,
+   "coal_twh_base": 35.93,
+   "coal_twh_lost_full": 9.176,
+   "eia930_coal_twh": 42.262,
+   "sd_intra_base_arm_actual": [
+    166,
+    214,
+    709
+   ],
+   "sd_daily_base_arm_actual": [
+    886,
+    834,
+    1136
+   ],
+   "hours_with_loss": 8746
+  }
+ }
+}
