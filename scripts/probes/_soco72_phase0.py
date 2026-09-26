@@ -853,6 +853,11 @@ def main_greedy_gas(years: list[int]) -> None:
         print(c1_rows(y, g["delta"]).round(3).to_string(index=False))
 
 
+CENSUS_OUT: dict = {}
+#: committed census record the soco-72 composer checks the legs against (§7(2)).
+CENSUS_PATH = _ROOT / "docs/handoffs/r-soco/soco72_gas_census.json"
+
+
 def main_fleet_gas(years: list[int]) -> None:
     """Census: fleet_only rebuild with the live table vs the table plus CANDIDATE_BASIS.
 
@@ -863,8 +868,11 @@ def main_fleet_gas(years: list[int]) -> None:
 
     for y in years:
         live = dict(ft.GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR["SOCO"])
-        a = rebuild(y, None)
         try:
+            # control = the keeper's table (no 2019-2022 rows); arm = with them
+            for k in CANDIDATE_BASIS:
+                ft.GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR["SOCO"].pop(k, None)
+            a = rebuild(y, None)
             ft.GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR["SOCO"].update(CANDIDATE_BASIS)
             b = rebuild(y, None)
         finally:
@@ -890,6 +898,14 @@ def main_fleet_gas(years: list[int]) -> None:
             print("  unmoved coal/nuclear sample:", [x for x in ids[~moved]][:5])
         ng = [x for x in ids[moved]]
         print("  sample moved ids:", ng[:6])
+        # soco-72 §7(2) census record: median mc_base per gas econ/peak tranche, both arms.
+        keep = [i for i, x in enumerate(ids) if moved[i] and not str(x).endswith("_committed")]
+        CENSUS_OUT.setdefault(str(y), {})
+        for i in keep:
+            CENSUS_OUT[str(y)][str(ids[i])] = [round(float(np.median(mca[i])), 4), round(float(np.median(mcb[i])), 4)]
+    if CENSUS_OUT:
+        CENSUS_PATH.write_text(json.dumps(CENSUS_OUT, indent=0, sort_keys=True) + "\n")
+        print(f"wrote {CENSUS_PATH} ({sum(len(v) for v in CENSUS_OUT.values())} tranche-years)")
 
 
 if __name__ == "__main__":
