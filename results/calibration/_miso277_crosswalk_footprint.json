@@ -1,0 +1,2070 @@
+{
+  "probe": "miso-277 crosswalk footprint (zero LP)",
+  "crosswalk": {
+    "file": "data/raw/reference/camd-eia-crosswalk/epa_eia_crosswalk.csv",
+    "rows": 6935,
+    "eia860_basis_year": 2018,
+    "version": "v0.3 (upstream master 3c7d672, 2022-10-03)"
+  },
+  "artifact": "data/raw/_processed-legacy/thermal_tranches_MISO.csv",
+  "finding_no_row_gap_twh": {
+    "2019": {
+      "model": 1.88,
+      "eia923": 6.87,
+      "gap": -4.99
+    },
+    "2020": {
+      "model": 2.31,
+      "eia923": 6.36,
+      "gap": -4.06
+    },
+    "2021": {
+      "model": 0.56,
+      "eia923": 3.86,
+      "gap": -3.31
+    },
+    "2022": {
+      "model": 1.03,
+      "eia923": 3.79,
+      "gap": -2.76
+    },
+    "2023": {
+      "model": 2.35,
+      "eia923": 3.55,
+      "gap": -1.19
+    }
+  },
+  "per_facility": {
+    "6190": {
+      "artifact_groups": [
+        "COAL"
+      ],
+      "fleet_groups_now": {
+        "ST_GAS": 428.5,
+        "COAL_PRB": 488.1
+      },
+      "fleet_primary_now": "COAL_PRB",
+      "crosswalk_units": [
+        "1",
+        "2",
+        "3-1",
+        "3-2"
+      ],
+      "eia860_2023_generators": [
+        "1:ST/NG:445.5MW:OP",
+        "2:ST/SUB:558.0MW:OP",
+        "3:ST/PC:703.8MW:OP"
+      ],
+      "units": {
+        "1": {
+          "2019": {
+            "gross_gwh": 564.2,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6190:1:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2020": {
+            "gross_gwh": 682.7,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6190:1:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2021": {
+            "gross_gwh": 441.9,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6190:1:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2022": {
+            "gross_gwh": 605.5,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6190:1:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2023": {
+            "gross_gwh": 1436.1,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6190:1:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          }
+        },
+        "2": {
+          "2019": {
+            "gross_gwh": 2306.1,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6190:2:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2020": {
+            "gross_gwh": 1235.3,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6190:2:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2021": {
+            "gross_gwh": 2490.9,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6190:2:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2022": {
+            "gross_gwh": 2678.6,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6190:2:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2023": {
+            "gross_gwh": 1833.8,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6190:2:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          }
+        },
+        "3-1": {
+          "2019": {
+            "gross_gwh": 1472.8,
+            "campd_fuel": "Petroleum Coke",
+            "campd_unit_type": "Circulating fluidized bed boiler",
+            "eia_gens": [
+              "6190:3:ST/PC"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2020": {
+            "gross_gwh": 1709.2,
+            "campd_fuel": "Petroleum Coke",
+            "campd_unit_type": "Circulating fluidized bed boiler",
+            "eia_gens": [
+              "6190:3:ST/PC"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2021": {
+            "gross_gwh": 1785.9,
+            "campd_fuel": "Petroleum Coke",
+            "campd_unit_type": "Circulating fluidized bed boiler",
+            "eia_gens": [
+              "6190:3:ST/PC"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2022": {
+            "gross_gwh": 1270.0,
+            "campd_fuel": "Petroleum Coke",
+            "campd_unit_type": "Circulating fluidized bed boiler",
+            "eia_gens": [
+              "6190:3:ST/PC"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2023": {
+            "gross_gwh": 538.1,
+            "campd_fuel": "Petroleum Coke",
+            "campd_unit_type": "Circulating fluidized bed boiler",
+            "eia_gens": [
+              "6190:3:ST/PC"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          }
+        },
+        "3-2": {
+          "2019": {
+            "gross_gwh": 1211.9,
+            "campd_fuel": "Petroleum Coke",
+            "campd_unit_type": "Circulating fluidized bed boiler",
+            "eia_gens": [
+              "6190:3:ST/PC"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2020": {
+            "gross_gwh": 1729.1,
+            "campd_fuel": "Petroleum Coke",
+            "campd_unit_type": "Circulating fluidized bed boiler",
+            "eia_gens": [
+              "6190:3:ST/PC"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2021": {
+            "gross_gwh": 1910.7,
+            "campd_fuel": "Petroleum Coke",
+            "campd_unit_type": "Circulating fluidized bed boiler",
+            "eia_gens": [
+              "6190:3:ST/PC"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2022": {
+            "gross_gwh": 1468.4,
+            "campd_fuel": "Petroleum Coke",
+            "campd_unit_type": "Circulating fluidized bed boiler",
+            "eia_gens": [
+              "6190:3:ST/PC"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2023": {
+            "gross_gwh": 729.3,
+            "campd_fuel": "Petroleum Coke",
+            "campd_unit_type": "Circulating fluidized bed boiler",
+            "eia_gens": [
+              "6190:3:ST/PC"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          }
+        }
+      }
+    },
+    "6055": {
+      "artifact_groups": [
+        "COAL"
+      ],
+      "fleet_groups_now": {
+        "ST_GAS": 546.4,
+        "COAL_PRB": 551.3
+      },
+      "fleet_primary_now": "COAL_PRB",
+      "crosswalk_units": [
+        "2B1",
+        "2B2",
+        "2B3"
+      ],
+      "eia860_2023_generators": [
+        "1:ST/SUB:657.9MW:OP",
+        "2:ST/NG:626.0MW:OP",
+        "3:ST/SUB:619.0MW:OP"
+      ],
+      "units": {
+        "2B1": {
+          "2019": {
+            "gross_gwh": 317.1,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6055:1:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2020": {
+            "gross_gwh": 87.4,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6055:1:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2021": {
+            "gross_gwh": 614.7,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6055:1:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2022": {
+            "gross_gwh": 726.8,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6055:1:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2023": {
+            "gross_gwh": 334.9,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6055:1:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          }
+        },
+        "2B2": {
+          "2019": {
+            "gross_gwh": 1446.3,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6055:2:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2020": {
+            "gross_gwh": 1045.7,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6055:2:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2021": {
+            "gross_gwh": 151.8,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6055:2:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2022": {
+            "gross_gwh": 442.8,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6055:2:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2023": {
+            "gross_gwh": 1003.4,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6055:2:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          }
+        },
+        "2B3": {
+          "2019": {
+            "gross_gwh": 1722.2,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6055:3:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2020": {
+            "gross_gwh": 240.7,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6055:3:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2021": {
+            "gross_gwh": 2114.8,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6055:3:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2022": {
+            "gross_gwh": 2894.9,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6055:3:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2023": {
+            "gross_gwh": 1128.4,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "6055:3:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          }
+        }
+      }
+    },
+    "2050": {
+      "artifact_groups": [],
+      "fleet_groups_now": {},
+      "fleet_primary_now": null,
+      "crosswalk_units": [
+        "1",
+        "2"
+      ],
+      "eia860_2023_generators": [],
+      "units": {
+        "1": {
+          "2019": {
+            "gross_gwh": 1588.1,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Tangentially-fired",
+            "eia_gens": [
+              "2050:1:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2020": {
+            "gross_gwh": 1577.6,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Tangentially-fired",
+            "eia_gens": [
+              "2050:1:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2021": {
+            "gross_gwh": 770.6,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Tangentially-fired",
+            "eia_gens": [
+              "2050:1:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2022": {
+            "gross_gwh": 318.3,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Tangentially-fired",
+            "eia_gens": [
+              "2050:1:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          }
+        }
+      }
+    },
+    "1400": {
+      "artifact_groups": [
+        "CT_PEAKER"
+      ],
+      "fleet_groups_now": {
+        "CT_PEAKER": 33.6
+      },
+      "fleet_primary_now": "CT_PEAKER",
+      "crosswalk_units": [
+        "2",
+        "3",
+        "4"
+      ],
+      "eia860_2023_generators": [
+        "3:ST/NG:348.5MW:OP",
+        "4:GT/NG:42.2MW:OP"
+      ],
+      "units": {
+        "3": {
+          "2019": {
+            "gross_gwh": 1025.2,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1400:3:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2020": {
+            "gross_gwh": 502.2,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1400:3:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2021": {
+            "gross_gwh": 249.7,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1400:3:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2022": {
+            "gross_gwh": 290.6,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1400:3:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2023": {
+            "gross_gwh": 181.8,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1400:3:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          }
+        },
+        "4": {
+          "2019": {
+            "gross_gwh": 2.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combustion turbine",
+            "eia_gens": [
+              "1400:4:GT/NG"
+            ],
+            "unit_class_via_crosswalk": "CT_PEAKER",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2020": {
+            "gross_gwh": 1.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combustion turbine",
+            "eia_gens": [
+              "1400:4:GT/NG"
+            ],
+            "unit_class_via_crosswalk": "CT_PEAKER",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2021": {
+            "gross_gwh": 8.5,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combustion turbine",
+            "eia_gens": [
+              "1400:4:GT/NG"
+            ],
+            "unit_class_via_crosswalk": "CT_PEAKER",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2022": {
+            "gross_gwh": 7.5,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combustion turbine",
+            "eia_gens": [
+              "1400:4:GT/NG"
+            ],
+            "unit_class_via_crosswalk": "CT_PEAKER",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2023": {
+            "gross_gwh": 1.6,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combustion turbine",
+            "eia_gens": [
+              "1400:4:GT/NG"
+            ],
+            "unit_class_via_crosswalk": "CT_PEAKER",
+            "unit_class_campd_fuel": "OTHER"
+          }
+        }
+      }
+    },
+    "1702": {
+      "artifact_groups": [
+        "ST_GAS"
+      ],
+      "fleet_groups_now": {
+        "ST_GAS": 1199.8
+      },
+      "fleet_primary_now": "ST_GAS",
+      "crosswalk_units": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "A",
+        "B"
+      ],
+      "eia860_2023_generators": [
+        "3:ST/NG:692.5MW:OP",
+        "4:ST/NG:709.8MW:OP"
+      ],
+      "units": {
+        "1": {
+          "2019": {
+            "gross_gwh": 986.6,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Tangentially-fired",
+            "eia_gens": [
+              "1702:1A:ST/SUB",
+              "1702:1B:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2020": {
+            "gross_gwh": 954.0,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Tangentially-fired",
+            "eia_gens": [
+              "1702:1A:ST/SUB",
+              "1702:1B:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2021": {
+            "gross_gwh": 1567.4,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Tangentially-fired",
+            "eia_gens": [
+              "1702:1A:ST/SUB",
+              "1702:1B:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2022": {
+            "gross_gwh": 1527.7,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Tangentially-fired",
+            "eia_gens": [
+              "1702:1A:ST/SUB",
+              "1702:1B:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2023": {
+            "gross_gwh": 489.9,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Tangentially-fired",
+            "eia_gens": [
+              "1702:1A:ST/SUB(xw2018)",
+              "1702:1B:ST/SUB(xw2018)"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          }
+        },
+        "2": {
+          "2019": {
+            "gross_gwh": 990.1,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1702:2A:ST/SUB",
+              "1702:2B:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2020": {
+            "gross_gwh": 870.7,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1702:2A:ST/SUB",
+              "1702:2B:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2021": {
+            "gross_gwh": 1689.1,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1702:2A:ST/SUB",
+              "1702:2B:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2022": {
+            "gross_gwh": 1663.9,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1702:2A:ST/SUB",
+              "1702:2B:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2023": {
+            "gross_gwh": 186.7,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1702:2A:ST/SUB(xw2018)",
+              "1702:2B:ST/SUB(xw2018)"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          }
+        },
+        "3": {
+          "2019": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1702:3:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2020": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1702:3:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2021": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1702:3:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2022": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1702:3:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2023": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1702:3:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          }
+        },
+        "4": {
+          "2019": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1702:4:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2020": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1702:4:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2021": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1702:4:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2022": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1702:4:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2023": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [
+              "1702:4:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          }
+        },
+        "A": {
+          "2019": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2020": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2021": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2022": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2023": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          }
+        },
+        "B": {
+          "2019": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2020": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2021": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2022": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2023": {
+            "gross_gwh": 0.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Dry bottom wall-fired boiler",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          }
+        }
+      }
+    },
+    "1104": {
+      "artifact_groups": [
+        "ST_GAS"
+      ],
+      "fleet_groups_now": {
+        "ST_GAS": 170.3,
+        "CT_PEAKER": 39.9
+      },
+      "fleet_primary_now": "ST_GAS",
+      "crosswalk_units": [
+        "1"
+      ],
+      "eia860_2023_generators": [
+        "1:ST/NG:212.0MW:OP",
+        "GT1:GT/NG:19.7MW:OA",
+        "GT2:GT/NG:19.7MW:OP",
+        "GT3:GT/NG:19.7MW:OP",
+        "GT4:GT/NG:19.7MW:OP"
+      ],
+      "units": {
+        "1": {
+          "2019": {
+            "gross_gwh": 1240.6,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Tangentially-fired",
+            "eia_gens": [
+              "1104:1:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2020": {
+            "gross_gwh": 1221.8,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Tangentially-fired",
+            "eia_gens": [
+              "1104:1:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2021": {
+            "gross_gwh": 1149.3,
+            "campd_fuel": "Coal",
+            "campd_unit_type": "Tangentially-fired",
+            "eia_gens": [
+              "1104:1:ST/SUB"
+            ],
+            "unit_class_via_crosswalk": "COAL",
+            "unit_class_campd_fuel": "COAL"
+          },
+          "2022": {
+            "gross_gwh": 30.6,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Tangentially-fired",
+            "eia_gens": [
+              "1104:1:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          },
+          "2023": {
+            "gross_gwh": 16.9,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Tangentially-fired",
+            "eia_gens": [
+              "1104:1:ST/NG"
+            ],
+            "unit_class_via_crosswalk": "ST_GAS",
+            "unit_class_campd_fuel": "GAS_STEAM"
+          }
+        }
+      }
+    },
+    "55641": {
+      "artifact_groups": [
+        "CC_REGULAR"
+      ],
+      "fleet_groups_now": {
+        "CC_REGULAR": 534.8
+      },
+      "fleet_primary_now": "CC_REGULAR",
+      "crosswalk_units": [
+        "CT-01",
+        "CT-02"
+      ],
+      "eia860_2023_generators": [
+        "CTG1:CT/NG:198.9MW:OP",
+        "CTG2:CT/NG:198.9MW:OP",
+        "STG1:CA/NG:277.1MW:OP"
+      ],
+      "units": {
+        "CT-01": {
+          "2019": {
+            "gross_gwh": 2088.2,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [
+              "55641:CTG1:CT/NG",
+              "55641:STG1:CA/NG"
+            ],
+            "unit_class_via_crosswalk": "CC_REGULAR",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2020": {
+            "gross_gwh": 1331.6,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [
+              "55641:CTG1:CT/NG",
+              "55641:STG1:CA/NG"
+            ],
+            "unit_class_via_crosswalk": "CC_REGULAR",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2021": {
+            "gross_gwh": 1704.8,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [
+              "55641:CTG1:CT/NG",
+              "55641:STG1:CA/NG"
+            ],
+            "unit_class_via_crosswalk": "CC_REGULAR",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2022": {
+            "gross_gwh": 1476.3,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [
+              "55641:CTG1:CT/NG",
+              "55641:STG1:CA/NG"
+            ],
+            "unit_class_via_crosswalk": "CC_REGULAR",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2023": {
+            "gross_gwh": 1862.0,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [
+              "55641:CTG1:CT/NG",
+              "55641:STG1:CA/NG"
+            ],
+            "unit_class_via_crosswalk": "CC_REGULAR",
+            "unit_class_campd_fuel": "OTHER"
+          }
+        },
+        "CT-02": {
+          "2019": {
+            "gross_gwh": 2055.4,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [
+              "55641:CTG2:CT/NG",
+              "55641:STG1:CA/NG"
+            ],
+            "unit_class_via_crosswalk": "CC_REGULAR",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2020": {
+            "gross_gwh": 1035.6,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [
+              "55641:CTG2:CT/NG",
+              "55641:STG1:CA/NG"
+            ],
+            "unit_class_via_crosswalk": "CC_REGULAR",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2021": {
+            "gross_gwh": 1628.1,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [
+              "55641:CTG2:CT/NG",
+              "55641:STG1:CA/NG"
+            ],
+            "unit_class_via_crosswalk": "CC_REGULAR",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2022": {
+            "gross_gwh": 1360.7,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [
+              "55641:CTG2:CT/NG",
+              "55641:STG1:CA/NG"
+            ],
+            "unit_class_via_crosswalk": "CC_REGULAR",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2023": {
+            "gross_gwh": 1817.7,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [
+              "55641:CTG2:CT/NG",
+              "55641:STG1:CA/NG"
+            ],
+            "unit_class_via_crosswalk": "CC_REGULAR",
+            "unit_class_campd_fuel": "OTHER"
+          }
+        },
+        "CT-03": {
+          "2020": {
+            "gross_gwh": 900.2,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2021": {
+            "gross_gwh": 767.7,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2022": {
+            "gross_gwh": 1644.8,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2023": {
+            "gross_gwh": 2087.6,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "OTHER"
+          }
+        },
+        "CT-04": {
+          "2020": {
+            "gross_gwh": 1081.4,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2021": {
+            "gross_gwh": 1235.2,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2022": {
+            "gross_gwh": 1529.9,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "OTHER"
+          },
+          "2023": {
+            "gross_gwh": 2221.5,
+            "campd_fuel": "Pipeline Natural Gas",
+            "campd_unit_type": "Combined cycle",
+            "eia_gens": [],
+            "unit_class_via_crosswalk": "UNMATCHED",
+            "unit_class_campd_fuel": "OTHER"
+          }
+        }
+      }
+    },
+    "64020": {
+      "artifact_groups": [],
+      "fleet_groups_now": {
+        "CC_REGULAR": 684.2
+      },
+      "fleet_primary_now": "CC_REGULAR",
+      "crosswalk_units": [],
+      "eia860_2023_generators": [
+        "CTG3:CT/NG:232.9MW:OP",
+        "CTG4:CT/NG:232.9MW:OP",
+        "PV1:PV/SUN:4.4MW:OP",
+        "STG2:CA/NG:257.4MW:OP"
+      ],
+      "units": {}
+    }
+  },
+  "misattributed_st_gas": {
+    "2019": {
+      "crosswalk_basis_gross_twh": 4.809,
+      "crosswalk_basis_net_twh": 4.809,
+      "of_which_at_plants_fleet_carries_st_gas_net_twh": 2.114,
+      "campd_fuel_basis_net_twh": 4.809,
+      "finding_gap_twh": -4.99,
+      "finding_eia923_twh": 6.87,
+      "by_plant": {
+        "2050": {
+          "name": "Baxter Wilson",
+          "artifact_groups": [],
+          "fleet_groups_now": [],
+          "gross_gwh": 1588.1,
+          "net_gwh": 1588.1,
+          "units": [
+            "1"
+          ]
+        },
+        "6055": {
+          "name": "Big Cajun 2",
+          "artifact_groups": [
+            "COAL"
+          ],
+          "fleet_groups_now": [
+            "COAL_PRB",
+            "ST_GAS"
+          ],
+          "gross_gwh": 1446.3,
+          "net_gwh": 1446.3,
+          "units": [
+            "2B2"
+          ]
+        },
+        "1400": {
+          "name": "Teche",
+          "artifact_groups": [
+            "CT_PEAKER"
+          ],
+          "fleet_groups_now": [
+            "CT_PEAKER"
+          ],
+          "gross_gwh": 1025.2,
+          "net_gwh": 1025.2,
+          "units": [
+            "3"
+          ]
+        },
+        "6190": {
+          "name": "Brame Energy Center",
+          "artifact_groups": [
+            "COAL"
+          ],
+          "fleet_groups_now": [
+            "COAL_PRB",
+            "ST_GAS"
+          ],
+          "gross_gwh": 564.2,
+          "net_gwh": 564.2,
+          "units": [
+            "1"
+          ]
+        },
+        "1464": {
+          "name": "Big Cajun 1",
+          "artifact_groups": [
+            "CT_PEAKER"
+          ],
+          "fleet_groups_now": [
+            "CT_PEAKER",
+            "ST_GAS"
+          ],
+          "gross_gwh": 87.4,
+          "net_gwh": 87.4,
+          "units": [
+            "1B1",
+            "1B2"
+          ]
+        },
+        "1439": {
+          "name": "Houma",
+          "artifact_groups": [],
+          "fleet_groups_now": [],
+          "gross_gwh": 63.1,
+          "net_gwh": 63.1,
+          "units": [
+            "15",
+            "16"
+          ]
+        },
+        "2070": {
+          "name": "Moselle",
+          "artifact_groups": [
+            "CC_REGULAR"
+          ],
+          "fleet_groups_now": [
+            "CC_REGULAR",
+            "CT_PEAKER",
+            "ST_GAS"
+          ],
+          "gross_gwh": 15.8,
+          "net_gwh": 15.8,
+          "units": [
+            "3"
+          ]
+        },
+        "2104": {
+          "name": "Meramec",
+          "artifact_groups": [],
+          "fleet_groups_now": [],
+          "gross_gwh": 12.1,
+          "net_gwh": 12.1,
+          "units": [
+            "1",
+            "2"
+          ]
+        },
+        "1081": {
+          "name": "Riverside",
+          "artifact_groups": [],
+          "fleet_groups_now": [],
+          "gross_gwh": 5.0,
+          "net_gwh": 5.0,
+          "units": [
+            "9"
+          ]
+        },
+        "4078": {
+          "name": "Weston",
+          "artifact_groups": [
+            "COAL"
+          ],
+          "fleet_groups_now": [
+            "COAL_PRB"
+          ],
+          "gross_gwh": 1.8,
+          "net_gwh": 1.8,
+          "units": [
+            "2"
+          ]
+        }
+      }
+    },
+    "2020": {
+      "crosswalk_basis_gross_twh": 3.921,
+      "crosswalk_basis_net_twh": 3.921,
+      "of_which_at_plants_fleet_carries_st_gas_net_twh": 1.786,
+      "campd_fuel_basis_net_twh": 3.921,
+      "finding_gap_twh": -4.06,
+      "finding_eia923_twh": 6.36,
+      "by_plant": {
+        "2050": {
+          "name": "Baxter Wilson",
+          "artifact_groups": [],
+          "fleet_groups_now": [],
+          "gross_gwh": 1577.6,
+          "net_gwh": 1577.6,
+          "units": [
+            "1"
+          ]
+        },
+        "6055": {
+          "name": "Big Cajun 2",
+          "artifact_groups": [
+            "COAL"
+          ],
+          "fleet_groups_now": [
+            "COAL_PRB",
+            "ST_GAS"
+          ],
+          "gross_gwh": 1045.7,
+          "net_gwh": 1045.7,
+          "units": [
+            "2B2"
+          ]
+        },
+        "6190": {
+          "name": "Brame Energy Center",
+          "artifact_groups": [
+            "COAL"
+          ],
+          "fleet_groups_now": [
+            "COAL_PRB",
+            "ST_GAS"
+          ],
+          "gross_gwh": 682.7,
+          "net_gwh": 682.7,
+          "units": [
+            "1"
+          ]
+        },
+        "1400": {
+          "name": "Teche",
+          "artifact_groups": [
+            "CT_PEAKER"
+          ],
+          "fleet_groups_now": [
+            "CT_PEAKER"
+          ],
+          "gross_gwh": 502.2,
+          "net_gwh": 502.2,
+          "units": [
+            "3"
+          ]
+        },
+        "1464": {
+          "name": "Big Cajun 1",
+          "artifact_groups": [
+            "CT_PEAKER"
+          ],
+          "fleet_groups_now": [
+            "CT_PEAKER",
+            "ST_GAS"
+          ],
+          "gross_gwh": 43.4,
+          "net_gwh": 43.4,
+          "units": [
+            "1B1",
+            "1B2"
+          ]
+        },
+        "1439": {
+          "name": "Houma",
+          "artifact_groups": [],
+          "fleet_groups_now": [],
+          "gross_gwh": 28.8,
+          "net_gwh": 28.8,
+          "units": [
+            "15",
+            "16"
+          ]
+        },
+        "2104": {
+          "name": "Meramec",
+          "artifact_groups": [],
+          "fleet_groups_now": [],
+          "gross_gwh": 25.7,
+          "net_gwh": 25.7,
+          "units": [
+            "1",
+            "2"
+          ]
+        },
+        "2070": {
+          "name": "Moselle",
+          "artifact_groups": [
+            "CC_REGULAR"
+          ],
+          "fleet_groups_now": [
+            "CC_REGULAR",
+            "CT_PEAKER",
+            "ST_GAS"
+          ],
+          "gross_gwh": 14.3,
+          "net_gwh": 14.3,
+          "units": [
+            "3"
+          ]
+        }
+      }
+    },
+    "2021": {
+      "crosswalk_basis_gross_twh": 1.733,
+      "crosswalk_basis_net_twh": 1.733,
+      "of_which_at_plants_fleet_carries_st_gas_net_twh": 0.643,
+      "campd_fuel_basis_net_twh": 1.779,
+      "finding_gap_twh": -3.31,
+      "finding_eia923_twh": 3.86,
+      "by_plant": {
+        "2050": {
+          "name": "Baxter Wilson",
+          "artifact_groups": [],
+          "fleet_groups_now": [],
+          "gross_gwh": 770.6,
+          "net_gwh": 770.6,
+          "units": [
+            "1"
+          ]
+        },
+        "6190": {
+          "name": "Brame Energy Center",
+          "artifact_groups": [
+            "COAL"
+          ],
+          "fleet_groups_now": [
+            "COAL_PRB",
+            "ST_GAS"
+          ],
+          "gross_gwh": 441.9,
+          "net_gwh": 441.9,
+          "units": [
+            "1"
+          ]
+        },
+        "1400": {
+          "name": "Teche",
+          "artifact_groups": [
+            "CT_PEAKER"
+          ],
+          "fleet_groups_now": [
+            "CT_PEAKER"
+          ],
+          "gross_gwh": 249.7,
+          "net_gwh": 249.7,
+          "units": [
+            "3"
+          ]
+        },
+        "6055": {
+          "name": "Big Cajun 2",
+          "artifact_groups": [
+            "COAL"
+          ],
+          "fleet_groups_now": [
+            "COAL_PRB",
+            "ST_GAS"
+          ],
+          "gross_gwh": 151.8,
+          "net_gwh": 151.8,
+          "units": [
+            "2B2"
+          ]
+        },
+        "2104": {
+          "name": "Meramec",
+          "artifact_groups": [],
+          "fleet_groups_now": [],
+          "gross_gwh": 46.5,
+          "net_gwh": 46.5,
+          "units": [
+            "1",
+            "2"
+          ]
+        },
+        "1464": {
+          "name": "Big Cajun 1",
+          "artifact_groups": [
+            "CT_PEAKER"
+          ],
+          "fleet_groups_now": [
+            "CT_PEAKER",
+            "ST_GAS"
+          ],
+          "gross_gwh": 30.2,
+          "net_gwh": 30.2,
+          "units": [
+            "1B1",
+            "1B2"
+          ]
+        },
+        "1439": {
+          "name": "Houma",
+          "artifact_groups": [],
+          "fleet_groups_now": [],
+          "gross_gwh": 23.6,
+          "net_gwh": 23.6,
+          "units": [
+            "15",
+            "16"
+          ]
+        },
+        "2070": {
+          "name": "Moselle",
+          "artifact_groups": [
+            "CC_REGULAR"
+          ],
+          "fleet_groups_now": [
+            "CC_REGULAR",
+            "CT_PEAKER",
+            "ST_GAS"
+          ],
+          "gross_gwh": 18.9,
+          "net_gwh": 18.9,
+          "units": [
+            "3"
+          ]
+        }
+      }
+    },
+    "2022": {
+      "crosswalk_basis_gross_twh": 1.738,
+      "crosswalk_basis_net_twh": 1.738,
+      "of_which_at_plants_fleet_carries_st_gas_net_twh": 1.129,
+      "campd_fuel_basis_net_twh": 1.738,
+      "finding_gap_twh": -2.76,
+      "finding_eia923_twh": 3.79,
+      "by_plant": {
+        "6190": {
+          "name": "Brame Energy Center",
+          "artifact_groups": [
+            "COAL"
+          ],
+          "fleet_groups_now": [
+            "COAL_PRB",
+            "ST_GAS"
+          ],
+          "gross_gwh": 605.5,
+          "net_gwh": 605.5,
+          "units": [
+            "1"
+          ]
+        },
+        "6055": {
+          "name": "Big Cajun 2",
+          "artifact_groups": [
+            "COAL"
+          ],
+          "fleet_groups_now": [
+            "COAL_PRB",
+            "ST_GAS"
+          ],
+          "gross_gwh": 442.8,
+          "net_gwh": 442.8,
+          "units": [
+            "2B2"
+          ]
+        },
+        "2050": {
+          "name": "Baxter Wilson",
+          "artifact_groups": [],
+          "fleet_groups_now": [],
+          "gross_gwh": 318.3,
+          "net_gwh": 318.3,
+          "units": [
+            "1"
+          ]
+        },
+        "1400": {
+          "name": "Teche",
+          "artifact_groups": [
+            "CT_PEAKER"
+          ],
+          "fleet_groups_now": [
+            "CT_PEAKER"
+          ],
+          "gross_gwh": 290.6,
+          "net_gwh": 290.6,
+          "units": [
+            "3"
+          ]
+        },
+        "1464": {
+          "name": "Big Cajun 1",
+          "artifact_groups": [
+            "CT_PEAKER"
+          ],
+          "fleet_groups_now": [
+            "CT_PEAKER",
+            "ST_GAS"
+          ],
+          "gross_gwh": 58.7,
+          "net_gwh": 58.7,
+          "units": [
+            "1B1",
+            "1B2"
+          ]
+        },
+        "2070": {
+          "name": "Moselle",
+          "artifact_groups": [
+            "CC_REGULAR"
+          ],
+          "fleet_groups_now": [
+            "CC_REGULAR",
+            "CT_PEAKER",
+            "ST_GAS"
+          ],
+          "gross_gwh": 22.4,
+          "net_gwh": 22.4,
+          "units": [
+            "3"
+          ]
+        }
+      }
+    },
+    "2023": {
+      "crosswalk_basis_gross_twh": 2.849,
+      "crosswalk_basis_net_twh": 2.849,
+      "of_which_at_plants_fleet_carries_st_gas_net_twh": 2.667,
+      "campd_fuel_basis_net_twh": 2.849,
+      "finding_gap_twh": -1.19,
+      "finding_eia923_twh": 3.55,
+      "by_plant": {
+        "6190": {
+          "name": "Brame Energy Center",
+          "artifact_groups": [
+            "COAL"
+          ],
+          "fleet_groups_now": [
+            "COAL_PRB",
+            "ST_GAS"
+          ],
+          "gross_gwh": 1436.1,
+          "net_gwh": 1436.1,
+          "units": [
+            "1"
+          ]
+        },
+        "6055": {
+          "name": "Big Cajun 2",
+          "artifact_groups": [
+            "COAL"
+          ],
+          "fleet_groups_now": [
+            "COAL_PRB",
+            "ST_GAS"
+          ],
+          "gross_gwh": 1003.4,
+          "net_gwh": 1003.4,
+          "units": [
+            "2B2"
+          ]
+        },
+        "1400": {
+          "name": "Teche",
+          "artifact_groups": [
+            "CT_PEAKER"
+          ],
+          "fleet_groups_now": [
+            "CT_PEAKER"
+          ],
+          "gross_gwh": 181.8,
+          "net_gwh": 181.8,
+          "units": [
+            "3"
+          ]
+        },
+        "1464": {
+          "name": "Big Cajun 1",
+          "artifact_groups": [
+            "CT_PEAKER"
+          ],
+          "fleet_groups_now": [
+            "CT_PEAKER",
+            "ST_GAS"
+          ],
+          "gross_gwh": 164.8,
+          "net_gwh": 164.8,
+          "units": [
+            "1B1",
+            "1B2"
+          ]
+        },
+        "2070": {
+          "name": "Moselle",
+          "artifact_groups": [
+            "CC_REGULAR"
+          ],
+          "fleet_groups_now": [
+            "CC_REGULAR",
+            "CT_PEAKER",
+            "ST_GAS"
+          ],
+          "gross_gwh": 62.7,
+          "net_gwh": 62.7,
+          "units": [
+            "3"
+          ]
+        }
+      }
+    }
+  },
+  "reverse_coal_in_st_gas": {
+    "2019": {
+      "net_twh": 5.381,
+      "by_plant_net_gwh": {
+        "1104": 1240.6,
+        "1702": 1976.7,
+        "6639": 2163.8
+      }
+    },
+    "2020": {
+      "net_twh": 4.122,
+      "by_plant_net_gwh": {
+        "1104": 1221.8,
+        "1702": 1824.7,
+        "6639": 1075.4
+      }
+    },
+    "2021": {
+      "net_twh": 6.601,
+      "by_plant_net_gwh": {
+        "1104": 1149.3,
+        "1702": 3256.5,
+        "6639": 2195.6
+      }
+    },
+    "2022": {
+      "net_twh": 3.661,
+      "by_plant_net_gwh": {
+        "1702": 3191.6,
+        "6639": 469.6
+      }
+    },
+    "2023": {
+      "net_twh": 0.813,
+      "by_plant_net_gwh": {
+        "1702": 676.6,
+        "6639": 136.5
+      }
+    }
+  },
+  "coverage": {
+    "2019": {
+      "miso_campd_units": 725,
+      "matched_units": 701,
+      "gross_twh_total": 461.818,
+      "gross_twh_matched": 457.169,
+      "matched_share_by_gross": 0.9899,
+      "top_unmatched_gwh": {
+        "60926:1A": 1886.5,
+        "60926:1B": 1853.7,
+        "56104:CT-1": 906.7,
+        "55218:2": 2.3,
+        "1702:A": 0.0,
+        "1702:B": 0.0,
+        "10865:GB1": 0.0,
+        "10865:GB2": 0.0,
+        "10867:123-09": 0.0,
+        "10867:123-08": 0.0,
+        "10866:14": 0.0,
+        "10866:13": 0.0
+      }
+    },
+    "2020": {
+      "miso_campd_units": 715,
+      "matched_units": 683,
+      "gross_twh_total": 418.254,
+      "gross_twh_matched": 405.283,
+      "matched_share_by_gross": 0.969,
+      "top_unmatched_gwh": {
+        "60926:1B": 3019.7,
+        "60926:1A": 2953.4,
+        "60927:1A": 1719.0,
+        "60927:1B": 1607.2,
+        "56104:CT-1": 1557.7,
+        "55641:CT-04": 1081.4,
+        "55641:CT-03": 900.2,
+        "60925:CT1": 63.2,
+        "60925:CT2": 53.4,
+        "55218:2": 7.3,
+        "55486:CTG02": 6.0,
+        "55486:CTG01": 2.6
+      }
+    },
+    "2021": {
+      "miso_campd_units": 705,
+      "matched_units": 667,
+      "gross_twh_total": 455.059,
+      "gross_twh_matched": 434.682,
+      "matched_share_by_gross": 0.9552,
+      "top_unmatched_gwh": {
+        "60927:1A": 2884.6,
+        "60927:1B": 2776.2,
+        "60925:CT1": 2752.8,
+        "60925:CT2": 2720.8,
+        "60926:1B": 2644.4,
+        "60926:1A": 2486.0,
+        "56104:CT-1": 1620.3,
+        "55641:CT-04": 1235.2,
+        "55641:CT-03": 767.7,
+        "61144:1": 277.2,
+        "55486:CTG01": 102.2,
+        "55486:CTG02": 93.4
+      }
+    },
+    "2022": {
+      "miso_campd_units": 688,
+      "matched_units": 649,
+      "gross_twh_total": 451.185,
+      "gross_twh_matched": 421.696,
+      "matched_share_by_gross": 0.9346,
+      "top_unmatched_gwh": {
+        "60925:CT2": 3350.2,
+        "60925:CT1": 3269.9,
+        "60927:1A": 3193.9,
+        "60927:1B": 3029.4,
+        "60926:1B": 2880.9,
+        "60926:1A": 2788.3,
+        "62192:12": 2461.7,
+        "62192:11": 2395.6,
+        "55641:CT-03": 1644.8,
+        "55641:CT-04": 1529.9,
+        "56104:CT-1": 954.9,
+        "64854:CT1": 318.8
+      }
+    },
+    "2023": {
+      "miso_campd_units": 675,
+      "matched_units": 636,
+      "gross_twh_total": 435.765,
+      "gross_twh_matched": 398.167,
+      "matched_share_by_gross": 0.9137,
+      "top_unmatched_gwh": {
+        "62192:12": 4192.5,
+        "62192:11": 4166.5,
+        "6061:3": 3426.4,
+        "60925:CT1": 3226.6,
+        "60925:CT2": 3128.8,
+        "60927:1A": 3032.1,
+        "60927:1B": 3002.2,
+        "60926:1A": 2652.1,
+        "60926:1B": 2532.1,
+        "55641:CT-04": 2221.5,
+        "55641:CT-03": 2087.6,
+        "56104:CT-1": 1474.5
+      }
+    }
+  },
+  "sync_hazard": {
+    "1702": {
+      "st_gas_nameplate_mw_fleet_now": 1199.8,
+      "parasitic_factor": 1.0,
+      "2019": {
+        "facility_summed_online_frac": 0.834,
+        "gas_units_only_online_frac": 0.0,
+        "gas_units": [
+          "3",
+          "4"
+        ],
+        "facility_net_twh": 1.977,
+        "gas_units_net_twh": 0.0
+      },
+      "2020": {
+        "facility_summed_online_frac": 0.809,
+        "gas_units_only_online_frac": 0.0,
+        "gas_units": [
+          "3",
+          "4"
+        ],
+        "facility_net_twh": 1.825,
+        "gas_units_net_twh": 0.0
+      },
+      "2021": {
+        "facility_summed_online_frac": 0.996,
+        "gas_units_only_online_frac": 0.0,
+        "gas_units": [
+          "3",
+          "4"
+        ],
+        "facility_net_twh": 3.256,
+        "gas_units_net_twh": 0.0
+      },
+      "2022": {
+        "facility_summed_online_frac": 0.967,
+        "gas_units_only_online_frac": 0.0,
+        "gas_units": [
+          "3",
+          "4"
+        ],
+        "facility_net_twh": 3.192,
+        "gas_units_net_twh": 0.0
+      }
+    },
+    "1104": {
+      "st_gas_nameplate_mw_fleet_now": 170.3,
+      "parasitic_factor": 1.0,
+      "2019": {
+        "facility_summed_online_frac": 0.85,
+        "gas_units_only_online_frac": null,
+        "gas_units": [],
+        "facility_net_twh": 1.241,
+        "gas_units_net_twh": null
+      },
+      "2020": {
+        "facility_summed_online_frac": 0.842,
+        "gas_units_only_online_frac": null,
+        "gas_units": [],
+        "facility_net_twh": 1.222,
+        "gas_units_net_twh": null
+      },
+      "2021": {
+        "facility_summed_online_frac": 0.852,
+        "gas_units_only_online_frac": null,
+        "gas_units": [],
+        "facility_net_twh": 1.149,
+        "gas_units_net_twh": null
+      },
+      "2022": {
+        "facility_summed_online_frac": 0.051,
+        "gas_units_only_online_frac": 0.051,
+        "gas_units": [
+          "1"
+        ],
+        "facility_net_twh": 0.031,
+        "gas_units_net_twh": 0.031
+      }
+    }
+  },
+  "riverside": {
+    "crosswalk_rows": [
+      {
+        "CAMD_PLANT_ID": "55641",
+        "CAMD_UNIT_ID": "CT-01",
+        "CAMD_GENERATOR_ID": "CTG1",
+        "EIA_PLANT_ID": "55641",
+        "EIA_GENERATOR_ID": "CTG1",
+        "MATCH_TYPE_GEN": "3_1_Generator (generators) match on plant and gen IDs  Step 1a: Exact match"
+      },
+      {
+        "CAMD_PLANT_ID": "55641",
+        "CAMD_UNIT_ID": "CT-01",
+        "CAMD_GENERATOR_ID": "STG1",
+        "EIA_PLANT_ID": "55641",
+        "EIA_GENERATOR_ID": "STG1",
+        "MATCH_TYPE_GEN": "3_1_Generator (generators) match on plant and gen IDs  Step 1a: Exact match"
+      },
+      {
+        "CAMD_PLANT_ID": "55641",
+        "CAMD_UNIT_ID": "CT-02",
+        "CAMD_GENERATOR_ID": "CTG2",
+        "EIA_PLANT_ID": "55641",
+        "EIA_GENERATOR_ID": "CTG2",
+        "MATCH_TYPE_GEN": "3_1_Generator (generators) match on plant and gen IDs  Step 1a: Exact match"
+      },
+      {
+        "CAMD_PLANT_ID": "55641",
+        "CAMD_UNIT_ID": "CT-02",
+        "CAMD_GENERATOR_ID": "STG1",
+        "EIA_PLANT_ID": "55641",
+        "EIA_GENERATOR_ID": "STG1",
+        "MATCH_TYPE_GEN": "3_1_Generator (generators) match on plant and gen IDs  Step 1a: Exact match"
+      }
+    ],
+    "maps_ct03_ct04_to_64020": false,
+    "crosswalk_has_ct03_ct04": false,
+    "crosswalk_has_eia_64020": false
+  }
+}

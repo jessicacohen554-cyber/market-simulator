@@ -53,7 +53,41 @@ RO-2 — an owner decision to charter a reduced-network (flowgate) program — n
 
 ## 2. C1 ST_GAS: the CAMPD–EIA crosswalk
 
-_(filled from the intake agent's report — §2 below)_
+**Intaken.** `data/raw/reference/camd-eia-crosswalk/` (attributes to `shared`): the EPA CAMD–EIA Power Sector Data
+Crosswalk, v0.3 (2022-10), byte-identical to upstream `master` @ `3c7d6724`, plus README and `SHA256SUMS.txt`. Its EIA
+side is **EIA-860 2018**; upstream has nothing newer. The probe takes prime mover and fuel from the solve-year
+`eia-860/vintage_<y>`. Match rate against MISO CAMPD gross load: **99.0 % (2019) → 91.4 % (2023)** (post-2018 builds
+missing).
+
+**Unit-level attribution at the named facilities:**
+
+| facility | gas-steam unit(s) → ST_GAS | coal / pet-coke unit(s) | filed today |
+|---|---|---|---|
+| Brame 6190 | 1 | 2, 3-1, 3-2 | COAL |
+| Big Cajun 2 6055 | 2B2 | 2B1, 2B3 | COAL |
+| Baxter Wilson 2050 | 1 (1.59 TWh 2019) | — | no row |
+| Teche 1400 | 3 (4 is a CT) | — | CT_PEAKER |
+| Dan E Karn 1702 | 3, 4 (0 gross load 2019–23) | 1, 2 | ST_GAS |
+| Burlington 1104 | 1 from 2022 | 1 through 2021 | ST_GAS |
+
+**Footprint (net TWh of gas-steam generation filed outside ST_GAS):** 4.81 / 3.92 / 1.73 / 1.74 / 2.85 (2019–23),
+against the §2 no-row gap of −4.99 (2019) and −1.19 (2023). The reverse error (coal counted inside ST_GAS-filed
+facilities) is 5.38 TWh in 2019 (Karn 1.98, Burlington 1.24, R D Green 2.16), 0.81 in 2023. Karn's facility sync
+0.83–1.00 is **0.000** on gas units alone: it is all coal.
+
+**Key reading.** CAMPD's own per-unit `primaryFuelInfo` gives the **same** totals (4.809 / 2.849 TWh), and the frozen
+deriver already reads that field. So the ST_GAS attribution repair does not depend on the crosswalk; the crosswalk
+adds the generator-level nameplate for the sync denominator. Under rule 23 the honest re-derive trigger is the
+**attribution defect** (nyiso-175 "crosswalk repair" precedent: extend `--per-unit-attribution` with a fuel split),
+not the crosswalk's arrival — and not the C1 residual.
+
+**Riverside (candidate 1): not unblocked.** The crosswalk has only 55641 CT-01/CT-02 and nothing for EIA 64020 (built
+2020, after its 2018 vintage). CAMPD still files CT-03/CT-04 under 55641 (4.31 TWh 2023). It needs a cited manual
+remap, like the CA-only `CAMPD_UNIT_PLANT_REMAP`.
+
+**Caveat on the prize.** Re-filing moves the population into ST_GAS; whether the model then *dispatches* it is not
+measured here. At the floored plants the 2019 shortfall was economic, above the floor (FINDING-miso276 §2), and these
+South units are committed for local reliability in reality (VLR), which the model does not have.
 
 ## 3. C3b 2021: the declined D1 arm did not implement the ruling for MISO-South
 
@@ -98,4 +132,10 @@ The owner question built on this table is §4.
 
 ## 4. Owner questions
 
-_(filled at the end of the session)_
+1. **C3b 2021 storm-print convention.** (a) re-solve D1 *as ruled* (South on Henry Hub), 7 shards; (b) build the
+   "paid level" convention (print shape, level burn-normalized to each plant's EIA-923 cost; zero fitted scalars) with
+   South on HH, 7 shards; (c) no solve — C3b 2021 stays open.
+2. **C1 ST_GAS unit-level fuel attribution.** Charter a re-derive of the thermal-tranche artifact with a per-unit
+   fuel split (rule 23 trigger = the attribution defect), plus a cited Riverside CT-03/04 → 64020 remap; or keep waiting.
+3. **C3a 2022.** The only route is RO-2 (a chartered reduced-network/flowgate program); otherwise it stays an open,
+   routed miss.
