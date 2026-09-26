@@ -1,0 +1,376 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": false,
+    "no_fit_to_price_residuals": false,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "authorized_price_tuning": {
+      "channel": "offer_curve_by_group",
+      "ruling": "Owner amendment 2026-09-05 to rules 1 [R-STRUCT] / 13 [R-MEASURED] (the registered offer-curve band multipliers are an authorized price-tuning channel), applied on the owner's explicit in-session instruction of 2026-09-09: 'first just tune the offer curve down by 7% across all fossil and launch an LP that runs that.'",
+      "value": {
+        "committed": 0.93,
+        "econ_low": 0.93,
+        "econ_high": 0.93,
+        "peak": 0.93
+      },
+      "years_held": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "set_ex_ante": true,
+      "not_swept": true,
+      "classes": [
+        "CC_REGULAR",
+        "CC_CHP",
+        "CT_CHP",
+        "CT_PEAKER",
+        "ST_GAS",
+        "COAL",
+        "COAL_BIT",
+        "COAL_LIGNITE",
+        "COAL_PRB",
+        "COAL_WC"
+      ],
+      "prereg": "docs/handoffs/PRECOMMIT-spp-52a-2026-09-09.md, pushed at c1393878 BEFORE the solve was launched",
+      "structural_shares_touched": false,
+      "phys_fields_touched": false,
+      "set_ex_ante_evidence": "The PRECOMMIT declaring 0.93 was committed and pushed before run_calibration_full.py was invoked; the commit precedes the bundle's own timestamps.",
+      "not_swept_evidence": "Exactly ONE multiplier was ever solved. No alternative value (0.95, 0.90, ...) was solved, scored or compared, and the declared 0.93 was not revised after its result was seen.",
+      "years_held_basis": "SPP-86 (2026-09-26): this run's own solved years [2019, 2020, 2021, 2022, 2023, 2024, 2025]. offer_curve_by_group SHA-256 4172b22a9cd371fb is byte-identical to the keeper's on every year; this lane passed one input-correction --set flag. No band, class or value moved and nothing was swept (rule 1 condition (c)). ONE config across every scored year (condition (b))."
+    },
+    "authorized_price_tuning_declared": "DECLARED AND IN USE. This run tunes SPP's fossil offer curve DOWN 7 % on the price level through the rule 1 [R-STRUCT] / rule 13 [R-MEASURED] authorized channel (owner amendment 2026-09-05), on the owner's explicit instruction: 'first just tune the offer curve down by 7% across all fossil and launch an LP that runs that.' Every condition of the carve-out is met and each is checkable against this run's own run_config.json: (a) the four offer_curve_by_group bands ONLY -- committed/econ_low/econ_high/peak all 0.93 on the ten registered fossil classes SPP dispatches, with NO phys_* field, NO econ_low_share, NO pct_peaking and no adder/offset/haircut/proxy touched (verified: CT_PEAKER keeps econ_low_share 0.526 / pct_peaking 7.0, COAL_PRB 0.55, ST_GAS 0.5 / 15.0, and the three *_INTERMEDIATE curves keep their peak 2.25 / 3.0 / 2.2); (b) ONE config across EVERY scored year -- a single scalar 0.93, no per-year value; (c) set EX ANTE and declared in the PRECOMMIT before the solve, and NEVER swept -- no other multiplier was solved, scored or compared, and the declared value was not revised after its result was seen; (d) merit-order movement across classes is an intended effect; (e) declared here and carried as a ledgered free parameter, identification 'residual' sourced to the ruling. ST_CHP is excluded because it has no registered base curve in SPP's resolved offer_curve_by_group and including it fails the launch with KeyError: 'econ_low_share'.",
+    "attested_by": "SPP-86 (2026-09-26) -- keeper 2026-09-26-spp-85-netload-mask's recipe replayed via scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), with exactly one registered ScenarioConfig boolean unit_outage_coal_extract_basis_share set True: the coal bins' unit-outage removed share taken on the extract's OWN capacity basis (nyiso-196's _extract_basis_index construction widened from the CC groups to the coal family), so a single-unit plant fully out reads exactly 1.0 (Holcomb 108 read 0.97). Every leg verified by scripts/probes/_spp86_shard_check.py (recipe diff vs the committed keeper + six extract sha256 + resolved path) and again by scripts/probes/_rspp_compose.py --require before composition. NO control solve: G-DRIFT all-INERT, rule 29(b) form 4, the committed keeper is the control. Zero LP in the parent. Pre-registered in docs/handoffs/PRECOMMIT-spp-86-coal-extract-basis-2026-09-26.md (pinned d72e5f10) before any shard launched; phase 0 docs/handoffs/FINDING-spp-86-coal-floor-conduct-2026-09-26.md; record docs/handoffs/RESULT-spp-86-coal-extract-basis-2026-09-26.md.",
+    "measured_input_switches": {
+      "eia860_vintage_tracks_solve_year": {
+        "value": true,
+        "where": "run_config.scenario_config.eia860_vintage_tracks_solve_year",
+        "identification": "measured-physical",
+        "source": "EIA-860 annual releases, resolved per solve year by config/paths.py::resolve_backcast_eia860_vintage. Zero scalars, zero degrees of freedom: the switch selects WHICH committed release the fleet builder reads, and the content is the release.",
+        "warrant": "Rule 14 [R-ACCURATE] and rule 13 [R-MEASURED]. Unarmed, every backcast year resolves to the canonical 2025 Early Release, so the 2023 and 2024 fleets carry a fuel vintage and a unit population those years did not have. The armed registry is the accurate input; the control's is an estimate silently compensating elsewhere.",
+        "forward_test": "Rule 13's admissibility test is met: the same construction regenerates for a forecast year from the then-current EIA-860 release, and responds to changed conditions. This is not an overlay and pins no outcome to an actual.",
+        "iso_scope": "Rule 25 [R-ISO-SCOPE]: armed per-run through --set on SPP's own bundle. The dataclass default stays False and is registered in _CACHE_KEY_OPTIONAL_FIELDS at that declared value, so every pre-existing cache key of all seven ISOs is byte-stable and no other ISO moves. No fitted number crosses an ISO boundary.",
+        "first_arm": "First arm of this field in any committed run, in any ISO."
+      },
+      "coal_supply_census_vintage": {
+        "value": [
+          2023,
+          2024,
+          2025
+        ],
+        "where": "data/raw/_processed-legacy/coal_supply_SPP.csv (31 rows), derived by scripts/data/derive_coal_supply.py --iso SPP --census-vintage 2023 2024 2025. Consumed as resolver step 2 of data/coal.py::coal_supply_class.",
+        "identification": "measured-physical",
+        "source": "EIA-923 Page-1 net generation by energy-source code, over the coal census taken from the UNION of the canonical EIA-860 snapshot and each solved year's own vintage_<year>/ release. Plant 6193 (Harrington) resolves prb at 100 % of 26,193,400.3 MWh of reported SUB; plant 10862 (ADM Lincoln) prb at 100 % of 156,101.0 MWh.",
+        "warrant": "Rule 14 [R-ACCURATE] and rule 13 [R-MEASURED]. The census read load_fleet_from_csv with NO VINTAGE \u2014 the canonical 2025 Early Release \u2014 for every solved year, so a plant that burned coal in the solved year but had been re-fuelled by the snapshot's vintage was absent from the census, received no rank, fell through all four resolver steps to '' and reported in a bare COAL class the SPP EIA-923 benchmark has no row for. Measured on keeper 6: 4.3551 TWh (2023) and 2.0670 TWh (2024) of coal dispatch in that class, scored by C1 against NOTHING \u2014 it appears in no C1 row, passing or failing. This run books it in COAL_PRB, the class EIA-923's own fuel code SUB maps to, so the model reaches the SAME class the benchmark does.",
+        "frozen_derive_admissibility": "Rule 23 [R-FROZEN-DERIVE]: the cited trigger is a change in the DERIVE'S OWN INPUT \u2014 its plant census read an EIA-860 registry measured wrong for the solved year, and the correct release was already committed on disk \u2014 NOT a residual that moved. Three facts make the argument stand without leaning on any residual: (a) the rank is not a choice (SUB -> prb at 100 %, zero free values); (b) the repair is INERT for every committed run (all seven ISOs' fleets byte-identical; 46 of 46 committed run_configs read the canonical registry); (c) it moves the target residual the WRONG way. The --year span is untouched, so the pre-patch script reproduces the committed CSV byte-identically (md5 5a71bd95bf10a732af980086e541ffa3) and the 29-row impact census below is exact rather than approximate.",
+        "impact_census": "ALL 29 INCUMBENT ROWS BYTE-IDENTICAL \u2014 the re-derive is 2 insertions(+), 0 deletions. Not luck: the census is a membership filter and each plant's rank is computed from its own EIA-923 rows independent of every other plant, so widening it can only ADD rows.",
+        "one_mech": "Rule 19 [R-ONE-MECH]: no fifth resolver. The four are the curated ERCOT map, the EIA-923-derived per-ISO CSV, the EIA-860 retiree fallback and the flag-gated partial-exit registry. Both new plants were unresolved by ALL FOUR, so no existing resolution changes hands: 7902 Pirkey keeps its retiree-fallback lignite and 57937 stays unresolved (both are coal only in vintage_2020, outside the solved span).",
+        "forward_test": "Rule 13's admissibility test is met: the same construction regenerates for a forecast year from the then-current EIA-860 release and responds to changed conditions. It pins no outcome to an actual and is not an overlay.",
+        "iso_scope": "Rule 25 [R-ISO-SCOPE]: derive_coal_supply.py is SHARED, so the new --census-vintage argument DEFAULTS to the canonical snapshot alone \u2014 the historical construction. Measured: with the patch applied and no flag passed, SPP / PJM / MISO / NEISO all re-derive byte-identically to the pre-patch script at HEAD. Only SPP's CSV moves, and plant codes 6193 / 10862 appear in SPP's fleet only (3 and 1 generators) and in NO other ISO's fleet, even though _derived_coal_supply globs every ISO's CSV into one national map.",
+        "registry": "Rule 24 [R-REGISTRY]: through the registered per-ISO derived CSV, never a per-plant dict. Provenance recorded in data/raw/_processed-legacy/README.md."
+      },
+      "st_gas_mustrun_per_plant": {
+        "value": true,
+        "p25_level_armed": false,
+        "where": "ScenarioConfig.st_gas_mustrun_per_plant. Applied in data/fleet/arrays.py as a per-(unit, hour) min_gen floor stamped MECH_ST_GAS_MUSTRUN_PER_PLANT: each gate-armed ST_GAS plant's committed tranche level is held in its top round(online_frac * 8760) hours ranked by the model's own system load (np.argsort(-sys_load)), each tranche clipped to pmax * availability that hour so an outage relaxes the floor.",
+        "identification": "measured-physical",
+        "source": "data/raw/_processed-legacy/thermal_tranches_SPP.csv \u2014 SPP's own CAMPD record, 22 ST_GAS plants. LEVEL = committed_pct (P5-of-online = the minimum stable load). WINDOW SIZE = online_frac (0.286-0.954, mean 0.518). Rule 23 [R-FROZEN-DERIVE]: the artifact is not regenerated by this lane and no value in it is re-derived. Rule 25 [R-ISO-SCOPE]: SPP's own data only; nothing is carried from MISO or any other ISO.",
+        "warrant": "Rule 17 [R-FLOOR-WINDOW] triple. DRIVER: SPP's gas-steam fleet is 100.0 % EIA-860 Sector 1 'Electric Utility' \u2014 9,515 of 9,515 MW, zero IPP (OG&E 2,887.5, PSO 2,111.0, Southwestern Public Service 1,772.0, SWEPCO 1,543.0, plus four co-ops/municipals). A vertically-integrated utility self-commits its own steam to serve native load rather than making a merchant start/stop decision against the LMP. Sector is a published per-plant integer \u2014 the same admissibility class the owner ruled on for PJM at capx D53/D78 (Q56: 'zero free parameters, a partition on one published per-plant boolean'). The reading is not vacuous: the same census reads CC_REGULAR 68.9 % Sector 1 / 31.1 % IPP and CT_PEAKER 99.7 %. WINDOW: each plant's own measured synchronization fraction placed in the top system-load hours, self-limiting so a genuine cycler floors only its top-load sliver. FORWARD STORY: committed_pct and online_frac re-derive from each new multi-year CAMPD vintage, and a retired or deregulated plant leaves the artifact. This is the object FINDING-spp-46 \u00a70.2 named and left open.",
+        "forward_test": "Rule 13 [R-MEASURED] admissibility is met, and the distinction from what SPP-46 refused is the whole point. SPP-46 declared INADMISSIBLE 'the measured-state form (CAMPD online hours as the floor window)' \u2014 a window that replays the meter's own on/off record \u2014 and SPP-44 killed the P0-anchored form. THIS window is neither: it is a SCALAR FRACTION placed by the MODEL'S OWN system-load rank, so it regenerates for a forward year from forward drivers and responds to changed conditions (a different load shape re-composes the floored hour set). No output is pinned to an actual: dispatch above the floor stays free. SPP-44's stated re-test condition was 'a MEASURED commitment-state membership on the ST_GAS fleet ... never this leg re-armed on the P0 pattern', and this is that membership and not that pattern. The lane records that this is a judgement at the edge of a prior adjudication, put to the gates rather than asserted.",
+        "one_mech": "Rule 19 [R-ONE-MECH], MACHINE-VERIFIED. Keeper 7's own committed legitimacy_diagnostics.json D-2 lists every forcing mechanism in the run \u2014 nuclear_mustrun and chp_steam (CC_CHP / CT_CHP / ST_CHP) \u2014 and ST_GAS does not appear at all. Corroborated by two on-recipe run_year(fleet_only=True) rebuilds of the 2023 recipe: ST_GAS min_gen 0.0000 -> 3.8701 TWh with EVERY other class moving exactly 0.0000. pmin_mw, min_run_hours, min_down_hours and startup_cost_per_mw are 0 on every SPP fossil unit, so this adds ONE mechanism to ONE class that had none. Nothing is stacked and nothing is replaced. st_gas_mustrun_p25_level is NOT armed: its rationale is MISO's own out-of-market VLR record (Entergy South) and rule 25 forbids carrying that driver to SPP.",
+        "level_choice": "Rule 1 [R-STRUCT]: the level was fixed ex ante and is the SMALLEST of the three the artifact offers \u2014 committed_pct (the LSL, 9.090 TWh on an all-on basis) against p25_cf (14.427) and median_cf (23.319). It is the level the field's own docstring calls 'the correct min-stable-load'. A level chosen to close a gap would have been one of the larger two.",
+        "iso_scope": "Rule 25 [R-ISO-SCOPE]: the gate is armed for SPP alone via --set, the shared dataclass default stays False, and every other ISO and every committed keeper is byte-identical. The floor is driven entirely by SPP's own per-ISO CAMPD artifact; no MISO verdict, level or window fills this cell.",
+        "registry": "Rule 24 [R-REGISTRY]: one registered ScenarioConfig field plus one registered committed artifact. No env-var knob, no per-plant dict in a data/ module, no getattr fallback literal in the offer path.",
+        "forced_budget": "Rule 20 [R-FORCED-BUDGET] is DECLARED AT THE GATE, not discovered after: ST_GAS carries a materially raised forced share against d2_merchant_max_share 0.30, and ST_GAS is not in d2_exempt_classes. Two things the scored span adjudicates rather than this file: (i) whether a class measured 100 % regulated-utility is a MERCHANT class within the rule's own words; (ii) failing that, the rule's conditional pass on provenance + shape, for which the D-4 window entry already exists ((MECH_ST_GAS_MUSTRUN_PER_PLANT, 'ST_GAS'): (0, 24), self-windowing, so off-window binding is nil by construction) and D-1 profile_r >= 0.80 / cv_ratio >= 0.50 is the genuinely uncertain leg. If the span lands over budget and D-1 misses, this arm is not a keeper and the lane says so."
+      },
+      "mustrun_window_commitment_grain": {
+        "value": true,
+        "where": "ScenarioConfig.mustrun_window_commitment_grain. Applied in data/fleet/arrays.py::_compose_min_gen_floors via two pure helpers, _commitment_day_order and _mustrun_window_hours, at BOTH per-plant must-run window sites (the committed-tranche block and the st_gas_mustrun_p25_level block) so the mechanism id's window stays single-valued. The window becomes round(k/24) whole operating days ranked by that day's MEAN system load; every hour of a selected day carries the floor, each tranche still clipped to pmax * availability that hour so an outage relaxes it.",
+        "identification": "structural-construction",
+        "source": "NO measured artifact enters the PLACEMENT \u2014 the day ranking is the MODEL'S OWN system load shape, the identical signal the hour ranking it replaces uses. The DRIVER evidence that the grain is the operating day is SPP's own CAMPD record, read at phase 0 with zero LP from the committed frontend/data/backcast/bench/SPP: the peak-to-mean of each plant's ONLINE hour-of-day profile is 1.007-1.146 on 21 of the 22 ST_GAS plants (3-year means; only Mooreland 3008 at 1.609 genuinely two-shifts), and the night(h0-5)/afternoon(h12-17) share of online hours is 0.78-1.09 on 19 of 22. Rule 25 [R-ISO-SCOPE]: SPP's own data only.",
+        "warrant": "Rule 17 [R-FLOOR-WINDOW] triple. DRIVER: SPP's gas-steam fleet is 100.0 % EIA-860 Sector 1 'Electric Utility' (9,515 of 9,515 MW; keeper 8's census, inherited) and a vertically-integrated utility commits DAY-AHEAD FOR THE OPERATING DAY, not hour by hour. The meter agrees twice over: the flat online diurnal profile above, and 647 / 746 / 778 measured runs per year across the fleet \u2014 multi-day blocks, not daily cycles. WINDOW: round(k/24) whole operating days by day-mean system load \u2014 the mechanical lift of the incumbent's own hourly ranking to the commitment period, same signal, same ordering statistic, one grain coarser. FORWARD STORY: the ranking is the model's own load shape, so a forecast year regenerates it from forward drivers and it responds to changed conditions. THE PHYSICS (rule 18 [R-PHYSICS]): the incumbent hour grain implies 2,843 / 2,740 / 2,335 STARTS per year against the meter's 647 / 746 / 778 \u2014 3.65x fleet-wide, and 202 starts on 989 MW Muskogee in 2024 against 27 measured, 307 on Plant X against 45, 179 on 883 MW Wilkes against 11. A gas-steam unit cannot start 200 times in a year. The day grain implies 892 against 2,171 over the span \u2014 FEWER than measured, i.e. a conservative commitment scaffold.",
+        "forward_test": "Rule 13 [R-MEASURED]: NOTHING MEASURED ENTERS THE PLACEMENT, so the field is deliberately NOT in _BACKCAST_ONLY_OVERLAY_FIELDS \u2014 unlike mustrun_online_frac_per_year (miso-172), which corrects the window's SIZE from the solve year's own meter and is registered backcast-only for exactly that reason. This lane REFUSES that field: trading a rule-13-admissible pooled input for one with no forward analogue, in order to move a diagnostic, is the wrong direction. No output is pinned to an actual \u2014 dispatch above the floor stays free, and the floor's level and size are untouched.",
+        "one_mech": "Rule 19 [R-ONE-MECH], enumerated. The floor has four orthogonal properties: MEMBERSHIP (mustrun_plant_exclusions, off), window SIZE (mustrun_online_frac_per_year, off), LEVEL (st_gas_mustrun_p25_level / _measured_level / _oom_level, all off) and hour-eligibility (mustrun_layup_window_mask, off). This arm moves window PLACEMENT alone and none of the other four is armed on SPP's keeper. The window is REPLACED, never stacked. Machine-verified at zero LP on the keeper's own 2023 recipe: mechanism 16 floored 3.870051 -> 4.070490 TWh with diurnal peak-to-mean 1.235 -> 1.000, nuclear (16.926975 TWh) and chp_steam (1.245162 TWh) BYTE-IDENTICAL, and max |delta min_gen| over every cell neither run tags ST_GAS-mustrun = 0.000000. The COAL synchronization floor (coal_sync_online_frac, armed on SPP via coal_mustrun_per_plant) and the CT_PEAKER floors deliberately KEEP the hour grain \u2014 separate mechanism ids whose own conduct evidence this lane does not carry.",
+        "iso_scope": "Rule 25 [R-ISO-SCOPE]: the gate is armed for SPP alone via --set. The shared dataclass default stays False and the field is registered in _CACHE_KEY_OPTIONAL_FIELDS at that declared default, so every pre-existing cache key of all seven ISOs is byte-stable and no other ISO moves. No iso_configs default override is added. The chartering measurement is SPP's own ST_GAS census; the matrix cell is O in SPP's shard and U everywhere else.",
+        "registry": "Rule 24 [R-REGISTRY]: one registered ScenarioConfig field. No env-var knob, no per-plant dict in a data/ module, no getattr fallback literal in the offer path, and no new artifact.",
+        "limits_declared_at_the_gate": "STATED BEFORE THE SOLVE AND NOT ABSORBED: this arm does NOT close card R-be. On the D-4 rider's own conduct statistic the fleet mean moves 0.8168 -> 0.8238 over 65 plant-years (25 rows better, 26 worse) and the count of plant-years below 0.50 goes 10 -> 11, because Mooreland 3008 is the one measured two-shifter in the fleet and a uniform whole-day window is wrong for it. It is NOT special-cased: a per-plant grain predicate needs a threshold, which is a free parameter (rule 21), and choosing it against this statistic is the fitted-mechanism selection rule 1 [R-STRUCT] (c) forbids; a plant-level exclusion is refused on miso-170's own warning that it 'would bury that error inside a membership list'. The rest of the R-be residual is DAY SELECTION \u2014 for plants 1230 / 1235 / 1271 the day-selection lift over chance is only ~2x and no forecast-admissible signal reaches it \u2014 plus a SIZE component that is NOT a defect (pooled online_frac is the rule-13-admissible construction and necessarily mis-sizes an individual year). The arm also raises floored energy +3.2 to +5.2 %, so rule 20 [R-FORCED-BUDGET]'s ST_GAS share rises from the keeper's 0.1962 / 0.1849 / 0.1744 against a 0.30 cap. Two variants measured at phase 0 and DELIBERATELY NOT TAKEN, declared so the choice is not hidden: a day-PEAK key and a NET-load (load - wind - solar) signal score marginally better on the same conduct statistic (net+peak 0.8368), and each was refused because it bundles a second, independently-unmotivated change into the same arm \u2014 and net-vs-gross is a WASH at the hour grain (0.8168 vs 0.8168). Nothing was swept against any gate. The warrant for the arm is rule 1 [R-STRUCT]'s first half and only that."
+      },
+      "eia860_vintage_cache_keying": {
+        "value": true,
+        "where": "NOT a ScenarioConfig field \u2014 a construction repair in the loader layer, recorded here because it changes an LP input. Twelve lru_cache'd loaders in data/outages.py, data/fleet/campd_bins.py and data/fleet/eia860.py each keep their public name as an UNCACHED thin shim over a cached core taking the active EIA-860 directory as its first key argument \u2014 the pattern the repo already used four times (cod_ramp._load_cod_map, chp._chp_by_plant, eia860._cc_steam_part_generators, eia860._eia860_plant_sectors). Where a core reads a sheet directly it now reads from its own argument, so a stale global cannot desync from the key.",
+        "identification": "structural-construction",
+        "source": "NO measured artifact enters the repair and no data changed: data/raw is byte-identical between keeper 10's basis_sha 706aa5475a44e2bb87326a556833f326f926160b and this arm's base 859c5dd52f4ac9e2be6381faf595a85ec66de217 (git diff over data/raw returns nothing). The defect and its magnitudes were measured at ZERO LP by scripts/probes/_spp37_vintage_cache_census.py and recorded in FINDING-spp-37-order-sensitivity-2026-09-12.md.",
+        "warrant": "Rule 14 [R-ACCURATE], not the residual. Under eia860_vintage_tracks_solve_year run_year re-points the process-global _ACTIVE_EIA_860_DIR every year (vintage_2023 -> vintage_2024 -> canonical, no vintage_2025 being committed). The LP's own fleet follows correctly because load_fleet_from_csv is uncached, but the twelve cached loaders did not, so years 2+ of a span read YEAR 1's vintage while the LP fleet advanced \u2014 the numerator/denominator basis split _iso_plant_capacity's own docstring says must never happen ('this denominator has to be THE SAME capacity the derate multiplier is applied to in the LP'). The stale 2023 map MISSES 12 bins / 526.1 MW in 2024 and 26 bins / 3,692.3 MW in 2025, whose outage events never reached the LP at all: _unit_outage_factors_from_events skips any event whose bin is absent from the map. The single largest term is physical and legible \u2014 plant 6193 is (6193,'COAL') 1,018.0 MW in the 2023 vintage and (6193,'ST_GAS') 1,018.0 MW in the true 2025 fleet, a coal-to-gas conversion between vintages \u2014 so a span run routed its 2025 outage events to ST_GAS, found no such bin, and dropped every one. ONE of the two constructions is simply wrong about which fleet existed in 2025; no gate, band or residual was consulted in deciding which.",
+        "forward_test": "Rule 13 [R-MEASURED]: the repair changes only WHICH CACHE ENTRY is served, never what is computed from a given vintage, so it adds no measured overlay and has no forward analogue to test \u2014 the underlying inputs are unchanged and each remains whatever it already was. No output is pinned to an actual. The repair is a STRICT NO-OP wherever the active directory does not move, which is every ISO that does not arm eia860_vintage_tracks_solve_year (measured at this HEAD: SPP's is the only committed bundle config that arms it), every SPP single-year run, and year 1 of every SPP span. The 2023 leg of this very bundle is the live proof: LW price, slack, dump, hours>200 and all fifteen class TWh are byte-identical to keeper 10's 2023.",
+        "one_mech": "Rule 19 [R-ONE-MECH]: nothing is stacked and no mechanism is added. The outage overlays, the offer curve, the must-run floors and the commitment bridges are all exactly keeper 10's; only the vintage each cached loader answers for changed. Machine-verified at zero LP: with the vintage flipped on a warm cache all twelve loaders now return each vintage's own value (census section 2b), and the span-vs-single-year delta in the LP's own 2025 availability input goes from -5,817,173 MWh (18 bins) on the >=5-day overlay and +142,296 MWh (5 bins) on the <5-day one to +0 MWh / 0 bins on BOTH (census section 5). Independently, scripts/lib/bundle_fleet.reconstruct_bundle_fleet \u2014 recorded order-dependent for SPP by SPP-27 \u2014 is the same defect one layer over and is CLOSED by this repair: SPP 2025's fleet_arrays.availability digest built alone vs built after 2023->2024 was 7,580,565.41768 vs 7,625,968.40751 pre-repair (order-dependent) and is identical post-repair, each leg run in its OWN process.",
+        "iso_scope": "Rule 25 [R-ISO-SCOPE]: no ISO's fitted number is carried anywhere. The repair is one shared construction applied identically in every ISO, and it is inert in every ISO but SPP because only SPP arms vintage tracking \u2014 a property of the configs, re-measured at this HEAD rather than inherited, not a per-ISO carve-out. No iso_configs default override is added and no mechanism-matrix cell moves: a cache key is not a tuning channel, so rule 28 [R-MECH-MATRIX] does not reach it.",
+        "registry": "Rule 24 [R-REGISTRY]: ZERO registered fields added. The repair introduces no env-var knob, no per-plant dict in a data/ module, no getattr fallback literal in the offer path and no new artifact. Guarded by tests/unit/data/test_eia860_vintage_cache_keying.py (33 hermetic tests), which pins re-keying on a vintage switch, a strict no-op at a constant vintage (same object back, one cache entry, one hit), and structurally that each public name is uncached and each core's first parameter is named eia860_dir.",
+        "limits_declared_at_the_gate": "STATED AND NOT ABSORBED. (1) KEEPER 10'S 2024/2025 NUMBERS ARE SUPERSEDED BY THIS RUN, and so are keeper 9's and every prior SPP span's: they were solved on the defective input. Their 2023 legs are sound. (2) THIS RUN OVERTURNS A CONCLUSION IN KEEPER 10'S OWN PROMOTION NOTE: that note dismissed three single-year fan-out shards' slack readings (1295.6995 MWh in 2024, 240.5966 in 2025) as 'a CONSTRUCTION MISMATCH IN THE PARENT'S OWN DESIGN' and declared the span-vs-span A/B 'the valid one'. The repaired span reproduces those exact numbers, and every 2025 class TWh in FINDING-spp-37 section 4c's single-year column to 4 dp. The single-year legs were right; the span carried the defect. The SPP-36 A/B itself still survives \u2014 both its legs shared the identical stale state, so the DIFFERENCE it measured is real \u2014 but the LEVEL either leg reported for 2024/2025 was not. (3) A SEPARATE CONFOUND, NOT THIS REPAIR: the eia923 shared-input hash moved (58267fd3f822 -> 7da41467dba7) while all seven other shared inputs are identical, because gov-hydro-seam-1 landed between keeper 10's basis and this arm's base and repaired plant_taxonomy.classify_plant so prime mover 'PS' returns OTHER instead of falling through to hydro. That moves the EIA-923 SCORED ACTUALS, not the LP, so any C1/C2 comparison against keeper 10 carries it; it is reported with the run rather than folded into the repair's effect. (4) NOTHING ELSE IS CLAIMED: this run fixes a wrong LP input. It does not close card R-be (D-4 still fails, 71 rows, identical to keeper 10), it does not touch C3c, and it buys no structural mechanism."
+      },
+      "mustrun_commitment_feasibility_clip": {
+        "value": true,
+        "where": "ScenarioConfig.mustrun_commitment_feasibility_clip -> data/fleet/arrays.py::_compose_min_gen_floors, immediately after the global np.minimum(min_gen, pmax x availability) clip and before clear_where_unfloored. Masked on MECH_CC_MUSTRUN_PER_PLANT / MECH_ST_GAS_MUSTRUN_PER_PLANT, so no other floor is reachable.",
+        "identification": "structural-construction",
+        "source": "NO measured input, artifact or loader of its own. Both operands are arrays the LP already holds: the plant-group's available capacity (sum of pmax x availability over its rows, the SAME basis the incumbent clip uses) and the committed level the floor asserts (sum of cc_mustrun_pmin_mw over its floored rows, which is the tranche artifact's P5-of-online loading).",
+        "warrant": "Rule 17 [R-FLOOR-WINDOW] / 18 [R-PHYSICS]: a commitment is integral, not linear. The test is the plant's own committed level against its own available capacity \u2014 it introduces NO free parameter (rule 21) and gates on unit physics rather than a class tuple or plant list.",
+        "forward_test": "Rule 13 [R-MEASURED]: PASSES in its strongest form \u2014 nothing measured enters at all, so the rule regenerates in a forecast year identically and responds to changed conditions through that year's own EFOR/maintenance envelope. It is deliberately NOT registered in _BACKCAST_ONLY_OVERLAY_FIELDS. It selects no hours from any meter, so the CAMPD-online-hours form SPP-46 declared inadmissible is not reached, and it can only REMOVE an assertion the engine was making \u2014 it never adds, relocates or pins forcing.",
+        "one_mech": "Rule 19 [R-ONE-MECH]: the ONE floor's clip is replaced in the infeasible hours; nothing is stacked. Machine-verified on the SOLVED floor arrays \u2014 every moved min_gen cell carries control-leg mechanism id 16 and arm-leg id 0, and the chp_steam and nuclear_mustrun floor arrays are byte-identical across legs. DISTINCT FROM mustrun_layup_window_mask, which subtracts a SECOND measured share and, on an ISO whose outage extract still carries its lay-up windows (SPP: 1089 of 1089), would double-subtract the identical window.",
+        "iso_scope": "Rule 25 [R-ISO-SCOPE]: ships default False, so every other ISO's keeper is byte-identical; the mechanism carries NO per-ISO number to transfer. All nine matrix shards carry the cell \u2014 SPP's alone is non-U.",
+        "registry": "Rule 24 [R-REGISTRY]: registered in ScenarioConfig, in _CACHE_KEY_OPTIONAL_FIELDS at its declared default (the nyiso-119 discipline, same commit as the field) and in this bundle's run_config.json. No env-var knob, no hardcoded per-plant dict, no getattr fallback literal."
+      },
+      "coal_mustrun_online_pmin": {
+        "value": true,
+        "basis": "Sizes the coal must-run band to the MEASURED online-net-MW synchronization Pmin (thermal_tranches_SPP.csv mustrun_online_pct, derived from SPP's own CAMPD unit conduct) instead of the all-hours available-CF mustrun_pct. Rule 14 [R-ACCURATE]: 12 of SPP's 24 status=ok COAL plants carry mustrun_pct = 0.0, i.e. NO min-load band at all, while CAMPD says every one of the 24 holds 7.9-60.0 % of nameplate when synchronized. Band 2,855.2 -> 4,090.3 MW."
+      },
+      "coal_sync_srmc_tranche": {
+        "value": true,
+        "basis": "Splits that band into a fuel-free contracted _mustrun tranche and a full-SRMC _sync tranche by the MEASURED take-or-pay share, and forces both on (coal_sync_pmin_mw -> FleetArrays.min_gen, scaled by the measured online_frac) so coal holds synchronized at min-load instead of price-following to zero. Inert without the first gate (fleet/assembly.py conjoins them)."
+      }
+    },
+    "dof_inherited_from": "spp42_span_a (SPP keeper 12)",
+    "dof_inheritance_basis": "SPP-51 arms TWO booleans that select between two ALREADY-COMMITTED MEASURED COLUMNS of thermal_tranches_SPP.csv (mustrun_online_pct in place of mustrun_pct) and force the resulting band on via coal_sync_pmin_mw -> min_gen, scaled by the measured online_frac and split by the measured take-or-pay share. NO threshold, share, multiplier, length, artifact, loader or CLI number is introduced. Machine-confirmed rather than asserted: build_dof_ledger.py --iso SPP at HEAD emits 5 entries / 3 residual on this bundle, the same five entry names as keeper 12's. Rule 23 [R-FROZEN-DERIVE]: thermal_tranches_SPP.csv is READ, never regenerated \u2014 no derive script ran in this lane.",
+    "mechanism_basis": "Rules 1 [R-STRUCT] / 14 [R-ACCURATE], NEVER the residual. The model took SPP's entire PRB coal fleet \u2014 must-run band included \u2014 to EXACTLY 0.0 MW for 151-290 h/yr in six of seven registered years, at a mean price of -$22.5..-$25.4, while SPP's real PRB fleet never falls below 8.1-17.5 % of its own annual max in ANY year. The arm ELIMINATES that state (151-290 -> 0 h in every year). The lane's PRECOMMIT predicted BEFORE the solve that it would close only ~8.5 % of C1 and pre-committed to keeping it regardless; it closes 4.4 %, and the run is kept on the structural ground, not the fit.",
+    "iso_scope": "Rule 25 [R-ISO-SCOPE]: both gates ship default False and are armed here per-run via the CLI only. NO code was changed by this lane, so every other ISO's keeper is byte-identical BY CONSTRUCTION. PJM and MISO arm members of this family in their own runs; rule 28(d) means neither verdict transferred \u2014 SPP derived its band from its OWN thermal_tranches_SPP.csv.",
+    "registry": "Rule 24 [R-REGISTRY]: both fields were already registered in ScenarioConfig with CLI flags (--coal-mustrun-online-pmin / --coal-sync-srmc-tranche) and appear in this bundle's run_config.json. No env-var knob, no hardcoded per-plant dict, no getattr fallback literal.",
+    "one_mechanism": "Rule 19 [R-ONE-MECH]: this is SPP's FIRST commitment floor \u2014 it replaces nothing and stacks on nothing. The control bundles carry NO coal_mustrun D-2 row at all, and keeper 12 ships reliability_floor=false, class_commitment_overrides={}, reliability_floor_overrides={} and spp_gas_commitment_bridge=false. It is RECONCILED with the already-armed vre_curtailment_oversupply_allocation water-fill exactly as SPP-51c required: the allocation concentrates the headroom into the low-net-load hours and this floor is what stops the LP absorbing it there.",
+    "attested": "SPP-71 (2026-09-22), lane 'card R-bc: PRICE-FORMING CURTAILMENT'. THE CHARTER'S OWN CHANNEL IS REFUSED ON A PROOF: any upper limit on wind delivery -- CF bound (what spp_curtailment_ceiling does, cell R) or LP row -- leaves wind NON-MARGINAL when it binds, because the marginal MWh of zonal load cannot then be served by wind, so the energy-balance dual is the next thermal offer and the price cannot reach the wind offer. The defect is the DIRECTION OF THE INEQUALITY, not the object it attaches to. What CAN take a zonal price to -26.000 is supply pushed UP from below, so the R-bc object is a SUPPLY-SIDE synchronization floor and SPP's keeper already carries it -- in the wrong place. THE MECHANISM UNDER TEST is the registered, default-off coal_sync_ensemble_level: floor_p(t) = coal_sync_pmin_mw_p x online_frac_p in EVERY hour, REPLACING (rule 19 [R-ONE-MECH], never stacking on) the top-k-by-system-load window that places the full Pmin on round(frac x 8760) hours and EXACTLY ZERO elsewhere. online_frac is a measured MARGINAL PROBABILITY and the shipped code spends it as a DEGENERATE distribution; the arm is its CONTINUOUS-RELAXATION image, which is what a Bernoulli commitment variable relaxes to in a pure-LP dispatch model with no integrality. ZERO new free parameters and ZERO new data (rules 21 [R-DOF] / 24 [R-REGISTRY]): the same two measured columns the armed floor already reads, mustrun_online_pct and online_frac from thermal_tranches_SPP.csv; DOF ledger 5 entries / 3 residual, unchanged. Rule 17 [R-FLOOR-WINDOW] (b) is satisfied by the declaration the repo ALREADY carries for this floor -- legitimacy_diagnostics.py (MECH_COAL_MUSTRUN, None): (0, 24), 'the driver-justified window is ALL 24 hours BY DRIVER' -- which the load-ranked code contradicts at the bottom. MEASURED, seven shards, one per year 2019-2025 (rule 36 [R-YEAR-ISOLATION]), each solving CONTROL AND ARM in one container at one pinned HEAD so the differencing is exact and rule 29(b) form 4 is not relied on; parent ran NO LP. Single-delta verified: coal_sync_ensemble_level is the ONLY differing scenario_config key in all seven years. THE STRUCTURAL RESULT: the fleet coal hourly minimum moves from 0.013-0.476x the measured EIA-930 SWPP COL minimum to 0.497-0.806x, and NEVER EXCEEDS it in any year -- it halves the structural gap and cannot over-force. THE GATE RESULT, reported at full magnitude and NOT minimised: hours at the wind offer rise in all seven years (+8 to +111), closing only 1.5-14.5 % of the gap to the measured negative-hour count; wind falls only 0.004-0.310 TWh against an excess of 1.2-11.7 TWh, about 2 %; the mean price falls 0.028-0.406 $/MWh. offer_curve_by_group is BYTE-IDENTICAL to keeper 14's (SHA-256 090abd79...), so the rule-1 authorized price-tuning channel was not touched, re-cut or swept.",
+    "mechanism_armed": {
+      "fields": {
+        "measured_ct_heat_rates": true,
+        "measured_coal_heat_rates": true,
+        "measured_st_heat_rates": true,
+        "measured_cc_heat_rates": true,
+        "measured_chp_heat_rates": true,
+        "unit_partial_outage_windows": true,
+        "mid_vintage_exit_carry": true,
+        "eia860_vintage_tracks_solve_year": true,
+        "unit_outage_netload_mask_repair": true,
+        "unit_outage_coal_extract_basis_share": true
+      },
+      "free_parameters_added": 0,
+      "inherited": {
+        "free_parameters_added": 0,
+        "inherited": {
+          "free_parameters_added": 0,
+          "level": "all measured: CAMPD unit-level heat rates per (plant, class) -- the solve year's own ok row, else the plant's pooled 2019-2025 ok row, else eGRID-<Y> (F1); CAMPD unit-grain partial-derate plateaus with the plant-level detector's frozen constants (F2 extract data/raw/campd-partial-outages-SPP.csv); EIA-860 vintage_<Y> with the year-matched eGRID join (F1)",
+          "basis": "Owner instruction 2026-09-24 (audit \u00a75): every backcast year on the year-correct EIA-860 vintage, plant-specific heat rates, granular CAMPD outage data. Rule 14 [R-ACCURATE]: measured inputs replace the HEAT_RATE_BINS class table (100 % of SPP thermal MW in the 2019-22 rung, audit D1) and eGRID-2023-for-every-year (D2). Never the residual.",
+          "one_mechanism": "rule 19 [R-ONE-MECH]: every heat-rate field REPLACES the base rate of the rows it covers (no stack); the partial family is the unit-grain second window shape of the armed unit-outage family, coal-scoped, and adds no floor",
+          "control": "the committed incumbent hydro5_spp_floor_span + hydro5_spp_floor_rung (rule 29(b) form 4); G-DRIFT docs/handoffs/PRECOMMIT-r-spp-2019-2025-inputs-2026-09-24.md section 4: F1/F2 hunks LIVE by design, every other hunk INERT",
+          "prereg": "docs/handoffs/PRECOMMIT-r-spp-2019-2025-inputs-2026-09-24.md, pushed at ec13e5c2ad35c4f817cc496ff2363affb3fed2f9 BEFORE any shard was launched"
+        },
+        "level": "measured: the SAME CAMPD unit-outage extracts, re-derived at their committed invocations (min_inmerit_hours 24 standard/partial, 6 short; high_load_pctl 0.85; 30-day window; full-stop override 5 d / CF 0.02) with the EIA-930 SWPP net-load mask live; each '-netloadmask-' companion is a strict full-row subset of its incumbent",
+        "basis": "rule 14 [R-ACCURATE] / rule 23 [R-FROZEN-DERIVE]: a code-scope repair (missing BA key), no frozen setting changed; measured-source basis = SPP's published hourly coal outage (portal capacity-of-generation-on-outage), never a price residual",
+        "one_mechanism": "rule 19 [R-ONE-MECH]: the field REPLACES each outage layer with its re-derivation; no window is added and no floor is created (the incumbent coal must-run floor re-applies in restored hours)",
+        "control": "per-year control solves of the keeper recipe at the same pinned SHA (G-DRIFT LIVE, docs/handoffs/PRECOMMIT-spp-85-netload-mask-repair-2026-09-26.md section 3)",
+        "prereg": "docs/handoffs/PRECOMMIT-spp-85-netload-mask-repair-2026-09-26.md, pushed at 0ff620d11d91797313f5f565b5e94ff3b123330b BEFORE any shard was launched"
+      },
+      "level": "measured: the SAME CAMPD unit-outage extracts (sha256 pinned), each coal row's removed share = unit_capacity_mw / the extract's own basis (the row's plant_capacity_mw at a single-group facility = the published unit_pct_of_plant; else the coal group's distinct-unit sum)",
+      "basis": "rule 14 [R-ACCURATE]: one construction for numerator and denominator of one share; direction checked against SPP's published hourly coal outage (the keeper's excess over it falls 0.19-0.32 GW), never a price residual; no frozen setting changed (rule 23)",
+      "one_mechanism": "rule 19 [R-ONE-MECH]: a scope widening of the existing extract-basis construction, not a new share; CC and coal scopes disjoint; no window added, no floor created (the incumbent coal must-run floor follows availability)",
+      "control": "the committed keeper bundle (rule 29(b) form 4; G-DRIFT all-INERT, docs/handoffs/PRECOMMIT-spp-86-coal-extract-basis-2026-09-26.md section 3)",
+      "prereg": "docs/handoffs/PRECOMMIT-spp-86-coal-extract-basis-2026-09-26.md, pushed at d72e5f107a6fe7ca59f94307f37b239e1a48c14f BEFORE any shard was launched"
+    },
+    "attested_by_inherited": "SPP-85 (2026-09-26) -- keeper 2026-09-24-r-spp-corrected-inputs's recipe replayed via scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), with exactly one registered ScenarioConfig boolean unit_outage_netload_mask_repair set True: the committed SPP CAMPD outage extracts (standard / short / partial) re-derived at their OWN recorded invocations with the deriver's EIA-930 net-load mask live (outage_detect._ISO_TO_BA had no SPP key, so the recorded in-merit filter was inert). Every leg verified by scripts/probes/_spp85_shard_check.py (recipe diff + six extract sha256 + resolved path) and again by scripts/probes/_rspp_compose.py --require before composition. Each year's control (the keeper recipe at the same pinned SHA) was solved in the same shard (G-DRIFT LIVE). Zero LP in the parent. Pre-registered in docs/handoffs/PRECOMMIT-spp-85-netload-mask-repair-2026-09-26.md (pinned 0ff620d1) before any shard launched; phase 0 docs/handoffs/FINDING-spp-85-coal-outage-basis-2026-09-26.md; record docs/handoffs/RESULT-spp-85-netload-mask-repair-2026-09-26.md."
+  },
+  "disclosures": {
+    "note": "SPP-71 disclosures -- reported, not patched (rules 1 / 13 / 14). Every item below was established at PHASE 0, ZERO LP, and pushed in the PRECOMMIT BEFORE any shard was launched. None is a post-hoc reading of the arm.",
+    "the_pooled_depth_and_the_year_own_gross_up_are_INCONSISTENT_in_2019": "The ceiling's removal, expressed as a percentage of the SAME year's gross-up headroom, is 92.1-112.6 % in six of seven years -- i.e. the two mechanisms roughly cancel and wind returns to its delivered basis -- but 614.8 % in 2019. Above 100 % the ceiling removes energy SPP ACTUALLY DELIVERED: 2.9 % of it in 2022, 12.6 % in 2023 and about 5.1 TWh in 2019. This is a rule 19 [R-ONE-MECH] finding about two mechanisms sized on different bases, not a level to re-cut.",
+    "the_price_channel_is_the_WRONG_CHANNEL_and_no_depth_fixes_it": "SPP-64 section 3 established it and this lane re-measured it on keeper 14: wind is a BOUNDED decision variable bid at a flat -ira_ptc_wind, so it is the only unit that can set a negative price, and a unit held AT its bound is never marginal. Lowering the bound removes the model's only negative price-setter. The model ALREADY carries only 0.18-0.50x the market's negative-hour count (model 170/511/498/393/464/414 against actual RT 936/1108/995/992/1172/1018 for 2020-2025), so removing them moves AWAY from the market. The natural experiment is 2019, which needed no construction: its gross-up headroom is 1.2453 TWh against 8.8-12.9 elsewhere, and it has ZERO negative hours and a minimum price of +4.500. The model's negative-price regime IS the gross-up headroom being spilled.",
+    "the_ceiling_removes_the_RIGHT_AMOUNT_from_the_WRONG_HOURS": "Measured after the PRECOMMIT was pushed and before any arm landed, so it cannot have been fitted to a result. The model's wind excess sits 41.9-52.2 % in the lowest net-load decile; the ceiling puts only 21.5-24.0 % of its removal there -- a concentration ratio of 0.28-0.52x, with corr(excess, removal) 0.60-0.70 (2019: 0.20). So it over-removes in the mid and high net-load hours, where the model's wind was already about right, and under-removes in the oversupply hours where the excess actually is. The ceiling is broad and shallow (mean multiplier 0.914-0.917, deepest cut 0.712, and the clip at 0 NEVER binds since depth x max share = 0.288137 < 1, so no hour is ever zeroed). Real congestion curtailment has the opposite shape: specific resources to zero in specific hours behind a binding constraint.",
+    "SPP_63_ALREADY_SCREENED_THIS_AND_TWO_OF_ITS_FIVE_GATES_FAILED": "The lane brief said the ceiling's control was keeper 5 and that it had never had a fair control. That understates the record and the correction was made in the PRECOMMIT before anything was spent. Lane SPP-63 (2026-09-10, shard 92b59c73, RESULT-spp-63-screen-2026-09-10.md) ran a solved five-gate screen on 2025 against the then-keeper: G-1 and G-3 PASS and wind landed within 0.232 TWh of actual, but G-4 FAILED (slack 0.0000 -> 211.208 MWh against a pre-registered <= 100.0) and G-5 FAILED (C3b NRMSE 0.167 -> 0.253 against a <= 0.20 band, a load-bearing PASS -> FAIL; negative hours 167 -> 0). The recovered energy went to COAL_PRB +7.099 and CC_REGULAR +3.680 while ST_GAS FELL 0.693, taking the coal family from +0.72 to +8.69 TWh against actual. The cell stayed O, not R, so rule 28(a) permits this re-test -- and two keepers have landed since that touch exactly what killed it.",
+    "WHY_THE_SPAN_WAS_SOLVED_AT_ALL_given_phase_0_predicted_a_kill": "Rule 34 [R-SHARD-PROMOTABLE] (b): a screen is not an exception, because you cannot know it is one until the owner rules. Rule 31 [R-RETAIN]: the owner routinely promotes what a session declined. Six of seven years were predicted to move from +8.6..+12.1 TWh of phantom wind to within +-1.21 TWh of actual -- a large, real C1 improvement the owner is entitled to rule on with solved numbers rather than with a session's arithmetic.",
+    "what_this_lane_does_NOT_close": "R-bc itself. The ceiling changes the BOUND; it does not give the LP a reason to spill, and it cannot make a bounded unit marginal. R-ba (the ST_GAS / CT_PEAKER merit-order inversion), R-be and C3c are untouched."
+  },
+  "exceptions": [],
+  "free_parameters": {
+    "schema": "dof-ledger/v1",
+    "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+    "n_entries": 5,
+    "n_residual": 3,
+    "entries": [
+      {
+        "name": "offer_curve_by_group",
+        "where": "run_config.scenario_config.offer_curve_by_group",
+        "identification": "residual",
+        "lineage_solves": "unknown",
+        "value": {
+          "CC_REGULAR": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CC_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CC_CHP": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CT_CHP": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "CT_PEAKER": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CT_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "ST_GAS": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "ST_GAS_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "COAL_LIGNITE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_PRB": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_BIT": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_WC": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ]
+        },
+        "n_scalars": 67,
+        "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "offer_curve_smoothing",
+        "where": "run_config.scenario_config.offer_curve_smoothing_*",
+        "identification": "residual",
+        "lineage_solves": "unknown",
+        "value": {
+          "offer_curve_smoothing_n": 6,
+          "offer_curve_smoothing_exp": 1.0
+        },
+        "n_scalars": 2,
+        "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "wefor_multiplier",
+        "where": "run_config.scenario_config.wefor_multiplier",
+        "identification": "residual",
+        "lineage_solves": "unknown",
+        "value": 0.7,
+        "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+        "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "unit_outage_short_windows (< 5-day baseload-coal CEMS windows)",
+        "where": "data/raw/campd-unit-outages-short-{ISO}.csv via outages.unit_outage_short_derate_factors (applied next to the >= 5-day parent overlay; disjoint by construction)",
+        "identification": "measured-physical",
+        "lineage_solves": "unknown",
+        "n_scalars": 0,
+        "source": "per-unit EPA CAMPD hourly gross generation (scripts/data/derive_campd_unit_outages.py --short-windows); identification guards: coal-only detector + unit annual CF >= 0.55 (the partial-outage detector's baseload constant) + the revealed-availability in-merit filter (outage_detect.filter_revealed_outages; the full-stop override cannot engage below the 5-day cap)",
+        "note": "the >= 5-day duration floor makes event-coincident short forced outages invisible (MISO Jul 28-29 2025: ~2.8 GW coal offline at the peak block beyond the overlay; docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md); CT/CC event unavailability stays unmodeled pending a max-gen-event registry intake (no identification without it)"
+      },
+      {
+        "name": "st_gas_mustrun_per_plant (ST_GAS local-reliability commitment floor, measured committed window)",
+        "where": "fleet.bins_to_fleet cc_mustrun_pmin_mw ST_GAS branch; window = top online_frac system-load hours (thermal_tranches_<ISO>.csv, derive_thermal_tranches.py)",
+        "identification": "measured-physical",
+        "lineage_solves": "unknown",
+        "n_scalars": 0,
+        "source": "CAMPD/CEMS 2023-2025: Entergy MISO-South steam fleet synchronized supermajority of ALL hours (Nine Mile 98.2%, P5-all-hours 414 MW; Sabine 85.6%; Lewis Creek 87.8%) under VLR/self-commitment (MISO SOM out-of-market local-reliability commitments, South region) while the economically-dispatched class ran near-dark",
+        "note": "the committed share and online fraction re-derive from multi-year CAMPD when the record extends (rule 23); true cyclers publish small fractions and force little (self-limiting by measurement, rule 18)"
+      }
+    ]
+  },
+  "r_spp": {
+    "result": "docs/handoffs/RESULT-r-spp-2019-2025-inputs-2026-09-24.md",
+    "composed_from_years": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "spp85": {
+    "result": "docs/handoffs/RESULT-spp-85-netload-mask-repair-2026-09-26.md",
+    "composed_from_years": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "spp86": {
+    "result": "docs/handoffs/RESULT-spp-86-coal-extract-basis-2026-09-26.md",
+    "composed_from_years": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  }
+}

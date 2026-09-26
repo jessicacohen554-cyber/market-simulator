@@ -1290,6 +1290,9 @@ def _apply_outage_overlays(
             extract_basis_share=getattr(
                 config, "unit_outage_extract_basis_share", False
             ),
+            coal_extract_basis_share=getattr(
+                config, "unit_outage_coal_extract_basis_share", False
+            ),
             fleet_status_scope=getattr(config, "unit_outage_fleet_status_scope", False),
             # SPP-48: the mid-vintage-year whole-plant exit channel injects
             # plants a year-matched native vintage drops from BOTH EIA sheets,
@@ -1521,6 +1524,9 @@ def _apply_outage_overlays(
                 extract_basis_share=getattr(
                     config, "unit_outage_extract_basis_share", False
                 ),
+                coal_extract_basis_share=getattr(
+                    config, "unit_outage_coal_extract_basis_share", False
+                ),
                 fleet_status_scope=getattr(
                     config, "unit_outage_fleet_status_scope", False
                 ),
@@ -1596,6 +1602,9 @@ def _apply_outage_overlays(
                 per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
                 extract_basis_share=getattr(
                     config, "unit_outage_extract_basis_share", False
+                ),
+                coal_extract_basis_share=getattr(
+                    config, "unit_outage_coal_extract_basis_share", False
                 ),
                 fleet_status_scope=getattr(
                     config, "unit_outage_fleet_status_scope", False
@@ -3086,6 +3095,9 @@ def _compose_min_gen_floors(
             per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
             extract_basis_share=getattr(
                 config, "unit_outage_extract_basis_share", False
+            ),
+            coal_extract_basis_share=getattr(
+                config, "unit_outage_coal_extract_basis_share", False
             ),
             # miso-266: the dispatched bin's own capacity as the denominator.
             # It moves with the outage overlay by NECESSITY, not by choice —

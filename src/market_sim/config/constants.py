@@ -6389,3 +6389,12 @@ VOLUNTARY_WTP_CEILING_USD_PER_MWH: dict[str, float] = {
     "mid": 4.5,  # committed (owner ruling S9, 2026-09-06), see above
     "high": 7.0,
 }
+
+# Minimum measured ONLINE SHARE of the winter fuel-security floor's cold-day
+# window a plant must show, pooled over the other derived years, to stay in the
+# floor's program fleet under ``ScenarioConfig.neiso_winter_fuelsec_conduct_roster``
+# (neiso-119). 0.5 is NOT fitted: it is the D-4 per-unit conduct rider's own test
+# (scripts/legitimacy_diagnostics.py — a floored unit fails when "its own measured
+# median output over the hours the floor binds is 0 MW", i.e. it is metered
+# offline in at least half of them). Online share >= 0.5 <=> median output > 0.
+WINTER_FUELSEC_CONDUCT_MIN_ONLINE_SHARE: float = 0.5

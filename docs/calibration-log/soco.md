@@ -1643,3 +1643,42 @@ CT_PEAKER -1.32..+0.18, ST_GAS -0.38..+0.03. C4 coal NRMSE 2020 0.347 -> 0.285, 
 COAL_BIT -3.83 -> -3.4pp still FAIL (Barry/Crist/Wansley cycle, must-run 0, their committed band keeps the coal start
 markup); D-2 FAIL -> PASS. Grade 5/3/2 -> 5/4/1, NOT-YET. Records:
 docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-70-2026-09-26.md. Leftover refs for the owner: claude/soco70-2019..2025.
+
+## soco-71 — 2026-09-26
+
+COAL HEAT-RATE ARTIFACT RE-DERIVED OVER ITS DECLARED WINDOW; PROMOTED; FAILING ROW IMPROVES. G-DRIFT (measured, zero LP):
+every LP input bit-identical vs keeper sha e3cea99b; code/data drift on main INERT (default-off fields, other ISOs'
+artifacts). Decomposition of 2019 COAL_BIT (Barry/Crist/Wansley): not availability, not the start markup (stripping it
+entirely caps at ~+0.4 TWh) — the cyclers' base offer is above the 2019 price in 78-97% of their CEMS-synced hours. Fuel
+matches own-plant F923 receipts (<3%). Heat rate did NOT: campd_coal_heat_rates_SOCO.csv never read AL/FL/GA 2019-2022
+CAMPD (pooled rows = 2023-2025 sums) and its latest-record union dropped Crist 641 (neiso-118 defect; now
+union_fleet(klass=COAL)). Re-derived, unchanged estimator, all 30 committed rows byte-identical (sha 369a58ba -> a5579637),
+zero scalars; Wansley 2019 12.75 -> 10.92, Crist 11.24 -> 10.55, Bowen 10.24 -> 10.67.
+
+RESULT (run 2026-09-26-soco71-coal-hr-window, seven year-isolated shards at ae5fb43a; 2020/2024 re-solved on the pinned
+dependency set after their first shards installed highspy 1.15.1; PROMOTED on the owner's standing ruling;
+2026-09-26-soco70-coal-rows-measured pruned per rule 35): COAL_BIT +0.87/+1.52/+2.00/-0.19 TWh 2019-2022; 2023-2025
+byte-identical; unserved 0. 2019 COAL_BIT -3.45 -> -3.09pp (-8.43 TWh vs +/-7.64) still FAIL, the only failing row; C4 PASS
+every year; D-1 2020 COAL_BIT r 0.284 -> 0.779. Grade 5/4/1, NOT-YET. Records:
+docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-71-2026-09-26.md. Leftover refs: claude/soco71-2019..2025,
+claude/soco71b-2020, claude/soco71b-2024, claude/soco70-2019..2025.
+
+## soco-72 — 2026-09-26
+
+GAS BASIS EXTENDED OVER THE KEEPER'S WINDOW; PROMOTED ON STRUCTURE; GATES REGRESS. G-DRIFT (measured, zero LP): every LP
+input bit-identical vs keeper sha ae5fb43a; code drift on main = two default-off fields (SPP-86, R-ERCOT-7) INERT; no
+data/ change. 2019 price-side decomposition (zero LP, soco-71 legs): in the cyclers' CEMS-synced/model-off hours the
+marginal gas units were offered +$0.27/MMBtu ABOVE their own F923 receipts; no import node (demand = EIA-930 net
+generation), so imports cannot displace coal. The defect: GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR['SOCO'] held only
+SOCO-55's 2023-2025 rows, so 2019-2022 fell through to the 2024 scalar 0.64. SOCO-55's construction, unchanged
+(reproduces 2023-2025 byte-for-byte): 0.27 / 0.32 / 0.30 / 1.20; zero fitted parameters. Pre-registered to deepen the
+failing row.
+
+RESULT (run 2026-09-26-soco72-gas-basis-window, seven year-isolated shards at 19159a0c; PROMOTED on the owner's standing
+ruling, PRECOMMIT §7 held; 2026-09-26-soco71-coal-hr-window pruned per rule 35): 678 gas econ/peak tranche-years at the
+census mc +/-$0.01; 2023-2025 byte-identical; unserved 0. COAL_BIT -2.83/-1.65/-2.56/+0.56, COAL_PRB -4.78/-1.26/-0.85/+0.04,
+CT_PEAKER +4.73/+1.91/+0.40/-0.24 TWh 2019-2022 (LP ~3x the greedy). 2019 COAL_BIT -3.09 -> -4.24pp (-11.26 TWh) still
+FAIL; NEW C4 FAIL 2020 coal NRMSE 0.276 -> 0.304; D-1 FAILs 3 -> 4. Grade 5/4/1 -> 5/3/2, NOT-YET. Conclusion: 2019
+COAL_BIT is coal COMMITMENT (the cyclers ran multi-day campaigns through hours priced below their own cost), not an
+input error. Records: docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-72-2026-09-26.md. Leftover refs: claude/soco72-2019..2025,
+claude/soco71-2019..2025, claude/soco71b-2020, claude/soco71b-2024, claude/soco70-2019..2025.

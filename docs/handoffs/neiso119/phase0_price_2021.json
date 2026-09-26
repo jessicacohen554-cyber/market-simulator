@@ -1,0 +1,310 @@
+{
+ "year": 2021,
+ "total": {
+  "model": 49.17,
+  "actual": 47.774
+ },
+ "months": [
+  {
+   "month": 1,
+   "model": 52.09,
+   "actual": 46.32,
+   "bias": 5.77,
+   "contrib_$": 0.507
+  },
+  {
+   "month": 2,
+   "model": 78.29,
+   "actual": 74.21,
+   "bias": 4.08,
+   "contrib_$": 0.332
+  },
+  {
+   "month": 3,
+   "model": 38.92,
+   "actual": 36.04,
+   "bias": 2.87,
+   "contrib_$": 0.228
+  },
+  {
+   "month": 4,
+   "model": 31.01,
+   "actual": 26.68,
+   "bias": 4.32,
+   "contrib_$": 0.304
+  },
+  {
+   "month": 5,
+   "model": 29.65,
+   "actual": 24.72,
+   "bias": 4.93,
+   "contrib_$": 0.365
+  },
+  {
+   "month": 6,
+   "model": 39.18,
+   "actual": 41.12,
+   "bias": -1.94,
+   "contrib_$": -0.176
+  },
+  {
+   "month": 7,
+   "model": 38.6,
+   "actual": 38.02,
+   "bias": 0.58,
+   "contrib_$": 0.054
+  },
+  {
+   "month": 8,
+   "model": 48.68,
+   "actual": 54.17,
+   "bias": -5.49,
+   "contrib_$": -0.566
+  },
+  {
+   "month": 9,
+   "model": 48.3,
+   "actual": 48.61,
+   "bias": -0.31,
+   "contrib_$": -0.027
+  },
+  {
+   "month": 10,
+   "model": 51.6,
+   "actual": 57.76,
+   "bias": -6.16,
+   "contrib_$": -0.442
+  },
+  {
+   "month": 11,
+   "model": 56.8,
+   "actual": 60.59,
+   "bias": -3.79,
+   "contrib_$": -0.303
+  },
+  {
+   "month": 12,
+   "model": 75.39,
+   "actual": 61.73,
+   "bias": 13.66,
+   "contrib_$": 1.12
+  }
+ ],
+ "hod": [
+  {
+   "hod": 0,
+   "model": 44.14,
+   "actual": 39.5,
+   "contrib_$": 0.16
+  },
+  {
+   "hod": 1,
+   "model": 43.92,
+   "actual": 37.81,
+   "contrib_$": 0.207
+  },
+  {
+   "hod": 2,
+   "model": 43.87,
+   "actual": 37.07,
+   "contrib_$": 0.228
+  },
+  {
+   "hod": 3,
+   "model": 43.93,
+   "actual": 36.97,
+   "contrib_$": 0.236
+  },
+  {
+   "hod": 4,
+   "model": 44.26,
+   "actual": 38.5,
+   "contrib_$": 0.201
+  },
+  {
+   "hod": 5,
+   "model": 45.36,
+   "actual": 43.51,
+   "contrib_$": 0.069
+  },
+  {
+   "hod": 6,
+   "model": 47.69,
+   "actual": 48.73,
+   "contrib_$": -0.042
+  },
+  {
+   "hod": 7,
+   "model": 49.1,
+   "actual": 49.33,
+   "contrib_$": -0.009
+  },
+  {
+   "hod": 8,
+   "model": 49.51,
+   "actual": 47.42,
+   "contrib_$": 0.089
+  },
+  {
+   "hod": 9,
+   "model": 49.58,
+   "actual": 44.97,
+   "contrib_$": 0.197
+  },
+  {
+   "hod": 10,
+   "model": 49.63,
+   "actual": 44.75,
+   "contrib_$": 0.211
+  },
+  {
+   "hod": 11,
+   "model": 49.82,
+   "actual": 45.47,
+   "contrib_$": 0.189
+  },
+  {
+   "hod": 12,
+   "model": 50.0,
+   "actual": 46.67,
+   "contrib_$": 0.146
+  },
+  {
+   "hod": 13,
+   "model": 50.26,
+   "actual": 47.8,
+   "contrib_$": 0.109
+  },
+  {
+   "hod": 14,
+   "model": 51.29,
+   "actual": 49.64,
+   "contrib_$": 0.075
+  },
+  {
+   "hod": 15,
+   "model": 51.7,
+   "actual": 55.05,
+   "contrib_$": -0.156
+  },
+  {
+   "hod": 16,
+   "model": 54.43,
+   "actual": 63.27,
+   "contrib_$": -0.431
+  },
+  {
+   "hod": 17,
+   "model": 54.98,
+   "actual": 63.85,
+   "contrib_$": -0.445
+  },
+  {
+   "hod": 18,
+   "model": 53.64,
+   "actual": 59.42,
+   "contrib_$": -0.287
+  },
+  {
+   "hod": 19,
+   "model": 52.66,
+   "actual": 53.94,
+   "contrib_$": -0.062
+  },
+  {
+   "hod": 20,
+   "model": 51.02,
+   "actual": 48.58,
+   "contrib_$": 0.111
+  },
+  {
+   "hod": 21,
+   "model": 48.23,
+   "actual": 43.51,
+   "contrib_$": 0.196
+  },
+  {
+   "hod": 22,
+   "model": 46.08,
+   "actual": 40.15,
+   "contrib_$": 0.225
+  },
+  {
+   "hod": 23,
+   "model": 44.67,
+   "actual": 39.64,
+   "contrib_$": 0.178
+  }
+ ],
+ "actual_price_buckets": [
+  {
+   "actual_bucket": "(-1000000000.0, 20.0]",
+   "hours": 786,
+   "model": 30.72,
+   "actual": 15.61,
+   "contrib_$": 1.062
+  },
+  {
+   "actual_bucket": "(20.0, 25.0]",
+   "hours": 1043,
+   "model": 32.26,
+   "actual": 22.52,
+   "contrib_$": 1.0
+  },
+  {
+   "actual_bucket": "(25.0, 30.0]",
+   "hours": 925,
+   "model": 36.91,
+   "actual": 27.6,
+   "contrib_$": 0.934
+  },
+  {
+   "actual_bucket": "(30.0, 40.0]",
+   "hours": 2028,
+   "model": 44.33,
+   "actual": 34.77,
+   "contrib_$": 2.21
+  },
+  {
+   "actual_bucket": "(40.0, 60.0]",
+   "hours": 2220,
+   "model": 51.42,
+   "actual": 48.4,
+   "contrib_$": 0.795
+  },
+  {
+   "actual_bucket": "(60.0, 100.0]",
+   "hours": 1375,
+   "model": 66.77,
+   "actual": 75.25,
+   "contrib_$": -1.508
+  },
+  {
+   "actual_bucket": "(100.0, 1000000000.0]",
+   "hours": 383,
+   "model": 79.55,
+   "actual": 136.39,
+   "contrib_$": -3.096
+  }
+ ],
+ "pct_model": {
+  "5": 27.41,
+  "10": 28.68,
+  "25": 33.58,
+  "50": 43.25,
+  "75": 55.08,
+  "90": 72.62,
+  "95": 91.39,
+  "99": 114.3
+ },
+ "pct_actual": {
+  "5": 17.87,
+  "10": 20.43,
+  "25": 27.08,
+  "50": 37.76,
+  "75": 54.08,
+  "90": 77.43,
+  "95": 95.96,
+  "99": 149.18
+ }
+}

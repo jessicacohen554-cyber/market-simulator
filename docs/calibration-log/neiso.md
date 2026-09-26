@@ -3603,3 +3603,14 @@ re-derived (+Canal 3 rows only, pooled 10.76). Seven single-year shards (first l
 explicit SHA checkout). Result: C1 CC_REGULAR 2019 −3.46 pp FAIL → −2.3 pp PASS; C3a price_mean 2019 +9.3 % → +10.03 %
 PASS → FAIL ($0.01 over). Full span NOT-YET on that one line; train tier CALIBRATED. `neiso-117-coal-yard` pruned
 (rule 35). Record: `docs/handoffs/neiso118/RESULT-neiso118-2026-09-26.md`. **Next shorthand: `neiso-119`.**
+
+## neiso-119 — 2026-09-26 — PROMOTED `2026-09-26-neiso-119-anchor-fuelsec` (full span CALIBRATED)
+
+Phase 0: the 2019 C3a miss is not a 2019 defect — every year lifts the cheap hours (RT ≤ $25: +$1–5) and under-prices
+peaks; 2019 has too few peaks to offset. CC_REGULAR sets the cheap-hour price, and its gas net-revenue margin was
+identified at the frozen 2023–2025 anchor ($4.08) in every year. Separately, the winter fuel-security floor bound
+units CEMS shows offline over its own window (rule 17). Owner rulings: arm `gas_offer_margin_anchor_vintage`, and build
+`neiso_winter_fuelsec_conduct_roster` (leave-one-year-out, ≥ 50 % online; roster = Schiller 2367). Seven single-year
+shards, one launch. Result: C3a 2019 +10.03 % → +7.9 % FAIL → PASS; no status regresses; **full span NOT-YET →
+CALIBRATED** (C3c ledgered); train tier CALIBRATED. `neiso-118-canal-ct` pruned (rule 35). Record:
+`docs/handoffs/neiso119/RESULT-neiso119-2026-09-26.md`. **Next shorthand: `neiso-120`.**

@@ -903,6 +903,27 @@ _CC_NAMEPLATE_BASIS_GROUPS: tuple[str, ...] = ("CC_REGULAR", "CC_CHP")
 _ST_CAPACITY_BASIS_GROUPS: tuple[str, ...] = ("ST_GAS", "ST_CHP")
 
 
+def _extract_basis_groups(
+    extract_basis_share: bool, coal_extract_basis_share: bool
+) -> tuple[str, ...]:
+    """Return the bin groups whose removed share is taken on the extract's own basis.
+
+    ``extract_basis_share`` (nyiso-196) scopes the construction to the
+    combined-cycle bins (:data:`_CC_NAMEPLATE_BASIS_GROUPS`);
+    ``coal_extract_basis_share`` (SPP-86,
+    ``ScenarioConfig.unit_outage_coal_extract_basis_share``) widens the SAME
+    construction to the coal bins (the extract's coal-family token,
+    :data:`COAL_ARTIFACT_FAMILY`). The two scopes are disjoint, so arming both
+    composes without stacking (rule 19 ``[R-ONE-MECH]``).
+    """
+    groups: tuple[str, ...] = ()
+    if extract_basis_share:
+        groups += _CC_NAMEPLATE_BASIS_GROUPS
+    if coal_extract_basis_share:
+        groups += (COAL_ARTIFACT_FAMILY,)
+    return groups
+
+
 def _fleet_cache_dir_key() -> str:
     """Return the fleet-derived caches' EIA-860 key: the active directory, plus
     a ``|SB`` suffix while ``admit_standby_units`` widens the fleet's status
@@ -1409,6 +1430,7 @@ def unit_outage_derate_factors(
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
     precod_clip: bool = False,
     netload_mask_repair: bool = False,
+    coal_extract_basis_share: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
@@ -1459,7 +1481,9 @@ def unit_outage_derate_factors(
     # UNFILTERED extract so every unit at the facility counts toward it,
     # whatever its own windows' durations. Non-ERCOT only (see the accumulator).
     basis = (
-        _extract_basis_index(df) if (extract_basis_share and iso != "ERCOT") else None
+        _extract_basis_index(df)
+        if ((extract_basis_share or coal_extract_basis_share) and iso != "ERCOT")
+        else None
     )
     if precod_clip:
         # soco-67 (rule 19 [R-ONE-MECH]): the COD ramp alone owns a not-yet-
@@ -1480,6 +1504,9 @@ def unit_outage_derate_factors(
         st_capacity_basis=st_capacity_basis,
         per_unit_clip=per_unit_clip,
         extract_basis=basis,
+        extract_basis_groups=_extract_basis_groups(
+            extract_basis_share, coal_extract_basis_share
+        ),
         mid_vintage_exit_carry=mid_vintage_exit_carry,
         lp_bin_capacity=lp_bin_capacity,
     )
@@ -1593,6 +1620,7 @@ def _unit_outage_factors_from_events(
     extract_basis: dict[tuple[int, str], tuple[bool, float]] | None = None,
     mid_vintage_exit_carry: bool = False,
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
+    extract_basis_groups: tuple[str, ...] = _CC_NAMEPLATE_BASIS_GROUPS,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Accumulate unit-outage event rows into per-bin availability factors.
 
@@ -1672,7 +1700,12 @@ def _unit_outage_factors_from_events(
     extract's ``facility_id`` does not address); a bin absent from the index
     keeps ``cap[bin]``. Mutually exclusive with ``cc_nameplate_basis``, which
     acts on the same CC bins' share (two constructions of one share never
-    stack).
+    stack). ``extract_basis_groups`` names the bins the construction reaches:
+    the CC groups by default, the coal family too under SPP-86's
+    ``ScenarioConfig.unit_outage_coal_extract_basis_share`` (see
+    :func:`_extract_basis_groups`) — at Holcomb 108, a single-unit coal plant,
+    the fleet-basis share of a full stop is 348.7 / 358.9 = 0.97 and the
+    extract-basis share is exactly 1.0.
     ``lp_bin_capacity`` (GATED default-off; miso-266,
     ``ScenarioConfig.unit_outage_dispatched_bin_denominator``): REPLACE the
     reconstructed ``cap`` map with the DISPATCHED fleet's own per-bin capacity
@@ -1714,7 +1747,11 @@ def _unit_outage_factors_from_events(
             "(rule 19 [R-ONE-MECH]): all three set the derate denominator — arm "
             "exactly one construction"
         )
-    if extract_basis is not None and cc_nameplate_basis:
+    if (
+        extract_basis is not None
+        and cc_nameplate_basis
+        and set(extract_basis_groups) & set(_CC_NAMEPLATE_BASIS_GROUPS)
+    ):
         raise ValueError(
             "unit_outage_extract_basis_share is mutually exclusive with "
             "unit_outage_lp_capacity_basis (rule 19 [R-ONE-MECH]): both act on "
@@ -1837,7 +1874,7 @@ def _unit_outage_factors_from_events(
         # (st_capacity_basis, rule 19). A bin the index does not carry keeps
         # ``cap[tgt]``.
         denom = cap[tgt]
-        if extract_basis is not None and tgt[1] in _CC_NAMEPLATE_BASIS_GROUPS:
+        if extract_basis is not None and tgt[1] in extract_basis_groups:
             ebasis = extract_basis.get((int(r.facility_id), str(r.plant_group)))
             if ebasis is not None:
                 single_group, group_basis = ebasis
@@ -1897,6 +1934,7 @@ def unit_outage_short_derate_factors(
     coal_scope: bool = True,
     hour_grain: bool = False,
     netload_mask_repair: bool = False,
+    coal_extract_basis_share: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return short-window (< 5-day) unit-outage availability multipliers.
 
@@ -1955,7 +1993,9 @@ def unit_outage_short_derate_factors(
     # over the unfiltered coal extract (nyiso-196) — so the off path, whose
     # frame IS that file, is byte-inert.
     basis = (
-        _extract_basis_index(df) if (extract_basis_share and iso != "ERCOT") else None
+        _extract_basis_index(df)
+        if ((extract_basis_share or coal_extract_basis_share) and iso != "ERCOT")
+        else None
     )
     scopes = ({COAL_ARTIFACT_FAMILY} if coal_scope else set()) | (
         set(_SHORT_GAS_GROUPS) if gas_scope else set()
@@ -1975,6 +2015,9 @@ def unit_outage_short_derate_factors(
         st_capacity_basis=st_capacity_basis,
         per_unit_clip=per_unit_clip,
         extract_basis=basis,
+        extract_basis_groups=_extract_basis_groups(
+            extract_basis_share, coal_extract_basis_share
+        ),
         mid_vintage_exit_carry=mid_vintage_exit_carry,
         lp_bin_capacity=lp_bin_capacity,
     )
@@ -2123,6 +2166,7 @@ def unit_layup_removed_fractions(
     per_unit_crosswalk: bool = False,
     merit_order_guard: bool = False,
     hour_grain: bool = False,
+    coal_extract_basis_share: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) laid-up capacity fraction}``.
 
@@ -2188,8 +2232,11 @@ def unit_layup_removed_fractions(
         # over the same denominator as the outage share it adds to.
         extract_basis=(
             _extract_basis_index(df)
-            if (extract_basis_share and iso != "ERCOT")
+            if ((extract_basis_share or coal_extract_basis_share) and iso != "ERCOT")
             else None
+        ),
+        extract_basis_groups=_extract_basis_groups(
+            extract_basis_share, coal_extract_basis_share
         ),
         lp_bin_capacity=lp_bin_capacity,
     )
@@ -2242,6 +2289,7 @@ def unit_partial_outage_derate_factors(
     extract_basis_share: bool = False,
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
     netload_mask_repair: bool = False,
+    coal_extract_basis_share: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return unit-grain partial-derate plateau availability multipliers.
 
@@ -2284,8 +2332,11 @@ def unit_partial_outage_derate_factors(
         per_unit_clip=per_unit_clip,
         extract_basis=(
             _extract_basis_index(df)
-            if (extract_basis_share and iso != "ERCOT")
+            if ((extract_basis_share or coal_extract_basis_share) and iso != "ERCOT")
             else None
+        ),
+        extract_basis_groups=_extract_basis_groups(
+            extract_basis_share, coal_extract_basis_share
         ),
         lp_bin_capacity=lp_bin_capacity,
     )

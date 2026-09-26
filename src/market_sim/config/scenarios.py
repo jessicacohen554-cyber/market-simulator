@@ -475,6 +475,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # through the same resolvers, so the off path is byte-inert). Same commit
     # as the field.
     "unit_outage_netload_mask_repair",
+    # SPP-86 coal outage share on the extract's own capacity basis (GATED
+    # default-off; widens nyiso-196's extract-basis construction to the COAL
+    # bins, so the off path is byte-inert). Same commit as the field.
+    "unit_outage_coal_extract_basis_share",
     # PJM-NEXT-2 card 3: nuclear dormancy defers to the solved vintage's exit
     # record (GATED default-off; byte-inert off). Same commit as the field.
     "nuclear_dormancy_defers_to_vintage_exit",
@@ -1685,6 +1689,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # off, byte-identical unarmed — the floor/backstop/CR-1 position keep the
     # composite). Starts the neiso_* cluster at the tuple's end per HOUSE-3.
     "neiso_net_icr_requirement",
+    # neiso-119 (2026-09-26; owner ruling "Conduct roster"): the winter
+    # fuel-security floor's leave-one-year-out CEMS conduct roster (GATED
+    # default off). Byte-identical off: apply_winter_fuelsec_mustrun receives
+    # eligible_plants=None and selects exactly the rows it always did. An armed
+    # run narrows the floored rows and hashes distinctly. neiso_* cluster, per
+    # HOUSE-3; registered IN THE SAME COMMIT as the field (nyiso-119 discipline).
+    "neiso_winter_fuelsec_conduct_roster",
     # capx D43 dispersion-carrying entry expectation (GATED default-off):
     # dropped from the hash at its False default so every pre-existing cache
     # key is byte-stable; an armed run replaces the capacity screens' price
@@ -2285,6 +2296,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by SPP-85 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_netload_mask_repair": "False",
+    # Added by SPP-86 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_coal_extract_basis_share": "False",
     "nuclear_dormancy_defers_to_vintage_exit": "False",
     # Added by soco-67 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
@@ -2734,6 +2748,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # D40: NEISO published Net ICR requirement gate, registered at its shipping
     # False default (an armed run keys distinctly).
     "neiso_net_icr_requirement": "False",
+    # neiso-119: winter fuel-security conduct roster, registered at its
+    # shipping False default (an armed run keys distinctly).
+    "neiso_winter_fuelsec_conduct_roster": "False",
     # capx D42: fossil announced-date step-1 channel, registered at its shipping
     # False default (an armed run keys distinctly).
     "fossil_announced_exits_enabled": "False",
@@ -7920,6 +7937,30 @@ class ScenarioConfig:
     # target). A program-scope quantity; if a future EIA-860/FCM roster crosswalk
     # narrows the committed set (winter-fuel data-audit §3), this is the knob —
     # never the price/volume residual.
+    neiso_winter_fuelsec_conduct_roster: bool = False  # Leave-one-year-out
+    # MEASURED CONDUCT ROSTER for the winter fuel-security floor above (neiso-119,
+    # owner ruling 2026-09-26 "Conduct roster"; GATED default off, byte-identical
+    # off). THE DEFECT: the floor postures the WHOLE fuel-secure steam fleet
+    # (commit_frac 1.0), but CEMS shows most of it OFFLINE over the very hours
+    # the floor binds -- 2019: Middletown 562 online 2 %, Newington 8002 1 %,
+    # West Springfield 1642 1 %, Merrimack 2364 45 % -- so the floor asserted a
+    # commitment its own driver evidence contradicts (rule 17 [R-FLOOR-WINDOW];
+    # the D-4 per-unit conduct rider's test, which this mechanism escaped for want
+    # of a D4_WINDOWS entry). docs/handoffs/neiso119/phase0_fuelsec_<Y>.json.
+    # Armed, a plant stays in the program fleet only if its CEMS BOILER units were
+    # online (gross load > 0) in at least
+    # constants.WINTER_FUELSEC_CONDUCT_MIN_ONLINE_SHARE of its zone's cold-day
+    # window hours POOLED OVER THE OTHER YEARS of the frozen derive
+    # (data/raw/_processed-legacy/winter_fuelsec_conduct_NEISO.csv,
+    # scripts/data/derive_neiso_winter_fuelsec_conduct.py) -- never the solved
+    # year's own conduct (rule 13 [R-MEASURED]: the roster is history, and a
+    # forecast year pools every derived year). The window is the floor's OWN
+    # (winter_fuelsec_cold_window), so the roster tests exactly the hours the
+    # floor can bind. It NARROWS the one mechanism's scope -- the roster
+    # crosswalk the commit_frac comment below anticipated -- and never adds a
+    # floor (rule 19 [R-ONE-MECH]). Zero new free parameters (rule 21): the share
+    # is D-4's own median-output convention. A plant with no other-year evidence
+    # is not floored (rule 17: a floor needs its driver evidence).
     neiso_winter_fuelsec_tmin_c: float = -7.0  # Cold-day gate on zone daily TMIN
     # for the winter must-run (~20 F). The NERC cold-weather forced-outage onset
     # (shared with neiso_gas_derate_t0_c): the temperature at which winter fuel-
@@ -16456,6 +16497,35 @@ class ScenarioConfig:
     # overwrite, falling back to the incumbent extract where not derived.
     # docs/handoffs/FINDING-spp-85-coal-outage-basis-2026-09-26.md.
     unit_outage_netload_mask_repair: bool = False
+    # SPP-86 (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH], rule 17
+    # [R-FLOOR-WINDOW]) COAL OUTAGE SHARE ON THE EXTRACT'S OWN CAPACITY BASIS.
+    # The shared accumulator removes unit_capacity_mw / cap[bin] of a coal bin,
+    # where the numerator is the extract's per-unit basis (EIA nameplate digits
+    # or a CEMS proxy) and cap[bin] is the fleet's EIA-860 per-plant capacity --
+    # two constructions of one share. Measured on the SPP keeper
+    # (scripts/probes/_spp86_coal_floor_conduct.py): Holcomb 108, a SINGLE-unit
+    # plant, reads 348.7 / 358.9 = 0.97 through every full stop, so 2.6-2.9 %
+    # of it stays available and the coal_mustrun floor survives on that residual
+    # (~3.1 MW) in every full-window hour -- the whole of the plant's D-4
+    # per-unit conduct FAIL in 2019/20/22/24 and most of 2021. The same mismatch
+    # runs the other way at plants whose extract basis EXCEEDS the LP bin
+    # (Jeffrey 6068: 3 x 720 MW nameplate on a 2,010 MW bin, one unit out
+    # removes 35.8 % against its 33.3 % share). Armed, nyiso-196's construction
+    # (unit_outage_extract_basis_share: numerator AND denominator from
+    # _extract_basis_index -- the row's plant_capacity_mw at a single-group
+    # facility, else the group's distinct-unit sum) is applied to the COAL
+    # bins, so a plant all of whose coal units are out lands on EXACTLY 1.0 and
+    # a unit removes its own share of the bin the LP dispatches. A WIDENING OF
+    # AN EXISTING CONSTRUCTION'S SCOPE, not a new share: the CC flag keeps its
+    # own scope and the two compose over disjoint groups. Threaded into the std
+    # >= 5-day, short and partial layers AND the lay-up loader (the additivity
+    # contract), exactly as unit_outage_extract_basis_share is. Non-ERCOT only.
+    # Mutually exclusive with unit_outage_dispatched_bin_denominator (both set
+    # the coal denominator; the loader raises). ZERO free parameters (rule 21),
+    # rule-13 forward-regenerable (a property of the accumulator on any year's
+    # extract), byte-inert off.
+    # docs/handoffs/FINDING-spp-86-coal-floor-conduct-2026-09-26.md.
+    unit_outage_coal_extract_basis_share: bool = False
     # PJM-NEXT-2 card 3 (rule 19 [R-ONE-MECH], rule 14 [R-ACCURATE]).
     # NUCLEAR_DORMANT_UNTIL zeroes a nuclear unit in every backcast year before
     # its restart year -- written for the Crane/TMI-1 restart, which EIA-860

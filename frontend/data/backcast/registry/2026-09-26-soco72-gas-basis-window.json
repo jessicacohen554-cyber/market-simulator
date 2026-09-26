@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-26-soco72-gas-basis-window",
+  "label": "soco72 gas basis window",
+  "date": "2026-09-26",
+  "shorthand": "soco72-gas-basis-window",
+  "definition": "soco-72 2019: soco-71 keeper recipe + GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR['SOCO'] extended to 2019-2022 (rule 14/23 source coverage)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-09-26-soco72-gas-basis-window.js",
+  "bundle": "results/calibration/soco72_span"
+}
