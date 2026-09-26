@@ -72,6 +72,7 @@ def verify_scope(
     inert_moved: frozenset[str] = frozenset(),
     lane_added: frozenset[str] = frozenset(),
     main_rows_added: int = 0,
+    lane_existing: frozenset[str] = frozenset(),
 ) -> dict:
     """Raise unless the hydro budgets, B1 and B2 are as claimed; return the evidence.
 
@@ -83,6 +84,10 @@ def verify_scope(
     declared delta (e.g. R-SOCO-B's two boundary registries): each adds one SOCO
     row and must appear in ``moved``. They are attested by that lane's own layer
     (``gen_rsocob_attestation.py``), never as inert.
+
+    ``lane_existing`` names PRE-EXISTING solve-surface keys a later lane MOVED as
+    its own live, declared delta (soco-72: GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR,
+    rows extended): each must appear in ``moved`` but adds no row.
     """
     import numpy as np  # noqa: PLC0415
     import pandas as pd  # noqa: PLC0415
@@ -181,7 +186,7 @@ def verify_scope(
         rows.get("moved") or {}
     ) != {"ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE"} | set(inert_moved) | set(
         lane_added
-    ):
+    ) | set(lane_existing):
         raise SystemExit(
             f"bundle solve_surface {rows.get('rows')} / {rows.get('moved')}"
         )
@@ -211,6 +216,15 @@ def main() -> None:
         "ISO_BA_JOINS); adds one SOCO row each; attested by that lane's layer",
     )
     ap.add_argument(
+        "--lane-moved-existing",
+        action="append",
+        default=[],
+        metavar="KEY",
+        help="a PRE-EXISTING solve-surface key a later lane MOVED as its own live, "
+        "declared delta (soco-72: GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR); must "
+        "appear in moved, adds no row; attested by that lane's layer",
+    )
+    ap.add_argument(
         "--main-rows-added",
         type=int,
         default=0,
@@ -233,6 +247,7 @@ def main() -> None:
         frozenset(a.declared_inert_moved),
         frozenset(a.lane_added_moved),
         a.main_rows_added,
+        frozenset(a.lane_moved_existing),
     )
     print(json.dumps(ev, indent=1))
     b, bd = ev["budgets"], ev["boundary"]

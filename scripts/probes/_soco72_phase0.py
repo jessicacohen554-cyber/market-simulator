@@ -883,7 +883,6 @@ def main_fleet_gas(years: list[int]) -> None:
         mcb = b["mc"] if b["mc"].ndim == 2 else np.repeat(b["mc"][:, None], T, axis=1)
         d = (mcb - mca)
         hr = np.asarray(a["stash"]["heat_rate"], float)
-        cls = np.array([x.split("_")[0] if False else "" for x in a["unit_ids"]])
         moved = np.abs(d).max(axis=1) > 1e-9
         same = all(np.array_equal(np.asarray(a[k]), np.asarray(b[k])) for k in ("pmax", "min_gen", "avail"))
         db = CANDIDATE_BASIS.get(y, APPLIED_BASIS) - APPLIED_BASIS
