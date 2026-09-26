@@ -1,6 +1,24 @@
 # RESULT: SPP-85, net-load-mask repair of SPP's CAMPD outage extracts (7-year control + arm)
 
-**Recommendation under the pre-registered rule (PRECOMMIT §6): DO NOT PROMOTE as-is.** Conditions
+## 0. ADDENDUM: PROMOTED 2026-09-26 on the owner's ruling
+
+The owner's reply to §6, verbatim: *"Yes promote rebase merge and give handoff"*. This overrides the
+lane's pre-registered HOLD (condition (e)) on rule 14. It was executed in this session in the rule-35 order.
+
+1. **Year set enumerated before the prune:** {2019..2025}, fully covered by `spp85_arm_span`.
+2. **`keepers/SPP.json` → `2026-09-26-spp-85-netload-mask`.** The `config_partition` was repointed with the
+   same tiers.
+3. **`audit_keepers --iso SPP` E1 passed** before the prune.
+4. **`prune_iso_runs.py --iso SPP --force-uncite`** removed the `2026-09-24-r-spp-corrected-inputs` sidecar,
+   its payload and `rspp_span`. Git history is the record (rule 35(d)).
+5. **Status rebuilt:** SPP reads CALIBRATED.
+6. **`calibration-complete.json` re-keyed.** The determination was re-verified: train tier CALIBRATED,
+   unchanged.
+7. **Matrix re-stamped:** `unit_outage_netload_mask_repair` O → **K**, keeper and gates stamps updated,
+   §5.7 header updated.
+8. **`audit_keepers --iso SPP`: 0 failures.**
+
+**Recommendation under the pre-registered rule (PRECOMMIT §6) was DO NOT PROMOTE as-is; the owner promoted (§0).** Conditions
 (a)–(d) hold, but (e) fails narrowly: one new D-4 per-unit conduct row (§3). The owner may still promote
 on rule 14 (§5). Nothing was promoted, pruned or deleted (rule 31).
 
