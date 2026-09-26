@@ -3646,3 +3646,6 @@ results/calibration/spp86_arm_20*/
 
 # neiso-119 per-year shard legs: composed into neiso119_span, never committed (rule 32(d))
 results/calibration/neiso119_20*/
+
+!results/calibration/neiso119_2019/**
+!results/calibration/neiso119_2019/
