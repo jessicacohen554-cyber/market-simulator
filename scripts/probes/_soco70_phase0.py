@@ -503,9 +503,59 @@ def main_greedy(candidate: Path, years: list[int]) -> None:
         print(c1_rows(y, g["delta"]).round(3).to_string(index=False))
 
 
+# ---------------------------------------------------------------------------
+# 4. post-solve comparison (zero LP): the soco-70 legs against the keeper legs.
+# ---------------------------------------------------------------------------
+ARM_LEG = _ROOT / "results/calibration/soco70_{y}"
+KEYS = ("CC_REGULAR", "CT_PEAKER", "ST_GAS", "COAL_BIT", "COAL_PRB", "CC_CHP", "CT_CHP", "ST_CHP",
+        "nuclear", "hydro", "wind", "solar")
+
+
+def compare(year: int) -> dict:
+    """Class deltas, unserved, plant coal TWh and the PRECOMMIT §5(2) cap_mw identity for one year."""
+    k, a = Path(str(LEG).format(y=year)), Path(str(ARM_LEG).format(y=year))
+    ck = pd.read_parquet(k / f"hourly/class_hourly_{year}.parquet")
+    ca = pd.read_parquet(a / f"hourly/class_hourly_{year}.parquet")
+    d = (ca.groupby(ca.klass.astype(str)).mw.sum() - ck.groupby(ck.klass.astype(str)).mw.sum()) / 1e6
+    sk = pd.read_parquet(k / f"hourly/system_{year}.parquet", columns=["slack"]).slack.sum()
+    sa = pd.read_parquet(a / f"hourly/system_{year}.parquet", columns=["slack"]).slack.sum()
+    cols = ["unit_id", "plant_code", "plant_group", "hour", "mw", "cap_mw"]
+    uk = pd.read_parquet(k / f"hourly/unit_hourly_{year}.parquet", columns=cols)
+    ua = pd.read_parquet(a / f"hourly/unit_hourly_{year}.parquet", columns=cols)
+
+    def five(u: pd.DataFrame) -> pd.Series:
+        return u.plant_group.astype(str).str.startswith("COAL") & u.plant_code.isin(list(PLANTS))
+
+    ok_ = uk[~five(uk)].sort_values(["unit_id", "hour"])
+    oa_ = ua[~five(ua)].sort_values(["unit_id", "hour"])
+    cap_same = list(ok_.unit_id.astype(str)) == list(oa_.unit_id.astype(str)) and np.array_equal(
+        ok_.cap_mw.to_numpy(), oa_.cap_mw.to_numpy()
+    )
+    pk = uk[five(uk)].groupby("plant_code").mw.sum() / 1e6
+    pa = ua[five(ua)].groupby("plant_code").mw.sum() / 1e6
+    mrk = uk[uk.unit_id.astype(str).str.endswith("_mustrun") & uk.plant_code.isin([703, 6002, 6257])].groupby("plant_code").mw.sum() / 1e6
+    mra = ua[ua.unit_id.astype(str).str.endswith("_mustrun") & ua.plant_code.isin([703, 6002, 6257])].groupby("plant_code").mw.sum() / 1e6
+    return dict(delta=d, slack=(sk, sa), cap_same=cap_same, plant=(pk, pa), measured_mr=(mrk, mra))
+
+
+def main_compare(years: list[int]) -> None:
+    """Print the post-solve comparison for every year."""
+    rows = []
+    for y in years:
+        r = compare(y)
+        rows.append({"year": y, **{k: round(float(r["delta"].get(k, 0.0)), 3) for k in KEYS},
+                     "slack_k": round(r["slack"][0], 1), "slack_a": round(r["slack"][1], 1)})
+        pk, pa = r["plant"]
+        mk, ma = r["measured_mr"]
+        print(f"{y}: other-unit cap_mw identical {r['cap_same']}  plant coal TWh keeper->arm "
+              + "  ".join(f"{p}:{pk.get(p, 0):.3f}->{pa.get(p, 0):.3f}" for p in PLANTS)
+              + "  | measured mustrun " + "  ".join(f"{p}:{mk.get(p, 0):.3f}->{ma.get(p, 0):.3f}" for p in (703, 6002, 6257)))
+    print(pd.DataFrame(rows).to_string(index=False))
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("mode", choices=["census", "fleet", "greedy"])
+    ap.add_argument("mode", choices=["census", "fleet", "greedy", "compare"])
     ap.add_argument("--candidate", type=Path)
     ap.add_argument("--years", nargs="+", type=int, default=list(YEARS))
     a = ap.parse_args()
@@ -513,5 +563,7 @@ if __name__ == "__main__":
         main_census()
     elif a.mode == "fleet":
         main_fleet(a.candidate, a.years)
-    else:
+    elif a.mode == "greedy":
         main_greedy(a.candidate, a.years)
+    else:
+        main_compare(a.years)
