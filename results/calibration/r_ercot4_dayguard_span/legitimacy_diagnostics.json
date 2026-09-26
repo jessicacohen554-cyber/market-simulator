@@ -617,11 +617,19 @@
     },
     {
      "year": 2019,
-     "class": "COAL",
+     "class": "COAL_LIGNITE",
      "mechanism": "coal_min_config",
-     "forced_twh": 4.93,
-     "class_total_twh": 64.3441,
-     "share_of_class": 0.0766
+     "forced_twh": 1.2725,
+     "class_total_twh": 16.4104,
+     "share_of_class": 0.0775
+    },
+    {
+     "year": 2019,
+     "class": "COAL_PRB",
+     "mechanism": "coal_min_config",
+     "forced_twh": 3.6291,
+     "class_total_twh": 47.9336,
+     "share_of_class": 0.0757
     },
     {
      "year": 2019,
@@ -689,11 +697,19 @@
     },
     {
      "year": 2020,
-     "class": "COAL",
+     "class": "COAL_LIGNITE",
      "mechanism": "coal_min_config",
-     "forced_twh": 6.9698,
-     "class_total_twh": 52.2232,
-     "share_of_class": 0.1335
+     "forced_twh": 1.4381,
+     "class_total_twh": 16.2959,
+     "share_of_class": 0.0882
+    },
+    {
+     "year": 2020,
+     "class": "COAL_PRB",
+     "mechanism": "coal_min_config",
+     "forced_twh": 5.4834,
+     "class_total_twh": 35.9272,
+     "share_of_class": 0.1526
     },
     {
      "year": 2020,
@@ -753,11 +769,19 @@
     },
     {
      "year": 2021,
-     "class": "COAL",
+     "class": "COAL_LIGNITE",
      "mechanism": "coal_min_config",
-     "forced_twh": 2.2241,
-     "class_total_twh": 71.4433,
-     "share_of_class": 0.0311
+     "forced_twh": 0.7204,
+     "class_total_twh": 16.8827,
+     "share_of_class": 0.0427
+    },
+    {
+     "year": 2021,
+     "class": "COAL_PRB",
+     "mechanism": "coal_min_config",
+     "forced_twh": 1.4899,
+     "class_total_twh": 54.5607,
+     "share_of_class": 0.0273
     },
     {
      "year": 2021,
@@ -825,11 +849,19 @@
     },
     {
      "year": 2022,
-     "class": "COAL",
+     "class": "COAL_LIGNITE",
      "mechanism": "coal_min_config",
-     "forced_twh": 1.0954,
-     "class_total_twh": 76.134,
-     "share_of_class": 0.0144
+     "forced_twh": 0.3908,
+     "class_total_twh": 17.5657,
+     "share_of_class": 0.0222
+    },
+    {
+     "year": 2022,
+     "class": "COAL_PRB",
+     "mechanism": "coal_min_config",
+     "forced_twh": 0.6676,
+     "class_total_twh": 58.5683,
+     "share_of_class": 0.0114
     },
     {
      "year": 2022,
@@ -897,11 +929,19 @@
     },
     {
      "year": 2023,
-     "class": "COAL",
+     "class": "COAL_LIGNITE",
      "mechanism": "coal_min_config",
-     "forced_twh": 4.4515,
-     "class_total_twh": 59.8695,
-     "share_of_class": 0.0744
+     "forced_twh": 0.9795,
+     "class_total_twh": 16.6381,
+     "share_of_class": 0.0589
+    },
+    {
+     "year": 2023,
+     "class": "COAL_PRB",
+     "mechanism": "coal_min_config",
+     "forced_twh": 3.4567,
+     "class_total_twh": 43.2315,
+     "share_of_class": 0.08
     },
     {
      "year": 2023,
@@ -969,11 +1009,19 @@
     },
     {
      "year": 2024,
-     "class": "COAL",
+     "class": "COAL_LIGNITE",
      "mechanism": "coal_min_config",
-     "forced_twh": 4.4943,
-     "class_total_twh": 56.5781,
-     "share_of_class": 0.0794
+     "forced_twh": 0.9926,
+     "class_total_twh": 15.0824,
+     "share_of_class": 0.0658
+    },
+    {
+     "year": 2024,
+     "class": "COAL_PRB",
+     "mechanism": "coal_min_config",
+     "forced_twh": 3.4674,
+     "class_total_twh": 41.4958,
+     "share_of_class": 0.0836
     },
     {
      "year": 2024,
@@ -1041,11 +1089,19 @@
     },
     {
      "year": 2025,
-     "class": "COAL",
+     "class": "COAL_LIGNITE",
      "mechanism": "coal_min_config",
-     "forced_twh": 2.0268,
-     "class_total_twh": 64.0286,
-     "share_of_class": 0.0317
+     "forced_twh": 1.1903,
+     "class_total_twh": 15.0748,
+     "share_of_class": 0.079
+    },
+    {
+     "year": 2025,
+     "class": "COAL_PRB",
+     "mechanism": "coal_min_config",
+     "forced_twh": 0.8194,
+     "class_total_twh": 48.9539,
+     "share_of_class": 0.0167
     },
     {
      "year": 2025,
@@ -1088,12 +1144,25 @@
     },
     {
      "year": 2019,
-     "class": "COAL",
-     "forced_twh": 4.93,
-     "class_total_twh": 64.3441,
-     "forced_share": 0.0766,
+     "class": "COAL_LIGNITE",
+     "forced_twh": 1.2725,
+     "class_total_twh": 16.4104,
+     "forced_share": 0.0775,
      "limit": 0.3,
-     "load_share": 0.1969,
+     "load_share": 0.0437,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2019,
+     "class": "COAL_PRB",
+     "forced_twh": 3.6291,
+     "class_total_twh": 47.9336,
+     "forced_share": 0.0757,
+     "limit": 0.3,
+     "load_share": 0.1531,
      "immaterial": false,
      "lower_bound": true,
      "upper_bound": false,
@@ -1140,12 +1209,25 @@
     },
     {
      "year": 2020,
-     "class": "COAL",
-     "forced_twh": 6.9698,
-     "class_total_twh": 52.2232,
-     "forced_share": 0.1335,
+     "class": "COAL_LIGNITE",
+     "forced_twh": 1.4381,
+     "class_total_twh": 16.2959,
+     "forced_share": 0.0882,
      "limit": 0.3,
-     "load_share": 0.1787,
+     "load_share": 0.0466,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "class": "COAL_PRB",
+     "forced_twh": 5.4834,
+     "class_total_twh": 35.9272,
+     "forced_share": 0.1526,
+     "limit": 0.3,
+     "load_share": 0.1321,
      "immaterial": false,
      "lower_bound": true,
      "upper_bound": false,
@@ -1192,12 +1274,25 @@
     },
     {
      "year": 2021,
-     "class": "COAL",
-     "forced_twh": 2.2241,
-     "class_total_twh": 71.4433,
-     "forced_share": 0.0311,
+     "class": "COAL_LIGNITE",
+     "forced_twh": 0.7204,
+     "class_total_twh": 16.8827,
+     "forced_share": 0.0427,
      "limit": 0.3,
-     "load_share": 0.1933,
+     "load_share": 0.0431,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "class": "COAL_PRB",
+     "forced_twh": 1.4899,
+     "class_total_twh": 54.5607,
+     "forced_share": 0.0273,
+     "limit": 0.3,
+     "load_share": 0.1513,
      "immaterial": false,
      "lower_bound": true,
      "upper_bound": false,
@@ -1244,12 +1339,25 @@
     },
     {
      "year": 2022,
-     "class": "COAL",
-     "forced_twh": 1.0954,
-     "class_total_twh": 76.134,
-     "forced_share": 0.0144,
+     "class": "COAL_LIGNITE",
+     "forced_twh": 0.3908,
+     "class_total_twh": 17.5657,
+     "forced_share": 0.0222,
      "limit": 0.3,
-     "load_share": 0.1775,
+     "load_share": 0.0409,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2022,
+     "class": "COAL_PRB",
+     "forced_twh": 0.6676,
+     "class_total_twh": 58.5683,
+     "forced_share": 0.0114,
+     "limit": 0.3,
+     "load_share": 0.1365,
      "immaterial": false,
      "lower_bound": true,
      "upper_bound": false,
@@ -1296,12 +1404,25 @@
     },
     {
      "year": 2023,
-     "class": "COAL",
-     "forced_twh": 4.4515,
-     "class_total_twh": 59.8695,
-     "forced_share": 0.0744,
+     "class": "COAL_LIGNITE",
+     "forced_twh": 0.9795,
+     "class_total_twh": 16.6381,
+     "forced_share": 0.0589,
      "limit": 0.3,
-     "load_share": 0.1407,
+     "load_share": 0.0373,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "class": "COAL_PRB",
+     "forced_twh": 3.4567,
+     "class_total_twh": 43.2315,
+     "forced_share": 0.08,
+     "limit": 0.3,
+     "load_share": 0.1055,
      "immaterial": false,
      "lower_bound": true,
      "upper_bound": false,
@@ -1348,12 +1469,25 @@
     },
     {
      "year": 2024,
-     "class": "COAL",
-     "forced_twh": 4.4943,
-     "class_total_twh": 56.5781,
-     "forced_share": 0.0794,
+     "class": "COAL_LIGNITE",
+     "forced_twh": 0.9926,
+     "class_total_twh": 15.0824,
+     "forced_share": 0.0658,
      "limit": 0.3,
-     "load_share": 0.1303,
+     "load_share": 0.0326,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "class": "COAL_PRB",
+     "forced_twh": 3.4674,
+     "class_total_twh": 41.4958,
+     "forced_share": 0.0836,
+     "limit": 0.3,
+     "load_share": 0.0994,
      "immaterial": false,
      "lower_bound": true,
      "upper_bound": false,
@@ -1400,12 +1534,25 @@
     },
     {
      "year": 2025,
-     "class": "COAL",
-     "forced_twh": 2.0268,
-     "class_total_twh": 64.0286,
-     "forced_share": 0.0317,
+     "class": "COAL_LIGNITE",
+     "forced_twh": 1.1903,
+     "class_total_twh": 15.0748,
+     "forced_share": 0.079,
      "limit": 0.3,
-     "load_share": 0.1321,
+     "load_share": 0.0309,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "class": "COAL_PRB",
+     "forced_twh": 0.8194,
+     "class_total_twh": 48.9539,
+     "forced_share": 0.0167,
+     "limit": 0.3,
+     "load_share": 0.1024,
      "immaterial": false,
      "lower_bound": true,
      "upper_bound": false,
@@ -1453,7 +1600,8 @@
     "2024: 2 floored plant(s) carry NO dispatch series in the active source (dispatch/2024_P1.parquet) and are scored under the floor-energy convention (dispatch := min_gen; PREREG-pjm149 \u00a73.2) \u2014 their forced TWh is the MANDATED floor energy and every affected class's forced_share is an UPPER BOUND, sound on a pass and indeterminate on a fail. By class: (unclassified) x2. Plants: 6145, 6251",
     "2024: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
     "2025: 2 floored plant(s) carry NO dispatch series in the active source (dispatch/2025_P1.parquet) and are scored under the floor-energy convention (dispatch := min_gen; PREREG-pjm149 \u00a73.2) \u2014 their forced TWh is the MANDATED floor energy and every affected class's forced_share is an UPPER BOUND, sound on a pass and indeterminate on a fail. By class: (unclassified) x2. Plants: 6145, 6251",
-    "2025: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds."
+    "2025: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+    "COAL rows re-split per subclass (rubric v3.9, owner ruling C8-SUBCLASS 2026-09-25) from a zero-LP D-2 recompute on committed run payload dispatch + run_year(fleet_only=True) floors (zero LP); every non-coal row is the original. Family cross-check: coal_subclass_resplit."
    ]
   },
   "D4": {
@@ -7494,5 +7642,66 @@
    "nuclear"
   ],
   "d4_max_offwindow_share": 0.05
+ },
+ "coal_subclass_resplit": {
+  "rubric": "v3.9",
+  "ruling": "owner ruling C8-SUBCLASS 2026-09-25",
+  "basis": "committed run payload dispatch + run_year(fleet_only=True) floors (zero LP)",
+  "code_sha": "c64e69ebeb2eb4c9e16106aa044b15285225393a",
+  "dispatch_source": {
+   "2019": "run payload frontend/data/backcast/runs/2026-09-25-r-4-day-guard.js",
+   "2020": "run payload frontend/data/backcast/runs/2026-09-25-r-4-day-guard.js",
+   "2021": "run payload frontend/data/backcast/runs/2026-09-25-r-4-day-guard.js",
+   "2022": "run payload frontend/data/backcast/runs/2026-09-25-r-4-day-guard.js",
+   "2023": "run payload frontend/data/backcast/runs/2026-09-25-r-4-day-guard.js",
+   "2024": "run payload frontend/data/backcast/runs/2026-09-25-r-4-day-guard.js",
+   "2025": "run payload frontend/data/backcast/runs/2026-09-25-r-4-day-guard.js"
+  },
+  "relabelled_years": {},
+  "unresolved_years": [],
+  "family_crosscheck": {
+   "2019": {
+    "committed_family_forced_twh": 4.93,
+    "committed_family_total_twh": 64.3441,
+    "resplit_subclass_forced_twh": 4.9016,
+    "resplit_subclass_total_twh": 64.344
+   },
+   "2020": {
+    "committed_family_forced_twh": 6.9698,
+    "committed_family_total_twh": 52.2232,
+    "resplit_subclass_forced_twh": 6.9215,
+    "resplit_subclass_total_twh": 52.2231
+   },
+   "2021": {
+    "committed_family_forced_twh": 2.2241,
+    "committed_family_total_twh": 71.4433,
+    "resplit_subclass_forced_twh": 2.2103,
+    "resplit_subclass_total_twh": 71.4434
+   },
+   "2022": {
+    "committed_family_forced_twh": 1.0954,
+    "committed_family_total_twh": 76.134,
+    "resplit_subclass_forced_twh": 1.0584,
+    "resplit_subclass_total_twh": 76.134
+   },
+   "2023": {
+    "committed_family_forced_twh": 4.4515,
+    "committed_family_total_twh": 59.8695,
+    "resplit_subclass_forced_twh": 4.4362,
+    "resplit_subclass_total_twh": 59.8696
+   },
+   "2024": {
+    "committed_family_forced_twh": 4.4943,
+    "committed_family_total_twh": 56.5781,
+    "resplit_subclass_forced_twh": 4.46,
+    "resplit_subclass_total_twh": 56.5782
+   },
+   "2025": {
+    "committed_family_forced_twh": 2.0268,
+    "committed_family_total_twh": 64.0286,
+    "resplit_subclass_forced_twh": 2.0097,
+    "resplit_subclass_total_twh": 64.0287
+   }
+  }
  }
 }
