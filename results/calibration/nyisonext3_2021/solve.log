@@ -1,0 +1,243 @@
+WARNING: replay environment differs from the bundle's recorded environment — byte-identity is not guaranteed:
+  platform: bundle 'Linux-6.18.44-fc-v42-x86_64-with-glibc2.39' != now 'Linux-6.18.44-fc-v37-x86_64-with-glibc2.39'
+replaying results/calibration/nyisonext2_2021 (NYISO [2021]) ...
+INFO: container preflight: memory ceiling 13.36 GiB (/sys/fs/cgroup/memory/process_api/01a0ded3-c019-7461-be89-ca490ba8adc9/claude-code-bash/memory.limit_in_bytes; MemTotal 15.72 GiB), swap 0.0 GiB, target ceiling+swap 24 GiB
+INFO: container preflight: provisioned 9 GiB swap at /swapfile-marketsim — ceiling 13.36 + swap 9.0 = 22.4 GiB
+INFO: container preflight: solve profile MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1
+WARNING: container preflight: ceiling+swap 22.4 GiB is below the 24 GiB target; a per-plant ISO-year LP (MISO, PJM) may be OOM-killed here
+WARNING: eGRID plant 7350 heat rate 13.769 MMBtu/MWh exceeds the combined-cycle physical ceiling 11.500 (PLHTIAN spans co-located plant 7931, 6 m away, whose 1 unit(s) eGRID double-counts) — reconciled to 6.808
+WARNING: eGRID plant 55641 heat rate 16.736 MMBtu/MWh exceeds the combined-cycle physical ceiling 11.500 (PLHTIAN spans co-located plant 64020, 454 m away, whose 2 unit(s) eGRID double-counts) — reconciled to 6.836
+WARNING: eGRID boundary heat-rate reconciliation active for 2 plant(s): 7350->6.808, 55641->6.836
+WARNING: eGRID plant 2681 heat rate 8.133 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 57186 heat rate 6.053 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 6 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: NYISO: CC plant 7314 fleet pmax sum 199.5 MW exceeds trusted bound 170.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (29.5 MW removed)
+WARNING: NYISO: CC plant 10190 fleet pmax sum 92.0 MW exceeds trusted bound 72.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (20.0 MW removed)
+WARNING: NYISO: CC plant 56196 fleet pmax sum 662.0 MW exceeds trusted bound 560.0 MW (demonstrated peak; corrupt summer-capacity rows) — reconciled (102.0 MW removed)
+INFO: Loaded NYISO fleet from EIA-860 parquet (460 generators)
+INFO: Rebuilt binned fleet cache for NYISO — 460 plants → nyiso_fleet_binned.parquet
+INFO: solving NYISO 2021 (hours=8760, Henry Hub=$3.72/MMBtu, commitment=False)
+INFO: NYISO 2021 interface TTC: Upstate_West->Capital_Hudson 2850 -> 2025 MW (AC Transmission year-varying limit)
+INFO: NYISO 2021: nyiso_import_sil_retire — dropped the mis-attributed NYISO_simultaneous_import scalar (the published G-J LOCALITY Bulk Power Transmission Limit, an internal boundary); the seam is now bounded by the posted-rating per-link TTCs alone
+INFO: NYISO 2021: nyiso_zonal_loss_surface — internal chain links split into one-way loss pairs (marginal delivery-factor physics, nyiso-159)
+INFO: Repaired degenerate NYISO 2021 solar distribution from donor NEISO
+INFO: NYISO 2021 Upstate_West->Capital_Hudson monthly TTC envelope: 1225-2625 MW (measured Central-East DAM postings)
+INFO: capacity-deliverability NYISO: delivery_year 2021/2022 absent; using latest 2025/2026
+INFO: NYISO 2021: Zone-K LCR/TSL import cap on NYC->Long_Island (HB14-21, published N-1-1 transmission security limit; replaces the LI self-supply energy floor)
+INFO: capacity-deliverability NYISO: delivery_year 2021/2022 absent; using latest 2025/2026
+INFO: NYISO 2021: Zone-J LCR/TSL import cap on Lower_Hudson->NYC (HB14-21, published NYC locality import limit; replaces the 3,900 MW Dunwoodie-South energy-TTC estimate)
+INFO: nyiso_seam_par_attribution 2021: Capital_Hudson import cap p50 135 MW (incumbent static p50 1600), export cap p50 736 MW
+INFO: nyiso_seam_par_attribution 2021: Long_Island import cap p50 803 MW (incumbent static p50 1200), export cap p50 0 MW
+INFO: nyiso_seam_par_attribution 2021: NYC import cap p50 913 MW (incumbent static p50 1000), export cap p50 0 MW
+INFO: nyiso_seam_par_attribution 2021: Upstate_West import cap p50 2785 MW (incumbent static p50 3000), export cap p50 0 MW
+INFO: NYISO 2021: nyiso_seam_par_attribution — all four border links follow the measured p90 directional envelope of the ATTRIBUTED seam (SCH - PJ - NY split by the published PAR shares under published PAR availability); supersedes nyiso_seam_deliverability_envelope
+WARNING: eGRID plant 7350 heat rate 12.100 MMBtu/MWh exceeds the combined-cycle physical ceiling 11.500 (PLHTIAN spans co-located plant 7931, 6 m away, whose 1 unit(s) eGRID double-counts) — reconciled to 7.040
+WARNING: eGRID boundary heat-rate reconciliation active for 1 plant(s): 7350->7.040
+WARNING: eGRID plant 2681 heat rate 8.786 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 52091 heat rate 5.854 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+INFO: NYISO: eGRID prime-mover-family heat rates applied to 42 generator row(s) across 7 plant(s)
+WARNING: NYISO: CC plant 10190 fleet pmax sum 92.7 MW exceeds trusted bound 72.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (20.7 MW removed)
+WARNING: 3 of 510 NYISO generators not in eGRID lookup — assigned fallback zone
+INFO: Loaded NYISO fleet from EIA-860 parquet (510 generators)
+INFO: NYISO: measured power-only CHP heat rates applied to 80 generator(s) across 28 (plant, class) pair(s)
+INFO: NYISO: eGRID identity-reconciled heat rates applied to 5 generator(s) across 2 plant(s)
+INFO: NYISO: eGRID steam-collapse identity heat rates applied to 4 generator(s) across 2 plant(s)
+INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
+INFO: cc_reserve_duty_split armed: 7 measured reserve-duty CC plant(s) route to the class peak band — [7784, 10620, 10621, 50744, 54034, 54592, 54593]
+INFO: chp_layup_duty_curve armed: 7 measured laid-up CHP plant(s) offer their price-conditional duty (econ/peak % of pmax), remainder withheld — {10617: (15.75, 18.31), 10725: (148.79, 50.62), 50449: (21.4, 11.41), 50450: (21.06, 16.03), 50451: (15.32, 12.92), 54041: (16.17, 32.77), 54076: (27.44, 18.1)}
+INFO: CC capacity reconcile: raised 2 / capped 11 plant(s) to demonstrated peak (-641 MW total) from cc_capacity_reconcile_NYISO.csv
+INFO: NYISO nuclear unit-availability overlay (2021): 0 reactor(s) on measured daily windows (uncovered dates keep the monthly CF)
+INFO: CC summer derate on the reconciled basis (NYISO): 15 reconciled plant(s) take min(1, net_summer / carried capacity) in Jun-Sep
+WARNING: eGRID plant 2681 heat rate 8.786 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 52091 heat rate 5.854 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: NYISO: CC plant 10190 fleet pmax sum 92.7 MW exceeds trusted bound 72.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (20.7 MW removed)
+WARNING: 3 of 510 NYISO generators not in eGRID lookup — assigned fallback zone
+INFO: Loaded NYISO fleet from EIA-860 parquet (510 generators)
+INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
+INFO: unit-outage derate (NYISO 2021): 248 plant-tranches derated
+INFO: COD ramp (NYISO 2021): 47 unit-months masked offline (mid-year COD / retirement), 0 unit(s) fully not-yet-built/retired
+WARNING: eGRID plant 2681 heat rate 8.786 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 52091 heat rate 5.854 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+INFO: NYISO: eGRID prime-mover-family heat rates applied to 42 generator row(s) across 7 plant(s)
+WARNING: NYISO: CC plant 10190 fleet pmax sum 92.7 MW exceeds trusted bound 72.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (20.7 MW removed)
+WARNING: 3 of 510 NYISO generators not in eGRID lookup — assigned fallback zone
+INFO: Loaded NYISO fleet from EIA-860 parquet (510 generators)
+INFO: NYISO: measured power-only CHP heat rates applied to 80 generator(s) across 28 (plant, class) pair(s)
+INFO: NYISO: eGRID identity-reconciled heat rates applied to 5 generator(s) across 2 plant(s)
+INFO: NYISO: eGRID steam-collapse identity heat rates applied to 4 generator(s) across 2 plant(s)
+INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
+INFO: NYISO 2021 hydro budget: backfilled 1 non-reporting plants (4.4 GWh) from 2024
+INFO: NYISO 2021 hydro budget pinned to monthly target total 27252.8 GWh (was 28760.3 GWh)
+INFO: Loaded NYISO 2021 hydro budget: 155 plants, 27252.8 GWh annual, 4609 MW nameplate
+INFO: NYISO 2021: RoR split — 87/155 plants flat at their monthly water (7.3% of the 27.25 TWh budget; fleet flat base 206-255 MW by month; 0 plants unclassified -> shapeable)
+INFO: NYISO 2021: min-flow floor reconciled with the RoR split — fleet Q95 level reduced by the RoR flat base (206-255 MW by month) and allocated over the reservoir class only
+INFO: NYISO 2021: hydro min-flow floor on 68 units — fleet level 1564-2234 MW by month (16.93 TWh, 62% of the 27.25 TWh budget)
+INFO: NYISO 2021: 155 hydro plants in LP (4609 MW, 27.25 TWh monthly budget)
+INFO: NYISO 2021: priced import/export node — 7 import tranches (6910 MW), 1 export sinks (600 MW)
+INFO: NYISO nuclear unit-availability overlay (2021): 4 reactor(s) on measured daily windows (uncovered dates keep the monthly CF)
+INFO: CC summer derate on the reconciled basis (NYISO): 15 reconciled plant(s) take min(1, net_summer / carried capacity) in Jun-Sep
+INFO: unit-outage derate (NYISO 2021): 248 plant-tranches derated
+INFO: COD ramp (NYISO 2021): 47 unit-months masked offline (mid-year COD / retirement), 0 unit(s) fully not-yet-built/retired
+INFO: NYISO 2021: reliability floor — 1 plant exclusion(s) ARMED (CLAUDE.md rule 17: laid-up units are not floored)
+INFO: NYISO 2021: reliability_floor_layup_window_mask ARMED: 15 plant-group lay-up share series mask the pro_rata reliability-floor basis
+INFO: NYISO 2021: reliability floor — 3 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: NYISO 2021: priced import node reconciled to measured EIA-930 net interchange — 8 node rows, annual band [27.33, 28.45] TWh
+INFO: F923 gas-price plausibility screen for 2021 (NYISO, band [0.5, 2.0] x state N3045 reference): 60 plant-months in band, 0 low, 0 negative, 0 high -> reference (0 plants); 0 months on the US fallback reference, 0 unscreened (no reference), 0 unscreened (reference <= 0)
+INFO: F923 fuel costs for 2021: 39 generators priced from their own plant, 287 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (NYISO 2021, daily): 446 gas generators repriced at the measured hub spot in 12/12 months (winter max 16.70 $/MMBtu)
+INFO: NYISO zonal gas basis (2021): 446 gas units shifted by zone hub offset (min -0.98, max 0.00 $/MMBtu vs Capital_Hudson)
+INFO: nyiso-downstate-gas: no clean partition and raw build failed for NYISO 2021 (gas-prices/nyiso_downstate_ldc_transport_monthly.csv has no KEDNY rows for 2021); caller falls back.
+INFO: NYISO LDC generator delivery leg (2021): 42 gas unit rows at plants [2490, 2500, 8906, 55375, 56196, 57664] lifted by hub x filed loss + filed LDC transport (mean add 0.210 $/MMBtu)
+INFO: EIA-860 multifuel: 603 (plant, group) dual-fuel gas keys flagged
+INFO: dual-fuel switching (NYISO 2021): 290 gas tranches (17147 MW) capped at the delivered oil price
+INFO: NYISO 2021: firm import baseload floored (HQ/Ontario must-flow)
+INFO: NYISO 2021: import tranches repriced to measured neighbor hourly DA LMPs (PJM_west→PJM, ISONE_tie→NEISO, scarcity→hourly max, export sink→hourly min) — static ladder bypassed
+INFO: NYISO: hydro budget periods from governing instrument — {period_hours: n_plants} = {0: 153, 24: 1, 168: 1}
+INFO: ramp envelopes (NYISO): 64 group(s) — gross->net rebasis from 2 measured parasitic factor(s) and 46 class default(s)
+INFO: NYISO 2021: ramp envelopes on 64 plant groups (312 member tranches)
+INFO: NYISO 2021: hydro deliverability envelope on 155 units (evening p95 4329 MW)
+INFO: energy+reserve co-opt (NYISO): 9 locational reserve families (5 10-min/quick-start), 60 ORDC steps ($3-$775), 687 full-fleet / 391 quick-start reserve-eligible units
+INFO: Matrix build: 5.473s, Solve: 80.441s (cold, simplex iterations 242965, objective 2976902152.9898)
+INFO: NYISO gas bridge membership correction: 12 laid-up plant code(s) excluded, matching 43 fleet row(s) — [2480, 2625, 2682, 8006, 10190, 10620, 10621, 50744, 54034, 54592, 54593, 56188]
+INFO: NYISO gas bridge reserve-duty membership correction: 7 capacity-only plant code(s) excluded, matching 8 fleet row(s) — [7784, 10620, 10621, 50744, 54034, 54592, 54593]
+INFO: NYISO state-floor duty scoping: 4 plant(s) clear the measured run-length gap and carry the online-hours floor — [2527, 2539, 56196, 56234]
+INFO: NYISO gas bridge commitment-real run screen, leg gas_cc_state: 38 P0 runs detected, 21 dropped as phantom (margin < startup) covering 77 P0 online hours at 3 unit(s)
+INFO: NYISO gas bridge leg gas_cc (min_load_frac 0.523, min_run 21h): 24691 unit-hours floored, 4.7728 TWh floor volume
+INFO: NYISO gas bridge commitment-real run screen, leg gas_cc: 842 P0 runs detected, 445 dropped as phantom (margin < startup) covering 3468 P0 online hours at 12 unit(s)
+INFO: NYISO gas bridge leg gas_cc (min_load_frac 0.523, min_run 21h): 2388 unit-hours floored, 0.0689 TWh floor volume
+INFO: NYISO gas bridge commitment-real run screen, leg gas_st: 331 P0 runs detected, 269 dropped as phantom (margin < startup) covering 16725 P0 online hours at 7 unit(s)
+INFO: NYISO gas bridge leg gas_st (min_load_frac 0.239, min_run 13h): 395 unit-hours floored, 0.0184 TWh floor volume
+INFO: NYISO gas bridge run screen per-plant census: 2490:18/1/17/259;2500:55/8/47/410;2511:1/0/1/8760;2516:8/0/8/6304;2517:26/13/13/30;2527:53/18/35/137;2539:11/7/4/29;7314:331/189/142/1048;8906:171/23/148/825;50292:342/148/194/1893;50978:92/29/63/312;54574:10/2/8/49;55375:16/5/11/31;55405:14/8/6/87;56196:3/3/0/0;56234:24/7/17/48;56940:8/4/4/7;57185:14/6/8/15;57664:14/5/9/26
+INFO: NYISO gas commitment bridge: 27474 unit-hours floored (4.86 TWh floor volume), 413 floored segments by length {'<4h': 46, '4-8h': 231, '8-16h': 108, '16-24h': 17, '>24h': 11} (min_run extension ON)
+INFO: P1 route: COLD REBUILD on a floored fleet — MARKET_SIM_P1_FLOOR_INPLACE off (default); would have been DECLINED anyway (availability changed and feeds a row) (availability_changed=True, availability_feeds_rows=True)
+INFO: Matrix build: 1.994s, Solve: 81.483s (cold, simplex iterations 240350, objective 3025797217.1278)
+INFO: EIA-923 dual-fuel oil re-attribution: 0.542 TWh across 38 modelled plant(s) moved from the `oil` class into the classes their units dispatch in (+0.000 TWh of it from net-negative rows)
+INFO: year 2021 phase timing: data_prep=47.2s solve_p0=80.4s markup=14.8s solve_p1=81.5s results_write=9.2s total=233.1s (markup: setup=0.0s p0_post=6.5s markup=0.1s seam=0.3s p1_post=7.9s tail=0.0s other=0.0s) (results_write: state=0.1s frames=0.6s parquet=1.0s bench=2.9s sidecars=4.6s)
+INFO: year 2021 memory after release: resident=0.71 GB peak=5.27 GB (malloc_trim=yes) | accumulators 0.03 GB (campd=0.01)
+INFO: year 2021 glibc arena: total=0.47 GB in_use=0.07 GB free_retained=0.40 GB mmapped=0.00 GB trim_top=0.00 GB
+INFO: year 2021 retained heap: ndarray=0.03 GB (n=259) [pandas=0.06 GB n=15, sparse=0.00 GB n=0 — slices, not additions] | 44 populated cache(s), 60 entries | top: ba_exit_month_share=5, ba_join_first_month=5, _chp_by_plant=4, chp_overrides=2, _egrid_boundary_hr_repairs_for=2
+INFO: year 2021 retained frame: 22.9 MB  126342 x 20  cols=plant_id,plant_name,prime_mover,fuel_type,chp,netgen_annual_mwh,ba_code,netgen_january_mwh,netgen_february_mwh,netgen_march_mwh,netgen_april_mwh,netgen_may_mwh
+INFO: year 2021 retained frame: 13.5 MB  1007400 x 4  cols=year,plant_id,hour,net_mw
+INFO: year 2021 retained frame: 6.4 MB  105120 x 6  cols=year,pass,from_zone,to_zone,hour,mw
+INFO: year 2021 retained frame: 4.4 MB  68919 x 7  cols=year,month,plant_id,state,fuel_group,price_per_mmbtu,quantity
+INFO: year 2021 retained frame: 4.2 MB  52560 x 10  cols=year,pass,zone,hour,price,slack,dump,demand,reserve_price,marginal_emission_rate
+INFO: year 2021 retained frame: 2.3 MB  87600 x 4  cols=year,series,hour,mw
+INFO: wrote calibration bundle to results/calibration/nyisonext3_2021
+INFO: memory peak: cgroup_peak_rss_gib=8.73, cgroup_peak_rss_plus_swap_gib=8.73, process_vmhwm_gib=5.27, process_vmswap_now_gib=0.00
+solved into results/calibration/nyisonext3_2021
+INFO: NYISO 2021: model dispatch from dispatch/2021_P1.parquet (280 plants)
+# Legitimacy diagnostics report
+
+Bundle: `/home/user/market-simulator/results/calibration/nyisonext3_2021` · ISO: NYISO · years: [2021]
+Overall: **FAIL**
+
+Diagnostics per `docs/model-legitimacy-audit-2026-07.md` §7; generated by `scripts/legitimacy_diagnostics.py`.
+
+## D-1 diurnal shape — PASS
+
+| year | class | profile_r | model_offpeak_cv | actual_offpeak_cv | cv_ratio | gated | verdict |
+|---|---|---|---|---|---|---|---|
+| 2021 | CC_CHP | 0.938 | 0.141 | 0.102 | 1.382 | False | pass |
+| 2021 | CC_REGULAR | 0.939 | 0.033 | 0.136 | 0.241 | False | pass |
+| 2021 | CT_CHP | 0.332 | 0.481 | 0.055 | 8.688 | False | pass |
+| 2021 | CT_PEAKER | 0.922 | 0.544 | 0.816 | 0.667 | True | pass |
+| 2021 | ST_CHP | 0.387 | 0.173 | 0.091 | 1.895 | False | pass |
+| 2021 | ST_GAS | 0.966 | 0.462 | 0.233 | 1.987 | True | pass |
+
+## D-2 forced-energy attribution — PASS
+
+_2021: 1 floored pseudo-unit row(s) (plant_code <= 0 interchange tranches) scored under the floor-energy convention (dispatch := min_gen; PREREG-caiso155 §3) — reported TWh is the mandated floor energy, an upper bound on at-floor dispatch: u:NYISO_external_HQ_hydro_
+_2021: floors reconstructed via run_year(fleet_only=True) — the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds._
+
+**Per-class gate summary:**
+
+| year | class | forced_twh | class_total_twh | forced_share | limit | load_share | immaterial | lower_bound | upper_bound | verdict |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 2021 | CC_REGULAR | 0.1314 | 32.5498 | 0.004 | 0.3 | 0.2142 | False | True | False | pass |
+| 2021 | CT_PEAKER | 0.0 | 3.2833 | 0.0 | 0.15 | 0.0216 | False | True | False | pass |
+| 2021 | ST_GAS | 1.9963 | 10.5284 | 0.1896 | 0.3 | 0.0784 | False | True | False | pass |
+| 2021 | hydro | 0.0 | 25.3989 | 0.0 | 0.3 | 0.1671 | False | True | False | pass |
+
+| year | class | mechanism | forced_twh | class_total_twh | share_of_class |
+|---|---|---|---|---|---|
+| 2021 |  | nuclear_mustrun | 28.3991 | 36.2867 | 0.7826 |
+| 2021 |  | firm_import | 7.884 | 36.2867 | 0.2173 |
+| 2021 | CC_CHP | chp_steam | 0.0316 | 14.5097 | 0.0022 |
+| 2021 | CC_REGULAR | nyiso_gas_commitment_bridge | 0.1314 | 32.5498 | 0.004 |
+| 2021 | ST_CHP | chp_steam | 0.0061 | 3.08 | 0.002 |
+| 2021 | ST_GAS | reliability_floor | 1.9871 | 10.5284 | 0.1887 |
+| 2021 | ST_GAS | nyiso_gas_commitment_bridge | 0.0092 | 10.5284 | 0.0009 |
+| 2021 | hydro | hydro_min_flow | 8.3448 | 25.3989 | 0.3285 |
+| 2021 | hydro | hydro_ror_flat | 1.8037 | 25.3989 | 0.071 |
+
+## D-4 off-window binding — FAIL
+
+**Gate failures:**
+- 2021 reliability_floor × ST_GAS: plant 2480 is floored for 0.0002 TWh (0.0% of the mechanism's forced energy) while its own measured median output over the 23 hours the floor actually binds for it (inside h0-23) is 0.000 MW (100.0% of them at zero) — the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)
+
+_2021: ct_only vintage guard extended the flag from sibling-year vintages for 2 plant(s): 2503, 52168_
+_2021: 1 floored pseudo-unit row(s) (plant_code <= 0 interchange tranches) scored under the floor-energy convention (dispatch := min_gen; PREREG-caiso155 §3) — reported TWh is the mandated floor energy, an upper bound on at-floor dispatch: u:NYISO_external_HQ_hydro_
+_2021: per-unit conduct rider skipped 4 floored plant(s) carrying the benchmark's CT-only CEMS flag (EIA-923 net > 1.1x CAMPD gross ⇒ scored on EIA-923 MONTHLY, hourly CAMPD incomplete) — a zero median in a series the benchmark itself declines to trust is a metering artifact, not conduct: 2493, 2539, 50978, 7314_
+_2021: per-unit conduct rider skipped 1 floored row(s) whose dispatch is SUBSTITUTED by their own floor (no series in the active source) — their at-floor set is the whole floor-positive set by construction, so a conduct verdict on them would be an artifact: u:NYISO_external_HQ_hydro_
+_2021: per-unit conduct rider skipped 111 floored row(s) with no measured series (hydro / nuclear / renewables / interchange pseudo-units) — the rider is a measured-conduct test and never fails a mechanism for a missing meter: 10116, 10196, 10214, 10218, 10219, 10220, 10221, 10238, 10467, 10530, 10531, 10538, 10544, 10545, 10547, 10687, 10752, 10753, 2481, 2483 …_
+
+| year | check | floor | window | plant | floored_twh | offwindow_twh | offwindow_share | binding_hours | measured_median_mw | measured_zero_share | verdict |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2021 | window | chp_steam | h0-23 |  | 0.0377 | 0.0 | 0.0 |  |  |  | pass |
+| 2021 | unit-conduct | chp_steam | h0-23 | 50006 | 0.0272 |  | 0.7213 | 57 | 769.491 | 0.0 | pass |
+| 2021 | window | firm_import | h0-23 |  | 7.884 | 0.0 | 0.0 |  |  |  | pass |
+| 2021 | window | reliability_floor × ST_GAS | h0-23 |  | 1.9871 | 0.0 | 0.0 |  |  |  | pass |
+| 2021 | unit-conduct | reliability_floor × ST_GAS | h0-23 | 2480 | 0.0002 |  | 0.0001 | 23 | 0.0 | 1.0 | FAIL |
+| 2021 | unit-conduct | reliability_floor × ST_GAS | h0-23 | 2490 | 0.2009 |  | 0.1011 | 3806 | 96.655 | 0.0413 | pass |
+| 2021 | unit-conduct | reliability_floor × ST_GAS | h0-23 | 2500 | 0.0067 |  | 0.0034 | 127 | 90.541 | 0.0 | pass |
+| 2021 | unit-conduct | reliability_floor × ST_GAS | h0-23 | 2511 | 0.4149 |  | 0.2088 | 7169 | 150.421 | 0.0255 | pass |
+| 2021 | unit-conduct | reliability_floor × ST_GAS | h0-23 | 2516 | 1.2798 |  | 0.644 | 7723 | 359.69 | 0.0607 | pass |
+| 2021 | unit-conduct | reliability_floor × ST_GAS | h0-23 | 2625 | 0.0167 |  | 0.0084 | 99 | 546.905 | 0.0101 | pass |
+| 2021 | unit-conduct | reliability_floor × ST_GAS | h0-23 | 8906 | 0.0679 |  | 0.0342 | 1685 | 81.0 | 0.0196 | pass |
+| 2021 | window | nyiso_gas_commitment_bridge × CC_REGULAR | h0-23 |  | 0.1314 | 0.0 | 0.0 |  |  |  | pass |
+| 2021 | unit-conduct | nyiso_gas_commitment_bridge × CC_REGULAR | h0-23 | 50292 | 0.0261 |  | 0.199 | 776 | 57.584 | 0.2358 | pass |
+| 2021 | window | nyiso_gas_commitment_bridge × ST_GAS | h0-23 |  | 0.0092 | 0.0 | 0.0 |  |  |  | pass |
+| 2021 | unit-conduct | nyiso_gas_commitment_bridge × ST_GAS | h0-23 | 2517 | 0.0018 |  | 0.1976 | 44 | 142.989 | 0.0 | pass |
+| 2021 | unit-conduct | nyiso_gas_commitment_bridge × ST_GAS | h0-23 | 2527 | 0.0017 |  | 0.1843 | 74 | 55.988 | 0.0 | pass |
+| 2021 | unit-conduct | nyiso_gas_commitment_bridge × ST_GAS | h0-23 | 8906 | 0.0057 |  | 0.6181 | 59 | 81.0 | 0.0169 | pass |
+| 2021 | window | hydro_min_flow | h0-23 |  | 8.3448 | 0.0 | 0.0 |  |  |  | pass |
+| 2021 | window | hydro_ror_flat | h0-23 |  | 1.8037 | 0.0 | 0.0 |  |  |  | pass |
+
+## D-5 forecast/backcast parity — PASS
+
+| mechanism | difference | declared_overlay | note | verdict |
+|---|---|---|---|---|
+| historic_outage_overlay | backcast-only | True | CAMPD outage windows (physical availability events) | declared |
+| eia860_vintage_snapshot | backcast-only | True | historical fleet vintage pin (runner.py:239 mode gate) | declared |
+| retired_within_window_fleet | backcast-only | True | within-window plant exits injected into the base fleet | declared |
+| planned_additions_pipeline | forecast-only | True | EIA-860 construction-committed pipeline — the declared forecast complement of the backcast fleet boundary | declared |
+| renewable_cf_measured | backcast-only | True | delivered EIA-930/HSL renewable CF upper bound (leakage L1) | declared |
+| nuclear_flat_mustrun | backcast-only | True | measured monthly nuclear CF + flat must-run floor (L3) | declared |
+| ordc_floor_active_mask | backcast-only | True | ERCOT scarcity-floor measured active-hours mask | declared |
+| gas_monthly_actuals | backcast-only | True | F923 delivered monthly gas (admissible fuel input) | declared |
+| gas_hub_basis_overlay | backcast-only | True | measured monthly hub-spot basis overlay | declared |
+| coal_plant_monthly_pricing | backcast-only | True | F923 per-plant delivered coal cost | declared |
+| reliability_floor | backcast-only | True | declared admissible overlay (2026-06 audit); a wiring gap in the forecast entry is reported but sanctioned by the declaration | declared |
+| nyiso_central_east_measured_ttc | backcast-only | True | measured Central-East DAM transfer capability (nyiso-104): the month-mean of NYISO's posted MIS ATC_TTC 'TTC (DAM)' series for the CENT EAST interface, applied to Upstate_West->Capital_Hudson as a per-hour envelope (NYISO_INTERFACE_TTC_BY_MONTH) over the annual mean (_BY_YEAR). Classified an OVERLAY, not a mechanism, on the source data's own forward reproducibility: across the two years that share the post-AC-Transmission topology (2024/2025) the level-normalized monthly shape correlates at only r=+0.21 (Spearman +0.16, dihedral-null p=0.25) and the deepest-derate month MOVES Sep->Apr, so the series is that year's realized transmission-outage schedule, not a seasonal rating that regenerates forward. Same admissibility family as historic_outage_overlay — a physical availability event, on the network instead of on a unit. Deliberately NOT wired forward: the LEVEL already has its forward channel (the transmission-expansion registry + the static 2,850 MW, itself the measured post-upgrade DAM mean), and pushing these numbers into a forecast would import one historical year's outage schedule into every forward year | declared |
+
+## D-9 overlay quarantine — PASS
+
+| bundle | check | value | verdict |
+|---|---|---|---|
+| nyisonext3_2021 | ct_deployment_overlay | False | pass |
+| nyisonext3_2021 | reliability_deployment_overlay | False | pass |
+| nyisonext3_2021 | ct_mustrun_per_plant | False | pass |
+| nyisonext3_2021 | ordc_reliability_deployment_mw | None | pass |
+| nyisonext3_2021 | caiso_gas_commitment_floor | False | pass |
+
+## D-10 free-class-only rescore (renewable-bound provenance) — PASS
+
+_NYISO: 2/2 wind/solar (year, fuel) rows ride the L1 delivered-outcome bound; their advisory-only C1 rows measure plumbing, not model skill (never gate the keeper verdict)._
+
+| year | fuel | provenance | pinned | verdict |
+|---|---|---|---|---|
+| 2021 | wind | delivered_pinned | True | PINNED (advisory-only, excluded from skill claims) |
+| 2021 | solar | delivered_pinned | True | PINNED (advisory-only, excluded from skill claims) |
+
+INFO: machine artifact written to results/calibration/nyisonext3_2021/legitimacy_diagnostics.json
+legitimacy diagnostics written -> results/calibration/nyisonext3_2021/legitimacy_diagnostics.json
+WARNING: legitimacy diagnostics gate FAIL on the replayed bundle (artifact still written; C7/C8 score from its contents — see the report above)
