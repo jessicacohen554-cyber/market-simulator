@@ -3643,3 +3643,6 @@ results/calibration/miso276_arm_*/
 results/calibration/spp86_arm_20*/
 # R-CAISO-4 2019-21 keeper touchpoint composite IS committed (it folds into the keeper, rule 30):
 !results/calibration/rcaiso4_tp_2019_2021/
+
+# soco-71: zero-LP G-DRIFT record (numbers carried in PRECOMMIT-soco-71 §0)
+results/calibration/_soco71/
