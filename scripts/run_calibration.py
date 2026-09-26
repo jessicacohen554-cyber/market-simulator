@@ -102,6 +102,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_hub_basis_overlay,
     apply_miso_gas_marginal_commodity,
     apply_miso_winter_citygate_daily,
+    apply_miso_winter_gas_daily_delivered,
     apply_miso_zonal_gas_basis,
     apply_nyiso_downstate_ct_gas_basis,
     apply_nyiso_downstate_ct_gas_daily,
@@ -4801,6 +4802,13 @@ def run_year(
     spot_cells = apply_miso_gas_marginal_commodity(
         fuel_prices, fleet_arrays, config, year
     )
+    if spot_cells is None:
+        # miso-276 (owner ruling D1): winter-month daily DELIVERED gas. Armed, it
+        # supersedes the winter Chicago shape overlay and, via the written mask,
+        # the zonal increment on those cells (rule 19). Mirrors resolve_fuel_prices.
+        spot_cells = apply_miso_winter_gas_daily_delivered(
+            fuel_prices, fleet_arrays, config, year
+        )
     if spot_cells is None:
         apply_miso_winter_citygate_daily(fuel_prices, fleet_arrays, config, year)
     else:

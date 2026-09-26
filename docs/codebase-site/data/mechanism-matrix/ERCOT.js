@@ -233,6 +233,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     nyiso_iroquois_winter_spread: { cell: "." },
     gas_marginal_commodity_pricing: { cell: "." },
     gas_variable_transport: { cell: "." },
+    winter_gas_daily_delivered: { cell: "." },
     seam_neighbour_anchored_ladder: { cell: "." },
     seam_neighbour_hourly_ladder: { cell: "U", ev: "miso-231 (2026-09-06) — row minted with the field; MISO-scoped so far. The LEVEL-not-SLOPE defect it attacks is generic to any seam ladder held at a FIXED annual price (this ISO included wherever its own ladder is one), but rule 25 [R-ISO-SCOPE] means MISO's verdict never fills this cell: the transfer PRECONDITION is a measured HOURLY neighbour price series for this ISO's own seams under data/raw, which is a DATA question to settle before any charter, and the delta_k offsets must be re-derived from this ISO's own flows and spread. Untested here; nothing licensed." },
     winter_citygate_daily: { cell: "U" },

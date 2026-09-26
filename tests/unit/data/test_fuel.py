@@ -3036,6 +3036,94 @@ def test_miso_gas_variable_transport_table_is_measured_and_nonempty():
 
 
 # ---------------------------------------------------------------------------
+# miso-276: WINTER daily DELIVERED gas (owner ruling D1, "Chicago proxy")
+# ---------------------------------------------------------------------------
+
+
+def _miso_winter_delivered_config(**kw):
+    return ScenarioConfig(
+        iso="MISO",
+        mode="backcast",
+        hours=_MISO_WINTER_HOURS,
+        miso_winter_gas_daily_delivered=True,
+        **kw,
+    )
+
+
+def test_miso_winter_gas_daily_delivered_off_is_byte_identical():
+    """Off -> returns None and touches no price."""
+    fleet = _miso_gas_fleet(_MISO_WINTER_HOURS)
+    prices = _miso_winter_base(fleet)
+    base = prices.copy()
+    config = ScenarioConfig(iso="MISO", mode="backcast", hours=_MISO_WINTER_HOURS)
+    assert (
+        fuel.apply_miso_winter_gas_daily_delivered(prices, fleet, config, 2024) is None
+    )
+    np.testing.assert_array_equal(prices, base)
+
+
+def test_miso_winter_gas_daily_delivered_writes_winter_only_at_hub_plus_transport():
+    """Dec/Jan/Feb cells equal hub + the row's transport; every other cell untouched."""
+    fleet = _miso_gas_fleet(_MISO_WINTER_HOURS)
+    base = _miso_winter_base(fleet)
+    prices = base.copy()
+    written = fuel.apply_miso_winter_gas_daily_delivered(
+        prices, fleet, _miso_winter_delivered_config(), 2024
+    )
+    month0 = fuel._month_index(_MISO_WINTER_HOURS)
+    winter = np.isin(month0, [11, 0, 1])
+    assert written is not None
+    assert written[:, winter].all() and not written[:, ~winter].any()
+    np.testing.assert_array_equal(prices[:, ~winter], base[:, ~winter])
+    # Winter cells are exactly the marginal-commodity-plus-transport form.
+    ref = _miso_winter_base(fleet)
+    fuel.apply_miso_gas_marginal_commodity(
+        ref,
+        fleet,
+        ScenarioConfig(
+            iso="MISO",
+            mode="backcast",
+            hours=_MISO_WINTER_HOURS,
+            miso_gas_marginal_commodity_pricing=True,
+            miso_gas_variable_transport=True,
+        ),
+        2024,
+    )
+    np.testing.assert_allclose(prices[:, winter], ref[:, winter])
+    again = prices.copy()
+    fuel.apply_miso_winter_gas_daily_delivered(
+        again, fleet, _miso_winter_delivered_config(), 2024
+    )
+    np.testing.assert_array_equal(again, prices)
+
+
+def test_miso_winter_gas_daily_delivered_refuses_the_all_month_form():
+    """Rule 19: stacking on the all-month marginal repricing is a hard error."""
+    fleet = _miso_gas_fleet(48)
+    prices = np.full((fleet.n_gen, 48), 3.0)
+    config = ScenarioConfig(
+        iso="MISO",
+        mode="backcast",
+        hours=48,
+        miso_winter_gas_daily_delivered=True,
+        miso_gas_marginal_commodity_pricing=True,
+    )
+    with pytest.raises(ValueError, match="mutually exclusive"):
+        fuel.apply_miso_winter_gas_daily_delivered(prices, fleet, config, 2024)
+
+
+def test_miso_winter_gas_daily_delivered_is_miso_scoped():
+    """Arming on another ISO is a hard error (rule 25)."""
+    fleet = _miso_gas_fleet(48)
+    prices = np.full((fleet.n_gen, 48), 3.0)
+    config = ScenarioConfig(
+        iso="PJM", mode="backcast", hours=48, miso_winter_gas_daily_delivered=True
+    )
+    with pytest.raises(ValueError, match="MISO-scoped"):
+        fuel.apply_miso_winter_gas_daily_delivered(prices, fleet, config, 2024)
+
+
+# ---------------------------------------------------------------------------
 # ercot-254: MONTHLY resolution of the ERCOT delivered-gas LEVEL anchor
 # ---------------------------------------------------------------------------
 
