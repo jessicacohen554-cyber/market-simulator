@@ -3598,3 +3598,5 @@ results/calibration/rcaiso4_*_20*/
 /results/ff-t3-neiso-golden/d99/*/NEISO/*/hourly/
 /results/ff-t3-neiso-golden/d99/*/NEISO/*/year_*_floor_retentions.json
 /results/ff-t3-neiso-golden/d99/*.log
+
+!results/ff-t3-neiso-golden/d99/vre_long/**
