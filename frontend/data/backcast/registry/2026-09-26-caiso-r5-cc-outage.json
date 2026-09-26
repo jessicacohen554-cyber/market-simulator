@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-26-caiso-r5-cc-outage",
+  "label": "caiso r5 cc outage",
+  "date": "2026-09-26",
+  "shorthand": "caiso-r5-cc-outage",
+  "definition": "R-CAISO-5 X 2022: keeper recipe + CC outage derate on the extract basis (X) (PRECOMMIT-r-caiso-5-2026-09-26 \u00a74)",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-26-caiso-r5-cc-outage.js",
+  "bundle": "results/calibration/rcaiso5_X_span"
+}
