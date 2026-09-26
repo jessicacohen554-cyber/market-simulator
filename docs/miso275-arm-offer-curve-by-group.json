@@ -1,0 +1,113 @@
+{
+ "CC_CHP": {
+  "committed": 1.1,
+  "econ_high": 1.1,
+  "econ_low": 1.1,
+  "econ_low_share": 0.5,
+  "pct_peaking": 8.0,
+  "peak": 2.475,
+  "phys_committed": 1.508,
+  "phys_econ_high": 1.017,
+  "phys_econ_low": 0.995,
+  "phys_peak": 2.25
+ },
+ "CC_INTERMEDIATE": {
+  "committed": 1.005,
+  "econ_high": 1.08,
+  "econ_low": 0.95,
+  "econ_low_share": 0.5,
+  "pct_peaking": 8.0,
+  "peak": 2.25
+ },
+ "CC_REGULAR": {
+  "committed": 1.005,
+  "econ_high": 1.08,
+  "econ_low": 0.95,
+  "econ_low_share": 0.5,
+  "pct_peaking": 8.0,
+  "peak": 2.25,
+  "phys_committed": 1.005,
+  "phys_econ_high": 1.008,
+  "phys_econ_low": 0.887,
+  "phys_peak": 2.25
+ },
+ "COAL_BIT": {
+  "committed": 1.1,
+  "econ_high": 1.21,
+  "econ_low": 1.1,
+  "econ_low_share": 0.55,
+  "peak": 1.595
+ },
+ "COAL_LIGNITE": {
+  "committed": 1.1,
+  "econ_high": 1.265,
+  "econ_low": 1.254,
+  "econ_low_share": 0.556,
+  "peak": 1.705
+ },
+ "COAL_PRB": {
+  "committed": 1.1,
+  "econ_high": 1.309,
+  "econ_low": 1.1,
+  "econ_low_share": 0.556,
+  "peak": 1.628
+ },
+ "COAL_WC": {
+  "committed": 1.1,
+  "econ_high": 1.122,
+  "econ_low": 1.1,
+  "econ_low_share": 0.55,
+  "peak": 1.32
+ },
+ "CT_CHP": {
+  "committed": 1.1,
+  "econ_high": 1.1,
+  "econ_low": 1.1,
+  "econ_low_share": 0.5,
+  "peak": 1.1,
+  "phys_committed": 0.857,
+  "phys_econ_high": 0.825,
+  "phys_econ_low": 0.785,
+  "phys_peak": 1.0
+ },
+ "CT_INTERMEDIATE": {
+  "committed": 1.1,
+  "econ_high": 1.32,
+  "econ_low": 1.1,
+  "econ_low_share": 0.5,
+  "pct_peaking": 5.0,
+  "peak": 3.3
+ },
+ "CT_PEAKER": {
+  "committed": 1.1275,
+  "econ_high": 1.1,
+  "econ_low": 1.1,
+  "econ_low_share": 0.526,
+  "pct_peaking": 7.0,
+  "peak": 4.4,
+  "phys_committed": 1.025,
+  "phys_econ_high": 0.691,
+  "phys_econ_low": 0.687,
+  "phys_peak": 1.0
+ },
+ "ST_GAS": {
+  "committed": 1.0,
+  "econ_high": 1.0,
+  "econ_low": 1.0,
+  "econ_low_share": 0.5,
+  "pct_peaking": 15.0,
+  "peak": 1.0,
+  "phys_committed": 1.079,
+  "phys_econ_high": 0.849,
+  "phys_econ_low": 0.812,
+  "phys_peak": 1.0
+ },
+ "ST_GAS_INTERMEDIATE": {
+  "committed": 1.0,
+  "econ_high": 1.15,
+  "econ_low": 1.0,
+  "econ_low_share": 0.5,
+  "pct_peaking": 6.0,
+  "peak": 2.2
+ }
+}
