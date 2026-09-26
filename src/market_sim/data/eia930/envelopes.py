@@ -488,8 +488,53 @@ def measured_gas_floor_profile(
 _CAISO_IMPORT_TRANCHE_HUB: dict[str, str] = CAISO_IMPORT_TRANCHE_HUB
 
 
+def _intertie_gap_fill_dam(iso: str, year: int, hub: str, hours: int) -> np.ndarray | None:
+    """Return one hub's MEASURED DAM prints for the main series' gap hours.
+
+    R-CAISO-4 (``ScenarioConfig.caiso_intertie_gap_fill_measured_dam``). Reads
+    the sibling artifact ``wecc_intertie_lmp_hourly_<ISO>_gapfill_dam.parquet``
+    (columns ``year``, ``hour``, ``hub``, ``price``), which
+    ``scripts/data/fetch_caiso_intertie_lmp.py --from-hourly-aggregate
+    --fill-gaps`` writes with ONLY the hours the main series leaves NaN and the
+    tracked OASIS DAM aggregate prints, on the main series' own construction
+    (delivered MCE+MCC+MCL, local Pacific calendar, nodes averaged per hub).
+    Returns ``(hours,)`` $/MWh, NaN where no print exists, or ``None`` when the
+    artifact or the (year, hub) is absent.
+    """
+    path = _calibration_dir() / f"wecc_intertie_lmp_hourly_{iso.upper()}_gapfill_dam.parquet"
+    if not path.exists():
+        return None
+    frame = pd.read_parquet(path)
+    frame = frame[(frame["year"] == year) & (frame["hub"] == hub)]
+    if frame.empty:
+        return None
+    out = np.full(hours, np.nan)
+    hrs = frame["hour"].to_numpy(dtype=int)
+    keep = (hrs >= 0) & (hrs < hours)
+    out[hrs[keep]] = pd.to_numeric(frame["price"], errors="coerce").to_numpy(dtype=float)[keep]
+    return out
+
+
+def _apply_dam_gap_fill(
+    price: pd.Series, iso: str, year: int, hub: str, hours: int
+) -> pd.Series:
+    """Fill ``price``'s NaN hours from :func:`_intertie_gap_fill_dam` (never a printed hour)."""
+    fill = _intertie_gap_fill_dam(iso, year, hub, hours)
+    if fill is None:
+        return price
+    vals = price.to_numpy(dtype=float).copy()
+    n = min(vals.shape[0], hours)
+    gap = ~np.isfinite(vals[:n]) & np.isfinite(fill[:n])
+    vals[:n][gap] = fill[:n][gap]
+    return pd.Series(vals, index=price.index)
+
+
 def measured_import_hub_prices(
-    iso: str, year: int, hours: int, gap_fill_measured_gas: bool = False
+    iso: str,
+    year: int,
+    hours: int,
+    gap_fill_measured_gas: bool = False,
+    gap_fill_measured_dam: bool = False,
 ) -> dict[str, np.ndarray] | None:
     """Return each CAISO import tranche's measured hourly neighbor-hub price.
 
@@ -522,6 +567,12 @@ def measured_import_hub_prices(
     instead of the forward Henry Hub trajectory; any gap hour that measured
     fill cannot price (an unprinted state-month) keeps the forward fill.
 
+    ``gap_fill_measured_dam`` (``ScenarioConfig.caiso_intertie_gap_fill_measured_dam``,
+    R-CAISO-4, default off = byte-identical) first fills the gap hours that the
+    tracked OASIS DAM aggregate still PRINTS (:func:`_intertie_gap_fill_dam` —
+    1,488 of the 2,040 2023 gap hours); only the hours no print covers reach
+    the formula fill above.
+
     Returns ``{tranche_name: (hours,) $/MWh}`` for every tranche whose hub has a
     measured series, or ``None`` when the ISO is not CAISO, the parquet is
     absent (forecast years / before the OASIS fetch lands), or the year is
@@ -540,15 +591,14 @@ def measured_import_hub_prices(
     out: dict[str, np.ndarray] = {}
     for hub, sub in frame.groupby("hub"):
         series = sub.sort_values("hour")
+        raw = pd.to_numeric(series["price"], errors="coerce").reset_index(drop=True)
+        if gap_fill_measured_dam:
+            raw = _apply_dam_gap_fill(raw, iso, year, str(hub), hours)
         # Interpolate the isolated DST spring-forward gap (1 interior NaN on the
         # fixed non-leap calendar that every hourly series carries); ``limit=2``
         # leaves a genuine multi-week gap (2023 Jan-Feb, aged out of OASIS
         # retention) NaN for the reference-formula fill below.
-        price = (
-            pd.to_numeric(series["price"], errors="coerce")
-            .interpolate(limit=2)
-            .to_numpy(dtype=float)
-        )
+        price = raw.interpolate(limit=2).to_numpy(dtype=float)
         if price.shape[0] < hours:
             continue  # incomplete hub series — leave its tranches on the ladder
         price = price[:hours].copy()
@@ -599,7 +649,7 @@ def measured_import_hub_prices(
 
 
 def measured_intertie_hub_price_raw(
-    iso: str, year: int, hours: int, hub: str
+    iso: str, year: int, hours: int, hub: str, gap_fill_measured_dam: bool = False
 ) -> np.ndarray | None:
     """Return ONE WECC intertie hub's measured hourly LMP, gaps left NaN.
 
@@ -612,6 +662,11 @@ def measured_intertie_hub_price_raw(
     :func:`market_sim.model.transmission.inject_caiso_dsw_surplus_clean`):
     the formula fill is pricing continuity, not surplus evidence, so filled
     hours must not classify as surplus.
+
+    ``gap_fill_measured_dam`` (R-CAISO-4, default off = byte-identical) fills
+    the gap hours the tracked OASIS DAM aggregate PRINTS — a measured print IS
+    evidence of the market state, unlike a formula fill — and leaves the rest
+    NaN.
 
     Returns ``(hours,)`` $/MWh with NaN where unmeasured, or ``None`` when the
     ISO is not CAISO, the parquet is absent, or the year/hub is uncovered.
@@ -626,11 +681,10 @@ def measured_intertie_hub_price_raw(
     if frame.empty:
         return None
     series = frame.sort_values("hour")
-    price = (
-        pd.to_numeric(series["price"], errors="coerce")
-        .interpolate(limit=2)
-        .to_numpy(dtype=float)
-    )
+    raw = pd.to_numeric(series["price"], errors="coerce").reset_index(drop=True)
+    if gap_fill_measured_dam:
+        raw = _apply_dam_gap_fill(raw, iso, year, hub, hours)
+    price = raw.interpolate(limit=2).to_numpy(dtype=float)
     if price.shape[0] < hours:
         return None
     return price[:hours].copy()

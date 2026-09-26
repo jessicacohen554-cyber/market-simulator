@@ -413,6 +413,44 @@ def measured_cc_heat_rates(iso: str, year: int | None = None) -> dict[int, float
     return _measured_rate_map(path, year)
 
 
+#: The measured-CC artifact flag whose row is priced on the owner's EIA-923
+#: fuel / EIA-923 net identity rather than on its (refused) CEMS record.
+_EIA923_IDENTITY_FLAG: str = "eia923_identity"
+
+
+@lru_cache(maxsize=64)
+def measured_cc_identity_heat_rates(iso: str, year: int) -> dict[int, float]:
+    """Return ``{plant_code: EIA-923 identity heat rate}`` for the CC rows it prices.
+
+    R-CAISO-4 (``ScenarioConfig.cc_eia923_identity_emission_basis``). The subset
+    of :func:`measured_cc_heat_rates` whose APPLIED row for ``year`` carries
+    ``flag == "eia923_identity"`` — the rows the CC derive REFUSED on their
+    CEMS record and re-priced at EIA-923 fuel / EIA-923 net. The applied row is
+    resolved exactly as :func:`_measured_rate_map` resolves it (the solve
+    year's own applied row, else the pooled one), so a plant is in this map iff
+    the heat rate the fleet gives it is the identity rate. Empty when the ISO
+    has no artifact or no such row — every artifact but CAISO's today.
+    """
+    path = PROCESSED_DIR / f"campd_cc_heat_rates_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if "year" not in df.columns:
+        df["year"] = 0
+    rate = pd.to_numeric(df["heat_rate"], errors="coerce")
+    df = df[df["flag"].astype(str).isin(_APPLIED_MEASURED_FLAGS) & (rate > 0.0)]
+    applied: dict[int, tuple[str, float]] = {}
+    for r in df[df["year"].astype(int) == 0].itertuples(index=False):
+        applied[int(r.plant_code)] = (str(r.flag), float(r.heat_rate))
+    for r in df[df["year"].astype(int) == int(year)].itertuples(index=False):
+        applied[int(r.plant_code)] = (str(r.flag), float(r.heat_rate))
+    return {
+        code: hr
+        for code, (flag, hr) in applied.items()
+        if flag == _EIA923_IDENTITY_FLAG
+    }
+
+
 @lru_cache(maxsize=64)
 def measured_st_heat_rates(iso: str, year: int | None = None) -> dict[int, float]:
     """Return ``{plant_code: measured operating heat rate}`` for an ISO's ST_GAS.
@@ -842,6 +880,32 @@ def _apply_forward_control_retrofits(
     return {k: (stepped[0][k], stepped[1][k], stepped[2][k]) for k in rates}
 
 
+@lru_cache(maxsize=8)
+def _plant_gas_co2_per_mmbtu(path: str, iso: str) -> dict[int, float]:
+    """Return ``{plant_id: tonnes CO2 per MMBtu}`` over a plant's gas CEMS rows.
+
+    R-CAISO-4. The plant's own measured CO2 mass over its own measured heat
+    input, pooled over every year the v2 artifact carries for it (the factor is
+    a fuel property — Part 75 Appendix G — and reads ~0.0539 t/MMBtu at every
+    CAISO gas plant), so a year with no CEMS row still resolves. Used only to
+    re-base a CC's CO2 onto the EIA-923 identity heat rate.
+    """
+    from market_sim.data.emission_rates import fuel_class
+
+    df = pd.read_parquet(path)
+    if "iso" in df.columns:
+        df = df[df["iso"].astype(str).str.upper() == iso.upper()]
+    if df.empty or "heat_mmbtu" not in df.columns or "co2_kg" not in df.columns:
+        return {}
+    df = df[df["primary_fuel"].astype(str).map(fuel_class) == "gas"]
+    g = df.groupby("plant_id")[["co2_kg", "heat_mmbtu"]].sum()
+    g = g[(g["heat_mmbtu"] > 0.0) & (g["co2_kg"] > 0.0)]
+    return {
+        int(pid): float(row.co2_kg) / float(row.heat_mmbtu) / _KG_PER_TONNE
+        for pid, row in g.iterrows()
+    }
+
+
 def apply_plant_emission_rates_v2(
     generators: list[Generator],
     path: str | Path,
@@ -916,12 +980,37 @@ def apply_plant_emission_rates_v2(
         and getattr(config, "control_retrofit_forward", False)
     ):
         rates = _apply_forward_control_retrofits(rates, config, int(year))
+    # R-CAISO-4 (cc_eia923_identity_emission_basis, default off): a CC_REGULAR
+    # plant whose heat rate the fleet takes from the EIA-923 identity (its CEMS
+    # record was REFUSED by the CC derive) books its CO2 on that same fuel
+    # basis — identity heat rate x the plant's own CEMS CO2 per MMBtu — instead
+    # of CEMS CO2 / CEMS load, which carries the refused heat-input record back
+    # in through the carbon cost (rule 19 [R-ONE-MECH]). Zero parameters; only
+    # the MMBtu/MWh basis moves, the measured CO2-per-fuel factor is kept.
+    identity_hr: dict[int, float] = {}
+    if (
+        config is not None
+        and getattr(config, "cc_eia923_identity_emission_basis", False)
+        and getattr(config, "measured_cc_heat_rates", False)
+    ):
+        identity_hr = measured_cc_identity_heat_rates(str(iso), int(year))
+    co2_per_mmbtu = (
+        _plant_gas_co2_per_mmbtu(str(resolved), str(iso)) if identity_hr else {}
+    )
     n = 0
     for gen in generators:
         triple = rates.get((int(gen.plant_code), fuel_class(gen.fuel_type)))
         if triple is None:
             continue
         co2, nox, so2 = triple
+        code = int(gen.plant_code)
+        if (
+            co2 > 0.0
+            and code in identity_hr
+            and code in co2_per_mmbtu
+            and str(getattr(gen, "plant_group", "")) == "CC_REGULAR"
+        ):
+            co2 = identity_hr[code] * co2_per_mmbtu[code]
         touched = False
         if co2 > 0.0:
             # capx D77: the measured rate is the HOST STACK's intensity, so a

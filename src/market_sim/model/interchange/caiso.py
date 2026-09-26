@@ -453,6 +453,7 @@ def inject_caiso_per_hub_intertie_prices(
     carbon_price: float,
     firm_base: bool = False,
     gap_fill_measured_gas: bool = False,
+    gap_fill_measured_dam: bool = False,
 ) -> bool:
     """Price each CAISO per-hub corridor at its OWN measured intertie hub.
 
@@ -484,6 +485,8 @@ def inject_caiso_per_hub_intertie_prices(
     ``gap_fill_measured_gas`` (``ScenarioConfig.caiso_intertie_gap_fill_measured_gas``,
     R-CAISO-3) is handed to the loader: a bulk retention-gap hour is filled on
     the hub host state's measured monthly gas instead of the forward trajectory.
+    ``gap_fill_measured_dam`` (``ScenarioConfig.caiso_intertie_gap_fill_measured_dam``,
+    R-CAISO-4) fills the gap hours the tracked OASIS DAM aggregate prints first.
 
     Returns ``True`` when the tie was repriced, ``False`` (byte-identical) when
     CAISO has no measured hub series for the year (e.g. 2023's OASIS gap), so the
@@ -492,7 +495,11 @@ def inject_caiso_per_hub_intertie_prices(
     from market_sim.data.eia_loader import measured_import_hub_prices
 
     prices = measured_import_hub_prices(
-        iso, year, int(mc.shape[1]), gap_fill_measured_gas=gap_fill_measured_gas
+        iso,
+        year,
+        int(mc.shape[1]),
+        gap_fill_measured_gas=gap_fill_measured_gas,
+        gap_fill_measured_dam=gap_fill_measured_dam,
     )
     if not prices:
         return False
@@ -786,7 +793,9 @@ def inject_caiso_firm_import_selfschedule(
     return True
 
 
-def inject_caiso_dsw_surplus_clean(fleet_arrays, iso: str, year: int) -> bool:
+def inject_caiso_dsw_surplus_clean(
+    fleet_arrays, iso: str, year: int, gap_fill_measured_dam: bool = False
+) -> bool:
     """Arm the south-corridor surplus-clean import depth (caiso-87).
 
     In surplus-West hours the marginal import into CAISO is a WEIM/EDAM
@@ -841,7 +850,11 @@ def inject_caiso_dsw_surplus_clean(fleet_arrays, iso: str, year: int) -> bool:
     if row is None:
         return False
     hub = measured_intertie_hub_price_raw(
-        iso, year, hours, CAISO_IMPORT_TRANCHE_HUB[CAISO_DSW_SURPLUS_CLEAN_NAME]
+        iso,
+        year,
+        hours,
+        CAISO_IMPORT_TRANCHE_HUB[CAISO_DSW_SURPLUS_CLEAN_NAME],
+        gap_fill_measured_dam=gap_fill_measured_dam,
     )
     gas = socal_citygate_weekly_hourly(year, hours)
     if hub is None or gas is None:
@@ -872,7 +885,9 @@ def inject_caiso_dsw_surplus_clean(fleet_arrays, iso: str, year: int) -> bool:
     return True
 
 
-def inject_caiso_dsw_overnight_clean(fleet_arrays, iso: str, year: int) -> bool:
+def inject_caiso_dsw_overnight_clean(
+    fleet_arrays, iso: str, year: int, gap_fill_measured_dam: bool = False
+) -> bool:
     """Arm the south-corridor OVERNIGHT clean import depth (caiso-93).
 
     Overnight (hod 0-5) the measured CAISO−PaloVerde spread carries NO
@@ -935,7 +950,11 @@ def inject_caiso_dsw_overnight_clean(fleet_arrays, iso: str, year: int) -> bool:
     if row is None:
         return False
     hub = measured_intertie_hub_price_raw(
-        iso, year, hours, CAISO_IMPORT_TRANCHE_HUB[CAISO_DSW_OVERNIGHT_CLEAN_NAME]
+        iso,
+        year,
+        hours,
+        CAISO_IMPORT_TRANCHE_HUB[CAISO_DSW_OVERNIGHT_CLEAN_NAME],
+        gap_fill_measured_dam=gap_fill_measured_dam,
     )
     if hub is None:
         return False
@@ -966,7 +985,11 @@ def inject_caiso_dsw_overnight_clean(fleet_arrays, iso: str, year: int) -> bool:
 
 
 def inject_caiso_dsw_daytime_clean(
-    fleet_arrays, iso: str, year: int, evening_trim: bool = False
+    fleet_arrays,
+    iso: str,
+    year: int,
+    evening_trim: bool = False,
+    gap_fill_measured_dam: bool = False,
 ) -> bool:
     """Arm the south-corridor DAYTIME trigger-OFF clean import depth (caiso-94).
 
@@ -1039,7 +1062,11 @@ def inject_caiso_dsw_daytime_clean(
     if row is None:
         return False
     hub = measured_intertie_hub_price_raw(
-        iso, year, hours, CAISO_IMPORT_TRANCHE_HUB[CAISO_DSW_DAYTIME_CLEAN_NAME]
+        iso,
+        year,
+        hours,
+        CAISO_IMPORT_TRANCHE_HUB[CAISO_DSW_DAYTIME_CLEAN_NAME],
+        gap_fill_measured_dam=gap_fill_measured_dam,
     )
     gas = socal_citygate_weekly_hourly(year, hours)
     if hub is None or gas is None:
@@ -1092,7 +1119,9 @@ def inject_caiso_dsw_daytime_clean(
     return True
 
 
-def inject_caiso_dsw_lateevening_clean(fleet_arrays, iso: str, year: int) -> bool:
+def inject_caiso_dsw_lateevening_clean(
+    fleet_arrays, iso: str, year: int, gap_fill_measured_dam: bool = False
+) -> bool:
     """Arm the south-corridor LATE-EVENING clean import depth (caiso-269).
 
     Closes the hod 22-23 WINDOW GAP the DSW clean-depth family leaves open.
@@ -1163,7 +1192,9 @@ def inject_caiso_dsw_lateevening_clean(fleet_arrays, iso: str, year: int) -> boo
     if row is None:
         return False
     hub_name = CAISO_IMPORT_TRANCHE_HUB[CAISO_DSW_LATEEVENING_CLEAN_NAME]
-    hub = measured_intertie_hub_price_raw(iso, year, hours, hub_name)
+    hub = measured_intertie_hub_price_raw(
+        iso, year, hours, hub_name, gap_fill_measured_dam=gap_fill_measured_dam
+    )
     if hub is None:
         return False
     spread = _caiso_measured_da_hub_spread(iso, year, hours, hub_name, hub)
@@ -1646,6 +1677,9 @@ def _caiso_measured_hub_priced_tranches(config, year: int, hours: int) -> frozen
         hours,
         gap_fill_measured_gas=bool(
             getattr(config, "caiso_intertie_gap_fill_measured_gas", False)
+        ),
+        gap_fill_measured_dam=bool(
+            getattr(config, "caiso_intertie_gap_fill_measured_dam", False)
         ),
     )
     if not prices:
@@ -2470,13 +2504,19 @@ def apply_caiso_seam_injections(
                         else ""
                     ),
                 )
+    # R-CAISO-4: the clean-depth triggers read the measured hub as EVIDENCE;
+    # under caiso_intertie_gap_fill_measured_dam a gap hour the DAM aggregate
+    # prints is evidence too (a formula-filled hour still is not).
+    _dam_fill = bool(getattr(config, "caiso_intertie_gap_fill_measured_dam", False))
     # CAISO south-corridor surplus-clean depth (caiso_dsw_surplus_clean,
     # caiso-87): the WEIM clean-transfer capability in surplus-West hours —
     # measured depth-in-surplus net of the shaped firm block, EF 0 (no border
     # carbon), priced at the measured Palo Verde hub by the per-hub injector.
     # Must run AFTER the firm-shape block (its headroom is net-of-firm).
     if per_hub_intertie and getattr(config, "caiso_dsw_surplus_clean", False):
-        if inject_caiso_dsw_surplus_clean(fleet_arrays, iso, year):
+        if inject_caiso_dsw_surplus_clean(
+            fleet_arrays, iso, year, gap_fill_measured_dam=_dam_fill
+        ):
             _logger.info(
                 "%s %d: south-corridor surplus-clean import depth armed "
                 "(WEIM clean transfer: measured depth-in-surplus %s MW net of "
@@ -2494,7 +2534,9 @@ def apply_caiso_seam_injections(
     # (no wheel). Must run AFTER the firm-shape and surplus-clean blocks (its
     # headroom nets both).
     if per_hub_intertie and getattr(config, "caiso_dsw_overnight_clean", False):
-        if inject_caiso_dsw_overnight_clean(fleet_arrays, iso, year):
+        if inject_caiso_dsw_overnight_clean(
+            fleet_arrays, iso, year, gap_fill_measured_dam=_dam_fill
+        ):
             _logger.info(
                 "%s %d: south-corridor OVERNIGHT clean import depth armed "
                 "(WEIM clean transfer: measured unconditional overnight depth "
@@ -2518,7 +2560,11 @@ def apply_caiso_seam_injections(
     if per_hub_intertie and getattr(config, "caiso_dsw_daytime_clean", False):
         _day_trim = bool(getattr(config, "caiso_dsw_daytime_evening_trim", False))
         if inject_caiso_dsw_daytime_clean(
-            fleet_arrays, iso, year, evening_trim=_day_trim
+            fleet_arrays,
+            iso,
+            year,
+            evening_trim=_day_trim,
+            gap_fill_measured_dam=_dam_fill,
         ):
             _logger.info(
                 "%s %d: south-corridor DAYTIME trigger-OFF clean import depth "
@@ -2542,7 +2588,9 @@ def apply_caiso_seam_injections(
                 else CAISO_DAYTIME_CLEAN_HOD_MAX,
             )
     if per_hub_intertie and getattr(config, "caiso_dsw_lateevening_clean", False):
-        if inject_caiso_dsw_lateevening_clean(fleet_arrays, iso, year):
+        if inject_caiso_dsw_lateevening_clean(
+            fleet_arrays, iso, year, gap_fill_measured_dam=_dam_fill
+        ):
             _logger.info(
                 "%s %d: south-corridor LATE-EVENING clean import depth armed "
                 "(caiso-269 window-gap closure: measured hod 22-23 depth %s MW "
