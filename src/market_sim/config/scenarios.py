@@ -2067,6 +2067,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SHARED field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as
     # the field (the nyiso-119 discipline).
     "coal_committed_nested_on_mustrun",
+    # NWPP-NEXT-5 (2026-09-26): EIA-860 standby (SB) generators admitted to
+    # the fleet by status alone (default off). Byte-identical off by
+    # construction: its one consumer, paths.set_eia860_standby_admission,
+    # leaves the admitted status set at {"OP"} at False, so no fleet row, cache
+    # key suffix or re-carry scope changes. SHARED field -- very end, per
+    # HOUSE-3. Registered IN THE SAME COMMIT as the field (nyiso-119).
+    "admit_standby_units",
     # R-CAISO-3 (2026-09-25), both default off, registered IN THE SAME COMMIT
     # as the fields (the nyiso-119 discipline). Byte-identical off by
     # construction: the coupling's skip set is computed only inside
@@ -2831,6 +2838,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "wefor_residual_short_screened_coal": "False",
     # Added by NWPP-NEXT-4 WITH the field (the nyiso-119 discipline).
     "coal_committed_nested_on_mustrun": "False",
+    # Added by NWPP-NEXT-5 WITH the field (the nyiso-119 discipline).
+    "admit_standby_units": "False",
     # Added by R-CAISO-3 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "caiso_import_gas_coupling_ladder_only": "False",
@@ -12185,6 +12194,27 @@ class ScenarioConfig:
     # non-coal groups are untouched. Regenerates for any year the artifact
     # serves, forecast included (rule 13).
     coal_committed_nested_on_mustrun: bool = False
+    # EIA-860 STANDBY (SB) UNITS ADMITTED BY STATUS ALONE (NWPP-NEXT-5, GATED
+    # default off, ISO-agnostic, ZERO free parameters). The fleet keeps
+    # ``Status == "OP"`` only, so a generator EIA-860 codes ``SB`` —
+    # "Standby/Backup: available for service but not normally used for this
+    # reporting period" — carries no LP capacity, while the C1 benchmark
+    # (plant-grain, no status filter) counts all of its EIA-923 generation.
+    # NWPP: Fredonia 607 (PSEI -> NWPP-NW, 4 x GT, 376 MW nameplate) and Sun
+    # Peak 54854 (NEVP -> NWPP-SNV, 3 x GT, 222 MW), SB in every vintage
+    # 2018-2025 (FINDING-nwppnext2-standby-census-2026-09-25). Armed, the
+    # admitted status set widens {"OP"} -> {"OP", "SB"}
+    # (``paths.set_eia860_standby_admission``) at the single fleet status seam
+    # every fleet read path lands in (``eia860._rows_to_generators``), plus the
+    # outage denominators built from that same fleet load (cache key suffixed)
+    # and the outage fleet-status scope; SB leaves the mothball re-carry scope
+    # so no unit is carried twice (rule 19 [R-ONE-MECH]). The admitted unit
+    # takes the standard offer construction and the LP decides whether it
+    # runs. Rule 13 [R-MEASURED]: status is a published EIA-860 field known ex
+    # ante from the year's own vintage (backcast) or the current snapshot
+    # (forecast), so it regenerates for any forward year. REFUSED variant:
+    # selecting SB units by same-year EIA-923 generation (outcome selection).
+    admit_standby_units: bool = False
 
     # Commitment-floor WINDOW ranked on NET load instead of system load
     # (SPP-66, owner ruling "Shared gate" 2026-09-20; default off, so every

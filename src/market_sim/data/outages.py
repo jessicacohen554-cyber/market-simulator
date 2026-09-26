@@ -56,6 +56,8 @@ from market_sim.config.paths import (
     CAMPD_BINS_CSV,
     RAW_DATA_DIR,
     REFERENCE_DIR,
+    eia860_operable_statuses,
+    eia860_standby_admitted,
 )
 from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY, artifact_class
 
@@ -901,6 +903,18 @@ _CC_NAMEPLATE_BASIS_GROUPS: tuple[str, ...] = ("CC_REGULAR", "CC_CHP")
 _ST_CAPACITY_BASIS_GROUPS: tuple[str, ...] = ("ST_GAS", "ST_CHP")
 
 
+def _fleet_cache_dir_key() -> str:
+    """Return the fleet-derived caches' EIA-860 key: the active directory, plus
+    a ``|SB`` suffix while ``admit_standby_units`` widens the fleet's status
+    filter (the fleet these maps sum depends on both). Identical to
+    ``str(active_eia860_dir())`` while off, so every off-path key is unchanged.
+    """
+    from market_sim.config.paths import active_eia860_dir
+
+    key = str(active_eia860_dir())
+    return f"{key}|SB" if eia860_standby_admitted() else key
+
+
 def _iso_plant_unit_capacity(
     iso: str,
     cc_steam_part_reclass: bool = False,
@@ -913,16 +927,15 @@ def _iso_plant_unit_capacity(
     cache key here because the fleet this map is built from is vintage-dependent
     (rule 14 ``[R-ACCURATE]``; SPP-38 / ``FINDING-spp-37-order-sensitivity``).
     """
-    from market_sim.config.paths import active_eia860_dir
 
     if not mid_vintage_exit_carry:
         # SPP-48: original arity while off, so the lru_cache key tuple is
         # unchanged and the off path is cache- and byte-identical.
         return _iso_plant_unit_capacity_cached(
-            str(active_eia860_dir()), iso, cc_steam_part_reclass
+            _fleet_cache_dir_key(), iso, cc_steam_part_reclass
         )
     return _iso_plant_unit_capacity_cached(
-        str(active_eia860_dir()),
+        _fleet_cache_dir_key(),
         iso,
         cc_steam_part_reclass,
         retiree_year,
@@ -1118,15 +1131,14 @@ def _iso_plant_capacity(
     ``docs/handoffs/FINDING-spp-37-order-sensitivity-2026-09-12.md``, repaired
     by SPP-38).
     """
-    from market_sim.config.paths import active_eia860_dir
 
     if not mid_vintage_exit_carry:
         # SPP-48: original arity while off — see _iso_plant_unit_capacity.
         return _iso_plant_capacity_cached(
-            str(active_eia860_dir()), iso, cc_steam_part_reclass, cc_nameplate_basis
+            _fleet_cache_dir_key(), iso, cc_steam_part_reclass, cc_nameplate_basis
         )
     return _iso_plant_capacity_cached(
-        str(active_eia860_dir()),
+        _fleet_cache_dir_key(),
         iso,
         cc_steam_part_reclass,
         cc_nameplate_basis,
@@ -1790,8 +1802,8 @@ def _unit_outage_factors_from_events(
             st = status_idx.get(int(r.facility_id), {}).get(
                 str(r.unit_id).strip().upper()
             )
-            if st is not None and st != "OP":
-                continue  # unit not in the fleet's OP capacity basis
+            if st is not None and st not in eia860_operable_statuses():
+                continue  # unit not in the fleet's operable capacity basis
         ucap = r.unit_capacity_mw
         if pd.isna(ucap) or float(ucap) <= 0.0:
             continue
