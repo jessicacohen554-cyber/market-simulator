@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-25T16:57:04",
+  "timestamp": "2026-09-26T02:11:27",
   "git": {
-    "sha": "54ac9e1a5",
-    "basis_sha": "54ac9e1a509c0cad01aadcb9d7583535fd27d883",
-    "branch": "claude/nyisostg-2021",
+    "sha": "5a977fecc",
+    "basis_sha": "5a977fecc5770ae77aade7a585791675b85ea544",
+    "branch": "HEAD",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
+  "model_changes_note": "NYISO-NEXT leg 2021: keeper recipe + reliability_floor_layup_window_mask",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NYISO",
@@ -103,7 +103,8 @@
       "unit_outage_extract_basis_share": true,
       "unit_outage_window_hour_grain": true,
       "use_plant_emission_rates_v2": true,
-      "nyiso_ldc_generator_delivered_gas": true
+      "nyiso_ldc_generator_delivered_gas": true,
+      "reliability_floor_layup_window_mask": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -120,7 +121,7 @@
     "nyiso_dynamic_reserve_requirements": true,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
-    "git_sha": "54ac9e1a5"
+    "git_sha": "5a977fecc"
   },
   "scenario_config": {
     "weather_year": 2021,
@@ -416,6 +417,7 @@
       }
     },
     "reliability_floor_plant_exclusions": true,
+    "reliability_floor_layup_window_mask": true,
     "class_commitment_overrides": {},
     "caiso_gas_commitment_floor": false,
     "caiso_gas_floor_frac": 1.0,
@@ -1146,6 +1148,7 @@
     "ercot_adaptive_fixed_point": false,
     "ercot_tie_zonal_interchange": false,
     "nwpp_grid_carried_wind_served": false,
+    "nwpp_demand_plant_basis": false,
     "demand_balance_screen": false,
     "caiso_storage_adaptive_expectation": false,
     "caiso_adaptive_half_life_days": 30.0,
@@ -1183,7 +1186,7 @@
       "THERMAL_AVAILABILITY": "34ff308290e18439"
     },
     "epochs": [],
-    "git_sha": "54ac9e1a5"
+    "git_sha": "5a977fecc"
   },
   "environment": {
     "python_version": "3.11.15",

@@ -57,7 +57,7 @@ def _verdict(rid: str) -> dict:
         ],
         capture_output=True,
         text=True,
-        check=True,
+        check=False,
         cwd=REPO,
     ).stdout
     return json.loads(out)

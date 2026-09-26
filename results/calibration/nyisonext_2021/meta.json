@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-25T16:57:04",
+  "timestamp": "2026-09-26T02:11:27",
   "iso": "NYISO",
   "years": [
     2021
@@ -114,7 +114,8 @@
     "unit_outage_extract_basis_share": true,
     "unit_outage_window_hour_grain": true,
     "use_plant_emission_rates_v2": true,
-    "nyiso_ldc_generator_delivered_gas": true
+    "nyiso_ldc_generator_delivered_gas": true,
+    "reliability_floor_layup_window_mask": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -405,8 +406,8 @@
     "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-a315d4a5cd46.parquet",
     "hydro_plant_modes": "../_shared/NYISO/hydro_plant_modes-13d438bb7db3.parquet"
   },
-  "git_sha": "54ac9e1a5",
-  "basis_sha": "54ac9e1a509c0cad01aadcb9d7583535fd27d883",
+  "git_sha": "5a977fecc",
+  "basis_sha": "5a977fecc5770ae77aade7a585791675b85ea544",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
