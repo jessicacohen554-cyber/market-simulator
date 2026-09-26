@@ -48,6 +48,8 @@ Usage:
     python scripts/data/fetch_caiso_intertie_lmp.py --from-grp-windows --years 2022
     # GroupZip-folded years whose windows are gone, from the tracked aggregate:
     python scripts/data/fetch_caiso_intertie_lmp.py --from-hourly-aggregate --years 2021
+    # measured DAM prints for the main series' NaN hours, to the sibling gap-fill artifact:
+    python scripts/data/fetch_caiso_intertie_lmp.py --from-hourly-aggregate --fill-gaps --years 2023
 
 ``--from-grp-windows`` (caiso-261, 2026-09-06) builds the same delivered nodal
 LMP from the per-day ``dam_grp_{Ymd}_{Ymd}.csv`` windows that
@@ -87,6 +89,8 @@ from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 from market_sim.utils.hour_calendar import hour_index  # noqa: E402
 
 OUT_PARQUET = CALIBRATION_DIR / "wecc_intertie_lmp_hourly_CAISO.parquet"
+# R-CAISO-4: measured DAM prints for hours the main series leaves NaN (--fill-gaps).
+GAPFILL_PARQUET = CALIBRATION_DIR / "wecc_intertie_lmp_hourly_CAISO_gapfill_dam.parquet"
 
 PRC_LMP_DAM = {"queryname": "PRC_LMP", "market_run_id": "DAM", "version": "12"}
 
@@ -346,6 +350,14 @@ def main() -> None:
         help="build from the tracked CAISO_dam_hourly_<year>.csv aggregate "
         "(GroupZip-folded years 2021/2022, whose windows are discarded)",
     )
+    ap.add_argument(
+        "--fill-gaps",
+        action="store_true",
+        help="write the SIBLING gap-fill artifact: only hours the main parquet "
+        "leaves NaN (the main parquet is never touched); e.g. the 2023 Jan-Mar "
+        "retention gap from the tracked aggregate: --from-hourly-aggregate "
+        "--fill-gaps --years 2023",
+    )
     args = ap.parse_args()
 
     if args.probe:
@@ -408,6 +420,38 @@ def main() -> None:
         print("no intertie data fetched — nothing written.", file=sys.stderr)
         sys.exit(1)
     out = pd.DataFrame.from_records(records)
+    if args.fill_gaps:
+        # Fill-only SIBLING artifact (R-CAISO-4). The main parquet is NEVER
+        # touched: the rows written here are exactly the (year, hub, hour)s
+        # the main series leaves NaN and the rebuilt series prints, so an
+        # already-measured hour can never be overwritten and a run that does
+        # not arm ScenarioConfig.caiso_intertie_gap_fill_measured_dam reads
+        # byte-identical inputs. Re-running replaces only the requested years.
+        if existing is None:
+            print(
+                "--fill-gaps needs the main parquet to find its gaps.", file=sys.stderr
+            )
+            sys.exit(1)
+        key = ["year", "hub", "hour"]
+        merged = existing.merge(
+            out.rename(columns={"price": "_fill"}), on=key, how="inner"
+        )
+        gap = merged["price"].isna() & merged["_fill"].notna()
+        fill = (
+            merged.loc[gap, key + ["_fill"]]
+            .rename(columns={"_fill": "price"})
+            .astype({"year": "int64", "hour": "int64"})
+        )
+        for (yr, hub), n in fill.groupby(["year", "hub"]).size().items():
+            print(f"  fill-gaps: {yr} {hub}: {n} NaN hours filled")
+        if GAPFILL_PARQUET.exists():
+            prior = pd.read_parquet(GAPFILL_PARQUET)
+            prior = prior[~prior["year"].isin(args.years)]
+            fill = pd.concat([prior, fill], ignore_index=True)
+        fill = fill.sort_values(key).reset_index(drop=True)
+        fill.to_parquet(GAPFILL_PARQUET, index=False)
+        print(f"wrote {GAPFILL_PARQUET.relative_to(REPO)} ({len(fill)} rows)")
+        return
     if existing is not None:
         # Replace only the (year, hub) pairs we just fetched; keep the rest.
         fetched = set(zip(out["year"], out["hub"]))

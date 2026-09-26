@@ -2079,6 +2079,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # path is byte-inert). SHARED field -- very end, per HOUSE-3. Registered IN
     # THE SAME COMMIT as the field (the nyiso-119 discipline).
     "reliability_floor_layup_window_mask",
+    # R-CAISO-4 (2026-09-26), both default off, registered IN THE SAME COMMIT
+    # as the fields (the nyiso-119 discipline). Byte-identical off by
+    # construction: the DAM gap fill is read only when a loader is handed
+    # gap_fill_measured_dam=True from the flag, and the CC emission re-basing
+    # is computed only inside `getattr(config,
+    # "cc_eia923_identity_emission_basis", False)` (and reaches only rows the
+    # measured-CC artifact flags eia923_identity, which only CAISO's carries).
+    "caiso_intertie_gap_fill_measured_dam",
+    "cc_eia923_identity_emission_basis",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2821,6 +2830,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by NYISO-NEXT WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "reliability_floor_layup_window_mask": "False",
+    # Added by R-CAISO-4 WITH the fields, in the same commit as their
+    # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
+    "caiso_intertie_gap_fill_measured_dam": "False",
+    "cc_eia923_identity_emission_basis": "False",
 }
 
 
@@ -9232,6 +9245,37 @@ class ScenarioConfig:
     # state series does not print falls back to the forward fill. Zero new
     # parameters (HR, shape unchanged). Default off (byte-identical);
     # CAISO-only; reaches the per-hub injector.
+    caiso_intertie_gap_fill_measured_dam: bool = False  # R-CAISO-4 (2026-09-26):
+    # fill the 2023 intertie-hub retention gap with the MEASURED OASIS DAM
+    # prints that the tracked CAISO_dam_hourly_2023.csv aggregate still holds
+    # for MALIN / CAPTJACK / PALOVRDE (1,488 of the 2,040 gap hours; Jan 1 -
+    # Mar 7), BEFORE any formula fill. The hours are landed as a sibling
+    # artifact (wecc_intertie_lmp_hourly_CAISO_gapfill_dam.parquet) by
+    # scripts/data/fetch_caiso_intertie_lmp.py --from-hourly-aggregate
+    # --fill-gaps, by the same construction that builds the main series
+    # (identity verified on 2022: max |diff| 1e-4 over 8,759 h); the main
+    # parquet is untouched. Rule 14 [R-ACCURATE]: measured over estimate.
+    # In the filled hours the caiso_intertie_gap_fill_measured_gas formula
+    # (monthly N3045 state gas, which lags the Jan-2023 spot collapse) reads
+    # +99 / +83 $/MWh above the measured Malin / Palo Verde Jan-2023 prints.
+    # Reaches the per-hub price injector AND the raw measured-hub evidence the
+    # caiso-87/93/94/269 clean-depth triggers read (a DAM print is evidence of
+    # a market state; a formula fill is not). The 552 hours no print covers
+    # keep the existing fill. Zero parameters; inert outside 2023 by
+    # construction (no other year has a gap). Default off; CAISO-only.
+    # docs/handoffs/r-caiso-4/PRECOMMIT-r-caiso-4-2026-09-26.md.
+    cc_eia923_identity_emission_basis: bool = False  # R-CAISO-4 (2026-09-26):
+    # a CC_REGULAR plant whose measured heat rate is the EIA-923 identity rate
+    # (its CEMS record REFUSED by the CC derive: flag eia923_identity) books
+    # its CO2 on the same fuel basis — identity heat rate x the plant's own
+    # CEMS CO2 per MMBtu — instead of plant_emission_rates_v2's CEMS CO2 /
+    # CEMS load, which re-imports the refused heat-input record through the
+    # carbon cost (rule 19 [R-ONE-MECH]; rule 14). Measured: Pastoria 55656
+    # books 0.446 t/MWh (er/hr 0.063 t/MMBtu vs the gas fuel's 0.054), a
+    # ~+2 $/MWh carbon wedge on every tranche at CA allowance prices; the
+    # re-based rate is 0.379-0.382. Zero parameters. Requires
+    # measured_cc_heat_rates and use_plant_emission_rates_v2. Default off;
+    # inert in every ISO whose CC artifact carries no eia923_identity row.
     caiso_import_solar_shape: bool = False  # Restore the CAISO negative midday
     # tail. The desert-SW solar import block (DSW_solar_PV / Palo Verde hub) is
     # the marginal CAISO import midday, but its level is priced flat (gas-coupled
