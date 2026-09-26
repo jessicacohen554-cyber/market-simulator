@@ -3,7 +3,7 @@
   "label": "nwppnext6 path76 ctrederive",
   "date": "2026-09-26",
   "shorthand": "nwppnext6-path76-ctrederive",
-  "definition": "NWPP-NEXT-6 arm AB: keeper #12 recipe + nwpp_path76_alturas_link + SB-population CT re-derive",
+  "definition": "NWPP keeper #13: keeper #12's recipe plus the WECC Path 76 Alturas link (NW\u2194SNV, 300 MW) and the rule-23 re-derive of campd_ct_heat_rates_NWPP.csv on the SB-admitted fleet (owner ruling 2026-09-26). The link cuts unserved load 52\u201386% across 2019\u20132025 (e.g. 118.8\u219246.6 GWh in 2020, 37.8\u21927.5 GWh in 2022); the CT re-derive corrects Fredonia dispatch toward its measured EIA-923 level. One flip vs keeper #12: C1 CC_REGULAR 2024 moves +7.67 PASS \u2192 +8.30 FAIL as CT_PEAKER energy substitutes onto CC_REGULAR \u2014 a regression, reported at full magnitude; CC_REGULAR was already 7-10 TWh long in 2019/2020/2024 (routed, not tuned). Determination: NOT-YET on {fuelmix, dispatch_corr} (same failing set as keeper #12); C2/C6/C8 PASS; price is unscored (rubric v3.8).",
   "years": [
     2019,
     2020,
