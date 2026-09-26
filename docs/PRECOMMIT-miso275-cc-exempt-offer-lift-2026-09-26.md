@@ -10,7 +10,7 @@ CONTROL : none solved. G-DRIFT 09b152c5..this SHA is all INERT for MISO (§3), s
 SHARDS  : 7 arm legs, one year each 2019-2025 (rules 34(c), 36), pinned to this document's commit SHA
 DATA    : DATA PROFILE: miso
 DOF     : ±0 new parameters. The existing ledger entry "offer_curve_by_group non-steam fossil lift (1.10)" narrows
-          its class scope from 11 to 9 classes; CC_REGULAR / CC_INTERMEDIATE return to the pre-miso-220 table values
+          its class scope to 8 lifted classes (miso-220 named 11; the bare `COAL` row is already folded into the subclasses by COAL-SUB); CC_REGULAR / CC_INTERMEDIATE return to the pre-miso-220 table values
 ```
 
 ## 1. The owner ruling (rule 1 `[R-STRUCT]` carve-out, rule 13 exception)
@@ -33,7 +33,7 @@ How each carve-out condition is met:
 | (b) | ONE config across every scored year | the same table for all seven legs, 2019–2025 |
 | (c) | set ex ante, never swept | the values are the pre-miso-220 table (`scripts/probes/_miso220_offer_table.py` lines 55–64), i.e. keeper ÷ 1.10 exactly; asserted to 1e-9 when the file was written. No alternative value is solved, and no value is selected by a gate |
 | (d) | merit-order adjustment is intended | CC moves down against coal (lifted ×1.10) and steam gas (held), which is the object FINDING-miso274 §5 names |
-| (e) | attestation `authorized_price_tuning` block + DOF ledger | the promotion (if ruled) rewrites the block's `value` to "×1.10 on 9 non-steam fossil classes; CC_REGULAR, CC_INTERMEDIATE, ST_GAS, ST_GAS_INTERMEDIATE held at the pre-lift table", cites this ruling, and narrows the ledger entry. No new free parameter: 1.10 is still the only one |
+| (e) | attestation `authorized_price_tuning` block + DOF ledger | the promotion (if ruled) rewrites the block's `value` to "×1.10 on 8 non-steam fossil classes; CC_REGULAR, CC_INTERMEDIATE, ST_GAS, ST_GAS_INTERMEDIATE held at the pre-lift table", cites this ruling, and narrows the ledger entry. No new free parameter: 1.10 is still the only one |
 
 ## 2. The delta (exactly eight cells)
 
