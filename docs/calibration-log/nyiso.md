@@ -14897,3 +14897,19 @@ too.
 - **Superseded and pruned:** `2026-09-24-nyiso-r-inputs-860vintage`.
 - **Record:** `docs/RESULT-nyiso-stgas-2023-ldc-leg-2026-09-25.md`.
 - **Owner-held:** reinstating the withdrawn `complete` marker on the now-CALIBRATED keeper.
+
+## NYISO-NEXT — 2026-09-26 — the NYC persistent-base floor stops forcing laid-up steam; keeper promoted
+
+- **Lever:** `reliability_floor_layup_window_mask` (new, default off, backcast-only).
+  - A pro-rata reliability-floor limb floors each unit on `pmax × max(0, availability − layup_share(t))`.
+  - The lay-up share is read from the merit-order guard's own measured windows, on the same
+    detection as the availability overlay.
+  - Zero DOF; `floor_pct` (0.1663 since nyiso-227, not 0.175) untouched.
+- **Result:** keeper `2026-09-26-nyisonext-floor-layup-span` (2022–2025) plus stamped
+  `2026-09-26-nyisonext-floor-layup-2021`. **CALIBRATED** unchanged (C3c ledgered).
+  - C1-2023 ST_GAS +3.17 → +2.14 TWh.
+  - C8 ST_GAS falls every year.
+  - D-4 FAIL set 11 → 7 (Astoria 8906 2023, Ravenswood 2500 2021 cleared).
+  - Held-out 2021 NOT-YET on C1 CC_REGULAR +3.81 TWh (reported, rule 30(c)).
+- **Superseded and pruned:** `2026-09-25-nyiso-stgas-ldc-leg` + its 2021 run.
+- **Record:** `docs/RESULT-nyiso-next-floor-layup-2026-09-26.md`.

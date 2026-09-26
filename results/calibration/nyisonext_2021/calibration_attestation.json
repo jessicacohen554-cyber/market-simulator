@@ -5,7 +5,7 @@
   "no_fit_to_price_residuals": true,
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
-  "attested_by": "session NYISO-STGAS-2023 (2026-09-25), 2021 HELD-OUT LEG of the ONE-FIELD ARM of the incumbent keeper 2026-09-24-nyiso-r-inputs-860vintage: nyiso_ldc_generator_delivered_gas false -> true (owner ruling on the lane's lever question). Pre-registration: docs/PRECOMMIT-nyiso-stgas-2023-ldc-leg-2026-09-25.md, pushed at 54ac9e1a509c0cad01aadcb9d7583535fd27d883 before any solve. Offer curves byte-identical to the keeper (rule 1(c)); no multiplier tuned; the new input is a filed tariff (Con Edison PSC No. 9 SC 9 Rate D(2)) applied through EIA-860's published LDC field. PRIOR: session R-NYISO (2026-09-24), INPUT CORRECTION of the incumbent keeper 2026-09-22-nyiso-hydro3-ror-split. Pre-registration: docs/PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md, pushed at e95436d5024fc14096eed558d6dd15a65128e524 before any solve, on the owner instruction of 2026-09-24 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md sec. 5.3.6). THE ONLY CHANGE IS THE F1 INPUT FOUNDATION: the year-matched EIA-860 vintage (eia860_vintage_tracks_solve_year) and the measured CAMPD coal / ST / CC heat rates, default-on in backcast since F1 (#6572); CT and CHP were already measured and now read per-year rows. F2 (#6569) moves nothing NYISO reads (the armed std extract is byte-identical, sha256 ee778a87...). Offer curves byte-identical to the keeper (rule 1(c): an input correction is never re-tuned). G-DRIFT 57e3c77f -> 92100753: no LIVE-OTHER hunk. ZERO new DOF: every changed input is a measured or published source (EIA-860 annual release, eGRID, CAMPD). Rule 19 [R-ONE-MECH]: one heat rate per plant; at Bethlehem 2539 the eGRID steam-collapse identity rate (6.877) rightly supersedes a measured CC row that its own per-year boundary guard refuses in 6 of 7 years (PRECOMMIT sec. 4). Four year-isolated shards (rule 36), composed at zero LP. 2019-2021 not solved: DATA-BLOCKED (PRECOMMIT sec. 5).",
+  "attested_by": "session NYISO-NEXT (2026-09-25/26), ONE-FIELD ARM of the incumbent keeper 2026-09-25-nyiso-stgas-ldc-leg: reliability_floor_layup_window_mask false -> true (rule 17 [R-FLOOR-WINDOW] hour-grain repair of the pro_rata reliability-floor basis). Pre-registration: docs/PRECOMMIT-nyiso-next-floor-layup-2026-09-25.md, pushed at 5a977fecc5770ae77aade7a585791675b85ea544 before any solve. Offer curves byte-identical to the keeper (rule 1(c)); no multiplier tuned; floor_pct and availability untouched; zero new free parameters. Five year-isolated shards (rule 36), composed at zero LP on the keeper's own benchmark hashes. PRIOR ATTESTATION: session NYISO-STGAS-2023 (2026-09-25), ONE-FIELD ARM of the incumbent keeper 2026-09-24-nyiso-r-inputs-860vintage: nyiso_ldc_generator_delivered_gas false -> true (owner ruling on the lane's lever question). Pre-registration: docs/PRECOMMIT-nyiso-stgas-2023-ldc-leg-2026-09-25.md, pushed at 54ac9e1a509c0cad01aadcb9d7583535fd27d883 before any solve. Offer curves byte-identical to the keeper (rule 1(c)); no multiplier tuned; the new input is a filed tariff (Con Edison PSC No. 9 SC 9 Rate D(2)) applied through EIA-860's published LDC field. PRIOR: session R-NYISO (2026-09-24), INPUT CORRECTION of the incumbent keeper 2026-09-22-nyiso-hydro3-ror-split. Pre-registration: docs/PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md, pushed at e95436d5024fc14096eed558d6dd15a65128e524 before any solve, on the owner instruction of 2026-09-24 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md sec. 5.3.6). THE ONLY CHANGE IS THE F1 INPUT FOUNDATION: the year-matched EIA-860 vintage (eia860_vintage_tracks_solve_year) and the measured CAMPD coal / ST / CC heat rates, default-on in backcast since F1 (#6572); CT and CHP were already measured and now read per-year rows. F2 (#6569) moves nothing NYISO reads (the armed std extract is byte-identical, sha256 ee778a87...). Offer curves byte-identical to the keeper (rule 1(c): an input correction is never re-tuned). G-DRIFT 57e3c77f -> 92100753: no LIVE-OTHER hunk. ZERO new DOF: every changed input is a measured or published source (EIA-860 annual release, eGRID, CAMPD). Rule 19 [R-ONE-MECH]: one heat rate per plant; at Bethlehem 2539 the eGRID steam-collapse identity rate (6.877) rightly supersedes a measured CC row that its own per-year boundary guard refuses in 6 of 7 years (PRECOMMIT sec. 4). Four year-isolated shards (rule 36), composed at zero LP. 2019-2021 not solved: DATA-BLOCKED (PRECOMMIT sec. 5).",
   "note": "authorized_price_tuning is NONE for this run. The rules 1 [R-STRUCT] / 13 [R-MEASURED] authorized price-tuning carve-out governs an offer_curve_by_group band multiplier IDENTIFIED BY THE PRICE RESIDUAL. These bands are identified by NYISO's own CAMPD conduct \u2014 the phys_* measurements the band dict already carried \u2014 so there is no value to declare, none to sweep, and no DOF entry (the nyiso-232 precedent, where two band multipliers moved and authorized_price_tuning was likewise NONE).",
   "computed_checks": {
    "environment_matches_the_keeper": {
@@ -105,7 +105,7 @@
  "free_parameters": {
   "schema": "dof-ledger/v1",
   "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
-  "n_entries": 9,
+  "n_entries": 10,
   "n_residual": 6,
   "entries": [
    {
@@ -313,6 +313,19 @@
     "n_scalars": 0,
     "source": "Con Edison PSC No. 9 Gas, SC 9 Transportation Rate (D)(2) Power Generation, Leaf 277 Rev 5 (eff 2014-03-01) / 277.1 Rev 2, NY DPS ETS; plant->LDC from EIA-860 Schedule 2 'Natural Gas LDC Name'. Value Added Charge unpublished and omitted (lower bound).",
     "root_cause": "not a residual closer: a filed cost the LDC-served generators pay that the hub price omitted (rule 14). Zero free parameters."
+   },
+   {
+    "name": "reliability_floor_layup_window_mask (merit-guarded lay-up windows mask the pro_rata reliability-floor basis)",
+    "where": "run_config.scenario_config.reliability_floor_layup_window_mask; data/raw/campd-unit-outages-layup-perunitmerithour-NYISO.csv (frozen derive layer, rule 23)",
+    "identification": "measured-market",
+    "lineage_solves": "1 (NYISO-NEXT, five year-isolated shards)",
+    "value": {
+     "floor_basis": "pmax x max(0, availability - layup_share(t))",
+     "scope": "pro_rata limbs only (NYC / Long_Island ST_GAS persistent bases)"
+    },
+    "n_scalars": 0,
+    "source": "CAMPD per-unit hour-grain merit-order-guard lay-up companion (the lay-up half of the same detection the availability overlay reads its outage half from; scripts/data/derive_campd_unit_outages.py --merit-order-guard --hour-grain).",
+    "root_cause": "not a residual closer: the pro_rata floor forced units ON inside windows the model's own outage pipeline classified as economic lay-up (rule 17). Zero free parameters; backcast-only (rule 13)."
    }
   ]
  },

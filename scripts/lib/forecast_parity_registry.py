@@ -829,6 +829,22 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
             "docs/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md",
         ),
     ),
+    # NYISO-NEXT (2026-09-26): armed in the NYISO keeper. It masks the pro_rata
+    # reliability-floor basis by the merit-order guard's SAME-YEAR measured
+    # economic lay-up windows, which have no forward analogue (rule 13), so the
+    # consumer returns None outside mode == "backcast" and a forecast keeps the
+    # unmasked floor by design (_BACKCAST_ONLY_OVERLAY_FIELDS also lists it).
+    ParityDeclaration(
+        fields=("reliability_floor_layup_window_mask",),
+        disposition=BACKCAST_ONLY,
+        why="NYISO-NEXT same-year measured lay-up windows mask the pro_rata "
+        "reliability-floor basis; no forward analogue (rule 13), so the "
+        "consumer is backcast-gated and a forecast keeps the unmasked floor",
+        evidence=(
+            _BACKCAST_ORCH,
+            "docs/PRECOMMIT-nyiso-next-floor-layup-2026-09-25.md",
+        ),
+    ),
 )
 
 

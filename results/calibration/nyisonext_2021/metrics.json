@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-25-nyiso-stgas-ldc-2021",
+  "run_id": "2026-09-26-nyisonext-floor-layup-2021",
   "iso": "NYISO",
-  "label": "nyiso stgas ldc 2021",
+  "label": "nyisonext floor layup 2021",
   "target_years": [
     2021
   ],
@@ -10,15 +10,17 @@
   ],
   "data_blocked_years": [],
   "price_reference_blocked_years": [],
-  "rubric_version": 3.8,
-  "determination": "CALIBRATED",
-  "reasons": [],
+  "rubric_version": 3.9,
+  "determination": "NOT-YET",
+  "reasons": [
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix"
+  ],
   "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -67,22 +69,22 @@
   },
   "grade_summary": {
     "scored": 8,
-    "target_grade": 8,
+    "target_grade": 7,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 0
+    "fails": 1
   },
   "reported": {
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2021": "+5.7%"
+        "2021": "+5.0%"
       }
     },
     "diurnal_amplitude": {
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
-        "2021": "amplitude 50.8% of measured (hod range $12.72 vs $25.05); peak h18 vs h17, trough h03 vs h02 \u2014 phase OK; hod r +0.916; 365 complete days"
+        "2021": "amplitude 50.1% of measured (hod range $12.55 vs $25.05); peak h18 vs h17, trough h03 vs h02 \u2014 phase OK; hod r +0.915; 365 complete days"
       }
     }
   },
@@ -103,13 +105,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 7,
+      "pass": 6,
       "total": 7
     },
     "free": {
-      "pass": 5,
+      "pass": 4,
       "total": 5
     },
-    "headline": "C1 all 7/7 \u00b7 free 5/5"
+    "headline": "C1 all 6/7 \u00b7 free 4/5"
   }
 }

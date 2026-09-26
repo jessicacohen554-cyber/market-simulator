@@ -1,19 +1,19 @@
 {
- "id": "2026-09-25-nyiso-stgas-ldc-2021",
- "label": "nyiso stgas ldc 2021",
- "date": "2026-09-25",
- "shorthand": "nyiso-stgas-ldc-2021",
- "definition": "NYISO-STGAS-2023 2021 leg (held-out, stamped to 2026-09-25-nyiso-stgas-ldc-leg): the keeper recipe plus nyiso_ldc_generator_delivered_gas (Con Edison SC 9 Rate D(2) LDC delivery leg on EIA-860 Con Ed-served gas generators >= 50 MW). Record: docs/RESULT-nyiso-stgas-2023-ldc-leg-2026-09-25.md.",
+ "id": "2026-09-26-nyisonext-floor-layup-2021",
+ "label": "nyisonext floor layup 2021",
+ "date": "2026-09-26",
+ "shorthand": "nyisonext-floor-layup-2021",
+ "definition": "NYISO-NEXT leg 2021: keeper recipe + reliability_floor_layup_window_mask",
  "years": [
   2021
  ],
  "iso": "NYISO",
- "file": "frontend/data/backcast/runs/2026-09-25-nyiso-stgas-ldc-2021.js",
- "bundle": "results/calibration/nyisostg_2021",
+ "file": "frontend/data/backcast/runs/2026-09-26-nyisonext-floor-layup-2021.js",
+ "bundle": "results/calibration/nyisonext_2021",
  "holdout": {
   "tier": "validation",
   "year": 2021,
-  "keeper": "2026-09-25-nyiso-stgas-ldc-leg",
+  "keeper": "2026-09-26-nyisonext-floor-layup-span",
   "keeperDetermination": "CALIBRATED",
   "keeperYears": [
    2022,
@@ -21,8 +21,16 @@
    2024,
    2025
   ],
-  "holdoutDetermination": "CALIBRATED",
+  "holdoutDetermination": "NOT-YET",
   "criteria": [
+   {
+    "key": "fuelmix",
+    "label": "C1 fuel-mix by class (grid-delivered)",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
    {
     "key": "price_tail",
     "label": "C3c price tail / scarcity (RT hourly)",
@@ -43,14 +51,6 @@
     "key": "forced_share",
     "label": "C8 forced-energy share (D-2)",
     "tier": "protective",
-    "inSample": "PASS",
-    "holdout": "PASS",
-    "verdict": "held"
-   },
-   {
-    "key": "fuelmix",
-    "label": "C1 fuel-mix by class (grid-delivered)",
-    "tier": "load-bearing",
     "inSample": "PASS",
     "holdout": "PASS",
     "verdict": "held"
@@ -88,9 +88,9 @@
     "verdict": "held"
    }
   ],
-  "nDegraded": 0,
+  "nDegraded": 1,
   "nCarried": 0,
   "tierCaveat": "Validation tier: ITERABLE model-SELECTION evidence. This is NOT a certified out-of-sample skill number and must never be quoted as one \u2014 the year may be re-spent after the open availability-envelope defect lands. The touch-once locked test (2019 / H1-2026) is NOT spent here.",
-  "envelopeCaveat": "2021 is solved on the SAME recipe, the same committed CAMPD unit-outage extract (sha256 ee778a87\u2026aa21fa) and thermal-tranche artifact as the keeper's 2022-2025 legs, pinned to the same PRECOMMIT (54ac9e1a). Its availability envelope is therefore built by the identical detector and merit-order guard; the in-sample-to-2021 delta is measured like-for-like. 2019-2020 remain data-blocked (NYISO solar profile starts 2021)."
+  "envelopeCaveat": "2021 is solved on the SAME recipe, the same committed CAMPD unit-outage extract (sha256 ee778a87\u2026aa21fa), its lay-up companion and the thermal-tranche artifact as the keeper's 2022-2025 legs, pinned to the same PRECOMMIT (5a977fec). Its availability envelope and its lay-up mask are therefore built by the identical detector and merit-order guard; the in-sample-to-2021 delta is measured like-for-like. 2019-2020 remain data-blocked (NYISO solar profile starts 2021)."
  }
 }
