@@ -173,6 +173,13 @@ this ratio would be a fitted threshold, so none is proposed.
   `min_gen`, `heat_rate`, `vom`, `emission_rate`, `nox_rate`, `zone_idx`, `mc_base`, `demand` and the VRE arrays
   are **byte-identical in all four years**. That also proves D and E are byte-identical off.
 
+- **Rebase addendum (base `c9bcc865` → `6407d711`, before any shard).** The new hunks are all INERT for CAISO:
+  - `reliability_floor_layup_window_mask` (NYISO-NEXT; off, absent from the recipe, None → unmasked basis);
+  - the `unit_outage_window_hour_grain` routing (ERCOT-only, or behind `campd_per_unit_attribution` +
+    `campd_outage_merit_order_guard`, which are off here);
+  - `*-hourgrain.csv` outage extracts (ERCOT);
+  - soco-69 (SOCO).
+
 **Form 4 is valid. The keeper's committed bundle is the control, and no control solve is spent.**
 
 ## 6. Shard plan (rules 32, 34, 36)
