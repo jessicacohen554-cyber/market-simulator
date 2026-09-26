@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-26-soco71-coal-hr-window",
+  "label": "soco71 coal hr window",
+  "date": "2026-09-26",
+  "shorthand": "soco71-coal-hr-window",
+  "definition": "soco-71 2019: soco-70 keeper recipe on campd_coal_heat_rates_SOCO.csv re-derived over its declared 2019-2025 window + coal-family population (rule 14/23 source coverage)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-09-26-soco71-coal-hr-window.js",
+  "bundle": "results/calibration/soco71_span"
+}
