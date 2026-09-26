@@ -3601,3 +3601,10 @@ results/calibration/nwppnext4_20*/
 # 2021 ae9c0fbcda02adb383578bca79e2effe49a79601, 2023 b24ea885e36c67ad7fdb5217ac8949764efb2ad2,
 # 2024 918343904792697135ac7bd1084e3c3d4c348a96, 2025 fddff1ac4ace665a3767b0576536151a542c28ac
 results/calibration/miso275_arm_*/
+
+# SPP-85 (2026-09-26): per-year control/arm legs and the control composite stay OUT of main
+# (rules 29(c) / 32(d)); kept on local disk until the owner rules on promotion (rule 31).
+# Provenance (not storage, rule 33(d)): claude/spp85-<Y> shard commits listed in
+# docs/handoffs/RESULT-spp-85-netload-mask-repair-2026-09-26.md section 1.
+results/calibration/spp85_ctl_*/
+results/calibration/spp85_arm_20*/

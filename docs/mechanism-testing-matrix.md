@@ -17988,6 +17988,24 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-85 (2026-09-26, COAL OUTAGE-BASIS RECONCILIATION — phase 0
+`docs/handoffs/FINDING-spp-85-coal-outage-basis-2026-09-26.md`, solve
+`docs/handoffs/RESULT-spp-85-netload-mask-repair-2026-09-26.md`).**
+- **Root cause is code, not data:** `scripts/lib/outage_detect._ISO_TO_BA` had no SPP key, so the
+  committed SPP CAMPD extracts' recorded `min_inmerit_hours` never ran. Key added (`SPP -> SWPP`);
+  `-netloadmask-` companions re-derived at the committed invocations; gated field
+  `unit_outage_netload_mask_repair` (cell **O**, default off). SOCO / NWPP carry the same missing key.
+- **Rule-14 test done:** boundary aligned (29/29 plants); SPP books Reserve Shutdown as a CROW Planned
+  Outage, so do not re-open "SPP excludes reserve shutdowns" without a portal-product citation.
+- **A realized-LMP removal test is refused (rule 13), and it does not discriminate anyway** (in-merit share
+  0.29 kept vs 0.30 dropped).
+- **Solved (7 shards, control + arm):** coal +1.5–3.8 TWh, price −0.2 to −2.3 $/MWh every year; 2023–25
+  stays CALIBRATED; 2021 C3a → PASS; new validation FAILs C1 COAL_PRB 2021 / CC_REGULAR 2021–22 / C4 gas
+  2021; one new D-4 row (Holcomb 108 `coal_mustrun` 2021) fails the pre-registered condition → **HOLD**,
+  owner ruling pending. Restored coal over-dispatches vs EIA-923: the outage over-count was compensating.
+- **Next (owner-gated):** Holcomb `coal_mustrun` conduct; the coal-vs-CC merit order the repair exposes;
+  the winter residual 0.6–2.5 GW via `campd_outage_merit_order_guard` on the per-unit family.
+
 **DO-NOT-REDO, added by SPP-84 (2026-09-26, MEASURED AVAILABILITY INPUTS vs THE KEEPER, ZERO LP —
 `docs/handoffs/FINDING-spp-84-published-outage-vs-keeper-2026-09-26.md`).** Target: C3a 2019–21
 (+13.3 / +21.2 / +10.0 %), off-queue per rule 28(a), because every non-C3c failure is already
