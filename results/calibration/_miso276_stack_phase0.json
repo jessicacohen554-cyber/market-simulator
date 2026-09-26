@@ -1,0 +1,474 @@
+{
+ "2022": {
+  "top_decile_hours": 756,
+  "top_model_sys_mean": 74.98,
+  "top_actual_mean": 163.44,
+  "model_price_max": 97.72,
+  "classes": {
+   "COAL_BIT": {
+    "mw": 16452.9,
+    "avail_twh": 94.591,
+    "disp_twh": 72.95,
+    "binding_hours": 6,
+    "headroom_twh": 21.641,
+    "offer_mean": 17.19,
+    "offer_by_season": {
+     "DJF": 17.43,
+     "MAM": 16.59,
+     "JJA": 18.02,
+     "SON": 16.73
+    },
+    "top_decile": {
+     "avail_gw": 11.26,
+     "disp_gw": 9.5,
+     "headroom_gw": 1.76,
+     "offer_mean": 17.53,
+     "offer_p50_p90_max": [
+      5.0,
+      41.0,
+      109.8
+     ]
+    }
+   },
+   "COAL_PRB": {
+    "mw": 35591.7,
+    "avail_twh": 210.452,
+    "disp_twh": 155.287,
+    "binding_hours": 4,
+    "headroom_twh": 55.165,
+    "offer_mean": 17.01,
+    "offer_by_season": {
+     "DJF": 16.6,
+     "MAM": 16.29,
+     "JJA": 17.37,
+     "SON": 17.77
+    },
+    "top_decile": {
+     "avail_gw": 26.41,
+     "disp_gw": 21.3,
+     "headroom_gw": 5.11,
+     "offer_mean": 17.17,
+     "offer_p50_p90_max": [
+      5.7,
+      37.5,
+      72.3
+     ]
+    }
+   },
+   "COAL_LIGNITE": {
+    "mw": 1268.4,
+    "avail_twh": 7.12,
+    "disp_twh": 6.59,
+    "binding_hours": 3373,
+    "headroom_twh": 0.53,
+    "offer_mean": 11.58,
+    "offer_by_season": {
+     "DJF": 12.25,
+     "MAM": 10.2,
+     "JJA": 11.21,
+     "SON": 12.7
+    },
+    "top_decile": {
+     "avail_gw": 0.84,
+     "disp_gw": 0.8,
+     "headroom_gw": 0.04,
+     "offer_mean": 11.25,
+     "offer_p50_p90_max": [
+      4.5,
+      28.9,
+      76.8
+     ]
+    }
+   },
+   "CC_REGULAR": {
+    "mw": 26413.2,
+    "avail_twh": 171.703,
+    "disp_twh": 125.058,
+    "binding_hours": 0,
+    "headroom_twh": 46.645,
+    "offer_mean": 54.28,
+    "offer_by_season": {
+     "DJF": 45.98,
+     "MAM": 54.3,
+     "JJA": 63.93,
+     "SON": 52.72
+    },
+    "top_decile": {
+     "avail_gw": 21.84,
+     "disp_gw": 18.67,
+     "headroom_gw": 3.16,
+     "offer_mean": 61.92,
+     "offer_p50_p90_max": [
+      59.2,
+      75.4,
+      292.8
+     ]
+    }
+   },
+   "CC_CHP": {
+    "mw": 3465.2,
+    "avail_twh": 26.186,
+    "disp_twh": 12.489,
+    "binding_hours": 0,
+    "headroom_twh": 13.697,
+    "offer_mean": 69.88,
+    "offer_by_season": {
+     "DJF": 61.14,
+     "MAM": 67.38,
+     "JJA": 82.14,
+     "SON": 68.66
+    },
+    "top_decile": {
+     "avail_gw": 3.03,
+     "disp_gw": 1.82,
+     "headroom_gw": 1.21,
+     "offer_mean": 79.31,
+     "offer_p50_p90_max": [
+      74.7,
+      105.8,
+      232.0
+     ]
+    }
+   },
+   "CT_PEAKER": {
+    "mw": 21575.8,
+    "avail_twh": 158.251,
+    "disp_twh": 9.2,
+    "binding_hours": 0,
+    "headroom_twh": 149.052,
+    "offer_mean": 115.3,
+    "offer_by_season": {
+     "DJF": 124.23,
+     "MAM": 107.71,
+     "JJA": 121.26,
+     "SON": 108.13
+    },
+    "top_decile": {
+     "avail_gw": 18.12,
+     "disp_gw": 4.53,
+     "headroom_gw": 13.59,
+     "offer_mean": 121.23,
+     "offer_p50_p90_max": [
+      103.6,
+      141.9,
+      5912.5
+     ]
+    }
+   },
+   "CT_CHP": {
+    "mw": 1166.4,
+    "avail_twh": 8.989,
+    "disp_twh": 6.656,
+    "binding_hours": 3,
+    "headroom_twh": 2.333,
+    "offer_mean": 55.99,
+    "offer_by_season": {
+     "DJF": 50.36,
+     "MAM": 54.86,
+     "JJA": 63.62,
+     "SON": 55.01
+    },
+    "top_decile": {
+     "avail_gw": 1.02,
+     "disp_gw": 0.88,
+     "headroom_gw": 0.14,
+     "offer_mean": 61.88,
+     "offer_p50_p90_max": [
+      56.1,
+      90.7,
+      152.3
+     ]
+    }
+   },
+   "ST_GAS": {
+    "mw": 11743.3,
+    "avail_twh": 62.971,
+    "disp_twh": 13.107,
+    "binding_hours": 0,
+    "headroom_twh": 49.864,
+    "offer_mean": 89.27,
+    "offer_by_season": {
+     "DJF": 92.74,
+     "MAM": 81.17,
+     "JJA": 98.68,
+     "SON": 84.51
+    },
+    "top_decile": {
+     "avail_gw": 7.16,
+     "disp_gw": 2.08,
+     "headroom_gw": 5.08,
+     "offer_mean": 97.92,
+     "offer_p50_p90_max": [
+      95.3,
+      115.0,
+      4616.0
+     ]
+    }
+   },
+   "ST_CHP": {
+    "mw": 655.7,
+    "avail_twh": 4.22,
+    "disp_twh": 2.899,
+    "binding_hours": 69,
+    "headroom_twh": 1.321,
+    "offer_mean": 50.72,
+    "offer_by_season": {
+     "DJF": 47.65,
+     "MAM": 48.01,
+     "JJA": 58.42,
+     "SON": 48.7
+    },
+    "top_decile": {
+     "avail_gw": 0.5,
+     "disp_gw": 0.41,
+     "headroom_gw": 0.09,
+     "offer_mean": 57.18,
+     "offer_p50_p90_max": [
+      54.5,
+      82.6,
+      130.1
+     ]
+    }
+   }
+  },
+  "import_top_decile_gw": 4.49,
+  "import_twh": 19.428,
+  "fossil_headroom_top_decile_gw": 30.18
+ },
+ "2019": {
+  "top_decile_hours": 877,
+  "top_model_sys_mean": 30.51,
+  "top_actual_mean": 57.45,
+  "model_price_max": 49.75,
+  "classes": {
+   "COAL_BIT": {
+    "mw": 19515.5,
+    "avail_twh": 119.73,
+    "disp_twh": 81.248,
+    "binding_hours": 0,
+    "headroom_twh": 38.482,
+    "offer_mean": 15.21,
+    "offer_by_season": {
+     "DJF": 15.58,
+     "MAM": 15.14,
+     "JJA": 15.19,
+     "SON": 14.92
+    },
+    "top_decile": {
+     "avail_gw": 14.15,
+     "disp_gw": 10.96,
+     "headroom_gw": 3.19,
+     "offer_mean": 15.2,
+     "offer_p50_p90_max": [
+      5.0,
+      31.9,
+      53.8
+     ]
+    }
+   },
+   "COAL_PRB": {
+    "mw": 36965.3,
+    "avail_twh": 229.581,
+    "disp_twh": 161.061,
+    "binding_hours": 2,
+    "headroom_twh": 68.521,
+    "offer_mean": 15.25,
+    "offer_by_season": {
+     "DJF": 15.07,
+     "MAM": 15.17,
+     "JJA": 15.05,
+     "SON": 15.73
+    },
+    "top_decile": {
+     "avail_gw": 27.11,
+     "disp_gw": 21.46,
+     "headroom_gw": 5.65,
+     "offer_mean": 15.23,
+     "offer_p50_p90_max": [
+      5.5,
+      32.7,
+      71.9
+     ]
+    }
+   },
+   "COAL_LIGNITE": {
+    "mw": 1915.7,
+    "avail_twh": 13.597,
+    "disp_twh": 9.38,
+    "binding_hours": 0,
+    "headroom_twh": 4.218,
+    "offer_mean": 27.64,
+    "offer_by_season": {
+     "DJF": 23.65,
+     "MAM": 32.03,
+     "JJA": 29.99,
+     "SON": 24.77
+    },
+    "top_decile": {
+     "avail_gw": 1.58,
+     "disp_gw": 1.14,
+     "headroom_gw": 0.44,
+     "offer_mean": 27.44,
+     "offer_p50_p90_max": [
+      4.5,
+      99.5,
+      268.5
+     ]
+    }
+   },
+   "CC_REGULAR": {
+    "mw": 22639.2,
+    "avail_twh": 138.343,
+    "disp_twh": 110.827,
+    "binding_hours": 0,
+    "headroom_twh": 27.516,
+    "offer_mean": 24.33,
+    "offer_by_season": {
+     "DJF": 27.25,
+     "MAM": 25.57,
+     "JJA": 21.89,
+     "SON": 22.66
+    },
+    "top_decile": {
+     "avail_gw": 15.98,
+     "disp_gw": 13.19,
+     "headroom_gw": 2.79,
+     "offer_mean": 25.39,
+     "offer_p50_p90_max": [
+      21.7,
+      39.0,
+      217.1
+     ]
+    }
+   },
+   "CC_CHP": {
+    "mw": 3667.6,
+    "avail_twh": 28.104,
+    "disp_twh": 14.466,
+    "binding_hours": 0,
+    "headroom_twh": 13.638,
+    "offer_mean": 29.62,
+    "offer_by_season": {
+     "DJF": 32.69,
+     "MAM": 31.24,
+     "JJA": 26.89,
+     "SON": 27.71
+    },
+    "top_decile": {
+     "avail_gw": 3.22,
+     "disp_gw": 1.87,
+     "headroom_gw": 1.35,
+     "offer_mean": 31.32,
+     "offer_p50_p90_max": [
+      28.1,
+      41.4,
+      287.4
+     ]
+    }
+   },
+   "CT_PEAKER": {
+    "mw": 21153.8,
+    "avail_twh": 155.717,
+    "disp_twh": 10.254,
+    "binding_hours": 0,
+    "headroom_twh": 145.462,
+    "offer_mean": 51.45,
+    "offer_by_season": {
+     "DJF": 56.01,
+     "MAM": 53.44,
+     "JJA": 47.5,
+     "SON": 48.94
+    },
+    "top_decile": {
+     "avail_gw": 17.78,
+     "disp_gw": 2.88,
+     "headroom_gw": 14.91,
+     "offer_mean": 53.66,
+     "offer_p50_p90_max": [
+      45.0,
+      74.0,
+      560.0
+     ]
+    }
+   },
+   "CT_CHP": {
+    "mw": 1045.6,
+    "avail_twh": 8.105,
+    "disp_twh": 6.415,
+    "binding_hours": 0,
+    "headroom_twh": 1.69,
+    "offer_mean": 25.41,
+    "offer_by_season": {
+     "DJF": 27.35,
+     "MAM": 26.41,
+     "JJA": 23.59,
+     "SON": 24.33
+    },
+    "top_decile": {
+     "avail_gw": 0.93,
+     "disp_gw": 0.78,
+     "headroom_gw": 0.15,
+     "offer_mean": 26.36,
+     "offer_p50_p90_max": [
+      23.8,
+      36.9,
+      129.5
+     ]
+    }
+   },
+   "ST_GAS": {
+    "mw": 12456.2,
+    "avail_twh": 70.562,
+    "disp_twh": 13.544,
+    "binding_hours": 0,
+    "headroom_twh": 57.018,
+    "offer_mean": 37.03,
+    "offer_by_season": {
+     "DJF": 39.69,
+     "MAM": 39.05,
+     "JJA": 33.67,
+     "SON": 35.75
+    },
+    "top_decile": {
+     "avail_gw": 8.2,
+     "disp_gw": 2.18,
+     "headroom_gw": 6.02,
+     "offer_mean": 38.32,
+     "offer_p50_p90_max": [
+      35.8,
+      49.0,
+      295.4
+     ]
+    }
+   },
+   "ST_CHP": {
+    "mw": 603.2,
+    "avail_twh": 3.934,
+    "disp_twh": 2.3,
+    "binding_hours": 0,
+    "headroom_twh": 1.634,
+    "offer_mean": 26.88,
+    "offer_by_season": {
+     "DJF": 31.15,
+     "MAM": 27.84,
+     "JJA": 24.17,
+     "SON": 24.44
+    },
+    "top_decile": {
+     "avail_gw": 0.46,
+     "disp_gw": 0.3,
+     "headroom_gw": 0.16,
+     "offer_mean": 28.14,
+     "offer_p50_p90_max": [
+      25.0,
+      37.8,
+      153.3
+     ]
+    }
+   }
+  },
+  "import_top_decile_gw": 6.45,
+  "import_twh": 49.695,
+  "fossil_headroom_top_decile_gw": 34.66
+ }
+}

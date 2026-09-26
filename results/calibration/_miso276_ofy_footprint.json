@@ -1,0 +1,102 @@
+{
+ "2019": {
+  "ST_GAS": {
+   "floor_twh_off": 9.659,
+   "floor_twh_on": 9.7642
+  },
+  "CC_REGULAR": {
+   "floor_twh_off": 0.0,
+   "floor_twh_on": 0.0
+  },
+  "ST_GAS_plant_delta_twh": {
+   "990": -0.3614,
+   "1122": -0.0556,
+   "6035": -0.022,
+   "1403": 0.1087,
+   "3457": 0.1179,
+   "1402": 0.1367,
+   "3459": 0.1808
+  },
+  "other_groups_floor_delta_twh": 0.0
+ },
+ "2020": {
+  "ST_GAS": {
+   "floor_twh_off": 10.0656,
+   "floor_twh_on": 10.2381
+  },
+  "CC_REGULAR": {
+   "floor_twh_off": 0.0,
+   "floor_twh_on": 0.0
+  },
+  "ST_GAS_plant_delta_twh": {
+   "990": -0.356,
+   "6035": -0.0216,
+   "1122": -0.0041,
+   "3457": 0.0486,
+   "1402": 0.0807,
+   "1403": 0.1087,
+   "3459": 0.3163
+  },
+  "other_groups_floor_delta_twh": 0.0
+ },
+ "2021": {
+  "ST_GAS": {
+   "floor_twh_off": 9.1502,
+   "floor_twh_on": 9.2073
+  },
+  "CC_REGULAR": {
+   "floor_twh_off": 0.0,
+   "floor_twh_on": 0.0
+  },
+  "ST_GAS_plant_delta_twh": {
+   "990": -0.3685,
+   "1402": -0.0186,
+   "6035": -0.018,
+   "1122": 0.0032,
+   "1403": 0.0482,
+   "3457": 0.0811,
+   "3459": 0.3298
+  },
+  "other_groups_floor_delta_twh": 0.0
+ },
+ "2022": {
+  "ST_GAS": {
+   "floor_twh_off": 10.0986,
+   "floor_twh_on": 9.9648
+  },
+  "CC_REGULAR": {
+   "floor_twh_off": 0.0,
+   "floor_twh_on": 0.0
+  },
+  "ST_GAS_plant_delta_twh": {
+   "990": -0.2551,
+   "6035": -0.0344,
+   "1402": -0.0026,
+   "1122": -0.001,
+   "3459": 0.0041,
+   "3457": 0.0644,
+   "1403": 0.0908
+  },
+  "other_groups_floor_delta_twh": 0.0
+ },
+ "2023": {
+  "ST_GAS": {
+   "floor_twh_off": 9.1718,
+   "floor_twh_on": 9.2628
+  },
+  "CC_REGULAR": {
+   "floor_twh_off": 0.0,
+   "floor_twh_on": 0.0
+  },
+  "ST_GAS_plant_delta_twh": {
+   "3457": -0.0467,
+   "1402": -0.0175,
+   "6035": -0.0127,
+   "990": -0.0121,
+   "1122": 0.003,
+   "3459": 0.0789,
+   "1403": 0.0982
+  },
+  "other_groups_floor_delta_twh": 0.0
+ }
+}
