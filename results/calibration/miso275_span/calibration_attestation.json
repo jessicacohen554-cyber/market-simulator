@@ -764,6 +764,12 @@
    "2025": "fddff1ac4ace665a3767b0576536151a542c28ac"
   },
   "control": "keeper bundle (G-DRIFT 09b152c5..pin all INERT, rule 29(b) form 4)",
-  "dof_added": 0
+  "dof_added": 0,
+  "promotion": {
+   "ruling": "If it's an improvement structural or calibration then promote yes.",
+   "date": "2026-09-26",
+   "headline": "train tier NOT-YET 8/6/1/1 -> CALIBRATED 8/7/1/0",
+   "prior_keeper": "2026-09-25-miso-273-screened-coal"
+  }
  }
 }

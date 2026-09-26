@@ -1,4 +1,4 @@
-# RESULT — miso-275: CC exempt from the ×1.10 non-steam lift. Every C1 CC_REGULAR failure clears and the train tier returns to CALIBRATED 8/7/1/0. RECOMMENDED for promotion; owner decision pending.
+# RESULT — miso-275: CC exempt from the ×1.10 non-steam lift. Every C1 CC_REGULAR failure clears and the train tier returns to CALIBRATED 8/7/1/0. PROMOTED 2026-09-26.
 
 ```
 LANE     : miso-275 (FINDING-miso274 §6 candidate 3; owner-authorized price-tuning channel)
@@ -123,3 +123,21 @@ Not done pending the owner's ruling (rule 31):
 - the rule-35 prune of `2026-09-25-miso-273-screened-coal`.
 
 The matrix cell `offer_curve_by_group` stays **K**, with this evidence prepended.
+
+## 6. Promotion executed (rule 35) — 2026-09-26
+
+The owner ruled, verbatim: *"If it's an improvement structural or calibration then promote yes."* It is a calibration
+improvement: the train tier goes from NOT-YET 8/6/1/1 to CALIBRATED 8/7/1/0.
+
+1. **Year set checked before any deletion.** Outgoing {2019–2025}, incoming {2019–2025}: covered (rule 35(c)).
+2. **Promoted.** `keepers/MISO.json` now names `2026-09-26-miso-275-cc-exempt`.
+   - Both `config_partition` tiers were re-keyed to `miso275_span`; the partition is byte-identical.
+   - `iso_determination` → **CALIBRATED**, and `status/MISO.js` rebuilt reads MISO: CALIBRATED.
+   - The attestation carries a `miso275.promotion` stamp.
+   - Matrix: keeper and gates stamps updated, the §5.4 header re-stamped, and `check_mechanism_matrix` is clean.
+3. **Verified.** `audit_keepers --iso MISO` E1 resolves the incoming keeper.
+4. **Pruned.** `prune_iso_runs.py --iso MISO --force-uncite` removed `2026-09-25-miso-273-screened-coal`: its sidecar,
+   its payload and `results/calibration/miso273_span`. Governance citations are retained as history.
+   `audit_keepers --iso MISO` now reads **PASS 0/0**.
+
+`calibration-complete.json` carries no MISO entry, so it had nothing to re-key.
