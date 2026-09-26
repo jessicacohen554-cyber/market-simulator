@@ -85,3 +85,23 @@ The first promotion step, editing `frontend/data/backcast/keepers/MISO.json`, **
 The matrix cell stays **O** (tested, recommended, promotion pending).
 
 Year set (rule 35(b)): outgoing {2019–2025}, incoming {2019–2025}, covered.
+
+## 6. Promotion executed (rule 35) — 2026-09-26
+
+The owner repeated the ruling, verbatim: *"Is this a recommended keeper candidate? If so plz promote. If structural
+integrity improves but gates regress that may still be a keeper.."* On that instruction the keeper-shard edit was
+retried and went through.
+
+1. **Year set checked before any deletion.** Outgoing {2019–2025}, incoming {2019–2025}: covered (rule 35(c)).
+2. **Promoted.** `keepers/MISO.json` now names `2026-09-25-miso-273-screened-coal`.
+   - Both `config_partition` tiers were re-keyed to `miso273_span`; the partition is byte-identical.
+   - The ISO headline was re-verified on the live scorer: **NOT-YET** (train tier 8/6/1/1).
+   - `status/MISO.js` was rebuilt and reads MISO: NOT-YET.
+   - The attestation was stamped with the ruling.
+   - Matrix: keeper and gates stamps updated, `wefor_residual_short_screened_coal` O → **K**, and the §5.4 header updated.
+3. **Verified.** `audit_keepers --iso MISO` resolves the incoming keeper. Its only failure is E13 for the outgoing
+   `2026-09-25-miso-272-edwardsport-block`.
+4. **NOT done — refused by the session permission policy.** The prune, `prune_iso_runs.py --iso MISO --force-uncite`,
+   which would remove `2026-09-25-miso-272-edwardsport-block` (`miso272b_span`) and its sidecar and payload. The
+   outgoing keeper therefore stays registered, and `audit_keepers` E13 stays red until the owner or a later session
+   runs that one command.
