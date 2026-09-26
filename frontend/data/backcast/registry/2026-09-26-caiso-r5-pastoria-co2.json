@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-26-caiso-r5-pastoria-co2",
+  "label": "caiso r5 pastoria co2",
+  "date": "2026-09-26",
+  "shorthand": "caiso-r5-pastoria-co2",
+  "definition": "R-CAISO-5 XE 2022: keeper recipe + X + EIA-923-identity CC CO2 basis (E) (PRECOMMIT-r-caiso-5-2026-09-26 \u00a74)",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-26-caiso-r5-pastoria-co2.js",
+  "bundle": "results/calibration/rcaiso5_XE_span"
+}

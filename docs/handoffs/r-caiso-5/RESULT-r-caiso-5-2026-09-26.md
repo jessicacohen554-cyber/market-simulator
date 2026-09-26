@@ -53,3 +53,105 @@ ledger stays 9/6, offer curves are unchanged, and there is no `authorized_price_
 The removed phantom capacity sits at over-dispatched plants (Moss Landing, Otay Mesa, Sunrise) and is roughly flat
 across the day. Its replacement is imports and CT peakers. The C4 error is diurnal and import-driven (PRECOMMIT §1),
 so X corrects a real input and moves C4 only 0.001–0.002.
+
+## 3. XE — `2026-09-26-caiso-r5-pastoria-co2` (bundle `rcaiso5_XE_span`), CALIBRATED
+
+This is X plus `cc_eia923_identity_emission_basis` (E, the blocked R-CAISO-4 lever). X's C4 gain pays for E's C4
+cost, so **E re-arms without the NOT-YET** that blocked it in R-CAISO-4.
+
+| | keeper | X | **XE** |
+|---|---|---|---|
+| C1 CC_REGULAR 2022 / 23 / 24 / 25 (TWh vs actual) | +2.45 / −0.38 / −0.50 / −1.03 | +2.27 / −0.50 / −0.63 / −1.40 | **+2.27 / −0.33 / −0.20 / −1.02** |
+| C3a 2022 / 23 / 24 / 25 | +8.7 / +7.1 / +7.0 / +8.6 % | +8.8 / +7.3 / +7.1 / +9.1 % | **+8.8 / +7.1 / +6.6 / +8.7 %** |
+| C3b 2022 / 23 / 24 / 25 | 0.108 / 0.114 / 0.128 / 0.112 | 0.110 / 0.115 / 0.129 / 0.116 | **0.110 / 0.114 / 0.125 / 0.112** |
+| C3c 2023 (actual 47 h) / 2024 (actual 35 h) | 55 / 0 L | 59 / 0 L | 59 / 0 L |
+| **C4 gas NRMSE 2023 / 24 / 25, unrounded** | 0.2508 / 0.2596 / **0.2987** | 0.2505 / 0.2583 / **0.2966** | 0.2499 / 0.2597 / **0.2987** |
+| C8 CC_REGULAR forced, 2025 | 8.7 % | 8.6 % | 8.5 % |
+| Determination | CALIBRATED | CALIBRATED | **CALIBRATED** |
+
+L = the ledgered caveat.
+
+**Pastoria 55656, TWh (EIA-923 actual):**
+
+| | 2023 | 2024 | 2025 |
+|---|--:|--:|--:|
+| keeper | 3.58 | 2.37 | 2.14 |
+| **XE** | **4.51** | **3.68** | **3.17** |
+| EIA-923 actual | 4.34 | 4.01 | 3.62 |
+
+High Desert moves 3.85 / 3.71 / 3.33 in XE (actual 4.08 / 4.60 / 3.33).
+
+**Attribution.** E is XE − X, in TWh:
+
+| | 2023 | 2024 | 2025 |
+|---|--:|--:|--:|
+| CC_REGULAR | +0.17 | +0.43 | +0.38 |
+| imports | −0.14 | −0.36 | −0.35 |
+
+- **E is inert in 2022.** XE-2022 reproduces X-2022 to 0.000 TWh in every class. That leg was solved only so
+  the span carries one config.
+- **Stop gates for XE.** G-IDENT PASS; G-LIVE PASS (Moss Landing 0 MW in both windows).
+- **G-FOOT, reported as written: FAILS for XE.** CC_REGULAR 2025 is +0.01 TWh vs the keeper, because E's
+  Pastoria gain (+0.38) offsets X's removal (−0.37). The gate was written as a liveness check on X. X passes
+  it (−0.37), and X's footprint is live inside XE (Moss Landing 0 MW). I do not reinterpret the gate; the
+  owner rules.
+- **C4 2025 has no added margin.** It is 0.2987, identical to the keeper, still 0.0013 under the 0.30 bound.
+
+## 4. Promotion — the owner's call (rule 31)
+
+| option | run | determination | C4 2025 | what it gains |
+|---|---|---|---|---|
+| (a) keep the current keeper | — | CALIBRATED | 0.2987 | — |
+| (b) promote X | `2026-09-26-caiso-r5-cc-outage` | CALIBRATED | 0.2966 | removes phantom outage capacity; +0.002 C4 margin; C3a 2025 +0.5 pt worse |
+| (c) promote XE | `2026-09-26-caiso-r5-pastoria-co2` | CALIBRATED | 0.2987 | X plus Pastoria CO2 on the fuel basis; C1 / C3a / C3b 2024–25 better than both; G-FOOT literal miss |
+
+**Recommendation: (c) XE on structure.** It carries two measured-input repairs and scores at least as well as the
+keeper on every load-bearing criterion.
+
+- **Either promotion needs 2019–2021 re-solved on the new recipe** before the outgoing keeper is pruned
+  (rule 35(c)). That is three shards, about 20 min each in parallel.
+- Until then the `2026-09-26-caiso-r4-keeper-2019` fold stays on the current keeper.
+- A promotion also re-keys `calibration-complete.json`, `keepers/CAISO.json` and the matrix stamp.
+
+## 5. Object 2 — 2019–21 intertie prices: the STOP stands
+
+PRECOMMIT §6 has the full probe record.
+
+- **No admissible measured hourly source for 2019–20.** OASIS is dead on every route.
+- **EIA/ICE daily on-peak indices** cover 55.9 % of hours, and their level drifts against the node series
+  (ratio 1.02–1.52 annually). An hourly construction would need a fitted basis plus a shape, which rules 13/14
+  refuse.
+- **Firm-base block:** `IMPORT_TRANCHES_BY_YEAR["CAISO"]` has no 2019–21 rows, so those years silently use the
+  2025 static ladder. The repair is zero-parameter (DMM `Imports` RA row × MIC north share); it is routed as a
+  successor intake.
+- **`caiso_per_year_import_caps`** is a no-op for 2019–22 (no area `peak_load` rows).
+
+## 6. Routed, report only
+
+- **`gas_foldin_deflation` → add CAISO to `EIA930_GAS_FOLD_REFUTED`: NOT flipped.** A scorer-only A/B leaves both
+  registered runs byte-identical. The change acts in the bench build's reconcile, as below.
+
+  | year(s) | effect of the flip |
+  |---|---|
+  | 2022–2025 | none; the reconcile fires in neither case, so every keeper score is unchanged |
+  | 2019 | target moves from 930 − deflation to the CEMS anchor: +7.9 TWh fossil, ≈ +5.5 TWh CC_REGULAR target |
+  | 2020 | +5.4 TWh fossil, ≈ +3.9 TWh CC_REGULAR target |
+  | 2021 | +3.2 TWh fossil, ≈ +2.4 TWh CC_REGULAR target |
+
+  The 2019–21 C1 CC_REGULAR misses would shrink from +26.1 / +28.1 / +18.3 to about +20.5 / +24.2 / +15.9 TWh,
+  still FAIL. Exact values need a bench re-render. Proposed, not taken.
+- **Stale comments.**
+  - `envelopes.py` (~l.614–622) says the gap-filled hours are absent from the price benchmark.
+  - `calibration_verdict.py` (~l.2131) says CAISO 2023 Jan–Feb aged out.
+  - Both are false: the 2023 RT benchmark has Jan $128.2 and Feb $64.3.
+  - Comment-only fix; not edited here per the routing.
+
+## Retrievability (rules 33/34)
+
+- **On this branch, and on `main` when the PR merges:** `rcaiso5_X_span` and `rcaiso5_XE_span` (slim set, hourly
+  sidecars, attestation, diagnostics), their sidecars and their payloads.
+- **Per-year legs:** gitignored, local disk only; each costs about 20 min to re-solve.
+- **Shard commits (provenance only):**
+  - X-2022 `3946b8bc`, X-2023 `9048e6d4`, X-2024 `902f7892`, X-2025 `7b095aa1`;
+  - XE-2022 `d7495185`, XE-2023 `818ac4a9`, XE-2024 `a83fafe5`, XE-2025 `135c510f`.
+- All 8 shards are archived. Their branches are the owner's to delete; this session cannot delete refs.
