@@ -1,0 +1,555 @@
+{
+ "schema": "calibration-attestation/v1",
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+  "n_entries": 9,
+  "n_residual": 6,
+  "entries": [
+   {
+    "name": "offer_curve_fossil_level_scalar",
+    "where": "run_config.scenario_config.offer_curve_by_group (12 markup bands; applied via offer_curve_overrides)",
+    "identification": "price residual, authorized channel (rules 1/13 amendment 2026-09-05)",
+    "value": 0.9547,
+    "note": "Rule 21 [R-DOF] cross-reference, owner ruling R-AY 2026-09-06: a band multiplier tuned on price through the authorized channel IS a ledgered free parameter whose identification source is the RULING, not a measured input; it is reported at full magnitude; and its presence does NOT by itself make the residual it closes an open root-cause issue. Reported at full magnitude: 4.530% cut, sized as the UNCHANGED in-sample geometric-mean bias target 0.034678 / the MEASURED FULL-SPAN pass-through 0.76550. This RE-SIZES the incumbent keeper's 0.93391 (6.609%), which was sized on the neiso-104 2025-only screen coefficient 0.5247; the target did not move, only the coefficient, from a one-year measurement of it to a three-year measurement of it. It remains ONE free parameter, not two -- a re-derivation of the same knob, not an additional one."
+   },
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "residual",
+    "lineage_solves": ">=43 solves (audit \u00a75.1)",
+    "value": {
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CC_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "ST_GAS_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "COAL_LIGNITE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_PRB": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_BIT": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_WC": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ]
+    },
+    "n_scalars": 88,
+    "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "offer_curve_committed_below_floor[NEISO]",
+    "where": "run_config.scenario_config.offer_curve_by_group[*].committed",
+    "identification": "residual",
+    "lineage_solves": ">=43 solves (audit \u00a75.1)",
+    "value": {
+     "ST_GAS": 0.79
+    },
+    "n_scalars": 1,
+    "source": "committed-tranche multiplier(s) below the audit \u00a72 0.85 physical-floor flag with no written rationale in the config \u2014 pulled out of the R6 bulk offer-curve population per plan \u00a72.1 (docs/handoffs/scalar-remediation-plan-2026-07.md)",
+    "root_cause": "open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1302 (per-ISO evening-merit-style diagnosis before any value is touched \u2014 rules #1/#18/#19/#26 apply, no blanket fix)"
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "residual",
+    "lineage_solves": ">=43 solves (audit \u00a75.1)",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 2,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "COAL_SIGMOID_DEFAULTS[NEISO]",
+    "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid)",
+    "identification": "residual",
+    "lineage_solves": ">=43 solves (audit \u00a75.1)",
+    "n_scalars": 4,
+    "source": "gas-keyed coal passthrough sigmoids \u2014 the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
+    "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 \u2014 docs/out-of-sample-results-2026-07.md \u00a72C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "wefor_multiplier",
+    "where": "run_config.scenario_config.wefor_multiplier",
+    "identification": "residual",
+    "lineage_solves": ">=43 solves (audit \u00a75.1)",
+    "value": 0.7,
+    "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+    "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "reliability_floor coefficients",
+    "where": "data/raw/reference/reliability_floor_coeffs_NEISO.csv",
+    "identification": "measured-physical",
+    "lineage_solves": ">=43 solves (audit \u00a75.1)",
+    "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+    "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+   },
+   {
+    "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[NEISO]",
+    "where": "interchange_config.py NEISO seam supply-curve ladders",
+    "identification": "measured-physical",
+    "lineage_solves": ">=43 solves (audit \u00a75.1)",
+    "source": "per-seam Q-Q duration coupling of measured ISO-NE DA hub LMP with measured EIA-930 per-seam flows, frozen scripts/data/derive_neiso_import_tranches.py (audit C-6 CLOSED 2026-07-06)",
+    "note": "re-derive trigger is a source-data change only (rule 23), never a residual; shape gap: flat annual rungs cannot carry within-year seam variation (calibration-log 2026-07-06 neiso-51 P9 re-test)"
+   },
+   {
+    "name": "st_gas_bands_corrected_class",
+    "where": "run_config.calibration_flags.offer_curve_overrides.ST_GAS",
+    "identification": "measured (CAMPD marginal heat rate of the corrected ST_GAS class) x existing reach and scalar",
+    "value": {
+     "committed": 0.849683,
+     "econ_low": 1.021529,
+     "econ_high": 1.14564,
+     "peak": 1.14564
+    },
+    "note": "A re-identification of the existing ST_GAS band magnitudes, not a new knob: the previous values were the same construction on Montville alone (n=2 units). Not residual-identified; set ex ante in the PRECOMMIT, never swept."
+   }
+  ]
+ },
+ "governance": {
+  "levers_trace_to_measured_input": false,
+  "no_fit_to_price_residuals": false,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "neiso-118 (2026-09-26) -- keeper 2026-09-26-neiso-117-coal-yard's recipe replayed UNCHANGED via scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), on the re-derived NEISO measured-CT heat-rate artifact (data/raw/_processed-legacy/campd_ct_heat_rates_NEISO.csv, sha256 f57df14e6e50; +Canal 3 rows only, owner ruling 2026-09-26 'CT only'). Every leg verified by docs/handoffs/neiso118/shard_check.py at composition. Zero LP in the parent. Pre-registered in docs/handoffs/neiso118/PRECOMMIT-neiso118-2026-09-26.md (pinned faa5bd59) before any shard launched; record docs/handoffs/neiso118/RESULT-neiso118-2026-09-26.md.",
+  "authorized_price_tuning": {
+   "channel": "offer_curve_by_group",
+   "ruling": "Owner ruling 2026-09-05 (rules 1 [R-STRUCT] / 13 [R-MEASURED] carve-out), applied on owner direction 2026-09-06: re-derive the fossil offer-level scalar on the FULL-SPAN pass-through coefficient. Succeeds the 2026-09-06 direction neiso-105 acted on ('shift the fossil offer curves down, preserving the ratio'), same channel, same 12 bands.",
+   "value": {
+    "scalar": 0.9547,
+    "cut_pct": 4.53,
+    "bands": 12,
+    "applied_to": {
+     "CC_REGULAR": [
+      "committed",
+      "econ_low",
+      "econ_high"
+     ],
+     "CC_CHP": [
+      "committed",
+      "econ_low",
+      "econ_high"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_low",
+      "econ_high"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_low",
+      "econ_high"
+     ]
+    },
+    "applied_to_base": "the PRE-CUT neiso-99 band values, not compounded onto the incumbent keeper's already-cut values -- one scalar on one base, so the config is a single multiplication and not an accumulation",
+    "excluded": "all four peak bands (three equal their phys_peak; CT_PEAKER 4.0 is the ISO-NE offer cap), every phys_*, econ_low_share, pct_peaking, and the declared-neutral CT_CHP group",
+    "file": "results/calibration/_neiso106_arm_offer_curve.json"
+   },
+   "years_held": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "set_ex_ante": true,
+   "not_swept": true,
+   "identification": "TARGET fixed ex ante and NEVER MOVED across all three sizings: the in-sample 2023-2025 GEOMETRIC-MEAN price bias, +3.4678% (owner-selected estimator, PREREG-neiso104 section 3.1); reproduced from the committed sidecars in this session at 0.034674 and still sized on the declared 0.034678. COEFFICIENT: the pass-through MEASURED ON THE FULL SCORED SPAN by the incumbent keeper's own solve -- the geometric mean of the three in-sample price moves (-5.0592%) divided by the cut that produced them (6.609%) = 0.76550. cut = 0.034678 / 0.76550 = 4.530%. No gate was consulted to choose either number.",
+   "prereg": "results/calibration/PREREG-neiso106-offer-level-rederived-2026-09-06.md (committed 773411e5, BEFORE the solve)",
+   "disclosure": "THREE THINGS A LATER READER WOULD OTHERWISE HAVE TO DISCOVER, recorded here instead. (1) THIS IS THE THIRD SIZING OF THIS SCALAR (4.53% -> 6.609% -> 4.530%), and PREREG-neiso105 section 3 pre-committed that it would not move again in either direction, calling a third iteration 'a sweep by accumulation'. That lane-level stop rule is OVERRIDDEN FROM ABOVE by the owner direction above, not reasoned away from within. The substance differs from the accumulation that clause feared: the target never moved, no gate was consulted, and what changed is a strictly better measurement of the same physical coefficient (three years with the actual mechanism, versus one year). PREREG-neiso106 section 1 states this at full strength. (2) THE ESTIMATOR OF THE COEFFICIENT WAS ONE CHOICE among three computed before choosing (geometric 0.76550, arithmetic-of-per-year 0.76441, log-elasticity 0.75929); the geometric one is declared because the TARGET is a geometric mean and the two halves of a division must share a geometry. The choice is immaterial -- the three span scalars 0.95433-0.95470, about 0.03% of price against a +/-10% band. (3) 0.95470 IS NUMERICALLY THE SCALAR NEISO-104 DECLARED (0.9547) AND REACHED BY A DIFFERENT, LATER-REFUTED ARGUMENT (an across-year delivered-gas elasticity). It is not that derivation reused: nothing here depends on it. The agreement is itself this lane's finding -- neiso-104's coefficient was sound and its rule-29-prescribed 2025 screen year was the problem, because pass-through tracks delivered gas INVERSELY (1.31 at $1.98/MMBtu down to 0.53 at $6.24) and rule 29 selects the largest-footprint, i.e. highest-gas, i.e. lowest-pass-through year. Filed as an owner ask in PREREG-neiso106 section 7; not acted on by this lane.",
+   "years_held_note": "EXTENDED from [2023,2024,2025] to the full scored span by neiso-109. The SCALAR IS UNCHANGED at 0.95470 and was neither re-sized nor re-swept; what changed is that the run now scores six years instead of three, so rule 1 [R-STRUCT] condition (b) -- ONE config across EVERY scored year -- is now asserted over 2020-2025. It holds by construction: the value is a single constant in the recipe and does not vary by year. Its identification remains the 2023-2025 in-sample geometric-mean price bias fixed ex ante in PREREG-neiso104 section 3.1; extending the span does not re-identify it, and no year outside 2023-2025 was used to select it.",
+   "years_held_basis": "neiso-118 (2026-09-26): this run's own solved years [2019, 2020, 2021, 2022, 2023, 2024, 2025]. offer_curve_by_group (bare COAL entry excluded, folded by COAL-SUB) SHA-256 fd9aca5a6d030432 equals keeper 2026-09-26-neiso-117-coal-yard's; no band moved and nothing was swept (rule 1 (c)).",
+   "st_gas_rederivation": {
+    "bands_effective": {
+     "committed": 0.849683,
+     "econ_low": 1.021529,
+     "econ_high": 1.14564,
+     "peak": 1.14564
+    },
+    "bands_registered": {
+     "committed": 0.89,
+     "econ_low": 1.07,
+     "econ_high": 1.2,
+     "peak": 1.2
+    },
+    "construction": "derive_campd_marginal_hr.derive_unit_bands UNCHANGED, corrected ST_GAS class (546, 562, 8002, 6156, 1642; 7 units) pooled 2019-2025, each unit normalised by its own average HR: marg p50 0.727 / 0.872 / 0.983 x NEISO CC reach 1.223 -> 0.89 / 1.07 / 1.20 (2 dp) x fossil scalar 0.9547; peak = max(registered 1.0, econ_high) so the ladder stays monotone. Rule 23 data change: the class membership the F1 vintage correction restored.",
+    "set_ex_ante": true,
+    "not_swept": true,
+    "one_config_all_years": [
+     2019,
+     2020,
+     2021,
+     2022,
+     2023,
+     2024,
+     2025
+    ]
+   }
+  },
+  "attested_by_inherited": "neiso-117 (2026-09-26) -- keeper 2026-09-25-neiso114-arm-b-stgas's recipe replayed via scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), with one registered zero-DOF delta: coal_fuel_inventory_plant_grain (per-coal-yard annual budget rows; the pooled monthly limb coal_fuel_inventory stays off, owner ruling 2026-09-26). Every leg verified by docs/handoffs/neiso117/shard_check.py at composition. Zero LP in the parent. Pre-registered in docs/handoffs/neiso117/PRECOMMIT-neiso117-2026-09-26.md (pinned 17402f35) before any shard launched; record docs/handoffs/neiso117/RESULT-neiso117-2026-09-26.md.",
+  "mechanism_armed": {
+   "field": "hydro_ror_split",
+   "value": true,
+   "level": "NO LEVEL PARAMETER. The classifier (ORNL EHA FY2024 Mode + the HILARRI / Corps-dam completion) is categorical and was reviewed on this BA's own labelled subset (rule 25); a run-of-river plant dispatches flat at its own monthly budget / hours",
+   "free_parameters_added": 0,
+   "basis": "rule 1 [R-STRUCT] / rule 14 [R-ACCURATE] structural repair: the budget LP gave every hydro plant full within-month shaping freedom with no lower bound, so the fleet parked at exactly 0 MW for up to 37 % of the year and banked water onto peaks; the measured fleet never goes near zero",
+   "one_mechanism": "rule 19 [R-ONE-MECH]: hydro_min_flow_floor and hydro_ror_split are one family and were tested as SEPARATE arms, never stacked; this run arms one",
+   "window": "all 24 hours by physics (D-4 MECH_HYDRO_MIN_FLOW / MECH_HYDRO_ROR_FLAT rows)",
+   "control": "the committed keeper neiso112_mer_span (rule 29(b) form 4); G-DRIFT docs/PRECOMMIT-hydro-5-2026-09-22.md section 6 classified every solve-path hunk INERT",
+   "prereg": "docs/PRECOMMIT-hydro-5-2026-09-22.md, pushed at fda9ece3d854d747a263f3078285df96fb4f0fe1 BEFORE any shard was launched"
+  },
+  "inputs_corrected": {
+   "flips": [
+    "eia860_vintage_tracks_solve_year",
+    "measured_coal_heat_rates",
+    "measured_st_heat_rates",
+    "measured_cc_heat_rates",
+    "unit_outage_short_windows_gas",
+    "unit_partial_outage_windows",
+    "mid_vintage_exit_carry",
+    "partial_plant_exit_carry"
+   ],
+   "free_parameters_added": 0,
+   "basis": "rule 14 [R-ACCURATE]: year-matched EIA-860 fleet (vintage_<Y> 2019-2024, canonical 2025) with its eGRID-<Y> heat rates; measured CAMPD coal / ST / CC heat rates (CT / CHP were already armed); the CAMPD gas sub-5-day outage family (the coal one stays rejected, neiso-69); the unit partial-derate family (0 NEISO windows: inert); and the two carries that keep a year-END vintage table from dropping a plant or unit that retired DURING the year. Std >=5-day extract re-derived for 2019-2021 (+18/+20/+4 windows, F2 finding 5).",
+   "control": "the committed keeper hydro5_neiso_ror_span (rule 29(b) form 4); G-DRIFT docs/handoffs/r-neiso/PRECOMMIT-r-neiso-2026-09-24.md section 6",
+   "prereg": "docs/handoffs/r-neiso/PRECOMMIT-r-neiso-2026-09-24.md, pushed at c265c1c30ce0e51bffa5e0e5f5db76eafe54ae3e BEFORE any shard was launched"
+  },
+  "structural_delta": {
+   "flips": [],
+   "data_rederive": "data/raw/_processed-legacy/campd_ct_heat_rates_NEISO.csv",
+   "free_parameters_added": 0,
+   "basis": "rule 14 [R-ACCURATE] / rule 23 [R-FROZEN-DERIVE]: the CT derive's union_fleet kept each unit's latest-vintage record, so Canal 3 (1599; CT_PEAKER 2019-2022, oil 2023-2025) never entered the measured population and 2019 priced it at eGRID-2019's boundary-broken 4.14 MMBtu/MWh (CAMPD partial-year heat input over full-year EIA-923 generation). The class-preserving union re-derive adds only Canal 3 (pooled CAMPD net 10.76); every other artifact row is byte-identical. Re-derived for a membership CODE defect, never because a residual moved.",
+   "control": "the committed keeper neiso117_span (rule 29(b) form 4); G-DRIFT docs/handoffs/neiso118/PRECOMMIT-neiso118-2026-09-26.md s4",
+   "prereg": "docs/handoffs/neiso118/PRECOMMIT-neiso118-2026-09-26.md, pushed at faa5bd591040e58e31a33e3c3369c1de7d4f31ea BEFORE any shard was launched"
+  }
+ },
+ "disclosures": {
+  "note": "neiso-93 disclosures, reported rather than patched. (a) THE PARASITIC-LOAD CHANGE MOVES THE TUNED YEARS, BY CONSTRUCTION AND ON PURPOSE. The shared parasitic_load_factors file held ZERO NEISO plants in ANY year, 2023-2025 included -- the neiso-92 assessment's '2022-2025 present, 2021 missing' reading is a misattribution of the file's TOTAL row counts, corrected in this session's FINDING SS5. Fixing only 2019-2021 would have left NEISO inconsistent across the span, so the derive covers 2019-2025 and the in-sample years therefore change. That is rule 22's touchpoint loop step 3 (re-train on 2023-2025 around the diagnosed issue), not a side effect, and it is why this re-solve exists. (b) 2019 IS NOT MADE READY BY THIS SESSION, AND A NEW 2019-ONLY BLOCKER WAS FOUND. Pilgrim (EIA 1590) ran Jan-May 2019 for 2.177 TWh before retiring 31 May 2019 and is absent from the EIA-860 operable snapshot the model fleet is built from, so a 2019 solve is short ~2.18 TWh of nuclear REGARDLESS of the extended overlay. Independently visible in EIA-930: Jan-May 2019 telemetry implies a 3,355 MW-fleet CF of 1.18-1.20, impossible, collapsing to a 0.003-0.005 gap from June exactly when Pilgrim stops. 2020-2022 are unaffected. This is a fleet-vintage limitation, NOT fixed here. (c) ONE COMMITTED IN-SAMPLE VALUE WAS CORRECTED BY 1 CENT. The 2025 NYISO_CT_base import rung read 44.48; its own deriver emits 44.47 and always has -- confirmed by re-running the deriver against the PRE-SESSION committed inputs. A hand-transcription slip in the 2026-07-06 paste-in, not an effect of the widening. (d) TWO PRODUCERS COULD NOT BE REPRODUCE-CHECKED AT ALL, and the reason is recorded rather than worked around silently: build_eia860_chp_by_year.py reads release zips this clone does not carry, and the NYISO proxy producer reads damlbmp archives that are gitignored and absent. Both were given a second, equivalent source and the equivalence was then demonstrated on the committed years. (e) THE EIA-930 INTERCHANGE BACK-FILL USED A KEYLESS BULK ROUTE because no EIA_API_KEY exists in this environment. It is EIA's own Grid Monitor six-month CSV archive -- the same family fetch_eia930_bulk_long.py already uses -- and it was shown equivalent to the committed API-sourced extract over 2023-2025 before any new year was taken from it (mean identical to full float32 precision; the only non-identical rows are the DST fall-back hour's two ambiguous rows in opposite order). || neiso-97 DST-REPAIR DISCLOSURE (2026-08-17, audit row O8). This bundle is the incumbent recipe re-solved at the REPAIRED NEISO SMD actual-LMP instrument: the 2018-2023 workbook vintage is DST-naive (flat 24 rows every day) and the committed series was displaced one hour around every DST transition of those years \u2014 562 hub cells, max $40.17/MWh, six fabricated mean cells and one lost hour per year \u2014 measured against the market's own daily hourly-LMP reports (0 mismatches, all 9 sheets x both markets x every truth day) and repaired value-preservingly per the PJM input-clock finding's \u00a72a protocol (non-affected cells identical every row; displaced cells == pristine at the corrected offset; the fall-back repeated-hour pair restored from the published daily reports; exactly one NaN per market-year filled with the measured value, zero introduced; 2024/2025/2026 blocks byte-identical). docs/FINDING-debug-b-neiso-smd-clock-2026-08-17.md is the full record. The corrected-clock gate is recomputed at attestation time (this script), not quoted. Blast radius on scoring: bench/NEISO 2023 recomputes; the C3c tail and every determination-bearing criterion status are unchanged. The 2022 validation touchpoint stands as scored on the pre-repair instrument; the NYISO keeper's nyiso_import_hub_prices consumption of this series is filed for the NYISO lane (rule 25), not acted on here. || neiso-99 JOINT DISCLOSURE (2026-08-17, audit row O5 + the Stony Brook routing defect). (1) THE SCORING BASIS MOVES OFF THE ARCHIVED P2 PASS. The incumbent was the only keeper of six that ran, and was RENDERED FROM, P2; this run persists ['P1'] alone. The effect on the means is small (mean lambda -0.0575 / -0.0110 / -0.0378 $/MWh for 2023/2024/2025) but the 2024 ANNUAL MAXIMUM of the max-across-zones price moves $256.93 -> $218.24, i.e. P2 was standing 17.7 % above P1 on that statistic. That is a PRICE-FORMATION statistic and it is reported at full magnitude, not tuned around. (2) THE OUTAGE ROUTING REPAIR. _resolve_unit_group's fac_group short-circuit was a pjm-75 conservatism, not a physical claim, and it handed a liquid-fuel combustion turbine's outage window to a sibling gas bin: plant 6081 Stony Brook's two Diesel Oil CTs (83 MW each, 74 windows each) derated a 305.1 MW combined cycle they are not in for 48.7 % of the 2024 and 56.0 % of the 2025 capacity-year \u2014 years in which the CC units 001/002/003 have no windows of their own at all. Three further NEISO plants are affected (1595 Kendall S6, 568 Bridgeport BHB4, 1588 Mystic MJ-1). The discriminator is the unit's OWN primaryFuelInfo and NOT unitType, measured: across all six ISOs 35 CAMPD units filed 'Combustion turbine' sit in a non-CT bin and 27 are GAS-fired members of a genuine block that must keep inheriting it. Extract diff, exact: 3,189 -> 2,932 rows, 0 added, 257 dropped = 236 the fix + 21 reclassified standard->layup in 2019/2020/2026 only, the latter reproduced by a PRE-FIX control re-derivation at HEAD and therefore ambient drift, not this change; within 2023-2025 the ONLY change is the 236 rows and all 2,932 surviving rows are byte-identical on every column. (3) THE ROUTING ARM'S DISPATCH EFFECT IS DOMINATED BY KENDALL, NOT STONY BROOK, WHICH REFUTES THE PREREG'S OWN P3 EXPECTATION AND IS REPORTED AS SUCH: restoring 6081's availability barely moves its dispatch because that block's heat rate 10.6062 sits above 97.5 % of NEISO's CC_REGULAR capacity (cap-weighted p50 7.340) \u2014 it is deep out of merit whether or not it is available, the same fact neiso-83 measured at the same plant. (4) CROSS-ISO, FILED NOT ACTED ON (rule 25 [R-ISO-SCOPE]): the same guard would drop mis-routed rows at PJM 593 Edge Moor 10, MISO 2001 New Ulm 7 and 8056 Waterford 4, and NYISO 2516 Northport UGT001. Only NEISO's extract is re-derived here; those are their lanes' calls. (5) THE REPLAY SEAM IS CLOSED IN THE SAME CHANGE: run_replay_bundle and replay_keeper.main rebuilt their kwargs from meta.json AFTER the CLI's P2 gate ran, so commitment=true re-armed the archived pass invisibly on every replay \u2014 which is how it propagated across three keeper generations with no operator decision. enforce_legacy_p2_kwargs now gates the RECONSTRUCTED recipe at both entry points and HARD-FAILS rather than silently rewriting it.",
+  "neiso109": "neiso-109 disclosures, reported rather than patched. (a) TWO PRE-REGISTERED GATES FIRE, AND BOTH TRACE TO GATES WRITTEN WRONG RATHER THAN TO THE REPAIR. G-1(iii) LP confinement FAILS AS WRITTEN: 1,460 zone-hours moved outside the delivered-gas array's own months (the array moves in exactly 2,160 hours across months 1/2/7 of 2025 and nowhere else, re-derived to confirm). The channel is STORAGE through the cyclic SOC boundary the LP formulation specifies -- thermal -8,116.00 MWh against storage net +8,115.47 MWh in June and -2,184.00 against +2,184.76 in August, energy-conserving to 0.007%, 0.132% of total movement, one-signed, 292 of 5,832 out-of-window hours. It is NOT the NYISO annual-reach anchor channel: that was a near-uniform level shift across every untouched month, and here the anchor is provably unmoved at 4.0763 in both solved configs. The gate should have been written over the GAS-DRIVEN price change; narrowing it after seeing the result is what pre-registration exists to prevent, so it stands as a failure. G-4 no-structural-break FIRES on 2021: 1,380.617467 MWh of dump in one zone-hour -- and the CONTROL dumps the IDENTICAL amount in the IDENTICAL hour at the IDENTICAL price (-26.001 $/MWh) against a NEGATIVE zone demand (-8.6 MW), the model shedding a net-negative load artifact. Pre-existing and not caused by the repair; the gate said 'zero in BOTH legs' and the control is not zero. Slack is 0.000000 in all six years. (b) G-DRIFT IS SETTLED EMPIRICALLY AT ZERO. The keeper's git_sha 52a2f519 and basis_sha cfc6672 both fail to resolve and the diff from its registration commit runs to 57 files / +6,555 lines across the backcast path, so rule 29(b) form 4 could not be validated by audit. A paired control was solved on 2025 instead and reproduces the keeper's committed year BIT-IDENTICALLY: 0 of 43,800 zone-hours differ, load-weighted price 69.687839 == 69.687839, 0.0 ppm on every one of 14 classes. NEISO HEAD drift is exactly zero, materialized default fields included. (c) ONE PRE-REGISTERED CALL MISSED, AND THE ERROR IS THE SESSION'S. PRECOMMIT section 3.1 called 2022 oil 'no change' from the oil-parity HOUR COUNT (48 -> 48 unchanged); an unchanged count does not mean the same hours, January 2022 is a moved month, and oil moved -13.0%. The 2023 FALL-to-zero, 2024 FALL and 2025 RISE calls all landed."
+ },
+ "exceptions": [
+  {
+   "criterion": "price_tail",
+   "year": 2023,
+   "metric": "hours LMP > $300/MWh (C3c scarcity tail, actual RT hourly gate - rubric v2.7; DA = report-only diagnostic; NEISO $300 threshold)",
+   "magnitude": "model 0h [energy-only LMP] vs RT actual 15h (0.00\u00d7, >$300)",
+   "classification": "MODEL MISS (NEISO seasonal scarcity-price formation, winter cold-snap AND summer peak - seasonal attribution corrected per the 2026-07-10 Limb A log entry + the 2026-07-16 RT hour-set anatomy; winter fuel-security build adopted, DORMANT on this backcast; temp_dependent_derate also dormant on the tail); energy_reserve_coopt also dormant on the tail at static requirements",
+   "reason": "CARRIED FORWARD from the incumbent keeper unchanged in substance. neiso-99 promotes an INPUT CORRECTION with zero free parameters, so it creates no new caveat and spends no new ledger slot. RT hour-set anatomy (2026-07-16, the v2.7 RT-basis re-check): the 15 actual RT>$300 hours are 10 WINTER (the Feb-3/4 arctic-blast x9 + Feb-26 evening) and 5 SUMMER afternoons (Jul-5 17:00 at $1,162 with DA $129, Sep-5/6 x4 with DA $108-131); only 1 of 15 was DA-visible (Feb-4 06:00, DA $319), so 14 of 15 are RT-only formations. WINTER leg: the energy-only LP caps the cold-hour price at dual-fuel oil-parity (~$258/MWh); the adopted winter fuel-inventory / seasonal-reliability build (neiso_gas_coldsnap_derate + neiso_winter_fuel_inventory + neiso_winter_fuel_mustrun) is DORMANT on 2023-2025 (the derate removes too little capacity on too few hours to make the ample NEISO winter fleet reserve-short, so Component A's oil budget never binds; model 0h, unchanged vs the zero-forcing ablation twin), and temp_dependent_derate does not change this. SUMMER leg: the in-LP ISO-NE RCPF reserve co-optimization runs at the published static 1,800/1,200/600 MW requirements and its reserve dual is $0.00 in every hour of all three years - no hour goes reserve-short - so the RCPF never stacks into the LMP in the summer events either. Both legs are documented dormant-mechanism/formation gaps at the 2026-07-11 frontier designation (every named admissible mechanism tried on record; further work needs a NEW measured identification, its own charter) - NOT closable by these mechanisms here and NEVER by an offer adder tuned to the tail.",
+   "carried_from": "2026-07-31-neiso-72-hy-window (NEISO ledger, neiso-55 onward)",
+   "magnitude_basis": "re-measured from this run's own verdict (2026-08-06-neiso-87-control)"
+  },
+  {
+   "criterion": "price_tail",
+   "year": 2024,
+   "metric": "hours LMP > $300/MWh (C3c scarcity tail, actual RT hourly gate - rubric v2.7; DA = report-only diagnostic; NEISO $300 threshold)",
+   "magnitude": "model 0h [energy-only LMP] vs RT actual 8h (small-count |\u0394|\u226410h, >$300)",
+   "classification": "MODEL MISS (NEISO seasonal scarcity-price formation - the 2024 RT tail is SUMMER, not winter: seasonal attribution corrected per the 2026-07-10 Limb A log entry + the 2026-07-16 RT hour-set anatomy; winter fuel-security build adopted, DORMANT on this backcast; temp_dependent_derate also dormant on the tail); energy_reserve_coopt also dormant on the tail at static requirements",
+   "reason": "CARRIED FORWARD from the incumbent keeper unchanged in substance. neiso-99 promotes an INPUT CORRECTION with zero free parameters, so it creates no new caveat and spends no new ledger slot. RT hour-set anatomy (2026-07-16, the v2.7 RT-basis re-check): 7 of the 8 actual RT>$300 hours are SUMMER afternoon/evening events (Jun-17 x2, Jul-7 Sun x2, Jul-31 x3 peaking $2,113) + 1 Dec-2 04:00 morning; NONE was DA-visible (all 8 cleared DA < $185; 2024's separate 5-hour DA tail - Jun-19/Jul-14/Jul-15 - has ZERO overlap with the RT set), so the whole 2024 RT tail is RT-only formation, the DA-RT forecast-risk wedge a realized-weather LP is out of representation to price plus summer formation the dormant mechanisms do not produce. The winter oil-parity framing does not describe this year (1 of 8 hours). Model-side facts unchanged: the energy-only LP tops out at ~$257 (this run's SCORED-pass maximum is $256.93, at 2024-07-15 17:00 - a SUMMER hour, 85.6 % of the $300 threshold and $1.07 under the ~$258 dual-fuel oil-parity cap; the scored-pass WINTER maximum is $198.52). BASIS CORRECTION, neiso-84 2026-08-05, from this keeper's own hourly/system_2024.parquet, no re-solve: the '$218.24' carried here was read off the bundle's OTHER labelled pass. This bundle persists TWO passes, 'P1' and 'P2', and the registered/scored payload matches 'P2' on two independent quantities (HQ_import mean LMP identical to 4 dp in all three years; 2025 coal 0.21 TWh and gas 61.35 TWh match P2's 0.2108/61.3457, not P1's 0.2159/61.3427) - so $218.24 is the NON-scored pass's maximum. The earlier '~$204' was stale and neiso-82's correction of it to $218.24 was wrong-basis; both are superseded. THE CAVEAT'S SIZING AND CLASSIFICATION ARE UNAFFECTED: the model tail is 0 hours > $300 in all three years on BOTH passes and on both an any-zone and a load-weighted basis; the winter fuel-security build and temp_dependent_derate are dormant; the in-LP RCPF co-opt at the published static 1,800/1,200/600 MW requirements carries a $0.00 reserve dual in every hour. Frontier designation 2026-07-11 stands (further work needs a NEW measured identification); never an offer adder tuned to the tail.",
+   "carried_from": "2026-07-31-neiso-72-hy-window (NEISO ledger, neiso-55 onward)",
+   "magnitude_basis": "re-measured from this run's own verdict (2026-08-06-neiso-87-control)"
+  },
+  {
+   "criterion": "price_tail",
+   "year": 2025,
+   "metric": "hours LMP > $300/MWh (C3c scarcity tail, actual RT hourly gate - rubric v2.7; DA = report-only diagnostic; NEISO $300 threshold)",
+   "magnitude": "model 0h [energy-only LMP] vs RT actual 20h (0.00\u00d7, >$300)",
+   "classification": "MODEL MISS (NEISO seasonal scarcity-price formation - the 2025 RT tail is majority SUMMER: seasonal attribution corrected per the 2026-07-10 Limb A log entry + the 2026-07-16 RT hour-set anatomy; winter fuel-security build adopted, DORMANT on this backcast; temp_dependent_derate also dormant on the tail); energy_reserve_coopt dormant at STATIC requirements - the measured dynamic-requirement Limb A (neiso-57 probe, un-promoted) engages exactly on the Jun-24 event",
+   "reason": "CARRIED FORWARD from the incumbent keeper unchanged in substance. neiso-99 promotes an INPUT CORRECTION with zero free parameters, so it creates no new caveat and spends no new ledger slot. RT hour-set anatomy (2026-07-16, the v2.7 RT-basis re-check): the 20 actual RT>$300 hours are 7 WINTER (Jan-17 x2, Jan-20, Jan-22 x2, Feb-10, Dec-10), 11 SUMMER (the Jun-23/24/25 heat wave x8 peaking $1,110, Jul-28/29 x2, Aug-10) and 2 SHOULDER RT-only transients (Nov-23 Sun 17-18h, $529/$865 vs DA $117/$91). 6 of 20 were DA-visible (Jun-24 x5 at DA $316-475 + Jul-29 17:00 DA $400) - realized, foreseeable scarcity a perfect-foresight model should be able to reach; 14 of 20 are RT-only (the out-of-representation DA-RT wedge). WINTER leg: the energy-only LP caps the cold-hour price at dual-fuel oil-parity (~$258/MWh); the adopted winter fuel-security build is DORMANT (model 0h, unchanged vs the zero-forcing twin) and temp_dependent_derate does not change this. SUMMER leg: the keeper's in-LP RCPF co-opt runs at the published STATIC 1,800/1,200/600 MW requirements and never goes short (reserve dual $0.00 in all 26,280 train hours) - but the Limb A probe (neiso-57, measured as-enforced hourly requirements, the NYISO #1344 analogue) ENGAGES on this exact event: at the measured 2,909 MW requirement the 2025-06-24 18:00 hour goes reserve-short, dual $125 stacks into the LMP, model $397 - the model's first structurally-formed >$300 hour, landing ON a DA-visible actual hour. Limb A closes 1 of 20, not the gate, and its keeper promotion remains an owner decision (LOYO-gated, 2026-07-10 log entry). Beyond it the 2026-07-11 frontier designation stands (further work needs a NEW measured identification - summer peak-load-margin offer formation, its own charter); never an offer adder tuned to the tail.",
+   "carried_from": "2026-07-31-neiso-72-hy-window (NEISO ledger, neiso-55 onward)",
+   "magnitude_basis": "re-measured from this run's own verdict (2026-08-06-neiso-87-control)"
+  },
+  {
+   "criterion": "storage",
+   "year": 2025,
+   "metric": "C5b storage throughput (pumped-storage + battery discharge)",
+   "magnitude": "model 0.83 vs actual 2.08 TWh (-60.2%; unchanged vs the neiso-55 keeper)",
+   "classification": "MODEL MISS (downstream of the price_tail / winter-scarcity item)",
+   "reason": "CARRIED FORWARD from the incumbent keeper unchanged in substance. neiso-99 promotes an INPUT CORRECTION with zero free parameters, so it creates no new caveat and spends no new ledger slot. PS arbitrage throughput tracks the intraday price spread. The residual under-cycle is winter-concentrated: the LP's cold-month spread stays compressed at the dual-fuel oil-parity cap, and the real Northfield fleet additionally cycles near-daily for reserves/regulation the energy-only LP does not remunerate. Per the neiso-ps-undercycling diagnosis the PS number may only move DOWNSTREAM of price structure, never via a storage knob. temp_dependent_derate slightly DEEPENS the gap (-56.3% -> -60.2%): the capacity-neutral summer reshape trims a little of the shoulder-season spread the PS fleet was arbitraging, without adding winter spread. Closes only with the winter fuel-inventory build and/or in-LP reserve co-optimization value reaching storage; never via a storage knob. neiso-56 tested the ledger's named closure path \u2014 in-LP reserve co-optimization value reaching storage (storage reserve-eligible in the co-opt) \u2014 and it is DORMANT: reserves clear free from idle thermal headroom, no reserve value reaches the pumped-storage fleet, and discharge is byte-similar to the keeper (0.827 vs 0.828 TWh in 2025).",
+   "carried_from": "2026-07-31-neiso-72-hy-window (NEISO ledger, neiso-55 onward)"
+  },
+  {
+   "criterion": "sysvol",
+   "family": "gas",
+   "year": 2025,
+   "metric": "C2 gas family grid-delivered TWh (preliminary 2025 vintage)",
+   "magnitude": "coal family immaterial (<10 TWh); governed by the C1 per-class absolute band",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (EIA-930 gas-vs-OTHER fold-in + preliminary-vintage incompleteness)",
+   "reason": "CARRIED FORWARD from the incumbent keeper unchanged in substance. neiso-99 promotes an INPUT CORRECTION with zero free parameters, so it creates no new caveat and spends no new ledger slot. 2025 is a preliminary EIA-923 vintage - per-class actuals are incomplete (13/30 prior CC_REGULAR plants missing, 57% reporting). The scorer falls back to the EIA-930 grid gas cell, which includes geothermal+biomass; the correction formula under-corrects because the preliminary vintage's per-class cells are incomplete. Same categorization issue as the complete-vintage years, where the per-class C1 gate PASSES under the load-scaled band. NOT closable by adjusting model dispatch. Unchanged by temp_dependent_derate.",
+   "carried_from": "2026-07-31-neiso-72-hy-window (NEISO ledger, neiso-55 onward)",
+   "magnitude_basis": "re-measured from this run's own verdict (2026-08-06-neiso-87-control)"
+  },
+  {
+   "criterion": "fuelmix",
+   "klass": "COAL_BIT/ST_GAS",
+   "year": 2023,
+   "metric": "C1 coal + steam-gas winter-energy under-run (within the C1 band, non-gating; documentation)",
+   "magnitude": "-0.14 TWh, share -0.1pp",
+   "classification": "MODEL MISS (structural; same winter fuel-security family as price_tail and storage)",
+   "reason": "CARRIED FORWARD from the incumbent keeper unchanged in substance. neiso-99 promotes an INPUT CORRECTION with zero free parameters, so it creates no new caveat and spends no new ledger slot. The energy-only LP runs coal/steam only at the temperature-floor commitment plus the hours delivered gas is dear enough; the real units ran more on winter fuel-security / local-reliability commitments. Closable only via the documented winter fuel-inventory / seasonal-reliability build, never by cranking the floor slope/cap or an offer adder. Within the C1 band, non-gating. Unchanged by temp_dependent_derate.",
+   "carried_from": "2026-07-31-neiso-72-hy-window (NEISO ledger, neiso-55 onward)",
+   "magnitude_basis": "re-measured from this run's own verdict (2026-08-06-neiso-87-control)"
+  },
+  {
+   "criterion": "governance",
+   "metric": "D-3 zero-forcing ablation twin (CLAUDE.md rule 20)",
+   "magnitude": "registered zero-forcing twin 2026-07-09-neiso-56-coopt-ablation",
+   "classification": "TWIN REGISTERED (neiso-55)",
+   "reason": "CARRIED FORWARD from the incumbent keeper unchanged in substance. neiso-99 promotes an INPUT CORRECTION with zero free parameters, so it creates no new caveat and spends no new ledger slot. neiso-56 adds energy_reserve_coopt on the neiso-55 recipe, so a fresh zero-forcing ablation (--zero-forcing-ablation, same recipe + energy_reserve_coopt, full 2023-2025 span, all merchant floors/bridges off) is registered as 2026-07-09-neiso-56-coopt-ablation and linked from this run's sidecar ablation_twin field. The twin confirms the dormancy is not floor-masked: reserve dual $0.00 in the zero-forcing arm too.",
+   "carried_from": "2026-07-31-neiso-72-hy-window (NEISO ledger, neiso-55 onward)"
+  },
+  {
+   "criterion": "fuelmix",
+   "year": "2020-2025",
+   "metric": "oil annual energy vs measured actual (bench classFull), TWh",
+   "magnitude": "actual 0.149/0.239/1.852/0.390/0.312/0.909 vs model 0.001/0.021/0.131/0.003/0.048/2.396 -- short in five years (-0.148/-0.218/-1.721/-0.386/-0.263) and OVER by +1.487 in 2025. The pre-repair keeper was short by -0.149/-0.219/-1.702/-0.079/-0.062 and over by +0.718, so the repair moves oil AWAY from actual in four of six years.",
+   "classification": "MODEL MISS -- NOT an accepted limitation and NOT ledgered as a caveat. The gas family and the combined gas+oil pair both IMPROVE (2023 gas err -0.618 -> -0.380; 2025 gas err +1.666 -> +0.886; combined 2025 +2.384 -> +2.373), so the repair changes the ALLOCATION between gas and oil rather than the quantity. The root cause is that the model's ISO-NE winter oil burn was being generated by CONTAMINATED gas prices crossing oil parity -- February 2023 burned oil because the model believed Boston gas reached $30.13/MMBtu when Boston peaked at $15.77 and the $28-30 print was TRANSCO Z6 NY's, the same print hubs.iso_hub_daily_gas_prices cites as its worked example. Strip it and 2023 has no hour above parity at all. The model is short 1.7 TWh of 2022 oil BEFORE and AFTER the repair, so price parity is not the mechanism that drives ISO-NE winter oil burn.",
+   "reason": "OPEN ROOT-CAUSE ISSUE, opened as the successor in the same session on the owner's ruling of 2026-09-16: docs/CHARTER-neiso110-winter-oil-driver-2026-09-16.md. Rule 14 [R-ACCURATE]: the accurate input is kept and the worse fit is treated as the discovered bug, never buried back inside the inaccurate input. Rule 13 [R-MEASURED]: the 1.7 TWh gap is a residual and closing it with a tuned oil adder is forbidden. Reported at full magnitude on this keeper's determination basis."
+  }
+ ],
+ "neiso109": {
+  "run_id": "2026-09-16-neiso109-gas-repair",
+  "bundle": "results/calibration/neiso109_gasrepair_span",
+  "years": [
+   2020,
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "supersedes": [
+   "2026-09-09-neiso-108-fuelvintage",
+   "2026-09-09-neiso-108-fuelvintage-touchpoints"
+  ],
+  "scenario_config_choices_changed": 0,
+  "dof_ledger": "carried byte-identical from the superseded keeper",
+  "input_changed": "data/raw/gas-prices/algonquin_citygate_daily.csv (436 -> 417 rows: +47 added, -66 removed, 26 corrected)",
+  "gdrift": "control leg bit-identical to the superseded keeper's committed 2025 (0 of 43,800 zone-hours differ)"
+ },
+ "neiso110": {
+  "session": "neiso-110 (2026-09-16)",
+  "incumbent": "2026-09-16-neiso109-gas-repair",
+  "charter": "docs/CHARTER-neiso110-winter-oil-driver-2026-09-16.md",
+  "prereg": "docs/PRECOMMIT-neiso110-coldsnap-dualfuel-2026-09-16.md",
+  "lineage": [
+   "docs/FINDING-neiso110-winter-oil-driver-2026-09-16.md",
+   "docs/RESULT-neiso110-coldsnap-dualfuel-screen-2026-09-16.md"
+  ],
+  "owner_ruling": "2026-09-16, verbatim: 'Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper.' Structural integrity improves and NO gate regresses, so the ruling's weaker limb is not even needed; the promotion rests on rule 1 [R-STRUCT], never on the residual.",
+  "config_delta_vs_incumbent": [
+   "neiso_coldsnap_derate_dualfuel_unswitched: False -> True"
+  ],
+  "free_parameters_added": 0,
+  "free_parameters_rationale": "A scope condition on one existing mechanism. No floor, no curve, no scalar, no adder; the parent derate's t0/slope/cap are byte-identical, so rule 23 [R-FROZEN-DERIVE] is not engaged. The condition is the gas-vs-oil-parity comparison apply_dual_fuel_pricing already computes -- it introduces no new quantity.",
+  "rule_17_floor_window": {
+   "driver": "The gas-electric pipeline constraint in deep cold (NERC/FERC Winter Storm Elliott analysis) -- INHERITED UNCHANGED from the parent derate. It is the EXEMPTION that carried no driver evidence.",
+   "window": "INHERITED UNCHANGED: NEISO_COLDSNAP_FLOOR_HOURS (hours 6-9, 17-20) on days whose NEISO load-weighted daily TMIN is below neiso_gas_derate_t0_c. No new window is introduced; out-of-window frac is identically 0 by construction.",
+   "forward": "INHERITED UNCHANGED: regenerates from a forecast year's pinned TMIN, and the switch condition regenerates from the same forward gas/oil series the parity test already uses."
+  },
+  "rule_19_one_mechanism": "REPLACES an unconditional exemption with a conditional one inside the SAME mechanism; it does not stack a second derate. Where the exemption's premise holds the arm is BYTE-IDENTICAL to the legacy path (guarded by tests/iso/neiso/test_neiso_coldsnap_dualfuel_exemption.py::test_switch_always_active_is_byte_identical_to_legacy), so it can only remove an exemption that was never earned.",
+  "measured_effect_reported_at_full_magnitude": {
+   "verdict": "IMMATERIAL. Promoted for structural fidelity, NOT for accuracy.",
+   "oil_gap_closed_pct_by_year": {
+    "2020": 0.01,
+    "2021": 0.05,
+    "2022": 0.1,
+    "2023": 0.01,
+    "2024": 0.0,
+    "2025": 0.02
+   },
+   "oil_twh_delta_total": 0.00154,
+   "c3a_pct_control_to_arm": {
+    "2020": [
+     4.109,
+     4.137
+    ],
+    "2021": [
+     -0.44,
+     -0.405
+    ],
+    "2022": [
+     -6.205,
+     -6.12
+    ],
+    "2023": [
+     -5.476,
+     -5.432
+    ],
+    "2024": [
+     -3.328,
+     -3.306
+    ],
+    "2025": [
+     -5.093,
+     -5.071
+    ]
+   },
+   "c3a_note": "Improves in 5 of 6 years; 2020 moves 0.028 pp further from the bench. Every move is < 0.09 pp and none approaches a band edge.",
+   "no_regression": "slack and dump delta 0.0000 in all six years; hours >$300 = 0 in both legs in all six years; reserve-co-opt dual nonzero in 0 of 26,280 family-hours per year in BOTH legs (the co-opt was already dormant and remains so); D1/D2/D4 legitimacy statuses identical to the incumbent; largest non-oil class move 0.0033 TWh against ~100 TWh of load.",
+   "what_it_does_not_fix": "The winter oil miss is UNCHANGED as a model miss and stays ledgered. The measured reason is in the RESULT: at Elliott the model's minimum thermal headroom is 6,959 MW against a 3,600 MW reserve requirement -- 3,359 MW clear of binding -- while derating 100 % of ALL NEISO gas would remove only 1,985 MW. No admissible magnitude of this mechanism family can produce a reserve-short hour, so the derate channel is not the explanation for the missing price tail."
+  },
+  "solve_provenance": {
+   "solved_by": "span shard session_01A6aTizYouZELNWHJE2BZRT",
+   "shard_branch": "claude/neiso110-span-2020-2025",
+   "shard_commit": "0d0004e197c205d6c7ea6d634d1a252f0fc86244",
+   "pinned_source_revision": "c0916408bf1d69a8c8b249a76c6716ab024b1b29",
+   "years": [
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "control": "No control solve spent. G-DRIFT form 4: every changed hunk between the incumbent's basis_sha b6ded93731fec2a0680a6bb7bf30d6c7caab7656 and HEAD classifies INERT for a NEISO backcast (hydro-cascade and coal-fuel-inventory default-off gates, SOCO/NWPP scoping, a PJM-only offer gate, a DEFAULT_ISO_ORDER display append, and a calibration_reference.json delta with 22 SOCO lines and 0 NEISO/ISNE lines). Corroborated mechanically: surface_stamp('NEISO') reproduces the incumbent's fingerprint 9d35c270c69e9eee, 197 rows, moved {}, at HEAD.",
+   "shared_inputs_provenance": "The bundle's eight content-addressed shared inputs were regenerated in the parent with --rebuild-benchmark (no re-solve) and every one hashes IDENTICAL to the incumbent's: eia930-a79ecddc812c, eia923-c06a87821698, campd-1782e1223554, unit_outages-c6be5bbb89ab, unit_outages_short-849e1d0a5f28, unit_outages_partial-b00540584f5f, unit_outages_e923-eec106f23392, unit_outages_layup-c622c4d5058e."
+  },
+  "test_baseline": "Zero regressions, measured not assumed: tests/unit + tests/scoring + tests/regression run in full on the branch and compared test-by-test against a clean origin/main checkout of the same 20 files -- 64 failures on each, sets identical member-for-member (both comm directions empty). The cache-key pin is unmoved (test_caiso_ra_mpb_anchor.py) because the new field is registered in _CACHE_KEY_OPTIONAL_FIELDS + _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS at 'False'."
+ },
+ "neiso112": {
+  "session": "neiso-112",
+  "incumbent": "2026-09-16-neiso110-dualfuel-derate-scope",
+  "purpose": "Produce marginal_emission_rate (tCO2/MWh, the emissions dual) for every NEISO backcast year, for the marginal-abatement page. The incumbent predates the commit that emits it (fba0ecd7 post-dates git_sha c0916408), and the rate is an LP dual, so no committed sidecar could carry it and no sidecar could be post-processed into it.",
+  "owner_ruling": "2026-09-19, verbatim: 'Rerun ISONE keeper to get MER for the Marginal abatement page. Make sure to launch a single shard for each year of the solve bc warm start has been proven to no longer be neutral and therefore shouldn't be used for backcast.' Promotion authorised the same day: 'Promote when they land'.",
+  "config_delta_vs_incumbent": "NONE that is a choice. The recipe is reconstructed by replay_keeper.py from the incumbent's own meta.json. Five ScenarioConfig fields that did not exist at the incumbent's git_sha now materialise at their False defaults (measured_coal_heat_rates, measured_st_heat_rates, soco_gas_st_campaign_commitment, coal_prb_proxy_own_iso, mid_vintage_exit_carry); all five were classified INERT for NEISO backcast in the PRECOMMIT's G-DRIFT audit and none appears in the incumbent's recipe.",
+  "free_parameters_added": 0,
+  "free_parameters_rationale": "Rule 21 [R-DOF]: this run introduces no free parameter. The offer-curve band multipliers are the incumbent's, unchanged and year-invariant, and were not swept here or anywhere in this session -- no gate was consulted before or during the solves.",
+  "g_drift": "Rule 29 [R-SCREEN] (b) form 4, recorded in docs/PRECOMMIT-neiso112-mer-year-isolated-2026-09-19.md SS3 BEFORE any solve: c0916408..HEAD over the solve path is 30 files / 19 non-merge commits, every hunk classified INERT for NEISO backcast except the MER emit. All seven solve-surface modules byte-identical. No control solve was spent; the incumbent's committed bundle is the control.",
+  "measured_effect_reported_at_full_magnitude": "Prices BIT-IDENTICAL to the incumbent in all six years: max |dPrice| 1.42e-14 to 5.68e-14 $/MWh, ZERO of 262,800 (zone,hour) cells past 0.01 $/MWh, demand identical at 0.00e+00, annual class energy identical to <5e-7 TWh (net system energy delta ~1e-9 % of total). Annual load-weighted price agrees to four decimals in every year. WHAT DOES MOVE, stated rather than rounded away: 1.19-1.55 % of class-hours (1,460-1,897 of 122,640) differ by more than 0.1 MW, the largest single class-hour by 402.6-587.5 MW, among CC_REGULAR / hydro / oil / CT_PEAKER / CC_CHP -- alternate-optimum reshuffling of a degenerate LP at an unchanged objective and unchanged prices, the same signature and magnitude neiso-107 already recorded and root-caused against this keeper (426.95 / 371.44 / 442.34 MW).",
+  "known_limitation_carried": "The marginal emission rate is a BASIS-DEPENDENT dual, so in the ~1.3 % of class-hours where columns are tied at the margin the reported value is one of several valid one-sided derivatives -- exactly what the _marginal_emission_rate docstring states of a degenerate vertex. No incumbent MER exists to difference it against, so the size of that ambiguity is UNMEASURED. It is named here rather than implied away.",
+  "rule_36_finding": "The MISO year-grouping defect (RESULT-miso262, same day: up to 24.18 TWh of class energy and 43,160 of 70,080 price cells moved, ~500 M USD of objective) DOES NOT REPRODUCE IN NEISO. Rule 36 (f) records that artifact's size as unmeasured outside MISO; for NEISO it is now measured at nil in price and annual energy. Mechanism: NEISO's margin is gas throughout (MER p90 0.65-0.68 vs MISO 0.94-1.02; 0.00-0.01 % of zone-hours at exactly zero vs 13-23 %), so there is no coal tranche to swap into and no second vertex to land on.",
+  "solve_provenance": "Six shard containers, one year each, all pinned to the immutable SHA dd61092ced3ea42267c70f1a73194b513a26ac11; ~3-4 min of LP each, peak cgroup 4.74-4.84 GiB. Each pushed its FULL bundle (17 files, incl. dispatch/<y>_P1.parquet) to its own branch under rule 34 [R-SHARD-PROMOTABLE] (a); recovery SHAs are in .gitignore and in docs/RESULT-neiso112-mer-year-isolated-2026-09-19.md SS5."
+ },
+ "hydro5": {
+  "result": "docs/RESULT-hydro-5-2026-09-22.md",
+  "gates": "G1 live in every year; G2 annual hydro energy within 0.1 % in every year; G3 hours-at-0 -> 0, top-decile share and within-month daily CV down in every year; G4 zero PASS->FAIL flips on C1/C2/C3a/C3b. Misses reported at full magnitude in the RESULT (SPP floor 2019 G1 9.3 MW nameplate clip; SPP floor 2025 May G2 +0.276 %)."
+ },
+ "r_neiso": {
+  "precommit": "docs/handoffs/r-neiso/PRECOMMIT-r-neiso-2026-09-24.md",
+  "result": "docs/handoffs/r-neiso/RESULT-r-neiso-2026-09-24.md",
+  "keeper_control": "2026-09-22-hydro-5-neiso-ror"
+ },
+ "neiso114": {
+  "precommit": "docs/handoffs/neiso114/PRECOMMIT-neiso114-2026-09-25.md",
+  "result": "docs/handoffs/neiso114/RESULT-neiso114-2026-09-25.md",
+  "keeper_control": "2026-09-25-neiso114-coal-mustrun-measured",
+  "arm": "B"
+ },
+ "neiso117": {
+  "precommit": "docs/handoffs/neiso117/PRECOMMIT-neiso117-2026-09-26.md",
+  "result": "docs/handoffs/neiso117/RESULT-neiso117-2026-09-26.md",
+  "keeper_control": "2026-09-25-neiso114-arm-b-stgas"
+ },
+ "neiso118": {
+  "precommit": "docs/handoffs/neiso118/PRECOMMIT-neiso118-2026-09-26.md",
+  "result": "docs/handoffs/neiso118/RESULT-neiso118-2026-09-26.md",
+  "keeper_control": "2026-09-26-neiso-117-coal-yard"
+ }
+}

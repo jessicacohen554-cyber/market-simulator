@@ -370,7 +370,9 @@ def main(argv: list[str] | None = None) -> int:
     years = sorted(args.years)
 
     fleets = backcast_fleets(iso, years)
-    union = union_fleet(fleets)
+    # Class-preserving union (neiso-118): a unit that is CT_PEAKER in any year
+    # stays in the population even if a later vintage re-classes it.
+    union = union_fleet(fleets, klass=TARGET_CLASS)
     caps = class_capacity(union, TARGET_CLASS)
     if not caps:
         raise SystemExit(f"{iso}: model fleet has no {TARGET_CLASS} plants")
