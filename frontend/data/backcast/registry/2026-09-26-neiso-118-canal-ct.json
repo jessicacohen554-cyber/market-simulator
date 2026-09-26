@@ -3,7 +3,7 @@
   "label": "neiso 118 canal ct",
   "date": "2026-09-26",
   "shorthand": "neiso-118-canal-ct",
-  "definition": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
+  "definition": "neiso-118: prior keeper (2026-09-26-neiso-117-coal-yard) recipe replayed unchanged, with Canal 3 (plant 1599) added to the NEISO measured-CT heat-rate derive via a class-preserving union_fleet fix (owner ruling 2026-09-26, 'CT only') that no longer drops a unit whose class differs across EIA-860 vintages. C1 CC_REGULAR 2019 FAIL to PASS (-1.24 TWh, share -3.46 to -2.3pp); C3a price_mean 2019 PASS to FAIL (+9.3% to +10.03%, $0.01/MWh over band). Full span 2019-2025 NOT-YET on that single line; train tier 2023-2025 CALIBRATED (C3c the sole ledgered caveat).",
   "years": [
     2019,
     2020,
