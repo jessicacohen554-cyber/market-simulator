@@ -465,3 +465,54 @@ def build_coal_plant_budget(
         rate_source_years=src_years,
     )
     return g_rows, budget, month_index, coeff, pos[keep], prov
+
+
+def reconcile_floors_to_yard_budget(
+    min_gen: np.ndarray,
+    gen_idx: np.ndarray,
+    budget: np.ndarray,
+    coeff: np.ndarray,
+    group_index: np.ndarray,
+) -> list[tuple[int, float, float]]:
+    """Scale each coal yard's must-run floors so they fit inside its fuel budget.
+
+    A floor cannot demand coal the yard does not hold (rule 19 [R-ONE-MECH]: the
+    yard budget and a coal floor both act on the same units' energy, so they are
+    reconciled rather than stacked; rule 17 [R-FLOOR-WINDOW]: a floor binding
+    where its own driver's premise — fuel on site — is false is a bug). neiso-117
+    found the case: Schiller 2367 in 2025 carries the NEISO winter fuel-security
+    floor while its EIA-923 yard reported zero stock and zero receipts, so the
+    budget row and the floor made the LP infeasible.
+
+    For each budget row ``i`` the floor's annual fuel draw is
+    ``E_i = sum_{g in i} coeff[g] * sum_t min_gen[g, t]`` (MMBtu). Where
+    ``E_i > budget_i`` every floor at that yard is scaled by ``budget_i / E_i``
+    (to zero for a zero budget) — the floor's hourly shape is kept, its level is
+    capped at what the pile can fund. Where the floor already fits, nothing is
+    touched, so every feasible solve is byte-identical. Zero free parameters.
+
+    Args:
+        min_gen: ``(n_gen, T)`` floor array; modified IN PLACE.
+        gen_idx: Rowed generator indices (``build_coal_plant_budget``'s first return).
+        budget: ``(n_rows, 1)`` annual budgets, MMBtu.
+        coeff: Per-rowed-generator MMBtu/MWh coefficients.
+        group_index: Budget row of each rowed generator.
+
+    Returns:
+        ``[(row, floor_mmbtu, scale), ...]`` for every row whose floor was scaled.
+    """
+    gen_idx = np.asarray(gen_idx, dtype=int)
+    group_index = np.asarray(group_index, dtype=int)
+    coeff = np.asarray(coeff, dtype=float)
+    draw = coeff * min_gen[gen_idx].sum(axis=1)
+    scaled: list[tuple[int, float, float]] = []
+    for i in range(budget.shape[0]):
+        sel = group_index == i
+        e = float(draw[sel].sum())
+        b = float(budget[i, 0])
+        if e <= b or e <= 0.0:
+            continue
+        s = max(b, 0.0) / e
+        min_gen[gen_idx[sel]] *= s
+        scaled.append((i, e, s))
+    return scaled

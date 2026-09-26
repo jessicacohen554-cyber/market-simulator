@@ -1,5 +1,6 @@
 [
  {
+  "floor_scaled_rows": [],
   "year": 2019,
   "yards": {
    "568": [
@@ -47,6 +48,7 @@
   "config_seen": true
  },
  {
+  "floor_scaled_rows": [],
   "year": 2020,
   "yards": {
    "568": [
@@ -94,6 +96,7 @@
   "config_seen": true
  },
  {
+  "floor_scaled_rows": [],
   "year": 2021,
   "yards": {
    "568": [
@@ -128,6 +131,7 @@
   "config_seen": true
  },
  {
+  "floor_scaled_rows": [],
   "year": 2022,
   "yards": {
    "568": [
@@ -162,6 +166,7 @@
   "config_seen": true
  },
  {
+  "floor_scaled_rows": [],
   "year": 2023,
   "yards": {
    "2364": [
@@ -183,6 +188,7 @@
   "config_seen": true
  },
  {
+  "floor_scaled_rows": [],
   "year": 2024,
   "yards": {
    "2364": [
@@ -204,6 +210,13 @@
   "config_seen": true
  },
  {
+  "floor_scaled_rows": [
+   {
+    "row": 1,
+    "floor_tbtu": 1.099,
+    "scale": 0.0
+   }
+  ],
   "year": 2025,
   "yards": {
    "568": [
