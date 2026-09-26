@@ -376,6 +376,7 @@ def unit_outage_csv_for_iso(
     hour_grain: bool = False,
     dark_unit_years: bool = False,
     membership_repair: bool = False,
+    unit_fuel_routing: bool = False,
 ) -> Path:
     """Return the CAMPD unit-outage CSV path for an ISO.
 
@@ -467,6 +468,15 @@ def unit_outage_csv_for_iso(
     line-for-line (the deriver's in-process assertion). One field, one
     phenomenon, one construction per artifact family (rule 19 ``[R-ONE-MECH]``);
     falls back to the incumbent when the companion is absent.
+
+    ``unit_fuel_routing`` (``ScenarioConfig.unit_outage_unit_fuel_routing``,
+    GATED default False; PJM-NEXT-3) selects the ``-memberrepair-unitfuel-``
+    companion of the ``-memberrepair-`` extract: the same rows, with a steam
+    row re-tagged to its own generator's class where that facility's steam
+    generators split across coal and gas in the row's year's EIA-860 vintage
+    (``scripts/data/build_outage_unit_fuel_routing.py``). Meaningful only with
+    ``membership_repair`` (it is a companion OF that file); zero free
+    parameters; falls back to ``-memberrepair-`` when not derived.
     """
     ercot = iso is None or iso.upper() == "ERCOT"
     base = (
@@ -510,6 +520,14 @@ def unit_outage_csv_for_iso(
         if alt.exists():
             return alt
     if membership_repair and not mixed_gas_routing and not per_unit_crosswalk:
+        if unit_fuel_routing:
+            # PJM-NEXT-3: per-unit fuel routing of the membership-repaired
+            # extract. Falls through to '-memberrepair-' when not derived.
+            alt = base.with_name(
+                f"campd-unit-outages-memberrepair-unitfuel-{(iso or 'ERCOT').upper()}.csv"
+            )
+            if alt.exists():
+                return alt
         alt = base.with_name(
             f"campd-unit-outages-memberrepair-{(iso or 'ERCOT').upper()}.csv"
         )
@@ -1334,6 +1352,7 @@ def unit_outage_derate_factors(
     hour_grain: bool = False,
     dark_unit_years: bool = False,
     membership_repair: bool = False,
+    unit_fuel_routing: bool = False,
     mid_vintage_exit_carry: bool = False,
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
     precod_clip: bool = False,
@@ -1370,6 +1389,7 @@ def unit_outage_derate_factors(
         hour_grain,
         dark_unit_years=dark_unit_years,
         membership_repair=membership_repair,
+        unit_fuel_routing=unit_fuel_routing,
     )
     df = _load_unit_outage_events(csv_path, iso)
     if df is None:
