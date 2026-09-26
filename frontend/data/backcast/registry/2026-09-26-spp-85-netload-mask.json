@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-26-spp-85-netload-mask",
+  "label": "spp 85 netload mask",
+  "date": "2026-09-26",
+  "shorthand": "spp-85-netload-mask",
+  "definition": "SPP-85 arm 2019: netload-mask repair",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-26-spp-85-netload-mask.js",
+  "bundle": "results/calibration/spp85_arm_span"
+}
