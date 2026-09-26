@@ -110,3 +110,11 @@ D1 ruling, built as ruled.
   the storm-print pass-through named as the reason.
 
 Year set (rule 35(b)): outgoing {2019–2025}, incoming {2019–2025}, so it is covered.
+
+## 6. Owner ruling (2026-09-26): **"Decline (Recommended)"**
+
+- The keeper stays `2026-09-26-miso-275-cc-exempt`. `keepers/MISO.json` is untouched and nothing is pruned.
+- The field `miso_winter_gas_daily_delivered` stays default-off. Matrix cell `winter_gas_daily_delivered` → **R**.
+- `2026-09-26-miso-276-winter-daily` stays registered as evidence.
+- **What a successor needs:** a storm-print convention that does not pass a thin weekend print straight through. That
+  is a new owner question, since the D1 ruling included spike days. It should not be re-tested without one.
