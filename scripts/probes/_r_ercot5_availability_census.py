@@ -52,7 +52,8 @@ for p in (REPO, REPO / "src", REPO / "scripts"):
 
 import scripts.probes._r_ercot3_coal_census as C  # noqa: E402
 
-C.BUNDLE = REPO / "results/calibration/r_ercot4_dayguard_span"
+# R-ERCOT-6: the current keeper (2026-09-25-r-5-hour-grain); ``--bundle`` overrides.
+C.BUNDLE = REPO / "results/calibration/r_ercot5_hourgrain_span"
 CLASSES = ("COAL", "CC_REGULAR", "ST_GAS")
 
 
@@ -204,13 +205,84 @@ def _build(year: int, overlay: dict | None):
         R.config_partition_overlay = orig
 
 
-def build_stages(year: int, cache: Path, overlay: dict | None = None) -> dict:
+def _hour_grain_active_units(year, hours=8760, iso="ERCOT"):
+    """``unit_outage_active_units`` read at the window factor's HOUR grain.
+
+    R-ERCOT-6: the incumbent helper reads ``unit_outage_csv_for_iso(iso)`` with
+    no ``hour_grain``, so under the R-ERCOT-5 keeper the unit-scoped shared-unit
+    mask is day-grain while the window factor it composes with is hour-grain.
+    This is the aligned mask, for the zero-LP comparison only.
+    """
+    import market_sim.data.outages as O
+
+    df = O._load_unit_outage_events(
+        O.unit_outage_csv_for_iso(iso, hour_grain=True), iso
+    )
+    if df is None:
+        return {}
+    df = df[df["duration_days"] >= O.UNIT_OUTAGE_MIN_DAYS]
+    has_hours = O._has_hour_grain(df)
+    out: dict = {}
+    for r in df.itertuples(index=False):
+        uid = str(r.unit_id).strip()
+        tgt = O._unit_outage_target(int(r.facility_id), uid, r.plant_group)
+        if tgt is None or not uid:
+            continue
+        w0, w1 = O.unit_outage_event_window(r, has_hours)
+        mask = O.outage_hour_mask(w0, w1, year, hours)
+        if not mask.any():
+            continue
+        arr = out.setdefault(tgt, {}).setdefault(uid, np.zeros(hours, dtype=bool))
+        arr |= mask
+    return out
+
+
+def _apply_variant(variant: str) -> None:
+    """Patch the unit-scoped seam for a zero-LP variant (``--variant``).
+
+    ``hgmask``: the shared-unit mask at the window factor's hour grain.
+    ``finer``:  ``hgmask`` plus FINER-GRAIN-WINS — at a shared-unit hour the
+                unit-exact window ceiling alone stands (the plant-aggregate
+                partial plateau is dropped there), instead of ``min(W, P)``.
+                Implemented by returning the class-grain plateau as 1.0 at the
+                bin's shared hours, so the cap's ``min(ceil_w, 1)`` is ``ceil_w``.
+    """
+    if variant == "none":
+        return
+    import market_sim.data.fleet.arrays as A
+    import market_sim.data.outages as O
+
+    A.unit_outage_active_units = _hour_grain_active_units
+    if variant != "finer":
+        return
+    orig = A.partial_outage_derate_factors
+
+    def pf(year, hours=8760, *a, class_grain=False, **k):
+        r = orig(year, hours, *a, class_grain=class_grain, **k)
+        if not class_grain:
+            return r
+        wu = _hour_grain_active_units(int(year), hours)
+        pu = O.partial_outage_active_units(int(year), hours, iso="ERCOT")
+        out = {}
+        for key, f in r.items():
+            f = np.asarray(f, float)
+            sh = O.shared_unit_hours(wu.get(key), pu.get(key), hours)[: f.size]
+            out[key] = np.where(sh, 1.0, f)
+        return out
+
+    A.partial_outage_derate_factors = pf
+
+
+def build_stages(
+    year: int, cache: Path, overlay: dict | None = None, variant: str = "none"
+) -> dict:
     """Instrumented fleet-only build; returns (and caches as .npz) the stage arrays."""
     if cache.exists():
         z = np.load(cache, allow_pickle=True)
         return {k: z[k] for k in z.files}
     import market_sim.data.fleet.arrays as A
 
+    _apply_variant(variant)
     rec = _instrument()
     # capture the live availability array object: the DAM pin receives it by reference
     orig_pin = A._ercot_dam_plant_hourly_apply
@@ -360,14 +432,27 @@ def main() -> None:
     ap.add_argument(
         "--set", action="append", default=[], help="KEY=JSON config overlay"
     )
+    ap.add_argument("--bundle", default=None, help="keeper bundle dir override")
+    ap.add_argument(
+        "--variant",
+        default="none",
+        choices=("none", "hgmask", "finer"),
+        help="unit-scoped seam variant (R-ERCOT-6); see _apply_variant",
+    )
     a = ap.parse_args()
+    if a.bundle:
+        C.BUNDLE = Path(a.bundle).resolve()
     hs = np.load(a.hours_file) if a.hours_file else None
     res = {}
     for y in a.years:
         ov = {k: json.loads(v) for k, v in (x.split("=", 1) for x in a.set)}
         tag = "".join(f"_{k}" for k in sorted(ov))
+        tag += "" if a.variant == "none" else f"_{a.variant}"
         st = build_stages(
-            y, Path(a.cache_dir) / f"r_ercot5_stages_{y}{tag}.npz", ov or None
+            y,
+            Path(a.cache_dir) / f"r_ercot5_stages_{y}{tag}.npz",
+            ov or None,
+            a.variant,
         )
         res[str(y)] = census(y, st, hs)
         print(y, json.dumps(res[str(y)]["summary"]), flush=True)
