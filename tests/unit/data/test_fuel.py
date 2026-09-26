@@ -3056,7 +3056,9 @@ def test_miso_winter_gas_daily_delivered_off_is_byte_identical():
     prices = _miso_winter_base(fleet)
     base = prices.copy()
     config = ScenarioConfig(iso="MISO", mode="backcast", hours=_MISO_WINTER_HOURS)
-    assert fuel.apply_miso_winter_gas_daily_delivered(prices, fleet, config, 2024) is None
+    assert (
+        fuel.apply_miso_winter_gas_daily_delivered(prices, fleet, config, 2024) is None
+    )
     np.testing.assert_array_equal(prices, base)
 
 
