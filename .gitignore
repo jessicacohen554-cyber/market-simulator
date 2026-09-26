@@ -3636,3 +3636,5 @@ results/calibration/nwppnext5_20*/
 # miso-276: per-year shard legs stay out of main (rule 32(d)); the composite miso276_span is what registers.
 # Provenance (rule 33(d), not a recovery route): legs pinned at 2837e3c9, branches claude/miso276-arm-<Y>.
 results/calibration/miso276_arm_*/
+
+!results/calibration/spp86_arm_2023/**
