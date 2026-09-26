@@ -37,6 +37,10 @@ data/raw/_validation-source data/raw/reference` touches 5 files:
   `reliability_floor_layup_window_mask` (NYISO-NEXT). INERT: new field default-off and absent from the keeper
   recipe; returns `None` when off.
 
+**Rebase window `722b40f9` → `cf0950dc`** (main moved before the pin): 4 files, one hunk family —
+`unit_outage_unit_fuel_routing` (PJM-NEXT-3, `-memberrepair-unitfuel-` extract companion). INERT: new field,
+default False, frozen cache-key drop value `"False"`, absent from the keeper recipe.
+
 Form 4 stands for every year: the keeper's committed bundle is the control; no control solve.
 
 ## 4. Phase 0 on the ARMED code path (zero LP) — `phase0_yard_rows_probe.py` → `.json`
@@ -93,4 +97,15 @@ negation + plain `git add`. Parent composes (`docs/handoffs/neiso117/compose_spa
 
 ## 8. Launch record
 
-(filled at launch)
+All seven pinned to **`17402f351e5dc3d45126100b7839531cd21c1ca3`** (this doc's first commit, on `cf0950dc`),
+created 2026-09-26 01:28 UTC, tag `neiso117`. Branch `claude/neiso117-<Y>`, out-dir `neiso117_<Y>`.
+
+| year | shard session |
+|---|---|
+| 2019 | `session_01HCR54dMpxMrELwDJ3vYcF8` |
+| 2020 | `session_01AnqN2uUmLU99H9dgXFWms3` |
+| 2021 | `session_01CU49KTyFBepnC7eDNoMdXt` |
+| 2022 | `session_01AxP61vTrmhf99qhNbzS2ka` |
+| 2023 | `session_019HiqKfoVDc1a8DBVFkZwAx` |
+| 2024 | `session_011W6dpXacaJVxBHZPNDuawG` |
+| 2025 | `session_01MNUF1v7Zi4WWMbU84361J1` |
