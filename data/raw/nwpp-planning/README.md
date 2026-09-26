@@ -130,7 +130,8 @@ IPCO·AVA·NWMT·WAUW · **EAST** = PACE · **SNV** = NEVP.
 | **EAST ↔ SNV** | **yes, and it is the clean one** | Path **35** TOT 2C (600/580) | **firm**. One line, Red Butte (PacifiCorp, SW Utah) – Harry Allen (NV Energy, near Las Vegas). N→S = EAST→SNV |
 | **INLAND ↔ SNV** | **yes** | Path **16** Idaho–Sierra (500/360) | **firm**. One line, Midpoint (Idaho Power) – Humboldt (NV Energy, northern Nevada). N→S = INLAND→SNV. See §1.5 on the zone's name |
 | **OR ↔ INLAND** | **not separately rated** | — | The Oregon-side terminals of Path 14 (Summer Lake, La Grande, Harney) are BPA substations, so Path 14 books to NW↔INLAND, not OR↔INLAND. No catalogue path rates a PGE/PACW ↔ IPCO/AVA/NWMT interface on its own |
-| **NW ↔ EAST**, **NW ↔ SNV**, **OR ↔ EAST**, **OR ↔ SNV** | n/a | — | Not adjacent in the catalogue's path set |
+| **NW ↔ SNV** | **yes — CORRECTED 2026-09-26 (NWPP-NEXT-6)** | Path **76** "Alturas Project" (300/300), printed p. 69 | **firm by BA pair.** One 345 kV line, Hilltop–Fort Sage (NV Energy). This row previously read "not adjacent", which Path 76 falsifies. The Hilltop 230 kV side is PacifiCorp-owned (HIFLD: Hilltop Tap–Warner 230 kV), but EIA-930 books NEVP's interchange on this seam against **BPAT** (−246 … +182 MW in 2023–2025; NEVP reports no PACW leg), and zones are BA groups, so it books NW ↔ SNV, not OR ↔ SNV. Modelled behind the gated `ScenarioConfig.nwpp_path76_alturas_link` |
+| **NW ↔ EAST**, **OR ↔ EAST**, **OR ↔ SNV** | n/a | — | Not adjacent in the catalogue's path set |
 
 **External seams — rated, but not internal boundaries.** Four of the charter's
 paths connect the footprint to something **outside** it, so they size an

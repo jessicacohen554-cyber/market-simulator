@@ -42,6 +42,7 @@ __all__ = [
     "apply_ttc_overrides",
     "apply_iso_year_ttc",
     "apply_iso_monthly_ttc",
+    "apply_nwpp_path76_link",
 ]
 
 # Zone-pair identifying each transfer link whose TTC the calibration CLI can
@@ -204,6 +205,35 @@ def apply_iso_year_ttc(iso_config, iso: str, year: int):
         else:
             links.append(link)
     return iso_config.model_copy(update={"links": links})
+
+
+def apply_nwpp_path76_link(iso_config, iso: str, config=None):
+    """Return ``iso_config`` with WECC Path 76 appended when the flag is armed.
+
+    ``ScenarioConfig.nwpp_path76_alturas_link`` (NWPP-NEXT-6, GATED default
+    off): appends :func:`market_sim.config.iso_configs.nwpp_path76_alturas_links`
+    (NWPP-NW <-> NWPP-SNV, 300 / 300 MW, WECC 2024 Path Rating Catalog p. 69)
+    to the static NWPP topology. Called at BOTH solve entry points
+    (``run_calibration.run_year`` and ``runner.run_scenario_iso``) before the
+    import node joins, so the link reaches incidence, interface groups and the
+    TTC array alike — the caiso-162 lesson that a topology edit wired into one
+    path only is silently ignored by the other. Returns the SAME object for
+    any other ISO or when the flag is off, so the default path is
+    byte-identical.
+    """
+    if iso != "NWPP" or not getattr(config, "nwpp_path76_alturas_link", False):
+        return iso_config
+    from market_sim.config.iso_configs import nwpp_path76_alturas_links
+
+    added = nwpp_path76_alturas_links()
+    for link in added:
+        logger.info(
+            "NWPP Path 76 (Alturas): %s<->%s %.0f MW appended",
+            link.from_zone,
+            link.to_zone,
+            link.ttc_mw,
+        )
+    return iso_config.model_copy(update={"links": list(iso_config.links) + added})
 
 
 def apply_iso_monthly_ttc(

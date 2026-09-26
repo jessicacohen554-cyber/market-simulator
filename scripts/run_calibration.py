@@ -3091,6 +3091,10 @@ def run_year(
     # Transmission project in service Dec 2023) — applied before the import
     # node joins so the corrected links flow through the whole solve.
     iso_config = _apply_iso_year_ttc(iso_config, iso, year)
+    # NWPP Path 76 "Alturas" link (config.nwpp_path76_alturas_link, default
+    # off -> same object, byte-identical): appended here, before the import
+    # node joins, and at the same point in runner.run_scenario_iso.
+    iso_config = _pipeline_ttc.apply_nwpp_path76_link(iso_config, iso, config)
     # CAISO per-year SP15-pocket import caps (config.caiso_per_year_import_caps,
     # default off -> byte-identical no-op). The SP15 split (2026-07-09) baked the
     # two internal import-limited links (SP15_rest -> LA_BASIN, SP15_rest -> SDGE)

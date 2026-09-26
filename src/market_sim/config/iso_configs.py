@@ -1933,6 +1933,42 @@ def _spp_config() -> ISOConfig:
     )
 
 
+#: WECC Path 76 "Alturas Project" (Hilltop 230/345 kV transformer; Hilltop–
+#: Fort Sage 345 kV), Accepted Rating N→S 300 MW / S→N 300 MW — WECC 2024
+#: Path Rating Catalog (public), printed p. 69
+#: (data/raw/nwpp-planning/transcriptions/2024_Path_Rating_Catalog_Public_v2.txt).
+NWPP_PATH76_ALTURAS_TTC_MW: float = 300.0
+
+
+def nwpp_path76_alturas_links() -> list[TransferLink]:
+    """Return the WECC Path 76 "Alturas Project" link, NWPP-NW <-> NWPP-SNV.
+
+    Gated by ``ScenarioConfig.nwpp_path76_alturas_link`` (NWPP-NEXT-6, default
+    off) and appended by :func:`market_sim.pipeline.ttc.apply_nwpp_path76_link`.
+    **Tier 1 candidate**: one rated path, one 345 kV line, symmetric
+    300 / 300 MW, so one bidirectional link.
+
+    **Why NW and not OR.** Card N5 zones are groups of balancing authorities
+    and may not split one, so a path is booked by the BA pair it
+    interconnects, not by the line owner. The Hilltop 230 kV side is
+    PacifiCorp-owned (HIFLD transmission lines: Hilltop Tap–Warner 230 kV,
+    "PACIFICORP AND SURPRISE VALLEY ELECTRIFICATION CORPORATION"), but EIA-930
+    books NEVP's interchange on this seam against **BPAT**: NEVP reports
+    partners BPAT / CISO / IPCO / LDWP / PACE / WALC and no PACW leg, and its
+    BPAT leg ranges −246 … +182 MW in 2023–2025 — the size of a 300 MW line
+    (``data/raw/eia-930-interchange/NEVP interchange hourly.parquet``). BPAT is
+    in NWPP-NW. This corrects ``data/raw/nwpp-planning/README.md`` §1.3,
+    which read NW <-> SNV as "not adjacent in the catalogue's path set".
+    """
+    return [
+        TransferLink(
+            from_zone="NWPP-NW",
+            to_zone="NWPP-SNV",
+            ttc_mw=NWPP_PATH76_ALTURAS_TTC_MW,
+        )
+    ]
+
+
 def _nwpp_config() -> ISOConfig:
     """Build the Northwest Power Pool (NWPP) topology configuration.
 

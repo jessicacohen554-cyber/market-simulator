@@ -2107,6 +2107,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # measured-CC artifact flags eia923_identity, which only CAISO's carries).
     "caiso_intertie_gap_fill_measured_dam",
     "cc_eia923_identity_emission_basis",
+    # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
+    # NWPP-SNV (default off). Byte-identical off by construction: its one
+    # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
+    # object unless iso == "NWPP" and the flag is True, so no link, incidence
+    # column or TTC entry changes. SHARED field -- very end, per HOUSE-3.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "nwpp_path76_alturas_link",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2862,6 +2869,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "caiso_intertie_gap_fill_measured_dam": "False",
     "cc_eia923_identity_emission_basis": "False",
+    # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
+    "nwpp_path76_alturas_link": "False",
 }
 
 
@@ -12228,6 +12237,23 @@ class ScenarioConfig:
     # (forecast), so it regenerates for any forward year. REFUSED variant:
     # selecting SB units by same-year EIA-923 generation (outcome selection).
     admit_standby_units: bool = False
+    # WECC PATH 76 "ALTURAS PROJECT" LINK, NWPP-NW <-> NWPP-SNV (NWPP-NEXT-6,
+    # GATED default off, NWPP-only, ZERO free parameters). The NWPP topology
+    # carries no link between NW and SNV because data/raw/nwpp-planning/
+    # README.md s1.3 read the pair as "not adjacent in the catalogue's path
+    # set"; Path 76 (Hilltop 230/345 kV transformer; Hilltop-Fort Sage 345 kV,
+    # Accepted Rating 300 / 300 MW, WECC 2024 Path Rating Catalog p. 69)
+    # falsifies that. Booked NW <-> SNV, not OR <-> SNV, by the BA pair EIA-930
+    # reports for the seam (NEVP <-> BPAT, -246 ... +182 MW 2023-2025; NEVP has
+    # no PACW leg) — zones are BA groups (card N5), so a path is booked by the
+    # BAs it interconnects, not by the line owner. Armed, one bidirectional
+    # 300 MW link is appended (pipeline.ttc.apply_nwpp_path76_link) at both
+    # solve entry points. Rule 14 [R-ACCURATE]: a published rating over an
+    # absent link. Rule 13: a static published rating, regenerates for any
+    # forward year. STATED COST: the LP link arbitrages to its rating (up to
+    # 0.6-1.9 TWh/yr N->S on keeper #12 prices) while the measured seam
+    # averages 20-28 MW; never re-rated to that residual (rules 1 / 13).
+    nwpp_path76_alturas_link: bool = False
 
     # Commitment-floor WINDOW ranked on NET load instead of system load
     # (SPP-66, owner ruling "Shared gate" 2026-09-20; default off, so every
