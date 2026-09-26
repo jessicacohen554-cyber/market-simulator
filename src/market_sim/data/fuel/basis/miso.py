@@ -406,15 +406,29 @@ def _miso_zone_hub_kind(year: int, path: Path | None = None) -> dict[str, str]:
     ``hub`` string starting with one of :data:`_MISO_HENRY_HUB_PREFIXES` (the
     Gulf Coast row, MISO-South) maps to Henry Hub; every other row maps to
     Chicago Citygate. Empty when the table or the year is absent.
+
+    A zone with no row in ``year`` takes its hub from the NEAREST year the table
+    does carry for it (ties to the earlier year). A zone's hub is a geographic
+    fact, not a yearly measurement: the basis VALUE is year-specific, the hub it
+    is quoted against is not. Without this, MISO-South (Gulf Coast, rows from
+    2022 only) fell through callers' ``"chicago"`` default in 2018-2021, so the
+    miso-276 D1 arm priced South on the Chicago Uri print against the owner's
+    ruling (South = Henry Hub). Found by miso-277
+    (``scripts/probes/_miso277_storm_print_conventions.py``).
     """
     frame = _load_zonal_gas_hub(Path(path) if path else MISO_ZONAL_GAS_HUB_PATH)
     if frame is None or "hub" not in frame.columns:
         return {}
-    sub = frame[frame["year"] == year]
+    if not (frame["year"] == year).any():
+        return {}
     out: dict[str, str] = {}
-    for r in sub.itertuples():
-        hub = str(r.hub).strip().lower()
-        out[str(r.zone)] = (
+    for zone, rows in frame.groupby("zone"):
+        # Nearest year to ``year`` (its own row when present); ties -> earlier.
+        pick = min(
+            rows.itertuples(), key=lambda r: (abs(int(r.year) - year), int(r.year))
+        )
+        hub = str(pick.hub).strip().lower()
+        out[str(zone)] = (
             "henry" if hub.startswith(_MISO_HENRY_HUB_PREFIXES) else "chicago"
         )
     return out
