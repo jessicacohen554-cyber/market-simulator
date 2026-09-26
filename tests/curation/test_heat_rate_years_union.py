@@ -57,3 +57,25 @@ def test_klass_still_takes_the_latest_in_class_record():
     """A unit in the class every year still reads its latest record."""
     union = union_fleet(_fleets(), klass="CT_PEAKER")
     assert [g.pmax_mw for g in union if g.unit_id == "1_1"] == [55.0]
+
+
+def test_klass_family_keeps_a_coal_plant_a_later_vintage_converts():
+    """soco-71: the coal derive names the coal FAMILY token, not a subclass.
+
+    Crist (641) is COAL_BIT in 2019 and ST_GAS after its 2020 gas conversion; the
+    latest-record union dropped it from the coal derive's population, so its 2019
+    coal dispatched on the eGRID rate. With ``klass="COAL"`` a subclass record in
+    any year keeps the plant, and a plant coal in every year is unchanged.
+    """
+    fleets = {
+        2019: [
+            _Gen("641_4", 641, "COAL_BIT", 924.0),
+            _Gen("3_4", 3, "COAL_BIT", 1118.5),
+        ],
+        2021: [_Gen("641_4", 641, "ST_GAS", 924.0), _Gen("3_4", 3, "COAL_BIT", 1118.5)],
+    }
+    assert class_capacity(union_fleet(fleets), "COAL") == {3: 1118.5}
+    assert class_capacity(union_fleet(fleets, klass="COAL"), "COAL") == {
+        641: 924.0,
+        3: 1118.5,
+    }
