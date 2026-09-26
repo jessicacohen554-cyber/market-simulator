@@ -84,13 +84,41 @@ def backcast_fleets(
     return out
 
 
-def union_fleet(fleets: dict[int, list]) -> list:
-    """Return one generator per ``unit_id`` across years, the LATEST year's record."""
+def union_fleet(fleets: dict[int, list], klass: str | None = None) -> list:
+    """Return one generator per ``unit_id`` across years, the LATEST year's record.
+
+    Args:
+        fleets: ``{year: fleet}`` from :func:`backcast_fleets`.
+        klass: The derive's target class (or class family). When given, a unit
+            that carries ``klass`` in ANY year keeps its latest ``klass``-bearing
+            record, so a later vintage that re-classes it cannot silently drop it
+            out of the derive's population (neiso-118: Canal 3, plant 1599, is
+            CT_PEAKER in the 2019-2022 vintages and oil in 2023-2025, so the
+            latest-record union never offered it to the CT derive and its 2019
+            dispatch fell through to eGRID-2019's boundary-broken 4.14
+            MMBtu/MWh). ``None`` keeps the latest record unconditionally — the
+            pre-neiso-118 behaviour, byte-identical for every caller that does
+            not pass it.
+    """
     latest: dict[str, object] = {}
     for year in sorted(fleets):
         for gen in fleets[year]:
-            latest[str(gen.unit_id)] = gen
+            key = str(gen.unit_id)
+            prev = latest.get(key)
+            if (
+                klass is not None
+                and prev is not None
+                and _in_class(prev, klass)
+                and not _in_class(gen, klass)
+            ):
+                continue
+            latest[key] = gen
     return list(latest.values())
+
+
+def _in_class(gen, klass: str) -> bool:
+    """True when ``gen`` belongs to ``klass`` (a class or its artifact family)."""
+    return gen.plant_group == klass or artifact_class(gen.plant_group) == klass
 
 
 def stack_year_tables(
