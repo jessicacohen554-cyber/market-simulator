@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-26-miso-277-d1-as",
+  "label": "miso 277 d1 as",
+  "date": "2026-09-26",
+  "shorthand": "miso-277-d1-as",
+  "definition": "miso-277 arm 2019: D1 as ruled (South on Henry Hub; owner ruling 2026-09-26)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-26-miso-277-d1-as.js",
+  "bundle": "results/calibration/miso277_span"
+}
