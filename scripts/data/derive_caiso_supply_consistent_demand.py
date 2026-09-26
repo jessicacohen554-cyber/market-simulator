@@ -32,11 +32,18 @@ committed ``gas_cems_grid`` anchor or the derived annual total moves outside
 the FINDING §6 pre-registered window.
 
 Usage:
-    python scripts/data/derive_caiso_supply_consistent_demand.py
+    python scripts/data/derive_caiso_supply_consistent_demand.py --years 2019 2020 2021
+
+``--years`` is REQUIRED (R-CAISO-4, 2026-09-26): the script used to rewrite
+every listed year on each run, which at HEAD would silently move the committed
+2022 artifact (219.538 -> 219.275 TWh, code/data drift since it was written).
+Only the named years are derived and written; ``provenance.json`` is MERGED,
+so the other years' entries survive untouched.
 """
 
 from __future__ import annotations
 
+import argparse
 import gzip
 import json
 import sys
@@ -64,7 +71,7 @@ ISO = "CAISO"
 # is new. NOTE this script takes NO arguments and REWRITES every year listed
 # here on any invocation; the 2023-2025 outputs are asserted sha256-identical
 # after the run (PRECOMMIT-caiso262 A-7).
-YEARS = (2022, 2023, 2024, 2025)
+YEARS = (2019, 2020, 2021, 2022, 2023, 2024, 2025)
 HOURS = 8760
 # FINDING §6 pre-registered annual levels (TWh) ±1.5 TWh tolerance: a derive
 # outside these windows means an input drifted — refuse to write.
@@ -86,11 +93,32 @@ HOURS = 8760
 # +17.7; if it does not, that is a finding to report, never a reason to move
 # the band.
 _ANNUAL_GUARD = {
-    2022: (199.6, 220.3),
     2023: (206.2, 209.2),
     2024: (210.9, 213.9),
     2025: (203.8, 206.8),
 }
+# G-DEMAND ON THE MEASURED 930 BASIS (R-CAISO-4, owner ruling 2026-09-26,
+# option (a) of docs/handoffs/i-caiso/INTAKE-i-caiso-2019-2021-2026-09-24.md
+# section 1). Replaces G-DEMAND-2022 for every year with no FINDING section-6
+# level (2019-2022). The old band measured
+#     wedge = [930 NetGen - TI] - derived = NG_cell - CEMS - cogen - foldin,
+# i.e. it assumed the CISO `NG: NG` cell FOLDS geothermal + biomass. CAISO's own
+# Outlook fuel mix refutes that: the 930 NG cell equals Outlook natural_gas
+# alone (65.15 vs 64.95 / 73.69 vs 73.82 / 79.23 vs 79.20 TWh, 2019/20/21), and
+# geo/bio appear in no 930 cell, so the fold-in is a term 930 NetGen genuinely
+# LACKS and must not sit inside the drift check. The measured-basis wedge is the
+# gas-vs-gas residual
+#     W_gas = NG_cell - CEMS bench-gas grid - gas_cogen_grid,
+# and the band is the IDENTICAL G-DEMAND construction applied to it, fixed from
+# the COMMITTED 2023-2025 artifacts only (wedge + foldin from provenance.json:
+# 5.416+13.786 / 10.780+13.589 / 17.675+10.499 = 19.202 / 24.369 / 28.174 TWh):
+# [-1.5, max + 1.5] = [-1.500, +29.674]. No new parameter; no value chosen
+# after seeing a 2019-2021 result (the 2019-21 wedges were already on record
+# in the intake doc, so this is stated rather than hidden). Measured W_gas:
+# 6.21 / 9.04 / 10.66 / 12.93 / 19.22 / 24.36 / 28.17 TWh (2019..2025), its
+# hourly correlation with 930 solar rising 0.04 -> 0.81: the growing
+# solar-shaped NG-cell artifact the derive removes by construction.
+_WGAS_GUARD = (-1.500, 29.674)
 # Committed-anchor reproduction tolerance (TWh) for the decoded CEMS hourly.
 _ANCHOR_TOL = 0.1
 
@@ -110,7 +138,11 @@ def _year_frame(year: int) -> pd.DataFrame:
     return frame
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--years", nargs="+", type=int, required=True, choices=YEARS)
+    args = ap.parse_args(argv)
+
     # Package import, not a ``spec_from_file_location`` file-load (refactor
     # plan §6-E): the old form executed the renderer a second time under the
     # synthetic name "rch" — a private copy that could drift from the
@@ -121,9 +153,11 @@ def main() -> int:
     gas_groups = set(rch._GAS_GROUPS)
     out_dir = CAISO_SUPPLY_CONSISTENT_DEMAND_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
-    provenance: dict[str, dict] = {}
+    prov_path = out_dir / "provenance.json"
+    prior = json.loads(prov_path.read_text()) if prov_path.exists() else {}
+    provenance: dict[str, dict] = dict(prior.get("years", {}))
 
-    for year in YEARS:
+    for year in args.years:
         part = json.loads(
             gzip.decompress(
                 (
@@ -172,12 +206,21 @@ def main() -> int:
 
         demand = netgen - ng_cell + cems_grid + cogen_flat + foldin_flat - ti
         total = demand.sum() / 1e6
-        lo, hi = _ANNUAL_GUARD[year]
-        if not (lo <= total <= hi):
-            raise SystemExit(
-                f"GUARD FAIL {ISO} {year}: derived demand {total:.2f} TWh "
-                f"outside pre-registered [{lo}, {hi}] (FINDING §6)."
-            )
+        wgas = float(ng_cell.sum() / 1e6 - anchor - float(e930["gas_cogen_grid"]))
+        if year in _ANNUAL_GUARD:
+            lo, hi = _ANNUAL_GUARD[year]
+            if not (lo <= total <= hi):
+                raise SystemExit(
+                    f"GUARD FAIL {ISO} {year}: derived demand {total:.2f} TWh "
+                    f"outside pre-registered [{lo}, {hi}] (FINDING §6)."
+                )
+        else:
+            lo, hi = _WGAS_GUARD
+            if not (lo <= wgas <= hi):
+                raise SystemExit(
+                    f"GUARD FAIL {ISO} {year}: measured-basis gas wedge "
+                    f"{wgas:.2f} TWh outside [{lo}, {hi}] (G-DEMAND, 930 basis)."
+                )
         if demand.min() <= 0:
             raise SystemExit(
                 f"GUARD FAIL {ISO} {year}: non-positive demand hour "
@@ -203,6 +246,7 @@ def main() -> int:
             "gas_cogen_grid_twh": round(float(e930["gas_cogen_grid"]), 3),
             "geo_biomass_foldin_twh": round(foldin_twh, 3),
             "flat_adders_mw": round(cogen_flat + foldin_flat, 1),
+            "gas_wedge_930_basis_twh": round(wgas, 3),
         }
         print(
             f"{ISO} {year}: demand {total:.2f} TWh "
@@ -220,7 +264,7 @@ def main() -> int:
                     "grid(t) + gas_cogen_grid/8760 + geo_biomass_foldin/8760 "
                     "- TI(t)"
                 ),
-                "years": provenance,
+                "years": {k: provenance[k] for k in sorted(provenance)},
             },
             indent=1,
         )
