@@ -166,3 +166,15 @@ python3 scripts/replay_keeper.py /tmp/n49/results/calibration/nwpp49_ror_span \
   `git add`.
 - The parent composes (2023 leg first), registers, and lands the bundle on `main` before this lane's PR merges
   (rule 33(f)).
+
+## 7. Launch record (appended after the pin; nothing above it changed)
+
+- Pin `19f2eace1cd769aa9d7c88995881e7d50ae2678d`. All seven shards were launched 2026-09-26 13:51–13:54 UTC.
+- Sessions:
+  - 2019: `session_01JQLm4tHRgh289ttMCvnGko`
+  - 2020: `session_01NyxjmbcPPdeoGmoz2pbXU9`
+  - 2021: `session_014jQ6UbSsa8MYJ2z9jX5sEF`
+  - 2022: `session_01TeSjCqpBKjPuVHWG28Nofw`
+  - 2023: `session_01HHtzrXmuTA8Ujyg1djx2nq`
+  - 2024: `session_011idfpJU2phMytBMURr3hLu`
+  - 2025: `session_013dJpaXwW6fuFfNhtQDhjaZ`
