@@ -134,3 +134,16 @@ value is not selected by the gates). Promotion is the owner's decision (rule 31)
 ## 8. Launch record
 
 (appended after the pin; §1–§7 unchanged)
+
+Launched 2026-09-26 01:14–01:15 UTC. All 7 shards are pinned to `e5acf0fe30e707bb7100215a4826d721a0a78e3e`, tagged
+`miso-275` / `shard`, with auto-PR off. Each shard pushes branch `claude/miso275-arm-<Y>` from out-dir `miso275_arm_<Y>`.
+
+| year | session |
+|---|---|
+| 2022 (launched first, the slow leg) | `session_01PSW98qX5zGaBDvBjxBMZR8` |
+| 2019 | `session_014uFazjMSsyrnp5DYUgJnhD` |
+| 2020 | `session_01QvPqqRSua7jTzGsvUq6kbW` |
+| 2021 | `session_015Akuyb2k3CfwUgbJDQvd8f` |
+| 2023 | `session_01QVaQ8ev5n5XRvPaCkD8em2` |
+| 2024 | `session_01ReePJ6w1dUDZYEjAzrxrct` |
+| 2025 | `session_01XuaPkSDVWz2bxbL8jaExqu` |
