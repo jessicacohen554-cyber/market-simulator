@@ -37,6 +37,10 @@ data/raw/_validation-source data/raw/reference` touches 5 files:
   `reliability_floor_layup_window_mask` (NYISO-NEXT). INERT: new field default-off and absent from the keeper
   recipe; returns `None` when off.
 
+**Rebase window `722b40f9` → `cf0950dc`** (main moved before the pin): 4 files, one hunk family —
+`unit_outage_unit_fuel_routing` (PJM-NEXT-3, `-memberrepair-unitfuel-` extract companion). INERT: new field,
+default False, frozen cache-key drop value `"False"`, absent from the keeper recipe.
+
 Form 4 stands for every year: the keeper's committed bundle is the control; no control solve.
 
 ## 4. Phase 0 on the ARMED code path (zero LP) — `phase0_yard_rows_probe.py` → `.json`
@@ -93,4 +97,33 @@ negation + plain `git add`. Parent composes (`docs/handoffs/neiso117/compose_spa
 
 ## 8. Launch record
 
-(filled at launch)
+All seven pinned to **`17402f351e5dc3d45126100b7839531cd21c1ca3`** (this doc's first commit, on `cf0950dc`),
+created 2026-09-26 01:28 UTC, tag `neiso117`. Branch `claude/neiso117-<Y>`, out-dir `neiso117_<Y>`.
+
+| year | shard session |
+|---|---|
+| 2019 | `session_01HCR54dMpxMrELwDJ3vYcF8` |
+| 2020 | `session_01AnqN2uUmLU99H9dgXFWms3` |
+| 2021 | `session_01CU49KTyFBepnC7eDNoMdXt` |
+| 2022 | `session_01AxP61vTrmhf99qhNbzS2ka` |
+| 2023 | `session_019HiqKfoVDc1a8DBVFkZwAx` |
+| 2024 | `session_011W6dpXacaJVxBHZPNDuawG` |
+| 2025 | `session_01MNUF1v7Zi4WWMbU84361J1` |
+
+## 9. ADDENDUM (before the 2025 re-solve) — the 2025 leg was infeasible; floor reconciliation
+
+The 2025 shard (`session_01MNUF1v7Zi4WWMbU84361J1`) stopped without pushing. Zero-LP diagnosis: Schiller 2367
+(a 2025-vintage row, `r202510`) carries the NEISO **winter fuel-security must-run** (`MECH_WINTER_FUELSEC`, 1,104 h
+on six tranches, ≈ 77 GWh / **1.099 TBtu**) while its EIA-923 yard reported **zero** Dec-2024 stock and zero
+2023–24 receipts, so the yard row (budget 0) and the floor cannot both hold — the LP is infeasible.
+
+Repair (rule 19 `[R-ONE-MECH]`, rule 17 `[R-FLOOR-WINDOW]`): a coal floor cannot demand fuel its own yard does
+not hold. `data/coal_fuel_inventory.reconcile_floors_to_yard_budget` scales every floor at a yard whose annual floor
+fuel draw exceeds the yard budget by `budget / draw` (zero for a zero budget), keeping the hourly shape; a yard
+whose floors already fit is untouched. Zero free parameters. Wired in `run_calibration.py` directly after the yard
+rows are built; logged per scaled row. Tests: `tests/unit/data/test_coal_fuel_inventory_plant_grain.py` (+2).
+
+**Inert for the six solved legs, verified at zero LP** (`phase0_yard_rows_probe.json`, `floor_scaled_rows`): 2019–2024
+scale nothing, so legs `neiso117_2019..2024` (solved at `17402f35`) are byte-valid under the new code; 2025 scales
+exactly one row, Schiller, ×0. MISO's keeper solved feasibly with the yard rows armed, so no MISO yard's floors
+exceed its budget and the change is inert there too. Only 2025 is re-solved, at the SHA recorded in §10.

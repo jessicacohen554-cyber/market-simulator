@@ -158,3 +158,29 @@ class YardBindsWherePoolDoesNotTest(unittest.TestCase):
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
+
+
+def test_floors_scaled_only_where_they_exceed_the_yard_budget():
+    """neiso-117: a zero-budget yard's floors go to zero; a fitting yard is untouched."""
+    from market_sim.data.coal_fuel_inventory import reconcile_floors_to_yard_budget
+
+    min_gen = np.array([[2.0, 2.0], [1.0, 1.0], [5.0, 5.0]])
+    gen_idx = np.array([0, 1, 2])
+    group = np.array([0, 0, 1])
+    coeff = np.array([10.0, 10.0, 10.0])
+    budget = np.array([[100.0], [0.0]])  # row 0 draw 60 fits; row 1 draw 100 > 0
+    out = reconcile_floors_to_yard_budget(min_gen, gen_idx, budget, coeff, group)
+    assert [(r, s) for r, _e, s in out] == [(1, 0.0)]
+    assert min_gen[:2].tolist() == [[2.0, 2.0], [1.0, 1.0]]
+    assert min_gen[2].tolist() == [0.0, 0.0]
+
+
+def test_floor_scale_caps_draw_at_budget():
+    from market_sim.data.coal_fuel_inventory import reconcile_floors_to_yard_budget
+
+    min_gen = np.array([[4.0, 4.0]])
+    out = reconcile_floors_to_yard_budget(
+        min_gen, np.array([0]), np.array([[40.0]]), np.array([10.0]), np.array([0])
+    )
+    assert out[0][2] == 0.5
+    assert float((10.0 * min_gen).sum()) == 40.0

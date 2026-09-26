@@ -3587,3 +3587,6 @@ results/calibration/soco69_20[0-9][0-9]/
 
 # R-CAISO-4 per-year shard legs: kept out of main (rule 32(d)); the composite is what registers. NOT deleted (rule 31).
 results/calibration/rcaiso4_*_20*/
+# neiso-117 per-year shard legs (rule 32(d)/36): the composite neiso117_span is what registers.
+# Legs live on claude/neiso117-<Y> (transport only, rule 33(f)).
+results/calibration/neiso117_20[12][0-9]/
