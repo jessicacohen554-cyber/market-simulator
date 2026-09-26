@@ -14731,3 +14731,30 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - `docs/handoffs/FINDING-r-ercot-4-validation-years-2026-09-25.md`
   - `docs/handoffs/PRECOMMIT-r-ercot-4-day-guard-2026-09-25.md`
   - `docs/handoffs/RESULT-r-ercot-4-day-guard-2026-09-25.md`
+
+## R-ERCOT-5 — 2026-09-25/26 — 2019 scarcity forensics; ERCOT CAMPD outage windows at their detected hour grain — PROMOTED
+
+- **Owner ruling:** "Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper.."
+- **New keeper:** `2026-09-25-r-5-hour-grain` (bundle `results/calibration/r_ercot5_hourgrain_span`, 2019–2025). Supersedes `2026-09-25-r-4-day-guard`, which was pruned.
+- **Step 1 (zero LP):**
+  - 2019's C3a +99 % is 75 % >$1k tail and 25 % coal-merit-order body. 21 of the model's 72 hours above $1k are the real Aug 12–16 event; March and July are pure phantoms.
+  - Under the phantoms: the CAMPD full-stop windows (standard, short-coal, short-gas) are day-granular. ~98 % of window unit-hours contradicted by the same unit's CEMS sit on the first or last day (2019: 4.5 TWh generated inside the "out" units' own windows). This holds in every year.
+- **Step 2:** 2020 is data-blocked. 77 % of its gap is the body (coal offer conduct); the availability contribution is bounded at ≤ 2.5 TWh of coal.
+- **Mechanism:** `unit_outage_window_hour_grain` (nyiso-229) gains an ERCOT branch, so there is no new field.
+  - It selects `-hourgrain` companions derived from ERCOT's own CAMPD; their base-column projection equals the incumbents.
+  - It is read by both the availability stack and the ERCOT-148/149 precedence cap.
+  - Zero new scalars; the DOF ledger is carried verbatim.
+  - Also repaired: the unit-outage deriver after COAL-SUB (main landed the same fix concurrently).
+- **Solves:** seven shards at `d20ca118`, one per year. Three were relaunched after sitting in the container queue for 5.5 h. G-DRIFT found everything inert, so the keeper bundle was the control.
+- **Result:**
+  - Train tier stays **CALIBRATED**, and every year's verdict is identical to the prior keeper.
+  - Validation: 2019 C3a +99.4 → +59.8 %, C3b 1.837 → 1.334; 2020 +19.0 → +11.7 %, 0.457 → 0.361; 2021 +5.8 → +2.6 %.
+  - **Reported regressions** (non-downgrading): C3a cheaper 2023 −7.5 %, 2024 −5.6 %, 2025 −6.9 %; C3b 0.133 / 0.120 / 0.108; 2024 C3c 26 → 18 h.
+- **Promotion checks:**
+  - Rule 35 order: year union {2019..2025} read before the prune; E1 passed; prune; `audit_keepers` 0/0.
+  - `stamp_config_partition --check` passes; the partition overrides are byte-equal to the prior keeper's.
+- **Matrix:** `unit_outage_window_hour_grain` U → O → **K** (ERCOT).
+- **Records:**
+  - `docs/handoffs/FINDING-r-ercot-5-2019-scarcity-2026-09-25.md`
+  - `docs/handoffs/PRECOMMIT-r-ercot-5-window-hour-grain-2026-09-25.md`
+  - `docs/handoffs/RESULT-r-ercot-5-hour-grain-2026-09-26.md`

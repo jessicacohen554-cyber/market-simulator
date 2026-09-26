@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-25-r-5-hour-grain",
+  "label": "r 5 hour grain",
+  "date": "2026-09-25",
+  "shorthand": "r-5-hour-grain",
+  "definition": "R-ERCOT-5 ARM 2025: keeper 2026-09-25-r-4-day-guard recipe with unit_outage_window_hour_grain=true (ERCOT CAMPD full-stop windows at their DETECTED hour grain) \u2014 PRECOMMIT-r-ercot-5-window-hour-grain-2026-09-25",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-09-25-r-5-hour-grain.js",
+  "bundle": "results/calibration/r_ercot5_hourgrain_span"
+}
