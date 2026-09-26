@@ -1,0 +1,10 @@
+2021: model 169.90  actual-LZ 165.95 (+2.4%)  actual-HUB same weights 162.92 (+4.3%)  LZ basis over hub +3.03 $/MWh = -77% of the C3a gap
+    model zone mean spread max-min $/MWh: 24.447  hours any model zone differs by >$1: 3395
+2022: model 68.45  actual-LZ 74.94 (-8.7%)  actual-HUB same weights 71.76 (-4.6%)  LZ basis over hub +3.18 $/MWh = 49% of the C3a gap
+    model zone mean spread max-min $/MWh: 28.119  hours any model zone differs by >$1: 3563
+2023: model 59.47  actual-LZ 64.32 (-7.5%)  actual-HUB same weights 61.97 (-4.0%)  LZ basis over hub +2.35 $/MWh = 48% of the C3a gap
+    model zone mean spread max-min $/MWh: 15.913  hours any model zone differs by >$1: 3025
+2024: model 29.24  actual-LZ 30.99 (-5.6%)  actual-HUB same weights 28.78 (+1.6%)  LZ basis over hub +2.21 $/MWh = 126% of the C3a gap
+    model zone mean spread max-min $/MWh: 17.656  hours any model zone differs by >$1: 3545
+2025: model 33.79  actual-LZ 36.29 (-6.9%)  actual-HUB same weights 33.64 (+0.4%)  LZ basis over hub +2.65 $/MWh = 106% of the C3a gap
+    model zone mean spread max-min $/MWh: 22.845  hours any model zone differs by >$1: 4345
