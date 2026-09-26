@@ -3608,3 +3608,8 @@ results/calibration/miso275_arm_*/
 # docs/handoffs/RESULT-spp-85-netload-mask-repair-2026-09-26.md section 1.
 results/calibration/spp85_ctl_*/
 results/calibration/spp85_arm_20*/
+# PJM-NEXT-3 card 2 per-year shard legs (rule 32(d): only the composite reaches main; rule 31: kept on disk).
+# Provenance (rule 33(d)), full SHAs: 2019 951b84441a08b0c0564076f774caebf1fcef72b7, 2020 9bd31d86756380a398d312cc705d83926fa9a82b,
+# 2021 91070fcf068344e80cb2ed5716035ccc7ab9c549, 2022 d02df9f3bb65ad210bec8d2c6170388bb3b7fad0, 2023 926affe99878abde3e61359ea348f315ac4270bc,
+# 2024 49abfa92ec5d500cd30c4a6db5ff4a4fbccf2de4, 2025 724c0f3f9e529610c862a40d338af24f51b73c5f (branches claude/pjmnext3-c2-<y>).
+results/calibration/pjmnext3_c2_20*/

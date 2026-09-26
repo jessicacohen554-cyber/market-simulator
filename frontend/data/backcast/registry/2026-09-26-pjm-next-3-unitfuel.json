@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-26-pjm-next-3-unitfuel",
+  "label": "pjm next 3 unitfuel",
+  "date": "2026-09-26",
+  "shorthand": "pjm-next-3-unitfuel",
+  "definition": "PJM-NEXT-3 card 2 2019: keeper recipe + unit_outage_unit_fuel_routing (PRECOMMIT-pjm-next-3-card2 \u00a76)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-09-26-pjm-next-3-unitfuel.js",
+  "bundle": "results/calibration/pjmnext3_c2_span"
+}
