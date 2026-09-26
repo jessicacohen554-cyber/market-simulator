@@ -2050,6 +2050,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # an armed run carries different coal availability and gets a distinct
     # key. SHARED field -- very end, per HOUSE-3.
     "wefor_residual_short_screened_coal",
+    # NWPP-NEXT-4 (2026-09-25): the coal committed band is sized as the
+    # INCREMENT above the must-run band, not stacked on it (default off).
+    # Byte-identical off by construction: its sole consumer,
+    # ``data/fleet/campd_bins.py::fleet_to_bins``, rewrites ``pct_mc`` only
+    # inside ``getattr(config, "coal_committed_nested_on_mustrun", False)``.
+    # SHARED field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as
+    # the field (the nyiso-119 discipline).
+    "coal_committed_nested_on_mustrun",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2780,6 +2788,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-273 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "wefor_residual_short_screened_coal": "False",
+    # Added by NWPP-NEXT-4 WITH the field (the nyiso-119 discipline).
+    "coal_committed_nested_on_mustrun": "False",
 }
 
 
@@ -11981,6 +11991,25 @@ class ScenarioConfig:
     # question, and a plant absent from it is a plant with no observed
     # commitment conduct, exactly as here.
     coal_mustrun_requires_measured_row: bool = False
+    # COAL COMMITTED BAND NESTED ON THE MUST-RUN BAND (NWPP-NEXT-4, GATED
+    # default off, ISO-agnostic, ZERO free parameters). The CAMPD thermal-
+    # tranche artifact (scripts/data/derive_thermal_tranches.py) defines BOTH
+    # coal shares as LEVELS measured from 0 MW: ``committed_pct`` = P5 of the
+    # plant's online-hour CF, ``mustrun_pct`` = P5 of its all-hour CF. The
+    # consumer stacks them as INCREMENTS — ``_mustrun`` = mustrun x nameplate
+    # and ``_committed`` = committed x nameplate ON TOP of it — so an
+    # always-online plant, where the two levels coincide, carries a fuel-cheap
+    # block of ~2x its measured minimum stable load (FINDING-nwpp-48 §6, owner
+    # card D3). Armed, a coal plant WITH a measured artifact row sizes its
+    # committed band as the increment ``max(0, committed_pct - mustrun_pct)``,
+    # so ``_mustrun`` + ``_committed`` together equal the measured committed
+    # level; the removed MW fall to the economic band, the plant keeps every
+    # MW and the LP decides them on price. Rule 14 [R-ACCURATE]: a units
+    # misread of a measured artifact, not a new level. Plants with no measured
+    # row keep the group default (whose shares are increments by design), and
+    # non-coal groups are untouched. Regenerates for any year the artifact
+    # serves, forecast included (rule 13).
+    coal_committed_nested_on_mustrun: bool = False
 
     # Commitment-floor WINDOW ranked on NET load instead of system load
     # (SPP-66, owner ruling "Shared gate" 2026-09-20; default off, so every
