@@ -39,7 +39,6 @@ from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
@@ -72,7 +71,9 @@ def _build(year: int, arm: bool) -> dict:
     from scripts.replay_keeper import run_year_kwargs
     from scripts.run_calibration import run_year
 
-    meta = json.loads((REPO / BUNDLES.get(year, DEFAULT_BUNDLE) / "meta.json").read_text())
+    meta = json.loads(
+        (REPO / BUNDLES.get(year, DEFAULT_BUNDLE) / "meta.json").read_text()
+    )
     kw = run_year_kwargs(meta)
     if arm:
         prb = dict(kw.get("prb_overrides") or {})
@@ -81,7 +82,9 @@ def _build(year: int, arm: bool) -> dict:
     ref = rcf._load_reference()
     gp = rcf._henry_hub_actual(ref, year)
     b = run_year(year, meta["iso"], T, gp, {}, fleet_only=True, **kw)
-    assert bool(getattr(b["config"], "reliability_floor_layup_window_mask", False)) == arm
+    assert (
+        bool(getattr(b["config"], "reliability_floor_layup_window_mask", False)) == arm
+    )
     return b
 
 
@@ -127,7 +130,9 @@ def measure(year: int) -> dict:
         foot[a] = bool(
             (x is None and y is None) or np.array_equal(np.asarray(x), np.asarray(y))
         )
-    foot["mc_base"] = bool(np.array_equal(np.asarray(ctl["mc_base"]), np.asarray(arm["mc_base"])))
+    foot["mc_base"] = bool(
+        np.array_equal(np.asarray(ctl["mc_base"]), np.asarray(arm["mc_base"]))
+    )
     mga, mgb = np.asarray(fa.min_gen), np.asarray(fb.min_gen)
     diff_rows = np.flatnonzero((mga != mgb).any(axis=1))
     mech_a = np.asarray(fa.min_gen_mechanism)
@@ -136,7 +141,8 @@ def measure(year: int) -> dict:
     foot["min_gen_rows_changed"] = int(diff_rows.size)
     foot["changed_rows_all_prorata_rel_floor"] = bool(
         all(
-            pg[r] == "ST_GAS" and zn[r] in PRO_RATA_ZONES
+            pg[r] == "ST_GAS"
+            and zn[r] in PRO_RATA_ZONES
             and (mech_a[r] == MECH_RELIABILITY_FLOOR).any()
             for r in diff_rows
         )
@@ -193,7 +199,9 @@ def measure(year: int) -> dict:
             "floor_twh_arm": round(float(pf_a.sum()) / 1e6, 4),
             "floor_twh_meter_zero_control": round(float(pf_c[zero].sum()) / 1e6, 4),
             "floor_twh_meter_zero_arm": round(float(pf_a[zero].sum()) / 1e6, 4),
-            "floor_twh_plant_meter_zero_control": round(float(pf_c[pzero].sum()) / 1e6, 4),
+            "floor_twh_plant_meter_zero_control": round(
+                float(pf_c[pzero].sum()) / 1e6, 4
+            ),
             "floor_twh_plant_meter_zero_arm": round(float(pf_a[pzero].sum()) / 1e6, 4),
             "floor_active_h_control": int((pf_c > 0).sum()),
             "floor_active_h_arm": int((pf_a > 0).sum()),
@@ -274,10 +282,13 @@ def coefficient_disclosure(years=(2023, 2024, 2025)) -> dict:
 def main() -> None:
     """CLI."""
     ap = argparse.ArgumentParser()
-    ap.add_argument("--years", nargs="+", type=int, default=[2021, 2022, 2023, 2024, 2025])
+    ap.add_argument(
+        "--years", nargs="+", type=int, default=[2021, 2022, 2023, 2024, 2025]
+    )
     ap.add_argument("--no-coef", action="store_true")
     ap.add_argument(
-        "--out", default=str(REPO / "results/calibration/_nyiso_next_floor_layup_phase0.json")
+        "--out",
+        default=str(REPO / "results/calibration/_nyiso_next_floor_layup_phase0.json"),
     )
     a = ap.parse_args()
     logging.basicConfig(level=logging.WARNING)

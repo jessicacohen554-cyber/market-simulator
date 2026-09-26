@@ -1256,7 +1256,6 @@ class TestReliabilityFloorPlantExclusions(unittest.TestCase):
             )
 
 
-
 class TestReliabilityFloorLayupWindowMask(unittest.TestCase):
     """NYISO-NEXT: measured lay-up windows leave the pro_rata floor basis.
 
@@ -1282,7 +1281,11 @@ class TestReliabilityFloorLayupWindowMask(unittest.TestCase):
         fa, rows = _build_two_plant_st_fleet(H)
         with mock.patch(_LOADER, loader):
             T.inject_reliability_floor(
-                fa, "TEST", 2024, [self._spec(distribution)], ["Z"],
+                fa,
+                "TEST",
+                2024,
+                [self._spec(distribution)],
+                ["Z"],
                 layup_removed=layup,
             )
         return fa, rows
@@ -1348,9 +1351,13 @@ class TestReliabilityFloorLayupWindowMask(unittest.TestCase):
         from market_sim.config import scenarios as sc
 
         self.assertFalse(sc.ScenarioConfig().reliability_floor_layup_window_mask)
-        self.assertIn("reliability_floor_layup_window_mask", sc._CACHE_KEY_OPTIONAL_FIELDS)
+        self.assertIn(
+            "reliability_floor_layup_window_mask", sc._CACHE_KEY_OPTIONAL_FIELDS
+        )
         self.assertEqual(
-            sc._CACHE_KEY_OPTIONAL_FIELD_DEFAULTS["reliability_floor_layup_window_mask"],
+            sc._CACHE_KEY_OPTIONAL_FIELD_DEFAULTS[
+                "reliability_floor_layup_window_mask"
+            ],
             "False",
         )
         self.assertIn(
@@ -1378,14 +1385,19 @@ class TestLayupCompanionResolver(unittest.TestCase):
         hour = unit_layup_csv_for_iso("NYISO", True, True, True)
         day = unit_layup_csv_for_iso("NYISO", True, True, False)
         if hour.exists():
-            self.assertEqual(hour.name, "campd-unit-outages-layup-perunitmerithour-NYISO.csv")
+            self.assertEqual(
+                hour.name, "campd-unit-outages-layup-perunitmerithour-NYISO.csv"
+            )
         if day.exists():
-            self.assertEqual(day.name, "campd-unit-outages-layup-perunitmerit-NYISO.csv")
+            self.assertEqual(
+                day.name, "campd-unit-outages-layup-perunitmerit-NYISO.csv"
+            )
         # The guard alone (no per-unit crosswalk) never selects the merit family.
         self.assertEqual(
             unit_layup_csv_for_iso("NYISO", False, True, True).name,
             "campd-unit-outages-layup-NYISO.csv",
         )
+
 
 if __name__ == "__main__":
     unittest.main()
