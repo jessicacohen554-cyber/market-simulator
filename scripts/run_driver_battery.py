@@ -90,6 +90,20 @@ THERMAL_FUELS: tuple[str, ...] = (
     "nuclear",
 )
 
+#: T1.6b's scoring window — the INCLUSIVE solve-year span whose REC-dual mean
+#: ``rps_dual_over_acp_mean_2041_2050`` averages. OWNER RULING Q72 (2026-09-26,
+#: capx ledger §0bl / §3: "Re-point, 2041–2050 mean" = DESIGN-capx-d97 §6
+#: option (a), sub-choice (a-2)), executed by capx D99. Why a horizon mean and
+#: not the final year: the NEISO RPS row's dual is near-binary in this LP (it
+#: reads the ACP while the region is physically short and ≈ 0 once it is not —
+#: DESIGN-capx-d97 §1.3), so a final-year scalar measures which side of the
+#: step ONE year lands on, while the mean over the back decade measures the
+#: regime plan §2's T1.6 row pre-registers. The window is the owner's, fixed
+#: before any rung was solved, and never selected against a result (rule 1).
+#: A run that does not solve every year of it gets NO value (the metric is
+#: absent ⇒ the expectation SKIPs as vacuous), never a partial-window mean.
+T16B_MEAN_WINDOW: tuple[int, int] = (2041, 2050)
+
 
 # --------------------------------------------------------------------------- #
 # Expectation model — declarative, so every PASS/FAIL rule is a named primitive
@@ -288,8 +302,9 @@ class Ladder:
     # this string is a PRE-REGISTRATION act, not a code change: it requires a
     # plan §2 instrument decision. NO LADDER IS CURRENTLY OUT OF SERVICE — T1.6
     # was, between capx-T16 (2026-09-01) and owner ruling Q27 the same day, which
-    # re-pointed it to ``entry_rate_limits``; the machinery stays for the next
-    # ladder whose instrument fails under it.
+    # re-pointed it to ``entry_rate_limits`` (since re-pointed again, to
+    # ``entry_pipeline_aware_signal``, by owner ruling Q72); the machinery stays
+    # for the next ladder whose instrument fails under it.
     out_of_service: str = ""
 
 
@@ -490,9 +505,10 @@ def build_ladders() -> list[Ladder]:
     # the VRE fleet short vs long leaves the pre-registered claim and both
     # expectations byte-identical. Nothing in plan §2 is edited.
     #
-    # THE LEVER. ``entry_rate_limits`` is the FF-2A entry growth ladder (armed by
-    # owner decision D-2, 2026-08-02): each entry technology's annual build is
-    # capped at ``ENTRY_GROWTH_LIMIT_MULTIPLE`` (2.0, the ReEDS growth-constraint
+    # THE Q27 LEVER (SUPERSEDED by Q72, below). ``entry_rate_limits`` is the
+    # FF-2A entry growth ladder (armed by owner decision D-2, 2026-08-02): each
+    # entry technology's annual build is capped at
+    # ``ENTRY_GROWTH_LIMIT_MULTIPLE`` (2.0, the ReEDS growth-constraint
     # hard bound adopted verbatim) × its prior maximum annual build, seeded from
     # the measured EIA-860 record over a trailing window
     # (``data/build_throughput.py``, whose docstring states wind/solar come from
@@ -528,14 +544,52 @@ def build_ladders() -> list[Ladder]:
     # failure, and it is reported as the outcome — never tuned until it moves,
     # and NEVER a third lever tried (rules 1/11/14; Q27 verbatim). The scorer
     # labels a constant series vacuous either way.
+    #
+    # RE-POINTED AGAIN 2026-09-26 to ``entry_pipeline_aware_signal`` by OWNER
+    # RULING Q72 (capx ledger §0bl / §3; DESIGN-capx-d97-t16-repoint-2026-09-25.md
+    # §6 option (a)), executed by lane capx D99. Same class of act as Q27 / T16-A
+    # above and D35's FC-6 re-scope: the plan §2 "Ladder" cell names an economic
+    # condition ("VRE fleet held short vs long"), so swapping the instrument is a
+    # re-point under the pre-registration, not an amendment of it.
+    #
+    # WHY ``entry_rate_limits`` COULD NOT HOLD THE FLEET LONG. T16-A and capx D94
+    # both measured 33.0 GW of NEISO VRE in BOTH rungs. D97 §1.4 traced why: the
+    # binder is not the FF-2A growth ladder but the pending-stock netting in
+    # ``model/capacity_evolution/new_entry.py`` (``_pending_netting_mw``) — with
+    # ``entry_commissioning_lag`` (COD lag L = 2) the MW decided last year and not
+    # yet commissioned are subtracted from this year's per-tech queue cap, so the
+    # long-run decision rate is capped at C/L = 1.5 GW/yr (FFR-4A §3.3). The
+    # growth ladder sits BEHIND that binder and only re-phases the same 33 GW.
+    #
+    # THE LEVER. ``entry_pipeline_aware_signal`` (FFR-5C, owner decision
+    # D-17(a), 2026-08-05; GATED default OFF) removes exactly that netting —
+    # FFR-4A found it a dimensional double-count (a stock subtracted from an
+    # annual flow) — and relocates the anti-cobweb guard to the price signal.
+    # ``False`` (the shipped default, and the ``neiso-t3`` golden's own posture)
+    # is the SHORT rung; ``True`` is the LONG rung (the un-netted C flow, ≈ 2× the
+    # net VRE decision rate). ``entry_rate_limits`` is no longer perturbed: both
+    # rungs carry the golden's own ``True``. Rung ORDER stays short → long.
+    #
+    # DECLARED CONFOUND (D97 §2.5(b)): the thermal per-tech caps un-net too and
+    # the look-ahead reprice sees the pending pipeline, so ``entry_thermal_gw`` /
+    # ``co2_mt_total`` / ``reserve_margin_final`` move beside the dual; they are
+    # reported, never argued away. The honesty clause above binds unchanged: a
+    # lever that does not move the dual is a finding, and no third lever is tried.
+    #
+    # T1.6b's METRIC (owner sub-choice (a-2), Q72): the 2041–2050 horizon MEAN of
+    # the REC dual over the ACP (:data:`T16B_MEAN_WINDOW`), not the final-year
+    # scalar — the dual is near-binary in this LP (D97 §1.3), so a final-year
+    # point would score a cobweb's parity in 2050 rather than the regime. The
+    # rule (``monotone_down``) is unchanged. T1.6a is NOT changed: it stays the
+    # final-year ``rps_dual_over_acp`` ``le_target`` 1.0 row.
     ladders.append(
         Ladder(
             test_id="T1.6",
             driver="RPS/ACP vs VRE supply (short→long)",
             isos=("NEISO",),
             rungs=[
-                Rung("vre_short", {"entry_rate_limits": True}),
-                Rung("vre_long", {"entry_rate_limits": False}),
+                Rung("vre_short", {"entry_pipeline_aware_signal": False}),
+                Rung("vre_long", {"entry_pipeline_aware_signal": True}),
             ],
             expectations=[
                 Expectation(
@@ -549,13 +603,15 @@ def build_ladders() -> list[Ladder]:
                 Expectation(
                     "T1.6b",
                     "REC dual ↓ as VRE builds toward the target",
-                    "rps_dual_over_acp",
+                    "rps_dual_over_acp_mean_2041_2050",
                     "monotone_down",
                 ),
             ],
             note="rps_dual_over_acp is the final-year REC dual divided by the "
             "ISO's ACP ceiling; ≤ 1 means the ACP escape column caps the dual as "
-            "designed, and it should fall as physical VRE covers the target.",
+            "designed (T1.6a). rps_dual_over_acp_mean_2041_2050 is the same ratio "
+            "averaged over solve years 2041–2050 (owner ruling Q72); it should "
+            "fall as physical VRE covers the target (T1.6b).",
         )
     )
 
@@ -960,6 +1016,17 @@ def _extract_metrics(spec, config, cache, key, ledgers, summarize) -> dict:
         metrics["mass_cap_price"] = round(mass_cap_prices[-1], 3)
     if rps_final is not None and acp:
         metrics["rps_dual_over_acp"] = round(rps_final / acp, 4)
+    # T1.6b (owner ruling Q72): the mean REC dual over the ACP across the
+    # T16B_MEAN_WINDOW solve years. Emitted only when EVERY window year was
+    # solved and carries a dual — a run that stops short of the window (e.g. a
+    # 2026–2030 smoke) or misses a year yields no value, so T1.6b SKIPs as
+    # vacuous rather than scoring a partial-window mean.
+    lo, hi = T16B_MEAN_WINDOW
+    window = [d for y, d in zip(years, rps_duals) if lo <= y <= hi]
+    if acp and len(window) == hi - lo + 1 and all(d is not None for d in window):
+        metrics["rps_dual_over_acp_mean_2041_2050"] = round(
+            sum(window) / len(window) / acp, 4
+        )
     # T1.9 storage capacity value per MW — the model's OWN marginal storage
     # accreditation at the final fleet: ELCC(4h reference duration) x the
     # saturation derate x the portfolio dilution, evaluated at the last
@@ -1454,6 +1521,7 @@ def render_report(
                     "exogenous_retired_thermal_gw",
                     "mass_cap_price",
                     "rps_dual_over_acp",
+                    "rps_dual_over_acp_mean_2041_2050",
                     "reserve_margin_final",
                 }
             )
