@@ -4854,8 +4854,8 @@
     "epochs": [],
     "git_sha": "5a48f4378"
    },
-   "scored_at_sha": "ce915d48c76d",
-   "scored_at_date": "2026-09-25T18:36:00Z",
+   "scored_at_sha": "5491f5107e76",
+   "scored_at_date": "2026-09-26T00:44:44Z",
    "cache_epoch": "dbef1ecac9596c90",
    "run_id": "neiso-2026-2050-t3-golden3-d96-base",
    "session": "capx-D96 (neiso-t3 put back on one data vintage: primary bundle, FC-6 paired arms and FC-5 table re-solved post-F1; owner ruling Q69)",
