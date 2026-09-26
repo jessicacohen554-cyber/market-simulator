@@ -14929,3 +14929,21 @@ too.
   - One new gas-bridge D-4 row, 8906 in 2024 (0.005 TWh).
 - **Superseded and pruned:** `2026-09-26-nyisonext-floor-layup-span` and its 2021 run.
 - **Record:** `docs/RESULT-nyiso-next2-astoria-pair-2026-09-26.md`.
+
+## NYISO-NEXT-3 — 2026-09-26 — the committed tranche share on the solve's own availability basis; keeper promoted
+
+- **Lever: brief item (5), plus the defect that made it inert.** `campd_bins.fleet_to_bins` read
+  `committed_pct` without the `merit_guard` selector, so NYISO's bins took their committed share from
+  the unguarded `-perunit-` tranche artifact while every other tranche consumer read `-perunitmerit-`
+  (rule 19). One-argument fix, plus the `-perunitmerit-` artifact re-derived on the current outage
+  basis: it had lagged nyiso-192 and NYISO-NEXT-2, and the drift is fully attributed (rule 23). Zero
+  `scenario_config` changes and zero DOF.
+- **Result:** keeper `2026-09-26-nyisonext3-tranche-basis-span` (2022–2025) plus the stamped
+  `2026-09-26-nyisonext3-tranche-basis-2021`.
+  - Determination unchanged: span NOT-YET (C3a 2022 −10.8 %, 2025 −10.9 %), 2021 CALIBRATED.
+  - NYC ST_GAS +0.04 to +0.10 TWh/yr (pre-registered direction); nothing else material.
+  - D-4 rows identical.
+- **Finding for the next lane:** NYC steam over-dispatch is NOT a tranche-share object. Every non-peak
+  band sits at ~$32–36 against a ~$34 NYC price, and the plants really run at minimum load.
+- **Superseded and pruned:** `2026-09-26-nyisonext2-astoria-pair-span` and its 2021 run.
+- **Record:** `docs/RESULT-nyiso-next3-tranche-basis-2026-09-26.md`.
