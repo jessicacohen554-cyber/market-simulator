@@ -17986,6 +17986,33 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-84 (2026-09-26, MEASURED AVAILABILITY INPUTS vs THE KEEPER, ZERO LP —
+`docs/handoffs/FINDING-spp-84-published-outage-vs-keeper-2026-09-26.md`).** Target: C3a 2019–21
+(+13.3 / +21.2 / +10.0 %), off-queue per rule 28(a), because every non-C3c failure is already
+adjudicated above. **No admissible availability input is a lever for it.**
+- **EIA-860M monthly status: no seasonal lay-up.** Only 0.05–0.45 GW of the keeper's gas plants is
+  SB / OS / OA in any month, 2019–2025, and the annual OP filter already drops non-OP units.
+  **Closed; do not re-fetch.**
+- **SPP's published hourly outage by fuel (`capacity-of-generation-on-outage`) is the right comparator,
+  and the keeper's TOTAL matches it but its FUEL SPLIT does not.**
+  - Gas: keeper − SPP is −2.35 / −1.39 / −0.38 / +1.04 / −1.26 / −2.19 GW (2019–24). CT_PEAKER carries
+    no outage.
+  - Coal: keeper − SPP is **+1.18 / +2.56 / +2.59 / +2.40 / +2.31 / +3.40 GW**, winter-heavy. That is
+    reserve shutdowns counted as outages in the CAMPD ≥ 5-day windows.
+  - SPP-83's ~6 GW gas excess is therefore ~1.3–2.4 GW missing CT outage plus ~4 GW of genuine
+    commitment state.
+- **Re-clear instrument:** rebasing both families pro rata to SPP's hourly totals gives
+  **+0.76 / −0.26 / +0.27 $/MWh** in 2019 / 20 / 21, against −2.8 / −3.5 / −3.8 needed. It costs
+  2022 −3.79 and 2023 −0.74. The coal-only leg takes 2024 C3a to about −10.5 % (FAIL). The upper-tercile
+  differential is ≈ 0, so **SPP-79's pairing is not carried.**
+- **Not armed. `dam_availability_rebasis` U → O.** The coal over-count is a rule-14 finding, routed to
+  an owner-gated charter:
+  - reconcile boundary and definition first (derates? reserve shutdowns?);
+  - then a unit-level zero-LP reconciliation of the coal windows against the published series;
+  - then a rule-23 deriver-scope change on that measured-source basis.
+
+  Expect it to lower prices in every year. Do not re-run the aggregate rebase as a lever.
+
 **DO-NOT-REDO, added by SPP-83 (2026-09-26, KEEPER SIDE + COMMITMENT-COST SURVEY, ZERO LP —
 `docs/handoffs/FINDING-spp-83-keeper-clears-on-offline-capacity-2026-09-26.md`).** **The keeper does
 clear on capacity SPP kept offline, but the excess is ~8 GW in EVERY year. It is a level defect, not the
