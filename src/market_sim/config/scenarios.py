@@ -470,6 +470,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # (GATED default-off; selects '-memberrepair-unitfuel-' through the same
     # resolver, so the off path is byte-inert). Same commit as the field.
     "unit_outage_unit_fuel_routing",
+    # SPP-85 net-load-mask repair of the standard / short / partial CAMPD
+    # extracts (GATED default-off; selects the '-netloadmask-' companions
+    # through the same resolvers, so the off path is byte-inert). Same commit
+    # as the field.
+    "unit_outage_netload_mask_repair",
     # PJM-NEXT-2 card 3: nuclear dormancy defers to the solved vintage's exit
     # record (GATED default-off; byte-inert off). Same commit as the field.
     "nuclear_dormancy_defers_to_vintage_exit",
@@ -2256,6 +2261,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by PJM-NEXT-3 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_unit_fuel_routing": "False",
+    # Added by SPP-85 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_netload_mask_repair": "False",
     "nuclear_dormancy_defers_to_vintage_exit": "False",
     # Added by soco-67 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
@@ -16338,6 +16346,25 @@ class ScenarioConfig:
     # overwrite; falls back to '-memberrepair-' where not derived).
     # docs/PRECOMMIT-pjm-next-3-card2-unit-fuel-routing-2026-09-26.md.
     unit_outage_unit_fuel_routing: bool = False
+    # SPP-85 (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]) NET-LOAD-MASK REPAIR
+    # of the CAMPD unit-outage extracts. The deriver's revealed-availability
+    # filter (scripts/lib/outage_detect.filter_revealed_outages) keys on an
+    # EIA-930 net-load mask looked up by ISO in outage_detect._ISO_TO_BA; SPP
+    # had no key, so the mask was None and every detected span was KEPT -- the
+    # recorded min_inmerit_hours (24 standard/partial, 6 short) was never in
+    # effect. Armed, the '-netloadmask-' companions of the standard (>= 5-day),
+    # short (1-5 day) and partial-plateau extracts are read: the SAME deriver at
+    # each committed extract's OWN recorded invocation, with the mask live
+    # (SPP -> SWPP, the BA the model reads for SPP everywhere else). Each is a
+    # strict row-subset of its incumbent; the one field moves every layer the
+    # missing key reached and REPLACES each layer, never stacks on it. ZERO free
+    # parameters (every threshold is the committed extract's own). Measured
+    # basis is SPP's own published outage (portal capacity-of-generation-on-
+    # outage), never a price residual (rule 23). Backcast overlay only (the
+    # CAMPD outage layer is historic). Byte-inert off: separate files, never an
+    # overwrite, falling back to the incumbent extract where not derived.
+    # docs/handoffs/FINDING-spp-85-coal-outage-basis-2026-09-26.md.
+    unit_outage_netload_mask_repair: bool = False
     # PJM-NEXT-2 card 3 (rule 19 [R-ONE-MECH], rule 14 [R-ACCURATE]).
     # NUCLEAR_DORMANT_UNTIL zeroes a nuclear unit in every backcast year before
     # its restart year -- written for the Crane/TMI-1 restart, which EIA-860
