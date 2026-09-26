@@ -783,6 +783,212 @@ def _consume_chp_floors(rows: list[dict], prior: pd.DataFrame) -> list[dict]:
     return rows
 
 
+def _coal_unit_ids_by_plant(states: tuple[str, ...], year: int) -> dict[int, set[str]]:
+    """Return ``{plant_id: {unit_id, ...}}`` of CAMPD units CEMS labels coal in ``year``.
+
+    A unit counts as coal-fired in a year when CAMPD's own ``primaryFuelInfo``
+    on its rows of that year names coal (``"Coal"`` or a coal-first blend such
+    as ``"Coal, Pipeline Natural Gas"``). This is the publisher's per-unit fuel
+    attribute — a measured unit identity that regenerates for any year CAMPD
+    reports, with no threshold and no parameter (rule 21 ``[R-DOF]``). Read
+    from the raw unit-level extract because the normalized hourly frame
+    (:func:`campd.load_campd_hourly`) drops the fuel column.
+    """
+    from market_sim.config.paths import CAMPD_UNIT_LEVEL_DIR
+
+    out: dict[int, set[str]] = {}
+    for st in states:
+        path = CAMPD_UNIT_LEVEL_DIR / f"{st}_{year}.parquet"
+        if not path.exists():
+            continue
+        df = pd.read_parquet(path, columns=["facilityId", "unitId", "primaryFuelInfo"])
+        df = df.dropna(subset=["facilityId", "primaryFuelInfo"]).drop_duplicates()
+        coal = df[df["primaryFuelInfo"].astype(str).str.contains("Coal")]
+        for fac, unit in zip(coal["facilityId"], coal["unitId"]):
+            out.setdefault(int(fac), set()).add(str(unit))
+    return out
+
+
+def coal_unit_coverage_rows(
+    iso: str,
+    years: list[int],
+    covered: set[int],
+    per_unit_crosswalk: bool = True,
+    dark_unit_years: bool = True,
+) -> list[dict]:
+    """Derive COAL rows for coal plants the artifact has NO row for (soco-70).
+
+    THE COVERAGE GAP THIS CLOSES. The facility-attribution path in
+    :func:`main` writes a row only for a plant's PRIMARY (largest-nameplate)
+    group over the derive window's fleet. A coal plant is therefore left with
+    no row when (i) a larger gas bin sits beside it at the same facility
+    (SOCO: Barry 3, Gaston 26, Daniel 6073 — the facility-summed CEMS net,
+    coal included, was attributed to the CC / gas-steam row instead), or
+    (ii) its coal units stopped before the derive window (Crist 641, Wansley
+    6052 — the incumbent SOCO artifact was derived over 2024 only). Under
+    ``coal_mustrun_requires_measured_row`` such a plant carries no floor at
+    all; without it, the unmeasured 45 % default slab.
+
+    THE CONSTRUCTION IS THE INCUMBENT'S, UNIT-SCOPED. For each plant with a
+    coal-class group in a year's vintage fleet and no row in ``covered``:
+
+    * the series is the net MW of the plant's coal-fired CAMPD units only
+      (:func:`_coal_unit_ids_by_plant` — CEMS's own per-unit fuel label),
+      routed through :func:`campd.plant_group_hourly_net` with the plant's
+      parasitic factor, so a gas unit at the same facility never enters it;
+    * the denominator is the plant's coal-group nameplate in THAT year's
+      EIA-860 vintage (the capacity the solve-year fleet carries, which is the
+      object the row is consumed against), times the unit-outage derate on
+      the consuming keeper's own extract basis;
+    * every statistic — ``committed_pct``, ``mustrun_pct``,
+      ``mustrun_online_pct``, ``online_frac``, ``p25_cf``, ``median_cf`` — is
+      computed with the SAME constants, masks and caps as :func:`main`'s COAL
+      branch, pooled over ``years``.
+
+    ZERO free parameters (rule 21 ``[R-DOF]``): no percentile, threshold or
+    cap is introduced. Rule 23 ``[R-FROZEN-DERIVE]``: rows already present in
+    the artifact are never re-derived; this only ADDS rows for plants the
+    source window never covered. The window is the ISO's backcast span, cited
+    as the source-data change (its CEMS years now sit inside the solved span).
+    """
+    from market_sim.config.paths import set_eia860_vintage
+    from market_sim.config.plant_taxonomy import is_coal_class
+
+    states = campd.states_for_iso(iso)
+    factors = _parasitic_factor_map()
+    online_cf: dict[int, list[np.ndarray]] = {}
+    allhr_cf: dict[int, list[np.ndarray]] = {}
+    online_mw: dict[int, list[np.ndarray]] = {}
+    sync_hours: dict[int, list[int]] = {}
+    nameplate_max: dict[int, float] = {}
+    names: dict[int, str] = {}
+    try:
+        for year in years:
+            set_eia860_vintage(year)
+            cap: dict[int, float] = {}
+            for gen in load_fleet_from_csv(iso, get_iso_config(iso), year=year):
+                code = int(gen.plant_code)
+                if code <= 0 or code in covered or not is_coal_class(gen.plant_group):
+                    continue
+                cap[code] = cap.get(code, 0.0) + float(gen.pmax_mw)
+                names.setdefault(code, gen.name)
+            if not cap:
+                continue
+            coal_units = _coal_unit_ids_by_plant(tuple(states), year)
+            df = campd.load_campd_hourly(states, [year], prefer_unit_level=True)
+            if df.empty:
+                continue
+
+            def group_of(plant_id: int, unit_id: str, unit_type: str) -> str | None:
+                if plant_id in cap and unit_id in coal_units.get(plant_id, ()):
+                    return "COAL"
+                return None
+
+            net = campd.plant_group_hourly_net(df, factors, year, group_of)
+            derate = unit_outage_derate_factors(
+                year,
+                iso=iso,
+                per_unit_crosswalk=per_unit_crosswalk,
+                dark_unit_years=dark_unit_years,
+            )
+            for code, nameplate in cap.items():
+                series = net.get((code, "COAL"))
+                if series is None or nameplate <= 0.0:
+                    continue
+                nameplate_max[code] = max(nameplate_max.get(code, 0.0), nameplate)
+                avail_mult = derate.get((code, "COAL"), np.ones(len(series)))
+                avail_cap = nameplate * avail_mult
+                with np.errstate(divide="ignore", invalid="ignore"):
+                    acf = np.where(avail_cap > 0.0, series / avail_cap, 0.0)
+                acf = np.clip(acf, 0.0, 1.5)
+                finite = np.isfinite(acf) & (avail_cap > 0.0)
+                online = finite & (series > _ONLINE_FRAC * avail_cap)
+                sync = series > _SYNC_MW_NAMEPLATE_FRAC * nameplate
+                acc = sync_hours.setdefault(code, [0, 0])
+                acc[0] += int(sync.sum())
+                acc[1] += int(len(series))
+                allhr_cf.setdefault(code, []).append(acf[finite])
+                if online.any():
+                    online_cf.setdefault(code, []).append(acf[online])
+                    online_mw.setdefault(code, []).append(series[online] / nameplate)
+    finally:
+        set_eia860_vintage(None)
+
+    rows: list[dict] = []
+    for code in sorted(nameplate_max):
+        on = online_cf.get(code)
+        n_online = int(sum(len(a) for a in on)) if on else 0
+        if not on or n_online < _MIN_ONLINE_HOURS:
+            continue
+        on_cat = np.concatenate(on)
+        all_cat = np.concatenate(allhr_cf[code])
+        # Online MW is pooled as a fraction of EACH YEAR's nameplate, so a
+        # vintage whose coal nameplate changed is floored on its own basis.
+        mw_on = np.concatenate(online_mw[code])
+        rows.append(
+            {
+                "plant_code": code,
+                "plant_group": "COAL",
+                "name": names.get(code, ""),
+                "status": "ok",
+                "nameplate_mw": round(nameplate_max[code], 1),
+                "online_hours": n_online,
+                "committed_pct": round(
+                    100.0
+                    * min(float(np.percentile(on_cat, _FLOOR_PCTILE)), _COMMITTED_CAP),
+                    1,
+                ),
+                "mustrun_pct": round(
+                    100.0
+                    * min(float(np.percentile(all_cat, _FLOOR_PCTILE)), _MUSTRUN_CAP),
+                    1,
+                ),
+                "mustrun_online_pct": round(
+                    100.0
+                    * min(float(np.percentile(mw_on, _FLOOR_PCTILE)), _MUSTRUN_CAP),
+                    1,
+                ),
+                "online_frac": round(
+                    min(1.0, sync_hours[code][0] / sync_hours[code][1]), 3
+                ),
+                "p25_cf": round(
+                    100.0 * min(float(np.percentile(on_cat, 25)), _P25_CAP), 1
+                ),
+                "median_cf": round(100.0 * float(np.percentile(on_cat, 50)), 1),
+            }
+        )
+    return rows
+
+
+def append_coal_unit_coverage(out_path: Path, iso: str, years: list[int]) -> list[dict]:
+    """Append :func:`coal_unit_coverage_rows` to an existing artifact, byte-safely.
+
+    The existing rows are never rewritten: the new rows are formatted in the
+    artifact's own column order and appended as text lines, so every
+    pre-existing byte (and therefore every row a keeper already reads) is
+    unchanged. Re-running is a no-op: a plant that already has a COAL row is
+    in ``covered`` and yields nothing.
+    """
+    import csv
+    import io
+
+    prior = pd.read_csv(out_path)
+    covered = set(prior.loc[prior["plant_group"] == "COAL", "plant_code"].astype(int))
+    rows = coal_unit_coverage_rows(iso, years, covered)
+    if not rows:
+        return rows
+    raw = out_path.read_bytes()
+    buf = io.StringIO()
+    writer = csv.DictWriter(
+        buf, fieldnames=list(prior.columns), extrasaction="ignore", lineterminator="\n"
+    )
+    for row in rows:
+        writer.writerow({c: row.get(c, "") for c in prior.columns})
+    sep = b"" if raw.endswith(b"\n") else b"\n"
+    out_path.write_bytes(raw + sep + buf.getvalue().encode())
+    return rows
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--iso", default="ERCOT")
@@ -829,6 +1035,14 @@ def main() -> None:
         "re-derivation, CSV untouched); the deriver group sets in force at "
         "its derive time are recorded as unknown (xiso-6).",
     )
+    ap.add_argument(
+        "--coal-unit-coverage",
+        action="store_true",
+        help="APPEND a COAL row, derived from the plant's own coal-fired CAMPD "
+        "units over --years, for every coal plant the existing artifact has no "
+        "COAL row for; existing rows are left byte-identical "
+        "(coal_unit_coverage_rows, soco-70). Zero free parameters.",
+    )
     args = ap.parse_args()
     iso = args.iso.upper()
     from market_sim.config.paths import PROCESSED_DIR
@@ -860,6 +1074,59 @@ def main() -> None:
             note=_BACKFILL_NOTE,
         )
         print(f"wrote descriptive sidecar {side} (CSV bytes untouched)")
+        return
+
+    if args.coal_unit_coverage:
+        if not out_path.exists():
+            ap.error(f"--coal-unit-coverage: no artifact at {out_path}")
+        import json as _json
+
+        _prior_side = out_path.with_suffix(".meta.json")
+        _base_invocation = (
+            _json.loads(_prior_side.read_text()).get("derive_invocation")
+            if _prior_side.exists()
+            else None
+        )
+        added = append_coal_unit_coverage(out_path, iso, [int(y) for y in args.years])
+        if not added:
+            # Idempotent re-run: nothing uncovered, so neither the CSV nor its
+            # sidecar (which records the base derive) is touched.
+            print(f"no uncovered coal plant in {out_path}; artifact untouched")
+            return
+        for row in added:
+            print(
+                f"  + {row['plant_code']:>6} COAL {row['name']:<28} "
+                f"np {row['nameplate_mw']:7.1f}  on_h {row['online_hours']:6d}  "
+                f"committed {row['committed_pct']:5.1f}  mustrun {row['mustrun_pct']:5.1f}  "
+                f"mr_online {row['mustrun_online_pct']:5.1f}  online_frac "
+                f"{row['online_frac']:.3f}  p25 {row['p25_cf']:5.1f}  "
+                f"median {row['median_cf']:5.1f}"
+            )
+        side = write_tranche_sidecar(
+            out_path,
+            provenance="derived",
+            groups_in_force={
+                "online_frac_groups": sorted(_ONLINE_FRAC_GROUPS),
+                "chp_groups": sorted(_CHP_GROUPS),
+                "peaking_groups": sorted(_PEAKING_GROUPS),
+                "thermal_groups": sorted(_THERMAL_GROUPS),
+            },
+            derive_invocation={
+                "iso": iso,
+                "years": [int(y) for y in args.years],
+                "chp_floors_from": None,
+                "coal_unit_coverage": True,
+                "base_derive_invocation": _base_invocation,
+            },
+            note=(
+                "COAL-UNIT COVERAGE APPEND (soco-70): rows present before the "
+                "append are byte-identical and keep their original derive "
+                "window; the appended COAL rows are derived from each "
+                "uncovered plant's own coal-fired CAMPD units over the years "
+                "in derive_invocation (coal_unit_coverage_rows)."
+            ),
+        )
+        print(f"appended {len(added)} COAL rows to {out_path}; sidecar {side}")
         return
 
     states = campd.states_for_iso(iso)
