@@ -6701,5 +6701,5 @@ control = keeper `2026-09-25-pjm-next-c1` committed bundle, G-DRIFT byte-identic
 deriver's COAL-SUB token fix), `pjm_zonal_gas_basis_skip_923_priced` (basis no longer stacked on EIA-923 prints),
 `nuclear_dormancy_defers_to_vintage_exit` (TMI-1 2019). Both runs NOT-YET. COAL_BIT 2019–22 +28.4/+19.4/+32.6/+10.3 →
 +12.9/+10.5/+20.7/+8.1; CC_REGULAR 2024 −14.68 → −10.07 (still FAIL); nuclear 2019 −5.9 → −0.9. Costs: C3a 2019
-PASS → FAIL (+10.7 %), C3b 2020 PASS → FAIL, CC_REGULAR 2022 +10.9 → +14.9. Registered `--no-prune`; promotion is
+PASS → FAIL (+10.7 %), C3b 2020 PASS → FAIL, CC_REGULAR 2022 +10.9 → +14.9. Registered `--no-prune`; **PROMOTED 2026-09-26** (owner: "If structural integrity improves but gates regress that may still be a keeper"), `2026-09-25-pjm-next-c1` pruned. Promotion was
 the owner's call. Record: `docs/RESULT-pjm-next-2-2026-09-25.md`.

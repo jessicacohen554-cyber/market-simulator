@@ -2,7 +2,7 @@
 
 Run **`2026-09-25-pjm-next-2-joint`** (bundle `results/calibration/pjmnext2_joint_span`, 2019–2025, one shard per
 year at `d25a3ebb`, composed at zero LP). Control: the keeper `2026-09-25-pjm-next-c1`'s committed bundle (rule 29(b)
-form 4; G-DRIFT byte-identical, PRECOMMIT card 1 §5). **Not promoted** — promotion is the owner's call (rule 31).
+form 4; G-DRIFT byte-identical, PRECOMMIT card 1 §5). **PROMOTED 2026-09-26** on the owner's ruling ("If structural integrity improves but gates regress that may still be a keeper"); outgoing keeper `2026-09-25-pjm-next-c1` pruned (rule 35).
 
 Pre-registrations: `docs/PRECOMMIT-pjm-next-2-card1-outage-membership-2026-09-25.md`,
 `…-card2-basis-scope-…`, `…-card3-tmi-dormancy-…`, `…-joint-…`.
