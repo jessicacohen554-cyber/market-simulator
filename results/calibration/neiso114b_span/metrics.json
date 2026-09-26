@@ -22,7 +22,7 @@
   ],
   "data_blocked_years": [],
   "price_reference_blocked_years": [],
-  "rubric_version": 3.8,
+  "rubric_version": 3.9,
   "determination": "NOT-YET",
   "reasons": [
     "undocumented out-of-tolerance (FAIL) criteria: fuelmix"

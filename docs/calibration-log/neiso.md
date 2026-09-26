@@ -3570,3 +3570,15 @@ changes status in any year; CC_REGULAR 2019 −3.54 → −2.87, 2021 −2.88 �
 ST_GAS over-dispatch roughly halved; mean-LMP bias +0.1–0.9 pp (all PASS). Train tier CALIBRATED; full span NOT-YET
 (C1 CC_REGULAR 2019/2022). Arm A and `2026-09-24-r-neiso-inputs-2019` pruned (rule 35). Record:
 `docs/handoffs/neiso114/RESULT-neiso114-2026-09-25.md` §6. **Next shorthand: `neiso-116`.**
+
+## neiso-116 — 2026-09-26 — bench refresh + phase 0 on the C1 CC_REGULAR misses (zero LP)
+
+Keeper bundle rebuilt from its seven neiso-115 legs (fetched by SHA) and re-registered: NEISO bench parts
+6 STALE → 0, keeper re-scored with **0 status flips** (full span NOT-YET, train tier CALIBRATED; only C2 2021
+actual 60.07 → 60.11 TWh moved). G-DRIFT `9db30b45` → `f30e3704`: every LP input array identical in all seven
+years — keeper is the control. Phase 0: Merrimack's coal is domestic NAPP (import-price option moot); its
+delivered cost is published 2019–20 (≈ 3.13 $/MMBtu); a price correction moves 2022 by ≤ ~0.5 TWh, while the
+EIA-923 yard budget (`coal_fuel_inventory` plant grain, NEISO U) cuts 2.21 TWh there. Tranche deriver drops coal
+rows at HEAD (COAL-SUB) and cannot see the restored ST_GAS plants; the committed-basis mechanism is
+non-selective and its NEISO artifact predates the fleet correction. Owner rulings requested; no solve.
+Record: `docs/handoffs/neiso116/PRECOMMIT-neiso116-2026-09-26.md`. **Next shorthand: `neiso-117`.**
