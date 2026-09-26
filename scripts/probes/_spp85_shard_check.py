@@ -1,13 +1,15 @@
-"""SPP-85 shard self-check: the leg == the keeper's recipe + EXACTLY ``unit_outage_netload_mask_repair``.
+"""SPP-85 shard self-check: the arm leg == its control + EXACTLY ``unit_outage_netload_mask_repair``.
 
 Run by each SPP-85 shard AFTER its solve and BEFORE it pushes (rule 32(c)(4) hard stops). Zero LP.
 Pre-registered in ``docs/handoffs/PRECOMMIT-spp-85-netload-mask-repair-2026-09-26.md``. Adapted
 from ``_rspp_shard_check.py``.
 
-1. **recipe** -- the leg's ``scenario_config`` differs from the keeper bundle
-   ``results/calibration/rspp_span``'s for the year by EXACTLY ``unit_outage_netload_mask_repair``
-   (True in the leg, absent/False in the keeper). Any other changed field, or a new field away
-   from its dataclass default, FAILS.
+1. **recipe** -- the arm leg's ``scenario_config`` differs from its OWN CONTROL leg (the keeper
+   recipe replayed at the same pinned SHA, ``--control``) by EXACTLY ``unit_outage_netload_mask_repair``.
+   Any other changed field, or a new field away from its dataclass default, FAILS. (Diffing against
+   the COMMITTED keeper instead is wrong at HEAD: ``replay_keeper`` translates the keeper's bare
+   ``COAL`` offer-curve key to its subclasses, so control and arm both differ from the committed
+   recipe by that key. The control-vs-keeper diff is printed for the record.)
 2. **gas price** -- ``gas_price_override`` equals the keeper's own value for the year.
 3. **inputs** -- the three ``-netloadmask-`` companions and the three incumbent SPP CAMPD extracts
    carry the pinned sha256.
@@ -66,6 +68,9 @@ def main() -> int:
     ap.add_argument("--year", type=int, required=True)
     ap.add_argument("--leg", required=True)
     ap.add_argument("--keeper", default=KEEPER)
+    ap.add_argument(
+        "--control", help="the same year's control leg (default spp85_ctl_<Y>)"
+    )
     a = ap.parse_args()
     from market_sim.config.scenarios import ScenarioConfig
 
@@ -75,13 +80,18 @@ def main() -> int:
         if f.default is not dataclasses.MISSING
     }
     kp, lg = ROOT / a.keeper, ROOT / a.leg
-    sk, sl = _scenario(kp, a.year), _scenario(lg, a.year)
+    ct = ROOT / (a.control or f"results/calibration/spp85_ctl_{a.year}")
+    sk, sl, sc = _scenario(kp, a.year), _scenario(lg, a.year), _scenario(ct, a.year)
     ok = True
-    changed, new = _diff(sk, sl, defaults)
+    kc_changed, kc_new = _diff(sk, sc, defaults)
+    print(
+        f"control vs committed keeper (record only): changed {sorted(kc_changed)} new {kc_new}"
+    )
+    changed, new = _diff(sc, sl, defaults)
     extra = {k: v for k, v in changed.items() if k != ARM}
     new_extra = {k: v for k, v in new.items() if k != ARM}
     stay_bad = {k: sl.get(k) for k, v in MUST_STAY.items() if sl.get(k) != v}
-    print(f"leg vs keeper: changed {changed}  non-default new {new}")
+    print(f"arm vs control: changed {changed}  non-default new {new}")
     if extra or new_extra or sl.get(ARM) is not True or stay_bad:
         print(
             f"RECIPE CHECK: FAIL -- extra {extra} new {new_extra} arm={sl.get(ARM)} "
@@ -89,8 +99,8 @@ def main() -> int:
         )
         ok = False
     else:
-        print(f"RECIPE CHECK: PASS -- only {ARM}=True differs from the keeper")
-    gk, gl = sk.get("gas_price_override"), sl.get("gas_price_override")
+        print(f"RECIPE CHECK: PASS -- only {ARM}=True differs from the control")
+    gk, gl = sc.get("gas_price_override"), sl.get("gas_price_override")
     if gk is None or gl is None or abs(float(gl) - float(gk)) > 1e-9:
         print(f"GAS CHECK: FAIL -- leg {gl} vs keeper {gk}")
         ok = False
@@ -108,21 +118,17 @@ def main() -> int:
         ok = False
     else:
         print("RESOLVED OUTAGE CHECK: PASS")
-    rk = (
-        readout(kp, a.year)
-        if (kp / f"hourly/class_hourly_{a.year}.parquet").exists()
-        else None
-    )
+    rk = readout(ct, a.year)
     rl = readout(lg, a.year)
-    print(json.dumps({"keeper": rk, "leg": rl}, indent=1))
+    print(json.dumps({"control": rk, "arm": rl}, indent=1))
     if rk:
         d = {
             k: round(rl["twh"].get(k, 0.0) - rk["twh"].get(k, 0.0), 3)
             for k in sorted(set(rk["twh"]) | set(rl["twh"]))
         }
-        print(f"class TWh leg - keeper: {d}")
+        print(f"class TWh arm - control: {d}")
         print(
-            f"price_mean_dw leg - keeper: {rl['price_mean_dw'] - rk['price_mean_dw']:+.3f}"
+            f"price_mean_dw arm - control: {rl['price_mean_dw'] - rk['price_mean_dw']:+.3f}"
         )
     print("SHARD CHECK:", "PASS" if ok else "FAIL")
     return 0 if ok else 1
