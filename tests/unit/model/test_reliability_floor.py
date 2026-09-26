@@ -1256,5 +1256,148 @@ class TestReliabilityFloorPlantExclusions(unittest.TestCase):
             )
 
 
+class TestReliabilityFloorLayupWindowMask(unittest.TestCase):
+    """NYISO-NEXT: measured lay-up windows leave the pro_rata floor basis.
+
+    ``ScenarioConfig.reliability_floor_layup_window_mask`` hands the engine the
+    guard's plant-hour lay-up shares; a pro_rata limb then floors each unit on
+    ``pmax x max(0, availability - layup_share)`` (rule 17 [R-FLOOR-WINDOW]),
+    and a cheapest_first limb is untouched.
+    """
+
+    def _spec(self, distribution="pro_rata"):
+        return ReliabilityFloorSpec(
+            zone="Z",
+            plant_class="ST_GAS",
+            driver="tmax",
+            threshold=-50.0,
+            floor_pct=0.2,
+            distribution=distribution,
+        )
+
+    def _run(self, layup, distribution="pro_rata"):
+        H = 48
+        loader = _weather_from_daily([12.0, 20.0], [2.0, 8.0], H)
+        fa, rows = _build_two_plant_st_fleet(H)
+        with mock.patch(_LOADER, loader):
+            T.inject_reliability_floor(
+                fa,
+                "TEST",
+                2024,
+                [self._spec(distribution)],
+                ["Z"],
+                layup_removed=layup,
+            )
+        return fa, rows
+
+    def test_layup_hours_lose_only_the_laid_up_units_floor(self):
+        share = np.zeros(48)
+        share[:24] = 1.0  # plant 2517 fully laid up on day 0
+        fa, rows = self._run({(2517, "ST_GAS"): share})
+        keep, lay = rows[1111], rows[2517]
+        np.testing.assert_allclose(
+            fa.min_gen[keep, :], 0.2 * fa.pmax[keep] * fa.availability[keep, :]
+        )
+        np.testing.assert_allclose(fa.min_gen[lay, :24], 0.0)
+        np.testing.assert_allclose(
+            fa.min_gen[lay, 24:], 0.2 * fa.pmax[lay] * fa.availability[lay, 24:]
+        )
+
+    def test_partial_share_clips_at_zero(self):
+        share = np.full(48, 0.4)
+        fa, rows = self._run({(1111, "ST_GAS"): share})
+        r = rows[1111]
+        np.testing.assert_allclose(
+            fa.min_gen[r, :],
+            0.2 * fa.pmax[r] * np.maximum(fa.availability[r, :] - 0.4, 0.0),
+        )
+
+    def test_none_and_empty_are_byte_identical_to_unmasked(self):
+        base, _ = self._run(None)
+        for layup in ({},):
+            fa, _ = self._run(layup)
+            np.testing.assert_array_equal(fa.min_gen, base.min_gen)
+
+    def test_cheapest_first_limb_is_not_masked(self):
+        share = np.ones(48)
+        base, _ = self._run(None, "cheapest_first")
+        fa, _ = self._run({(1111, "ST_GAS"): share}, "cheapest_first")
+        np.testing.assert_array_equal(fa.min_gen, base.min_gen)
+
+    def test_mask_never_raises_a_floor(self):
+        share = np.linspace(0.0, 1.0, 48)
+        base, _ = self._run(None)
+        fa, _ = self._run({(1111, "ST_GAS"): share, (2517, "ST_GAS"): share})
+        self.assertTrue((fa.min_gen <= base.min_gen + 1e-12).all())
+
+    def test_consumer_returns_none_when_off_or_forecast(self):
+        from scripts.run_calibration import _reliability_floor_layup_shares
+
+        cfg = types.SimpleNamespace(
+            reliability_floor_layup_window_mask=False,
+            mode="backcast",
+            outage_source="historic",
+        )
+        fa, _ = _build_two_plant_st_fleet(24)
+        self.assertIsNone(_reliability_floor_layup_shares(cfg, "NYISO", 2023, fa))
+        cfg.reliability_floor_layup_window_mask = True
+        cfg.mode = "forecast"
+        self.assertIsNone(_reliability_floor_layup_shares(cfg, "NYISO", 2023, fa))
+        cfg.mode = "backcast"
+        cfg.outage_source = "statistical"
+        self.assertIsNone(_reliability_floor_layup_shares(cfg, "NYISO", 2023, fa))
+
+    def test_field_is_default_off_and_registered(self):
+        from market_sim.config import scenarios as sc
+
+        self.assertFalse(sc.ScenarioConfig().reliability_floor_layup_window_mask)
+        self.assertIn(
+            "reliability_floor_layup_window_mask", sc._CACHE_KEY_OPTIONAL_FIELDS
+        )
+        self.assertEqual(
+            sc._CACHE_KEY_OPTIONAL_FIELD_DEFAULTS[
+                "reliability_floor_layup_window_mask"
+            ],
+            "False",
+        )
+        self.assertIn(
+            "reliability_floor_layup_window_mask", sc._BACKCAST_ONLY_OVERLAY_FIELDS
+        )
+
+
+class TestLayupCompanionResolver(unittest.TestCase):
+    """The lay-up resolver selects the companion matching the outage extract."""
+
+    def test_default_is_the_unsuffixed_file(self):
+        from market_sim.data.outages import unit_layup_csv_for_iso
+
+        self.assertEqual(
+            unit_layup_csv_for_iso("NYISO").name, "campd-unit-outages-layup-NYISO.csv"
+        )
+        self.assertEqual(
+            unit_layup_csv_for_iso("ERCOT", True, True, True).name,
+            "campd-unit-outages-layup.csv",
+        )
+
+    def test_merit_family_selects_matching_companion(self):
+        from market_sim.data.outages import unit_layup_csv_for_iso
+
+        hour = unit_layup_csv_for_iso("NYISO", True, True, True)
+        day = unit_layup_csv_for_iso("NYISO", True, True, False)
+        if hour.exists():
+            self.assertEqual(
+                hour.name, "campd-unit-outages-layup-perunitmerithour-NYISO.csv"
+            )
+        if day.exists():
+            self.assertEqual(
+                day.name, "campd-unit-outages-layup-perunitmerit-NYISO.csv"
+            )
+        # The guard alone (no per-unit crosswalk) never selects the merit family.
+        self.assertEqual(
+            unit_layup_csv_for_iso("NYISO", False, True, True).name,
+            "campd-unit-outages-layup-NYISO.csv",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

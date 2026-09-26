@@ -1979,7 +1979,12 @@ def short_screened_coal_shares(
     return {k: min(1.0, v / cap[k]) for k, v in acc.items()}
 
 
-def unit_layup_csv_for_iso(iso: str | None) -> Path:
+def unit_layup_csv_for_iso(
+    iso: str | None,
+    per_unit_crosswalk: bool = False,
+    merit_order_guard: bool = False,
+    hour_grain: bool = False,
+) -> Path:
     """Return the ECONOMIC-LAYUP companion CSV path for an ISO.
 
     Written by ``scripts/data/derive_campd_unit_outages.py --merit-order-guard``
@@ -1988,13 +1993,36 @@ def unit_layup_csv_for_iso(iso: str | None) -> Path:
     own measured SRMC sat above the revealed clearing cost for >=
     ``MERIT_OOM_FRAC`` of the window (scripts/lib/outage_detect.py). These
     windows deliberately stay OUT of the availability envelope (an economically
-    idle unit is available; the LP declines it on its own economics); the sole
-    engine consumer is the must-run floor mask
-    (``ScenarioConfig.mustrun_layup_window_mask``), which reads them as the
-    measured hours in which the plant's self-commitment driver is absent.
+    idle unit is available; the LP declines it on its own economics); the
+    engine consumers are the floor masks (``ScenarioConfig.
+    mustrun_layup_window_mask``, ``netload_drag_layup_window_mask``,
+    ``reliability_floor_layup_window_mask``), which read them as the measured
+    hours in which the plant's self-commitment driver is absent.
+
+    The three selector flags mirror :func:`unit_outage_csv_for_iso`'s own
+    (NYISO-NEXT, 2026-09-25; the resolver extension nyiso-177 §7.5 named): with
+    ``per_unit_crosswalk`` AND ``merit_order_guard`` the ``-layup-perunitmerit-``
+    companion is selected (``-layup-perunitmerithour-`` first under
+    ``hour_grain``), i.e. the lay-up half of the SAME detection the availability
+    overlay reads its outage half from — which is what the loader's additivity
+    contract requires. Each falls through to the next coarser file when not
+    derived for the ISO, exactly as the outage selector does. All three default
+    False, so every existing caller reads the file it always read.
     """
     if iso is None or iso.upper() == "ERCOT":
         return UNIT_OUTAGE_CSV.with_name("campd-unit-outages-layup.csv")
+    if per_unit_crosswalk and merit_order_guard:
+        if hour_grain:
+            alt = UNIT_OUTAGE_CSV.with_name(
+                f"campd-unit-outages-layup-perunitmerithour-{iso.upper()}.csv"
+            )
+            if alt.exists():
+                return alt
+        alt = UNIT_OUTAGE_CSV.with_name(
+            f"campd-unit-outages-layup-perunitmerit-{iso.upper()}.csv"
+        )
+        if alt.exists():
+            return alt
     return UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-layup-{iso.upper()}.csv")
 
 
@@ -2010,6 +2038,9 @@ def unit_layup_removed_fractions(
     per_unit_clip: bool = False,
     extract_basis_share: bool = False,
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
+    per_unit_crosswalk: bool = False,
+    merit_order_guard: bool = False,
+    hour_grain: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) laid-up capacity fraction}``.
 
@@ -2025,9 +2056,21 @@ def unit_layup_removed_fractions(
     must-run floor mask (``ScenarioConfig.mustrun_layup_window_mask``), which
     subtracts this share from the floor's ``pmax x availability`` clip basis.
     ISOs or years without the file get an empty dict (no effect).
+
+    ``per_unit_crosswalk`` / ``merit_order_guard`` / ``hour_grain`` select the
+    companion that matches the availability overlay's own extract
+    (:func:`unit_layup_csv_for_iso`), and ``per_unit_crosswalk`` also routes
+    each unit exactly as that overlay routes it — the additivity contract above
+    is only true when both halves of one detection share one routing. All
+    default False (the file and routing every existing caller always used).
     """
     iso = (iso or "ERCOT").upper()
-    csv_path = unit_layup_csv_for_iso(iso)
+    csv_path = unit_layup_csv_for_iso(
+        iso,
+        per_unit_crosswalk=per_unit_crosswalk,
+        merit_order_guard=merit_order_guard,
+        hour_grain=hour_grain,
+    )
     if not csv_path.exists():
         return {}
     df = pd.read_csv(csv_path)
@@ -2048,6 +2091,7 @@ def unit_layup_removed_fractions(
         cc_steam_part_reclass,
         cc_nameplate_basis,
         False,
+        per_unit_crosswalk=per_unit_crosswalk,
         st_capacity_basis=st_capacity_basis,
         # Same rule-19 [R-ONE-MECH] reasoning as st_capacity_basis above: this
         # loader's contract is that a lay-up share and an outage share for the
