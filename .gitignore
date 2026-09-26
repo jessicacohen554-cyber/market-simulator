@@ -3575,6 +3575,9 @@ results/calibration/rcaiso3_*_20*/
 # soco-69 probe scratch + shard legs: kept out of main (rule 32(d)); composite soco69_span is what registers
 results/calibration/_soco69/
 results/calibration/soco69_20[0-9][0-9]/
+# soco-70 probe scratch + shard legs: kept out of main (rule 32(d)); composite soco70_span is what registers
+results/calibration/_soco70/
+results/calibration/soco70_20[0-9][0-9]/
 # capx D96 (2026-09-25, owner ruling Q69): neiso-t3 re-solved post-F1. The per-year
 # cache parquets / npz / hourly sidecars stay OFF main (rule 29(c) / rule 33(f)); the slim
 # bundle (summary, run_config, config.yaml, solve_surface.json, 25 evolution ledgers) lands.
