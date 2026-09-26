@@ -1414,6 +1414,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # built OUTSIDE this function can resolve the same posture instead of
     # reporting the caller's unresolved config — the FFR-2E defect class.
     config = apply_iso_scenario_defaults(config, iso)
+    # NWPP Path 76 "Alturas" link (config.nwpp_path76_alturas_link, default
+    # off -> same object, byte-identical): the forecast-path twin of the
+    # run_calibration.run_year call, before the interchange topology joins.
+    from market_sim.pipeline.ttc import apply_nwpp_path76_link
+
+    iso_config = apply_nwpp_path76_link(iso_config, iso, config)
 
     # caiso-190: the input-completeness guard on the FORECAST solve path.
     # caiso-157 built it, caiso-188 wired the backcast lane and filed this half
