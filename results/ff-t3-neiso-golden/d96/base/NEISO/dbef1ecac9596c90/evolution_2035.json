@@ -1,0 +1,189 @@
+{
+  "adequacy_requirement_mw": 27704.93,
+  "announced_derates": [],
+  "bridge": false,
+  "capacity_reserve_position": 0.99464,
+  "ccs_retrofits": [],
+  "confirmed_derates": [],
+  "entry_decided_mw_by_tech": {
+    "gas_cc": 1000.0,
+    "gas_ct": 500.0,
+    "solar": 1089.4,
+    "wind": 712.6
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2037,
+      "decision_year": 2035,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 712.6,
+      "seq": 0,
+      "tech": "wind",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2037,
+      "decision_year": 2035,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 1089.4,
+      "seq": 2,
+      "tech": "solar",
+      "zone": "Connecticut"
+    },
+    {
+      "cod_year": 2037,
+      "decision_year": 2035,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 1000.0,
+      "seq": 3,
+      "tech": "gas_cc",
+      "zone": "Central"
+    },
+    {
+      "cod_year": 2037,
+      "decision_year": 2035,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 500.0,
+      "seq": 4,
+      "tech": "gas_ct",
+      "zone": "Central"
+    },
+    {
+      "cod_year": 2035,
+      "decision_year": 2033,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 712.6,
+      "seq": 1,
+      "tech": "wind",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2035,
+      "decision_year": 2033,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 1089.4,
+      "seq": 2,
+      "tech": "solar",
+      "zone": "Connecticut"
+    },
+    {
+      "cod_year": 2035,
+      "decision_year": 2033,
+      "event": "commissioned",
+      "kind": "thermal",
+      "mw": 1000.0,
+      "seq": 3,
+      "tech": "gas_cc",
+      "zone": "Central"
+    },
+    {
+      "cod_year": 2035,
+      "decision_year": 2033,
+      "event": "commissioned",
+      "kind": "thermal",
+      "mw": 500.0,
+      "seq": 4,
+      "tech": "gas_ct",
+      "zone": "Central"
+    }
+  ],
+  "firm_clean_accredited_mw": 1396.472,
+  "firm_clean_mw": 1899.5,
+  "fleet_by_fuel_after": {
+    "biomass": 1047.2,
+    "gas_cc": 4347.1116,
+    "gas_cc_ccs": 6866.29914,
+    "gas_ct": 1948.958698,
+    "gas_st": 63.61,
+    "nuclear": 3355.4,
+    "oil": 5083.6
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 1047.2,
+    "gas_cc": 3347.1116,
+    "gas_cc_ccs": 6866.29914,
+    "gas_ct": 1453.608698,
+    "gas_st": 63.61,
+    "nuclear": 3355.4,
+    "oil": 5083.6
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "NEISO",
+  "ledger_version": 1,
+  "locality_capacity": [],
+  "mode": "forecast",
+  "peak_demand_mw": 26934.418,
+  "pipeline_events": [],
+  "renewable_additions": [
+    {
+      "mw": 712.6,
+      "tech": "wind",
+      "zone": "North"
+    },
+    {
+      "mw": 1089.4,
+      "tech": "solar",
+      "zone": "Connecticut"
+    }
+  ],
+  "renewable_credit_applied": {
+    "solar": 0.18,
+    "wind": 0.16
+  },
+  "reserve_margin": 0.090125,
+  "retirements": [
+    {
+      "fuel": "gas_ct",
+      "mw": 2.325,
+      "reason": "announced",
+      "unit_id": "CT_PEAKER_Connecticut_p60040_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 2.325,
+      "reason": "announced",
+      "unit_id": "CT_PEAKER_Connecticut_p60054_econ"
+    }
+  ],
+  "rps_dual": 50.0,
+  "screen_adequacy_requirement_mw": 27704.93,
+  "screen_entering_firm_mw": 27556.436,
+  "screen_peak_demand_mw": 26934.418,
+  "screen_reserve_position": 0.99464,
+  "solar_cap_mw": 9789.4,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 2263.825,
+  "storage_power_mw": 2635.0,
+  "thermal_additions": [
+    {
+      "eia860_id": null,
+      "fuel": "gas_cc",
+      "mw": 1000.0,
+      "source": "economic",
+      "unit_id": "gas_cc_new_2033c2035_3",
+      "zone": "Central"
+    },
+    {
+      "eia860_id": null,
+      "fuel": "gas_ct",
+      "mw": 500.0,
+      "source": "economic",
+      "unit_id": "gas_ct_new_2033c2035_4",
+      "zone": "Central"
+    }
+  ],
+  "wind_cap_mw": 5112.6,
+  "year": 2035
+}

@@ -1,0 +1,281 @@
+{
+  "adequacy_requirement_mw": 25891.643,
+  "announced_derates": [],
+  "bridge": false,
+  "capacity_reserve_position": 1.003154,
+  "ccs_retrofits": [
+    {
+      "annual_net_savings_per_mw": 164202.62343536806,
+      "attr_post_usd_per_mwh": 0.0,
+      "attr_unabated_usd_per_mwh": 0.0,
+      "capex_scale": 0.972722213908351,
+      "fixed_cost_scale": 1.0,
+      "from_fuel": "gas_cc",
+      "mw": 263.9784,
+      "old_emission_rate": 0.3493045470144889,
+      "old_hr": 7.0907628679200005,
+      "retrofit_capex_per_mw": 1167940.8599577546,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_Connecticut_p568_committed",
+      "vom_adder_per_mwh": 8.0
+    },
+    {
+      "annual_net_savings_per_mw": 174838.41454816368,
+      "attr_post_usd_per_mwh": 0.0,
+      "attr_unabated_usd_per_mwh": 0.0,
+      "capex_scale": 1.1626468850322964,
+      "fixed_cost_scale": 1.0,
+      "from_fuel": "gas_cc",
+      "mw": 58.12560000000001,
+      "old_emission_rate": 0.4175064964150977,
+      "old_hr": 7.723966592,
+      "retrofit_capex_per_mw": 1395982.1039511752,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_Central_p55026_econ",
+      "vom_adder_per_mwh": 8.0
+    },
+    {
+      "annual_net_savings_per_mw": 260942.99896329915,
+      "attr_post_usd_per_mwh": 0.0,
+      "attr_unabated_usd_per_mwh": 0.0,
+      "capex_scale": 1.5648922480945644,
+      "fixed_cost_scale": 1.0,
+      "from_fuel": "gas_cc",
+      "mw": 230.73990000000003,
+      "old_emission_rate": 0.5619528062907581,
+      "old_hr": 7.405876369999999,
+      "retrofit_capex_per_mw": 1878955.3398160534,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_Central_p55079_econ",
+      "vom_adder_per_mwh": 8.0
+    },
+    {
+      "annual_net_savings_per_mw": 176752.99220011424,
+      "attr_post_usd_per_mwh": 0.0,
+      "attr_unabated_usd_per_mwh": 0.0,
+      "capex_scale": 1.0576877588409228,
+      "fixed_cost_scale": 1.0,
+      "from_fuel": "gas_cc",
+      "mw": 148.7268,
+      "old_emission_rate": 0.3798156741997754,
+      "old_hr": 7.229099833999999,
+      "retrofit_capex_per_mw": 1269958.4043259528,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_North_p55100_econ",
+      "vom_adder_per_mwh": 8.0
+    },
+    {
+      "annual_net_savings_per_mw": 262821.7602686401,
+      "attr_post_usd_per_mwh": 0.0,
+      "attr_unabated_usd_per_mwh": 0.0,
+      "capex_scale": 1.6138843792426234,
+      "fixed_cost_scale": 1.0,
+      "from_fuel": "gas_cc",
+      "mw": 285.1072,
+      "old_emission_rate": 0.5795458805860261,
+      "old_hr": 7.556123442600001,
+      "retrofit_capex_per_mw": 1937779.8541183642,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_Connecticut_p55149_committed",
+      "vom_adder_per_mwh": 8.0
+    },
+    {
+      "annual_net_savings_per_mw": 267327.29467616405,
+      "attr_post_usd_per_mwh": 0.0,
+      "attr_unabated_usd_per_mwh": 0.0,
+      "capex_scale": 1.6142638189885261,
+      "fixed_cost_scale": 1.0,
+      "from_fuel": "gas_cc",
+      "mw": 323.19386,
+      "old_emission_rate": 0.5796821373987797,
+      "old_hr": 7.457324372000001,
+      "retrofit_capex_per_mw": 1938235.4448068414,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_Central_p55212_econ",
+      "vom_adder_per_mwh": 8.0
+    },
+    {
+      "annual_net_savings_per_mw": 152197.60990932118,
+      "attr_post_usd_per_mwh": 0.0,
+      "attr_unabated_usd_per_mwh": 0.0,
+      "capex_scale": 0.9455086511694588,
+      "fixed_cost_scale": 1.0,
+      "from_fuel": "gas_cc",
+      "mw": 181.20888,
+      "old_emission_rate": 0.3395321566349527,
+      "old_hr": 7.265264959800001,
+      "retrofit_capex_per_mw": 1135265.7226849354,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_North_p55294_committed",
+      "vom_adder_per_mwh": 8.0
+    },
+    {
+      "annual_net_savings_per_mw": 176120.35060538974,
+      "attr_post_usd_per_mwh": 0.0,
+      "attr_unabated_usd_per_mwh": 0.0,
+      "capex_scale": 1.089011186965104,
+      "fixed_cost_scale": 1.0,
+      "from_fuel": "gas_cc",
+      "mw": 390.96,
+      "old_emission_rate": 0.3910639172391689,
+      "old_hr": 7.3844821629999995,
+      "retrofit_capex_per_mw": 1307568.2286489615,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_Boston_p55317_econ",
+      "vom_adder_per_mwh": 8.0
+    },
+    {
+      "annual_net_savings_per_mw": 156475.48080240816,
+      "attr_post_usd_per_mwh": 0.0,
+      "attr_unabated_usd_per_mwh": 0.0,
+      "capex_scale": 0.9551482604492953,
+      "fixed_cost_scale": 1.0,
+      "from_fuel": "gas_cc",
+      "mw": 414.27432,
+      "old_emission_rate": 0.342993740327342,
+      "old_hr": 7.20272754468,
+      "retrofit_capex_per_mw": 1146839.935128088,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_Connecticut_p56047_committed",
+      "vom_adder_per_mwh": 8.0
+    },
+    {
+      "annual_net_savings_per_mw": 165464.77596742098,
+      "attr_post_usd_per_mwh": 0.0,
+      "attr_unabated_usd_per_mwh": 0.0,
+      "capex_scale": 1.0060718083729479,
+      "fixed_cost_scale": 1.0,
+      "from_fuel": "gas_cc",
+      "mw": 664.1023999999999,
+      "old_emission_rate": 0.3612803863867256,
+      "old_hr": 7.255981885,
+      "retrofit_capex_per_mw": 1207983.4882449436,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_Boston_p60903_econ",
+      "vom_adder_per_mwh": 8.0
+    }
+  ],
+  "confirmed_derates": [],
+  "entry_decided_mw_by_tech": {
+    "solar": 1089.4,
+    "wind": 712.6
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2031,
+      "decision_year": 2029,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 712.6,
+      "seq": 0,
+      "tech": "wind",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2031,
+      "decision_year": 2029,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 1089.4,
+      "seq": 1,
+      "tech": "solar",
+      "zone": "Connecticut"
+    },
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 712.6,
+      "seq": 0,
+      "tech": "wind",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 1089.4,
+      "seq": 1,
+      "tech": "solar",
+      "zone": "Connecticut"
+    }
+  ],
+  "firm_clean_accredited_mw": 1396.472,
+  "firm_clean_mw": 1899.5,
+  "fleet_by_fuel_after": {
+    "biomass": 1047.2,
+    "gas_cc": 4373.35205,
+    "gas_cc_ccs": 5953.49378,
+    "gas_ct": 1315.398,
+    "gas_st": 63.61,
+    "nuclear": 3355.4,
+    "oil": 5083.6
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 1047.2,
+    "gas_cc": 7333.76941,
+    "gas_cc_ccs": 2993.07642,
+    "gas_ct": 1317.036,
+    "gas_st": 63.61,
+    "nuclear": 3355.4,
+    "oil": 5083.6
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "NEISO",
+  "ledger_version": 1,
+  "locality_capacity": [],
+  "mode": "forecast",
+  "peak_demand_mw": 25171.562,
+  "pipeline_events": [],
+  "renewable_additions": [
+    {
+      "mw": 712.6,
+      "tech": "wind",
+      "zone": "North"
+    },
+    {
+      "mw": 1089.4,
+      "tech": "solar",
+      "zone": "Connecticut"
+    }
+  ],
+  "renewable_credit_applied": {
+    "solar": 0.18,
+    "wind": 0.16
+  },
+  "reserve_margin": 0.044106,
+  "retirements": [
+    {
+      "fuel": "gas_ct",
+      "mw": 0.882,
+      "reason": "announced",
+      "unit_id": "CT_CHP_Connecticut_p52061_econ"
+    },
+    {
+      "fuel": "gas_ct",
+      "mw": 0.756,
+      "reason": "announced",
+      "unit_id": "CT_CHP_Central_p58185_econ"
+    }
+  ],
+  "rps_dual": 50.0,
+  "screen_adequacy_requirement_mw": 25891.643,
+  "screen_entering_firm_mw": 25973.299,
+  "screen_peak_demand_mw": 25171.562,
+  "screen_reserve_position": 1.003154,
+  "solar_cap_mw": 3789.4,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 2263.825,
+  "storage_power_mw": 2635.0,
+  "thermal_additions": [],
+  "wind_cap_mw": 2112.6,
+  "year": 2029
+}

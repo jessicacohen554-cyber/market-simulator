@@ -1,0 +1,17 @@
+{
+  "epochs": [],
+  "fingerprint": "8f90ae4dca904a66",
+  "git_sha": "5a48f4378",
+  "iso": "NEISO",
+  "moved": {
+    "GENERIC_BASE_OFFER_CURVE": "bdc2b348ec6144d1",
+    "LABELS": "600aeac5bbcd256c",
+    "MAINTENANCE_MONTHLY_SHAPE": "b4da945d5a2e8f77",
+    "MIN_STABLE_PCT_PHYSICAL": "262e67a17cf047e0",
+    "PLANT_CLASSES": "3c91d80e901b878c",
+    "RGGI_MEMBER_STATES_BY_YEAR": "e432156b179ff182",
+    "THERMAL_AVAILABILITY": "34ff308290e18439"
+  },
+  "rows": 202,
+  "schema": 1
+}

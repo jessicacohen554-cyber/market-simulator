@@ -170,3 +170,36 @@ def iso_electric_power_monthly_level(
         )
         level[index] = blended / covered / MCF_TO_MMBTU
     return level
+
+
+def state_electric_power_monthly_gas(
+    state: str,
+    year: int,
+    prices_path: str | None = None,
+) -> np.ndarray | None:
+    """Return ONE state's ``(12,)`` measured delivered-to-electric-power gas ($/MMBtu).
+
+    The single-state read of the same N3045 series
+    :func:`iso_electric_power_monthly_level` blends. Used where a price is keyed
+    to one physical location rather than an ISO footprint — the R-CAISO-3
+    intertie-hub gap fill (``ScenarioConfig.caiso_intertie_gap_fill_measured_gas``),
+    whose operand is the host state of the hub. A month the state does not
+    print is ``NaN`` (never backfilled from ``N3045US3``, per the module
+    docstring); ``None`` when the state prints no month of ``year``.
+
+    Args:
+        state: Two-letter US state code (e.g. ``"AZ"``).
+        year: Calendar year.
+        prices_path: Override for the N3045 state CSV (tests).
+
+    Returns:
+        A ``(12,)`` array of $/MMBtu indexed January..December, or ``None``.
+    """
+    prices = _load_state_prices(prices_path)
+    out = np.array(
+        [prices.get((state.upper(), year, month), np.nan) for month in _MONTHS],
+        dtype=float,
+    )
+    if not np.isfinite(out).any():
+        return None
+    return out / MCF_TO_MMBTU

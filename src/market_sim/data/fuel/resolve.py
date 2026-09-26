@@ -269,10 +269,22 @@ def resolve_fuel_prices(
             )
             else None
         )
+        # PJM-NEXT-2: PJM's own twin of the miso-213 scope, consumed only under
+        # its own flag (rule 25: no MISO verdict transfers; flag off => None).
+        skip_for_pjm = (
+            print_cells
+            if config.iso == "PJM"
+            and getattr(config, "pjm_zonal_gas_basis_skip_923_priced", False)
+            else None
+        )
         for iso_name in ZONAL_BASIS_ORDER:
             if iso_name == "MISO" and skip_for_miso is not None:
                 appliers[iso_name](
                     fuel_prices, fleet, config, year, skip_cells=skip_for_miso
+                )
+            elif iso_name == "PJM" and skip_for_pjm is not None:
+                appliers[iso_name](
+                    fuel_prices, fleet, config, year, skip_cells=skip_for_pjm
                 )
             else:
                 appliers[iso_name](fuel_prices, fleet, config, year)

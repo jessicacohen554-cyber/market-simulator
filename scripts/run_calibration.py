@@ -4643,8 +4643,12 @@ def run_year(
     # western coal serves the east. Capacity-weighted mean-zero so the aggregate
     # gas level is preserved. Same order as the resolve_fuel_prices
     # apply_monthly=True branch: after the plant-monthly / hub overlay, before the
-    # dual-fuel min. No-op unless pjm_zonal_gas_basis is set (PJM only).
-    apply_pjm_zonal_gas_basis(fuel_prices, fleet_arrays, config, year)
+    # dual-fuel min. No-op unless pjm_zonal_gas_basis is set (PJM only). The
+    # print-derived-cell mask is passed always; the applier consumes it only
+    # under pjm_zonal_gas_basis_skip_923_priced (PJM-NEXT-2; off => identical).
+    apply_pjm_zonal_gas_basis(
+        fuel_prices, fleet_arrays, config, year, skip_cells=print_cells
+    )
     # MISO winter fuel security (miso-72): in Dec/Jan/Feb, swap the national HH
     # gas_daily_shape for the measured Chicago Citygate daily shape on the
     # Chicago-hub zones' gas units. BEFORE the zonal basis (acts on
@@ -5418,6 +5422,9 @@ def run_year(
                 year,
                 carbon_price,
                 firm_base=getattr(config, "caiso_perhub_firm_base", False),
+                gap_fill_measured_gas=getattr(
+                    config, "caiso_intertie_gap_fill_measured_gas", False
+                ),
             ):
                 logger.info(
                     "%s %d: per-hub WECC intertie — two signed corridors (Malin/COI "

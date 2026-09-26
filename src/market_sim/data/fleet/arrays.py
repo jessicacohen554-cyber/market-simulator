@@ -404,8 +404,18 @@ def _nuclear_monthly(
     # return-to-service year. Forecast runs keep the unit — in backcast mode
     # weather_year is the calendar year; in forecast it is only a weather
     # shape, so the comparison would be meaningless there.
+    # PJM-NEXT-2 card 3 (rule 19 [R-ONE-MECH]): under
+    # nuclear_dormancy_defers_to_vintage_exit a unit the solved year's OWN
+    # EIA-860 vintage records as operating until a mid-year exit
+    # (mid_vintage_exit_unit, injected by mid_vintage_exit_carry) is not
+    # zeroed: the dormancy table describes the post-shutdown restart window
+    # (TMI-1 ran Jan-Sep 2019), and the exit's retirement mask already removes
+    # it after its exit month. Off => byte-identical.
+    _defer = bool(getattr(config, "nuclear_dormancy_defers_to_vintage_exit", False))
     if _yr is not None and getattr(config, "mode", "forecast") == "backcast":
         for g_idx, gen in enumerate(generators):
+            if _defer and getattr(gen, "mid_vintage_exit_unit", False):
+                continue
             if gen.fuel_type == "nuclear" and _yr < NUCLEAR_DORMANT_UNTIL.get(
                 int(gen.plant_code), 0
             ):
@@ -1323,6 +1333,12 @@ def _apply_outage_overlays(
             # flag; selects '-perunitdark-' and is byte-inert while off.
             dark_unit_years=bool(getattr(config, "campd_per_unit_attribution", False))
             and bool(getattr(config, "campd_dark_unit_year_windows", False)),
+            # PJM-NEXT-2 (rule 14 [R-ACCURATE]): the standard extract plus the
+            # windows of the facilities its membership never scanned. Selects
+            # '-memberrepair-'; byte-inert while off.
+            membership_repair=bool(
+                getattr(config, "unit_outage_membership_repair", False)
+            ),
             # miso-266: the dispatched bin's own capacity as the denominator.
             lp_bin_capacity=_lp_bins,
             # soco-67 (rule 19 [R-ONE-MECH]): drop a new unit's pre-commercial

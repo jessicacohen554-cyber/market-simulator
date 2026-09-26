@@ -452,6 +452,7 @@ def inject_caiso_per_hub_intertie_prices(
     year: int,
     carbon_price: float,
     firm_base: bool = False,
+    gap_fill_measured_gas: bool = False,
 ) -> bool:
     """Price each CAISO per-hub corridor at its OWN measured intertie hub.
 
@@ -480,13 +481,19 @@ def inject_caiso_per_hub_intertie_prices(
     tranches all map to Palo Verde, so the DSW export = Palo Verde) — i.e. each
     corridor exports into its own neighbor, not a blended hub.
 
+    ``gap_fill_measured_gas`` (``ScenarioConfig.caiso_intertie_gap_fill_measured_gas``,
+    R-CAISO-3) is handed to the loader: a bulk retention-gap hour is filled on
+    the hub host state's measured monthly gas instead of the forward trajectory.
+
     Returns ``True`` when the tie was repriced, ``False`` (byte-identical) when
     CAISO has no measured hub series for the year (e.g. 2023's OASIS gap), so the
     per-hub legs keep their static-ladder placeholder prices.
     """
     from market_sim.data.eia_loader import measured_import_hub_prices
 
-    prices = measured_import_hub_prices(iso, year, int(mc.shape[1]))
+    prices = measured_import_hub_prices(
+        iso, year, int(mc.shape[1]), gap_fill_measured_gas=gap_fill_measured_gas
+    )
     if not prices:
         return False
     border = wecc_border_carbon_adder(carbon_price)
@@ -1608,6 +1615,47 @@ _CAISO_IMPORT_COUPLE_HR: dict[str, float] = {
 }
 
 
+def _caiso_measured_hub_priced_tranches(config, year: int, hours: int) -> frozenset:
+    """Return the CAISO import tranches a MEASURED hub series has repriced.
+
+    Mirrors the gates the backcast measured-overlay applies
+    (``scripts/run_calibration.py``): the per-hub injector
+    (:func:`inject_caiso_per_hub_intertie_prices`) runs when
+    ``caiso_per_hub_intertie`` is on and the forward
+    ``caiso_intertie_reference_price`` seam is not, and it leaves the
+    ``CAISO_FIRM_IMPORT_TRANCHES`` on their static ladder under
+    ``caiso_perhub_firm_base``; the legacy pooled node's
+    :func:`inject_caiso_import_hub_prices` runs under ``caiso_import_hub_prices``
+    off the per-hub topology. A tranche is hub-priced only when the loader
+    returns a series for it, so a year with no measured series (every forecast
+    year) yields the empty set and the coupling is unchanged there. Used only by
+    ``caiso_import_gas_coupling_ladder_only`` (R-CAISO-3).
+    """
+    from market_sim.data.eia_loader import measured_import_hub_prices
+
+    per_hub = bool(getattr(config, "caiso_per_hub_intertie", False))
+    reference = bool(getattr(config, "caiso_intertie_reference_price", False))
+    legacy_hub = (not per_hub) and bool(
+        getattr(config, "caiso_import_hub_prices", False)
+    )
+    if not ((per_hub and not reference) or legacy_hub):
+        return frozenset()
+    prices = measured_import_hub_prices(
+        config.iso,
+        year,
+        hours,
+        gap_fill_measured_gas=bool(
+            getattr(config, "caiso_intertie_gap_fill_measured_gas", False)
+        ),
+    )
+    if not prices:
+        return frozenset()
+    names = set(prices)
+    if per_hub and getattr(config, "caiso_perhub_firm_base", False):
+        names -= set(CAISO_FIRM_IMPORT_TRANCHES)
+    return frozenset(names)
+
+
 def inject_caiso_import_gas_coupling(
     fleet_arrays, mc: np.ndarray, config, year: int
 ) -> bool:
@@ -1662,6 +1710,15 @@ def inject_caiso_import_gas_coupling(
         return False
     delta_h = _expand_monthly_to_hourly(delta_m, int(mc.shape[1]))
     couple_hr = _CAISO_IMPORT_COUPLE_HR if iso.upper() == "CAISO" else {}
+    # R-CAISO-3: under caiso_import_gas_coupling_ladder_only a tranche the
+    # measured-hub injector has already repriced is skipped — its measured
+    # LMP carries the region's gas cost, and the coupling's premise (a level
+    # fitted in the F923 world) does not hold for it (rule 19 [R-ONE-MECH]).
+    hub_priced = (
+        _caiso_measured_hub_priced_tranches(config, year, int(mc.shape[1]))
+        if getattr(config, "caiso_import_gas_coupling_ladder_only", False)
+        else frozenset()
+    )
     applied = False
     for row, uid in enumerate(fleet_arrays.unit_ids):
         # Find the tranche under either the pooled WECC_import node or the
@@ -1674,7 +1731,7 @@ def inject_caiso_import_gas_coupling(
         if tranche is None:
             continue
         heat_rate = couple_hr.get(tranche)
-        if not heat_rate:
+        if not heat_rate or tranche in hub_priced:
             continue
         mc[row, :] = mc[row, :] + delta_h * heat_rate
         applied = True

@@ -462,6 +462,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # default-off; selects '-perunitdark-' through the same resolver, so the
     # off path is byte-inert). Registered IN THE SAME COMMIT as the field.
     "campd_dark_unit_year_windows",
+    # PJM-NEXT-2 outage-extract membership repair (GATED default-off; selects
+    # the '-memberrepair-' companion through the same resolver, so the off path
+    # is byte-inert). Registered IN THE SAME COMMIT as the field.
+    "unit_outage_membership_repair",
+    # PJM-NEXT-2 card 3: nuclear dormancy defers to the solved vintage's exit
+    # record (GATED default-off; byte-inert off). Same commit as the field.
+    "nuclear_dormancy_defers_to_vintage_exit",
     # soco-67 pre-commercial window clip on the >= 5-day CAMPD unit-outage
     # overlay (GATED default-off; the extract is read unchanged while off, so
     # the off path is byte-inert). Registered IN THE SAME COMMIT as the field.
@@ -1524,6 +1531,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # existing keeper keeps its key; the armed A/B leg hashes distinctly.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "miso_zonal_gas_basis_skip_923_priced",
+    # PJM-NEXT-2 rule-19 scope of the PJM zonal basis (skip print-derived
+    # cells), default off: dropped from the hash at its default so every
+    # existing keeper keeps its key. Registered IN THE SAME COMMIT as the field.
+    "pjm_zonal_gas_basis_skip_923_priced",
     # ercot-254 monthly resolution of the ERCOT delivered-gas LEVEL anchor,
     # default off: dropped from the hash at its False default so every
     # pre-existing ERCOT key (the designated keeper's included) stays
@@ -2047,6 +2058,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SHARED field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as
     # the field (the nyiso-119 discipline).
     "coal_committed_nested_on_mustrun",
+    # R-CAISO-3 (2026-09-25), both default off, registered IN THE SAME COMMIT
+    # as the fields (the nyiso-119 discipline). Byte-identical off by
+    # construction: the coupling's skip set is computed only inside
+    # `getattr(config, "caiso_import_gas_coupling_ladder_only", False)`, and the
+    # measured-gas fill is reached only when the per-hub injector is handed
+    # gap_fill_measured_gas=True from the flag. An armed run prices different
+    # import rows and earns a distinct key. CAISO-only.
+    "caiso_import_gas_coupling_ladder_only",
+    "caiso_intertie_gap_fill_measured_gas",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2209,6 +2229,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by SOCO-61 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_dark_unit_year_windows": "False",
+    # Added by PJM-NEXT-2 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_membership_repair": "False",
+    "nuclear_dormancy_defers_to_vintage_exit": "False",
     # Added by soco-67 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_precod_clip": "False",
@@ -2538,6 +2562,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-213 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_zonal_gas_basis_skip_923_priced": "False",
+    "pjm_zonal_gas_basis_skip_923_priced": "False",
     # Added by ercot-254 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_ep_gas_basis_monthly": "False",
@@ -2774,6 +2799,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "wefor_residual_short_screened_coal": "False",
     # Added by NWPP-NEXT-4 WITH the field (the nyiso-119 discipline).
     "coal_committed_nested_on_mustrun": "False",
+    # Added by R-CAISO-3 WITH the fields, in the same commit as their
+    # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
+    "caiso_import_gas_coupling_ladder_only": "False",
+    "caiso_intertie_gap_fill_measured_gas": "False",
 }
 
 
@@ -9093,6 +9122,47 @@ class ScenarioConfig:
     # (byte-identical); CAISO-only; pairs with --gas-hub-basis-overlay; no-op for
     # forecast years (no measured gas basis). Does NOT address the negative
     # midday tail — that is caiso_import_solar_shape below.
+    caiso_import_gas_coupling_ladder_only: bool = False  # R-CAISO-3 (2026-09-25):
+    # scope caiso_import_gas_coupling to the tranches it was built for — the
+    # ones still on the STATIC ladder. The coupling's own premise is that a
+    # tranche's level "was fitted against the F923 delivered world", so it is
+    # shifted by (commodity spot - F923 delivered) x HR when the overlay moves
+    # in-state gas. Under caiso_per_hub_intertie (and the legacy
+    # caiso_import_hub_prices) the spot-traded DSW gas tranches are REPRICED to
+    # the measured Palo Verde intertie LMP, which already carries the region's
+    # gas cost; the coupling then ADDS its CA-series delta on top of a measured
+    # price that was never fitted to anything (the per-hub injector's docstring
+    # says those rows are "overwritten off measured gas" by the coupling — the
+    # code adds instead). Measured on the R-CAISO-2 keeper: the delta is
+    # -11.68 / -11.06 $/MMBtu in Dec-2022 / Jan-2023 (N3050 citygate lagging
+    # F923 delivered), so DSW_CCGT / DSW_CT were offered -81 / -121 $/MWh BELOW
+    # their hub in the western gas spike and went NEGATIVE in Jan-2023.
+    # With the flag, a tranche repriced by a measured hub series is skipped;
+    # static-ladder rows (the caiso_perhub_firm_base DSW_solar_PV block) keep
+    # the coupling exactly as before. Zero new parameters (rule 19 [R-ONE-MECH]:
+    # the measured hub is the ONE gas channel for a hub-priced row). Requires
+    # caiso_import_gas_coupling; default off (byte-identical); CAISO-only.
+    # docs/handoffs/r-caiso-3/PRECOMMIT-r-caiso-3-2026-09-25.md.
+    caiso_intertie_gap_fill_measured_gas: bool = False  # R-CAISO-3 (2026-09-25):
+    # the measured WECC intertie hub series (Malin / Palo Verde) has a bulk
+    # OASIS retention gap (2023-01-01..03-26, 2,040 h) that
+    # eia930.envelopes.measured_import_hub_prices fills with the FORWARD
+    # reference formula (HENRY_HUB_TRAJECTORIES annual + static basis) x HR x
+    # load shape — a forecast estimate inside a backcast year, which prices
+    # Palo Verde at ~$39/MWh through the Jan-2023 western gas crisis. With the
+    # flag, the SAME formula takes the MEASURED monthly delivered-to-electric-
+    # power gas of the hub's host state (EIA N3045AZ3 for Palo Verde, N3045OR3
+    # for Malin; interchange.spec.CAISO_INTERTIE_HUB_GAS_STATE) in place of the
+    # forward HH + static basis. Rule 14 [R-ACCURATE]: measured over estimate.
+    # Identified OUT OF SAMPLE, never on a model residual: in fully measured
+    # months the regional-gas formula reproduces the measured hub at monthly
+    # correlation 0.94 / 0.96 (PV / Malin, 2022) vs 0.47 / 0.16 for the
+    # forward fill, and has lower monthly MAE in every year 2022-2025. Rule 13:
+    # the forward analogue is the forward monthly gas curve through the same
+    # formula. Only fills gap hours (2023 alone in 2022-2025); a month the
+    # state series does not print falls back to the forward fill. Zero new
+    # parameters (HR, shape unchanged). Default off (byte-identical);
+    # CAISO-only; reaches the per-hub injector.
     caiso_import_solar_shape: bool = False  # Restore the CAISO negative midday
     # tail. The desert-SW solar import block (DSW_solar_PV / Palo Verde hub) is
     # the marginal CAISO import midday, but its level is priced flat (gas-coupled
@@ -16097,6 +16167,40 @@ class ScenarioConfig:
     # an overwrite, falling back to '-perunit-' where not derived.
     # FINDING-soco-61-2026-09-24.md.
     campd_dark_unit_year_windows: bool = False
+    # PJM-NEXT-2 (rule 14 [R-ACCURATE]) OUTAGE-EXTRACT MEMBERSHIP REPAIR on the
+    # standard >= 5-day CAMPD unit-outage overlay. The committed extract was
+    # derived against one fleet membership (the canonical EIA-860 fleet plus
+    # the canonical whole-plant retirees), so a facility outside it was never
+    # SCANNED: PJM's pre-exit coal (Zimmer, Avon Lake, Cheswick, Will County,
+    # Conesville, Birchwood, Bruce Mansfield) and its PARTIAL-plant coal exits
+    # keyed on their surviving CT class (Morgantown, Dickerson, Wagner, Indian
+    # River, Waukegan) carry ZERO measured windows in any year while their own
+    # CEMS shows 150-300 dead days a year, so the LP dispatches them fully
+    # available. Armed, the '-memberrepair-' companion is read instead: the
+    # committed extract UNCHANGED plus the windows the SAME deriver produces
+    # (with the COAL-SUB artifact-token fix and --membership-vintage-union)
+    # for exactly the facilities the committed extract carries no row for.
+    # Existing rows are never re-derived or altered (card 4's extract-drift
+    # question is untouched). ZERO free parameters: a membership correction on
+    # a measured input (rule 13: outage windows regenerate for any year with
+    # a CAMPD filing). Byte-inert off: a separate file, never an overwrite,
+    # falling back to the standard extract where not derived.
+    # docs/PRECOMMIT-pjm-next-2-card1-outage-membership-2026-09-25.md.
+    unit_outage_membership_repair: bool = False
+    # PJM-NEXT-2 card 3 (rule 19 [R-ONE-MECH], rule 14 [R-ACCURATE]).
+    # NUCLEAR_DORMANT_UNTIL zeroes a nuclear unit in every backcast year before
+    # its restart year -- written for the Crane/TMI-1 restart, which EIA-860
+    # 2025 carries as OP while it is physically dormant. Under
+    # mid_vintage_exit_carry the 2019 vintage injects TMI-1 as a unit that
+    # OPERATED until its Sept-2019 exit, and the dormancy rule then zeroed it
+    # for the whole year (0 MWh vs ~5 TWh measured; model nuclear 271.98 vs
+    # 277.92 TWh). Armed, a unit flagged mid_vintage_exit_unit is exempt from
+    # the dormancy zeroing (its exit month's retirement mask still removes it
+    # afterwards). The nuclear monthly-CF derive already excludes the dormant
+    # plant's generation AND capacity, so nothing double-counts. ZERO free
+    # parameters. PJM 2019 is the only unit-year it reaches in the keeper.
+    # docs/PRECOMMIT-pjm-next-2-card3-tmi-dormancy-2026-09-25.md.
+    nuclear_dormancy_defers_to_vintage_exit: bool = False
     # soco-67 (rule 19 [R-ONE-MECH], rule 14 [R-ACCURATE]) PRE-COMMERCIAL
     # WINDOW CLIP on the >= 5-day CAMPD unit-outage overlay. The deriver fills
     # a unit's hours ABSENT from the CAMPD record as dark, so a unit that
@@ -18295,6 +18399,27 @@ class ScenarioConfig:
     # written-cell mask apply_plant_monthly_fuel_prices returns
     # (resolve_fuel_prices and run_calibration.run_year both thread it).
     miso_zonal_gas_basis_skip_923_priced: bool = False
+
+    # PJM-NEXT-2 (2026-09-25), rule 19 [R-ONE-MECH]: SCOPE of the mean-zero PJM
+    # zonal basis (pjm_zonal_gas_basis). PJM's own twin of miso-213 -- the MISO
+    # verdict does not transfer (rule 25); this is PJM's own measurement. A gas
+    # cell whose delivered price the EIA-923 print path SET
+    # (gas_plant_monthly_fuel_pricing: the plant's own month, or the nearby
+    # pool) already embeds the regional delivered premium, so adding the zonal
+    # increment on top prices one phenomenon twice. Measured on the PJM keeper:
+    # Wildcat Point (59220, the one Maryland gas plant with public receipts)
+    # is priced at its own 2024 print + 0.78 $/MMBtu in EVERY month (2023:
+    # +0.53), and Keys / CPV St Charles inherit that print + basis through the
+    # nearby pool; Dominion's reporting CCs sit ~+0.45 over their prints. With
+    # this set the PJM applier leaves print-derived cells byte-untouched and
+    # adds the increment only to cells still on the trajectory / EP level. The
+    # capacity-weighted mean is still taken over ALL gas rows, so the spread
+    # VALUES are unchanged (the mask changes only who receives them). ZERO free
+    # parameters. Forecast-mode inert by construction (the print path is a
+    # backcast-only overlay). Off by default (every keeper byte-identical; in
+    # _CACHE_KEY_OPTIONAL_FIELDS).
+    # docs/PRECOMMIT-pjm-next-2-card2-basis-scope-2026-09-25.md.
+    pjm_zonal_gas_basis_skip_923_priced: bool = False
 
     # MISO winter fuel-security daily citygate overlay (miso-72). In the winter
     # months (Dec/Jan/Feb) only, for the MISO gas units in the Chicago-hub zones
@@ -23088,6 +23213,7 @@ TIER_TAGS: dict[str, int] = {
     "pjm_zonal_gas_basis": 3,
     "miso_zonal_gas_basis": 3,
     "miso_zonal_gas_basis_skip_923_priced": 3,
+    "pjm_zonal_gas_basis_skip_923_priced": 3,
     "miso_winter_citygate_daily": 3,
     "miso_gas_marginal_commodity_pricing": 3,
     "miso_gas_variable_transport": 3,

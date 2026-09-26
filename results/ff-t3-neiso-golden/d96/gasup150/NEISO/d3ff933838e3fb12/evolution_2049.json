@@ -1,0 +1,146 @@
+{
+  "adequacy_requirement_mw": 33334.631,
+  "announced_derates": [],
+  "bridge": false,
+  "capacity_reserve_position": 1.010573,
+  "ccs_retrofits": [],
+  "confirmed_derates": [],
+  "entry_decided_mw_by_tech": {
+    "solar": 1089.4,
+    "wind": 712.6
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2051,
+      "decision_year": 2049,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 712.6,
+      "seq": 0,
+      "tech": "wind",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2051,
+      "decision_year": 2049,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 1089.4,
+      "seq": 2,
+      "tech": "solar",
+      "zone": "Connecticut"
+    },
+    {
+      "cod_year": 2049,
+      "decision_year": 2047,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 712.6,
+      "seq": 0,
+      "tech": "wind",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2049,
+      "decision_year": 2047,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 1089.4,
+      "seq": 2,
+      "tech": "solar",
+      "zone": "Connecticut"
+    }
+  ],
+  "firm_clean_accredited_mw": 1396.472,
+  "firm_clean_mw": 1899.5,
+  "fleet_by_fuel_after": {
+    "biomass": 1047.2,
+    "gas_cc": 9124.48388,
+    "gas_cc_ccs": 1223.29,
+    "gas_ct": 3094.851414,
+    "gas_st": 58.63,
+    "nuclear": 3355.4,
+    "oil": 5083.6
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 1047.2,
+    "gas_cc": 9124.48388,
+    "gas_cc_ccs": 1223.29,
+    "gas_ct": 3094.851414,
+    "gas_st": 58.63,
+    "nuclear": 3355.4,
+    "oil": 5083.6
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "NEISO",
+  "ledger_version": 1,
+  "locality_capacity": [],
+  "mode": "forecast",
+  "peak_demand_mw": 32407.55,
+  "pipeline_events": [],
+  "renewable_additions": [
+    {
+      "mw": 712.6,
+      "tech": "wind",
+      "zone": "North"
+    },
+    {
+      "mw": 1089.4,
+      "tech": "solar",
+      "zone": "Connecticut"
+    }
+  ],
+  "renewable_credit_applied": {
+    "solar": 0.18,
+    "wind": 0.16
+  },
+  "reserve_margin": 0.071268,
+  "retirements": [],
+  "rps_dual": 50.0,
+  "screen_adequacy_requirement_mw": 33334.631,
+  "screen_entering_firm_mw": 33687.062,
+  "screen_peak_demand_mw": 32407.55,
+  "screen_reserve_position": 1.010573,
+  "solar_cap_mw": 23789.4,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [
+    {
+      "duration_h": 100.0,
+      "mw": 144.0,
+      "tech": "iron_air",
+      "unit_id": "North_iron_air_new_2049_0",
+      "zone": "North"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 216.0,
+      "tech": "iron_air",
+      "unit_id": "Central_iron_air_new_2049_0",
+      "zone": "Central"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 151.2,
+      "tech": "iron_air",
+      "unit_id": "Boston_iron_air_new_2049_0",
+      "zone": "Boston"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 208.79999999999998,
+      "tech": "iron_air",
+      "unit_id": "Connecticut_iron_air_new_2049_0",
+      "zone": "Connecticut"
+    }
+  ],
+  "storage_firm_mw": 3703.825,
+  "storage_power_mw": 4075.0,
+  "thermal_additions": [],
+  "wind_cap_mw": 12112.6,
+  "year": 2049
+}
