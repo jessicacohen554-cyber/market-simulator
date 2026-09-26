@@ -66,6 +66,20 @@ reproduces only at declaration is capx D79's DESIGNED re-key — "a re-derived
 registry table re-keys the ISOs whose rows moved" — not a mismatch, and this
 module never repairs it.
 
+**The third construction: the RECORDED surface (capx D98, owner ruling Q71,
+"Add the construction.").** Both keys above assume the record solved while its
+ISO's surface sat at declaration, or sits where it sits today. A record solved
+on an ALREADY-MOVED surface hashed the ``moved`` block live at its solve, and
+matches neither once the surface moves again (capx D95: the two d94 legs, after
+``a669e4a4`` and ``5f8d153c``). For a mismatch only, :func:`surface_recorded_verdict`
+hashes the payload with the ``moved`` block read from the record's OWN committed
+``<run_config dir>/<ISO>/<recorded key>/solve_surface.json`` — never
+synthesized, so a record with no committed stamp cannot reach it. A record it
+reproduces is classified ``surface-recorded``: counted as a mismatch, REPORTED
+one line per record like a Q66 ``LAG`` row, exempt from ``G1_UNKNOWN``; a stamp
+that does not reproduce (a tampered block, a perturbed literal) stays
+``G1_UNKNOWN``.
+
 **SCOPE — THIS CENSUS IS PAYLOAD-DRIVEN, AND capx D91 MEASURED WHAT THAT MISSES.**
 :func:`head_key` opens with ``out = dict(payload)``: it hashes exactly the
 fields the RECORD stored, which is the right question for "could today's rules
@@ -143,7 +157,13 @@ def _hash(payload: dict) -> str:
 # HEAD rules
 # --------------------------------------------------------------------------- #
 def head_key(
-    payload: dict, *, undrop=(), extra_drop=(), roots=None, surface=False
+    payload: dict,
+    *,
+    undrop=(),
+    extra_drop=(),
+    roots=None,
+    surface=False,
+    surface_block: dict | None = None,
 ) -> str:
     """Hash under the live rules (the D76-ARM construction), with recipe knobs.
 
@@ -160,7 +180,15 @@ def head_key(
     keys differ iff the ISO's surface has moved off its declaration since the
     bundle solved (capx D79's designed re-key). ``__solve_epochs__`` is not
     modelled: ``SOLVE_EPOCHS`` is empty at HEAD, asserted below.
+
+    ``surface_block`` is the THIRD construction (capx D98, owner ruling Q71):
+    append the given ``moved`` block — read by :func:`recorded_surface_stamp`
+    from the record's OWN committed ``solve_surface.json``, never synthesized —
+    in place of the live one. An empty block collapses to the declaration key,
+    exactly as ``cache_key`` omits an empty block. Exclusive with ``surface``.
     """
+    if surface and surface_block is not None:
+        raise ValueError("surface=True and surface_block are exclusive")
     drop_at = {n: _jsonable(v) for n, v in cache_key_drop_defaults().items()}
     out = dict(payload)
     for name in _CACHE_KEY_OPTIONAL_FIELDS:
@@ -176,6 +204,8 @@ def head_key(
         moved = moved_rows(str(payload.get("iso") or "").upper() or None)
         if moved:
             out["__solve_surface__"] = moved
+    elif surface_block:
+        out["__solve_surface__"] = dict(sorted(surface_block.items()))
     out = _normalize_cache_key_paths(
         out, roots if roots is not None else _cache_key_path_roots()
     )
@@ -843,6 +873,8 @@ def lag_classifications(
     for row in record["rows"]:
         if row["reproduces_recorded_key"] is not False or row["run_config"] in listed:
             continue
+        if (row.get("classification") or {}).get("class") == SURFACE_RECORDED_CLASS:
+            continue  # the Q71 construction already derives it (capx D98)
         verdict = lag_class_verdict(
             row, registrations, ancestry=ancestry, resolve=resolve, fetch=fetch
         )
@@ -857,6 +889,7 @@ def check_exceptions(
     *,
     fetch: bool = True,
     lag: dict[str, dict] | None = None,
+    surface: dict[str, dict] | None = None,
 ) -> list[dict]:
     """Return the gate failures, empty when the record and the list agree.
 
@@ -900,6 +933,15 @@ def check_exceptions(
         ancestry is ``G1_LAG_UNVERIFIED`` (the ``G3_UNVERIFIED`` analogue).
         ``lag`` pre-computes :func:`lag_classifications`; ``None`` computes it.
 
+    ``surface-recorded`` (capx D98, owner ruling Q71)
+        an UNLISTED mismatch whose recorded literal is reproduced by the
+        ``moved`` block of its OWN committed ``solve_surface.json``
+        (:func:`surface_recorded_verdict`) is exempt from ``G1_UNKNOWN`` and
+        REPORTED by the caller. A stamp that does not reproduce leaves the row
+        ``G1_UNKNOWN``; a LISTED entry the construction derives is
+        ``G2_STALE``. ``surface`` pre-computes
+        :func:`surface_recorded_classifications`; ``None`` computes it.
+
     G1, G2, G4, G5 and G6 are pure arithmetic over committed bytes and never touch
     the network. Only a ``vintage_sha`` recipe (G3) needs a blob; when it cannot
     be reached the failure is reported as ``G3_UNVERIFIED`` so an offline runner
@@ -912,9 +954,14 @@ def check_exceptions(
     failures: list[dict] = []
     if lag is None:
         lag = lag_classifications(record, exceptions, fetch=fetch)
+    if surface is None:
+        surface = surface_recorded_classifications(record)
 
     for path, row in rows.items():
         if row["reproduces_recorded_key"] is False and path not in listed:
+            sv = surface.get(path) or {}
+            if sv.get("status") == SURFACE_RECORDED_CLASS:
+                continue  # Q71 construction: REPORTED by the caller (capx D98)
             verdict = lag.get(path) or {}
             if verdict.get("status") == "lag":
                 continue  # Q66 class rule: REPORTED by the caller, not a failure
@@ -959,6 +1006,7 @@ def check_exceptions(
                         "report it as a new finding, do not append it here."
                     ),
                     "classification": row.get("classification"),
+                    **({"surface_verdict": sv} if sv else {}),
                 }
             )
 
@@ -997,6 +1045,20 @@ def check_exceptions(
                     "detail": (
                         "listed record REPRODUCES its recorded key under today's "
                         "rules — the exception is dead scaffolding, delete it "
+                        "(rule 26 [R-DELETE])."
+                    ),
+                }
+            )
+            continue
+        if (surface.get(path) or {}).get("status") == SURFACE_RECORDED_CLASS:
+            failures.append(
+                {
+                    "gate": "G2_STALE",
+                    "run_config": path,
+                    "detail": (
+                        "listed record is derived by the Q71 recorded-surface "
+                        f"construction ({surface[path]['solve_surface_json']}) — "
+                        "the exception is dead scaffolding, delete it "
                         "(rule 26 [R-DELETE])."
                     ),
                 }
@@ -1049,6 +1111,141 @@ def check_exceptions(
 
 
 # --------------------------------------------------------------------------- #
+# The THIRD construction: the record's own recorded surface (capx D98, Q71)
+# --------------------------------------------------------------------------- #
+#: The per-bundle solve-surface stamp capx D79 writes beside every cache
+#: bundle's ``config.yaml`` (``results/cache.py::_SOLVE_SURFACE_FILENAME``).
+SURFACE_STAMP_NAME = "solve_surface.json"
+
+#: The class a record reproducing ONLY under its recorded surface is reported
+#: as — a REPORTED line like a Q66 ``LAG`` row, never silent and never a pass.
+SURFACE_RECORDED_CLASS = "surface-recorded"
+
+
+def committed_surface_stamps() -> frozenset[str]:
+    """Repo-relative paths of every COMMITTED ``solve_surface.json``."""
+    out = subprocess.run(
+        ["git", "ls-files", f"*{SURFACE_STAMP_NAME}"],
+        cwd=_REPO,
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.split()
+    return frozenset(out)
+
+
+def recorded_surface_stamp(
+    run_config: str,
+    iso: str | None,
+    recorded: str | None,
+    *,
+    root: Path = _REPO,
+    committed: frozenset[str] | set[str] | None = None,
+) -> tuple[dict | None, str]:
+    """Locate and read the record's OWN committed solve-surface stamp.
+
+    Returns ``(stamp, why)``; ``stamp`` is ``{"solve_surface_json": rel,
+    "moved": {...}}`` or ``None`` when the construction CANNOT apply, and
+    ``why`` says which leg failed. The stamp is found only at
+    ``<run_config dir>/<ISO>/<recorded cache_key>/solve_surface.json`` — the
+    cache bundle the record's own literal names (``cache.get_cache_path``) — so
+    a record can never borrow another bundle's block, and the block is READ,
+    never synthesized: a record with no committed stamp cannot reach this
+    construction at all (Q71's charter condition).
+
+    Every leg, in order: a recorded key; a path in ``committed`` (the
+    ``git ls-files`` set by default — an uncommitted stamp is not evidence);
+    a JSON object with ``schema == 1``; the stamp's ``iso`` equal to the
+    record's; ``moved`` a ``{str: str}`` object; and ``epochs`` empty, because
+    ``__solve_epochs__`` is not modelled (``SOLVE_EPOCHS`` is empty at HEAD).
+    """
+    if not isinstance(recorded, str) or not recorded:
+        return None, "no recorded cache_key"
+    iso_u = str(iso or "").upper()
+    if not iso_u:
+        return None, "record names no iso"
+    rel = (Path(run_config).parent / iso_u / recorded / SURFACE_STAMP_NAME).as_posix()
+    if committed is None:
+        committed = committed_surface_stamps()
+    if rel not in committed:
+        return None, f"no committed {SURFACE_STAMP_NAME} at {rel}"
+    try:
+        stamp = json.loads((Path(root) / rel).read_text())
+    except (OSError, ValueError) as exc:
+        return None, f"{rel} unreadable: {exc}"
+    if not isinstance(stamp, dict) or stamp.get("schema") != 1:
+        return None, f"{rel} is not a schema-1 stamp"
+    if str(stamp.get("iso") or "").upper() != iso_u:
+        return None, f"{rel} stamps iso {stamp.get('iso')!r}, record is {iso_u}"
+    moved = stamp.get("moved")
+    if not isinstance(moved, dict) or not all(
+        isinstance(k, str) and isinstance(v, str) for k, v in moved.items()
+    ):
+        return None, f"{rel} carries no moved block"
+    if stamp.get("epochs"):
+        return None, f"{rel} carries solve epochs, which are not modelled"
+    return {"solve_surface_json": rel, "moved": dict(sorted(moved.items()))}, "ok"
+
+
+def surface_recorded_verdict(
+    row: dict,
+    *,
+    root: Path = _REPO,
+    committed: frozenset[str] | set[str] | None = None,
+) -> dict | None:
+    """Hash one census row under its recorded surface (the Q71 construction).
+
+    Returns ``None`` when :func:`recorded_surface_stamp` says the construction
+    cannot apply, else ``{solve_surface_json, moved, key, status}`` where
+    ``status`` is ``surface-recorded`` iff the key is the row's recorded
+    literal and ``no_reproduce`` otherwise — a tampered block or a perturbed
+    literal lands there and stays a failure (it is never a pass-through).
+    """
+    payload = row.get("scenario_config")
+    if not isinstance(payload, dict):
+        return None
+    stamp, _why = recorded_surface_stamp(
+        row["run_config"],
+        row.get("iso") or payload.get("iso"),
+        row.get("recorded_cache_key"),
+        root=root,
+        committed=committed,
+    )
+    if stamp is None:
+        return None
+    key = head_key(payload, surface_block=stamp["moved"])
+    status = (
+        SURFACE_RECORDED_CLASS
+        if key == row.get("recorded_cache_key")
+        else "no_reproduce"
+    )
+    return {**stamp, "key": key, "status": status}
+
+
+def surface_recorded_classifications(
+    record: dict,
+    *,
+    root: Path = _REPO,
+    committed: frozenset[str] | set[str] | None = None,
+) -> dict[str, dict]:
+    """``{run_config: verdict}`` for every mismatch the Q71 construction reaches.
+
+    Re-derived from the committed bytes (payload + stamp), never trusted from
+    the census record, so :func:`check_exceptions` gates on arithmetic.
+    """
+    if committed is None:
+        committed = committed_surface_stamps()
+    out = {}
+    for row in record["rows"]:
+        if row["reproduces_recorded_key"] is not False:
+            continue
+        verdict = surface_recorded_verdict(row, root=root, committed=committed)
+        if verdict is not None:
+            out[row["run_config"]] = verdict
+    return out
+
+
+# --------------------------------------------------------------------------- #
 # The census
 # --------------------------------------------------------------------------- #
 def census(*, keep_payloads: bool = True, fetch_vintages: bool = True) -> dict:
@@ -1066,6 +1263,7 @@ def census(*, keep_payloads: bool = True, fetch_vintages: bool = True) -> dict:
     live_fields = {f.name for f in fields(ScenarioConfig)}
     rows, mismatches = [], []
     vintages: dict = {}
+    stamps = committed_surface_stamps()
     for path in _committed_run_configs():
         record = json.loads(path.read_text())
         payload = record.get("scenario_config")
@@ -1119,7 +1317,26 @@ def census(*, keep_payloads: bool = True, fetch_vintages: bool = True) -> dict:
             ),
             "scenario_config": payload,
         }
-        if reproduces is False:
+        # The THIRD construction (capx D98, Q71): the record's own committed
+        # solve_surface.json block. Consulted only for a mismatch, and REPORTED
+        # as its own class — it never joins the "reproduce" count.
+        sv = (
+            surface_recorded_verdict(row, committed=stamps)
+            if reproduces is False
+            else None
+        )
+        row["recorded_surface"] = sv
+        if sv is not None and sv["status"] == SURFACE_RECORDED_CLASS:
+            row["classification"] = {
+                "class": SURFACE_RECORDED_CLASS,
+                "recipe": {
+                    "surface": "recorded",
+                    "solve_surface_json": sv["solve_surface_json"],
+                    "moved": sv["moved"],
+                },
+                "reproduced": True,
+            }
+        elif reproduces is False:
             row["classification"] = classify(
                 payload,
                 recorded,
@@ -1128,6 +1345,7 @@ def census(*, keep_payloads: bool = True, fetch_vintages: bool = True) -> dict:
                 vintages,
                 fetch=fetch_vintages,
             )
+        if reproduces is False:
             # Independent cross-check, recorded whenever the solve commit is
             # reachable: the key under the bundle's OWN vintage rules. A
             # HEAD-recipe class that also reproduces here is doubly derived;
@@ -1212,6 +1430,13 @@ def census(*, keep_payloads: bool = True, fetch_vintages: bool = True) -> dict:
         ),
         "instrument_mismatch": len(mismatches),
         "mismatch_by_class": dict(sorted(by_class.items())),
+        # capx D98 (Q71): mismatches derived by the record's own committed
+        # solve_surface.json block — reported per record, never silent.
+        "surface_recorded": sum(
+            1
+            for m in mismatches
+            if m["classification"]["class"] == SURFACE_RECORDED_CLASS
+        ),
         "unclassified": len(unclassified),
         "unclassified_unreachable_commit": len(unreachable),
         # Class (c): the surface rows currently off their declaration, and the

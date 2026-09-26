@@ -50,7 +50,10 @@ Usage::
 Exit 0 iff every mismatch is a listed exception whose recipe reproduces its
 recorded literal, or a Q66 class-rule ``lag`` (capx D93: one row per
 registration in ``docs/governance/key-provenance-lag-registrations.json``,
-each such record printed as a REPORTED ``LAG`` line, never silently). ``--no-fetch`` downgrades an unreachable ``vintage`` blob (and a class-rule
+each such record printed as a REPORTED ``LAG`` line, never silently), or a
+Q71 ``surface-recorded`` record (capx D98: its literal is reproduced by the
+``moved`` block of its OWN committed ``solve_surface.json``, printed as a
+REPORTED ``SURFACE-RECORDED`` line). ``--no-fetch`` downgrades an unreachable ``vintage`` blob (and a class-rule
 ancestry this clone cannot decide) from a failure to a warning (the clone is ``blob:none`` and shallow, so one
 recipe needs a depth-1 fetch); every other gate still binds.
 """
@@ -66,10 +69,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from scripts.lib.key_provenance import (  # noqa: E402
     EXCEPTIONS_PATH,
+    SURFACE_RECORDED_CLASS,
     census,
     check_exceptions,
     lag_classifications,
     load_exceptions,
+    surface_recorded_classifications,
     unregistered_schema_drift,
 )
 
@@ -95,12 +100,20 @@ def main(argv: list[str] | None = None) -> int:
     record = census()
     exceptions = load_exceptions(Path(args.exceptions))
     lag = lag_classifications(record, exceptions, fetch=not args.no_fetch)
-    failures = check_exceptions(record, exceptions, fetch=not args.no_fetch, lag=lag)
+    surface = surface_recorded_classifications(record)
+    failures = check_exceptions(
+        record, exceptions, fetch=not args.no_fetch, lag=lag, surface=surface
+    )
 
     listed = {e["run_config"] for e in exceptions["entries"]}
     mismatch = {r["run_config"] for r in record["mismatch_detail"]}
     classed = {p for p, v in lag.items() if v["status"] == "lag"}
-    unknown = sorted(mismatch - listed - classed)
+    recorded_surface = {
+        p
+        for p, v in surface.items()
+        if v["status"] == SURFACE_RECORDED_CLASS and p not in listed
+    }
+    unknown = sorted(mismatch - listed - classed - recorded_surface)
 
     print(
         f"{record['configs_checked']} committed run configs at {record['head']}: "
@@ -110,7 +123,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     print(
         f"  {len(mismatch & listed)} KNOWN (listed exceptions), "
-        f"{len(classed)} LAG (Q66 class rule), {len(unknown)} UNKNOWN"
+        f"{len(classed)} LAG (Q66 class rule), "
+        f"{len(recorded_surface)} SURFACE-RECORDED (Q71 construction), "
+        f"{len(unknown)} UNKNOWN"
     )
     # Q66: a class-rule `lag` is REPORTED, never silent (capx D93).
     for path in sorted(classed):
@@ -119,6 +134,14 @@ def main(argv: list[str] | None = None) -> int:
             f"    LAG (Q66 class rule): {path} <- undrop {v['field']}; "
             f"registration {v['registration_sha'][:8]} not in solve "
             f"{v['solve_sha'][:10]}; reproduces {v['undrop_key']}"
+        )
+    # Q71: a record derived by its own committed solve_surface.json block is
+    # REPORTED, never silent (capx D98).
+    for path in sorted(recorded_surface):
+        v = surface[path]
+        print(
+            f"    SURFACE-RECORDED (Q71 construction): {path} <- moved "
+            f"{v['moved']} from {v['solve_surface_json']}; reproduces {v['key']}"
         )
     print(
         f"  keys: {record['validated_under_both_constructions']} reproduce under "
@@ -180,8 +203,9 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         return 1
     print(
-        "\nok: every mismatch is a known, cited, recipe-verified exception or a "
-        "reported Q66 class-rule lag, and "
+        "\nok: every mismatch is a known, cited, recipe-verified exception, a "
+        "reported Q66 class-rule lag, or a reported Q71 recorded-surface "
+        "record, and "
         "no unregistered ScenarioConfig field is off the G6 ratchet"
     )
     return 0
