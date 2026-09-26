@@ -16077,6 +16077,25 @@ class ScenarioConfig:
     # two bundles with identical configs could have solved on different grains
     # (rule 24 [R-REGISTRY]). Evidence:
     # docs/FINDING-nyiso229-phase0-the-outage-window-grain-2026-09-12.md.
+    #
+    # ERCOT BRANCH (R-ERCOT-5, 2026-09-25). ERCOT routes its windows through its
+    # own bin sheet and arms neither per-unit flag, so the predicate above never
+    # reaches it. For ERCOT ONLY the same field selects the ``-hourgrain``
+    # companions of ERCOT's three window families -- campd-unit-outages.csv
+    # (standard, merit-guarded), campd-unit-outages-short.csv (coal < 5 d) and
+    # campd-unit-outages-shortgas.csv (gas < 5 d) -- each re-derived with
+    # ``--hour-grain``, whose base-column projection reproduces the incumbent
+    # line-for-line (2018 rows of the standard file carried verbatim with null
+    # hours, which the loader reconstructs at day grain per row). Both ERCOT
+    # consumers read it: the availability stack AND the ERCOT-148/149 measured-
+    # event precedence cap, so the cap cannot re-impose the edges. One field,
+    # one phenomenon (rule 19 [R-ONE-MECH]); every non-ERCOT path is unchanged.
+    # MEASURED ON ERCOT'S OWN CAMPD (zero LP): 99 % of ERCOT windows are
+    # contradicted by CEMS for the very unit they declare out, on the first /
+    # last day (interior 1-2.5 %), e.g. 2019 std 17,577 unit-hours / 2.89 TWh,
+    # short-gas 9,525 / 1.39 TWh, short-coal 725 / 0.26 TWh generated inside
+    # their own windows. Evidence:
+    # docs/handoffs/FINDING-r-ercot-5-2019-scarcity-2026-09-25.md.
     unit_outage_window_hour_grain: bool = False
 
     # CAMPD PER-UNIT ATTRIBUTION (nyiso-175b/176, GATED default-off). The two

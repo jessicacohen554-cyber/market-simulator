@@ -214,3 +214,128 @@ class TestWindowReconstruction:
             t = pd.Timestamp("2022-05-31") + pd.Timedelta(hours=hour)
             assert not (h1[0] <= t < h1[1])
             assert not (h2[0] <= t < h2[1])
+
+
+class TestErcotFamily:
+    """R-ERCOT-5: the same field reaches ERCOT's own incumbent window family.
+
+    ERCOT routes its windows through its bin sheet and arms neither per-unit
+    flag, so the ``-perunitmerithour-`` branch never reaches it. For ERCOT the
+    gate selects the ``-hourgrain`` companions of its three window families
+    (standard, short coal, short gas); every other ISO's paths are unchanged.
+    Evidence: ``docs/handoffs/FINDING-r-ercot-5-2019-scarcity-2026-09-25.md``.
+    """
+
+    NAMES = (
+        "campd-unit-outages-hourgrain.csv",
+        "campd-unit-outages-short.csv",
+        "campd-unit-outages-short-hourgrain.csv",
+        "campd-unit-outages-shortgas.csv",
+        "campd-unit-outages-shortgas-hourgrain.csv",
+        "campd-unit-outages-short-NYISO.csv",
+        "campd-unit-outages-shortgas-NYISO.csv",
+    )
+
+    def _om(self, tmp_path, monkeypatch, names=NAMES):
+        return TestSelector._lay(tmp_path, monkeypatch, *names)
+
+    def test_standard_family_selects_the_companion(self, tmp_path, monkeypatch):
+        om = self._om(tmp_path, monkeypatch)
+        assert om.unit_outage_csv_for_iso("ERCOT", hour_grain=True).name == (
+            "campd-unit-outages-hourgrain.csv"
+        )
+        assert om.unit_outage_csv_for_iso(None, hour_grain=True).name == (
+            "campd-unit-outages-hourgrain.csv"
+        )
+
+    def test_off_keeps_every_incumbent(self, tmp_path, monkeypatch):
+        om = self._om(tmp_path, monkeypatch)
+        assert om.unit_outage_csv_for_iso("ERCOT").name == "campd-unit-outages.csv"
+        assert om.unit_outage_short_csv_for_iso("ERCOT").name == (
+            "campd-unit-outages-short.csv"
+        )
+        assert om.unit_outage_short_gas_csv_for_iso("ERCOT").name == (
+            "campd-unit-outages-shortgas.csv"
+        )
+
+    def test_short_families_select_their_companions(self, tmp_path, monkeypatch):
+        om = self._om(tmp_path, monkeypatch)
+        assert om.unit_outage_short_csv_for_iso("ERCOT", True).name == (
+            "campd-unit-outages-short-hourgrain.csv"
+        )
+        assert om.unit_outage_short_gas_csv_for_iso("ERCOT", True).name == (
+            "campd-unit-outages-shortgas-hourgrain.csv"
+        )
+
+    def test_falls_through_when_a_companion_is_absent(self, tmp_path, monkeypatch):
+        om = self._om(
+            tmp_path,
+            monkeypatch,
+            ("campd-unit-outages-short.csv", "campd-unit-outages-shortgas.csv"),
+        )
+        assert om.unit_outage_csv_for_iso("ERCOT", hour_grain=True).name == (
+            "campd-unit-outages.csv"
+        )
+        assert om.unit_outage_short_csv_for_iso("ERCOT", True).name == (
+            "campd-unit-outages-short.csv"
+        )
+        assert om.unit_outage_short_gas_csv_for_iso("ERCOT", True).name == (
+            "campd-unit-outages-shortgas.csv"
+        )
+
+    def test_other_isos_ignore_it(self, tmp_path, monkeypatch):
+        om = self._om(tmp_path, monkeypatch)
+        assert om.unit_outage_short_csv_for_iso("NYISO", True).name == (
+            "campd-unit-outages-short-NYISO.csv"
+        )
+        assert om.unit_outage_short_gas_csv_for_iso("NYISO", True).name == (
+            "campd-unit-outages-shortgas-NYISO.csv"
+        )
+        assert om.unit_outage_csv_for_iso("NYISO", hour_grain=True).name == (
+            "campd-unit-outages-NYISO.csv"
+        )
+
+
+class TestErcotCommittedCompanions:
+    """The committed ERCOT companions only ever NARROW the incumbent windows."""
+
+    PAIRS = (
+        ("campd-unit-outages.csv", "campd-unit-outages-hourgrain.csv"),
+        ("campd-unit-outages-short.csv", "campd-unit-outages-short-hourgrain.csv"),
+        (
+            "campd-unit-outages-shortgas.csv",
+            "campd-unit-outages-shortgas-hourgrain.csv",
+        ),
+    )
+
+    @pytest.mark.parametrize("incumbent,companion", PAIRS)
+    def test_base_projection_is_the_incumbent(self, incumbent, companion):
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        a = RAW_DATA_DIR / incumbent
+        b = RAW_DATA_DIR / companion
+        if not (a.exists() and b.exists()):
+            pytest.skip("ERCOT window extracts not hydrated")
+        inc, hg = pd.read_csv(a), pd.read_csv(b)
+        assert hg[list(inc.columns)].equals(inc)
+
+    @pytest.mark.parametrize("incumbent,companion", PAIRS)
+    def test_every_window_is_a_subset_of_its_day_window(self, incumbent, companion):
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        b = RAW_DATA_DIR / companion
+        if not b.exists():
+            pytest.skip("ERCOT window extracts not hydrated")
+        hg = pd.read_csv(b)
+        has = hg["outage_start_hour"].notna() & hg["outage_end_hour"].notna()
+        assert has.mean() > 0.8
+        rows = hg[has]
+        start = pd.to_datetime(rows["outage_start"]) + pd.to_timedelta(
+            rows["outage_start_hour"].astype(int), unit="h"
+        )
+        stop = pd.to_datetime(rows["outage_end"]) + pd.to_timedelta(
+            rows["outage_end_hour"].astype(int) + 1, unit="h"
+        )
+        assert (start >= pd.to_datetime(rows["outage_start"])).all()
+        assert (stop <= pd.to_datetime(rows["outage_end"]) + pd.Timedelta(days=1)).all()
+        assert (stop > start).all()

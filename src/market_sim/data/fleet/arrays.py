@@ -1324,9 +1324,19 @@ def _apply_outage_overlays(
             # Predicated on BOTH flags above, so all three are one selector over
             # one artifact family; selects the '-perunitmerithour-' extract and
             # is byte-inert while off (it reads the same file it always did).
-            hour_grain=bool(getattr(config, "campd_per_unit_attribution", False))
-            and bool(getattr(config, "campd_outage_merit_order_guard", False))
-            and bool(getattr(config, "unit_outage_window_hour_grain", False)),
+            #
+            # R-ERCOT-5: the SAME field also reaches ERCOT's own incumbent
+            # family (bin-sheet routing, neither per-unit flag), selecting the
+            # '-hourgrain' companion of campd-unit-outages.csv. ERCOT-only by
+            # the predicate; every other ISO's value is unchanged.
+            hour_grain=bool(getattr(config, "unit_outage_window_hour_grain", False))
+            and (
+                (
+                    bool(getattr(config, "campd_per_unit_attribution", False))
+                    and bool(getattr(config, "campd_outage_merit_order_guard", False))
+                )
+                or (_iso or "ERCOT") == "ERCOT"
+            ),
             # SOCO-61 (rule 14 [R-ACCURATE]): the SAME per-unit extract plus one
             # full-year window per unit its own CAMPD id files dark all year
             # while producing in an adjacent year. Predicated on the per-unit
@@ -1475,6 +1485,9 @@ def _apply_outage_overlays(
         # is byte-identical to before.
         _short_coal = getattr(config, "unit_outage_short_windows", False)
         _short_gas = getattr(config, "unit_outage_short_windows_gas", False)
+        _ercot_window_hour_grain = (_iso or "ERCOT") == "ERCOT" and bool(
+            getattr(config, "unit_outage_window_hour_grain", False)
+        )
         if _short_coal or _short_gas:
             sfac = unit_outage_short_derate_factors(
                 config.weather_year,
@@ -1512,6 +1525,9 @@ def _apply_outage_overlays(
                 # accumulator, for the sub-5-day window family.
                 lp_bin_capacity=_lp_bins,
                 coal_scope=_short_coal,
+                # R-ERCOT-5: ERCOT's detected-hour companions of both short
+                # families (ERCOT-only by the loader's own path selector).
+                hour_grain=_ercot_window_hour_grain,
             )
             if sfac:
                 applied_s = 0
@@ -2122,8 +2138,14 @@ def _apply_outage_overlays(
             and getattr(config, "outage_source", "statistical") == "historic"
         ):
             _bins_path = getattr(config, "campd_bins_path", str(CAMPD_BINS_CSV))
+            # R-ERCOT-5: the ceiling reads the SAME window grain the stack
+            # applied above — otherwise the precedence cap would re-impose the
+            # day-granular edges the hour-grain companion removed.
+            _hg = bool(getattr(config, "unit_outage_window_hour_grain", False))
             _cap_layers: list[dict] = [
-                unit_outage_derate_factors(int(_yr), hours, _bins_path, iso="ERCOT"),
+                unit_outage_derate_factors(
+                    int(_yr), hours, _bins_path, iso="ERCOT", hour_grain=_hg
+                ),
             ]
             if getattr(config, "unit_outage_short_windows", False):
                 _cap_layers.append(
@@ -2135,6 +2157,7 @@ def _apply_outage_overlays(
                         gas_scope=getattr(
                             config, "unit_outage_short_windows_gas", False
                         ),
+                        hour_grain=_hg,
                     )
                 )
             if getattr(config, "unit_partial_outage_windows", False):
