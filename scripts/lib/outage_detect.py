@@ -140,6 +140,14 @@ _ISO_TO_BA: dict[str, str] = {
     "NYISO": "NYIS",
     "NEISO": "ISNE",
     "MISO": "MISO",
+    # SPP-85 (2026-09-26, rule 14 [R-ACCURATE]): the key SPP-20 deferred to the outage lane and
+    # nobody landed. Without it high_load_mask("SPP") returned None and filter_revealed_outages
+    # kept EVERY span, so the committed SPP extracts' recorded min_inmerit_hours was never in
+    # effect. SWPP is the EIA-930 BA the model reads for SPP everywhere else
+    # (eia930/frames._ISO_TO_HOURLY_BA). The committed campd-*-SPP.csv files predate this key;
+    # the '-netloadmask-' companions are their re-derivation at the SAME recorded invocations.
+    # docs/handoffs/FINDING-spp-85-coal-outage-basis-2026-09-26.md.
+    "SPP": "SWPP",
 }
 
 
