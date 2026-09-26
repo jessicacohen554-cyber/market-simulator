@@ -88,7 +88,10 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from market_sim.config.plant_taxonomy import artifact_class_array  # noqa: E402
+from market_sim.config.plant_taxonomy import (  # noqa: E402
+    COAL_ARTIFACT_FAMILY,
+    COAL_CLASSES,
+)
 from market_sim.data.floor_mechanisms import (  # noqa: E402
     D2_EXEMPT_MECHS,
     MECH_CAISO_GAS_COMMITMENT_FLOOR,
@@ -2670,7 +2673,10 @@ def _rebuild_fleet_arrays(bundle: Path, iso: str, year: int):
     """
     import inspect
 
-    from scripts.replay_keeper import derived_run_year_inputs
+    from scripts.replay_keeper import (
+        derived_run_year_inputs,
+        translate_legacy_coal_keys,
+    )
     from scripts.run_calibration import run_year
 
     meta = json.loads((bundle / "meta.json").read_text())
@@ -2722,6 +2728,13 @@ def _rebuild_fleet_arrays(bundle: Path, iso: str, year: int):
     # silent there either).
     derived = derived_run_year_inputs(bundle, year)
     kwargs.update(derived)
+    # COAL-SUB: a recipe recorded before 2026-09-25 names the deleted bare
+    # ``COAL`` class in its offer-curve patches (PJM / SPP
+    # ``offer_curve_overrides``, MISO ``prb_overrides``), which the
+    # calibration channels now REFUSE (BareCoalClassError). Fold it exactly as
+    # ``replay_keeper`` does, so this rebuild reads the recipe the replay lane
+    # reads — a rebuilt floor must come from the fleet a replay would build.
+    translate_legacy_coal_keys(kwargs)
     logger.info(
         "fleet rebuild: %d flags passed (incl. derived %s), dropped %s",
         len(kwargs),
@@ -2797,6 +2810,73 @@ def _backfill_pmax(arrays: dict, bundle: Path, iso: str, year: int) -> dict:
     return out
 
 
+def _resplit_legacy_coal(arrays: dict, bundle: Path, iso: str, year: int) -> dict:
+    """Relabel a pre-COAL-SUB floors npz's ``COAL`` rows to their coal subclass.
+
+    Floors persisted before COAL-SUB (2026-09-25) label every coal unit with
+    the bare ``COAL`` plant group. C8 scores each coal subclass as its own
+    class (rubric v3.9), so those rows are re-split by joining the npz's
+    ``unit_ids`` to a ``fleet_only`` rebuild (zero LP), whose ``plant_group``
+    carries the resolved subclass (``data.coal.coal_subclass``). Exactly like
+    :func:`_backfill_pmax` this is an EXACT recovery joined BY ``unit_id``,
+    never positional, and **the floors themselves are untouched** — only the
+    class label changes, so the committed numerator stays the one the LP saw.
+
+    A row whose unit the rebuild does not carry, or carries with a non-coal
+    group, keeps its ``COAL`` label and the gap is logged; such a row then
+    reaches D-2 as a legacy family row, which ``calibration_verdict`` still
+    reads as the historical coal family. Nothing is invented.
+    """
+    groups = np.asarray(arrays["plant_group"]).astype(str)
+    is_legacy = groups == COAL_ARTIFACT_FAMILY
+    try:
+        fa = _rebuild_fleet_arrays(bundle, iso, year)
+    except Exception as exc:  # pragma: no cover - environment-dependent
+        logger.warning(
+            "%s %s: coal subclass re-split unavailable (%s); %d legacy COAL "
+            "floor rows stay on the coal-family label",
+            iso,
+            year,
+            exc,
+            int(is_legacy.sum()),
+        )
+        return arrays
+    if fa.plant_group is None:
+        return arrays
+    by_uid = {
+        str(u): str(g)
+        for u, g in zip(fa.unit_ids, fa.plant_group)
+        if str(g) in COAL_CLASSES
+    }
+    uids = np.asarray(arrays["unit_ids"]).astype(str)
+    out_groups = groups.astype(object)
+    unresolved = []
+    for i in np.flatnonzero(is_legacy):
+        sub = by_uid.get(uids[i])
+        if sub is None:
+            unresolved.append(uids[i])
+        else:
+            out_groups[i] = sub
+    if unresolved:
+        logger.warning(
+            "%s %s: %d legacy COAL floor rows have no rebuilt coal subclass "
+            "(e.g. %s); they stay on the coal-family label",
+            iso,
+            year,
+            len(unresolved),
+            unresolved[:3],
+        )
+    out = dict(arrays)
+    out["plant_group"] = np.array([str(g) for g in out_groups], dtype=str)
+    logger.info(
+        "%s %s: re-split %d legacy COAL floor rows to coal subclasses",
+        iso,
+        year,
+        int(is_legacy.sum()) - len(unresolved),
+    )
+    return out
+
+
 def load_or_rebuild_floors(
     bundle: Path, iso: str, year: int, force_rebuild: bool = False
 ) -> tuple[dict, bool]:
@@ -2822,6 +2902,11 @@ def load_or_rebuild_floors(
                     arrays = {k: z[k] for k in z.files}
                 if "pmax" not in arrays:
                     arrays = _backfill_pmax(arrays, bundle, iso, year)
+                if np.isin(
+                    np.asarray(arrays["plant_group"]).astype(str),
+                    COAL_ARTIFACT_FAMILY,
+                ).any():
+                    arrays = _resplit_legacy_coal(arrays, bundle, iso, year)
                 return arrays, ra_missing
 
     logger.info("%s %s: rebuilding floors via run_year(fleet_only=True)", iso, year)
@@ -3128,15 +3213,17 @@ def aggregate_floors_by_plant(
     keep = plant_code > 0
     pos = np.clip(np.asarray(arrays["min_gen"], dtype=float)[keep], 0.0, None)
     mech = np.asarray(arrays["mechanism"])[keep]
-    # Class FAMILY vote (plant_taxonomy.artifact_class_array): the D-2 / D-4
-    # forced share, class denominator and rule-20 materiality are measured on
-    # ALL coal as one class, exactly as when the fleet carried the bare COAL
-    # group. Since COAL-SUB (2026-09-25) a floors npz written by a new solve
-    # labels coal by subclass while a committed one says COAL; folding both to
-    # the family keeps C8 byte-identical across old and new bundles. (Scoring
-    # C8 per coal SUBCLASS instead would be a rubric change — an owner ruling,
-    # not a relabel.)
-    groups = artifact_class_array(np.asarray(arrays["plant_group"]).astype(str)[keep])
+    # Class vote on the unit's OWN plant_group — each coal SUBCLASS
+    # (COAL_BIT / COAL_PRB / COAL_LIGNITE / COAL_WC) is a D-2 / D-4 class in
+    # its own right, with its own forced share, class denominator and rule-20
+    # materiality line (owner ruling C8-SUBCLASS 2026-09-25, rubric v3.9,
+    # completing COAL-SUB's "all coal should be sorted into its subclass").
+    # The former fold to the coal FAMILY (plant_taxonomy.artifact_class_array)
+    # is deleted, not zeroed (rule 26 [R-DELETE]). A floors npz persisted
+    # before COAL-SUB still carries the legacy ``COAL`` token; its rows are
+    # re-split to their subclass by unit_id in :func:`load_or_rebuild_floors`
+    # (:func:`_resplit_legacy_coal`), never folded here.
+    groups = np.asarray(arrays["plant_group"]).astype(str)[keep].astype(object)
     pc = plant_code[keep]
     order = np.argsort(pc, kind="stable")
     pos, mech, groups, pc = pos[order], mech[order], groups[order], pc[order]
@@ -3199,8 +3286,10 @@ def aggregate_floors_by_plant(
         floored = pos_d.max(axis=1) > D2_FLOOR_MIN_MW
         if floored.any():
             uids = np.asarray(arrays["unit_ids"]).astype(str)[dropped][floored]
-            groups_d = artifact_class_array(
-                np.asarray(arrays["plant_group"]).astype(str)[dropped][floored]
+            groups_d = (
+                np.asarray(arrays["plant_group"])
+                .astype(str)[dropped][floored]
+                .astype(object)
             )
             mech_d = np.asarray(arrays["mechanism"])[dropped][floored].copy()
             pos_f = pos_d[floored]
@@ -3310,6 +3399,153 @@ def build_json_report(
             "d4_max_offwindow_share": D4_MAX_OFFWINDOW_SHARE,
         },
     }
+
+
+# Every D-2 class label that belongs to coal: the four subclasses plus the
+# legacy family token a pre-rubric-v3.9 artifact carries.
+COAL_D2_LABELS: tuple[str, ...] = (COAL_ARTIFACT_FAMILY, *COAL_CLASSES)
+
+
+def _failure_class(line: str) -> str:
+    """The class token of a run_d2 failure line (``"<year> <class>: ..."``)."""
+    head = line.split(":", 1)[0].split()
+    return head[1] if len(head) > 1 else ""
+
+
+def resplit_coal_d2(
+    committed: dict,
+    recomputed: GateResult,
+    provenance: dict,
+    years: list[int],
+    single_subclass: dict[int, str] | None = None,
+) -> dict:
+    """Replace a committed artifact's coal D-2 rows with per-subclass rows.
+
+    Rubric v3.9 (owner ruling C8-SUBCLASS, 2026-09-25) scores each coal
+    subclass as its own C8 class. An artifact written before it carries ONE
+    coal-family row per year; this swaps exactly those rows — ``rows``,
+    ``summary`` and ``failures`` whose class is in :data:`COAL_D2_LABELS` — for
+    the coal rows of a zero-LP D-2 recompute (``recomputed``, from
+    :func:`diagnose_bundle` with ``only={"D2"}``), and leaves every non-coal
+    row, D-1, D-4 and every other block byte-identical; only ``years`` (the
+    years the recompute covered) are touched. D-4 needs no change:
+    every coal-mechanism window is class-agnostic (``(mech, None)`` in
+    :data:`D4_WINDOWS`), so the class vote never selects its cells.
+
+    The recompute runs on the rebuildable basis (committed run payload +
+    ``run_year(fleet_only=True)`` floors) rather than the solve-time
+    ``dispatch/*.parquet`` the rest of the artifact read, so the splice
+    records, per year, the committed family totals beside the sum over the
+    new subclass rows — the basis gap is disclosed, never hidden — under a
+    top-level ``coal_subclass_resplit`` block (``provenance`` plus that
+    cross-check). Rows are ordered by (year, class), the order run_d2 emits.
+
+    A year whose committed artifact carries coal energy but whose recompute
+    emits NO coal row (the rebuildable dispatch source does not carry the
+    coal plant — measured on a CAISO payload that omits a 15 MW cogen's
+    series) is never silently emptied. When ``single_subclass`` names the ONE
+    coal subclass that year's rebuilt fleet carries, the committed family rows
+    ARE that subclass's rows and are relabelled exactly (``relabelled_years``);
+    otherwise the committed family rows are kept as they are
+    (``unresolved_years``) and still read as the historical family.
+    """
+    out = json.loads(json.dumps(committed))
+    d2 = out["diagnostics"]["D2"]
+
+    scope = {int(y) for y in years}
+
+    def is_coal(row: dict) -> bool:
+        return (
+            str(row.get("class")) in COAL_D2_LABELS
+            and int(row.get("year", -1)) in scope
+        )
+
+    def fam(rows: list[dict], key: str) -> dict[str, float]:
+        acc: dict[str, float] = {}
+        for r in rows:
+            if is_coal(r):
+                y = str(r["year"])
+                acc[y] = acc.get(y, 0.0) + float(r.get(key, 0.0) or 0.0)
+        return acc
+
+    old_f, old_t = (
+        fam(d2["summary"], "forced_twh"),
+        fam(d2["summary"], "class_total_twh"),
+    )
+    new_f = fam(recomputed.summary, "forced_twh")
+    new_t = fam(recomputed.summary, "class_total_twh")
+    # Years the recompute cannot see (committed coal energy, no recomputed
+    # coal row): relabel exactly when the fleet's coal is one subclass, else
+    # keep the committed family rows untouched.
+    blind = sorted(int(y) for y, tot in old_t.items() if tot > 0.0 and y not in new_t)
+    single_subclass = single_subclass or {}
+    relabelled = [y for y in blind if single_subclass.get(y)]
+    unresolved = [y for y in blind if not single_subclass.get(y)]
+    recomputed_rows = [r for r in recomputed.rows if is_coal(r)]
+    recomputed_summary = [r for r in recomputed.summary if is_coal(r)]
+    for y in relabelled:
+        for src, dst in (
+            (d2["rows"], recomputed_rows),
+            (d2["summary"], recomputed_summary),
+        ):
+            dst += [
+                {**r, "class": single_subclass[y]}
+                for r in src
+                if is_coal(r) and int(r["year"]) == y
+            ]
+    scope -= set(unresolved)
+    order = lambda r: (int(r.get("year", 0)), str(r.get("class")))  # noqa: E731
+    d2["rows"] = sorted(
+        [r for r in d2["rows"] if not is_coal(r)] + recomputed_rows, key=order
+    )
+    d2["summary"] = sorted(
+        [r for r in d2["summary"] if not is_coal(r)] + recomputed_summary, key=order
+    )
+
+    def coal_failure(line: str) -> bool:
+        head = line.split(" ", 1)[0]
+        return (
+            _failure_class(line) in COAL_D2_LABELS
+            and head.isdigit()
+            and int(head) in scope
+        )
+
+    d2["failures"] = (
+        [f for f in d2["failures"] if not coal_failure(f)]
+        + [f for f in recomputed.failures if coal_failure(f)]
+        + [
+            f.replace(
+                f" {_failure_class(f)}:", f" {single_subclass[int(f.split()[0])]}:", 1
+            )
+            for f in committed["diagnostics"]["D2"]["failures"]
+            if coal_failure(f) and int(f.split()[0]) in relabelled
+        ]
+    )
+    d2["passed"] = not d2["failures"]
+    years = sorted(set(old_f) | set(new_f), key=int)
+    for y in relabelled:
+        new_f[str(y)], new_t[str(y)] = old_f.get(str(y), 0.0), old_t[str(y)]
+    out["coal_subclass_resplit"] = {
+        **provenance,
+        "relabelled_years": {str(y): single_subclass[y] for y in relabelled},
+        "unresolved_years": [str(y) for y in unresolved],
+        "family_crosscheck": {
+            y: {
+                "committed_family_forced_twh": round(old_f.get(y, 0.0), 4),
+                "committed_family_total_twh": round(old_t.get(y, 0.0), 4),
+                "resplit_subclass_forced_twh": round(new_f.get(y, 0.0), 4),
+                "resplit_subclass_total_twh": round(new_t.get(y, 0.0), 4),
+            }
+            for y in years
+        },
+    }
+    d2["notes"] = list(d2.get("notes", [])) + [
+        "COAL rows re-split per subclass (rubric v3.9, owner ruling "
+        "C8-SUBCLASS 2026-09-25) from a zero-LP D-2 recompute on "
+        f"{provenance.get('basis', 'the rebuildable basis')}; every non-coal "
+        "row is the original. Family cross-check: coal_subclass_resplit."
+    ]
+    return out
 
 
 def render_report(
@@ -3691,6 +3927,14 @@ def main(argv: list[str] | None = None) -> int:
         "D-6 holdout quarantines (the rule-22 enforcement) still run. Run the "
         "full --keepers (D-2 included) locally / in a data-provisioned tier.",
     )
+    parser.add_argument(
+        "--resplit-coal-d2",
+        action="store_true",
+        help="with --bundle/--iso: re-split the committed artifact's coal D-2 "
+        "rows per coal subclass (rubric v3.9) from a zero-LP D-2 recompute, "
+        "leaving every other row untouched, and rewrite "
+        "<bundle>/legitimacy_diagnostics.json in place",
+    )
     parser.add_argument("--report", type=Path, help="write a markdown report")
     parser.add_argument(
         "--json-out",
@@ -3707,6 +3951,47 @@ def main(argv: list[str] | None = None) -> int:
         if not args.no_d2_recompute:
             results.append(run_d2_keepers_verify(REPO_ROOT))
         bundle_label = "all keepers"
+    if args.bundle and args.resplit_coal_d2:
+        if not args.iso:
+            parser.error("--iso is required with --bundle")
+        bundle = args.bundle.resolve()
+        path = bundle / "legitimacy_diagnostics.json"
+        committed = json.loads(path.read_text())
+        years = args.years or committed.get("years", [])
+        d2 = diagnose_bundle(
+            bundle, args.iso, years, rebuild_floors=args.rebuild_floors, only={"D2"}
+        )[0]
+        import subprocess
+
+        sha = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, capture_output=True, text=True
+        ).stdout.strip()
+        provenance = {
+            "rubric": "v3.9",
+            "ruling": "owner ruling C8-SUBCLASS 2026-09-25",
+            "basis": "committed run payload dispatch + run_year(fleet_only=True) "
+            "floors (zero LP)",
+            "code_sha": sha,
+            "dispatch_source": {
+                str(y): _dispatch_source_basis[int(y)]
+                for y in years
+                if int(y) in _dispatch_source_basis
+            },
+        }
+        # The one coal subclass each year's fleet carries, where it carries
+        # exactly one (the floors are the cached rebuild the recompute read).
+        single: dict[int, str] = {}
+        for y in years:
+            arrays, _ = load_or_rebuild_floors(bundle, args.iso, int(y))
+            subs = set(np.asarray(arrays["plant_group"]).astype(str)) & set(
+                COAL_CLASSES
+            )
+            if len(subs) == 1:
+                single[int(y)] = subs.pop()
+        resplit = resplit_coal_d2(committed, d2, provenance, years, single)
+        path.write_text(json.dumps(resplit, indent=1) + "\n")
+        print(f"re-split coal D-2 rows -> {path}")
+        return 0
     if args.bundle:
         if not args.iso:
             parser.error("--iso is required with --bundle")
