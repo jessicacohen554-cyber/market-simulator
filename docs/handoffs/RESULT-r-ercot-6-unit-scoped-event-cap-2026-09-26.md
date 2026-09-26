@@ -111,3 +111,12 @@
 | 2025 | `63ea8f891eae6287879ef64cfc1c9f10a0a72524` |
 
 **Leftover refs the owner must delete (sessions cannot, rule 33(f)):** `claude/r-ercot6-arm-{2019,2020,2021,2022,2023,2024,2025}`.
+
+## Owner ruling (2026-09-26)
+
+**"Don't promote (Recommended)."** Actions taken in this session:
+- The keeper stays `2026-09-25-r-5-hour-grain`, and ERCOT stays CALIBRATED on the train tier.
+- `2026-09-26-r-6-unit-scoped` is pruned through `prune_iso_runs.py --iso ERCOT --force-uncite`, which removed the registry sidecar, run payload and bundle together (rule 15; rule 31 trigger (i)). Git history plus this doc are the record.
+- Matrix cell `ercot_dam_availability_event_cap_unit_scoped` goes O → **R**, re-affirmed with this test as evidence.
+- The named successor is a per-unit window × partial composition (each unit's downtime removed once). It needs the unit-grain partial layer inside the cap.
+- The `unit_outage_active_units(hour_grain=)` consistency repair stays in code. It is default-inert and makes the field the construction it claims to be if it is ever re-armed.
