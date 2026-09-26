@@ -69,6 +69,13 @@ def main() -> int:
         rowed_keys = []
         if res is not None:
             g_rows, budget, _mi, coeff, grp, prov = res
+            from market_sim.data.coal_fuel_inventory import (
+                reconcile_floors_to_yard_budget,
+            )
+
+            scaled = reconcile_floors_to_yard_budget(
+                np.array(fa.min_gen, dtype=float, copy=True), g_rows, budget, coeff, grp
+            )
             codes = np.asarray(fa.plant_code)
             for i in range(budget.shape[0]):
                 plants = sorted(
@@ -85,6 +92,10 @@ def main() -> int:
         for rk in rowed_keys:
             rk["census_tbtu"] = [cen.get(p) for p in rk["plants"]]
         rec = {
+            "floor_scaled_rows": [
+                {"row": r, "floor_tbtu": round(e / 1e6, 3), "scale": round(sc, 6)}
+                for r, e, sc in (scaled if res is not None else [])
+            ],
             "year": y,
             "yards": {str(k): sorted(v) for k, v in yards.items()},
             "rows": rowed_keys,

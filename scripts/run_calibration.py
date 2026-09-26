@@ -6215,6 +6215,31 @@ def run_year(
                 coal_plant_group_index,
                 _cp_prov,
             ) = _cp
+            # neiso-117: a coal floor cannot demand fuel its yard does not
+            # hold (rule 19 / rule 17). Scales only rows whose floor draw
+            # exceeds the budget, so every already-feasible solve is unchanged.
+            if getattr(fleet_arrays, "min_gen", None) is not None:
+                from market_sim.data.coal_fuel_inventory import (
+                    reconcile_floors_to_yard_budget,
+                )
+
+                for _row, _draw, _scale in reconcile_floors_to_yard_budget(
+                    fleet_arrays.min_gen,
+                    coal_plant_gen_idx,
+                    coal_plant_budget,
+                    coal_plant_gen_hour_coeff,
+                    coal_plant_group_index,
+                ):
+                    logger.info(
+                        "coal per-yard budget (%s %d): yard row %d floors draw "
+                        "%.3f TBtu > budget %.3f TBtu -> floors scaled x%.4f",
+                        iso,
+                        year,
+                        _row,
+                        _draw / 1e6,
+                        float(coal_plant_budget[_row, 0]) / 1e6,
+                        _scale,
+                    )
             logger.info(
                 "coal per-yard budget (%s %d): %d yards, %d coal gens rowed "
                 "(%d unrowed: no curated record), annual %.1f TWh-equiv "

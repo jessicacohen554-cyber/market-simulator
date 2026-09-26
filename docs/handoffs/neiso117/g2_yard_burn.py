@@ -72,11 +72,11 @@ def main() -> int:
                         continue
                     twh += e
                     tbtu += e * hr[(y, int(p))]
-                rec[f"{tag}_twh"] = round(twh, 4)
-                rec[f"{tag}_tbtu"] = round(tbtu, 3)
+                rec[f"{tag}_twh"] = round(float(twh), 4)
+                rec[f"{tag}_tbtu"] = round(float(tbtu), 3)
             b = row["budget_tbtu"]
-            rec["arm_within_budget"] = rec["arm_tbtu"] <= b * (1 + 1e-6) + 1e-3
-            rec["binding"] = (
+            rec["arm_within_budget"] = bool(rec["arm_tbtu"] <= b * (1 + 1e-6) + 1e-3)
+            rec["binding"] = bool(
                 rec["arm_tbtu"] >= b * (1 - BIND_TOL) and rec["keeper_tbtu"] > b
             )
             yards.append(rec)
@@ -87,7 +87,7 @@ def main() -> int:
             "yards": yards,
             "class_twh_delta": moved,
             "max_abs_class_delta_twh": round(max_abs, 4),
-            "inert_within_tol": max_abs <= INERT_TOL_TWH,
+            "inert_within_tol": bool(max_abs <= INERT_TOL_TWH),
         }
         print(json.dumps(r))
         out.append(r)
