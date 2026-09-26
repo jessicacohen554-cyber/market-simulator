@@ -357,6 +357,10 @@ def _campd_unit_outages_block(config, iso: str) -> dict[str, Any]:
                 dark_unit_years=bool(
                     getattr(config, "campd_dark_unit_year_windows", False)
                 ),
+                # PJM-NEXT-2: the membership-repair companion gate, same reason.
+                membership_repair=bool(
+                    getattr(config, "unit_outage_membership_repair", False)
+                ),
             )
         )
     except Exception:  # pragma: no cover - a probe never breaks the record

@@ -1,15 +1,15 @@
 {
  "schema": "fc5-disposition/v1",
- "authored_by": "capx D92, 2026-09-10 (owner ruling Q65) -- RE-BASED onto a post-capx-D77 bundle. The prior table, keyed to results/ff-t3-neiso-golden/bau (cache_key 706e7ba8e6582d42, solved 2026-09-01, which PREDATES capx D77's repair of the CCS emission-rate seam), is preserved byte-equal at dispositions/neiso-t3-pre-d92.json -- the same preservation pattern the T3-GOLDEN-2 session used for dispositions/neiso-t3-prera-2026-08-31.json under owner ruling Q25. Every model_value is recomputed MECHANICALLY from the new bundle by docs/handoffs/d92/corridor_model_values.py, which reproduces 54/54 of the prior table's own cells from the bundle the prior table declares; anchors are UNTOUCHED on every row (rule 13 [R-MEASURED]). Explanations are re-authored ONLY where a row's verdict changed or its text was falsified by the new number: co2@2030 (sign reversed), co2@2035 (the level-crossing reading is retired), co2@2040 (fleet composition refreshed), capacity:gas_cc@2040 and generation:total@2040 (newly divergent, new explanations), generation:gas@2030 (quoted split refreshed); and three rows that became IN CORRIDOR had their explanations retired (generation:gas@2035, generation:gas@2040, capacity:fossil_peaker_steam@2040). Evidence: docs/handoffs/FINDING-capx-d92-2026-09-10.md.",
+ "authored_by": "capx D96, 2026-09-25 (owner ruling Q69) -- RE-BASED onto the post-F1 capx D96 `base` leg, so the whole neiso-t3 verdict sits on one data vintage. The prior table (capx D92, keyed to results/ff-t3-neiso-golden/d92/base, cache_key dd8203a8bf1546b9, pre-F1) is preserved byte-equal at dispositions/neiso-t3-pre-d96.json. Every model_value / divergence_pct is recomputed MECHANICALLY by capx D92's validated instruments (docs/handoffs/d92/corridor_model_values.py, 54/54 at HEAD); anchors are UNTOUCHED (rule 13 [R-MEASURED]). No row changed class. Explanations are touched only where they quote a figure of the bundle: co2@2030, co2@2035, co2@2040, generation:gas@2030, capacity:gas_cc@2040, generation:total@2040 -- each quoted current figure refreshed, D92's historical transitions left as history, one D96 sentence appended. Prior authorship: capx D92 (2026-09-10, owner ruling Q65), preserved in the -pre-d96 file. Script: docs/handoffs/d96/rebase_fc5_d96.py. Evidence: docs/handoffs/FINDING-capx-d96-2026-09-25.md.",
  "verdict_key": "neiso-t3",
  "iso": "NEISO",
  "tier": "t3",
  "convention": "cross-model-corridor-2026-07-13.md \u00a71, imported whole by rubric \u00a7FC-5: divergence > 15 % (or opposite sign/direction) requires a written ours-vs-theirs explanation naming the mechanism; any UNEXPLAINED row => FC-5 FAIL.",
  "context_never_fit_target": "rule 13 [R-MEASURED] / plan \u00a77.6: nothing in the model moves toward any anchor; no conformance band exists; rows re-dispositioned against the new trajectory, never the other way around (the T3-GOLDEN-2 charter's own line).",
  "model_source": {
-  "summary": "results/ff-t3-neiso-golden/d92/base/full_horizon_summary.json",
-  "run_config": "results/ff-t3-neiso-golden/d92/base/run_config.json",
-  "cache_key": "dd8203a8bf1546b9",
+  "summary": "results/ff-t3-neiso-golden/d96/base/full_horizon_summary.json",
+  "run_config": "results/ff-t3-neiso-golden/d96/base/run_config.json",
+  "cache_key": "dbef1ecac9596c90",
   "window": [
    2026,
    2050
@@ -34,7 +34,7 @@
   },
   "storage_base_fleet_gw": 0.77,
   "storage_ps_residual_gw": 1.865,
-  "note": "capx D92 leg L0 -- the golden recipe the neiso-t3 verdict names (ccs_retrofit_vom_adder=8.0, ccs_retrofit_fixed_cost_co2_scaling=false, --golden-posture), re-solved at aac390a6 on post-D77 code. It reproduces the committed neiso-2026-2050-t3-golden3-d90 bundle EXACTLY: zero differing cells across 25 years x every trajectory field, and identical invariants."
+  "note": "capx D96 leg `base` -- the golden recipe the neiso-t3 verdict names (ccs_retrofit_vom_adder=8.0, ccs_retrofit_fixed_cost_co2_scaling=false, --golden-posture), re-solved at 5a48f4378 on post-F1 data (eGRID-2024 heat rates), so the primary bundle, the FC-6 paired arms, this table and the FC-6 driver battery (capx D94) sit on one data vintage. Evidence: docs/handoffs/FINDING-capx-d96-2026-09-25.md."
  },
  "anchor_source": {
   "table": "results/ff-corridor/benchmark-corridor-anchors.json",
@@ -55,8 +55,8 @@
   "This table dispositions the ARMED-posture golden (storage_entry gates true, owner ruling R-A); the prior (pre-R-A) table is preserved at results/ff-corridor/dispositions/neiso-t3-prera-2026-08-31.json."
  ],
  "counts": {
-  "in_corridor": 28,
-  "explained": 26,
+  "in_corridor": 29,
+  "explained": 25,
   "unexplained": 0,
   "total": 54
  },
@@ -68,7 +68,7 @@
    "quantity": "capacity:total",
    "model_basis": "sum(capacity_by_fuel_mw) - import node + storage_power_mw (whole storage fleet incl. PS; D29 real column replaces the D25 base-fleet reconstruction)",
    "anchor_basis": "AEO Total Capacity (region-summed; includes PS + diurnal storage)",
-   "model_value": 33.8239,
+   "model_value": 33.8265,
    "anchor_value": 41.2516,
    "unit": "GW",
    "divergence_pct": -18.0,
@@ -95,7 +95,7 @@
    "quantity": "capacity:gas_cc",
    "model_basis": "gas_cc + gas_cc_ccs",
    "anchor_basis": "AEO Combined Cycle (incl. sequestration variants)",
-   "model_value": 11.3269,
+   "model_value": 11.3268,
    "anchor_value": 12.7797,
    "unit": "GW",
    "divergence_pct": -11.4,
@@ -108,7 +108,7 @@
    "quantity": "capacity:fossil_peaker_steam",
    "model_basis": "gas_ct + gas_st + oil (one block vs AEO CT + Fossil Steam)",
    "anchor_basis": "AEO Combustion Turbine/Diesel + Fossil Steam (= oil + gas steam)",
-   "model_value": 6.4599,
+   "model_value": 6.4626,
    "anchor_value": 7.0307,
    "unit": "GW",
    "divergence_pct": -8.1,
@@ -216,12 +216,12 @@
    "quantity": "co2",
    "model_basis": "trajectory co2_mt (dispatch x per-generator emission rates)",
    "anchor_basis": "AEO electric-power CO2, MMst x 0.90718474",
-   "model_value": 6.9545,
+   "model_value": 6.6509,
    "anchor_value": 9.2692,
    "unit": "Mt",
-   "divergence_pct": -25.0,
+   "divergence_pct": -28.2,
    "verdict": "EXPLAINED DIVERGENCE",
-   "explanation": "The 45Q + resolved-RGGI CCS retrofit wave, CORRECTLY RATED. The spec-\u00a75.6 screen converts the CC fleet at its 3 GW/yr cap from 2028 (this bundle: 6,648.3 MW gas_cc_ccs beside 4,678.6 MW unabated gas_cc at 2030) under the 45Q window (ira_ccus_45q_last_year=2032) plus the resolved RGGI escalator ($26.05/t 2026 -> $132.16/t 2050, D23 \u00a72; carbon_price field 0.0, program-resolved). AEO also carries RGGI at a far lower allowance path and retrofits nothing. Model CO2 at 2030 is now LOWER (-25.0 %) because the converted fleet emits at its CAPTURED rate: 20.454 TWh of the 34.044 TWh gas total is abated gas_cc_ccs. THIS ROW'S SIGN IS REVERSED FROM THE PRIOR TABLE (+60.6 % -> -25.0 %), and the reversal is not a model change: it is capx D77's repair of the CCS emission-rate seam (data/fleet/campd_bins.py::apply_plant_emission_rates_v2 re-booked a converted unit's UNCAPTURED host rate over its captured one in every forecast year), which the prior table's bundle predates. The renewable shortfall the prior explanation leaned on is unchanged and still present (generation:renewables row, -41.0 %); it is simply no longer large enough to outweigh a correctly-rated abated fleet."
+   "explanation": "The 45Q + resolved-RGGI CCS retrofit wave, CORRECTLY RATED. The spec-\u00a75.6 screen converts the CC fleet at its 3 GW/yr cap from 2028 (this bundle: 6,979.7 MW gas_cc_ccs beside 4,347.1 MW unabated gas_cc at 2030) under the 45Q window (ira_ccus_45q_last_year=2032) plus the resolved RGGI escalator ($26.05/t 2026 -> $132.16/t 2050, D23 \u00a72; carbon_price field 0.0, program-resolved). AEO also carries RGGI at a far lower allowance path and retrofits nothing. Model CO2 at 2030 is now LOWER (-28.2 %) because the converted fleet emits at its CAPTURED rate: 21.286 TWh of the 33.925 TWh gas total is abated gas_cc_ccs. THIS ROW'S SIGN IS REVERSED FROM THE PRIOR TABLE (+60.6 % -> -25.0 %), and the reversal is not a model change: it is capx D77's repair of the CCS emission-rate seam (data/fleet/campd_bins.py::apply_plant_emission_rates_v2 re-booked a converted unit's UNCAPTURED host rate over its captured one in every forecast year), which the prior table's bundle predates. The renewable shortfall the prior explanation leaned on is unchanged and still present (generation:renewables row, -40.9 %); it is simply no longer large enough to outweigh a correctly-rated abated fleet. capx D96 (2026-09-25, owner ruling Q69) re-based this row onto the post-F1 bundle (eGRID-2024 heat rates): divergence -25.0 % -> -28.2 %, quoted figures refreshed; the mechanism is unchanged."
   },
   {
    "source": "AEO2025",
@@ -230,10 +230,10 @@
    "quantity": "generation:total",
    "model_basis": "total_gen_mwh - generation_by_fuel_mwh[import] (imports are interchange, not in-region generation)",
    "anchor_basis": "AEO Total Generation (in-region)",
-   "model_value": 87.7811,
+   "model_value": 87.7066,
    "anchor_value": 96.6219,
    "unit": "TWh",
-   "divergence_pct": -9.1,
+   "divergence_pct": -9.2,
    "verdict": "IN CORRIDOR"
   },
   {
@@ -256,12 +256,12 @@
    "quantity": "generation:gas",
    "model_basis": "gas_cc + gas_cc_ccs + gas_ct + gas_st generation",
    "anchor_basis": "AEO Natural Gas generation (all gas cycles)",
-   "model_value": 34.0442,
+   "model_value": 33.9249,
    "anchor_value": 23.0391,
    "unit": "TWh",
-   "divergence_pct": 47.8,
+   "divergence_pct": 47.2,
    "verdict": "EXPLAINED DIVERGENCE",
-   "explanation": "The OSW procurement gap seen in energy space, plus the model's CCS-heavy dispatch: AEO's contracted OSW fleet (6.4-8.5 GW) generates the bulk of its 46-73 TWh renewables block, displacing gas; the model has no procurement channel (wind_total row), so gas-CCS dispatch (20.454 TWh of the 34.044 TWh gas total at 2030 is abated gas_cc_ccs) and imports back-fill the missing OSW energy. Same instrument divergence as the 2030 co2 row, in energy rather than emissions -- and note that on the repaired emission-rate seam this row FALLS (+57.0 % -> +47.8 %) while the co2 row's sign reverses, because the repair moves what the abated fleet EMITS, not chiefly what it generates."
+   "explanation": "The OSW procurement gap seen in energy space, plus the model's CCS-heavy dispatch: AEO's contracted OSW fleet (6.4-8.5 GW) generates the bulk of its 46-73 TWh renewables block, displacing gas; the model has no procurement channel (wind_total row), so gas-CCS dispatch (21.286 TWh of the 33.925 TWh gas total at 2030 is abated gas_cc_ccs) and imports back-fill the missing OSW energy. Same instrument divergence as the 2030 co2 row, in energy rather than emissions -- and note that on the repaired emission-rate seam this row FALLS (+57.0 % -> +47.8 %) while the co2 row's sign reverses, because the repair moves what the abated fleet EMITS, not chiefly what it generates. capx D96 (2026-09-25, owner ruling Q69) re-based this row onto the post-F1 bundle (eGRID-2024 heat rates): divergence +47.8 % -> +47.2 %, quoted figures refreshed; the mechanism is unchanged."
   },
   {
    "source": "AEO2025",
@@ -297,10 +297,10 @@
    "quantity": "generation:renewables",
    "model_basis": "wind + solar + hydro + biomass dispatched energy (post-curtailment)",
    "anchor_basis": "AEO Renewable Sources generation (incl. conventional hydro)",
-   "model_value": 27.2548,
+   "model_value": 27.2995,
    "anchor_value": 46.1848,
    "unit": "TWh",
-   "divergence_pct": -41.0,
+   "divergence_pct": -40.9,
    "verdict": "EXPLAINED DIVERGENCE",
    "explanation": "The renewables-generation shortfall is the OSW energy gap: model wind+solar+hydro+biomass dispatched energy vs AEO's renewable block that embeds the OREC pipeline's offshore output. The model's PV overshoot (solar row) recovers part of it by 2040 but cannot close a 6-8.5 GW offshore fleet's energy. Mechanism 3 in energy space; post-curtailment dispatch is quoted (I3's out-year dump starts 2043, after these anchors)."
   },
@@ -311,10 +311,10 @@
    "quantity": "capacity:total",
    "model_basis": "sum(capacity_by_fuel_mw) - import node + storage_power_mw (whole storage fleet incl. PS; D29 real column replaces the D25 base-fleet reconstruction)",
    "anchor_basis": "AEO Total Capacity (region-summed; includes PS + diurnal storage)",
-   "model_value": 42.1489,
+   "model_value": 42.1487,
    "anchor_value": 42.382,
    "unit": "GW",
-   "divergence_pct": -0.5,
+   "divergence_pct": -0.6,
    "verdict": "IN CORRIDOR"
   },
   {
@@ -350,7 +350,7 @@
    "quantity": "capacity:fossil_peaker_steam",
    "model_basis": "gas_ct + gas_st + oil (one block vs AEO CT + Fossil Steam)",
    "anchor_basis": "AEO Combustion Turbine/Diesel + Fossil Steam (= oil + gas steam)",
-   "model_value": 7.0964,
+   "model_value": 7.0962,
    "anchor_value": 6.9972,
    "unit": "GW",
    "divergence_pct": 1.4,
@@ -458,12 +458,12 @@
    "quantity": "co2",
    "model_basis": "trajectory co2_mt (dispatch x per-generator emission rates)",
    "anchor_basis": "AEO electric-power CO2, MMst x 0.90718474",
-   "model_value": 4.509,
+   "model_value": 4.3399,
    "anchor_value": 10.4766,
    "unit": "Mt",
-   "divergence_pct": -57.0,
+   "divergence_pct": -58.6,
    "verdict": "EXPLAINED DIVERGENCE",
-   "explanation": "The conversion wave at its deepest: 21.338 TWh of the model's 28.432 TWh gas generation is abated gas_cc_ccs at 2035, against an AEO NE trajectory that retrofits nothing and whose CO2 RISES on its gas build. Both level and direction diverge. THE PRIOR TABLE'S EXPLANATION IS RETIRED, NOT REFINED: it read the -2.0 % agreement as a path crossing (\"the level crossing ... is where the paths cross\"), and on the repaired emission-rate seam (capx D77) there is no crossing at this year -- the model sits 57.0 % below the anchor. Same mechanism as the 2030 and 2040 rows; the -2.0 % was an artifact of the mis-booked uncaptured rate, not a measured agreement."
+   "explanation": "The conversion wave at its deepest: 21.832 TWh of the model's 28.430 TWh gas generation is abated gas_cc_ccs at 2035, against an AEO NE trajectory that retrofits nothing and whose CO2 RISES on its gas build. Both level and direction diverge. THE PRIOR TABLE'S EXPLANATION IS RETIRED, NOT REFINED: it read the -2.0 % agreement as a path crossing (\"the level crossing ... is where the paths cross\"), and on the repaired emission-rate seam (capx D77) there is no crossing at this year -- the model sits 58.6 % below the anchor. Same mechanism as the 2030 and 2040 rows; the -2.0 % was an artifact of the mis-booked uncaptured rate, not a measured agreement. capx D96 (2026-09-25, owner ruling Q69) re-based this row onto the post-F1 bundle (eGRID-2024 heat rates): divergence -57.0 % -> -58.6 %, quoted figures refreshed; the mechanism is unchanged."
   },
   {
    "source": "AEO2025",
@@ -472,7 +472,7 @@
    "quantity": "generation:total",
    "model_basis": "total_gen_mwh - generation_by_fuel_mwh[import] (imports are interchange, not in-region generation)",
    "anchor_basis": "AEO Total Generation (in-region)",
-   "model_value": 95.3507,
+   "model_value": 95.3506,
    "anchor_value": 103.8229,
    "unit": "TWh",
    "divergence_pct": -8.2,
@@ -498,7 +498,7 @@
    "quantity": "generation:gas",
    "model_basis": "gas_cc + gas_cc_ccs + gas_ct + gas_st generation",
    "anchor_basis": "AEO Natural Gas generation (all gas cycles)",
-   "model_value": 28.4324,
+   "model_value": 28.4304,
    "anchor_value": 25.5721,
    "unit": "TWh",
    "divergence_pct": 11.2,
@@ -538,7 +538,7 @@
    "quantity": "generation:renewables",
    "model_basis": "wind + solar + hydro + biomass dispatched energy (post-curtailment)",
    "anchor_basis": "AEO Renewable Sources generation (incl. conventional hydro)",
-   "model_value": 40.4365,
+   "model_value": 40.4384,
    "anchor_value": 50.8547,
    "unit": "TWh",
    "divergence_pct": -20.5,
@@ -552,10 +552,10 @@
    "quantity": "capacity:total",
    "model_basis": "sum(capacity_by_fuel_mw) - import node + storage_power_mw (whole storage fleet incl. PS; D29 real column replaces the D25 base-fleet reconstruction)",
    "anchor_basis": "AEO Total Capacity (region-summed; includes PS + diurnal storage)",
-   "model_value": 48.8264,
+   "model_value": 48.7681,
    "anchor_value": 49.6938,
    "unit": "GW",
-   "divergence_pct": -1.7,
+   "divergence_pct": -1.9,
    "verdict": "IN CORRIDOR"
   },
   {
@@ -578,12 +578,12 @@
    "quantity": "capacity:gas_cc",
    "model_basis": "gas_cc + gas_cc_ccs",
    "anchor_basis": "AEO Combined Cycle (incl. sequestration variants)",
-   "model_value": 10.2006,
+   "model_value": 10.1425,
    "anchor_value": 12.7797,
    "unit": "GW",
-   "divergence_pct": -20.2,
+   "divergence_pct": -20.6,
    "verdict": "EXPLAINED DIVERGENCE",
-   "explanation": "The self-limiting retrofit wave -- NEW EVIDENCE, not a restatement. On the repaired emission-rate seam (capx D77) a converted unit pays roughly one tenth of its host's carbon adder, which depresses BOTH the margin that would justify the next retrofit AND the margin that keeps the marginal unabated CC alive; D77 predicted exactly this self-limiting effect and named the 2029/2030 retrofit-set reshuffle as its signature. At 2040 the total CC fleet (gas_cc + gas_cc_ccs) is 10,200.6 MW -- 5,678.6 unabated + 4,522.0 abated -- against AEO's 12,779.7 MW of unabated CC held flat across the horizon. Ours-vs-theirs: AEO retrofits nothing and therefore never prices a retrofit against a retirement, so its CC fleet has no mechanism to shrink; the model's spec-\u00a75.6 step-2/step-3 JOINT retrofit-or-retire screen does. The prior table had this row IN CORRIDOR at +2.8 % on a bundle carrying the defect. Stated as an OPEN root cause and not a closed one: whether the model's CC fleet SHOULD shrink this far is the question capx D90-R routed as \"the CCS retrofit wave's size or economics\", and this lane does not resolve it."
+   "explanation": "The self-limiting retrofit wave -- NEW EVIDENCE, not a restatement. On the repaired emission-rate seam (capx D77) a converted unit pays roughly one tenth of its host's carbon adder, which depresses BOTH the margin that would justify the next retrofit AND the margin that keeps the marginal unabated CC alive; D77 predicted exactly this self-limiting effect and named the 2029/2030 retrofit-set reshuffle as its signature. At 2040 the total CC fleet (gas_cc + gas_cc_ccs) is 10,142.5 MW -- 5,347.1 unabated + 4,795.4 abated -- against AEO's 12,779.7 MW of unabated CC held flat across the horizon. Ours-vs-theirs: AEO retrofits nothing and therefore never prices a retrofit against a retirement, so its CC fleet has no mechanism to shrink; the model's spec-\u00a75.6 step-2/step-3 JOINT retrofit-or-retire screen does. The prior table had this row IN CORRIDOR at +2.8 % on a bundle carrying the defect. Stated as an OPEN root cause and not a closed one: whether the model's CC fleet SHOULD shrink this far is the question capx D90-R routed as \"the CCS retrofit wave's size or economics\", and this lane does not resolve it. capx D96 (2026-09-25, owner ruling Q69) re-based this row onto the post-F1 bundle (eGRID-2024 heat rates): divergence -20.2 % -> -20.6 %, quoted figures refreshed; the mechanism is unchanged."
   },
   {
    "source": "AEO2025",
@@ -592,7 +592,7 @@
    "quantity": "capacity:fossil_peaker_steam",
    "model_basis": "gas_ct + gas_st + oil (one block vs AEO CT + Fossil Steam)",
    "anchor_basis": "AEO Combustion Turbine/Diesel + Fossil Steam (= oil + gas steam)",
-   "model_value": 7.5887,
+   "model_value": 7.5885,
    "anchor_value": 8.2446,
    "unit": "GW",
    "divergence_pct": -8.0,
@@ -700,12 +700,12 @@
    "quantity": "co2",
    "model_basis": "trajectory co2_mt (dispatch x per-generator emission rates)",
    "anchor_basis": "AEO electric-power CO2, MMst x 0.90718474",
-   "model_value": 4.2141,
+   "model_value": 4.0525,
    "anchor_value": 10.5331,
    "unit": "Mt",
-   "divergence_pct": -60.0,
+   "divergence_pct": -61.5,
    "verdict": "EXPLAINED DIVERGENCE",
-   "explanation": "By 2040 the model's CC fleet is 4,522.0 MW gas_cc_ccs beside 5,678.6 MW unabated gas_cc -- 44 % abated, NOT the 100 % the prior table recorded -- yet CO2 still lands at 4.21 Mt because the abated units carry the dispatch (20.691 of the 26.731 TWh CC total), while AEO, which retrofits nothing and keeps unabated gas, sits at 10.53 Mt. Carbon-price-path + retrofit-response divergence, each leg checkable (D25 \u00a74.3 mechanism 5; D26 measured the screen's carbon response sign-correct). What capx D77's repair moved here is the FLEET COMPOSITION, not the CO2 level (-57.4 % -> -60.0 %); see the capacity:gas_cc@2040 row."
+   "explanation": "By 2040 the model's CC fleet is 4,795.4 MW gas_cc_ccs beside 5,347.1 MW unabated gas_cc -- 47 % abated, NOT the 100 % the prior table recorded -- yet CO2 still lands at 4.05 Mt because the abated units carry the dispatch (21.198 of the 26.680 TWh CC total), while AEO, which retrofits nothing and keeps unabated gas, sits at 10.53 Mt. Carbon-price-path + retrofit-response divergence, each leg checkable (D25 \u00a74.3 mechanism 5; D26 measured the screen's carbon response sign-correct). What capx D77's repair moved here is the FLEET COMPOSITION, not the CO2 level (-57.4 % -> -60.0 %); see the capacity:gas_cc@2040 row. capx D96 (2026-09-25, owner ruling Q69) re-based this row onto the post-F1 bundle (eGRID-2024 heat rates): divergence -60.0 % -> -61.5 %, quoted figures refreshed; the mechanism is unchanged."
   },
   {
    "source": "AEO2025",
@@ -714,12 +714,12 @@
    "quantity": "generation:total",
    "model_basis": "total_gen_mwh - generation_by_fuel_mwh[import] (imports are interchange, not in-region generation)",
    "anchor_basis": "AEO Total Generation (in-region)",
-   "model_value": 105.6935,
+   "model_value": 105.694,
    "anchor_value": 124.8211,
    "unit": "TWh",
    "divergence_pct": -15.3,
    "verdict": "EXPLAINED DIVERGENCE",
-   "explanation": "In-region generation only, and the gap is interchange plus the smaller CC fleet. The model's basis excludes imports by construction (total_gen_mwh - generation_by_fuel_mwh[import]) and at 2040 it imports 30.525 TWh through the tie nodes -- energy AEO's NEPCC generation total likewise does not carry as in-region output, but which the model leans on harder because its wind fleet is 49.8 % short of AEO's (wind_total row) and its CC fleet 20.2 % short (capacity:gas_cc row). The prior table had this row IN CORRIDOR at -12.4 %; on the repaired seam it crosses the convention's 15 % line at -15.3 %, by 0.3 points. Reported as divergent rather than argued back inside: the threshold is not negotiable at the third decimal, and the two named component rows carry the mechanism."
+   "explanation": "In-region generation only, and the gap is interchange plus the smaller CC fleet. The model's basis excludes imports by construction (total_gen_mwh - generation_by_fuel_mwh[import]) and at 2040 it imports 30.515 TWh through the tie nodes -- energy AEO's NEPCC generation total likewise does not carry as in-region output, but which the model leans on harder because its wind fleet is 49.8 % short of AEO's (wind_total row) and its CC fleet 20.6 % short (capacity:gas_cc row). The prior table had this row IN CORRIDOR at -12.4 %; on the repaired seam it crosses the convention's 15 % line at -15.3 %, by 0.3 points. Reported as divergent rather than argued back inside: the threshold is not negotiable at the third decimal, and the two named component rows carry the mechanism. capx D96 (2026-09-25, owner ruling Q69) re-based this row onto the post-F1 bundle (eGRID-2024 heat rates): divergence -15.3 % -> -15.3 %, quoted figures refreshed; the mechanism is unchanged."
   },
   {
    "source": "AEO2025",
@@ -741,10 +741,10 @@
    "quantity": "generation:gas",
    "model_basis": "gas_cc + gas_cc_ccs + gas_ct + gas_st generation",
    "anchor_basis": "AEO Natural Gas generation (all gas cycles)",
-   "model_value": 28.0428,
+   "model_value": 28.0036,
    "anchor_value": 24.8652,
    "unit": "TWh",
-   "divergence_pct": 12.8,
+   "divergence_pct": 12.6,
    "verdict": "IN CORRIDOR"
   },
   {
@@ -767,10 +767,10 @@
    "quantity": "generation:oil",
    "model_basis": "generation_by_fuel_mwh[oil]",
    "anchor_basis": "AEO Petroleum generation",
-   "model_value": 0.0013,
+   "model_value": 0.0015,
    "anchor_value": 0.0081,
    "unit": "TWh",
-   "divergence_pct": -84.0,
+   "divergence_pct": -81.5,
    "verdict": "EXPLAINED DIVERGENCE",
    "explanation": "Both sides ~0 (< 0.02 TWh \u2014 the anchor is 8-12 GWh, roughly one afternoon of one peaker): a ratio on a near-zero denominator manufactures the percentage, so the divergence is explained as a level-scale artifact \u2014 model and AEO agree that NEISO oil-fired ENERGY is essentially zero even while the oil CAPACITY rows differ (the fleet is retained for capacity value, not dispatched)."
   },
@@ -781,10 +781,10 @@
    "quantity": "generation:renewables",
    "model_basis": "wind + solar + hydro + biomass dispatched energy (post-curtailment)",
    "anchor_basis": "AEO Renewable Sources generation (incl. conventional hydro)",
-   "model_value": 51.2152,
+   "model_value": 51.2548,
    "anchor_value": 72.5119,
    "unit": "TWh",
-   "divergence_pct": -29.4,
+   "divergence_pct": -29.3,
    "verdict": "EXPLAINED DIVERGENCE",
    "explanation": "The renewables-generation shortfall is the OSW energy gap: model wind+solar+hydro+biomass dispatched energy vs AEO's renewable block that embeds the OREC pipeline's offshore output. The model's PV overshoot (solar row) recovers part of it by 2040 but cannot close a 6-8.5 GW offshore fleet's energy. Mechanism 3 in energy space; post-curtailment dispatch is quoted (I3's out-year dump starts 2043, after these anchors)."
   }

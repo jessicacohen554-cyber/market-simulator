@@ -375,6 +375,7 @@ def unit_outage_csv_for_iso(
     merit_order_guard: bool = False,
     hour_grain: bool = False,
     dark_unit_years: bool = False,
+    membership_repair: bool = False,
 ) -> Path:
     """Return the CAMPD unit-outage CSV path for an ISO.
 
@@ -446,12 +447,37 @@ def unit_outage_csv_for_iso(
     exists), so it is one more selector over the same artifact family (rule 19
     ``[R-ONE-MECH]``). Zero free parameters. A separate file, never an
     overwrite, and the ``-perunit-`` extract when the companion is absent.
+
+    ``membership_repair`` (``ScenarioConfig.unit_outage_membership_repair``,
+    GATED default False; PJM-NEXT-2) selects the ``-memberrepair-`` companion of
+    the STANDARD extract: the committed extract unchanged plus the windows the
+    same deriver produces for the facilities it never scanned (a membership
+    defect -- pre-exit whole-plant retirees and partial-plant coal exits keyed
+    on their surviving CT class). Only on the standard path: ignored under
+    ``per_unit_crosswalk`` (the per-unit family has its own membership). Zero
+    free parameters; a separate file, never an overwrite, and the standard
+    extract when the companion is absent.
+
+    ``hour_grain`` ALSO reaches ERCOT's own incumbent family (R-ERCOT-5,
+    2026-09-25). ERCOT routes its windows through its bin sheet and arms neither
+    per-unit flag, so the ``-perunitmerithour-`` branch above never reaches it;
+    for ERCOT the SAME repair selects ``campd-unit-outages-hourgrain.csv`` — the
+    incumbent ``campd-unit-outages.csv`` (merit-guarded) re-derived with
+    ``--hour-grain``, whose base-column projection reproduces the incumbent
+    line-for-line (the deriver's in-process assertion). One field, one
+    phenomenon, one construction per artifact family (rule 19 ``[R-ONE-MECH]``);
+    falls back to the incumbent when the companion is absent.
     """
+    ercot = iso is None or iso.upper() == "ERCOT"
     base = (
         UNIT_OUTAGE_CSV
-        if (iso is None or iso.upper() == "ERCOT")
+        if ercot
         else UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-{iso.upper()}.csv")
     )
+    if ercot and hour_grain and not per_unit_crosswalk:
+        alt = UNIT_OUTAGE_CSV.with_name("campd-unit-outages-hourgrain.csv")
+        if alt.exists():
+            return alt
     if per_unit_crosswalk:
         if merit_order_guard:
             if hour_grain:
@@ -483,13 +509,19 @@ def unit_outage_csv_for_iso(
         )
         if alt.exists():
             return alt
+    if membership_repair and not mixed_gas_routing and not per_unit_crosswalk:
+        alt = base.with_name(
+            f"campd-unit-outages-memberrepair-{(iso or 'ERCOT').upper()}.csv"
+        )
+        if alt.exists():
+            return alt
     if not mixed_gas_routing:
         return base
     alt = base.with_name(f"campd-unit-outages-unitroute-{(iso or 'ERCOT').upper()}.csv")
     return alt if alt.exists() else base
 
 
-def unit_outage_short_csv_for_iso(iso: str | None) -> Path:
+def unit_outage_short_csv_for_iso(iso: str | None, hour_grain: bool = False) -> Path:
     """Return the SHORT (< 5-day) unit-outage CSV path for an ISO.
 
     Written by ``scripts/data/derive_campd_unit_outages.py --short-windows``:
@@ -498,13 +530,24 @@ def unit_outage_short_csv_for_iso(iso: str | None) -> Path:
     guards (coal-only detector, unit annual CF >= 0.55, revealed-availability
     in-merit filter). Consumed by :func:`unit_outage_short_derate_factors`
     under ``ScenarioConfig.unit_outage_short_windows``.
+
+    ``hour_grain`` (``ScenarioConfig.unit_outage_window_hour_grain``, R-ERCOT-5)
+    selects ERCOT's ``campd-unit-outages-short-hourgrain.csv`` — the same windows
+    at their DETECTED hour grain (see :func:`unit_outage_csv_for_iso`); ERCOT
+    only, falling back to the incumbent when absent.
     """
     if iso is None or iso.upper() == "ERCOT":
+        if hour_grain:
+            alt = UNIT_OUTAGE_CSV.with_name("campd-unit-outages-short-hourgrain.csv")
+            if alt.exists():
+                return alt
         return UNIT_OUTAGE_CSV.with_name("campd-unit-outages-short.csv")
     return UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-short-{iso.upper()}.csv")
 
 
-def unit_outage_short_gas_csv_for_iso(iso: str | None) -> Path:
+def unit_outage_short_gas_csv_for_iso(
+    iso: str | None, hour_grain: bool = False
+) -> Path:
     """Return the SHORT (< 5-day) GAS unit-outage CSV path for an ISO.
 
     Written by ``scripts/data/derive_campd_unit_outages.py --short-windows
@@ -528,8 +571,16 @@ def unit_outage_short_gas_csv_for_iso(iso: str | None) -> Path:
     the capacity that WAS running. The detector is the event-based dead-span
     rule the >= 5-day gas extract already uses, never the coal sustained-gap
     rule.
+
+    ``hour_grain`` selects ERCOT's ``campd-unit-outages-shortgas-hourgrain.csv``
+    (R-ERCOT-5), exactly as :func:`unit_outage_short_csv_for_iso` does for the
+    coal family.
     """
     if iso is None or iso.upper() == "ERCOT":
+        if hour_grain:
+            alt = UNIT_OUTAGE_CSV.with_name("campd-unit-outages-shortgas-hourgrain.csv")
+            if alt.exists():
+                return alt
         return UNIT_OUTAGE_CSV.with_name("campd-unit-outages-shortgas.csv")
     return UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-shortgas-{iso.upper()}.csv")
 
@@ -1282,6 +1333,7 @@ def unit_outage_derate_factors(
     extract_basis_share: bool = False,
     hour_grain: bool = False,
     dark_unit_years: bool = False,
+    membership_repair: bool = False,
     mid_vintage_exit_carry: bool = False,
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
     precod_clip: bool = False,
@@ -1317,6 +1369,7 @@ def unit_outage_derate_factors(
         merit_order_guard,
         hour_grain,
         dark_unit_years=dark_unit_years,
+        membership_repair=membership_repair,
     )
     df = _load_unit_outage_events(csv_path, iso)
     if df is None:
@@ -1761,6 +1814,7 @@ def unit_outage_short_derate_factors(
     mid_vintage_exit_carry: bool = False,
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
     coal_scope: bool = True,
+    hour_grain: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return short-window (< 5-day) unit-outage availability multipliers.
 
@@ -1793,11 +1847,19 @@ def unit_outage_short_derate_factors(
     neiso-69) can carry the disjoint gas family alone. The two families were
     always disjoint by plant group; this only stops the gas one being reachable
     solely through the coal gate.
+
+    ``hour_grain`` (``ScenarioConfig.unit_outage_window_hour_grain``, R-ERCOT-5,
+    default ``False``, byte-inert) reads ERCOT's ``-hourgrain`` companions of both
+    families, whose windows carry their DETECTED start/end hour, so the shared
+    accumulator stops re-expanding each window to 00:00-23:00 (see
+    :func:`unit_outage_event_window`).
     """
     iso = (iso or "ERCOT").upper()
-    csv_path = unit_outage_short_csv_for_iso(iso)
+    # ``hour_grain`` (R-ERCOT-5): ERCOT's detected-hour companions of both
+    # families; every other ISO's paths ignore it.
+    csv_path = unit_outage_short_csv_for_iso(iso, hour_grain)
     have_coal = coal_scope and csv_path.exists()
-    gas_path = unit_outage_short_gas_csv_for_iso(iso) if gas_scope else None
+    gas_path = unit_outage_short_gas_csv_for_iso(iso, hour_grain) if gas_scope else None
     have_gas = gas_path is not None and gas_path.exists()
     if not have_coal and not have_gas:
         return {}
@@ -1834,6 +1896,87 @@ def unit_outage_short_derate_factors(
         mid_vintage_exit_carry=mid_vintage_exit_carry,
         lp_bin_capacity=lp_bin_capacity,
     )
+
+
+def unit_outage_short_screened_csv_for_iso(iso: str | None) -> Path:
+    """Return the short-coal SCREENED-SET CSV path for an ISO (miso-273).
+
+    Written by ``scripts/data/derive_campd_unit_outages.py --short-windows
+    --emit-screened-set``: one row per coal unit-year that passed the
+    ``SHORT_BASELOAD_CF`` when-operable baseload guard, whether or not it had a
+    < 5-day event — the set of unit-years whose sub-5-day forced outages the
+    short extract MEASURES. Consumed by :func:`short_screened_coal_shares`
+    under ``ScenarioConfig.wefor_residual_short_screened_coal``.
+    """
+    if iso is None or iso.upper() == "ERCOT":
+        return UNIT_OUTAGE_CSV.with_name("campd-unit-outages-short-screened.csv")
+    return UNIT_OUTAGE_CSV.with_name(
+        f"campd-unit-outages-short-screened-{iso.upper()}.csv"
+    )
+
+
+def short_screened_coal_shares(
+    year: int,
+    iso: str,
+    lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...],
+) -> dict[tuple[int, str], float]:
+    """Return each coal bin's capacity share whose short outages are MEASURED.
+
+    ``ScenarioConfig.wefor_residual_short_screened_coal`` (miso-273). The
+    statistical forced-outage rate (WEFOR) represents every forced outage,
+    including the sub-5-day ones the >= 5-day CAMPD overlay cannot see. For a
+    coal unit-year that passed the short family's baseload guard, those
+    sub-5-day stops are MEASURED by ``unit_outage_short_windows``, so applying
+    the full statistical WEFOR on top counts them twice (rule 19
+    ``[R-ONE-MECH]``) — the coal twin of the miso-271 gas finding. A unit the
+    guard did not admit (a cycling unit) has no measured short family and keeps
+    the full statistical term.
+
+    The share is built on the SAME construction the short overlay uses for its
+    numerator and denominator — each screened unit's extract ``unit_capacity_mw``
+    routed by :func:`_generic_unit_outage_target`, divided by the DISPATCHED
+    bin's own capacity (:func:`lp_bin_capacity_index`, miso-266) — and clipped at
+    1. Zero free parameters (rule 21): every number is a CAMPD/EIA-860 field or
+    the fleet's own ``pmax``. Non-ERCOT only; requires the dispatched-bin
+    roster (fail-closed: the reconstructed map would divide by a different
+    capacity than the one the relief is applied to).
+
+    Args:
+        year: Solve year; only that year's screened rows count.
+        iso: ISO code (non-ERCOT).
+        lp_bin_capacity: The dispatched fleet's ``(plant_code, group) -> MW``
+            roster.
+
+    Returns:
+        ``{(plant_code, "COAL"): share in [0, 1]}``; empty when the ISO has no
+        screened-set file.
+
+    Raises:
+        ValueError: ERCOT, or no ``lp_bin_capacity``.
+    """
+    iso = (iso or "").upper()
+    if iso in ("", "ERCOT") or lp_bin_capacity is None:
+        raise ValueError(
+            "wefor_residual_short_screened_coal is non-ERCOT only and requires "
+            "unit_outage_dispatched_bin_denominator (the share must divide by "
+            "the capacity the relief is applied to)"
+        )
+    path = unit_outage_short_screened_csv_for_iso(iso)
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    df = df[(df["year"] == int(year)) & (df["plant_group"] == COAL_ARTIFACT_FAMILY)]
+    cap = dict(lp_bin_capacity)
+    acc: dict[tuple[int, str], float] = {}
+    for r in df.itertuples(index=False):
+        tgt = _generic_unit_outage_target(int(r.facility_id), r.unit_id, r.plant_group)
+        if tgt is None or tgt not in cap or cap[tgt] <= 0.0:
+            continue
+        ucap = r.unit_capacity_mw
+        if pd.isna(ucap) or float(ucap) <= 0.0:
+            continue
+        acc[tgt] = acc.get(tgt, 0.0) + float(ucap)
+    return {k: min(1.0, v / cap[k]) for k, v in acc.items()}
 
 
 def unit_layup_csv_for_iso(

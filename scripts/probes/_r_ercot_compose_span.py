@@ -57,6 +57,8 @@ MUST_AGREE = (
     "ercot_partial_outage_shaped_derate",
     # R-ERCOT-4: the day-guard arm must be uniform across legs.
     "ercot_partial_outage_day_guard",
+    # R-ERCOT-5: the detected-hour window grain must be uniform across legs.
+    "unit_outage_window_hour_grain",
     "outage_source",
 ) + FIELDS
 

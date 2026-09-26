@@ -45,10 +45,13 @@ PINNED = "9db30b45a55bf4bbd9cdbc3b2a7f51aa37dc7466"
 FLIPS = ("coal_mustrun_requires_measured_row",)
 
 
-def _offer_sha(bundle: Path) -> str:
+def _offer_sha(bundle: Path, skip: frozenset = frozenset({"COAL"})) -> str:
+    """Hash of the resolved ``offer_curve_by_group`` with ``skip`` groups set aside."""
     cfg = json.loads((bundle / "run_config.json").read_text())["scenario_config"]
     curve = {
-        g: v for g, v in (cfg.get("offer_curve_by_group") or {}).items() if g != "COAL"
+        g: v
+        for g, v in (cfg.get("offer_curve_by_group") or {}).items()
+        if g not in skip
     }
     return hashlib.sha256(json.dumps(curve, sort_keys=True).encode()).hexdigest()[:16]
 

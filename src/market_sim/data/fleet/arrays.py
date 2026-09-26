@@ -60,6 +60,7 @@ from market_sim.data.outages import (
     reliability_deployment_floor_for_year,
     retiree_availability_caps,
     shared_unit_hours,
+    short_screened_coal_shares,
     unit_outage_active_units,
     lp_bin_capacity_index,
     unit_outage_derate_factors,
@@ -403,8 +404,18 @@ def _nuclear_monthly(
     # return-to-service year. Forecast runs keep the unit — in backcast mode
     # weather_year is the calendar year; in forecast it is only a weather
     # shape, so the comparison would be meaningless there.
+    # PJM-NEXT-2 card 3 (rule 19 [R-ONE-MECH]): under
+    # nuclear_dormancy_defers_to_vintage_exit a unit the solved year's OWN
+    # EIA-860 vintage records as operating until a mid-year exit
+    # (mid_vintage_exit_unit, injected by mid_vintage_exit_carry) is not
+    # zeroed: the dormancy table describes the post-shutdown restart window
+    # (TMI-1 ran Jan-Sep 2019), and the exit's retirement mask already removes
+    # it after its exit month. Off => byte-identical.
+    _defer = bool(getattr(config, "nuclear_dormancy_defers_to_vintage_exit", False))
     if _yr is not None and getattr(config, "mode", "forecast") == "backcast":
         for g_idx, gen in enumerate(generators):
+            if _defer and getattr(gen, "mid_vintage_exit_unit", False):
+                continue
             if gen.fuel_type == "nuclear" and _yr < NUCLEAR_DORMANT_UNTIL.get(
                 int(gen.plant_code), 0
             ):
@@ -766,6 +777,38 @@ def _availability_matrix(
                     _iso or "?",
                     len(_recon_summer_ratio),
                 )
+        # miso-273 (ScenarioConfig.wefor_residual_short_screened_coal): the
+        # coal bins whose sub-5-day forced outages the short family MEASURES
+        # (unit-years that passed its baseload guard) take the WEFOR residual
+        # cap on that measured capacity share only; the rest of the bin keeps
+        # the full statistical term. Empty (byte-inert) while off.
+        _screened_share: dict[tuple[int, str], float] = {}
+        if wefor_res is not None and getattr(
+            config, "wefor_residual_short_screened_coal", False
+        ):
+            if not getattr(config, "unit_outage_short_windows", False):
+                raise ValueError(
+                    "wefor_residual_short_screened_coal requires "
+                    "unit_outage_short_windows: the relief is justified only "
+                    "where the short coal family is armed (rule 19)"
+                )
+            if not getattr(config, "unit_outage_dispatched_bin_denominator", False):
+                raise ValueError(
+                    "wefor_residual_short_screened_coal requires "
+                    "unit_outage_dispatched_bin_denominator"
+                )
+            _roster = lp_bin_capacity_index(generators)
+            _screened_share = short_screened_coal_shares(
+                int(fleet_year), _iso or "", _roster
+            )
+            logger.info(
+                "short-screened coal WEFOR relief (%s %d): %d coal bin(s), "
+                "%.1f MW measured-short capacity",
+                _iso,
+                int(fleet_year),
+                len(_screened_share),
+                sum(s * dict(_roster).get(k, 0.0) for k, s in _screened_share.items()),
+            )
         for g_idx, gen in enumerate(generators):
             if gen.plant_group not in THERMAL_AVAILABILITY:
                 continue
@@ -806,6 +849,12 @@ def _availability_matrix(
             )
             if wefor_res is not None and _covered:
                 wefor = min(wefor, wefor_res)
+            elif _screened_share and gen.fuel_type == "coal":
+                _s = _screened_share.get(
+                    (int(gen.plant_code), artifact_class(gen.plant_group)), 0.0
+                )
+                if _s > 0.0:
+                    wefor = (1.0 - _s) * wefor + _s * min(wefor, wefor_res)
             if is_cc_np and cc_np_derate_backcast:
                 # CC nameplate, historic backcast: the CAMPD outage overlay below
                 # carries every SUSTAINED outage, so the statistical POF and the
@@ -1275,15 +1324,31 @@ def _apply_outage_overlays(
             # Predicated on BOTH flags above, so all three are one selector over
             # one artifact family; selects the '-perunitmerithour-' extract and
             # is byte-inert while off (it reads the same file it always did).
-            hour_grain=bool(getattr(config, "campd_per_unit_attribution", False))
-            and bool(getattr(config, "campd_outage_merit_order_guard", False))
-            and bool(getattr(config, "unit_outage_window_hour_grain", False)),
+            #
+            # R-ERCOT-5: the SAME field also reaches ERCOT's own incumbent
+            # family (bin-sheet routing, neither per-unit flag), selecting the
+            # '-hourgrain' companion of campd-unit-outages.csv. ERCOT-only by
+            # the predicate; every other ISO's value is unchanged.
+            hour_grain=bool(getattr(config, "unit_outage_window_hour_grain", False))
+            and (
+                (
+                    bool(getattr(config, "campd_per_unit_attribution", False))
+                    and bool(getattr(config, "campd_outage_merit_order_guard", False))
+                )
+                or (_iso or "ERCOT") == "ERCOT"
+            ),
             # SOCO-61 (rule 14 [R-ACCURATE]): the SAME per-unit extract plus one
             # full-year window per unit its own CAMPD id files dark all year
             # while producing in an adjacent year. Predicated on the per-unit
             # flag; selects '-perunitdark-' and is byte-inert while off.
             dark_unit_years=bool(getattr(config, "campd_per_unit_attribution", False))
             and bool(getattr(config, "campd_dark_unit_year_windows", False)),
+            # PJM-NEXT-2 (rule 14 [R-ACCURATE]): the standard extract plus the
+            # windows of the facilities its membership never scanned. Selects
+            # '-memberrepair-'; byte-inert while off.
+            membership_repair=bool(
+                getattr(config, "unit_outage_membership_repair", False)
+            ),
             # miso-266: the dispatched bin's own capacity as the denominator.
             lp_bin_capacity=_lp_bins,
             # soco-67 (rule 19 [R-ONE-MECH]): drop a new unit's pre-commercial
@@ -1420,6 +1485,9 @@ def _apply_outage_overlays(
         # is byte-identical to before.
         _short_coal = getattr(config, "unit_outage_short_windows", False)
         _short_gas = getattr(config, "unit_outage_short_windows_gas", False)
+        _ercot_window_hour_grain = (_iso or "ERCOT") == "ERCOT" and bool(
+            getattr(config, "unit_outage_window_hour_grain", False)
+        )
         if _short_coal or _short_gas:
             sfac = unit_outage_short_derate_factors(
                 config.weather_year,
@@ -1457,6 +1525,9 @@ def _apply_outage_overlays(
                 # accumulator, for the sub-5-day window family.
                 lp_bin_capacity=_lp_bins,
                 coal_scope=_short_coal,
+                # R-ERCOT-5: ERCOT's detected-hour companions of both short
+                # families (ERCOT-only by the loader's own path selector).
+                hour_grain=_ercot_window_hour_grain,
             )
             if sfac:
                 applied_s = 0
@@ -2067,8 +2138,14 @@ def _apply_outage_overlays(
             and getattr(config, "outage_source", "statistical") == "historic"
         ):
             _bins_path = getattr(config, "campd_bins_path", str(CAMPD_BINS_CSV))
+            # R-ERCOT-5: the ceiling reads the SAME window grain the stack
+            # applied above — otherwise the precedence cap would re-impose the
+            # day-granular edges the hour-grain companion removed.
+            _hg = bool(getattr(config, "unit_outage_window_hour_grain", False))
             _cap_layers: list[dict] = [
-                unit_outage_derate_factors(int(_yr), hours, _bins_path, iso="ERCOT"),
+                unit_outage_derate_factors(
+                    int(_yr), hours, _bins_path, iso="ERCOT", hour_grain=_hg
+                ),
             ]
             if getattr(config, "unit_outage_short_windows", False):
                 _cap_layers.append(
@@ -2080,6 +2157,7 @@ def _apply_outage_overlays(
                         gas_scope=getattr(
                             config, "unit_outage_short_windows_gas", False
                         ),
+                        hour_grain=_hg,
                     )
                 )
             if getattr(config, "unit_partial_outage_windows", False):

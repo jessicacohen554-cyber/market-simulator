@@ -1,0 +1,36 @@
+SHARD — PJM-NEXT-2 card 1 (outage-extract membership repair), arm leg, year 2023
+DATA PROFILE: pjm
+You are a SHARD of orchestrator session PJM-NEXT-2 (CLAUDE.md rules 32/33/34/36). You run ONE backcast solve for ONE year, push the full bundle to your own branch, and report numbers. You are NOT the orchestrator.
+
+"A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE."
+
+PINNED COMMIT: e8cb6516b10f7fe7966dbb8dbc1fb04902802d2a
+Record: docs/PRECOMMIT-pjm-next-2-card1-outage-membership-2026-09-25.md (in your checkout).
+
+STEPS
+1. HARD STOP: `git rev-parse HEAD` must equal e8cb6516b10f7fe7966dbb8dbc1fb04902802d2a. If not, `git fetch origin e8cb6516b10f7fe7966dbb8dbc1fb04902802d2a && git checkout --detach e8cb6516b10f7fe7966dbb8dbc1fb04902802d2a` once; if it still differs, STOP and report. Never rebase, never `git pull`, never "sync" to any branch.
+2. Setup: `pip install -q -e .`; `python3 scripts/hydrate_data.py --profile pjm`.
+3. Clean tree — DO NOT run the full regenerate_clean pass (it fills the disk and starves the swapfile; PJM years OOM that way). Start with: `python3 scripts/regenerate_clean.py transfer-interface-limits ramp-capability reference egrid rggi-co2-budgets partial-outages unit-outage-events outages fleet fuel-prices generation load demand-profile renewables validation lmp`. Then whenever the solve raises FileNotFoundError naming a clean datatype ("run scripts/regenerate_clean.py <X>"), run exactly that datatype and re-run the solve (up to 6 times). Check `df -h /` before the solve and report free GiB.
+4. DA virtuals: `python3 scripts/data/fetch_pjm_da_virtuals.py --years 2023`. A failed fetch is a HARD STOP.
+5. Branch: `git checkout -b claude/pjmnext2-c1-2023`.
+6. Solve (runner UNMODIFIED; never pass --no-container-preflight):
+   python3 scripts/replay_keeper.py results/calibration/pjmnext_c1_span --years 2023 \
+     --set unit_outage_membership_repair=true \
+     --out-dir results/calibration/pjmnext2_c1_2023 --note "PJM-NEXT-2 c1 arm, 2023" 2>&1 | tee /tmp/solve_2023.log
+   If it is OOM-killed (exit 137): report the `container preflight:` lines and free disk, then STOP (do not retry with modified settings).
+7. G1 HARD STOPS — only (a), (b), (d), (g) can stop you; (e)/(f) are REPORT-only. If a hard stop fails, do NOT push the bundle; write docs/FINDING-pjmnext2-c1-2023-blocker.md on your branch, push that, and report:
+   (a) run_config.json `scenario_config`: eia860_vintage_tracks_solve_year, measured_ct_heat_rates, measured_coal_heat_rates, measured_st_heat_rates, measured_cc_heat_rates, measured_chp_heat_rates, pjm_rggi_allowance_pricing, mid_vintage_exit_carry, fleet_zone_vintage_coords, benchmark_membership_vintage_union all TRUE;
+   (b) in run_config.json (or run_config_2023.json): `resolved_inputs.campd_unit_outages.path` ends with `campd-unit-outages-memberrepair-PJM.csv` AND its `sha256` starts with c6883c51;
+   (d) scenario_config: unit_outage_membership_repair TRUE;
+   (e) REPORT the `mid-vintage-year exit carry (PJM 2023)` log line if present (do not stop on it);
+   (f) REPORT whether `fleet_zone_vintage_coords (PJM)` appears in the log (do not stop on it);
+   (g) meta.json `shared_inputs.eia923` parquet (path relative to the bundle dir): sum(annual_mwh where year==2023)/1e6 = 823.024 TWh (±0.001).
+8. Push the FULL bundle (rule 34(a)) — exactly:
+   printf '\n!results/calibration/pjmnext2_c1_2023/**\n' >> .gitignore
+   git add .gitignore && git add results/calibration/pjmnext2_c1_2023
+   git status --short   # MUST show nothing staged outside .gitignore and results/calibration/pjmnext2_c1_2023/
+   Confirm `dispatch/2023_P1.parquet` is staged. Commit "PJM-NEXT-2 c1 2023: bundle", then `git push -u origin claude/pjmnext2-c1-2023` (on HTTP 408/500: `git config http.version HTTP/1.1` and retry; network errors: retry 4x with 2/4/8/16 s backoff).
+9. REPORT in your final message, in numbers: pushed commit full SHA; `git ls-tree -r --name-only HEAD -- results/calibration/pjmnext2_c1_2023 | wc -l`; each G1 item with its observed value; per-class model TWh for 2023 (P1); mean price; the `container preflight:` and `memory peak:` lines; free disk before solve; solve wall time.
+
+FORBIDDEN, by name: `git add -A`, `git add .`, `git add -f`; running `dashboard_add_run.py`, `build_manifest.py`, `build_status.py`, `prune_iso_runs.py`; touching anything under `frontend/data/backcast/**`; ANY edit under `src/` or `scripts/`; opening a PR; deleting any result; rebasing / pulling / force-pushing; solving any other year.
+If the solve exceeds its budget with no artifact, STOP and report — never push a half-written bundle.

@@ -253,6 +253,16 @@ def campd_ct_run_lengths(iso: str) -> dict[int, float]:
     }
 
 
+#: The ``flag`` values a measured heat-rate artifact row may carry and still be
+#: APPLIED. ``ok`` is the CAMPD-measured rate; ``eia923_identity`` (R-CAISO-3,
+#: 2026-09-25) is a row the CC derive's gross-net identity REFUSED on its CEMS
+#: record and re-priced at the owner's own EIA-923 fuel / EIA-923 net
+#: (``scripts/data/derive_campd_cc_heat_rates.py``). Every other flag is a
+#: refusal and falls back (pooled row, else eGRID). An artifact that carries no
+#: ``eia923_identity`` row reads exactly as before.
+_APPLIED_MEASURED_FLAGS: frozenset[str] = frozenset({"ok", "eia923_identity"})
+
+
 def _measured_rate_map(path: Path, year: int | None, class_keyed: bool = False) -> dict:
     """Read one measured-heat-rate artifact into ``{key: rate}`` for a solve year.
 
@@ -282,7 +292,7 @@ def _measured_rate_map(path: Path, year: int | None, class_keyed: bool = False) 
     if "year" not in df.columns:
         df["year"] = 0
     rate = pd.to_numeric(df["heat_rate"], errors="coerce")
-    df = df[(df["flag"].astype(str) == "ok") & (rate > 0.0)]
+    df = df[df["flag"].astype(str).isin(_APPLIED_MEASURED_FLAGS) & (rate > 0.0)]
 
     def _key(r):
         code = int(r.plant_code)
@@ -2853,6 +2863,19 @@ def fleet_to_bins(
             and getattr(config, "coal_mustrun_requires_measured_row", False)
         ):
             pct_mr = 0.0
+        # COAL COMMITTED BAND NESTED ON MUST-RUN (config.coal_committed_nested_
+        # on_mustrun, NWPP-NEXT-4). The artifact's committed_pct and
+        # mustrun_pct are both LEVELS from 0 MW (P5 of online-hour / all-hour
+        # CF), while bins_to_fleet stacks _committed ON TOP of _mustrun. Armed,
+        # a measured coal row's committed band is the increment above the
+        # must-run level, so the two cheap bands sum to the measured committed
+        # level (rule 14 [R-ACCURATE]); the difference falls to the econ band.
+        if (
+            is_coal_class(group)
+            and _measured_row
+            and getattr(config, "coal_committed_nested_on_mustrun", False)
+        ):
+            pct_mc = max(0.0, pct_mc - pct_mr)
         pct_peak = peaking.get(_akey, d_peak)
         # Keep the split feasible: clip committed + peaking to leave room for an
         # economic band above the must-run floor.

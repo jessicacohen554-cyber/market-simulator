@@ -1,0 +1,20 @@
+{
+  "id": "2026-09-25-pjm-next-2-joint",
+  "label": "pjm next 2 joint",
+  "date": "2026-09-25",
+  "shorthand": "pjm-next-2-joint",
+  "definition": "PJM-NEXT-2 joint arm, 2019",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-09-25-pjm-next-2-joint.js",
+  "bundle": "results/calibration/pjmnext2_joint_span",
+  "market_story": "COAL_BIT/COAL_PRB (2019-2022): the pre-exit coal fleet (Morgantown, Zimmer, Avon Lake, Dickerson, Waukegan, Cheswick) sat dark for months before retiring, as their own CEMS shows; the model now carries those measured outage windows, so it stops running idle plants. CC_REGULAR (2022-2025): eastern CCs (SWMAAC, Dominion) buy gas at their delivered EIA-923 price, which already includes the regional premium; the premium is no longer added a second time, so they clear where the real market dispatched them. NUCLEAR (2019): TMI-1 ran until its September 2019 retirement; it now does."
+}
