@@ -3638,3 +3638,5 @@ results/calibration/nwppnext5_20*/
 results/calibration/miso276_arm_*/
 # R-CAISO-4 2019-21 keeper touchpoint composite IS committed (it folds into the keeper, rule 30):
 !results/calibration/rcaiso4_tp_2019_2021/
+
+!results/calibration/rcaiso5_X_2023/**
