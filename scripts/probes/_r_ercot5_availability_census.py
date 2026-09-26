@@ -252,6 +252,53 @@ def _apply_variant(variant: str) -> None:
     import market_sim.data.fleet.arrays as A
     import market_sim.data.outages as O
 
+    if variant == "resid":
+        # R-ERCOT-7 sensitivity (probe only, with --set
+        # ercot_dam_availability_event_cap_per_unit=true): RESIDUAL-PRESERVING
+        # per-unit composition. Instead of apportioning the plateau's removed
+        # share by the carrying units' deficits (which drops plateau depth no
+        # carrying unit explains together with the windowed unit), subtract
+        # only the windowed carrying units' own measured deficit MW, on the
+        # window accumulator's own bin-capacity denominator:
+        #   f_p* = 1 - max(0, (1 - f_p) - sum_{u windowed} d_u / cap_bin)
+        from market_sim.config.paths import CAMPD_BINS_CSV
+        from market_sim.config.plant_taxonomy import artifact_class
+        from market_sim.data.fleet import load_campd_bins
+
+        b = load_campd_bins(str(CAMPD_BINS_CSV))
+        cap = {
+            (int(c), artifact_class(g)): float(m)
+            for c, g, m in zip(b["Plant_Code"], b["Plant_Group"], b["capacity_mw"])
+            if m and m > 0
+        }
+        orig_def = O.partial_outage_unit_deficits
+
+        def deficits(year, hours=8760, iso="ERCOT"):
+            out = {}
+            for k, d in orig_def(year, hours, iso).items():
+                if k in cap:
+                    out[k] = {u: a / cap[k] for u, a in d.items()}
+            return out
+
+        def factor(fp, unit_def, win):
+            fp = np.asarray(fp, float)
+            if not unit_def or not win:
+                return fp
+            w = {O._norm_partial_unit_id(u): m for u, m in win.items()}
+            n = fp.size
+            sub = np.zeros(n)
+            for u, d in unit_def.items():
+                m = w.get(O._norm_partial_unit_id(u))
+                if m is not None:
+                    sub += np.where(m[:n], np.asarray(d, float)[:n], 0.0)
+            if not sub.any():
+                return fp
+            return 1.0 - np.maximum((1.0 - fp) - sub, 0.0)
+
+        A.partial_outage_unit_deficits = deficits
+        A.per_unit_partial_factor = factor
+        return
+
     A.unit_outage_active_units = _hour_grain_active_units
     if variant != "finer":
         return
@@ -436,7 +483,7 @@ def main() -> None:
     ap.add_argument(
         "--variant",
         default="none",
-        choices=("none", "hgmask", "finer"),
+        choices=("none", "hgmask", "finer", "resid"),
         help="unit-scoped seam variant (R-ERCOT-6); see _apply_variant",
     )
     a = ap.parse_args()

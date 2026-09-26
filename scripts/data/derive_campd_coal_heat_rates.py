@@ -435,7 +435,12 @@ def main(argv: list[str] | None = None) -> int:
         "measured_st_heat_rates": args.measured_st_heat_rates,
     }
     fleets = backcast_fleets(iso, years, **recipe_flags)
-    union = union_fleet(fleets)
+    # soco-71: ``klass`` keeps a plant that is COAL in ANY backcast year, the
+    # neiso-118 guard the CT sibling already carries. Without it the
+    # latest-record union drops a plant whose later vintage re-classes it —
+    # Crist 641 is coal in 2019 and gas-steam after its 2020 conversion, so the
+    # model dispatched its 2019 coal on the eGRID rate while CAMPD meters it.
+    union = union_fleet(fleets, klass=TARGET_CLASS)
     caps = class_capacity(union, TARGET_CLASS)
     if not caps:
         raise SystemExit(f"{iso}: model fleet has no {TARGET_CLASS} plants")
@@ -444,7 +449,8 @@ def main(argv: list[str] | None = None) -> int:
     # an APPLIED number (the gas-steam sibling's guard, soco-53e section 1.3).
     if any(recipe_flags.values()):
         plain_caps = class_capacity(
-            union_fleet(backcast_fleets(iso, years)), TARGET_CLASS
+            union_fleet(backcast_fleets(iso, years), klass=TARGET_CLASS),
+            TARGET_CLASS,
         )
         if plain_caps != caps:
             raise SystemExit(f"{iso}: the provenance recipe moved the plant population")

@@ -336,6 +336,95 @@ _WINTER_FUELSEC_CLASSES: tuple[str, ...] = (COAL_ARTIFACT_FAMILY, "ST_GAS")
 _WINTER_FUELSEC_MIN_EVENT_HOURS: int = 48
 
 
+def winter_fuelsec_cold_window(
+    iso: str,
+    year: int,
+    zone: str,
+    hours: int,
+    *,
+    tmin_threshold_c: float = -7.0,
+    min_event_hours: int = _WINTER_FUELSEC_MIN_EVENT_HOURS,
+) -> np.ndarray | None:
+    """Return the winter fuel-security floor's cold-day window for one zone-year.
+
+    The ONE definition of the hours the Component-B floor may bind (rule 17
+    [R-FLOOR-WINDOW] (b)): winter months (Nov-Mar) AND zone daily TMIN below
+    ``tmin_threshold_c``, multi-day events bridged to ``min_event_hours`` and the
+    season gate re-applied. Shared by :func:`apply_winter_fuelsec_mustrun` and the
+    conduct-roster derive (``scripts/data/derive_neiso_winter_fuelsec_conduct.py``)
+    so the roster measures exactly the hours the floor can bind.
+
+    Args:
+        iso: ISO identifier.
+        year: Weather year of the pinned zone temperature series.
+        zone: Model zone name.
+        hours: Horizon length.
+        tmin_threshold_c: Cold-day gate on zone daily TMIN.
+        min_event_hours: Multi-day event bridging.
+
+    Returns:
+        ``(hours,)`` boolean mask, or ``None`` when the zone has no pinned TMIN
+        (import node / unmapped / forecast year) or no flagged hour.
+    """
+    from market_sim.data.eia_loader import iso_zone_tmax
+    from market_sim.model.transmission import _bridge_flagged_runs
+
+    T = int(hours)
+    is_winter_hour = np.isin(_hour_to_month_index(T), WINTER_MONTH_INDICES)
+    temp_result = iso_zone_tmax(iso, year, T, zone=zone)
+    if temp_result is None:
+        return None
+    _tmax, tmin = temp_result
+    if tmin is None:
+        return None
+    tmin = np.asarray(tmin, dtype=float)
+    flagged = (tmin < float(tmin_threshold_c)) & is_winter_hour
+    if not flagged.any():
+        return None
+    return _bridge_flagged_runs(flagged, int(min_event_hours)) & is_winter_hour
+
+
+def winter_fuelsec_conduct_roster(
+    iso: str, year: int, *, path: Path | None = None
+) -> frozenset[int]:
+    """Return the plants the conduct roster keeps in the winter fuel-security floor.
+
+    Reads the frozen conduct derive (``winter_fuelsec_conduct_<ISO>.csv``: per
+    plant-year, the cold-day window hours and the hours its CEMS boiler units were
+    online) and pools every year EXCEPT ``year`` (leave-one-year-out: the solved
+    year's own conduct is an outcome and never enters, rule 13 [R-MEASURED]; a
+    year outside the derive pools every derived year). A plant is kept iff its
+    pooled online share is at least
+    ``constants.WINTER_FUELSEC_CONDUCT_MIN_ONLINE_SHARE`` (the D-4 conduct test);
+    a plant with no other-year window hours has no evidence and is not kept
+    (rule 17). Gated by ``ScenarioConfig.neiso_winter_fuelsec_conduct_roster``.
+
+    Args:
+        iso: ISO identifier.
+        year: Solve year (excluded from the pool).
+        path: Artifact override (tests).
+
+    Returns:
+        The eligible plant codes.
+
+    Raises:
+        FileNotFoundError: the artifact is absent (never a silent fallback).
+    """
+    import pandas as pd
+
+    from market_sim.config.constants import WINTER_FUELSEC_CONDUCT_MIN_ONLINE_SHARE
+    from market_sim.config.paths import PROCESSED_DIR
+
+    p = path or (PROCESSED_DIR / f"winter_fuelsec_conduct_{iso.upper()}.csv")
+    df = pd.read_csv(p)
+    df = df[df["year"] != int(year)]
+    g = df.groupby("plant_code")[["window_hours", "online_hours"]].sum()
+    g = g[g["window_hours"] > 0]
+    share = g["online_hours"] / g["window_hours"]
+    keep = share[share >= WINTER_FUELSEC_CONDUCT_MIN_ONLINE_SHARE].index
+    return frozenset(int(c) for c in keep)
+
+
 def apply_winter_fuelsec_mustrun(
     fleet_arrays,
     iso: str,
@@ -348,6 +437,7 @@ def apply_winter_fuelsec_mustrun(
     tmin_threshold_c: float = -7.0,
     min_event_hours: int = _WINTER_FUELSEC_MIN_EVENT_HOURS,
     hours: int | None = None,
+    eligible_plants: frozenset[int] | None = None,
 ) -> bool:
     """Apply the NEISO winter fuel-security must-run floor (Component B).
 
@@ -422,6 +512,10 @@ def apply_winter_fuelsec_mustrun(
             cold-weather onset).
         min_event_hours: Steam multi-day event bridging (default 48 h).
         hours: LP horizon (defaults to the fleet availability width, else 8760).
+        eligible_plants: When given (``neiso_winter_fuelsec_conduct_roster``),
+            only rows whose ``plant_code`` is in the set are floored — the
+            measured-conduct program fleet (:func:`winter_fuelsec_conduct_roster`).
+            ``None`` (default) floors every fuel-secure row, byte-identical.
 
     Returns:
         ``True`` iff at least one unit-hour was floored, ``False`` (byte-identical)
@@ -432,12 +526,8 @@ def apply_winter_fuelsec_mustrun(
         return False
     # Lazy imports: match the harness pattern and avoid a module-load cycle
     # (transmission imports dispatch/fleet; eia_loader is heavy).
-    from market_sim.data.eia_loader import iso_zone_tmax
     from market_sim.data.floor_mechanisms import MECH_WINTER_FUELSEC
-    from market_sim.model.transmission import (
-        _bridge_flagged_runs,
-        _distribute_group_floor,
-    )
+    from market_sim.model.transmission import _distribute_group_floor
 
     if hours is None:
         avail = getattr(fleet_arrays, "availability", None)
@@ -464,24 +554,31 @@ def apply_winter_fuelsec_mustrun(
     # Per-zone cold-day gate: a committed steam boiler is a zone-local decision,
     # so the cold flag keys off each zone's own daily TMIN (unlike the pooled oil
     # budget). Classes present only in some zones are floored where they exist.
+    in_roster = (
+        np.ones(pmax.shape[0], dtype=bool)
+        if eligible_plants is None
+        else np.isin(
+            np.asarray(fleet_arrays.plant_code).astype(int),
+            np.fromiter(eligible_plants, dtype=int, count=len(eligible_plants)),
+        )
+    )
     for z_idx, zone in enumerate(zone_names):
-        temp_result = iso_zone_tmax(iso, year, T, zone=zone)
-        if temp_result is None:
-            continue  # import node / unmapped / forecast year with no pinned wx
-        _tmax, tmin = temp_result
-        if tmin is None:
+        # Cold winter hours below the NERC cold-onset, bridged, season-gated —
+        # the one window definition (winter_fuelsec_cold_window); None = import
+        # node / unmapped / forecast year with no pinned wx / no cold hour.
+        flagged = winter_fuelsec_cold_window(
+            iso,
+            year,
+            zone,
+            T,
+            tmin_threshold_c=tmin_threshold_c,
+            min_event_hours=min_event_hours,
+        )
+        if flagged is None:
             continue
-        tmin = np.asarray(tmin, dtype=float)
-        # Cold winter hours: below the NERC cold-onset AND inside the season.
-        flagged = (tmin < float(tmin_threshold_c)) & is_winter_hour
-        if not flagged.any():
-            continue
-        # Bridge multi-day cold events, then re-apply the season gate so a snap
-        # straddling the Mar/Apr boundary cannot leak a floor into spring.
-        flagged = _bridge_flagged_runs(flagged, int(min_event_hours)) & is_winter_hour
         frac = np.where(flagged, floor_pct, 0.0)
         for cls in plant_classes:
-            sel = (groups == cls) & (zone_idx == z_idx) & (pmax > 0.0)
+            sel = (groups == cls) & (zone_idx == z_idx) & (pmax > 0.0) & in_roster
             rows = np.flatnonzero(sel)
             if rows.size == 0:
                 continue

@@ -3636,6 +3636,11 @@ results/calibration/nwppnext5_20*/
 # miso-276: per-year shard legs stay out of main (rule 32(d)); the composite miso276_span is what registers.
 # Provenance (rule 33(d), not a recovery route): legs pinned at 2837e3c9, branches claude/miso276-arm-<Y>.
 results/calibration/miso276_arm_*/
+# SPP-86 (2026-09-26): per-year arm legs stay out of main (rule 32(d)); the composite spp86_arm_span is the keeper.
+# Provenance (rule 33(d)), full SHAs on claude/spp86-<y>: 2019 8e4ca7c32f66a3bb0e29bb1690f487fc1563a065,
+# 2020 d473b8821b88a9354ff294cfeb7e50fed90e4e90, 2021 cf3941b821eaf3df1e0d2e30d2542d9e6e38eece, 2022 0d30dbf1709a822dc9fac3a22be0da13e0c53caf,
+# 2023 b715262e6459e62b1db5b6470b1d6e869be9125f, 2024 c52cd4f7d7d73074fb34543576f61ef4f0f4801d, 2025 4ad4308dde1e1f478610230b3ae2b287e58c751d
+results/calibration/spp86_arm_20*/
 # R-CAISO-4 2019-21 keeper touchpoint composite IS committed (it folds into the keeper, rule 30):
 !results/calibration/rcaiso4_tp_2019_2021/
 
@@ -3647,3 +3652,19 @@ results/calibration/miso276_arm_*/
 #   2024 55a6a47d89f19d8de7769b271ec026e40c0fc26b (claude/pjmnext4-c1-2024)
 #   2025 9b2f10f775b3d6955a87bc2e8a52266d0e8c9215 (claude/pjmnext4-c1-2025)
 results/calibration/pjmnext4_c1_20*/
+# NWPP-NEXT-6 per-year shard legs (rule 32(d)/31): kept on local disk, never on main.
+results/calibration/nwppnext6a_20*/
+results/calibration/nwppnext6ab_20*/
+# soco-71 probe scratch + shard legs: kept out of main (rule 32(d)); composite soco71_span is what registers.
+# Legs (provenance, rule 33(d)): 2019 cb8fb831 2020 89a67b85 2021 0311fd54 2022 726ae0e7 2023 73093597 2024 049dd3b0 2025 476b2238
+results/calibration/_soco71/
+results/calibration/soco71_20[0-9][0-9]/
+# neiso-119 per-year shard legs: composed into neiso119_span, never committed (rule 32(d))
+results/calibration/neiso119_20*/
+
+# soco-72 probe scratch + shard legs: kept out of main (rule 32(d)); composite soco72_span is what registers.
+results/calibration/_soco72/
+results/calibration/soco72_20[0-9][0-9]/
+# NYISO-NEXT-3 per-year shard legs 2022-2025 (rule 32(d): kept out of main; the composite nyisonext3_span is registered; the 2021 leg IS its own registered bundle).
+# Legs (provenance, rule 33(d)): 2021 1f411bffe6104d096a3faa44fb4f51be47bf55c6 · 2022 6ad45aec642c6ae1b58698fd3abe93bc947a8c1c · 2023 c62da1f8a46d69544b1b0ba554abadecc06febc9 · 2024 6be240a8c97410e94e0a8dd1439a11f78b309dd0 · 2025 8b2063744565ffeb8229f1385c51792a10cc1d0a
+results/calibration/nyisonext3_202[2-5]/

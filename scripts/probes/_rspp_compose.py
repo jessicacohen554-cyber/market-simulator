@@ -78,6 +78,8 @@ MUST_AGREE = (
     # SPP-85: the net-load-mask repair of the CAMPD extracts. Every leg of a
     # composite must agree on it; --require pins its value (arm True).
     "unit_outage_netload_mask_repair",
+    # SPP-86: the coal outage share on the extract's own basis. Same contract.
+    "unit_outage_coal_extract_basis_share",
 )
 
 FIELDS = (

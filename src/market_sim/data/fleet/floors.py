@@ -723,6 +723,9 @@ def _resolve_drag_layup_shares(
         st_capacity_basis=getattr(config, "unit_outage_st_capacity_basis", False),
         per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
         extract_basis_share=getattr(config, "unit_outage_extract_basis_share", False),
+        coal_extract_basis_share=getattr(
+            config, "unit_outage_coal_extract_basis_share", False
+        ),
         # miso-266: the dispatched bin's own capacity as the denominator, for
         # the same additivity contract every basis argument here mirrors.
         lp_bin_capacity=lp_bin_capacity,

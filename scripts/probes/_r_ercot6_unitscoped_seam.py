@@ -4,7 +4,8 @@ Reads the stage caches _r_ercot5_availability_census.py writes (keeper recipe,
 bundle r_ercot5_hourgrain_span) for the keeper (A) and for each variant:
 B = --set ercot_dam_availability_event_cap_unit_scoped=true as coded;
 Bh = B with the shared-unit mask at the window factor's hour grain
-(--variant hgmask); C = finer-grain-wins (--variant finer).
+(--variant hgmask); C = finer-grain-wins (--variant finer); D = the R-ERCOT-7
+per-unit composition (--set ercot_dam_availability_event_cap_per_unit=true).
 Per year and class it reports the capability lift (TWh), split into the part up
 to the plant's own same-hour CEMS net output and the part above it; the
 below-CEMS gap before/after; the lift in hours the tranche's mean mc_base is
@@ -33,6 +34,10 @@ tags = {
     "B": "_ercot_dam_availability_event_cap_unit_scoped",
     "Bh": "_ercot_dam_availability_event_cap_unit_scoped_hgmask",
     "C": "_ercot_dam_availability_event_cap_unit_scoped_finer",
+    # R-ERCOT-7: the per-unit composition (--set ercot_dam_availability_event_cap_per_unit=true)
+    "D": "_ercot_dam_availability_event_cap_per_unit",
+    # R-ERCOT-7 sensitivity: residual-preserving per-unit (--variant resid)
+    "D2": "_ercot_dam_availability_event_cap_per_unit_resid",
 }
 out = {}
 rows = []

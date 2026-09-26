@@ -1,0 +1,4925 @@
+{
+ "2021": {
+  "arm": {
+   "footprint": {
+    "pmax": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "pmin": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "heat_rate": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "availability": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "min_gen": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "zone_idx": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "vom": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "mc_base": {
+     "identical": true,
+     "plants_moved": []
+    }
+   },
+   "plants": {
+    "8906:ST_GAS": {
+     "name": "Astoria",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      103.8,
+      338.6,
+      338.6,
+      137.8
+     ],
+     "tranche_pmax_arm": [
+      103.8,
+      338.6,
+      338.6,
+      137.8
+     ],
+     "tranche_mc_mean_control": [
+      46.96,
+      45.2,
+      45.2,
+      158.06
+     ],
+     "tranche_mc_mean_arm": [
+      46.96,
+      45.2,
+      45.2,
+      158.06
+     ],
+     "avail_twh_control": 6.4314,
+     "avail_twh_arm": 6.4314,
+     "min_gen_twh_control": 0.2524,
+     "min_gen_twh_arm": 0.2524,
+     "inmerit_twh_control": 2.8517,
+     "inmerit_twh_arm": 2.8517,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 3.2444,
+     "e923_twh": 0.6619,
+     "binding_h_keeper": 0,
+     "binding_bound_add_twh": 0.0
+    },
+    "2500:ST_GAS": {
+     "name": "Ravenswood",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      351.5,
+      560.1,
+      560.1,
+      259.7
+     ],
+     "tranche_pmax_arm": [
+      351.5,
+      560.1,
+      560.1,
+      259.7
+     ],
+     "tranche_mc_mean_control": [
+      52.8,
+      50.67,
+      50.67,
+      186.83
+     ],
+     "tranche_mc_mean_arm": [
+      52.8,
+      50.67,
+      50.67,
+      186.83
+     ],
+     "avail_twh_control": 10.3294,
+     "avail_twh_arm": 10.3294,
+     "min_gen_twh_control": 0.142,
+     "min_gen_twh_arm": 0.142,
+     "inmerit_twh_control": 1.0408,
+     "inmerit_twh_arm": 1.0408,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 1.5073,
+     "e923_twh": 0.4412,
+     "binding_h_keeper": 0,
+     "binding_bound_add_twh": 0.0
+    },
+    "2490:ST_GAS": {
+     "name": "Arthur Kill",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      255.4,
+      237.8,
+      237.8,
+      129.0
+     ],
+     "tranche_pmax_arm": [
+      255.4,
+      237.8,
+      237.8,
+      129.0
+     ],
+     "tranche_mc_mean_control": [
+      51.72,
+      49.7,
+      49.7,
+      178.99
+     ],
+     "tranche_mc_mean_arm": [
+      51.72,
+      49.7,
+      49.7,
+      178.99
+     ],
+     "avail_twh_control": 2.0794,
+     "avail_twh_arm": 2.0794,
+     "min_gen_twh_control": 0.3326,
+     "min_gen_twh_arm": 0.3326,
+     "inmerit_twh_control": 0.5124,
+     "inmerit_twh_arm": 0.5124,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.7796,
+     "e923_twh": 0.8748,
+     "binding_h_keeper": 3031,
+     "binding_bound_add_twh": 0.0
+    },
+    "2516:ST_GAS": {
+     "name": "Northport",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      409.2,
+      472.1,
+      472.1,
+      238.8
+     ],
+     "tranche_pmax_arm": [
+      409.2,
+      472.1,
+      472.1,
+      238.8
+     ],
+     "tranche_mc_mean_control": [
+      58.58,
+      56.24,
+      56.24,
+      206.25
+     ],
+     "tranche_mc_mean_arm": [
+      58.58,
+      56.24,
+      56.24,
+      206.25
+     ],
+     "avail_twh_control": 5.928,
+     "avail_twh_arm": 5.928,
+     "min_gen_twh_control": 1.5531,
+     "min_gen_twh_arm": 1.5531,
+     "inmerit_twh_control": 0.3696,
+     "inmerit_twh_arm": 0.3696,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 1.9027,
+     "e923_twh": 3.9491,
+     "binding_h_keeper": 5,
+     "binding_bound_add_twh": 0.0
+    },
+    "2511:ST_GAS": {
+     "name": "Barrett",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      56.2,
+      130.1,
+      130.1,
+      55.8
+     ],
+     "tranche_pmax_arm": [
+      56.2,
+      130.1,
+      130.1,
+      55.8
+     ],
+     "tranche_mc_mean_control": [
+      57.03,
+      54.76,
+      54.76,
+      200.11
+     ],
+     "tranche_mc_mean_arm": [
+      57.03,
+      54.76,
+      54.76,
+      200.11
+     ],
+     "avail_twh_control": 2.0268,
+     "avail_twh_arm": 2.0268,
+     "min_gen_twh_control": 0.531,
+     "min_gen_twh_arm": 0.531,
+     "inmerit_twh_control": 0.2843,
+     "inmerit_twh_arm": 0.2843,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.7566,
+     "e923_twh": 1.3686,
+     "binding_h_keeper": 4,
+     "binding_bound_add_twh": 0.0
+    },
+    "2625:ST_GAS": {
+     "name": "Bowline",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_pmax_arm": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_mc_mean_control": [
+      56.12,
+      53.88,
+      53.88,
+      197.38
+     ],
+     "tranche_mc_mean_arm": [
+      56.12,
+      53.88,
+      53.88,
+      197.38
+     ],
+     "avail_twh_control": 1.7053,
+     "avail_twh_arm": 1.7053,
+     "min_gen_twh_control": 0.0364,
+     "min_gen_twh_arm": 0.0364,
+     "inmerit_twh_control": 0.167,
+     "inmerit_twh_arm": 0.167,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.2023,
+     "e923_twh": 0.9792,
+     "binding_h_keeper": 5893,
+     "binding_bound_add_twh": 0.0
+    },
+    "8006:ST_GAS": {
+     "name": "Roseton",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      163.8,
+      430.1,
+      430.1,
+      180.7
+     ],
+     "tranche_pmax_arm": [
+      163.8,
+      430.1,
+      430.1,
+      180.7
+     ],
+     "tranche_mc_mean_control": [
+      58.14,
+      55.84,
+      55.84,
+      203.51
+     ],
+     "tranche_mc_mean_arm": [
+      58.14,
+      55.84,
+      55.84,
+      203.51
+     ],
+     "avail_twh_control": 0.476,
+     "avail_twh_arm": 0.476,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.0733,
+     "inmerit_twh_arm": 0.0733,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.0788,
+     "e923_twh": 0.1389,
+     "binding_h_keeper": 8011,
+     "binding_bound_add_twh": 0.0
+    }
+   }
+  },
+  "arm_sel": {
+   "footprint": {
+    "pmax": {
+     "identical": false,
+     "plants_moved": [
+      "2480:ST_GAS",
+      "2490:ST_GAS",
+      "2500:ST_GAS",
+      "2511:ST_GAS",
+      "2516:ST_GAS",
+      "2517:ST_GAS",
+      "50978:CC_REGULAR",
+      "52168:CC_CHP",
+      "54914:CC_CHP",
+      "55375:CC_REGULAR",
+      "57664:CC_REGULAR",
+      "8906:ST_GAS"
+     ]
+    },
+    "pmin": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "heat_rate": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "availability": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "min_gen": {
+     "identical": false,
+     "plants_moved": [
+      "2490:ST_GAS",
+      "2500:ST_GAS",
+      "2511:ST_GAS",
+      "2516:ST_GAS",
+      "8906:ST_GAS"
+     ]
+    },
+    "zone_idx": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "vom": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "mc_base": {
+     "identical": true,
+     "plants_moved": []
+    }
+   },
+   "plants": {
+    "8906:ST_GAS": {
+     "name": "Astoria",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      103.8,
+      338.6,
+      338.6,
+      137.8
+     ],
+     "tranche_pmax_arm": [
+      82.7,
+      349.1,
+      349.1,
+      137.8
+     ],
+     "tranche_mc_mean_control": [
+      46.96,
+      45.2,
+      45.2,
+      158.06
+     ],
+     "tranche_mc_mean_arm": [
+      46.96,
+      45.2,
+      45.2,
+      158.06
+     ],
+     "avail_twh_control": 6.4314,
+     "avail_twh_arm": 6.4314,
+     "min_gen_twh_control": 0.2524,
+     "min_gen_twh_arm": 0.2524,
+     "inmerit_twh_control": 2.8517,
+     "inmerit_twh_arm": 2.8682,
+     "econ_reach_up_twh": 0.0165,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 3.2444,
+     "e923_twh": 0.6619,
+     "binding_h_keeper": 0,
+     "binding_bound_add_twh": 0.0
+    },
+    "2500:ST_GAS": {
+     "name": "Ravenswood",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      351.5,
+      560.1,
+      560.1,
+      259.7
+     ],
+     "tranche_pmax_arm": [
+      147.2,
+      662.3,
+      662.3,
+      259.7
+     ],
+     "tranche_mc_mean_control": [
+      52.8,
+      50.67,
+      50.67,
+      186.83
+     ],
+     "tranche_mc_mean_arm": [
+      52.8,
+      50.67,
+      50.67,
+      186.83
+     ],
+     "avail_twh_control": 10.3294,
+     "avail_twh_arm": 10.3294,
+     "min_gen_twh_control": 0.142,
+     "min_gen_twh_arm": 0.142,
+     "inmerit_twh_control": 1.0408,
+     "inmerit_twh_arm": 1.1141,
+     "econ_reach_up_twh": 0.0732,
+     "econ_reach_down_twh": -0.0,
+     "model_twh_keeper": 1.5073,
+     "e923_twh": 0.4412,
+     "binding_h_keeper": 0,
+     "binding_bound_add_twh": 0.0
+    },
+    "2490:ST_GAS": {
+     "name": "Arthur Kill",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      255.4,
+      237.8,
+      237.8,
+      129.0
+     ],
+     "tranche_pmax_arm": [
+      94.6,
+      318.2,
+      318.2,
+      129.0
+     ],
+     "tranche_mc_mean_control": [
+      51.72,
+      49.7,
+      49.7,
+      178.99
+     ],
+     "tranche_mc_mean_arm": [
+      51.72,
+      49.7,
+      49.7,
+      178.99
+     ],
+     "avail_twh_control": 2.0794,
+     "avail_twh_arm": 2.0794,
+     "min_gen_twh_control": 0.3326,
+     "min_gen_twh_arm": 0.3326,
+     "inmerit_twh_control": 0.5124,
+     "inmerit_twh_arm": 0.5905,
+     "econ_reach_up_twh": 0.0781,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.7796,
+     "e923_twh": 0.8748,
+     "binding_h_keeper": 3031,
+     "binding_bound_add_twh": 0.0
+    },
+    "2516:ST_GAS": {
+     "name": "Northport",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      409.2,
+      472.1,
+      472.1,
+      238.8
+     ],
+     "tranche_pmax_arm": [
+      393.3,
+      480.0,
+      480.0,
+      238.8
+     ],
+     "tranche_mc_mean_control": [
+      58.58,
+      56.24,
+      56.24,
+      206.25
+     ],
+     "tranche_mc_mean_arm": [
+      58.58,
+      56.24,
+      56.24,
+      206.25
+     ],
+     "avail_twh_control": 5.928,
+     "avail_twh_arm": 5.928,
+     "min_gen_twh_control": 1.5531,
+     "min_gen_twh_arm": 1.5531,
+     "inmerit_twh_control": 0.3696,
+     "inmerit_twh_arm": 0.3733,
+     "econ_reach_up_twh": 0.0037,
+     "econ_reach_down_twh": -0.0,
+     "model_twh_keeper": 1.9027,
+     "e923_twh": 3.9491,
+     "binding_h_keeper": 5,
+     "binding_bound_add_twh": 0.0
+    },
+    "2511:ST_GAS": {
+     "name": "Barrett",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      56.2,
+      130.1,
+      130.1,
+      55.8
+     ],
+     "tranche_pmax_arm": [
+      55.1,
+      130.6,
+      130.6,
+      55.8
+     ],
+     "tranche_mc_mean_control": [
+      57.03,
+      54.76,
+      54.76,
+      200.11
+     ],
+     "tranche_mc_mean_arm": [
+      57.03,
+      54.76,
+      54.76,
+      200.11
+     ],
+     "avail_twh_control": 2.0268,
+     "avail_twh_arm": 2.0268,
+     "min_gen_twh_control": 0.531,
+     "min_gen_twh_arm": 0.531,
+     "inmerit_twh_control": 0.2843,
+     "inmerit_twh_arm": 0.285,
+     "econ_reach_up_twh": 0.0007,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.7566,
+     "e923_twh": 1.3686,
+     "binding_h_keeper": 4,
+     "binding_bound_add_twh": 0.0
+    },
+    "2625:ST_GAS": {
+     "name": "Bowline",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_pmax_arm": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_mc_mean_control": [
+      56.12,
+      53.88,
+      53.88,
+      197.38
+     ],
+     "tranche_mc_mean_arm": [
+      56.12,
+      53.88,
+      53.88,
+      197.38
+     ],
+     "avail_twh_control": 1.7053,
+     "avail_twh_arm": 1.7053,
+     "min_gen_twh_control": 0.0364,
+     "min_gen_twh_arm": 0.0364,
+     "inmerit_twh_control": 0.167,
+     "inmerit_twh_arm": 0.167,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.2023,
+     "e923_twh": 0.9792,
+     "binding_h_keeper": 5893,
+     "binding_bound_add_twh": 0.0
+    },
+    "8006:ST_GAS": {
+     "name": "Roseton",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      163.8,
+      430.1,
+      430.1,
+      180.7
+     ],
+     "tranche_pmax_arm": [
+      163.8,
+      430.1,
+      430.1,
+      180.7
+     ],
+     "tranche_mc_mean_control": [
+      58.14,
+      55.84,
+      55.84,
+      203.51
+     ],
+     "tranche_mc_mean_arm": [
+      58.14,
+      55.84,
+      55.84,
+      203.51
+     ],
+     "avail_twh_control": 0.476,
+     "avail_twh_arm": 0.476,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.0733,
+     "inmerit_twh_arm": 0.0733,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.0788,
+     "e923_twh": 0.1389,
+     "binding_h_keeper": 8011,
+     "binding_bound_add_twh": 0.0
+    },
+    "2480:ST_GAS": {
+     "name": "",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      153.2,
+      134.8,
+      134.8,
+      74.6
+     ],
+     "tranche_pmax_arm": [
+      89.5,
+      166.6,
+      166.6,
+      74.6
+     ],
+     "tranche_mc_mean_control": [
+      58.38,
+      56.06,
+      56.06,
+      204.61
+     ],
+     "tranche_mc_mean_arm": [
+      58.38,
+      56.06,
+      56.06,
+      204.61
+     ],
+     "avail_twh_control": 0.8054,
+     "avail_twh_arm": 0.8054,
+     "min_gen_twh_control": 0.0002,
+     "min_gen_twh_arm": 0.0002,
+     "inmerit_twh_control": 0.0153,
+     "inmerit_twh_arm": 0.0169,
+     "econ_reach_up_twh": 0.0015,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.016,
+     "e923_twh": 0.013,
+     "binding_h_keeper": 0,
+     "binding_bound_add_twh": 0.0
+    },
+    "2517:ST_GAS": {
+     "name": "",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      50.0,
+      138.6,
+      138.6,
+      57.8
+     ],
+     "tranche_pmax_arm": [
+      45.0,
+      141.1,
+      141.1,
+      57.8
+     ],
+     "tranche_mc_mean_control": [
+      60.43,
+      58.0,
+      58.0,
+      213.32
+     ],
+     "tranche_mc_mean_arm": [
+      60.43,
+      58.0,
+      58.0,
+      213.32
+     ],
+     "avail_twh_control": 1.1589,
+     "avail_twh_arm": 1.1589,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.0608,
+     "inmerit_twh_arm": 0.0613,
+     "econ_reach_up_twh": 0.0006,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.0709,
+     "e923_twh": 0.429,
+     "binding_h_keeper": 37,
+     "binding_bound_add_twh": 0.0
+    },
+    "50978:CC_REGULAR": {
+     "name": "",
+     "zone": "Upstate_West",
+     "tranche_pmax_control": [
+      69.8,
+      8.8,
+      8.8,
+      8.8,
+      8.8,
+      8.8,
+      8.8
+     ],
+     "tranche_pmax_arm": [
+      61.3,
+      10.2,
+      10.2,
+      10.2,
+      10.2,
+      10.2,
+      10.2
+     ],
+     "tranche_mc_mean_control": [
+      37.72,
+      39.5,
+      39.77,
+      40.05,
+      40.32,
+      40.59,
+      40.86
+     ],
+     "tranche_mc_mean_arm": [
+      37.72,
+      39.5,
+      39.77,
+      40.05,
+      40.32,
+      40.59,
+      40.86
+     ],
+     "avail_twh_control": 0.9528,
+     "avail_twh_arm": 0.9528,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.0764,
+     "inmerit_twh_arm": 0.0751,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0013,
+     "model_twh_keeper": 0.0692,
+     "e923_twh": 0.1391,
+     "binding_h_keeper": 504,
+     "binding_bound_add_twh": 0.0
+    },
+    "52168:CC_CHP": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      12.4,
+      2.3
+     ],
+     "tranche_pmax_arm": [
+      11.3,
+      3.3
+     ],
+     "tranche_mc_mean_control": [
+      20.32,
+      36.07
+     ],
+     "tranche_mc_mean_arm": [
+      20.32,
+      36.07
+     ],
+     "avail_twh_control": 0.1212,
+     "avail_twh_arm": 0.1212,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.121,
+     "inmerit_twh_arm": 0.121,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0001,
+     "model_twh_keeper": 0.1224,
+     "e923_twh": 0.0,
+     "binding_h_keeper": 8599,
+     "binding_bound_add_twh": 0.0
+    },
+    "54914:CC_CHP": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      215.4,
+      16.3,
+      16.3,
+      16.3,
+      16.3,
+      16.3,
+      16.3
+     ],
+     "tranche_pmax_arm": [
+      134.9,
+      29.7,
+      29.7,
+      29.7,
+      29.7,
+      29.7,
+      29.7
+     ],
+     "tranche_mc_mean_control": [
+      36.29,
+      39.55,
+      40.95,
+      42.34,
+      43.73,
+      45.12,
+      46.52
+     ],
+     "tranche_mc_mean_arm": [
+      36.29,
+      39.55,
+      40.95,
+      42.34,
+      43.73,
+      45.12,
+      46.52
+     ],
+     "avail_twh_control": 2.4057,
+     "avail_twh_arm": 2.4057,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 2.1602,
+     "inmerit_twh_arm": 1.9988,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.1614,
+     "model_twh_keeper": 2.1858,
+     "e923_twh": 1.9903,
+     "binding_h_keeper": 4715,
+     "binding_bound_add_twh": 0.0
+    },
+    "55375:CC_REGULAR": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      427.3,
+      24.2,
+      24.2,
+      24.2,
+      24.2,
+      24.2,
+      24.2,
+      37.8
+     ],
+     "tranche_pmax_arm": [
+      369.9,
+      33.8,
+      33.8,
+      33.8,
+      33.8,
+      33.8,
+      33.8,
+      37.8
+     ],
+     "tranche_mc_mean_control": [
+      30.06,
+      31.55,
+      31.77,
+      32.0,
+      32.23,
+      32.46,
+      32.69,
+      67.01
+     ],
+     "tranche_mc_mean_arm": [
+      30.06,
+      31.55,
+      31.77,
+      32.0,
+      32.23,
+      32.46,
+      32.69,
+      67.01
+     ],
+     "avail_twh_control": 3.9831,
+     "avail_twh_arm": 3.9831,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 3.7376,
+     "inmerit_twh_arm": 3.7375,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0001,
+     "model_twh_keeper": 3.7413,
+     "e923_twh": 3.0624,
+     "binding_h_keeper": 1755,
+     "binding_bound_add_twh": 0.0
+    },
+    "57664:CC_REGULAR": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      292.5,
+      41.3,
+      41.3,
+      41.3,
+      41.3,
+      41.3,
+      41.3,
+      109.8
+     ],
+     "tranche_pmax_arm": [
+      252.8,
+      47.9,
+      47.9,
+      47.9,
+      47.9,
+      47.9,
+      47.9,
+      109.8
+     ],
+     "tranche_mc_mean_control": [
+      30.58,
+      32.07,
+      32.3,
+      32.53,
+      32.76,
+      32.99,
+      33.22,
+      67.76
+     ],
+     "tranche_mc_mean_arm": [
+      30.58,
+      32.07,
+      32.3,
+      32.53,
+      32.76,
+      32.99,
+      33.22,
+      67.76
+     ],
+     "avail_twh_control": 4.0114,
+     "avail_twh_arm": 4.0114,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 3.3371,
+     "inmerit_twh_arm": 3.337,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0001,
+     "model_twh_keeper": 3.3126,
+     "e923_twh": 2.8374,
+     "binding_h_keeper": 1812,
+     "binding_bound_add_twh": 0.0
+    }
+   }
+  }
+ },
+ "2022": {
+  "arm": {
+   "footprint": {
+    "pmax": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "pmin": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "heat_rate": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "availability": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "min_gen": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "zone_idx": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "vom": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "mc_base": {
+     "identical": true,
+     "plants_moved": []
+    }
+   },
+   "plants": {
+    "8906:ST_GAS": {
+     "name": "Astoria",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      104.3,
+      340.2,
+      340.2,
+      138.5
+     ],
+     "tranche_pmax_arm": [
+      104.3,
+      340.2,
+      340.2,
+      138.5
+     ],
+     "tranche_mc_mean_control": [
+      81.83,
+      78.51,
+      78.51,
+      290.84
+     ],
+     "tranche_mc_mean_arm": [
+      81.83,
+      78.51,
+      78.51,
+      290.84
+     ],
+     "avail_twh_control": 6.5749,
+     "avail_twh_arm": 6.5749,
+     "min_gen_twh_control": 0.3018,
+     "min_gen_twh_arm": 0.3018,
+     "inmerit_twh_control": 3.2432,
+     "inmerit_twh_arm": 3.2432,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 3.6446,
+     "e923_twh": 0.8277,
+     "binding_h_keeper": 8,
+     "binding_bound_add_twh": 0.0
+    },
+    "2500:ST_GAS": {
+     "name": "Ravenswood",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      351.2,
+      559.7,
+      559.7,
+      259.5
+     ],
+     "tranche_pmax_arm": [
+      351.2,
+      559.7,
+      559.7,
+      259.5
+     ],
+     "tranche_mc_mean_control": [
+      91.98,
+      88.08,
+      88.08,
+      338.01
+     ],
+     "tranche_mc_mean_arm": [
+      91.98,
+      88.08,
+      88.08,
+      338.01
+     ],
+     "avail_twh_control": 1.9666,
+     "avail_twh_arm": 1.9666,
+     "min_gen_twh_control": 0.1914,
+     "min_gen_twh_arm": 0.1914,
+     "inmerit_twh_control": 0.7516,
+     "inmerit_twh_arm": 0.7516,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.8778,
+     "e923_twh": 0.479,
+     "binding_h_keeper": 3179,
+     "binding_bound_add_twh": 0.0
+    },
+    "2490:ST_GAS": {
+     "name": "Arthur Kill",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      257.0,
+      239.3,
+      239.3,
+      129.8
+     ],
+     "tranche_pmax_arm": [
+      257.0,
+      239.3,
+      239.3,
+      129.8
+     ],
+     "tranche_mc_mean_control": [
+      93.88,
+      89.96,
+      89.96,
+      340.59
+     ],
+     "tranche_mc_mean_arm": [
+      93.88,
+      89.96,
+      89.96,
+      340.59
+     ],
+     "avail_twh_control": 2.6355,
+     "avail_twh_arm": 2.6355,
+     "min_gen_twh_control": 0.3624,
+     "min_gen_twh_arm": 0.3624,
+     "inmerit_twh_control": 0.7573,
+     "inmerit_twh_arm": 0.7573,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 1.0387,
+     "e923_twh": 0.9597,
+     "binding_h_keeper": 1414,
+     "binding_bound_add_twh": 0.0
+    },
+    "2516:ST_GAS": {
+     "name": "Northport",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      409.2,
+      472.1,
+      472.1,
+      238.8
+     ],
+     "tranche_pmax_arm": [
+      409.2,
+      472.1,
+      472.1,
+      238.8
+     ],
+     "tranche_mc_mean_control": [
+      107.56,
+      103.0,
+      103.0,
+      395.06
+     ],
+     "tranche_mc_mean_arm": [
+      107.56,
+      103.0,
+      103.0,
+      395.06
+     ],
+     "avail_twh_control": 4.8682,
+     "avail_twh_arm": 4.8682,
+     "min_gen_twh_control": 1.2755,
+     "min_gen_twh_arm": 1.2755,
+     "inmerit_twh_control": 0.6199,
+     "inmerit_twh_arm": 0.6199,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 1.7442,
+     "e923_twh": 2.9,
+     "binding_h_keeper": 388,
+     "binding_bound_add_twh": 0.0
+    },
+    "2511:ST_GAS": {
+     "name": "Barrett",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      56.2,
+      130.1,
+      130.1,
+      55.8
+     ],
+     "tranche_pmax_arm": [
+      56.2,
+      130.1,
+      130.1,
+      55.8
+     ],
+     "tranche_mc_mean_control": [
+      104.63,
+      100.21,
+      100.21,
+      383.28
+     ],
+     "tranche_mc_mean_arm": [
+      104.63,
+      100.21,
+      100.21,
+      383.28
+     ],
+     "avail_twh_control": 1.7716,
+     "avail_twh_arm": 1.7716,
+     "min_gen_twh_control": 0.4641,
+     "min_gen_twh_arm": 0.4641,
+     "inmerit_twh_control": 0.2501,
+     "inmerit_twh_arm": 0.2501,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.6375,
+     "e923_twh": 1.2005,
+     "binding_h_keeper": 2,
+     "binding_bound_add_twh": 0.0
+    },
+    "2625:ST_GAS": {
+     "name": "Bowline",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_pmax_arm": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_mc_mean_control": [
+      102.8,
+      98.44,
+      98.44,
+      377.66
+     ],
+     "tranche_mc_mean_arm": [
+      102.8,
+      98.44,
+      98.44,
+      377.66
+     ],
+     "avail_twh_control": 2.2378,
+     "avail_twh_arm": 2.2378,
+     "min_gen_twh_control": 0.0319,
+     "min_gen_twh_arm": 0.0319,
+     "inmerit_twh_control": 0.3835,
+     "inmerit_twh_arm": 0.3835,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.4344,
+     "e923_twh": 1.4656,
+     "binding_h_keeper": 5386,
+     "binding_bound_add_twh": 0.0
+    },
+    "8006:ST_GAS": {
+     "name": "Roseton",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      82.4,
+      216.2,
+      216.2,
+      90.9
+     ],
+     "tranche_pmax_arm": [
+      82.4,
+      216.2,
+      216.2,
+      90.9
+     ],
+     "tranche_mc_mean_control": [
+      103.45,
+      99.12,
+      99.12,
+      375.97
+     ],
+     "tranche_mc_mean_arm": [
+      103.45,
+      99.12,
+      99.12,
+      375.97
+     ],
+     "avail_twh_control": 0.3439,
+     "avail_twh_arm": 0.3439,
+     "min_gen_twh_control": 0.0302,
+     "min_gen_twh_arm": 0.0302,
+     "inmerit_twh_control": 0.089,
+     "inmerit_twh_arm": 0.089,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.0979,
+     "e923_twh": 0.4777,
+     "binding_h_keeper": 8101,
+     "binding_bound_add_twh": 0.0
+    }
+   }
+  },
+  "arm_sel": {
+   "footprint": {
+    "pmax": {
+     "identical": false,
+     "plants_moved": [
+      "2480:ST_GAS",
+      "2490:ST_GAS",
+      "2500:ST_GAS",
+      "2511:ST_GAS",
+      "2516:ST_GAS",
+      "2517:ST_GAS",
+      "50978:CC_REGULAR",
+      "52168:CC_CHP",
+      "54914:CC_CHP",
+      "55375:CC_REGULAR",
+      "57664:CC_REGULAR",
+      "8906:ST_GAS"
+     ]
+    },
+    "pmin": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "heat_rate": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "availability": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "min_gen": {
+     "identical": false,
+     "plants_moved": [
+      "2490:ST_GAS",
+      "2500:ST_GAS",
+      "2511:ST_GAS",
+      "2516:ST_GAS",
+      "8906:ST_GAS"
+     ]
+    },
+    "zone_idx": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "vom": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "mc_base": {
+     "identical": true,
+     "plants_moved": []
+    }
+   },
+   "plants": {
+    "8906:ST_GAS": {
+     "name": "Astoria",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      104.3,
+      340.2,
+      340.2,
+      138.5
+     ],
+     "tranche_pmax_arm": [
+      83.1,
+      350.8,
+      350.8,
+      138.5
+     ],
+     "tranche_mc_mean_control": [
+      81.83,
+      78.51,
+      78.51,
+      290.84
+     ],
+     "tranche_mc_mean_arm": [
+      81.83,
+      78.51,
+      78.51,
+      290.84
+     ],
+     "avail_twh_control": 6.5749,
+     "avail_twh_arm": 6.5749,
+     "min_gen_twh_control": 0.3018,
+     "min_gen_twh_arm": 0.3018,
+     "inmerit_twh_control": 3.2432,
+     "inmerit_twh_arm": 3.2555,
+     "econ_reach_up_twh": 0.0123,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 3.6446,
+     "e923_twh": 0.8277,
+     "binding_h_keeper": 8,
+     "binding_bound_add_twh": 0.0
+    },
+    "2500:ST_GAS": {
+     "name": "Ravenswood",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      351.2,
+      559.7,
+      559.7,
+      259.5
+     ],
+     "tranche_pmax_arm": [
+      147.1,
+      661.8,
+      661.8,
+      259.5
+     ],
+     "tranche_mc_mean_control": [
+      91.98,
+      88.08,
+      88.08,
+      338.01
+     ],
+     "tranche_mc_mean_arm": [
+      91.98,
+      88.08,
+      88.08,
+      338.01
+     ],
+     "avail_twh_control": 1.9666,
+     "avail_twh_arm": 1.9666,
+     "min_gen_twh_control": 0.1914,
+     "min_gen_twh_arm": 0.1914,
+     "inmerit_twh_control": 0.7516,
+     "inmerit_twh_arm": 0.7735,
+     "econ_reach_up_twh": 0.0219,
+     "econ_reach_down_twh": -0.0,
+     "model_twh_keeper": 0.8778,
+     "e923_twh": 0.479,
+     "binding_h_keeper": 3179,
+     "binding_bound_add_twh": 0.0
+    },
+    "2490:ST_GAS": {
+     "name": "Arthur Kill",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      257.0,
+      239.3,
+      239.3,
+      129.8
+     ],
+     "tranche_pmax_arm": [
+      95.2,
+      320.2,
+      320.2,
+      129.8
+     ],
+     "tranche_mc_mean_control": [
+      93.88,
+      89.96,
+      89.96,
+      340.59
+     ],
+     "tranche_mc_mean_arm": [
+      93.88,
+      89.96,
+      89.96,
+      340.59
+     ],
+     "avail_twh_control": 2.6355,
+     "avail_twh_arm": 2.6355,
+     "min_gen_twh_control": 0.3624,
+     "min_gen_twh_arm": 0.3624,
+     "inmerit_twh_control": 0.7573,
+     "inmerit_twh_arm": 0.7919,
+     "econ_reach_up_twh": 0.0346,
+     "econ_reach_down_twh": -0.0,
+     "model_twh_keeper": 1.0387,
+     "e923_twh": 0.9597,
+     "binding_h_keeper": 1414,
+     "binding_bound_add_twh": 0.0
+    },
+    "2516:ST_GAS": {
+     "name": "Northport",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      409.2,
+      472.1,
+      472.1,
+      238.8
+     ],
+     "tranche_pmax_arm": [
+      393.3,
+      480.0,
+      480.0,
+      238.8
+     ],
+     "tranche_mc_mean_control": [
+      107.56,
+      103.0,
+      103.0,
+      395.06
+     ],
+     "tranche_mc_mean_arm": [
+      107.56,
+      103.0,
+      103.0,
+      395.06
+     ],
+     "avail_twh_control": 4.8682,
+     "avail_twh_arm": 4.8682,
+     "min_gen_twh_control": 1.2755,
+     "min_gen_twh_arm": 1.2755,
+     "inmerit_twh_control": 0.6199,
+     "inmerit_twh_arm": 0.6227,
+     "econ_reach_up_twh": 0.0028,
+     "econ_reach_down_twh": -0.0,
+     "model_twh_keeper": 1.7442,
+     "e923_twh": 2.9,
+     "binding_h_keeper": 388,
+     "binding_bound_add_twh": 0.0
+    },
+    "2511:ST_GAS": {
+     "name": "Barrett",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      56.2,
+      130.1,
+      130.1,
+      55.8
+     ],
+     "tranche_pmax_arm": [
+      55.1,
+      130.6,
+      130.6,
+      55.8
+     ],
+     "tranche_mc_mean_control": [
+      104.63,
+      100.21,
+      100.21,
+      383.28
+     ],
+     "tranche_mc_mean_arm": [
+      104.63,
+      100.21,
+      100.21,
+      383.28
+     ],
+     "avail_twh_control": 1.7716,
+     "avail_twh_arm": 1.7716,
+     "min_gen_twh_control": 0.4641,
+     "min_gen_twh_arm": 0.4641,
+     "inmerit_twh_control": 0.2501,
+     "inmerit_twh_arm": 0.2505,
+     "econ_reach_up_twh": 0.0004,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.6375,
+     "e923_twh": 1.2005,
+     "binding_h_keeper": 2,
+     "binding_bound_add_twh": 0.0
+    },
+    "2625:ST_GAS": {
+     "name": "Bowline",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_pmax_arm": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_mc_mean_control": [
+      102.8,
+      98.44,
+      98.44,
+      377.66
+     ],
+     "tranche_mc_mean_arm": [
+      102.8,
+      98.44,
+      98.44,
+      377.66
+     ],
+     "avail_twh_control": 2.2378,
+     "avail_twh_arm": 2.2378,
+     "min_gen_twh_control": 0.0319,
+     "min_gen_twh_arm": 0.0319,
+     "inmerit_twh_control": 0.3835,
+     "inmerit_twh_arm": 0.3835,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.4344,
+     "e923_twh": 1.4656,
+     "binding_h_keeper": 5386,
+     "binding_bound_add_twh": 0.0
+    },
+    "8006:ST_GAS": {
+     "name": "Roseton",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      82.4,
+      216.2,
+      216.2,
+      90.9
+     ],
+     "tranche_pmax_arm": [
+      82.4,
+      216.2,
+      216.2,
+      90.9
+     ],
+     "tranche_mc_mean_control": [
+      103.45,
+      99.12,
+      99.12,
+      375.97
+     ],
+     "tranche_mc_mean_arm": [
+      103.45,
+      99.12,
+      99.12,
+      375.97
+     ],
+     "avail_twh_control": 0.3439,
+     "avail_twh_arm": 0.3439,
+     "min_gen_twh_control": 0.0302,
+     "min_gen_twh_arm": 0.0302,
+     "inmerit_twh_control": 0.089,
+     "inmerit_twh_arm": 0.089,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.0979,
+     "e923_twh": 0.4777,
+     "binding_h_keeper": 8101,
+     "binding_bound_add_twh": 0.0
+    },
+    "2480:ST_GAS": {
+     "name": "",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      153.2,
+      134.8,
+      134.8,
+      74.6
+     ],
+     "tranche_pmax_arm": [
+      89.5,
+      166.6,
+      166.6,
+      74.6
+     ],
+     "tranche_mc_mean_control": [
+      108.14,
+      103.56,
+      103.56,
+      396.53
+     ],
+     "tranche_mc_mean_arm": [
+      108.14,
+      103.56,
+      103.56,
+      396.53
+     ],
+     "avail_twh_control": 0.3594,
+     "avail_twh_arm": 0.3594,
+     "min_gen_twh_control": 0.0008,
+     "min_gen_twh_arm": 0.0008,
+     "inmerit_twh_control": 0.044,
+     "inmerit_twh_arm": 0.0467,
+     "econ_reach_up_twh": 0.0027,
+     "econ_reach_down_twh": -0.0,
+     "model_twh_keeper": 0.0467,
+     "e923_twh": 0.0155,
+     "binding_h_keeper": 281,
+     "binding_bound_add_twh": 0.0
+    },
+    "2517:ST_GAS": {
+     "name": "",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      50.0,
+      138.6,
+      138.6,
+      57.8
+     ],
+     "tranche_pmax_arm": [
+      45.0,
+      141.1,
+      141.1,
+      57.8
+     ],
+     "tranche_mc_mean_control": [
+      113.19,
+      108.38,
+      108.38,
+      416.49
+     ],
+     "tranche_mc_mean_arm": [
+      113.19,
+      108.38,
+      108.38,
+      416.49
+     ],
+     "avail_twh_control": 1.6227,
+     "avail_twh_arm": 1.6227,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.1065,
+     "inmerit_twh_arm": 0.107,
+     "econ_reach_up_twh": 0.0004,
+     "econ_reach_down_twh": 0.0
+    },
+    "50978:CC_REGULAR": {
+     "name": "",
+     "zone": "Upstate_West",
+     "tranche_pmax_control": [
+      69.8,
+      8.8,
+      8.8,
+      8.8,
+      8.8,
+      8.8,
+      8.8
+     ],
+     "tranche_pmax_arm": [
+      61.3,
+      10.2,
+      10.2,
+      10.2,
+      10.2,
+      10.2,
+      10.2
+     ],
+     "tranche_mc_mean_control": [
+      58.22,
+      61.07,
+      61.51,
+      61.95,
+      62.39,
+      62.83,
+      63.27
+     ],
+     "tranche_mc_mean_arm": [
+      58.22,
+      61.07,
+      61.51,
+      61.95,
+      62.39,
+      62.83,
+      63.27
+     ],
+     "avail_twh_control": 0.9528,
+     "avail_twh_arm": 0.9528,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.1622,
+     "inmerit_twh_arm": 0.1595,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0027,
+     "model_twh_keeper": 0.1484,
+     "e923_twh": 0.1527,
+     "binding_h_keeper": 948,
+     "binding_bound_add_twh": 0.0
+    },
+    "52168:CC_CHP": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      12.4,
+      2.3
+     ],
+     "tranche_pmax_arm": [
+      11.3,
+      3.3
+     ],
+     "tranche_mc_mean_control": [
+      44.95,
+      85.54
+     ],
+     "tranche_mc_mean_arm": [
+      44.95,
+      85.54
+     ],
+     "avail_twh_control": 0.1212,
+     "avail_twh_arm": 0.1212,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.11,
+     "inmerit_twh_arm": 0.1048,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0052,
+     "model_twh_keeper": 0.2204,
+     "e923_twh": 0.1742,
+     "binding_h_keeper": 8609,
+     "binding_bound_add_twh": 0.0
+    },
+    "54914:CC_CHP": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      215.4,
+      16.3,
+      16.3,
+      16.3,
+      16.3,
+      16.3,
+      16.3
+     ],
+     "tranche_pmax_arm": [
+      134.9,
+      29.7,
+      29.7,
+      29.7,
+      29.7,
+      29.7,
+      29.7
+     ],
+     "tranche_mc_mean_control": [
+      60.91,
+      66.72,
+      69.2,
+      71.68,
+      74.15,
+      76.63,
+      79.11
+     ],
+     "tranche_mc_mean_arm": [
+      60.91,
+      66.72,
+      69.2,
+      71.68,
+      74.15,
+      76.63,
+      79.11
+     ],
+     "avail_twh_control": 2.3103,
+     "avail_twh_arm": 2.3103,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 2.1835,
+     "inmerit_twh_arm": 2.0841,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0994,
+     "model_twh_keeper": 2.1973,
+     "e923_twh": 1.9657,
+     "binding_h_keeper": 5817,
+     "binding_bound_add_twh": 0.0
+    },
+    "55375:CC_REGULAR": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      427.3,
+      24.2,
+      24.2,
+      24.2,
+      24.2,
+      24.2,
+      24.2,
+      37.8
+     ],
+     "tranche_pmax_arm": [
+      369.9,
+      33.8,
+      33.8,
+      33.8,
+      33.8,
+      33.8,
+      33.8,
+      37.8
+     ],
+     "tranche_mc_mean_control": [
+      53.69,
+      56.49,
+      56.92,
+      57.35,
+      57.78,
+      58.21,
+      58.64,
+      123.35
+     ],
+     "tranche_mc_mean_arm": [
+      53.69,
+      56.49,
+      56.92,
+      57.35,
+      57.78,
+      58.21,
+      58.64,
+      123.35
+     ],
+     "avail_twh_control": 4.7642,
+     "avail_twh_arm": 4.7642,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 4.4796,
+     "inmerit_twh_arm": 4.4796,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0,
+     "model_twh_keeper": 4.41,
+     "e923_twh": 3.6217,
+     "binding_h_keeper": 875,
+     "binding_bound_add_twh": 0.0
+    },
+    "57664:CC_REGULAR": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      292.5,
+      41.3,
+      41.3,
+      41.3,
+      41.3,
+      41.3,
+      41.3,
+      109.8
+     ],
+     "tranche_pmax_arm": [
+      252.8,
+      47.9,
+      47.9,
+      47.9,
+      47.9,
+      47.9,
+      47.9,
+      109.8
+     ],
+     "tranche_mc_mean_control": [
+      54.3,
+      57.1,
+      57.54,
+      57.97,
+      58.4,
+      58.83,
+      59.26,
+      124.25
+     ],
+     "tranche_mc_mean_arm": [
+      54.3,
+      57.1,
+      57.54,
+      57.97,
+      58.4,
+      58.83,
+      59.26,
+      124.25
+     ],
+     "avail_twh_control": 4.777,
+     "avail_twh_arm": 4.777,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 3.9977,
+     "inmerit_twh_arm": 3.9977,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0,
+     "model_twh_keeper": 3.9327,
+     "e923_twh": 3.5861,
+     "binding_h_keeper": 996,
+     "binding_bound_add_twh": 0.0
+    }
+   }
+  }
+ },
+ "2023": {
+  "arm": {
+   "footprint": {
+    "pmax": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "pmin": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "heat_rate": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "availability": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "min_gen": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "zone_idx": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "vom": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "mc_base": {
+     "identical": true,
+     "plants_moved": []
+    }
+   },
+   "plants": {
+    "8906:ST_GAS": {
+     "name": "Astoria",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      104.3,
+      340.2,
+      340.2,
+      138.5
+     ],
+     "tranche_pmax_arm": [
+      104.3,
+      340.2,
+      340.2,
+      138.5
+     ],
+     "tranche_mc_mean_control": [
+      33.5,
+      32.5,
+      32.5,
+      96.72
+     ],
+     "tranche_mc_mean_arm": [
+      33.5,
+      32.5,
+      32.5,
+      96.72
+     ],
+     "avail_twh_control": 5.9449,
+     "avail_twh_arm": 5.9449,
+     "min_gen_twh_control": 0.2854,
+     "min_gen_twh_arm": 0.2854,
+     "inmerit_twh_control": 3.1794,
+     "inmerit_twh_arm": 3.1794,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 3.4911,
+     "e923_twh": 0.7289,
+     "binding_h_keeper": 10,
+     "binding_bound_add_twh": 0.0
+    },
+    "2500:ST_GAS": {
+     "name": "Ravenswood",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      351.3,
+      559.8,
+      559.8,
+      259.5
+     ],
+     "tranche_pmax_arm": [
+      351.3,
+      559.8,
+      559.8,
+      259.5
+     ],
+     "tranche_mc_mean_control": [
+      35.31,
+      34.11,
+      34.11,
+      111.01
+     ],
+     "tranche_mc_mean_arm": [
+      35.31,
+      34.11,
+      34.11,
+      111.01
+     ],
+     "avail_twh_control": 9.7377,
+     "avail_twh_arm": 9.7377,
+     "min_gen_twh_control": 0.2982,
+     "min_gen_twh_arm": 0.2982,
+     "inmerit_twh_control": 3.3893,
+     "inmerit_twh_arm": 3.3893,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 3.9091,
+     "e923_twh": 0.7924,
+     "binding_h_keeper": 3,
+     "binding_bound_add_twh": 0.0
+    },
+    "2490:ST_GAS": {
+     "name": "Arthur Kill",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      262.8,
+      244.7,
+      244.7,
+      132.7
+     ],
+     "tranche_pmax_arm": [
+      262.8,
+      244.7,
+      244.7,
+      132.7
+     ],
+     "tranche_mc_mean_control": [
+      36.99,
+      35.78,
+      35.78,
+      113.01
+     ],
+     "tranche_mc_mean_arm": [
+      36.99,
+      35.78,
+      35.78,
+      113.01
+     ],
+     "avail_twh_control": 5.2385,
+     "avail_twh_arm": 5.2385,
+     "min_gen_twh_control": 0.3076,
+     "min_gen_twh_arm": 0.3076,
+     "inmerit_twh_control": 1.1352,
+     "inmerit_twh_arm": 1.1352,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 1.4378,
+     "e923_twh": 1.0437,
+     "binding_h_keeper": 7,
+     "binding_bound_add_twh": 0.0
+    },
+    "2516:ST_GAS": {
+     "name": "Northport",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      409.2,
+      472.1,
+      472.1,
+      238.8
+     ],
+     "tranche_pmax_arm": [
+      409.2,
+      472.1,
+      472.1,
+      238.8
+     ],
+     "tranche_mc_mean_control": [
+      47.86,
+      46.13,
+      46.13,
+      157.13
+     ],
+     "tranche_mc_mean_arm": [
+      47.86,
+      46.13,
+      46.13,
+      157.13
+     ],
+     "avail_twh_control": 4.4786,
+     "avail_twh_arm": 4.4786,
+     "min_gen_twh_control": 1.1151,
+     "min_gen_twh_arm": 1.1151,
+     "inmerit_twh_control": 0.338,
+     "inmerit_twh_arm": 0.338,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 1.446,
+     "e923_twh": 2.3902,
+     "binding_h_keeper": 679,
+     "binding_bound_add_twh": 0.0
+    },
+    "2511:ST_GAS": {
+     "name": "Barrett",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      56.2,
+      130.1,
+      130.1,
+      55.8
+     ],
+     "tranche_pmax_arm": [
+      56.2,
+      130.1,
+      130.1,
+      55.8
+     ],
+     "tranche_mc_mean_control": [
+      47.16,
+      45.46,
+      45.46,
+      153.98
+     ],
+     "tranche_mc_mean_arm": [
+      47.16,
+      45.46,
+      45.46,
+      153.98
+     ],
+     "avail_twh_control": 1.8804,
+     "avail_twh_arm": 1.8804,
+     "min_gen_twh_control": 0.4927,
+     "min_gen_twh_arm": 0.4927,
+     "inmerit_twh_control": 0.2024,
+     "inmerit_twh_arm": 0.2024,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.6508,
+     "e923_twh": 1.2994,
+     "binding_h_keeper": 3,
+     "binding_bound_add_twh": 0.0
+    },
+    "2625:ST_GAS": {
+     "name": "Bowline",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_pmax_arm": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_mc_mean_control": [
+      45.75,
+      44.1,
+      44.1,
+      149.69
+     ],
+     "tranche_mc_mean_arm": [
+      45.75,
+      44.1,
+      44.1,
+      149.69
+     ],
+     "avail_twh_control": 1.2333,
+     "avail_twh_arm": 1.2333,
+     "min_gen_twh_control": 0.0519,
+     "min_gen_twh_arm": 0.0519,
+     "inmerit_twh_control": 0.1234,
+     "inmerit_twh_arm": 0.1234,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.1603,
+     "e923_twh": 0.9358,
+     "binding_h_keeper": 6384,
+     "binding_bound_add_twh": 0.0
+    },
+    "8006:ST_GAS": {
+     "name": "Roseton",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      166.3,
+      436.4,
+      436.4,
+      183.4
+     ],
+     "tranche_pmax_arm": [
+      166.3,
+      436.4,
+      436.4,
+      183.4
+     ],
+     "tranche_mc_mean_control": [
+      47.17,
+      45.48,
+      45.48,
+      153.14
+     ],
+     "tranche_mc_mean_arm": [
+      47.17,
+      45.48,
+      45.48,
+      153.14
+     ],
+     "avail_twh_control": 0.7812,
+     "avail_twh_arm": 0.7812,
+     "min_gen_twh_control": 0.0012,
+     "min_gen_twh_arm": 0.0012,
+     "inmerit_twh_control": 0.1049,
+     "inmerit_twh_arm": 0.1049,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.1186,
+     "e923_twh": 0.1927,
+     "binding_h_keeper": 7658,
+     "binding_bound_add_twh": 0.0
+    }
+   }
+  },
+  "arm_sel": {
+   "footprint": {
+    "pmax": {
+     "identical": false,
+     "plants_moved": [
+      "2480:ST_GAS",
+      "2490:ST_GAS",
+      "2500:ST_GAS",
+      "2511:ST_GAS",
+      "2516:ST_GAS",
+      "2517:ST_GAS",
+      "50978:CC_REGULAR",
+      "52168:CC_CHP",
+      "54914:CC_CHP",
+      "55375:CC_REGULAR",
+      "57664:CC_REGULAR",
+      "8906:ST_GAS"
+     ]
+    },
+    "pmin": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "heat_rate": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "availability": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "min_gen": {
+     "identical": false,
+     "plants_moved": [
+      "2490:ST_GAS",
+      "2500:ST_GAS",
+      "2511:ST_GAS",
+      "2516:ST_GAS",
+      "8906:ST_GAS"
+     ]
+    },
+    "zone_idx": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "vom": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "mc_base": {
+     "identical": true,
+     "plants_moved": []
+    }
+   },
+   "plants": {
+    "8906:ST_GAS": {
+     "name": "Astoria",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      104.3,
+      340.2,
+      340.2,
+      138.5
+     ],
+     "tranche_pmax_arm": [
+      83.1,
+      350.8,
+      350.8,
+      138.5
+     ],
+     "tranche_mc_mean_control": [
+      33.5,
+      32.5,
+      32.5,
+      96.72
+     ],
+     "tranche_mc_mean_arm": [
+      33.5,
+      32.5,
+      32.5,
+      96.72
+     ],
+     "avail_twh_control": 5.9449,
+     "avail_twh_arm": 5.9449,
+     "min_gen_twh_control": 0.2854,
+     "min_gen_twh_arm": 0.2854,
+     "inmerit_twh_control": 3.1794,
+     "inmerit_twh_arm": 3.197,
+     "econ_reach_up_twh": 0.0176,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 3.4911,
+     "e923_twh": 0.7289,
+     "binding_h_keeper": 10,
+     "binding_bound_add_twh": 0.0
+    },
+    "2500:ST_GAS": {
+     "name": "Ravenswood",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      351.3,
+      559.8,
+      559.8,
+      259.5
+     ],
+     "tranche_pmax_arm": [
+      147.1,
+      661.8,
+      661.8,
+      259.5
+     ],
+     "tranche_mc_mean_control": [
+      35.31,
+      34.11,
+      34.11,
+      111.01
+     ],
+     "tranche_mc_mean_arm": [
+      35.31,
+      34.11,
+      34.11,
+      111.01
+     ],
+     "avail_twh_control": 9.7377,
+     "avail_twh_arm": 9.7377,
+     "min_gen_twh_control": 0.2982,
+     "min_gen_twh_arm": 0.2982,
+     "inmerit_twh_control": 3.3893,
+     "inmerit_twh_arm": 3.5383,
+     "econ_reach_up_twh": 0.149,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 3.9091,
+     "e923_twh": 0.7924,
+     "binding_h_keeper": 3,
+     "binding_bound_add_twh": 0.0
+    },
+    "2490:ST_GAS": {
+     "name": "Arthur Kill",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      262.8,
+      244.7,
+      244.7,
+      132.7
+     ],
+     "tranche_pmax_arm": [
+      97.3,
+      327.4,
+      327.4,
+      132.7
+     ],
+     "tranche_mc_mean_control": [
+      36.99,
+      35.78,
+      35.78,
+      113.01
+     ],
+     "tranche_mc_mean_arm": [
+      36.99,
+      35.78,
+      35.78,
+      113.01
+     ],
+     "avail_twh_control": 5.2385,
+     "avail_twh_arm": 5.2385,
+     "min_gen_twh_control": 0.3076,
+     "min_gen_twh_arm": 0.3076,
+     "inmerit_twh_control": 1.1352,
+     "inmerit_twh_arm": 1.2023,
+     "econ_reach_up_twh": 0.0671,
+     "econ_reach_down_twh": -0.0,
+     "model_twh_keeper": 1.4378,
+     "e923_twh": 1.0437,
+     "binding_h_keeper": 7,
+     "binding_bound_add_twh": 0.0
+    },
+    "2516:ST_GAS": {
+     "name": "Northport",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      409.2,
+      472.1,
+      472.1,
+      238.8
+     ],
+     "tranche_pmax_arm": [
+      393.3,
+      480.0,
+      480.0,
+      238.8
+     ],
+     "tranche_mc_mean_control": [
+      47.86,
+      46.13,
+      46.13,
+      157.13
+     ],
+     "tranche_mc_mean_arm": [
+      47.86,
+      46.13,
+      46.13,
+      157.13
+     ],
+     "avail_twh_control": 4.4786,
+     "avail_twh_arm": 4.4786,
+     "min_gen_twh_control": 1.1151,
+     "min_gen_twh_arm": 1.1151,
+     "inmerit_twh_control": 0.338,
+     "inmerit_twh_arm": 0.3401,
+     "econ_reach_up_twh": 0.0021,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 1.446,
+     "e923_twh": 2.3902,
+     "binding_h_keeper": 679,
+     "binding_bound_add_twh": 0.0
+    },
+    "2511:ST_GAS": {
+     "name": "Barrett",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      56.2,
+      130.1,
+      130.1,
+      55.8
+     ],
+     "tranche_pmax_arm": [
+      55.1,
+      130.6,
+      130.6,
+      55.8
+     ],
+     "tranche_mc_mean_control": [
+      47.16,
+      45.46,
+      45.46,
+      153.98
+     ],
+     "tranche_mc_mean_arm": [
+      47.16,
+      45.46,
+      45.46,
+      153.98
+     ],
+     "avail_twh_control": 1.8804,
+     "avail_twh_arm": 1.8804,
+     "min_gen_twh_control": 0.4927,
+     "min_gen_twh_arm": 0.4927,
+     "inmerit_twh_control": 0.2024,
+     "inmerit_twh_arm": 0.2028,
+     "econ_reach_up_twh": 0.0004,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.6508,
+     "e923_twh": 1.2994,
+     "binding_h_keeper": 3,
+     "binding_bound_add_twh": 0.0
+    },
+    "2625:ST_GAS": {
+     "name": "Bowline",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_pmax_arm": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_mc_mean_control": [
+      45.75,
+      44.1,
+      44.1,
+      149.69
+     ],
+     "tranche_mc_mean_arm": [
+      45.75,
+      44.1,
+      44.1,
+      149.69
+     ],
+     "avail_twh_control": 1.2333,
+     "avail_twh_arm": 1.2333,
+     "min_gen_twh_control": 0.0519,
+     "min_gen_twh_arm": 0.0519,
+     "inmerit_twh_control": 0.1234,
+     "inmerit_twh_arm": 0.1234,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.1603,
+     "e923_twh": 0.9358,
+     "binding_h_keeper": 6384,
+     "binding_bound_add_twh": 0.0
+    },
+    "8006:ST_GAS": {
+     "name": "Roseton",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      166.3,
+      436.4,
+      436.4,
+      183.4
+     ],
+     "tranche_pmax_arm": [
+      166.3,
+      436.4,
+      436.4,
+      183.4
+     ],
+     "tranche_mc_mean_control": [
+      47.17,
+      45.48,
+      45.48,
+      153.14
+     ],
+     "tranche_mc_mean_arm": [
+      47.17,
+      45.48,
+      45.48,
+      153.14
+     ],
+     "avail_twh_control": 0.7812,
+     "avail_twh_arm": 0.7812,
+     "min_gen_twh_control": 0.0012,
+     "min_gen_twh_arm": 0.0012,
+     "inmerit_twh_control": 0.1049,
+     "inmerit_twh_arm": 0.1049,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.1186,
+     "e923_twh": 0.1927,
+     "binding_h_keeper": 7658,
+     "binding_bound_add_twh": 0.0
+    },
+    "2480:ST_GAS": {
+     "name": "",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      153.2,
+      134.8,
+      134.8,
+      74.6
+     ],
+     "tranche_pmax_arm": [
+      89.5,
+      166.6,
+      166.6,
+      74.6
+     ],
+     "tranche_mc_mean_control": [
+      48.88,
+      47.11,
+      47.11,
+      160.05
+     ],
+     "tranche_mc_mean_arm": [
+      48.88,
+      47.11,
+      47.11,
+      160.05
+     ],
+     "avail_twh_control": 0.828,
+     "avail_twh_arm": 0.828,
+     "min_gen_twh_control": 0.0007,
+     "min_gen_twh_arm": 0.0007,
+     "inmerit_twh_control": 0.019,
+     "inmerit_twh_arm": 0.0197,
+     "econ_reach_up_twh": 0.0006,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.0198,
+     "e923_twh": 0.0192,
+     "binding_h_keeper": 0,
+     "binding_bound_add_twh": 0.0
+    },
+    "2517:ST_GAS": {
+     "name": "",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      50.0,
+      138.6,
+      138.6,
+      57.8
+     ],
+     "tranche_pmax_arm": [
+      45.0,
+      141.1,
+      141.1,
+      57.8
+     ],
+     "tranche_mc_mean_control": [
+      51.28,
+      49.41,
+      49.41,
+      169.55
+     ],
+     "tranche_mc_mean_arm": [
+      51.28,
+      49.41,
+      49.41,
+      169.55
+     ],
+     "avail_twh_control": 2.5147,
+     "avail_twh_arm": 2.5147,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.0383,
+     "inmerit_twh_arm": 0.0386,
+     "econ_reach_up_twh": 0.0002,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.0475,
+     "e923_twh": 0.2909,
+     "binding_h_keeper": 9,
+     "binding_bound_add_twh": 0.0
+    },
+    "50978:CC_REGULAR": {
+     "name": "",
+     "zone": "Upstate_West",
+     "tranche_pmax_control": [
+      69.8,
+      8.8,
+      8.8,
+      8.8,
+      8.8,
+      8.8,
+      8.8
+     ],
+     "tranche_pmax_arm": [
+      61.3,
+      10.2,
+      10.2,
+      10.2,
+      10.2,
+      10.2,
+      10.2
+     ],
+     "tranche_mc_mean_control": [
+      26.27,
+      27.2,
+      27.34,
+      27.49,
+      27.63,
+      27.77,
+      27.92
+     ],
+     "tranche_mc_mean_arm": [
+      26.27,
+      27.2,
+      27.34,
+      27.49,
+      27.63,
+      27.77,
+      27.92
+     ],
+     "avail_twh_control": 0.9528,
+     "avail_twh_arm": 0.9528,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.3044,
+     "inmerit_twh_arm": 0.3012,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0032,
+     "model_twh_keeper": 0.242,
+     "e923_twh": 0.1726,
+     "binding_h_keeper": 1794,
+     "binding_bound_add_twh": 0.0
+    },
+    "52168:CC_CHP": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      12.4,
+      1.2
+     ],
+     "tranche_pmax_arm": [
+      11.3,
+      1.2
+     ],
+     "tranche_mc_mean_control": [
+      26.17,
+      37.64
+     ],
+     "tranche_mc_mean_arm": [
+      26.17,
+      37.64
+     ],
+     "avail_twh_control": 0.1146,
+     "avail_twh_arm": 0.1058,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.1053,
+     "inmerit_twh_arm": 0.0965,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0088,
+     "model_twh_keeper": 0.2151,
+     "e923_twh": 0.169,
+     "binding_h_keeper": 8735,
+     "binding_bound_add_twh": 0.0
+    },
+    "54914:CC_CHP": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      215.4,
+      16.3,
+      16.3,
+      16.3,
+      16.3,
+      16.3,
+      16.3
+     ],
+     "tranche_pmax_arm": [
+      134.9,
+      29.7,
+      29.7,
+      29.7,
+      29.7,
+      29.7,
+      29.7
+     ],
+     "tranche_mc_mean_control": [
+      24.81,
+      26.52,
+      27.25,
+      27.98,
+      28.71,
+      29.44,
+      30.17
+     ],
+     "tranche_mc_mean_arm": [
+      24.81,
+      26.52,
+      27.25,
+      27.98,
+      28.71,
+      29.44,
+      30.17
+     ],
+     "avail_twh_control": 2.4139,
+     "avail_twh_arm": 2.4139,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 2.3647,
+     "inmerit_twh_arm": 2.3261,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0386,
+     "model_twh_keeper": 2.4062,
+     "e923_twh": 2.0219,
+     "binding_h_keeper": 7633,
+     "binding_bound_add_twh": 0.0
+    },
+    "55375:CC_REGULAR": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      427.3,
+      24.2,
+      24.2,
+      24.2,
+      24.2,
+      24.2,
+      24.2,
+      37.8
+     ],
+     "tranche_pmax_arm": [
+      369.9,
+      33.8,
+      33.8,
+      33.8,
+      33.8,
+      33.8,
+      33.8,
+      37.8
+     ],
+     "tranche_mc_mean_control": [
+      20.75,
+      21.59,
+      21.72,
+      21.84,
+      21.97,
+      22.1,
+      22.23,
+      41.56
+     ],
+     "tranche_mc_mean_arm": [
+      20.75,
+      21.59,
+      21.72,
+      21.84,
+      21.97,
+      22.1,
+      22.23,
+      41.56
+     ],
+     "avail_twh_control": 4.7678,
+     "avail_twh_arm": 4.7678,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 4.5131,
+     "inmerit_twh_arm": 4.5131,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 4.4859,
+     "e923_twh": 4.086,
+     "binding_h_keeper": 1057,
+     "binding_bound_add_twh": 0.0
+    },
+    "57664:CC_REGULAR": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      292.5,
+      41.3,
+      41.3,
+      41.3,
+      41.3,
+      41.3,
+      41.3,
+      109.8
+     ],
+     "tranche_pmax_arm": [
+      252.8,
+      47.9,
+      47.9,
+      47.9,
+      47.9,
+      47.9,
+      47.9,
+      109.8
+     ],
+     "tranche_mc_mean_control": [
+      21.43,
+      22.28,
+      22.41,
+      22.54,
+      22.67,
+      22.8,
+      22.93,
+      42.59
+     ],
+     "tranche_mc_mean_arm": [
+      21.43,
+      22.28,
+      22.41,
+      22.54,
+      22.67,
+      22.8,
+      22.93,
+      42.59
+     ],
+     "avail_twh_control": 4.7916,
+     "avail_twh_arm": 4.7916,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 4.0858,
+     "inmerit_twh_arm": 4.0858,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0001,
+     "model_twh_keeper": 4.0182,
+     "e923_twh": 3.912,
+     "binding_h_keeper": 965,
+     "binding_bound_add_twh": 0.0
+    }
+   }
+  }
+ },
+ "2024": {
+  "arm": {
+   "footprint": {
+    "pmax": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "pmin": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "heat_rate": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "availability": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "min_gen": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "zone_idx": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "vom": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "mc_base": {
+     "identical": true,
+     "plants_moved": []
+    }
+   },
+   "plants": {
+    "8906:ST_GAS": {
+     "name": "Astoria",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      104.3,
+      340.2,
+      340.2,
+      138.5
+     ],
+     "tranche_pmax_arm": [
+      104.3,
+      340.2,
+      340.2,
+      138.5
+     ],
+     "tranche_mc_mean_control": [
+      39.09,
+      38.0,
+      38.0,
+      107.46
+     ],
+     "tranche_mc_mean_arm": [
+      39.09,
+      38.0,
+      38.0,
+      107.46
+     ],
+     "avail_twh_control": 6.4732,
+     "avail_twh_arm": 6.4732,
+     "min_gen_twh_control": 0.3227,
+     "min_gen_twh_arm": 0.3227,
+     "inmerit_twh_control": 2.3848,
+     "inmerit_twh_arm": 2.3848,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 2.738,
+     "e923_twh": 0.8704,
+     "binding_h_keeper": 2,
+     "binding_bound_add_twh": 0.0
+    },
+    "2500:ST_GAS": {
+     "name": "Ravenswood",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      350.4,
+      558.5,
+      558.5,
+      259.0
+     ],
+     "tranche_pmax_arm": [
+      350.4,
+      558.5,
+      558.5,
+      259.0
+     ],
+     "tranche_mc_mean_control": [
+      39.54,
+      38.28,
+      38.28,
+      119.31
+     ],
+     "tranche_mc_mean_arm": [
+      39.54,
+      38.28,
+      38.28,
+      119.31
+     ],
+     "avail_twh_control": 3.4451,
+     "avail_twh_arm": 3.4451,
+     "min_gen_twh_control": 0.2373,
+     "min_gen_twh_arm": 0.2373,
+     "inmerit_twh_control": 1.6746,
+     "inmerit_twh_arm": 1.6746,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 1.8076,
+     "e923_twh": 0.6289,
+     "binding_h_keeper": 0,
+     "binding_bound_add_twh": 0.0
+    },
+    "2490:ST_GAS": {
+     "name": "Arthur Kill",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      262.4,
+      244.3,
+      244.3,
+      132.5
+     ],
+     "tranche_pmax_arm": [
+      262.4,
+      244.3,
+      244.3,
+      132.5
+     ],
+     "tranche_mc_mean_control": [
+      42.28,
+      41.02,
+      41.02,
+      122.06
+     ],
+     "tranche_mc_mean_arm": [
+      42.28,
+      41.02,
+      41.02,
+      122.06
+     ],
+     "avail_twh_control": 3.0259,
+     "avail_twh_arm": 3.0259,
+     "min_gen_twh_control": 0.4462,
+     "min_gen_twh_arm": 0.4462,
+     "inmerit_twh_control": 0.8153,
+     "inmerit_twh_arm": 0.8153,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 1.1533,
+     "e923_twh": 1.2716,
+     "binding_h_keeper": 1039,
+     "binding_bound_add_twh": 0.0
+    },
+    "2516:ST_GAS": {
+     "name": "Northport",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      409.2,
+      472.1,
+      472.1,
+      238.8
+     ],
+     "tranche_pmax_arm": [
+      409.2,
+      472.1,
+      472.1,
+      238.8
+     ],
+     "tranche_mc_mean_control": [
+      46.69,
+      45.2,
+      45.2,
+      140.46
+     ],
+     "tranche_mc_mean_arm": [
+      46.69,
+      45.2,
+      45.2,
+      140.46
+     ],
+     "avail_twh_control": 6.2001,
+     "avail_twh_arm": 6.2001,
+     "min_gen_twh_control": 1.6244,
+     "min_gen_twh_arm": 1.6244,
+     "inmerit_twh_control": 0.8492,
+     "inmerit_twh_arm": 0.8492,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 2.3051,
+     "e923_twh": 3.7051,
+     "binding_h_keeper": 0,
+     "binding_bound_add_twh": 0.0
+    },
+    "2511:ST_GAS": {
+     "name": "Barrett",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      56.2,
+      130.1,
+      130.1,
+      55.8
+     ],
+     "tranche_pmax_arm": [
+      56.2,
+      130.1,
+      130.1,
+      55.8
+     ],
+     "tranche_mc_mean_control": [
+      46.48,
+      45.02,
+      45.02,
+      138.59
+     ],
+     "tranche_mc_mean_arm": [
+      46.48,
+      45.02,
+      45.02,
+      138.59
+     ],
+     "avail_twh_control": 2.3235,
+     "avail_twh_arm": 2.3235,
+     "min_gen_twh_control": 0.6088,
+     "min_gen_twh_arm": 0.6088,
+     "inmerit_twh_control": 0.3307,
+     "inmerit_twh_arm": 0.3307,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.8663,
+     "e923_twh": 1.0644,
+     "binding_h_keeper": 0,
+     "binding_bound_add_twh": 0.0
+    },
+    "2625:ST_GAS": {
+     "name": "Bowline",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_pmax_arm": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_mc_mean_control": [
+      45.8,
+      44.34,
+      44.34,
+      137.61
+     ],
+     "tranche_mc_mean_arm": [
+      45.8,
+      44.34,
+      44.34,
+      137.61
+     ],
+     "avail_twh_control": 2.2228,
+     "avail_twh_arm": 2.2228,
+     "min_gen_twh_control": 0.0855,
+     "min_gen_twh_arm": 0.0855,
+     "inmerit_twh_control": 0.4285,
+     "inmerit_twh_arm": 0.4285,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.5055,
+     "e923_twh": 1.2859,
+     "binding_h_keeper": 5584,
+     "binding_bound_add_twh": 0.0
+    },
+    "8006:ST_GAS": {
+     "name": "Roseton",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      166.3,
+      436.4,
+      436.4,
+      183.4
+     ],
+     "tranche_pmax_arm": [
+      166.3,
+      436.4,
+      436.4,
+      183.4
+     ],
+     "tranche_mc_mean_control": [
+      47.13,
+      45.64,
+      45.64,
+      140.98
+     ],
+     "tranche_mc_mean_arm": [
+      47.13,
+      45.64,
+      45.64,
+      140.98
+     ],
+     "avail_twh_control": 0.8411,
+     "avail_twh_arm": 0.8411,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.1763,
+     "inmerit_twh_arm": 0.1763,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.1932,
+     "e923_twh": 0.2367,
+     "binding_h_keeper": 7723,
+     "binding_bound_add_twh": 0.0
+    }
+   }
+  },
+  "arm_sel": {
+   "footprint": {
+    "pmax": {
+     "identical": false,
+     "plants_moved": [
+      "2480:ST_GAS",
+      "2490:ST_GAS",
+      "2500:ST_GAS",
+      "2511:ST_GAS",
+      "2516:ST_GAS",
+      "2517:ST_GAS",
+      "50978:CC_REGULAR",
+      "52168:CC_CHP",
+      "54914:CC_CHP",
+      "55375:CC_REGULAR",
+      "57664:CC_REGULAR",
+      "8906:ST_GAS"
+     ]
+    },
+    "pmin": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "heat_rate": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "availability": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "min_gen": {
+     "identical": false,
+     "plants_moved": [
+      "2490:ST_GAS",
+      "2500:ST_GAS",
+      "2511:ST_GAS",
+      "2516:ST_GAS",
+      "8906:ST_GAS"
+     ]
+    },
+    "zone_idx": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "vom": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "mc_base": {
+     "identical": true,
+     "plants_moved": []
+    }
+   },
+   "plants": {
+    "8906:ST_GAS": {
+     "name": "Astoria",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      104.3,
+      340.2,
+      340.2,
+      138.5
+     ],
+     "tranche_pmax_arm": [
+      83.1,
+      350.8,
+      350.8,
+      138.5
+     ],
+     "tranche_mc_mean_control": [
+      39.09,
+      38.0,
+      38.0,
+      107.46
+     ],
+     "tranche_mc_mean_arm": [
+      39.09,
+      38.0,
+      38.0,
+      107.46
+     ],
+     "avail_twh_control": 6.4732,
+     "avail_twh_arm": 6.4732,
+     "min_gen_twh_control": 0.3227,
+     "min_gen_twh_arm": 0.3227,
+     "inmerit_twh_control": 2.3848,
+     "inmerit_twh_arm": 2.3956,
+     "econ_reach_up_twh": 0.0109,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 2.738,
+     "e923_twh": 0.8704,
+     "binding_h_keeper": 2,
+     "binding_bound_add_twh": 0.0
+    },
+    "2500:ST_GAS": {
+     "name": "Ravenswood",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      350.4,
+      558.5,
+      558.5,
+      259.0
+     ],
+     "tranche_pmax_arm": [
+      146.7,
+      660.3,
+      660.3,
+      259.0
+     ],
+     "tranche_mc_mean_control": [
+      39.54,
+      38.28,
+      38.28,
+      119.31
+     ],
+     "tranche_mc_mean_arm": [
+      39.54,
+      38.28,
+      38.28,
+      119.31
+     ],
+     "avail_twh_control": 3.4451,
+     "avail_twh_arm": 3.4451,
+     "min_gen_twh_control": 0.2373,
+     "min_gen_twh_arm": 0.2373,
+     "inmerit_twh_control": 1.6746,
+     "inmerit_twh_arm": 1.7191,
+     "econ_reach_up_twh": 0.0444,
+     "econ_reach_down_twh": -0.0,
+     "model_twh_keeper": 1.8076,
+     "e923_twh": 0.6289,
+     "binding_h_keeper": 0,
+     "binding_bound_add_twh": 0.0
+    },
+    "2490:ST_GAS": {
+     "name": "Arthur Kill",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      262.4,
+      244.3,
+      244.3,
+      132.5
+     ],
+     "tranche_pmax_arm": [
+      97.2,
+      326.9,
+      326.9,
+      132.5
+     ],
+     "tranche_mc_mean_control": [
+      42.28,
+      41.02,
+      41.02,
+      122.06
+     ],
+     "tranche_mc_mean_arm": [
+      42.28,
+      41.02,
+      41.02,
+      122.06
+     ],
+     "avail_twh_control": 3.0259,
+     "avail_twh_arm": 3.0259,
+     "min_gen_twh_control": 0.4462,
+     "min_gen_twh_arm": 0.4462,
+     "inmerit_twh_control": 0.8153,
+     "inmerit_twh_arm": 0.8472,
+     "econ_reach_up_twh": 0.0319,
+     "econ_reach_down_twh": -0.0,
+     "model_twh_keeper": 1.1533,
+     "e923_twh": 1.2716,
+     "binding_h_keeper": 1039,
+     "binding_bound_add_twh": 0.0
+    },
+    "2516:ST_GAS": {
+     "name": "Northport",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      409.2,
+      472.1,
+      472.1,
+      238.8
+     ],
+     "tranche_pmax_arm": [
+      393.3,
+      480.0,
+      480.0,
+      238.8
+     ],
+     "tranche_mc_mean_control": [
+      46.69,
+      45.2,
+      45.2,
+      140.46
+     ],
+     "tranche_mc_mean_arm": [
+      46.69,
+      45.2,
+      45.2,
+      140.46
+     ],
+     "avail_twh_control": 6.2001,
+     "avail_twh_arm": 6.2001,
+     "min_gen_twh_control": 1.6244,
+     "min_gen_twh_arm": 1.6244,
+     "inmerit_twh_control": 0.8492,
+     "inmerit_twh_arm": 0.8524,
+     "econ_reach_up_twh": 0.0032,
+     "econ_reach_down_twh": -0.0,
+     "model_twh_keeper": 2.3051,
+     "e923_twh": 3.7051,
+     "binding_h_keeper": 0,
+     "binding_bound_add_twh": 0.0
+    },
+    "2511:ST_GAS": {
+     "name": "Barrett",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      56.2,
+      130.1,
+      130.1,
+      55.8
+     ],
+     "tranche_pmax_arm": [
+      55.1,
+      130.6,
+      130.6,
+      55.8
+     ],
+     "tranche_mc_mean_control": [
+      46.48,
+      45.02,
+      45.02,
+      138.59
+     ],
+     "tranche_mc_mean_arm": [
+      46.48,
+      45.02,
+      45.02,
+      138.59
+     ],
+     "avail_twh_control": 2.3235,
+     "avail_twh_arm": 2.3235,
+     "min_gen_twh_control": 0.6088,
+     "min_gen_twh_arm": 0.6088,
+     "inmerit_twh_control": 0.3307,
+     "inmerit_twh_arm": 0.3312,
+     "econ_reach_up_twh": 0.0005,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.8663,
+     "e923_twh": 1.0644,
+     "binding_h_keeper": 0,
+     "binding_bound_add_twh": 0.0
+    },
+    "2625:ST_GAS": {
+     "name": "Bowline",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_pmax_arm": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_mc_mean_control": [
+      45.8,
+      44.34,
+      44.34,
+      137.61
+     ],
+     "tranche_mc_mean_arm": [
+      45.8,
+      44.34,
+      44.34,
+      137.61
+     ],
+     "avail_twh_control": 2.2228,
+     "avail_twh_arm": 2.2228,
+     "min_gen_twh_control": 0.0855,
+     "min_gen_twh_arm": 0.0855,
+     "inmerit_twh_control": 0.4285,
+     "inmerit_twh_arm": 0.4285,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.5055,
+     "e923_twh": 1.2859,
+     "binding_h_keeper": 5584,
+     "binding_bound_add_twh": 0.0
+    },
+    "8006:ST_GAS": {
+     "name": "Roseton",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      166.3,
+      436.4,
+      436.4,
+      183.4
+     ],
+     "tranche_pmax_arm": [
+      166.3,
+      436.4,
+      436.4,
+      183.4
+     ],
+     "tranche_mc_mean_control": [
+      47.13,
+      45.64,
+      45.64,
+      140.98
+     ],
+     "tranche_mc_mean_arm": [
+      47.13,
+      45.64,
+      45.64,
+      140.98
+     ],
+     "avail_twh_control": 0.8411,
+     "avail_twh_arm": 0.8411,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.1763,
+     "inmerit_twh_arm": 0.1763,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.1932,
+     "e923_twh": 0.2367,
+     "binding_h_keeper": 7723,
+     "binding_bound_add_twh": 0.0
+    },
+    "2480:ST_GAS": {
+     "name": "",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      153.2,
+      134.8,
+      134.8,
+      74.6
+     ],
+     "tranche_pmax_arm": [
+      89.5,
+      166.6,
+      166.6,
+      74.6
+     ],
+     "tranche_mc_mean_control": [
+      47.7,
+      46.21,
+      46.21,
+      141.72
+     ],
+     "tranche_mc_mean_arm": [
+      47.7,
+      46.21,
+      46.21,
+      141.72
+     ],
+     "avail_twh_control": 0.828,
+     "avail_twh_arm": 0.828,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.0447,
+     "inmerit_twh_arm": 0.0474,
+     "econ_reach_up_twh": 0.0028,
+     "econ_reach_down_twh": -0.0,
+     "model_twh_keeper": 0.0459,
+     "e923_twh": 0.0192,
+     "binding_h_keeper": 0,
+     "binding_bound_add_twh": 0.0
+    },
+    "2517:ST_GAS": {
+     "name": "",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      50.0,
+      138.6,
+      138.6,
+      57.8
+     ],
+     "tranche_pmax_arm": [
+      45.0,
+      141.1,
+      141.1,
+      57.8
+     ],
+     "tranche_mc_mean_control": [
+      49.41,
+      47.8,
+      47.8,
+      150.57
+     ],
+     "tranche_mc_mean_arm": [
+      49.41,
+      47.8,
+      47.8,
+      150.57
+     ],
+     "avail_twh_control": 2.7113,
+     "avail_twh_arm": 2.7113,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.1357,
+     "inmerit_twh_arm": 0.1362,
+     "econ_reach_up_twh": 0.0005,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.1542,
+     "e923_twh": 0.2572,
+     "binding_h_keeper": 0,
+     "binding_bound_add_twh": 0.0
+    },
+    "50978:CC_REGULAR": {
+     "name": "",
+     "zone": "Upstate_West",
+     "tranche_pmax_control": [
+      45.5,
+      5.7,
+      5.7,
+      5.7,
+      5.7,
+      5.7,
+      5.7
+     ],
+     "tranche_pmax_arm": [
+      40.0,
+      6.7,
+      6.7,
+      6.7,
+      6.7,
+      6.7,
+      6.7
+     ],
+     "tranche_mc_mean_control": [
+      29.71,
+      30.59,
+      30.73,
+      30.86,
+      31.0,
+      31.13,
+      31.27
+     ],
+     "tranche_mc_mean_arm": [
+      29.71,
+      30.59,
+      30.73,
+      30.86,
+      31.0,
+      31.13,
+      31.27
+     ],
+     "avail_twh_control": 0.6763,
+     "avail_twh_arm": 0.6763,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.5287,
+     "inmerit_twh_arm": 0.5265,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0022,
+     "model_twh_keeper": 0.5064,
+     "e923_twh": 0.1687,
+     "binding_h_keeper": 5827,
+     "binding_bound_add_twh": 0.0
+    },
+    "52168:CC_CHP": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      12.4,
+      1.2
+     ],
+     "tranche_pmax_arm": [
+      11.3,
+      1.2
+     ],
+     "tranche_mc_mean_control": [
+      40.22,
+      52.73
+     ],
+     "tranche_mc_mean_arm": [
+      40.22,
+      52.73
+     ],
+     "avail_twh_control": 0.1146,
+     "avail_twh_arm": 0.1058,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.0263,
+     "inmerit_twh_arm": 0.0241,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0022,
+     "model_twh_keeper": 0.0998,
+     "e923_twh": 0.1301,
+     "binding_h_keeper": 1223,
+     "binding_bound_add_twh": 0.0
+    },
+    "54914:CC_CHP": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      215.4,
+      16.3,
+      16.3,
+      16.3,
+      16.3,
+      16.3,
+      16.3
+     ],
+     "tranche_pmax_arm": [
+      134.9,
+      29.7,
+      29.7,
+      29.7,
+      29.7,
+      29.7,
+      29.7
+     ],
+     "tranche_mc_mean_control": [
+      32.61,
+      34.63,
+      35.5,
+      36.36,
+      37.22,
+      38.08,
+      38.94
+     ],
+     "tranche_mc_mean_arm": [
+      32.61,
+      34.63,
+      35.5,
+      36.36,
+      37.22,
+      38.08,
+      38.94
+     ],
+     "avail_twh_control": 2.4929,
+     "avail_twh_arm": 2.4929,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 1.9183,
+     "inmerit_twh_arm": 1.7734,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.1449,
+     "model_twh_keeper": 1.7389,
+     "e923_twh": 2.1696,
+     "binding_h_keeper": 3863,
+     "binding_bound_add_twh": 0.0
+    },
+    "55375:CC_REGULAR": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      427.3,
+      24.2,
+      24.2,
+      24.2,
+      24.2,
+      24.2,
+      24.2,
+      37.8
+     ],
+     "tranche_pmax_arm": [
+      369.9,
+      33.8,
+      33.8,
+      33.8,
+      33.8,
+      33.8,
+      33.8,
+      37.8
+     ],
+     "tranche_mc_mean_control": [
+      24.63,
+      25.53,
+      25.67,
+      25.81,
+      25.95,
+      26.09,
+      26.23,
+      47.26
+     ],
+     "tranche_mc_mean_arm": [
+      24.63,
+      25.53,
+      25.67,
+      25.81,
+      25.95,
+      26.09,
+      26.23,
+      47.26
+     ],
+     "avail_twh_control": 4.7701,
+     "avail_twh_arm": 4.7701,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 4.5117,
+     "inmerit_twh_arm": 4.5104,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0012,
+     "model_twh_keeper": 4.4542,
+     "e923_twh": 4.1573,
+     "binding_h_keeper": 909,
+     "binding_bound_add_twh": 0.0
+    },
+    "57664:CC_REGULAR": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      292.5,
+      41.3,
+      41.3,
+      41.3,
+      41.3,
+      41.3,
+      41.3,
+      109.8
+     ],
+     "tranche_pmax_arm": [
+      252.8,
+      47.9,
+      47.9,
+      47.9,
+      47.9,
+      47.9,
+      47.9,
+      109.8
+     ],
+     "tranche_mc_mean_control": [
+      25.5,
+      26.42,
+      26.56,
+      26.7,
+      26.84,
+      26.98,
+      27.13,
+      48.38
+     ],
+     "tranche_mc_mean_arm": [
+      25.5,
+      26.42,
+      26.56,
+      26.7,
+      26.84,
+      26.98,
+      27.13,
+      48.38
+     ],
+     "avail_twh_control": 4.7765,
+     "avail_twh_arm": 4.7765,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 4.0522,
+     "inmerit_twh_arm": 4.0509,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0012,
+     "model_twh_keeper": 3.9619,
+     "e923_twh": 4.0053,
+     "binding_h_keeper": 858,
+     "binding_bound_add_twh": 0.0
+    }
+   }
+  }
+ },
+ "2025": {
+  "arm": {
+   "footprint": {
+    "pmax": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "pmin": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "heat_rate": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "availability": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "min_gen": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "zone_idx": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "vom": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "mc_base": {
+     "identical": true,
+     "plants_moved": []
+    }
+   },
+   "plants": {
+    "8906:ST_GAS": {
+     "name": "Astoria",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      104.3,
+      340.2,
+      340.2,
+      138.5
+     ],
+     "tranche_pmax_arm": [
+      104.3,
+      340.2,
+      340.2,
+      138.5
+     ],
+     "tranche_mc_mean_control": [
+      54.71,
+      52.9,
+      52.9,
+      168.52
+     ],
+     "tranche_mc_mean_arm": [
+      54.71,
+      52.9,
+      52.9,
+      168.52
+     ],
+     "avail_twh_control": 5.4806,
+     "avail_twh_arm": 5.4806,
+     "min_gen_twh_control": 0.4394,
+     "min_gen_twh_arm": 0.4394,
+     "inmerit_twh_control": 2.8121,
+     "inmerit_twh_arm": 2.8121,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 3.0814,
+     "e923_twh": 1.359,
+     "binding_h_keeper": 30,
+     "binding_bound_add_twh": 0.0
+    },
+    "2500:ST_GAS": {
+     "name": "Ravenswood",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      350.1,
+      558.0,
+      558.0,
+      258.7
+     ],
+     "tranche_pmax_arm": [
+      350.1,
+      558.0,
+      558.0,
+      258.7
+     ],
+     "tranche_mc_mean_control": [
+      57.13,
+      55.07,
+      55.07,
+      186.99
+     ],
+     "tranche_mc_mean_arm": [
+      57.13,
+      55.07,
+      55.07,
+      186.99
+     ],
+     "avail_twh_control": 1.7484,
+     "avail_twh_arm": 1.7484,
+     "min_gen_twh_control": 0.2908,
+     "min_gen_twh_arm": 0.2908,
+     "inmerit_twh_control": 1.1381,
+     "inmerit_twh_arm": 1.1381,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 1.2388,
+     "e923_twh": 0.9598,
+     "binding_h_keeper": 5358,
+     "binding_bound_add_twh": 0.0
+    },
+    "2490:ST_GAS": {
+     "name": "Arthur Kill",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      260.4,
+      242.4,
+      242.4,
+      131.5
+     ],
+     "tranche_pmax_arm": [
+      260.4,
+      242.4,
+      242.4,
+      131.5
+     ],
+     "tranche_mc_mean_control": [
+      63.49,
+      61.22,
+      61.22,
+      206.01
+     ],
+     "tranche_mc_mean_arm": [
+      63.49,
+      61.22,
+      61.22,
+      206.01
+     ],
+     "avail_twh_control": 3.4606,
+     "avail_twh_arm": 3.4606,
+     "min_gen_twh_control": 0.5555,
+     "min_gen_twh_arm": 0.5555,
+     "inmerit_twh_control": 1.5462,
+     "inmerit_twh_arm": 1.5462,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 1.8772,
+     "e923_twh": 2.0565,
+     "binding_h_keeper": 725,
+     "binding_bound_add_twh": 0.0
+    },
+    "2516:ST_GAS": {
+     "name": "Northport",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      409.2,
+      472.1,
+      472.1,
+      238.8
+     ],
+     "tranche_pmax_arm": [
+      409.2,
+      472.1,
+      472.1,
+      238.8
+     ],
+     "tranche_mc_mean_control": [
+      71.13,
+      68.52,
+      68.52,
+      235.56
+     ],
+     "tranche_mc_mean_arm": [
+      71.13,
+      68.52,
+      68.52,
+      235.56
+     ],
+     "avail_twh_control": 6.3214,
+     "avail_twh_arm": 6.3214,
+     "min_gen_twh_control": 1.6562,
+     "min_gen_twh_arm": 1.6562,
+     "inmerit_twh_control": 1.1391,
+     "inmerit_twh_arm": 1.1391,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 2.5237,
+     "e923_twh": 4.0886,
+     "binding_h_keeper": 8,
+     "binding_bound_add_twh": 0.0
+    },
+    "2511:ST_GAS": {
+     "name": "Barrett",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      56.2,
+      130.1,
+      130.1,
+      55.8
+     ],
+     "tranche_pmax_arm": [
+      56.2,
+      130.1,
+      130.1,
+      55.8
+     ],
+     "tranche_mc_mean_control": [
+      74.6,
+      71.9,
+      71.9,
+      245.26
+     ],
+     "tranche_mc_mean_arm": [
+      74.6,
+      71.9,
+      71.9,
+      245.26
+     ],
+     "avail_twh_control": 2.2675,
+     "avail_twh_arm": 2.2675,
+     "min_gen_twh_control": 0.5253,
+     "min_gen_twh_arm": 0.5253,
+     "inmerit_twh_control": 0.2259,
+     "inmerit_twh_arm": 0.2259,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.6959,
+     "e923_twh": 0.9648,
+     "binding_h_keeper": 6,
+     "binding_bound_add_twh": 0.0
+    },
+    "2625:ST_GAS": {
+     "name": "Bowline",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_pmax_arm": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_mc_mean_control": [
+      68.69,
+      66.16,
+      66.16,
+      227.88
+     ],
+     "tranche_mc_mean_arm": [
+      68.69,
+      66.16,
+      66.16,
+      227.88
+     ],
+     "avail_twh_control": 2.6402,
+     "avail_twh_arm": 2.6402,
+     "min_gen_twh_control": 0.0997,
+     "min_gen_twh_arm": 0.0997,
+     "inmerit_twh_control": 0.6814,
+     "inmerit_twh_arm": 0.6814,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.7507,
+     "e923_twh": 1.9594,
+     "binding_h_keeper": 4589,
+     "binding_bound_add_twh": 0.0
+    },
+    "8006:ST_GAS": {
+     "name": "Roseton",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      166.2,
+      436.3,
+      436.3,
+      183.3
+     ],
+     "tranche_pmax_arm": [
+      166.2,
+      436.3,
+      436.3,
+      183.3
+     ],
+     "tranche_mc_mean_control": [
+      74.09,
+      71.39,
+      71.39,
+      244.5
+     ],
+     "tranche_mc_mean_arm": [
+      74.09,
+      71.39,
+      71.39,
+      244.5
+     ],
+     "avail_twh_control": 3.3715,
+     "avail_twh_arm": 3.3715,
+     "min_gen_twh_control": 0.0002,
+     "min_gen_twh_arm": 0.0002,
+     "inmerit_twh_control": 0.3347,
+     "inmerit_twh_arm": 0.3347,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.3697,
+     "e923_twh": 0.6761,
+     "binding_h_keeper": 3537,
+     "binding_bound_add_twh": 0.0
+    }
+   }
+  },
+  "arm_sel": {
+   "footprint": {
+    "pmax": {
+     "identical": false,
+     "plants_moved": [
+      "2480:ST_GAS",
+      "2490:ST_GAS",
+      "2500:ST_GAS",
+      "2511:ST_GAS",
+      "2516:ST_GAS",
+      "2517:ST_GAS",
+      "50978:CC_REGULAR",
+      "52168:CC_CHP",
+      "54914:CC_CHP",
+      "55375:CC_REGULAR",
+      "57664:CC_REGULAR",
+      "8906:ST_GAS"
+     ]
+    },
+    "pmin": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "heat_rate": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "availability": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "min_gen": {
+     "identical": false,
+     "plants_moved": [
+      "2480:ST_GAS",
+      "2490:ST_GAS",
+      "2500:ST_GAS",
+      "2511:ST_GAS",
+      "2516:ST_GAS",
+      "8006:ST_GAS",
+      "8906:ST_GAS"
+     ]
+    },
+    "zone_idx": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "vom": {
+     "identical": true,
+     "plants_moved": []
+    },
+    "mc_base": {
+     "identical": true,
+     "plants_moved": []
+    }
+   },
+   "plants": {
+    "8906:ST_GAS": {
+     "name": "Astoria",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      104.3,
+      340.2,
+      340.2,
+      138.5
+     ],
+     "tranche_pmax_arm": [
+      83.1,
+      350.8,
+      350.8,
+      138.5
+     ],
+     "tranche_mc_mean_control": [
+      54.71,
+      52.9,
+      52.9,
+      168.52
+     ],
+     "tranche_mc_mean_arm": [
+      54.71,
+      52.9,
+      52.9,
+      168.52
+     ],
+     "avail_twh_control": 5.4806,
+     "avail_twh_arm": 5.4806,
+     "min_gen_twh_control": 0.4394,
+     "min_gen_twh_arm": 0.4394,
+     "inmerit_twh_control": 2.8121,
+     "inmerit_twh_arm": 2.8194,
+     "econ_reach_up_twh": 0.0074,
+     "econ_reach_down_twh": -0.0,
+     "model_twh_keeper": 3.0814,
+     "e923_twh": 1.359,
+     "binding_h_keeper": 30,
+     "binding_bound_add_twh": 0.0
+    },
+    "2500:ST_GAS": {
+     "name": "Ravenswood",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      350.1,
+      558.0,
+      558.0,
+      258.7
+     ],
+     "tranche_pmax_arm": [
+      146.6,
+      659.7,
+      659.7,
+      258.7
+     ],
+     "tranche_mc_mean_control": [
+      57.13,
+      55.07,
+      55.07,
+      186.99
+     ],
+     "tranche_mc_mean_arm": [
+      57.13,
+      55.07,
+      55.07,
+      186.99
+     ],
+     "avail_twh_control": 1.7484,
+     "avail_twh_arm": 1.7484,
+     "min_gen_twh_control": 0.2908,
+     "min_gen_twh_arm": 0.2908,
+     "inmerit_twh_control": 1.1381,
+     "inmerit_twh_arm": 1.1599,
+     "econ_reach_up_twh": 0.0218,
+     "econ_reach_down_twh": -0.0,
+     "model_twh_keeper": 1.2388,
+     "e923_twh": 0.9598,
+     "binding_h_keeper": 5358,
+     "binding_bound_add_twh": 0.0
+    },
+    "2490:ST_GAS": {
+     "name": "Arthur Kill",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      260.4,
+      242.4,
+      242.4,
+      131.5
+     ],
+     "tranche_pmax_arm": [
+      96.4,
+      324.3,
+      324.3,
+      131.5
+     ],
+     "tranche_mc_mean_control": [
+      63.49,
+      61.22,
+      61.22,
+      206.01
+     ],
+     "tranche_mc_mean_arm": [
+      63.49,
+      61.22,
+      61.22,
+      206.01
+     ],
+     "avail_twh_control": 3.4606,
+     "avail_twh_arm": 3.4606,
+     "min_gen_twh_control": 0.5555,
+     "min_gen_twh_arm": 0.5555,
+     "inmerit_twh_control": 1.5462,
+     "inmerit_twh_arm": 1.5933,
+     "econ_reach_up_twh": 0.0471,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 1.8772,
+     "e923_twh": 2.0565,
+     "binding_h_keeper": 725,
+     "binding_bound_add_twh": 0.0
+    },
+    "2516:ST_GAS": {
+     "name": "Northport",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      409.2,
+      472.1,
+      472.1,
+      238.8
+     ],
+     "tranche_pmax_arm": [
+      393.3,
+      480.0,
+      480.0,
+      238.8
+     ],
+     "tranche_mc_mean_control": [
+      71.13,
+      68.52,
+      68.52,
+      235.56
+     ],
+     "tranche_mc_mean_arm": [
+      71.13,
+      68.52,
+      68.52,
+      235.56
+     ],
+     "avail_twh_control": 6.3214,
+     "avail_twh_arm": 6.3214,
+     "min_gen_twh_control": 1.6562,
+     "min_gen_twh_arm": 1.6562,
+     "inmerit_twh_control": 1.1391,
+     "inmerit_twh_arm": 1.1422,
+     "econ_reach_up_twh": 0.0031,
+     "econ_reach_down_twh": -0.0,
+     "model_twh_keeper": 2.5237,
+     "e923_twh": 4.0886,
+     "binding_h_keeper": 8,
+     "binding_bound_add_twh": 0.0
+    },
+    "2511:ST_GAS": {
+     "name": "Barrett",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      56.2,
+      130.1,
+      130.1,
+      55.8
+     ],
+     "tranche_pmax_arm": [
+      55.1,
+      130.6,
+      130.6,
+      55.8
+     ],
+     "tranche_mc_mean_control": [
+      74.6,
+      71.9,
+      71.9,
+      245.26
+     ],
+     "tranche_mc_mean_arm": [
+      74.6,
+      71.9,
+      71.9,
+      245.26
+     ],
+     "avail_twh_control": 2.2675,
+     "avail_twh_arm": 2.2675,
+     "min_gen_twh_control": 0.5253,
+     "min_gen_twh_arm": 0.5253,
+     "inmerit_twh_control": 0.2259,
+     "inmerit_twh_arm": 0.2262,
+     "econ_reach_up_twh": 0.0003,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.6959,
+     "e923_twh": 0.9648,
+     "binding_h_keeper": 6,
+     "binding_bound_add_twh": 0.0
+    },
+    "2625:ST_GAS": {
+     "name": "Bowline",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_pmax_arm": [
+      243.5,
+      371.1,
+      371.1,
+      173.9
+     ],
+     "tranche_mc_mean_control": [
+      68.69,
+      66.16,
+      66.16,
+      227.88
+     ],
+     "tranche_mc_mean_arm": [
+      68.69,
+      66.16,
+      66.16,
+      227.88
+     ],
+     "avail_twh_control": 2.6402,
+     "avail_twh_arm": 2.6402,
+     "min_gen_twh_control": 0.0997,
+     "min_gen_twh_arm": 0.0997,
+     "inmerit_twh_control": 0.6814,
+     "inmerit_twh_arm": 0.6814,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.7507,
+     "e923_twh": 1.9594,
+     "binding_h_keeper": 4589,
+     "binding_bound_add_twh": 0.0
+    },
+    "8006:ST_GAS": {
+     "name": "Roseton",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      166.2,
+      436.3,
+      436.3,
+      183.3
+     ],
+     "tranche_pmax_arm": [
+      166.2,
+      436.3,
+      436.3,
+      183.3
+     ],
+     "tranche_mc_mean_control": [
+      74.09,
+      71.39,
+      71.39,
+      244.5
+     ],
+     "tranche_mc_mean_arm": [
+      74.09,
+      71.39,
+      71.39,
+      244.5
+     ],
+     "avail_twh_control": 3.3715,
+     "avail_twh_arm": 3.3715,
+     "min_gen_twh_control": 0.0002,
+     "min_gen_twh_arm": 0.0001,
+     "inmerit_twh_control": 0.3347,
+     "inmerit_twh_arm": 0.3347,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.3697,
+     "e923_twh": 0.6761,
+     "binding_h_keeper": 3537,
+     "binding_bound_add_twh": 0.0
+    },
+    "2480:ST_GAS": {
+     "name": "",
+     "zone": "Capital_Hudson",
+     "tranche_pmax_control": [
+      153.2,
+      134.8,
+      134.8,
+      74.6
+     ],
+     "tranche_pmax_arm": [
+      89.5,
+      166.6,
+      166.6,
+      74.6
+     ],
+     "tranche_mc_mean_control": [
+      78.29,
+      75.35,
+      75.35,
+      263.33
+     ],
+     "tranche_mc_mean_arm": [
+      78.29,
+      75.35,
+      75.35,
+      263.33
+     ],
+     "avail_twh_control": 0.3301,
+     "avail_twh_arm": 0.3301,
+     "min_gen_twh_control": 0.0001,
+     "min_gen_twh_arm": 0.0001,
+     "inmerit_twh_control": 0.054,
+     "inmerit_twh_arm": 0.0565,
+     "econ_reach_up_twh": 0.0025,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.0541,
+     "e923_twh": 0.0,
+     "binding_h_keeper": 295,
+     "binding_bound_add_twh": 0.0
+    },
+    "2517:ST_GAS": {
+     "name": "",
+     "zone": "Long_Island",
+     "tranche_pmax_control": [
+      50.0,
+      138.6,
+      138.6,
+      57.8
+     ],
+     "tranche_pmax_arm": [
+      45.0,
+      141.1,
+      141.1,
+      57.8
+     ],
+     "tranche_mc_mean_control": [
+      76.81,
+      73.96,
+      73.96,
+      256.04
+     ],
+     "tranche_mc_mean_arm": [
+      76.81,
+      73.96,
+      73.96,
+      256.04
+     ],
+     "avail_twh_control": 2.3063,
+     "avail_twh_arm": 2.3063,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.1573,
+     "inmerit_twh_arm": 0.1581,
+     "econ_reach_up_twh": 0.0008,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 0.1719,
+     "e923_twh": 0.277,
+     "binding_h_keeper": 5,
+     "binding_bound_add_twh": 0.0
+    },
+    "50978:CC_REGULAR": {
+     "name": "",
+     "zone": "Upstate_West",
+     "tranche_pmax_control": [
+      45.5,
+      5.7,
+      5.7,
+      5.7,
+      5.7,
+      5.7,
+      5.7
+     ],
+     "tranche_pmax_arm": [
+      40.0,
+      6.7,
+      6.7,
+      6.7,
+      6.7,
+      6.7,
+      6.7
+     ],
+     "tranche_mc_mean_control": [
+      32.8,
+      33.81,
+      33.97,
+      34.13,
+      34.28,
+      34.44,
+      34.6
+     ],
+     "tranche_mc_mean_arm": [
+      32.8,
+      33.81,
+      33.97,
+      34.13,
+      34.28,
+      34.44,
+      34.6
+     ],
+     "avail_twh_control": 0.6763,
+     "avail_twh_arm": 0.6763,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.6,
+     "inmerit_twh_arm": 0.599,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.001,
+     "model_twh_keeper": 0.5953,
+     "e923_twh": 0.1842,
+     "binding_h_keeper": 7482,
+     "binding_bound_add_twh": 0.0
+    },
+    "52168:CC_CHP": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      12.4,
+      1.2
+     ],
+     "tranche_pmax_arm": [
+      11.3,
+      1.2
+     ],
+     "tranche_mc_mean_control": [
+      46.07,
+      67.67
+     ],
+     "tranche_mc_mean_arm": [
+      46.07,
+      67.67
+     ],
+     "avail_twh_control": 0.1146,
+     "avail_twh_arm": 0.1058,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 0.0772,
+     "inmerit_twh_arm": 0.0709,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0063,
+     "model_twh_keeper": 0.0618,
+     "e923_twh": 0.0,
+     "binding_h_keeper": 831,
+     "binding_bound_add_twh": 0.0
+    },
+    "54914:CC_CHP": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      215.4,
+      16.3,
+      16.3,
+      16.3,
+      16.3,
+      16.3,
+      16.3
+     ],
+     "tranche_pmax_arm": [
+      134.9,
+      29.7,
+      29.7,
+      29.7,
+      29.7,
+      29.7,
+      29.7
+     ],
+     "tranche_mc_mean_control": [
+      46.6,
+      50.09,
+      51.58,
+      53.07,
+      54.56,
+      56.04,
+      57.53
+     ],
+     "tranche_mc_mean_arm": [
+      46.6,
+      50.09,
+      51.58,
+      53.07,
+      54.56,
+      56.04,
+      57.53
+     ],
+     "avail_twh_control": 2.4929,
+     "avail_twh_arm": 2.4929,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 2.0781,
+     "inmerit_twh_arm": 1.8837,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.1945,
+     "model_twh_keeper": 1.9665,
+     "e923_twh": 1.9165,
+     "binding_h_keeper": 4120,
+     "binding_bound_add_twh": 0.0
+    },
+    "55375:CC_REGULAR": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      427.3,
+      24.2,
+      24.2,
+      24.2,
+      24.2,
+      24.2,
+      24.2,
+      37.8
+     ],
+     "tranche_pmax_arm": [
+      369.9,
+      33.8,
+      33.8,
+      33.8,
+      33.8,
+      33.8,
+      33.8,
+      37.8
+     ],
+     "tranche_mc_mean_control": [
+      35.23,
+      36.74,
+      36.97,
+      37.21,
+      37.44,
+      37.67,
+      37.9,
+      72.91
+     ],
+     "tranche_mc_mean_arm": [
+      35.23,
+      36.74,
+      36.97,
+      37.21,
+      37.44,
+      37.67,
+      37.9,
+      72.91
+     ],
+     "avail_twh_control": 4.3652,
+     "avail_twh_arm": 4.3652,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 4.1453,
+     "inmerit_twh_arm": 4.1453,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": 0.0,
+     "model_twh_keeper": 4.0405,
+     "e923_twh": 3.8998,
+     "binding_h_keeper": 1692,
+     "binding_bound_add_twh": 0.0
+    },
+    "57664:CC_REGULAR": {
+     "name": "",
+     "zone": "NYC",
+     "tranche_pmax_control": [
+      292.5,
+      41.3,
+      41.3,
+      41.3,
+      41.3,
+      41.3,
+      41.3,
+      109.8
+     ],
+     "tranche_pmax_arm": [
+      252.8,
+      47.9,
+      47.9,
+      47.9,
+      47.9,
+      47.9,
+      47.9,
+      109.8
+     ],
+     "tranche_mc_mean_control": [
+      36.55,
+      38.08,
+      38.31,
+      38.55,
+      38.78,
+      39.02,
+      39.25,
+      74.64
+     ],
+     "tranche_mc_mean_arm": [
+      36.55,
+      38.08,
+      38.31,
+      38.55,
+      38.78,
+      39.02,
+      39.25,
+      74.64
+     ],
+     "avail_twh_control": 3.7699,
+     "avail_twh_arm": 3.7699,
+     "min_gen_twh_control": 0.0,
+     "min_gen_twh_arm": 0.0,
+     "inmerit_twh_control": 3.2395,
+     "inmerit_twh_arm": 3.2394,
+     "econ_reach_up_twh": 0.0,
+     "econ_reach_down_twh": -0.0001,
+     "model_twh_keeper": 3.11,
+     "e923_twh": 2.2129,
+     "binding_h_keeper": 1649,
+     "binding_bound_add_twh": 0.0
+    }
+   }
+  }
+ }
+}

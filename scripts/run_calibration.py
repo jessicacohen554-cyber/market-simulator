@@ -587,6 +587,9 @@ def _reliability_floor_layup_shares(
         st_capacity_basis=getattr(config, "unit_outage_st_capacity_basis", False),
         per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
         extract_basis_share=getattr(config, "unit_outage_extract_basis_share", False),
+        coal_extract_basis_share=getattr(
+            config, "unit_outage_coal_extract_basis_share", False
+        ),
         lp_bin_capacity=lp_bins,
         per_unit_crosswalk=per_unit,
         merit_order_guard=merit,
@@ -3091,6 +3094,10 @@ def run_year(
     # Transmission project in service Dec 2023) — applied before the import
     # node joins so the corrected links flow through the whole solve.
     iso_config = _apply_iso_year_ttc(iso_config, iso, year)
+    # NWPP Path 76 "Alturas" link (config.nwpp_path76_alturas_link, default
+    # off -> same object, byte-identical): appended here, before the import
+    # node joins, and at the same point in runner.run_scenario_iso.
+    iso_config = _pipeline_ttc.apply_nwpp_path76_link(iso_config, iso, config)
     # CAISO per-year SP15-pocket import caps (config.caiso_per_year_import_caps,
     # default off -> byte-identical no-op). The SP15 split (2026-07-09) baked the
     # two internal import-limited links (SP15_rest -> LA_BASIN, SP15_rest -> SDGE)
@@ -4594,6 +4601,24 @@ def run_year(
         ):
             _wf_classes = tuple(c for c in _wf_classes if c != "ST_GAS")
 
+        # neiso-119: leave-one-year-out CEMS conduct roster (gated, default off
+        # -> None -> byte-identical). Narrows the program fleet; never a new floor.
+        _wf_roster = None
+        if getattr(config, "neiso_winter_fuelsec_conduct_roster", False):
+            from market_sim.data.winter_fuel_inventory import (
+                winter_fuelsec_conduct_roster,
+            )
+
+            _wf_roster = winter_fuelsec_conduct_roster(iso, int(config.weather_year))
+            logger.info(
+                "%s %d: winter fuel-security conduct roster (leave-one-year-out "
+                "CEMS, online share >= D-4 threshold): %d plant(s) kept: %s",
+                iso,
+                year,
+                len(_wf_roster),
+                sorted(_wf_roster),
+            )
+
         if apply_winter_fuelsec_mustrun(
             fleet_arrays,
             iso,
@@ -4608,6 +4633,7 @@ def run_year(
                 getattr(config, "neiso_winter_fuelsec_tmin_c", -7.0)
             ),
             hours=config.hours,
+            eligible_plants=_wf_roster,
         ):
             logger.info(
                 "%s %d: winter fuel-security must-run (Component B) applied — "

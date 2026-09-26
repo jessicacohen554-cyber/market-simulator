@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-26-neiso-119-anchor-fuelsec",
+  "label": "neiso 119 anchor fuelsec",
+  "date": "2026-09-26",
+  "shorthand": "neiso-119-anchor-fuelsec",
+  "definition": "neiso-119: prior keeper (2026-09-26-neiso-118-canal-ct) recipe replayed with two owner-ruled arms, one shard per year: gas_offer_margin_anchor_vintage (gas net-revenue margin identified on the solved year's own delivered gas, not the frozen 2023-2025 mean) and neiso_winter_fuelsec_conduct_roster (winter fuel-security floor limited to plants CEMS shows online in its cold-day window in other years). Zero new free parameters.",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-09-26-neiso-119-anchor-fuelsec.js",
+  "bundle": "results/calibration/neiso119_span"
+}

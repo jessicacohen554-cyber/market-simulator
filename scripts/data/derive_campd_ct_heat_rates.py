@@ -92,7 +92,11 @@ REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
-from market_sim.config.paths import PROCESSED_DIR, RAW_DIR  # noqa: E402
+from market_sim.config.paths import (  # noqa: E402
+    PROCESSED_DIR,
+    RAW_DIR,
+    set_eia860_standby_admission,
+)
 from market_sim.data import campd  # noqa: E402
 from scripts.lib.heat_rate_years import (  # noqa: E402
     BACKCAST_YEARS,
@@ -361,6 +365,15 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--out", default=None, help="Output CSV path override")
     parser.add_argument(
+        "--admit-standby-units",
+        action="store_true",
+        help=(
+            "Load the fleet union with EIA-860 standby (SB) units admitted, "
+            "the population ScenarioConfig.admit_standby_units solves on "
+            "(NWPP-NEXT-6, owner rule-23 ruling 2026-09-26)"
+        ),
+    )
+    parser.add_argument(
         "--detail",
         action="store_true",
         help="ALSO write the per-unit table (pooled) alongside the plant summary",
@@ -369,7 +382,15 @@ def main(argv: list[str] | None = None) -> int:
     iso = args.iso.upper()
     years = sorted(args.years)
 
-    fleets = backcast_fleets(iso, years)
+    # The artifact's target population must be the fleet the keeper solves on
+    # (NWPP-NEXT-6, owner rule-23 ruling 2026-09-26): with SB units admitted,
+    # an admitted CT that CAMPD measures would otherwise carry no row and fall
+    # to its eGRID rate. Adds rows only; existing rows are byte-identical.
+    set_eia860_standby_admission(args.admit_standby_units)
+    try:
+        fleets = backcast_fleets(iso, years)
+    finally:
+        set_eia860_standby_admission(False)
     # Class-preserving union (neiso-118): a unit that is CT_PEAKER in any year
     # stays in the population even if a later vintage re-classes it.
     union = union_fleet(fleets, klass=TARGET_CLASS)
