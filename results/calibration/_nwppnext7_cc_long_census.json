@@ -1,0 +1,2119 @@
+{
+ "keeper": "2026-09-26-nwppnext6-path76-ctrederive",
+ "years": {
+  "2019": {
+   "c1_delta_twh": {
+    "CC_REGULAR": 7.765999999999998,
+    "CC_CHP": -0.5590000000000002,
+    "CT_PEAKER": -0.6120000000000001,
+    "ST_GAS": -0.881,
+    "ST_CHP": -0.33499999999999996,
+    "COAL_PRB": -0.15500000000000114,
+    "COAL_LIGNITE": -0.004,
+    "COAL_BIT": -3.942999999999998,
+    "COAL_WC": -0.33399999999999996
+   },
+   "cc_regular_delta": 7.765999999999998,
+   "coal_family_delta": -4.435999999999998,
+   "hydro_delta": 0.38630000000000564,
+   "hydro_actual": 118.4358,
+   "fossil_total_delta": 0.9429999999999993,
+   "cc_regular_delta_by_zone_volerr": {
+    "NWPP-NW": -1.9209000000000014,
+    "NWPP-OR": -0.6622999999999983,
+    "NWPP-INLAND": -0.5775000000000001,
+    "NWPP-EAST": 2.6846999999999994,
+    "NWPP-SNV": 4.944600000000008
+   },
+   "take_binding_vs_k13_twh": {
+    "A": 3.8369,
+    "B": 10.2029
+   },
+   "cc_if_take_displaces_cc_1to1": {
+    "A": 3.9290999999999983,
+    "B": -2.4369000000000014
+   },
+   "beaver_8073_model_cc_twh": 0.8414,
+   "beaver_8073_eia923_cc_twh": 0.49743,
+   "plants": {
+    "58503": {
+     "name": "Carty Generating Station",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 2.7854,
+     "eia923_twh": 2.9896
+    },
+    "8066": {
+     "name": "Jim Bridger",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 9.0749,
+     "eia923_twh": 11.255
+    },
+    "8069": {
+     "name": "Huntington",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 4.1029,
+     "eia923_twh": 4.8975
+    },
+    "55749": {
+     "name": "Hardin Generator Project",
+     "zone": "NWPP-INLAND",
+     "group": "COAL_PRB",
+     "model_twh": 0.0012,
+     "eia923_twh": 0.1372
+    },
+    "6076": {
+     "name": "Colstrip",
+     "zone": "NWPP-INLAND",
+     "group": "COAL_PRB",
+     "model_twh": 9.4846,
+     "eia923_twh": 13.4077
+    },
+    "4162": {
+     "name": "Naughton",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 2.7052,
+     "eia923_twh": 3.0968
+    },
+    "4158": {
+     "name": "Dave Johnston",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 5.0235,
+     "eia923_twh": 4.6864
+    },
+    "2336:CC_REGULAR": {
+     "name": "Tracy",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 4.5812,
+     "eia923_twh": 3.7609
+    },
+    "56163:COAL_BIT": {
+     "name": "",
+     "zone": "",
+     "group": "COAL_BIT",
+     "model_twh": 0.4404,
+     "eia923_twh": 0.0
+    },
+    "55662": {
+     "name": "Chehalis Generating Facility",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.7284,
+     "eia923_twh": 2.4315
+    },
+    "8224": {
+     "name": "North Valmy",
+     "zone": "NWPP-SNV",
+     "group": "COAL_BIT",
+     "model_twh": 1.4748,
+     "eia923_twh": 1.6987
+    },
+    "10761": {
+     "name": "Las Vegas Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 0.3439,
+     "eia923_twh": 0.1961
+    },
+    "55482": {
+     "name": "Goldendale Generating Station",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.6137,
+     "eia923_twh": 1.9052
+    },
+    "6106": {
+     "name": "Boardman",
+     "zone": "NWPP-OR",
+     "group": "COAL_PRB",
+     "model_twh": 3.1634,
+     "eia923_twh": 2.5739
+    },
+    "56102": {
+     "name": "Currant Creek",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 3.8668,
+     "eia923_twh": 2.9175
+    },
+    "56227": {
+     "name": "Port Westward",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 1.9358,
+     "eia923_twh": 2.7379
+    },
+    "2322:CC_REGULAR": {
+     "name": "Clark (NVE)",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 0.6825,
+     "eia923_twh": 0.4465
+    },
+    "7082:CC_REGULAR": {
+     "name": "Harry Allen",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 3.6181,
+     "eia923_twh": 3.2711
+    },
+    "57028": {
+     "name": "Langley Gulch Power Plant",
+     "zone": "NWPP-INLAND",
+     "group": "CC_REGULAR",
+     "model_twh": 1.2752,
+     "eia923_twh": 1.5014
+    },
+    "56224": {
+     "name": "TS Power Plant",
+     "zone": "NWPP-SNV",
+     "group": "COAL_PRB",
+     "model_twh": 0.7947,
+     "eia923_twh": 1.0491
+    },
+    "7999": {
+     "name": "Grays Harbor Energy Facility",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 3.5929,
+     "eia923_twh": 3.4071
+    },
+    "56177": {
+     "name": "Nebo Power Station",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 0.5228,
+     "eia923_twh": 0.4194
+    },
+    "55322": {
+     "name": "Chuck Lenzie Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 7.5835,
+     "eia923_twh": 6.579
+    },
+    "55687": {
+     "name": "Higgins Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 3.2082,
+     "eia923_twh": 2.2403
+    },
+    "8073:CC_REGULAR": {
+     "name": "",
+     "zone": "",
+     "group": "CC_REGULAR",
+     "model_twh": 0.8414,
+     "eia923_twh": 0.0
+    },
+    "55700": {
+     "name": "Mint Farm Generating Station",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.7314,
+     "eia923_twh": 1.8647
+    },
+    "6165": {
+     "name": "Hunter",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 8.4615,
+     "eia923_twh": 8.6818
+    },
+    "7790": {
+     "name": "Bonanza",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 2.8135,
+     "eia923_twh": 3.7379
+    },
+    "50951": {
+     "name": "Sunnyside Cogen Associates",
+     "zone": "NWPP-EAST",
+     "group": "COAL_WC",
+     "model_twh": 0.1384,
+     "eia923_twh": 0.401
+    },
+    "55818": {
+     "name": "Frederickson Power LP",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.1746,
+     "eia923_twh": 1.3435
+    },
+    "7605": {
+     "name": "River Road Gen Plant",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.733,
+     "eia923_twh": 1.7463
+    },
+    "55841": {
+     "name": "Silverhawk",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 2.348,
+     "eia923_twh": 1.795
+    },
+    "56237": {
+     "name": "Lake Side Power Plant",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 6.6958,
+     "eia923_twh": 5.0639
+    },
+    "55179": {
+     "name": "Rathdrum Power LLC",
+     "zone": "NWPP-INLAND",
+     "group": "CC_REGULAR",
+     "model_twh": 1.45,
+     "eia923_twh": 1.8014
+    },
+    "6101": {
+     "name": "Wyodak",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 2.2573,
+     "eia923_twh": 1.8509
+    },
+    "55514": {
+     "name": "Apex Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 2.9773,
+     "eia923_twh": 2.1091
+    },
+    "7870": {
+     "name": "Encogen",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.38,
+     "eia923_twh": 0.4013
+    },
+    "3845": {
+     "name": "Transalta Centralia Generation",
+     "zone": "NWPP-NW",
+     "group": "COAL_BIT",
+     "model_twh": 1.331,
+     "eia923_twh": 7.1549
+    }
+   }
+  },
+  "2020": {
+   "c1_delta_twh": {
+    "CC_REGULAR": 9.940999999999995,
+    "CC_CHP": -0.008000000000000007,
+    "CT_PEAKER": 2.951,
+    "ST_GAS": -0.931,
+    "ST_CHP": -0.358,
+    "COAL_PRB": -4.021000000000001,
+    "COAL_LIGNITE": -0.006,
+    "COAL_BIT": -4.754,
+    "COAL_WC": -0.376
+   },
+   "cc_regular_delta": 9.940999999999995,
+   "coal_family_delta": -9.157,
+   "hydro_delta": -0.22939999999999827,
+   "hydro_actual": 130.956,
+   "fossil_total_delta": 2.437999999999995,
+   "cc_regular_delta_by_zone_volerr": {
+    "NWPP-NW": -1.7002000000000006,
+    "NWPP-OR": 1.6153000000000022,
+    "NWPP-INLAND": 0.008199999999999541,
+    "NWPP-EAST": 3.8389000000000006,
+    "NWPP-SNV": 5.403499999999994
+   },
+   "take_binding_vs_k13_twh": {
+    "A": 5.363799999999999,
+    "B": 21.351499999999998
+   },
+   "cc_if_take_displaces_cc_1to1": {
+    "A": 4.577199999999997,
+    "B": -11.410500000000003
+   },
+   "beaver_8073_model_cc_twh": 2.412,
+   "beaver_8073_eia923_cc_twh": 0.373687996,
+   "plants": {
+    "58503": {
+     "name": "Carty Generating Station",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 2.7067,
+     "eia923_twh": 2.9889
+    },
+    "8066": {
+     "name": "Jim Bridger",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 8.4116,
+     "eia923_twh": 10.4586
+    },
+    "8069": {
+     "name": "Huntington",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 4.3169,
+     "eia923_twh": 4.5153
+    },
+    "55749": {
+     "name": "Hardin Generator Project",
+     "zone": "NWPP-INLAND",
+     "group": "COAL_PRB",
+     "model_twh": 0.0,
+     "eia923_twh": 0.062
+    },
+    "6076": {
+     "name": "Colstrip",
+     "zone": "NWPP-INLAND",
+     "group": "COAL_PRB",
+     "model_twh": 3.4403,
+     "eia923_twh": 7.9352
+    },
+    "4158": {
+     "name": "Dave Johnston",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 4.9856,
+     "eia923_twh": 4.3256
+    },
+    "2336:CC_REGULAR": {
+     "name": "Tracy",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 4.4032,
+     "eia923_twh": 4.1695
+    },
+    "56163:COAL_BIT": {
+     "name": "",
+     "zone": "",
+     "group": "COAL_BIT",
+     "model_twh": 0.0,
+     "eia923_twh": 0.0
+    },
+    "55662": {
+     "name": "Chehalis Generating Facility",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 2.0373,
+     "eia923_twh": 2.4073
+    },
+    "10504:COAL_BIT": {
+     "name": "",
+     "zone": "",
+     "group": "COAL_BIT",
+     "model_twh": 0.0363,
+     "eia923_twh": 0.0
+    },
+    "8224": {
+     "name": "North Valmy",
+     "zone": "NWPP-SNV",
+     "group": "COAL_BIT",
+     "model_twh": 1.1309,
+     "eia923_twh": 0.9322
+    },
+    "10761": {
+     "name": "Las Vegas Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 0.5512,
+     "eia923_twh": 0.3155
+    },
+    "55482": {
+     "name": "Goldendale Generating Station",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.6475,
+     "eia923_twh": 1.9786
+    },
+    "6106": {
+     "name": "Boardman",
+     "zone": "NWPP-OR",
+     "group": "COAL_PRB",
+     "model_twh": 1.9428,
+     "eia923_twh": 1.6323
+    },
+    "56102": {
+     "name": "Currant Creek",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 3.4866,
+     "eia923_twh": 2.3354
+    },
+    "56227": {
+     "name": "Port Westward",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 2.5024,
+     "eia923_twh": 2.6432
+    },
+    "2322:CC_REGULAR": {
+     "name": "Clark (NVE)",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 0.4884,
+     "eia923_twh": 0.5607
+    },
+    "7082:CC_REGULAR": {
+     "name": "Harry Allen",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 3.8689,
+     "eia923_twh": 3.2862
+    },
+    "57028": {
+     "name": "Langley Gulch Power Plant",
+     "zone": "NWPP-INLAND",
+     "group": "CC_REGULAR",
+     "model_twh": 1.5449,
+     "eia923_twh": 1.5215
+    },
+    "4162:COAL_PRB": {
+     "name": "Naughton",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 1.0598,
+     "eia923_twh": 2.4614
+    },
+    "56224": {
+     "name": "TS Power Plant",
+     "zone": "NWPP-SNV",
+     "group": "COAL_PRB",
+     "model_twh": 0.7614,
+     "eia923_twh": 1.0273
+    },
+    "7999": {
+     "name": "Grays Harbor Energy Facility",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 2.7098,
+     "eia923_twh": 2.3607
+    },
+    "56177": {
+     "name": "Nebo Power Station",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 0.6974,
+     "eia923_twh": 0.4667
+    },
+    "55322": {
+     "name": "Chuck Lenzie Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 7.6061,
+     "eia923_twh": 6.1243
+    },
+    "55687": {
+     "name": "Higgins Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 2.6207,
+     "eia923_twh": 1.7708
+    },
+    "8073:CC_REGULAR": {
+     "name": "",
+     "zone": "",
+     "group": "CC_REGULAR",
+     "model_twh": 2.412,
+     "eia923_twh": 0.0
+    },
+    "55700": {
+     "name": "Mint Farm Generating Station",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.3008,
+     "eia923_twh": 1.7296
+    },
+    "6165": {
+     "name": "Hunter",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 7.5071,
+     "eia923_twh": 7.9882
+    },
+    "7790": {
+     "name": "Bonanza",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 2.0859,
+     "eia923_twh": 3.2576
+    },
+    "50951": {
+     "name": "Sunnyside Cogen Associates",
+     "zone": "NWPP-EAST",
+     "group": "COAL_WC",
+     "model_twh": 0.0309,
+     "eia923_twh": 0.3221
+    },
+    "55818": {
+     "name": "Frederickson Power LP",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.8786,
+     "eia923_twh": 0.9599
+    },
+    "7605": {
+     "name": "River Road Gen Plant",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.6426,
+     "eia923_twh": 1.6171
+    },
+    "55841": {
+     "name": "Silverhawk",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 3.642,
+     "eia923_twh": 2.5461
+    },
+    "56237": {
+     "name": "Lake Side Power Plant",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 8.0174,
+     "eia923_twh": 5.5601
+    },
+    "55179": {
+     "name": "Rathdrum Power LLC",
+     "zone": "NWPP-INLAND",
+     "group": "CC_REGULAR",
+     "model_twh": 1.6737,
+     "eia923_twh": 1.6888
+    },
+    "6101": {
+     "name": "Wyodak",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 2.4273,
+     "eia923_twh": 1.7305
+    },
+    "55514": {
+     "name": "Apex Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 3.8186,
+     "eia923_twh": 2.8227
+    },
+    "7870": {
+     "name": "Encogen",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.2455,
+     "eia923_twh": 0.3701
+    },
+    "3845": {
+     "name": "Transalta Centralia Generation",
+     "zone": "NWPP-NW",
+     "group": "COAL_BIT",
+     "model_twh": 0.0948,
+     "eia923_twh": 5.149
+    }
+   }
+  },
+  "2021": {
+   "c1_delta_twh": {
+    "CC_REGULAR": -0.5510000000000019,
+    "CC_CHP": -1.5820000000000007,
+    "CT_PEAKER": -2.031,
+    "ST_GAS": -0.872,
+    "ST_CHP": -0.294,
+    "COAL_PRB": 2.433,
+    "COAL_LIGNITE": -0.004,
+    "COAL_BIT": 3.4689999999999976,
+    "COAL_WC": -0.2
+   },
+   "cc_regular_delta": -0.5510000000000019,
+   "coal_family_delta": 5.697999999999998,
+   "hydro_delta": 1.694100000000006,
+   "hydro_actual": 116.1323,
+   "fossil_total_delta": 0.3679999999999947,
+   "cc_regular_delta_by_zone_volerr": {
+    "NWPP-NW": -3.887699999999999,
+    "NWPP-OR": -1.5414999999999974,
+    "NWPP-INLAND": -0.4072,
+    "NWPP-EAST": -1.3506999999999998,
+    "NWPP-SNV": -0.29400000000000404
+   },
+   "take_binding_vs_k13_twh": {
+    "A": 0.8411,
+    "B": 3.743899999999999
+   },
+   "cc_if_take_displaces_cc_1to1": {
+    "A": -1.392100000000002,
+    "B": -4.294900000000001
+   },
+   "beaver_8073_model_cc_twh": 0.3363,
+   "beaver_8073_eia923_cc_twh": 0.835617999,
+   "plants": {
+    "58503": {
+     "name": "Carty Generating Station",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 2.6023,
+     "eia923_twh": 3.0273
+    },
+    "8066": {
+     "name": "Jim Bridger",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 11.098,
+     "eia923_twh": 10.3428
+    },
+    "8069": {
+     "name": "Huntington",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 6.7682,
+     "eia923_twh": 6.2637
+    },
+    "55749": {
+     "name": "Hardin Generator Project",
+     "zone": "NWPP-INLAND",
+     "group": "COAL_PRB",
+     "model_twh": 0.187,
+     "eia923_twh": 0.4817
+    },
+    "6076": {
+     "name": "Colstrip",
+     "zone": "NWPP-INLAND",
+     "group": "COAL_PRB",
+     "model_twh": 8.0262,
+     "eia923_twh": 10.0103
+    },
+    "4158": {
+     "name": "Dave Johnston",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 4.1987,
+     "eia923_twh": 3.6012
+    },
+    "2336:CC_REGULAR": {
+     "name": "Tracy",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 2.5304,
+     "eia923_twh": 3.973
+    },
+    "56163:COAL_BIT": {
+     "name": "",
+     "zone": "",
+     "group": "COAL_BIT",
+     "model_twh": 0.0,
+     "eia923_twh": 0.0
+    },
+    "55662": {
+     "name": "Chehalis Generating Facility",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.68,
+     "eia923_twh": 2.2482
+    },
+    "10504:COAL_BIT": {
+     "name": "",
+     "zone": "",
+     "group": "COAL_BIT",
+     "model_twh": 0.0372,
+     "eia923_twh": 0.0
+    },
+    "8224": {
+     "name": "North Valmy",
+     "zone": "NWPP-SNV",
+     "group": "COAL_BIT",
+     "model_twh": 2.386,
+     "eia923_twh": 1.5681
+    },
+    "10761": {
+     "name": "Las Vegas Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 0.3756,
+     "eia923_twh": 0.328
+    },
+    "55482": {
+     "name": "Goldendale Generating Station",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.6024,
+     "eia923_twh": 1.9977
+    },
+    "56102": {
+     "name": "Currant Creek",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 2.0424,
+     "eia923_twh": 2.7463
+    },
+    "56227": {
+     "name": "Port Westward",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 2.5098,
+     "eia923_twh": 2.9186
+    },
+    "2322:CC_REGULAR": {
+     "name": "Clark (NVE)",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 0.6561,
+     "eia923_twh": 0.6996
+    },
+    "7082:CC_REGULAR": {
+     "name": "Harry Allen",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 3.5219,
+     "eia923_twh": 2.9546
+    },
+    "57028": {
+     "name": "Langley Gulch Power Plant",
+     "zone": "NWPP-INLAND",
+     "group": "CC_REGULAR",
+     "model_twh": 1.7484,
+     "eia923_twh": 1.9271
+    },
+    "4162:COAL_PRB": {
+     "name": "Naughton",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 1.5663,
+     "eia923_twh": 2.2077
+    },
+    "56224": {
+     "name": "TS Power Plant",
+     "zone": "NWPP-SNV",
+     "group": "COAL_PRB",
+     "model_twh": 1.2231,
+     "eia923_twh": 1.1923
+    },
+    "7999": {
+     "name": "Grays Harbor Energy Facility",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 3.4129,
+     "eia923_twh": 3.5409
+    },
+    "56177": {
+     "name": "Nebo Power Station",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 0.1923,
+     "eia923_twh": 0.5436
+    },
+    "55322": {
+     "name": "Chuck Lenzie Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 5.4898,
+     "eia923_twh": 6.1012
+    },
+    "55328": {
+     "name": "Hermiston Power Partnership",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 4.1326,
+     "eia923_twh": 4.3411
+    },
+    "55687": {
+     "name": "Higgins Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 3.4361,
+     "eia923_twh": 2.8428
+    },
+    "8073:CC_REGULAR": {
+     "name": "",
+     "zone": "",
+     "group": "CC_REGULAR",
+     "model_twh": 0.3363,
+     "eia923_twh": 0.0
+    },
+    "55700": {
+     "name": "Mint Farm Generating Station",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.847,
+     "eia923_twh": 1.7965
+    },
+    "6165": {
+     "name": "Hunter",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 10.4822,
+     "eia923_twh": 9.249
+    },
+    "7790": {
+     "name": "Bonanza",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 2.7646,
+     "eia923_twh": 2.9161
+    },
+    "50951": {
+     "name": "Sunnyside Cogen Associates",
+     "zone": "NWPP-EAST",
+     "group": "COAL_WC",
+     "model_twh": 0.2515,
+     "eia923_twh": 0.4009
+    },
+    "55818": {
+     "name": "Frederickson Power LP",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.0243,
+     "eia923_twh": 1.2897
+    },
+    "7605": {
+     "name": "River Road Gen Plant",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.3188,
+     "eia923_twh": 1.9426
+    },
+    "55841": {
+     "name": "Silverhawk",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 1.5513,
+     "eia923_twh": 1.629
+    },
+    "56237": {
+     "name": "Lake Side Power Plant",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 6.0938,
+     "eia923_twh": 6.3894
+    },
+    "55179": {
+     "name": "Rathdrum Power LLC",
+     "zone": "NWPP-INLAND",
+     "group": "CC_REGULAR",
+     "model_twh": 1.5941,
+     "eia923_twh": 1.8226
+    },
+    "6101": {
+     "name": "Wyodak",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 2.2703,
+     "eia923_twh": 1.7148
+    },
+    "55514": {
+     "name": "Apex Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 3.4691,
+     "eia923_twh": 2.7962
+    },
+    "7870": {
+     "name": "Encogen",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.0458,
+     "eia923_twh": 0.5305
+    },
+    "3845": {
+     "name": "Transalta Centralia Generation",
+     "zone": "NWPP-NW",
+     "group": "COAL_BIT",
+     "model_twh": 1.414,
+     "eia923_twh": 3.1143
+    }
+   }
+  },
+  "2022": {
+   "c1_delta_twh": {
+    "CC_REGULAR": -7.506999999999998,
+    "CC_CHP": -1.0830000000000002,
+    "CT_PEAKER": -1.569,
+    "ST_GAS": -1.121,
+    "ST_CHP": -0.27799999999999997,
+    "COAL_PRB": 7.518999999999998,
+    "COAL_LIGNITE": -0.003,
+    "COAL_BIT": 5.707000000000001,
+    "COAL_WC": -0.009000000000000008
+   },
+   "cc_regular_delta": -7.506999999999998,
+   "coal_family_delta": 13.213999999999999,
+   "hydro_delta": 0.8414999999999964,
+   "hydro_actual": 129.2015,
+   "fossil_total_delta": 1.6559999999999993,
+   "cc_regular_delta_by_zone_volerr": {
+    "NWPP-NW": -4.1766999999999985,
+    "NWPP-OR": -0.46529999999999916,
+    "NWPP-INLAND": -1.4350000000000003,
+    "NWPP-EAST": -6.7294,
+    "NWPP-SNV": -0.8580000000000005
+   },
+   "take_binding_vs_k13_twh": {
+    "A": 0.1607000000000004,
+    "B": 0.5108000000000003
+   },
+   "cc_if_take_displaces_cc_1to1": {
+    "A": -7.667699999999998,
+    "B": -8.017799999999998
+   },
+   "beaver_8073_model_cc_twh": 1.3632,
+   "beaver_8073_eia923_cc_twh": 0.8694199920000001,
+   "plants": {
+    "58503": {
+     "name": "Carty Generating Station",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 2.9135,
+     "eia923_twh": 3.0179
+    },
+    "8066": {
+     "name": "Jim Bridger",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 14.2366,
+     "eia923_twh": 10.662
+    },
+    "8069": {
+     "name": "Huntington",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 6.4985,
+     "eia923_twh": 5.6731
+    },
+    "55749": {
+     "name": "Hardin Generator Project",
+     "zone": "NWPP-INLAND",
+     "group": "COAL_PRB",
+     "model_twh": 0.3564,
+     "eia923_twh": 0.4939
+    },
+    "6076": {
+     "name": "Colstrip",
+     "zone": "NWPP-INLAND",
+     "group": "COAL_PRB",
+     "model_twh": 10.0219,
+     "eia923_twh": 10.8656
+    },
+    "4158": {
+     "name": "Dave Johnston",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 4.6703,
+     "eia923_twh": 3.5819
+    },
+    "2336:CC_REGULAR": {
+     "name": "Tracy",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 3.3545,
+     "eia923_twh": 3.252
+    },
+    "55662": {
+     "name": "Chehalis Generating Facility",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.1012,
+     "eia923_twh": 2.172
+    },
+    "8224": {
+     "name": "North Valmy",
+     "zone": "NWPP-SNV",
+     "group": "COAL_BIT",
+     "model_twh": 2.879,
+     "eia923_twh": 1.4019
+    },
+    "10761": {
+     "name": "Las Vegas Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 0.2159,
+     "eia923_twh": 0.2846
+    },
+    "55482": {
+     "name": "Goldendale Generating Station",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.485,
+     "eia923_twh": 1.5645
+    },
+    "56102": {
+     "name": "Currant Creek",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 0.5819,
+     "eia923_twh": 2.806
+    },
+    "56227": {
+     "name": "Port Westward",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 1.1839,
+     "eia923_twh": 2.3239
+    },
+    "2322:CC_REGULAR": {
+     "name": "Clark (NVE)",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 0.5032,
+     "eia923_twh": 0.7695
+    },
+    "7082:CC_REGULAR": {
+     "name": "Harry Allen",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 3.1084,
+     "eia923_twh": 2.7603
+    },
+    "57028": {
+     "name": "Langley Gulch Power Plant",
+     "zone": "NWPP-INLAND",
+     "group": "CC_REGULAR",
+     "model_twh": 0.773,
+     "eia923_twh": 1.5481
+    },
+    "4162:COAL_PRB": {
+     "name": "Naughton",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 1.9689,
+     "eia923_twh": 1.7977
+    },
+    "56224": {
+     "name": "TS Power Plant",
+     "zone": "NWPP-SNV",
+     "group": "COAL_PRB",
+     "model_twh": 1.4453,
+     "eia923_twh": 1.3425
+    },
+    "7999": {
+     "name": "Grays Harbor Energy Facility",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 2.8041,
+     "eia923_twh": 3.1632
+    },
+    "56177": {
+     "name": "Nebo Power Station",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 0.0148,
+     "eia923_twh": 0.3892
+    },
+    "55322": {
+     "name": "Chuck Lenzie Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 5.2429,
+     "eia923_twh": 5.4468
+    },
+    "55328": {
+     "name": "Hermiston Power Partnership",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 4.1451,
+     "eia923_twh": 3.8598
+    },
+    "55687": {
+     "name": "Higgins Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 2.463,
+     "eia923_twh": 2.6953
+    },
+    "8073:CC_REGULAR": {
+     "name": "",
+     "zone": "",
+     "group": "CC_REGULAR",
+     "model_twh": 1.3632,
+     "eia923_twh": 0.0
+    },
+    "55700": {
+     "name": "Mint Farm Generating Station",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.986,
+     "eia923_twh": 1.6054
+    },
+    "6165": {
+     "name": "Hunter",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 9.0846,
+     "eia923_twh": 7.3812
+    },
+    "7790": {
+     "name": "Bonanza",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 3.5185,
+     "eia923_twh": 3.4506
+    },
+    "50951": {
+     "name": "Sunnyside Cogen Associates",
+     "zone": "NWPP-EAST",
+     "group": "COAL_WC",
+     "model_twh": 0.3586,
+     "eia923_twh": 0.4048
+    },
+    "55818": {
+     "name": "Frederickson Power LP",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.9124,
+     "eia923_twh": 1.259
+    },
+    "7605": {
+     "name": "River Road Gen Plant",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.3486,
+     "eia923_twh": 1.6956
+    },
+    "55841": {
+     "name": "Silverhawk",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 1.2676,
+     "eia923_twh": 1.802
+    },
+    "56237": {
+     "name": "Lake Side Power Plant",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 2.4479,
+     "eia923_twh": 6.5787
+    },
+    "55179": {
+     "name": "Rathdrum Power LLC",
+     "zone": "NWPP-INLAND",
+     "group": "CC_REGULAR",
+     "model_twh": 0.9965,
+     "eia923_twh": 1.6565
+    },
+    "6101": {
+     "name": "Wyodak",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 2.0019,
+     "eia923_twh": 1.7803
+    },
+    "55514": {
+     "name": "Apex Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 2.6926,
+     "eia923_twh": 2.6958
+    },
+    "7870": {
+     "name": "Encogen",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.0853,
+     "eia923_twh": 0.4268
+    },
+    "3845": {
+     "name": "Transalta Centralia Generation",
+     "zone": "NWPP-NW",
+     "group": "COAL_BIT",
+     "model_twh": 2.7648,
+     "eia923_twh": 3.555
+    }
+   }
+  },
+  "2023": {
+   "c1_delta_twh": {
+    "CC_REGULAR": -0.9610000000000056,
+    "CC_CHP": -0.1509999999999998,
+    "CT_PEAKER": -3.9220000000000006,
+    "ST_GAS": -1.339,
+    "ST_CHP": -0.339,
+    "COAL_PRB": 3.4570000000000007,
+    "COAL_LIGNITE": 0.0,
+    "COAL_BIT": 3.798,
+    "COAL_WC": -0.20700000000000007
+   },
+   "cc_regular_delta": -0.9610000000000056,
+   "coal_family_delta": 7.048000000000001,
+   "hydro_delta": 2.638799999999989,
+   "hydro_actual": 104.233,
+   "fossil_total_delta": 0.33599999999999386,
+   "cc_regular_delta_by_zone_volerr": {
+    "NWPP-NW": -2.757900000000003,
+    "NWPP-OR": -2.3252000000000006,
+    "NWPP-INLAND": -0.017899999999999583,
+    "NWPP-EAST": -1.731600000000002,
+    "NWPP-SNV": -0.4295000000000009
+   },
+   "take_binding_vs_k13_twh": {
+    "A": 1.4604000000000004,
+    "B": 2.2554000000000003
+   },
+   "cc_if_take_displaces_cc_1to1": {
+    "A": -2.421400000000006,
+    "B": -3.216400000000006
+   },
+   "beaver_8073_model_cc_twh": 0.0308,
+   "beaver_8073_eia923_cc_twh": 1.687131,
+   "plants": {
+    "58503": {
+     "name": "Carty Generating Station",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 2.8195,
+     "eia923_twh": 3.1182
+    },
+    "8066": {
+     "name": "Jim Bridger",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 9.7402,
+     "eia923_twh": 8.3201
+    },
+    "8069": {
+     "name": "Huntington",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 5.8149,
+     "eia923_twh": 3.4009
+    },
+    "55749": {
+     "name": "Hardin Generator Project",
+     "zone": "NWPP-INLAND",
+     "group": "COAL_PRB",
+     "model_twh": 0.2102,
+     "eia923_twh": 0.4354
+    },
+    "6076": {
+     "name": "Colstrip",
+     "zone": "NWPP-INLAND",
+     "group": "COAL_PRB",
+     "model_twh": 9.5274,
+     "eia923_twh": 10.8204
+    },
+    "4158": {
+     "name": "Dave Johnston",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 4.5585,
+     "eia923_twh": 3.5374
+    },
+    "2336:CC_REGULAR": {
+     "name": "Tracy",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 3.6047,
+     "eia923_twh": 3.7295
+    },
+    "55662": {
+     "name": "Chehalis Generating Facility",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.0733,
+     "eia923_twh": 2.239
+    },
+    "8224": {
+     "name": "North Valmy",
+     "zone": "NWPP-SNV",
+     "group": "COAL_BIT",
+     "model_twh": 0.947,
+     "eia923_twh": 0.9818
+    },
+    "10761": {
+     "name": "Las Vegas Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 0.307,
+     "eia923_twh": 0.3397
+    },
+    "55482": {
+     "name": "Goldendale Generating Station",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.7477,
+     "eia923_twh": 2.172
+    },
+    "56102": {
+     "name": "Currant Creek",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 2.5296,
+     "eia923_twh": 2.8799
+    },
+    "56227": {
+     "name": "Port Westward",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 2.5933,
+     "eia923_twh": 3.0675
+    },
+    "2322:CC_REGULAR": {
+     "name": "Clark (NVE)",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 0.0246,
+     "eia923_twh": 0.4328
+    },
+    "7082:CC_REGULAR": {
+     "name": "Harry Allen",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 2.2908,
+     "eia923_twh": 1.8907
+    },
+    "57028": {
+     "name": "Langley Gulch Power Plant",
+     "zone": "NWPP-INLAND",
+     "group": "CC_REGULAR",
+     "model_twh": 1.5853,
+     "eia923_twh": 1.6285
+    },
+    "4162:COAL_PRB": {
+     "name": "Naughton",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 1.5896,
+     "eia923_twh": 1.8551
+    },
+    "56224": {
+     "name": "TS Power Plant",
+     "zone": "NWPP-SNV",
+     "group": "COAL_PRB",
+     "model_twh": 0.5962,
+     "eia923_twh": 1.0858
+    },
+    "7999": {
+     "name": "Grays Harbor Energy Facility",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 3.7085,
+     "eia923_twh": 3.6182
+    },
+    "56177": {
+     "name": "Nebo Power Station",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 0.2324,
+     "eia923_twh": 0.8254
+    },
+    "55322": {
+     "name": "Chuck Lenzie Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 6.5944,
+     "eia923_twh": 6.8862
+    },
+    "55328": {
+     "name": "Hermiston Power Partnership",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 4.0223,
+     "eia923_twh": 3.9181
+    },
+    "55687": {
+     "name": "Higgins Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 1.9777,
+     "eia923_twh": 2.1418
+    },
+    "8073:CC_REGULAR": {
+     "name": "",
+     "zone": "",
+     "group": "CC_REGULAR",
+     "model_twh": 0.0308,
+     "eia923_twh": 0.0
+    },
+    "55700": {
+     "name": "Mint Farm Generating Station",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.6885,
+     "eia923_twh": 1.9896
+    },
+    "6165": {
+     "name": "Hunter",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 6.4385,
+     "eia923_twh": 4.1018
+    },
+    "7790": {
+     "name": "Bonanza",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 3.0856,
+     "eia923_twh": 3.4482
+    },
+    "50951": {
+     "name": "Sunnyside Cogen Associates",
+     "zone": "NWPP-EAST",
+     "group": "COAL_WC",
+     "model_twh": 0.1618,
+     "eia923_twh": 0.3165
+    },
+    "55818": {
+     "name": "Frederickson Power LP",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.5554,
+     "eia923_twh": 1.8241
+    },
+    "7605": {
+     "name": "River Road Gen Plant",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.3834,
+     "eia923_twh": 1.8286
+    },
+    "55841": {
+     "name": "Silverhawk",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 2.0241,
+     "eia923_twh": 2.5702
+    },
+    "56237": {
+     "name": "Lake Side Power Plant",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 5.6662,
+     "eia923_twh": 6.4546
+    },
+    "55179": {
+     "name": "Rathdrum Power LLC",
+     "zone": "NWPP-INLAND",
+     "group": "CC_REGULAR",
+     "model_twh": 1.8349,
+     "eia923_twh": 1.8095
+    },
+    "6101": {
+     "name": "Wyodak",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 2.2508,
+     "eia923_twh": 1.7765
+    },
+    "55514": {
+     "name": "Apex Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 3.0366,
+     "eia923_twh": 2.2987
+    },
+    "7870": {
+     "name": "Encogen",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.6319,
+     "eia923_twh": 0.903
+    },
+    "3845": {
+     "name": "Transalta Centralia Generation",
+     "zone": "NWPP-NW",
+     "group": "COAL_BIT",
+     "model_twh": 1.867,
+     "eia923_twh": 4.1434
+    }
+   }
+  },
+  "2024": {
+   "c1_delta_twh": {
+    "CC_REGULAR": 8.302000000000007,
+    "CC_CHP": -0.06400000000000006,
+    "CT_PEAKER": 0.40200000000000014,
+    "ST_GAS": -2.499,
+    "ST_CHP": -0.41500000000000004,
+    "COAL_PRB": -0.23600000000000065,
+    "COAL_LIGNITE": 0.0,
+    "COAL_BIT": -4.449000000000002,
+    "COAL_WC": -0.39799999999999996
+   },
+   "cc_regular_delta": 8.302000000000007,
+   "coal_family_delta": -5.083000000000002,
+   "hydro_delta": 2.8393999999999977,
+   "hydro_actual": 105.0397,
+   "fossil_total_delta": 0.6430000000000049,
+   "cc_regular_delta_by_zone_volerr": {
+    "NWPP-NW": -3.7897,
+    "NWPP-OR": -0.14140000000000086,
+    "NWPP-INLAND": -0.4914000000000005,
+    "NWPP-EAST": 3.225699999999998,
+    "NWPP-SNV": 3.9166999999999916
+   },
+   "take_binding_vs_k13_twh": {
+    "A": 7.2043,
+    "B": 9.4299
+   },
+   "cc_if_take_displaces_cc_1to1": {
+    "A": 1.0977000000000068,
+    "B": -1.1278999999999932
+   },
+   "beaver_8073_model_cc_twh": 1.9113,
+   "beaver_8073_eia923_cc_twh": 1.708353971,
+   "plants": {
+    "58503": {
+     "name": "Carty Generating Station",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 2.9859,
+     "eia923_twh": 3.3166
+    },
+    "8069": {
+     "name": "Huntington",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 1.9101,
+     "eia923_twh": 2.6554
+    },
+    "55749": {
+     "name": "Hardin Generator Project",
+     "zone": "NWPP-INLAND",
+     "group": "COAL_PRB",
+     "model_twh": 0.2087,
+     "eia923_twh": 0.481
+    },
+    "6076": {
+     "name": "Colstrip",
+     "zone": "NWPP-INLAND",
+     "group": "COAL_PRB",
+     "model_twh": 6.9297,
+     "eia923_twh": 9.0285
+    },
+    "55841:CC_REGULAR": {
+     "name": "Silverhawk",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 1.5887,
+     "eia923_twh": 2.693
+    },
+    "4158": {
+     "name": "Dave Johnston",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 4.5345,
+     "eia923_twh": 3.839
+    },
+    "2336:CC_REGULAR": {
+     "name": "Tracy",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 4.4418,
+     "eia923_twh": 3.8948
+    },
+    "55662": {
+     "name": "Chehalis Generating Facility",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.8656,
+     "eia923_twh": 2.6519
+    },
+    "8224": {
+     "name": "North Valmy",
+     "zone": "NWPP-SNV",
+     "group": "COAL_BIT",
+     "model_twh": 0.806,
+     "eia923_twh": 1.1646
+    },
+    "10761": {
+     "name": "Las Vegas Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 0.8776,
+     "eia923_twh": 0.4485
+    },
+    "55482": {
+     "name": "Goldendale Generating Station",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.6875,
+     "eia923_twh": 2.0996
+    },
+    "56102": {
+     "name": "Currant Creek",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 3.8964,
+     "eia923_twh": 2.8614
+    },
+    "56227": {
+     "name": "Port Westward",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 2.4983,
+     "eia923_twh": 2.7534
+    },
+    "2322:CC_REGULAR": {
+     "name": "Clark (NVE)",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 0.1431,
+     "eia923_twh": 0.8616
+    },
+    "7082:CC_REGULAR": {
+     "name": "Harry Allen",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 3.3742,
+     "eia923_twh": 2.8475
+    },
+    "57028": {
+     "name": "Langley Gulch Power Plant",
+     "zone": "NWPP-INLAND",
+     "group": "CC_REGULAR",
+     "model_twh": 1.7222,
+     "eia923_twh": 1.8269
+    },
+    "4162:COAL_PRB": {
+     "name": "Naughton",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 1.1702,
+     "eia923_twh": 1.5891
+    },
+    "56224": {
+     "name": "TS Power Plant",
+     "zone": "NWPP-SNV",
+     "group": "COAL_PRB",
+     "model_twh": 0.5506,
+     "eia923_twh": 1.3642
+    },
+    "7999": {
+     "name": "Grays Harbor Energy Facility",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 3.3182,
+     "eia923_twh": 2.7797
+    },
+    "56177": {
+     "name": "Nebo Power Station",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 0.7259,
+     "eia923_twh": 0.8091
+    },
+    "55322": {
+     "name": "Chuck Lenzie Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 7.3977,
+     "eia923_twh": 5.5089
+    },
+    "55328": {
+     "name": "Hermiston Power Partnership",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 4.5247,
+     "eia923_twh": 4.2831
+    },
+    "55687": {
+     "name": "Higgins Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 4.3516,
+     "eia923_twh": 2.9843
+    },
+    "8073:CC_REGULAR": {
+     "name": "",
+     "zone": "",
+     "group": "CC_REGULAR",
+     "model_twh": 1.9113,
+     "eia923_twh": 0.0
+    },
+    "55700": {
+     "name": "Mint Farm Generating Station",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.66,
+     "eia923_twh": 2.3064
+    },
+    "6165": {
+     "name": "Hunter",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 2.7268,
+     "eia923_twh": 4.0663
+    },
+    "8066:COAL_PRB": {
+     "name": "Jim Bridger",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 5.0788,
+     "eia923_twh": 4.8201
+    },
+    "7790": {
+     "name": "Bonanza",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 2.0408,
+     "eia923_twh": 3.2441
+    },
+    "50951": {
+     "name": "Sunnyside Cogen Associates",
+     "zone": "NWPP-EAST",
+     "group": "COAL_WC",
+     "model_twh": 0.0373,
+     "eia923_twh": 0.3435
+    },
+    "55818": {
+     "name": "Frederickson Power LP",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.2811,
+     "eia923_twh": 1.7177
+    },
+    "7605": {
+     "name": "River Road Gen Plant",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.1724,
+     "eia923_twh": 1.5616
+    },
+    "56237": {
+     "name": "Lake Side Power Plant",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 8.3803,
+     "eia923_twh": 6.1063
+    },
+    "55179": {
+     "name": "Rathdrum Power LLC",
+     "zone": "NWPP-INLAND",
+     "group": "CC_REGULAR",
+     "model_twh": 0.9861,
+     "eia923_twh": 1.373
+    },
+    "6101": {
+     "name": "Wyodak",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 2.1178,
+     "eia923_twh": 1.9705
+    },
+    "55514": {
+     "name": "Apex Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 3.0022,
+     "eia923_twh": 2.0217
+    },
+    "7870": {
+     "name": "Encogen",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.3751,
+     "eia923_twh": 0.754
+    },
+    "3845": {
+     "name": "Transalta Centralia Generation",
+     "zone": "NWPP-NW",
+     "group": "COAL_BIT",
+     "model_twh": 0.684,
+     "eia923_twh": 2.8317
+    }
+   }
+  },
+  "2025": {
+   "c1_delta_twh": {
+    "CC_REGULAR": 8.341999999999999,
+    "CC_CHP": -0.35499999999999954,
+    "CT_PEAKER": 5.567,
+    "ST_GAS": -2.403,
+    "ST_CHP": -0.242,
+    "COAL_PRB": -1.2900000000000027,
+    "COAL_BIT": -9.441,
+    "COAL_WC": -0.19
+   },
+   "cc_regular_delta": 8.341999999999999,
+   "coal_family_delta": -10.921000000000003,
+   "hydro_delta": 2.7959999999999923,
+   "hydro_actual": 110.2719,
+   "fossil_total_delta": -0.012000000000004507,
+   "cc_regular_delta_by_zone_volerr": {
+    "NWPP-NW": -1.9098999999999968,
+    "NWPP-OR": 2.6875,
+    "NWPP-INLAND": -0.253099999999999,
+    "NWPP-EAST": 3.370700000000003,
+    "NWPP-SNV": 4.446999999999999
+   },
+   "take_binding_vs_k13_twh": {
+    "A": 3.9794,
+    "B": 6.585900000000001
+   },
+   "cc_if_take_displaces_cc_1to1": {
+    "A": 4.362599999999999,
+    "B": 1.7560999999999973
+   },
+   "beaver_8073_model_cc_twh": 3.3349,
+   "beaver_8073_eia923_cc_twh": 1.864329,
+   "plants": {
+    "58503": {
+     "name": "Carty Generating Station",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 3.0648,
+     "eia923_twh": 3.2168
+    },
+    "8069": {
+     "name": "Huntington",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 1.7048,
+     "eia923_twh": 4.2602
+    },
+    "55749": {
+     "name": "Hardin Generator Project",
+     "zone": "NWPP-INLAND",
+     "group": "COAL_PRB",
+     "model_twh": 0.1022,
+     "eia923_twh": 0.2092
+    },
+    "6076": {
+     "name": "Colstrip",
+     "zone": "NWPP-INLAND",
+     "group": "COAL_PRB",
+     "model_twh": 8.8875,
+     "eia923_twh": 9.1712
+    },
+    "55841:CC_REGULAR": {
+     "name": "Silverhawk",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 1.5455,
+     "eia923_twh": 2.3905
+    },
+    "4158": {
+     "name": "Dave Johnston",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 4.75,
+     "eia923_twh": 4.2735
+    },
+    "8224:COAL_BIT": {
+     "name": "North Valmy",
+     "zone": "NWPP-SNV",
+     "group": "COAL_BIT",
+     "model_twh": 0.8023,
+     "eia923_twh": 1.2924
+    },
+    "2336:CC_REGULAR": {
+     "name": "Tracy",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 4.7916,
+     "eia923_twh": 3.9141
+    },
+    "56163:COAL_BIT": {
+     "name": "",
+     "zone": "",
+     "group": "COAL_BIT",
+     "model_twh": 0.0,
+     "eia923_twh": 0.0
+    },
+    "55662": {
+     "name": "Chehalis Generating Facility",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 2.6856,
+     "eia923_twh": 2.3374
+    },
+    "10761": {
+     "name": "Las Vegas Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 0.5874,
+     "eia923_twh": 0.6446
+    },
+    "55482": {
+     "name": "Goldendale Generating Station",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.4133,
+     "eia923_twh": 1.6419
+    },
+    "56102": {
+     "name": "Currant Creek",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 4.1225,
+     "eia923_twh": 2.8031
+    },
+    "56227": {
+     "name": "Port Westward",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 2.525,
+     "eia923_twh": 3.2648
+    },
+    "2322:CC_REGULAR": {
+     "name": "Clark (NVE)",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 0.0023,
+     "eia923_twh": 0.6643
+    },
+    "7082:CC_REGULAR": {
+     "name": "Harry Allen",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 3.7425,
+     "eia923_twh": 3.0304
+    },
+    "57028": {
+     "name": "Langley Gulch Power Plant",
+     "zone": "NWPP-INLAND",
+     "group": "CC_REGULAR",
+     "model_twh": 1.805,
+     "eia923_twh": 1.7551
+    },
+    "4162:COAL_PRB": {
+     "name": "Naughton",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 1.4318,
+     "eia923_twh": 1.6862
+    },
+    "56224": {
+     "name": "TS Power Plant",
+     "zone": "NWPP-SNV",
+     "group": "COAL_PRB",
+     "model_twh": 0.847,
+     "eia923_twh": 1.718
+    },
+    "7999": {
+     "name": "Grays Harbor Energy Facility",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 3.4855,
+     "eia923_twh": 3.6494
+    },
+    "56177": {
+     "name": "Nebo Power Station",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 0.7012,
+     "eia923_twh": 0.7685
+    },
+    "55322": {
+     "name": "Chuck Lenzie Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 8.7431,
+     "eia923_twh": 6.1578
+    },
+    "55328": {
+     "name": "Hermiston Power Partnership",
+     "zone": "NWPP-OR",
+     "group": "CC_REGULAR",
+     "model_twh": 3.2335,
+     "eia923_twh": 2.989
+    },
+    "55687": {
+     "name": "Higgins Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 3.0786,
+     "eia923_twh": 2.0846
+    },
+    "8073:CC_REGULAR": {
+     "name": "",
+     "zone": "",
+     "group": "CC_REGULAR",
+     "model_twh": 3.3349,
+     "eia923_twh": 0.0
+    },
+    "55700": {
+     "name": "Mint Farm Generating Station",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.6733,
+     "eia923_twh": 2.2983
+    },
+    "6165": {
+     "name": "Hunter",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 2.9081,
+     "eia923_twh": 6.8337
+    },
+    "8066:COAL_PRB": {
+     "name": "Jim Bridger",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 4.0341,
+     "eia923_twh": 4.8826
+    },
+    "7790": {
+     "name": "Bonanza",
+     "zone": "NWPP-EAST",
+     "group": "COAL_BIT",
+     "model_twh": 1.5255,
+     "eia923_twh": 2.5366
+    },
+    "50951": {
+     "name": "Sunnyside Cogen Associates",
+     "zone": "NWPP-EAST",
+     "group": "COAL_WC",
+     "model_twh": 0.0362,
+     "eia923_twh": 0.2258
+    },
+    "55818": {
+     "name": "Frederickson Power LP",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 1.4899,
+     "eia923_twh": 1.6062
+    },
+    "7605": {
+     "name": "River Road Gen Plant",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.425,
+     "eia923_twh": 1.4339
+    },
+    "56237": {
+     "name": "Lake Side Power Plant",
+     "zone": "NWPP-EAST",
+     "group": "CC_REGULAR",
+     "model_twh": 8.1681,
+     "eia923_twh": 6.0495
+    },
+    "55179": {
+     "name": "Rathdrum Power LLC",
+     "zone": "NWPP-INLAND",
+     "group": "CC_REGULAR",
+     "model_twh": 1.4363,
+     "eia923_twh": 1.7391
+    },
+    "6101": {
+     "name": "Wyodak",
+     "zone": "NWPP-EAST",
+     "group": "COAL_PRB",
+     "model_twh": 2.2865,
+     "eia923_twh": 2.092
+    },
+    "55514": {
+     "name": "Apex Generating Station",
+     "zone": "NWPP-SNV",
+     "group": "CC_REGULAR",
+     "model_twh": 2.3075,
+     "eia923_twh": 1.4652
+    },
+    "7870": {
+     "name": "Encogen",
+     "zone": "NWPP-NW",
+     "group": "CC_REGULAR",
+     "model_twh": 0.2423,
+     "eia923_twh": 0.3541
+    },
+    "3845": {
+     "name": "Transalta Centralia Generation",
+     "zone": "NWPP-NW",
+     "group": "COAL_BIT",
+     "model_twh": 1.5889,
+     "eia923_twh": 3.1505
+    }
+   }
+  }
+ },
+ "r_ccdelta_vs_coaldelta": -0.973787452312116
+}
