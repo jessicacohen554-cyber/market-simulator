@@ -107,4 +107,15 @@ composes (`docs/handoffs/neiso118/compose_span.py`), attests, registers `--no-pr
 
 ## 8. Launch record
 
-(filled at launch)
+All seven pinned to **`faa5bd591040e58e31a33e3c3369c1de7d4f31ea`** (this doc's commit on `a151c5b1`), created
+2026-09-26 14:01 UTC, tag `neiso118`. Branch `claude/neiso118-<Y>`, out-dir `neiso118_<Y>`.
+
+| year | shard session |
+|---|---|
+| 2019 | `session_01WmMzLRD35E2ektbF2KChzu` |
+| 2020 | `session_01EteN82GKiDFSuPYpqb9PXv` |
+| 2021 | `session_01XJnVYr7TbRhpNadnQMqz2M` |
+| 2022 | `session_015k2zCro2xcGaeBC2bZAsSm` |
+| 2023 | `session_014DUBDmJt9jYnXrCovsvoSv` |
+| 2024 | `session_01XEFYqtCNCJ63KNYbunRNTS` |
+| 2025 | `session_01RJ2fAJrxporgn694kG7svP` |
