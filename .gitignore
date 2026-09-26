@@ -3588,3 +3588,6 @@ results/calibration/soco69_20[0-9][0-9]/
 # neiso-117 per-year shard legs (rule 32(d)/36): the composite neiso117_span is what registers.
 # Legs live on claude/neiso117-<Y> (transport only, rule 33(f)).
 results/calibration/neiso117_20[12][0-9]/
+
+!results/calibration/neiso117_2025/**
+!results/calibration/neiso117_2025/
