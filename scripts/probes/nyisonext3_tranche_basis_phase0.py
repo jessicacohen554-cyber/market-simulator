@@ -167,15 +167,15 @@ def _diff(ctl: dict, arm: dict) -> dict:
     return foot
 
 
-def _plant_detail(year: int, ctl: dict, arm: dict) -> dict:
-    """Tranche capacities, offer levels and the two bounds per watched steam plant."""
+def _plant_detail(year: int, ctl: dict, arm: dict, extra: set[str]) -> dict:
+    """Tranche capacities, offer levels and both bounds per watched / moved plant-class."""
     import gzip
 
     fa, fb = ctl["fleet_arrays"], arm["fleet_arrays"]
     pc = np.asarray(fa.plant_code).astype(int)
     pg = np.asarray(fa.plant_group).astype(str)
     zi = np.asarray(fa.zone_idx).astype(int)
-    zones = list(ctl.get("zones") or ctl.get("zone_names") or [])
+    zones = list(ctl["iso_config"].zone_names)
     n = pc.size
     ma, mb = _mc(ctl, n), _mc(arm, n)
     price = _prices(year)
@@ -184,8 +184,14 @@ def _plant_detail(year: int, ctl: dict, arm: dict) -> dict:
         gzip.open(REPO / f"frontend/data/backcast/bench/NYISO/{year}.json.gz").read()
     )["bench"]["plants"]
     out = {}
-    for code, name in PLANTS.items():
-        rows = np.flatnonzero((pc == code) & (pg == "ST_GAS"))
+    keys = [(c, "ST_GAS", n) for c, n in PLANTS.items()]
+    keys += [
+        (int(k.split(":")[0]), k.split(":")[1], "")
+        for k in sorted(extra)
+        if (int(k.split(":")[0]), k.split(":")[1]) not in {(c, g) for c, g, _ in keys}
+    ]
+    for code, cls, name in keys:
+        rows = np.flatnonzero((pc == code) & (pg == cls))
         if rows.size == 0:
             continue
         pmax_a = np.asarray(fa.pmax, float)[rows]
@@ -214,9 +220,9 @@ def _plant_detail(year: int, ctl: dict, arm: dict) -> dict:
             rec["inmerit_twh_arm"] = round(float(inb.sum()) / 1e6, 4)
             rec["econ_reach_up_twh"] = round(float(np.clip(d, 0, None).sum()) / 1e6, 4)
             rec["econ_reach_down_twh"] = round(float(np.clip(d, None, 0).sum()) / 1e6, 4)
-        key = f"{code}:ST_GAS" if f"{code}:ST_GAS" in pay else str(code)
+        key = f"{code}:{cls}" if f"{code}:{cls}" in pay else str(code)
         bp = bench.get(key)
-        if bp is not None and key in pay:
+        if bp is not None and key in pay and bp.get("group", cls) == cls:
             npl = float(bp["npl"])
             m = prev._cf(pay[key]["m"]) * npl / 100.0
             ca, cb_ = cap_a.sum(0), cap_b.sum(0)
@@ -227,7 +233,7 @@ def _plant_detail(year: int, ctl: dict, arm: dict) -> dict:
             rec["binding_bound_add_twh"] = round(
                 float(np.clip(cb_ - ca, 0, None)[bind].sum()) / 1e6, 4
             )
-        out[str(code)] = rec
+        out[f"{code}:{cls}"] = rec
     return out
 
 
@@ -235,13 +241,13 @@ def measure(year: int, arm_dir: Path, selector: bool) -> dict:
     """One year's control / arm (/ arm_sel) census."""
     ctl = _build_on(year, None, False)
     arm = _build_on(year, arm_dir, False)
-    res = {"arm": {"footprint": _diff(ctl, arm), "plants": _plant_detail(year, ctl, arm)}}
-    if selector:
-        sel = _build_on(year, arm_dir, True)
-        res["arm_sel"] = {
-            "footprint": _diff(ctl, sel),
-            "plants": _plant_detail(year, ctl, sel),
-        }
+    res = {}
+    for name, b in (("arm", arm),) + ((("arm_sel", _build_on(year, arm_dir, True)),) if selector else ()):
+        foot = _diff(ctl, b)
+        moved = set()
+        for v in foot.values():
+            moved |= set(v.get("plants_moved", []))
+        res[name] = {"footprint": foot, "plants": _plant_detail(year, ctl, b, moved)}
     return res
 
 
