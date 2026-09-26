@@ -208,6 +208,7 @@ def inject_reliability_floor(
     wind_cap: np.ndarray | None = None,
     solar_cf: np.ndarray | None = None,
     solar_cap: np.ndarray | None = None,
+    layup_removed: dict[tuple[int, str], np.ndarray] | None = None,
 ) -> bool:
     """Apply temperature / net-load reliability-commitment floors from limb specs.
 
@@ -250,6 +251,18 @@ def inject_reliability_floor(
     window, reproducing the legacy ``clip(base + slope×(T−T0), base, cap)`` ramp
     instead of a single step that over-fires on every warm day. Ramp families
     support only the ``tmax``/``tmin`` drivers (see :class:`ReliabilityFloorSpec`).
+
+    *layup_removed* (``ScenarioConfig.reliability_floor_layup_window_mask``,
+    NYISO-NEXT) maps ``(plant_code, plant_group)`` to the plant-hour share of
+    capacity the merit-order guard measured as ECONOMIC LAY-UP
+    (:func:`market_sim.data.outages.unit_layup_removed_fractions`). When given,
+    a ``pro_rata`` limb floors each unit on ``pmax x max(0, availability -
+    layup_share)`` instead of ``pmax x availability``, so no unit is forced on
+    inside a window its own record classifies as laid up (rule 17
+    ``[R-FLOOR-WINDOW]``); ``availability`` itself is untouched. A
+    ``cheapest_first`` limb is deliberately NOT masked: its zonal target is
+    placed on other units, so masking it would relocate forcing rather than
+    remove it. ``None`` (the default) is the unmasked basis, byte-identical.
 
     Modifies *fleet_arrays* in place. Returns ``True`` iff any enabled limb
     floored at least one unit, ``False`` (byte-identical) otherwise.
@@ -315,6 +328,19 @@ def inject_reliability_floor(
             mech = ensure_mechanism(fleet_arrays)
             for r in rows:
                 avail_r = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+                if layup_removed:
+                    # NYISO-NEXT lay-up window mask: drop the capacity the
+                    # guard measured as laid up from THIS unit's floor basis
+                    # (its own forcing only; nothing is relocated).
+                    # Keyed exactly as the outage overlay keys availability:
+                    # (plant_code, artifact_class(plant_group)).
+                    share = layup_removed.get(
+                        (int(fleet_arrays.plant_code[r]), str(groups[r]))
+                    )
+                    if share is not None:
+                        avail_r = fleet_arrays.pmax[r] * np.maximum(
+                            fleet_arrays.availability[r, :] - share, 0.0
+                        )
                 target = frac * avail_r
                 raised = fleet_arrays.min_gen[r, :] < target
                 np.maximum(

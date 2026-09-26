@@ -2034,6 +2034,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # keeper's True) is non-default and keeps its key unchanged. SHARED field
     # -- very end, per HOUSE-3.
     "coal_mustrun_requires_measured_row",
+    # NYISO-NEXT (2026-09-25) lay-up window mask on the PRO-RATA reliability
+    # floor (GATED default-off; its one consumer, run_calibration.run_year,
+    # builds the lay-up shares only inside ``getattr(config,
+    # "reliability_floor_layup_window_mask", False)`` and passes None otherwise,
+    # which inject_reliability_floor reads as the unmasked basis, so the off
+    # path is byte-inert). SHARED field -- very end, per HOUSE-3. Registered IN
+    # THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "reliability_floor_layup_window_mask",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2756,6 +2764,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by SPP-71 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "coal_sync_ensemble_level": "False",
+    # Added by NYISO-NEXT WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "reliability_floor_layup_window_mask": "False",
 }
 
 
@@ -3464,6 +3475,9 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
         "measured CAISO peak band for the bypassed ST_GAS steamers"
     ),
     "pjm_ct_measured_max_reprice": "measured PJM CT max-offer repricing",
+    "reliability_floor_layup_window_mask": (
+        "measured lay-up windows mask the pro-rata reliability floor"
+    ),
 }
 
 # ``outage_source`` is the same family but is a STRING axis, not a flag: only the
@@ -7357,6 +7371,51 @@ class ScenarioConfig:
     # adds NO free parameter (rule 21 [R-DOF]). Default off: every existing run
     # and every other ISO stays byte-identical.
     # Evidence: results/calibration/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md
+    reliability_floor_layup_window_mask: bool = False
+    # NYISO-NEXT (2026-09-25) — the HOUR-grain companion of the membership
+    # correction above, for the case membership cannot express: a unit that is
+    # economically laid up in PART of a year. A pro_rata limb floors each unit
+    # at ``floor_pct x pmax x availability[t]``, and the merit-order guard
+    # (campd_outage_merit_order_guard) deliberately returns a measured lay-up
+    # window to AVAILABILITY ("an economically idle unit is AVAILABLE; the LP
+    # declines it on its own economics"). The floor then forces the unit ON
+    # inside the very window the model's own outage pipeline adjudicated as
+    # not-operating — rule 17 [R-FLOOR-WINDOW]'s "a floor binding in hours its
+    # own driver evidence says the unit is offline is a bug by definition".
+    # Measured case: NYISO NYC ST_GAS persistent base (tmax -50, 24 h, pro_rata)
+    # on Ravenswood 2500 — the guard books its 2021 / 2023 windows as lay-up
+    # and its 2022 / 2024 / 2025 windows as outage, so its availability, and
+    # with it the floor, jumps to 0.64-0.68 in exactly the two lay-up years
+    # (~1.6 TWh of floor in 2023 against a measured 0.79 TWh of output).
+    #
+    # When True (BACKCAST only), each pro_rata limb's per-unit basis becomes
+    # ``pmax x max(0, availability - layup_share(t))``, the plant-hour lay-up
+    # share from market_sim.data.outages.unit_layup_removed_fractions read from
+    # the lay-up half of the SAME detection the availability overlay reads its
+    # outage half from (same selector flags, same routing, same denominator, so
+    # the two shares are additive by construction). AVAILABILITY IS NOT TOUCHED:
+    # the unit stays available to the LP's economics, reserves and scarcity;
+    # only the FORCING leaves the measured lay-up hours. Exactly the
+    # mustrun_layup_window_mask (miso-173) / netload_drag_layup_window_mask
+    # (ercot-256) construction, on the third floor family.
+    #
+    # SCOPE: pro_rata limbs only. A cheapest_first limb sizes one ZONAL target
+    # on the fleet's available capacity and places it on the cheapest units, so
+    # masking its target would move forcing onto OTHER units — a coefficient
+    # change through the back door (nyiso-204's objection to the Capital_Hudson
+    # exclusion) — and masking only its per-unit caps would relocate the forcing
+    # the mask exists to remove. Under pro_rata a unit's floor is its own, so the
+    # mask removes exactly the laid-up unit's forcing and relocates nothing.
+    # Rule 21 [R-DOF]: ZERO free parameters (windows, shares and the guard's
+    # MERIT_OOM_FRAC live in the frozen derive layer, rule 23). floor_pct is
+    # UNTOUCHED — the level is not the instrument. Rule 13 [R-MEASURED]:
+    # BACKCAST ONLY (_BACKCAST_ONLY_OVERLAY_FIELDS + the consumer's mode gate);
+    # same-year lay-up windows have no forward analogue, exactly like the
+    # outage windows the same detector writes, so a forecast keeps the
+    # unmasked floor. Rule 19 [R-ONE-MECH]: no new floor, no membership change;
+    # the existing floor's hour-eligibility is refined by the measured-conduct
+    # family that already sets its availability. Default off: every existing
+    # run and every other ISO stays byte-identical.
     class_commitment_overrides: dict[str, dict] = field(default_factory=dict)
     # Per-class commitment overrides for THIS run's ISO, keyed by plant_group
     # class (e.g. "ST_GAS") -> {"min_run_hours"?: int, "min_down_hours"?: int}.

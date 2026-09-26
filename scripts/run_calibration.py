@@ -532,6 +532,76 @@ def _measured_heat_rate_flags(config: ScenarioConfig) -> dict[str, bool]:
     }
 
 
+def _reliability_floor_layup_shares(
+    config, iso: str, year: int, fleet_arrays
+) -> dict[tuple[int, str], np.ndarray] | None:
+    """Lay-up shares for ``ScenarioConfig.reliability_floor_layup_window_mask``.
+
+    Returns ``{(plant_code, plant_group): (hours,) laid-up capacity share}`` read
+    from the lay-up half of the SAME merit-guarded detection the availability
+    overlay reads its outage half from — every selector and basis argument
+    mirrors ``data.fleet.arrays``' own ``unit_outage_derate_factors`` call, which
+    is what makes the two shares additive (the loader's contract). Returns
+    ``None`` when the mask is off, the run is not a backcast (rule 13: same-year
+    lay-up windows have no forward analogue), or the run carries no historic
+    outage overlay for the windows to be a complement of — so the off path is
+    byte-inert.
+    """
+    if not getattr(config, "reliability_floor_layup_window_mask", False):
+        return None
+    if getattr(config, "mode", "forecast") != "backcast":
+        return None
+    if getattr(config, "outage_source", None) != "historic":
+        return None
+    from types import SimpleNamespace
+
+    from market_sim.data.outages import (
+        BINS_CSV_DEFAULT,
+        lp_bin_capacity_index,
+        unit_layup_removed_fractions,
+    )
+
+    iso_u = (iso or "ERCOT").upper()
+    per_unit = bool(getattr(config, "campd_per_unit_attribution", False))
+    merit = per_unit and bool(getattr(config, "campd_outage_merit_order_guard", False))
+    lp_bins = None
+    if (
+        getattr(config, "unit_outage_dispatched_bin_denominator", False)
+        and iso_u != "ERCOT"
+    ):
+        lp_bins = lp_bin_capacity_index(
+            [
+                SimpleNamespace(plant_code=int(c), plant_group=str(g))
+                for c, g in zip(fleet_arrays.plant_code, fleet_arrays.plant_group)
+            ],
+            np.asarray(fleet_arrays.pmax, dtype=float),
+        )
+    shares = unit_layup_removed_fractions(
+        int(getattr(config, "weather_year", 0) or year),
+        int(fleet_arrays.availability.shape[1]),
+        getattr(config, "campd_bins_path", None) or str(BINS_CSV_DEFAULT),
+        iso=iso_u,
+        cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
+        cc_nameplate_basis=getattr(config, "unit_outage_lp_capacity_basis", False),
+        st_capacity_basis=getattr(config, "unit_outage_st_capacity_basis", False),
+        per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
+        extract_basis_share=getattr(config, "unit_outage_extract_basis_share", False),
+        lp_bin_capacity=lp_bins,
+        per_unit_crosswalk=per_unit,
+        merit_order_guard=merit,
+        hour_grain=merit
+        and bool(getattr(config, "unit_outage_window_hour_grain", False)),
+    )
+    logger.info(
+        "%s %d: reliability_floor_layup_window_mask ARMED: %d plant-group "
+        "lay-up share series mask the pro_rata reliability-floor basis",
+        iso,
+        year,
+        len(shares),
+    )
+    return shares
+
+
 def run_year(
     year: int,
     iso: str,
@@ -4408,6 +4478,11 @@ def run_year(
                 year,
                 _n_excluded,
             )
+        # Rule 17 [R-FLOOR-WINDOW], hour grain (NYISO-NEXT): the measured
+        # economic-lay-up windows leave each pro_rata limb's per-unit basis.
+        # None unless reliability_floor_layup_window_mask is armed in a
+        # backcast, which inject_reliability_floor reads as the unmasked basis.
+        _floor_layup = _reliability_floor_layup_shares(config, iso, year, fleet_arrays)
         if _floor_specs and inject_reliability_floor(
             fleet_arrays,
             iso,
@@ -4419,6 +4494,7 @@ def run_year(
             wind_cap=wind_cap,
             solar_cf=solar_cf,
             solar_cap=solar_cap,
+            layup_removed=_floor_layup,
         ):
             logger.info(
                 "%s %d: reliability floor — %d enabled limb spec(s) applied "
