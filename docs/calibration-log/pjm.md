@@ -6703,3 +6703,13 @@ deriver's COAL-SUB token fix), `pjm_zonal_gas_basis_skip_923_priced` (basis no l
 +12.9/+10.5/+20.7/+8.1; CC_REGULAR 2024 −14.68 → −10.07 (still FAIL); nuclear 2019 −5.9 → −0.9. Costs: C3a 2019
 PASS → FAIL (+10.7 %), C3b 2020 PASS → FAIL, CC_REGULAR 2022 +10.9 → +14.9. Registered `--no-prune`; **PROMOTED 2026-09-26** (owner: "If structural integrity improves but gates regress that may still be a keeper"), `2026-09-25-pjm-next-c1` pruned. Promotion was
 the owner's call. Record: `docs/RESULT-pjm-next-2-2026-09-25.md`.
+
+## PJM-NEXT-3 — 2026-09-26 — per-unit fuel routing of outage windows (PROMOTED)
+
+Run `2026-09-26-pjm-next-3-unitfuel` (bundle `pjmnext3_c2_span`, one shard per year 2019–2025 at `54849585`, composed at
+zero LP; control = keeper `2026-09-25-pjm-next-2-joint` committed bundle, G-DRIFT INERT). One gated, zero-DOF field,
+`unit_outage_unit_fuel_routing`: at Montour (2023/2024) and Brunner Island (2019), each CAMPD window now derates its own
+generator's fuel slice (66 re-tags in a companion extract). Zero criterion flips. CC_REGULAR 2024 −10.07 → −9.33 (still
+FAIL), COAL_BIT 2024 +3.62 → +0.93, ST_GAS 2023 +5.22 → +2.63, COAL_BIT 2019 +12.91 → +13.98 (predicted). **PROMOTED**
+on the owner's structural-integrity ruling; `2026-09-25-pjm-next-2-joint` pruned. Cards 1/3/4 ended at phase 0.
+Records: `docs/RESULT-pjm-next-3-2026-09-26.md`, `docs/FINDING-pjm-next-3-phase0-cards-1-3-4-2026-09-26.md`.

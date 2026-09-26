@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-26-nwppnext5-standby",
+  "label": "nwppnext5 standby",
+  "date": "2026-09-26",
+  "shorthand": "nwppnext5-standby",
+  "definition": "NWPP keeper #12: keeper #11's recipe (coal committed band nested on must-run) plus admit_standby_units, admitting EIA-860 standby (SB)-status units by status alone. Unserved energy falls 34-70% across 2019-2025 and two criteria flip FAIL to PASS (C1 CC_REGULAR 2024, C4 coal 2019 r) with none flipping PASS to FAIL. Determination NOT-YET on {fuelmix, dispatch_corr}, the same failing set as keeper #11 (C2/C6/C8 PASS; price UNSCORED, rubric v3.8).",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-09-26-nwppnext5-standby.js",
+  "bundle": "results/calibration/nwppnext5_span"
+}

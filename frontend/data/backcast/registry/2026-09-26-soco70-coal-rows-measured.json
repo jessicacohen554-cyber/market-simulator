@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-26-soco70-coal-rows-measured",
+  "label": "soco70 coal rows measured",
+  "date": "2026-09-26",
+  "shorthand": "soco70-coal-rows-measured",
+  "definition": "soco-70 2019: soco-69 keeper recipe on thermal_tranches_SOCO.csv + measured COAL rows for plants 3/26/641/6052/6073 (coal-unit coverage, rule 23 source change)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-09-26-soco70-coal-rows-measured.js",
+  "bundle": "results/calibration/soco70_span"
+}

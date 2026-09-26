@@ -56,6 +56,8 @@ from market_sim.config.paths import (
     CAMPD_BINS_CSV,
     RAW_DATA_DIR,
     REFERENCE_DIR,
+    eia860_operable_statuses,
+    eia860_standby_admitted,
 )
 from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY, artifact_class
 
@@ -377,6 +379,7 @@ def unit_outage_csv_for_iso(
     dark_unit_years: bool = False,
     membership_repair: bool = False,
     unit_fuel_routing: bool = False,
+    netload_mask_repair: bool = False,
 ) -> Path:
     """Return the CAMPD unit-outage CSV path for an ISO.
 
@@ -477,6 +480,22 @@ def unit_outage_csv_for_iso(
     (``scripts/data/build_outage_unit_fuel_routing.py``). Meaningful only with
     ``membership_repair`` (it is a companion OF that file); zero free
     parameters; falls back to ``-memberrepair-`` when not derived.
+
+    ``netload_mask_repair`` (``ScenarioConfig.unit_outage_netload_mask_repair``,
+    GATED default False; SPP-85) selects the ``-netloadmask-`` companion of the
+    STANDARD extract: the SAME deriver at the committed extract's own recorded
+    invocation, re-run once ``scripts/lib/outage_detect._ISO_TO_BA`` carries the
+    ISO's EIA-930 balancing authority. Without that key ``high_load_mask``
+    returned ``None`` and ``filter_revealed_outages`` kept every span, so the
+    recorded ``min_inmerit_hours`` was never in effect (SPP). The companion is a
+    strict row-subset of the incumbent (the filter only drops spans). Only on the
+    standard path (ignored under the per-unit / unit-route / membership families,
+    which carry their own derivations). Zero free parameters; a separate file,
+    never an overwrite, and the standard extract when the companion is absent.
+    The SAME field selects the short and partial companions
+    (:func:`unit_outage_short_csv_for_iso`, :func:`unit_partial_outage_csv_for_iso`),
+    so one repair moves every layer the missing key reached, together (rule 19
+    ``[R-ONE-MECH]``: it replaces each layer, never stacks on it).
     """
     ercot = iso is None or iso.upper() == "ERCOT"
     base = (
@@ -533,13 +552,26 @@ def unit_outage_csv_for_iso(
         )
         if alt.exists():
             return alt
+    if (
+        netload_mask_repair
+        and not ercot
+        and not mixed_gas_routing
+        and not per_unit_crosswalk
+        and not membership_repair
+    ):
+        # SPP-85: the standard extract re-derived with the net-load mask live.
+        alt = base.with_name(f"campd-unit-outages-netloadmask-{iso.upper()}.csv")
+        if alt.exists():
+            return alt
     if not mixed_gas_routing:
         return base
     alt = base.with_name(f"campd-unit-outages-unitroute-{(iso or 'ERCOT').upper()}.csv")
     return alt if alt.exists() else base
 
 
-def unit_outage_short_csv_for_iso(iso: str | None, hour_grain: bool = False) -> Path:
+def unit_outage_short_csv_for_iso(
+    iso: str | None, hour_grain: bool = False, netload_mask_repair: bool = False
+) -> Path:
     """Return the SHORT (< 5-day) unit-outage CSV path for an ISO.
 
     Written by ``scripts/data/derive_campd_unit_outages.py --short-windows``:
@@ -553,6 +585,10 @@ def unit_outage_short_csv_for_iso(iso: str | None, hour_grain: bool = False) -> 
     selects ERCOT's ``campd-unit-outages-short-hourgrain.csv`` — the same windows
     at their DETECTED hour grain (see :func:`unit_outage_csv_for_iso`); ERCOT
     only, falling back to the incumbent when absent.
+
+    ``netload_mask_repair`` (``ScenarioConfig.unit_outage_netload_mask_repair``,
+    SPP-85) selects the non-ERCOT ``-short-netloadmask-`` companion (see
+    :func:`unit_outage_csv_for_iso`), falling back to the incumbent when absent.
     """
     if iso is None or iso.upper() == "ERCOT":
         if hour_grain:
@@ -560,6 +596,12 @@ def unit_outage_short_csv_for_iso(iso: str | None, hour_grain: bool = False) -> 
             if alt.exists():
                 return alt
         return UNIT_OUTAGE_CSV.with_name("campd-unit-outages-short.csv")
+    if netload_mask_repair:
+        alt = UNIT_OUTAGE_CSV.with_name(
+            f"campd-unit-outages-short-netloadmask-{iso.upper()}.csv"
+        )
+        if alt.exists():
+            return alt
     return UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-short-{iso.upper()}.csv")
 
 
@@ -861,6 +903,18 @@ _CC_NAMEPLATE_BASIS_GROUPS: tuple[str, ...] = ("CC_REGULAR", "CC_CHP")
 _ST_CAPACITY_BASIS_GROUPS: tuple[str, ...] = ("ST_GAS", "ST_CHP")
 
 
+def _fleet_cache_dir_key() -> str:
+    """Return the fleet-derived caches' EIA-860 key: the active directory, plus
+    a ``|SB`` suffix while ``admit_standby_units`` widens the fleet's status
+    filter (the fleet these maps sum depends on both). Identical to
+    ``str(active_eia860_dir())`` while off, so every off-path key is unchanged.
+    """
+    from market_sim.config.paths import active_eia860_dir
+
+    key = str(active_eia860_dir())
+    return f"{key}|SB" if eia860_standby_admitted() else key
+
+
 def _iso_plant_unit_capacity(
     iso: str,
     cc_steam_part_reclass: bool = False,
@@ -873,16 +927,15 @@ def _iso_plant_unit_capacity(
     cache key here because the fleet this map is built from is vintage-dependent
     (rule 14 ``[R-ACCURATE]``; SPP-38 / ``FINDING-spp-37-order-sensitivity``).
     """
-    from market_sim.config.paths import active_eia860_dir
 
     if not mid_vintage_exit_carry:
         # SPP-48: original arity while off, so the lru_cache key tuple is
         # unchanged and the off path is cache- and byte-identical.
         return _iso_plant_unit_capacity_cached(
-            str(active_eia860_dir()), iso, cc_steam_part_reclass
+            _fleet_cache_dir_key(), iso, cc_steam_part_reclass
         )
     return _iso_plant_unit_capacity_cached(
-        str(active_eia860_dir()),
+        _fleet_cache_dir_key(),
         iso,
         cc_steam_part_reclass,
         retiree_year,
@@ -1078,15 +1131,14 @@ def _iso_plant_capacity(
     ``docs/handoffs/FINDING-spp-37-order-sensitivity-2026-09-12.md``, repaired
     by SPP-38).
     """
-    from market_sim.config.paths import active_eia860_dir
 
     if not mid_vintage_exit_carry:
         # SPP-48: original arity while off — see _iso_plant_unit_capacity.
         return _iso_plant_capacity_cached(
-            str(active_eia860_dir()), iso, cc_steam_part_reclass, cc_nameplate_basis
+            _fleet_cache_dir_key(), iso, cc_steam_part_reclass, cc_nameplate_basis
         )
     return _iso_plant_capacity_cached(
-        str(active_eia860_dir()),
+        _fleet_cache_dir_key(),
         iso,
         cc_steam_part_reclass,
         cc_nameplate_basis,
@@ -1356,6 +1408,7 @@ def unit_outage_derate_factors(
     mid_vintage_exit_carry: bool = False,
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
     precod_clip: bool = False,
+    netload_mask_repair: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
@@ -1390,8 +1443,16 @@ def unit_outage_derate_factors(
         dark_unit_years=dark_unit_years,
         membership_repair=membership_repair,
         unit_fuel_routing=unit_fuel_routing,
+        netload_mask_repair=netload_mask_repair,
     )
-    df = _load_unit_outage_events(csv_path, iso)
+    if netload_mask_repair and csv_path.name.startswith(
+        "campd-unit-outages-netloadmask-"
+    ):
+        # SPP-85: the companion is never in the curated clean table, which
+        # mirrors the INCUMBENT extract — read the selected CSV directly.
+        df = pd.read_csv(csv_path)
+    else:
+        df = _load_unit_outage_events(csv_path, iso)
     if df is None:
         return {}
     # Extract-own-basis share (nyiso-196): the bin basis is indexed over the
@@ -1741,8 +1802,8 @@ def _unit_outage_factors_from_events(
             st = status_idx.get(int(r.facility_id), {}).get(
                 str(r.unit_id).strip().upper()
             )
-            if st is not None and st != "OP":
-                continue  # unit not in the fleet's OP capacity basis
+            if st is not None and st not in eia860_operable_statuses():
+                continue  # unit not in the fleet's operable capacity basis
         ucap = r.unit_capacity_mw
         if pd.isna(ucap) or float(ucap) <= 0.0:
             continue
@@ -1835,6 +1896,7 @@ def unit_outage_short_derate_factors(
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
     coal_scope: bool = True,
     hour_grain: bool = False,
+    netload_mask_repair: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return short-window (< 5-day) unit-outage availability multipliers.
 
@@ -1877,7 +1939,7 @@ def unit_outage_short_derate_factors(
     iso = (iso or "ERCOT").upper()
     # ``hour_grain`` (R-ERCOT-5): ERCOT's detected-hour companions of both
     # families; every other ISO's paths ignore it.
-    csv_path = unit_outage_short_csv_for_iso(iso, hour_grain)
+    csv_path = unit_outage_short_csv_for_iso(iso, hour_grain, netload_mask_repair)
     have_coal = coal_scope and csv_path.exists()
     gas_path = unit_outage_short_gas_csv_for_iso(iso, hour_grain) if gas_scope else None
     have_gas = gas_path is not None and gas_path.exists()
@@ -2136,7 +2198,9 @@ def unit_layup_removed_fractions(
     return {k: 1.0 - v for k, v in factors.items()}
 
 
-def unit_partial_outage_csv_for_iso(iso: str | None) -> Path:
+def unit_partial_outage_csv_for_iso(
+    iso: str | None, netload_mask_repair: bool = False
+) -> Path:
     """Return the UNIT-GRAIN partial-derate plateau CSV path for an ISO.
 
     Distinct from the ERCOT PLANT-grain :data:`PARTIAL_OUTAGE_CSV`
@@ -2148,7 +2212,17 @@ def unit_partial_outage_csv_for_iso(iso: str | None) -> Path:
     ERCOT keeps the plant-grain path and has no unit-grain partial file, so
     ``ERCOT`` resolves to a name that does not collide with the plant-grain
     file and simply does not exist (empty derate).
+
+    ``netload_mask_repair`` (``ScenarioConfig.unit_outage_netload_mask_repair``,
+    SPP-85) selects the ``-netloadmask-`` companion (see
+    :func:`unit_outage_csv_for_iso`), falling back to the incumbent when absent.
     """
+    if netload_mask_repair:
+        alt = UNIT_OUTAGE_CSV.with_name(
+            f"campd-partial-outages-netloadmask-{(iso or 'ERCOT').upper()}.csv"
+        )
+        if alt.exists():
+            return alt
     return UNIT_OUTAGE_CSV.with_name(
         f"campd-partial-outages-{(iso or 'ERCOT').upper()}.csv"
     )
@@ -2167,6 +2241,7 @@ def unit_partial_outage_derate_factors(
     per_unit_clip: bool = False,
     extract_basis_share: bool = False,
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
+    netload_mask_repair: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return unit-grain partial-derate plateau availability multipliers.
 
@@ -2192,7 +2267,7 @@ def unit_partial_outage_derate_factors(
     a cycling fleet and stays ERCOT-scoped in ``fleet.py``.
     """
     iso = (iso or "ERCOT").upper()
-    csv_path = unit_partial_outage_csv_for_iso(iso)
+    csv_path = unit_partial_outage_csv_for_iso(iso, netload_mask_repair)
     if not csv_path.exists():
         return {}
     df = pd.read_csv(csv_path)
@@ -2511,6 +2586,7 @@ def unit_outage_active_units(
     year: int,
     hours: int = HOURS_PER_YEAR,
     iso: str = "ERCOT",
+    hour_grain: bool = False,
 ) -> dict[tuple[int, str], dict[str, np.ndarray]]:
     """Return ``{(plant_code, plant_group): {unit_id: (hours,) bool}}``.
 
@@ -2525,9 +2601,18 @@ def unit_outage_active_units(
     through :func:`unit_outage_event_window`, so the two layers adopt the
     optional hour grain together or not at all. Consumed only by the
     unit-scoped event-cap composition.
+
+    ``hour_grain`` (R-ERCOT-6) selects the SAME extract the window factor reads
+    (``unit_outage_csv_for_iso(iso, hour_grain=...)``). Without it the mask was
+    read from the day-grain file while the R-ERCOT-5 keeper's window factor is
+    hour-grain, so the shared-unit hours carried up to 23 h per edge the factor
+    no longer removes (measured <= 0.012 TWh/yr of coal capability; rule 14
+    consistency repair, not a residual fit). Default False: byte-identical.
     """
     iso = (iso or "ERCOT").upper()
-    df = _load_unit_outage_events(unit_outage_csv_for_iso(iso), iso)
+    df = _load_unit_outage_events(
+        unit_outage_csv_for_iso(iso, hour_grain=hour_grain), iso
+    )
     if df is None:
         return {}
     df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]

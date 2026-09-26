@@ -1485,8 +1485,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # to the canonical snapshot. See config.paths.set_eia860_vintage.
     from market_sim.config.paths import (
         resolve_backcast_eia860_vintage,
+        set_eia860_standby_admission,
         set_eia860_vintage,
     )
+
+    # Standby (SB) generator admission for the same loaders (NWPP-NEXT-5,
+    # ScenarioConfig.admit_standby_units; {"OP"} while off). Set on every run.
+    set_eia860_standby_admission(config.admit_standby_units)
 
     # A capacity hindcast (plan §1.3) is forecast-mode but initialises from a
     # vintage snapshot (the 2020 Final release) so the modelled start-year fleet

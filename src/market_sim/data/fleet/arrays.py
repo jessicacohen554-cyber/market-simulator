@@ -1357,6 +1357,13 @@ def _apply_outage_overlays(
             ),
             # miso-266: the dispatched bin's own capacity as the denominator.
             lp_bin_capacity=_lp_bins,
+            # SPP-85 (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]): the standard
+            # extract re-derived with the deriver's net-load mask live (the
+            # recorded min_inmerit_hours was inert without the ISO's EIA-930 BA
+            # key). Selects '-netloadmask-'; REPLACES the layer, byte-inert off.
+            netload_mask_repair=bool(
+                getattr(config, "unit_outage_netload_mask_repair", False)
+            ),
             # soco-67 (rule 19 [R-ONE-MECH]): drop a new unit's pre-commercial
             # window hours, which the COD ramp below already holds offline.
             # Byte-inert while off (the extract is read unchanged).
@@ -1520,6 +1527,11 @@ def _apply_outage_overlays(
                 # does not stack on the coal scope (disjoint plant groups) or on
                 # the >= 5-day overlay (disjoint durations).
                 gas_scope=getattr(config, "unit_outage_short_windows_gas", False),
+                # SPP-85: the '-short-netloadmask-' companion (same field as the
+                # >= 5-day layer, so the layers move together). Byte-inert off.
+                netload_mask_repair=bool(
+                    getattr(config, "unit_outage_netload_mask_repair", False)
+                ),
                 # SPP-48: the mid-vintage-year exit channel injects plants a
                 # year-matched native vintage drops from BOTH EIA sheets, so
                 # the derate DENOMINATOR must carry them or their measured
@@ -1588,6 +1600,11 @@ def _apply_outage_overlays(
                 # miso-266: the dispatched bin's own capacity as the
                 # denominator (same shared accumulator).
                 lp_bin_capacity=_lp_bins,
+                # SPP-85: the '-netloadmask-' partial companion (same field as
+                # the >= 5-day layer). Byte-inert off.
+                netload_mask_repair=bool(
+                    getattr(config, "unit_outage_netload_mask_repair", False)
+                ),
             )
             if ppfac:
                 applied_pp = 0
@@ -2223,7 +2240,7 @@ def _apply_outage_overlays(
                 day_guard=getattr(config, "ercot_partial_outage_day_guard", False),
             )
             _w_units = (
-                unit_outage_active_units(int(_yr), hours, iso="ERCOT")
+                unit_outage_active_units(int(_yr), hours, iso="ERCOT", hour_grain=_hg)
                 if _unit_scoped
                 else {}
             )

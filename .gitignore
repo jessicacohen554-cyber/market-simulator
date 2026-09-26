@@ -3575,6 +3575,9 @@ results/calibration/rcaiso3_*_20*/
 # soco-69 probe scratch + shard legs: kept out of main (rule 32(d)); composite soco69_span is what registers
 results/calibration/_soco69/
 results/calibration/soco69_20[0-9][0-9]/
+# soco-70 probe scratch + shard legs: kept out of main (rule 32(d)); composite soco70_span is what registers
+results/calibration/_soco70/
+results/calibration/soco70_20[0-9][0-9]/
 # capx D96 (2026-09-25, owner ruling Q69): neiso-t3 re-solved post-F1. The per-year
 # cache parquets / npz / hourly sidecars stay OFF main (rule 29(c) / rule 33(f)); the slim
 # bundle (summary, run_config, config.yaml, solve_surface.json, 25 evolution ledgers) lands.
@@ -3597,3 +3600,22 @@ results/calibration/nwppnext4_20*/
 # NYISO-NEXT-2 per-year shard legs 2022-2025 (rule 32(d): kept out of main; the composite nyisonext2_span is registered; the 2021 leg IS its own registered bundle).
 # Legs (provenance, rule 33(d)): 2021 9b008aa403e4e1dbd5cf43e985dad3864efbe594 · 2024 85b0ab6851e7c5bb755734d8f89fa81927a5062c · 2025 51674648560717d37499bfe58003c70eee53262b
 results/calibration/nyisonext2_202[2-5]/
+# miso-275 per-year shard legs (rule 32(d)/31: kept out of main, retained on disk until the owner rules).
+# Provenance only (rule 33(d)): 2019 dc0801ff88be6c517b718188efd8de6128830454, 2020 f3ca8ff1012f6fd9192de3d4251bbe6e4482ba15,
+# 2021 ae9c0fbcda02adb383578bca79e2effe49a79601, 2023 b24ea885e36c67ad7fdb5217ac8949764efb2ad2,
+# 2024 918343904792697135ac7bd1084e3c3d4c348a96, 2025 fddff1ac4ace665a3767b0576536151a542c28ac
+results/calibration/miso275_arm_*/
+
+# SPP-85 (2026-09-26): per-year control/arm legs and the control composite stay OUT of main
+# (rules 29(c) / 32(d)); kept on local disk until the owner rules on promotion (rule 31).
+# Provenance (not storage, rule 33(d)): claude/spp85-<Y> shard commits listed in
+# docs/handoffs/RESULT-spp-85-netload-mask-repair-2026-09-26.md section 1.
+results/calibration/spp85_ctl_*/
+results/calibration/spp85_arm_20*/
+# PJM-NEXT-3 card 2 per-year shard legs (rule 32(d): only the composite reaches main; rule 31: kept on disk).
+# Provenance (rule 33(d)), full SHAs: 2019 951b84441a08b0c0564076f774caebf1fcef72b7, 2020 9bd31d86756380a398d312cc705d83926fa9a82b,
+# 2021 91070fcf068344e80cb2ed5716035ccc7ab9c549, 2022 d02df9f3bb65ad210bec8d2c6170388bb3b7fad0, 2023 926affe99878abde3e61359ea348f315ac4270bc,
+# 2024 49abfa92ec5d500cd30c4a6db5ff4a4fbccf2de4, 2025 724c0f3f9e529610c862a40d338af24f51b73c5f (branches claude/pjmnext3-c2-<y>).
+results/calibration/pjmnext3_c2_20*/
+# NWPP-NEXT-5 per-year shard legs (rule 32(d)): kept out of main; the composite is registered.
+results/calibration/nwppnext5_20*/
