@@ -14758,3 +14758,17 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - `docs/handoffs/FINDING-r-ercot-5-2019-scarcity-2026-09-25.md`
   - `docs/handoffs/PRECOMMIT-r-ercot-5-window-hour-grain-2026-09-25.md`
   - `docs/handoffs/RESULT-r-ercot-5-hour-grain-2026-09-26.md`
+
+## R-ERCOT-6 — 2026-09-26 — window × partial double count re-tested (owner leave); train-tier under-price decomposed — NOT PROMOTED (owner: "Don't promote")
+
+- **Step 1 (zero LP):** against the r-5 keeper, the ercot-174 unit-scoped composition lifts coal capability 3.7–6.4 TWh/yr, of which 1.0–3.7 TWh/yr is below the plants' own same-hour CEMS output (the below-CEMS gap is cut 60–79 %).
+  - Finer-grain-wins is weaker: its increment is 76–98 % above CEMS.
+  - Latent seam: the shared-unit mask read DAY-grain windows under the hour-grain keeper (≤ 0.012 TWh). Repaired: `unit_outage_active_units(hour_grain=)`.
+- **Step 2 (zero LP):** the train C3a (−7.5 / −5.6 / −6.9 %) is mostly the actual LZ congestion basis over hub (+2.35 / +2.21 / +2.65 $/MWh = 48 / 126 / 106 % of the gap). The model's loaded zones clear at one price; the West LZ carries +$8–12.
+  - The zonal route is closed (ERCOT-117); the named route is the WP-B nodal layer data intake. No multiplier touched.
+- **Arm (owner: "Arm B + hour-grain mask"):** 7 shards at `cf138c01`; G-DRIFT all inert; A/A null 244/244. Registered `2026-09-26-r-6-unit-scoped` (`--no-prune`).
+  - Train tier CALIBRATED → **NOT-YET** on C3a 2023 −10.6 % / 2024 −10.3 %; on the hub basis it would read −7.3 / −3.4 %.
+  - 2022 → NOT-YET (C1 CC_REGULAR −10.04 TWh); 2019/2020 C3a +53.6 / +10.4 %.
+  - Coal +0.83…+4.75 TWh; 2025 overshoot +1.23 → +4.08 TWh.
+- **Recommendation:** do not promote. The rule 14 reason is over-restoration at shared plants, not the C3a flip. Successor: a per-unit composition. Owner ruled "Don't promote": the run is pruned, and the cell is back to R.
+- **Records:** `docs/handoffs/FINDING-r-ercot-6-double-count-retest-2026-09-26.md`, `PRECOMMIT-r-ercot-6-unit-scoped-event-cap-2026-09-26.md`, `RESULT-r-ercot-6-unit-scoped-event-cap-2026-09-26.md`.

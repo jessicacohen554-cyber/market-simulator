@@ -516,3 +516,28 @@ coal-long shrinks). Unserved load unchanged.
 **Promoted 2026-09-26 (owner standing structure ruling, rule 14):** keeper #11; keeper #10 pruned (rule 35), audit
 PASS. Successor: coal conduct under period fuel-take obligations.
 Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext4-coal-nested-2019-2025-2026-09-2{5,6}.md`.
+
+## nwpp-next-5 — 2026-09-26 — EIA-860 standby (SB) units admitted by status → KEEPER #12
+
+**Lever 1 (coal take obligation), zero LP, negative for C4.** An admissible prior-year contract obligation exists
+(NWPP coal is about 100 % contract), but it is a volume lever. Every price-shaped emulation lowers C4 r, and the best
+unshaped bracket still fails 2023–25. Owner questions Q1–Q6 are in
+`FINDING-nwppnext5-coal-take-obligation-design-2026-09-26.md`.
+
+**Lever 2: new default-off, ISO-agnostic field `admit_standby_units`** (zero DOF), with a matrix row plus a cell in every
+shard. It admits Fredonia 607 (NW, 280 MW) and Sun Peak 54854 (SNV, 222 MW) plus about 80–90 MW of small SB units.
+The handoff's "598 MW covers 60–92 % of SNV shed" was corrected before the solve: Fredonia is in NW, so SNV gains
+222 MW (31–57 %). WECC Path 76 Alturas (300 MW into SNV) is missing from the topology; routed.
+
+Seven year-isolated shards at `19f2eace`, parent zero LP. The 2021 shard failed at container init and was relaunched.
+
+Run `2026-09-26-nwppnext5-standby`: NOT-YET on {fuelmix, dispatch_corr}, unchanged.
+- **FAIL → PASS:** C1 CC_REGULAR 2024 (+8.48 → +7.67) and C4 coal 2019 (0.697 → 0.701). Zero PASS → FAIL.
+- **Unserved load** falls every year: 33.4 / 193.7 / 110.1 / 73.4 / 21.3 / 45.7 / 8.8 → 15.4 / 118.8 / 73.8 / 37.8 /
+  9.0 / 27.1 / 2.6 GWh.
+- **Regression:** Fredonia over-runs 2.5–2.9× EIA-923 in 2019 and 2024, because its eGRID HR of 4.918 is clamped to
+  the 9.0 floor. The re-derive of the measured-CT artifact population is routed to the owner (rule 23).
+
+**Promoted 2026-09-26 (owner standing structure ruling, rule 14):** keeper #12; keeper #11 pruned (rule 35), audit
+PASS.
+Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext5-standby-admission-2019-2025-2026-09-26.md`.

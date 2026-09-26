@@ -1,0 +1,96 @@
+{
+ "id": "2026-09-26-nyisonext2-astoria-pair-2021",
+ "label": "nyisonext2 astoria pair 2021",
+ "date": "2026-09-26",
+ "shorthand": "nyisonext2-astoria-pair-2021",
+ "definition": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
+ "years": [
+  2021
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-09-26-nyisonext2-astoria-pair-2021.js",
+ "bundle": "results/calibration/nyisonext2_2021",
+ "holdout": {
+  "tier": "validation",
+  "year": 2021,
+  "keeper": "2026-09-26-nyisonext2-astoria-pair-span",
+  "keeperDetermination": "NOT-YET",
+  "keeperYears": [
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "holdoutDetermination": "CALIBRATED",
+  "criteria": [
+   {
+    "key": "price_mean",
+    "label": "C3a mean LMP",
+    "tier": "load-bearing",
+    "inSample": "FAIL",
+    "holdout": "PASS",
+    "verdict": "improved"
+   },
+   {
+    "key": "price_tail",
+    "label": "C3c price tail / scarcity (RT hourly)",
+    "tier": "supporting",
+    "inSample": "FAIL",
+    "holdout": "PASS",
+    "verdict": "improved"
+   },
+   {
+    "key": "dispatch_corr",
+    "label": "C4 fleet hourly dispatch correlation",
+    "tier": "supporting",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "forced_share",
+    "label": "C8 forced-energy share (D-2)",
+    "tier": "protective",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "fuelmix",
+    "label": "C1 fuel-mix by class (grid-delivered)",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "governance",
+    "label": "C6 governance gate",
+    "tier": "protective",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "price_shape",
+    "label": "C3b price duration/shape",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "sysvol",
+    "label": "C2 system volume (gas/coal families)",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   }
+  ],
+  "nDegraded": 0,
+  "nCarried": 0,
+  "tierCaveat": "Validation tier: ITERABLE model-SELECTION evidence. This is NOT a certified out-of-sample skill number and must never be quoted as one \u2014 the year may be re-spent after the open availability-envelope defect lands. The touch-once locked test (2019 / H1-2026) is NOT spent here.",
+  "envelopeCaveat": "2021 is solved on the SAME recipe, the same committed CAMPD unit-outage extract (sha256 986d1d43\u2026, the NYISO-NEXT-2 stack-duplicate re-derivation), its lay-up companion and the thermal-tranche artifact as the keeper's 2022-2025 legs, pinned to the same PRECOMMIT (9fe82bde). Its availability envelope and its lay-up mask are therefore built by the identical detector and merit-order guard; the in-sample-to-2021 delta is measured like-for-like. 2019-2020 remain data-blocked (NYISO solar profile starts 2021)."
+ }
+}

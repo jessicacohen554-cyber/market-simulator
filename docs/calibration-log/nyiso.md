@@ -14913,3 +14913,19 @@ too.
   - Held-out 2021 NOT-YET on C1 CC_REGULAR +3.81 TWh (reported, rule 30(c)).
 - **Superseded and pruned:** `2026-09-25-nyiso-stgas-ldc-leg` + its 2021 run.
 - **Record:** `docs/RESULT-nyiso-next-floor-layup-2026-09-26.md`.
+
+## NYISO-NEXT-2 — 2026-09-26 — the Astoria stack-duplicate boiler pair in the outage extract; keeper promoted
+
+- **Lever (c), a data repair:** the outage deriver now drops `campd.CAMPD_STACK_DUPLICATE_UNITS`
+  rows (Astoria 8906 `32SH`/`52SH`) before detection. The hour-grain guard extract pair was
+  re-derived under its committed invocation (rule 23): 3,734 → 3,615 rows, and only 8906 moves.
+  Zero `scenario_config` changes and zero DOF.
+- **Result:** keeper `2026-09-26-nyisonext2-astoria-pair-span` (2022–2025) plus the stamped
+  `2026-09-26-nyisonext2-astoria-pair-2021`.
+  - **Span CALIBRATED → NOT-YET:** C3a 2022 −10.8 % and 2025 −11.0 % both fail, so C3c is not the
+    lone caveat.
+  - **Held-out 2021 NOT-YET → CALIBRATED.**
+  - Astoria gains +1.0 to +1.8 TWh a year, so NYC steam moves further over EIA-923 (pre-registered).
+  - One new gas-bridge D-4 row, 8906 in 2024 (0.005 TWh).
+- **Superseded and pruned:** `2026-09-26-nyisonext-floor-layup-span` and its 2021 run.
+- **Record:** `docs/RESULT-nyiso-next2-astoria-pair-2026-09-26.md`.

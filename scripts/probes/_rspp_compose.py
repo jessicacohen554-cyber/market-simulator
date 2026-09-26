@@ -75,6 +75,9 @@ MUST_AGREE = (
     "unit_outage_short_windows_gas",
     "eia860_vintage_tracks_solve_year",
     "hydro_min_flow_floor",
+    # SPP-85: the net-load-mask repair of the CAMPD extracts. Every leg of a
+    # composite must agree on it; --require pins its value (arm True).
+    "unit_outage_netload_mask_repair",
 )
 
 FIELDS = (
@@ -291,11 +294,20 @@ def main() -> int:
     ap.add_argument("--out", required=True)
     ap.add_argument("--side", choices=("arm", "control"), required=True)
     ap.add_argument("--skip-diagnostics", action="store_true")
+    ap.add_argument(
+        "--require",
+        action="append",
+        default=[],
+        help="FIELD=JSON every leg must carry (SPP-85: unit_outage_netload_mask_repair=true)",
+    )
     args = ap.parse_args()
 
     REQUIRED.clear()
     REQUIRED.update(BASE_REQUIRED)
     REQUIRED.update({f: args.side == "arm" for f in FIELDS})
+    for spec in args.require:
+        k, _, v = spec.partition("=")
+        REQUIRED[k] = json.loads(v)
     legs: dict[str, list[int]] = {}
     for spec in args.leg:
         ys, _, name = spec.partition("=")

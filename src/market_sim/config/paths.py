@@ -140,6 +140,53 @@ def set_eia860_vintage(year: int | None) -> Path:
     return _ACTIVE_EIA_860_DIR
 
 
+# --- EIA-860 operable status admission ------------------------------------
+# The fleet keeps EIA-860 ``Status == "OP"`` generators only. ``SB`` is EIA's
+# "Standby/Backup — available for service but not normally used for this
+# reporting period": physically available capacity the OP filter drops (NWPP
+# Fredonia 607 / Sun Peak 54854, FINDING-nwppnext2-standby-census-2026-09-25).
+# ``ScenarioConfig.admit_standby_units`` (GATED default-off) widens the set to
+# ``{"OP", "SB"}``. Process-global exactly like the vintage switch above and set
+# at the same two entry points, so every fleet read path — the snapshot, the
+# per-year vintages, the outage denominators built from the same fleet load —
+# sees one admission rule (rule 19 ``[R-ONE-MECH]``).
+_DEFAULT_OPERABLE_STATUSES: frozenset[str] = frozenset({"OP"})
+_STANDBY_ADMITTED_STATUSES: frozenset[str] = frozenset({"OP", "SB"})
+_ACTIVE_OPERABLE_STATUSES: frozenset[str] = _DEFAULT_OPERABLE_STATUSES
+
+
+def eia860_operable_statuses() -> frozenset[str]:
+    """Return the EIA-860 generator statuses the fleet admits as operable.
+
+    ``{"OP"}`` by default; ``{"OP", "SB"}`` while
+    :func:`set_eia860_standby_admission` is armed.
+    """
+    return _ACTIVE_OPERABLE_STATUSES
+
+
+def eia860_standby_admitted() -> bool:
+    """Return True while standby (``SB``) generators are admitted to the fleet."""
+    return "SB" in _ACTIVE_OPERABLE_STATUSES
+
+
+def set_eia860_standby_admission(admit_standby_units: bool) -> frozenset[str]:
+    """Arm (or reset) standby-unit admission for the fleet loaders.
+
+    Args:
+        admit_standby_units: ``ScenarioConfig.admit_standby_units``.
+
+    Returns:
+        The active admitted status set.
+    """
+    global _ACTIVE_OPERABLE_STATUSES
+    _ACTIVE_OPERABLE_STATUSES = (
+        _STANDBY_ADMITTED_STATUSES
+        if admit_standby_units
+        else _DEFAULT_OPERABLE_STATUSES
+    )
+    return _ACTIVE_OPERABLE_STATUSES
+
+
 def resolve_backcast_eia860_vintage(
     explicit_vintage: int | None,
     solve_year: int | None,
