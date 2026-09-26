@@ -182,3 +182,17 @@ regression reported at full magnitude.
   lane's PR merges (rule 33(f)).
 
 ## 8. Launch record (appended after the pins; nothing above it changed)
+
+- **P1** (arm A) `e29efd5f3bd563ba37d548b57087b433f603c381`. **P2** (arm AB) `0a84941d9dbc605d9f6b52894cba9597b3e85d68`, which is
+  P1 plus the CSV commit only. The artifact sha256 is `b5c09a91…` at P1 and `29baa2f1…` at P2.
+- All 14 shards were launched 2026-09-26 18:20–18:24 UTC:
+
+| Year | Arm A session | Arm AB session |
+|---|---|---|
+| 2019 | `session_01M739XCXbRvj9Fc3vR9WTM5` | `session_0158Y7vSdbbXnXgfF2Pv2Ww4` |
+| 2020 | `session_01P6V9AJFoctB6Rrr6gZBE6B` | `session_01RidaPYi8ACmEuqZPJ9FdpH` |
+| 2021 | `session_01942rEuJGexBn351YVMm8wr` | `session_01SHSdzvLdJTodproKYNoDFA` |
+| 2022 | `session_011FzwFGmAdScudg36DdQRRd` | `session_01YVxaFnQ521S2F2RyJDXopy` |
+| 2023 | `session_01HhiHSrjq82LxNKETAnEh3n` | `session_012vKm7EtgEhZWxDssG6fpAH` |
+| 2024 | `session_015wWZECjxJubN2E4F3nRVj3` | `session_01Txi1U8UHZE3U6XBHwqbRdm` |
+| 2025 | `session_012JAX11XF5Av17JM7g8WBAe` | `session_01JZprRhc6H4bq3zwCPWppdy` |
