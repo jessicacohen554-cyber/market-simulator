@@ -1349,6 +1349,12 @@ def _apply_outage_overlays(
             membership_repair=bool(
                 getattr(config, "unit_outage_membership_repair", False)
             ),
+            # PJM-NEXT-3 (rule 14 [R-ACCURATE]): per-unit fuel routing of the
+            # membership-repaired extract. Selects '-memberrepair-unitfuel-';
+            # byte-inert while off.
+            unit_fuel_routing=bool(
+                getattr(config, "unit_outage_unit_fuel_routing", False)
+            ),
             # miso-266: the dispatched bin's own capacity as the denominator.
             lp_bin_capacity=_lp_bins,
             # soco-67 (rule 19 [R-ONE-MECH]): drop a new unit's pre-commercial

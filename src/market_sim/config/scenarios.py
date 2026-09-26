@@ -466,6 +466,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the '-memberrepair-' companion through the same resolver, so the off path
     # is byte-inert). Registered IN THE SAME COMMIT as the field.
     "unit_outage_membership_repair",
+    # PJM-NEXT-3 card 2 per-unit fuel routing of the '-memberrepair-' extract
+    # (GATED default-off; selects '-memberrepair-unitfuel-' through the same
+    # resolver, so the off path is byte-inert). Same commit as the field.
+    "unit_outage_unit_fuel_routing",
     # PJM-NEXT-2 card 3: nuclear dormancy defers to the solved vintage's exit
     # record (GATED default-off; byte-inert off). Same commit as the field.
     "nuclear_dormancy_defers_to_vintage_exit",
@@ -2240,6 +2244,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by PJM-NEXT-2 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_membership_repair": "False",
+    # Added by PJM-NEXT-3 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_unit_fuel_routing": "False",
     "nuclear_dormancy_defers_to_vintage_exit": "False",
     # Added by soco-67 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
@@ -16265,6 +16272,25 @@ class ScenarioConfig:
     # falling back to the standard extract where not derived.
     # docs/PRECOMMIT-pjm-next-2-card1-outage-membership-2026-09-25.md.
     unit_outage_membership_repair: bool = False
+    # PJM-NEXT-3 card 2 (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]) PER-UNIT
+    # FUEL ROUTING of the '-memberrepair-' extract. The deriver tags every
+    # window at a facility with ONE class per year, which mis-routes a plant
+    # mid-conversion whose steam units burn different fuels that year: the
+    # fleet carries one slice per generator fuel, and every unit's window lands
+    # on the slice the facility tag names. Montour (3149): EIA-860 vintages
+    # 2023/2024 list gen 1 BIT coal and gen 2 NG steam (752 MW each); the
+    # extract tags both units COAL (2023) / ST_GAS (2024), so the other slice
+    # runs fully available through its unit's outages. Armed WITH
+    # unit_outage_membership_repair, the '-memberrepair-unitfuel-' companion is
+    # read: the same rows, with a steam row re-tagged to its OWN generator's
+    # class only where that facility's steam generators split across coal and
+    # gas in the row's year's EIA-860 vintage
+    # (scripts/data/build_outage_unit_fuel_routing.py). ZERO free parameters: a
+    # categorical re-tag from a published per-generator field; no row added,
+    # dropped, moved or resized. Byte-inert off (a separate file, never an
+    # overwrite; falls back to '-memberrepair-' where not derived).
+    # docs/PRECOMMIT-pjm-next-3-card2-unit-fuel-routing-2026-09-26.md.
+    unit_outage_unit_fuel_routing: bool = False
     # PJM-NEXT-2 card 3 (rule 19 [R-ONE-MECH], rule 14 [R-ACCURATE]).
     # NUCLEAR_DORMANT_UNTIL zeroes a nuclear unit in every backcast year before
     # its restart year -- written for the Crane/TMI-1 restart, which EIA-860
