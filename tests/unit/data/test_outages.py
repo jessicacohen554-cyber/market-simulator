@@ -1722,6 +1722,49 @@ class PartialOutageClassGrainTest(unittest.TestCase):
                 self.assertTrue(np.array_equal(arr, plant[code]))
 
 
+class PerUnitEventCapCompositionTest(unittest.TestCase):
+    """The R-ERCOT-7 per-unit event-cap composition (``per_unit_partial_factor``).
+
+    Each unit's downtime is removed once: the plateau share carried by a
+    WINDOWED unit is dropped, every other carrying unit keeps its share, and
+    an unattributed plateau (or no windowed unit) keeps the incumbent factor.
+    """
+
+    def test_windowed_sole_carrier_drops_the_whole_plateau(self):
+        from market_sim.data.outages import per_unit_partial_factor
+
+        h = 6
+        fp = np.full(h, 0.46)
+        d = {"LIM2": np.full(h, 950.0)}
+        w = {"LIM2": np.array([0, 1, 1, 1, 0, 0], dtype=bool)}
+        out = per_unit_partial_factor(fp, d, w)
+        np.testing.assert_allclose(out, [0.46, 1.0, 1.0, 1.0, 0.46, 0.46])
+
+    def test_other_carriers_keep_their_share(self):
+        from market_sim.data.outages import per_unit_partial_factor
+
+        h = 2
+        fp = np.full(h, 0.4)  # removed share 0.6
+        d = {"U1": np.full(h, 300.0), "U2": np.full(h, 100.0)}
+        w = {"U1": np.array([True, False])}
+        out = per_unit_partial_factor(fp, d, w)
+        # hour 0: U1 windowed -> keep U2's 1/4 of the 0.6 removal
+        np.testing.assert_allclose(out, [1.0 - 0.6 * 0.25, 0.4])
+        self.assertTrue((out >= fp).all())
+
+    def test_fail_safe_paths_return_the_incumbent(self):
+        from market_sim.data.outages import per_unit_partial_factor
+
+        fp = np.full(4, 0.5)
+        live = {"U1": np.ones(4, dtype=bool)}
+        dmw = {"U1": np.full(4, 10.0)}
+        for d, w in ((None, live), (dmw, None), ({}, live), (dmw, {"U9": live["U1"]})):
+            self.assertTrue(np.array_equal(per_unit_partial_factor(fp, d, w), fp))
+        # no deficit at the windowed hours -> unchanged
+        zero = {"U1": np.zeros(4)}
+        self.assertTrue(np.array_equal(per_unit_partial_factor(fp, zero, live), fp))
+
+
 class UnitScopedEventCapCompositionTest(unittest.TestCase):
     """The ercot-174 unit-scoped event-cap composition's loader layer.
 

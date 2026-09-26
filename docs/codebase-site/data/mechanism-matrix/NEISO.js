@@ -250,6 +250,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     ercot_dam_availability_gas_event_cap: { cell: "." },
     ercot_dam_availability_event_cap_reconciliation: { cell: "." },
     ercot_dam_availability_event_cap_unit_scoped: { cell: "." },
+    ercot_dam_availability_event_cap_per_unit: { cell: "." },
     ercot_partial_outage_shaped_derate: { cell: "." },
     ercot_partial_outage_day_guard: { cell: "." },
     unit_outage_short_windows: { cell: "R", ev: "neiso-69. R-NEISO (2026-09-24): verdict UNCHANGED, not re-opened - the coal short scope stays OFF (neiso-69 rejected it on CEMS provenance, not on the D1/D2 heat-rate inputs). The partial-derate shape (unit_partial_outage_windows) was ARMED in the R-NEISO run as the audit instructed and is INERT BY DATA: campd-partial-outages-NEISO.csv carries 0 windows in every year 2019-2025, consistent with neiso-69. The gas scope is its own row (unit_outage_short_windows_gas) and is now armable without the coal scope. Record: docs/handoffs/r-neiso/RESULT-r-neiso-2026-09-24.md" },

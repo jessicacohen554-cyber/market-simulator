@@ -3641,3 +3641,5 @@ results/calibration/miso276_arm_*/
 # 2020 d473b8821b88a9354ff294cfeb7e50fed90e4e90, 2021 cf3941b821eaf3df1e0d2e30d2542d9e6e38eece, 2022 0d30dbf1709a822dc9fac3a22be0da13e0c53caf,
 # 2023 b715262e6459e62b1db5b6470b1d6e869be9125f, 2024 c52cd4f7d7d73074fb34543576f61ef4f0f4801d, 2025 4ad4308dde1e1f478610230b3ae2b287e58c751d
 results/calibration/spp86_arm_20*/
+# R-CAISO-4 2019-21 keeper touchpoint composite IS committed (it folds into the keeper, rule 30):
+!results/calibration/rcaiso4_tp_2019_2021/

@@ -2684,6 +2684,160 @@ def unit_outage_active_units(
     return out
 
 
+@lru_cache(maxsize=None)
+def unit_outage_short_active_units(
+    year: int,
+    hours: int = HOURS_PER_YEAR,
+    iso: str = "ERCOT",
+    gas_scope: bool = False,
+    hour_grain: bool = False,
+) -> dict[tuple[int, str], dict[str, np.ndarray]]:
+    """Return ``{(plant_code, plant_group): {unit_id: (hours,) bool}}`` for SHORT windows.
+
+    The < 5-day companion of :func:`unit_outage_active_units`: which CAMPD units
+    are inside a short full-stop window at each hour, read from the SAME extract(s)
+    :func:`unit_outage_short_derate_factors` reads (coal family, plus the gas
+    family under ``gas_scope``, at the optional detected hour grain) under the
+    same duration / plant-group filter and :func:`_unit_outage_target` routing —
+    so a unit present here is exactly a unit whose downtime the short-window
+    factor removed. Consumed only by the per-unit event-cap composition
+    (``ScenarioConfig.ercot_dam_availability_event_cap_per_unit``, R-ERCOT-7),
+    which needs the whole window family's unit set because the ceiling it
+    composes with carries the short layer when that layer is armed.
+    """
+    iso = (iso or "ERCOT").upper()
+    frames: list[pd.DataFrame] = []
+    coal_path = unit_outage_short_csv_for_iso(iso, hour_grain)
+    if coal_path.exists():
+        frames.append(pd.read_csv(coal_path))
+    if gas_scope:
+        gas_path = unit_outage_short_gas_csv_for_iso(iso, hour_grain)
+        if gas_path.exists():
+            frames.append(pd.read_csv(gas_path))
+    if not frames:
+        return {}
+    df = frames[0] if len(frames) == 1 else pd.concat(frames, ignore_index=True)
+    scopes = {COAL_ARTIFACT_FAMILY} | (set(_SHORT_GAS_GROUPS) if gas_scope else set())
+    df = df[
+        (df["duration_days"] < UNIT_OUTAGE_MIN_DAYS) & (df["plant_group"].isin(scopes))
+    ]
+    has_hours = _has_hour_grain(df)
+    out: dict[tuple[int, str], dict[str, np.ndarray]] = {}
+    for r in df.itertuples(index=False):
+        uid = str(r.unit_id).strip()
+        tgt = _unit_outage_target(int(r.facility_id), uid, r.plant_group)
+        if tgt is None or not uid:
+            continue
+        w_start, w_stop = unit_outage_event_window(r, has_hours)
+        mask = outage_hour_mask(w_start, w_stop, year, hours)
+        if not mask.any():
+            continue
+        arr = out.setdefault(tgt, {}).setdefault(uid, np.zeros(hours, dtype=bool))
+        arr |= mask
+    return out
+
+
+@lru_cache(maxsize=None)
+def partial_outage_unit_deficits(
+    year: int, hours: int = HOURS_PER_YEAR, iso: str = "ERCOT"
+) -> dict[tuple[int, str], dict[str, np.ndarray]]:
+    """Return ``{(plant_code, plant_group): {unit_id: (hours,) deficit MW}}``.
+
+    Each plateau-carrying CAMPD unit's OWN measured capability deficit over the
+    plateau's span, from the unit-attributed extract
+    :data:`PARTIAL_OUTAGE_UNITS_CSV`: ``(1 - ceiling_ratio) x unit_capacity_mw``,
+    where ``ceiling_ratio`` is the unit's own median daily-max ceiling over the
+    plateau relative to its own normal ceiling — the quantity the frozen
+    attribution test thresholds (``derive_partial_outages._carrying_units``;
+    rule 23, no new constant). Zero outside the unit's plateaus; the deepest row
+    wins where a unit's own rows overlap. Rows with an empty ``unit_id`` or a
+    missing ``ceiling_ratio`` / capacity carry nothing, so an unattributed
+    plateau leaves the bin empty and the consumer keeps the incumbent product —
+    fail-safe. Routed by the same :func:`_unit_outage_target` as the window
+    layer, so the two layers' unit ids are directly comparable.
+
+    These are PARTITION WEIGHTS, not a replacement depth: the per-unit event-cap
+    composition (``ScenarioConfig.ercot_dam_availability_event_cap_per_unit``,
+    R-ERCOT-7) keeps the incumbent (shaped, day-guarded) plant-grain plateau
+    depth and only uses the deficits to apportion it among its carrying units.
+    ERCOT-only; a missing file or uncovered year returns an empty dict.
+    """
+    if (iso or "ERCOT").upper() != "ERCOT" or not PARTIAL_OUTAGE_UNITS_CSV.exists():
+        return {}
+    df = pd.read_csv(PARTIAL_OUTAGE_UNITS_CSV)
+    df = df[
+        (df["year"] == year)
+        & df["unit_id"].notna()
+        & df["ceiling_ratio"].notna()
+        & df["unit_capacity_mw"].notna()
+    ]
+    out: dict[tuple[int, str], dict[str, np.ndarray]] = {}
+    for r in df.itertuples(index=False):
+        uid = str(r.unit_id).strip()
+        if not uid:
+            continue
+        tgt = _unit_outage_target(int(r.oris_code), uid, r.plant_group)
+        if tgt is None:
+            continue
+        deficit = min(max(1.0 - float(r.ceiling_ratio), 0.0), 1.0) * float(
+            r.unit_capacity_mw
+        )
+        if deficit <= 0.0:
+            continue
+        mask = outage_hour_mask(r.outage_start, r.outage_stop, year, hours)
+        if not mask.any():
+            continue
+        arr = out.setdefault(tgt, {}).setdefault(uid, np.zeros(hours))
+        arr[mask] = np.maximum(arr[mask], deficit)
+    return out
+
+
+def per_unit_partial_factor(
+    plant_partial: np.ndarray,
+    unit_deficits: dict[str, np.ndarray] | None,
+    window_units: dict[str, np.ndarray] | None,
+) -> np.ndarray:
+    """Return the plant plateau with the WINDOWED carrying units' share removed.
+
+    The per-unit event-cap composition (R-ERCOT-7,
+    ``ScenarioConfig.ercot_dam_availability_event_cap_per_unit``): the plateau's
+    removed share ``1 - f_p(t)`` is apportioned among its carrying units by their
+    own measured deficits ``d_u(t)`` (:func:`partial_outage_unit_deficits`), and
+    the part carried by units that are ALSO inside a window-family full stop at
+    ``t`` is dropped — the window already removes those units whole, so keeping
+    it would remove the same unit's downtime twice (rule 19 `[R-ONE-MECH]`). The
+    other carrying units keep their share, so no unit's plateau is dropped
+    because a DIFFERENT unit is windowed (the over-restoration R-ERCOT-6
+    measured in the ``min()`` construction)::
+
+        f_p*(t) = 1 - (1 - f_p(t)) * sum_{u not windowed} d_u(t) / sum_u d_u(t)
+
+    and ``f_p*(t) = f_p(t)`` wherever ``sum_u d_u(t) = 0`` (an unattributed
+    plateau — the incumbent product stands, fail-safe). Pointwise
+    ``f_p <= f_p* <= 1``, so the ceiling ``f_w x f_p*`` can only restore
+    capability relative to the incumbent product. Zero free parameters.
+    """
+    fp = np.asarray(plant_partial, dtype=float)
+    if not unit_deficits or not window_units:
+        return fp
+    n = fp.size
+    w = {_norm_partial_unit_id(u): m for u, m in window_units.items()}
+    total = np.zeros(n)
+    windowed = np.zeros(n)
+    for uid, d in unit_deficits.items():
+        d = np.asarray(d, dtype=float)[:n]
+        total += d
+        m = w.get(_norm_partial_unit_id(uid))
+        if m is not None:
+            windowed += np.where(m[:n], d, 0.0)
+    if not windowed.any():
+        return fp
+    keep = np.divide(
+        total - windowed, total, out=np.ones(n), where=total > 0.0
+    )  # share of the plateau NOT carried by a windowed unit
+    return 1.0 - (1.0 - fp) * keep
+
+
 def shared_unit_hours(
     window_units: dict[str, np.ndarray] | None,
     partial_units: dict[str, np.ndarray] | None,

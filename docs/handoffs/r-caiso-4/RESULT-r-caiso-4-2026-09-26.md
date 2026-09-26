@@ -112,3 +112,35 @@ What was done at promotion:
 
 **Retrievability:** the keeper composite `rcaiso4_D_span` (slim set, hourly sidecars, attestation, diagnostics) is on
 `main` with this PR. The per-year legs are gitignored and on local disk only; re-solving one costs about 20 min.
+
+## 2019–2021 on the keeper recipe (2026-09-26, owner: "Yes solve")
+
+**Demand guard: owner option (a).** The guard now uses the same G-DEMAND construction on the gas-vs-gas wedge
+(930 NG − CEMS − cogen). The old guard assumed the CISO NG cell folds in geo/bio; CAISO Outlook shows it does not.
+The band is fixed from the committed 2023–25 artifacts at [−1.500, +29.674] TWh.
+
+- **2019 / 2020 / 2021 demand:** 217.28 / 215.62 / 217.39 TWh.
+- **2022–25 CSVs:** byte-identical.
+- **`--years` is now required**, so a run cannot silently rewrite another year. Landed in PR #6735.
+
+**Solves.** Three shards, one per year, at `3be69b8f`. G-DRIFT: the 2022 fleet rebuild at that pin is
+byte-identical to the keeper's. Legs: K-2019 `c7da7e58`, K-2020 `b8e31d9f`, K-2021 `64a94202`. Composed as
+`rcaiso4_tp_2019_2021`, registered as `2026-09-26-caiso-r4-keeper-2019`, and stamped to the keeper so the years
+fold into the keeper's report (rule 30(a)).
+
+**Scores. Reported only: a held-out year never downgrades the ISO (rule 30(c)).**
+
+| | 2019 | 2020 | 2021 |
+|---|---|---|---|
+| C1 CC_REGULAR (TWh) | **+26.07 FAIL** | **+28.08 FAIL** | **+18.25 FAIL** |
+| C1 CT_PEAKER (TWh) | +3.21 | +1.87 | −0.30 |
+| model net import vs 930 (TWh) | 32.9 vs 53.8 | 34.0 vs 59.2 | 40.4 vs 54.4 |
+| C3a / C3b | no benchmark | no benchmark | **+15.1 % FAIL** / 0.187 |
+| C3c (>$200 h) | — | — | 90 vs 27 h (RT coverage 65 %) |
+| C4 gas NRMSE | 0.664 FAIL | 0.597 FAIL | 0.385 FAIL |
+| C8 | PASS | PASS | PASS |
+
+**One cause, measured.** No measured WECC intertie hub series exists for 2019–21 (2021 has only 5,976 h), so every
+per-hub import tranche falls back to the static ladder. Imports come out 14–25 TWh short of the measured 930 net
+interchange, and in-state CC fills the gap almost one-for-one. **The 2019–21 misses are the import fallback, not the
+keeper's in-state physics.** Closing them needs a 2019–21 intertie price source; the intake's standing STOP.

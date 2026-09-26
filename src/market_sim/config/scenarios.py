@@ -669,6 +669,9 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # ercot-174 unit-scoped successor: same treatment (default-off,
     # byte-identical at its default, so dropped from the hash there).
     "ercot_dam_availability_event_cap_unit_scoped",
+    # R-ERCOT-7 per-unit successor: same treatment (default-off, byte-identical
+    # at its default, so dropped from the hash there).
+    "ercot_dam_availability_event_cap_per_unit",
     # ercot-185 fault-3 partial-layer construction repair: same treatment
     # (default-off, byte-identical at its default because the loader then reads
     # the unchanged flat extract, so dropped from the hash there).
@@ -2393,6 +2396,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # a flip of it was undetectable).
     "ercot_dam_availability_event_cap_reconciliation": "False",
     "ercot_dam_availability_event_cap_unit_scoped": "False",
+    "ercot_dam_availability_event_cap_per_unit": "False",
     "ercot_partial_outage_shaped_derate": "False",
     "ercot_partial_outage_day_guard": "False",
     "coal_econ_marginal_hr_bound": "False",
@@ -3511,6 +3515,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     # FFR-W1X lesson recorded on the gas entry directly above).
     "ercot_dam_availability_event_cap_reconciliation": "measured DAM-award event-cap reconciliation",
     "ercot_dam_availability_event_cap_unit_scoped": "measured unit-scoped event-cap composition",
+    "ercot_dam_availability_event_cap_per_unit": "measured per-unit event-cap composition",
     "ercot_partial_outage_shaped_derate": "measured day-shaped partial-outage plateau derate",
     "ercot_partial_outage_day_guard": "measured day-shaped partial-outage derate, same-day CEMS guard",
     "pjm_dam_availability": "measured PJM DAM availability record",
@@ -14279,6 +14284,28 @@ class ScenarioConfig:
     # docs/PRECOMMIT-ercot174-unit-attributed-partial-outage-2026-08-06.md
     ercot_dam_availability_event_cap_unit_scoped: bool = False
 
+    # R-ERCOT-7 PER-UNIT event-cap composition (default off, ERCOT backcast).
+    # The successor R-ERCOT-6 named when its test of the unit-scoped min()
+    # above was ruled "Don't promote": min() at a shared-unit hour drops the
+    # WHOLE plant plateau there, including the plateau share carried by units
+    # the window does not remove, so it over-restores at plants where only one
+    # unit is shared (2022/2025 coal overshoot +3.3/+2.9 TWh). Under this gate
+    # each CAMPD unit's downtime is removed ONCE: the window where the unit is
+    # inside a window-family full stop (>= 5-day, plus short windows when
+    # unit_outage_short_windows is armed), and its OWN share of the plant
+    # plateau elsewhere. The plateau depth stays the incumbent (shaped,
+    # day-guarded) plant-grain layer; its removed share is apportioned among
+    # its carrying units by their own measured deficits
+    # ((1 - ceiling_ratio) x unit capacity, data/raw/campd-partial-outages-
+    # units.csv, the frozen ercot-174 attribution) and only the windowed units'
+    # share is dropped (outages.per_unit_partial_factor). Zero fitted scalars
+    # (rule 21); product <= this pointwise, so it can only restore capability;
+    # an unattributed plateau keeps the product (fail-safe). Mutually exclusive
+    # with the unit-scoped min() above (rule 19, enforced at the point of use in
+    # fleet/arrays.py). Backcast-only by the same construction; forecast
+    # untouched. docs/handoffs/FINDING-r-ercot-7-per-unit-composition-2026-09-26.md
+    ercot_dam_availability_event_cap_per_unit: bool = False
+
     # ercot-185 FAULT-3 PARTIAL-LAYER CONSTRUCTION REPAIR (default off, ERCOT
     # backcast). NOT a composition change — the f_window x f_partial product is
     # untouched and the ERCOT-148/149 precedence is not disturbed. What changes
@@ -23528,6 +23555,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_dam_availability_gas_event_cap": 3,
     "ercot_dam_availability_event_cap_reconciliation": 3,
     "ercot_dam_availability_event_cap_unit_scoped": 3,
+    "ercot_dam_availability_event_cap_per_unit": 3,
     "ercot_partial_outage_shaped_derate": 3,
     "ercot_partial_outage_day_guard": 3,
     "maxgen_emergency_tier_pricing": 3,

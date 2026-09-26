@@ -57,6 +57,8 @@ from market_sim.data.outages import (
     ercot_noncampd_availability_caps,
     partial_outage_active_units,
     partial_outage_derate_factors,
+    partial_outage_unit_deficits,
+    per_unit_partial_factor,
     reliability_deployment_floor_for_year,
     retiree_availability_caps,
     shared_unit_hours,
@@ -65,6 +67,7 @@ from market_sim.data.outages import (
     lp_bin_capacity_index,
     unit_outage_derate_factors,
     unit_outage_maxgen_derate_factors,
+    unit_outage_short_active_units,
     unit_outage_short_derate_factors,
     unit_partial_outage_derate_factors,
 )
@@ -1784,9 +1787,15 @@ def _apply_outage_overlays(
             # grain repair — so a plateau lands only on the class bin its
             # extract row names (provably identical on the current bins sheet;
             # see partial_outage_derate_factors).
-            _pgrain = getattr(
-                config, "ercot_dam_availability_event_cap_reconciliation", False
-            ) or getattr(config, "ercot_dam_availability_event_cap_unit_scoped", False)
+            _pgrain = (
+                getattr(
+                    config, "ercot_dam_availability_event_cap_reconciliation", False
+                )
+                or getattr(
+                    config, "ercot_dam_availability_event_cap_unit_scoped", False
+                )
+                or getattr(config, "ercot_dam_availability_event_cap_per_unit", False)
+            )
             # ercot-185 fault-3 repair: the DAY-SHAPED plateau extract replaces
             # the flat multi-week factor. Same plateaus, same covered hours,
             # day-resolved profile — so this consumer and the event-cap ceiling
@@ -2229,19 +2238,44 @@ def _apply_outage_overlays(
             # product (fail-safe). The window-family layers keep their
             # incumbent product composition among themselves — only the
             # window-vs-partial seam is refined.
+            #
+            # R-ERCOT-7 PER-UNIT composition (default off; the successor the
+            # R-ERCOT-6 test named). min() at a shared-unit hour drops EVERY
+            # unit's plateau there, including units the window does not remove
+            # — the over-restoration R-ERCOT-6 measured. Under this gate the
+            # plant plateau's removed share is apportioned among its carrying
+            # units by their own measured deficits and only the share carried
+            # by a WINDOWED unit (>= 5-day or, when armed, short window) is
+            # dropped (outages.per_unit_partial_factor): each unit's downtime is
+            # removed once — its window where windowed, its own plateau share
+            # elsewhere. product <= this; unattributed plateaus keep the
+            # product. Mutually exclusive with the unit-scoped min() (two
+            # constructions of one seam never stack, rule 19; enforced here at
+            # the point of use, where the config is complete).
+            _per_unit = getattr(
+                config, "ercot_dam_availability_event_cap_per_unit", False
+            )
             _unit_scoped = getattr(
                 config, "ercot_dam_availability_event_cap_unit_scoped", False
             )
+            if _per_unit and _unit_scoped:
+                raise ValueError(
+                    "ercot_dam_availability_event_cap_per_unit and "
+                    "ercot_dam_availability_event_cap_unit_scoped are mutually "
+                    "exclusive (rule 19 [R-ONE-MECH]): both compose the window x "
+                    "partial seam — arm exactly one construction"
+                )
             _reconc = (
                 getattr(
                     config, "ercot_dam_availability_event_cap_reconciliation", False
                 )
                 and not _unit_scoped
+                and not _per_unit
             )
             _plant_partial = partial_outage_derate_factors(
                 int(_yr),
                 hours,
-                class_grain=_reconc or _unit_scoped,
+                class_grain=_reconc or _unit_scoped or _per_unit,
                 # ercot-185: the same repaired layer this block's sibling
                 # consumer reads (arrays.py ~1333) — one construction, one
                 # layer, both seams.
@@ -2258,6 +2292,30 @@ def _apply_outage_overlays(
                 if _unit_scoped
                 else {}
             )
+            _pu_win: dict = {}
+            _pu_def: dict = {}
+            if _per_unit:
+                _pu_win = {
+                    k: dict(v)
+                    for k, v in unit_outage_active_units(
+                        int(_yr), hours, iso="ERCOT", hour_grain=_hg
+                    ).items()
+                }
+                if getattr(config, "unit_outage_short_windows", False):
+                    for k, v in unit_outage_short_active_units(
+                        int(_yr),
+                        hours,
+                        iso="ERCOT",
+                        gas_scope=getattr(
+                            config, "unit_outage_short_windows_gas", False
+                        ),
+                        hour_grain=_hg,
+                    ).items():
+                        d = _pu_win.setdefault(k, {})
+                        for u, m in v.items():
+                            d[u] = d[u] | m if u in d else m
+                _pu_def = partial_outage_unit_deficits(int(_yr), hours, iso="ERCOT")
+            _n_pu_bins = 0
             _n_capped = 0
             _n_shared_bins = 0
             _n_shared_hours = 0
@@ -2277,8 +2335,19 @@ def _apply_outage_overlays(
                         else:
                             _ceil_w = _ceil_w * _f
                 _binkey = (int(gen.plant_code), artifact_class(gen.plant_group))
-                _ppkey = _binkey if (_reconc or _unit_scoped) else int(gen.plant_code)
+                _ppkey = (
+                    _binkey
+                    if (_reconc or _unit_scoped or _per_unit)
+                    else int(gen.plant_code)
+                )
                 _fp = _plant_partial.get(_ppkey)
+                if _fp is not None and _per_unit and _ceil_w is not None:
+                    _fps = per_unit_partial_factor(
+                        _fp, _pu_def.get(_binkey), _pu_win.get(_binkey)
+                    )
+                    if _fps is not _fp:
+                        _n_pu_bins += 1
+                    _fp = _fps
                 if _fp is not None:
                     if _ceil_w is None:
                         _ceil_w = np.array(_fp, dtype=float, copy=True)
@@ -2314,6 +2383,13 @@ def _apply_outage_overlays(
                 _n_capped,
                 "/".join(sorted(_evcap_scope)),
             )
+            if _per_unit:
+                logger.info(
+                    "ERCOT per-unit event-cap composition (%d): windowed carrying "
+                    "units' plateau share dropped on %d tranche(s); product elsewhere",
+                    int(_yr),
+                    _n_pu_bins,
+                )
             if _unit_scoped:
                 logger.info(
                     "ERCOT unit-scoped event-cap composition (%d): min() on "
