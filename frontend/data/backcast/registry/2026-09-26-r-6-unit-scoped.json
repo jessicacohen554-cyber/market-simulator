@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-26-r-6-unit-scoped",
+  "label": "r 6 unit scoped",
+  "date": "2026-09-26",
+  "shorthand": "r-6-unit-scoped",
+  "definition": "R-ERCOT-6 ARM 2025: keeper 2026-09-25-r-5-hour-grain recipe with ercot_dam_availability_event_cap_unit_scoped=true (ercot-174 unit-scoped window x partial composition, shared-unit mask at the window hour grain) \u2014 PRECOMMIT-r-ercot-6-unit-scoped-event-cap-2026-09-26",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-09-26-r-6-unit-scoped.js",
+  "bundle": "results/calibration/r_ercot6_unitscoped_span"
+}
