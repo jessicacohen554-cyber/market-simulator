@@ -290,7 +290,18 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--legs", nargs="+", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument(
+        "--require",
+        action="append",
+        default=[],
+        metavar="KEY=JSON",
+        help="extra arm field every leg must carry (repeatable), e.g. "
+        "--require cc_eia923_identity_emission_basis=true (R-CAISO-4)",
+    )
     a = ap.parse_args()
+    for item in a.require:
+        k, v = item.split("=", 1)
+        ARM_FIELDS[k] = json.loads(v)
     legs = [ROOT / p if not Path(p).is_absolute() else Path(p) for p in a.legs]
     out = ROOT / a.out if not Path(a.out).is_absolute() else Path(a.out)
     compose(legs, out)
