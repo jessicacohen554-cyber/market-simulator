@@ -3597,6 +3597,16 @@ results/calibration/neiso117_20[12][0-9]/
 # Leg provenance (rule 33(d)): 2020 375e536b, 2021 db23aaeb, 2022 9e50d5bb, 2023 bf311536, 2024 2aec7bb6, 2025 69d99c56.
 results/calibration/nwppnext4_20*/
 
+# capx D99 (2026-09-26, owner ruling Q72): T1.6 re-pointed to entry_pipeline_aware_signal. The
+# vre_long rung's per-year cache parquets / npz / hourly sidecars stay OFF main (rule 29(c) /
+# rule 33(f)); the slim bundle (summary, run_config, config.yaml, solve_surface.json, 25 evolution
+# ledgers, the battery row) lands. The shard pushes its FULL out-dir to its own branch via a
+# negation (rule 34(a)). NOT deleted (rule 31).
+/results/ff-t3-neiso-golden/d99/*/NEISO/*/*.parquet
+/results/ff-t3-neiso-golden/d99/*/NEISO/*/*.npz
+/results/ff-t3-neiso-golden/d99/*/NEISO/*/hourly/
+/results/ff-t3-neiso-golden/d99/*/NEISO/*/year_*_floor_retentions.json
+/results/ff-t3-neiso-golden/d99/*.log
 # NYISO-NEXT-2 per-year shard legs 2022-2025 (rule 32(d): kept out of main; the composite nyisonext2_span is registered; the 2021 leg IS its own registered bundle).
 # Legs (provenance, rule 33(d)): 2021 9b008aa403e4e1dbd5cf43e985dad3864efbe594 · 2024 85b0ab6851e7c5bb755734d8f89fa81927a5062c · 2025 51674648560717d37499bfe58003c70eee53262b
 results/calibration/nyisonext2_202[2-5]/

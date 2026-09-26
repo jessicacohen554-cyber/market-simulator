@@ -124,16 +124,17 @@ class TestDynamicRungResolver(unittest.TestCase):
 
 
 class TestT16Repoint(unittest.TestCase):
-    """T1.6's lever, re-pointed to ``entry_rate_limits`` by owner ruling Q27.
+    """T1.6's lever and T1.6b's metric, as re-pointed by owner ruling Q72.
 
-    Pins the three properties the re-point rests on (capx-T16-A,
-    ``docs/handoffs/FINDING-capx-t16a-ladder-repoint-2026-09-02.md``): the
-    ladder is IN SERVICE, both rungs perturb the FF-2A entry growth ladder and
-    nothing else, and the rung ORDER runs short → long so the T1.6b
-    ``monotone_down`` series runs in the direction the pre-registered
-    expectation names (more VRE ⇒ lower REC dual). A silent re-order or a
-    lever swap would make the gate score a different claim than plan §2
-    pre-registers.
+    History: owner ruling Q27 (capx-T16-A,
+    ``docs/handoffs/FINDING-capx-t16a-ladder-repoint-2026-09-02.md``) pointed
+    the ladder at ``entry_rate_limits``; owner ruling Q72 (capx D99,
+    ``docs/handoffs/DESIGN-capx-d97-t16-repoint-2026-09-25.md`` §6 (a) + (a-2))
+    re-pointed it to ``entry_pipeline_aware_signal`` and moved T1.6b onto the
+    2041–2050 horizon mean. Pins: the ladder is IN SERVICE, both rungs perturb
+    ``entry_pipeline_aware_signal`` and nothing else, the rung ORDER runs
+    short → long so T1.6b's ``monotone_down`` runs in the pre-registered
+    direction, T1.6a is unchanged, and T1.6b reads the Q72 window metric.
     """
 
     def _ladder(self):
@@ -142,27 +143,112 @@ class TestT16Repoint(unittest.TestCase):
     def test_ladder_is_in_service(self):
         self.assertEqual(self._ladder().out_of_service, "")
 
-    def test_rungs_perturb_entry_rate_limits_short_then_long(self):
+    def test_rungs_perturb_pipeline_aware_signal_short_then_long(self):
         lad = self._ladder()
         self.assertEqual(
             [(r.label, r.overrides) for r in lad.rungs],
             [
-                ("vre_short", {"entry_rate_limits": True}),
-                ("vre_long", {"entry_rate_limits": False}),
+                ("vre_short", {"entry_pipeline_aware_signal": False}),
+                ("vre_long", {"entry_pipeline_aware_signal": True}),
             ],
         )
 
-    def test_expectations_are_unchanged_by_the_repoint(self):
-        # It was the instrument that failed, not the claim: the pre-registered
-        # expectations are byte-identical across the delete/re-point.
+    def test_expectations_t16a_unchanged_t16b_on_q72_mean(self):
+        # The rules are the pre-registration's and do not move; only T1.6b's
+        # metric construction moved (Q72 sub-choice (a-2)). T1.6a is untouched.
         lad = self._ladder()
         self.assertEqual(
             [(e.expr_id, e.metric, e.rule, e.target, e.gate) for e in lad.expectations],
             [
                 ("T1.6a", "rps_dual_over_acp", "le_target", 1.0, True),
-                ("T1.6b", "rps_dual_over_acp", "monotone_down", None, True),
+                (
+                    "T1.6b",
+                    "rps_dual_over_acp_mean_2041_2050",
+                    "monotone_down",
+                    None,
+                    True,
+                ),
             ],
         )
+
+    def test_mean_window_is_the_owner_ruled_2041_2050(self):
+        self.assertEqual(B.T16B_MEAN_WINDOW, (2041, 2050))
+
+
+class _Summ:
+    """Minimal stand-ins for the cache reads ``_extract_metrics`` performs."""
+
+    def __init__(self, duals):
+        self.duals = duals
+
+    def load_result(self, iso, key, year):
+        import types
+
+        import numpy as np
+
+        return types.SimpleNamespace(
+            slack=np.zeros((1, 2)),
+            rps_shadow_price=self.duals[year],
+            co2_cap_price=None,
+        )
+
+    def load_fleet_context(self, iso, key, year):
+        return None
+
+
+def _summarize(result, context):
+    return {
+        "generation_twh": {},
+        "emissions_mt": 0.0,
+        "avg_price": 0.0,
+        "capacity_gw": {},
+    }
+
+
+class TestT16bHorizonMeanMetric(unittest.TestCase):
+    """The Q72 metric construction: mean of the 2041–2050 REC dual over the ACP."""
+
+    def _metrics(self, start, end, duals):
+        spec = B.RungSpec(
+            rung_id="T1.6:NEISO:x",
+            test_id="T1.6",
+            iso="NEISO",
+            rung_label="x",
+            overrides={},
+            start_year=start,
+            end_year=end,
+            cache_root="/tmp/x",
+            metrics_cache="/tmp/x.json",
+        )
+        orig = B._acp_ceiling
+        B._acp_ceiling = lambda config: 50.0
+        try:
+            return B._extract_metrics(spec, None, _Summ(duals), "k", {}, _summarize)
+        finally:
+            B._acp_ceiling = orig
+
+    def test_mean_over_window_and_final_year_untouched(self):
+        duals = {y: 50.0 for y in range(2026, 2051)}
+        # A step off the ACP in 2044 and a cobweb back to it in 2050: the final
+        # year reads 1.0, the window mean reads the regime (4 × 1.0 + 6 × 0.0
+        # except 2050 ⇒ 5 × 1.0 of 10 ⇒ 0.5).
+        for y in range(2045, 2050):
+            duals[y] = 0.0
+        m = self._metrics(2026, 2050, duals)
+        self.assertEqual(m["rps_dual_over_acp"], 1.0)
+        self.assertEqual(m["rps_dual_over_acp_mean_2041_2050"], 0.5)
+
+    def test_short_run_emits_no_window_metric(self):
+        duals = {y: 50.0 for y in range(2026, 2031)}
+        m = self._metrics(2026, 2030, duals)
+        self.assertEqual(m["rps_dual_over_acp"], 1.0)
+        self.assertNotIn("rps_dual_over_acp_mean_2041_2050", m)
+
+    def test_missing_window_year_dual_emits_no_window_metric(self):
+        duals = {y: 50.0 for y in range(2026, 2051)}
+        duals[2043] = None
+        m = self._metrics(2026, 2050, duals)
+        self.assertNotIn("rps_dual_over_acp_mean_2041_2050", m)
 
 
 class TestOutOfServiceLadder(unittest.TestCase):
