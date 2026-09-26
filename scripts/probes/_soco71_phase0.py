@@ -562,7 +562,7 @@ def main_greedy(candidate: Path, years: list[int]) -> None:
 # ---------------------------------------------------------------------------
 # 4. post-solve comparison (zero LP): the soco-70 legs against the keeper legs.
 # ---------------------------------------------------------------------------
-ARM_LEG = _ROOT / "results/calibration/soco70_{y}"
+ARM_LEG = _ROOT / "results/calibration/soco71_{y}"
 KEYS = ("CC_REGULAR", "CT_PEAKER", "ST_GAS", "COAL_BIT", "COAL_PRB", "CC_CHP", "CT_CHP", "ST_CHP",
         "nuclear", "hydro", "wind", "solar")
 
