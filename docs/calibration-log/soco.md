@@ -1602,3 +1602,24 @@ ruling; 2026-09-25-soco67-precod-clip pruned per rule 35): CC_REGULAR +1.48..+2.
 (C2/C4/C6/C8 PASS, C3 unscorable). Next lever: ST_GAS under-dispatch (commitment hours, soco-62 §3). Records:
 docs/handoffs/r-soco/{FINDING,PRECOMMIT,RESULT}-soco-68-2026-09-25.md. Leftover refs for the owner:
 claude/soco68-2019..2025.
+
+## soco-69 — 2026-09-26
+
+ST_GAS DEFICIT DECOMPOSED; UNMEASURED COAL MUST-RUN SLAB WITHDRAWN; PROMOTED ON STRUCTURE, GATES REGRESS. G-DRIFT
+(measured, zero LP): every LP input bit-identical vs keeper sha 34f3d4aa; solve-SHA diff (one default-off miso-273
+field) INERT. Decomposition (per plant, exact hour partition vs CEMS): the ST_GAS deficit (7.6/5.6/6.6/5.7/5.5/4.9/5.2
+TWh 2019-2025) is MERIT ORDER - available boilers $1-10+/MWh above the clearing price, synced boilers only at their
+committed tranche - not availability (0.08-0.36 TWh/yr). Displacer: coal 2019-2022 (+4.4..+9.5 TWh), CT 2023-2024
+(start-cost channel, G). The coal excess sat on the default 45% / $4.50 must-run slab at every coal plant absent from
+thermal_tranches_SOCO.csv (all but Bowen/Miller/Scherer), 3.99/7.34/4.72/0.23/0.67/1.09/0.93 TWh of it binding while
+the plant's own CEMS was offline (Wansley 6.28 TWh/yr vs 1.82/0.14/1.11 actual). Armed the existing registered field
+coal_mustrun_requires_measured_row (zero free parameters; PJM/NEISO K, SOCO U -> K).
+
+RESULT (run 2026-09-26-soco69-coal-mustrun-measured, seven year-isolated shards at ccaa94e0, PROMOTED on the owner's
+standing ruling; 2026-09-25-soco68-summer-basis pruned per rule 35): COAL_BIT -1.1..-12.3, CC_REGULAR +0.9..+5.5,
+CT_PEAKER +0.3..+5.3, ST_GAS +0.07..+1.48 TWh/yr; unserved 0 every year; removed set == census. 2019 ST_GAS -3.09pp
+FAIL -> -2.49pp PASS. REGRESSIONS: 2019 COAL_BIT +0.81 -> -3.83pp FAIL (the unmeasured BIT plants' $37-50 econ cost,
+masked by the slab); C4 coal NRMSE 2020 0.230 -> 0.347, 2023 0.216 -> 0.316 FAIL. Grade 5/4/1 -> 5/3/2, NOT-YET.
+Next lever: measured coal rows (commitment) for Barry/Gaston/Crist/Wansley/Daniel; CT start-cost owner question
+re-raised. Records: docs/handoffs/r-soco/{FINDING,PRECOMMIT}-soco-69-2026-09-25.md, RESULT-soco-69-2026-09-26.md.
+Leftover refs for the owner: claude/soco69-2019..2025, claude/soco68-2019..2025.
