@@ -3590,3 +3590,6 @@ results/calibration/rcaiso4_*_20*/
 # neiso-117 per-year shard legs (rule 32(d)/36): the composite neiso117_span is what registers.
 # Legs live on claude/neiso117-<Y> (transport only, rule 33(f)).
 results/calibration/neiso117_20[12][0-9]/
+# NWPP-NEXT-4 per-year shard legs (rule 32(d): kept out of main; the composite nwppnext4_span is registered).
+# Leg provenance (rule 33(d)): 2020 375e536b, 2021 db23aaeb, 2022 9e50d5bb, 2023 bf311536, 2024 2aec7bb6, 2025 69d99c56.
+results/calibration/nwppnext4_20*/
