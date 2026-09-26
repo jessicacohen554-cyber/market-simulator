@@ -14772,3 +14772,18 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - Coal +0.83…+4.75 TWh; 2025 overshoot +1.23 → +4.08 TWh.
 - **Recommendation:** do not promote. The rule 14 reason is over-restoration at shared plants, not the C3a flip. Successor: a per-unit composition. Owner ruled "Don't promote": the run is pruned, and the cell is back to R.
 - **Records:** `docs/handoffs/FINDING-r-ercot-6-double-count-retest-2026-09-26.md`, `PRECOMMIT-r-ercot-6-unit-scoped-event-cap-2026-09-26.md`, `RESULT-r-ercot-6-unit-scoped-event-cap-2026-09-26.md`.
+
+## R-ERCOT-7 — 2026-09-26 — per-unit window × partial composition: FAILED its zero-LP test, recorded R (owner: "Record R, no arm"); Jack Fusco coverage gap found
+
+- **Step 1 (zero LP, no arm):**
+  - Built `ercot_dam_availability_event_cap_per_unit` (default off; mutually exclusive with `unit_scoped`). It drops only the windowed carrying units' share of the plant plateau.
+  - A/A null: byte-identical to `main` on every stage array, 2019–2025.
+  - Result: it restores MORE coal than the unit-scoped `min()` in every year (+0.17…+1.12 TWh/yr), with a LOWER ≤ own-CEMS share (2023 0.23 vs 0.28). That fails the pre-stated test. A residual-preserving sensitivity (D2) lands near `min()`.
+  - The R-ERCOT-6 "drops other units' plateau" diagnosis is not what drives the lift. The thresholded attribution leaves plateau depth that belongs to no unit.
+  - Owner: record **R**, no arm. The window × partial family stays closed unless a complete per-unit deficit decomposition is derived (rule 23 charter).
+- **Step 2 (zero LP, proposed):**
+  - **Jack Fusco / Brazos Valley (55357) is absent from the fleet.** It is ~602 MW CC in Houston, and ERCOT's 60-Day DAM disclosure lists it as `BVE_CC1_1/_2` (QSE Calpine). The DAM crosswalk carries `BVE_CC1`, but mis-matched to Lost Pines (`accepted=0`).
+  - Owner: add it and test it in the next lane.
+  - Decker Creek steam is validation-years only. Hidalgo needs a zone move to South. AVR's default is already right.
+- **Step 4:** the non-ERCOT deriver `plant_group` break is already fixed on `main` (miso-273). `_APPLIED_MEASURED_FLAGS` stays inert for ERCOT (0 `eia923_identity` rows).
+- **Records:** `docs/handoffs/FINDING-r-ercot-7-per-unit-composition-2026-09-26.md`.

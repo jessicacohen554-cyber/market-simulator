@@ -117,3 +117,16 @@ Notes:
 - **`campd_bins._APPLIED_MEASURED_FLAGS = {"ok", "eia923_identity"}` is a shared change that is not gated by any flag.**
   - It stays inert for ERCOT only while no ERCOT heat-rate artifact carries `eia923_identity` rows. Today `ercot_campd_marginal_hr_summary.csv` carries 0.
   - Re-check it if any ERCOT HR artifact is re-derived.
+
+## Owner ruling (2026-09-26)
+
+- **Step 1: "Record R, no arm (Recommended)."**
+  - `ercot_dam_availability_event_cap_per_unit` is recorded as **R** in the ERCOT matrix shard.
+  - The default-off field stays in code as the tested record.
+  - No LP was spent, and the keeper `2026-09-25-r-5-hour-grain` is unchanged.
+- **Step 2: "Add Fusco, test in next lane (Recommended)."**
+  - A follow-up lane adds Jack Fusco / Brazos Valley (55357):
+    - the bin-sheet row;
+    - the `BVE_CC1` DAM crosswalk re-match from Lost Pines 55154 to 55357.
+  - It then tests the addition under a PRECOMMIT with 7 one-year shards.
+  - Decker Creek steam, Hidalgo's zone and AVR ride along with separable attribution.
