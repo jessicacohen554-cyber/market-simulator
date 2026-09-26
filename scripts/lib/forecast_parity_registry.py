@@ -410,6 +410,15 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
     ),
     # -- parameters ----------------------------------------------------------
     ParityDeclaration(
+        fields=("neiso_winter_fuelsec_conduct_roster",),
+        disposition=PARAMETER_OF,
+        parent="neiso_winter_fuel_mustrun",
+        why="neiso-119 scope parameter of the winter fuel-security floor: narrows "
+        "its program fleet to the leave-one-year-out CEMS conduct roster — inert "
+        "unless that floor is armed",
+        evidence=(_BACKCAST_ORCH,),
+    ),
+    ParityDeclaration(
         fields=("caiso_gas_floor_frac",),
         disposition=PARAMETER_OF,
         parent="caiso_gas_commitment_floor",

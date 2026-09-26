@@ -1,0 +1,157 @@
+{
+ "year": 2023,
+ "fuelsec": [
+  {
+   "plant": 562,
+   "classes": [
+    "ST_GAS"
+   ],
+   "floored_hours": 192,
+   "floor_twh": 0.0271,
+   "floor_mw_mean_when_bound": 141.1,
+   "cems_median_mw_when_bound": 0.0,
+   "cems_share_zero_when_bound": 0.521,
+   "cems_twh_when_bound": 0.0338,
+   "cems_twh_year": 0.2043
+  },
+  {
+   "plant": 2364,
+   "classes": [
+    "COAL_BIT"
+   ],
+   "floored_hours": 840,
+   "floor_twh": 0.1305,
+   "floor_mw_mean_when_bound": 155.4,
+   "cems_median_mw_when_bound": 0.0,
+   "cems_share_zero_when_bound": 0.585,
+   "cems_twh_when_bound": 0.099,
+   "cems_twh_year": 0.1812
+  },
+  {
+   "plant": 50955,
+   "classes": [
+    "ST_GAS"
+   ],
+   "floored_hours": 144,
+   "floor_twh": 0.0003,
+   "floor_mw_mean_when_bound": 2.0,
+   "cems_median_mw_when_bound": 0.0,
+   "cems_share_zero_when_bound": 1.0,
+   "cems_twh_when_bound": 0.0,
+   "cems_twh_year": 0.0
+  },
+  {
+   "plant": 54085,
+   "classes": [
+    "ST_GAS"
+   ],
+   "floored_hours": 600,
+   "floor_twh": 0.0155,
+   "floor_mw_mean_when_bound": 25.8,
+   "cems_median_mw_when_bound": 0.0,
+   "cems_share_zero_when_bound": 1.0,
+   "cems_twh_when_bound": 0.0,
+   "cems_twh_year": 0.0
+  }
+ ],
+ "watch_heat_rates": [
+  {
+   "plant": 1599,
+   "unit": "1599_1",
+   "class": "",
+   "pmax": 560.0,
+   "heat_rate": 14.691
+  },
+  {
+   "plant": 1599,
+   "unit": "1599_2",
+   "class": "",
+   "pmax": 558.8,
+   "heat_rate": 14.691
+  },
+  {
+   "plant": 6156,
+   "unit": "6156_1",
+   "class": "",
+   "pmax": 432.6,
+   "heat_rate": 20.026
+  },
+  {
+   "plant": 6156,
+   "unit": "6156_2",
+   "class": "",
+   "pmax": 43.2,
+   "heat_rate": 20.026
+  },
+  {
+   "plant": 6156,
+   "unit": "6156_3",
+   "class": "",
+   "pmax": 43.2,
+   "heat_rate": 20.026
+  },
+  {
+   "plant": 6156,
+   "unit": "6156_4",
+   "class": "",
+   "pmax": 43.2,
+   "heat_rate": 20.026
+  },
+  {
+   "plant": 8002,
+   "unit": "8002_1",
+   "class": "",
+   "pmax": 400.2,
+   "heat_rate": 14.0
+  },
+  {
+   "plant": 10726,
+   "unit": "CC_REGULAR_Central_p10726_committed",
+   "class": "CC_REGULAR",
+   "pmax": 35.2,
+   "heat_rate": 10.447
+  },
+  {
+   "plant": 10726,
+   "unit": "CC_REGULAR_Central_p10726_econc00",
+   "class": "CC_REGULAR",
+   "pmax": 37.6,
+   "heat_rate": 8.329
+  },
+  {
+   "plant": 10726,
+   "unit": "CC_REGULAR_Central_p10726_econc01",
+   "class": "CC_REGULAR",
+   "pmax": 37.6,
+   "heat_rate": 8.534
+  },
+  {
+   "plant": 10726,
+   "unit": "CC_REGULAR_Central_p10726_econc02",
+   "class": "CC_REGULAR",
+   "pmax": 37.6,
+   "heat_rate": 8.74
+  },
+  {
+   "plant": 10726,
+   "unit": "CC_REGULAR_Central_p10726_econc03",
+   "class": "CC_REGULAR",
+   "pmax": 37.6,
+   "heat_rate": 8.946
+  },
+  {
+   "plant": 10726,
+   "unit": "CC_REGULAR_Central_p10726_econc04",
+   "class": "CC_REGULAR",
+   "pmax": 37.6,
+   "heat_rate": 9.151
+  },
+  {
+   "plant": 10726,
+   "unit": "CC_REGULAR_Central_p10726_econc05",
+   "class": "CC_REGULAR",
+   "pmax": 37.6,
+   "heat_rate": 9.357
+  }
+ ]
+}

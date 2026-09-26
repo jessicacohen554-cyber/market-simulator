@@ -3648,3 +3648,5 @@ results/calibration/spp86_arm_20*/
 # Legs (provenance, rule 33(d)): 2019 cb8fb831 2020 89a67b85 2021 0311fd54 2022 726ae0e7 2023 73093597 2024 049dd3b0 2025 476b2238
 results/calibration/_soco71/
 results/calibration/soco71_20[0-9][0-9]/
+# neiso-119 per-year shard legs: composed into neiso119_span, never committed (rule 32(d))
+results/calibration/neiso119_20*/

@@ -4597,6 +4597,24 @@ def run_year(
         ):
             _wf_classes = tuple(c for c in _wf_classes if c != "ST_GAS")
 
+        # neiso-119: leave-one-year-out CEMS conduct roster (gated, default off
+        # -> None -> byte-identical). Narrows the program fleet; never a new floor.
+        _wf_roster = None
+        if getattr(config, "neiso_winter_fuelsec_conduct_roster", False):
+            from market_sim.data.winter_fuel_inventory import (
+                winter_fuelsec_conduct_roster,
+            )
+
+            _wf_roster = winter_fuelsec_conduct_roster(iso, int(config.weather_year))
+            logger.info(
+                "%s %d: winter fuel-security conduct roster (leave-one-year-out "
+                "CEMS, online share >= D-4 threshold): %d plant(s) kept: %s",
+                iso,
+                year,
+                len(_wf_roster),
+                sorted(_wf_roster),
+            )
+
         if apply_winter_fuelsec_mustrun(
             fleet_arrays,
             iso,
@@ -4611,6 +4629,7 @@ def run_year(
                 getattr(config, "neiso_winter_fuelsec_tmin_c", -7.0)
             ),
             hours=config.hours,
+            eligible_plants=_wf_roster,
         ):
             logger.info(
                 "%s %d: winter fuel-security must-run (Component B) applied — "
