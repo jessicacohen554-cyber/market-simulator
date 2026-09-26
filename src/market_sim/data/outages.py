@@ -375,6 +375,7 @@ def unit_outage_csv_for_iso(
     merit_order_guard: bool = False,
     hour_grain: bool = False,
     dark_unit_years: bool = False,
+    membership_repair: bool = False,
 ) -> Path:
     """Return the CAMPD unit-outage CSV path for an ISO.
 
@@ -446,6 +447,16 @@ def unit_outage_csv_for_iso(
     exists), so it is one more selector over the same artifact family (rule 19
     ``[R-ONE-MECH]``). Zero free parameters. A separate file, never an
     overwrite, and the ``-perunit-`` extract when the companion is absent.
+
+    ``membership_repair`` (``ScenarioConfig.unit_outage_membership_repair``,
+    GATED default False; PJM-NEXT-2) selects the ``-memberrepair-`` companion of
+    the STANDARD extract: the committed extract unchanged plus the windows the
+    same deriver produces for the facilities it never scanned (a membership
+    defect -- pre-exit whole-plant retirees and partial-plant coal exits keyed
+    on their surviving CT class). Only on the standard path: ignored under
+    ``per_unit_crosswalk`` (the per-unit family has its own membership). Zero
+    free parameters; a separate file, never an overwrite, and the standard
+    extract when the companion is absent.
     """
     base = (
         UNIT_OUTAGE_CSV
@@ -480,6 +491,12 @@ def unit_outage_csv_for_iso(
                 return alt
         alt = base.with_name(
             f"campd-unit-outages-perunit-{(iso or 'ERCOT').upper()}.csv"
+        )
+        if alt.exists():
+            return alt
+    if membership_repair and not mixed_gas_routing and not per_unit_crosswalk:
+        alt = base.with_name(
+            f"campd-unit-outages-memberrepair-{(iso or 'ERCOT').upper()}.csv"
         )
         if alt.exists():
             return alt
@@ -1282,6 +1299,7 @@ def unit_outage_derate_factors(
     extract_basis_share: bool = False,
     hour_grain: bool = False,
     dark_unit_years: bool = False,
+    membership_repair: bool = False,
     mid_vintage_exit_carry: bool = False,
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
     precod_clip: bool = False,
@@ -1317,6 +1335,7 @@ def unit_outage_derate_factors(
         merit_order_guard,
         hour_grain,
         dark_unit_years=dark_unit_years,
+        membership_repair=membership_repair,
     )
     df = _load_unit_outage_events(csv_path, iso)
     if df is None:

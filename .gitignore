@@ -3562,5 +3562,9 @@ results/calibration/nwppnext3_20*/
 # docs/handoffs/neiso114/RESULT-neiso114-2026-09-25.md section 6 (rule 33(d)).
 results/calibration/neiso114b_20*/
 
+# PJM-NEXT-2 per-year shard legs: composed into pjmnext2_joint_span, kept out of main (rule 32(d)); never deleted before the owner rules (rule 31).
+# Leg provenance (rule 33(d)): 2019 79d3492c, 2020 967b4333, 2021 938daefc, 2022 11e75a4d, 2023 d91d5d13, 2024 4e40ace0, 2025 71836f90.
+results/calibration/pjmnext2_joint_20[0-9][0-9]/
+results/calibration/pjmnext2_c[123]_20[0-9][0-9]/
 # miso-273 per-year arm legs (rule 32(d): composite only reaches main; bytes provenance in PRECOMMIT §8)
 results/calibration/miso273_arm_*/
