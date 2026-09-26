@@ -429,3 +429,129 @@ def test_q66_field_carried_off_its_drop_value_is_not_lag():
     row["scenario_config"] = dict(row["scenario_config"], **{_LAG_FIELD: True})
     lag, gates = _gates(row, ancestor=False)
     assert not lag and gates == ["G1_UNKNOWN"], (lag, gates)
+
+
+# --------------------------------------------------------------------------- #
+# The Q71 RECORDED-SURFACE construction (capx D98) — both directions, offline
+# --------------------------------------------------------------------------- #
+# A record solved on a MOVED surface hashes with the ``moved`` block live at its
+# solve; once the ISO's surface moves again it matches neither the declaration
+# nor the live construction (capx D95). The third construction reads that block
+# from the record's OWN committed ``solve_surface.json`` — never synthesizes
+# it. These tests build the bundle in ``tmp_path`` and inject the committed set,
+# so they need no census, no git and no network.
+_SURF_RC = "results/_synthetic_surface/run_config.json"
+_SURF_BLOCK = {"RGGI_MEMBER_STATES_BY_YEAR": "94d8b85ac442ecfd"}
+
+
+def _surface_row(tmp_path, *, block=None, stamp=True, **over) -> tuple[dict, set]:
+    """A record whose recorded key was hashed with ``_SURF_BLOCK`` appended."""
+    from dataclasses import asdict
+
+    payload = K._jsonable(asdict(K.ScenarioConfig()))
+    iso = str(payload["iso"]).upper()
+    recorded = K.head_key(payload, surface_block=_SURF_BLOCK)
+    assert recorded not in (
+        K.head_key(payload),
+        K.head_key(payload, surface=True),
+    ), "synthetic record would reproduce under declaration or live"
+    row = {
+        "run_config": _SURF_RC,
+        "iso": iso,
+        "reproduces_recorded_key": False,
+        "recorded_cache_key": recorded,
+        "scenario_config": payload,
+    }
+    row.update(over)
+    rel = f"results/_synthetic_surface/{iso}/{recorded}/{K.SURFACE_STAMP_NAME}"
+    committed = set()
+    if stamp:
+        path = tmp_path / rel
+        path.parent.mkdir(parents=True)
+        path.write_text(
+            json.dumps(
+                {
+                    "schema": 1,
+                    "iso": iso,
+                    "moved": _SURF_BLOCK if block is None else block,
+                    "epochs": [],
+                }
+            )
+        )
+        committed.add(rel)
+    return row, committed
+
+
+def _surface_gates(row, tmp_path, committed, entries=()) -> tuple[dict, list[str]]:
+    record = {"rows": [row], "mismatch_detail": [row]}
+    surface = K.surface_recorded_classifications(
+        record, root=tmp_path, committed=committed
+    )
+    failures = K.check_exceptions(
+        record, {"entries": list(entries)}, fetch=False, lag={}, surface=surface
+    )
+    return surface, [f["gate"] for f in failures]
+
+
+def test_q71_recorded_surface_record_classifies_and_does_not_fail(tmp_path):
+    """The committed stamp's block reproduces the literal: reported, no failure."""
+    row, committed = _surface_row(tmp_path)
+    surface, gates = _surface_gates(row, tmp_path, committed)
+    verdict = surface[_SURF_RC]
+    assert verdict["status"] == K.SURFACE_RECORDED_CLASS, verdict
+    assert verdict["moved"] == _SURF_BLOCK
+    assert gates == [], f"a genuine recorded-surface record failed: {gates}"
+
+
+def test_q71_perturbed_literal_fails(tmp_path):
+    """Same stamp, perturbed literal: never a pass-through — ``G1_UNKNOWN``."""
+    row, committed = _surface_row(tmp_path)
+    good = row["recorded_cache_key"]
+    # The stamp stays where the ORIGINAL literal names it; point the record at
+    # it under a perturbed key by re-homing the stamp to the perturbed path.
+    bad = "deadbeefdeadbeef"
+    iso = row["iso"]
+    src = tmp_path / f"results/_synthetic_surface/{iso}/{good}/{K.SURFACE_STAMP_NAME}"
+    dst_rel = f"results/_synthetic_surface/{iso}/{bad}/{K.SURFACE_STAMP_NAME}"
+    (tmp_path / dst_rel).parent.mkdir(parents=True)
+    (tmp_path / dst_rel).write_text(src.read_text())
+    row["recorded_cache_key"] = bad
+    surface, gates = _surface_gates(row, tmp_path, {dst_rel})
+    assert surface[_SURF_RC]["status"] == "no_reproduce", surface
+    assert gates == ["G1_UNKNOWN"], gates
+
+
+def test_q71_record_without_a_stamp_cannot_use_it(tmp_path):
+    """No ``solve_surface.json``: the construction never applies — ``G1_UNKNOWN``."""
+    row, committed = _surface_row(tmp_path, stamp=False)
+    assert not committed
+    surface, gates = _surface_gates(row, tmp_path, committed)
+    assert not surface and gates == ["G1_UNKNOWN"], (surface, gates)
+
+
+def test_q71_uncommitted_stamp_cannot_be_used(tmp_path):
+    """A stamp on disk but NOT committed is not evidence — ``G1_UNKNOWN``."""
+    row, _committed = _surface_row(tmp_path)
+    surface, gates = _surface_gates(row, tmp_path, set())
+    assert not surface and gates == ["G1_UNKNOWN"], (surface, gates)
+
+
+def test_q71_tampered_moved_block_fails(tmp_path):
+    """A stamp whose ``moved`` block was edited does not reproduce — a FAILURE."""
+    tampered = {"RGGI_MEMBER_STATES_BY_YEAR": "0000000000000000"}
+    row, committed = _surface_row(tmp_path, block=tampered)
+    surface, gates = _surface_gates(row, tmp_path, committed)
+    assert surface[_SURF_RC]["status"] == "no_reproduce", surface
+    assert gates == ["G1_UNKNOWN"], gates
+    # An EMPTY block collapses to the declaration key, which does not reproduce.
+    row, committed = _surface_row(tmp_path / "empty", block={})
+    surface, gates = _surface_gates(row, tmp_path / "empty", committed)
+    assert gates == ["G1_UNKNOWN"], gates
+
+
+def test_q71_listed_entry_the_construction_derives_is_stale(tmp_path):
+    """A listed exception the construction now derives is dead scaffolding."""
+    row, committed = _surface_row(tmp_path)
+    entry = {"run_config": _SURF_RC, "recorded_cache_key": row["recorded_cache_key"]}
+    _, gates = _surface_gates(row, tmp_path, committed, entries=[entry])
+    assert gates == ["G2_STALE"], gates
