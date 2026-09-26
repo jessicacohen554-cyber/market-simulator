@@ -17975,6 +17975,26 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-83 (2026-09-26, KEEPER SIDE + COMMITMENT-COST SURVEY, ZERO LP —
+`docs/handoffs/FINDING-spp-83-keeper-clears-on-offline-capacity-2026-09-26.md`).** **The keeper does
+clear on capacity SPP kept offline, but the excess is ~8 GW in EVERY year. It is a level defect, not the
+2023+ step.**
+- **Keeper available minus SPP online thermal capacity** on SPP-82's sample: **+8.17 / +8.04 / +8.17 /
+  +8.85 / +8.09 / +6.90 GW** (2019 → 2024), ~6 GW of it gas. Keeper coal is below SPP online coal
+  every year. Keeper headroom is 12–14 GW against SPP's 4–5 GW, with generation matched within 0.9 GW.
+- **Re-clear bound** (the excess removed from the keeper's ≥ $10 gas stack cheapest first): **+7.9 /
+  +7.9 / +14.3 / +23.8 / +7.0 / +13.1 $/MWh**. The 2023/24 − 2019/20 differential is +2.1 against a
+  needed +8.3, and it overshoots 2019/20 and 2021. **A commitment state sized to online capacity is a
+  BODY lever, and it cannot carry SPP-79's pairing.**
+- **Source survey failed (STOP):** no public SPP per-class start-up / no-load **dollars**.
+  - The ASOM gives fuel-level **times** only, with gas unsplit (2024 gas min-run 21 h, min-down 8 h).
+  - App. G gives the formula with no values.
+  - Make-whole / uplift reports are outcomes.
+  - EQR has no parameters, ITP/PROMOD is proprietary, and NREL 55433 is national-generic.
+  - **Do not re-survey without a new product.**
+- **Re-open only on** an owner-gated engine design lane for commitment state in the LP **and** a
+  year-differential driver for the 2023+ step. Neither exists today.
+
 **DO-NOT-REDO, added by SPP-82 (2026-09-25, THE +7.5 GW "OFFERED BUT NOT SETTING PRICE", ZERO LP —
 `docs/handoffs/FINDING-spp-82-offered-not-setting-2026-09-25.md`).** **The owner is offline,
 available, UNCOMMITTED capacity. It is a commitment state, and no admissible representation exists
