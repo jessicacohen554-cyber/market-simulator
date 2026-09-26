@@ -1623,3 +1623,23 @@ masked by the slab); C4 coal NRMSE 2020 0.230 -> 0.347, 2023 0.216 -> 0.316 FAIL
 Next lever: measured coal rows (commitment) for Barry/Gaston/Crist/Wansley/Daniel; CT start-cost owner question
 re-raised. Records: docs/handoffs/r-soco/{FINDING,PRECOMMIT}-soco-69-2026-09-25.md, RESULT-soco-69-2026-09-26.md.
 Leftover refs for the owner: claude/soco69-2019..2025, claude/soco68-2019..2025.
+
+## soco-70 — 2026-09-26
+
+MEASURED COAL ROWS FOR THE FIVE UNCOVERED PLANTS; PROMOTED; GATES IMPROVE. G-DRIFT (measured, zero LP): every LP input
+bit-identical vs keeper sha ccaa94e0 at 7df4a1f3 and at the rebased head (data drift on main since: other-ISO or
+default-off, INERT). Census: thermal_tranches_SOCO.csv (derived --years 2024, facility attribution) carried COAL rows only
+for Bowen/Miller/Scherer - Barry/Gaston/Daniel's coal output went to their CC/ST_GAS row, Crist/Wansley stopped coal before
+2024; after soco-69 they ran 2.16 vs 13.50 TWh EIA-923 (2019). Repair (data only, zero free parameters, rule 23 source
+change = span now 2019-2025): derive_thermal_tranches.py --coal-unit-coverage appends one COAL row per uncovered plant from
+its own CEMS coal units (incumbent statistics; 60 prior rows byte-identical; sha 7b7f5f27 -> ab5ec265). Must-run 48.0%
+Gaston / 34.9% Daniel, 0% Barry/Crist/Wansley. The per-unit tranche companion was deliberately NOT derived (gas-only
+crosswalk; SOCO-56 note).
+
+RESULT (run 2026-09-26-soco70-coal-rows-measured, seven year-isolated shards at e3cea99b, PROMOTED on the owner's standing
+ruling; 2026-09-26-soco69-coal-mustrun-measured pruned per rule 35): every other unit's hourly cap_mw byte-identical;
+measured-plant must-run identical; unserved 0. Gaston +0.85..+1.75, Daniel +0.08..+1.67 TWh/yr; COAL_BIT +0.61..+1.31,
+CT_PEAKER -1.32..+0.18, ST_GAS -0.38..+0.03. C4 coal NRMSE 2020 0.347 -> 0.285, 2023 0.316 -> 0.268 FAIL -> PASS; 2019
+COAL_BIT -3.83 -> -3.4pp still FAIL (Barry/Crist/Wansley cycle, must-run 0, their committed band keeps the coal start
+markup); D-2 FAIL -> PASS. Grade 5/3/2 -> 5/4/1, NOT-YET. Records:
+docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-70-2026-09-26.md. Leftover refs for the owner: claude/soco70-2019..2025.
