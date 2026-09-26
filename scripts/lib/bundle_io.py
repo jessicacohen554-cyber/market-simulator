@@ -205,6 +205,20 @@ def write_derived_solve_inputs(iso: str, run_dir: Path) -> dict[str, str]:
         csv_paths[f"unit_outages_{tag}"] = main_csv.with_name(
             f"campd-unit-outages-{tag}{suffix}.csv"
         )
+    if (iso or "").upper() != "ERCOT":
+        # SPP-85: the '-netloadmask-' companions (selected under
+        # ScenarioConfig.unit_outage_netload_mask_repair), captured by name like
+        # e923/layup so an armed bundle pins what it actually read.
+        u = iso.upper()
+        csv_paths["unit_outages_netloadmask"] = main_csv.with_name(
+            f"campd-unit-outages-netloadmask-{u}.csv"
+        )
+        csv_paths["unit_outages_short_netloadmask"] = main_csv.with_name(
+            f"campd-unit-outages-short-netloadmask-{u}.csv"
+        )
+        csv_paths["unit_outages_partial_netloadmask"] = main_csv.with_name(
+            f"campd-partial-outages-netloadmask-{u}.csv"
+        )
     for name, path in csv_paths.items():
         if not path.is_file():
             continue
