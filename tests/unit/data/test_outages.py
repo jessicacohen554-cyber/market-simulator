@@ -1951,6 +1951,57 @@ class UnitOutageHourGrainTest(unittest.TestCase):
         self.assertEqual(arr[_hour_of_year(9, 1, 6)], 0.0)
 
 
+class UnitOutageActiveUnitsHourGrainTest(unittest.TestCase):
+    """R-ERCOT-6: the unit-scoped shared-unit mask reads the factor's own grain."""
+
+    def _active(self, rows: list[dict], hour_grain: bool):
+        from unittest.mock import patch
+
+        from market_sim.data import outages
+
+        seen: list[bool] = []
+        with tempfile.TemporaryDirectory() as td:
+            csv = Path(td) / "campd-unit-outages.csv"
+            pd.DataFrame(rows).to_csv(csv, index=False)
+
+            def pick(iso, *a, hour_grain=False, **k):
+                seen.append(hour_grain)
+                return csv
+
+            outages.unit_outage_active_units.cache_clear()
+            with (
+                patch.object(outages, "unit_outage_csv_for_iso", side_effect=pick),
+                patch.object(
+                    outages, "_unit_outage_target", return_value=(70002, "COAL")
+                ),
+            ):
+                out = outages.unit_outage_active_units(
+                    2023, HOURS_PER_YEAR, iso="ERCOT", hour_grain=hour_grain
+                )
+            outages.unit_outage_active_units.cache_clear()
+        return out, seen
+
+    def test_hour_grain_is_forwarded_to_the_extract_selector(self):
+        rows = [_unit_outage_row(outage_start_hour=22, outage_end_hour=1)]
+        _, seen = self._active(rows, hour_grain=True)
+        self.assertEqual(seen, [True])
+        _, seen = self._active(rows, hour_grain=False)
+        self.assertEqual(seen, [False])
+
+    def test_mask_matches_the_detected_window(self):
+        rows = [
+            _unit_outage_row(
+                outage_start_hour=22, outage_end_hour=1, duration_days=18.2
+            )
+        ]
+        out, _ = self._active(rows, hour_grain=True)
+        mask = out[(70002, "COAL")]["1"]
+        self.assertFalse(mask[_hour_of_year(6, 1, 21)])
+        self.assertTrue(mask[_hour_of_year(6, 1, 22)])
+        self.assertTrue(mask[_hour_of_year(6, 20, 1)])
+        self.assertFalse(mask[_hour_of_year(6, 20, 2)])
+
+
 class DeriverHourGrainAssertionTest(unittest.TestCase):
     """The deriver's stop-the-line grain assertions (ercot-174 BE-3 class)."""
 

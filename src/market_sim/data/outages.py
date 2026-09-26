@@ -2511,6 +2511,7 @@ def unit_outage_active_units(
     year: int,
     hours: int = HOURS_PER_YEAR,
     iso: str = "ERCOT",
+    hour_grain: bool = False,
 ) -> dict[tuple[int, str], dict[str, np.ndarray]]:
     """Return ``{(plant_code, plant_group): {unit_id: (hours,) bool}}``.
 
@@ -2525,9 +2526,18 @@ def unit_outage_active_units(
     through :func:`unit_outage_event_window`, so the two layers adopt the
     optional hour grain together or not at all. Consumed only by the
     unit-scoped event-cap composition.
+
+    ``hour_grain`` (R-ERCOT-6) selects the SAME extract the window factor reads
+    (``unit_outage_csv_for_iso(iso, hour_grain=...)``). Without it the mask was
+    read from the day-grain file while the R-ERCOT-5 keeper's window factor is
+    hour-grain, so the shared-unit hours carried up to 23 h per edge the factor
+    no longer removes (measured <= 0.012 TWh/yr of coal capability; rule 14
+    consistency repair, not a residual fit). Default False: byte-identical.
     """
     iso = (iso or "ERCOT").upper()
-    df = _load_unit_outage_events(unit_outage_csv_for_iso(iso), iso)
+    df = _load_unit_outage_events(
+        unit_outage_csv_for_iso(iso, hour_grain=hour_grain), iso
+    )
     if df is None:
         return {}
     df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]

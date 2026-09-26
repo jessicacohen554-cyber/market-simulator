@@ -2223,7 +2223,7 @@ def _apply_outage_overlays(
                 day_guard=getattr(config, "ercot_partial_outage_day_guard", False),
             )
             _w_units = (
-                unit_outage_active_units(int(_yr), hours, iso="ERCOT")
+                unit_outage_active_units(int(_yr), hours, iso="ERCOT", hour_grain=_hg)
                 if _unit_scoped
                 else {}
             )
