@@ -3643,3 +3643,6 @@ results/calibration/miso276_arm_*/
 results/calibration/spp86_arm_20*/
 # R-CAISO-4 2019-21 keeper touchpoint composite IS committed (it folds into the keeper, rule 30):
 !results/calibration/rcaiso4_tp_2019_2021/
+
+# neiso-119 per-year shard legs: composed into neiso119_span, never committed (rule 32(d))
+results/calibration/neiso119_20*/

@@ -1,0 +1,30 @@
+{
+ "year": 2025,
+ "anchor": {
+  "control": 4.0763,
+  "arm": 6.226389589041096
+ },
+ "fuelsec_floor_twh": {
+  "control": {
+   "546": 0.0226,
+   "2364": 0.0219,
+   "2367": 0.077
+  },
+  "arm": {
+   "2367": 0.0373
+  }
+ },
+ "mean_mc_shift_by_class": {
+  "(oil)": 0.0,
+  "CC_CHP": 1.946,
+  "CC_REGULAR": 2.034,
+  "COAL_BIT": 0.0,
+  "COAL_PRB": 0.0,
+  "CT_CHP": 0.0,
+  "CT_PEAKER": 15.125,
+  "ST_CHP": 0.0,
+  "ST_GAS": 5.906,
+  "hydro": 0.0
+ },
+ "units_with_mc_change": 393
+}
