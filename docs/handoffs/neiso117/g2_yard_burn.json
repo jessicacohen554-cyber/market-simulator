@@ -1,0 +1,271 @@
+[
+ {
+  "year": 2019,
+  "yards": [
+   {
+    "plants": [
+     568
+    ],
+    "budget_tbtu": 3.112,
+    "keeper_twh": 0.7874,
+    "keeper_tbtu": 7.409,
+    "arm_twh": 0.3393,
+    "arm_tbtu": 3.193,
+    "arm_within_budget": false,
+    "binding": true
+   },
+   {
+    "plants": [
+     2364
+    ],
+    "budget_tbtu": 6.354,
+    "keeper_twh": 0.7305,
+    "keeper_tbtu": 7.747,
+    "arm_twh": 0.6035,
+    "arm_tbtu": 6.4,
+    "arm_within_budget": false,
+    "binding": true
+   },
+   {
+    "plants": [
+     2367
+    ],
+    "budget_tbtu": 3.003,
+    "keeper_twh": 0.0892,
+    "keeper_tbtu": 1.29,
+    "arm_twh": 0.0921,
+    "arm_tbtu": 1.331,
+    "arm_within_budget": true,
+    "binding": false
+   }
+  ],
+  "class_twh_delta": {
+   "CC_CHP": 0.0214,
+   "CC_REGULAR": 0.5157,
+   "COAL_BIT": -0.1242,
+   "COAL_PRB": -0.4481,
+   "CT_CHP": 0.0006,
+   "CT_PEAKER": 0.0266,
+   "ST_CHP": 0.0001,
+   "ST_GAS": 0.019,
+   "oil": 0.0003
+  },
+  "max_abs_class_delta_twh": 0.5157,
+  "inert_within_tol": false
+ },
+ {
+  "year": 2020,
+  "yards": [
+   {
+    "plants": [
+     568
+    ],
+    "budget_tbtu": 3.942,
+    "keeper_twh": 0.1403,
+    "keeper_tbtu": 1.322,
+    "arm_twh": 0.1403,
+    "arm_tbtu": 1.321,
+    "arm_within_budget": true,
+    "binding": false
+   },
+   {
+    "plants": [
+     2364
+    ],
+    "budget_tbtu": 7.212,
+    "keeper_twh": 0.3023,
+    "keeper_tbtu": 2.988,
+    "arm_twh": 0.3022,
+    "arm_tbtu": 2.988,
+    "arm_within_budget": true,
+    "binding": false
+   },
+   {
+    "plants": [
+     2367
+    ],
+    "budget_tbtu": 2.508,
+    "keeper_twh": 0.0072,
+    "keeper_tbtu": 0.104,
+    "arm_twh": 0.0072,
+    "arm_tbtu": 0.104,
+    "arm_within_budget": true,
+    "binding": false
+   }
+  ],
+  "class_twh_delta": {
+   "CC_CHP": 0.0005,
+   "CC_REGULAR": 0.0006,
+   "CT_PEAKER": -0.0005
+  },
+  "max_abs_class_delta_twh": 0.0006,
+  "inert_within_tol": true
+ },
+ {
+  "year": 2021,
+  "yards": [
+   {
+    "plants": [
+     568
+    ],
+    "budget_tbtu": 4.093,
+    "keeper_twh": 0.2775,
+    "keeper_tbtu": 2.733,
+    "arm_twh": 0.2807,
+    "arm_tbtu": 2.765,
+    "arm_within_budget": true,
+    "binding": false
+   },
+   {
+    "plants": [
+     2364
+    ],
+    "budget_tbtu": 9.234,
+    "keeper_twh": 1.5488,
+    "keeper_tbtu": 15.865,
+    "arm_twh": 0.8997,
+    "arm_tbtu": 9.216,
+    "arm_within_budget": true,
+    "binding": true
+   }
+  ],
+  "class_twh_delta": {
+   "CC_CHP": 0.0388,
+   "CC_REGULAR": 0.5433,
+   "COAL_BIT": -0.6491,
+   "COAL_PRB": 0.0032,
+   "CT_CHP": 0.0006,
+   "CT_PEAKER": 0.0456,
+   "ST_GAS": 0.0235
+  },
+  "max_abs_class_delta_twh": 0.6491,
+  "inert_within_tol": false
+ },
+ {
+  "year": 2022,
+  "yards": [
+   {
+    "plants": [
+     568
+    ],
+    "budget_tbtu": 0.0,
+    "keeper_twh": 0.0,
+    "keeper_tbtu": 0.0,
+    "arm_twh": 0.0,
+    "arm_tbtu": 0.0,
+    "arm_within_budget": true,
+    "binding": false
+   },
+   {
+    "plants": [
+     2364
+    ],
+    "budget_tbtu": 7.678,
+    "keeper_twh": 2.9324,
+    "keeper_tbtu": 30.995,
+    "arm_twh": 0.7363,
+    "arm_tbtu": 7.782,
+    "arm_within_budget": false,
+    "binding": true
+   }
+  ],
+  "class_twh_delta": {
+   "CC_CHP": 0.0498,
+   "CC_REGULAR": 1.9217,
+   "COAL_BIT": -2.1961,
+   "CT_CHP": 0.0006,
+   "CT_PEAKER": 0.2182,
+   "ST_CHP": 0.0004,
+   "ST_GAS": 0.015,
+   "oil": -0.0002
+  },
+  "max_abs_class_delta_twh": 2.1961,
+  "inert_within_tol": false
+ },
+ {
+  "year": 2023,
+  "yards": [
+   {
+    "plants": [
+     2364
+    ],
+    "budget_tbtu": 9.645,
+    "keeper_twh": 0.648,
+    "keeper_tbtu": 6.855,
+    "arm_twh": 0.6478,
+    "arm_tbtu": 6.852,
+    "arm_within_budget": true,
+    "binding": false
+   }
+  ],
+  "class_twh_delta": {
+   "CC_CHP": 0.0004,
+   "COAL_BIT": -0.0002
+  },
+  "max_abs_class_delta_twh": 0.0004,
+  "inert_within_tol": true
+ },
+ {
+  "year": 2024,
+  "yards": [
+   {
+    "plants": [
+     2364
+    ],
+    "budget_tbtu": 9.698,
+    "keeper_twh": 0.3973,
+    "keeper_tbtu": 5.685,
+    "arm_twh": 0.4011,
+    "arm_tbtu": 5.739,
+    "arm_within_budget": true,
+    "binding": false
+   }
+  ],
+  "class_twh_delta": {
+   "CC_REGULAR": -0.0038,
+   "COAL_BIT": 0.0038,
+   "CT_PEAKER": -0.0001
+  },
+  "max_abs_class_delta_twh": 0.0038,
+  "inert_within_tol": true
+ },
+ {
+  "year": 2025,
+  "yards": [
+   {
+    "plants": [
+     2364
+    ],
+    "budget_tbtu": 4.813,
+    "keeper_twh": 0.2001,
+    "keeper_tbtu": 3.216,
+    "arm_twh": 0.2006,
+    "arm_tbtu": 3.223,
+    "arm_within_budget": true,
+    "binding": false
+   },
+   {
+    "plants": [
+     2367
+    ],
+    "budget_tbtu": 0.0,
+    "keeper_twh": 0.132,
+    "keeper_tbtu": 1.919,
+    "arm_twh": 0.0,
+    "arm_tbtu": 0.0,
+    "arm_within_budget": true,
+    "binding": true
+   }
+  ],
+  "class_twh_delta": {
+   "CC_CHP": 0.002,
+   "CC_REGULAR": 0.0965,
+   "COAL_BIT": -0.1315,
+   "CT_PEAKER": 0.0088,
+   "ST_GAS": 0.0001,
+   "oil": 0.0248
+  },
+  "max_abs_class_delta_twh": 0.1315,
+  "inert_within_tol": false
+ }
+]

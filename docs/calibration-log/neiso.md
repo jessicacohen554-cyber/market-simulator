@@ -3582,3 +3582,14 @@ EIA-923 yard budget (`coal_fuel_inventory` plant grain, NEISO U) cuts 2.21 TWh t
 rows at HEAD (COAL-SUB) and cannot see the restored ST_GAS plants; the committed-basis mechanism is
 non-selective and its NEISO artifact predates the fleet correction. Owner rulings requested; no solve.
 Record: `docs/handoffs/neiso116/PRECOMMIT-neiso116-2026-09-26.md`. **Next shorthand: `neiso-117`.**
+
+## neiso-117 — 2026-09-26 — PROMOTED `2026-09-26-neiso-117-coal-yard` (owner ruling)
+
+Owner rulings on PRECOMMIT-neiso116 §5: arm `coal_fuel_inventory_plant_grain` ALONE (per-coal-yard annual EIA-923
+budget rows, no pooled monthly limb — new gate `resolve_coal_budget_arms`, `(MISO, NEISO)`), no Provport, placeholder
+coal price kept, tranche/committed-basis deferred. Seven single-year shards; the first 2025 leg was infeasible
+(Schiller's winter fuel-security floor vs a zero-coal yard) → `reconcile_floors_to_yard_budget` (floors scaled to the
+yard's own budget; inert 2019–2024) and 2025 re-solved. Result: no criterion changes status; C1 CC_REGULAR 2022
+−3.03 → PASS, 2019 −2.87/−4.0 pp → −2.35/−3.5 pp (share still FAIL); CO2 2022 CAVEAT → PASS. Train tier CALIBRATED;
+full span NOT-YET on 2019 share only. `neiso114-arm-b-stgas` pruned (rule 35). Record:
+`docs/handoffs/neiso117/RESULT-neiso117-2026-09-26.md`. **Next shorthand: `neiso-118`.**
