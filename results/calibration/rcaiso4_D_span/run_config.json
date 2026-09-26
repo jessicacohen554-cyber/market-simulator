@@ -27,6 +27,7 @@
       "caiso_firm_import_shape": true,
       "caiso_import_gas_coupling": true,
       "caiso_import_gas_coupling_ladder_only": true,
+      "caiso_intertie_gap_fill_measured_dam": true,
       "caiso_intertie_gap_fill_measured_gas": true,
       "caiso_per_year_import_caps": true,
       "caiso_ps_plant_params": true,
@@ -77,7 +78,7 @@
       "2024": 2.19,
       "2025": 3.52
     },
-    "git_sha": "d666fd94",
+    "git_sha": "9a1980bc",
     "hours": 8760,
     "iso": "CAISO",
     "nyiso_dynamic_reserve_requirements": null,
@@ -101,10 +102,10 @@
     ]
   },
   "composed_from": [
-    "rcaiso3_ABC_2022",
-    "rcaiso3_ABC_2023",
-    "rcaiso3_ABC_2024",
-    "rcaiso3_ABC_2025"
+    "rcaiso4_D_2022",
+    "rcaiso4_D_2023",
+    "rcaiso4_D_2024",
+    "rcaiso4_D_2025"
   ],
   "environment": {
     "cache_key_path_roots": [
@@ -126,58 +127,58 @@
     "python_version": "3.11.15"
   },
   "git": {
-    "basis_sha": "cb9d32ece9634f85db58974608d424473fdbf5b3",
+    "basis_sha": "6407d711cad70789500b2d2407890980e760a3c6",
     "branch": "HEAD",
     "changed_files": [],
     "diffstat": "",
     "dirty": false,
-    "sha": "d666fd94"
+    "sha": "9a1980bc"
   },
-  "model_changes_note": "R-CAISO-3 ABC 2022: keeper recipe + A + B + EIA-923 identity CC heat-rate artifact (C) (PRECOMMIT-r-caiso-3-2026-09-25 \u00a74)",
+  "model_changes_note": "R-CAISO-4 D 2022: keeper recipe + D only (DAM-print intertie gap fill) (PRECOMMIT-r-caiso-4-2026-09-26 \u00a76)",
   "per_leg_provenance": {
     "2022": {
       "git": {
-        "basis_sha": "cb9d32ece9634f85db58974608d424473fdbf5b3",
+        "basis_sha": "6407d711cad70789500b2d2407890980e760a3c6",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "d666fd94"
+        "sha": "9a1980bc"
       },
-      "timestamp": "2026-09-25T19:52:22"
+      "timestamp": "2026-09-26T02:34:14"
     },
     "2023": {
       "git": {
-        "basis_sha": "cb9d32ece9634f85db58974608d424473fdbf5b3",
+        "basis_sha": "6407d711cad70789500b2d2407890980e760a3c6",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "d666fd94"
+        "sha": "9a1980bc"
       },
-      "timestamp": "2026-09-25T19:48:09"
+      "timestamp": "2026-09-26T02:11:17"
     },
     "2024": {
       "git": {
-        "basis_sha": "cb9d32ece9634f85db58974608d424473fdbf5b3",
+        "basis_sha": "6407d711cad70789500b2d2407890980e760a3c6",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "d666fd94"
+        "sha": "9a1980bc"
       },
-      "timestamp": "2026-09-25T19:47:13"
+      "timestamp": "2026-09-26T02:30:49"
     },
     "2025": {
       "git": {
-        "basis_sha": "cb9d32ece9634f85db58974608d424473fdbf5b3",
+        "basis_sha": "6407d711cad70789500b2d2407890980e760a3c6",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "d666fd94"
+        "sha": "9a1980bc"
       },
-      "timestamp": "2026-09-25T19:52:40"
+      "timestamp": "2026-09-26T02:36:29"
     }
   },
   "resolved_inputs": {
@@ -259,6 +260,7 @@
     "caiso_import_gas_coupling_ladder_only": true,
     "caiso_import_hub_prices": false,
     "caiso_import_solar_shape": false,
+    "caiso_intertie_gap_fill_measured_dam": true,
     "caiso_intertie_gap_fill_measured_gas": true,
     "caiso_intertie_reference_price": false,
     "caiso_lcr_commitment_credit": false,
@@ -342,6 +344,7 @@
     "cc_duct_peaking_row_scoped": false,
     "cc_econ_hr_mult": 0.96,
     "cc_econ_hr_override": null,
+    "cc_eia923_identity_emission_basis": false,
     "cc_intermediate_cf_threshold": 50.0,
     "cc_intermediate_split": false,
     "cc_mustrun_per_plant": false,
@@ -384,6 +387,7 @@
     "coal_bit_passthrough_gas_mid": null,
     "coal_bit_passthrough_gas_slope": null,
     "coal_bit_passthrough_sigmoid": false,
+    "coal_committed_nested_on_mustrun": false,
     "coal_committed_takeorpay_all": false,
     "coal_committed_takeorpay_regulated": false,
     "coal_committed_takeorpay_sunk_fixed": false,
@@ -879,8 +883,10 @@
     "netload_drag_min_run_persistence": false,
     "nominal_discount_rate": 0.08,
     "nox_price": 0.0,
+    "nuclear_dormancy_defers_to_vintage_exit": false,
     "nuclear_fuel_price_override": null,
     "nuclear_unit_availability": true,
+    "nwpp_demand_plant_basis": false,
     "nwpp_grid_carried_wind_served": false,
     "nyiso_chp_btm_measured": false,
     "nyiso_ct_peaker_bands_measured": false,
@@ -915,6 +921,7 @@
     "nyiso_import_sil_retire": false,
     "nyiso_incity_commitment_obligation": false,
     "nyiso_iroquois_winter_spread": false,
+    "nyiso_ldc_generator_delivered_gas": false,
     "nyiso_li_lcr_tsl": false,
     "nyiso_li_locational_reserve": false,
     "nyiso_li_tsl_n11_security": false,
@@ -1166,6 +1173,7 @@
     "pjm_thermal_accreditation_vintage": false,
     "pjm_vre_accreditation_vintage": false,
     "pjm_zonal_gas_basis": false,
+    "pjm_zonal_gas_basis_skip_923_priced": false,
     "pjm_zonal_loss_surface": false,
     "planning_reserve_margin": 0.1375,
     "planning_reserve_margin_override": null,
@@ -1181,6 +1189,7 @@
     "reliability_deployment_floor_frac": 1.0,
     "reliability_deployment_overlay": false,
     "reliability_floor": true,
+    "reliability_floor_layup_window_mask": false,
     "reliability_floor_overrides": {},
     "reliability_floor_plant_exclusions": false,
     "renewable_cf_adjustment": 1.0,
@@ -1272,6 +1281,7 @@
     "unit_outage_fleet_status_scope": false,
     "unit_outage_lp_capacity_basis": true,
     "unit_outage_maxgen_events": false,
+    "unit_outage_membership_repair": false,
     "unit_outage_mixed_gas_routing": false,
     "unit_outage_per_unit_clip": false,
     "unit_outage_precod_clip": false,
@@ -1298,12 +1308,13 @@
     "wefor_residual_groups": [
       "CC_REGULAR"
     ],
+    "wefor_residual_short_screened_coal": false,
     "wind_ptc_vintage_offers": false
   },
   "solve_surface": {
     "epochs": [],
     "fingerprint": "490ff78425f818f7",
-    "git_sha": "d666fd94",
+    "git_sha": "9a1980bc",
     "iso": "CAISO",
     "moved": {
       "GENERIC_BASE_OFFER_CURVE": "bdc2b348ec6144d1",
@@ -1319,5 +1330,5 @@
     "rows": 209,
     "schema": 1
   },
-  "timestamp": "2026-09-25T19:52:22"
+  "timestamp": "2026-09-26T02:34:14"
 }

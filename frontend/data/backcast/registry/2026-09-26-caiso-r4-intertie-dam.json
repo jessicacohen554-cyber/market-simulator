@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-26-caiso-r4-intertie-dam",
+  "label": "caiso r4 intertie dam",
+  "date": "2026-09-26",
+  "shorthand": "caiso-r4-intertie-dam",
+  "definition": "R-CAISO-4 D 2022: keeper recipe + D only (DAM-print intertie gap fill) (PRECOMMIT-r-caiso-4-2026-09-26 \u00a76)",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-26-caiso-r4-intertie-dam.js",
+  "bundle": "results/calibration/rcaiso4_D_span"
+}
