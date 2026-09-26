@@ -494,3 +494,25 @@ unserved load up every year (2020 113 → 194 GWh, 2024 13 → 46), gas long in 
 
 **Promoted 2026-09-25 (owner standing ruling):** keeper #10; NWPP-NEXT-2's keeper #9 pruned (rule 35), audit PASS.
 Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext3-plant-basis-2019-2025-2026-09-25.md`.
+
+## nwpp-next-4 — 2026-09-26 — coal committed band nested on must-run (owner card D3) → KEEPER #11
+
+Phase 0 (zero LP) on lever 1 (C4 coal amplitude) found the flat block. In 2024–25, 84–99 % of coal energy at the
+big PacifiCorp and Colstrip plants sat in the fuel-cheap `_mustrun` + `_committed` block. The econ bands above it
+are bang-bang: Utah delivered coal roughly doubled 2022 → 2024, so the econ offers sit at $40–48 against model
+prices of $17–27. The block was also 2.0× the measured minimum stable load, because the tranche artifact's two
+levels (both measured from 0 MW) were stacked.
+
+New default-off field `coal_committed_nested_on_mustrun` (zero DOF): 2,047.9 MW move to the econ band at 9 plants.
+Seven year-isolated shards ran at `fac3d392`, parent zero LP. Three legs were relaunched: 2022 was archived before it
+solved, and 2025 and 2019 tripped hard-stop thresholds I had mis-scoped (a non-coal unit at 8224, and 2019's
+four-unit Colstrip).
+
+Run `2026-09-26-nwppnext4-coal-nested`: NOT-YET on {fuelmix, dispatch_corr} (was {dispatch_corr}). C4 coal r fell
+in 6 of 7 years, as predicted before the solve. Regressions: 2019 coal 0.697 FAIL; C1 CC_REGULAR 2020 +9.54 and
+2024 +8.48 TWh FAIL; 2020 gas NRMSE 0.303 FAIL. Improved: coal volume (2019 COAL_PRB +4.84 → −0.08; 2021–23
+coal-long shrinks). Unserved load unchanged.
+
+**Promoted 2026-09-26 (owner standing structure ruling, rule 14):** keeper #11; keeper #10 pruned (rule 35), audit
+PASS. Successor: coal conduct under period fuel-take obligations.
+Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext4-coal-nested-2019-2025-2026-09-2{5,6}.md`.

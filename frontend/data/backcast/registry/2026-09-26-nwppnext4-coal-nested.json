@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-26-nwppnext4-coal-nested",
+  "label": "nwppnext4 coal nested",
+  "date": "2026-09-26",
+  "shorthand": "nwppnext4-coal-nested",
+  "definition": "NWPP-NEXT-4: keeper #10 recipe + coal_committed_nested_on_mustrun (owner card D3)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-09-26-nwppnext4-coal-nested.js",
+  "bundle": "results/calibration/nwppnext4_span"
+}
