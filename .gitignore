@@ -3590,3 +3590,5 @@ results/calibration/rcaiso4_*_20*/
 
 !results/calibration/spp85_ctl_2024/
 !results/calibration/spp85_ctl_2024/**
+!results/calibration/spp85_arm_2024/
+!results/calibration/spp85_arm_2024/**
