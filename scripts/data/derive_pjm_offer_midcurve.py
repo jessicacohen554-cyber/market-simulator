@@ -175,6 +175,59 @@ def _segments(per_unit: pd.DataFrame) -> dict[str, pd.Index]:
     }
 
 
+def _merge_into_existing(out_json: Path, new_doc: dict, years: list[int]) -> dict:
+    """Insert ``new_doc``'s per-year ladders into the committed surface.
+
+    A full re-derive over a widened year set re-segments every unit on the
+    union's physics medians and re-pools the forward ladder, so it would move
+    tables whose source data did not change (rule 23 `[R-FROZEN-DERIVE]`).
+    This path only ADDS: each new year's ladders come from a derive over that
+    year set alone (its own unit-physics segmentation, same rules), existing
+    year entries and ``pooled`` are carried verbatim, and the added years'
+    provenance is recorded under ``_provenance.merged_year_derives``. The
+    forward (pooled) ladder is untouched by construction.
+    """
+    doc = json.loads(out_json.read_text())
+    before = {
+        seg: json.dumps(entry, sort_keys=True)
+        for seg, entry in doc.items()
+        if not seg.startswith("_")
+    }
+    for seg, entry in doc.items():
+        if seg.startswith("_"):
+            continue
+        clash = sorted(set(entry["years"]) & {str(y) for y in years})
+        if clash:
+            raise SystemExit(f"{seg}: surface already carries {clash}; refusing")
+        added = new_doc[seg]["years"]
+        entry["years"] = dict(
+            sorted({**entry["years"], **added}.items(), key=lambda kv: int(kv[0]))
+        )
+    # Guard: every pre-existing (segment, year) ladder and pooled is unchanged.
+    for seg, text in before.items():
+        old = json.loads(text)
+        now = doc[seg]
+        assert now["pooled"] == old["pooled"], seg
+        for y, lad in old["years"].items():
+            assert now["years"][y] == lad, (seg, y)
+    prov = new_doc["_provenance"]
+    doc["_provenance"].setdefault("merged_year_derives", []).append(
+        {
+            "years": [int(y) for y in years],
+            "source": prov["source"],
+            "segment_units": prov["segment_units"],
+            "month_coverage": prov["month_coverage"],
+            "n_month_files_parsed": prov["n_month_files_parsed"],
+            "note": (
+                "added by --merge-into-existing: segmentation from these "
+                "years' own unit-physics medians (same rules); existing year "
+                "entries and the pooled forward ladder carried verbatim"
+            ),
+        }
+    )
+    return doc
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--years", nargs="*", type=int, default=[2023, 2024, 2025])
@@ -188,6 +241,17 @@ def main(argv: list[str] | None = None) -> int:
             "_withinseason vintage (owner-authorized 2026-07-27); the "
             "within-year default keeps the live filenames. MUST match the "
             "top-of-curve derive — the two surfaces share one definition."
+        ),
+    )
+    ap.add_argument(
+        "--merge-into-existing",
+        action="store_true",
+        help=(
+            "Add the derived delivery years to the committed surface as NEW "
+            "per-year entries, leaving every existing year entry, the pooled "
+            "ladder and the existing provenance byte-identical (rule 23: a "
+            "source-data extension must not re-derive the tables already on "
+            "file). Refuses a year the surface already carries."
         ),
     )
     args = ap.parse_args(argv)
@@ -372,8 +436,11 @@ def main(argv: list[str] | None = None) -> int:
         **out,
     }
     out_json, out_csv = _out_paths(args.conditioning)
-    out_json.write_text(json.dumps(out_doc, indent=1))
     sdf = pd.DataFrame(summary)
+    if args.merge_into_existing:
+        out_doc = _merge_into_existing(out_json, out_doc, args.years)
+        sdf = pd.concat([pd.read_csv(out_csv), sdf], ignore_index=True)
+    out_json.write_text(json.dumps(out_doc, indent=1))
     sdf.to_csv(out_csv, index=False)
     print(f"wrote {out_json}")
     print(f"wrote {out_csv}")

@@ -24,6 +24,17 @@ the six years explicitly** (see below) until that default pair is moved —
 `docs/FINDING-pjm-h12-the-midcurve-rebuild-is-a-clean-rederivation-2026-09-20.md`
 §5 records why this lane did not move it and §2 verifies the re-derivation.
 
+**2019 WAS ADDED BY MERGE, NOT BY RE-DERIVATION (PJM-NEXT-4, 2026-09-26).** The 12
+2019 month-files were fetched and derived alone with
+`derive_pjm_offer_midcurve.py --years 2019 --merge-into-existing`, which inserts the
+2019 ladders and leaves every 2020–2025 entry and the pooled forward ladder
+byte-identical (recorded under `_provenance.merged_year_derives`). A full re-derive
+over 2019–2025 would re-segment and re-pool the other years; do not run one unless
+their source data changed (rule 23). **Publisher gap, carried as published:** from
+2019-11-08 through 2019-12-05 the feed serves ~1,081 units/hour instead of ~1,220
+(the API's own row count for 2019-11-12 is 25,944 vs 29,256 on 2019-11-07).
+Regenerate 2019 with `fetch_pjm_energy_offers.py --years 2019`.
+
 **Source:** PJM DataMiner2 REST API, `https://api.pjm.com/api/v1`
 (`energy_market_offers` feed). See `docs/data-licensing.md` §4 — PJM
 DataMiner2 data carries a non-member redistribution restriction; this
