@@ -159,7 +159,7 @@ def gencap_hourly(y: int, zdir: Path) -> pd.DataFrame:
     for n in z.namelist():
         if not n.lower().endswith(".csv"):
             continue
-        f = pd.read_csv(io.BytesIO(z.read(n)), skipinitialspace=True)
+        f = pd.read_csv(io.BytesIO(z.read(n)), skipinitialspace=True, thousands=",")
         f.columns = [c.strip() for c in f.columns]
         if "BAA" in f:
             f = f[f.BAA == "SPP"].drop(columns="BAA")
@@ -187,6 +187,7 @@ def genmix_th(y: int) -> pd.DataFrame:
 
 def year_run(y: int, lmp: pd.DataFrame, comp: pd.DataFrame, n_days: int, lo: float, zdir: Path) -> pd.DataFrame:
     """Every sampled hour of ``y``: the SPP-81b stack stats, the aggregate split and the 5-min MEC."""
+    gc = gencap_hourly(y, zdir)  # read first: a parse failure should not cost the offer reads
     ns = upper(frame(y, lmp, comp))
     ns = ns[~ns.scar].copy()
     days = sample_days(ns, n_days)
@@ -218,7 +219,7 @@ def year_run(y: int, lmp: pd.DataFrame, comp: pd.DataFrame, n_days: int, lo: flo
     with ThreadPoolExecutor(6) as ex:
         rows = [x for rr in ex.map(work, days) for x in rr]
     Q = pd.DataFrame(rows).drop_duplicates("h").set_index("h")
-    return Q.join(five).join(gencap_hourly(y, zdir)).join(genmix_th(y)).join(ns[["net"]])
+    return Q.join(five).join(gc).join(genmix_th(y)).join(ns[["net"]])
 
 
 def summarise(y: int, Q: pd.DataFrame) -> dict:
@@ -262,6 +263,8 @@ def main() -> None:
     rows = []
     for y in a.years:
         Q = year_run(y, lmp, comp, a.days, a.lo, a.zdir)
+        if a.out:
+            Q.to_parquet(a.out.with_suffix(f".{y}.hours.parquet"))
         rows.append(summarise(y, Q))
         print(f"{y} done ({len(Q)} hours)", flush=True)
         if a.listing_cache:
