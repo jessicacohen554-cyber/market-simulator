@@ -1662,3 +1662,23 @@ byte-identical; unserved 0. 2019 COAL_BIT -3.45 -> -3.09pp (-8.43 TWh vs +/-7.64
 every year; D-1 2020 COAL_BIT r 0.284 -> 0.779. Grade 5/4/1, NOT-YET. Records:
 docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-71-2026-09-26.md. Leftover refs: claude/soco71-2019..2025,
 claude/soco71b-2020, claude/soco71b-2024, claude/soco70-2019..2025.
+
+## soco-72 — 2026-09-26
+
+GAS BASIS EXTENDED OVER THE KEEPER'S WINDOW; PROMOTED ON STRUCTURE; GATES REGRESS. G-DRIFT (measured, zero LP): every LP
+input bit-identical vs keeper sha ae5fb43a; code drift on main = two default-off fields (SPP-86, R-ERCOT-7) INERT; no
+data/ change. 2019 price-side decomposition (zero LP, soco-71 legs): in the cyclers' CEMS-synced/model-off hours the
+marginal gas units were offered +$0.27/MMBtu ABOVE their own F923 receipts; no import node (demand = EIA-930 net
+generation), so imports cannot displace coal. The defect: GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR['SOCO'] held only
+SOCO-55's 2023-2025 rows, so 2019-2022 fell through to the 2024 scalar 0.64. SOCO-55's construction, unchanged
+(reproduces 2023-2025 byte-for-byte): 0.27 / 0.32 / 0.30 / 1.20; zero fitted parameters. Pre-registered to deepen the
+failing row.
+
+RESULT (run 2026-09-26-soco72-gas-basis-window, seven year-isolated shards at 19159a0c; PROMOTED on the owner's standing
+ruling, PRECOMMIT §7 held; 2026-09-26-soco71-coal-hr-window pruned per rule 35): 678 gas econ/peak tranche-years at the
+census mc +/-$0.01; 2023-2025 byte-identical; unserved 0. COAL_BIT -2.83/-1.65/-2.56/+0.56, COAL_PRB -4.78/-1.26/-0.85/+0.04,
+CT_PEAKER +4.73/+1.91/+0.40/-0.24 TWh 2019-2022 (LP ~3x the greedy). 2019 COAL_BIT -3.09 -> -4.24pp (-11.26 TWh) still
+FAIL; NEW C4 FAIL 2020 coal NRMSE 0.276 -> 0.304; D-1 FAILs 3 -> 4. Grade 5/4/1 -> 5/3/2, NOT-YET. Conclusion: 2019
+COAL_BIT is coal COMMITMENT (the cyclers ran multi-day campaigns through hours priced below their own cost), not an
+input error. Records: docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-72-2026-09-26.md. Leftover refs: claude/soco72-2019..2025,
+claude/soco71-2019..2025, claude/soco71b-2020, claude/soco71b-2024, claude/soco70-2019..2025.
