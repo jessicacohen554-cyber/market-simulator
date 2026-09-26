@@ -1,7 +1,7 @@
 {
   "artifact": "thermal_tranches-perunitmerit-NYISO.csv",
   "artifact_rows": 86,
-  "artifact_sha256": "a3bbd6ef408ea8175c1fa73bb3f016bf2e4cd9e0984ceac08e6dfd93534d8376",
+  "artifact_sha256": "38cc256b288eded42b45b2b534a87aedd1ebf8d77cf4eb2b380b370661127414",
   "columns": [
     "plant_code",
     "plant_group",
@@ -328,5 +328,6 @@
       "ST_CHP",
       "ST_GAS"
     ]
-  }
+  },
+  "rederivation_note": "NYISO-NEXT-3 (rule 23, rule 19): the committed artifact was last derived by nyiso-187 (2026-09-04) against the nyiso-187 '-perunitmerit-' outage extract; nyiso-192 (2026-09-05) and NYISO-NEXT-2 (2026-09-26) re-derived that extract and never this artifact. HEAD's deriver on the nyiso-187 extract reproduces the committed rows exactly (0 differing values), so the whole drift is those two extract re-derivations. Re-derived on the current extract; 8 ST_GAS rows move (online_hours, committed_pct, p25_cf, median_cf), no other row. Written in the committed column set (HEAD also emits chp_pmin_on_cf, not part of this repair). docs/PRECOMMIT-nyiso-next3-tranche-basis-2026-09-26.md sec. 1."
 }
