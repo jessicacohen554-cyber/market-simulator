@@ -3652,3 +3652,6 @@ results/calibration/soco71_20[0-9][0-9]/
 # soco-72 probe scratch + shard legs: kept out of main (rule 32(d)); composite soco72_span is what registers.
 results/calibration/_soco72/
 results/calibration/soco72_20[0-9][0-9]/
+
+!results/calibration/soco72_2025/
+!results/calibration/soco72_2025/**
