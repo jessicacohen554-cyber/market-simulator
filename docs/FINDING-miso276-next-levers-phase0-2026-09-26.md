@@ -153,3 +153,11 @@ value of that crosswalk.
 | candidate 1 | waiting on crosswalk | unchanged |
 
 **No LP was earned, so no shard was launched.** Keeper unchanged; nothing to promote.
+
+## 6. Owner rulings taken on this FINDING (2026-09-26)
+
+1. **D1 MidCon source: "Chicago proxy (Recommended)".** MISO-South takes Henry Hub daily; West and Plains take
+   Chicago daily as the declared rule-14 proxy. Built as `miso_winter_gas_daily_delivered` and armed in a 7-shard
+   span: `docs/PRECOMMIT-miso276-winter-gas-daily-delivered-2026-09-26.md`.
+2. **C1 ST_GAS route: "Wait for crosswalk (Recommended)".** The mixed-facility population gap waits on the
+   CAMPD-unit → EIA crosswalk, now with two consumers. No VLR lane is chartered.

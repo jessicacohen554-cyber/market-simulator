@@ -126,3 +126,20 @@ python scripts/replay_keeper.py results/calibration/miso275_span --years <Y> \
 ```
 
 Shard check: `scripts/probes/_miso276_shard_check.py --leg results/calibration/miso276_arm_<Y> --year <Y> --log <log>`.
+
+## 8. Launch record
+
+(appended after the pin; §1–§7 unchanged)
+
+Launched 2026-09-26 14:17–14:19 UTC. All 7 shards are pinned to `2837e3c9c2f7673c9df147cc74f4a1abb5e5005d`, tagged
+`miso-276` / `shard`, with auto-PR off. Each shard pushes branch `claude/miso276-arm-<Y>` from out-dir `miso276_arm_<Y>`.
+
+| year | session |
+|---|---|
+| 2022 (launched first, the slow leg) | `session_01GYvs7zq6mqdkw8zmVR1ddm` |
+| 2019 | `session_01JsL2zgkffUig6DsFNLLVDh` |
+| 2020 | `session_01JML7qRmKmhqncZxLuc5wBs` |
+| 2021 | `session_01WURPTzYR9gvXcf219ZHDiB` |
+| 2023 | `session_01KVbEYYYsLNsPgMQvgf6wrN` |
+| 2024 | `session_01JCariHcxaJ9jro3ianDRMm` |
+| 2025 | `session_01UgVTECmaQ5wpajvuabzpZT` |
