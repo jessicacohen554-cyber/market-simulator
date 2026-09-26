@@ -217,3 +217,17 @@ python3 scripts/replay_keeper.py /tmp/n49/results/calibration/nwpp49_ror_span \
   `git add`.
 - The parent composes (2023 leg first), registers, and lands the bundle on `main` before this lane's PR merges
   (rule 33(f)).
+
+## 9. Launch record (appended after the pin; nothing above it changed)
+
+- Pin `fac3d39235f21213f116d1e0d015f7eb194885c1`. All seven shards were launched 2026-09-26 00:28–00:30 UTC.
+- Sessions:
+  - 2019: `session_01H6F2PW9uaA4dXSzCHg7ZJe`
+  - 2020: `session_01KQJUUFSQCuAASvEftsaQJU`
+  - 2021: `session_01XCMeQyLGFGiD1bz8cK1Ybq`
+  - 2022: `session_01Dh7DDdmRihM3XJVcm347vE`
+  - 2023: `session_01WALaDevELUYxVTH1mtEe7v`
+  - 2024: `session_01TcMCq4eMXviR5TeqxHMhHj`
+  - 2025: `session_01CEK7nSPPCzp4s78FYAH8pX`
+- Attestation generator: `scripts/gen_nwppnext4_attestation.py`. It correctly refuses keeper #10's bundle, because the
+  field is absent there.
