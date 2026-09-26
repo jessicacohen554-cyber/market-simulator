@@ -33,7 +33,12 @@ ARM = "unit_outage_netload_mask_repair"
 
 
 def _offer_sha(cfg: dict) -> str:
-    blob = json.dumps(cfg.get("offer_curve_by_group") or {}, sort_keys=True)
+    # replay_keeper translates a keeper's bare "COAL" key to its subclasses (the coal-sub
+    # refactor), so the bare key is excluded from the identity; the subclass bands are compared.
+    oc = {
+        k: v for k, v in (cfg.get("offer_curve_by_group") or {}).items() if k != "COAL"
+    }
+    blob = json.dumps(oc, sort_keys=True)
     return hashlib.sha256(blob.encode()).hexdigest()[:16]
 
 
