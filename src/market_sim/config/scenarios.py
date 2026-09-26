@@ -475,6 +475,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # through the same resolvers, so the off path is byte-inert). Same commit
     # as the field.
     "unit_outage_netload_mask_repair",
+    # SPP-86 coal outage share on the extract's own capacity basis (GATED
+    # default-off; widens nyiso-196's extract-basis construction to the COAL
+    # bins, so the off path is byte-inert). Same commit as the field.
+    "unit_outage_coal_extract_basis_share",
     # PJM-NEXT-2 card 3: nuclear dormancy defers to the solved vintage's exit
     # record (GATED default-off; byte-inert off). Same commit as the field.
     "nuclear_dormancy_defers_to_vintage_exit",
@@ -2278,6 +2282,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by SPP-85 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_netload_mask_repair": "False",
+    # Added by SPP-86 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_coal_extract_basis_share": "False",
     "nuclear_dormancy_defers_to_vintage_exit": "False",
     # Added by soco-67 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
@@ -16430,6 +16437,35 @@ class ScenarioConfig:
     # overwrite, falling back to the incumbent extract where not derived.
     # docs/handoffs/FINDING-spp-85-coal-outage-basis-2026-09-26.md.
     unit_outage_netload_mask_repair: bool = False
+    # SPP-86 (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH], rule 17
+    # [R-FLOOR-WINDOW]) COAL OUTAGE SHARE ON THE EXTRACT'S OWN CAPACITY BASIS.
+    # The shared accumulator removes unit_capacity_mw / cap[bin] of a coal bin,
+    # where the numerator is the extract's per-unit basis (EIA nameplate digits
+    # or a CEMS proxy) and cap[bin] is the fleet's EIA-860 per-plant capacity --
+    # two constructions of one share. Measured on the SPP keeper
+    # (scripts/probes/_spp86_coal_floor_conduct.py): Holcomb 108, a SINGLE-unit
+    # plant, reads 348.7 / 358.9 = 0.97 through every full stop, so 2.6-2.9 %
+    # of it stays available and the coal_mustrun floor survives on that residual
+    # (~3.1 MW) in every full-window hour -- the whole of the plant's D-4
+    # per-unit conduct FAIL in 2019/20/22/24 and most of 2021. The same mismatch
+    # runs the other way at plants whose extract basis EXCEEDS the LP bin
+    # (Jeffrey 6068: 3 x 720 MW nameplate on a 2,010 MW bin, one unit out
+    # removes 35.8 % against its 33.3 % share). Armed, nyiso-196's construction
+    # (unit_outage_extract_basis_share: numerator AND denominator from
+    # _extract_basis_index -- the row's plant_capacity_mw at a single-group
+    # facility, else the group's distinct-unit sum) is applied to the COAL
+    # bins, so a plant all of whose coal units are out lands on EXACTLY 1.0 and
+    # a unit removes its own share of the bin the LP dispatches. A WIDENING OF
+    # AN EXISTING CONSTRUCTION'S SCOPE, not a new share: the CC flag keeps its
+    # own scope and the two compose over disjoint groups. Threaded into the std
+    # >= 5-day, short and partial layers AND the lay-up loader (the additivity
+    # contract), exactly as unit_outage_extract_basis_share is. Non-ERCOT only.
+    # Mutually exclusive with unit_outage_dispatched_bin_denominator (both set
+    # the coal denominator; the loader raises). ZERO free parameters (rule 21),
+    # rule-13 forward-regenerable (a property of the accumulator on any year's
+    # extract), byte-inert off.
+    # docs/handoffs/FINDING-spp-86-coal-floor-conduct-2026-09-26.md.
+    unit_outage_coal_extract_basis_share: bool = False
     # PJM-NEXT-2 card 3 (rule 19 [R-ONE-MECH], rule 14 [R-ACCURATE]).
     # NUCLEAR_DORMANT_UNTIL zeroes a nuclear unit in every backcast year before
     # its restart year -- written for the Crane/TMI-1 restart, which EIA-860
