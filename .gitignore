@@ -3593,3 +3593,7 @@ results/calibration/neiso117_20[12][0-9]/
 # NWPP-NEXT-4 per-year shard legs (rule 32(d): kept out of main; the composite nwppnext4_span is registered).
 # Leg provenance (rule 33(d)): 2020 375e536b, 2021 db23aaeb, 2022 9e50d5bb, 2023 bf311536, 2024 2aec7bb6, 2025 69d99c56.
 results/calibration/nwppnext4_20*/
+
+# NYISO-NEXT-2 per-year shard legs 2022-2025 (rule 32(d): kept out of main; the composite nyisonext2_span is registered; the 2021 leg IS its own registered bundle).
+# Legs (provenance, rule 33(d)): 2021 9b008aa403e4e1dbd5cf43e985dad3864efbe594 · 2024 85b0ab6851e7c5bb755734d8f89fa81927a5062c · 2025 51674648560717d37499bfe58003c70eee53262b
+results/calibration/nyisonext2_202[2-5]/
