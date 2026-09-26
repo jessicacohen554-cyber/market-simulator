@@ -139,3 +139,10 @@ The owner question built on this table is §4.
    fuel split (rule 23 trigger = the attribution defect), plus a cited Riverside CT-03/04 → 64020 remap; or keep waiting.
 3. **C3a 2022.** The only route is RO-2 (a chartered reduced-network/flowgate program); otherwise it stays an open,
    routed miss.
+
+## 5. Owner rulings (2026-09-26)
+
+1. **C3b:** "Re-solve D1 as ruled (Recommended)" → `docs/PRECOMMIT-miso277-d1-as-ruled-2026-09-26.md`, 7 shards.
+2. **C1 ST_GAS:** "Charter re-derive (Recommended)" → `docs/handoffs/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md`.
+3. **C3a 2022:** "Leave as routed miss (Recommended)". Recorded as a known structural limitation (no intra-MISO
+   transfer limits; no measured 2022 limit exists). RO-2 not chartered.

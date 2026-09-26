@@ -727,6 +727,11 @@ def apply_miso_winter_gas_daily_delivered(
     zone_kind = np.array(
         [kind_by_zone.get(zn, "chicago") for zn in zone_names], dtype=object
     )
+    logger.info(
+        "MISO winter daily delivered hub map (%d): %s",
+        year,
+        " ".join(f"{zn}={k}" for zn, k in zip(zone_names, zone_kind)),
+    )
     transport = _miso_gas_variable_transport_vector(
         fleet, gas_rows, tuple(zone_names), transport_path
     )
