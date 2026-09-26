@@ -17992,6 +17992,23 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-87 (2026-09-26, EIA-923 vs EIA-930 BENCHMARK RECONCILIATION, ZERO LP —
+`docs/handoffs/FINDING-spp-87-benchmark-reconcile-2026-09-26.md`, probe `scripts/probes/_spp87_benchmark_reconcile.py`).**
+- **The 4–6 TWh/yr gap between EIA-930 coal and EIA-923 coal is METERING BASIS, not membership.** EIA-930 and the SPP portal
+  track CEMS **gross** of the scorer's own coal plants: hourly slope 0.97–1.04, corr 0.95–1.00. EIA-923 is net, 0.89–0.91 × gross,
+  i.e. 7.5–8.5 TWh of station service. Membership ≤ 0.04 TWh. Subclass routing is clean (refined-coal `RC` goes to the three
+  lignite plants). Do not re-derive this.
+- **The model's coal is on the gross basis** (2021 peak 20.1 GW ≈ nameplate 20.2 GW > net summer 19.1 GW), and model demand =
+  EIA-930 `NG`. On the aligned (gross) basis, the 2021/22 coal excess is **+2.0 / +5.5 TWh**, not C1's +10.1 / +13.9. This adds
+  to SPP-44's `R` on the coal markup rather than reopening it.
+- **The scorer's fossil reconcile (`reconcile_vintage_classes`) fires for SPP only in 2023–25** (×1.039 / 1.054 / 1.065) and
+  scales the gas classes along with coal. That puts the train and validation tiers on different bases.
+- **A shadow re-score on either alternative basis moves 3 validation-tier C1 rows** (COAL_PRB 2021/22 FAIL→PASS, 2020
+  PASS→FAIL) and **0 train-tier rows**. **CC_REGULAR 2021/22 stays FAIL on every basis.** Wind (+8.0 / +9.2 TWh against
+  EIA-930, which is C1's own wind actual) is the largest single counterpart of the 2021–22 gas deficit. Next object: Card B.
+- The benchmark-basis change is an **open owner question** (rubric-level, ISO-agnostic code), not landed. It is not a mechanism,
+  so no `SPP.js` cell moved.
+
 **DO-NOT-REDO, added by SPP-86 (2026-09-26, HOLCOMB CONDUCT + COAL OUTAGE-SHARE BASIS, 7 shards —
 `docs/handoffs/FINDING-spp-86-coal-floor-conduct-2026-09-26.md`, `…/RESULT-spp-86-coal-extract-basis-2026-09-26.md`).**
 - **Holcomb 108's `coal_mustrun` D-4 FAIL was an outage-SHARE defect, not a floor-window one.** A single-unit plant read
