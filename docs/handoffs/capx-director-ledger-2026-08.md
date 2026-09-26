@@ -8,8 +8,9 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 
 **CROSS-DESK NOTICE (SPP-21, 2026-09-06, branch `claude/spp-21-matrix-shard-ti2gy3`):** SPP shard exists from this commit — **seven** shards; every rule-28(c) cell line now includes SPP. *(A self-referential sha cannot be written inside its own single commit — G2 requires one — so the lane and branch are the citation; `git log --grep=SPP-21` resolves the sha.)*
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-26 (refresh #67) ·
-**r#67 (HEAD `cf0950dc`):** all four r#66 lanes LANDED on relaunch (re-key · D95 surface re-key · D96 HOLD→HOLD one vintage · D97 T1.6 design) · desk re-keyed MISO → gate (a) EXIT 0 · Q71 (surface construction) / Q72 (T1.6 re-point, 2041–2050 mean) RULED · D98, D99 dispatched · D96 shard PRs closed · NEXT FREE LABEL: D100 ·
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-26 (refresh #68) ·
+**r#68 (HEAD `9149be2c`):** D98 (key provenance EXIT 0) and D99 (neiso-t3 FC-6 CAVEAT→PASS, HOLD) LANDED · desk re-keyed MISO → gate (a) EXIT 0 · queue EMPTY · NEXT FREE LABEL: D100 ·
+*(previous)* **r#67 (HEAD `cf0950dc`):** all four r#66 lanes LANDED on relaunch (re-key · D95 surface re-key · D96 HOLD→HOLD one vintage · D97 T1.6 design) · desk re-keyed MISO → gate (a) EXIT 0 · Q71 (surface construction) / Q72 (T1.6 re-point, 2041–2050 mean) RULED · D98, D99 dispatched · D96 shard PRs closed · NEXT FREE LABEL: D100 ·
 *(previous)* **r#66 (HEAD `a1b8ebd9`):** all three r#65 lanes LANDED (re-key · D93 · D94 HOLD→HOLD) · gate (a) red again on FIVE ISOs (R-* promotions) · D94's two legs are the new key-provenance UNKNOWNs · Q69 (re-solve neiso-t3 post-F1) / Q70 (T1.6 design lane first) RULED · re-key r#66, D95, D96, D97 dispatched · NEXT FREE LABEL: D98 ·
 *(previous)* **r#65 (HEAD `40f4ed7a`):** fourteen days without a sitting; both r#64 lanes LANDED (re-key partial: 3 of 4) and nothing capx has merged since · gate (a) RED on SIX ISOs + SPP's marker claim · Q66 (class rule) / Q67 (charter D94) / Q68 (NWPP+SOCO board rows after `complete`) RULED live · GATE-(a) RE-KEY r#65, D93, D94 issued and dispatched · NEXT FREE LABEL: D95 ·
 *(previous)* **r#64 (HEAD `5fa3a07f`):** **THE LARGEST WINDOW THIS DESK HAS EVER GRADED — 573 commits, nearly 5× the previous record — ALL SEVEN KEEPERS MOVED, and six of eleven gates are RED** · **BOTH CHARTERS LAND AND BOTH CLOSE THEIR QUESTION** · **D91: all 200 keyed payloads derived to their recorded literal, ZERO UNCLASSIFIED** on a population **13× D85's**, and **the other 95 are NOT a second key move** — established by an exhaustive ladder, exact payload differencing (**no value ever differs**), and **brute force over 546 unregistered fields where exactly one single-field drop reproduces the pinned literal and the search terminates at size 1** · **AND IT ANSWERED §0bh.2(b), WHICH WAS MINE: THE GATE WAS GREEN BECAUSE THE CENSUS IS PAYLOAD-DRIVEN AND `cache_key()` IS DATACLASS-DRIVEN** — a field added after a bundle solved is absent from its payload **by construction**, so G1_UNKNOWN is **structurally blind** to the defect class that produces its own stated condition (**1 of 232** payloads even contains the field name) · **THE CAUSAL FINDING: the guard that should have caught it was silenced by its OWN drifted helper, and EITHER of its two drifted baselines alone suffices** — proved across all four combinations · repair registers the field (**not a default flip**), fixes both helper halves, **advances NO pin literal**, and adds a **sixth gate with BOTH directions proved by test**; **orphan count ONE, counted before the edit**; pins **33 → 2 red, fixed 31, newly broken 0** · **AND WITHIN ONE DAY THAT NEW GATE FIRED ON A REAL DEFECT IN ANOTHER DESK'S LANE** (`caiso_dsw_lateevening_clean`) — the answer a green tick could never have given, and §0bh.2(b) closed by construction rather than argument · **D90-R: `neiso-t3` re-scores HOLD → HOLD and D88 moves ZERO of 19 scored rows**; predictions graded **5 HIT / 3 MISS / 3 PARTIAL** with the **headline P1 a MISS** and **P6 declined by the lane as "a hit on a technicality"** · **AND THE FINDING THAT MATTERS MORE THAN ITS CHARTER'S: capx D77 moves that run far more than D88 does**, reproducing D77's own published A/B **to four decimals** (2029 **14.021 → 6.795 Mt, −51.5 %**) — **the scores were sound and the numbers are stale**, for a repair nobody flagged · **AGAINST INTEREST: that is the THIRD capx document deferring to the already-closed D65-B batch, and the EARLIEST — my §0bg doctrine line was written a sitting too late to catch its own first instance** → adopted upstream: **a lane that DEFERS work names a LIVE owner or states that none exists** · **AGAINST INTEREST: six of eleven gates red is the worst state this desk has recorded, and my duties do not scale with the window** — Q34 fires once per sitting whether one ISO promoted or seven, which is why gate (a) is red on **FOUR ISOs at once, the EIGHTEENTH firing and the FIRST QUADRUPLE** · **RULED: the CAISO marker defect is ROUTED AND FLAGGED, not converted into my card** — its `complete` entry asserts CALIBRATED while the live verdict of the keeper it names is **NOT-YET** and that keeper's bundle dir is **missing**, which rule 22 D-5(b) says must stop a promotion and escalate; but *"should CAISO be complete"* is the parked Q50 question I may not re-serve, while *"the marker asserts something never scored"* is a repair · **Q65 SERVED AND RULED: D77's named residue only** · `final` still EMPTY · 2 charters issued, **no diagnosis run at this desk**
@@ -71,6 +72,39 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 *(previous)* **Last refresh #26:**
 **HEAD at refresh:** `8462da22` — the nine-writer wave lands 7-of-9 with two clean mid-lane checkpoints (§0w.1); **D27 vindicates D17's arithmetic and refutes it as a remedy — coal ate all 14.7 GW** (§0w.1); CAISO promotes caiso-231 (§0w.5); the Q22/R-H duplication recorded AGAINST INTEREST (§0w.2); Q24 funds the MISO PRA/RBDC intake; D26-S/D31/D33 issued (§0w.4) · **Owner cards A/B/C SIGNED 2026-08-25; Q20–Q23 r#25; Q24 r#26** (§3)
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (rewritten whole at r#36; the ledger wins where they diverge)
+
+---
+
+## 0bm. Refresh #68 (2026-09-26, main HEAD `9149be2c`) — D98 and D99 both LANDED; key provenance GREEN; FC-6 reads PASS on `neiso-t3` for the first time; the desk re-keyed MISO again; queue EMPTY
+
+### 1. GRADED BY CONTENT — 2 of 2 LANDED, both self-merged, both sessions self-archived
+
+* **D98 (Q71) — LANDED** (PR #6722), zero LP. It adds the recorded-surface construction to the
+  key-provenance census, tested in both directions. **`check_key_provenance` EXIT 1 → 0**: 250 records,
+  193 reproduce, and no unclassified mismatch remains.
+* **D99 (Q72) — LANDED** (PR #6726). T1.6 is re-pointed to `entry_pipeline_aware_signal`, and T1.6b now
+  scores the 2041–2050 mean. **`neiso-t3` FC-6 CAVEAT → PASS**, the first time FC-6 has read PASS on
+  this verdict. The determination stays **HOLD** (FC-1/2/3/4/7 FAIL), with the prior preserved at
+  `neiso-t3-pre-d99`. Graded against DESIGN-capx-d97's map: **outcome A on the dual and on every score,
+  with its volume clause NOT met.** The 2050 REC dual leaves the ACP (0.001, so the ratio is 0.0), but
+  VRE build is +5.8 GW (38.8 vs 33.0), not the pre-declared ≥ 50. The lane reported this as a partial,
+  not a clean A. **`claude/capx-d99-vre_long` (the shard's transport branch) needs owner deletion.**
+
+### 2. GATES AT `9149be2c`
+
+* **`check_gate_a_provenance` 1 → 0 — RE-KEYED BY THIS DESK** (Q34, one row): MISO
+  `miso-273-screened-coal` → `miso-275-cc-exempt` (commit 0e87160e, a promoter miss again). Leg (a)
+  unmoved. MISO's train tier is back to CALIBRATED on that promotion.
+* **`check_key_provenance` EXIT 0** (D98) · **`check_registry_payload_parity` EXIT 0**.
+* **`audit_keepers` EXIT 1: MISO E13.** `miso-276-winter-daily` is registered for MISO, unstamped and not
+  the keeper. It is most likely an in-flight or rejected MISO probe. **ROUTED → the MISO lane**
+  (rule 35(a) / rule 15).
+
+### 3. QUEUE
+
+**EMPTY. No owner card is open on this desk.** Standing items that are not capx's to charter:
+the NEISO `complete`-on-NOT-YET-keeper question (reported at §0bl, owner's), and the MISO E13 above.
+**NEXT FREE LABEL: D100.**
 
 ---
 
