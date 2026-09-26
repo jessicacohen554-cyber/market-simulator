@@ -44,6 +44,7 @@ from .basis import (
     ZONAL_BASIS_ORDER,
     apply_miso_gas_marginal_commodity,
     apply_miso_winter_citygate_daily,
+    apply_miso_winter_gas_daily_delivered,
 )
 from .dual_fuel import apply_dual_fuel_pricing
 from .hubs import apply_hub_basis_overlay, gas_daily_shape_factors
@@ -242,6 +243,13 @@ def resolve_fuel_prices(
         # carries level AND shape) and the mean-zero zonal increment (the
         # written mask joins the print-derived mask the MISO applier skips).
         spot_cells = apply_miso_gas_marginal_commodity(fuel_prices, fleet, config, year)
+        if spot_cells is None:
+            # miso-276 (owner ruling D1): winter-month daily DELIVERED gas. When
+            # armed it supersedes the winter Chicago shape overlay and, via the
+            # written mask, the zonal increment on those cells (rule 19).
+            spot_cells = apply_miso_winter_gas_daily_delivered(
+                fuel_prices, fleet, config, year
+            )
         if spot_cells is None:
             apply_miso_winter_citygate_daily(fuel_prices, fleet, config, year)
         else:

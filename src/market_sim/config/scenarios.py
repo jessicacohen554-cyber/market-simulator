@@ -1378,6 +1378,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # run adds a per-plant $/MMBtu adder to every MISO gas row and hashes
     # distinctly. Registered WITH the field, per the nyiso-119 discipline.
     "miso_gas_variable_transport",
+    # miso-276: byte-identical OFF (the winter daily-delivered branch runs only
+    # when armed); an armed run reprices MISO gas rows in Dec/Jan/Feb and hashes
+    # distinctly. Registered WITH the field, per the nyiso-119 discipline.
+    "miso_winter_gas_daily_delivered",
     # miso-225: byte-identical OFF (the overlay is read only inside the armed
     # branch, and the flag is REFUSED without miso_seam_measured_ladder); an
     # armed run reprices the PJM seam's 16 band rows and hashes distinctly.
@@ -2560,6 +2564,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-225 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_gas_variable_transport": "False",
+    # Added by miso-276 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "miso_winter_gas_daily_delivered": "False",
     # Added by miso-225 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_seam_neighbour_anchored_ladder": "False",
@@ -3433,6 +3440,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "miso_winter_citygate_daily": "measured Chicago Citygate daily prints",
     "miso_gas_marginal_commodity_pricing": "measured Chicago Citygate + Henry Hub daily spot (marginal-commodity gas offers)",
     "miso_gas_variable_transport": "measured per-plant variable transport over that hub (EIA-923 receipts, frozen derive)",
+    "miso_winter_gas_daily_delivered": "measured Chicago Citygate + Henry Hub daily spot in Dec/Jan/Feb, plus measured per-plant variable transport",
     "caiso_citygate_spot_level": "measured CA daily citygate spot series",
     "caiso_citygate_flow_date": "flow-date placement of that measured series",
     "gas_flow_date_year_start_package": "the prior December trade that priced that measured series' year-opening flow days",
@@ -18690,6 +18698,30 @@ class ScenarioConfig:
     # PRECOMMIT-miso225-transport-joint-2026-09-06.md.
     miso_gas_variable_transport: bool = False
 
+    # MISO WINTER DAILY DELIVERED GAS (miso-276; owner ruling D1 2026-09-26,
+    # "Daily delivered price", and the MidCon source ruling the same day,
+    # "Chicago proxy"). Replaces miso_winter_citygate_daily's storm-month
+    # construction, which multiplies the EIA-923 monthly AVERAGE level by
+    # print_d / mean(print_month): in a storm month the level is
+    # purchase-weighted and the shape is calendar-normalized, so Chicago-zone gas
+    # lands BELOW the traded commodity on calm days ($0.73-1.01 vs $2.5-4.0 in
+    # Feb-2021) while the other zones smear the storm cost over every day
+    # ($11-16; FINDING-miso269 §1). Armed, in the winter months (Dec/Jan/Feb,
+    # the overlay's own scope, no storm threshold) every MISO gas row is priced at
+    # its zone's MEASURED DAILY hub (Henry Hub for MISO-South; Chicago Citygate
+    # for the Chicago-hub zones AND, as the ruled proxy, MidCon West/Plains --
+    # no free MidCon daily series exists) PLUS its plant's measured variable
+    # transport (the miso-225 owner-ruled delivered adder). Spike days are
+    # included by ruling. Rule 19: supersedes, never stacks -- the winter Chicago
+    # shape overlay and the mean-zero zonal increment are skipped on the written
+    # cells; dual-fuel oil parity still caps any blowout. Zero fitted scalars.
+    # REFUSED together with miso_gas_marginal_commodity_pricing (that flag
+    # already reprices every month). MISO-scoped (rule 25). Backcast-only
+    # overlay. Off by default; byte-identical off. See market_sim.data.fuel.
+    # basis.miso.apply_miso_winter_gas_daily_delivered and
+    # docs/PRECOMMIT-miso276-winter-gas-daily-delivered-2026-09-26.md.
+    miso_winter_gas_daily_delivered: bool = False
+
     # MISO seam import ladder anchored on the NEIGHBOUR's own price (miso-225,
     # the D-2 5(i) repair the owner ruled admissible 2026-09-06 in this ONE
     # form). The incumbent miso_seam_measured_ladder prices every band at a
@@ -23425,6 +23457,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_winter_citygate_daily": 3,
     "miso_gas_marginal_commodity_pricing": 3,
     "miso_gas_variable_transport": 3,
+    "miso_winter_gas_daily_delivered": 3,
     "miso_seam_neighbour_anchored_ladder": 3,
     "miso_seam_neighbour_hourly_ladder": 3,
     "miso_seam_neighbour_hourly_spp": 3,

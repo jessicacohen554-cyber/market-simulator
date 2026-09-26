@@ -45,6 +45,7 @@ from .meanzero import (
 from .miso import (
     apply_miso_gas_marginal_commodity,
     apply_miso_winter_citygate_daily,
+    apply_miso_winter_gas_daily_delivered,
     apply_miso_zonal_gas_basis,
     miso_chicago_daily_shape_factors,
     miso_zonal_gas_basis_by_zone,
@@ -106,6 +107,7 @@ __all__ = [
     "apply_ercot_zonal_gas_basis",
     "apply_miso_gas_marginal_commodity",
     "apply_miso_winter_citygate_daily",
+    "apply_miso_winter_gas_daily_delivered",
     "apply_miso_zonal_gas_basis",
     "apply_nyiso_downstate_ct_gas_basis",
     "apply_nyiso_downstate_ct_gas_daily",

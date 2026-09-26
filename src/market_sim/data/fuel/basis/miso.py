@@ -601,3 +601,142 @@ def apply_miso_gas_marginal_commodity(
         ),
     )
     return written
+
+
+# ---------------------------------------------------------------------------
+# miso-276: WINTER daily DELIVERED gas (owner ruling D1 2026-09-26).
+# ---------------------------------------------------------------------------
+
+
+def apply_miso_winter_gas_daily_delivered(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+    path: Path | None = None,
+    citygate_path: Path | None = None,
+    henry_hub_path: Path | None = None,
+    transport_path: Path | None = None,
+) -> np.ndarray | None:
+    """Price MISO gas at its zone's daily hub plus variable transport, winter months only.
+
+    The miso-276 arm of the owner's D1 ruling ("Daily delivered price",
+    2026-09-26), replacing :func:`apply_miso_winter_citygate_daily`'s storm-month
+    construction. That overlay multiplies the EIA-923 monthly AVERAGE level by
+    ``print_d / mean(print_month)``; in a storm month the level is
+    purchase-weighted and the shape calendar-normalized, so Chicago-zone gas
+    lands below the traded commodity on calm days and the other zones carry the
+    storm cost on every day (FINDING-miso269 §1).
+
+    In :data:`_MISO_WINTER_MONTHS` (the overlay's own scope, so no storm
+    threshold is chosen) every MISO gas row is priced at:
+
+    * its zone's measured DAILY hub (:func:`_miso_zone_hub_kind`, the published
+      hub table): Henry Hub for MISO-South; Chicago Citygate for the Chicago-hub
+      zones and, as the owner-ruled proxy ("Chicago proxy", 2026-09-26), for the
+      MidCon zones, which have no free daily series (FINDING-miso276 §3);
+    * PLUS its plant's measured variable transport
+      (:func:`_miso_gas_variable_transport_vector`, the miso-225 owner-ruled
+      delivered adder over the hub).
+
+    Spike days pass through by ruling. Every non-winter cell is untouched.
+
+    Rule 19 ``[R-ONE-MECH]``: returns the written mask so the caller skips the
+    winter Chicago shape overlay and the mean-zero zonal increment on those
+    cells; dual-fuel oil parity still runs afterwards. REFUSED together with
+    ``miso_gas_marginal_commodity_pricing``, which already reprices every month.
+    MISO-scoped (rule 25). FAIL CLOSED on a missing daily series or transport
+    table. Zero fitted scalars.
+
+    Returns the ``(n_gen, T)`` boolean mask of written cells, or ``None`` when
+    off. Mutates ``fuel_prices`` in place; idempotent.
+    """
+    if not getattr(config, "miso_winter_gas_daily_delivered", False):
+        return None
+    if getattr(config, "miso_gas_marginal_commodity_pricing", False):
+        raise ValueError(
+            "miso_winter_gas_daily_delivered and miso_gas_marginal_commodity_pricing "
+            "are mutually exclusive (rule 19 [R-ONE-MECH]): the latter already "
+            "reprices every month at the daily hub"
+        )
+    if config.iso.upper() != "MISO":
+        raise ValueError(
+            "miso_winter_gas_daily_delivered is MISO-scoped (rule 25 "
+            f"[R-ISO-SCOPE]) and was armed for {config.iso.upper()}"
+        )
+    T = fuel_prices.shape[1]
+    hubs = _pkg_ns()
+    _chi_all = hubs._miso_citygate_daily_dated(citygate_path)
+    chicago_daily = _flow_date_staircase(
+        _chi_all.get(year, {}),
+        year,
+        prior_year_dated=(
+            _chi_all.get(year - 1)
+            if getattr(config, "gas_flow_date_year_start_package", False)
+            else None
+        ),
+    )
+    henry_daily = hubs._trade_date_staircase(
+        hubs._henry_hub_daily_dated(henry_hub_path).get(year, {}), year
+    )
+    if chicago_daily is None or henry_daily is None:
+        raise ValueError(
+            f"MISO {year}: miso_winter_gas_daily_delivered is armed but the daily "
+            f"hub series is missing (chicago={chicago_daily is not None}, "
+            f"henry={henry_daily is not None})"
+        )
+    series = {
+        "chicago": np.repeat(chicago_daily, 24)[:T],
+        "henry": np.repeat(henry_daily, 24)[:T],
+    }
+    if series["chicago"].size < T or series["henry"].size < T:
+        raise ValueError(f"MISO {year}: daily hub series shorter than {T} hours")
+    by_plant, _, _, _ = _load_miso_gas_variable_transport(transport_path)
+    if not by_plant:
+        raise ValueError(
+            f"MISO {year}: miso_winter_gas_daily_delivered needs the derived "
+            "variable-transport table data/raw/reference/"
+            "miso_gas_variable_transport.csv (the ruled delivered adder)"
+        )
+
+    from market_sim.config.iso_configs import get_iso_config
+
+    zone_names = get_iso_config(config.iso).zone_names
+    kind_by_zone = _miso_zone_hub_kind(year, path)
+    if not kind_by_zone:
+        raise ValueError(f"MISO {year}: no hub-table rows to map zones to hubs")
+    written = np.zeros(fuel_prices.shape, dtype=bool)
+    gas_rows = np.nonzero(np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX))[0]
+    winter = np.isin(_month_index(T), [m - 1 for m in _MISO_WINTER_MONTHS])
+    if gas_rows.size == 0 or not winter.any():
+        return written
+    zone_kind = np.array(
+        [kind_by_zone.get(zn, "chicago") for zn in zone_names], dtype=object
+    )
+    transport = _miso_gas_variable_transport_vector(
+        fleet, gas_rows, tuple(zone_names), transport_path
+    )
+    cols = np.nonzero(winter)[0]
+    for kind in ("chicago", "henry"):
+        mask = zone_kind[fleet.zone_idx[gas_rows]] == kind
+        sel = gas_rows[mask]
+        if sel.size == 0:
+            continue
+        level = series[kind][cols][np.newaxis, :] + transport[mask][:, np.newaxis]
+        fuel_prices[np.ix_(sel, cols)] = np.maximum(level, _GAS_PRICE_FLOOR)
+        written[np.ix_(sel, cols)] = True
+    logger.info(
+        "MISO winter daily delivered gas (%d): %d gas units repriced in %d winter "
+        "hours at the measured daily hub (Chicago %.2f..%.2f, Henry Hub %.2f..%.2f "
+        "$/MMBtu) plus per-plant variable transport (mean %+.3f); winter shape "
+        "overlay and zonal increment superseded on these cells (rule 19)",
+        year,
+        gas_rows.size,
+        cols.size,
+        float(series["chicago"][cols].min()),
+        float(series["chicago"][cols].max()),
+        float(series["henry"][cols].min()),
+        float(series["henry"][cols].max()),
+        float(transport.mean()),
+    )
+    return written
