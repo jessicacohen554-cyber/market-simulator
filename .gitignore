@@ -3557,3 +3557,5 @@ results/calibration/nyisostg_2024/
 results/calibration/nyisostg_2025/
 # NWPP-NEXT-3 per-year shard legs (rule 32(d): kept out of main; the composite nwppnext3_span is registered).
 results/calibration/nwppnext3_20*/
+# NYISO-NEXT per-year shard legs (rule 32(d): kept out of main; the composite nyisonext_span is registered).
+results/calibration/nyisonext_20*/
