@@ -3650,3 +3650,7 @@ results/calibration/_soco71/
 results/calibration/soco71_20[0-9][0-9]/
 # neiso-119 per-year shard legs: composed into neiso119_span, never committed (rule 32(d))
 results/calibration/neiso119_20*/
+
+# soco-72 probe scratch + shard legs: kept out of main (rule 32(d)); composite soco72_span is what registers.
+results/calibration/_soco72/
+results/calibration/soco72_20[0-9][0-9]/
