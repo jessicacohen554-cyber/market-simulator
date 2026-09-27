@@ -1,0 +1,415 @@
+{
+ "2019": {
+  "rate": 0.015908220021133547,
+  "factor": 1.0161653824823893,
+  "src": "own",
+  "n": 8760,
+  "headroom_twh": 1.2452585813402026,
+  "excess_twh": 1.2221650625,
+  "actual_neg_hours": 862,
+  "model_neg_hours": 22,
+  "buckets": {
+   "-inf..0.0": {
+    "hours": 862,
+    "headroom_twh": 0.18236349030667173,
+    "excess_twh": 0.70738014453125,
+    "spent_twh": -0.5250166542245783,
+    "gas_model_minus_930_twh": -0.6887711148071289,
+    "coal_model_minus_930_twh": -0.22942975439453125,
+    "model_price_median": 18.602112599712854
+   },
+   "0.0..15.0": {
+    "hours": 3008,
+    "headroom_twh": 0.5233023831549677,
+    "excess_twh": 0.693754826171875,
+    "spent_twh": -0.17045244301690732,
+    "gas_model_minus_930_twh": -0.4579868743591309,
+    "coal_model_minus_930_twh": -0.9995851157226563,
+    "model_price_median": 20.076886758634153
+   },
+   "15.0..30.0": {
+    "hours": 4229,
+    "headroom_twh": 0.4756650054867942,
+    "excess_twh": -0.005801927734375,
+    "spent_twh": 0.4814669332211692,
+    "gas_model_minus_930_twh": 0.4127451649169922,
+    "coal_model_minus_930_twh": -1.6579574020996093,
+    "model_price_median": 24.640923935000004
+   },
+   "30.0..inf": {
+    "hours": 655,
+    "headroom_twh": 0.06284680409208418,
+    "excess_twh": -0.18239198046875,
+    "spent_twh": 0.24523878456083417,
+    "gas_model_minus_930_twh": 0.06142184057617187,
+    "coal_model_minus_930_twh": -0.19047889794921874,
+    "model_price_median": 26.800698465250964
+   }
+  },
+  "pos_price_north_congested": {
+   "hours": 491,
+   "excess_twh": 0.0255370390625,
+   "headroom_twh": 0.07052815738238855
+  },
+  "no_curtail_signal": {
+   "hours": 4647,
+   "excess_twh": -0.186738916015625,
+   "headroom_twh": 0.5088821022076997,
+   "delivered_twh": 31.479744
+  }
+ },
+ "2020": {
+  "rate": 0.09650131886270663,
+  "factor": 1.1068084778399832,
+  "src": "reference",
+  "n": 8760,
+  "headroom_twh": 8.762742901512832,
+  "excess_twh": 8.07758176171875,
+  "actual_neg_hours": 1347,
+  "model_neg_hours": 447,
+  "buckets": {
+   "-inf..0.0": {
+    "hours": 1347,
+    "headroom_twh": 1.988720559950044,
+    "excess_twh": 4.305473025390625,
+    "spent_twh": -2.3167524654405804,
+    "gas_model_minus_930_twh": -2.4567940723495485,
+    "coal_model_minus_930_twh": -1.6544477530517578,
+    "model_price_median": 14.665919495745293
+   },
+   "0.0..15.0": {
+    "hours": 3544,
+    "headroom_twh": 4.045971148217867,
+    "excess_twh": 3.68738005859375,
+    "spent_twh": 0.3585910896241168,
+    "gas_model_minus_930_twh": 0.318637656539917,
+    "coal_model_minus_930_twh": -4.256444365600586,
+    "model_price_median": 19.435367965054404
+   },
+   "15.0..30.0": {
+    "hours": 3358,
+    "headroom_twh": 2.361811865382677,
+    "excess_twh": 0.141573146484375,
+    "spent_twh": 2.220238718898302,
+    "gas_model_minus_930_twh": 1.709276788635254,
+    "coal_model_minus_930_twh": -3.665480958251953,
+    "model_price_median": 22.913337096
+   },
+   "30.0..inf": {
+    "hours": 505,
+    "headroom_twh": 0.3577484812078753,
+    "excess_twh": -0.05954246875,
+    "spent_twh": 0.4172909499578753,
+    "gas_model_minus_930_twh": 0.18352788986206053,
+    "coal_model_minus_930_twh": -0.44935070556640627,
+    "model_price_median": 24.429451611969117
+   }
+  },
+  "pos_price_north_congested": {
+   "hours": 395,
+   "excess_twh": 0.1611421806640625,
+   "headroom_twh": 0.4263929014054206
+  },
+  "no_curtail_signal": {
+   "hours": 3723,
+   "excess_twh": 0.0688527490234375,
+   "headroom_twh": 2.5836202836536253,
+   "delivered_twh": 24.189281
+  }
+ },
+ "2021": {
+  "rate": 0.09650131886270663,
+  "factor": 1.1068084778399832,
+  "src": "reference",
+  "n": 8760,
+  "headroom_twh": 9.917665963033947,
+  "excess_twh": 8.033969932617188,
+  "actual_neg_hours": 1750,
+  "model_neg_hours": 758,
+  "buckets": {
+   "-inf..0.0": {
+    "hours": 1750,
+    "headroom_twh": 2.956703258024987,
+    "excess_twh": 4.979561409179688,
+    "spent_twh": -2.0228581511547006,
+    "gas_model_minus_930_twh": -4.192810726379395,
+    "coal_model_minus_930_twh": -0.7498070853271485,
+    "model_price_median": 16.254863522817097
+   },
+   "0.0..15.0": {
+    "hours": 2350,
+    "headroom_twh": 3.176512114782293,
+    "excess_twh": 2.8490676708984375,
+    "spent_twh": 0.32744444388385535,
+    "gas_model_minus_930_twh": -5.014033573280335,
+    "coal_model_minus_930_twh": 1.8945511314697265,
+    "model_price_median": 22.781250607470945
+   },
+   "15.0..30.0": {
+    "hours": 2774,
+    "headroom_twh": 2.5634122264547785,
+    "excess_twh": 0.2345369697265625,
+    "spent_twh": 2.328875256728216,
+    "gas_model_minus_930_twh": -3.6942036503601074,
+    "coal_model_minus_930_twh": 2.5812894892578124,
+    "model_price_median": 29.885779625339843
+   },
+   "30.0..inf": {
+    "hours": 1880,
+    "headroom_twh": 1.2093669741644035,
+    "excess_twh": -0.047706640625,
+    "spent_twh": 1.2570736147894035,
+    "gas_model_minus_930_twh": -1.5792054886627198,
+    "coal_model_minus_930_twh": 0.2533632067871094,
+    "model_price_median": 45.21976989883898
+   }
+  },
+  "pos_price_north_congested": {
+   "hours": 1411,
+   "excess_twh": 0.7970427041015625,
+   "headroom_twh": 1.5537166522526862
+  },
+  "no_curtail_signal": {
+   "hours": 3867,
+   "excess_twh": 0.0608051982421875,
+   "headroom_twh": 3.0372199745768356,
+   "delivered_twh": 28.436132
+  }
+ },
+ "2022": {
+  "rate": 0.0935682937153296,
+  "factor": 1.1032270749870967,
+  "src": "own",
+  "n": 8760,
+  "headroom_twh": 11.090858460933479,
+  "excess_twh": 9.169209336425782,
+  "actual_neg_hours": 1634,
+  "model_neg_hours": 692,
+  "buckets": {
+   "-inf..0.0": {
+    "hours": 1634,
+    "headroom_twh": 2.8912291296974484,
+    "excess_twh": 5.158890485351563,
+    "spent_twh": -2.2676613556541136,
+    "gas_model_minus_930_twh": -4.2824235703125,
+    "coal_model_minus_930_twh": -0.8292565556640625,
+    "model_price_median": 17.678903322897753
+   },
+   "0.0..15.0": {
+    "hours": 1532,
+    "headroom_twh": 2.483213793103451,
+    "excess_twh": 3.0082118447265627,
+    "spent_twh": -0.5249980516231119,
+    "gas_model_minus_930_twh": -4.244636140579224,
+    "coal_model_minus_930_twh": 1.1221941755371094,
+    "model_price_median": 26.37273789585153
+   },
+   "15.0..30.0": {
+    "hours": 1954,
+    "headroom_twh": 2.5351857350013547,
+    "excess_twh": 1.1158133920898436,
+    "spent_twh": 1.4193723429115102,
+    "gas_model_minus_930_twh": -4.716234107208252,
+    "coal_model_minus_930_twh": 2.9639408740234376,
+    "model_price_median": 38.493727794477735
+   },
+   "30.0..inf": {
+    "hours": 3634,
+    "headroom_twh": 3.1750169783960507,
+    "excess_twh": -0.118841328125,
+    "spent_twh": 3.2938583065210505,
+    "gas_model_minus_930_twh": -6.139949326324463,
+    "coal_model_minus_930_twh": 4.557856546875,
+    "model_price_median": 55.83174416208389
+   }
+  },
+  "pos_price_north_congested": {
+   "hours": 2308,
+   "excess_twh": 1.732691447265625,
+   "headroom_twh": 3.062551493105909
+  },
+  "no_curtail_signal": {
+   "hours": 4021,
+   "excess_twh": 0.48431275439453125,
+   "headroom_twh": 3.799269191633695,
+   "delivered_twh": 36.804968
+  }
+ },
+ "2023": {
+  "rate": 0.08493407350629845,
+  "factor": 1.09281743647886,
+  "src": "own",
+  "n": 8759,
+  "headroom_twh": 9.564785686739032,
+  "excess_twh": 8.401845546386719,
+  "actual_neg_hours": 1506,
+  "model_neg_hours": 588,
+  "buckets": {
+   "-inf..0.0": {
+    "hours": 1506,
+    "headroom_twh": 2.444399074617772,
+    "excess_twh": 4.513774190429688,
+    "spent_twh": -2.069375115811915,
+    "gas_model_minus_930_twh": -3.8288840996665954,
+    "coal_model_minus_930_twh": -0.6358421013183594,
+    "model_price_median": 18.483677125631107
+   },
+   "0.0..15.0": {
+    "hours": 2048,
+    "headroom_twh": 2.8729058065471396,
+    "excess_twh": 3.3123436982421874,
+    "spent_twh": -0.4394378916950481,
+    "gas_model_minus_930_twh": -2.9429391440925596,
+    "coal_model_minus_930_twh": -0.47944379467773435,
+    "model_price_median": 21.854370083632524
+   },
+   "15.0..30.0": {
+    "hours": 3803,
+    "headroom_twh": 3.3508425570907603,
+    "excess_twh": 0.6944392875976563,
+    "spent_twh": 2.656403269493104,
+    "gas_model_minus_930_twh": -1.0051972944831848,
+    "coal_model_minus_930_twh": -0.14483674841308594,
+    "model_price_median": 26.871774495000004
+   },
+   "30.0..inf": {
+    "hours": 1397,
+    "headroom_twh": 0.8920773852896627,
+    "excess_twh": -0.1187116298828125,
+    "spent_twh": 1.0107890151724752,
+    "gas_model_minus_930_twh": 0.08683494769287109,
+    "coal_model_minus_930_twh": -0.343975921875,
+    "model_price_median": 32.073336748
+   }
+  },
+  "pos_price_north_congested": {
+   "hours": 1292,
+   "excess_twh": 0.8308567724609375,
+   "headroom_twh": 1.4069383043261212
+  },
+  "no_curtail_signal": {
+   "hours": 4412,
+   "excess_twh": 0.46423092236328123,
+   "headroom_twh": 3.5339451847464636,
+   "delivered_twh": 38.074152
+  }
+ },
+ "2024": {
+  "rate": 0.1056117362199117,
+  "factor": 1.1180826498925074,
+  "src": "own",
+  "n": 8759,
+  "headroom_twh": 12.907308743769411,
+  "excess_twh": 11.43685721484375,
+  "actual_neg_hours": 1903,
+  "model_neg_hours": 686,
+  "buckets": {
+   "-inf..0.0": {
+    "hours": 1903,
+    "headroom_twh": 3.8836449515885025,
+    "excess_twh": 6.2821579453125,
+    "spent_twh": -2.398512993723997,
+    "gas_model_minus_930_twh": -5.1944670844497685,
+    "coal_model_minus_930_twh": -0.6930127073974609,
+    "model_price_median": 17.27946350190774
+   },
+   "0.0..15.0": {
+    "hours": 2503,
+    "headroom_twh": 4.323847269527829,
+    "excess_twh": 4.290041254882812,
+    "spent_twh": 0.03380601464501687,
+    "gas_model_minus_930_twh": -3.722823704521179,
+    "coal_model_minus_930_twh": -0.4098966204833984,
+    "model_price_median": 21.20665975831765
+   },
+   "15.0..30.0": {
+    "hours": 3362,
+    "headroom_twh": 3.798549044191417,
+    "excess_twh": 0.8815996552734375,
+    "spent_twh": 2.91694938891798,
+    "gas_model_minus_930_twh": -1.3796086773986815,
+    "coal_model_minus_930_twh": -0.7074956066894531,
+    "model_price_median": 26.041839265469367
+   },
+   "30.0..inf": {
+    "hours": 980,
+    "headroom_twh": 0.8860685882633969,
+    "excess_twh": -0.02699113671875,
+    "spent_twh": 0.9130597249821468,
+    "gas_model_minus_930_twh": -0.21605905694580077,
+    "coal_model_minus_930_twh": -0.3799045086669922,
+    "model_price_median": 31.34983208
+   }
+  },
+  "pos_price_north_congested": {
+   "hours": 1227,
+   "excess_twh": 0.781964583984375,
+   "headroom_twh": 1.812135902938132
+  },
+  "no_curtail_signal": {
+   "hours": 3630,
+   "excess_twh": 0.7503646005859375,
+   "headroom_twh": 3.78915332582212,
+   "delivered_twh": 32.088993
+  }
+ },
+ "2025": {
+  "rate": 0.09895814686190971,
+  "factor": 1.1098263599157627,
+  "src": "own",
+  "n": 8760,
+  "headroom_twh": 12.130737255294633,
+  "excess_twh": 10.926654041015626,
+  "actual_neg_hours": 1637,
+  "model_neg_hours": 584,
+  "buckets": {
+   "-inf..0.0": {
+    "hours": 1637,
+    "headroom_twh": 3.2430163450550333,
+    "excess_twh": 6.140917357421875,
+    "spent_twh": -2.8979010123668414,
+    "gas_model_minus_930_twh": -5.397449070411682,
+    "coal_model_minus_930_twh": -0.3729919595947266,
+    "model_price_median": 19.430427969935383
+   },
+   "0.0..15.0": {
+    "hours": 1927,
+    "headroom_twh": 3.3228190336551844,
+    "excess_twh": 3.6890458046875,
+    "spent_twh": -0.3662267710323159,
+    "gas_model_minus_930_twh": -4.74981810735321,
+    "coal_model_minus_930_twh": 1.226203280883789,
+    "model_price_median": 24.07022050895415
+   },
+   "15.0..30.0": {
+    "hours": 3348,
+    "headroom_twh": 3.948975464060079,
+    "excess_twh": 1.1902728857421876,
+    "spent_twh": 2.758702578317892,
+    "gas_model_minus_930_twh": -3.843641754776001,
+    "coal_model_minus_930_twh": 2.610648066894531,
+    "model_price_median": 29.968360926008906
+   },
+   "30.0..inf": {
+    "hours": 1842,
+    "headroom_twh": 1.6064643224857953,
+    "excess_twh": -0.0990113466796875,
+    "spent_twh": 1.7054756691654827,
+    "gas_model_minus_930_twh": -0.9827502572021485,
+    "coal_model_minus_930_twh": 0.0260327080078125,
+    "model_price_median": 35.52302563572019
+   }
+  },
+  "pos_price_north_congested": {
+   "hours": 1230,
+   "excess_twh": 1.00181671875,
+   "headroom_twh": 1.7543012560893236
+  },
+  "no_curtail_signal": {
+   "hours": 4545,
+   "excess_twh": 0.972547888671875,
+   "headroom_twh": 4.748169474788415,
+   "delivered_twh": 43.233423
+  }
+ }
+}
