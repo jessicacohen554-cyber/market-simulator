@@ -5065,6 +5065,15 @@ def solve_and_persist(
         iso == "CAISO"
         and bool((prb_overrides or {}).get("caiso_fsno_subzonal_topology", False))
     )
+    # SPP-93 West/East re-partition, armed at the same seam for the same
+    # reason (config.topology_variant); "north_south" for every other ISO.
+    from market_sim.config.topology_variant import set_spp_zone_partition
+
+    set_spp_zone_partition(
+        (prb_overrides or {}).get("spp_zone_partition", "north_south")
+        if iso == "SPP"
+        else "north_south"
+    )
     iso_config = get_iso_config(iso)
     # caiso-110: the endogenous WECC-West node keeps the SINGLE WECC_import zone
     # (no per-hub split — run_year does not split it either), so this caller's

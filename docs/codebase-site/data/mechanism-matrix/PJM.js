@@ -304,6 +304,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     measured_interface_limits: { cell: "K", ev: "pjm measured TTC keeper" },
     internal_congestion_split: { cell: "." },
     caiso_fsno_subzonal_topology: { cell: "." },
+    spp_zone_partition: { cell: ".", ev: "n/a — the mechanism re-partitions SPP's own footprint by SPP's own reserve-zone registry; no PJM object. Row added by SPP-93 (2026-09-27) with the field, per rule 28(c)." },
     tsa_transfer_derate: { cell: "." },
     scuc_load_pocket_commitment: { cell: "." },
     pjm_congestion_star: { cell: "K" },

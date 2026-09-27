@@ -1,0 +1,130 @@
+{
+ "legs": {
+  "2019": {
+   "C0_same_units": true,
+   "C0_zones_ok": true,
+   "C1_wind_max_rel": 6.792764739111976e-16,
+   "C1_solar_max_rel": 4.284679813628746e-16,
+   "C2_max_cf": 1.0,
+   "demand_total_max_rel": 3.5148421697449796e-16,
+   "C3_new_negative_hours": [
+    5894,
+    5895,
+    5896
+   ],
+   "keeper_slack_hours": [],
+   "min_margin_we": -797.9462940140547,
+   "min_margin_ns": 230.49917267217825,
+   "window_min_margin_we": 9456.189967824383,
+   "window_min_margin_ns": 10805.163525621601
+  },
+  "2020": {
+   "C0_same_units": true,
+   "C0_zones_ok": true,
+   "C1_wind_max_rel": 7.930717664570357e-16,
+   "C1_solar_max_rel": 3.5825684155971444e-16,
+   "C2_max_cf": 1.0,
+   "demand_total_max_rel": 3.701396059579169e-16,
+   "C3_new_negative_hours": [],
+   "keeper_slack_hours": [],
+   "min_margin_we": 2445.297871769544,
+   "min_margin_ns": 2386.9921821654734,
+   "window_min_margin_we": 8908.720277593318,
+   "window_min_margin_ns": 6176.97538728871
+  },
+  "2021": {
+   "C0_same_units": true,
+   "C0_zones_ok": true,
+   "C1_wind_max_rel": 8.092037090644576e-16,
+   "C1_solar_max_rel": 3.383536836952858e-16,
+   "C2_max_cf": 1.0,
+   "demand_total_max_rel": 3.474226911974004e-16,
+   "C3_new_negative_hours": [],
+   "keeper_slack_hours": [],
+   "min_margin_we": 1465.6012786603533,
+   "min_margin_ns": 1736.2065970318326,
+   "window_min_margin_we": 5898.171116328838,
+   "window_min_margin_ns": 5729.317644108811
+  },
+  "2022": {
+   "C0_same_units": true,
+   "C0_zones_ok": true,
+   "C1_wind_max_rel": 6.793937522999156e-16,
+   "C1_solar_max_rel": 3.0075882995136514e-16,
+   "C2_max_cf": 1.0,
+   "demand_total_max_rel": 4.213915740991763e-16,
+   "C3_new_negative_hours": [],
+   "keeper_slack_hours": [],
+   "min_margin_we": -32.395581186669006,
+   "min_margin_ns": -301.9654102696877,
+   "window_min_margin_we": 9597.332863605734,
+   "window_min_margin_ns": 10000.814037151096
+  },
+  "2023": {
+   "C0_same_units": true,
+   "C0_zones_ok": true,
+   "C1_wind_max_rel": 7.34860276804677e-16,
+   "C1_solar_max_rel": 3.304849933767908e-16,
+   "C2_max_cf": 1.0,
+   "demand_total_max_rel": 3.5708468856416495e-16,
+   "C3_new_negative_hours": [
+    1135,
+    5677,
+    5678,
+    5679
+   ],
+   "keeper_slack_hours": [],
+   "min_margin_we": -275.4959896706787,
+   "min_margin_ns": 818.0938343068046,
+   "window_min_margin_we": 10286.50908374526,
+   "window_min_margin_ns": 8408.23196902063
+  },
+  "2024": {
+   "C0_same_units": true,
+   "C0_zones_ok": true,
+   "C1_wind_max_rel": 8.225410242869007e-16,
+   "C1_solar_max_rel": 2.856453209085831e-16,
+   "C2_max_cf": 0.9890517179660868,
+   "demand_total_max_rel": 3.5193758412418616e-16,
+   "C3_new_negative_hours": [
+    4167,
+    4168,
+    6638,
+    6639,
+    6640,
+    6641
+   ],
+   "keeper_slack_hours": [
+    7072
+   ],
+   "min_margin_we": -645.3321573669782,
+   "min_margin_ns": -317.909805809908,
+   "window_min_margin_we": 4602.733260540423,
+   "window_min_margin_ns": 3336.0273091138315
+  },
+  "2025": {
+   "C0_same_units": true,
+   "C0_zones_ok": true,
+   "C1_wind_max_rel": 8.124056620824093e-16,
+   "C1_solar_max_rel": 6.342361937049711e-16,
+   "C2_max_cf": 1.0,
+   "demand_total_max_rel": 4.522599213192083e-16,
+   "C3_new_negative_hours": [
+    5054
+   ],
+   "keeper_slack_hours": [
+    8507
+   ],
+   "min_margin_we": -45.62713711391552,
+   "min_margin_ns": -795.6786462683922,
+   "window_min_margin_we": 1250.7429937279194,
+   "window_min_margin_ns": -795.6786462683922
+  }
+ },
+ "verdict": {
+  "C0": true,
+  "C1": true,
+  "C2": true,
+  "C3": false
+ }
+}

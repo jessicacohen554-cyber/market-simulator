@@ -1913,6 +1913,43 @@ def _spp_config() -> ISOConfig:
             from_zone="SPP-North", to_zone="SPP-South", ttc_mw=_ns_corridor_ttc
         ),
     ]
+    # SPP-93 West/East re-partition (ScenarioConfig spp_zone_partition =
+    # "west_east", default "north_south"; armed process-wide via
+    # config.topology_variant). It REPLACES the zones and the N<->S link above
+    # (rule 19 [R-ONE-MECH]: one seam, never two). Construction fixed in
+    # docs/handoffs/PRECOMMIT-spp-93-west-east-2026-09-27.md before any model
+    # output existed; every number in FINDING/RESULT-spp-93.
+    #   Zones: SPP's own reserve zones (SL_to_Pnode_to_Zone_with_Area.csv
+    #     RESZONE) -- West = RZ {1,2,3,5}, East = RZ 4. Load: sub-BA -> the
+    #     majority RESZONE of its current LOAD settlement locations, West =
+    #     {LES, NPPD, OPPD, SECI, SPS, WAUE}. Static fallback share = the
+    #     measured 2023-2025 EIA-930 sub-BA energy share, 345.404 / 873.445 TWh
+    #     = 0.3954 (the 0.5125 convention above).
+    #   Link TTC 4,000 MW: SPP-53's construction (A), the FCITC reading, on the
+    #     ACTUAL East-bubble - West-bubble RT spread (GMT clock, 2023-25, OLS
+    #     HC1 on every constraint binding >= 263 h): constituents = SPP-14
+    #     groups n_s_corridor + sps_tie; 18 identified (psi > 0, t >= 2); T* =
+    #     L_f / psi_f with L_f from the SPP-53 + SPP-57 2026 limit tables;
+    #     binding-hours-weighted median 3,967 -> 4,000 (p25 2,275 / p75 8,044).
+    #     R2/R3 residual-blind bounds: West non-gas capability - West 2023
+    #     minimum load = 20,889 MW; total - minimum = 33,293 MW.
+    #     docs/handoffs/spp93/{psi_we.json,tstar_we.csv}.
+    #   Rule 14 [R-ACCURATE] MISALIGNMENT, stated: 2026 limits on 2019-2025;
+    #     an element-under-contingency rating is not a corridor capability;
+    #     psi identified on 2023-25 and applied to 2019-22; the group superset
+    #     relies on the psi screen to drop East-internal Kansas elements.
+    #   Symmetric, as N<->S was registered: the measured E-W spread is
+    #     positive in 70-85 % of hours, so the reverse direction is live.
+    from market_sim.config.topology_variant import spp_west_east_active
+
+    if spp_west_east_active():
+        zones = [
+            Zone(name="SPP-West", iso="SPP", load_share=0.3954),
+            Zone(name="SPP-East", iso="SPP", load_share=0.6046),
+        ]
+        links = [
+            TransferLink(from_zone="SPP-West", to_zone="SPP-East", ttc_mw=4000.0),
+        ]
     # voll = $2,000/MWh (owner ruling P10, desk sitting r#3, 2026-09-06):
     # the FERC Order 831 hard ceiling for COST-VERIFIED incremental energy
     # offers. Both published numbers, so neither is mistaken for the other:
