@@ -37,9 +37,20 @@ PIN = "93a38eac"
 DEFAULT_OUT = REPO / "results/calibration/_rcaiso6/gdrift_input_identity.json"
 T = 8760
 ARRAYS = (
-    "unit_ids", "mc_base", "pmax", "pmin", "min_gen", "availability",
-    "heat_rate", "emission_rate", "vom", "plant_group", "fuel_type_idx",
-    "zone_idx", "plant_code", "nox_rate",
+    "unit_ids",
+    "mc_base",
+    "pmax",
+    "pmin",
+    "min_gen",
+    "availability",
+    "heat_rate",
+    "emission_rate",
+    "vom",
+    "plant_group",
+    "fuel_type_idx",
+    "zone_idx",
+    "plant_code",
+    "nox_rate",
 )
 
 CHILD = r"""
@@ -112,20 +123,28 @@ print("@@JSON@@" + json.dumps(out))
 """
 
 
-
 def _run_arm(tree: Path, bundle: str, years, label: str) -> dict:
     """Execute CHILD inside ``tree`` for one bundle; return its JSON payload."""
     env = dict(os.environ)
     env["PYTHONPATH"] = f"{tree}:{tree / 'src'}:{tree / 'scripts'}"
     print(f"  [{label}] {bundle} in {tree} ...", flush=True)
     p = subprocess.run(
-        [sys.executable, "-c", CHILD, str(REPO / "results/calibration" / bundle),
-         ",".join(map(str, years)), ",".join(ARRAYS)],
-        cwd=tree, env=env, capture_output=True, text=True,
+        [
+            sys.executable,
+            "-c",
+            CHILD,
+            str(REPO / "results/calibration" / bundle),
+            ",".join(map(str, years)),
+            ",".join(ARRAYS),
+        ],
+        cwd=tree,
+        env=env,
+        capture_output=True,
+        text=True,
     )
     for line in p.stdout.splitlines():
         if line.startswith("@@JSON@@"):
-            return json.loads(line[len("@@JSON@@"):])
+            return json.loads(line[len("@@JSON@@") :])
     raise SystemExit(f"[{label}] no payload rc={p.returncode}\n{p.stderr[-3000:]}")
 
 
@@ -133,10 +152,16 @@ def _worktree(sha: str, name: str) -> Path:
     """Sparse worktree (src + scripts) at ``sha`` sharing this repo's data/."""
     wt = Path(tempfile.gettempdir()) / f"rcaiso6_wt_{name}"
     if not wt.exists():
-        subprocess.run(["git", "worktree", "add", "--no-checkout", "--detach", str(wt), sha],
-                       cwd=REPO, check=True)
-        subprocess.run(["git", "sparse-checkout", "set", "src", "scripts", "configs"],
-                       cwd=wt, check=True)
+        subprocess.run(
+            ["git", "worktree", "add", "--no-checkout", "--detach", str(wt), sha],
+            cwd=REPO,
+            check=True,
+        )
+        subprocess.run(
+            ["git", "sparse-checkout", "set", "src", "scripts", "configs"],
+            cwd=wt,
+            check=True,
+        )
         subprocess.run(["git", "checkout", "--detach", sha], cwd=wt, check=True)
         for d in ("data", "results"):
             (wt / d).symlink_to(REPO / d)
@@ -149,7 +174,11 @@ def main() -> None:
     ap.add_argument("--main-sha", default="92479835")
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
     a = ap.parse_args()
-    arms = {"pin": _worktree(PIN, "pin"), "main": _worktree(a.main_sha, "main"), "work": REPO}
+    arms = {
+        "pin": _worktree(PIN, "pin"),
+        "main": _worktree(a.main_sha, "main"),
+        "work": REPO,
+    }
     res = {k: {} for k in arms}
     for label, tree in arms.items():
         for bundle, years in BUNDLES.items():
@@ -166,18 +195,44 @@ def main() -> None:
                     diff.append("demand")
                 ta, tb = A["topology"][yr], B["topology"][yr]
                 if ta["links_sha"] != tb["links_sha"]:
-                    diff.append("links: " + repr(sorted(set(map(tuple, tb["links"])) ^ set(map(tuple, ta["links"])))))
+                    diff.append(
+                        "links: "
+                        + repr(
+                            sorted(
+                                set(map(tuple, tb["links"]))
+                                ^ set(map(tuple, ta["links"]))
+                            )
+                        )
+                    )
                 if ta["limits_sha"] != tb["limits_sha"]:
-                    diff.append("limits: " + repr(sorted(set(tb["limits"]) ^ set(ta["limits"])))[:1500])
+                    diff.append(
+                        "limits: "
+                        + repr(sorted(set(tb["limits"]) ^ set(ta["limits"])))[:1500]
+                    )
                 pr[yr] = diff
-        dflt = [k for k in res[x]["rcaiso5_XE_span"]["scenarioconfig_defaults"]
-                if res[x]["rcaiso5_XE_span"]["scenarioconfig_defaults"][k]
-                != res[y]["rcaiso5_XE_span"]["scenarioconfig_defaults"].get(k)]
-        added = sorted(set(res[y]["rcaiso5_XE_span"]["scenarioconfig_defaults"]) - set(res[x]["rcaiso5_XE_span"]["scenarioconfig_defaults"]))
-        cons = sorted(k for k in set(res[x]["rcaiso5_XE_span"]["constants"]) | set(res[y]["rcaiso5_XE_span"]["constants"])
-                      if res[x]["rcaiso5_XE_span"]["constants"].get(k) != res[y]["rcaiso5_XE_span"]["constants"].get(k))
-        report["pairs"][f"{x}->{y}"] = {"per_year_diffs": pr, "defaults_changed": dflt,
-                                         "fields_added": added, "constants_changed": cons}
+        dflt = [
+            k
+            for k in res[x]["rcaiso5_XE_span"]["scenarioconfig_defaults"]
+            if res[x]["rcaiso5_XE_span"]["scenarioconfig_defaults"][k]
+            != res[y]["rcaiso5_XE_span"]["scenarioconfig_defaults"].get(k)
+        ]
+        added = sorted(
+            set(res[y]["rcaiso5_XE_span"]["scenarioconfig_defaults"])
+            - set(res[x]["rcaiso5_XE_span"]["scenarioconfig_defaults"])
+        )
+        cons = sorted(
+            k
+            for k in set(res[x]["rcaiso5_XE_span"]["constants"])
+            | set(res[y]["rcaiso5_XE_span"]["constants"])
+            if res[x]["rcaiso5_XE_span"]["constants"].get(k)
+            != res[y]["rcaiso5_XE_span"]["constants"].get(k)
+        )
+        report["pairs"][f"{x}->{y}"] = {
+            "per_year_diffs": pr,
+            "defaults_changed": dflt,
+            "fields_added": added,
+            "constants_changed": cons,
+        }
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(json.dumps(report, indent=2))
     print(json.dumps(report, indent=2))
