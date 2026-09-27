@@ -86,7 +86,10 @@ class TestShortSelector:
 
     def test_off_and_fallback_keep_the_incumbent(self, tmp_path, monkeypatch):
         om = _lay(tmp_path, monkeypatch, "campd-unit-outages-short-PJM.csv")
-        assert om.unit_outage_short_csv_for_iso("PJM").name == "campd-unit-outages-short-PJM.csv"
+        assert (
+            om.unit_outage_short_csv_for_iso("PJM").name
+            == "campd-unit-outages-short-PJM.csv"
+        )
         assert (
             om.unit_outage_short_csv_for_iso("PJM", full_rederive=True).name
             == "campd-unit-outages-short-PJM.csv"
