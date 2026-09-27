@@ -1,0 +1,50 @@
+{
+ "2022": {
+  "LI_lw_price": {
+   "keeper": 92.655,
+   "arm": 92.975,
+   "delta": 0.32
+  },
+  "system_lw_price": {
+   "keeper": 72.35,
+   "arm": 71.821,
+   "delta": -0.529
+  },
+  "class_twh_delta": {
+   "CC_CHP": -0.0303,
+   "CC_REGULAR": 0.0875,
+   "CT_CHP": 0.0178,
+   "CT_PEAKER": 0.04,
+   "ST_GAS": 0.1,
+   "hydro": -0.1961
+  },
+  "max_abs_class_delta_twh": 0.1961,
+  "total_energy_delta_twh": 0.0183,
+  "G2_pass": true,
+  "G3_energy_pass": true
+ },
+ "2023": {
+  "LI_lw_price": {
+   "keeper": 36.764,
+   "arm": 36.981,
+   "delta": 0.217
+  },
+  "system_lw_price": {
+   "keeper": 31.425,
+   "arm": 31.427,
+   "delta": 0.001
+  },
+  "class_twh_delta": {
+   "CC_CHP": -0.0595,
+   "CC_REGULAR": 0.0212,
+   "CT_CHP": 0.0011,
+   "CT_PEAKER": 0.014,
+   "ST_GAS": 0.0748,
+   "hydro": -0.0439
+  },
+  "max_abs_class_delta_twh": 0.0748,
+  "total_energy_delta_twh": 0.0076,
+  "G2_pass": true,
+  "G3_energy_pass": true
+ }
+}
