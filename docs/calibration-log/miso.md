@@ -15191,3 +15191,10 @@ default drops (3.1/1.0/1.5/2.8 GW in 2019–2022). S-2 fails: new slack sits ins
 Escalated to the owner. Record: `docs/RESULT-rmiso-corrected-inputs-2019-2025-2026-09-24.md`.
 
 **PROMOTED 2026-09-25** on the owner's ruling (*"Rebase for merge And promote"*): MISO keeper → `2026-09-24-rmiso-arm-b-mid` (2019–2025); `miso-268` and arm A pruned (rule 35). MISO headline CALIBRATED → **NOT-YET** (train 8/5/1/2). Forecast gate-(a) row in `program-status.json` not re-keyed (permission-blocked).
+
+## owner ruling 2026-09-27 — miso-276-winter-daily: PRUNED (declined as keeper)
+
+Asked in session soco-72 because the unstamped registration kept CI "Keeper-integrity gates" red on every PR (audit_keepers
+E13). The owner ruled **"Prune it"**: `2026-09-26-miso-276-winter-daily` removed via `prune_iso_runs.py --iso MISO
+--force-uncite` (sidecar, payload, `results/calibration/miso276_span`); the keeper stays `2026-09-26-miso-275-cc-exempt`;
+`audit_keepers --iso MISO` PASS. Git history is the record for the bytes (rule 15); the MISO matrix citations are retained.
