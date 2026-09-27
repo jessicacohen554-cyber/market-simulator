@@ -1,0 +1,58 @@
+{
+ "local/hub": {
+  "n": 26256,
+  "R2": 0.37,
+  "corridor_constituents": 30,
+  "identified_NtoS": 16,
+  "StoN_loaded": 9,
+  "identified_with_L": 16,
+  "T_p25_p50_p75": [
+   2618,
+   2623,
+   6951
+  ],
+  "TTC_rounded": 2600.0
+ },
+ "local/bubble": {
+  "n": 26256,
+  "R2": 0.234,
+  "corridor_constituents": 30,
+  "identified_NtoS": 12,
+  "StoN_loaded": 11,
+  "identified_with_L": 12,
+  "T_p25_p50_p75": [
+   3594,
+   3594,
+   15451
+  ],
+  "TTC_rounded": 3600.0
+ },
+ "gmt/hub": {
+  "n": 26256,
+  "R2": 0.432,
+  "corridor_constituents": 30,
+  "identified_NtoS": 16,
+  "StoN_loaded": 10,
+  "identified_with_L": 16,
+  "T_p25_p50_p75": [
+   2868,
+   2885,
+   7194
+  ],
+  "TTC_rounded": 2900.0
+ },
+ "gmt/bubble": {
+  "n": 26256,
+  "R2": 0.32,
+  "corridor_constituents": 30,
+  "identified_NtoS": 11,
+  "StoN_loaded": 12,
+  "identified_with_L": 11,
+  "T_p25_p50_p75": [
+   4043,
+   4101,
+   4101
+  ],
+  "TTC_rounded": 4100.0
+ }
+}
