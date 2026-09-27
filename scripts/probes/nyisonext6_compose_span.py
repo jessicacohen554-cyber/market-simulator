@@ -70,6 +70,56 @@ def check_g1(legs: list[Path]) -> None:
         raise SystemExit(f"legs {bad} fail G-1; refusing to compose")
 
 
+def check_g1_zero_lp(legs: list[Path]) -> None:
+    """G-1 on each leg's OWN recorded config, zero LP (used when a leg has no solve.log).
+
+    Rebuilds the NYISO topology under the leg's ``scenario_config``, applies the
+    PAR-attributed envelope and the clip, and requires the §9.2 footprint with no
+    other link moving. The shard's own hard stop already gated its push on the log line.
+    """
+    import dataclasses
+
+    import numpy as np
+
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.config.scenarios import ScenarioConfig
+    from market_sim.data.nyiso_par_attribution import nyiso_par_attributed_ttc_hourly
+    from market_sim.data.nyiso_seam_envelope import nyiso_li_posted_limit_cap
+    from market_sim.model.interchange import spec as sp
+
+    names = {f.name for f in dataclasses.fields(ScenarioConfig)}
+    bad = []
+    for leg in legs:
+        rc = json.loads((leg / "run_config.json").read_text())
+        sc = rc["scenario_config"]
+        cfg = ScenarioConfig().with_overrides(
+            **{
+                k: v
+                for k, v in sc.items()
+                if k in names and k != "reliability_floor_overrides"
+            }
+        )
+        y = int(leg.name.rsplit("_", 1)[-1])
+        ic = sp.apply_interchange_topology(
+            get_iso_config("NYISO"), sp.get_interchange_spec(cfg, "NYISO", y), cfg, year=y
+        )
+        static = np.array([ln.ttc_mw for ln in ic.links], dtype=float)
+        fwd, _ = nyiso_par_attributed_ttc_hourly(static, ic, y, 8760)
+        arm = nyiso_li_posted_limit_cap(fwd, ic, y, 8760)
+        i = [(ln.from_zone, ln.to_zone) for ln in ic.links].index(
+            ("NYISO_external", "Long_Island")
+        )
+        cut = fwd[:, i] - arm[:, i]
+        other = float(np.abs(np.delete(arm - fwd, i, axis=1)).max())
+        got = (int((cut > 0).sum()), f"{cut.sum() / 1e6:.3f}")
+        ok = got == G1[y] and other == 0.0 and not (cut < 0).any()
+        print(f"  {leg.name}: G-1 zero-LP {got} other={other} {'OK' if ok else 'FAIL'}")
+        if not ok:
+            bad.append(leg.name)
+    if bad:
+        raise SystemExit(f"legs {bad} fail G-1; refusing to compose")
+
+
 def main() -> None:
     """Check every leg, then compose the span bundle."""
     ap = argparse.ArgumentParser(description=__doc__)
@@ -77,6 +127,11 @@ def main() -> None:
     ap.add_argument("--legs", nargs="+", required=True)
     ap.add_argument("--out")
     ap.add_argument("--check-only", action="store_true")
+    ap.add_argument(
+        "--no-log",
+        action="store_true",
+        help="legs carry no solve.log: verify G-1 at zero LP from each leg's config",
+    )
     args = ap.parse_args()
     legs = [Path(x) for x in args.legs]
     base.PIN = args.pin
@@ -84,8 +139,11 @@ def main() -> None:
     base.INPUT_SHA = n3.INPUT_SHA
     base.KEEPER = _REPO / "results" / "calibration" / "nyisonext3_span"
     base.check_legs(legs)
-    prev.check_footprint(legs)
-    check_g1(legs)
+    if args.no_log:
+        check_g1_zero_lp(legs)
+    else:
+        prev.check_footprint(legs)
+        check_g1(legs)
     if args.check_only:
         return
     if not args.out:
