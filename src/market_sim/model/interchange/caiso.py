@@ -1937,7 +1937,7 @@ _CAISO_LOCAL_IMPORT_LINKS: dict[str, tuple[str, str]] = {
 
 
 def apply_caiso_local_import_limits(
-    iso_config: ISOConfig, iso: str, year: int
+    iso_config: ISOConfig, iso: str, year: int, *, sd_floor_static: bool = False
 ) -> ISOConfig:
     """Swap the SP15-pocket import-link TTCs to the solve year's measured LCT cap.
 
@@ -1958,10 +1958,27 @@ def apply_caiso_local_import_limits(
     omits the area rather than guessing) — the link keeps its static 2023
     baked-in default TTC.
 
+    ``sd_floor_static`` (``ScenarioConfig.caiso_import_cap_floor_static``,
+    R-CAISO-9, owner ruling 2026-09-27 "Floor at static 1,436") floors the
+    ``SP15_rest -> SDGE`` cap at the link's own baked static TTC (the
+    documented ``_SDGE_IMPORT_CAP_MW`` = 1,436 MW in ``iso_configs``): the
+    per-year value becomes ``max(LCT cap, static)``. A declared rule-14
+    reconciled estimate, not a new number: the LCT ``peak - requirement`` is a
+    1-in-10 N-1-1 planning-case capability, not the operating transfer limit
+    the all-hours LP link represents, and measured night-time SDGE imports
+    exceed it in 2,773 / 784 / 886 h (2019 / 2020 / 2021; strict lower bound,
+    ``results/calibration/_rcaiso8/object2_sd_census.json``). The 1,436 floor
+    is itself exceeded 167 h in 2019, so it is still a conservative estimate,
+    not a measured operating limit. LA Basin is deliberately NOT floored
+    (owner card, R-CAISO-9: no measured LA import census exists). Only years
+    whose SD LCT cap is below 1,436 move (2019-21); 2022 has no LCT row and
+    2023-25 are >= 1,436 already.
+
     Args:
         iso_config: CAISO topology carrying the two SP15-split import links.
         iso: Model ISO name.
         year: Solve year (resolves the LCT delivery-year row).
+        sd_floor_static: Floor the SDGE cap at its baked static TTC.
 
     Returns:
         ``iso_config`` with the matching links' TTC set to the measured value,
@@ -1985,6 +2002,13 @@ def apply_caiso_local_import_limits(
     new_links: list[TransferLink] = []
     for link in iso_config.links:
         cap = new_ttc.get((link.from_zone, link.to_zone))
+        if (
+            cap is not None
+            and sd_floor_static
+            and (link.from_zone, link.to_zone)
+            == _CAISO_LOCAL_IMPORT_LINKS["San Diego/Imperial Valley"]
+        ):
+            cap = max(cap, float(link.ttc_mw))
         if cap is not None and cap != link.ttc_mw:
             new_links.append(link.model_copy(update={"ttc_mw": cap}))
             changed = True

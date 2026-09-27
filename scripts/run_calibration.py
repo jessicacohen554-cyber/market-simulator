@@ -3174,7 +3174,12 @@ def run_year(
     if iso == "CAISO" and getattr(config, "caiso_per_year_import_caps", False):
         from market_sim.model.transmission import apply_caiso_local_import_limits
 
-        iso_config = apply_caiso_local_import_limits(iso_config, iso, year)
+        iso_config = apply_caiso_local_import_limits(
+            iso_config,
+            iso,
+            year,
+            sd_floor_static=getattr(config, "caiso_import_cap_floor_static", False),
+        )
     # Priced import/export node (orchestrator-unification Stage 5): the
     # builder choice — reference-price seam vs CAISO per-hub / bidirectional
     # intertie vs the static year-grounded tranche ladder, plus the Manitoba

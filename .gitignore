@@ -3727,3 +3727,5 @@ results/calibration/soco82_20*/
 results/calibration/nyisonext8_202[2-5]/
 # R-ERCOT-10 per-year shard legs (rule 32(d): composite only reaches main). Provenance SHAs in RESULT-r-ercot-10.
 results/calibration/r_ercot10_arm_20*/
+# R-CAISO-9 per-year shard legs (rule 32(d)/36): kept out of main; the composite is what registers.
+results/calibration/rcaiso9_A_20*/**
