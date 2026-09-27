@@ -1793,3 +1793,11 @@ hourlies. Floor above actual energy: 2020 9.90 TWh (Scherer 13.15 vs 5.63, 2.3x)
 fails in the C4 year (contracts -32 %). Greedy: 2019 COAL_BIT -4.16 -> -2.61pp PASS, but 2020 CC_REGULAR/COAL_PRB C1 FAIL, 2020 C4
 0.301 -> 0.514 and 2024 C4 0.254 -> 0.381 FAIL. Cell U -> G on structure (rules 13/20), per-year/plant scoping refused (rule 1).
 Owner questions (soco-75, soco-77) carried. Record: docs/handoffs/r-soco/FINDING-soco-80-2026-09-27.md.
+
+## owner rulings 2026-09-27 (asked in soco-80, decision cards)
+
+- **soco-75 two-sided `coal_econ_marginal_hr_bound`: YES, build it.** Scope: SOCO only, the must-run-floored plants'
+  econ tranches (cyclers excluded per SOCO-63 §5), measured incremental HR from the frozen derive_campd_marginal_hr
+  construction, able to lower as well as raise offers. The greedy promise is 2020 C4 0.301 -> ~0.29 (PASS); 2019
+  COAL_BIT stays FAIL. The build goes to the successor lane (soco-81): soco-72/76 pattern, seven year-isolated shards.
+- **soco-77 `tranche_startup_amortization` as SOCO's objective start: NO** (lane recommendation). It stays refused for SOCO.
