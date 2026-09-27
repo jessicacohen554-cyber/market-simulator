@@ -149,3 +149,43 @@ keeper is the control. No control solve is owed.
   admissible measured input and is **not** chartered.
 - The C3a 2022 / 2025 miss is unchanged by this lever, per NYISO-NEXT-4 §5: the 2022 Upstate_West
   pin (**R**) and the > $300 tail.
+
+---
+
+## 9. ADDENDUM — NYISO-NEXT-6, written before any solve (2026-09-27)
+
+Implementation: `nyiso_li_seam_posted_limit_cap` (default off), `data/nyiso_seam_envelope.py::nyiso_li_posted_limit_cap`,
+applied in `run_calibration.run_year` after the armed envelope. Nothing in §3–§7 is changed.
+
+### 9.1 G-DRIFT, `df4bd585` → `origin/main` `18a2a3cb`
+
+Every solve-path hunk is **INERT for NYISO**. Form 4 stays valid; the keeper stays the control.
+
+| hunk source | classification |
+|---|---|
+| NWPP-NEXT-7 coal take floor (`scenarios.py`, `coal_fuel_inventory.py`, `lp/{__init__,model,rows}.py`, `pipeline/spec.py`, `run_calibration.py`) | default-off `coal_fuel_inventory_take_floor`, gated to `("NWPP",)` and requires `coal_fuel_inventory_plant_grain` — both absent from the keeper recipe; `coal_plant_floor` is `UNSET`/`None` off, leaving the 0 lower bound |
+| `COAL_PLANT_GRAIN_ISOS` gains `"NWPP"` | another ISO |
+| miso-277 hub nearest-year fallback (`fuel/basis/miso.py`) | MISO-only table |
+| `_validation-source/pjm_offer_midcurve_*` | PJM artifact |
+| `reference/camd-eia-crosswalk/` (new) | no consumer on any solve path (`git grep` over `src`, the two runners, `scripts/lib`: 0 hits) |
+
+### 9.2 G-1 at zero LP (production functions, keeper config) — `scripts/probes/nyisonext6_g1_footprint.py`
+
+| | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|
+| Hours whose LI cap falls | 860 | 1,468 | 1,688 | **969** | 1,734 |
+| Cap energy removed, TWh | 0.160 | 0.343 | 0.268 | **0.269** | 0.308 |
+| Mean cut in those hours, MW | 185.5 | 233.4 | 158.8 | 278.0 | 177.5 |
+| Any hour raised | no | no | no | no | no |
+| Max \|Δ\| on any other link, MW | 0 | 0 | 0 | 0 | 0 |
+
+- **Exact match to §4 in 2021, 2022, 2023 and 2025.**
+- **2024 differs by +1 hour / −0.001 TWh (§4: 968 / 0.270).** Cause: the NEXT-5 probe indexed posted
+  limits by hours since 1 Jan **without dropping Feb 29**, while the envelope is on the model's fixed
+  non-leap clock. After 28 Feb its limit and cap arrays were one day apart. The implementation uses the
+  model clock (the outage-window convention). The 2024 reference value for G-1 is therefore the
+  corrected **969 / 0.269**; this is a defect in the reference computation, not a change to the gate.
+  The same misalignment touches §2's 2024 LI-price columns; they are not re-used here.
+- The PAR-attributed envelope (the keeper arms it; it supersedes the nyiso-125 envelope) and
+  `seam_envelope_by_zone` give **byte-identical** Long_Island caps in all five years, so §4's cap basis
+  is the keeper's.

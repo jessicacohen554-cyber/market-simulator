@@ -305,3 +305,164 @@ def nyiso_seam_ttc_hourly(
             "from iso_config (the mechanism never silently no-ops)"
         )
     return ttc_hourly, ttc_import
+
+
+# The Long Island ties whose POSTED import limits bound the LI import link under
+# ``ScenarioConfig.nyiso_li_seam_posted_limit_cap`` (NYISO-NEXT-6). The same
+# three rows the envelope sums, so the clip and the envelope share one tie set.
+NYISO_LI_POSTED_LIMIT_TIES: tuple[str, ...] = NYISO_SEAM_TIE_LANDING["Long_Island"]
+
+# The external star node every NYISO seam is hosted on (interchange.spec).
+NYISO_EXTERNAL_NODE: str = "NYISO_external"
+
+
+def posted_import_limit_hourly(
+    frame: pd.DataFrame, ties: tuple[str, ...], hours: int
+) -> np.ndarray:
+    """Sum the ties' posted import limits hour by hour on the model clock.
+
+    Each P-32 row carries the hour's most-binding POSITIVE (import) limit; a
+    line on outage posts 0. Source hours are placed by their OWN local
+    (month, day, hour) on the model's fixed non-leap clock — Feb 29 dropped,
+    the same convention as every outage window (``outages._hour_of_year``).
+    The DST fall-back hour repeats one local label: the lower (more binding)
+    posting is kept. The spring-forward hour has no posting: it carries the
+    previous hour's (a posting persists until replaced).
+
+    Args:
+        frame: The ``nyiso-interface-flows`` clean partition for one year.
+        ties: The P-32 interface rows to sum.
+        hours: Dispatch horizon (length of the returned array).
+
+    Returns:
+        ``(hours,)`` summed posted import limit in MW, non-negative.
+
+    Raises:
+        ValueError: A tie is absent from ``frame``, or no hour carries a
+            posting (the mechanism never silently no-ops).
+    """
+    present = set(frame["interface"].unique())
+    missing = [t for t in ties if t not in present]
+    if missing:
+        raise ValueError(
+            f"posted import limit: interface(s) {missing} absent from the "
+            f"{DATATYPE!r} partition (the mechanism never silently no-ops)"
+        )
+    sel = frame[frame["interface"].isin(ties)]
+    ts = pd.to_datetime(sel["interval_start_local"]).dt.floor("h")
+    keep = ~((ts.dt.month == 2) & (ts.dt.day == 29))
+    sel, ts = sel.loc[keep], ts.loc[keep]
+    lim = (
+        pd.DataFrame(
+            {
+                "_mo": ts.dt.month.to_numpy(),
+                "_dy": ts.dt.day.to_numpy(),
+                "_hr": ts.dt.hour.to_numpy(),
+                "interface": sel["interface"].to_numpy(),
+                "lim": sel["positive_limit_mw"].to_numpy(dtype=float),
+            }
+        )
+        .groupby(["_mo", "_dy", "_hr", "interface"])["lim"]
+        .min()
+        .unstack("interface")
+    )
+    cal = pd.date_range("2023-01-01", periods=hours, freq="h")
+    clock = pd.MultiIndex.from_arrays(
+        [cal.month, cal.day, cal.hour], names=["_mo", "_dy", "_hr"]
+    )
+    lim = lim.reindex(clock)[list(ties)].ffill().bfill()
+    if lim.isna().all().any():
+        raise ValueError(
+            "posted import limit: a tie carries no posted limit in any hour "
+            "(the mechanism never silently no-ops)"
+        )
+    return np.clip(lim.sum(axis=1).to_numpy(dtype=float), 0.0, None)
+
+
+def nyiso_li_posted_limit_cap(
+    ttc_hourly: np.ndarray,
+    iso_config,
+    year: int,
+    hours: int,
+    frame: pd.DataFrame | None = None,
+) -> np.ndarray:
+    """Clip the Long Island IMPORT bound at the ties' summed posted limits.
+
+    ``ScenarioConfig.nyiso_li_seam_posted_limit_cap`` (NYISO-NEXT-6). The p90
+    envelope — whether built here or by the superseding PAR attribution, which
+    give byte-identical Long_Island caps — pools each (month x hour) bin's
+    outage days with its in-service days, so in an hour when a tie posts 0 the
+    envelope still assumes it is in service. This clip is
+    ``cap_h = min(envelope_h, sum of posted import limits_h)`` on the
+    ``NYISO_external>Long_Island`` forward (import) column only.
+
+    A clip INSIDE the one armed seam mechanism (rule 19 ``[R-ONE-MECH]``): it
+    never raises a cap and never touches another link or the export bound.
+    Admissibility (rule 13 ``[R-MEASURED]``): a published physical availability
+    state on the same P-32 file the envelope reads — the object class of an
+    outage window — so it is backcast/calibration only; in a forecast year the
+    envelope stands unchanged. Zero free parameters (rules 21/24): the posted
+    limit is read as published.
+
+    Evidence and footprint: ``docs/PRECOMMIT-nyiso-next5-li-tie-posted-limit-
+    2026-09-27.md`` §4 (``scripts/probes/nyisonext5_li_tie_gap.py``).
+
+    Args:
+        ttc_hourly: ``(hours, n_links)`` forward (import) cap AFTER the seam
+            envelope has been applied.
+        iso_config: The NYISO ``ISOConfig`` after ``apply_interchange_topology``.
+        year: Backcast year whose clean partition is read.
+        hours: Dispatch horizon.
+        frame: Optional pre-read clean partition (tests); read when ``None``.
+
+    Returns:
+        A copy of ``ttc_hourly`` with the Long_Island column clipped.
+
+    Raises:
+        FileNotFoundError: No clean partition for ``year``, or no border link
+            lands in Long_Island (the mechanism never silently no-ops).
+    """
+    if frame is None:
+        try:
+            from scripts.lib.clean_io import read_clean
+
+            frame = read_clean(DATATYPE, iso="NYISO", year=year, validate=False)
+        except Exception as exc:  # noqa: BLE001 — re-raised as the gated error
+            raise FileNotFoundError(
+                f"nyiso_li_seam_posted_limit_cap {year}: could not read the "
+                f"{DATATYPE!r} clean partition ({exc}) — run "
+                "scripts/regenerate_clean.py nyiso-interface-flows"
+            ) from exc
+    if frame is None or frame.empty:
+        raise FileNotFoundError(
+            f"nyiso_li_seam_posted_limit_cap {year}: empty {DATATYPE!r} partition"
+        )
+    # Select the BORDER link explicitly by its origin: a to_zone lookup alone
+    # would also match the internal NYC>Long_Island link (and its one-way loss
+    # pair), whose bound this clip must never touch.
+    border = [
+        i
+        for i, link in enumerate(iso_config.links)
+        if link.from_zone == NYISO_EXTERNAL_NODE and link.to_zone == "Long_Island"
+    ]
+    if len(border) != 1:
+        raise FileNotFoundError(
+            f"nyiso_li_seam_posted_limit_cap {year}: expected one "
+            f"{NYISO_EXTERNAL_NODE}>Long_Island link, found {len(border)} "
+            "(has apply_interchange_topology run?)"
+        )
+    i = border[0]
+    posted = posted_import_limit_hourly(frame, NYISO_LI_POSTED_LIMIT_TIES, hours)
+    out = np.array(ttc_hourly, dtype=float, copy=True)
+    before = out[:, i].copy()
+    out[:, i] = np.minimum(before, posted)
+    cut = before - out[:, i]
+    logger.info(
+        "nyiso_li_seam_posted_limit_cap %d: Long_Island import cap falls in %d "
+        "hours, %.3f TWh removed (mean %.1f MW in cut hours)",
+        year,
+        int((cut > 0).sum()),
+        float(cut.sum()) / 1e6,
+        float(cut[cut > 0].mean()) if (cut > 0).any() else 0.0,
+    )
+    return out
