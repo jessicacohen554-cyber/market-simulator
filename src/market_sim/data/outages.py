@@ -380,6 +380,7 @@ def unit_outage_csv_for_iso(
     membership_repair: bool = False,
     unit_fuel_routing: bool = False,
     netload_mask_repair: bool = False,
+    full_rederive: bool = False,
 ) -> Path:
     """Return the CAMPD unit-outage CSV path for an ISO.
 
@@ -481,6 +482,14 @@ def unit_outage_csv_for_iso(
     ``membership_repair`` (it is a companion OF that file); zero free
     parameters; falls back to ``-memberrepair-`` when not derived.
 
+    ``full_rederive`` (``ScenarioConfig.unit_outage_full_rederive``, GATED
+    default False; PJM-NEXT-5) selects the ``-rederive-unitfuel-`` companion:
+    the WHOLE standard extract re-derived at HEAD (every deriver fix on main,
+    membership union included) and then per-unit fuel routed. It REPLACES the
+    ``-memberrepair-unitfuel-`` file of the same family (rule 19), so it is
+    meaningful only with both ``membership_repair`` and ``unit_fuel_routing``;
+    falls back to ``-memberrepair-unitfuel-`` when not derived.
+
     ``netload_mask_repair`` (``ScenarioConfig.unit_outage_netload_mask_repair``,
     GATED default False; SPP-85) selects the ``-netloadmask-`` companion of the
     STANDARD extract: the SAME deriver at the committed extract's own recorded
@@ -539,6 +548,14 @@ def unit_outage_csv_for_iso(
         if alt.exists():
             return alt
     if membership_repair and not mixed_gas_routing and not per_unit_crosswalk:
+        if unit_fuel_routing and full_rederive:
+            # PJM-NEXT-5: the full HEAD re-derive of the same family. Falls
+            # through to '-memberrepair-unitfuel-' when not derived.
+            alt = base.with_name(
+                f"campd-unit-outages-rederive-unitfuel-{(iso or 'ERCOT').upper()}.csv"
+            )
+            if alt.exists():
+                return alt
         if unit_fuel_routing:
             # PJM-NEXT-3: per-unit fuel routing of the membership-repaired
             # extract. Falls through to '-memberrepair-' when not derived.
@@ -570,7 +587,10 @@ def unit_outage_csv_for_iso(
 
 
 def unit_outage_short_csv_for_iso(
-    iso: str | None, hour_grain: bool = False, netload_mask_repair: bool = False
+    iso: str | None,
+    hour_grain: bool = False,
+    netload_mask_repair: bool = False,
+    full_rederive: bool = False,
 ) -> Path:
     """Return the SHORT (< 5-day) unit-outage CSV path for an ISO.
 
@@ -589,6 +609,11 @@ def unit_outage_short_csv_for_iso(
     ``netload_mask_repair`` (``ScenarioConfig.unit_outage_netload_mask_repair``,
     SPP-85) selects the non-ERCOT ``-short-netloadmask-`` companion (see
     :func:`unit_outage_csv_for_iso`), falling back to the incumbent when absent.
+
+    ``full_rederive`` (``ScenarioConfig.unit_outage_full_rederive``, PJM-NEXT-5)
+    selects the non-ERCOT ``-short-rederive-`` companion — the short-coal
+    extract re-derived at HEAD with the same fixes as the standard companion —
+    falling back to the incumbent when absent.
     """
     if iso is None or iso.upper() == "ERCOT":
         if hour_grain:
@@ -596,6 +621,12 @@ def unit_outage_short_csv_for_iso(
             if alt.exists():
                 return alt
         return UNIT_OUTAGE_CSV.with_name("campd-unit-outages-short.csv")
+    if full_rederive:
+        alt = UNIT_OUTAGE_CSV.with_name(
+            f"campd-unit-outages-short-rederive-{iso.upper()}.csv"
+        )
+        if alt.exists():
+            return alt
     if netload_mask_repair:
         alt = UNIT_OUTAGE_CSV.with_name(
             f"campd-unit-outages-short-netloadmask-{iso.upper()}.csv"
@@ -1426,6 +1457,7 @@ def unit_outage_derate_factors(
     dark_unit_years: bool = False,
     membership_repair: bool = False,
     unit_fuel_routing: bool = False,
+    full_rederive: bool = False,
     mid_vintage_exit_carry: bool = False,
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
     precod_clip: bool = False,
@@ -1466,6 +1498,7 @@ def unit_outage_derate_factors(
         membership_repair=membership_repair,
         unit_fuel_routing=unit_fuel_routing,
         netload_mask_repair=netload_mask_repair,
+        full_rederive=full_rederive,
     )
     if netload_mask_repair and csv_path.name.startswith(
         "campd-unit-outages-netloadmask-"
@@ -1934,6 +1967,7 @@ def unit_outage_short_derate_factors(
     coal_scope: bool = True,
     hour_grain: bool = False,
     netload_mask_repair: bool = False,
+    full_rederive: bool = False,
     coal_extract_basis_share: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return short-window (< 5-day) unit-outage availability multipliers.
@@ -1977,7 +2011,9 @@ def unit_outage_short_derate_factors(
     iso = (iso or "ERCOT").upper()
     # ``hour_grain`` (R-ERCOT-5): ERCOT's detected-hour companions of both
     # families; every other ISO's paths ignore it.
-    csv_path = unit_outage_short_csv_for_iso(iso, hour_grain, netload_mask_repair)
+    csv_path = unit_outage_short_csv_for_iso(
+        iso, hour_grain, netload_mask_repair, full_rederive
+    )
     have_coal = coal_scope and csv_path.exists()
     gas_path = unit_outage_short_gas_csv_for_iso(iso, hour_grain) if gas_scope else None
     have_gas = gas_path is not None and gas_path.exists()

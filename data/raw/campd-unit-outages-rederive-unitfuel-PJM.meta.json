@@ -1,0 +1,61 @@
+{
+  "artifact": "campd-unit-outages-rederive-unitfuel-PJM.csv",
+  "artifact_rows": 11463,
+  "derive_invocation": {
+    "fullstop_override_cf": 0.02,
+    "fullstop_override_days": 5,
+    "high_load_pctl": 0.85,
+    "iso": "PJM",
+    "merit_order_guard": false,
+    "min_inmerit_hours": 24,
+    "min_outage_days": 5.0,
+    "mixed_gas_routing": false,
+    "no_inmerit_filter": false,
+    "partial_windows": false,
+    "per_unit_crosswalk": false,
+    "short_windows": false,
+    "years": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "deriver": "scripts/data/derive_campd_unit_outages.py",
+  "observed_years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "sidecar_schema_version": 1,
+  "windows_by_start_year": {
+    "2019": 1787,
+    "2020": 1644,
+    "2021": 1856,
+    "2022": 1617,
+    "2023": 1560,
+    "2024": 1535,
+    "2025": 1464
+  },
+  "artifact_sha256": "a77386d8facb25714edaa825b47e8f30f438b843b736d8633696f894e707ee6a",
+  "pjm_next5_construction": {
+    "session": "PJM-NEXT-5 card 3(a), 2026-09-27",
+    "deriver_invocation": "python3 scripts/data/derive_campd_unit_outages.py --iso PJM --years 2019..2025 --membership-vintage-union",
+    "deriver_fixes_on_main": [
+      "COAL-SUB artifact-token membership (miso-273)",
+      "--membership-vintage-union (PJM-NEXT-2)",
+      "unit-scoped ST_GAS_PEAKER_PLANTS skip (PJM-NEXT-5)"
+    ],
+    "span_rows": "2019-2025 from the HEAD re-derive; rows starting outside 2019-2025 carried verbatim from the incumbent family file (2018 raw CAMPD is not in the repo)",
+    "post_step": "then scripts/data/build_outage_unit_fuel_routing.build_companion",
+    "selected_by": "ScenarioConfig.unit_outage_full_rederive (with unit_outage_membership_repair + unit_outage_unit_fuel_routing for the standard file)",
+    "record": "docs/PRECOMMIT-pjm-next-5-card3a-f2-rederive-2026-09-27.md"
+  }
+}

@@ -470,6 +470,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # (GATED default-off; selects '-memberrepair-unitfuel-' through the same
     # resolver, so the off path is byte-inert). Same commit as the field.
     "unit_outage_unit_fuel_routing",
+    # PJM-NEXT-5 card 3(a) full HEAD re-derive of the standard + short-coal
+    # CAMPD extracts (GATED default-off; selects the '-rederive-unitfuel-' and
+    # '-short-rederive-' companions through the same resolvers, so the off path
+    # is byte-inert). Same commit as the field.
+    "unit_outage_full_rederive",
     # SPP-85 net-load-mask repair of the standard / short / partial CAMPD
     # extracts (GATED default-off; selects the '-netloadmask-' companions
     # through the same resolvers, so the off path is byte-inert). Same commit
@@ -2299,6 +2304,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by PJM-NEXT-3 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_unit_fuel_routing": "False",
+    # Added by PJM-NEXT-5 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_full_rederive": "False",
     # Added by SPP-85 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_netload_mask_repair": "False",
@@ -16500,6 +16508,26 @@ class ScenarioConfig:
     # overwrite; falls back to '-memberrepair-' where not derived).
     # docs/PRECOMMIT-pjm-next-3-card2-unit-fuel-routing-2026-09-26.md.
     unit_outage_unit_fuel_routing: bool = False
+    # PJM-NEXT-5 card 3(a) (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH],
+    # rule 23 [R-FROZEN-DERIVE] — a SOURCE/DERIVER change, never a residual)
+    # FULL HEAD RE-DERIVE of the standard and short-coal CAMPD extracts. The
+    # committed standard extract is YEAR-INCONSISTENT: facilities it scans in
+    # 2023-2025 (Bergen, Hay Road, Brunot Island, Hunterstown, Ironwood) carry
+    # no 2019-2022 windows, while the HEAD deriver reproduces their 2023+
+    # windows exactly and derives 2019-2022 by the same construction. The
+    # re-derive carries every deriver fix on main — the COAL-SUB artifact-token
+    # membership fix (miso-273), --membership-vintage-union (PJM-NEXT-2), and
+    # the unit-scoped ST_GAS_PEAKER_PLANTS skip (PJM-NEXT-5: the plant-wide
+    # skip deleted Montour's pre-conversion coal windows) — and then the
+    # PJM-NEXT-3 per-unit fuel routing (build_outage_unit_fuel_routing).
+    # Armed WITH unit_outage_membership_repair + unit_outage_unit_fuel_routing
+    # (it REPLACES that family's file, rule 19), the '-rederive-unitfuel-'
+    # standard companion and the '-short-rederive-' short-coal companion are
+    # read. ZERO free parameters: the deriver's committed constants. Byte-inert
+    # off (separate files, never an overwrite; falls back to the incumbent
+    # family where not derived).
+    # docs/PRECOMMIT-pjm-next-5-card3a-f2-rederive-2026-09-27.md.
+    unit_outage_full_rederive: bool = False
     # SPP-85 (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]) NET-LOAD-MASK REPAIR
     # of the CAMPD unit-outage extracts. The deriver's revealed-availability
     # filter (scripts/lib/outage_detect.filter_revealed_outages) keys on an

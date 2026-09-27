@@ -1361,6 +1361,9 @@ def _apply_outage_overlays(
             unit_fuel_routing=bool(
                 getattr(config, "unit_outage_unit_fuel_routing", False)
             ),
+            # PJM-NEXT-5 (rule 14 [R-ACCURATE]): the full HEAD re-derive of the
+            # same family. Selects '-rederive-unitfuel-'; byte-inert while off.
+            full_rederive=bool(getattr(config, "unit_outage_full_rederive", False)),
             # miso-266: the dispatched bin's own capacity as the denominator.
             lp_bin_capacity=_lp_bins,
             # SPP-85 (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]): the standard
@@ -1541,6 +1544,9 @@ def _apply_outage_overlays(
                 netload_mask_repair=bool(
                     getattr(config, "unit_outage_netload_mask_repair", False)
                 ),
+                # PJM-NEXT-5: the '-short-rederive-' companion (same field as
+                # the >= 5-day layer, so the layers move together). Byte-inert off.
+                full_rederive=bool(getattr(config, "unit_outage_full_rederive", False)),
                 # SPP-48: the mid-vintage-year exit channel injects plants a
                 # year-matched native vintage drops from BOTH EIA sheets, so
                 # the derate DENOMINATOR must carry them or their measured

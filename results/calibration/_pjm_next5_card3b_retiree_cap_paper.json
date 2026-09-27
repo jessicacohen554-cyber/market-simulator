@@ -1,0 +1,100 @@
+{
+ "2019": {
+  "plants": 100,
+  "mw": 19191,
+  "removed_twh": 96.3,
+  "by_class": {
+   "COAL_BIT": 65.7,
+   "": 9.3,
+   "ST_GAS": 7.9,
+   "CC_REGULAR": 5.7,
+   "CT_PEAKER": 4.2,
+   "COAL_PRB": 2.3,
+   "COAL_WC": 1.1
+  }
+ },
+ "2020": {
+  "plants": 100,
+  "mw": 18066,
+  "removed_twh": 118.2,
+  "by_class": {
+   "COAL_BIT": 82.4,
+   "ST_GAS": 11.0,
+   "": 9.4,
+   "CT_PEAKER": 6.4,
+   "CC_REGULAR": 5.4,
+   "COAL_PRB": 2.6,
+   "COAL_WC": 1.1
+  }
+ },
+ "2021": {
+  "plants": 100,
+  "mw": 19191,
+  "removed_twh": 114.6,
+  "by_class": {
+   "COAL_BIT": 82.1,
+   "": 9.4,
+   "ST_GAS": 9.1,
+   "CT_PEAKER": 6.5,
+   "CC_REGULAR": 5.0,
+   "COAL_PRB": 1.5,
+   "COAL_WC": 1.1
+  }
+ },
+ "2022": {
+  "plants": 100,
+  "mw": 19191,
+  "removed_twh": 132.0,
+  "by_class": {
+   "COAL_BIT": 96.1,
+   "ST_GAS": 10.3,
+   "": 9.4,
+   "CT_PEAKER": 6.5,
+   "CC_REGULAR": 5.6,
+   "COAL_PRB": 2.9,
+   "COAL_WC": 1.1
+  }
+ },
+ "2023": {
+  "plants": 101,
+  "mw": 19371,
+  "removed_twh": 157.8,
+  "by_class": {
+   "COAL_BIT": 118.2,
+   "ST_GAS": 11.2,
+   "": 9.4,
+   "CT_PEAKER": 6.7,
+   "CC_REGULAR": 6.7,
+   "COAL_PRB": 4.5,
+   "COAL_WC": 1.1
+  }
+ },
+ "2024": {
+  "plants": 101,
+  "mw": 19371,
+  "removed_twh": 168.9,
+  "by_class": {
+   "COAL_BIT": 124.2,
+   "ST_GAS": 15.7,
+   "": 9.4,
+   "CT_PEAKER": 7.1,
+   "CC_REGULAR": 7.0,
+   "COAL_PRB": 4.5,
+   "COAL_WC": 1.1
+  }
+ },
+ "2025": {
+  "plants": 101,
+  "mw": 19371,
+  "removed_twh": 169.7,
+  "by_class": {
+   "COAL_BIT": 124.8,
+   "ST_GAS": 15.7,
+   "": 9.4,
+   "CT_PEAKER": 7.2,
+   "CC_REGULAR": 7.0,
+   "COAL_PRB": 4.5,
+   "COAL_WC": 1.1
+  }
+ }
+}
