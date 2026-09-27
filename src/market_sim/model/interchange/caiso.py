@@ -454,6 +454,7 @@ def inject_caiso_per_hub_intertie_prices(
     firm_base: bool = False,
     gap_fill_measured_gas: bool = False,
     gap_fill_measured_dam: bool = False,
+    partial_year_measured: bool = False,
 ) -> bool:
     """Price each CAISO per-hub corridor at its OWN measured intertie hub.
 
@@ -488,6 +489,12 @@ def inject_caiso_per_hub_intertie_prices(
     ``gap_fill_measured_dam`` (``ScenarioConfig.caiso_intertie_gap_fill_measured_dam``,
     R-CAISO-4) fills the gap hours the tracked OASIS DAM aggregate prints first.
 
+    ``partial_year_measured`` (``ScenarioConfig.caiso_intertie_partial_year_measured``,
+    R-CAISO-8) keeps a >25 %-gap hub (2021: 5,976 of 8,760 h printed) instead
+    of dropping it: each row is written in its hub's PRINTED hours only and
+    keeps its current (static-ladder) price in the unprinted ones — the same
+    per-hour mask the clean-depth triggers arm on.
+
     Returns ``True`` when the tie was repriced, ``False`` (byte-identical) when
     CAISO has no measured hub series for the year (e.g. 2023's OASIS gap), so the
     per-hub legs keep their static-ladder placeholder prices.
@@ -500,6 +507,7 @@ def inject_caiso_per_hub_intertie_prices(
         int(mc.shape[1]),
         gap_fill_measured_gas=gap_fill_measured_gas,
         gap_fill_measured_dam=gap_fill_measured_dam,
+        partial_year_measured=partial_year_measured,
     )
     if not prices:
         return False
@@ -541,7 +549,13 @@ def inject_caiso_per_hub_intertie_prices(
         if name.startswith(f"{_CAISO_PER_HUB_EXPORT_PREFIX}_"):
             hub_series = corridor_export_hub.get(zone)
             if hub_series is not None:
-                mc[row, :] = hub_series - eps  # export earns the hub, no CA carbon
+                if partial_year_measured:
+                    # R-CAISO-8: printed hours only; unprinted keep the ladder.
+                    mc[row, :] = np.where(
+                        np.isfinite(hub_series), hub_series - eps, mc[row, :]
+                    )
+                else:
+                    mc[row, :] = hub_series - eps  # export earns the hub
                 applied = True
         elif name in import_names:
             if firm_base and name in CAISO_FIRM_IMPORT_TRANCHES:
@@ -552,9 +566,14 @@ def inject_caiso_per_hub_intertie_prices(
                 continue  # tranche with no measured hub stays on the ladder
             _loss, wheel = CAISO_IMPORT_DELIVERY_BASIS.get(name, (0.0, 0.0))
             ef = ef_map.get(name, CARB_UNSPECIFIED_IMPORT_EF)
-            mc[row, :] = (
+            priced = (
                 hub_series + wheel + border * (ef / CARB_UNSPECIFIED_IMPORT_EF) + eps
             )
+            if partial_year_measured:
+                # R-CAISO-8: printed hours only; unprinted keep the ladder.
+                mc[row, :] = np.where(np.isfinite(hub_series), priced, mc[row, :])
+            else:
+                mc[row, :] = priced
             applied = True
     return applied
 
@@ -1659,8 +1678,23 @@ def _caiso_measured_hub_priced_tranches(config, year: int, hours: int) -> frozen
     :func:`inject_caiso_import_hub_prices` runs under ``caiso_import_hub_prices``
     off the per-hub topology. A tranche is hub-priced only when the loader
     returns a series for it, so a year with no measured series (every forecast
-    year) yields the empty set and the coupling is unchanged there. Used only by
-    ``caiso_import_gas_coupling_ladder_only`` (R-CAISO-3).
+    year) yields the empty set and the coupling is unchanged there. The key set
+    of :func:`_caiso_measured_hub_unprinted_masks`, which
+    ``caiso_import_gas_coupling_ladder_only`` (R-CAISO-3) reads.
+    """
+    return frozenset(_caiso_measured_hub_unprinted_masks(config, year, hours))
+
+
+def _caiso_measured_hub_unprinted_masks(
+    config, year: int, hours: int
+) -> dict[str, np.ndarray | None]:
+    """Map each measured-hub-priced CAISO import tranche to its UNPRINTED hours.
+
+    Same gates as :func:`_caiso_measured_hub_priced_tranches`. The value is
+    ``None`` when the tranche is hub-priced in every hour (always the case with
+    ``caiso_intertie_partial_year_measured`` off: the loader then fills a series
+    completely or drops it), else a boolean ``(hours,)`` mask of the hours it
+    keeps its ladder price (R-CAISO-8), where the gas coupling still applies.
     """
     from market_sim.data.eia_loader import measured_import_hub_prices
 
@@ -1670,7 +1704,10 @@ def _caiso_measured_hub_priced_tranches(config, year: int, hours: int) -> frozen
         getattr(config, "caiso_import_hub_prices", False)
     )
     if not ((per_hub and not reference) or legacy_hub):
-        return frozenset()
+        return {}
+    partial = per_hub and bool(
+        getattr(config, "caiso_intertie_partial_year_measured", False)
+    )
     prices = measured_import_hub_prices(
         config.iso,
         year,
@@ -1681,13 +1718,18 @@ def _caiso_measured_hub_priced_tranches(config, year: int, hours: int) -> frozen
         gap_fill_measured_dam=bool(
             getattr(config, "caiso_intertie_gap_fill_measured_dam", False)
         ),
+        partial_year_measured=partial,
     )
     if not prices:
-        return frozenset()
+        return {}
     names = set(prices)
     if per_hub and getattr(config, "caiso_perhub_firm_base", False):
         names -= set(CAISO_FIRM_IMPORT_TRANCHES)
-    return frozenset(names)
+    out: dict[str, np.ndarray | None] = {}
+    for name in names:
+        gap = ~np.isfinite(np.asarray(prices[name], dtype=float))
+        out[name] = gap if gap.any() else None
+    return out
 
 
 def inject_caiso_import_gas_coupling(
@@ -1749,9 +1791,9 @@ def inject_caiso_import_gas_coupling(
     # LMP carries the region's gas cost, and the coupling's premise (a level
     # fitted in the F923 world) does not hold for it (rule 19 [R-ONE-MECH]).
     hub_priced = (
-        _caiso_measured_hub_priced_tranches(config, year, int(mc.shape[1]))
+        _caiso_measured_hub_unprinted_masks(config, year, int(mc.shape[1]))
         if getattr(config, "caiso_import_gas_coupling_ladder_only", False)
-        else frozenset()
+        else {}
     )
     applied = False
     for row, uid in enumerate(fleet_arrays.unit_ids):
@@ -1765,7 +1807,16 @@ def inject_caiso_import_gas_coupling(
         if tranche is None:
             continue
         heat_rate = couple_hr.get(tranche)
-        if not heat_rate or tranche in hub_priced:
+        if not heat_rate:
+            continue
+        if tranche in hub_priced:
+            unprinted = hub_priced[tranche]
+            if unprinted is None:
+                continue
+            # R-CAISO-8: a partial-year hub prices only its printed hours, so
+            # the ladder (and its coupling) survives in the unprinted ones.
+            mc[row, :] = mc[row, :] + np.where(unprinted, delta_h * heat_rate, 0.0)
+            applied = True
             continue
         mc[row, :] = mc[row, :] + delta_h * heat_rate
         applied = True

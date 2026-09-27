@@ -48,11 +48,13 @@ CLASS_DEFAULTS = {"mr": 1.10, "mc": 1.15, "econ": 1.00, "peak": 1.10}
 MEASURED_PEAK = ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO["CAISO"]
 MEASURED_COMMITTED = ST_GAS_COMMITTED_MEASURED_HR_MULT_BY_ISO["CAISO"]
 
+#: The CAISO ST_GAS class band = the committed artifact's CT_PEAKER bucket
+#: (re-frozen by df277e89; R-CAISO-8 re-synced the registry to it).
 ST_GAS_BANDS = {
     "committed": 0.81,
-    "econ_low": 1.145,
-    "econ_high": 1.166,
-    "peak": 1.166,
+    "econ_low": 1.103,
+    "econ_high": 1.146,
+    "peak": 1.154,
     "econ_low_share": 0.5,
     "pct_peaking": 15.0,
 }

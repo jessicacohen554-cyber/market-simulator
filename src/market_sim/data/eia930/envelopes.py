@@ -542,6 +542,7 @@ def measured_import_hub_prices(
     hours: int,
     gap_fill_measured_gas: bool = False,
     gap_fill_measured_dam: bool = False,
+    partial_year_measured: bool = False,
 ) -> dict[str, np.ndarray] | None:
     """Return each CAISO import tranche's measured hourly neighbor-hub price.
 
@@ -579,6 +580,13 @@ def measured_import_hub_prices(
     tracked OASIS DAM aggregate still PRINTS (:func:`_intertie_gap_fill_dam` —
     1,488 of the 2,040 2023 gap hours); only the hours no print covers reach
     the formula fill above.
+
+    ``partial_year_measured`` (``ScenarioConfig.caiso_intertie_partial_year_measured``,
+    R-CAISO-8, default off = byte-identical) keeps a hub whose gap exceeds the
+    25 % bound instead of dropping it: the series is returned with its
+    unprinted hours left NaN (no formula fill), so the caller prices the
+    printed hours at the measured hub and leaves the NaN hours on the ladder.
+    A hub at or under the bound takes the existing fill path unchanged.
 
     Returns ``{tranche_name: (hours,) $/MWh}`` for every tranche whose hub has a
     measured series, or ``None`` when the ISO is not CAISO, the parquet is
@@ -621,6 +629,14 @@ def measured_import_hub_prices(
             # the filled hours are the same hours absent from the actual-LMP
             # benchmark, so C3 price scoring never reads the filled values.
             if gap.mean() > 0.25:
+                if not partial_year_measured:
+                    continue
+                # R-CAISO-8: a mostly-unprinted year keeps its printed hours;
+                # the NaN hours stay NaN and the injector leaves them on the
+                # ladder, per hour (never a formula fill over >25 % of a year).
+                for tranche, mapped_hub in _CAISO_IMPORT_TRANCHE_HUB.items():
+                    if mapped_hub == hub:
+                        out[tranche] = price
                 continue
             from market_sim.config.interchange_config import (
                 CAISO_PER_HUB_NEIGHBORS,
