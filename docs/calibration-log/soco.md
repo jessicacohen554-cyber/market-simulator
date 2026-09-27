@@ -1703,3 +1703,14 @@ construction scoped to coal by parameters, greedies to 2019 COAL_BIT +0.13 TWh (
 floors Barry 3,203/6,622 h in 2024/2025 while CEMS-off: REFUSED. The coal-sync family (U) is all-coal and floors
 offline hours: not admissible as a lever. (ii) cost-based start (admissible under the same-day owner ruling): the cyclers' _committed tranches carry a flat $100/MWh (no-P0-run months amortized over 1 h); full re-amortization over CEMS campaigns greedies to 2019 COAL_BIT +0.19 TWh, 2020 C4 0.303, 2021 C4 0.208 -> 0.226; not built. THE OBJECT: in H2 2020 every coal econ tranche but Miller is offered $33-49 vs a $26.40 median price and clears in 0-0.4 % of hours while the real fleet ran above must-run; next = the take-or-pay/contract family (U), identification first. Record:
 docs/handoffs/r-soco/FINDING-soco-73-2026-09-27.md.
+
+## soco-74 — 2026-09-27
+
+NO LEVER; NO SOLVE; KEEPER UNCHANGED (2026-09-26-soco72-gas-basis-window). Task: identify the take-or-pay / contract
+family (`coal_takeorpay_committed` row) from SOCO's own EIA-923 Page 5. NOT IDENTIFIABLE: Purchase Type C/NC is a
+price term with no quantity obligation; SOCO's contracted deliveries fell 28.87 -> 19.76 Mt (-32 %) 2019->2020 in step
+with burn (29.51 -> 20.70 Mt; contract/burn 0.74-1.04 except Barry 1.15), so contracted coal was avoided in the
+C4-failing year; contract and spot prices match where both exist. The family also acts only on `_mustrun` / `_committed`,
+never the `_econ` tranches soco-73 named as the object. Matrix cell U -> G. Next candidate (unscoped): coal econ
+tranches priced at average rather than incremental heat rate (no registered field). Record:
+docs/handoffs/r-soco/FINDING-soco-74-2026-09-27.md.
