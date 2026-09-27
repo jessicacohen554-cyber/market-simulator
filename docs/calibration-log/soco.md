@@ -1745,3 +1745,15 @@ everything else byte-identical; unserved 0. CT_PEAKER -1.03/-0.49/-0.05/-0.18/-0
 up. 2019 COAL_BIT -4.24 -> -4.16pp FAIL; 2020 C4 coal 0.3045 -> 0.3012 FAIL; D-1 2019 COAL_BIT r 0.591 -> 0.737. Dahlberg flips
 from 1.7 TWh over-run to ~0 (actual 0.49): CT plant split is cost-only. Grade 5/3/2, NOT-YET. Records:
 docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-76-2026-09-27.md. Leftover refs: claude/soco76-2019..2025.
+
+## soco-77 — 2026-09-27
+
+NO LEVER BUILT; NO SOLVE; KEEPER UNCHANGED (2026-09-27-soco76-egrid-identity-hr). No owner ruling on soco-75's two-sided coal
+mode, so TASK 1 (zero LP, soco76 legs) ran: the CT fleet's plant split as a cost-based start. Every CT econ*/peak tranche carries
+$0 start; only the _committed anchor carries the NREL $20/MW (core P1 markup). Greedy of tranche_startup_amortization's own scope
+at NREL: 2019 CT_PEAKER +2.29 -> +0.31 pp, 2020 C4 coal 0.301 -> 0.236 (FAIL -> PASS), 2019 COAL_BIT -4.16 -> -3.52 pp (FAIL);
+at the measured fuel-only $3.6/MW about a third of that. It does NOT fix the plant split: the over-runners (Tenaska 55061 2.72 vs
+0.13 TWh) start 10-21x/unit-yr on CEMS and the under-runners (McIntosh 7813, 7829) 120-190x - a ranking inversion, not a cost.
+Owner question: arm the field for SOCO as the objective start (in this LP it is also the price dual)? Lane recommends not on
+these grounds; next object = identification of why SOCO's cheapest CTs rarely start. Record:
+docs/handoffs/r-soco/FINDING-soco-77-2026-09-27.md.
