@@ -541,3 +541,45 @@ Run `2026-09-26-nwppnext5-standby`: NOT-YET on {fuelmix, dispatch_corr}, unchang
 **Promoted 2026-09-26 (owner standing structure ruling, rule 14):** keeper #12; keeper #11 pruned (rule 35), audit
 PASS.
 Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext5-standby-admission-2019-2025-2026-09-26.md`.
+
+## nwpp-next-6 — 2026-09-26 — WECC Path 76 link + SB-population CT heat-rate re-derive → KEEPER #13
+
+**Two owner rulings, this session.** (1) Rule 23: re-derive `campd_ct_heat_rates_NWPP.csv` with
+`admit_standby_units` armed in the fleet union. Zero LP: 86 rows byte-identical, 16 added (Fredonia 607 9.0 floor →
+10.413; Sun Peak 54854 13.436 → 12.893). (2) Path 76 "Alturas" (300/300 MW) booked **NW↔SNV**, not OR↔SNV: EIA-930
+books the NEVP seam against BPAT (−246…+182 MW) and NEVP has no PACW leg, even though HIFLD shows the Hilltop 230 kV
+side as PacifiCorp-owned. New default-off, NWPP-only field `nwpp_path76_alturas_link`, wired at both entry points, with
+a matrix row and a cell in every shard. The README §1.3 "not adjacent" claim is corrected.
+
+Two chained arms, 14 year-isolated shards (A at `e29efd5f`, AB at `0a84941d`), parent zero LP.
+- **Arm A** (Path 76 only): zero flips. Unserved 15.4/118.8/73.8/37.8/9.0/27.1/2.6 → 4.5/46.6/34.0/7.5/1.5/13.6/1.2 GWh.
+- **Arm AB** (+ re-derive): the same unserved figures. Fredonia 2024 1,610 → 670 GWh (EIA-923 554). ONE flip,
+  C1 CC_REGULAR 2024 +7.67 → +8.30 TWh (band 8.00; A +0.27, re-derive +0.36): CT energy moving onto an already-long CC
+  class. Routed as lever 4.
+- Path 76 runs at its rating 83–91 % of hours in both directions, against a measured net flow of 20–28 MW. Stated
+  before the solve; not re-rated.
+
+Run `2026-09-26-nwppnext6-path76-ctrederive`: NOT-YET on {fuelmix, dispatch_corr}, unchanged.
+
+**Promoted 2026-09-26 (owner standing structure ruling, rule 14):** keeper #13. Keeper #12 and arm A were pruned
+(rule 35), audit PASS.
+Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext6-path76-and-ct-rederive-2019-2025-2026-09-26.md`.
+
+## nwpp-next-7 — 2026-09-26 — lever 1 diagnosis: C1 CC_REGULAR long is coal short (zero LP, no solve)
+
+Zero LP on keeper #13's committed payload, benchmark and the NWPP-NEXT-5 contract census
+(`scripts/probes/_nwppnext7_cc_long_census.py`).
+- The C1 CC_REGULAR residual mirrors the coal-family residual every year: **r = −0.974** over 2019–2025. The
+  all-fossil total is within +2.4 TWh and hydro within ±3 TWh.
+- CC is long at SNV/EAST plants in low-gas years. The coal it displaces is Centralia (≈0 in the model Mar–Nov) and
+  Colstrip, both 100 % contract with no filed price, plus Utah BIT in 2024–25.
+- It does not track hydro years. CC heat-rate coverage is 22/23 plants (Clark missing, and it runs short), so no
+  rule-23 re-derive is indicated.
+- The open NWPP-NEXT-5 coal take floor would bind 3.8/5.4/7.2/4.0 TWh (A) or 10.2/21.4/9.4/6.6 TWh (B) in
+  2019/2020/2024/2025. At a 1:1 bound, A brings every CC year inside ±8 and B over-corrects 2020 to −11.4.
+  Neither result may select the estimator (rule 1).
+- Lever 1 therefore reduces to owner questions Q1–Q5. Nothing was solved, promoted or pruned; keeper #13 stands.
+- Secondary: PGE Beaver 8073 has no CEMS, so it has no benchmark plant row and no measured CC rate (model 2.41 vs
+  0.37 TWh in 2020). The benchmark's per-plant CC sum and its classFull disagree by −2.2 to +4.6 TWh.
+
+Record: `docs/handoffs/FINDING-nwppnext7-cc-long-is-coal-short-2026-09-26.md`.

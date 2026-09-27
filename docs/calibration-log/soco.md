@@ -1682,3 +1682,11 @@ FAIL; NEW C4 FAIL 2020 coal NRMSE 0.276 -> 0.304; D-1 FAILs 3 -> 4. Grade 5/4/1 
 COAL_BIT is coal COMMITMENT (the cyclers ran multi-day campaigns through hours priced below their own cost), not an
 input error. Records: docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-72-2026-09-26.md. Leftover refs: claude/soco72-2019..2025,
 claude/soco71-2019..2025, claude/soco71b-2020, claude/soco71b-2024, claude/soco70-2019..2025.
+
+## owner ruling 2026-09-27 — SOCO-64/65 cost-based start: ALLOWED
+
+Asked in session soco-72. The owner ruled **"Allow cost-based start"**: the market-PRICING use of `tranche_startup_amortization`
+(the Order-825 fast-start bid markup) stays refused (`G`) on SOCO's no-market footprint, but a measured, cost-based start
+cost carried in the dispatch objective is admissible. The keeper's live P1 `_committed` start markup is consistent with
+this reading; lane soco-73 may use a cost-based start (e.g. a measured CEMS run horizon for the no-must-run coal cyclers,
+ceiling ~+0.4 TWh on 2019 COAL_BIT) as a lever, under rules 13/17/19/21. Matrix cell annotated, verdict letter unchanged.
