@@ -1690,3 +1690,16 @@ Asked in session soco-72. The owner ruled **"Allow cost-based start"**: the mark
 cost carried in the dispatch objective is admissible. The keeper's live P1 `_committed` start markup is consistent with
 this reading; lane soco-73 may use a cost-based start (e.g. a measured CEMS run horizon for the no-must-run coal cyclers,
 ceiling ~+0.4 TWh on 2019 COAL_BIT) as a lever, under rules 13/17/19/21. Matrix cell annotated, verdict letter unchanged.
+
+## soco-73 — 2026-09-27
+
+NO ADMISSIBLE LEVER; NO SOLVE; KEEPER UNCHANGED (2026-09-26-soco72-gas-basis-window). G-DRIFT vs 19159a0c: all LP
+inputs bit-identical; code drift on main (NWPP Path 76, NEISO conduct roster, NYISO merit-guard `_mg`) INERT for SOCO.
+Conduct (zero LP, soco72 legs fetched by full SHA): the model does not START the no-must-run cyclers (Barry on 267 of
+8,312 CEMS-synced h in 2019; offer > price in 96 % of synced hours), while the same plants over-run in 2021 (Wansley
++5.0 TWh) and 2022 (Barry +2.0). 2020 C4 coal is a fleet-wide Jul-Dec level deficit (-926 MW mean, 78 % of SSE Jul-Dec;
+62 % at the measured-must-run plants' economic tranches, 24 % at the cyclers). Candidate (i), the soco-53d campaign
+construction scoped to coal by parameters, greedies to 2019 COAL_BIT +0.13 TWh (need +3.62) and C4 2020 unchanged, and
+floors Barry 3,203/6,622 h in 2024/2025 while CEMS-off: REFUSED. The coal-sync family (U) is all-coal and floors
+offline hours: not admissible as a lever. (ii) start markup: ceiling ~+0.4 TWh, still gated on SOCO-64/65. Record:
+docs/handoffs/r-soco/FINDING-soco-73-2026-09-27.md.
