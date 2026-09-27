@@ -82,6 +82,40 @@ from scripts.data.derive_campd_unit_outages import (  # noqa: E402
 # nothing) and CC_REGULAR. The baseload-CF filter below excludes cyclic units
 # where a depressed CF ceiling is economic part-load rather than an outage.
 _DETECT_GROUPS: frozenset[str] = frozenset({"COAL", "CC_REGULAR"})
+
+
+def _fuel_family(primary_fuel: str) -> str:
+    """Return the bin fuel family (``COAL`` / ``GAS``) of a CAMPD ``primaryFuelInfo``."""
+    return "COAL" if "coal" in str(primary_fuel).lower() else "GAS"
+
+
+def _cross_fuel_units(states, year: int, raw_dir: Path = RAW_DATA_DIR) -> dict:
+    """Map each plant to ``{unit_id: fuel family}`` from the unit-level CAMPD extract.
+
+    R-ERCOT-10 (rule 14 `[R-ACCURATE]`, misaligned boundary): the facility-level
+    CEMS series sums EVERY unit at a plant code, but a detection candidate's
+    bin carries one fuel family. At a mixed facility (W A Parish 3470: coal
+    WAP5-8 in the COAL bin, gas steam WAP1-4 in no bin) the facility sum puts
+    the other family's output into the plateau's normal-ceiling reference and
+    the derate is then applied to the one-family bin. Only the unit-level
+    extract carries ``primaryFuelInfo``; a state/year without it returns ``{}``
+    and the facility path stands unchanged.
+    """
+    out: dict[int, dict[str, str]] = {}
+    for st in states:
+        f = Path(raw_dir) / "campd-unit-level" / f"{st}_{year}.parquet"
+        if not f.exists():
+            continue
+        u = pd.read_parquet(f, columns=["facilityId", "unitId", "primaryFuelInfo"])
+        u = u.drop_duplicates(["facilityId", "unitId"])
+        for fac, uid, fuel in u.itertuples(index=False):
+            code = pd.to_numeric(fac, errors="coerce")
+            if pd.isna(code):
+                continue
+            out.setdefault(int(code), {})[str(uid)] = _fuel_family(fuel)
+    return out
+
+
 _BASELOAD_CF = 0.55  # only plants that normally run near their ceiling
 
 # Columns of the plant-grain extract, in emission order. The unit-attributed
@@ -461,8 +495,29 @@ def main() -> None:
             ]
             unit_df = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
         unit_index: dict[int, list] = {}
+        # R-ERCOT-10: fuel-scope a mixed facility's CEMS series to the units of
+        # its bin's own fuel family (see _cross_fuel_units). Single-family
+        # plants keep the facility series byte-for-byte.
+        fuel_of = _cross_fuel_units(campd.states_for_iso(args.iso), yr)
+        unit_level = None
         for code in candidates:
-            g = campd.plant_hourly_grid(df, code, yr)
+            fam = "COAL" if group.get(code) == "COAL" else "GAS"
+            units = fuel_of.get(code, {})
+            own = {u for u, f in units.items() if f == fam}
+            if own and len(own) < len(units):
+                if unit_level is None:
+                    unit_level = campd.load_campd_hourly(
+                        campd.states_for_iso(args.iso), [yr], prefer_unit_level=True
+                    )
+                g = campd.plant_hourly_grid(
+                    unit_level[unit_level["unit_id"].isin(own)], code, yr
+                )
+                print(
+                    f"  fuel-scoped {code} {name.get(code, code)} {yr}: "
+                    f"{sorted(own)} of {sorted(units)}"
+                )
+            else:
+                g = campd.plant_hourly_grid(df, code, yr)
             if g.empty or cap[code] <= 0:
                 continue
             cf = (g["gross_mw"].reindex(full).fillna(0.0) / cap[code]).to_numpy(
