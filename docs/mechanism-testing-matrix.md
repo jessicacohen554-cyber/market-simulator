@@ -17996,6 +17996,17 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-89 (2026-09-27, THE 2021–22 COAL/CC SWAP, ZERO LP —
+`docs/handoffs/FINDING-spp-89-coal-cc-swap-2026-09-27.md`, probes `scripts/probes/_spp89_{stack_dump,coal_cc_swap}.py`).**
+- **The gas fuel input is not the object.** CC offer fuel tracks Henry Hub; its premium over Panhandle Eastern is
+  ~$0.6–0.8 in 2022, 2023 and 2024 alike. A uniform −$1/MMBtu gas-offer sensitivity moves 2022 CC only +0.68 TWh
+  and pulls 24–34 TWh off coal in 2019/2023/2024. **Any gas-price-level lever is dead.**
+- **The swap is two known objects:** 2021 (~82 %) and ~60 % of 2022 sit in actual-LMP < $30 hours (SPP-75/77 DA
+  commitment, model-class); ~40 % of 2022 sits in ≥ $30 hours, where the keeper loads coal at 0.96 of available vs
+  SPP's flat 0.83–0.92 (gross) — the 2022 coal markup (SPP-44, procurement-blocked).
+- **New measurement, not a lever:** real coal in-the-money loading is price-invariant; the keeper's is gas-driven.
+  A successor needs a measured, forward-reproducible unit-conduct driver on the coal-outage family (SPP-84/85/86).
+
 **DO-NOT-REDO, added by SPP-88 Card D (2026-09-27, EIA-930 vs EIA-923 GAS GAP, ZERO LP —
 `docs/handoffs/FINDING-spp-88-gas-930-923-gap-2026-09-27.md`, probe `scripts/probes/_spp88_gas_930_923_gap.py`).**
 - **2023–25:** the scorer's gas bench − EIA-930 gap (2.4–3.4 TWh) is entirely the fossil reconcile scale. Raw EIA-923 agrees
