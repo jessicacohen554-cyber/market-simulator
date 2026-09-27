@@ -1757,3 +1757,17 @@ at the measured fuel-only $3.6/MW about a third of that. It does NOT fix the pla
 Owner question: arm the field for SOCO as the objective start (in this LP it is also the price dual)? Lane recommends not on
 these grounds; next object = identification of why SOCO's cheapest CTs rarely start. Record:
 docs/handoffs/r-soco/FINDING-soco-77-2026-09-27.md.
+
+## soco-78 — 2026-09-27
+
+NO LEVER BUILT; NO SOLVE; KEEPER UNCHANGED (2026-09-27-soco76-egrid-identity-hr). No owner ruling on soco-75 or soco-77, so the
+zero-LP identification ran on the soco76 legs. The CT "ranking inversion" is a within-class merit order: log(model/923) vs CEMS heat
+rate Spearman -0.60, so the cheapest CTs (7FA-class, mostly IPP-sector) absorb the class's over-run. The class object is PRICE
+ELASTICITY: actual CT output is 3.3-4.7 TWh/yr (2022: 7.05) whatever the gas price, while the model swings 2.4 -> 11.5 TWh (2.0-2.6x
+actual when fuel <= $3.3; under in 2021-22). IPP CTs 2019 4.90 vs 0.71 TWh, with 59-70 % of real energy in top-decile load hours vs
+32-39 % modelled; OPC CTs match in low-gas years and under-run 3-4x in 2021-22, so no ownership partition is right every year. Heat
+rate, fuel, oil share and outage windows do not discriminate; IPP delivered gas and contract terms are unmeasured (EIA-923 Page 5
+withholds), so a sector carrier would need a fitted number: refused. McDonough 710 census: the family mechanism never touches it
+(APPLIED_VINTAGE=2023, no live GT family there); the scoped out_of_window fall-back is inert for SOCO and moves NYISO (Northport); the
+real seam is the 2023-pinned family artifact vs the year-matched join (shared code, three ISOs), not built. Owner questions carried
+(soco-75, soco-77) plus a scoping question on the family vintage. Record: docs/handoffs/r-soco/FINDING-soco-78-2026-09-27.md.
