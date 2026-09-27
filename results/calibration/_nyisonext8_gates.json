@@ -91,5 +91,34 @@
    5185
   ],
   "total_energy_delta_twh": -0.0182
+ },
+ "2023": {
+  "lw_price_delta": {
+   "Capital_Hudson": 0.044,
+   "Long_Island": 0.019,
+   "Lower_Hudson": 0.047,
+   "NYC": 0.045,
+   "NYISO_external": 0.011,
+   "Upstate_West": -0.005,
+   "system": 0.024
+  },
+  "class_twh_delta": {
+   "CC_CHP": -0.0181,
+   "CT_CHP": 0.0051,
+   "CT_PEAKER": 0.0022,
+   "ST_CHP": -0.0032,
+   "ST_GAS": 0.0143,
+   "import": 0.0044
+  },
+  "import_twh": {
+   "keeper": 23.3165,
+   "arm": 23.3209,
+   "delta": 0.0044
+  },
+  "import_mw_min_max_arm": [
+   900,
+   5275
+  ],
+  "total_energy_delta_twh": 0.0042
  }
 }

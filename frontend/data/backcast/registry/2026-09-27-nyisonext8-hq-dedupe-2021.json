@@ -1,0 +1,13 @@
+{
+  "id": "2026-09-27-nyisonext8-hq-dedupe-2021",
+  "label": "nyisonext8 hq dedupe 2021",
+  "date": "2026-09-27",
+  "shorthand": "nyisonext8-hq-dedupe-2021",
+  "definition": "NYISO-NEXT-8 arm: keeper recipe, HQ-deduped import ladder",
+  "years": [
+    2021
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-27-nyisonext8-hq-dedupe-2021.js",
+  "bundle": "results/calibration/nyisonext8_2021"
+}
