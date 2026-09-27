@@ -3694,3 +3694,4 @@ results/calibration/soco76_20[0-9][0-9]/
 # composed span / stamped 2021 are what register. Provenance SHAs: 2022 d3554b099d504456c2ce9f7096853252c5b25f4a,
 # 2023 5f5362d232e6913a612b0a8a9191bfa89db068e2 (rule 33(d): provenance only, not a recovery route).
 results/calibration/nyisonext6_202[2-5]/
+results/calibration/nyisonext6_2021/
