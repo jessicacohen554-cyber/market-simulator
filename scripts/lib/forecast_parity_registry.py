@@ -821,6 +821,21 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
     # built, which is a GAP. The parent's misclassification is routed in the
     # Y-29 FINDING, not repaired here.
     ParityDeclaration(
+        fields=("nyiso_li_seam_posted_limit_cap",),
+        disposition=GAP,
+        why="NYISO-NEXT-6 Long Island seam posted-limit sub-clip: the LI "
+        "hourly import cap = min(envelope, posted Neptune + CSC + 1385 import "
+        "limit). Armed in the NYISO keeper and consumed only in "
+        "run_calibration.run_year, so a forecast on the keeper config keeps "
+        "the envelope-only LI cap. Evidenced BACKCAST_ONLY vs wire-forward is "
+        "the NYISO desk's call with the forecast desk (owner ruling R-X)",
+        finding="docs/handoffs/FINDING-fr22-nyiso-li-posted-limit-gap-2026-09-27.md",
+        evidence=(
+            "scripts/run_calibration.py",
+            "docs/RESULT-nyiso-next6-li-posted-limit-2026-09-27.md",
+        ),
+    ),
+    ParityDeclaration(
         fields=("coal_fuel_inventory_plant_grain",),
         disposition=GAP,
         why="miso-268 per-coal-YARD annual grain of coal_fuel_inventory "
