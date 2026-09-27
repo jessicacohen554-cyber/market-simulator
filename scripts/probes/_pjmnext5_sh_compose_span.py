@@ -54,7 +54,7 @@ MUST_BE_TRUE = (
     "nuclear_dormancy_defers_to_vintage_exit",
     "unit_outage_unit_fuel_routing",
     "pjm_offer_midcurve_conditional",
-) + ARM_FLAGS
+)
 
 
 def _drop_bare_coal(d: "dict | None") -> dict:
@@ -107,6 +107,8 @@ def check_recipes(legs: dict[str, list[int]]) -> None:
                 f"ABORT: {name} differs from keeper {year} in {sorted(diff)}"
             )
         off = [x for x in MUST_BE_TRUE if a.get(x) is not True]
+        if list(a.get("pjm_offer_midcurve_shape_segments") or []) != ["CC_LIKE"]:
+            off.append("pjm_offer_midcurve_shape_segments != ['CC_LIKE']")
         if off:
             raise SystemExit(f"ABORT: {name} has {off} not True")
         ocf = cfg["calibration_flags"].get("offer_curve_overrides")
