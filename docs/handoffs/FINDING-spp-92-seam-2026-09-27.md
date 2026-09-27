@@ -3,7 +3,7 @@
 **Lane** SPP-92 · **ZERO LP** · keeper `2026-09-26-spp-86-coal-extract` (bundle `spp86_arm_span`, basis_sha `d72e5f10`) ·
 probes `scripts/probes/_spp92_seam_probe.py`, `_spp92_load_lmp_fetch.py`, `_spp92_bubble_spread.py`, `_spp92_psi_repair.py` ·
 records `docs/handoffs/spp92/` (`_spp92_seam_probe.json`, `_spp92_bubble_spread.json`, `psi_repair.json`, `tstar_*.csv`,
-`PREDECLARE-psi-repair.md` committed at `0ed7de45` **before** the ψ re-run was computed).
+`PREDECLARE-psi-repair.md` committed at `48711d25` **before** the ψ re-run was computed).
 Nothing solved, registered or promoted. Keeper unchanged. No promotion question (rule 31).
 
 ## 0. Bottom line
@@ -82,7 +82,7 @@ Readings:
 
 ## 3. (a) Is the 3,400 MW rating too wide? The repaired construction says no
 
-SPP-53 named its own misalignment (iii): ψ was fitted on the hub pair, not the bubble pair. It also read the RTBM `Interval` stamp on local time, which is 1 h off the CST model clock in DST months. The re-run changes only those two things (`_spp92_psi_repair.py`; the rule was pre-declared at `0ed7de45`). Otherwise it uses SPP-53's spec and L_f tables verbatim.
+SPP-53 named its own misalignment (iii): ψ was fitted on the hub pair, not the bubble pair. It also read the RTBM `Interval` stamp on local time, which is 1 h off the CST model clock in DST months. The re-run changes only those two things (`_spp92_psi_repair.py`; the rule was pre-declared at `48711d25`). Otherwise it uses SPP-53's spec and L_f tables verbatim.
 
 | cell | R² | identified N→S | TTC (weighted-median T*) | p25 / p75 |
 |---|---:|---:|---:|---|

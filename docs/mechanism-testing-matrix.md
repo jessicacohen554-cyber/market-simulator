@@ -18004,7 +18004,7 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
 `docs/handoffs/FINDING-spp-92-seam-2026-09-27.md`, probes `scripts/probes/_spp92_{seam_probe,load_lmp_fetch,bubble_spread,psi_repair}.py`).**
 - **Not the pipe width.** SPP-53's own ψ construction, repaired to the model's object (the load-weighted BUBBLE spread from all
   112 RTBM load settlement locations, on the GMT-derived model clock), gives **4,100 MW, WIDER** than 3,400. All four cells
-  (2,600 / 2,900 / 3,600 / 4,100) sit inside SPP-53's stated width, so by the pre-declared rule (`0ed7de45`) there is no change.
+  (2,600 / 2,900 / 3,600 / 4,100) sit inside SPP-53's stated width, so by the pre-declared rule (`48711d25`) there is no change.
   Every cell's median is the Franklin 161/69 kV transformer (100 MW / ψ). SPP-53's own cell does NOT reproduce from committed
   inputs (2,600 at R² 0.37 vs 3,355 at 0.17). Do not tighten the link to close the spread (rule 14).
 - **The cause is bubble contents.** The actual price divide runs West-cheap (SECI, NPPD, LES, WAUE, SPS) / East-dear (SPRM, EDE,
