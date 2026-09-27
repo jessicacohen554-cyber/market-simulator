@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-27-r-8-fusco",
+  "label": "r 8 fusco",
+  "date": "2026-09-27",
+  "shorthand": "r-8-fusco",
+  "definition": "R-ERCOT-8 ARM 2025: keeper 2026-09-25-r-5-hour-grain recipe, UNCHANGED flags, on the R-ERCOT-8 input corrections (Jack Fusco 55357 joins the ERCOT fleet + DAM crosswalk + membership; Hidalgo to South) \u2014 PRECOMMIT-r-ercot-8-fusco-fleet-coverage-2026-09-27",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-09-27-r-8-fusco.js",
+  "bundle": "results/calibration/r_ercot8_fusco_span"
+}

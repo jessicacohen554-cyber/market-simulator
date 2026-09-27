@@ -14787,3 +14787,23 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - Decker Creek steam is validation-years only. Hidalgo needs a zone move to South. AVR's default is already right.
 - **Step 4:** the non-ERCOT deriver `plant_group` break is already fixed on `main` (miso-273). `_APPLIED_MEASURED_FLAGS` stays inert for ERCOT (0 `eia923_identity` rows).
 - **Records:** `docs/handoffs/FINDING-r-ercot-7-per-unit-composition-2026-09-26.md`.
+
+## R-ERCOT-8 — 2026-09-27 — Jack Fusco (55357) added to the fleet; PROMOTED `2026-09-27-r-8-fusco` (owner: "Promote + fix 2023 next"); ISO → NOT-YET
+
+- **Input corrections (rule 14, PR #6772):**
+  - Jack Fusco / Brazos Valley (675.6 MW CC, Houston; DAM `BVE_CC1`) added to the bin sheet, with its measured heat rate (7.32 net) and CAMPD outage windows.
+  - `BVE_CC1` crosswalk → 55357.
+  - ERCOT membership admits accepted DAM-crosswalk plants (rule 19).
+  - Hidalgo → South.
+  - The `derive_campd_unit_outages.py` ERCOT `NameError` is fixed.
+- **Solve:** 7 shards at `5696a72c`, G-DRIFT all inert, composed; overrides byte-equal to the keeper's.
+- **Train tier:**
+  - 2023 CALIBRATED → **NOT-YET** (C3a −7.5 → −19.8 %, C3b 0.133 → 0.290). 22 of 59 hours above $1k were formed by the missing 676 MW.
+  - 2024/2025 stay CALIBRATED (C3a −8.2 / −8.7 %).
+- **Validation:** 2019 C3a +59.8 → +26.0 %; 2020 C3a → PASS; 2022 C1 CC −10.88 → −10.05 TWh.
+- **Promoted on owner decision card:**
+  - `complete` marker withdrawn (Q5);
+  - gate (a) → fail;
+  - `2026-09-25-r-5-hour-grain` pruned.
+- **Next:** root-cause the 2023 scarcity/price formation that the missing plant was masking.
+- **Record:** `docs/handoffs/RESULT-r-ercot-8-fusco-fleet-coverage-2026-09-27.md`.
