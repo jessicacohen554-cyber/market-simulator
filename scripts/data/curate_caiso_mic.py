@@ -130,9 +130,14 @@ BG_DISPLAY_NAME: dict[str, str] = {
 # filing's PDF renders several rows with the code glued to the scheduling
 # point (``NEWMELONP_ITCNML230``) and the scheduling point glued to the
 # direction (``RANCHOSECOImport``), so neither boundary may require
-# whitespace.
+# whitespace. The suffix itself is OPTIONAL: the 2018-2020 filings code the
+# Malin intertie as a bare ``MALIN500`` (no ``_ITC``/``_ISL``/``_BG``), and a
+# suffix-required pattern silently dropped the largest branch group (~3 GW)
+# from those three delivery years (R-CAISO-6, 2026-09-27; filing totals
+# 14,852 / 15,208 / 15,524 MW are the check). A bare code must be followed
+# by whitespace.
 _ROW = re.compile(
-    r"^(?P<code>[A-Z0-9\-]+)_(?:ITC|ISL|BG).*?Import"
+    r"^(?P<code>[A-Z0-9\-]+)(?:_(?:ITC|ISL|BG)|\s).*?Import"
     r"\s+(?P<net>-?\d+)\s+(?P<sched>-?\d+)\s+(?P<unused>-?\d+)"
     r"\s+(?P<mic>-?\d+)\s+(?P<otc>-?\d+)\s*$"
 )
