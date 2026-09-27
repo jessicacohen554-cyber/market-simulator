@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-27-nyisonext6-li-cap-span",
+  "label": "nyisonext6 li cap span",
+  "date": "2026-09-27",
+  "shorthand": "nyisonext6-li-cap-span",
+  "definition": "NYISO-NEXT-6 arm: keeper recipe + nyiso_li_seam_posted_limit_cap, year 2022",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-27-nyisonext6-li-cap-span.js",
+  "bundle": "results/calibration/nyisonext6_span"
+}

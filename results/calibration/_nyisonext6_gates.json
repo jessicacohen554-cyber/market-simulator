@@ -95,5 +95,27 @@
   "total_energy_delta_twh": 0.0089,
   "G2_pass": true,
   "G3_energy_pass": true
+ },
+ "2024": {
+  "LI_lw_price": {
+   "keeper": 40.215,
+   "arm": 40.283,
+   "delta": 0.067
+  },
+  "system_lw_price": {
+   "keeper": 37.748,
+   "arm": 37.745,
+   "delta": -0.003
+  },
+  "class_twh_delta": {
+   "CC_CHP": -0.0133,
+   "CC_REGULAR": 0.0049,
+   "CT_CHP": 0.0018,
+   "ST_GAS": 0.0164
+  },
+  "max_abs_class_delta_twh": 0.0164,
+  "total_energy_delta_twh": 0.0107,
+  "G2_pass": true,
+  "G3_energy_pass": true
  }
 }
