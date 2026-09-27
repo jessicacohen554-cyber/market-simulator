@@ -286,13 +286,19 @@ def _thermal_tranche_block(config, iso: str) -> dict[str, Any]:
     }
     try:
         from market_sim.config.paths import REPO_ROOT
-        from market_sim.data.fleet.campd_bins import thermal_tranche_csv_for_iso
+        from market_sim.data.fleet.campd_bins import (
+            _fuel_split_companion,
+            campd_fuel_split_selector,
+            thermal_tranche_csv_for_iso,
+        )
 
+        fuel_split = campd_fuel_split_selector(config)
         path = Path(
             thermal_tranche_csv_for_iso(
                 iso,
                 bool(getattr(config, "campd_per_unit_attribution", False)),
                 bool(getattr(config, "campd_outage_merit_order_guard", False)),
+                fuel_split,
             )
         )
     except Exception:  # pragma: no cover - a probe never breaks the record
@@ -307,6 +313,20 @@ def _thermal_tranche_block(config, iso: str) -> dict[str, Any]:
     if block["present"]:
         block["bytes"] = path.stat().st_size
         block["sha256"] = _sha256(path)
+    if fuel_split:
+        # miso-278: the three same-derivation companions the ST_GAS floor and
+        # the per-year windows read under campd_unit_fuel_split. Recorded ONLY
+        # when armed, so an unarmed run's record is byte-identical.
+        comp: dict[str, Any] = {}
+        for name in ("online_frac_by_year", "p25_level_mw", "oom_level_mw"):
+            base = path.parent / f"thermal_tranches_{name}_{iso.upper()}.csv"
+            alt = _fuel_split_companion(base)
+            used = alt if alt.exists() else base
+            comp[name] = {
+                "path": used.name,
+                "sha256": _sha256(used) if used.exists() else None,
+            }
+        block["fuel_split_companions"] = comp
     return block
 
 

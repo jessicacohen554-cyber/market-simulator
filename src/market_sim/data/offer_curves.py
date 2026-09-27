@@ -378,6 +378,7 @@ def _offer_curve_for_group(
     ``gas_offer_net_revenue_margin`` silently skips the whole cohort.
     """
     from market_sim.data.fleet import (
+        campd_fuel_split_selector,
         cc_intermediate_plants,
         ct_intermediate_plants,
         st_gas_intermediate_plants,
@@ -401,6 +402,7 @@ def _offer_curve_for_group(
             thr,
             bool(getattr(config, "campd_per_unit_attribution", False)),
             bool(getattr(config, "campd_outage_merit_order_guard", False)),
+            campd_fuel_split_selector(config),
         ):
             inter = curves.get("ST_GAS_INTERMEDIATE")
             if inter:
@@ -413,6 +415,7 @@ def _offer_curve_for_group(
             thr,
             bool(getattr(config, "campd_per_unit_attribution", False)),
             bool(getattr(config, "campd_outage_merit_order_guard", False)),
+            campd_fuel_split_selector(config),
         ):
             inter = curves.get("CT_INTERMEDIATE")
             if inter:
@@ -425,6 +428,7 @@ def _offer_curve_for_group(
             thr,
             bool(getattr(config, "campd_per_unit_attribution", False)),
             bool(getattr(config, "campd_outage_merit_order_guard", False)),
+            campd_fuel_split_selector(config),
         ):
             inter = curves.get("CC_INTERMEDIATE")
             if inter:
