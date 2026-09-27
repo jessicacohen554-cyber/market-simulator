@@ -4972,6 +4972,7 @@ def solve_and_persist(
     miso_import_sil_measured_envelope: bool = False,
     nyiso_seam_deliverability_envelope: bool = False,
     nyiso_seam_par_attribution: bool = False,
+    nyiso_li_seam_posted_limit_cap: bool = False,
     miso_pjm_border_anchor: bool = False,
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
@@ -6123,6 +6124,10 @@ def solve_and_persist(
             )
         if nyiso_seam_par_attribution:
             recorded_cfg = recorded_cfg.with_overrides(nyiso_seam_par_attribution=True)
+        if nyiso_li_seam_posted_limit_cap:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_li_seam_posted_limit_cap=True
+            )
         if miso_pjm_border_anchor:
             recorded_cfg = recorded_cfg.with_overrides(miso_pjm_border_anchor=True)
         if miso_cc_coal_rebalance:
@@ -6967,6 +6972,7 @@ def solve_and_persist(
             miso_import_sil_measured_envelope=miso_import_sil_measured_envelope,
             nyiso_seam_deliverability_envelope=nyiso_seam_deliverability_envelope,
             nyiso_seam_par_attribution=nyiso_seam_par_attribution,
+            nyiso_li_seam_posted_limit_cap=nyiso_li_seam_posted_limit_cap,
             miso_pjm_border_anchor=miso_pjm_border_anchor,
             miso_cc_coal_rebalance=miso_cc_coal_rebalance,
             miso_firm_import_floor=miso_firm_import_floor,
@@ -7958,6 +7964,7 @@ def solve_and_persist(
         "miso_import_sil_measured_envelope": miso_import_sil_measured_envelope,
         "nyiso_seam_deliverability_envelope": nyiso_seam_deliverability_envelope,
         "nyiso_seam_par_attribution": nyiso_seam_par_attribution,
+        "nyiso_li_seam_posted_limit_cap": nyiso_li_seam_posted_limit_cap,
         "miso_pjm_border_anchor": miso_pjm_border_anchor,
         "miso_cc_coal_rebalance": miso_cc_coal_rebalance,
         "miso_firm_import_floor": miso_firm_import_floor,
@@ -14203,6 +14210,18 @@ def main() -> None:
         "PREREG-nyiso127-addendum2-full-seam-attribution-2026-08-05.md.",
     )
     parser.add_argument(
+        "--nyiso-li-seam-posted-limit-cap",
+        action="store_true",
+        help="NYISO Long Island posted-limit sub-clip (NYISO-NEXT-6): cap the "
+        "NYISO_external>Long_Island IMPORT bound, hour by hour, at the sum of "
+        "the posted import limits of SCH - PJM_NEPTUNE, SCH - NPX_CSC and "
+        "SCH - NPX_1385 off the same MIS P-32 posting (a line on outage posts "
+        "0). A clip inside the armed seam envelope (rule 19), never raises a "
+        "cap; requires --nyiso-seam-par-attribution or "
+        "--nyiso-seam-deliverability-envelope. Backcast only, zero free "
+        "parameters, NYISO-only, default off.",
+    )
+    parser.add_argument(
         "--nyiso-iroquois-winter-spread",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -15857,6 +15876,7 @@ def main() -> None:
         miso_import_sil_measured_envelope=args.miso_import_sil_measured_envelope,
         nyiso_seam_deliverability_envelope=args.nyiso_seam_deliverability_envelope,
         nyiso_seam_par_attribution=args.nyiso_seam_par_attribution,
+        nyiso_li_seam_posted_limit_cap=args.nyiso_li_seam_posted_limit_cap,
         miso_pjm_border_anchor=args.miso_pjm_border_anchor,
         miso_cc_coal_rebalance=args.miso_cc_coal_rebalance,
         miso_firm_import_floor=args.miso_firm_import_floor,

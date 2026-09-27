@@ -148,3 +148,48 @@ regression reported at full magnitude.
 | 2023 | `session_01CUBhQjL6iuhtwUymGm1BuY` |
 | 2024 | `session_01ErmbW8Abxx8ZesFSgkhbeb` |
 | 2025 | `session_01H4onUSo8bk9UkFgqmzBXNe` |
+
+## 9. Addendum (2026-09-27, before the soft-floor solves): hard floor → soft floor
+
+**What happened on the hard floor** (pin `821069f3`). The legs are kept as a record and superseded.
+
+| Year | Result |
+|---|---|
+| 2021 | Solved |
+| 2025 | Solved |
+| 2019 | Solved after 80 min |
+| 2020 | P0 infeasible |
+| 2022 | HiGHS status Unknown |
+| 2023 | HiGHS status Unknown |
+| 2024 | HiGHS status Unknown |
+
+- Each failing year had a yard whose floor was clipped exactly to its ceiling or to its full capacity.
+- That leaves the row satisfiable only at a corner.
+
+**Owner ruling (decision card, 2026-09-27): soft floor, measured penalty.**
+- Each yard row gets a shortfall column in every hour (`layout.n_take_slack`, the RPS ACP escape pattern).
+- The column is priced at the yard's own model coal fuel price: the resolved `fuel_prices` for its rowed units,
+  year-mean and weighted by `coeff × pmax` (`coal_take_shortfall_price`).
+- Economic meaning: take-or-pay. Unburned contracted coal is paid for anyway, so the yard's coal is sunk up to the
+  take, and the row dual is capped at the fuel price.
+- Zero free parameters.
+- Recipe, config keys and hard stops 1–5, 7 and 8 are unchanged. §2's floors and clips are unchanged.
+
+**Changes for the re-solve:**
+- **New pin:** recorded below.
+- **Out-dir** `results/calibration/nwppnext7sf_<Y>`, branch `claude/nwppnext7sf-<Y>`.
+- **Hard stop 6** additionally requires the log line `coal take floor (NWPP <Y>): soft, shortfall priced per yard at`.
+- **Reported:** the per-yard shortfall paid (TWh-equivalent). A large shortfall means the take could not be burned,
+  and it is reported at full magnitude.
+
+**Soft-floor pin** `2162cef52b4c4667a2be4ca288d38ea77e19186a`. All 7 shards were launched 2026-09-27 21:53 UTC.
+
+| Year | Session |
+|---|---|
+| 2019 | `session_01RpMbF3NTo4jtemVrYVDaaj` |
+| 2020 | `session_01RvQ8aPPXhHTmUmYk1LDTyr` |
+| 2021 | `session_01NYjnfZdE4tvnfxzpJV5Ten` |
+| 2022 | `session_011KYpqSofjctkx2uzMaPkhw` |
+| 2023 | `session_01LasPAeFu6yh6DEYiMbxPhn` |
+| 2024 | `session_011iHFAWoF91PBfRy5SDL2WS` |
+| 2025 | `session_01ADFcHrE3MajP3gwYsTKAXW` |

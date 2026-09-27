@@ -998,6 +998,7 @@ def run_year(
     miso_import_sil_measured_envelope: bool = False,
     nyiso_seam_deliverability_envelope: bool = False,
     nyiso_seam_par_attribution: bool = False,
+    nyiso_li_seam_posted_limit_cap: bool = False,
     miso_pjm_border_anchor: bool = False,
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
@@ -2184,6 +2185,8 @@ def run_year(
         config = config.with_overrides(nyiso_seam_deliverability_envelope=True)
     if nyiso_seam_par_attribution:
         config = config.with_overrides(nyiso_seam_par_attribution=True)
+    if nyiso_li_seam_posted_limit_cap:
+        config = config.with_overrides(nyiso_li_seam_posted_limit_cap=True)
     if pjm_seam_flow_limit:
         config = config.with_overrides(pjm_seam_flow_limit=True)
     if pjm_seam_flow_percentile is not None:
@@ -3484,6 +3487,34 @@ def run_year(
             iso,
             year,
             NYISO_SEAM_FLOW_PERCENTILE,
+        )
+
+    # NYISO Long Island posted-limit sub-clip (NYISO-NEXT-6, ScenarioConfig.
+    # nyiso_li_seam_posted_limit_cap): inside whichever seam envelope armed
+    # above, cap the NYISO_external>Long_Island IMPORT bound at the summed
+    # posted import limits of Neptune / CSC / 1385 in the hour. The p90
+    # envelope pools outage days with in-service days, so it would otherwise
+    # import over a tie posting 0. Never raises a cap, never a second
+    # mechanism (rule 19); backcast only (rule 13 — an outage-window class
+    # overlay). Requires an armed envelope: a clip with nothing to clip is a
+    # misconfigured run, not a silent no-op.
+    if (
+        getattr(config, "nyiso_li_seam_posted_limit_cap", False)
+        and iso == "NYISO"
+        and getattr(config, "mode", "forecast") == "backcast"
+    ):
+        if not (
+            getattr(config, "nyiso_seam_par_attribution", False)
+            or getattr(config, "nyiso_seam_deliverability_envelope", False)
+        ):
+            raise ValueError(
+                "nyiso_li_seam_posted_limit_cap requires nyiso_seam_par_attribution "
+                "or nyiso_seam_deliverability_envelope (it clips that envelope)"
+            )
+        from market_sim.data.nyiso_seam_envelope import nyiso_li_posted_limit_cap
+
+        ttc = nyiso_li_posted_limit_cap(
+            np.asarray(ttc, dtype=float), iso_config, year, demand.shape[1]
         )
 
     # ERCOT West Texas Export corridor VRE curtailment-share driver (WP-B): a
@@ -6270,6 +6301,7 @@ def run_year(
     coal_plant_gen_hour_coeff = UNSET
     coal_plant_group_index = UNSET
     coal_plant_floor = UNSET
+    coal_plant_floor_price = UNSET
     _coal_floor_armed = resolve_coal_take_floor(config, iso, _coal_plant_armed)
     # Armable WITHOUT the pooled monthly rows since neiso-117 (the yard rows
     # alone are the annual identity's plant partition; resolve_coal_budget_arms
@@ -6342,6 +6374,25 @@ def run_year(
                     coal_plant_gen_hour_coeff,
                     coal_plant_budget,
                     _cp_prov.yard_keys,
+                )
+                from market_sim.data.coal_fuel_inventory import (
+                    coal_take_shortfall_price,
+                )
+
+                coal_plant_floor_price = coal_take_shortfall_price(
+                    fuel_prices,
+                    fleet_arrays,
+                    coal_plant_gen_idx,
+                    coal_plant_group_index,
+                    coal_plant_gen_hour_coeff,
+                    coal_plant_budget.shape[0],
+                )
+                logger.info(
+                    "coal take floor (%s %d): soft, shortfall priced per yard at "
+                    "%s $/MMBtu",
+                    iso,
+                    year,
+                    [round(float(v), 3) for v in coal_plant_floor_price],
                 )
                 logger.info(
                     "coal take floor (%s %d): %d yard rows floored, %.1f TWh-equiv "
@@ -6472,6 +6523,7 @@ def run_year(
         coal_plant_gen_hour_coeff=coal_plant_gen_hour_coeff,
         coal_plant_group_index=coal_plant_group_index,
         coal_plant_floor=coal_plant_floor,
+        coal_plant_floor_price=coal_plant_floor_price,
         T=config.hours,
     )
     dispatch_kwargs = build_base_dispatch_kwargs(

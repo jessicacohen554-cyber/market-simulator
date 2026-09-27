@@ -1613,8 +1613,31 @@ def campd_attribution_selectors(config: object) -> tuple[bool, bool]:
     return per_unit, merit_guard
 
 
+def campd_fuel_split_selector(config: object) -> bool:
+    """Return whether the ``-fuelsplit-`` tranche companions are selected.
+
+    ``ScenarioConfig.campd_unit_fuel_split`` (miso-278, GATED default False).
+    ONE accessor for every tranche-family reader, so a call site cannot read the
+    fuel-split pooled artifact beside an incumbent level artifact (rule 19
+    ``[R-ONE-MECH]``). Forced False under ``campd_per_unit_attribution``: the
+    per-unit companions carry their own (prime-mover) routing and no fuel-split
+    variant of them exists, so the two are never combined.
+    """
+    per_unit, _ = campd_attribution_selectors(config)
+    return (not per_unit) and bool(getattr(config, "campd_unit_fuel_split", False))
+
+
+def _fuel_split_companion(base: Path) -> Path:
+    """``thermal_tranches_X_<ISO>.csv`` -> ``thermal_tranches_X-fuelsplit-<ISO>.csv``."""
+    stem, iso = base.stem.rsplit("_", 1)
+    return base.with_name(f"{stem}-fuelsplit-{iso}{base.suffix}")
+
+
 def thermal_tranche_csv_for_iso(
-    iso: str, per_unit: bool = False, merit_guard: bool = False
+    iso: str,
+    per_unit: bool = False,
+    merit_guard: bool = False,
+    fuel_split: bool = False,
 ) -> Path:
     """Return the CAMPD thermal-tranche artifact path for an ISO.
 
@@ -1648,8 +1671,25 @@ def thermal_tranche_csv_for_iso(
     bases inside one LP. The same field therefore moves both artifacts, exactly
     as ``per_unit`` does (rule 19 ``[R-ONE-MECH]``); it has no meaning without
     ``per_unit`` and is ignored without it. Falls back the same way.
+
+    ``fuel_split`` (``ScenarioConfig.campd_unit_fuel_split``, GATED default
+    False; miso-278) selects the ``-fuelsplit-`` companion written by that
+    deriver's ``--unit-fuel-split``: the incumbent artifact with every
+    MIXED-FUEL plant's rows re-derived by routing each CAMPD unit on its own
+    ``primaryFuelInfo`` (coal units to the coal bin, gas units to their
+    prime-mover family's gas bin) and every other line byte-identical. It
+    repairs the facility attribution at plants whose coal and gas boilers share
+    one facility -- a case the per-unit (prime-mover) crosswalk cannot separate,
+    because both are boilers. Ignored under ``per_unit``
+    (:func:`campd_fuel_split_selector`). Falls back to the incumbent where the
+    companion has not been derived (MISO only at this writing, so the flag is
+    self-scoping, rule 25 ``[R-ISO-SCOPE]``).
     """
     base = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if fuel_split and not per_unit:
+        alt = _fuel_split_companion(base)
+        if alt.exists():
+            return alt
     if per_unit:
         if merit_guard:
             alt = base.with_name(f"thermal_tranches-perunitmerit-{iso.upper()}.csv")
@@ -1667,6 +1707,7 @@ def thermal_tranche_overrides(
     coal_online_pmin: bool = False,
     per_unit: bool = False,
     merit_guard: bool = False,
+    fuel_split: bool = False,
 ) -> dict[tuple[int, str], tuple[float, float]]:
     """Return ``{(plant_code, group): (committed_pct, mustrun_pct)}`` for an ISO.
 
@@ -1685,7 +1726,7 @@ def thermal_tranche_overrides(
     in an artifact that predates the column (or with a blank/NaN value) keep
     ``mustrun_pct``; non-coal rows are unaffected.
     """
-    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard)
+    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard, fuel_split)
     if not path.exists():
         return {}
     df = pd.read_csv(path)
@@ -1712,7 +1753,10 @@ def thermal_tranche_overrides(
 
 @lru_cache(maxsize=8)
 def thermal_tranche_peaking(
-    iso: str, per_unit: bool = False, merit_guard: bool = False
+    iso: str,
+    per_unit: bool = False,
+    merit_guard: bool = False,
+    fuel_split: bool = False,
 ) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): peaking_pct}`` for an ISO's CC plants.
 
@@ -1733,7 +1777,7 @@ def thermal_tranche_peaking(
     the four the deleted dict named, since ERCOT has no thermal-tranche
     artifact of its own to fall back to.)
     """
-    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard)
+    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard, fuel_split)
     if not path.exists():
         return {}
     df = pd.read_csv(path)
@@ -1787,7 +1831,10 @@ def coal_min_config(iso: str) -> dict[int, float]:
 
 @lru_cache(maxsize=8)
 def thermal_tranche_online_frac(
-    iso: str, per_unit: bool = False, merit_guard: bool = False
+    iso: str,
+    per_unit: bool = False,
+    merit_guard: bool = False,
+    fuel_split: bool = False,
 ) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): online_frac}`` for an ISO's gas plants.
 
@@ -1805,7 +1852,7 @@ def thermal_tranche_online_frac(
     rides ``coal_sync_online_frac``, not this map). Rows with a blank/NaN
     fraction are absent (no floor).
     """
-    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard)
+    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard, fuel_split)
     if not path.exists():
         return {}
     df = pd.read_csv(path)
@@ -1897,7 +1944,11 @@ def assert_thermal_tranche_coverage(iso: str, config: ScenarioConfig) -> None:
         armed.append((gate, columns, groups))
     if not armed:
         return
-    path = thermal_tranche_csv_for_iso(iso, *campd_attribution_selectors(config))
+    path = thermal_tranche_csv_for_iso(
+        iso,
+        *campd_attribution_selectors(config),
+        campd_fuel_split_selector(config),
+    )
     if not path.exists():
         raise ValueError(
             f"thermal-tranche coverage guard: ISO {iso!r} arms "
@@ -1948,7 +1999,10 @@ def assert_thermal_tranche_coverage(iso: str, config: ScenarioConfig) -> None:
 
 
 def thermal_tranche_p25_level(
-    iso: str, per_unit: bool = False, merit_guard: bool = False
+    iso: str,
+    per_unit: bool = False,
+    merit_guard: bool = False,
+    fuel_split: bool = False,
 ) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): p25_level_mw}`` for an ISO's gas plants.
 
@@ -1970,7 +2024,7 @@ def thermal_tranche_p25_level(
     when the ISO has no artifact or it predates the ``p25_cf`` column. Rows with
     a blank/NaN ``p25_cf`` or ``nameplate_mw`` are absent (no floor).
     """
-    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard)
+    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard, fuel_split)
     if not path.exists():
         return {}
     df = pd.read_csv(path)
@@ -2010,6 +2064,7 @@ def thermal_tranche_p25_level(
 @lru_cache(maxsize=8)
 def thermal_tranche_online_frac_by_year(
     iso: str,
+    fuel_split: bool = False,
 ) -> dict[tuple[int, str, int], float]:
     """Return ``{(plant_code, group, year): online_frac}`` — the PER-YEAR window.
 
@@ -2037,6 +2092,10 @@ def thermal_tranche_online_frac_by_year(
     byte-identical. Rows with a blank/NaN fraction are absent.
     """
     path = PROCESSED_DIR / f"thermal_tranches_online_frac_by_year_{iso.upper()}.csv"
+    # miso-278: ``fuel_split`` selects the same-derivation '-fuelsplit-'
+    # companion (thermal_tranche_csv_for_iso), falling back where not derived.
+    if fuel_split and _fuel_split_companion(path).exists():
+        path = _fuel_split_companion(path)
     if not path.exists():
         return {}
     df = pd.read_csv(path)
@@ -2056,7 +2115,9 @@ def thermal_tranche_online_frac_by_year(
 
 
 @lru_cache(maxsize=8)
-def thermal_tranche_p25_measured_level(iso: str) -> dict[tuple[int, str], float]:
+def thermal_tranche_p25_measured_level(
+    iso: str, fuel_split: bool = False
+) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): p25_level_mw}`` measured DIRECTLY in MW.
 
     The same 25th-percentile-of-online statistic :func:`thermal_tranche_p25_level`
@@ -2083,6 +2144,8 @@ def thermal_tranche_p25_measured_level(iso: str) -> dict[tuple[int, str], float]
     Empty when the ISO has no artifact, leaving today's behaviour byte-identical.
     """
     path = PROCESSED_DIR / f"thermal_tranches_p25_level_mw_{iso.upper()}.csv"
+    if fuel_split and _fuel_split_companion(path).exists():
+        path = _fuel_split_companion(path)  # miso-278, see online_frac_by_year
     if not path.exists():
         return {}
     df = pd.read_csv(path)
@@ -2101,7 +2164,9 @@ def thermal_tranche_p25_measured_level(iso: str) -> dict[tuple[int, str], float]
 
 
 @lru_cache(maxsize=8)
-def thermal_tranche_oom_level(iso: str) -> dict[tuple[int, str], float]:
+def thermal_tranche_oom_level(
+    iso: str, fuel_split: bool = False
+) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): oom_level_mw}`` — the OUT-OF-MERIT level.
 
     The same measured-MW percentile family as
@@ -2136,6 +2201,8 @@ def thermal_tranche_oom_level(iso: str) -> dict[tuple[int, str], float]:
     byte-identical.
     """
     path = PROCESSED_DIR / f"thermal_tranches_oom_level_mw_{iso.upper()}.csv"
+    if fuel_split and _fuel_split_companion(path).exists():
+        path = _fuel_split_companion(path)  # miso-278, see online_frac_by_year
     if not path.exists():
         return {}
     df = pd.read_csv(path)
@@ -2786,10 +2853,12 @@ def fleet_to_bins(
     # peaking / p25 / the reserve pool mlf read '-perunitmerit-' — two
     # availability bases inside one LP, the exact state nyiso-177 made the
     # selector pair to prevent. Only NYISO arms the guard, so no other ISO moves.
+    # miso-278: the fuel-split companion rides the same selector discipline.
+    _fs = campd_fuel_split_selector(config)
     overrides = thermal_tranche_overrides(
-        iso, getattr(config, "coal_mustrun_online_pmin", False), _pu, _mg
+        iso, getattr(config, "coal_mustrun_online_pmin", False), _pu, _mg, _fs
     )
-    peaking = thermal_tranche_peaking(iso, _pu, _mg)
+    peaking = thermal_tranche_peaking(iso, _pu, _mg, _fs)
     if getattr(config, "cc_reserve_duty_split", False):
         _cohort = _reserve_duty_cohort(iso)
         logger.info(
@@ -3199,7 +3268,11 @@ _COAL_SUPPLY_TO_CURVE = COAL_SUPPLY_TO_CLASS
 
 @lru_cache(maxsize=8)
 def ct_intermediate_plants(
-    iso: str, threshold: float, per_unit: bool = False, merit_guard: bool = False
+    iso: str,
+    threshold: float,
+    per_unit: bool = False,
+    merit_guard: bool = False,
+    fuel_split: bool = False,
 ) -> frozenset[int]:
     """EIA plant codes of intermediate-duty ``CT_PEAKER`` units for an ISO.
 
@@ -3222,7 +3295,7 @@ def ct_intermediate_plants(
     :data:`market_sim.data.outages.ST_GAS_PEAKER_PLANTS`. Returns an empty set
     when the ISO has no tranche file (e.g. ERCOT's hand-set bins).
     """
-    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard)
+    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard, fuel_split)
     if not path.exists():
         return frozenset()
     df = pd.read_csv(path)
@@ -3255,7 +3328,11 @@ def ct_intermediate_plants(
 
 @lru_cache(maxsize=8)
 def st_gas_intermediate_plants(
-    iso: str, threshold: float, per_unit: bool = False, merit_guard: bool = False
+    iso: str,
+    threshold: float,
+    per_unit: bool = False,
+    merit_guard: bool = False,
+    fuel_split: bool = False,
 ) -> frozenset[int]:
     """EIA plant codes of intermediate-duty ``ST_GAS`` units for an ISO.
 
@@ -3277,7 +3354,7 @@ def st_gas_intermediate_plants(
     Returns an empty set when the ISO has no tranche file (e.g. ERCOT's hand-set
     bins).
     """
-    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard)
+    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard, fuel_split)
     if not path.exists():
         return frozenset()
     df = pd.read_csv(path)
@@ -3289,7 +3366,11 @@ def st_gas_intermediate_plants(
 
 @lru_cache(maxsize=8)
 def cc_intermediate_plants(
-    iso: str, threshold: float, per_unit: bool = False, merit_guard: bool = False
+    iso: str,
+    threshold: float,
+    per_unit: bool = False,
+    merit_guard: bool = False,
+    fuel_split: bool = False,
 ) -> frozenset[int]:
     """EIA plant codes of intermediate-duty ``CC_REGULAR`` units for an ISO.
 
@@ -3320,7 +3401,7 @@ def cc_intermediate_plants(
     :func:`st_gas_intermediate_plants`. Returns an empty set when the ISO has no
     tranche file (e.g. ERCOT's hand-set bins).
     """
-    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard)
+    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard, fuel_split)
     if not path.exists():
         return frozenset()
     df = pd.read_csv(path)

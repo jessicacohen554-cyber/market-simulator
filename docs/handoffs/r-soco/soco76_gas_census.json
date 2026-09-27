@@ -1,0 +1,1454 @@
+{
+"plants": [
+{
+"plant": 55061,
+"name": "Tenaska Georgia Generation Facility",
+"cls": "CT_PEAKER",
+"model": 2.7128,
+"eia923": 0.1271,
+"delta": 2.5857
+},
+{
+"plant": 7709,
+"name": NaN,
+"cls": "CT_PEAKER",
+"model": 1.7146,
+"eia923": 0.0,
+"delta": 1.7146
+},
+{
+"plant": 7710,
+"name": "H Allen Franklin Combined Cycle",
+"cls": "CC_REGULAR",
+"model": 13.9517,
+"eia923": 12.4626,
+"delta": 1.4891
+},
+{
+"plant": 57037,
+"name": "Ratcliffe",
+"cls": "CC_REGULAR",
+"model": 5.8275,
+"eia923": 4.6101,
+"delta": 1.2174
+},
+{
+"plant": 55409,
+"name": "Calhoun Energy Center",
+"cls": "CT_PEAKER",
+"model": 1.5488,
+"eia923": 0.3349,
+"delta": 1.2139
+},
+{
+"plant": 643,
+"name": "643",
+"cls": "CC_REGULAR",
+"model": 4.9541,
+"eia923": 3.9134,
+"delta": 1.0407
+},
+{
+"plant": 55128,
+"name": "Walton County Energy Facility",
+"cls": "CT_PEAKER",
+"model": 1.3679,
+"eia923": 0.4582,
+"delta": 0.9097
+},
+{
+"plant": 55267,
+"name": "Edward L. Addison Generating Plant",
+"cls": "CT_PEAKER",
+"model": 1.1206,
+"eia923": 0.3697,
+"delta": 0.7509
+},
+{
+"plant": 55440,
+"name": "Central Alabama Generating Station",
+"cls": "CC_REGULAR",
+"model": 5.5777,
+"eia923": 4.8327,
+"delta": 0.745
+},
+{
+"plant": 55332,
+"name": "Washington County Power LLC",
+"cls": "CT_PEAKER",
+"model": 0.9203,
+"eia923": 0.2237,
+"delta": 0.6966
+},
+{
+"plant": 55304,
+"name": "Baconton Power Plant",
+"cls": "CT_PEAKER",
+"model": 0.8335,
+"eia923": 0.2488,
+"delta": 0.5847
+},
+{
+"plant": 56150,
+"name": "McIntosh Combined Cycle Facility",
+"cls": "CC_REGULAR",
+"model": 9.017,
+"eia923": 8.4348,
+"delta": 0.5822
+},
+{
+"plant": 55382,
+"name": "Thomas A Smith Energy Facility",
+"cls": "CC_REGULAR",
+"model": 6.8705,
+"eia923": 6.3259,
+"delta": 0.5446
+},
+{
+"plant": 710,
+"name": "Jack McDonough",
+"cls": "CT_PEAKER",
+"model": 0.481,
+"eia923": 0.0002,
+"delta": 0.4808
+},
+{
+"plant": 7897,
+"name": "E B Harris Electric Generating Plant",
+"cls": "CC_REGULAR",
+"model": 4.817,
+"eia923": 4.4044,
+"delta": 0.4126
+},
+{
+"plant": 55242,
+"name": "55242",
+"cls": "CC_REGULAR",
+"model": 1.7384,
+"eia923": 1.3359,
+"delta": 0.4025
+},
+{
+"plant": 7946,
+"name": "Wansley Unit 9",
+"cls": "CC_REGULAR",
+"model": 3.4135,
+"eia923": 3.0698,
+"delta": 0.3437
+},
+{
+"plant": 7768,
+"name": "Sowega Power",
+"cls": "CT_PEAKER",
+"model": 0.4265,
+"eia923": 0.1115,
+"delta": 0.315
+},
+{
+"plant": 55965,
+"name": "Wansley Combined Cycle",
+"cls": "CC_REGULAR",
+"model": 9.1366,
+"eia923": 8.8468,
+"delta": 0.2898
+},
+{
+"plant": 55411,
+"name": "Hillabee Energy Center",
+"cls": "CC_REGULAR",
+"model": 5.2835,
+"eia923": 5.0352,
+"delta": 0.2483
+},
+{
+"plant": 710,
+"name": "Jack McDonough",
+"cls": "CC_REGULAR",
+"model": 19.3134,
+"eia923": 19.0716,
+"delta": 0.2418
+},
+{
+"plant": 55406,
+"name": "Bobby C Smith Jr Energy Facility",
+"cls": "CC_REGULAR",
+"model": 2.3349,
+"eia923": 2.135,
+"delta": 0.1999
+},
+{
+"plant": 10416,
+"name": NaN,
+"cls": "CT_CHP",
+"model": 0.1988,
+"eia923": 0.0,
+"delta": 0.1988
+},
+{
+"plant": 50398,
+"name": NaN,
+"cls": "ST_CHP",
+"model": 0.171,
+"eia923": 0.0,
+"delta": 0.171
+},
+{
+"plant": 56018,
+"name": "AMEA Peaking",
+"cls": "CT_PEAKER",
+"model": 0.2236,
+"eia923": 0.0537,
+"delta": 0.1699
+},
+{
+"plant": 7764,
+"name": "MPC Generating",
+"cls": "CT_PEAKER",
+"model": 0.1321,
+"eia923": 0.0105,
+"delta": 0.1216
+},
+{
+"plant": 54004,
+"name": NaN,
+"cls": "CT_CHP",
+"model": 0.097,
+"eia923": 0.0,
+"delta": 0.097
+},
+{
+"plant": 54358,
+"name": NaN,
+"cls": "ST_CHP",
+"model": 0.0877,
+"eia923": 0.0,
+"delta": 0.0877
+},
+{
+"plant": 54538,
+"name": NaN,
+"cls": "CT_PEAKER",
+"model": 0.0856,
+"eia923": 0.0,
+"delta": 0.0856
+},
+{
+"plant": 54789,
+"name": NaN,
+"cls": "ST_CHP",
+"model": 0.0521,
+"eia923": 0.0,
+"delta": 0.0521
+},
+{
+"plant": 10416,
+"name": NaN,
+"cls": "ST_CHP",
+"model": 0.0384,
+"eia923": 0.0,
+"delta": 0.0384
+},
+{
+"plant": 62449,
+"name": NaN,
+"cls": "CT_CHP",
+"model": 0.0238,
+"eia923": 0.0,
+"delta": 0.0238
+},
+{
+"plant": 50146,
+"name": NaN,
+"cls": "ST_CHP",
+"model": 0.0233,
+"eia923": 0.0,
+"delta": 0.0233
+},
+{
+"plant": 54550,
+"name": NaN,
+"cls": "CC_CHP",
+"model": 0.022,
+"eia923": 0.0,
+"delta": 0.022
+},
+{
+"plant": 54880,
+"name": NaN,
+"cls": "CT_CHP",
+"model": 0.02,
+"eia923": 0.0,
+"delta": 0.02
+},
+{
+"plant": 61927,
+"name": NaN,
+"cls": "CT_CHP",
+"model": 0.0,
+"eia923": 0.0,
+"delta": 0.0
+},
+{
+"plant": 753,
+"name": NaN,
+"cls": "CT_PEAKER",
+"model": 0.0,
+"eia923": 0.0,
+"delta": 0.0
+},
+{
+"plant": 7715,
+"name": NaN,
+"cls": "CT_PEAKER",
+"model": 0.0,
+"eia923": 0.0,
+"delta": 0.0
+},
+{
+"plant": 753,
+"name": NaN,
+"cls": "ST_GAS",
+"model": 0.0,
+"eia923": 0.0,
+"delta": 0.0
+},
+{
+"plant": 54730,
+"name": NaN,
+"cls": "CT_PEAKER",
+"model": 0.0,
+"eia923": 0.0,
+"delta": 0.0
+},
+{
+"plant": 2048,
+"name": "Sweatt",
+"cls": "CT_PEAKER",
+"model": 0.0,
+"eia923": 0.0062,
+"delta": -0.0062
+},
+{
+"plant": 55138,
+"name": "Walton Discover Power Facility",
+"cls": "CT_PEAKER",
+"model": 0.0013,
+"eia923": 0.0089,
+"delta": -0.0076
+},
+{
+"plant": 7917,
+"name": "Chattahoochee Energy Facility",
+"cls": "CC_REGULAR",
+"model": 3.3084,
+"eia923": 3.3273,
+"delta": -0.0189
+},
+{
+"plant": 7348,
+"name": "Robins",
+"cls": "CT_PEAKER",
+"model": 0.0,
+"eia923": 0.0217,
+"delta": -0.0217
+},
+{
+"plant": 6073,
+"name": "Victor J Daniel Jr",
+"cls": "CC_REGULAR",
+"model": 8.264,
+"eia923": 8.3012,
+"delta": -0.0372
+},
+{
+"plant": 55244,
+"name": "Doyle Energy Facility",
+"cls": "CT_PEAKER",
+"model": 0.059,
+"eia923": 0.0988,
+"delta": -0.0398
+},
+{
+"plant": 6124,
+"name": "McIntosh",
+"cls": "CT_PEAKER",
+"model": 0.017,
+"eia923": 0.0769,
+"delta": -0.0599
+},
+{
+"plant": 55672,
+"name": "AL Sandersville LLC",
+"cls": "CT_PEAKER",
+"model": 0.0272,
+"eia923": 0.093,
+"delta": -0.0658
+},
+{
+"plant": 7698,
+"name": "General Electric Plastic",
+"cls": "CC_CHP",
+"model": 0.3214,
+"eia923": 0.408,
+"delta": -0.0866
+},
+{
+"plant": 55040,
+"name": "Mid-Georgia Cogeneration Facility",
+"cls": "CC_CHP",
+"model": 0.1402,
+"eia923": 0.23,
+"delta": -0.0898
+},
+{
+"plant": 10,
+"name": "Greene County",
+"cls": "CT_PEAKER",
+"model": 0.0002,
+"eia923": 0.1581,
+"delta": -0.1579
+},
+{
+"plant": 2049,
+"name": "Jack Watson",
+"cls": "CT_PEAKER",
+"model": 0.0,
+"eia923": 0.1592,
+"delta": -0.1592
+},
+{
+"plant": 3,
+"name": "Barry",
+"cls": "ST_GAS",
+"model": 0.0,
+"eia923": 0.1646,
+"delta": -0.1646
+},
+{
+"plant": 7,
+"name": "Gadsden",
+"cls": "ST_CHP",
+"model": 0.0,
+"eia923": 0.17,
+"delta": -0.17
+},
+{
+"plant": 55241,
+"name": "Hog Bayou Energy Center",
+"cls": "CC_REGULAR",
+"model": 0.9128,
+"eia923": 1.0883,
+"delta": -0.1755
+},
+{
+"plant": 7916,
+"name": "Talbot County Energy",
+"cls": "CT_PEAKER",
+"model": 0.2953,
+"eia923": 0.4929,
+"delta": -0.1976
+},
+{
+"plant": 55141,
+"name": "Hawk Road Facility",
+"cls": "CT_PEAKER",
+"model": 0.2902,
+"eia923": 0.5619,
+"delta": -0.2717
+},
+{
+"plant": 7829,
+"name": "Smarr Energy Center",
+"cls": "CT_PEAKER",
+"model": 0.0,
+"eia923": 0.2743,
+"delta": -0.2743
+},
+{
+"plant": 7697,
+"name": "Washington County Cogeneration Facility",
+"cls": "CC_CHP",
+"model": 0.5112,
+"eia923": 0.8239,
+"delta": -0.3127
+},
+{
+"plant": 7813,
+"name": "Sewell Creek Energy",
+"cls": "CT_PEAKER",
+"model": 0.2696,
+"eia923": 0.5926,
+"delta": -0.323
+},
+{
+"plant": 10,
+"name": "Greene County",
+"cls": "ST_GAS",
+"model": 1.3695,
+"eia923": 1.7244,
+"delta": -0.3549
+},
+{
+"plant": 2047,
+"name": "Chevron Oil",
+"cls": "CT_CHP",
+"model": 0.6975,
+"eia923": 1.0801,
+"delta": -0.3826
+},
+{
+"plant": 55271,
+"name": "Tenaska Lindsay Hill Generating Station",
+"cls": "CC_REGULAR",
+"model": 1.3121,
+"eia923": 1.724,
+"delta": -0.4119
+},
+{
+"plant": 7721,
+"name": "Theodore Cogen Facility",
+"cls": "CC_CHP",
+"model": 1.0552,
+"eia923": 1.5518,
+"delta": -0.4966
+},
+{
+"plant": 3,
+"name": "Barry",
+"cls": "CC_REGULAR",
+"model": 7.5908,
+"eia923": 8.1313,
+"delta": -0.5405
+},
+{
+"plant": 54096,
+"name": "International Paper Riverdale Mill",
+"cls": "CC_CHP",
+"model": 0.0165,
+"eia923": 0.6017,
+"delta": -0.5852
+},
+{
+"plant": 54802,
+"name": "Mead Coated Board",
+"cls": "CT_CHP",
+"model": 0.0509,
+"eia923": 0.7746,
+"delta": -0.7237
+},
+{
+"plant": 2049,
+"name": "Jack Watson",
+"cls": "ST_GAS",
+"model": 1.2933,
+"eia923": 2.5544,
+"delta": -1.2611
+},
+{
+"plant": 728,
+"name": "Yates",
+"cls": "ST_GAS",
+"model": 0.7787,
+"eia923": 2.0531,
+"delta": -1.2744
+},
+{
+"plant": 26,
+"name": "E C Gaston",
+"cls": "ST_GAS",
+"model": 0.8942,
+"eia923": 2.9003,
+"delta": -2.0061
+}
+],
+"synced_off_hours": {
+"3": 8053,
+"26": 151,
+"641": 6302,
+"6052": 3532,
+"6073": 193,
+"703": 48,
+"6002": 0,
+"6257": 0
+},
+"undercut": [
+{
+"plant_code": 710,
+"g": "CC_REGULAR",
+"hours": 8638,
+"offer_med": 20.34320068359375,
+"undercut_med": 17.345800399780273,
+"undercut_p10": 11.899700164794922,
+"twh": 19.04290008544922
+},
+{
+"plant_code": 7710,
+"g": "CC_REGULAR",
+"hours": 8638,
+"offer_med": 20.653200149536133,
+"undercut_med": 17.03580093383789,
+"undercut_p10": 11.514599800109863,
+"twh": 13.760899543762207
+},
+{
+"plant_code": 55965,
+"g": "CC_REGULAR",
+"hours": 8470,
+"offer_med": 20.816699981689453,
+"undercut_med": 16.872299194335938,
+"undercut_p10": 11.311599731445312,
+"twh": 9.005499839782715
+},
+{
+"plant_code": 56150,
+"g": "CC_REGULAR",
+"hours": 8637,
+"offer_med": 21.34869956970215,
+"undercut_med": 16.340299606323242,
+"undercut_p10": 10.650699615478516,
+"twh": 8.872200012207031
+},
+{
+"plant_code": 6073,
+"g": "CC_REGULAR",
+"hours": 8638,
+"offer_med": 20.18829917907715,
+"undercut_med": 17.500699996948242,
+"undercut_p10": 12.092000007629395,
+"twh": 8.140299797058105
+},
+{
+"plant_code": 3,
+"g": "CC_REGULAR",
+"hours": 8638,
+"offer_med": 21.02359962463379,
+"undercut_med": 16.6653995513916,
+"undercut_p10": 11.054499626159668,
+"twh": 7.474800109863281
+},
+{
+"plant_code": 55382,
+"g": "CC_REGULAR",
+"hours": 8384,
+"offer_med": 21.367300033569336,
+"undercut_med": 16.321699142456055,
+"undercut_p10": 10.627599716186523,
+"twh": 6.752299785614014
+},
+{
+"plant_code": 57037,
+"g": "CC_REGULAR",
+"hours": 8349,
+"offer_med": 21.92959976196289,
+"undercut_med": 15.62440013885498,
+"undercut_p10": 9.929200172424316,
+"twh": 5.732100009918213
+},
+{
+"plant_code": 55440,
+"g": "CC_REGULAR",
+"hours": 6791,
+"offer_med": 21.937999725341797,
+"undercut_med": 15.814299583435059,
+"undercut_p10": 9.918800354003906,
+"twh": 5.497399806976318
+},
+{
+"plant_code": 55411,
+"g": "CC_REGULAR",
+"hours": 7524,
+"offer_med": 21.4237003326416,
+"undercut_med": 16.332399368286133,
+"undercut_p10": 10.640999794006348,
+"twh": 5.199100017547607
+},
+{
+"plant_code": 643,
+"g": "CC_REGULAR",
+"hours": 8638,
+"offer_med": 21.12420082092285,
+"undercut_med": 16.564800262451172,
+"undercut_p10": 10.92959976196289,
+"twh": 4.882900238037109
+},
+{
+"plant_code": 7897,
+"g": "CC_REGULAR",
+"hours": 6973,
+"offer_med": 20.82390022277832,
+"undercut_med": 16.932199478149414,
+"undercut_p10": 12.984000205993652,
+"twh": 4.744200229644775
+},
+{
+"plant_code": 7946,
+"g": "CC_REGULAR",
+"hours": 8614,
+"offer_med": 20.59630012512207,
+"undercut_med": 17.09269905090332,
+"undercut_p10": 11.58530044555664,
+"twh": 3.3754000663757324
+},
+{
+"plant_code": 7917,
+"g": "CC_REGULAR",
+"hours": 7804,
+"offer_med": 20.688800811767578,
+"undercut_med": 17.067399978637695,
+"undercut_p10": 11.470399856567383,
+"twh": 3.260999917984009
+},
+{
+"plant_code": 55061,
+"g": "CT_PEAKER",
+"hours": 3462,
+"offer_med": 30.98240089416504,
+"undercut_med": 7.420199871063232,
+"undercut_p10": 5.73859977722168,
+"twh": 2.6714999675750732
+},
+{
+"plant_code": 55406,
+"g": "CC_REGULAR",
+"hours": 5342,
+"offer_med": 21.804399490356445,
+"undercut_med": 16.5487003326416,
+"undercut_p10": 12.337499618530273,
+"twh": 2.3299999237060547
+},
+{
+"plant_code": 55242,
+"g": "CC_REGULAR",
+"hours": 7872,
+"offer_med": 22.085100173950195,
+"undercut_med": 14.832900047302246,
+"undercut_p10": 9.736000061035156,
+"twh": 1.711300015449524
+},
+{
+"plant_code": 7709,
+"g": "CT_PEAKER",
+"hours": 2672,
+"offer_med": 31.23259925842285,
+"undercut_med": 6.770500183105469,
+"undercut_p10": 5.089000225067139,
+"twh": 1.6957999467849731
+},
+{
+"plant_code": 55409,
+"g": "CT_PEAKER",
+"hours": 2999,
+"offer_med": 31.48040008544922,
+"undercut_med": 6.981200218200684,
+"undercut_p10": 5.299699783325195,
+"twh": 1.5305999517440796
+},
+{
+"plant_code": 10,
+"g": "ST_GAS",
+"hours": 6230,
+"offer_med": 30.95949935913086,
+"undercut_med": 7.060200214385986,
+"undercut_p10": 4.6834001541137695,
+"twh": 1.3503999710083008
+},
+{
+"plant_code": 55128,
+"g": "CT_PEAKER",
+"hours": 3721,
+"offer_med": 30.83989906311035,
+"undercut_med": 7.598499774932861,
+"undercut_p10": 5.449900150299072,
+"twh": 1.343500018119812
+},
+{
+"plant_code": 55271,
+"g": "CC_REGULAR",
+"hours": 6046,
+"offer_med": 21.995100021362305,
+"undercut_med": 15.76099967956543,
+"undercut_p10": 12.074299812316895,
+"twh": 1.3034000396728516
+},
+{
+"plant_code": 2049,
+"g": "ST_GAS",
+"hours": 4796,
+"offer_med": 31.67919921875,
+"undercut_med": 6.324999809265137,
+"undercut_p10": 4.643499851226807,
+"twh": 1.2783000469207764
+},
+{
+"plant_code": 55267,
+"g": "CT_PEAKER",
+"hours": 2347,
+"offer_med": 32.12519836425781,
+"undercut_med": 6.474299907684326,
+"undercut_p10": 4.792699813842773,
+"twh": 1.1087000370025635
+},
+{
+"plant_code": 7721,
+"g": "CC_CHP",
+"hours": 7945,
+"offer_med": 25.164600372314453,
+"undercut_med": 12.409099578857422,
+"undercut_p10": 6.725399971008301,
+"twh": 1.0383000373840332
+},
+{
+"plant_code": 55332,
+"g": "CT_PEAKER",
+"hours": 1909,
+"offer_med": 32.374000549316406,
+"undercut_med": 6.225500106811523,
+"undercut_p10": 4.544000148773193,
+"twh": 0.9093000292778015
+},
+{
+"plant_code": 55241,
+"g": "CC_REGULAR",
+"hours": 4485,
+"offer_med": 22.76759910583496,
+"undercut_med": 14.98859977722168,
+"undercut_p10": 13.375699996948242,
+"twh": 0.9075000286102295
+},
+{
+"plant_code": 26,
+"g": "ST_GAS",
+"hours": 3410,
+"offer_med": 32.30619812011719,
+"undercut_med": 5.0055999755859375,
+"undercut_p10": 3.877500057220459,
+"twh": 0.8799999952316284
+},
+{
+"plant_code": 55304,
+"g": "CT_PEAKER",
+"hours": 4842,
+"offer_med": 29.854299545288086,
+"undercut_med": 7.901800155639648,
+"undercut_p10": 3.8048999309539795,
+"twh": 0.8136000037193298
+},
+{
+"plant_code": 728,
+"g": "ST_GAS",
+"hours": 4575,
+"offer_med": 32.51599884033203,
+"undercut_med": 6.063499927520752,
+"undercut_p10": 4.626999855041504,
+"twh": 0.7742000222206116
+},
+{
+"plant_code": 2047,
+"g": "CT_CHP",
+"hours": 8612,
+"offer_med": 21.61359977722168,
+"undercut_med": 16.115699768066406,
+"undercut_p10": 10.684900283813477,
+"twh": 0.6876999735832214
+},
+{
+"plant_code": 710,
+"g": "CT_PEAKER",
+"hours": 8345,
+"offer_med": 21.92180061340332,
+"undercut_med": 15.834400177001953,
+"undercut_p10": 10.302000045776367,
+"twh": 0.4740000069141388
+},
+{
+"plant_code": 7697,
+"g": "CC_CHP",
+"hours": 6925,
+"offer_med": 32.0276985168457,
+"undercut_med": 5.728499889373779,
+"undercut_p10": 1.3609000444412231,
+"twh": 0.42899999022483826
+},
+{
+"plant_code": 7768,
+"g": "CT_PEAKER",
+"hours": 4944,
+"offer_med": 29.677900314331055,
+"undercut_med": 8.078300476074219,
+"undercut_p10": 3.9944000244140625,
+"twh": 0.41659998893737793
+},
+{
+"plant_code": 7698,
+"g": "CC_CHP",
+"hours": 6022,
+"offer_med": 14.671799659729004,
+"undercut_med": 23.115800857543945,
+"undercut_p10": 20.02429962158203,
+"twh": 0.3149999976158142
+},
+{
+"plant_code": 7916,
+"g": "CT_PEAKER",
+"hours": 660,
+"offer_med": 32.67470169067383,
+"undercut_med": 4.984899997711182,
+"undercut_p10": 3.460700035095215,
+"twh": 0.28679999709129333
+},
+{
+"plant_code": 55141,
+"g": "CT_PEAKER",
+"hours": 831,
+"offer_med": 32.317901611328125,
+"undercut_med": 5.341800212860107,
+"undercut_p10": 3.8373000621795654,
+"twh": 0.2824000120162964
+},
+{
+"plant_code": 7813,
+"g": "CT_PEAKER",
+"hours": 762,
+"offer_med": 32.33760070800781,
+"undercut_med": 5.3221001625061035,
+"undercut_p10": 3.816499948501587,
+"twh": 0.26179999113082886
+},
+{
+"plant_code": 56018,
+"g": "CT_PEAKER",
+"hours": 3486,
+"offer_med": 31.038400650024414,
+"undercut_med": 7.4903998374938965,
+"undercut_p10": 5.808800220489502,
+"twh": 0.22030000388622284
+},
+{
+"plant_code": 10416,
+"g": "CT_CHP",
+"hours": 8638,
+"offer_med": 18.38599967956543,
+"undercut_med": 19.32200050354004,
+"undercut_p10": 14.700400352478027,
+"twh": 0.19599999487400055
+},
+{
+"plant_code": 50398,
+"g": "ST_CHP",
+"hours": 8638,
+"offer_med": 20.774499893188477,
+"undercut_med": 17.11210060119629,
+"undercut_p10": 13.203300476074219,
+"twh": 0.16869999468326569
+},
+{
+"plant_code": 55040,
+"g": "CC_CHP",
+"hours": 885,
+"offer_med": 24.78619956970215,
+"undercut_med": 12.970000267028809,
+"undercut_p10": 10.933799743652344,
+"twh": 0.13760000467300415
+},
+{
+"plant_code": 7764,
+"g": "CT_PEAKER",
+"hours": 553,
+"offer_med": 32.67620086669922,
+"undercut_med": 4.983399868011475,
+"undercut_p10": 3.4591000080108643,
+"twh": 0.12780000269412994
+},
+{
+"plant_code": 54004,
+"g": "CT_CHP",
+"hours": 8638,
+"offer_med": 18.388200759887695,
+"undercut_med": 19.31999969482422,
+"undercut_p10": 14.697699546813965,
+"twh": 0.09560000151395798
+},
+{
+"plant_code": 54358,
+"g": "ST_CHP",
+"hours": 8638,
+"offer_med": 20.450000762939453,
+"undercut_med": 17.445199966430664,
+"undercut_p10": 13.559200286865234,
+"twh": 0.08649999648332596
+},
+{
+"plant_code": 54538,
+"g": "CT_PEAKER",
+"hours": 319,
+"offer_med": 32.89400100708008,
+"undercut_med": 4.765600204467773,
+"undercut_p10": 3.2291998863220215,
+"twh": 0.08060000091791153
+},
+{
+"plant_code": 55244,
+"g": "CT_PEAKER",
+"hours": 210,
+"offer_med": 34.47669982910156,
+"undercut_med": 6.590199947357178,
+"undercut_p10": 2.450200080871582,
+"twh": 0.05469999834895134
+},
+{
+"plant_code": 54789,
+"g": "ST_CHP",
+"hours": 8638,
+"offer_med": 20.36949920654297,
+"undercut_med": 17.527799606323242,
+"undercut_p10": 13.647500038146973,
+"twh": 0.05139999836683273
+},
+{
+"plant_code": 54802,
+"g": "CT_CHP",
+"hours": 8638,
+"offer_med": 12.673700332641602,
+"undercut_med": 25.055599212646484,
+"undercut_p10": 21.789100646972656,
+"twh": 0.050200000405311584
+},
+{
+"plant_code": 10416,
+"g": "ST_CHP",
+"hours": 8638,
+"offer_med": 20.344999313354492,
+"undercut_med": 17.41119956970215,
+"undercut_p10": 12.381600379943848,
+"twh": 0.03790000081062317
+},
+{
+"plant_code": 55672,
+"g": "CT_PEAKER",
+"hours": 62,
+"offer_med": 35.32600021362305,
+"undercut_med": 2.3336000442504883,
+"undercut_p10": 1.6008000373840332,
+"twh": 0.025499999523162842
+},
+{
+"plant_code": 50146,
+"g": "ST_CHP",
+"hours": 8638,
+"offer_med": 20.622299194335938,
+"undercut_med": 17.133899688720703,
+"undercut_p10": 12.037199974060059,
+"twh": 0.023000000044703484
+},
+{
+"plant_code": 54550,
+"g": "CC_CHP",
+"hours": 8638,
+"offer_med": 16.224700927734375,
+"undercut_med": 21.50309944152832,
+"undercut_p10": 17.0314998626709,
+"twh": 0.021700000390410423
+},
+{
+"plant_code": 62449,
+"g": "CT_CHP",
+"hours": 5743,
+"offer_med": 33.52429962158203,
+"undercut_med": 5.075200080871582,
+"undercut_p10": 1.6446000337600708,
+"twh": 0.020800000056624413
+},
+{
+"plant_code": 54880,
+"g": "CT_CHP",
+"hours": 7385,
+"offer_med": 23.420400619506836,
+"undercut_med": 13.73069953918457,
+"undercut_p10": 8.440600395202637,
+"twh": 0.019700000062584877
+},
+{
+"plant_code": 6124,
+"g": "CT_PEAKER",
+"hours": 45,
+"offer_med": 35.434200286865234,
+"undercut_med": 2.2255001068115234,
+"undercut_p10": 1.8590999841690063,
+"twh": 0.016599999740719795
+},
+{
+"plant_code": 54096,
+"g": "CC_CHP",
+"hours": 3360,
+"offer_med": 12.044699668884277,
+"undercut_med": 26.2716007232666,
+"undercut_p10": 25.297000885009766,
+"twh": 0.016499999910593033
+},
+{
+"plant_code": 55138,
+"g": "CT_PEAKER",
+"hours": 15,
+"offer_med": 35.74330139160156,
+"undercut_med": 5.323599815368652,
+"undercut_p10": 1.1835999488830566,
+"twh": 0.0013000000035390258
+},
+{
+"plant_code": 10,
+"g": "CT_PEAKER",
+"hours": 1,
+"offer_med": 36.341800689697266,
+"undercut_med": 1.3178999423980713,
+"undercut_p10": 1.3178999423980713,
+"twh": 0.00019999999494757503
+}
+],
+"inputs": [
+{
+"plant": 710,
+"cls": "CC_REGULAR",
+"undercut_twh": 19.043,
+"offer_med": 20.34,
+"undercut_med": 17.35,
+"model_hr": 6.799,
+"artifact_hr": 6.799,
+"cems_hr_all": 6.899,
+"cems_hr_loaded": 6.904,
+"hr_gap_all": -0.1,
+"vom": 2.0,
+"offer_fuel": 2.698,
+"own_f923": 3.038,
+"fuel_gap": -0.34,
+"model_twh": 19.312999725341797,
+"cems_gross_twh": 19.358,
+"cap_p99": 2408.2,
+"cems_net_p99": 2658.8,
+"h_cems_gt_cap": 4261,
+"h_cems_on": 8760,
+"h_model_on": 8760
+},
+{
+"plant": 7710,
+"cls": "CC_REGULAR",
+"undercut_twh": 13.761,
+"offer_med": 20.65,
+"undercut_med": 17.04,
+"model_hr": 6.914,
+"artifact_hr": 6.914,
+"cems_hr_all": 6.881,
+"cems_hr_loaded": 6.914,
+"hr_gap_all": 0.032,
+"vom": 2.0,
+"offer_fuel": 2.698,
+"own_f923": NaN,
+"fuel_gap": NaN,
+"model_twh": 13.95199966430664,
+"cems_gross_twh": 12.825,
+"cap_p99": 1843.8,
+"cems_net_p99": 1990.0,
+"h_cems_gt_cap": 2871,
+"h_cems_on": 8711,
+"h_model_on": 8760
+},
+{
+"plant": 55965,
+"cls": "CC_REGULAR",
+"undercut_twh": 9.005,
+"offer_med": 20.82,
+"undercut_med": 16.87,
+"model_hr": 6.974,
+"artifact_hr": 6.974,
+"cems_hr_all": 6.918,
+"cems_hr_loaded": 6.923,
+"hr_gap_all": 0.056,
+"vom": 2.0,
+"offer_fuel": 2.698,
+"own_f923": NaN,
+"fuel_gap": NaN,
+"model_twh": 9.13700008392334,
+"cems_gross_twh": 9.07,
+"cap_p99": 1148.7,
+"cems_net_p99": 1237.3,
+"h_cems_gt_cap": 3926,
+"h_cems_on": 8585,
+"h_model_on": 8592
+},
+{
+"plant": 56150,
+"cls": "CC_REGULAR",
+"undercut_twh": 8.872,
+"offer_med": 21.35,
+"undercut_med": 16.34,
+"model_hr": 7.172,
+"artifact_hr": 7.171,
+"cems_hr_all": 7.124,
+"cems_hr_loaded": 7.149,
+"hr_gap_all": 0.047,
+"vom": 2.0,
+"offer_fuel": 2.698,
+"own_f923": 2.939,
+"fuel_gap": -0.241,
+"model_twh": 9.017000198364258,
+"cems_gross_twh": 8.543,
+"cap_p99": 1276.1,
+"cems_net_p99": 1334.8,
+"h_cems_gt_cap": 2756,
+"h_cems_on": 8753,
+"h_model_on": 8759
+},
+{
+"plant": 6073,
+"cls": "CC_REGULAR",
+"undercut_twh": 8.14,
+"offer_med": 20.19,
+"undercut_med": 17.5,
+"model_hr": 6.741,
+"artifact_hr": 6.741,
+"cems_hr_all": 6.741,
+"cems_hr_loaded": 6.729,
+"hr_gap_all": 0.0,
+"vom": 2.0,
+"offer_fuel": 2.698,
+"own_f923": 2.689,
+"fuel_gap": 0.009,
+"model_twh": 8.263999938964844,
+"cems_gross_twh": 8.469,
+"cap_p99": 1070.1,
+"cems_net_p99": 1130.0,
+"h_cems_gt_cap": 5139,
+"h_cems_on": 8760,
+"h_model_on": 8760
+},
+{
+"plant": 3,
+"cls": "CC_REGULAR",
+"undercut_twh": 7.475,
+"offer_med": 21.02,
+"undercut_med": 16.67,
+"model_hr": 7.051,
+"artifact_hr": 7.051,
+"cems_hr_all": 7.34,
+"cems_hr_loaded": 7.327,
+"hr_gap_all": -0.289,
+"vom": 2.0,
+"offer_fuel": 2.698,
+"own_f923": 2.877,
+"fuel_gap": -0.179,
+"model_twh": 7.591000080108643,
+"cems_gross_twh": 8.287,
+"cap_p99": 1011.9,
+"cems_net_p99": 1135.9,
+"h_cems_gt_cap": 7315,
+"h_cems_on": 8760,
+"h_model_on": 8760
+},
+{
+"plant": 55382,
+"cls": "CC_REGULAR",
+"undercut_twh": 6.752,
+"offer_med": 21.37,
+"undercut_med": 16.32,
+"model_hr": 7.178,
+"artifact_hr": 7.178,
+"cems_hr_all": 7.308,
+"cems_hr_loaded": 7.25,
+"hr_gap_all": -0.129,
+"vom": 2.0,
+"offer_fuel": 2.698,
+"own_f923": 2.711,
+"fuel_gap": -0.013,
+"model_twh": 6.870999813079834,
+"cems_gross_twh": 6.55,
+"cap_p99": 1126.4,
+"cems_net_p99": 1267.5,
+"h_cems_gt_cap": 3525,
+"h_cems_on": 8539,
+"h_model_on": 8506
+},
+{
+"plant": 57037,
+"cls": "CC_REGULAR",
+"undercut_twh": 5.732,
+"offer_med": 21.93,
+"undercut_med": 15.62,
+"model_hr": 7.387,
+"artifact_hr": 7.387,
+"cems_hr_all": 7.387,
+"cems_hr_loaded": 7.345,
+"hr_gap_all": 0.0,
+"vom": 2.0,
+"offer_fuel": 2.698,
+"own_f923": 2.511,
+"fuel_gap": 0.187,
+"model_twh": 5.827000141143799,
+"cems_gross_twh": 4.716,
+"cap_p99": 793.8,
+"cems_net_p99": 723.8,
+"h_cems_gt_cap": 112,
+"h_cems_on": 8487,
+"h_model_on": 8471
+},
+{
+"plant": 55440,
+"cls": "CC_REGULAR",
+"undercut_twh": 5.497,
+"offer_med": 21.94,
+"undercut_med": 15.81,
+"model_hr": 7.39,
+"artifact_hr": 7.39,
+"cems_hr_all": 10.068,
+"cems_hr_loaded": 7.452,
+"hr_gap_all": -2.679,
+"vom": 2.0,
+"offer_fuel": 2.698,
+"own_f923": NaN,
+"fuel_gap": NaN,
+"model_twh": 5.578000068664551,
+"cems_gross_twh": 3.902,
+"cap_p99": 889.0,
+"cems_net_p99": 907.7,
+"h_cems_gt_cap": 1065,
+"h_cems_on": 7218,
+"h_model_on": 6884
+},
+{
+"plant": 55411,
+"cls": "CC_REGULAR",
+"undercut_twh": 5.199,
+"offer_med": 21.42,
+"undercut_med": 16.33,
+"model_hr": 7.174,
+"artifact_hr": 7.174,
+"cems_hr_all": 6.975,
+"cems_hr_loaded": 6.922,
+"hr_gap_all": 0.199,
+"vom": 2.0,
+"offer_fuel": 2.698,
+"own_f923": NaN,
+"fuel_gap": NaN,
+"model_twh": 5.2829999923706055,
+"cems_gross_twh": 5.202,
+"cap_p99": 741.7,
+"cems_net_p99": 802.4,
+"h_cems_gt_cap": 3187,
+"h_cems_on": 7724,
+"h_model_on": 7646
+},
+{
+"plant": 643,
+"cls": "CC_REGULAR",
+"undercut_twh": 4.883,
+"offer_med": 21.12,
+"undercut_med": 16.56,
+"model_hr": 7.088,
+"artifact_hr": NaN,
+"cems_hr_all": 6.938,
+"cems_hr_loaded": 6.919,
+"hr_gap_all": 0.15,
+"vom": 2.0,
+"offer_fuel": 2.698,
+"own_f923": 3.24,
+"fuel_gap": -0.542,
+"model_twh": 4.953999996185303,
+"cems_gross_twh": 3.998,
+"cap_p99": 585.6,
+"cems_net_p99": 668.0,
+"h_cems_gt_cap": 3556,
+"h_cems_on": 8219,
+"h_model_on": 8760
+},
+{
+"plant": 7897,
+"cls": "CC_REGULAR",
+"undercut_twh": 4.744,
+"offer_med": 20.82,
+"undercut_med": 16.93,
+"model_hr": 6.977,
+"artifact_hr": 6.977,
+"cems_hr_all": 6.965,
+"cems_hr_loaded": 6.84,
+"hr_gap_all": 0.012,
+"vom": 2.0,
+"offer_fuel": 2.698,
+"own_f923": NaN,
+"fuel_gap": NaN,
+"model_twh": 4.816999912261963,
+"cems_gross_twh": 4.515,
+"cap_p99": 1232.3,
+"cems_net_p99": 1306.9,
+"h_cems_gt_cap": 3653,
+"h_cems_on": 7033,
+"h_model_on": 7056
+},
+{
+"plant": 7946,
+"cls": "CC_REGULAR",
+"undercut_twh": 3.375,
+"offer_med": 20.6,
+"undercut_med": 17.09,
+"model_hr": 6.893,
+"artifact_hr": 10.938,
+"cems_hr_all": 10.448,
+"cems_hr_loaded": 10.394,
+"hr_gap_all": -3.555,
+"vom": 2.0,
+"offer_fuel": 2.698,
+"own_f923": 2.734,
+"fuel_gap": -0.036,
+"model_twh": 3.4130001068115234,
+"cems_gross_twh": 2.077,
+"cap_p99": 474.7,
+"cems_net_p99": 373.4,
+"h_cems_gt_cap": 363,
+"h_cems_on": 7407,
+"h_model_on": 8736
+},
+{
+"plant": 7917,
+"cls": "CC_REGULAR",
+"undercut_twh": 3.261,
+"offer_med": 20.69,
+"undercut_med": 17.07,
+"model_hr": 6.927,
+"artifact_hr": 6.927,
+"cems_hr_all": 7.014,
+"cems_hr_loaded": 6.971,
+"hr_gap_all": -0.087,
+"vom": 2.0,
+"offer_fuel": 2.698,
+"own_f923": 2.641,
+"fuel_gap": 0.057,
+"model_twh": 3.308000087738037,
+"cems_gross_twh": 3.416,
+"cap_p99": 443.9,
+"cems_net_p99": 498.2,
+"h_cems_gt_cap": 4566,
+"h_cems_on": 8005,
+"h_model_on": 7920
+},
+{
+"plant": 55061,
+"cls": "CT_PEAKER",
+"undercut_twh": 2.672,
+"offer_med": 30.98,
+"undercut_med": 7.42,
+"model_hr": 10.259,
+"artifact_hr": 10.259,
+"cems_hr_all": 9.762,
+"cems_hr_loaded": 10.162,
+"hr_gap_all": 0.497,
+"vom": 3.5,
+"offer_fuel": 2.698,
+"own_f923": NaN,
+"fuel_gap": NaN,
+"model_twh": 2.7130000591278076,
+"cems_gross_twh": 0.137,
+"cap_p99": 883.9,
+"cems_net_p99": 621.1,
+"h_cems_gt_cap": 54,
+"h_cems_on": 282,
+"h_model_on": 3522
+}
+]
+}

@@ -23,7 +23,11 @@ from market_sim.config.plant_taxonomy import (
     artifact_class,
     artifact_class_array,
 )
-from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+from market_sim.data.fleet import (
+    FUEL_TYPE_NAMES,
+    FleetArrays,
+    campd_fuel_split_selector,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -1170,6 +1174,7 @@ def _posture_pool_params(
     iso: str,
     per_unit: bool = False,
     merit_guard: bool = False,
+    fuel_split: bool = False,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Per-pool commitment-posture parameters for the pergen (zone, fuel) pools.
 
@@ -1239,7 +1244,7 @@ def _posture_pool_params(
     # Member min-stable-when-online fraction: CEMS-measured committed_pct per
     # plant, WWSIS-2 class gap-fill for uncovered plants.
     overrides = thermal_tranche_overrides(
-        iso, per_unit=per_unit, merit_guard=merit_guard
+        iso, per_unit=per_unit, merit_guard=merit_guard, fuel_split=fuel_split
     )
     mlf = np.zeros(gidx.size)
     for j in range(gidx.size):
@@ -2805,6 +2810,7 @@ def _pjm_design(
                 str(config.iso),
                 bool(getattr(config, "campd_per_unit_attribution", False)),
                 bool(getattr(config, "campd_outage_merit_order_guard", False)),
+                campd_fuel_split_selector(config),
             )
         return ReserveDesign(
             families=families,
@@ -3228,6 +3234,7 @@ def _miso_design(
                 str(config.iso),
                 bool(getattr(config, "campd_per_unit_attribution", False)),
                 bool(getattr(config, "campd_outage_merit_order_guard", False)),
+                campd_fuel_split_selector(config),
             )
         return ReserveDesign(
             families=families,
@@ -4333,6 +4340,7 @@ def _caiso_design(
             str(config.iso),
             bool(getattr(config, "campd_per_unit_attribution", False)),
             bool(getattr(config, "campd_outage_merit_order_guard", False)),
+            campd_fuel_split_selector(config),
         )
 
     return ReserveDesign(

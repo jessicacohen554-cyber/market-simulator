@@ -648,3 +648,49 @@ def reconcile_floors_to_yard_budget(
         min_gen[gen_idx[sel]] *= s
         scaled.append((i, e, s))
     return scaled
+
+
+def coal_take_shortfall_price(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    gen_idx: np.ndarray,
+    group_index: np.ndarray,
+    coeff: np.ndarray,
+    n_rows: int,
+) -> np.ndarray:
+    """Per-yard $/MMBtu price of an unmet coal take (NWPP-NEXT-7 soft floor).
+
+    Owner ruling 2026-09-27: the take floor is SOFT, its shortfall priced at the
+    yard's own delivered coal cost — contracted coal left unburned is paid for
+    anyway (take-or-pay), so no yard row is ever infeasible and the row's dual
+    is capped at that price. The price is the one the model already charges
+    those units for fuel (``fuel_prices``, the resolved EIA-923 plant-monthly /
+    coal-supply chain), averaged over the year and weighted across the yard's
+    rowed units by ``coeff * pmax`` (fuel-burn capability). Zero free
+    parameters: it reads no quantity the fuel pricing does not already set.
+
+    Args:
+        fuel_prices: ``(n_gen, T)`` delivered fuel price, $/MMBtu.
+        fleet: The fleet (for ``pmax``).
+        gen_idx: Rowed coal generator indices.
+        group_index: Yard row of each rowed generator.
+        coeff: Per-rowed-generator MMBtu/MWh.
+        n_rows: Number of yard rows.
+
+    Returns:
+        ``(n_rows,)`` $/MMBtu, rows aligned with the yard budget.
+    """
+    fp = np.asarray(fuel_prices, dtype=float)
+    if fp.shape[0] != np.asarray(fleet.pmax).shape[0]:
+        raise ValueError(
+            f"fuel_prices rows {fp.shape[0]} != fleet generators "
+            f"{np.asarray(fleet.pmax).shape[0]}: the price would read the wrong units"
+        )
+    gen_idx = np.asarray(gen_idx, dtype=int)
+    group_index = np.asarray(group_index, dtype=int)
+    w = np.asarray(coeff, dtype=float) * np.asarray(fleet.pmax, dtype=float)[gen_idx]
+    p = fp[gen_idx].mean(axis=1)
+    num = np.bincount(group_index, weights=w * p, minlength=n_rows)
+    den = np.bincount(group_index, weights=w, minlength=n_rows)
+    fleet_mean = float((w * p).sum() / w.sum()) if w.sum() > 0 else 0.0
+    return np.where(den > 0, num / np.where(den > 0, den, 1.0), fleet_mean)

@@ -1552,6 +1552,9 @@ def build_constraints(
             # Cascade spill / pond-volume columns are WATER, not energy (zero
             # block; empty off the arm, keeping per_hour width == vph).
             sp.csr_matrix((n_zones, layout.n_cascade)),
+            # Coal take-floor shortfall columns are fuel MMBtu, not energy
+            # (zero block; empty off the arm, keeping per_hour width == vph).
+            sp.csr_matrix((n_zones, layout.n_take_slack)),
         ],
         format="csr",
     )
@@ -2024,6 +2027,32 @@ def build_constraints(
                 cp_lower = np.minimum(
                     np.asarray(coal_plant_floor, dtype=float).ravel(), cp_upper
                 )
+                # Soft floor (owner ruling 2026-09-27): each yard row carries
+                # its own shortfall column in every hour (+1 MMBtu), priced in
+                # the objective at the yard's delivered coal cost, so an
+                # unreachable take is paid rather than infeasible.
+                n_ts = int(layout.n_take_slack)
+                if n_ts:
+                    n_rows_cp = cp_block.shape[0]
+                    if n_ts != n_rows_cp:
+                        raise ValueError(
+                            f"layout.n_take_slack ({n_ts}) != coal yard rows "
+                            f"({n_rows_cp})"
+                        )
+                    hrs = np.arange(T)
+                    ts_rows = np.repeat(np.arange(n_ts), T)
+                    ts_cols = (
+                        hrs[None, :] * vph
+                        + layout._take_slack_off
+                        + np.arange(n_ts)[:, None]
+                    ).ravel()
+                    cp_block = (
+                        cp_block
+                        + sp.coo_matrix(
+                            (np.ones(ts_rows.size), (ts_rows, ts_cols)),
+                            shape=cp_block.shape,
+                        ).tocsr()
+                    ).tocsr()
             blocks.append(cp_block)
             del cp_block
             _add_bounds(cp_lower, cp_upper)

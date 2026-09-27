@@ -1668,7 +1668,6 @@ def main() -> None:
         fleet = load_fleet_from_csv(iso, iso_config) + load_retired_within_window(
             iso, iso_config
         )
-        from market_sim.config.plant_taxonomy import artifact_class
 
         for g in fleet:
             if int(g.plant_code) > 0 and g.plant_group:

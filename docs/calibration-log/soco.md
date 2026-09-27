@@ -1727,3 +1727,77 @@ would stack. Greedy of the admissible scope (must-run-floored plants only; cycle
 0.304 -> 0.289/0.294, 2019 COAL_BIT -4.24 -> -4.01/-4.18 pp (still FAIL at ~3x LP), 2022 COAL_PRB +2.69 -> +2.72.
 Owner question: a SOCO-scoped two-sided per-plant mode of the carrier. Record:
 docs/handoffs/r-soco/FINDING-soco-75-2026-09-27.md.
+
+## soco-76 — 2026-09-27
+
+GAS SIDE OF THE 2019 MERIT ORDER MEASURED; TWO ID-SPLIT CT PLANTS REPAIRED; PROMOTED; BOTH FAILING ROWS PERSIST. No owner
+ruling on soco-75's two-sided coal mode, so TASK 1 (zero LP) ran. Census (soco72-2019 leg): in coal's CEMS-synced/model-off
+hours the CC fleet clears at $20-22 (correct merit order); the 15 largest undercutting gas plants match their own CEMS heat
+rate (-0.25 MMBtu/MWh weighted) and EIA-923 receipts (-$0.11/MMBtu). Two plants never reach their measured data: EPA files
+Dahlberg (EIA 7709) and Hartwell (54538) under CAMD/eGRID 7765 / 70454 (PLANT_ID_CHANGE_FLAG=1), so both priced at the class
+default 10.5 / 11.5 vs measured 12.62 / 12.56. Carrier egrid_identity_heat_rates (U -> K): one ISO_SCOPE row; frozen discovery
+finds exactly these two, 7/7 vintages; zero fitted parameters. McDonough 710's 1971 CTs on the plant CC blend (6.83, 0.48 TWh vs
+~0) recorded, not built.
+
+RESULT (run 2026-09-27-soco76-egrid-identity-hr, seven year-isolated shards at 5b8af962; PROMOTED on the owner's standing
+ruling, PRECOMMIT §7 held; 2026-09-26-soco72-gas-basis-window pruned per rule 35): six tranches at the census mc +/-$0.01,
+everything else byte-identical; unserved 0. CT_PEAKER -1.03/-0.49/-0.05/-0.18/-0.48/-0.27/-0.34 TWh 2019-2025, ST_GAS and coal
+up. 2019 COAL_BIT -4.24 -> -4.16pp FAIL; 2020 C4 coal 0.3045 -> 0.3012 FAIL; D-1 2019 COAL_BIT r 0.591 -> 0.737. Dahlberg flips
+from 1.7 TWh over-run to ~0 (actual 0.49): CT plant split is cost-only. Grade 5/3/2, NOT-YET. Records:
+docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-76-2026-09-27.md. Leftover refs: claude/soco76-2019..2025.
+
+## soco-77 — 2026-09-27
+
+NO LEVER BUILT; NO SOLVE; KEEPER UNCHANGED (2026-09-27-soco76-egrid-identity-hr). No owner ruling on soco-75's two-sided coal
+mode, so TASK 1 (zero LP, soco76 legs) ran: the CT fleet's plant split as a cost-based start. Every CT econ*/peak tranche carries
+$0 start; only the _committed anchor carries the NREL $20/MW (core P1 markup). Greedy of tranche_startup_amortization's own scope
+at NREL: 2019 CT_PEAKER +2.29 -> +0.31 pp, 2020 C4 coal 0.301 -> 0.236 (FAIL -> PASS), 2019 COAL_BIT -4.16 -> -3.52 pp (FAIL);
+at the measured fuel-only $3.6/MW about a third of that. It does NOT fix the plant split: the over-runners (Tenaska 55061 2.72 vs
+0.13 TWh) start 10-21x/unit-yr on CEMS and the under-runners (McIntosh 7813, 7829) 120-190x - a ranking inversion, not a cost.
+Owner question: arm the field for SOCO as the objective start (in this LP it is also the price dual)? Lane recommends not on
+these grounds; next object = identification of why SOCO's cheapest CTs rarely start. Record:
+docs/handoffs/r-soco/FINDING-soco-77-2026-09-27.md.
+
+## soco-78 — 2026-09-27
+
+NO LEVER BUILT; NO SOLVE; KEEPER UNCHANGED (2026-09-27-soco76-egrid-identity-hr). No owner ruling on soco-75 or soco-77, so the
+zero-LP identification ran on the soco76 legs. The CT "ranking inversion" is a within-class merit order: log(model/923) vs CEMS heat
+rate Spearman -0.60, so the cheapest CTs (7FA-class, mostly IPP-sector) absorb the class's over-run. The class object is PRICE
+ELASTICITY: actual CT output is 3.3-4.7 TWh/yr (2022: 7.05) whatever the gas price, while the model swings 2.4 -> 11.5 TWh (2.0-2.6x
+actual when fuel <= $3.3; under in 2021-22). IPP CTs 2019 4.90 vs 0.71 TWh, with 59-70 % of real energy in top-decile load hours vs
+32-39 % modelled; OPC CTs match in low-gas years and under-run 3-4x in 2021-22, so no ownership partition is right every year. Heat
+rate, fuel, oil share and outage windows do not discriminate; IPP delivered gas and contract terms are unmeasured (EIA-923 Page 5
+withholds), so a sector carrier would need a fitted number: refused. McDonough 710 census: the family mechanism never touches it
+(APPLIED_VINTAGE=2023, no live GT family there); the scoped out_of_window fall-back is inert for SOCO and moves NYISO (Northport); the
+real seam is the 2023-pinned family artifact vs the year-matched join (shared code, three ISOs), not built. Owner questions carried
+(soco-75, soco-77) plus a scoping question on the family vintage. Record: docs/handoffs/r-soco/FINDING-soco-78-2026-09-27.md.
+
+## soco-79 — 2026-09-27
+
+NO LEVER BUILT; NO SOLVE; KEEPER UNCHANGED (2026-09-27-soco76-egrid-identity-hr). No owner ruling on soco-75, soco-77 or soco-78's
+scoping question, so the zero-LP fleet-grain census for question (3) ran: fleet_only rebuilds on each keeper's own recipe (SOCO
+soco76 2019-2025; CAISO rcaiso5_XE 2019-2025; NYISO nyisonext6 2021-2025), family rate at the 2023 applied vintage vs each year's
+own vintage (ok rows) vs that plus a class-default fall-back for out_of_window. SOCO: year-matching moves 0 rows in every year - the
+mechanism is fully shadowed (family-off also moves 0) because every covered plant now takes a measured CAMPD rate (F1, 2026-09-24).
+The fall-back reaches McDonough 710 CTs only in 2019/2022 (64 MW, 6.8 -> 11.5) and 2024/25 (already out of merit), never 2020/21;
+greedy on the legs: 2019 COAL_BIT -4.16 -> -4.13 pp still FAIL, 2020 C4 0.301 untouched. Other ISOs (reported in the FINDING only):
+CAISO Huntington Beach 335 ST 225.8 MW +0.25/+0.41 in 2021/22; NYISO Northport/Port Jefferson GTs <= 24.7 MW. SOCO has no stake in
+(3). Record: docs/handoffs/r-soco/FINDING-soco-79-2026-09-27.md.
+
+## soco-80 — 2026-09-27
+
+NO LEVER BUILT; NO SOLVE; KEEPER UNCHANGED (2026-09-27-soco76-egrid-identity-hr). No owner ruling on soco-75 or soco-77, so the
+zero-LP task ran on the last untested take family member, `coal_fuel_inventory_take_floor` (NWPP-NEXT-7, estimator B: Y-1
+contract tons + Dec stock - max stock). The soco76 leg refs are gone from origin, so the work used the committed payload and
+hourlies. Floor above actual energy: 2020 9.90 TWh (Scherer 13.15 vs 5.63, 2.3x), 2024 1.73 (Barry 3.5x). The renewal premise
+fails in the C4 year (contracts -32 %). Greedy: 2019 COAL_BIT -4.16 -> -2.61pp PASS, but 2020 CC_REGULAR/COAL_PRB C1 FAIL, 2020 C4
+0.301 -> 0.514 and 2024 C4 0.254 -> 0.381 FAIL. Cell U -> G on structure (rules 13/20), per-year/plant scoping refused (rule 1).
+Owner questions (soco-75, soco-77) carried. Record: docs/handoffs/r-soco/FINDING-soco-80-2026-09-27.md.
+
+## owner rulings 2026-09-27 (asked in soco-80, decision cards)
+
+- **soco-75 two-sided `coal_econ_marginal_hr_bound`: YES, build it.** Scope: SOCO only, the must-run-floored plants'
+  econ tranches (cyclers excluded per SOCO-63 §5), measured incremental HR from the frozen derive_campd_marginal_hr
+  construction, able to lower as well as raise offers. The greedy promise is 2020 C4 0.301 -> ~0.29 (PASS); 2019
+  COAL_BIT stays FAIL. The build goes to the successor lane (soco-81): soco-72/76 pattern, seven year-isolated shards.
+- **soco-77 `tranche_startup_amortization` as SOCO's objective start: NO** (lane recommendation). It stays refused for SOCO.

@@ -1,0 +1,338 @@
+{
+"2019": {
+"moved": {
+"CT_PEAKER_SOCO_GA_p54538_econhi": {
+"dmc": 2.8731,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 37.4001,
+"mc_old": 34.527
+},
+"CT_PEAKER_SOCO_GA_p54538_econlo": {
+"dmc": 2.8731,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 37.4001,
+"mc_old": 34.527
+},
+"CT_PEAKER_SOCO_GA_p54538_peak": {
+"dmc": 2.8731,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 37.4001,
+"mc_old": 34.527
+},
+"CT_PEAKER_SOCO_GA_p7709_econhi": {
+"dmc": 5.723,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 37.552,
+"mc_old": 31.829
+},
+"CT_PEAKER_SOCO_GA_p7709_econlo": {
+"dmc": 5.723,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 37.552,
+"mc_old": 31.829
+},
+"CT_PEAKER_SOCO_GA_p7709_peak": {
+"dmc": 5.723,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 37.552,
+"mc_old": 31.829
+}
+},
+"ok": true,
+"units": 339
+},
+"2020": {
+"moved": {
+"CT_PEAKER_SOCO_GA_p54538_econhi": {
+"dmc": 2.3774,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 31.5511,
+"mc_old": 29.1737
+},
+"CT_PEAKER_SOCO_GA_p54538_econlo": {
+"dmc": 2.3774,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 31.5511,
+"mc_old": 29.1737
+},
+"CT_PEAKER_SOCO_GA_p54538_peak": {
+"dmc": 2.3774,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 31.5511,
+"mc_old": 29.1737
+},
+"CT_PEAKER_SOCO_GA_p7709_econhi": {
+"dmc": 4.7356,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 31.6768,
+"mc_old": 26.9412
+},
+"CT_PEAKER_SOCO_GA_p7709_econlo": {
+"dmc": 4.7356,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 31.6768,
+"mc_old": 26.9412
+},
+"CT_PEAKER_SOCO_GA_p7709_peak": {
+"dmc": 4.7356,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 31.6768,
+"mc_old": 26.9412
+}
+},
+"ok": true,
+"units": 340
+},
+"2021": {
+"moved": {
+"CT_PEAKER_SOCO_GA_p54538_econhi": {
+"dmc": 4.0669,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 51.4854,
+"mc_old": 47.4185
+},
+"CT_PEAKER_SOCO_GA_p54538_econlo": {
+"dmc": 4.0669,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 51.4854,
+"mc_old": 47.4185
+},
+"CT_PEAKER_SOCO_GA_p54538_peak": {
+"dmc": 4.0669,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 51.4854,
+"mc_old": 47.4185
+},
+"CT_PEAKER_SOCO_GA_p7709_econhi": {
+"dmc": 8.1009,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 51.7004,
+"mc_old": 43.5995
+},
+"CT_PEAKER_SOCO_GA_p7709_econlo": {
+"dmc": 8.1009,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 51.7004,
+"mc_old": 43.5995
+},
+"CT_PEAKER_SOCO_GA_p7709_peak": {
+"dmc": 8.1009,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 51.7004,
+"mc_old": 43.5995
+}
+},
+"ok": true,
+"units": 347
+},
+"2022": {
+"moved": {
+"CT_PEAKER_SOCO_GA_p54538_econhi": {
+"dmc": 7.7392,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 94.8154,
+"mc_old": 87.0762
+},
+"CT_PEAKER_SOCO_GA_p54538_econlo": {
+"dmc": 7.7392,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 94.8154,
+"mc_old": 87.0762
+},
+"CT_PEAKER_SOCO_GA_p54538_peak": {
+"dmc": 7.7392,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 94.8154,
+"mc_old": 87.0762
+},
+"CT_PEAKER_SOCO_GA_p7709_econhi": {
+"dmc": 15.4158,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 95.2246,
+"mc_old": 79.8088
+},
+"CT_PEAKER_SOCO_GA_p7709_econlo": {
+"dmc": 15.4158,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 95.2246,
+"mc_old": 79.8088
+},
+"CT_PEAKER_SOCO_GA_p7709_peak": {
+"dmc": 15.4158,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 95.2246,
+"mc_old": 79.8088
+}
+},
+"ok": true,
+"units": 348
+},
+"2023": {
+"moved": {
+"CT_PEAKER_SOCO_GA_p54538_econhi": {
+"dmc": 3.0653,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 39.6681,
+"mc_old": 36.6028
+},
+"CT_PEAKER_SOCO_GA_p54538_econlo": {
+"dmc": 3.0653,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 39.6681,
+"mc_old": 36.6028
+},
+"CT_PEAKER_SOCO_GA_p54538_peak": {
+"dmc": 3.0653,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 39.6681,
+"mc_old": 36.6028
+},
+"CT_PEAKER_SOCO_GA_p7709_econhi": {
+"dmc": 6.1059,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 39.8301,
+"mc_old": 33.7242
+},
+"CT_PEAKER_SOCO_GA_p7709_econlo": {
+"dmc": 6.1059,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 39.8301,
+"mc_old": 33.7242
+},
+"CT_PEAKER_SOCO_GA_p7709_peak": {
+"dmc": 6.1059,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 39.8301,
+"mc_old": 33.7242
+}
+},
+"ok": true,
+"units": 328
+},
+"2024": {
+"moved": {
+"CT_PEAKER_SOCO_GA_p54538_econhi": {
+"dmc": 2.863,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 37.2807,
+"mc_old": 34.4177
+},
+"CT_PEAKER_SOCO_GA_p54538_econlo": {
+"dmc": 2.863,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 37.2807,
+"mc_old": 34.4177
+},
+"CT_PEAKER_SOCO_GA_p54538_peak": {
+"dmc": 2.863,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 37.2807,
+"mc_old": 34.4177
+},
+"CT_PEAKER_SOCO_GA_p7709_econhi": {
+"dmc": 5.7028,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 37.4321,
+"mc_old": 31.7293
+},
+"CT_PEAKER_SOCO_GA_p7709_econlo": {
+"dmc": 5.7028,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 37.4321,
+"mc_old": 31.7293
+},
+"CT_PEAKER_SOCO_GA_p7709_peak": {
+"dmc": 5.7028,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 37.4321,
+"mc_old": 31.7293
+}
+},
+"ok": true,
+"units": 329
+},
+"2025": {
+"moved": {
+"CT_PEAKER_SOCO_GA_p54538_econhi": {
+"dmc": 4.2186,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 53.2759,
+"mc_old": 49.0572
+},
+"CT_PEAKER_SOCO_GA_p54538_econlo": {
+"dmc": 4.2186,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 53.2759,
+"mc_old": 49.0572
+},
+"CT_PEAKER_SOCO_GA_p54538_peak": {
+"dmc": 4.2186,
+"hr_new": 12.5649,
+"hr_old": 11.5,
+"mc_new": 53.2759,
+"mc_old": 49.0572
+},
+"CT_PEAKER_SOCO_GA_p7709_econhi": {
+"dmc": 8.4031,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 53.4989,
+"mc_old": 45.0957
+},
+"CT_PEAKER_SOCO_GA_p7709_econlo": {
+"dmc": 8.4031,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 53.4989,
+"mc_old": 45.0957
+},
+"CT_PEAKER_SOCO_GA_p7709_peak": {
+"dmc": 8.4031,
+"hr_new": 12.6212,
+"hr_old": 10.5,
+"mc_new": 53.4989,
+"mc_old": 45.0957
+}
+},
+"ok": true,
+"units": 353
+}
+}

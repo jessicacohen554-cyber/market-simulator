@@ -329,6 +329,11 @@ def build_variable_bounds(
             raise ValueError(f"hydro_cascade_pond_cap shape {cap.shape} != ({n_c},)")
         col_upper[:, v0 : v0 + n_c] = cap[np.newaxis, :]
 
+    # Coal take-floor shortfall columns (NWPP-NEXT-7): 0 <= S <= inf.
+    if layout.n_take_slack:
+        o = layout._take_slack_off
+        col_upper[:, o : o + layout.n_take_slack] = np.inf
+
     # Clip the lower bound to never exceed the upper bound. A committed
     # thermal generator carries a positive Pmin, but the commitment screen
     # (and hour-varying availability) can drive its upper bound to zero in

@@ -385,3 +385,14 @@ CAISO,2022,annual,San Diego/Imperial Valley,local_area,requirement,3993,,https:/
 CAISO,2022,annual,SP26,zone,peak_load,27474,,https://www.caiso.com/Documents/Final2022LocalCapacityTechnicalReport.pdf,Table 3.2-1
 CAISO,2022,annual,NP26,zone,peak_load,20403,,https://www.caiso.com/Documents/Final2022LocalCapacityTechnicalReport.pdf,Table 3.2-1
 CAISO,2022,annual,CAISO,rto,system_requirement,,0.15,https://www.caiso.com/Documents/Final2022LocalCapacityTechnicalReport.pdf,Table 3.2-1 (p31) CPUC minimum PRM
+CAISO,2018,annual,Malin 500,branch_group,import_limit,3008,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2018.pdf,1
+CAISO,2019,annual,Malin 500,branch_group,import_limit,3054,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2019.pdf,1
+CAISO,2020,annual,Malin 500,branch_group,import_limit,3130,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2020.pdf,1
+CAISO,2019,annual,SP26,zone,peak_load,26995,,https://www.caiso.com/Documents/Final2019LocalCapacityTechnicalReport.pdf,p24 Total Zonal Resource Need
+CAISO,2019,annual,NP26,zone,peak_load,20082,,https://www.caiso.com/Documents/Final2019LocalCapacityTechnicalReport.pdf,p24 Total Zonal Resource Need
+CAISO,2019,annual,LA Basin,local_area,peak_load,19266,,https://www.caiso.com/Documents/Final2019LocalCapacityTechnicalReport.pdf,p52 net load+losses+pumps (electrically defined area)
+CAISO,2019,annual,San Diego/Imperial Valley,local_area,peak_load,4412,,https://www.caiso.com/Documents/Final2019LocalCapacityTechnicalReport.pdf,p64 managed peak demand incl. losses
+CAISO,2020,annual,LA Basin,local_area,peak_load,19261,,https://www.caiso.com/Documents/Final2020LocalCapacityTechnicalReport.pdf,Table 3.3-74 Load+Losses+Pumps
+CAISO,2020,annual,San Diego/Imperial Valley,local_area,peak_load,4613,,https://www.caiso.com/Documents/Final2020LocalCapacityTechnicalReport.pdf,Table 3.3-83 Load+Losses+Pumps
+CAISO,2021,annual,LA Basin,local_area,peak_load,18930,,https://www.caiso.com/Documents/Final2021LocalCapacityTechnicalReport.pdf,Table 3.3-75 Load+Losses+Pumps
+CAISO,2021,annual,San Diego/Imperial Valley,local_area,peak_load,4523,,https://www.caiso.com/Documents/Final2021LocalCapacityTechnicalReport.pdf,Table 3.3-84 Load+Losses+Pumps

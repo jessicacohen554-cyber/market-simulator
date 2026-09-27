@@ -480,6 +480,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # '-short-rederive-' companions through the same resolvers, so the off path
     # is byte-inert). Same commit as the field.
     "unit_outage_full_rederive",
+    # miso-278 unit-fuel split of the thermal-tranche family (GATED default-off;
+    # selects the four '-fuelsplit-' companions through
+    # campd_bins.campd_fuel_split_selector, so the off path is byte-inert).
+    # Registered IN THE SAME COMMIT as the field.
+    "campd_unit_fuel_split",
     # SPP-85 net-load-mask repair of the standard / short / partial CAMPD
     # extracts (GATED default-off; selects the '-netloadmask-' companions
     # through the same resolvers, so the off path is byte-inert). Same commit
@@ -2144,6 +2149,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SHARED field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline).
     "coal_fuel_inventory_take_floor",
+    # NYISO-NEXT-6 (2026-09-27): Long Island posted-limit sub-clip (default
+    # off). Byte-identical off by construction: its one applier,
+    # data.nyiso_seam_envelope.nyiso_li_posted_limit_cap, is reached only inside
+    # ``if iso == "NYISO" and getattr(config, "nyiso_li_seam_posted_limit_cap",
+    # False)`` in run_calibration.run_year, so no link bound changes off.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "nyiso_li_seam_posted_limit_cap",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2315,6 +2327,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by PJM-NEXT-5 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_full_rederive": "False",
+    # Added by miso-278 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "campd_unit_fuel_split": "False",
     # Added by SPP-85 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_netload_mask_repair": "False",
@@ -2913,6 +2928,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
     "coal_fuel_inventory_take_floor": "False",
+    # Added by NYISO-NEXT-6 WITH the field (the nyiso-119 discipline).
+    "nyiso_li_seam_posted_limit_cap": "False",
 }
 
 
@@ -8237,6 +8254,19 @@ class ScenarioConfig:
     # (NYISO_SEAM_FLOW_PERCENTILE), and the Gold Book tie landings. Default off;
     # NYISO-only. Pre-registration:
     # results/calibration/PREREG-nyiso127-addendum2-full-seam-attribution-2026-08-05.md
+    # LONG ISLAND POSTED-LIMIT SUB-CLIP (NYISO-NEXT-6, GATED default off,
+    # NYISO-only, backcast only, ZERO free parameters). Caps the
+    # NYISO_external>Long_Island IMPORT bound, hour by hour, at the sum of the
+    # POSTED import limits of SCH - PJM_NEPTUNE, SCH - NPX_CSC and
+    # SCH - NPX_1385 on the same MIS P-32 posting the envelope already reads (a
+    # line on outage posts 0). The p90 envelope pools each month's outage days
+    # with its in-service days, so it lets the model import over a tie posting
+    # 0. A clip INSIDE the one armed seam mechanism, never a second one, and
+    # never raises a cap (rule 19 [R-ONE-MECH]); a physical availability event,
+    # the object class of an outage window (rule 13). Applied only when one of
+    # the two seam flags above is armed. Export bound untouched; NYC ties out of
+    # scope. PRECOMMIT: docs/PRECOMMIT-nyiso-next5-li-tie-posted-limit-2026-09-27.md
+    nyiso_li_seam_posted_limit_cap: bool = False
     nyiso_seam_deliverability_envelope: bool = False  # NYISO external seam
     # deliverability envelope (nyiso-125, data.nyiso_seam_envelope): replace the
     # flat SYMMETRIC static rating on the two border links whose external ties
@@ -12332,7 +12362,12 @@ class ScenarioConfig:
     # orchestrator raises if either is armed with it. Requires
     # coal_fuel_inventory_plant_grain. Rule 13: every input predates Y; forward,
     # the take is the then-latest contract volume renewed until the plant's
-    # step-0/1b exit. See data/coal_fuel_inventory.py:build_coal_take_floor.
+    # step-0/1b exit. SOFT since owner ruling 2026-09-27 (after four hard-floor
+    # year solves went infeasible): each yard row carries a shortfall column
+    # priced at the yard's own model coal fuel price ($/MMBtu), so an unmet take
+    # is paid (take-or-pay), never infeasible, and the dual is capped at that
+    # price. See data/coal_fuel_inventory.py:build_coal_take_floor and
+    # coal_take_shortfall_price.
     coal_fuel_inventory_take_floor: bool = False
 
     # Commitment-floor WINDOW ranked on NET load instead of system load
@@ -16417,6 +16452,32 @@ class ScenarioConfig:
     # so the off path is byte-inert and no ISO but NYISO is reachable today.
     # See docs/FINDING-nyiso176-input-artifact-reproducibility-2026-09-02.md.
     campd_per_unit_attribution: bool = False
+
+    # UNIT-FUEL SPLIT of the CAMPD thermal-tranche family (miso-278, GATED
+    # default off; rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]). The incumbent
+    # tranche artifact attributes a plant's FACILITY-summed CAMPD net to its
+    # largest-nameplate group, so where coal and gas boilers share a facility
+    # one bin carries both fuels' conduct: Brame 6190's and Big Cajun 2 6055's
+    # gas-steam units sit inside their COAL rows (so their ST_GAS bins carry no
+    # row and no floor), Dan E Karn 1702's coal units sit inside its ST_GAS row,
+    # coal sits inside CT_PEAKER rows at 976 / 6137. campd_per_unit_attribution
+    # cannot reach it: its crosswalk routes by prime-mover FAMILY, and a coal
+    # boiler and a gas boiler are one family. Armed, the four '-fuelsplit-'
+    # companions written by derive_thermal_tranches.py --unit-fuel-split are
+    # read -- pooled tranches, per-year online_frac, p25 MW level, out-of-merit
+    # MW level -- in which every MIXED-FUEL plant's rows are re-derived by
+    # routing each CAMPD unit on its own primaryFuelInfo (coal -> the coal bin,
+    # gas -> its prime-mover family's gas bin, pet-coke/oil -> no bin) with the
+    # frozen estimator over the incumbent's pooled window (2023-2025), and every
+    # other line is byte-identical. ONE field over all four, so membership,
+    # window and level come from one derivation. ZERO free parameters: CAMPD's
+    # per-unit fuel label and EIA-860 vintage fleets. Rule 23: the trigger is
+    # the attribution defect (FINDING-miso277 section 2), never a residual.
+    # Ignored under campd_per_unit_attribution (no fuel-split variant of the
+    # per-unit companions exists). Byte-inert off; self-scoping -- only MISO
+    # carries the companions, every other ISO falls back to its incumbent.
+    # docs/handoffs/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md.
+    campd_unit_fuel_split: bool = False
 
     # ECONOMIC-LAY-UP GUARD on the per-unit CAMPD companions (nyiso-177,
     # GATED default off; PREREG-nyiso177-degradation-root-cause.md). Selects

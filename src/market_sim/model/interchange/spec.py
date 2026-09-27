@@ -624,7 +624,58 @@ IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = 
     # 2025 alone. Spot tranches and every price are identical to the other
     # years, i.e. the same STATIC-FITTED-PENDING-MEASURED Tier-3 proxies the
     # G-26 label above already declares.
+    #
+    # 2019-2021 ADDED 2026-09-27 (R-CAISO-6) — same recipe, ZERO new
+    # parameters, re-proved first: the construction below reproduces the
+    # committed 2022/2023/2024/2025 pairs to the MW. Without these rows the
+    # three folded years silently ran the STATIC 2025 block (1,566 / 1,805),
+    # the defect caiso-262 fixed for 2022.
+    #   RA imports (DMM Annual Report on Market Issues and Performance):
+    #   2021 — Table 9.4 (Alert+ hours), `Imports` row = 2,771 MW; the sibling
+    #     `Imports - MSS` (336) is excluded, exactly the 2022 convention.
+    #   2020 — Table 9.1 (210 highest load hours), `Imports` = 4,699 MW.
+    #   2019 — Table 10.1 (210 highest load hours), `Imports` = 4,704 MW.
+    #   MISALIGNMENT, disclosed per rule 14: the 2019/2020 tables publish ONE
+    #   `Imports` row with no MSS split, so it probably includes metered-
+    #   subsystem imports (the 2021 report's MSS row is 336 MW; 2022 273;
+    #   2023 326) — an upward bias of order 300 MW (~7 %) that cannot be
+    #   removed without borrowing another year's MSS value, which would be a
+    #   guess. The window also differs (210 highest load hours vs Alert+
+    #   hours). The published row is still the reconciled real datum and beats
+    #   the static 2025 block it replaces (3,371 MW, a different year).
+    #   MIC north share = the same north-of-Path-15 branch-group partition:
+    #   2019 7,312 / 15,208 = 0.48080; 2020 7,401 / 15,524 = 0.47675;
+    #   2021 7,451 / 15,820 = 0.47099. The 2019/2020 totals include the
+    #   Malin 500 branch group (3,054 / 3,130 MW), which the MIC intake had
+    #   DROPPED for 2018-2020 (the filings code it bare `MALIN500`, and the
+    #   parser required an `_ITC`/`_ISL`/`_BG` suffix); fixed in the same
+    #   session, and the corrected totals equal the filings' own printed
+    #   Total rows (15,208 / 15,524).
     "CAISO": {
+        2019: [
+            ("PNW_hydro_base", 2262.0, 28.0),
+            ("PNW_midC", 1800.0, 36.0),
+            ("DSW_solar_PV", 2442.0, 48.0),
+            ("DSW_CCGT", 1800.0, 68.0),
+            ("DSW_CT", 2200.0, 110.0),
+            ("WECC_scarcity", 3000.0, 180.0),
+        ],
+        2020: [
+            ("PNW_hydro_base", 2240.0, 28.0),
+            ("PNW_midC", 1800.0, 36.0),
+            ("DSW_solar_PV", 2459.0, 48.0),
+            ("DSW_CCGT", 1800.0, 68.0),
+            ("DSW_CT", 2200.0, 110.0),
+            ("WECC_scarcity", 3000.0, 180.0),
+        ],
+        2021: [
+            ("PNW_hydro_base", 1305.0, 28.0),
+            ("PNW_midC", 1800.0, 36.0),
+            ("DSW_solar_PV", 1466.0, 48.0),
+            ("DSW_CCGT", 1800.0, 68.0),
+            ("DSW_CT", 2200.0, 110.0),
+            ("WECC_scarcity", 3000.0, 180.0),
+        ],
         2022: [
             ("PNW_hydro_base", 1489.0, 28.0),
             ("PNW_midC", 1800.0, 36.0),

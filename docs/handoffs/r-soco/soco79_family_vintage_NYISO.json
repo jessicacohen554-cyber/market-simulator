@@ -1,0 +1,154 @@
+{
+ "2021": {
+  "AB": {
+   "rows": 2,
+   "mw": 24.7,
+   "plants": [
+    2516,
+    2517
+   ],
+   "d_hr_mw_wtd": 6.9241,
+   "d_hr_min": 0.4609,
+   "d_hr_max": 13.9898
+  },
+  "BC": {
+   "rows": 0,
+   "mw": 0.0,
+   "plants": [],
+   "d_hr_mw_wtd": 0.0,
+   "d_hr_min": 0.0,
+   "d_hr_max": 0.0
+  },
+  "AC": {
+   "rows": 2,
+   "mw": 24.7,
+   "plants": [
+    2516,
+    2517
+   ],
+   "d_hr_mw_wtd": 6.9241,
+   "d_hr_min": 0.4609,
+   "d_hr_max": 13.9898
+  }
+ },
+ "2022": {
+  "AB": {
+   "rows": 1,
+   "mw": 12.9,
+   "plants": [
+    2517
+   ],
+   "d_hr_mw_wtd": -0.0993,
+   "d_hr_min": -0.0993,
+   "d_hr_max": -0.0993
+  },
+  "BC": {
+   "rows": 0,
+   "mw": 0.0,
+   "plants": [],
+   "d_hr_mw_wtd": 0.0,
+   "d_hr_min": 0.0,
+   "d_hr_max": 0.0
+  },
+  "AC": {
+   "rows": 1,
+   "mw": 12.9,
+   "plants": [
+    2517
+   ],
+   "d_hr_mw_wtd": -0.0993,
+   "d_hr_min": -0.0993,
+   "d_hr_max": -0.0993
+  }
+ },
+ "2023": {
+  "AB": {
+   "rows": 0,
+   "mw": 0.0,
+   "plants": [],
+   "d_hr_mw_wtd": 0.0,
+   "d_hr_min": 0.0,
+   "d_hr_max": 0.0
+  },
+  "BC": {
+   "rows": 1,
+   "mw": 11.8,
+   "plants": [
+    2516
+   ],
+   "d_hr_mw_wtd": 2.6127,
+   "d_hr_min": 2.6127,
+   "d_hr_max": 2.6127
+  },
+  "AC": {
+   "rows": 1,
+   "mw": 11.8,
+   "plants": [
+    2516
+   ],
+   "d_hr_mw_wtd": 2.6127,
+   "d_hr_min": 2.6127,
+   "d_hr_max": 2.6127
+  }
+ },
+ "2024": {
+  "AB": {
+   "rows": 1,
+   "mw": 12.9,
+   "plants": [
+    2517
+   ],
+   "d_hr_mw_wtd": -0.1662,
+   "d_hr_min": -0.1662,
+   "d_hr_max": -0.1662
+  },
+  "BC": {
+   "rows": 0,
+   "mw": 0.0,
+   "plants": [],
+   "d_hr_mw_wtd": 0.0,
+   "d_hr_min": 0.0,
+   "d_hr_max": 0.0
+  },
+  "AC": {
+   "rows": 1,
+   "mw": 12.9,
+   "plants": [
+    2517
+   ],
+   "d_hr_mw_wtd": -0.1662,
+   "d_hr_min": -0.1662,
+   "d_hr_max": -0.1662
+  }
+ },
+ "2025": {
+  "AB": {
+   "rows": 1,
+   "mw": 12.9,
+   "plants": [
+    2517
+   ],
+   "d_hr_mw_wtd": -0.1662,
+   "d_hr_min": -0.1662,
+   "d_hr_max": -0.1662
+  },
+  "BC": {
+   "rows": 0,
+   "mw": 0.0,
+   "plants": [],
+   "d_hr_mw_wtd": 0.0,
+   "d_hr_min": 0.0,
+   "d_hr_max": 0.0
+  },
+  "AC": {
+   "rows": 1,
+   "mw": 12.9,
+   "plants": [
+    2517
+   ],
+   "d_hr_mw_wtd": -0.1662,
+   "d_hr_min": -0.1662,
+   "d_hr_max": -0.1662
+  }
+ }
+}
