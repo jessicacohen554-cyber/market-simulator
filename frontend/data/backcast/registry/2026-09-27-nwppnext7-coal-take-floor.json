@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-27-nwppnext7-coal-take-floor",
+  "label": "nwppnext7 coal take floor",
+  "date": "2026-09-27",
+  "shorthand": "nwppnext7-coal-take-floor",
+  "definition": "NWPP-NEXT-7 take floor: keeper #13 recipe + per-yard coal take floor (B net), take-or-pay discounts retired",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-09-27-nwppnext7-coal-take-floor.js",
+  "bundle": "results/calibration/nwppnext7sf_span"
+}
