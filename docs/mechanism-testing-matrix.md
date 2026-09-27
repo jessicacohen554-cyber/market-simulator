@@ -17994,6 +17994,18 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-88 (2026-09-27, WIND HEADROOM PLACEMENT, ZERO LP —
+`docs/handoffs/FINDING-spp-88-wind-headroom-placement-2026-09-27.md`, probe `scripts/probes/_spp88_wind_headroom_placement.py`).**
+- **The keeper's wind excess is NOT phantom headroom.** 86–99 % of it sits in hours when the actual RT hub LMP was < $15
+  (the real curtailment hours). Hours with no curtailment signal hold −0.19…+0.97 TWh. The flat `1/(1−r)` gross-up is placed
+  correctly; do not re-shape or re-level it.
+- **The model does not curtail because its price does not fall.** In actual negative hours its median price is +$14.7…+19.4.
+  The counterpart is gas: 7.0–10.2 TWh short in the same < $15 hours (2021–25). That is SPP-74/75/77's gas low-side object,
+  which has no admissible driver. Re-open only on SPP-77's condition.
+- **2021–22 CC_REGULAR is a separate object**: gas short and coal long in every price bucket, including ≥ $30. This is the
+  high-gas-price merit-order swap.
+- Owner ruling (SPP-87 Q1): measure every ISO's gross/net coal alignment before any C1 basis change.
+
 **DO-NOT-REDO, added by SPP-87 (2026-09-26, EIA-923 vs EIA-930 BENCHMARK RECONCILIATION, ZERO LP —
 `docs/handoffs/FINDING-spp-87-benchmark-reconcile-2026-09-26.md`, probe `scripts/probes/_spp87_benchmark_reconcile.py`).**
 - **The 4–6 TWh/yr gap between EIA-930 coal and EIA-923 coal is METERING BASIS, not membership.** EIA-930 and the SPP portal
