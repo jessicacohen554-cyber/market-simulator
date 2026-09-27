@@ -1,0 +1,1296 @@
+[
+ {
+  "year": 2019,
+  "gate": [
+   [
+    false,
+    true
+   ],
+   true,
+   {
+    "coal_fuel_inventory_plant_grain": true,
+    "coal_fuel_inventory_take_floor": true,
+    "coal_takeorpay_from_data": false,
+    "coal_committed_takeorpay_regulated": false
+   }
+  ],
+  "n_unrowed_generators": 14,
+  "clipped_to_budget": 1,
+  "clipped_to_capacity": 1,
+  "floor_binding_vs_k13_twh": 10.146,
+  "ceiling_binding_vs_k13_twh": 1.99,
+  "rows": [
+   {
+    "yard": 3845,
+    "plants": [
+     3845
+    ],
+    "hr": 11.73,
+    "ceiling_twh": 5.653,
+    "floor_twh": 4.292,
+    "census_Bnet_twh": 4.292,
+    "keeper13_model_twh": 1.331
+   },
+   {
+    "yard": 4158,
+    "plants": [
+     4158
+    ],
+    "hr": 11.489,
+    "ceiling_twh": 5.806,
+    "floor_twh": 4.601,
+    "census_Bnet_twh": 4.601,
+    "keeper13_model_twh": 5.024
+   },
+   {
+    "yard": 4162,
+    "plants": [
+     4162
+    ],
+    "hr": 11.231,
+    "ceiling_twh": 5.182,
+    "floor_twh": 4.321,
+    "census_Bnet_twh": 4.321,
+    "keeper13_model_twh": 2.705
+   },
+   {
+    "yard": 6076,
+    "plants": [
+     6076
+    ],
+    "hr": 10.832,
+    "ceiling_twh": 14.08,
+    "floor_twh": 11.926,
+    "census_Bnet_twh": 11.926,
+    "keeper13_model_twh": 9.485
+   },
+   {
+    "yard": 6101,
+    "plants": [
+     6101
+    ],
+    "hr": 11.82,
+    "ceiling_twh": 2.539,
+    "floor_twh": 2.257,
+    "census_Bnet_twh": 2.422,
+    "keeper13_model_twh": 2.257
+   },
+   {
+    "yard": 6106,
+    "plants": [
+     6106
+    ],
+    "hr": 10.406,
+    "ceiling_twh": 1.908,
+    "floor_twh": 1.147,
+    "census_Bnet_twh": 1.147,
+    "keeper13_model_twh": 3.163
+   },
+   {
+    "yard": 6165,
+    "plants": [
+     6165
+    ],
+    "hr": 10.392,
+    "ceiling_twh": 10.77,
+    "floor_twh": 8.168,
+    "census_Bnet_twh": 8.168,
+    "keeper13_model_twh": 8.461
+   },
+   {
+    "yard": 7790,
+    "plants": [
+     7790
+    ],
+    "hr": 10.9,
+    "ceiling_twh": 3.583,
+    "floor_twh": 2.927,
+    "census_Bnet_twh": 2.927,
+    "keeper13_model_twh": 2.813
+   },
+   {
+    "yard": 8066,
+    "plants": [
+     8066
+    ],
+    "hr": 10.672,
+    "ceiling_twh": 13.591,
+    "floor_twh": 10.948,
+    "census_Bnet_twh": 10.948,
+    "keeper13_model_twh": 9.075
+   },
+   {
+    "yard": 8069,
+    "plants": [
+     8069
+    ],
+    "hr": 10.493,
+    "ceiling_twh": 6.402,
+    "floor_twh": 4.982,
+    "census_Bnet_twh": 4.982,
+    "keeper13_model_twh": 4.103
+   },
+   {
+    "yard": 8224,
+    "plants": [
+     8224
+    ],
+    "hr": 9.949,
+    "ceiling_twh": 1.282,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 1.475
+   },
+   {
+    "yard": 50951,
+    "plants": [
+     50951
+    ],
+    "hr": 12.177,
+    "ceiling_twh": 0.412,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.138
+   },
+   {
+    "yard": 54318,
+    "plants": [
+     54318
+    ],
+    "hr": 5.598,
+    "ceiling_twh": 0.02,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.24
+   },
+   {
+    "yard": 55749,
+    "plants": [
+     55749
+    ],
+    "hr": 15.052,
+    "ceiling_twh": 0.109,
+    "floor_twh": 0.109,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.001
+   },
+   {
+    "yard": 56163,
+    "plants": [
+     56163
+    ],
+    "hr": 10.8,
+    "ceiling_twh": 0.118,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.44
+   },
+   {
+    "yard": 56224,
+    "plants": [
+     56224
+    ],
+    "hr": 10.424,
+    "ceiling_twh": 1.064,
+    "floor_twh": 0.949,
+    "census_Bnet_twh": 0.949,
+    "keeper13_model_twh": 0.795
+   }
+  ]
+ },
+ {
+  "year": 2020,
+  "gate": [
+   [
+    false,
+    true
+   ],
+   true,
+   {
+    "coal_fuel_inventory_plant_grain": true,
+    "coal_fuel_inventory_take_floor": true,
+    "coal_takeorpay_from_data": false,
+    "coal_committed_takeorpay_regulated": false
+   }
+  ],
+  "n_unrowed_generators": 14,
+  "clipped_to_budget": 0,
+  "clipped_to_capacity": 4,
+  "floor_binding_vs_k13_twh": 12.768,
+  "ceiling_binding_vs_k13_twh": 0.444,
+  "rows": [
+   {
+    "yard": 3845,
+    "plants": [
+     3845
+    ],
+    "hr": 11.932,
+    "ceiling_twh": 6.718,
+    "floor_twh": 4.976,
+    "census_Bnet_twh": 5.77,
+    "keeper13_model_twh": 0.095
+   },
+   {
+    "yard": 4158,
+    "plants": [
+     4158
+    ],
+    "hr": 11.574,
+    "ceiling_twh": 5.723,
+    "floor_twh": 4.521,
+    "census_Bnet_twh": 4.521,
+    "keeper13_model_twh": 4.986
+   },
+   {
+    "yard": 4162,
+    "plants": [
+     4162
+    ],
+    "hr": 10.961,
+    "ceiling_twh": 4.514,
+    "floor_twh": 2.486,
+    "census_Bnet_twh": 2.928,
+    "keeper13_model_twh": 1.06
+   },
+   {
+    "yard": 6076,
+    "plants": [
+     6076
+    ],
+    "hr": 10.525,
+    "ceiling_twh": 14.116,
+    "floor_twh": 5.855,
+    "census_Bnet_twh": 13.259,
+    "keeper13_model_twh": 3.44
+   },
+   {
+    "yard": 6101,
+    "plants": [
+     6101
+    ],
+    "hr": 11.917,
+    "ceiling_twh": 2.203,
+    "floor_twh": 2.004,
+    "census_Bnet_twh": 2.004,
+    "keeper13_model_twh": 2.427
+   },
+   {
+    "yard": 6106,
+    "plants": [
+     6106
+    ],
+    "hr": 10.897,
+    "ceiling_twh": 2.547,
+    "floor_twh": 2.296,
+    "census_Bnet_twh": 2.296,
+    "keeper13_model_twh": 1.943
+   },
+   {
+    "yard": 6165,
+    "plants": [
+     6165
+    ],
+    "hr": 10.449,
+    "ceiling_twh": 9.26,
+    "floor_twh": 5.73,
+    "census_Bnet_twh": 5.73,
+    "keeper13_model_twh": 7.507
+   },
+   {
+    "yard": 7790,
+    "plants": [
+     7790
+    ],
+    "hr": 10.779,
+    "ceiling_twh": 4.017,
+    "floor_twh": 3.173,
+    "census_Bnet_twh": 3.173,
+    "keeper13_model_twh": 2.086
+   },
+   {
+    "yard": 8066,
+    "plants": [
+     8066
+    ],
+    "hr": 11.101,
+    "ceiling_twh": 12.698,
+    "floor_twh": 10.417,
+    "census_Bnet_twh": 10.417,
+    "keeper13_model_twh": 8.412
+   },
+   {
+    "yard": 8069,
+    "plants": [
+     8069
+    ],
+    "hr": 10.365,
+    "ceiling_twh": 6.348,
+    "floor_twh": 4.72,
+    "census_Bnet_twh": 4.72,
+    "keeper13_model_twh": 4.317
+   },
+   {
+    "yard": 8224,
+    "plants": [
+     8224
+    ],
+    "hr": 10.288,
+    "ceiling_twh": 2.577,
+    "floor_twh": 0.844,
+    "census_Bnet_twh": 0.844,
+    "keeper13_model_twh": 1.131
+   },
+   {
+    "yard": 50951,
+    "plants": [
+     50951
+    ],
+    "hr": 12.236,
+    "ceiling_twh": 0.402,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.031
+   },
+   {
+    "yard": 54318,
+    "plants": [
+     54318
+    ],
+    "hr": 5.599,
+    "ceiling_twh": 0.02,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.24
+   },
+   {
+    "yard": 55749,
+    "plants": [
+     55749
+    ],
+    "hr": 13.014,
+    "ceiling_twh": 0.14,
+    "floor_twh": 0.057,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.0
+   },
+   {
+    "yard": 56163,
+    "plants": [
+     56163
+    ],
+    "hr": 10.8,
+    "ceiling_twh": 0.0,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.0
+   },
+   {
+    "yard": 56224,
+    "plants": [
+     56224
+    ],
+    "hr": 11.211,
+    "ceiling_twh": 1.016,
+    "floor_twh": 0.902,
+    "census_Bnet_twh": 0.902,
+    "keeper13_model_twh": 0.761
+   }
+  ]
+ },
+ {
+  "year": 2021,
+  "gate": [
+   [
+    false,
+    true
+   ],
+   true,
+   {
+    "coal_fuel_inventory_plant_grain": true,
+    "coal_fuel_inventory_take_floor": true,
+    "coal_takeorpay_from_data": false,
+    "coal_committed_takeorpay_regulated": false
+   }
+  ],
+  "n_unrowed_generators": 14,
+  "clipped_to_budget": 0,
+  "clipped_to_capacity": 3,
+  "floor_binding_vs_k13_twh": 2.634,
+  "ceiling_binding_vs_k13_twh": 1.701,
+  "rows": [
+   {
+    "yard": 3845,
+    "plants": [
+     3845
+    ],
+    "hr": 11.605,
+    "ceiling_twh": 7.152,
+    "floor_twh": 3.263,
+    "census_Bnet_twh": 4.231,
+    "keeper13_model_twh": 1.414
+   },
+   {
+    "yard": 4158,
+    "plants": [
+     4158
+    ],
+    "hr": 11.679,
+    "ceiling_twh": 5.495,
+    "floor_twh": 4.182,
+    "census_Bnet_twh": 4.182,
+    "keeper13_model_twh": 4.199
+   },
+   {
+    "yard": 4162,
+    "plants": [
+     4162
+    ],
+    "hr": 11.154,
+    "ceiling_twh": 3.348,
+    "floor_twh": 2.246,
+    "census_Bnet_twh": 2.305,
+    "keeper13_model_twh": 1.566
+   },
+   {
+    "yard": 6076,
+    "plants": [
+     6076
+    ],
+    "hr": 10.294,
+    "ceiling_twh": 12.341,
+    "floor_twh": 7.962,
+    "census_Bnet_twh": 7.962,
+    "keeper13_model_twh": 8.026
+   },
+   {
+    "yard": 6101,
+    "plants": [
+     6101
+    ],
+    "hr": 11.976,
+    "ceiling_twh": 1.965,
+    "floor_twh": 1.936,
+    "census_Bnet_twh": 1.936,
+    "keeper13_model_twh": 2.27
+   },
+   {
+    "yard": 6165,
+    "plants": [
+     6165
+    ],
+    "hr": 10.522,
+    "ceiling_twh": 13.086,
+    "floor_twh": 10.485,
+    "census_Bnet_twh": 10.568,
+    "keeper13_model_twh": 10.482
+   },
+   {
+    "yard": 7790,
+    "plants": [
+     7790
+    ],
+    "hr": 10.969,
+    "ceiling_twh": 4.007,
+    "floor_twh": 2.867,
+    "census_Bnet_twh": 2.867,
+    "keeper13_model_twh": 2.765
+   },
+   {
+    "yard": 8066,
+    "plants": [
+     8066
+    ],
+    "hr": 10.836,
+    "ceiling_twh": 13.061,
+    "floor_twh": 10.439,
+    "census_Bnet_twh": 10.439,
+    "keeper13_model_twh": 11.098
+   },
+   {
+    "yard": 8069,
+    "plants": [
+     8069
+    ],
+    "hr": 10.554,
+    "ceiling_twh": 5.933,
+    "floor_twh": 4.184,
+    "census_Bnet_twh": 4.184,
+    "keeper13_model_twh": 6.768
+   },
+   {
+    "yard": 8224,
+    "plants": [
+     8224
+    ],
+    "hr": 10.193,
+    "ceiling_twh": 2.586,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 2.386
+   },
+   {
+    "yard": 50951,
+    "plants": [
+     50951
+    ],
+    "hr": 12.06,
+    "ceiling_twh": 0.365,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.252
+   },
+   {
+    "yard": 54318,
+    "plants": [
+     54318
+    ],
+    "hr": 5.616,
+    "ceiling_twh": 0.038,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.24
+   },
+   {
+    "yard": 55749,
+    "plants": [
+     55749
+    ],
+    "hr": 13.633,
+    "ceiling_twh": 0.091,
+    "floor_twh": 0.048,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.187
+   },
+   {
+    "yard": 56163,
+    "plants": [
+     56163
+    ],
+    "hr": 10.8,
+    "ceiling_twh": 0.0,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.0
+   },
+   {
+    "yard": 56224,
+    "plants": [
+     56224
+    ],
+    "hr": 11.787,
+    "ceiling_twh": 0.96,
+    "floor_twh": 0.184,
+    "census_Bnet_twh": 0.184,
+    "keeper13_model_twh": 1.223
+   }
+  ]
+ },
+ {
+  "year": 2022,
+  "gate": [
+   [
+    false,
+    true
+   ],
+   true,
+   {
+    "coal_fuel_inventory_plant_grain": true,
+    "coal_fuel_inventory_take_floor": true,
+    "coal_takeorpay_from_data": false,
+    "coal_committed_takeorpay_regulated": false
+   }
+  ],
+  "n_unrowed_generators": 16,
+  "clipped_to_budget": 1,
+  "clipped_to_capacity": 1,
+  "floor_binding_vs_k13_twh": 0.126,
+  "ceiling_binding_vs_k13_twh": 4.049,
+  "rows": [
+   {
+    "yard": 3845,
+    "plants": [
+     3845
+    ],
+    "hr": 11.488,
+    "ceiling_twh": 4.656,
+    "floor_twh": 1.313,
+    "census_Bnet_twh": 1.313,
+    "keeper13_model_twh": 2.765
+   },
+   {
+    "yard": 4158,
+    "plants": [
+     4158
+    ],
+    "hr": 11.775,
+    "ceiling_twh": 5.13,
+    "floor_twh": 3.596,
+    "census_Bnet_twh": 3.596,
+    "keeper13_model_twh": 4.67
+   },
+   {
+    "yard": 4162,
+    "plants": [
+     4162
+    ],
+    "hr": 11.364,
+    "ceiling_twh": 3.189,
+    "floor_twh": 2.016,
+    "census_Bnet_twh": 2.319,
+    "keeper13_model_twh": 1.969
+   },
+   {
+    "yard": 6076,
+    "plants": [
+     6076
+    ],
+    "hr": 10.088,
+    "ceiling_twh": 10.771,
+    "floor_twh": 10.101,
+    "census_Bnet_twh": 10.101,
+    "keeper13_model_twh": 10.022
+   },
+   {
+    "yard": 6101,
+    "plants": [
+     6101
+    ],
+    "hr": 11.923,
+    "ceiling_twh": 1.871,
+    "floor_twh": 1.796,
+    "census_Bnet_twh": 1.796,
+    "keeper13_model_twh": 2.002
+   },
+   {
+    "yard": 6165,
+    "plants": [
+     6165
+    ],
+    "hr": 10.655,
+    "ceiling_twh": 11.449,
+    "floor_twh": 5.618,
+    "census_Bnet_twh": 5.618,
+    "keeper13_model_twh": 9.085
+   },
+   {
+    "yard": 7790,
+    "plants": [
+     7790
+    ],
+    "hr": 11.133,
+    "ceiling_twh": 3.742,
+    "floor_twh": 2.521,
+    "census_Bnet_twh": 2.521,
+    "keeper13_model_twh": 3.518
+   },
+   {
+    "yard": 8066,
+    "plants": [
+     8066
+    ],
+    "hr": 10.813,
+    "ceiling_twh": 12.634,
+    "floor_twh": 9.935,
+    "census_Bnet_twh": 9.935,
+    "keeper13_model_twh": 14.237
+   },
+   {
+    "yard": 8069,
+    "plants": [
+     8069
+    ],
+    "hr": 10.605,
+    "ceiling_twh": 6.068,
+    "floor_twh": 5.225,
+    "census_Bnet_twh": 5.225,
+    "keeper13_model_twh": 6.498
+   },
+   {
+    "yard": 8224,
+    "plants": [
+     8224
+    ],
+    "hr": 10.82,
+    "ceiling_twh": 1.605,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 2.879
+   },
+   {
+    "yard": 50951,
+    "plants": [
+     50951
+    ],
+    "hr": 12.298,
+    "ceiling_twh": 0.357,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.359
+   },
+   {
+    "yard": 54318,
+    "plants": [
+     54318
+    ],
+    "hr": 5.613,
+    "ceiling_twh": 0.022,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.24
+   },
+   {
+    "yard": 55749,
+    "plants": [
+     55749
+    ],
+    "hr": 14.418,
+    "ceiling_twh": 0.245,
+    "floor_twh": 0.245,
+    "census_Bnet_twh": 0.438,
+    "keeper13_model_twh": 0.356
+   },
+   {
+    "yard": 56224,
+    "plants": [
+     56224
+    ],
+    "hr": 9.847,
+    "ceiling_twh": 1.165,
+    "floor_twh": 1.073,
+    "census_Bnet_twh": 1.073,
+    "keeper13_model_twh": 1.445
+   }
+  ]
+ },
+ {
+  "year": 2023,
+  "gate": [
+   [
+    false,
+    true
+   ],
+   true,
+   {
+    "coal_fuel_inventory_plant_grain": true,
+    "coal_fuel_inventory_take_floor": true,
+    "coal_takeorpay_from_data": false,
+    "coal_committed_takeorpay_regulated": false
+   }
+  ],
+  "n_unrowed_generators": 11,
+  "clipped_to_budget": 0,
+  "clipped_to_capacity": 2,
+  "floor_binding_vs_k13_twh": 2.431,
+  "ceiling_binding_vs_k13_twh": 0.812,
+  "rows": [
+   {
+    "yard": 3845,
+    "plants": [
+     3845
+    ],
+    "hr": 11.425,
+    "ceiling_twh": 4.1,
+    "floor_twh": 2.52,
+    "census_Bnet_twh": 2.52,
+    "keeper13_model_twh": 1.867
+   },
+   {
+    "yard": 4158,
+    "plants": [
+     4158
+    ],
+    "hr": 11.841,
+    "ceiling_twh": 4.757,
+    "floor_twh": 3.42,
+    "census_Bnet_twh": 3.42,
+    "keeper13_model_twh": 4.559
+   },
+   {
+    "yard": 4162,
+    "plants": [
+     4162
+    ],
+    "hr": 11.373,
+    "ceiling_twh": 2.548,
+    "floor_twh": 1.279,
+    "census_Bnet_twh": 1.279,
+    "keeper13_model_twh": 1.59
+   },
+   {
+    "yard": 6076,
+    "plants": [
+     6076
+    ],
+    "hr": 10.316,
+    "ceiling_twh": 11.809,
+    "floor_twh": 10.556,
+    "census_Bnet_twh": 10.589,
+    "keeper13_model_twh": 9.527
+   },
+   {
+    "yard": 6101,
+    "plants": [
+     6101
+    ],
+    "hr": 12.252,
+    "ceiling_twh": 1.658,
+    "floor_twh": 1.568,
+    "census_Bnet_twh": 1.568,
+    "keeper13_model_twh": 2.251
+   },
+   {
+    "yard": 6165,
+    "plants": [
+     6165
+    ],
+    "hr": 10.956,
+    "ceiling_twh": 7.243,
+    "floor_twh": 2.286,
+    "census_Bnet_twh": 2.286,
+    "keeper13_model_twh": 6.439
+   },
+   {
+    "yard": 7790,
+    "plants": [
+     7790
+    ],
+    "hr": 11.06,
+    "ceiling_twh": 3.624,
+    "floor_twh": 2.251,
+    "census_Bnet_twh": 2.251,
+    "keeper13_model_twh": 3.086
+   },
+   {
+    "yard": 8066,
+    "plants": [
+     8066
+    ],
+    "hr": 11.025,
+    "ceiling_twh": 11.109,
+    "floor_twh": 8.517,
+    "census_Bnet_twh": 8.517,
+    "keeper13_model_twh": 9.74
+   },
+   {
+    "yard": 8069,
+    "plants": [
+     8069
+    ],
+    "hr": 11.012,
+    "ceiling_twh": 6.195,
+    "floor_twh": 4.162,
+    "census_Bnet_twh": 4.162,
+    "keeper13_model_twh": 5.815
+   },
+   {
+    "yard": 8224,
+    "plants": [
+     8224
+    ],
+    "hr": 11.444,
+    "ceiling_twh": 2.037,
+    "floor_twh": 0.716,
+    "census_Bnet_twh": 0.716,
+    "keeper13_model_twh": 0.947
+   },
+   {
+    "yard": 50951,
+    "plants": [
+     50951
+    ],
+    "hr": 12.298,
+    "ceiling_twh": 0.399,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.162
+   },
+   {
+    "yard": 54318,
+    "plants": [
+     54318
+    ],
+    "hr": 5.598,
+    "ceiling_twh": 0.021,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.24
+   },
+   {
+    "yard": 55749,
+    "plants": [
+     55749
+    ],
+    "hr": 14.651,
+    "ceiling_twh": 0.437,
+    "floor_twh": 0.433,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.21
+   },
+   {
+    "yard": 56224,
+    "plants": [
+     56224
+    ],
+    "hr": 10.261,
+    "ceiling_twh": 1.217,
+    "floor_twh": 1.122,
+    "census_Bnet_twh": 1.137,
+    "keeper13_model_twh": 0.596
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "gate": [
+   [
+    false,
+    true
+   ],
+   true,
+   {
+    "coal_fuel_inventory_plant_grain": true,
+    "coal_fuel_inventory_take_floor": true,
+    "coal_takeorpay_from_data": false,
+    "coal_committed_takeorpay_regulated": false
+   }
+  ],
+  "n_unrowed_generators": 11,
+  "clipped_to_budget": 1,
+  "clipped_to_capacity": 1,
+  "floor_binding_vs_k13_twh": 7.857,
+  "ceiling_binding_vs_k13_twh": 0.611,
+  "rows": [
+   {
+    "yard": 3845,
+    "plants": [
+     3845
+    ],
+    "hr": 11.869,
+    "ceiling_twh": 4.49,
+    "floor_twh": 2.618,
+    "census_Bnet_twh": 2.618,
+    "keeper13_model_twh": 0.684
+   },
+   {
+    "yard": 4158,
+    "plants": [
+     4158
+    ],
+    "hr": 11.601,
+    "ceiling_twh": 4.894,
+    "floor_twh": 3.667,
+    "census_Bnet_twh": 3.667,
+    "keeper13_model_twh": 4.535
+   },
+   {
+    "yard": 4162,
+    "plants": [
+     4162
+    ],
+    "hr": 11.557,
+    "ceiling_twh": 2.27,
+    "floor_twh": 1.554,
+    "census_Bnet_twh": 1.554,
+    "keeper13_model_twh": 1.17
+   },
+   {
+    "yard": 6076,
+    "plants": [
+     6076
+    ],
+    "hr": 10.33,
+    "ceiling_twh": 12.268,
+    "floor_twh": 8.978,
+    "census_Bnet_twh": 10.71,
+    "keeper13_model_twh": 6.93
+   },
+   {
+    "yard": 6101,
+    "plants": [
+     6101
+    ],
+    "hr": 12.058,
+    "ceiling_twh": 1.692,
+    "floor_twh": 1.692,
+    "census_Bnet_twh": 1.79,
+    "keeper13_model_twh": 2.118
+   },
+   {
+    "yard": 6165,
+    "plants": [
+     6165
+    ],
+    "hr": 11.03,
+    "ceiling_twh": 5.188,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 2.727
+   },
+   {
+    "yard": 7790,
+    "plants": [
+     7790
+    ],
+    "hr": 10.755,
+    "ceiling_twh": 4.882,
+    "floor_twh": 3.432,
+    "census_Bnet_twh": 3.432,
+    "keeper13_model_twh": 2.041
+   },
+   {
+    "yard": 8066,
+    "plants": [
+     8066
+    ],
+    "hr": 11.228,
+    "ceiling_twh": 9.404,
+    "floor_twh": 6.277,
+    "census_Bnet_twh": 6.277,
+    "keeper13_model_twh": 5.079
+   },
+   {
+    "yard": 8069,
+    "plants": [
+     8069
+    ],
+    "hr": 11.368,
+    "ceiling_twh": 4.243,
+    "floor_twh": 1.513,
+    "census_Bnet_twh": 1.513,
+    "keeper13_model_twh": 1.91
+   },
+   {
+    "yard": 8224,
+    "plants": [
+     8224
+    ],
+    "hr": 11.704,
+    "ceiling_twh": 2.292,
+    "floor_twh": 1.056,
+    "census_Bnet_twh": 1.056,
+    "keeper13_model_twh": 0.806
+   },
+   {
+    "yard": 50951,
+    "plants": [
+     50951
+    ],
+    "hr": 12.298,
+    "ceiling_twh": 0.356,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.037
+   },
+   {
+    "yard": 54318,
+    "plants": [
+     54318
+    ],
+    "hr": 5.611,
+    "ceiling_twh": 0.031,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.216
+   },
+   {
+    "yard": 55749,
+    "plants": [
+     55749
+    ],
+    "hr": 13.781,
+    "ceiling_twh": 0.447,
+    "floor_twh": 0.369,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.209
+   },
+   {
+    "yard": 56224,
+    "plants": [
+     56224
+    ],
+    "hr": 10.299,
+    "ceiling_twh": 1.296,
+    "floor_twh": 1.043,
+    "census_Bnet_twh": 1.043,
+    "keeper13_model_twh": 0.551
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "gate": [
+   [
+    false,
+    true
+   ],
+   true,
+   {
+    "coal_fuel_inventory_plant_grain": true,
+    "coal_fuel_inventory_take_floor": true,
+    "coal_takeorpay_from_data": false,
+    "coal_committed_takeorpay_regulated": false
+   }
+  ],
+  "n_unrowed_generators": 21,
+  "clipped_to_budget": 1,
+  "clipped_to_capacity": 1,
+  "floor_binding_vs_k13_twh": 6.348,
+  "ceiling_binding_vs_k13_twh": 0.682,
+  "rows": [
+   {
+    "yard": 3845,
+    "plants": [
+     3845
+    ],
+    "hr": 10.216,
+    "ceiling_twh": 4.301,
+    "floor_twh": 1.156,
+    "census_Bnet_twh": 1.156,
+    "keeper13_model_twh": 1.589
+   },
+   {
+    "yard": 4158,
+    "plants": [
+     4158
+    ],
+    "hr": 11.523,
+    "ceiling_twh": 4.66,
+    "floor_twh": 3.259,
+    "census_Bnet_twh": 3.259,
+    "keeper13_model_twh": 4.75
+   },
+   {
+    "yard": 4162,
+    "plants": [
+     4162
+    ],
+    "hr": 11.61,
+    "ceiling_twh": 2.635,
+    "floor_twh": 1.801,
+    "census_Bnet_twh": 1.801,
+    "keeper13_model_twh": 1.432
+   },
+   {
+    "yard": 6076,
+    "plants": [
+     6076
+    ],
+    "hr": 10.36,
+    "ceiling_twh": 11.495,
+    "floor_twh": 9.032,
+    "census_Bnet_twh": 9.032,
+    "keeper13_model_twh": 8.887
+   },
+   {
+    "yard": 6101,
+    "plants": [
+     6101
+    ],
+    "hr": 11.86,
+    "ceiling_twh": 1.915,
+    "floor_twh": 1.915,
+    "census_Bnet_twh": 2.01,
+    "keeper13_model_twh": 2.287
+   },
+   {
+    "yard": 6165,
+    "plants": [
+     6165
+    ],
+    "hr": 10.939,
+    "ceiling_twh": 6.8,
+    "floor_twh": 3.436,
+    "census_Bnet_twh": 3.436,
+    "keeper13_model_twh": 2.908
+   },
+   {
+    "yard": 7790,
+    "plants": [
+     7790
+    ],
+    "hr": 10.892,
+    "ceiling_twh": 4.83,
+    "floor_twh": 2.437,
+    "census_Bnet_twh": 2.675,
+    "keeper13_model_twh": 1.526
+   },
+   {
+    "yard": 8066,
+    "plants": [
+     8066
+    ],
+    "hr": 11.293,
+    "ceiling_twh": 8.203,
+    "floor_twh": 4.796,
+    "census_Bnet_twh": 4.796,
+    "keeper13_model_twh": 4.034
+   },
+   {
+    "yard": 8069,
+    "plants": [
+     8069
+    ],
+    "hr": 10.831,
+    "ceiling_twh": 5.159,
+    "floor_twh": 4.021,
+    "census_Bnet_twh": 4.021,
+    "keeper13_model_twh": 1.705
+   },
+   {
+    "yard": 8224,
+    "plants": [
+     8224
+    ],
+    "hr": 10.985,
+    "ceiling_twh": 2.954,
+    "floor_twh": 1.896,
+    "census_Bnet_twh": 1.896,
+    "keeper13_model_twh": 0.802
+   },
+   {
+    "yard": 50951,
+    "plants": [
+     50951
+    ],
+    "hr": 12.298,
+    "ceiling_twh": 0.334,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.036
+   },
+   {
+    "yard": 54318,
+    "plants": [
+     54318
+    ],
+    "hr": 5.611,
+    "ceiling_twh": 0.019,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.239
+   },
+   {
+    "yard": 55749,
+    "plants": [
+     55749
+    ],
+    "hr": 14.835,
+    "ceiling_twh": 0.415,
+    "floor_twh": 0.0,
+    "census_Bnet_twh": 0.0,
+    "keeper13_model_twh": 0.102
+   },
+   {
+    "yard": 56224,
+    "plants": [
+     56224
+    ],
+    "hr": 10.112,
+    "ceiling_twh": 1.279,
+    "floor_twh": 1.07,
+    "census_Bnet_twh": 1.07,
+    "keeper13_model_twh": 0.847
+   }
+  ]
+ }
+]

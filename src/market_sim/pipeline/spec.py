@@ -161,6 +161,9 @@ class DispatchSpec:
     coal_plant_month_index: Any = UNSET
     coal_plant_gen_hour_coeff: Any = UNSET
     coal_plant_group_index: Any = UNSET
+    # NWPP-NEXT-7 coal take floor (coal_fuel_inventory_take_floor): (n_yards, 1)
+    # MMBtu LOWER bound on the same yard rows. UNSET when off (byte-identical).
+    coal_plant_floor: Any = UNSET
     # Measured storage-AS SOC sustain floor (CAISO battery reservation,
     # caiso_storage_as_reservation) — (n_storage, T) SOC lower bound. UNSET
     # (flag off / other ISOs) omits the key, leaving the 0 lower bound.
