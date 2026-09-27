@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-26-pjm-next-4-midcurve2019",
+  "label": "pjm next 4 midcurve2019",
+  "date": "2026-09-26",
+  "shorthand": "pjm-next-4-midcurve2019",
+  "definition": "PJM-NEXT-4 card 1: measured 2019 mid-curve table (data-only arm)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-09-26-pjm-next-4-midcurve2019.js",
+  "bundle": "results/calibration/pjmnext4_c1_span"
+}
