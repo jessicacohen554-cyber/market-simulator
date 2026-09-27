@@ -15606,3 +15606,18 @@ and the X-only candidate `2026-09-26-caiso-r5-cc-outage`. Record: `docs/handoffs
 - **C3c 2024:** characterised, still ledgered.
 
 Record: `docs/handoffs/r-caiso-6/`.
+
+## R-CAISO-7 — 2026-09-27 — 2019–21 CC excess traced to a missing DSW import; keeper unchanged (zero LP)
+
+- **Keeper unchanged:** `2026-09-26-caiso-r5-pastoria-co2`, CALIBRATED. No shard, no registration.
+- **Object 1:** the 2019–21 CC_REGULAR excess is the DSW corridor: model 20.9 / 17.3 / 15.8 TWh vs EIA-930
+  44.7 / 41.9 / 40.9, flat across hours and months. The cause is no measured intertie hub price in those years.
+  - 2021 defect: the hub prints 5,976 h, but pricing drops the year while arming builds ~2.75 GW of clean
+    tranches on the $180 placeholder.
+  - Proposed lever (not armed): price printed hours at the measured hub. Up to +24.2 TWh DSW first-order.
+  - 2019–20: the STOP stands.
+- **Object 2:** recommend not landing the 2022 LCT rows. The 2019 leg's 386 MW SD cap already gives SDGE a $389
+  mean price and 420 GWh unserved.
+- **Object 3:** C4 2025 unchanged, 0.2987.
+
+Record: `docs/handoffs/r-caiso-7/`.
