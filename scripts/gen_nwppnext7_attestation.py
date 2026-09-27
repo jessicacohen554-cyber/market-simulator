@@ -25,7 +25,7 @@ sys.path.insert(0, str(REPO))
 import scripts.gen_nwppnext6_attestation as prev  # noqa: E402
 import scripts.gen_rnwpp_attestation as base  # noqa: E402
 
-PIN = "821069f3cd65ad6c287ac3aac0280138a6b3eb87"
+PIN = "2162cef52b4c4667a2be4ca288d38ea77e19186a"
 ARMED = ("coal_fuel_inventory_plant_grain", "coal_fuel_inventory_take_floor")
 RETIRED = ("coal_takeorpay_from_data", "coal_committed_takeorpay_regulated")
 
@@ -44,7 +44,9 @@ def build(bundle: Path) -> dict:
         "EIA-923 Page 5 Y-1 contract tonnage (purchase types C/NC/T), renewed at volume "
         "(estimator B, owner ruling Q4), net of stock slack: max(0, contract + Dec(Y-1) stock "
         "- max month-end stock <= Y-1) x the yard's Y-1 heat content, clipped to the yard "
-        "ceiling and to sum HR x pmax x availability. Owner rulings Q1-Q5, 2026-09-27."
+        "ceiling and to sum HR x pmax x availability. Owner rulings Q1-Q5, 2026-09-27. "
+        "SOFT (owner ruling 2026-09-27): shortfall priced per yard at the yard's own "
+        "model coal fuel price, capability-weighted (take-or-pay)."
     )
     att = prev.build(bundle, "AB")
     att["lane"] = "NWPP-NEXT-7"

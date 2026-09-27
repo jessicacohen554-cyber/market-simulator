@@ -193,3 +193,75 @@ def test_cache_key_unchanged_off_and_distinct_armed():
         base.cache_key()
         != ScenarioConfig(coal_fuel_inventory_take_floor=True).cache_key()
     )
+
+
+def test_soft_floor_unreachable_take_is_paid_not_infeasible():
+    """A take above what the unit can burn stays feasible; the shortfall is paid.
+
+    Coal (MC 40, HR 10) can burn at most 100 MW x 24 h = 24,000 MMBtu; the take
+    is 30,000. With a $2/MMBtu shortfall price the LP runs the coal flat out
+    (burning is cheaper than paying for coal plus buying gas) and pays 6,000.
+    """
+    T = 24
+    fleet = _coal_fleet([1], heat_rate=10.0, pmax=100.0, hours=T)
+    demand = np.full((1, T), 100.0)
+    mc = np.vstack([np.full(T, 40.0), np.full(T, 30.0)])
+    base = dict(
+        wind_cf=np.zeros((1, T)),
+        wind_cap=np.zeros(1),
+        solar_cf=np.zeros((1, T)),
+        solar_cap=np.zeros(1),
+        coal_plant_budget=np.array([[1e9]]),
+        coal_plant_gen_idx=np.array([0]),
+        coal_plant_month_index=np.zeros(T, dtype=int),
+        coal_plant_gen_hour_coeff=np.array([10.0]),
+        coal_plant_group_index=np.array([0]),
+    )
+    r = solve_dispatch(
+        fleet,
+        demand,
+        mc=mc,
+        T=T,
+        coal_plant_floor=np.array([[30_000.0]]),
+        coal_plant_floor_price=np.array([2.0]),
+        **base,
+    )
+    assert float(r.dispatch[0].sum()) == pytest.approx(2400.0, abs=1e-4)
+
+
+def test_soft_floor_price_caps_the_take_or_pay_value():
+    """Shortfall price $0.5/MMBtu (=$5/MWh at HR 10): dear coal (MC 40) is NOT run
+    against gas (MC 30), because paying the take costs less than the $10/MWh gap."""
+    T = 24
+    fleet = _coal_fleet([1], heat_rate=10.0, pmax=100.0, hours=T)
+    demand = np.full((1, T), 100.0)
+    mc = np.vstack([np.full(T, 40.0), np.full(T, 30.0)])
+    r = solve_dispatch(
+        fleet,
+        demand,
+        mc=mc,
+        T=T,
+        wind_cf=np.zeros((1, T)),
+        wind_cap=np.zeros(1),
+        solar_cf=np.zeros((1, T)),
+        solar_cap=np.zeros(1),
+        coal_plant_budget=np.array([[1e9]]),
+        coal_plant_gen_idx=np.array([0]),
+        coal_plant_month_index=np.zeros(T, dtype=int),
+        coal_plant_gen_hour_coeff=np.array([10.0]),
+        coal_plant_group_index=np.array([0]),
+        coal_plant_floor=np.array([[12_000.0]]),
+        coal_plant_floor_price=np.array([0.5]),
+    )
+    assert float(r.dispatch[0].sum()) == pytest.approx(0.0, abs=1e-4)
+
+
+def test_shortfall_price_is_capability_weighted_model_fuel_price():
+    from market_sim.data.coal_fuel_inventory import coal_take_shortfall_price
+
+    fleet = _coal_fleet([1, 2], heat_rate=10.0, pmax=100.0)
+    fp = np.vstack([np.full(_HOURS, 2.0), np.full(_HOURS, 4.0), np.full(_HOURS, 3.0)])
+    p = coal_take_shortfall_price(
+        fp, fleet, np.array([0, 1]), np.array([0, 0]), np.array([10.0, 10.0]), 1
+    )
+    assert p.tolist() == [3.0]

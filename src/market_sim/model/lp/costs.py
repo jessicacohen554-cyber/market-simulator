@@ -28,6 +28,7 @@ def build_cost_vector(
     min_injectable_mc: float | None = None,
     dis_tranche_arm_idx: np.ndarray | None = None,
     dis_tranche_price: np.ndarray | None = None,
+    coal_take_price: np.ndarray | None = None,
 ) -> np.ndarray:
     """Assemble the flat LP objective cost vector.
 
@@ -267,5 +268,18 @@ def build_cost_vector(
                 f"rps_acp_price shape {acp.shape} != ({layout.n_rec_acp},)"
             )
         block[:, layout._rec_acp_off : layout._rec_acp_off + layout.n_rec_acp] = acp
+
+    # Coal take-floor shortfall columns (NWPP-NEXT-7): priced at each yard's
+    # own delivered coal cost ($/MMBtu), so unburned contracted coal costs what
+    # burning it would have — take-or-pay — and each yard row's dual is capped
+    # at that price.
+    if layout.n_take_slack:
+        tp = np.asarray(coal_take_price, dtype=float)
+        if tp.shape != (layout.n_take_slack,):
+            raise ValueError(
+                f"coal_take_price shape {tp.shape} != ({layout.n_take_slack},)"
+            )
+        o = layout._take_slack_off
+        block[:, o : o + layout.n_take_slack] = tp
 
     return cost

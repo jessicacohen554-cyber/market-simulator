@@ -139,6 +139,7 @@ class DispatchModel:
         coal_plant_gen_hour_coeff: np.ndarray | None = None,
         coal_plant_group_index: np.ndarray | None = None,
         coal_plant_floor: np.ndarray | None = None,
+        coal_plant_floor_price: np.ndarray | None = None,
         storage_daily_cycle_hours: int | None = None,
         storage_alloc_batt_idx: np.ndarray | None = None,
         storage_alloc_share: np.ndarray | None = None,
@@ -236,6 +237,18 @@ class DispatchModel:
         # two water columns per coupled downstream plant. None / an empty spec
         # leaves n_cascade = 0 and the layout byte-identical.
         n_cascade = 0
+        # Coal take-floor shortfall columns (NWPP-NEXT-7): one per floored yard
+        # row, only when both the floor and its price are supplied.
+        n_take_slack = 0
+        if (
+            coal_plant_floor is not None
+            and coal_plant_floor_price is not None
+            and coal_plant_budget is not None
+        ):
+            n_take_slack = int(np.asarray(coal_plant_budget).shape[0])
+        self.coal_plant_floor_price = (
+            np.asarray(coal_plant_floor_price, dtype=float) if n_take_slack else None
+        )
         if hydro_cascade is not None and hydro_cascade.n_coupled:
             n_cascade = 2 * int(hydro_cascade.n_coupled)
 
@@ -439,6 +452,7 @@ class DispatchModel:
             n_dis_tranche=n_dis_tranche,
             dis_tranche_k=dis_tranche_k,
             n_cascade=n_cascade,
+            n_take_slack=n_take_slack,
         )
         # The discharge-tranche decomposition rides the base Dis column (which
         # keeps its exact total-discharge meaning), so it composes with the
@@ -1231,6 +1245,7 @@ class DispatchModel:
             min_injectable_mc=min_injectable_mc,
             dis_tranche_arm_idx=self.dis_tranche_arm_idx,
             dis_tranche_price=self.dis_tranche_price,
+            coal_take_price=self.coal_plant_floor_price,
         )
 
         h = self._h

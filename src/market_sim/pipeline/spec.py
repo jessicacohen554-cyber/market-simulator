@@ -164,6 +164,8 @@ class DispatchSpec:
     # NWPP-NEXT-7 coal take floor (coal_fuel_inventory_take_floor): (n_yards, 1)
     # MMBtu LOWER bound on the same yard rows. UNSET when off (byte-identical).
     coal_plant_floor: Any = UNSET
+    # Per-yard shortfall price, $/MMBtu (the soft floor's take-or-pay payment).
+    coal_plant_floor_price: Any = UNSET
     # Measured storage-AS SOC sustain floor (CAISO battery reservation,
     # caiso_storage_as_reservation) — (n_storage, T) SOC lower bound. UNSET
     # (flag off / other ISOs) omits the key, leaving the 0 lower bound.
