@@ -1,0 +1,1342 @@
+{
+ "2022": {
+  "total_usd": -8.018,
+  "act_mean": 80.368,
+  "pct": -9.98,
+  "month": {
+   "1": {
+    "contrib_usd": -1.085,
+    "load_share": 0.091,
+    "model": 118.012,
+    "act": 129.875
+   },
+   "2": {
+    "contrib_usd": -1.747,
+    "load_share": 0.079,
+    "model": 61.304,
+    "act": 83.516
+   },
+   "3": {
+    "contrib_usd": -0.468,
+    "load_share": 0.079,
+    "model": 49.626,
+    "act": 55.52
+   },
+   "4": {
+    "contrib_usd": -0.225,
+    "load_share": 0.071,
+    "model": 48.941,
+    "act": 52.132
+   },
+   "5": {
+    "contrib_usd": -0.02,
+    "load_share": 0.076,
+    "model": 61.922,
+    "act": 62.19
+   },
+   "6": {
+    "contrib_usd": -0.697,
+    "load_share": 0.083,
+    "model": 63.946,
+    "act": 72.35
+   },
+   "7": {
+    "contrib_usd": 0.231,
+    "load_share": 0.103,
+    "model": 91.928,
+    "act": 89.693
+   },
+   "8": {
+    "contrib_usd": -0.395,
+    "load_share": 0.104,
+    "model": 103.256,
+    "act": 107.047
+   },
+   "9": {
+    "contrib_usd": -0.058,
+    "load_share": 0.081,
+    "model": 70.431,
+    "act": 71.151
+   },
+   "10": {
+    "contrib_usd": -0.379,
+    "load_share": 0.073,
+    "model": 42.839,
+    "act": 48.042
+   },
+   "11": {
+    "contrib_usd": 0.032,
+    "load_share": 0.075,
+    "model": 47.276,
+    "act": 46.845
+   },
+   "12": {
+    "contrib_usd": -3.207,
+    "load_share": 0.085,
+    "model": 78.983,
+    "act": 116.51
+   }
+  },
+  "decile": {
+   "1": {
+    "contrib_usd": 0.904,
+    "load_share": 0.083,
+    "model": 37.942,
+    "act": 27.043
+   },
+   "2": {
+    "contrib_usd": 0.621,
+    "load_share": 0.086,
+    "model": 44.345,
+    "act": 37.158
+   },
+   "3": {
+    "contrib_usd": 0.399,
+    "load_share": 0.089,
+    "model": 47.255,
+    "act": 42.767
+   },
+   "4": {
+    "contrib_usd": 0.397,
+    "load_share": 0.092,
+    "model": 52.69,
+    "act": 48.38
+   },
+   "5": {
+    "contrib_usd": 0.3,
+    "load_share": 0.095,
+    "model": 58.297,
+    "act": 55.122
+   },
+   "6": {
+    "contrib_usd": 0.444,
+    "load_share": 0.099,
+    "model": 66.582,
+    "act": 62.074
+   },
+   "7": {
+    "contrib_usd": 0.466,
+    "load_share": 0.105,
+    "model": 75.447,
+    "act": 70.997
+   },
+   "8": {
+    "contrib_usd": 0.025,
+    "load_share": 0.113,
+    "model": 85.065,
+    "act": 84.84
+   },
+   "9": {
+    "contrib_usd": -1.013,
+    "load_share": 0.118,
+    "model": 98.631,
+    "act": 107.194
+   },
+   "10": {
+    "contrib_usd": -10.561,
+    "load_share": 0.121,
+    "model": 124.884,
+    "act": 212.45
+   }
+  },
+  "hourclass": {
+   "dear-gas day": {
+    "contrib_usd": 1.17,
+    "load_share": 0.105,
+    "model": 129.751,
+    "act": 118.568
+   },
+   "ordinary": {
+    "contrib_usd": -3.817,
+    "load_share": 0.881,
+    "model": 64.232,
+    "act": 68.564
+   },
+   "tail>$300": {
+    "contrib_usd": -5.371,
+    "load_share": 0.014,
+    "model": 152.88,
+    "act": 529.272
+   }
+  },
+  "dear_x_winter": [
+   {
+    "cls": "dear-gas day",
+    "winter": false,
+    "contrib_usd": 0.218,
+    "load_share": 0.021,
+    "model": 122.659,
+    "act": 112.265
+   },
+   {
+    "cls": "dear-gas day",
+    "winter": true,
+    "contrib_usd": 0.952,
+    "load_share": 0.084,
+    "model": 131.527,
+    "act": 120.147
+   },
+   {
+    "cls": "ordinary",
+    "winter": false,
+    "contrib_usd": -0.812,
+    "load_share": 0.718,
+    "model": 64.907,
+    "act": 66.037
+   },
+   {
+    "cls": "ordinary",
+    "winter": true,
+    "contrib_usd": -3.005,
+    "load_share": 0.163,
+    "model": 61.257,
+    "act": 79.705
+   },
+   {
+    "cls": "tail>$300",
+    "winter": false,
+    "contrib_usd": -1.385,
+    "load_share": 0.005,
+    "model": 152.297,
+    "act": 417.723
+   },
+   {
+    "cls": "tail>$300",
+    "winter": true,
+    "contrib_usd": -3.986,
+    "load_share": 0.009,
+    "model": 153.215,
+    "act": 593.591
+   }
+  ],
+  "marg_class": {
+   "CC_CHP": {
+    "contrib_usd": -2.233,
+    "load_share": 0.122,
+    "model": 68.996,
+    "act": 87.369
+   },
+   "CC_REGULAR": {
+    "contrib_usd": 0.026,
+    "load_share": 0.013,
+    "model": 58.75,
+    "act": 56.743
+   },
+   "CT_CHP": {
+    "contrib_usd": -0.465,
+    "load_share": 0.186,
+    "model": 44.101,
+    "act": 46.606
+   },
+   "CT_PEAKER": {
+    "contrib_usd": -1.202,
+    "load_share": 0.342,
+    "model": 58.728,
+    "act": 62.246
+   },
+   "ST_CHP": {
+    "contrib_usd": -0.359,
+    "load_share": 0.053,
+    "model": 32.788,
+    "act": 39.513
+   },
+   "ST_GAS": {
+    "contrib_usd": -0.005,
+    "load_share": 0.002,
+    "model": 29.509,
+    "act": 31.848
+   },
+   "oil": {
+    "contrib_usd": -3.78,
+    "load_share": 0.283,
+    "model": 117.228,
+    "act": 130.597
+   }
+  },
+  "marg_band": {
+   "oil:": {
+    "contrib_usd": -3.78,
+    "load_share": 0.283,
+    "model": 117.228,
+    "act": 130.597
+   },
+   "CC_CHP:peak": {
+    "contrib_usd": -2.233,
+    "load_share": 0.122,
+    "model": 68.996,
+    "act": 87.369
+   },
+   "CT_PEAKER:committed": {
+    "contrib_usd": -1.263,
+    "load_share": 0.261,
+    "model": 59.461,
+    "act": 64.296
+   },
+   "CT_CHP:peak": {
+    "contrib_usd": -0.659,
+    "load_share": 0.054,
+    "model": 40.112,
+    "act": 52.281
+   },
+   "ST_CHP:peak": {
+    "contrib_usd": -0.257,
+    "load_share": 0.039,
+    "model": 34.706,
+    "act": 41.288
+   },
+   "ST_CHP:committed": {
+    "contrib_usd": -0.102,
+    "load_share": 0.014,
+    "model": 27.587,
+    "act": 34.699
+   },
+   "ST_GAS:peak": {
+    "contrib_usd": -0.005,
+    "load_share": 0.002,
+    "model": 29.509,
+    "act": 31.848
+   },
+   "CT_PEAKER:econlo": {
+    "contrib_usd": -0.001,
+    "load_share": 0.018,
+    "model": 51.068,
+    "act": 51.108
+   }
+  },
+  "n_dear_days": 37,
+  "zone_basis": "hourly, NYISO 5-min zonal RT zips",
+  "zone": {
+   "Capital_Hudson": {
+    "contrib_usd": -1.436,
+    "load_share": 0.139,
+    "model": 87.955,
+    "act": 98.27
+   },
+   "Long_Island": {
+    "contrib_usd": -2.009,
+    "load_share": 0.132,
+    "model": 92.658,
+    "act": 107.921
+   },
+   "Lower_Hudson": {
+    "contrib_usd": -0.216,
+    "load_share": 0.057,
+    "model": 90.132,
+    "act": 93.924
+   },
+   "NYC": {
+    "contrib_usd": -1.024,
+    "load_share": 0.326,
+    "model": 90.048,
+    "act": 93.19
+   },
+   "Upstate_West": {
+    "contrib_usd": -7.551,
+    "load_share": 0.347,
+    "model": 38.815,
+    "act": 60.607
+   }
+  },
+  "zone_total_usd": -12.235
+ },
+ "2023": {
+  "total_usd": -0.622,
+  "act_mean": 32.048,
+  "pct": -1.94,
+  "month": {
+   "1": {
+    "contrib_usd": 0.08,
+    "load_share": 0.086,
+    "model": 39.562,
+    "act": 38.629
+   },
+   "2": {
+    "contrib_usd": -0.558,
+    "load_share": 0.078,
+    "model": 36.758,
+    "act": 43.929
+   },
+   "3": {
+    "contrib_usd": 0.482,
+    "load_share": 0.082,
+    "model": 33.091,
+    "act": 27.194
+   },
+   "4": {
+    "contrib_usd": 0.071,
+    "load_share": 0.071,
+    "model": 27.607,
+    "act": 26.604
+   },
+   "5": {
+    "contrib_usd": -0.112,
+    "load_share": 0.074,
+    "model": 18.807,
+    "act": 20.332
+   },
+   "6": {
+    "contrib_usd": -0.008,
+    "load_share": 0.082,
+    "model": 27.812,
+    "act": 27.905
+   },
+   "7": {
+    "contrib_usd": -0.027,
+    "load_share": 0.106,
+    "model": 37.292,
+    "act": 37.543
+   },
+   "8": {
+    "contrib_usd": -0.16,
+    "load_share": 0.095,
+    "model": 27.881,
+    "act": 29.568
+   },
+   "9": {
+    "contrib_usd": -0.642,
+    "load_share": 0.085,
+    "model": 33.338,
+    "act": 40.85
+   },
+   "10": {
+    "contrib_usd": -0.176,
+    "load_share": 0.077,
+    "model": 25.645,
+    "act": 27.919
+   },
+   "11": {
+    "contrib_usd": 0.062,
+    "load_share": 0.079,
+    "model": 31.72,
+    "act": 30.927
+   },
+   "12": {
+    "contrib_usd": 0.363,
+    "load_share": 0.085,
+    "model": 33.99,
+    "act": 29.717
+   }
+  },
+  "decile": {
+   "1": {
+    "contrib_usd": 0.705,
+    "load_share": 0.084,
+    "model": 21.87,
+    "act": 13.48
+   },
+   "2": {
+    "contrib_usd": 0.488,
+    "load_share": 0.087,
+    "model": 24.39,
+    "act": 18.775
+   },
+   "3": {
+    "contrib_usd": 0.467,
+    "load_share": 0.091,
+    "model": 26.209,
+    "act": 21.105
+   },
+   "4": {
+    "contrib_usd": 0.416,
+    "load_share": 0.094,
+    "model": 27.55,
+    "act": 23.139
+   },
+   "5": {
+    "contrib_usd": 0.394,
+    "load_share": 0.097,
+    "model": 29.315,
+    "act": 25.259
+   },
+   "6": {
+    "contrib_usd": 0.31,
+    "load_share": 0.101,
+    "model": 30.61,
+    "act": 27.536
+   },
+   "7": {
+    "contrib_usd": 0.263,
+    "load_share": 0.105,
+    "model": 32.56,
+    "act": 30.047
+   },
+   "8": {
+    "contrib_usd": 0.213,
+    "load_share": 0.109,
+    "model": 35.057,
+    "act": 33.099
+   },
+   "9": {
+    "contrib_usd": -0.12,
+    "load_share": 0.113,
+    "model": 37.113,
+    "act": 38.179
+   },
+   "10": {
+    "contrib_usd": -3.758,
+    "load_share": 0.119,
+    "model": 43.085,
+    "act": 74.585
+   }
+  },
+  "hourclass": {
+   "dear-gas day": {
+    "contrib_usd": -0.007,
+    "load_share": 0.105,
+    "model": 44.993,
+    "act": 45.064
+   },
+   "ordinary": {
+    "contrib_usd": 0.068,
+    "load_share": 0.893,
+    "model": 29.729,
+    "act": 29.653
+   },
+   "tail>$300": {
+    "contrib_usd": -0.683,
+    "load_share": 0.002,
+    "model": 86.486,
+    "act": 498.179
+   }
+  },
+  "dear_x_winter": [
+   {
+    "cls": "dear-gas day",
+    "winter": false,
+    "contrib_usd": 0.129,
+    "load_share": 0.014,
+    "model": 42.669,
+    "act": 33.235
+   },
+   {
+    "cls": "dear-gas day",
+    "winter": true,
+    "contrib_usd": -0.137,
+    "load_share": 0.091,
+    "model": 45.342,
+    "act": 46.838
+   },
+   {
+    "cls": "ordinary",
+    "winter": false,
+    "contrib_usd": -0.159,
+    "load_share": 0.736,
+    "model": 29.284,
+    "act": 29.5
+   },
+   {
+    "cls": "ordinary",
+    "winter": true,
+    "contrib_usd": 0.227,
+    "load_share": 0.158,
+    "model": 31.806,
+    "act": 30.363
+   },
+   {
+    "cls": "tail>$300",
+    "winter": false,
+    "contrib_usd": -0.478,
+    "load_share": 0.001,
+    "model": 93.819,
+    "act": 438.589
+   },
+   {
+    "cls": "tail>$300",
+    "winter": true,
+    "contrib_usd": -0.205,
+    "load_share": 0.0,
+    "model": 48.977,
+    "act": 803.001
+   }
+  ],
+  "marg_class": {
+   "CC_CHP": {
+    "contrib_usd": -0.076,
+    "load_share": 0.009,
+    "model": 18.791,
+    "act": 26.996
+   },
+   "CC_REGULAR": {
+    "contrib_usd": 0.017,
+    "load_share": 0.01,
+    "model": 23.099,
+    "act": 21.451
+   },
+   "CT_CHP": {
+    "contrib_usd": 0.087,
+    "load_share": 0.246,
+    "model": 32.652,
+    "act": 32.3
+   },
+   "CT_PEAKER": {
+    "contrib_usd": -0.954,
+    "load_share": 0.242,
+    "model": 38.058,
+    "act": 41.997
+   },
+   "ST_CHP": {
+    "contrib_usd": 0.409,
+    "load_share": 0.472,
+    "model": 27.257,
+    "act": 26.391
+   },
+   "ST_GAS": {
+    "contrib_usd": -0.011,
+    "load_share": 0.017,
+    "model": 25.15,
+    "act": 25.787
+   },
+   "oil": {
+    "contrib_usd": -0.093,
+    "load_share": 0.004,
+    "model": 121.844,
+    "act": 145.057
+   }
+  },
+  "marg_band": {
+   "CT_PEAKER:econlo": {
+    "contrib_usd": -1.156,
+    "load_share": 0.159,
+    "model": 42.695,
+    "act": 49.943
+   },
+   "ST_CHP:peak": {
+    "contrib_usd": -0.283,
+    "load_share": 0.153,
+    "model": 33.773,
+    "act": 35.623
+   },
+   "CT_CHP:peak": {
+    "contrib_usd": -0.222,
+    "load_share": 0.069,
+    "model": 32.254,
+    "act": 35.457
+   },
+   "oil:": {
+    "contrib_usd": -0.093,
+    "load_share": 0.004,
+    "model": 121.844,
+    "act": 145.057
+   },
+   "CC_CHP:peak": {
+    "contrib_usd": -0.076,
+    "load_share": 0.009,
+    "model": 18.791,
+    "act": 26.996
+   },
+   "CT_PEAKER:peak": {
+    "contrib_usd": -0.032,
+    "load_share": 0.001,
+    "model": 76.133,
+    "act": 108.71
+   },
+   "ST_GAS:peak": {
+    "contrib_usd": -0.011,
+    "load_share": 0.017,
+    "model": 25.15,
+    "act": 25.787
+   },
+   "CC_REGULAR:peak": {
+    "contrib_usd": 0.017,
+    "load_share": 0.01,
+    "model": 23.099,
+    "act": 21.451
+   }
+  },
+  "n_dear_days": 37,
+  "zone_basis": "hourly, NYISO 5-min zonal RT zips",
+  "zone": {
+   "Capital_Hudson": {
+    "contrib_usd": -0.122,
+    "load_share": 0.137,
+    "model": 34.472,
+    "act": 35.365
+   },
+   "Long_Island": {
+    "contrib_usd": -1.136,
+    "load_share": 0.132,
+    "model": 36.764,
+    "act": 45.384
+   },
+   "Lower_Hudson": {
+    "contrib_usd": 0.004,
+    "load_share": 0.055,
+    "model": 35.076,
+    "act": 35.008
+   },
+   "NYC": {
+    "contrib_usd": -0.059,
+    "load_share": 0.328,
+    "model": 35.118,
+    "act": 35.298
+   },
+   "Upstate_West": {
+    "contrib_usd": -0.837,
+    "load_share": 0.348,
+    "model": 24.143,
+    "act": 26.548
+   }
+  },
+  "zone_total_usd": -2.151
+ },
+ "2024": {
+  "total_usd": -0.386,
+  "act_mean": 38.134,
+  "pct": -1.01,
+  "month": {
+   "1": {
+    "contrib_usd": 0.693,
+    "load_share": 0.089,
+    "model": 61.556,
+    "act": 53.801
+   },
+   "2": {
+    "contrib_usd": 0.157,
+    "load_share": 0.079,
+    "model": 32.148,
+    "act": 30.155
+   },
+   "3": {
+    "contrib_usd": 0.352,
+    "load_share": 0.077,
+    "model": 30.426,
+    "act": 25.874
+   },
+   "4": {
+    "contrib_usd": 0.177,
+    "load_share": 0.071,
+    "model": 29.533,
+    "act": 27.024
+   },
+   "5": {
+    "contrib_usd": 0.256,
+    "load_share": 0.076,
+    "model": 29.777,
+    "act": 26.392
+   },
+   "6": {
+    "contrib_usd": 0.16,
+    "load_share": 0.091,
+    "model": 36.543,
+    "act": 34.783
+   },
+   "7": {
+    "contrib_usd": -0.895,
+    "load_share": 0.107,
+    "model": 39.547,
+    "act": 47.882
+   },
+   "8": {
+    "contrib_usd": 0.162,
+    "load_share": 0.095,
+    "model": 34.978,
+    "act": 33.281
+   },
+   "9": {
+    "contrib_usd": 0.137,
+    "load_share": 0.079,
+    "model": 33.722,
+    "act": 31.98
+   },
+   "10": {
+    "contrib_usd": -0.033,
+    "load_share": 0.074,
+    "model": 31.903,
+    "act": 32.35
+   },
+   "11": {
+    "contrib_usd": -0.045,
+    "load_share": 0.075,
+    "model": 33.448,
+    "act": 34.044
+   },
+   "12": {
+    "contrib_usd": -1.506,
+    "load_share": 0.086,
+    "model": 53.05,
+    "act": 70.531
+   }
+  },
+  "decile": {
+   "1": {
+    "contrib_usd": 0.776,
+    "load_share": 0.083,
+    "model": 25.977,
+    "act": 16.581
+   },
+   "2": {
+    "contrib_usd": 0.692,
+    "load_share": 0.088,
+    "model": 28.566,
+    "act": 20.703
+   },
+   "3": {
+    "contrib_usd": 0.63,
+    "load_share": 0.091,
+    "model": 29.971,
+    "act": 23.056
+   },
+   "4": {
+    "contrib_usd": 0.576,
+    "load_share": 0.094,
+    "model": 31.417,
+    "act": 25.31
+   },
+   "5": {
+    "contrib_usd": 0.487,
+    "load_share": 0.098,
+    "model": 32.796,
+    "act": 27.819
+   },
+   "6": {
+    "contrib_usd": 0.416,
+    "load_share": 0.101,
+    "model": 34.997,
+    "act": 30.886
+   },
+   "7": {
+    "contrib_usd": 0.171,
+    "load_share": 0.105,
+    "model": 36.31,
+    "act": 34.687
+   },
+   "8": {
+    "contrib_usd": -0.012,
+    "load_share": 0.11,
+    "model": 39.134,
+    "act": 39.24
+   },
+   "9": {
+    "contrib_usd": -0.578,
+    "load_share": 0.113,
+    "model": 43.087,
+    "act": 48.201
+   },
+   "10": {
+    "contrib_usd": -3.544,
+    "load_share": 0.117,
+    "model": 65.555,
+    "act": 95.933
+   }
+  },
+  "hourclass": {
+   "dear-gas day": {
+    "contrib_usd": -0.236,
+    "load_share": 0.108,
+    "model": 71.263,
+    "act": 73.453
+   },
+   "ordinary": {
+    "contrib_usd": 0.812,
+    "load_share": 0.89,
+    "model": 33.64,
+    "act": 32.728
+   },
+   "tail>$300": {
+    "contrib_usd": -0.962,
+    "load_share": 0.002,
+    "model": 56.08,
+    "act": 511.098
+   }
+  },
+  "dear_x_winter": [
+   {
+    "cls": "dear-gas day",
+    "winter": false,
+    "contrib_usd": 0.033,
+    "load_share": 0.013,
+    "model": 47.266,
+    "act": 44.768
+   },
+   {
+    "cls": "dear-gas day",
+    "winter": true,
+    "contrib_usd": -0.269,
+    "load_share": 0.095,
+    "model": 74.571,
+    "act": 77.406
+   },
+   {
+    "cls": "ordinary",
+    "winter": false,
+    "contrib_usd": 1.154,
+    "load_share": 0.731,
+    "model": 33.414,
+    "act": 31.834
+   },
+   {
+    "cls": "ordinary",
+    "winter": true,
+    "contrib_usd": -0.342,
+    "load_share": 0.159,
+    "model": 34.678,
+    "act": 36.825
+   },
+   {
+    "cls": "tail>$300",
+    "winter": false,
+    "contrib_usd": -0.916,
+    "load_share": 0.002,
+    "model": 56.832,
+    "act": 516.936
+   },
+   {
+    "cls": "tail>$300",
+    "winter": true,
+    "contrib_usd": -0.045,
+    "load_share": 0.0,
+    "model": 43.815,
+    "act": 415.95
+   }
+  ],
+  "marg_class": {
+   "CC_CHP": {
+    "contrib_usd": -0.007,
+    "load_share": 0.038,
+    "model": 29.862,
+    "act": 30.043
+   },
+   "CC_REGULAR": {
+    "contrib_usd": 0.038,
+    "load_share": 0.021,
+    "model": 32.535,
+    "act": 30.709
+   },
+   "CT_CHP": {
+    "contrib_usd": -1.131,
+    "load_share": 0.138,
+    "model": 43.012,
+    "act": 51.228
+   },
+   "CT_PEAKER": {
+    "contrib_usd": 0.572,
+    "load_share": 0.36,
+    "model": 32.891,
+    "act": 31.3
+   },
+   "ST_CHP": {
+    "contrib_usd": -2.055,
+    "load_share": 0.177,
+    "model": 45.722,
+    "act": 57.325
+   },
+   "ST_GAS": {
+    "contrib_usd": 0.995,
+    "load_share": 0.245,
+    "model": 29.286,
+    "act": 25.219
+   },
+   "oil": {
+    "contrib_usd": 1.202,
+    "load_share": 0.022,
+    "model": 130.79,
+    "act": 77.143
+   }
+  },
+  "marg_band": {
+   "ST_CHP:peak": {
+    "contrib_usd": -2.055,
+    "load_share": 0.177,
+    "model": 45.722,
+    "act": 57.325
+   },
+   "CT_CHP:peak": {
+    "contrib_usd": -1.133,
+    "load_share": 0.137,
+    "model": 43.052,
+    "act": 51.309
+   },
+   "CC_CHP:peak": {
+    "contrib_usd": -0.007,
+    "load_share": 0.038,
+    "model": 29.862,
+    "act": 30.043
+   },
+   "CT_PEAKER:econlo": {
+    "contrib_usd": -0.003,
+    "load_share": 0.027,
+    "model": 34.464,
+    "act": 34.569
+   },
+   "CT_CHP:econhi": {
+    "contrib_usd": 0.002,
+    "load_share": 0.0,
+    "model": 31.893,
+    "act": 28.588
+   },
+   "CC_REGULAR:peak": {
+    "contrib_usd": 0.038,
+    "load_share": 0.021,
+    "model": 32.535,
+    "act": 30.709
+   },
+   "CT_PEAKER:committed": {
+    "contrib_usd": 0.575,
+    "load_share": 0.333,
+    "model": 32.765,
+    "act": 31.038
+   },
+   "ST_GAS:peak": {
+    "contrib_usd": 0.995,
+    "load_share": 0.245,
+    "model": 29.286,
+    "act": 25.219
+   }
+  },
+  "n_dear_days": 38,
+  "zone_basis": "hourly, NYISO 5-min zonal RT zips",
+  "zone": {
+   "Capital_Hudson": {
+    "contrib_usd": -0.11,
+    "load_share": 0.137,
+    "model": 38.717,
+    "act": 39.519
+   },
+   "Long_Island": {
+    "contrib_usd": -0.798,
+    "load_share": 0.131,
+    "model": 40.217,
+    "act": 46.301
+   },
+   "Lower_Hudson": {
+    "contrib_usd": -0.057,
+    "load_share": 0.056,
+    "model": 39.349,
+    "act": 40.364
+   },
+   "NYC": {
+    "contrib_usd": -0.728,
+    "load_share": 0.329,
+    "model": 39.317,
+    "act": 41.528
+   },
+   "Upstate_West": {
+    "contrib_usd": 0.037,
+    "load_share": 0.346,
+    "model": 34.677,
+    "act": 34.571
+   }
+  },
+  "zone_total_usd": -1.657
+ },
+ "2025": {
+  "total_usd": -7.153,
+  "act_mean": 66.351,
+  "pct": -10.78,
+  "month": {
+   "1": {
+    "contrib_usd": -1.463,
+    "load_share": 0.094,
+    "model": 96.281,
+    "act": 111.923
+   },
+   "2": {
+    "contrib_usd": -1.463,
+    "load_share": 0.081,
+    "model": 81.954,
+    "act": 99.94
+   },
+   "3": {
+    "contrib_usd": 0.082,
+    "load_share": 0.077,
+    "model": 47.87,
+    "act": 46.808
+   },
+   "4": {
+    "contrib_usd": -0.03,
+    "load_share": 0.071,
+    "model": 40.27,
+    "act": 40.687
+   },
+   "5": {
+    "contrib_usd": 0.089,
+    "load_share": 0.073,
+    "model": 34.952,
+    "act": 33.73
+   },
+   "6": {
+    "contrib_usd": -2.085,
+    "load_share": 0.087,
+    "model": 53.355,
+    "act": 77.239
+   },
+   "7": {
+    "contrib_usd": -1.457,
+    "load_share": 0.107,
+    "model": 64.562,
+    "act": 78.131
+   },
+   "8": {
+    "contrib_usd": 0.211,
+    "load_share": 0.09,
+    "model": 47.254,
+    "act": 44.915
+   },
+   "9": {
+    "contrib_usd": 0.043,
+    "load_share": 0.078,
+    "model": 40.591,
+    "act": 40.039
+   },
+   "10": {
+    "contrib_usd": -0.101,
+    "load_share": 0.073,
+    "model": 43.878,
+    "act": 45.248
+   },
+   "11": {
+    "contrib_usd": -0.327,
+    "load_share": 0.077,
+    "model": 50.662,
+    "act": 54.925
+   },
+   "12": {
+    "contrib_usd": -0.653,
+    "load_share": 0.092,
+    "model": 90.659,
+    "act": 97.767
+   }
+  },
+  "decile": {
+   "1": {
+    "contrib_usd": 0.921,
+    "load_share": 0.082,
+    "model": 31.726,
+    "act": 20.453
+   },
+   "2": {
+    "contrib_usd": 0.633,
+    "load_share": 0.087,
+    "model": 35.457,
+    "act": 28.171
+   },
+   "3": {
+    "contrib_usd": 0.653,
+    "load_share": 0.09,
+    "model": 40.175,
+    "act": 32.915
+   },
+   "4": {
+    "contrib_usd": 0.487,
+    "load_share": 0.093,
+    "model": 42.9,
+    "act": 37.648
+   },
+   "5": {
+    "contrib_usd": 0.361,
+    "load_share": 0.096,
+    "model": 46.136,
+    "act": 42.397
+   },
+   "6": {
+    "contrib_usd": 0.267,
+    "load_share": 0.103,
+    "model": 51.102,
+    "act": 48.506
+   },
+   "7": {
+    "contrib_usd": 0.15,
+    "load_share": 0.107,
+    "model": 57.66,
+    "act": 56.253
+   },
+   "8": {
+    "contrib_usd": -0.43,
+    "load_share": 0.111,
+    "model": 66.152,
+    "act": 70.011
+   },
+   "9": {
+    "contrib_usd": -1.499,
+    "load_share": 0.113,
+    "model": 81.536,
+    "act": 94.762
+   },
+   "10": {
+    "contrib_usd": -8.696,
+    "load_share": 0.118,
+    "model": 114.003,
+    "act": 187.559
+   }
+  },
+  "hourclass": {
+   "dear-gas day": {
+    "contrib_usd": 0.514,
+    "load_share": 0.112,
+    "model": 126.772,
+    "act": 122.185
+   },
+   "ordinary": {
+    "contrib_usd": -3.739,
+    "load_share": 0.88,
+    "model": 49.657,
+    "act": 53.904
+   },
+   "tail>$300": {
+    "contrib_usd": -3.928,
+    "load_share": 0.008,
+    "model": 168.138,
+    "act": 682.534
+   }
+  },
+  "dear_x_winter": [
+   {
+    "cls": "dear-gas day",
+    "winter": true,
+    "contrib_usd": 0.514,
+    "load_share": 0.112,
+    "model": 126.772,
+    "act": 122.185
+   },
+   {
+    "cls": "ordinary",
+    "winter": false,
+    "contrib_usd": 0.175,
+    "load_share": 0.726,
+    "model": 46.905,
+    "act": 46.665
+   },
+   {
+    "cls": "ordinary",
+    "winter": true,
+    "contrib_usd": -3.914,
+    "load_share": 0.154,
+    "model": 62.645,
+    "act": 88.074
+   },
+   {
+    "cls": "tail>$300",
+    "winter": false,
+    "contrib_usd": -3.749,
+    "load_share": 0.007,
+    "model": 165.433,
+    "act": 718.552
+   },
+   {
+    "cls": "tail>$300",
+    "winter": true,
+    "contrib_usd": -0.179,
+    "load_share": 0.001,
+    "model": 189.496,
+    "act": 398.212
+   }
+  ],
+  "marg_class": {
+   "CC_CHP": {
+    "contrib_usd": 0.036,
+    "load_share": 0.049,
+    "model": 30.261,
+    "act": 29.517
+   },
+   "CT_CHP": {
+    "contrib_usd": -2.454,
+    "load_share": 0.309,
+    "model": 60.348,
+    "act": 68.278
+   },
+   "CT_PEAKER": {
+    "contrib_usd": 1.383,
+    "load_share": 0.366,
+    "model": 41.042,
+    "act": 37.261
+   },
+   "ST_CHP": {
+    "contrib_usd": -3.484,
+    "load_share": 0.175,
+    "model": 55.609,
+    "act": 75.514
+   },
+   "oil": {
+    "contrib_usd": -2.635,
+    "load_share": 0.101,
+    "model": 141.368,
+    "act": 167.393
+   }
+  },
+  "marg_band": {
+   "ST_CHP:peak": {
+    "contrib_usd": -3.585,
+    "load_share": 0.156,
+    "model": 58.13,
+    "act": 81.047
+   },
+   "oil:": {
+    "contrib_usd": -2.635,
+    "load_share": 0.101,
+    "model": 141.368,
+    "act": 167.393
+   },
+   "CT_CHP:peak": {
+    "contrib_usd": -2.456,
+    "load_share": 0.308,
+    "model": 60.415,
+    "act": 68.381
+   },
+   "CT_CHP:econhi": {
+    "contrib_usd": 0.002,
+    "load_share": 0.001,
+    "model": 41.119,
+    "act": 39.047
+   },
+   "CT_PEAKER:econhi": {
+    "contrib_usd": 0.003,
+    "load_share": 0.0,
+    "model": 77.597,
+    "act": 49.002
+   },
+   "CC_CHP:peak": {
+    "contrib_usd": 0.004,
+    "load_share": 0.001,
+    "model": 27.112,
+    "act": 23.627
+   },
+   "CC_CHP:econc04": {
+    "contrib_usd": 0.032,
+    "load_share": 0.048,
+    "model": 30.331,
+    "act": 29.648
+   },
+   "ST_CHP:econ": {
+    "contrib_usd": 0.102,
+    "load_share": 0.019,
+    "model": 34.37,
+    "act": 28.891
+   }
+  },
+  "n_dear_days": 37,
+  "zone_basis": "hourly, NYISO 5-min zonal RT zips",
+  "zone": {
+   "Capital_Hudson": {
+    "contrib_usd": -1.212,
+    "load_share": 0.139,
+    "model": 61.639,
+    "act": 70.347
+   },
+   "Long_Island": {
+    "contrib_usd": -2.379,
+    "load_share": 0.132,
+    "model": 63.121,
+    "act": 81.188
+   },
+   "Lower_Hudson": {
+    "contrib_usd": -0.558,
+    "load_share": 0.056,
+    "model": 62.392,
+    "act": 72.286
+   },
+   "NYC": {
+    "contrib_usd": -3.837,
+    "load_share": 0.331,
+    "model": 61.52,
+    "act": 73.128
+   },
+   "Upstate_West": {
+    "contrib_usd": -2.038,
+    "load_share": 0.342,
+    "model": 53.93,
+    "act": 59.886
+   }
+  },
+  "zone_total_usd": -10.024
+ }
+}
