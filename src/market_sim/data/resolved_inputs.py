@@ -365,6 +365,8 @@ def _campd_unit_outages_block(config, iso: str) -> dict[str, Any]:
                 unit_fuel_routing=bool(
                     getattr(config, "unit_outage_unit_fuel_routing", False)
                 ),
+                # PJM-NEXT-5: the full HEAD re-derive companion gate.
+                full_rederive=bool(getattr(config, "unit_outage_full_rederive", False)),
                 # SPP-85: the net-load-mask companion gate, same reason.
                 netload_mask_repair=bool(
                     getattr(config, "unit_outage_netload_mask_repair", False)

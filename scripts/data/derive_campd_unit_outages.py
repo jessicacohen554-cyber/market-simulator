@@ -212,6 +212,20 @@ SHORT_WINDOW_GAS_GROUPS: frozenset[str] = frozenset(
 # primitives — imported above from scripts.lib.outage_detect.
 
 
+def _is_listed_peaker_steam(plant_code: object, group: str | None) -> bool:
+    """Return True when a unit/plant is the ST_GAS slice of a listed peaker plant.
+
+    :data:`~market_sim.data.outages.ST_GAS_PEAKER_PLANTS` is defined on a
+    plant's **ST_GAS slice** (pjm-d4-2's qualifying test is that slice's CAMPD
+    meter-online share), so only gas-steam units there carry no outage overlay.
+    A coal or CC unit at the same plant keeps its measured windows — the
+    plant-wide skip this replaces deleted, e.g., Montour's 2019 coal windows
+    (PJM-NEXT-5). A plant whose qualifying units are all gas steam is skipped
+    exactly as before.
+    """
+    return int(plant_code) in ST_GAS_PEAKER_PLANTS and group == "ST_GAS"
+
+
 def _norm_unit_id(uid: object) -> str:
     """Return an upper-cased alphanumeric-only unit id (drop spaces/dashes)."""
     return re.sub(r"[^0-9A-Za-z]", "", str(uid)).upper()
@@ -989,7 +1003,7 @@ def derive_eia923_noncampd_fallback(
         code
         for code, group in group_by_code.items()
         if group in QUALIFYING_PLANT_GROUPS
-        and int(code) not in ST_GAS_PEAKER_PLANTS
+        and not _is_listed_peaker_steam(code, group)
         and int(code) not in campd_codes
     )
     rows: list[dict] = []
@@ -1850,8 +1864,17 @@ def main() -> None:
                 # below routes and skips unit-by-unit).
                 if not (fac_groups & QUALIFYING_PLANT_GROUPS):
                     continue
-                if int(fac_id) in ST_GAS_PEAKER_PLANTS:
-                    continue
+                # The ST_GAS_PEAKER_PLANTS skip is applied PER UNIT below, after
+                # each unit's own group is resolved — never plant-wide here.
+                # The registry is defined on the plant's ST_GAS SLICE
+                # (pjm-d4-2's qualifying test reads that slice's meter-online
+                # share), so a plant-wide skip also deleted the windows of the
+                # plant's COAL / CC units: PJM-NEXT-5 measured it removing
+                # Montour's 2019 coal windows (13.4 TWh of window capacity-
+                # hours; coal until its 2023 gas conversion) and the coal units
+                # of Yorktown and Chalk Point. Plants whose only qualifying
+                # units are gas steam (every ERCOT / CAISO member) are skipped
+                # exactly as before.
                 fac_name = remap_names.get(
                     int(fac_id), str(fac["facilityName"].iloc[0])
                 )
@@ -2051,6 +2074,8 @@ def main() -> None:
                         )
                     )
                     if ugroup not in QUALIFYING_PLANT_GROUPS:
+                        continue
+                    if _is_listed_peaker_steam(fac_id, ugroup):
                         continue
                     # Short/partial modes: baseload coal only, WHEN-OPERABLE
                     # basis. A cycling unit's brief stop can be economics; a
@@ -2295,7 +2320,7 @@ def main() -> None:
         for fac_id, group in sorted(group_by_code.items()):
             if group not in QUALIFYING_PLANT_GROUPS:
                 continue
-            if int(fac_id) in ST_GAS_PEAKER_PLANTS:
+            if _is_listed_peaker_steam(fac_id, group):
                 continue
             npl = npl_by_plant.get(int(fac_id), 0.0)
             if npl <= 0.0:
