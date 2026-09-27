@@ -1714,3 +1714,16 @@ C4-failing year; contract and spot prices match where both exist. The family als
 never the `_econ` tranches soco-73 named as the object. Matrix cell U -> G. Next candidate (unscoped): coal econ
 tranches priced at average rather than incremental heat rate (no registered field). Record:
 docs/handoffs/r-soco/FINDING-soco-74-2026-09-27.md.
+
+## soco-75 — 2026-09-27
+
+NO LEVER BUILT; NO SOLVE; KEEPER UNCHANGED (2026-09-26-soco72-gas-basis-window). Task: average vs INCREMENTAL coal
+heat rate on the econ tranches. Measured (frozen derive_campd_marginal_hr construction, own CEMS 2019-2025):
+incremental/average pooled econ_low Bowen 0.98, Miller 0.92, Scherer 0.93, Daniel 0.89, Gaston 0.90 (sd <= 0.07;
+Barry/Wansley/Crist cyclers 0.91-0.95), i.e. $0-3.5/MWh against soco-73's $7-23 H2-2020 gap. Rule 19: the registered
+`coal_econ_marginal_hr_bound` carries this measurement as a one-sided FLOOR on class bands; SOCO bands are 1.0, so it
+is INERT (cell U -> I; soco-74's "no registered field" corrected). Lowering econ offers is the opposite polarity and
+would stack. Greedy of the admissible scope (must-run-floored plants only; cyclers refused per SOCO-63 §5): 2020 C4
+0.304 -> 0.289/0.294, 2019 COAL_BIT -4.24 -> -4.01/-4.18 pp (still FAIL at ~3x LP), 2022 COAL_PRB +2.69 -> +2.72.
+Owner question: a SOCO-scoped two-sided per-plant mode of the carrier. Record:
+docs/handoffs/r-soco/FINDING-soco-75-2026-09-27.md.
