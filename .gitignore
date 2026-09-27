@@ -3697,3 +3697,5 @@ results/calibration/nyisonext6_202[2-5]/
 # R-CAISO-6 per-year shard legs (rule 32(d)/36): kept out of main; the composite rcaiso6_tp_2019_2021 is what registers.
 results/calibration/rcaiso6_O2_20*/**
 !results/calibration/rcaiso6_tp_2019_2021/
+# miso-278 per-year shard legs: parent-local only (rule 32(d)); provenance SHAs in docs/RESULT-miso278-unit-fuel-split-2026-09-27.md
+results/calibration/miso278_arm_*/
