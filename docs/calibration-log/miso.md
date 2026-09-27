@@ -15198,3 +15198,14 @@ Asked in session soco-72 because the unstamped registration kept CI "Keeper-inte
 E13). The owner ruled **"Prune it"**: `2026-09-26-miso-276-winter-daily` removed via `prune_iso_runs.py --iso MISO
 --force-uncite` (sidecar, payload, `results/calibration/miso276_span`); the keeper stays `2026-09-26-miso-275-cc-exempt`;
 `audit_keepers --iso MISO` PASS. Git history is the record for the bytes (rule 15); the MISO matrix citations are retained.
+## miso-277 — 2026-09-26/27
+
+Phase 0 (`docs/FINDING-miso277-phase0-congestion-crosswalk-stormprint-2026-09-26.md`): C3a 2022 is real West→East
+congestion with no admissible 2022 limit (owner: routed miss); EPA CAMD–EIA crosswalk intaken and the ST_GAS
+unit-attribution re-derive chartered (`docs/handoffs/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md`); the
+declined miso-276 D1 arm was found mis-built (South on the Chicago print, 2019–2021) and fixed. Re-solved as ruled
+(7 shards, `docs/RESULT-miso277-d1-as-ruled-2026-09-26.md`): C3b 2021 0.290 → 0.254, zero status flips.
+
+**PROMOTED 2026-09-27** on the owner's ruling (*"Promote"*): MISO keeper → `2026-09-26-miso-277-d1-as` (2019–2025);
+`miso-275` and `miso-276` pruned (rule 35). Headline unchanged: train CALIBRATED; full span NOT-YET on C1 ST_GAS 2019,
+C3a 2022, C3b 2021.
