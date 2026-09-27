@@ -1,0 +1,276 @@
+{
+ "year": 2021,
+ "zones": {
+  "MISO-West": {
+   "keeper": {
+    "feb_calendar": 14.44,
+    "storm_13_16": 19.05,
+    "calm": 13.67,
+    "burn_weighted": 15.5
+   },
+   "d1": {
+    "feb_calendar": 14.18,
+    "storm_13_16": 66.45,
+    "calm": 5.46,
+    "burn_weighted": 17.52
+   },
+   "burnw": {
+    "feb_calendar": 14.4,
+    "storm_13_16": 19.09,
+    "calm": 13.61,
+    "burn_weighted": 14.88
+   },
+   "d1_burnw": {
+    "feb_calendar": 16.27,
+    "storm_13_16": 72.1,
+    "calm": 6.96,
+    "burn_weighted": 14.88
+   },
+   "d1_south_hh": {
+    "feb_calendar": 14.18,
+    "storm_13_16": 66.45,
+    "calm": 5.46,
+    "burn_weighted": 17.52
+   },
+   "d1_south_hh_burnw": {
+    "feb_calendar": 16.27,
+    "storm_13_16": 72.1,
+    "calm": 6.96,
+    "burn_weighted": 14.88
+   }
+  },
+  "MISO-Plains": {
+   "keeper": {
+    "feb_calendar": 12.76,
+    "storm_13_16": 18.22,
+    "calm": 11.85,
+    "burn_weighted": 13.16
+   },
+   "d1": {
+    "feb_calendar": 19.92,
+    "storm_13_16": 104.9,
+    "calm": 5.75,
+    "burn_weighted": 15.19
+   },
+   "burnw": {
+    "feb_calendar": 14.02,
+    "storm_13_16": 20.1,
+    "calm": 13.01,
+    "burn_weighted": 14.37
+   },
+   "d1_burnw": {
+    "feb_calendar": 24.6,
+    "storm_13_16": 129.77,
+    "calm": 7.07,
+    "burn_weighted": 14.37
+   },
+   "d1_south_hh": {
+    "feb_calendar": 19.92,
+    "storm_13_16": 104.9,
+    "calm": 5.75,
+    "burn_weighted": 15.19
+   },
+   "d1_south_hh_burnw": {
+    "feb_calendar": 24.6,
+    "storm_13_16": 129.77,
+    "calm": 7.07,
+    "burn_weighted": 14.37
+   }
+  },
+  "MISO-Illinois": {
+   "keeper": {
+    "feb_calendar": 7.11,
+    "storm_13_16": 37.97,
+    "calm": 1.97,
+    "burn_weighted": 2.76
+   },
+   "d1": {
+    "feb_calendar": 21.3,
+    "storm_13_16": 99.25,
+    "calm": 8.31,
+    "burn_weighted": 6.44
+   },
+   "burnw": {
+    "feb_calendar": 14.87,
+    "storm_13_16": 79.78,
+    "calm": 4.05,
+    "burn_weighted": 4.83
+   },
+   "d1_burnw": {
+    "feb_calendar": 12.73,
+    "storm_13_16": 64.97,
+    "calm": 4.02,
+    "burn_weighted": 4.83
+   },
+   "d1_south_hh": {
+    "feb_calendar": 21.3,
+    "storm_13_16": 99.25,
+    "calm": 8.31,
+    "burn_weighted": 6.44
+   },
+   "d1_south_hh_burnw": {
+    "feb_calendar": 12.73,
+    "storm_13_16": 64.97,
+    "calm": 4.02,
+    "burn_weighted": 4.83
+   }
+  },
+  "MISO-Indiana": {
+   "keeper": {
+    "feb_calendar": 6.56,
+    "storm_13_16": 36.91,
+    "calm": 1.5,
+    "burn_weighted": 6.07
+   },
+   "d1": {
+    "feb_calendar": 21.57,
+    "storm_13_16": 117.91,
+    "calm": 5.51,
+    "burn_weighted": 23.09
+   },
+   "burnw": {
+    "feb_calendar": 7.11,
+    "storm_13_16": 40.12,
+    "calm": 1.61,
+    "burn_weighted": 5.8
+   },
+   "d1_burnw": {
+    "feb_calendar": 6.85,
+    "storm_13_16": 37.19,
+    "calm": 1.79,
+    "burn_weighted": 5.8
+   },
+   "d1_south_hh": {
+    "feb_calendar": 21.57,
+    "storm_13_16": 117.91,
+    "calm": 5.51,
+    "burn_weighted": 23.09
+   },
+   "d1_south_hh_burnw": {
+    "feb_calendar": 6.85,
+    "storm_13_16": 37.19,
+    "calm": 1.79,
+    "burn_weighted": 5.8
+   }
+  },
+  "MISO-East": {
+   "keeper": {
+    "feb_calendar": 4.89,
+    "storm_13_16": 26.85,
+    "calm": 1.23,
+    "burn_weighted": 6.6
+   },
+   "d1": {
+    "feb_calendar": 18.01,
+    "storm_13_16": 94.26,
+    "calm": 5.3,
+    "burn_weighted": 24.88
+   },
+   "burnw": {
+    "feb_calendar": 5.49,
+    "storm_13_16": 30.62,
+    "calm": 1.3,
+    "burn_weighted": 5.42
+   },
+   "d1_burnw": {
+    "feb_calendar": 5.46,
+    "storm_13_16": 28.47,
+    "calm": 1.62,
+    "burn_weighted": 5.42
+   },
+   "d1_south_hh": {
+    "feb_calendar": 18.01,
+    "storm_13_16": 94.26,
+    "calm": 5.3,
+    "burn_weighted": 24.88
+   },
+   "d1_south_hh_burnw": {
+    "feb_calendar": 5.46,
+    "storm_13_16": 28.47,
+    "calm": 1.62,
+    "burn_weighted": 5.42
+   }
+  },
+  "MISO-South": {
+   "keeper": {
+    "feb_calendar": 22.48,
+    "storm_13_16": 32.47,
+    "calm": 20.81,
+    "burn_weighted": 25.59
+   },
+   "d1": {
+    "feb_calendar": 20.33,
+    "storm_13_16": 111.47,
+    "calm": 5.14,
+    "burn_weighted": 27.65
+   },
+   "burnw": {
+    "feb_calendar": 18.99,
+    "storm_13_16": 27.41,
+    "calm": 17.59,
+    "burn_weighted": 22.33
+   },
+   "d1_burnw": {
+    "feb_calendar": 17.22,
+    "storm_13_16": 94.14,
+    "calm": 4.4,
+    "burn_weighted": 22.33
+   },
+   "d1_south_hh": {
+    "feb_calendar": 5.34,
+    "storm_13_16": 7.73,
+    "calm": 4.94,
+    "burn_weighted": 5.93
+   },
+   "d1_south_hh_burnw": {
+    "feb_calendar": 18.81,
+    "storm_13_16": 27.44,
+    "calm": 17.38,
+    "burn_weighted": 22.33
+   }
+  }
+ },
+ "system": {
+  "keeper": {
+   "feb_calendar": 14.41,
+   "storm_13_16": 29.68,
+   "calm": 11.86,
+   "burn_weighted": 18.21
+  },
+  "d1": {
+   "feb_calendar": 19.33,
+   "storm_13_16": 102.31,
+   "calm": 5.5,
+   "burn_weighted": 25.59
+  },
+  "burnw": {
+   "feb_calendar": 13.66,
+   "storm_13_16": 31.58,
+   "calm": 10.67,
+   "burn_weighted": 16.0
+  },
+  "d1_burnw": {
+   "feb_calendar": 13.56,
+   "storm_13_16": 71.53,
+   "calm": 3.9,
+   "burn_weighted": 16.0
+  },
+  "d1_south_hh": {
+   "feb_calendar": 12.69,
+   "storm_13_16": 56.38,
+   "calm": 5.41,
+   "burn_weighted": 13.03
+  },
+  "d1_south_hh_burnw": {
+   "feb_calendar": 14.27,
+   "storm_13_16": 42.0,
+   "calm": 9.64,
+   "burn_weighted": 16.0
+  }
+ },
+ "coverage": {
+  "gas_rows": 1461,
+  "gas_rows_with_campd_burn": 879,
+  "gas_pmax_share_with_burn": 0.855
+ }
+}
