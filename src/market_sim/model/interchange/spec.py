@@ -548,14 +548,30 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     # re-derive only when the interface-flow / DA-LMP source data extends. This
     # static entry is the POOLED 2023-2025 derivation (multi-year revealed
     # supply curve, forward story); backcast years use IMPORT_TRANCHES_BY_YEAR.
+    # NYISO-NEXT-8 CORRECTION (2026-09-27, rule 14 derivation fix, zero DOF):
+    # every NYISO ladder below (this static entry and 2018-2025 by year) was
+    # re-derived after removing ``SCH - HQ_IMPORT_EXPORT`` from the producer's
+    # HQ row set. That row is an accounting duplicate of ``SCH - HQ - NY``
+    # (corr 0.955-0.993, every year; nyiso_par_attribution.ACCOUNTING_DUPLICATE
+    # already excluded it), so the prior rungs were derived on a net import
+    # that counted HQ twice (e.g. 2022 3,786 vs true 3,080 MW; 2025 1,671 vs
+    # 2,197 MW). Same frozen formula, same two sources, one input row removed;
+    # the cause is the defect, not a residual (rule 23). The producer's own
+    # offline reproduction of the TRUE net import improves every year
+    # (duration RMSE 2018-2025: 827/902/861/713/583/337/447/681 ->
+    # 249/224/204/252/297/215/220/211 MW). Disclosed: re-running the
+    # unfixed producer today differs from the prior committed rungs by at most
+    # $0.19 (2022 HQ_hydro, a must-flow rung), all other rungs <= $0.01.
+    # Record: docs/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md,
+    # scripts/probes/nyisonext8_hq_dedupe_phase0.py.
     "NYISO": [
-        ("HQ_hydro", 900.0, 20.78),
-        ("IESO_Ontario", 690.0, 26.36),
-        ("PJM_shoulder", 690.0, 32.24),
-        ("PJM_west", 690.0, 40.13),
-        ("eastern_mid", 690.0, 51.03),
-        ("ISONE_tie", 690.0, 71.46),
-        ("import_scarcity", 2035.0, 152.97),
+        ("HQ_hydro", 900.0, 15.77),
+        ("IESO_Ontario", 690.0, 21.77),
+        ("PJM_shoulder", 690.0, 28.11),
+        ("PJM_west", 690.0, 38.64),
+        ("eastern_mid", 690.0, 57.70),
+        ("ISONE_tie", 690.0, 104.54),
+        ("import_scarcity", 990.0, 182.59),
     ],
     # NEISO seams (audit C-6 closure, 2026-07-06): measured-data ladders from
     # scripts/data/derive_neiso_import_tranches.py — per-seam Q-Q duration coupling
@@ -711,7 +727,10 @@ IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = 
     },
     # NYISO year-grounded measured ladders (derivation + sources in the static
     # IMPORT_TRANCHES["NYISO"] comment above; scripts/data/
-    # derive_nyiso_import_tranches.py). Year texture is real market history: the
+    # derive_nyiso_import_tranches.py). RE-DERIVED 2026-09-27 by NYISO-NEXT-8
+    # (HQ accounting duplicate removed — see the CORRECTION note on the static
+    # entry); the rung prices and reproduction figures quoted in the rest of
+    # this comment describe the superseded double-counted derivation. Year texture is real market history: the
     # rung prices scale with each year's measured DA LMP (mean $31.1 / $36.7 /
     # $60.7), and the 2023 off-peak marginal (PJM_west rung) falls to $27.9 —
     # the fitted ladder's $34.2 was the audit-C6 over-price that pinned the
@@ -742,76 +761,76 @@ IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = 
     #   partial-window methodology decision first.
     "NYISO": {
         2018: [
-            ("HQ_hydro", 900.0, 11.09),
-            ("IESO_Ontario", 690.0, 14.04),
-            ("PJM_shoulder", 690.0, 16.69),
-            ("PJM_west", 690.0, 19.76),
-            ("eastern_mid", 690.0, 23.50),
-            ("ISONE_tie", 690.0, 28.27),
-            ("import_scarcity", 2670.0, 56.24),
+            ("HQ_hydro", 900.0, 11.50),
+            ("IESO_Ontario", 690.0, 15.39),
+            ("PJM_shoulder", 690.0, 20.16),
+            ("PJM_west", 690.0, 25.57),
+            ("eastern_mid", 690.0, 32.44),
+            ("ISONE_tie", 690.0, 42.36),
+            ("import_scarcity", 1470.0, 129.77),
         ],
         2019: [
-            ("HQ_hydro", 900.0, 9.56),
-            ("IESO_Ontario", 690.0, 12.05),
-            ("PJM_shoulder", 690.0, 14.29),
-            ("PJM_west", 690.0, 17.36),
-            ("eastern_mid", 690.0, 20.98),
-            ("ISONE_tie", 690.0, 25.10),
-            ("import_scarcity", 2365.0, 43.68),
+            ("HQ_hydro", 900.0, 10.15),
+            ("IESO_Ontario", 690.0, 13.74),
+            ("PJM_shoulder", 690.0, 18.43),
+            ("PJM_west", 690.0, 23.13),
+            ("eastern_mid", 690.0, 28.76),
+            ("ISONE_tie", 690.0, 38.04),
+            ("import_scarcity", 1125.0, 75.88),
         ],
         2020: [
-            ("HQ_hydro", 900.0, 6.16),
-            ("IESO_Ontario", 690.0, 10.46),
-            ("PJM_shoulder", 690.0, 12.72),
-            ("PJM_west", 690.0, 15.11),
-            ("eastern_mid", 690.0, 18.51),
-            ("ISONE_tie", 690.0, 22.93),
-            ("import_scarcity", 1955.0, 41.41),
+            ("HQ_hydro", 900.0, 6.93),
+            ("IESO_Ontario", 690.0, 12.05),
+            ("PJM_shoulder", 690.0, 16.00),
+            ("PJM_west", 690.0, 20.33),
+            ("eastern_mid", 690.0, 26.85),
+            ("ISONE_tie", 690.0, 37.56),
+            ("import_scarcity", 885.0, 57.80),
         ],
         2021: [
-            ("HQ_hydro", 900.0, 11.30),
-            ("IESO_Ontario", 690.0, 13.52),
-            ("PJM_shoulder", 690.0, 16.28),
-            ("PJM_west", 690.0, 20.42),
-            ("eastern_mid", 690.0, 26.01),
-            ("ISONE_tie", 690.0, 33.42),
-            ("import_scarcity", 2560.0, 61.00),
+            ("HQ_hydro", 900.0, 11.41),
+            ("IESO_Ontario", 690.0, 13.97),
+            ("PJM_shoulder", 690.0, 18.52),
+            ("PJM_west", 690.0, 27.39),
+            ("eastern_mid", 690.0, 37.70),
+            ("ISONE_tie", 690.0, 49.41),
+            ("import_scarcity", 1480.0, 85.57),
         ],
         2022: [
-            ("HQ_hydro", 900.0, 25.16),
-            ("IESO_Ontario", 690.0, 34.27),
-            ("PJM_shoulder", 690.0, 41.12),
-            ("PJM_west", 690.0, 46.94),
-            ("eastern_mid", 690.0, 53.35),
-            ("ISONE_tie", 690.0, 62.59),
-            ("import_scarcity", 2760.0, 126.79),
+            ("HQ_hydro", 900.0, 23.77),
+            ("IESO_Ontario", 690.0, 36.06),
+            ("PJM_shoulder", 690.0, 44.21),
+            ("PJM_west", 690.0, 52.55),
+            ("eastern_mid", 690.0, 64.64),
+            ("ISONE_tie", 690.0, 86.91),
+            ("import_scarcity", 1575.0, 174.89),
         ],
         2023: [
-            ("HQ_hydro", 900.0, 15.20),
-            ("IESO_Ontario", 690.0, 18.67),
-            ("PJM_shoulder", 690.0, 22.91),
-            ("PJM_west", 690.0, 27.88),
-            ("eastern_mid", 690.0, 33.61),
-            ("ISONE_tie", 690.0, 40.23),
-            ("import_scarcity", 2230.0, 71.66),
+            ("HQ_hydro", 900.0, 13.59),
+            ("IESO_Ontario", 690.0, 17.41),
+            ("PJM_shoulder", 690.0, 22.46),
+            ("PJM_west", 690.0, 28.61),
+            ("eastern_mid", 690.0, 37.65),
+            ("ISONE_tie", 690.0, 51.53),
+            ("import_scarcity", 1065.0, 99.60),
         ],
         2024: [
-            ("HQ_hydro", 900.0, 20.97),
-            ("IESO_Ontario", 690.0, 25.70),
-            ("PJM_shoulder", 690.0, 29.85),
-            ("PJM_west", 690.0, 35.02),
-            ("eastern_mid", 690.0, 41.83),
-            ("ISONE_tie", 690.0, 54.38),
-            ("import_scarcity", 2120.0, 122.71),
+            ("HQ_hydro", 900.0, 17.50),
+            ("IESO_Ontario", 690.0, 22.27),
+            ("PJM_shoulder", 690.0, 26.98),
+            ("PJM_west", 690.0, 33.64),
+            ("eastern_mid", 690.0, 44.58),
+            ("ISONE_tie", 690.0, 68.11),
+            ("import_scarcity", 1150.0, 138.03),
         ],
         2025: [
-            ("HQ_hydro", 900.0, 31.32),
-            ("IESO_Ontario", 690.0, 44.09),
-            ("PJM_shoulder", 690.0, 59.82),
-            ("PJM_west", 690.0, 79.19),
-            ("eastern_mid", 690.0, 102.99),
-            ("ISONE_tie", 690.0, 128.54),
-            ("import_scarcity", 1725.0, 208.77),
+            ("HQ_hydro", 900.0, 20.43),
+            ("IESO_Ontario", 690.0, 30.76),
+            ("PJM_shoulder", 690.0, 43.16),
+            ("PJM_west", 690.0, 65.77),
+            ("eastern_mid", 690.0, 105.83),
+            ("ISONE_tie", 690.0, 153.51),
+            ("import_scarcity", 835.0, 242.96),
         ],
     },
     # NEISO: year-grounded measured ladders (derivation + sources in the
