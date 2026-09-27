@@ -43,7 +43,9 @@ ARM = {
 
 def _keeper_coal_twh(year: int) -> dict[int, float]:
     s = (REPO / "frontend/data/backcast/runs" / f"{KEEPER}.js").read_text()
-    pay = json.loads(gzip.decompress(base64.b64decode(s.split('="', 1)[1].rsplit('"', 1)[0])))
+    pay = json.loads(
+        gzip.decompress(base64.b64decode(s.split('="', 1)[1].rsplit('"', 1)[0]))
+    )
     out: dict[int, float] = {}
     for k, p in pay["years"][str(year)]["plants"].items():
         if ":" in k and "COAL" not in k:
@@ -95,8 +97,12 @@ def main() -> int:
                 resolve_coal_take_floor(cfg, "NWPP", True),
                 {k: getattr(cfg, k) for k in ARM},
             ]
-        g_rows, budget, _mi, coeff, grp, prov = build_coal_plant_budget(fa, y, hours=8760)
-        floor, tf = build_coal_take_floor(fa, y, g_rows, grp, coeff, budget, prov.yard_keys)
+        g_rows, budget, _mi, coeff, grp, prov = build_coal_plant_budget(
+            fa, y, hours=8760
+        )
+        floor, tf = build_coal_take_floor(
+            fa, y, g_rows, grp, coeff, budget, prov.yard_keys
+        )
         yards = coal_yard_groups(fa)
         model = _keeper_coal_twh(y)
         rows = []
@@ -106,13 +112,18 @@ def main() -> int:
         from market_sim.data.coal_fuel_inventory import coal_gen_idx
 
         rowed = set(int(g) for g in g_rows)
-        unrowed = sorted({int(codes[g]) for g in coal_gen_idx(fa) if int(g) not in rowed})
+        unrowed = sorted(
+            {int(codes[g]) for g in coal_gen_idx(fa) if int(g) not in rowed}
+        )
         for i, key in enumerate(prov.yard_keys):
             sel = grp == i
             hr = float(np.average(coeff[sel])) if sel.any() else float("nan")
             ids = sorted(yards.get(key, {key}))
             cen = sum(
-                (census[str(y)]["plants"].get(str(p), {}).get("burn_floor_B_twh") or 0.0)
+                (
+                    census[str(y)]["plants"].get(str(p), {}).get("burn_floor_B_twh")
+                    or 0.0
+                )
                 for p in ids
             )
             rows.append(
@@ -125,7 +136,9 @@ def main() -> int:
                     "census_Bnet_twh": round(cen, 3),
                     "keeper13_model_twh": round(sum(model.get(p, 0.0) for p in ids), 3),
                     "avail_twh": round(
-                        float((pmax[g_rows[sel]] * av[g_rows[sel]].sum(axis=1)).sum()) / 1e6, 3
+                        float((pmax[g_rows[sel]] * av[g_rows[sel]].sum(axis=1)).sum())
+                        / 1e6,
+                        3,
                     ),
                     "rowed_pmax_mw": round(float(pmax[g_rows[sel]].sum()), 1),
                 }
@@ -141,7 +154,8 @@ def main() -> int:
                 sum(max(0.0, r["floor_twh"] - r["keeper13_model_twh"]) for r in rows), 3
             ),
             "ceiling_binding_vs_k13_twh": round(
-                sum(max(0.0, r["keeper13_model_twh"] - r["ceiling_twh"]) for r in rows), 3
+                sum(max(0.0, r["keeper13_model_twh"] - r["ceiling_twh"]) for r in rows),
+                3,
             ),
             "rows": rows,
         }
