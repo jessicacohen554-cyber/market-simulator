@@ -14807,3 +14807,22 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - `2026-09-25-r-5-hour-grain` pruned.
 - **Next:** root-cause the 2023 scarcity/price formation that the missing plant was masking.
 - **Record:** `docs/handoffs/RESULT-r-ercot-8-fusco-fleet-coverage-2026-09-27.md`.
+
+## R-ERCOT-9 — 2026-09-27 — 2023 gap root-caused to energy-offer price formation (zero LP); zonal actuals repaired to the standard clock; keeper unchanged
+
+- **Tight hours (2023, 62 h with actual ≥ $1k):**
+  - Actual is λ $2,284 + RTORPA $68 + RTORDPA $53.
+  - The model is physically tighter than the market (ORDC-total held ≈ 3.85 GW vs PRC 5.2 GW), and its ORDC adder is higher ($201).
+  - The gap is the energy-offer component. The body under $200 is +$0.72.
+- **The 22 hours Fusco removed:**
+  - The CC_REGULAR and CT_PEAKER peak tranches are held for AS.
+  - Price is set by whichever k-scaled CHP peak step is marginal: CC_CHP ≈ $1.4k before Fusco, CT_CHP ≈ $0.65k after.
+- **Carve-out level:**
+  - The carve-out peak bands are the forward bands × 33 (k swept by ercot-235/236).
+  - Measured Aug-2023 DAM top-of-curve gas offers are $24–146 (CC). The $5k offers are storage and hydro.
+  - A measured re-anchor would lower the gas bands. No new admissible mechanism exists; the level question goes to the owner (decision card).
+- **Rule-14 clock repair:**
+  - `derive_ercot_zonal_lmp.py` now applies `_PrevailingShift`. Zonal actuals were one hour late in every DST hour, every year 2018–2026.
+  - `actual_lmp.json` ERCOT `rt_lw` changes 2019–2025: 46.90→46.55, 25.50→25.40, 165.53→165.95, 74.44→75.08, 64.32→65.02, 30.99→31.17, 36.29→36.50.
+  - These take effect at the next registration. No solve impact, and no determination flips.
+- **Record:** `docs/handoffs/FINDING-r-ercot-9-2023-scarcity-2026-09-27.md`.
