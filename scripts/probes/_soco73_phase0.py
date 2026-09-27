@@ -371,7 +371,11 @@ def greedy(year: int, arm: dict, price_override: np.ndarray | None = None) -> di
         for i in idx:
             cap = pmax[i] * av[i]
             off = mc_c[i] if mc_c.ndim == 2 else np.full(T, mc_c[i])
-            if ids[i].endswith("_committed") and not has_mr:
+            if ids[i].endswith("_committed") and not has_mr and p in MARKUP_OVERRIDE:
+                # soco-73 (ii): the cost-based start re-amortized over the plant's
+                # MEASURED mean campaign length (startup $/MW / mean run h).
+                off = off + MARKUP_OVERRIDE[p]
+            elif ids[i].endswith("_committed") and not has_mr:
                 c_id, e_id = ids[i], ids[i].replace("_committed", "_econlo")
                 if c_id in k_mc and e_id in k_mc:
                     off = (
@@ -444,6 +448,8 @@ def greedy(year: int, arm: dict, price_override: np.ndarray | None = None) -> di
 
 
 KEEPER_ID = "2026-09-26-soco72-gas-basis-window"
+#: soco-73 (ii): plant -> re-amortized committed markup $/MWh (empty = keeper markup).
+MARKUP_OVERRIDE: dict[int, float] = {}
 _ART: dict = {}
 
 
@@ -1116,9 +1122,36 @@ def main_campaign_greedy(years: list[int], plants_in: list[int] | None) -> None:
             print(c1_rows(y, d.to_dict()).round(3).to_string(index=False))
 
 
+def main_markup_greedy(years: list[int]) -> None:
+    """soco-73 (ii): greedy of the cyclers' committed start re-amortized over measured mean campaigns."""
+    prm = pd.read_csv(CAMPAIGN_PARAMS).set_index("plant_code")
+    for y in years:
+        fl = rebuild(y, None)
+        st = fl["stash"]
+        MARKUP_OVERRIDE.clear()
+        g0 = greedy(y, fl)
+        for p in (3, 641, 6052):
+            su = [float(st["startup"].get(x, 0.0)) for i, x in enumerate(fl["unit_ids"])
+                  if x.startswith("COAL") and x.endswith("_committed") and int(fl["plant"][i]) == p]
+            mean_run = prm.loc[p, "sync_share"] * T / prm.loc[p, "campaigns_per_year"]
+            MARKUP_OVERRIDE[p] = float(su[0]) / mean_run if su else 0.0
+        print(f"\n===== {y}  re-amortized markup $/MWh: " + " ".join(f"{p}:{v:.2f}" for p, v in MARKUP_OVERRIDE.items()))
+        g = greedy(y, fl)
+        MARKUP_OVERRIDE.clear()
+        keys = set(g["delta"]) | set(g0["delta"])
+        d = {k: g["delta"].get(k, 0.0) - g0["delta"].get(k, 0.0) for k in keys}
+        pdlt = {p: g["plant_delta"].get(p, 0.0) - g0["plant_delta"].get(p, 0.0) for p in (3, 641, 6052)}
+        print("  plant delta TWh " + " ".join(f"{p}:{v:+.3f}" for p, v in pdlt.items()))
+        print("  class delta TWh: " + "  ".join(f"{k} {v:+.3f}" for k, v in sorted(d.items()) if abs(v) > 1e-4))
+        if y <= 2024:
+            r0, n0, r1, n1 = c4_coal(y, g["coal_delta_t"] - g0["coal_delta_t"])
+            print(f"  C4 coal: keeper r={r0:.3f} nrmse={n0:.3f} -> arm~ r={r1:.3f} nrmse={n1:.3f}")
+            print(c1_rows(y, d).round(3).to_string(index=False))
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("mode", choices=["census", "fleet", "greedy", "compare", "decompose", "price", "greedy-gas", "fleet-gas", "conduct", "c4shape", "campaign-greedy"])
+    ap.add_argument("mode", choices=["census", "fleet", "greedy", "compare", "decompose", "price", "greedy-gas", "fleet-gas", "conduct", "c4shape", "campaign-greedy", "markup-greedy"])
     ap.add_argument("--plants", nargs="*", type=int)
     ap.add_argument("--candidate", type=Path)
     ap.add_argument("--years", nargs="+", type=int, default=list(YEARS))
@@ -1141,6 +1174,8 @@ if __name__ == "__main__":
         main_conduct(a.years)
     elif a.mode == "c4shape":
         main_c4shape(a.years)
+    elif a.mode == "markup-greedy":
+        main_markup_greedy(a.years)
     elif a.mode == "campaign-greedy":
         main_campaign_greedy(a.years, a.plants)
     else:
