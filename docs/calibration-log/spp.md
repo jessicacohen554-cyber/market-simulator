@@ -3920,3 +3920,10 @@ Two items routed, not built: (1) blended-plant rows at GRDA 165 and Hawthorn 207
 case for its own lane); (2) F923 January 2022 CC delivered gas at $147.15/MMBtu for Hawthorn and
 State Line MO, which survives into the offers. The crossover defect has no measured driver in the
 offer stack. Record: `docs/handoffs/RESULT-spp-76-crossover-heat-rates-2026-09-24.md`.
+
+## spp-93 — 2026-09-27 — West/East re-partition: admissible, rated, STOPPED pre-solve at C-3 (zero LP)
+
+Built `spp_zone_partition` (default `north_south` = keeper, byte-identical). West = SPP reserve zones {1,2,3,5}, East = RZ 4,
+one 4,000 MW W↔E link replacing N↔S. Measured-price admissibility passes 7/7 years. The ψ rating passes R1–R4. The census and
+the wind identity pass. C-3 STOPS: 14 East afternoon hours go margin-negative where N/S was ≥ 0. No shard launched, keeper
+unchanged, cell `spp_zone_partition` = O. Record: `docs/handoffs/FINDING-spp-93-west-east-2026-09-27.md`.

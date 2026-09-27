@@ -2166,6 +2166,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # False)`` in run_calibration.run_year, so no link bound changes off.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "nyiso_li_seam_posted_limit_cap",
+    # SPP-93 West/East re-partition (default "north_south"): dropped from the
+    # hash at its default so every pre-existing run keeps its key; an armed
+    # run solves a different SPP topology and so gets a distinct key.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "spp_zone_partition",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2943,6 +2948,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "coal_fuel_inventory_take_floor": "False",
     # Added by NYISO-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nyiso_li_seam_posted_limit_cap": "False",
+    # Added by SPP-93 WITH the field (the nyiso-119 discipline).
+    "spp_zone_partition": "'north_south'",
 }
 
 
@@ -18286,6 +18293,28 @@ class ScenarioConfig:
     spp_curtailment_ceiling: bool = False
     spp_curtail_depth_wind: float = 0.288137
 
+    # SPP-93 — the West/East re-partition of the SPP seam
+    # (docs/handoffs/PRECOMMIT-spp-93-west-east-2026-09-27.md, written before any
+    # model output existed). "north_south" (DEFAULT) is the keeper's topology,
+    # byte-identical. "west_east" REPLACES it (rule 19 [R-ONE-MECH]: the N<->S
+    # link is removed, never stacked on): SPP-West = SPP's own reserve zones
+    # {1,2,3,5} (Nebraska, western Kansas + the northern Panhandle, SPS / New
+    # Mexico, the Dakotas) and SPP-East = reserve zone 4, joined by ONE
+    # symmetric link. Every input is measured, with zero tuned scalars:
+    #   load    -- sub-BA -> bubble by the majority RESZONE of its current LOAD
+    #              settlement locations (SPP registry SL_to_Pnode_to_Zone_with_
+    #              Area.csv): West = {LES, NPPD, OPPD, SECI, SPS, WAUE};
+    #   plants  -- EIA-860 "RTO/ISO LMP Node Designation" matched to SPP's
+    #              registry -> RESZONE, else 1-nearest-neighbour on coordinates
+    #              (data/raw/reference/spp_plant_reserve_zone.csv, built by
+    #              scripts/data/derive_spp_plant_reserve_zone.py);
+    #   link    -- 4,000 MW, SPP-53's FCITC construction on the ACTUAL
+    #              East-West bubble spread (cited at iso_configs._spp_config).
+    # Applied process-wide through config.topology_variant (set at every
+    # config seam) so the LP and every data consumer see one topology.
+    # SPP-only [R-ISO-SCOPE]; any other value raises.
+    spp_zone_partition: str = "north_south"
+
     # ercot-165 — UNPOOL the driver's share by diurnal family, and give the
     # Panhandle export interface exactly ONE owner (rule 19 [R-ONE-MECH]).
     # FINDING-ercot164 measured that the pooled congestion_share is a UNION over
@@ -23807,6 +23836,7 @@ TIER_TAGS: dict[str, int] = {
     "maxgen_emergency_tier_pricing": 3,
     "gas_price_override": 3,
     "f923_gas_price_plausibility_screen": 1,
+    "spp_zone_partition": 1,
 }
 
 # SweepDefinition (the sweep / named-case-matrix expansion engine) moved

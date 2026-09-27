@@ -296,6 +296,11 @@ def load_zonal_shares(iso: str, year: int, zone_names: list[str]) -> np.ndarray 
     # hourly series exists (see _caiso_fsno_rescale).
     if iso == "CAISO" and "FSNO" in zone_names:
         return _caiso_fsno_rescale(iso, year, zone_names)
+    # SPP-93 West/East re-partition: the curated clean parquet is keyed only by
+    # ISO-year and holds the BASE North/South grouping, so the variant always
+    # parses the measured raw sub-BA file with its own grouping.
+    if iso == "SPP" and "SPP-West" in zone_names:
+        return _zonal_shares_from_raw(iso, year, zone_names)
     return _load_zonal_shares_base(iso, year, zone_names)
 
 

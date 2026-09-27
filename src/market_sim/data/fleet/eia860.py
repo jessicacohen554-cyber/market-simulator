@@ -463,6 +463,18 @@ def _assign_zones(
         vintage_coords_zone_lookup(iso) if fleet_zone_vintage_coords_active() else {}
     )
 
+    # SPP-93 West/East re-partition: the base-topology pin (SPP-North) does
+    # not exist there, so the fallback is the largest-load-share bubble and
+    # the measured plant table is consulted first (PRECOMMIT-spp-93 §1.3).
+    from market_sim.config.topology_variant import spp_west_east_active
+
+    spp_we_map = None
+    if iso == "SPP" and spp_west_east_active():
+        from market_sim.data.zone_assignment import load_spp_plant_bubbles
+
+        spp_we_map = load_spp_plant_bubbles()[0]
+        fallback_zone = "SPP-East"
+
     zones: list[str] = []
     missing = 0
     vintage_placed = 0
@@ -472,6 +484,10 @@ def _assign_zones(
         if zone is None and oris is not None and oris in vintage_lookup:
             zone = vintage_lookup[oris]
             vintage_placed += 1
+        if zone is None and spp_we_map is not None and oris in spp_we_map:
+            # SPP-93: a plant eGRID/EIA-860 geography missed but the measured
+            # West/East plant table carries (its own vintage's coordinates).
+            zone = spp_we_map[oris]
         if zone is None:
             zone = fallback_zone
             missing += 1

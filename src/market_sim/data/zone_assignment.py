@@ -1077,8 +1077,58 @@ def _neiso_zone(
     return _LARGEST_ZONE["NEISO"]
 
 
-def _spp_zone(lat: float | None, fips_state: int | None) -> str:
+SPP_PLANT_RESERVE_ZONE_CSV = REFERENCE_DIR / "spp_plant_reserve_zone.csv"
+
+
+@lru_cache(maxsize=1)
+def load_spp_plant_bubbles() -> tuple[
+    dict[int, str], np.ndarray, np.ndarray, np.ndarray
+]:
+    """Return the SPP-93 West/East plant map and its node-labelled coordinate set.
+
+    ``({plant_code: "SPP-West"|"SPP-East"}, lat, lon, zone)`` from
+    ``data/raw/reference/spp_plant_reserve_zone.csv``
+    (``scripts/data/derive_spp_plant_reserve_zone.py``; PRECOMMIT-spp-93 §1.3).
+    The three arrays are the NODE-labelled plants only, which is the 1-NN
+    reference set for a plant the table does not carry.
+    """
+    df = pd.read_csv(SPP_PLANT_RESERVE_ZONE_CSV)
+    zone = "SPP-" + df["bubble"].astype(str)
+    mapping = {int(c): z for c, z in zip(df["plant_code"], zone)}
+    lab = (df["source"] == "node").to_numpy()
+    return (
+        mapping,
+        df["lat"].to_numpy(float)[lab],
+        df["lon"].to_numpy(float)[lab],
+        zone.to_numpy()[lab],
+    )
+
+
+def _spp_we_nearest(lat: float | None, lon: float | None) -> str:
+    """Return the SPP-93 bubble of the nearest node-labelled plant (haversine 1-NN).
+
+    No parameter (PRECOMMIT-spp-93 §1.3 step 3). A location with no
+    coordinates takes the largest-load-share bubble, SPP-East, the same
+    fallback convention the base topology uses.
+    """
+    if lat is None or lon is None or not np.isfinite(lat) or not np.isfinite(lon):
+        return "SPP-East"
+    _, la, lo, zone = load_spp_plant_bubbles()
+    p1, p2 = np.radians(lat), np.radians(la)
+    dl = np.radians(lo) - np.radians(lon)
+    a = np.sin((p2 - p1) / 2) ** 2 + np.cos(p1) * np.cos(p2) * np.sin(dl / 2) ** 2
+    return str(zone[int(np.argmin(a))])
+
+
+def _spp_zone(
+    lat: float | None, fips_state: int | None, lon: float | None = None
+) -> str:
     """Return the SPP model zone for a plant location.
+
+    Under the SPP-93 West/East re-partition (``config.topology_variant``) the
+    zone is the bubble of the nearest node-labelled plant (:func:`_spp_we_nearest`).
+    Plant-keyed callers override it with the measured table
+    (:func:`load_spp_plant_bubbles`). Otherwise, the base North/South rule:
 
     FIPS state carries the assignment — the two model zones are exact unions
     of whole states (see :data:`_SPP_STATE_ZONES`) and eGRID / EIA-860 carry a
@@ -1087,6 +1137,10 @@ def _spp_zone(lat: float | None, fips_state: int | None) -> str:
     coordinates are available (South below 37.0 N, the KS/OK line), and
     otherwise to the largest-load-share zone (SPP-North).
     """
+    from market_sim.config.topology_variant import spp_west_east_active
+
+    if spp_west_east_active():
+        return _spp_we_nearest(lat, lon)
     if fips_state in _SPP_STATE_ZONES:
         return _SPP_STATE_ZONES[fips_state]
     if lat is not None:
@@ -1160,7 +1214,7 @@ def _zone_from_location(
     if iso == "PJM":
         return _pjm_zone(lat, lon, fips_state, fips_county)
     if iso == "SPP":
-        return _spp_zone(lat, fips_state)
+        return _spp_zone(lat, fips_state, lon)
     if iso == "NWPP":
         # NWPP zones are whole-BA groups (gate G18): no coordinate, state or
         # county rule can place a plant, because a state holds several BAs.
@@ -1222,6 +1276,15 @@ def assign_zone(oris_code: int, iso: str) -> str:
             _LARGEST_ZONE["NWPP"],
         )
         return _LARGEST_ZONE["NWPP"]
+    if iso == "SPP" and oris is not None:
+        from market_sim.config.topology_variant import spp_west_east_active
+
+        if spp_west_east_active():
+            measured = load_spp_plant_bubbles()[0].get(oris)
+            if measured is not None:
+                return measured
+            loc = _oris_to_location().get(oris)
+            return _spp_we_nearest(*(loc[:2] if loc else (None, None)))
     location = _oris_to_location().get(oris) if oris is not None else None
     if location is None:
         fallback = _LARGEST_ZONE.get(iso)
@@ -1619,11 +1682,15 @@ def build_zone_lookup(iso: str) -> dict[int, str]:
     the arm/control pair share nothing in-process) can never serve a lookup
     built under the other topology.
     """
-    from market_sim.config.topology_variant import caiso_fsno_partition_active
+    from market_sim.config.topology_variant import (
+        caiso_fsno_partition_active,
+        spp_west_east_active,
+    )
 
     iso_u = iso.upper()
     fsno = caiso_fsno_partition_active() if iso_u == "CAISO" else False
-    return dict(_build_zone_lookup_cached(iso_u, _use_clean(), fsno))
+    spp_we = spp_west_east_active() if iso_u == "SPP" else False
+    return dict(_build_zone_lookup_cached(iso_u, _use_clean(), fsno, spp_we))
 
 
 def _ercot_dam_admitted_zones(egrid: pd.DataFrame, members: set[int]) -> dict[int, str]:
@@ -1674,7 +1741,7 @@ def _ercot_dam_admitted_zones(egrid: pd.DataFrame, members: set[int]) -> dict[in
 
 @lru_cache(maxsize=16)
 def _build_zone_lookup_cached(
-    iso: str, use_clean: bool, caiso_fsno: bool = False
+    iso: str, use_clean: bool, caiso_fsno: bool = False, spp_we: bool = False
 ) -> dict[int, str]:
     """Cache-bearing core of :func:`build_zone_lookup` (already-uppercased ISO)."""
     codes = _iso_ba_codes(iso)
@@ -1787,6 +1854,17 @@ def _build_zone_lookup_cached(
                 and zone in ("NP15", "ZP26")
             ):
                 lookup[oris] = "FSNO"
+
+    # SPP-93 West/East re-partition (armed via config.topology_variant from
+    # ScenarioConfig spp_zone_partition): the measured plant table OVERRIDES
+    # the coordinate 1-NN estimate above for every plant it carries (the
+    # EIA-860 node -> SPP RESZONE match, PRECOMMIT-spp-93 §1.3). It re-zones
+    # only plants already in the ISO's population and never widens it.
+    if iso == "SPP" and spp_we:
+        we_map = load_spp_plant_bubbles()[0]
+        for oris in lookup:
+            if oris in we_map:
+                lookup[oris] = we_map[oris]
 
     # Clean-backed reference crosswalk supplement (default OFF, gated by
     # MARKET_SIM_USE_CLEAN). When enabled, the curated ERCOT bin-assignments

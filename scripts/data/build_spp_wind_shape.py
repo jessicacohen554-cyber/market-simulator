@@ -287,8 +287,23 @@ def main() -> None:
         "wind and print the result. Diagnostic only — it changes no value in "
         "the parquet.",
     )
+    parser.add_argument(
+        "--zone-partition",
+        choices=("north_south", "west_east"),
+        default="north_south",
+        help="SPP-93: build for the West/East re-partition "
+        "(ScenarioConfig.spp_zone_partition). Writes "
+        "spp_<year>_wind_zone_shape_west_east.parquet beside the base files, "
+        "which are left untouched.",
+    )
     args = parser.parse_args()
     iso = args.iso.upper()
+    from market_sim.config.topology_variant import set_spp_zone_partition
+
+    set_spp_zone_partition(args.zone_partition if iso == "SPP" else "north_south")
+    suffix = (
+        "_west_east" if (iso == "SPP" and args.zone_partition == "west_east") else ""
+    )
 
     out_dir = args.out_dir or wind_shape_dir(iso)
     if out_dir is None:
@@ -311,7 +326,7 @@ def main() -> None:
         table = table.replace_schema_metadata(
             wind_shape.shape_table_metadata(iso, year)
         )
-        out_file = out_dir / f"{iso.lower()}_{year}_wind_zone_shape.parquet"
+        out_file = out_dir / f"{iso.lower()}_{year}_wind_zone_shape{suffix}.parquet"
         pq.write_table(table, out_file)
         print(f"Wrote {out_file} ({out_file.stat().st_size / 1024:.1f} KiB)")
 

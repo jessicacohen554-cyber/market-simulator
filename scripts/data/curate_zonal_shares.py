@@ -546,6 +546,32 @@ _SPP_SUBBA_ZONE_GROUPS: dict[str, str] = {
     "WFEC": "SPP-South",  # Western Farmers Electric Cooperative (OK)
 }
 
+# SPP-93 West/East re-partition (ScenarioConfig spp_zone_partition="west_east";
+# PRECOMMIT-spp-93-west-east-2026-09-27.md §1.2). Each sub-BA goes to the
+# bubble of the reserve zone holding the MAJORITY of its current-effective LOAD
+# settlement locations in SPP's registry (SL_to_Pnode_to_Zone_with_Area.csv,
+# RESZONE): West = RZ {1,2,3,5}, East = RZ 4. No ties. Selected by
+# parse_spp_shares when the caller's zone list is the West/East one.
+_SPP_SUBBA_ZONE_GROUPS_WEST_EAST: dict[str, str] = {
+    "LES": "SPP-West",  # RZ1 2 of 2
+    "NPPD": "SPP-West",  # RZ1 17 of 17
+    "OPPD": "SPP-West",  # RZ1 10 of 10
+    "SECI": "SPP-West",  # RZ2 6 of 6
+    "SPS": "SPP-West",  # RZ3 3, RZ2 1
+    "WAUE": "SPP-West",  # RZ5 28 of 28
+    "CSWS": "SPP-East",  # RZ4 4 of 4
+    "EDE": "SPP-East",  # RZ4 2 of 2
+    "GRDA": "SPP-East",  # RZ4 4 of 4
+    "INDN": "SPP-East",  # RZ4 1 of 1
+    "KACY": "SPP-East",  # RZ4 1 of 1
+    "KCPL": "SPP-East",  # RZ4 3 of 3
+    "MPS": "SPP-East",  # RZ4 2 of 2
+    "OKGE": "SPP-East",  # RZ4 6 of 6
+    "SPRM": "SPP-East",  # RZ4 2 of 2
+    "WFEC": "SPP-East",  # RZ4 2 of 2
+    "WR": "SPP-East",  # RZ4 16, RZ2 2
+}
+
 
 def _spp_utc_to_local_hoy(period_utc: pd.Series, year: int) -> pd.Series | None:
     """Map UTC timestamps to SPP local hour-of-year on the renewable clock.
@@ -641,7 +667,12 @@ def parse_spp_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
         .melt(id_vars="hoy", var_name="subba", value_name="mw")
         .dropna(subset=["mw"])
     )
-    mzone = long["subba"].map(_SPP_SUBBA_ZONE_GROUPS)
+    groups = (
+        _SPP_SUBBA_ZONE_GROUPS_WEST_EAST
+        if "SPP-West" in zone_names
+        else _SPP_SUBBA_ZONE_GROUPS
+    )
+    mzone = long["subba"].map(groups)
     shares = _hourly_shares_from_groups(
         mzone, long["hoy"].to_numpy(), long["mw"], zone_names
     )
