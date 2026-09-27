@@ -960,6 +960,580 @@ def coal_unit_coverage_rows(
     return rows
 
 
+def _tranche_stats_row(
+    code: int,
+    group: str,
+    name: str,
+    nameplate: float,
+    on: list[np.ndarray],
+    allh: list[np.ndarray] | None,
+    mw_list: list[np.ndarray],
+    sync_acc: list[int],
+) -> tuple[dict, np.ndarray, np.ndarray]:
+    """Return one ``status="ok"`` tranche row plus its pooled online / all-hour samples.
+
+    THE frozen per-row estimator of :func:`main`, factored out verbatim (miso-278)
+    so the unit-fuel-split path (:func:`unit_fuel_split_rows`) computes its rows
+    with the SAME percentiles, caps and masks instead of restating them (rule 23
+    ``[R-FROZEN-DERIVE]``). ``on`` / ``allh`` are the per-year available-CF
+    samples over online / all finite hours, ``mw_list`` the per-year online net
+    MW, ``sync_acc`` the pooled ``[synced hours, total hours]``. The CHP columns
+    are NOT computed here -- :func:`main` appends them to the returned row from
+    the returned samples, exactly as before.
+    """
+    on_cat = np.concatenate(on)
+    all_cat = np.concatenate(allh) if allh else on_cat
+    # Committed = min stable load when online; cap at a physical ceiling
+    # (a plant whose CEMS gross runs above its EIA nameplate, e.g. Doswell,
+    # would otherwise report a committed floor > 100%).
+    committed = min(float(np.percentile(on_cat, _FLOOR_PCTILE)), _COMMITTED_CAP)
+    # Must-run = the always-on baseload floor. Physically meaningful only
+    # for COAL (take-or-pay baseload) — the dispatch applies a must-run
+    # floor to coal only; fast gas (CC / CT / ST) is load-following and is
+    # never forced on, so its must-run is recorded as zero even when its
+    # high capacity factor would make the all-hours floor look high.
+    if group == "COAL":
+        mustrun = min(float(np.percentile(all_cat, _FLOOR_PCTILE)), _MUSTRUN_CAP)
+        # Step 2 (synchronization min-load): the net MW the unit holds 95%
+        # of its *online* time, as a fraction of nameplate — the genuine
+        # online Pmin. For an ~always-online coal unit the all-hours
+        # available-CF floor above reads high (its all-hours P5 sits in its
+        # normal operating band, not its true minimum) and on the
+        # outage-adjusted available-CF basis it is ~2x the level CEMS shows
+        # the unit actually holds. This online-net-MW floor (~20-30% of
+        # nameplate) is the synchronization Pmin the dispatch should force
+        # on instead. See
+        # docs/multi-iso/pjm-coal-operations-firstprinciples-2026-06.md
+        # (Thread C/D); selected at runtime by coal_mustrun_online_pmin.
+        mw_on = np.concatenate(mw_list)
+        mustrun_online = (
+            min(float(np.percentile(mw_on, _FLOOR_PCTILE)) / nameplate, _MUSTRUN_CAP)
+            if nameplate > 0.0
+            else mustrun
+        )
+    else:
+        mustrun = 0.0
+        mustrun_online = 0.0
+    row = {
+        "plant_code": code,
+        "plant_group": group,
+        "name": name,
+        "status": "ok",
+        "nameplate_mw": round(nameplate, 1),
+        "online_hours": int(sum(len(a) for a in on)),
+        "committed_pct": round(100.0 * committed, 1),
+        "mustrun_pct": round(100.0 * mustrun, 1),
+        "mustrun_online_pct": round(100.0 * mustrun_online, 1),
+        # Synchronization fraction: the share of the year the plant has any
+        # unit synchronized. COAL drives the step-3a online%-scaled min-load
+        # forcing (coal_sync_online_frac): an ~always-online supercritical
+        # (~1.0) is held all 8760 h, a two-shifting cycler is forced only in
+        # its top-load online hours. The merchant gas committed groups
+        # (:data:`_GAS_MUSTRUN_GROUPS`) carry the SAME measured fraction for
+        # the local-reliability commitment floor (cc_mustrun_per_plant,
+        # G-20 eastern under-run follow-up): it sizes the committed window —
+        # the top-online_frac system-load hours the plant's committed
+        # tranche is held on. ST_GAS carries it for the same floor under
+        # its own gate (st_gas_mustrun_per_plant — the VLR/self-commitment
+        # trace of the Entergy South steam fleet). Same CEMS quantity,
+        # same estimator; only the consumer differs. CHP groups stay
+        # blank — their floor is the steam host (rule 19). *(That premise
+        # is true of a genuinely flat steam host and FALSE of a cycling
+        # cogen carrying a legacy QF designation: caiso-293 measured
+        # hour-of-day on-frequency max/min of 12.4-35.0 on the seven CAISO
+        # CHP plants the keeper's D-4 fails on, against 1.00-1.04 on the
+        # three flat hosts. The blank column costs nothing, because the
+        # SAME fraction is recoverable exactly as
+        # ``steam_level_cf / median_cf`` — both emitted below at the same
+        # percentile over the same sample — which is what
+        # ``ScenarioConfig.chp_steam_duty_window`` consumes. Left blank
+        # deliberately so no committed artifact byte moves, rule 23
+        # [R-FROZEN-DERIVE].)*
+        "online_frac": (
+            round(
+                min(1.0, sync_acc[0] / sync_acc[1]),
+                3,
+            )
+            if group in _ONLINE_FRAC_GROUPS and sync_acc[1] > 0
+            else ""
+        ),
+        "p25_cf": round(100.0 * min(float(np.percentile(on_cat, 25)), _P25_CAP), 1),
+        "median_cf": round(100.0 * float(np.percentile(on_cat, 50)), 1),
+    }
+    # Duct-firing / scarcity peaking share (combined cycles): the share
+    # of the demonstrated sustained maximum that only shows up in the
+    # rarest online hours. Net-MW percentile ratio, so the CF basis
+    # cancels (see module docstring, step 5).
+    if group in _PEAKING_GROUPS:
+        mw = np.concatenate(mw_list)
+        mw_max = float(np.percentile(mw, _PEAKING_MAX_PCTILE))
+        mw_base = float(np.percentile(mw, _PEAKING_BASE_PCTILE))
+        if mw_max > 0.0:
+            row["peaking_pct"] = round(
+                min(100.0 * max(0.0, 1.0 - mw_base / mw_max), _PEAKING_CAP),
+                1,
+            )
+    return row, on_cat, all_cat
+
+
+# CAMPD ``primaryFuelInfo`` values that name a GASEOUS primary fuel. A unit so
+# labelled can only sit in a model GAS bin (plant_taxonomy classifies NG / OG /
+# process-gas generators into the gas classes). Everything that is neither coal
+# (see :func:`_unit_fuel_class`) nor gas -- petroleum coke, oil, wood -- carries
+# no model coal or gas bin (plant_taxonomy.py: "Petroleum coke (PC) is
+# deliberately excluded so it falls to the residual"), so the fuel split routes
+# it to NO bin rather than hand its energy to a neighbour.
+_GAS_FUEL_TOKENS: tuple[str, ...] = (
+    "Pipeline Natural Gas",
+    "Natural Gas",
+    "Other Gas",
+    "Process Gas",
+)
+
+
+def _unit_fuel_class(fuel_info: object) -> str:
+    """Classify one CAMPD ``primaryFuelInfo`` value as ``COAL`` / ``GAS`` / ``OTHER``.
+
+    ``COAL`` is the test :func:`_coal_unit_ids_by_plant` already applies (the
+    label names coal, including ``"Coal Refuse"`` and coal-first blends); ``GAS``
+    is a label that begins with a :data:`_GAS_FUEL_TOKENS` entry; anything else
+    is ``OTHER``. The publisher's own per-unit fuel attribute, zero parameters.
+    """
+    s = "" if fuel_info is None else str(fuel_info).strip()
+    if "Coal" in s:
+        return "COAL"
+    if any(s.startswith(tok) for tok in _GAS_FUEL_TOKENS):
+        return "GAS"
+    return "OTHER"
+
+
+def _unit_fuel_by_unit(
+    states: tuple[str, ...], year: int
+) -> dict[tuple[int, str], str]:
+    """Return ``{(facility_id, unit_id): COAL|GAS|OTHER}`` for one CAMPD year.
+
+    Read from the raw unit-level extract (the normalized hourly frame drops the
+    fuel column), exactly as :func:`_coal_unit_ids_by_plant` does. ``facilityId``
+    is a STRING in these extracts and is cast before use. A unit whose label
+    changes within the year (a coal-to-gas conversion) takes the COAL class if
+    any of its rows name coal -- the same "any row names coal" reading
+    :func:`_coal_unit_ids_by_plant` makes.
+    """
+    from market_sim.config.paths import CAMPD_UNIT_LEVEL_DIR
+
+    out: dict[tuple[int, str], str] = {}
+    for st in states:
+        path = CAMPD_UNIT_LEVEL_DIR / f"{st}_{year}.parquet"
+        if not path.exists():
+            continue
+        df = pd.read_parquet(path, columns=["facilityId", "unitId", "primaryFuelInfo"])
+        df = df.dropna(subset=["facilityId", "primaryFuelInfo"]).drop_duplicates()
+        for fac, unit, fuel in zip(
+            df["facilityId"], df["unitId"], df["primaryFuelInfo"]
+        ):
+            key = (int(fac), str(unit))
+            klass = _unit_fuel_class(fuel)
+            if out.get(key) != "COAL":
+                out[key] = klass
+    return out
+
+
+def unit_fuel_split_rows(
+    iso: str,
+    years: list[int],
+    incumbent: pd.DataFrame,
+) -> dict[str, object]:
+    """Re-derive the tranche rows of every MIXED-FUEL plant with per-unit fuel routing.
+
+    THE DEFECT THIS REPAIRS (miso-277 phase 0 §2; charter
+    ``docs/handoffs/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md``).
+    :func:`main` attributes a plant's FACILITY-summed CAMPD net to its
+    largest-nameplate group, so at a plant whose units burn different fuels the
+    whole facility's conduct lands on one bin: Brame 6190's gas-steam unit 1 and
+    Big Cajun 2's gas-steam unit 2B2 are filed inside their plant's COAL row (and
+    the plant's ST_GAS bin gets no row, hence no floor); Dan E Karn 1702's coal
+    units 1-2 are filed inside its ST_GAS row, which then floors gas boilers
+    that the meter shows at 0 MWh; coal units sit inside CT_PEAKER rows at 976
+    and 6137. The facility-attribution fallback of the nyiso-175b per-unit
+    resolver cannot reach it -- a coal boiler and a gas boiler are the SAME
+    prime-mover family, so the family crosswalk seats both on one steam bin.
+
+    THE REPAIR. A plant is MIXED-FUEL when, in any window year, its positive-gross
+    CAMPD units include both a ``COAL`` unit and a non-coal one (per
+    :func:`_unit_fuel_class`), or their fuel disagrees with every incumbent
+    row's fuel (only coal units behind non-coal rows, or only non-coal units
+    behind COAL rows). Gas-plus-oil plants are NOT in scope -- that is the
+    liquid-fuel defect class, a different object. At such a plant each unit is routed by its OWN CAMPD fuel
+    label: ``COAL`` -> the plant's coal bin (artifact family ``"COAL"``); ``GAS``
+    -> the gas bin of its prime-mover family through the shared
+    :func:`scripts.lib.campd_measured_classes.corrected_unit_class` crosswalk
+    (the nyiso-175b construction); ``OTHER`` (pet-coke, oil, wood) -> no bin. A
+    unit whose class its plant does not carry that year routes to NO bin: the
+    repair never invents a bin, and a unit that is not in the model fleet cannot
+    contribute to a model row's statistics.
+
+    Every statistic is :func:`_tranche_stats_row` -- the frozen estimator -- over
+    the same online mask, sync threshold and pooled window. Group membership and
+    each year's denominator come from THAT year's EIA-860 vintage fleet (the
+    soco-70 coverage construction, :func:`coal_unit_coverage_rows`), so a unit
+    that retired mid-window (Karn's coal, June 2023) is floored only on the
+    years its generator existed; the row's ``nameplate_mw`` is the largest
+    vintage nameplate in the window. The derate is the keeper's own outage basis
+    (``mixed_gas_routing`` -- the ``-unitroute-`` extract the MISO keeper
+    solves against), whose resolver already routes a coal unit's windows to COAL
+    and a gas unit's to its gas bin (:func:`derive_campd_unit_outages._resolve_unit_group`),
+    so the two artifacts agree about which bin a machine is in (rule 19
+    ``[R-ONE-MECH]``, the nyiso-176 coupling).
+
+    Plants that are not mixed-fuel are untouched: this returns rows for the
+    mixed-fuel plants only, and :func:`write_unit_fuel_split_companions` keeps
+    every other line of each incumbent artifact byte-identical.
+
+    Rule 13 ``[R-MEASURED]``: the inputs are CAMPD's per-unit fuel label and
+    EIA-860 vintage fleets -- static unit attributes that regenerate for any
+    year. Rule 21 ``[R-DOF]``: zero free parameters. Rule 23
+    ``[R-FROZEN-DERIVE]``: triggered by the attribution defect, never by a
+    residual; the estimator is imported, not restated.
+
+    Returns:
+        ``{"plants": sorted mixed-fuel plant codes, "tranche": [row dicts],
+        "by_year": [online_frac_by_year row dicts], "p25": [p25-level row
+        dicts], "oom": [oom-level row dicts], "audit": {...}}``.
+    """
+    from market_sim.config.paths import RAW_DATA_DIR, set_eia860_vintage
+    from market_sim.config.plant_taxonomy import is_coal_class
+    from market_sim.data.chp import _chp_by_plant
+    from scripts.data import derive_thermal_tranche_oom_level_mw as oom_mod
+    from scripts.data import derive_thermal_tranche_p25_level_mw as p25_mod
+    from scripts.lib.campd_measured_classes import (
+        campd_unittype_class,
+        corrected_unit_class,
+    )
+
+    states = tuple(campd.states_for_iso(iso))
+    factors = _parasitic_factor_map()
+    flags = _chp_by_plant(RAW_DATA_DIR / "eia-860", 2025)
+    chp = {int(k) for k, v in flags.items() if str(v).strip().upper() == "Y"}
+    # The OOM conditioning set is built on the FACILITY primary attribution,
+    # exactly as the frozen oom deriver builds it, so the hour set is unchanged.
+    _cap_now, primary_now = _fleet_nameplate_and_group(iso)
+
+    inc_ok = incumbent[incumbent["status"].astype(str) == "ok"]
+    inc_groups: dict[int, set[str]] = {}
+    for c, g in zip(inc_ok["plant_code"], inc_ok["plant_group"]):
+        inc_groups.setdefault(int(c), set()).add(str(g))
+
+    per_year: dict[int, dict] = {}
+    mixed: set[int] = set()
+    try:
+        for year in years:
+            set_eia860_vintage(year)
+            cap_y: dict[tuple[int, str], float] = {}
+            names_y: dict[int, str] = {}
+            for gen in load_fleet_from_csv(iso, get_iso_config(iso), year=year):
+                code = int(gen.plant_code)
+                g = str(gen.plant_group or "")
+                if code <= 0 or not g:
+                    continue
+                g = "COAL" if is_coal_class(g) else g
+                if g not in _THERMAL_GROUPS:
+                    continue
+                cap_y[(code, g)] = cap_y.get((code, g), 0.0) + float(gen.pmax_mw)
+                names_y.setdefault(code, gen.name)
+            fuel = _unit_fuel_by_unit(states, year)
+            df = campd.load_campd_hourly(list(states), [year], prefer_unit_level=True)
+            yr = df[df["year"] == year]
+            gross = yr.groupby(["plant_id", "unit_id"])["gross_mw"].sum()
+            classes: dict[int, set[str]] = {}
+            for (pid, uid), v in gross.items():
+                if v > 0:
+                    classes.setdefault(int(pid), set()).add(
+                        fuel.get((int(pid), str(uid)), "OTHER")
+                    )
+            for pid, cls in classes.items():
+                filed = inc_groups.get(pid)
+                # Coal vs non-coal only. A gas plant with an oil or pet-coke
+                # unit beside it is the liquid-fuel defect class
+                # (derive_campd_unit_outages._is_liquid_only_fuel), not this
+                # one, and is deliberately left on today's attribution.
+                if "COAL" in cls and len(cls) > 1:
+                    mixed.add(pid)
+                elif filed and cls == {"COAL"} and "COAL" not in filed:
+                    mixed.add(pid)
+                elif filed and "COAL" not in cls and filed == {"COAL"}:
+                    mixed.add(pid)
+            # The unit-level frame is NOT kept (three years of it is several
+            # GB); the routing pass below reloads it.
+            per_year[year] = {"cap": cap_y, "names": names_y, "fuel": fuel}
+            del df, yr
+    finally:
+        set_eia860_vintage(None)
+
+    online_cf: dict[tuple[int, str], list[np.ndarray]] = {}
+    allhr_cf: dict[tuple[int, str], list[np.ndarray]] = {}
+    online_mw: dict[tuple[int, str], list[np.ndarray]] = {}
+    oom_mw: dict[tuple[int, str], list[np.ndarray]] = {}
+    sync_hours: dict[tuple[int, str], list[int]] = {}
+    by_year_rows: list[dict] = []
+    nameplate_max: dict[tuple[int, str], float] = {}
+    names: dict[int, str] = {}
+    routed_twh: dict[int, dict[str, float]] = {}
+    for year in years:
+        st = per_year[year]
+        cap_y, fuel = st["cap"], st["fuel"]
+        df = campd.load_campd_hourly(list(states), [year], prefer_unit_level=True)
+        groups_by_plant: dict[int, set[str]] = {}
+        for code, g in cap_y:
+            if code in mixed:
+                groups_by_plant.setdefault(code, set()).add(g)
+
+        def group_of(plant_id: int, unit_id: str, unit_type: str) -> str | None:
+            if plant_id not in mixed:
+                return None
+            groups = groups_by_plant.get(plant_id, set())
+            klass = fuel.get((plant_id, str(unit_id)), "OTHER")
+            if klass == "COAL":
+                return "COAL" if "COAL" in groups else None
+            if klass != "GAS":
+                return None
+            gas_groups = groups - {"COAL"}
+            seated = corrected_unit_class(
+                campd_unittype_class(unit_type, plant_id in chp), gas_groups
+            )
+            return seated if seated in gas_groups else None
+
+        net = campd.plant_group_hourly_net(df, factors, year, group_of)
+        derate = unit_outage_derate_factors(year, iso=iso, mixed_gas_routing=True)
+        fac_df = campd.load_campd_hourly(list(states), [year])
+        fac_net = campd.plant_hourly_net(fac_df, factors, year)
+        hours = len(next(iter(fac_net.values())))
+        oom = oom_mod._cc_headroom_mask(fac_net, primary_now, hours)
+        for (code, group), nameplate in sorted(cap_y.items()):
+            if code not in mixed or nameplate <= 0.0:
+                continue
+            names.setdefault(code, st["names"].get(code, ""))
+            nameplate_max[(code, group)] = max(
+                nameplate_max.get((code, group), 0.0), nameplate
+            )
+            series = net.get((code, group))
+            if series is None:
+                series = np.zeros(hours, dtype=float)
+            routed_twh.setdefault(code, {})[f"{group}:{year}"] = round(
+                float(series.sum()) / 1e6, 4
+            )
+            avail_mult = derate.get((code, group), np.ones(len(series)))
+            avail_cap = nameplate * avail_mult
+            with np.errstate(divide="ignore", invalid="ignore"):
+                acf = np.where(avail_cap > 0.0, series / avail_cap, 0.0)
+            acf = np.clip(acf, 0.0, 1.5)
+            finite = np.isfinite(acf) & (avail_cap > 0.0)
+            online = finite & (series > _ONLINE_FRAC * avail_cap)
+            sync = series > _SYNC_MW_NAMEPLATE_FRAC * nameplate
+            acc = sync_hours.setdefault((code, group), [0, 0])
+            acc[0] += int(sync.sum())
+            acc[1] += int(len(series))
+            allhr_cf.setdefault((code, group), []).append(acf[finite])
+            if online.any():
+                online_cf.setdefault((code, group), []).append(acf[online])
+                online_mw.setdefault((code, group), []).append(series[online])
+            if (online & oom).any():
+                oom_mw.setdefault((code, group), []).append(series[online & oom])
+            if group in _ONLINE_FRAC_GROUPS:
+                by_year_rows.append(
+                    {
+                        "plant_code": int(code),
+                        "plant_group": str(group),
+                        "year": int(year),
+                        "nameplate_mw": round(float(nameplate), 1),
+                        "sync_hours": int(sync.sum()),
+                        "total_hours": int(len(series)),
+                        "online_frac": round(min(1.0, sync.sum() / len(series)), 3),
+                    }
+                )
+
+    tranche_rows: list[dict] = []
+    p25_rows: list[dict] = []
+    oom_rows: list[dict] = []
+    for (code, group), nameplate in sorted(nameplate_max.items()):
+        if group in _CHP_GROUPS:
+            continue  # CHP floors are the steam host; not re-derived here
+        on = online_cf.get((code, group))
+        n_online = int(sum(len(a) for a in on)) if on else 0
+        if not on or n_online < _MIN_ONLINE_HOURS:
+            continue  # rarely_online: no row, the class default applies
+        row, on_cat, _all = _tranche_stats_row(
+            code,
+            group,
+            names.get(code, ""),
+            nameplate,
+            on,
+            allhr_cf.get((code, group)),
+            online_mw.get((code, group), []),
+            sync_hours.get((code, group), [0, 0]),
+        )
+        tranche_rows.append(row)
+        if group in p25_mod._LEVEL_GROUPS:
+            sample = np.concatenate(online_mw[(code, group)])
+            p25 = float(np.percentile(sample, 25))
+            cf_pct = row["p25_cf"]
+            p25_rows.append(
+                {
+                    "plant_code": int(code),
+                    "plant_group": str(group),
+                    "nameplate_mw": round(nameplate, 1),
+                    "online_hours": int(sample.size),
+                    "p25_level_mw": round(min(p25, nameplate), 2),
+                    "p50_level_mw": round(
+                        min(float(np.percentile(sample, 50)), nameplate), 2
+                    ),
+                    "p25_cf_pct": cf_pct,
+                    "implied_avail_base_mw": round(p25 / (cf_pct / 100.0), 1)
+                    if cf_pct
+                    else "",
+                }
+            )
+        if group in oom_mod._LEVEL_GROUPS and oom_mw.get((code, group)):
+            sample = np.concatenate(oom_mw[(code, group)])
+            if sample.size >= _MIN_ONLINE_HOURS:
+                level = float(np.percentile(sample, oom_mod._OOM_PCTILE))
+                oom_rows.append(
+                    {
+                        "plant_code": int(code),
+                        "plant_group": str(group),
+                        "nameplate_mw": round(nameplate, 1),
+                        "oom_hours": int(sample.size),
+                        "oom_level_mw": round(min(level, nameplate), 2),
+                    }
+                )
+    return {
+        "plants": sorted(mixed),
+        "tranche": tranche_rows,
+        "by_year": by_year_rows,
+        "p25": p25_rows,
+        "oom": oom_rows,
+        "audit": {"routed_twh": routed_twh},
+    }
+
+
+def _replace_plant_rows(
+    src: Path,
+    dst: Path,
+    plants: set[int],
+    rows: list[dict],
+    keep_groups: frozenset[str] = frozenset(),
+) -> int:
+    """Write ``dst`` = ``src`` with the lines of ``plants`` replaced by ``rows``, byte-safely.
+
+    Lines of every OTHER plant are copied verbatim (so every row a consumer
+    reads for an unaffected plant is byte-identical), the affected plants' lines
+    are dropped (except a line whose ``plant_group`` is in ``keep_groups`` --
+    the CHP floors, which the fuel split does not re-derive), and ``rows`` are
+    appended in ``src``'s own column order -- the
+    soco-70 :func:`append_coal_unit_coverage` text-level discipline. Returns the
+    number of lines removed.
+    """
+    import csv
+    import io
+
+    raw = src.read_text()
+    lines = raw.splitlines(keepends=True)
+    header = next(csv.reader([lines[0]]))
+    gcol = header.index("plant_group")
+    keep = [lines[0]]
+    removed = 0
+    for line in lines[1:]:
+        if not line.strip():
+            continue
+        cells = next(csv.reader([line]))
+        code = cells[0]
+        if (
+            code.strip().lstrip("-").isdigit()
+            and int(code) in plants
+            and cells[gcol] not in keep_groups
+        ):
+            removed += 1
+            continue
+        keep.append(line if line.endswith("\n") else line + "\n")
+    buf = io.StringIO()
+    writer = csv.DictWriter(
+        buf, fieldnames=header, extrasaction="ignore", lineterminator="\n"
+    )
+    for row in rows:
+        writer.writerow({c: row.get(c, "") for c in header})
+    dst.write_text("".join(keep) + buf.getvalue())
+    return removed
+
+
+def fuel_split_companion_path(path: Path) -> Path:
+    """Return the ``-fuelsplit-`` companion of a tranche-family artifact path.
+
+    ``thermal_tranches_MISO.csv`` -> ``thermal_tranches-fuelsplit-MISO.csv``;
+    ``thermal_tranches_p25_level_mw_MISO.csv`` ->
+    ``thermal_tranches_p25_level_mw-fuelsplit-MISO.csv``. The ISO suffix stays
+    last so the companion sorts beside its incumbent.
+    """
+    stem, iso = path.stem.rsplit("_", 1)
+    return path.with_name(f"{stem}-fuelsplit-{iso}{path.suffix}")
+
+
+def write_unit_fuel_split_companions(iso: str, years: list[int]) -> dict[str, object]:
+    """Derive the four ``-fuelsplit-`` companions of an ISO's tranche family.
+
+    The pooled tranche artifact, its per-year ``online_frac`` grain, and the two
+    ST_GAS level artifacts (measured p25 MW, out-of-merit MW) are each written
+    as a SEPARATE file beside the incumbent -- never an overwrite, so every run
+    that does not select them stays byte-identical -- with the mixed-fuel
+    plants' rows replaced by :func:`unit_fuel_split_rows` and every other line
+    copied verbatim. One derivation feeds all four, so they cannot disagree
+    about which bin a unit is in (rule 19 ``[R-ONE-MECH]``).
+    """
+    from market_sim.config.paths import PROCESSED_DIR
+
+    iso = iso.upper()
+    tranche = PROCESSED_DIR / f"thermal_tranches_{iso}.csv"
+    incumbent = pd.read_csv(tranche)
+    res = unit_fuel_split_rows(iso, years, incumbent)
+    plants = set(res["plants"])
+    written: dict[str, dict] = {}
+    for src, rows in (
+        (tranche, res["tranche"]),
+        (
+            PROCESSED_DIR / f"thermal_tranches_online_frac_by_year_{iso}.csv",
+            res["by_year"],
+        ),
+        (PROCESSED_DIR / f"thermal_tranches_p25_level_mw_{iso}.csv", res["p25"]),
+        (PROCESSED_DIR / f"thermal_tranches_oom_level_mw_{iso}.csv", res["oom"]),
+    ):
+        dst = fuel_split_companion_path(src)
+        removed = _replace_plant_rows(src, dst, plants, rows, _CHP_GROUPS)
+        written[dst.name] = {"from": src.name, "removed": removed, "added": len(rows)}
+    write_tranche_sidecar(
+        fuel_split_companion_path(tranche),
+        provenance="derived",
+        groups_in_force={
+            "online_frac_groups": sorted(_ONLINE_FRAC_GROUPS),
+            "chp_groups": sorted(_CHP_GROUPS),
+            "peaking_groups": sorted(_PEAKING_GROUPS),
+            "thermal_groups": sorted(_THERMAL_GROUPS),
+        },
+        derive_invocation={
+            "iso": iso,
+            "years": [int(y) for y in years],
+            "unit_fuel_split": True,
+            "mixed_fuel_plants": res["plants"],
+            "derate_basis": "unit_outage_derate_factors(mixed_gas_routing=True)",
+        },
+        note=(
+            "UNIT-FUEL-SPLIT COMPANION (miso-278): lines of plants outside "
+            "derive_invocation.mixed_fuel_plants are byte-identical to the "
+            "incumbent thermal_tranches_<ISO>.csv (whose own vintage is the "
+            "incumbent sidecar's); the mixed-fuel plants' non-CHP rows are "
+            "re-derived by unit_fuel_split_rows over derive_invocation.years."
+        ),
+    )
+    return {"plants": res["plants"], "written": written, "audit": res["audit"]}
+
+
 def append_coal_unit_coverage(out_path: Path, iso: str, years: list[int]) -> list[dict]:
     """Append :func:`coal_unit_coverage_rows` to an existing artifact, byte-safely.
 
@@ -1043,9 +1617,27 @@ def main() -> None:
         "COAL row for; existing rows are left byte-identical "
         "(coal_unit_coverage_rows, soco-70). Zero free parameters.",
     )
+    ap.add_argument(
+        "--unit-fuel-split",
+        action="store_true",
+        help="Write the four '-fuelsplit-' companions of the ISO's tranche "
+        "family (pooled tranches, per-year online_frac, p25 MW level, "
+        "out-of-merit MW level) with every MIXED-FUEL plant's rows re-derived "
+        "by routing each CAMPD unit on its own primaryFuelInfo (coal -> COAL, "
+        "gas -> its prime-mover family's gas bin, other -> no bin); every "
+        "other line byte-identical (unit_fuel_split_rows, miso-278). Never an "
+        "overwrite. Zero free parameters.",
+    )
     args = ap.parse_args()
     iso = args.iso.upper()
     from market_sim.config.paths import PROCESSED_DIR
+
+    if args.unit_fuel_split:
+        import json as _json
+
+        res = write_unit_fuel_split_companions(iso, [int(y) for y in args.years])
+        print(_json.dumps(res, indent=1, sort_keys=True))
+        return
 
     per_unit = bool(getattr(args, "per_unit_attribution", False))
     merit_guard = bool(getattr(args, "merit_order_guard", False))
@@ -1253,103 +1845,16 @@ def main() -> None:
                 }
             )
             continue
-        on_cat = np.concatenate(on)
-        all_cat = np.concatenate(allh) if allh else on_cat
-        # Committed = min stable load when online; cap at a physical ceiling
-        # (a plant whose CEMS gross runs above its EIA nameplate, e.g. Doswell,
-        # would otherwise report a committed floor > 100%).
-        committed = min(float(np.percentile(on_cat, _FLOOR_PCTILE)), _COMMITTED_CAP)
-        # Must-run = the always-on baseload floor. Physically meaningful only
-        # for COAL (take-or-pay baseload) — the dispatch applies a must-run
-        # floor to coal only; fast gas (CC / CT / ST) is load-following and is
-        # never forced on, so its must-run is recorded as zero even when its
-        # high capacity factor would make the all-hours floor look high.
-        if group == "COAL":
-            mustrun = min(float(np.percentile(all_cat, _FLOOR_PCTILE)), _MUSTRUN_CAP)
-            # Step 2 (synchronization min-load): the net MW the unit holds 95%
-            # of its *online* time, as a fraction of nameplate — the genuine
-            # online Pmin. For an ~always-online coal unit the all-hours
-            # available-CF floor above reads high (its all-hours P5 sits in its
-            # normal operating band, not its true minimum) and on the
-            # outage-adjusted available-CF basis it is ~2x the level CEMS shows
-            # the unit actually holds. This online-net-MW floor (~20-30% of
-            # nameplate) is the synchronization Pmin the dispatch should force
-            # on instead. See
-            # docs/multi-iso/pjm-coal-operations-firstprinciples-2026-06.md
-            # (Thread C/D); selected at runtime by coal_mustrun_online_pmin.
-            mw_on = np.concatenate(online_mw[(code, group)])
-            mustrun_online = (
-                min(
-                    float(np.percentile(mw_on, _FLOOR_PCTILE)) / nameplate, _MUSTRUN_CAP
-                )
-                if nameplate > 0.0
-                else mustrun
-            )
-        else:
-            mustrun = 0.0
-            mustrun_online = 0.0
-        row = {
-            "plant_code": code,
-            "plant_group": group,
-            "name": names.get(code, ""),
-            "status": "ok",
-            "nameplate_mw": round(nameplate, 1),
-            "online_hours": n_online,
-            "committed_pct": round(100.0 * committed, 1),
-            "mustrun_pct": round(100.0 * mustrun, 1),
-            "mustrun_online_pct": round(100.0 * mustrun_online, 1),
-            # Synchronization fraction: the share of the year the plant has any
-            # unit synchronized. COAL drives the step-3a online%-scaled min-load
-            # forcing (coal_sync_online_frac): an ~always-online supercritical
-            # (~1.0) is held all 8760 h, a two-shifting cycler is forced only in
-            # its top-load online hours. The merchant gas committed groups
-            # (:data:`_GAS_MUSTRUN_GROUPS`) carry the SAME measured fraction for
-            # the local-reliability commitment floor (cc_mustrun_per_plant,
-            # G-20 eastern under-run follow-up): it sizes the committed window —
-            # the top-online_frac system-load hours the plant's committed
-            # tranche is held on. ST_GAS carries it for the same floor under
-            # its own gate (st_gas_mustrun_per_plant — the VLR/self-commitment
-            # trace of the Entergy South steam fleet). Same CEMS quantity,
-            # same estimator; only the consumer differs. CHP groups stay
-            # blank — their floor is the steam host (rule 19). *(That premise
-            # is true of a genuinely flat steam host and FALSE of a cycling
-            # cogen carrying a legacy QF designation: caiso-293 measured
-            # hour-of-day on-frequency max/min of 12.4-35.0 on the seven CAISO
-            # CHP plants the keeper's D-4 fails on, against 1.00-1.04 on the
-            # three flat hosts. The blank column costs nothing, because the
-            # SAME fraction is recoverable exactly as
-            # ``steam_level_cf / median_cf`` — both emitted below at the same
-            # percentile over the same sample — which is what
-            # ``ScenarioConfig.chp_steam_duty_window`` consumes. Left blank
-            # deliberately so no committed artifact byte moves, rule 23
-            # [R-FROZEN-DERIVE].)*
-            "online_frac": (
-                round(
-                    min(
-                        1.0, sync_hours[(code, group)][0] / sync_hours[(code, group)][1]
-                    ),
-                    3,
-                )
-                if group in _ONLINE_FRAC_GROUPS
-                and sync_hours.get((code, group), [0, 0])[1] > 0
-                else ""
-            ),
-            "p25_cf": round(100.0 * min(float(np.percentile(on_cat, 25)), _P25_CAP), 1),
-            "median_cf": round(100.0 * float(np.percentile(on_cat, 50)), 1),
-        }
-        # Duct-firing / scarcity peaking share (combined cycles): the share
-        # of the demonstrated sustained maximum that only shows up in the
-        # rarest online hours. Net-MW percentile ratio, so the CF basis
-        # cancels (see module docstring, step 5).
-        if group in _PEAKING_GROUPS:
-            mw = np.concatenate(online_mw[(code, group)])
-            mw_max = float(np.percentile(mw, _PEAKING_MAX_PCTILE))
-            mw_base = float(np.percentile(mw, _PEAKING_BASE_PCTILE))
-            if mw_max > 0.0:
-                row["peaking_pct"] = round(
-                    min(100.0 * max(0.0, 1.0 - mw_base / mw_max), _PEAKING_CAP),
-                    1,
-                )
+        row, on_cat, all_cat = _tranche_stats_row(
+            code,
+            group,
+            names.get(code, ""),
+            nameplate,
+            on,
+            allh,
+            online_mw.get((code, group), []),
+            sync_hours.get((code, group), [0, 0]),
+        )
         # CHP cogens additionally carry their steam-following total must-run
         # floor (P2 of the all-hours available-CF, the ERCOT
         # CHP_PMIN_CF_BY_PLANT convention) and the EIA-923 sector class that
