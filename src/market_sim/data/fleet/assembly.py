@@ -545,6 +545,7 @@ def bins_to_fleet(
                 getattr(config, "iso", "ERCOT") or "ERCOT",
                 bool(getattr(config, "campd_per_unit_attribution", False)),
                 bool(getattr(config, "campd_outage_merit_order_guard", False)),
+                _pkg_ns().campd_fuel_split_selector(config),
             ).get(int(b["Plant_Code"]), 1.0)
 
         group = str(b["Plant_Group"])
@@ -582,6 +583,7 @@ def bins_to_fleet(
                 (getattr(config, "iso", "ERCOT") or "ERCOT"),
                 bool(getattr(config, "campd_per_unit_attribution", False)),
                 bool(getattr(config, "campd_outage_merit_order_guard", False)),
+                _pkg_ns().campd_fuel_split_selector(config),
             ).get((plant_code, group))
             if _pk is not None:
                 pct_peak = _pk
@@ -1352,6 +1354,7 @@ def bins_to_fleet(
                     getattr(config, "iso", "ERCOT") or "ERCOT",
                     bool(getattr(config, "campd_per_unit_attribution", False)),
                     bool(getattr(config, "campd_outage_merit_order_guard", False)),
+                    _pkg_ns().campd_fuel_split_selector(config),
                 )
                 .get((plant_code, group), 0.0)
             )

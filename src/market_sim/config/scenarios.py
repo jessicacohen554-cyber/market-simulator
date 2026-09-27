@@ -475,6 +475,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # '-short-rederive-' companions through the same resolvers, so the off path
     # is byte-inert). Same commit as the field.
     "unit_outage_full_rederive",
+    # miso-278 unit-fuel split of the thermal-tranche family (GATED default-off;
+    # selects the four '-fuelsplit-' companions through
+    # campd_bins.campd_fuel_split_selector, so the off path is byte-inert).
+    # Registered IN THE SAME COMMIT as the field.
+    "campd_unit_fuel_split",
     # SPP-85 net-load-mask repair of the standard / short / partial CAMPD
     # extracts (GATED default-off; selects the '-netloadmask-' companions
     # through the same resolvers, so the off path is byte-inert). Same commit
@@ -2314,6 +2319,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by PJM-NEXT-5 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_full_rederive": "False",
+    # Added by miso-278 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "campd_unit_fuel_split": "False",
     # Added by SPP-85 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_netload_mask_repair": "False",
@@ -16428,6 +16436,32 @@ class ScenarioConfig:
     # so the off path is byte-inert and no ISO but NYISO is reachable today.
     # See docs/FINDING-nyiso176-input-artifact-reproducibility-2026-09-02.md.
     campd_per_unit_attribution: bool = False
+
+    # UNIT-FUEL SPLIT of the CAMPD thermal-tranche family (miso-278, GATED
+    # default off; rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]). The incumbent
+    # tranche artifact attributes a plant's FACILITY-summed CAMPD net to its
+    # largest-nameplate group, so where coal and gas boilers share a facility
+    # one bin carries both fuels' conduct: Brame 6190's and Big Cajun 2 6055's
+    # gas-steam units sit inside their COAL rows (so their ST_GAS bins carry no
+    # row and no floor), Dan E Karn 1702's coal units sit inside its ST_GAS row,
+    # coal sits inside CT_PEAKER rows at 976 / 6137. campd_per_unit_attribution
+    # cannot reach it: its crosswalk routes by prime-mover FAMILY, and a coal
+    # boiler and a gas boiler are one family. Armed, the four '-fuelsplit-'
+    # companions written by derive_thermal_tranches.py --unit-fuel-split are
+    # read -- pooled tranches, per-year online_frac, p25 MW level, out-of-merit
+    # MW level -- in which every MIXED-FUEL plant's rows are re-derived by
+    # routing each CAMPD unit on its own primaryFuelInfo (coal -> the coal bin,
+    # gas -> its prime-mover family's gas bin, pet-coke/oil -> no bin) with the
+    # frozen estimator over the incumbent's pooled window (2023-2025), and every
+    # other line is byte-identical. ONE field over all four, so membership,
+    # window and level come from one derivation. ZERO free parameters: CAMPD's
+    # per-unit fuel label and EIA-860 vintage fleets. Rule 23: the trigger is
+    # the attribution defect (FINDING-miso277 section 2), never a residual.
+    # Ignored under campd_per_unit_attribution (no fuel-split variant of the
+    # per-unit companions exists). Byte-inert off; self-scoping -- only MISO
+    # carries the companions, every other ISO falls back to its incumbent.
+    # docs/handoffs/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md.
+    campd_unit_fuel_split: bool = False
 
     # ECONOMIC-LAY-UP GUARD on the per-unit CAMPD companions (nyiso-177,
     # GATED default off; PREREG-nyiso177-degradation-root-cause.md). Selects

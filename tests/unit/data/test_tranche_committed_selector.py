@@ -24,25 +24,34 @@ class _Cfg:
 @pytest.mark.parametrize(
     ("flags", "expected"),
     [
-        ({}, (False, False)),
-        ({"campd_per_unit_attribution": True}, (True, False)),
+        ({}, (False, False, False)),
+        ({"campd_per_unit_attribution": True}, (True, False, False)),
         (
             {
                 "campd_per_unit_attribution": True,
                 "campd_outage_merit_order_guard": True,
             },
-            (True, True),
+            (True, True, False),
         ),
         # merit_guard has no meaning without per_unit (campd_attribution_selectors).
-        ({"campd_outage_merit_order_guard": True}, (False, False)),
+        ({"campd_outage_merit_order_guard": True}, (False, False, False)),
+        # miso-278: the fuel-split companion rides the same read ...
+        ({"campd_unit_fuel_split": True}, (False, False, True)),
+        # ... and is ignored under per-unit attribution (campd_fuel_split_selector).
+        (
+            {"campd_unit_fuel_split": True, "campd_per_unit_attribution": True},
+            (True, False, False),
+        ),
     ],
 )
 def test_fleet_to_bins_passes_the_selector_pair(monkeypatch, flags, expected):
-    """The committed-share read receives (per_unit, merit_guard) exactly as the accessor."""
+    """The committed-share read receives the selectors exactly as the accessors."""
     seen = []
 
-    def _record(iso, coal_online_pmin=False, per_unit=False, merit_guard=False):
-        seen.append((per_unit, merit_guard))
+    def _record(
+        iso, coal_online_pmin=False, per_unit=False, merit_guard=False, fuel_split=False
+    ):
+        seen.append((per_unit, merit_guard, fuel_split))
         return {}
 
     monkeypatch.setattr(cb, "thermal_tranche_overrides", _record)

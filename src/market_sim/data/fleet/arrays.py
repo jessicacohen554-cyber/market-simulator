@@ -2962,7 +2962,9 @@ def _compose_min_gen_floors(
         and getattr(config, "mode", "forecast") == "backcast"
         and _yr is not None
     ):
-        _by_year = _pkg_ns().thermal_tranche_online_frac_by_year(_iso or "ERCOT")
+        _by_year = _pkg_ns().thermal_tranche_online_frac_by_year(
+            _iso or "ERCOT", _pkg_ns().campd_fuel_split_selector(config)
+        )
         _per_year_frac = {
             (pc, grp): frac
             for (pc, grp, yr), frac in _by_year.items()
@@ -2999,7 +3001,9 @@ def _compose_min_gen_floors(
         and getattr(config, "mode", "forecast") == "backcast"
         and _yr is not None
     ):
-        _coal_by_year = _pkg_ns().thermal_tranche_online_frac_by_year(_iso or "ERCOT")
+        _coal_by_year = _pkg_ns().thermal_tranche_online_frac_by_year(
+            _iso or "ERCOT", _pkg_ns().campd_fuel_split_selector(config)
+        )
         _coal_per_year_frac = {
             pc: frac
             for (pc, grp, yr), frac in _coal_by_year.items()
@@ -3138,11 +3142,21 @@ def _compose_min_gen_floors(
         and getattr(config, "st_gas_mustrun_per_plant", False)
     )
     if st_gas_p25_level_on:
-        from market_sim.data.fleet.campd_bins import campd_attribution_selectors
+        from market_sim.data.fleet.campd_bins import (
+            campd_attribution_selectors,
+            campd_fuel_split_selector,
+        )
 
         _pu, _mg = campd_attribution_selectors(config)
-        _p25_levels = _pkg_ns().thermal_tranche_p25_level(_iso or "ERCOT", _pu, _mg)
-        _p25_fracs = _pkg_ns().thermal_tranche_online_frac(_iso or "ERCOT", _pu, _mg)
+        # miso-278: ONE fuel-split selector for all four tranche-family reads
+        # below, so membership, window and level come from one derivation.
+        _fs = campd_fuel_split_selector(config)
+        _p25_levels = _pkg_ns().thermal_tranche_p25_level(
+            _iso or "ERCOT", _pu, _mg, _fs
+        )
+        _p25_fracs = _pkg_ns().thermal_tranche_online_frac(
+            _iso or "ERCOT", _pu, _mg, _fs
+        )
         # MEASURED-MW LEVEL BASIS (config.st_gas_mustrun_p25_measured_level,
         # miso-172). ``p25_cf`` is a percentile of net / (nameplate x
         # avail_mult), so the incumbent reconstruction ``p25_cf x nameplate``
@@ -3157,7 +3171,7 @@ def _compose_min_gen_floors(
         _p25_measured: dict[tuple[int, str], float] = {}
         if getattr(config, "st_gas_mustrun_p25_measured_level", False):
             _p25_measured = _pkg_ns().thermal_tranche_p25_measured_level(
-                _iso or "ERCOT"
+                _iso or "ERCOT", _fs
             )
             logger.info(
                 "st_gas_mustrun_p25_measured_level ARMED (%s): %d measured-MW "
@@ -3181,7 +3195,7 @@ def _compose_min_gen_floors(
         # that level re-conditioned rather than a second one.
         # Rule 21: zero free parameters — see the ScenarioConfig field.
         if getattr(config, "st_gas_mustrun_oom_level", False):
-            _oom_level = _pkg_ns().thermal_tranche_oom_level(_iso or "ERCOT")
+            _oom_level = _pkg_ns().thermal_tranche_oom_level(_iso or "ERCOT", _fs)
             if _oom_level:
                 _p25_measured = {**_p25_measured, **_oom_level}
             logger.info(
