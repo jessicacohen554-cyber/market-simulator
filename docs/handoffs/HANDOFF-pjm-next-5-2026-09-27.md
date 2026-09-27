@@ -41,11 +41,15 @@ offer_curve_by_group multipliers.
      - Only a measured, rule-14 operand correction proceeds to a solve.
  (2) If card 1 finds no admissible operand: phase 0 the coal side's remaining unadjudicated levers from the queue
      (coal_offer_net_revenue_margin is U; coal_fuel_inventory is U), each against its own matrix record.
- (3) OWNER-BLOCKED — ask, do not act, unless the owner has already ruled in the session that launched you:
-     - (a) the F2 full outage-extract re-derive;
-     - (b) retiree_cems_cap delete or repair (rule 26);
-     - (c) licensing a daily east-PJM hub gas index (Transco Z5/Z6-non-NY, Tetco M3, Eastern Gas South) — the only
-       route to CC_REGULAR 2024 via marginal MD/VA gas; data-blocked without it.
+ (3) OWNER RULINGS (2026-09-27, given in PJM-NEXT-4 — act on them):
+     - (a) F2 full outage-extract re-derive: YES. The COAL-SUB deriver fix is on main (rule 23: source/deriver
+       change). Re-derive the PJM CAMPD outage extract into a new companion file (never overwrite the committed
+       extract in place). Prove which rows move with a zero-LP census by year and class; the 2019 capacity-hour
+       drift vs the keeper was CC_REGULAR +20 / ST_GAS −26 TWh. Pre-register it, then solve it as its own card.
+     - (b) retiree_cems_cap: PHASE 0 ONLY, then bring a delete-or-repair recommendation to the owner. Cover what it
+       touches on the keeper, its admissibility under rules 13/24/26, and what moves if deleted. No model change
+       until the owner rules.
+     - (c) CC_REGULAR 2024 gas: do card (1)'s gas-side phase 0 first. No licensed hub index is being sourced now.
 
 EXECUTION: the parent never solves (rule 32).
 - Shards: one per year 2019–2025 (rule 36), pinned 40-char SHA, created with permission_mode auto, clone_depth 1,
