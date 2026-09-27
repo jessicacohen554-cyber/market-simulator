@@ -3708,3 +3708,5 @@ results/calibration/miso278_arm_*/
 results/calibration/nwppnext7sf_20[12][0-9]/
 # SPP-92 seam probe scratch (zero LP; numbers live in the FINDING)
 results/calibration/_spp92_seam_hourly_*.parquet
+# R-CAISO-8 per-year shard legs (rule 32(d)/36): kept out of main; the composite is what registers.
+results/calibration/rcaiso8_A_20*/**

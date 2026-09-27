@@ -5666,6 +5666,9 @@ def run_year(
                 gap_fill_measured_dam=getattr(
                     config, "caiso_intertie_gap_fill_measured_dam", False
                 ),
+                partial_year_measured=getattr(
+                    config, "caiso_intertie_partial_year_measured", False
+                ),
             ):
                 logger.info(
                     "%s %d: per-hub WECC intertie — two signed corridors (Malin/COI "

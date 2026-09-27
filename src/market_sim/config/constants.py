@@ -847,8 +847,19 @@ ST_GAS_COMMITTED_MEASURED_HR_MULT_BY_ISO: dict[str, float] = {
 # An ISO absent from this registry cannot arm the mechanism (rule 25
 # [R-ISO-SCOPE] — the gate hard-errors rather than silently falling back to the
 # class default).
+#
+# RE-SYNCED 2026-09-27 (R-CAISO-8, rule 23 [R-FROZEN-DERIVE]: the SOURCE moved,
+# not a residual): 1.166 -> 1.154. The committed artifact's CT_PEAKER peak was
+# re-frozen from 1.166 to 1.154 by df277e89 (2026-09-06, "Re-freeze the CAISO
+# measured offer surface: CT-side de-contamination only"; reverted by c274f1a0,
+# re-applied by caiso-257 48bcd0ec). This registry was written at caiso-240
+# (2026-09-03) and did not follow, so the bypassed ST_GAS plants carried 1.166
+# while the ST_GAS class band (the same CT bucket, via
+# caiso_offer_surface_measured_ungrounded) carried 1.154 -- breaking the
+# identity stated above. The "1.166" in the paragraphs above is the caiso-240
+# value; the artifact is the source of truth.
 ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO: dict[str, float] = {
-    "CAISO": 1.166,
+    "CAISO": 1.154,
 }
 
 # ZONE-resolved delivered-gas anchor ($/MMBtu) — the same identification point

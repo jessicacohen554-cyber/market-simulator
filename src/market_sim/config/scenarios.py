@@ -2136,6 +2136,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # measured-CC artifact flags eia923_identity, which only CAISO's carries).
     "caiso_intertie_gap_fill_measured_dam",
     "cc_eia923_identity_emission_basis",
+    # R-CAISO-8 (2026-09-27), default off, registered IN THE SAME COMMIT as
+    # the field (the nyiso-119 discipline). Byte-identical off by
+    # construction: measured_import_hub_prices reads it only when handed
+    # partial_year_measured=True from the flag, and the per-hour writes in the
+    # per-hub injector / gas coupling run only under that same flag.
+    "caiso_intertie_partial_year_measured",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -2924,6 +2930,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "caiso_intertie_gap_fill_measured_dam": "False",
     "cc_eia923_identity_emission_basis": "False",
+    # Added by R-CAISO-8 WITH the field (the nyiso-119 discipline).
+    "caiso_intertie_partial_year_measured": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
@@ -9399,6 +9407,25 @@ class ScenarioConfig:
     # keep the existing fill. Zero parameters; inert outside 2023 by
     # construction (no other year has a gap). Default off; CAISO-only.
     # docs/handoffs/r-caiso-4/PRECOMMIT-r-caiso-4-2026-09-26.md.
+    caiso_intertie_partial_year_measured: bool = False  # R-CAISO-8 (2026-09-27):
+    # price each WECC intertie hub at its MEASURED print in every hour it
+    # prints, and keep the static ladder only in the hours it does not. Today
+    # a hub whose year is >25 % unprinted is dropped WHOLE by
+    # envelopes.measured_import_hub_prices (every tranche on the ladder) while
+    # the raw-print loader the caiso-87/93/94/269 clean-depth triggers read
+    # still ARMS those tranches in the printed hours -- so in 2021 (5,976 of
+    # 8,760 h printed, May-Dec) ~2.75 GW of DSW clean depth sits on the $180
+    # placeholder and dispatches 0 (RESULT-r-caiso-7 Object 1). With the flag
+    # the pricing gate becomes the arming gate: one per-hour mask, the printed
+    # hours. Unprinted hours keep exactly what they carry today (ladder, and
+    # under caiso_import_gas_coupling_ladder_only the gas coupling there only).
+    # Rule 14 [R-ACCURATE]: measured over estimate; rule 19 [R-ONE-MECH]: no
+    # new mechanism, the existing injector per hour. Zero parameters (rules
+    # 21/24). Inert by construction where a hub is fully printed or its gap is
+    # <=25 % (the existing fill path is untouched) and where it prints nothing
+    # (2019-20): only 2021 moves. Default off; CAISO-only; backcast-only (the
+    # measured overlay never runs in a forecast).
+    # docs/handoffs/r-caiso-8/PRECOMMIT-r-caiso-8-2026-09-27.md.
     cc_eia923_identity_emission_basis: bool = False  # R-CAISO-4 (2026-09-26):
     # a CC_REGULAR plant whose measured heat rate is the EIA-923 identity rate
     # (its CEMS record REFUSED by the CC derive: flag eia923_identity) books
