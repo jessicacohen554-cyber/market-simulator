@@ -1771,3 +1771,15 @@ withholds), so a sector carrier would need a fitted number: refused. McDonough 7
 (APPLIED_VINTAGE=2023, no live GT family there); the scoped out_of_window fall-back is inert for SOCO and moves NYISO (Northport); the
 real seam is the 2023-pinned family artifact vs the year-matched join (shared code, three ISOs), not built. Owner questions carried
 (soco-75, soco-77) plus a scoping question on the family vintage. Record: docs/handoffs/r-soco/FINDING-soco-78-2026-09-27.md.
+
+## soco-79 — 2026-09-27
+
+NO LEVER BUILT; NO SOLVE; KEEPER UNCHANGED (2026-09-27-soco76-egrid-identity-hr). No owner ruling on soco-75, soco-77 or soco-78's
+scoping question, so the zero-LP fleet-grain census for question (3) ran: fleet_only rebuilds on each keeper's own recipe (SOCO
+soco76 2019-2025; CAISO rcaiso5_XE 2019-2025; NYISO nyisonext6 2021-2025), family rate at the 2023 applied vintage vs each year's
+own vintage (ok rows) vs that plus a class-default fall-back for out_of_window. SOCO: year-matching moves 0 rows in every year - the
+mechanism is fully shadowed (family-off also moves 0) because every covered plant now takes a measured CAMPD rate (F1, 2026-09-24).
+The fall-back reaches McDonough 710 CTs only in 2019/2022 (64 MW, 6.8 -> 11.5) and 2024/25 (already out of merit), never 2020/21;
+greedy on the legs: 2019 COAL_BIT -4.16 -> -4.13 pp still FAIL, 2020 C4 0.301 untouched. Other ISOs (reported in the FINDING only):
+CAISO Huntington Beach 335 ST 225.8 MW +0.25/+0.41 in 2021/22; NYISO Northport/Port Jefferson GTs <= 24.7 MW. SOCO has no stake in
+(3). Record: docs/handoffs/r-soco/FINDING-soco-79-2026-09-27.md.
