@@ -5,7 +5,8 @@ Reads the committed ERCOT SPP archives in ``data/raw/lmp-data/``
 day-ahead hourly). Each zip holds ONE .xlsx with 12 monthly sheets (Jan..Dec);
 read every sheet. RTM is averaged 15-min -> hourly. Writes
 ``data/raw/_validation-source/actual_lmp_zonal_ERCOT.parquet``
-(year, hour, settlement_point, rt, da) on the fixed 8760-hour clock.
+(year, hour, settlement_point, rt, da) on the fixed 8760-hour STANDARD clock
+(prevailing-labelled hours shifted like the HB_HUBAVG series).
 
 This is the per-hub/zone counterpart to the system HB_HUBAVG series in
 ``derive_actual_lmp.py`` — used to scope the spatial reliability-deployment
@@ -30,6 +31,9 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.paths import CALIBRATION_DIR, LMP_DATA_DIR  # noqa: E402
+
+sys.path.insert(0, str(REPO))
+from scripts.data.derive_actual_lmp import _PrevailingShift  # noqa: E402
 
 # Cumulative hours before the first of each 1-based month on the model's
 # fixed non-leap 8760-hour clock (same construction as derive_actual_lmp.py).
@@ -102,9 +106,28 @@ def _parse(pattern: str, market: str) -> pd.DataFrame:
         dy = dt.dt.day.to_numpy()
         keep = ~((mo == 2) & (dy == 29))
         df = df[keep]
-        df["hoy"] = (
-            _MONTH_START_HOUR[mo[keep] - 1] + (dy[keep] - 1) * 24 + df["_h1"] - 1
+        # Prevailing -> standard clock (R-ERCOT-9, 2026-09-27). ERCOT labels
+        # hours on the Central PREVAILING clock; the model and every other
+        # ERCOT actual series (derive_actual_lmp's HB_HUBAVG, the NP6-905
+        # ORDC/lambda parquets) sit on the chronological standard-clock
+        # calendar. Without this shift every DST hour (~65 % of the year)
+        # landed one slot late — measured: zonal HB_HUBAVG[t+1] == hub[t] at
+        # corr 1.000 in July of every year 2018-2026, and 0.25-0.80 at t.
+        # Same helper as the hub series, so the two cannot drift; the
+        # "Repeated Hour Flag" places the fall-back hour's two instances in
+        # their own slots instead of averaging them together.
+        shift = _PrevailingShift(yr, "America/Chicago")
+        rep = df["Repeated Hour Flag"].astype(str).str.strip().str.upper() == "Y"
+        hod = (df["_h1"] - 1).to_numpy()
+        off = np.fromiter(
+            (
+                shift(int(m), int(d), int(h), bool(r))
+                for m, d, h, r in zip(mo[keep], dy[keep], hod, rep.to_numpy())
+            ),
+            dtype=np.int64,
+            count=len(df),
         )
+        df["hoy"] = _MONTH_START_HOUR[mo[keep] - 1] + (dy[keep] - 1) * 24 + hod - off
         df = df[(df["hoy"] >= 0) & (df["hoy"] < 8760)]
         g = df.groupby([spcol, "hoy"])["Settlement Point Price"].mean().reset_index()
         g.columns = ["settlement_point", "hour", market]
