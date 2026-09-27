@@ -1,0 +1,370 @@
+[
+ {
+  "year": 2019,
+  "arm": "C",
+  "moved_rows": 3,
+  "moved_mw": 64.0,
+  "moved_twh": -0.4492168143877983,
+  "delta": {
+   "CC_CHP": 0.0223,
+   "CC_REGULAR": 0.0574,
+   "COAL_BIT": 0.0604,
+   "COAL_PRB": 0.1079,
+   "CT_CHP": 0.0003,
+   "CT_PEAKER": -0.2889,
+   "ST_GAS": 0.0405
+  },
+  "c4": [
+   0.25,
+   0.2482
+  ],
+  "c4_r": [
+   0.8722,
+   0.8708
+  ],
+  "c1": [
+   {
+    "cls": "CC_REGULAR",
+    "actual": 110.644,
+    "keeper": 113.621,
+    "arm": 113.678,
+    "pp0": 2.86,
+    "pp1": 2.88,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "CC_CHP",
+    "actual": 2.071,
+    "keeper": 2.067,
+    "arm": 2.09,
+    "pp0": 0.03,
+    "pp1": 0.04,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "CT_PEAKER",
+    "actual": 6.098,
+    "keeper": 11.497,
+    "arm": 11.208,
+    "pp0": 2.29,
+    "pp1": 2.17,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "ST_GAS",
+    "actual": 9.75,
+    "keeper": 4.793,
+    "arm": 4.834,
+    "pp0": -1.87,
+    "pp1": -1.86,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "ST_CHP",
+    "actual": 1.19,
+    "keeper": 0.373,
+    "arm": 0.373,
+    "pp0": -0.32,
+    "pp1": -0.32,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "COAL_PRB",
+    "actual": 32.397,
+    "keeper": 33.316,
+    "arm": 33.424,
+    "pp0": 0.86,
+    "pp1": 0.9,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "COAL_BIT",
+    "actual": 23.119,
+    "keeper": 12.069,
+    "arm": 12.129,
+    "pp0": -4.16,
+    "pp1": -4.13,
+    "st0": "FAIL",
+    "st1": "FAIL"
+   }
+  ]
+ },
+ {
+  "year": 2022,
+  "arm": "C",
+  "moved_rows": 3,
+  "moved_mw": 64.0,
+  "moved_twh": -0.49273971493816376,
+  "delta": {
+   "CC_CHP": 0.007,
+   "CC_REGULAR": 0.2839,
+   "COAL_BIT": 0.0318,
+   "COAL_PRB": 0.0019,
+   "CT_CHP": 0.0001,
+   "CT_PEAKER": -0.3748,
+   "ST_GAS": 0.05
+  },
+  "c4": [
+   0.2401,
+   0.2403
+  ],
+  "c4_r": [
+   0.8211,
+   0.8215
+  ],
+  "c1": [
+   {
+    "cls": "CC_REGULAR",
+    "actual": 111.56,
+    "keeper": 107.945,
+    "arm": 108.229,
+    "pp0": -0.61,
+    "pp1": -0.49,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "CC_CHP",
+    "actual": 2.232,
+    "keeper": 2.375,
+    "arm": 2.382,
+    "pp0": 0.08,
+    "pp1": 0.08,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "CT_PEAKER",
+    "actual": 7.734,
+    "keeper": 5.176,
+    "arm": 4.801,
+    "pp0": -0.98,
+    "pp1": -1.14,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "ST_GAS",
+    "actual": 8.582,
+    "keeper": 3.006,
+    "arm": 3.056,
+    "pp0": -2.21,
+    "pp1": -2.19,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "ST_CHP",
+    "actual": 1.033,
+    "keeper": 0.374,
+    "arm": 0.374,
+    "pp0": -0.26,
+    "pp1": -0.26,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "COAL_PRB",
+    "actual": 30.932,
+    "keeper": 36.936,
+    "arm": 36.938,
+    "pp0": 2.69,
+    "pp1": 2.69,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "COAL_BIT",
+    "actual": 14.587,
+    "keeper": 17.163,
+    "arm": 17.195,
+    "pp0": 1.16,
+    "pp1": 1.18,
+    "st0": "PASS",
+    "st1": "PASS"
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "arm": "C",
+  "moved_rows": 2,
+  "moved_mw": 64.0,
+  "moved_twh": 0.0,
+  "delta": {},
+  "c4": [
+   0.2543,
+   0.2543
+  ],
+  "c4_r": [
+   0.8482,
+   0.8482
+  ],
+  "c1": [
+   {
+    "cls": "CC_REGULAR",
+    "actual": 110.305,
+    "keeper": 113.701,
+    "arm": 113.701,
+    "pp0": 2.29,
+    "pp1": 2.29,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "CC_CHP",
+    "actual": 1.823,
+    "keeper": 2.05,
+    "arm": 2.05,
+    "pp0": 0.11,
+    "pp1": 0.11,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "CT_PEAKER",
+    "actual": 4.407,
+    "keeper": 8.011,
+    "arm": 8.011,
+    "pp0": 1.48,
+    "pp1": 1.48,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "ST_GAS",
+    "actual": 7.615,
+    "keeper": 2.909,
+    "arm": 2.909,
+    "pp0": -1.82,
+    "pp1": -1.82,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "ST_CHP",
+    "actual": 1.238,
+    "keeper": 0.421,
+    "arm": 0.421,
+    "pp0": -0.32,
+    "pp1": -0.32,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "COAL_PRB",
+    "actual": 26.914,
+    "keeper": 23.332,
+    "arm": 23.332,
+    "pp0": -1.2,
+    "pp1": -1.2,
+    "st0": "PASS",
+    "st1": "PASS"
+   },
+   {
+    "cls": "COAL_BIT",
+    "actual": 13.357,
+    "keeper": 9.727,
+    "arm": 9.727,
+    "pp0": -1.34,
+    "pp1": -1.34,
+    "st0": "PASS",
+    "st1": "PASS"
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "arm": "C",
+  "moved_rows": 2,
+  "moved_mw": 64.0,
+  "moved_twh": 0.0,
+  "delta": {},
+  "c4": [
+   0.1845,
+   0.1845
+  ],
+  "c4_r": [
+   0.8966,
+   0.8966
+  ],
+  "c1": [
+   {
+    "cls": "CC_REGULAR",
+    "actual": 110.514,
+    "keeper": 110.401,
+    "arm": 110.401,
+    "pp0": -0.39,
+    "pp1": -0.39,
+    "st0": "SKIPPED",
+    "st1": "SKIPPED"
+   },
+   {
+    "cls": "CC_CHP",
+    "actual": 0.12,
+    "keeper": 1.952,
+    "arm": 1.952,
+    "pp0": 0.72,
+    "pp1": 0.72,
+    "st0": "SKIPPED",
+    "st1": "SKIPPED"
+   },
+   {
+    "cls": "CT_PEAKER",
+    "actual": 4.705,
+    "keeper": 4.938,
+    "arm": 4.938,
+    "pp0": 0.08,
+    "pp1": 0.08,
+    "st0": "SKIPPED",
+    "st1": "SKIPPED"
+   },
+   {
+    "cls": "ST_GAS",
+    "actual": 7.364,
+    "keeper": 2.293,
+    "arm": 2.293,
+    "pp0": -2.03,
+    "pp1": -2.03,
+    "st0": "SKIPPED",
+    "st1": "SKIPPED"
+   },
+   {
+    "cls": "ST_CHP",
+    "actual": 0.477,
+    "keeper": 0.237,
+    "arm": 0.237,
+    "pp0": -0.1,
+    "pp1": -0.1,
+    "st0": "SKIPPED",
+    "st1": "SKIPPED"
+   },
+   {
+    "cls": "COAL_PRB",
+    "actual": 28.352,
+    "keeper": 31.78,
+    "arm": 31.78,
+    "pp0": 1.27,
+    "pp1": 1.27,
+    "st0": "SKIPPED",
+    "st1": "SKIPPED"
+   },
+   {
+    "cls": "COAL_BIT",
+    "actual": 15.016,
+    "keeper": 16.487,
+    "arm": 16.487,
+    "pp0": 0.53,
+    "pp1": 0.53,
+    "st0": "SKIPPED",
+    "st1": "SKIPPED"
+   }
+  ]
+ }
+]
