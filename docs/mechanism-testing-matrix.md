@@ -18000,6 +18000,18 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-91 (2026-09-27, FLAT ON-LINE COAL SHORTFALL: RESERVES OR CONGESTION, ZERO LP —
+`docs/handoffs/FINDING-spp-91-flat-coal-headroom-2026-09-27.md`, probes `scripts/probes/_spp91_{flat_coal_series,node_lmp_fetch,flat_coal_tests}.py`).**
+- **Not reg-up/spin headroom.** The flat shortfall F (1.0–1.35 GW) equals 88–120 % of ALL SPP reg-up + spin cleared (1.10–1.17 GW,
+  every fuel). F does not rise with reserve MCPs (within-week r −0.12 to +0.09), and it does not step when the ramp product
+  started in 2022. No by-fuel cleared-reserve data is published.
+- **Partly intra-zone congestion.** RTBM plant-node LMPs (the monthly SL files; their Date/HE is **GMT hour-ending**, −7 h
+  to the model clock) sit $3–40 below the plant's **own** zone hub in F hours. 27–49 % of F MWh clear at a node LMP below
+  the keeper's own top coal offer. A 2-zone model cannot carry this, and making it explicit would cut keeper coal in years
+  where the keeper is already short (SPP-90). This is placement, not level.
+- The keeper's N–S seam barely separates (≥ $30 mean spread −0.0 to −4.4 vs actual down to −28.6; p10 0 vs −34 to −117). That
+  belongs to the `measured_interface_limits` / `internal_congestion_split` lane (SPP-40/57), not to coal.
+
 **DO-NOT-REDO, added by SPP-90 (2026-09-27, COAL IN-THE-MONEY CONDUCT, ZERO LP —
 `docs/handoffs/FINDING-spp-90-coal-inmoney-conduct-2026-09-27.md`, probe `scripts/probes/_spp90_coal_inmoney_conduct.py`).**
 - **The keeper does not over-state coal availability.** Against each unit's same-week demonstrated in-money capability
