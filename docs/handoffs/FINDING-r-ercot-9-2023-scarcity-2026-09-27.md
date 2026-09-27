@@ -104,3 +104,14 @@ Measured before the fix:
    - Fusco is double-counted in MISO (MISO lane, rule 25);
    - `build_ercot_dam_resource_crosswalk.py` drops the coal rows at HEAD (COAL-SUB);
    - 25 base-red fast-tier tests on main.
+
+## 6. Owner ruling (decision card, 2026-09-27)
+
+Verbatim answer: **"Hold k=33, work validation (Recommended)"**.
+
+- The keeper and the carve-out's `offer_curve_by_group` stay unchanged. No re-declaration, and no sweep.
+- 2023 stays NOT-YET at full magnitude, so ERCOT stays NOT-YET.
+- The next lane works the physical validation-year items:
+  - 2019/2020 COAL_PRB C1 shortfall;
+  - 2022 CC_REGULAR C1;
+  - the Decker Creek 3548 retirement seam.
