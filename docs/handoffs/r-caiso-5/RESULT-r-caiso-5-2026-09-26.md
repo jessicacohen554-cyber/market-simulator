@@ -155,3 +155,32 @@ PRECOMMIT §6 has the full probe record.
   - X-2022 `3946b8bc`, X-2023 `9048e6d4`, X-2024 `902f7892`, X-2025 `7b095aa1`;
   - XE-2022 `d7495185`, XE-2023 `818ac4a9`, XE-2024 `a83fafe5`, XE-2025 `135c510f`.
 - All 8 shards are archived. Their branches are the owner's to delete; this session cannot delete refs.
+
+## 7. PROMOTED 2026-09-27 — `2026-09-26-caiso-r5-pastoria-co2` (XE)
+
+The owner instruction was: "Is this a recommended keeper candidate? If so plz promote. If structural integrity
+improves but gates regress that may still be a keeper".
+
+- **2019–2021 were re-solved on the XE recipe first** (rule 35(c)), one shard each at `93a38eac`: 2019 `88e00832`,
+  2020 `e952e686`, 2021 `8cffd6072`. They are composed as `rcaiso5_XE_tp_2019_2021`, registered as
+  `2026-09-27-caiso-r5-xe-keeper` and stamped to the keeper (rule 30(a)).
+- **Their verdict is NOT-YET, reported only and never downgrading the ISO (rule 30(c)).** The fails are C1 / C3a /
+  C4, all from the import fallback.
+- **2019–21 vs the R-CAISO-4 recipe (TWh):**
+
+  | | 2019 | 2020 | 2021 |
+  |---|--:|--:|--:|
+  | CC_REGULAR | −0.01 | −0.25 | −0.20 |
+  | CT_PEAKER | +0.07 | +0.19 | +0.21 |
+
+- **Re-keyed:** `keepers/CAISO.json`, `calibration-complete.json` `complete.CAISO` (re-verified CALIBRATED, no
+  D-5(b) escalation), and the `program-status.json` gate-(a) row. `status/CAISO.js` was rebuilt, and the matrix
+  stamp and §5.2 header were updated.
+- **Cells:**
+  - `unit_outage_extract_basis_share`: O → K;
+  - `cc_eia923_identity_emission_basis`: O → K;
+  - `unit_outage_lp_capacity_basis`: K → R (superseded).
+- **Pruned (rule 35):** `2026-09-26-caiso-r4-intertie-dam`, `2026-09-26-caiso-r4-keeper-2019`, and the X-only
+  candidate `2026-09-26-caiso-r5-cc-outage`. Git history is the record.
+- **Year set:** 2019–2025, unchanged.
+- **Checks:** `audit_keepers --iso CAISO` PASS; `check_promotion_completeness` OK on (a) through (d).

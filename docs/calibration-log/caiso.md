@@ -15557,3 +15557,31 @@ It read NOT-YET on C4 2025 (0.301 vs 0.30), and promoting it would have withdraw
 
 **Pruned (rule 35):** the outgoing `2026-09-25-caiso-r3-abc-import` and the D+E candidate. Record:
 `docs/handoffs/r-caiso-4/`.
+
+## R-CAISO-5 — 2026-09-27 — PROMOTED `2026-09-26-caiso-r5-pastoria-co2`
+
+The keeper is now the R-CAISO-4 recipe plus two measured-input / construction repairs. It was solved as 11 shards,
+one per year per arm (rule 36): X 2022–25, XE 2022–25 and XE 2019–21. The parent spent zero LP.
+
+- **(X) `unit_outage_extract_basis_share`**, replacing `unit_outage_lp_capacity_basis` (rule 19).
+  - A CC outage's removed share is now taken on the CEMS extract's own capacity basis.
+  - Before: Moss Landing kept 207 MW available in its 2025 all-units-out windows while CEMS showed it dark.
+  - After: 0 MW in those windows.
+- **(E) `cc_eia923_identity_emission_basis`** (the lever R-CAISO-4 left blocked).
+
+**Result: CALIBRATED.**
+
+- C4 2025: 0.2987. That equals the outgoing keeper; X pays for E's C4 cost.
+- C1 CC_REGULAR 2023 / 24: −0.33 / −0.20 TWh.
+- C3a 2024: +6.6 %.
+- Pastoria 2023 / 24 / 25: 4.51 / 3.68 / 3.17 TWh, against 4.34 / 4.01 / 3.62 actual.
+- G-FOOT (CC_REGULAR 2025 falls) reads +0.01 TWh for XE. That is reported, and the run was promoted on structure
+  per the owner's ruling.
+- 2019–2021 were re-solved on the recipe and folded in (rule 35(c)). They remain reported-only FAILs from the
+  import fallback.
+
+**Phase 0 finding (not a lever).** The C4 midday gap is the import diurnal shape: model net imports run +1.5 to
++2.3 GW over EIA-930 at h8–16 in every month of 2022–25.
+
+**Pruned (rule 35):** the outgoing `2026-09-26-caiso-r4-intertie-dam`, its fold `2026-09-26-caiso-r4-keeper-2019`,
+and the X-only candidate `2026-09-26-caiso-r5-cc-outage`. Record: `docs/handoffs/r-caiso-5/`.
