@@ -3723,3 +3723,5 @@ results/calibration/soco81_20[0-9][0-9]/
 # 2022 0b1a9021f19c7f3af05eb38cc3811929328c15b4, 2023 0a1d99f27dd4470d4868a031fd704c262b5fff51,
 # 2024 b6943beab05cf1a69db82970625ea9a2c847cbe0, 2025 1f56d8eb18403daaf69aa8da0bd02c938729a441.
 results/calibration/nyisonext8_202[2-5]/
+# R-ERCOT-10 per-year shard legs (rule 32(d): composite only reaches main). Provenance SHAs in RESULT-r-ercot-10.
+results/calibration/r_ercot10_arm_20*/
