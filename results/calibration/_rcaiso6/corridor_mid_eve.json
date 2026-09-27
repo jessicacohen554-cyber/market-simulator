@@ -1,0 +1,94 @@
+{
+ "2022": {
+  "ties_pnw_hours": 3800,
+  "model_PNW": {
+   "mid": 1335,
+   "eve": 2180
+  },
+  "model_DSW_net": {
+   "mid": 3485,
+   "eve": 3491
+  },
+  "model_total": {
+   "mid": 4819,
+   "eve": 5671
+  },
+  "930_WECC_DSW": {
+   "mid": 2809,
+   "eve": 5340
+  },
+  "930_WECC_PNW": {
+   "mid": 449,
+   "eve": 1975
+  }
+ },
+ "2023": {
+  "ties_pnw_hours": 1676,
+  "model_PNW": {
+   "mid": 447,
+   "eve": 1560
+  },
+  "model_DSW_net": {
+   "mid": 2484,
+   "eve": 2265
+  },
+  "model_total": {
+   "mid": 2931,
+   "eve": 3824
+  },
+  "930_WECC_DSW": {
+   "mid": 1903,
+   "eve": 4367
+  },
+  "930_WECC_PNW": {
+   "mid": -1019,
+   "eve": 669
+  }
+ },
+ "2024": {
+  "ties_pnw_hours": 1098,
+  "model_PNW": {
+   "mid": 775,
+   "eve": 1880
+  },
+  "model_DSW_net": {
+   "mid": 2809,
+   "eve": 2803
+  },
+  "model_total": {
+   "mid": 3584,
+   "eve": 4682
+  },
+  "930_WECC_DSW": {
+   "mid": 1938,
+   "eve": 4219
+  },
+  "930_WECC_PNW": {
+   "mid": -502,
+   "eve": 822
+  }
+ },
+ "2025": {
+  "ties_pnw_hours": 1334,
+  "model_PNW": {
+   "mid": 814,
+   "eve": 2042
+  },
+  "model_DSW_net": {
+   "mid": 2914,
+   "eve": 2872
+  },
+  "model_total": {
+   "mid": 3728,
+   "eve": 4914
+  },
+  "930_WECC_DSW": {
+   "mid": 2194,
+   "eve": 4334
+  },
+  "930_WECC_PNW": {
+   "mid": -332,
+   "eve": 1202
+  }
+ }
+}

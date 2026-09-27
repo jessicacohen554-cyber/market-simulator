@@ -65,8 +65,14 @@ class TestCurateCapacityDeliverabilityCaiso(unittest.TestCase):
         # groups via curate_caiso_mic.py, 50 LCR local-area requirements +
         # 6 zonal peak loads + 3 PRM rows via curate_caiso_lcr.py; the 2018 and
         # 2019 studies carry no §3.2 zonal section, so those two years have no
-        # zone/rto rows).
-        self.assertEqual(len(df), 386)
+        # zone/rto rows), + 11 rows from R-CAISO-6 (2026-09-27): the Malin 500
+        # branch group for 2018-2020 (3 — dropped by the MIC parser's
+        # suffix-required regex; filings code it bare ``MALIN500``), the 2019
+        # SP26 / NP26 zonal peaks (2 — the 2019 study DOES carry the zonal
+        # table, untitled, on p24; the "no §3.2 section" note above is wrong
+        # for 2019), and the LA Basin / San Diego-IV area peak_load for
+        # 2019-2021 (6 — the caiso_per_year_import_caps inputs).
+        self.assertEqual(len(df), 397)
         year = pd.to_numeric(df["delivery_year"])
         self.assertEqual(int(year.between(2023, 2025).sum()), 153)
 
