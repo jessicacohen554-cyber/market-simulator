@@ -17996,6 +17996,18 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-90 (2026-09-27, COAL IN-THE-MONEY CONDUCT, ZERO LP —
+`docs/handoffs/FINDING-spp-90-coal-inmoney-conduct-2026-09-27.md`, probe `scripts/probes/_spp90_coal_inmoney_conduct.py`).**
+- **The keeper does not over-state coal availability.** Against each unit's same-week demonstrated in-money capability
+  (CEMS), the keeper offers 0.6–1.3 GW LESS net (+0.7–1.1 kept offline, −1.8–2.0 removed on line). The whole real gap to
+  keeper-available is units ON LINE below their own same-week level: 2.1–2.8 GW, flat 2019–25 (flat 1.0–1.35, ramping
+  0.5–0.7, start-up 0.3–0.4; weekly derate 0.3–0.6; no summer/ambient signature).
+- **In the money the keeper is SHORT on coal in 4 of 7 years** (M−A at actual LMP ≥ $30: −1.20 / −0.89 / +0.69 / **+5.33** /
+  −0.51 / −0.49 / +1.04 TWh, 2019–25). Any year-invariant coal cap cuts the passing years. 2022 is price-driven loading →
+  SPP-44's markup object. **No coal-availability / derate / outage-family lever; do not re-derive.**
+- Only real mechanism found: hourly ramp (CEMS up-ramp p99 ≈ 0.22 D/h; `measured_ramp_capability` stays U). All-class,
+  year-invariant — a structural lane of its own, never a 2022 fix; still owes SPP-73's C3a/C3b bound.
+
 **DO-NOT-REDO, added by SPP-89 (2026-09-27, THE 2021–22 COAL/CC SWAP, ZERO LP —
 `docs/handoffs/FINDING-spp-89-coal-cc-swap-2026-09-27.md`, probes `scripts/probes/_spp89_{stack_dump,coal_cc_swap}.py`).**
 - **The gas fuel input is not the object.** CC offer fuel tracks Henry Hub; its premium over Panhandle Eastern is
