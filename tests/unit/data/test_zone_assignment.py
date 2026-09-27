@@ -819,3 +819,34 @@ def test_soco_every_admitted_plant_resolves():
     valid = {"SOCO_AL", "SOCO_GA", "SOCO_MS"}
     assert set(lookup.values()) <= valid
     assert valid <= set(lookup.values())
+
+
+def test_ercot_dam_admission_admits_only_accepted_nonmembers(tmp_path, monkeypatch):
+    """R-ERCOT-8: an accepted DAM-crosswalk plant outside the BA geography is admitted and zoned."""
+    import pandas as pd
+
+    from market_sim.data import zone_assignment as za
+
+    ref = tmp_path / "reference"
+    ref.mkdir()
+    pd.DataFrame(
+        {
+            "site": ["BVE_CC1", "X_CC1", "Y_CC1"],
+            "plant_code": [55357, 111, 222],
+            "accepted": [1, 0, 1],
+        }
+    ).to_csv(ref / "ercot-dam-plant-crosswalk.csv", index=False)
+    monkeypatch.setattr(za, "REFERENCE_DIR", ref)
+    egrid = pd.DataFrame(
+        {
+            "ORISPL": [55357, 111, 222],
+            "LAT": [29.4731, 29.47, 32.9],
+            "LON": [-95.6244, -95.62, -96.8],
+            "FIPSST": [48, 48, 48],
+            "FIPSCNTY": [157, 157, 113],
+        }
+    )
+    # 222 is already a member; 111 is not accepted; only 55357 is admitted.
+    out = za._ercot_dam_admitted_zones(egrid, members={222})
+    assert out == {55357: "Houston"}
+    assert za._ercot_dam_admitted_zones(egrid, members={55357, 222}) == {}

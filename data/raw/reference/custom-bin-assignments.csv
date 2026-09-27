@@ -24,6 +24,7 @@ CC_REGULAR,Houston,2,H_CC2,55062,Tenaska Frontier Generation Station,939.7,7.15,
 CC_REGULAR,Houston,3,H_CC3,56350,Colorado Bend Energy Center,654.1,8.02,1x1,F-class,0.0,45.0,40.0,15.0,8.0,4.0,,1.1,1.0,1.45
 CC_REGULAR,Houston,4,H_CC4,56806,Cedar Bayou 4,535.5,9.94,1x1,E-class,0.0,55.0,35.0,10.0,6.0,4.0,,1.12,1.0,1.35
 CC_REGULAR,Houston,5,H_CC5,3469,T H Wharton,1189.9,12.99,Multi-Unit,E-class,0.0,55.0,30.0,15.0,4.0,4.0,,1.12,1.0,1.35
+CC_REGULAR,Houston,6,H_CC6,55357,Jack Fusco Energy Center,675.6,7.34,2x1,F-class,0.0,25.0,60.0,15.0,16.0,6.0,,1.08,1.0,1.55
 CC_REGULAR,North,1,N_CC1 (6.60-6.82),55226,Freestone Energy Center,1036.0,6.79,2x1,F-class,0.0,25.0,60.0,15.0,16.0,6.0,,1.08,1.0,1.55
 CC_REGULAR,North,1,N_CC1 (6.60-6.82),55320,Wise County Power LLC,821.7,6.72,2x1,F-class,0.0,25.0,60.0,15.0,16.0,6.0,,1.08,1.0,1.55
 CC_REGULAR,North,1,N_CC1 (6.60-6.82),59812,Wolf Hollow II,1231.2,6.65,2x1,F-class (late),0.0,20.0,65.0,15.0,16.0,6.0,,1.08,1.0,1.55
@@ -52,7 +53,7 @@ CC_REGULAR,South_Central,4,S_CC4,7900,Sand Hill,696.4,7.37,1x1,F-class,0.0,45.0,
 CC_REGULAR,South_Central,5,S_CC5,55153,Guadalupe Generating Station,1088.2,7.39,2x1,F-class,0.0,25.0,60.0,15.0,8.0,4.0,,1.08,1.0,1.55
 CC_REGULAR,South_Central,6,S_CC6,4937,Thomas C Ferguson,574.6,10.12,1x1,E-class,0.0,55.0,35.0,10.0,6.0,4.0,,1.12,1.0,1.35
 CC_REGULAR,Unknown,1,U_CC1,55098,Frontera Energy Center,529.0,6.87,1x1,F-class,0.0,45.0,40.0,15.0,16.0,6.0,,1.1,1.0,1.45
-CC_REGULAR,Unknown,2,U_CC2,55545,Hidalgo Energy Center,551.3,,1x1,F-class,0.0,45.0,40.0,15.0,4.0,4.0,,1.1,1.0,1.45
+CC_REGULAR,South,6,S_CC6,55545,Hidalgo Energy Center,551.3,,1x1,F-class,0.0,45.0,40.0,15.0,4.0,4.0,,1.1,1.0,1.45
 CC_REGULAR,Unknown,3,U_CC3,7512,Arthur Von Rosenberg,575.0,,1x1,E-class,0.0,55.0,35.0,10.0,4.0,4.0,,1.12,1.0,1.35
 CC_REGULAR,West,1,W_CC1,55215,Odessa-Ector Power Plant,1152.8,6.72,2x1,F-class,0.0,25.0,60.0,15.0,16.0,6.0,,1.08,1.0,1.55
 CC_REGULAR,West,2,W_CC2,56233,EG178 Facility,153.9,8.21,1x1,E-class,0.0,55.0,35.0,10.0,8.0,4.0,,1.12,1.0,1.35

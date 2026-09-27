@@ -28,6 +28,7 @@ from market_sim.config.paths import (
     CAMPD_BINS_CSV,
     EIA_860_DIR,
     FLEET_DIR,
+    REFERENCE_DIR,
 )
 from market_sim.data.egrid_sheets import read_egrid_sheet
 from market_sim.data.local_capacity import (
@@ -1625,6 +1626,52 @@ def build_zone_lookup(iso: str) -> dict[int, str]:
     return dict(_build_zone_lookup_cached(iso_u, _use_clean(), fsno))
 
 
+def _ercot_dam_admitted_zones(egrid: pd.DataFrame, members: set[int]) -> dict[int, str]:
+    """Return ``{oris: zone}`` for accepted ERCOT DAM-crosswalk plants outside ``members``.
+
+    The crosswalk (``data/raw/reference/ercot-dam-plant-crosswalk.csv``) maps
+    ERCOT 60-Day DAM resource sites to EIA plants; only reviewed
+    ``accepted == 1`` rows are read, the same gate the plant-grain DAM
+    availability loader applies. Each admitted plant is zoned from its own
+    eGRID coordinates and county (any BA) through :func:`_zone_from_location`;
+    a plant eGRID lacks is skipped rather than guessed.
+    """
+    path = REFERENCE_DIR / "ercot-dam-plant-crosswalk.csv"
+    if not path.exists():
+        return {}
+    xw = pd.read_csv(path)
+    codes = {
+        int(c)
+        for c in pd.to_numeric(
+            xw.loc[xw["accepted"] == 1, "plant_code"], errors="coerce"
+        )
+        .dropna()
+        .astype(int)
+    }
+    admit = codes - members
+    if not admit:
+        return {}
+    out: dict[int, str] = {}
+    for row in egrid.itertuples(index=False):
+        oris = _to_int(row.ORISPL)
+        if oris in admit and oris not in out:
+            out[oris] = _zone_from_location(
+                "ERCOT",
+                _to_float(row.LAT),
+                _to_float(row.LON),
+                _to_int(row.FIPSST),
+                _to_int(row.FIPSCNTY),
+            )
+    if out:
+        logger.info(
+            "ERCOT DAM-membership admission: %d plant(s) outside the ERCO BA "
+            "geography admitted from accepted DAM crosswalk rows — %s",
+            len(out),
+            sorted(out.items()),
+        )
+    return out
+
+
 @lru_cache(maxsize=16)
 def _build_zone_lookup_cached(
     iso: str, use_clean: bool, caiso_fsno: bool = False
@@ -1687,6 +1734,18 @@ def _build_zone_lookup_cached(
 
     if iso in _EIA860_SUPPLEMENT_ISOS:
         for oris, zone in _eia860_ba_zones(iso).items():
+            lookup.setdefault(oris, zone)
+
+    # R-ERCOT-8 measured ERCOT membership admission ([R-ACCURATE], rule 19):
+    # a plant with an ACCEPTED row in ERCOT's own 60-Day DAM site crosswalk is
+    # an ERCOT resource by ERCOT's settlement record, whatever its EIA BA field
+    # says. Admits only plants the geography above missed (``setdefault``),
+    # zoned by the same eGRID coordinate rule. Measured case: Jack Fusco
+    # (55357, DAM site BVE_CC1, QSE QCALP) — EIA-860 NERC TRE, BA "MISO".
+    # Inert while every accepted plant is already a member (verified at
+    # R-ERCOT-8 before the BVE_CC1 acceptance: zero admitted).
+    if iso == "ERCOT":
+        for oris, zone in _ercot_dam_admitted_zones(df, set(lookup)).items():
             lookup.setdefault(oris, zone)
 
     # CAISO measured hub-membership first-check (caiso-217): where CAISO's
