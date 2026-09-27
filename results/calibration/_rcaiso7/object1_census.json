@@ -1,0 +1,283 @@
+{
+ "2019": {
+  "corridors": {
+   "WECC_PNW": {
+    "model_twh": 16.739999771118164,
+    "eia930_twh": 9.149999618530273,
+    "excess_mw_h0_6": 773,
+    "excess_mw_h8_16": 983,
+    "excess_mw_h17_22": 804
+   },
+   "WECC_DSW": {
+    "model_twh": 20.940000534057617,
+    "eia930_twh": 44.689998626708984,
+    "excess_mw_h0_6": -2938,
+    "excess_mw_h8_16": -2287,
+    "excess_mw_h17_22": -3039
+   }
+  },
+  "tranches": {
+   "WECC_DSW_DSW_CCGT": {
+    "cap_mean_mw": 1764,
+    "twh": 1.1100000143051147,
+    "offer_mean": 62.8
+   },
+   "WECC_DSW_DSW_CT": {
+    "cap_mean_mw": 2156,
+    "twh": 0.6700000166893005,
+    "offer_mean": 102.3
+   },
+   "WECC_DSW_DSW_daytime_clean": {
+    "cap_mean_mw": 0,
+    "twh": 0.0,
+    "offer_mean": 180.0
+   },
+   "WECC_DSW_DSW_lateevening_clean": {
+    "cap_mean_mw": 0,
+    "twh": 0.0,
+    "offer_mean": 180.0
+   },
+   "WECC_DSW_DSW_overnight_clean": {
+    "cap_mean_mw": 0,
+    "twh": 0.0,
+    "offer_mean": 180.0
+   },
+   "WECC_DSW_DSW_solar_PV": {
+    "cap_mean_mw": 2393,
+    "twh": 19.15999984741211,
+    "offer_mean": 36.5
+   },
+   "WECC_DSW_DSW_surplus_clean": {
+    "cap_mean_mw": 0,
+    "twh": 0.0,
+    "offer_mean": 180.0
+   },
+   "WECC_DSW_WECC_scarcity": {
+    "cap_mean_mw": 2940,
+    "twh": 0.0,
+    "offer_mean": 187.2
+   },
+   "WECC_DSW_export_PALOVRDE": {
+    "cap_mean_mw": 0,
+    "twh": 0.0,
+    "offer_mean": 0.0
+   },
+   "WECC_PNW_PNW_hydro_base": {
+    "cap_mean_mw": 1892,
+    "twh": 16.5,
+    "offer_mean": 28.0
+   },
+   "WECC_PNW_PNW_midC": {
+    "cap_mean_mw": 1764,
+    "twh": 0.23999999463558197,
+    "offer_mean": 36.0
+   },
+   "WECC_PNW_export_MALIN": {
+    "cap_mean_mw": 0,
+    "twh": 0.0,
+    "offer_mean": 0.0
+   }
+  },
+  "first_order_add_twh_total": 0.0,
+  "sd_pocket": {
+   "link_limit_mw": 386.0,
+   "binding_hours": 7461,
+   "sdge_price_mean": 388.8,
+   "sp15_price_mean": 40.8,
+   "sdge_hours_gt_500": 1534,
+   "sdge_unserved_mwh": 419683
+  }
+ },
+ "2020": {
+  "corridors": {
+   "WECC_PNW": {
+    "model_twh": 21.520000457763672,
+    "eia930_twh": 17.31999969482422,
+    "excess_mw_h0_6": 398,
+    "excess_mw_h8_16": 480,
+    "excess_mw_h17_22": 562
+   },
+   "WECC_DSW": {
+    "model_twh": 17.280000686645508,
+    "eia930_twh": 41.900001525878906,
+    "excess_mw_h0_6": -3626,
+    "excess_mw_h8_16": -1801,
+    "excess_mw_h17_22": -3242
+   }
+  },
+  "tranches": {
+   "WECC_DSW_DSW_CCGT": {
+    "cap_mean_mw": 1764,
+    "twh": 0.07000000029802322,
+    "offer_mean": 69.1
+   },
+   "WECC_DSW_DSW_CT": {
+    "cap_mean_mw": 2156,
+    "twh": 0.0,
+    "offer_mean": 111.7
+   },
+   "WECC_DSW_DSW_daytime_clean": {
+    "cap_mean_mw": 0,
+    "twh": 0.0,
+    "offer_mean": 180.0
+   },
+   "WECC_DSW_DSW_lateevening_clean": {
+    "cap_mean_mw": 0,
+    "twh": 0.0,
+    "offer_mean": 180.0
+   },
+   "WECC_DSW_DSW_overnight_clean": {
+    "cap_mean_mw": 0,
+    "twh": 0.0,
+    "offer_mean": 180.0
+   },
+   "WECC_DSW_DSW_solar_PV": {
+    "cap_mean_mw": 2410,
+    "twh": 17.209999084472656,
+    "offer_mean": 42.8
+   },
+   "WECC_DSW_DSW_surplus_clean": {
+    "cap_mean_mw": 0,
+    "twh": 0.0,
+    "offer_mean": 180.0
+   },
+   "WECC_DSW_WECC_scarcity": {
+    "cap_mean_mw": 2940,
+    "twh": 0.0,
+    "offer_mean": 187.3
+   },
+   "WECC_DSW_export_PALOVRDE": {
+    "cap_mean_mw": 0,
+    "twh": 0.0,
+    "offer_mean": 0.0
+   },
+   "WECC_PNW_PNW_hydro_base": {
+    "cap_mean_mw": 2189,
+    "twh": 19.100000381469727,
+    "offer_mean": 28.0
+   },
+   "WECC_PNW_PNW_midC": {
+    "cap_mean_mw": 1764,
+    "twh": 2.430000066757202,
+    "offer_mean": 36.0
+   },
+   "WECC_PNW_export_MALIN": {
+    "cap_mean_mw": 0,
+    "twh": 0.0,
+    "offer_mean": 0.0
+   }
+  },
+  "first_order_add_twh_total": 0.0,
+  "sd_pocket": {
+   "link_limit_mw": 718.0,
+   "binding_hours": 4058,
+   "sdge_price_mean": 53.6,
+   "sp15_price_mean": 35.9,
+   "sdge_hours_gt_500": 77,
+   "sdge_unserved_mwh": 12125
+  }
+ },
+ "2021": {
+  "corridors": {
+   "WECC_PNW": {
+    "model_twh": 21.770000457763672,
+    "eia930_twh": 13.600000381469727,
+    "excess_mw_h0_6": 881,
+    "excess_mw_h8_16": 1035,
+    "excess_mw_h17_22": 854
+   },
+   "WECC_DSW": {
+    "model_twh": 15.760000228881836,
+    "eia930_twh": 40.869998931884766,
+    "excess_mw_h0_6": -3408,
+    "excess_mw_h8_16": -2147,
+    "excess_mw_h17_22": -3177
+   }
+  },
+  "tranches": {
+   "WECC_DSW_DSW_CCGT": {
+    "cap_mean_mw": 1764,
+    "twh": 2.7899999618530273,
+    "offer_mean": 66.3,
+    "measured_hours": 5976,
+    "first_order_add_twh": 3.19
+   },
+   "WECC_DSW_DSW_CT": {
+    "cap_mean_mw": 2156,
+    "twh": 0.3100000023841858,
+    "offer_mean": 107.4,
+    "measured_hours": 5976,
+    "first_order_add_twh": 2.44
+   },
+   "WECC_DSW_DSW_daytime_clean": {
+    "cap_mean_mw": 1169,
+    "twh": 0.0,
+    "offer_mean": 180.0,
+    "measured_hours": 5976,
+    "first_order_add_twh": 5.33
+   },
+   "WECC_DSW_DSW_lateevening_clean": {
+    "cap_mean_mw": 104,
+    "twh": 0.0,
+    "offer_mean": 180.0,
+    "measured_hours": 5976,
+    "first_order_add_twh": 0.86
+   },
+   "WECC_DSW_DSW_overnight_clean": {
+    "cap_mean_mw": 601,
+    "twh": 0.0,
+    "offer_mean": 180.0,
+    "measured_hours": 5976,
+    "first_order_add_twh": 5.09
+   },
+   "WECC_DSW_DSW_solar_PV": {
+    "cap_mean_mw": 1437,
+    "twh": 12.59000015258789,
+    "offer_mean": 38.1
+   },
+   "WECC_DSW_DSW_surplus_clean": {
+    "cap_mean_mw": 875,
+    "twh": 0.0,
+    "offer_mean": 180.0,
+    "measured_hours": 5976,
+    "first_order_add_twh": 6.92
+   },
+   "WECC_DSW_WECC_scarcity": {
+    "cap_mean_mw": 2940,
+    "twh": 0.07999999821186066,
+    "offer_mean": 189.4
+   },
+   "WECC_DSW_export_PALOVRDE": {
+    "cap_mean_mw": 0,
+    "twh": 0.0,
+    "offer_mean": 0.0
+   },
+   "WECC_PNW_PNW_hydro_base": {
+    "cap_mean_mw": 1278,
+    "twh": 11.199999809265137,
+    "offer_mean": 28.0
+   },
+   "WECC_PNW_PNW_midC": {
+    "cap_mean_mw": 1764,
+    "twh": 10.569999694824219,
+    "offer_mean": 36.0,
+    "measured_hours": 5976,
+    "first_order_add_twh": 0.35
+   },
+   "WECC_PNW_export_MALIN": {
+    "cap_mean_mw": 0,
+    "twh": 0.0,
+    "offer_mean": 0.0
+   }
+  },
+  "first_order_add_twh_total": 24.18,
+  "sd_pocket": {
+   "link_limit_mw": 635.0,
+   "binding_hours": 4876,
+   "sdge_price_mean": 60.9,
+   "sp15_price_mean": 56.4,
+   "sdge_hours_gt_500": 20,
+   "sdge_unserved_mwh": 2259
+  }
+ }
+}
