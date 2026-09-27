@@ -15621,3 +15621,18 @@ Record: `docs/handoffs/r-caiso-6/`.
 - **Object 3:** C4 2025 unchanged, 0.2987.
 
 Record: `docs/handoffs/r-caiso-7/`.
+
+## R-CAISO-8 — 2026-09-27 — PROMOTED `2026-09-27-caiso-r8-partial-year`
+
+- **Keeper:** `2026-09-27-caiso-r8-partial-year` (bundle `rcaiso8_A_span`), CALIBRATED; 2022–25 identical to the
+  outgoing keeper at scored precision (C4 2025 0.299 thin; single ledgered C3c 2024).
+- **Fold:** `2026-09-27-caiso-r8-fold` (2019–21), stamped. Pruned: `…r5-pastoria-co2`, `…r6-malin-fold`.
+- **Arm (A):** `caiso_intertie_partial_year_measured` prices each hub at its print in printed hours; 2021 only.
+  - DSW import 15.8 → 29.5 TWh (EIA-930 40.9); CC_REGULAR 68.6 → 59.3 (actual 49.2).
+  - C1 +19.4 → +10.1 TWh, C3a +17.6 → +13.5 %, C3b 0.211 → 0.158 PASS, C4 0.422 → 0.387.
+- **Object 3 (B):** ST_GAS peak registry 1.166 → 1.154, re-synced to the re-frozen artifact (rule 23). 3 rows,
+  ≤ 0.5 $/MWh.
+- **Object 2:** no public per-year operating SD import limit. Measured night imports exceed the LCT cap in 95 % of
+  2019 night hours. Owner decision on the construction.
+
+Record: `docs/handoffs/r-caiso-8/`.
