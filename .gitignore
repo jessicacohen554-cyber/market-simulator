@@ -3729,3 +3729,5 @@ results/calibration/nyisonext8_202[2-5]/
 results/calibration/r_ercot10_arm_20*/
 # R-CAISO-9 per-year shard legs (rule 32(d)/36): kept out of main; the composite is what registers.
 results/calibration/rcaiso9_A_20*/**
+# miso-279 per-year shard legs: parent-local only (rule 32(d)); provenance SHAs in docs/RESULT-miso279-stgas-span-coverage-2026-09-27.md
+results/calibration/miso279_arm_*/
