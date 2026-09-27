@@ -3384,7 +3384,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             _year_iso_config = iso_config
             if iso == "CAISO" and getattr(config, "caiso_per_year_import_caps", False):
                 _caiso_year_iso_config = apply_caiso_local_import_limits(
-                    iso_config, iso, year
+                    iso_config,
+                    iso,
+                    year,
+                    sd_floor_static=getattr(
+                        config, "caiso_import_cap_floor_static", False
+                    ),
                 )
                 if _caiso_year_iso_config is not iso_config:
                     _year_iso_config = _caiso_year_iso_config

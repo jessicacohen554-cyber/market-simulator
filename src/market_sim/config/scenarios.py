@@ -2146,6 +2146,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # partial_year_measured=True from the flag, and the per-hour writes in the
     # per-hub injector / gas coupling run only under that same flag.
     "caiso_intertie_partial_year_measured",
+    # R-CAISO-9 (2026-09-27), default off, registered IN THE SAME COMMIT as
+    # the field (the nyiso-119 discipline). Byte-identical off by
+    # construction: apply_caiso_local_import_limits floors only when handed
+    # sd_floor_static=True from the flag.
+    "caiso_import_cap_floor_static",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -2942,6 +2947,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "cc_eia923_identity_emission_basis": "False",
     # Added by R-CAISO-8 WITH the field (the nyiso-119 discipline).
     "caiso_intertie_partial_year_measured": "False",
+    # Added by R-CAISO-9 WITH the field (the nyiso-119 discipline).
+    "caiso_import_cap_floor_static": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
@@ -19208,6 +19215,19 @@ class ScenarioConfig:
     # existing CAISO keeper replay is byte-identical. See
     # market_sim.model.transmission.apply_caiso_local_import_limits.
     caiso_per_year_import_caps: bool = False
+    # R-CAISO-9 (owner ruling 2026-09-27, "Floor at static 1,436"): under
+    # caiso_per_year_import_caps, floor the SP15_rest->SDGE per-year LCT cap at
+    # the link's baked static TTC (_SDGE_IMPORT_CAP_MW = 1,436 MW, iso_configs):
+    # cap = max(LCT cap, 1,436). Declared rule-14 reconciled estimate -- the LCT
+    # peak - requirement is a 1-in-10 N-1-1 planning-case capability, not an
+    # operating limit; measured night-time SDGE imports exceed it 2,773 / 784 /
+    # 886 h in 2019/20/21, and the 1,436 floor itself is exceeded 167 h in 2019
+    # (results/calibration/_rcaiso8/object2_sd_census.json). Zero new numbers
+    # (rules 21/24). LA Basin not floored (owner card). Moves 2019-21 only
+    # (2022 has no LCT row; 2023-25 >= 1,436). Inert unless
+    # caiso_per_year_import_caps is on. Default off; CAISO-only.
+    # docs/handoffs/r-caiso-9/PRECOMMIT-r-caiso-9-2026-09-27.md.
+    caiso_import_cap_floor_static: bool = False
 
     # PJM transmission-congestion lever (break the copper-plate). PJM clears as a
     # perfect single price (0.000 zonal LMP spread in all 8760 hours of all

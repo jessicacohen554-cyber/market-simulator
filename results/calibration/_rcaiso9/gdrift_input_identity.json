@@ -1,0 +1,61 @@
+{
+  "pin": {
+    "rcaiso8_A_span": "ee309e39170be7641494a3bdc0b5863fc82d141c",
+    "rcaiso8_A_tp_2019_2021": "ee309e39170be7641494a3bdc0b5863fc82d141c"
+  },
+  "flag": "caiso_import_cap_floor_static",
+  "pairs": {
+    "pin->off": {
+      "per_year_diffs": {
+        "2022": [],
+        "2023": [],
+        "2024": [],
+        "2025": [],
+        "2019": [],
+        "2020": [],
+        "2021": []
+      },
+      "defaults_changed": [
+        "campd_bins_path",
+        "plant_registry_path",
+        "plant_emission_rates_path",
+        "plant_emission_rates_v2_path",
+        "control_retrofit_path",
+        "retiree_cems_cap"
+      ],
+      "fields_added": [
+        "caiso_import_cap_floor_static",
+        "pjm_offer_midcurve_shape_segments"
+      ],
+      "constants_changed": [
+        "CAMPD_BINNING_ISOS",
+        "EIA930_PS_FOLDED_INTO_WAT",
+        "RGGI_MEMBER_STATES_BY_YEAR"
+      ]
+    },
+    "off->on": {
+      "per_year_diffs": {
+        "2022": [],
+        "2023": [],
+        "2024": [],
+        "2025": [],
+        "2019": [
+          "links: [('SP15_rest', 'SDGE', 386.0), ('SP15_rest', 'SDGE', 1436.0)]"
+        ],
+        "2020": [
+          "links: [('SP15_rest', 'SDGE', 718.0), ('SP15_rest', 'SDGE', 1436.0)]"
+        ],
+        "2021": [
+          "links: [('SP15_rest', 'SDGE', 635.0), ('SP15_rest', 'SDGE', 1436.0)]"
+        ]
+      },
+      "defaults_changed": [],
+      "fields_added": [],
+      "constants_changed": [
+        "CAMPD_BINNING_ISOS",
+        "EIA930_PS_FOLDED_INTO_WAT",
+        "RGGI_MEMBER_STATES_BY_YEAR"
+      ]
+    }
+  }
+}
