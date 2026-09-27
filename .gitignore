@@ -3712,3 +3712,7 @@ results/calibration/_spp92_seam_hourly_*.parquet
 results/calibration/rcaiso8_A_20*/**
 # R-CAISO-8 Object 2: raw OASIS PRC_NOMOGRAM downloads (re-fetched by scripts/probes/_rcaiso8_sd_import_census.py)
 results/calibration/_rcaiso8/oasis_cache/
+
+# soco-81 shard legs: kept out of main (rule 32(d)); composite soco81_span is what registers.
+# Provenance (rule 33(d)): 2019 5eb223e6, 2020 da7d01ec, 2021 a83b4f9f, 2022 dc9e9c7c, 2023 58f2dca6, 2024 7ea14cfb, 2025 91007d69.
+results/calibration/soco81_20[0-9][0-9]/
