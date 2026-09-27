@@ -14826,3 +14826,4 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - `actual_lmp.json` ERCOT `rt_lw` changes 2019–2025: 46.90→46.55, 25.50→25.40, 165.53→165.95, 74.44→75.08, 64.32→65.02, 30.99→31.17, 36.29→36.50.
   - These take effect at the next registration. No solve impact, and no determination flips.
 - **Record:** `docs/handoffs/FINDING-r-ercot-9-2023-scarcity-2026-09-27.md`.
+- **Owner ruling (decision card):** "Hold k=33, work validation (Recommended)". The keeper is unchanged, and the next lane takes the validation-year C1 items.
