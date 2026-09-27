@@ -1,0 +1,100 @@
+{
+ "2019": {
+  "av_moved": {
+   "COAL_SOCO_GA_p6052_committed": {
+    "av_mean_new": 0.2332,
+    "av_mean_old": 0.9141,
+    "cap_mwh_removed": 2090871.7
+   },
+   "COAL_SOCO_GA_p6052_econhi": {
+    "av_mean_new": 0.2332,
+    "av_mean_old": 0.9141,
+    "cap_mwh_removed": 3646542.7
+   },
+   "COAL_SOCO_GA_p6052_econlo": {
+    "av_mean_new": 0.2332,
+    "av_mean_old": 0.9141,
+    "cap_mwh_removed": 4456885.6
+   },
+   "COAL_SOCO_GA_p6052_peak": {
+    "av_mean_new": 0.2332,
+    "av_mean_old": 0.9141,
+    "cap_mwh_removed": 208046.9
+   }
+  },
+  "mc_moved": 0,
+  "other_moved": []
+ },
+ "2020": {
+  "av_moved": {
+   "COAL_SOCO_GA_p6052_committed": {
+    "av_mean_new": 0.0195,
+    "av_mean_old": 0.9141,
+    "cap_mwh_removed": 2746957.5
+   },
+   "COAL_SOCO_GA_p6052_econhi": {
+    "av_mean_new": 0.0195,
+    "av_mean_old": 0.9141,
+    "cap_mwh_removed": 4790775.8
+   },
+   "COAL_SOCO_GA_p6052_econlo": {
+    "av_mean_new": 0.0195,
+    "av_mean_old": 0.9141,
+    "cap_mwh_removed": 5855392.6
+   },
+   "COAL_SOCO_GA_p6052_peak": {
+    "av_mean_new": 0.0195,
+    "av_mean_old": 0.9141,
+    "cap_mwh_removed": 273329.1
+   }
+  },
+  "mc_moved": 0,
+  "other_moved": []
+ },
+ "2021": {
+  "av_moved": {
+   "COAL_SOCO_GA_p6052_committed": {
+    "av_mean_new": 0.1175,
+    "av_mean_old": 0.9141,
+    "cap_mwh_removed": 2445975.8
+   },
+   "COAL_SOCO_GA_p6052_econhi": {
+    "av_mean_new": 0.1175,
+    "av_mean_old": 0.9141,
+    "cap_mwh_removed": 4265854.8
+   },
+   "COAL_SOCO_GA_p6052_econlo": {
+    "av_mean_new": 0.1175,
+    "av_mean_old": 0.9141,
+    "cap_mwh_removed": 5213822.5
+   },
+   "COAL_SOCO_GA_p6052_peak": {
+    "av_mean_new": 0.1175,
+    "av_mean_old": 0.9141,
+    "cap_mwh_removed": 243380.7
+   }
+  },
+  "mc_moved": 0,
+  "other_moved": []
+ },
+ "2022": {
+  "av_moved": {},
+  "mc_moved": 0,
+  "other_moved": []
+ },
+ "2023": {
+  "av_moved": {},
+  "mc_moved": 0,
+  "other_moved": []
+ },
+ "2024": {
+  "av_moved": {},
+  "mc_moved": 0,
+  "other_moved": []
+ },
+ "2025": {
+  "av_moved": {},
+  "mc_moved": 0,
+  "other_moved": []
+ }
+}
