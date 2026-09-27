@@ -101,7 +101,10 @@ def check_g1_zero_lp(legs: list[Path]) -> None:
         )
         y = int(leg.name.rsplit("_", 1)[-1])
         ic = sp.apply_interchange_topology(
-            get_iso_config("NYISO"), sp.get_interchange_spec(cfg, "NYISO", y), cfg, year=y
+            get_iso_config("NYISO"),
+            sp.get_interchange_spec(cfg, "NYISO", y),
+            cfg,
+            year=y,
         )
         static = np.array([ln.ttc_mw for ln in ic.links], dtype=float)
         fwd, _ = nyiso_par_attributed_ttc_hourly(static, ic, y, 8760)
