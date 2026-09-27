@@ -80,7 +80,7 @@
       "2020": 2.03,
       "2021": 3.72
     },
-    "git_sha": "93a38eac",
+    "git_sha": "6810e68e",
     "hours": 8760,
     "iso": "CAISO",
     "nyiso_dynamic_reserve_requirements": null,
@@ -103,9 +103,9 @@
     ]
   },
   "composed_from": [
-    "rcaiso5_XE_2019",
-    "rcaiso5_XE_2020",
-    "rcaiso5_XE_2021"
+    "rcaiso6_O2_2019",
+    "rcaiso6_O2_2020",
+    "rcaiso6_O2_2021"
   ],
   "environment": {
     "cache_key_path_roots": [
@@ -123,51 +123,51 @@
       "pydantic": "2.13.4",
       "scipy": "1.17.1"
     },
-    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v42-x86_64-with-glibc2.39",
     "python_version": "3.11.15"
   },
   "git": {
-    "basis_sha": "93a38eac1889559fc3d5a359d15fe96aae85d87b",
+    "basis_sha": "6810e68ecf5488aeb0468c18ff736c930b629336",
     "branch": "HEAD",
     "changed_files": [],
     "diffstat": "",
     "dirty": false,
-    "sha": "93a38eac"
+    "sha": "6810e68e"
   },
-  "model_changes_note": "R-CAISO-5 XE 2019: keeper recipe + X + EIA-923-identity CC CO2 basis (E) (PRECOMMIT-r-caiso-5-2026-09-26 \u00a74)",
+  "model_changes_note": "R-CAISO-6 O2 2019: XE keeper recipe + 2019-21 firm rows + MIC Malin repair (PRECOMMIT-r-caiso-6-2026-09-27 \u00a74)",
   "per_leg_provenance": {
     "2019": {
       "git": {
-        "basis_sha": "93a38eac1889559fc3d5a359d15fe96aae85d87b",
+        "basis_sha": "6810e68ecf5488aeb0468c18ff736c930b629336",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "93a38eac"
+        "sha": "6810e68e"
       },
-      "timestamp": "2026-09-27T18:48:53"
+      "timestamp": "2026-09-27T20:37:15"
     },
     "2020": {
       "git": {
-        "basis_sha": "93a38eac1889559fc3d5a359d15fe96aae85d87b",
+        "basis_sha": "6810e68ecf5488aeb0468c18ff736c930b629336",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "93a38eac"
+        "sha": "6810e68e"
       },
-      "timestamp": "2026-09-27T19:02:17"
+      "timestamp": "2026-09-27T20:58:59"
     },
     "2021": {
       "git": {
-        "basis_sha": "93a38eac1889559fc3d5a359d15fe96aae85d87b",
+        "basis_sha": "6810e68ecf5488aeb0468c18ff736c930b629336",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "93a38eac"
+        "sha": "6810e68e"
       },
-      "timestamp": "2026-09-27T19:11:23"
+      "timestamp": "2026-09-27T20:47:37"
     }
   },
   "resolved_inputs": {
@@ -189,7 +189,7 @@
     "seam_import_cap": {
       "by_year": {
         "2019": {
-          "cap_mw": 12154.0,
+          "cap_mw": 15208.0,
           "delivery_year": "2019",
           "flag_armed": true,
           "import_zone": "WECC_import",
@@ -867,6 +867,7 @@
     "neiso_winter_fuel_mustrun": false,
     "neiso_winter_fuel_start_fill_bbl": null,
     "neiso_winter_fuelsec_commit_frac": 1.0,
+    "neiso_winter_fuelsec_conduct_roster": false,
     "neiso_winter_fuelsec_min_stable_pct": 0.4,
     "neiso_winter_fuelsec_tmin_c": -7.0,
     "net_cone_forward_escalation": "reindex_gross",
@@ -880,6 +881,7 @@
     "nuclear_unit_availability": true,
     "nwpp_demand_plant_basis": false,
     "nwpp_grid_carried_wind_served": false,
+    "nwpp_path76_alturas_link": false,
     "nyiso_chp_btm_measured": false,
     "nyiso_ct_peaker_bands_measured": false,
     "nyiso_ct_peaker_committed_measured": false,
@@ -1268,6 +1270,7 @@
     "tranche_startup_conditional_runs": false,
     "tranche_startup_measured_runs": false,
     "transmission_expansion_enabled": false,
+    "unit_outage_coal_extract_basis_share": false,
     "unit_outage_dispatched_bin_denominator": false,
     "unit_outage_extract_basis_share": true,
     "unit_outage_fleet_status_scope": false,
@@ -1307,8 +1310,8 @@
   },
   "solve_surface": {
     "epochs": [],
-    "fingerprint": "490ff78425f818f7",
-    "git_sha": "93a38eac",
+    "fingerprint": "ea426b82660d270e",
+    "git_sha": "6810e68e",
     "iso": "CAISO",
     "moved": {
       "GENERIC_BASE_OFFER_CURVE": "bdc2b348ec6144d1",
@@ -1321,8 +1324,8 @@
       "STATE_CARBON_PRICE_BY_ISO": "ea913868b7dbf5c1",
       "THERMAL_AVAILABILITY": "34ff308290e18439"
     },
-    "rows": 209,
+    "rows": 210,
     "schema": 1
   },
-  "timestamp": "2026-09-27T18:48:53"
+  "timestamp": "2026-09-27T20:37:15"
 }

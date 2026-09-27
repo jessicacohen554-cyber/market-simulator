@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-27-caiso-r5-xe-keeper",
+  "run_id": "2026-09-27-caiso-r6-malin-fold",
   "iso": "CAISO",
-  "label": "caiso r5 xe keeper",
+  "label": "caiso r6 malin fold",
   "target_years": [
     2019,
     2020,
@@ -20,7 +20,7 @@
   "rubric_version": 3.9,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, dispatch_corr"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape, dispatch_corr"
   ],
   "notes": [],
   "criteria": {
@@ -42,7 +42,7 @@
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
@@ -79,18 +79,18 @@
   },
   "grade_summary": {
     "scored": 8,
-    "target_grade": 4,
+    "target_grade": 3,
     "commercial_grade": 0,
     "ledgered": 1,
-    "fails": 3
+    "fails": 4
   },
   "reported": {
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2019": "+34.3%",
-        "2020": "+34.3%",
-        "2021": "+8.9%"
+        "2019": "+26.9%",
+        "2020": "+26.5%",
+        "2021": "+13.1%"
       }
     },
     "diurnal_amplitude": {

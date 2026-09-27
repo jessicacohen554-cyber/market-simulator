@@ -15585,3 +15585,24 @@ one per year per arm (rule 36): X 2022–25, XE 2022–25 and XE 2019–21. The 
 
 **Pruned (rule 35):** the outgoing `2026-09-26-caiso-r4-intertie-dam`, its fold `2026-09-26-caiso-r4-keeper-2019`,
 and the X-only candidate `2026-09-26-caiso-r5-cc-outage`. Record: `docs/handoffs/r-caiso-5/`.
+
+## R-CAISO-6 — 2026-09-27 — 2019–21 fold re-solved on corrected import inputs; keeper unchanged
+
+- **Keeper unchanged:** `2026-09-26-caiso-r5-pastoria-co2`, CALIBRATED. G-DRIFT 93a38eac → HEAD is
+  byte-identical on every LP-visible array, 2019–25.
+- **Intake bug fixed:** `curate_caiso_mic.py` dropped the bare-coded `MALIN500` branch group for delivery years
+  2018–20. The 2019/20 seam cap was 12,154 / 12,394 MW; it is now 15,208 / 15,524, matching the filings' Total
+  rows.
+- **New 2019–21 inputs:**
+  - firm-import rows by the zero-parameter DMM × MIC construction: 2,262 / 2,442, 2,240 / 2,459 and
+    1,305 / 1,466 MW;
+  - LA Basin / SD-IV peak_load rows from the Final LCT reports.
+- **Fold re-registered** as `2026-09-27-caiso-r6-malin-fold`, stamped to the keeper; `…r5-xe-keeper` is pruned.
+  - CC_REGULAR over actual, 2019 / 20: +26.0 / +27.8 → +20.4 / +24.8 TWh.
+  - 2021 worsens (C3b 0.189 → 0.211 FAIL), because the measured 2021 RA-import level is below the static
+    block. Kept per rule 14.
+- **C4 midday imports:** no admissible lever. It is PNW's missing midday export (R/G) plus economic imports. A
+  per-corridor firm-shape repair was censused at zero LP: ±130 MW. Not armed.
+- **C3c 2024:** characterised, still ledgered.
+
+Record: `docs/handoffs/r-caiso-6/`.
