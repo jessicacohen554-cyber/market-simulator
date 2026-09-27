@@ -18000,6 +18000,22 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**SPP-93 (2026-09-27, WEST/EAST RE-PARTITION, ZERO LP — `docs/handoffs/FINDING-spp-93-west-east-2026-09-27.md`,
+PRECOMMIT `599f45a6`, cell `spp_zone_partition` = O).**
+- **Built, gated, default off.** The field is `spp_zone_partition`, default `north_south` = the keeper, byte-identical; the
+  solve surface has 0 values moved.
+  - West = SPP reserve zones {1, 2, 3, 5}; East = RZ 4.
+  - Load goes by the majority RESZONE of each sub-BA's LOAD SLs, which puts LES, NPPD, OPPD, SECI, SPS and WAUE West.
+  - Plants go by EIA-860 LMP node → registry RESZONE, else 1-NN.
+  - One 4,000 MW W↔E link REPLACES N↔S (rule 19).
+- **Admissible on measured prices.** East is dearer in all 7 years (+$2.8–16.0), and |E−W| exceeds |S−N| in 7 of 7 years.
+- **Rating.** 4,000 MW (ψ₁). ψ₂ reads ≈ 10,400, the same ~3× gap as N↔S.
+- **STOPPED at pre-solve C-3.** 14 East hot or low-wind afternoon hours have negative availability-net margin (−46 to −798 MW)
+  where the keeper's N/S margin was ≥ 0. The 4,000 MW link feeds an East holding ~60 % of the load.
+- **No shard was launched and nothing was re-cut.** G-DRIFT `d72e5f10` → `325674da` is ALL INERT. The shard check
+  `_spp93_shard_check.py` is ready if the owner authorizes a solve.
+- **Do not redo** the partition rule, the rating or the census. They are measured and committed in `docs/handoffs/spp93/`.
+
 **DO-NOT-REDO, added by SPP-92 (2026-09-27, WHY THE N–S SEAM BARELY SEPARATES, ZERO LP —
 `docs/handoffs/FINDING-spp-92-seam-2026-09-27.md`, probes `scripts/probes/_spp92_{seam_probe,load_lmp_fetch,bubble_spread,psi_repair}.py`).**
 - **Not the pipe width.** SPP-53's own ψ construction, repaired to the model's object (the load-weighted BUBBLE spread from all
