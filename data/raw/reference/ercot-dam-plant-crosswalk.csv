@@ -10,7 +10,7 @@ FERGCC_CC1,CC_REGULAR,561.0,FERGCC_CC1,QLCRA,4937,Thomas C Ferguson,South_Centra
 GUADG_CC2,CC_REGULAR,555.0,GUADG_CC2,QCALP,55153,Guadalupe Generating Station,South_Central,1088.2,0.51,token_prefix,0.764,1,1
 GUADG_CC1,CC_REGULAR,549.0,GUADG_CC1,QCALP,55153,Guadalupe Generating Station,South_Central,1088.2,0.505,token_prefix,0.762,1,1
 LOSTPI_CC1,CC_REGULAR,540.0,LOSTPI_CC1,QLCRA,55154,Lost Pines 1 Power Project,South_Central,609.0,0.887,token_prefix,0.895,1,1
-DUKE_CC1,CC_REGULAR,520.0,DUKE_CC1,QCALP,55545,Hidalgo Energy Center,Unknown,551.3,0.943,forensic_seed,,0,1
+DUKE_CC1,CC_REGULAR,520.0,DUKE_CC1,QCALP,55545,Hidalgo Energy Center,South,551.3,0.943,forensic_seed,,0,1
 BRAUNIG_CC1,CC_REGULAR,518.0,BRAUNIG_CC1,QCPSE,7512,Arthur Von Rosenberg,Unknown,575.0,0.901,forensic_seed,,0,1
 SANDHSYD_CC1,CC_REGULAR,300.0,SANDHSYD_CC1,QAEN,7900,Sand Hill,South_Central,696.4,0.431,token_prefix,0.736,1,1
 VICTORIA_CC1,CC_REGULAR,288.0,VICTORIA_CC1,QTENS4,3443,Victoria,South,376.9,0.764,token_prefix,0.852,1,1
@@ -71,7 +71,7 @@ NEDIN_CC1,CC_REGULAR,715.0,NEDIN_CC1,QCALP,3441,Nueces Bay,South,730.2,0.979,non
 CHE_CC1,CC_REGULAR,677.0,CHE_CC1,QCALP,7900,Sand Hill,South_Central,696.4,0.972,none,0.34,0,0
 B_DAVIS_CC1,CC_REGULAR,660.0,B_DAVIS_CC1,QEDF20,4939,Barney M Davis [CC],South,730.0,0.904,letter_subsequence,0.609,0,0
 BTE_CC1,CC_REGULAR,623.0,BTE_CC1,QCALP,55168,Bastrop Energy Center,South_Central,618.7,1.007,none,0.348,0,0
-BVE_CC1,CC_REGULAR,613.0,BVE_CC1,QCALP,55154,Lost Pines 1 Power Project,South_Central,609.0,1.007,none,0.348,0,0
+BVE_CC1,CC_REGULAR,613.0,BVE_CC1,QCALP,55357,Jack Fusco Energy Center,Houston,675.6,0.907,forensic_seed,,0,1
 OECCS_CC2,CC_REGULAR,585.0,OECCS_CC2,QLUMN,4937,Thomas C Ferguson,South_Central,574.6,1.018,letter_subsequence,0.636,0,0
 OECCS_CC1,CC_REGULAR,580.0,OECCS_CC1,QLUMN,4937,Thomas C Ferguson,South_Central,574.6,1.009,letter_subsequence,0.639,0,0
 CVC_CC1,CC_REGULAR,576.0,CVC_CC1,QEDE21,4937,Thomas C Ferguson,South_Central,574.6,1.002,none,0.349,0,0

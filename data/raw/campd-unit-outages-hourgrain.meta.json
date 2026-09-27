@@ -1,6 +1,6 @@
 {
   "artifact": "campd-unit-outages-hourgrain.csv",
-  "artifact_rows": 6700,
+  "artifact_rows": 6740,
   "derive_invocation": {
     "fullstop_override_cf": 0.02,
     "fullstop_override_days": 5,
@@ -48,5 +48,6 @@
     "2025": 655,
     "2026": 316
   },
-  "r_ercot5_carry_2018": "The 855 rows starting in 2018 are carried VERBATIM from campd-unit-outages.csv with empty outage_start_hour/outage_end_hour: the 2018 CAMPD unit vintage is gitignored (BLOAT-S2) so the deriver cannot re-detect them here, and the loader falls back to the day-granular reconstruction per row when the hours are null (outages.unit_outage_event_window). Whole-file base-column projection == the incumbent extract."
+  "r_ercot5_carry_2018": "The 855 rows starting in 2018 are carried VERBATIM from campd-unit-outages.csv with empty outage_start_hour/outage_end_hour: the 2018 CAMPD unit vintage is gitignored (BLOAT-S2) so the deriver cannot re-detect them here, and the loader falls back to the day-granular reconstruction per row when the hours are null (outages.unit_outage_event_window). Whole-file base-column projection == the incumbent extract.",
+  "r_ercot8_fusco_rows": "R-ERCOT-8 (2026-09-27): Jack Fusco (55357) rows inserted after custom-bin-assignments.csv gained the plant. Produced by this sidecar's own derive_invocation at HEAD with the fixed ERCOT branch (derive_campd_unit_outages.py NameError fix); that re-derive reproduces every non-55357 row value-for-value, so only the 55357 rows were inserted and the rest of the file is byte-identical to the incumbent."
 }
