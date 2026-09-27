@@ -17994,6 +17994,15 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-88 Card D (2026-09-27, EIA-930 vs EIA-923 GAS GAP, ZERO LP —
+`docs/handoffs/FINDING-spp-88-gas-930-923-gap-2026-09-27.md`, probe `scripts/probes/_spp88_gas_930_923_gap.py`).**
+- **2023–25:** the scorer's gas bench − EIA-930 gap (2.4–3.4 TWh) is entirely the fossil reconcile scale. Raw EIA-923 agrees
+  with 930 within 1.4 TWh. This is SPP-87 Q1, not a new object.
+- **2019–22:** raw EIA-923 carries 2.7–5.1 TWh/yr of SWPP gas that SPP's metered mix (930 = portal) lacks. SPP's "Gas Self"
+  rises +2.8 TWh in 2024, and total 930 − 923 steps +3.7 TWh at the same time: a **metering-coverage break**, which moves
+  the model's demand basis too. The plants are unidentified (needs SPP registration data; Stall/Elk have no CAMPD). It is
+  too small to explain CC_REGULAR 2021/22. Routed into the owner-ruled all-ISO benchmark-basis measurement.
+
 **DO-NOT-REDO, added by SPP-88 (2026-09-27, WIND HEADROOM PLACEMENT, ZERO LP —
 `docs/handoffs/FINDING-spp-88-wind-headroom-placement-2026-09-27.md`, probe `scripts/probes/_spp88_wind_headroom_placement.py`).**
 - **The keeper's wind excess is NOT phantom headroom.** 86–99 % of it sits in hours when the actual RT hub LMP was < $15
