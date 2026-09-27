@@ -700,6 +700,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # off no offer-curve band is touched), so it is dropped from the hash at its
     # default; an armed run enters the key as a distinct scenario.
     "coal_econ_marginal_hr_bound",
+    # soco-81 per-plant TWO-SIDED mode of the same measurement (default off;
+    # with it off no tranche is touched), so dropped from the hash at its
+    # default; an armed run enters the key as a distinct scenario.
+    "coal_econ_marginal_hr_two_sided",
     # ERCOT-113 per-zone wind SHAPE gate. Default-off and byte-identical for
     # every existing config (with the gate off the ERCOT wind path keeps its
     # single ISO-wide profile), so it is dropped from the hash at its default;
@@ -2457,6 +2461,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_partial_outage_shaped_derate": "False",
     "ercot_partial_outage_day_guard": "False",
     "coal_econ_marginal_hr_bound": "False",
+    "coal_econ_marginal_hr_two_sided": "False",
     "ercot_wind_zone_shape": "False",
     "gas_offer_net_revenue_margin": "False",
     "gas_offer_margin_anchor": "None",
@@ -12490,6 +12495,33 @@ class ScenarioConfig:
     # (results/calibration/FINDING-ercot111-coal-dispatch-economics-2026-07-24.md).
     # Default off (every existing keeper unchanged).
     coal_econ_marginal_hr_bound: bool = False
+
+    # PER-PLANT TWO-SIDED MODE of the same measurement (soco-81; owner ruling
+    # 2026-09-27 on docs/handoffs/r-soco/FINDING-soco-75-2026-09-27.md §6).
+    # The class floor above only RAISES a band; it is inert where a plant's
+    # measured incremental rate sits below the band (SOCO: every plant). With
+    # this on, a coal tranche set that carries a measured MUST-RUN floor
+    # (``_mustrun`` capacity > 0 — a unit parameter, never a plant list, rule 18)
+    # prices the tranches above that floor (``_committed``, the econ ramp) at
+    # the plant's OWN measured incremental heat rate: plant average HR x
+    # ``ratio_econ_low`` (committed + econ_low half) / ``ratio_econ_high``
+    # (econ_high half), from ``data/raw/_processed-legacy/
+    # coal_incremental_hr_ratio_<ISO>.csv`` (``scripts/data/
+    # derive_coal_incremental_hr_ratio.py``: the frozen
+    # derive_campd_marginal_hr construction over the same CEMS hours the
+    # average-HR artifact averages). Two-sided: it lowers an offer as readily as
+    # it raises one. The ratio REPLACES the band multiplier for those tranches
+    # (and so the class floor's role there — rule 19, never stacked); the
+    # ``_mustrun`` tranche (sunk fuel) and ``_peak`` (scarcity wall) are
+    # untouched, and a plant with no floor (a cycler) keeps the average, which
+    # is the only place its no-load heat lives (SOCO-63 §5).
+    #
+    # Year rule (rule 13): the solve year's own ratio where the average-HR
+    # artifact carries that plant-year, else the pooled ratio — exactly how the
+    # average it multiplies is chosen, so a forecast year reads pooled. Zero
+    # free parameters (rule 21); per-ISO artifact, a no-op for an ISO without
+    # one (rule 25; derived for SOCO only). Default off: byte-identical.
+    coal_econ_marginal_hr_two_sided: bool = False
 
     # ROUTE A "REPLACE" -- the COMMITTED band's MEASURED basis (pjm-h6, chartered
     # by docs/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md §4/§10a and
@@ -23618,6 +23650,10 @@ TIER_TAGS: dict[str, int] = {
     "coal_bit_passthrough_gas_slope": 3,
     "coal_econ_srmc_bound": 3,
     "coal_econ_marginal_hr_bound": 3,
+    # Structural gate (1), not a parameter: soco-81's per-plant two-sided mode
+    # reads every ratio from the frozen measured artifact
+    # coal_incremental_hr_ratio_<ISO>.csv (rule 21 [R-DOF]).
+    "coal_econ_marginal_hr_two_sided": 1,
     # Structural gate (1), not a parameter -- the miso_coal_night_floor
     # criterion exactly: every multiplier it installs is read from a frozen
     # measured artifact (<iso>_campd_marginal_hr_summary.csv avg_committed_p50),

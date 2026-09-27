@@ -209,6 +209,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     pjm_midcurve_belt: { cell: "." },
     coal_passthrough_sigmoids: { cell: "." },
     coal_econ_bound: { cell: "." },
+    coal_econ_two_sided: { cell: ".", ev: "soco-81 (2026-09-27) row seed: no coal fleet the mechanism could reach at this ISO's keeper, and no artifact derived (derive_coal_incremental_hr_ratio.ISO_SCOPE is SOCO only)." },
     coal_offer_net_revenue_margin: { cell: "." },
     cc_committed_offer_margin: { cell: "U" },
     coal_peak_offer_margin: { cell: "." },
