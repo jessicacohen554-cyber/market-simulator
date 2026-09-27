@@ -1,0 +1,402 @@
+{
+ "2021": {
+  "hours_matched": 8759,
+  "measured_mw": {
+   "neptune": 311.6,
+   "csc": 221.1,
+   "l1385": 83.9,
+   "net": 616.7
+  },
+  "cap_mw_mean": 752.3,
+  "gap_mw": {
+   "mean": 135.6,
+   "p10": 0.0,
+   "p50": 102.9,
+   "p90": 330.0,
+   "gap_twh": 1.188
+  },
+  "li_miss_usd": -12.76,
+  "li_model_mean": 49.51,
+  "li_act_mean": 62.27,
+  "corr_gap_miss": 0.037,
+  "corr_gap_miss_ex_tail": 0.014,
+  "line_outage": {
+   "neptune": {
+    "outage_hours": 1300,
+    "gap_mw_in_outage": 204.7,
+    "gap_twh_in_outage": 0.266,
+    "li_miss_contrib_usd": -1.91
+   },
+   "csc": {
+    "outage_hours": 1262,
+    "gap_mw_in_outage": 256.5,
+    "gap_twh_in_outage": 0.324,
+    "li_miss_contrib_usd": -0.67
+   },
+   "l1385": {
+    "outage_hours": 590,
+    "gap_mw_in_outage": 144.6,
+    "gap_twh_in_outage": 0.085,
+    "li_miss_contrib_usd": -0.01
+   }
+  },
+  "gap_twh_all_lines_up": 0.68,
+  "unused_posted_mw_when_up": {
+   "neptune": 294.2,
+   "csc": 71.6,
+   "l1385": 88.2
+  },
+  "posted_limit_cap": {
+   "hours_cut": 860,
+   "cut_twh": 0.16,
+   "cut_share_of_gap": 0.134,
+   "mean_cut_mw_in_cut_hours": 185.5,
+   "li_miss_in_cut_hours_usd": -8.49,
+   "li_miss_contrib_cut_hours_usd": -0.81
+  },
+  "li_miss_by_gap_quartile": {
+   "q1": {
+    "gap_mw": -11.0,
+    "miss_usd": -27.25,
+    "contrib_usd": -7.45
+   },
+   "q2": {
+    "gap_mw": 59.0,
+    "miss_usd": -6.29,
+    "contrib_usd": -1.61
+   },
+   "q3": {
+    "gap_mw": 163.0,
+    "miss_usd": -7.39,
+    "contrib_usd": -1.73
+   },
+   "q4": {
+    "gap_mw": 331.0,
+    "miss_usd": -8.36,
+    "contrib_usd": -1.98
+   }
+  },
+  "li_miss_contrib_tail_usd": -4.33,
+  "li_miss_contrib_nontail_usd": -8.44
+ },
+ "2022": {
+  "hours_matched": 8759,
+  "measured_mw": {
+   "neptune": 480.5,
+   "csc": 212.4,
+   "l1385": 55.1,
+   "net": 748.0
+  },
+  "cap_mw_mean": 906.3,
+  "gap_mw": {
+   "mean": 158.3,
+   "p10": 0.0,
+   "p50": 119.6,
+   "p90": 385.1,
+   "gap_twh": 1.387
+  },
+  "li_miss_usd": -15.26,
+  "li_model_mean": 92.66,
+  "li_act_mean": 107.92,
+  "corr_gap_miss": -0.106,
+  "corr_gap_miss_ex_tail": -0.096,
+  "line_outage": {
+   "neptune": {
+    "outage_hours": 233,
+    "gap_mw_in_outage": 579.8,
+    "gap_twh_in_outage": 0.135,
+    "li_miss_contrib_usd": -0.31
+   },
+   "csc": {
+    "outage_hours": 788,
+    "gap_mw_in_outage": 367.4,
+    "gap_twh_in_outage": 0.289,
+    "li_miss_contrib_usd": -0.55
+   },
+   "l1385": {
+    "outage_hours": 513,
+    "gap_mw_in_outage": 210.7,
+    "gap_twh_in_outage": 0.108,
+    "li_miss_contrib_usd": -0.44
+   }
+  },
+  "gap_twh_all_lines_up": 0.898,
+  "unused_posted_mw_when_up": {
+   "neptune": 166.4,
+   "csc": 96.8,
+   "l1385": 98.8
+  },
+  "posted_limit_cap": {
+   "hours_cut": 1468,
+   "cut_twh": 0.343,
+   "cut_share_of_gap": 0.247,
+   "mean_cut_mw_in_cut_hours": 233.4,
+   "li_miss_in_cut_hours_usd": -7.19,
+   "li_miss_contrib_cut_hours_usd": -1.12
+  },
+  "li_miss_by_gap_quartile": {
+   "q1": {
+    "gap_mw": -7.0,
+    "miss_usd": -7.53,
+    "contrib_usd": -1.9
+   },
+   "q2": {
+    "gap_mw": 73.0,
+    "miss_usd": -5.82,
+    "contrib_usd": -1.42
+   },
+   "q3": {
+    "gap_mw": 181.0,
+    "miss_usd": -20.21,
+    "contrib_usd": -5.28
+   },
+   "q4": {
+    "gap_mw": 387.0,
+    "miss_usd": -27.53,
+    "contrib_usd": -6.66
+   }
+  },
+  "li_miss_contrib_tail_usd": -12.68,
+  "li_miss_contrib_nontail_usd": -2.59
+ },
+ "2023": {
+  "hours_matched": 8759,
+  "measured_mw": {
+   "neptune": 630.8,
+   "csc": 155.3,
+   "l1385": 57.8,
+   "net": 843.8
+  },
+  "cap_mw_mean": 987.7,
+  "gap_mw": {
+   "mean": 143.9,
+   "p10": 0.0,
+   "p50": 105.2,
+   "p90": 349.6,
+   "gap_twh": 1.26
+  },
+  "li_miss_usd": -8.62,
+  "li_model_mean": 36.76,
+  "li_act_mean": 45.38,
+  "corr_gap_miss": -0.212,
+  "corr_gap_miss_ex_tail": -0.214,
+  "line_outage": {
+   "neptune": {
+    "outage_hours": 265,
+    "gap_mw_in_outage": 551.5,
+    "gap_twh_in_outage": 0.146,
+    "li_miss_contrib_usd": -0.75
+   },
+   "csc": {
+    "outage_hours": 2693,
+    "gap_mw_in_outage": 159.3,
+    "gap_twh_in_outage": 0.429,
+    "li_miss_contrib_usd": -3.87
+   },
+   "l1385": {
+    "outage_hours": 1119,
+    "gap_mw_in_outage": 120.4,
+    "gap_twh_in_outage": 0.135,
+    "li_miss_contrib_usd": -0.71
+   }
+  },
+  "gap_twh_all_lines_up": 0.636,
+  "unused_posted_mw_when_up": {
+   "neptune": 9.7,
+   "csc": 105.8,
+   "l1385": 112.4
+  },
+  "posted_limit_cap": {
+   "hours_cut": 1688,
+   "cut_twh": 0.268,
+   "cut_share_of_gap": 0.213,
+   "mean_cut_mw_in_cut_hours": 158.8,
+   "li_miss_in_cut_hours_usd": -14.01,
+   "li_miss_contrib_cut_hours_usd": -2.82
+  },
+  "li_miss_by_gap_quartile": {
+   "q1": {
+    "gap_mw": -9.0,
+    "miss_usd": -2.25,
+    "contrib_usd": -0.57
+   },
+   "q2": {
+    "gap_mw": 66.0,
+    "miss_usd": -0.87,
+    "contrib_usd": -0.21
+   },
+   "q3": {
+    "gap_mw": 156.0,
+    "miss_usd": -8.44,
+    "contrib_usd": -2.11
+   },
+   "q4": {
+    "gap_mw": 362.0,
+    "miss_usd": -22.1,
+    "contrib_usd": -5.74
+   }
+  },
+  "li_miss_contrib_tail_usd": -2.68,
+  "li_miss_contrib_nontail_usd": -5.94
+ },
+ "2024": {
+  "hours_matched": 8759,
+  "measured_mw": {
+   "neptune": 616.1,
+   "csc": 177.4,
+   "l1385": 8.6,
+   "net": 802.2
+  },
+  "cap_mw_mean": 971.6,
+  "gap_mw": {
+   "mean": 169.4,
+   "p10": -0.4,
+   "p50": 141.4,
+   "p90": 364.9,
+   "gap_twh": 1.484
+  },
+  "li_miss_usd": -6.08,
+  "li_model_mean": 40.22,
+  "li_act_mean": 46.3,
+  "corr_gap_miss": -0.065,
+  "corr_gap_miss_ex_tail": -0.041,
+  "line_outage": {
+   "neptune": {
+    "outage_hours": 423,
+    "gap_mw_in_outage": 666.8,
+    "gap_twh_in_outage": 0.282,
+    "li_miss_contrib_usd": -0.69
+   },
+   "csc": {
+    "outage_hours": 445,
+    "gap_mw_in_outage": 269.8,
+    "gap_twh_in_outage": 0.12,
+    "li_miss_contrib_usd": -0.53
+   },
+   "l1385": {
+    "outage_hours": 148,
+    "gap_mw_in_outage": 219.1,
+    "gap_twh_in_outage": 0.032,
+    "li_miss_contrib_usd": -0.06
+   }
+  },
+  "gap_twh_all_lines_up": 1.065,
+  "unused_posted_mw_when_up": {
+   "neptune": 12.0,
+   "csc": 143.1,
+   "l1385": 174.4
+  },
+  "posted_limit_cap": {
+   "hours_cut": 968,
+   "cut_twh": 0.27,
+   "cut_share_of_gap": 0.182,
+   "mean_cut_mw_in_cut_hours": 279.2,
+   "li_miss_in_cut_hours_usd": -8.74,
+   "li_miss_contrib_cut_hours_usd": -0.91
+  },
+  "li_miss_by_gap_quartile": {
+   "q1": {
+    "gap_mw": -12.0,
+    "miss_usd": -2.67,
+    "contrib_usd": -0.7
+   },
+   "q2": {
+    "gap_mw": 97.0,
+    "miss_usd": -2.86,
+    "contrib_usd": -0.72
+   },
+   "q3": {
+    "gap_mw": 191.0,
+    "miss_usd": -6.25,
+    "contrib_usd": -1.5
+   },
+   "q4": {
+    "gap_mw": 401.0,
+    "miss_usd": -12.88,
+    "contrib_usd": -3.16
+   }
+  },
+  "li_miss_contrib_tail_usd": -2.17,
+  "li_miss_contrib_nontail_usd": -3.92
+ },
+ "2025": {
+  "hours_matched": 8757,
+  "measured_mw": {
+   "neptune": 618.4,
+   "csc": 165.9,
+   "l1385": -7.7,
+   "net": 776.5
+  },
+  "cap_mw_mean": 928.5,
+  "gap_mw": {
+   "mean": 152.0,
+   "p10": 0.0,
+   "p50": 107.8,
+   "p90": 360.2,
+   "gap_twh": 1.331
+  },
+  "li_miss_usd": -18.07,
+  "li_model_mean": 63.12,
+  "li_act_mean": 81.19,
+  "corr_gap_miss": 0.003,
+  "corr_gap_miss_ex_tail": -0.009,
+  "line_outage": {
+   "neptune": {
+    "outage_hours": 263,
+    "gap_mw_in_outage": 649.7,
+    "gap_twh_in_outage": 0.171,
+    "li_miss_contrib_usd": -0.37
+   },
+   "csc": {
+    "outage_hours": 1040,
+    "gap_mw_in_outage": 244.1,
+    "gap_twh_in_outage": 0.254,
+    "li_miss_contrib_usd": -0.89
+   },
+   "l1385": {
+    "outage_hours": 764,
+    "gap_mw_in_outage": 85.2,
+    "gap_twh_in_outage": 0.065,
+    "li_miss_contrib_usd": -0.52
+   }
+  },
+  "gap_twh_all_lines_up": 0.926,
+  "unused_posted_mw_when_up": {
+   "neptune": 20.8,
+   "csc": 141.8,
+   "l1385": 133.3
+  },
+  "posted_limit_cap": {
+   "hours_cut": 1734,
+   "cut_twh": 0.308,
+   "cut_share_of_gap": 0.231,
+   "mean_cut_mw_in_cut_hours": 177.5,
+   "li_miss_in_cut_hours_usd": -6.68,
+   "li_miss_contrib_cut_hours_usd": -1.24
+  },
+  "li_miss_by_gap_quartile": {
+   "q1": {
+    "gap_mw": -9.0,
+    "miss_usd": -12.75,
+    "contrib_usd": -3.15
+   },
+   "q2": {
+    "gap_mw": 68.0,
+    "miss_usd": -15.2,
+    "contrib_usd": -4.02
+   },
+   "q3": {
+    "gap_mw": 168.0,
+    "miss_usd": -31.6,
+    "contrib_usd": -8.31
+   },
+   "q4": {
+    "gap_mw": 382.0,
+    "miss_usd": -11.49,
+    "contrib_usd": -2.59
+   }
+  },
+  "li_miss_contrib_tail_usd": -10.02,
+  "li_miss_contrib_nontail_usd": -8.04
+ }
+}
