@@ -72,6 +72,8 @@ fails on every basis** (SPP-87). It is a separate object from the low-price curt
 - **Owner ruling recorded this session (SPP-87 §6 Q1):** *measure the gross/net coal alignment in every ISO before any
   rubric change.* That is a zero-LP successor. No scorer change lands.
 
-## 5. Housekeeping owed to the owner (not attempted, rule 33(f)(5))
+## 5. Housekeeping (checked 2026-09-27)
 
-Leftover refs `claude/rspp-2019…2025`, `claude/spp85-2019…2025`, `claude/spp86-2019…2025`.
+- `git ls-remote --heads origin | grep -i spp` finds only this lane's branch. The leftover refs SPP-87 named
+  (`claude/rspp-2019…2025`, `claude/spp85-*`, `claude/spp86-*`) are **already gone**, so nothing is owed.
+- No open PR touches SPP. Nothing needed salvaging.
