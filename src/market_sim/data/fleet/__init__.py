@@ -121,7 +121,6 @@ from market_sim.data.outages import (
     ercot_noncampd_availability_caps,
     partial_outage_derate_factors,
     reliability_deployment_floor_for_year,
-    retiree_availability_caps,
     unit_outage_derate_factors,
     unit_outage_maxgen_derate_factors,
     unit_outage_short_derate_factors,

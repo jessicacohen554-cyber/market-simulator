@@ -13,8 +13,6 @@ from market_sim.config.plant_taxonomy import COAL_CLASSES
 from market_sim.data.outages import (
     QUALIFYING_PLANT_GROUPS,
     _hour_of_year,
-    _MONTH_OF_HOUR,
-    _plant_cems_envelope,
     outage_hour_mask,
     unit_outage_derate_factors,
 )
@@ -418,84 +416,6 @@ class NEISOFloorOutageExemptTest(unittest.TestCase):
             HOURS_PER_YEAR,
             "exemption: 2024 Merrimack availability restored every hour",
         )
-
-
-class RetireeCemsEnvelopeTest(unittest.TestCase):
-    """The within-window retiree measured-availability cap (CEMS envelope)."""
-
-    def _write_extract(self, d: Path, rows: list[dict]) -> None:
-        pd.DataFrame(rows).to_parquet(d / "ZZ_2023.parquet")
-
-    def test_monthly_peak_envelope_clips_to_one_and_zeros_idle_months(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            d = Path(tmp)
-            # Unit ran near nameplate (100 MW) in Jan, half in Feb, idle after.
-            rows = []
-            for h in range(24):
-                rows.append(
-                    {
-                        "facilityId": "999",
-                        "date": "2023-01-15",
-                        "hour": h,
-                        "grossLoad": 100.0,
-                    }
-                )
-                rows.append(
-                    {
-                        "facilityId": "999",
-                        "date": "2023-02-15",
-                        "hour": h,
-                        "grossLoad": 50.0,
-                    }
-                )
-            self._write_extract(d, rows)
-            import market_sim.data.outages as O
-
-            orig = O.CAMPD_UNIT_LEVEL_DIR
-            try:
-                O.CAMPD_UNIT_LEVEL_DIR = d
-                cap = O._plant_cems_envelope("ZZ", 2023, 999, 100.0, HOURS_PER_YEAR)
-            finally:
-                O.CAMPD_UNIT_LEVEL_DIR = orig
-            self.assertIsNotNone(cap)
-            jan = cap[_MONTH_OF_HOUR == 1]
-            feb = cap[_MONTH_OF_HOUR == 2]
-            mar = cap[_MONTH_OF_HOUR == 3]
-            self.assertAlmostEqual(float(jan.max()), 1.0, places=3)  # clipped
-            self.assertAlmostEqual(float(feb.max()), 0.5, places=3)
-            self.assertEqual(float(mar.max()), 0.0)  # idle -> zero
-
-    def test_absent_plant_with_extract_caps_to_zero(self):
-        # A within-window retiree absent from an extract that EXISTS did not run
-        # -> capped to zero (not skipped), overriding a collapsed planned date.
-        with tempfile.TemporaryDirectory() as tmp:
-            d = Path(tmp)
-            self._write_extract(
-                d,
-                [
-                    {
-                        "facilityId": "111",
-                        "date": "2023-01-01",
-                        "hour": 0,
-                        "grossLoad": 10.0,
-                    }
-                ],
-            )
-            import market_sim.data.outages as O
-
-            orig = O.CAMPD_UNIT_LEVEL_DIR
-            try:
-                O.CAMPD_UNIT_LEVEL_DIR = d
-                cap = O._plant_cems_envelope("ZZ", 2023, 999, 100.0, HOURS_PER_YEAR)
-            finally:
-                O.CAMPD_UNIT_LEVEL_DIR = orig
-            self.assertIsNotNone(cap)
-            self.assertTrue((cap == 0.0).all())
-
-    def test_missing_extract_returns_none(self):
-        # No state extract at all -> data gap, no cap (COD aging stands).
-        cap = _plant_cems_envelope("ZZ", 1999, 999, 100.0, HOURS_PER_YEAR)
-        self.assertIsNone(cap)
 
 
 class ErcotNuclearUnitAvailabilityTest(unittest.TestCase):

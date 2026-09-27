@@ -186,6 +186,20 @@ _RULE26_DELETED_UNCONDITIONAL: dict[str, tuple[str, object]] = {
     # still hard-errors as historical-record-only — the miso-50..53 strictness
     # is preserved, not relaxed. Successor mechanism: caiso_per_hub_intertie.
     "caiso_bidir_intertie": ("CAISO", (False, None)),
+    # PJM-NEXT-5 card 3(b) (2026-09-27, owner ruling "Delete") deleted
+    # `retiree_cems_cap` (a within-window retiree's availability capped to its
+    # monthly measured CEMS peak) under rule 26 [R-DELETE]; registered in
+    # scenarios._CACHE_KEY_RETIRED_FIELDS. Only PJM ever armed it. True is
+    # declared INERT because the zero-LP census MEASURED it moving zero fleet
+    # rows on the PJM keeper recipe in every year 2019-2025: under
+    # eia860_vintage_tracks_solve_year the in-run retiree set is empty
+    # 2019-2024, and in 2025 a flag-off rebuild moves 0 rows (the COD ramp
+    # already zeroes those retirees) —
+    # docs/FINDING-pjm-next-5-phase0-cards-1-2-3b-2026-09-27.md §3(b). A
+    # pre-F1 PJM bundle recording True WITHOUT the vintage flag did carry live
+    # caps, so its replay at HEAD is not byte-faithful; those bundles are
+    # historical records superseded by F1.
+    "retiree_cems_cap": ("PJM", (False, None, True)),
 }
 
 

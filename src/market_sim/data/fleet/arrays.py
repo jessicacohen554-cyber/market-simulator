@@ -60,7 +60,6 @@ from market_sim.data.outages import (
     partial_outage_unit_deficits,
     per_unit_partial_factor,
     reliability_deployment_floor_for_year,
-    retiree_availability_caps,
     shared_unit_hours,
     short_screened_coal_shares,
     unit_outage_active_units,
@@ -1709,37 +1708,6 @@ def _apply_outage_overlays(
                     _iso or "ERCOT",
                     config.weather_year,
                     applied_mg,
-                )
-        # Within-window retiree measured-availability cap (CAMPD unit-level):
-        # a unit winding down to retirement is held at its coal must-run floor
-        # by the cost-based LP while reality barely ran it (out-of-market
-        # retirement economics the merit order cannot see, and the per-plant
-        # binning collapses the per-unit COD before the ramp). Cap each retiree
-        # plant's availability to its measured monthly CEMS envelope. Applied
-        # before min_gen is built so the must-run floor (clamped to availability)
-        # scales down with it. Plant-keyed (reaches every binned tranche),
-        # scoped to the within-window retirees; the bulk fleet keeps its
-        # cost-based dispatch. Gated to the validated ISO (config flag).
-        if getattr(config, "retiree_cems_cap", False):
-            rcaps = retiree_availability_caps(
-                _iso or "ERCOT", config.weather_year, hours
-            )
-            if rcaps:
-                applied_r = 0
-                for g_idx, gen in enumerate(generators):
-                    cap = rcaps.get(int(gen.plant_code))
-                    if cap is not None:
-                        np.minimum(
-                            availability[g_idx, :], cap, out=availability[g_idx, :]
-                        )
-                        applied_r += 1
-                logger.info(
-                    "retiree CEMS availability cap (%s %d): %d tranche(s) across "
-                    "%d retiree plant(s) capped to measured envelope",
-                    _iso or "ERCOT",
-                    config.weather_year,
-                    applied_r,
-                    len(rcaps),
                 )
         # ERCOT CAMPD-blind per-plant availability (ercot_noncampd_plant_availability,
         # ERCOT-71): the ERCOT gas plants ABSENT from the TX CAMPD extract

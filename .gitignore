@@ -3686,6 +3686,10 @@ results/calibration/miso277_arm_*/
 
 # NWPP-NEXT-7 per-year take-floor shard legs (kept out of main; the _span composite is registered)
 results/calibration/nwppnext7tf_20[12][0-9]/
+
+# PJM-NEXT-5 per-year shard legs (rule 32(d)/31: local only; composites are what land). Leg provenance SHAs: f2 2019 f8583075 2020 3a14c8ea 2021 25b69d0f 2022 d196c6d8 2024 208095e1 2025 350c4052; sh 2020 29a54101 2021 837dd5f0 2022 5d9ba516 2023 62555718 2024 7164ae5a 2025 ecf70872
+results/calibration/pjmnext5_f2_20*/
+results/calibration/pjmnext5_sh_20*/
 # soco-76 shard legs: kept out of main (rule 32(d)); composite soco76_span is what registers.
 results/calibration/soco76_20[0-9][0-9]/
 

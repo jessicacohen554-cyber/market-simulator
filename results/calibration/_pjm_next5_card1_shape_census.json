@@ -1,0 +1,467 @@
+{
+ "what": "PJM-NEXT-5 card 1 zero-LP census \u2014 the shape-on-own-cost form vs the keeper. ZERO LP.",
+ "years": {
+  "2019": {
+   "cc_econ_keeper": 27.143691278728937,
+   "cc_econ_shape": 24.188829967217945,
+   "coal_econ_keeper": 25.053223523415078,
+   "non_cc_rows_byte_identical": true,
+   "by_rung": {
+    "econc00": [
+     23.02,
+     22.62
+    ],
+    "econc01": [
+     24.41,
+     22.75
+    ],
+    "econc02": [
+     25.64,
+     22.87
+    ],
+    "econc03": [
+     27.77,
+     23.73
+    ],
+    "econc04": [
+     30.6,
+     25.55
+    ],
+    "econc05": [
+     33.62,
+     28.86
+    ]
+   },
+   "by_zone": {
+    "PJM_AEP_Ohio": [
+     24.71,
+     22.28
+    ],
+    "PJM_ATSI": [
+     24.55,
+     21.11
+    ],
+    "PJM_Central_PA": [
+     24.42,
+     21.62
+    ],
+    "PJM_ComEd": [
+     24.57,
+     20.72
+    ],
+    "PJM_Dominion": [
+     30.81,
+     29.32
+    ],
+    "PJM_EMAAC": [
+     26.64,
+     22.91
+    ],
+    "PJM_SWMAAC": [
+     35.32,
+     32.28
+    ],
+    "PJM_West_APS": [
+     29.04,
+     26.89
+    ]
+   }
+  },
+  "2020": {
+   "cc_econ_keeper": 23.531940090302538,
+   "cc_econ_shape": 21.1844061299066,
+   "coal_econ_keeper": 23.343001972097532,
+   "non_cc_rows_byte_identical": true,
+   "by_rung": {
+    "econc00": [
+     19.47,
+     18.94
+    ],
+    "econc01": [
+     20.85,
+     19.24
+    ],
+    "econc02": [
+     22.19,
+     19.76
+    ],
+    "econc03": [
+     24.19,
+     20.7
+    ],
+    "econc04": [
+     26.8,
+     22.73
+    ],
+    "econc05": [
+     29.5,
+     27.21
+    ]
+   },
+   "by_zone": {
+    "PJM_AEP_Ohio": [
+     20.44,
+     18.33
+    ],
+    "PJM_ATSI": [
+     21.14,
+     18.45
+    ],
+    "PJM_Central_PA": [
+     20.65,
+     18.59
+    ],
+    "PJM_ComEd": [
+     21.08,
+     17.65
+    ],
+    "PJM_Dominion": [
+     25.17,
+     24.47
+    ],
+    "PJM_EMAAC": [
+     25.88,
+     22.82
+    ],
+    "PJM_SWMAAC": [
+     29.55,
+     27.06
+    ],
+    "PJM_West_APS": [
+     20.58,
+     17.97
+    ]
+   }
+  },
+  "2021": {
+   "cc_econ_keeper": 36.34496540454283,
+   "cc_econ_shape": 36.34067017696257,
+   "coal_econ_keeper": 32.78979433556928,
+   "non_cc_rows_byte_identical": true,
+   "by_rung": {
+    "econc00": [
+     31.75,
+     31.98
+    ],
+    "econc01": [
+     33.48,
+     33.38
+    ],
+    "econc02": [
+     34.92,
+     34.09
+    ],
+    "econc03": [
+     37.13,
+     35.65
+    ],
+    "econc04": [
+     40.14,
+     39.45
+    ],
+    "econc05": [
+     43.29,
+     46.72
+    ]
+   },
+   "by_zone": {
+    "PJM_AEP_Ohio": [
+     34.69,
+     36.17
+    ],
+    "PJM_ATSI": [
+     32.93,
+     32.15
+    ],
+    "PJM_Central_PA": [
+     31.43,
+     31.64
+    ],
+    "PJM_ComEd": [
+     32.75,
+     31.03
+    ],
+    "PJM_Dominion": [
+     39.22,
+     41.56
+    ],
+    "PJM_EMAAC": [
+     39.22,
+     38.27
+    ],
+    "PJM_SWMAAC": [
+     43.91,
+     43.09
+    ],
+    "PJM_West_APS": [
+     33.86,
+     32.04
+    ]
+   }
+  },
+  "2022": {
+   "cc_econ_keeper": 58.9263017320325,
+   "cc_econ_shape": 59.89504499235721,
+   "coal_econ_keeper": 61.69206479500373,
+   "non_cc_rows_byte_identical": true,
+   "by_rung": {
+    "econc00": [
+     52.23,
+     54.19
+    ],
+    "econc01": [
+     53.96,
+     53.92
+    ],
+    "econc02": [
+     56.16,
+     55.27
+    ],
+    "econc03": [
+     59.67,
+     57.91
+    ],
+    "econc04": [
+     64.66,
+     64.94
+    ],
+    "econc05": [
+     70.77,
+     78.09
+    ]
+   },
+   "by_zone": {
+    "PJM_AEP_Ohio": [
+     54.58,
+     55.88
+    ],
+    "PJM_ATSI": [
+     50.84,
+     50.92
+    ],
+    "PJM_Central_PA": [
+     51.45,
+     50.4
+    ],
+    "PJM_ComEd": [
+     51.94,
+     50.1
+    ],
+    "PJM_Dominion": [
+     63.67,
+     68.93
+    ],
+    "PJM_EMAAC": [
+     64.96,
+     66.32
+    ],
+    "PJM_SWMAAC": [
+     69.77,
+     71.17
+    ],
+    "PJM_West_APS": [
+     58.24,
+     58.25
+    ]
+   }
+  },
+  "2023": {
+   "cc_econ_keeper": 27.788625640828915,
+   "cc_econ_shape": 26.501511763754312,
+   "coal_econ_keeper": 38.58383260514949,
+   "non_cc_rows_byte_identical": true,
+   "by_rung": {
+    "econc00": [
+     23.48,
+     22.77
+    ],
+    "econc01": [
+     24.89,
+     23.02
+    ],
+    "econc02": [
+     26.27,
+     23.54
+    ],
+    "econc03": [
+     28.32,
+     25.33
+    ],
+    "econc04": [
+     31.26,
+     29.39
+    ],
+    "econc05": [
+     35.18,
+     38.38
+    ]
+   },
+   "by_zone": {
+    "PJM_AEP_Ohio": [
+     24.48,
+     23.96
+    ],
+    "PJM_ATSI": [
+     25.05,
+     23.21
+    ],
+    "PJM_Central_PA": [
+     22.97,
+     21.13
+    ],
+    "PJM_ComEd": [
+     24.43,
+     21.15
+    ],
+    "PJM_Dominion": [
+     38.1,
+     41.12
+    ],
+    "PJM_EMAAC": [
+     29.56,
+     27.21
+    ],
+    "PJM_SWMAAC": [
+     31.96,
+     29.22
+    ],
+    "PJM_West_APS": [
+     29.35,
+     28.46
+    ]
+   }
+  },
+  "2024": {
+   "cc_econ_keeper": 27.410123236968953,
+   "cc_econ_shape": 27.348546677984167,
+   "coal_econ_keeper": 36.68592390791743,
+   "non_cc_rows_byte_identical": true,
+   "by_rung": {
+    "econc00": [
+     22.94,
+     22.53
+    ],
+    "econc01": [
+     24.48,
+     23.32
+    ],
+    "econc02": [
+     25.73,
+     23.69
+    ],
+    "econc03": [
+     27.75,
+     25.77
+    ],
+    "econc04": [
+     30.73,
+     30.55
+    ],
+    "econc05": [
+     35.69,
+     42.56
+    ]
+   },
+   "by_zone": {
+    "PJM_AEP_Ohio": [
+     24.14,
+     24.46
+    ],
+    "PJM_ATSI": [
+     24.1,
+     22.96
+    ],
+    "PJM_Central_PA": [
+     22.85,
+     22.02
+    ],
+    "PJM_ComEd": [
+     22.76,
+     21.12
+    ],
+    "PJM_Dominion": [
+     28.72,
+     30.83
+    ],
+    "PJM_EMAAC": [
+     33.65,
+     33.84
+    ],
+    "PJM_SWMAAC": [
+     37.53,
+     38.18
+    ],
+    "PJM_West_APS": [
+     24.73,
+     22.89
+    ]
+   }
+  },
+  "2025": {
+   "cc_econ_keeper": 38.13814000064062,
+   "cc_econ_shape": 40.76970809026651,
+   "coal_econ_keeper": 39.41916587986471,
+   "non_cc_rows_byte_identical": true,
+   "by_rung": {
+    "econc00": [
+     32.57,
+     33.81
+    ],
+    "econc01": [
+     34.5,
+     34.83
+    ],
+    "econc02": [
+     35.92,
+     35.85
+    ],
+    "econc03": [
+     38.28,
+     38.63
+    ],
+    "econc04": [
+     42.04,
+     45.25
+    ],
+    "econc05": [
+     48.56,
+     61.4
+    ]
+   },
+   "by_zone": {
+    "PJM_AEP_Ohio": [
+     32.08,
+     34.91
+    ],
+    "PJM_ATSI": [
+     31.69,
+     32.36
+    ],
+    "PJM_Central_PA": [
+     32.53,
+     34.11
+    ],
+    "PJM_ComEd": [
+     32.02,
+     32.11
+    ],
+    "PJM_Dominion": [
+     35.98,
+     40.72
+    ],
+    "PJM_EMAAC": [
+     49.18,
+     53.38
+    ],
+    "PJM_SWMAAC": [
+     53.78,
+     57.2
+    ],
+    "PJM_West_APS": [
+     34.36,
+     34.64
+    ]
+   }
+  }
+ }
+}

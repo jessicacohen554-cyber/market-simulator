@@ -7,6 +7,18 @@ per-ISO calibration sessions never conflict (the per-ISO lane convention,
 2026-07-19; see `frontend/data/backcast/keepers/README.md`).
 
 
+## PJM-NEXT-5 — 2026-09-27 — PROMOTED `2026-09-27-pjm-next-5-shape`: 2023–2025 alone CALIBRATED
+
+Owner rulings (cards): shape form "Build + solve"; `retiree_cems_cap` "Delete"; F2 re-derive YES (earlier).
+Phase 0: CC econ bid $7–10.5/MWh above PJM's measured CC offers every year (level = delivered gas, data-blocked;
+shape = the residual-identified econ ladder). Card 1 `pjm_offer_midcurve_shape_segments=[CC_LIKE]` (own-cost × measured
+ladder ratio) solved 2019–2025: C1 CC_REGULAR 2024 −9.33 → pass; the training span scored alone is CALIBRATED; run-level
+NOT-YET on 2019–2022 rows only (CC overshoot 2019/2020/2022, coal 2019/2021/2022, C3a 2020, C3b 2022). Card 3(a) F2
+re-derive (`unit_outage_full_rederive`, + unit-scoped peaker-skip deriver fix) solved: NOT promoted (ST_GAS 2023/24
++8 TWh from listed peakers losing dead-period windows; CC 2024 −12.06) — owner decision. `retiree_cems_cap` deleted
+(measured inert every year). Prior keeper `2026-09-26-pjm-next-4-midcurve2019` pruned. Record:
+`docs/RESULT-pjm-next-5-2026-09-27.md`.
+
 ## PJM-NEXT card 1 — 2026-09-25
 
 **PROMOTED** `2026-09-25-pjm-r-pjm-2` → **`2026-09-25-pjm-next-c1`** (bundle `pjmnext_c1_span`, 2019–2025) on the owner's
