@@ -85,9 +85,10 @@ def main() -> int:
         )
         moved = by_plant[by_plant.abs() > 1e-6]
         summary[str(y)] = {
-            "units_identical": bool(
-                (k[["unit_id", "pmax"]].values == a[["unit_id", "pmax"]].values).all()
-            ),
+            "n_units": [len(k), len(a)],
+            "st_gas_pmax_mw": [
+                round(float(d[d.group == "ST_GAS"].pmax.sum()), 1) for d in (k, a)
+            ],
             "st_gas_floor_twh": [
                 round(float(d[d.group == "ST_GAS"].floor_twh.sum()), 4) for d in (k, a)
             ],
