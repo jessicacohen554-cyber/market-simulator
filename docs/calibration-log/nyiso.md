@@ -14963,3 +14963,21 @@ too.
   `NYISO_external` star node re-sells LI's unusable import to Zone A.
 - **Superseded and pruned:** `2026-09-26-nyisonext3-tranche-basis-span` and its 2021 run.
 - **Record:** `docs/RESULT-nyiso-next6-li-posted-limit-2026-09-27.md`.
+
+## NYISO-NEXT-7 — 2026-09-27 — external star node: phase 0, lever refused on identification
+
+- **Question:** does the single `NYISO_external` node move import between neighbours in a way the
+  real seams cannot, and is a per-neighbour routing lever admissible at zero DOF?
+- **Phase 0 (zero LP):** at-bound link flows were rebuilt from committed prices and the keeper's caps.
+  - 87–100 % of the NEXT-6 LI cut was re-routed through Upstate_West, the node's only interior link.
+  - The standing error is **eastern over-delivery**, not a leak into Zone A. Capital_Hudson imports at
+    its cap where NYISO's schedule is a net export, and NYC/LI sit above their schedules: 4.85–7.60
+    TWh/yr east of Central-East. Upstate_West is under-supplied.
+- **Verdict:** refused on identification.
+  - Tranches carry no neighbour identity.
+  - The frozen Q-Q formula is anti-monotone per neighbour: NE AC ρ −0.23 to −0.34 in all 5 years.
+  - A spread ladder needs neighbour prices the repo lacks.
+  - `seam_neighbour_anchored_ladder` U → G. No solve, no shard, keeper unchanged.
+- **Side defect:** the aggregate ladder derivation double-counts `SCH - HQ_IMPORT_EXPORT`. Routed to
+  the next lane.
+- **Record:** `docs/FINDING-nyiso-next7-star-node-2026-09-27.md`.
