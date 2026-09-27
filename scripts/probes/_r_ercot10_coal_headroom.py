@@ -84,6 +84,29 @@ def main() -> None:
         if y == a.years[0]:
             print("state keys", sorted(st.keys())[:60], flush=True)
             print("fa fields", sorted(vars(st["fleet_arrays"]).keys()) if hasattr(st["fleet_arrays"], "__dict__") else dir(st["fleet_arrays"]), flush=True)
+        fa = st["fleet_arrays"]
+        pc = np.asarray(fa.plant_code).astype(str)
+        av = np.asarray(fa.availability, float)
+        pm = np.asarray(fa.pmax, float)
+        mcb = np.asarray(st["mc_base"], float)
+        mg = np.asarray(fa.min_gen, float) if fa.min_gen is not None else None
+        uid = np.asarray(fa.unit_ids).astype(str)
+        dump = {}
+        for code in ("3470", "6179", "6146", "56611"):
+            ix = np.where(pc == code)[0]
+            dump[f"avail_{code}"] = (pm[ix, None] * av[ix]).sum(axis=0)
+            for i in ix:
+                tag = uid[i].rpartition("_")[2]
+                dump[f"cap_{code}_{tag}"] = pm[i] * av[i]
+                dump[f"mc_{code}_{tag}"] = mcb[i]
+                if mg is not None:
+                    dump[f"mg_{code}_{tag}"] = np.broadcast_to(mg[i], (8760,)).astype(float)
+        gm = np.array([str(g) for g in fa.plant_group])
+        for grpn in ("CC_REGULAR",):
+            m = gm == grpn
+            dump[f"ccw_{grpn}"] = (pm[m, None] * av[m])
+            dump[f"ccmc_{grpn}"] = mcb[m]
+        np.savez_compressed(Path(a.out).with_suffix(f".{y}.npz"), **dump)
         res[str(y)] = {"plants": census(st), "fuel": c3.summarize(st)["fuel_price_means"],
                        "coal_lines": sorted({ln.strip()[:300] for ln in lines if "coal" in ln.lower()})[:200]}
         print(y, "done", flush=True)
