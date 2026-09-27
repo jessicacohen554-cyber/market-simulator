@@ -50,6 +50,26 @@ MEASURED_NEGATIVE: dict[tuple[str, int, str], str] = {
     ): "Bridgeport Station (568) ST/SUB -19,082 MWh: an idle coal unit's station service",
     (
         "SOCO",
+        2019,
+        "OTHER",
+    ): "pumped storage PS/WAT -0.641 TWh net (pumping exceeds generation)",
+    (
+        "SOCO",
+        2020,
+        "OTHER",
+    ): "pumped storage PS/WAT -0.562 TWh net (pumping exceeds generation)",
+    (
+        "SOCO",
+        2021,
+        "OTHER",
+    ): "pumped storage PS/WAT -0.466 TWh net (pumping exceeds generation)",
+    (
+        "SOCO",
+        2022,
+        "OTHER",
+    ): "pumped storage PS/WAT -0.634 TWh net (pumping exceeds generation)",
+    (
+        "SOCO",
         2023,
         "OTHER",
     ): "pumped storage PS/WAT -0.647 TWh net (pumping exceeds generation)",
