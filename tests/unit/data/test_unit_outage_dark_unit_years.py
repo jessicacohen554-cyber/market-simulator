@@ -132,15 +132,15 @@ class TestDarkPredicate:
 def test_committed_soco_companion_is_perunit_plus_exactly_the_dark_rows():
     """The committed '-perunitdark-' SOCO extract adds only dark-unit-year rows."""
     raw = _ROOT / "data/raw"
-    import json
-
     base = pd.read_csv(raw / "campd-unit-outages-perunit-SOCO.csv")
     dark = pd.read_csv(raw / "campd-unit-outages-perunitdark-SOCO.csv")
     # F2 (FINDING-f2-campd-outage-coverage-2026-09-24 §2) extended the dark
-    # companion to 2019-2025; the '-perunit-' base still spans only the years its
-    # sidecar records, so the superset invariant is checked on the base's span.
-    meta = json.loads((raw / "campd-unit-outages-perunit-SOCO.meta.json").read_text())
-    in_span = dark["outage_start"].str[:4].astype(int).isin(meta["observed_years"])
+    # companion to 2019-2025; the '-perunit-' base still spans only 2023-2025 (its
+    # sidecar's observed_years), so the superset invariant is checked on the
+    # years the base itself carries.
+    base_years = set(base["outage_start"].str[:4].astype(int))
+    assert base_years == {2023, 2024, 2025}
+    in_span = dark["outage_start"].str[:4].astype(int).isin(base_years)
     added = (
         dark[in_span]
         .merge(base, how="left", indicator=True)
