@@ -117,4 +117,16 @@ Compose: `scripts/probes/_miso278_compose_span.py`.
 
 ## 8. Launch record
 
-(appended after the pin)
+Launched 2026-09-27 19:22–19:24 UTC, all pinned to `257d3c6f4d64cafbebb35090c71cd2c6d573c1dd`, tagged `miso-278` /
+`shard`, auto-PR off. Each pushes `claude/miso278-arm-<Y>` from out-dir `miso278_arm_<Y>` (full bundle incl.
+`dispatch/<Y>_P1.parquet`, gitignore negation + plain `git add`, rule 34(a)).
+
+| year | session |
+|---|---|
+| 2022 (first, slow leg) | `session_01XLRNGVkGrJvJ66rPGZuN4F` |
+| 2019 | `session_014wr6p9X9nuAMAPD445Nc7M` |
+| 2020 | `session_01PyTVosHV7GuvhbfT37uo89` |
+| 2021 | `session_01351K1zG5uiq28BkJhCByLb` |
+| 2023 | `session_01A9bPchTi9FwyTSEKwtF8tW` |
+| 2024 | `session_01WDxHGMEuy83wcB7p6NspgL` |
+| 2025 | `session_015CiNaTeecMxfWN5Y1EjTHF` |
