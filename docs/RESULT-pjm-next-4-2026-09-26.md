@@ -5,7 +5,7 @@ year at `7394a279`, composed at zero LP.
 
 - **Control:** the keeper `2026-09-26-pjm-next-3-unitfuel`'s committed bundle (rule 29(b) form 4, G-DRIFT all INERT).
 - **Pre-registration:** `docs/PRECOMMIT-pjm-next-4-card1-midcurve-2019-2026-09-26.md`.
-- **Status:** registered `--no-prune`. **NOT promoted**; the promotion question is open.
+- **Status:** **PROMOTED 2026-09-27** on the owner's ruling ("If structural integrity improves but gates regress that may still be a keeper"). The outgoing keeper `2026-09-26-pjm-next-3-unitfuel` was pruned (rule 35); `audit_keepers` and `check_promotion_completeness` pass.
 
 ## 1. What changed
 

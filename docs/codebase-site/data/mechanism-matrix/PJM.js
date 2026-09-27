@@ -22,8 +22,8 @@ window.MECH_MATRIX_SHARDS = window.MECH_MATRIX_SHARDS || {};
 window.MECH_MATRIX_SHARDS.PJM = {
   iso: "PJM",
   updated: "2026-09-26",
-  keeper: "2026-09-26-pjm-next-3-unitfuel",
-  gates: "ONE FAILING CRITERION — PJM reads NOT-YET across 2023-2025 on C1 alone: CC_REGULAR 2024 -9.33 TWh (band 8); PROMOTED 2026-09-26 (PJM-NEXT-3, unit_outage_unit_fuel_routing; prior keeper 2026-09-25-pjm-next-2-joint -10.07); seven of eight criteria PASS in the training span. PROMOTED 2026-09-26 (lane PJM-NEXT-2, owner ruling \"If structural integrity improves but gates regress that may still be a keeper\") from 2026-09-25-pjm-next-c1: + unit_outage_membership_repair + pjm_zonal_gas_basis_skip_923_priced + nuclear_dormancy_defers_to_vintage_exit. Out of the training span (reported, not determining): C3a 2019 +10.7% FAIL (was PASS), C3b 2020 0.205 FAIL (was PASS), COAL_BIT 2019-22 +12.9/+10.5/+20.7/+8.1 TWh. docs/RESULT-pjm-next-2-2026-09-25.md.",
+  keeper: "2026-09-26-pjm-next-4-midcurve2019",
+  gates: "ONE FAILING CRITERION — PJM reads NOT-YET across 2023-2025 on C1 alone: CC_REGULAR 2024 -9.33 TWh (band 8); PROMOTED 2026-09-27 (PJM-NEXT-4 card 1, measured 2019 mid-curve table; 2020-2025 byte-identical, 2019 COAL_BIT +25.84 / CC_REGULAR -8.54 FAIL / C3a +7.6 % PASS; prior keeper 2026-09-26-pjm-next-3-unitfuel). PROMOTED 2026-09-26 (PJM-NEXT-3, unit_outage_unit_fuel_routing; prior keeper 2026-09-25-pjm-next-2-joint -10.07); seven of eight criteria PASS in the training span. PROMOTED 2026-09-26 (lane PJM-NEXT-2, owner ruling \"If structural integrity improves but gates regress that may still be a keeper\") from 2026-09-25-pjm-next-c1: + unit_outage_membership_repair + pjm_zonal_gas_basis_skip_923_priced + nuclear_dormancy_defers_to_vintage_exit. Out of the training span (reported, not determining): C3a 2019 +10.7% FAIL (was PASS), C3b 2020 0.205 FAIL (was PASS), COAL_BIT 2019-22 +12.9/+10.5/+20.7/+8.1 TWh. docs/RESULT-pjm-next-2-2026-09-25.md.",
   cells: {
     cc_steam_part_capacity: { cell: "." },
     cc_steam_part_reclass: { cell: "." },
