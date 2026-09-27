@@ -134,3 +134,17 @@ regression reported at full magnitude.
 - Each pushes its full bundle to `claude/nwppnext7tf-<Y>` (rule 34(a): a `.gitignore` negation and a plain
   `git add`).
 - The parent composes (2023 leg first), registers, and lands the bundle on `main` if promoted (rule 33(f)).
+
+## 8. Launch record (appended after the pin; nothing above it changed)
+
+- **Pin** `821069f3cd65ad6c287ac3aac0280138a6b3eb87`. All 7 shards were launched 2026-09-27 18:53–18:54 UTC.
+
+| Year | Session |
+|---|---|
+| 2019 | `session_015UzeFpYZtuCVYVeC22uJk5` |
+| 2020 | `session_01SSnQpzbWfwQchFry7oBJ3s` |
+| 2021 | `session_01SmeXb9Mf8HkwiwKb8KoVxk` |
+| 2022 | `session_017TwCLeR5ViTddQ1isByCQ8` |
+| 2023 | `session_01CUBhQjL6iuhtwUymGm1BuY` |
+| 2024 | `session_01ErmbW8Abxx8ZesFSgkhbeb` |
+| 2025 | `session_01H4onUSo8bk9UkFgqmzBXNe` |
