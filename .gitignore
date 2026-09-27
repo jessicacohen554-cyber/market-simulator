@@ -3699,3 +3699,6 @@ results/calibration/rcaiso6_O2_20*/**
 !results/calibration/rcaiso6_tp_2019_2021/
 # miso-278 per-year shard legs: parent-local only (rule 32(d)); provenance SHAs in docs/RESULT-miso278-unit-fuel-split-2026-09-27.md
 results/calibration/miso278_arm_*/
+
+# NWPP-NEXT-7 soft-floor per-year shard legs (kept out of main; the _span composite is registered)
+results/calibration/nwppnext7sf_20[12][0-9]/

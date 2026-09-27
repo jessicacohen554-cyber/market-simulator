@@ -12353,7 +12353,12 @@ class ScenarioConfig:
     # orchestrator raises if either is armed with it. Requires
     # coal_fuel_inventory_plant_grain. Rule 13: every input predates Y; forward,
     # the take is the then-latest contract volume renewed until the plant's
-    # step-0/1b exit. See data/coal_fuel_inventory.py:build_coal_take_floor.
+    # step-0/1b exit. SOFT since owner ruling 2026-09-27 (after four hard-floor
+    # year solves went infeasible): each yard row carries a shortfall column
+    # priced at the yard's own model coal fuel price ($/MMBtu), so an unmet take
+    # is paid (take-or-pay), never infeasible, and the dual is capped at that
+    # price. See data/coal_fuel_inventory.py:build_coal_take_floor and
+    # coal_take_shortfall_price.
     coal_fuel_inventory_take_floor: bool = False
 
     # Commitment-floor WINDOW ranked on NET load instead of system load

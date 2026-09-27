@@ -106,6 +106,15 @@ class VariableLayout:
     # AFTER the discharge-tranche block so every existing offset is unchanged;
     # 0 (the default) leaves the layout byte-identical.
     n_cascade: int = 0
+    # Coal TAKE-floor shortfall columns (NWPP-NEXT-7, config
+    # coal_fuel_inventory_take_floor). One non-negative variable per floored
+    # coal yard per hour, each carrying +1 (MMBtu) in its yard's annual row and
+    # a cost of that yard's own delivered coal price ($/MMBtu): contracted coal
+    # left unburned is paid for anyway (take-or-pay), so no yard row is ever
+    # infeasible and each row's dual is capped at the contract price — the
+    # RPS ACP escape pattern. Appended AFTER the cascade block so every existing
+    # offset is unchanged; 0 (the default) leaves the layout byte-identical.
+    n_take_slack: int = 0
 
     @property
     def vars_per_hour(self) -> int:
@@ -122,6 +131,7 @@ class VariableLayout:
             + self.n_rec_acp
             + self.n_dis_tranche
             + self.n_cascade
+            + self.n_take_slack
         )
 
     @property
@@ -224,6 +234,11 @@ class VariableLayout:
     def _cas_v_off(self) -> int:
         """Per-hour offset of the cascade pond-volume block (V[c,t]; NWPP-36)."""
         return self._cas_s_off + self.n_cascade // 2
+
+    @property
+    def _take_slack_off(self) -> int:
+        """Per-hour offset of the coal take-floor shortfall block (NWPP-NEXT-7)."""
+        return self._cas_s_off + self.n_cascade
 
     def cas_s_col(self, c: int, t: int) -> int:
         """Return the spill column of coupled cascade plant ``c`` in hour ``t``."""

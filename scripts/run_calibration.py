@@ -6303,6 +6303,7 @@ def run_year(
     coal_plant_gen_hour_coeff = UNSET
     coal_plant_group_index = UNSET
     coal_plant_floor = UNSET
+    coal_plant_floor_price = UNSET
     _coal_floor_armed = resolve_coal_take_floor(config, iso, _coal_plant_armed)
     # Armable WITHOUT the pooled monthly rows since neiso-117 (the yard rows
     # alone are the annual identity's plant partition; resolve_coal_budget_arms
@@ -6375,6 +6376,25 @@ def run_year(
                     coal_plant_gen_hour_coeff,
                     coal_plant_budget,
                     _cp_prov.yard_keys,
+                )
+                from market_sim.data.coal_fuel_inventory import (
+                    coal_take_shortfall_price,
+                )
+
+                coal_plant_floor_price = coal_take_shortfall_price(
+                    fuel_prices,
+                    fleet_arrays,
+                    coal_plant_gen_idx,
+                    coal_plant_group_index,
+                    coal_plant_gen_hour_coeff,
+                    coal_plant_budget.shape[0],
+                )
+                logger.info(
+                    "coal take floor (%s %d): soft, shortfall priced per yard at "
+                    "%s $/MMBtu",
+                    iso,
+                    year,
+                    [round(float(v), 3) for v in coal_plant_floor_price],
                 )
                 logger.info(
                     "coal take floor (%s %d): %d yard rows floored, %.1f TWh-equiv "
@@ -6505,6 +6525,7 @@ def run_year(
         coal_plant_gen_hour_coeff=coal_plant_gen_hour_coeff,
         coal_plant_group_index=coal_plant_group_index,
         coal_plant_floor=coal_plant_floor,
+        coal_plant_floor_price=coal_plant_floor_price,
         T=config.hours,
     )
     dispatch_kwargs = build_base_dispatch_kwargs(
