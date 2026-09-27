@@ -3677,3 +3677,5 @@ results/calibration/nyisonext3_202[2-5]/
 #   2025 9b2f10f775b3d6955a87bc2e8a52266d0e8c9215 (claude/pjmnext4-c1-2025)
 #   2021 a53454dd6fe8cfa4ca9899595e03399617bf7cd9 (claude/pjmnext4-c1-2021b; first 2021 shard stalled, archived, pushed nothing)
 results/calibration/pjmnext4_c1_20*/
+# soco-73 zero-LP probe outputs (G-DRIFT json/log, coal-retargeted campaign derive; FINDING-soco-73 carries every number)
+results/calibration/_soco73/
