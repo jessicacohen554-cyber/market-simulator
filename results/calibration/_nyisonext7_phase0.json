@@ -1,0 +1,487 @@
+{
+ "2021": {
+  "measured": {
+   "link_composition_mean_mw": {
+    "Capital_Hudson": {
+     "NE": -589.6,
+     "PJM_AC(PAR)": 294.5,
+     "total": -295.1
+    },
+    "Long_Island": {
+     "NE": 305.0,
+     "PJM": 311.7,
+     "PJM_AC(PAR)": 0.0,
+     "total": 616.7
+    },
+    "NYC": {
+     "PJM": 577.2,
+     "PJM_AC(PAR)": 43.9,
+     "total": 621.1
+    },
+    "Upstate_West": {
+     "HQ": 1228.2,
+     "IESO": 648.6,
+     "PJM_AC(PAR)": 288.3,
+     "total": 2165.1
+    }
+   },
+   "spearman_vs_ny_da": {
+    "HQ": 0.175,
+    "IESO": 0.088,
+    "PJM_AC": 0.494,
+    "PJM_DC": 0.476,
+    "NE_AC": -0.249,
+    "NE_DC": -0.054,
+    "AGGREGATE": 0.365
+   },
+   "mean_mw": {
+    "HQ": 1228.1,
+    "IESO": 648.5,
+    "PJM_AC": 626.7,
+    "PJM_DC": 888.8,
+    "NE_AC": -589.6,
+    "NE_DC": 305.0,
+    "AGGREGATE": 3107.6
+   },
+   "hq_dup_mean_mw": 871.4,
+   "hq_dup_share_of_derivation_net": 0.219
+  },
+  "model": {
+   "import_twh_ctrl": 27.422,
+   "import_twh_arm": 27.422,
+   "import_delta_twh": 0.0,
+   "li_cut_twh": 0.16,
+   "rerouted_twh": 0.16,
+   "rerouted_share": 1.0,
+   "link_at_bound_share_arm": {
+    "Upstate_West": 0.021,
+    "Capital_Hudson": 1.0,
+    "NYC": 1.0,
+    "Long_Island": 1.0
+   },
+   "uw_price_delta_lw": -0.241,
+   "uw_hours_price_fell": 3544,
+   "ext_price_delta_mean": -0.229
+  },
+  "reconstruct": {
+   "Upstate_West": {
+    "at_bound_share": 0.021,
+    "model_mw_at_bound": 2421.7,
+    "measured_mw_same_hours": 2203.1,
+    "excess_twh": 0.04
+   },
+   "Capital_Hudson": {
+    "at_bound_share": 1.0,
+    "model_mw_at_bound": 235.7,
+    "measured_mw_same_hours": -295.1,
+    "excess_twh": 4.649
+   },
+   "NYC": {
+    "at_bound_share": 1.0,
+    "model_mw_at_bound": 840.2,
+    "measured_mw_same_hours": 621.1,
+    "excess_twh": 1.919
+   },
+   "Long_Island": {
+    "at_bound_share": 1.0,
+    "model_mw_at_bound": 734.1,
+    "measured_mw_same_hours": 616.7,
+    "excess_twh": 1.028
+   },
+   "upstate_west_implied_ub": {
+    "hours_all_three_at_bound": 8760,
+    "model_ub_mw": 1320.5,
+    "measured_mw": 2165.1,
+    "excess_ub_twh": -7.397
+   }
+  }
+ },
+ "2022": {
+  "measured": {
+   "link_composition_mean_mw": {
+    "Capital_Hudson": {
+     "NE": -400.3,
+     "PJM_AC(PAR)": 223.5,
+     "total": -176.8
+    },
+    "Long_Island": {
+     "NE": 267.5,
+     "PJM": 480.5,
+     "PJM_AC(PAR)": 0.0,
+     "total": 748.0
+    },
+    "NYC": {
+     "PJM": 650.4,
+     "PJM_AC(PAR)": 33.5,
+     "total": 683.9
+    },
+    "Upstate_West": {
+     "HQ": 1082.3,
+     "IESO": 521.5,
+     "PJM_AC(PAR)": 221.5,
+     "total": 1825.3
+    }
+   },
+   "spearman_vs_ny_da": {
+    "HQ": 0.421,
+    "IESO": 0.295,
+    "PJM_AC": 0.29,
+    "PJM_DC": 0.258,
+    "NE_AC": -0.31,
+    "NE_DC": -0.099,
+    "AGGREGATE": 0.384
+   },
+   "mean_mw": {
+    "HQ": 1082.3,
+    "IESO": 521.4,
+    "PJM_AC": 478.4,
+    "PJM_DC": 1130.8,
+    "NE_AC": -400.3,
+    "NE_DC": 267.4,
+    "AGGREGATE": 3080.1
+   },
+   "hq_dup_mean_mw": 705.9,
+   "hq_dup_share_of_derivation_net": 0.186
+  },
+  "model": {
+   "import_twh_ctrl": 27.849,
+   "import_twh_arm": 27.849,
+   "import_delta_twh": 0.0,
+   "li_cut_twh": 0.343,
+   "rerouted_twh": 0.343,
+   "rerouted_share": 1.0,
+   "link_at_bound_share_arm": {
+    "Upstate_West": 0.137,
+    "Capital_Hudson": 1.0,
+    "NYC": 1.0,
+    "Long_Island": 1.0
+   },
+   "uw_price_delta_lw": -2.021,
+   "uw_hours_price_fell": 2986,
+   "ext_price_delta_mean": -3.443
+  },
+  "reconstruct": {
+   "Upstate_West": {
+    "at_bound_share": 0.137,
+    "model_mw_at_bound": 866.9,
+    "measured_mw_same_hours": 1228.0,
+    "excess_twh": -0.435
+   },
+   "Capital_Hudson": {
+    "at_bound_share": 1.0,
+    "model_mw_at_bound": 280.1,
+    "measured_mw_same_hours": -176.8,
+    "excess_twh": 4.002
+   },
+   "NYC": {
+    "at_bound_share": 1.0,
+    "model_mw_at_bound": 886.1,
+    "measured_mw_same_hours": 683.9,
+    "excess_twh": 1.771
+   },
+   "Long_Island": {
+    "at_bound_share": 1.0,
+    "model_mw_at_bound": 867.2,
+    "measured_mw_same_hours": 748.0,
+    "excess_twh": 1.044
+   },
+   "upstate_west_implied_ub": {
+    "hours_all_three_at_bound": 8760,
+    "model_ub_mw": 1145.8,
+    "measured_mw": 1825.3,
+    "excess_ub_twh": -5.951
+   }
+  }
+ },
+ "2023": {
+  "measured": {
+   "link_composition_mean_mw": {
+    "Capital_Hudson": {
+     "NE": -510.6,
+     "PJM_AC(PAR)": 358.8,
+     "total": -151.8
+    },
+    "Long_Island": {
+     "NE": 213.0,
+     "PJM": 630.8,
+     "PJM_AC(PAR)": 0.1,
+     "total": 843.9
+    },
+    "NYC": {
+     "PJM": 671.4,
+     "PJM_AC(PAR)": 54.9,
+     "total": 726.3
+    },
+    "Upstate_West": {
+     "HQ": 303.0,
+     "IESO": 452.9,
+     "PJM_AC(PAR)": 372.0,
+     "total": 1127.9
+    }
+   },
+   "spearman_vs_ny_da": {
+    "HQ": 0.234,
+    "IESO": 0.077,
+    "PJM_AC": 0.325,
+    "PJM_DC": 0.327,
+    "NE_AC": -0.342,
+    "NE_DC": 0.021,
+    "AGGREGATE": 0.303
+   },
+   "mean_mw": {
+    "HQ": 303.1,
+    "IESO": 452.8,
+    "PJM_AC": 785.7,
+    "PJM_DC": 1302.1,
+    "NE_AC": -510.6,
+    "NE_DC": 213.0,
+    "AGGREGATE": 2546.1
+   },
+   "hq_dup_mean_mw": 147.6,
+   "hq_dup_share_of_derivation_net": 0.055
+  },
+  "model": {
+   "import_twh_ctrl": 23.317,
+   "import_twh_arm": 23.316,
+   "import_delta_twh": -0.0007,
+   "li_cut_twh": 0.268,
+   "rerouted_twh": 0.2673,
+   "rerouted_share": 0.997,
+   "link_at_bound_share_arm": {
+    "Upstate_West": 0.448,
+    "Capital_Hudson": 0.797,
+    "NYC": 0.989,
+    "Long_Island": 1.0
+   },
+   "uw_price_delta_lw": -0.09,
+   "uw_hours_price_fell": 3395,
+   "ext_price_delta_mean": -0.332
+  },
+  "reconstruct": {
+   "Upstate_West": {
+    "at_bound_share": 0.448,
+    "model_mw_at_bound": 82.1,
+    "measured_mw_same_hours": 781.2,
+    "excess_twh": -2.742
+   },
+   "Capital_Hudson": {
+    "at_bound_share": 0.797,
+    "model_mw_at_bound": 362.3,
+    "measured_mw_same_hours": -182.3,
+    "excess_twh": 3.803
+   },
+   "NYC": {
+    "at_bound_share": 0.989,
+    "model_mw_at_bound": 979.3,
+    "measured_mw_same_hours": 726.3,
+    "excess_twh": 2.192
+   },
+   "Long_Island": {
+    "at_bound_share": 1.0,
+    "model_mw_at_bound": 957.1,
+    "measured_mw_same_hours": 843.9,
+    "excess_twh": 0.992
+   },
+   "upstate_west_implied_ub": {
+    "hours_all_three_at_bound": 6907,
+    "model_ub_mw": 527.1,
+    "measured_mw": 1246.5,
+    "excess_ub_twh": -4.968
+   }
+  }
+ },
+ "2024": {
+  "measured": {
+   "link_composition_mean_mw": {
+    "Capital_Hudson": {
+     "NE": -668.0,
+     "PJM_AC(PAR)": 466.6,
+     "total": -201.4
+    },
+    "Long_Island": {
+     "NE": 185.7,
+     "PJM": 616.3,
+     "PJM_AC(PAR)": -0.0,
+     "total": 802.0
+    },
+    "NYC": {
+     "PJM": 671.4,
+     "PJM_AC(PAR)": 67.5,
+     "total": 738.9
+    },
+    "Upstate_West": {
+     "HQ": -155.8,
+     "IESO": 713.5,
+     "PJM_AC(PAR)": 461.1,
+     "total": 1018.8
+    }
+   },
+   "spearman_vs_ny_da": {
+    "HQ": 0.325,
+    "IESO": 0.181,
+    "PJM_AC": 0.203,
+    "PJM_DC": -0.033,
+    "NE_AC": -0.229,
+    "NE_DC": -0.107,
+    "AGGREGATE": 0.247
+   },
+   "mean_mw": {
+    "HQ": -153.3,
+    "IESO": 712.3,
+    "PJM_AC": 993.7,
+    "PJM_DC": 1287.6,
+    "NE_AC": -666.4,
+    "NE_DC": 186.1,
+    "AGGREGATE": 2360.0
+   },
+   "hq_dup_mean_mw": -213.9,
+   "hq_dup_share_of_derivation_net": -0.1
+  },
+  "model": {
+   "import_twh_ctrl": 20.559,
+   "import_twh_arm": 20.559,
+   "import_delta_twh": 0.0,
+   "li_cut_twh": 0.269,
+   "rerouted_twh": 0.269,
+   "rerouted_share": 1.0,
+   "link_at_bound_share_arm": {
+    "Upstate_West": 0.523,
+    "Capital_Hudson": 0.646,
+    "NYC": 0.982,
+    "Long_Island": 0.998
+   },
+   "uw_price_delta_lw": -0.028,
+   "uw_hours_price_fell": 2223,
+   "ext_price_delta_mean": -0.069
+  },
+  "reconstruct": {
+   "Upstate_West": {
+    "at_bound_share": 0.523,
+    "model_mw_at_bound": -43.5,
+    "measured_mw_same_hours": 683.5,
+    "excess_twh": -3.333
+   },
+   "Capital_Hudson": {
+    "at_bound_share": 0.646,
+    "model_mw_at_bound": 276.6,
+    "measured_mw_same_hours": -216.1,
+    "excess_twh": 2.789
+   },
+   "NYC": {
+    "at_bound_share": 0.982,
+    "model_mw_at_bound": 906.8,
+    "measured_mw_same_hours": 739.4,
+    "excess_twh": 1.44
+   },
+   "Long_Island": {
+    "at_bound_share": 0.998,
+    "model_mw_at_bound": 940.8,
+    "measured_mw_same_hours": 802.0,
+    "excess_twh": 1.213
+   },
+   "upstate_west_implied_ub": {
+    "hours_all_three_at_bound": 5502,
+    "model_ub_mw": 586.9,
+    "measured_mw": 1267.5,
+    "excess_ub_twh": -3.744
+   }
+  }
+ },
+ "2025": {
+  "measured": {
+   "link_composition_mean_mw": {
+    "Capital_Hudson": {
+     "NE": -657.0,
+     "PJM_AC(PAR)": 526.7,
+     "total": -130.3
+    },
+    "Long_Island": {
+     "NE": 158.2,
+     "PJM": 618.4,
+     "PJM_AC(PAR)": 0.1,
+     "total": 776.7
+    },
+    "NYC": {
+     "PJM": 731.5,
+     "PJM_AC(PAR)": 77.7,
+     "total": 809.2
+    },
+    "Upstate_West": {
+     "HQ": -545.7,
+     "IESO": 759.2,
+     "PJM_AC(PAR)": 527.8,
+     "total": 741.3
+    }
+   },
+   "spearman_vs_ny_da": {
+    "HQ": 0.232,
+    "IESO": 0.165,
+    "PJM_AC": 0.352,
+    "PJM_DC": 0.13,
+    "NE_AC": -0.321,
+    "NE_DC": -0.325,
+    "AGGREGATE": 0.283
+   },
+   "mean_mw": {
+    "HQ": -545.5,
+    "IESO": 759.2,
+    "PJM_AC": 1132.3,
+    "PJM_DC": 1349.7,
+    "NE_AC": -657.0,
+    "NE_DC": 158.2,
+    "AGGREGATE": 2196.8
+   },
+   "hq_dup_mean_mw": -525.8,
+   "hq_dup_share_of_derivation_net": -0.315
+  },
+  "model": {
+   "import_twh_ctrl": 19.307,
+   "import_twh_arm": 19.267,
+   "import_delta_twh": -0.0393,
+   "li_cut_twh": 0.308,
+   "rerouted_twh": 0.2687,
+   "rerouted_share": 0.872,
+   "link_at_bound_share_arm": {
+    "Upstate_West": 0.624,
+    "Capital_Hudson": 0.628,
+    "NYC": 0.929,
+    "Long_Island": 0.956
+   },
+   "uw_price_delta_lw": -0.066,
+   "uw_hours_price_fell": 2554,
+   "ext_price_delta_mean": -0.192
+  },
+  "reconstruct": {
+   "Upstate_West": {
+    "at_bound_share": 0.624,
+    "model_mw_at_bound": -166.3,
+    "measured_mw_same_hours": 397.0,
+    "excess_twh": -3.077
+   },
+   "Capital_Hudson": {
+    "at_bound_share": 0.628,
+    "model_mw_at_bound": 258.6,
+    "measured_mw_same_hours": -164.1,
+    "excess_twh": 2.326
+   },
+   "NYC": {
+    "at_bound_share": 0.929,
+    "model_mw_at_bound": 990.2,
+    "measured_mw_same_hours": 802.6,
+    "excess_twh": 1.526
+   },
+   "Long_Island": {
+    "at_bound_share": 0.956,
+    "model_mw_at_bound": 887.9,
+    "measured_mw_same_hours": 770.2,
+    "excess_twh": 0.985
+   },
+   "upstate_west_implied_ub": {
+    "hours_all_three_at_bound": 4893,
+    "model_ub_mw": 521.2,
+    "measured_mw": 1049.8,
+    "excess_ub_twh": -2.586
+   }
+  }
+ }
+}

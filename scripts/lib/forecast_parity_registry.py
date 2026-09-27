@@ -713,6 +713,22 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         finding="docs/handoffs/FINDING-y18-fr22-parity-2026-09-06.md",
         evidence=(_BACKCAST_ORCH, "src/market_sim/data/nyiso_seam_envelope.py"),
     ),
+    # NYISO-NEXT-6 (2026-09-27) armed this clip in the keeper without the FR-22
+    # row; filed by NYISO-NEXT-7. Unlike the envelope above, the clip's own
+    # docstring declares it backcast/calibration only: it reads the hour's
+    # POSTED tie limits (a line on outage posts 0), the object class of an
+    # outage window, and in a forecast year the envelope stands unchanged.
+    ParityDeclaration(
+        fields=("nyiso_li_seam_posted_limit_cap",),
+        disposition=BACKCAST_ONLY,
+        why="measured hourly posted import limits of the Long Island ties "
+        "(Neptune / CSC / 1385; a tie on outage posts 0) clipping the LI "
+        "border-link import cap — a rule-13-admissible availability event, "
+        "declared backcast/calibration only at its definition; the forward "
+        "channel is the seam envelope, which stands unchanged in a forecast "
+        "year, per the ercot_gtc_limits_measured adjudication",
+        evidence=(_BACKCAST_ORCH, "src/market_sim/data/nyiso_seam_envelope.py"),
+    ),
     # Same fork class again, one keeper later: armed by the caiso-241 promotion
     # (2026-09-03, #4663) whose lane left the FR-22 duty undischarged. Filed by
     # the Y-4 audit lane under the R-X route.
