@@ -66,7 +66,8 @@ displaced CC 1:1 (an **upper bound** on the CC reduction; some would displace CT
 | 2024 | 7.20 | 9.43 | +1.1 | −1.1 |
 | 2025 | 3.98 | 6.59 | +4.4 | +1.8 |
 
-These are gross `burn_floor_*` values from the NWPP-NEXT-5 census. The `_net` stock-slack variant is smaller.
+These are the census's `burn_floor_*` values, which are the `_net` (stock-slack) form. *(Corrected 2026-09-27: first
+published as "gross".)*
 
 - **Estimator A** would bring every CC year inside the band at the 1:1 bound.
 - **Estimator B** over-corrects 2020 to −11.4 and puts 2022 on the band edge.

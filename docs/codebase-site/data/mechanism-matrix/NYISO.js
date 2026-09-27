@@ -112,6 +112,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     coal_committed_nested_on_mustrun: { cell: "U", ev: "MINTED U by the rule-28(c) same-PR duty only (NWPP-NEXT-4, 2026-09-25) -- NO adjudication is made or implied here; rules 25 [R-ISO-SCOPE] / 28(d) mean NWPP's evidence never fills this cell. Default off; this ISO's committed bundles are byte-identical. Applies only where this ISO's per-plant fleet reads a thermal_tranches_<ISO>.csv COAL row through fleet_to_bins (ERCOT's own bins path never enters it)." },
     admit_standby_units: { cell: "U", ev: "MINTED U by the rule-28(c) same-PR duty only (NWPP-NEXT-5, 2026-09-26) -- NO adjudication is made or implied here; rules 25 [R-ISO-SCOPE] / 28(d) mean NWPP's evidence never fills this cell. Default off; this ISO's committed bundles are byte-identical. FINDING-nwppnext2-standby-census-2026-09-25 s3 sizes this ISO's SB-only gas footprint for its own lane." },
     nwpp_path76_alturas_link: { cell: ".", ev: "n/a: NWPP-only topology field (pipeline.ttc.apply_nwpp_path76_link returns the same ISOConfig for any other ISO); added by the rule-28(c) same-PR duty, NWPP-NEXT-6 2026-09-26." },
+    coal_fuel_inventory_take_floor: { cell: "U", ev: "ROW ADDED 2026-09-27 (NWPP-NEXT-7) WITH the field -- U: UNTESTED here (rule 28(d)); gated to NWPP (COAL_TAKE_FLOOR_ISOS) until this ISO derives its own contract census." },
     coal_takeorpay_committed: { cell: "." },
     coal_prb_committed_dispatchable: { cell: "." },
     coal_prb_committed_split: { cell: "." },

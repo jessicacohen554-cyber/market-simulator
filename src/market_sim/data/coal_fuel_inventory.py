@@ -301,6 +301,7 @@ class CoalPlantBudget:
     n_unrowed_generators: int
     annual_budget_mmbtu: float
     rate_source_years: tuple[int, ...]
+    yard_keys: tuple[int, ...] = ()
 
 
 def coal_yard_groups(
@@ -463,8 +464,139 @@ def build_coal_plant_budget(
         n_unrowed_generators=int((~keep).sum()),
         annual_budget_mmbtu=float(budget.sum()),
         rate_source_years=src_years,
+        yard_keys=tuple(int(r[0]) for r in rowed),
     )
     return g_rows, budget, month_index, coeff, pos[keep], prov
+
+
+#: EIA-923 Page 5 purchase types that carry a forward commitment to take coal:
+#: ``C`` contract, ``NC`` new contract, ``T`` tolling. The same set the owner-
+#: ruled census used (``scripts/probes/_nwppnext5_coal_contract_census.py``
+#: ``CONTRACT_TYPES``); ``S`` spot is excluded because a spot lot obliges nothing.
+TAKE_PURCHASE_TYPES: tuple[str, ...] = ("C", "NC", "T")
+
+
+@dataclass(frozen=True)
+class CoalTakeFloor:
+    """Provenance for one year's per-yard coal take floor (NWPP-NEXT-7).
+
+    Attributes:
+        n_binding_rows: Yard rows carrying a positive floor.
+        floor_mmbtu: Sum of the (clipped) per-yard floors.
+        clipped_to_budget: Rows whose floor was cut to the yard's own ceiling.
+        clipped_to_capacity: Rows whose floor was cut to what the yard's rowed
+            units can physically burn in the year.
+        per_yard: ``{yard key: (floor MMBtu before clip, after clip)}``.
+    """
+
+    n_binding_rows: int
+    floor_mmbtu: float
+    clipped_to_budget: int
+    clipped_to_capacity: int
+    per_yard: dict[int, tuple[float, float]]
+
+
+def build_coal_take_floor(
+    fleet: FleetArrays,
+    year: int,
+    gen_idx: np.ndarray,
+    group_index: np.ndarray,
+    coeff: np.ndarray,
+    budget: np.ndarray,
+    yard_keys: tuple[int, ...],
+    reference_dir: Path | None = None,
+) -> tuple[np.ndarray, CoalTakeFloor]:
+    """Per-yard annual coal TAKE floor on the yard budget rows (NWPP-NEXT-7).
+
+    The LOWER bound of the same annual identity whose upper bound is
+    :func:`build_coal_plant_budget` (owner rulings Q1-Q5, 2026-09-27, on
+    ``docs/handoffs/FINDING-nwppnext5-coal-take-obligation-design-2026-09-26.md``
+    §5: generalise the yard row, annual period, a floor not an equality,
+    estimator B net, incumbent per-hour take-or-pay discounts retired)::
+
+        take_net_y = max(0, C_y + S_dec_y - S_max_y) * hc_y
+        take_net_y <= sum_{g at yard y, t} HR[g] * P[g, t] <= budget_y
+
+    * ``C_y`` — the yard's contract tonnage received in ``year - 1``
+      (EIA-923 Page 5, purchase types :data:`TAKE_PURCHASE_TYPES`), assumed
+      renewed at the same volume (estimator B).
+    * ``S_dec_y`` — the yard's December ``year - 1`` ending stock (Page 2).
+    * ``S_max_y`` — the yard's largest month-end stock in any curated year
+      ``<= year - 1``: the take may be absorbed into the pile up to the most it
+      has ever held, so only the remainder must be burned (the ``_net`` form).
+    * ``hc_y`` — the yard's own ``year - 1`` quantity-weighted heat content.
+
+    Every quantity predates ``year`` (rule 13 [R-MEASURED]); zero free
+    parameters (rule 21 [R-DOF]). A yard with no December stock record gets no
+    floor (never substituted). Two FEASIBILITY clips, fixed ex ante and not
+    tunable: the floor never exceeds the yard's own ceiling row, and never
+    exceeds ``sum coeff * pmax * availability`` of its rowed units, i.e. what
+    they can physically burn.
+
+    Returns:
+        ``(floor (n_rows, 1) MMBtu, provenance)``, rows aligned with ``budget``.
+    """
+    from market_sim.data.coal_receipts import load_coal_receipts
+    from market_sim.data.coal_stocks import load_coal_stocks
+
+    yards = coal_yard_groups(fleet, reference_dir=reference_dir)
+    n_rows = budget.shape[0]
+    floor = np.zeros((n_rows, 1), dtype=float)
+    rec = load_coal_receipts([year - 1])
+    stocks = load_coal_stocks()
+    if not stocks.empty:
+        stocks = stocks[stocks["year"] <= year - 1]
+    gen_idx = np.asarray(gen_idx, dtype=int)
+    group_index = np.asarray(group_index, dtype=int)
+    coeff = np.asarray(coeff, dtype=float)
+    pmax = np.asarray(fleet.pmax, dtype=float)[gen_idx]
+    avail = getattr(fleet, "availability", None)
+    if avail is not None and np.ndim(avail) == 2:
+        mwh = pmax * np.asarray(avail, dtype=float)[gen_idx].sum(axis=1)
+        cap_mmbtu = np.bincount(group_index, weights=coeff * mwh, minlength=n_rows)
+    else:  # no hourly availability: the capacity clip has nothing to read
+        cap_mmbtu = np.full(n_rows, np.inf)
+    per_yard: dict[int, tuple[float, float]] = {}
+    n_bud = n_cap = 0
+    for i, key in enumerate(yard_keys):
+        ids = yards.get(int(key), {int(key)})
+        st = stocks[stocks["plant_id"].isin(ids)] if not stocks.empty else stocks
+        if st.empty or not ((st["year"] == year - 1) & (st["month"] == 12)).any():
+            continue
+        by_month = st.groupby(["year", "month"])["ending_stock_tons"].sum()
+        s_dec = float(by_month.get((year - 1, 12), 0.0))
+        s_max = float(by_month.max())
+        r = rec[rec["plant_id"].isin(ids)] if not rec.empty else rec
+        if r.empty:
+            continue
+        tons_all = float(r["quantity_tons"].sum())
+        hc = (
+            float((r["quantity_tons"] * r["heat_content_mmbtu_per_ton"]).sum())
+            / tons_all
+            if tons_all > 0
+            else float("nan")
+        )
+        c_tons = float(
+            r.loc[r["purchase_type"].isin(TAKE_PURCHASE_TYPES), "quantity_tons"].sum()
+        )
+        if not np.isfinite(hc) or hc <= 0.0:
+            continue
+        raw = max(c_tons + s_dec - s_max, 0.0) * hc
+        val = raw
+        if val > float(budget[i, 0]):
+            val, n_bud = float(budget[i, 0]), n_bud + 1
+        if val > float(cap_mmbtu[i]):
+            val, n_cap = float(cap_mmbtu[i]), n_cap + 1
+        floor[i, 0] = max(val, 0.0)
+        per_yard[int(key)] = (raw, floor[i, 0])
+    prov = CoalTakeFloor(
+        n_binding_rows=int((floor[:, 0] > 0).sum()),
+        floor_mmbtu=float(floor.sum()),
+        clipped_to_budget=n_bud,
+        clipped_to_capacity=n_cap,
+        per_yard=per_yard,
+    )
+    return floor, prov
 
 
 def reconcile_floors_to_yard_budget(

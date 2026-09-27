@@ -3684,3 +3684,6 @@ results/calibration/pjmnext4_c1_20*/
 results/calibration/_soco73/
 # miso-277 per-year shard legs: parent-local only (rule 32(d)); provenance SHAs in docs/PRECOMMIT-miso277-d1-as-ruled-2026-09-26.md
 results/calibration/miso277_arm_*/
+
+# NWPP-NEXT-7 per-year take-floor shard legs (kept out of main; the _span composite is registered)
+results/calibration/nwppnext7tf_20[12][0-9]/

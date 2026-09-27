@@ -613,7 +613,48 @@ def _reliability_floor_layup_shares(
 # neiso-117 (owner ruling 2026-09-26 on docs/handoffs/neiso116/PRECOMMIT-neiso116-
 # 2026-09-26.md §5.1(a): arm the annual yard rows WITHOUT the pooled monthly
 # limb, which spreads Merrimack's winter burn flat and binds in 2023/2024).
-COAL_PLANT_GRAIN_ISOS: tuple[str, ...] = ("MISO", "NEISO")
+# NWPP: NWPP-NEXT-7 (owner ruling Q1, 2026-09-27, on NWPP's own contract census
+# docs/handoffs/FINDING-nwppnext5-coal-take-obligation-design-2026-09-26.md).
+COAL_PLANT_GRAIN_ISOS: tuple[str, ...] = ("MISO", "NEISO", "NWPP")
+
+# ISOs whose own evidence armed the per-yard coal TAKE floor
+# (coal_fuel_inventory_take_floor): NWPP-NEXT-7, owner rulings Q1-Q5.
+COAL_TAKE_FLOOR_ISOS: tuple[str, ...] = ("NWPP",)
+
+
+def resolve_coal_take_floor(
+    config: ScenarioConfig, iso: str, plant_armed: bool
+) -> bool:
+    """Validate and resolve the per-yard coal TAKE floor for ``iso``.
+
+    Raises ``ValueError`` when the floor is armed without the yard rows it
+    bounds, outside :data:`COAL_TAKE_FLOOR_ISOS` (rule 25), or together with the
+    per-hour take-or-pay discounts it replaces (rule 19 [R-ONE-MECH], owner
+    ruling Q5): the contract is carried once, by the yard row's dual.
+    """
+    if not bool(getattr(config, "coal_fuel_inventory_take_floor", False)):
+        return False
+    if not plant_armed:
+        raise ValueError(
+            "coal_fuel_inventory_take_floor bounds the per-yard rows from below "
+            "and requires coal_fuel_inventory_plant_grain."
+        )
+    if iso.upper() not in COAL_TAKE_FLOOR_ISOS:
+        raise ValueError(
+            f"coal_fuel_inventory_take_floor is gated to {COAL_TAKE_FLOOR_ISOS} "
+            f"(rule 25 [R-ISO-SCOPE]); {iso} needs its own contract census first."
+        )
+    stacked = [
+        f
+        for f in ("coal_takeorpay_from_data", "coal_committed_takeorpay_regulated")
+        if bool(getattr(config, f, False))
+    ]
+    if stacked:
+        raise ValueError(
+            "coal_fuel_inventory_take_floor REPLACES the per-hour take-or-pay "
+            f"discounts (rule 19, owner ruling Q5); disarm {stacked}."
+        )
+    return True
 
 
 def resolve_coal_budget_arms(config: ScenarioConfig, iso: str) -> tuple[bool, bool]:
@@ -6230,6 +6271,8 @@ def run_year(
     coal_plant_month_index = UNSET
     coal_plant_gen_hour_coeff = UNSET
     coal_plant_group_index = UNSET
+    coal_plant_floor = UNSET
+    _coal_floor_armed = resolve_coal_take_floor(config, iso, _coal_plant_armed)
     # Armable WITHOUT the pooled monthly rows since neiso-117 (the yard rows
     # alone are the annual identity's plant partition; resolve_coal_budget_arms
     # holds both limbs' ISO and backcast-only gates).
@@ -6290,6 +6333,33 @@ def run_year(
                 _cp_prov.annual_budget_mmbtu / 10.661 / 1e6,
                 "+".join(str(y) for y in _cp_prov.rate_source_years),
             )
+            if _coal_floor_armed:
+                from market_sim.data.coal_fuel_inventory import build_coal_take_floor
+
+                coal_plant_floor, _tf = build_coal_take_floor(
+                    fleet_arrays,
+                    year,
+                    coal_plant_gen_idx,
+                    coal_plant_group_index,
+                    coal_plant_gen_hour_coeff,
+                    coal_plant_budget,
+                    _cp_prov.yard_keys,
+                )
+                logger.info(
+                    "coal take floor (%s %d): %d yard rows floored, %.1f TWh-equiv "
+                    "@HR10.661 (clipped: %d to ceiling, %d to capacity); per yard "
+                    "raw->floor TBtu %s",
+                    iso,
+                    year,
+                    _tf.n_binding_rows,
+                    _tf.floor_mmbtu / 10.661 / 1e6,
+                    _tf.clipped_to_budget,
+                    _tf.clipped_to_capacity,
+                    {
+                        k: (round(a / 1e6, 3), round(b / 1e6, 3))
+                        for k, (a, b) in _tf.per_yard.items()
+                    },
+                )
 
     # Base dispatch kwargs + priced import-node band: the shared pipeline
     # assembly (orchestrator-unification Stage 2) — the same key set the
@@ -6403,6 +6473,7 @@ def run_year(
         coal_plant_month_index=coal_plant_month_index,
         coal_plant_gen_hour_coeff=coal_plant_gen_hour_coeff,
         coal_plant_group_index=coal_plant_group_index,
+        coal_plant_floor=coal_plant_floor,
         T=config.hours,
     )
     dispatch_kwargs = build_base_dispatch_kwargs(

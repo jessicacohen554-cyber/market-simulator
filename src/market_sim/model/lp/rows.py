@@ -1318,6 +1318,7 @@ def build_constraints(
     coal_plant_month_index: np.ndarray | None = None,
     coal_plant_gen_hour_coeff: np.ndarray | None = None,
     coal_plant_group_index: np.ndarray | None = None,
+    coal_plant_floor: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
     storage_alloc_batt_idx: np.ndarray | None = None,
     storage_alloc_share: np.ndarray | None = None,
@@ -2015,6 +2016,14 @@ def build_constraints(
                 gen_hour_coeff=coal_plant_gen_hour_coeff,
                 group_index=coal_plant_group_index,
             )
+            # NWPP-NEXT-7 coal take floor (coal_fuel_inventory_take_floor): the
+            # SAME yard rows get a LOWER bound, the take-or-pay obligation, so
+            # the one annual identity is bounded on both sides (rule 19
+            # [R-ONE-MECH]: no new row family). None leaves the 0 lower bound.
+            if coal_plant_floor is not None:
+                cp_lower = np.minimum(
+                    np.asarray(coal_plant_floor, dtype=float).ravel(), cp_upper
+                )
             blocks.append(cp_block)
             del cp_block
             _add_bounds(cp_lower, cp_upper)

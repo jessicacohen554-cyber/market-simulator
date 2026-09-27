@@ -2125,6 +2125,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # column or TTC entry changes. SHARED field -- very end, per HOUSE-3.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link",
+    # NWPP-NEXT-7 (2026-09-27): per-coal-yard annual TAKE floor on the
+    # coal_fuel_inventory_plant_grain rows (default off). Off, the yard rows keep
+    # their 0 lower bound and no kwarg is built, so the LP is byte-identical.
+    # SHARED field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 discipline).
+    "coal_fuel_inventory_take_floor",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2888,6 +2894,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "cc_eia923_identity_emission_basis": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
+    # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
+    "coal_fuel_inventory_take_floor": "False",
 }
 
 
@@ -12295,6 +12303,20 @@ class ScenarioConfig:
     # 0.6-1.9 TWh/yr N->S on keeper #12 prices) while the measured seam
     # averages 20-28 MW; never re-rated to that residual (rules 1 / 13).
     nwpp_path76_alturas_link: bool = False
+    # COAL TAKE FLOOR on the per-yard annual rows (NWPP-NEXT-7, GATED default
+    # off, backcast-only, ZERO free parameters). Owner rulings Q1-Q5 (2026-09-27)
+    # on FINDING-nwppnext5-coal-take-obligation-design-2026-09-26.md §5: the
+    # coal_fuel_inventory_plant_grain yard row gets a LOWER bound (one identity,
+    # no new row family -- rule 19), annual, a floor not an equality, estimator
+    # B net: max(0, Y-1 contract tons (EIA-923 Page 5 C/NC/T) + Dec(Y-1) stock -
+    # max month-end stock <= Y-1) x the yard's Y-1 heat content. Its dual is the
+    # take-or-pay shadow price, so it REPLACES the per-hour take-or-pay discounts
+    # (coal_takeorpay_from_data, coal_committed_takeorpay_regulated), and the
+    # orchestrator raises if either is armed with it. Requires
+    # coal_fuel_inventory_plant_grain. Rule 13: every input predates Y; forward,
+    # the take is the then-latest contract volume renewed until the plant's
+    # step-0/1b exit. See data/coal_fuel_inventory.py:build_coal_take_floor.
+    coal_fuel_inventory_take_floor: bool = False
 
     # Commitment-floor WINDOW ranked on NET load instead of system load
     # (SPP-66, owner ruling "Shared gate" 2026-09-20; default off, so every
@@ -23203,6 +23225,7 @@ TIER_TAGS: dict[str, int] = {
     "neiso_winter_fuel_inventory": 1,
     "coal_fuel_inventory": 1,
     "coal_fuel_inventory_plant_grain": 1,
+    "coal_fuel_inventory_take_floor": 1,
     "commitment_floor_window_netload": 1,
     "neiso_winter_fuel_start_fill_bbl": 1,
     "neiso_net_icr_requirement": 1,
