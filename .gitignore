@@ -3710,3 +3710,5 @@ results/calibration/nwppnext7sf_20[12][0-9]/
 results/calibration/_spp92_seam_hourly_*.parquet
 # R-CAISO-8 per-year shard legs (rule 32(d)/36): kept out of main; the composite is what registers.
 results/calibration/rcaiso8_A_20*/**
+# R-CAISO-8 Object 2: raw OASIS PRC_NOMOGRAM downloads (re-fetched by scripts/probes/_rcaiso8_sd_import_census.py)
+results/calibration/_rcaiso8/oasis_cache/
