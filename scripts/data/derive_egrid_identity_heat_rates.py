@@ -75,6 +75,12 @@ FOSSIL_FUELS = {"NG", "DFO", "RFO", "KER", "BIT", "SUB", "LIG", "WC", "PC", "OG"
 # each ISO's lane derives its own artifact from its own market's data).
 ISO_SCOPE: dict[str, tuple[str, tuple[str, ...], tuple[str, ...]]] = {
     "NYISO": ("NYIS", ("NY",), ("NY",)),
+    # soco-76: SOCO's four footprint states (the fleet's AL/GA/MS/FL admission
+    # rule). Discovery over the whole CAMPD-less fossil population finds exactly
+    # Dahlberg (EIA 7709 <-> CAMD/eGRID 7765) and Hartwell (EIA 54538 <-> 70454),
+    # both 7/7 vintages — the pair EPA's own CAMD-EIA crosswalk flags with
+    # PLANT_ID_CHANGE_FLAG=1 (docs/handoffs/r-soco/FINDING-soco-76-2026-09-27.md).
+    "SOCO": ("SOCO", ("AL", "FL", "GA", "MS"), ("AL", "FL", "GA", "MS")),
 }
 
 MATCH_TOL_MWH = 0.5  # "equal to the MWh": float-format slack only, not a band
