@@ -3716,3 +3716,6 @@ results/calibration/_rcaiso8/oasis_cache/
 # soco-81 shard legs: kept out of main (rule 32(d)); composite soco81_span is what registers.
 # Provenance (rule 33(d)): 2019 5eb223e6, 2020 da7d01ec, 2021 a83b4f9f, 2022 dc9e9c7c, 2023 58f2dca6, 2024 7ea14cfb, 2025 91007d69.
 results/calibration/soco81_20[0-9][0-9]/
+
+# soco-82 per-year shard legs: kept out of main (rule 32(d)); legs pinned by SHA in RESULT-soco-82
+results/calibration/soco82_20*/

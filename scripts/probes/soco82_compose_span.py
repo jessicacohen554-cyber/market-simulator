@@ -83,6 +83,8 @@ def assert_input_census(legs: list[Path]) -> dict:
         y = _year(leg)
         f = census.build(y, True)
         u = pd.read_parquet(leg / f"hourly/unit_hourly_{y}.parquet")
+        if "pass" in u.columns:
+            u = u[u["pass"].astype(str) == "P1"]
         u["unit_id"] = u.unit_id.astype(str)
         got = u.groupby("unit_id").mc.median()
         want = {x: float(np.median(f["mc"][i])) for i, x in enumerate(f["ids"])}
@@ -120,7 +122,9 @@ def assert_keeper_years(legs: list[Path]) -> None:
         a = pd.read_parquet(leg / f"hourly/class_hourly_{y}.parquet")
         k = pd.read_parquet(KEEPER_SPAN / f"hourly/class_hourly_{y}.parquet")
         if "pass" in a.columns:
-            a, k = a[a["pass"] == "P1"], k[k["pass"] == "P1"]
+            a = a[a["pass"].astype(str) == "P1"]
+        if "pass" in k.columns:
+            k = k[k["pass"].astype(str) == "P1"]
         d = (a.groupby("klass").mw.sum() - k.groupby("klass").mw.sum()).abs() / 1e6
         worst = float(d.max())
         if worst > TOL_TWH:
