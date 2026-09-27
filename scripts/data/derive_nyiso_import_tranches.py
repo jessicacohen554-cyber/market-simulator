@@ -91,6 +91,7 @@ if str(REPO) not in sys.path:
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.paths import RAW_DATA_DIR  # noqa: E402
+from market_sim.data.nyiso_par_attribution import ACCOUNTING_DUPLICATE  # noqa: E402
 
 RAW = RAW_DATA_DIR
 FLOW_DIR = RAW / "NYISO" / "interface-flows"
@@ -104,12 +105,26 @@ YEARS = (2023, 2024, 2025)
 # names that land on it (NYISO MIS ExternalLimitsFlows). Internal interfaces
 # (CENTRAL EAST, TOTAL EAST, UPNY CONED, MOSES SOUTH, DYSINGER, WEST CENTRAL,
 # SPR/DUN) are NOT external transfers and are excluded.
+#
+# ``SCH - HQ_IMPORT_EXPORT`` is NOT a seam row: it is an accounting duplicate of
+# ``SCH - HQ - NY`` (corr 0.955-0.993 in every year 2018-2025), and until
+# NYISO-NEXT-8 (2026-09-27) it was listed under "HQ" here, so every committed
+# NYISO ladder was derived on a net import that counted the HQ seam twice
+# (2022: 3,786 MW vs the true 3,080; 2025: 1,671 vs 2,197, where HQ ran net
+# export). The duplicate is named ONCE, in ``nyiso_par_attribution``
+# (``ACCOUNTING_DUPLICATE``), and imported here so the derivation and the seam
+# attribution cannot drift apart again (rule 19); the assert below refuses any
+# future edit that re-lists it. Record:
+# docs/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md.
 EXTERNAL_SEAMS: dict[str, list[str]] = {
-    "HQ": ["SCH - HQ - NY", "SCH - HQ_CEDARS", "SCH - HQ_IMPORT_EXPORT"],
+    "HQ": ["SCH - HQ - NY", "SCH - HQ_CEDARS"],
     "IESO": ["SCH - OH - NY"],
     "PJM": ["SCH - PJ - NY", "SCH - PJM_HTP", "SCH - PJM_NEPTUNE", "SCH - PJM_VFT"],
     "NE": ["SCH - NE - NY", "SCH - NPX_1385", "SCH - NPX_CSC"],
 }
+assert not any(ACCOUNTING_DUPLICATE in rows for rows in EXTERNAL_SEAMS.values()), (
+    f"{ACCOUNTING_DUPLICATE!r} duplicates 'SCH - HQ - NY'; listing it double-counts HQ"
+)
 
 # Firm HQ baseload (Chateauguay contract) — the always-on firm-import floor's
 # capacity; kept at the ladder's established value so the floor is unchanged.
