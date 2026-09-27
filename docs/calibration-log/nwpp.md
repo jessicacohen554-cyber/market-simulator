@@ -564,3 +564,22 @@ Run `2026-09-26-nwppnext6-path76-ctrederive`: NOT-YET on {fuelmix, dispatch_corr
 **Promoted 2026-09-26 (owner standing structure ruling, rule 14):** keeper #13. Keeper #12 and arm A were pruned
 (rule 35), audit PASS.
 Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext6-path76-and-ct-rederive-2019-2025-2026-09-26.md`.
+
+## nwpp-next-7 — 2026-09-26 — lever 1 diagnosis: C1 CC_REGULAR long is coal short (zero LP, no solve)
+
+Zero LP on keeper #13's committed payload, benchmark and the NWPP-NEXT-5 contract census
+(`scripts/probes/_nwppnext7_cc_long_census.py`).
+- The C1 CC_REGULAR residual mirrors the coal-family residual every year: **r = −0.974** over 2019–2025. The
+  all-fossil total is within +2.4 TWh and hydro within ±3 TWh.
+- CC is long at SNV/EAST plants in low-gas years. The coal it displaces is Centralia (≈0 in the model Mar–Nov) and
+  Colstrip, both 100 % contract with no filed price, plus Utah BIT in 2024–25.
+- It does not track hydro years. CC heat-rate coverage is 22/23 plants (Clark missing, and it runs short), so no
+  rule-23 re-derive is indicated.
+- The open NWPP-NEXT-5 coal take floor would bind 3.8/5.4/7.2/4.0 TWh (A) or 10.2/21.4/9.4/6.6 TWh (B) in
+  2019/2020/2024/2025. At a 1:1 bound, A brings every CC year inside ±8 and B over-corrects 2020 to −11.4.
+  Neither result may select the estimator (rule 1).
+- Lever 1 therefore reduces to owner questions Q1–Q5. Nothing was solved, promoted or pruned; keeper #13 stands.
+- Secondary: PGE Beaver 8073 has no CEMS, so it has no benchmark plant row and no measured CC rate (model 2.41 vs
+  0.37 TWh in 2020). The benchmark's per-plant CC sum and its classFull disagree by −2.2 to +4.6 TWh.
+
+Record: `docs/handoffs/FINDING-nwppnext7-cc-long-is-coal-short-2026-09-26.md`.
