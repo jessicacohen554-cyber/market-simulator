@@ -1727,3 +1727,21 @@ would stack. Greedy of the admissible scope (must-run-floored plants only; cycle
 0.304 -> 0.289/0.294, 2019 COAL_BIT -4.24 -> -4.01/-4.18 pp (still FAIL at ~3x LP), 2022 COAL_PRB +2.69 -> +2.72.
 Owner question: a SOCO-scoped two-sided per-plant mode of the carrier. Record:
 docs/handoffs/r-soco/FINDING-soco-75-2026-09-27.md.
+
+## soco-76 — 2026-09-27
+
+GAS SIDE OF THE 2019 MERIT ORDER MEASURED; TWO ID-SPLIT CT PLANTS REPAIRED; PROMOTED; BOTH FAILING ROWS PERSIST. No owner
+ruling on soco-75's two-sided coal mode, so TASK 1 (zero LP) ran. Census (soco72-2019 leg): in coal's CEMS-synced/model-off
+hours the CC fleet clears at $20-22 (correct merit order); the 15 largest undercutting gas plants match their own CEMS heat
+rate (-0.25 MMBtu/MWh weighted) and EIA-923 receipts (-$0.11/MMBtu). Two plants never reach their measured data: EPA files
+Dahlberg (EIA 7709) and Hartwell (54538) under CAMD/eGRID 7765 / 70454 (PLANT_ID_CHANGE_FLAG=1), so both priced at the class
+default 10.5 / 11.5 vs measured 12.62 / 12.56. Carrier egrid_identity_heat_rates (U -> K): one ISO_SCOPE row; frozen discovery
+finds exactly these two, 7/7 vintages; zero fitted parameters. McDonough 710's 1971 CTs on the plant CC blend (6.83, 0.48 TWh vs
+~0) recorded, not built.
+
+RESULT (run 2026-09-27-soco76-egrid-identity-hr, seven year-isolated shards at 5b8af962; PROMOTED on the owner's standing
+ruling, PRECOMMIT §7 held; 2026-09-26-soco72-gas-basis-window pruned per rule 35): six tranches at the census mc +/-$0.01,
+everything else byte-identical; unserved 0. CT_PEAKER -1.03/-0.49/-0.05/-0.18/-0.48/-0.27/-0.34 TWh 2019-2025, ST_GAS and coal
+up. 2019 COAL_BIT -4.24 -> -4.16pp FAIL; 2020 C4 coal 0.3045 -> 0.3012 FAIL; D-1 2019 COAL_BIT r 0.591 -> 0.737. Dahlberg flips
+from 1.7 TWh over-run to ~0 (actual 0.49): CT plant split is cost-only. Grade 5/3/2, NOT-YET. Records:
+docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-76-2026-09-27.md. Leftover refs: claude/soco76-2019..2025.
