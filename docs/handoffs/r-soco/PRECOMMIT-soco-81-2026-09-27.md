@@ -23,6 +23,15 @@ origin/main` over the solve path, every hunk classified:
 | `forecast_parity_registry` NYISO row | INERT | bookkeeping, not the solve path |
 | **this lane:** `coal_econ_marginal_hr_two_sided` + artifact + `bins_to_fleet(year=)` | LIVE only when armed | default off; with it off the hook is skipped (census "off" builds reproduce the keeper recipe) |
 
+Addendum, `877b7776` → `b8f938ff` (main moved while this lane rebased):
+
+| hunk | class | reason |
+|---|---|---|
+| `retiree_cems_cap` deleted (scenarios, fleet/arrays, outages, backcast_config, persist) | INERT | `false` in the soco76 meta and run_config, so the deleted branch never ran for SOCO |
+| `pjm_offer_midcurve_shape_segments` (offer_surfaces) | INERT | PJM only, default `None` |
+
+The §2 census was re-run at the rebased HEAD: `soco81_fleet_census.json` is byte-identical.
+
 **Form 4 is valid. The keeper is the control.**
 
 ## 1. The mechanism
