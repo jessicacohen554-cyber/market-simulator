@@ -3670,7 +3670,6 @@ results/calibration/soco72_20[0-9][0-9]/
 # NYISO-NEXT-3 per-year shard legs 2022-2025 (rule 32(d): kept out of main; the composite nyisonext3_span is registered; the 2021 leg IS its own registered bundle).
 # Legs (provenance, rule 33(d)): 2021 1f411bffe6104d096a3faa44fb4f51be47bf55c6 · 2022 6ad45aec642c6ae1b58698fd3abe93bc947a8c1c · 2023 c62da1f8a46d69544b1b0ba554abadecc06febc9 · 2024 6be240a8c97410e94e0a8dd1439a11f78b309dd0 · 2025 8b2063744565ffeb8229f1385c51792a10cc1d0a
 results/calibration/nyisonext3_202[2-5]/
-!results/calibration/rcaiso5_XE_tp_2019_2021/
 # PJM-NEXT-4 card 1 per-year legs (parent tree only; composite is what reaches main). Provenance, not recovery (rule 33(d)):
 #   2019 1f3d1da160a5eea27b752885a7e2a975b2e27685 (claude/pjmnext4-c1-2019)
 #   2020 e1146013c00ec3428703e7827ed7a4f7348d8109 (claude/pjmnext4-c1-2020)

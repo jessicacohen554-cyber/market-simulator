@@ -1,7 +1,7 @@
 {
   "as_reserve_formula": false,
   "as_reserve_withholding": false,
-  "basis_sha": "93a38eac1889559fc3d5a359d15fe96aae85d87b",
+  "basis_sha": "6810e68ecf5488aeb0468c18ff736c930b629336",
   "battery_dispatch_adder": 0.0,
   "btm_backfill_year": null,
   "caiso_asymmetric_path_ratings": true,
@@ -130,9 +130,9 @@
   "commitment_screen_coal": true,
   "committed_band_measured_basis": null,
   "composed_from": [
-    "rcaiso5_XE_2019",
-    "rcaiso5_XE_2020",
-    "rcaiso5_XE_2021"
+    "rcaiso6_O2_2019",
+    "rcaiso6_O2_2020",
+    "rcaiso6_O2_2021"
   ],
   "ct_drag_overrides": {},
   "ct_intermediate_cf_threshold": null,
@@ -165,7 +165,7 @@
       "pydantic": "2.13.4",
       "scipy": "1.17.1"
     },
-    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v42-x86_64-with-glibc2.39",
     "python_version": "3.11.15"
   },
   "ercot_as_aware_commitment": false,
@@ -243,7 +243,7 @@
   },
   "gas_st_drag_overrides": {},
   "gas_st_netload_drag": false,
-  "git_sha": "93a38eac",
+  "git_sha": "6810e68e",
   "highspy_version": "1.14.0",
   "hours": 8760,
   "hydro_backfill_year": 2024,
@@ -377,7 +377,7 @@
   "scarcity_price_overlay": null,
   "shared_inputs": {
     "campd": "../_shared/CAISO/campd-6db5c1fb7efe.parquet",
-    "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-d7accfaa841f.parquet",
+    "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-26921eecd30f.parquet",
     "eia923": "../_shared/CAISO/eia923-a5f79303b8df.parquet",
     "eia930": "../_shared/CAISO/eia930-155fdf61ffda.parquet",
     "unit_outages": "../_shared/CAISO/unit_outages-e28c7b0b81d1.parquet",
@@ -403,7 +403,7 @@
   "temp_derate_mean_anchored": false,
   "temp_derate_slope_ct_chp": null,
   "temp_derate_slope_st_chp": null,
-  "timestamp": "2026-09-27T18:48:53",
+  "timestamp": "2026-09-27T20:37:15",
   "tranche_startup_amortization": false,
   "tranche_startup_conditional_runs": false,
   "tranche_startup_measured_runs": false,
