@@ -1783,3 +1783,13 @@ The fall-back reaches McDonough 710 CTs only in 2019/2022 (64 MW, 6.8 -> 11.5) a
 greedy on the legs: 2019 COAL_BIT -4.16 -> -4.13 pp still FAIL, 2020 C4 0.301 untouched. Other ISOs (reported in the FINDING only):
 CAISO Huntington Beach 335 ST 225.8 MW +0.25/+0.41 in 2021/22; NYISO Northport/Port Jefferson GTs <= 24.7 MW. SOCO has no stake in
 (3). Record: docs/handoffs/r-soco/FINDING-soco-79-2026-09-27.md.
+
+## soco-80 — 2026-09-27
+
+NO LEVER BUILT; NO SOLVE; KEEPER UNCHANGED (2026-09-27-soco76-egrid-identity-hr). No owner ruling on soco-75 or soco-77, so the
+zero-LP task ran on the last untested take family member, `coal_fuel_inventory_take_floor` (NWPP-NEXT-7, estimator B: Y-1
+contract tons + Dec stock - max stock). The soco76 leg refs are gone from origin, so the work used the committed payload and
+hourlies. Floor above actual energy: 2020 9.90 TWh (Scherer 13.15 vs 5.63, 2.3x), 2024 1.73 (Barry 3.5x). The renewal premise
+fails in the C4 year (contracts -32 %). Greedy: 2019 COAL_BIT -4.16 -> -2.61pp PASS, but 2020 CC_REGULAR/COAL_PRB C1 FAIL, 2020 C4
+0.301 -> 0.514 and 2024 C4 0.254 -> 0.381 FAIL. Cell U -> G on structure (rules 13/20), per-year/plant scoping refused (rule 1).
+Owner questions (soco-75, soco-77) carried. Record: docs/handoffs/r-soco/FINDING-soco-80-2026-09-27.md.
