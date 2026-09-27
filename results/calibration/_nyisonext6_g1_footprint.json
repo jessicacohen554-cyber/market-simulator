@@ -1,0 +1,37 @@
+{
+ "2021": {
+  "hours_cut": 860,
+  "cut_twh": 0.16,
+  "mean_cut_mw": 185.5,
+  "any_raise": false,
+  "other_links_max_abs_delta": 0.0
+ },
+ "2022": {
+  "hours_cut": 1468,
+  "cut_twh": 0.343,
+  "mean_cut_mw": 233.4,
+  "any_raise": false,
+  "other_links_max_abs_delta": 0.0
+ },
+ "2023": {
+  "hours_cut": 1688,
+  "cut_twh": 0.268,
+  "mean_cut_mw": 158.8,
+  "any_raise": false,
+  "other_links_max_abs_delta": 0.0
+ },
+ "2024": {
+  "hours_cut": 969,
+  "cut_twh": 0.269,
+  "mean_cut_mw": 278.0,
+  "any_raise": false,
+  "other_links_max_abs_delta": 0.0
+ },
+ "2025": {
+  "hours_cut": 1734,
+  "cut_twh": 0.308,
+  "mean_cut_mw": 177.5,
+  "any_raise": false,
+  "other_links_max_abs_delta": 0.0
+ }
+}

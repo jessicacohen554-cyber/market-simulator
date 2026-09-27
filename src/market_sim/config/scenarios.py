@@ -2131,6 +2131,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SHARED field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline).
     "coal_fuel_inventory_take_floor",
+    # NYISO-NEXT-6 (2026-09-27): Long Island posted-limit sub-clip (default
+    # off). Byte-identical off by construction: its one applier,
+    # data.nyiso_seam_envelope.nyiso_li_posted_limit_cap, is reached only inside
+    # ``if iso == "NYISO" and getattr(config, "nyiso_li_seam_posted_limit_cap",
+    # False)`` in run_calibration.run_year, so no link bound changes off.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "nyiso_li_seam_posted_limit_cap",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2896,6 +2903,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
     "coal_fuel_inventory_take_floor": "False",
+    # Added by NYISO-NEXT-6 WITH the field (the nyiso-119 discipline).
+    "nyiso_li_seam_posted_limit_cap": "False",
 }
 
 
@@ -8220,6 +8229,19 @@ class ScenarioConfig:
     # (NYISO_SEAM_FLOW_PERCENTILE), and the Gold Book tie landings. Default off;
     # NYISO-only. Pre-registration:
     # results/calibration/PREREG-nyiso127-addendum2-full-seam-attribution-2026-08-05.md
+    # LONG ISLAND POSTED-LIMIT SUB-CLIP (NYISO-NEXT-6, GATED default off,
+    # NYISO-only, backcast only, ZERO free parameters). Caps the
+    # NYISO_external>Long_Island IMPORT bound, hour by hour, at the sum of the
+    # POSTED import limits of SCH - PJM_NEPTUNE, SCH - NPX_CSC and
+    # SCH - NPX_1385 on the same MIS P-32 posting the envelope already reads (a
+    # line on outage posts 0). The p90 envelope pools each month's outage days
+    # with its in-service days, so it lets the model import over a tie posting
+    # 0. A clip INSIDE the one armed seam mechanism, never a second one, and
+    # never raises a cap (rule 19 [R-ONE-MECH]); a physical availability event,
+    # the object class of an outage window (rule 13). Applied only when one of
+    # the two seam flags above is armed. Export bound untouched; NYC ties out of
+    # scope. PRECOMMIT: docs/PRECOMMIT-nyiso-next5-li-tie-posted-limit-2026-09-27.md
+    nyiso_li_seam_posted_limit_cap: bool = False
     nyiso_seam_deliverability_envelope: bool = False  # NYISO external seam
     # deliverability envelope (nyiso-125, data.nyiso_seam_envelope): replace the
     # flat SYMMETRIC static rating on the two border links whose external ties
