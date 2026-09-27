@@ -6713,3 +6713,13 @@ generator's fuel slice (66 re-tags in a companion extract). Zero criterion flips
 FAIL), COAL_BIT 2024 +3.62 → +0.93, ST_GAS 2023 +5.22 → +2.63, COAL_BIT 2019 +12.91 → +13.98 (predicted). **PROMOTED**
 on the owner's structural-integrity ruling; `2026-09-25-pjm-next-2-joint` pruned. Cards 1/3/4 ended at phase 0.
 Records: `docs/RESULT-pjm-next-3-2026-09-26.md`, `docs/FINDING-pjm-next-3-phase0-cards-1-3-4-2026-09-26.md`.
+
+## PJM-NEXT-4 — 2026-09-26 — the measured 2019 mid-curve table (PROMOTED 2026-09-27)
+
+Run `2026-09-26-pjm-next-4-midcurve2019` (bundle `pjmnext4_c1_span`, one shard per year 2019–2025 at `7394a279`,
+composed at zero LP; control = keeper `2026-09-26-pjm-next-3-unitfuel` committed bundle, G-DRIFT INERT). Data-only arm:
+the mid-curve surface gains a 2019 table from PJM's own 2019 offers (merge-only; 2020–2025 + pooled byte-identical).
+Handoff premise corrected: 2020–2022 already read year-own tables. 2023–2025 byte-identical → still NOT-YET on
+CC_REGULAR 2024 −9.33. 2019: COAL_BIT +13.98 → +25.84 (pre-registered against interest, 5× the predicted size),
+CC_REGULAR −0.58 PASS → −8.54 FAIL, C3a +10.7 % FAIL → +7.6 % PASS, C3b 0.125 → 0.099. The pre-2023 coal over-run is
+not a mid-curve-table defect. Card 2 (MD/VA hub gas) data-blocked. **PROMOTED** on the owner's structural-integrity ruling; `2026-09-26-pjm-next-3-unitfuel` pruned. Record: `docs/RESULT-pjm-next-4-2026-09-26.md`.
