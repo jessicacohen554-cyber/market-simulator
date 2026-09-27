@@ -113,7 +113,9 @@ def check_recipes(legs: dict[str, list[int]]) -> None:
         if recorded != [year]:
             raise SystemExit(f"ABORT: {name} records years {recorded}, claims [{year}]")
         if cfg["git"]["basis_sha"] != PINNED_SHA:
-            raise SystemExit(f"ABORT: {name} solved at {cfg['git']['basis_sha']}, not {PINNED_SHA}")
+            raise SystemExit(
+                f"ABORT: {name} solved at {cfg['git']['basis_sha']}, not {PINNED_SHA}"
+            )
         surfaces.add((cfg.get("solve_surface") or {}).get("fingerprint"))
         sha = (
             cfg.get("resolved_inputs", {})
