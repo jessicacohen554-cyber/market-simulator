@@ -1701,5 +1701,5 @@ Conduct (zero LP, soco72 legs fetched by full SHA): the model does not START the
 62 % at the measured-must-run plants' economic tranches, 24 % at the cyclers). Candidate (i), the soco-53d campaign
 construction scoped to coal by parameters, greedies to 2019 COAL_BIT +0.13 TWh (need +3.62) and C4 2020 unchanged, and
 floors Barry 3,203/6,622 h in 2024/2025 while CEMS-off: REFUSED. The coal-sync family (U) is all-coal and floors
-offline hours: not admissible as a lever. (ii) start markup: ceiling ~+0.4 TWh, still gated on SOCO-64/65. Record:
+offline hours: not admissible as a lever. (ii) cost-based start (admissible under the same-day owner ruling): the cyclers' _committed tranches carry a flat $100/MWh (no-P0-run months amortized over 1 h); full re-amortization over CEMS campaigns greedies to 2019 COAL_BIT +0.19 TWh, 2020 C4 0.303, 2021 C4 0.208 -> 0.226; not built. THE OBJECT: in H2 2020 every coal econ tranche but Miller is offered $33-49 vs a $26.40 median price and clears in 0-0.4 % of hours while the real fleet ran above must-run; next = the take-or-pay/contract family (U), identification first. Record:
 docs/handoffs/r-soco/FINDING-soco-73-2026-09-27.md.

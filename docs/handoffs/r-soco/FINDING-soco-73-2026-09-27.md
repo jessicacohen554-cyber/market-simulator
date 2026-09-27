@@ -1,4 +1,4 @@
-# FINDING — soco-73: no admissible lever for the two failing rows (zero LP, no solve)
+# FINDING — soco-73: neither failing row has a commitment answer; the object is coal ECON offers in low-gas years (zero LP, no solve)
 
 Lane soco-73, 2026-09-27. Keeper `2026-09-26-soco72-gas-basis-window` (bundle `soco72_span`), unchanged. No
 PRECOMMIT, no shard, no registration: Task 1 found no lever that meets rules 17 / 19 / 21, so the lane stops here
@@ -118,26 +118,70 @@ U for SOCO.
 - **Verdict.** It is a multi-part Thread-D rebuild (a take-or-pay pairing is also required), not a zero-parameter lever.
   The cells stay U, and nothing was solved.
 
-### (ii) Coal P1 start markup on the no-must-run cyclers — NOT ARMED
+### (ii) Cost-based coal start on the cyclers — ADMISSIBLE since the 2026-09-27 owner ruling, sized, NOT BUILT
 
-- Its ceiling is about +0.4 TWh, far short of the +3.62 TWh needed.
-- It remains gated on the open owner question SOCO-64/65.
+The owner ruled mid-session (`docs/calibration-log/soco.md`, "owner ruling 2026-09-27"): a measured cost-based start in
+the objective is admissible; the market-pricing use stays `G`.
 
-## 5. What the evidence says the object is
+**Measured on the soco72 legs (`decompose`).**
 
-- **2019 COAL_BIT.** The cyclers are priced out: their offers sit above the clearing price in 96 % of their measured
-  synchronized hours. A cost-minimizing LP with no start cost and no min-down has no reason to keep them on.
-  - The real plants ran multi-day campaigns anyway. The driver is not in the model and is not a measured cost:
-    fuel (F923), heat rate (CAMPD) and gas basis (EIA-923) are all measured as of soco-72.
-  - A floor that places the units where the meter says they ran would pin outcomes, which rule 13 forbids.
-  - What is left are the commitment economics a binary UC would carry: start cost plus min-down across a cheap trough.
-    In a pure LP those enter only as the start markup, which is question (ii).
-- **2020 C4.** It is a fleet-wide July–December coal level deficit, 62 % of it at the measured must-run plants' economic
-  tranches. It sits next to 2020 CC_REGULAR +2.26 pp and CT_PEAKER +2.22 pp, a gas-over-coal merit-order split in the
-  second half of 2020.
-  - The next zero-LP object is a price decomposition of July–December 2020 on the soco72-2020 leg: the marginal class,
-    and Bowen/Scherer econ-tranche offer minus price. That would show whether the coal offer or the gas offer is off in
-    that half-year.
+- Each cycler's `_committed` tranche carries a flat **$100.00/MWh** markup: Barry 448.5 MW, Crist 143.2 MW and Wansley
+  350.5 MW in 2019 (the median for Crist is $37.5).
+- The cause is `compute_monthly_markup`'s `startup / max(avg_run, 1)`. A month with no P0 run amortizes the NREL
+  $100/MW start over one hour. This is the P0-feedback artifact soco-58 named.
+- Re-amortized over each plant's CEMS mean campaign (pooled 2019–2025), the markup is $0.22 (Barry) and $0.50
+  (Crist, Wansley).
+
+**Greedy of full re-amortization** (`markup-greedy`; an upper bound):
+
+| year | COAL_BIT Δ TWh | thinnest / failing rows | C4 coal NRMSE |
+|---|---|---|---|
+| 2019 | +0.193 | COAL_BIT −4.24 → −4.17 FAIL; CC_REGULAR 2.86 → 2.84; CT_PEAKER 2.71 → 2.68 | 0.263 → 0.263 |
+| 2020 | +0.070 | CC_REGULAR 2.26 → 2.26 | **0.304 → 0.303 FAIL** |
+| 2021 | +1.111 (Wansley +0.634, on a +5.0 TWh over-run) | ST_GAS −2.73 → −2.81 | 0.208 → **0.226** |
+| 2022 | +0.201 | COAL_PRB 2.69 → 2.69 | 0.240 → 0.242 |
+| 2023 | 0 | CT_PEAKER 2.40 → 2.40 | = |
+| 2024 | +0.241 | — | 0.256 → 0.253 |
+
+**The registered carrier would deliver LESS than this bound.**
+
+- The existing measured-horizon hook (`Generator.fast_start_run_hours`) takes the measured run as a **ceiling** that
+  P0 runs may only shorten. It fixes the no-run months but keeps the $25–100 markup in months with a short P0 run.
+- It therefore closes neither failing row, and it worsens 2021 C4.
+- It remains a genuine structural repair: the $100 comes from a one-hour amortization, not a measured cost. It is
+  offered to the owner as a small follow-on rather than spent as this lane's solve.
+
+## 5. What the evidence says the object is: coal ECON offers priced out in the low-gas years
+
+**The mechanism, seen in July–December 2020 on the soco72-2020 leg** (median zone price $26.40, CC_REGULAR median offer
+$18.08):
+
+| plant | econ/committed offer, $/MWh | share of H2 hours offer ≤ price | CEMS / model H2 average GW |
+|---|---|---|---|
+| Bowen 703 | 33.62 | 0.004 | 1.56 / 1.12 |
+| Scherer 6257 | 34.26 | 0.000 | 1.06 / 0.74 |
+| Daniel 6073 | 36.23 | 0.000 | 0.42 / 0.25 |
+| Barry 3 | 37.00 (committed 137.00) | 0.000 | 0.48 / 0.00 |
+| Gaston 26 | 49.43 | 0.000 | 0.42 / 0.22 |
+| Miller 6002 (PRB) | 22.93 | 0.772 | 2.31 / 2.02 |
+
+- **Model coal output is effectively the measured must-run slabs plus Miller.** Everything above must-run sits
+  $7–23/MWh above the clearing price, and so it never clears.
+- **The real fleet ran above its must-run anyway.**
+- **The same pattern explains 2019 COAL_BIT.** Barry's, Crist's and Wansley's base offer is at or below price in only
+  3.2 %, 17.5 % and 7.0 % of their synced hours.
+- **The inputs are measured.** Fuel is own-plant F923 at $3.0–3.2/MMBtu, heat rate is CAMPD, and the offer is
+  fuel × heat rate + $4.50 VOM. So the gap is not an input error.
+- **What it is instead.** In 2019–2020 (Henry Hub about $2.6 / $2.0), SOCO burned coal whose *average delivered* price
+  sat above the gas-parity marginal cost. The candidate structural reason is contract fuel economics: minimum-take /
+  take-or-pay coal and rail commitments make the avoidable cost of contracted tons lower than the F923 average.
+  - This is the object of the registered take-or-pay family (`coal_takeorpay_committed` and siblings, all **U** for
+    SOCO; `coal_takeorpay_from_data` reads the EIA-923 contract share).
+  - It is NOT armed here. It needs its own identification lane, which must first establish that SOCO's EIA-923
+    Schedule 2 contract-type records support a sunk/avoidable split at all, under rules 13 / 14 / 21. That test is the
+    successor handoff.
+- **Not levers:** offer-band multipliers (SOCO has no price reference), any adder, and re-deriving F923 against the
+  residual.
 
 ## 6. Retrievability
 
