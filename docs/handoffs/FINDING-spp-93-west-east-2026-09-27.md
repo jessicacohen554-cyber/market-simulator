@@ -159,3 +159,11 @@ and the owner's direction for this lane is "do not re-cut after the result".
   - (b) authorize a solve despite C-3, graded post-solve by L3 (unserved ⊆ keeper's).
 - `complete` / `frontier`: unchanged. The train tier 2023–25 is CALIBRATED (lone ledgered C3c); the validation tier 2019–22
   is NOT-YET (reported, not gating, rule 30(c)). **`frontier` is NOT reached.**
+
+## 7. Owner ruling (decision card, 2026-09-27)
+
+**"Hold STOP, next lever (Recommended)."**
+- The C-3 STOP stands.
+- `spp_zone_partition` stays built and default-off, and its cell stays **O**.
+- SPP-94 moves to the next SPP rubric failure.
+- A West/East solve is NOT authorized; a later lane re-opens it only with a new ruling.
