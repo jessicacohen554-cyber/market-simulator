@@ -353,7 +353,6 @@ def write_run_config(
                 "coal_prb_passthrough",
                 "coal_prb_passthrough_sigmoid",
                 "coal_mustrun_per_plant",
-                "retiree_cems_cap",
                 "ct_mustrun_per_plant",
                 "ct_mustrun_floor_frac",
                 "coal_drop_pof",

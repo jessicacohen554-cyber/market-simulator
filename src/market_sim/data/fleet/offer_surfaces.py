@@ -1405,6 +1405,30 @@ def build_pjm_offer_midcurve_conditional_markup(
     # measured level. Intersected with the floor scope like the others.
     minload_cfg = getattr(config, "pjm_offer_midcurve_minload_segments", None)
     minload_scope = {str(s) for s in minload_cfg} & scoped if minload_cfg else set()
+    # SHAPE-ON-OWN-COST scope (ScenarioConfig.pjm_offer_midcurve_shape_segments,
+    # default off; PJM-NEXT-5, owner ruling 2026-09-27). A segment here has its
+    # ECON rows SET to the plant's OWN committed-rung cost scaled by PJM's
+    # MEASURED ladder shape between the two within-plant shares:
+    #
+    #     bid[g, t] = (mc_base[c, t] - vom[c]) * m(s_g, bin t) / m(s_c, bin t) + vom[g]
+    #
+    # where c is the same plant's ``committed`` row. The gas-day index cancels
+    # inside the ratio, so the plant keeps its OWN delivered gas, heat rate and
+    # carbon cost (the plant differences the LEVEL form erased, pjm-h21 §3) and
+    # only the rise above min load is measured — replacing the residual-
+    # identified econ_low/econ_high ladder on those rows (rule 14). Signed like
+    # the level form (it may lower a fitted rung). Exactly one construction
+    # prices a row (rule 19): a segment may not be in both the level and the
+    # shape scope. A row whose plant has no committed rung, or an hour whose
+    # ratio is not finite, falls back to the floor form.
+    shape_cfg = getattr(config, "pjm_offer_midcurve_shape_segments", None)
+    shape_scope = {str(s) for s in shape_cfg} & scoped if shape_cfg else set()
+    if shape_scope & level_scope:
+        raise ValueError(
+            "pjm_offer_midcurve: segment(s) "
+            f"{sorted(shape_scope & level_scope)} in both the level and the shape "
+            "scope — one construction per row (rule 19)"
+        )
 
     ctx = _pjm_midcurve_context(
         fleet_arrays, generators, mc_base, net_load_mw, config, year, scoped
@@ -1413,6 +1437,17 @@ def build_pjm_offer_midcurve_conditional_markup(
 
     markup = np.zeros_like(mc_base)
     n_priced = 0
+    committed_of: dict[str, tuple[int, float]] = {}
+    if shape_scope:
+        for g, s_g, sfx, seg in ctx.rows:
+            if sfx == "committed" and seg in shape_scope:
+                committed_of[generators[g].unit_id.rpartition("_")[0]] = (g, s_g)
+    vom = np.asarray(
+        getattr(fleet_arrays, "vom", None)
+        if getattr(fleet_arrays, "vom", None) is not None
+        else np.zeros(mc_base.shape[0]),
+        dtype=float,
+    )
     for g, s_g, sfx, seg in ctx.rows:
         is_peak_row = sfx.startswith("peak")
         peak_targeted = is_peak_row and seg in peak_scope
@@ -1428,7 +1463,27 @@ def build_pjm_offer_midcurve_conditional_markup(
         if not is_target or seg not in tables:
             continue
         target = _pjm_midcurve_row_target(ctx, seg, s_g)  # (T,)
-        if seg in level_scope or peak_targeted or minload_targeted:
+        c = committed_of.get(generators[g].unit_id.rpartition("_")[0])
+        if (
+            seg in shape_scope
+            and sfx.startswith("econ")
+            and not (peak_targeted or minload_targeted)
+            and c is not None
+        ):
+            # SHAPE form: the plant's own committed-rung cost x the measured
+            # ratio (gas_day cancels). Uncovered hours fall back to the floor.
+            gc, s_c = c
+            with np.errstate(divide="ignore", invalid="ignore"):
+                ratio = target / _pjm_midcurve_row_target(ctx, seg, s_c)
+            shaped = (mc_base[gc, :] - vom[gc]) * ratio + vom[g]
+            shaped = np.minimum(shaped, ctx.voll_cap)
+            floor = np.maximum(0.0, np.nan_to_num(target, nan=0.0) - mc_base[g, :])
+            row = np.where(
+                np.isfinite(shaped),
+                np.maximum(shaped, 0.0) - mc_base[g, :],
+                floor,
+            )
+        elif seg in level_scope or peak_targeted or minload_targeted:
             # LEVEL form: the bid IS the measured target (clamped >= 0,
             # VOLL-capped above) — a signed markup that may lower the
             # fitted band. Hours with no measured coverage (NaN target)

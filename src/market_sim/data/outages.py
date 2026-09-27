@@ -3313,7 +3313,7 @@ def ercot_noncampd_availability_caps(
     statistical availability untouched elsewhere (a zero-month availability
     event, never a monthly-level pin — rule 14). Plant-keyed so the fleet
     builder applies each cap to every dispatch tranche of the (possibly binned)
-    plant, exactly like :func:`retiree_availability_caps`. Empty when the CSV is
+    plant. Empty when the CSV is
     absent or the year has no windows, so callers degrade to the statistical
     model unchanged.
     """
@@ -3369,87 +3369,6 @@ for _mm in range(1, 13):
     _lo_h = _DAYS_BEFORE_MONTH[_mm] * 24
     _hi_h = (_DAYS_BEFORE_MONTH[_mm] + calendar.monthrange(2023, _mm)[1]) * 24
     _MONTH_OF_HOUR[_lo_h:_hi_h] = _mm
-
-
-def _plant_cems_envelope(
-    state: str, year: int, plant_code: int, nameplate_mw: float, hours: int
-) -> np.ndarray | None:
-    """Monthly CEMS availability envelope for one retiree plant, or ``None``.
-
-    Reads ``campd-unit-level/{STATE}_{YEAR}.parquet``, sums the plant's units to
-    an hourly plant-total gross load, and returns a length-``hours`` cap in
-    [0, 1] = each month's peak plant-total hour / ``nameplate_mw`` (clipped to
-    1), zero in months with no generation. ``None`` when the state extract or
-    the plant is absent (no measurement -> the COD ramp's planned-date aging
-    stands). Gross load over net nameplate clips to 1 in full-output months, so
-    the cap only bites where the plant's demonstrated peak has fallen — i.e.
-    where it is winding down.
-
-    A within-window retiree absent from an extract that *exists* did not run that
-    year at all (it had retired / was decommissioned), so it is capped to zero
-    rather than skipped — the binned plant's planned retirement (e.g. Homer City
-    held online through 2024-04 by the collapsed plant date) is then overridden
-    by the measured "did not run" fact. Only a missing state extract returns
-    ``None`` (a genuine data gap).
-    """
-    if nameplate_mw <= 0.0:
-        return None
-    path = CAMPD_UNIT_LEVEL_DIR / f"{state}_{year}.parquet"
-    if not path.exists():
-        return None
-    df = pd.read_parquet(path, columns=["facilityId", "date", "hour", "grossLoad"])
-    sub = df[df["facilityId"].astype(str) == str(int(plant_code))]
-    if sub.empty:
-        return np.zeros(hours)
-    sub = sub.copy()
-    sub["grossLoad"] = pd.to_numeric(sub["grossLoad"], errors="coerce").fillna(0.0)
-    # Plant-total per hour (units summed), then the peak hour within each month.
-    plant_hourly = sub.groupby(["date", "hour"], as_index=False)["grossLoad"].sum()
-    plant_hourly["month"] = pd.to_datetime(plant_hourly["date"]).dt.month
-    monthly_peak = plant_hourly.groupby("month")["grossLoad"].max()
-    frac = np.zeros(13)  # 1-indexed; index 0 unused
-    for m in range(1, 13):
-        peak = monthly_peak.get(m, 0.0)
-        if pd.isna(peak):
-            peak = 0.0
-        frac[m] = min(1.0, max(0.0, float(peak) / nameplate_mw))
-    idx = np.arange(hours) % HOURS_PER_YEAR
-    return frac[_MONTH_OF_HOUR[idx]]
-
-
-@lru_cache(maxsize=None)
-def retiree_availability_caps(
-    iso: str, year: int, hours: int = HOURS_PER_YEAR
-) -> dict[int, np.ndarray]:
-    """Return ``{plant_code: (hours,) availability cap}`` for within-window
-    retiree plants, from the CAMPD unit-level CEMS envelope.
-
-    Plant-keyed so the fleet builder applies each cap to every dispatch tranche
-    of the (possibly binned) plant. The denominator is the plant's nameplate
-    summed over its retiree units. Plants with no CEMS extract, or whose
-    envelope never falls below full capacity, are omitted. Empty for an ISO with
-    no within-window retiree parquet.
-    """
-    from market_sim.config.iso_configs import get_iso_config
-    from market_sim.data.fleet import load_retired_within_window
-
-    try:
-        iso_config = get_iso_config(iso)
-    except ValueError:
-        iso_config = None
-    plants: dict[int, list] = {}
-    for g in load_retired_within_window(iso, iso_config):
-        pc = int(g.plant_code)
-        if pc <= 0 or not g.state:
-            continue
-        rec = plants.setdefault(pc, [g.state, 0.0])
-        rec[1] += float(g.pmax_mw)
-    caps: dict[int, np.ndarray] = {}
-    for pc, (state, nameplate) in plants.items():
-        cap = _plant_cems_envelope(state, year, pc, nameplate, hours)
-        if cap is not None and (cap < 1.0).any():
-            caps[pc] = cap
-    return caps
 
 
 # CT_PEAKER AS/RUC-deployment energy floor (scripts/data/derive_ct_deployment.py).

@@ -57,6 +57,11 @@ from market_sim.config.sweeps import SweepDefinition  # noqa: F401
 # failure mode rule 26 targets. Entries are append-only; never delete one, or
 # the key it was protecting moves after all.
 _CACHE_KEY_RETIRED_FIELDS: dict[str, object] = {
+    # Within-window retiree CEMS envelope cap (a retiree plant's availability
+    # capped to its monthly measured peak output) — deleted 2026-09-27,
+    # PJM-NEXT-5 card 3(b), owner ruling: inert on the only keeper that armed
+    # it (PJM, every year 2019-2025, measured) and fails rule 13's forward test.
+    "retiree_cems_cap": False,
     # CT_CHP tranche heat-rate override triple (1.1 / 1.2 / 1.4 on all six ISOs'
     # bundles, reachable on none — deleted 2026-08-03, nyiso-114).
     "ct_committed_hr_override": None,
@@ -866,6 +871,9 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the hash at its default; an armed run enters the key as a distinct
     # scenario.
     "pjm_offer_midcurve_level_segments",
+    # PJM-NEXT-5 shape-on-own-cost scope (default off; an armed run keys
+    # distinctly, the default drops from the hash).
+    "pjm_offer_midcurve_shape_segments",
     # PJM mid-curve PEAK-row scope + the CT_FAST measured max()-seam reprice
     # (pjm-123 dispersion composite legs 2 and 3, both default-off). Neither
     # branch is reachable at its default — an empty peak scope targets no extra
@@ -2468,6 +2476,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "pjm_dam_availability": "False",
     "pjm_measured_outage_event_cap": "False",
     "pjm_offer_midcurve_level_segments": "None",
+    "pjm_offer_midcurve_shape_segments": "None",
     "pjm_offer_midcurve_peak_segments": "None",
     "pjm_offer_midcurve_minload_segments": "None",
     "pjm_ct_measured_max_reprice": "False",
@@ -12787,17 +12796,6 @@ class ScenarioConfig:
     # byte-identical and an armed run gets its own key.
     ercot_coal_min_config_floor: bool = False
 
-    # When True, each within-window retiree plant (fleet.load_retired_within_
-    # window) is capped to its measured monthly CAMPD CEMS envelope
-    # (outages.retiree_availability_caps): a winding-down retiree the cost-based
-    # LP would hold at its coal must-run floor as baseload is limited to the
-    # peak output it actually demonstrated each month (zero after it stops),
-    # honestly reflecting the out-of-market retirement economics the merit order
-    # cannot see. Scoped to the within-window retirees (the bulk fleet keeps its
-    # cost-based dispatch); backcast-only (historic outage source). Off by
-    # default; enabled per ISO once its retiree-keeper effect is scored.
-    retiree_cems_cap: bool = False
-
     # When True, simple-cycle peakers (CT_PEAKER) carry a per-plant monthly
     # reliability must-run floor equal to their observed EIA-923 net generation
     # (fleet.ct_mustrun_floor_mwh_by_plant), injected as a minimum-generation
@@ -15093,6 +15091,19 @@ class ScenarioConfig:
     # measured. Exercised by scripts/probes/pjm121_level_form_precheck.py;
     # regression contract in tests/test_pjm_offer_midcurve_level_form.py.
     pjm_offer_midcurve_level_segments: tuple[str, ...] | None = None
+    # SHAPE-ON-OWN-COST scope for the mid-curve surface (default OFF; PJM-NEXT-5,
+    # owner ruling 2026-09-27). Listed segments (intersected with the floor
+    # scope; disjoint from the level scope, rule 19) have their ECON rows set to
+    # the plant's own committed-rung cost scaled by PJM's measured offer-ladder
+    # RATIO between the row's and the committed rung's within-plant shares:
+    # (mc_committed - vom_committed) x m(s_g)/m(s_c) + vom_g. The gas index
+    # cancels in the ratio, so each plant keeps its own delivered gas, heat rate
+    # and carbon cost — the plant differences the LEVEL form erased (pjm-h21
+    # §3) — while the econ rise above min load is PJM's measured one, replacing
+    # the residual-identified econ_low/econ_high band on those rows (rule 14).
+    # Zero free parameters. P1-only like every mid-curve form. Phase 0:
+    # docs/FINDING-pjm-next-5-phase0-cards-1-2-3b-2026-09-27.md card 1.
+    pjm_offer_midcurve_shape_segments: tuple[str, ...] | None = None
     # PEAK-row scope for the mid-curve surface (default OFF, PJM-gated). The
     # mid-curve targeting excludes the CC/CT ``peak`` rungs by design (only the
     # LONG_RUN peak rung is in scope), so the measured STEEP top belt — the

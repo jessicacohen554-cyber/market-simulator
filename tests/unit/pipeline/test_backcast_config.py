@@ -81,7 +81,6 @@ class TestBackcastFlagToField(unittest.TestCase):
             "commitment_enabled",
             "coal_mustrun_per_plant",
             "ct_mustrun_per_plant",
-            "retiree_cems_cap",
         ):
             with self.subTest(flag=flag):
                 self.assertFalse(getattr(self._cfg(), flag))
