@@ -15209,3 +15209,15 @@ declined miso-276 D1 arm was found mis-built (South on the Chicago print, 2019�
 **PROMOTED 2026-09-27** on the owner's ruling (*"Promote"*): MISO keeper → `2026-09-26-miso-277-d1-as` (2019–2025);
 `miso-275` and `miso-276` pruned (rule 35). Headline unchanged: train CALIBRATED; full span NOT-YET on C1 ST_GAS 2019,
 C3a 2022, C3b 2021.
+
+## miso-278 — 2026-09-27
+
+Owner-chartered ST_GAS unit-fuel attribution re-derive (`docs/handoffs/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md`).
+New field `campd_unit_fuel_split` selects four `-fuelsplit-` tranche companions in which mixed coal/gas plants' rows
+are re-derived with each CAMPD unit routed on its own fuel (9 rows → 14; every other line byte-identical). 7 shards
+at `257d3c6f` (`docs/PRECOMMIT-miso278-unit-fuel-split-2026-09-27.md`, `docs/RESULT-miso278-unit-fuel-split-2026-09-27.md`):
+zero status flips, C1 ST_GAS 2019 −8.56 → −8.20 TWh (FAIL), legitimacy 12 → 11.
+
+**PROMOTED 2026-09-27** on the owner's standing instruction: MISO keeper → `2026-09-27-miso-278-fuelsplit`
+(2019–2025); `miso-277` pruned (rule 35). Headline unchanged: train CALIBRATED; full span NOT-YET on C1 ST_GAS 2019,
+C3a 2022, C3b 2021. Riverside remap (55641 CT-03/04 → 64020) held out as not solve-inert; owed to a later lane.
