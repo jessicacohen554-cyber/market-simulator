@@ -18000,6 +18000,23 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-92 (2026-09-27, WHY THE N–S SEAM BARELY SEPARATES, ZERO LP —
+`docs/handoffs/FINDING-spp-92-seam-2026-09-27.md`, probes `scripts/probes/_spp92_{seam_probe,load_lmp_fetch,bubble_spread,psi_repair}.py`).**
+- **Not the pipe width.** SPP-53's own ψ construction, repaired to the model's object (the load-weighted BUBBLE spread from all
+  112 RTBM load settlement locations, on the GMT-derived model clock), gives **4,100 MW, WIDER** than 3,400. All four cells
+  (2,600 / 2,900 / 3,600 / 4,100) sit inside SPP-53's stated width, so by the pre-declared rule (`48711d25`) there is no change.
+  Every cell's median is the Franklin 161/69 kV transformer (100 MW / ψ). SPP-53's own cell does NOT reproduce from committed
+  inputs (2,600 at R² 0.37 vs 3,355 at 0.17). Do not tighten the link to close the spread (rule 14).
+- **The cause is bubble contents.** The actual price divide runs West-cheap (SECI, NPPD, LES, WAUE, SPS) / East-dear (SPRM, EDE,
+  OKGE, CSWS) INSIDE both bubbles: the within-North area range of $9–40 exceeds the bubble-to-bubble mean spread of $2–11 in
+  every year 2019–25. The keeper's hourly S−N is uncorrelated with the actual bubble S−N (r 0.02–0.27). The short side is the
+  South price (keeper $1–12 below the actual South bubble).
+- **Hub ≠ bubble.** The hub spread exceeds the bubble spread by 15–38 % of |S−N|, which is intra-bubble. SPP-53's corridor
+  elements (Franklin, Sibley, KC area) lie INSIDE the North bubble, not on its KS/OK cut.
+- 2019–22 failures: `price_mean` 2019/2020 and `price_shape` 2020 are not seam objects. At most the North half of the 2021–22
+  PRB-over / CC-under miss is seam-shaped: South's own coal is over +2.6 / +6.5 TWh against South gas −17 TWh.
+- **Re-open only as a West/East re-partition lane** (a new topology, owner decision), never as a TTC change.
+
 **DO-NOT-REDO, added by SPP-91 (2026-09-27, FLAT ON-LINE COAL SHORTFALL: RESERVES OR CONGESTION, ZERO LP —
 `docs/handoffs/FINDING-spp-91-flat-coal-headroom-2026-09-27.md`, probes `scripts/probes/_spp91_{flat_coal_series,node_lmp_fetch,flat_coal_tests}.py`).**
 - **Not reg-up/spin headroom.** The flat shortfall F (1.0–1.35 GW) equals 88–120 % of ALL SPP reg-up + spin cleared (1.10–1.17 GW,

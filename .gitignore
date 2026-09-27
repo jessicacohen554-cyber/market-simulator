@@ -3702,3 +3702,5 @@ results/calibration/miso278_arm_*/
 
 # NWPP-NEXT-7 soft-floor per-year shard legs (kept out of main; the _span composite is registered)
 results/calibration/nwppnext7sf_20[12][0-9]/
+# SPP-92 seam probe scratch (zero LP; numbers live in the FINDING)
+results/calibration/_spp92_seam_hourly_*.parquet
