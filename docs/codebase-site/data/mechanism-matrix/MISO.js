@@ -209,6 +209,7 @@ window.MECH_MATRIX_SHARDS.MISO = {
     pjm_midcurve_belt: { cell: "." },
     coal_passthrough_sigmoids: { cell: "R", ev: "MISO-53" },
     coal_econ_bound: { cell: "K", ev: "miso archive" },
+    coal_econ_two_sided: { cell: "U", ev: "soco-81 (2026-09-27) row seed, no verdict minted: UNTESTED here. The artifact coal_incremental_hr_ratio_<ISO>.csv is derived for SOCO only (derive_coal_incremental_hr_ratio.ISO_SCOPE), so the flag is a no-op for this ISO until its own lane derives one (rules 25 / 28(d))." },
     coal_offer_net_revenue_margin: { cell: "U" },
     cc_committed_offer_margin: { cell: "U" },
     coal_peak_offer_margin: { cell: "U" },

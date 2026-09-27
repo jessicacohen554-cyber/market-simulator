@@ -976,6 +976,7 @@ def run_year(
     chp_layup_duty_split: bool | None = None,
     chp_layup_duty_curve: bool | None = None,
     egrid_identity_heat_rates: bool | None = None,
+    coal_econ_marginal_hr_two_sided: bool | None = None,
     measured_ct_heat_rates: bool | None = None,
     measured_coal_heat_rates: bool | None = None,
     measured_st_heat_rates: bool | None = None,
@@ -2115,6 +2116,10 @@ def run_year(
     if egrid_identity_heat_rates is not None:
         config = config.with_overrides(
             egrid_identity_heat_rates=egrid_identity_heat_rates
+        )
+    if coal_econ_marginal_hr_two_sided is not None:
+        config = config.with_overrides(
+            coal_econ_marginal_hr_two_sided=coal_econ_marginal_hr_two_sided
         )
     if measured_ct_heat_rates is not None:
         config = config.with_overrides(measured_ct_heat_rates=measured_ct_heat_rates)
