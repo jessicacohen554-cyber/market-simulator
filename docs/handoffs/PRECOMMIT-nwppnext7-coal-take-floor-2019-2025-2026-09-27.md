@@ -181,3 +181,15 @@ regression reported at full magnitude.
 - **Hard stop 6** additionally requires the log line `coal take floor (NWPP <Y>): soft, shortfall priced per yard at`.
 - **Reported:** the per-yard shortfall paid (TWh-equivalent). A large shortfall means the take could not be burned,
   and it is reported at full magnitude.
+
+**Soft-floor pin** `2162cef52b4c4667a2be4ca288d38ea77e19186a`. All 7 shards were launched 2026-09-27 21:53 UTC.
+
+| Year | Session |
+|---|---|
+| 2019 | `session_01RpMbF3NTo4jtemVrYVDaaj` |
+| 2020 | `session_01RvQ8aPPXhHTmUmYk1LDTyr` |
+| 2021 | `session_01NYjnfZdE4tvnfxzpJV5Ten` |
+| 2022 | `session_011KYpqSofjctkx2uzMaPkhw` |
+| 2023 | `session_01LasPAeFu6yh6DEYiMbxPhn` |
+| 2024 | `session_011iHFAWoF91PBfRy5SDL2WS` |
+| 2025 | `session_01ADFcHrE3MajP3gwYsTKAXW` |

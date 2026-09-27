@@ -25,7 +25,7 @@ sys.path.insert(0, str(REPO))
 import scripts.gen_nwppnext6_attestation as prev  # noqa: E402
 import scripts.gen_rnwpp_attestation as base  # noqa: E402
 
-PIN = "__SOFT_PIN__"
+PIN = "2162cef52b4c4667a2be4ca288d38ea77e19186a"
 ARMED = ("coal_fuel_inventory_plant_grain", "coal_fuel_inventory_take_floor")
 RETIRED = ("coal_takeorpay_from_data", "coal_committed_takeorpay_regulated")
 
