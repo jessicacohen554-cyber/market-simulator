@@ -93,3 +93,18 @@ Artifact: `results/calibration/_rcaiso9/gdrift_input_identity.json`. **Matches �
   off → on, where the code is identical, so they carry no LP content.
 - New fields since the pin: `caiso_import_cap_floor_static` (this lane) and `pjm_offer_midcurve_shape_segments`
   (a PJM field, default off, INERT for CAISO).
+
+### 6a. G-DRIFT addendum — rebase base `baf382bd` (code audit, zero LP)
+
+G-DRIFT above ran at base `a6347bd8`. Before launch the branch was rebased onto `baf382bd`. Every changed hunk on
+the backcast path (`git diff a6347bd8 baf382bd -- src/market_sim scripts/run_calibration*.py scripts/lib
+data/raw/_validation-source data/raw/reference`) is **INERT for CAISO**:
+- SPP-93 (`zonal_shares.py`, `eia860.py`, `zone_assignment.py`, `renewables.py::_allocation_zone`, `iso_configs.py`,
+  `topology_variant.py`, `data/raw/reference/spp_plant_reserve_zone.csv`): SPP-only, and gated on
+  `spp_zone_partition` (default `north_south` = byte-identical).
+- soco-81 (`campd_bins.py::coal_incremental_hr_ratios`, `assembly.py` two-sided coal HR, the `year=` pass-through):
+  gated on `coal_econ_marginal_hr_two_sided` (default off, absent from the CAISO recipe), and no CAISO artifact
+  exists.
+- R-ERCOT-10: regenerated ERCOT partial-outage extracts only.
+
+Form 4 stands: the committed keeper and fold bundles are the controls.
