@@ -58,7 +58,10 @@ def test_off_keeps_the_f2_file(tmp_path, monkeypatch):
 def test_needs_full_rederive(tmp_path, monkeypatch):
     om = _lay(tmp_path, monkeypatch, *_FAMILY)
     path = om.unit_outage_csv_for_iso(
-        "PJM", membership_repair=True, unit_fuel_routing=True, rederive_peaker_windows=True
+        "PJM",
+        membership_repair=True,
+        unit_fuel_routing=True,
+        rederive_peaker_windows=True,
     )
     assert path.name == "campd-unit-outages-memberrepair-unitfuel-PJM.csv"
 

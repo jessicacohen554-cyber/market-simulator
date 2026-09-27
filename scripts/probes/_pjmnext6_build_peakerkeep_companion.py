@@ -44,9 +44,15 @@ def _derive(scratch: Path, keep: bool) -> pd.DataFrame:
     """Run the HEAD deriver into ``scratch`` and return its extract."""
     out = scratch / ("split.csv" if keep else "f2_repro.csv")
     cmd = [
-        sys.executable, str(REPO / "scripts/data/derive_campd_unit_outages.py"),
-        "--iso", "PJM", "--years", *map(str, YEARS),
-        "--membership-vintage-union", "--out", str(out),
+        sys.executable,
+        str(REPO / "scripts/data/derive_campd_unit_outages.py"),
+        "--iso",
+        "PJM",
+        "--years",
+        *map(str, YEARS),
+        "--membership-vintage-union",
+        "--out",
+        str(out),
     ]
     if keep:
         cmd.append("--keep-listed-peaker-dead-periods")
@@ -98,7 +104,9 @@ def main() -> None:
         "(with unit_outage_full_rederive + membership_repair + unit_fuel_routing)",
         "record": "docs/PRECOMMIT-pjm-next-6-card1-f2-split-2026-09-27.md",
     }
-    OUT.with_suffix(".meta.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
+    OUT.with_suffix(".meta.json").write_text(
+        json.dumps(meta, indent=2, sort_keys=True) + "\n"
+    )
     print(f"wrote {OUT.name} rows={len(frame)} sha256={sha}")
 
 
