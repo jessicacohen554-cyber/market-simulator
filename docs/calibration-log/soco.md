@@ -1801,3 +1801,21 @@ Owner questions (soco-75, soco-77) carried. Record: docs/handoffs/r-soco/FINDING
   construction, able to lower as well as raise offers. The greedy promise is 2020 C4 0.301 -> ~0.29 (PASS); 2019
   COAL_BIT stays FAIL. The build goes to the successor lane (soco-81): soco-72/76 pattern, seven year-isolated shards.
 - **soco-77 `tranche_startup_amortization` as SOCO's objective start: NO** (lane recommendation). It stays refused for SOCO.
+
+## soco-81 — 2026-09-27
+
+BUILT THE OWNER-AUTHORIZED TWO-SIDED COAL INCREMENTAL-HR MODE; PROMOTED; 2020 C4 CLOSES; 2019 COAL_BIT IS THE ONE FAILING ROW. New
+field coal_econ_marginal_hr_two_sided (default off; matrix row + cell in every ISO shard; SOCO-only artifact
+coal_incremental_hr_ratio_SOCO.csv from derive_coal_incremental_hr_ratio.py, the frozen derive_campd_marginal_hr construction over the
+average-HR artifact's own hours; reproduces soco-75 §3 exactly). A coal tranche set with a measured min-load floor prices its
+committed/econ tranches at average x its measured incremental ratio (0.77-1.08, two-sided), replacing the band (rule 19); cyclers keep
+the average. Zero-LP census: 11 tranches at Bowen/Miller/Scherer/Daniel/Gaston move every year, nothing else. Greedy 2020 C4 0.301 ->
+0.283.
+
+RESULT (run 2026-09-27-soco81-coal-incremental-hr, seven year-isolated shards at e688d3f2; PROMOTED on the owner's standing ruling,
+PRECOMMIT §7 held; 2026-09-27-soco76-egrid-identity-hr pruned per rule 35): 11 tranches at the census mc +/-$0.01, all other units at
+the flag-off build; unserved 0; benchmark byte-identical. COAL_PRB +0.1..+1.3 TWh/yr, CC_REGULAR -0.4..-0.7. 2020 C4 coal NRMSE 0.301
+-> 0.285 PASS; 2019 COAL_BIT -4.16 -> -3.99pp FAIL; D-1 fails 4 -> 3. Grade 5/3/2 -> 5/4/1, NOT-YET (C1 2019 COAL_BIT only).
+Secondary: two SOCO fast-tier tests were stale, not builder defects (PR #6800); re-deriving the dark-unit outage file at HEAD adds 44
+coal windows (Wansley 37) — an open drift lead, not fixed. Records: docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-81-2026-09-27.md.
+Leftover refs: claude/soco81-2019..2025, claude/soco-81, claude/soco-81-tests.
