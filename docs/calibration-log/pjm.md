@@ -6760,3 +6760,9 @@ COAL_BIT 2022; new CT_PEAKER 2021 −9.57, CC_REGULAR 2023, C3a 2022 −11.5 %).
 over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phantom, Chalk Point / Mansfield / Sammis);
 2021 has no measured operand. Records: `docs/RESULT-pjm-next-7-2026-09-28.md`,
 `docs/FINDING-pjm-next-7-coal-phase0-2026-09-28.md`.
+
+## PJM-NEXT-8 — 2026-09-28
+
+- **Promoted** `2026-09-28-pjm-next8-exitfix` (bundle `pjmnext8_xf_span`) on structure: `unit_outage_exit_cohort_repair`, the exit-cohort repair of the CAMPD outage layer (measured input, zero DOF). COAL_BIT 2019 +17.81 → +10.61 exactly as pre-registered; 2024–25 byte-identical; training span NOT-YET unchanged (CC_REGULAR 2023 +8.48); run-level 12 → 14 failing rows (2019 CC_REGULAR +10.86 and C3a +11.8 % unmasked). Prior keeper `2026-09-28-pjm-next-7-virtual` pruned.
+- **Card 1 (zero LP):** CC_REGULAR 2023 is a zonal price-formation defect — missing east-to-south congestion boundary; no measured operand in the repo.
+- Records: `docs/RESULT-pjm-next-8-2026-09-28.md`, `docs/PRECOMMIT-pjm-next-8-exitfix-2026-09-28.md`, `docs/FINDING-pjm-next-8-cc2023-phase0-2026-09-28.md`.
