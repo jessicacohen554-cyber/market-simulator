@@ -45,6 +45,27 @@ The four tranche-family companions are written by
 ``derive_thermal_tranches.py --split-remap`` AFTER this (they read the ``std``
 companion as their outage-derated denominator).
 
+PLAIN-FAMILY ISOs (SPP-99). An ISO whose keeper reads the PLAIN tranche artifact
+and the net-load-masked std extract (SPP: ``unit_outage_netload_mask_repair``,
+no fuel split, no mixed-gas routing) selects three more families, never part of
+the default set, so the MISO invocation is unchanged:
+
+* ``stdbase``  -- ``unit_outage_csv_for_iso(iso)`` (the plain std extract),
+  deriver ``derive_campd_unit_outages.py --no-inmerit-filter``: the committed
+  SPP base extract predates SPP-85's EIA-930 key, so its revealed-availability
+  mask was ``None`` and every span was kept -- exactly what
+  ``--no-inmerit-filter`` does. It is not read by a solve under
+  ``unit_outage_netload_mask_repair``; it is the plain tranche family's
+  outage-derated DENOMINATOR, which must carry the remapped identity;
+* ``stdmask``  -- ``unit_outage_csv_for_iso(iso, netload_mask_repair=True)``,
+  deriver ``derive_campd_unit_outages.py`` at its recorded invocation;
+* ``tranches`` -- ``thermal_tranches_<ISO>.csv``, deriver
+  ``derive_thermal_tranches.py --split-remap-denominator`` over the incumbent's
+  own recorded ``derive_invocation.years`` (its denominator reads the
+  ``stdbase`` companion, so ``stdbase`` is built first). Splicing leaves every
+  non-remap row -- the COAL rows the HEAD plain path no longer emits included --
+  byte-identical, and projects the fresh rows onto the incumbent's columns.
+
 ``--fresh-dir`` reuses deriver outputs already written there
 (``fresh-<family>.csv``) instead of re-running the derivers. Zero free
 parameters. Never an overwrite of an incumbent.
@@ -72,6 +93,17 @@ from market_sim.data.outages import (  # noqa: E402
 )
 
 FAMILIES: tuple[str, ...] = ("std", "shortgas", "maxgen", "cc")
+#: Every family, in build order (``std`` / ``stdbase`` feed their dependants;
+#: ``stdbase`` / ``stdmask`` / ``tranches`` are the SPP-99 plain-family ones).
+ALL_FAMILIES: tuple[str, ...] = (
+    "std",
+    "stdbase",
+    "stdmask",
+    "shortgas",
+    "maxgen",
+    "cc",
+    "tranches",
+)
 
 #: Per family: (plant column, the column whose leading 4 characters give the
 #: row's year for the ``--years`` scope or None to splice every year, the
@@ -81,6 +113,9 @@ _KEYS: dict[str, tuple[str, str | None, tuple[str, ...]]] = {
     "shortgas": ("facility_id", "outage_start", ("facility_id", "unit_id")),
     "maxgen": ("facility_id", "window_start", ("facility_id", "window_start")),
     "cc": ("plant_code", None, ("plant_code", "year")),
+    "stdbase": ("facility_id", "outage_start", ("facility_id", "unit_id")),
+    "stdmask": ("facility_id", "outage_start", ("facility_id", "unit_id")),
+    "tranches": ("plant_code", None, ("plant_code", "plant_group")),
 }
 
 #: CC rows whose flag this incumbent construction could not have written.
@@ -104,7 +139,25 @@ def incumbent_path(family: str, iso: str) -> Path:
         return unit_outage_maxgen_csv_for_iso(iso, mixed_gas_routing=True)
     if family == "cc":
         return PROCESSED_DIR / f"campd_cc_heat_rates_{iso.upper()}.csv"
+    if family == "stdbase":
+        return unit_outage_csv_for_iso(iso)
+    if family == "stdmask":
+        return unit_outage_csv_for_iso(iso, netload_mask_repair=True)
+    if family == "tranches":
+        return PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
     raise ValueError(f"unknown family {family!r}")
+
+
+def tranche_years(iso: str) -> list[int]:
+    """The plain tranche incumbent's own recorded derive window (its sidecar)."""
+    import json
+
+    side = incumbent_path("tranches", iso).with_suffix(".meta.json")
+    inv = json.loads(side.read_text()).get("derive_invocation") or {}
+    years = inv.get("years")
+    if not years:
+        raise SystemExit(f"{side.name}: no derive_invocation.years; refusing to guess")
+    return [int(y) for y in years]
 
 
 def companion_path(incumbent: Path) -> Path:
@@ -140,6 +193,21 @@ def derive_command(family: str, iso: str, years: list[int], out: Path) -> list[s
         return py + [
             str(REPO / "scripts/data/derive_campd_cc_heat_rates.py"),
             "--iso", iso, "--years", *ys, "--out", str(out),
+        ]  # fmt: skip
+    if family == "stdbase":
+        return py + [
+            str(REPO / "scripts/data/derive_campd_unit_outages.py"),
+            "--iso", iso, "--years", *ys, "--no-inmerit-filter", "--out", str(out),
+        ]  # fmt: skip
+    if family == "stdmask":
+        return py + [
+            str(REPO / "scripts/data/derive_campd_unit_outages.py"),
+            "--iso", iso, "--years", *ys, "--out", str(out),
+        ]  # fmt: skip
+    if family == "tranches":
+        return py + [
+            str(REPO / "scripts/data/derive_thermal_tranches.py"),
+            "--iso", iso, "--years", *ys, "--split-remap-denominator", "--out", str(out),
         ]  # fmt: skip
     raise ValueError(f"unknown family {family!r}")
 
@@ -322,14 +390,26 @@ def main() -> None:
         default=[2019, 2020, 2021, 2022, 2023, 2024, 2025],
         help="Years for the shortgas and cc derivers (their incumbents' span).",
     )
-    ap.add_argument("--family", nargs="+", choices=FAMILIES, default=list(FAMILIES))
+    ap.add_argument(
+        "--family",
+        nargs="+",
+        choices=ALL_FAMILIES,
+        default=list(FAMILIES),
+        help="Default: the MISO set. A plain-family ISO (SPP) passes "
+        "stdbase stdmask cc tranches.",
+    )
     ap.add_argument("--fresh-dir", required=True, type=Path)
     ap.add_argument("--rerun", action="store_true")
     args = ap.parse_args()
     iso = args.iso.upper()
-    order = [f for f in FAMILIES if f in args.family]
+    order = [f for f in ALL_FAMILIES if f in args.family]
     for family in order:
-        years = args.years if family in ("std", "maxgen") else args.cc_years
+        if family == "tranches":
+            years = tranche_years(iso)
+        elif family in ("std", "maxgen", "stdbase", "stdmask"):
+            years = args.years
+        else:
+            years = args.cc_years
         res = build_family(family, iso, years, args.fresh_dir, args.rerun)
         print(f"{family}: {res}")
 

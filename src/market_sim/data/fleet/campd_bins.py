@@ -1748,20 +1748,25 @@ def campd_fuel_split_selector(config: object) -> bool | str:
     ``ScenarioConfig.campd_split_remap_companions`` (miso-280, GATED default
     False) appends :data:`market_sim.data.campd.SPLIT_REMAP_TAG` to whichever
     fuel-split family is selected (``"splitremap"`` / ``"stcov-splitremap"``),
-    selecting the ``-splitremap-`` companions of all four readers at once. The
-    companions were derived only on the fuel-split family (the MISO keeper's),
-    so arming it WITHOUT the fuel split raises rather than silently reading the
-    pre-remap tranche artifact beside remapped outage extracts.
+    selecting the ``-splitremap-`` companions of all four readers at once.
+    Armed WITHOUT the fuel split (SPP-99: an ISO whose keeper reads the PLAIN
+    tranche family) it returns :data:`PLAIN_SPLIT_REMAP_TAG`, which selects the
+    plain artifacts' own ``-splitremap-`` companions -- raising where one is
+    absent, never silently reading the pre-remap tranche artifact beside
+    remapped outage extracts. Under ``campd_per_unit_attribution`` it still
+    raises: no per-unit split-remap companion has been derived.
     """
     per_unit, _ = campd_attribution_selectors(config)
     split_remap = _campd.split_remap_armed(config)
     if per_unit or not bool(getattr(config, "campd_unit_fuel_split", False)):
         if split_remap:
-            raise ValueError(
-                "campd_split_remap_companions requires campd_unit_fuel_split "
-                "(and not campd_per_unit_attribution): the tranche-family "
-                "'-splitremap-' companions exist only for the fuel-split family"
-            )
+            if per_unit:
+                raise ValueError(
+                    "campd_split_remap_companions does not compose with "
+                    "campd_per_unit_attribution: no per-unit '-splitremap-' "
+                    "tranche companion has been derived"
+                )
+            return PLAIN_SPLIT_REMAP_TAG
         return False
     if bool(getattr(config, "campd_st_gas_span_coverage", False)):
         tag: bool | str = ST_GAS_SPAN_COVERAGE_TAG
@@ -1776,6 +1781,13 @@ def campd_fuel_split_selector(config: object) -> bool | str:
     return tag
 
 
+#: Selector value for the PLAIN tranche family under
+#: ``campd_split_remap_companions`` without the fuel split (SPP-99): each reader
+#: resolves its plain artifact's ``-splitremap-`` companion
+#: (:func:`market_sim.data.campd.split_remap_companion`, raising when absent).
+PLAIN_SPLIT_REMAP_TAG: str = f"plain-{_campd.SPLIT_REMAP_TAG}"
+
+
 def _fuel_split_companion(base: Path, fuel_split: bool | str = True) -> Path:
     """``thermal_tranches_X_<ISO>.csv`` -> ``thermal_tranches_X-fuelsplit-<ISO>.csv``.
 
@@ -1784,6 +1796,9 @@ def _fuel_split_companion(base: Path, fuel_split: bool | str = True) -> Path:
     the plain fuel-split companion (the coverage append is additive, so its
     absence degrades to the fuel split, never past it).
     """
+    if fuel_split == PLAIN_SPLIT_REMAP_TAG:
+        # SPP-99: the plain artifact's own split-remap companion, no fuel split.
+        return _campd.split_remap_companion(base)
     stem, iso = base.stem.rsplit("_", 1)
     plain = base.with_name(f"{stem}-fuelsplit-{iso}{base.suffix}")
     # miso-280: a trailing split-remap tag selects the '-splitremap-' companion

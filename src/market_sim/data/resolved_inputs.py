@@ -287,6 +287,7 @@ def _thermal_tranche_block(config, iso: str) -> dict[str, Any]:
     try:
         from market_sim.config.paths import REPO_ROOT
         from market_sim.data.fleet.campd_bins import (
+            PLAIN_SPLIT_REMAP_TAG,
             _fuel_split_companion,
             campd_fuel_split_selector,
             thermal_tranche_csv_for_iso,
@@ -313,7 +314,7 @@ def _thermal_tranche_block(config, iso: str) -> dict[str, Any]:
     if block["present"]:
         block["bytes"] = path.stat().st_size
         block["sha256"] = _sha256(path)
-    if fuel_split:
+    if fuel_split and fuel_split != PLAIN_SPLIT_REMAP_TAG:
         # miso-278: the three same-derivation companions the ST_GAS floor and
         # the per-year windows read under campd_unit_fuel_split. Recorded ONLY
         # when armed, so an unarmed run's record is byte-identical.
