@@ -180,3 +180,8 @@ regression reported at full magnitude.
 | 2023 | `session_013hUChwwKXquVEsjBj1FiUe` |
 | 2024 | `session_01Ly4aNfS2ymBUm5foP6XLSE` |
 | 2025 | `session_01Hsk3bRN91t9i7zJDgSY5td` |
+
+**2019 relaunch (02:45 UTC, same pin, same recipe).** The first 2019 shard stopped on the parent's 100-min budget
+before producing an artifact: P0 took 38 min, and P1 was still running at 55 min. This was not an infeasibility. The
+retry, `session_01XLBqfLT1URfcoy3Y76C6Ho`, has a 180-min budget; nothing else changed. The other six legs were fetched,
+checked against hard stops 3 and 5, and their shards archived.
