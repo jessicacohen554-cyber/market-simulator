@@ -15221,3 +15221,15 @@ zero status flips, C1 ST_GAS 2019 −8.56 → −8.20 TWh (FAIL), legitimacy 12 
 **PROMOTED 2026-09-27** on the owner's standing instruction: MISO keeper → `2026-09-27-miso-278-fuelsplit`
 (2019–2025); `miso-277` pruned (rule 35). Headline unchanged: train CALIBRATED; full span NOT-YET on C1 ST_GAS 2019,
 C3a 2022, C3b 2021. Riverside remap (55641 CT-03/04 → 64020) held out as not solve-inert; owed to a later lane.
+
+## miso-279 — 2026-09-28
+
+Lever A (owner pick): new field `campd_st_gas_span_coverage` (sub-gate of `campd_unit_fuel_split`) selects four
+`-fuelsplit-stcov-` tranche companions — the fuel-split bytes plus ST_GAS rows for 8 gas-steam bins the pooled
+2023–2025 window never measured, derived 2019–2025 from each plant's own CEMS. 7 shards at `47d3f872`
+(`docs/PRECOMMIT-miso279-stgas-span-coverage-2026-09-27.md`, `docs/RESULT-miso279-stgas-span-coverage-2026-09-27.md`):
+zero status flips, C1 ST_GAS 2019 −8.203 → −8.003 TWh (FAIL vs 8.00 band), legitimacy FAIL rows unchanged.
+
+**PROMOTED 2026-09-28** on the owner's ruling: MISO keeper → `2026-09-27-miso-279-stcov` (2019–2025); `miso-278`
+pruned (rule 35). Headline unchanged: train CALIBRATED; full span NOT-YET on C1 ST_GAS 2019, C3a 2022, C3b 2021.
+Riverside remap (55641 CT-03/04 → 64020) still held out.

@@ -583,3 +583,26 @@ Zero LP on keeper #13's committed payload, benchmark and the NWPP-NEXT-5 contrac
   0.37 TWh in 2020). The benchmark's per-plant CC sum and its classFull disagree by −2.2 to +4.6 TWh.
 
 Record: `docs/handoffs/FINDING-nwppnext7-cc-long-is-coal-short-2026-09-26.md`.
+
+## nwpp-next-7 (cont.) — 2026-09-27 — coal take floor (owner rulings Q1–Q5, soft) → KEEPER #14
+
+The owner ruled on the NWPP-NEXT-5 design:
+- generalise the yard row, with NWPP added to `COAL_PLANT_GRAIN_ISOS`;
+- an annual floor, estimator B net;
+- retire the per-hour take-or-pay discounts.
+
+New default-off field `coal_fuel_inventory_take_floor`, with its matrix row and a cell in every shard.
+- **Hard floor** (pin `821069f3`): 2020 was infeasible and 2022–24 returned HiGHS Unknown. In each failing year a
+  yard's floor was clipped to its ceiling or capacity.
+- **Owner ruling: soft floor.** Per-yard shortfall columns (`layout.n_take_slack`) are priced at the yard's own model
+  coal fuel price (take-or-pay).
+- **Re-solve:** 7 year-isolated shards at `2162cef5`. All passed.
+
+Run `2026-09-27-nwppnext7-coal-take-floor`: **NOT-YET on {dispatch_corr}** (was {fuelmix, dispatch_corr}).
+- **C1 FAIL → PASS:** CC_REGULAR 2020 +9.94 → +3.03 and 2024 +8.30 → +4.62 TWh.
+- **C4 fixed:** 2020 gas and 2024 coal (r 0.582 → 0.734).
+- **C4 regressed:** 2019 gas (0.719 → 0.699) and 2019 coal (0.701 → 0.690).
+- **Unchanged:** unserved energy. Hydro is flat.
+
+**Promoted 2026-09-27 (owner standing structure ruling):** keeper #14. Keeper #13 was pruned (rule 35); audit PASS.
+Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext7-coal-take-floor-2019-2025-2026-09-27.md`.

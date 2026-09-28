@@ -976,6 +976,7 @@ def run_year(
     chp_layup_duty_split: bool | None = None,
     chp_layup_duty_curve: bool | None = None,
     egrid_identity_heat_rates: bool | None = None,
+    coal_econ_marginal_hr_two_sided: bool | None = None,
     measured_ct_heat_rates: bool | None = None,
     measured_coal_heat_rates: bool | None = None,
     measured_st_heat_rates: bool | None = None,
@@ -2116,6 +2117,10 @@ def run_year(
         config = config.with_overrides(
             egrid_identity_heat_rates=egrid_identity_heat_rates
         )
+    if coal_econ_marginal_hr_two_sided is not None:
+        config = config.with_overrides(
+            coal_econ_marginal_hr_two_sided=coal_econ_marginal_hr_two_sided
+        )
     if measured_ct_heat_rates is not None:
         config = config.with_overrides(measured_ct_heat_rates=measured_ct_heat_rates)
     if measured_coal_heat_rates is not None:
@@ -3126,6 +3131,15 @@ def run_year(
     set_caiso_fsno_partition(
         iso == "CAISO" and getattr(config, "caiso_fsno_subzonal_topology", False)
     )
+    # SPP-93 West/East re-partition, armed at the same seam for the same
+    # reason (config.topology_variant); "north_south" for every other ISO.
+    from market_sim.config.topology_variant import set_spp_zone_partition
+
+    set_spp_zone_partition(
+        getattr(config, "spp_zone_partition", "north_south")
+        if iso == "SPP"
+        else "north_south"
+    )
     # PJM-NEXT fleet_zone_vintage_coords: armed per solve, like the partition
     # above, before the first fleet load reads the zone lookup.
     from market_sim.data.zone_assignment import set_fleet_zone_vintage_coords
@@ -3160,7 +3174,12 @@ def run_year(
     if iso == "CAISO" and getattr(config, "caiso_per_year_import_caps", False):
         from market_sim.model.transmission import apply_caiso_local_import_limits
 
-        iso_config = apply_caiso_local_import_limits(iso_config, iso, year)
+        iso_config = apply_caiso_local_import_limits(
+            iso_config,
+            iso,
+            year,
+            sd_floor_static=getattr(config, "caiso_import_cap_floor_static", False),
+        )
     # Priced import/export node (orchestrator-unification Stage 5): the
     # builder choice — reference-price seam vs CAISO per-hub / bidirectional
     # intertie vs the static year-grounded tranche ladder, plus the Manitoba
@@ -5665,6 +5684,9 @@ def run_year(
                 ),
                 gap_fill_measured_dam=getattr(
                     config, "caiso_intertie_gap_fill_measured_dam", False
+                ),
+                partial_year_measured=getattr(
+                    config, "caiso_intertie_partial_year_measured", False
                 ),
             ):
                 logger.info(

@@ -1,5 +1,5 @@
 {
  "iso": "NWPP",
- "keeper": "2026-09-26-nwppnext6-path76-ctrederive",
- "note": "NWPP keeper #13 (NWPP-NEXT-6): keeper #12 + WECC Path 76 NW<->SNV link + SB-population CT heat-rate re-derive"
+ "keeper": "2026-09-27-nwppnext7-coal-take-floor",
+ "note": "NWPP keeper #14 (NWPP-NEXT-7): keeper #13 + per-coal-yard annual coal take floor (soft, estimator B net) with yard ceiling; per-hour take-or-pay discounts retired (owner rulings Q1-Q5 + soft-floor ruling)"
 }

@@ -4950,6 +4950,7 @@ def solve_and_persist(
     chp_layup_duty_split: bool | None = None,
     chp_layup_duty_curve: bool | None = None,
     egrid_identity_heat_rates: bool | None = None,
+    coal_econ_marginal_hr_two_sided: bool | None = None,
     measured_ct_heat_rates: bool | None = None,
     measured_coal_heat_rates: bool | None = None,
     measured_st_heat_rates: bool | None = None,
@@ -5063,6 +5064,15 @@ def solve_and_persist(
     set_caiso_fsno_partition(
         iso == "CAISO"
         and bool((prb_overrides or {}).get("caiso_fsno_subzonal_topology", False))
+    )
+    # SPP-93 West/East re-partition, armed at the same seam for the same
+    # reason (config.topology_variant); "north_south" for every other ISO.
+    from market_sim.config.topology_variant import set_spp_zone_partition
+
+    set_spp_zone_partition(
+        (prb_overrides or {}).get("spp_zone_partition", "north_south")
+        if iso == "SPP"
+        else "north_south"
     )
     iso_config = get_iso_config(iso)
     # caiso-110: the endogenous WECC-West node keeps the SINGLE WECC_import zone
@@ -6038,6 +6048,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 egrid_identity_heat_rates=egrid_identity_heat_rates
             )
+        if coal_econ_marginal_hr_two_sided is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                coal_econ_marginal_hr_two_sided=coal_econ_marginal_hr_two_sided
+            )
         if measured_ct_heat_rates is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 measured_ct_heat_rates=measured_ct_heat_rates
@@ -6951,6 +6965,7 @@ def solve_and_persist(
             chp_layup_duty_split=chp_layup_duty_split,
             chp_layup_duty_curve=chp_layup_duty_curve,
             egrid_identity_heat_rates=egrid_identity_heat_rates,
+            coal_econ_marginal_hr_two_sided=coal_econ_marginal_hr_two_sided,
             measured_ct_heat_rates=measured_ct_heat_rates,
             measured_coal_heat_rates=measured_coal_heat_rates,
             measured_st_heat_rates=measured_st_heat_rates,
@@ -7942,6 +7957,7 @@ def solve_and_persist(
         "chp_layup_duty_split": chp_layup_duty_split,
         "chp_layup_duty_curve": chp_layup_duty_curve,
         "egrid_identity_heat_rates": egrid_identity_heat_rates,
+        "coal_econ_marginal_hr_two_sided": coal_econ_marginal_hr_two_sided,
         "measured_ct_heat_rates": measured_ct_heat_rates,
         "measured_coal_heat_rates": measured_coal_heat_rates,
         "measured_st_heat_rates": measured_st_heat_rates,
@@ -15058,6 +15074,19 @@ def main() -> None:
         "--no-measured-chp-heat-rates reaches the pre-F1 posture.",
     )
     parser.add_argument(
+        "--coal-econ-marginal-hr-two-sided",
+        dest="coal_econ_marginal_hr_two_sided",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="soco-81 per-plant TWO-SIDED mode of the coal incremental-HR "
+        "measurement: a coal tranche set with a measured must-run floor prices "
+        "its committed + econ tranches at the plant's own measured incremental "
+        "heat rate (average x ratio from coal_incremental_hr_ratio_<ISO>.csv, "
+        "scripts/data/derive_coal_incremental_hr_ratio.py), replacing the band "
+        "multiplier there; lowers as well as raises. Zero fitted parameters; "
+        "no-op for an ISO with no artifact.",
+    )
+    parser.add_argument(
         "--egrid-identity-heat-rates",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -15855,6 +15884,7 @@ def main() -> None:
         chp_layup_duty_split=args.chp_layup_duty_split,
         chp_layup_duty_curve=args.chp_layup_duty_curve,
         egrid_identity_heat_rates=args.egrid_identity_heat_rates,
+        coal_econ_marginal_hr_two_sided=args.coal_econ_marginal_hr_two_sided,
         measured_ct_heat_rates=args.measured_ct_heat_rates,
         measured_coal_heat_rates=args.measured_coal_heat_rates,
         measured_st_heat_rates=args.measured_st_heat_rates,

@@ -81,6 +81,7 @@ from market_sim.data.fleet.campd_bins import (
     campd_ct_run_lengths,
     cc_duct_burner_peak_mult,
     cc_duct_peaking_pct,
+    coal_incremental_hr_ratios,
     coal_prb_committed_split_night,
     load_plant_registry,
     load_plant_tranche_config,
@@ -140,10 +141,30 @@ def _top_refine_ok(curve_cap: float, n: int, enabled: bool) -> bool:
     return curve_cap / float(n * n) > MIN_TRANCHE_CAPACITY_MW
 
 
+def _incremental_econ_ratio(
+    suffix: str, i: int, n: int, r_lo: float, r_hi: float
+) -> float:
+    """Incremental/average ratio for one econ step (coal_econ_marginal_hr_two_sided).
+
+    ``econlo`` takes the econ_low point (x = 0.5 of the ramp), ``econhi`` the
+    econ_high point (x = 0.9); a single ``econ`` step takes their mean; a
+    smoothed n-slice ramp interpolates linearly from econ_low (first slice) to
+    econ_high (last), the same straight marginal curve the derive fits.
+    """
+    if suffix == "econlo":
+        return r_lo
+    if suffix == "econhi":
+        return r_hi
+    if n <= 1:
+        return 0.5 * (r_lo + r_hi)
+    return r_lo + (r_hi - r_lo) * i / (n - 1)
+
+
 def bins_to_fleet(
     bins: pd.DataFrame,
     zone_names: list[str],
     config: ScenarioConfig,
+    year: int | None = None,
 ) -> tuple[list[Generator], FleetArrays]:
     """Convert per-plant CAMPD bins into LP generators -- stepped tranches.
 
@@ -187,6 +208,9 @@ def bins_to_fleet(
         zone_names: The ISO's ordered zone names.
         config: Scenario configuration (unknown-zone default, registry
             path, horizon length).
+        year: The solve year, read only by the year-keyed measured artifacts
+            (``coal_econ_marginal_hr_two_sided``); ``None`` reads their pooled
+            rows.
 
     Returns:
         A tuple ``(generators, fleet_arrays)``: the bin-derived generator
@@ -270,6 +294,17 @@ def bins_to_fleet(
         )
         else {}
     )
+
+    # soco-81 per-plant TWO-SIDED incremental heat rate
+    # (ScenarioConfig.coal_econ_marginal_hr_two_sided): {plant: (lo, hi)} ratios
+    # of measured incremental to average HR. Per-ISO artifact, so a no-op for an
+    # ISO without one (rule 25). Empty when the flag is off.
+    _inc_hr_ratio: dict[int, tuple[float, float]] = (
+        coal_incremental_hr_ratios(getattr(config, "iso", "ERCOT") or "ERCOT", year)
+        if getattr(config, "coal_econ_marginal_hr_two_sided", False)
+        else {}
+    )
+    _inc_applied: set[int] = set()
 
     # Optional per-plant tranche-config override sheet: when set, each listed
     # plant's tranche shares + per-band HR multipliers come straight from the
@@ -1250,6 +1285,43 @@ def bins_to_fleet(
         sync_tranches = (
             [("sync", sync_cap, mustrun_hr, 1.0, 0, 0, 0.0)] if sync_cap > 0.5 else []
         )
+        # soco-81 two-sided incremental HR (coal_econ_marginal_hr_two_sided).
+        # Scope is the unit's own parameter (rule 18): a coal tranche set with a
+        # measured min-load floor (``_mustrun`` + ``_sync`` > 0) keeps its boiler
+        # on, so the no-load heat is sunk and each MWh above the floor costs the
+        # plant's measured INCREMENTAL rate. The ratio REPLACES the band
+        # multiplier on the committed and econ tranches (rule 19: the class
+        # floor never reaches them after this); ``_mustrun`` / ``_sync`` and
+        # ``_peak`` are untouched, and a floorless cycler keeps its average
+        # (SOCO-63 §5: its average is where its no-load heat lives).
+        _inc = (
+            _inc_hr_ratio.get(plant_code)
+            if (
+                _inc_hr_ratio
+                and fuel == "coal"
+                and coal_chp_sector is None
+                and (mustrun_cap + sync_cap) > 0.0
+                and base_hr > 0.0
+            )
+            else None
+        )
+        if _inc is not None:
+            _r_lo, _r_hi = _inc
+            _inc_applied.add(plant_code)
+            committed_tranches = [
+                (sfx, cap_, base_hr * _r_lo, *rest)
+                for sfx, cap_, _hr, *rest in committed_tranches
+            ]
+            _n_e = len(econ_steps)
+            econ_steps = [
+                (
+                    sfx,
+                    cap_,
+                    base_hr * _incremental_econ_ratio(sfx, i, _n_e, _r_lo, _r_hi),
+                    *rest,
+                )
+                for i, (sfx, cap_, _hr, *rest) in enumerate(econ_steps)
+            ]
         # Fast-start tranche pricing (Order 825 analogue,
         # ScenarioConfig.tranche_startup_amortization): the FAST-START-capable
         # tranches carry the same NREL start cost as the committed anchor, so
@@ -1557,6 +1629,15 @@ def bins_to_fleet(
     # coarse fuel class) match the dispatch-fleet path uses — makes the flag's
     # recorded state true on both paths. Default off: byte-identical unless a
     # config explicitly opts in.
+    if _inc_hr_ratio:
+        logger.info(
+            "%s coal incremental HR (two-sided, year %s): committed/econ tranches "
+            "repriced at %d must-run-floored plant(s) %s",
+            getattr(config, "iso", "ERCOT"),
+            year,
+            len(_inc_applied),
+            sorted(_inc_applied),
+        )
     if getattr(config, "use_plant_emission_rates_v2", False):
         _pkg_ns().apply_plant_emission_rates_v2(
             fleet,
@@ -1712,7 +1793,9 @@ def build_base_fleet(
       (per-plant, identity-preserving) when ``plant_level_fleet`` is set.
     """
     if campd_bins is not None:
-        campd_fleet, _ = _pkg_ns().bins_to_fleet(campd_bins, zone_names, config)
+        campd_fleet, _ = _pkg_ns().bins_to_fleet(
+            campd_bins, zone_names, config, year=year
+        )
         all_gens = (
             _pkg_ns().load_fleet_from_csv(
                 iso,

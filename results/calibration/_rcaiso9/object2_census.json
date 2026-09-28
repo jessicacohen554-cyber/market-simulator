@@ -1,0 +1,155 @@
+{
+ "c4_2025": {
+  "nrmse": 0.2987,
+  "r": 0.88,
+  "hod_bias_mw": [
+   381,
+   229,
+   -114,
+   -306,
+   -16,
+   383,
+   695,
+   -158,
+   -1246,
+   -1203,
+   -1075,
+   -983,
+   -1000,
+   -1104,
+   -1225,
+   -1237,
+   -1007,
+   -159,
+   500,
+   580,
+   597,
+   642,
+   679,
+   684
+  ],
+  "hod_sse_share": [
+   0.03,
+   0.031,
+   0.032,
+   0.033,
+   0.028,
+   0.026,
+   0.038,
+   0.042,
+   0.059,
+   0.06,
+   0.052,
+   0.05,
+   0.051,
+   0.057,
+   0.061,
+   0.058,
+   0.061,
+   0.046,
+   0.036,
+   0.032,
+   0.031,
+   0.031,
+   0.028,
+   0.027
+  ],
+  "nrmse_without_diurnal_mean_bias": 0.2666,
+  "class_dev_mw": {
+   "CC_REGULAR": {
+    "mean": 69,
+    "h9_16": -821,
+    "h17_22": 742
+   },
+   "ST_GAS": {
+    "mean": -5,
+    "h9_16": -7,
+    "h17_22": -1
+   },
+   "CT_PEAKER": {
+    "mean": -71,
+    "h9_16": -99,
+    "h17_22": -8
+   },
+   "CC_CHP": {
+    "mean": -11,
+    "h9_16": 35,
+    "h17_22": -47
+   },
+   "CT_CHP": {
+    "mean": 5,
+    "h9_16": 2,
+    "h17_22": 1
+   }
+  },
+  "cc_regular_midday_split_mw": {
+   "model_off_mw": -947,
+   "both_on_under_mw": -668,
+   "model_over_mw": 793
+  }
+ },
+ "dsw_2021": {
+  "printed_hours": 5976,
+  "gap": {
+   "all_all": {
+    "hours": 8760,
+    "model_mw": 3374,
+    "eia930_mw": 4666,
+    "gap_twh": -11.32
+   },
+   "all_h17_22": {
+    "hours": 2190,
+    "model_mw": 2861,
+    "eia930_mw": 5721,
+    "gap_twh": -6.26
+   },
+   "printed_all": {
+    "hours": 5976,
+    "model_mw": 4115,
+    "eia930_mw": 4668,
+    "gap_twh": -3.31
+   },
+   "printed_h17_22": {
+    "hours": 1494,
+    "model_mw": 3042,
+    "eia930_mw": 5599,
+    "gap_twh": -3.82
+   },
+   "unprinted_all": {
+    "hours": 2784,
+    "model_mw": 1783,
+    "eia930_mw": 4661,
+    "gap_twh": -8.01
+   },
+   "unprinted_h17_22": {
+    "hours": 696,
+    "model_mw": 2472,
+    "eia930_mw": 5984,
+    "gap_twh": -2.44
+   }
+  },
+  "price_printed_hours": {
+   "h17_22": {
+    "hours": 1494,
+    "model_sp15_rest": 68.9,
+    "measured_dam_th_sp15": 77.8,
+    "measured_dam_palovrde": 77.0,
+    "hub_input_palovrde": 79.1
+   },
+   "h8_16": {
+    "hours": 2241,
+    "model_sp15_rest": 48.4,
+    "measured_dam_th_sp15": 45.4,
+    "measured_dam_palovrde": 43.7,
+    "hub_input_palovrde": 41.0
+   },
+   "h0_6": {
+    "hours": 1743,
+    "model_sp15_rest": 53.1,
+    "measured_dam_th_sp15": 50.1,
+    "measured_dam_palovrde": 49.4,
+    "hub_input_palovrde": 49.5
+   }
+  }
+ }
+}

@@ -1401,6 +1401,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     set_caiso_fsno_partition(
         iso == "CAISO" and getattr(config, "caiso_fsno_subzonal_topology", False)
     )
+    # SPP-93 West/East re-partition, armed at the same seam for the same
+    # reason (config.topology_variant); "north_south" for every other ISO.
+    from market_sim.config.topology_variant import set_spp_zone_partition
+
+    set_spp_zone_partition(
+        getattr(config, "spp_zone_partition", "north_south")
+        if iso == "SPP"
+        else "north_south"
+    )
     # PJM-NEXT fleet_zone_vintage_coords: armed per solve, like the partition
     # above, before the first fleet load reads the zone lookup.
     from market_sim.data.zone_assignment import set_fleet_zone_vintage_coords
@@ -3375,7 +3384,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             _year_iso_config = iso_config
             if iso == "CAISO" and getattr(config, "caiso_per_year_import_caps", False):
                 _caiso_year_iso_config = apply_caiso_local_import_limits(
-                    iso_config, iso, year
+                    iso_config,
+                    iso,
+                    year,
+                    sd_floor_static=getattr(
+                        config, "caiso_import_cap_floor_static", False
+                    ),
                 )
                 if _caiso_year_iso_config is not iso_config:
                     _year_iso_config = _caiso_year_iso_config

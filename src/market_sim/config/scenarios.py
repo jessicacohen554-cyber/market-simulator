@@ -489,6 +489,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # campd_bins.campd_fuel_split_selector, so the off path is byte-inert).
     # Registered IN THE SAME COMMIT as the field.
     "campd_unit_fuel_split",
+    # miso-279 ST_GAS span coverage, a SUB-GATE of campd_unit_fuel_split
+    # (GATED default-off; selects the four '-fuelsplit-stcov-' companions
+    # through the same selector, so the off path is byte-inert). Registered IN
+    # THE SAME COMMIT as the field.
+    "campd_st_gas_span_coverage",
     # SPP-85 net-load-mask repair of the standard / short / partial CAMPD
     # extracts (GATED default-off; selects the '-netloadmask-' companions
     # through the same resolvers, so the off path is byte-inert). Same commit
@@ -704,6 +709,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # off no offer-curve band is touched), so it is dropped from the hash at its
     # default; an armed run enters the key as a distinct scenario.
     "coal_econ_marginal_hr_bound",
+    # soco-81 per-plant TWO-SIDED mode of the same measurement (default off;
+    # with it off no tranche is touched), so dropped from the hash at its
+    # default; an armed run enters the key as a distinct scenario.
+    "coal_econ_marginal_hr_two_sided",
     # ERCOT-113 per-zone wind SHAPE gate. Default-off and byte-identical for
     # every existing config (with the gate off the ERCOT wind path keeps its
     # single ISO-wide profile), so it is dropped from the hash at its default;
@@ -2140,6 +2149,17 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # measured-CC artifact flags eia923_identity, which only CAISO's carries).
     "caiso_intertie_gap_fill_measured_dam",
     "cc_eia923_identity_emission_basis",
+    # R-CAISO-8 (2026-09-27), default off, registered IN THE SAME COMMIT as
+    # the field (the nyiso-119 discipline). Byte-identical off by
+    # construction: measured_import_hub_prices reads it only when handed
+    # partial_year_measured=True from the flag, and the per-hour writes in the
+    # per-hub injector / gas coupling run only under that same flag.
+    "caiso_intertie_partial_year_measured",
+    # R-CAISO-9 (2026-09-27), default off, registered IN THE SAME COMMIT as
+    # the field (the nyiso-119 discipline). Byte-identical off by
+    # construction: apply_caiso_local_import_limits floors only when handed
+    # sd_floor_static=True from the flag.
+    "caiso_import_cap_floor_static",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -2160,6 +2180,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # False)`` in run_calibration.run_year, so no link bound changes off.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "nyiso_li_seam_posted_limit_cap",
+    # SPP-93 West/East re-partition (default "north_south"): dropped from the
+    # hash at its default so every pre-existing run keeps its key; an armed
+    # run solves a different SPP topology and so gets a distinct key.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "spp_zone_partition",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2337,6 +2362,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-278 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_unit_fuel_split": "False",
+    # Added by miso-279 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "campd_st_gas_span_coverage": "False",
     # Added by SPP-85 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_netload_mask_repair": "False",
@@ -2458,6 +2486,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_partial_outage_shaped_derate": "False",
     "ercot_partial_outage_day_guard": "False",
     "coal_econ_marginal_hr_bound": "False",
+    "coal_econ_marginal_hr_two_sided": "False",
     "ercot_wind_zone_shape": "False",
     "gas_offer_net_revenue_margin": "False",
     "gas_offer_margin_anchor": "None",
@@ -2931,12 +2960,18 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "caiso_intertie_gap_fill_measured_dam": "False",
     "cc_eia923_identity_emission_basis": "False",
+    # Added by R-CAISO-8 WITH the field (the nyiso-119 discipline).
+    "caiso_intertie_partial_year_measured": "False",
+    # Added by R-CAISO-9 WITH the field (the nyiso-119 discipline).
+    "caiso_import_cap_floor_static": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
     "coal_fuel_inventory_take_floor": "False",
     # Added by NYISO-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nyiso_li_seam_posted_limit_cap": "False",
+    # Added by SPP-93 WITH the field (the nyiso-119 discipline).
+    "spp_zone_partition": "'north_south'",
 }
 
 
@@ -9406,6 +9441,25 @@ class ScenarioConfig:
     # keep the existing fill. Zero parameters; inert outside 2023 by
     # construction (no other year has a gap). Default off; CAISO-only.
     # docs/handoffs/r-caiso-4/PRECOMMIT-r-caiso-4-2026-09-26.md.
+    caiso_intertie_partial_year_measured: bool = False  # R-CAISO-8 (2026-09-27):
+    # price each WECC intertie hub at its MEASURED print in every hour it
+    # prints, and keep the static ladder only in the hours it does not. Today
+    # a hub whose year is >25 % unprinted is dropped WHOLE by
+    # envelopes.measured_import_hub_prices (every tranche on the ladder) while
+    # the raw-print loader the caiso-87/93/94/269 clean-depth triggers read
+    # still ARMS those tranches in the printed hours -- so in 2021 (5,976 of
+    # 8,760 h printed, May-Dec) ~2.75 GW of DSW clean depth sits on the $180
+    # placeholder and dispatches 0 (RESULT-r-caiso-7 Object 1). With the flag
+    # the pricing gate becomes the arming gate: one per-hour mask, the printed
+    # hours. Unprinted hours keep exactly what they carry today (ladder, and
+    # under caiso_import_gas_coupling_ladder_only the gas coupling there only).
+    # Rule 14 [R-ACCURATE]: measured over estimate; rule 19 [R-ONE-MECH]: no
+    # new mechanism, the existing injector per hour. Zero parameters (rules
+    # 21/24). Inert by construction where a hub is fully printed or its gap is
+    # <=25 % (the existing fill path is untouched) and where it prints nothing
+    # (2019-20): only 2021 moves. Default off; CAISO-only; backcast-only (the
+    # measured overlay never runs in a forecast).
+    # docs/handoffs/r-caiso-8/PRECOMMIT-r-caiso-8-2026-09-27.md.
     cc_eia923_identity_emission_basis: bool = False  # R-CAISO-4 (2026-09-26):
     # a CC_REGULAR plant whose measured heat rate is the EIA-923 identity rate
     # (its CEMS record REFUSED by the CC derive: flag eia923_identity) books
@@ -12470,6 +12524,33 @@ class ScenarioConfig:
     # (results/calibration/FINDING-ercot111-coal-dispatch-economics-2026-07-24.md).
     # Default off (every existing keeper unchanged).
     coal_econ_marginal_hr_bound: bool = False
+
+    # PER-PLANT TWO-SIDED MODE of the same measurement (soco-81; owner ruling
+    # 2026-09-27 on docs/handoffs/r-soco/FINDING-soco-75-2026-09-27.md §6).
+    # The class floor above only RAISES a band; it is inert where a plant's
+    # measured incremental rate sits below the band (SOCO: every plant). With
+    # this on, a coal tranche set that carries a measured MUST-RUN floor
+    # (``_mustrun`` capacity > 0 — a unit parameter, never a plant list, rule 18)
+    # prices the tranches above that floor (``_committed``, the econ ramp) at
+    # the plant's OWN measured incremental heat rate: plant average HR x
+    # ``ratio_econ_low`` (committed + econ_low half) / ``ratio_econ_high``
+    # (econ_high half), from ``data/raw/_processed-legacy/
+    # coal_incremental_hr_ratio_<ISO>.csv`` (``scripts/data/
+    # derive_coal_incremental_hr_ratio.py``: the frozen
+    # derive_campd_marginal_hr construction over the same CEMS hours the
+    # average-HR artifact averages). Two-sided: it lowers an offer as readily as
+    # it raises one. The ratio REPLACES the band multiplier for those tranches
+    # (and so the class floor's role there — rule 19, never stacked); the
+    # ``_mustrun`` tranche (sunk fuel) and ``_peak`` (scarcity wall) are
+    # untouched, and a plant with no floor (a cycler) keeps the average, which
+    # is the only place its no-load heat lives (SOCO-63 §5).
+    #
+    # Year rule (rule 13): the solve year's own ratio where the average-HR
+    # artifact carries that plant-year, else the pooled ratio — exactly how the
+    # average it multiplies is chosen, so a forecast year reads pooled. Zero
+    # free parameters (rule 21); per-ISO artifact, a no-op for an ISO without
+    # one (rule 25; derived for SOCO only). Default off: byte-identical.
+    coal_econ_marginal_hr_two_sided: bool = False
 
     # ROUTE A "REPLACE" -- the COMMITTED band's MEASURED basis (pjm-h6, chartered
     # by docs/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md §4/§10a and
@@ -16486,6 +16567,29 @@ class ScenarioConfig:
     # docs/handoffs/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md.
     campd_unit_fuel_split: bool = False
 
+    # ST_GAS SPAN COVERAGE of the fuel-split tranche family (miso-279, GATED
+    # default off; a SUB-GATE of campd_unit_fuel_split, ignored without it;
+    # rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]). The tranche family is
+    # derived over a pooled 2023-2025 window, so an ST_GAS bin whose boilers
+    # ran only before it carries NO row and therefore no measured
+    # st_gas_mustrun_per_plant floor, however the real system committed it:
+    # Baxter Wilson 2050 unit 1, Teche 1400 unit 3 (whose CT unit 4 holds the
+    # plant's only row), Big Cajun 1 1464, Houma 1439, Rex Brown 2053. Armed,
+    # the four '-fuelsplit-stcov-' companions written by
+    # derive_thermal_tranches.py --st-gas-span-coverage are read: each is the
+    # '-fuelsplit-' companion's exact bytes plus ST_GAS rows derived by the
+    # SAME unit-routed estimator from each uncovered plant's own gas-steam
+    # CAMPD units over the backcast span 2019-2025 (the soco-70 coal-coverage
+    # construction, applied to gas steam). ZERO free parameters. Rule 23: the
+    # trigger is the span reaching CEMS years the pooled window never saw, a
+    # source-coverage change, never a residual. Rule 17: the new floors carry
+    # the incumbent ST_GAS floor's driver (own CEMS commitment conduct), window
+    # (own measured online_frac, top system-load hours) and forward story (the
+    # same derive over the forward year's CEMS). A plant that retired before a
+    # solve year is absent from that year's fleet, so its row is inert there.
+    # docs/FINDING-miso279-stgas-span-coverage-2026-09-27.md.
+    campd_st_gas_span_coverage: bool = False
+
     # ECONOMIC-LAY-UP GUARD on the per-unit CAMPD companions (nyiso-177,
     # GATED default off; PREREG-nyiso177-degradation-root-cause.md). Selects
     # the '-perunitmerit-' pair -- the SAME per-unit attribution, derived with
@@ -18248,6 +18352,28 @@ class ScenarioConfig:
     spp_curtailment_ceiling: bool = False
     spp_curtail_depth_wind: float = 0.288137
 
+    # SPP-93 — the West/East re-partition of the SPP seam
+    # (docs/handoffs/PRECOMMIT-spp-93-west-east-2026-09-27.md, written before any
+    # model output existed). "north_south" (DEFAULT) is the keeper's topology,
+    # byte-identical. "west_east" REPLACES it (rule 19 [R-ONE-MECH]: the N<->S
+    # link is removed, never stacked on): SPP-West = SPP's own reserve zones
+    # {1,2,3,5} (Nebraska, western Kansas + the northern Panhandle, SPS / New
+    # Mexico, the Dakotas) and SPP-East = reserve zone 4, joined by ONE
+    # symmetric link. Every input is measured, with zero tuned scalars:
+    #   load    -- sub-BA -> bubble by the majority RESZONE of its current LOAD
+    #              settlement locations (SPP registry SL_to_Pnode_to_Zone_with_
+    #              Area.csv): West = {LES, NPPD, OPPD, SECI, SPS, WAUE};
+    #   plants  -- EIA-860 "RTO/ISO LMP Node Designation" matched to SPP's
+    #              registry -> RESZONE, else 1-nearest-neighbour on coordinates
+    #              (data/raw/reference/spp_plant_reserve_zone.csv, built by
+    #              scripts/data/derive_spp_plant_reserve_zone.py);
+    #   link    -- 4,000 MW, SPP-53's FCITC construction on the ACTUAL
+    #              East-West bubble spread (cited at iso_configs._spp_config).
+    # Applied process-wide through config.topology_variant (set at every
+    # config seam) so the LP and every data consumer see one topology.
+    # SPP-only [R-ISO-SCOPE]; any other value raises.
+    spp_zone_partition: str = "north_south"
+
     # ercot-165 — UNPOOL the driver's share by diurnal family, and give the
     # Panhandle export interface exactly ONE owner (rule 19 [R-ONE-MECH]).
     # FINDING-ercot164 measured that the pooled congestion_share is a UNION over
@@ -19141,6 +19267,19 @@ class ScenarioConfig:
     # existing CAISO keeper replay is byte-identical. See
     # market_sim.model.transmission.apply_caiso_local_import_limits.
     caiso_per_year_import_caps: bool = False
+    # R-CAISO-9 (owner ruling 2026-09-27, "Floor at static 1,436"): under
+    # caiso_per_year_import_caps, floor the SP15_rest->SDGE per-year LCT cap at
+    # the link's baked static TTC (_SDGE_IMPORT_CAP_MW = 1,436 MW, iso_configs):
+    # cap = max(LCT cap, 1,436). Declared rule-14 reconciled estimate -- the LCT
+    # peak - requirement is a 1-in-10 N-1-1 planning-case capability, not an
+    # operating limit; measured night-time SDGE imports exceed it 2,773 / 784 /
+    # 886 h in 2019/20/21, and the 1,436 floor itself is exceeded 167 h in 2019
+    # (results/calibration/_rcaiso8/object2_sd_census.json). Zero new numbers
+    # (rules 21/24). LA Basin not floored (owner card). Moves 2019-21 only
+    # (2022 has no LCT row; 2023-25 >= 1,436). Inert unless
+    # caiso_per_year_import_caps is on. Default off; CAISO-only.
+    # docs/handoffs/r-caiso-9/PRECOMMIT-r-caiso-9-2026-09-27.md.
+    caiso_import_cap_floor_static: bool = False
 
     # PJM transmission-congestion lever (break the copper-plate). PJM clears as a
     # perfect single price (0.000 zonal LMP spread in all 8760 hours of all
@@ -23612,6 +23751,10 @@ TIER_TAGS: dict[str, int] = {
     "coal_bit_passthrough_gas_slope": 3,
     "coal_econ_srmc_bound": 3,
     "coal_econ_marginal_hr_bound": 3,
+    # Structural gate (1), not a parameter: soco-81's per-plant two-sided mode
+    # reads every ratio from the frozen measured artifact
+    # coal_incremental_hr_ratio_<ISO>.csv (rule 21 [R-DOF]).
+    "coal_econ_marginal_hr_two_sided": 1,
     # Structural gate (1), not a parameter -- the miso_coal_night_floor
     # criterion exactly: every multiplier it installs is read from a frozen
     # measured artifact (<iso>_campd_marginal_hr_summary.csv avg_committed_p50),
@@ -23765,6 +23908,7 @@ TIER_TAGS: dict[str, int] = {
     "maxgen_emergency_tier_pricing": 3,
     "gas_price_override": 3,
     "f923_gas_price_plausibility_screen": 1,
+    "spp_zone_partition": 1,
 }
 
 # SweepDefinition (the sweep / named-case-matrix expansion engine) moved

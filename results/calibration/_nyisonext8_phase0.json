@@ -1,0 +1,1108 @@
+{
+ "years": {
+  "2018": {
+   "dup_corr": 0.9828526145670199,
+   "dup_equal_within_0p5_share": 0.07169768238383377,
+   "dup_mean_mw": 995.1877406096586,
+   "hq_ny_mean_mw": 1199.5338645964152,
+   "net_old_mean_mw": 4050.251578767123,
+   "net_new_mean_mw": 3055.1774440639274,
+   "committed_reproduced_exactly": false,
+   "ladder_old": [
+    [
+     "HQ_hydro",
+     900.0,
+     11.12
+    ],
+    [
+     "IESO_Ontario",
+     690.0,
+     14.05
+    ],
+    [
+     "PJM_shoulder",
+     690.0,
+     16.7
+    ],
+    [
+     "PJM_west",
+     690.0,
+     19.76
+    ],
+    [
+     "eastern_mid",
+     690.0,
+     23.5
+    ],
+    [
+     "ISONE_tie",
+     690.0,
+     28.27
+    ],
+    [
+     "import_scarcity",
+     2670.0,
+     56.24
+    ]
+   ],
+   "ladder_new": [
+    [
+     "HQ_hydro",
+     900.0,
+     11.5
+    ],
+    [
+     "IESO_Ontario",
+     690.0,
+     15.39
+    ],
+    [
+     "PJM_shoulder",
+     690.0,
+     20.16
+    ],
+    [
+     "PJM_west",
+     690.0,
+     25.57
+    ],
+    [
+     "eastern_mid",
+     690.0,
+     32.44
+    ],
+    [
+     "ISONE_tie",
+     690.0,
+     42.36
+    ],
+    [
+     "import_scarcity",
+     1470.0,
+     129.77
+    ]
+   ],
+   "offline_old": {
+    "sim_twh": 32.58474,
+    "act_twh": 35.48020383,
+    "dur_rmse": 643.439804088942,
+    "imp_hrs_sim": 99.93150684931507,
+    "imp_hrs_act": 99.98858447488584,
+    "diurnal_corr": 0.7782257087661475,
+    "hourly_corr": 0.1274721746657212
+   },
+   "offline_old_vs_true": {
+    "sim_twh": 32.58474,
+    "act_twh": 26.763354410000005,
+    "dur_rmse": 827.2329746334199,
+    "imp_hrs_sim": 99.93150684931507,
+    "imp_hrs_act": 99.96575342465754,
+    "diurnal_corr": 0.7460461225759384,
+    "hourly_corr": 0.13933850814378165
+   },
+   "offline_new": {
+    "sim_twh": 26.43108,
+    "act_twh": 26.763354410000005,
+    "dur_rmse": 248.9162291120784,
+    "imp_hrs_sim": 99.80593607305937,
+    "imp_hrs_act": 99.96575342465754,
+    "diurnal_corr": 0.750062302839737,
+    "hourly_corr": 0.10118015808639778
+   },
+   "floor_total_net_new": {
+    "mean": 3055.1774440639274,
+    "min": -331.0900000000004,
+    "p1": 867.4374,
+    "p5": 1388.535,
+    "share_below_900": 0.011872146118721462,
+    "share_below_0": 0.00022831050228310502
+   },
+   "hq_seam_new": {
+    "mean": 1328.7285273972605,
+    "min": -349.34000000000003,
+    "p1": 0.0,
+    "p5": 190.0,
+    "share_below_900": 0.13881278538812786,
+    "share_below_0": 0.0009132420091324201
+   }
+  },
+  "2019": {
+   "dup_corr": 0.9664218426896367,
+   "dup_equal_within_0p5_share": 0.1783308596871789,
+   "dup_mean_mw": 979.1166491608632,
+   "hq_ny_mean_mw": 1133.0772200022834,
+   "net_old_mean_mw": 3619.783840753424,
+   "net_new_mean_mw": 2640.7789628995433,
+   "committed_reproduced_exactly": true,
+   "ladder_old": [
+    [
+     "HQ_hydro",
+     900.0,
+     9.56
+    ],
+    [
+     "IESO_Ontario",
+     690.0,
+     12.05
+    ],
+    [
+     "PJM_shoulder",
+     690.0,
+     14.29
+    ],
+    [
+     "PJM_west",
+     690.0,
+     17.36
+    ],
+    [
+     "eastern_mid",
+     690.0,
+     20.98
+    ],
+    [
+     "ISONE_tie",
+     690.0,
+     25.1
+    ],
+    [
+     "import_scarcity",
+     2365.0,
+     43.68
+    ]
+   ],
+   "ladder_new": [
+    [
+     "HQ_hydro",
+     900.0,
+     10.15
+    ],
+    [
+     "IESO_Ontario",
+     690.0,
+     13.74
+    ],
+    [
+     "PJM_shoulder",
+     690.0,
+     18.43
+    ],
+    [
+     "PJM_west",
+     690.0,
+     23.13
+    ],
+    [
+     "eastern_mid",
+     690.0,
+     28.76
+    ],
+    [
+     "ISONE_tie",
+     690.0,
+     38.04
+    ],
+    [
+     "import_scarcity",
+     1125.0,
+     75.88
+    ]
+   ],
+   "offline_old": {
+    "sim_twh": 30.1011,
+    "act_twh": 31.709306444999996,
+    "dur_rmse": 487.74062419869824,
+    "imp_hrs_sim": 99.46347031963471,
+    "imp_hrs_act": 99.93150684931507,
+    "diurnal_corr": 0.8285186282102697,
+    "hourly_corr": 0.5663086516609742
+   },
+   "offline_old_vs_true": {
+    "sim_twh": 30.1011,
+    "act_twh": 23.133223715,
+    "dur_rmse": 902.2947615694027,
+    "imp_hrs_sim": 99.46347031963471,
+    "imp_hrs_act": 99.92009132420091,
+    "diurnal_corr": 0.8162728008518221,
+    "hourly_corr": 0.574667603076142
+   },
+   "offline_new": {
+    "sim_twh": 22.97826,
+    "act_twh": 23.133223715,
+    "dur_rmse": 224.3026606410489,
+    "imp_hrs_sim": 99.05251141552512,
+    "imp_hrs_act": 99.92009132420091,
+    "diurnal_corr": 0.8029277115048086,
+    "hourly_corr": 0.5750950337020034
+   },
+   "floor_total_net_new": {
+    "mean": 2640.7789628995433,
+    "min": -353.76000000000005,
+    "p1": 471.7660000000001,
+    "p5": 1021.7875,
+    "share_below_900": 0.0365296803652968,
+    "share_below_0": 0.0006849315068493151
+   },
+   "hq_seam_new": {
+    "mean": 1247.4481940639268,
+    "min": -993.25,
+    "p1": 0.0,
+    "p5": 204.60850000000013,
+    "share_below_900": 0.19828767123287672,
+    "share_below_0": 0.0013698630136986301
+   }
+  },
+  "2020": {
+   "dup_corr": 0.9547355919461109,
+   "dup_equal_within_0p5_share": 0.1600639342390684,
+   "dup_mean_mw": 859.939724283594,
+   "hq_ny_mean_mw": 1014.9267045324808,
+   "net_old_mean_mw": 3140.106673515982,
+   "net_new_mean_mw": 2280.26511586758,
+   "committed_reproduced_exactly": false,
+   "ladder_old": [
+    [
+     "HQ_hydro",
+     900.0,
+     6.24
+    ],
+    [
+     "IESO_Ontario",
+     690.0,
+     10.47
+    ],
+    [
+     "PJM_shoulder",
+     690.0,
+     12.72
+    ],
+    [
+     "PJM_west",
+     690.0,
+     15.11
+    ],
+    [
+     "eastern_mid",
+     690.0,
+     18.51
+    ],
+    [
+     "ISONE_tie",
+     690.0,
+     22.93
+    ],
+    [
+     "import_scarcity",
+     1955.0,
+     41.41
+    ]
+   ],
+   "ladder_new": [
+    [
+     "HQ_hydro",
+     900.0,
+     6.93
+    ],
+    [
+     "IESO_Ontario",
+     690.0,
+     12.05
+    ],
+    [
+     "PJM_shoulder",
+     690.0,
+     16.0
+    ],
+    [
+     "PJM_west",
+     690.0,
+     20.33
+    ],
+    [
+     "eastern_mid",
+     690.0,
+     26.85
+    ],
+    [
+     "ISONE_tie",
+     690.0,
+     37.56
+    ],
+    [
+     "import_scarcity",
+     885.0,
+     57.8
+    ]
+   ],
+   "offline_old": {
+    "sim_twh": 26.9283,
+    "act_twh": 27.50733446,
+    "dur_rmse": 307.0726103327233,
+    "imp_hrs_sim": 99.82876712328768,
+    "imp_hrs_act": 99.98858447488584,
+    "diurnal_corr": 0.8503684613179192,
+    "hourly_corr": 0.46020410523399446
+   },
+   "offline_old_vs_true": {
+    "sim_twh": 26.9283,
+    "act_twh": 19.975122414999998,
+    "dur_rmse": 860.8412673782125,
+    "imp_hrs_sim": 99.82876712328768,
+    "imp_hrs_act": 99.98858447488584,
+    "diurnal_corr": 0.7548078181782268,
+    "hourly_corr": 0.4348333897876109
+   },
+   "offline_new": {
+    "sim_twh": 19.94733,
+    "act_twh": 19.975122414999998,
+    "dur_rmse": 203.67983618726785,
+    "imp_hrs_sim": 99.70319634703196,
+    "imp_hrs_act": 99.98858447488584,
+    "diurnal_corr": 0.7712232960066645,
+    "hourly_corr": 0.46584977778498526
+   },
+   "floor_total_net_new": {
+    "mean": 2280.26511586758,
+    "min": 0.0,
+    "p1": 646.6178,
+    "p5": 1011.5000000000001,
+    "share_below_900": 0.033105022831050226,
+    "share_below_0": 0.0
+   },
+   "hq_seam_new": {
+    "mean": 1136.106901826484,
+    "min": 0.0,
+    "p1": 5.92,
+    "p5": 196.30350000000018,
+    "share_below_900": 0.28378995433789955,
+    "share_below_0": 0.0
+   }
+  },
+  "2021": {
+   "dup_corr": 0.9869943197088095,
+   "dup_equal_within_0p5_share": 0.06872930699851582,
+   "dup_mean_mw": 871.4453596300947,
+   "hq_ny_mean_mw": 1131.0346209612972,
+   "net_old_mean_mw": 3978.5780513698637,
+   "net_new_mean_mw": 3107.2321718036524,
+   "committed_reproduced_exactly": false,
+   "ladder_old": [
+    [
+     "HQ_hydro",
+     900.0,
+     11.31
+    ],
+    [
+     "IESO_Ontario",
+     690.0,
+     13.52
+    ],
+    [
+     "PJM_shoulder",
+     690.0,
+     16.28
+    ],
+    [
+     "PJM_west",
+     690.0,
+     20.42
+    ],
+    [
+     "eastern_mid",
+     690.0,
+     26.01
+    ],
+    [
+     "ISONE_tie",
+     690.0,
+     33.42
+    ],
+    [
+     "import_scarcity",
+     2560.0,
+     61.0
+    ]
+   ],
+   "ladder_new": [
+    [
+     "HQ_hydro",
+     900.0,
+     11.41
+    ],
+    [
+     "IESO_Ontario",
+     690.0,
+     13.97
+    ],
+    [
+     "PJM_shoulder",
+     690.0,
+     18.52
+    ],
+    [
+     "PJM_west",
+     690.0,
+     27.39
+    ],
+    [
+     "eastern_mid",
+     690.0,
+     37.7
+    ],
+    [
+     "ISONE_tie",
+     690.0,
+     49.41
+    ],
+    [
+     "import_scarcity",
+     1480.0,
+     85.57
+    ]
+   ],
+   "offline_old": {
+    "sim_twh": 31.87956,
+    "act_twh": 34.85234373,
+    "dur_rmse": 661.8275392920033,
+    "imp_hrs_sim": 99.93150684931507,
+    "imp_hrs_act": 99.9771689497717,
+    "diurnal_corr": 0.7094522866612735,
+    "hourly_corr": 0.3716533559541891
+   },
+   "offline_old_vs_true": {
+    "sim_twh": 31.87956,
+    "act_twh": 27.219353824999995,
+    "dur_rmse": 713.3717082611122,
+    "imp_hrs_sim": 99.93150684931507,
+    "imp_hrs_act": 99.96575342465754,
+    "diurnal_corr": 0.5773604550441845,
+    "hourly_corr": 0.3749382569598857
+   },
+   "offline_new": {
+    "sim_twh": 26.91045,
+    "act_twh": 27.219353824999995,
+    "dur_rmse": 251.67754715760344,
+    "imp_hrs_sim": 99.90867579908675,
+    "imp_hrs_act": 99.96575342465754,
+    "diurnal_corr": 0.6479664079779633,
+    "hourly_corr": 0.3555915651522138
+   },
+   "floor_total_net_new": {
+    "mean": 3107.2321718036524,
+    "min": -97.36999999999989,
+    "p1": 1067.0770000000002,
+    "p5": 1581.5960000000002,
+    "share_below_900": 0.005365296803652968,
+    "share_below_0": 0.00022831050228310502
+   },
+   "hq_seam_new": {
+    "mean": 1228.0036135844748,
+    "min": -118.5,
+    "p1": 15.0,
+    "p5": 90.0,
+    "share_below_900": 0.2160958904109589,
+    "share_below_0": 0.00045662100456621003
+   }
+  },
+  "2022": {
+   "dup_corr": 0.9887499345758456,
+   "dup_equal_within_0p5_share": 0.055029112912432926,
+   "dup_mean_mw": 705.9425025687865,
+   "hq_ny_mean_mw": 979.8994440004567,
+   "net_old_mean_mw": 3785.6292608447493,
+   "net_new_mean_mw": 3079.767345319635,
+   "committed_reproduced_exactly": false,
+   "ladder_old": [
+    [
+     "HQ_hydro",
+     900.0,
+     25.35
+    ],
+    [
+     "IESO_Ontario",
+     690.0,
+     34.28
+    ],
+    [
+     "PJM_shoulder",
+     690.0,
+     41.13
+    ],
+    [
+     "PJM_west",
+     690.0,
+     46.95
+    ],
+    [
+     "eastern_mid",
+     690.0,
+     53.35
+    ],
+    [
+     "ISONE_tie",
+     690.0,
+     62.59
+    ],
+    [
+     "import_scarcity",
+     2760.0,
+     126.79
+    ]
+   ],
+   "ladder_new": [
+    [
+     "HQ_hydro",
+     900.0,
+     23.77
+    ],
+    [
+     "IESO_Ontario",
+     690.0,
+     36.06
+    ],
+    [
+     "PJM_shoulder",
+     690.0,
+     44.21
+    ],
+    [
+     "PJM_west",
+     690.0,
+     52.55
+    ],
+    [
+     "eastern_mid",
+     690.0,
+     64.64
+    ],
+    [
+     "ISONE_tie",
+     690.0,
+     86.91
+    ],
+    [
+     "import_scarcity",
+     1575.0,
+     174.89
+    ]
+   ],
+   "offline_old": {
+    "sim_twh": 29.99757,
+    "act_twh": 33.162112325,
+    "dur_rmse": 719.0536169842803,
+    "imp_hrs_sim": 98.82420091324201,
+    "imp_hrs_act": 99.80593607305937,
+    "diurnal_corr": 0.4927629982272148,
+    "hourly_corr": 0.4092648150654378
+   },
+   "offline_old_vs_true": {
+    "sim_twh": 29.99757,
+    "act_twh": 26.978761945,
+    "dur_rmse": 582.6117246438782,
+    "imp_hrs_sim": 98.82420091324201,
+    "imp_hrs_act": 99.94292237442922,
+    "diurnal_corr": 0.29851883604787194,
+    "hourly_corr": 0.365424250765165
+   },
+   "offline_new": {
+    "sim_twh": 26.43546,
+    "act_twh": 26.978761945,
+    "dur_rmse": 297.3160815991052,
+    "imp_hrs_sim": 99.14383561643835,
+    "imp_hrs_act": 99.94292237442922,
+    "diurnal_corr": 0.3672896394187361,
+    "hourly_corr": 0.39134380462700036
+   },
+   "floor_total_net_new": {
+    "mean": 3079.767345319635,
+    "min": -610.63,
+    "p1": 477.2828,
+    "p5": 1072.8809999999999,
+    "share_below_900": 0.03687214611872146,
+    "share_below_0": 0.00045662100456621003
+   },
+   "hq_seam_new": {
+    "mean": 1082.1613356164385,
+    "min": -857.4599999999999,
+    "p1": -206.0,
+    "p5": 144.0,
+    "share_below_900": 0.35513698630136986,
+    "share_below_0": 0.02454337899543379
+   }
+  },
+  "2023": {
+   "dup_corr": 0.9768427891021676,
+   "dup_equal_within_0p5_share": 0.4075807740609659,
+   "dup_mean_mw": 147.61132891882636,
+   "hq_ny_mean_mw": 296.5875145564562,
+   "net_old_mean_mw": 2693.444070776256,
+   "net_new_mean_mw": 2545.849592465753,
+   "committed_reproduced_exactly": true,
+   "ladder_old": [
+    [
+     "HQ_hydro",
+     900.0,
+     15.2
+    ],
+    [
+     "IESO_Ontario",
+     690.0,
+     18.67
+    ],
+    [
+     "PJM_shoulder",
+     690.0,
+     22.91
+    ],
+    [
+     "PJM_west",
+     690.0,
+     27.88
+    ],
+    [
+     "eastern_mid",
+     690.0,
+     33.61
+    ],
+    [
+     "ISONE_tie",
+     690.0,
+     40.23
+    ],
+    [
+     "import_scarcity",
+     2230.0,
+     71.66
+    ]
+   ],
+   "ladder_new": [
+    [
+     "HQ_hydro",
+     900.0,
+     13.59
+    ],
+    [
+     "IESO_Ontario",
+     690.0,
+     17.41
+    ],
+    [
+     "PJM_shoulder",
+     690.0,
+     22.46
+    ],
+    [
+     "PJM_west",
+     690.0,
+     28.61
+    ],
+    [
+     "eastern_mid",
+     690.0,
+     37.65
+    ],
+    [
+     "ISONE_tie",
+     690.0,
+     51.53
+    ],
+    [
+     "import_scarcity",
+     1065.0,
+     99.6
+    ]
+   ],
+   "offline_old": {
+    "sim_twh": 23.09199,
+    "act_twh": 23.594570060000002,
+    "dur_rmse": 327.9241473651488,
+    "imp_hrs_sim": 97.54566210045662,
+    "imp_hrs_act": 98.94977168949771,
+    "diurnal_corr": 0.7754144265908173,
+    "hourly_corr": 0.2956849602649319
+   },
+   "offline_old_vs_true": {
+    "sim_twh": 23.09199,
+    "act_twh": 22.30164243,
+    "dur_rmse": 336.96614120612963,
+    "imp_hrs_sim": 97.54566210045662,
+    "imp_hrs_act": 99.86301369863013,
+    "diurnal_corr": 0.5903771029972483,
+    "hourly_corr": 0.2987745277693504
+   },
+   "offline_new": {
+    "sim_twh": 22.22658,
+    "act_twh": 22.30164243,
+    "dur_rmse": 214.69683287225433,
+    "imp_hrs_sim": 99.07534246575342,
+    "imp_hrs_act": 99.86301369863013,
+    "diurnal_corr": 0.5936762485065318,
+    "hourly_corr": 0.29453499687124307
+   },
+   "floor_total_net_new": {
+    "mean": 2545.849592465753,
+    "min": -376.8800000000001,
+    "p1": 495.8476000000001,
+    "p5": 1094.6329999999998,
+    "share_below_900": 0.031735159817351595,
+    "share_below_0": 0.0012557077625570776
+   },
+   "hq_seam_new": {
+    "mean": 303.02071689497717,
+    "min": -1100.3400000000001,
+    "p1": -905.0,
+    "p5": -885.0,
+    "share_below_900": 0.8081050228310502,
+    "share_below_0": 0.23207762557077627
+   }
+  },
+  "2024": {
+   "dup_corr": 0.9892111833476793,
+   "dup_equal_within_0p5_share": 0.7788560337938121,
+   "dup_mean_mw": -213.93850667884465,
+   "hq_ny_mean_mw": -174.01665601096016,
+   "net_old_mean_mw": 2145.818933219178,
+   "net_new_mean_mw": 2359.733017694064,
+   "committed_reproduced_exactly": true,
+   "ladder_old": [
+    [
+     "HQ_hydro",
+     900.0,
+     20.97
+    ],
+    [
+     "IESO_Ontario",
+     690.0,
+     25.7
+    ],
+    [
+     "PJM_shoulder",
+     690.0,
+     29.85
+    ],
+    [
+     "PJM_west",
+     690.0,
+     35.02
+    ],
+    [
+     "eastern_mid",
+     690.0,
+     41.83
+    ],
+    [
+     "ISONE_tie",
+     690.0,
+     54.38
+    ],
+    [
+     "import_scarcity",
+     2120.0,
+     122.71
+    ]
+   ],
+   "ladder_new": [
+    [
+     "HQ_hydro",
+     900.0,
+     17.5
+    ],
+    [
+     "IESO_Ontario",
+     690.0,
+     22.27
+    ],
+    [
+     "PJM_shoulder",
+     690.0,
+     26.98
+    ],
+    [
+     "PJM_west",
+     690.0,
+     33.64
+    ],
+    [
+     "eastern_mid",
+     690.0,
+     44.58
+    ],
+    [
+     "ISONE_tie",
+     690.0,
+     68.11
+    ],
+    [
+     "import_scarcity",
+     1150.0,
+     138.03
+    ]
+   ],
+   "offline_old": {
+    "sim_twh": 18.4599,
+    "act_twh": 18.797373854999996,
+    "dur_rmse": 315.0120739377387,
+    "imp_hrs_sim": 90.26255707762557,
+    "imp_hrs_act": 97.0662100456621,
+    "diurnal_corr": 0.7312509968733827,
+    "hourly_corr": 0.32853113447850807
+   },
+   "offline_old_vs_true": {
+    "sim_twh": 18.4599,
+    "act_twh": 20.671261235,
+    "dur_rmse": 447.3877405599235,
+    "imp_hrs_sim": 90.26255707762557,
+    "imp_hrs_act": 99.76027397260275,
+    "diurnal_corr": 0.25546418713371155,
+    "hourly_corr": 0.26348017561851195
+   },
+   "offline_new": {
+    "sim_twh": 20.57403,
+    "act_twh": 20.671261235,
+    "dur_rmse": 220.04490098899944,
+    "imp_hrs_sim": 98.55022831050229,
+    "imp_hrs_act": 99.76027397260275,
+    "diurnal_corr": 0.24679998044377854,
+    "hourly_corr": 0.2723434871296626
+   },
+   "floor_total_net_new": {
+    "mean": 2359.733017694064,
+    "min": -852.3199999999999,
+    "p1": 363.8290000000001,
+    "p5": 804.131,
+    "share_below_900": 0.06541095890410958,
+    "share_below_0": 0.00228310502283105
+   },
+   "hq_seam_new": {
+    "mean": -153.23801255707764,
+    "min": -1080.0,
+    "p1": -1065.0,
+    "p5": -980.0,
+    "share_below_900": 0.9222602739726027,
+    "share_below_0": 0.5680365296803653
+   }
+  },
+  "2025": {
+   "dup_corr": 0.9934112050764492,
+   "dup_equal_within_0p5_share": 0.9087795410434981,
+   "dup_mean_mw": -525.8344502797122,
+   "hq_ny_mean_mw": -507.8027114967462,
+   "net_old_mean_mw": 1670.7442385844747,
+   "net_new_mean_mw": 2196.518662100457,
+   "committed_reproduced_exactly": false,
+   "ladder_old": [
+    [
+     "HQ_hydro",
+     900.0,
+     31.33
+    ],
+    [
+     "IESO_Ontario",
+     690.0,
+     44.09
+    ],
+    [
+     "PJM_shoulder",
+     690.0,
+     59.82
+    ],
+    [
+     "PJM_west",
+     690.0,
+     79.19
+    ],
+    [
+     "eastern_mid",
+     690.0,
+     102.99
+    ],
+    [
+     "ISONE_tie",
+     690.0,
+     128.54
+    ],
+    [
+     "import_scarcity",
+     1725.0,
+     208.77
+    ]
+   ],
+   "ladder_new": [
+    [
+     "HQ_hydro",
+     900.0,
+     20.43
+    ],
+    [
+     "IESO_Ontario",
+     690.0,
+     30.76
+    ],
+    [
+     "PJM_shoulder",
+     690.0,
+     43.16
+    ],
+    [
+     "PJM_west",
+     690.0,
+     65.77
+    ],
+    [
+     "eastern_mid",
+     690.0,
+     105.83
+    ],
+    [
+     "ISONE_tie",
+     690.0,
+     153.51
+    ],
+    [
+     "import_scarcity",
+     835.0,
+     242.96
+    ]
+   ],
+   "offline_old": {
+    "sim_twh": 14.50764,
+    "act_twh": 14.63571953,
+    "dur_rmse": 275.75611223972624,
+    "imp_hrs_sim": 84.45205479452055,
+    "imp_hrs_act": 94.92009132420091,
+    "diurnal_corr": -0.5857625538445899,
+    "hourly_corr": 0.4044564408033151
+   },
+   "offline_old_vs_true": {
+    "sim_twh": 14.50764,
+    "act_twh": 19.241503480000002,
+    "dur_rmse": 680.6478724883538,
+    "imp_hrs_sim": 84.45205479452055,
+    "imp_hrs_act": 99.87442922374429,
+    "diurnal_corr": -0.7773603384362061,
+    "hourly_corr": 0.35125223634333375
+   },
+   "offline_new": {
+    "sim_twh": 19.16904,
+    "act_twh": 19.241503480000002,
+    "dur_rmse": 210.9860415941773,
+    "imp_hrs_sim": 98.76712328767124,
+    "imp_hrs_act": 99.87442922374429,
+    "diurnal_corr": -0.7753402435669995,
+    "hourly_corr": 0.333382024313147
+   },
+   "floor_total_net_new": {
+    "mean": 2196.518662100457,
+    "min": -640.28,
+    "p1": 415.05290000000014,
+    "p5": 847.8485000000002,
+    "share_below_900": 0.05878995433789954,
+    "share_below_0": 0.001141552511415525
+   },
+   "hq_seam_new": {
+    "mean": -545.4678413242008,
+    "min": -1083.08,
+    "p1": -1080.0,
+    "p5": -1080.0,
+    "share_below_900": 0.9672374429223745,
+    "share_below_0": 0.825
+   }
+  }
+ },
+ "duplicate_row": "SCH - HQ_IMPORT_EXPORT",
+ "pooled_2023_2025": {
+  "committed_reproduced_exactly": false,
+  "ladder_old": [
+   [
+    "HQ_hydro",
+    900.0,
+    20.78
+   ],
+   [
+    "IESO_Ontario",
+    690.0,
+    26.37
+   ],
+   [
+    "PJM_shoulder",
+    690.0,
+    32.24
+   ],
+   [
+    "PJM_west",
+    690.0,
+    40.13
+   ],
+   [
+    "eastern_mid",
+    690.0,
+    51.03
+   ],
+   [
+    "ISONE_tie",
+    690.0,
+    71.46
+   ],
+   [
+    "import_scarcity",
+    2035.0,
+    152.97
+   ]
+  ],
+  "ladder_new": [
+   [
+    "HQ_hydro",
+    900.0,
+    15.77
+   ],
+   [
+    "IESO_Ontario",
+    690.0,
+    21.77
+   ],
+   [
+    "PJM_shoulder",
+    690.0,
+    28.11
+   ],
+   [
+    "PJM_west",
+    690.0,
+    38.64
+   ],
+   [
+    "eastern_mid",
+    690.0,
+    57.7
+   ],
+   [
+    "ISONE_tie",
+    690.0,
+    104.54
+   ],
+   [
+    "import_scarcity",
+    990.0,
+    182.59
+   ]
+  ],
+  "offline_old_vs_true": {
+   "sim_twh": 56.05815,
+   "act_twh": 62.214407144999996,
+   "dur_rmse": 471.67453080554264,
+   "imp_hrs_sim": 90.75342465753424,
+   "imp_hrs_act": 99.83257229832573,
+   "diurnal_corr": -0.03930039336385039,
+   "hourly_corr": 0.16746447502525777
+  },
+  "offline_new": {
+   "sim_twh": 61.96959,
+   "act_twh": 62.214407144999996,
+   "dur_rmse": 215.27445333686777,
+   "imp_hrs_sim": 98.8089802130898,
+   "imp_hrs_act": 99.83257229832573,
+   "diurnal_corr": -0.05557951662955204,
+   "hourly_corr": 0.18154495366160708
+  }
+ }
+}

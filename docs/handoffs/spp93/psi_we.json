@@ -1,0 +1,16 @@
+{
+ "n_hours": 26280,
+ "R2": 0.312,
+ "constituents": 37,
+ "identified_WtoE": 18,
+ "EtoW_loaded": 12,
+ "identified_with_L": 18,
+ "T_p25_p50_p75": [
+  2275,
+  3967,
+  8044
+ ],
+ "TTC": 4000.0,
+ "R1_pass": true,
+ "R4_pass": true
+}

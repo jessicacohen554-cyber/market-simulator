@@ -1,0 +1,1322 @@
+{
+ "schema": "legitimacy-diagnostics/v1",
+ "bundle": "/home/user/market-simulator/results/calibration/rcaiso9_A_tp_2019_2021",
+ "iso": "CAISO",
+ "years": [
+  2019,
+  2020,
+  2021
+ ],
+ "plant_class_vote_basis": {
+  "2019": "capacity",
+  "2020": "capacity",
+  "2021": "capacity"
+ },
+ "dispatch_source": {
+  "2019": "dispatch/2019_P1.parquet",
+  "2020": "dispatch/2020_P1.parquet",
+  "2021": "dispatch/2021_P1.parquet"
+ },
+ "diagnostics": {
+  "D1": {
+   "name": "D-1 diurnal shape",
+   "passed": true,
+   "rows": [
+    {
+     "year": 2019,
+     "class": "CC_CHP",
+     "profile_r": 0.934,
+     "model_offpeak_cv": 0.011,
+     "actual_offpeak_cv": 0.036,
+     "cv_ratio": 0.293,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2019,
+     "class": "CC_REGULAR",
+     "profile_r": 0.926,
+     "model_offpeak_cv": 0.12,
+     "actual_offpeak_cv": 0.106,
+     "cv_ratio": 1.136,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2019,
+     "class": "CT_CHP",
+     "profile_r": 0.913,
+     "model_offpeak_cv": 0.013,
+     "actual_offpeak_cv": 0.067,
+     "cv_ratio": 0.194,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2019,
+     "class": "CT_PEAKER",
+     "profile_r": 0.917,
+     "model_offpeak_cv": 0.502,
+     "actual_offpeak_cv": 0.635,
+     "cv_ratio": 0.791,
+     "gated": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2019,
+     "class": "OTHER_FOSSIL",
+     "profile_r": 0.943,
+     "model_offpeak_cv": 0.892,
+     "actual_offpeak_cv": 0.621,
+     "cv_ratio": 1.436,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2019,
+     "class": "ST_GAS",
+     "profile_r": 0.936,
+     "model_offpeak_cv": 2.359,
+     "actual_offpeak_cv": 0.361,
+     "cv_ratio": 6.529,
+     "gated": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "class": "CC_CHP",
+     "profile_r": 0.994,
+     "model_offpeak_cv": 0.014,
+     "actual_offpeak_cv": 0.029,
+     "cv_ratio": 0.476,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "class": "CC_REGULAR",
+     "profile_r": 0.847,
+     "model_offpeak_cv": 0.154,
+     "actual_offpeak_cv": 0.102,
+     "cv_ratio": 1.513,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "class": "CT_CHP",
+     "profile_r": 0.898,
+     "model_offpeak_cv": 0.021,
+     "actual_offpeak_cv": 0.144,
+     "cv_ratio": 0.142,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "class": "CT_PEAKER",
+     "profile_r": 0.881,
+     "model_offpeak_cv": 0.477,
+     "actual_offpeak_cv": 0.572,
+     "cv_ratio": 0.834,
+     "gated": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "class": "OTHER_FOSSIL",
+     "profile_r": 0.728,
+     "model_offpeak_cv": 0.065,
+     "actual_offpeak_cv": 0.616,
+     "cv_ratio": 0.106,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "class": "ST_GAS",
+     "profile_r": 0.908,
+     "model_offpeak_cv": 1.327,
+     "actual_offpeak_cv": 0.36,
+     "cv_ratio": 3.689,
+     "gated": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "class": "CC_CHP",
+     "profile_r": 0.901,
+     "model_offpeak_cv": 0.011,
+     "actual_offpeak_cv": 0.061,
+     "cv_ratio": 0.18,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "class": "CC_REGULAR",
+     "profile_r": 0.985,
+     "model_offpeak_cv": 0.228,
+     "actual_offpeak_cv": 0.179,
+     "cv_ratio": 1.273,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "class": "CT_CHP",
+     "profile_r": 0.83,
+     "model_offpeak_cv": 0.109,
+     "actual_offpeak_cv": 0.123,
+     "cv_ratio": 0.888,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "class": "CT_PEAKER",
+     "profile_r": 0.862,
+     "model_offpeak_cv": 0.777,
+     "actual_offpeak_cv": 0.455,
+     "cv_ratio": 1.707,
+     "gated": true,
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "class": "OTHER_FOSSIL",
+     "profile_r": 0.756,
+     "model_offpeak_cv": 0.12,
+     "actual_offpeak_cv": 0.606,
+     "cv_ratio": 0.199,
+     "gated": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "class": "ST_GAS",
+     "profile_r": 0.843,
+     "model_offpeak_cv": 2.774,
+     "actual_offpeak_cv": 0.302,
+     "cv_ratio": 9.199,
+     "gated": true,
+     "verdict": "pass"
+    }
+   ],
+   "summary": [],
+   "failures": [],
+   "notes": []
+  },
+  "D2": {
+   "name": "D-2 forced-energy attribution",
+   "passed": true,
+   "rows": [
+    {
+     "year": 2019,
+     "class": "",
+     "mechanism": "nuclear_mustrun",
+     "forced_twh": 16.0786,
+     "class_total_twh": 46.2279,
+     "share_of_class": 0.3478
+    },
+    {
+     "year": 2019,
+     "class": "",
+     "mechanism": "firm_import",
+     "forced_twh": 30.1492,
+     "class_total_twh": 46.2279,
+     "share_of_class": 0.6522
+    },
+    {
+     "year": 2019,
+     "class": "CC_CHP",
+     "mechanism": "chp_steam",
+     "forced_twh": 3.5918,
+     "class_total_twh": 9.1001,
+     "share_of_class": 0.3947
+    },
+    {
+     "year": 2019,
+     "class": "CC_REGULAR",
+     "mechanism": "ra_mustoffer_bridge",
+     "forced_twh": 0.8596,
+     "class_total_twh": 58.9854,
+     "share_of_class": 0.0146
+    },
+    {
+     "year": 2019,
+     "class": "CT_CHP",
+     "mechanism": "chp_steam",
+     "forced_twh": 1.1624,
+     "class_total_twh": 1.2256,
+     "share_of_class": 0.9484
+    },
+    {
+     "year": 2019,
+     "class": "hydro",
+     "mechanism": "hydro_min_flow",
+     "forced_twh": 8.8189,
+     "class_total_twh": 29.186,
+     "share_of_class": 0.3022
+    },
+    {
+     "year": 2020,
+     "class": "",
+     "mechanism": "nuclear_mustrun",
+     "forced_twh": 16.1178,
+     "class_total_twh": 46.1016,
+     "share_of_class": 0.3496
+    },
+    {
+     "year": 2020,
+     "class": "",
+     "mechanism": "firm_import",
+     "forced_twh": 29.9838,
+     "class_total_twh": 46.1016,
+     "share_of_class": 0.6504
+    },
+    {
+     "year": 2020,
+     "class": "CC_CHP",
+     "mechanism": "chp_steam",
+     "forced_twh": 4.8643,
+     "class_total_twh": 9.0568,
+     "share_of_class": 0.5371
+    },
+    {
+     "year": 2020,
+     "class": "CC_REGULAR",
+     "mechanism": "ra_mustoffer_bridge",
+     "forced_twh": 0.8941,
+     "class_total_twh": 68.2282,
+     "share_of_class": 0.0131
+    },
+    {
+     "year": 2020,
+     "class": "CT_CHP",
+     "mechanism": "chp_steam",
+     "forced_twh": 1.1364,
+     "class_total_twh": 1.1901,
+     "share_of_class": 0.9548
+    },
+    {
+     "year": 2020,
+     "class": "hydro",
+     "mechanism": "hydro_min_flow",
+     "forced_twh": 4.7469,
+     "class_total_twh": 16.1563,
+     "share_of_class": 0.2938
+    },
+    {
+     "year": 2021,
+     "class": "",
+     "mechanism": "nuclear_mustrun",
+     "forced_twh": 16.3498,
+     "class_total_twh": 39.2204,
+     "share_of_class": 0.4169
+    },
+    {
+     "year": 2021,
+     "class": "",
+     "mechanism": "firm_import",
+     "forced_twh": 22.8612,
+     "class_total_twh": 39.2204,
+     "share_of_class": 0.5829
+    },
+    {
+     "year": 2021,
+     "class": "CC_CHP",
+     "mechanism": "chp_steam",
+     "forced_twh": 3.9444,
+     "class_total_twh": 9.4859,
+     "share_of_class": 0.4158
+    },
+    {
+     "year": 2021,
+     "class": "CC_REGULAR",
+     "mechanism": "ra_mustoffer_bridge",
+     "forced_twh": 2.9047,
+     "class_total_twh": 59.5551,
+     "share_of_class": 0.0488
+    },
+    {
+     "year": 2021,
+     "class": "CT_CHP",
+     "mechanism": "chp_steam",
+     "forced_twh": 1.1239,
+     "class_total_twh": 1.5118,
+     "share_of_class": 0.7434
+    },
+    {
+     "year": 2021,
+     "class": "hydro",
+     "mechanism": "hydro_min_flow",
+     "forced_twh": 1.0611,
+     "class_total_twh": 11.3735,
+     "share_of_class": 0.0933
+    }
+   ],
+   "summary": [
+    {
+     "year": 2019,
+     "class": "CC_REGULAR",
+     "forced_twh": 0.8596,
+     "class_total_twh": 58.9854,
+     "forced_share": 0.0146,
+     "limit": 0.3,
+     "load_share": 0.2715,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2019,
+     "class": "COAL_BIT",
+     "forced_twh": 0.0,
+     "class_total_twh": 0.1091,
+     "forced_share": 0.0,
+     "limit": 0.3,
+     "load_share": 0.0005,
+     "immaterial": true,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2019,
+     "class": "CT_PEAKER",
+     "forced_twh": 0.0,
+     "class_total_twh": 5.2873,
+     "forced_share": 0.0,
+     "limit": 0.15,
+     "load_share": 0.0243,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2019,
+     "class": "ST_GAS",
+     "forced_twh": 0.0,
+     "class_total_twh": 0.3015,
+     "forced_share": 0.0,
+     "limit": 0.3,
+     "load_share": 0.0057,
+     "immaterial": true,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2019,
+     "class": "hydro",
+     "forced_twh": 0.0,
+     "class_total_twh": 29.186,
+     "forced_share": 0.0,
+     "limit": 0.3,
+     "load_share": 0.1343,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "class": "CC_REGULAR",
+     "forced_twh": 0.8941,
+     "class_total_twh": 68.2282,
+     "forced_share": 0.0131,
+     "limit": 0.3,
+     "load_share": 0.3164,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "class": "COAL_BIT",
+     "forced_twh": 0.0,
+     "class_total_twh": 0.0996,
+     "forced_share": 0.0,
+     "limit": 0.3,
+     "load_share": 0.0005,
+     "immaterial": true,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "class": "CT_PEAKER",
+     "forced_twh": 0.0,
+     "class_total_twh": 5.2097,
+     "forced_share": 0.0,
+     "limit": 0.15,
+     "load_share": 0.0242,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "class": "ST_GAS",
+     "forced_twh": 0.0,
+     "class_total_twh": 1.0108,
+     "forced_share": 0.0,
+     "limit": 0.3,
+     "load_share": 0.0082,
+     "immaterial": true,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "class": "hydro",
+     "forced_twh": 0.0,
+     "class_total_twh": 16.1563,
+     "forced_share": 0.0,
+     "limit": 0.3,
+     "load_share": 0.0749,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "class": "CC_REGULAR",
+     "forced_twh": 2.9047,
+     "class_total_twh": 59.5551,
+     "forced_share": 0.0488,
+     "limit": 0.3,
+     "load_share": 0.274,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "class": "COAL_BIT",
+     "forced_twh": 0.0,
+     "class_total_twh": 0.1094,
+     "forced_share": 0.0,
+     "limit": 0.3,
+     "load_share": 0.0005,
+     "immaterial": true,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "class": "CT_PEAKER",
+     "forced_twh": 0.0,
+     "class_total_twh": 5.7217,
+     "forced_share": 0.0,
+     "limit": 0.15,
+     "load_share": 0.0263,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "class": "ST_GAS",
+     "forced_twh": 0.0,
+     "class_total_twh": 0.361,
+     "forced_share": 0.0,
+     "limit": 0.3,
+     "load_share": 0.0062,
+     "immaterial": true,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "class": "hydro",
+     "forced_twh": 0.0,
+     "class_total_twh": 11.3735,
+     "forced_share": 0.0,
+     "limit": 0.3,
+     "load_share": 0.0523,
+     "immaterial": false,
+     "lower_bound": true,
+     "upper_bound": false,
+     "verdict": "pass"
+    }
+   ],
+   "failures": [],
+   "notes": [
+    "2019: 2 floored pseudo-unit row(s) (plant_code <= 0 interchange tranches) scored under the floor-energy convention (dispatch := min_gen; PREREG-caiso155 \u00a73) \u2014 reported TWh is the mandated floor energy, an upper bound on at-floor dispatch: u:WECC_DSW_DSW_solar_PV, u:WECC_PNW_PNW_hydro_base",
+    "2019: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+    "2020: 2 floored pseudo-unit row(s) (plant_code <= 0 interchange tranches) scored under the floor-energy convention (dispatch := min_gen; PREREG-caiso155 \u00a73) \u2014 reported TWh is the mandated floor energy, an upper bound on at-floor dispatch: u:WECC_DSW_DSW_solar_PV, u:WECC_PNW_PNW_hydro_base",
+    "2020: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+    "2021: 2 floored pseudo-unit row(s) (plant_code <= 0 interchange tranches) scored under the floor-energy convention (dispatch := min_gen; PREREG-caiso155 \u00a73) \u2014 reported TWh is the mandated floor energy, an upper bound on at-floor dispatch: u:WECC_DSW_DSW_solar_PV, u:WECC_PNW_PNW_hydro_base",
+    "2021: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds."
+   ]
+  },
+  "D4": {
+   "name": "D-4 off-window binding",
+   "passed": false,
+   "rows": [
+    {
+     "year": 2019,
+     "check": "window",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "",
+     "floored_twh": 4.7542,
+     "offwindow_twh": 0.0,
+     "offwindow_share": 0.0,
+     "binding_hours": "",
+     "measured_median_mw": "",
+     "measured_zero_share": "",
+     "verdict": "pass"
+    },
+    {
+     "year": 2019,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "10034",
+     "floored_twh": 0.0333,
+     "offwindow_twh": "",
+     "offwindow_share": 0.007,
+     "binding_hours": 2138,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.7685,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2019,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "10649",
+     "floored_twh": 0.0254,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0053,
+     "binding_hours": 8760,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.8959,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2019,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "10650",
+     "floored_twh": 0.0105,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0022,
+     "binding_hours": 8760,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.9547,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2019,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "50612",
+     "floored_twh": 0.0128,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0027,
+     "binding_hours": 8730,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.954,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2019,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "50865",
+     "floored_twh": 0.1385,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0291,
+     "binding_hours": 8760,
+     "measured_median_mw": 36.138,
+     "measured_zero_share": 0.0113,
+     "verdict": "pass"
+    },
+    {
+     "year": 2019,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "54749",
+     "floored_twh": 0.0008,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0002,
+     "binding_hours": 144,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.6528,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2019,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "54768",
+     "floored_twh": 0.0152,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0032,
+     "binding_hours": 8588,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.9631,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2019,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "55217",
+     "floored_twh": 1.5751,
+     "offwindow_twh": "",
+     "offwindow_share": 0.3313,
+     "binding_hours": 6478,
+     "measured_median_mw": 291.72,
+     "measured_zero_share": 0.0022,
+     "verdict": "pass"
+    },
+    {
+     "year": 2019,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "55400",
+     "floored_twh": 0.0808,
+     "offwindow_twh": "",
+     "offwindow_share": 0.017,
+     "binding_hours": 248,
+     "measured_median_mw": 411.255,
+     "measured_zero_share": 0.0081,
+     "verdict": "pass"
+    },
+    {
+     "year": 2019,
+     "check": "window",
+     "floor": "firm_import",
+     "window": "h0-23",
+     "plant": "",
+     "floored_twh": 30.1492,
+     "offwindow_twh": 0.0,
+     "offwindow_share": 0.0,
+     "binding_hours": "",
+     "measured_median_mw": "",
+     "measured_zero_share": "",
+     "verdict": "pass"
+    },
+    {
+     "year": 2019,
+     "check": "window",
+     "floor": "hydro_min_flow",
+     "window": "h0-23",
+     "plant": "",
+     "floored_twh": 8.8189,
+     "offwindow_twh": 0.0,
+     "offwindow_share": 0.0,
+     "binding_hours": "",
+     "measured_median_mw": "",
+     "measured_zero_share": "",
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "check": "window",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "",
+     "floored_twh": 6.0007,
+     "offwindow_twh": 0.0,
+     "offwindow_share": 0.0,
+     "binding_hours": "",
+     "measured_median_mw": "",
+     "measured_zero_share": "",
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "10034",
+     "floored_twh": 0.0288,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0048,
+     "binding_hours": 1889,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.7004,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2020,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "10649",
+     "floored_twh": 0.0247,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0041,
+     "binding_hours": 8507,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.8862,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2020,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "10650",
+     "floored_twh": 0.0101,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0017,
+     "binding_hours": 8458,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.9506,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2020,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "50612",
+     "floored_twh": 0.0126,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0021,
+     "binding_hours": 8611,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.9556,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2020,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "50865",
+     "floored_twh": 0.1376,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0229,
+     "binding_hours": 8759,
+     "measured_median_mw": 34.986,
+     "measured_zero_share": 0.145,
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "54749",
+     "floored_twh": 0.0032,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0005,
+     "binding_hours": 575,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.8487,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2020,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "54768",
+     "floored_twh": 0.0147,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0025,
+     "binding_hours": 8321,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.947,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2020,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "55217",
+     "floored_twh": 1.6564,
+     "offwindow_twh": "",
+     "offwindow_share": 0.276,
+     "binding_hours": 6597,
+     "measured_median_mw": 298.489,
+     "measured_zero_share": 0.0,
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "55400",
+     "floored_twh": 1.2663,
+     "offwindow_twh": "",
+     "offwindow_share": 0.211,
+     "binding_hours": 4126,
+     "measured_median_mw": 442.239,
+     "measured_zero_share": 0.0051,
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "check": "window",
+     "floor": "firm_import",
+     "window": "h0-23",
+     "plant": "",
+     "floored_twh": 29.9838,
+     "offwindow_twh": 0.0,
+     "offwindow_share": 0.0,
+     "binding_hours": "",
+     "measured_median_mw": "",
+     "measured_zero_share": "",
+     "verdict": "pass"
+    },
+    {
+     "year": 2020,
+     "check": "window",
+     "floor": "hydro_min_flow",
+     "window": "h0-23",
+     "plant": "",
+     "floored_twh": 4.7469,
+     "offwindow_twh": 0.0,
+     "offwindow_share": 0.0,
+     "binding_hours": "",
+     "measured_median_mw": "",
+     "measured_zero_share": "",
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "check": "window",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "",
+     "floored_twh": 5.0683,
+     "offwindow_twh": 0.0,
+     "offwindow_share": 0.0,
+     "binding_hours": "",
+     "measured_median_mw": "",
+     "measured_zero_share": "",
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "10034",
+     "floored_twh": 0.0294,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0058,
+     "binding_hours": 1923,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.7473,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2021,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "10649",
+     "floored_twh": 0.0214,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0042,
+     "binding_hours": 7335,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.8982,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2021,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "10650",
+     "floored_twh": 0.0012,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0002,
+     "binding_hours": 1011,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.997,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2021,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "50612",
+     "floored_twh": 0.0124,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0024,
+     "binding_hours": 8448,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.9635,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2021,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "50865",
+     "floored_twh": 0.1381,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0272,
+     "binding_hours": 8742,
+     "measured_median_mw": 34.999,
+     "measured_zero_share": 0.0502,
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "54749",
+     "floored_twh": 0.0038,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0008,
+     "binding_hours": 698,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.8238,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2021,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "54768",
+     "floored_twh": 0.0142,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0028,
+     "binding_hours": 7995,
+     "measured_median_mw": 0.0,
+     "measured_zero_share": 0.9315,
+     "verdict": "FAIL"
+    },
+    {
+     "year": 2021,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "55217",
+     "floored_twh": 1.7488,
+     "offwindow_twh": "",
+     "offwindow_share": 0.3451,
+     "binding_hours": 6657,
+     "measured_median_mw": 468.002,
+     "measured_zero_share": 0.0021,
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "check": "unit-conduct",
+     "floor": "chp_steam",
+     "window": "h0-23",
+     "plant": "55400",
+     "floored_twh": 0.236,
+     "offwindow_twh": "",
+     "offwindow_share": 0.0466,
+     "binding_hours": 721,
+     "measured_median_mw": 423.68,
+     "measured_zero_share": 0.0,
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "check": "window",
+     "floor": "firm_import",
+     "window": "h0-23",
+     "plant": "",
+     "floored_twh": 22.8612,
+     "offwindow_twh": 0.0,
+     "offwindow_share": 0.0,
+     "binding_hours": "",
+     "measured_median_mw": "",
+     "measured_zero_share": "",
+     "verdict": "pass"
+    },
+    {
+     "year": 2021,
+     "check": "window",
+     "floor": "hydro_min_flow",
+     "window": "h0-23",
+     "plant": "",
+     "floored_twh": 1.0611,
+     "offwindow_twh": 0.0,
+     "offwindow_share": 0.0,
+     "binding_hours": "",
+     "measured_median_mw": "",
+     "measured_zero_share": "",
+     "verdict": "pass"
+    }
+   ],
+   "summary": [],
+   "failures": [
+    "2019 chp_steam: plant 10034 is floored for 0.0333 TWh (0.7% of the mechanism's forced energy) while its own measured median output over the 2138 hours the floor actually binds for it (inside h0-23) is 0.000 MW (76.8% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2019 chp_steam: plant 10649 is floored for 0.0254 TWh (0.5% of the mechanism's forced energy) while its own measured median output over the 8760 hours the floor actually binds for it (inside h0-23) is 0.000 MW (89.6% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2019 chp_steam: plant 10650 is floored for 0.0105 TWh (0.2% of the mechanism's forced energy) while its own measured median output over the 8760 hours the floor actually binds for it (inside h0-23) is 0.000 MW (95.5% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2019 chp_steam: plant 50612 is floored for 0.0128 TWh (0.3% of the mechanism's forced energy) while its own measured median output over the 8730 hours the floor actually binds for it (inside h0-23) is 0.000 MW (95.4% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2019 chp_steam: plant 54749 is floored for 0.0008 TWh (0.0% of the mechanism's forced energy) while its own measured median output over the 144 hours the floor actually binds for it (inside h0-23) is 0.000 MW (65.3% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2019 chp_steam: plant 54768 is floored for 0.0152 TWh (0.3% of the mechanism's forced energy) while its own measured median output over the 8588 hours the floor actually binds for it (inside h0-23) is 0.000 MW (96.3% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2020 chp_steam: plant 10034 is floored for 0.0288 TWh (0.5% of the mechanism's forced energy) while its own measured median output over the 1889 hours the floor actually binds for it (inside h0-23) is 0.000 MW (70.0% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2020 chp_steam: plant 10649 is floored for 0.0247 TWh (0.4% of the mechanism's forced energy) while its own measured median output over the 8507 hours the floor actually binds for it (inside h0-23) is 0.000 MW (88.6% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2020 chp_steam: plant 10650 is floored for 0.0101 TWh (0.2% of the mechanism's forced energy) while its own measured median output over the 8458 hours the floor actually binds for it (inside h0-23) is 0.000 MW (95.1% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2020 chp_steam: plant 50612 is floored for 0.0126 TWh (0.2% of the mechanism's forced energy) while its own measured median output over the 8611 hours the floor actually binds for it (inside h0-23) is 0.000 MW (95.6% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2020 chp_steam: plant 54749 is floored for 0.0032 TWh (0.1% of the mechanism's forced energy) while its own measured median output over the 575 hours the floor actually binds for it (inside h0-23) is 0.000 MW (84.9% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2020 chp_steam: plant 54768 is floored for 0.0147 TWh (0.2% of the mechanism's forced energy) while its own measured median output over the 8321 hours the floor actually binds for it (inside h0-23) is 0.000 MW (94.7% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2021 chp_steam: plant 10034 is floored for 0.0294 TWh (0.6% of the mechanism's forced energy) while its own measured median output over the 1923 hours the floor actually binds for it (inside h0-23) is 0.000 MW (74.7% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2021 chp_steam: plant 10649 is floored for 0.0214 TWh (0.4% of the mechanism's forced energy) while its own measured median output over the 7335 hours the floor actually binds for it (inside h0-23) is 0.000 MW (89.8% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2021 chp_steam: plant 10650 is floored for 0.0012 TWh (0.0% of the mechanism's forced energy) while its own measured median output over the 1011 hours the floor actually binds for it (inside h0-23) is 0.000 MW (99.7% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2021 chp_steam: plant 50612 is floored for 0.0124 TWh (0.2% of the mechanism's forced energy) while its own measured median output over the 8448 hours the floor actually binds for it (inside h0-23) is 0.000 MW (96.4% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2021 chp_steam: plant 54749 is floored for 0.0038 TWh (0.1% of the mechanism's forced energy) while its own measured median output over the 698 hours the floor actually binds for it (inside h0-23) is 0.000 MW (82.4% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+    "2021 chp_steam: plant 54768 is floored for 0.0142 TWh (0.3% of the mechanism's forced energy) while its own measured median output over the 7995 hours the floor actually binds for it (inside h0-23) is 0.000 MW (93.1% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)"
+   ],
+   "notes": [
+    "2019: ct_only vintage guard extended the flag from sibling-year vintages for 2 plant(s): 341, 422",
+    "2019: 2 floored pseudo-unit row(s) (plant_code <= 0 interchange tranches) scored under the floor-energy convention (dispatch := min_gen; PREREG-caiso155 \u00a73) \u2014 reported TWh is the mandated floor energy, an upper bound on at-floor dispatch: u:WECC_DSW_DSW_solar_PV, u:WECC_PNW_PNW_hydro_base",
+    "2019: per-unit conduct rider skipped 2 floored plant(s) carrying the benchmark's CT-only CEMS flag (EIA-923 net > 1.1x CAMPD gross \u21d2 scored on EIA-923 MONTHLY, hourly CAMPD incomplete) \u2014 a zero median in a series the benchmark itself declines to trust is a metering artifact, not conduct: 10294, 10405",
+    "2019: per-unit conduct rider skipped 2 floored row(s) whose dispatch is SUBSTITUTED by their own floor (no series in the active source) \u2014 their at-floor set is the whole floor-positive set by construction, so a conduct verdict on them would be an artifact: u:WECC_DSW_DSW_solar_PV, u:WECC_PNW_PNW_hydro_base",
+    "2019: per-unit conduct rider skipped 160 floored row(s) with no measured series (hydro / nuclear / renewables / interchange pseudo-units) \u2014 the rider is a measured-conduct test and never fails a mechanism for a missing meter: 10139, 10213, 10253, 10282, 10342, 10458, 10496, 10706, 10707, 10882, 217, 218, 219, 220, 221, 222, 223, 225, 227, 231 \u2026",
+    "2020: ct_only vintage guard extended the flag from sibling-year vintages for 5 plant(s): 10169, 10294, 10776, 341, 422",
+    "2020: 2 floored pseudo-unit row(s) (plant_code <= 0 interchange tranches) scored under the floor-energy convention (dispatch := min_gen; PREREG-caiso155 \u00a73) \u2014 reported TWh is the mandated floor energy, an upper bound on at-floor dispatch: u:WECC_DSW_DSW_solar_PV, u:WECC_PNW_PNW_hydro_base",
+    "2020: per-unit conduct rider skipped 2 floored plant(s) carrying the benchmark's CT-only CEMS flag (EIA-923 net > 1.1x CAMPD gross \u21d2 scored on EIA-923 MONTHLY, hourly CAMPD incomplete) \u2014 a zero median in a series the benchmark itself declines to trust is a metering artifact, not conduct: 10294, 10405",
+    "2020: per-unit conduct rider skipped 2 floored row(s) whose dispatch is SUBSTITUTED by their own floor (no series in the active source) \u2014 their at-floor set is the whole floor-positive set by construction, so a conduct verdict on them would be an artifact: u:WECC_DSW_DSW_solar_PV, u:WECC_PNW_PNW_hydro_base",
+    "2020: per-unit conduct rider skipped 140 floored row(s) with no measured series (hydro / nuclear / renewables / interchange pseudo-units) \u2014 the rider is a measured-conduct test and never fails a mechanism for a missing meter: 10139, 10213, 10342, 10458, 10496, 10880, 217, 218, 219, 220, 221, 222, 223, 225, 227, 231, 232, 233, 235, 236 \u2026",
+    "2021: ct_only vintage guard extended the flag from sibling-year vintages for 3 plant(s): 10294, 341, 422",
+    "2021: 2 floored pseudo-unit row(s) (plant_code <= 0 interchange tranches) scored under the floor-energy convention (dispatch := min_gen; PREREG-caiso155 \u00a73) \u2014 reported TWh is the mandated floor energy, an upper bound on at-floor dispatch: u:WECC_DSW_DSW_solar_PV, u:WECC_PNW_PNW_hydro_base",
+    "2021: per-unit conduct rider skipped 3 floored plant(s) carrying the benchmark's CT-only CEMS flag (EIA-923 net > 1.1x CAMPD gross \u21d2 scored on EIA-923 MONTHLY, hourly CAMPD incomplete) \u2014 a zero median in a series the benchmark itself declines to trust is a metering artifact, not conduct: 10294, 10349, 10405",
+    "2021: per-unit conduct rider skipped 2 floored row(s) whose dispatch is SUBSTITUTED by their own floor (no series in the active source) \u2014 their at-floor set is the whole floor-positive set by construction, so a conduct verdict on them would be an artifact: u:WECC_DSW_DSW_solar_PV, u:WECC_PNW_PNW_hydro_base",
+    "2021: per-unit conduct rider skipped 89 floored row(s) with no measured series (hydro / nuclear / renewables / interchange pseudo-units) \u2014 the rider is a measured-conduct test and never fails a mechanism for a missing meter: 10213, 10342, 10496, 217, 218, 219, 222, 223, 231, 232, 235, 236, 237, 239, 240, 249, 254, 262, 265, 266 \u2026"
+   ]
+  },
+  "D5": {
+   "name": "D-5 forecast/backcast parity",
+   "passed": true,
+   "rows": [
+    {
+     "mechanism": "historic_outage_overlay",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "CAMPD outage windows (physical availability events)",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "eia860_vintage_snapshot",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "historical fleet vintage pin (runner.py:239 mode gate)",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "retired_within_window_fleet",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "within-window plant exits injected into the base fleet",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "planned_additions_pipeline",
+     "difference": "forecast-only",
+     "declared_overlay": true,
+     "note": "EIA-860 construction-committed pipeline \u2014 the declared forecast complement of the backcast fleet boundary",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "renewable_cf_measured",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "delivered EIA-930/HSL renewable CF upper bound (leakage L1)",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "nuclear_flat_mustrun",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "measured monthly nuclear CF + flat must-run floor (L3)",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "ordc_floor_active_mask",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "ERCOT scarcity-floor measured active-hours mask",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "gas_monthly_actuals",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "F923 delivered monthly gas (admissible fuel input)",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "gas_hub_basis_overlay",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "measured monthly hub-spot basis overlay",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "coal_plant_monthly_pricing",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "F923 per-plant delivered coal cost",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "reliability_floor",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "declared admissible overlay (2026-06 audit); a wiring gap in the forecast entry is reported but sanctioned by the declaration",
+     "verdict": "declared"
+    },
+    {
+     "mechanism": "caiso_ra_mustoffer",
+     "difference": "backcast-only",
+     "declared_overlay": true,
+     "note": "RA must-offer is market design (mode-independent) and rule-13 admissible in BOTH modes \u2014 the bridge is detected from the model's own base-cost P0 run pattern against the physical CC_COMMITMENT_PARAMS min-down time, so no measured outcome enters. The parity difference is the known w2-caiso-ra-p2 WIRING GAP: caiso_ra_mustoffer_min_gen is called from scripts/run_calibration.py and never from runner.py, so the mechanism is backcast-only in practice though not by intent. DECLARED 2026-09-20 (caiso-294) in docs/backcast-measured-data-audit-2026-06.md \u2014 same posture as the reliability_floor row above: the gap is reported and sanctioned by the declaration, NOT claimed harmless. Closing it is a forecast-path model change (docs/audit-wiring-iso-gaps/prompt-pack/w2-caiso-ra-p2.md) needing its own PRECOMMIT and an owner ruling; it is deliberately not bundled into the declaration",
+     "verdict": "declared"
+    }
+   ],
+   "summary": [],
+   "failures": [],
+   "notes": []
+  },
+  "D9": {
+   "name": "D-9 overlay quarantine",
+   "passed": true,
+   "rows": [
+    {
+     "bundle": "rcaiso9_A_tp_2019_2021",
+     "check": "ct_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "rcaiso9_A_tp_2019_2021",
+     "check": "reliability_deployment_overlay",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "rcaiso9_A_tp_2019_2021",
+     "check": "ct_mustrun_per_plant",
+     "value": false,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "rcaiso9_A_tp_2019_2021",
+     "check": "ordc_reliability_deployment_mw",
+     "value": null,
+     "verdict": "pass"
+    },
+    {
+     "bundle": "rcaiso9_A_tp_2019_2021",
+     "check": "caiso_gas_commitment_floor",
+     "value": false,
+     "verdict": "pass"
+    }
+   ],
+   "summary": [],
+   "failures": [],
+   "notes": []
+  },
+  "D10": {
+   "name": "D-10 free-class-only rescore (renewable-bound provenance)",
+   "passed": true,
+   "rows": [
+    {
+     "year": 2019,
+     "fuel": "wind",
+     "provenance": "measured_potential",
+     "pinned": false,
+     "verdict": "free"
+    },
+    {
+     "year": 2019,
+     "fuel": "solar",
+     "provenance": "measured_potential",
+     "pinned": false,
+     "verdict": "free"
+    },
+    {
+     "year": 2020,
+     "fuel": "wind",
+     "provenance": "measured_potential",
+     "pinned": false,
+     "verdict": "free"
+    },
+    {
+     "year": 2020,
+     "fuel": "solar",
+     "provenance": "measured_potential",
+     "pinned": false,
+     "verdict": "free"
+    },
+    {
+     "year": 2021,
+     "fuel": "wind",
+     "provenance": "measured_potential",
+     "pinned": false,
+     "verdict": "free"
+    },
+    {
+     "year": 2021,
+     "fuel": "solar",
+     "provenance": "measured_potential",
+     "pinned": false,
+     "verdict": "free"
+    }
+   ],
+   "summary": [],
+   "failures": [],
+   "notes": [
+    "CAISO: 0/6 wind/solar (year, fuel) rows ride the L1 delivered-outcome bound; their advisory-only C1 rows measure plumbing, not model skill (never gate the keeper verdict)."
+   ]
+  }
+ },
+ "gates": {
+  "d1_min_profile_r": 0.8,
+  "d1_min_cv_ratio": 0.5,
+  "d1_offpeak_last_hour": 14,
+  "d1_gated_classes": [
+   "CT_PEAKER",
+   "ST_GAS",
+   "COAL_LIGNITE",
+   "COAL_PRB",
+   "COAL_BIT",
+   "COAL_WC"
+  ],
+  "d2_peaker_max_share": 0.15,
+  "d2_merchant_max_share": 0.3,
+  "d2_exempt_classes": [
+   "CC_CHP",
+   "CT_CHP",
+   "ST_CHP",
+   "nuclear"
+  ],
+  "d4_max_offwindow_share": 0.05
+ }
+}

@@ -3711,3 +3711,29 @@ results/calibration/_spp92_seam_hourly_*.parquet
 
 # PJM-NEXT-6 per-year shard legs (rule 32(d)/31: local only; the pjmnext6_sp_span composite is what lands). Leg provenance SHAs (provenance only, rule 33(d)): 2019 7591da23 2020 43788691 2021 4ecfd612 2022 fbafed32 2023 da36c6fb 2024 c9ec09ac 2025 7200e592
 results/calibration/pjmnext6_sp_20*/
+# R-CAISO-8 per-year shard legs (rule 32(d)/36): kept out of main; the composite is what registers.
+results/calibration/rcaiso8_A_20*/**
+# R-CAISO-8 Object 2: raw OASIS PRC_NOMOGRAM downloads (re-fetched by scripts/probes/_rcaiso8_sd_import_census.py)
+results/calibration/_rcaiso8/oasis_cache/
+
+# soco-81 shard legs: kept out of main (rule 32(d)); composite soco81_span is what registers.
+# Provenance (rule 33(d)): 2019 5eb223e6, 2020 da7d01ec, 2021 a83b4f9f, 2022 dc9e9c7c, 2023 58f2dca6, 2024 7ea14cfb, 2025 91007d69.
+results/calibration/soco81_20[0-9][0-9]/
+
+# soco-82 per-year shard legs: kept out of main (rule 32(d)); legs pinned by SHA in RESULT-soco-82
+results/calibration/soco82_20*/
+# NYISO-NEXT-8 per-year shard legs (rule 32(d)/36): kept on disk, never on main; the composed
+# span nyisonext8_span and the 2021 leg (its own registered bundle) are what land.
+# Provenance SHAs (rule 33(d), provenance only): 2021 41df05f453c8ff92c25bb86d27858cedc1fa9d66,
+# 2022 0b1a9021f19c7f3af05eb38cc3811929328c15b4, 2023 0a1d99f27dd4470d4868a031fd704c262b5fff51,
+# 2024 b6943beab05cf1a69db82970625ea9a2c847cbe0, 2025 1f56d8eb18403daaf69aa8da0bd02c938729a441.
+results/calibration/nyisonext8_202[2-5]/
+# R-ERCOT-10 per-year shard legs (rule 32(d): composite only reaches main). Provenance SHAs in RESULT-r-ercot-10.
+results/calibration/r_ercot10_arm_20*/
+# R-CAISO-9 per-year shard legs (rule 32(d)/36): kept out of main; the composite is what registers.
+results/calibration/rcaiso9_A_20*/**
+
+# SPP-95 per-year shard legs (rule 32(d): kept out of main; composite spp94_arm_span is registered)
+results/calibration/spp94_arm_20*/
+# miso-279 per-year shard legs: parent-local only (rule 32(d)); provenance SHAs in docs/RESULT-miso279-stgas-span-coverage-2026-09-27.md
+results/calibration/miso279_arm_*/

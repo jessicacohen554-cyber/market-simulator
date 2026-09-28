@@ -134,8 +134,24 @@ def test_committed_soco_companion_is_perunit_plus_exactly_the_dark_rows():
     raw = _ROOT / "data/raw"
     base = pd.read_csv(raw / "campd-unit-outages-perunit-SOCO.csv")
     dark = pd.read_csv(raw / "campd-unit-outages-perunitdark-SOCO.csv")
-    added = dark.merge(base, how="left", indicator=True).query("_merge == 'left_only'")
-    assert len(dark) == len(base) + len(added)
+    # F2 (FINDING-f2-campd-outage-coverage-2026-09-24 §2) extended the dark
+    # companion to 2019-2025; the '-perunit-' base still spans only 2023-2025 (its
+    # sidecar's observed_years), so the superset invariant is checked on the
+    # years the base itself carries.
+    base_years = set(base["outage_start"].str[:4].astype(int))
+    assert base_years == {2023, 2024, 2025}
+    in_span = dark["outage_start"].str[:4].astype(int).isin(base_years)
+    added = (
+        dark[in_span]
+        .merge(base, how="left", indicator=True)
+        .query("_merge == 'left_only'")
+    )
+    assert len(dark[in_span]) == len(base) + len(added)
+    off = dark[~in_span & (dark["capacity_source"] == "campd_dark_unit_year")]
+    assert off[["facility_id", "unit_id", "outage_start"]].values.tolist() == [
+        [3, "1", "2021-01-01"],
+        [56, "1", "2020-01-01"],
+    ]
     assert set(added["capacity_source"]) == {"campd_dark_unit_year"}
     assert added[
         ["facility_id", "unit_id", "outage_start", "outage_end"]

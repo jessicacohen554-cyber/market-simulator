@@ -88,6 +88,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from collections.abc import Callable
 from pathlib import Path
 
 import numpy as np
@@ -1138,6 +1139,34 @@ def _unit_fuel_by_unit(
     return out
 
 
+def _vintage_thermal_bins(
+    iso: str, year: int
+) -> tuple[dict[tuple[int, str], float], dict[int, str]]:
+    """Return ``({(plant, bin): nameplate MW}, {plant: name})`` of the active vintage fleet.
+
+    The caller sets the EIA-860 vintage (``set_eia860_vintage(year)``). Coal
+    subclasses collapse to the artifact family ``"COAL"`` and only
+    :data:`_THERMAL_GROUPS` bins are kept -- the membership/denominator
+    construction of :func:`coal_unit_coverage_rows` (soco-70), shared by
+    :func:`unit_fuel_split_rows` and :func:`st_gas_span_coverage_rows`.
+    """
+    from market_sim.config.plant_taxonomy import is_coal_class
+
+    cap_y: dict[tuple[int, str], float] = {}
+    names_y: dict[int, str] = {}
+    for gen in load_fleet_from_csv(iso, get_iso_config(iso), year=year):
+        code = int(gen.plant_code)
+        g = str(gen.plant_group or "")
+        if code <= 0 or not g:
+            continue
+        g = "COAL" if is_coal_class(g) else g
+        if g not in _THERMAL_GROUPS:
+            continue
+        cap_y[(code, g)] = cap_y.get((code, g), 0.0) + float(gen.pmax_mw)
+        names_y.setdefault(code, gen.name)
+    return cap_y, names_y
+
+
 def unit_fuel_split_rows(
     iso: str,
     years: list[int],
@@ -1200,23 +1229,9 @@ def unit_fuel_split_rows(
         "by_year": [online_frac_by_year row dicts], "p25": [p25-level row
         dicts], "oom": [oom-level row dicts], "audit": {...}}``.
     """
-    from market_sim.config.paths import RAW_DATA_DIR, set_eia860_vintage
-    from market_sim.config.plant_taxonomy import is_coal_class
-    from market_sim.data.chp import _chp_by_plant
-    from scripts.data import derive_thermal_tranche_oom_level_mw as oom_mod
-    from scripts.data import derive_thermal_tranche_p25_level_mw as p25_mod
-    from scripts.lib.campd_measured_classes import (
-        campd_unittype_class,
-        corrected_unit_class,
-    )
+    from market_sim.config.paths import set_eia860_vintage
 
     states = tuple(campd.states_for_iso(iso))
-    factors = _parasitic_factor_map()
-    flags = _chp_by_plant(RAW_DATA_DIR / "eia-860", 2025)
-    chp = {int(k) for k, v in flags.items() if str(v).strip().upper() == "Y"}
-    # The OOM conditioning set is built on the FACILITY primary attribution,
-    # exactly as the frozen oom deriver builds it, so the hour set is unchanged.
-    _cap_now, primary_now = _fleet_nameplate_and_group(iso)
 
     inc_ok = incumbent[incumbent["status"].astype(str) == "ok"]
     inc_groups: dict[int, set[str]] = {}
@@ -1228,18 +1243,7 @@ def unit_fuel_split_rows(
     try:
         for year in years:
             set_eia860_vintage(year)
-            cap_y: dict[tuple[int, str], float] = {}
-            names_y: dict[int, str] = {}
-            for gen in load_fleet_from_csv(iso, get_iso_config(iso), year=year):
-                code = int(gen.plant_code)
-                g = str(gen.plant_group or "")
-                if code <= 0 or not g:
-                    continue
-                g = "COAL" if is_coal_class(g) else g
-                if g not in _THERMAL_GROUPS:
-                    continue
-                cap_y[(code, g)] = cap_y.get((code, g), 0.0) + float(gen.pmax_mw)
-                names_y.setdefault(code, gen.name)
+            cap_y, names_y = _vintage_thermal_bins(iso, year)
             fuel = _unit_fuel_by_unit(states, year)
             df = campd.load_campd_hourly(list(states), [year], prefer_unit_level=True)
             yr = df[df["year"] == year]
@@ -1269,6 +1273,56 @@ def unit_fuel_split_rows(
     finally:
         set_eia860_vintage(None)
 
+    res = _routed_family_rows(
+        iso, years, per_year, mixed, lambda code, _group: code in mixed
+    )
+    return {"plants": sorted(mixed), **res}
+
+
+def _routed_family_rows(
+    iso: str,
+    years: list[int],
+    per_year: dict[int, dict],
+    route_plants: set[int],
+    keep: Callable[[int, str], bool],
+) -> dict[str, object]:
+    """Derive tranche-family rows for ``keep``-selected ``(plant, group)`` bins, unit-routed.
+
+    THE shared estimator of :func:`unit_fuel_split_rows` (miso-278) and
+    :func:`st_gas_span_coverage_rows` (miso-279), factored out verbatim so both
+    paths compute their rows with ONE routing and ONE statistic (rule 23
+    ``[R-FROZEN-DERIVE]``: the estimator is shared, never restated). Each CAMPD
+    unit at a plant holding a kept bin is routed by its OWN fuel label: coal
+    units to the plant's coal bin, gas units to their prime-mover family's gas
+    bin through :func:`scripts.lib.campd_measured_classes.corrected_unit_class`,
+    anything else to no bin; a unit whose class the plant does not carry routes
+    nowhere. Routing sees EVERY bin of a ``route_plants`` plant (so a gas CT
+    beside a gas boiler is seated on the CT bin, never the steam one); only the
+    ``keep``-selected bins then produce rows. ``per_year[year]`` carries that year's EIA-860 vintage bin
+    nameplate (``cap``), plant names (``names``) and unit fuels (``fuel``).
+    Every statistic is :func:`_tranche_stats_row` over the frozen masks and
+    caps, the derate is the keeper's own ``mixed_gas_routing`` outage basis,
+    and the out-of-merit hour set is the frozen oom deriver's own.
+
+    Returns ``{"tranche", "by_year", "p25", "oom", "audit"}`` row lists.
+    """
+    from market_sim.config.paths import RAW_DATA_DIR
+    from market_sim.data.chp import _chp_by_plant
+    from scripts.data import derive_thermal_tranche_oom_level_mw as oom_mod
+    from scripts.data import derive_thermal_tranche_p25_level_mw as p25_mod
+    from scripts.lib.campd_measured_classes import (
+        campd_unittype_class,
+        corrected_unit_class,
+    )
+
+    states = tuple(campd.states_for_iso(iso))
+    factors = _parasitic_factor_map()
+    flags = _chp_by_plant(RAW_DATA_DIR / "eia-860", 2025)
+    chp = {int(k) for k, v in flags.items() if str(v).strip().upper() == "Y"}
+    # The OOM conditioning set is built on the FACILITY primary attribution,
+    # exactly as the frozen oom deriver builds it, so the hour set is unchanged.
+    _cap_now, primary_now = _fleet_nameplate_and_group(iso)
+
     online_cf: dict[tuple[int, str], list[np.ndarray]] = {}
     allhr_cf: dict[tuple[int, str], list[np.ndarray]] = {}
     online_mw: dict[tuple[int, str], list[np.ndarray]] = {}
@@ -1284,13 +1338,13 @@ def unit_fuel_split_rows(
         df = campd.load_campd_hourly(list(states), [year], prefer_unit_level=True)
         groups_by_plant: dict[int, set[str]] = {}
         for code, g in cap_y:
-            if code in mixed:
+            if code in route_plants:
                 groups_by_plant.setdefault(code, set()).add(g)
 
         def group_of(plant_id: int, unit_id: str, unit_type: str) -> str | None:
-            if plant_id not in mixed:
+            groups = groups_by_plant.get(plant_id)
+            if not groups:
                 return None
-            groups = groups_by_plant.get(plant_id, set())
             klass = fuel.get((plant_id, str(unit_id)), "OTHER")
             if klass == "COAL":
                 return "COAL" if "COAL" in groups else None
@@ -1309,7 +1363,7 @@ def unit_fuel_split_rows(
         hours = len(next(iter(fac_net.values())))
         oom = oom_mod._cc_headroom_mask(fac_net, primary_now, hours)
         for (code, group), nameplate in sorted(cap_y.items()):
-            if code not in mixed or nameplate <= 0.0:
+            if not keep(code, group) or nameplate <= 0.0:
                 continue
             names.setdefault(code, st["names"].get(code, ""))
             nameplate_max[(code, group)] = max(
@@ -1406,13 +1460,69 @@ def unit_fuel_split_rows(
                     }
                 )
     return {
-        "plants": sorted(mixed),
         "tranche": tranche_rows,
         "by_year": by_year_rows,
         "p25": p25_rows,
         "oom": oom_rows,
         "audit": {"routed_twh": routed_twh},
     }
+
+
+def st_gas_span_coverage_rows(
+    iso: str, years: list[int], covered: set[int]
+) -> dict[str, object]:
+    """Derive ST_GAS rows for gas-steam bins the tranche artifact never measured (miso-279).
+
+    THE COVERAGE GAP THIS CLOSES. The tranche family is derived over a pooled
+    window (MISO: 2023-2025), so an ST_GAS bin whose boilers ran only BEFORE it
+    carries no row -- and under ``st_gas_mustrun_per_plant`` a bin with no row
+    has no measured floor, however it was committed. MISO: Baxter Wilson 2050
+    unit 1 (1.59 TWh CEMS gross, 2019), Teche 1400 unit 3 (1.03 TWh, its CT
+    unit 4 holds the plant's only row), Big Cajun 1 1464, Houma 1439, Rex Brown
+    2053 (docs/FINDING-miso279-stgas-span-coverage-2026-09-27.md §1). The same
+    source-coverage defect soco-70 closed for coal (:func:`coal_unit_coverage_rows`).
+
+    THE CONSTRUCTION IS THE INCUMBENT'S, UNIT-ROUTED. For every plant whose
+    vintage fleet carries an ``ST_GAS`` bin in any of ``years`` and that is not
+    in ``covered`` (the plants the artifact already has an ST_GAS row for),
+    :func:`_routed_family_rows` routes each CAMPD unit on its own fuel and
+    prime-mover family over ALL of the plant's bins and emits rows for the
+    ``ST_GAS`` bin only -- so a gas CT beside the boiler (Teche 4) never enters
+    it. Every statistic is the frozen estimator, pooled over ``years``, with
+    each year's vintage nameplate as its denominator; a bin below
+    ``_MIN_ONLINE_HOURS`` online gets no row, exactly as today.
+
+    ZERO free parameters (rule 21). Rule 23 ``[R-FROZEN-DERIVE]``: rows already
+    present are never re-derived; the trigger is the backcast span (2019-2025)
+    reaching CEMS years the pooled window never saw -- a source-coverage
+    change, never a residual. Rule 13: measured CEMS conduct that regenerates
+    for any year CAMPD reports.
+    """
+    from market_sim.config.paths import set_eia860_vintage
+
+    states = tuple(campd.states_for_iso(iso))
+    per_year: dict[int, dict] = {}
+    targets: set[int] = set()
+    try:
+        for year in years:
+            set_eia860_vintage(year)
+            cap_y, names_y = _vintage_thermal_bins(iso, year)
+            targets |= {c for (c, g) in cap_y if g == "ST_GAS" and c not in covered}
+            per_year[year] = {
+                "cap": cap_y,
+                "names": names_y,
+                "fuel": _unit_fuel_by_unit(states, year),
+            }
+    finally:
+        set_eia860_vintage(None)
+    res = _routed_family_rows(
+        iso,
+        years,
+        per_year,
+        targets,
+        lambda code, group: code in targets and group == "ST_GAS",
+    )
+    return {"plants": sorted(targets), **res}
 
 
 def _replace_plant_rows(
@@ -1534,6 +1644,100 @@ def write_unit_fuel_split_companions(iso: str, years: list[int]) -> dict[str, ob
     return {"plants": res["plants"], "written": written, "audit": res["audit"]}
 
 
+def st_gas_span_coverage_companion_path(path: Path) -> Path:
+    """``thermal_tranches-fuelsplit-MISO.csv`` -> ``thermal_tranches-fuelsplit-stcov-MISO.csv``."""
+    stem, iso = path.stem.rsplit("-", 1)
+    return path.with_name(f"{stem}-stcov-{iso}{path.suffix}")
+
+
+def _append_rows(src: Path, dst: Path, rows: list[dict]) -> None:
+    """Write ``dst`` = ``src``'s exact bytes + ``rows`` in ``src``'s column order."""
+    import csv
+    import io
+
+    raw = src.read_bytes()
+    header = next(csv.reader([raw.decode().splitlines()[0]]))
+    buf = io.StringIO()
+    writer = csv.DictWriter(
+        buf, fieldnames=header, extrasaction="ignore", lineterminator="\n"
+    )
+    for row in rows:
+        writer.writerow({c: row.get(c, "") for c in header})
+    sep = b"" if raw.endswith(b"\n") else b"\n"
+    dst.write_bytes(raw + sep + buf.getvalue().encode())
+
+
+def write_st_gas_span_coverage_companions(
+    iso: str, years: list[int]
+) -> dict[str, object]:
+    """Derive the four ``-fuelsplit-stcov-`` companions of an ISO's tranche family.
+
+    Each is its ``-fuelsplit-`` companion's EXACT bytes with the
+    :func:`st_gas_span_coverage_rows` rows appended (the soco-70 append
+    discipline): every row a keeper reads today is byte-identical, and the
+    appended rows come from ONE derivation, so membership, window and level
+    agree (rule 19 ``[R-ONE-MECH]``). Never an overwrite.
+    """
+    from market_sim.config.paths import PROCESSED_DIR
+
+    iso = iso.upper()
+    fs = [
+        fuel_split_companion_path(PROCESSED_DIR / name)
+        for name in (
+            f"thermal_tranches_{iso}.csv",
+            f"thermal_tranches_online_frac_by_year_{iso}.csv",
+            f"thermal_tranches_p25_level_mw_{iso}.csv",
+            f"thermal_tranches_oom_level_mw_{iso}.csv",
+        )
+    ]
+    for f in fs:
+        if not f.exists():
+            raise SystemExit(
+                f"--st-gas-span-coverage: missing {f.name} (derive --unit-fuel-split first)"
+            )
+    base = pd.read_csv(fs[0])
+    covered = set(base.loc[base["plant_group"] == "ST_GAS", "plant_code"].astype(int))
+    res = st_gas_span_coverage_rows(iso, years, covered)
+    written: dict[str, dict] = {}
+    for src, key in zip(fs, ("tranche", "by_year", "p25", "oom")):
+        dst = st_gas_span_coverage_companion_path(src)
+        _append_rows(src, dst, res[key])
+        written[dst.name] = {"from": src.name, "added": len(res[key])}
+    import json as _json
+
+    prior_side = fs[0].with_suffix(".meta.json")
+    write_tranche_sidecar(
+        st_gas_span_coverage_companion_path(fs[0]),
+        provenance="derived",
+        groups_in_force={
+            "online_frac_groups": sorted(_ONLINE_FRAC_GROUPS),
+            "chp_groups": sorted(_CHP_GROUPS),
+            "peaking_groups": sorted(_PEAKING_GROUPS),
+            "thermal_groups": sorted(_THERMAL_GROUPS),
+        },
+        derive_invocation={
+            "iso": iso,
+            "years": [int(y) for y in years],
+            "st_gas_span_coverage": True,
+            "target_plants": res["plants"],
+            "derate_basis": "unit_outage_derate_factors(mixed_gas_routing=True)",
+            "base_derive_invocation": _json.loads(prior_side.read_text()).get(
+                "derive_invocation"
+            )
+            if prior_side.exists()
+            else None,
+        },
+        note=(
+            "ST_GAS SPAN-COVERAGE APPEND (miso-279): every line of the "
+            "'-fuelsplit-' companion is byte-identical and keeps its derive "
+            "window; the appended ST_GAS rows are derived by "
+            "st_gas_span_coverage_rows over derive_invocation.years for the "
+            "ST_GAS bins that companion carried no row for."
+        ),
+    )
+    return {"plants": res["plants"], "written": written, "audit": res["audit"]}
+
+
 def append_coal_unit_coverage(out_path: Path, iso: str, years: list[int]) -> list[dict]:
     """Append :func:`coal_unit_coverage_rows` to an existing artifact, byte-safely.
 
@@ -1628,9 +1832,26 @@ def main() -> None:
         "other line byte-identical (unit_fuel_split_rows, miso-278). Never an "
         "overwrite. Zero free parameters.",
     )
+    ap.add_argument(
+        "--st-gas-span-coverage",
+        action="store_true",
+        help="Write the four '-fuelsplit-stcov-' companions: each "
+        "'-fuelsplit-' companion's exact bytes plus ST_GAS rows, derived over "
+        "--years from each plant's own unit-routed gas-steam CAMPD units, for "
+        "every ST_GAS bin the fuel-split companion has no row for "
+        "(st_gas_span_coverage_rows, miso-279). Never an overwrite. Zero free "
+        "parameters.",
+    )
     args = ap.parse_args()
     iso = args.iso.upper()
     from market_sim.config.paths import PROCESSED_DIR
+
+    if args.st_gas_span_coverage:
+        import json as _json
+
+        res = write_st_gas_span_coverage_companions(iso, [int(y) for y in args.years])
+        print(_json.dumps(res, indent=1, sort_keys=True))
+        return
 
     if args.unit_fuel_split:
         import json as _json

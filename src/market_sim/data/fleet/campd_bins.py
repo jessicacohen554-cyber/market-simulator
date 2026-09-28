@@ -11,6 +11,7 @@ the full pre-split surface; patch semantics are preserved via
 from __future__ import annotations
 
 import logging
+import re
 import numpy as np
 import pandas as pd
 
@@ -363,6 +364,41 @@ def measured_coal_heat_rates(iso: str, year: int | None = None) -> dict[int, flo
     if not path.exists():
         return {}
     return _measured_rate_map(path, year)
+
+
+@lru_cache(maxsize=64)
+def coal_incremental_hr_ratios(
+    iso: str, year: int | None = None
+) -> dict[int, tuple[float, float]]:
+    """Return ``{plant_code: (ratio_econ_low, ratio_econ_high)}`` for an ISO's coal.
+
+    Reads ``data/raw/_processed-legacy/coal_incremental_hr_ratio_<ISO>.csv``
+    (``scripts/data/derive_coal_incremental_hr_ratio.py``, soco-81): each coal
+    plant's measured INCREMENTAL heat rate (the frozen
+    ``derive_campd_marginal_hr`` I/O-curve slope at econ_low x = 0.5 / econ_high
+    x = 0.9) over its AVERAGE heat rate from ``campd_coal_heat_rates_<ISO>.csv``.
+    Consumed by :func:`~market_sim.data.fleet.assembly.bins_to_fleet` under
+    ``ScenarioConfig.coal_econ_marginal_hr_two_sided``.
+
+    Year rule, identical to :func:`measured_coal_heat_rates` (the average the
+    ratio multiplies): the solve year's own ``ok`` row where one exists, else
+    the plant's pooled (``year == 0``) row. ``year=None`` reads pooled only.
+    Empty dict when the ISO has no artifact (rule 25: a no-op there).
+    """
+    path = PROCESSED_DIR / f"coal_incremental_hr_ratio_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    df = df[df["flag"].astype(str) == "ok"]
+    out: dict[int, tuple[float, float]] = {}
+    for yr in (0, year):
+        if yr is None:
+            continue
+        for r in df[df["year"] == int(yr)].itertuples(index=False):
+            lo, hi = float(r.ratio_econ_low), float(r.ratio_econ_high)
+            if lo > 0.0 and hi > 0.0:
+                out[int(r.plant_code)] = (lo, hi)
+    return out
 
 
 @lru_cache(maxsize=64)
@@ -1267,6 +1303,37 @@ _BIN_GROUP_MEASURED_FAMILY: dict[str, str] = {
 }
 
 
+_SPLIT_TAG = re.compile(r"\[[A-Z]+\]\s*$")
+
+
+def split_child_parent_codes(detail: pd.DataFrame) -> dict[int, int]:
+    """Return ``{child_code: parent_code}`` for the sheet's split-plant rows.
+
+    ``scripts/tag_mixed_plants.py`` tags each fuel class of a mixed facility
+    with a ``[TAG]`` name suffix; the dominant class keeps the real EIA plant
+    code and every other class takes ``real_code * 10 + fuel_digit``. A child
+    is a tagged row whose ``code // 10`` is itself a tagged row of the sheet —
+    both conditions, so an ordinary plant code that happens to end in a digit
+    is never read as a child.
+
+    Args:
+        detail: The raw curated sheet (``Plant_Code``, ``Plant_Name``).
+
+    Returns:
+        The child-to-parent code map (empty when the sheet has no split plant
+        or carries no ``Plant_Name`` column).
+    """
+    if "Plant_Name" not in detail.columns:
+        return {}
+    codes = pd.to_numeric(detail["Plant_Code"], errors="coerce")
+    tagged = {
+        int(c)
+        for c, n in zip(codes, detail["Plant_Name"].astype(str))
+        if c == c and _SPLIT_TAG.search(n)
+    }
+    return {c: c // 10 for c in tagged if c >= 10 and c // 10 in tagged}
+
+
 def resolve_bin_heat_rates(
     detail: pd.DataFrame,
     iso: str,
@@ -1292,6 +1359,15 @@ def resolve_bin_heat_rates(
        (:func:`market_sim.data.egrid.resolve_plant_heat_rates`);
     3. else the sheet's own value;
     4. else NaN, which :func:`_fill_plant_hr` sends to ``BIN_GROUP_HR_DEFAULT``.
+
+    Split-plant children (R-ERCOT-11, rule 14): a mixed facility's non-dominant
+    fuel class is a synthetic child row ``parent*10+digit``
+    (``scripts/tag_mixed_plants.py`` — W A Parish 34702, Barney M Davis
+    49392), but the measured artifacts are keyed on the CAMPD facility, whose
+    derive already pairs that facility's units to the child's class. A child
+    that misses on its own code therefore reads its PARENT's entry in its own
+    family's map (:func:`split_child_parent_codes`); previously it fell through
+    to the sheet value, which at W A Parish is the coal row's plant average.
 
     Args:
         detail: The raw curated sheet (``Plant_Code``, ``Plant_Group``,
@@ -1330,6 +1406,7 @@ def resolve_bin_heat_rates(
         egrid_hr = pd.Series(float("nan"), index=detail.index)
     hr = pd.Series(float("nan"), index=detail.index, dtype=float)
     src = pd.Series("default", index=detail.index, dtype=object)
+    parent_of = split_child_parent_codes(detail)
     for i in detail.index:
         fam = _BIN_GROUP_MEASURED_FAMILY.get(groups[i])
         m = maps.get(fam) if fam else None
@@ -1340,6 +1417,9 @@ def resolve_bin_heat_rates(
                 else int(codes[i])
             )
             v = m.get(key)
+            parent = parent_of.get(int(codes[i]))
+            if v is None and parent is not None and not isinstance(key, tuple):
+                v = m.get(parent)
             if v is not None and v > 0.0:
                 hr[i], src[i] = float(v), "measured"
                 continue
@@ -1613,8 +1693,13 @@ def campd_attribution_selectors(config: object) -> tuple[bool, bool]:
     return per_unit, merit_guard
 
 
-def campd_fuel_split_selector(config: object) -> bool:
-    """Return whether the ``-fuelsplit-`` tranche companions are selected.
+# Selector token for the miso-279 ST_GAS span-coverage companions (see
+# :func:`campd_fuel_split_selector`); also their filename infix.
+ST_GAS_SPAN_COVERAGE_TAG = "stcov"
+
+
+def campd_fuel_split_selector(config: object) -> bool | str:
+    """Return which ``-fuelsplit-`` tranche companion family is selected.
 
     ``ScenarioConfig.campd_unit_fuel_split`` (miso-278, GATED default False).
     ONE accessor for every tranche-family reader, so a call site cannot read the
@@ -1622,22 +1707,48 @@ def campd_fuel_split_selector(config: object) -> bool:
     ``[R-ONE-MECH]``). Forced False under ``campd_per_unit_attribution``: the
     per-unit companions carry their own (prime-mover) routing and no fuel-split
     variant of them exists, so the two are never combined.
+
+    ``ScenarioConfig.campd_st_gas_span_coverage`` (miso-279, GATED default
+    False) is a SUB-GATE of the fuel split, exactly as ``merit_guard`` is of
+    ``per_unit``: armed WITH ``campd_unit_fuel_split`` it returns
+    :data:`ST_GAS_SPAN_COVERAGE_TAG`, which selects the ``-fuelsplit-stcov-``
+    companions (the fuel-split bytes plus appended ST_GAS rows) for all four
+    readers at once; without the fuel split it has no meaning and is ignored.
+    Unarmed, the return value is the plain ``True``/``False`` it always was,
+    so every existing reader and cache key is unchanged.
     """
     per_unit, _ = campd_attribution_selectors(config)
-    return (not per_unit) and bool(getattr(config, "campd_unit_fuel_split", False))
+    if per_unit or not bool(getattr(config, "campd_unit_fuel_split", False)):
+        return False
+    if bool(getattr(config, "campd_st_gas_span_coverage", False)):
+        return ST_GAS_SPAN_COVERAGE_TAG
+    return True
 
 
-def _fuel_split_companion(base: Path) -> Path:
-    """``thermal_tranches_X_<ISO>.csv`` -> ``thermal_tranches_X-fuelsplit-<ISO>.csv``."""
+def _fuel_split_companion(base: Path, fuel_split: bool | str = True) -> Path:
+    """``thermal_tranches_X_<ISO>.csv`` -> ``thermal_tranches_X-fuelsplit-<ISO>.csv``.
+
+    Under :data:`ST_GAS_SPAN_COVERAGE_TAG` it is
+    ``thermal_tranches_X-fuelsplit-stcov-<ISO>.csv`` when that file exists, else
+    the plain fuel-split companion (the coverage append is additive, so its
+    absence degrades to the fuel split, never past it).
+    """
     stem, iso = base.stem.rsplit("_", 1)
-    return base.with_name(f"{stem}-fuelsplit-{iso}{base.suffix}")
+    plain = base.with_name(f"{stem}-fuelsplit-{iso}{base.suffix}")
+    if fuel_split == ST_GAS_SPAN_COVERAGE_TAG:
+        cov = base.with_name(
+            f"{stem}-fuelsplit-{ST_GAS_SPAN_COVERAGE_TAG}-{iso}{base.suffix}"
+        )
+        if cov.exists():
+            return cov
+    return plain
 
 
 def thermal_tranche_csv_for_iso(
     iso: str,
     per_unit: bool = False,
     merit_guard: bool = False,
-    fuel_split: bool = False,
+    fuel_split: bool | str = False,
 ) -> Path:
     """Return the CAMPD thermal-tranche artifact path for an ISO.
 
@@ -1687,7 +1798,7 @@ def thermal_tranche_csv_for_iso(
     """
     base = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
     if fuel_split and not per_unit:
-        alt = _fuel_split_companion(base)
+        alt = _fuel_split_companion(base, fuel_split)
         if alt.exists():
             return alt
     if per_unit:
@@ -1707,7 +1818,7 @@ def thermal_tranche_overrides(
     coal_online_pmin: bool = False,
     per_unit: bool = False,
     merit_guard: bool = False,
-    fuel_split: bool = False,
+    fuel_split: bool | str = False,
 ) -> dict[tuple[int, str], tuple[float, float]]:
     """Return ``{(plant_code, group): (committed_pct, mustrun_pct)}`` for an ISO.
 
@@ -1756,7 +1867,7 @@ def thermal_tranche_peaking(
     iso: str,
     per_unit: bool = False,
     merit_guard: bool = False,
-    fuel_split: bool = False,
+    fuel_split: bool | str = False,
 ) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): peaking_pct}`` for an ISO's CC plants.
 
@@ -1834,7 +1945,7 @@ def thermal_tranche_online_frac(
     iso: str,
     per_unit: bool = False,
     merit_guard: bool = False,
-    fuel_split: bool = False,
+    fuel_split: bool | str = False,
 ) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): online_frac}`` for an ISO's gas plants.
 
@@ -2002,7 +2113,7 @@ def thermal_tranche_p25_level(
     iso: str,
     per_unit: bool = False,
     merit_guard: bool = False,
-    fuel_split: bool = False,
+    fuel_split: bool | str = False,
 ) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): p25_level_mw}`` for an ISO's gas plants.
 
@@ -2064,7 +2175,7 @@ def thermal_tranche_p25_level(
 @lru_cache(maxsize=8)
 def thermal_tranche_online_frac_by_year(
     iso: str,
-    fuel_split: bool = False,
+    fuel_split: bool | str = False,
 ) -> dict[tuple[int, str, int], float]:
     """Return ``{(plant_code, group, year): online_frac}`` — the PER-YEAR window.
 
@@ -2094,8 +2205,8 @@ def thermal_tranche_online_frac_by_year(
     path = PROCESSED_DIR / f"thermal_tranches_online_frac_by_year_{iso.upper()}.csv"
     # miso-278: ``fuel_split`` selects the same-derivation '-fuelsplit-'
     # companion (thermal_tranche_csv_for_iso), falling back where not derived.
-    if fuel_split and _fuel_split_companion(path).exists():
-        path = _fuel_split_companion(path)
+    if fuel_split and _fuel_split_companion(path, fuel_split).exists():
+        path = _fuel_split_companion(path, fuel_split)
     if not path.exists():
         return {}
     df = pd.read_csv(path)
@@ -2116,7 +2227,7 @@ def thermal_tranche_online_frac_by_year(
 
 @lru_cache(maxsize=8)
 def thermal_tranche_p25_measured_level(
-    iso: str, fuel_split: bool = False
+    iso: str, fuel_split: bool | str = False
 ) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): p25_level_mw}`` measured DIRECTLY in MW.
 
@@ -2144,8 +2255,10 @@ def thermal_tranche_p25_measured_level(
     Empty when the ISO has no artifact, leaving today's behaviour byte-identical.
     """
     path = PROCESSED_DIR / f"thermal_tranches_p25_level_mw_{iso.upper()}.csv"
-    if fuel_split and _fuel_split_companion(path).exists():
-        path = _fuel_split_companion(path)  # miso-278, see online_frac_by_year
+    if fuel_split and _fuel_split_companion(path, fuel_split).exists():
+        path = _fuel_split_companion(
+            path, fuel_split
+        )  # miso-278, see online_frac_by_year
     if not path.exists():
         return {}
     df = pd.read_csv(path)
@@ -2165,7 +2278,7 @@ def thermal_tranche_p25_measured_level(
 
 @lru_cache(maxsize=8)
 def thermal_tranche_oom_level(
-    iso: str, fuel_split: bool = False
+    iso: str, fuel_split: bool | str = False
 ) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): oom_level_mw}`` — the OUT-OF-MERIT level.
 
@@ -2201,8 +2314,10 @@ def thermal_tranche_oom_level(
     byte-identical.
     """
     path = PROCESSED_DIR / f"thermal_tranches_oom_level_mw_{iso.upper()}.csv"
-    if fuel_split and _fuel_split_companion(path).exists():
-        path = _fuel_split_companion(path)  # miso-278, see online_frac_by_year
+    if fuel_split and _fuel_split_companion(path, fuel_split).exists():
+        path = _fuel_split_companion(
+            path, fuel_split
+        )  # miso-278, see online_frac_by_year
     if not path.exists():
         return {}
     df = pd.read_csv(path)
@@ -3272,7 +3387,7 @@ def ct_intermediate_plants(
     threshold: float,
     per_unit: bool = False,
     merit_guard: bool = False,
-    fuel_split: bool = False,
+    fuel_split: bool | str = False,
 ) -> frozenset[int]:
     """EIA plant codes of intermediate-duty ``CT_PEAKER`` units for an ISO.
 
@@ -3332,7 +3447,7 @@ def st_gas_intermediate_plants(
     threshold: float,
     per_unit: bool = False,
     merit_guard: bool = False,
-    fuel_split: bool = False,
+    fuel_split: bool | str = False,
 ) -> frozenset[int]:
     """EIA plant codes of intermediate-duty ``ST_GAS`` units for an ISO.
 
@@ -3370,7 +3485,7 @@ def cc_intermediate_plants(
     threshold: float,
     per_unit: bool = False,
     merit_guard: bool = False,
-    fuel_split: bool = False,
+    fuel_split: bool | str = False,
 ) -> frozenset[int]:
     """EIA plant codes of intermediate-duty ``CC_REGULAR`` units for an ISO.
 

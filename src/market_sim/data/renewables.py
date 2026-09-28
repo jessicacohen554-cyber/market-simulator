@@ -975,9 +975,11 @@ def _spp_wind_year_own_curtailment_rate(year: int) -> tuple[float, int] | None:
     parquet, built from the year's OWN measured curtailment) than the
     cross-year mean it replaces.
 
-    Returns ``None`` when SPP published no rate for ``year`` — 2020 and 2021,
-    where the ASOM prints only the 2019 and 2022 endpoints of the span — so
-    those years keep the reference-rate path untouched.
+    Returns ``None`` when SPP published no rate for ``year``, so that year keeps
+    the reference-rate path untouched. Every year 2019-2025 now carries one:
+    SPP-67 read only the 2023-2025 ASOMs and so treated 2020 and 2021 as
+    unpublished, but the 2022 edition prints 2020 (244 MW) and the 2021 edition
+    prints 2021 (725 MW); SPP-94 transcribed both rows.
     """
     rate = _spp_wind_annual_rates().get(int(year))
     return None if rate is None else (rate, int(year))
@@ -1683,6 +1685,24 @@ def get_renewable_zone(iso: str, fuel: str) -> str:
     Raises:
         KeyError: if ``iso`` or ``fuel`` has no allocation entry.
     """
+    return _allocation_zone(iso, fuel)
+
+
+# SPP-93 West/East re-partition: the same Tier-3 "zone holding the bulk of the
+# technology's EIA-860 operable fleet" rule, re-read on the West/East plant
+# table (data/raw/reference/spp_plant_reserve_zone.csv x EIA-860 HEAD operable
+# summer MW): wind West 18,671 / East 16,707; solar East 756 / West 682.
+# Fallback only, exactly as the base SPP entry.
+_SPP_WEST_EAST_ALLOCATION = {"wind": "SPP-West", "solar": "SPP-East"}
+
+
+def _allocation_zone(iso: str, fuel: str) -> str:
+    """Return :data:`RENEWABLE_ZONE_ALLOCATION`'s zone, variant-aware for SPP-93."""
+    if iso.upper() == "SPP":
+        from market_sim.config.topology_variant import spp_west_east_active
+
+        if spp_west_east_active():
+            return _SPP_WEST_EAST_ALLOCATION[fuel]
     return RENEWABLE_ZONE_ALLOCATION[iso][fuel]
 
 
@@ -2476,8 +2496,21 @@ def _wind_zone_reanalysis_shapes(
         data_dir = wind_shape_dir(iso)
     if data_dir is None:
         return None
-    path = Path(data_dir) / f"{iso.lower()}_{cal_year}_wind_zone_shape.parquet"
+    # SPP-93 West/East re-partition: its shapes live beside the base files
+    # under a suffix, so the keeper's own inputs are untouched; a missing
+    # variant file FAILS LOUD rather than silently falling back to the
+    # ISO-wide profile (built by build_spp_wind_shape.py --zone-partition).
+    from market_sim.config.topology_variant import spp_west_east_active
+
+    spp_we = iso.upper() == "SPP" and spp_west_east_active()
+    suffix = "_west_east" if spp_we else ""
+    path = Path(data_dir) / f"{iso.lower()}_{cal_year}_wind_zone_shape{suffix}.parquet"
     if not path.exists():
+        if spp_we:
+            raise FileNotFoundError(
+                f"SPP West/East wind zone shape missing: {path} "
+                "(scripts/data/build_spp_wind_shape.py --zone-partition west_east)"
+            )
         return None
     df = pd.read_parquet(path)
     if not set(zone_names) <= set(df.columns) or len(df) != HOURS_PER_YEAR:
@@ -3193,7 +3226,7 @@ def load_renewable_profiles(
                 _eia930_cf(fuel),
                 RENEWABLE_INSTALLED_MW[iso][fuel],
                 zone_names,
-                RENEWABLE_ZONE_ALLOCATION[iso][fuel],
+                _allocation_zone(iso, fuel),
             )
 
     wind_cf, wind_cap = allocated["wind"]

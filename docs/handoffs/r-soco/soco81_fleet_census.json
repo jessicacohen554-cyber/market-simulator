@@ -1,0 +1,969 @@
+{
+"2019": {
+"artifact_ratio": {
+"26": [
+0.9275,
+0.9115
+],
+"6002": [
+0.896,
+0.9834
+],
+"6073": [
+0.8704,
+0.8854
+],
+"6257": [
+0.9633,
+1.043
+],
+"703": [
+0.958,
+0.9794
+]
+},
+"floorless": [
+3,
+641,
+6052
+],
+"moved": {
+"COAL_SOCO_AL_p26_committed": {
+"cap_mw": 416.0,
+"dmc": -3.327,
+"hr_new": 10.3682,
+"hr_old": 11.1787,
+"mc_new": 47.062,
+"mc_old": 50.389,
+"ratio": 0.9275
+},
+"COAL_SOCO_AL_p6002_committed": {
+"cap_mw": 1200.9,
+"dmc": -1.949,
+"hr_new": 9.7929,
+"hr_old": 10.9296,
+"mc_new": 21.295,
+"mc_old": 23.244,
+"ratio": 0.896
+},
+"COAL_SOCO_AL_p6002_econhi": {
+"cap_mw": 143.2,
+"dmc": -0.311,
+"hr_new": 10.7482,
+"hr_old": 10.9296,
+"mc_new": 22.933,
+"mc_old": 23.244,
+"ratio": 0.9834
+},
+"COAL_SOCO_AL_p6002_econlo": {
+"cap_mw": 179.3,
+"dmc": -1.949,
+"hr_new": 9.7929,
+"hr_old": 10.9296,
+"mc_new": 21.295,
+"mc_old": 23.244,
+"ratio": 0.896
+},
+"COAL_SOCO_GA_p6257_committed": {
+"cap_mw": 1200.6,
+"dmc": -1.038,
+"hr_new": 10.9441,
+"hr_old": 11.361,
+"mc_new": 31.756,
+"mc_old": 32.795,
+"ratio": 0.9633
+},
+"COAL_SOCO_GA_p6257_econhi": {
+"cap_mw": 430.7,
+"dmc": 1.217,
+"hr_new": 11.8495,
+"hr_old": 11.361,
+"mc_new": 34.011,
+"mc_old": 32.795,
+"ratio": 1.043
+},
+"COAL_SOCO_GA_p6257_econlo": {
+"cap_mw": 539.4,
+"dmc": -1.038,
+"hr_new": 10.9441,
+"hr_old": 11.361,
+"mc_new": 31.756,
+"mc_old": 32.795,
+"ratio": 0.9633
+},
+"COAL_SOCO_GA_p703_committed": {
+"cap_mw": 1228.2,
+"dmc": -1.294,
+"hr_new": 10.2217,
+"hr_old": 10.6698,
+"mc_new": 34.011,
+"mc_old": 35.304,
+"ratio": 0.958
+},
+"COAL_SOCO_MS_p6073_committed": {
+"cap_mw": 350.4,
+"dmc": -4.43,
+"hr_new": 10.3806,
+"hr_old": 11.9262,
+"mc_new": 34.252,
+"mc_old": 38.682,
+"ratio": 0.8704
+},
+"COAL_SOCO_MS_p6073_econhi": {
+"cap_mw": 125.7,
+"dmc": -3.917,
+"hr_new": 10.5595,
+"hr_old": 11.9262,
+"mc_new": 34.764,
+"mc_old": 38.682,
+"ratio": 0.8854
+},
+"COAL_SOCO_MS_p6073_econlo": {
+"cap_mw": 157.4,
+"dmc": -4.43,
+"hr_new": 10.3806,
+"hr_old": 11.9262,
+"mc_new": 34.252,
+"mc_old": 38.682,
+"ratio": 0.8704
+}
+},
+"must_run_plants": [
+26,
+703,
+6002,
+6073,
+6257
+],
+"ok": true,
+"units": 339
+},
+"2020": {
+"artifact_ratio": {
+"26": [
+0.9339,
+0.9312
+],
+"6002": [
+0.8994,
+0.9583
+],
+"6073": [
+0.9428,
+1.0767
+],
+"6257": [
+0.9014,
+0.9174
+],
+"703": [
+0.9946,
+1.0251
+]
+},
+"floorless": [
+3,
+641,
+6052
+],
+"moved": {
+"COAL_SOCO_AL_p26_committed": {
+"cap_mw": 416.0,
+"dmc": -2.907,
+"hr_new": 10.2814,
+"hr_old": 11.0091,
+"mc_new": 45.57,
+"mc_old": 48.477,
+"ratio": 0.9339
+},
+"COAL_SOCO_AL_p6002_committed": {
+"cap_mw": 1199.9,
+"dmc": -1.899,
+"hr_new": 9.8742,
+"hr_old": 10.9786,
+"mc_new": 21.477,
+"mc_old": 23.376,
+"ratio": 0.8994
+},
+"COAL_SOCO_AL_p6002_econhi": {
+"cap_mw": 143.1,
+"dmc": -0.787,
+"hr_new": 10.5208,
+"hr_old": 10.9786,
+"mc_new": 22.589,
+"mc_old": 23.376,
+"ratio": 0.9583
+},
+"COAL_SOCO_AL_p6002_econlo": {
+"cap_mw": 179.1,
+"dmc": -1.899,
+"hr_new": 9.8742,
+"hr_old": 10.9786,
+"mc_new": 21.477,
+"mc_old": 23.376,
+"ratio": 0.8994
+},
+"COAL_SOCO_GA_p6257_committed": {
+"cap_mw": 1200.6,
+"dmc": -2.935,
+"hr_new": 10.7282,
+"hr_old": 11.9017,
+"mc_new": 31.335,
+"mc_old": 34.27,
+"ratio": 0.9014
+},
+"COAL_SOCO_GA_p6257_econhi": {
+"cap_mw": 430.7,
+"dmc": -2.459,
+"hr_new": 10.9186,
+"hr_old": 11.9017,
+"mc_new": 31.811,
+"mc_old": 34.27,
+"ratio": 0.9174
+},
+"COAL_SOCO_GA_p6257_econlo": {
+"cap_mw": 539.4,
+"dmc": -2.935,
+"hr_new": 10.7282,
+"hr_old": 11.9017,
+"mc_new": 31.335,
+"mc_old": 34.27,
+"ratio": 0.9014
+},
+"COAL_SOCO_GA_p703_committed": {
+"cap_mw": 1228.2,
+"dmc": -0.161,
+"hr_new": 10.3098,
+"hr_old": 10.3658,
+"mc_new": 34.075,
+"mc_old": 34.236,
+"ratio": 0.9946
+},
+"COAL_SOCO_MS_p6073_committed": {
+"cap_mw": 350.4,
+"dmc": -1.819,
+"hr_new": 11.5187,
+"hr_old": 12.2175,
+"mc_new": 34.489,
+"mc_old": 36.309,
+"ratio": 0.9428
+},
+"COAL_SOCO_MS_p6073_econhi": {
+"cap_mw": 125.7,
+"dmc": 2.44,
+"hr_new": 13.1546,
+"hr_old": 12.2175,
+"mc_new": 38.748,
+"mc_old": 36.309,
+"ratio": 1.0767
+},
+"COAL_SOCO_MS_p6073_econlo": {
+"cap_mw": 157.4,
+"dmc": -1.819,
+"hr_new": 11.5187,
+"hr_old": 12.2175,
+"mc_new": 34.489,
+"mc_old": 36.309,
+"ratio": 0.9428
+}
+},
+"must_run_plants": [
+26,
+703,
+6002,
+6073,
+6257
+],
+"ok": true,
+"units": 340
+},
+"2021": {
+"artifact_ratio": {
+"26": [
+1.0299,
+1.0049
+],
+"6002": [
+0.9182,
+0.9486
+],
+"6073": [
+0.938,
+0.9663
+],
+"6257": [
+0.9582,
+1.005
+],
+"703": [
+0.9637,
+0.9886
+]
+},
+"floorless": [
+3,
+6052
+],
+"moved": {
+"COAL_SOCO_AL_p26_committed": {
+"cap_mw": 416.0,
+"dmc": 1.399,
+"hr_new": 11.8314,
+"hr_old": 11.4879,
+"mc_new": 52.689,
+"mc_old": 51.29,
+"ratio": 1.0299
+},
+"COAL_SOCO_AL_p6002_committed": {
+"cap_mw": 1199.9,
+"dmc": -1.618,
+"hr_new": 9.8847,
+"hr_old": 10.7653,
+"mc_new": 22.667,
+"mc_old": 24.286,
+"ratio": 0.9182
+},
+"COAL_SOCO_AL_p6002_econhi": {
+"cap_mw": 143.1,
+"dmc": -1.017,
+"hr_new": 10.212,
+"hr_old": 10.7653,
+"mc_new": 23.269,
+"mc_old": 24.286,
+"ratio": 0.9486
+},
+"COAL_SOCO_AL_p6002_econlo": {
+"cap_mw": 179.1,
+"dmc": -1.618,
+"hr_new": 9.8847,
+"hr_old": 10.7653,
+"mc_new": 22.667,
+"mc_old": 24.286,
+"ratio": 0.9182
+},
+"COAL_SOCO_GA_p6257_committed": {
+"cap_mw": 1200.6,
+"dmc": -1.259,
+"hr_new": 10.8245,
+"hr_old": 11.2967,
+"mc_new": 33.365,
+"mc_old": 34.624,
+"ratio": 0.9582
+},
+"COAL_SOCO_GA_p6257_econhi": {
+"cap_mw": 430.7,
+"dmc": 0.151,
+"hr_new": 11.3532,
+"hr_old": 11.2967,
+"mc_new": 34.775,
+"mc_old": 34.624,
+"ratio": 1.005
+},
+"COAL_SOCO_GA_p6257_econlo": {
+"cap_mw": 539.4,
+"dmc": -1.259,
+"hr_new": 10.8245,
+"hr_old": 11.2967,
+"mc_new": 33.365,
+"mc_old": 34.624,
+"ratio": 0.9582
+},
+"COAL_SOCO_GA_p703_committed": {
+"cap_mw": 1216.0,
+"dmc": -1.066,
+"hr_new": 10.1309,
+"hr_old": 10.5125,
+"mc_new": 32.813,
+"mc_old": 33.88,
+"ratio": 0.9637
+},
+"COAL_SOCO_MS_p6073_committed": {
+"cap_mw": 350.4,
+"dmc": -1.887,
+"hr_new": 10.8783,
+"hr_old": 11.5973,
+"mc_new": 33.051,
+"mc_old": 34.938,
+"ratio": 0.938
+},
+"COAL_SOCO_MS_p6073_econhi": {
+"cap_mw": 125.7,
+"dmc": -1.026,
+"hr_new": 11.2065,
+"hr_old": 11.5973,
+"mc_new": 33.912,
+"mc_old": 34.938,
+"ratio": 0.9663
+},
+"COAL_SOCO_MS_p6073_econlo": {
+"cap_mw": 157.4,
+"dmc": -1.887,
+"hr_new": 10.8783,
+"hr_old": 11.5973,
+"mc_new": 33.051,
+"mc_old": 34.938,
+"ratio": 0.938
+}
+},
+"must_run_plants": [
+26,
+703,
+6002,
+6073,
+6257
+],
+"ok": true,
+"units": 347
+},
+"2022": {
+"artifact_ratio": {
+"26": [
+0.8003,
+0.7994
+],
+"6002": [
+0.9337,
+0.9693
+],
+"6073": [
+0.8899,
+0.8645
+],
+"6257": [
+0.9378,
+0.9807
+],
+"703": [
+0.9632,
+0.978
+]
+},
+"floorless": [
+3
+],
+"moved": {
+"COAL_SOCO_AL_p26_committed": {
+"cap_mw": 416.0,
+"dmc": -14.29,
+"hr_new": 9.2027,
+"hr_old": 11.4991,
+"mc_new": 61.766,
+"mc_old": 76.056,
+"ratio": 0.8003
+},
+"COAL_SOCO_AL_p6002_committed": {
+"cap_mw": 1199.9,
+"dmc": -1.628,
+"hr_new": 10.152,
+"hr_old": 10.8729,
+"mc_new": 27.432,
+"mc_old": 29.061,
+"ratio": 0.9337
+},
+"COAL_SOCO_AL_p6002_econhi": {
+"cap_mw": 143.1,
+"dmc": -0.754,
+"hr_new": 10.5391,
+"hr_old": 10.8729,
+"mc_new": 28.307,
+"mc_old": 29.061,
+"ratio": 0.9693
+},
+"COAL_SOCO_AL_p6002_econlo": {
+"cap_mw": 179.1,
+"dmc": -1.628,
+"hr_new": 10.152,
+"hr_old": 10.8729,
+"mc_new": 27.432,
+"mc_old": 29.061,
+"ratio": 0.9337
+},
+"COAL_SOCO_GA_p6257_committed": {
+"cap_mw": 900.4,
+"dmc": -2.302,
+"hr_new": 10.4316,
+"hr_old": 11.1235,
+"mc_new": 39.207,
+"mc_old": 41.509,
+"ratio": 0.9378
+},
+"COAL_SOCO_GA_p6257_econhi": {
+"cap_mw": 323.0,
+"dmc": -0.714,
+"hr_new": 10.9088,
+"hr_old": 11.1235,
+"mc_new": 40.795,
+"mc_old": 41.509,
+"ratio": 0.9807
+},
+"COAL_SOCO_GA_p6257_econlo": {
+"cap_mw": 404.5,
+"dmc": -2.302,
+"hr_new": 10.4316,
+"hr_old": 11.1235,
+"mc_new": 39.207,
+"mc_old": 41.509,
+"ratio": 0.9378
+},
+"COAL_SOCO_GA_p703_committed": {
+"cap_mw": 1216.0,
+"dmc": -1.461,
+"hr_new": 10.0337,
+"hr_old": 10.417,
+"mc_new": 42.751,
+"mc_old": 44.213,
+"ratio": 0.9632
+},
+"COAL_SOCO_MS_p6073_committed": {
+"cap_mw": 350.4,
+"dmc": -4.772,
+"hr_new": 10.3464,
+"hr_old": 11.6265,
+"mc_new": 43.07,
+"mc_old": 47.842,
+"ratio": 0.8899
+},
+"COAL_SOCO_MS_p6073_econhi": {
+"cap_mw": 125.7,
+"dmc": -5.873,
+"hr_new": 10.0511,
+"hr_old": 11.6265,
+"mc_new": 41.969,
+"mc_old": 47.842,
+"ratio": 0.8645
+},
+"COAL_SOCO_MS_p6073_econlo": {
+"cap_mw": 157.4,
+"dmc": -4.772,
+"hr_new": 10.3464,
+"hr_old": 11.6265,
+"mc_new": 43.07,
+"mc_old": 47.842,
+"ratio": 0.8899
+}
+},
+"must_run_plants": [
+26,
+703,
+6002,
+6073,
+6257
+],
+"ok": true,
+"units": 348
+},
+"2023": {
+"artifact_ratio": {
+"26": [
+0.9086,
+0.9414
+],
+"6002": [
+0.9287,
+1.0063
+],
+"6073": [
+0.8561,
+0.8604
+],
+"6257": [
+0.93,
+0.9612
+],
+"703": [
+0.9616,
+0.9689
+]
+},
+"floorless": [
+3
+],
+"moved": {
+"COAL_SOCO_AL_p26_committed": {
+"cap_mw": 416.0,
+"dmc": -7.298,
+"hr_new": 10.6592,
+"hr_old": 11.7315,
+"mc_new": 77.047,
+"mc_old": 84.345,
+"ratio": 0.9086
+},
+"COAL_SOCO_AL_p6002_committed": {
+"cap_mw": 1199.9,
+"dmc": -1.693,
+"hr_new": 10.1473,
+"hr_old": 10.9264,
+"mc_new": 26.549,
+"mc_old": 28.242,
+"ratio": 0.9287
+},
+"COAL_SOCO_AL_p6002_econhi": {
+"cap_mw": 143.1,
+"dmc": 0.15,
+"hr_new": 10.9952,
+"hr_old": 10.9264,
+"mc_new": 28.392,
+"mc_old": 28.242,
+"ratio": 1.0063
+},
+"COAL_SOCO_AL_p6002_econlo": {
+"cap_mw": 179.1,
+"dmc": -1.693,
+"hr_new": 10.1473,
+"hr_old": 10.9264,
+"mc_new": 26.549,
+"mc_old": 28.242,
+"ratio": 0.9287
+},
+"COAL_SOCO_GA_p6257_committed": {
+"cap_mw": 900.4,
+"dmc": -2.76,
+"hr_new": 10.7617,
+"hr_old": 11.5717,
+"mc_new": 41.167,
+"mc_old": 43.927,
+"ratio": 0.93
+},
+"COAL_SOCO_GA_p6257_econhi": {
+"cap_mw": 323.0,
+"dmc": -1.53,
+"hr_new": 11.1227,
+"hr_old": 11.5717,
+"mc_new": 42.397,
+"mc_old": 43.927,
+"ratio": 0.9612
+},
+"COAL_SOCO_GA_p6257_econlo": {
+"cap_mw": 404.5,
+"dmc": -2.76,
+"hr_new": 10.7617,
+"hr_old": 11.5717,
+"mc_new": 41.167,
+"mc_old": 43.927,
+"ratio": 0.93
+},
+"COAL_SOCO_GA_p703_committed": {
+"cap_mw": 1216.0,
+"dmc": -2.148,
+"hr_new": 10.0721,
+"hr_old": 10.4743,
+"mc_new": 58.287,
+"mc_old": 60.435,
+"ratio": 0.9616
+},
+"COAL_SOCO_MS_p6073_committed": {
+"cap_mw": 350.4,
+"dmc": -6.112,
+"hr_new": 10.3766,
+"hr_old": 12.1208,
+"mc_new": 40.863,
+"mc_old": 46.975,
+"ratio": 0.8561
+},
+"COAL_SOCO_MS_p6073_econhi": {
+"cap_mw": 125.7,
+"dmc": -5.93,
+"hr_new": 10.4287,
+"hr_old": 12.1208,
+"mc_new": 41.046,
+"mc_old": 46.975,
+"ratio": 0.8604
+},
+"COAL_SOCO_MS_p6073_econlo": {
+"cap_mw": 157.4,
+"dmc": -6.112,
+"hr_new": 10.3766,
+"hr_old": 12.1208,
+"mc_new": 40.863,
+"mc_old": 46.975,
+"ratio": 0.8561
+}
+},
+"must_run_plants": [
+26,
+703,
+6002,
+6073,
+6257
+],
+"ok": true,
+"units": 328
+},
+"2024": {
+"artifact_ratio": {
+"26": [
+0.8828,
+0.8877
+],
+"6002": [
+0.9426,
+1.0521
+],
+"6073": [
+0.8417,
+0.8036
+],
+"6257": [
+0.9097,
+0.9633
+],
+"703": [
+1.0044,
+1.0274
+]
+},
+"floorless": [
+3
+],
+"moved": {
+"COAL_SOCO_AL_p26_committed": {
+"cap_mw": 416.0,
+"dmc": -8.275,
+"hr_new": 9.5062,
+"hr_old": 10.7682,
+"mc_new": 66.832,
+"mc_old": 75.107,
+"ratio": 0.8828
+},
+"COAL_SOCO_AL_p6002_committed": {
+"cap_mw": 1199.9,
+"dmc": -1.279,
+"hr_new": 10.1014,
+"hr_old": 10.7165,
+"mc_new": 25.496,
+"mc_old": 26.774,
+"ratio": 0.9426
+},
+"COAL_SOCO_AL_p6002_econhi": {
+"cap_mw": 143.1,
+"dmc": 1.161,
+"hr_new": 11.2748,
+"hr_old": 10.7165,
+"mc_new": 27.935,
+"mc_old": 26.774,
+"ratio": 1.0521
+},
+"COAL_SOCO_AL_p6002_econlo": {
+"cap_mw": 179.1,
+"dmc": -1.279,
+"hr_new": 10.1014,
+"hr_old": 10.7165,
+"mc_new": 25.496,
+"mc_old": 26.774,
+"ratio": 0.9426
+},
+"COAL_SOCO_GA_p6257_committed": {
+"cap_mw": 900.4,
+"dmc": -3.238,
+"hr_new": 10.4784,
+"hr_old": 11.5185,
+"mc_new": 37.121,
+"mc_old": 40.359,
+"ratio": 0.9097
+},
+"COAL_SOCO_GA_p6257_econhi": {
+"cap_mw": 323.0,
+"dmc": -1.316,
+"hr_new": 11.0958,
+"hr_old": 11.5185,
+"mc_new": 39.043,
+"mc_old": 40.359,
+"ratio": 0.9633
+},
+"COAL_SOCO_GA_p6257_econlo": {
+"cap_mw": 404.5,
+"dmc": -3.238,
+"hr_new": 10.4784,
+"hr_old": 11.5185,
+"mc_new": 37.121,
+"mc_old": 40.359,
+"ratio": 0.9097
+},
+"COAL_SOCO_GA_p703_committed": {
+"cap_mw": 1216.0,
+"dmc": 0.233,
+"hr_new": 10.2615,
+"hr_old": 10.2165,
+"mc_new": 57.676,
+"mc_old": 57.443,
+"ratio": 1.0044
+},
+"COAL_SOCO_MS_p6073_committed": {
+"cap_mw": 350.4,
+"dmc": -6.168,
+"hr_new": 10.4581,
+"hr_old": 12.425,
+"mc_new": 37.297,
+"mc_old": 43.465,
+"ratio": 0.8417
+},
+"COAL_SOCO_MS_p6073_econhi": {
+"cap_mw": 125.7,
+"dmc": -7.653,
+"hr_new": 9.9847,
+"hr_old": 12.425,
+"mc_new": 35.812,
+"mc_old": 43.465,
+"ratio": 0.8036
+},
+"COAL_SOCO_MS_p6073_econlo": {
+"cap_mw": 157.4,
+"dmc": -6.168,
+"hr_new": 10.4581,
+"hr_old": 12.425,
+"mc_new": 37.297,
+"mc_old": 43.465,
+"ratio": 0.8417
+}
+},
+"must_run_plants": [
+26,
+703,
+6002,
+6073,
+6257
+],
+"ok": true,
+"units": 329
+},
+"2025": {
+"artifact_ratio": {
+"26": [
+0.8416,
+0.7668
+],
+"6002": [
+0.9489,
+1.0306
+],
+"6073": [
+0.9133,
+0.9158
+],
+"6257": [
+0.9199,
+0.9331
+],
+"703": [
+1.0191,
+1.0502
+]
+},
+"floorless": [
+3,
+8,
+708,
+6052
+],
+"moved": {
+"COAL_SOCO_AL_p26_committed": {
+"cap_mw": 416.0,
+"dmc": -11.566,
+"hr_new": 9.05,
+"hr_old": 10.7533,
+"mc_new": 65.949,
+"mc_old": 77.515,
+"ratio": 0.8416
+},
+"COAL_SOCO_AL_p6002_committed": {
+"cap_mw": 1199.9,
+"dmc": -1.197,
+"hr_new": 10.2101,
+"hr_old": 10.7599,
+"mc_new": 26.737,
+"mc_old": 27.934,
+"ratio": 0.9489
+},
+"COAL_SOCO_AL_p6002_econhi": {
+"cap_mw": 143.1,
+"dmc": 0.717,
+"hr_new": 11.0892,
+"hr_old": 10.7599,
+"mc_new": 28.651,
+"mc_old": 27.934,
+"ratio": 1.0306
+},
+"COAL_SOCO_AL_p6002_econlo": {
+"cap_mw": 179.1,
+"dmc": -1.197,
+"hr_new": 10.2101,
+"hr_old": 10.7599,
+"mc_new": 26.737,
+"mc_old": 27.934,
+"ratio": 0.9489
+},
+"COAL_SOCO_GA_p6257_committed": {
+"cap_mw": 900.4,
+"dmc": -2.694,
+"hr_new": 10.2936,
+"hr_old": 11.1899,
+"mc_new": 35.439,
+"mc_old": 38.133,
+"ratio": 0.9199
+},
+"COAL_SOCO_GA_p6257_econhi": {
+"cap_mw": 323.0,
+"dmc": -2.25,
+"hr_new": 10.4413,
+"hr_old": 11.1899,
+"mc_new": 35.883,
+"mc_old": 38.133,
+"ratio": 0.9331
+},
+"COAL_SOCO_GA_p6257_econlo": {
+"cap_mw": 404.5,
+"dmc": -2.694,
+"hr_new": 10.2936,
+"hr_old": 11.1899,
+"mc_new": 35.439,
+"mc_old": 38.133,
+"ratio": 0.9199
+},
+"COAL_SOCO_GA_p703_committed": {
+"cap_mw": 1216.0,
+"dmc": 0.72,
+"hr_new": 10.2675,
+"hr_old": 10.0751,
+"mc_new": 42.937,
+"mc_old": 42.217,
+"ratio": 1.0191
+},
+"COAL_SOCO_MS_p6073_committed": {
+"cap_mw": 350.4,
+"dmc": -2.902,
+"hr_new": 10.3945,
+"hr_old": 11.3813,
+"mc_new": 35.07,
+"mc_old": 37.972,
+"ratio": 0.9133
+},
+"COAL_SOCO_MS_p6073_econhi": {
+"cap_mw": 125.7,
+"dmc": -2.818,
+"hr_new": 10.423,
+"hr_old": 11.3813,
+"mc_new": 35.154,
+"mc_old": 37.972,
+"ratio": 0.9158
+},
+"COAL_SOCO_MS_p6073_econlo": {
+"cap_mw": 157.4,
+"dmc": -2.902,
+"hr_new": 10.3945,
+"hr_old": 11.3813,
+"mc_new": 35.07,
+"mc_old": 37.972,
+"ratio": 0.9133
+}
+},
+"must_run_plants": [
+26,
+703,
+6002,
+6073,
+6257
+],
+"ok": true,
+"units": 353
+}
+}

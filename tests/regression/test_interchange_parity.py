@@ -411,3 +411,35 @@ def test_runner_and_calibration_spec_agree(iso):
     assert build_interchange_fleet(spec_runner, 0.0) == build_interchange_fleet(
         spec_cal, 0.0
     )
+
+
+def test_nyiso_ladder_derivation_excludes_hq_accounting_duplicate():
+    """NYISO-NEXT-8: the ladder producer never sums the HQ accounting duplicate.
+
+    ``SCH - HQ_IMPORT_EXPORT`` duplicates ``SCH - HQ - NY``; listing both in the
+    derivation counted the HQ seam twice. The producer's ``EXTERNAL_SEAMS`` is
+    read as a literal (no import side effects) and checked against the one
+    name ``nyiso_par_attribution`` carries for the duplicate.
+    """
+    import ast
+    from pathlib import Path
+
+    from market_sim.data.nyiso_par_attribution import ACCOUNTING_DUPLICATE
+
+    path = (
+        Path(__file__).resolve().parents[2]
+        / "scripts"
+        / "data"
+        / "derive_nyiso_import_tranches.py"
+    )
+    tree = ast.parse(path.read_text())
+    seams = next(
+        ast.literal_eval(node.value)
+        for node in tree.body
+        if isinstance(node, ast.AnnAssign)
+        and getattr(node.target, "id", None) == "EXTERNAL_SEAMS"
+    )
+    rows = [r for rs in seams.values() for r in rs]
+    assert ACCOUNTING_DUPLICATE not in rows
+    assert "SCH - HQ - NY" in seams["HQ"]
+    assert len(rows) == len(set(rows))

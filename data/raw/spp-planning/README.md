@@ -16,7 +16,7 @@ Exact URLs: `SOURCES.md`. Checksums of every fetched artifact, tracked or not:
 | `spp-system-interfaces-stakeholder-reference-guide.pdf` | 0.7 MB | **yes** |
 | `Long_Term_PRM_Policy_Paper.pdf` | 0.17 MB | **yes** |
 | 2025 ITP Assessment Report | 14.3 MB | no — `transcriptions/2025_ITP_Report_v1.0.txt` |
-| ASOM 2023 / 2024 / 2025 | 6.2 / 6.4 / 6.1 MB | no — `transcriptions/ASOM_*.txt` |
+| ASOM 2021 / 2022 / 2023 / 2024 / 2025 | 4.7 / 6.8 / 6.2 / 6.4 / 6.1 MB | no — `transcriptions/ASOM_*.txt` (2021 / 2022 added by SPP-94, pypdf text) |
 | Integrated Marketplace Protocols 119 | 8.3 MB zip | no — `transcriptions/Integrated_Marketplace_Protocols_119.txt` |
 
 The four untracked payloads follow the repo's **corpus conversion** convention
