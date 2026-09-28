@@ -91,3 +91,18 @@ See §9 (appended before the pin, from the audit of every changed hunk).
 - Arm: `replay_keeper.py results/calibration/nyisonext9_span --years <y> --out-dir results/calibration/nyisonext11_<y> --set nyiso_ne_ac_node=true` (2021 from `results/calibration/nyisonext9_2021`).
 - Each shard pushes its full bundle, `dispatch/<y>_P1.parquet` included (rule 34 (a)).
 - Parent: compose, gates, benchmark rebuild, legitimacy diagnostics, attestation, registration; promotion per §7.
+
+## 9. G-DRIFT (appended before the pin; keeper basis `7900ac51` → `origin/main` `08043ecf`)
+
+127 commits, 32 files on the backcast path. **Every hunk INERT for NYISO**, so form 4 holds and the keeper's committed bundles are the control.
+
+| class | hunks | why inert |
+|---|---|---|
+| ERCOT-only | `custom-bin-assignments.csv` (W A Parish rows), `load_campd_bins` heat-rate parent fallback, `ISO_PLANT_ENTRIES` + plant-entry masks / benchmark frames | `run_calibration.py:4152` / `assembly.py:1680` `iso == "ERCOT"`; `ISO_PLANT_ENTRIES` has ERCOT only, so NYISO lookups return `{}` |
+| CAISO-only | TAC-share standard time, `sd_floor_static` | `iso == "CAISO"` gates, flags absent in the recipe |
+| PJM / SOCO-only | virtual-bid settlement, SOCO campaign partition, SOCO validation data, FERC-714 / SOCO auction loaders | flags off / not on the solve path |
+| default-off flags absent from the recipe | `campd_split_remap_companions`, `unit_outage_rederive_peaker_windows` and their branches in `campd.py`, `arrays.py`, `outages.py`, `eia860.py`, `resolved_inputs.py`; the CC heat-rate selector returns `True`, identical to before | recipe values checked in both keeper `run_config.json` |
+| unconditional but disjoint | `CAMPD_UNIT_PLANT_REMAP` + SPP / WI facilities | none of the 10 codes is in `bin_assignments_NYISO.csv` |
+| new library | `scripts/lib/seam_neighbour_price/*` | read only by fetch / curate scripts |
+
+This session's own two commits are the arm (the rule-26 deletion is hash- and path-inert for NYISO: the keeper recorded `nyiso_firm_imports: false`). The delta from `08043ecf` to the pin is re-listed in the RESULT.
