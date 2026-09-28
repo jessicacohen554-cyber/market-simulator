@@ -2498,9 +2498,7 @@ ISO_BA_EXITS: dict[str, dict[str, str]] = {"SOCO": {"FPL": "2022-07-13 12:00"}}
 # 2019-2022 and none for Jan-May 2023. Operating day 2023-04-13 HE01 CDT is
 # hour-ending UTC 2023-04-13 06:00.
 # (docs/handoffs/FINDING-r-ercot-11-benchmark-vs-930-2026-09-28.md.)
-ISO_PLANT_ENTRIES: dict[str, dict[int, str]] = {
-    "ERCOT": {55098: "2023-04-13 06:00"}
-}
+ISO_PLANT_ENTRIES: dict[str, dict[int, str]] = {"ERCOT": {55098: "2023-04-13 06:00"}}
 
 # --- Hydro hourly deliverability envelope (caiso-72 STEP-2) ------------------
 # Percentile of the measured EIA-930 NG:WAT hourly output, per (month x

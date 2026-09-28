@@ -29,5 +29,7 @@ for y in [int(a) for a in sys.argv[1:]]:
     mwh = float((av * pmax[:, None]).sum())
     on = np.where(av.max(axis=0) > 0)[0]
     first = int(on[0]) if on.size else -1
-    print(f"{y}: 55098 rows={int(k.sum())} pmax={pmax.sum():.1f} MW avail {mwh/1e6:.3f} TWh-cap first_row={first}")
+    print(
+        f"{y}: 55098 rows={int(k.sum())} pmax={pmax.sum():.1f} MW avail {mwh / 1e6:.3f} TWh-cap first_row={first}"
+    )
     print("   ", [ln for ln in lines if "plant entry" in ln][:2])
