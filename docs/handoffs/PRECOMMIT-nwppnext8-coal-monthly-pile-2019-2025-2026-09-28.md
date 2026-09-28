@@ -88,7 +88,20 @@ does. The gate resolved `(pooled False, yard True)`, floor True and monthly pile
 
 ## 4. G-DRIFT, keeper `git_sha` `2162cef5` → pin (form 4)
 
-Recorded in §8 before any solve.
+Scope: `git diff 2162cef5 origin/main` over the solve paths (26 files). Every hunk is **INERT** for NWPP, checked
+against all seven keeper `run_config_<Y>.json`:
+
+| Change | Why inert for NWPP |
+|---|---|
+| `retiree_cems_cap` deleted (scenarios, arrays, outages, backcast_config, persist, run_calibration*, replay_keeper) | False in all 7 keeper configs; its off path never ran. It drops from the cache key at False |
+| `coal_econ_marginal_hr_two_sided` and its `assembly.py` / `campd_bins.py` reprice | Default off and absent from the keeper; `_inc_hr_ratio` is `{}` when it is off |
+| SPP West/East partition (`iso_configs`, `topology_variant`, `runner`, `eia860`, `zone_assignment`, `renewables`, `zonal_shares`, `spp_plant_reserve_zone.csv`) | Gated to SPP plus `spp_west_east_active()`; forced to `north_south` for other ISOs |
+| CAISO `partial_year_measured` (`envelopes.py`, `interchange/caiso.py`) and `ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO["CAISO"]` | CAISO-only |
+| `pjm_offer_midcurve_shape_segments` (`offer_surfaces.py`) | PJM-only, None |
+| NYISO import ladders (`interchange/spec.py`) | NYISO keys only |
+| `actual_lmp.json`, `actual_lmp_zonal_ERCOT.parquet` | ERCOT scoring artifacts, never LP inputs |
+
+This lane's own change is live only when armed.
 
 ## 5. Recipe (per shard, year Y)
 
