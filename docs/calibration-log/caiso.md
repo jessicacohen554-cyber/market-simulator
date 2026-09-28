@@ -15652,3 +15652,16 @@ Record: `docs/handoffs/r-caiso-8/`.
     days only. The STOP stands.
 
 Record: `docs/handoffs/r-caiso-12/`.
+
+## R-CAISO-13 — 2026-09-28 — battery "1 h late" is an EIA-930 CISO clock defect; arm built, solve handed on (zero LP)
+
+- **Finding.** EIA-930 CISO is published one hour LATE (measured against the OASIS TAC clock and solar geometry):
+  - generation / NG / interchange: 2023-11-01 → 2025-12-02;
+  - Demand: 2022-06-16 → 2025-12-02.
+- **Symptoms in the keeper:** its solar centroid is 12.9 h PST in 2024–25, and its battery profile lags CAISO Outlook by +1 h (r 0.99).
+- **caiso-75** read the relative lag only; it is superseded.
+- **Arm** `caiso_eia930_clock_repair` merged (gated, default off, zero parameters). Owner card: "Build + solve now".
+- **Not solved:** the session was at the nesting limit. The 7 shards go to R-CAISO-14 (owner card "Solve + promote only").
+- **The evening ramp-peak gap is not the clock** (2023 has no defect). Storage sets the plateau: price spread across interior-discharge hours has a median of $1.8–11. No admissible lever.
+
+Record: `docs/handoffs/r-caiso-13/`.
