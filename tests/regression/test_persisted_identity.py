@@ -747,8 +747,19 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   317 names; 1 value(s) moved: ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO: CAISO".
 #   WHAT IT COSTS: nothing new — every CAISO keeper since R-CAISO-8 (r8, r9,
 #   r10) was solved on 1.154; only pre-R-CAISO-8 CAISO bundles re-key.
+# 2026-09-28 ERCOT ADVANCED (R-ERCOT-12, owner ruling "Fleet + benchmark") —
+#   ONE ROW ADDED, DECLARED AT ITS PRE-ARM HASH SO IT MOVES ERCOT'S KEY.
+#   constants.ISO_PLANT_ENTRIES = {"ERCOT": {55098: "2023-04-13 06:00"}}:
+#   Frontera Energy Center is outside ERCOT before its entry (it exported to
+#   CFE), read only by data.ba_membership in the fleet hour mask, the EIA-923
+#   frame and both CAMPD backfills. Declared in solve_surface_declared.py at
+#   the empty-table hash (as ISO_BA_JOINS / ISO_BA_EXITS were for SOCO), so the
+#   row reads as moved off its declaration for ERCOT: 235 -> 236 rows.
+#   WHAT IT COSTS: an ERCOT cache miss. 2019-2023 solves change (Frontera
+#   offline before 2023-04-13); 2024/2025 reproduce byte-identically (member
+#   all year). The keeper 2026-09-28-r-12-frontera-membership was solved on it.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("542d797ba061b435", 235),
+    "ERCOT": ("179755c2f2cb063e", 236),
     "CAISO": ("35d53f519b496e2d", 210),
     "MISO": ("754991ac8927d9f7", 216),
     "PJM": ("82f6053c8964444d", 220),
@@ -808,6 +819,9 @@ def test_solve_surface_fingerprint_is_pinned(iso: str) -> None:
 #: registry value that changed while every reader still believes the pin.
 LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
     "ERCOT": {
+        "ISO_PLANT_ENTRIES": (
+            "R-ERCOT-12 2026-09-28 (owner ruling 'Fleet + benchmark'): Frontera 55098 dated ERCOT membership, declared at the pre-arm hash so ERCOT re-keys — see the 2026-09-28 R-ERCOT-12 cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
         "CORRELATED_OUTAGE_CURVE": (
             "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
         ),

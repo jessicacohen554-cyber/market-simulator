@@ -64,6 +64,9 @@ TAIL_THRESHOLD = {
     "SPP": 200.0,  # owner ruling P6 (2026-09-06); mirrors calibration_verdict
     # SOCO deliberately ABSENT (SOCO-20, 2026-09-14): no price series exists
     # (SOCO-13 STOP gate NO), so no tail; mirrors calibration_verdict.
+    # STILL ABSENT after soco-84 (2026-09-28) landed the FERC-714 system
+    # lambda as SOCO's C3a/C3b benchmark: the same owner sitting ruled C3c
+    # "Not scored on lambda" (calibration_verdict.C3C_NOT_SCORED).
     # NWPP deliberately ABSENT (NWPP-31, 2026-09-14) -- plan gate G6, the
     # SECOND of the three TAIL_THRESHOLD-family skips. Card N2 chartered
     # NWPP-13 to build a WEIM-derived hourly price series behind a STOP gate

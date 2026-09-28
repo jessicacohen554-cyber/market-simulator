@@ -346,6 +346,23 @@ CAMPD_UNIT_PLANT_REMAP: dict[tuple[int, str], int] = {
     (63628, "5A-2"): 2953,
     (63628, "5B-1"): 2953,
     (63628, "5B-2"): 2953,
+    # West Riverside Energy Center (MISO, WI, CC_REGULAR): CEMS files the 2020
+    # block's two CTs under the legacy Riverside Energy Center ORIS 55641 as
+    # units "CT-03" / "CT-04", while EIA-860 carries them as generators
+    # CTG3 / CTG4 (232.9 MW each, with STG2) under their own plant 64020.
+    # The identity is measured: CAMPD CT-03 + CT-04 gross tracks EIA-923
+    # 64020 net within 2 % in every year 2020-2025 (2023: 4.31 vs 4.25 TWh).
+    # Without the entry the outage derive booked CT-03 / CT-04 against 55641,
+    # so 64020 was derated for none of its own outages and 55641 for its
+    # sibling's, the CC heat-rate derive refused 55641 (boundary_above_band)
+    # and left 64020 on the fallback rate, and the tranche derive read 55641
+    # at a 150 % median CF. [R-ACCURATE]
+    # FINDING-miso280-phase0-riverside-vlr-southgas-2026-09-28.md §1. The
+    # MISO keeper's derived artifacts move only through the default-off
+    # ScenarioConfig.campd_split_remap_companions gate (rule 23 trigger: this
+    # identity data change, not a residual).
+    (55641, "CT-03"): 64020,
+    (55641, "CT-04"): 64020,
 }
 
 # Facilities with at least one remapped unit (split facilities).
@@ -414,6 +431,59 @@ CAMPD_STACK_DUPLICATE_FACILITIES: frozenset[int] = frozenset(
 _FACILITIES_NEEDING_UNIT_ROWS: frozenset[int] = (
     CAMPD_SPLIT_FACILITIES | CAMPD_STACK_DUPLICATE_FACILITIES
 )
+
+# Filename infix of the split-remap companions (miso-280): the derived CAMPD
+# artifacts re-derived after an entry was ADDED to CAMPD_UNIT_PLANT_REMAP, read
+# only under ``ScenarioConfig.campd_split_remap_companions``.
+SPLIT_REMAP_TAG = "splitremap"
+
+
+def split_remap_armed(config: object) -> bool:
+    """Return ``ScenarioConfig.campd_split_remap_companions`` (miso-280, default False).
+
+    ONE accessor for every reader of a split-remap companion (the three unit
+    outage extracts, the CC heat-rate artifact and the four tranche-family
+    files), so no reader can pick up the re-derived identity while a sibling
+    artifact still carries the pre-remap one (rule 19 ``[R-ONE-MECH]``).
+    """
+    return bool(getattr(config, "campd_split_remap_companions", False))
+
+
+def split_remap_companion(base: Path) -> Path:
+    """Return the ``-splitremap-`` companion of a derived CAMPD artifact, or raise.
+
+    The tag is inserted before the trailing ISO token, whichever separator the
+    base uses: ``campd-unit-outages-unitroute-MISO.csv`` ->
+    ``campd-unit-outages-unitroute-splitremap-MISO.csv``;
+    ``campd_cc_heat_rates_MISO.csv`` -> ``campd_cc_heat_rates-splitremap-MISO.csv``;
+    ``thermal_tranches-fuelsplit-stcov-MISO.csv`` ->
+    ``thermal_tranches-fuelsplit-stcov-splitremap-MISO.csv``.
+
+    Unlike the fall-back discipline of the other companion families, an ABSENT
+    split-remap companion RAISES: the gate is an identity repair across several
+    artifacts at once, and silently reading one of them on the pre-remap
+    identity would put two plant identities for the same CEMS units inside one
+    LP. The companions exist for MISO only (the only ISO carrying facility
+    55641), so arming the gate anywhere else fails loudly rather than being a
+    silent no-op.
+
+    Raises:
+        FileNotFoundError: when the companion has not been derived.
+    """
+    stem = base.stem
+    cut = max(stem.rfind("-"), stem.rfind("_"))
+    if cut <= 0:
+        raise ValueError(f"split_remap_companion: no ISO token in {base.name!r}")
+    alt = base.with_name(
+        f"{stem[:cut]}-{SPLIT_REMAP_TAG}-{stem[cut + 1 :]}{base.suffix}"
+    )
+    if not alt.exists():
+        raise FileNotFoundError(
+            f"campd_split_remap_companions is armed but {alt.name} has not been "
+            f"derived (base {base.name}); the split-remap companions exist only "
+            "where the lane re-derived them (miso-280: MISO)"
+        )
+    return alt
 
 
 def _to_numeric_by_uniques(s: pd.Series) -> pd.Series:
@@ -636,7 +706,7 @@ def _read_one(
     :func:`plant_hourly_net`), so the extra granularity is transparent here.
 
     The only exception is the split facilities in
-    :data:`CAMPD_UNIT_PLANT_REMAP` (CA only): their rows are re-keyed (or, for
+    :data:`CAMPD_UNIT_PLANT_REMAP` (CA, NY, WI): their rows are re-keyed (or, for
     a facility-level file, substituted from the companion unit-level extract)
     so each unit's history lands on the EIA plant the model fleet carries.
     """
@@ -718,8 +788,9 @@ def _normalize_campd(raw: pd.DataFrame, year: int) -> pd.DataFrame:
     if "unitId" in raw.columns and len(raw):
         fac = plant_id.fillna(-1).astype(int).to_numpy()
         uid = raw["unitId"].astype(str).to_numpy()
-        # Only rows at a split facility can remap, and the remap table is CA-only
-        # (:data:`CAMPD_UNIT_PLANT_REMAP`), so restrict the per-row dict lookup to
+        # Only rows at a split facility can remap, and the remap table is a
+        # handful of facilities (:data:`CAMPD_UNIT_PLANT_REMAP`: CA, NY, WI), so
+        # restrict the per-row dict lookup to
         # those rows: every other row's ``.get`` returns its own ``f`` unchanged.
         # PERF-B: the unrestricted comprehension ran 7M dict lookups per PJM year
         # to remap nothing at all (~4.4 s of the phase).

@@ -60,6 +60,7 @@ from market_sim.config.paths import (
     eia860_standby_admitted,
 )
 from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY, artifact_class
+from market_sim.data import campd as _campd
 
 logger = logging.getLogger(__name__)
 
@@ -382,6 +383,7 @@ def unit_outage_csv_for_iso(
     netload_mask_repair: bool = False,
     full_rederive: bool = False,
     rederive_peaker_windows: bool = False,
+    split_remap: bool = False,
 ) -> Path:
     """Return the CAMPD unit-outage CSV path for an ISO.
 
@@ -514,7 +516,31 @@ def unit_outage_csv_for_iso(
     (:func:`unit_outage_short_csv_for_iso`, :func:`unit_partial_outage_csv_for_iso`),
     so one repair moves every layer the missing key reached, together (rule 19
     ``[R-ONE-MECH]``: it replaces each layer, never stacks on it).
+
+    ``split_remap`` (``ScenarioConfig.campd_split_remap_companions``, GATED
+    default False; miso-280) selects the ``-splitremap-`` companion of WHATEVER
+    extract the flags above resolve to: the same deriver invocation re-run after
+    an entry was added to ``campd.CAMPD_UNIT_PLANT_REMAP`` (West Riverside
+    64020's CTs, filed by CEMS under Riverside 55641). Unlike the other
+    companions an absent one RAISES (:func:`market_sim.data.campd.split_remap_companion`)
+    rather than falling back, so the identity repair can never be half-applied
+    across the artifacts it moves together.
     """
+    if split_remap:
+        return _campd.split_remap_companion(
+            unit_outage_csv_for_iso(
+                iso,
+                mixed_gas_routing,
+                per_unit_crosswalk,
+                merit_order_guard,
+                hour_grain,
+                dark_unit_years=dark_unit_years,
+                membership_repair=membership_repair,
+                unit_fuel_routing=unit_fuel_routing,
+                netload_mask_repair=netload_mask_repair,
+                full_rederive=full_rederive,
+            )
+        )
     ercot = iso is None or iso.upper() == "ERCOT"
     base = (
         UNIT_OUTAGE_CSV
@@ -655,7 +681,7 @@ def unit_outage_short_csv_for_iso(
 
 
 def unit_outage_short_gas_csv_for_iso(
-    iso: str | None, hour_grain: bool = False
+    iso: str | None, hour_grain: bool = False, split_remap: bool = False
 ) -> Path:
     """Return the SHORT (< 5-day) GAS unit-outage CSV path for an ISO.
 
@@ -684,7 +710,15 @@ def unit_outage_short_gas_csv_for_iso(
     ``hour_grain`` selects ERCOT's ``campd-unit-outages-shortgas-hourgrain.csv``
     (R-ERCOT-5), exactly as :func:`unit_outage_short_csv_for_iso` does for the
     coal family.
+
+    ``split_remap`` (``ScenarioConfig.campd_split_remap_companions``, miso-280)
+    selects the ``-splitremap-`` companion, raising when it is absent (see
+    :func:`unit_outage_csv_for_iso`).
     """
+    if split_remap:
+        return _campd.split_remap_companion(
+            unit_outage_short_gas_csv_for_iso(iso, hour_grain)
+        )
     if iso is None or iso.upper() == "ERCOT":
         if hour_grain:
             alt = UNIT_OUTAGE_CSV.with_name("campd-unit-outages-shortgas-hourgrain.csv")
@@ -1482,6 +1516,7 @@ def unit_outage_derate_factors(
     precod_clip: bool = False,
     netload_mask_repair: bool = False,
     coal_extract_basis_share: bool = False,
+    split_remap: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
@@ -1519,12 +1554,14 @@ def unit_outage_derate_factors(
         netload_mask_repair=netload_mask_repair,
         full_rederive=full_rederive,
         rederive_peaker_windows=rederive_peaker_windows,
+        split_remap=split_remap,
     )
-    if netload_mask_repair and csv_path.name.startswith(
-        "campd-unit-outages-netloadmask-"
+    if split_remap or (
+        netload_mask_repair
+        and csv_path.name.startswith("campd-unit-outages-netloadmask-")
     ):
-        # SPP-85: the companion is never in the curated clean table, which
-        # mirrors the INCUMBENT extract — read the selected CSV directly.
+        # SPP-85 / miso-280: a companion is never in the curated clean table,
+        # which mirrors the INCUMBENT extract — read the selected CSV directly.
         df = pd.read_csv(csv_path)
     else:
         df = _load_unit_outage_events(csv_path, iso)
@@ -1989,6 +2026,7 @@ def unit_outage_short_derate_factors(
     netload_mask_repair: bool = False,
     full_rederive: bool = False,
     coal_extract_basis_share: bool = False,
+    split_remap: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return short-window (< 5-day) unit-outage availability multipliers.
 
@@ -2027,6 +2065,12 @@ def unit_outage_short_derate_factors(
     families, whose windows carry their DETECTED start/end hour, so the shared
     accumulator stops re-expanding each window to 00:00-23:00 (see
     :func:`unit_outage_event_window`).
+
+    ``split_remap`` (``ScenarioConfig.campd_split_remap_companions``, miso-280)
+    reaches the GAS family only: its ``-splitremap-`` companion carries the
+    re-routed West Riverside rows, while the coal-scoped short extract carries
+    no row of the remapped CEMS units (none are coal), so it has no companion
+    and is read unchanged.
     """
     iso = (iso or "ERCOT").upper()
     # ``hour_grain`` (R-ERCOT-5): ERCOT's detected-hour companions of both
@@ -2035,7 +2079,11 @@ def unit_outage_short_derate_factors(
         iso, hour_grain, netload_mask_repair, full_rederive
     )
     have_coal = coal_scope and csv_path.exists()
-    gas_path = unit_outage_short_gas_csv_for_iso(iso, hour_grain) if gas_scope else None
+    gas_path = (
+        unit_outage_short_gas_csv_for_iso(iso, hour_grain, split_remap)
+        if gas_scope
+        else None
+    )
     have_gas = gas_path is not None and gas_path.exists()
     if not have_coal and not have_gas:
         return {}
@@ -2399,7 +2447,7 @@ def unit_partial_outage_derate_factors(
 
 
 def unit_outage_maxgen_csv_for_iso(
-    iso: str | None, mixed_gas_routing: bool = False
+    iso: str | None, mixed_gas_routing: bool = False, split_remap: bool = False
 ) -> Path:
     """Return the declared-event-window (maxgen) unit-derate CSV path.
 
@@ -2416,7 +2464,15 @@ def unit_outage_maxgen_csv_for_iso(
     must move with it -- a unit routed to ``ST_GAS`` in one layer and
     ``CC_REGULAR`` in the other would leave the object half-repaired
     (rule 19 ``[R-ONE-MECH]``).
+
+    ``split_remap`` (``ScenarioConfig.campd_split_remap_companions``, miso-280)
+    selects the ``-splitremap-`` companion, raising when it is absent (see
+    :func:`unit_outage_csv_for_iso`).
     """
+    if split_remap:
+        return _campd.split_remap_companion(
+            unit_outage_maxgen_csv_for_iso(iso, mixed_gas_routing)
+        )
     iso_u = (iso or "ERCOT").upper()
     base = UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-maxgen-{iso_u}.csv")
     if not mixed_gas_routing:
@@ -2435,6 +2491,7 @@ def unit_outage_maxgen_derate_factors(
     mixed_gas_routing: bool = False,
     mid_vintage_exit_carry: bool = False,
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
+    split_remap: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return declared-event-window revealed-derate availability multipliers.
 
@@ -2461,7 +2518,9 @@ def unit_outage_maxgen_derate_factors(
     derate. ISOs without the file get an empty dict (no effect).
     """
     iso = (iso or "ERCOT").upper()
-    csv_path = unit_outage_maxgen_csv_for_iso(iso, mixed_gas_routing)
+    # miso-280: ``split_remap`` selects the '-splitremap-' companion (raising
+    # when absent) — see unit_outage_maxgen_csv_for_iso.
+    csv_path = unit_outage_maxgen_csv_for_iso(iso, mixed_gas_routing, split_remap)
     if not csv_path.exists():
         return {}
     df = pd.read_csv(csv_path)

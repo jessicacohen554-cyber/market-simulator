@@ -31,14 +31,15 @@ def _art(iso="SOCO", year=2019, coal_bit=45.0, attestation=True):
     """The clean PJM-scale fixture, re-keyed, with COAL_BIT moved to ``coal_bit``.
 
     Actual COAL_BIT is 55 TWh on a ~721 TWh system (volume band 8 TWh), so 45
-    is a -10 TWh under-run FAIL and 65 a +10 TWh over-run FAIL. The bench's
-    avgLMP is dropped so a region with no price block takes the v3.8 class.
+    is a -10 TWh under-run FAIL and 65 a +10 TWh over-run FAIL. The bench
+    keeps the fixture's clean avgLMP: since soco-84 (owner ruling 2026-09-28
+    "Score C3a vs lambda") SOCO carries a price block and scores on the
+    ordinary path, so the scoped row now lands on the CALIBRATED ladder.
     """
     d = DeterminationTests()
     ypay = d._clean_year_payload()
     ypay["gmModel"]["COAL_BIT"] = coal_bit
     kw = d._clean_bench_args()
-    kw.pop("avg_lmp")
     art = _artifacts(
         ypay,
         iso=iso,
@@ -76,7 +77,7 @@ class ScopedLedgerTests(unittest.TestCase):
         self.assertEqual(v["criteria"]["fuelmix"]["caveat_kind"], "ledgered")
         self.assertEqual(v["grade_summary"]["ledgered"], 1)
         # It DOWNGRADES: the caveat rung, never the clean one.
-        self.assertEqual(v["determination"], cv.PHYSICALLY_CALIBRATED_CAVEATS)
+        self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
         self.assertIn("rubric v3.10 scoped ledgered caveat", v["reasons"][0])
         self.assertFalse(
             any(
@@ -87,7 +88,7 @@ class ScopedLedgerTests(unittest.TestCase):
 
     def test_the_same_run_without_the_miss_is_clean(self):
         v = cv.determine_from_artifacts("t", _art(coal_bit=55.0))
-        self.assertEqual(v["determination"], cv.PHYSICALLY_CALIBRATED)
+        self.assertEqual(v["determination"], cv.CALIBRATED)
 
     def test_overrun_of_the_same_row_stays_fail(self):
         v = cv.determine_from_artifacts("t", _art(coal_bit=65.0))
@@ -117,7 +118,6 @@ class ScopedLedgerTests(unittest.TestCase):
         ypay = d._clean_year_payload()
         ypay["gmModel"]["CC_REGULAR"] = 300.0  # -25 TWh under-run on CC
         kw = d._clean_bench_args()
-        kw.pop("avg_lmp")
         art = _artifacts(
             ypay, iso="SOCO", year=2019, attestation=_clean_attestation(), **kw
         )

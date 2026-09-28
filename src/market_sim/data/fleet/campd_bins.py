@@ -27,6 +27,7 @@ from market_sim.config.plant_taxonomy import (
     is_coal_class,
 )
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.data import campd as _campd
 from market_sim.data.campd import (
     DEFAULT_PARASITIC_LOAD_PCT,
     _DEFAULT_PARASITIC_LOAD_PCT,
@@ -402,7 +403,9 @@ def coal_incremental_hr_ratios(
 
 
 @lru_cache(maxsize=64)
-def measured_cc_heat_rates(iso: str, year: int | None = None) -> dict[int, float]:
+def measured_cc_heat_rates(
+    iso: str, year: int | None = None, split_remap: bool = False
+) -> dict[int, float]:
     """Return ``{plant_code: measured operating heat rate}`` for CC_REGULAR.
 
     Reads the committed CAMPD-measured artifact
@@ -442,11 +445,36 @@ def measured_cc_heat_rates(iso: str, year: int | None = None) -> dict[int, float
     1.5x too high. Those plants are flagged ``steam_not_metered`` and are not
     applied. Empty dict when the ISO has no artifact, which leaves every plant
     on its eGRID rate — never a silent hand number (rule 23 [R-FROZEN-DERIVE]).
+
+    ``split_remap`` (``ScenarioConfig.campd_split_remap_companions``, miso-280;
+    resolved by :func:`measured_cc_heat_rate_selector`) reads the
+    ``-splitremap-`` companion re-derived after West Riverside's CTs were added
+    to ``campd.CAMPD_UNIT_PLANT_REMAP``, raising when it is absent.
     """
     path = PROCESSED_DIR / f"campd_cc_heat_rates_{iso.upper()}.csv"
+    if split_remap:
+        path = _campd.split_remap_companion(path)
     if not path.exists():
         return {}
     return _measured_rate_map(path, year)
+
+
+def measured_cc_heat_rate_selector(config: object) -> bool | str:
+    """Return the ``measured_cc_heat_rates`` value the fleet loaders receive.
+
+    ``False`` / ``True`` exactly as ``ScenarioConfig.measured_cc_heat_rates``
+    reads, unless ``campd_split_remap_companions`` (miso-280, GATED default
+    False) is ALSO armed, in which case :data:`market_sim.data.campd.SPLIT_REMAP_TAG`
+    — a truthy tag the loaders forward to :func:`measured_cc_heat_rates` as
+    ``split_remap=True``. One accessor for every fleet call site (operable,
+    retiree and mothball channels), so no channel prices a CC on the pre-remap
+    artifact while another reads the companion (rule 19 ``[R-ONE-MECH]``).
+    Unarmed, the value is the plain bool it always was.
+    """
+    measured = bool(getattr(config, "measured_cc_heat_rates", False))
+    if measured and _campd.split_remap_armed(config):
+        return _campd.SPLIT_REMAP_TAG
+    return measured
 
 
 #: The measured-CC artifact flag whose row is priced on the owner's EIA-923
@@ -1716,13 +1744,36 @@ def campd_fuel_split_selector(config: object) -> bool | str:
     readers at once; without the fuel split it has no meaning and is ignored.
     Unarmed, the return value is the plain ``True``/``False`` it always was,
     so every existing reader and cache key is unchanged.
+
+    ``ScenarioConfig.campd_split_remap_companions`` (miso-280, GATED default
+    False) appends :data:`market_sim.data.campd.SPLIT_REMAP_TAG` to whichever
+    fuel-split family is selected (``"splitremap"`` / ``"stcov-splitremap"``),
+    selecting the ``-splitremap-`` companions of all four readers at once. The
+    companions were derived only on the fuel-split family (the MISO keeper's),
+    so arming it WITHOUT the fuel split raises rather than silently reading the
+    pre-remap tranche artifact beside remapped outage extracts.
     """
     per_unit, _ = campd_attribution_selectors(config)
+    split_remap = _campd.split_remap_armed(config)
     if per_unit or not bool(getattr(config, "campd_unit_fuel_split", False)):
+        if split_remap:
+            raise ValueError(
+                "campd_split_remap_companions requires campd_unit_fuel_split "
+                "(and not campd_per_unit_attribution): the tranche-family "
+                "'-splitremap-' companions exist only for the fuel-split family"
+            )
         return False
     if bool(getattr(config, "campd_st_gas_span_coverage", False)):
-        return ST_GAS_SPAN_COVERAGE_TAG
-    return True
+        tag: bool | str = ST_GAS_SPAN_COVERAGE_TAG
+    else:
+        tag = True
+    if split_remap:
+        return (
+            f"{tag}-{_campd.SPLIT_REMAP_TAG}"
+            if isinstance(tag, str)
+            else _campd.SPLIT_REMAP_TAG
+        )
+    return tag
 
 
 def _fuel_split_companion(base: Path, fuel_split: bool | str = True) -> Path:
@@ -1735,13 +1786,24 @@ def _fuel_split_companion(base: Path, fuel_split: bool | str = True) -> Path:
     """
     stem, iso = base.stem.rsplit("_", 1)
     plain = base.with_name(f"{stem}-fuelsplit-{iso}{base.suffix}")
+    # miso-280: a trailing split-remap tag selects the '-splitremap-' companion
+    # of the family the rest of the tag selects, raising when it is absent
+    # (market_sim.data.campd.split_remap_companion).
+    split_remap = isinstance(fuel_split, str) and fuel_split.endswith(
+        _campd.SPLIT_REMAP_TAG
+    )
+    if split_remap:
+        fuel_split = fuel_split[: -len(_campd.SPLIT_REMAP_TAG)].rstrip("-") or True
+    chosen = plain
     if fuel_split == ST_GAS_SPAN_COVERAGE_TAG:
         cov = base.with_name(
             f"{stem}-fuelsplit-{ST_GAS_SPAN_COVERAGE_TAG}-{iso}{base.suffix}"
         )
         if cov.exists():
-            return cov
-    return plain
+            chosen = cov
+    if split_remap:
+        return _campd.split_remap_companion(chosen)
+    return chosen
 
 
 def thermal_tranche_csv_for_iso(

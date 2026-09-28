@@ -506,6 +506,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # through the same selector, so the off path is byte-inert). Registered IN
     # THE SAME COMMIT as the field.
     "campd_st_gas_span_coverage",
+    # miso-280 split-remap companions (GATED default-off; selects the
+    # '-splitremap-' companions of the MISO keeper's seven CAMPD-derived
+    # artifacts through campd.split_remap_armed, so the off path is
+    # byte-inert). Registered IN THE SAME COMMIT as the field.
+    "campd_split_remap_companions",
     # SPP-85 net-load-mask repair of the standard / short / partial CAMPD
     # extracts (GATED default-off; selects the '-netloadmask-' companions
     # through the same resolvers, so the off path is byte-inert). Same commit
@@ -2393,6 +2398,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-279 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_st_gas_span_coverage": "False",
+    # Added by miso-280 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "campd_split_remap_companions": "False",
     # Added by SPP-85 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_netload_mask_repair": "False",
@@ -16636,6 +16644,33 @@ class ScenarioConfig:
     # solve year is absent from that year's fleet, so its row is inert there.
     # docs/FINDING-miso279-stgas-span-coverage-2026-09-27.md.
     campd_st_gas_span_coverage: bool = False
+
+    # CAMPD SPLIT-REMAP COMPANIONS (miso-280, GATED default off; rule 14
+    # [R-ACCURATE], rule 19 [R-ONE-MECH]). CEMS files West Riverside Energy
+    # Center's 2020 CTs (EIA 64020, generators CTG3 / CTG4) under the legacy
+    # Riverside facility 55641 as units CT-03 / CT-04; CAMPD CT-03 + CT-04 gross
+    # tracks EIA-923 64020 net within 2 % every year 2020-2025. The identity
+    # entries (55641, "CT-03"/"CT-04") -> 64020 now sit in
+    # campd.CAMPD_UNIT_PLANT_REMAP unconditionally -- no live solve path reads
+    # raw CAMPD, so they reach a solve ONLY through re-derived artifacts, and
+    # every derived artifact the MISO keeper reads was derived before the entry
+    # existed: 55641 carries its sibling's outage windows (64020 none of its
+    # own), 55641's CC heat-rate row is refused boundary_above_band while 64020
+    # has no row (fallback rate), and 55641's tranche row reads a 150 % median
+    # CF. Armed, the '-splitremap-' companions re-derived under the extended
+    # remap are read in place of: the unit-outage extract the routing gates
+    # select (MISO: '-unitroute-'), the short-GAS extract, the maxgen extract,
+    # the measured CC heat-rate artifact (needs measured_cc_heat_rates) and the
+    # four tranche-family files (needs campd_unit_fuel_split; the tag rides
+    # campd_fuel_split_selector). ONE field over all seven, so no artifact reads
+    # one plant identity while a sibling reads the other; an ABSENT companion
+    # RAISES rather than falling back (MISO carries the only derived set).
+    # Plant emission rates (plant_emission_rates_v2, shared all-ISO) are OUT of
+    # scope: the MISO backcast carries no carbon price, so they do not enter
+    # its dispatch. ZERO free parameters (DOF +0). Rule 23 [R-FROZEN-DERIVE]:
+    # the trigger is this identity data change, never a residual.
+    # docs/FINDING-miso280-phase0-riverside-vlr-southgas-2026-09-28.md §1.
+    campd_split_remap_companions: bool = False
 
     # ECONOMIC-LAY-UP GUARD on the per-unit CAMPD companions (nyiso-177,
     # GATED default off; PREREG-nyiso177-degradation-root-cause.md). Selects

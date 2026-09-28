@@ -53,6 +53,7 @@ from market_sim.data.ba_membership import (
     joining_ba_codes,
 )
 from market_sim.data.coal import _coal_class_for, coal_subclass
+from market_sim.data import campd as _campd
 from market_sim.data.disk_memo import memoized_mapping
 from market_sim.data.egrid_sheets import read_egrid_sheet
 from pathlib import Path
@@ -1209,7 +1210,7 @@ def _rows_to_generators(
     measured_ct_heat_rates: bool = False,
     measured_coal_heat_rates: bool = False,
     measured_st_heat_rates: bool = False,
-    measured_cc_heat_rates: bool = False,
+    measured_cc_heat_rates: bool | str = False,
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
@@ -1349,9 +1350,15 @@ def _rows_to_generators(
     # CC_REGULAR may take it, so a CC site's boilers and peakers keep the rate
     # their own class assigns, and a cogenerating CC (CC_CHP) is excluded by
     # construction. Empty when the flag is off or the ISO has no committed
-    # artifact, in which case every row keeps its eGRID rate.
+    # artifact, in which case every row keeps its eGRID rate. The flag may
+    # carry the miso-280 split-remap tag (campd_bins.measured_cc_heat_rate_selector),
+    # which selects the '-splitremap-' companion artifact instead.
     cc_heat_rates: dict[int, float] = (
-        _pkg_ns().measured_cc_heat_rates(iso, heat_rate_year)
+        _pkg_ns().measured_cc_heat_rates(
+            iso,
+            heat_rate_year,
+            split_remap=measured_cc_heat_rates == _campd.SPLIT_REMAP_TAG,
+        )
         if measured_cc_heat_rates
         else {}
     )
@@ -2069,7 +2076,7 @@ def _load_fleet_from_parquet(
     measured_ct_heat_rates: bool = False,
     measured_coal_heat_rates: bool = False,
     measured_st_heat_rates: bool = False,
-    measured_cc_heat_rates: bool = False,
+    measured_cc_heat_rates: bool | str = False,
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
@@ -2238,7 +2245,7 @@ def _load_fleet_from_clean(
     measured_ct_heat_rates: bool = False,
     measured_coal_heat_rates: bool = False,
     measured_st_heat_rates: bool = False,
-    measured_cc_heat_rates: bool = False,
+    measured_cc_heat_rates: bool | str = False,
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
@@ -2511,7 +2518,7 @@ def load_fleet_from_csv(
     measured_ct_heat_rates: bool = False,
     measured_coal_heat_rates: bool = False,
     measured_st_heat_rates: bool = False,
-    measured_cc_heat_rates: bool = False,
+    measured_cc_heat_rates: bool | str = False,
     measured_chp_heat_rates: bool = False,
     egrid_identity_heat_rates: bool = False,
     apply_chp_steam_credit_correction: bool = True,
@@ -3210,7 +3217,7 @@ def load_retired_within_window(
     measured_ct_heat_rates: bool = False,
     measured_coal_heat_rates: bool = False,
     measured_st_heat_rates: bool = False,
-    measured_cc_heat_rates: bool = False,
+    measured_cc_heat_rates: bool | str = False,
     measured_chp_heat_rates: bool = False,
 ) -> list[Generator]:
     """Load whole-plant exits that retired mid-backcast for an ISO.
@@ -3452,7 +3459,7 @@ def load_mothballed_but_operating(
     measured_ct_heat_rates: bool = False,
     measured_coal_heat_rates: bool = False,
     measured_st_heat_rates: bool = False,
-    measured_cc_heat_rates: bool = False,
+    measured_cc_heat_rates: bool | str = False,
     measured_chp_heat_rates: bool = False,
 ) -> list[Generator]:
     """Re-carry OA (mothballed) units that were OP in the year-matched vintage.

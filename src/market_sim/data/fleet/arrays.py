@@ -52,6 +52,7 @@ from market_sim.data.floor_mechanisms import (
     MECH_ST_GAS_MUSTRUN_PER_PLANT,
     clear_where_unfloored,
 )
+from market_sim.data import campd as _campd
 from market_sim.data.outages import (
     ct_deployment_floor_for_year,
     ercot_noncampd_availability_caps,
@@ -1348,6 +1349,12 @@ def _apply_outage_overlays(
             # flag; selects '-perunitdark-' and is byte-inert while off.
             dark_unit_years=bool(getattr(config, "campd_per_unit_attribution", False))
             and bool(getattr(config, "campd_dark_unit_year_windows", False)),
+            # miso-280 (rule 14 [R-ACCURATE]): the '-splitremap-' companion of
+            # whichever extract the flags above select, re-derived after West
+            # Riverside's CTs were added to campd.CAMPD_UNIT_PLANT_REMAP. Moves
+            # with the short-gas, maxgen, CC heat-rate and tranche companions
+            # through ONE accessor (rule 19); raises if armed and absent.
+            split_remap=_campd.split_remap_armed(config),
             # PJM-NEXT-2 (rule 14 [R-ACCURATE]): the standard extract plus the
             # windows of the facilities its membership never scanned. Selects
             # '-memberrepair-'; byte-inert while off.
@@ -1563,6 +1570,9 @@ def _apply_outage_overlays(
                 # accumulator, for the sub-5-day window family.
                 lp_bin_capacity=_lp_bins,
                 coal_scope=_short_coal,
+                # miso-280: the gas family's '-splitremap-' companion (the
+                # coal short extract carries no remapped unit). Byte-inert off.
+                split_remap=_campd.split_remap_armed(config),
                 # R-ERCOT-5: ERCOT's detected-hour companions of both short
                 # families (ERCOT-only by the loader's own path selector).
                 hour_grain=_ercot_window_hour_grain,
@@ -1698,6 +1708,9 @@ def _apply_outage_overlays(
                 # on the DENOMINATOR, never on the measured derate_mw
                 # numerator, so the objection recorded there does not apply.
                 lp_bin_capacity=_lp_bins,
+                # miso-280: the '-splitremap-' companion, moving with the std
+                # layer (same routing, same identity). Byte-inert off.
+                split_remap=_campd.split_remap_armed(config),
             )
             if mgfac:
                 applied_mg = 0
@@ -4484,6 +4497,46 @@ def generators_to_fleet_arrays(
                     int((last < hours).sum()),
                     float(pmax[last < hours].sum()),
                     int(last.min()),
+                )
+
+    # PLANT ENTRY hour mask (lane R-ERCOT-12, owner ruling "Fleet + benchmark"
+    # 2026-09-28; constants.ISO_PLANT_ENTRIES). A registered plant that was
+    # connected to another system before a dated hour is offline in every LP
+    # row before it (all year in an earlier year). ERCOT's bin sheet carries
+    # its plants in every year and no loader BA filter reaches them, so this
+    # is the fleet's only membership seam for them (ERCOT: Frontera 55098,
+    # exporting to CFE until 2023-04-13). min_gen scaled likewise.
+    # Backcast-only; an empty map for every other region and year, so they
+    # are byte-identical.
+    if (
+        config is not None
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _cod_year is not None
+        and _iso is not None
+    ):
+        from market_sim.data.ba_membership import plant_entry_first_inside_row
+
+        _entry = plant_entry_first_inside_row(_iso, int(_cod_year))
+        if _entry:
+            first_in = np.array(
+                [_entry.get(int(g.plant_code), 0) for g in generators], dtype=np.int64
+            )
+            if (first_in > 0).any():
+                member = (
+                    np.arange(hours)[np.newaxis, :] >= first_in[:, np.newaxis]
+                ).astype(float)
+                availability *= member
+                if min_gen is not None:
+                    min_gen *= member
+                    clear_where_unfloored(min_gen_mech, min_gen)
+                logger.info(
+                    "plant entry (%s %s): %d unit(s), %.0f MW outside the region "
+                    "before LP row %d",
+                    _iso,
+                    _cod_year,
+                    int((first_in > 0).sum()),
+                    float(pmax[first_in > 0].sum()),
+                    int(min(first_in[first_in > 0].min(), hours)),
                 )
 
     # Measured ramp/fast-start capability (GATED config.measured_ramp_capability,

@@ -1,0 +1,2058 @@
+{
+ "delta": {
+  "campd_split_remap_companions": true
+ },
+ "keeper": "results/calibration/miso279_span",
+ "years": {
+  "2019": {
+   "cc_regular_avail_twh": [
+    138.34335,
+    138.34335
+   ],
+   "classes_moved": {},
+   "plants": {
+    "A": {
+     "55641": [
+      {
+       "avail_twh": 2.1655,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0797,
+       "mc_mean": 19.975,
+       "pmax": 276.3,
+       "unit": "CC_REGULAR_MISO-East_p55641_committed"
+      },
+      {
+       "avail_twh": 0.2623,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.7686,
+       "mc_mean": 19.334,
+       "pmax": 33.5,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc00"
+      },
+      {
+       "avail_twh": 0.2623,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9212,
+       "mc_mean": 19.725,
+       "pmax": 33.5,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc01"
+      },
+      {
+       "avail_twh": 0.2623,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0739,
+       "mc_mean": 20.116,
+       "pmax": 33.5,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc02"
+      },
+      {
+       "avail_twh": 0.2623,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.2265,
+       "mc_mean": 20.507,
+       "pmax": 33.5,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc03"
+      },
+      {
+       "avail_twh": 0.2623,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.3791,
+       "mc_mean": 20.898,
+       "pmax": 33.5,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc04"
+      },
+      {
+       "avail_twh": 0.2623,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.5317,
+       "mc_mean": 21.289,
+       "pmax": 33.5,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc05"
+      },
+      {
+       "avail_twh": 0.707,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 15.8501,
+       "mc_mean": 42.243,
+       "pmax": 90.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_peak"
+      }
+     ],
+     "64020": []
+    },
+    "K": {
+     "55641": [
+      {
+       "avail_twh": 3.1126,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0797,
+       "mc_mean": 19.975,
+       "pmax": 397.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_committed"
+      },
+      {
+       "avail_twh": 0.1045,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.7686,
+       "mc_mean": 19.334,
+       "pmax": 13.3,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc00"
+      },
+      {
+       "avail_twh": 0.1045,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9212,
+       "mc_mean": 19.725,
+       "pmax": 13.3,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc01"
+      },
+      {
+       "avail_twh": 0.1045,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0739,
+       "mc_mean": 20.116,
+       "pmax": 13.3,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc02"
+      },
+      {
+       "avail_twh": 0.1045,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.2265,
+       "mc_mean": 20.507,
+       "pmax": 13.3,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc03"
+      },
+      {
+       "avail_twh": 0.1045,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.3791,
+       "mc_mean": 20.898,
+       "pmax": 13.3,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc04"
+      },
+      {
+       "avail_twh": 0.1045,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.5317,
+       "mc_mean": 21.289,
+       "pmax": 13.3,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc05"
+      },
+      {
+       "avail_twh": 0.707,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 15.8501,
+       "mc_mean": 42.243,
+       "pmax": 90.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_peak"
+      }
+     ],
+     "64020": []
+    }
+   },
+   "units_moved": [
+    "CC_REGULAR_MISO-East_p55641_committed",
+    "CC_REGULAR_MISO-East_p55641_econc00",
+    "CC_REGULAR_MISO-East_p55641_econc01",
+    "CC_REGULAR_MISO-East_p55641_econc02",
+    "CC_REGULAR_MISO-East_p55641_econc03",
+    "CC_REGULAR_MISO-East_p55641_econc04",
+    "CC_REGULAR_MISO-East_p55641_econc05"
+   ]
+  },
+  "2020": {
+   "cc_regular_avail_twh": [
+    140.58946,
+    141.25291
+   ],
+   "classes_moved": {
+    "CC_REGULAR": {
+     "avail_twh_delta": 0.6635,
+     "floor_twh_delta": 0.0
+    }
+   },
+   "plants": {
+    "A": {
+     "55641": [
+      {
+       "avail_twh": 1.2447,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9175,
+       "mc_mean": 18.685,
+       "pmax": 274.8,
+       "unit": "CC_REGULAR_MISO-East_p55641_committed"
+      },
+      {
+       "avail_twh": 0.1487,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.6135,
+       "mc_mean": 17.916,
+       "pmax": 32.8,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc00"
+      },
+      {
+       "avail_twh": 0.1487,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.7626,
+       "mc_mean": 18.275,
+       "pmax": 32.8,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc01"
+      },
+      {
+       "avail_twh": 0.1487,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9118,
+       "mc_mean": 18.634,
+       "pmax": 32.8,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc02"
+      },
+      {
+       "avail_twh": 0.1487,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0609,
+       "mc_mean": 18.993,
+       "pmax": 32.8,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc03"
+      },
+      {
+       "avail_twh": 0.1487,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.21,
+       "mc_mean": 19.351,
+       "pmax": 32.8,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc04"
+      },
+      {
+       "avail_twh": 0.1487,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.3592,
+       "mc_mean": 19.71,
+       "pmax": 32.8,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc05"
+      },
+      {
+       "avail_twh": 0.4192,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 15.487,
+       "mc_mean": 39.356,
+       "pmax": 92.5,
+       "unit": "CC_REGULAR_MISO-East_p55641_peak"
+      }
+     ],
+     "64020": [
+      {
+       "avail_twh": 1.3949,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1881,
+       "mc_mean": 21.072,
+       "pmax": 365.6,
+       "unit": "CC_REGULAR_MISO-East_p64020_committed"
+      },
+      {
+       "avail_twh": 0.2216,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8722,
+       "mc_mean": 20.086,
+       "pmax": 58.1,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc00"
+      },
+      {
+       "avail_twh": 0.2216,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0271,
+       "mc_mean": 20.494,
+       "pmax": 58.1,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc01"
+      },
+      {
+       "avail_twh": 0.2216,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1821,
+       "mc_mean": 20.901,
+       "pmax": 58.1,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc02"
+      },
+      {
+       "avail_twh": 0.2216,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.3371,
+       "mc_mean": 21.309,
+       "pmax": 58.1,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc03"
+      },
+      {
+       "avail_twh": 0.2216,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.492,
+       "mc_mean": 21.717,
+       "pmax": 58.1,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc04"
+      },
+      {
+       "avail_twh": 0.2216,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.647,
+       "mc_mean": 22.124,
+       "pmax": 58.1,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc05"
+      }
+     ]
+    },
+    "K": {
+     "55641": [
+      {
+       "avail_twh": 0.3514,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 11.3491,
+       "mc_mean": 29.375,
+       "pmax": 395.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_committed"
+      },
+      {
+       "avail_twh": 0.0114,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 10.8503,
+       "mc_mean": 28.112,
+       "pmax": 12.8,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc00"
+      },
+      {
+       "avail_twh": 0.0114,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 11.095,
+       "mc_mean": 28.701,
+       "pmax": 12.8,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc01"
+      },
+      {
+       "avail_twh": 0.0114,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 11.3397,
+       "mc_mean": 29.29,
+       "pmax": 12.8,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc02"
+      },
+      {
+       "avail_twh": 0.0114,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 11.5844,
+       "mc_mean": 29.878,
+       "pmax": 12.8,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc03"
+      },
+      {
+       "avail_twh": 0.0114,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 11.829,
+       "mc_mean": 30.467,
+       "pmax": 12.8,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc04"
+      },
+      {
+       "avail_twh": 0.0114,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 12.0737,
+       "mc_mean": 31.056,
+       "pmax": 12.8,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc05"
+      },
+      {
+       "avail_twh": 0.0823,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 25.4084,
+       "mc_mean": 63.287,
+       "pmax": 92.5,
+       "unit": "CC_REGULAR_MISO-East_p55641_peak"
+      }
+     ],
+     "64020": [
+      {
+       "avail_twh": 1.8517,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.2507,
+       "mc_mean": 21.238,
+       "pmax": 321.3,
+       "unit": "CC_REGULAR_MISO-East_p64020_committed"
+      },
+      {
+       "avail_twh": 0.3772,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.932,
+       "mc_mean": 20.243,
+       "pmax": 65.5,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc00"
+      },
+      {
+       "avail_twh": 0.3772,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0884,
+       "mc_mean": 20.655,
+       "pmax": 65.5,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc01"
+      },
+      {
+       "avail_twh": 0.3772,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.2447,
+       "mc_mean": 21.066,
+       "pmax": 65.5,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc02"
+      },
+      {
+       "avail_twh": 0.3772,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.401,
+       "mc_mean": 21.477,
+       "pmax": 65.5,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc03"
+      },
+      {
+       "avail_twh": 0.3772,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.5573,
+       "mc_mean": 21.888,
+       "pmax": 65.5,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc04"
+      },
+      {
+       "avail_twh": 0.3772,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.7136,
+       "mc_mean": 22.3,
+       "pmax": 65.5,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc05"
+      }
+     ]
+    }
+   },
+   "units_moved": [
+    "CC_REGULAR_MISO-East_p55641_committed",
+    "CC_REGULAR_MISO-East_p55641_econc00",
+    "CC_REGULAR_MISO-East_p55641_econc01",
+    "CC_REGULAR_MISO-East_p55641_econc02",
+    "CC_REGULAR_MISO-East_p55641_econc03",
+    "CC_REGULAR_MISO-East_p55641_econc04",
+    "CC_REGULAR_MISO-East_p55641_econc05",
+    "CC_REGULAR_MISO-East_p55641_peak",
+    "CC_REGULAR_MISO-East_p64020_committed",
+    "CC_REGULAR_MISO-East_p64020_econc00",
+    "CC_REGULAR_MISO-East_p64020_econc01",
+    "CC_REGULAR_MISO-East_p64020_econc02",
+    "CC_REGULAR_MISO-East_p64020_econc03",
+    "CC_REGULAR_MISO-East_p64020_econc04",
+    "CC_REGULAR_MISO-East_p64020_econc05"
+   ]
+  },
+  "2021": {
+   "cc_regular_avail_twh": [
+    146.71961,
+    146.00528
+   ],
+   "classes_moved": {
+    "CC_REGULAR": {
+     "avail_twh_delta": -0.7143,
+     "floor_twh_delta": 0.0
+    }
+   },
+   "plants": {
+    "A": {
+     "55641": [
+      {
+       "avail_twh": 1.984,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9019,
+       "mc_mean": 37.874,
+       "pmax": 269.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_committed"
+      },
+      {
+       "avail_twh": 0.2254,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.5986,
+       "mc_mean": 35.781,
+       "pmax": 30.6,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc00"
+      },
+      {
+       "avail_twh": 0.2254,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.7474,
+       "mc_mean": 36.542,
+       "pmax": 30.6,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc01"
+      },
+      {
+       "avail_twh": 0.2254,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8962,
+       "mc_mean": 37.304,
+       "pmax": 30.6,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc02"
+      },
+      {
+       "avail_twh": 0.2254,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.045,
+       "mc_mean": 38.065,
+       "pmax": 30.6,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc03"
+      },
+      {
+       "avail_twh": 0.2254,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1938,
+       "mc_mean": 38.826,
+       "pmax": 30.6,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc04"
+      },
+      {
+       "avail_twh": 0.2254,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.3426,
+       "mc_mean": 39.587,
+       "pmax": 30.6,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc05"
+      },
+      {
+       "avail_twh": 0.7374,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 15.4521,
+       "mc_mean": 82.314,
+       "pmax": 100.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_peak"
+      }
+     ],
+     "64020": [
+      {
+       "avail_twh": 1.3824,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9752,
+       "mc_mean": 38.515,
+       "pmax": 358.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_committed"
+      },
+      {
+       "avail_twh": 0.2196,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.6687,
+       "mc_mean": 36.373,
+       "pmax": 57.0,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc00"
+      },
+      {
+       "avail_twh": 0.2196,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.819,
+       "mc_mean": 37.147,
+       "pmax": 57.0,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc01"
+      },
+      {
+       "avail_twh": 0.2196,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9694,
+       "mc_mean": 37.922,
+       "pmax": 57.0,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc02"
+      },
+      {
+       "avail_twh": 0.2196,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1198,
+       "mc_mean": 38.696,
+       "pmax": 57.0,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc03"
+      },
+      {
+       "avail_twh": 0.2196,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.2702,
+       "mc_mean": 39.471,
+       "pmax": 57.0,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc04"
+      },
+      {
+       "avail_twh": 0.2196,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.4206,
+       "mc_mean": 40.245,
+       "pmax": 57.0,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc05"
+      }
+     ]
+    },
+    "K": {
+     "55641": [
+      {
+       "avail_twh": 1.0322,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 11.1543,
+       "mc_mean": 59.976,
+       "pmax": 386.9,
+       "unit": "CC_REGULAR_MISO-East_p55641_committed"
+      },
+      {
+       "avail_twh": 0.0292,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 10.6641,
+       "mc_mean": 56.594,
+       "pmax": 11.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc00"
+      },
+      {
+       "avail_twh": 0.0292,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 10.9046,
+       "mc_mean": 57.824,
+       "pmax": 11.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc01"
+      },
+      {
+       "avail_twh": 0.0292,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 11.1451,
+       "mc_mean": 59.055,
+       "pmax": 11.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc02"
+      },
+      {
+       "avail_twh": 0.0292,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 11.3856,
+       "mc_mean": 60.285,
+       "pmax": 11.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc03"
+      },
+      {
+       "avail_twh": 0.0292,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 11.626,
+       "mc_mean": 61.515,
+       "pmax": 11.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc04"
+      },
+      {
+       "avail_twh": 0.0292,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 11.8665,
+       "mc_mean": 62.746,
+       "pmax": 11.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc05"
+      },
+      {
+       "avail_twh": 0.2669,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 24.9724,
+       "mc_mean": 131.797,
+       "pmax": 100.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_peak"
+      }
+     ],
+     "64020": [
+      {
+       "avail_twh": 2.7061,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8112,
+       "mc_mean": 37.657,
+       "pmax": 315.2,
+       "unit": "CC_REGULAR_MISO-East_p64020_committed"
+      },
+      {
+       "avail_twh": 0.5513,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.5118,
+       "mc_mean": 35.564,
+       "pmax": 64.2,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc00"
+      },
+      {
+       "avail_twh": 0.5513,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.6587,
+       "mc_mean": 36.321,
+       "pmax": 64.2,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc01"
+      },
+      {
+       "avail_twh": 0.5513,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8055,
+       "mc_mean": 37.077,
+       "pmax": 64.2,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc02"
+      },
+      {
+       "avail_twh": 0.5513,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9524,
+       "mc_mean": 37.833,
+       "pmax": 64.2,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc03"
+      },
+      {
+       "avail_twh": 0.5513,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0992,
+       "mc_mean": 38.59,
+       "pmax": 64.2,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc04"
+      },
+      {
+       "avail_twh": 0.5513,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.246,
+       "mc_mean": 39.346,
+       "pmax": 64.2,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc05"
+      }
+     ]
+    }
+   },
+   "units_moved": [
+    "CC_REGULAR_MISO-East_p55641_committed",
+    "CC_REGULAR_MISO-East_p55641_econc00",
+    "CC_REGULAR_MISO-East_p55641_econc01",
+    "CC_REGULAR_MISO-East_p55641_econc02",
+    "CC_REGULAR_MISO-East_p55641_econc03",
+    "CC_REGULAR_MISO-East_p55641_econc04",
+    "CC_REGULAR_MISO-East_p55641_econc05",
+    "CC_REGULAR_MISO-East_p55641_peak",
+    "CC_REGULAR_MISO-East_p64020_committed",
+    "CC_REGULAR_MISO-East_p64020_econc00",
+    "CC_REGULAR_MISO-East_p64020_econc01",
+    "CC_REGULAR_MISO-East_p64020_econc02",
+    "CC_REGULAR_MISO-East_p64020_econc03",
+    "CC_REGULAR_MISO-East_p64020_econc04",
+    "CC_REGULAR_MISO-East_p64020_econc05"
+   ]
+  },
+  "2022": {
+   "cc_regular_avail_twh": [
+    171.70284,
+    170.52993
+   ],
+   "classes_moved": {
+    "CC_REGULAR": {
+     "avail_twh_delta": -1.1729,
+     "floor_twh_delta": 0.0
+    }
+   },
+   "plants": {
+    "A": {
+     "55641": [
+      {
+       "avail_twh": 1.7151,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8505,
+       "mc_mean": 41.661,
+       "pmax": 272.9,
+       "unit": "CC_REGULAR_MISO-East_p55641_committed"
+      },
+      {
+       "avail_twh": 0.2013,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.5494,
+       "mc_mean": 40.265,
+       "pmax": 32.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc00"
+      },
+      {
+       "avail_twh": 0.2013,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.6971,
+       "mc_mean": 41.129,
+       "pmax": 32.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc01"
+      },
+      {
+       "avail_twh": 0.2013,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8448,
+       "mc_mean": 41.992,
+       "pmax": 32.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc02"
+      },
+      {
+       "avail_twh": 0.2013,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9925,
+       "mc_mean": 42.855,
+       "pmax": 32.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc03"
+      },
+      {
+       "avail_twh": 0.2013,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1402,
+       "mc_mean": 43.718,
+       "pmax": 32.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc04"
+      },
+      {
+       "avail_twh": 0.2013,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.2879,
+       "mc_mean": 44.581,
+       "pmax": 32.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc05"
+      },
+      {
+       "avail_twh": 0.5987,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 15.3369,
+       "mc_mean": 90.794,
+       "pmax": 95.3,
+       "unit": "CC_REGULAR_MISO-East_p55641_peak"
+      }
+     ],
+     "64020": [
+      {
+       "avail_twh": 1.9358,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9801,
+       "mc_mean": 41.488,
+       "pmax": 361.5,
+       "unit": "CC_REGULAR_MISO-East_p64020_committed"
+      },
+      {
+       "avail_twh": 0.3075,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.6734,
+       "mc_mean": 40.165,
+       "pmax": 57.4,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc00"
+      },
+      {
+       "avail_twh": 0.3075,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8239,
+       "mc_mean": 41.026,
+       "pmax": 57.4,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc01"
+      },
+      {
+       "avail_twh": 0.3075,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9743,
+       "mc_mean": 41.887,
+       "pmax": 57.4,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc02"
+      },
+      {
+       "avail_twh": 0.3075,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1248,
+       "mc_mean": 42.748,
+       "pmax": 57.4,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc03"
+      },
+      {
+       "avail_twh": 0.3075,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.2753,
+       "mc_mean": 43.609,
+       "pmax": 57.4,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc04"
+      },
+      {
+       "avail_twh": 0.3075,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.4258,
+       "mc_mean": 44.47,
+       "pmax": 57.4,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc05"
+      }
+     ]
+    },
+    "K": {
+     "55641": [
+      {
+       "avail_twh": 1.6903,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8738,
+       "mc_mean": 41.796,
+       "pmax": 392.3,
+       "unit": "CC_REGULAR_MISO-East_p55641_committed"
+      },
+      {
+       "avail_twh": 0.0523,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.5717,
+       "mc_mean": 40.396,
+       "pmax": 12.1,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc00"
+      },
+      {
+       "avail_twh": 0.0523,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.7199,
+       "mc_mean": 41.262,
+       "pmax": 12.1,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc01"
+      },
+      {
+       "avail_twh": 0.0523,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8681,
+       "mc_mean": 42.128,
+       "pmax": 12.1,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc02"
+      },
+      {
+       "avail_twh": 0.0523,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0163,
+       "mc_mean": 42.994,
+       "pmax": 12.1,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc03"
+      },
+      {
+       "avail_twh": 0.0523,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1645,
+       "mc_mean": 43.86,
+       "pmax": 12.1,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc04"
+      },
+      {
+       "avail_twh": 0.0523,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.3127,
+       "mc_mean": 44.726,
+       "pmax": 12.1,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc05"
+      },
+      {
+       "avail_twh": 0.4105,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 15.3891,
+       "mc_mean": 91.096,
+       "pmax": 95.3,
+       "unit": "CC_REGULAR_MISO-East_p55641_peak"
+      }
+     ],
+     "64020": [
+      {
+       "avail_twh": 2.7274,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0017,
+       "mc_mean": 41.61,
+       "pmax": 317.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_committed"
+      },
+      {
+       "avail_twh": 0.5556,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.694,
+       "mc_mean": 40.283,
+       "pmax": 64.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc00"
+      },
+      {
+       "avail_twh": 0.5556,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.845,
+       "mc_mean": 41.147,
+       "pmax": 64.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc01"
+      },
+      {
+       "avail_twh": 0.5556,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9959,
+       "mc_mean": 42.01,
+       "pmax": 64.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc02"
+      },
+      {
+       "avail_twh": 0.5556,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1469,
+       "mc_mean": 42.874,
+       "pmax": 64.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc03"
+      },
+      {
+       "avail_twh": 0.5556,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.2978,
+       "mc_mean": 43.738,
+       "pmax": 64.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc04"
+      },
+      {
+       "avail_twh": 0.5556,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.4488,
+       "mc_mean": 44.601,
+       "pmax": 64.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc05"
+      }
+     ]
+    }
+   },
+   "units_moved": [
+    "CC_REGULAR_MISO-East_p55641_committed",
+    "CC_REGULAR_MISO-East_p55641_econc00",
+    "CC_REGULAR_MISO-East_p55641_econc01",
+    "CC_REGULAR_MISO-East_p55641_econc02",
+    "CC_REGULAR_MISO-East_p55641_econc03",
+    "CC_REGULAR_MISO-East_p55641_econc04",
+    "CC_REGULAR_MISO-East_p55641_econc05",
+    "CC_REGULAR_MISO-East_p55641_peak",
+    "CC_REGULAR_MISO-East_p64020_committed",
+    "CC_REGULAR_MISO-East_p64020_econc00",
+    "CC_REGULAR_MISO-East_p64020_econc01",
+    "CC_REGULAR_MISO-East_p64020_econc02",
+    "CC_REGULAR_MISO-East_p64020_econc03",
+    "CC_REGULAR_MISO-East_p64020_econc04",
+    "CC_REGULAR_MISO-East_p64020_econc05"
+   ]
+  },
+  "2023": {
+   "cc_regular_avail_twh": [
+    181.4555,
+    181.07128
+   ],
+   "classes_moved": {
+    "CC_REGULAR": {
+     "avail_twh_delta": -0.3842,
+     "floor_twh_delta": 0.0
+    }
+   },
+   "plants": {
+    "A": {
+     "55641": [
+      {
+       "avail_twh": 1.9481,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8366,
+       "mc_mean": 22.392,
+       "pmax": 261.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_committed"
+      },
+      {
+       "avail_twh": 0.2047,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.5362,
+       "mc_mean": 21.511,
+       "pmax": 27.4,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc00"
+      },
+      {
+       "avail_twh": 0.2047,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.6836,
+       "mc_mean": 21.951,
+       "pmax": 27.4,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc01"
+      },
+      {
+       "avail_twh": 0.2047,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8309,
+       "mc_mean": 22.391,
+       "pmax": 27.4,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc02"
+      },
+      {
+       "avail_twh": 0.2047,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9783,
+       "mc_mean": 22.831,
+       "pmax": 27.4,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc03"
+      },
+      {
+       "avail_twh": 0.2047,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1257,
+       "mc_mean": 23.271,
+       "pmax": 27.4,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc04"
+      },
+      {
+       "avail_twh": 0.2047,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.2731,
+       "mc_mean": 23.711,
+       "pmax": 27.4,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc05"
+      },
+      {
+       "avail_twh": 0.824,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 15.3058,
+       "mc_mean": 47.653,
+       "pmax": 110.4,
+       "unit": "CC_REGULAR_MISO-East_p55641_peak"
+      }
+     ],
+     "64020": [
+      {
+       "avail_twh": 2.3808,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8519,
+       "mc_mean": 22.555,
+       "pmax": 350.4,
+       "unit": "CC_REGULAR_MISO-East_p64020_committed"
+      },
+      {
+       "avail_twh": 0.3782,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.5508,
+       "mc_mean": 21.66,
+       "pmax": 55.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc00"
+      },
+      {
+       "avail_twh": 0.3782,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.6985,
+       "mc_mean": 22.103,
+       "pmax": 55.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc01"
+      },
+      {
+       "avail_twh": 0.3782,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8462,
+       "mc_mean": 22.547,
+       "pmax": 55.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc02"
+      },
+      {
+       "avail_twh": 0.3782,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9939,
+       "mc_mean": 22.99,
+       "pmax": 55.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc03"
+      },
+      {
+       "avail_twh": 0.3782,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1416,
+       "mc_mean": 23.433,
+       "pmax": 55.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc04"
+      },
+      {
+       "avail_twh": 0.3782,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.2894,
+       "mc_mean": 23.877,
+       "pmax": 55.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc05"
+      }
+     ]
+    },
+    "K": {
+     "55641": [
+      {
+       "avail_twh": 2.2119,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9144,
+       "mc_mean": 22.624,
+       "pmax": 375.1,
+       "unit": "CC_REGULAR_MISO-East_p55641_committed"
+      },
+      {
+       "avail_twh": 0.0495,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.6106,
+       "mc_mean": 21.733,
+       "pmax": 8.4,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc00"
+      },
+      {
+       "avail_twh": 0.0495,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.7596,
+       "mc_mean": 22.178,
+       "pmax": 8.4,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc01"
+      },
+      {
+       "avail_twh": 0.0495,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9087,
+       "mc_mean": 22.623,
+       "pmax": 8.4,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc02"
+      },
+      {
+       "avail_twh": 0.0495,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0578,
+       "mc_mean": 23.068,
+       "pmax": 8.4,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc03"
+      },
+      {
+       "avail_twh": 0.0495,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.2068,
+       "mc_mean": 23.513,
+       "pmax": 8.4,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc04"
+      },
+      {
+       "avail_twh": 0.0495,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.3559,
+       "mc_mean": 23.958,
+       "pmax": 8.4,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc05"
+      },
+      {
+       "avail_twh": 0.6509,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 15.4801,
+       "mc_mean": 48.173,
+       "pmax": 110.4,
+       "unit": "CC_REGULAR_MISO-East_p55641_peak"
+      }
+     ],
+     "64020": [
+      {
+       "avail_twh": 2.6436,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.6782,
+       "mc_mean": 22.034,
+       "pmax": 307.9,
+       "unit": "CC_REGULAR_MISO-East_p64020_committed"
+      },
+      {
+       "avail_twh": 0.5385,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.3847,
+       "mc_mean": 21.162,
+       "pmax": 62.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc00"
+      },
+      {
+       "avail_twh": 0.5385,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.5287,
+       "mc_mean": 21.594,
+       "pmax": 62.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc01"
+      },
+      {
+       "avail_twh": 0.5385,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.6726,
+       "mc_mean": 22.026,
+       "pmax": 62.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc02"
+      },
+      {
+       "avail_twh": 0.5385,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8166,
+       "mc_mean": 22.458,
+       "pmax": 62.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc03"
+      },
+      {
+       "avail_twh": 0.5385,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9606,
+       "mc_mean": 22.89,
+       "pmax": 62.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc04"
+      },
+      {
+       "avail_twh": 0.5385,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1046,
+       "mc_mean": 23.322,
+       "pmax": 62.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc05"
+      }
+     ]
+    }
+   },
+   "units_moved": [
+    "CC_REGULAR_MISO-East_p55641_committed",
+    "CC_REGULAR_MISO-East_p55641_econc00",
+    "CC_REGULAR_MISO-East_p55641_econc01",
+    "CC_REGULAR_MISO-East_p55641_econc02",
+    "CC_REGULAR_MISO-East_p55641_econc03",
+    "CC_REGULAR_MISO-East_p55641_econc04",
+    "CC_REGULAR_MISO-East_p55641_econc05",
+    "CC_REGULAR_MISO-East_p55641_peak",
+    "CC_REGULAR_MISO-East_p64020_committed",
+    "CC_REGULAR_MISO-East_p64020_econc00",
+    "CC_REGULAR_MISO-East_p64020_econc01",
+    "CC_REGULAR_MISO-East_p64020_econc02",
+    "CC_REGULAR_MISO-East_p64020_econc03",
+    "CC_REGULAR_MISO-East_p64020_econc04",
+    "CC_REGULAR_MISO-East_p64020_econc05"
+   ]
+  },
+  "2024": {
+   "cc_regular_avail_twh": [
+    181.13477,
+    180.92664
+   ],
+   "classes_moved": {
+    "CC_REGULAR": {
+     "avail_twh_delta": -0.2081,
+     "floor_twh_delta": 0.0
+    }
+   },
+   "plants": {
+    "A": {
+     "55641": [
+      {
+       "avail_twh": 1.8148,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8511,
+       "mc_mean": 20.872,
+       "pmax": 258.1,
+       "unit": "CC_REGULAR_MISO-East_p55641_committed"
+      },
+      {
+       "avail_twh": 0.1851,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.55,
+       "mc_mean": 19.957,
+       "pmax": 26.3,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc00"
+      },
+      {
+       "avail_twh": 0.1851,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.6977,
+       "mc_mean": 20.362,
+       "pmax": 26.3,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc01"
+      },
+      {
+       "avail_twh": 0.1851,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8454,
+       "mc_mean": 20.767,
+       "pmax": 26.3,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc02"
+      },
+      {
+       "avail_twh": 0.1851,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9931,
+       "mc_mean": 21.171,
+       "pmax": 26.3,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc03"
+      },
+      {
+       "avail_twh": 0.1851,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1408,
+       "mc_mean": 21.576,
+       "pmax": 26.3,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc04"
+      },
+      {
+       "avail_twh": 0.1851,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.2885,
+       "mc_mean": 21.981,
+       "pmax": 26.3,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc05"
+      },
+      {
+       "avail_twh": 0.8012,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 15.3383,
+       "mc_mean": 44.25,
+       "pmax": 114.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_peak"
+      }
+     ],
+     "64020": [
+      {
+       "avail_twh": 2.6608,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8844,
+       "mc_mean": 21.071,
+       "pmax": 354.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_committed"
+      },
+      {
+       "avail_twh": 0.4227,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.5818,
+       "mc_mean": 20.14,
+       "pmax": 56.3,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc00"
+      },
+      {
+       "avail_twh": 0.4227,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.7302,
+       "mc_mean": 20.549,
+       "pmax": 56.3,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc01"
+      },
+      {
+       "avail_twh": 0.4227,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8786,
+       "mc_mean": 20.958,
+       "pmax": 56.3,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc02"
+      },
+      {
+       "avail_twh": 0.4227,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0271,
+       "mc_mean": 21.367,
+       "pmax": 56.3,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc03"
+      },
+      {
+       "avail_twh": 0.4227,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1755,
+       "mc_mean": 21.776,
+       "pmax": 56.3,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc04"
+      },
+      {
+       "avail_twh": 0.4227,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.3239,
+       "mc_mean": 22.185,
+       "pmax": 56.3,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc05"
+      }
+     ]
+    },
+    "K": {
+     "55641": [
+      {
+       "avail_twh": 2.2294,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8697,
+       "mc_mean": 20.923,
+       "pmax": 371.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_committed"
+      },
+      {
+       "avail_twh": 0.0451,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.5678,
+       "mc_mean": 20.006,
+       "pmax": 7.5,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc00"
+      },
+      {
+       "avail_twh": 0.0451,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.7159,
+       "mc_mean": 20.412,
+       "pmax": 7.5,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc01"
+      },
+      {
+       "avail_twh": 0.0451,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.864,
+       "mc_mean": 20.818,
+       "pmax": 7.5,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc02"
+      },
+      {
+       "avail_twh": 0.0451,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0121,
+       "mc_mean": 21.224,
+       "pmax": 7.5,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc03"
+      },
+      {
+       "avail_twh": 0.0451,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1602,
+       "mc_mean": 21.629,
+       "pmax": 7.5,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc04"
+      },
+      {
+       "avail_twh": 0.0451,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.3083,
+       "mc_mean": 22.035,
+       "pmax": 7.5,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc05"
+      },
+      {
+       "avail_twh": 0.6847,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 15.3799,
+       "mc_mean": 44.365,
+       "pmax": 114.0,
+       "unit": "CC_REGULAR_MISO-East_p55641_peak"
+      }
+     ],
+     "64020": [
+      {
+       "avail_twh": 2.676,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.6242,
+       "mc_mean": 20.35,
+       "pmax": 311.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_committed"
+      },
+      {
+       "avail_twh": 0.5451,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.3331,
+       "mc_mean": 19.455,
+       "pmax": 63.5,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc00"
+      },
+      {
+       "avail_twh": 0.5451,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.4759,
+       "mc_mean": 19.848,
+       "pmax": 63.5,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc01"
+      },
+      {
+       "avail_twh": 0.5451,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.6187,
+       "mc_mean": 20.242,
+       "pmax": 63.5,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc02"
+      },
+      {
+       "avail_twh": 0.5451,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.7616,
+       "mc_mean": 20.635,
+       "pmax": 63.5,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc03"
+      },
+      {
+       "avail_twh": 0.5451,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9044,
+       "mc_mean": 21.029,
+       "pmax": 63.5,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc04"
+      },
+      {
+       "avail_twh": 0.5451,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0472,
+       "mc_mean": 21.422,
+       "pmax": 63.5,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc05"
+      }
+     ]
+    }
+   },
+   "units_moved": [
+    "CC_REGULAR_MISO-East_p55641_committed",
+    "CC_REGULAR_MISO-East_p55641_econc00",
+    "CC_REGULAR_MISO-East_p55641_econc01",
+    "CC_REGULAR_MISO-East_p55641_econc02",
+    "CC_REGULAR_MISO-East_p55641_econc03",
+    "CC_REGULAR_MISO-East_p55641_econc04",
+    "CC_REGULAR_MISO-East_p55641_econc05",
+    "CC_REGULAR_MISO-East_p55641_peak",
+    "CC_REGULAR_MISO-East_p64020_committed",
+    "CC_REGULAR_MISO-East_p64020_econc00",
+    "CC_REGULAR_MISO-East_p64020_econc01",
+    "CC_REGULAR_MISO-East_p64020_econc02",
+    "CC_REGULAR_MISO-East_p64020_econc03",
+    "CC_REGULAR_MISO-East_p64020_econc04",
+    "CC_REGULAR_MISO-East_p64020_econc05"
+   ]
+  },
+  "2025": {
+   "cc_regular_avail_twh": [
+    170.72613,
+    170.56801
+   ],
+   "classes_moved": {
+    "CC_REGULAR": {
+     "avail_twh_delta": -0.1581,
+     "floor_twh_delta": 0.0
+    }
+   },
+   "plants": {
+    "A": {
+     "55641": [
+      {
+       "avail_twh": 1.9667,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8638,
+       "mc_mean": 26.958,
+       "pmax": 260.4,
+       "unit": "CC_REGULAR_MISO-East_p55641_committed"
+      },
+      {
+       "avail_twh": 0.2053,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.5622,
+       "mc_mean": 25.94,
+       "pmax": 27.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc00"
+      },
+      {
+       "avail_twh": 0.2053,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.7102,
+       "mc_mean": 26.48,
+       "pmax": 27.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc01"
+      },
+      {
+       "avail_twh": 0.2053,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8582,
+       "mc_mean": 27.02,
+       "pmax": 27.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc02"
+      },
+      {
+       "avail_twh": 0.2053,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0061,
+       "mc_mean": 27.56,
+       "pmax": 27.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc03"
+      },
+      {
+       "avail_twh": 0.2053,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1541,
+       "mc_mean": 28.1,
+       "pmax": 27.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc04"
+      },
+      {
+       "avail_twh": 0.2053,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.3021,
+       "mc_mean": 28.64,
+       "pmax": 27.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc05"
+      },
+      {
+       "avail_twh": 0.84,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 15.3668,
+       "mc_mean": 57.875,
+       "pmax": 111.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_peak"
+      }
+     ],
+     "64020": [
+      {
+       "avail_twh": 2.6346,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.979,
+       "mc_mean": 27.49,
+       "pmax": 350.3,
+       "unit": "CC_REGULAR_MISO-East_p64020_committed"
+      },
+      {
+       "avail_twh": 0.4185,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.6723,
+       "mc_mean": 26.444,
+       "pmax": 55.6,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc00"
+      },
+      {
+       "avail_twh": 0.4185,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8228,
+       "mc_mean": 26.995,
+       "pmax": 55.6,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc01"
+      },
+      {
+       "avail_twh": 0.4185,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9732,
+       "mc_mean": 27.546,
+       "pmax": 55.6,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc02"
+      },
+      {
+       "avail_twh": 0.4185,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1237,
+       "mc_mean": 28.098,
+       "pmax": 55.6,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc03"
+      },
+      {
+       "avail_twh": 0.4185,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.2742,
+       "mc_mean": 28.649,
+       "pmax": 55.6,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc04"
+      },
+      {
+       "avail_twh": 0.4185,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.4246,
+       "mc_mean": 29.2,
+       "pmax": 55.6,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc05"
+      }
+     ]
+    },
+    "K": {
+     "55641": [
+      {
+       "avail_twh": 2.4279,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.8697,
+       "mc_mean": 26.979,
+       "pmax": 374.4,
+       "unit": "CC_REGULAR_MISO-East_p55641_committed"
+      },
+      {
+       "avail_twh": 0.0532,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.5678,
+       "mc_mean": 25.961,
+       "pmax": 8.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc00"
+      },
+      {
+       "avail_twh": 0.0532,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.7159,
+       "mc_mean": 26.501,
+       "pmax": 8.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc01"
+      },
+      {
+       "avail_twh": 0.0532,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.864,
+       "mc_mean": 27.042,
+       "pmax": 8.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc02"
+      },
+      {
+       "avail_twh": 0.0532,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0121,
+       "mc_mean": 27.582,
+       "pmax": 8.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc03"
+      },
+      {
+       "avail_twh": 0.0532,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.1602,
+       "mc_mean": 28.122,
+       "pmax": 8.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc04"
+      },
+      {
+       "avail_twh": 0.0532,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.3083,
+       "mc_mean": 28.663,
+       "pmax": 8.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_econc05"
+      },
+      {
+       "avail_twh": 0.7214,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 15.3799,
+       "mc_mean": 57.923,
+       "pmax": 111.2,
+       "unit": "CC_REGULAR_MISO-East_p55641_peak"
+      }
+     ],
+     "64020": [
+      {
+       "avail_twh": 2.6432,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.6242,
+       "mc_mean": 26.195,
+       "pmax": 307.9,
+       "unit": "CC_REGULAR_MISO-East_p64020_committed"
+      },
+      {
+       "avail_twh": 0.5384,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.3331,
+       "mc_mean": 25.201,
+       "pmax": 62.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc00"
+      },
+      {
+       "avail_twh": 0.5384,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.4759,
+       "mc_mean": 25.724,
+       "pmax": 62.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc01"
+      },
+      {
+       "avail_twh": 0.5384,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.6187,
+       "mc_mean": 26.248,
+       "pmax": 62.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc02"
+      },
+      {
+       "avail_twh": 0.5384,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.7616,
+       "mc_mean": 26.771,
+       "pmax": 62.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc03"
+      },
+      {
+       "avail_twh": 0.5384,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 6.9044,
+       "mc_mean": 27.294,
+       "pmax": 62.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc04"
+      },
+      {
+       "avail_twh": 0.5384,
+       "floor_twh": 0.0,
+       "group": "CC_REGULAR",
+       "hr": 7.0472,
+       "mc_mean": 27.818,
+       "pmax": 62.7,
+       "unit": "CC_REGULAR_MISO-East_p64020_econc05"
+      }
+     ]
+    }
+   },
+   "units_moved": [
+    "CC_REGULAR_MISO-East_p55641_committed",
+    "CC_REGULAR_MISO-East_p55641_econc00",
+    "CC_REGULAR_MISO-East_p55641_econc01",
+    "CC_REGULAR_MISO-East_p55641_econc02",
+    "CC_REGULAR_MISO-East_p55641_econc03",
+    "CC_REGULAR_MISO-East_p55641_econc04",
+    "CC_REGULAR_MISO-East_p55641_econc05",
+    "CC_REGULAR_MISO-East_p55641_peak",
+    "CC_REGULAR_MISO-East_p64020_committed",
+    "CC_REGULAR_MISO-East_p64020_econc00",
+    "CC_REGULAR_MISO-East_p64020_econc01",
+    "CC_REGULAR_MISO-East_p64020_econc02",
+    "CC_REGULAR_MISO-East_p64020_econc03",
+    "CC_REGULAR_MISO-East_p64020_econc04",
+    "CC_REGULAR_MISO-East_p64020_econc05"
+   ]
+  }
+ }
+}

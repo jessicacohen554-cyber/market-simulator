@@ -2474,6 +2474,32 @@ ISO_BA_JOINS: dict[str, dict[str, tuple[int, int]]] = {"SOCO": {"AEC": (2021, 9)
 # for 2019-2022). Re-derive only when a source changes (rule 23).
 ISO_BA_EXITS: dict[str, dict[str, str]] = {"SOCO": {"FPL": "2022-07-13 12:00"}}
 
+# --- PLANTS that ENTERED a modelled region mid-backcast (plant grain) --------
+# ``{iso: {plant_code: first_hour_inside}}`` — the plant-grain twin of
+# ``ISO_BA_JOINS`` for a single plant that was physically connected to another
+# system before a dated hour, with no balancing-authority code to key on.
+# ``first_hour_inside`` is the region's EIA-930 extract's own hour-ending
+# ``UTC time`` stamp of the first row the plant is inside (the
+# ``ISO_BA_EXITS`` clock convention). Read ONLY by ``data.ba_membership``
+# (rule 19 [R-ONE-MECH]) at the same three seams: the LP fleet (offline
+# before the stamp — the ERCOT bin sheet carries the plant in every year and
+# no loader BA filter reaches it), the EIA-923 benchmark frame and BOTH CAMPD
+# backfills (pre-stamp CAMPD hours are dropped, so the backfill cannot
+# re-book them). Zero free parameters, measured date (rules 21 / 24);
+# per-ISO (rule 25). Backcast-only in the fleet: a forecast year is past
+# every registered entry.
+#
+# ERCOT (lane R-ERCOT-12, 2026-09-28, owner ruling "Fleet + benchmark"):
+# Frontera Energy Center (55098, Mission TX, 529 MW CC) exported to CFE
+# (Mexico) and was not an ERCOT resource before 2023-04-13. Measured:
+# (1) ERCOT's own 60-Day DAM Gen Resource data first lists FRONT_EC_CC1 on
+# operating day 2023-04-13; (2) EIA-860 vintages 2018-2022 carry no 55098
+# row at all, vintage 2023+ codes it ERCO; (3) EIA-923 has no 55098 rows
+# 2019-2022 and none for Jan-May 2023. Operating day 2023-04-13 HE01 CDT is
+# hour-ending UTC 2023-04-13 06:00.
+# (docs/handoffs/FINDING-r-ercot-11-benchmark-vs-930-2026-09-28.md.)
+ISO_PLANT_ENTRIES: dict[str, dict[int, str]] = {"ERCOT": {55098: "2023-04-13 06:00"}}
+
 # --- Hydro hourly deliverability envelope (caiso-72 STEP-2) ------------------
 # Percentile of the measured EIA-930 NG:WAT hourly output, per (month x
 # hour-of-day) bucket, used as the hydro fleet's hourly dispatch ceiling when

@@ -15636,3 +15636,19 @@ Record: `docs/handoffs/r-caiso-7/`.
   2019 night hours. Owner decision on the construction.
 
 Record: `docs/handoffs/r-caiso-8/`.
+
+## R-CAISO-12 — 2026-09-28 — the "h15–17 import surplus" was two benchmark artifacts; keeper unchanged (zero LP)
+
+- **Keeper unchanged:** `2026-09-28-caiso-r11-tacpst`, CALIBRATED. No shard, no registration, no cell verdict moved.
+- **Object 1:** the handed-on claim came from two mismatched benchmarks.
+  - Import timing: EIA-930 interchange was read on prevailing hour-ending time. On the model clock the surplus is
+    h8–16 (+0.4 to +2.5 GW).
+  - Gas: the "3–5 GW less gas" used the registered-corrupt EIA-930 NG cell. Against CEMS, model gas is
+    −0.4 to −1.5 GW at h8–16 and **+0.2 to +1.9 GW at h19–21**.
+  - The surplus sits in the `K` WEIM clean rungs. The export legs clear 0 MW in every hour.
+  - Imports mirror the model-vs-DAM intertie price error (hod-profile r 0.40–0.85). No admissible lever.
+- **Object 2:** the fold's CC excess tracks the DSW deficit (−23.4 / −24.6 / −11.2 TWh), not Object 1.
+  - The ICE daily index fails as a 2019–20 hub print: +7 to +18 $/MWh drifting bias at Palo Verde, on-peak
+    days only. The STOP stands.
+
+Record: `docs/handoffs/r-caiso-12/`.
