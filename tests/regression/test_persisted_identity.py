@@ -758,13 +758,21 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   WHAT IT COSTS: an ERCOT cache miss. 2019-2023 solves change (Frontera
 #   offline before 2023-04-13); 2024/2025 reproduce byte-identically (member
 #   all year). The keeper 2026-09-28-r-12-frontera-membership was solved on it.
+# 2026-09-28 ALL SIX ADVANCED (R-CAISO-13) — ONE ROW ADDED, NO VALUE MOVED.
+#   R-CAISO-13 added constants.EIA930_CISO_CLOCK_LATE_WINDOWS_UTC (the CISO
+#   late-stamp windows, read only under the default-off
+#   caiso_eia930_clock_repair). `solve_surface_register.py --diff origin/main`
+#   -> "0 value(s) moved, 1 added"; declared at its live hash
+#   (`--declare-missing`, moves no key). +1 row everywhere.
+#   WHAT IT COSTS: nothing solved — no registry value moved, so no committed
+#   bundle's numbers change; the digest moves only because the row set grew.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("179755c2f2cb063e", 236),
-    "CAISO": ("35d53f519b496e2d", 210),
-    "MISO": ("754991ac8927d9f7", 216),
-    "PJM": ("82f6053c8964444d", 220),
-    "NYISO": ("fd0d853c93a9babc", 217),
-    "NEISO": ("910cd732ce01c3fb", 203),
+    "ERCOT": ("896a6f8abc3ed118", 237),
+    "CAISO": ("9e8498829b85d3b9", 211),
+    "MISO": ("c47273705b10a23a", 217),
+    "PJM": ("c12a55de477c71d0", 221),
+    "NYISO": ("e24f81f7fdb24226", 218),
+    "NEISO": ("4486d4c5ac4eeeb6", 204),
 }
 
 

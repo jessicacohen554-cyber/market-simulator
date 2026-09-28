@@ -602,4 +602,5 @@ DECLARED: dict[str, str | dict[str, str]] = {
     # ISO_BA_EXITS were for SOCO, so the Frontera entry re-keys ERCOT's
     # backcast bundles rather than silently re-using pre-fix ones.
     "ISO_PLANT_ENTRIES": {"ERCOT": "a4d0fee78b233797"},
+    "EIA930_CISO_CLOCK_LATE_WINDOWS_UTC": "65677404b01b1492",
 }
