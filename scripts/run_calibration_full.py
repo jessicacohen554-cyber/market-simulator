@@ -6584,6 +6584,8 @@ def solve_and_persist(
         _nwpp_plant_basis = _caiso_demand_flag("nwpp_demand_plant_basis")
         # pjm-h19: the balance-identity demand screen is the same class.
         _demand_balance = _caiso_demand_flag("demand_balance_screen")
+        # R-CAISO-11: the TAC-share clock flag is the same class.
+        _tac_std = _caiso_demand_flag("caiso_tac_shares_standard_time")
         # td_loss_factor is the SAME defect class as the two flags above and
         # needs the same treatment (nyiso-87). It is not a solve_and_persist
         # kwarg, so a `--set td_loss_factor=X` probe can only arrive through
@@ -6617,6 +6619,7 @@ def solve_and_persist(
             nwpp_grid_carried_wind_served=_nwpp_grid_wind,
             nwpp_demand_plant_basis=_nwpp_plant_basis,
             demand_balance_screen=_demand_balance,
+            caiso_tac_shares_standard_time=_tac_std,
         )
         # Must-run residual classes (biomass / other-gas / ...) are netted out
         # of demand for the LP and re-added as pseudo-units in the dispatch
