@@ -1715,6 +1715,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 "measured_chp_heat_rates",
             )
         }
+        # miso-280: the CC swap carries the split-remap tag when that gate is
+        # armed, so the retiree channel reads the same CC artifact as the
+        # operable fleet (campd_bins.measured_cc_heat_rate_selector).
+        from market_sim.data.fleet import measured_cc_heat_rate_selector
+
+        _mhr["measured_cc_heat_rates"] = measured_cc_heat_rate_selector(config)
         retired_within_window = load_retired_within_window(
             iso,
             iso_config,

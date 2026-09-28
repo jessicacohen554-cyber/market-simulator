@@ -85,6 +85,7 @@ from market_sim.data.fleet import (  # noqa: E402
     load_fleet_from_csv,
     load_mothballed_but_operating,
     load_retired_within_window,
+    measured_cc_heat_rate_selector,
     thermal_tranche_overrides,
 )
 from market_sim.data.offer_curves import (  # noqa: E402
@@ -514,14 +515,14 @@ def _renewable_bound_is_delivered_pinned(iso: str, year: int) -> bool:
     )
 
 
-def _measured_heat_rate_flags(config: ScenarioConfig) -> dict[str, bool]:
+def _measured_heat_rate_flags(config: ScenarioConfig) -> dict[str, bool | str]:
     """Return the five measured-heat-rate flags as loader keyword arguments.
 
     F1 D4: the retiree and mothball channels take the SAME measured heat-rate
     swaps the operable fleet loader does, read from one place so the three
     call sites cannot drift (rule 24 [R-REGISTRY]).
     """
-    return {
+    flags: dict[str, bool | str] = {
         name: bool(getattr(config, name, False))
         for name in (
             "measured_ct_heat_rates",
@@ -531,6 +532,10 @@ def _measured_heat_rate_flags(config: ScenarioConfig) -> dict[str, bool]:
             "measured_chp_heat_rates",
         )
     }
+    # miso-280: the CC swap carries the split-remap tag when
+    # campd_split_remap_companions is armed (one accessor for every channel).
+    flags["measured_cc_heat_rates"] = measured_cc_heat_rate_selector(config)
+    return flags
 
 
 def _reliability_floor_layup_shares(
@@ -4173,7 +4178,7 @@ def run_year(
                 measured_ct_heat_rates=config.measured_ct_heat_rates,
                 measured_coal_heat_rates=config.measured_coal_heat_rates,
                 measured_st_heat_rates=config.measured_st_heat_rates,
-                measured_cc_heat_rates=config.measured_cc_heat_rates,
+                measured_cc_heat_rates=measured_cc_heat_rate_selector(config),
                 measured_chp_heat_rates=config.measured_chp_heat_rates,
                 cc_steam_part_capacity=config.cc_steam_part_capacity,
                 cc_steam_part_reclass=config.cc_steam_part_reclass,

@@ -15109,6 +15109,20 @@ def main() -> None:
         "--no-measured-chp-heat-rates reaches the pre-F1 posture.",
     )
     parser.add_argument(
+        "--campd-split-remap-companions",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="miso-280 (ScenarioConfig.campd_split_remap_companions, GATED "
+        "default off): read the '-splitremap-' companions of the CAMPD-derived "
+        "artifacts -- the unit-outage extract the routing gates select, the "
+        "short-gas and maxgen extracts, the measured CC heat rates and the four "
+        "fuel-split tranche files -- re-derived after West Riverside 64020's "
+        "CTs (filed by CEMS under Riverside 55641 as CT-03/CT-04) were added to "
+        "campd.CAMPD_UNIT_PLANT_REMAP. An identity repair (rule 14), zero free "
+        "parameters; an absent companion RAISES (MISO carries the only set). "
+        "Rides the generic prb_overrides channel, so run_config.json records it.",
+    )
+    parser.add_argument(
         "--coal-econ-marginal-hr-two-sided",
         dest="coal_econ_marginal_hr_two_sided",
         action=argparse.BooleanOptionalAction,
@@ -15569,6 +15583,9 @@ def main() -> None:
             "eia860_vintage_tracks_solve_year": args.eia860_vintage_tracks_solve_year,
             "measured_cc_heat_rates": args.measured_cc_heat_rates,
             "measured_chp_heat_rates": args.measured_chp_heat_rates,
+            # miso-280: the split-remap companion gate rides the same generic
+            # channel (None keeps the config/recipe value untouched).
+            "campd_split_remap_companions": args.campd_split_remap_companions,
             "coal_warm_committed": True if args.coal_warm_committed else None,
             "committed_ramp_spread": args.committed_ramp_spread,
             "cc_duct_peaking": True if args.cc_duct_peaking else None,

@@ -3777,3 +3777,5 @@ results/calibration/nyisonext9_202[2-5]/
 results/calibration/rcaiso11_A_20*/**
 results/calibration/rcaiso11_A_span/hourly/p0_*
 results/calibration/rcaiso11_A_tp_2019_2021/hourly/p0_*
+# miso-280 per-year arm legs: parent-local, never on main (rule 32(d)); provenance SHAs in RESULT-miso280
+results/calibration/miso280_arm_*/
