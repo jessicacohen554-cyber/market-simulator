@@ -71,3 +71,12 @@ without it the model imports into South where the real system does not. It is th
 - **Matrix:** `committed_band_measured_basis` MISO stays **U**, with its footprint recorded.
   `diurnal_price_amplitude` stays **G**, with the 7-year extension recorded.
 - **Rubric:** unchanged. The full span is NOT-YET on the three owner-ruled routed misses. **No frontier.**
+
+## 5. Owner ruling (2026-09-28)
+
+*"Do standby units and un route ro2 before going after night overshoot"*. The ruling sets this order:
+1. **`admit_standby_units` plus its outage/layup companion**, re-derived on the admitted population (miso-282 §4),
+   so that idled Taconite Harbor 10075 cannot run phantom coal.
+2. **RO-2 is UN-ROUTED.** `scuc_load_pocket_commitment` becomes a MISO build lane for South out-of-merit steam
+   commitment. It needs a rule-17 window, a driver and a forward story, and it never uses own-year floors (rule 13).
+3. Only after both: the system night overshoot (`diurnal_price_amplitude`, G).

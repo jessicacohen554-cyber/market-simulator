@@ -15299,3 +15299,5 @@ committed offers by $18–29/MWh (a take-or-pay collision).
 
 What remains South-specific points at out-of-merit South commitment (routed RO-2). No frontier.
 `docs/FINDING-miso283-south-price-premium-2026-09-28.md`.
+
+Owner ruling: "Do standby units and un route ro2 before going after night overshoot". Order: admit_standby_units + outage companion, then RO-2 (un-routed) South load-pocket commitment, then the night overshoot.

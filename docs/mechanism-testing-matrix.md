@@ -5776,6 +5776,8 @@ loss.
 > Fuel is ruled out: model South gas = HH + measured variable transport within ±0.1. The marginal CC offers sit on
 > the measured basis. `committed_band_measured_basis` was sized: CC does not move, coal committed rises $18–29
 > (a take-or-pay collision), and it stays **U**. No frontier.
+> **Owner ruling:** *"Do standby units and un route ro2 before going after night overshoot"*. The queue is (1)
+> `admit_standby_units` + outage companion, (2) RO-2 `scuc_load_pocket_commitment` (**un-routed**), (3) night overshoot.
 
 > **QUEUE STAMP miso-281 (2026-09-28) — ZERO LP, NO SOLVE EARNED, keeper unchanged**
 > (`FINDING-miso281-south-steam-2019-out-of-merit-2026-09-28.md`). 2019 MISO-South gas steam ran **17.1 of 20.2
