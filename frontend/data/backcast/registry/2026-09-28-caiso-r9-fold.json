@@ -1,21 +1,21 @@
 {
- "id": "2026-09-27-caiso-r8-fold",
- "label": "caiso r8 fold",
- "date": "2026-09-27",
- "shorthand": "caiso-r8-fold",
- "definition": "R-CAISO-8 A 2019: keeper recipe + caiso_intertie_partial_year_measured + ST_GAS peak registry re-sync (PRECOMMIT-r-caiso-8-2026-09-27)",
+ "id": "2026-09-28-caiso-r9-fold",
+ "label": "caiso r9 fold",
+ "date": "2026-09-28",
+ "shorthand": "caiso-r9-fold",
+ "definition": "R-CAISO-9 A 2019: keeper recipe + caiso_import_cap_floor_static (PRECOMMIT-r-caiso-9-2026-09-27)",
  "years": [
   2019,
   2020,
   2021
  ],
  "iso": "CAISO",
- "file": "frontend/data/backcast/runs/2026-09-27-caiso-r8-fold.js",
- "bundle": "results/calibration/rcaiso8_A_tp_2019_2021",
+ "file": "frontend/data/backcast/runs/2026-09-28-caiso-r9-fold.js",
+ "bundle": "results/calibration/rcaiso9_A_tp_2019_2021",
  "holdout": {
   "tier": "validation",
   "year": 2022,
-  "keeper": "2026-09-27-caiso-r8-partial-year",
+  "keeper": "2026-09-28-caiso-r9-sd-floor",
   "keeperDetermination": "CALIBRATED",
   "keeperYears": [
    2022,

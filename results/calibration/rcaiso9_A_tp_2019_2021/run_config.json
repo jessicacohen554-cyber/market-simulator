@@ -25,6 +25,7 @@
       "caiso_firm_import_selfsched_clip": true,
       "caiso_firm_import_selfschedule": true,
       "caiso_firm_import_shape": true,
+      "caiso_import_cap_floor_static": true,
       "caiso_import_gas_coupling": true,
       "caiso_import_gas_coupling_ladder_only": true,
       "caiso_intertie_gap_fill_measured_dam": true,
@@ -81,7 +82,7 @@
       "2020": 2.03,
       "2021": 3.72
     },
-    "git_sha": "ee309e39",
+    "git_sha": "980f2ed6",
     "hours": 8760,
     "iso": "CAISO",
     "nyiso_dynamic_reserve_requirements": null,
@@ -94,7 +95,6 @@
       "P1"
     ],
     "priced_interchange": true,
-    "retiree_cems_cap": false,
     "td_loss_factor": 0.0,
     "temp_dependent_derate": true,
     "years": [
@@ -104,9 +104,9 @@
     ]
   },
   "composed_from": [
-    "rcaiso8_A_2019",
-    "rcaiso8_A_2020",
-    "rcaiso8_A_2021"
+    "rcaiso9_A_2019",
+    "rcaiso9_A_2020",
+    "rcaiso9_A_2021"
   ],
   "environment": {
     "cache_key_path_roots": [
@@ -124,51 +124,51 @@
       "pydantic": "2.13.4",
       "scipy": "1.17.1"
     },
-    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v42-x86_64-with-glibc2.39",
     "python_version": "3.11.15"
   },
   "git": {
-    "basis_sha": "ee309e39170be7641494a3bdc0b5863fc82d141c",
+    "basis_sha": "980f2ed64a0abfa233e956a48c63225ff47aa459",
     "branch": "HEAD",
     "changed_files": [],
     "diffstat": "",
     "dirty": false,
-    "sha": "ee309e39"
+    "sha": "980f2ed6"
   },
-  "model_changes_note": "R-CAISO-8 A 2019: keeper recipe + caiso_intertie_partial_year_measured + ST_GAS peak registry re-sync (PRECOMMIT-r-caiso-8-2026-09-27)",
+  "model_changes_note": "R-CAISO-9 A 2019: keeper recipe + caiso_import_cap_floor_static (PRECOMMIT-r-caiso-9-2026-09-27)",
   "per_leg_provenance": {
     "2019": {
       "git": {
-        "basis_sha": "ee309e39170be7641494a3bdc0b5863fc82d141c",
+        "basis_sha": "980f2ed64a0abfa233e956a48c63225ff47aa459",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "ee309e39"
+        "sha": "980f2ed6"
       },
-      "timestamp": "2026-09-27T22:39:09"
+      "timestamp": "2026-09-28T00:05:22"
     },
     "2020": {
       "git": {
-        "basis_sha": "ee309e39170be7641494a3bdc0b5863fc82d141c",
+        "basis_sha": "980f2ed64a0abfa233e956a48c63225ff47aa459",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "ee309e39"
+        "sha": "980f2ed6"
       },
-      "timestamp": "2026-09-27T22:27:16"
+      "timestamp": "2026-09-28T00:16:00"
     },
     "2021": {
       "git": {
-        "basis_sha": "ee309e39170be7641494a3bdc0b5863fc82d141c",
+        "basis_sha": "980f2ed64a0abfa233e956a48c63225ff47aa459",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "ee309e39"
+        "sha": "980f2ed6"
       },
-      "timestamp": "2026-09-27T22:28:13"
+      "timestamp": "2026-09-28T00:18:16"
     }
   },
   "resolved_inputs": {
@@ -247,6 +247,7 @@
     "caiso_fsno_subzonal_topology": false,
     "caiso_gas_commitment_floor": false,
     "caiso_gas_floor_frac": 0.8,
+    "caiso_import_cap_floor_static": true,
     "caiso_import_gas_coupling": true,
     "caiso_import_gas_coupling_ladder_only": true,
     "caiso_import_hub_prices": false,
@@ -386,6 +387,7 @@
     "coal_committed_takeorpay_sunk_fixed": false,
     "coal_drop_pof": true,
     "coal_econ_marginal_hr_bound": false,
+    "coal_econ_marginal_hr_two_sided": false,
     "coal_econ_srmc_bound": false,
     "coal_fuel_inventory": false,
     "coal_fuel_inventory_plant_grain": false,
@@ -1146,6 +1148,7 @@
     "pjm_offer_midcurve_path": null,
     "pjm_offer_midcurve_peak_segments": null,
     "pjm_offer_midcurve_segments": null,
+    "pjm_offer_midcurve_shape_segments": null,
     "pjm_offer_surface_binned_path": null,
     "pjm_offer_surface_conditional": false,
     "pjm_offer_surface_min_bin": 0,
@@ -1195,7 +1198,6 @@
     "renewable_elcc_curves": true,
     "renewable_keep_running_value": 20.0,
     "reserve_margin_build_enabled": null,
-    "retiree_cems_cap": false,
     "retiree_vintage_status_scope": false,
     "retirement_aggressiveness": "mid",
     "retirement_consecutive_years": 2,
@@ -1233,6 +1235,7 @@
     "spp_curtail_depth_wind": 0.288137,
     "spp_curtailment_ceiling": false,
     "spp_gas_commitment_bridge": false,
+    "spp_zone_partition": "north_south",
     "st_gas_intermediate_cf_threshold": 50.0,
     "st_gas_intermediate_split": false,
     "st_gas_mustrun_oom_level": false,
@@ -1317,7 +1320,7 @@
   "solve_surface": {
     "epochs": [],
     "fingerprint": "35d53f519b496e2d",
-    "git_sha": "ee309e39",
+    "git_sha": "980f2ed6",
     "iso": "CAISO",
     "moved": {
       "GENERIC_BASE_OFFER_CURVE": "bdc2b348ec6144d1",
@@ -1334,5 +1337,5 @@
     "rows": 210,
     "schema": 1
   },
-  "timestamp": "2026-09-27T22:39:09"
+  "timestamp": "2026-09-28T00:05:22"
 }

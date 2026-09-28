@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-28-caiso-r9-sd-floor",
+  "label": "caiso r9 sd floor",
+  "date": "2026-09-28",
+  "shorthand": "caiso-r9-sd-floor",
+  "definition": "R-CAISO-9 A 2022: keeper recipe + caiso_import_cap_floor_static (PRECOMMIT-r-caiso-9-2026-09-27)",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-28-caiso-r9-sd-floor.js",
+  "bundle": "results/calibration/rcaiso9_A_span"
+}

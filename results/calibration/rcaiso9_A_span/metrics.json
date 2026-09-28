@@ -1,33 +1,32 @@
 {
-  "run_id": "2026-09-27-caiso-r8-fold",
+  "run_id": "2026-09-28-caiso-r9-sd-floor",
   "iso": "CAISO",
-  "label": "caiso r8 fold",
+  "label": "caiso r9 sd floor",
   "target_years": [
-    2019,
-    2020,
-    2021
+    2022,
+    2023,
+    2024,
+    2025
   ],
   "scorable_years": [
-    2019,
-    2020,
-    2021
+    2022,
+    2023,
+    2024,
+    2025
   ],
   "data_blocked_years": [],
-  "price_reference_blocked_years": [
-    2019,
-    2020
-  ],
+  "price_reference_blocked_years": [],
   "rubric_version": 3.9,
-  "determination": "NOT-YET",
+  "determination": "CALIBRATED",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, dispatch_corr"
+    "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
   ],
   "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -37,7 +36,7 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
@@ -53,7 +52,7 @@
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "governance": {
       "label": "C6 governance gate",
@@ -79,26 +78,28 @@
   },
   "grade_summary": {
     "scored": 8,
-    "target_grade": 4,
+    "target_grade": 7,
     "commercial_grade": 0,
     "ledgered": 1,
-    "fails": 3
+    "fails": 0
   },
   "reported": {
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2019": "+26.9%",
-        "2020": "+26.5%",
-        "2021": "+5.5%"
+        "2022": "-7.1%",
+        "2023": "-6.0%",
+        "2024": "-5.0%",
+        "2025": "-5.8%"
       }
     },
     "diurnal_amplitude": {
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
-        "2019": "no committed measured hod profile",
-        "2020": "no committed measured hod profile",
-        "2021": "no committed measured hod profile"
+        "2022": "amplitude 89.1% of measured (hod range $57.31 vs $64.34); peak h19 vs h17, trough h11 vs h11 \u2014 phase OFF; hod r +0.967; 365 complete days",
+        "2023": "amplitude 69.7% of measured (hod range $34.58 vs $49.59); peak h19 vs h18, trough h12 vs h12 \u2014 phase OK; hod r +0.968; 363 complete days",
+        "2024": "amplitude 69.8% of measured (hod range $26.45 vs $37.89); peak h19 vs h18, trough h13 vs h12 \u2014 phase OK; hod r +0.969; 365 complete days",
+        "2025": "amplitude 81.2% of measured (hod range $24.33 vs $29.97); peak h20 vs h18, trough h13 vs h13 \u2014 phase OFF; hod r +0.974; 365 complete days"
       }
     }
   },
@@ -118,13 +119,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 15,
+      "pass": 18,
       "total": 18
     },
     "free": {
-      "pass": 9,
+      "pass": 12,
       "total": 12
     },
-    "headline": "C1 all 15/18 \u00b7 free 9/12"
+    "headline": "C1 all 18/18 \u00b7 free 12/12"
   }
 }
