@@ -106,3 +106,5 @@ See §9 (appended before the pin, from the audit of every changed hunk).
 | new library | `scripts/lib/seam_neighbour_price/*` | read only by fetch / curate scripts |
 
 This session's own two commits are the arm (the rule-26 deletion is hash- and path-inert for NYISO: the keeper recorded `nyiso_firm_imports: false`). The delta from `08043ecf` to the pin is re-listed in the RESULT.
+
+**§9 addendum (`08043ecf` → `3aeffb33`, before the pin).** 7 files, R-CAISO-13's `caiso_eia930_clock_repair` (default off, a new field absent from the keeper recipe): the runner arms it only on `iso == "CAISO"`; `frames._repair_clock_late_windows` returns its input unchanged unless armed **and** `ba_code == "CISO"`; `demand._repair_supply_consistent_clock` is reached only when armed; `EIA930_CISO_CLOCK_LATE_WINDOWS_UTC` is read only there. **INERT for NYISO.**
