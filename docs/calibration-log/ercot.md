@@ -14827,3 +14827,21 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - These take effect at the next registration. No solve impact, and no determination flips.
 - **Record:** `docs/handoffs/FINDING-r-ercot-9-2023-scarcity-2026-09-27.md`.
 - **Owner ruling (decision card):** "Hold k=33, work validation (Recommended)". The keeper is unchanged, and the next lane takes the validation-year C1 items.
+
+## R-ERCOT-10 — 2026-09-28 — W A Parish partial-outage derate fuel-scoped (rule 14); PROMOTED `2026-09-27-r-10-parish-fuelscope` (owner: "Is it an improvement? Then promote"); ISO NOT-YET (2023 carve-out, owner hold k=33)
+
+- **Phase 0 (zero LP):**
+  - 2019/20 COAL_PRB: offer conduct unmeasured for 2019–22 (owner data decision).
+  - 2022 CC_REGULAR: static coal offers vs $6.45 gas, plus a ~4.4 TWh benchmark basis residual.
+  - Decker 3548: routed.
+  - A defect was found: Parish CEMS summed gas units WAP1–4 into the coal bin's derate reference.
+- **Fix:** `derive_partial_outages.py` fuel-scopes mixed-fuel facilities (only 3470 rows change, plus stale Fusco rows).
+- **Solve:** 7 shards at `a33eeb3a`. G-DRIFT found every hunk INERT or scoring-only. Composed, and the partition is byte-equal.
+- **Result:**
+  - No determination flips.
+  - 2020 C1 CC_REGULAR clears.
+  - COAL_PRB narrows by 1.04 / 0.41 TWh in 2019 / 2020.
+  - 2023 C3a −20.6 → −19.9 % (repaired clock).
+  - 2024 / 2025 stay CALIBRATED (−8.8 / −9.4 %).
+  - 2022 C3a −10.4 % FAIL is a scoring-basis effect (the keeper reads −10.6 % on the same basis).
+- **Record:** `docs/handoffs/RESULT-r-ercot-10-parish-fuel-scope-2026-09-28.md`.

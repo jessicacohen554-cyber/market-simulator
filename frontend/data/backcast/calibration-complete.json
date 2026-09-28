@@ -442,6 +442,12 @@
    "withdrawn": "2026-09-27",
    "keeper_at_declaration": "2026-08-31 declaration (ercot-246/247); keeper at declaration per the prior record below",
    "keeper_at_withdrawal": "2026-09-27-r-8-fusco",
+   "keeper": "2026-09-27-r-10-parish-fuelscope",
+   "keeper_rekey_2026_09_28": {
+    "from": "2026-09-27-r-8-fusco",
+    "to": "2026-09-27-r-10-parish-fuelscope",
+    "by": "session R-ERCOT-10 on the owner's promotion instruction (rule 35); designates the keeper, does not re-declare - the marker stays withdrawn, ISO NOT-YET on the 2023 carve-out."
+   },
    "determination_at_withdrawal": "NOT-YET (calibration_verdict --years on committed artifacts): forward {2024, 2025} CALIBRATED; carve-out {2023} NOT-YET on C3a -19.8% and C3b 0.290; validation 2021 CALIBRATED, 2019/2020/2022 NOT-YET (non-gating).",
    "reason": "ERCOT `complete` MARKER WITHDRAWN 2026-09-27 BY OWNER RULING (session R-ERCOT-8 decision card, answer verbatim: \"Promote + fix 2023 next (Recommended)\", whose text stated that promoting withdraws the complete marker). The Q5 uniform rule (owner r#12 ruling 2026-08-30, STANDING: \"a `complete` marker cannot stand on a NOT-YET keeper\") applies: the incoming keeper adds the missing ERCOT resource Jack Fusco (55357, 676 MW, rule 14) and its 2023 carve-out drops to NOT-YET because the superseded keeper's 2023 scarcity pricing leaned on the missing capacity. THE KEEPER DESIGNATION IS UNTOUCHED (keepers/ERCOT.json names 2026-09-27-r-8-fusco). The marker authorizes nothing since [R-HOLDOUT] was removed 2026-09-09; what moves is the designation's complete flag and the forecast gate-(a) input, flipped in the same commit.",
    "withdrawn_by": "session R-ERCOT-8 (parent), executing the owner ruling above",
