@@ -110,3 +110,13 @@ validation flip (2022 C1 CC_REGULAR PASS → FAIL) is already FAIL on this keepe
 ## 7. Year set (rule 35(b))
 
 SPP's registered years: 2019–2025, all on keeper `2026-09-28-spp-99-remap-rederive`. This lane solves all seven.
+
+## Addendum A (2026-09-28, before any number was read) — shard-check repair
+
+The first seven shards (pinned `2e1f387d`) solved, then stopped at hard stop 3. The recipe test in
+`_spp100_shard_check.py` had a bug: `chp_steam_floor_p25` already sits in the keeper's recorded recipe at its
+default (`false`), so the shared `_diff` helper reports it as CHANGED rather than NEW, and the check required
+CHANGED to be empty. It now requires the effective delta (changed-to values plus new values) to be exactly the two
+fields, with every change starting from the field's default. Verified on a synthetic leg: exact recipe → PASS, recipe
+plus a stray field → FAIL. Nothing in §2–§6 changes. The shards are relaunched on the repair's merge SHA. The first
+round's bundles never left their containers (the shards correctly refused to push), and no number from them was seen.

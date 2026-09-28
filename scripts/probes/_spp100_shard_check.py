@@ -97,7 +97,16 @@ def main() -> int:
     ok = True
     changed, new = _diff(sk, sl, defaults)
     print(f"leg vs committed keeper: changed {changed}  non-default new {new}")
-    if changed or new != ARM:
+    # chp_steam_floor_p25 already sits in the keeper's recorded recipe at its
+    # default (False), so _diff reports it as CHANGED, not NEW. The recipe is
+    # right iff every change starts from the field's default and the effective
+    # delta (changed-to values plus new values) is exactly ARM.
+    effective = {k: v[1] for k, v in changed.items()} | new
+    from_default = all(
+        json.dumps(v[0]) == json.dumps(defaults.get(k), default=str)
+        for k, v in changed.items()
+    )
+    if effective != ARM or not from_default:
         print(f"RECIPE CHECK: FAIL -- must be the keeper + exactly {ARM}")
         ok = False
     else:
