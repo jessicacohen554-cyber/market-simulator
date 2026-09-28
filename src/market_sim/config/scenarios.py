@@ -484,6 +484,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # default-off; selects '-rederive-peakerkeep-unitfuel-' through the same
     # resolver, so the off path is byte-inert). Same commit as the field.
     "unit_outage_rederive_peaker_windows",
+    # PJM-NEXT-7 financially-settled DA virtual position (GATED default-off;
+    # zeroes the virtual pseudo-units' bounds in P1 only, so the off path is
+    # byte-inert). Same commit as the field.
+    "pjm_da_virtual_settle_financial",
     # miso-278 unit-fuel split of the thermal-tranche family (GATED default-off;
     # selects the four '-fuelsplit-' companions through
     # campd_bins.campd_fuel_split_selector, so the off path is byte-inert).
@@ -2160,6 +2164,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # construction: apply_caiso_local_import_limits floors only when handed
     # sd_floor_static=True from the flag.
     "caiso_import_cap_floor_static",
+    # R-CAISO-11 (2026-09-28), default off, registered IN THE SAME COMMIT as
+    # the field (the nyiso-119 discipline). Byte-identical off by
+    # construction: load_demand passes caiso_standard_time to
+    # load_zonal_shares only when the flag is True.
+    "caiso_tac_shares_standard_time",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -2359,6 +2368,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by PJM-NEXT-6 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_rederive_peaker_windows": "False",
+    # Added by PJM-NEXT-7 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "pjm_da_virtual_settle_financial": "False",
     # Added by miso-278 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_unit_fuel_split": "False",
@@ -2964,6 +2976,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_intertie_partial_year_measured": "False",
     # Added by R-CAISO-9 WITH the field (the nyiso-119 discipline).
     "caiso_import_cap_floor_static": "False",
+    # Added by R-CAISO-11 WITH the field (the nyiso-119 discipline).
+    "caiso_tac_shares_standard_time": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
@@ -15162,6 +15176,17 @@ class ScenarioConfig:
     # (scripts/data/derive_pjm_da_virtual_surface.py, rule 21) and are frozen
     # against residuals (rule 20). PJM-only (rule 25).
     pjm_da_virtual_bids: bool = False
+    # PJM-NEXT-7 (owner ruling 2026-09-28 "settle financially"; design card A',
+    # docs/DESIGN-pjm-next-7-virtual-settlement-2026-09-28.md). Requires
+    # ``pjm_da_virtual_bids``. In PJM a cleared INC/DEC is liquidated in RT:
+    # RT physical generation serves RT physical load, and virtuals reach RT
+    # only through the DA schedule. The model's P0 (commitment discovery) is
+    # the DA stage and keeps the virtual pseudo-units; P1 (the scored,
+    # RT-gated pass) zeroes their bounds, so the net virtual position is never
+    # served by physical fuel. Virtuals still shape P1 through P0's run
+    # lengths (the startup-markup amortization) — the DA-commitment channel.
+    # Zero free parameters (rule 21); one flag, no stacking (rule 19).
+    pjm_da_virtual_settle_financial: bool = False
     # Path to the measured condition-binned virtual-bid surface JSON
     # (default: the frozen
     # data/raw/_validation-source/pjm_da_virtual_surface_condbinned.json).
@@ -19280,6 +19305,20 @@ class ScenarioConfig:
     # caiso_per_year_import_caps is on. Default off; CAISO-only.
     # docs/handoffs/r-caiso-9/PRECOMMIT-r-caiso-9-2026-09-27.md.
     caiso_import_cap_floor_static: bool = False
+    # R-CAISO-11 (owner decision card 2026-09-28, "Fix + solve now"): place the
+    # CAISO TAC-area zonal load shares on the model's fixed-PST (UTC-8)
+    # hour-of-year clock -- the clock the EIA-930 CISO system total they
+    # multiply rides. The historical parse (curate_zonal_shares.
+    # parse_caiso_shares) converted OASIS interval_start_gmt to PREVAILING
+    # Pacific time, so every DST-month share landed one hour late against the
+    # total: at h16-17 Apr-Oct, 0.2-0.45 GW (mean) and up to 1.5 GW (single
+    # hour) of load sat in LA_BASIN instead of NP15/SDGE; total load is
+    # unchanged. Rule 14 source-clock correction; zero parameters (rules
+    # 21/24). Wired on the backcast calibration path only (scripts/
+    # run_calibration*.py), like caiso_demand_clock_realign; the forecast
+    # runner's load_demand sites do not read it. CAISO-only; default off.
+    # docs/handoffs/r-caiso-11/RESULT-r-caiso-11-2026-09-28.md sec 4.
+    caiso_tac_shares_standard_time: bool = False
 
     # PJM transmission-congestion lever (break the copper-plate). PJM clears as a
     # perfect single price (0.000 zonal LMP spread in all 8760 hours of all

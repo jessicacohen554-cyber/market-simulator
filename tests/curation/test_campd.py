@@ -811,5 +811,21 @@ class TestStackDuplicateCorrection(unittest.TestCase):
         )
 
 
+class TestSppSplitPlantRemap(unittest.TestCase):
+    """SPP-98: CEMS units filed under another facility's ORIS land on their EIA plant."""
+
+    def test_stall_turbines_leave_arsenal_hill(self):
+        # EPA CAMD-EIA crosswalk: Arsenal Hill 1416 CTG-6A/6B are J Lamar Stall 56565.
+        for unit in ("CTG-6A", "CTG-6B"):
+            self.assertEqual(campd.CAMPD_UNIT_PLANT_REMAP[(1416, unit)], 56565)
+        # Arsenal Hill's own steam unit stays put.
+        self.assertNotIn((1416, "5A"), campd.CAMPD_UNIT_PLANT_REMAP)
+
+    def test_spp_rows_are_split_facilities(self):
+        for fac in (1416, 3006, 762, 63628):
+            self.assertIn(fac, campd.CAMPD_SPLIT_FACILITIES)
+            self.assertIn(fac, campd._FACILITIES_NEEDING_UNIT_ROWS)
+
+
 if __name__ == "__main__":
     unittest.main()

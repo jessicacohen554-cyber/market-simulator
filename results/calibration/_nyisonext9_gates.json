@@ -120,5 +120,37 @@
    "arm": 0
   },
   "G2b_pass": true
+ },
+ "2024": {
+  "lw_price_delta": {
+   "Capital_Hudson": -0.009,
+   "Long_Island": -0.008,
+   "Lower_Hudson": -0.009,
+   "NYC": -0.009,
+   "NYISO_external": -0.022,
+   "Upstate_West": -0.019,
+   "system": -0.012
+  },
+  "class_twh_delta": {
+   "CC_CHP": -0.0015,
+   "CC_REGULAR": 0.0192,
+   "ST_CHP": -0.0019,
+   "ST_GAS": -0.0172
+  },
+  "import_twh": {
+   "keeper": 20.5693,
+   "arm": 20.5693,
+   "delta": 0.0
+  },
+  "import_mw_min_max_arm": [
+   0,
+   5331
+  ],
+  "total_energy_delta_twh": -0.0014,
+  "hours_below_floor": {
+   "keeper": 0,
+   "arm": 162
+  },
+  "G2b_pass": true
  }
 }

@@ -302,6 +302,10 @@ def main() -> None:
     for item in a.require:
         k, v = item.split("=", 1)
         ARM_FIELDS[k] = json.loads(v)
+        # An arm that flips a keeper-posture key (R-CAISO-10: startup_aware
+        # off) re-states that key's required value rather than contradicting it.
+        if k in KEEPER_POSTURE:
+            KEEPER_POSTURE[k] = json.loads(v)
     legs = [ROOT / p if not Path(p).is_absolute() else Path(p) for p in a.legs]
     out = ROOT / a.out if not Path(a.out).is_absolute() else Path(a.out)
     compose(legs, out)

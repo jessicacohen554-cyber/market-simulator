@@ -1,0 +1,274 @@
+{
+ "totals": {
+  "campd_twh": 16.272,
+  "blocked_twh": 2.868,
+  "blocked_at_zero_twh": 1.531,
+  "plants": 24
+ },
+ "plants": [
+  {
+   "plant": 1416,
+   "name": "Arsenal Hill",
+   "npl": 125,
+   "campd_twh": 2.2792,
+   "blocked_twh": 1.9905,
+   "blocked_at_zero_twh": 1.3395,
+   "avail_mean": 0.2637,
+   "campd_online_h": 8079,
+   "online_but_zero_avail_h": 4983
+  },
+  {
+   "plant": 2956,
+   "name": "Seminole (OK)",
+   "npl": 1701,
+   "campd_twh": 2.7987,
+   "blocked_twh": 0.2226,
+   "blocked_at_zero_twh": 0.0112,
+   "avail_mean": 0.3111,
+   "campd_online_h": 5318,
+   "online_but_zero_avail_h": 48
+  },
+  {
+   "plant": 2952,
+   "name": "Muskogee",
+   "npl": 1144,
+   "campd_twh": 1.0623,
+   "blocked_twh": 0.1145,
+   "blocked_at_zero_twh": 0.0303,
+   "avail_mean": 0.1908,
+   "campd_online_h": 2919,
+   "online_but_zero_avail_h": 122
+  },
+  {
+   "plant": 3482,
+   "name": "Jones",
+   "npl": 495,
+   "campd_twh": 1.3788,
+   "blocked_twh": 0.0904,
+   "blocked_at_zero_twh": 0.005,
+   "avail_mean": 0.5983,
+   "campd_online_h": 7032,
+   "online_but_zero_avail_h": 54
+  },
+  {
+   "plant": 3484,
+   "name": "Nichols",
+   "npl": 475,
+   "campd_twh": 1.2692,
+   "blocked_twh": 0.0808,
+   "blocked_at_zero_twh": 0.0061,
+   "avail_mean": 0.6502,
+   "campd_online_h": 8106,
+   "online_but_zero_avail_h": 35
+  },
+  {
+   "plant": 2963,
+   "name": "Northeastern",
+   "npl": 473,
+   "campd_twh": 1.0962,
+   "blocked_twh": 0.0771,
+   "blocked_at_zero_twh": 0.0297,
+   "avail_mean": 0.3603,
+   "campd_online_h": 4195,
+   "online_but_zero_avail_h": 168
+  },
+  {
+   "plant": 2964,
+   "name": "Southwestern",
+   "npl": 483,
+   "campd_twh": 0.9641,
+   "blocked_twh": 0.0618,
+   "blocked_at_zero_twh": 0.0102,
+   "avail_mean": 0.4997,
+   "campd_online_h": 7730,
+   "online_but_zero_avail_h": 128
+  },
+  {
+   "plant": 3478,
+   "name": "Wilkes",
+   "npl": 882,
+   "campd_twh": 1.1571,
+   "blocked_twh": 0.0398,
+   "blocked_at_zero_twh": 0.0,
+   "avail_mean": 0.3926,
+   "campd_online_h": 6193,
+   "online_but_zero_avail_h": 0
+  },
+  {
+   "plant": 2291,
+   "name": "North Omaha",
+   "npl": 291,
+   "campd_twh": 0.1761,
+   "blocked_twh": 0.0376,
+   "blocked_at_zero_twh": 0.0097,
+   "avail_mean": 0.1012,
+   "campd_online_h": 2300,
+   "online_but_zero_avail_h": 171
+  },
+  {
+   "plant": 4940,
+   "name": "Riverside (OK)",
+   "npl": 946,
+   "campd_twh": 1.173,
+   "blocked_twh": 0.0286,
+   "blocked_at_zero_twh": 0.016,
+   "avail_mean": 0.2959,
+   "campd_online_h": 3796,
+   "online_but_zero_avail_h": 100
+  },
+  {
+   "plant": 3476,
+   "name": "Knox Lee",
+   "npl": 351,
+   "campd_twh": 0.4878,
+   "blocked_twh": 0.0262,
+   "blocked_at_zero_twh": 0.0203,
+   "avail_mean": 0.3903,
+   "campd_online_h": 3773,
+   "online_but_zero_avail_h": 190
+  },
+  {
+   "plant": 1336,
+   "name": "Garden City",
+   "npl": 98,
+   "campd_twh": 0.0565,
+   "blocked_twh": 0.014,
+   "blocked_at_zero_twh": 0.0134,
+   "avail_mean": 0.1261,
+   "campd_online_h": 1221,
+   "online_but_zero_avail_h": 313
+  },
+  {
+   "plant": 3008,
+   "name": "Mooreland",
+   "npl": 305,
+   "campd_twh": 0.1039,
+   "blocked_twh": 0.0138,
+   "blocked_at_zero_twh": 0.0034,
+   "avail_mean": 0.2853,
+   "campd_online_h": 2107,
+   "online_but_zero_avail_h": 77
+  },
+  {
+   "plant": 2965,
+   "name": "Tulsa",
+   "npl": 348,
+   "campd_twh": 0.2424,
+   "blocked_twh": 0.0133,
+   "blocked_at_zero_twh": 0.0086,
+   "avail_mean": 0.2507,
+   "campd_online_h": 5271,
+   "online_but_zero_avail_h": 220
+  },
+  {
+   "plant": 1417,
+   "name": "Lieberman",
+   "npl": 228,
+   "campd_twh": 0.1458,
+   "blocked_twh": 0.0124,
+   "blocked_at_zero_twh": 0.0114,
+   "avail_mean": 0.1757,
+   "campd_online_h": 2390,
+   "online_but_zero_avail_h": 271
+  },
+  {
+   "plant": 1233,
+   "name": "Fort Dodge",
+   "npl": 149,
+   "campd_twh": 0.1187,
+   "blocked_twh": 0.0081,
+   "blocked_at_zero_twh": 0.0065,
+   "avail_mean": 0.1584,
+   "campd_online_h": 1654,
+   "online_but_zero_avail_h": 128
+  },
+  {
+   "plant": 1230,
+   "name": "Cimarron River",
+   "npl": 65,
+   "campd_twh": 0.0262,
+   "blocked_twh": 0.0074,
+   "blocked_at_zero_twh": 0.0004,
+   "avail_mean": 0.1155,
+   "campd_online_h": 839,
+   "online_but_zero_avail_h": 17
+  },
+  {
+   "plant": 2951,
+   "name": "Horseshoe Lake",
+   "npl": 443,
+   "campd_twh": 0.6314,
+   "blocked_twh": 0.007,
+   "blocked_at_zero_twh": 0.0,
+   "avail_mean": 0.6214,
+   "campd_online_h": 4732,
+   "online_but_zero_avail_h": 0
+  },
+  {
+   "plant": 2226,
+   "name": "Canaday",
+   "npl": 109,
+   "campd_twh": 0.026,
+   "blocked_twh": 0.0059,
+   "blocked_at_zero_twh": 0.0058,
+   "avail_mean": 0.0638,
+   "campd_online_h": 942,
+   "online_but_zero_avail_h": 228
+  },
+  {
+   "plant": 1235,
+   "name": "Great Bend - Sunflower",
+   "npl": 82,
+   "campd_twh": 0.0374,
+   "blocked_twh": 0.0046,
+   "blocked_at_zero_twh": 0.0,
+   "avail_mean": 0.2708,
+   "campd_online_h": 1033,
+   "online_but_zero_avail_h": 0
+  },
+  {
+   "plant": 2446,
+   "name": "Maddox",
+   "npl": 114,
+   "campd_twh": 0.3556,
+   "blocked_twh": 0.0041,
+   "blocked_at_zero_twh": 0.0031,
+   "avail_mean": 0.7155,
+   "campd_online_h": 7631,
+   "online_but_zero_avail_h": 82
+  },
+  {
+   "plant": 3485,
+   "name": "Plant X",
+   "npl": 190,
+   "campd_twh": 0.6695,
+   "blocked_twh": 0.0033,
+   "blocked_at_zero_twh": 0.0,
+   "avail_mean": 1.2025,
+   "campd_online_h": 6036,
+   "online_but_zero_avail_h": 0
+  },
+  {
+   "plant": 1271,
+   "name": "Coffeyville",
+   "npl": 44,
+   "campd_twh": 0.0119,
+   "blocked_twh": 0.0031,
+   "blocked_at_zero_twh": 0.0002,
+   "avail_mean": 0.1234,
+   "campd_online_h": 665,
+   "online_but_zero_avail_h": 8
+  },
+  {
+   "plant": 7013,
+   "name": "East 12th Street",
+   "npl": 28,
+   "campd_twh": 0.0039,
+   "blocked_twh": 0.0007,
+   "blocked_at_zero_twh": 0.0007,
+   "avail_mean": 0.0301,
+   "campd_online_h": 259,
+   "online_but_zero_avail_h": 42
+  }
+ ]
+}

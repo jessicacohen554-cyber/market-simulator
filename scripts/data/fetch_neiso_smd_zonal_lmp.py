@@ -153,8 +153,14 @@ def _fetch(opener: urllib.request.OpenerDirector, url: str) -> bytes:
     return body
 
 
-def reduce_report(body: bytes) -> dict[tuple[int, str], tuple[str, float]]:
-    """Reduce one daily all-node hourly LMP report to the nine SMD locations.
+def reduce_report(
+    body: bytes, locations: dict[str, str] | None = None
+) -> dict[tuple[int, str], tuple[str, float]]:
+    """Reduce one daily all-node hourly LMP report to a location set.
+
+    ``locations`` defaults to the nine SMD locations; a caller may pass any
+    ``{location_id: name}`` map (e.g. the NY external nodes,
+    ``scripts/data/fetch_seam_neighbour_price_neiso.py``).
 
     Returns ``{(seq, location_id): (hour_ending, lmp)}`` where ``seq`` is the
     0-based position of the hour within the operating day, counted per location
@@ -162,24 +168,29 @@ def reduce_report(body: bytes) -> dict[tuple[int, str], tuple[str, float]]:
     label is what makes the DST days (23 rows in spring, 25 in autumn) carry
     through without a special case.
     """
+    locations = SMD_LOCATIONS if locations is None else locations
     out: dict[tuple[int, str], tuple[str, float]] = {}
     seen: dict[str, int] = {}
     for row in csv.reader(io.TextIOWrapper(io.BytesIO(body), encoding="utf-8-sig")):
         if len(row) < 7 or row[0] != "D":
             continue
         loc = row[3]
-        if loc not in SMD_LOCATIONS:
+        if loc not in locations:
             continue
         seq = seen.get(loc, 0)
         seen[loc] = seq + 1
         out[(seq, loc)] = (row[2], float(row[6]))
-    missing = set(SMD_LOCATIONS) - {loc for _, loc in out}
+    missing = set(locations) - {loc for _, loc in out}
     if missing:
-        raise RuntimeError(f"report is missing SMD locations {sorted(missing)}")
+        raise RuntimeError(f"report is missing locations {sorted(missing)}")
     return out
 
 
-def day_rows(opener: urllib.request.OpenerDirector, day: dt.date) -> list[dict]:
+def day_rows(
+    opener: urllib.request.OpenerDirector,
+    day: dt.date,
+    locations: dict[str, str] | None = None,
+) -> list[dict]:
     """Fetch and join one operating day's DA and RT-final hourly zonal prices.
 
     The two markets publish separate reports with the same per-day hour
@@ -188,8 +199,9 @@ def day_rows(opener: urllib.request.OpenerDirector, day: dt.date) -> list[dict]:
     fails loudly instead of pairing prices one hour apart.
     """
     stamp = f"{day:%Y%m%d}"
-    da = reduce_report(_fetch(opener, DA_URL % stamp))
-    rt = reduce_report(_fetch(opener, RT_URL % stamp))
+    locations = SMD_LOCATIONS if locations is None else locations
+    da = reduce_report(_fetch(opener, DA_URL % stamp), locations)
+    rt = reduce_report(_fetch(opener, RT_URL % stamp), locations)
     if da.keys() != rt.keys():
         raise RuntimeError(f"{day}: DA/RT hour grids differ")
     rows = []
@@ -203,7 +215,7 @@ def day_rows(opener: urllib.request.OpenerDirector, day: dt.date) -> list[dict]:
                 "hour_ending": he,
                 "seq": seq,
                 "location_id": loc,
-                "location": SMD_LOCATIONS[loc],
+                "location": locations[loc],
                 "da_lmp": da_lmp,
                 "rt_lmp": rt_lmp,
             }
@@ -211,7 +223,12 @@ def day_rows(opener: urllib.request.OpenerDirector, day: dt.date) -> list[dict]:
     return rows
 
 
-def fetch_days(days: list[dt.date], *, workers: int = DEFAULT_WORKERS) -> list[dict]:
+def fetch_days(
+    days: list[dt.date],
+    *,
+    workers: int = DEFAULT_WORKERS,
+    locations: dict[str, str] | None = None,
+) -> list[dict]:
     """Fetch ``days`` through a small pool of independent ISO Express sessions.
 
     Each worker keeps its own cookie-carrying opener (the endpoint is
@@ -229,7 +246,7 @@ def fetch_days(days: list[dt.date], *, workers: int = DEFAULT_WORKERS) -> list[d
         if getattr(local, "opener", None) is None:
             local.opener = _opener()
         try:
-            rows = day_rows(local.opener, day)
+            rows = day_rows(local.opener, day, locations)
         except TransientMiss:
             with lock:
                 missed.append(day)
@@ -254,7 +271,12 @@ def fetch_days(days: list[dt.date], *, workers: int = DEFAULT_WORKERS) -> list[d
     return [r for day in sorted(got) for r in got[day]]
 
 
-def write_year_csv(rows: list[dict], year: int, dest_dir: Path | None = None) -> Path:
+def write_year_csv(
+    rows: list[dict],
+    year: int,
+    dest_dir: Path | None = None,
+    stem: str = "NEISO_smd_zonal_lmp",
+) -> Path:
     """Write one year's reduced zonal series, merging with any existing file.
 
     Merging on ``(date, location_id)`` makes the script idempotent and lets a
@@ -263,7 +285,7 @@ def write_year_csv(rows: list[dict], year: int, dest_dir: Path | None = None) ->
     """
     dest_dir = RAW_DIR if dest_dir is None else dest_dir
     dest_dir.mkdir(parents=True, exist_ok=True)
-    path = dest_dir / f"NEISO_smd_zonal_lmp_{year}.csv"
+    path = dest_dir / f"{stem}_{year}.csv"
     merged: dict[tuple[str, int, str], dict] = {}
     if path.exists():
         with path.open(newline="") as f:

@@ -1,0 +1,78 @@
+# Canonical schema: hourly prices at both ends of an ISO's external seams
+#
+# One tidy row per (publishing market, node, market, UTC hour). The home ISO's
+# price at its proxy buses / zones and each neighbour's own price at the node
+# facing the home ISO, so any seam's hourly spread is a join on
+# (seam_group, interval_start_utc). Built for NYISO-NEXT-10
+# (docs/FINDING-nyiso-next7-star-node-2026-09-27.md §3(c)).
+#
+# Raw: data/raw/seam-neighbour-price/<iso>/ (README there). Curation:
+# scripts/data/curate_seam_neighbour_price.py. Partitioned by iso + year.
+datatype: seam-neighbour-price
+schema_version: 1
+title: Hourly prices at both ends of an ISO's external seams
+description: >-
+  Hourly LMP / market price at the home ISO's seam proxy buses and zones and at
+  each neighbour's node facing the home ISO, in native currency and USD, keyed on
+  the UTC hour start. Sparse by construction: a node appears only for the hours
+  its market published.
+
+key_columns: [iso, node, market, interval_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: Market that PUBLISHED the price (NYISO, PJM, NEISO, IESO).
+  - name: node
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Pricing point as the publisher names it. NYISO: zone or proxy bus (e.g.
+      "O H", "NPX", "PJM_GEN_HTP_PROXY", "N.Y.C."). PJM: INTERFACE pnode name
+      (NYIS, HUDSONTP, LINDENVFT, NEPTUNE). NEISO: external-node name
+      (".I.ROSETON 345 1", ".I.SHOREHAM138 99", ".I.NRTHPORT138 5") and
+      ".H.INTERNAL_HUB". IESO: HOEP, ONTARIO_MCP, NEW_YORK_INTERTIE_MCP.
+  - name: market
+    dtype: string
+    unit: none
+    nullable: false
+    description: DA (day-ahead) or RT (real-time; PJM settlement-verified hourly, ISO-NE final, IESO hourly).
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: none
+    nullable: false
+    description: Start of the hour in UTC (DST and IESO's EST-only clock resolved at curation).
+  - name: home_iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: The ISO whose seams this row serves (NYISO).
+  - name: seam_group
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      The home ISO's seam group this node prices (IESO, HQ, PJM_AC, PJM_HTP,
+      PJM_VFT, PJM_NEPTUNE, NE_AC, NE_CSC, NE_1385); null for internal zones and
+      reference prices (ISO-NE hub, IESO Ontario MCP).
+  - name: currency
+    dtype: string
+    unit: none
+    nullable: false
+    description: Currency of `price` (USD, or CAD for IESO).
+  - name: price
+    dtype: float64
+    unit: currency_per_mwh
+    nullable: false
+    description: Published total price in native currency per MWh.
+  - name: price_usd
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: >-
+      Price in USD/MWh. IESO converted at the Bank of Canada daily USD/CAD
+      (FXUSDCAD) for the operating date, carried over non-business days.

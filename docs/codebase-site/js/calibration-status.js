@@ -431,6 +431,29 @@
           ${esc(String(s.keeper_fails))} fails with overlays on &rarr; ${esc(String(s.statmode_fails))} with them off.${probeLink}${
           s.stale ? ' <em>(measured against a prior keeper — re-measure)</em>' : ''}</p>`);
       }
+      if (keeper.system_lambda && (keeper.system_lambda.rows || []).length) {
+        // REPORTED-ONLY (owner ruling 2026-09-27, soco-82): the operator's own
+        // FERC-714 system lambda beside the model price. Never gating.
+        const sl = keeper.system_lambda;
+        const f = (v) => (v === null || v === undefined ? '&ndash;' : `$${Number(v).toFixed(2)}`);
+        const sgn = (v) => (v === null || v === undefined ? '&ndash;' : `${v >= 0 ? '+' : '&minus;'}$${Math.abs(v).toFixed(2)}`);
+        const maxv = Math.max(1, ...sl.rows.flatMap((r) => [r.lambda_mean || 0, r.model_mean || 0]));
+        const bar = (v, color) => (v === null || v === undefined ? '' :
+          `<span style="display:inline-block;height:8px;width:${(100 * v / maxv).toFixed(1)}px;background:${color};border-radius:2px;vertical-align:middle;"></span>`);
+        const rowsHtml = sl.rows.map((r) => `<tr><td>${esc(String(r.year))}</td>
+          <td>${f(r.lambda_mean)} ${bar(r.lambda_mean, 'var(--text-muted)')}</td>
+          <td>${f(r.model_mean)} ${bar(r.model_mean, 'var(--accent, #4a7bd0)')}</td>
+          <td>${sgn(r.bias)}</td></tr>`).join('');
+        html += `
+        <details class="cs-detail" style="margin-top: 4px;">
+          <summary><span>Model price vs operator system lambda</span><span class="cs-gate">reported only &middot; not gating</span></summary>
+          <div style="padding: 14px; font-size: 0.82rem;">
+            <div class="bc-table-wrap"><table><thead><tr><th>Year</th><th>System lambda (mean)</th><th>Model price (mean)</th><th>Model &minus; lambda</th></tr></thead>
+            <tbody>${rowsHtml}</tbody></table></div>
+            <p class="bc-mute" style="margin-top: 8px;">${esc(sl.series || '')}. A system lambda is the operator's marginal cost of its own dispatch, not an LMP; it is not a C3 benchmark. Source <code>${esc(sl.source || '')}</code>.</p>
+          </div>
+        </details>`;
+      }
       if (notes.length) {
         html += `
         <details class="cs-detail" style="margin-top: 4px;">

@@ -138,6 +138,11 @@ data/raw/pjm-binding-constraints/*
 data/raw/pjm-ehv-lmp/*
 !data/raw/pjm-ehv-lmp/README.md
 !data/raw/pjm-ehv-lmp/SHA256SUMS.txt
+# NYISO-NEXT-10: PJM DataMiner2 INTERFACE-pnode LMPs at the NY seams — same
+# non-member redistribution restriction (docs/data-licensing.md §4). Re-fetch
+# with scripts/data/fetch_seam_neighbour_price_pjm.py; the tree-wide
+# data/raw/seam-neighbour-price/SHA256SUMS.txt is the committed record.
+data/raw/seam-neighbour-price/pjm/*.csv
 
 # NYISO MIS public DAM zonal LBMP monthly archives (36 zips, ~13 MB): raw
 # source of nyiso_proxy_lmp_hourly_NEISO.parquet (committed). Regenerable
@@ -3737,6 +3742,10 @@ results/calibration/rcaiso9_A_20*/**
 results/calibration/spp94_arm_20*/
 # miso-279 per-year shard legs: parent-local only (rule 32(d)); provenance SHAs in docs/RESULT-miso279-stgas-span-coverage-2026-09-27.md
 results/calibration/miso279_arm_*/
+
+# soco-83 shard legs: kept out of main (rule 32(d)); composite soco83_span is what registers.
+# Provenance only (rule 33(d)); legs are costed as re-solves (~2 min LP/yr).
+results/calibration/soco83_20*/
 # R-ERCOT-11 per-year shard legs (rule 32(d)/36: composite r_ercot11_parish_split_span only reaches main).
 # Provenance SHAs (rule 33(d), provenance only): 2019 ee2b4c0d81552d26e11ecf8edb1373c1e6f006e1, 2020 0c88c309f0e7a3ba64bc12f5f178555ac043a46d, 2021 1054d0f1ece7e68306f7f259454a86ec146d5558, 2022 fbcc848ba5ef2ab90618134afd6c6fbbc0ef7a40, 2023 45ffc83803eda87683f0a814271736959adba3c0, 2024 a1207674577beddec7e8ff19b5c4b2d1c4501cfe, 2025 4fd84de49e3713c50d7c9e84a6234f2e043dd74d.
 results/calibration/r_ercot11_arm_20*/
@@ -3744,3 +3753,24 @@ results/calibration/r_ercot11_arm_20*/
 # R-ERCOT-12 per-year shard legs (rule 32(d)/36: composite r_ercot12_frontera_span only reaches main).
 # Leg provenance (rule 33(d)): 2019 474ddd1c6e9c647f1eba61df6f30498a82e7ef1e, 2020 f76abe7dc17c30cfb9826ddbbe73262e9bc8606f, 2021 55d1aaeb6ba13d5294cf25afeba0ee5e16c8632f, 2022 e7a4832bdb15a0c7c2ac57ae0df800e53a775f08, 2023 3d4a490452a28e6394d2be24c6dadb0f37b38435, 2024 41061da2db3a81995b8a31d7fdd2d20a01264b80, 2025 6ad0a04b9e3a60e34f036bb3178c3bfb4fdf846e
 results/calibration/r_ercot12_arm_20*/
+# R-CAISO-10 per-year legs (startup_aware disarm A/B): local only, pushed to shard branches (rule 34(a)); composite span/fold go on main
+results/calibration/rcaiso10_A_20*/**
+# R-CAISO-10: P0 dispatch/duals of the composites are local diagnostics (not in the keeper slim set)
+results/calibration/rcaiso10_A_*/hourly/p0_*.parquet
+# PJM-NEXT-7 per-year shard legs (rule 32(d)/36): the composite pjmnext7_vs_span is
+# the registered keeper; legs stay out of main. Provenance (rule 33(d), not a
+# recovery route): 2019 8a3b5094 2020 05cc491f 2021 173b48bb 2022 2b1ef9b3
+# 2023 791f1f8e 2024 389fe37a 2025 e9a7ab3a on claude/pjmnext7-vs-<y>.
+results/calibration/pjmnext7_vs_20*/
+
+# NYISO-NEXT-9 per-year shard legs (rule 32(d)/36): kept on disk, never on main; the composed
+# span nyisonext9_span and the 2021 leg (its own registered bundle) are what land.
+# Provenance SHAs (rule 33(d), provenance only): 2021 256972f4590944bb84602e344b4be0fef0e72ca7,
+# 2022 04514ab6cc76831cb6dd57421df4b9f5d8f28dee, 2023 0b0e6631c68ac8ae45b78bbdb98a5c4c27ae747e,
+# 2024 cf22a08d8a8528ec44bbc2ea12758b6b83f61b46, 2025 cec0c6a2fd8aa237cde688709ca33a0ac244c771.
+results/calibration/nyisonext9_202[2-5]/
+# R-CAISO-11 per-year legs (TAC-share clock arm): local only, pushed to shard branches (rule 34(a)); composite span/fold go on main.
+# Provenance SHAs (rule 33(d), provenance only): 2019 d12cd90983f45d875a14fea73c8a657ce0dca9ce, 2020 80e94bf7db27e908b6cca8c2f8049ed54469c7a5, 2021 f851904369f10e2c8fd7fef7610e63598a2e49c5, 2022 05cc2f8c45a92a2ac45afc78d3ca943e8b5c482d, 2023 b719a2f318cfc235159f56aeed62e987a52ddf29, 2024 e8b23b12381aeab15a2afc25a932ec5bc84d1599, 2025 56268443416f9e00396ba6118a3d6780213ff521.
+results/calibration/rcaiso11_A_20*/**
+results/calibration/rcaiso11_A_span/hourly/p0_*
+results/calibration/rcaiso11_A_tp_2019_2021/hourly/p0_*

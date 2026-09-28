@@ -235,3 +235,50 @@ def test_virtual_group_constants():
     """Both sides carry non-physical groups (reserve-ineligible, no bench)."""
     assert VIRTUAL_DEC_GROUP == "VIRTUAL_DEC"
     assert VIRTUAL_INC_GROUP == "VIRTUAL_INC"
+
+
+def test_settle_virtuals_financially_zeroes_p1_bounds_only():
+    """PJM-NEXT-7: P1 copy zeroes DEC min_gen + INC availability; P0 untouched."""
+    import dataclasses
+    from types import SimpleNamespace
+
+    from market_sim.data.virtual_bids import settle_virtuals_financially
+
+    @dataclasses.dataclass
+    class _FA:
+        pmin: np.ndarray
+        availability: np.ndarray
+        plant_group: np.ndarray
+        min_gen: np.ndarray | None = None
+
+    fa = _FA(
+        pmin=np.array([10.0, -200.0, 0.0]),
+        availability=np.array([[1.0, 0.9], [0.0, 0.0], [0.5, 1.0]]),
+        plant_group=np.array(
+            ["CC_REGULAR", VIRTUAL_DEC_GROUP, VIRTUAL_INC_GROUP], dtype=object
+        ),
+        min_gen=np.array([[10.0, 10.0], [-200.0, -50.0], [0.0, 0.0]]),
+    )
+    on = SimpleNamespace(pjm_da_virtual_bids=True, pjm_da_virtual_settle_financial=True)
+    out = settle_virtuals_financially(on, fa)
+    assert out is not fa
+    assert out.min_gen[1] == pytest.approx([0.0, 0.0])
+    assert out.availability[2] == pytest.approx([0.0, 0.0])
+    # The physical row and the P0 arrays are untouched.
+    assert out.min_gen[0] == pytest.approx([10.0, 10.0])
+    assert out.availability[0] == pytest.approx([1.0, 0.9])
+    assert fa.min_gen[1] == pytest.approx([-200.0, -50.0])
+    assert fa.availability[2] == pytest.approx([0.5, 1.0])
+    # No min_gen: DEC rows would fall back to negative pmin — materialized at 0.
+    fa2 = dataclasses.replace(fa, min_gen=None)
+    out2 = settle_virtuals_financially(on, fa2)
+    assert out2.min_gen[:, 0] == pytest.approx([10.0, 0.0, 0.0])
+    # Flag off / parent layer off -> None (byte-identical caller path).
+    off = SimpleNamespace(
+        pjm_da_virtual_bids=True, pjm_da_virtual_settle_financial=False
+    )
+    assert settle_virtuals_financially(off, fa) is None
+    orphan = SimpleNamespace(
+        pjm_da_virtual_bids=False, pjm_da_virtual_settle_financial=True
+    )
+    assert settle_virtuals_financially(orphan, fa) is None

@@ -1,0 +1,90 @@
+{
+ "keeper": "2026-09-28-caiso-r9-sd-floor",
+ "threshold_mw": 0.5,
+ "years": {
+  "2022": {
+   "plants": 25,
+   "cems_cc_regular_mid_mw": 4493,
+   "cems_on_model_off_mid_mw": 605,
+   "by_model_day_pattern_mw": {
+    "UNAVAIL": 0,
+    "OFF_DAY": 12,
+    "EVE_ONLY": 63,
+    "MORN_ONLY": 3,
+    "BOTH": 527
+   },
+   "share": {
+    "UNAVAIL": 0.0,
+    "OFF_DAY": 0.02,
+    "EVE_ONLY": 0.104,
+    "MORN_ONLY": 0.005,
+    "BOTH": 0.871
+   },
+   "of_which_cems_on_all_24h_mw": 436,
+   "ra_floor_cc_regular_mid_mw": 837
+  },
+  "2023": {
+   "plants": 25,
+   "cems_cc_regular_mid_mw": 4339,
+   "cems_on_model_off_mid_mw": 942,
+   "by_model_day_pattern_mw": {
+    "UNAVAIL": 0,
+    "OFF_DAY": 51,
+    "EVE_ONLY": 96,
+    "MORN_ONLY": 14,
+    "BOTH": 781
+   },
+   "share": {
+    "UNAVAIL": 0.0,
+    "OFF_DAY": 0.054,
+    "EVE_ONLY": 0.102,
+    "MORN_ONLY": 0.015,
+    "BOTH": 0.829
+   },
+   "of_which_cems_on_all_24h_mw": 701,
+   "ra_floor_cc_regular_mid_mw": 795
+  },
+  "2024": {
+   "plants": 25,
+   "cems_cc_regular_mid_mw": 3880,
+   "cems_on_model_off_mid_mw": 1164,
+   "by_model_day_pattern_mw": {
+    "UNAVAIL": 0,
+    "OFF_DAY": 46,
+    "EVE_ONLY": 86,
+    "MORN_ONLY": 24,
+    "BOTH": 1009
+   },
+   "share": {
+    "UNAVAIL": 0.0,
+    "OFF_DAY": 0.039,
+    "EVE_ONLY": 0.074,
+    "MORN_ONLY": 0.021,
+    "BOTH": 0.866
+   },
+   "of_which_cems_on_all_24h_mw": 882,
+   "ra_floor_cc_regular_mid_mw": 751
+  },
+  "2025": {
+   "plants": 26,
+   "cems_cc_regular_mid_mw": 2969,
+   "cems_on_model_off_mid_mw": 946,
+   "by_model_day_pattern_mw": {
+    "UNAVAIL": 0,
+    "OFF_DAY": 67,
+    "EVE_ONLY": 50,
+    "MORN_ONLY": 49,
+    "BOTH": 781
+   },
+   "share": {
+    "UNAVAIL": 0.0,
+    "OFF_DAY": 0.071,
+    "EVE_ONLY": 0.053,
+    "MORN_ONLY": 0.052,
+    "BOTH": 0.825
+   },
+   "of_which_cems_on_all_24h_mw": 721,
+   "ra_floor_cc_regular_mid_mw": 959
+  }
+ }
+}

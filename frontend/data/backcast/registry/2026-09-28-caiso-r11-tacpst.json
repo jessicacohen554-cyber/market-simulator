@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-28-caiso-r11-tacpst",
+  "label": "caiso r11 tacpst",
+  "date": "2026-09-28",
+  "shorthand": "caiso-r11-tacpst",
+  "definition": "R-CAISO-11 A 2022: keeper recipe + caiso_tac_shares_standard_time=true (PRECOMMIT-r-caiso-11-2026-09-28)",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-28-caiso-r11-tacpst.js",
+  "bundle": "results/calibration/rcaiso11_A_span"
+}
