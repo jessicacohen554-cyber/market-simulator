@@ -3779,3 +3779,7 @@ results/calibration/rcaiso11_A_span/hourly/p0_*
 results/calibration/rcaiso11_A_tp_2019_2021/hourly/p0_*
 # miso-280 per-year arm legs: parent-local, never on main (rule 32(d)); provenance SHAs in RESULT-miso280
 results/calibration/miso280_arm_*/
+# R-ERCOT-13 shard legs (rule 32(d)/36: composite r_ercot13_span only reaches main; 2020-2025 legs are the R-ERCOT-12 legs above).
+# Leg provenance (rule 33(d), provenance only): arm 2019 d667f4a8a3caf105129a6a4240543dc170b2a347; LR-only diagnostic 2019 5cb237e6c5b1f1b6157637217e873c119fd1db4c (never promotable).
+results/calibration/r_ercot13_arm_2019/
+results/calibration/r_ercot13_lr_2019/

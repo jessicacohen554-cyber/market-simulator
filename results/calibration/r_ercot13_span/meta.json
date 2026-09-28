@@ -145,9 +145,6 @@
   "commitment_screen_coal": true,
   "committed_band_measured_basis": null,
   "composed_from": {
-    "r_ercot12_arm_2019": [
-      2019
-    ],
     "r_ercot12_arm_2020": [
       2020
     ],
@@ -165,11 +162,17 @@
     ],
     "r_ercot12_arm_2025": [
       2025
+    ],
+    "r_ercot13_arm_2019": [
+      2019
     ]
   },
   "config_partition_overrides": {
     "2019": {
+      "caiso_tac_shares_standard_time": false,
+      "ercot_load_resource_reserve_from_year": 2019,
       "ercot_offer_swcap_clip": true,
+      "ercot_reserve_supply_cap_from_year": 2019,
       "offer_curve_by_group": {
         "CC_CHP": {
           "committed": 1.029,
@@ -342,7 +345,8 @@
           "pct_peaking": 6.0,
           "peak": 72.6
         }
-      }
+      },
+      "pjm_da_virtual_settle_financial": false
     },
     "2020": {
       "ercot_offer_swcap_clip": true,

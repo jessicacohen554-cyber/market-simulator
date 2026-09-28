@@ -314,7 +314,7 @@ order is a prior, not a mandate — a session with a better-identified lever
 goes off-queue and says so. Entries already adjudicated elsewhere are *not*
 repeated here; the matrix `R`/`G`/`I` cells are the DO-NOT-REDO list.
 
-### 5.1 ERCOT — keeper `2026-09-28-r-12-frontera-membership` (**PROMOTED 2026-09-28, R-ERCOT-12**, owner decision card *"Promote (Recommended)"* — the `2026-09-28-r-11-parish-split` recipe, flags and multipliers unchanged, on one rule-14 membership correction: Frontera 55098 outside ERCOT before 2023-04-13 in fleet and benchmark; ISO reads **NOT-YET** — 2023 carve-out C3a −20.0 % / C3b 0.293 (owner hold), 2024 C3a −10.7 %; 2025 CALIBRATED; validation 2021 and 2022 CALIBRATED, 2019/2020 NOT-YET on a newly exposed over-scarcity)
+### 5.1 ERCOT — keeper `2026-09-28-r-13-2019-reserve` (**PROMOTED 2026-09-28, R-ERCOT-13**, owner standing instruction *"Is it an improvement? Then promote"* — the `2026-09-28-r-12-frontera-membership` recipe with 2019 brought onto the measured reserve inputs (LR RRS credit + RTOLCAP supply cap, `from_year` 2020 → 2019); ISO reads **NOT-YET** — 2023 carve-out C3a −20.0 % / C3b 0.293 (owner hold), 2024 C3a −10.7 %; 2025 CALIBRATED; validation 2021/2022 CALIBRATED, 2019 (C3a +41.4 %) / 2020 (C3a +11.3 %) NOT-YET; next objects: the 2019–2021 shed-vs-rigid-reserve penalty inversion and the 2019–20 off-peak coal shortfall)
 
 > **ercot-234 EXECUTION (2026-08-25) — CARD Z SIGNED (Z-A) AND EXECUTED SAME
 > SESSION: THE IDENTITY REPAIR IS SOLVED, REGISTERED
