@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-28-r-12-frontera-membership",
+  "run_id": "2026-09-28-r-13-2019-reserve",
   "iso": "ERCOT",
-  "label": "r 12 frontera membership",
+  "label": "r 13 2019 reserve",
   "target_years": [
     2019,
     2020,
@@ -22,7 +22,7 @@
   ],
   "data_blocked_years": [],
   "price_reference_blocked_years": [],
-  "rubric_version": 3.9,
+  "rubric_version": "3.10",
   "determination": "NOT-YET",
   "reasons": [
     "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape"
@@ -105,7 +105,7 @@
     "diurnal_amplitude": {
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
-        "2019": "amplitude 184.3% of measured (hod range $215.25 vs $116.77); peak h15 vs h15, trough h02 vs h02 \u2014 phase OK; hod r +0.986; 365 complete days",
+        "2019": "amplitude 167.6% of measured (hod range $195.67 vs $116.77); peak h15 vs h15, trough h02 vs h02 \u2014 phase OK; hod r +0.990; 365 complete days",
         "2020": "amplitude 135.3% of measured (hod range $41.59 vs $30.73); peak h14 vs h14, trough h02 vs h02 \u2014 phase OK; hod r +0.965; 365 complete days",
         "2021": "amplitude 100.8% of measured (hod range $48.15 vs $47.76); peak h18 vs h18, trough h10 vs h11 \u2014 phase OK; hod r +0.762; 365 complete days",
         "2022": "amplitude 70.0% of measured (hod range $54.89 vs $78.44); peak h16 vs h15, trough h03 vs h02 \u2014 phase OK; hod r +0.957; 365 complete days",

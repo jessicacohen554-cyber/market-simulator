@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-28T03:37:44",
+  "timestamp": "2026-09-28T05:22:05",
   "git": {
-    "sha": "2af9ab74",
-    "basis_sha": "2af9ab74cae3ca183801ce6989ab930de6417c86",
-    "branch": "claude/r-ercot12-arm-2019",
+    "sha": "dac2fa2c",
+    "basis_sha": "dac2fa2c234c590920cbc944dd64c82aeaa95b72",
+    "branch": "claude/r-ercot13-arm-2019",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "R-ERCOT-12 ARM 2019: keeper 2026-09-28-r-11-parish-split recipe, UNCHANGED flags, on the R-ERCOT-12 membership correction (constants.ISO_PLANT_ENTRIES: Frontera 55098 outside ERCOT before 2023-04-13, fleet + benchmark) \u2014 PRECOMMIT-r-ercot-12-frontera-membership-2026-09-28",
+  "model_changes_note": "R-ERCOT-13 arm A: 2019 LR RRS credit + RTOLCAP supply cap (from_year 2020->2019)",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "ERCOT",
@@ -276,7 +276,9 @@
           "pct_peaking": 6.0,
           "peak": 72.6
         }
-      }
+      },
+      "ercot_load_resource_reserve_from_year": 2019,
+      "ercot_reserve_supply_cap_from_year": 2019
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -345,7 +347,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "2af9ab74"
+    "git_sha": "dac2fa2c"
   },
   "scenario_config": {
     "weather_year": 2019,
@@ -772,7 +774,7 @@
     "caiso_reserve_online_scoped": false,
     "caiso_locational_as_families": false,
     "ercot_load_resource_reserve": true,
-    "ercot_load_resource_reserve_from_year": 2020,
+    "ercot_load_resource_reserve_from_year": 2019,
     "ercot_storage_as_reserve": true,
     "ercot_storage_as_reserve_from_year": 2023,
     "ercot_ecrs_requirement": false,
@@ -791,7 +793,7 @@
     "ercot_as_aware_commitment": false,
     "ercot_as_adequacy_frac": 1.0,
     "ercot_reserve_supply_cap": true,
-    "ercot_reserve_supply_cap_from_year": 2020,
+    "ercot_reserve_supply_cap_from_year": 2019,
     "ercot_reserve_supply_forward": false,
     "ercot_reserve_supply_cap_net_credits": true,
     "ercot_online_capacity_envelope": false,
@@ -1042,6 +1044,7 @@
     "caiso_offer_surface_min_bin": 0,
     "caiso_offer_surface_price_cap_frac": 0.95,
     "pjm_da_virtual_bids": false,
+    "pjm_da_virtual_settle_financial": false,
     "pjm_da_virtual_surface_path": null,
     "pjm_offer_midcurve_conditional": false,
     "pjm_offer_midcurve_path": null,
@@ -16240,6 +16243,7 @@
     "caiso_asymmetric_path_ratings": false,
     "caiso_per_year_import_caps": false,
     "caiso_import_cap_floor_static": false,
+    "caiso_tac_shares_standard_time": false,
     "pjm_congestion": false,
     "transmission_expansion_enabled": false,
     "pjm_seam_flow_limit": false,
@@ -16327,18 +16331,18 @@
       "THERMAL_AVAILABILITY": "34ff308290e18439"
     },
     "epochs": [],
-    "git_sha": "2af9ab74"
+    "git_sha": "dac2fa2c"
   },
   "environment": {
     "python_version": "3.11.15",
     "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.14.0",
+      "highspy": "1.15.1",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.3",
-      "pyarrow": "24.0.0",
-      "pydantic": "2.13.4"
+      "pandas": "3.0.6",
+      "pyarrow": "25.0.1",
+      "pydantic": "2.13.5"
     },
     "cache_key_path_roots": [
       [
