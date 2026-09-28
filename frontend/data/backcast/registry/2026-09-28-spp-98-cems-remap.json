@@ -3,7 +3,7 @@
   "label": "spp 98 cems remap",
   "date": "2026-09-28",
   "shorthand": "spp-98-cems-remap",
-  "definition": "SPP-98 2019: keeper replay under the CEMS->EIA remap rows (benchmark attribution only)",
+  "definition": "SPP-98 (2019-2025, seven year-isolated replay shards): keeper spp-94 recipe unchanged, dispatch byte-identical; benchmark corrected: J Lamar Stall's CEMS turbines re-attributed from Arsenal Hill (EPA CAMD-EIA crosswalk), removing a C1 ST_GAS double count",
   "years": [
     2019,
     2020,
