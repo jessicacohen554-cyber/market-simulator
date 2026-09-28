@@ -48,7 +48,9 @@ def _dam_sp15(y: int) -> np.ndarray | None:
     d = pd.read_csv(p)
     d = d[d.node == "TH_SP15_GEN-APND"]
     t = pd.to_datetime(d.interval_start_gmt).dt.tz_convert("Etc/GMT+8")
-    h = ((t - pd.Timestamp(f"{y}-01-01", tz="Etc/GMT+8")).dt.total_seconds() // 3600).astype(int)
+    h = (
+        (t - pd.Timestamp(f"{y}-01-01", tz="Etc/GMT+8")).dt.total_seconds() // 3600
+    ).astype(int)
     out = np.full(T, np.nan)
     k = (h >= 0) & (h < T)
     out[h[k].to_numpy()] = d.LMP.to_numpy()[k.to_numpy()]
@@ -58,13 +60,24 @@ def _dam_sp15(y: int) -> np.ndarray | None:
 def setter(y: int) -> dict:
     """Name the SP15_rest price-setter by class for each window of year ``y``."""
     leg = Path(LEG.format(y=y))
-    s = pd.read_parquet(leg / f"hourly/system_{y}.parquet", columns=["zone", "hour", "price"])
+    s = pd.read_parquet(
+        leg / f"hourly/system_{y}.parquet", columns=["zone", "hour", "price"]
+    )
     zp = s.pivot(index="hour", columns="zone", values="price").reindex(range(T))
     sp = zp["SP15_rest"].to_numpy()
     same = {z: np.abs(zp[z].to_numpy() - sp) <= TOL for z in zp.columns}
     u = pd.read_parquet(
         leg / f"hourly/unit_hourly_{y}.parquet",
-        columns=["unit_id", "plant_group", "fuel", "zone", "hour", "mw", "cap_mw", "red_cost"],
+        columns=[
+            "unit_id",
+            "plant_group",
+            "fuel",
+            "zone",
+            "hour",
+            "mw",
+            "cap_mw",
+            "red_cost",
+        ],
     )
     u = u[(u.mw > ON) & (u.mw < u.cap_mw - ON) & (u.red_cost.abs() <= TOL)]
     u = u[[bool(same[z][h]) for z, h in zip(u.zone.astype(str), u.hour)]]
@@ -75,11 +88,21 @@ def setter(y: int) -> dict:
     )
     w = u.groupby("hour").cls.transform("size")
     u["wt"] = 1.0 / w
-    by_hour_cls = u.groupby(["hour", "cls"]).wt.sum().unstack(fill_value=0.0).reindex(range(T), fill_value=0.0)
+    by_hour_cls = (
+        u.groupby(["hour", "cls"])
+        .wt.sum()
+        .unstack(fill_value=0.0)
+        .reindex(range(T), fill_value=0.0)
+    )
     none = by_hour_cls.sum(axis=1).to_numpy() == 0
 
     hubs = pd.read_parquet(HUBS)
-    pv = hubs[(hubs.year == y) & (hubs.hub == "PALOVRDE")].set_index("hour").price.reindex(range(T)).to_numpy()
+    pv = (
+        hubs[(hubs.year == y) & (hubs.hub == "PALOVRDE")]
+        .set_index("hour")
+        .price.reindex(range(T))
+        .to_numpy()
+    )
     printed = ~np.isnan(pv)
     dam = _dam_sp15(y)
     out = {}
@@ -92,11 +115,17 @@ def setter(y: int) -> dict:
         out[nm] = {
             "hours": n,
             "model_sp15_rest": round(float(np.nanmean(sp[msk])), 1),
-            "measured_dam_sp15": round(float(np.nanmean(dam[msk])), 1) if dam is not None and (~np.isnan(dam[msk])).any() else None,
+            "measured_dam_sp15": round(float(np.nanmean(dam[msk])), 1)
+            if dam is not None and (~np.isnan(dam[msk])).any()
+            else None,
             "hub_palovrde": round(float(np.nanmean(pv[msk])), 1),
-            "setter_share": {k: round(float(v), 3) for k, v in shares.items() if v >= 0.01},
+            "setter_share": {
+                k: round(float(v), 3) for k, v in shares.items() if v >= 0.01
+            },
             "none_thermal_share": round(float(none[msk].mean()), 3),
-            "model_price_when_none": round(float(np.nanmean(sp[msk & none])), 1) if (msk & none).any() else None,
+            "model_price_when_none": round(float(np.nanmean(sp[msk & none])), 1)
+            if (msk & none).any()
+            else None,
         }
     return out
 

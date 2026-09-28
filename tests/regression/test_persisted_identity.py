@@ -739,9 +739,17 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   its live hash (`--declare-missing`, moves no key). +1 row everywhere.
 #   WHAT IT COSTS: nothing solved — no registry value moved, so no committed
 #   bundle's numbers change; the digest moves only because the row set grew.
+# 2026-09-28 CAISO ADVANCED (R-CAISO-10) — ONE VALUE MOVED, LEDGERED AFTER THE
+#   FACT. R-CAISO-8 (7ee882e0, 2026-09-27) re-synced
+#   constants.ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO["CAISO"] 1.166 -> 1.154 to the
+#   re-frozen CT_PEAKER-peak artifact (rule 23) without advancing this pin, so
+#   main went red here. `solve_surface_register.py --diff 84896e59` -> "317 ->
+#   317 names; 1 value(s) moved: ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO: CAISO".
+#   WHAT IT COSTS: nothing new — every CAISO keeper since R-CAISO-8 (r8, r9,
+#   r10) was solved on 1.154; only pre-R-CAISO-8 CAISO bundles re-key.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
     "ERCOT": ("542d797ba061b435", 235),
-    "CAISO": ("ea426b82660d270e", 210),
+    "CAISO": ("35d53f519b496e2d", 210),
     "MISO": ("754991ac8927d9f7", 216),
     "PJM": ("82f6053c8964444d", 220),
     "NYISO": ("fd0d853c93a9babc", 217),
@@ -831,6 +839,11 @@ LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
         ),
     },
     "CAISO": {
+        "ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO": (
+            "R-CAISO-8 2026-09-27: CAISO 1.166 -> 1.154, re-synced to the "
+            "re-frozen CT_PEAKER-peak artifact (rule 23) — see the 2026-09-28 "
+            "R-CAISO-10 cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
         "GENERIC_BASE_OFFER_CURVE": (
             "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
         ),
