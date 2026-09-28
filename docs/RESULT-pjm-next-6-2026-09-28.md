@@ -64,6 +64,9 @@ out of span (reported, never gating, rule 30(c)).
   on the system-price basis.
 - **No measured-input lever.** The next step is structural (rule 1) and needs an owner decision: make the virtual
   layer price-forming but not physical-energy-forming (e.g. settle the net virtual position financially).
+- **OWNER RULING 2026-09-28 (decision card):** "Design card: settle financially". The next session writes a
+  design card + zero-LP census for a financially settled net virtual position (price-forming, not
+  physical-energy-forming); no solve until the owner approves the design.
 
 ## 4. Card 3 — C3a 2020 / C3b 2022
 
