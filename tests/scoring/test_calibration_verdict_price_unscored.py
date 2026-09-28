@@ -8,7 +8,9 @@ of an actual_lmp.json block — no existing ISO can reach it".
 
 These tests pin the four things that make the class safe:
 
-* it is REACHED by a region with no block (SOCO, NWPP), on synthetic artifacts;
+* it is REACHED by a region with no block (NWPP; SOCO until its FERC-714
+  system-lambda block landed, owner ruling 2026-09-28 "Score C3a vs lambda",
+  lane soco-84), on synthetic artifacts;
 * it is UNREACHABLE by a region WITH a block, whether the price scored or not,
   and unreachable by leg (ii) when a price somehow scored without a block;
 * it is never ``CALIBRATED``, every NOT-YET route is untouched, and the price
@@ -35,8 +37,8 @@ from tests.scoring.test_calibration_verdict import (
     cv,
 )
 
-_REGISTERED_ISOS = ("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "PJM", "SPP")
-_NO_BLOCK_ISOS = ("SOCO", "NWPP")
+_REGISTERED_ISOS = ("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "PJM", "SOCO", "SPP")
+_NO_BLOCK_ISOS = ("NWPP",)
 
 
 def _no_price_art(iso, *, avg_lmp=False, legit=True, target_years=None, fail=False):
@@ -140,7 +142,7 @@ class ReachedTests(unittest.TestCase):
     """A region with no block, otherwise clean, reads the new class."""
 
     def test_clean_no_price_run_reads_physically_calibrated(self):
-        v = cv.determine_from_artifacts("t", _no_price_art("SOCO"))
+        v = cv.determine_from_artifacts("t", _no_price_art("NWPP"))
         self.assertEqual(v["determination"], cv.PHYSICALLY_CALIBRATED)
         for c in cv.PRICE_CRITERIA:
             self.assertEqual(v["criteria"][c]["status"], cv.SKIPPED, c)
@@ -148,7 +150,7 @@ class ReachedTests(unittest.TestCase):
             self.assertEqual(v["criteria"][c]["status"], cv.PASS, c)
         self.assertIn("price_unscored", v)
         pu = v["price_unscored"]
-        self.assertEqual(pu["basis"], "no actual_lmp.json block for SOCO")
+        self.assertEqual(pu["basis"], "no actual_lmp.json block for NWPP")
         self.assertEqual(pu["criteria_unscored"], list(cv.PRICE_CRITERIA))
         self.assertEqual(
             pu["scored_on"],
@@ -158,13 +160,13 @@ class ReachedTests(unittest.TestCase):
         self.assertEqual(pu["model_mean_lmp_by_year"], {"2024": 29.0})
 
     def test_the_basis_line_names_everything(self):
-        v = cv.determine_from_artifacts("t", _no_price_art("SOCO"))
+        v = cv.determine_from_artifacts("t", _no_price_art("NWPP"))
         self.assertEqual(len(v["reasons"]), 1)
         line = v["reasons"][0]
         self.assertTrue(line.startswith("PRICE UNSCORED"))
         for needle in (
             "actual_lmp.json",
-            "SOCO",
+            "NWPP",
             cv.CRITERIA["price_mean"][0],
             cv.CRITERIA["price_shape"][0],
             cv.CRITERIA["price_tail"][0],
@@ -191,7 +193,7 @@ class ReachedTests(unittest.TestCase):
         )
 
     def test_render_and_condensed_carry_the_block(self):
-        v = cv.determine_from_artifacts("t", _no_price_art("SOCO"))
+        v = cv.determine_from_artifacts("t", _no_price_art("NWPP"))
         txt = cv.render_text(v)
         self.assertIn("CALIBRATION DETERMINATION: " + cv.PHYSICALLY_CALIBRATED, txt)
         self.assertIn("PRICE UNSCORED (rubric v3.8)", txt)
@@ -212,11 +214,11 @@ class NeverCalibratedTests(unittest.TestCase):
         self.assertIn("CAVEATS", cv.PHYSICALLY_CALIBRATED_CAVEATS)
 
     def test_clean_no_price_run_is_not_calibrated(self):
-        v = cv.determine_from_artifacts("t", _no_price_art("SOCO"))
+        v = cv.determine_from_artifacts("t", _no_price_art("NWPP"))
         self.assertNotIn(v["determination"], (cv.CALIBRATED, cv.CALIBRATED_CAVEATS))
 
     def test_a_fail_is_still_not_yet_and_still_names_the_price_gap(self):
-        v = cv.determine_from_artifacts("t", _no_price_art("SOCO", fail=True))
+        v = cv.determine_from_artifacts("t", _no_price_art("NWPP", fail=True))
         self.assertEqual(v["determination"], cv.NOT_YET)
         self.assertEqual(v["criteria"]["fuelmix"]["status"], cv.FAIL)
         # The FAIL line keeps the headline; the price line is present and LAST,
@@ -227,7 +229,7 @@ class NeverCalibratedTests(unittest.TestCase):
         self.assertIn("price_unscored", v)
 
     def test_unattested_governance_is_still_not_yet(self):
-        art = _no_price_art("SOCO")
+        art = _no_price_art("NWPP")
         art["attestation"] = None
         v = cv.determine_from_artifacts("t", art)
         self.assertEqual(v["determination"], cv.NOT_YET)
@@ -236,7 +238,7 @@ class NeverCalibratedTests(unittest.TestCase):
 
     def test_caveat_rung_on_a_data_blocked_year(self):
         v = cv.determine_from_artifacts(
-            "t", _no_price_art("SOCO", target_years=[2024, 2025])
+            "t", _no_price_art("NWPP", target_years=[2024, 2025])
         )
         self.assertEqual(v["determination"], cv.PHYSICALLY_CALIBRATED_CAVEATS)
         self.assertEqual(v["data_blocked_years"], [2025])
@@ -245,7 +247,7 @@ class NeverCalibratedTests(unittest.TestCase):
 
     def test_caveat_rung_on_an_unscored_protective_criterion(self):
         """The protective fail-closed guard is untouched: no C8 artifact downgrades."""
-        v = cv.determine_from_artifacts("t", _no_price_art("SOCO", legit=False))
+        v = cv.determine_from_artifacts("t", _no_price_art("NWPP", legit=False))
         self.assertEqual(v["determination"], cv.PHYSICALLY_CALIBRATED_CAVEATS)
         self.assertEqual(v["criteria"]["forced_share"]["status"], cv.SKIPPED)
         self.assertTrue(v["reasons"][0].startswith("unscored PROTECTIVE criteria"))
@@ -291,7 +293,7 @@ class UnreachableTests(unittest.TestCase):
 
     def test_leg_two_a_scored_price_overrides_absence(self):
         """No block, but the bench carries a price anyway: the ordinary path."""
-        v = cv.determine_from_artifacts("t", _no_price_art("SOCO", avg_lmp=True))
+        v = cv.determine_from_artifacts("t", _no_price_art("NWPP", avg_lmp=True))
         self.assertEqual(v["criteria"]["price_mean"]["status"], cv.PASS)
         self.assertEqual(v["determination"], cv.CALIBRATED)
         self.assertNotIn("price_unscored", v)
@@ -301,9 +303,9 @@ class UnreachableTests(unittest.TestCase):
         """Leg (ii) is ALL three: one scored price criterion is enough to refuse."""
         from tests.scoring.test_calibration_verdict import _reset_tail, _tail
 
-        _tail({"SOCO": {"2024": {"da_gt": 80, "rt_gt": 100, "rt_coverage": 1.0}}})
+        _tail({"NWPP": {"2024": {"da_gt": 80, "rt_gt": 100, "rt_coverage": 1.0}}})
         self.addCleanup(_reset_tail)
-        art = _no_price_art("SOCO")
+        art = _no_price_art("NWPP")
         art["payload"]["years"]["2024"]["ordc"] = {
             "hoursGt200": {"actual": 100, "model": 100}
         }

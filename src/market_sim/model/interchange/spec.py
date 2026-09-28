@@ -539,7 +539,8 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     # data/raw/NYISO/interface-flows/). Single import node → the AGGREGATE
     # net-import supply curve is the object reconciled to the model (rule 14),
     # not per-seam curves. HQ_hydro kept at the firm-base 900 MW so the
-    # always-on firm-import floor (NYISO_FIRM_IMPORT_FLOOR_FRAC) is unchanged;
+    # always-on firm-import floor (NYISO_FIRM_IMPORT_FLOOR_FRAC, deleted
+    # 2026-09-28 by NYISO-NEXT-11 under rule 26) was unchanged;
     # five equal-MW economic rungs span [900, ~4,350 MW SIL] (the clearable
     # range) so a rung lands at the off-peak operating depth and reprices it
     # measured; import_scarcity is the SIL-blocked deep tail. Replaces the
@@ -922,6 +923,126 @@ IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = 
             ("import_scarcity", 105.0, 299.86),
         ],
     },
+}
+
+# --- NYISO NE AC tie node (ScenarioConfig.nyiso_ne_ac_node, NYISO-NEXT-11) ---
+#
+# The NY-New England AC tie (P-32 SCH - NE - NY: New Scotland / Pleasant
+# Valley, NYISO zone F-G = Capital_Hudson) leaves the pooled NYISO_external
+# star node for its own TWO-WAY node (owner ruling Q-a, 2026-09-28;
+# docs/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md). The pooled node cannot
+# hold NE's measured net EXPORT (3.5-5.9 TWh/yr, 2021-2025) and HQ/IESO's
+# import at once, so Capital_Hudson imported at cap where NYISO's own schedule
+# exports (docs/FINDING-nyiso-next7-star-node-2026-09-27.md §2). The tie is the
+# one seam whose hourly flow follows its OWN spread (CAPITL DA - ISO-NE Roseton
+# DA) in every year (docs/FINDING-nyiso-next10-seam-spread-2026-09-28.md §2).
+
+#: The NE AC tie's own external zone (zero load, one link to its landing zone).
+NYISO_NE_AC_ZONE: str = "NYISO_NE_AC"
+#: The NYISO zone the tie lands in (Gold Book: New Scotland / Pleasant Valley,
+#: zones F-G; nyiso_par_attribution.SEAM_ROW_ZONE).
+NYISO_NE_AC_LANDING: str = "Capital_Hudson"
+#: The P-32 row the node carries, removed from every pooled derivation.
+NYISO_NE_AC_SEAM_ROW: str = "SCH - NE - NY"
+#: ISO-NE's external pricing node facing the tie (seam-neighbour-price README).
+NYISO_NE_AC_NEIGHBOUR_NODE: str = ".I.ROSETON 345 1"
+
+# Per year: SEAM_FLOW_TRANCHES (8) equal import and export bands sized on the
+# year's MEDIAN posted import / export limit of the tie, each carrying an
+# OFFSET ($/MWh) to the hourly Roseton DA LMP — band k offers at
+# Roseton(t) + offset_k. Offsets: the PJM neighbour-hourly Q-Q duration coupling
+# (derive_pjm_seam_ladders._derive_one_spread) transferred IN KIND (rule 25 —
+# the formula, never PJM's numbers) and applied to NYISO's own measured tie flow
+# and its own spread; same-seam no-wash clamp (export < min import - 0.01; zero
+# clamps fired). Zero free parameters (rules 21/24). Producer:
+# scripts/data/derive_nyiso_ne_ac_ladder.py; re-derive only when the P-32
+# posting or either DA series extends (rule 23). Backcast-only: the forward
+# anchor (a modeled NEISO price at Roseton / the reference-price formula) is not
+# wired, and get_interchange_spec refuses the flag outside a backcast.
+NYISO_NE_AC_LADDER_BY_YEAR: dict[int, dict[str, float | list[float]]] = {
+    2021: {
+        "import_mw": 1400.0,
+        "export_mw": 1600.0,
+        "import": [9.5, 12.68, 17.3, 23.59, 29.26, 40.11, 49.52, 68.48],
+        "export": [7.01, 5.06, 3.4, 1.48, -0.19, -1.67, -3.79, -13.59],
+    },
+    2022: {
+        "import_mw": 1400.0,
+        "export_mw": 1600.0,
+        "import": [22.03, 35.7, 50.96, 89.99, 139.94, 197.65, 286.81, 286.81],
+        "export": [14.93, 9.53, 6.05, 3.41, 1.05, -1.58, -5.09, -12.57],
+    },
+    2023: {
+        "import_mw": 1400.0,
+        "export_mw": 1600.0,
+        "import": [5.52, 8.02, 11.82, 20.57, 32.45, 89.49, 173.22, 242.88],
+        "export": [3.9, 2.54, 1.48, 0.35, -0.77, -2.22, -3.82, -7.91],
+    },
+    2024: {
+        "import_mw": 1400.0,
+        "export_mw": 1600.0,
+        "import": [3.61, 4.8, 6.6, 9.98, 21.7, 37.65, 65.88, 210.51],
+        "export": [2.72, 1.8, 0.93, 0.04, -0.99, -2.16, -3.89, -6.77],
+    },
+    2025: {
+        "import_mw": 1400.0,
+        "export_mw": 1600.0,
+        "import": [11.16, 15.75, 23.48, 35.2, 57.87, 101.34, 178.96, 328.0],
+        "export": [7.95, 5.46, 3.28, 1.69, -0.27, -2.52, -5.27, -11.47],
+    },
+}
+
+# The incumbent pooled NYISO ladder (IMPORT_TRANCHES_BY_YEAR["NYISO"]) re-derived
+# by its own frozen formula (derive_nyiso_import_tranches.derive, byte-for-byte)
+# on net import WITHOUT the NE AC row, so the tie's volume is counted once
+# (rule 19 [R-ONE-MECH]). Replaces that ladder for the year when
+# nyiso_ne_ac_node is armed. Same producer, same rule-23 trigger.
+NYISO_IMPORT_TRANCHES_NE_SPLIT_BY_YEAR: dict[int, list[tuple[str, float, float]]] = {
+    2021: [
+        ("HQ_hydro", 900.0, 10.63),
+        ("IESO_Ontario", 690.0, 12.22),
+        ("PJM_shoulder", 690.0, 16.06),
+        ("PJM_west", 690.0, 22.78),
+        ("eastern_mid", 690.0, 29.39),
+        ("ISONE_tie", 690.0, 37.4),
+        ("import_scarcity", 2145.0, 65.76),
+    ],
+    2022: [
+        ("HQ_hydro", 900.0, 17.39),
+        ("IESO_Ontario", 690.0, 34.96),
+        ("PJM_shoulder", 690.0, 43.1),
+        ("PJM_west", 690.0, 48.56),
+        ("eastern_mid", 690.0, 56.95),
+        ("ISONE_tie", 690.0, 68.31),
+        ("import_scarcity", 2110.0, 146.34),
+    ],
+    2023: [
+        ("HQ_hydro", 900.0, 12.15),
+        ("IESO_Ontario", 690.0, 15.48),
+        ("PJM_shoulder", 690.0, 19.51),
+        ("PJM_west", 690.0, 24.32),
+        ("eastern_mid", 690.0, 30.69),
+        ("ISONE_tie", 690.0, 38.77),
+        ("import_scarcity", 1495.0, 63.81),
+    ],
+    2024: [
+        ("HQ_hydro", 900.0, 15.59),
+        ("IESO_Ontario", 690.0, 19.47),
+        ("PJM_shoulder", 690.0, 22.74),
+        ("PJM_west", 690.0, 27.41),
+        ("eastern_mid", 690.0, 33.26),
+        ("ISONE_tie", 690.0, 42.01),
+        ("import_scarcity", 1980.0, 120.11),
+    ],
+    2025: [
+        ("HQ_hydro", 900.0, 17.49),
+        ("IESO_Ontario", 690.0, 25.2),
+        ("PJM_shoulder", 690.0, 33.55),
+        ("PJM_west", 690.0, 45.05),
+        ("eastern_mid", 690.0, 62.85),
+        ("ISONE_tie", 690.0, 93.04),
+        ("import_scarcity", 1595.0, 162.49),
+    ],
 }
 
 # CAISO and PJM export sinks below are STATIC-FITTED-PENDING-MEASURED (gap
@@ -3106,11 +3227,6 @@ CAISO_INTERTIE_HUB_GAS_STATE: dict[str, str] = {
 
 # --- NYISO-specific interchange constants ---
 
-NYISO_FIRM_IMPORT_FLOOR_FRAC: dict[str, float] = {
-    "HQ_hydro": 1.0,
-    "IESO_Ontario": 0.0,
-}
-
 NYISO_IMPORT_RECON_BAND_FRAC: float = 0.02
 
 
@@ -3396,6 +3512,15 @@ class InterchangeSpec:
     # Resolved from ScenarioConfig.caiso_dsw_lateevening_clean; zero capacity
     # at build, armed hourly by transmission.inject_caiso_dsw_lateevening_clean.
     caiso_lateevening_clean: bool = False
+    # NYISO only: host the NE AC tie on its own two-way node
+    # (NYISO_NE_AC_ZONE, NYISO-NEXT-11). Resolved from
+    # ScenarioConfig.nyiso_ne_ac_node on the static-tranche path; when set,
+    # ``import_tranches`` is the NE-split pooled ladder and the node's bands are
+    # appended by build_interchange_fleet.
+    nyiso_ne_ac_node: bool = False
+    # The solve year the spec was resolved for (the NE AC node's ladder is
+    # year-indexed); ``None`` when unresolved.
+    year: int | None = None
 
 
 def get_interchange_spec(config, iso: str, year: int | None = None) -> InterchangeSpec:
@@ -3543,6 +3668,30 @@ def get_interchange_spec(config, iso: str, year: int | None = None) -> Interchan
             )
         )
 
+    ne_ac_node = (
+        iso == "NYISO"
+        and not (use_ref or use_corridors)
+        and bool(getattr(config, "nyiso_ne_ac_node", False))
+    )
+    if ne_ac_node:
+        # Backcast-only (rule 13): the node is anchored on the MEASURED Roseton
+        # DA series; its forward anchor is not wired, so a forecast refuses the
+        # flag rather than silently serving an unpriced node.
+        if getattr(config, "mode", "forecast") != "backcast":
+            raise ValueError(
+                "nyiso_ne_ac_node is backcast-only: the node is priced at the "
+                "measured ISO-NE Roseton DA LMP, which has no forward series here"
+            )
+        if year not in NYISO_NE_AC_LADDER_BY_YEAR:
+            raise ValueError(
+                f"nyiso_ne_ac_node: no derived NE AC ladder for {year} "
+                f"(covered: {sorted(NYISO_NE_AC_LADDER_BY_YEAR)}; producer "
+                "scripts/data/derive_nyiso_ne_ac_ladder.py)"
+            )
+        # Rule 19: the pooled ladder derived WITHOUT the NE AC row, so the
+        # tie's volume enters the model once — on its own node.
+        tranches = NYISO_IMPORT_TRANCHES_NE_SPLIT_BY_YEAR[year]
+
     recon = None
     if getattr(config, "nyiso_import_reconciliation", False) and iso == "NYISO":
         recon = ReconciliationBand(
@@ -3583,7 +3732,66 @@ def get_interchange_spec(config, iso: str, year: int | None = None) -> Interchan
         caiso_lateevening_clean=(
             caiso_per_hub and getattr(config, "caiso_dsw_lateevening_clean", False)
         ),
+        nyiso_ne_ac_node=ne_ac_node,
+        year=year,
     )
+
+
+def build_nyiso_ne_ac_node_gens(year: int) -> list[Generator]:
+    """Build the NE AC tie node's import bands and export sinks for ``year``.
+
+    ``SEAM_FLOW_TRANCHES`` equal import bands (``pmax`` = median posted import
+    limit / N) and as many export sinks (``pmin`` = -median posted export limit
+    / N) on :data:`NYISO_NE_AC_ZONE`, all ``fuel_type="import"`` so they join the
+    monthly EIA-930 reconciliation band like every other seam row (the band is
+    NYISO's TOTAL net interchange, which includes this tie). ``vom`` is a zero
+    placeholder: the hourly offer ``Roseton(t) + offset_k`` is written by
+    :func:`market_sim.model.interchange.nyiso.inject_nyiso_ne_ac_node_prices`.
+    No forced-outage derate — the hourly posted limits on the node's link carry
+    the tie's availability.
+
+    Args:
+        year: Backcast year (a key of :data:`NYISO_NE_AC_LADDER_BY_YEAR`).
+
+    Returns:
+        ``2 × SEAM_FLOW_TRANCHES`` generators, imports first.
+    """
+    from market_sim.data.neighbor_price import SEAM_FLOW_TRANCHES
+
+    spec = NYISO_NE_AC_LADDER_BY_YEAR[year]
+    step_i = float(spec["import_mw"]) / SEAM_FLOW_TRANCHES
+    step_e = float(spec["export_mw"]) / SEAM_FLOW_TRANCHES
+    zone = NYISO_NE_AC_ZONE
+    gens: list[Generator] = []
+    for k in range(1, SEAM_FLOW_TRANCHES + 1):
+        gens.append(
+            Generator(
+                unit_id=f"{zone}_imp#{k}",
+                name=f"NE_AC_imp#{k}",
+                zone=zone,
+                fuel_type="import",
+                pmax_mw=step_i,
+                pmin_mw=0.0,
+                heat_rate=0.0,
+                vom=0.0,
+                eford=0.0,
+            )
+        )
+    for k in range(1, SEAM_FLOW_TRANCHES + 1):
+        gens.append(
+            Generator(
+                unit_id=f"{zone}_exp#{k}",
+                name=f"NE_AC_exp#{k}",
+                zone=zone,
+                fuel_type="import",
+                pmax_mw=0.0,
+                pmin_mw=-step_e,
+                heat_rate=0.0,
+                vom=0.0,
+                eford=0.0,
+            )
+        )
+    return gens
 
 
 def build_interchange_fleet(
@@ -3647,6 +3855,8 @@ def build_interchange_fleet(
         )
     else:
         gens.extend(_build_static_tranche_gens(spec, border_carbon_per_mwh))
+        if spec.nyiso_ne_ac_node:
+            gens.extend(build_nyiso_ne_ac_node_gens(int(spec.year)))
 
     for fi in spec.firm_imports:
         gens.append(
@@ -3767,6 +3977,12 @@ def apply_interchange_topology(
     iso = spec.iso
     if extend_node:
         iso_config = extend_with_import_node(iso_config)
+    if spec.nyiso_ne_ac_node:
+        from market_sim.model.interchange.nyiso import split_nyiso_ne_ac_node
+
+        iso_config = split_nyiso_ne_ac_node(
+            iso_config, float(NYISO_NE_AC_LADDER_BY_YEAR[year]["import_mw"])
+        )
     if iso == "NYISO" and getattr(config, "nyiso_import_sil_retire", False):
         iso_config = retire_misattributed_sil(iso_config, iso)
         logger.info(

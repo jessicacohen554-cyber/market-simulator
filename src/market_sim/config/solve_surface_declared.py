@@ -598,4 +598,9 @@ DECLARED: dict[str, str | dict[str, str]] = {
     "ISO_BA_EXITS": {"SOCO": "a4d0fee78b233797"},
     "EIA930_REMOTE_GENERATION_DOUBLE_BOOKED": "b90c9e86758ef245",
     "WINTER_FUELSEC_CONDUCT_MIN_ONLINE_SHARE": "cfabfbece983e46a",
+    # R-ERCOT-12: declared at the PRE-ARM (empty-table) hash, as ISO_BA_JOINS /
+    # ISO_BA_EXITS were for SOCO, so the Frontera entry re-keys ERCOT's
+    # backcast bundles rather than silently re-using pre-fix ones.
+    "ISO_PLANT_ENTRIES": {"ERCOT": "a4d0fee78b233797"},
+    "EIA930_CISO_CLOCK_LATE_WINDOWS_UTC": "65677404b01b1492",
 }

@@ -47,7 +47,8 @@ Rung structure (frozen; re-derive only on a source-data update, rule 23):
     at its established ``FIRM_BASE_MW`` so the always-on firm-import floor
     (``NYISO_FIRM_IMPORT_FLOOR_FRAC["HQ_hydro"]`` = 1.0,
     ``transmission.inject_nyiso_firm_imports``) is byte-unchanged. Priced at
-    the low-quantile coupling (cosmetic — the block is must-flow).
+    the low-quantile coupling. (That floor was un-armed by NYISO-NEXT-9 and
+    deleted 2026-09-28 by NYISO-NEXT-11, rule 26; the rung is now economic.)
   * five economic rungs spanning ``[FIRM_BASE_MW, SIL]`` in equal-MW steps —
     the clearable range under the published ~4,350 MW Simultaneous Import Limit
     (``EXTERNAL_SIMULTANEOUS_LIMITS["NYISO"]``), so a rung midpoint sits at the

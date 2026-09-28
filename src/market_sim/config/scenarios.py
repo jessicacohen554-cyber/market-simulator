@@ -102,6 +102,14 @@ _CACHE_KEY_RETIRED_FIELDS: dict[str, object] = {
     # caiso_per_hub_intertie. Deleted 2026-09-02 (caiso-236),
     # results/calibration/FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md.
     "caiso_bidir_intertie": False,
+    # NYISO HQ_hydro / Ontario firm (must-flow) import floor
+    # (inject_nyiso_firm_imports, NYISO_FIRM_IMPORT_FLOOR_FRAC). An
+    # outcome-percentile level ("NY imported >=922 MW in 98 % of 2023 hours")
+    # with no published contract driver and an always-on window (rules 13/17);
+    # un-armed from the NYISO keeper by NYISO-NEXT-9 and off in every shipped
+    # configuration since. Deleted 2026-09-28 (NYISO-NEXT-11, owner ruling
+    # Q-b), docs/RESULT-nyiso-next9-hq-floor-2026-09-28.md §1.
+    "nyiso_firm_imports": False,
 }
 
 # Config fields introduced after the results cache existed. ``cache_key`` omits
@@ -503,6 +511,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # through the same selector, so the off path is byte-inert). Registered IN
     # THE SAME COMMIT as the field.
     "campd_st_gas_span_coverage",
+    # miso-280 split-remap companions (GATED default-off; selects the
+    # '-splitremap-' companions of the MISO keeper's seven CAMPD-derived
+    # artifacts through campd.split_remap_armed, so the off path is
+    # byte-inert). Registered IN THE SAME COMMIT as the field.
+    "campd_split_remap_companions",
     # SPP-85 net-load-mask repair of the standard / short / partial CAMPD
     # extracts (GATED default-off; selects the '-netloadmask-' companions
     # through the same resolvers, so the off path is byte-inert). Same commit
@@ -2169,6 +2182,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # construction: apply_caiso_local_import_limits floors only when handed
     # sd_floor_static=True from the flag.
     "caiso_import_cap_floor_static",
+    # R-CAISO-11 (2026-09-28), default off, registered IN THE SAME COMMIT as
+    # the field (the nyiso-119 discipline). Byte-identical off by
+    # construction: load_demand passes caiso_standard_time to
+    # load_zonal_shares only when the flag is True.
+    "caiso_tac_shares_standard_time",
+    # R-CAISO-13 (2026-09-28), default off, registered IN THE SAME COMMIT as
+    # the field (the nyiso-119 discipline). Byte-identical off by
+    # construction: frames._repair_clock_late_windows returns its input
+    # object unless the per-solve switch is armed from this flag.
+    "caiso_eia930_clock_repair",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -2182,6 +2205,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SHARED field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline).
     "coal_fuel_inventory_take_floor",
+    # NWPP-NEXT-8 (2026-09-28): MONTHLY cumulative grain of the per-yard coal
+    # pile identity (default off). Off, the yard rows keep their one annual
+    # column, so the LP is byte-identical. SHARED field -- very end, per
+    # HOUSE-3. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "coal_fuel_inventory_monthly_pile",
     # NYISO-NEXT-6 (2026-09-27): Long Island posted-limit sub-clip (default
     # off). Byte-identical off by construction: its one applier,
     # data.nyiso_seam_envelope.nyiso_li_posted_limit_cap, is reached only inside
@@ -2189,6 +2218,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # False)`` in run_calibration.run_year, so no link bound changes off.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "nyiso_li_seam_posted_limit_cap",
+    # NYISO-NEXT-11 (2026-09-28): the NE AC tie's own two-way node (default
+    # off). Byte-identical off by construction: every applier is reached only
+    # through InterchangeSpec.nyiso_ne_ac_node (resolved False unless the flag
+    # is set on a NYISO static-tranche spec) or an explicit
+    # ``getattr(config, "nyiso_ne_ac_node", False)`` gate in
+    # run_calibration.run_year / the NYISO P1 bridge. Registered IN THE SAME
+    # COMMIT as the field (the nyiso-119 discipline).
+    "nyiso_ne_ac_node",
     # SPP-93 West/East re-partition (default "north_south"): dropped from the
     # hash at its default so every pre-existing run keeps its key; an armed
     # run solves a different SPP topology and so gets a distinct key.
@@ -2380,6 +2417,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-279 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_st_gas_span_coverage": "False",
+    # Added by miso-280 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "campd_split_remap_companions": "False",
     # Added by SPP-85 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_netload_mask_repair": "False",
@@ -2979,12 +3019,19 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_intertie_partial_year_measured": "False",
     # Added by R-CAISO-9 WITH the field (the nyiso-119 discipline).
     "caiso_import_cap_floor_static": "False",
+    # Added by R-CAISO-11 WITH the field (the nyiso-119 discipline).
+    "caiso_tac_shares_standard_time": "False",
+    # Added by R-CAISO-13 WITH the field (the nyiso-119 discipline).
+    "caiso_eia930_clock_repair": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
     "coal_fuel_inventory_take_floor": "False",
+    # Added by NWPP-NEXT-8 WITH the field (the nyiso-119 discipline).
+    "coal_fuel_inventory_monthly_pile": "False",
     # Added by NYISO-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nyiso_li_seam_posted_limit_cap": "False",
+    "nyiso_ne_ac_node": "False",
     # Added by SPP-93 WITH the field (the nyiso-119 discipline).
     "spp_zone_partition": "'north_south'",
 }
@@ -8324,6 +8371,23 @@ class ScenarioConfig:
     # the two seam flags above is armed. Export bound untouched; NYC ties out of
     # scope. PRECOMMIT: docs/PRECOMMIT-nyiso-next5-li-tie-posted-limit-2026-09-27.md
     nyiso_li_seam_posted_limit_cap: bool = False
+    nyiso_ne_ac_node: bool = False  # NYISO-NEXT-11 (owner ruling Q-a,
+    # 2026-09-28): host the NY-New England AC tie (P-32 SCH - NE - NY, landing
+    # Capital_Hudson) on its OWN two-way node (spec.NYISO_NE_AC_ZONE, one link
+    # to Capital_Hudson) instead of the pooled NYISO_external star, which cannot
+    # hold NE's measured net EXPORT (3.5-5.9 TWh/yr) and HQ/IESO's import at
+    # once. 8 import bands + 8 export sinks priced hourly at the measured ISO-NE
+    # Roseton DA LMP + Q-Q offsets derived on the tie's own spread (CAPITL -
+    # Roseton; spec.NYISO_NE_AC_LADDER_BY_YEAR, zero free parameters); the link
+    # is bounded hour by hour at the POSTED import / export limits. The NE row
+    # leaves the pooled ladder (spec.NYISO_IMPORT_TRANCHES_NE_SPLIT_BY_YEAR),
+    # the pooled Capital_Hudson PAR envelope and the pooled hub repricing, so
+    # the tie is counted once (rule 19); the node's sinks keep their range
+    # through the NYISO P1 bridge (their no-wash offsets make that safe; the
+    # pooled sink stays as it is). Requires priced_interchange and
+    # nyiso_seam_par_attribution; backcast-only (measured anchor; the forward
+    # anchor is not wired, rule 13). PRECOMMIT:
+    # docs/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md. Default off; NYISO.
     nyiso_seam_deliverability_envelope: bool = False  # NYISO external seam
     # deliverability envelope (nyiso-125, data.nyiso_seam_envelope): replace the
     # flat SYMMETRIC static rating on the two border links whose external ties
@@ -8388,18 +8452,6 @@ class ScenarioConfig:
     # Services Tariff §5.12), so $500 is the price below which the registered
     # demand-side capability will not curtail. Rule 4: not a residual-fit knob —
     # a market-design constant. Only consumed when nyiso_scr_edrp is on.
-    nyiso_firm_imports: bool = False  # NYISO firm (must-flow) import baseload:
-    # Hydro-Québec (Châteauguay/Cedars) and Ontario (IESO) sell NY firm,
-    # long-term scheduled hydro/nuclear baseload that flows regardless of NY's
-    # hourly price — not price-responsive economy energy. The priced node prices
-    # them as economic tranches (clear only when NYISO price > tranche cost),
-    # backing them off in cheap-overnight hours / low-price years even though the
-    # real schedule keeps flowing. This sets a must-flow floor (NYISO_FIRM_
-    # IMPORT_FLOOR_FRAC x tranche capacity) on those rows via FleetArrays.min_gen
-    # (transmission.inject_nyiso_firm_imports). The floor stays below the
-    # measured lightest-import hour (NY imported >=922 MW in 98% of 2023 hours)
-    # so it never forces a phantom over-import. FORWARD-REPRODUCIBLE (a firm
-    # schedule reproduces for any year); Tier 3. Default off; NYISO-only.
     nyiso_import_reconciliation: bool = False  # NYISO priced import-node
     # boundary-flow calibration: pin the priced node's MONTHLY net interchange to
     # the measured EIA-930 schedule (eia_loader.nyiso_net_interchange) via a
@@ -9628,7 +9680,7 @@ class ScenarioConfig:
     # MIC-split level × the measured unit-mean revealed-base shape of
     # caiso_firm_import_shape, eford preserved), the exact analogue of the
     # Manitoba/HQ firm must-flow blocks (transmission.inject_miso_firm_
-    # imports / inject_nyiso_firm_imports, MECH_FIRM_IMPORT — a contract,
+    # imports / the deleted inject_nyiso_firm_imports, MECH_FIRM_IMPORT — a contract,
     # ablation-kept, D-2 exempt by construction). Zero new free parameters:
     # level and shape are the existing measured caiso-73 inputs; the tranche
     # $/MWh stays as inframarginal contract-cost bookkeeping and can no
@@ -12445,6 +12497,24 @@ class ScenarioConfig:
     # price. See data/coal_fuel_inventory.py:build_coal_take_floor and
     # coal_take_shortfall_price.
     coal_fuel_inventory_take_floor: bool = False
+    # MONTHLY PILE GRAIN of the per-yard coal identity (NWPP-NEXT-8, GATED
+    # default off, backcast-only, ZERO free parameters). Owner decision cards
+    # 2026-09-28 (reopening Q2 "annual" on the NEXT-8 seasonal census): the
+    # coal_fuel_inventory_plant_grain yard row becomes 12 CUMULATIVE rows, one
+    # per month-end m, bounding the yard's own pile on both sides:
+    #   max(0, S_dec + m/12 * C - S_max) * hc
+    #       <= sum_{g at yard, t <= end of m} HR[g] * P[g, t] + shortfall
+    #       <= (S_dec + m/12 * rate) * hc
+    # i.e. the pile never goes negative (ceiling) and never overflows the most
+    # it has ever held (floor), with receipts FLAT ratable within the year
+    # (owner card: the standard take-or-pay delivery form; no Y-1 timing is
+    # carried into Y). Month 12 is EXACTLY today's annual ceiling and take
+    # floor, so it is the same identity at a finer grain (rule 19), never a
+    # second mechanism. The soft floor's per-hour shortfall column enters every
+    # later cumulative row, so a missed take is paid once. Requires
+    # coal_fuel_inventory_take_floor. See
+    # data/coal_fuel_inventory.py:build_coal_monthly_pile.
+    coal_fuel_inventory_monthly_pile: bool = False
 
     # Commitment-floor WINDOW ranked on NET load instead of system load
     # (SPP-66, owner ruling "Shared gate" 2026-09-20; default off, so every
@@ -16616,6 +16686,33 @@ class ScenarioConfig:
     # docs/FINDING-miso279-stgas-span-coverage-2026-09-27.md.
     campd_st_gas_span_coverage: bool = False
 
+    # CAMPD SPLIT-REMAP COMPANIONS (miso-280, GATED default off; rule 14
+    # [R-ACCURATE], rule 19 [R-ONE-MECH]). CEMS files West Riverside Energy
+    # Center's 2020 CTs (EIA 64020, generators CTG3 / CTG4) under the legacy
+    # Riverside facility 55641 as units CT-03 / CT-04; CAMPD CT-03 + CT-04 gross
+    # tracks EIA-923 64020 net within 2 % every year 2020-2025. The identity
+    # entries (55641, "CT-03"/"CT-04") -> 64020 now sit in
+    # campd.CAMPD_UNIT_PLANT_REMAP unconditionally -- no live solve path reads
+    # raw CAMPD, so they reach a solve ONLY through re-derived artifacts, and
+    # every derived artifact the MISO keeper reads was derived before the entry
+    # existed: 55641 carries its sibling's outage windows (64020 none of its
+    # own), 55641's CC heat-rate row is refused boundary_above_band while 64020
+    # has no row (fallback rate), and 55641's tranche row reads a 150 % median
+    # CF. Armed, the '-splitremap-' companions re-derived under the extended
+    # remap are read in place of: the unit-outage extract the routing gates
+    # select (MISO: '-unitroute-'), the short-GAS extract, the maxgen extract,
+    # the measured CC heat-rate artifact (needs measured_cc_heat_rates) and the
+    # four tranche-family files (needs campd_unit_fuel_split; the tag rides
+    # campd_fuel_split_selector). ONE field over all seven, so no artifact reads
+    # one plant identity while a sibling reads the other; an ABSENT companion
+    # RAISES rather than falling back (MISO carries the only derived set).
+    # Plant emission rates (plant_emission_rates_v2, shared all-ISO) are OUT of
+    # scope: the MISO backcast carries no carbon price, so they do not enter
+    # its dispatch. ZERO free parameters (DOF +0). Rule 23 [R-FROZEN-DERIVE]:
+    # the trigger is this identity data change, never a residual.
+    # docs/FINDING-miso280-phase0-riverside-vlr-southgas-2026-09-28.md §1.
+    campd_split_remap_companions: bool = False
+
     # ECONOMIC-LAY-UP GUARD on the per-unit CAMPD companions (nyiso-177,
     # GATED default off; PREREG-nyiso177-degradation-root-cause.md). Selects
     # the '-perunitmerit-' pair -- the SAME per-unit attribution, derived with
@@ -19327,6 +19424,37 @@ class ScenarioConfig:
     # caiso_per_year_import_caps is on. Default off; CAISO-only.
     # docs/handoffs/r-caiso-9/PRECOMMIT-r-caiso-9-2026-09-27.md.
     caiso_import_cap_floor_static: bool = False
+    # R-CAISO-11 (owner decision card 2026-09-28, "Fix + solve now"): place the
+    # CAISO TAC-area zonal load shares on the model's fixed-PST (UTC-8)
+    # hour-of-year clock -- the clock the EIA-930 CISO system total they
+    # multiply rides. The historical parse (curate_zonal_shares.
+    # parse_caiso_shares) converted OASIS interval_start_gmt to PREVAILING
+    # Pacific time, so every DST-month share landed one hour late against the
+    # total: at h16-17 Apr-Oct, 0.2-0.45 GW (mean) and up to 1.5 GW (single
+    # hour) of load sat in LA_BASIN instead of NP15/SDGE; total load is
+    # unchanged. Rule 14 source-clock correction; zero parameters (rules
+    # 21/24). Wired on the backcast calibration path only (scripts/
+    # run_calibration*.py), like caiso_demand_clock_realign; the forecast
+    # runner's load_demand sites do not read it. CAISO-only; default off.
+    # docs/handoffs/r-caiso-11/RESULT-r-caiso-11-2026-09-28.md sec 4.
+    caiso_tac_shares_standard_time: bool = False
+    # R-CAISO-13 (owner decision card 2026-09-28, "Build + solve now"): repair
+    # the EIA-930 CISO extract's published one-hour-LATE stamps at the frame
+    # seam (data.eia930.frames._repair_clock_late_windows), so every reader --
+    # solar/wind CF, the WAT hydro envelope, demand, interchange, the
+    # benchmark -- sees the true hour. Measured against two clocks independent
+    # of EIA-930 (OASIS SLD TAC actual; solar geometry): the generation frame is
+    # stamped 1 h late 2023-11-01 .. 2025-12-02, the Demand column
+    # 2022-06-16 .. 2025-12-02 (constants.EIA930_CISO_CLOCK_LATE_WINDOWS_UTC).
+    # Symptom: the keeper's own dispatched solar centroid sits at 12.9 h PST
+    # in 2024-25 against ~11.9 in 2022-23, and its battery profile runs 1 h
+    # late against CAISO Outlook. Under caiso_supply_consistent_demand the
+    # artifact's EIA-930 term is moved the same way; caiso_demand_clock_realign
+    # is superseded (rule 19). Rule 14 source-clock repair; zero parameters
+    # (rules 21/24). Wired on the backcast calibration path only, like
+    # caiso_tac_shares_standard_time. CAISO-only; default off.
+    # docs/handoffs/r-caiso-13/RESULT-r-caiso-13-2026-09-28.md.
+    caiso_eia930_clock_repair: bool = False
 
     # PJM transmission-congestion lever (break the copper-plate). PJM clears as a
     # perfect single price (0.000 zonal LMP spread in all 8760 hours of all
@@ -23533,6 +23661,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_fuel_inventory": 1,
     "coal_fuel_inventory_plant_grain": 1,
     "coal_fuel_inventory_take_floor": 1,
+    "coal_fuel_inventory_monthly_pile": 1,
     "commitment_floor_window_netload": 1,
     "neiso_winter_fuel_start_fill_bbl": 1,
     "neiso_net_icr_requirement": 1,
@@ -23550,9 +23679,9 @@ TIER_TAGS: dict[str, int] = {
     "capacity_no_default_cap_convention_by_iso": 1,
     "capacity_screen_peak_measured_hindcast": 1,
     "nyiso_local_selfsupply": 1,
-    "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,
     "nyiso_import_hub_prices": 1,
+    "nyiso_ne_ac_node": 1,
     "nyiso_iroquois_winter_spread": 1,
     "nyiso_synchronised_reserve": 1,
     "nyiso_li_locational_reserve": 1,

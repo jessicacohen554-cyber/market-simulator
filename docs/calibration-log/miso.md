@@ -15233,3 +15233,49 @@ zero status flips, C1 ST_GAS 2019 −8.203 → −8.003 TWh (FAIL vs 8.00 band),
 **PROMOTED 2026-09-28** on the owner's ruling: MISO keeper → `2026-09-27-miso-279-stcov` (2019–2025); `miso-278`
 pruned (rule 35). Headline unchanged: train CALIBRATED; full span NOT-YET on C1 ST_GAS 2019, C3a 2022, C3b 2021.
 Riverside remap (55641 CT-03/04 → 64020) still held out.
+
+## miso-280 — 2026-09-28
+
+Phase 0 (zero LP, `docs/FINDING-miso280-phase0-riverside-vlr-southgas-2026-09-28.md`): G-DRIFT 47d3f872..6ca311d4 all
+INERT for MISO; VLR data search found no public commitment MW/hours (routed, RO-2 class); C3b 2021 South storm gas has no
+admissible daily Gulf print (owner: "Leave as routed miss"). Lever C (owner: "Build it"): new field
+`campd_split_remap_companions` + `CAMPD_UNIT_PLANT_REMAP` (55641 CT-03/CT-04 → 64020) and seven `-splitremap-`
+companions. 7 shards at `8f765fef` (`docs/PRECOMMIT-miso280-split-remap-2026-09-28.md`,
+`docs/RESULT-miso280-split-remap-2026-09-28.md`): zero status flips, legitimacy rows unchanged, C3a 2022 −15.8 → −15.5 %,
+C3b 2021 0.254 → 0.252.
+
+**PROMOTED 2026-09-28** on the owner's ruling: MISO keeper → `2026-09-28-miso-280-splitremap` (2019–2025); `miso-279`
+pruned (rule 35). Headline unchanged: train CALIBRATED; full span NOT-YET on C1 ST_GAS 2019, C3a 2022, C3b 2021. Next:
+zero-LP probe of 2019 South steam dispatch (owner pick).
+
+## miso-281 — 2026-09-28
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 on C1 ST_GAS 2019 (−8.00 TWh):
+2019 MISO-South gas steam produced 17.1 of 20.2 TWh **out of merit**, meaning the measured hub LMP was below the
+plant's own measured cost. The model's offers match measured cost, and its South price ($28.26) is above the
+measured hubs ($23–27). The gap is out-of-merit (load-pocket / VLR) commitment above the pooled 2023–25 floors:
+~7.6 TWh in 2019 and 6.8 TWh in 2020. It explains little in 2021–22.
+`docs/FINDING-miso281-south-steam-2019-out-of-merit-2026-09-28.md`.
+
+Owner rulings: C1 ST_GAS 2019 is a **routed miss**, and **no frontier** is declared, because the rubric does not
+clear every year. MISO stays NOT-YET on the full span and CALIBRATED on the 2023–2025 train span. Next: the
+2021–22 ST_GAS in-merit gap.
+
+## miso-282 — 2026-09-28
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 on the 2021–22 C1 ST_GAS residual
+(−5.24 / −5.11 TWh, PASS). It is **not an in-merit shortfall**: South in-merit steam matches measured conduct
+(gap −0.19 / −0.36 TWh). The residual splits into three parts:
+- South out-of-merit steam above the floors: −2.3 / −2.2 TWh. On the C1 basis this is present in every year, from
+  −2.2 to −8.2 TWh, which corrects miso-281 §4.
+- EIA-860 `SB` Baxter Wilson, which the fleet drops: −0.75 / −0.31 TWh.
+- Non-South plants: −0.9 TWh.
+
+2023–24 read near zero only because the model's South price premium over the measured hubs lifts in-merit steam by
++4.6 / +5.8 TWh. Gas price, basis and the margin anchor were tested and are not the cause.
+
+`admit_standby_units` was sized and its cell stays U. It adds only +0.38 / +0.08 TWh of ST_GAS, and it would bring
+~1 TWh/yr of phantom coal from idled Taconite Harbor unless an outage companion is re-derived.
+`docs/FINDING-miso282-2021-22-stgas-gap-2026-09-28.md`.
+
+Owner ruling: next lane is the MISO-South price premium probe (zero LP). No frontier.

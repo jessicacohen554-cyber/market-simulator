@@ -355,7 +355,7 @@ def capability_and_derate(
 
 
 def _load_covered_windows(
-    iso: str, mixed_gas_routing: bool = False
+    iso: str, mixed_gas_routing: bool = False, split_remap: bool = False
 ) -> dict[tuple[int, str], list[tuple]]:
     """Return std + short extract windows keyed ``(facility_id, unit_id)``.
 
@@ -370,10 +370,17 @@ def _load_covered_windows(
     changes neither the rows nor their windows, so the covered set is identical
     either way -- the flag is threaded for wiring consistency, not to change a
     verdict.
+
+    ``split_remap`` (miso-280) reads the std extract's ``-splitremap-``
+    companion, whose re-keyed rows carry the SAME ``(facility_id, unit_id)``
+    the remapped CAMPD grid this deriver builds carries -- without it a
+    remapped unit's std windows would sit under the legacy facility and guard 4
+    would never see them. The coal short extract carries no remapped unit, so
+    it is read unchanged.
     """
     covered: dict[tuple[int, str], list[tuple]] = {}
     for path in (
-        unit_outage_csv_for_iso(iso, mixed_gas_routing),
+        unit_outage_csv_for_iso(iso, mixed_gas_routing, split_remap=split_remap),
         unit_outage_short_csv_for_iso(iso),
     ):
         if not path.exists():
@@ -432,6 +439,17 @@ def main() -> None:
         ),
     )
     ap.add_argument(
+        "--split-remap",
+        action="store_true",
+        help=(
+            "miso-280: derive against the std extract's '-splitremap-' "
+            "companion (the CEMS split-plant remap extended to West Riverside "
+            "64020) and write the '-splitremap-' companion of the selected "
+            "maxgen extract, never an overwrite. The remap itself is "
+            "campd.CAMPD_UNIT_PLANT_REMAP, which this deriver always applies."
+        ),
+    )
+    ap.add_argument(
         "--out",
         default=None,
         help="Output CSV; defaults to data/raw/campd-unit-outages-maxgen-{ISO}.csv.",
@@ -450,6 +468,11 @@ def main() -> None:
         )
     else:
         out_path = unit_outage_maxgen_csv_for_iso(iso)
+    if args.split_remap and not args.out:
+        # Constructed explicitly (the reader raises until the file exists).
+        out_path = out_path.with_name(
+            out_path.name.replace(f"-{iso}.csv", f"-splitremap-{iso}.csv")
+        )
 
     ev = load_registry_model_clock(iso)
     # Guard 2 needs the year's DA hub record. Registry years without one (the
@@ -528,7 +551,9 @@ def main() -> None:
     plant_cap = _iso_plant_capacity(iso)
 
     exact, by_digits = build_capacity_index(Path(args.eia860))
-    covered = _load_covered_windows(iso, bool(args.mixed_gas_routing))
+    covered = _load_covered_windows(
+        iso, bool(args.mixed_gas_routing), bool(args.split_remap)
+    )
 
     # Blocks by calendar year (all current blocks are within-year; a block
     # straddling Dec 31 would clip at the CAMPD year files' edges).

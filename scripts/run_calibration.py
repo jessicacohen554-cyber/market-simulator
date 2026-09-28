@@ -85,6 +85,7 @@ from market_sim.data.fleet import (  # noqa: E402
     load_fleet_from_csv,
     load_mothballed_but_operating,
     load_retired_within_window,
+    measured_cc_heat_rate_selector,
     thermal_tranche_overrides,
 )
 from market_sim.data.offer_curves import (  # noqa: E402
@@ -514,14 +515,14 @@ def _renewable_bound_is_delivered_pinned(iso: str, year: int) -> bool:
     )
 
 
-def _measured_heat_rate_flags(config: ScenarioConfig) -> dict[str, bool]:
+def _measured_heat_rate_flags(config: ScenarioConfig) -> dict[str, bool | str]:
     """Return the five measured-heat-rate flags as loader keyword arguments.
 
     F1 D4: the retiree and mothball channels take the SAME measured heat-rate
     swaps the operable fleet loader does, read from one place so the three
     call sites cannot drift (rule 24 [R-REGISTRY]).
     """
-    return {
+    flags: dict[str, bool | str] = {
         name: bool(getattr(config, name, False))
         for name in (
             "measured_ct_heat_rates",
@@ -531,6 +532,10 @@ def _measured_heat_rate_flags(config: ScenarioConfig) -> dict[str, bool]:
             "measured_chp_heat_rates",
         )
     }
+    # miso-280: the CC swap carries the split-remap tag when
+    # campd_split_remap_companions is armed (one accessor for every channel).
+    flags["measured_cc_heat_rates"] = measured_cc_heat_rate_selector(config)
+    return flags
 
 
 def _reliability_floor_layup_shares(
@@ -653,6 +658,30 @@ def resolve_coal_take_floor(
         raise ValueError(
             "coal_fuel_inventory_take_floor REPLACES the per-hour take-or-pay "
             f"discounts (rule 19, owner ruling Q5); disarm {stacked}."
+        )
+    return True
+
+
+def resolve_coal_monthly_pile(
+    config: ScenarioConfig, iso: str, floor_armed: bool
+) -> bool:
+    """Validate and resolve the monthly pile grain of the yard rows for ``iso``.
+
+    NWPP-NEXT-8 (owner decision cards 2026-09-28). Raises ``ValueError`` when
+    ``coal_fuel_inventory_monthly_pile`` is armed without the take floor whose
+    identity it refines, or outside :data:`COAL_TAKE_FLOOR_ISOS` (rule 25).
+    """
+    if not bool(getattr(config, "coal_fuel_inventory_monthly_pile", False)):
+        return False
+    if not floor_armed:
+        raise ValueError(
+            "coal_fuel_inventory_monthly_pile refines the yard pile identity the "
+            "take floor bounds and requires coal_fuel_inventory_take_floor."
+        )
+    if iso.upper() not in COAL_TAKE_FLOOR_ISOS:
+        raise ValueError(
+            f"coal_fuel_inventory_monthly_pile is gated to {COAL_TAKE_FLOOR_ISOS} "
+            f"(rule 25 [R-ISO-SCOPE])."
         )
     return True
 
@@ -948,9 +977,9 @@ def run_year(
     nyiso_local_selfsupply: bool | None = None,
     nyiso_scr_edrp: bool | None = None,
     nyiso_scr_edrp_strike: float | None = None,
-    nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
     nyiso_import_hub_prices: bool | None = None,
+    nyiso_ne_ac_node: bool | None = None,
     nyiso_iroquois_winter_spread: bool | None = None,
     nyiso_synchronised_reserve: bool | None = None,
     nyiso_li_locational_reserve: bool | None = None,
@@ -2017,14 +2046,14 @@ def run_year(
         config = config.with_overrides(nyiso_scr_edrp=nyiso_scr_edrp)
     if nyiso_scr_edrp_strike is not None:
         config = config.with_overrides(nyiso_scr_edrp_strike=nyiso_scr_edrp_strike)
-    if nyiso_firm_imports is not None:
-        config = config.with_overrides(nyiso_firm_imports=nyiso_firm_imports)
     if nyiso_import_reconciliation is not None:
         config = config.with_overrides(
             nyiso_import_reconciliation=nyiso_import_reconciliation
         )
     if nyiso_import_hub_prices is not None:
         config = config.with_overrides(nyiso_import_hub_prices=nyiso_import_hub_prices)
+    if nyiso_ne_ac_node is not None:
+        config = config.with_overrides(nyiso_ne_ac_node=nyiso_ne_ac_node)
     if nyiso_iroquois_winter_spread is not None:
         config = config.with_overrides(
             nyiso_iroquois_winter_spread=nyiso_iroquois_winter_spread
@@ -3145,6 +3174,13 @@ def run_year(
     from market_sim.data.zone_assignment import set_fleet_zone_vintage_coords
 
     set_fleet_zone_vintage_coords(getattr(config, "fleet_zone_vintage_coords", False))
+    # R-CAISO-13 caiso_eia930_clock_repair: armed per solve at the same seam,
+    # before the first EIA-930 frame is read (CAISO only).
+    from market_sim.data.eia930.frames import set_caiso_eia930_clock_repair
+
+    set_caiso_eia930_clock_repair(
+        iso == "CAISO" and getattr(config, "caiso_eia930_clock_repair", False)
+    )
     iso_config = get_iso_config(iso)
     # Year-varying interface limits (e.g. NYISO Central-East jumps with the AC
     # Transmission project in service Dec 2023) — applied before the import
@@ -3273,6 +3309,9 @@ def run_year(
             ),
             nwpp_demand_plant_basis=getattr(config, "nwpp_demand_plant_basis", False),
             demand_balance_screen=getattr(config, "demand_balance_screen", False),
+            caiso_tac_shares_standard_time=getattr(
+                config, "caiso_tac_shares_standard_time", False
+            ),
         )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, year, iso_config, config
@@ -3471,15 +3510,48 @@ def run_year(
     # nyiso-125 two-link envelope rather than stacking on it (rule 19
     # [R-ONE-MECH]): it computes those same two links from the same measured
     # rows, so exactly one of the two mechanisms is applied.
+    if (
+        getattr(config, "nyiso_ne_ac_node", False)
+        and iso == "NYISO"
+        and not getattr(config, "nyiso_seam_par_attribution", False)
+    ):
+        raise ValueError(
+            "nyiso_ne_ac_node requires nyiso_seam_par_attribution (the node's "
+            "row must leave the pooled Capital_Hudson envelope it would "
+            "otherwise be counted in)"
+        )
     if getattr(config, "nyiso_seam_par_attribution", False) and iso == "NYISO":
         from market_sim.config.constants import NYISO_SEAM_FLOW_PERCENTILE
         from market_sim.data.nyiso_par_attribution import (
             nyiso_par_attributed_ttc_hourly,
         )
+        from market_sim.model.interchange.spec import NYISO_NE_AC_SEAM_ROW
 
+        # nyiso_ne_ac_node (NYISO-NEXT-11): the NE AC row rides its own node,
+        # so it leaves the pooled Capital_Hudson envelope (rule 19).
+        _ne_node = bool(getattr(config, "nyiso_ne_ac_node", False))
         ttc, ttc_import = nyiso_par_attributed_ttc_hourly(
-            np.asarray(ttc, dtype=float), iso_config, year, demand.shape[1]
+            np.asarray(ttc, dtype=float),
+            iso_config,
+            year,
+            demand.shape[1],
+            exclude_rows=(NYISO_NE_AC_SEAM_ROW,) if _ne_node else (),
         )
+        if _ne_node:
+            from market_sim.model.interchange.nyiso import (
+                nyiso_ne_ac_posted_ttc_hourly,
+            )
+
+            ttc, ttc_import = nyiso_ne_ac_posted_ttc_hourly(
+                ttc, ttc_import, iso_config, year, demand.shape[1]
+            )
+            logger.info(
+                "%s %d: nyiso_ne_ac_node — NE AC tie on its own node, link "
+                "bounded at the posted import/export limits; NE row excluded "
+                "from the pooled Capital_Hudson envelope",
+                iso,
+                year,
+            )
         logger.info(
             "%s %d: nyiso_seam_par_attribution — all four border links follow "
             "the measured p%.0f directional envelope of the ATTRIBUTED seam "
@@ -4170,7 +4242,7 @@ def run_year(
                 measured_ct_heat_rates=config.measured_ct_heat_rates,
                 measured_coal_heat_rates=config.measured_coal_heat_rates,
                 measured_st_heat_rates=config.measured_st_heat_rates,
-                measured_cc_heat_rates=config.measured_cc_heat_rates,
+                measured_cc_heat_rates=measured_cc_heat_rate_selector(config),
                 measured_chp_heat_rates=config.measured_chp_heat_rates,
                 cc_steam_part_capacity=config.cc_steam_part_capacity,
                 cc_steam_part_reclass=config.cc_steam_part_reclass,
@@ -5743,7 +5815,10 @@ def run_year(
         ):
             from market_sim.model.transmission import inject_nyiso_import_hub_prices
 
-            if inject_nyiso_import_hub_prices(fleet_arrays, mc_base, iso, year):
+            _hub_excl = ("NEISO",) if getattr(config, "nyiso_ne_ac_node", False) else ()
+            if inject_nyiso_import_hub_prices(
+                fleet_arrays, mc_base, iso, year, exclude_neighbours=_hub_excl
+            ):
                 logger.info(
                     "%s %d: import tranches repriced to measured neighbor hourly "
                     "DA LMPs (PJM_west→PJM, ISONE_tie→NEISO, scarcity→hourly max, "
@@ -5751,6 +5826,27 @@ def run_year(
                     iso,
                     year,
                 )
+        # [measured: ISO-NE Roseton DA LMP (hourly) | forecast substitute: not
+        #  wired — the flag is backcast-only]. NYISO-NEXT-11: the NE AC node's
+        # bands at Roseton(t) + their Q-Q spread offsets. Not gated on
+        # nyiso_import_hub_prices: the node carries its own price (rule 19).
+        if (
+            iso == "NYISO"
+            and priced_interchange
+            and getattr(config, "nyiso_ne_ac_node", False)
+        ):
+            from market_sim.model.interchange.nyiso import (
+                inject_nyiso_ne_ac_node_prices,
+            )
+
+            _n_ne = inject_nyiso_ne_ac_node_prices(fleet_arrays, mc_base, year)
+            logger.info(
+                "%s %d: nyiso_ne_ac_node — %d NE AC bands priced at the hourly "
+                "Roseton DA LMP + Q-Q spread offsets",
+                iso,
+                year,
+                _n_ne,
+            )
 
     # Net load for the solar-shape coupling: the LP-served load (net of
     # must-run) less utility solar/wind generation — same convention as the
@@ -6325,6 +6421,7 @@ def run_year(
     coal_plant_floor = UNSET
     coal_plant_floor_price = UNSET
     _coal_floor_armed = resolve_coal_take_floor(config, iso, _coal_plant_armed)
+    _coal_pile_armed = resolve_coal_monthly_pile(config, iso, _coal_floor_armed)
     # Armable WITHOUT the pooled monthly rows since neiso-117 (the yard rows
     # alone are the annual identity's plant partition; resolve_coal_budget_arms
     # holds both limbs' ISO and backcast-only gates).
@@ -6431,6 +6528,43 @@ def run_year(
                         for k, (a, b) in _tf.per_yard.items()
                     },
                 )
+                if _coal_pile_armed:
+                    # NWPP-NEXT-8: the same rows at month-end grain. Month 12 is
+                    # the annual ceiling and floor just built, clips included.
+                    from market_sim.data.coal_fuel_inventory import (
+                        build_coal_monthly_pile,
+                    )
+
+                    (
+                        coal_plant_budget,
+                        coal_plant_floor,
+                        coal_plant_month_index,
+                        _pile,
+                    ) = build_coal_monthly_pile(
+                        fleet_arrays,
+                        coal_plant_gen_idx,
+                        coal_plant_group_index,
+                        coal_plant_gen_hour_coeff,
+                        coal_plant_budget,
+                        _cp_prov.stock_mmbtu,
+                        _tf.parts,
+                        config.hours,
+                    )
+                    logger.info(
+                        "coal monthly pile (%s %d): %d yard rows x %d month-ends, "
+                        "cumulative; floor clipped %d cells to ceiling, %d to "
+                        "capacity; month-end floor TWh-equiv @HR10.661 %s",
+                        iso,
+                        year,
+                        _pile.n_rows,
+                        _pile.n_months,
+                        _pile.floor_clipped_to_ceiling,
+                        _pile.floor_clipped_to_capacity,
+                        [
+                            round(float(v) / 10.661 / 1e6, 2)
+                            for v in coal_plant_floor.sum(axis=0)
+                        ],
+                    )
 
     # Base dispatch kwargs + priced import-node band: the shared pipeline
     # assembly (orchestrator-unification Stage 2) — the same key set the

@@ -444,13 +444,23 @@
           <td>${f(r.lambda_mean)} ${bar(r.lambda_mean, 'var(--text-muted)')}</td>
           <td>${f(r.model_mean)} ${bar(r.model_mean, 'var(--accent, #4a7bd0)')}</td>
           <td>${sgn(r.bias)}</td></tr>`).join('');
+        // Energy Auction hour-ahead line — REPORTED-ONLY (owner ruling 2026-09-28,
+        // soco-84): cleared hours only, compared with the lambda in those same hours.
+        const ea = sl.energy_auction;
+        const eaYears = ea && ea.years ? Object.keys(ea.years).sort() : [];
+        const auctionHtml = eaYears.length ? `
+            <p style="margin: 12px 0 6px;"><strong>Energy Auction (hour-ahead)</strong> <span class="bc-mute">reported only &middot; not gating &middot; cleared hours only</span></p>
+            <div class="bc-table-wrap"><table><thead><tr><th>Year</th><th>Cleared hours</th><th>Auction mean</th><th>Lambda, same hours</th><th>r</th></tr></thead>
+            <tbody>${eaYears.map((y) => { const e = ea.years[y]; return `<tr><td>${esc(y)}</td><td>${esc(String(e.hours))}</td><td>${f(e.ha_mean)}</td><td>${f(e.lam_mean_same_hours)}</td><td>${e.r === null || e.r === undefined ? '&mdash;' : esc(e.r.toFixed(2))}</td></tr>`; }).join('')}</tbody></table></div>
+            <p class="bc-mute" style="margin-top: 6px;">${esc(ea.series || '')}. Source <code>${esc(ea.source || '')}</code>.</p>` : '';
         html += `
         <details class="cs-detail" style="margin-top: 4px;">
-          <summary><span>Model price vs operator system lambda</span><span class="cs-gate">reported only &middot; not gating</span></summary>
+          <summary><span>Model price vs operator system lambda</span><span class="cs-gate">C3a/C3b benchmark &middot; C3c not scored</span></summary>
           <div style="padding: 14px; font-size: 0.82rem;">
             <div class="bc-table-wrap"><table><thead><tr><th>Year</th><th>System lambda (mean)</th><th>Model price (mean)</th><th>Model &minus; lambda</th></tr></thead>
             <tbody>${rowsHtml}</tbody></table></div>
-            <p class="bc-mute" style="margin-top: 8px;">${esc(sl.series || '')}. A system lambda is the operator's marginal cost of its own dispatch, not an LMP; it is not a C3 benchmark. Source <code>${esc(sl.source || '')}</code>.</p>
+            ${auctionHtml}
+            <p class="bc-mute" style="margin-top: 8px;">${esc(sl.series || '')}. A system lambda is the operator's marginal cost of its own dispatch, not an LMP. It is the C3a/C3b system benchmark (gated on the load-weighted basis in the criteria below); C3c is not scored on it. Source <code>${esc(sl.source || '')}</code>.</p>
           </div>
         </details>`;
       }

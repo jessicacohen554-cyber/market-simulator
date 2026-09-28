@@ -1132,7 +1132,13 @@ def _unit_fuel_by_unit(
         for fac, unit, fuel in zip(
             df["facilityId"], df["unitId"], df["primaryFuelInfo"]
         ):
-            key = (int(fac), str(unit))
+            # Keyed on the EIA plant the unit's history belongs to
+            # (campd.CAMPD_UNIT_PLANT_REMAP), the id the normalized hourly
+            # frame -- and so every group_of lookup -- carries (miso-280).
+            key = (
+                campd.CAMPD_UNIT_PLANT_REMAP.get((int(fac), str(unit)), int(fac)),
+                str(unit),
+            )
             klass = _unit_fuel_class(fuel)
             if out.get(key) != "COAL":
                 out[key] = klass
@@ -1285,6 +1291,7 @@ def _routed_family_rows(
     per_year: dict[int, dict],
     route_plants: set[int],
     keep: Callable[[int, str], bool],
+    split_remap: bool = False,
 ) -> dict[str, object]:
     """Derive tranche-family rows for ``keep``-selected ``(plant, group)`` bins, unit-routed.
 
@@ -1303,6 +1310,9 @@ def _routed_family_rows(
     Every statistic is :func:`_tranche_stats_row` over the frozen masks and
     caps, the derate is the keeper's own ``mixed_gas_routing`` outage basis,
     and the out-of-merit hour set is the frozen oom deriver's own.
+    ``split_remap`` (miso-280) takes that derate from the ``-splitremap-``
+    companion of the same extract, so the rows' outage-derated denominator
+    carries the same plant identity as their CAMPD numerator.
 
     Returns ``{"tranche", "by_year", "p25", "oom", "audit"}`` row lists.
     """
@@ -1357,7 +1367,9 @@ def _routed_family_rows(
             return seated if seated in gas_groups else None
 
         net = campd.plant_group_hourly_net(df, factors, year, group_of)
-        derate = unit_outage_derate_factors(year, iso=iso, mixed_gas_routing=True)
+        derate = unit_outage_derate_factors(
+            year, iso=iso, mixed_gas_routing=True, split_remap=split_remap
+        )
         fac_df = campd.load_campd_hourly(list(states), [year])
         fac_net = campd.plant_hourly_net(fac_df, factors, year)
         hours = len(next(iter(fac_net.values())))
@@ -1738,6 +1750,153 @@ def write_st_gas_span_coverage_companions(
     return {"plants": res["plants"], "written": written, "audit": res["audit"]}
 
 
+def split_remap_plants(iso: str) -> set[int]:
+    """Plant codes of ``iso``'s fleet a ``campd.CAMPD_UNIT_PLANT_REMAP`` entry touches.
+
+    Both sides of every entry -- the legacy CEMS facility and the EIA plant it
+    re-keys to -- whichever the ISO's operable fleet carries (MISO: Riverside
+    55641 and West Riverside 64020). These are the only plants whose
+    tranche-family rows a remap entry can move.
+    """
+    touched = {int(f) for f, _ in campd.CAMPD_UNIT_PLANT_REMAP} | {
+        int(v) for v in campd.CAMPD_UNIT_PLANT_REMAP.values()
+    }
+    fleet = {int(g.plant_code) for g in load_fleet_from_csv(iso, get_iso_config(iso))}
+    return touched & fleet
+
+
+def split_remap_rows(
+    iso: str, years: list[int], plants: set[int], split_remap: bool = True
+) -> dict[str, object]:
+    """Re-derive the tranche-family rows of the split-remap plants (miso-280).
+
+    THE DEFECT THIS REPAIRS. CEMS files West Riverside Energy Center's 2020 CTs
+    (EIA 64020) under the legacy Riverside facility 55641 as units CT-03 /
+    CT-04. Before ``campd.CAMPD_UNIT_PLANT_REMAP`` carried them, the pooled
+    tranche derive booked all four CTs' gross against 55641's 534.8 MW (median
+    CF 150 %, the clip) and 64020 got no row (class default). With the entries
+    in place the normalized hourly frame re-keys the two CTs to 64020, so the
+    SAME unit-routed estimator as :func:`unit_fuel_split_rows` /
+    :func:`st_gas_span_coverage_rows` (:func:`_routed_family_rows`, frozen
+    statistic, each year's EIA-860 vintage nameplate) measures each plant on its
+    own units, against the ``-splitremap-`` outage extract (``split_remap``).
+
+    ``split_remap=False`` is the CONTROL: the identical construction against
+    the incumbent outage extract, run by the lane with the remap entries
+    stripped in-process to show the estimator reproduces the incumbent rows.
+
+    Zero free parameters (rule 21). Rule 23 ``[R-FROZEN-DERIVE]``: the trigger
+    is the identity data change, never a residual; rows of every other plant
+    are never re-derived.
+    """
+    from market_sim.config.paths import set_eia860_vintage
+
+    states = tuple(campd.states_for_iso(iso))
+    per_year: dict[int, dict] = {}
+    try:
+        for year in years:
+            set_eia860_vintage(year)
+            cap_y, names_y = _vintage_thermal_bins(iso, year)
+            per_year[year] = {
+                "cap": cap_y,
+                "names": names_y,
+                "fuel": _unit_fuel_by_unit(states, year),
+            }
+    finally:
+        set_eia860_vintage(None)
+    res = _routed_family_rows(
+        iso,
+        years,
+        per_year,
+        set(plants),
+        lambda code, _group: code in plants,
+        split_remap=split_remap,
+    )
+    return {"plants": sorted(plants), **res}
+
+
+def split_remap_companion_path(path: Path) -> Path:
+    """``thermal_tranches-fuelsplit-stcov-MISO.csv`` -> ``...-stcov-splitremap-MISO.csv``."""
+    stem, iso = path.stem.rsplit("-", 1)
+    return path.with_name(f"{stem}-{campd.SPLIT_REMAP_TAG}-{iso}{path.suffix}")
+
+
+def write_split_remap_companions(iso: str, years: list[int]) -> dict[str, object]:
+    """Derive the four ``-fuelsplit-stcov-splitremap-`` companions (miso-280).
+
+    Each is its ``-fuelsplit-stcov-`` companion (the MISO keeper's family) with
+    the split-remap plants' non-CHP lines replaced by :func:`split_remap_rows`
+    over ``years`` (the incumbent pooled window) and every other line
+    byte-identical -- the :func:`_replace_plant_rows` discipline of
+    :func:`write_unit_fuel_split_companions`. One derivation feeds all four
+    (rule 19 ``[R-ONE-MECH]``). Never an overwrite.
+    """
+    import json as _json
+
+    from market_sim.config.paths import PROCESSED_DIR
+
+    iso = iso.upper()
+    srcs = [
+        st_gas_span_coverage_companion_path(
+            fuel_split_companion_path(PROCESSED_DIR / n)
+        )
+        for n in (
+            f"thermal_tranches_{iso}.csv",
+            f"thermal_tranches_online_frac_by_year_{iso}.csv",
+            f"thermal_tranches_p25_level_mw_{iso}.csv",
+            f"thermal_tranches_oom_level_mw_{iso}.csv",
+        )
+    ]
+    for f in srcs:
+        if not f.exists():
+            raise SystemExit(f"--split-remap: missing {f.name} (derive stcov first)")
+    plants = split_remap_plants(iso)
+    res = split_remap_rows(iso, years, plants)
+    written: dict[str, dict] = {}
+    for src, key in zip(srcs, ("tranche", "by_year", "p25", "oom")):
+        dst = split_remap_companion_path(src)
+        removed = _replace_plant_rows(src, dst, plants, res[key], _CHP_GROUPS)
+        written[dst.name] = {
+            "from": src.name,
+            "removed": removed,
+            "added": len(res[key]),
+        }
+    prior_side = srcs[0].with_suffix(".meta.json")
+    write_tranche_sidecar(
+        split_remap_companion_path(srcs[0]),
+        provenance="derived",
+        groups_in_force={
+            "online_frac_groups": sorted(_ONLINE_FRAC_GROUPS),
+            "chp_groups": sorted(_CHP_GROUPS),
+            "peaking_groups": sorted(_PEAKING_GROUPS),
+            "thermal_groups": sorted(_THERMAL_GROUPS),
+        },
+        derive_invocation={
+            "iso": iso,
+            "years": [int(y) for y in years],
+            "split_remap": True,
+            "split_remap_plants": sorted(plants),
+            "derate_basis": (
+                "unit_outage_derate_factors(mixed_gas_routing=True, split_remap=True)"
+            ),
+            "base_derive_invocation": _json.loads(prior_side.read_text()).get(
+                "derive_invocation"
+            )
+            if prior_side.exists()
+            else None,
+        },
+        note=(
+            "SPLIT-REMAP COMPANION (miso-280): every line of the "
+            "'-fuelsplit-stcov-' companion outside "
+            "derive_invocation.split_remap_plants is byte-identical; those "
+            "plants' non-CHP rows are re-derived by split_remap_rows over "
+            "derive_invocation.years under the extended "
+            "campd.CAMPD_UNIT_PLANT_REMAP."
+        ),
+    )
+    return {"plants": sorted(plants), "written": written, "audit": res["audit"]}
+
+
 def append_coal_unit_coverage(out_path: Path, iso: str, years: list[int]) -> list[dict]:
     """Append :func:`coal_unit_coverage_rows` to an existing artifact, byte-safely.
 
@@ -1842,9 +2001,53 @@ def main() -> None:
         "(st_gas_span_coverage_rows, miso-279). Never an overwrite. Zero free "
         "parameters.",
     )
+    ap.add_argument(
+        "--split-remap",
+        action="store_true",
+        help="Write the four '-fuelsplit-stcov-splitremap-' companions: each "
+        "'-fuelsplit-stcov-' companion with the rows of the plants a "
+        "campd.CAMPD_UNIT_PLANT_REMAP entry touches re-derived over --years "
+        "against the '-splitremap-' outage extract, every other line "
+        "byte-identical (split_remap_rows, miso-280). Never an overwrite. Zero "
+        "free parameters.",
+    )
+    ap.add_argument(
+        "--split-remap-denominator",
+        action="store_true",
+        help="PLAIN-family derive (no per-unit / fuel-split routing) whose "
+        "outage-derated denominator is read from the '-splitremap-' companion "
+        "of the extract the plain path reads, so every row's denominator "
+        "carries the same plant identity as its remapped CAMPD numerator "
+        "(SPP-99). Requires --out: it writes the FRESH file "
+        "scripts/data/build_campd_split_remap_companions.py splices the remap "
+        "plants' rows from (family 'tranches'), never the incumbent. Zero free "
+        "parameters.",
+    )
     args = ap.parse_args()
     iso = args.iso.upper()
     from market_sim.config.paths import PROCESSED_DIR
+
+    split_remap_denominator = bool(args.split_remap_denominator)
+    if split_remap_denominator and (
+        not args.out
+        or args.per_unit_attribution
+        or args.unit_fuel_split
+        or args.split_remap
+        or args.st_gas_span_coverage
+        or args.coal_unit_coverage
+        or args.backfill_sidecar
+    ):
+        raise SystemExit(
+            "--split-remap-denominator is the plain-family fresh derive: it "
+            "requires --out and no other mode"
+        )
+
+    if args.split_remap:
+        import json as _json
+
+        res = write_split_remap_companions(iso, [int(y) for y in args.years])
+        print(_json.dumps(res, indent=1, sort_keys=True))
+        return
 
     if args.st_gas_span_coverage:
         import json as _json
@@ -1993,6 +2196,8 @@ def main() -> None:
             iso=iso,
             per_unit_crosswalk=per_unit,
             merit_order_guard=merit_guard,
+            # SPP-99: the plain family's denominator on the remapped identity.
+            split_remap=split_remap_denominator,
         )
         for (code, group), nameplate in cap.items():
             if group not in _THERMAL_GROUPS or nameplate <= 0:

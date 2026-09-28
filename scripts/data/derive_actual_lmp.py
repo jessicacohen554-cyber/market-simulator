@@ -56,6 +56,16 @@ system-wide hub-average series of each market:
     ``scripts/data/build_spp_lmp_reference.py``, lanes SPP-12/SPP-14) and emits
     no hourly frame, so this script never rewrites them.
 
+  * SOCO — NOT AN LMP. The Southern Company balancing authority runs no
+    energy market, so its benchmark is Southern Company's own FERC Form 714
+    Part II Schedule 6 hourly SYSTEM LAMBDA (the incremental cost of its
+    economic dispatch), committed under ``data/raw/ferc-714/`` and read
+    through :func:`market_sim.data.ferc714.load_ferc714_system_lambda`. One
+    system-wide series: no zones, no day-ahead, so only the ``rt`` fields are
+    emitted (the lambda is a realized-dispatch marginal cost, the model's
+    real-time analogue). Owner ruling 2026-09-28 "Score C3a vs lambda" (lane
+    soco-84); :data:`SOCO_COMMENT` is stated on every SOCO record.
+
 The zonal ISOs (NYISO, NEISO, SPP) additionally carry a ``zones`` sub-dict —
 ``{key: {da, rt, da_mon, rt_mon}}`` — alongside the hub-level
 ``da``/``rt``/``*_mon``/``*_pct``; the dashboard reads only the top-level hub
@@ -160,6 +170,20 @@ SPP_ZONAL_SRC = (
     "(actual_lmp_hourly_zonal_SPP.parquet, lane SPP-14), keyed by SPP TRADING "
     "HUB — not by model zone"
 )
+SOCO_SRC = (
+    "Southern Company FERC Form 714 Part II Sch. 6 hourly SYSTEM LAMBDA "
+    "(respondent 253), data/raw/ferc-714/soco_hourly_system_lambda_2019_2025.csv "
+    "— a system incremental cost, NOT an LMP"
+)
+#: Stated on every SOCO record: the ``rt`` key is borrowed, not literal.
+SOCO_COMMENT = (
+    "SOCO runs no energy market. rt/rt_mon/rt_lw carry Southern Company's reported "
+    "SYSTEM LAMBDA (one system-wide series for the whole BA, no zones, no DA), "
+    "scored as a SYSTEM benchmark against the model's load-weighted price (owner "
+    "ruling 2026-09-28, lane soco-84). C3c is NOT scored on it: a lambda above a "
+    "tail threshold is fuel cost, not scarcity pricing (same ruling session)."
+)
+
 #: Stated on every SPP record because the key names invite the wrong reading.
 #: SPP's two trading hubs are fixed clusters of pricing nodes (their member
 #: nodes and weights are ``data/raw/spp-planning/Hub_Definitions.csv``), NOT
@@ -1236,6 +1260,50 @@ def _spp(year: int) -> tuple[dict, None] | None:
     return rec, None
 
 
+def _soco(year: int) -> tuple[dict, pd.DataFrame] | None:
+    """Return ``(record, hourly)`` for SOCO's system lambda, or ``None``.
+
+    The committed extract is on an hour-beginning naive-UTC index; the SOCO
+    model clock is Central STANDARD time (UTC-6, no DST), so a fixed -6 h
+    shift puts row ``k`` on the k-th hour after local standard-time midnight
+    Jan 1, and the standard-time Feb 29 is dropped — the dense 8760 calendar
+    every hourly sidecar shares. Only ``rt`` is populated (``da`` is NaN in
+    the hourly frame and absent from the record): see :data:`SOCO_COMMENT`.
+    """
+    from market_sim.data.ferc714 import load_ferc714_system_lambda
+
+    try:
+        lam = load_ferc714_system_lambda()["system_lambda_usd_mwh"]
+    except FileNotFoundError:
+        return None
+    local = lam.index - pd.Timedelta(hours=6)  # UTC -> CST (Etc/GMT+6)
+    keep = (local.year == int(year)) & ~((local.month == 2) & (local.day == 29))
+    ser = pd.Series(lam.to_numpy(dtype=float)[keep], index=local[keep]).sort_index()
+    if ser.empty:
+        return None
+    if len(ser) != _HOURS_PER_YEAR:
+        raise ValueError(f"SOCO {year}: {len(ser)} lambda hours, expected 8760")
+    v = ser.to_numpy(dtype=float)
+    months = _month_of_hour()
+    rec = {
+        "rt": round(float(np.nanmean(v)), 2),
+        "rt_mon": _by_month(v, months),
+        "rt_pct": _pct(v),
+        "rt_cov": _coverage(v, months),
+        "src": SOCO_SRC,
+        "comment": SOCO_COMMENT,
+    }
+    hourly = pd.DataFrame(
+        {
+            "year": np.full(_HOURS_PER_YEAR, int(year), dtype="int16"),
+            "hour": np.arange(_HOURS_PER_YEAR, dtype="int16"),
+            "rt": v.astype("float32"),
+            "da": np.full(_HOURS_PER_YEAR, np.nan, dtype="float32"),
+        }
+    )
+    return rec, hourly
+
+
 BUILDERS = {
     "ERCOT": _ercot,
     "PJM": _pjm,
@@ -1243,6 +1311,7 @@ BUILDERS = {
     "NYISO": _nyiso,
     "NEISO": _neiso,
     "SPP": _spp,
+    "SOCO": _soco,
 }
 
 

@@ -606,3 +606,31 @@ Run `2026-09-27-nwppnext7-coal-take-floor`: **NOT-YET on {dispatch_corr}** (was 
 
 **Promoted 2026-09-27 (owner standing structure ruling):** keeper #14. Keeper #13 was pruned (rule 35); audit PASS.
 Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext7-coal-take-floor-2019-2025-2026-09-27.md`.
+
+## nwpp-next-8 — 2026-09-28 — monthly pile grain of the coal yard identity (owner cards) → KEEPER #15
+
+**Diagnosis (zero LP).** Keeper #14's C4 misfit was 65–81 % monthly.
+- The model swaps coal and gas by season.
+- NW delivered gas ran $3.8–5.1/MMBtu in Jan–Mar 2019 against $2.2 in summer, so the LP fuel-switches.
+- The annual take floor let the LP bank the whole obligated burn in the dear-gas months.
+- If the monthly shape alone were right, every C4 record would clear r ≥ 0.80.
+
+**Owner decision cards:**
+- A monthly pile balance, reopening Q2 "annual".
+- Flat ratable receipts (C/12).
+- Both floor and ceiling at every month-end.
+
+**The field.** New default-off field `coal_fuel_inventory_monthly_pile`: 12 cumulative yard rows. Month 12 is exactly
+the annual identity, and there are zero new parameters.
+
+**Solve.** 7 year-isolated shards at `e7478536`. 2019 needed a 180-min re-launch (P0 43 min).
+
+Run `2026-09-28-nwppnext8-coal-monthly-pile`: **NOT-YET on {dispatch_corr}, one record** (was four).
+- **C4 FAIL → PASS:** coal 2019 0.690 → 0.733, gas 2019 0.699 → 0.750, coal 2025 0.678 → 0.721.
+- **Still FAIL:** coal 2023 0.693 → 0.695. Its phase-0 footprint was 0.1 TWh, and this was predicted.
+- **Regression (still PASS):** gas 2025 0.864 → 0.854.
+- **Improved:** every other C4 record (e.g. gas 2021 0.757 → 0.854).
+- C1, C2, C6 and C8 PASS. Unserved energy is unchanged.
+
+**Promoted 2026-09-28 (owner standing structure ruling):** keeper #15. Keeper #14 was pruned (rule 35); audit PASS.
+Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext8-coal-monthly-pile-2019-2025-2026-09-28.md`.

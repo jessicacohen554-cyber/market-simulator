@@ -14867,3 +14867,21 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - The 2019–22 SCED is behind ERCOT's API subscription key (401), so the lane stopped.
   - The benchmark-vs-930 gap was diagnosed only: Frontera out-of-footprint 2019–22, hydro, backfill double counts, and a CHP residual.
 - **Record:** `docs/handoffs/RESULT-r-ercot-11-parish-split-2026-09-28.md`.
+
+## R-ERCOT-12 — 2026-09-28 — Frontera 55098 dated ERCOT membership (fleet + benchmark, rule 14); PROMOTED `2026-09-28-r-12-frontera-membership` (owner card: "Promote (Recommended)"); ISO NOT-YET
+
+- **Phase 0 (zero LP), lever 1:** the 2024 tight-hour under-pricing closes with NO arm. 87 % of the 2024 C3a flip (−8.8 → −10.7 %) was one prior-keeper VOLL-shed hour (2024-05-07 19:00, 3.1 MWh Panhandle); every other hour moved C3a −0.24 pts. The remaining gap is the known compressed distribution (C3b/C3c conduct object). `FINDING-r-ercot-12-2024-tight-hours-2026-09-28.md`.
+- **Lever 2 (owner "Fleet + benchmark"):** `constants.ISO_PLANT_ENTRIES = {"ERCOT": {55098: "2023-04-13 06:00"}}`, read only by `data.ba_membership` — fleet hour mask, EIA-923 frame, both CAMPD backfills (pre-entry hours zeroed, not dropped). Zero DOF, no ScenarioConfig field; declared at the pre-arm solve-surface hash so ERCOT keys move.
+- **Solve:** 7 shards at `2af9ab74` (rule 36); G-DRIFT every hunk INERT; partition byte-equal.
+- **Result:** train unchanged (2023 NOT-YET −20.0 %, 2024 NOT-YET −10.7 %, 2025 CALIBRATED). 2022 NOT-YET → CALIBRATED. 2019 C3a +24.8 → +53.6 % and 2020 +7.1 → +11.3 % — Frontera's phantom 529 MW masked a 2019–20 over-scarcity (next object).
+- **Lever 3:** SCED key still declined by the owner; coal offers untouched.
+- Record: `docs/handoffs/RESULT-r-ercot-12-frontera-membership-2026-09-28.md`.
+
+## R-ERCOT-13 — 2026-09-28 — 2019 onto the measured reserve inputs (LR RRS credit + RTOLCAP cap, from_year 2020 → 2019); PROMOTED `2026-09-28-r-13-2019-reserve` (owner standing instruction "Is it an improvement? Then promote"); ISO NOT-YET
+
+- **Phase 0 (zero LP):** DC ties are already netted in demand (model = 930 demand + TI, corr 0.9999). Coal, wind and solar match 930 in the 48 scarcity hours. Gas runs ~1.1 GW short, and the keeper held exactly 3,395 MW of reserve while shedding. Actual 2019 PRC was 2.3–2.7 GW in those hours, with no shed.
+- **Root cause:** `ercot_load_resource_reserve_from_year` and `ercot_reserve_supply_cap_from_year` were set to 2020. 2019's LR series was "deliberately unbuilt (locked-test tier)", a regime removed 2026-09-09.
+- **Arm:** built `ercot_2019_as_up_mw.parquet` (unchanged builder; mean 698 MW) and set both gates to 2019. Zero DOF. One 2019 shard (A) plus one LR-only attribution shard (B, never promotable). G-DRIFT: every hunk INERT.
+- **Result:** 2019 C3a +53.6 → +41.4 %, C3b 1.228 → 0.874, shed 4,662 → 17 MWh; hours ≥ $1k 48 → 54 (P2 missed — the cap adds ORDC-short hours 394 → 1,329). C1 is unchanged, so the coal/CC object is separate. 2020–2025 are identical (R-ERCOT-12 legs recomposed; they were fetchable by full SHA, so there were zero re-solves).
+- **Routed:** R1, the 2019–21 shed ($5k) vs rigid-reserve ($9k) penalty inversion. R2, the scored price exceeding HCAP. R3+R4, the off-peak coal shortfall (Martin Lake −5.9, Sam Seymour −3.6 TWh in 2020; Oklaunion 127 absent from the 2020 fleet).
+- Record: `docs/handoffs/RESULT-r-ercot-13-2019-reserve-inputs-2026-09-28.md`.

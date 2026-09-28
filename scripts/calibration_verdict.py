@@ -837,6 +837,36 @@ TAIL_THRESHOLD = {
     # derive_actual_tail.py / derive_actual_amplitude.py — are SKIPPED by
     # design, not forgotten. A key is added only if the owner ever rules a
     # labelled price benchmark in (an S2 amendment, never a re-cut gate).
+    #
+    # SUPERSEDED IN PART 2026-09-28 (owner rulings, lane soco-84): the owner
+    # ruled a labelled benchmark in — "Score C3a vs lambda", and "Score C3b" —
+    # so SOCO now carries an actual_lmp.json block (Southern Company's FERC-714
+    # Sch. 6 SYSTEM LAMBDA) and leaves the no-price class by construction. The
+    # SAME sitting ruled C3c "Not scored on lambda": a lambda above a tail
+    # threshold is fuel cost, not scarcity pricing. So the key STAYS ABSENT
+    # and C3c reads SKIPPED with the reason in C3C_NOT_SCORED (below).
+}
+
+# ISOs whose committed price benchmark is not a market price, keyed to the
+# label the C3a/C3b metric carries (owner ruling 2026-09-28, lane soco-84).
+# Display only: the numbers are scored exactly as any ``rt``/``rt_lw`` block.
+PRICE_BENCHMARK_LABEL = {
+    "SOCO": "Southern Co. FERC-714 system lambda, one system-wide series",
+}
+
+# ISOs for which C3c is deliberately NOT scored on the committed benchmark, with
+# the reason the SKIPPED record carries. SOCO: owner ruling 2026-09-28 "Not
+# scored on lambda" (lane soco-84) — a system lambda has no administrative
+# scarcity component, and its hours above a tail threshold (0/0/8/96/11/33/47
+# for 2019-2025 at $200) are fuel cost (oil CTs, Winter Storm Elliott), so a
+# tail count against it would not measure what C3c judges. A SKIPPED criterion
+# is not a PASS: it still costs whatever an unscored criterion costs.
+C3C_NOT_SCORED = {
+    "SOCO": (
+        "C3c NOT SCORED on the SOCO system lambda (owner ruling 2026-09-28): a "
+        "lambda has no scarcity-pricing component, so its hours above a tail "
+        "threshold are fuel cost, not realized scarcity"
+    ),
 }
 
 # Governance: outage sources that are exogenous availability events (rubric C6.4).
@@ -2270,6 +2300,8 @@ def score_price_mean(
         if bench_kind == "RT"
         else f"vs DA ({basis}) — no RT actual committed"
     )
+    if iso in PRICE_BENCHMARK_LABEL:
+        label = f"vs {PRICE_BENCHMARK_LABEL[iso]} ({basis})"
     if masked:
         label += (
             f" (both sides masked to the actual's {len(covered)} fully-staged "
@@ -2429,7 +2461,15 @@ def score_price_shape(
         "year": year,
         "status": status,
         "classification": classification,
-        "metric": f"monthly load-weighted price NRMSE ({basis} actual)",
+        "metric": (
+            f"monthly load-weighted price NRMSE ({basis} actual"
+            + (
+                f"; {PRICE_BENCHMARK_LABEL[iso]}"
+                if iso in PRICE_BENCHMARK_LABEL
+                else ""
+            )
+            + ")"
+        ),
         "model": round(nrmse, 3),
         "actual": None,
         "tol": (
@@ -2459,6 +2499,8 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
     (|model − actual| ≤ TAIL_SMALL_COUNT) — a ratio on a handful of hours is
     degenerate, and it doubles as the invented-tail guard against a ~0 actual.
     """
+    if iso in C3C_NOT_SCORED:
+        return [_skip("price_tail", year, C3C_NOT_SCORED[iso])]
     ordc = ypay.get("ordc")
     thr = TAIL_THRESHOLD.get(iso, 200.0)
     if not ordc or "hoursGt200" not in ordc:

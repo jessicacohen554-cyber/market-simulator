@@ -2019,6 +2019,24 @@ def build_constraints(
                 gen_hour_coeff=coal_plant_gen_hour_coeff,
                 group_index=coal_plant_group_index,
             )
+            # NWPP-NEXT-8 monthly pile grain (coal_fuel_inventory_monthly_pile):
+            # a yard budget with more than one month column is CUMULATIVE — row
+            # (yard, m) sums the burn through the end of month m, so its bounds
+            # are the yard's pile identity at each month-end (the builder's rows
+            # are yard-major, month-minor, so one block-lower-triangular
+            # left-multiply turns per-month sums into running sums). One column
+            # (the annual form) is the identity, and is skipped so the annual
+            # LP stays byte-identical.
+            n_cp_months = int(np.asarray(coal_plant_budget).shape[1])
+            cum_op = None
+            if n_cp_months > 1:
+                n_cp_groups = cp_block.shape[0] // n_cp_months
+                cum_op = sp.kron(
+                    sp.identity(n_cp_groups, format="csr"),
+                    sp.csr_matrix(np.tril(np.ones((n_cp_months, n_cp_months)))),
+                    format="csr",
+                )
+                cp_block = (cum_op @ cp_block).tocsr()
             # NWPP-NEXT-7 coal take floor (coal_fuel_inventory_take_floor): the
             # SAME yard rows get a LOWER bound, the take-or-pay obligation, so
             # the one annual identity is bounded on both sides (rule 19
@@ -2034,25 +2052,34 @@ def build_constraints(
                 n_ts = int(layout.n_take_slack)
                 if n_ts:
                     n_rows_cp = cp_block.shape[0]
-                    if n_ts != n_rows_cp:
+                    if n_ts * n_cp_months != n_rows_cp:
                         raise ValueError(
-                            f"layout.n_take_slack ({n_ts}) != coal yard rows "
-                            f"({n_rows_cp})"
+                            f"layout.n_take_slack ({n_ts}) x months "
+                            f"({n_cp_months}) != coal yard rows ({n_rows_cp})"
                         )
                     hrs = np.arange(T)
-                    ts_rows = np.repeat(np.arange(n_ts), T)
+                    if n_cp_months > 1:
+                        # The hour-t shortfall of yard y lands in (y, month(t))
+                        # and, through the running sum, in every later
+                        # month-end row — a missed take is paid ONCE.
+                        mi = np.asarray(coal_plant_month_index, dtype=int)
+                        ts_rows = (
+                            np.arange(n_ts)[:, None] * n_cp_months + mi[None, :]
+                        ).ravel()
+                    else:
+                        ts_rows = np.repeat(np.arange(n_ts), T)
                     ts_cols = (
                         hrs[None, :] * vph
                         + layout._take_slack_off
                         + np.arange(n_ts)[:, None]
                     ).ravel()
-                    cp_block = (
-                        cp_block
-                        + sp.coo_matrix(
-                            (np.ones(ts_rows.size), (ts_rows, ts_cols)),
-                            shape=cp_block.shape,
-                        ).tocsr()
+                    ts_block = sp.coo_matrix(
+                        (np.ones(ts_rows.size), (ts_rows, ts_cols)),
+                        shape=cp_block.shape,
                     ).tocsr()
+                    if cum_op is not None:
+                        ts_block = (cum_op @ ts_block).tocsr()
+                    cp_block = (cp_block + ts_block).tocsr()
             blocks.append(cp_block)
             del cp_block
             _add_bounds(cp_lower, cp_upper)

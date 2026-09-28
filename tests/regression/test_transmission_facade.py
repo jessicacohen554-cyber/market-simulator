@@ -95,7 +95,6 @@ HISTORICAL_SURFACE = (
     "inject_miso_seam_flow_limit",
     "inject_miso_seam_ladder_prices",
     "inject_neiso_gas_coldsnap_derate",
-    "inject_nyiso_firm_imports",
     "inject_nyiso_import_hub_prices",
     "inject_nyiso_local_selfsupply",
     "inject_pjm_seam_flow_limit",
@@ -208,11 +207,9 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "_NYISO_HUB_IMPORT_TRANCHE_NEIGHBOR",
         "_NYISO_HUB_SCARCITY_TRANCHE",
         "_dispatchable_thermal_codes",
-        "apply_nyiso_firm_import_injections",
         "apply_nyiso_li_tsl_import_cap",
         "apply_nyiso_nyc_tsl_import_cap",
         "build_import_node_reconciliation",
-        "inject_nyiso_firm_imports",
         "inject_nyiso_import_hub_prices",
         "inject_nyiso_local_selfsupply",
     ),
@@ -337,7 +334,6 @@ class TestInjectionRegistry:
             caiso,
             import_nodes,
             miso,
-            nyiso,
             registry,
         )
 
@@ -349,10 +345,7 @@ class TestInjectionRegistry:
                 miso.apply_miso_firm_import_injections,
             ),
             "NEISO": (import_nodes.apply_reference_price_seam_injections,),
-            "NYISO": (
-                import_nodes.apply_reference_price_seam_injections,
-                nyiso.apply_nyiso_firm_import_injections,
-            ),
+            "NYISO": (import_nodes.apply_reference_price_seam_injections,),
             "PJM": (import_nodes.apply_reference_price_seam_injections,),
             # SPP (registered 2026-09-06, lane SPP-20): the self-gating generic
             # seam step alone — default-off for SPP, so a byte-identical no-op.

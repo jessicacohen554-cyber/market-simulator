@@ -80,7 +80,7 @@ high-gas scenarios a decarbonization study is run to answer.
 from __future__ import annotations
 
 import csv
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import numpy as np
@@ -294,6 +294,11 @@ class CoalPlantBudget:
             sized on a substitute.
         annual_budget_mmbtu: Sum of the per-yard budgets.
         rate_source_years: The prior years the delivery rates averaged.
+        yard_keys: Yard key of each row, in row order.
+        stock_mmbtu: Each row's Dec(Y-1) opening stock in MMBtu (the
+            ``stock * hc`` term of its budget), in row order — what
+            :func:`build_coal_monthly_pile` needs to split the annual ceiling
+            into its opening pile and its receipts.
     """
 
     n_entities: int
@@ -302,6 +307,7 @@ class CoalPlantBudget:
     annual_budget_mmbtu: float
     rate_source_years: tuple[int, ...]
     yard_keys: tuple[int, ...] = ()
+    stock_mmbtu: tuple[float, ...] = ()
 
 
 def coal_yard_groups(
@@ -438,12 +444,14 @@ def build_coal_plant_budget(
     yard_of_plant = {p: key for key, ids in yards.items() for p in ids}
     key_pos = {key: i for i, (key, *_rest) in enumerate(rowed)}
     budget = np.zeros((len(rowed), 1), dtype=float)
+    stock_mmbtu = np.zeros(len(rowed), dtype=float)
     for i, (_key, stock, rate, mmbtu) in enumerate(rowed):
         tons_src = rate * n_src
         hc = mmbtu / tons_src if tons_src > 0 else fleet_hc
         if not np.isfinite(hc) or hc <= 0.0:
             return None
         budget[i, 0] = (stock + rate) * hc
+        stock_mmbtu[i] = stock * hc
     pos = np.array(
         [key_pos.get(yard_of_plant.get(int(codes[g]), -1), -1) for g in gen_idx],
         dtype=int,
@@ -465,6 +473,7 @@ def build_coal_plant_budget(
         annual_budget_mmbtu=float(budget.sum()),
         rate_source_years=src_years,
         yard_keys=tuple(int(r[0]) for r in rowed),
+        stock_mmbtu=tuple(float(v) for v in stock_mmbtu),
     )
     return g_rows, budget, month_index, coeff, pos[keep], prov
 
@@ -487,6 +496,9 @@ class CoalTakeFloor:
         clipped_to_capacity: Rows whose floor was cut to what the yard's rowed
             units can physically burn in the year.
         per_yard: ``{yard key: (floor MMBtu before clip, after clip)}``.
+        parts: ``{row index: (C * hc, (S_dec - S_max) * hc)}`` MMBtu — the
+            contract take and the pile headroom term of each floored row's
+            unclipped floor, for :func:`build_coal_monthly_pile`.
     """
 
     n_binding_rows: int
@@ -494,6 +506,7 @@ class CoalTakeFloor:
     clipped_to_budget: int
     clipped_to_capacity: int
     per_yard: dict[int, tuple[float, float]]
+    parts: dict[int, tuple[float, float]] = field(default_factory=dict)
 
 
 def build_coal_take_floor(
@@ -557,6 +570,7 @@ def build_coal_take_floor(
     else:  # no hourly availability: the capacity clip has nothing to read
         cap_mmbtu = np.full(n_rows, np.inf)
     per_yard: dict[int, tuple[float, float]] = {}
+    parts: dict[int, tuple[float, float]] = {}
     n_bud = n_cap = 0
     for i, key in enumerate(yard_keys):
         ids = yards.get(int(key), {int(key)})
@@ -582,6 +596,7 @@ def build_coal_take_floor(
         if not np.isfinite(hc) or hc <= 0.0:
             continue
         raw = max(c_tons + s_dec - s_max, 0.0) * hc
+        parts[i] = (c_tons * hc, (s_dec - s_max) * hc)
         val = raw
         if val > float(budget[i, 0]):
             val, n_bud = float(budget[i, 0]), n_bud + 1
@@ -595,8 +610,119 @@ def build_coal_take_floor(
         clipped_to_budget=n_bud,
         clipped_to_capacity=n_cap,
         per_yard=per_yard,
+        parts=parts,
     )
     return floor, prov
+
+
+@dataclass(frozen=True)
+class CoalMonthlyPile:
+    """Provenance for one year's monthly-grain yard pile rows (NWPP-NEXT-8).
+
+    Attributes:
+        n_rows: Yard rows (each now carries one cumulative row per month).
+        n_months: Month-end rows per yard.
+        floor_clipped_to_ceiling: (row, month) cells whose cumulative floor was
+            cut to the same month's cumulative ceiling.
+        floor_clipped_to_capacity: (row, month) cells whose cumulative floor was
+            cut to what the yard's rowed units can burn through that month.
+    """
+
+    n_rows: int
+    n_months: int
+    floor_clipped_to_ceiling: int
+    floor_clipped_to_capacity: int
+
+
+def build_coal_monthly_pile(
+    fleet: FleetArrays,
+    gen_idx: np.ndarray,
+    group_index: np.ndarray,
+    coeff: np.ndarray,
+    budget: np.ndarray,
+    stock_mmbtu: tuple[float, ...],
+    floor_parts: dict[int, tuple[float, float]] | None,
+    hours: int,
+) -> tuple[np.ndarray, np.ndarray | None, np.ndarray, CoalMonthlyPile]:
+    """Split the per-yard annual pile identity into cumulative month-end rows.
+
+    NWPP-NEXT-8 (owner decision cards 2026-09-28). The annual yard row bounds a
+    whole year's burn, so the LP may place the contracted take in whichever
+    months are cheapest — measured on keeper #14, it banked the obligated burn
+    in winter, when NW delivered gas is dear, and let the yards idle through
+    spring and summer. A real yard cannot: its pile holds between zero and the
+    most it has ever held, and contract coal arrives through the year. One
+    cumulative row per month-end ``m`` (1-based) enforces::
+
+        max(0, (S_dec - S_max) + m/12 * C) * hc
+            <= sum_{g at yard, t <= end of m} HR[g] * P[g, t]  (+ shortfall)
+            <= S_dec * hc + m/12 * (budget - S_dec * hc)
+
+    Receipts are FLAT RATABLE (``m/12``), the owner-carded standard take-or-pay
+    delivery form, so no year ``Y-1`` delivery timing is carried into ``Y``. At
+    ``m = 12`` both sides are EXACTLY the annual rows
+    (:func:`build_coal_plant_budget`, :func:`build_coal_take_floor`), clips
+    included, so this is the same identity at a finer grain, never a second
+    mechanism (rule 19 ``[R-ONE-MECH]``). Zero free parameters (rule 21): every
+    term is one the annual rows already read. The two feasibility clips are the
+    annual ones applied per month: a month's floor never exceeds that month's
+    ceiling, nor what the yard's rowed units can physically burn by then.
+
+    Args:
+        fleet: The fleet (``pmax``, ``availability``).
+        gen_idx: Rowed coal generator indices.
+        group_index: Yard row of each rowed generator.
+        coeff: Per-rowed-generator MMBtu/MWh.
+        budget: ``(n_rows, 1)`` annual ceilings, MMBtu.
+        stock_mmbtu: Each row's Dec(Y-1) stock term, MMBtu
+            (``CoalPlantBudget.stock_mmbtu``).
+        floor_parts: ``CoalTakeFloor.parts`` (``{row: (C*hc, (S_dec-S_max)*hc)}``),
+            or ``None`` when no take floor is armed (ceiling only).
+        hours: LP horizon.
+
+    Returns:
+        ``(ceiling (n_rows, n_months), floor (n_rows, n_months) or None,
+        month_index (hours,), provenance)``, cumulative MMBtu.
+    """
+    budget = np.asarray(budget, dtype=float)
+    n_rows = budget.shape[0]
+    month_index = _hour_to_month_index(int(hours))
+    n_months = int(month_index.max()) + 1 if month_index.size else 1
+    frac = np.arange(1, n_months + 1, dtype=float) / 12.0
+    stock = np.asarray(stock_mmbtu, dtype=float)
+    if stock.shape != (n_rows,):
+        raise ValueError(
+            f"stock_mmbtu has {stock.shape} entries for {n_rows} yard rows"
+        )
+    ceiling = stock[:, None] + frac[None, :] * (budget[:, 0] - stock)[:, None]
+    if floor_parts is None:
+        prov = CoalMonthlyPile(n_rows, n_months, 0, 0)
+        return ceiling, None, month_index, prov
+    gen_idx = np.asarray(gen_idx, dtype=int)
+    group_index = np.asarray(group_index, dtype=int)
+    coeff = np.asarray(coeff, dtype=float)
+    pmax = np.asarray(fleet.pmax, dtype=float)[gen_idx]
+    avail = getattr(fleet, "availability", None)
+    if avail is not None and np.ndim(avail) == 2:
+        a = np.asarray(avail, dtype=float)[gen_idx][:, : month_index.size]
+        # MWh each rowed unit can make in each month, then cumulative MMBtu.
+        by_month = np.zeros((gen_idx.size, n_months), dtype=float)
+        np.add.at(by_month.T, month_index, a.T)
+        w = coeff * pmax
+        cap = np.zeros((n_rows, n_months), dtype=float)
+        np.add.at(cap, group_index, w[:, None] * by_month)
+        cap = np.cumsum(cap, axis=1)
+    else:
+        cap = np.full((n_rows, n_months), np.inf)
+    floor = np.zeros((n_rows, n_months), dtype=float)
+    for i, (c_mmbtu, head_mmbtu) in floor_parts.items():
+        floor[int(i)] = np.maximum(head_mmbtu + frac * c_mmbtu, 0.0)
+    n_ceil = int((floor > ceiling).sum())
+    floor = np.minimum(floor, ceiling)
+    n_cap = int((floor > cap).sum())
+    floor = np.maximum(np.minimum(floor, cap), 0.0)
+    prov = CoalMonthlyPile(n_rows, n_months, n_ceil, n_cap)
+    return ceiling, floor, month_index, prov
 
 
 def reconcile_floors_to_yard_budget(

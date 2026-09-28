@@ -2330,6 +2330,36 @@ EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC: dict[str, tuple[tuple[str, str], .
     "SOCO": (("2019-01-01 07:00", "2019-09-11 05:00"),)
 }
 
+# --- EIA-930 CISO published one hour LATE (R-CAISO-13, 2026-09-28) -----------
+# Per column family: inclusive windows of the extract's hour-ENDING ``UTC time``
+# stamps whose value is the TRUE value of the PREVIOUS hour (stamped 1 h late).
+# Applied at the frame seam (``data.eia930.frames._repair_clock_late_windows``)
+# only while ``ScenarioConfig.caiso_eia930_clock_repair`` is armed.
+# Measured against two clocks independent of EIA-930, zero fitted parameters
+# (rule 14 source repair; re-derive only when the extract changes, rule 23):
+#   * OASIS SLD TAC actual ``CA ISO-TAC`` (``interval_start_gmt``): monthly and
+#     daily best lag of d(Demand) and d(NetGen - TI) against d(TAC).
+#     Demand: lag 0 through 2022-06-13, +1 h from 2022-06-16 (06-14/15 mixed,
+#     not asserted), back to lag 0 at 2025-12-02 22:00 UTC (hour-level scan).
+#     NetGen - TI: lag 0 through 2023-10-31, +1 h from 2023-11-01 (local),
+#     lag 0 again from 2025-12-03.
+#   * Solar geometry: the ``NG: SUN`` production centroid is 11.6-11.9 h PST
+#     in every month through 2023-10 and in 2025-12, and 12.5-13.0 h PST in
+#     every month 2023-11 .. 2025-11 (solar noon at the fleet's longitude is
+#     ~12.0 h PST), i.e. the whole generation frame shifts, not only SUN.
+# The EIA-930 API long series (``CISO_fueltype.parquet`` / ``CISO_region``)
+# is byte-identical to the extract across both windows, so the defect is the
+# publisher's, not the download's. caiso-75 (``_CAISO_DEMAND_CLOCK_REALIGN_END``)
+# read the same identity against the GENERATION frame and so saw only the
+# relative lag (Demand late Jan-Oct 2023, "aligned" after, when both were
+# late); this registry supersedes it. Probe:
+# scripts/probes/_rcaiso13_storage_timing.py;
+# docs/handoffs/r-caiso-13/RESULT-r-caiso-13-2026-09-28.md.
+EIA930_CISO_CLOCK_LATE_WINDOWS_UTC: dict[str, tuple[str, str]] = {
+    "generation": ("2023-11-01 08:00", "2025-12-02 22:00"),
+    "demand": ("2022-06-16 08:00", "2025-12-02 22:00"),
+}
+
 # --- EIA-930 remote generation booked by TWO balancing authorities ------------
 # Per EIA-930 BA code: ``{fuel column: BA that already books the same plants}``.
 # The listed member's published fuel column is energy from a jointly-owned plant
@@ -2473,6 +2503,32 @@ ISO_BA_JOINS: dict[str, dict[str, tuple[int, int]]] = {"SOCO": {"AEC": (2021, 9)
 # closes the SOCO-60 B1/B2 checks (930/923 fossil 0.982 / 0.991 / 0.982 / 0.985
 # for 2019-2022). Re-derive only when a source changes (rule 23).
 ISO_BA_EXITS: dict[str, dict[str, str]] = {"SOCO": {"FPL": "2022-07-13 12:00"}}
+
+# --- PLANTS that ENTERED a modelled region mid-backcast (plant grain) --------
+# ``{iso: {plant_code: first_hour_inside}}`` — the plant-grain twin of
+# ``ISO_BA_JOINS`` for a single plant that was physically connected to another
+# system before a dated hour, with no balancing-authority code to key on.
+# ``first_hour_inside`` is the region's EIA-930 extract's own hour-ending
+# ``UTC time`` stamp of the first row the plant is inside (the
+# ``ISO_BA_EXITS`` clock convention). Read ONLY by ``data.ba_membership``
+# (rule 19 [R-ONE-MECH]) at the same three seams: the LP fleet (offline
+# before the stamp — the ERCOT bin sheet carries the plant in every year and
+# no loader BA filter reaches it), the EIA-923 benchmark frame and BOTH CAMPD
+# backfills (pre-stamp CAMPD hours are dropped, so the backfill cannot
+# re-book them). Zero free parameters, measured date (rules 21 / 24);
+# per-ISO (rule 25). Backcast-only in the fleet: a forecast year is past
+# every registered entry.
+#
+# ERCOT (lane R-ERCOT-12, 2026-09-28, owner ruling "Fleet + benchmark"):
+# Frontera Energy Center (55098, Mission TX, 529 MW CC) exported to CFE
+# (Mexico) and was not an ERCOT resource before 2023-04-13. Measured:
+# (1) ERCOT's own 60-Day DAM Gen Resource data first lists FRONT_EC_CC1 on
+# operating day 2023-04-13; (2) EIA-860 vintages 2018-2022 carry no 55098
+# row at all, vintage 2023+ codes it ERCO; (3) EIA-923 has no 55098 rows
+# 2019-2022 and none for Jan-May 2023. Operating day 2023-04-13 HE01 CDT is
+# hour-ending UTC 2023-04-13 06:00.
+# (docs/handoffs/FINDING-r-ercot-11-benchmark-vs-930-2026-09-28.md.)
+ISO_PLANT_ENTRIES: dict[str, dict[int, str]] = {"ERCOT": {55098: "2023-04-13 06:00"}}
 
 # --- Hydro hourly deliverability envelope (caiso-72 STEP-2) ------------------
 # Percentile of the measured EIA-930 NG:WAT hourly output, per (month x
