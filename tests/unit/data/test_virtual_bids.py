@@ -254,7 +254,9 @@ def test_settle_virtuals_financially_zeroes_p1_bounds_only():
     fa = _FA(
         pmin=np.array([10.0, -200.0, 0.0]),
         availability=np.array([[1.0, 0.9], [0.0, 0.0], [0.5, 1.0]]),
-        plant_group=np.array(["CC_REGULAR", VIRTUAL_DEC_GROUP, VIRTUAL_INC_GROUP], dtype=object),
+        plant_group=np.array(
+            ["CC_REGULAR", VIRTUAL_DEC_GROUP, VIRTUAL_INC_GROUP], dtype=object
+        ),
         min_gen=np.array([[10.0, 10.0], [-200.0, -50.0], [0.0, 0.0]]),
     )
     on = SimpleNamespace(pjm_da_virtual_bids=True, pjm_da_virtual_settle_financial=True)
@@ -272,7 +274,11 @@ def test_settle_virtuals_financially_zeroes_p1_bounds_only():
     out2 = settle_virtuals_financially(on, fa2)
     assert out2.min_gen[:, 0] == pytest.approx([10.0, 0.0, 0.0])
     # Flag off / parent layer off -> None (byte-identical caller path).
-    off = SimpleNamespace(pjm_da_virtual_bids=True, pjm_da_virtual_settle_financial=False)
+    off = SimpleNamespace(
+        pjm_da_virtual_bids=True, pjm_da_virtual_settle_financial=False
+    )
     assert settle_virtuals_financially(off, fa) is None
-    orphan = SimpleNamespace(pjm_da_virtual_bids=False, pjm_da_virtual_settle_financial=True)
+    orphan = SimpleNamespace(
+        pjm_da_virtual_bids=False, pjm_da_virtual_settle_financial=True
+    )
     assert settle_virtuals_financially(orphan, fa) is None
