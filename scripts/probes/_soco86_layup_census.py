@@ -82,6 +82,12 @@ def rebuild(year: int, mask: bool) -> dict:
     )
 
 
+def _mg(r: dict) -> np.ndarray:
+    """(units, T) min_gen, broadcasting a 1-D floor over the year."""
+    mg = r["min_gen"]
+    return mg if mg.ndim == 2 else np.repeat(mg[:, None], T, 1)
+
+
 def main() -> None:
     """Print the per-year keeper-vs-mask array diff and the floor-plant TWh."""
     ap = argparse.ArgumentParser()
@@ -94,12 +100,7 @@ def main() -> None:
             f: (not same_ids) or not np.array_equal(k[f], m[f])
             for f in ("pmax", "mc", "min_gen", "avail")
         }
-        mg = lambda r: (
-            r["min_gen"]
-            if r["min_gen"].ndim == 2
-            else np.repeat(r["min_gen"][:, None], T, 1)
-        )  # noqa: E731
-        fk, fm = mg(k), mg(m)
+        fk, fm = _mg(k), _mg(m)
         moved = [
             u
             for i, u in enumerate(k["ids"])
