@@ -1876,3 +1876,22 @@ OWNER RULINGS 2026-09-28 (decision cards, end of soco-83; routed to soco-84):
   No gate change. Found by the soco-83 price search, which recorded the other sources as refused, blocked or not public: FERC-EQR index (gate
   NO, SOCO-13), SEEM (login), Into Southern (not in EIA's ICE files), OATI OASIS (TLS/503), neighbouring-BA lambdas (would blend other
   systems in).
+
+## soco-84 — 2026-09-28
+
+ZERO LP; KEEPER UNCHANGED (2026-09-28-soco83-st-oom-floor); DETERMINATION NOW NOT-YET; NO FRONTIER. (1) SOCO's C3a/C3b now score
+against Southern's FERC-714 Sch. 6 system lambda (actual_lmp.json SOCO block, RT-keyed, system-wide, load-weighted; derive_actual_lmp
+`_soco`); C3c SKIPPED on it; SOCO leaves the v3.8 no-price class, NWPP stays. Keeper: C3a FAIL 2019 +14.0 % / 2020 +15.6 % / 2022
+-16.1 %; C3b FAIL 2020/21/22/24 (0.226/0.261/0.391/0.271); grade 7/4/0/1/2; per year 2023 CALIBRATED, 2025 WITH-CAVEATS, rest NOT-YET.
+No other registered run moved. (2) Energy Auction hour-ahead/day-ahead clearing files 2019-2025 intaken (1,125 of 1,127 links),
+reported-only on the status panel (same-hour means vs lambda, r 0.66-0.90). (3) Diagnosis: model +$5.7-6.9 above lambda in the
+low-load quintile every year (off-peak setter CC_REGULAR at AVERAGE HR; lambda is incremental HR), below it at peak in cold snaps
+(Elliott -4.5 of -13.0 $/MWh 2022); the out-of-merit-coal counterfactual halves 2019-20 but worsens 2021/23/24.
+Record: docs/handoffs/r-soco/RESULT-soco-84-2026-09-28.md.
+
+OWNER RULINGS 2026-09-28 (decision cards, soco-84):
+- **C3b: "Score C3b (Recommended)"**; **C3c: "Not scored on lambda (Recommended)"** (asked after the zero-LP preview, before the block).
+- **CC incremental HR: "Zero-LP census first (Recommended)"** — soco-85 derives SOCO-native CC incremental ratios and reports the greedy
+  effect on price and on the CC/ST/CT split, answering SOCO-63/64's no-load carrier problem first; comes back with a card. No build.
+- **Daily gas: "Data scout, zero LP (Recommended)"** — find a public daily Southeast hub series 2019-2025 and measure how much of the peak
+  gap it explains; report before any intake or build.

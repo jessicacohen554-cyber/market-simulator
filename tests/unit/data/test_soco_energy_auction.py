@@ -40,7 +40,9 @@ class LoaderTests(unittest.TestCase):
             load_soco_energy_auction_hourly(self.tmp)
 
     def test_foreign_layout_is_refused(self):
-        (self.tmp / "hourly/2023-07-17_HOURLY_CLEARING_PRICES.CSV").write_text("A,B\n1,2\n")
+        (self.tmp / "hourly/2023-07-17_HOURLY_CLEARING_PRICES.CSV").write_text(
+            "A,B\n1,2\n"
+        )
         with self.assertRaises(ValueError):
             load_soco_energy_auction_hourly(self.tmp)
 
