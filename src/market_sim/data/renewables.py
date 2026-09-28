@@ -975,9 +975,11 @@ def _spp_wind_year_own_curtailment_rate(year: int) -> tuple[float, int] | None:
     parquet, built from the year's OWN measured curtailment) than the
     cross-year mean it replaces.
 
-    Returns ``None`` when SPP published no rate for ``year`` — 2020 and 2021,
-    where the ASOM prints only the 2019 and 2022 endpoints of the span — so
-    those years keep the reference-rate path untouched.
+    Returns ``None`` when SPP published no rate for ``year``, so that year keeps
+    the reference-rate path untouched. Every year 2019-2025 now carries one:
+    SPP-67 read only the 2023-2025 ASOMs and so treated 2020 and 2021 as
+    unpublished, but the 2022 edition prints 2020 (244 MW) and the 2021 edition
+    prints 2021 (725 MW); SPP-94 transcribed both rows.
     """
     rate = _spp_wind_annual_rates().get(int(year))
     return None if rate is None else (rate, int(year))
