@@ -3753,3 +3753,10 @@ results/calibration/rcaiso10_A_*/hourly/p0_*.parquet
 # recovery route): 2019 8a3b5094 2020 05cc491f 2021 173b48bb 2022 2b1ef9b3
 # 2023 791f1f8e 2024 389fe37a 2025 e9a7ab3a on claude/pjmnext7-vs-<y>.
 results/calibration/pjmnext7_vs_20*/
+
+# NYISO-NEXT-9 per-year shard legs (rule 32(d)/36): kept on disk, never on main; the composed
+# span nyisonext9_span and the 2021 leg (its own registered bundle) are what land.
+# Provenance SHAs (rule 33(d), provenance only): 2021 256972f4590944bb84602e344b4be0fef0e72ca7,
+# 2022 04514ab6cc76831cb6dd57421df4b9f5d8f28dee, 2023 0b0e6631c68ac8ae45b78bbdb98a5c4c27ae747e,
+# 2024 cf22a08d8a8528ec44bbc2ea12758b6b83f61b46, 2025 cec0c6a2fd8aa237cde688709ca33a0ac244c771.
+results/calibration/nyisonext9_202[2-5]/

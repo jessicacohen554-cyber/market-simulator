@@ -14997,3 +14997,20 @@ too.
 - **Routed:** the 900 MW HQ_hydro always-on floor sits above measured total net import in 0.5–6.5 % of hours every year (rule-17 question). The HQ seam is a net export in 2024–2025.
 - **Superseded and pruned:** `2026-09-27-nyisonext6-li-cap-span` and its 2021 run.
 - **Record:** `docs/RESULT-nyiso-next8-hq-dedupe-2026-09-27.md`.
+
+## NYISO-NEXT-9 — 2026-09-28 — always-on 900 MW HQ_hydro import floor removed; keeper promoted
+
+- **Lever:** removal on structure (rules 13 / 17 / 19), zero DOF. The keeper recipe changes in one field, `nyiso_firm_imports` true → false.
+  - No published HQ firm energy quantity exists for 2021–2025. Gold Book Table V-1 is aggregate ICAP; Table III-3d is realized GWh.
+  - The 900 MW level was an outcome percentile of measured net import. It had no window: its D-4 window was h0–23.
+  - The measured monthly import band already sets the import level.
+- **Result:** keeper `2026-09-28-nyisonext9-hq-floor-span` (2022–2025) plus the stamped `2026-09-28-nyisonext9-hq-floor-2021`.
+  - G-1 exact in all five legs.
+  - G-2(a): hours with import < 900 MW are 0/0/52/162/172 (2021–2025), against 46/322/277/572/514 measured.
+  - G-2(b): |Δ import| ≤ 0.006 TWh in every year.
+  - G-3: C6 and C8 PASS; the D-4 FAIL set is identical to the keeper's.
+  - Δ system LW price 0.00 / 0.00 / −0.01 / −0.01 / −0.12 $/MWh. No criterion changes verdict.
+  - Span NOT-YET (C3a 2022 −11.3 %, 2025 −11.2 → −11.4 %); 2021 CALIBRATED.
+- **Matrix:** `nyiso_firm_imports` K → R.
+- **Superseded and pruned:** `2026-09-27-nyisonext8-hq-dedupe-span` and its 2021 run.
+- **Record:** `docs/RESULT-nyiso-next9-hq-floor-2026-09-28.md`.
