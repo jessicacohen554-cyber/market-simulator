@@ -16,13 +16,11 @@ import numpy as np
 
 from market_sim.config.constants import NYISO_LOCAL_SELFSUPPLY_FRAC
 from market_sim.data.floor_mechanisms import (
-    MECH_FIRM_IMPORT,
     MECH_NYISO_SELFSUPPLY,
     ensure_mechanism,
 )
 from market_sim.model.interchange.spec import (
     IMPORT_ZONE,
-    NYISO_FIRM_IMPORT_FLOOR_FRAC,
     NYISO_IMPORT_RECON_BAND_FRAC,
 )
 
@@ -32,7 +30,7 @@ _logger = logging.getLogger(__name__)
 # NYISO priced-node tranche → the modeled neighbor whose measured hourly system
 # LMP prices it (nyiso_import_hub_prices). HQ_hydro and IESO_Ontario are absent
 # on purpose: neither carries an organized-market LMP series in-repo (HQ is a
-# firm-contract flow, firm-floored by inject_nyiso_firm_imports; IESO's HOEP is
+# firm-contract flow with no organized-market price; IESO's HOEP is
 # not uploaded), so they keep their static contract-ladder values.
 _NYISO_HUB_IMPORT_TRANCHE_NEIGHBOR: dict[str, str] = {
     "PJM_west": "PJM",
@@ -538,64 +536,6 @@ def inject_nyiso_local_selfsupply(
     return applied
 
 
-def inject_nyiso_firm_imports(fleet_arrays, iso: str, year: int) -> bool:
-    """Floor NYISO's firm (must-flow) import baseload at the priced node.
-
-    Hydro-Québec (Châteauguay/Cedars) and Ontario (IESO) sell NY firm,
-    long-term scheduled hydro/nuclear baseload that flows regardless of NY's
-    hourly price. The priced node prices them as economic tranches (clearing
-    only when NYISO's price exceeds the tranche cost), which backs them off in
-    cheap-overnight hours / low-price years even though the real schedule keeps
-    flowing. For each tranche in
-    :data:`~market_sim.config.interchange_config.NYISO_FIRM_IMPORT_FLOOR_FRAC`, this sets
-    a constant hourly ``min_gen`` floor of ``frac × tranche capacity`` on the
-    matching import row (capped at the row's available capacity), so the firm
-    baseload flows every hour. The configured fractions keep the total firm
-    floor below the measured lightest-import hour, so it can never force a
-    phantom over-import.
-
-    Modifies ``fleet_arrays`` in place. Returns ``True`` when a floor was
-    applied, ``False`` (byte-identical) when ``iso`` is not NYISO, no fraction
-    is configured, or no matching import row is present (e.g. the served-wedge
-    path without a priced node).
-
-    Args:
-        fleet_arrays: Vectorized fleet (modified in place).
-        iso: ISO identifier; only ``"NYISO"`` applies a floor.
-        year: Backcast year (unused today; carried for parity with the other
-            priced-node injectors and future per-year firm schedules).
-
-    Returns:
-        ``True`` if any firm-import floor was applied, else ``False``.
-    """
-    if iso != "NYISO" or not NYISO_FIRM_IMPORT_FLOOR_FRAC:
-        return False
-
-    hours = int(fleet_arrays.availability.shape[1])
-    unit_ids = list(fleet_arrays.unit_ids)
-    applied = False
-    for name, frac in NYISO_FIRM_IMPORT_FLOOR_FRAC.items():
-        if frac <= 0.0:
-            continue
-        rows = [i for i, uid in enumerate(unit_ids) if uid.endswith(f"_{name}")]
-        for r in rows:
-            if fleet_arrays.pmax[r] <= 0.0:
-                continue
-            floor = frac * fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
-            if fleet_arrays.min_gen is None:
-                fleet_arrays.min_gen = np.broadcast_to(
-                    fleet_arrays.pmin[:, np.newaxis],
-                    (fleet_arrays.pmin.size, hours),
-                ).copy()
-            raised = fleet_arrays.min_gen[r, :] < floor
-            np.maximum(
-                fleet_arrays.min_gen[r, :], floor, out=fleet_arrays.min_gen[r, :]
-            )
-            ensure_mechanism(fleet_arrays)[r, raised] = MECH_FIRM_IMPORT
-            applied = True
-    return applied
-
-
 def build_import_node_reconciliation(
     fleet_arrays,
     iso: str,
@@ -725,32 +665,6 @@ def build_import_node_reconciliation(
     monthly_lo = monthly_target - half
     monthly_hi = monthly_target + half
     return node_idx, monthly_lo, monthly_hi
-
-
-def apply_nyiso_firm_import_injections(
-    fleet_arrays,
-    mc,
-    config,
-    iso: str,
-    year: int,
-    *,
-    carbon_price: float = 0.0,
-    gas_scenario: str = "mid",
-    forward_skill: str | None = None,
-) -> None:
-    """Registry step: the HQ/Ontario firm-import must-flow floors.
-
-    Verbatim step 3 (NYISO half) of the historical
-    ``apply_interchange_injections`` monolith — contract structure, not a
-    measured-outcome pin; gated on ``config.nyiso_firm_imports``.
-    """
-    if getattr(config, "nyiso_firm_imports", False):
-        if inject_nyiso_firm_imports(fleet_arrays, iso, year):
-            _logger.info(
-                "%s %d: firm import baseload floored (HQ/Ontario must-flow)",
-                iso,
-                year,
-            )
 
 
 # --------------------------------------------------------------------------

@@ -948,7 +948,6 @@ def run_year(
     nyiso_local_selfsupply: bool | None = None,
     nyiso_scr_edrp: bool | None = None,
     nyiso_scr_edrp_strike: float | None = None,
-    nyiso_firm_imports: bool | None = None,
     nyiso_import_reconciliation: bool | None = None,
     nyiso_import_hub_prices: bool | None = None,
     nyiso_iroquois_winter_spread: bool | None = None,
@@ -2017,8 +2016,6 @@ def run_year(
         config = config.with_overrides(nyiso_scr_edrp=nyiso_scr_edrp)
     if nyiso_scr_edrp_strike is not None:
         config = config.with_overrides(nyiso_scr_edrp_strike=nyiso_scr_edrp_strike)
-    if nyiso_firm_imports is not None:
-        config = config.with_overrides(nyiso_firm_imports=nyiso_firm_imports)
     if nyiso_import_reconciliation is not None:
         config = config.with_overrides(
             nyiso_import_reconciliation=nyiso_import_reconciliation

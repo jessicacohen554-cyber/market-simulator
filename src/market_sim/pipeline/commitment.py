@@ -2240,7 +2240,6 @@ def run_commitment_pass(state: dict, config=None):
         or getattr(cfg, "caiso_gas_commitment_floor", False)
         or getattr(cfg, "nyiso_local_selfsupply", False)
         or getattr(cfg, "reliability_floor", False)
-        or getattr(cfg, "nyiso_firm_imports", False)
         or getattr(cfg, "miso_firm_imports", False)
     )
     fa_p2 = apply_commitment_with_coal_pin(

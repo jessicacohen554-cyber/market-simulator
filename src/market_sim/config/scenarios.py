@@ -102,6 +102,14 @@ _CACHE_KEY_RETIRED_FIELDS: dict[str, object] = {
     # caiso_per_hub_intertie. Deleted 2026-09-02 (caiso-236),
     # results/calibration/FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md.
     "caiso_bidir_intertie": False,
+    # NYISO HQ_hydro / Ontario firm (must-flow) import floor
+    # (inject_nyiso_firm_imports, NYISO_FIRM_IMPORT_FLOOR_FRAC). An
+    # outcome-percentile level ("NY imported >=922 MW in 98 % of 2023 hours")
+    # with no published contract driver and an always-on window (rules 13/17);
+    # un-armed from the NYISO keeper by NYISO-NEXT-9 and off in every shipped
+    # configuration since. Deleted 2026-09-28 (NYISO-NEXT-11, owner ruling
+    # Q-b), docs/RESULT-nyiso-next9-hq-floor-2026-09-28.md §1.
+    "nyiso_firm_imports": False,
 }
 
 # Config fields introduced after the results cache existed. ``cache_key`` omits
@@ -8387,18 +8395,6 @@ class ScenarioConfig:
     # Services Tariff §5.12), so $500 is the price below which the registered
     # demand-side capability will not curtail. Rule 4: not a residual-fit knob —
     # a market-design constant. Only consumed when nyiso_scr_edrp is on.
-    nyiso_firm_imports: bool = False  # NYISO firm (must-flow) import baseload:
-    # Hydro-Québec (Châteauguay/Cedars) and Ontario (IESO) sell NY firm,
-    # long-term scheduled hydro/nuclear baseload that flows regardless of NY's
-    # hourly price — not price-responsive economy energy. The priced node prices
-    # them as economic tranches (clear only when NYISO price > tranche cost),
-    # backing them off in cheap-overnight hours / low-price years even though the
-    # real schedule keeps flowing. This sets a must-flow floor (NYISO_FIRM_
-    # IMPORT_FLOOR_FRAC x tranche capacity) on those rows via FleetArrays.min_gen
-    # (transmission.inject_nyiso_firm_imports). The floor stays below the
-    # measured lightest-import hour (NY imported >=922 MW in 98% of 2023 hours)
-    # so it never forces a phantom over-import. FORWARD-REPRODUCIBLE (a firm
-    # schedule reproduces for any year); Tier 3. Default off; NYISO-only.
     nyiso_import_reconciliation: bool = False  # NYISO priced import-node
     # boundary-flow calibration: pin the priced node's MONTHLY net interchange to
     # the measured EIA-930 schedule (eia_loader.nyiso_net_interchange) via a
@@ -9627,7 +9623,7 @@ class ScenarioConfig:
     # MIC-split level × the measured unit-mean revealed-base shape of
     # caiso_firm_import_shape, eford preserved), the exact analogue of the
     # Manitoba/HQ firm must-flow blocks (transmission.inject_miso_firm_
-    # imports / inject_nyiso_firm_imports, MECH_FIRM_IMPORT — a contract,
+    # imports / the deleted inject_nyiso_firm_imports, MECH_FIRM_IMPORT — a contract,
     # ablation-kept, D-2 exempt by construction). Zero new free parameters:
     # level and shape are the existing measured caiso-73 inputs; the tranche
     # $/MWh stays as inframarginal contract-cost bookkeeping and can no
@@ -23542,7 +23538,6 @@ TIER_TAGS: dict[str, int] = {
     "capacity_no_default_cap_convention_by_iso": 1,
     "capacity_screen_peak_measured_hindcast": 1,
     "nyiso_local_selfsupply": 1,
-    "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,
     "nyiso_import_hub_prices": 1,
     "nyiso_iroquois_winter_spread": 1,

@@ -539,7 +539,8 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     # data/raw/NYISO/interface-flows/). Single import node → the AGGREGATE
     # net-import supply curve is the object reconciled to the model (rule 14),
     # not per-seam curves. HQ_hydro kept at the firm-base 900 MW so the
-    # always-on firm-import floor (NYISO_FIRM_IMPORT_FLOOR_FRAC) is unchanged;
+    # always-on firm-import floor (NYISO_FIRM_IMPORT_FLOOR_FRAC, deleted
+    # 2026-09-28 by NYISO-NEXT-11 under rule 26) was unchanged;
     # five equal-MW economic rungs span [900, ~4,350 MW SIL] (the clearable
     # range) so a rung lands at the off-peak operating depth and reprices it
     # measured; import_scarcity is the SIL-blocked deep tail. Replaces the
@@ -3105,11 +3106,6 @@ CAISO_INTERTIE_HUB_GAS_STATE: dict[str, str] = {
 
 
 # --- NYISO-specific interchange constants ---
-
-NYISO_FIRM_IMPORT_FLOOR_FRAC: dict[str, float] = {
-    "HQ_hydro": 1.0,
-    "IESO_Ontario": 0.0,
-}
 
 NYISO_IMPORT_RECON_BAND_FRAC: float = 0.02
 

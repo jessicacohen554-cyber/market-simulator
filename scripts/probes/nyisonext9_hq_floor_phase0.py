@@ -29,10 +29,12 @@ sys.path.insert(0, str(REPO / "scripts" / "data"))
 sys.path.insert(0, str(REPO / "src"))
 
 import derive_nyiso_import_tranches as dnit  # noqa: E402
-from market_sim.model.interchange.spec import (  # noqa: E402
-    IMPORT_TRANCHES_BY_YEAR,
-    NYISO_FIRM_IMPORT_FLOOR_FRAC,
-)
+from market_sim.model.interchange.spec import IMPORT_TRANCHES_BY_YEAR  # noqa: E402
+
+# The deleted spec constant's value, frozen here so this record probe still
+# reproduces its JSON (NYISO_FIRM_IMPORT_FLOOR_FRAC was removed 2026-09-28 by
+# NYISO-NEXT-11 under rule 26 [R-DELETE]).
+NYISO_FIRM_IMPORT_FLOOR_FRAC = {"HQ_hydro": 1.0, "IESO_Ontario": 0.0}
 
 CAL = REPO / "results" / "calibration"
 OUT = CAL / "_nyisonext9_phase0.json"
@@ -58,14 +60,18 @@ def _model(year: int) -> tuple[np.ndarray, np.ndarray]:
 
 def main() -> None:
     """Compute the per-year footprint and write the JSON record."""
-    firm = next(c for n, c, _ in IMPORT_TRANCHES_BY_YEAR["NYISO"][YEARS[0]] if n == "HQ_hydro")
+    firm = next(
+        c for n, c, _ in IMPORT_TRANCHES_BY_YEAR["NYISO"][YEARS[0]] if n == "HQ_hydro"
+    )
     floor_mw = NYISO_FIRM_IMPORT_FLOOR_FRAC["HQ_hydro"] * firm
     out: dict = {"floor_mw": floor_mw, "years": {}}
     for y in YEARS:
         imp, p_model = _model(y)
         net = dnit.load_net_import(y)
         da = dnit.load_da_lmp(y)
-        hq_rung = next(p for n, _, p in IMPORT_TRANCHES_BY_YEAR["NYISO"][y] if n == "HQ_hydro")
+        hq_rung = next(
+            p for n, _, p in IMPORT_TRANCHES_BY_YEAR["NYISO"][y] if n == "HQ_hydro"
+        )
         bind = imp <= floor_mw + TOL_MW
         below = net < floor_mw
         ok = np.isfinite(net) & np.isfinite(da)
@@ -81,24 +87,38 @@ def main() -> None:
             "measured_min_mw": round(float(np.nanmin(net)), 0),
         }
         if b.any():
-            rec.update({
-                "bind_measured_net_import_mean_mw": round(float(net[b].mean()), 0),
-                "bind_measured_below_floor_hours": int((b & below).sum()),
-                "bind_measured_shortfall_twh": round(float(np.clip(floor_mw - net[b], 0, None).sum()) / 1e6, 4),
-                "bind_model_price_mean": round(float(p_model[b].mean()), 2),
-                "bind_actual_da_mean": round(float(da[b].mean()), 2),
-                "bind_hours_model_below_hq_rung": int((p_model[b] < hq_rung - 1e-6).sum()),
-                "bind_hours_share_pct": round(100 * b.mean(), 2),
-                "annual_mean_effect_if_bind_gap_closed": round(float((da[b] - p_model[b]).sum()) / 8760, 3),
-            })
+            rec.update(
+                {
+                    "bind_measured_net_import_mean_mw": round(float(net[b].mean()), 0),
+                    "bind_measured_below_floor_hours": int((b & below).sum()),
+                    "bind_measured_shortfall_twh": round(
+                        float(np.clip(floor_mw - net[b], 0, None).sum()) / 1e6, 4
+                    ),
+                    "bind_model_price_mean": round(float(p_model[b].mean()), 2),
+                    "bind_actual_da_mean": round(float(da[b].mean()), 2),
+                    "bind_hours_model_below_hq_rung": int(
+                        (p_model[b] < hq_rung - 1e-6).sum()
+                    ),
+                    "bind_hours_share_pct": round(100 * b.mean(), 2),
+                    "annual_mean_effect_if_bind_gap_closed": round(
+                        float((da[b] - p_model[b]).sum()) / 8760, 3
+                    ),
+                }
+            )
         # measured below-floor hours: what did the keeper do there
         mb = below & ok
         if mb.any():
-            rec.update({
-                "measured_below_keeper_import_mean_mw": round(float(imp[mb].mean()), 0),
-                "measured_below_actual_da_mean": round(float(da[mb].mean()), 2),
-                "measured_below_model_price_mean": round(float(p_model[mb].mean()), 2),
-            })
+            rec.update(
+                {
+                    "measured_below_keeper_import_mean_mw": round(
+                        float(imp[mb].mean()), 0
+                    ),
+                    "measured_below_actual_da_mean": round(float(da[mb].mean()), 2),
+                    "measured_below_model_price_mean": round(
+                        float(p_model[mb].mean()), 2
+                    ),
+                }
+            )
         rec["model_price_mean"] = round(float(p_model.mean()), 2)
         rec["actual_da_mean"] = round(float(np.nanmean(da)), 2)
         out["years"][y] = rec

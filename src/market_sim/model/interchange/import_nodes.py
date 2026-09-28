@@ -486,7 +486,7 @@ def inject_reference_price_mc(
 def inject_reference_price_firm_export(fleet_arrays, iso: str, year: int) -> bool:
     """Floor PJM's firm (must-flow) scheduled export on the reference-price seam.
 
-    The mirror of :func:`inject_nyiso_firm_imports` / :func:`inject_miso_firm_imports`
+    The mirror of :func:`inject_miso_firm_imports` (and the since-deleted NYISO firm floor)
     for the EXPORT direction. PJM exports to MISO / NYISO in ~87-100% of hours at
     a mean spread too thin for the economic seam to clear every hour, because a
     large share is firm, long-term SCHEDULED capacity/energy that flows
