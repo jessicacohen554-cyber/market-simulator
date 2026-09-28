@@ -15279,3 +15279,23 @@ Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 
 `docs/FINDING-miso282-2021-22-stgas-gap-2026-09-28.md`.
 
 Owner ruling: next lane is the MISO-South price premium probe (zero LP). No frontier.
+
+## miso-283 — 2026-09-28
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 on the MISO-South price premium
+over the measured LA/MS/AR/TX hubs. At night, about 80 % of it is system-wide: Illinois is also +$5–9/MWh above
+ILLINOIS.HUB at h0–5 in every year, 2019–2025, and the model couples South to Illinois in 78 % of night hours
+(`diurnal_price_amplitude`, G). The South-specific spread error is +0.1 to +1.9 $/MWh (2021–22: +3.6 / +3.8 at
+night, up to +10 by day, where the North is under-priced; these are the routed objects). The premium is the same
+in DA and RT.
+
+Ruled out:
+- Gas: model South gas = Henry Hub + measured South CC variable transport, within ±0.1 $/MMBtu.
+- Reserve adders: $0 at night.
+- A CC markup: the night-marginal CC tranches are at the measured incremental HR plus ~$1.5.
+
+`committed_band_measured_basis` was sized and its MISO cell stays U. It leaves CC unchanged and raises coal
+committed offers by $18–29/MWh (a take-or-pay collision).
+
+What remains South-specific points at out-of-merit South commitment (routed RO-2). No frontier.
+`docs/FINDING-miso283-south-price-premium-2026-09-28.md`.
