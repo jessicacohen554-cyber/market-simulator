@@ -37,7 +37,7 @@ from _hydro5_compose_span import compose, regenerate_diagnostics  # noqa: E402
 CAL = REPO / "results" / "calibration"
 KEEPER = CAL / "pjmnext6_sp_span"
 ARM_FLAGS: tuple[str, ...] = ("pjm_da_virtual_settle_financial",)
-PINNED_SHA = "81dcf97436735d148ccdf2de2a26a407349bfb73"
+PINNED_SHA = "f2850356a29c3b22c1c1ccd2a0365190e2adb0ca"
 MUST_BE_TRUE = (
     "eia860_vintage_tracks_solve_year",
     "measured_ct_heat_rates",

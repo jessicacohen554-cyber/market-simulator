@@ -21,7 +21,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 KEEPER = REPO / "results" / "calibration" / "pjmnext6_sp_span"
-PINNED = "__PINNED__"
+PINNED = "f2850356a29c3b22c1c1ccd2a0365190e2adb0ca"
 PRECOMMIT = "docs/PRECOMMIT-pjm-next-7-virtual-settle-2026-09-28.md"
 
 

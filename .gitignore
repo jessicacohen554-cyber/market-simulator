@@ -3748,3 +3748,8 @@ results/calibration/r_ercot11_arm_20*/
 results/calibration/rcaiso10_A_20*/**
 # R-CAISO-10: P0 dispatch/duals of the composites are local diagnostics (not in the keeper slim set)
 results/calibration/rcaiso10_A_*/hourly/p0_*.parquet
+# PJM-NEXT-7 per-year shard legs (rule 32(d)/36): the composite pjmnext7_vs_span is
+# the registered keeper; legs stay out of main. Provenance (rule 33(d), not a
+# recovery route): 2019 8a3b5094 2020 05cc491f 2021 173b48bb 2022 2b1ef9b3
+# 2023 791f1f8e 2024 389fe37a 2025 e9a7ab3a on claude/pjmnext7-vs-<y>.
+results/calibration/pjmnext7_vs_20*/
