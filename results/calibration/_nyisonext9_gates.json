@@ -93,5 +93,32 @@
    "arm": 172
   },
   "G2b_pass": true
+ },
+ "2021": {
+  "lw_price_delta": {
+   "Capital_Hudson": 0.0,
+   "Long_Island": 0.0,
+   "Lower_Hudson": 0.0,
+   "NYC": 0.0,
+   "NYISO_external": 0.0,
+   "Upstate_West": 0.0,
+   "system": 0.0
+  },
+  "class_twh_delta": {},
+  "import_twh": {
+   "keeper": 27.3431,
+   "arm": 27.3431,
+   "delta": 0.0
+  },
+  "import_mw_min_max_arm": [
+   1430,
+   5693
+  ],
+  "total_energy_delta_twh": 0.0,
+  "hours_below_floor": {
+   "keeper": 0,
+   "arm": 0
+  },
+  "G2b_pass": true
  }
 }
