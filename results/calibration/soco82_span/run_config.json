@@ -48,7 +48,7 @@
       "2024": 2.19,
       "2025": 3.52
     },
-    "git_sha": "e688d3f2",
+    "git_sha": "2265d524",
     "hours": 8760,
     "iso": "SOCO",
     "nyiso_dynamic_reserve_requirements": null,
@@ -74,13 +74,13 @@
     ]
   },
   "composed_from": [
-    "soco81_2019",
-    "soco81_2020",
-    "soco81_2021",
-    "soco81_2022",
-    "soco81_2023",
-    "soco81_2024",
-    "soco81_2025"
+    "soco82_2019",
+    "soco82_2020",
+    "soco82_2021",
+    "soco82_2022",
+    "soco82_2023",
+    "soco82_2024",
+    "soco82_2025"
   ],
   "environment": {
     "cache_key_path_roots": [
@@ -98,104 +98,104 @@
       "pydantic": "2.13.4",
       "scipy": "1.17.1"
     },
-    "platform": "Linux-6.18.44-fc-v42-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
     "python_version": "3.11.15"
   },
   "git": {
-    "basis_sha": "e688d3f2e03f50b8ff6c992e5fb8f14862ca56db",
-    "branch": "HEAD",
+    "basis_sha": "2265d524a7d575467c106a416ec726fb103ba445",
+    "branch": "claude/soco82-2019",
     "changed_files": [],
     "diffstat": "",
     "dirty": false,
-    "sha": "e688d3f2"
+    "sha": "2265d524"
   },
-  "model_changes_note": "soco-81 2019: soco-76 keeper recipe + coal_econ_marginal_hr_two_sided (SOCO must-run-floored coal at measured incremental HR)",
+  "model_changes_note": "soco-82 2019: soco-81 keeper recipe on the regenerated perunitdark-SOCO outage extract (F1 retiree append)",
   "per_leg_provenance": {
     "2019": {
       "git": {
-        "basis_sha": "e688d3f2e03f50b8ff6c992e5fb8f14862ca56db",
-        "branch": "HEAD",
+        "basis_sha": "2265d524a7d575467c106a416ec726fb103ba445",
+        "branch": "claude/soco82-2019",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "e688d3f2"
+        "sha": "2265d524"
       },
-      "timestamp": "2026-09-27T22:35:16"
+      "timestamp": "2026-09-27T23:52:36"
     },
     "2020": {
       "git": {
-        "basis_sha": "e688d3f2e03f50b8ff6c992e5fb8f14862ca56db",
-        "branch": "HEAD",
+        "basis_sha": "2265d524a7d575467c106a416ec726fb103ba445",
+        "branch": "claude/soco82-2020",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "e688d3f2"
+        "sha": "2265d524"
       },
-      "timestamp": "2026-09-27T22:36:49"
+      "timestamp": "2026-09-27T23:57:30"
     },
     "2021": {
       "git": {
-        "basis_sha": "e688d3f2e03f50b8ff6c992e5fb8f14862ca56db",
-        "branch": "HEAD",
+        "basis_sha": "2265d524a7d575467c106a416ec726fb103ba445",
+        "branch": "claude/soco82-2021",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "e688d3f2"
+        "sha": "2265d524"
       },
-      "timestamp": "2026-09-27T22:37:24"
+      "timestamp": "2026-09-27T23:54:23"
     },
     "2022": {
       "git": {
-        "basis_sha": "e688d3f2e03f50b8ff6c992e5fb8f14862ca56db",
-        "branch": "HEAD",
+        "basis_sha": "2265d524a7d575467c106a416ec726fb103ba445",
+        "branch": "claude/soco82-2022",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "e688d3f2"
+        "sha": "2265d524"
       },
-      "timestamp": "2026-09-27T22:39:14"
+      "timestamp": "2026-09-27T23:54:24"
     },
     "2023": {
       "git": {
-        "basis_sha": "e688d3f2e03f50b8ff6c992e5fb8f14862ca56db",
-        "branch": "HEAD",
+        "basis_sha": "2265d524a7d575467c106a416ec726fb103ba445",
+        "branch": "claude/soco82-2023",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "e688d3f2"
+        "sha": "2265d524"
       },
-      "timestamp": "2026-09-27T22:37:49"
+      "timestamp": "2026-09-27T23:54:58"
     },
     "2024": {
       "git": {
-        "basis_sha": "e688d3f2e03f50b8ff6c992e5fb8f14862ca56db",
-        "branch": "HEAD",
+        "basis_sha": "2265d524a7d575467c106a416ec726fb103ba445",
+        "branch": "claude/soco82-2024",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "e688d3f2"
+        "sha": "2265d524"
       },
-      "timestamp": "2026-09-27T22:37:54"
+      "timestamp": "2026-09-27T23:55:58"
     },
     "2025": {
       "git": {
-        "basis_sha": "e688d3f2e03f50b8ff6c992e5fb8f14862ca56db",
-        "branch": "HEAD",
+        "basis_sha": "2265d524a7d575467c106a416ec726fb103ba445",
+        "branch": "claude/soco82-2025",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "e688d3f2"
+        "sha": "2265d524"
       },
-      "timestamp": "2026-09-27T22:37:04"
+      "timestamp": "2026-09-27T23:53:53"
     }
   },
   "resolved_inputs": {
     "campd_unit_outages": {
       "armed": true,
-      "bytes": 240516,
+      "bytes": 244415,
       "path": "data/raw/campd-unit-outages-perunitdark-SOCO.csv",
       "present": true,
-      "sha256": "ae0912a9d70e6bec10ddc9ed374289894173a211851b115eae05605685cfa2f1"
+      "sha256": "03ce606cfe118ef28e560739d12a005b2240aa112609e119c51a9f86ea2fd37c"
     },
     "hydro_plant_modes": {
       "classified_plants": 45,
@@ -260,6 +260,7 @@
     "caiso_import_solar_shape": false,
     "caiso_intertie_gap_fill_measured_dam": false,
     "caiso_intertie_gap_fill_measured_gas": false,
+    "caiso_intertie_partial_year_measured": false,
     "caiso_intertie_reference_price": false,
     "caiso_lcr_commitment_credit": false,
     "caiso_locational_as_families": false,
@@ -1176,6 +1177,7 @@
     "spp_curtail_depth_wind": 0.288137,
     "spp_curtailment_ceiling": false,
     "spp_gas_commitment_bridge": false,
+    "spp_zone_partition": "north_south",
     "st_gas_intermediate_cf_threshold": 50.0,
     "st_gas_intermediate_split": false,
     "st_gas_mustrun_oom_level": false,
@@ -1258,7 +1260,7 @@
   "solve_surface": {
     "epochs": [],
     "fingerprint": "a66095bfefe9db9e",
-    "git_sha": "e688d3f2",
+    "git_sha": "2265d524",
     "iso": "SOCO",
     "moved": {
       "EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC": "5aa0d68a2b2c9bf3",
@@ -1277,5 +1279,5 @@
     "rows": 192,
     "schema": 1
   },
-  "timestamp": "2026-09-27T22:35:16"
+  "timestamp": "2026-09-27T23:52:36"
 }

@@ -1837,3 +1837,9 @@ OWNER RULINGS 2026-09-27 (decision cards, soco-82):
   the v3.1 C3c-only ledger guard, with a test) is routed to soco-83.
 - **FERC-714 system lambda: "Intake, reported-only"** — intake SOCO lambda 2019-2025 (CSV era + XBRL) under data/raw/ferc-714 with
   README/SHA256SUMS and show model-vs-lambda on the status page; no gate changes. Routed to soco-83.
+
+RESULT (run 2026-09-27-soco82-perunitdark-regen, seven year-isolated shards at 2265d524; PROMOTED 2026-09-28 on the owner's decision
+card; PRECOMMIT §7 held; 2026-09-27-soco81-coal-incremental-hr pruned per rule 35): every leg at the HEAD build's offers, Wansley within
+its new availability, 2022-2025 identical to the keeper, unserved 0, C6/C8 PASS, D-diagnostics unchanged. 2021 Wansley 5.58 -> 0.91
+TWh, C4 coal 0.204 -> 0.145, COAL_BIT +0.3 -> -1.5pp; 2021 CC_REGULAR +2.3 -> +3.05pp FAIL (displaced coal lands on gas: the CC/ST split
+defect exposed); 2019 COAL_BIT -3.99 -> -4.1pp. NOT-YET, grade 5/4/1. Record: docs/handoffs/r-soco/RESULT-soco-82-2026-09-27.md.
