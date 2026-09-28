@@ -14981,3 +14981,19 @@ too.
 - **Side defect:** the aggregate ladder derivation double-counts `SCH - HQ_IMPORT_EXPORT`. Routed to
   the next lane.
 - **Record:** `docs/FINDING-nyiso-next7-star-node-2026-09-27.md`.
+
+## NYISO-NEXT-8 — 2026-09-27 — HQ double count removed from the import ladder; keeper promoted
+
+- **Lever:** a rule-14 derivation correction with zero DOF.
+  - `derive_nyiso_import_tranches.py` summed `SCH - HQ_IMPORT_EXPORT`, an accounting duplicate of `SCH - HQ - NY` (corr 0.955–0.993, 2018–2025).
+  - The producer now imports `nyiso_par_attribution.ACCOUNTING_DUPLICATE` and refuses to list it.
+  - Every NYISO ladder was re-derived: the static pooled ladder and 2018–2025. Offline duration RMSE fell from 337–902 MW to 204–297 MW.
+  - Landed directly on `main`; no new field.
+- **Result:** keeper `2026-09-27-nyisonext8-hq-dedupe-span` (2022–2025) plus the stamped `2026-09-27-nyisonext8-hq-dedupe-2021`.
+  - G-1: every leg passes acceptance.
+  - G-2: import TWh 2021 −0.079, 2022 0.000.
+  - G-3: C6 and C8 PASS every year.
+  - Span NOT-YET (C3a 2022 −11.5 → −11.3 %, 2025 −10.9 → −11.2 %); 2021 CALIBRATED.
+- **Routed:** the 900 MW HQ_hydro always-on floor sits above measured total net import in 0.5–6.5 % of hours every year (rule-17 question). The HQ seam is a net export in 2024–2025.
+- **Superseded and pruned:** `2026-09-27-nyisonext6-li-cap-span` and its 2021 run.
+- **Record:** `docs/RESULT-nyiso-next8-hq-dedupe-2026-09-27.md`.

@@ -31,3 +31,9 @@ d3de297c2e419ea81cd19dfc35428da9df4957510d956ba865b5863276347b82  2026_ITP_Const
 62924a5c55496f7e1d4c379cbe905d1791fb8dd959f887a31f7920cce2d203a7  Hub_Definitions.csv                               # tracked (0.20 MB) — SPPNORTH_HUB 449 / SPPSOUTH_HUB 460 nodes
 af89cfaed9507fc6c7c8735c8ef44c4b38984b28a01d6d5c9aba8fbe831870b6  TieFlows_Sep2025.csv                              # tracked (8.9 MB) — 1-min tie flows by neighbour, Sep 2025
 f365cad6f1f31e6ae6c0eaf7d329834676c15802b89665bfac13ce7c96c65ffd  TieFlows.csv                                      # NOT landed — 2-day 2026-01 sample with a "SPP NSI Future" column
+# Appended 2026-09-27 by lane SPP-94 (fetched from www.spp.org, document tree ?id=18512).
+# Transcriptions: pypdf page text, one "=== PDFPAGE n ===" header per PDF page (printed page = footer number).
+1eb25ba14a50ab3e65c130662acea5b66841493e1c68f2deb40fae88c6f5e770  2019_Annual_State_of_the_Market_Report.pdf        # NOT tracked (6.6 MB); no transcription (no wind-curtailment MW sentence)
+5a0d3e10b662c8a9ccc6879f40c09b7c2c82718c8b3265b939ff11536ac95f29  2020_Annual_State_of_the_Market_Report.pdf        # NOT tracked (4.8 MB); no transcription (no wind-curtailment section)
+c636aae8e237847984625145ed0810f1e59f7ca03cadedb9baaa7291ec5d862a  2021_Annual_State_of_the_Market_Report.pdf        # NOT tracked (4.7 MB); transcriptions/ASOM_2021.txt
+e5f9aff1c0badde3d8ee042a2456611df9f2ca0f2e695fb4ccac4e2737b5f327  2022_Annual_State_of_the_Market_Report.pdf        # NOT tracked (6.8 MB); transcriptions/ASOM_2022.txt

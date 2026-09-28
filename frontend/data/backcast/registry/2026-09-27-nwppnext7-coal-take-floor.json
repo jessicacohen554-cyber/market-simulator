@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-27-nwppnext7-coal-take-floor",
+  "label": "nwppnext7 coal take floor",
+  "date": "2026-09-27",
+  "shorthand": "nwppnext7-coal-take-floor",
+  "definition": "NWPP keeper #14: keeper #13's recipe plus a per-coal-yard annual coal take floor (soft, estimator-B net, bounded by measured EIA-923 yard quantities that predate the solve year) with a yard ceiling; the per-hour take-or-pay discounts are retired in the same arm (owner rulings Q1-Q5, 2026-09-27). Seven year-isolated soft-floor legs composed at zero LP. C1 fuel-mix flips FAIL → PASS; C4 fixes 2020 gas and 2024 coal but regresses 2019 gas/coal (reported at full magnitude). Determination: NOT-YET on {dispatch_corr} (previously {fuelmix, dispatch_corr} under keeper #13); C2/C6/C8 PASS; price is unscored (rubric v3.8).",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-09-27-nwppnext7-coal-take-floor.js",
+  "bundle": "results/calibration/nwppnext7sf_span"
+}
