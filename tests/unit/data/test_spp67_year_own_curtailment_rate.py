@@ -39,12 +39,19 @@ COMMITTED_RATES = {
 }
 
 # The rows SPP-67 added, from SPP MMU ASOM curtailment MW already in the table
-# paired with GenMix delivered wind on SPP-32's construction.
-ADDED_RATES = {2019: 0.015908220021133547, 2022: 0.0935682937153296}
+# paired with GenMix delivered wind on SPP-32's construction. 2020 and 2021 were
+# added by SPP-94 (2026-09-27): SPP-67 recorded them as unpublished, but ASOM 2022
+# p. 53 prints 2020 = 244 MW and ASOM 2021 p. 60 prints 2021 = 725 MW (rule 14
+# [R-ACCURATE]); solved and promoted by SPP-95 (keeper 2026-09-28-spp-94-curtail-rows).
+ADDED_RATES = {
+    2019: 0.015908220021133547,
+    2020: 0.02546680443790379,
+    2021: 0.06370154289530101,
+    2022: 0.0935682937153296,
+}
 
-# SPP publishes no average hourly curtailment MW for these, so no rate forms
-# and they must keep the reference-rate path even when the gate is armed.
-UNPUBLISHED_YEARS = (2020, 2021)
+# Every backcast year SPP carries now has its own published row.
+SPP_YEARS = range(2019, 2026)
 
 
 def test_reference_rate_is_unchanged_by_the_coverage_extension() -> None:
@@ -72,9 +79,12 @@ def test_added_rows_pair_into_a_year_own_rate(year: int, expected: float) -> Non
     assert own[1] == year
 
 
-@pytest.mark.parametrize("year", UNPUBLISHED_YEARS)
-def test_unpublished_years_form_no_year_own_rate(year: int) -> None:
-    assert R._spp_wind_year_own_curtailment_rate(year) is None
+@pytest.mark.parametrize("year", SPP_YEARS)
+def test_every_spp_year_forms_its_own_rate(year: int) -> None:
+    """SPP-94: no SPP backcast year is unpublished any more."""
+    own = R._spp_wind_year_own_curtailment_rate(year)
+    assert own is not None
+    assert own[1] == year
 
 
 def test_2019_is_the_object_and_it_is_large() -> None:
@@ -117,9 +127,10 @@ def test_year_own_registry_is_spp_wind_only() -> None:
     assert set(R._YEAR_OWN_RATE_PROVIDERS) == {("SPP", "wind")}
 
 
-@pytest.mark.parametrize("year", UNPUBLISHED_YEARS)
-def test_armed_spp_wind_falls_back_on_an_unpublished_year(year: int) -> None:
-    assert R._curtailment_rate_for_year("SPP", "wind", year, True) == (
+def test_armed_spp_wind_falls_back_on_an_unpublished_year() -> None:
+    """A year with no published row still takes the reference-rate path."""
+    assert R._spp_wind_year_own_curtailment_rate(2018) is None
+    assert R._curtailment_rate_for_year("SPP", "wind", 2018, True) == (
         R._reference_curtailment_rate("SPP", "wind")
     )
 
