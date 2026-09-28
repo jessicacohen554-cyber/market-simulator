@@ -11,6 +11,7 @@ the full pre-split surface; patch semantics are preserved via
 from __future__ import annotations
 
 import logging
+import re
 import numpy as np
 import pandas as pd
 
@@ -1302,6 +1303,37 @@ _BIN_GROUP_MEASURED_FAMILY: dict[str, str] = {
 }
 
 
+_SPLIT_TAG = re.compile(r"\[[A-Z]+\]\s*$")
+
+
+def split_child_parent_codes(detail: pd.DataFrame) -> dict[int, int]:
+    """Return ``{child_code: parent_code}`` for the sheet's split-plant rows.
+
+    ``scripts/tag_mixed_plants.py`` tags each fuel class of a mixed facility
+    with a ``[TAG]`` name suffix; the dominant class keeps the real EIA plant
+    code and every other class takes ``real_code * 10 + fuel_digit``. A child
+    is a tagged row whose ``code // 10`` is itself a tagged row of the sheet —
+    both conditions, so an ordinary plant code that happens to end in a digit
+    is never read as a child.
+
+    Args:
+        detail: The raw curated sheet (``Plant_Code``, ``Plant_Name``).
+
+    Returns:
+        The child-to-parent code map (empty when the sheet has no split plant
+        or carries no ``Plant_Name`` column).
+    """
+    if "Plant_Name" not in detail.columns:
+        return {}
+    codes = pd.to_numeric(detail["Plant_Code"], errors="coerce")
+    tagged = {
+        int(c)
+        for c, n in zip(codes, detail["Plant_Name"].astype(str))
+        if c == c and _SPLIT_TAG.search(n)
+    }
+    return {c: c // 10 for c in tagged if c >= 10 and c // 10 in tagged}
+
+
 def resolve_bin_heat_rates(
     detail: pd.DataFrame,
     iso: str,
@@ -1327,6 +1359,15 @@ def resolve_bin_heat_rates(
        (:func:`market_sim.data.egrid.resolve_plant_heat_rates`);
     3. else the sheet's own value;
     4. else NaN, which :func:`_fill_plant_hr` sends to ``BIN_GROUP_HR_DEFAULT``.
+
+    Split-plant children (R-ERCOT-11, rule 14): a mixed facility's non-dominant
+    fuel class is a synthetic child row ``parent*10+digit``
+    (``scripts/tag_mixed_plants.py`` — W A Parish 34702, Barney M Davis
+    49392), but the measured artifacts are keyed on the CAMPD facility, whose
+    derive already pairs that facility's units to the child's class. A child
+    that misses on its own code therefore reads its PARENT's entry in its own
+    family's map (:func:`split_child_parent_codes`); previously it fell through
+    to the sheet value, which at W A Parish is the coal row's plant average.
 
     Args:
         detail: The raw curated sheet (``Plant_Code``, ``Plant_Group``,
@@ -1365,6 +1406,7 @@ def resolve_bin_heat_rates(
         egrid_hr = pd.Series(float("nan"), index=detail.index)
     hr = pd.Series(float("nan"), index=detail.index, dtype=float)
     src = pd.Series("default", index=detail.index, dtype=object)
+    parent_of = split_child_parent_codes(detail)
     for i in detail.index:
         fam = _BIN_GROUP_MEASURED_FAMILY.get(groups[i])
         m = maps.get(fam) if fam else None
@@ -1375,6 +1417,9 @@ def resolve_bin_heat_rates(
                 else int(codes[i])
             )
             v = m.get(key)
+            parent = parent_of.get(int(codes[i]))
+            if v is None and parent is not None and not isinstance(key, tuple):
+                v = m.get(parent)
             if v is not None and v > 0.0:
                 hr[i], src[i] = float(v), "measured"
                 continue
