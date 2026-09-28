@@ -3927,3 +3927,10 @@ Built `spp_zone_partition` (default `north_south` = keeper, byte-identical). Wes
 one 4,000 MW W↔E link replacing N↔S. Measured-price admissibility passes 7/7 years. The ψ rating passes R1–R4. The census and
 the wind identity pass. C-3 STOPS: 14 East afternoon hours go margin-negative where N/S was ≥ 0. No shard launched, keeper
 unchanged, cell `spp_zone_partition` = O. Record: `docs/handoffs/FINDING-spp-93-west-east-2026-09-27.md`.
+
+## spp-94 — 2026-09-28 — SPP's own 2020/2021 wind curtailment rows landed; solve blocked at nesting depth
+
+SPP-67 treated 2020/2021 as unpublished. The 2022 and 2021 ASOMs print 244 MW and 725 MW (average hourly wind). The rows were
+added (PR #6812, merge `020bb1c5`, PRECOMMIT first). The armed year-own seam now uses 2.55 % / 6.37 % instead of 9.65 %. Wind
+headroom: 2020 −6.62 TWh, 2021 −3.60 TWh; every other year byte-identical. The seven shards were refused at lineage depth 8, so
+nothing was solved. Keeper unchanged. Record: `docs/handoffs/FINDING-spp-94-curtail-rows-2026-09-28.md`.
