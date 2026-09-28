@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-28-spp-99-remap-rederive",
+  "label": "spp 99 remap rederive",
+  "date": "2026-09-28",
+  "shorthand": "spp-99-remap-rederive",
+  "definition": "SPP-99 2019: keeper + campd_split_remap_companions (SPP CAMPD artifacts under the CEMS->EIA remap rows)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-28-spp-99-remap-rederive.js",
+  "bundle": "results/calibration/spp99_remap_span"
+}
