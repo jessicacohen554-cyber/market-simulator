@@ -324,6 +324,28 @@ CAMPD_UNIT_PLANT_REMAP: dict[tuple[int, str], int] = {
     # PREREG-nyiso187-ct-steam-merit-position.md §1 Object 2.
     (55375, "CT3"): 57664,
     (55375, "CT4"): 57664,
+    # SPP (SPP-98): four split facilities, every row taken from the EPA CAMD-EIA
+    # Power Sector Data Crosswalk (data/raw/reference/camd-eia-crosswalk,
+    # CAMD_PLANT_ID != EIA_PLANT_ID) and every target verified a member of
+    # SPP's model fleet. The material one is J Lamar Stall (EIA 56565, 511 MW
+    # CC, 2010), whose two CTs file under the Arsenal Hill ORIS 1416 while EIA
+    # plant 1416 is a single 125 MW steam unit ("5A"): without the entry the
+    # benchmark read Arsenal Hill ST_GAS at up to 225 % CF, and the EIA-923
+    # CAMPD backfill booked Stall's output to ST_GAS in the years Arsenal
+    # Hill's own 923 fell below the threshold (2020 / 2021 / 2025) while Stall
+    # was already counted as CC -- a 1.9-2.3 TWh double count. Stall's CEMS is
+    # CT-only (steam turbine unmetered; peak ~370 of 511 MW).
+    # [R-ACCURATE] PRECOMMIT-spp-98-cems-eia-remap-2026-09-28.md.
+    (1416, "CTG-6A"): 56565,
+    (1416, "CTG-6B"): 56565,
+    (3006, "7"): 55655,  # Anadarko -> WFEC GenCo (CT_PEAKER)
+    (3006, "8"): 55655,
+    (762, "3"): 7546,  # Ponca -> Ponca City (762 is not in the fleet)
+    (762, "4"): 7546,
+    (63628, "5A-1"): 2953,  # Tinker -> Mustang 5A / 5B (CT_PEAKER)
+    (63628, "5A-2"): 2953,
+    (63628, "5B-1"): 2953,
+    (63628, "5B-2"): 2953,
 }
 
 # Facilities with at least one remapped unit (split facilities).

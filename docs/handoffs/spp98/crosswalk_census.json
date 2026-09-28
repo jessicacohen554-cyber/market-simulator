@@ -1,0 +1,136 @@
+{
+ "units": [
+  {
+   "CAMD_STATE": "OK",
+   "CAMD_PLANT_ID": 762,
+   "CAMD_UNIT_ID": "3",
+   "CAMD_FACILITY_NAME": "Ponca",
+   "EIA_PLANT_ID": 7546,
+   "EIA_PLANT_NAME": "Ponca City",
+   "EIA_UNIT_TYPE": "CA"
+  },
+  {
+   "CAMD_STATE": "OK",
+   "CAMD_PLANT_ID": 762,
+   "CAMD_UNIT_ID": "4",
+   "CAMD_FACILITY_NAME": "Ponca",
+   "EIA_PLANT_ID": 7546,
+   "EIA_PLANT_NAME": "Ponca City",
+   "EIA_UNIT_TYPE": "GT"
+  },
+  {
+   "CAMD_STATE": "LA",
+   "CAMD_PLANT_ID": 1416,
+   "CAMD_UNIT_ID": "CTG-6A",
+   "CAMD_FACILITY_NAME": "Arsenal Hill Power Plant",
+   "EIA_PLANT_ID": 56565,
+   "EIA_PLANT_NAME": "J Lamar Stall Unit",
+   "EIA_UNIT_TYPE": "CT"
+  },
+  {
+   "CAMD_STATE": "LA",
+   "CAMD_PLANT_ID": 1416,
+   "CAMD_UNIT_ID": "CTG-6B",
+   "CAMD_FACILITY_NAME": "Arsenal Hill Power Plant",
+   "EIA_PLANT_ID": 56565,
+   "EIA_PLANT_NAME": "J Lamar Stall Unit",
+   "EIA_UNIT_TYPE": "CT"
+  },
+  {
+   "CAMD_STATE": "OK",
+   "CAMD_PLANT_ID": 3006,
+   "CAMD_UNIT_ID": "7",
+   "CAMD_FACILITY_NAME": "Anadarko",
+   "EIA_PLANT_ID": 55655,
+   "EIA_PLANT_NAME": "WFEC GenCo LLC",
+   "EIA_UNIT_TYPE": "GT"
+  },
+  {
+   "CAMD_STATE": "OK",
+   "CAMD_PLANT_ID": 3006,
+   "CAMD_UNIT_ID": "8",
+   "CAMD_FACILITY_NAME": "Anadarko",
+   "EIA_PLANT_ID": 55655,
+   "EIA_PLANT_NAME": "WFEC GenCo LLC",
+   "EIA_UNIT_TYPE": "GT"
+  },
+  {
+   "CAMD_STATE": "OK",
+   "CAMD_PLANT_ID": 63628,
+   "CAMD_UNIT_ID": "5A-1",
+   "CAMD_FACILITY_NAME": "Tinker",
+   "EIA_PLANT_ID": 2953,
+   "EIA_PLANT_NAME": "Mustang",
+   "EIA_UNIT_TYPE": "GT"
+  },
+  {
+   "CAMD_STATE": "OK",
+   "CAMD_PLANT_ID": 63628,
+   "CAMD_UNIT_ID": "5A-2",
+   "CAMD_FACILITY_NAME": "Tinker",
+   "EIA_PLANT_ID": 2953,
+   "EIA_PLANT_NAME": "Mustang",
+   "EIA_UNIT_TYPE": "GT"
+  },
+  {
+   "CAMD_STATE": "OK",
+   "CAMD_PLANT_ID": 63628,
+   "CAMD_UNIT_ID": "5B-1",
+   "CAMD_FACILITY_NAME": "Tinker",
+   "EIA_PLANT_ID": 2953,
+   "EIA_PLANT_NAME": "Mustang",
+   "EIA_UNIT_TYPE": "GT"
+  },
+  {
+   "CAMD_STATE": "OK",
+   "CAMD_PLANT_ID": 63628,
+   "CAMD_UNIT_ID": "5B-2",
+   "CAMD_FACILITY_NAME": "Tinker",
+   "EIA_PLANT_ID": 2953,
+   "EIA_PLANT_NAME": "Mustang",
+   "EIA_UNIT_TYPE": "GT"
+  }
+ ],
+ "gross_twh": {
+  "2019": {
+   "1416->56565": 1.622,
+   "762->7546": 0.069,
+   "3006->55655": 0.145
+  },
+  "2020": {
+   "1416->56565": 2.242,
+   "762->7546": 0.014,
+   "3006->55655": 0.129
+  },
+  "2021": {
+   "1416->56565": 1.86,
+   "762->7546": 0.023,
+   "3006->55655": 0.139,
+   "63628->2953": 0.001
+  },
+  "2022": {
+   "1416->56565": 2.009,
+   "762->7546": 0.048,
+   "3006->55655": 0.116,
+   "63628->2953": 0.018
+  },
+  "2023": {
+   "1416->56565": 2.275,
+   "762->7546": 0.033,
+   "3006->55655": 0.076,
+   "63628->2953": 0.013
+  },
+  "2024": {
+   "1416->56565": 2.105,
+   "762->7546": 0.023,
+   "3006->55655": 0.09,
+   "63628->2953": 0.008
+  },
+  "2025": {
+   "1416->56565": 2.204,
+   "762->7546": 0.034,
+   "3006->55655": 0.059,
+   "63628->2953": 0.007
+  }
+ }
+}
