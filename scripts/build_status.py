@@ -622,7 +622,7 @@ _MONTH_DAYS = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
 
 def system_lambda_block(iso: str, run_id: str) -> dict | None:
-    """Model price vs the operator's system lambda, per year — REPORTED-ONLY.
+    """Model price vs the operator's system lambda, per year (panel; the gate reads actual_lmp.json since soco-84).
 
     Reads the committed reference part (``scripts/data/derive_system_lambda_
     reference.py``) and the keeper's committed run payload. The model side is
@@ -679,7 +679,12 @@ def system_lambda_block(iso: str, run_id: str) -> dict | None:
             }
         )
     return {
-        "status": "REPORTED-ONLY — no gate, no scorer path (owner ruling 2026-09-27)",
+        "status": (
+            "SCORED as SOCO's C3a/C3b system benchmark since 2026-09-28 (owner "
+            "ruling 'Score C3a vs lambda', lane soco-84); C3c not scored on it. "
+            "This panel's month-weighted basis is display only — the gate reads "
+            "the load-weighted actual_lmp.json block"
+        ),
         "series": ref.get("series"),
         "source": ref.get("source"),
         "source_sha256": ref.get("source_sha256"),

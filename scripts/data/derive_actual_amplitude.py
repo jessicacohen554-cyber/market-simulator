@@ -71,6 +71,10 @@ OUT = REPO / "frontend" / "data" / "backcast" / "amplitude" / "actual_amplitude.
 # a PRICE artifact and SOCO has no price series (SOCO-13 STOP gate NO; the
 # rubric v3.8 no-price class scores C1/C2/C4/C6/C8 only) — the third of the
 # three TAIL_THRESHOLD-family skips gate G6 names, documented, not forgotten.
+# STILL ABSENT after soco-84 (2026-09-28): SOCO now carries a price benchmark
+# (the FERC-714 system lambda, owner ruling "Score C3a vs lambda"), but that
+# ruling covered C3a/C3b only, and this reported-only amplitude reference was
+# not extended to it; a successor that wants the D-A row adds SOCO here.
 # NWPP is deliberately ABSENT for the SAME reason (NWPP-31, 2026-09-14), and it
 # is the third of ITS OWN three G6 skips: card N2's NWPP-13 built a
 # WEIM-derived hourly series behind a STOP gate pre-registered before any value

@@ -446,11 +446,11 @@
           <td>${sgn(r.bias)}</td></tr>`).join('');
         html += `
         <details class="cs-detail" style="margin-top: 4px;">
-          <summary><span>Model price vs operator system lambda</span><span class="cs-gate">reported only &middot; not gating</span></summary>
+          <summary><span>Model price vs operator system lambda</span><span class="cs-gate">C3a/C3b benchmark &middot; C3c not scored</span></summary>
           <div style="padding: 14px; font-size: 0.82rem;">
             <div class="bc-table-wrap"><table><thead><tr><th>Year</th><th>System lambda (mean)</th><th>Model price (mean)</th><th>Model &minus; lambda</th></tr></thead>
             <tbody>${rowsHtml}</tbody></table></div>
-            <p class="bc-mute" style="margin-top: 8px;">${esc(sl.series || '')}. A system lambda is the operator's marginal cost of its own dispatch, not an LMP; it is not a C3 benchmark. Source <code>${esc(sl.source || '')}</code>.</p>
+            <p class="bc-mute" style="margin-top: 8px;">${esc(sl.series || '')}. A system lambda is the operator's marginal cost of its own dispatch, not an LMP. It is the C3a/C3b system benchmark (gated on the load-weighted basis in the criteria below); C3c is not scored on it. Source <code>${esc(sl.source || '')}</code>.</p>
           </div>
         </details>`;
       }
