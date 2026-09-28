@@ -3740,3 +3740,5 @@ results/calibration/miso279_arm_*/
 # R-ERCOT-11 per-year shard legs (rule 32(d)/36: composite r_ercot11_parish_split_span only reaches main).
 # Provenance SHAs (rule 33(d), provenance only): 2019 ee2b4c0d81552d26e11ecf8edb1373c1e6f006e1, 2020 0c88c309f0e7a3ba64bc12f5f178555ac043a46d, 2021 1054d0f1ece7e68306f7f259454a86ec146d5558, 2022 fbcc848ba5ef2ab90618134afd6c6fbbc0ef7a40, 2023 45ffc83803eda87683f0a814271736959adba3c0, 2024 a1207674577beddec7e8ff19b5c4b2d1c4501cfe, 2025 4fd84de49e3713c50d7c9e84a6234f2e043dd74d.
 results/calibration/r_ercot11_arm_20*/
+# R-CAISO-10 per-year legs (startup_aware disarm A/B): local only, pushed to shard branches (rule 34(a)); composite span/fold go on main
+results/calibration/rcaiso10_A_20*/**
