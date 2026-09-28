@@ -68,6 +68,7 @@ COAL_LIGNITE,South,2,S_COAL2,6183,San Miguel,410.0,11.25,,,40.0,10.0,45.0,5.0,36
 COAL_PRB,South_Central,1,SC_COAL1,6179,Fayette Power Project,1690.0,10.67,,,25.0,20.0,50.0,5.0,36.0,16.0,,1.15,1.0,1.05
 COAL_PRB,South_Central,2,SC_COAL2,7097,J K Spruce,1488.5,10.98,,,25.0,20.0,50.0,5.0,36.0,16.0,,1.15,1.0,1.05
 COAL_PRB,South_Central,3,SC_COAL3,56611,Sandy Creek Energy Station,936.0,9.5,,,25.0,20.0,50.0,5.0,36.0,16.0,,1.15,1.0,1.05
+COAL_PRB,North,5,N_COAL5,127,Oklaunion,720.0,11.9,,,25.0,20.0,50.0,5.0,36.0,16.0,,1.15,1.0,1.05
 CT_CHP,Houston,1,H_CTCHP1 (5.14-5.46),55311,BASF Freeport Works,92.7,5.37,,,65.0,0.0,30.0,5.0,24.0,2.0,1.05,,1.0,1.1
 CT_CHP,Houston,1,H_CTCHP1 (5.14-5.46),10436,ExxonMobil Baytown Refinery,209.3,5.3,,,65.0,0.0,30.0,5.0,24.0,2.0,1.05,,1.0,1.1
 CT_CHP,Houston,1,H_CTCHP1 (5.14-5.46),10692,ExxonMobil Baytown Turbine,381.8,5.37,,,65.0,0.0,30.0,5.0,24.0,2.0,1.05,,1.0,1.1

@@ -49,6 +49,10 @@ COAL_PLANT_SUPPLY: dict[int, str] = {
     7097: "prb",  # J K Spruce — PRB by rail
     56611: "prb",  # Sandy Creek — PRB by rail (EIA-923 plant id 56611)
     3470: "prb",  # W A Parish (coal units 5-8, subbituminous) — PRB by rail
+    # Oklaunion — EIA-923 burns SUB only (2019 27.8 / 2020 12.2 TBtu); an
+    # ERCOT resource (OKLA_OKLA_G1) though EIA-860 codes it SWPP; retired
+    # 9/2020 (R-ERCOT-14).
+    127: "prb",
 }
 
 

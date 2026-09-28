@@ -603,4 +603,7 @@ DECLARED: dict[str, str | dict[str, str]] = {
     # backcast bundles rather than silently re-using pre-fix ones.
     "ISO_PLANT_ENTRIES": {"ERCOT": "a4d0fee78b233797"},
     "EIA930_CISO_CLOCK_LATE_WINDOWS_UTC": "65677404b01b1492",
+    # R-ERCOT-14: declared at the PRE-ARM (empty-table) hash, exactly as
+    # ISO_PLANT_ENTRIES was, so the Oklaunion exit re-keys ERCOT's bundles.
+    "ISO_PLANT_EXITS": {"ERCOT": "a4d0fee78b233797"},
 }

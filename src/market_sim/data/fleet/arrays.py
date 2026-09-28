@@ -4499,6 +4499,40 @@ def generators_to_fleet_arrays(
                     int(last.min()),
                 )
 
+    # PLANT EXIT hour mask (lane R-ERCOT-14; constants.ISO_PLANT_EXITS) — the
+    # twin of the entry mask below: a registered plant is offline in every LP
+    # row at or after its dated exit (all year in a later year). ERCOT:
+    # Oklaunion 127, gone after operating day 2020-09-30. Any mode (a retired
+    # plant has no forward life; the COD ramp already retires it wherever the
+    # active EIA-860 vintage still dates it, so there this is a no-op); an
+    # empty map for every other region and year, so they are byte-identical.
+    if config is not None and _cod_year is not None and _iso is not None:
+        from market_sim.data.ba_membership import plant_exit_first_outside_row
+
+        _exit = plant_exit_first_outside_row(_iso, int(_cod_year))
+        if _exit:
+            first_out = np.array(
+                [_exit.get(int(g.plant_code), hours) for g in generators],
+                dtype=np.int64,
+            )
+            if (first_out < hours).any():
+                member = (
+                    np.arange(hours)[np.newaxis, :] < first_out[:, np.newaxis]
+                ).astype(float)
+                availability *= member
+                if min_gen is not None:
+                    min_gen *= member
+                    clear_where_unfloored(min_gen_mech, min_gen)
+                logger.info(
+                    "plant exit (%s %s): %d unit(s), %.0f MW outside the region "
+                    "from LP row %d",
+                    _iso,
+                    _cod_year,
+                    int((first_out < hours).sum()),
+                    float(pmax[first_out < hours].sum()),
+                    int(first_out.min()),
+                )
+
     # PLANT ENTRY hour mask (lane R-ERCOT-12, owner ruling "Fleet + benchmark"
     # 2026-09-28; constants.ISO_PLANT_ENTRIES). A registered plant that was
     # connected to another system before a dated hour is offline in every LP

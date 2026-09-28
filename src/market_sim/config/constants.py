@@ -2530,6 +2530,28 @@ ISO_BA_EXITS: dict[str, dict[str, str]] = {"SOCO": {"FPL": "2022-07-13 12:00"}}
 # (docs/handoffs/FINDING-r-ercot-11-benchmark-vs-930-2026-09-28.md.)
 ISO_PLANT_ENTRIES: dict[str, dict[int, str]] = {"ERCOT": {55098: "2023-04-13 06:00"}}
 
+# --- PLANTS that LEFT a modelled region mid-backcast (plant grain) -----------
+# ``{iso: {plant_code: first_hour_outside}}`` — the exit twin of
+# ``ISO_PLANT_ENTRIES``, for a plant whose retirement the fleet cannot date on
+# its own. ``first_hour_outside`` is the region's EIA-930 hour-ending
+# ``UTC time`` of the first hour the plant is gone. Read ONLY by
+# ``data.ba_membership`` (rule 19 [R-ONE-MECH]) at the LP fleet hour mask. The
+# benchmark needs no twin: a retired plant has no EIA-923 or CEMS generation
+# after it leaves. Zero free parameters, measured date (rules 21 / 24);
+# per-ISO (rule 25). Backcast-only in the fleet.
+#
+# ERCOT (lane R-ERCOT-14, 2026-09-28): Oklaunion (127, Vernon TX, 720 MW
+# nameplate / 650 MW summer sub-bituminous coal) was an ERCOT resource —
+# ERCOT's 60-Day DAM Gen Resource data lists OKLA_OKLA_G1 (jointly-owned
+# shares J01-J05) through operating day 2020-09-30, and its CEMS output loads
+# at 0.97 on the EIA-930 ERCO coal series (2019 hourly regression) — although
+# EIA-860 codes it BA SWPP. It sits in ERCOT's curated bin sheet; this stamp
+# retires it, because under eia860_vintage_tracks_solve_year the 2020 vintage
+# has already moved it off the operable sheet the COD ramp reads, which would
+# leave it online all twelve months. Operating day 2020-10-01 HE01 CDT is
+# hour-ending UTC 2020-10-01 06:00.
+ISO_PLANT_EXITS: dict[str, dict[int, str]] = {"ERCOT": {127: "2020-10-01 06:00"}}
+
 # --- Hydro hourly deliverability envelope (caiso-72 STEP-2) ------------------
 # Percentile of the measured EIA-930 NG:WAT hourly output, per (month x
 # hour-of-day) bucket, used as the hydro fleet's hourly dispatch ceiling when
