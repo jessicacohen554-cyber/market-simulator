@@ -615,6 +615,82 @@ def merge_holdout_records(iso: str, keeper_run_id: str, verdict: dict) -> None:
             )
 
 
+SYSTEM_LAMBDA_FILE = REPO / "frontend/data/backcast/reference/system_lambda.json"
+#: Days per month in a non-leap year; a leap February only shifts the annual
+#: hour-weighting by 1/8784 and the display rounds to cents.
+_MONTH_DAYS = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+
+
+def system_lambda_block(iso: str, run_id: str) -> dict | None:
+    """Model price vs the operator's system lambda, per year — REPORTED-ONLY.
+
+    Reads the committed reference part (``scripts/data/derive_system_lambda_
+    reference.py``) and the keeper's committed run payload. The model side is
+    each month's zone ``pMon`` weighted by zone ``dMon``, then hour-weighted
+    over months (close to, not identical with, the lambda's simple hourly
+    mean — soco-83 measured the gap at up to ~\$0.6/MWh).
+    Returns None when the ISO has no lambda series.
+    """
+    if not SYSTEM_LAMBDA_FILE.exists():
+        return None
+    ref = json.loads(SYSTEM_LAMBDA_FILE.read_text()).get("isos", {}).get(iso)
+    if not ref:
+        return None
+    try:
+        payload = cv.load_artifacts(run_id)["payload"] or {}
+    except Exception:  # a missing payload must never abort the lane
+        payload = {}
+    rows = []
+    for y, lv in sorted(ref.get("years", {}).items()):
+        ypay = (payload.get("years") or {}).get(str(y))
+        model_mon = None
+        if ypay:
+            zones = [z for z in (ypay.get("lmp") or {}).values() if z.get("pMon")]
+            if zones:
+                model_mon = []
+                for m in range(12):
+                    w = sum(float((z.get("dMon") or [1.0] * 12)[m]) for z in zones)
+                    model_mon.append(
+                        sum(
+                            float(z["pMon"][m])
+                            * float((z.get("dMon") or [1.0] * 12)[m])
+                            for z in zones
+                        )
+                        / w
+                        if w
+                        else None
+                    )
+        model_mean = None
+        if model_mon and all(v is not None for v in model_mon):
+            model_mean = sum(v * d for v, d in zip(model_mon, _MONTH_DAYS)) / sum(
+                _MONTH_DAYS
+            )
+        rows.append(
+            {
+                "year": int(y),
+                "lambda_mean": lv.get("mean"),
+                "lambda_median": lv.get("median"),
+                "lambda_mon": lv.get("mon"),
+                "model_mean": round(model_mean, 2) if model_mean is not None else None,
+                "model_mon": [round(v, 2) for v in model_mon] if model_mon else None,
+                "bias": round(model_mean - lv["mean"], 2)
+                if model_mean is not None and lv.get("mean") is not None
+                else None,
+            }
+        )
+    return {
+        "status": "REPORTED-ONLY — no gate, no scorer path (owner ruling 2026-09-27)",
+        "series": ref.get("series"),
+        "source": ref.get("source"),
+        "source_sha256": ref.get("source_sha256"),
+        "basis": (
+            "lambda = simple hourly mean; model = the payload zone monthly means "
+            "(pMon) weighted by zone demand (dMon), hour-weighted over months"
+        ),
+        "rows": rows,
+    }
+
+
 def build_part(iso: str) -> dict | None:
     """Score one ISO's current keeper into its status part payload.
 
@@ -762,6 +838,13 @@ def build_part(iso: str) -> dict | None:
             "source": statmode.get("source"),
             "stale": d7.get("measured_against") != run_id,
         }
+    lam = system_lambda_block(iso, run_id)
+    if lam:
+        # REPORTED-ONLY, never gating (owner ruling 2026-09-27, soco-82:
+        # "Intake, reported-only"): the operator's own FERC-714 system lambda
+        # beside the model's price. Attached AFTER determine(); touches no
+        # verdict, grade, caveat budget or magnitude.
+        verdict["system_lambda"] = lam
     # ONE uniform per-year table — training years (per designated config) and
     # rule-22 held-out years in the same rows, scored the same way, and every
     # held-out year's criterion records folded into the SAME per-criterion
