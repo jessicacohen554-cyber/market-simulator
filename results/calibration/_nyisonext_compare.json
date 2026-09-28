@@ -1,14 +1,14 @@
 {
  "determination": {
-  "2026-09-27-nyisonext6-li-cap-span": "NOT-YET",
-  "2026-09-27-nyisonext8-hq-dedupe-span": "NOT-YET"
+  "2026-09-27-nyisonext8-hq-dedupe-span": "NOT-YET",
+  "2026-09-28-nyisonext9-hq-floor-span": "NOT-YET"
  },
  "years": {
   "2022": {
    "criteria": {
     "fuelmix:CC_REGULAR": {
      "keeper": [
-      "+1.44 TWh, share +1.8pp",
+      "+1.43 TWh, share +1.8pp",
       "PASS"
      ],
      "arm": [
@@ -18,7 +18,7 @@
     },
     "fuelmix:CC_CHP": {
      "keeper": [
-      "-0.85 TWh, share -0.4pp",
+      "-0.87 TWh, share -0.4pp",
       "PASS"
      ],
      "arm": [
@@ -38,7 +38,7 @@
     },
     "fuelmix:ST_GAS": {
      "keeper": [
-      "-0.16 TWh, share +0.1pp",
+      "-0.14 TWh, share +0.1pp",
       "PASS"
      ],
      "arm": [
@@ -48,7 +48,7 @@
     },
     "price_mean:None": {
      "keeper": [
-      "-11.5%",
+      "-11.3%",
       "FAIL"
      ],
      "arm": [
@@ -58,7 +58,7 @@
     },
     "price_mean:da_diagnostic": {
      "keeper": [
-      "-7.7% vs DA (DA\u2212RT premium $-3.33)",
+      "-7.5% vs DA (DA\u2212RT premium $-3.33)",
       "SKIPPED"
      ],
      "arm": [
@@ -98,7 +98,7 @@
     },
     "dispatch_corr:gas": {
      "keeper": [
-      "r=0.866, NRMSE=0.19",
+      "r=0.866, NRMSE=0.191",
       "PASS"
      ],
      "arm": [
@@ -118,7 +118,7 @@
     },
     "forced_share:CC_REGULAR": {
      "keeper": [
-      "0.4% forced (0.154 of 35.4773 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+      "0.4% forced (0.156 of 35.4702 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
       "PASS"
      ],
      "arm": [
@@ -138,7 +138,7 @@
     },
     "forced_share:ST_GAS": {
      "keeper": [
-      "15.6% forced (1.7078 of 10.9509 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+      "15.5% forced (1.7045 of 10.9703 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
       "PASS"
      ],
      "arm": [
@@ -148,7 +148,7 @@
     },
     "forced_share:hydro": {
      "keeper": [
-      "0.0% forced (0.0 of 25.4008 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+      "0.0% forced (0.0 of 25.4063 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
       "PASS"
      ],
      "arm": [
@@ -159,7 +159,7 @@
    },
    "stgas_zone": {
     "Capital_Hudson": [
-     0.58,
+     0.59,
      0.59,
      1.96
     ],
@@ -169,7 +169,7 @@
      2.27
     ],
     "Long_Island": [
-     2.4,
+     2.41,
      2.41,
      4.1
     ],
@@ -223,8 +223,8 @@
    },
    "price_bias_mae": {
     "keeper": [
-     -7.4,
-     21.96
+     -7.29,
+     21.89
     ],
     "arm": [
      -7.29,
@@ -240,17 +240,17 @@
       "PASS"
      ],
      "arm": [
-      "+0.58 TWh, share +1.0pp",
+      "+0.59 TWh, share +1.0pp",
       "PASS"
      ]
     },
     "fuelmix:CC_CHP": {
      "keeper": [
-      "+0.64 TWh, share +0.7pp",
+      "+0.63 TWh, share +0.7pp",
       "PASS"
      ],
      "arm": [
-      "+0.63 TWh, share +0.7pp",
+      "+0.62 TWh, share +0.7pp",
       "PASS"
      ]
     },
@@ -266,7 +266,7 @@
     },
     "fuelmix:ST_GAS": {
      "keeper": [
-      "+3.22 TWh, share +2.7pp",
+      "+3.24 TWh, share +2.7pp",
       "PASS"
      ],
      "arm": [
@@ -276,7 +276,7 @@
     },
     "price_mean:None": {
      "keeper": [
-      "-2.6%",
+      "-2.5%",
       "PASS"
      ],
      "arm": [
@@ -286,7 +286,7 @@
     },
     "price_mean:da_diagnostic": {
      "keeper": [
-      "-4.6% vs DA (DA\u2212RT premium $+0.69)",
+      "-4.5% vs DA (DA\u2212RT premium $+0.69)",
       "SKIPPED"
      ],
      "arm": [
@@ -296,7 +296,7 @@
     },
     "price_shape:None": {
      "keeper": [
-      "NRMSE 0.126",
+      "NRMSE 0.125",
       "PASS"
      ],
      "arm": [
@@ -326,11 +326,11 @@
     },
     "dispatch_corr:gas": {
      "keeper": [
-      "r=0.941, NRMSE=0.125",
+      "r=0.942, NRMSE=0.124",
       "PASS"
      ],
      "arm": [
-      "r=0.942, NRMSE=0.124",
+      "r=0.941, NRMSE=0.125",
       "PASS"
      ]
     },
@@ -346,11 +346,11 @@
     },
     "forced_share:CC_REGULAR": {
      "keeper": [
-      "0.7% forced (0.2305 of 31.7525 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+      "0.8% forced (0.2375 of 31.7527 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
       "PASS"
      ],
      "arm": [
-      "0.8% forced (0.2375 of 31.7527 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+      "0.7% forced (0.2347 of 31.7579 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
       "PASS"
      ]
     },
@@ -366,17 +366,17 @@
     },
     "forced_share:ST_GAS": {
      "keeper": [
-      "11.5% forced (1.5712 of 13.6575 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+      "11.5% forced (1.5681 of 13.6726 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
       "PASS"
      ],
      "arm": [
-      "11.5% forced (1.5681 of 13.6726 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+      "11.5% forced (1.5679 of 13.6772 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
       "PASS"
      ]
     },
     "forced_share:hydro": {
      "keeper": [
-      "0.0% forced (0.0 of 26.5594 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+      "0.0% forced (0.0 of 26.5589 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
       "PASS"
      ],
      "arm": [
@@ -387,7 +387,7 @@
    },
    "stgas_zone": {
     "Capital_Hudson": [
-     0.3,
+     0.31,
      0.31,
      1.15
     ],
@@ -397,12 +397,12 @@
      2.56
     ],
     "Long_Island": [
-     2.17,
+     2.18,
      2.18,
      3.98
     ],
     "Upstate_West": [
-     0.12,
+     0.13,
      0.13,
      0.63
     ]
@@ -410,7 +410,7 @@
    "stgas_plant": {
     "2490:ST_GAS Arthur Kill Generating Station": [
      1.43,
-     1.43,
+     1.44,
      1.04
     ],
     "2500:ST_GAS Ravenswood": [
@@ -419,7 +419,7 @@
      0.79
     ],
     "2511:ST_GAS E F Barrett": [
-     0.65,
+     0.66,
      0.66,
      1.3
     ],
@@ -429,12 +429,12 @@
      2.39
     ],
     "2527 Greenidge Generation LLC": [
-     0.12,
+     0.13,
      0.13,
      0.62
     ],
     "2625 Bowline Point": [
-     0.16,
+     0.17,
      0.17,
      0.94
     ],
@@ -446,12 +446,12 @@
    },
    "price_bias_mae": {
     "keeper": [
-     0.11,
-     8.77
-    ],
-    "arm": [
      0.12,
      8.76
+    ],
+    "arm": [
+     0.11,
+     8.75
     ]
    }
   },
@@ -459,17 +459,17 @@
    "criteria": {
     "fuelmix:CC_REGULAR": {
      "keeper": [
-      "+2.98 TWh, share +2.5pp",
+      "+3.02 TWh, share +2.5pp",
       "PASS"
      ],
      "arm": [
-      "+3.02 TWh, share +2.5pp",
+      "+3.04 TWh, share +2.5pp",
       "PASS"
      ]
     },
     "fuelmix:CC_CHP": {
      "keeper": [
-      "+1.65 TWh, share +1.4pp",
+      "+1.67 TWh, share +1.4pp",
       "PASS"
      ],
      "arm": [
@@ -489,17 +489,17 @@
     },
     "fuelmix:ST_GAS": {
      "keeper": [
-      "+0.22 TWh, share +0.2pp",
+      "+0.15 TWh, share +0.2pp",
       "PASS"
      ],
      "arm": [
-      "+0.15 TWh, share +0.2pp",
+      "+0.13 TWh, share +0.2pp",
       "PASS"
      ]
     },
     "price_mean:None": {
      "keeper": [
-      "-1.0%",
+      "-0.9%",
       "PASS"
      ],
      "arm": [
@@ -509,7 +509,7 @@
     },
     "price_mean:da_diagnostic": {
      "keeper": [
-      "-2.6% vs DA (DA\u2212RT premium $+0.62)",
+      "-2.5% vs DA (DA\u2212RT premium $+0.62)",
       "SKIPPED"
      ],
      "arm": [
@@ -519,11 +519,11 @@
     },
     "price_shape:None": {
      "keeper": [
-      "NRMSE 0.162",
+      "NRMSE 0.161",
       "PASS"
      ],
      "arm": [
-      "NRMSE 0.161",
+      "NRMSE 0.162",
       "PASS"
      ]
     },
@@ -549,11 +549,11 @@
     },
     "dispatch_corr:gas": {
      "keeper": [
-      "r=0.905, NRMSE=0.131",
+      "r=0.906, NRMSE=0.13",
       "PASS"
      ],
      "arm": [
-      "r=0.906, NRMSE=0.13",
+      "r=0.905, NRMSE=0.131",
       "PASS"
      ]
     },
@@ -569,11 +569,11 @@
     },
     "forced_share:CC_REGULAR": {
      "keeper": [
-      "0.2% forced (0.0788 of 35.3409 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+      "0.2% forced (0.0777 of 35.3867 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
       "PASS"
      ],
      "arm": [
-      "0.2% forced (0.0777 of 35.3867 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+      "0.2% forced (0.0782 of 35.406 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
       "PASS"
      ]
     },
@@ -589,11 +589,11 @@
     },
     "forced_share:ST_GAS": {
      "keeper": [
-      "17.4% forced (2.1764 of 12.4742 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+      "17.5% forced (2.1766 of 12.4002 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
       "PASS"
      ],
      "arm": [
-      "17.5% forced (2.1766 of 12.4002 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+      "17.6% forced (2.1793 of 12.3836 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
       "PASS"
      ]
     },
@@ -610,17 +610,17 @@
    },
    "stgas_zone": {
     "Capital_Hudson": [
-     0.74,
+     0.75,
      0.75,
      1.54
     ],
     "NYC": [
-     5.76,
      5.66,
+     5.65,
      2.77
     ],
     "Long_Island": [
-     3.33,
+     3.34,
      3.34,
      5.03
     ],
@@ -632,13 +632,13 @@
    },
    "stgas_plant": {
     "2490:ST_GAS Arthur Kill Generating Station": [
-     1.18,
+     1.17,
      1.17,
      1.27
     ],
     "2500:ST_GAS Ravenswood": [
-     1.85,
      1.83,
+     1.82,
      0.63
     ],
     "2511:ST_GAS E F Barrett": [
@@ -662,18 +662,18 @@
      1.29
     ],
     "8906:ST_GAS Astoria Generating Station": [
-     2.73,
      2.67,
+     2.66,
      0.87
     ]
    },
    "price_bias_mae": {
     "keeper": [
-     0.5,
-     10.15
+     0.53,
+     10.17
     ],
     "arm": [
-     0.53,
+     0.52,
      10.17
     ]
    }
@@ -722,31 +722,31 @@
     },
     "price_mean:None": {
      "keeper": [
-      "-10.9%",
+      "-11.2%",
       "FAIL"
      ],
      "arm": [
-      "-11.2%",
+      "-11.4%",
       "FAIL"
      ]
     },
     "price_mean:da_diagnostic": {
      "keeper": [
-      "-9.4% vs DA (DA\u2212RT premium $-1.13)",
+      "-9.7% vs DA (DA\u2212RT premium $-1.13)",
       "SKIPPED"
      ],
      "arm": [
-      "-9.7% vs DA (DA\u2212RT premium $-1.13)",
+      "-9.9% vs DA (DA\u2212RT premium $-1.13)",
       "SKIPPED"
      ]
     },
     "price_shape:None": {
      "keeper": [
-      "NRMSE 0.171",
+      "NRMSE 0.172",
       "PASS"
      ],
      "arm": [
-      "NRMSE 0.172",
+      "NRMSE 0.173",
       "PASS"
      ]
     },
@@ -772,11 +772,11 @@
     },
     "dispatch_corr:gas": {
      "keeper": [
-      "r=0.856, NRMSE=0.18",
+      "r=0.851, NRMSE=0.182",
       "PASS"
      ],
      "arm": [
-      "r=0.851, NRMSE=0.182",
+      "r=0.847, NRMSE=0.184",
       "PASS"
      ]
     },
@@ -792,11 +792,11 @@
     },
     "forced_share:CC_REGULAR": {
      "keeper": [
-      "0.4% forced (0.1359 of 34.1676 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+      "0.3% forced (0.1171 of 34.2932 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
       "PASS"
      ],
      "arm": [
-      "0.3% forced (0.1171 of 34.2932 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+      "0.3% forced (0.1157 of 34.3063 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
       "PASS"
      ]
     },
@@ -812,11 +812,11 @@
     },
     "forced_share:ST_GAS": {
      "keeper": [
-      "14.4% forced (1.9946 of 13.8381 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+      "14.9% forced (2.0329 of 13.6112 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
       "PASS"
      ],
      "arm": [
-      "14.9% forced (2.0329 of 13.6112 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+      "14.9% forced (2.0305 of 13.6012 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
       "PASS"
      ]
     },
@@ -833,17 +833,17 @@
    },
    "stgas_zone": {
     "Capital_Hudson": [
-     1.17,
      1.09,
+     1.06,
      2.64
     ],
     "NYC": [
-     6.26,
      6.2,
+     6.23,
      4.38
     ],
     "Long_Island": [
-     3.42,
+     3.32,
      3.32,
      5.33
     ],
@@ -855,53 +855,53 @@
    },
    "stgas_plant": {
     "2490 Arthur Kill Generating Station": [
-     1.91,
      1.87,
+     1.89,
      2.06
     ],
     "2500:ST_GAS Ravenswood": [
-     1.24,
+     1.23,
      1.23,
      0.96
     ],
     "2511:ST_GAS E F Barrett": [
-     0.7,
+     0.68,
      0.68,
      0.96
     ],
     "2516 Northport": [
-     2.55,
+     2.49,
      2.49,
      4.09
     ],
     "2527 Greenidge Generation LLC": [
-     0.53,
      0.54,
+     0.53,
      0.67
     ],
     "2625 Bowline Point": [
-     0.75,
      0.7,
+     0.68,
      1.96
     ],
     "8006 Roseton Generating Facility": [
-     0.37,
      0.34,
+     0.32,
      0.68
     ],
     "8906 Astoria Generating Station": [
-     3.11,
      3.1,
+     3.11,
      1.36
     ]
    },
    "price_bias_mae": {
     "keeper": [
-     -12.19,
-     25.28
+     -12.37,
+     25.53
     ],
     "arm": [
-     -12.37,
+     -12.47,
      25.53
     ]
    }
