@@ -6618,6 +6618,14 @@ def solve_and_persist(
         _demand_balance = _caiso_demand_flag("demand_balance_screen")
         # R-CAISO-11: the TAC-share clock flag is the same class.
         _tac_std = _caiso_demand_flag("caiso_tac_shares_standard_time")
+        # R-CAISO-13: the CISO frame clock repair is the same class, and it
+        # must be armed BEFORE this parent-process demand load reads a frame
+        # (run_year re-arms it at its own seam with the same value).
+        from market_sim.data.eia930.frames import set_caiso_eia930_clock_repair
+
+        set_caiso_eia930_clock_repair(
+            iso == "CAISO" and _caiso_demand_flag("caiso_eia930_clock_repair")
+        )
         # td_loss_factor is the SAME defect class as the two flags above and
         # needs the same treatment (nyiso-87). It is not a solve_and_persist
         # kwarg, so a `--set td_loss_factor=X` probe can only arrive through

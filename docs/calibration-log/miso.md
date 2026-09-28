@@ -15247,3 +15247,16 @@ C3b 2021 0.254 → 0.252.
 **PROMOTED 2026-09-28** on the owner's ruling: MISO keeper → `2026-09-28-miso-280-splitremap` (2019–2025); `miso-279`
 pruned (rule 35). Headline unchanged: train CALIBRATED; full span NOT-YET on C1 ST_GAS 2019, C3a 2022, C3b 2021. Next:
 zero-LP probe of 2019 South steam dispatch (owner pick).
+
+## miso-281 — 2026-09-28
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 on C1 ST_GAS 2019 (−8.00 TWh):
+2019 MISO-South gas steam produced 17.1 of 20.2 TWh **out of merit**, meaning the measured hub LMP was below the
+plant's own measured cost. The model's offers match measured cost, and its South price ($28.26) is above the
+measured hubs ($23–27). The gap is out-of-merit (load-pocket / VLR) commitment above the pooled 2023–25 floors:
+~7.6 TWh in 2019 and 6.8 TWh in 2020. It explains little in 2021–22.
+`docs/FINDING-miso281-south-steam-2019-out-of-merit-2026-09-28.md`.
+
+Owner rulings: C1 ST_GAS 2019 is a **routed miss**, and **no frontier** is declared, because the rubric does not
+clear every year. MISO stays NOT-YET on the full span and CALIBRATED on the 2023–2025 train span. Next: the
+2021–22 ST_GAS in-merit gap.

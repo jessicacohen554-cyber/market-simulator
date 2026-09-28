@@ -336,6 +336,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     caiso_intertie_partial_year_measured: { cell: ".", ev: "n/a \u2014 CAISO-only by construction (the intertie loaders return None for any other ISO). Minted by the rule-28(c) same-PR duty (R-CAISO-8, 2026-09-27); no adjudication made or implied." },
     caiso_import_cap_floor_static: { cell: ".", ev: "n/a \u2014 CAISO-only by construction (apply_caiso_local_import_limits returns the topology unchanged for any other ISO). Minted by the rule-28(c) same-PR duty (R-CAISO-9, 2026-09-27); no adjudication made or implied." },
     caiso_tac_shares_standard_time: { cell: ".", ev: "n/a: CAISO-only TAC-area share parser (R-CAISO-11, 2026-09-28, rule 28c row seed)." },
+    caiso_eia930_clock_repair: { cell: ".", ev: "n/a: CAISO-only EIA-930 CISO frame clock repair (R-CAISO-13, 2026-09-28, rule 28c row seed)." },
     cc_eia923_identity_emission_basis: { cell: ".", ev: "n/a \u2014 inert by construction here: this ISO's measured-CC artifact carries no eia923_identity row (only CAISO's does, R-CAISO-3 lever C). Becomes U if this ISO's own lane re-derives its artifact with the EIA-923 identity (rule 25). Minted by the rule-28(c) same-PR duty (R-CAISO-4, 2026-09-26); no adjudication made or implied." },
     import_hub_pricing: { cell: "K" },
     import_shape_lever: { cell: "." },

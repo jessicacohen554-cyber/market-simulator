@@ -3150,6 +3150,13 @@ def run_year(
     from market_sim.data.zone_assignment import set_fleet_zone_vintage_coords
 
     set_fleet_zone_vintage_coords(getattr(config, "fleet_zone_vintage_coords", False))
+    # R-CAISO-13 caiso_eia930_clock_repair: armed per solve at the same seam,
+    # before the first EIA-930 frame is read (CAISO only).
+    from market_sim.data.eia930.frames import set_caiso_eia930_clock_repair
+
+    set_caiso_eia930_clock_repair(
+        iso == "CAISO" and getattr(config, "caiso_eia930_clock_repair", False)
+    )
     iso_config = get_iso_config(iso)
     # Year-varying interface limits (e.g. NYISO Central-East jumps with the AC
     # Transmission project in service Dec 2023) — applied before the import

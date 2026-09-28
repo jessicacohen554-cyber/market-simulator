@@ -284,7 +284,70 @@ def _load_caiso_supply_consistent_demand(year: int) -> np.ndarray:
         f"caiso_supply_consistent_demand {year}: NaN demand"
     )
     assert demand.min() > 0.0, f"caiso_supply_consistent_demand {year}: <=0 hour"
+    from market_sim.data.eia930.frames import caiso_eia930_clock_repair_active
+
+    if caiso_eia930_clock_repair_active():
+        demand = _repair_supply_consistent_clock(year, demand)
     return demand
+
+
+def _supply_consistent_eia930_term(year: int) -> np.ndarray | None:
+    """Return the artifact's EIA-930 term ``NetGen - NG_cell - TI`` (MW)."""
+    from market_sim.config.paths import CAISO_SUPPLY_CONSISTENT_DEMAND_DIR
+
+    path = (
+        CAISO_SUPPLY_CONSISTENT_DEMAND_DIR
+        / f"caiso_supply_consistent_demand_{year}.csv"
+    )
+    if not path.exists():
+        return None
+    df = pd.read_csv(path, usecols=["netgen_mw", "ng_cell_mw", "ti_mw"])
+    return (df["netgen_mw"] - df["ng_cell_mw"] - df["ti_mw"]).to_numpy(dtype=float)
+
+
+def _model_row_starts_utc(year: int) -> pd.DatetimeIndex:
+    """Interval-start UTC instant of each model-clock row (fixed PST, no Feb 29)."""
+    start = pd.Timestamp(year=year, month=1, day=1) + pd.Timedelta(hours=8)
+    idx = pd.date_range(start, periods=HOURS_PER_YEAR + 24, freq="h")
+    pst = idx - pd.Timedelta(hours=8)
+    idx = idx[~((pst.month == 2) & (pst.day == 29))]
+    return idx[:HOURS_PER_YEAR]
+
+
+def _repair_supply_consistent_clock(year: int, demand: np.ndarray) -> np.ndarray:
+    """Move the supply-consistent series' EIA-930 term off CISO's late stamps.
+
+    ``caiso_eia930_clock_repair`` (R-CAISO-13) applied to the derived caiso-80
+    artifact: its ``NetGen - NG_cell - TI`` term was built on the CISO
+    generation frame, which EIA published one hour late inside
+    :data:`~market_sim.config.constants.EIA930_CISO_CLOCK_LATE_WINDOWS_UTC`
+    ``["generation"]``. That term is pulled back one hour exactly as the frame
+    seam repairs the extract (the window's last hour takes its neighbours'
+    mean); the CEMS gas term and the flat fold-ins ride their own clocks and
+    are untouched. The artifact on disk is never modified. The first row of
+    ``year + 1`` supplies the value that crosses a year edge.
+    """
+    from market_sim.config.constants import EIA930_CISO_CLOCK_LATE_WINDOWS_UTC
+
+    g = _supply_consistent_eia930_term(year)
+    if g is None:
+        return demand
+    g_next = _supply_consistent_eia930_term(year + 1)
+    stamps = _model_row_starts_utc(year) + pd.Timedelta(hours=1)  # hour-ending
+    first, last = (
+        pd.Timestamp(t) for t in EIA930_CISO_CLOCK_LATE_WINDOWS_UTC["generation"]
+    )
+    nxt = g_next[0] if g_next is not None else g[-1]
+    g_after = np.r_[g[1:], nxt]  # the value published one stamp later
+    inside_next = (stamps + pd.Timedelta(hours=1) >= first) & (
+        stamps + pd.Timedelta(hours=1) <= last
+    )
+    fixed = np.where(inside_next, g_after, g)
+    seam = np.flatnonzero(stamps == last)
+    if seam.size:
+        k = int(seam[0])
+        fixed[k] = 0.5 * (g[k] + g_after[k])
+    return demand - g + fixed
 
 
 def _load_caiso_hourly_demand(
@@ -348,6 +411,13 @@ def _load_caiso_hourly_demand(
         return None
     # Repaired on the source clock, before any realignment shifts rows.
     demand = _screen_demand_dropouts(demand, ba_code="CISO", year=year)
+    # R-CAISO-13: the armed frame-seam clock repair already moves the Demand
+    # column's late window (a superset of caiso-75's), so realigning again
+    # would shift those rows twice (rule 19 [R-ONE-MECH]: it supersedes).
+    from market_sim.data.eia930.frames import caiso_eia930_clock_repair_active
+
+    if caiso_eia930_clock_repair_active():
+        clock_realign = False
     if clock_realign and "Local date" in frame.columns:
         end = pd.Timestamp(_CAISO_DEMAND_CLOCK_REALIGN_END)
         misaligned = (pd.to_datetime(frame["Local date"]) < end).to_numpy()
