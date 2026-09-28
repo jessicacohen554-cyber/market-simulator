@@ -2011,9 +2011,36 @@ def main() -> None:
         "byte-identical (split_remap_rows, miso-280). Never an overwrite. Zero "
         "free parameters.",
     )
+    ap.add_argument(
+        "--split-remap-denominator",
+        action="store_true",
+        help="PLAIN-family derive (no per-unit / fuel-split routing) whose "
+        "outage-derated denominator is read from the '-splitremap-' companion "
+        "of the extract the plain path reads, so every row's denominator "
+        "carries the same plant identity as its remapped CAMPD numerator "
+        "(SPP-99). Requires --out: it writes the FRESH file "
+        "scripts/data/build_campd_split_remap_companions.py splices the remap "
+        "plants' rows from (family 'tranches'), never the incumbent. Zero free "
+        "parameters.",
+    )
     args = ap.parse_args()
     iso = args.iso.upper()
     from market_sim.config.paths import PROCESSED_DIR
+
+    split_remap_denominator = bool(args.split_remap_denominator)
+    if split_remap_denominator and (
+        not args.out
+        or args.per_unit_attribution
+        or args.unit_fuel_split
+        or args.split_remap
+        or args.st_gas_span_coverage
+        or args.coal_unit_coverage
+        or args.backfill_sidecar
+    ):
+        raise SystemExit(
+            "--split-remap-denominator is the plain-family fresh derive: it "
+            "requires --out and no other mode"
+        )
 
     if args.split_remap:
         import json as _json
@@ -2169,6 +2196,8 @@ def main() -> None:
             iso=iso,
             per_unit_crosswalk=per_unit,
             merit_order_guard=merit_guard,
+            # SPP-99: the plain family's denominator on the remapped identity.
+            split_remap=split_remap_denominator,
         )
         for (code, group), nameplate in cap.items():
             if group not in _THERMAL_GROUPS or nameplate <= 0:

@@ -1,0 +1,445 @@
+{
+  "artifact": "thermal_tranches-splitremap-SPP.csv",
+  "artifact_rows": 120,
+  "artifact_sha256": "92ed67de6b5c80630c9f8e319882facb422cd411f96b496463ec6e003cb465f2",
+  "columns": [
+    "plant_code",
+    "plant_group",
+    "name",
+    "status",
+    "nameplate_mw",
+    "online_hours",
+    "committed_pct",
+    "mustrun_pct",
+    "mustrun_online_pct",
+    "online_frac",
+    "p25_cf",
+    "median_cf",
+    "peaking_pct",
+    "chp_pmin_cf",
+    "chp_sector",
+    "steam_level_cf"
+  ],
+  "coverage_ok_rows": {
+    "chp_pmin_cf": {
+      "CC_CHP": [
+        1,
+        1
+      ],
+      "CC_REGULAR": [
+        0,
+        20
+      ],
+      "COAL": [
+        0,
+        24
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        0,
+        38
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        0,
+        22
+      ]
+    },
+    "chp_sector": {
+      "CC_CHP": [
+        1,
+        1
+      ],
+      "CC_REGULAR": [
+        0,
+        20
+      ],
+      "COAL": [
+        0,
+        24
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        0,
+        38
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        0,
+        22
+      ]
+    },
+    "committed_pct": {
+      "CC_CHP": [
+        1,
+        1
+      ],
+      "CC_REGULAR": [
+        20,
+        20
+      ],
+      "COAL": [
+        24,
+        24
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        38,
+        38
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        22,
+        22
+      ]
+    },
+    "median_cf": {
+      "CC_CHP": [
+        1,
+        1
+      ],
+      "CC_REGULAR": [
+        20,
+        20
+      ],
+      "COAL": [
+        24,
+        24
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        38,
+        38
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        22,
+        22
+      ]
+    },
+    "mustrun_online_pct": {
+      "CC_CHP": [
+        1,
+        1
+      ],
+      "CC_REGULAR": [
+        20,
+        20
+      ],
+      "COAL": [
+        24,
+        24
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        38,
+        38
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        22,
+        22
+      ]
+    },
+    "mustrun_pct": {
+      "CC_CHP": [
+        1,
+        1
+      ],
+      "CC_REGULAR": [
+        20,
+        20
+      ],
+      "COAL": [
+        24,
+        24
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        38,
+        38
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        22,
+        22
+      ]
+    },
+    "nameplate_mw": {
+      "CC_CHP": [
+        1,
+        1
+      ],
+      "CC_REGULAR": [
+        20,
+        20
+      ],
+      "COAL": [
+        24,
+        24
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        38,
+        38
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        22,
+        22
+      ]
+    },
+    "online_frac": {
+      "CC_CHP": [
+        0,
+        1
+      ],
+      "CC_REGULAR": [
+        20,
+        20
+      ],
+      "COAL": [
+        24,
+        24
+      ],
+      "CT_CHP": [
+        0,
+        1
+      ],
+      "CT_PEAKER": [
+        38,
+        38
+      ],
+      "ST_CHP": [
+        0,
+        1
+      ],
+      "ST_GAS": [
+        22,
+        22
+      ]
+    },
+    "online_hours": {
+      "CC_CHP": [
+        1,
+        1
+      ],
+      "CC_REGULAR": [
+        20,
+        20
+      ],
+      "COAL": [
+        24,
+        24
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        38,
+        38
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        22,
+        22
+      ]
+    },
+    "p25_cf": {
+      "CC_CHP": [
+        1,
+        1
+      ],
+      "CC_REGULAR": [
+        20,
+        20
+      ],
+      "COAL": [
+        24,
+        24
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        38,
+        38
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        22,
+        22
+      ]
+    },
+    "peaking_pct": {
+      "CC_CHP": [
+        1,
+        1
+      ],
+      "CC_REGULAR": [
+        20,
+        20
+      ],
+      "COAL": [
+        0,
+        24
+      ],
+      "CT_CHP": [
+        0,
+        1
+      ],
+      "CT_PEAKER": [
+        0,
+        38
+      ],
+      "ST_CHP": [
+        0,
+        1
+      ],
+      "ST_GAS": [
+        0,
+        22
+      ]
+    },
+    "steam_level_cf": {
+      "CC_CHP": [
+        1,
+        1
+      ],
+      "CC_REGULAR": [
+        0,
+        20
+      ],
+      "COAL": [
+        0,
+        24
+      ],
+      "CT_CHP": [
+        1,
+        1
+      ],
+      "CT_PEAKER": [
+        0,
+        38
+      ],
+      "ST_CHP": [
+        1,
+        1
+      ],
+      "ST_GAS": [
+        0,
+        22
+      ]
+    }
+  },
+  "derive_invocation": {
+    "base_derive_invocation": {
+      "chp_floors_from": null,
+      "iso": "SPP",
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    "derate_basis": "unit_outage_derate_factors(split_remap=True) -> campd-unit-outages-splitremap-SPP.csv",
+    "iso": "SPP",
+    "split_remap": true,
+    "split_remap_plants": [
+      1416,
+      2953,
+      3006,
+      7546,
+      56565
+    ],
+    "years": [
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "deriver": "scripts/data/derive_thermal_tranches.py",
+  "provenance": "derived",
+  "row_counts_by_status": {
+    "eia923_cf": 13,
+    "ok": 107
+  },
+  "sidecar_schema_version": 1,
+  "vintage": {
+    "chp_groups": [
+      "CC_CHP",
+      "CT_CHP",
+      "ST_CHP"
+    ],
+    "note": "SPLIT-REMAP COMPANION, PLAIN FAMILY (SPP-99): every line of thermal_tranches_SPP.csv outside derive_invocation.split_remap_plants is byte-identical; those plants' rows are the plain deriver's (derive_thermal_tranches.py --split-remap-denominator) over derive_invocation.years under the extended campd.CAMPD_UNIT_PLANT_REMAP, spliced by scripts/data/build_campd_split_remap_companions.py (family 'tranches'). Control: the same deriver with the SPP rows stripped reproduces the incumbent byte-for-byte (scripts/probes/_spp99_splice_control.py).",
+    "online_frac_groups": [
+      "CC_REGULAR",
+      "COAL",
+      "CT_PEAKER",
+      "ST_GAS"
+    ],
+    "peaking_groups": [
+      "CC_CHP",
+      "CC_REGULAR"
+    ],
+    "thermal_groups": [
+      "CC_CHP",
+      "CC_REGULAR",
+      "COAL",
+      "CT_CHP",
+      "CT_PEAKER",
+      "ST_CHP",
+      "ST_GAS"
+    ]
+  }
+}

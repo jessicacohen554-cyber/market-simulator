@@ -140,7 +140,12 @@ def test_selectors_off_are_the_plain_values():
 
 
 def test_selectors_on_carry_the_tag():
-    """Armed, the tag rides both selectors; without the fuel split it raises."""
+    """Armed, the tag rides both selectors; without the fuel split it selects the plain family.
+
+    SPP-99 widened the no-fuel-split case from a raise to the plain family's own
+    '-splitremap-' companions (``PLAIN_SPLIT_REMAP_TAG``); a missing companion
+    still raises at resolution, and per-unit attribution still raises here.
+    """
     armed = ScenarioConfig(**KEEPER, campd_split_remap_companions=True)
     assert campd.split_remap_armed(armed) is True
     assert cb.measured_cc_heat_rate_selector(armed) == campd.SPLIT_REMAP_TAG
@@ -149,8 +154,16 @@ def test_selectors_on_carry_the_tag():
         campd_unit_fuel_split=True, campd_split_remap_companions=True
     )
     assert cb.campd_fuel_split_selector(plain) == campd.SPLIT_REMAP_TAG
-    with pytest.raises(ValueError):
+    assert (
         cb.campd_fuel_split_selector(ScenarioConfig(campd_split_remap_companions=True))
+        == cb.PLAIN_SPLIT_REMAP_TAG
+    )
+    with pytest.raises(ValueError):
+        cb.campd_fuel_split_selector(
+            ScenarioConfig(
+                campd_split_remap_companions=True, campd_per_unit_attribution=True
+            )
+        )
 
 
 def test_cache_key_is_byte_inert_off():
