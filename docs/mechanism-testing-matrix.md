@@ -18002,6 +18002,16 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**SPP-97 (2026-09-28, CC_REGULAR SHAPE — DUCT OFFER AND GAP BRIDGE, ZERO LP — `docs/handoffs/FINDING-spp-97-cc-shape-2026-09-28.md`;
+`spp_gas_commitment_bridge` stays R, `offer_curve_by_group` stays R).**
+- The model's CC fleet is bimodal: too many near-off hours every year, and a near-ceiling excess in 2019–20. The dashboard's
+  CF Distribution normalises by each series' own max. Every CC tranche is offered at average HR × 0.93, so each plant
+  is one flat step.
+- **No duct step in SPP's CEMS**: top-band incremental HR is 0.93× average. Do not price the duct band up.
+- **A gap bridge fails on precision** (≤ 24 h gaps are online 0.45–0.57 against 0.59–0.62 unconditional in
+  2019/20/23/24). Do not re-open the bridge.
+- Successor: an exogenous measured CC online profile (design charter; the SPP-82/83 commitment-state lane).
+
 **SPP-96 (2026-09-28, QUEUE ITEM 6 / SPP-56 RESERVE CO-OPT (M2), ZERO LP — `docs/handoffs/RESULT-spp-96-reserve-coopt-2026-09-28.md`,
 PRECOMMIT `58d98cb8`, cell `energy_reserve_coopt` stays I; `reserve_pergen` / `reserve_deliverability_scoping` stay U).**
 - **INERT on the pre-registered rule.** Keeper headroom (reserve-eligible available − P1 dispatch) falls below SPP's
