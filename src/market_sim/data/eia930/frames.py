@@ -510,6 +510,109 @@ def _repair_double_booked_generation(df: pd.DataFrame, ba_code: str) -> pd.DataF
     return out
 
 
+# R-CAISO-13 ``ScenarioConfig.caiso_eia930_clock_repair`` — the process-wide
+# switch, set ONCE per solve at the calibration config seams
+# (``scripts/run_calibration.py::run_year`` and
+# ``scripts/run_calibration_full.py::solve_and_persist``), the
+# ``zone_assignment.set_fleet_zone_vintage_coords`` pattern. Plumbing, never a
+# knob: the registered ScenarioConfig field is the source of truth.
+_CISO_CLOCK_REPAIR: bool = False
+
+
+def set_caiso_eia930_clock_repair(active: bool) -> None:
+    """Arm/disarm the CISO late-stamp clock repair for this process.
+
+    Called only from the per-solve config seams with the value of
+    ``ScenarioConfig.caiso_eia930_clock_repair``. Clears the cached frames when
+    the value changes, so no reader can be served a frame built under the
+    other setting. Idempotent.
+    """
+    global _CISO_CLOCK_REPAIR
+    active = bool(active)
+    if active != _CISO_CLOCK_REPAIR:
+        _CISO_CLOCK_REPAIR = active
+        for cached in (
+            _eia_hourly_frame,
+            _eia_hourly_frame_filled,
+            _pool_hourly_frame,
+            _ercot_hourly_frame,
+        ):
+            cached.cache_clear()
+
+
+def caiso_eia930_clock_repair_active() -> bool:
+    """Return True when the CISO late-stamp clock repair is armed."""
+    return _CISO_CLOCK_REPAIR
+
+
+# Column families the CISO clock registry names (constants.
+# EIA930_CISO_CLOCK_LATE_WINDOWS_UTC). ``Demand forecast`` is deliberately
+# absent: it was not measured.
+_CISO_CLOCK_FAMILY_COLUMNS: dict[str, Callable[[str], bool]] = {
+    "generation": lambda c: (
+        c.startswith("NG: ")
+        or c.startswith("Net generation")
+        or c.startswith("Total interchange")
+    ),
+    "demand": lambda c: c in ("Demand", "Demand (Adjusted)"),
+}
+
+
+def _repair_clock_late_windows(df: pd.DataFrame, ba_code: str) -> pd.DataFrame:
+    """Pull CISO's published one-hour-LATE windows back onto the true hour.
+
+    Inside each registered window of hour-ending ``UTC time`` stamps
+    ``[first, last]`` the value stamped ``s`` is the true value of ``s - 1 h``
+    (:data:`~market_sim.config.constants.EIA930_CISO_CLOCK_LATE_WINDOWS_UTC`,
+    measured against the OASIS TAC clock and solar geometry). The repair writes
+    ``published(s)`` to row ``s - 1 h`` for every ``s`` in the window. The
+    window's last row has no published true value (the source dropped that
+    hour when it realigned), so it takes the mean of its two neighbours — a
+    one-hour seam approximation, the same class as caiso-75's seam hour. The
+    row before the window is overwritten with a value equal to its own truth
+    (the source published that hour twice).
+
+    Rule 14 [R-ACCURATE] source repair; zero fitted parameters; the raw extract
+    is never modified. Returns the input UNCHANGED (the same object) unless the
+    repair is armed and ``ba_code == "CISO"``, so every other BA and the
+    unarmed path are byte-identical. Otherwise a copy is returned.
+    """
+    if not _CISO_CLOCK_REPAIR or ba_code != "CISO" or "UTC time" not in df.columns:
+        return df
+    from market_sim.config.constants import EIA930_CISO_CLOCK_LATE_WINDOWS_UTC
+
+    utc = pd.DatetimeIndex(df["UTC time"])
+    if utc.tz is not None:
+        utc = utc.tz_convert("UTC").tz_localize(None)
+    pos = pd.Series(np.arange(len(df)), index=utc)
+    pos = pos[~pos.index.duplicated(keep="first")]
+    out = df.copy()
+    hour = pd.Timedelta(hours=1)
+    for family, (first, last) in EIA930_CISO_CLOCK_LATE_WINDOWS_UTC.items():
+        cols = [c for c in df.columns if _CISO_CLOCK_FAMILY_COLUMNS[family](c)]
+        if not cols:
+            continue
+        lo, hi = pd.Timestamp(first), pd.Timestamp(last)
+        src_stamps = pos.index[(pos.index >= lo) & (pos.index <= hi)]
+        if src_stamps.empty:
+            continue
+        dst = pos.reindex(src_stamps - hour)
+        have = dst.notna().to_numpy()
+        src_rows = pos.loc[src_stamps].to_numpy()[have]
+        dst_rows = dst.to_numpy()[have].astype(int)
+        for col in cols:
+            raw = pd.to_numeric(df[col], errors="coerce").to_numpy(dtype=float)
+            new = out[col].to_numpy(dtype=float, copy=True)
+            new[dst_rows] = raw[src_rows]
+            # The seam hour: the stamp ``last`` carries no true value of its
+            # own once the window is pulled back.
+            if hi in pos.index and hi + hour in pos.index:
+                r_last, r_next = int(pos.loc[hi]), int(pos.loc[hi + hour])
+                new[r_last] = 0.5 * (raw[r_last] + raw[r_next])
+            out[col] = new
+    return out
+
+
 def _repair_published_extract(df: pd.DataFrame, ba_code: str) -> pd.DataFrame:
     """Apply every registered source repair to a ``<BA> hourly`` extract.
 
@@ -517,12 +620,16 @@ def _repair_published_extract(df: pd.DataFrame, ba_code: str) -> pd.DataFrame:
     through (the strict frame, the gap-filled reconstruction, the pool member
     frames and the hourly benchmark), so no reader can see one repair without
     the other: the published sign-inverted interchange windows
-    (:func:`_repair_inverted_interchange`) and the double-booked remote
-    generation (:func:`_repair_double_booked_generation`). Both return the
-    input object unchanged for an unregistered BA.
+    (:func:`_repair_inverted_interchange`), the double-booked remote
+    generation (:func:`_repair_double_booked_generation`) and, when armed, the
+    CISO late-stamp windows (:func:`_repair_clock_late_windows`). Each returns
+    the input object unchanged for an unregistered BA.
     """
-    return _repair_double_booked_generation(
-        _repair_inverted_interchange(df, ba_code), ba_code
+    return _repair_clock_late_windows(
+        _repair_double_booked_generation(
+            _repair_inverted_interchange(df, ba_code), ba_code
+        ),
+        ba_code,
     )
 
 

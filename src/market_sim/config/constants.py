@@ -2330,6 +2330,36 @@ EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC: dict[str, tuple[tuple[str, str], .
     "SOCO": (("2019-01-01 07:00", "2019-09-11 05:00"),)
 }
 
+# --- EIA-930 CISO published one hour LATE (R-CAISO-13, 2026-09-28) -----------
+# Per column family: inclusive windows of the extract's hour-ENDING ``UTC time``
+# stamps whose value is the TRUE value of the PREVIOUS hour (stamped 1 h late).
+# Applied at the frame seam (``data.eia930.frames._repair_clock_late_windows``)
+# only while ``ScenarioConfig.caiso_eia930_clock_repair`` is armed.
+# Measured against two clocks independent of EIA-930, zero fitted parameters
+# (rule 14 source repair; re-derive only when the extract changes, rule 23):
+#   * OASIS SLD TAC actual ``CA ISO-TAC`` (``interval_start_gmt``): monthly and
+#     daily best lag of d(Demand) and d(NetGen - TI) against d(TAC).
+#     Demand: lag 0 through 2022-06-13, +1 h from 2022-06-16 (06-14/15 mixed,
+#     not asserted), back to lag 0 at 2025-12-02 22:00 UTC (hour-level scan).
+#     NetGen - TI: lag 0 through 2023-10-31, +1 h from 2023-11-01 (local),
+#     lag 0 again from 2025-12-03.
+#   * Solar geometry: the ``NG: SUN`` production centroid is 11.6-11.9 h PST
+#     in every month through 2023-10 and in 2025-12, and 12.5-13.0 h PST in
+#     every month 2023-11 .. 2025-11 (solar noon at the fleet's longitude is
+#     ~12.0 h PST), i.e. the whole generation frame shifts, not only SUN.
+# The EIA-930 API long series (``CISO_fueltype.parquet`` / ``CISO_region``)
+# is byte-identical to the extract across both windows, so the defect is the
+# publisher's, not the download's. caiso-75 (``_CAISO_DEMAND_CLOCK_REALIGN_END``)
+# read the same identity against the GENERATION frame and so saw only the
+# relative lag (Demand late Jan-Oct 2023, "aligned" after, when both were
+# late); this registry supersedes it. Probe:
+# scripts/probes/_rcaiso13_storage_timing.py;
+# docs/handoffs/r-caiso-13/RESULT-r-caiso-13-2026-09-28.md.
+EIA930_CISO_CLOCK_LATE_WINDOWS_UTC: dict[str, tuple[str, str]] = {
+    "generation": ("2023-11-01 08:00", "2025-12-02 22:00"),
+    "demand": ("2022-06-16 08:00", "2025-12-02 22:00"),
+}
+
 # --- EIA-930 remote generation booked by TWO balancing authorities ------------
 # Per EIA-930 BA code: ``{fuel column: BA that already books the same plants}``.
 # The listed member's published fuel column is energy from a jointly-owned plant

@@ -2174,6 +2174,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # construction: load_demand passes caiso_standard_time to
     # load_zonal_shares only when the flag is True.
     "caiso_tac_shares_standard_time",
+    # R-CAISO-13 (2026-09-28), default off, registered IN THE SAME COMMIT as
+    # the field (the nyiso-119 discipline). Byte-identical off by
+    # construction: frames._repair_clock_late_windows returns its input
+    # object unless the per-solve switch is armed from this flag.
+    "caiso_eia930_clock_repair",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -2986,6 +2991,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_import_cap_floor_static": "False",
     # Added by R-CAISO-11 WITH the field (the nyiso-119 discipline).
     "caiso_tac_shares_standard_time": "False",
+    # Added by R-CAISO-13 WITH the field (the nyiso-119 discipline).
+    "caiso_eia930_clock_repair": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
@@ -19354,6 +19361,23 @@ class ScenarioConfig:
     # runner's load_demand sites do not read it. CAISO-only; default off.
     # docs/handoffs/r-caiso-11/RESULT-r-caiso-11-2026-09-28.md sec 4.
     caiso_tac_shares_standard_time: bool = False
+    # R-CAISO-13 (owner decision card 2026-09-28, "Build + solve now"): repair
+    # the EIA-930 CISO extract's published one-hour-LATE stamps at the frame
+    # seam (data.eia930.frames._repair_clock_late_windows), so every reader --
+    # solar/wind CF, the WAT hydro envelope, demand, interchange, the
+    # benchmark -- sees the true hour. Measured against two clocks independent
+    # of EIA-930 (OASIS SLD TAC actual; solar geometry): the generation frame is
+    # stamped 1 h late 2023-11-01 .. 2025-12-02, the Demand column
+    # 2022-06-16 .. 2025-12-02 (constants.EIA930_CISO_CLOCK_LATE_WINDOWS_UTC).
+    # Symptom: the keeper's own dispatched solar centroid sits at 12.9 h PST
+    # in 2024-25 against ~11.9 in 2022-23, and its battery profile runs 1 h
+    # late against CAISO Outlook. Under caiso_supply_consistent_demand the
+    # artifact's EIA-930 term is moved the same way; caiso_demand_clock_realign
+    # is superseded (rule 19). Rule 14 source-clock repair; zero parameters
+    # (rules 21/24). Wired on the backcast calibration path only, like
+    # caiso_tac_shares_standard_time. CAISO-only; default off.
+    # docs/handoffs/r-caiso-13/RESULT-r-caiso-13-2026-09-28.md.
+    caiso_eia930_clock_repair: bool = False
 
     # PJM transmission-congestion lever (break the copper-plate). PJM clears as a
     # perfect single price (0.000 zonal LMP spread in all 8760 hours of all
