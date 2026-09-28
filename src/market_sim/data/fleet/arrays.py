@@ -4486,6 +4486,46 @@ def generators_to_fleet_arrays(
                     int(last.min()),
                 )
 
+    # PLANT ENTRY hour mask (lane R-ERCOT-12, owner ruling "Fleet + benchmark"
+    # 2026-09-28; constants.ISO_PLANT_ENTRIES). A registered plant that was
+    # connected to another system before a dated hour is offline in every LP
+    # row before it (all year in an earlier year). ERCOT's bin sheet carries
+    # its plants in every year and no loader BA filter reaches them, so this
+    # is the fleet's only membership seam for them (ERCOT: Frontera 55098,
+    # exporting to CFE until 2023-04-13). min_gen scaled likewise.
+    # Backcast-only; an empty map for every other region and year, so they
+    # are byte-identical.
+    if (
+        config is not None
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _cod_year is not None
+        and _iso is not None
+    ):
+        from market_sim.data.ba_membership import plant_entry_first_inside_row
+
+        _entry = plant_entry_first_inside_row(_iso, int(_cod_year))
+        if _entry:
+            first_in = np.array(
+                [_entry.get(int(g.plant_code), 0) for g in generators], dtype=np.int64
+            )
+            if (first_in > 0).any():
+                member = (
+                    np.arange(hours)[np.newaxis, :] >= first_in[:, np.newaxis]
+                ).astype(float)
+                availability *= member
+                if min_gen is not None:
+                    min_gen *= member
+                    clear_where_unfloored(min_gen_mech, min_gen)
+                logger.info(
+                    "plant entry (%s %s): %d unit(s), %.0f MW outside the region "
+                    "before LP row %d",
+                    _iso,
+                    _cod_year,
+                    int((first_in > 0).sum()),
+                    float(pmax[first_in > 0].sum()),
+                    int(min(first_in[first_in > 0].min(), hours)),
+                )
+
     # Measured ramp/fast-start capability (GATED config.measured_ramp_capability,
     # default off): reconcile the class 10-minute fractions against the
     # ramp-capability clean datatype (EIA-860 "10M" fast-start floor + CAMPD

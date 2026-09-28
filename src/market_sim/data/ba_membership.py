@@ -21,6 +21,13 @@ the region's load on (rule 19 [R-ONE-MECH]; lane R-SOCO-B, 2026-09-25):
   :func:`ba_exit_month_share`). SOCO: the former Gulf Power plants, to FPL at
   hour-ending UTC 2022-07-13 12:00 (lane R-SOCO-B2, owner ruling (C)).
 
+* :data:`~market_sim.config.constants.ISO_PLANT_ENTRIES` — a single PLANT
+  that entered the region at a dated hour, with no BA code to key on
+  (:func:`plant_entry_stamps`, :func:`plant_entry_non_members`,
+  :func:`plant_entry_first_inside_row`, :func:`plant_entry_month_share`,
+  :func:`zero_pre_entry_campd`). ERCOT: Frontera 55098, 2023-04-13 (lane
+  R-ERCOT-12).
+
 Every function is a pure read of committed EIA-860 parquet keyed on its
 arguments (no ``ScenarioConfig``, no process global), and every one returns an
 empty result for a region neither registry names, so every other region is
@@ -31,12 +38,14 @@ from __future__ import annotations
 
 from functools import lru_cache
 
+import numpy as np
 import pandas as pd
 
 from market_sim.config.constants import (
     ISO_BA_EXITS,
     ISO_BA_JOINS,
     ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE,
+    ISO_PLANT_ENTRIES,
 )
 
 #: Returned by :func:`ba_join_first_month` for a plant whose BA has not yet
@@ -343,4 +352,161 @@ def ba_join_first_month(iso: str, year: int) -> dict[int, int]:
     for code, b in zip(plant, ba):
         if pd.notna(code) and b in live:
             out[int(code)] = int(live[b])
+    return out
+
+
+# --- plant-grain ENTRY (constants.ISO_PLANT_ENTRIES, lane R-ERCOT-12) --------
+
+
+def _entry_clock(iso: str, year: int) -> pd.DataFrame:
+    """The region clock for an entry, keyed on the ISO's own EIA-930 BA code.
+
+    :func:`_region_clock` reads the frame named by the ISO string, which is the
+    BA code only where the two coincide (SOCO); ERCOT's EIA-930 BA is ``ERCO``.
+    Raises rather than guessing: a registered entry that cannot be placed on
+    the region's clock must fail loudly, never silently drop the correction.
+    """
+    from market_sim.data.zone_assignment import _iso_ba_codes
+
+    for code in (iso.upper(), *_iso_ba_codes(iso)):
+        frame = _region_clock(code, year)
+        if frame is not None:
+            return frame
+    raise RuntimeError(
+        f"ISO_PLANT_ENTRIES[{iso}] needs the {iso} {year} EIA-930 region clock, "
+        "which is not on disk"
+    )
+
+
+def plant_entry_stamps(iso: str) -> dict[int, pd.Timestamp]:
+    """``{plant: first hour INSIDE iso}`` from ``ISO_PLANT_ENTRIES[iso]``.
+
+    The stamp is the region's EIA-930 hour-ending ``UTC time`` of the plant's
+    first in-region row. Empty for any region the registry does not name.
+    """
+    return {
+        int(p): pd.Timestamp(t)
+        for p, t in ISO_PLANT_ENTRIES.get(iso.upper(), {}).items()
+    }
+
+
+def plant_entry_non_members(iso: str, year: int | None) -> frozenset[int]:
+    """Registered entering plants that are outside ``iso`` for ALL of ``year``.
+
+    A plant is outside in every year before its entry stamp's year; the entry
+    year itself is split at hour grain (:func:`plant_entry_first_inside_row`,
+    :func:`plant_entry_month_share`). ``year=None`` returns none.
+    """
+    if year is None:
+        return frozenset()
+    return frozenset(
+        p for p, s in plant_entry_stamps(iso).items() if int(year) < s.year
+    )
+
+
+def _entry_std_offset(iso: str, year: int) -> pd.Timedelta:
+    """The region clock's standard ``UTC time - Local time`` offset for ``year``."""
+    frame = _entry_clock(iso, year)
+    return (
+        pd.to_datetime(frame["UTC time"]) - pd.to_datetime(frame["Local time"])
+    ).max()
+
+
+@lru_cache(maxsize=32)
+def plant_entry_first_inside_row(iso: str, year: int) -> dict[int, int]:
+    """``{plant: first LP row inside iso}`` for registered entering plants.
+
+    In the entry year the row is the count of the region's local-year frame
+    rows whose hour-ending ``UTC time`` precedes the stamp (the rows the LP
+    dispatches, as :func:`ba_exit_first_outside_row`); in an earlier year it
+    is ``2**31 - 1`` (never inside). Plants already inside all year are
+    omitted, as is every plant of an unregistered region.
+    """
+    stamps = plant_entry_stamps(iso)
+    out: dict[int, int] = {
+        p: 2**31 - 1 for p, s in stamps.items() if int(year) < s.year
+    }
+    live = {p: s for p, s in stamps.items() if s.year == int(year)}
+    if live:
+        frame = _entry_clock(iso, year)
+        utc = pd.to_datetime(frame["UTC time"]).to_numpy()
+        out.update({p: int((utc < s.to_datetime64()).sum()) for p, s in live.items()})
+    return out
+
+
+def _campd_hour_ending_utc(iso: str, year: int, hours: np.ndarray) -> pd.DatetimeIndex:
+    """Hour-ending UTC stamps of CAMPD hour-of-year indices (local standard)."""
+    start = pd.Timestamp(f"{int(year)}-01-01")
+    return (
+        start
+        + pd.to_timedelta(np.asarray(hours, dtype=np.int64), unit="h")
+        + pd.Timedelta(hours=1)
+        + _entry_std_offset(iso, year)
+    )
+
+
+def zero_pre_entry_campd(
+    campd_year: pd.DataFrame | None, iso: str, year: int
+) -> pd.DataFrame | None:
+    """Zero CAMPD net of registered entering plants in hours before entry.
+
+    ``campd_year`` is the benchmark's per-plant hourly CAMPD net frame
+    (``plant_id``, ``hour`` = local-standard hour-of-year). Both CAMPD
+    backfills read it and never consult the EIA-923 membership, so without
+    this they re-book a non-member plant from its CEMS meter. Returns the
+    input object unchanged when nothing is zeroed (byte-identical elsewhere).
+    """
+    if campd_year is None or campd_year.empty:
+        return campd_year
+    stamps = plant_entry_stamps(iso)
+    if not stamps:
+        return campd_year
+    pid = pd.to_numeric(campd_year["plant_id"], errors="coerce")
+    drop = pid.isin(plant_entry_non_members(iso, year)).to_numpy(dtype=bool).copy()
+    live = {p: s for p, s in stamps.items() if s.year == int(year)}
+    for p, s in live.items():
+        m = (pid == p).to_numpy(dtype=bool)
+        if m.any():
+            he = _campd_hour_ending_utc(iso, year, campd_year.loc[m, "hour"].to_numpy())
+            pre = np.zeros(len(campd_year), dtype=bool)
+            pre[np.where(m)[0]] = he < s
+            drop |= pre
+    if not drop.any():
+        return campd_year
+    # ZERO, never drop: the missing-month fill reads each plant's series by
+    # position on the hour-of-year clock, so removing rows would shift months.
+    out = campd_year.copy()
+    out.loc[drop, "net_mw"] = 0.0
+    return out
+
+
+@lru_cache(maxsize=32)
+def plant_entry_month_share(iso: str, year: int) -> dict[int, tuple[int, float]]:
+    """``{plant: (split month, in-region share)}`` for plants entering IN ``year``.
+
+    The mirror of :func:`ba_exit_month_share`: the monthly EIA-923 benchmark
+    zeroes the plant's months before the split month and scales the split
+    month by the plant's own CAMPD gross-load share at or after the stamp
+    (hour share of the month for a plant CAMPD does not carry).
+    """
+    live = {p: s for p, s in plant_entry_stamps(iso).items() if s.year == int(year)}
+    if not live:
+        return {}
+    std_offset = _entry_std_offset(iso, year)
+    cems = _exit_plant_cems(iso, int(year), tuple(sorted(live)))
+    out: dict[int, tuple[int, float]] = {}
+    for p, s in live.items():
+        local = s - std_offset - pd.Timedelta(hours=1)
+        month = int(local.month)
+        m_start = pd.Timestamp(year=int(year), month=month, day=1)
+        m_end = m_start + pd.offsets.MonthBegin(1)
+        share = float((m_end - local) / (m_end - m_start))
+        c = cems.get(p) if cems is not None else None
+        if c is not None:
+            he = c.index + pd.Timedelta(hours=1) + std_offset
+            mm = c.index.month == month
+            tot = float(c[mm].sum())
+            if tot > 0:
+                share = float(c[mm & (he >= s)].sum()) / tot
+        out[p] = (month, share)
     return out
