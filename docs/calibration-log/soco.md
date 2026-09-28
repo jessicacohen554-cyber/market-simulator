@@ -1819,3 +1819,27 @@ the flag-off build; unserved 0; benchmark byte-identical. COAL_PRB +0.1..+1.3 TW
 Secondary: two SOCO fast-tier tests were stale, not builder defects (PR #6800); re-deriving the dark-unit outage file at HEAD adds 44
 coal windows (Wansley 37) — an open drift lead, not fixed. Records: docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-81-2026-09-27.md.
 Leftover refs: claude/soco81-2019..2025, claude/soco-81, claude/soco-81-tests.
+
+## soco-82 — 2026-09-27
+
+ZERO-LP FINDING + ONE INPUT REPAIR. (1) The perunitdark-SOCO drift is F1 31e54d8a5 (SOCO retirees appended to
+eia860_generator_retired_within_window.parquet 37 min after F2 5ff0cb9cb derived the file); HEAD's deriver with the pre-F1 retiree
+parquet reproduces the committed CSV byte-for-byte. Only Wansley 6052 reaches an LP fleet (2019-2021; availability 0.914 -> 0.233 /
+0.020 / 0.118); Gorgas/Hammond are inert. The file is regenerated (rule 23) and solved as run soco82 (PRECOMMIT-soco-82). (2) Southern's
+own FERC-714 Part II Sch. 6 system lambda (PUDL raw archive, Zenodo 21738524): model P1 price is $4-5/MWh ABOVE it (2019 $30.21 vs
+$25.72; 2020 $25.07 vs $20.90). Barry/Wansley ran 2019 while lambda sat below their cost in 94 % / 85 % of synced hours even at measured
+incremental HR (median -$9.0 / -$4.8); replacement (spot) fuel cost is dearer than contract (wrong sign). 2019 COAL_BIT has no admissible
+economic lever. Record: docs/handoffs/r-soco/FINDING-soco-82-2026-09-27.md.
+
+OWNER RULINGS 2026-09-27 (decision cards, soco-82):
+- **2019 COAL_BIT: "Ledger as limitation"** — a SOCO-only, 2019-only, ledgered C1 caveat for measured out-of-merit conduct, reported at
+  full magnitude; SOCO then reads PHYSICALLY-CALIBRATED-WITH-CAVEATS (price unscored). Implementation (a scoped rubric amendment past
+  the v3.1 C3c-only ledger guard, with a test) is routed to soco-83.
+- **FERC-714 system lambda: "Intake, reported-only"** — intake SOCO lambda 2019-2025 (CSV era + XBRL) under data/raw/ferc-714 with
+  README/SHA256SUMS and show model-vs-lambda on the status page; no gate changes. Routed to soco-83.
+
+RESULT (run 2026-09-27-soco82-perunitdark-regen, seven year-isolated shards at 2265d524; PROMOTED 2026-09-28 on the owner's decision
+card; PRECOMMIT §7 held; 2026-09-27-soco81-coal-incremental-hr pruned per rule 35): every leg at the HEAD build's offers, Wansley within
+its new availability, 2022-2025 identical to the keeper, unserved 0, C6/C8 PASS, D-diagnostics unchanged. 2021 Wansley 5.58 -> 0.91
+TWh, C4 coal 0.204 -> 0.145, COAL_BIT +0.3 -> -1.5pp; 2021 CC_REGULAR +2.3 -> +3.05pp FAIL (displaced coal lands on gas: the CC/ST split
+defect exposed); 2019 COAL_BIT -3.99 -> -4.1pp. NOT-YET, grade 5/4/1. Record: docs/handoffs/r-soco/RESULT-soco-82-2026-09-27.md.
