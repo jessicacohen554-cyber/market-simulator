@@ -165,3 +165,18 @@ python3 scripts/replay_keeper.py /tmp/n49/results/calibration/nwpp49_ror_span \
 regression reported at full magnitude.
 
 ## 8. Launch record (appended after the pin; nothing above it changed)
+
+- **Pin** `e7478536f46cade23e0aea71e79a329c0e29202a`. All 7 shards were launched 2026-09-28 00:37–00:40 UTC.
+- Unit suite at the pin: 27 failures, the same test IDs as `origin/main` (`test_firm_import_*`,
+  `test_gas_offer_zonal_anchor_vintage`, `test_nwpp_demand_plant_basis`, `results/test_export`). None come from this
+  lane.
+
+| Year | Session |
+|---|---|
+| 2019 | `session_01Jw3MQPBETS1uKj7VYVFAhz` |
+| 2020 | `session_015XJwKpuaDKTJS6itqAoZjt` |
+| 2021 | `session_01ErY21i1rSkGxrbozjLYLjF` |
+| 2022 | `session_012nFDDkKi3LP1E12vqcjUY9` |
+| 2023 | `session_013hUChwwKXquVEsjBj1FiUe` |
+| 2024 | `session_01Ly4aNfS2ymBUm5foP6XLSE` |
+| 2025 | `session_01Hsk3bRN91t9i7zJDgSY5td` |
