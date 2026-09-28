@@ -65,7 +65,8 @@ def main() -> int:
             raise SystemExit(f"{y}: offer_curve_by_group moved: {_offer_sha(sc)}")
         ksc = _scenario(CAL / KEEPER / f"run_config_{y}.json")
         moved = sorted(
-            k for k in set(sc) | set(ksc)
+            k
+            for k in set(sc) | set(ksc)
             if k != "offer_curve_by_group" and sc.get(k) != ksc.get(k)
         )
         if moved:
@@ -97,7 +98,10 @@ def main() -> int:
     gov["data_corrections"] = [
         {
             "path": DATA,
-            "rows": {"2020": "244 MW (ASOM 2022 p. 53)", "2021": "725 MW (ASOM 2021 p. 60)"},
+            "rows": {
+                "2020": "244 MW (ASOM 2022 p. 53)",
+                "2021": "725 MW (ASOM 2021 p. 60)",
+            },
             "free_parameters_added": 0,
             "basis": (
                 "rule 14 [R-ACCURATE]: SPP's own published measurement replaces the 2023-25 mean "

@@ -3729,3 +3729,6 @@ results/calibration/nyisonext8_202[2-5]/
 results/calibration/r_ercot10_arm_20*/
 # R-CAISO-9 per-year shard legs (rule 32(d)/36): kept out of main; the composite is what registers.
 results/calibration/rcaiso9_A_20*/**
+
+# SPP-95 per-year shard legs (rule 32(d): kept out of main; composite spp94_arm_span is registered)
+results/calibration/spp94_arm_20*/
