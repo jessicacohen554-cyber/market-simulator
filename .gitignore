@@ -3760,6 +3760,10 @@ results/calibration/rcaiso10_A_*/hourly/p0_*.parquet
 
 # SPP-98 per-year replay legs (composed into spp98_remap_span; provenance SHAs in the RESULT doc)
 results/calibration/spp98_rep_*/
+# SPP-99 per-year arm legs (rule 32(d)/36): composed into spp99_remap_span; legs stay out of main.
+# Provenance (rule 33(d), not a recovery route): 2019 b18f5f79 2020 46fd4ee9 2021 d5253ce6
+# 2022 0a0c3766 2023 e2f13142 2024 d006fec4 2025 23141bf5 on claude/spp99-<y>.
+results/calibration/spp99_arm_20*/
 # PJM-NEXT-7 per-year shard legs (rule 32(d)/36): the composite pjmnext7_vs_span is
 # the registered keeper; legs stay out of main. Provenance (rule 33(d), not a
 # recovery route): 2019 8a3b5094 2020 05cc491f 2021 173b48bb 2022 2b1ef9b3
