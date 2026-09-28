@@ -3742,3 +3742,5 @@ results/calibration/miso279_arm_*/
 results/calibration/r_ercot11_arm_20*/
 # R-CAISO-10 per-year legs (startup_aware disarm A/B): local only, pushed to shard branches (rule 34(a)); composite span/fold go on main
 results/calibration/rcaiso10_A_20*/**
+# R-CAISO-10: P0 dispatch/duals of the composites are local diagnostics (not in the keeper slim set)
+results/calibration/rcaiso10_A_*/hourly/p0_*.parquet
