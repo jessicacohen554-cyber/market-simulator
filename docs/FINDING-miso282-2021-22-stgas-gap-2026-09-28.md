@@ -111,3 +111,12 @@ status alone and is rule-13 admissible. Zero-LP fleet delta at the keeper's own 
   outage-extract companion on the admitted population. This is a build lane if the owner wants it.
 - **Rubric:** unchanged. C1 ST_GAS 2021–22 PASS. The full span stays NOT-YET on the three owner-ruled routed misses.
   **No frontier.**
+
+## 6. Owner ruling (2026-09-28)
+
+Next lane: **"South price premium probe (Recommended)"**. This is a zero-LP phase 0 on two things:
+- why the model's MISO-South price sits above the measured LA / MS / AR hubs at night (+$5–13/MWh, every year);
+- why it misses the measured evening peaks in 2021–22.
+
+No solve this session. No frontier, because the full span still fails on the three routed misses.
+

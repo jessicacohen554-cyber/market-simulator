@@ -15278,3 +15278,4 @@ Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 
 ~1 TWh/yr of phantom coal from idled Taconite Harbor unless an outage companion is re-derived.
 `docs/FINDING-miso282-2021-22-stgas-gap-2026-09-28.md`.
 
+Owner ruling: next lane is the MISO-South price premium probe (zero LP). No frontier.
