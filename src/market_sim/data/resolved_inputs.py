@@ -395,6 +395,10 @@ def _campd_unit_outages_block(config, iso: str) -> dict[str, Any]:
                 netload_mask_repair=bool(
                     getattr(config, "unit_outage_netload_mask_repair", False)
                 ),
+                # miso-280: the split-remap companion gate, same reason.
+                split_remap=bool(
+                    getattr(config, "campd_split_remap_companions", False)
+                ),
             )
         )
     except Exception:  # pragma: no cover - a probe never breaks the record
@@ -437,7 +441,7 @@ def resolved_inputs_block(config, iso: str) -> dict[str, Any]:
         for (recorded_iso, yr), res in sorted(_RECORDED.items(), key=lambda kv: kv[0])
         if recorded_iso == iso_key
     }
-    return {
+    out: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
         "iso": iso_key,
         "seam_import_cap": {
@@ -448,3 +452,51 @@ def resolved_inputs_block(config, iso: str) -> dict[str, Any]:
         "campd_unit_outages": _campd_unit_outages_block(config, iso),
         "thermal_tranches": _thermal_tranche_block(config, iso),
     }
+    if bool(getattr(config, "campd_split_remap_companions", False)):
+        # miso-280: recorded ONLY when armed, so an unarmed run's record is
+        # byte-identical to its pre-gate form.
+        out["campd_split_remap"] = _campd_split_remap_block(config, iso)
+    return out
+
+
+def _campd_split_remap_block(config, iso: str) -> dict[str, Any]:
+    """Identity of the ``-splitremap-`` companions a miso-280 run reads.
+
+    ``ScenarioConfig.campd_split_remap_companions`` moves SEVEN artifacts at
+    once: the three unit-outage extracts (std, short-gas, maxgen), the measured
+    CC heat-rate artifact and the four tranche-family files. The std extract
+    and the four tranche files are already named in ``campd_unit_outages`` /
+    ``thermal_tranches``; this block names the other three with their sha256,
+    so the bundle carries every byte the identity repair changed.
+    """
+    comp: dict[str, Any] = {}
+    try:
+        from market_sim.config.paths import PROCESSED_DIR
+        from market_sim.data.outages import (
+            unit_outage_maxgen_csv_for_iso,
+            unit_outage_short_gas_csv_for_iso,
+        )
+        from market_sim.data import campd as _campd
+
+        paths = {
+            "unit_outages_short_gas": unit_outage_short_gas_csv_for_iso(
+                iso, split_remap=True
+            ),
+            "unit_outages_maxgen": unit_outage_maxgen_csv_for_iso(
+                iso,
+                bool(getattr(config, "unit_outage_mixed_gas_routing", False)),
+                split_remap=True,
+            ),
+            "cc_heat_rates": _campd.split_remap_companion(
+                PROCESSED_DIR / f"campd_cc_heat_rates_{iso.upper()}.csv"
+            ),
+        }
+    except Exception:  # pragma: no cover - a probe never breaks the record
+        logger.warning("resolved_inputs: split-remap probe failed", exc_info=True)
+        return {"armed": True, "companions": None}
+    for name, path in paths.items():
+        comp[name] = {
+            "path": Path(path).name,
+            "sha256": _sha256(Path(path)) if Path(path).exists() else None,
+        }
+    return {"armed": True, "companions": comp}

@@ -92,3 +92,21 @@ buy a daily Gulf-hub print (ICE/NGI — a data purchase), or leave C3b 2021 as a
 1. **C (Riverside):** build the identity remap + re-derive + 7 shards (structural, no gate expected to flip), or record
    and defer.
 2. **B (C3b 2021):** buy/intake a daily Gulf hub for South, build "paid level" for South, or leave as routed miss.
+
+## 5. Addendum (2026-09-28) — lever C built behind `campd_split_remap_companions` (default off)
+
+- **Identity**: `(55641,"CT-03")`, `(55641,"CT-04")` → 64020 added to `campd.CAMPD_UNIT_PLANT_REMAP`
+  unconditionally. No live solve path reads raw CAMPD, so it reaches a solve only through the derived artifacts.
+- **Gate**: `ScenarioConfig.campd_split_remap_companions` (default False, cache-key drop at False, DOF +0, rule 23
+  trigger = this identity change). Armed, seven artifacts switch to `-splitremap-` companions through one accessor
+  (`campd.split_remap_armed`); an absent companion raises. Off, the keeper resolves the identical files and sha256s.
+- **Construction**: a plant-scoped splice (`scripts/data/build_campd_split_remap_companions.py`;
+  `derive_thermal_tranches.py --split-remap`): incumbent bytes, with the 55641/64020 lines replaced by the same
+  deriver's lines under the remap. A wholesale HEAD re-derive was rejected because the std, maxgen and CC derives no
+  longer reproduce their incumbents on unrelated plants (HEAD drift; the std extract's 2018 CAMPD files are gone).
+  Control: the HEAD deriver with the entries stripped reproduces every incumbent's 55641/64020 lines, and
+  splicing it back gives the incumbent byte for byte (all four outage/CC families).
+- **Emissions** (`plant_emission_rates_v2`, shared across ISOs): out of scope. The MISO backcast has no carbon, NOx
+  or SO2 price, so emission rates do not enter dispatch.
+- **Footprint** (fleet_only, keeper vs +flag): only 55641/64020 units move, and no other class moves.
+  `scripts/probes/_miso280_splitremap_footprint.py` → `results/calibration/_miso280_splitremap_footprint.json`.
