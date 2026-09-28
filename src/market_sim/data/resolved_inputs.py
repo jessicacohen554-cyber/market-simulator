@@ -387,6 +387,10 @@ def _campd_unit_outages_block(config, iso: str) -> dict[str, Any]:
                 ),
                 # PJM-NEXT-5: the full HEAD re-derive companion gate.
                 full_rederive=bool(getattr(config, "unit_outage_full_rederive", False)),
+                # PJM-NEXT-6: the peaker-window-kept F2 companion gate.
+                rederive_peaker_windows=bool(
+                    getattr(config, "unit_outage_rederive_peaker_windows", False)
+                ),
                 # SPP-85: the net-load-mask companion gate, same reason.
                 netload_mask_repair=bool(
                     getattr(config, "unit_outage_netload_mask_repair", False)
