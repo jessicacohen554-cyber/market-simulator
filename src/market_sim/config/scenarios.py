@@ -492,6 +492,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # default-off; selects '-rederive-peakerkeep-unitfuel-' through the same
     # resolver, so the off path is byte-inert). Same commit as the field.
     "unit_outage_rederive_peaker_windows",
+    # PJM-NEXT-8 card 2, the exit-cohort repair of the CAMPD outage layer
+    # (GATED default-off; selects '-rederive-peakerkeep-exitfix-unitfuel-' and
+    # keys dated exit bins, so the off path is byte-inert). Same commit as the
+    # field.
+    "unit_outage_exit_cohort_repair",
     # PJM-NEXT-7 financially-settled DA virtual position (GATED default-off;
     # zeroes the virtual pseudo-units' bounds in P1 only, so the off path is
     # byte-inert). Same commit as the field.
@@ -2400,6 +2405,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by PJM-NEXT-6 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_rederive_peaker_windows": "False",
+    # Added by PJM-NEXT-8 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_exit_cohort_repair": "False",
     # Added by PJM-NEXT-7 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "pjm_da_virtual_settle_financial": "False",
@@ -16840,6 +16848,27 @@ class ScenarioConfig:
     # '-rederive-unitfuel-' where not derived. Zero free parameters.
     # docs/PRECOMMIT-pjm-next-6-card1-f2-split-2026-09-27.md.
     unit_outage_rederive_peaker_windows: bool = False
+    # PJM-NEXT-8 card 2 (owner card "Build + solve", 2026-09-28; rule 14
+    # [R-ACCURATE], rule 19 [R-ONE-MECH]) — the EXIT-COHORT repair of the
+    # CAMPD unit-outage layer (docs/FINDING-pjm-next-7-coal-phase0-2026-09-28.md
+    # section 3). Three measured corrections, one object:
+    # (a) unit capacity from the derive year's OWN EIA-860 vintage (Chalk Point
+    #     1571's coal boilers took GT1/GT2's 16/35 MW because the post-retirement
+    #     snapshot has no ST rows; Sammis 3-4 fell to observed peaks);
+    # (b) a row at a plant split into dated exit bins (mid_vintage_exit_carry)
+    #     derates ITS OWN dated bin over that bin's capacity, keyed by the
+    #     unit's EIA retirement year-month (Bruce Mansfield 6094's unit-3
+    #     windows had left its bin 0.639 available);
+    # (c) one full-year window for a unit its own CAMPD id files dark every hour
+    #     of the year while the year's vintage carries it and retires it that
+    #     year or the next (Mansfield 1-2, Sammis 1-2, 2019).
+    # Selects '-rederive-peakerkeep-exitfix-unitfuel-' (deriver
+    # --exit-cohort-repair on the PJM-NEXT-6 construction); meaningful only
+    # WITH unit_outage_rederive_peaker_windows (it REPLACES that file, rule 19)
+    # and RAISES there when not derived. ZERO free parameters: every field is
+    # EIA's or CAMPD's own, and the construction regenerates for any year with
+    # a vintage and a CAMPD filing (rule 13).
+    unit_outage_exit_cohort_repair: bool = False
     # SPP-85 (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]) NET-LOAD-MASK REPAIR
     # of the CAMPD unit-outage extracts. The deriver's revealed-availability
     # filter (scripts/lib/outage_detect.filter_revealed_outages) keys on an

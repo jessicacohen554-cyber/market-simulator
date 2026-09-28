@@ -383,6 +383,7 @@ def unit_outage_csv_for_iso(
     netload_mask_repair: bool = False,
     full_rederive: bool = False,
     rederive_peaker_windows: bool = False,
+    exit_cohort_repair: bool = False,
     split_remap: bool = False,
 ) -> Path:
     """Return the CAMPD unit-outage CSV path for an ISO.
@@ -501,6 +502,15 @@ def unit_outage_csv_for_iso(
     periods``). Meaningful only with ``full_rederive``; falls back to
     ``-rederive-unitfuel-`` when not derived.
 
+    ``exit_cohort_repair`` (``ScenarioConfig.unit_outage_exit_cohort_repair``,
+    GATED default False; PJM-NEXT-8) selects the
+    ``-rederive-peakerkeep-exitfix-unitfuel-`` companion: the
+    ``rederive_peaker_windows`` file re-derived with ``--exit-cohort-repair``
+    (vintage-matched unit capacity, the exit cohort's dark-all-year windows and
+    the ``exit_ym`` dated-bin key). Meaningful only on top of
+    ``rederive_peaker_windows``; RAISES when armed there and not derived, so the
+    mechanism never silently no-ops.
+
     ``netload_mask_repair`` (``ScenarioConfig.unit_outage_netload_mask_repair``,
     GATED default False; SPP-85) selects the ``-netloadmask-`` companion of the
     STANDARD extract: the SAME deriver at the committed extract's own recorded
@@ -583,6 +593,23 @@ def unit_outage_csv_for_iso(
         if alt.exists():
             return alt
     if membership_repair and not mixed_gas_routing and not per_unit_crosswalk:
+        if (
+            unit_fuel_routing
+            and full_rederive
+            and rederive_peaker_windows
+            and exit_cohort_repair
+        ):
+            # PJM-NEXT-8: the exit-cohort repair of the PJM-NEXT-6 file.
+            alt = base.with_name(
+                f"campd-unit-outages-rederive-peakerkeep-exitfix-unitfuel-"
+                f"{(iso or 'ERCOT').upper()}.csv"
+            )
+            if not alt.exists():
+                raise FileNotFoundError(
+                    f"unit_outage_exit_cohort_repair is on but {alt.name} is not "
+                    "derived (scripts/probes/_pjmnext8_build_exitfix_companion.py)"
+                )
+            return alt
         if unit_fuel_routing and full_rederive and rederive_peaker_windows:
             # PJM-NEXT-6: the F2 re-derive with the listed peakers' measured
             # dead-period windows kept. Falls through to '-rederive-unitfuel-'.
@@ -1516,9 +1543,19 @@ def unit_outage_derate_factors(
     precod_clip: bool = False,
     netload_mask_repair: bool = False,
     coal_extract_basis_share: bool = False,
+    exit_cohort_repair: bool = False,
+    dated_bin_shares: tuple | None = None,
     split_remap: bool = False,
-) -> dict[tuple[int, str], np.ndarray]:
+) -> dict[tuple, np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
+
+    ``exit_cohort_repair`` / ``dated_bin_shares`` (PJM-NEXT-8,
+    ``ScenarioConfig.unit_outage_exit_cohort_repair``): select the exit-fix
+    companion and, where a plant's bin is split into dated exit bins
+    (``mid_vintage_exit_carry``), route each row by its ``exit_ym`` to its own
+    dated bin under the key ``(plant_code, plant_group, ret_year, ret_month)``
+    with that bin's share of the plant as the denominator; see
+    :func:`_unit_outage_factors_from_events`.
 
     Built from the ISO's unit-level outage extract (ERCOT's
     :data:`UNIT_OUTAGE_CSV` ``campd-unit-outages.csv``, or
@@ -1554,6 +1591,7 @@ def unit_outage_derate_factors(
         netload_mask_repair=netload_mask_repair,
         full_rederive=full_rederive,
         rederive_peaker_windows=rederive_peaker_windows,
+        exit_cohort_repair=exit_cohort_repair,
         split_remap=split_remap,
     )
     if split_remap or (
@@ -1599,7 +1637,18 @@ def unit_outage_derate_factors(
         ),
         mid_vintage_exit_carry=mid_vintage_exit_carry,
         lp_bin_capacity=lp_bin_capacity,
+        dated_bin_shares=dated_bin_shares if exit_cohort_repair else None,
     )
+
+
+def _parse_exit_ym(value: object) -> tuple[int, int] | None:
+    """Parse an extract ``exit_ym`` cell (``"YYYY-MM"``) or return ``None``."""
+    if value is None or (isinstance(value, float) and np.isnan(value)):
+        return None
+    text = str(value).strip()
+    if len(text) != 7 or text[4] != "-":
+        return None
+    return int(text[:4]), int(text[5:])
 
 
 def _fleet_status_index(iso: str) -> dict[int, dict[str, str]] | None:
@@ -1711,8 +1760,20 @@ def _unit_outage_factors_from_events(
     mid_vintage_exit_carry: bool = False,
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
     extract_basis_groups: tuple[str, ...] = _CC_NAMEPLATE_BASIS_GROUPS,
-) -> dict[tuple[int, str], np.ndarray]:
+    dated_bin_shares: tuple | None = None,
+) -> dict[tuple, np.ndarray]:
     """Accumulate unit-outage event rows into per-bin availability factors.
+
+    ``dated_bin_shares`` (PJM-NEXT-8, off when ``None``) is
+    ``(((plant_code, group), ((ret_year, ret_month, share), ...)), ...)``: the
+    capacity share of each dated exit bin a plant's ``(plant_code, group)`` bin
+    is split into. A row whose ``exit_ym`` names one of them derates THAT bin,
+    keyed ``(plant_code, group, ret_year, ret_month)``, over the bin's own
+    capacity (``denom x share``) — not the whole plant's, which diluted a
+    unit's outage across bins it is not in (Bruce Mansfield 6094, 2019). A row
+    without a dated match at a split plant derates the undated remainder over
+    ``denom x (1 - sum(shares))``; where no undated remainder exists it keeps
+    the whole-plant key and denominator (the incumbent behaviour).
 
     Shared core of :func:`unit_outage_derate_factors` (>= 5-day full stops),
     :func:`unit_outage_short_derate_factors` (< 5-day baseload-coal full stops)
@@ -1909,6 +1970,14 @@ def _unit_outage_factors_from_events(
             else _st_basis_pairmap(df, cap, iso, cc_steam_part_reclass)
         )
     has_derate = "derate_factor" in df.columns
+    dated: dict[tuple[int, str], dict[tuple[int, int], float]] | None = (
+        {
+            (int(k[0]), str(k[1])): {(int(a), int(b)): float(c) for a, b, c in v}
+            for k, v in dated_bin_shares
+        }
+        if dated_bin_shares is not None and "exit_ym" in df.columns
+        else None
+    )
     # Checked once per frame: an extract re-derived with --hour-grain states the
     # detected window in hours, otherwise the day-granular reconstruction stands
     # (caiso-183; see :func:`unit_outage_event_window`).
@@ -1964,6 +2033,7 @@ def _unit_outage_factors_from_events(
         # (st_capacity_basis, rule 19). A bin the index does not carry keeps
         # ``cap[tgt]``.
         denom = cap[tgt]
+        key: tuple = tgt
         if extract_basis is not None and tgt[1] in extract_basis_groups:
             ebasis = extract_basis.get((int(r.facility_id), str(r.plant_group)))
             if ebasis is not None:
@@ -1978,13 +2048,24 @@ def _unit_outage_factors_from_events(
                     denom = float(row_pc)
                 elif group_basis > 0.0:
                     denom = group_basis
+        if dated is not None and tgt in dated:
+            # PJM-NEXT-8: route to the unit's own dated exit bin.
+            ym = _parse_exit_ym(getattr(r, "exit_ym", None))
+            shares = dated[tgt]
+            if ym is not None and ym in shares:
+                key = (tgt[0], tgt[1], ym[0], ym[1])
+                denom = denom * shares[ym]
+            else:
+                rest = 1.0 - sum(shares.values())
+                if rest > 1e-9:
+                    denom = denom * rest
         if per_unit_clip:
             # Hold this unit's removed MW apart from the bin so it can be capped
             # at the unit's own capacity below. ``ucap`` is the same value the
             # unclipped path divides by ``denom``, so the two paths differ ONLY
             # where a unit's own rows overlap — the boundary-day double-count.
             slot = per_unit.setdefault(
-                (tgt, str(r.unit_id)), [np.zeros(hours), 0.0, denom]
+                (key, str(r.unit_id)), [np.zeros(hours), 0.0, denom]
             )
             slot[0][mask] += removed_frac * float(ucap)
             # A unit is at most fully out. Rows for one unit can differ in
@@ -1995,9 +2076,9 @@ def _unit_outage_factors_from_events(
             # legitimate single window.
             slot[1] = max(slot[1], float(ucap))
             slot[2] = denom
-            sums.setdefault(tgt, np.zeros(hours))
+            sums.setdefault(key, np.zeros(hours))
             continue
-        arr = sums.setdefault(tgt, np.zeros(hours))
+        arr = sums.setdefault(key, np.zeros(hours))
         arr[mask] += removed_frac * float(ucap) / denom
     for (tgt, _uid), (removed_mw, unit_cap, denom) in per_unit.items():
         if unit_cap <= 0.0:

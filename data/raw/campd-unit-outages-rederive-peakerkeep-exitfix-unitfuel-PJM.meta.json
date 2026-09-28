@@ -1,0 +1,61 @@
+{
+  "artifact": "campd-unit-outages-rederive-peakerkeep-exitfix-unitfuel-PJM.csv",
+  "artifact_rows": 14113,
+  "artifact_sha256": "02d565cd382fc69692b7c04ca38985b21b5e66a7f229d44548145bd30f0e40ff",
+  "derive_invocation": {
+    "exit_cohort_repair": true,
+    "fullstop_override_cf": 0.02,
+    "fullstop_override_days": 5,
+    "high_load_pctl": 0.85,
+    "iso": "PJM",
+    "keep_listed_peaker_dead_periods": true,
+    "merit_order_guard": false,
+    "min_inmerit_hours": 24,
+    "min_outage_days": 5.0,
+    "mixed_gas_routing": false,
+    "no_inmerit_filter": false,
+    "partial_windows": false,
+    "per_unit_crosswalk": false,
+    "short_windows": false,
+    "years": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "deriver": "scripts/data/derive_campd_unit_outages.py",
+  "observed_years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "pjm_next8_construction": {
+    "builder": "scripts/probes/_pjmnext8_build_exitfix_companion.py",
+    "control": "same construction without the switch reproduces campd-unit-outages-rederive-peakerkeep-unitfuel-PJM.csv sha256 5171a5fb37bbd2a535a7f8cbde5ae06d735186d520a4620fcfe84f9f1e8d1ae9",
+    "deriver_invocation": "derive_campd_unit_outages.py --iso PJM --years 2019..2025 --membership-vintage-union --keep-listed-peaker-dead-periods --exit-cohort-repair",
+    "post_step": "scripts/data/build_outage_unit_fuel_routing.build_companion",
+    "selected_by": "ScenarioConfig.unit_outage_exit_cohort_repair (on top of unit_outage_rederive_peaker_windows)",
+    "session": "PJM-NEXT-8 card 2, 2026-09-28 (owner card 'Build + solve')",
+    "span_rows": "2019-2025 from the HEAD re-derive; out-of-span rows carried verbatim from campd-unit-outages-memberrepair-PJM.csv, placed first"
+  },
+  "sidecar_schema_version": 1,
+  "windows_by_start_year": {
+    "2018": 1227,
+    "2019": 1945,
+    "2020": 1747,
+    "2021": 2029,
+    "2022": 1783,
+    "2023": 1710,
+    "2024": 1671,
+    "2025": 1622,
+    "2026": 379
+  }
+}

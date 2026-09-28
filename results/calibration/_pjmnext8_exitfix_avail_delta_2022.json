@@ -1,0 +1,37 @@
+{
+ "year": 2022,
+ "by_class_twh": {
+  "COAL_BIT": -0.6414981321910308,
+  "COAL_PRB": -0.03704532000000006
+ },
+ "rows": [
+  {
+   "plant": "2866",
+   "class": "COAL_BIT",
+   "off_twh": 7.335545857610736,
+   "delta_twh": -0.4926090926174456,
+   "model_above_repaired_twh": 0.10271474164255741
+  },
+  {
+   "plant": "3122",
+   "class": "COAL_BIT",
+   "off_twh": 5.239242514234604,
+   "delta_twh": -0.1547388835735852,
+   "model_above_repaired_twh": 0.04486581432642574
+  },
+  {
+   "plant": "3797",
+   "class": "COAL_BIT",
+   "off_twh": 2.17279404,
+   "delta_twh": 0.005849844000000041,
+   "model_above_repaired_twh": 0.17409468530966465
+  },
+  {
+   "plant": "884",
+   "class": "COAL_PRB",
+   "off_twh": 0.70498212,
+   "delta_twh": -0.03704532000000006,
+   "model_above_repaired_twh": 0.024914463287319732
+  }
+ ]
+}
