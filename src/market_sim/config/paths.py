@@ -232,6 +232,9 @@ EIA_930_DIR: Path = RAW_DATA_DIR / "eia-930"
 # (PUDL ``out_ferc714__hourly_planning_area_demand``). The measured substitute
 # for an NWPP pool member whose EIA-930 demand is missing (lane NWPP-NEXT).
 FERC_714_DIR: Path = RAW_DATA_DIR / "ferc-714"
+#: Southern Company Energy Auction clearing prices (southerngeneration.com/auctionpub),
+#: REPORTED-ONLY (owner ruling 2026-09-28, lane soco-84; see its README).
+SOCO_ENERGY_AUCTION_DIR: Path = RAW_DATA_DIR / "soco-energy-auction"
 ZONE_DEMAND_DIR: Path = RAW_DATA_DIR / "zone-specific-demand"
 # PJM Day-Ahead energy market offers from DataMiner2 (energy_market_offers feed).
 # Monthly raw parquets: pjm_energy_offers_YYYY_MM.parquet.  Files are gitignored

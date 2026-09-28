@@ -693,6 +693,10 @@ def system_lambda_block(iso: str, run_id: str) -> dict | None:
             "(pMon) weighted by zone demand (dMon), hour-weighted over months"
         ),
         "rows": rows,
+        # REPORTED-ONLY (owner ruling 2026-09-28, soco-84): the operator's own
+        # hour-ahead energy-auction clearing price vs the lambda in the SAME
+        # cleared hours. Display only; touches no verdict.
+        "energy_auction": ref.get("energy_auction"),
     }
 
 
