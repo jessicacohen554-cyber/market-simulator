@@ -2200,6 +2200,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SHARED field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline).
     "coal_fuel_inventory_take_floor",
+    # NWPP-NEXT-8 (2026-09-28): MONTHLY cumulative grain of the per-yard coal
+    # pile identity (default off). Off, the yard rows keep their one annual
+    # column, so the LP is byte-identical. SHARED field -- very end, per
+    # HOUSE-3. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "coal_fuel_inventory_monthly_pile",
     # NYISO-NEXT-6 (2026-09-27): Long Island posted-limit sub-clip (default
     # off). Byte-identical off by construction: its one applier,
     # data.nyiso_seam_envelope.nyiso_li_posted_limit_cap, is reached only inside
@@ -3013,6 +3019,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
     "coal_fuel_inventory_take_floor": "False",
+    # Added by NWPP-NEXT-8 WITH the field (the nyiso-119 discipline).
+    "coal_fuel_inventory_monthly_pile": "False",
     # Added by NYISO-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nyiso_li_seam_posted_limit_cap": "False",
     "nyiso_ne_ac_node": "False",
@@ -12481,6 +12489,24 @@ class ScenarioConfig:
     # price. See data/coal_fuel_inventory.py:build_coal_take_floor and
     # coal_take_shortfall_price.
     coal_fuel_inventory_take_floor: bool = False
+    # MONTHLY PILE GRAIN of the per-yard coal identity (NWPP-NEXT-8, GATED
+    # default off, backcast-only, ZERO free parameters). Owner decision cards
+    # 2026-09-28 (reopening Q2 "annual" on the NEXT-8 seasonal census): the
+    # coal_fuel_inventory_plant_grain yard row becomes 12 CUMULATIVE rows, one
+    # per month-end m, bounding the yard's own pile on both sides:
+    #   max(0, S_dec + m/12 * C - S_max) * hc
+    #       <= sum_{g at yard, t <= end of m} HR[g] * P[g, t] + shortfall
+    #       <= (S_dec + m/12 * rate) * hc
+    # i.e. the pile never goes negative (ceiling) and never overflows the most
+    # it has ever held (floor), with receipts FLAT ratable within the year
+    # (owner card: the standard take-or-pay delivery form; no Y-1 timing is
+    # carried into Y). Month 12 is EXACTLY today's annual ceiling and take
+    # floor, so it is the same identity at a finer grain (rule 19), never a
+    # second mechanism. The soft floor's per-hour shortfall column enters every
+    # later cumulative row, so a missed take is paid once. Requires
+    # coal_fuel_inventory_take_floor. See
+    # data/coal_fuel_inventory.py:build_coal_monthly_pile.
+    coal_fuel_inventory_monthly_pile: bool = False
 
     # Commitment-floor WINDOW ranked on NET load instead of system load
     # (SPP-66, owner ruling "Shared gate" 2026-09-20; default off, so every
@@ -23606,6 +23632,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_fuel_inventory": 1,
     "coal_fuel_inventory_plant_grain": 1,
     "coal_fuel_inventory_take_floor": 1,
+    "coal_fuel_inventory_monthly_pile": 1,
     "commitment_floor_window_netload": 1,
     "neiso_winter_fuel_start_fill_bbl": 1,
     "neiso_net_icr_requirement": 1,

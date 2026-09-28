@@ -3783,3 +3783,5 @@ results/calibration/miso280_arm_*/
 # Leg provenance (rule 33(d), provenance only): arm 2019 d667f4a8a3caf105129a6a4240543dc170b2a347; LR-only diagnostic 2019 5cb237e6c5b1f1b6157637217e873c119fd1db4c (never promotable).
 results/calibration/r_ercot13_arm_2019/
 results/calibration/r_ercot13_lr_2019/
+# NWPP-NEXT-8 per-year shard legs: local only, composed into nwppnext8mp_span (rule 32(d)); leg SHAs in the RESULT doc.
+results/calibration/nwppnext8mp_20*/
