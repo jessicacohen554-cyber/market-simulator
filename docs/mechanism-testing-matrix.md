@@ -18022,6 +18022,16 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**SPP-100 (2026-09-28, CHP STEAM-LEVEL SWAP SCOPED TO METERED NON-CYCLERS — new field `chp_steam_floor_conduct_scope`,
+`docs/handoffs/RESULT-spp-100-chp-conduct-scope-2026-09-28.md`, run `2026-09-28-spp-100-chp-scope`; cell O, awaiting the owner ruling).**
+- Off-queue: the named re-open route of the R cell `chp_steam_following` (owner, 2026-09-24). The swap applies only where the
+  host's pooled on-frequency is above 0.5 (D-4's own conduct bar). SPP: Eastman / Black Hawk in, Lake Road 2098 out.
+- **Do not redo:** `chp_steam_duty_window` alone does not clear Lake Road (meter zero in > 50 % of its window hours, 6 of 7
+  years); its on-hours don't follow load.
+- **Effect:** CHP +0.8–1.2 TWh/yr, CC_REGULAR and coal each −0.2–0.4, price −$0.08–0.44. D-4 FAIL rows 8 → 7, no CHP row
+  fails. Train CALIBRATED unchanged; validation rows all move slightly better except C1 CC_REGULAR 2021/22 (−0.4 TWh
+  worse). Recommendation on the pre-registered rule: PROMOTE.
+
 **SPP-99 (2026-09-28, CEMS→EIA REMAP REACHES THE SOLVE — `campd_split_remap_companions` EXTENDED TO SPP, `docs/handoffs/RESULT-spp-99-remap-rederive-2026-09-28.md`,
 run `2026-09-28-spp-99-remap-rederive`, **PROMOTED**; cell `campd_split_remap_companions` K).**
 - SPP-98's remap rows reach the solve only through re-derived artifacts. **Rule 19:** miso-280's mechanism was extended

@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-28-spp-100-chp-scope",
+  "label": "spp 100 chp scope",
+  "date": "2026-09-28",
+  "shorthand": "spp-100-chp-scope",
+  "definition": "SPP-100 2019: keeper + chp_steam_floor_p25 + chp_steam_floor_conduct_scope (CHP steam-level swap scoped to metered non-cyclers)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-28-spp-100-chp-scope.js",
+  "bundle": "results/calibration/spp100_arm_span"
+}
