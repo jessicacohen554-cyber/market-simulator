@@ -14845,3 +14845,25 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - 2024 / 2025 stay CALIBRATED (−8.8 / −9.4 %).
   - 2022 C3a −10.4 % FAIL is a scoring-basis effect (the keeper reads −10.6 % on the same basis).
 - **Record:** `docs/handoffs/RESULT-r-ercot-10-parish-fuel-scope-2026-09-28.md`.
+
+## R-ERCOT-11 — 2026-09-28 — W A Parish split repaired (EIA-860 capacity boundary + split-child measured ST heat rates, rule 14); PROMOTED `2026-09-28-r-11-parish-split` (owner card: "Promote (Recommended)"); ISO NOT-YET (2023 hold; 2024 now C3a −10.7 %)
+
+- **Phase 0 (zero LP):** the ruling's premise ("WAP1–4 in no year") was false. WAP1–4 were already in the fleet as split code 34702, outages already route them, and C1 `classFull` books Parish NG-ST to ST_GAS. The real defects:
+  - The split's capacity boundary moved 294 MW of coal into the gas row.
+  - The split children 34702/49392 missed their measured ST heat rate.
+- **Fix:**
+  - Bin sheet 3470 2443.0 → 2736.8 MW and 34702 1565.0 → 1255.3 MW (EIA-860 nameplate).
+  - `resolve_bin_heat_rates` parent fallback (`split_child_parent_codes`).
+  - Partial-outage extracts regenerate byte-identical.
+- **Solve:** 7 shards at `d6ffbda9`. G-DRIFT found every hunk INERT. Composed, and the partition is byte-equal.
+- **Result:**
+  - Parish gas now tracks EIA-923 NG-ST.
+  - 2019 CC_REGULAR clears; COAL_PRB narrows (2019 −8.84, 2020 −13.28).
+  - 2020 CC_REGULAR +8.03 tips to FAIL.
+  - 2022 C8 ST_GAS 30.3 % FAIL (denominator effect).
+  - **2024 CALIBRATED → NOT-YET:** C3a −10.7 %, from +57 MW net in 74 tight hours ($229 → $174). Named next object.
+  - 2025 CALIBRATED (−9.6 %).
+- **Rulings 2/3:**
+  - The 2019–22 SCED is behind ERCOT's API subscription key (401), so the lane stopped.
+  - The benchmark-vs-930 gap was diagnosed only: Frontera out-of-footprint 2019–22, hydro, backfill double counts, and a CHP residual.
+- **Record:** `docs/handoffs/RESULT-r-ercot-11-parish-split-2026-09-28.md`.
