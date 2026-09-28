@@ -19,6 +19,7 @@ from market_sim.config.constants import (
     CC_ECON_HR_OVERRIDE_DEFAULT,
     CC_PEAK_HR_OVERRIDE_DEFAULT,
     CHP_BTM_PCT_BY_SECTOR,
+    CHP_STEAM_ALLHOURS_MIN_ON_FRAC,
     GAS_ST_ECON_HR_OVERRIDE_DEFAULT,
     GAS_ST_PEAK_HR_OVERRIDE_DEFAULT,
     HOURS_PER_YEAR,
@@ -945,6 +946,26 @@ def bins_to_fleet(
                     bool(getattr(config, "campd_per_unit_attribution", False)),
                     bool(getattr(config, "campd_outage_merit_order_guard", False)),
                 ).get((plant_code, group))
+                # CONDUCT SCOPE (chp_steam_floor_conduct_scope, SPP-100): a
+                # METERED host whose pooled on-frequency does not exceed D-4's
+                # own conduct bar keeps its p2 floor — an all-hours level floor
+                # on a plant metered off most hours is the rule-17 defect D-4
+                # convicts (SPP-75, Lake Road 2098). CEMS-invisible rows are
+                # absent from the duty map and keep the swap (no meter, no
+                # verdict). Eligibility of the ONE swap, not a second floor.
+                if _level is not None and getattr(
+                    config, "chp_steam_floor_conduct_scope", False
+                ):
+                    _scope = thermal_tranche_chp_steam_duty(
+                        getattr(config, "iso", "ERCOT") or "ERCOT",
+                        bool(getattr(config, "campd_per_unit_attribution", False)),
+                        bool(getattr(config, "campd_outage_merit_order_guard", False)),
+                    ).get((plant_code, group))
+                    if (
+                        _scope is not None
+                        and _scope[0] <= CHP_STEAM_ALLHOURS_MIN_ON_FRAC
+                    ):
+                        _level = None
                 if _level is not None and _level > (pmin_cf or 0.0):
                     pmin_cf = _level
                     # DUTY WINDOW (chp_steam_duty_window, caiso-293): the level
