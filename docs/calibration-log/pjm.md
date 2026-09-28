@@ -6748,3 +6748,15 @@ recur. **PROMOTED**; `2026-09-27-pjm-next-5-shape` pruned. Card 2 (zero LP): the
 DA virtual layer — measured 2019–22 bids net to virtual demand +5.5/+15.1/+14.8/+6.8 TWh at actual DA prices, served by
 physical thermal in the LP; open structural question for the owner. Records: `docs/RESULT-pjm-next-6-2026-09-28.md`,
 `docs/FINDING-pjm-next-6-card2-energy-balance-2026-09-28.md`.
+
+## PJM-NEXT-7 — 2026-09-28 — DA virtual position settled financially (PROMOTED on structure)
+
+Run `2026-09-28-pjm-next-7-virtual` (bundle `pjmnext7_vs_span`, one shard per year 2019–2025 at `f2850356`, composed
+at zero LP; control = keeper `2026-09-28-pjm-next-6-f2` committed bundle, G-DRIFT all INERT). Owner rulings "settle
+financially" → design A′ (P0 = DA stage keeps the virtual layer; scored P1 zeroes it; `pjm_da_virtual_settle_financial`,
+zero DOF). Training span CALIBRATED → NOT-YET (C1 CC_REGULAR 2023 +8.40 vs ±8.00); run-level failures 7 → 9 (clears
+COAL_BIT 2022; new CT_PEAKER 2021 −9.57, CC_REGULAR 2023, C3a 2022 −11.5 %). Zero-LP envelope predicted each within
+~1 TWh. **PROMOTED on structure** (owner card); `2026-09-28-pjm-next-6-f2` pruned. Card 3 phase 0 (zero LP): 2019 coal
+over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phantom, Chalk Point / Mansfield / Sammis);
+2021 has no measured operand. Records: `docs/RESULT-pjm-next-7-2026-09-28.md`,
+`docs/FINDING-pjm-next-7-coal-phase0-2026-09-28.md`.

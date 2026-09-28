@@ -1124,6 +1124,7 @@ def load_demand(
     nwpp_grid_carried_wind_served: bool = False,
     nwpp_demand_plant_basis: bool = False,
     demand_balance_screen: bool = False,
+    caiso_tac_shares_standard_time: bool = False,
 ) -> np.ndarray:
     """Load hourly ISO demand and allocate it across zones.
 
@@ -1224,6 +1225,10 @@ def load_demand(
             :func:`_screen_demand_balance`). Applied to the frame-sourced
             series only, never to the demand-profiles fallback. Default
             ``False`` is byte-identical.
+        caiso_tac_shares_standard_time: CAISO only -- split the system total
+            with TAC shares placed on the fixed-PST clock the total rides
+            (R-CAISO-11; :func:`load_zonal_shares` ``caiso_standard_time``).
+            Default ``False`` is byte-identical.
 
     Returns:
         A ``(n_zones, HOURS_PER_YEAR)`` array of zonal demand in MW, ordered
@@ -1342,7 +1347,15 @@ def load_demand(
     # hour, so the rest of the math is identical.
     # Resolved through the package namespace so tests patching
     # ``market_sim.data.eia_loader.load_zonal_shares`` keep intercepting it.
-    zonal_shares = _pkg_ns().load_zonal_shares(iso, year, iso_config.zone_names)
+    # R-CAISO-11: the TAC shares re-parsed on the fixed-PST clock the system
+    # total rides. Passed only when armed, so the historical 3-argument call
+    # (and every test patch intercepting it) is unchanged when off.
+    if caiso_tac_shares_standard_time and iso == "CAISO":
+        zonal_shares = _pkg_ns().load_zonal_shares(
+            iso, year, iso_config.zone_names, caiso_standard_time=True
+        )
+    else:
+        zonal_shares = _pkg_ns().load_zonal_shares(iso, year, iso_config.zone_names)
     if zonal_shares is not None:
         weights = zonal_shares
     else:

@@ -200,8 +200,18 @@ def parse_ercot_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
     return _hourly_shares_from_groups(mzone, hoy_long, mw, zone_names)
 
 
-def parse_caiso_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
+def parse_caiso_shares(
+    year: int, zone_names: list[str], *, standard_time: bool = False
+) -> np.ndarray | None:
     """Parse CAISO TAC-area CSV -> ``(n_zones, HOURS_PER_YEAR)`` shares.
+
+    ``standard_time`` (``ScenarioConfig.caiso_tac_shares_standard_time``,
+    R-CAISO-11) places each UTC ``interval_start_gmt`` on the model's
+    fixed-PST (UTC-8) hour-of-year clock -- the clock the EIA-930 CISO system
+    total these shares multiply rides. The default (False) keeps the historical
+    prevailing-time (DST-following) placement, which lands every DST-month
+    share one hour LATE against that total (rule 14 source-clock defect;
+    docs/handoffs/r-caiso-11/RESULT-r-caiso-11-2026-09-28.md sec 4).
 
     Reads ``data/raw/zone-specific-demand/CAISO/CAISO_tac_load_hourly_{year}.csv``
     (upload U4: OASIS SLD_FCST with market_run_id=ACTUAL), maps the four TAC
@@ -219,7 +229,7 @@ def parse_caiso_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
     df = df.drop_duplicates(subset=["tac_area", "interval_start_gmt"])
     ts = (
         pd.DatetimeIndex(df["interval_start_gmt"])
-        .tz_convert("America/Los_Angeles")
+        .tz_convert("Etc/GMT+8" if standard_time else "America/Los_Angeles")
         .tz_localize(None)
     )
     keep = (ts.year == year) & ~((ts.month == 2) & (ts.day == 29))
