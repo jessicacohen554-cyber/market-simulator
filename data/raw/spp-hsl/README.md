@@ -25,7 +25,7 @@ manifest row's stated manual fallback, taken.
 
 | Metric | Years | Published or derived |
 |---|---|---|
-| `avg_hourly_curtailment_mw` | 2019, 2022, 2023, 2024, 2025 | **published** |
+| `avg_hourly_curtailment_mw` | 2019, 2020, 2021, 2022, 2023, 2024, 2025 | **published** (2020 / 2021 added by SPP-94 from the 2022 / 2021 editions) |
 | `wind_generation_gwh` | 2024, 2025 | **published** (caveated — see below) |
 | `wind_nameplate_mw` | 2023, 2024, 2025 | **published** |
 | `curtailed_energy_gwh` | 2019, 2022, 2023, 2024, 2025 | derived: MW x 8760 / 1000 |
@@ -36,6 +36,8 @@ The published series, so it is readable without opening the CSV:
 | Year | Avg hourly curtailment | Basis |
 |---|---|---|
 | 2019 | 137 MW | wind |
+| 2020 | 244 MW | wind (ASOM 2022 p. 53) |
+| 2021 | 725 MW | wind (ASOM 2021 p. 60; the sentence's "MWh" is the figure axis's average-hourly label — its 2019 value 136 is this table's 137) |
 | 2022 | 1,260 MW | wind |
 | 2023 | 1,097 MW | wind |
 | 2024 | 1,483 MW | wind |
