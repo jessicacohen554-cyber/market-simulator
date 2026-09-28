@@ -1843,3 +1843,36 @@ card; PRECOMMIT §7 held; 2026-09-27-soco81-coal-incremental-hr pruned per rule 
 its new availability, 2022-2025 identical to the keeper, unserved 0, C6/C8 PASS, D-diagnostics unchanged. 2021 Wansley 5.58 -> 0.91
 TWh, C4 coal 0.204 -> 0.145, COAL_BIT +0.3 -> -1.5pp; 2021 CC_REGULAR +2.3 -> +3.05pp FAIL (displaced coal lands on gas: the CC/ST split
 defect exposed); 2019 COAL_BIT -3.99 -> -4.1pp. NOT-YET, grade 5/4/1. Record: docs/handoffs/r-soco/RESULT-soco-82-2026-09-27.md.
+
+## soco-83 — 2026-09-28
+
+RUBRIC + INTAKE + ONE MECHANISM, PROMOTED. (1) Rubric v3.10 (owner ruling 2026-09-27 "Ledger as limitation", re-confirmed 2026-09-28):
+one scoped ledger row (SOCO, 2019, fuelmix, COAL_BIT), under-run only, downgrading, spends the single slot; re-scored all 11 registered
+runs x every per-year subset — only SOCO 2019 alone moved; rule-history §23. (2) FERC-714 Sch. 6 Southern Company system lambda
+2019-2025 intaken (data/raw/ferc-714, reported-only, status-page panel; owner ruling "Intake, reported-only"). (3) FINDING-soco-83 (zero
+LP): CC is economic against Southern's own lambda; ST boilers run out of merit (lambda below their cost in 60-88 % of synced hours,
+median $6-15/MWh, held near minimum load); neither offer is mis-priced; the 2021 CC_REGULAR row is the mirror of that conduct.
+
+OWNER RULINGS 2026-09-28 (decision cards, soco-83): "Build ST out-of-merit floor (Recommended)"; "Partition by plant (Recommended)";
+"Southern lambda < plant cost (Recommended)".
+
+RESULT (run 2026-09-28-soco83-st-oom-floor, seven year-isolated shards at 19d60fd6; PROMOTED on the owner's standing ruling, PRECOMMIT §7
+held on all five; 2026-09-27-soco82-perunitdark-regen pruned per rule 35): st_gas_mustrun_per_plant + _p25_level + _oom_level on Gaston /
+Yates / Watson at 179 / 120 / 190 MW (derive --condition lambda); they leave the campaign floor, Greene keeps it. 2021 C1 CC_REGULAR +3.05pp
+FAIL -> +2.7pp PASS; ST_GAS +1.3..+2.0 TWh every year; no row PASS->FAIL; C8 ST_GAS 30-51 % forced, GROUNDED; unserved 0.
+PHYSICALLY-CALIBRATED-WITH-CAVEATS (PRICE UNSCORED): 2020-2024 each clean on its own; 2019 = the ledgered COAL_BIT caveat; 2025 = C1
+skipped on the preliminary EIA-923 vintage. Weaknesses carried: ~21 % of floor energy in CEMS-offline hours; lambda < ST cost in 63-91 % of
+all hours. Record: docs/handoffs/r-soco/{FINDING,PRECOMMIT,RESULT}-soco-83-2026-09-28.md.
+
+OWNER RULINGS 2026-09-28 (decision cards, end of soco-83; routed to soco-84):
+- **Frontier: "Declare frontier (Recommended)"**, sequenced by the follow-up card **"Score first, then decide (Recommended)"**. soco-84 first lands
+  the lambda as SOCO's C3 benchmark and re-scores the keeper. If C3a passes or is ledgered, it declares frontier then. If C3a fails, calibration
+  continues on the price-level object and there is no declaration to withdraw.
+- **Price scoring: "Score C3a vs lambda"**, which supersedes the 2026-09-27 "Intake, reported-only" posture for C3a. Build a SOCO `actual_lmp`
+  block from `data/raw/ferc-714/soco_hourly_system_lambda_2019_2025.csv`. This takes SOCO out of the rubric v3.8 no-price class by
+  construction. Expect 2019-2020 C3a to read about +17-20 % (model above lambda) and 2021/2023-2025 within about 6-8 %.
+- **Energy Auction: "Yes, reported-only (Recommended)"**. Intake Southern Company's hour-ahead auction clearing prices
+  (southerngeneration.com/auctionpub/ClearingData, 2019-2025, 136-2,121 cleared h/yr) as a second reported-only line beside the lambda.
+  No gate change. Found by the soco-83 price search, which recorded the other sources as refused, blocked or not public: FERC-EQR index (gate
+  NO, SOCO-13), SEEM (login), Into Southern (not in EIA's ICE files), OATI OASIS (TLS/503), neighbouring-BA lambdas (would blend other
+  systems in).

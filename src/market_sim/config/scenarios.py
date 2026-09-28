@@ -480,6 +480,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # '-short-rederive-' companions through the same resolvers, so the off path
     # is byte-inert). Same commit as the field.
     "unit_outage_full_rederive",
+    # PJM-NEXT-6 card 1, the owner-ruled "Split" of the F2 re-derive (GATED
+    # default-off; selects '-rederive-peakerkeep-unitfuel-' through the same
+    # resolver, so the off path is byte-inert). Same commit as the field.
+    "unit_outage_rederive_peaker_windows",
     # miso-278 unit-fuel split of the thermal-tranche family (GATED default-off;
     # selects the four '-fuelsplit-' companions through
     # campd_bins.campd_fuel_split_selector, so the off path is byte-inert).
@@ -2352,6 +2356,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by PJM-NEXT-5 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_full_rederive": "False",
+    # Added by PJM-NEXT-6 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_rederive_peaker_windows": "False",
     # Added by miso-278 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_unit_fuel_split": "False",
@@ -16704,6 +16711,20 @@ class ScenarioConfig:
     # family where not derived).
     # docs/PRECOMMIT-pjm-next-5-card3a-f2-rederive-2026-09-27.md.
     unit_outage_full_rederive: bool = False
+    # PJM-NEXT-6 card 1 (owner ruling 2026-09-27, "Split"; rule 14
+    # [R-ACCURATE], rule 19 [R-ONE-MECH]) — the F2 re-derive with the listed
+    # gas-steam peakers' MEASURED full-dark dead-period windows KEPT. The F2
+    # file applies the ST_GAS_PEAKER_PLANTS unit skip, so Martins Creek, Chalk
+    # Point, Edge Moor, Joliet 29, Yorktown steam and Montour's gas unit lose
+    # every window, including spans where the unit is dark (CF < ST_GAS_CF_PEAK)
+    # for >= 5 days through the revealed high-load hours — an availability
+    # event, not economic idleness. The companion is the SAME HEAD derivation
+    # run with --keep-listed-peaker-dead-periods, then the same per-unit fuel
+    # routing; every other F2 correction is kept. Meaningful only WITH
+    # unit_outage_full_rederive (it REPLACES that file, rule 19); falls back to
+    # '-rederive-unitfuel-' where not derived. Zero free parameters.
+    # docs/PRECOMMIT-pjm-next-6-card1-f2-split-2026-09-27.md.
+    unit_outage_rederive_peaker_windows: bool = False
     # SPP-85 (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]) NET-LOAD-MASK REPAIR
     # of the CAMPD unit-outage extracts. The deriver's revealed-availability
     # filter (scripts/lib/outage_detect.filter_revealed_outages) keys on an

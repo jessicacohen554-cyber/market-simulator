@@ -6735,3 +6735,16 @@ Handoff premise corrected: 2020–2022 already read year-own tables. 2023–2025
 CC_REGULAR 2024 −9.33. 2019: COAL_BIT +13.98 → +25.84 (pre-registered against interest, 5× the predicted size),
 CC_REGULAR −0.58 PASS → −8.54 FAIL, C3a +10.7 % FAIL → +7.6 % PASS, C3b 0.125 → 0.099. The pre-2023 coal over-run is
 not a mid-curve-table defect. Card 2 (MD/VA hub gas) data-blocked. **PROMOTED** on the owner's structural-integrity ruling; `2026-09-26-pjm-next-3-unitfuel` pruned. Record: `docs/RESULT-pjm-next-4-2026-09-26.md`.
+
+## PJM-NEXT-6 — 2026-09-28 — F2 outage re-derive "Split" (PROMOTED); pre-2023 surplus = DA virtual layer
+
+Run `2026-09-28-pjm-next-6-f2` (bundle `pjmnext6_sp_span`, one shard per year 2019–2025 at `81dcf974`, composed at zero
+LP; control = keeper `2026-09-27-pjm-next-5-shape` committed bundle, G-DRIFT all INERT). Owner ruling "Split": the F2
+full HEAD outage re-derive with the listed ST_GAS peakers' measured full-dark dead-period windows kept
+(`unit_outage_rederive_peaker_windows`, zero DOF; companion control reproduces F2 byte-for-byte). 2023–2025 stay
+CALIBRATED; run-level failures 8 → 7: CC_REGULAR 2019 +11.10 → +6.11 (clears), 2020 +16.86 → +12.75, 2022 +13.45 →
++11.25; COAL_BIT 2019 +13.83 → +17.29; C3a 2020 +15.1 → +18.0 %; C3b 2022 0.236 → 0.229; F2's ST_GAS defect does not
+recur. **PROMOTED**; `2026-09-27-pjm-next-5-shape` pruned. Card 2 (zero LP): the pre-2023 joint CC+coal surplus is the
+DA virtual layer — measured 2019–22 bids net to virtual demand +5.5/+15.1/+14.8/+6.8 TWh at actual DA prices, served by
+physical thermal in the LP; open structural question for the owner. Records: `docs/RESULT-pjm-next-6-2026-09-28.md`,
+`docs/FINDING-pjm-next-6-card2-energy-balance-2026-09-28.md`.

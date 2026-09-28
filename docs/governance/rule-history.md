@@ -1489,10 +1489,40 @@ no determination moves; every registered run re-scores byte-identically. Rule 34
 amendment notes pointing at (f)(1) — a passing `git ls-tree` is necessary but not sufficient, and a
 RESULT doc names where the bytes are **on `main`**.
 
-## 23. Changes to this file
+## 23. Rubric v3.10 — one SCOPED ledger row past the C3c-only guard: SOCO 2019 COAL_BIT (owner, 2026-09-27)
+
+**Owner ruling, verbatim** (soco-82 decision card on 2019 COAL_BIT, recorded in
+`docs/calibration-log/soco.md`; implementation re-confirmed by the owner in session soco-83, 2026-09-28):
+
+> "Ledger as limitation"
+
+**Why a ledger, not a lever.** FINDING-soco-82 §3: Southern Company's own FERC-714 Part II Sch. 6
+system lambda sat below Barry's and Wansley's variable cost in 94 % / 85 % of their CEMS-synced 2019
+hours, even at measured incremental heat rate. Their fuel prices match their own EIA-923 receipts,
+SOCO carries no offer tuning, and replacement fuel is the wrong sign. The plants ran out of merit
+against the operator's own reported marginal cost; any offer lever reproducing that would be the
+fitted mechanism rule 1 `[R-STRUCT]` forbids.
+
+**What changed** (`scripts/calibration_verdict.py`, `SCOPED_LEDGER_ENTRIES` + `_apply_scoped_ledger`):
+exactly one key — `(SOCO, 2019, fuelmix, COAL_BIT)` — may move from FAIL to a ledgered CAVEAT
+(`ACCEPTED MODEL-CLASS LIMITATION`), only on a model **under-run**, only with governance PASS, applied
+after the C3c standing rule. It spends the single ledgered slot (budgets checked first, unchanged) and,
+unlike a v3.3 ledgered C3c, it **downgrades**: a run whose only blemish it is reads
+`PHYSICALLY-CALIBRATED-WITH-CAVEATS (PRICE UNSCORED)`. `LEDGERABLE_CRITERIA` is unchanged (C3c alone),
+so no attestation ledger entry can reach C1 anywhere. `RUBRIC_VERSION` becomes the string `"3.10"`
+(the float 3.10 equals 3.1).
+
+**Measured at amendment** over all 11 registered runs, full span and every single-year subset,
+against a pre-change scorer on `origin/main`: one determination moves — SOCO keeper
+`2026-09-27-soco82-perunitdark-regen` scored on 2019 alone, NOT-YET → PHYSICALLY-CALIBRATED-WITH-CAVEATS.
+Its full span stays NOT-YET (2021 CC_REGULAR). No other ISO's verdict changes in any field compared.
+Tests: `tests/scoring/test_calibration_verdict_scoped_ledger.py`. NO SOLVE RAN.
+
+## 24. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-28 | Added §23: **rubric v3.10**, one scoped ledger row (SOCO 2019 COAL_BIT, under-run only, downgrading, spends the single slot) past the v3.1 C3c-only guard (owner ruling verbatim in §23). One determination moves across all registered runs and per-year subsets (SOCO 2019 alone). "Changes to this file" renumbered §23 → §24 (no external reference cited §23). |
 | 2026-09-20 | Added §22: **rule 33 `[R-SHARD-ARCHIVE]` (d)/(f) — a shard branch is TRANSPORT, not STORAGE** (owner instruction, verbatim in §22). The five-step ordered-delete procedure is removed, along with both premises it rested on, each falsified by measurement in lane nwpp-42 on one day: (1) the environment deletes an unmerged shard branch when the **PARENT's** PR merges — `claude/nwpp-42-{arm-2023,arm-2024,mer-2025}` vanished on the lane PR's merge with none of their commits an ancestor of `main`, two holding an arm leg's per-plant dispatch layer and one the entire 2025 control; and (2) a session cannot delete a ref at all (HTTP 403 over nine refs, no MCP counterpart to `create_branch`), so the procedure was unperformable end to end. The lane's own "fix" — mirroring leg SHAs to PR-free refs — was strictly worse and is now banned by name, since those refs can never be cleared in-session. Replacement: what must survive lands on `main` inside the registered keeper bundle before the lane's PR merges; a shard's unique FINDING doc is still rescued; screen and control bundles stay disposable by design (rule 29(c) / rule 15 forbid them reaching `main` anyway). KEPT: rule 31 `[R-RETAIN]` untouched and still outranking; rule 34(a) "the bundle is pushed, always" untouched as the transport mechanism; clause (d)'s full-SHA discipline demoted from recovery route to **provenance**; rule 33 (a)/(b)/(c)/(e) unchanged. Rule 34 (d)/(e) annotated — a passing `git ls-tree` is necessary, not sufficient. Nothing scored moves. "Changes to this file" renumbered §22 → §23 (no external reference cited §22). |
 | 2026-09-16 | Added §21: **rule 29 `[R-SCREEN]`'s SCREEN-YEAR REGIME REMOVED** (owner instruction, verbatim in §21) — a new config goes straight to the full span; the one-year screen solve, the footprint-named screen year, the span's conditionality and the structural STOP gate are all gone as requirements. The ordinal and ID do **not** move (the §18 `[R-HOLDOUT]` discipline), because `[R-SCREEN]` is cited by name in `check_registry_payload_parity.py`, `keepers/README.md` and rules 15/31/32(b)/34(b): clause (b) (`G-DRIFT`, no control solves) and clause (c) (delete before merge) survive verbatim, and clause (0) survives as practice rather than gate. §19's *"a single-year shard is still correct for a rule-29 SCREEN"* carve-out is spent — a single-year shard is now one leg of rule 34 (c)'s per-year fan-out, pushing its full bundle. Rules 1/16/34 untouched. The trade is recorded rather than hidden: the screen saved ~2 of every 3 years on a dead arm (pjm-h6/h7/h8 each spent one), and dead arms are now paid for in full. Nothing scored moves. "Changes to this file" renumbered §21 → §22 (no external reference cited §21). |
 | 2026-09-12 | Added §20: **rule 35 `[R-PROMOTE]` is NEW** (owner instruction, verbatim in §20) — a keeper promotion DELETES the prior keeper's three stores in the promoting session, and the incoming keeper must carry every year the ISO has already run, held-out years included. This gives an owner and a deadline to a duty rule 15 `[R-DASHBOARD]` has required since 2026-09-05 but deferred to "the next registration": measured 2026-09-12, 47 registered runs against 7 keepers (33 superseded), 92 bundle dirs / 579 MB, and the parity gate RED on 5 of them. The two halves are one rule because the registry is the only mechanical record of which years an ISO has run, so deleting before enumerating can silently retire a held-out rung — quietly, since rule 30(a) renders a dangling stamp as unstamped. Rule 15's timing text edited in the same commit; rules 29/31/34 untouched (rule 31 outranks: the owner's promotion ruling IS its trigger (i)). Enforced by `audit_keepers` **E13** + `tests/scoring/test_audit_keepers_orphan_runs.py`, closing a structural blind spot — E1 sees the keeper's own stores, E12 the shard's live pointers, neither the ISO's registered SET. "Changes to this file" renumbered §20 → §21 (no external reference cited §20). |

@@ -1,0 +1,79 @@
+{
+ "2019": {
+  "miss_h": 16899,
+  "bridge_h": 7153,
+  "never_h": 9746,
+  "miss_twh_minload": 1.52,
+  "bridge_twh": 0.717,
+  "never_twh": 0.803,
+  "flattop_h": 0,
+  "plants": 20,
+  "bridge_share": 0.472
+ },
+ "2020": {
+  "miss_h": 17654,
+  "bridge_h": 8751,
+  "never_h": 8903,
+  "miss_twh_minload": 1.742,
+  "bridge_twh": 0.96,
+  "never_twh": 0.781,
+  "flattop_h": 279,
+  "plants": 20,
+  "bridge_share": 0.551
+ },
+ "2021": {
+  "miss_h": 40679,
+  "bridge_h": 16506,
+  "never_h": 24173,
+  "miss_twh_minload": 4.659,
+  "bridge_twh": 2.188,
+  "never_twh": 2.471,
+  "flattop_h": 278,
+  "plants": 20,
+  "bridge_share": 0.47
+ },
+ "2022": {
+  "miss_h": 46578,
+  "bridge_h": 20546,
+  "never_h": 26032,
+  "miss_twh_minload": 5.406,
+  "bridge_twh": 2.433,
+  "never_twh": 2.973,
+  "flattop_h": 74,
+  "plants": 20,
+  "bridge_share": 0.45
+ },
+ "2023": {
+  "miss_h": 33543,
+  "bridge_h": 13144,
+  "never_h": 20399,
+  "miss_twh_minload": 3.414,
+  "bridge_twh": 1.421,
+  "never_twh": 1.994,
+  "flattop_h": 411,
+  "plants": 21,
+  "bridge_share": 0.416
+ },
+ "2024": {
+  "miss_h": 30640,
+  "bridge_h": 12047,
+  "never_h": 18593,
+  "miss_twh_minload": 3.125,
+  "bridge_twh": 1.343,
+  "never_twh": 1.782,
+  "flattop_h": 327,
+  "plants": 20,
+  "bridge_share": 0.43
+ },
+ "2025": {
+  "miss_h": 35311,
+  "bridge_h": 14626,
+  "never_h": 20685,
+  "miss_twh_minload": 3.695,
+  "bridge_twh": 1.716,
+  "never_twh": 1.98,
+  "flattop_h": 390,
+  "plants": 20,
+  "bridge_share": 0.464
+ }
+}

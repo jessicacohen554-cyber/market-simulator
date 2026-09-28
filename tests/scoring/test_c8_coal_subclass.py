@@ -139,7 +139,9 @@ class TestScorerPerSubclass:
         assert recs["COAL_PRB"]["status"] == cv.PASS
 
     def test_rubric_version(self):
-        assert cv.RUBRIC_VERSION == 3.9
+        # v3.9 or later (v3.10 made the constant a string: 3.10 == 3.1 as a float).
+        major, minor = (int(x) for x in str(cv.RUBRIC_VERSION).split("."))
+        assert (major, minor) >= (3, 9)
 
 
 def _committed():
