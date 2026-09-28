@@ -843,7 +843,12 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
     # and resolve_coal_monthly_pile raise otherwise). Declared in NEXT-8, which
     # found the NEXT-7 promotion had left the take floor undeclared.
     ParityDeclaration(
-        fields=("coal_fuel_inventory_take_floor", "coal_fuel_inventory_monthly_pile"),
+        fields=(
+            "coal_fuel_inventory_take_floor",
+            "coal_fuel_inventory_monthly_pile",
+            # NWPP-NEXT-9: the pile's same-year receipt profile (same rows).
+            "coal_monthly_pile_measured_receipts",
+        ),
         disposition=PARAMETER_OF,
         parent="coal_fuel_inventory_plant_grain",
         why="lower bound (take floor) and month-end grain (monthly pile) of the "

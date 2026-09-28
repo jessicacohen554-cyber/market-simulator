@@ -3800,3 +3800,5 @@ results/calibration/nwppnext8mp_20*/
 #   2023 9792fadfb03be5bfb2431c291a8622cb5d82109a  2024 b80813cb67b6660a4ecdf5f842098693644da426
 #   2025 ee57f7c0e273d1c6582b952a5c5ff58a29fe4a7e
 results/calibration/soco85_20[12][0-9]/
+# NWPP-NEXT-9 per-year shard legs: local only, composed into nwppnext9mr_span (rule 32(d)); leg SHAs in the RESULT doc.
+results/calibration/nwppnext9mr_20*/

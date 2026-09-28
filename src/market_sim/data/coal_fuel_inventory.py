@@ -643,6 +643,7 @@ def build_coal_monthly_pile(
     stock_mmbtu: tuple[float, ...],
     floor_parts: dict[int, tuple[float, float]] | None,
     hours: int,
+    measured: tuple[np.ndarray, np.ndarray] | None = None,
 ) -> tuple[np.ndarray, np.ndarray | None, np.ndarray, CoalMonthlyPile]:
     """Split the per-yard annual pile identity into cumulative month-end rows.
 
@@ -679,6 +680,13 @@ def build_coal_monthly_pile(
         floor_parts: ``CoalTakeFloor.parts`` (``{row: (C*hc, (S_dec-S_max)*hc)}``),
             or ``None`` when no take floor is armed (ceiling only).
         hours: LP horizon.
+        measured: ``(cum_receipts, cum_contract)`` from
+            :func:`build_coal_measured_receipts` (NWPP-NEXT-9,
+            ``coal_monthly_pile_measured_receipts``), each ``(n_rows, 12)``
+            cumulative same-year MMBtu. A finite row replaces that yard's
+            ratable ``m/12`` receipts on the ceiling (all lots) and the floor
+            (contract lots); a NaN row keeps the ratable profile. ``None`` (the
+            default) leaves every row ratable, byte-identical to NEXT-8.
 
     Returns:
         ``(ceiling (n_rows, n_months), floor (n_rows, n_months) or None,
@@ -695,6 +703,19 @@ def build_coal_monthly_pile(
             f"stock_mmbtu has {stock.shape} entries for {n_rows} yard rows"
         )
     ceiling = stock[:, None] + frac[None, :] * (budget[:, 0] - stock)[:, None]
+    meas_r = meas_c = None
+    if measured is not None:
+        meas_r = np.asarray(measured[0], dtype=float)[:, :n_months]
+        meas_c = np.asarray(measured[1], dtype=float)[:, :n_months]
+        if meas_r.shape != (n_rows, n_months) or meas_c.shape != meas_r.shape:
+            raise ValueError(
+                f"measured receipts have {meas_r.shape} / {meas_c.shape} cells "
+                f"for {n_rows} yard rows x {n_months} months"
+            )
+        # A finite row is the yard's own same-year Page 5 record; NaN keeps
+        # the ratable profile (a missing input is never substituted).
+        has = np.isfinite(meas_r).all(axis=1)
+        ceiling[has] = stock[has, None] + meas_r[has]
     if floor_parts is None:
         prov = CoalMonthlyPile(n_rows, n_months, 0, 0)
         return ceiling, None, month_index, prov
@@ -716,13 +737,98 @@ def build_coal_monthly_pile(
         cap = np.full((n_rows, n_months), np.inf)
     floor = np.zeros((n_rows, n_months), dtype=float)
     for i, (c_mmbtu, head_mmbtu) in floor_parts.items():
-        floor[int(i)] = np.maximum(head_mmbtu + frac * c_mmbtu, 0.0)
+        take = frac * c_mmbtu
+        if meas_c is not None and np.isfinite(meas_c[int(i)]).all():
+            take = meas_c[int(i)]
+        floor[int(i)] = np.maximum(head_mmbtu + take, 0.0)
     n_ceil = int((floor > ceiling).sum())
     floor = np.minimum(floor, ceiling)
     n_cap = int((floor > cap).sum())
     floor = np.maximum(np.minimum(floor, cap), 0.0)
     prov = CoalMonthlyPile(n_rows, n_months, n_ceil, n_cap)
     return ceiling, floor, month_index, prov
+
+
+@dataclass(frozen=True)
+class CoalMeasuredReceipts:
+    """Provenance for one year's same-year measured pile receipts (NWPP-NEXT-9).
+
+    Attributes:
+        n_measured: Yard rows carrying their own same-year Page 5 record.
+        n_ratable: Yard rows kept on the ratable profile (no same-year row).
+        receipts_mmbtu: Sum of the measured rows' annual receipts, MMBtu.
+        contract_mmbtu: Sum of the measured rows' annual contract lots, MMBtu.
+    """
+
+    n_measured: int
+    n_ratable: int
+    receipts_mmbtu: float
+    contract_mmbtu: float
+
+
+def build_coal_measured_receipts(
+    fleet: FleetArrays,
+    year: int,
+    yard_keys: tuple[int, ...],
+    reference_dir: Path | None = None,
+) -> tuple[np.ndarray, np.ndarray, CoalMeasuredReceipts] | None:
+    """Cumulative same-year monthly coal receipts per yard row (NWPP-NEXT-9).
+
+    Owner decision card 2026-09-28 (``coal_monthly_pile_measured_receipts``).
+    The monthly pile (:func:`build_coal_monthly_pile`) spreads each yard's
+    receipts flat across the year at the prior-years rate, so a year whose
+    deliveries fall short — 2023 at PacifiCorp's Bridger, Hunter and
+    Huntington, where EIA-923 Page 5 receipts fell 18-53 % below 2022 with
+    December stocks at record lows — is modelled with coal the yard never
+    received. This returns the year's OWN receipts, month by month: every lot
+    (the ceiling's inflow) and the contract lots of :data:`TAKE_PURCHASE_TYPES`
+    (the floor's take), each at its own reported heat content.
+
+    A realised physical fuel-supply input from the same Page 5 table the F923
+    delivered-price overlay reads — a backcast overlay under rule 13
+    ``[R-MEASURED]``, like the pile itself backcast-only, never a forecast
+    methodology. Zero free parameters (rule 21). A yard with no same-year row
+    gets a NaN row (it keeps the ratable profile: a missing input is never
+    substituted with zero).
+
+    Returns:
+        ``(cum_receipts (n_rows, 12), cum_contract (n_rows, 12), provenance)``
+        in MMBtu, rows aligned with ``yard_keys``, or ``None`` when the year has
+        no curated receipts at all (every row stays ratable).
+    """
+    from market_sim.data.coal_receipts import load_coal_receipts
+
+    rec = load_coal_receipts([year])
+    if rec.empty:
+        return None
+    yards = coal_yard_groups(fleet, reference_dir=reference_dir)
+    rec = rec.assign(
+        _mmbtu=rec["quantity_tons"] * rec["heat_content_mmbtu_per_ton"],
+        _c=rec["purchase_type"].isin(TAKE_PURCHASE_TYPES),
+    )
+    n = len(yard_keys)
+    cum_r = np.full((n, 12), np.nan)
+    cum_c = np.full((n, 12), np.nan)
+    for i, key in enumerate(yard_keys):
+        ids = yards.get(int(key), {int(key)})
+        r = rec[rec["plant_id"].isin(ids)]
+        if r.empty:
+            continue
+        mo = r["month"].astype(int).to_numpy() - 1
+        allm = np.bincount(mo, weights=r["_mmbtu"].to_numpy(), minlength=12)[:12]
+        conm = np.bincount(
+            mo, weights=(r["_mmbtu"] * r["_c"]).to_numpy(), minlength=12
+        )[:12]
+        cum_r[i] = np.cumsum(allm)
+        cum_c[i] = np.cumsum(conm)
+    has = np.isfinite(cum_r).all(axis=1)
+    prov = CoalMeasuredReceipts(
+        n_measured=int(has.sum()),
+        n_ratable=int((~has).sum()),
+        receipts_mmbtu=float(cum_r[has, -1].sum()),
+        contract_mmbtu=float(cum_c[has, -1].sum()),
+    )
+    return cum_r, cum_c, prov
 
 
 def reconcile_floors_to_yard_budget(

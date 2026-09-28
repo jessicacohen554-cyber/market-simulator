@@ -2220,6 +2220,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # HOUSE-3. Registered IN THE SAME COMMIT as the field (the nyiso-119
     # discipline).
     "coal_fuel_inventory_monthly_pile",
+    # NWPP-NEXT-9 (2026-09-28): same-year MEASURED monthly receipts on the
+    # monthly pile rows (default off). Off, build_coal_monthly_pile keeps its
+    # flat ratable m/12 profile, so the LP is byte-identical. SHARED field --
+    # very end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "coal_monthly_pile_measured_receipts",
     # NYISO-NEXT-6 (2026-09-27): Long Island posted-limit sub-clip (default
     # off). Byte-identical off by construction: its one applier,
     # data.nyiso_seam_envelope.nyiso_li_posted_limit_cap, is reached only inside
@@ -3041,6 +3047,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "coal_fuel_inventory_take_floor": "False",
     # Added by NWPP-NEXT-8 WITH the field (the nyiso-119 discipline).
     "coal_fuel_inventory_monthly_pile": "False",
+    # Added by NWPP-NEXT-9 WITH the field (the nyiso-119 discipline).
+    "coal_monthly_pile_measured_receipts": "False",
     # Added by NYISO-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nyiso_li_seam_posted_limit_cap": "False",
     "nyiso_ne_ac_node": "False",
@@ -12527,6 +12535,26 @@ class ScenarioConfig:
     # coal_fuel_inventory_take_floor. See
     # data/coal_fuel_inventory.py:build_coal_monthly_pile.
     coal_fuel_inventory_monthly_pile: bool = False
+    # SAME-YEAR MEASURED RECEIPTS on the monthly pile rows (NWPP-NEXT-9, GATED
+    # default off, backcast-only like the pile itself, ZERO free parameters).
+    # Owner decision card 2026-09-28 ("Backcast receipts overlay"), on the
+    # NEXT-9 zero-LP census: 2023 was a PacifiCorp coal-SUPPLY shortfall year
+    # (EIA-923 Page 5 receipts Bridger 105.1 -> 86.6, Hunter 58.8 -> 39.2,
+    # Huntington 56.0 -> 26.5 TBtu; December stocks at record lows), which the
+    # prior-years ratable rate cannot see. Armed, a yard's cumulative month-end
+    # rows read the year's OWN Page 5 receipts instead of m/12 of the proxies:
+    #   max(0, (S_dec - S_max) * hc + cumC_Y(m))
+    #       <= sum_{g at yard, t <= end of m} HR[g] * P[g, t] + shortfall
+    #       <= S_dec * hc + cumR_Y(m)
+    # where R_Y is every lot received and C_Y the contract lots (purchase types
+    # C / NC / T), each at its own reported heat content. A realised physical
+    # fuel-supply input of the same table and kind as the F923 delivered-price
+    # overlay (rule 13 backcast overlay, never a forecast methodology). A yard
+    # with no same-year Page 5 row, and every yard in a year with no curated
+    # receipts file, keeps the ratable profile (a missing input is never
+    # substituted). Requires coal_fuel_inventory_monthly_pile. See
+    # data/coal_fuel_inventory.py:build_coal_measured_receipts.
+    coal_monthly_pile_measured_receipts: bool = False
 
     # Commitment-floor WINDOW ranked on NET load instead of system load
     # (SPP-66, owner ruling "Shared gate" 2026-09-20; default off, so every
@@ -23704,6 +23732,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_fuel_inventory_plant_grain": 1,
     "coal_fuel_inventory_take_floor": 1,
     "coal_fuel_inventory_monthly_pile": 1,
+    "coal_monthly_pile_measured_receipts": 1,
     "commitment_floor_window_netload": 1,
     "neiso_winter_fuel_start_fill_bbl": 1,
     "neiso_net_icr_requirement": 1,
