@@ -149,3 +149,12 @@ unbuilt (locked-test-tier years; rule 22 permits the intake, the `final`
 preparation session owns it). Whether any solve consumes a back-year file is
 the `ercot_load_resource_reserve_from_year` recipe gate (2023 in every
 keeper), untouched by the intake.
+
+`ercot_2019_as_up_mw.parquet` (built 2026-09-28, session R-ERCOT-13, same
+builder, `--year 2019`, no code change): 8,760/8,760 h covered by the
+posting-year 2019 + 2020 Load Resource Data files; `rrsufr_mw` mean 698 MW,
+min 387, max 1,024. The "locked-test tier" reason for leaving 2019 unbuilt
+lapsed with `[R-HOLDOUT]`'s removal (2026-09-09). Rebuilding 2020 in the same
+invocation reproduced the committed 2020 file's values exactly
+(`DataFrame.equals`), so the committed 2020 bytes were kept.
+sha256 `6e220631d6878c86c5f8fe9c8e386fd7bba2eadcf275d965afafbf7b99c1d965`.
