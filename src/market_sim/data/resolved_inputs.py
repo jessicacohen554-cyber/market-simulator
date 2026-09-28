@@ -320,7 +320,7 @@ def _thermal_tranche_block(config, iso: str) -> dict[str, Any]:
         comp: dict[str, Any] = {}
         for name in ("online_frac_by_year", "p25_level_mw", "oom_level_mw"):
             base = path.parent / f"thermal_tranches_{name}_{iso.upper()}.csv"
-            alt = _fuel_split_companion(base)
+            alt = _fuel_split_companion(base, fuel_split)
             used = alt if alt.exists() else base
             comp[name] = {
                 "path": used.name,

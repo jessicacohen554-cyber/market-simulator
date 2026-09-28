@@ -3732,3 +3732,5 @@ results/calibration/rcaiso9_A_20*/**
 
 # SPP-95 per-year shard legs (rule 32(d): kept out of main; composite spp94_arm_span is registered)
 results/calibration/spp94_arm_20*/
+# miso-279 per-year shard legs: parent-local only (rule 32(d)); provenance SHAs in docs/RESULT-miso279-stgas-span-coverage-2026-09-27.md
+results/calibration/miso279_arm_*/

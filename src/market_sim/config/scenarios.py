@@ -485,6 +485,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # campd_bins.campd_fuel_split_selector, so the off path is byte-inert).
     # Registered IN THE SAME COMMIT as the field.
     "campd_unit_fuel_split",
+    # miso-279 ST_GAS span coverage, a SUB-GATE of campd_unit_fuel_split
+    # (GATED default-off; selects the four '-fuelsplit-stcov-' companions
+    # through the same selector, so the off path is byte-inert). Registered IN
+    # THE SAME COMMIT as the field.
+    "campd_st_gas_span_coverage",
     # SPP-85 net-load-mask repair of the standard / short / partial CAMPD
     # extracts (GATED default-off; selects the '-netloadmask-' companions
     # through the same resolvers, so the off path is byte-inert). Same commit
@@ -2350,6 +2355,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-278 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_unit_fuel_split": "False",
+    # Added by miso-279 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "campd_st_gas_span_coverage": "False",
     # Added by SPP-85 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_netload_mask_repair": "False",
@@ -16551,6 +16559,29 @@ class ScenarioConfig:
     # carries the companions, every other ISO falls back to its incumbent.
     # docs/handoffs/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md.
     campd_unit_fuel_split: bool = False
+
+    # ST_GAS SPAN COVERAGE of the fuel-split tranche family (miso-279, GATED
+    # default off; a SUB-GATE of campd_unit_fuel_split, ignored without it;
+    # rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]). The tranche family is
+    # derived over a pooled 2023-2025 window, so an ST_GAS bin whose boilers
+    # ran only before it carries NO row and therefore no measured
+    # st_gas_mustrun_per_plant floor, however the real system committed it:
+    # Baxter Wilson 2050 unit 1, Teche 1400 unit 3 (whose CT unit 4 holds the
+    # plant's only row), Big Cajun 1 1464, Houma 1439, Rex Brown 2053. Armed,
+    # the four '-fuelsplit-stcov-' companions written by
+    # derive_thermal_tranches.py --st-gas-span-coverage are read: each is the
+    # '-fuelsplit-' companion's exact bytes plus ST_GAS rows derived by the
+    # SAME unit-routed estimator from each uncovered plant's own gas-steam
+    # CAMPD units over the backcast span 2019-2025 (the soco-70 coal-coverage
+    # construction, applied to gas steam). ZERO free parameters. Rule 23: the
+    # trigger is the span reaching CEMS years the pooled window never saw, a
+    # source-coverage change, never a residual. Rule 17: the new floors carry
+    # the incumbent ST_GAS floor's driver (own CEMS commitment conduct), window
+    # (own measured online_frac, top system-load hours) and forward story (the
+    # same derive over the forward year's CEMS). A plant that retired before a
+    # solve year is absent from that year's fleet, so its row is inert there.
+    # docs/FINDING-miso279-stgas-span-coverage-2026-09-27.md.
+    campd_st_gas_span_coverage: bool = False
 
     # ECONOMIC-LAY-UP GUARD on the per-unit CAMPD companions (nyiso-177,
     # GATED default off; PREREG-nyiso177-degradation-root-cause.md). Selects
