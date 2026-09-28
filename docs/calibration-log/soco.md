@@ -1863,3 +1863,16 @@ FAIL -> +2.7pp PASS; ST_GAS +1.3..+2.0 TWh every year; no row PASS->FAIL; C8 ST_
 PHYSICALLY-CALIBRATED-WITH-CAVEATS (PRICE UNSCORED): 2020-2024 each clean on its own; 2019 = the ledgered COAL_BIT caveat; 2025 = C1
 skipped on the preliminary EIA-923 vintage. Weaknesses carried: ~21 % of floor energy in CEMS-offline hours; lambda < ST cost in 63-91 % of
 all hours. Record: docs/handoffs/r-soco/{FINDING,PRECOMMIT,RESULT}-soco-83-2026-09-28.md.
+
+OWNER RULINGS 2026-09-28 (decision cards, end of soco-83; routed to soco-84):
+- **Frontier: "Declare frontier (Recommended)"**, sequenced by the follow-up card **"Score first, then decide (Recommended)"**. soco-84 first lands
+  the lambda as SOCO's C3 benchmark and re-scores the keeper. If C3a passes or is ledgered, it declares frontier then. If C3a fails, calibration
+  continues on the price-level object and there is no declaration to withdraw.
+- **Price scoring: "Score C3a vs lambda"**, which supersedes the 2026-09-27 "Intake, reported-only" posture for C3a. Build a SOCO `actual_lmp`
+  block from `data/raw/ferc-714/soco_hourly_system_lambda_2019_2025.csv`. This takes SOCO out of the rubric v3.8 no-price class by
+  construction. Expect 2019-2020 C3a to read about +17-20 % (model above lambda) and 2021/2023-2025 within about 6-8 %.
+- **Energy Auction: "Yes, reported-only (Recommended)"**. Intake Southern Company's hour-ahead auction clearing prices
+  (southerngeneration.com/auctionpub/ClearingData, 2019-2025, 136-2,121 cleared h/yr) as a second reported-only line beside the lambda.
+  No gate change. Found by the soco-83 price search, which recorded the other sources as refused, blocked or not public: FERC-EQR index (gate
+  NO, SOCO-13), SEEM (login), Into Southern (not in EIA's ICE files), OATI OASIS (TLS/503), neighbouring-BA lambdas (would blend other
+  systems in).
