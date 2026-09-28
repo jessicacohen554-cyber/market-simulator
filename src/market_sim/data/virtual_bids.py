@@ -469,3 +469,55 @@ def apply_virtual_bid_prices(
         fuel_prices[g, :] = np.asarray(row, dtype=float)[:hours]
         n += 1
     return n
+
+
+def settle_virtuals_financially(config, fleet_arrays):
+    """P1 fleet with the virtual pseudo-units' bounds zeroed, or ``None``.
+
+    ``ScenarioConfig.pjm_da_virtual_settle_financial`` (PJM-NEXT-7, owner
+    ruling 2026-09-28; ``docs/DESIGN-pjm-next-7-virtual-settlement-2026-09-28.md``).
+    A cleared PJM INC/DEC is liquidated in real time: RT physical generation
+    serves RT physical load. P0 — the model's commitment-discovery pass — is
+    the DA stage and keeps the virtual layer, so virtuals still shape the
+    scored pass through P0's run lengths (the startup-markup amortization);
+    P1 — scored against RT prices and RT-physical generation — clears with the
+    net virtual position removed: DEC rows' ``min_gen`` and INC rows'
+    ``availability`` are set to 0, so every virtual column is fixed at 0.
+
+    Returns a copy of ``fleet_arrays`` (the P0 arrays are never mutated), or
+    ``None`` when the flag is off, the parent layer is off, or the fleet holds
+    no virtual rows — the caller then keeps its fleet object unchanged, so the
+    flag-off path is byte-identical.
+    """
+    import dataclasses
+
+    if not (
+        getattr(config, "pjm_da_virtual_settle_financial", False)
+        and getattr(config, "pjm_da_virtual_bids", False)
+    ):
+        return None
+    groups = getattr(fleet_arrays, "plant_group", None)
+    if groups is None:
+        return None
+    groups = np.asarray(groups, dtype=object)
+    virt = (groups == VIRTUAL_DEC_GROUP) | (groups == VIRTUAL_INC_GROUP)
+    if not virt.any():
+        return None
+    availability = np.array(fleet_arrays.availability, dtype=float, copy=True)
+    availability[virt, :] = 0.0
+    min_gen = fleet_arrays.min_gen
+    if min_gen is None and bool((np.asarray(fleet_arrays.pmin)[virt] < 0.0).any()):
+        # A DEC row's lower bound would fall back to its negative pmin.
+        min_gen = np.broadcast_to(
+            np.asarray(fleet_arrays.pmin, dtype=float)[:, np.newaxis],
+            availability.shape,
+        )
+    if min_gen is not None:
+        min_gen = np.array(min_gen, dtype=float, copy=True)
+        min_gen[virt, :] = 0.0
+    logger.info(
+        "PJM DA virtual layer settled financially: %d virtual rows zeroed in P1 "
+        "(P0 = DA stage keeps them)",
+        int(virt.sum()),
+    )
+    return dataclasses.replace(fleet_arrays, availability=availability, min_gen=min_gen)
