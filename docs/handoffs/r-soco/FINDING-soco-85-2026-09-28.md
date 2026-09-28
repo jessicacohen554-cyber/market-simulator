@@ -115,3 +115,41 @@ not be committed (`docs/data-licensing.md` §5).
 ## 6. Retrievability
 
 No solve, no bundle. The probe and this doc land on `main` with the lane PR.
+
+## 7. Addendum — fuel-basis census (owner ruling "Zero-LP fuel-basis census", same session)
+
+**Data.** EIA-923 Page 5 (Fuel Receipts and Costs) 2019–2024, `FUEL_GROUP == "Natural Gas"`, `Balancing Authority
+Code == "SOCO"`, fetched keyless to scratch (`f923_<Y>.zip`, EIA archive). Not committed. MMBtu-weighted
+`FUEL_COST` vs the Henry Hub monthly mean of the same months:
+
+| year | contract share | contract ×HH | spot ×HH | all ×HH |
+|---|---:|---:|---:|---:|
+| 2019 | 0.17 | 1.04 | 1.14 | 1.12 |
+| 2020 | 0.19 | 0.96 | 1.21 | 1.16 |
+| 2021 | 0.21 | 1.03 | 1.09 | 1.08 |
+| 2022 | 0.31 | 1.22 | 1.13 | 1.16 |
+| 2023 | 0.30 | 1.20 | 1.25 | 1.23 |
+| 2024 | 0.26 | 1.23 | 1.30 | 1.28 |
+
+- 100 % of SOCO gas receipts are **firm** supply and **firm** delivery. **Spot is not cheaper than contract**, so
+  EIA-923 cannot supply a measured "replacement cost" below delivered cost. The premium over Henry Hub is transport
+  plus Southeast basis, and public data does not split the two.
+
+**Upper-bound greedy — every gas unit at the Henry Hub monthly mean** (`--arm hub`; not a candidate mechanism):
+
+| year | C3a keeper → bound | C3b keeper → bound | Δprice lw |
+|---|---|---|---:|
+| 2019 | +14.0 → **+7.2** | 0.179 → 0.119 | −1.84 |
+| 2020 | +15.6 → **+3.7** | 0.226 → **0.105** | −2.63 |
+| 2021 | −6.1 → −5.8 | 0.261 → **0.120** | +0.32 |
+| 2022 | −16.1 → **−25.1** | 0.391 → 0.361 | −6.89 |
+| 2023 | +1.8 → **−10.9** | 0.153 → 0.142 | −3.94 |
+| 2024 | −4.4 → **−18.8** | 0.271 → 0.241 | −4.24 |
+| 2025 | −1.9 → **−13.4** | 0.171 → 0.205 | −4.76 |
+
+C1: 2019 CT_PEAKER flips PASS → FAIL (+3.0 pp) and 2019 COAL_BIT worsens (−4.1 → −4.7 pp).
+
+**Verdict.** The hub reading fixes 2019–2020 and breaks 2022–2025. It is **not year-consistent**, the same signature
+as soco-84's coal-conduct counterfactual. The off-peak premium is not a single fuel-basis object. **No build is
+recommended.** The remaining explanation that is consistent across years is λ's own construction (incremental cost
+at the unit's actual loading, plus Southern's coal conduct), which public data does not identify further.

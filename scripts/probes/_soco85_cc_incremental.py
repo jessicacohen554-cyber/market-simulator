@@ -336,6 +336,16 @@ def _greedy(
     return out, ms[k, np.arange(cap.shape[1])]
 
 
+def hub_monthly(gas_csv: Path, year: int) -> np.ndarray:
+    """Hourly array of the Henry Hub calendar-day monthly mean (staircase over non-trading days)."""
+    d = pd.read_csv(gas_csv, parse_dates=["date"]).set_index("date").iloc[:, 0]
+    days = pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D")
+    days = days[~((days.month == 2) & (days.day == 29))]
+    v = d.reindex(d.index.union(days)).sort_index().ffill().reindex(days)
+    m = v.groupby(v.index.month).transform("mean")
+    return np.repeat(m.to_numpy(float), 24)[:T]
+
+
 def daily_factor(gas_csv: Path, year: int) -> np.ndarray:
     """Hourly within-month daily/monthly gas factor (mean-preserving per month).
 
@@ -376,6 +386,25 @@ def greedy(
         mc1 = mc0.copy()
         k, b, p = f["klass"][sel], band[sel], f["plant"][sel]
         fuelc = (f["hr"][:, None] * f["fuel"])[sel]
+        if arm == "hub":
+            # UPPER BOUND, not a mechanism: every gas unit re-priced from its
+            # EIA-923 delivered monthly level to the Henry Hub monthly mean
+            # (the replacement-commodity reading of Southern's lambda formula).
+            hh = hub_monthly(gas_csv, y)
+            gas = np.isin(
+                k, ("CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP")
+            )
+            fp = f["fuel"][sel][gas]
+            mon = np.searchsorted(
+                np.cumsum([31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31])[:-1] * 24,
+                np.arange(T),
+                side="right",
+            )
+            fm = np.stack([fp[:, mon == m].mean(axis=1) for m in range(12)], axis=1)[
+                :, mon
+            ]
+            scale = np.where(fm > 0, hh[None, :] / fm, 1.0)
+            mc1[gas] = mc0[gas] + (scale - 1.0) * fuelc[gas]
         if arm == "gasdaily":
             fac = daily_factor(gas_csv, y)
             gas = np.isin(
@@ -384,7 +413,7 @@ def greedy(
             mc1[gas] = mc0[gas] + (fac[None, :] - 1.0) * fuelc[gas]
         moved = ("econlo", "econhi") + (("committed",) if arm == "full" else ())
         for i in np.where((k == "CC_REGULAR") & np.isin(b, moved))[0]:
-            if arm == "gasdaily":
+            if arm in ("gasdaily", "hub"):
                 break
             r = rt.get(int(p[i]), {}).get(b[i])
             if r is not None:
@@ -468,7 +497,9 @@ def main() -> None:
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--basis", choices=("quad", "lin", "integ"), default="quad")
     ap.add_argument("--years", type=int, nargs="+", default=list(YEARS))
-    ap.add_argument("--arm", choices=("econ", "full", "gasdaily"), default="econ")
+    ap.add_argument(
+        "--arm", choices=("econ", "full", "gasdaily", "hub"), default="econ"
+    )
     ap.add_argument(
         "--gas-csv", type=Path, default=ROOT / "data/raw/gas-prices/henry_hub_daily.csv"
     )
