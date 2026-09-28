@@ -542,6 +542,10 @@ jobs:
           # SPP-67's test_spp67_year_own_curtailment_rate reads it through
           # renewables._spp_wind_reference_curtailment_rate, whose missing-file
           # branch returns None — 7 fast-tier reds, not input drift.
+          # soco-85 (2026-09-28) added the two SOCO paths soco-84's tests read:
+          # tests/scoring/test_soco_lambda_benchmark.py (FERC-714 Sch. 6 lambda,
+          # 2.7 MB) and tests/unit/data/test_soco_energy_auction.py (committed
+          # auction store, 4.7 MB) — 2 fast-tier reds on main since soco-84.
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             /*
@@ -598,6 +602,8 @@ jobs:
             /data/raw/ornl-eha/
             /data/raw/hilarri/
             /data/raw/coal-prices/
+            /data/raw/ferc-714/soco_hourly_system_lambda_2019_2025.csv
+            /data/raw/soco-energy-auction/
             /data/raw/oil-prices/
             /data/raw/policy/
             /data/raw/som-competitive-conduct/

@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-28-soco85-gas-daily-shape",
+  "label": "soco85 gas daily shape",
+  "date": "2026-09-28",
+  "shorthand": "soco85-gas-daily-shape",
+  "definition": "soco-85 2019: soco-83 keeper recipe + gas_daily_shape (Henry Hub within-month gas shape)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-09-28-soco85-gas-daily-shape.js",
+  "bundle": "results/calibration/soco85_span"
+}
