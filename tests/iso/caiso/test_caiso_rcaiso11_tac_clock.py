@@ -19,7 +19,12 @@ from market_sim.config.paths import RAW_DATA_DIR
 
 ZONES = ["NP15", "ZP26", "SP15_rest", "LA_BASIN", "SDGE"]
 YEAR = 2024
-RAW = RAW_DATA_DIR / "zone-specific-demand" / "CAISO" / f"CAISO_tac_load_hourly_{YEAR}.csv"
+RAW = (
+    RAW_DATA_DIR
+    / "zone-specific-demand"
+    / "CAISO"
+    / f"CAISO_tac_load_hourly_{YEAR}.csv"
+)
 
 
 class TestFlagRegistration(unittest.TestCase):
