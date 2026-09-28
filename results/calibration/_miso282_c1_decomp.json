@@ -1,0 +1,96 @@
+{
+ "keeper": "2026-09-28-miso-280-splitremap",
+ "rows": [
+  {
+   "year": 2019,
+   "c1_model": 8.415,
+   "c1_actual": 16.418,
+   "c1_resid": -8.003,
+   "no_unit": -0.575,
+   "south": -7.498,
+   "other": -0.525,
+   "south_oom_gap": -8.106,
+   "south_inmerit_gap": 1.133,
+   "south_price_effect_MM_minus_HM": 0.938,
+   "south_offer_effect_MM_minus_MC": -2.94
+  },
+  {
+   "year": 2020,
+   "c1_model": 11.112,
+   "c1_actual": 17.511,
+   "c1_resid": -6.399,
+   "no_unit": -0.721,
+   "south": -5.138,
+   "other": -0.54,
+   "south_oom_gap": -8.175,
+   "south_inmerit_gap": 3.671,
+   "south_price_effect_MM_minus_HM": 3.696,
+   "south_offer_effect_MM_minus_MC": -3.096
+  },
+  {
+   "year": 2021,
+   "c1_model": 5.979,
+   "c1_actual": 11.219,
+   "c1_resid": -5.239,
+   "no_unit": -1.727,
+   "south": -2.611,
+   "other": -0.902,
+   "south_oom_gap": -2.273,
+   "south_inmerit_gap": -0.192,
+   "south_price_effect_MM_minus_HM": -0.85,
+   "south_offer_effect_MM_minus_MC": -1.793
+  },
+  {
+   "year": 2022,
+   "c1_model": 7.014,
+   "c1_actual": 12.123,
+   "c1_resid": -5.109,
+   "no_unit": -0.827,
+   "south": -3.357,
+   "other": -0.924,
+   "south_oom_gap": -2.241,
+   "south_inmerit_gap": -0.363,
+   "south_price_effect_MM_minus_HM": -1.229,
+   "south_offer_effect_MM_minus_MC": -1.506
+  },
+  {
+   "year": 2023,
+   "c1_model": 13.71,
+   "c1_actual": 13.94,
+   "c1_resid": -0.23,
+   "no_unit": -0.405,
+   "south": 0.529,
+   "other": -0.508,
+   "south_oom_gap": -2.845,
+   "south_inmerit_gap": 4.576,
+   "south_price_effect_MM_minus_HM": 4.469,
+   "south_offer_effect_MM_minus_MC": -2.503
+  },
+  {
+   "year": 2024,
+   "c1_model": 15.679,
+   "c1_actual": 17.581,
+   "c1_resid": -1.902,
+   "no_unit": -1.05,
+   "south": 0.024,
+   "other": -0.957,
+   "south_oom_gap": -4.698,
+   "south_inmerit_gap": 5.796,
+   "south_price_effect_MM_minus_HM": 5.562,
+   "south_offer_effect_MM_minus_MC": -1.318
+  },
+  {
+   "year": 2025,
+   "c1_model": 11.955,
+   "c1_actual": 15.814,
+   "c1_resid": -3.859,
+   "no_unit": -0.399,
+   "south": -1.025,
+   "other": -1.78,
+   "south_oom_gap": -3.969,
+   "south_inmerit_gap": 3.722,
+   "south_price_effect_MM_minus_HM": 3.271,
+   "south_offer_effect_MM_minus_MC": -1.59
+  }
+ ]
+}
