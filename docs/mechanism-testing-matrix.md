@@ -18000,6 +18000,16 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**SPP-94 (2026-09-28, SPP'S OWN 2020/2021 WIND CURTAILMENT, ZERO LP SO FAR — `docs/handoffs/FINDING-spp-94-curtail-rows-2026-09-28.md`,
+PRECOMMIT `020bb1c5`, cell `vre_reference_rate_year_own` stays K).**
+- **SPP-67's "2020/2021 unpublished" is false.** ASOM 2022 p. 53 prints 2020 = 244 MW; ASOM 2021 p. 60 prints 2021 = 725 MW
+  (average hourly, wind). Year-own rates are 2.55 % / 6.37 %, against the 9.65 % mean the keeper applied.
+- **The rows are on `main`** (rule 14). Wind headroom falls 8.76 → 2.14 TWh (2020) and 9.92 → 6.32 TWh (2021); every other year's
+  input is byte-identical. The declared direction is 2020 price up (the +17.6 % `price_mean` miss is expected to worsen).
+- **Solve pending**: seven year-isolated shards are specified in the PRECOMMIT but were refused at lineage depth 8. Until they run,
+  G-DRIFT must treat `020bb1c5` as LIVE for 2020/2021.
+- **Do not redo** the transcription or the census; do not widen `_SPP_REFERENCE_RATE_YEARS` (every year 2019–25 now has its own rate).
+
 **SPP-93 (2026-09-27, WEST/EAST RE-PARTITION, ZERO LP — `docs/handoffs/FINDING-spp-93-west-east-2026-09-27.md`,
 PRECOMMIT `599f45a6`, cell `spp_zone_partition` = O).**
 - **Built, gated, default off.** The field is `spp_zone_partition`, default `north_south` = the keeper, byte-identical; the
