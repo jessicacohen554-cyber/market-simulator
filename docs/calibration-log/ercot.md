@@ -14867,3 +14867,12 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - The 2019–22 SCED is behind ERCOT's API subscription key (401), so the lane stopped.
   - The benchmark-vs-930 gap was diagnosed only: Frontera out-of-footprint 2019–22, hydro, backfill double counts, and a CHP residual.
 - **Record:** `docs/handoffs/RESULT-r-ercot-11-parish-split-2026-09-28.md`.
+
+## R-ERCOT-12 — 2026-09-28 — Frontera 55098 dated ERCOT membership (fleet + benchmark, rule 14); PROMOTED `2026-09-28-r-12-frontera-membership` (owner card: "Promote (Recommended)"); ISO NOT-YET
+
+- **Phase 0 (zero LP), lever 1:** the 2024 tight-hour under-pricing closes with NO arm. 87 % of the 2024 C3a flip (−8.8 → −10.7 %) was one prior-keeper VOLL-shed hour (2024-05-07 19:00, 3.1 MWh Panhandle); every other hour moved C3a −0.24 pts. The remaining gap is the known compressed distribution (C3b/C3c conduct object). `FINDING-r-ercot-12-2024-tight-hours-2026-09-28.md`.
+- **Lever 2 (owner "Fleet + benchmark"):** `constants.ISO_PLANT_ENTRIES = {"ERCOT": {55098: "2023-04-13 06:00"}}`, read only by `data.ba_membership` — fleet hour mask, EIA-923 frame, both CAMPD backfills (pre-entry hours zeroed, not dropped). Zero DOF, no ScenarioConfig field; declared at the pre-arm solve-surface hash so ERCOT keys move.
+- **Solve:** 7 shards at `2af9ab74` (rule 36); G-DRIFT every hunk INERT; partition byte-equal.
+- **Result:** train unchanged (2023 NOT-YET −20.0 %, 2024 NOT-YET −10.7 %, 2025 CALIBRATED). 2022 NOT-YET → CALIBRATED. 2019 C3a +24.8 → +53.6 % and 2020 +7.1 → +11.3 % — Frontera's phantom 529 MW masked a 2019–20 over-scarcity (next object).
+- **Lever 3:** SCED key still declined by the owner; coal offers untouched.
+- Record: `docs/handoffs/RESULT-r-ercot-12-frontera-membership-2026-09-28.md`.
