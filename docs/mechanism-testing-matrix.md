@@ -18002,6 +18002,17 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**SPP-96 (2026-09-28, QUEUE ITEM 6 / SPP-56 RESERVE CO-OPT (M2), ZERO LP — `docs/handoffs/RESULT-spp-96-reserve-coopt-2026-09-28.md`,
+PRECOMMIT `58d98cb8`, cell `energy_reserve_coopt` stays I; `reserve_pergen` / `reserve_deliverability_scoping` stay U).**
+- **INERT on the pre-registered rule.** Keeper headroom (reserve-eligible available − P1 dispatch) falls below SPP's
+  MEASURED cleared up-reserve (reg-up + spin + supp + ramp + uncertainty) in **2 / 0 / 0 / 0 / 0 / 11 / 6** hours
+  (2019–2025); the bar was 88 in a 2019–22 year. Median headroom 16.8–18.2 GW against 1.8–3.0 GW cleared.
+- **The market side is not small**: RTBM Spin MCP averages 10–33 % of the RT LMP mean, reg-up 39–68 %. SPP prices
+  reserves because it holds only ~4–5 GW of headroom (SPP-82/83); the LP holds ~17 GW because it has no commitment state.
+  M2 is therefore downstream of the commitment-state defect, not a lever of its own.
+- Also wrong-signed for 2019/2020 (both over-price). **The §5.7 queue is now exhausted**: every item is R, I, done, or
+  out of scope. Do not re-run this test; re-open only inside an owner-gated commitment-state design lane.
+
 **SPP-95 (2026-09-28, THE SPP-94 ROWS SOLVED — `docs/handoffs/RESULT-spp-95-curtail-rows-2026-09-28.md`, run
 `2026-09-28-spp-94-curtail-rows`, cell `vre_reference_rate_year_own` stays K; **PROMOTED to keeper** by owner decision card).**
 - Seven year-isolated shards at `020bb1c5`. E1–E5 all hold, and the §5 rule reads **RECOMMEND PROMOTE**. The
@@ -18475,7 +18486,9 @@ measured-and-admissible for the price rows; they stay an unidentified body-level
    `ordc_scarcity_overlay` (rule-19-excluded while the in-LP family exists),
    `reserve_family_dual_sidecar`, `dynamic_reserve_requirements` annotated, not
    moved; `maxgen_emergency_tier_pricing` untouched (MISO's object).
-6. **SPP-56 — reserve co-optimisation (M2), LAST.** `[FABLE]`. Reg / Spin /
+6. **SPP-56 — reserve co-optimisation (M2), LAST.** **DONE 2026-09-28 (SPP-96): INERT at zero LP** — the
+   keeper's reserve row could bind in 0–11 h/yr against SPP's measured cleared up-reserve; see the SPP-96 note above.
+   Charter as issued: `[FABLE]`. Reg / Spin /
    Supplemental on SPP's measured `da-mcp` / `rtbm-mcp` prices. Owner ruling
    **P4** (r#2, 2026-09-06): *deferred; cells `U`; SPP-56 last* — M2 is last by
    playbook §5, and MISO's co-opt was **inert at its zone count** with its tail
