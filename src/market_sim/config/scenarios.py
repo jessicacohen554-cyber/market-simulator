@@ -2084,6 +2084,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # no sub-fields. SHARED field -- very end, per HOUSE-3. Registered IN THE
     # SAME COMMIT as the field (the nyiso-119 discipline).
     "chp_steam_duty_window",
+    # CHP steam-floor CONDUCT SCOPE (SPP-100, default off): dropped from the
+    # hash at its default so every pre-existing cached run -- every ISO's
+    # keepers included -- keeps its key. Byte-identical off by construction
+    # (the swap's eligibility test is skipped); an armed run withholds the
+    # level swap from metered cyclers and so earns a distinct key. Its one bar
+    # is constants.CHP_STEAM_ALLHOURS_MIN_ON_FRAC (D-4's own conduct test), so
+    # there are no sub-fields. SHARED field -- very end, per HOUSE-3.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "chp_steam_floor_conduct_scope",
     # Measured per-plant FOREBAY-STORAGE bound on within-month hydro
     # reallocation (hydro-1, default off): dropped from the hash at its default
     # so every pre-existing cached run -- every ISO's keepers included -- keeps
@@ -2991,6 +3000,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by caiso-293 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "chp_steam_duty_window": "False",
+    # Added by SPP-100 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "chp_steam_floor_conduct_scope": "False",
     # Added by hydro-1 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "hydro_pondage_bound": "False",
@@ -18118,6 +18130,36 @@ class ScenarioConfig:
     # path).
     chp_steam_duty_window: bool = False
 
+    # CHP steam-floor CONDUCT SCOPE (SPP-100, 2026-09-28) — the level swap in
+    # ``chp_steam_floor_p25`` restricted to hosts whose own meter supports an
+    # all-hours floor. Composes with ``chp_steam_floor_p25``; inert without it.
+    #
+    # THE DEFECT. SPP-75 armed the swap on SPP and it did what it was built for
+    # (Eastman 55176 and Black Hawk 55064 run flat at 92-99 % of hours on their
+    # CAMPD meters and were floored at 1/3-1/2 of that), but the owner declined
+    # it ("Don't promote", 2026-09-24) because it also created a 4.6 MW 24/7
+    # floor at Lake Road (MO) 2098 ST_CHP, whose meter reads zero 72-95 % of
+    # hours: a new rule-17 D-4 unit-conduct FAIL in all seven years. The duty
+    # window above does not repair it: placed on SPP's system-load window,
+    # Lake Road's meter is still at zero in > 50 % of the window hours in 6 of
+    # 7 years (scripts/probes/_spp100_chp_duty_phase0.py).
+    #
+    # WHEN TRUE, a METERED CHP row (``status == "ok"``, so the artifact carries
+    # both ``steam_level_cf`` and ``median_cf``) takes the swapped level only
+    # if its pooled on-frequency ``steam_level_cf / median_cf`` (the exact
+    # identity thermal_tranche_chp_steam_duty recovers) exceeds
+    # constants.CHP_STEAM_ALLHOURS_MIN_ON_FRAC; otherwise it keeps its p2
+    # ``chp_pmin_cf`` floor. That bar is D-4's own conduct test applied ex
+    # ante, not a fitted number (rule 21 [R-DOF]); on SPP the partition is the
+    # same for any bar in (0.25, 0.98). CEMS-invisible ``eia923_cf`` rows carry
+    # no on-frequency and are untouched (never fail a mechanism for a missing
+    # meter). Rule 19 [R-ONE-MECH]: no new floor and no second level source —
+    # the one MECH_CHP_STEAM swap's eligibility. Rule 13 [R-MEASURED]: pooled
+    # multi-year CEMS, regenerates for a forward year from the same artifact.
+    # Rule 25 [R-ISO-SCOPE]: the artifact is per-ISO. Off by default;
+    # byte-identical off.
+    chp_steam_floor_conduct_scope: bool = False
+
     # Measured ERCOT GTC transfer limits (backcast/calibration overlay). When
     # True in backcast mode, the export-direction capability of the transfer
     # links that carry ERCOT's published Generic Transmission Constraints
@@ -24001,6 +24043,10 @@ TIER_TAGS: dict[str, int] = {
     # (steam_level_cf / median_cf), so the flag carries no free number of its
     # own (rule 21 [R-DOF]); the miso_coal_night_floor criterion exactly.
     "chp_steam_duty_window": 1,
+    # Structural gate (1): eligibility of the existing level swap, keyed on an
+    # exact identity over frozen artifact columns against D-4's own conduct
+    # bar (constants.CHP_STEAM_ALLHOURS_MIN_ON_FRAC); no free number (rule 21).
+    "chp_steam_floor_conduct_scope": 1,
     "ercot_gtc_limits_measured": 3,
     "pjm_measured_interface_limits": 3,
     "pjm_east_interface_cut": 3,
