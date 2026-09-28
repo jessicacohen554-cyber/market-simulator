@@ -102,3 +102,15 @@ C3b before is the keeper's registered, old-basis value.
   - `build_ercot_dam_resource_crosswalk.py` drops the 26 coal rows on a rebuild at HEAD (COAL-SUB).
   - The base-red fast-tier tests on main.
   - CAMPD TX 2018 is off disk (BLOAT-S2), so 2018 partial-outage rows cannot be regenerated; they are carried as committed.
+
+## Owner rulings (decision cards, 2026-09-28) — for R-ERCOT-11
+
+1. **Coal offers:** *"Fetch 2019–22 SCED (Recommended)"*.
+   - Next lane tries ERCOT's public archive/API for the 2019–22 60-Day SCED Gen Resource disclosures for the coal plants, and builds per-year coal offer tables with the existing ercot-168 construction (`coal_perplant_offer_curves_2023_ERCOT.json`'s derive) if they can be obtained.
+   - If the files sit behind authentication, the lane STOPS and reports.
+2. **Benchmark:** *"Diagnose only (Recommended)"*.
+   - Measure where the EIA-923 `classFull` benchmark exceeds EIA-930 generation (≈ 4.8 TWh in 2022, positive in every year): CHP/BTM, other/biomass, and double counts such as Decker's CT-only CEMS flag.
+   - Report only. No scorer change without a ruling.
+3. **Fleet gaps:** *"Add Parish WAP1–4 (Recommended)"*.
+   - Rule-14 fleet-coverage fix: a second W A Parish bin (ST_GAS, gas steam WAP1–4, ~1.1 GW) with its own outage and derate routing (the plant-code-keyed seams must tolerate two groups at 3470), then one shard per year and promote-if-better.
+   - Decker stays routed.
