@@ -1,10 +1,10 @@
-# RESULT — SPP-95: SPP's own 2020/2021 wind curtailment rows, solved. §5 rule → RECOMMEND PROMOTE.
+# RESULT — SPP-95: SPP's own 2020/2021 wind curtailment rows, solved and PROMOTED.
 
 **Lane** SPP-95 (solves SPP-94's plan) · keeper `2026-09-26-spp-86-coal-extract` (bundle `spp86_arm_span`) is the
 control (rule 29(b) form 4, no control solve) · PRECOMMIT `docs/handoffs/PRECOMMIT-spp-94-curtail-rows-2026-09-27.md`,
 merged at `020bb1c5cb38b73da686dc4e83d1620c415b1437` before any shard launched · registered run
 **`2026-09-28-spp-94-curtail-rows`**, bundle `results/calibration/spp94_arm_span` (2019–2025) · owner ruling on
-promotion: **pending** (rule 31).
+promotion: **PROMOTE** (decision card "Promote (Recommended)", 2026-09-28).
 
 ## 1. What was solved
 
@@ -94,3 +94,19 @@ The arm covers all seven.
 The N↔S rating, the West/East partition (stays O), ramp limits, reserve headroom (SPP-91), gas-price levers, the
 2022 coal markup (SPP-44) and the benchmark basis are untouched. `complete` / `frontier` for SPP: **not reached**,
 because the validation tier 2019–22 is NOT-YET either way.
+
+## 7. Promotion (executed 2026-09-28, rule 35)
+
+Year set enumerated before pruning: SPP's registered years were 2019–2025, on `spp-86` only. `spp-94` covers all
+seven, so the year set is unchanged. The promotion steps, in order:
+
+1. Re-keyed `keepers/SPP.json`, including the `config_partition` tiers, and the `complete.SPP` entry in
+   `calibration-complete.json`. Rebuilt `status/SPP.js` (CALIBRATED).
+2. Ran `audit_keepers --iso SPP`. E1 passed; E13 flagged `spp-86` as a superseded run left behind.
+3. Ran `prune_iso_runs.py --iso SPP --force-uncite`, which removed `spp-86`'s sidecar, payload and
+   `spp86_arm_span`.
+4. Re-ran the audit and got a clean PASS. The calibration-keeper-auditor agent also passed, with 0 repairs.
+
+**Diagnostic note.** The D-4 FAIL rows go from 7 to 8. The one new row is 2021 `coal_mustrun` plant 6095:
+0.0248 TWh floored, with a measured median of 0 MW over the 285 hours the floor binds. This is part of the extra
+2021 coal commitment that replaces the removed wind. It is reported here and does not gate the promotion.
