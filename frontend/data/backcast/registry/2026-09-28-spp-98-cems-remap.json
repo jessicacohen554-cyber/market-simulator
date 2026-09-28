@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-28-spp-98-cems-remap",
+  "label": "spp 98 cems remap",
+  "date": "2026-09-28",
+  "shorthand": "spp-98-cems-remap",
+  "definition": "SPP-98 2019: keeper replay under the CEMS->EIA remap rows (benchmark attribution only)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-28-spp-98-cems-remap.js",
+  "bundle": "results/calibration/spp98_remap_span"
+}

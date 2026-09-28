@@ -18002,6 +18002,16 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**SPP-98 (2026-09-28, CEMS→EIA SPLIT-PLANT REMAP — BENCHMARK ATTRIBUTION, `docs/handoffs/RESULT-spp-98-cems-eia-remap-2026-09-28.md`,
+run `2026-09-28-spp-98-cems-remap`, 7 replay shards, dispatch byte-identical).**
+- J Lamar Stall's CC turbines (EIA 56565) file in CEMS under Arsenal Hill ORIS 1416. The benchmark booked them as ST_GAS
+  (up to 225 % CF), and the EIA-923 CAMPD backfill **double-counted ~2 TWh in C1 in 2020 / 2021 / 2025**.
+- Ten EPA-crosswalk rows were added to `campd.CAMPD_UNIT_PLANT_REMAP` (the existing mechanism).
+- **C1 ST_GAS miss 2020 −6.56 → −4.32, 2021 −5.00 → −3.13 TWh.** No status flips. Train CALIBRATED; validation
+  NOT-YET, unchanged.
+- **Successor (solve):** re-derive Arsenal Hill's tranche row and Stall's outage windows under the new rows.
+- **Do not redo** the census. Only four SPP facilities are split, and Stall is 95 % of the energy.
+
 **SPP-97 (2026-09-28, CC_REGULAR SHAPE — DUCT OFFER AND GAP BRIDGE, ZERO LP — `docs/handoffs/FINDING-spp-97-cc-shape-2026-09-28.md`;
 `spp_gas_commitment_bridge` stays R, `offer_curve_by_group` stays R).**
 - The model's CC fleet is bimodal: too many near-off hours every year, and a near-ceiling excess in 2019–20. The dashboard's
