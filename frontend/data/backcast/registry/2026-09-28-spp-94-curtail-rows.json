@@ -3,7 +3,7 @@
   "label": "spp 94 curtail rows",
   "date": "2026-09-28",
   "shorthand": "spp-94-curtail-rows",
-  "definition": "SPP-94 2019: SPP's own published 2020/2021 wind curtailment rows",
+  "definition": "SPP-94/95 (2019-2025, seven year-isolated shards): keeper spp-86 recipe unchanged, with SPP's own published 2020 (244 MW) and 2021 (725 MW) wind curtailment rows",
   "years": [
     2019,
     2020,
