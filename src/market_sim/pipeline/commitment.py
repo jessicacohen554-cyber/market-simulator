@@ -2323,6 +2323,30 @@ def _soco_gas_st_campaign_floor(
     params = load_gas_st_campaign_params(iso)
     if not params:
         return None
+    # RULE 19 [R-ONE-MECH] PLANT PARTITION (lane soco-83, owner ruling
+    # 2026-09-28, decision card "Partition by plant"): a plant whose ST_GAS rows
+    # already carry the per-plant must-run floor (MECH_ST_GAS_MUSTRUN_PER_PLANT,
+    # composed into ``min_gen`` by data.fleet.arrays before this seam) is left
+    # to that floor and is NOT campaign-floored as well, so no plant carries
+    # two commitment floors for one phenomenon. Membership is read from the
+    # built floor's own attribution, never re-derived here. Inert whenever
+    # st_gas_mustrun_per_plant is off (every keeper before soco-83).
+    from market_sim.data.floor_mechanisms import MECH_ST_GAS_MUSTRUN_PER_PLANT
+
+    _mech = getattr(fleet_arrays, "min_gen_mechanism", None)
+    mustrun_plants: set[int] = set()
+    if _mech is not None:
+        _rows = np.flatnonzero(np.any(_mech == MECH_ST_GAS_MUSTRUN_PER_PLANT, axis=1))
+        mustrun_plants = {int(getattr(fleet[g], "plant_code", 0) or 0) for g in _rows}
+    if mustrun_plants & set(params):
+        logger.info(
+            "SOCO gas-steam campaign commitment floor: plant(s) %s left to the "
+            "per-plant must-run floor (rule 19 partition)",
+            sorted(mustrun_plants & set(params)),
+        )
+        params = {k: v for k, v in params.items() if k not in mustrun_plants}
+        if not params:
+            return None
     n_gen = len(fleet)
     frac_by_gen = np.zeros(n_gen, dtype=float)
     min_run = np.zeros(n_gen, dtype=float)

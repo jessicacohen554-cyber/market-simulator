@@ -533,7 +533,41 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       byte-identical; per-year family cross-check recorded under
 #       coal_subclass_resplit). Effect at amendment, all registered runs:
 #       docs/handoffs/RESULT-c8-coal-subclass-2026-09-25.md.
-RUBRIC_VERSION = 3.9
+# v3.10 — 2026-09-27 owner ruling, soco-82 decision card on 2019 COAL_BIT,
+#       verbatim: "Ledger as limitation"; implementation re-authorized by the
+#       owner in session soco-83 (2026-09-28). Record:
+#       docs/handoffs/r-soco/RESULT-soco-83-2026-09-28.md.
+#       ONE SCOPED LEDGER ENTRY PAST THE v3.1 C3c-ONLY GUARD, keyed EXACTLY:
+#       (iso SOCO, year 2019, criterion fuelmix, key COAL_BIT) —
+#       :data:`SCOPED_LEDGER_ENTRIES`, applied by :func:`_apply_scoped_ledger`.
+#       THE EVIDENCE (FINDING-soco-82 §3): Southern Company's own FERC-714
+#       Part II Sch. 6 system lambda sat below Barry's and Wansley's variable
+#       cost in 94 % / 85 % of their CEMS-synced 2019 hours even at measured
+#       incremental heat rate; their fuel inputs match their own EIA-923
+#       receipts, SOCO carries no offer tuning, and replacement fuel cost is
+#       the wrong sign. The plants ran out of merit against the operator's own
+#       reported marginal cost, which an economic-dispatch LP cannot reproduce
+#       without a fitted mechanism rule 1 forbids: an accepted model-class
+#       limitation, measured.
+#       GUARDS, every one fail-closed:
+#       (a) EXACT KEY — a literal table, not a pattern. LEDGERABLE_CRITERIA is
+#           UNCHANGED (C3c alone), so no attestation ledger entry reaches C1;
+#       (b) DIRECTION-BOUND — fires only on a model UNDER-run (model < actual),
+#           the only sign the out-of-merit evidence explains;
+#       (c) GOVERNANCE MUST PASS;
+#       (d) NEVER A PASS — CAVEAT at full magnitude, named on the basis;
+#       (e) SPENDS THE SINGLE LEDGERED SLOT — MAX_LEDGERED_CAVEATS stays 1 and
+#           both budgets are checked FIRST;
+#       (f) IT DOWNGRADES — unlike a v3.3 ledgered C3c it is not
+#           determination-neutral: a run whose only blemish it is reads the
+#           caveat rung, never the clean rung.
+#       Applied AFTER the explicit ledger, governance and the C3c standing
+#       rule, so v3.10 can never make a C3c failure "lone".
+#       NO SOLVE RAN — scorer-side only. Genealogy:
+#       docs/governance/rule-history.md §23.
+# A STRING from v3.10 on: the float 3.10 == 3.1, which would collide with the
+# v3.1 amendment. Display-only everywhere it is read.
+RUBRIC_VERSION = "3.10"
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -865,6 +899,27 @@ MAX_LEDGERED_CAVEATS = 1  # C3c is the only ledgerable criterion (v3.1)
 # level the model does not reproduce. The budget above still applies on top
 # (a criterion being ledgerABLE never means ledgering is free).
 LEDGERABLE_CRITERIA = frozenset({"price_tail"})
+
+# Rubric v3.10 (owner ruling 2026-09-27, soco-82 card: "Ledger as limitation").
+# The ONLY rows admitted to the ledger outside LEDGERABLE_CRITERIA, keyed
+# exactly (iso, year, criterion, key), each with the direction its evidence
+# explains ("under": model < actual). A new row is an owner amendment.
+SCOPED_LEDGER_ENTRIES: dict[tuple[str, int, str, str], dict] = {
+    ("SOCO", 2019, "fuelmix", "COAL_BIT"): {
+        "direction": "under",
+        "rule": "soco-2019-coal-bit-out-of-merit-2026-09-27",
+        "reason": (
+            "rubric v3.10 scoped ledger (owner ruling 2026-09-27, soco-82 card: "
+            "'Ledger as limitation'): Barry and Wansley ran in 2019 while "
+            "Southern Company's own FERC-714 Sch. 6 system lambda sat below their "
+            "variable cost in 94 % / 85 % of their synced hours even at measured "
+            "incremental heat rate (FINDING-soco-82 §3) — measured out-of-merit "
+            "conduct an economic-dispatch LP cannot reproduce without a fitted "
+            "mechanism. Reported at full magnitude; spends the single ledgered "
+            "slot; DOWNGRADES the determination."
+        ),
+    },
+}
 
 # C8 materiality floor (rubric v2.1, owner amendment 2026-07-06; scoped to C8
 # alone since C7's v3.1 retirement): the protective forced-share gate — and the
@@ -1479,6 +1534,50 @@ def _apply_c3c_standing_rule(records: list[dict], gov: dict) -> None:
         return  # nothing failing, or something OTHER than C3c is -- rule silent
     for rec in remaining:
         _reclassify(rec, "c3c-any-year-2026-08-09", C3C_STANDING_RULE_REASON)
+
+
+def _apply_scoped_ledger(records: list[dict], iso: str, gov: dict) -> None:
+    """Reclassify the rubric v3.10 scoped-ledger rows from FAIL to a CAVEAT.
+
+    Only a record whose exact ``(iso, year, criterion, key)`` is in
+    :data:`SCOPED_LEDGER_ENTRIES` can move, only when governance PASSES, and
+    only in the direction the entry's evidence explains (``"under"``: model <
+    actual). It becomes a CAVEAT classified :data:`MODEL_LIMIT`, keeps its
+    magnitude, and is flagged ``scoped_ledger`` so the determination counts it
+    as a DOWNGRADING ledgered caveat (it still spends the single ledgered
+    slot). Every other record is untouched.
+
+    Args:
+        records: Scored criterion records, mutated in place.
+        iso: The run's ISO.
+        gov: The governance-gate record from :func:`score_governance`.
+    """
+    if str(gov.get("status", "")).upper() != PASS:
+        return
+    iso_u = str(iso or "").upper()
+    for rec in records:
+        if rec.get("status") != FAIL:
+            continue
+        try:
+            year = int(rec.get("year"))
+        except (TypeError, ValueError):
+            continue
+        entry = SCOPED_LEDGER_ENTRIES.get(
+            (iso_u, year, rec.get("criterion"), rec.get("key"))
+        )
+        if entry is None:
+            continue
+        try:
+            m, a = float(rec["model"]), float(rec["actual"])
+        except (KeyError, TypeError, ValueError):
+            continue  # no magnitude to check the direction on -- fail closed
+        if entry["direction"] != "under" or not m < a:
+            continue
+        rec["status"] = CAVEAT
+        rec["classification"] = MODEL_LIMIT
+        rec["ledger_reason"] = entry["reason"]
+        rec["standing_rule"] = entry["rule"]
+        rec["scoped_ledger"] = True
 
 
 def _apply_ledger(rec: dict, exceptions: list[dict]) -> dict:
@@ -3538,6 +3637,10 @@ def determine_from_artifacts(
     # because it is conditioned on both.
     _apply_c3c_standing_rule(records, gov)
 
+    # Rubric v3.10 scoped ledger (owner ruling 2026-09-27). AFTER the C3c
+    # standing rule, so its lone-failure guard saw these rows as FAILs.
+    _apply_scoped_ledger(records, iso, gov)
+
     # Aggregate per criterion.
     per_criterion: dict[str, dict] = {}
     for cid, (label, tier) in CRITERIA.items():
@@ -3595,6 +3698,10 @@ def determine_from_artifacts(
         if c["tier"] != TIER_PROTECT
         and c["status"] == CAVEAT
         and c["caveat_kind"] == "commercial-band"
+    ]
+    # Rubric v3.10: the ledgered caveats earned by a SCOPED ledger row.
+    scoped_caveats = [
+        c for c in ledgered_caveats if any(r.get("scoped_ledger") for r in c["records"])
     ]
     fails = [cid for cid, c in per_criterion.items() if c["status"] == FAIL]
     # An unscored criterion can never be a silent pass: it caps the
@@ -3701,11 +3808,27 @@ def determine_from_artifacts(
         # CALIBRATED-WITH-CAVEATS. Every other route to a caveat still
         # downgrades: commercial-band target misses, protective-gate caveats,
         # unscored criteria and data-blocked years are untouched.
-        downgrading_caveats = len(protective_caveats) + len(band_caveats)
+        # Rubric v3.10: a scoped-ledger caveat is ledgered (it spent the slot
+        # above) but, unlike a ledgered C3c, it DOWNGRADES.
+        downgrading_caveats = (
+            len(protective_caveats) + len(band_caveats) + len(scoped_caveats)
+        )
         if downgrading_caveats == 0 and not skipped_downgrading and not data_blocked:
             determination = clean_label
         else:
             determination = caveat_label
+            if scoped_caveats:
+                reasons.append(
+                    "rubric v3.10 scoped ledgered caveat(s) — owner-accepted "
+                    "measured out-of-merit conduct, REPORTED AT FULL MAGNITUDE and "
+                    "determination-DOWNGRADING: "
+                    + "; ".join(
+                        f"{r['year']} {r.get('key')} ({r.get('magnitude')})"
+                        for c in scoped_caveats
+                        for r in c["records"]
+                        if r.get("scoped_ledger")
+                    )
+                )
             if band_caveats:
                 reasons.append(
                     f"{len(band_caveats)} criterion(s) within the commercial-grade "
@@ -3736,11 +3859,12 @@ def determine_from_artifacts(
         # at full magnitude — silence here is what would make v3.3 an escape
         # hatch, so the caveat stays visible in `reasons`, in `caveats.ledgered`
         # and in `grade_summary.ledgered` exactly as before.
-        if ledgered_caveats:
+        ledgered_neutral = [c for c in ledgered_caveats if c not in scoped_caveats]
+        if ledgered_neutral:
             reasons.append(
-                f"{len(ledgered_caveats)} ledgered caveat(s) (measured-input or "
+                f"{len(ledgered_neutral)} ledgered caveat(s) (measured-input or "
                 "model-class) — REPORTED, and NOT determination-downgrading "
-                "under rubric v3.3: " + ", ".join(c["label"] for c in ledgered_caveats)
+                "under rubric v3.3: " + ", ".join(c["label"] for c in ledgered_neutral)
             )
         # Same contract for an UNSCORED C3c (rubric v3.7). It is exempt from the
         # unscored-criteria downgrade, so it must still be NAMED here — an
