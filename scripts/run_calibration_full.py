@@ -2371,6 +2371,11 @@ def _iso_plant_ids(
             for p, m in ba_join_first_month(iso, int(year)).items()
             if m >= NOT_A_MEMBER_THIS_YEAR
         }
+        # R-ERCOT-12: a registered entering plant (ISO_PLANT_ENTRIES) is
+        # outside before its entry year. Empty (no-op) for every other region.
+        from market_sim.data.ba_membership import plant_entry_non_members
+
+        outside |= set(plant_entry_non_members(iso, int(year)))
         if outside:
             base = base - frozenset(outside)
     return base
@@ -2473,6 +2478,25 @@ def _eia923_frame(
                 after = (split < (i + 1)).fillna(False).to_numpy(dtype=bool)
                 at = (split == (i + 1)).fillna(False).to_numpy(dtype=bool)
                 df.loc[after, c] = 0.0
+                df.loc[at, c] = df.loc[at, c] * share[at]
+            df.loc[hit, "netgen_annual_mwh"] = df.loc[hit, cols].sum(axis=1)
+    # R-ERCOT-12 (constants.ISO_PLANT_ENTRIES): in a registered plant's entry
+    # year its months before the split month are zeroed, the split month keeps
+    # its measured in-region share (its own CAMPD gross load at or after the
+    # entry hour), and its annual is re-summed. Empty map (no-op) elsewhere.
+    from market_sim.data.ba_membership import plant_entry_month_share
+
+    _entry = plant_entry_month_share(iso, int(year))
+    if _entry:
+        split = df["plant_id"].map({p: m for p, (m, _s) in _entry.items()})
+        share = df["plant_id"].map({p: sh for p, (_m, sh) in _entry.items()})
+        hit = split.notna().to_numpy(dtype=bool)
+        if hit.any():
+            df = df.copy()
+            for i, c in enumerate(cols):
+                before = (split > (i + 1)).fillna(False).to_numpy(dtype=bool)
+                at = (split == (i + 1)).fillna(False).to_numpy(dtype=bool)
+                df.loc[before, c] = 0.0
                 df.loc[at, c] = df.loc[at, c] * share[at]
             df.loc[hit, "netgen_annual_mwh"] = df.loc[hit, cols].sum(axis=1)
     agg = {"netgen_annual_mwh": "sum", **{c: "sum" for c in cols}}
@@ -3742,6 +3766,14 @@ def _benchmark_eia923_frame(
         group_by_code,
         class_shares=class_shares,
     )
+    # R-ERCOT-12 (constants.ISO_PLANT_ENTRIES): both CAMPD backfills loop over
+    # campd_year and never consult the 923 membership above, so a registered
+    # entering plant's pre-entry CEMS hours are zeroed here — otherwise the
+    # backfill re-books it (how Frontera entered ERCOT's 2019-2022 benchmark).
+    # Returns the same object (no-op) for every other region.
+    from market_sim.data.ba_membership import zero_pre_entry_campd
+
+    campd_year = zero_pre_entry_campd(campd_year, iso, int(year))
     e923 = _backfill_eia923_with_campd(
         e923,
         campd_year,
