@@ -676,6 +676,16 @@ def run_energy_solve(
         replaced = p1_fleet_prep(r0)
         if replaced is not None:
             p1_fleet_arrays = replaced
+    # PJM-NEXT-7: the DA virtual position settles financially — P0 (the DA
+    # stage) keeps the virtual pseudo-units, the scored P1 zeroes their bounds
+    # (data.virtual_bids.settle_virtuals_financially). ``None`` on every
+    # flag-off path, so the fleet object and the warm-start identity are kept.
+    if getattr(config, "pjm_da_virtual_settle_financial", False):
+        from market_sim.data.virtual_bids import settle_virtuals_financially
+
+        settled = settle_virtuals_financially(config, p1_fleet_arrays)
+        if settled is not None:
+            p1_fleet_arrays = settled
     # P1-only kwargs overrides (e.g. the PJM path-B deliverable reserve-supply
     # cap recomputed on the masked fleet). ``None``/empty keeps the shared
     # kwargs object, preserving the warm-start identity check below.

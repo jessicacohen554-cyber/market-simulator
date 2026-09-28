@@ -227,6 +227,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     egrid_family_heat_rates: { cell: "U" },
     egrid_steam_collapse_heat_rates: { cell: "U" },
     da_virtual_bids: { cell: "R", ev: "neiso-75 (CHARTER-neiso75-c3c-frontier-2026-08-02.md §4 — chartered); neiso-76 (results/calibration/FINDING-neiso76-dabid-phase0-2026-08-02.md §A/§C — REFUTED at Phase-0 on both limbs; probes _neiso76_dabid_phase0.py + _neiso76_demand_limb.py)" },
+    pjm_da_virtual_settle_financial: { cell: ".", ev: "Row added by PJM-NEXT-7 (2026-09-28) with the field, same PR (rule 28c) -- NO adjudication made or implied here (rules 25 / 28(d)). Inert: a sub-gate of pjm_da_virtual_bids, which is PJM-gated." },
     negative_renewable_offers: { cell: "." },
     wind_ptc_vintage_offers: { cell: "." },
     gas_offer_curve_tranches: { cell: "K" },
