@@ -110,3 +110,12 @@ buy a daily Gulf-hub print (ICE/NGI — a data purchase), or leave C3b 2021 as a
   or SO2 price, so emission rates do not enter dispatch.
 - **Footprint** (fleet_only, keeper vs +flag): only 55641/64020 units move, and no other class moves.
   `scripts/probes/_miso280_splitremap_footprint.py` → `results/calibration/_miso280_splitremap_footprint.json`.
+
+## 6. Owner rulings (2026-09-28)
+
+1. **C (Riverside):** "Build it (Recommended)" → `docs/PRECOMMIT-miso280-split-remap-2026-09-28.md`, 7 shards.
+2. **B (C3b 2021):** "Leave as routed miss (Recommended)". Recorded as a known extreme-event limitation: no admissible
+   daily Gulf-hub print is on disk, EIA withholds LA/MS/AR delivered prices for Feb 2021, and the zero-DOF "paid level"
+   construction would lift calm-day South gas to ~$17 vs ~$3–5 traded. Reopens on a purchased daily Gulf-hub series.
+3. **D (VLR):** no public input exists (§2); routed with C3a 2022 to the RO-2 reduced-network class. Open lead for the
+   owner: MISO's "Commit Reason" commitment report, if reachable from a browser, back to 2019.
