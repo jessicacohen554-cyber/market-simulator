@@ -33,12 +33,29 @@ if str(_REPO) not in sys.path:
 
 from scripts.probes.nyiso238_compose_span import compose as _compose  # noqa: E402
 from scripts.probes.rnyiso_compose_span import _offer_block  # noqa: E402
+sys.path.insert(0, str(_REPO / "src"))
 
 PIN = "7900ac511f710940bc039aa4de354646d4e10f26"
 CAL = _REPO / "results" / "calibration"
 DELTA = {"nyiso_firm_imports": (True, False)}
 #: keys the replay path translates identically for control and arm (rule 26 deletions)
 IGNORED = {"retiree_cems_cap"}
+#: year-keyed fields replay_keeper re-derives per solve year (the composite keeper
+#: records its first leg's value); S1 checks weather_year == the leg's year instead
+YEAR_KEYED = {"weather_year", "gas_price_override"}
+#: resolved-input artifacts that must be byte-identical to the keeper's (sha256 / record)
+INPUT_KEYS = ("campd_unit_outages", "thermal_tranches", "hydro_plant_modes")
+
+
+def _new_field_default(key: str, value: object) -> bool:
+    """True when ``key`` post-dates the keeper and the arm carries its default."""
+    import dataclasses
+
+    from market_sim.config.scenarios import ScenarioConfig
+
+    fields = {f.name: f for f in dataclasses.fields(ScenarioConfig)}
+    f = fields.get(key)
+    return f is not None and f.default is not dataclasses.MISSING and f.default == value
 
 
 def _keeper(year: int) -> Path:
@@ -61,14 +78,20 @@ def check_legs(legs: list[Path]) -> None:
         diff = {
             k: (sk.get(k), sa.get(k))
             for k in set(sa) | set(sk)
-            if k not in IGNORED and sa.get(k) != sk.get(k)
+            if k not in IGNORED | YEAR_KEYED
+            and sa.get(k) != sk.get(k)
+            and not (k not in sk and _new_field_default(k, sa.get(k)))
         }
+        if sa.get("weather_year") != y:
+            errs.append(f"S1 weather_year {sa.get('weather_year')!r}")
         if diff != DELTA:
             errs.append(f"S1 scenario_config delta {diff}")
         if _offer_block(rc) != _offer_block(kc):
             errs.append("S1 offer-curve block differs from the keeper")
-        if rc.get("resolved_inputs") != kc.get("resolved_inputs"):
-            errs.append("S2 resolved_inputs differ from the keeper")
+        ra, rk = rc.get("resolved_inputs") or {}, kc.get("resolved_inputs") or {}
+        for key in INPUT_KEYS:
+            if ra.get(key) != rk.get(key):
+                errs.append(f"S2 resolved_inputs[{key}] differs from the keeper")
         ld = json.loads((leg / "legitimacy_diagnostics.json").read_text())
         rows = ld["diagnostics"]["D2"]["rows"]
         if any(r.get("mechanism") == "firm_import" for r in rows):
