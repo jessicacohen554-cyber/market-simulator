@@ -42,7 +42,7 @@ Wind headroom above delivered, as the keeper builds it:
 
 The seven shards (one per year, rule 36) were written and pinned to `020bb1c5`. `create_session` refused all seven:
 **"caller session is at lineage depth 8 (limit 8)"**. Rule 32(a) forbids the parent from solving, so the lane stops
-here. The shard prompts are in the handoff (§5). Cost when run: SPP is a 2-zone ISO, so each shard is minutes;
+here. The shard prompt template is `docs/handoffs/spp94/shard_prompt_template.txt`. Cost when run: SPP is a 2-zone ISO, so each shard is minutes;
 the whole span is about 500 s of LP.
 
 ## 4. State left behind (read before G-DRIFT)
@@ -60,3 +60,6 @@ Run the seven shards exactly as PRECOMMIT §4 specifies. They go in a session th
 chain. Then compose, attest, score, register (`--no-prune`), and put the promotion question to the owner under
 PRECOMMIT §5's fixed rule. `complete` / `frontier`: unchanged. The train tier 2023–25 is CALIBRATED (lone ledgered
 C3c). The validation tier 2019–22 is NOT-YET. **`frontier` is NOT reached.**
+
+**Owner ruling (decision card, 2026-09-28): "New chain (Recommended)".** The solve runs in a fresh session chain (SPP-95),
+not in this one.
