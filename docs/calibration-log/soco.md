@@ -1915,3 +1915,8 @@ OWNER RULINGS 2026-09-28 (decision cards, soco-85):
 - **SE basis: "Stay free-data only (Recommended)"** — no licensed NGI/Platts series; the cold-snap peak gap is a data limitation.
 - **Next lever: "Zero-LP fuel-basis census (Recommended)"** — EIA-923 receipts by purchase/contract type -> a spot/replacement gas cost;
   greedy, then a card. No build.
+
+RESULT (run 2026-09-28-soco85-gas-daily-shape, seven year-isolated shards at 599df6a0; PROMOTED on the owner's standing ruling, PRECOMMIT-soco-85 §7
+held on all five; 2026-09-28-soco83-st-oom-floor pruned per rule 35): soco-83 recipe + gas_daily_shape (Henry Hub within-month shape, zero DOF).
+C3a 2019 +13.9 / 2020 +15.0 / 2022 -15.7 % still FAIL (moves <=1 pp); C3b 2020/21/22/24 still FAIL; zero status flips; D-1 fails 6->4; ST_GAS forced
+share lower every year; unserved 0. NOT-YET, grade 7/4/0/1/2 unchanged. Record: docs/handoffs/r-soco/{FINDING,PRECOMMIT,RESULT}-soco-85-2026-09-28.md.

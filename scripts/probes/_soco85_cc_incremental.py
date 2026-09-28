@@ -1,6 +1,9 @@
 """soco-85 zero-LP census: SOCO combined-cycle INCREMENTAL vs AVERAGE heat rate.
 
-Owner ruling 2026-09-28 (soco-84 card): "Zero-LP census first". Rule 32
+Owner ruling 2026-09-28 (soco-84 card): "Zero-LP census first". The numbers in
+FINDING-soco-85 were measured on the soco83 legs (keeper at the time); after the
+soco-85 promotion this probe reads soco85_span, whose recipe already carries
+``gas_daily_shape``, so ``--arm gasdaily`` is then a no-op re-shape. Rule 32
 ``[R-SHARD]`` (a): never solves. Writes only to ``--out`` (a scratch path);
 commits no artifact.
 
@@ -58,8 +61,10 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "scripts"), str(ROOT / "src"), str(ROOT)]
 
 LEGACY = ROOT / "data/raw/_processed-legacy"
-KEEPER = "2026-09-28-soco83-st-oom-floor"
-SPAN = ROOT / "results/calibration/soco83_span"
+# Repointed soco-85 (2026-09-28): soco83_span was pruned at the soco-85 promotion (rule 35);
+# the incumbent keeper is soco85_span (the soco-83 recipe + gas_daily_shape).
+KEEPER = "2026-09-28-soco85-gas-daily-shape"
+SPAN = ROOT / "results/calibration/soco85_span"
 YEARS = tuple(range(2019, 2026))
 T = 8760
 RECIPE_SETS = (  # PRECOMMIT-soco-83 §5 --set flags (same list as _soco84_price_gap)
@@ -76,6 +81,7 @@ RECIPE_SETS = (  # PRECOMMIT-soco-83 §5 --set flags (same list as _soco84_price
     "st_gas_mustrun_per_plant",
     "st_gas_mustrun_p25_level",
     "st_gas_mustrun_oom_level",
+    "gas_daily_shape",
 )
 RESTACK = (
     "CC_REGULAR",
