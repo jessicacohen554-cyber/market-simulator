@@ -70,6 +70,7 @@ ALL_DATATYPES = [
     "coal-mining-ppi",
     "nyiso-reserve-requirements",
     "nyiso-interface-flows",
+    "seam-neighbour-price",
     "nyiso-som-hub-fuel-annual",
     "reserve-requirements",
     "som-competitive-conduct",
