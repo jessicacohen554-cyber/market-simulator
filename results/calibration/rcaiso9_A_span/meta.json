@@ -1,7 +1,7 @@
 {
   "as_reserve_formula": false,
   "as_reserve_withholding": false,
-  "basis_sha": "ee309e39170be7641494a3bdc0b5863fc82d141c",
+  "basis_sha": "980f2ed64a0abfa233e956a48c63225ff47aa459",
   "battery_dispatch_adder": 0.0,
   "btm_backfill_year": null,
   "caiso_asymmetric_path_ratings": true,
@@ -53,6 +53,7 @@
   "coal_bit_sigmoid_overrides": {},
   "coal_drop_pof": true,
   "coal_econ_marginal_hr_bound": null,
+  "coal_econ_marginal_hr_two_sided": null,
   "coal_econ_srmc_bound": false,
   "coal_fuel_inventory": null,
   "coal_lignite_mustrun": null,
@@ -83,6 +84,7 @@
     "caiso_firm_import_selfsched_clip": true,
     "caiso_firm_import_selfschedule": true,
     "caiso_firm_import_shape": true,
+    "caiso_import_cap_floor_static": true,
     "caiso_import_gas_coupling": true,
     "caiso_import_gas_coupling_ladder_only": true,
     "caiso_intertie_gap_fill_measured_dam": true,
@@ -131,9 +133,10 @@
   "commitment_screen_coal": true,
   "committed_band_measured_basis": null,
   "composed_from": [
-    "rcaiso8_A_2019",
-    "rcaiso8_A_2020",
-    "rcaiso8_A_2021"
+    "rcaiso9_A_2022",
+    "rcaiso9_A_2023",
+    "rcaiso9_A_2024",
+    "rcaiso9_A_2025"
   ],
   "ct_drag_overrides": {},
   "ct_intermediate_cf_threshold": null,
@@ -238,13 +241,14 @@
   "gas_offer_margin_zonal_anchor": false,
   "gas_offer_margin_zonal_anchor_vintage": false,
   "gas_prices": {
-    "2019": 2.57,
-    "2020": 2.03,
-    "2021": 3.72
+    "2022": 6.45,
+    "2023": 2.54,
+    "2024": 2.19,
+    "2025": 3.52
   },
   "gas_st_drag_overrides": {},
   "gas_st_netload_drag": false,
-  "git_sha": "ee309e39",
+  "git_sha": "980f2ed6",
   "highspy_version": "1.14.0",
   "hours": 8760,
   "hydro_backfill_year": 2024,
@@ -375,13 +379,12 @@
   "reliability_floor": null,
   "reliability_floor_overrides": null,
   "reliability_floor_plant_exclusions": null,
-  "retiree_cems_cap": false,
   "scarcity_price_overlay": null,
   "shared_inputs": {
-    "campd": "../_shared/CAISO/campd-6db5c1fb7efe.parquet",
+    "campd": "../_shared/CAISO/campd-f94d6eed9d7d.parquet",
     "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-26921eecd30f.parquet",
-    "eia923": "../_shared/CAISO/eia923-a5f79303b8df.parquet",
-    "eia930": "../_shared/CAISO/eia930-155fdf61ffda.parquet",
+    "eia923": "../_shared/CAISO/eia923-638a435fb75f.parquet",
+    "eia930": "../_shared/CAISO/eia930-295288131aac.parquet",
     "unit_outages": "../_shared/CAISO/unit_outages-e28c7b0b81d1.parquet",
     "unit_outages_e923": "../_shared/CAISO/unit_outages_e923-f53035a2541a.parquet",
     "unit_outages_layup": "../_shared/CAISO/unit_outages_layup-d75214d7cdc0.parquet",
@@ -405,7 +408,7 @@
   "temp_derate_mean_anchored": false,
   "temp_derate_slope_ct_chp": null,
   "temp_derate_slope_st_chp": null,
-  "timestamp": "2026-09-27T22:39:09",
+  "timestamp": "2026-09-28T00:09:40",
   "tranche_startup_amortization": false,
   "tranche_startup_conditional_runs": false,
   "tranche_startup_measured_runs": false,
@@ -419,8 +422,9 @@
   "vre_curtailment_oversupply_allocation": null,
   "wind_ptc_vintage_offers": false,
   "years": [
-    2019,
-    2020,
-    2021
+    2022,
+    2023,
+    2024,
+    2025
   ]
 }
