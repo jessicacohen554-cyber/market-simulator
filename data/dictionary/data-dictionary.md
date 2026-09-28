@@ -74,6 +74,7 @@ for the market split.
 | nyiso-reserve-requirements | — | — | — | — | — | — | — | — |
 | nyiso-operating-events | — | — | — | — | — | — | — | — |
 | nyiso-interface-flows | — | — | — | — | — | — | — | — |
+| seam-neighbour-price | — | — | — | — | — | — | — | — |
 | nyiso-som-hub-fuel-annual | — | — | — | — | — | — | — | — |
 | reserve-requirements | — | — | — | — | — | — | — | — |
 | som-competitive-conduct | — | — | — | — | — | — | — | — |
@@ -1453,6 +1454,33 @@ interfaces and external ties, aggregated from the public 5-minute MIS posting
 | `positive_limit_mw` | `float64` | `mw` | yes | Most-binding (minimum) posted positive limit across the hour's 5-minute intervals; null where the source posts the +/-9999 MW "unbounded" sentinel. |
 | `negative_limit_mw` | `float64` | `mw` | yes | Most-binding (maximum, i.e. closest to zero) posted negative limit across the hour; null where the source posts the sentinel. |
 | `n_intervals` | `int64` | `none` | no | Count of 5-minute observations aggregated (24 in the DST fall-back hour). 0 marks an interior source gap filled from the adjacent actual observation (owner instruction 2026-07-10; see the fetch script) — hours before an interface first exists are never invented. |
+
+## seam-neighbour-price
+
+Hourly prices at both ends of NYISO's external seams: NYISO DA LBMP at every
+proxy bus and zone, and each neighbour's own price at the node facing New York
+(PJM INTERFACE pnodes, ISO-NE external nodes, IESO HOEP / MCP) — the spread
+NEXT-7 §3(c) needed. Schema:
+[`schema/seam-neighbour-price.schema.yaml`](schema/seam-neighbour-price.schema.yaml).
+
+- **Keys:** `iso`, `node`, `market`, `interval_start_utc`
+- **Reconciles:** NYISO MIS damlbmp zone+gen zips, PJM DataMiner2
+  type=INTERFACE (gitignored, re-fetch), ISO-NE histRpts DA/RT-final, IESO
+  reports-public yearly CSVs + Bank of Canada FXUSDCAD, one partition per (iso,
+  year) 2021-2025 from `data/raw/seam-neighbour-price/` (IESO ends 2025-04-30:
+  Market Renewal, README DATA NEEDED).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | Market that PUBLISHED the price (NYISO, PJM, NEISO, IESO). |
+| `node` | `string` | `none` | no | Pricing point as the publisher names it. NYISO: zone or proxy bus (e.g. "O H", "NPX", "PJM_GEN_HTP_PROXY", "N.Y.C."). PJM: INTERFACE pnode name (NYIS, HUDSONTP, LINDENVFT, NEPTUNE). NEISO: external-node name (".I.ROSETON 345 1", ".I.SHOREHAM138 99", ".I.NRTHPORT138 5") and ".H.INTERNAL_HUB". IESO: HOEP, ONTARIO_MCP, NEW_YORK_INTERTIE_MCP. |
+| `market` | `string` | `none` | no | DA (day-ahead) or RT (real-time; PJM settlement-verified hourly, ISO-NE final, IESO hourly). |
+| `interval_start_utc` | `datetime64[ns, UTC]` | `none` | no | Start of the hour in UTC (DST and IESO's EST-only clock resolved at curation). |
+| `home_iso` | `string` | `none` | no | The ISO whose seams this row serves (NYISO). |
+| `seam_group` | `string` | `none` | yes | The home ISO's seam group this node prices (IESO, HQ, PJM_AC, PJM_HTP, PJM_VFT, PJM_NEPTUNE, NE_AC, NE_CSC, NE_1385); null for internal zones and reference prices (ISO-NE hub, IESO Ontario MCP). |
+| `currency` | `string` | `none` | no | Currency of `price` (USD, or CAD for IESO). |
+| `price` | `float64` | `currency_per_mwh` | no | Published total price in native currency per MWh. |
+| `price_usd` | `float64` | `usd_per_mwh` | yes | Price in USD/MWh. IESO converted at the Bank of Canada daily USD/CAD (FXUSDCAD) for the operating date, carried over non-business days. |
 
 ## nyiso-som-hub-fuel-annual
 

@@ -138,6 +138,11 @@ data/raw/pjm-binding-constraints/*
 data/raw/pjm-ehv-lmp/*
 !data/raw/pjm-ehv-lmp/README.md
 !data/raw/pjm-ehv-lmp/SHA256SUMS.txt
+# NYISO-NEXT-10: PJM DataMiner2 INTERFACE-pnode LMPs at the NY seams — same
+# non-member redistribution restriction (docs/data-licensing.md §4). Re-fetch
+# with scripts/data/fetch_seam_neighbour_price_pjm.py; the tree-wide
+# data/raw/seam-neighbour-price/SHA256SUMS.txt is the committed record.
+data/raw/seam-neighbour-price/pjm/*.csv
 
 # NYISO MIS public DAM zonal LBMP monthly archives (36 zips, ~13 MB): raw
 # source of nyiso_proxy_lmp_hourly_NEISO.parquet (committed). Regenerable

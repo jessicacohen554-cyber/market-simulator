@@ -120,6 +120,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "nyiso-reserve-requirements",
     "nyiso-operating-events",
     "nyiso-interface-flows",
+    "seam-neighbour-price",
     "nyiso-som-hub-fuel-annual",
     "reserve-requirements",
     "som-competitive-conduct",
@@ -990,6 +991,21 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "5-min -> hourly (mean flow, most-binding limits; +/-9999 MW "
             "unbounded sentinels nulled), one partition per year 2018 "
             "through H1-2026 from `data/raw/NYISO/interface-flows/`."
+        ),
+    },
+    "seam-neighbour-price": {
+        "summary": (
+            "Hourly prices at both ends of NYISO's external seams: NYISO DA "
+            "LBMP at every proxy bus and zone, and each neighbour's own price "
+            "at the node facing New York (PJM INTERFACE pnodes, ISO-NE external "
+            "nodes, IESO HOEP / MCP) — the spread NEXT-7 §3(c) needed."
+        ),
+        "reconciles": (
+            "NYISO MIS damlbmp zone+gen zips, PJM DataMiner2 type=INTERFACE "
+            "(gitignored, re-fetch), ISO-NE histRpts DA/RT-final, IESO "
+            "reports-public yearly CSVs + Bank of Canada FXUSDCAD, one partition "
+            "per (iso, year) 2021-2025 from `data/raw/seam-neighbour-price/` "
+            "(IESO ends 2025-04-30: Market Renewal, README DATA NEEDED)."
         ),
     },
     "nyiso-som-hub-fuel-annual": {
