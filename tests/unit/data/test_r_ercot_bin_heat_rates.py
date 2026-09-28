@@ -68,3 +68,42 @@ def test_default_call_is_byte_identical_to_sheet():
         egrid_year_match=True,
     )
     pd.testing.assert_frame_equal(a, b)
+
+
+def _split_detail() -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "Plant_Code": [3470, 34702, 4939, 49392, 34520],
+            "Plant_Name": [
+                "W A Parish [COAL]",
+                "W A Parish [ST]",
+                "Barney M Davis [CC]",
+                "Barney M Davis [ST]",
+                "Ordinary Plant",
+            ],
+            "Plant_Group": ["COAL_PRB", "ST_GAS", "CC_REGULAR", "ST_GAS", "ST_GAS"],
+            "Plant_Avg_HR_MMBtu_MWh": [10.76, 10.76, 7.0, 10.7, 12.0],
+        }
+    )
+
+
+def test_split_child_parent_codes_needs_both_tags():
+    """Only a tagged row whose code // 10 is a tagged row is a split child."""
+    assert cb.split_child_parent_codes(_split_detail()) == {34702: 3470, 49392: 4939}
+    assert cb.split_child_parent_codes(_detail()) == {}
+
+
+def test_split_child_reads_parent_entry_of_its_own_family(monkeypatch):
+    """R-ERCOT-11: a split child that misses on its own code reads its parent's
+    entry in its own family's map; an untagged code never does."""
+    monkeypatch.setattr(cb, "measured_coal_heat_rates", lambda iso, y: {3470: 10.5})
+    monkeypatch.setattr(cb, "measured_cc_heat_rates", lambda iso, y: {4939: 7.8})
+    monkeypatch.setattr(cb, "measured_ct_heat_rates", lambda iso, y: {})
+    monkeypatch.setattr(
+        cb, "measured_st_heat_rates", lambda iso, y: {3470: 11.6, 4939: 12.6, 3452: 9.9}
+    )
+    monkeypatch.setattr(cb, "measured_chp_heat_rates", lambda iso, y: {})
+    flags = {n: True for n in set(cb._BIN_GROUP_MEASURED_FAMILY.values())}
+    hr, src = cb.resolve_bin_heat_rates(_split_detail(), "ERCOT", 2022, flags, False)
+    assert list(hr) == [10.5, 11.6, 7.8, 12.6, 12.0]
+    assert list(src) == ["measured", "measured", "measured", "measured", "sheet"]
