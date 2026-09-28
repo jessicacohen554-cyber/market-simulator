@@ -3716,3 +3716,10 @@ results/calibration/_rcaiso8/oasis_cache/
 # soco-81 shard legs: kept out of main (rule 32(d)); composite soco81_span is what registers.
 # Provenance (rule 33(d)): 2019 5eb223e6, 2020 da7d01ec, 2021 a83b4f9f, 2022 dc9e9c7c, 2023 58f2dca6, 2024 7ea14cfb, 2025 91007d69.
 results/calibration/soco81_20[0-9][0-9]/
+
+# NYISO-NEXT-8 per-year shard legs (rule 32(d)/36): kept on disk, never on main; the composed
+# span nyisonext8_span and the 2021 leg (its own registered bundle) are what land.
+# Provenance SHAs (rule 33(d), provenance only): 2021 41df05f453c8ff92c25bb86d27858cedc1fa9d66,
+# 2022 0b1a9021f19c7f3af05eb38cc3811929328c15b4, 2023 0a1d99f27dd4470d4868a031fd704c262b5fff51,
+# 2024 b6943beab05cf1a69db82970625ea9a2c847cbe0, 2025 1f56d8eb18403daaf69aa8da0bd02c938729a441.
+results/calibration/nyisonext8_202[2-5]/
