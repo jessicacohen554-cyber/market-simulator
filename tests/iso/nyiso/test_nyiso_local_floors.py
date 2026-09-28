@@ -1,12 +1,11 @@
-"""Tests for the NYISO local self-supply and firm-import floors.
+"""Tests for the NYISO local self-supply floor.
 
-Both impose an hour-varying ``FleetArrays.min_gen`` lower bound:
-
-* :func:`inject_nyiso_local_selfsupply` forces a cable-islanded downstate
-  pocket (Long Island) to meet a forward fraction of its own load with in-zone
-  dispatchable thermal generation (NYISO's LMIC / local-reliability rule).
-* :func:`inject_nyiso_firm_imports` floors the cheap HQ/Ontario priced-node
-  tranches as must-flow baseload.
+:func:`inject_nyiso_local_selfsupply` imposes an hour-varying
+``FleetArrays.min_gen`` lower bound: it forces a cable-islanded downstate
+pocket (Long Island) to meet a forward fraction of its own load with in-zone
+dispatchable thermal generation (NYISO's LMIC / local-reliability rule). (The
+HQ/Ontario firm-import floor and its tests were deleted 2026-09-28,
+NYISO-NEXT-11, rule 26.)
 """
 
 import unittest
@@ -14,11 +13,9 @@ import unittest
 import numpy as np
 
 from market_sim.config.constants import NYISO_LOCAL_SELFSUPPLY_FRAC
-from market_sim.config.interchange_config import NYISO_FIRM_IMPORT_FLOOR_FRAC
 from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
 from market_sim.model.transmission import (
     NYISO_SELFSUPPLY_FLOOR_HOURS,
-    inject_nyiso_firm_imports,
     inject_nyiso_local_selfsupply,
 )
 
@@ -136,36 +133,6 @@ class TestLocalSelfSupply(unittest.TestCase):
         demand[1, :] = 400.0
         self.assertFalse(inject_nyiso_local_selfsupply(fa, "PJM", demand, _ZONES))
         self.assertIsNone(fa.min_gen)
-
-
-class TestFirmImports(unittest.TestCase):
-    def test_hq_firm_floor(self):
-        fa = _fa()
-        applied = inject_nyiso_firm_imports(fa, "NYISO", 2023)
-        self.assertTrue(applied)
-        frac = NYISO_FIRM_IMPORT_FLOOR_FRAC["HQ_hydro"]
-        np.testing.assert_allclose(fa.min_gen[3, :], frac * 900.0)
-        # Non-import rows are untouched by the firm-import floor.
-        self.assertTrue(np.all(fa.min_gen[0, :] == 0.0))
-
-    def test_non_nyiso_noop(self):
-        fa = _fa()
-        self.assertFalse(inject_nyiso_firm_imports(fa, "CAISO", 2023))
-        self.assertIsNone(fa.min_gen)
-
-    def test_composes_with_existing_min_gen(self):
-        fa = _fa()
-        demand = np.zeros((3, T))
-        demand[1, :] = 400.0
-        inject_nyiso_local_selfsupply(fa, "NYISO", demand, _ZONES)
-        inject_nyiso_firm_imports(fa, "NYISO", 2023)
-        # The LI floor survives the firm-import pass (different rows), checked in
-        # the peak window; the firm-import floor is all-hours.
-        self.assertAlmostEqual(
-            float(fa.min_gen[1, _ON] + fa.min_gen[2, _ON]),
-            NYISO_LOCAL_SELFSUPPLY_FRAC["Long_Island"] * 400.0,
-        )
-        self.assertAlmostEqual(float(fa.min_gen[3, _ON]), 900.0)
 
 
 if __name__ == "__main__":

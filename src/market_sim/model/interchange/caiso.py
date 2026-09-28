@@ -713,7 +713,7 @@ def inject_caiso_firm_import_selfschedule(
     :func:`inject_caiso_firm_import_shape` (eford preserved multiplicatively
     inside ``availability``) — the exact analogue of the Manitoba / HQ firm
     must-flow blocks (:func:`inject_miso_firm_imports` /
-    :func:`inject_nyiso_firm_imports`, floor frac 1.0). Mechanism attribution
+    the since-deleted ``inject_nyiso_firm_imports``, floor frac 1.0). Mechanism attribution
     is :data:`~market_sim.data.floor_mechanisms.MECH_FIRM_IMPORT`: a
     CONTRACT, ablation-kept and D-2 exempt by construction
     (``NON_THERMAL_MECHS`` / ``MECH_ABLATION_KEPT``). At ``pmin = pmax`` the

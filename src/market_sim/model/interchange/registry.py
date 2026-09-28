@@ -25,7 +25,6 @@ from market_sim.model.interchange.import_nodes import (
     apply_reference_price_seam_injections,
 )
 from market_sim.model.interchange.miso import apply_miso_firm_import_injections
-from market_sim.model.interchange.nyiso import apply_nyiso_firm_import_injections
 
 _logger = logging.getLogger(__name__)
 
@@ -46,10 +45,9 @@ INTERCHANGE_INJECTIONS: dict[str, tuple] = {
         apply_miso_firm_import_injections,
     ),
     "NEISO": (apply_reference_price_seam_injections,),
-    "NYISO": (
-        apply_reference_price_seam_injections,
-        apply_nyiso_firm_import_injections,
-    ),
+    # NYISO's HQ/Ontario firm-import floor step was deleted 2026-09-28
+    # (NYISO-NEXT-11, rule 26 [R-DELETE], owner ruling Q-b).
+    "NYISO": (apply_reference_price_seam_injections,),
     "PJM": (apply_reference_price_seam_injections,),
     # SPP (registered 2026-09-06, lane SPP-20; owner rulings P2/P3): the
     # generic seam step alone. It self-gates on ``reference_price_interface``,
@@ -110,8 +108,8 @@ def apply_interchange_injections(
        prices (``caiso_intertie_reference_price``). The per-hub
        *measured-hub* pricing is a backcast overlay and lives in
        ``measured_overlay``, never here.
-    3. Firm import floors: Manitoba (``miso_firm_imports``) and NYISO
-       HQ/Ontario (``nyiso_firm_imports``) must-flow baseloads.
+    3. Firm import floor: Manitoba (``miso_firm_imports``) must-flow
+       baseload.
     4. ``measured_overlay(fleet_arrays, mc)`` — the caller-supplied backcast
        measured-price block (measured hub LMP overwrites). The forecast
        runner passes ``None``. It sits exactly here because the measured hub

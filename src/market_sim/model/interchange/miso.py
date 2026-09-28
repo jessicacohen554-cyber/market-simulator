@@ -1103,7 +1103,7 @@ def inject_miso_firm_imports(fleet_arrays, iso: str, year: int) -> bool:
 
     The Manitoba contract is firm must-flow energy: it flows into MISO-West
     every hour regardless of MISO's hourly price (the Hydro-Québec firm-import
-    pattern, :func:`inject_nyiso_firm_imports`). This sets a constant hourly
+    pattern, the since-deleted ``inject_nyiso_firm_imports``). This sets a constant hourly
     ``min_gen`` floor of
     :data:`~market_sim.config.interchange_config.MISO_MANITOBA_FIRM_IMPORT_FLOOR_FRAC` ×
     the block's available capacity on the Manitoba import row

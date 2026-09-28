@@ -245,7 +245,7 @@ def _bridge_floored_fleet(
     fleet_arrays,
     bridge_floor: np.ndarray,
     mech_id: int,
-    preserve_absorption: bool = False,
+    preserve_absorption: bool | np.ndarray = False,
 ):
     """Compose a P1-native bridge floor onto a ``FleetArrays`` (shared tail).
 
@@ -276,7 +276,14 @@ def _bridge_floored_fleet(
             CAISO-flag-gated (``ScenarioConfig.caiso_p1_export_sink_seam``)
             so no other ISO's keeper recipe shifts underneath it; the ERCOT
             and NYISO bridges re-gate on their own evidence (rule 25
-            [R-ISO-SCOPE], caiso-138 §D cross-ISO blast radius).
+            [R-ISO-SCOPE], caiso-138 §D cross-ISO blast radius). May also be
+            a boolean ROW MASK: only the ``pmin < 0`` rows it selects are
+            exempt. NYISO-NEXT-11 passes the NE AC node's sinks alone — a node
+            whose export offsets sit strictly below every import offset
+            (no-wash) and that hosts nothing else, so keeping its sinks cannot
+            open a resale path; the pooled ``NYISO_external`` sink is NOT
+            exempted, because there the static rungs sit below the sink's hub
+            price in most hours (phase 0, the PRECOMMIT §3).
     """
     import dataclasses
 
@@ -286,8 +293,10 @@ def _bridge_floored_fleet(
         else np.broadcast_to(fleet_arrays.pmin[:, None], bridge_floor.shape)
     )
     new_min_gen = np.maximum(base_min_gen, bridge_floor)
-    if preserve_absorption:
+    if isinstance(preserve_absorption, np.ndarray) or preserve_absorption:
         absorb = np.asarray(fleet_arrays.pmin, dtype=float) < 0.0
+        if isinstance(preserve_absorption, np.ndarray):
+            absorb = absorb & preserve_absorption.astype(bool)
         if absorb.any():
             new_min_gen[absorb, :] = np.asarray(base_min_gen, dtype=float)[absorb, :]
     base_mech = getattr(fleet_arrays, "min_gen_mechanism", None)
@@ -1204,6 +1213,19 @@ def build_nyiso_gas_bridge_p1_prep(
 
     from market_sim.data.floor_mechanisms import MECH_NYISO_GAS_COMMITMENT_BRIDGE
 
+    # nyiso_ne_ac_node (NYISO-NEXT-11): the NE AC node's export sinks keep
+    # their range through the bridge; without this the zeros-initialised floor
+    # collapses them to 0 in the scored P1 and the two-way node exports nothing
+    # (caiso-138 §D, the same defect). None when the node is off -> byte-identical.
+    ne_sinks = None
+    if getattr(config, "nyiso_ne_ac_node", False):
+        from market_sim.model.interchange.spec import NYISO_NE_AC_ZONE
+
+        ne_sinks = np.array(
+            [str(u).startswith(f"{NYISO_NE_AC_ZONE}_") for u in fleet_arrays.unit_ids],
+            dtype=bool,
+        )
+
     def _fleet_prep(r0):
         bridge_floor = _nyiso_gas_bridge_floor(
             config, fleet, fleet_arrays, r0.dispatch, r0.prices, mc_base
@@ -1211,7 +1233,10 @@ def build_nyiso_gas_bridge_p1_prep(
         if bridge_floor is None:
             return None
         return _bridge_floored_fleet(
-            fleet_arrays, bridge_floor, MECH_NYISO_GAS_COMMITMENT_BRIDGE
+            fleet_arrays,
+            bridge_floor,
+            MECH_NYISO_GAS_COMMITMENT_BRIDGE,
+            preserve_absorption=ne_sinks if ne_sinks is not None else False,
         )
 
     return _fleet_prep
@@ -2240,7 +2265,6 @@ def run_commitment_pass(state: dict, config=None):
         or getattr(cfg, "caiso_gas_commitment_floor", False)
         or getattr(cfg, "nyiso_local_selfsupply", False)
         or getattr(cfg, "reliability_floor", False)
-        or getattr(cfg, "nyiso_firm_imports", False)
         or getattr(cfg, "miso_firm_imports", False)
     )
     fa_p2 = apply_commitment_with_coal_pin(

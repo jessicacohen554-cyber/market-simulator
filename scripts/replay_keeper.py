@@ -200,6 +200,16 @@ _RULE26_DELETED_UNCONDITIONAL: dict[str, tuple[str, object]] = {
     # caps, so its replay at HEAD is not byte-faithful; those bundles are
     # historical records superseded by F1.
     "retiree_cems_cap": ("PJM", (False, None, True)),
+    # NYISO-NEXT-11 (2026-09-28, owner ruling Q-b "Delete") deleted
+    # `nyiso_firm_imports` (the always-on 900 MW HQ_hydro must-flow floor,
+    # inject_nyiso_firm_imports / NYISO_FIRM_IMPORT_FLOOR_FRAC) under rule 26
+    # [R-DELETE]; registered in scenarios._CACHE_KEY_RETIRED_FIELDS. Only NYISO
+    # ever armed it, and NYISO-NEXT-9 un-armed it from the keeper
+    # (docs/RESULT-nyiso-next9-hq-floor-2026-09-28.md), so the designated
+    # keeper and every other ISO's meta record False or None (the tri-state
+    # "flag never set", default False) — both inert. A NYISO bundle recording
+    # True floored the rung and still hard-errors as historical-record-only.
+    "nyiso_firm_imports": ("NYISO", (False, None)),
 }
 
 

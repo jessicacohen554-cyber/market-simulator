@@ -327,6 +327,7 @@ def nyiso_par_attributed_ttc_hourly(
     year: int,
     hours: int,
     percentile: float | None = None,
+    exclude_rows: tuple[str, ...] = (),
 ) -> tuple[np.ndarray, np.ndarray]:
     """Replace every NYISO border-link static with the attributed seam envelope.
 
@@ -352,6 +353,11 @@ def nyiso_par_attributed_ttc_hourly(
         hours: Dispatch horizon (rows of the output matrices).
         percentile: Envelope percentile; defaults to
             ``constants.NYISO_SEAM_FLOW_PERCENTILE``.
+        exclude_rows: P-32 rows served by their OWN node rather than the pooled
+            ``NYISO_external`` star (``nyiso_ne_ac_node`` passes
+            ``("SCH - NE - NY",)``), dropped before attribution so the pooled
+            link's envelope carries only the ties it still hosts (rule 19 — a
+            tie's volume is counted once).
 
     Returns:
         ``(ttc_hourly, ttc_import)`` — the ``(hours, n_links)`` forward (import)
@@ -395,7 +401,20 @@ def nyiso_par_attributed_ttc_hourly(
     )
     ttc_import = ttc_hourly.copy()
 
-    link_idx = {link.to_zone: i for i, link in enumerate(iso_config.links)}
+    # Only the pooled node's border links: a separately-hosted seam node (e.g.
+    # the NE AC node, NYISO-NEXT-11) also lands in a NYISO zone, and a bare
+    # to_zone lookup would let it shadow the pooled link. Byte-identical when no
+    # such node exists (every border link then originates at the pooled node).
+    from market_sim.model.interchange.spec import IMPORT_ZONE
+
+    pooled = IMPORT_ZONE.get("NYISO")
+    link_idx = {
+        link.to_zone: i
+        for i, link in enumerate(iso_config.links)
+        if link.from_zone == pooled
+    }
+    if exclude_rows:
+        frame = frame[~frame["interface"].isin(exclude_rows)]
     envelopes = attributed_envelope_by_zone(frame, year, hours, pct)
 
     n_capped = 0
