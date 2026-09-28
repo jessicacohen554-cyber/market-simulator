@@ -3273,6 +3273,9 @@ def run_year(
             ),
             nwpp_demand_plant_basis=getattr(config, "nwpp_demand_plant_basis", False),
             demand_balance_screen=getattr(config, "demand_balance_screen", False),
+            caiso_tac_shares_standard_time=getattr(
+                config, "caiso_tac_shares_standard_time", False
+            ),
         )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, year, iso_config, config

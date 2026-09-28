@@ -234,7 +234,7 @@ def _validate_zonal_shares(
 
 
 def _zonal_shares_from_raw(
-    iso: str, year: int, zone_names: list[str]
+    iso: str, year: int, zone_names: list[str], **parse_kwargs: bool
 ) -> np.ndarray | None:
     """Build measured hourly zonal shares straight from the raw demand file.
 
@@ -257,7 +257,7 @@ def _zonal_shares_from_raw(
     if parse_fn is None:
         return None
     try:
-        shares = parse_fn(year, zone_names)
+        shares = parse_fn(year, zone_names, **parse_kwargs)
     except Exception as exc:
         logger.warning("raw zonal-shares parse failed for %s %d: %s", iso, year, exc)
         return None
@@ -266,7 +266,13 @@ def _zonal_shares_from_raw(
     return _validate_zonal_shares(iso, year, zone_names, shares, "raw")
 
 
-def load_zonal_shares(iso: str, year: int, zone_names: list[str]) -> np.ndarray | None:
+def load_zonal_shares(
+    iso: str,
+    year: int,
+    zone_names: list[str],
+    *,
+    caiso_standard_time: bool = False,
+) -> np.ndarray | None:
     """Load measured hourly zonal load-share fractions.
 
     Returns a ``(n_zones, HOURS_PER_YEAR)`` array of hourly fractional load
@@ -290,7 +296,16 @@ def load_zonal_shares(iso: str, year: int, zone_names: list[str]) -> np.ndarray 
     Returns:
         ``(n_zones, HOURS_PER_YEAR)`` float64 array, or ``None`` if no measured
         source (clean parquet or raw file) is available for this ISO-year.
+
+    ``caiso_standard_time`` (CAISO only; ``ScenarioConfig.
+    caiso_tac_shares_standard_time``) re-parses the raw TAC file on the fixed
+    PST clock, bypassing the curated parquet, which was written on the
+    historical prevailing-time placement.
     """
+    if iso == "CAISO" and caiso_standard_time:
+        if "FSNO" in zone_names:
+            return _caiso_fsno_rescale(iso, year, zone_names, standard_time=True)
+        return _zonal_shares_from_raw(iso, year, zone_names, standard_time=True)
     # CAISO FSNO sub-zonal partition (caiso-224): the 7-zone caller list is
     # served by exact scalar re-split of the 6-zone measured shares — no new
     # hourly series exists (see _caiso_fsno_rescale).
@@ -305,7 +320,7 @@ def load_zonal_shares(iso: str, year: int, zone_names: list[str]) -> np.ndarray 
 
 
 def _caiso_fsno_rescale(
-    iso: str, year: int, zone_names: list[str]
+    iso: str, year: int, zone_names: list[str], *, standard_time: bool = False
 ) -> np.ndarray | None:
     """Serve 7-zone CAISO shares by re-splitting the measured 6-zone shares.
 
@@ -322,7 +337,11 @@ def _caiso_fsno_rescale(
     (caiso-224; PRECOMMIT-caiso224-fsno-arm-2026-08-30.md §1).
     """
     base_names = [z for z in zone_names if z != "FSNO"]
-    base = _load_zonal_shares_base(iso, year, base_names)
+    base = (
+        _zonal_shares_from_raw(iso, year, base_names, standard_time=True)
+        if standard_time
+        else _load_zonal_shares_base(iso, year, base_names)
+    )
     if base is None:
         return None
     pge = base[base_names.index("NP15")] / CAISO_TAC_ZONE_WEIGHTS["PGE-TAC"]["NP15"]
