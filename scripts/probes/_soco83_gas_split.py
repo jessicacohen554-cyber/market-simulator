@@ -43,6 +43,9 @@ KEEPER = "2026-09-27-soco82-perunitdark-regen"
 SPAN = _ROOT / "results/calibration/soco82_span"
 BENCH = _ROOT / "frontend/data/backcast/bench/SOCO/{y}.json.gz"
 OUT = _ROOT / "docs/handoffs/r-soco/soco83_gas_offers.csv"
+#: The per-plant monthly ST_GAS cost the lambda-conditioned out-of-merit derive reads
+#: (scripts/data/derive_thermal_tranche_oom_level_mw.py --condition lambda).
+COST_OUT = _ROOT / "data/raw/_processed-legacy/thermal_tranches_oom_cost_SOCO.csv"
 YEARS = (2019, 2020, 2021, 2022, 2023, 2024, 2025)
 GAS = ("CC_REGULAR", "ST_GAS", "CT_PEAKER")
 #: CAMPD unit-level extracts are per state; SOCO's gas fleet sits in these four.
@@ -169,6 +172,7 @@ def cems_plant(plant: int, year: int, fuel: str = "Natural Gas") -> np.ndarray:
 def main_offers(years: list[int]) -> None:
     """Gas offers vs lambda in CEMS-synced hours; model price vs lambda."""
     rows = []
+    cost_rows: list[dict] = []
     for y in years:
         lam = lambda_series(y)
         s = pd.read_parquet(SPAN / f"hourly/system_{y}.parquet")
@@ -200,6 +204,12 @@ def main_offers(years: list[int]) -> None:
             # capacity-weighted offer per hour across the plant-class's tranches, cheapest band excluded
             # only if it is a must-run floor (min_gen) -- here every tranche counts, weighted by pmax.
             off = (mc[sel] * w[:, None]).sum(0) / w.sum()
+            if g == "ST_GAS":
+                mon = pd.Series(off[:T], index=pd.date_range(f"{y}-01-01", periods=T, freq="h")).groupby(
+                    lambda t: t.month).median()
+                for mo, c in mon.items():
+                    cost_rows.append(dict(plant_code=plant, plant_group=g, year=y, month=int(mo),
+                                          cost_usd_mwh=round(float(c), 3)))
             a = cems_plant(plant, y)
             npl = float(v.get("npl") or 0) or float(w.sum())
             syn = a > 0.01 * npl
@@ -235,6 +245,12 @@ def main_offers(years: list[int]) -> None:
     print(t.to_string(index=False))
     t.to_csv(OUT, index=False)
     print(f"wrote {OUT.relative_to(_ROOT)}")
+    if set(years) == set(YEARS):
+        c = pd.DataFrame(cost_rows).sort_values(["plant_code", "year", "month"])
+        c["source"] = (f"keeper {KEEPER} fleet_only mc_base (measured ST heat rate x EIA-923 delivered "
+                       "gas + VOM), pmax-weighted over the plant's ST_GAS tranches, monthly median")
+        c.to_csv(COST_OUT, index=False)
+        print(f"wrote {COST_OUT.relative_to(_ROOT)} ({len(c)} rows)")
 
 
 if __name__ == "__main__":

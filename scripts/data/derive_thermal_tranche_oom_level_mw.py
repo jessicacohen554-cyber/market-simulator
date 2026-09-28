@@ -54,9 +54,35 @@ but assert ~2 TWh/yr in hours the plants' own meters say they did not operate
 ``[R-FLOOR-WINDOW]`` makes a bug by definition. Record:
 ``results/calibration/_miso198_level_selection.json``.
 
+**Second conditioning set, ``--condition lambda`` (lane soco-83, owner rulings
+2026-09-28 on the soco-83 decision cards: "Build ST out-of-merit floor" and
+"Southern lambda < plant cost").** Where the operator publishes its own hourly
+system lambda (FERC Form 714 Part II Sch. 6 — SOCO, ``data/raw/ferc-714``), the
+out-of-merit hours of a plant are the hours its own measured cost sat ABOVE the
+operator's reported marginal cost:
+
+    oom[plant] = online AND lambda(h) < cost(plant, month(h))
+
+``cost`` is ``thermal_tranches_oom_cost_<ISO>.csv`` — the plant's own offer as
+the model builds it from measured inputs (measured ST heat rate x EIA-923
+delivered gas + VOM), monthly median, written by
+``scripts/probes/_soco83_gas_split.py offers``. Only plants with cost rows are
+emitted. Everything else — online mask, net construction, derate source,
+percentile, nameplate clamp, pooled window — is unchanged, so the only thing
+this mode replaces is the conditioning MASK. The reason a second set exists
+for SOCO: the W3b CC-headroom set covers 83-91 % of all SOCO hours (measured
+2026-09-28), so it barely conditions there, while the lambda test is the
+operator's own statement of what was in merit (FINDING-soco-83 §2).
+Rule 21: zero free parameters (the percentile is the family's p25; lambda and
+cost are measured). Rule 13: the level is a pooled percentile of measured
+output, not an hourly pin; forward it is a static per-plant parameter exactly
+like every other level in this family.
+
 Usage:
     python3 scripts/data/derive_thermal_tranche_oom_level_mw.py \
         --iso MISO --years 2023 2024 2025 [--compare] [--out PATH]
+    python3 scripts/data/derive_thermal_tranche_oom_level_mw.py \
+        --iso SOCO --years 2019 2020 2021 2022 2023 2024 2025 --condition lambda
 
 Output: ``data/raw/_processed-legacy/thermal_tranches_oom_level_mw_<ISO>.csv``
 with columns ``plant_code, plant_group, nameplate_mw, oom_hours, oom_level_mw``.
@@ -118,8 +144,60 @@ def _cc_headroom_mask(
     return agg < _CC_HEADROOM_FRAC * ref
 
 
-def oom_level_mw(iso: str, years: list[int]) -> pd.DataFrame:
-    """Return the measured p25-of-out-of-merit-online dispatch level in MW."""
+#: ISOs whose operator publishes an hourly system lambda this repo carries
+#: (``--condition lambda``). Offset of the operator's reported clock from UTC
+#: is the lambda README's finding (fixed UTC-6, data/raw/ferc-714/README.md).
+_LAMBDA_ISOS: dict[str, int] = {"SOCO": -6}
+
+
+def _lambda_by_hour(iso: str, year: int, hours: int) -> np.ndarray:
+    """The operator's system lambda on the CAMPD local-hour grid for ``year``."""
+    from market_sim.data.ferc714 import load_ferc714_system_lambda
+
+    lam = load_ferc714_system_lambda()
+    idx = lam.index.tz_convert(None) if lam.index.tz is not None else lam.index
+    s = pd.Series(
+        lam["system_lambda_usd_mwh"].to_numpy(float),
+        index=idx + pd.Timedelta(hours=_LAMBDA_ISOS[iso]),
+    )
+    grid = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    return s.reindex(grid).to_numpy(float)
+
+
+def _lambda_masks(
+    iso: str, year: int, hours: int, cost: pd.DataFrame
+) -> dict[tuple[int, str], np.ndarray]:
+    """Per (plant, group): hours the operator's lambda sat below the plant's cost."""
+    lam = _lambda_by_hour(iso, year, hours)
+    month = pd.date_range(f"{year}-01-01", periods=hours, freq="h").month.to_numpy()
+    out: dict[tuple[int, str], np.ndarray] = {}
+    for (code, group), g in cost[cost.year == year].groupby(
+        ["plant_code", "plant_group"]
+    ):
+        by_month = dict(zip(g.month.astype(int), g.cost_usd_mwh.astype(float)))
+        c = np.array([by_month.get(int(m), np.nan) for m in month])
+        out[(int(code), str(group))] = np.isfinite(lam) & np.isfinite(c) & (lam < c)
+    return out
+
+
+def oom_level_mw(
+    iso: str, years: list[int], condition: str = "cc_headroom"
+) -> pd.DataFrame:
+    """Return the measured p25-of-out-of-merit-online dispatch level in MW.
+
+    ``condition`` selects the out-of-merit hour set: ``"cc_headroom"`` (the
+    miso-197 W3b set, default, unchanged) or ``"lambda"`` (the operator's own
+    system lambda below the plant's monthly cost; see the module docstring).
+    """
+    cost = None
+    if condition == "lambda":
+        if iso not in _LAMBDA_ISOS:
+            raise SystemExit(
+                f"--condition lambda: no system lambda registered for {iso!r}"
+            )
+        cost = pd.read_csv(PROCESSED_DIR / f"thermal_tranches_oom_cost_{iso}.csv")
+    elif condition != "cc_headroom":
+        raise SystemExit(f"unknown --condition {condition!r}")
     cap, primary = dtt._fleet_nameplate_and_group(iso)
     factors = dtt._parasitic_factor_map()
     states = campd.states_for_iso(iso)
@@ -137,12 +215,22 @@ def oom_level_mw(iso: str, years: list[int]) -> pd.DataFrame:
         if not hours:
             continue
         derate = unit_outage_derate_factors(year, iso=iso)
-        oom = _cc_headroom_mask(net, primary, hours)
-        print(
-            f"  {year}: {int(oom.sum())} out-of-merit hour(s) of {hours} "
-            f"({_MERIT_REFERENCE_GROUP} below "
-            f"{_CC_HEADROOM_FRAC:.2f} x p{_CC_REF_PCTILE})"
-        )
+        if cost is None:
+            oom = _cc_headroom_mask(net, primary, hours)
+            plant_oom = None
+            print(
+                f"  {year}: {int(oom.sum())} out-of-merit hour(s) of {hours} "
+                f"({_MERIT_REFERENCE_GROUP} below "
+                f"{_CC_HEADROOM_FRAC:.2f} x p{_CC_REF_PCTILE})"
+            )
+        else:
+            plant_oom = _lambda_masks(iso, year, hours, cost)
+            print(
+                f"  {year}: lambda < plant cost in "
+                + ", ".join(
+                    f"{k[0]}:{int(v.sum())}h" for k, v in sorted(plant_oom.items())
+                )
+            )
         for (code, group), nameplate in cap.items():
             if group not in _LEVEL_GROUPS or nameplate <= 0:
                 continue
@@ -156,7 +244,12 @@ def oom_level_mw(iso: str, years: list[int]) -> pd.DataFrame:
             avail_cap = nameplate * avail_mult
             finite = np.isfinite(series) & (avail_cap > 0.0)
             online = finite & (series > dtt._ONLINE_FRAC * avail_cap)
-            sel = online & oom
+            if plant_oom is not None:
+                if (code, group) not in plant_oom:
+                    continue  # lambda mode emits only plants with a measured cost
+                sel = online & plant_oom[(code, group)][: len(series)]
+            else:
+                sel = online & oom
             if sel.any():
                 oom_mw.setdefault((code, group), []).append(series[sel])
 
@@ -189,6 +282,13 @@ def main() -> None:
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
     ap.add_argument("--out", default=None)
     ap.add_argument(
+        "--condition",
+        choices=("cc_headroom", "lambda"),
+        default="cc_headroom",
+        help="out-of-merit hour set: the miso-197 W3b CC-headroom set (default) "
+        "or the operator's system lambda below the plant's monthly cost",
+    )
+    ap.add_argument(
         "--compare",
         action="store_true",
         help="print the out-of-merit level beside the incumbent all-online p25 "
@@ -198,7 +298,7 @@ def main() -> None:
 
     iso = args.iso.upper()
     print(f"Deriving out-of-merit level (MW) for {iso}, years {args.years}")
-    df = oom_level_mw(iso, sorted(args.years))
+    df = oom_level_mw(iso, sorted(args.years), args.condition)
     if df.empty:
         raise SystemExit("no rows derived")
 
