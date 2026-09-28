@@ -71,10 +71,14 @@ def census(year: int, art: dict) -> dict:
     )
     g = u.groupby(["plant_code", "hour"])[["mw", "cap_mw"]].sum()
     fl = np.load(leg / f"floors/{year}_P1.npz")
-    ra = (fl["mechanism"] == MECH_RA_MUSTOFFER) & (fl["plant_group"][:, None] == "CC_REGULAR")
+    ra = (fl["mechanism"] == MECH_RA_MUSTOFFER) & (
+        fl["plant_group"][:, None] == "CC_REGULAR"
+    )
     ra_mid_mw = float(np.where(ra, fl["min_gen"], 0).sum(axis=0)[MID].mean())
 
-    buckets = dict.fromkeys(("UNAVAIL", "OFF_DAY", "EVE_ONLY", "MORN_ONLY", "BOTH"), 0.0)
+    buckets = dict.fromkeys(
+        ("UNAVAIL", "OFF_DAY", "EVE_ONLY", "MORN_ONLY", "BOTH"), 0.0
+    )
     cems_allday = 0.0
     total_act_mid = 0.0
     n_plants = 0
