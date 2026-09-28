@@ -97,7 +97,9 @@ def test_builder_reads_same_year_lots_by_month_and_purchase_type(monkeypatch):
     import market_sim.data.coal_receipts as cr
 
     monkeypatch.setattr(cr, "load_coal_receipts", lambda years: rec)
-    monkeypatch.setattr(cfi, "coal_yard_groups", lambda f, reference_dir=None: {1: {1}, 3: {3}})
+    monkeypatch.setattr(
+        cfi, "coal_yard_groups", lambda f, reference_dir=None: {1: {1}, 3: {3}}
+    )
     fleet = _coal_fleet([1], hours=24)
     cum_r, cum_c, prov = cfi.build_coal_measured_receipts(fleet, 2023, (1, 3))
     assert cum_r[0, :3].tolist() == pytest.approx([290.0, 290.0, 330.0])
@@ -111,7 +113,9 @@ def test_builder_none_without_a_year_file(monkeypatch):
     import market_sim.data.coal_receipts as cr
 
     monkeypatch.setattr(cr, "load_coal_receipts", lambda years: pd.DataFrame())
-    assert cfi.build_coal_measured_receipts(_coal_fleet([1], hours=24), 2025, (1,)) is None
+    assert (
+        cfi.build_coal_measured_receipts(_coal_fleet([1], hours=24), 2025, (1,)) is None
+    )
 
 
 def _cfg(**kw) -> ScenarioConfig:
