@@ -4923,6 +4923,7 @@ def solve_and_persist(
     nyiso_scr_edrp_strike: float | None = None,
     nyiso_import_reconciliation: bool | None = None,
     nyiso_import_hub_prices: bool | None = None,
+    nyiso_ne_ac_node: bool | None = None,
     nyiso_iroquois_winter_spread: bool | None = None,
     nyiso_synchronised_reserve: bool | None = None,
     nyiso_li_locational_reserve: bool | None = None,
@@ -5941,6 +5942,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_import_hub_prices=nyiso_import_hub_prices
             )
+        if nyiso_ne_ac_node is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_ne_ac_node=nyiso_ne_ac_node
+            )
         if nyiso_iroquois_winter_spread is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_iroquois_winter_spread=nyiso_iroquois_winter_spread
@@ -6933,6 +6938,7 @@ def solve_and_persist(
             nyiso_scr_edrp_strike=nyiso_scr_edrp_strike,
             nyiso_import_reconciliation=nyiso_import_reconciliation,
             nyiso_import_hub_prices=nyiso_import_hub_prices,
+            nyiso_ne_ac_node=nyiso_ne_ac_node,
             nyiso_iroquois_winter_spread=nyiso_iroquois_winter_spread,
             nyiso_synchronised_reserve=nyiso_synchronised_reserve,
             nyiso_li_locational_reserve=nyiso_li_locational_reserve,
@@ -7925,6 +7931,7 @@ def solve_and_persist(
         "nyiso_scr_edrp_strike": nyiso_scr_edrp_strike,
         "nyiso_import_reconciliation": nyiso_import_reconciliation,
         "nyiso_import_hub_prices": nyiso_import_hub_prices,
+        "nyiso_ne_ac_node": nyiso_ne_ac_node,
         "nyiso_iroquois_winter_spread": nyiso_iroquois_winter_spread,
         "nyiso_synchronised_reserve": nyiso_synchronised_reserve,
         "nyiso_li_locational_reserve": nyiso_li_locational_reserve,
@@ -14167,6 +14174,17 @@ def main() -> None:
         "value (off).",
     )
     parser.add_argument(
+        "--nyiso-ne-ac-node",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NYISO-NEXT-11: host the NY-New England AC tie on its own two-way "
+        "node (8 import bands + 8 export sinks at the hourly ISO-NE Roseton DA "
+        "LMP + Q-Q spread offsets, link at the posted limits), removing it from "
+        "the pooled ladder / Capital_Hudson envelope / hub repricing. Requires "
+        "--priced-interchange and nyiso_seam_par_attribution; backcast-only. "
+        "NYISO-only. Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--nyiso-import-hub-prices",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -15839,6 +15857,7 @@ def main() -> None:
         nyiso_scr_edrp_strike=args.nyiso_scr_edrp_strike,
         nyiso_import_reconciliation=args.nyiso_import_reconciliation,
         nyiso_import_hub_prices=args.nyiso_import_hub_prices,
+        nyiso_ne_ac_node=args.nyiso_ne_ac_node,
         nyiso_iroquois_winter_spread=args.nyiso_iroquois_winter_spread,
         nyiso_synchronised_reserve=args.nyiso_synchronised_reserve,
         nyiso_li_locational_reserve=args.nyiso_li_locational_reserve,

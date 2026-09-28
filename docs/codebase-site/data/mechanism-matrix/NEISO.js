@@ -114,6 +114,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     nwpp_path76_alturas_link: { cell: ".", ev: "n/a: NWPP-only topology field (pipeline.ttc.apply_nwpp_path76_link returns the same ISOConfig for any other ISO); added by the rule-28(c) same-PR duty, NWPP-NEXT-6 2026-09-26." },
     coal_fuel_inventory_take_floor: { cell: "U", ev: "ROW ADDED 2026-09-27 (NWPP-NEXT-7) WITH the field -- U: UNTESTED here (rule 28(d)); gated to NWPP (COAL_TAKE_FLOOR_ISOS) until this ISO derives its own contract census." },
     nyiso_li_seam_posted_limit_cap: { cell: ".", ev: "n/a: NYISO-only clip (run_calibration.run_year gates it on iso == \"NYISO\"); added by the rule-28(c) same-PR duty, NYISO-NEXT-6 2026-09-27." },
+    nyiso_ne_ac_node: { cell: ".", ev: "n/a: NYISO-only node (get_interchange_spec resolves it on iso == \"NYISO\" only); added by the rule-28(c) same-PR duty, NYISO-NEXT-11 2026-09-28." },
     coal_takeorpay_committed: { cell: "." },
     coal_prb_committed_dispatchable: { cell: "." },
     coal_prb_committed_split: { cell: "." },

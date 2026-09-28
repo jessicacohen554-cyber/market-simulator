@@ -3,8 +3,9 @@
 Everything NYISO-specific that lived in ``model/transmission.py``: the
 measured neighbor-LMP import-hub repricer, the published Zone-K / Zone-J
 locality (LCR/TSL) import caps, the downstate local self-supply floor, the
-HQ/Ontario firm-import floors, and the priced-node monthly net-interchange
-reconciliation band. Per-ISO tuned limits transplant byte-for-byte
+priced-node monthly net-interchange reconciliation band, and the NE AC tie's
+own two-way node (NYISO-NEXT-11). (The HQ/Ontario firm-import floor was
+deleted 2026-09-28 under rule 26.) Per-ISO tuned limits transplant byte-for-byte
 (CLAUDE.md rules 23/25). Moved INTACT from ``model/transmission.py``
 (session 3F, refactor-consolidation plan §5 item 6); ``transmission``
 remains the full-surface facade.
@@ -22,6 +23,11 @@ from market_sim.data.floor_mechanisms import (
 from market_sim.model.interchange.spec import (
     IMPORT_ZONE,
     NYISO_IMPORT_RECON_BAND_FRAC,
+    NYISO_NE_AC_LADDER_BY_YEAR,
+    NYISO_NE_AC_LANDING,
+    NYISO_NE_AC_NEIGHBOUR_NODE,
+    NYISO_NE_AC_SEAM_ROW,
+    NYISO_NE_AC_ZONE,
 )
 
 _logger = logging.getLogger(__name__)
@@ -54,6 +60,7 @@ def inject_nyiso_import_hub_prices(
     mc: np.ndarray,
     iso: str,
     year: int,
+    exclude_neighbours: tuple[str, ...] = (),
 ) -> bool:
     """Reprice NYISO's non-firm import tranches at measured neighbor hourly LMPs.
 
@@ -87,6 +94,12 @@ def inject_nyiso_import_hub_prices(
     NYISO's own flow (rule #11). The monthly EIA-930 reconciliation band, HQ
     firm floor and simultaneous-import limit are untouched.
 
+    ``exclude_neighbours`` drops a neighbour from the pooled node entirely —
+    its proxy rung keeps the static ladder value and it leaves the scarcity
+    max / export min. ``nyiso_ne_ac_node`` passes ``("NEISO",)``: the NE AC tie
+    then has its own node priced at ISO-NE's Roseton node, so pricing a pooled
+    rung at the ISO-NE hub as well would admit NE's price twice (rule 19).
+
     Returns ``True`` when at least one row was repriced, ``False`` (byte-
     identical static ladder) for non-NYISO ISOs, a missing import node, or
     missing measured neighbor series (e.g. forecast years).
@@ -101,6 +114,8 @@ def inject_nyiso_import_hub_prices(
     hours = int(mc.shape[1])
     series: dict[str, np.ndarray] = {}
     for neighbor in sorted(set(_NYISO_HUB_IMPORT_TRANCHE_NEIGHBOR.values())):
+        if neighbor in exclude_neighbours:
+            continue
         lmp = neighbor_lmp_hourly(neighbor, year, "da")
         if lmp is None:
             lmp = neighbor_lmp_hourly(neighbor, year, "rt")
@@ -830,3 +845,262 @@ def build_nyiso_link_loss(links, iso: str, year: int, hours: int):
         eps_m = np.maximum(0.0, (dev_to - dev_from) / (1.0 + dev_to))
         loss[i, :] = eps_m[month_of_hour]
     return loss if np.any(loss > 0.0) else None
+
+
+# --------------------------------------------------------------------------
+# The NE AC tie's own two-way node (nyiso_ne_ac_node, NYISO-NEXT-11)
+# --------------------------------------------------------------------------
+
+
+def split_nyiso_ne_ac_node(iso_config, import_ttc_mw: float):
+    """Append the NE AC tie's own external zone and its single border link.
+
+    ``ScenarioConfig.nyiso_ne_ac_node`` (owner ruling Q-a, 2026-09-28). Adds
+    the zero-load :data:`~market_sim.model.interchange.spec.NYISO_NE_AC_ZONE`
+    and ONE link from it to the tie's landing zone
+    (:data:`~market_sim.model.interchange.spec.NYISO_NE_AC_LANDING`), so the
+    node's bands can reach NYISO only across the NE AC tie — no wheel through
+    the pooled ``NYISO_external`` bus and no second landing. The pooled
+    ``NYISO_external -> Capital_Hudson`` link stays: under PAR attribution it
+    carries the PJM-Ramapo share alone once the NE row is excluded
+    (:func:`market_sim.data.nyiso_par_attribution.nyiso_par_attributed_ttc_hourly`
+    ``exclude_rows``). The static TTC is the year's median posted import limit;
+    in a backcast it is overwritten hour by hour by the posted limits in both
+    directions (:func:`nyiso_ne_ac_posted_ttc_hourly`).
+
+    The ``NYISO_simultaneous_import`` InterfaceLimit is left as it is: it is the
+    mis-installed internal G-J locality limit (nyiso-100) the keeper retires,
+    and :func:`~market_sim.model.interchange.import_nodes.retire_misattributed_sil`
+    identifies it by every member originating at ``NYISO_external``.
+
+    Idempotent: a topology already carrying the zone is returned unchanged.
+
+    Raises:
+        ValueError: The landing zone is absent (fail loud).
+    """
+    from market_sim.config.iso_configs import TransferLink, Zone
+
+    if NYISO_NE_AC_ZONE in iso_config.zone_names:
+        return iso_config
+    if NYISO_NE_AC_LANDING not in iso_config.zone_names:
+        raise ValueError(
+            f"split_nyiso_ne_ac_node: landing zone {NYISO_NE_AC_LANDING!r} absent"
+        )
+    extended = iso_config.model_copy(
+        update={
+            "zones": [
+                *iso_config.zones,
+                Zone(name=NYISO_NE_AC_ZONE, iso=iso_config.name, load_share=0.0),
+            ],
+            "links": [
+                *iso_config.links,
+                TransferLink(
+                    from_zone=NYISO_NE_AC_ZONE,
+                    to_zone=NYISO_NE_AC_LANDING,
+                    ttc_mw=float(import_ttc_mw),
+                ),
+            ],
+        }
+    )
+    extended.validate_topology()
+    return extended
+
+
+def _model_clock_index(hours: int):
+    """(month, day, hour) MultiIndex of the model's fixed non-leap local clock."""
+    import pandas as pd
+
+    cal = pd.date_range("2023-01-01", periods=hours, freq="h")
+    return pd.MultiIndex.from_arrays(
+        [cal.month, cal.day, cal.hour], names=["_mo", "_dy", "_hr"]
+    )
+
+
+def _on_model_clock(local, values, hours: int, how: str = "mean") -> np.ndarray:
+    """Place local-hour values on the model clock (Feb 29 dropped).
+
+    The convention of every NYISO P-32 reader
+    (``nyiso_seam_envelope.posted_import_limit_hourly``): a source hour goes to
+    its OWN local (month, day, hour); the DST fall-back repeat is reduced by
+    ``how``; the spring-forward gap carries the previous hour.
+    """
+    import pandas as pd
+
+    ts = pd.to_datetime(local).dt.floor("h")
+    keep = ~((ts.dt.month == 2) & (ts.dt.day == 29))
+    frame = pd.DataFrame(
+        {
+            "_mo": ts[keep].dt.month.to_numpy(),
+            "_dy": ts[keep].dt.day.to_numpy(),
+            "_hr": ts[keep].dt.hour.to_numpy(),
+            "v": np.asarray(values, dtype=float)[keep.to_numpy()],
+        }
+    )
+    series = frame.groupby(["_mo", "_dy", "_hr"])["v"].agg(how)
+    return (
+        series.reindex(_model_clock_index(hours)).ffill().bfill().to_numpy(dtype=float)
+    )
+
+
+def load_nyiso_ne_ac_neighbour_price(year: int, hours: int, frame=None) -> np.ndarray:
+    """Return the hourly ISO-NE Roseton DA LMP ($/MWh) on the model clock.
+
+    Read from the ``seam-neighbour-price`` clean datatype (publisher NEISO,
+    node :data:`~market_sim.model.interchange.spec.NYISO_NE_AC_NEIGHBOUR_NODE`,
+    market DA), keyed on ``interval_start_utc`` and placed on the model's local
+    clock (America/New_York). Full coverage or nothing: a year the datatype
+    does not cover raises rather than leaving the node unpriced.
+
+    Args:
+        year: Backcast year.
+        hours: Dispatch horizon.
+        frame: Optional pre-read partition (tests); read when ``None``.
+
+    Raises:
+        FileNotFoundError: No partition, or no Roseton DA rows for ``year``.
+    """
+    if frame is None:
+        try:
+            from scripts.lib.clean_io import read_clean
+
+            frame = read_clean(
+                "seam-neighbour-price", iso="NEISO", year=year, validate=False
+            )
+        except Exception as exc:  # noqa: BLE001 — re-raised as the gated error
+            raise FileNotFoundError(
+                f"nyiso_ne_ac_node {year}: could not read the "
+                f"'seam-neighbour-price' clean partition ({exc}) — run "
+                "scripts/regenerate_clean.py seam-neighbour-price"
+            ) from exc
+    sel = frame[
+        (frame["node"] == NYISO_NE_AC_NEIGHBOUR_NODE) & (frame["market"] == "DA")
+    ]
+    if sel.empty:
+        raise FileNotFoundError(
+            f"nyiso_ne_ac_node {year}: no {NYISO_NE_AC_NEIGHBOUR_NODE!r} DA rows "
+            "in 'seam-neighbour-price' (the mechanism never silently no-ops)"
+        )
+    local = (
+        sel["interval_start_utc"].dt.tz_convert("America/New_York").dt.tz_localize(None)
+    )
+    return _on_model_clock(local, sel["price_usd"].to_numpy(dtype=float), hours)
+
+
+def inject_nyiso_ne_ac_node_prices(
+    fleet_arrays, mc: np.ndarray, year: int, neighbour_price: np.ndarray | None = None
+) -> int:
+    """Price the NE AC node's bands at ``Roseton(t) + offset_k``, hour by hour.
+
+    Band k of the import side clears in hour t iff Capital_Hudson's price
+    exceeds ``Roseton(t) + import_offset_k`` (the tie's measured spread
+    exceeding the band's Q-Q offset); export sink k absorbs iff Capital_Hudson's
+    price is below ``Roseton(t) + export_offset_k``. The offsets are
+    :data:`~market_sim.model.interchange.spec.NYISO_NE_AC_LADDER_BY_YEAR`
+    (derived, zero free parameters); the no-wash clamp in that derivation makes
+    every export offset strictly below every import offset, so the node can
+    never buy and sell in the same hour.
+
+    Args:
+        fleet_arrays: Vectorized fleet carrying the node's rows.
+        mc: ``(n_gen, hours)`` marginal-cost matrix (modified in place).
+        year: Backcast year.
+        neighbour_price: Optional Roseton series (tests); loaded when ``None``.
+
+    Returns:
+        Number of rows priced.
+
+    Raises:
+        ValueError: The node's rows are absent or do not match the ladder.
+    """
+    hours = int(mc.shape[1])
+    ladder = NYISO_NE_AC_LADDER_BY_YEAR[year]
+    anchor = (
+        load_nyiso_ne_ac_neighbour_price(year, hours)
+        if neighbour_price is None
+        else np.asarray(neighbour_price, dtype=float)[:hours]
+    )
+    prefix = f"{NYISO_NE_AC_ZONE}_"
+    n = 0
+    for side, key in (("imp", "import"), ("exp", "export")):
+        offsets = ladder[key]
+        for k, off in enumerate(offsets, start=1):
+            uid = f"{prefix}{side}#{k}"
+            rows = [i for i, u in enumerate(fleet_arrays.unit_ids) if u == uid]
+            if len(rows) != 1:
+                raise ValueError(
+                    f"inject_nyiso_ne_ac_node_prices {year}: expected one row "
+                    f"{uid!r}, found {len(rows)}"
+                )
+            mc[rows[0], :] = anchor + float(off)
+            n += 1
+    return n
+
+
+def nyiso_ne_ac_posted_ttc_hourly(
+    ttc_hourly: np.ndarray,
+    ttc_reverse: np.ndarray,
+    iso_config,
+    year: int,
+    hours: int,
+    frame=None,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Bound the NE AC node's link at the tie's POSTED limits, hour by hour.
+
+    Forward (import into NYISO) = the P-32 ``positive_limit_mw`` of
+    :data:`~market_sim.model.interchange.spec.NYISO_NE_AC_SEAM_ROW`; reverse
+    (export) = ``-negative_limit_mw``. Published physical ratings under
+    outage, read as posted (rule 13: the object class of an outage window,
+    backcast only — never an outcome percentile). The +/-9999 "no limit"
+    sentinel is nulled at curation and carried forward from the previous
+    posting, like every other gap.
+
+    Args:
+        ttc_hourly: ``(hours, n_links)`` forward cap.
+        ttc_reverse: ``(hours, n_links)`` reverse cap.
+        iso_config: NYISO topology carrying the node's link.
+        year: Backcast year.
+        hours: Dispatch horizon.
+        frame: Optional pre-read ``nyiso-interface-flows`` partition (tests).
+
+    Returns:
+        Copies of both matrices with the node link's column replaced.
+
+    Raises:
+        FileNotFoundError / ValueError: No partition, no posted row, or no
+            node link (the mechanism never silently no-ops).
+    """
+    if frame is None:
+        try:
+            from scripts.lib.clean_io import read_clean
+
+            frame = read_clean(
+                "nyiso-interface-flows", iso="NYISO", year=year, validate=False
+            )
+        except Exception as exc:  # noqa: BLE001 — re-raised as the gated error
+            raise FileNotFoundError(
+                f"nyiso_ne_ac_node {year}: could not read the "
+                f"'nyiso-interface-flows' clean partition ({exc})"
+            ) from exc
+    sel = frame[frame["interface"] == NYISO_NE_AC_SEAM_ROW]
+    if sel.empty:
+        raise ValueError(
+            f"nyiso_ne_ac_node {year}: {NYISO_NE_AC_SEAM_ROW!r} absent from the "
+            "P-32 partition"
+        )
+    idx = [
+        i
+        for i, ln in enumerate(iso_config.links)
+        if ln.from_zone == NYISO_NE_AC_ZONE and ln.to_zone == NYISO_NE_AC_LANDING
+    ]
+    if len(idx) != 1:
+        raise ValueError(f"nyiso_ne_ac_node {year}: node link not found in topology")
+    pos = sel["positive_limit_mw"].astype(float)
+    neg = sel["negative_limit_mw"].astype(float)
+    local = sel["interval_start_local"]
+    fwd = _on_model_clock(local, pos.to_numpy(), hours, how="min")
+    rev = _on_model_clock(local, (-neg).to_numpy(), hours, how="min")
+    out_f = np.array(ttc_hourly, dtype=float, copy=True)
+    out_r = np.array(ttc_reverse, dtype=float, copy=True)
+    out_f[:, idx[0]] = np.clip(fwd, 0.0, None)
+    out_r[:, idx[0]] = np.clip(rev, 0.0, None)
+    return out_f, out_r

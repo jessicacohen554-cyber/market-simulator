@@ -950,6 +950,7 @@ def run_year(
     nyiso_scr_edrp_strike: float | None = None,
     nyiso_import_reconciliation: bool | None = None,
     nyiso_import_hub_prices: bool | None = None,
+    nyiso_ne_ac_node: bool | None = None,
     nyiso_iroquois_winter_spread: bool | None = None,
     nyiso_synchronised_reserve: bool | None = None,
     nyiso_li_locational_reserve: bool | None = None,
@@ -2022,6 +2023,8 @@ def run_year(
         )
     if nyiso_import_hub_prices is not None:
         config = config.with_overrides(nyiso_import_hub_prices=nyiso_import_hub_prices)
+    if nyiso_ne_ac_node is not None:
+        config = config.with_overrides(nyiso_ne_ac_node=nyiso_ne_ac_node)
     if nyiso_iroquois_winter_spread is not None:
         config = config.with_overrides(
             nyiso_iroquois_winter_spread=nyiso_iroquois_winter_spread
@@ -3471,15 +3474,48 @@ def run_year(
     # nyiso-125 two-link envelope rather than stacking on it (rule 19
     # [R-ONE-MECH]): it computes those same two links from the same measured
     # rows, so exactly one of the two mechanisms is applied.
+    if (
+        getattr(config, "nyiso_ne_ac_node", False)
+        and iso == "NYISO"
+        and not getattr(config, "nyiso_seam_par_attribution", False)
+    ):
+        raise ValueError(
+            "nyiso_ne_ac_node requires nyiso_seam_par_attribution (the node's "
+            "row must leave the pooled Capital_Hudson envelope it would "
+            "otherwise be counted in)"
+        )
     if getattr(config, "nyiso_seam_par_attribution", False) and iso == "NYISO":
         from market_sim.config.constants import NYISO_SEAM_FLOW_PERCENTILE
         from market_sim.data.nyiso_par_attribution import (
             nyiso_par_attributed_ttc_hourly,
         )
+        from market_sim.model.interchange.spec import NYISO_NE_AC_SEAM_ROW
 
+        # nyiso_ne_ac_node (NYISO-NEXT-11): the NE AC row rides its own node,
+        # so it leaves the pooled Capital_Hudson envelope (rule 19).
+        _ne_node = bool(getattr(config, "nyiso_ne_ac_node", False))
         ttc, ttc_import = nyiso_par_attributed_ttc_hourly(
-            np.asarray(ttc, dtype=float), iso_config, year, demand.shape[1]
+            np.asarray(ttc, dtype=float),
+            iso_config,
+            year,
+            demand.shape[1],
+            exclude_rows=(NYISO_NE_AC_SEAM_ROW,) if _ne_node else (),
         )
+        if _ne_node:
+            from market_sim.model.interchange.nyiso import (
+                nyiso_ne_ac_posted_ttc_hourly,
+            )
+
+            ttc, ttc_import = nyiso_ne_ac_posted_ttc_hourly(
+                ttc, ttc_import, iso_config, year, demand.shape[1]
+            )
+            logger.info(
+                "%s %d: nyiso_ne_ac_node — NE AC tie on its own node, link "
+                "bounded at the posted import/export limits; NE row excluded "
+                "from the pooled Capital_Hudson envelope",
+                iso,
+                year,
+            )
         logger.info(
             "%s %d: nyiso_seam_par_attribution — all four border links follow "
             "the measured p%.0f directional envelope of the ATTRIBUTED seam "
@@ -5743,7 +5779,10 @@ def run_year(
         ):
             from market_sim.model.transmission import inject_nyiso_import_hub_prices
 
-            if inject_nyiso_import_hub_prices(fleet_arrays, mc_base, iso, year):
+            _hub_excl = ("NEISO",) if getattr(config, "nyiso_ne_ac_node", False) else ()
+            if inject_nyiso_import_hub_prices(
+                fleet_arrays, mc_base, iso, year, exclude_neighbours=_hub_excl
+            ):
                 logger.info(
                     "%s %d: import tranches repriced to measured neighbor hourly "
                     "DA LMPs (PJM_west→PJM, ISONE_tie→NEISO, scarcity→hourly max, "
@@ -5751,6 +5790,27 @@ def run_year(
                     iso,
                     year,
                 )
+        # [measured: ISO-NE Roseton DA LMP (hourly) | forecast substitute: not
+        #  wired — the flag is backcast-only]. NYISO-NEXT-11: the NE AC node's
+        # bands at Roseton(t) + their Q-Q spread offsets. Not gated on
+        # nyiso_import_hub_prices: the node carries its own price (rule 19).
+        if (
+            iso == "NYISO"
+            and priced_interchange
+            and getattr(config, "nyiso_ne_ac_node", False)
+        ):
+            from market_sim.model.interchange.nyiso import (
+                inject_nyiso_ne_ac_node_prices,
+            )
+
+            _n_ne = inject_nyiso_ne_ac_node_prices(fleet_arrays, mc_base, year)
+            logger.info(
+                "%s %d: nyiso_ne_ac_node — %d NE AC bands priced at the hourly "
+                "Roseton DA LMP + Q-Q spread offsets",
+                iso,
+                year,
+                _n_ne,
+            )
 
     # Net load for the solar-shape coupling: the LP-served load (net of
     # must-run) less utility solar/wind generation — same convention as the

@@ -2197,6 +2197,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # False)`` in run_calibration.run_year, so no link bound changes off.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "nyiso_li_seam_posted_limit_cap",
+    # NYISO-NEXT-11 (2026-09-28): the NE AC tie's own two-way node (default
+    # off). Byte-identical off by construction: every applier is reached only
+    # through InterchangeSpec.nyiso_ne_ac_node (resolved False unless the flag
+    # is set on a NYISO static-tranche spec) or an explicit
+    # ``getattr(config, "nyiso_ne_ac_node", False)`` gate in
+    # run_calibration.run_year / the NYISO P1 bridge. Registered IN THE SAME
+    # COMMIT as the field (the nyiso-119 discipline).
+    "nyiso_ne_ac_node",
     # SPP-93 West/East re-partition (default "north_south"): dropped from the
     # hash at its default so every pre-existing run keeps its key; an armed
     # run solves a different SPP topology and so gets a distinct key.
@@ -2992,6 +3000,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "coal_fuel_inventory_take_floor": "False",
     # Added by NYISO-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nyiso_li_seam_posted_limit_cap": "False",
+    "nyiso_ne_ac_node": "False",
     # Added by SPP-93 WITH the field (the nyiso-119 discipline).
     "spp_zone_partition": "'north_south'",
 }
@@ -8331,6 +8340,23 @@ class ScenarioConfig:
     # the two seam flags above is armed. Export bound untouched; NYC ties out of
     # scope. PRECOMMIT: docs/PRECOMMIT-nyiso-next5-li-tie-posted-limit-2026-09-27.md
     nyiso_li_seam_posted_limit_cap: bool = False
+    nyiso_ne_ac_node: bool = False  # NYISO-NEXT-11 (owner ruling Q-a,
+    # 2026-09-28): host the NY-New England AC tie (P-32 SCH - NE - NY, landing
+    # Capital_Hudson) on its OWN two-way node (spec.NYISO_NE_AC_ZONE, one link
+    # to Capital_Hudson) instead of the pooled NYISO_external star, which cannot
+    # hold NE's measured net EXPORT (3.5-5.9 TWh/yr) and HQ/IESO's import at
+    # once. 8 import bands + 8 export sinks priced hourly at the measured ISO-NE
+    # Roseton DA LMP + Q-Q offsets derived on the tie's own spread (CAPITL -
+    # Roseton; spec.NYISO_NE_AC_LADDER_BY_YEAR, zero free parameters); the link
+    # is bounded hour by hour at the POSTED import / export limits. The NE row
+    # leaves the pooled ladder (spec.NYISO_IMPORT_TRANCHES_NE_SPLIT_BY_YEAR),
+    # the pooled Capital_Hudson PAR envelope and the pooled hub repricing, so
+    # the tie is counted once (rule 19); the node's sinks keep their range
+    # through the NYISO P1 bridge (their no-wash offsets make that safe; the
+    # pooled sink stays as it is). Requires priced_interchange and
+    # nyiso_seam_par_attribution; backcast-only (measured anchor; the forward
+    # anchor is not wired, rule 13). PRECOMMIT:
+    # docs/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md. Default off; NYISO.
     nyiso_seam_deliverability_envelope: bool = False  # NYISO external seam
     # deliverability envelope (nyiso-125, data.nyiso_seam_envelope): replace the
     # flat SYMMETRIC static rating on the two border links whose external ties
@@ -23540,6 +23566,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_local_selfsupply": 1,
     "nyiso_import_reconciliation": 1,
     "nyiso_import_hub_prices": 1,
+    "nyiso_ne_ac_node": 1,
     "nyiso_iroquois_winter_spread": 1,
     "nyiso_synchronised_reserve": 1,
     "nyiso_li_locational_reserve": 1,
