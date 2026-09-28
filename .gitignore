@@ -3760,3 +3760,8 @@ results/calibration/pjmnext7_vs_20*/
 # 2022 04514ab6cc76831cb6dd57421df4b9f5d8f28dee, 2023 0b0e6631c68ac8ae45b78bbdb98a5c4c27ae747e,
 # 2024 cf22a08d8a8528ec44bbc2ea12758b6b83f61b46, 2025 cec0c6a2fd8aa237cde688709ca33a0ac244c771.
 results/calibration/nyisonext9_202[2-5]/
+# R-CAISO-11 per-year legs (TAC-share clock arm): local only, pushed to shard branches (rule 34(a)); composite span/fold go on main.
+# Provenance SHAs (rule 33(d), provenance only): 2019 d12cd90983f45d875a14fea73c8a657ce0dca9ce, 2020 80e94bf7db27e908b6cca8c2f8049ed54469c7a5, 2021 f851904369f10e2c8fd7fef7610e63598a2e49c5, 2022 05cc2f8c45a92a2ac45afc78d3ca943e8b5c482d, 2023 b719a2f318cfc235159f56aeed62e987a52ddf29, 2024 e8b23b12381aeab15a2afc25a932ec5bc84d1599, 2025 56268443416f9e00396ba6118a3d6780213ff521.
+results/calibration/rcaiso11_A_20*/**
+results/calibration/rcaiso11_A_span/hourly/p0_*
+results/calibration/rcaiso11_A_tp_2019_2021/hourly/p0_*
