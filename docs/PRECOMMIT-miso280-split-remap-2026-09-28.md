@@ -100,3 +100,19 @@ python scripts/replay_keeper.py results/calibration/miso279_span --years <Y> \
 
 Shard check: `scripts/probes/_miso280_shard_check.py --leg results/calibration/miso280_arm_<Y> --year <Y> --log <log>`.
 Compose: `scripts/probes/_miso280_compose_span.py`.
+
+## 8. Launch record
+
+Launched 2026-09-28 02:29–02:31 UTC, all pinned to `8f765fef0ed79c89687b6bf686cb65f611a9fea4`, tagged `miso-280` /
+`shard`, auto-PR off. Each pushes `claude/miso280-arm-<Y>` from out-dir `miso280_arm_<Y>` (full bundle incl.
+`dispatch/<Y>_P1.parquet`, gitignore negation + plain `git add`, rule 34(a)).
+
+| year | session |
+|---|---|
+| 2022 (first, slow leg) | `session_01PjwJzuftGNxzfT3k9MMR6C` |
+| 2019 | `session_0155sG1WB9jZeb8GZZKJLFG5` |
+| 2020 | `session_01JdKTZNn71oRmvy9YJuRx2L` |
+| 2021 | `session_013emPaksn5vRQ4LtZx1grgm` |
+| 2023 | `session_016oRN9g34eQ5P6ZEVzGzK37` |
+| 2024 | `session_01KKs13dxQH8PB6tGtVGJjd9` |
+| 2025 | `session_019svWRjQjanTwWYVhGck9Qd` |
