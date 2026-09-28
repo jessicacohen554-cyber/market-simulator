@@ -484,6 +484,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # default-off; selects '-rederive-peakerkeep-unitfuel-' through the same
     # resolver, so the off path is byte-inert). Same commit as the field.
     "unit_outage_rederive_peaker_windows",
+    # PJM-NEXT-7 financially-settled DA virtual position (GATED default-off;
+    # zeroes the virtual pseudo-units' bounds in P1 only, so the off path is
+    # byte-inert). Same commit as the field.
+    "pjm_da_virtual_settle_financial",
     # miso-278 unit-fuel split of the thermal-tranche family (GATED default-off;
     # selects the four '-fuelsplit-' companions through
     # campd_bins.campd_fuel_split_selector, so the off path is byte-inert).
@@ -2359,6 +2363,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by PJM-NEXT-6 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_rederive_peaker_windows": "False",
+    # Added by PJM-NEXT-7 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "pjm_da_virtual_settle_financial": "False",
     # Added by miso-278 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_unit_fuel_split": "False",
@@ -15162,6 +15169,17 @@ class ScenarioConfig:
     # (scripts/data/derive_pjm_da_virtual_surface.py, rule 21) and are frozen
     # against residuals (rule 20). PJM-only (rule 25).
     pjm_da_virtual_bids: bool = False
+    # PJM-NEXT-7 (owner ruling 2026-09-28 "settle financially"; design card A',
+    # docs/DESIGN-pjm-next-7-virtual-settlement-2026-09-28.md). Requires
+    # ``pjm_da_virtual_bids``. In PJM a cleared INC/DEC is liquidated in RT:
+    # RT physical generation serves RT physical load, and virtuals reach RT
+    # only through the DA schedule. The model's P0 (commitment discovery) is
+    # the DA stage and keeps the virtual pseudo-units; P1 (the scored,
+    # RT-gated pass) zeroes their bounds, so the net virtual position is never
+    # served by physical fuel. Virtuals still shape P1 through P0's run
+    # lengths (the startup-markup amortization) — the DA-commitment channel.
+    # Zero free parameters (rule 21); one flag, no stacking (rule 19).
+    pjm_da_virtual_settle_financial: bool = False
     # Path to the measured condition-binned virtual-bid surface JSON
     # (default: the frozen
     # data/raw/_validation-source/pjm_da_virtual_surface_condbinned.json).

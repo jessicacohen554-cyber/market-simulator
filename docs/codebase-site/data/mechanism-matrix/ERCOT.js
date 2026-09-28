@@ -227,6 +227,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     egrid_family_heat_rates: { cell: "U" },
     egrid_steam_collapse_heat_rates: { cell: "U" },
     da_virtual_bids: { cell: "." },
+    pjm_da_virtual_settle_financial: { cell: ".", ev: "Row added by PJM-NEXT-7 (2026-09-28) with the field, same PR (rule 28c) -- NO adjudication made or implied here (rules 25 / 28(d)). Inert: a sub-gate of pjm_da_virtual_bids, which is PJM-gated." },
     negative_renewable_offers: { cell: "G" },
     wind_ptc_vintage_offers: { cell: "I" },
     gas_offer_curve_tranches: { cell: "." },
