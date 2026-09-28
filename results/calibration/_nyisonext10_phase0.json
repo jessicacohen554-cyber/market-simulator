@@ -1,0 +1,515 @@
+{
+ "per_year": {
+  "2021": {
+   "IESO": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 648.5,
+    "twh": 5.681,
+    "rho_ny_price": 0.081,
+    "rho_spread_proxy": 0.322,
+    "n": 8760,
+    "rho_spread_landing": 0.237,
+    "mean_spread_proxy": 6.02
+   },
+   "PJM_AC": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 626.6,
+    "twh": 5.489,
+    "rho_ny_price": 0.499,
+    "rho_spread_proxy": 0.591,
+    "n": 8760,
+    "mean_spread_proxy": 0.34
+   },
+   "PJM_HTP": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 320.5,
+    "twh": 2.808,
+    "rho_ny_price": 0.546,
+    "rho_spread_proxy": 0.448,
+    "n": 8760,
+    "rho_spread_landing": 0.485,
+    "mean_spread_proxy": 6.26
+   },
+   "PJM_VFT": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 256.7,
+    "twh": 2.248,
+    "rho_ny_price": 0.215,
+    "rho_spread_proxy": 0.375,
+    "n": 8760,
+    "rho_spread_landing": 0.35,
+    "mean_spread_proxy": 8.54
+   },
+   "PJM_NEPTUNE": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 311.6,
+    "twh": 2.73,
+    "rho_ny_price": 0.071,
+    "rho_spread_proxy": -0.255,
+    "n": 8760,
+    "rho_spread_landing": -0.224,
+    "mean_spread_proxy": 20.02
+   },
+   "NE_AC": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": -589.6,
+    "twh": -5.165,
+    "rho_ny_price": -0.253,
+    "rho_spread_proxy": 0.192,
+    "n": 8760,
+    "rho_spread_landing": 0.434,
+    "mean_spread_proxy": 1.9
+   },
+   "NE_CSC": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 221.1,
+    "twh": 1.937,
+    "rho_ny_price": -0.115,
+    "rho_spread_proxy": 0.015,
+    "n": 8760,
+    "rho_spread_landing": 0.045,
+    "mean_spread_proxy": 10.0
+   },
+   "NE_1385": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 83.9,
+    "twh": 0.735,
+    "rho_ny_price": 0.054,
+    "rho_spread_proxy": 0.265,
+    "n": 8760,
+    "rho_spread_landing": 0.519,
+    "mean_spread_proxy": 2.68
+   }
+  },
+  "2022": {
+   "IESO": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 521.4,
+    "twh": 4.567,
+    "rho_ny_price": 0.291,
+    "rho_spread_proxy": 0.383,
+    "n": 8760,
+    "rho_spread_landing": 0.367,
+    "mean_spread_proxy": 18.2
+   },
+   "PJM_AC": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 478.4,
+    "twh": 4.191,
+    "rho_ny_price": 0.297,
+    "rho_spread_proxy": 0.638,
+    "n": 8760,
+    "mean_spread_proxy": 1.21
+   },
+   "PJM_HTP": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 369.6,
+    "twh": 3.238,
+    "rho_ny_price": 0.223,
+    "rho_spread_proxy": 0.47,
+    "n": 8760,
+    "rho_spread_landing": 0.475,
+    "mean_spread_proxy": 14.46
+   },
+   "PJM_VFT": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 280.7,
+    "twh": 2.459,
+    "rho_ny_price": 0.11,
+    "rho_spread_proxy": 0.333,
+    "n": 8760,
+    "rho_spread_landing": 0.27,
+    "mean_spread_proxy": 16.04
+   },
+   "PJM_NEPTUNE": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 480.5,
+    "twh": 4.209,
+    "rho_ny_price": 0.11,
+    "rho_spread_proxy": -0.255,
+    "n": 8760,
+    "rho_spread_landing": -0.182,
+    "mean_spread_proxy": 27.99
+   },
+   "NE_AC": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": -400.2,
+    "twh": -3.506,
+    "rho_ny_price": -0.314,
+    "rho_spread_proxy": 0.087,
+    "n": 8760,
+    "rho_spread_landing": 0.241,
+    "mean_spread_proxy": 4.63
+   },
+   "NE_CSC": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 212.4,
+    "twh": 1.86,
+    "rho_ny_price": -0.074,
+    "rho_spread_proxy": 0.227,
+    "n": 8760,
+    "rho_spread_landing": 0.252,
+    "mean_spread_proxy": 11.23
+   },
+   "NE_1385": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 55.1,
+    "twh": 0.482,
+    "rho_ny_price": -0.096,
+    "rho_spread_proxy": 0.278,
+    "n": 8760,
+    "rho_spread_landing": 0.455,
+    "mean_spread_proxy": 3.58
+   }
+  },
+  "2023": {
+   "IESO": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 452.8,
+    "twh": 3.967,
+    "rho_ny_price": 0.073,
+    "rho_spread_proxy": 0.371,
+    "n": 8760,
+    "rho_spread_landing": 0.367,
+    "mean_spread_proxy": 3.95
+   },
+   "PJM_AC": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 785.6,
+    "twh": 6.882,
+    "rho_ny_price": 0.333,
+    "rho_spread_proxy": 0.443,
+    "n": 8760,
+    "mean_spread_proxy": 2.2
+   },
+   "PJM_HTP": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 402.7,
+    "twh": 3.528,
+    "rho_ny_price": 0.38,
+    "rho_spread_proxy": 0.485,
+    "n": 8760,
+    "rho_spread_landing": 0.491,
+    "mean_spread_proxy": 7.55
+   },
+   "PJM_VFT": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 268.6,
+    "twh": 2.353,
+    "rho_ny_price": 0.031,
+    "rho_spread_proxy": 0.301,
+    "n": 8760,
+    "rho_spread_landing": 0.248,
+    "mean_spread_proxy": 7.77
+   },
+   "PJM_NEPTUNE": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 630.8,
+    "twh": 5.526,
+    "rho_ny_price": 0.021,
+    "rho_spread_proxy": -0.021,
+    "n": 8760,
+    "rho_spread_landing": 0.004,
+    "mean_spread_proxy": 11.81
+   },
+   "NE_AC": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": -510.5,
+    "twh": -4.472,
+    "rho_ny_price": -0.357,
+    "rho_spread_proxy": 0.144,
+    "n": 8760,
+    "rho_spread_landing": 0.272,
+    "mean_spread_proxy": 0.65
+   },
+   "NE_CSC": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 155.2,
+    "twh": 1.36,
+    "rho_ny_price": 0.041,
+    "rho_spread_proxy": -0.066,
+    "n": 8760,
+    "rho_spread_landing": -0.008,
+    "mean_spread_proxy": 7.29
+   },
+   "NE_1385": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 57.8,
+    "twh": 0.506,
+    "rho_ny_price": -0.006,
+    "rho_spread_proxy": 0.368,
+    "n": 8760,
+    "rho_spread_landing": 0.449,
+    "mean_spread_proxy": 1.63
+   }
+  },
+  "2024": {
+   "IESO": {
+    "hours_flow": 8784,
+    "hours_neighbour": 8784,
+    "mean_flow_mw": 713.4,
+    "twh": 6.267,
+    "rho_ny_price": 0.217,
+    "rho_spread_proxy": 0.317,
+    "n": 8784,
+    "rho_spread_landing": 0.312,
+    "mean_spread_proxy": 7.94
+   },
+   "PJM_AC": {
+    "hours_flow": 8784,
+    "hours_neighbour": 8784,
+    "mean_flow_mw": 995.3,
+    "twh": 8.742,
+    "rho_ny_price": 0.214,
+    "rho_spread_proxy": 0.093,
+    "n": 8784,
+    "mean_spread_proxy": 2.58
+   },
+   "PJM_HTP": {
+    "hours_flow": 8784,
+    "hours_neighbour": 8784,
+    "mean_flow_mw": 384.3,
+    "twh": 3.375,
+    "rho_ny_price": -0.047,
+    "rho_spread_proxy": 0.129,
+    "n": 8784,
+    "rho_spread_landing": 0.138,
+    "mean_spread_proxy": 10.19
+   },
+   "PJM_VFT": {
+    "hours_flow": 8784,
+    "hours_neighbour": 8784,
+    "mean_flow_mw": 287.0,
+    "twh": 2.521,
+    "rho_ny_price": 0.035,
+    "rho_spread_proxy": 0.343,
+    "n": 8784,
+    "rho_spread_landing": 0.289,
+    "mean_spread_proxy": 9.15
+   },
+   "PJM_NEPTUNE": {
+    "hours_flow": 8784,
+    "hours_neighbour": 8784,
+    "mean_flow_mw": 616.2,
+    "twh": 5.413,
+    "rho_ny_price": 0.104,
+    "rho_spread_proxy": 0.028,
+    "n": 8784,
+    "rho_spread_landing": 0.047,
+    "mean_spread_proxy": 12.77
+   },
+   "NE_AC": {
+    "hours_flow": 8784,
+    "hours_neighbour": 8784,
+    "mean_flow_mw": -668.0,
+    "twh": -5.867,
+    "rho_ny_price": -0.247,
+    "rho_spread_proxy": 0.106,
+    "n": 8784,
+    "rho_spread_landing": 0.399,
+    "mean_spread_proxy": 0.67
+   },
+   "NE_CSC": {
+    "hours_flow": 8784,
+    "hours_neighbour": 8784,
+    "mean_flow_mw": 176.9,
+    "twh": 1.554,
+    "rho_ny_price": -0.028,
+    "rho_spread_proxy": 0.267,
+    "n": 8784,
+    "rho_spread_landing": 0.309,
+    "mean_spread_proxy": 4.94
+   },
+   "NE_1385": {
+    "hours_flow": 8784,
+    "hours_neighbour": 8784,
+    "mean_flow_mw": 8.7,
+    "twh": 0.077,
+    "rho_ny_price": -0.142,
+    "rho_spread_proxy": 0.434,
+    "n": 8784,
+    "rho_spread_landing": 0.456,
+    "mean_spread_proxy": 0.78
+   }
+  },
+  "2025": {
+   "IESO": {
+    "hours_flow": 8760,
+    "hours_neighbour": 2880,
+    "mean_flow_mw": 759.2,
+    "twh": 6.65,
+    "rho_ny_price": 0.462,
+    "rho_spread_proxy": 0.491,
+    "n": 2880,
+    "rho_spread_landing": 0.486,
+    "mean_spread_proxy": 18.72
+   },
+   "PJM_AC": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 1132.1,
+    "twh": 9.918,
+    "rho_ny_price": 0.355,
+    "rho_spread_proxy": 0.123,
+    "n": 8760,
+    "mean_spread_proxy": 2.65
+   },
+   "PJM_HTP": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 450.7,
+    "twh": 3.948,
+    "rho_ny_price": 0.077,
+    "rho_spread_proxy": 0.11,
+    "n": 8760,
+    "rho_spread_landing": 0.081,
+    "mean_spread_proxy": 19.08
+   },
+   "PJM_VFT": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 280.7,
+    "twh": 2.459,
+    "rho_ny_price": 0.133,
+    "rho_spread_proxy": 0.45,
+    "n": 8760,
+    "rho_spread_landing": 0.231,
+    "mean_spread_proxy": 12.94
+   },
+   "PJM_NEPTUNE": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 618.4,
+    "twh": 5.417,
+    "rho_ny_price": 0.236,
+    "rho_spread_proxy": 0.34,
+    "n": 8760,
+    "rho_spread_landing": 0.352,
+    "mean_spread_proxy": 23.45
+   },
+   "NE_AC": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": -657.0,
+    "twh": -5.755,
+    "rho_ny_price": -0.331,
+    "rho_spread_proxy": 0.15,
+    "n": 8760,
+    "rho_spread_landing": 0.396,
+    "mean_spread_proxy": 4.17
+   },
+   "NE_CSC": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": 165.9,
+    "twh": 1.453,
+    "rho_ny_price": -0.219,
+    "rho_spread_proxy": 0.129,
+    "n": 8760,
+    "rho_spread_landing": 0.158,
+    "mean_spread_proxy": 2.65
+   },
+   "NE_1385": {
+    "hours_flow": 8760,
+    "hours_neighbour": 8760,
+    "mean_flow_mw": -7.7,
+    "twh": -0.068,
+    "rho_ny_price": -0.331,
+    "rho_spread_proxy": 0.304,
+    "n": 8760,
+    "rho_spread_landing": 0.398,
+    "mean_spread_proxy": 1.62
+   }
+  }
+ },
+ "verdict": {
+  "IESO": {
+   "statistic": "rho_spread_landing",
+   "S1": true,
+   "S2": true,
+   "S3_median": 0.367,
+   "S3": true,
+   "identified": true
+  },
+  "PJM_AC": {
+   "statistic": "rho_spread_proxy",
+   "S1": true,
+   "S2": false,
+   "S3_median": 0.443,
+   "S3": true,
+   "identified": false
+  },
+  "PJM_HTP": {
+   "statistic": "rho_spread_landing",
+   "S1": true,
+   "S2": true,
+   "S3_median": 0.475,
+   "S3": true,
+   "identified": true
+  },
+  "PJM_VFT": {
+   "statistic": "rho_spread_landing",
+   "S1": true,
+   "S2": true,
+   "S3_median": 0.27,
+   "S3": false,
+   "identified": false
+  },
+  "PJM_NEPTUNE": {
+   "statistic": "rho_spread_landing",
+   "S1": false,
+   "S2": false,
+   "S3_median": 0.004,
+   "S3": false,
+   "identified": false
+  },
+  "NE_AC": {
+   "statistic": "rho_spread_landing",
+   "S1": true,
+   "S2": true,
+   "S3_median": 0.396,
+   "S3": true,
+   "identified": true
+  },
+  "NE_CSC": {
+   "statistic": "rho_spread_landing",
+   "S1": false,
+   "S2": true,
+   "S3_median": 0.158,
+   "S3": false,
+   "identified": false
+  },
+  "NE_1385": {
+   "statistic": "rho_spread_landing",
+   "S1": true,
+   "S2": true,
+   "S3_median": 0.455,
+   "S3": true,
+   "identified": true
+  }
+ }
+}
