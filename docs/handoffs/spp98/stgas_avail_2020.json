@@ -1,0 +1,296 @@
+{
+ "totals": {
+  "campd_twh": 14.123,
+  "blocked_twh": 3.33,
+  "blocked_at_zero_twh": 2.234,
+  "plants": 26
+ },
+ "plants": [
+  {
+   "plant": 1416,
+   "name": "Arsenal Hill",
+   "npl": 125,
+   "campd_twh": 2.1599,
+   "blocked_twh": 2.0968,
+   "blocked_at_zero_twh": 1.9706,
+   "avail_mean": 0.0605,
+   "campd_online_h": 7562,
+   "online_but_zero_avail_h": 6906
+  },
+  {
+   "plant": 2956,
+   "name": "Seminole (OK)",
+   "npl": 1701,
+   "campd_twh": 2.6593,
+   "blocked_twh": 0.3703,
+   "blocked_at_zero_twh": 0.0376,
+   "avail_mean": 0.2806,
+   "campd_online_h": 6187,
+   "online_but_zero_avail_h": 174
+  },
+  {
+   "plant": 2952,
+   "name": "Muskogee",
+   "npl": 1144,
+   "campd_twh": 1.3751,
+   "blocked_twh": 0.2891,
+   "blocked_at_zero_twh": 0.1004,
+   "avail_mean": 0.1654,
+   "campd_online_h": 3472,
+   "online_but_zero_avail_h": 355
+  },
+  {
+   "plant": 3482,
+   "name": "Jones",
+   "npl": 495,
+   "campd_twh": 2.0698,
+   "blocked_twh": 0.2057,
+   "blocked_at_zero_twh": 0.0005,
+   "avail_mean": 0.7315,
+   "campd_online_h": 8019,
+   "online_but_zero_avail_h": 10
+  },
+  {
+   "plant": 3484,
+   "name": "Nichols",
+   "npl": 475,
+   "campd_twh": 1.3104,
+   "blocked_twh": 0.1048,
+   "blocked_at_zero_twh": 0.0009,
+   "avail_mean": 0.6427,
+   "campd_online_h": 8267,
+   "online_but_zero_avail_h": 30
+  },
+  {
+   "plant": 2951,
+   "name": "Horseshoe Lake",
+   "npl": 443,
+   "campd_twh": 0.9153,
+   "blocked_twh": 0.061,
+   "blocked_at_zero_twh": 0.0008,
+   "avail_mean": 0.5862,
+   "campd_online_h": 4798,
+   "online_but_zero_avail_h": 10
+  },
+  {
+   "plant": 2964,
+   "name": "Southwestern",
+   "npl": 483,
+   "campd_twh": 0.3936,
+   "blocked_twh": 0.0367,
+   "blocked_at_zero_twh": 0.0175,
+   "avail_mean": 0.2883,
+   "campd_online_h": 4521,
+   "online_but_zero_avail_h": 283
+  },
+  {
+   "plant": 3476,
+   "name": "Knox Lee",
+   "npl": 351,
+   "campd_twh": 0.1384,
+   "blocked_twh": 0.0339,
+   "blocked_at_zero_twh": 0.0322,
+   "avail_mean": 0.1595,
+   "campd_online_h": 1466,
+   "online_but_zero_avail_h": 322
+  },
+  {
+   "plant": 4940,
+   "name": "Riverside (OK)",
+   "npl": 946,
+   "campd_twh": 0.3258,
+   "blocked_twh": 0.0219,
+   "blocked_at_zero_twh": 0.0164,
+   "avail_mean": 0.0946,
+   "campd_online_h": 1635,
+   "online_but_zero_avail_h": 123
+  },
+  {
+   "plant": 3478,
+   "name": "Wilkes",
+   "npl": 882,
+   "campd_twh": 0.7345,
+   "blocked_twh": 0.0191,
+   "blocked_at_zero_twh": 0.0,
+   "avail_mean": 0.3139,
+   "campd_online_h": 7310,
+   "online_but_zero_avail_h": 0
+  },
+  {
+   "plant": 2963,
+   "name": "Northeastern",
+   "npl": 473,
+   "campd_twh": 0.3098,
+   "blocked_twh": 0.0187,
+   "blocked_at_zero_twh": 0.0144,
+   "avail_mean": 0.1146,
+   "campd_online_h": 1273,
+   "online_but_zero_avail_h": 75
+  },
+  {
+   "plant": 2446,
+   "name": "Maddox",
+   "npl": 114,
+   "campd_twh": 0.3935,
+   "blocked_twh": 0.0156,
+   "blocked_at_zero_twh": 0.0066,
+   "avail_mean": 0.6197,
+   "campd_online_h": 6669,
+   "online_but_zero_avail_h": 147
+  },
+  {
+   "plant": 2291,
+   "name": "North Omaha",
+   "npl": 291,
+   "campd_twh": 0.021,
+   "blocked_twh": 0.013,
+   "blocked_at_zero_twh": 0.0108,
+   "avail_mean": 0.0185,
+   "campd_online_h": 430,
+   "online_but_zero_avail_h": 219
+  },
+  {
+   "plant": 3008,
+   "name": "Mooreland",
+   "npl": 305,
+   "campd_twh": 0.0411,
+   "blocked_twh": 0.013,
+   "blocked_at_zero_twh": 0.0042,
+   "avail_mean": 0.1376,
+   "campd_online_h": 1029,
+   "online_but_zero_avail_h": 106
+  },
+  {
+   "plant": 1417,
+   "name": "Lieberman",
+   "npl": 228,
+   "campd_twh": 0.0249,
+   "blocked_twh": 0.0115,
+   "blocked_at_zero_twh": 0.0114,
+   "avail_mean": 0.0177,
+   "campd_online_h": 549,
+   "online_but_zero_avail_h": 264
+  },
+  {
+   "plant": 2965,
+   "name": "Tulsa",
+   "npl": 348,
+   "campd_twh": 0.2851,
+   "blocked_twh": 0.0066,
+   "blocked_at_zero_twh": 0.0012,
+   "avail_mean": 0.3956,
+   "campd_online_h": 8296,
+   "online_but_zero_avail_h": 49
+  },
+  {
+   "plant": 3485,
+   "name": "Plant X",
+   "npl": 190,
+   "campd_twh": 0.9427,
+   "blocked_twh": 0.0044,
+   "blocked_at_zero_twh": 0.0,
+   "avail_mean": 1.1816,
+   "campd_online_h": 7409,
+   "online_but_zero_avail_h": 0
+  },
+  {
+   "plant": 1217,
+   "name": "Earl F Wisdom",
+   "npl": 38,
+   "campd_twh": 0.0037,
+   "blocked_twh": 0.0022,
+   "blocked_at_zero_twh": 0.0022,
+   "avail_mean": 0.0594,
+   "campd_online_h": 254,
+   "online_but_zero_avail_h": 147
+  },
+  {
+   "plant": 1336,
+   "name": "Garden City",
+   "npl": 98,
+   "campd_twh": 0.003,
+   "blocked_twh": 0.0019,
+   "blocked_at_zero_twh": 0.0019,
+   "avail_mean": 0.0025,
+   "campd_online_h": 74,
+   "online_but_zero_avail_h": 50
+  },
+  {
+   "plant": 1233,
+   "name": "Fort Dodge",
+   "npl": 149,
+   "campd_twh": 0.0032,
+   "blocked_twh": 0.0014,
+   "blocked_at_zero_twh": 0.0014,
+   "avail_mean": 0.0025,
+   "campd_online_h": 48,
+   "online_but_zero_avail_h": 24
+  },
+  {
+   "plant": 2226,
+   "name": "Canaday",
+   "npl": 109,
+   "campd_twh": 0.001,
+   "blocked_twh": 0.001,
+   "blocked_at_zero_twh": 0.001,
+   "avail_mean": 0.0,
+   "campd_online_h": 46,
+   "online_but_zero_avail_h": 46
+  },
+  {
+   "plant": 7013,
+   "name": "East 12th Street",
+   "npl": 28,
+   "campd_twh": 0.0077,
+   "blocked_twh": 0.0007,
+   "blocked_at_zero_twh": 0.0006,
+   "avail_mean": 0.0374,
+   "campd_online_h": 498,
+   "online_but_zero_avail_h": 42
+  },
+  {
+   "plant": 1230,
+   "name": "Cimarron River",
+   "npl": 65,
+   "campd_twh": 0.0005,
+   "blocked_twh": 0.0005,
+   "blocked_at_zero_twh": 0.0005,
+   "avail_mean": 0.0449,
+   "campd_online_h": 18,
+   "online_but_zero_avail_h": 18
+  },
+  {
+   "plant": 1271,
+   "name": "Coffeyville",
+   "npl": 44,
+   "campd_twh": 0.0003,
+   "blocked_twh": 0.0003,
+   "blocked_at_zero_twh": 0.0003,
+   "avail_mean": 0.0,
+   "campd_online_h": 23,
+   "online_but_zero_avail_h": 23
+  },
+  {
+   "plant": 1235,
+   "name": "Great Bend - Sunflower",
+   "npl": 82,
+   "campd_twh": 0.0015,
+   "blocked_twh": 0.0002,
+   "blocked_at_zero_twh": 0.0,
+   "avail_mean": 0.182,
+   "campd_online_h": 47,
+   "online_but_zero_avail_h": 0
+  },
+  {
+   "plant": 2132,
+   "name": "Blue Valley",
+   "npl": 115,
+   "campd_twh": 0.002,
+   "blocked_twh": 0.0001,
+   "blocked_at_zero_twh": 0.0,
+   "avail_mean": 0.1293,
+   "campd_online_h": 170,
+   "online_but_zero_avail_h": 0
+  }
+ ]
+}

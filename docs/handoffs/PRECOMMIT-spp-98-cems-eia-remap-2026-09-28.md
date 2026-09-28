@@ -62,3 +62,43 @@ only, and every target EIA plant is verified to be in SPP's model fleet:
 any C1 row, the determination is reported at full magnitude and is **not** a criterion (rule 1). A row that flips
 either way is a scoring correction, not a model change. If X4 or X5 fails, **STOP**, because the table has reach this
 PRECOMMIT did not declare.
+
+## 6. Addendum, written before any shard: why a replay is needed, the G-DRIFT audit, and the shard plan
+
+**Why a replay.** `rebuild_benchmark` → `report_run` needs the keeper's `system.parquet` and `dispatch/<Y>_P1.parquet`.
+Both are gitignored, and SPP-95's shard branches, which carried them, were cut when that lane merged (rule 33(f)(1)).
+Measured on a probe copy: the frames rebuild, but `report_run` raises `FileNotFoundError: system.parquet`. Adoption
+therefore needs one replay of the keeper recipe per year (rule 36), and that replay also measures X4 instead of
+asserting it.
+
+**Dry-run results** (benchmark frames rebuilt on a copy of the keeper, zero LP):
+
+| check | result |
+|---|---|
+| X1 | 1416 CEMS 1.69–2.46 → 0.03–0.20 TWh; 56565 gains 1.62–2.28 TWh |
+| X2 | C1 ST_GAS actual Δ = 0 / **−2.237 / −1.864** / 0 / 0 / 0 / **−2.204** TWh (2019–25) |
+| X3 | CC_REGULAR Δ = 0 in every year; CT_PEAKER +0.002 in 2019 |
+| EIA-930 frame | byte-identical |
+| X5 | none of the 8 codes is in any other ISO's benchmark membership, for any of the 9 ISOs, 2019–25 |
+
+**G-DRIFT, keeper `020bb1c5` → HEAD.** `020bb1c5 → 6ca311d4` is ALL INERT (SPP-96 PRECOMMIT §5). The audit of
+`6ca311d4 → origin/main` follows.
+
+| hunk | class | reason |
+|---|---|---|
+| `unit_outage_rederive_peaker_windows` (scenarios, arrays, outages, resolved_inputs) | INERT | default off, absent from the keeper recipe |
+| `pipeline/commitment.py` SOCO campaign partition | INERT | inside `soco_gas_st_campaign_commitment`, which is None in the keeper |
+| `data/ferc714.py` (new module) | INERT | not imported on SPP's solve path |
+| `data/campd.py` remap rows (this lane) | declared | the solve path reads them only under `ct_mustrun_per_plant`, which is **off** in the keeper; X4 is measured by every shard |
+
+**Shard plan.** Seven shards, one per year 2019–2025, pinned to this PRECOMMIT's merge SHA. Each runs
+`replay_keeper.py results/calibration/spp94_arm_span --years <Y> --out-dir results/calibration/spp98_rep_<Y>`, then
+`scripts/probes/_spp98_shard_check.py`, then pushes its full bundle. X4 (IDENTITY) is **the** gate: any leg with
+|ΔTWh| > 1e-4 or |Δprice| > 1e-6 means **STOP**, because the remap has solve-path reach this PRECOMMIT did not
+declare.
+
+On all seven legs identical:
+1. compose with `_rspp_compose.py`;
+2. `rebuild_benchmark`;
+3. attest, run the DOF check, register the new run id `2026-09-28-spp-98-cems-remap`, and score per tier;
+4. put the promotion question to the owner.
