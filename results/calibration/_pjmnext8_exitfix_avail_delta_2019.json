@@ -1,0 +1,102 @@
+{
+ "year": 2019,
+ "by_class_twh": {
+  "COAL_BIT": -16.626868968721894,
+  "CC_REGULAR": -0.0702385469501172,
+  "ST_GAS": -0.017146287529411733,
+  "COAL_PRB": 0.09821617200000002
+ },
+ "rows": [
+  {
+   "plant": "1554",
+   "class": "COAL_BIT",
+   "off_twh": 0.33915252000000007,
+   "delta_twh": -0.005801760000000067,
+   "model_above_repaired_twh": 0.013822003976411121
+  },
+  {
+   "plant": "1571",
+   "class": "COAL_BIT",
+   "off_twh": 5.2756896000000015,
+   "delta_twh": -4.542916800000001,
+   "model_above_repaired_twh": 1.7203957254599491
+  },
+  {
+   "plant": "1572",
+   "class": "COAL_BIT",
+   "off_twh": 0.1639365600000002,
+   "delta_twh": -0.021882480000000187,
+   "model_above_repaired_twh": 0.1151331104135635
+  },
+  {
+   "plant": "1573",
+   "class": "COAL_BIT",
+   "off_twh": 2.7634415999999997,
+   "delta_twh": 0.05298036000000034,
+   "model_above_repaired_twh": 0.07400169032560606
+  },
+  {
+   "plant": "2840",
+   "class": "COAL_BIT",
+   "off_twh": 4.529924399999999,
+   "delta_twh": -2.5754760119999993,
+   "model_above_repaired_twh": 1.741317607632189
+  },
+  {
+   "plant": "2866",
+   "class": "COAL_BIT",
+   "off_twh": 9.603606721085972,
+   "delta_twh": -4.512094010280543,
+   "model_above_repaired_twh": 2.9506668906072453
+  },
+  {
+   "plant": "3122",
+   "class": "COAL_BIT",
+   "off_twh": 10.869116159999997,
+   "delta_twh": 0.036100679999999705,
+   "model_above_repaired_twh": 0.005273729324096249
+  },
+  {
+   "plant": "3797",
+   "class": "COAL_BIT",
+   "off_twh": 1.2089057739960238,
+   "delta_twh": 0.010661693558647996,
+   "model_above_repaired_twh": 0.03691628465312023
+  },
+  {
+   "plant": "3804",
+   "class": "CC_REGULAR",
+   "off_twh": 3.374743962275882,
+   "delta_twh": 0.1049330523402053,
+   "model_above_repaired_twh": 0.00016102888478767386
+  },
+  {
+   "plant": "599",
+   "class": "ST_GAS",
+   "off_twh": 0.017146287529411733,
+   "delta_twh": -0.017146287529411733,
+   "model_above_repaired_twh": 0.0005000000000000001
+  },
+  {
+   "plant": "60357",
+   "class": "CC_REGULAR",
+   "off_twh": 11.79273122187097,
+   "delta_twh": -0.1751715992903225,
+   "model_above_repaired_twh": 0.17814493320400882
+  },
+  {
+   "plant": "6094",
+   "class": "COAL_BIT",
+   "off_twh": 6.33415744,
+   "delta_twh": -5.06844064,
+   "model_above_repaired_twh": 3.883352304688654
+  },
+  {
+   "plant": "883",
+   "class": "COAL_PRB",
+   "off_twh": 1.6676649599999998,
+   "delta_twh": 0.09821617200000002,
+   "model_above_repaired_twh": 0.08016928704741848
+  }
+ ]
+}

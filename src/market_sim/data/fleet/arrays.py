@@ -1194,6 +1194,74 @@ def _availability_matrix(
             np.clip(availability, 0.0, 1.0, out=availability)
 
 
+def _dated_exit_tag(gen) -> tuple[int, int] | None:
+    """``(ret_year, ret_month)`` of a dated exit-cohort tranche, else ``None``.
+
+    A dated bin (``fleet_to_bins``' date-scoped exit cohort) carries the
+    ``_p{plant}_r{yyyy}{mm}`` token in its unit id and its retirement on the
+    tranche (``assembly``); an ordinary tranche carries neither.
+    """
+    uid = str(getattr(gen, "unit_id", "") or "")
+    tag = f"_p{int(gen.plant_code)}_r"
+    i = uid.find(tag)
+    if i < 0 or getattr(gen, "retirement_year", None) is None:
+        return None
+    digits = uid[i + len(tag) : i + len(tag) + 6]
+    if len(digits) != 6 or not digits.isdigit():
+        return None
+    return int(digits[:4]), int(digits[4:])
+
+
+def _dated_exit_bin_shares(generators) -> tuple | None:
+    """Capacity share of each dated exit bin within its ``(plant, group)``.
+
+    PJM-NEXT-8 (``ScenarioConfig.unit_outage_exit_cohort_repair``). Returns the
+    hashable ``(((plant_code, group), ((ret_year, ret_month, share), ...)), ...)``
+    that :func:`~market_sim.data.outages.unit_outage_derate_factors` keys dated
+    rows on, summed from the dispatched tranches' own ``pmax_mw``; ``None``
+    when the fleet carries no dated bin. Zero free parameters.
+    """
+    total: dict[tuple[int, str], float] = {}
+    dated: dict[tuple[int, str], dict[tuple[int, int], float]] = {}
+    for gen in generators:
+        if gen.plant_group is None or int(gen.plant_code) <= 0:
+            continue
+        key = (int(gen.plant_code), artifact_class(gen.plant_group))
+        mw = float(gen.pmax_mw)
+        total[key] = total.get(key, 0.0) + mw
+        tag = _dated_exit_tag(gen)
+        if tag is not None:
+            d = dated.setdefault(key, {})
+            d[tag] = d.get(tag, 0.0) + mw
+    out = tuple(
+        (key, tuple((ym[0], ym[1], mw / total[key]) for ym, mw in sorted(d.items())))
+        for key, d in sorted(dated.items())
+        if total.get(key, 0.0) > 0.0
+    )
+    return out or None
+
+
+def _dated_exit_factor(ufac, key, gen, dated_shares, fallback):
+    """The outage factor for one tranche under the exit-cohort repair.
+
+    A dated tranche reads its own dated key (``None`` = no window on that bin)
+    — except at a plant with no undated remainder, where an unmatched row kept
+    the whole-plant key and so still reaches every dated bin. An undated
+    tranche reads the plant key exactly as before.
+    """
+    tag = _dated_exit_tag(gen)
+    if tag is None or dated_shares is None:
+        return fallback
+    shares = dict(dated_shares).get(key)
+    if not shares:
+        return fallback
+    own = ufac.get((key[0], key[1], tag[0], tag[1]))
+    rest = 1.0 - sum(s for _, _, s in shares)
+    if rest > 1e-9 or fallback is None:
+        return own
+    return fallback if own is None else own * fallback
+
+
 def _apply_outage_overlays(
     generators: list[Generator],
     availability: np.ndarray,
@@ -1277,6 +1345,11 @@ def _apply_outage_overlays(
         # Built per ISO by scripts/data/derive_campd_unit_outages.py --iso <ISO>;
         # ISOs with no unit-outage file get an empty derate (no effect).
         # Multiplies the statistical availability already set above.
+        # PJM-NEXT-8 (ScenarioConfig.unit_outage_exit_cohort_repair): each
+        # dated exit bin's capacity share of its plant's (plant_code, group),
+        # so a unit's outage derates its OWN dated bin (rule 14). None = off.
+        _exit_repair = bool(getattr(config, "unit_outage_exit_cohort_repair", False))
+        _dated_shares = _dated_exit_bin_shares(generators) if _exit_repair else None
         ufac = unit_outage_derate_factors(
             config.weather_year,
             hours,
@@ -1382,6 +1455,8 @@ def _apply_outage_overlays(
             # window hours, which the COD ramp below already holds offline.
             # Byte-inert while off (the extract is read unchanged).
             precod_clip=bool(getattr(config, "unit_outage_precod_clip", False)),
+            exit_cohort_repair=_exit_repair,
+            dated_bin_shares=_dated_shares,
         )
         # DAM-first outage precedence (backcast overlay, gated per ISO). Where an
         # ISO publishes its own availability instrument, use it IN PLACE OF the
@@ -1477,7 +1552,10 @@ def _apply_outage_overlays(
                 if neiso_floor_exempt and gen.plant_group in exempt_groups:
                     exempted_u += 1
                     continue
-                f = ufac.get((int(gen.plant_code), artifact_class(gen.plant_group)))
+                _k = (int(gen.plant_code), artifact_class(gen.plant_group))
+                f = ufac.get(_k)
+                if _dated_shares is not None:
+                    f = _dated_exit_factor(ufac, _k, gen, _dated_shares, f)
                 if f is not None:
                     availability[g_idx, :] *= f
                     applied_u += 1

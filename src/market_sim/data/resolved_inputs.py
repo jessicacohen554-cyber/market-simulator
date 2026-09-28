@@ -391,6 +391,10 @@ def _campd_unit_outages_block(config, iso: str) -> dict[str, Any]:
                 rederive_peaker_windows=bool(
                     getattr(config, "unit_outage_rederive_peaker_windows", False)
                 ),
+                # PJM-NEXT-8: the exit-cohort repair companion gate.
+                exit_cohort_repair=bool(
+                    getattr(config, "unit_outage_exit_cohort_repair", False)
+                ),
                 # SPP-85: the net-load-mask companion gate, same reason.
                 netload_mask_repair=bool(
                     getattr(config, "unit_outage_netload_mask_repair", False)

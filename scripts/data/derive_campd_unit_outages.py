@@ -338,6 +338,205 @@ def build_capacity_index(
     return exact, by_digits
 
 
+#: CAMPD ``unitType`` family -> the EIA-860 prime movers it can be. Used ONLY
+#: by ``--exit-cohort-repair`` to disambiguate a trailing-digit match that hits
+#: two generators at one plant (Chalk Point 1571: CAMPD boiler ``1`` against
+#: EIA ``GT1`` 16 MW and ``ST1`` 364 MW). Categorical, zero free parameters.
+_UNIT_TYPE_PRIME_MOVERS: tuple[tuple[str, frozenset[str]], ...] = (
+    ("combined cycle", frozenset({"CT", "CA", "CS"})),
+    ("turbine", frozenset({"GT", "CT"})),
+    ("boiler", frozenset({"ST"})),
+    ("stoker", frozenset({"ST"})),
+    ("cyclone", frozenset({"ST"})),
+    ("fired", frozenset({"ST"})),
+)
+
+
+#: Model bin -> the EIA-860 prime movers its capacity can hold. Used ONLY by
+#: ``--exit-cohort-repair`` to refuse a window whose matched generator cannot
+#: belong to the bin the router sends it to. Categorical, zero free parameters.
+_GROUP_PRIME_MOVERS: dict[str, frozenset[str]] = {
+    "CC_REGULAR": frozenset({"CT", "CA", "CS"}),
+    "CC_CHP": frozenset({"CT", "CA", "CS"}),
+    "COAL": frozenset({"ST"}),
+    "ST_GAS": frozenset({"ST"}),
+}
+
+
+def _prime_movers_for_unit_type(unit_type: str) -> frozenset[str] | None:
+    """Return the EIA-860 prime movers a CAMPD ``unitType`` can map to."""
+    ut = str(unit_type).strip().lower()
+    for token, pms in _UNIT_TYPE_PRIME_MOVERS:
+        if token in ut:
+            return pms
+    return None
+
+
+class VintageCapacityIndex:
+    """Per-year EIA-860 capacity index for ``--exit-cohort-repair`` (PJM-NEXT-8).
+
+    The default index is ONE snapshot (``--eia860``), so a unit that retired
+    before the snapshot is missing from it: its trailing-digit match can land
+    on a surviving generator of another prime mover (Chalk Point 1571's coal
+    boilers ``1``/``2`` take GT1/GT2's 16/35 MW), or on nothing (the observed-
+    peak fallback sizes Sammis 3-4 at 62/152 MW against 190.4). This index is
+    built from the derive year's OWN vintage — the year-end operable sheet
+    plus every generator on that vintage's Retired-and-Canceled sheet retiring
+    DURING the year (vintages that ship no such sheet read the same rows from
+    the canonical whole-plant retiree parquet, the fleet's own
+    ``_mid_vintage_exit_rows_from_window`` source) — so the capacity is the
+    one the year's fleet carried. Years with no ``vintage_<year>/`` directory
+    fall back to the canonical snapshot.
+
+    ``in_fleet`` holds the generators the year's fleet dispatches: operable
+    at year end, or retired during the year at a plant absent from the year-end
+    operable sheet (whole-plant exit, which ``mid_vintage_exit_carry`` dates).
+    A generator retired during the year at a SURVIVING plant is a partial exit
+    the fleet does not carry, so it is indexed (for its nameplate) but never
+    admitted as a dark-year unit. ``exit_ym`` maps a retired-during-year
+    generator to its EIA ``(year, month)`` — the dated-bin key. ``exits_next``
+    holds generators the year's operable sheet plans to retire the next year.
+    Zero free parameters: every field is EIA's own.
+    """
+
+    def __init__(self, year: int, canonical: Path) -> None:
+        vdir = EIA_860_DIR / f"vintage_{int(year)}"
+        op_path = vdir / "eia860_generators.parquet"
+        cols = ["plant_id", "generator_id", "nameplate_capacity_mw", "prime_mover"]
+        if not op_path.exists():
+            op_path = canonical
+        op = pd.read_parquet(op_path)
+        op = op.dropna(subset=["generator_id"]).copy()
+        op["plant_id"] = pd.to_numeric(op["plant_id"], errors="coerce")
+        op = op[op["plant_id"].notna()]
+        op["plant_id"] = op["plant_id"].astype("int64")
+        exits_next = set()
+        if "planned_retirement_year" in op.columns:
+            nxt = pd.to_numeric(op["planned_retirement_year"], errors="coerce")
+            for p, gid in op.loc[
+                nxt == int(year) + 1, ["plant_id", "generator_id"]
+            ].itertuples(index=False):
+                exits_next.add((int(p), _norm_unit_id(gid)))
+        operable_plants = set(op["plant_id"].astype(int))
+        ret = self._retired_during(vdir, int(year))
+        frame = pd.concat([op[cols], ret[cols]], ignore_index=True)
+        frame["nameplate_capacity_mw"] = pd.to_numeric(
+            frame["nameplate_capacity_mw"], errors="coerce"
+        )
+        frame = frame[frame["nameplate_capacity_mw"] > 0.0]
+        self.exact: dict[tuple[int, str], tuple[float, str]] = {}
+        self.by_digits: dict[tuple[int, str], list[tuple[float, str, str]]] = {}
+        for p, gid, cap, pm in frame[cols].itertuples(index=False):
+            full = _norm_unit_id(gid)
+            self.exact[(int(p), full)] = (float(cap), str(pm))
+            digits = re.sub(r"\D", "", full)
+            if digits:
+                self.by_digits.setdefault((int(p), digits), []).append(
+                    (float(cap), str(pm), full)
+                )
+        self.in_fleet = {
+            (int(p), _norm_unit_id(g))
+            for p, g in op[["plant_id", "generator_id"]].itertuples(index=False)
+        }
+        self.exit_ym: dict[tuple[int, str], tuple[int, int]] = {}
+        for p, gid, ry, rm in ret[["plant_id", "generator_id", "ry", "rm"]].itertuples(
+            index=False
+        ):
+            key = (int(p), _norm_unit_id(gid))
+            self.exit_ym[key] = (int(ry), int(rm))
+            if int(p) not in operable_plants:
+                self.in_fleet.add(key)
+        self.exits_next = exits_next
+
+    @staticmethod
+    def _retired_during(vdir: Path, year: int) -> pd.DataFrame:
+        """Generators retired DURING ``year`` per that vintage (see class doc)."""
+        cols = [
+            "plant_id",
+            "generator_id",
+            "nameplate_capacity_mw",
+            "prime_mover",
+            "ry",
+            "rm",
+        ]
+        ret_path = vdir / "eia860_generator_retired_and_canceled.parquet"
+        if ret_path.exists():
+            raw = pd.read_parquet(ret_path)
+            df = pd.DataFrame(
+                {
+                    "plant_id": pd.to_numeric(raw["Plant Code"], errors="coerce"),
+                    "generator_id": raw["Generator ID"],
+                    "nameplate_capacity_mw": pd.to_numeric(
+                        raw["Nameplate Capacity (MW)"], errors="coerce"
+                    ),
+                    "prime_mover": raw["Prime Mover"],
+                    "ry": pd.to_numeric(raw["Retirement Year"], errors="coerce"),
+                    "rm": pd.to_numeric(raw["Retirement Month"], errors="coerce"),
+                }
+            )
+        elif vdir.exists():
+            win = EIA_860_DIR / "eia860_generator_retired_within_window.parquet"
+            if not win.exists():
+                return pd.DataFrame(columns=cols)
+            raw = pd.read_parquet(win)
+            df = pd.DataFrame(
+                {
+                    "plant_id": pd.to_numeric(raw["plant_id"], errors="coerce"),
+                    "generator_id": raw["generator_id"],
+                    "nameplate_capacity_mw": raw["nameplate_capacity_mw"],
+                    "prime_mover": raw["prime_mover"],
+                    "ry": pd.to_numeric(
+                        raw["planned_retirement_year"], errors="coerce"
+                    ),
+                    "rm": pd.to_numeric(
+                        raw["planned_retirement_month"], errors="coerce"
+                    ),
+                }
+            )
+        else:
+            return pd.DataFrame(columns=cols)
+        df = df[
+            (df["ry"] == year) & df["plant_id"].notna() & df["generator_id"].notna()
+        ]
+        df = df.copy()
+        df["plant_id"] = df["plant_id"].astype("int64")
+        df["rm"] = df["rm"].fillna(12).astype("int64")
+        return df[cols]
+
+    def match(
+        self, plant_id: int, unit_id: object, unit_type: str
+    ) -> tuple[float, str, str] | None:
+        """Return ``(nameplate_mw, source, generator_key)`` or ``None``.
+
+        Exact id first; then a unique trailing-digit match; then, only where
+        the digits hit several generators, the unique hit whose prime mover
+        is compatible with the CAMPD ``unitType``.
+        """
+        full = _norm_unit_id(unit_id)
+        if (plant_id, full) in self.exact:
+            return self.exact[(plant_id, full)][0], "eia_exact", full
+        digits = re.sub(r"\D", "", full)
+        if not digits:
+            return None
+        hits = self.by_digits.get((plant_id, digits)) or []
+        if len(hits) == 1:
+            return hits[0][0], "eia_digits", hits[0][2]
+        pms = _prime_movers_for_unit_type(unit_type)
+        if pms is not None:
+            pm_hits = [h for h in hits if h[1] in pms]
+            if len(pm_hits) == 1:
+                return pm_hits[0][0], "eia_digits_pm", pm_hits[0][2]
+        return None
+
+
+def _is_whole_year_dark(rows: pd.DataFrame, clock_len: int) -> bool:
+    """True when a unit's CAMPD id files every hour of the year with opTime 0."""
+    if len(rows) < clock_len:
+        return False
+    op = pd.to_numeric(rows["opTime"], errors="coerce").fillna(0.0)
+    return float(op.max()) <= 0.0
+
+
 def plant_nameplate_index(eia860_path: Path) -> dict[int, float]:
     """Return ``plant_id -> total generator nameplate MW`` from EIA-860."""
     gens = pd.read_parquet(
@@ -1537,6 +1736,20 @@ def main() -> None:
         "idleness. Every other construction step is unchanged.",
     )
     ap.add_argument(
+        "--exit-cohort-repair",
+        action="store_true",
+        help="DEFAULT-OFF, standard extract only (PJM-NEXT-8, rule 14): (a) size "
+        "each unit from the derive year's OWN EIA-860 vintage (year-end operable "
+        "plus generators retired during the year), disambiguating a multi-hit "
+        "trailing-digit match by the CAMPD unitType's prime mover; (c) emit one "
+        "full-year window for a unit its own CAMPD id files dark every hour of the "
+        "year when the vintage says the fleet carries it and it retires that year "
+        "or the next, and a peer ran; and write an exit_ym column (the unit's EIA "
+        "retirement year-month when it retires during the year) that the runtime "
+        "keys dated-bin outage shares on (ScenarioConfig."
+        "unit_outage_exit_cohort_repair). Zero free parameters.",
+    )
+    ap.add_argument(
         "--emit-screened-set",
         action="store_true",
         help="DEFAULT-OFF, --short-windows coal scope only (miso-273): also "
@@ -1555,6 +1768,14 @@ def main() -> None:
         raise SystemExit(
             "--dark-unit-years requires --per-unit-crosswalk and the standard "
             "(>= 5-day) extract (not --short-windows / --partial-windows)"
+        )
+    exit_repair = bool(getattr(args, "exit_cohort_repair", False))
+    if exit_repair and (
+        args.per_unit_crosswalk or args.short_windows or args.partial_windows
+    ):
+        raise SystemExit(
+            "--exit-cohort-repair applies to the standard (>= 5-day) extract only "
+            "(not --per-unit-crosswalk / --short-windows / --partial-windows)"
         )
     short_gas = args.short_windows and args.short_window_groups == "gas"
     if args.short_window_groups == "gas" and not args.short_windows:
@@ -1715,6 +1936,8 @@ def main() -> None:
     }
 
     exact, by_digits = build_capacity_index(Path(args.eia860))
+    # PJM-NEXT-8 --exit-cohort-repair: one per-year vintage index, built lazily.
+    vintage_index: dict[int, VintageCapacityIndex] = {}
     npl_by_plant = plant_nameplate_index(Path(args.eia860))
 
     # EIA-923 non-CAMPD fallback: a SEPARATE default-off layer written to its own
@@ -1926,6 +2149,30 @@ def main() -> None:
                     )
                     for uid in units
                 }
+                # PJM-NEXT-8 (a): re-size from the year's own vintage. A
+                # combined-cycle steam-augmented entry keeps its block share; a
+                # unit whose vintage nameplate equals the default keeps its row
+                # byte-identical (label included).
+                unit_gkey: dict[object, str] = {}
+                unit_pm: dict[object, str] = {}
+                vidx = None
+                if exit_repair:
+                    if year not in vintage_index:
+                        vintage_index[year] = VintageCapacityIndex(
+                            year, Path(args.eia860)
+                        )
+                    vidx = vintage_index[year]
+                    for uid in units:
+                        hit = vidx.match(int(fac_id), uid, unit_type.get(uid, ""))
+                        if hit is None:
+                            continue
+                        cap_mw, vsrc, gkey = hit
+                        unit_gkey[uid] = gkey
+                        unit_pm[uid] = vidx.exact[(int(fac_id), gkey)][1]
+                        detect0, derate0, src0 = caps[uid]
+                        if src0.endswith("_cc") or abs(cap_mw - detect0) < 1e-9:
+                            continue
+                        caps[uid] = (cap_mw, cap_mw, f"{vsrc}_vintage")
                 # Gross-silent facility fallback (non-ERCOT): some units
                 # report opTime but never grossLoad (Seward's CFB boilers),
                 # so the gross-based detector is blind to them in every year.
@@ -2061,10 +2308,36 @@ def main() -> None:
                             any(o != uid for o in ran),
                         )
                     )
-                    if not dark_year and (peaks[uid] <= 0.0 or derate_cap <= 0.0):
+                    # PJM-NEXT-8 (c): the exit cohort's dark-all-year units.
+                    # The SOCO-61 adjacency evidence (same id producing in
+                    # Y-1/Y+1) cannot fire for a unit whose last producing year
+                    # precedes the CAMPD corpus; the year's own EIA-860 vintage
+                    # supplies it instead — the fleet carries the generator and
+                    # retires it this year or the next.
+                    gk = (int(fac_id), unit_gkey.get(uid, ""))
+                    exit_dark = bool(
+                        vidx is not None
+                        and not dark_year
+                        and peaks[uid] <= 0.0
+                        and derate_cap > 0.0
+                        and uid in unit_gkey
+                        and gk in vidx.in_fleet
+                        and (gk in vidx.exit_ym or gk in vidx.exits_next)
+                        and any(o != uid for o in ran)
+                        and _is_whole_year_dark(
+                            fac[fac["unitId"].astype(str) == str(uid)],
+                            len(pd.date_range(f"{year}-01-01", horizon_end, freq="h")),
+                        )
+                    )
+                    if not (dark_year or exit_dark) and (
+                        peaks[uid] <= 0.0 or derate_cap <= 0.0
+                    ):
                         continue
                     if dark_year:
                         cap_src = "campd_dark_unit_year"
+                    if exit_dark:
+                        cap_src = "campd_exit_dark_unit_year"
+                        dark_year = True
                     # Route this unit's window to ITS model bin (non-ERCOT;
                     # ERCOT keeps the bin-sheet group verbatim and reroutes
                     # its split plants downstream in _unit_outage_target).
@@ -2090,6 +2363,18 @@ def main() -> None:
                         )
                     )
                     if ugroup not in QUALIFYING_PLANT_GROUPS:
+                        continue
+                    # PJM-NEXT-8: a unit whose matched EIA generator cannot be
+                    # part of the bin it routes to (Possum Point 3804's 882 MW
+                    # residual-oil steam unit 5 routed to the CC bin) carries no
+                    # window there — its nameplate is not that bin's capacity.
+                    _pms = _GROUP_PRIME_MOVERS.get(ugroup)
+                    if (
+                        vidx is not None
+                        and _pms is not None
+                        and uid in unit_pm
+                        and unit_pm[uid] not in _pms
+                    ):
                         continue
                     if _is_listed_peaker_steam(fac_id, ugroup) and not getattr(
                         args, "keep_listed_peaker_dead_periods", False
@@ -2286,6 +2571,9 @@ def main() -> None:
                             "peer_units_online": peers,
                             "total_units_at_plant": len(units),
                         }
+                        if vidx is not None:
+                            ym = vidx.exit_ym.get(gk) if gk in vidx.in_fleet else None
+                            row["exit_ym"] = f"{ym[0]}-{ym[1]:02d}" if ym else ""
                         if args.partial_windows:
                             # The measured availability fraction the unit ran at
                             # during the plateau: the consumer removes
@@ -2410,6 +2698,9 @@ def main() -> None:
         "peer_units_online",
         "total_units_at_plant",
     ]
+    if exit_repair:
+        # PJM-NEXT-8: appended after the incumbent header (dated-bin key).
+        cols.append("exit_ym")
     base_cols = list(cols)
     if args.hour_grain:
         # caiso-183: appended AFTER the incumbent header, so every existing

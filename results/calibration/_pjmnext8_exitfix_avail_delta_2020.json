@@ -1,0 +1,74 @@
+{
+ "year": 2020,
+ "by_class_twh": {
+  "COAL_BIT": -4.905408528908999,
+  "CC_REGULAR": -0.0034220878553958556,
+  "ST_GAS": -0.01666186199999997,
+  "COAL_PRB": 0.08269219200000028
+ },
+ "rows": [
+  {
+   "plant": "1571",
+   "class": "COAL_BIT",
+   "off_twh": 5.219348663283584,
+   "delta_twh": -4.949100165134331,
+   "model_above_repaired_twh": 0.8760895032753921
+  },
+  {
+   "plant": "1573",
+   "class": "COAL_BIT",
+   "off_twh": 1.7463528000000001,
+   "delta_twh": 0.04700759999999986,
+   "model_above_repaired_twh": 0.035074910561320546
+  },
+  {
+   "plant": "2866",
+   "class": "COAL_BIT",
+   "off_twh": 5.93399566928859,
+   "delta_twh": -0.09102305726174359,
+   "model_above_repaired_twh": 0.034861245247101845
+  },
+  {
+   "plant": "3122",
+   "class": "COAL_BIT",
+   "off_twh": 4.953946584000002,
+   "delta_twh": 0.051984359999998474,
+   "model_above_repaired_twh": 0.0008303146869366126
+  },
+  {
+   "plant": "3797",
+   "class": "COAL_BIT",
+   "off_twh": 2.213418792047714,
+   "delta_twh": 0.035722733487077524,
+   "model_above_repaired_twh": 0.2812087972238293
+  },
+  {
+   "plant": "3804",
+   "class": "CC_REGULAR",
+   "off_twh": 4.454405760523559,
+   "delta_twh": 0.12912374282722455,
+   "model_above_repaired_twh": 2.325504210555812e-05
+  },
+  {
+   "plant": "599",
+   "class": "ST_GAS",
+   "off_twh": 0.04739762159999996,
+   "delta_twh": -0.01666186199999997,
+   "model_above_repaired_twh": 0.0001800707026071586
+  },
+  {
+   "plant": "60357",
+   "class": "CC_REGULAR",
+   "off_twh": 11.984384987082203,
+   "delta_twh": -0.1325458306826204,
+   "model_above_repaired_twh": 0.1331789340797505
+  },
+  {
+   "plant": "883",
+   "class": "COAL_PRB",
+   "off_twh": 1.0649026799999997,
+   "delta_twh": 0.08269219200000028,
+   "model_above_repaired_twh": 0.0662762192500581
+  }
+ ]
+}
