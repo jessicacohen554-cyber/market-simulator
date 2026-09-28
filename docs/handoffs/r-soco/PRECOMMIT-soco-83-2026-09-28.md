@@ -16,6 +16,17 @@ Lane soco-83, 2026-09-28. Written, committed and pushed **before any solve**. Th
 | `src/market_sim/pipeline/commitment.py` (plant partition) | INERT for the keeper, LIVE for the arm | fires only when `st_gas_mustrun_per_plant` tags rows, and that flag is off in the keeper recipe |
 | `thermal_tranches_oom_{cost,level_mw}_SOCO.csv` | INERT for the keeper, LIVE for the arm | read only under `st_gas_mustrun_oom_level` |
 
+The merges that landed during this lane are also INERT for SOCO:
+
+| merge | touches | why inert for SOCO |
+|---|---|---|
+| miso-279 | the `stcov` fuel-split companions | MISO artifacts only |
+| R-ERCOT-11 | the split-child lookup | ERCOT custom-bin sheet; SOCO fleet names carry no `[TAG]` |
+| CAISO | import-cap floor | CAISO-only, flag default off |
+
+**Proven, not only argued:** a `fleet_only` build of the keeper recipe for 2021 at pre-merge main `03277407` and at this SHA is
+**array-identical** — 347 units; pmax, `mc_base`, `min_gen` and availability all equal.
+
 Every hunk is INERT for the keeper recipe, so form 4 holds: the keeper's committed bundle is the control.
 
 ## 1. What changes (owner rulings 2026-09-28, soco-83 decision cards)
