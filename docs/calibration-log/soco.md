@@ -1895,3 +1895,23 @@ OWNER RULINGS 2026-09-28 (decision cards, soco-84):
   effect on price and on the CC/ST/CT split, answering SOCO-63/64's no-load carrier problem first; comes back with a card. No build.
 - **Daily gas: "Data scout, zero LP (Recommended)"** — find a public daily Southeast hub series 2019-2025 and measure how much of the peak
   gap it explains; report before any intake or build.
+
+## soco-85 — 2026-09-28
+
+ZERO LP; KEEPER UNCHANGED (2026-09-28-soco83-st-oom-floor, NOT-YET); NO FRONTIER. (1) CC incremental-HR census (owner "Zero-LP census
+first"): on the FROZEN derive_campd_marginal_hr construction, SOCO's CC incremental HR is at or ABOVE average across the econ range
+(econ_low 1.00, econ_high 1.21, linear slope 1.11; 16 ok plants, 53 units, every year 2019-2025 alike); only the ramp bottom is 0.81, and
+that is the committed no-load carrier. soco-84's x0.88 premise is refuted. Greedy: every form raises the lw price; 2019/2020 C3a worsen,
+zero flips; C1 CC_REGULAR error shrinks, no status moves. (2) Daily gas scout (owner "Data scout, zero LP"): no free daily Southeast hub
+2019-2025; Henry Hub daily only (committed). The existing gas_daily_shape (HH) greedies to <=1.3 pp C3a, no flips; HH carries Uri, not
+Elliott (lambda 407 vs model 93 $/MWh, max 1,657). (3) Measured lead, not built: model CC gas (EIA-923 delivered) is 1.03-1.29 x HH;
+lambda's low-load quintile implies gas at 0.74-0.90 x the model's — Southern's lambda uses REPLACEMENT fuel cost.
+Record: docs/handoffs/r-soco/FINDING-soco-85-2026-09-28.md.
+
+OWNER RULINGS 2026-09-28 (decision cards, soco-85):
+- **CC incremental HR: "Keep refused (Recommended)"** — census recorded; no build.
+- **Daily gas: "Arm + solve 7 shards (Recommended)"** — arm the existing `gas_daily_shape` (Henry Hub within-month shape, zero DOF) on
+  the soco83 recipe; seven year-isolated shards; PRECOMMIT-soco-85 §7 governs the recommendation.
+- **SE basis: "Stay free-data only (Recommended)"** — no licensed NGI/Platts series; the cold-snap peak gap is a data limitation.
+- **Next lever: "Zero-LP fuel-basis census (Recommended)"** — EIA-923 receipts by purchase/contract type -> a spot/replacement gas cost;
+  greedy, then a card. No build.
