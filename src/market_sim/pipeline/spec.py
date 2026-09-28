@@ -26,6 +26,24 @@ if TYPE_CHECKING:
     import numpy as np
 
 
+def shed_penalty_voll(config: Any, iso_config: Any) -> float:
+    """Return the LP load-shed penalty ($/MWh) for a solve.
+
+    The ISO's own energy-offer cap (``ISOConfig.voll``) — except for an
+    ERCOT solve armed with ``ScenarioConfig.ercot_swcap_vintage``, where the
+    shed penalty is the year's published HCAP carried on ``config.voll``
+    (ERCOT's energy-only design sets offer cap = ORDC VOLL = shed value;
+    R-ERCOT-14). Off, or for any other ISO, this returns ``iso_config.voll``
+    unchanged, so every existing solve is byte-identical.
+    """
+    if (
+        getattr(config, "ercot_swcap_vintage", False)
+        and getattr(config, "iso", "") == "ERCOT"
+    ):
+        return float(config.voll)
+    return float(iso_config.voll)
+
+
 class _Unset:
     """Sentinel for DispatchSpec keys the caller did not assemble at all.
 
