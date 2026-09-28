@@ -15233,3 +15233,17 @@ zero status flips, C1 ST_GAS 2019 −8.203 → −8.003 TWh (FAIL vs 8.00 band),
 **PROMOTED 2026-09-28** on the owner's ruling: MISO keeper → `2026-09-27-miso-279-stcov` (2019–2025); `miso-278`
 pruned (rule 35). Headline unchanged: train CALIBRATED; full span NOT-YET on C1 ST_GAS 2019, C3a 2022, C3b 2021.
 Riverside remap (55641 CT-03/04 → 64020) still held out.
+
+## miso-280 — 2026-09-28
+
+Phase 0 (zero LP, `docs/FINDING-miso280-phase0-riverside-vlr-southgas-2026-09-28.md`): G-DRIFT 47d3f872..6ca311d4 all
+INERT for MISO; VLR data search found no public commitment MW/hours (routed, RO-2 class); C3b 2021 South storm gas has no
+admissible daily Gulf print (owner: "Leave as routed miss"). Lever C (owner: "Build it"): new field
+`campd_split_remap_companions` + `CAMPD_UNIT_PLANT_REMAP` (55641 CT-03/CT-04 → 64020) and seven `-splitremap-`
+companions. 7 shards at `8f765fef` (`docs/PRECOMMIT-miso280-split-remap-2026-09-28.md`,
+`docs/RESULT-miso280-split-remap-2026-09-28.md`): zero status flips, legitimacy rows unchanged, C3a 2022 −15.8 → −15.5 %,
+C3b 2021 0.254 → 0.252.
+
+**PROMOTED 2026-09-28** on the owner's ruling: MISO keeper → `2026-09-28-miso-280-splitremap` (2019–2025); `miso-279`
+pruned (rule 35). Headline unchanged: train CALIBRATED; full span NOT-YET on C1 ST_GAS 2019, C3a 2022, C3b 2021. Next:
+zero-LP probe of 2019 South steam dispatch (owner pick).
