@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-28-caiso-r10-nosa",
+  "label": "caiso r10 nosa",
+  "date": "2026-09-28",
+  "shorthand": "caiso-r10-nosa",
+  "definition": "R-CAISO-10 A 2022: keeper recipe + caiso_ra_bridge_startup_aware=false (PRECOMMIT-r-caiso-10-2026-09-28)",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-28-caiso-r10-nosa.js",
+  "bundle": "results/calibration/rcaiso10_A_span"
+}
