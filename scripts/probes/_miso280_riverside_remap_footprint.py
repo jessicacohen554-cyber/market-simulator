@@ -83,7 +83,10 @@ def instrument(relabel: bool) -> None:
         name = Path(path).name
         if not relabel or not isinstance(df, pd.DataFrame):
             return df
-        if not (name.startswith("campd-unit-outages") or name.startswith("campd-partial-outages")):
+        if not (
+            name.startswith("campd-unit-outages")
+            or name.startswith("campd-partial-outages")
+        ):
             return df
         if "facility_id" not in df.columns or "unit_id" not in df.columns:
             return df
@@ -195,16 +198,24 @@ def identity() -> dict:
             str(k): round(float(v) / 1e6, 4)
             for k, v in d.groupby("unitId").grossLoad.sum().items()
         }
-    e = pd.read_csv(REPO / "data/raw/eia-923-generation-fuel/eia923_generation_fuel_2019_2025.csv")
+    e = pd.read_csv(
+        REPO / "data/raw/eia-923-generation-fuel/eia923_generation_fuel_2019_2025.csv"
+    )
     e = e[e.plant_id.isin(PLANTS)]
     for (p, y), v in e.groupby(["plant_id", "year"]).net_generation_mwh.sum().items():
         out["eia923_net_twh"].setdefault(str(y), {})[str(p)] = round(float(v) / 1e6, 4)
     for v in range(2018, 2025):
-        g = pd.read_parquet(REPO / f"data/raw/eia-860/vintage_{v}/eia860_generator_operable.parquet")
+        g = pd.read_parquet(
+            REPO / f"data/raw/eia-860/vintage_{v}/eia860_generator_operable.parquet"
+        )
         g = g[pd.to_numeric(g["Plant Code"], errors="coerce").isin(PLANTS)]
         out["eia860"][str(v)] = [
-            [int(r["Plant Code"]), str(r["Generator ID"]), str(r["Prime Mover"]),
-             float(r["Nameplate Capacity (MW)"])]
+            [
+                int(r["Plant Code"]),
+                str(r["Generator ID"]),
+                str(r["Prime Mover"]),
+                float(r["Nameplate Capacity (MW)"]),
+            ]
             for _, r in g.iterrows()
         ]
     return out
@@ -245,7 +256,11 @@ def main() -> int:
             for v in ("K", "P")
         }
         f = res["fleet"][str(y)]
-        print(y, {v: f[v].get("plants", f[v].get("error", "")[-300:]) for v in f}, flush=True)
+        print(
+            y,
+            {v: f[v].get("plants", f[v].get("error", "")[-300:]) for v in f},
+            flush=True,
+        )
         OUT_JSON.write_text(json.dumps(res, indent=1, sort_keys=True))
     res["notes"] = {
         "D_is_emulated": "relabel of committed outage rows, not a re-run of the derive: "
