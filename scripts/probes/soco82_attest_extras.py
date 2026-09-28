@@ -20,7 +20,8 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-KEEPER = ROOT / "results/calibration/soco81_span/calibration_attestation.json"
+# Repointed soco-83 (2026-09-28): soco81_span was pruned (rule 35); read the incumbent keeper.
+KEEPER = ROOT / "results/calibration/soco82_span/calibration_attestation.json"
 
 #: Keeper-only entries, carried by NAME PREFIX.
 CARRY = (

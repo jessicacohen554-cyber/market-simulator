@@ -54,9 +54,11 @@ from scripts.probes.soco81_compose_span import assert_two_sided_arm  # noqa: E40
 
 import _soco81_census as census  # noqa: E402
 
-KEEPER_SPAN = ROOT / "results/calibration/soco81_span"
+# Repointed soco-83 (2026-09-28): soco81_span was pruned at the soco-82 promotion (rule 35);
+# the incumbent keeper is soco82_span.
+KEEPER_SPAN = ROOT / "results/calibration/soco82_span"
 census.SPAN = KEEPER_SPAN
-census.KEEPER = "2026-09-27-soco81-coal-incremental-hr"
+census.KEEPER = "2026-09-27-soco82-perunitdark-regen"
 DARK = ROOT / "data/raw/campd-unit-outages-perunitdark-SOCO.csv"
 DARK_SHA = "03ce606cfe118ef28e560739d12a005b2240aa112609e119c51a9f86ea2fd37c"
 WANSLEY = "COAL_SOCO_GA_p6052_"

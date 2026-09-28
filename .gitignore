@@ -3731,3 +3731,7 @@ results/calibration/r_ercot10_arm_20*/
 results/calibration/rcaiso9_A_20*/**
 # miso-279 per-year shard legs: parent-local only (rule 32(d)); provenance SHAs in docs/RESULT-miso279-stgas-span-coverage-2026-09-27.md
 results/calibration/miso279_arm_*/
+
+# soco-83 shard legs: kept out of main (rule 32(d)); composite soco83_span is what registers.
+# Provenance only (rule 33(d)); legs are costed as re-solves (~2 min LP/yr).
+results/calibration/soco83_20*/
