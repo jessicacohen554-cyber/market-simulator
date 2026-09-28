@@ -1920,3 +1920,6 @@ RESULT (run 2026-09-28-soco85-gas-daily-shape, seven year-isolated shards at 599
 held on all five; 2026-09-28-soco83-st-oom-floor pruned per rule 35): soco-83 recipe + gas_daily_shape (Henry Hub within-month shape, zero DOF).
 C3a 2019 +13.9 / 2020 +15.0 / 2022 -15.7 % still FAIL (moves <=1 pp); C3b 2020/21/22/24 still FAIL; zero status flips; D-1 fails 6->4; ST_GAS forced
 share lower every year; unserved 0. NOT-YET, grade 7/4/0/1/2 unchanged. Record: docs/handoffs/r-soco/{FINDING,PRECOMMIT,RESULT}-soco-85-2026-09-28.md.
+
+OWNER RULING 2026-09-28 (end of soco-85): **SOCO next: "Layup-mask queue item (Recommended)"** — soco-86 takes mustrun_layup_window_mask (trims the
+~21 % of ST floor energy asserted in CEMS-offline hours; lay-up data 2023-2025 only). C3a/C3b stay failing; no rubric card.
