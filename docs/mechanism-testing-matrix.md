@@ -18000,6 +18000,17 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**SPP-95 (2026-09-28, THE SPP-94 ROWS SOLVED — `docs/handoffs/RESULT-spp-95-curtail-rows-2026-09-28.md`, run
+`2026-09-28-spp-94-curtail-rows`, cell `vre_reference_rate_year_own` stays K; promotion pending the owner).**
+- Seven year-isolated shards at `020bb1c5`. E1–E5 all hold, and the §5 rule reads **RECOMMEND PROMOTE**. The
+  2019/2022–25 legs reproduce the keeper exactly.
+- 2020/2021 wind falls −6.02 / −2.82 TWh. Price_dw rises +$1.69 / +$1.42. Slack stays 0.
+- Train 2023–25 is unchanged (CALIBRATED, lone C3c).
+- **2020 price is now the clearest open miss**: C3a +27.8 % (was +17.6 %), C3b 0.348. The excess wind was hiding it.
+  It is a BODY miss, not the tail (SPP-72/74).
+- 2021–22 coal/CC swap: COAL_PRB is +13.5 TWh in both years; CC_REGULAR is −9.2 (2021) and −10.3 (2022). The
+  next lever must come from the queue below, and it must respect the SPP-89/90/91 DO-NOT-REDOs.
+
 **SPP-94 (2026-09-28, SPP'S OWN 2020/2021 WIND CURTAILMENT, ZERO LP SO FAR — `docs/handoffs/FINDING-spp-94-curtail-rows-2026-09-28.md`,
 PRECOMMIT `020bb1c5`, cell `vre_reference_rate_year_own` stays K).**
 - **SPP-67's "2020/2021 unpublished" is false.** ASOM 2022 p. 53 prints 2020 = 244 MW; ASOM 2021 p. 60 prints 2021 = 725 MW

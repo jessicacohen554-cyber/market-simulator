@@ -21,9 +21,13 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO / "src"))
+from market_sim.config.scenarios import _CACHE_KEY_RETIRED_FIELDS  # noqa: E402
+
 CAL = REPO / "results" / "calibration"
 PRECOMMIT = "docs/handoffs/PRECOMMIT-spp-94-curtail-rows-2026-09-27.md"
 FINDING = "docs/handoffs/FINDING-spp-94-curtail-rows-2026-09-28.md"
@@ -64,10 +68,20 @@ def main() -> int:
         if _offer_sha(sc) not in ksha:
             raise SystemExit(f"{y}: offer_curve_by_group moved: {_offer_sha(sc)}")
         ksc = _scenario(CAL / KEEPER / f"run_config_{y}.json")
+        # Fields added after the keeper was solved are absent from its config; the shard
+        # check verified each sits at its default, so only the keeper's own fields are compared.
         moved = sorted(
             k
-            for k in set(sc) | set(ksc)
-            if k != "offer_curve_by_group" and sc.get(k) != ksc.get(k)
+            for k in ksc
+            if k != "offer_curve_by_group"
+            and sc.get(k) != ksc.get(k)
+            # a field deleted since the keeper (rule 26) is absent from the leg; it
+            # is inert iff the keeper carried it at its frozen retired value
+            and not (
+                k not in sc
+                and k in _CACHE_KEY_RETIRED_FIELDS
+                and ksc[k] == _CACHE_KEY_RETIRED_FIELDS[k]
+            )
         )
         if moved:
             raise SystemExit(f"{y}: scenario_config moved vs keeper: {moved}")
