@@ -1,0 +1,183 @@
+{
+ "bundle": "spp94_arm_span",
+ "years": [
+  {
+   "year": 2019,
+   "t1_rt_lmp_mean": 20.846,
+   "t1_mcp_mean": {
+    "RegUPService": 10.882,
+    "RegDNService": 7.579,
+    "Spin": 5.185,
+    "Supp": 1.748
+   },
+   "t1_spin_share_of_lmp": 0.2487,
+   "t1_regup_share_of_lmp": 0.522,
+   "t2_req_median_mw": 1834,
+   "t2_req_max_mw": 2281,
+   "t2_headroom_min_mw": 1770,
+   "t2_headroom_p1_mw": 6648,
+   "t2_headroom_median_mw": 16766,
+   "t2_headroom_over_req_median": 9.19,
+   "t2_bind_hours": 2,
+   "t2_bind_hour_list": [
+    5895,
+    5896
+   ],
+   "t2_max_shortfall_mw": 158.8,
+   "req_hours_covered": 8760
+  },
+  {
+   "year": 2020,
+   "t1_rt_lmp_mean": 16.515,
+   "t1_mcp_mean": {
+    "RegUPService": 11.161,
+    "RegDNService": 9.1,
+    "Spin": 5.464,
+    "Supp": 0.899
+   },
+   "t1_spin_share_of_lmp": 0.3308,
+   "t1_regup_share_of_lmp": 0.6758,
+   "t2_req_median_mw": 1884,
+   "t2_req_max_mw": 2375,
+   "t2_headroom_min_mw": 3570,
+   "t2_headroom_p1_mw": 7424,
+   "t2_headroom_median_mw": 17001,
+   "t2_headroom_over_req_median": 8.95,
+   "t2_bind_hours": 0,
+   "t2_bind_hour_list": [],
+   "t2_max_shortfall_mw": -1640.8,
+   "req_hours_covered": 8760
+  },
+  {
+   "year": 2021,
+   "t1_rt_lmp_mean": 37.362,
+   "t1_mcp_mean": {
+    "RegUPService": 25.303,
+    "RegDNService": 11.079,
+    "Spin": 12.051,
+    "Supp": 6.314
+   },
+   "t1_spin_share_of_lmp": 0.3225,
+   "t1_regup_share_of_lmp": 0.6772,
+   "t2_req_median_mw": 1898,
+   "t2_req_max_mw": 2511,
+   "t2_headroom_min_mw": 4439,
+   "t2_headroom_p1_mw": 7365,
+   "t2_headroom_median_mw": 17145,
+   "t2_headroom_over_req_median": 9.19,
+   "t2_bind_hours": 0,
+   "t2_bind_hour_list": [],
+   "t2_max_shortfall_mw": -2459.7,
+   "req_hours_covered": 8760
+  },
+  {
+   "year": 2022,
+   "t1_rt_lmp_mean": 44.092,
+   "t1_mcp_mean": {
+    "RegUPService": 18.619,
+    "RegDNService": 9.234,
+    "Spin": 7.09,
+    "Supp": 1.688
+   },
+   "t1_spin_share_of_lmp": 0.1608,
+   "t1_regup_share_of_lmp": 0.4223,
+   "t2_req_median_mw": 2216,
+   "t2_req_max_mw": 4029,
+   "t2_headroom_min_mw": 2184,
+   "t2_headroom_p1_mw": 6552,
+   "t2_headroom_median_mw": 18199,
+   "t2_headroom_over_req_median": 8.04,
+   "t2_bind_hours": 0,
+   "t2_bind_hour_list": [],
+   "t2_max_shortfall_mw": -59.0,
+   "req_hours_covered": 8759
+  },
+  {
+   "year": 2023,
+   "t1_rt_lmp_mean": 23.473,
+   "t1_mcp_mean": {
+    "RegUPService": 9.131,
+    "RegDNService": 4.702,
+    "Spin": 3.498,
+    "Supp": 1.187
+   },
+   "t1_spin_share_of_lmp": 0.149,
+   "t1_regup_share_of_lmp": 0.389,
+   "t2_req_median_mw": 2419,
+   "t2_req_max_mw": 6808,
+   "t2_headroom_min_mw": 2494,
+   "t2_headroom_p1_mw": 5608,
+   "t2_headroom_median_mw": 17287,
+   "t2_headroom_over_req_median": 6.84,
+   "t2_bind_hours": 0,
+   "t2_bind_hour_list": [],
+   "t2_max_shortfall_mw": -287.2,
+   "req_hours_covered": 8724
+  },
+  {
+   "year": 2024,
+   "t1_rt_lmp_mean": 23.313,
+   "t1_mcp_mean": {
+    "RegUPService": 10.203,
+    "RegDNService": 4.904,
+    "Spin": 2.597,
+    "Supp": 1.028
+   },
+   "t1_spin_share_of_lmp": 0.1114,
+   "t1_regup_share_of_lmp": 0.4377,
+   "t2_req_median_mw": 2511,
+   "t2_req_max_mw": 7078,
+   "t2_headroom_min_mw": 765,
+   "t2_headroom_p1_mw": 5134,
+   "t2_headroom_median_mw": 17257,
+   "t2_headroom_over_req_median": 6.45,
+   "t2_bind_hours": 11,
+   "t2_bind_hour_list": [
+    5699,
+    5700,
+    5724,
+    5725,
+    5726,
+    5727,
+    5728,
+    6278,
+    6279,
+    6280,
+    6281
+   ],
+   "t2_max_shortfall_mw": 1343.3,
+   "req_hours_covered": 8752
+  },
+  {
+   "year": 2025,
+   "t1_rt_lmp_mean": 27.111,
+   "t1_mcp_mean": {
+    "RegUPService": 11.592,
+    "RegDNService": 4.888,
+    "Spin": 2.848,
+    "Supp": 0.954
+   },
+   "t1_spin_share_of_lmp": 0.1051,
+   "t1_regup_share_of_lmp": 0.4276,
+   "t2_req_median_mw": 3016,
+   "t2_req_max_mw": 8209,
+   "t2_headroom_min_mw": 1543,
+   "t2_headroom_p1_mw": 6302,
+   "t2_headroom_median_mw": 17141,
+   "t2_headroom_over_req_median": 5.38,
+   "t2_bind_hours": 6,
+   "t2_bind_hour_list": [
+    4908,
+    4909,
+    4910,
+    4911,
+    5054,
+    5366
+   ],
+   "t2_max_shortfall_mw": 814.7,
+   "req_hours_covered": 8711
+  }
+ ],
+ "earns_solve": false,
+ "verdict": "INERT: no solve"
+}

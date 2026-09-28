@@ -1363,6 +1363,12 @@ def _apply_outage_overlays(
             # PJM-NEXT-5 (rule 14 [R-ACCURATE]): the full HEAD re-derive of the
             # same family. Selects '-rederive-unitfuel-'; byte-inert while off.
             full_rederive=bool(getattr(config, "unit_outage_full_rederive", False)),
+            # PJM-NEXT-6: the F2 re-derive with the listed peakers' measured
+            # dead-period windows kept. Selects '-rederive-peakerkeep-unitfuel-';
+            # byte-inert while off.
+            rederive_peaker_windows=bool(
+                getattr(config, "unit_outage_rederive_peaker_windows", False)
+            ),
             # miso-266: the dispatched bin's own capacity as the denominator.
             lp_bin_capacity=_lp_bins,
             # SPP-85 (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]): the standard

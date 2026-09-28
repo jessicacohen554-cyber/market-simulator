@@ -1268,6 +1268,12 @@ def _write_outage_sidecar(
                         if getattr(args, "hour_grain", False)
                         else {}
                     ),
+                    # PJM-NEXT-6: recorded only when set, same discipline.
+                    **(
+                        {"keep_listed_peaker_dead_periods": True}
+                        if getattr(args, "keep_listed_peaker_dead_periods", False)
+                        else {}
+                    ),
                     "no_inmerit_filter": bool(
                         getattr(args, "no_inmerit_filter", False)
                     ),
@@ -1519,6 +1525,16 @@ def main() -> None:
         "own normal monthly output (median of its positive months across all "
         "filed years) is a full-stop window (default "
         f"{EIA923_FALLBACK_OUTAGE_RATIO}).",
+    )
+    ap.add_argument(
+        "--keep-listed-peaker-dead-periods",
+        action="store_true",
+        help="DEFAULT-OFF, standard extract only (PJM-NEXT-6, owner ruling "
+        "2026-09-27 'Split'): do NOT apply the ST_GAS_PEAKER_PLANTS unit skip, "
+        "so a listed gas-steam peaker keeps its measured full-dark (CF < "
+        "ST_GAS_CF_PEAK for >= --min-outage-days) dead-period windows. A unit "
+        "dark for the whole window is an availability event, not economic "
+        "idleness. Every other construction step is unchanged.",
     )
     ap.add_argument(
         "--emit-screened-set",
@@ -2075,7 +2091,9 @@ def main() -> None:
                     )
                     if ugroup not in QUALIFYING_PLANT_GROUPS:
                         continue
-                    if _is_listed_peaker_steam(fac_id, ugroup):
+                    if _is_listed_peaker_steam(fac_id, ugroup) and not getattr(
+                        args, "keep_listed_peaker_dead_periods", False
+                    ):
                         continue
                     # Short/partial modes: baseload coal only, WHEN-OPERABLE
                     # basis. A cycling unit's brief stop can be economics; a
@@ -2320,7 +2338,9 @@ def main() -> None:
         for fac_id, group in sorted(group_by_code.items()):
             if group not in QUALIFYING_PLANT_GROUPS:
                 continue
-            if _is_listed_peaker_steam(fac_id, group):
+            if _is_listed_peaker_steam(fac_id, group) and not getattr(
+                args, "keep_listed_peaker_dead_periods", False
+            ):
                 continue
             npl = npl_by_plant.get(int(fac_id), 0.0)
             if npl <= 0.0:

@@ -3708,6 +3708,9 @@ results/calibration/miso278_arm_*/
 results/calibration/nwppnext7sf_20[12][0-9]/
 # SPP-92 seam probe scratch (zero LP; numbers live in the FINDING)
 results/calibration/_spp92_seam_hourly_*.parquet
+
+# PJM-NEXT-6 per-year shard legs (rule 32(d)/31: local only; the pjmnext6_sp_span composite is what lands). Leg provenance SHAs (provenance only, rule 33(d)): 2019 7591da23 2020 43788691 2021 4ecfd612 2022 fbafed32 2023 da36c6fb 2024 c9ec09ac 2025 7200e592
+results/calibration/pjmnext6_sp_20*/
 # R-CAISO-8 per-year shard legs (rule 32(d)/36): kept out of main; the composite is what registers.
 results/calibration/rcaiso8_A_20*/**
 # R-CAISO-8 Object 2: raw OASIS PRC_NOMOGRAM downloads (re-fetched by scripts/probes/_rcaiso8_sd_import_census.py)
@@ -3729,6 +3732,9 @@ results/calibration/nyisonext8_202[2-5]/
 results/calibration/r_ercot10_arm_20*/
 # R-CAISO-9 per-year shard legs (rule 32(d)/36): kept out of main; the composite is what registers.
 results/calibration/rcaiso9_A_20*/**
+
+# SPP-95 per-year shard legs (rule 32(d): kept out of main; composite spp94_arm_span is registered)
+results/calibration/spp94_arm_20*/
 # miso-279 per-year shard legs: parent-local only (rule 32(d)); provenance SHAs in docs/RESULT-miso279-stgas-span-coverage-2026-09-27.md
 results/calibration/miso279_arm_*/
 

@@ -381,6 +381,7 @@ def unit_outage_csv_for_iso(
     unit_fuel_routing: bool = False,
     netload_mask_repair: bool = False,
     full_rederive: bool = False,
+    rederive_peaker_windows: bool = False,
 ) -> Path:
     """Return the CAMPD unit-outage CSV path for an ISO.
 
@@ -490,6 +491,14 @@ def unit_outage_csv_for_iso(
     meaningful only with both ``membership_repair`` and ``unit_fuel_routing``;
     falls back to ``-memberrepair-unitfuel-`` when not derived.
 
+    ``rederive_peaker_windows``
+    (``ScenarioConfig.unit_outage_rederive_peaker_windows``, GATED default
+    False; PJM-NEXT-6) selects the ``-rederive-peakerkeep-unitfuel-`` companion:
+    the ``full_rederive`` file with the listed gas-steam peakers' measured
+    full-dark dead-period windows kept (deriver ``--keep-listed-peaker-dead-
+    periods``). Meaningful only with ``full_rederive``; falls back to
+    ``-rederive-unitfuel-`` when not derived.
+
     ``netload_mask_repair`` (``ScenarioConfig.unit_outage_netload_mask_repair``,
     GATED default False; SPP-85) selects the ``-netloadmask-`` companion of the
     STANDARD extract: the SAME deriver at the committed extract's own recorded
@@ -548,6 +557,15 @@ def unit_outage_csv_for_iso(
         if alt.exists():
             return alt
     if membership_repair and not mixed_gas_routing and not per_unit_crosswalk:
+        if unit_fuel_routing and full_rederive and rederive_peaker_windows:
+            # PJM-NEXT-6: the F2 re-derive with the listed peakers' measured
+            # dead-period windows kept. Falls through to '-rederive-unitfuel-'.
+            alt = base.with_name(
+                f"campd-unit-outages-rederive-peakerkeep-unitfuel-"
+                f"{(iso or 'ERCOT').upper()}.csv"
+            )
+            if alt.exists():
+                return alt
         if unit_fuel_routing and full_rederive:
             # PJM-NEXT-5: the full HEAD re-derive of the same family. Falls
             # through to '-memberrepair-unitfuel-' when not derived.
@@ -1458,6 +1476,7 @@ def unit_outage_derate_factors(
     membership_repair: bool = False,
     unit_fuel_routing: bool = False,
     full_rederive: bool = False,
+    rederive_peaker_windows: bool = False,
     mid_vintage_exit_carry: bool = False,
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
     precod_clip: bool = False,
@@ -1499,6 +1518,7 @@ def unit_outage_derate_factors(
         unit_fuel_routing=unit_fuel_routing,
         netload_mask_repair=netload_mask_repair,
         full_rederive=full_rederive,
+        rederive_peaker_windows=rederive_peaker_windows,
     )
     if netload_mask_repair and csv_path.name.startswith(
         "campd-unit-outages-netloadmask-"
