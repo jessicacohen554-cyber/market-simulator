@@ -3827,3 +3827,8 @@ results/calibration/rcaiso13_A_20*/**
 # R-CAISO-14 composites: NOT promoted (owner card 2026-09-29 "Complete repair, re-solve"); kept on local disk (rule 31), numbers in docs/handoffs/r-caiso-14/RESULT.
 results/calibration/rcaiso13_A_span/
 results/calibration/rcaiso13_A_tp_2019_2021/
+# SPP-102 arm (spp_commitment_posture): owner ruled "Don't promote" 2026-09-29; legs + composite stay out of main.
+# Provenance only (rule 33(d)), pin 62ac90e2: 2019 9efe9d9e 2020 7646a1dc 2021 012273be 2022 807adee2
+# 2023 d8ef67b9 2024 dbca2693 2025 54f8f0d3 on claude/spp102-<y>. Numbers: RESULT-spp-102-commitment-posture-2026-09-29.md.
+results/calibration/spp102_arm_20*/
+results/calibration/spp102_arm_span/
