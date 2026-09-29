@@ -99,3 +99,13 @@ SPP's registered years are 2019–2025, all on keeper `2026-09-28-spp-100-chp-sc
 - the exact recipe with a leg identical to the keeper → **FAIL** (ARMED: the posture never reached the solve).
 
 The shard prompt is `docs/handoffs/spp102/shard_prompt_template.txt`.
+
+## Addendum A (2026-09-29, before any number was read) — calibration-path wiring
+
+- **What stopped round 1.** The first seven shards (pinned `e66ef989`) stopped at their ARMED hard stop.
+  `scripts/run_calibration.py` assembles its own dispatch kwargs and called only `apply_ercot_commitment_posture`,
+  so the posture never reached the backcast solve. The shards correctly refused to push, and no solved number was
+  seen.
+- **The repair.** Add `apply_spp_commitment_posture` beside the ERCOT call. A source-level regression test
+  (`TestCalibrationPathWiring`) now guards it.
+- **Nothing else changes.** §1–§7 stand. The shards are relaunched on the repair's merge SHA.
