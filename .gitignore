@@ -3855,3 +3855,6 @@ results/calibration/spp102_arm_span/
 data/raw/gas-prices/licensed/*
 !data/raw/gas-prices/licensed/README.md
 !data/raw/gas-prices/licensed/SHA256SUMS.txt
+
+# miso-287 zero-LP probe hourly dumps (parent-local; numbers live in the FINDING)
+results/calibration/_miso287_hourly_*.parquet
