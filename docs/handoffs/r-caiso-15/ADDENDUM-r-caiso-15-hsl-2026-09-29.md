@@ -49,7 +49,31 @@ pre-interpolation columns.)
 
 ## 4. Census of other CAISO consumers of EIA-930-derived artifacts
 
-CENSUS_PLACEHOLDER
+Checked against the keeper recipe (`rcaiso11_A_span/run_config.json`). "Late" = derived from EIA-930 CISO data inside the
+generation window without passing the repair seam.
+
+| # | Artifact (reader) | Hourly shape at solve? | Status |
+|---|---|---|---|
+| 1 | `data/raw/reference/caiso-storage-shape-envelope.csv` (`model/storage.py::caiso_storage_shape_caps`; keeper `caiso_storage_shape_anchor=true`). Builder `scripts/derive_caiso_storage_shape.py` reads raw `CISO hourly.parquet` `NG: OTH` by Local date/Hour, no seam | YES: per-(year, hour-of-day) p95 battery charge/discharge caps, 2023–25 | **GAP, live.** Caps battery shape on the late clock; bears directly on P2 |
+| 2 | `data/raw/eia-930-interchange/CISO interchange hourly.parquet` (per-DIBA feed; `envelopes.measured_corridor_flow_envelope`, `measured_firm_import_shape`). Clock set by fixed lags `_CAISO_INTERCHANGE_LAG_STD_H=1` / `_DST_H=2` (`envelopes.py:885-890`), fitted against the unrepaired `Total interchange` | YES: month × hour-of-day | **GAP, live.** Under the arm the extract's interchange moves 1 h, this feed does not. Needs a lag re-scan against the repaired column |
+| 3 | DSW clean-depth / surplus / wedge / import-tranche constants (`model/interchange/spec.py`) | No (one p95 per year; only the hour window is clock-dependent) | GAP, second-order; inherits #2 |
+| 4 | `caiso_offer_surface_condbinned.json` (net-load bin join) | No (per net-load bin) | GAP, weak |
+| 5 | CT-drag / ST-gas overnight drag scalars | No (regression scalars) | GAP, scalar |
+| 6 | Solar-shape band 10/30 percentiles | No | N/A (clock-robust) |
+| 7 | caiso-80 supply-consistent demand | YES | REPAIRED (R-CAISO-13) |
+| 8 | `data/raw/caiso-hsl/*` | YES | **REPAIRED (this lane)** |
+| 9 | `eia-930/eia_generation_profiles.parquet` etc. | YES | Dormant fallback, not reached for CAISO 2022–25 |
+| 10–14 | storage-dispatch actuals (Outlook), Outlook fuelsource, intertie self-sched, CEMS/TAC artifacts, calibration_reference | — | N/A (not EIA-930, or scoring-only) |
+| 15 | `data/clean/*` generation | YES | Inert (clean path off); clean renewables pass the HSL seam |
+
+Live frame readers (demand, `caiso_solar_fraction`, WAT hydro envelope, `measured_interchange_envelope`,
+`measured_gas_floor_profile`, `_eia_hourly_cf_profile`) are REPAIRED through the seam.
+
+**Scoring side.** C4 gas NRMSE for CAISO 2023+ is scored against CEMS bench gas + flat cogen
+(`calibration_verdict.py`), not the EIA-930 NG cell, so the arm does not move the benchmark. The in-solve e930 bench
+is built after the arm is set (repaired). The zero-LP benchmark rebuilds (`build_benchmark_frames`,
+`--rebuild-benchmark`, `restore_shared_inputs`, `build_bench_part_zero_lp.py`, `regen_caiso_bench_cems.py`) do NOT arm
+the repair: a rebuild of an armed bundle would regenerate the e930 bench unrepaired.
 
 ## 5. G-DRIFT 332c8048 → pin
 
