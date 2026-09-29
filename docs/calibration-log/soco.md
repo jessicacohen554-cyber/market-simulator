@@ -1995,6 +1995,7 @@ OWNER RULINGS 2026-09-29 (decision cards, soco-89):
   (Transco Z4/Z5 or Sonat) used as replacement fuel, matching lambda's definition (incremental cost × replacement fuel). The owner
   supplies the file; it is non-redistributable (data-licensing §5), so it stays gitignored. soco-90 greedies both halves, zero LP,
   then brings a build card.
+
 ## 2026-09-29 — soco-90: a daily replacement-fuel series cannot do the joint C3a repair (zero LP)
 
 The licensed SE daily file was not supplied, so the lane bounded it. Greedy on soco87_span with replacement = HH daily
