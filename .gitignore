@@ -3802,3 +3802,7 @@ results/calibration/nwppnext8mp_20*/
 results/calibration/soco85_20[12][0-9]/
 # NWPP-NEXT-9 per-year shard legs: local only, composed into nwppnext9mr_span (rule 32(d)); leg SHAs in the RESULT doc.
 results/calibration/nwppnext9mr_20*/
+# SPP-100 per-year arm legs (rule 32(d)/36): composed into spp100_arm_span; legs stay out of main.
+# Provenance only (rule 33(d)), round-2 pin 11b72265: 2019 7d463322 2020 d4d5530a 2021 65720bac
+# 2022 e5cb7754 2023 68667e64 2024 24ed08be 2025 7021af9b on claude/spp100-<y>.
+results/calibration/spp100_arm_20*/

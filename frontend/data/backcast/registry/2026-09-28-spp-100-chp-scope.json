@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-28-spp-100-chp-scope",
+  "label": "spp 100 chp scope",
+  "date": "2026-09-28",
+  "shorthand": "spp-100-chp-scope",
+  "definition": "SPP-100: the SPP-99 keeper recipe plus chp_steam_floor_p25 and chp_steam_floor_conduct_scope, the CHP steam-level swap scoped to metered hosts whose own meter supports an all-hours floor (Eastman and Black Hawk in, Lake Road out). Seven year-isolated shards composed into one 2019-2025 bundle. Train 2023-25 passes every criterion except the ledgered C3c tail; 2019-22 fail C1/C3a/C3b/C4 rows. Promoted to SPP keeper 2026-09-29.",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-28-spp-100-chp-scope.js",
+  "bundle": "results/calibration/spp100_arm_span"
+}
