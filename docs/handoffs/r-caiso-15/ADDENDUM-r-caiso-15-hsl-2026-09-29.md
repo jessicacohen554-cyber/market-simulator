@@ -138,3 +138,6 @@ carry no CAISO rows.
   for 2025 the active directory already is the canonical one, so the new path loads the same fleet: the 2025 leg is
   valid as solved (G-DRIFT: INERT for 2025).
 - **Relaunch:** 2019–2024 at the new pin.
+- **G-DRIFT 893545e3 → relaunch pin:** one solve-path commit besides this fix, `a168680b` NWPP-NEXT-10
+  `unit_outage_exit_ym_from_eia860` (default off, absent from the keeper recipe; every new branch is gated
+  `exit_cohort_repair or exit_ym_from_eia860`, both off for CAISO) — INERT. Also INERT for the 2025 leg.
