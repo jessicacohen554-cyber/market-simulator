@@ -15,8 +15,13 @@ import pandas as pd
 import pytest
 
 from market_sim.config import constants
+from market_sim.config.constants import HOURS_PER_YEAR
+from market_sim.config.paths import CAISO_HSL_DIR as _CAISO_HSL
+from market_sim.data import renewables as R
+from market_sim.data.eia930 import actuals as A
 from market_sim.data.eia930 import demand as D
 from market_sim.data.eia930 import frames as F
+from tests.helpers import requires_raw
 
 
 @pytest.fixture(autouse=True)
@@ -152,3 +157,107 @@ def test_model_row_starts_skip_leap_day():
     assert idx[0] == pd.Timestamp("2024-01-01 08:00")
     pst = idx - pd.Timedelta(hours=8)
     assert not ((pst.month == 2) & (pst.day == 29)).any()
+
+
+# --- R-CAISO-15: the HSL generation term (renewables._repair_caiso_hsl_clock) --
+
+
+def _hsl_frame(n: int = HOURS_PER_YEAR) -> pd.DataFrame:
+    """A synthetic HSL frame: gen = k, curtailment = 10 (wind) / 20 (solar)."""
+    k = np.arange(n, dtype=float)
+    return pd.DataFrame(
+        {
+            "hour": np.arange(n),
+            "wind_gen_mw": k,
+            "wind_hsl_mw": k + 10.0,
+            "solar_gen_mw": 2 * k,
+            "solar_hsl_mw": 2 * k + 20.0,
+        }
+    )
+
+
+def test_hsl_unarmed_and_other_iso_return_same_object():
+    """Off by default, and armed-but-not-CAISO: the input object comes back."""
+    df = _hsl_frame()
+    assert R._repair_caiso_hsl_clock("CAISO", 2024, df) is df
+    F.set_caiso_eia930_clock_repair(True)
+    assert R._repair_caiso_hsl_clock("ERCOT", 2024, df) is df
+
+
+def test_hsl_year_outside_window_returns_same_object(monkeypatch):
+    """Armed, but the year's stamps never reach the generation window."""
+    _windows(
+        monkeypatch,
+        ("2023-11-01 08:00", "2025-12-02 22:00"),
+        ("2022-06-16 08:00", "2025-12-02 22:00"),
+    )
+    F.set_caiso_eia930_clock_repair(True)
+    df = _hsl_frame()
+    for year in (2019, 2022, 2026):
+        assert R._repair_caiso_hsl_clock("CAISO", year, df) is df
+
+
+def test_hsl_gen_replaced_and_curtailment_kept(monkeypatch):
+    """Gen is re-read from the repaired frame; hsl = new gen + old curtailment."""
+    F.set_caiso_eia930_clock_repair(True)
+    new = {
+        "wind": np.full(HOURS_PER_YEAR, 7.0),
+        "solar": np.full(HOURS_PER_YEAR, 9.0),
+    }
+    monkeypatch.setattr(A, "load_eia_hourly_renewable_gen", lambda iso, y: new)
+    df = _hsl_frame()
+    out = R._repair_caiso_hsl_clock("CAISO", 2024, df)
+    assert out is not df
+    np.testing.assert_allclose(out["wind_gen_mw"], 7.0)
+    np.testing.assert_allclose(out["wind_hsl_mw"], 17.0)
+    np.testing.assert_allclose(out["solar_gen_mw"], 9.0)
+    np.testing.assert_allclose(out["solar_hsl_mw"], 29.0)
+    np.testing.assert_allclose(df["wind_gen_mw"], np.arange(HOURS_PER_YEAR))
+
+
+def test_hsl_missing_repaired_frame_raises(monkeypatch):
+    """Armed in-window with no repaired EIA-930 series: fail, never fall back."""
+    F.set_caiso_eia930_clock_repair(True)
+    monkeypatch.setattr(A, "load_eia_hourly_renewable_gen", lambda iso, y: None)
+    with pytest.raises(RuntimeError, match="HSL generation term"):
+        R._repair_caiso_hsl_clock("CAISO", 2024, _hsl_frame())
+
+
+def _solar_centroid_by_month(gen: np.ndarray, year: int) -> np.ndarray:
+    """Monthly solar centroid (h PST, hour-beginning + 0.5) on the frame clock."""
+    utc = pd.DatetimeIndex(F._eia_hourly_frame_filled("CISO", year)["UTC time"])
+    pst = utc - pd.Timedelta(hours=9)  # hour-ending UTC -> hour-beginning PST
+    h, m = np.asarray(pst.hour) + 0.5, np.asarray(pst.month)
+    return np.array(
+        [(gen[m == k] * h[m == k]).sum() / gen[m == k].sum() for k in range(1, 13)]
+    )
+
+
+@requires_raw(_CAISO_HSL / "caiso_2024_hsl_hourly.parquet")
+def test_live_hsl_precondition_file_gen_is_unarmed_loader():
+    """The offline file's gen term IS the unarmed EIA-930 loader, 2019-2025."""
+    for year in range(2019, 2026):
+        df = R.load_hsl_hourly("CAISO", year)
+        eia = A.load_eia_hourly_renewable_gen("CAISO", year)
+        for fuel in ("wind", "solar"):
+            np.testing.assert_array_equal(df[f"{fuel}_gen_mw"].to_numpy(), eia[fuel])
+
+
+@requires_raw(_CAISO_HSL / "caiso_2024_hsl_hourly.parquet")
+def test_live_hsl_armed_moves_solar_centroid_and_conserves_curtailment():
+    """2024-25 solar centroid lands at 11.5-12.0 h PST every month; 2019-22 inert."""
+    for year in range(2019, 2026):
+        F.set_caiso_eia930_clock_repair(False)
+        off = R.load_hsl_hourly("CAISO", year)
+        F.set_caiso_eia930_clock_repair(True)
+        on = R.load_hsl_hourly("CAISO", year)
+        if year <= 2022:
+            pd.testing.assert_frame_equal(on, off)
+            continue
+        for fuel in ("wind", "solar"):
+            curt_on = (on[f"{fuel}_hsl_mw"] - on[f"{fuel}_gen_mw"]).sum()
+            curt_off = (off[f"{fuel}_hsl_mw"] - off[f"{fuel}_gen_mw"]).sum()
+            assert curt_on == pytest.approx(curt_off, rel=1e-12, abs=1e-6)
+        if year >= 2024:
+            c = _solar_centroid_by_month(on["solar_gen_mw"].to_numpy(), year)
+            assert ((c >= 11.5) & (c <= 12.0 + 5e-3)).all(), c

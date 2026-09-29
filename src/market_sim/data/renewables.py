@@ -1861,7 +1861,63 @@ def load_hsl_hourly(iso: str, year: int) -> pd.DataFrame | None:
         return None
     if not set(_HSL_COLUMNS).issubset(df.columns) or len(df) != HOURS_PER_YEAR:
         return None
-    return df.sort_values("hour").reset_index(drop=True)
+    return _repair_caiso_hsl_clock(
+        iso, year, df.sort_values("hour").reset_index(drop=True)
+    )
+
+
+def _repair_caiso_hsl_clock(iso: str, year: int, df: pd.DataFrame) -> pd.DataFrame:
+    """Move the CAISO HSL frame's EIA-930 generation term off CISO's late stamps.
+
+    ``caiso_eia930_clock_repair`` (R-CAISO-13, completed R-CAISO-15) applied to
+    the offline HSL artifact. ``scripts/data/build_caiso_hsl.py`` built
+    ``*_gen_mw`` from :func:`~market_sim.data.eia930.actuals.load_eia_hourly_renewable_gen`
+    before the repair existed, so inside
+    :data:`~market_sim.config.constants.EIA930_CISO_CLOCK_LATE_WINDOWS_UTC`
+    ``["generation"]`` it carries the one-hour-late stamps. The term is re-read
+    from that same loader, whose frame the seam
+    (:func:`~market_sim.data.eia930.frames._repair_clock_late_windows`) has
+    already repaired — the identical row mapping, seam hour and year edge. The
+    curtailment term (``*_hsl_mw - *_gen_mw``, CAISO 5-minute data stamped on
+    the model clock) is kept, and ``*_hsl_mw`` is recomposed as repaired gen +
+    curtailment. Precondition, measured 2026-09-29 and pinned by test: the
+    file's ``*_gen_mw`` is byte-identical to the unarmed loader in 2019-2025.
+
+    Rule 14 [R-ACCURATE] source repair; zero parameters; the parquet on disk is
+    never modified (rule 23). Returns ``df`` itself (the same object) unless the
+    repair is armed, ``iso == "CAISO"`` and the year's stamps reach the window.
+    """
+    from market_sim.data.eia930.frames import caiso_eia930_clock_repair_active
+
+    if iso != "CAISO" or not caiso_eia930_clock_repair_active():
+        return df
+    from market_sim.config.constants import EIA930_CISO_CLOCK_LATE_WINDOWS_UTC
+
+    first, last = (
+        pd.Timestamp(t) for t in EIA930_CISO_CLOCK_LATE_WINDOWS_UTC["generation"]
+    )
+    hour = pd.Timedelta(hours=1)
+    # Hour-ending UTC stamps of the local year (PST/PDT) lie inside
+    # [Jan 1 07:00, Jan 1 of year+1 09:00]; a row reads its successor's stamp.
+    year_lo = pd.Timestamp(year=year, month=1, day=1, hour=7)
+    year_hi = pd.Timestamp(year=year + 1, month=1, day=1, hour=9)
+    if year_hi < first - hour or year_lo > last:
+        return df
+    from market_sim.data.eia930.actuals import load_eia_hourly_renewable_gen
+
+    repaired = load_eia_hourly_renewable_gen("CAISO", year)
+    if repaired is None or not {"wind", "solar"} <= set(repaired):
+        raise RuntimeError(
+            f"caiso_eia930_clock_repair: no repaired EIA-930 CISO wind/solar for "
+            f"{year}; the HSL generation term cannot be moved"
+        )
+    out = df.copy()
+    for fuel in ("wind", "solar"):
+        gen = df[f"{fuel}_gen_mw"].to_numpy(dtype=float)
+        curtailment = df[f"{fuel}_hsl_mw"].to_numpy(dtype=float) - gen
+        out[f"{fuel}_gen_mw"] = repaired[fuel]
+        out[f"{fuel}_hsl_mw"] = repaired[fuel] + curtailment
+    return out
 
 
 def _load_hsl_hourly_raw(iso: str, year: int) -> pd.DataFrame | None:
