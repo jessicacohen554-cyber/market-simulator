@@ -3783,3 +3783,8 @@ results/calibration/miso280_arm_*/
 # Leg provenance (rule 33(d), provenance only): arm 2019 d667f4a8a3caf105129a6a4240543dc170b2a347; LR-only diagnostic 2019 5cb237e6c5b1f1b6157637217e873c119fd1db4c (never promotable).
 results/calibration/r_ercot13_arm_2019/
 results/calibration/r_ercot13_lr_2019/
+
+# R-ERCOT-14 shard legs (rule 32(d)/36: only the composite reaches main). Provenance, not recovery (rule 33(d)):
+# A-2019 cec0ae848a1889cde9d2bf75e30b0c1bb0e8b778
+results/calibration/r_ercot14_a_20*/
+results/calibration/r_ercot14_b_20*/
