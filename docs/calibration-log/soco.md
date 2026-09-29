@@ -1959,3 +1959,16 @@ PRECOMMIT-soco-87 §7 held on all five; 2026-09-28-soco85-gas-daily-shape pruned
 0.389->0.275 still FAIL (Elliott December); no PASS->FAIL. C3a 2019 +14.0 / 2020 +14.4 / 2022 -12.7 % still FAIL; no C3a flips. C1/C2/C4/C6/C8
 no flips; unserved 0. NOT-YET, grade 7/4/0/1/2 (C3a 2019/2020/2022, C3b 2022). Record:
 docs/handoffs/r-soco/{FINDING,PRECOMMIT,RESULT}-soco-87-2026-09-29.md.
+
+OWNER RULING 2026-09-29 (end of soco-87): **"Gas-level derive, zero LP (Recommended)"** — a zero-LP lane testing
+`gas_electric_power_monthly_level` on SOCO: derive SOCO's gas-capacity state weights with the frozen EIA-860 construction,
+read the level's interplay with the keeper gas stack, then greedy re-pricing on soco87_span. Build nothing without a ruling.
+
+## 2026-09-29 — soco-88: `gas_electric_power_monthly_level` does not move C3a (zero LP)
+
+SOCO state weights come from the frozen EIA-860 derive (GA 0.512 / AL 0.400 / MS 0.086 / FL 0.003; all prior rows
+reproduced byte-for-byte; committed as a data change, inert until armed). Admissible 2019–2020 (GA only) and 2022–2024;
+inert 2021 and 2025. The level replaces HH + measured basis + HH monthly shape; the daily shape survives. Greedy on soco87_span:
+C3a 2019 +14.0→+14.3, 2020 +14.4→+13.5, 2022 −12.7→−15.4; no C3a or C3b flips. The N3045 level is within 1.6 % of the keeper's
+(−4.7 % in 2022), so gas level cannot explain a 13–14 % C3a gap. Matrix cell R. No solve; keeper unchanged; NOT-YET 7/4/0/1/2.
+Record: docs/handoffs/r-soco/FINDING-soco-88-2026-09-29.md; probe scripts/probes/_soco88_ep_level.py.
