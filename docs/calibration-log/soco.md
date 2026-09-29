@@ -1923,3 +1923,15 @@ share lower every year; unserved 0. NOT-YET, grade 7/4/0/1/2 unchanged. Record: 
 
 OWNER RULING 2026-09-28 (end of soco-85): **SOCO next: "Layup-mask queue item (Recommended)"** — soco-86 takes mustrun_layup_window_mask (trims the
 ~21 % of ST floor energy asserted in CEMS-offline hours; lay-up data 2023-2025 only). C3a/C3b stay failing; no rubric card.
+
+## 2026-09-28 — soco-86: lay-up mask is INERT for SOCO (zero LP)
+
+Owner ruling (end of soco-85): take the lay-up-mask queue item. This lane ran a `fleet_only` census on the soco85_span keeper
+recipe with and without `mustrun_layup_window_mask`. The mask arms in every year but moves no array in any year (0 floor rows,
+2019–2025). The reason: SOCO's lay-up companion is coal-only (no SOCO gas basis, per SOCO-30), so it never reaches the ST_GAS
+floor. The "~21 % offline" premise does not reproduce: that number came from the soco-83 greedy. On the fleet-built floor,
+hours with every gas boiler dark hold 0.078 of 19.086 TWh (0.4 %). Dark spells of 5 days or more, the only ones a lay-up
+detector can see, hold 0.009 TWh; that is the class ceiling. The floor sits above the plant's measured output (part-load) in
+1.194 TWh (6.3 %), which only an outcome pin could close (rule 13). Matrix cell: I. No solve, no registration; keeper
+unchanged; NOT-YET 7/4/0/1/2. Record: docs/handoffs/r-soco/FINDING-soco-86-2026-09-28.md; probe
+scripts/probes/_soco86_layup_census.py.

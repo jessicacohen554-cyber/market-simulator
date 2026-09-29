@@ -15302,6 +15302,28 @@ What remains South-specific points at out-of-merit South commitment (routed RO-2
 
 Owner ruling: "Do standby units and un route ro2 before going after night overshoot". Order: admit_standby_units + outage companion, then RO-2 (un-routed) South load-pocket commitment, then the night overshoot.
 
+## miso-284 — 2026-09-29
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Ran the `admit_standby_units` conduct
+census on the material admitted SB plants, 2019–2025.
+
+Plants that ran while SB:
+- Baxter Wilson 2050 (494 MW ST_GAS, 2021–22): CEMS 771 / 318 GWh.
+- Marion 976 GT 5/6 (140 MW CT).
+
+Plants with no measured conduct:
+- Taconite Harbor 10075 (155 MW COAL_PRB, 2019–22): 0 op-hours in every year.
+- Louisiana 2 1392 (138 MW ST_GAS, 2023–25): no CEMS or EIA-923 record ever.
+- Wyandotte 1866 (42 MW, 2023–25): dark.
+
+No MISO outage extract covers the no-conduct plants, and re-deriving on OP+SB would not either. The
+`eia923_netzero` hook requires output in an on-disk 923 year (2018+). SOCO-61's dark-unit test requires output in
+an adjacent year. Midland ST2 (380 MW) is unobservable at unit grain. The flag admits 0 MW ST_GAS in 2019, so it
+cannot reach a failing criterion.
+
+Owner ruling: "Park, go to RO-2 (Recommended)". The cell stays U. Next lane: RO-2 `scuc_load_pocket_commitment`.
+No frontier. `docs/FINDING-miso284-standby-census-2026-09-28.md`.
+
 RO-2 (same session, zero LP): about 76 % of the South out-of-merit steam sits on the MTEP15 VLR-eligible plants
 (Ninemile, Sabine, Lewis Creek, Little Gypsy, Waterford), and it falls as in-pocket CCs enter (2019–21). The pocket
 MW requirement and import limit are unpublished: only outcome reports, interface names and capability deltas are
