@@ -1,0 +1,77 @@
+{
+ "2021": {
+  "B1_pooled_ladder": true,
+  "B2_node_ladder": true,
+  "B3_envelope_equals_ne_excluded": true,
+  "B3_ne_row_changes_envelope": true,
+  "CH_import_env_mean_mw": {
+   "with_ne": 235.7,
+   "arm": 486.5
+  },
+  "CH_export_env_mean_mw": {
+   "with_ne": 718.2,
+   "arm": 19.7
+  },
+  "pass": true
+ },
+ "2022": {
+  "B1_pooled_ladder": true,
+  "B2_node_ladder": true,
+  "B3_envelope_equals_ne_excluded": true,
+  "B3_ne_row_changes_envelope": true,
+  "CH_import_env_mean_mw": {
+   "with_ne": 280.1,
+   "arm": 465.1
+  },
+  "CH_export_env_mean_mw": {
+   "with_ne": 617.6,
+   "arm": 133.7
+  },
+  "pass": true
+ },
+ "2023": {
+  "B1_pooled_ladder": true,
+  "B2_node_ladder": true,
+  "B3_envelope_equals_ne_excluded": true,
+  "B3_ne_row_changes_envelope": true,
+  "CH_import_env_mean_mw": {
+   "with_ne": 406.0,
+   "arm": 595.8
+  },
+  "CH_export_env_mean_mw": {
+   "with_ne": 643.3,
+   "arm": 30.1
+  },
+  "pass": true
+ },
+ "2024": {
+  "B1_pooled_ladder": true,
+  "B2_node_ladder": true,
+  "B3_envelope_equals_ne_excluded": true,
+  "B3_ne_row_changes_envelope": true,
+  "CH_import_env_mean_mw": {
+   "with_ne": 368.6,
+   "arm": 680.1
+  },
+  "CH_export_env_mean_mw": {
+   "with_ne": 717.1,
+   "arm": 8.2
+  },
+  "pass": true
+ },
+ "2025": {
+  "B1_pooled_ladder": true,
+  "B2_node_ladder": true,
+  "B3_envelope_equals_ne_excluded": true,
+  "B3_ne_row_changes_envelope": true,
+  "CH_import_env_mean_mw": {
+   "with_ne": 463.7,
+   "arm": 721.9
+  },
+  "CH_export_env_mean_mw": {
+   "with_ne": 655.6,
+   "arm": 6.6
+  },
+  "pass": true
+ }
+}
