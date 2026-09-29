@@ -2251,6 +2251,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # run_calibration.run_year / the NYISO P1 bridge. Registered IN THE SAME
     # COMMIT as the field (the nyiso-119 discipline).
     "nyiso_ne_ac_node",
+    # NYISO-NEXT-13 (2026-09-29): the NE AC node detached from the monthly
+    # net-interchange band (default off). Byte-identical off by construction:
+    # its one applier is reached only inside ``getattr(config,
+    # "nyiso_ne_ac_recon_detach", False)`` in run_calibration.run_year.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "nyiso_ne_ac_recon_detach",
     # SPP-93 West/East re-partition (default "north_south"): dropped from the
     # hash at its default so every pre-existing run keeps its key; an armed
     # run solves a different SPP topology and so gets a distinct key.
@@ -3071,6 +3077,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by NYISO-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nyiso_li_seam_posted_limit_cap": "False",
     "nyiso_ne_ac_node": "False",
+    # Added by NYISO-NEXT-13 WITH the field (the nyiso-119 discipline).
+    "nyiso_ne_ac_recon_detach": "False",
     # Added by SPP-93 WITH the field (the nyiso-119 discipline).
     "spp_zone_partition": "'north_south'",
     # Added by SPP-102 WITH the field (the nyiso-119 discipline).
@@ -8429,6 +8437,20 @@ class ScenarioConfig:
     # nyiso_seam_par_attribution; backcast-only (measured anchor; the forward
     # anchor is not wired, rule 13). PRECOMMIT:
     # docs/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md. Default off; NYISO.
+    nyiso_ne_ac_recon_detach: bool = False  # NYISO-NEXT-13: take the NE AC
+    # node out of the monthly EIA-930 net-interchange band
+    # (nyiso_import_reconciliation). With the node armed, the band still pinned
+    # the signed sum of ALL import rows, node included; the node is the band's
+    # only export-capable row, so the band's dual, not the node's own bands, set
+    # its flow whenever the pooled node's volume missed (phase 0: the band binds
+    # 11-12 of 12 months in every year; the node's TWh error mirrors the pooled
+    # node's). Armed: the node's rows leave the band and the tie's MEASURED P-32
+    # monthly schedule leaves the target, so the band pins the pooled node
+    # alone to (EIA-930 total - NE AC schedule) — strictly fewer measured
+    # outcomes pinned (rule 13); zero free parameters (the same band_frac).
+    # Requires nyiso_ne_ac_node and nyiso_import_reconciliation; backcast-only.
+    # PRECOMMIT: docs/PRECOMMIT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md.
+    # Default off; NYISO.
     nyiso_seam_deliverability_envelope: bool = False  # NYISO external seam
     # deliverability envelope (nyiso-125, data.nyiso_seam_envelope): replace the
     # flat SYMMETRIC static rating on the two border links whose external ties
@@ -23862,6 +23884,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_import_reconciliation": 1,
     "nyiso_import_hub_prices": 1,
     "nyiso_ne_ac_node": 1,
+    "nyiso_ne_ac_recon_detach": 1,
     "nyiso_iroquois_winter_spread": 1,
     "nyiso_synchronised_reserve": 1,
     "nyiso_li_locational_reserve": 1,

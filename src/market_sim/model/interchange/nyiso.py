@@ -1104,3 +1104,94 @@ def nyiso_ne_ac_posted_ttc_hourly(
     out_f[:, idx[0]] = np.clip(fwd, 0.0, None)
     out_r[:, idx[0]] = np.clip(rev, 0.0, None)
     return out_f, out_r
+
+
+def load_nyiso_ne_ac_measured_flow(year: int, hours: int, frame=None) -> np.ndarray:
+    """Return the NE AC tie's measured net schedule (MW, import-positive) on the model clock.
+
+    The P-32 ``flow_mw`` of :data:`~market_sim.model.interchange.spec.NYISO_NE_AC_SEAM_ROW`
+    (positive = into NYISO), the same row whose posted limits bound the node's
+    link. Read from the ``nyiso-interface-flows`` clean datatype.
+
+    Args:
+        year: Backcast year.
+        hours: Dispatch horizon.
+        frame: Optional pre-read partition (tests); read when ``None``.
+
+    Raises:
+        FileNotFoundError / ValueError: No partition or no NE AC row.
+    """
+    if frame is None:
+        try:
+            from scripts.lib.clean_io import read_clean
+
+            frame = read_clean(
+                "nyiso-interface-flows", iso="NYISO", year=year, validate=False
+            )
+        except Exception as exc:  # noqa: BLE001 — re-raised as the gated error
+            raise FileNotFoundError(
+                f"nyiso_ne_ac_recon_detach {year}: could not read the "
+                f"'nyiso-interface-flows' clean partition ({exc})"
+            ) from exc
+    sel = frame[frame["interface"] == NYISO_NE_AC_SEAM_ROW]
+    if sel.empty:
+        raise ValueError(
+            f"nyiso_ne_ac_recon_detach {year}: {NYISO_NE_AC_SEAM_ROW!r} absent "
+            "from the P-32 partition"
+        )
+    return _on_model_clock(
+        sel["interval_start_local"], sel["flow_mw"].astype(float).to_numpy(), hours
+    )
+
+
+def detach_nyiso_ne_ac_from_reconciliation(
+    recon: tuple[np.ndarray, np.ndarray, np.ndarray],
+    unit_ids,
+    measured_ne_net_import: np.ndarray,
+    band_frac: float = NYISO_IMPORT_RECON_BAND_FRAC,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Take the NE AC node out of the monthly net-interchange band (NYISO-NEXT-13).
+
+    The backcast band (:func:`build_import_node_reconciliation`) pins the
+    signed sum of EVERY import-fuel row to the measured EIA-930 monthly net
+    interchange. With ``nyiso_ne_ac_node`` armed the NE AC tie is priced by
+    its own hourly bands (measured Roseton DA + Q-Q offsets on the tie's own
+    spread), yet it stays inside that sum, so the band's dual, not the tie's
+    bands, sets its flow whenever the pooled node's volume misses: the node is
+    the band's only export-capable row. This removes the node's rows from the
+    band and removes the tie's MEASURED monthly net schedule (P-32) from the
+    target, so the band pins the pooled node alone to its own measured volume
+    (EIA-930 total minus the NE AC schedule) and pins strictly fewer measured
+    outcomes than before (rule 13). Half-width is re-taken on the new target
+    by the same ``band_frac``. Rule 14 misalignment, declared: the target mixes
+    the EIA-930 BA total with the P-32 tie schedule (two NYISO postings of the
+    same metered interchange).
+
+    Args:
+        recon: ``(node_idx, monthly_lo, monthly_hi)`` from the backcast band.
+        unit_ids: Fleet unit ids, indexed like ``node_idx``.
+        measured_ne_net_import: Hourly measured NE AC net import (MW).
+        band_frac: Band half-width fraction.
+
+    Returns:
+        The detached ``(node_idx, monthly_lo, monthly_hi)``.
+
+    Raises:
+        ValueError: The band carries no NE AC row (nothing to detach).
+    """
+    from market_sim.data.fleet import _hour_to_month_index
+
+    node_idx, lo, hi = recon
+    prefix = f"{NYISO_NE_AC_ZONE}_"
+    is_ne = np.array([str(unit_ids[i]).startswith(prefix) for i in node_idx], bool)
+    if not is_ne.any():
+        raise ValueError(
+            "detach_nyiso_ne_ac_from_reconciliation: no NE AC row in the band "
+            "(the mechanism never silently no-ops)"
+        )
+    flow = np.asarray(measured_ne_net_import, dtype=float).reshape(-1)
+    month_index = _hour_to_month_index(flow.size)
+    ne_monthly = np.bincount(month_index, weights=flow, minlength=len(lo))
+    mid = (np.asarray(lo, float) + np.asarray(hi, float)) / 2.0 - ne_monthly
+    half = abs(band_frac) * np.abs(mid)
+    return node_idx[~is_ne], mid - half, mid + half

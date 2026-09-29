@@ -4884,6 +4884,42 @@ def run_year(
             ),
             system_demand=demand,
         )
+        # [measured: P-32 SCH - NE - NY net schedule, monthly | forecast
+        #  substitute: not wired — nyiso_ne_ac_node is backcast-only].
+        # NYISO-NEXT-13: the NE AC node leaves the band (its own hourly bands
+        # set its flow); the band pins the pooled node to EIA-930 total minus
+        # the tie's measured schedule (rule 13: fewer outcomes pinned).
+        if (
+            import_node_recon is not None
+            and iso == "NYISO"
+            and getattr(config, "nyiso_ne_ac_recon_detach", False)
+        ):
+            if not getattr(config, "nyiso_ne_ac_node", False):
+                raise ValueError(
+                    "nyiso_ne_ac_recon_detach requires nyiso_ne_ac_node (there is "
+                    "no NE AC node to detach from the band)"
+                )
+            from market_sim.model.interchange.nyiso import (
+                detach_nyiso_ne_ac_from_reconciliation,
+                load_nyiso_ne_ac_measured_flow,
+            )
+
+            _n_before = int(import_node_recon[0].size)
+            import_node_recon = detach_nyiso_ne_ac_from_reconciliation(
+                import_node_recon,
+                fleet_arrays.unit_ids,
+                load_nyiso_ne_ac_measured_flow(year, demand.shape[1]),
+            )
+            logger.info(
+                "%s %d: nyiso_ne_ac_recon_detach — %d NE AC rows out of the "
+                "monthly band (%d -> %d rows); target less the measured NE AC "
+                "schedule",
+                iso,
+                year,
+                _n_before - int(import_node_recon[0].size),
+                _n_before,
+                int(import_node_recon[0].size),
+            )
         if import_node_recon is not None:
             node_idx, recon_lo, recon_hi = import_node_recon
             _recon_target = (
