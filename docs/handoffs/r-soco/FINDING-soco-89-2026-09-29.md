@@ -148,3 +148,16 @@ is not evidence of skill. It is not new evidence for any refused lever, and §2.
 
 - Probe: `scripts/probes/_soco89_price_setter_census.py` (`--out DIR` writes `census_<y>.json` + cached `fleet_<y>.npz`).
 - Keeper unchanged; NOT-YET 7/4/0/1/2. SOCO is not frontier.
+
+## 6. Owner rulings on this FINDING (decision cards, 2026-09-29)
+
+1. **"Reopen joint repair"**: design a combined low-end + tail repair, since §2.3 shows a one-sided fix cannot clear C3a.
+2. **"License SE daily gas (Recommended)"**: lift "free-data only" for ONE licensed daily Southeast hub series
+   (Transco Z4/Z5 or Sonat), used as **replacement fuel**. Southern's Sch. 6 lambda is defined as incremental cost ×
+   replacement fuel, so this is the one object that can act on both halves. Free-data candidates for either half are
+   refuted by measurement (CC incremental HR raises prices; Henry Hub fixes 2019–20 and breaks 2022–25, soco-85 §7).
+
+**What this lane cannot do.** A session cannot buy a license. The series must be supplied by the owner. Under
+`docs/data-licensing.md` §5 it is **not redistributable**, so it lives gitignored or local-fetch-only, never committed.
+That limits reproducibility: any keeper built on it regenerates only where the licensed file is present. That cost is
+the owner's accepted trade under this ruling. Next lane: soco-90, which is zero-LP until the file exists.
