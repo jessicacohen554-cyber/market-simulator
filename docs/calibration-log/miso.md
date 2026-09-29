@@ -15301,3 +15301,9 @@ What remains South-specific points at out-of-merit South commitment (routed RO-2
 `docs/FINDING-miso283-south-price-premium-2026-09-28.md`.
 
 Owner ruling: "Do standby units and un route ro2 before going after night overshoot". Order: admit_standby_units + outage companion, then RO-2 (un-routed) South load-pocket commitment, then the night overshoot.
+
+RO-2 (same session, zero LP): about 76 % of the South out-of-merit steam sits on the MTEP15 VLR-eligible plants
+(Ninemile, Sabine, Lewis Creek, Little Gypsy, Waterford), and it falls as in-pocket CCs enter (2019–21). The pocket
+MW requirement and import limit are unpublished: only outcome reports, interface names and capability deltas are
+public. Owner ruling: "Mark blocked, go to night (Recommended)". `scuc_load_pocket_commitment` moves · → G. Next:
+the system night overshoot. `docs/FINDING-miso284-ro2-identification-2026-09-29.md`.
