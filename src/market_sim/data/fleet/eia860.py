@@ -4211,7 +4211,10 @@ COAL_PLANT_COMMISSION_YEAR: dict[int, int] = {
     6183: 1982,  # San Miguel
     7030: 1990,  # Major Oak Power
     7097: 1992,  # J K Spruce
-    56257: 2013,  # Sandy Creek
+    # Sandy Creek: keyed on the bin-sheet / EIA-860 code 56611 (R-ERCOT-15; it
+    # was keyed 56257, so the age model fell back to 2010 — inert, since the
+    # COAL outage parameters are flat over ages 6-15).
+    56611: 2013,
     127: 1986,  # Oklaunion (EIA-860 Operating Year; R-ERCOT-14)
 }
 
