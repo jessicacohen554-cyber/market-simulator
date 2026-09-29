@@ -408,3 +408,34 @@ class TestBackcastFleetSourcing(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CuratedSheetPopulationTest(unittest.TestCase):
+    """R-ERCOT-15: the derive also measures every curated-sheet coal plant."""
+
+    def test_ercot_sheet_carries_oklaunion_and_sandy_creek(self):
+        """Oklaunion (EIA-860 SWPP) and Sandy Creek are sheet coal plants."""
+        from scripts.data.derive_campd_coal_heat_rates import (
+            curated_sheet_coal_plants,
+        )
+
+        caps, hrs = curated_sheet_coal_plants("ERCOT")
+        self.assertIn(127, caps)
+        self.assertIn(56611, caps)
+        self.assertEqual(set(caps), set(hrs))
+
+    def test_non_curated_iso_is_empty(self):
+        """An ISO outside CURATED_SHEET_ISOS adds nothing (rule 25)."""
+        from scripts.data.derive_campd_coal_heat_rates import (
+            curated_sheet_coal_plants,
+        )
+
+        self.assertEqual(curated_sheet_coal_plants("SPP"), ({}, {}))
+
+    def test_committed_artifact_carries_oklaunion(self):
+        """The re-derived ERCOT artifact measures 127 in 2019 and 2020."""
+        rates = measured_coal_heat_rates("ERCOT", 2020)
+        self.assertAlmostEqual(rates[127], 11.4738, places=4)
+        self.assertAlmostEqual(
+            measured_coal_heat_rates("ERCOT", 2019)[127], 11.7713, places=4
+        )
