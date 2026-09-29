@@ -634,3 +634,25 @@ Run `2026-09-28-nwppnext8-coal-monthly-pile`: **NOT-YET on {dispatch_corr}, one 
 
 **Promoted 2026-09-28 (owner standing structure ruling):** keeper #15. Keeper #14 was pruned (rule 35); audit PASS.
 Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext8-coal-monthly-pile-2019-2025-2026-09-28.md`.
+
+## NWPP-NEXT-9 — 2026-09-28/29 — measured coal receipts on the monthly pile: REJECTED (keeper #15 stands)
+
+**Census (zero LP).** C4 coal 2023 (r 0.695) comes from a 2023 PacifiCorp coal-supply shortfall.
+- EIA-923 Page 5 receipts fell: Bridger 105.1 → 86.6, Hunter 58.8 → 39.2, Huntington 56.0 → 26.5 TBtu.
+- December stocks were at record lows.
+- Bridger ran ~20 % load Feb–May 2023 while rebuilding its pile. It alone is +2.0 TWh of the Jan–Mar over-burn.
+- The candidate "pile ≥ historical minimum" was refuted at phase 0: Bridger went below its prior minimum in 2022.
+
+**Owner card: "Backcast receipts overlay".** New default-off field `coal_monthly_pile_measured_receipts`: same-year
+Page 5 receipts replace the ratable C/12 on both sides of the pile. G-DRIFT ALL INERT. 7 shards at `677273fb`.
+2025 is byte-identical, as predicted.
+
+**Result: NOT-YET on {dispatch_corr}, 1 → 3 records.**
+- C4 coal 2022 0.741 → 0.695 and 2024 0.739 → 0.664: PASS → FAIL.
+- C4 coal 2023 0.695 → 0.648.
+- C1 coal volume improved: COAL_BIT 2023 +4.73 → +0.72 TWh.
+- **Cause:** the LP spends scarcer coal in dear-gas winter months; real operators held stock.
+
+**Owner ruling 2026-09-29: "Reject, keep #15".** The probe was pruned (rule 31 (i)); the matrix cell is R.
+Also re-derived the stale `nwpp_plant_basis_energy.csv` provenance hash (only `source_sha256` moved).
+Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext9-coal-measured-receipts-2019-2025-2026-09-28.md`.
