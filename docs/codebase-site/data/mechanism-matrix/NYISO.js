@@ -123,6 +123,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     coal_prb_committed_dispatchable: { cell: "." },
     coal_prb_committed_split: { cell: "." },
     miso_coal_night_floor: { cell: "." },
+    miso_gas_ecomin_online_floor: { cell: ".", ev: "MISO-exclusive field (rule 25 [R-ISO-SCOPE]); line added 2026-09-29 by miso-286 (rule 28c)." },
     coal_min_load_floor: { cell: "." },
     st_gas_mustrun_p25: { cell: "I", ev: "nyiso-105 (FINDING-nyiso105-stgas-inert-seam-live-2026-07-31 §A, PREREG-nyiso105 §2, probe _nyiso105_seam_recipe_stgas.py §C) — INERT ex ante, no solve" },
     historic_outage_overlay: { cell: "I", ev: "nyiso-115 (row added by the shared-field census; inertness re-verified against src/market_sim); FINDING-ercot79-phantom-outage-2026-07.md" },

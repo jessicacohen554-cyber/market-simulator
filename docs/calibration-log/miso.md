@@ -15351,3 +15351,19 @@ Owner ruling: "Charter EcoMin price-taker build". `diurnal_price_amplitude` G �
 `docs/handoffs/CHARTER-miso285-ecomin-price-taker-2026-09-29.md` (merchant CC only, measured LSL, P0 online
 hours, zero-LP pre-check with a kill rule before any shard). No frontier.
 `docs/FINDING-miso285-night-overshoot-phase0-2026-09-29.md`.
+
+## miso-286 — 2026-09-29
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Built the chartered merchant-CC EcoMin online
+floor (`miso_gas_ecomin_online_floor`, default off; measured plant-basis min-load 0.3238 from MISO CAMPD).
+
+- **Pre-registered pre-check killed it:** night median moves −0.01 / −0.00 / −0.09 / −0.12 / −0.00 / 0.00 / −0.01
+  $/MWh, 2019–2025. That is < $0.5 in 7 of 7 years, so no shards were spent.
+- **Why:** flooring units that are already online changes the clear only when the floored unit is marginal. CF1's
+  upper bound came from forcing offline CC on.
+- **Side defect:** MISO CC `_peak` tranches carry a startup cost, so the shared detector admits them. The new field
+  restricts to the base block. Other ISOs' bridges are for their own lanes to check.
+- **Cells:** new row MISO = I; `diurnal_price_amplitude` O → G.
+
+No frontier: the full span is NOT-YET on the three routed misses.
+`docs/FINDING-miso286-ecomin-precheck-killed-2026-09-29.md`.

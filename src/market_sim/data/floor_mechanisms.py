@@ -207,6 +207,24 @@ MECH_SPP_GAS_COMMITMENT_BRIDGE: int = 24
 # so this stacks on nothing. A merchant commitment floor — subject to the D-2
 # forced-share gate.
 MECH_SOCO_GAS_ST_CAMPAIGN: int = 25
+# miso_gas_ecomin_online_floor (miso-286, pipeline.commitment.
+# build_miso_gas_ecomin_p1_prep): the P1-native committed-STATE floor on MISO's
+# merchant combined-cycle fleet. A synchronized non-fast-start MISO unit's
+# EcoMin energy is must-take while it is online: its cost is recovered through
+# no-load / make-whole, not through the incremental energy curve that sets LMP
+# (ELMP extends commitment-cost pricing to fast-start resources only). Same
+# ISO-neutral detector as the CAISO / ERCOT / NYISO / SPP / MISO-coal legs
+# (model.commitment.caiso_ra_mustoffer_min_gen) with ONLY the ercot141
+# online-hours leg — no gap-bridge, startup or min-run leg — at the MEASURED
+# plant-basis minimum stable load (constants.MISO_GAS_ECOMIN_MIN_LOAD_FRAC).
+# Eligibility by physics (rule 18): gas_cc committed tranches with min-down
+# >= RA_BRIDGE_ECON_MIN_DOWN_HOURS; CHP excluded by the detector. Rule 19
+# [R-ONE-MECH]: the keeper carries no floor on MISO CC_REGULAR (its night
+# bands are committed + econ, no _mustrun); any other floor on a shared
+# unit-hour composes by MAXIMUM in _bridge_floored_fleet. Its own id so D-2/D-4
+# attribution stays per-mechanism. A merchant commitment floor — subject to the
+# D-2 forced-share gate.
+MECH_MISO_GAS_ECOMIN_ONLINE: int = 26
 
 MECH_NAMES: dict[int, str] = {
     MECH_NONE: "none",
@@ -235,6 +253,7 @@ MECH_NAMES: dict[int, str] = {
     MECH_ERCOT_RUC_COMMITMENT: "ercot_ruc_commitment",
     MECH_SPP_GAS_COMMITMENT_BRIDGE: "spp_gas_commitment_bridge",
     MECH_SOCO_GAS_ST_CAMPAIGN: "soco_gas_st_campaign_commitment",
+    MECH_MISO_GAS_ECOMIN_ONLINE: "miso_gas_ecomin_online_floor",
 }
 
 # Mechanisms whose forced energy is exempt from the D-2 merchant-class gates
@@ -291,6 +310,7 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
     MECH_NYISO_GAS_COMMITMENT_BRIDGE: {"nyiso_gas_commitment_bridge": False},
     MECH_COAL_MIN_CONFIG: {"ercot_coal_min_config_floor": False},
     MECH_MISO_COAL_NIGHT_FLOOR: {"miso_coal_night_floor": False},
+    MECH_MISO_GAS_ECOMIN_ONLINE: {"miso_gas_ecomin_online_floor": False},
     # Classified ABLATED, not kept: the min-flow floor is a real physical
     # obligation, but it is a NEW mechanism whose forcing must stay visible and
     # switchable rather than joining the protected structural must-run set.

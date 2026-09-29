@@ -1293,6 +1293,7 @@ class TestMechanismThreading:
         from market_sim.data.floor_mechanisms import (
             MECH_GAS_COMMITMENT_BRIDGE,
             MECH_MISO_COAL_NIGHT_FLOOR,
+            MECH_MISO_GAS_ECOMIN_ONLINE,
             MECH_NYISO_GAS_COMMITMENT_BRIDGE,
             MECH_RA_MUSTOFFER,
             MECH_SPP_GAS_COMMITMENT_BRIDGE,
@@ -1307,6 +1308,8 @@ class TestMechanismThreading:
             MECH_NYISO_GAS_COMMITMENT_BRIDGE,
             MECH_MISO_COAL_NIGHT_FLOOR,
             MECH_SPP_GAS_COMMITMENT_BRIDGE,
+            # miso-286: the MISO EcoMin online floor rides the same detector.
+            MECH_MISO_GAS_ECOMIN_ONLINE,
         }
 
     def test_rebuild_rename_map_threads_generic_override_channels(self):

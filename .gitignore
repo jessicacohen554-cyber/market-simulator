@@ -3824,3 +3824,9 @@ results/calibration/soco87_20[12][0-9]/
 
 # R-ERCOT-16 per-year shard legs (rule 32(d)) - local only, never on main. Provenance (rule 33(d)): arm-2019 33da37d00f717039c603125dfc907bcf3fd3b4eb, arm-2020 11db2df17b975c7b49ae04a0db21fda7ef686170
 results/calibration/r_ercot15_arm_20*/
+# R-CAISO-14 per-year legs (caiso_eia930_clock_repair arm): local only, pushed to shard branches (rule 34(a)); composite span/fold go on main.
+# Provenance SHAs (rule 33(d), provenance only): 2019 33dc5257ce5f2e357232ec96b7e57d7bc1b3d5d2, 2020 0d1e4a3f47f936e3c70d0b79b3fa7844356b27af, 2021 24ba084c1bc5fac06384c7ccb4c553d91020d871, 2022 b177081e945a891cf14031c84d90802830e4a8ed, 2023 d84b3caf82d6050efb2867a32196d1575acf4def, 2024 c335eb69400b7e456411ef30aa29b7f83e080487, 2025 61e5b4755c9270808cee99f59e21c4bd3695cf16.
+results/calibration/rcaiso13_A_20*/**
+# R-CAISO-14 composites: NOT promoted (owner card 2026-09-29 "Complete repair, re-solve"); kept on local disk (rule 31), numbers in docs/handoffs/r-caiso-14/RESULT.
+results/calibration/rcaiso13_A_span/
+results/calibration/rcaiso13_A_tp_2019_2021/

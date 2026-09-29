@@ -104,6 +104,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_FIRM_IMPORT,
     MECH_GAS_COMMITMENT_BRIDGE,
     MECH_MISO_COAL_NIGHT_FLOOR,
+    MECH_MISO_GAS_ECOMIN_ONLINE,
     MECH_NYISO_GAS_COMMITMENT_BRIDGE,
     MECH_SOCO_GAS_ST_CAMPAIGN,
     MECH_SPP_GAS_COMMITMENT_BRIDGE,
@@ -703,6 +704,24 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     #   on a CAMPD vintage change (rule 23 [R-FROZEN-DERIVE],
     #   scripts/data/derive_prb_committed_split.py).
     (MECH_MISO_COAL_NIGHT_FLOOR, None): (0, 24),
+    # miso_gas_ecomin_online_floor (miso-286, MECH_MISO_GAS_ECOMIN_ONLINE —
+    # pipeline.commitment.build_miso_gas_ecomin_p1_prep): the committed-STATE
+    # floor on MISO's merchant combined cycles. Rule-12/17 declaration:
+    # * WINDOW — self-windowing, ALL 24 hours by driver. The floor exists only
+    #   in hours the unit's own `_committed` tranche is dispatched above the
+    #   detector's run threshold in P0 (the ercot141 online-hours leg; the
+    #   restart-bar gaps are masked out), so a unit the model has offline is
+    #   never floored and no clock-hour rule exists to declare.
+    # * DRIVER — commitment non-convexity: a synchronized non-fast-start unit
+    #   cannot run below EcoMin, and MISO recovers that block's cost through
+    #   no-load / make-whole rather than the energy offer that sets LMP (ELMP
+    #   extends commitment-cost pricing to fast-start units only).
+    # * LEVEL — the measured MISO CC plant-basis minimum stable load
+    #   (constants.MISO_GAS_ECOMIN_MIN_LOAD_FRAC, CAMPD 2023-2025), capped at
+    #   the committed tranche's own capacity.
+    # * FORWARD STORY — regenerates from any year's own P0 run pattern plus the
+    #   frozen measured fraction (rule 23).
+    (MECH_MISO_GAS_ECOMIN_ONLINE, None): (0, 24),
     # hydro_min_flow (caiso-124, MECH_HYDRO_MIN_FLOW — data.hydro.
     # build_hydro_fleet / allocate_min_flow_floor -> FleetArrays.min_gen): the
     # conventional-hydro minimum-flow floor. Rule-12/17 declaration:
@@ -944,6 +963,7 @@ BRIDGE_MECHS: tuple[int, ...] = (
     MECH_NYISO_GAS_COMMITMENT_BRIDGE,
     MECH_MISO_COAL_NIGHT_FLOOR,
     MECH_SPP_GAS_COMMITMENT_BRIDGE,
+    MECH_MISO_GAS_ECOMIN_ONLINE,
 )
 
 # D-6 holdout quarantine (CLAUDE.md rule 22, amended 2026-07-04; TIER-AWARE
