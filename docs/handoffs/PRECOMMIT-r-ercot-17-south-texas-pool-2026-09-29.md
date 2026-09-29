@@ -50,7 +50,7 @@ Median econ-tranche mc delta, South: 2020 ≈ −16 to −18 $/MWh, 2019 ≈ −
 
 ## 4. G-DRIFT (rule 29(b)) — legs 3c398753 (2019–20), edbfdad5 (2021), 2af9ab74 (2022–25) → pinned SHA
 
-See §8 (filled before launch). The keeper's committed legs are the control (form 4); no control solve.
+See §8: ALL INERT. The keeper's committed legs are the control (form 4); no control solve.
 
 ## 5. Arm
 
@@ -78,6 +78,15 @@ Keeper baseline (r-16): LW price 57.71 / 26.93 / 173.60 / 68.54 / 52.02 / 27.83 
 
 Rule 14 governs: the pool is kept on its identity (owner already ruled the construction), never on its scores. Promote under the standing instruction ("Is it an improvement? Then promote") if no train-year determination flips worse. If 2024 or 2025 flips CALIBRATED → NOT-YET (2025 is the live risk), do **not** promote on my own: decision card with the numbers, all bundles kept (rule 31). DOF ledger unchanged (the pool adds none).
 
-## 8. G-DRIFT result
+## 8. G-DRIFT result — ALL INERT, form 4 valid (recorded before launch)
 
-(filled before launch)
+Ranges: `3c398753…` (2019–20) → `edbfdad5…` (2021) → `2af9ab74…` (2022–25) → `origin/main 0a5eb910…`, linear history. Every changed hunk on the backcast path classified (full table in the session record; summary):
+
+- **New `ScenarioConfig` fields** (`campd_split_remap_companions`, `unit_outage_exit_cohort_repair`, `unit_outage_exit_ym_from_eia860`, `chp_steam_floor_conduct_scope`, `coal_fuel_inventory_monthly_pile`, `coal_monthly_pile_measured_receipts`, `caiso_*` clock repairs, `pjm_da_virtual_settle_financial`, `miso_gas_ecomin_online_floor`, `spp_commitment_posture`, `nyiso_ne_ac_*`): all default off, absent or pinned false in the keeper. INERT.
+- **LP rows / reserves / commitment / storage / renewables** (`lp/rows.py` posture rows and coal-yard reshape, `reserves/spec.py`, `pipeline/commitment.py`, `model/storage.py`, `data/renewables.py`): SPP / MISO / CAISO / SOCO gated or behind off flags (`coal_fuel_inventory`, `ercot_commitment_posture` off). INERT.
+- **`shed_penalty_voll`**: returns `iso_config.voll` unless `ercot_swcap_vintage`, which is unchanged since the 2019–21 legs and off in 2022–25. INERT.
+- **Oklaunion (127) now present in the 2021–25 fleet, masked by `ISO_PLANT_EXITS`** — the one data/fleet change that reaches ERCOT. **Measured, not read:** 2022 fleet-only rebuild at `2af9ab74` vs HEAD — all 2,344 common rows byte-identical in mc, availability, pmax and pmin; the only difference is 4 new `COAL_North_p127_*` rows with availability 0 and min-gen 0 in every hour. The DAM plant-grain residual lands only on 127 (it is the sole unmapped coal plant in 2021–25 DAM data).
+- **Sandy Creek commission-year re-key**: ages stay below the COAL WEFOR/derate onsets; measured identical in R-ERCOT-15.
+- Replay note: the keeper recipe carries the deleted `nyiso_firm_imports`; `replay_keeper.build_kwargs` handles it (the §3 probe replayed all seven years through it without error).
+
+The keeper's committed legs are the control. No control solve.
