@@ -23,7 +23,10 @@ REPO = Path(__file__).resolve().parents[2]
 for p in (REPO / "src", REPO):
     sys.path.insert(0, str(p))
 
-KEEP = {2021: "nyisonext9_2021", **{y: "nyisonext9_span" for y in (2022, 2023, 2024, 2025)}}
+KEEP = {
+    2021: "nyisonext9_2021",
+    **{y: "nyisonext9_span" for y in (2022, 2023, 2024, 2025)},
+}
 G2C_FRAC = 0.04
 #: measured NE AC net tie, TWh (PRECOMMIT sec. 4; + = import into NYISO)
 MEASURED_NE_TWH = {2021: -5.17, 2022: -3.51, 2023: -4.47, 2024: -5.84, 2025: -5.76}
@@ -36,7 +39,9 @@ def _sys(b: str, y: int) -> pd.DataFrame:
 
 
 def _cls(b: str, y: int) -> pd.DataFrame:
-    c = pd.read_parquet(REPO / f"results/calibration/{b}/hourly/class_hourly_{y}.parquet")
+    c = pd.read_parquet(
+        REPO / f"results/calibration/{b}/hourly/class_hourly_{y}.parquet"
+    )
     c["klass"] = c["klass"].astype(str)
     return c[c["pass"].astype(str) == "P1"]
 
@@ -58,7 +63,11 @@ def _posted(y: int) -> tuple[np.ndarray, np.ndarray]:
     ttc = np.array([float(link.ttc_mw) for link in topo.links])
     base = np.broadcast_to(ttc, (8760, ttc.size)).copy()
     fwd, rev = nyiso_ne_ac_posted_ttc_hourly(base, base.copy(), topo, y, 8760)
-    i = next(k for k, link in enumerate(topo.links) if NYISO_NE_AC_ZONE in (link.from_zone, link.to_zone))
+    i = next(
+        k
+        for k, link in enumerate(topo.links)
+        if NYISO_NE_AC_ZONE in (link.from_zone, link.to_zone)
+    )
     return fwd[:, i], rev[:, i]
 
 
@@ -77,13 +86,17 @@ def year(y: int, arm_bundle: str) -> dict:
 
         lk, la = lw(k), lw(a)
         out["lw_price_delta"][z] = (
-            round(la - lk, 3) if lk is not None and la is not None else {"arm": la, "keeper": lk}
+            round(la - lk, 3)
+            if lk is not None and la is not None
+            else {"arm": la, "keeper": lk}
         )
     ck, ca = _cls(KEEP[y], y), _cls(arm_bundle, y)
     tk, ta = ck.groupby("klass").mw.sum() / 1e6, ca.groupby("klass").mw.sum() / 1e6
     idx = tk.index.union(ta.index)
     d = ta.reindex(idx, fill_value=0) - tk.reindex(idx, fill_value=0)
-    out["class_twh_delta"] = {i: round(float(v), 4) for i, v in d.items() if abs(v) >= 0.001}
+    out["class_twh_delta"] = {
+        i: round(float(v), 4) for i, v in d.items() if abs(v) >= 0.001
+    }
     ik = float(ck[ck.klass == "import"].mw.sum())
     ia = float(ca[ca.klass == "import"].mw.sum())
     out["import_twh"] = {
@@ -99,8 +112,18 @@ def year(y: int, arm_bundle: str) -> dict:
     )
     dp["unit_id"] = dp["unit_id"].astype(str)
     node = dp[dp.unit_id.str.startswith(NODE)]
-    exp = node[node.unit_id.str.contains("_exp#")].groupby("hour").mw.sum().reindex(range(8760), fill_value=0.0)
-    imp = node[node.unit_id.str.contains("_imp#")].groupby("hour").mw.sum().reindex(range(8760), fill_value=0.0)
+    exp = (
+        node[node.unit_id.str.contains("_exp#")]
+        .groupby("hour")
+        .mw.sum()
+        .reindex(range(8760), fill_value=0.0)
+    )
+    imp = (
+        node[node.unit_id.str.contains("_imp#")]
+        .groupby("hour")
+        .mw.sum()
+        .reindex(range(8760), fill_value=0.0)
+    )
     net = imp + exp
     out["node"] = {
         "n_units": int(node.unit_id.nunique()),
@@ -118,7 +141,9 @@ def year(y: int, arm_bundle: str) -> dict:
         out["node"]["hours_at_posted_export"] = int((n <= -rev + 0.5).sum())
     except Exception as exc:  # noqa: BLE001 -- reported-only diagnostic
         out["node"]["posted_bound_error"] = str(exc)[:200]
-    out["G2a_pass"] = bool(out["node"]["hours_exporting"] >= 1 and out["node"]["hours_importing"] >= 1)
+    out["G2a_pass"] = bool(
+        out["node"]["hours_exporting"] >= 1 and out["node"]["hours_importing"] >= 1
+    )
     return out
 
 

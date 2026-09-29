@@ -34,6 +34,7 @@ if str(_REPO) not in sys.path:
 
 from scripts.probes.nyiso238_compose_span import compose as _compose  # noqa: E402
 from scripts.probes.rnyiso_compose_span import _offer_block  # noqa: E402
+
 sys.path.insert(0, str(_REPO / "src"))
 
 PIN = "4ba64817beb037bb58839c7a35c6913d123e0c30"
@@ -102,8 +103,12 @@ def check_legs(legs: list[Path]) -> None:
 
         dp = pd.read_parquet(leg / "dispatch" / f"{y}_P1.parquet")
         col = "unit_id" if "unit_id" in dp.columns else dp.columns[0]
-        n_node = int(dp[col].astype(str).str.startswith("NYISO_NE_AC_").pipe(
-            lambda m: dp.loc[m, col].nunique()))
+        n_node = int(
+            dp[col]
+            .astype(str)
+            .str.startswith("NYISO_NE_AC_")
+            .pipe(lambda m: dp.loc[m, col].nunique())
+        )
         if n_node != 16:
             errs.append(f"S4 {n_node} NYISO_NE_AC_* units in dispatch (want 16)")
         print(f"  {leg.name}: {'OK' if not errs else errs}")

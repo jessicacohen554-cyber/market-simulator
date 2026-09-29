@@ -61,7 +61,9 @@ def year_block(y: int) -> dict:
         tuple(x) for x in r["pooled_without_ne"]
     ] == split
     node = NYISO_NE_AC_LADDER_BY_YEAR[y]
-    b2 = r["node"] == {k: node[k] for k in ("import_mw", "export_mw", "import", "export")}
+    b2 = r["node"] == {
+        k: node[k] for k in ("import_mw", "export_mw", "import", "export")
+    }
 
     topo = apply_interchange_topology(get_iso_config("NYISO"), spec, cfg, year=y)
     ttc = np.array([float(link.ttc_mw) for link in topo.links])
@@ -76,22 +78,31 @@ def year_block(y: int) -> dict:
     )
     frame = read_clean("nyiso-interface-flows", iso="NYISO", year=y, validate=False)
     wo = attributed_envelope_by_zone(
-        frame[frame["interface"] != NYISO_NE_AC_SEAM_ROW], y, T, NYISO_SEAM_FLOW_PERCENTILE
+        frame[frame["interface"] != NYISO_NE_AC_SEAM_ROW],
+        y,
+        T,
+        NYISO_SEAM_FLOW_PERCENTILE,
     )[NYISO_NE_AC_LANDING]
     wi = attributed_envelope_by_zone(frame, y, T, NYISO_SEAM_FLOW_PERCENTILE)[
         NYISO_NE_AC_LANDING
     ]
     b3_eq = bool(np.array_equal(fwd[:, i], wo[0]) and np.array_equal(rev[:, i], wo[1]))
-    b3_ne_out = bool(not (np.array_equal(wo[0], wi[0]) and np.array_equal(wo[1], wi[1])))
+    b3_ne_out = bool(
+        not (np.array_equal(wo[0], wi[0]) and np.array_equal(wo[1], wi[1]))
+    )
     return {
         "B1_pooled_ladder": bool(b1),
         "B2_node_ladder": bool(b2),
         "B3_envelope_equals_ne_excluded": b3_eq,
         "B3_ne_row_changes_envelope": b3_ne_out,
-        "CH_import_env_mean_mw": {"with_ne": round(float(wi[0].mean()), 1),
-                                  "arm": round(float(fwd[:, i].mean()), 1)},
-        "CH_export_env_mean_mw": {"with_ne": round(float(wi[1].mean()), 1),
-                                  "arm": round(float(rev[:, i].mean()), 1)},
+        "CH_import_env_mean_mw": {
+            "with_ne": round(float(wi[0].mean()), 1),
+            "arm": round(float(fwd[:, i].mean()), 1),
+        },
+        "CH_export_env_mean_mw": {
+            "with_ne": round(float(wi[1].mean()), 1),
+            "arm": round(float(rev[:, i].mean()), 1),
+        },
         "pass": bool(b1 and b2 and b3_eq and b3_ne_out),
     }
 
@@ -99,5 +110,7 @@ def year_block(y: int) -> dict:
 if __name__ == "__main__":
     ys = [int(x) for x in sys.argv[1:]] or [2021, 2022, 2023, 2024, 2025]
     res = {str(y): year_block(y) for y in ys}
-    (REPO / "results/calibration/_nyisonext12_g2b.json").write_text(json.dumps(res, indent=1))
+    (REPO / "results/calibration/_nyisonext12_g2b.json").write_text(
+        json.dumps(res, indent=1)
+    )
     print(json.dumps(res, indent=1))
