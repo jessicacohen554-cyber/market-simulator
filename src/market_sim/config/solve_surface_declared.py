@@ -608,4 +608,5 @@ DECLARED: dict[str, str | dict[str, str]] = {
     # ISO_PLANT_ENTRIES was, so the Oklaunion exit re-keys ERCOT's bundles.
     "ISO_PLANT_EXITS": {"ERCOT": "a4d0fee78b233797"},
     "SPP_POSTURE_MIN_DOWN_HOURS": "05ce3498cb8df05c",
+    "MISO_GAS_ECOMIN_MIN_LOAD_FRAC": "8dbeefa4395b85e6",
 }

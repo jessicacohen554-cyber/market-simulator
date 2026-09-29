@@ -245,3 +245,21 @@ class TestMarkupReconciliation(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestCalibrationPathWiring(unittest.TestCase):
+    """The calibration orchestrator assembles its own dispatch kwargs; it must merge the posture.
+
+    SPP-102's first shard round stopped at its ARMED check because
+    ``scripts/run_calibration.py`` called only the ERCOT applier.
+    """
+
+    def test_run_calibration_merges_spp_posture(self):
+        from pathlib import Path
+
+        src = (
+            Path(__file__).resolve().parents[3] / "scripts" / "run_calibration.py"
+        ).read_text()
+        self.assertIn(
+            "apply_spp_commitment_posture(dispatch_kwargs, config, fleet_arrays)", src
+        )

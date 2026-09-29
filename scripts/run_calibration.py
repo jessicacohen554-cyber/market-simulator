@@ -128,6 +128,7 @@ from market_sim.pipeline import (  # noqa: E402
     shed_penalty_voll,
     EnergySolveResult,
     apply_ercot_commitment_posture,
+    apply_spp_commitment_posture,
     apply_reserve_coopt,
     backcast_config,
     build_base_dispatch_kwargs,
@@ -137,6 +138,7 @@ from market_sim.pipeline import (  # noqa: E402
     build_caiso_reserve_p1_prep,
     build_ercot_gas_bridge_p1_preps,
     build_miso_coal_night_floor_p1_prep,
+    build_miso_gas_ecomin_p1_prep,
     build_nyiso_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
     build_soco_gas_st_campaign_p1_prep,
@@ -1015,6 +1017,7 @@ def run_year(
     spp_gas_commitment_bridge: bool | None = None,
     soco_gas_st_campaign_commitment: bool | None = None,
     miso_coal_night_floor: bool | None = None,
+    miso_gas_ecomin_online_floor: bool | None = None,
     nyiso_gas_bridge_cc_min_load_frac: float | None = None,
     nyiso_gas_bridge_st_min_load_frac: float | None = None,
     nyiso_gas_bridge_startup: bool | None = None,
@@ -2114,6 +2117,10 @@ def run_year(
         )
     if miso_coal_night_floor is not None:
         config = config.with_overrides(miso_coal_night_floor=miso_coal_night_floor)
+    if miso_gas_ecomin_online_floor is not None:
+        config = config.with_overrides(
+            miso_gas_ecomin_online_floor=miso_gas_ecomin_online_floor
+        )
     if nyiso_gas_bridge_cc_min_load_frac is not None:
         config = config.with_overrides(
             nyiso_gas_bridge_cc_min_load_frac=nyiso_gas_bridge_cc_min_load_frac
@@ -6982,6 +6989,9 @@ def run_year(
     # merged as its own dispatch kwargs after the reserve seam. No-op / byte-
     # identical for every non-ERCOT run and default-off ERCOT.
     apply_ercot_commitment_posture(dispatch_kwargs, config, fleet_arrays)
+    # SPP standalone commitment posture with min-up/min-down (SPP-102). No-op /
+    # byte-identical for every non-SPP run and default-off SPP.
+    apply_spp_commitment_posture(dispatch_kwargs, config, fleet_arrays)
 
     # P0 → monthly startup markup → P1 via the shared pipeline solve core
     # (orchestrator-unification Stage 3): the intra-year warm start, the
@@ -7060,6 +7070,10 @@ def run_year(
     miso_night_floor_prep = build_miso_coal_night_floor_p1_prep(
         config, iso, fleet, fleet_arrays
     )
+    # P1-native MISO merchant-CC EcoMin online floor (miso-286): the committed
+    # CC tranche is must-take at its measured plant-basis min-load in every
+    # P0-online hour. None for every non-MISO / gate-off run (byte-identical).
+    miso_ecomin_prep = build_miso_gas_ecomin_p1_prep(config, iso, fleet, fleet_arrays)
     # P1-native PJM commitment-scoped reserve supply (path B, G-20b): the fleet
     # hook zeroes non-fast-start reserve-eligible units' availability in their
     # plant's P0-offline hours (the fa_p2-style mask), the kwargs hook
@@ -7209,6 +7223,7 @@ def run_year(
             or spp_bridge_prep
             or soco_campaign_prep
             or miso_night_floor_prep
+            or miso_ecomin_prep
             or pjm_fleet_prep
         ),
         p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
@@ -7388,6 +7403,7 @@ def run_year(
                     or ercot_bridge_prep
                     or nyiso_bridge_prep
                     or miso_night_floor_prep
+                    or miso_ecomin_prep
                     or pjm_fleet_prep
                 ),
                 p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
@@ -7499,6 +7515,7 @@ def run_year(
                         or ercot_bridge_prep
                         or nyiso_bridge_prep
                         or miso_night_floor_prep
+                        or miso_ecomin_prep
                         or pjm_fleet_prep
                     ),
                     p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
@@ -7611,6 +7628,7 @@ def run_year(
                 or ercot_bridge_prep
                 or nyiso_bridge_prep
                 or miso_night_floor_prep
+                or miso_ecomin_prep
                 or pjm_fleet_prep
             ),
             p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,

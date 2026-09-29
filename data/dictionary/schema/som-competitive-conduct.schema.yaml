@@ -92,6 +92,11 @@ columns:
       MMU's fuel-type marginal-resource markup averages); SPP-81 adds
       "gas_combined_cycle" / "gas_simple_cycle" / "other" for the
       marginal-technology shares.
+      PJM (PJM-NEXT-12, 2026-09-29) adds "steam_coal" / "all_units" (the
+      Monitoring Analytics SOM DA-offer status table's unit-type rows) and
+      reuses "coal" / "gas_combined_cycle" / "gas_simple_cycle" / "wind"
+      for RT marginal-resource shares, and "gas_fuel" / "coal_fuel" for the
+      RT LMP fuel components.
   - name: metric
     dtype: string
     unit: none
@@ -139,6 +144,18 @@ columns:
       "rt_implied_heat_rate" (the MMU's annual implied heat rate, btu_per_kwh),
       and "gas_hub_price_annual_avg" on the "panhandle_eastern" /
       "southern_star" / "henry_hub" segments (usd_per_mmbtu).
+      PJM IMM SOM rows (PJM-NEXT-12, 2026-09-29) add the DA offer-status
+      shares of offered MW "da_offer_mustrun_share" / "da_offer_ecomin_share"
+      / "da_offer_dispatchable_share" / "da_offer_emergency_share"
+      (2020-2024), the 2019 layout's "da_offer_selfsched_fixed_share" /
+      "_ecomin_share" / "_total_share", the redesigned 2025 layout's
+      "da_offer_block_loaded_share" and "_totalmw_basis" variants (the note
+      carries each vintage's printed definition; they differ), and
+      "rt_marginal_resource_share" (share of RT marginal resources by
+      fuel/technology, fraction), and the RT LMP decomposition
+      "rt_lmp_component" (usd_per_mwh) / "rt_lmp_component_share" (fraction)
+      on the "gas_fuel" / "coal_fuel" segments plus
+      "rt_lmp_load_weighted_total" (usd_per_mwh) on "system".
   - name: value
     dtype: float64
     unit: mixed

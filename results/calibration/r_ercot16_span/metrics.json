@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-28-r-14-oklaunion-swcap",
+  "run_id": "2026-09-28-r-16-oklaunion-hr",
   "iso": "ERCOT",
-  "label": "r 14 oklaunion swcap",
+  "label": "r 16 oklaunion hr",
   "target_years": [
     2019,
     2020,
@@ -25,7 +25,7 @@
   "rubric_version": "3.10",
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [],
   "criteria": {
@@ -52,8 +52,7 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "FAIL"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -63,7 +62,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
@@ -73,9 +72,7 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [
-      "C3c price tail / scarcity (RT hourly)"
-    ],
+    "ledgered": [],
     "commercial_band": [],
     "budget": {
       "protective_max": 0,
@@ -83,11 +80,11 @@
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 4,
+    "scored": 7,
+    "target_grade": 3,
     "commercial_grade": 0,
-    "ledgered": 1,
-    "fails": 3
+    "ledgered": 0,
+    "fails": 4
   },
   "reported": {
     "co2": {
@@ -105,7 +102,7 @@
     "diurnal_amplitude": {
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
-        "2019": "amplitude 141.5% of measured (hod range $165.19 vs $116.77); peak h15 vs h15, trough h02 vs h02 \u2014 phase OK; hod r +0.992; 365 complete days",
+        "2019": "amplitude 141.5% of measured (hod range $165.18 vs $116.77); peak h15 vs h15, trough h02 vs h02 \u2014 phase OK; hod r +0.992; 365 complete days",
         "2020": "amplitude 112.9% of measured (hod range $34.70 vs $30.73); peak h14 vs h14, trough h02 vs h02 \u2014 phase OK; hod r +0.977; 365 complete days",
         "2021": "amplitude 123.8% of measured (hod range $59.11 vs $47.76); peak h18 vs h18, trough h10 vs h11 \u2014 phase OK; hod r +0.700; 365 complete days",
         "2022": "amplitude 70.0% of measured (hod range $54.89 vs $78.44); peak h16 vs h15, trough h03 vs h02 \u2014 phase OK; hod r +0.957; 365 complete days",

@@ -178,3 +178,60 @@ MCP is 2023-10-09.
   the EIA-923 delivered price.
 - Consumer: `scripts/probes/_spp81_residual_upper_tercile.py` /
   `docs/handoffs/FINDING-spp-81-residual-upper-tercile-2026-09-25.md`.
+
+## Authoritative sources (PJM) — added 2026-09-29 by lane PJM-NEXT-12
+
+Monitoring Analytics, LLC (the PJM Independent Market Monitor) annual *State of
+the Market Report for PJM*, **Section 3 — Energy Market**, 2019–2025, from
+`www.monitoringanalytics.com` (anonymous HTTPS, fetched 2026-09-29). **PDFs NOT
+committed** (© Monitoring Analytics; the numbers are transcribed with page
+citations, as for SPP). `source_page` is PDF pagination (1-based) of the
+section-3 PDF identified by the sha256 below.
+
+| Year | URL | sha256 |
+|---|---|---|
+| 2019 | <https://www.monitoringanalytics.com/reports/PJM_State_of_the_Market/2019/2019-som-pjm-sec3.pdf> | `2eeb5a0ae3600e8eef12adf388a60223076e52f7cce8b84364d7b992d568058c` |
+| 2020 | <https://www.monitoringanalytics.com/reports/PJM_State_of_the_Market/2020/2020-som-pjm-sec3.pdf> | `18ee916f84ded8d9c6e3aab5f3ae2d1ba35567177e35c2b17a804925e5da5a92` |
+| 2021 | <https://www.monitoringanalytics.com/reports/PJM_State_of_the_Market/2021/2021-som-pjm-sec3.pdf> | `6e6d7ff325c30c5f58547d04d1f4f96409e064d503533a3aeaa47f8e5ad2cd16` |
+| 2022 | <https://www.monitoringanalytics.com/reports/PJM_State_of_the_Market/2022/2022-som-pjm-sec3.pdf> | `f81a2d2919b4f99f28a8061b839701901a337855c99ccc8c41ce602f3d4af2f9` |
+| 2023 | <https://www.monitoringanalytics.com/reports/PJM_State_of_the_Market/2023/2023-som-pjm-sec3.pdf> | `118073d9530c76a3ec522116209043ff033f33b5dd77e3d3894c579fde026669` |
+| 2024 | <https://www.monitoringanalytics.com/reports/PJM_State_of_the_Market/2024/2024-som-pjm-sec3.pdf> | `6477b4d7f99e3cafe36da6be81b1c94ea6962927aed855008f7bb8b949a90bc7` |
+| 2025 | <https://www.monitoringanalytics.com/reports/PJM_State_of_the_Market/2025/2025-som-pjm-sec3.pdf> | `00e14255d4309a2ae0606b891b9ffbe64eba592acc9ca450d48b327433ca82b4` |
+
+What is transcribed (`iso == PJM`):
+
+- **DA offer commitment/dispatch status** (`da_offer_*_share`, segments
+  `steam_coal` / `all_units`): the table "Dispatchable status of day-ahead
+  energy offers" — share of DA offered MW that is must-run (self-scheduled),
+  economic-commitment eco-min, dispatchable range, emergency.
+- **RT marginal resources by fuel/technology** (`rt_marginal_resource_share`,
+  segments `coal` / `gas_combined_cycle` / `gas_simple_cycle` / `wind`): the
+  table "Type of fuel used and technology (By real-time marginal units)", each
+  year from the latest vintage that tabulates it. Vintages overlap five years
+  and agree to 0.01 pt — no restatement.
+
+- **RT LMP components** (`rt_lmp_component` $/MWh and
+  `rt_lmp_component_share`, segments `gas_fuel` / `coal_fuel`;
+  `rt_lmp_load_weighted_total` on `system`): the table "Components of
+  real-time (Unadjusted) load-weighted average LMP" — the IMM's decomposition
+  of LMP into the offer-cost components of the marginal units. The fuel rows
+  are the part of the load-weighted LMP set by gas-fired / coal-fired
+  marginal units' fuel cost. Each year from the latest vintage carrying it.
+
+**The DA-offer table changed definition TWICE — read `note` before comparing years.**
+- 2019: self-scheduled offers are split into *fixed output* (coal 2.0 %) and
+  *self-scheduled-and-dispatchable* (eco-min 22.5 %); separate metric codes.
+- 2020–2021: "Must Run" = the eco-min MW of must-run units.
+- 2022–2024: "Must Run" = the *submitted offer MW* of must-run units (wording
+  change; possibly a level break at 2022).
+- 2025: table redesigned — no must-run column, shares "regardless of
+  commitment availability status" over a total-including-unavailable
+  denominator (`_totalmw_basis` codes + `da_offer_block_loaded_share`).
+
+The only same-definition adjacent pair is 2020/2021 (coal must-run 19.2 % /
+18.7 %). Consumer: `scripts/probes/_pjmnext12_selfsched_marginal.py` /
+`docs/FINDING-pjm-next-12-selfsched-marginal-2026-09-29.md`.
+
+DATA NEEDED (PJM): a unit-level or fuel-level self-schedule MWh series
+(not only offered-MW shares). PJM DataMiner2 carries none that this lane
+found; the IMM publishes only the offered-MW shares above.

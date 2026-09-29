@@ -138,6 +138,25 @@
    "CT_CHP": 331.0,
    "COAL_PRB": 156.0,
    "ST_CHP": 86.0
+  },
+  "cf4": {
+   "min_load_frac": 0.3238,
+   "eligible_rows": 43,
+   "eligible_mw": 11915.0,
+   "eligible_groups": [
+    "CC_REGULAR"
+   ],
+   "p0_median": 27.11,
+   "cf4_median": 27.11,
+   "delta_median": -0.0,
+   "delta_mean": -0.02,
+   "hub_median": 19.35,
+   "p1_median": 27.12,
+   "stack_online_eligible_committed_mw": 7632.0,
+   "floor_mw_added_vs_min_gen": 5151.0,
+   "hours_price_moved": 265,
+   "night_hours": 2190,
+   "keeper_p1_cc_committed_night_mw": 7295.0
   }
  },
  "2019": {
@@ -270,6 +289,25 @@
    "CT_CHP": 264.0,
    "COAL_BIT": 150.0,
    "ST_CHP": 86.0
+  },
+  "cf4": {
+   "min_load_frac": 0.3238,
+   "eligible_rows": 41,
+   "eligible_mw": 9530.0,
+   "eligible_groups": [
+    "CC_REGULAR"
+   ],
+   "p0_median": 23.59,
+   "cf4_median": 23.59,
+   "delta_median": -0.01,
+   "delta_mean": -0.01,
+   "hub_median": 18.95,
+   "p1_median": 23.67,
+   "stack_online_eligible_committed_mw": 5495.0,
+   "floor_mw_added_vs_min_gen": 3837.0,
+   "hours_price_moved": 286,
+   "night_hours": 2190,
+   "keeper_p1_cc_committed_night_mw": 5224.0
   }
  },
  "2020": {
@@ -408,6 +446,25 @@
    "CT_CHP": 264.0,
    "COAL_BIT": 111.0,
    "ST_CHP": 86.0
+  },
+  "cf4": {
+   "min_load_frac": 0.3238,
+   "eligible_rows": 44,
+   "eligible_mw": 10410.0,
+   "eligible_groups": [
+    "CC_REGULAR"
+   ],
+   "p0_median": 20.16,
+   "cf4_median": 20.16,
+   "delta_median": -0.0,
+   "delta_mean": -0.02,
+   "hub_median": 15.8,
+   "p1_median": 19.88,
+   "stack_online_eligible_committed_mw": 5374.0,
+   "floor_mw_added_vs_min_gen": 3716.0,
+   "hours_price_moved": 303,
+   "night_hours": 2190,
+   "keeper_p1_cc_committed_night_mw": 5082.0
   }
  },
  "2021": {
@@ -536,6 +593,25 @@
    "CT_CHP": 335.0,
    "COAL_BIT": 135.0,
    "ST_CHP": 87.0
+  },
+  "cf4": {
+   "min_load_frac": 0.3238,
+   "eligible_rows": 43,
+   "eligible_mw": 10677.0,
+   "eligible_groups": [
+    "CC_REGULAR"
+   ],
+   "p0_median": 29.65,
+   "cf4_median": 29.56,
+   "delta_median": -0.09,
+   "delta_mean": -0.01,
+   "hub_median": 23.41,
+   "p1_median": 29.52,
+   "stack_online_eligible_committed_mw": 3653.0,
+   "floor_mw_added_vs_min_gen": 2598.0,
+   "hours_price_moved": 295,
+   "night_hours": 2189,
+   "keeper_p1_cc_committed_night_mw": 4268.0
   }
  },
  "2022": {
@@ -672,6 +748,25 @@
    "COAL_BIT": 187.0,
    "COAL_PRB": 121.0,
    "ST_CHP": 90.0
+  },
+  "cf4": {
+   "min_load_frac": 0.3238,
+   "eligible_rows": 46,
+   "eligible_mw": 11641.0,
+   "eligible_groups": [
+    "CC_REGULAR"
+   ],
+   "p0_median": 42.99,
+   "cf4_median": 42.86,
+   "delta_median": -0.12,
+   "delta_mean": -0.03,
+   "hub_median": 42.68,
+   "p1_median": 48.09,
+   "stack_online_eligible_committed_mw": 3046.0,
+   "floor_mw_added_vs_min_gen": 2149.0,
+   "hours_price_moved": 291,
+   "night_hours": 1890,
+   "keeper_p1_cc_committed_night_mw": 5636.0
   }
  },
  "2024": {
@@ -815,6 +910,25 @@
    "COAL_BIT": 114.0,
    "ST_CHP": 85.0,
    "COAL_PRB": 59.0
+  },
+  "cf4": {
+   "min_load_frac": 0.3238,
+   "eligible_rows": 46,
+   "eligible_mw": 12060.0,
+   "eligible_groups": [
+    "CC_REGULAR"
+   ],
+   "p0_median": 23.76,
+   "cf4_median": 23.76,
+   "delta_median": 0.0,
+   "delta_mean": -0.01,
+   "hub_median": 17.31,
+   "p1_median": 23.76,
+   "stack_online_eligible_committed_mw": 8148.0,
+   "floor_mw_added_vs_min_gen": 5544.0,
+   "hours_price_moved": 225,
+   "night_hours": 2190,
+   "keeper_p1_cc_committed_night_mw": 7784.0
   }
  },
  "2025": {
@@ -957,6 +1071,25 @@
    "COAL_BIT": 122.0,
    "ST_CHP": 69.0,
    "COAL_PRB": 57.0
+  },
+  "cf4": {
+   "min_load_frac": 0.3238,
+   "eligible_rows": 51,
+   "eligible_mw": 12205.0,
+   "eligible_groups": [
+    "CC_REGULAR"
+   ],
+   "p0_median": 32.83,
+   "cf4_median": 32.83,
+   "delta_median": -0.01,
+   "delta_mean": -0.01,
+   "hub_median": 24.2,
+   "p1_median": 34.69,
+   "stack_online_eligible_committed_mw": 7486.0,
+   "floor_mw_added_vs_min_gen": 5117.0,
+   "hours_price_moved": 214,
+   "night_hours": 2190,
+   "keeper_p1_cc_committed_night_mw": 7584.0
   }
  }
 }

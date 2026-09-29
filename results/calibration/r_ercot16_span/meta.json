@@ -157,14 +157,14 @@
     "r_ercot12_arm_2025": [
       2025
     ],
-    "r_ercot14_b_2019": [
-      2019
-    ],
-    "r_ercot14_b_2020": [
-      2020
-    ],
     "r_ercot14_b_2021": [
       2021
+    ],
+    "r_ercot15_arm_2019": [
+      2019
+    ],
+    "r_ercot15_arm_2020": [
+      2020
     ]
   },
   "config_partition_overrides": {
@@ -172,6 +172,9 @@
       "caiso_eia930_clock_repair": false,
       "caiso_tac_shares_standard_time": false,
       "campd_split_remap_companions": false,
+      "chp_steam_floor_conduct_scope": false,
+      "coal_fuel_inventory_monthly_pile": false,
+      "coal_monthly_pile_measured_receipts": false,
       "ercot_load_resource_reserve_from_year": 2019,
       "ercot_offer_swcap_clip": true,
       "ercot_reserve_supply_cap_from_year": 2019,
@@ -351,12 +354,16 @@
         }
       },
       "pjm_da_virtual_settle_financial": false,
+      "unit_outage_exit_cohort_repair": false,
       "voll": 9000.0
     },
     "2020": {
       "caiso_eia930_clock_repair": false,
       "caiso_tac_shares_standard_time": false,
       "campd_split_remap_companions": false,
+      "chp_steam_floor_conduct_scope": false,
+      "coal_fuel_inventory_monthly_pile": false,
+      "coal_monthly_pile_measured_receipts": false,
       "ercot_offer_swcap_clip": true,
       "ercot_swcap_vintage": true,
       "nyiso_ne_ac_node": false,
@@ -534,6 +541,7 @@
         }
       },
       "pjm_da_virtual_settle_financial": false,
+      "unit_outage_exit_cohort_repair": false,
       "voll": 9000.0
     },
     "2021": {
@@ -1073,7 +1081,7 @@
       }
     },
     "_schema": "composite-per-year-recipe/v1",
-    "_why": "meta.json carries ONE config (for a composite bundle, the base recipe recorded in run_config.json). These are the EXACT extra ScenarioConfig keys each other year solved under, DERIVED by diffing that year's own committed run_config scenario_config against the base \u2014 never hand-typed. Year-driven fields (gas_price_override, ordc_mcl_mw, ordc_voll, weather_year) are excluded: they differ because the legs cover different YEARS, not because the recipe differs. Consumed by replay_keeper.enforce_single_recipe_partition; re-derivable with scripts/stamp_config_partition.py --check."
+    "_why": "meta.json carries ONE config (for a composite bundle, the base recipe recorded in run_config_2024.json). These are the EXACT extra ScenarioConfig keys each other year solved under, DERIVED by diffing that year's own committed run_config scenario_config against the base \u2014 never hand-typed. Year-driven fields (gas_price_override, ordc_mcl_mw, ordc_voll, weather_year) are excluded: they differ because the legs cover different YEARS, not because the recipe differs. Consumed by replay_keeper.enforce_single_recipe_partition; re-derivable with scripts/stamp_config_partition.py --check."
   },
   "ct_drag_overrides": {},
   "ct_intermediate_cf_threshold": null,

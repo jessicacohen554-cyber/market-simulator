@@ -1,0 +1,177 @@
+{
+ "2019": {
+  "c1_gap_twh": 18.76,
+  "response_part_twh": 17.87,
+  "som_coal_mustrun_share": 0.245,
+  "som_coal_mustrun_definition": "2019 fixed+selfsched eco-min",
+  "som_coal_rt_marginal_share": 0.2437,
+  "som_wind_rt_marginal_share": 0.0381,
+  "som_coal_fuel_lmp_share": 0.264,
+  "som_gas_fuel_lmp_share": 0.421,
+  "share_hours_below_gas_cc": {
+   "hr<6.0": {
+    "model": 0.002,
+    "actual": 0.246
+   },
+   "hr<6.5": {
+    "model": 0.023,
+    "actual": 0.364
+   },
+   "hr<7.0": {
+    "model": 0.084,
+    "actual": 0.506
+   }
+  },
+  "model_mer_coal_band_share_all_hours": 0.369
+ },
+ "2020": {
+  "c1_gap_twh": 12.16,
+  "response_part_twh": 6.57,
+  "som_coal_mustrun_share": 0.192,
+  "som_coal_mustrun_definition": "eco-min MW of must-run units",
+  "som_coal_rt_marginal_share": 0.1753,
+  "som_wind_rt_marginal_share": 0.0675,
+  "som_coal_fuel_lmp_share": 0.237,
+  "som_gas_fuel_lmp_share": 0.415,
+  "share_hours_below_gas_cc": {
+   "hr<6.0": {
+    "model": 0.003,
+    "actual": 0.34
+   },
+   "hr<6.5": {
+    "model": 0.03,
+    "actual": 0.449
+   },
+   "hr<7.0": {
+    "model": 0.088,
+    "actual": 0.556
+   }
+  },
+  "model_mer_coal_band_share_all_hours": 0.318
+ },
+ "2021": {
+  "c1_gap_twh": 15.66,
+  "response_part_twh": 11.78,
+  "som_coal_mustrun_share": 0.187,
+  "som_coal_mustrun_definition": "eco-min MW of must-run units",
+  "som_coal_rt_marginal_share": 0.1415,
+  "som_wind_rt_marginal_share": 0.1104,
+  "som_coal_fuel_lmp_share": 0.103,
+  "som_gas_fuel_lmp_share": 0.539,
+  "share_hours_below_gas_cc": {
+   "hr<6.0": {
+    "model": 0.0,
+    "actual": 0.309
+   },
+   "hr<6.5": {
+    "model": 0.028,
+    "actual": 0.396
+   },
+   "hr<7.0": {
+    "model": 0.122,
+    "actual": 0.488
+   }
+  },
+  "model_mer_coal_band_share_all_hours": 0.279
+ },
+ "2022": {
+  "c1_gap_twh": 7.61,
+  "response_part_twh": 10.17,
+  "som_coal_mustrun_share": 0.255,
+  "som_coal_mustrun_definition": "submitted MW of must-run units",
+  "som_coal_rt_marginal_share": 0.1002,
+  "som_wind_rt_marginal_share": 0.1112,
+  "som_coal_fuel_lmp_share": 0.071,
+  "som_gas_fuel_lmp_share": 0.517,
+  "share_hours_below_gas_cc": {
+   "hr<6.0": {
+    "model": 0.0,
+    "actual": 0.188
+   },
+   "hr<6.5": {
+    "model": 0.0,
+    "actual": 0.272
+   },
+   "hr<7.0": {
+    "model": 0.017,
+    "actual": 0.357
+   }
+  },
+  "model_mer_coal_band_share_all_hours": 0.29
+ },
+ "2023": {
+  "c1_gap_twh": -0.11,
+  "response_part_twh": 1.67,
+  "som_coal_mustrun_share": 0.276,
+  "som_coal_mustrun_definition": "submitted MW of must-run units",
+  "som_coal_rt_marginal_share": 0.0914,
+  "som_wind_rt_marginal_share": 0.0553,
+  "som_coal_fuel_lmp_share": 0.144,
+  "som_gas_fuel_lmp_share": 0.437,
+  "share_hours_below_gas_cc": {
+   "hr<6.0": {
+    "model": 0.001,
+    "actual": 0.225
+   },
+   "hr<6.5": {
+    "model": 0.012,
+    "actual": 0.301
+   },
+   "hr<7.0": {
+    "model": 0.033,
+    "actual": 0.378
+   }
+  },
+  "model_mer_coal_band_share_all_hours": 0.253
+ },
+ "2024": {
+  "c1_gap_twh": -0.07,
+  "response_part_twh": 2.8,
+  "som_coal_mustrun_share": 0.296,
+  "som_coal_mustrun_definition": "submitted MW of must-run units",
+  "som_coal_rt_marginal_share": 0.1027,
+  "som_wind_rt_marginal_share": 0.1355,
+  "som_coal_fuel_lmp_share": 0.121,
+  "som_gas_fuel_lmp_share": 0.397,
+  "share_hours_below_gas_cc": {
+   "hr<6.0": {
+    "model": 0.0,
+    "actual": 0.206
+   },
+   "hr<6.5": {
+    "model": 0.005,
+    "actual": 0.264
+   },
+   "hr<7.0": {
+    "model": 0.019,
+    "actual": 0.321
+   }
+  },
+  "model_mer_coal_band_share_all_hours": 0.24
+ },
+ "2025": {
+  "c1_gap_twh": 13.71,
+  "response_part_twh": 15.13,
+  "som_coal_mustrun_share": null,
+  "som_coal_mustrun_definition": "n/a (2025 table redesigned)",
+  "som_coal_rt_marginal_share": 0.079,
+  "som_wind_rt_marginal_share": 0.1114,
+  "som_coal_fuel_lmp_share": 0.077,
+  "som_gas_fuel_lmp_share": 0.438,
+  "share_hours_below_gas_cc": {
+   "hr<6.0": {
+    "model": 0.0,
+    "actual": 0.206
+   },
+   "hr<6.5": {
+    "model": 0.0,
+    "actual": 0.272
+   },
+   "hr<7.0": {
+    "model": 0.017,
+    "actual": 0.342
+   }
+  },
+  "model_mer_coal_band_share_all_hours": 0.19
+ }
+}

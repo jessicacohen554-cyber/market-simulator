@@ -6784,3 +6784,23 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
   - Owner card *"Record as limit"*, superseded the same day by *"Relabel as open and queue the test"*: **OPEN**.
 - **Cards 2–3:** CT_PEAKER 2021 is the same coal-displaces-gas swap. The model exports 10–14 TWh *less* than actual, so interchange can't explain the fossil surplus. C3a 2020/2022 and C3b 2022 are price-distribution compression. Owner card *"Record, no successor"*, superseded: **OPEN**, successor PJM-NEXT-11 fetches the PJM offers corpus to test LONG_RUN offered EcoMax by year.
 - Records: `docs/RESULT-pjm-next-10-2026-09-29.md`, `docs/FINDING-pjm-next-10-coal-loading-2026-09-29.md`.
+
+## PJM-NEXT-11 — 2026-09-29 — offered EcoMax falsified as the COAL_BIT lever; C3a 2019/2020 relabelled a bulk price-level error (zero LP)
+
+- No solve, no shard, keeper unchanged (`2026-09-28-pjm-next8-exitfix`). The PJM offers corpus (2019–2025, 84 month-files) was re-fetched.
+- **Card 1:** LONG_RUN offered EcoMax ÷ curve top is 0.923–0.949 in every year, flat across hours and net-load bins. Capping COAL_BIT at it closes at most −1.5 / −1.9 / −1.9 TWh of the 2019 / 2021 / 2025 over-run, and it misorders the years (2020 over-runs at the fit years' ratio; 2022 has the lowest). Not a lever; no solve. The feed has no fuel-conservation status field.
+- **Card 2:** 2022's small over-run is PJM's own 2022 LONG_RUN offers (about 2× delivered fuel cost), already in the keeper through the measured mid-curve floor. PJM-NEXT-10's delivered coal/gas ratio was the wrong operand for 2022. No coal-inventory ceiling is needed.
+- **Card 3:** C3a/C3b 2022 are confirmed as the pjm-h12 tail-compression object (top decile −$9.19 vs bulk +$4.36). **C3a 2019/2020 are NOT:** they are a bulk-level excess (median ratio 1.18 / 1.26). That bulk excess is present in every year (1.12–1.26), and C3a passes in 2021 and 2023–25 only by cancellation against the missing top tail.
+- **Audit (a), owner card *"Do both audits here"*:** the over-run is **response, not price**. At the same local price the model loads more coal: response +17.87 / +11.78 / +15.13 TWh of the +18.76 / +15.66 / +13.71 gap (2019 / 2021 / 2025). The price part matters only in 2020 (+5.59). Real coal is much flatter in price (0.36–0.50 of p99 across $15–60 in 2020–25; 2019 rises to 0.66); model coal is steep (0.3 → 0.9).
+- **Audit (b):** the model's price floor is too high in every year. Implied heat rate at p10 is 6.9–8.4 (model) vs 4.8–5.5 (actual), so real PJM often prices below any gas unit's cost and the model does not. Plausibly the same object as (a).
+- COAL_BIT / CT_PEAKER 2021 / C3a 2019–20 remain **OPEN**. Next test: intake PJM's measured DA self-scheduled MW by fuel and year, plus marginal-fuel shares (IMM State of the Market). The offers corpus has no self-schedule flag.
+- Records: `docs/FINDING-pjm-next-11-offered-ecomax-2026-09-29.md`, `docs/RESULT-pjm-next-11-2026-09-29.md`.
+
+## PJM-NEXT-12 — 2026-09-29 — coal self-scheduling falsified; coal was the price-setter behind C3a 2019/2020 (zero LP)
+
+- No solve, no shard, keeper unchanged (`2026-09-28-pjm-next8-exitfix`).
+- **Intake:** PJM IMM SOM §3 2019–2025 → `som-competitive-conduct` (105 PJM rows: DA offer must-run shares, RT marginal-unit shares by fuel, RT LMP fuel components).
+- **Card 1:** coal must-run share of DA offered MW is 24.5 / 19.2 / 18.7 / 25.5 / 27.6 / 29.6 % (2019–24; definitions differ by vintage, 2025 not published). It is lowest in the over-run year 2021 and highest in the fit years. A must-run block is a floor, not a cap. **Falsified**, no design card.
+- **Card 2:** the coal-fuel share of RT LMP is 26 / 24 / 10 / 7 / 14 / 12 / 8 %, which discriminates C3a 2019/2020 but not the COAL_BIT over-run. Actual prices sit below 6.5 × gas in 26–45 % of hours; the model's in 0–3 %, every year.
+- OPEN: COAL_BIT, CT_PEAKER 2021, C3a 2019/2020. Next tests: coal availability vs CAMPD monthly max; production-area gas vs delivered; the model's coal-set LMP share.
+- Records: `docs/FINDING-pjm-next-12-selfsched-marginal-2026-09-29.md`, `docs/RESULT-pjm-next-12-2026-09-29.md`.
