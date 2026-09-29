@@ -42,7 +42,10 @@ CAL = REPO / "results" / "calibration"
 SNP = REPO / "data" / "raw" / "seam-neighbour-price"
 OUT = CAL / "_nyisonext13_phase0.json"
 H = dne.H
-BUNDLE = {2021: "nyisonext12_2021", **{y: "nyisonext12_span" for y in range(2022, 2026)}}
+BUNDLE = {
+    2021: "nyisonext12_2021",
+    **{y: "nyisonext12_span" for y in range(2022, 2026)},
+}
 UPSTATE = ("WEST", "GENESE", "CENTRL", "NORTH", "MHK VL")
 MODEL_TO_MEAS = {
     "Upstate_West": UPSTATE,
@@ -113,7 +116,9 @@ def year_block(year: int) -> dict:
     ce_bind_mod = np.abs(ce_mod) > 0.5
     zone_gap = {
         z: {
-            "all": _stats(mod[z].to_numpy() - meas[list(c)].mean(axis=1).to_numpy(), alln),
+            "all": _stats(
+                mod[z].to_numpy() - meas[list(c)].mean(axis=1).to_numpy(), alln
+            ),
             "at_export_bound": _stats(
                 mod[z].to_numpy() - meas[list(c)].mean(axis=1).to_numpy(), at_exp
             ),
@@ -128,7 +133,10 @@ def year_block(year: int) -> dict:
         "node_twh_measured": round(float(np.nansum(d["flow"])) / 1e6, 3),
         "hours_at_export_bound_implied": int(at_exp.sum()),
         "hours_at_export_bound_measured_price": int((-q_meas_sp >= ce - 1).sum()),
-        "gap_ch": {"all": _stats(gap_ch, alln), "at_export_bound": _stats(gap_ch, at_exp)},
+        "gap_ch": {
+            "all": _stats(gap_ch, alln),
+            "at_export_bound": _stats(gap_ch, at_exp),
+        },
         "gap_upstate_level": {
             "all": _stats(gap_uw, alln),
             "at_export_bound": _stats(gap_uw, at_exp),
@@ -146,7 +154,9 @@ def year_block(year: int) -> dict:
         "measured_capitl_at_export_bound": _stats(ch_meas, at_exp),
         "roseton_at_export_bound": _stats(ros, at_exp),
         "zone_gap_model_minus_measured_da": zone_gap,
-        "export_bound_hours_by_month": np.bincount(month[at_exp], minlength=12).tolist(),
+        "export_bound_hours_by_month": np.bincount(
+            month[at_exp], minlength=12
+        ).tolist(),
         "export_bound_hours_by_hod": np.bincount(hod[at_exp], minlength=24).tolist(),
     }
 
@@ -166,12 +176,27 @@ def main() -> None:
             b["hours_at_export_bound_implied"],
             b["hours_at_export_bound_measured_price"],
         )
-        for k in ("gap_ch", "gap_upstate_level", "central_east_model", "central_east_measured"):
-            print("   ", k, "all", b[k]["all"].get("mean"), "@exp", b[k]["at_export_bound"])
+        for k in (
+            "gap_ch",
+            "gap_upstate_level",
+            "central_east_model",
+            "central_east_measured",
+        ):
+            print(
+                "   ",
+                k,
+                "all",
+                b[k]["all"].get("mean"),
+                "@exp",
+                b[k]["at_export_bound"],
+            )
         print("    CE binding h (model)", b["central_east_model"]["hours_binding"])
         print(
             "    zone gap mean all:",
-            {z: v["all"].get("mean") for z, v in b["zone_gap_model_minus_measured_da"].items()},
+            {
+                z: v["all"].get("mean")
+                for z, v in b["zone_gap_model_minus_measured_da"].items()
+            },
         )
         print("    @exp by month", b["export_bound_hours_by_month"])
 
