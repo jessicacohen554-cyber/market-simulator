@@ -30,7 +30,9 @@ HARD STOPS — check each; if any fails, STOP, do not push, report which one:
    Also (the arm is live, frame + caiso-80 demand + HSL generation term): `PYTHONPATH=src python3 -c "import numpy as np; from market_sim.data.eia930 import frames as F; from market_sim.data.eia930.demand import _load_caiso_supply_consistent_demand as SC; from market_sim.data.renewables import load_hsl_hourly as H; a=F._eia_hourly_frame_filled('CISO',{Y}).copy(); da=SC({Y}); ha=H('CAISO',{Y}); F.set_caiso_eia930_clock_repair(True); b=F._eia_hourly_frame_filled('CISO',{Y}); db=SC({Y}); hb=H('CAISO',{Y}); ne=lambda c: int((~np.isclose(a[c].to_numpy(float),b[c].to_numpy(float),equal_nan=True)).sum()); nh=lambda c: int((~np.isclose(ha[c].to_numpy(float),hb[c].to_numpy(float))).sum()); print(ne('Demand'), ne('NG: SUN'), int((np.abs(da-db)>1e-6).sum()), nh('solar_gen_mw'), nh('wind_gen_mw'))"`
    must print EXACTLY (per year): 2019/2020/2021 -> `0 0 0 0 0`; 2022 -> `4776 0 0 0 0`; 2023 -> `8752 1140 1465 1140 1454`; 2024 -> `8758 7666 8755 7664 8743`; 2025 -> `8049 6943 8051 6943 8031`.
    (The last two numbers are the HSL solar/wind rows R-CAISO-15 added; if they read 0 in 2023-2025 the build is missing — STOP.)
-   (2019-2022 are EXPECTED to be inert in the LP — solve them anyway; that is not a stop.)
+   Also (battery envelope arm, owner card 2026-09-29 "Add battery envelope"): `PYTHONPATH=src python3 -c "import numpy as np, pandas as pd; from market_sim.data.eia930 import frames as F; from market_sim.model import storage as S; from market_sim.config.paths import RAW_DIR; e=pd.read_csv(RAW_DIR/'reference'/'caiso-storage-shape-envelope.csv'); u=max([y for y in sorted(e.year.unique()) if y<={Y}] or [2023]); r=e[e.year==u].sort_values('hod'); F.set_caiso_eia930_clock_repair(True); c,d=S._caiso_storage_envelope_clock_repaired(u); print(u, int((c!=r.chg_frac_p95.to_numpy()).sum()+(d!=r.dis_frac_p95.to_numpy()).sum()))"`
+   must print EXACTLY: 2019/2020/2021/2022/2023 -> `2023 34`; 2024 -> `2024 40`; 2025 -> `2025 38`.
+   (2019-2022 borrow the 2023 envelope, so they are NO LONGER expected to be byte-identical — ADDENDUM §7.)
 3. After the solve, results/calibration/rcaiso15_A_{Y}/run_config.json must show:
    scenario_config: caiso_eia930_clock_repair=true (THE ARM — if it reads false or is absent, STOP), caiso_tac_shares_standard_time=true, caiso_supply_consistent_demand=true,
    caiso_ra_bridge_startup_aware=false, caiso_ra_mustoffer=true,
@@ -48,7 +50,7 @@ SOLVE (exactly this, unmodified, IN THE FOREGROUND — never nohup / & / run_in_
   python3 scripts/replay_keeper.py results/calibration/{SRC} --years {Y} \
     --set caiso_eia930_clock_repair=true --persist-p0-dispatch \
     --out-dir results/calibration/rcaiso15_A_{Y} \
-    --note "R-CAISO-15 A {Y}: keeper recipe + caiso_eia930_clock_repair=true incl. HSL gen term (PRECOMMIT-r-caiso-13 + ADDENDUM-r-caiso-15)"
+    --note "R-CAISO-15 A {Y}: keeper recipe + caiso_eia930_clock_repair=true incl. HSL gen term + battery envelope (PRECOMMIT-r-caiso-13 + ADDENDUM-r-caiso-15)"
   Budget: ~25 min. If it approaches 40 min with no bundle, stop and report.
 
 PUSH (rule 34(a) — plain git add, NEVER `git add -f`, NEVER `git add -A` / `git add .`):

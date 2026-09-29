@@ -1,4 +1,4 @@
-# ADDENDUM — R-CAISO-15 (2026-09-29): repair completed to the HSL generation term
+# ADDENDUM — R-CAISO-15 (2026-09-29): repair completed to the HSL generation term and the battery envelope
 
 Extends `docs/handoffs/r-caiso-13/PRECOMMIT-r-caiso-13-2026-09-28.md` and
 `docs/handoffs/r-caiso-14/ADDENDUM-r-caiso-14-gdrift-2026-09-29.md`. Written before any shard is launched.
@@ -54,7 +54,7 @@ generation window without passing the repair seam.
 
 | # | Artifact (reader) | Hourly shape at solve? | Status |
 |---|---|---|---|
-| 1 | `data/raw/reference/caiso-storage-shape-envelope.csv` (`model/storage.py::caiso_storage_shape_caps`; keeper `caiso_storage_shape_anchor=true`). Builder `scripts/derive_caiso_storage_shape.py` reads raw `CISO hourly.parquet` `NG: OTH` by Local date/Hour, no seam | YES: per-(year, hour-of-day) p95 battery charge/discharge caps, 2023–25 | **GAP, live.** Caps battery shape on the late clock; bears directly on P2 |
+| 1 | `data/raw/reference/caiso-storage-shape-envelope.csv` (`model/storage.py::caiso_storage_shape_caps`; keeper `caiso_storage_shape_anchor=true`). Builder `scripts/derive_caiso_storage_shape.py` reads raw `CISO hourly.parquet` `NG: OTH` by Local date/Hour, no seam | YES: per-(year, hour-of-day) p95 battery charge/discharge caps, 2023–25 | **GAP, live → REPAIRED (this lane, §7)** after the owner card |
 | 2 | `data/raw/eia-930-interchange/CISO interchange hourly.parquet` (per-DIBA feed; `envelopes.measured_corridor_flow_envelope`, `measured_firm_import_shape`). Clock set by fixed lags `_CAISO_INTERCHANGE_LAG_STD_H=1` / `_DST_H=2` (`envelopes.py:885-890`), fitted against the unrepaired `Total interchange` | YES: month × hour-of-day | **GAP, live.** Under the arm the extract's interchange moves 1 h, this feed does not. Needs a lag re-scan against the repaired column |
 | 3 | DSW clean-depth / surplus / wedge / import-tranche constants (`model/interchange/spec.py`) | No (one p95 per year; only the hour window is clock-dependent) | GAP, second-order; inherits #2 |
 | 4 | `caiso_offer_surface_condbinned.json` (net-load bin join) | No (per net-load bin) | GAP, weak |
@@ -102,3 +102,21 @@ carry no CAISO rows.
 7 shards, one per year 2019–2025 (rule 36), prompt `docs/handoffs/r-caiso-15/shard-prompt.md`, out-dir
 `rcaiso15_A_{Y}`, branch `claude/r-caiso-15-A-{Y}`. `{SRC}` = `rcaiso11_A_tp_2019_2021` (2019–21) /
 `rcaiso11_A_span` (2022–25); `{SDCAP}` = 1436.0 (2019–23) / 2074.0 (2024) / 2071.0 (2025).
+
+## 7. Scope widened by owner card (2026-09-29, after the census): "Add battery envelope"
+
+- **Build (same flag, zero parameters):** `model/storage._caiso_storage_envelope_clock_repaired`, called from
+  `caiso_storage_shape_caps`. Armed and the envelope year reaching the window → the derive script's own construction
+  (Local date/Hour order, NaN→0, canonical EIA-860 battery fleet by month, per-hour-of-day p95, 4 dp) re-run on the
+  extract after `frames._repair_clock_late_windows`. The committed CSV is not modified. A non-canonical EIA-860 vintage
+  raises (the keeper uses the canonical one).
+- **Precondition, measured and pinned by test:** on the unrepaired extract the reader's derivation reproduces the
+  committed `chg_frac_p95` / `dis_frac_p95` exactly (max |Δ| 0.0) for 2023, 2024, 2025.
+- **Effect (zero-LP):** 2024–25 caps become the committed caps rolled one hour earlier (e.g. 2024 discharge p95 peak
+  0.66 moves from h19–20 to h18–19). 2023 changes in hours reached by Nov–Dec (max |Δ| 0.11).
+- **Arm liveness, envelope entries changed (of 48):** envelope year 2023 → 34; 2024 → 40; 2025 → 38.
+- **P4 amended (before any solve).** 2019–22 solves borrow the **2023** envelope (`caiso_storage_shape_anchor=true` in
+  every keeper year), so they are no longer expected to be byte-identical. **P4′:** 2019–22 move only through the
+  battery caps; HSL, demand and frame are unchanged there. Reported at full magnitude, not a criterion.
+- **Left for the next link (recorded, not built):** #2 per-DIBA interchange lag re-scan, and its dependants #3; the
+  weak/scalar gaps #4–#5; the zero-LP benchmark-rebuild seam.
