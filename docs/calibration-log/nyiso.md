@@ -15028,3 +15028,16 @@ too.
 - **Matrix:** `nyiso_ne_ac_node` U → K.
 - **Superseded and pruned:** `2026-09-28-nyisonext9-hq-floor-span` and its 2021 run.
 - **Record:** `docs/RESULT-nyiso-next12-ne-ac-node-2026-09-28.md`.
+
+## NYISO-NEXT-13 — 2026-09-29 — the NE AC node out of the monthly net-interchange band; keeper promoted on structure
+
+- **Phase 0 (zero LP):** the ±2 % monthly EIA-930 band binds in 11–12 of 12 months every year. It pinned the NE AC node together with the pooled seams, and the node (the band's only export-capable row) followed its own bands in only 34–63 % of hours. Queue item 1 is re-routed away from Capital_Hudson pricing.
+- **Lever:** `nyiso_ne_ac_recon_detach` (PR #6875, zero DOF). The node's rows and its measured P-32 schedule leave the band, which then pins the pooled node alone.
+- **Result:** keeper `2026-09-29-nyisonext13-recon-detach-span` (2022–2025), plus the stamped `2026-09-29-nyisonext13-recon-detach-2021`. Promoted per the pre-registered structural rule; owner ruling "Promote per rule".
+  - G-1 exact. G-2(a): the node is on its own bands in 99.9–100 % of hours. G-2(b): 12/12 months inside the band. G-2(c): two-way. G-3: C6 / C8 PASS.
+  - C3a: 2021 −1.7 → −14.3 %, 2022 −10.1 → −13.6 %, 2023 −2.1 → −7.0 %, 2024 −0.9 → −2.5 %, 2025 −11.3 %. C3b fails in 2022 (0.226) and 2021 (0.219).
+  - Span NOT-YET. 2021 NOT-YET (was CALIBRATED).
+- **Cause of the regression:** the band now pins the static pooled ladder to its measured monthly volume (+4.1 / +2.2 TWh in 2021 / 2022).
+- **Matrix:** `nyiso_ne_ac_recon_detach` U → K.
+- **Superseded and pruned:** `2026-09-29-nyisonext12-neac-node-span` and its 2021 run.
+- **Record:** `docs/RESULT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md`.
