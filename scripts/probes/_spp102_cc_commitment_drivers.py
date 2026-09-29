@@ -25,6 +25,7 @@ min-down physics), and a fleet-level decomposition of the L-hour online MWh by p
 Writes docs/handoffs/spp102/cc_commitment_drivers.json. Usage:
   uv run python scripts/probes/_spp102_cc_commitment_drivers.py <decoded payload.json>
 """
+
 from __future__ import annotations
 
 import base64
@@ -82,7 +83,13 @@ def eia930(y: int) -> dict[str, np.ndarray]:
     d = ser(reg[reg["type"] == "D"])
     w = ser(fu[fu["fueltype"] == "WND"])
     so = ser(fu[fu["fueltype"] == "SUN"])
-    return {"load": d, "wind": w, "solar": so, "nl": d - w - so, "local": idx - pd.Timedelta(hours=CST_OFFSET_H)}
+    return {
+        "load": d,
+        "wind": w,
+        "solar": so,
+        "nl": d - w - so,
+        "local": idx - pd.Timedelta(hours=CST_OFFSET_H),
+    }
 
 
 def fwd_max(x: np.ndarray, w: int) -> np.ndarray:
@@ -106,24 +113,42 @@ def spells(on: np.ndarray) -> np.ndarray:
 def main() -> int:
     """Run the driver census for every keeper year."""
     pay = json.load(open(sys.argv[1]))
-    lmp = pd.read_parquet(RAW_DATA_DIR / "_validation-source/actual_lmp_hourly_SPP.parquet")
-    bench = {y: json.load(gzip.open(REPO / f"frontend/data/backcast/bench/SPP/{y}.json.gz"))["bench"]["plants"] for y in YEARS}
+    lmp = pd.read_parquet(
+        RAW_DATA_DIR / "_validation-source/actual_lmp_hourly_SPP.parquet"
+    )
+    bench = {
+        y: json.load(gzip.open(REPO / f"frontend/data/backcast/bench/SPP/{y}.json.gz"))[
+            "bench"
+        ]["plants"]
+        for y in YEARS
+    }
     # plant series per year
     series: dict[str, dict[str, dict]] = {}
     for y in YEARS:
         mp = pay["years"][y]["plants"]
         series[y] = {}
         for k, v in bench[y].items():
-            if v["group"] != "CC_REGULAR" or v.get("nodata") in (True, "True") or not v.get("campd"):
+            if (
+                v["group"] != "CC_REGULAR"
+                or v.get("nodata") in (True, "True")
+                or not v.get("campd")
+            ):
                 continue
             key = k if k in mp else f"{k}:CC_REGULAR"
             c = dec(v["campd"])
             m = dec(mp[key]["m"]) if key in mp else np.zeros(len(c))
             if len(c) != 8760 or len(m) != 8760:
                 continue
-            series[y][k] = {"c": c, "m": m, "npl": float(v["npl"]), "name": v.get("name", k)}
+            series[y][k] = {
+                "c": c,
+                "m": m,
+                "npl": float(v["npl"]),
+                "name": v.get("name", k),
+            }
     # leave-year-out conduct: pooled on-frequency over the OTHER years
-    onh = {y: {k: (s["c"] >= ON_CEMS).sum() for k, s in series[y].items()} for y in YEARS}
+    onh = {
+        y: {k: (s["c"] >= ON_CEMS).sum() for k, s in series[y].items()} for y in YEARS
+    }
 
     def conduct_lyo(y: str, k: str) -> float:
         num = sum(onh[o][k] for o in YEARS if o != y and k in onh[o])
@@ -140,7 +165,9 @@ def main() -> int:
         loc = e["local"]
         month = loc.month.to_numpy()
         gasday = (loc - pd.Timedelta(hours=9)).normalize()
-        nl_gd = pd.Series(e["nl"]).groupby(gasday.to_numpy()).transform("max").to_numpy()
+        nl_gd = (
+            pd.Series(e["nl"]).groupby(gasday.to_numpy()).transform("max").to_numpy()
+        )
         drivers = {
             "nl_now": e["nl"],
             "nl_fwd24": fwd_max(e["nl"], 24),
@@ -156,14 +183,25 @@ def main() -> int:
             mon = s["m"] >= ON_MODEL
             sp = spells(on)
             cd = conduct_lyo(y, k)
-            Y.append(on[low]); M.append(mon[low]); S.append(sp[low]); C.append(np.full(low.sum(), cd)); NPL.append(np.full(low.sum(), s["npl"]))
+            Y.append(on[low])
+            M.append(mon[low])
+            S.append(sp[low])
+            C.append(np.full(low.sum(), cd))
+            NPL.append(np.full(low.sum(), s["npl"]))
             P.append(np.flatnonzero(low))
             per_plant[k] = {
-                "name": s["name"], "npl": s["npl"], "conduct_lyo": round(float(cd), 3),
-                "on_all": round(float(on.mean()), 3), "on_low": round(float(on[low].mean()), 3) if low.any() else None,
+                "name": s["name"],
+                "npl": s["npl"],
+                "conduct_lyo": round(float(cd), 3),
+                "on_all": round(float(on.mean()), 3),
+                "on_low": round(float(on[low].mean()), 3) if low.any() else None,
                 "model_on_low": round(float(mon[low].mean()), 3) if low.any() else None,
-                "low_online_twh_minload": round(float((on & low).sum() * MIN_LOAD * s["npl"] / 1e6), 3),
-                "gap_twh_minload": round(float((on & ~mon & low).sum() * MIN_LOAD * s["npl"] / 1e6), 3),
+                "low_online_twh_minload": round(
+                    float((on & low).sum() * MIN_LOAD * s["npl"] / 1e6), 3
+                ),
+                "gap_twh_minload": round(
+                    float((on & ~mon & low).sum() * MIN_LOAD * s["npl"] / 1e6), 3
+                ),
             }
         Y, M, S, C, NPL, P = map(np.concatenate, (Y, M, S, C, NPL, P))
         res = {
@@ -172,10 +210,17 @@ def main() -> int:
             "plant_hours": int(len(Y)),
             "cems_online_rate_low": round(float(Y.mean()), 3),
             "model_online_rate_low": round(float(M.mean()), 3),
-            "cems_online_rate_all": round(float(np.mean([ (s["c"] >= ON_CEMS).mean() for s in series[y].values()])), 3),
+            "cems_online_rate_all": round(
+                float(
+                    np.mean([(s["c"] >= ON_CEMS).mean() for s in series[y].values()])
+                ),
+                3,
+            ),
             "gap_twh_minload": round(float(((Y & ~M) * NPL).sum() * MIN_LOAD / 1e6), 3),
             "auc": {},
-            "long_spell_share_of_low_online": round(float((S[Y] > LONG_SPELL_H).mean()), 3),
+            "long_spell_share_of_low_online": round(
+                float((S[Y] > LONG_SPELL_H).mean()), 3
+            ),
             "median_spell_h_of_low_online": float(np.median(S[Y])) if Y.any() else None,
         }
         for nm, x in drivers.items():
@@ -189,17 +234,30 @@ def main() -> int:
                 on = (s["c"] >= ON_CEMS)[low]
                 a = auc(x[low], on)
                 if a is not None:
-                    vals.append(a); wts.append(s["npl"])
+                    vals.append(a)
+                    wts.append(s["npl"])
             wp[nm] = round(float(np.average(vals, weights=wts)), 3) if vals else None
         res["auc_within_plant"] = wp
         # conduct-class split of the L-hour online energy
-        for lab, lo_, hi_ in (("always_on_gt0.8", 0.8, 1.01), ("mid_0.5_0.8", 0.5, 0.8), ("cycler_lt0.5", -1, 0.5)):
+        for lab, lo_, hi_ in (
+            ("always_on_gt0.8", 0.8, 1.01),
+            ("mid_0.5_0.8", 0.5, 0.8),
+            ("cycler_lt0.5", -1, 0.5),
+        ):
             sel = (C > lo_) & (C <= hi_) if lab != "cycler_lt0.5" else (C < hi_)
             res[f"class_{lab}"] = {
-                "cems_on_rate_low": round(float(Y[sel].mean()), 3) if sel.any() else None,
-                "model_on_rate_low": round(float(M[sel].mean()), 3) if sel.any() else None,
-                "gap_twh_minload": round(float(((Y & ~M & sel) * NPL).sum() * MIN_LOAD / 1e6), 3),
-                "cems_low_online_twh_minload": round(float(((Y & sel) * NPL).sum() * MIN_LOAD / 1e6), 3),
+                "cems_on_rate_low": round(float(Y[sel].mean()), 3)
+                if sel.any()
+                else None,
+                "model_on_rate_low": round(float(M[sel].mean()), 3)
+                if sel.any()
+                else None,
+                "gap_twh_minload": round(
+                    float(((Y & ~M & sel) * NPL).sum() * MIN_LOAD / 1e6), 3
+                ),
+                "cems_low_online_twh_minload": round(
+                    float(((Y & sel) * NPL).sum() * MIN_LOAD / 1e6), 3
+                ),
             }
         # precision / recall of the zero-parameter conduct rule "online iff conduct_lyo > 0.5"
         pred = C > 0.5
@@ -207,8 +265,12 @@ def main() -> int:
         res["rule_conduct_gt0.5"] = {
             "precision": round(float(tp / pred.sum()), 3) if pred.any() else None,
             "recall": round(float(tp / Y.sum()), 3) if Y.any() else None,
-            "reach_twh_minload_where_model_off": round(float(((pred & ~M) * NPL).sum() * MIN_LOAD / 1e6), 3),
-            "correct_reach_twh_minload": round(float(((pred & ~M & Y) * NPL).sum() * MIN_LOAD / 1e6), 3),
+            "reach_twh_minload_where_model_off": round(
+                float(((pred & ~M) * NPL).sum() * MIN_LOAD / 1e6), 3
+            ),
+            "correct_reach_twh_minload": round(
+                float(((pred & ~M & Y) * NPL).sum() * MIN_LOAD / 1e6), 3
+            ),
         }
         res["plants"] = per_plant
         out[y] = res

@@ -8,6 +8,7 @@ Stage 2 (``_spp89_coal_cc_swap.py``) reads these ``.npz`` files.
 
 Usage: ``python scripts/probes/_spp89_stack_dump.py --year 2022 --out-dir <dir>``
 """
+
 from __future__ import annotations
 
 import argparse
@@ -37,7 +38,9 @@ def main() -> int:
     fa = state["fleet_arrays"]
     mc = np.asarray(state["mc_base"], float)
     n = len(mc)
-    fuel = np.broadcast_to(np.asarray(state["fuel_prices"], float).reshape(n, -1), mc.shape)
+    fuel = np.broadcast_to(
+        np.asarray(state["fuel_prices"], float).reshape(n, -1), mc.shape
+    )
     avail = np.broadcast_to(np.asarray(fa.availability, float).reshape(n, -1), mc.shape)
     pmax = np.asarray(fa.pmax, float)
     klass = np.asarray(fa.plant_group).astype(str)
@@ -49,9 +52,13 @@ def main() -> int:
         mc=mc[th].astype(np.float32),
         cap=(pmax[:, None] * avail)[th].astype(np.float32),
         fuel=fuel[th].astype(np.float32),
-        pmax=pmax[th], hr=hr[th],
-        klass=klass[th], codes=np.asarray(fa.plant_code).astype(int)[th],
-        gas=float(state["config"].gas_price) if hasattr(state["config"], "gas_price") else np.nan,
+        pmax=pmax[th],
+        hr=hr[th],
+        klass=klass[th],
+        codes=np.asarray(fa.plant_code).astype(int)[th],
+        gas=float(state["config"].gas_price)
+        if hasattr(state["config"], "gas_price")
+        else np.nan,
     )
     print(a.year, "rows", len(th), "classes", sorted(set(klass[th].tolist())))
     return 0
