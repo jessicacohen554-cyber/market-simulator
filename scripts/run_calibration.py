@@ -128,6 +128,7 @@ from market_sim.pipeline import (  # noqa: E402
     shed_penalty_voll,
     EnergySolveResult,
     apply_ercot_commitment_posture,
+    apply_spp_commitment_posture,
     apply_reserve_coopt,
     backcast_config,
     build_base_dispatch_kwargs,
@@ -6982,6 +6983,9 @@ def run_year(
     # merged as its own dispatch kwargs after the reserve seam. No-op / byte-
     # identical for every non-ERCOT run and default-off ERCOT.
     apply_ercot_commitment_posture(dispatch_kwargs, config, fleet_arrays)
+    # SPP standalone commitment posture with min-up/min-down (SPP-102). No-op /
+    # byte-identical for every non-SPP run and default-off SPP.
+    apply_spp_commitment_posture(dispatch_kwargs, config, fleet_arrays)
 
     # P0 → monthly startup markup → P1 via the shared pipeline solve core
     # (orchestrator-unification Stage 3): the intra-year warm start, the
