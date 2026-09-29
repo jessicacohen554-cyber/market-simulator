@@ -1,0 +1,3691 @@
+{
+ "2019": {
+  "hours": 8755,
+  "constraints_total": 1614,
+  "rent_share_kept": 0.8537,
+  "spreads": {
+   "NJ-Western": {
+    "mean_spread": -2.815,
+    "fit_mean": -2.786,
+    "r2": 0.967,
+    "top_constraints": [
+     {
+      "k": "CONASTON500 KV  CNS-PEA | ACTUAL",
+      "contrib": -1.138,
+      "beta": 0.341,
+      "bind_h": 3139,
+      "mean_mu": -3.334
+     },
+     {
+      "k": "CONASTON500 KV  CNS-PEA | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.544,
+      "beta": 0.321,
+      "bind_h": 1833,
+      "mean_mu": -1.692
+     },
+     {
+      "k": "CONASTON 5012/3-500B GCB C     500 KV | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.217,
+      "beta": 0.308,
+      "bind_h": 244,
+      "mean_mu": -0.704
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.187,
+      "beta": 0.075,
+      "bind_h": 1485,
+      "mean_mu": -2.482
+     },
+     {
+      "k": "EAST | ACTUAL",
+      "contrib": 0.13,
+      "beta": -0.6,
+      "bind_h": 113,
+      "mean_mu": -0.217
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.112,
+      "beta": 0.115,
+      "bind_h": 392,
+      "mean_mu": -0.971
+     },
+     {
+      "k": "FACEROCK69 KV   FAROZBR | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.11,
+      "beta": 0.016,
+      "bind_h": 2157,
+      "mean_mu": -7.104
+     },
+     {
+      "k": "SEWARD  115 KV  SEW-TOW | L230.HomerCity-Quemahoning-Hooversville.2024",
+      "contrib": -0.093,
+      "beta": 0.07,
+      "bind_h": 206,
+      "mean_mu": -1.332
+     },
+     {
+      "k": "SIEGFRIE230 KV  5 | L230.Siegfried.Yardspan + 230/69.Siegfried.T1",
+      "contrib": 0.089,
+      "beta": -0.021,
+      "bind_h": 519,
+      "mean_mu": -4.251
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L500.Brighton-Conastone",
+      "contrib": -0.068,
+      "beta": 0.088,
+      "bind_h": 140,
+      "mean_mu": -0.767
+     },
+     {
+      "k": "GARDNERS115 KV  GAR-TEX | L115.MiddletownJct-Collins.975 (Sctnlz)",
+      "contrib": -0.06,
+      "beta": 0.014,
+      "bind_h": 1658,
+      "mean_mu": -4.299
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-GRAC | L230.Graceton-Bagley-RaphaelRoad.2305",
+      "contrib": -0.058,
+      "beta": 0.076,
+      "bind_h": 443,
+      "mean_mu": -0.763
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.054,
+      "beta": 0.105,
+      "bind_h": 206,
+      "mean_mu": -0.516
+     },
+     {
+      "k": "WESCOSVI500 KV  3 | L500.Hopatcong-Lackawanna.5063",
+      "contrib": 0.049,
+      "beta": -0.02,
+      "bind_h": 76,
+      "mean_mu": -2.436
+     },
+     {
+      "k": "MONR AE 69 KV   MON-VINE | L230.Cumberland-Orchard.2314",
+      "contrib": 0.044,
+      "beta": -0.015,
+      "bind_h": 4244,
+      "mean_mu": -3.024
+     }
+    ],
+    "corridor_share": 0.847,
+    "top_facilities": {
+     "CONASTON500 KV  CNS-PEA": -1.681,
+     "CONASTON 5012/3-500B GCB C     500 KV": -0.217,
+     "GRACETON230 KV  GRA-SAF": -0.187,
+     "NOTTINGH230 KV  2-3": -0.166,
+     "FACEROCK69 KV   FAROZBR": -0.14,
+     "EAST": 0.13,
+     "CONASTON230 KV  CNS-NOR2": -0.102,
+     "SEWARD  115 KV  SEW-TOW": -0.093,
+     "SIEGFRIE230 KV  5": 0.089,
+     "BAGLEY  230 KV  BAG-GRAC": -0.085,
+     "WESCOSVI500 KV  3": 0.063,
+     "GARDNERS115 KV  GAR-TEX": -0.06,
+     "PRGEORGE230 KV  TX1": -0.05,
+     "MONR AE 69 KV   MON-VINE": 0.044,
+     "PA-CENT contingency 1": -0.043
+    }
+   },
+   "Eastern-Western": {
+    "mean_spread": -1.962,
+    "fit_mean": -1.914,
+    "r2": 0.973,
+    "top_constraints": [
+     {
+      "k": "CONASTON500 KV  CNS-PEA | ACTUAL",
+      "contrib": -1.309,
+      "beta": 0.393,
+      "bind_h": 3139,
+      "mean_mu": -3.334
+     },
+     {
+      "k": "CONASTON500 KV  CNS-PEA | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.627,
+      "beta": 0.37,
+      "bind_h": 1833,
+      "mean_mu": -1.692
+     },
+     {
+      "k": "COOLSPRI-MILFORD 23069      B  230 KV | L230.IndianRiver-Milford.23034",
+      "contrib": 0.358,
+      "beta": -0.176,
+      "bind_h": 128,
+      "mean_mu": -2.033
+     },
+     {
+      "k": "CEDARCRE230 KV  CED-RED | L230.Cartanza-Milford.23033",
+      "contrib": 0.311,
+      "beta": -0.179,
+      "bind_h": 724,
+      "mean_mu": -1.736
+     },
+     {
+      "k": "CONASTON 5012/3-500B GCB C     500 KV | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.239,
+      "beta": 0.339,
+      "bind_h": 244,
+      "mean_mu": -0.704
+     },
+     {
+      "k": "COOLSPRI230 KV  COL-MIL | L230.IndianRiver-Milford.23034",
+      "contrib": 0.205,
+      "beta": -0.18,
+      "bind_h": 335,
+      "mean_mu": -1.141
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.166,
+      "beta": 0.067,
+      "bind_h": 1485,
+      "mean_mu": -2.482
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.151,
+      "beta": 0.155,
+      "bind_h": 392,
+      "mean_mu": -0.971
+     },
+     {
+      "k": "LORETTO 138 KV  LOR-VIE | L230.IndianRiver-PineyGrove.23002",
+      "contrib": 0.147,
+      "beta": -0.09,
+      "bind_h": 317,
+      "mean_mu": -1.639
+     },
+     {
+      "k": "EAST | ACTUAL",
+      "contrib": 0.143,
+      "beta": -0.66,
+      "bind_h": 113,
+      "mean_mu": -0.217
+     },
+     {
+      "k": "FACEROCK69 KV   FAROZBR | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.115,
+      "beta": 0.016,
+      "bind_h": 2157,
+      "mean_mu": -7.104
+     },
+     {
+      "k": "PRESTON 69 KV   PRE-TAN | 230/138.Vienna.AT20",
+      "contrib": 0.115,
+      "beta": -0.023,
+      "bind_h": 863,
+      "mean_mu": -5.038
+     },
+     {
+      "k": "SEWARD  115 KV  SEW-TOW | L230.HomerCity-Quemahoning-Hooversville.2024",
+      "contrib": -0.095,
+      "beta": 0.072,
+      "bind_h": 206,
+      "mean_mu": -1.332
+     },
+     {
+      "k": "EASTON  69 KV   EAS-EMU | ACTUAL",
+      "contrib": 0.074,
+      "beta": -0.047,
+      "bind_h": 4829,
+      "mean_mu": -1.586
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L500.Brighton-Conastone",
+      "contrib": -0.072,
+      "beta": 0.094,
+      "bind_h": 140,
+      "mean_mu": -0.767
+     }
+    ],
+    "corridor_share": 1.372,
+    "top_facilities": {
+     "CONASTON500 KV  CNS-PEA": -1.936,
+     "COOLSPRI-MILFORD 23069      B  230 KV": 0.358,
+     "CEDARCRE230 KV  CED-RED": 0.311,
+     "CONASTON 5012/3-500B GCB C     500 KV": -0.239,
+     "NOTTINGH230 KV  2-3": -0.206,
+     "COOLSPRI230 KV  COL-MIL": 0.205,
+     "LORETTO 138 KV  LOR-VIE": 0.202,
+     "GRACETON230 KV  GRA-SAF": -0.166,
+     "FACEROCK69 KV   FAROZBR": -0.15,
+     "EAST": 0.143,
+     "PRESTON 69 KV   PRE-TAN": 0.115,
+     "CONASTON230 KV  CNS-NOR2": -0.11,
+     "SEWARD  115 KV  SEW-TOW": -0.095,
+     "BAGLEY  230 KV  BAG-GRAC": -0.087,
+     "EASTON  69 KV   EAS-EMU": 0.074
+    }
+   },
+   "Dominion-Western": {
+    "mean_spread": 0.712,
+    "fit_mean": 0.702,
+    "r2": 0.838,
+    "top_constraints": [
+     {
+      "k": "CONASTON500 KV  CNS-PEA | ACTUAL",
+      "contrib": 0.164,
+      "beta": -0.049,
+      "bind_h": 3139,
+      "mean_mu": -3.334
+     },
+     {
+      "k": "CONASTON500 KV  CNS-PEA | L500.Hunterstown-Conastone.5013",
+      "contrib": 0.111,
+      "beta": -0.065,
+      "bind_h": 1833,
+      "mean_mu": -1.692
+     },
+     {
+      "k": "SEWARD  115 KV  SEW-TOW | L230.HomerCity-Quemahoning-Hooversville.2024",
+      "contrib": -0.086,
+      "beta": 0.065,
+      "bind_h": 206,
+      "mean_mu": -1.332
+     },
+     {
+      "k": "MONR AE 69 KV   MON-VINE | L230.Cumberland-Orchard.2314",
+      "contrib": -0.071,
+      "beta": 0.024,
+      "bind_h": 4244,
+      "mean_mu": -3.024
+     },
+     {
+      "k": "SIEGFRIE230 KV  5 | L230.Siegfried.Yardspan + 230/69.Siegfried.T1",
+      "contrib": 0.068,
+      "beta": -0.016,
+      "bind_h": 519,
+      "mean_mu": -4.251
+     },
+     {
+      "k": "PRESTON 69 KV   PRE-TAN | 230/138.Vienna.AT20",
+      "contrib": 0.05,
+      "beta": -0.01,
+      "bind_h": 863,
+      "mean_mu": -5.038
+     },
+     {
+      "k": "LORETTO 138 KV  LOR-VIE | L230.IndianRvr-PineyGrve.23002+230/138.PinyGr.AT20",
+      "contrib": 0.049,
+      "beta": -0.082,
+      "bind_h": 195,
+      "mean_mu": -0.6
+     },
+     {
+      "k": "Palisades-Argenta1 345kV l/o Palisades-Argenta2 345kV | L345.Argenta-Palisades.2",
+      "contrib": -0.047,
+      "beta": 0.027,
+      "bind_h": 738,
+      "mean_mu": -1.78
+     },
+     {
+      "k": "CONASTON 5012/3-500B GCB C     500 KV | L500.Hunterstown-Conastone.5013",
+      "contrib": 0.046,
+      "beta": -0.065,
+      "bind_h": 244,
+      "mean_mu": -0.704
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": 0.043,
+      "beta": -0.017,
+      "bind_h": 1485,
+      "mean_mu": -2.482
+     },
+     {
+      "k": "PLEASNTV230 KV  274D | L230.Brambleton-YardleyRidge.2172",
+      "contrib": 0.033,
+      "beta": -0.045,
+      "bind_h": 157,
+      "mean_mu": -0.726
+     },
+     {
+      "k": "KRENDALE138 KV  KRE-SHA | L500.Cabot-Cranberry",
+      "contrib": 0.031,
+      "beta": -0.036,
+      "bind_h": 639,
+      "mean_mu": -0.878
+     },
+     {
+      "k": "BUTL APS138 KV  BUT-KAR | L345.ErieWest-Ashtabula-Perry",
+      "contrib": -0.031,
+      "beta": 0.047,
+      "bind_h": 154,
+      "mean_mu": -0.656
+     },
+     {
+      "k": "KEYSTONE B14 CB                500 KV | 500/230.Keystone.T4",
+      "contrib": 0.026,
+      "beta": -0.115,
+      "bind_h": 291,
+      "mean_mu": -0.222
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-GRAC | L230.Graceton-Bagley-RaphaelRoad.2305",
+      "contrib": 0.022,
+      "beta": -0.029,
+      "bind_h": 443,
+      "mean_mu": -0.763
+     }
+    ],
+    "corridor_share": 0.565,
+    "top_facilities": {
+     "CONASTON500 KV  CNS-PEA": 0.275,
+     "SEWARD  115 KV  SEW-TOW": -0.086,
+     "MONR AE 69 KV   MON-VINE": -0.071,
+     "SIEGFRIE230 KV  5": 0.068,
+     "LORETTO 138 KV  LOR-VIE": 0.051,
+     "PRESTON 69 KV   PRE-TAN": 0.05,
+     "PLEASNTV230 KV  274D": 0.05,
+     "Palisades-Argenta1 345kV l/o Palisades-Argenta2 345kV": -0.047,
+     "CONASTON 5012/3-500B GCB C     500 KV": 0.046,
+     "GRACETON230 KV  GRA-SAF": 0.043,
+     "KRENDALE138 KV  KRE-SHA": 0.031,
+     "BAGLEY  230 KV  BAG-GRAC": 0.031,
+     "KEYSTONE B14 CB                500 KV": 0.026,
+     "NOTTINGH230 KV  2-3": 0.025,
+     "FACEROCK69 KV   FAROZBR": 0.023
+    }
+   },
+   "NJ-Dominion": {
+    "mean_spread": -3.527,
+    "fit_mean": -3.488,
+    "r2": 0.948,
+    "top_constraints": [
+     {
+      "k": "CONASTON500 KV  CNS-PEA | ACTUAL",
+      "contrib": -1.302,
+      "beta": 0.391,
+      "bind_h": 3139,
+      "mean_mu": -3.334
+     },
+     {
+      "k": "CONASTON500 KV  CNS-PEA | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.654,
+      "beta": 0.387,
+      "bind_h": 1833,
+      "mean_mu": -1.692
+     },
+     {
+      "k": "CONASTON 5012/3-500B GCB C     500 KV | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.263,
+      "beta": 0.374,
+      "bind_h": 244,
+      "mean_mu": -0.704
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.23,
+      "beta": 0.093,
+      "bind_h": 1485,
+      "mean_mu": -2.482
+     },
+     {
+      "k": "FACEROCK69 KV   FAROZBR | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.13,
+      "beta": 0.018,
+      "bind_h": 2157,
+      "mean_mu": -7.104
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.125,
+      "beta": 0.129,
+      "bind_h": 392,
+      "mean_mu": -0.971
+     },
+     {
+      "k": "EAST | ACTUAL",
+      "contrib": 0.12,
+      "beta": -0.553,
+      "bind_h": 113,
+      "mean_mu": -0.217
+     },
+     {
+      "k": "MONR AE 69 KV   MON-VINE | L230.Cumberland-Orchard.2314",
+      "contrib": 0.115,
+      "beta": -0.038,
+      "bind_h": 4244,
+      "mean_mu": -3.024
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-GRAC | L230.Graceton-Bagley-RaphaelRoad.2305",
+      "contrib": -0.08,
+      "beta": 0.105,
+      "bind_h": 443,
+      "mean_mu": -0.763
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L500.Brighton-Conastone",
+      "contrib": -0.077,
+      "beta": 0.1,
+      "bind_h": 140,
+      "mean_mu": -0.767
+     },
+     {
+      "k": "PRESTON 69 KV   PRE-TAN | 230/138.Vienna.AT20",
+      "contrib": -0.073,
+      "beta": 0.014,
+      "bind_h": 863,
+      "mean_mu": -5.038
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.066,
+      "beta": 0.128,
+      "bind_h": 206,
+      "mean_mu": -0.516
+     },
+     {
+      "k": "PA-CENT contingency 1 | L500.Juniata-Sunbury.5046",
+      "contrib": -0.059,
+      "beta": 0.112,
+      "bind_h": 824,
+      "mean_mu": -0.532
+     },
+     {
+      "k": "KEYSTONE B14 CB                500 KV | 500/230.Keystone.T4",
+      "contrib": -0.056,
+      "beta": 0.251,
+      "bind_h": 291,
+      "mean_mu": -0.222
+     },
+     {
+      "k": "GARDNERS115 KV  GAR-TEX | L115.MiddletownJct-Collins.975 (Sctnlz)",
+      "contrib": -0.055,
+      "beta": 0.013,
+      "bind_h": 1658,
+      "mean_mu": -4.299
+     }
+    ],
+    "corridor_share": 0.79,
+    "top_facilities": {
+     "CONASTON500 KV  CNS-PEA": -1.956,
+     "CONASTON 5012/3-500B GCB C     500 KV": -0.263,
+     "GRACETON230 KV  GRA-SAF": -0.23,
+     "NOTTINGH230 KV  2-3": -0.191,
+     "FACEROCK69 KV   FAROZBR": -0.164,
+     "EAST": 0.12,
+     "BAGLEY  230 KV  BAG-GRAC": -0.116,
+     "MONR AE 69 KV   MON-VINE": 0.115,
+     "CONASTON230 KV  CNS-NOR2": -0.111,
+     "PRESTON 69 KV   PRE-TAN": -0.073,
+     "PA-CENT contingency 1": -0.059,
+     "KEYSTONE B14 CB                500 KV": -0.056,
+     "GARDNERS115 KV  GAR-TEX": -0.055,
+     "WESCOSVI500 KV  3": 0.051,
+     "PRGEORGE230 KV  TX1": -0.05
+    }
+   }
+  }
+ },
+ "2020": {
+  "hours": 8779,
+  "constraints_total": 1283,
+  "rent_share_kept": 0.8999,
+  "spreads": {
+   "NJ-Western": {
+    "mean_spread": -2.723,
+    "fit_mean": -2.655,
+    "r2": 0.936,
+    "top_constraints": [
+     {
+      "k": "BAGLEY  230 KV  BAG-GRA | L500.Brighton-Conastone.5011",
+      "contrib": -0.277,
+      "beta": 0.098,
+      "bind_h": 955,
+      "mean_mu": -2.842
+     },
+     {
+      "k": "BAGLEY - GRACETON 2305      B  230 KV | L500.Brighton-Conastone.5011",
+      "contrib": -0.249,
+      "beta": 0.107,
+      "bind_h": 358,
+      "mean_mu": -2.325
+     },
+     {
+      "k": "CONASTON500 KV  CNS-PEA | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.225,
+      "beta": 0.307,
+      "bind_h": 970,
+      "mean_mu": -0.734
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-GRA | L230.Graceton-Bagley-RaphaelRoad.2313",
+      "contrib": -0.206,
+      "beta": 0.066,
+      "bind_h": 944,
+      "mean_mu": -3.113
+     },
+     {
+      "k": "TMI     500 KV  1 BANK | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.191,
+      "beta": 0.099,
+      "bind_h": 782,
+      "mean_mu": -1.922
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-GRAC | L500.Brighton-Conastone.5011",
+      "contrib": -0.156,
+      "beta": 0.111,
+      "bind_h": 462,
+      "mean_mu": -1.401
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.14,
+      "beta": 0.105,
+      "bind_h": 659,
+      "mean_mu": -1.337
+     },
+     {
+      "k": "SEWARD  115 KV  SEW-TOW | L115.Hilltop-Krayn-RachelHill (HillclayJct&Salix)",
+      "contrib": -0.112,
+      "beta": 0.076,
+      "bind_h": 518,
+      "mean_mu": -1.479
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.109,
+      "beta": 0.092,
+      "bind_h": 329,
+      "mean_mu": -1.186
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-GRAC | L230.Graceton-Bagley-RaphaelRoad.2305",
+      "contrib": -0.081,
+      "beta": 0.063,
+      "bind_h": 621,
+      "mean_mu": -1.281
+     },
+     {
+      "k": "YUKON    TRAN  4  XFORMER   H  500 KV | 500/138.Yukon.T1 & T3 (Sctnlz F)",
+      "contrib": -0.058,
+      "beta": 0.019,
+      "bind_h": 154,
+      "mean_mu": -3.017
+     },
+     {
+      "k": "CONASTON230 KV  CON-GRAC | L230.Conastone-Graceton.2323",
+      "contrib": -0.054,
+      "beta": 0.014,
+      "bind_h": 564,
+      "mean_mu": -3.728
+     },
+     {
+      "k": "NOTTINGHM 2-3 SER DEV       A  230 KV | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.053,
+      "beta": 0.092,
+      "bind_h": 341,
+      "mean_mu": -0.583
+     },
+     {
+      "k": "TMI     500 KV  1 BANK | ACTUAL",
+      "contrib": -0.053,
+      "beta": 0.113,
+      "bind_h": 218,
+      "mean_mu": -0.467
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.051,
+      "beta": 0.094,
+      "bind_h": 319,
+      "mean_mu": -0.545
+     }
+    ],
+    "corridor_share": 0.347,
+    "top_facilities": {
+     "BAGLEY  230 KV  BAG-GRA": -0.484,
+     "TMI     500 KV  1 BANK": -0.278,
+     "BAGLEY  230 KV  BAG-GRAC": -0.274,
+     "GRACETON230 KV  GRA-SAF": -0.258,
+     "BAGLEY - GRACETON 2305      B  230 KV": -0.249,
+     "CONASTON500 KV  CNS-PEA": -0.225,
+     "SEWARD  115 KV  SEW-TOW": -0.161,
+     "NOTTINGH230 KV  2-3": -0.077,
+     "YUKON    TRAN  4  XFORMER   H  500 KV": -0.058,
+     "NOTTINGHM 2-3 SER DEV       A  230 KV": -0.053,
+     "CONASTON230 KV  CON-GRAC": -0.053,
+     "JUNIATA 500 KV  2": -0.046,
+     "HARWOOD 230 KV  HAR-SUS": 0.043,
+     "CONASTON230 KV  CNS-NOR2": -0.041,
+     "KEYSTONE230 KV  KEY-SHE": -0.033
+    }
+   },
+   "Eastern-Western": {
+    "mean_spread": -1.649,
+    "fit_mean": -1.549,
+    "r2": 0.967,
+    "top_constraints": [
+     {
+      "k": "BAGLEY  230 KV  BAG-GRA | L500.Brighton-Conastone.5011",
+      "contrib": -0.309,
+      "beta": 0.109,
+      "bind_h": 955,
+      "mean_mu": -2.842
+     },
+     {
+      "k": "BAGLEY - GRACETON 2305      B  230 KV | L500.Brighton-Conastone.5011",
+      "contrib": -0.267,
+      "beta": 0.115,
+      "bind_h": 358,
+      "mean_mu": -2.325
+     },
+     {
+      "k": "CONASTON500 KV  CNS-PEA | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.261,
+      "beta": 0.355,
+      "bind_h": 970,
+      "mean_mu": -0.734
+     },
+     {
+      "k": "TMI     500 KV  1 BANK | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.221,
+      "beta": 0.115,
+      "bind_h": 782,
+      "mean_mu": -1.922
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-GRA | L230.Graceton-Bagley-RaphaelRoad.2313",
+      "contrib": -0.21,
+      "beta": 0.067,
+      "bind_h": 944,
+      "mean_mu": -3.113
+     },
+     {
+      "k": "NELSON  138 KV  NEL-VIE | L230.CoolSprings-Milford.23069",
+      "contrib": 0.209,
+      "beta": -0.059,
+      "bind_h": 274,
+      "mean_mu": -3.569
+     },
+     {
+      "k": "COOLSPRI230 KV  COL-MIL | L230.IndianRiver-Milford.23034",
+      "contrib": 0.204,
+      "beta": -0.174,
+      "bind_h": 294,
+      "mean_mu": -1.171
+     },
+     {
+      "k": "NELSON-VIENNA 13707         A  138 KV | L230.CoolSprings-Milford.23069",
+      "contrib": 0.178,
+      "beta": -0.06,
+      "bind_h": 54,
+      "mean_mu": -2.997
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-GRAC | L500.Brighton-Conastone.5011",
+      "contrib": -0.157,
+      "beta": 0.112,
+      "bind_h": 462,
+      "mean_mu": -1.401
+     },
+     {
+      "k": "PRESTON 69 KV   PRE-TAN | L230.Steele-Vienna.23085 & 230/138.Vienna.AT20",
+      "contrib": 0.139,
+      "beta": -0.037,
+      "bind_h": 303,
+      "mean_mu": -3.766
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.134,
+      "beta": 0.1,
+      "bind_h": 659,
+      "mean_mu": -1.337
+     },
+     {
+      "k": "COOLSPRI-MILFORD 23069      A  230 KV | L230.IndianRiver-Milford.23034",
+      "contrib": 0.12,
+      "beta": -0.174,
+      "bind_h": 41,
+      "mean_mu": -0.691
+     },
+     {
+      "k": "SEWARD  115 KV  SEW-TOW | L115.Hilltop-Krayn-RachelHill (HillclayJct&Salix)",
+      "contrib": -0.111,
+      "beta": 0.075,
+      "bind_h": 518,
+      "mean_mu": -1.479
+     },
+     {
+      "k": "LORETTO 138 KV  LOR-VIE | 230/138.PineyGrove.AT20",
+      "contrib": 0.103,
+      "beta": -0.081,
+      "bind_h": 215,
+      "mean_mu": -1.262
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.099,
+      "beta": 0.084,
+      "bind_h": 329,
+      "mean_mu": -1.186
+     }
+    ],
+    "corridor_share": 0.613,
+    "top_facilities": {
+     "BAGLEY  230 KV  BAG-GRA": -0.519,
+     "TMI     500 KV  1 BANK": -0.325,
+     "BAGLEY  230 KV  BAG-GRAC": -0.285,
+     "BAGLEY - GRACETON 2305      B  230 KV": -0.267,
+     "CONASTON500 KV  CNS-PEA": -0.261,
+     "GRACETON230 KV  GRA-SAF": -0.241,
+     "NELSON  138 KV  NEL-VIE": 0.209,
+     "COOLSPRI230 KV  COL-MIL": 0.204,
+     "LORETTO 138 KV  LOR-VIE": 0.181,
+     "NELSON-VIENNA 13707         A  138 KV": 0.178,
+     "SEWARD  115 KV  SEW-TOW": -0.163,
+     "PRESTON 69 KV   PRE-TAN": 0.149,
+     "COOLSPRI-MILFORD 23069      A  230 KV": 0.12,
+     "NOTTINGH230 KV  2-3": -0.102,
+     "NOTTINGHM 2-3 SER DEV       A  230 KV": -0.064
+    }
+   },
+   "Dominion-Western": {
+    "mean_spread": 0.344,
+    "fit_mean": 0.344,
+    "r2": 0.948,
+    "top_constraints": [
+     {
+      "k": "SEWARD  115 KV  SEW-TOW | L115.Hilltop-Krayn-RachelHill (HillclayJct&Salix)",
+      "contrib": -0.119,
+      "beta": 0.081,
+      "bind_h": 518,
+      "mean_mu": -1.479
+     },
+     {
+      "k": "WHITESTN115 KV  65A | L230.Fredericksburg-Birchwood.2083",
+      "contrib": 0.119,
+      "beta": -0.021,
+      "bind_h": 1205,
+      "mean_mu": -5.719
+     },
+     {
+      "k": "PLEASNTV230 KV  274D | L230.Belmont-CochranMill-Ashburn-Beaumeade.227",
+      "contrib": 0.095,
+      "beta": -0.036,
+      "bind_h": 445,
+      "mean_mu": -2.664
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-GRA | L500.Brighton-Conastone.5011",
+      "contrib": 0.07,
+      "beta": -0.025,
+      "bind_h": 955,
+      "mean_mu": -2.842
+     },
+     {
+      "k": "BAGLEY - GRACETON 2305      B  230 KV | L500.Brighton-Conastone.5011",
+      "contrib": 0.053,
+      "beta": -0.023,
+      "bind_h": 358,
+      "mean_mu": -2.325
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-GRAC | L500.Brighton-Conastone.5011",
+      "contrib": 0.05,
+      "beta": -0.036,
+      "bind_h": 462,
+      "mean_mu": -1.401
+     },
+     {
+      "k": "Paradise-BR Tap 161kV l/o Wilson BR Unit 1 | Wilson Unit 1",
+      "contrib": -0.05,
+      "beta": 0.006,
+      "bind_h": 655,
+      "mean_mu": -8.186
+     },
+     {
+      "k": "CONASTON500 KV  CNS-PEA | L500.Hunterstown-Conastone.5013",
+      "contrib": 0.048,
+      "beta": -0.065,
+      "bind_h": 970,
+      "mean_mu": -0.734
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-GRA | L230.Graceton-Bagley-RaphaelRoad.2313",
+      "contrib": 0.044,
+      "beta": -0.014,
+      "bind_h": 944,
+      "mean_mu": -3.113
+     },
+     {
+      "k": "BUTL APS138 KV  BUT-KAR | L345.ErieWest-Ashtabula-Perry",
+      "contrib": -0.037,
+      "beta": 0.032,
+      "bind_h": 176,
+      "mean_mu": -1.159
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Hunterstown-Conastone.5013",
+      "contrib": 0.037,
+      "beta": -0.031,
+      "bind_h": 329,
+      "mean_mu": -1.186
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": 0.034,
+      "beta": -0.025,
+      "bind_h": 659,
+      "mean_mu": -1.337
+     },
+     {
+      "k": "PRUNTYTO P11     CB      138 KV | 500/138.Pruntytown.T3 & T4 (Sctnlz F)",
+      "contrib": -0.027,
+      "beta": 0.02,
+      "bind_h": 31,
+      "mean_mu": -1.316
+     },
+     {
+      "k": "SMITHTON138 KV  SMI-YUK2 | L500.Cabot-Keystone.5002",
+      "contrib": 0.024,
+      "beta": -0.012,
+      "bind_h": 225,
+      "mean_mu": -2.01
+     },
+     {
+      "k": "SEWARD  115 KV  SEW-TOW | ACTUAL",
+      "contrib": -0.023,
+      "beta": 0.048,
+      "bind_h": 92,
+      "mean_mu": -0.494
+     }
+    ],
+    "corridor_share": 0.62,
+    "top_facilities": {
+     "SEWARD  115 KV  SEW-TOW": -0.166,
+     "WHITESTN115 KV  65A": 0.129,
+     "BAGLEY  230 KV  BAG-GRA": 0.114,
+     "PLEASNTV230 KV  274D": 0.095,
+     "BAGLEY  230 KV  BAG-GRAC": 0.078,
+     "GRACETON230 KV  GRA-SAF": 0.073,
+     "BAGLEY - GRACETON 2305      B  230 KV": 0.053,
+     "Paradise-BR Tap 161kV l/o Wilson BR Unit 1": -0.05,
+     "CONASTON500 KV  CNS-PEA": 0.048,
+     "BUTL APS138 KV  BUT-KAR": -0.043,
+     "CUMB PL 230 KV  CUM-JUN": 0.031,
+     "SMITHTON138 KV  SMI-YUK2": 0.028,
+     "EDGEWOOD115 KV  EDG-SHE": -0.028,
+     "PRUNTYTO P11     CB      138 KV": -0.027,
+     "ALLDAM6 138 KV  ALL-KIT": -0.025
+    }
+   },
+   "NJ-Dominion": {
+    "mean_spread": -3.067,
+    "fit_mean": -2.999,
+    "r2": 0.942,
+    "top_constraints": [
+     {
+      "k": "BAGLEY  230 KV  BAG-GRA | L500.Brighton-Conastone.5011",
+      "contrib": -0.347,
+      "beta": 0.122,
+      "bind_h": 955,
+      "mean_mu": -2.842
+     },
+     {
+      "k": "BAGLEY - GRACETON 2305      B  230 KV | L500.Brighton-Conastone.5011",
+      "contrib": -0.302,
+      "beta": 0.13,
+      "bind_h": 358,
+      "mean_mu": -2.325
+     },
+     {
+      "k": "CONASTON500 KV  CNS-PEA | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.273,
+      "beta": 0.372,
+      "bind_h": 970,
+      "mean_mu": -0.734
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-GRA | L230.Graceton-Bagley-RaphaelRoad.2313",
+      "contrib": -0.25,
+      "beta": 0.08,
+      "bind_h": 944,
+      "mean_mu": -3.113
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-GRAC | L500.Brighton-Conastone.5011",
+      "contrib": -0.206,
+      "beta": 0.147,
+      "bind_h": 462,
+      "mean_mu": -1.401
+     },
+     {
+      "k": "TMI     500 KV  1 BANK | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.197,
+      "beta": 0.102,
+      "bind_h": 782,
+      "mean_mu": -1.922
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.174,
+      "beta": 0.13,
+      "bind_h": 659,
+      "mean_mu": -1.337
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.146,
+      "beta": 0.123,
+      "bind_h": 329,
+      "mean_mu": -1.186
+     },
+     {
+      "k": "WHITESTN115 KV  65A | L230.Fredericksburg-Birchwood.2083",
+      "contrib": -0.12,
+      "beta": 0.021,
+      "bind_h": 1205,
+      "mean_mu": -5.719
+     },
+     {
+      "k": "PLEASNTV230 KV  274D | L230.Belmont-CochranMill-Ashburn-Beaumeade.227",
+      "contrib": -0.103,
+      "beta": 0.039,
+      "bind_h": 445,
+      "mean_mu": -2.664
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-GRAC | L230.Graceton-Bagley-RaphaelRoad.2305",
+      "contrib": -0.095,
+      "beta": 0.074,
+      "bind_h": 621,
+      "mean_mu": -1.281
+     },
+     {
+      "k": "CONASTON230 KV  CON-GRAC | L230.Conastone-Graceton.2323",
+      "contrib": -0.068,
+      "beta": 0.018,
+      "bind_h": 564,
+      "mean_mu": -3.728
+     },
+     {
+      "k": "NOTTINGHM 2-3 SER DEV       A  230 KV | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.062,
+      "beta": 0.107,
+      "bind_h": 341,
+      "mean_mu": -0.583
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.061,
+      "beta": 0.112,
+      "bind_h": 319,
+      "mean_mu": -0.545
+     },
+     {
+      "k": "TMI     500 KV  1 BANK | ACTUAL",
+      "contrib": -0.055,
+      "beta": 0.118,
+      "bind_h": 218,
+      "mean_mu": -0.467
+     }
+    ],
+    "corridor_share": 0.377,
+    "top_facilities": {
+     "BAGLEY  230 KV  BAG-GRA": -0.597,
+     "BAGLEY  230 KV  BAG-GRAC": -0.352,
+     "GRACETON230 KV  GRA-SAF": -0.33,
+     "BAGLEY - GRACETON 2305      B  230 KV": -0.302,
+     "TMI     500 KV  1 BANK": -0.29,
+     "CONASTON500 KV  CNS-PEA": -0.273,
+     "WHITESTN115 KV  65A": -0.131,
+     "PLEASNTV230 KV  274D": -0.103,
+     "NOTTINGH230 KV  2-3": -0.088,
+     "CONASTON230 KV  CON-GRAC": -0.067,
+     "NOTTINGHM 2-3 SER DEV       A  230 KV": -0.062,
+     "CONASTON230 KV  CNS-NOR2": -0.045,
+     "Paradise-BR Tap 161kV l/o Wilson BR Unit 1": 0.042,
+     "HARWOOD 230 KV  HAR-SUS": 0.041,
+     "YUKON    TRAN  4  XFORMER   H  500 KV": -0.035
+    }
+   }
+  }
+ },
+ "2021": {
+  "hours": 8755,
+  "constraints_total": 1048,
+  "rent_share_kept": 0.9247,
+  "spreads": {
+   "NJ-Western": {
+    "mean_spread": -6.002,
+    "fit_mean": -5.946,
+    "r2": 0.959,
+    "top_constraints": [
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -1.459,
+      "beta": 0.1,
+      "bind_h": 2010,
+      "mean_mu": -14.543
+     },
+     {
+      "k": "TMI     500 KV  1 BANK | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.911,
+      "beta": 0.091,
+      "bind_h": 1503,
+      "mean_mu": -9.987
+     },
+     {
+      "k": "BRIGHTON 6AB           CB      500 KV | 500/230.Brighton.T1",
+      "contrib": -0.506,
+      "beta": 0.199,
+      "bind_h": 1094,
+      "mean_mu": -2.538
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.387,
+      "beta": 0.081,
+      "bind_h": 1217,
+      "mean_mu": -4.769
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L230.Conastone-Northwest.2310",
+      "contrib": -0.307,
+      "beta": 0.086,
+      "bind_h": 259,
+      "mean_mu": -3.549
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-RAP5 | L500.Brighton-Conastone.5011",
+      "contrib": -0.276,
+      "beta": 0.115,
+      "bind_h": 818,
+      "mean_mu": -2.407
+     },
+     {
+      "k": "JUNIATA 500 KV  1 | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.153,
+      "beta": 0.097,
+      "bind_h": 71,
+      "mean_mu": -1.57
+     },
+     {
+      "k": "CONASTON500 KV  500-4 | L500.Brighton-Conastone.5011",
+      "contrib": -0.136,
+      "beta": 0.112,
+      "bind_h": 95,
+      "mean_mu": -1.219
+     },
+     {
+      "k": "HOPECREE230 KV  HOP-SIL | L500.HopeCreek-RedLion.5015",
+      "contrib": -0.128,
+      "beta": 0.077,
+      "bind_h": 392,
+      "mean_mu": -1.656
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-GRAC | L500.Brighton-Conastone.5011",
+      "contrib": -0.108,
+      "beta": 0.104,
+      "bind_h": 255,
+      "mean_mu": -1.047
+     },
+     {
+      "k": "ELIMA   138 KV  ELI-HAV1 | L765.Marysville-Sorenson",
+      "contrib": -0.101,
+      "beta": 0.004,
+      "bind_h": 1545,
+      "mean_mu": -24.747
+     },
+     {
+      "k": "JUNIATA 500 KV  2 | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.097,
+      "beta": 0.073,
+      "bind_h": 197,
+      "mean_mu": -1.339
+     },
+     {
+      "k": "CONASTON500 KV  500-2 | L500.Brighton-Conastone.5011",
+      "contrib": -0.086,
+      "beta": 0.12,
+      "bind_h": 85,
+      "mean_mu": -0.72
+     },
+     {
+      "k": "CUMB PL 230 KV  CUM-JUN | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.082,
+      "beta": 0.024,
+      "bind_h": 268,
+      "mean_mu": -3.462
+     },
+     {
+      "k": "FACEROCK69 KV   FAROZBR | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.073,
+      "beta": 0.018,
+      "bind_h": 721,
+      "mean_mu": -3.942
+     }
+    ],
+    "corridor_share": 0.42,
+    "top_facilities": {
+     "NOTTINGH230 KV  2-3": -1.459,
+     "TMI     500 KV  1 BANK": -0.911,
+     "BRIGHTON 6AB           CB      500 KV": -0.506,
+     "GRACETON230 KV  GRA-SAF": -0.387,
+     "CONASTON230 KV  CNS-NOR2": -0.367,
+     "BAGLEY  230 KV  BAG-RAP5": -0.276,
+     "HOPECREE230 KV  HOP-SIL": -0.271,
+     "JUNIATA 500 KV  2": -0.174,
+     "JUNIATA 500 KV  1": -0.153,
+     "CONASTON500 KV  500-2": -0.144,
+     "CONASTON500 KV  500-4": -0.136,
+     "BAGLEY  230 KV  BAG-GRAC": -0.108,
+     "CUMB PL 230 KV  CUM-JUN": -0.108,
+     "ELIMA   138 KV  ELI-HAV1": -0.101,
+     "GARDNERS115 KV  GAR-TEX": -0.089
+    }
+   },
+   "Eastern-Western": {
+    "mean_spread": -3.153,
+    "fit_mean": -3.086,
+    "r2": 0.964,
+    "top_constraints": [
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -1.926,
+      "beta": 0.132,
+      "bind_h": 2010,
+      "mean_mu": -14.543
+     },
+     {
+      "k": "VIENNA  230 KV  AT20 | L230.IndianRiver-Milford.23034",
+      "contrib": 1.436,
+      "beta": -0.198,
+      "bind_h": 578,
+      "mean_mu": -7.246
+     },
+     {
+      "k": "TMI     500 KV  1 BANK | L500.Conastone-PeachBottom.5012",
+      "contrib": -1.01,
+      "beta": 0.101,
+      "bind_h": 1503,
+      "mean_mu": -9.987
+     },
+     {
+      "k": "BRIGHTON 6AB           CB      500 KV | 500/230.Brighton.T1",
+      "contrib": -0.531,
+      "beta": 0.209,
+      "bind_h": 1094,
+      "mean_mu": -2.538
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.372,
+      "beta": 0.078,
+      "bind_h": 1217,
+      "mean_mu": -4.769
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L230.Conastone-Northwest.2310",
+      "contrib": -0.333,
+      "beta": 0.094,
+      "bind_h": 259,
+      "mean_mu": -3.549
+     },
+     {
+      "k": "HOPECREE230 KV  HOP-SIL | L500.Keeney-RockSprings.5025",
+      "contrib": 0.31,
+      "beta": -0.23,
+      "bind_h": 125,
+      "mean_mu": -1.349
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-RAP5 | L500.Brighton-Conastone.5011",
+      "contrib": -0.302,
+      "beta": 0.126,
+      "bind_h": 818,
+      "mean_mu": -2.407
+     },
+     {
+      "k": "MARDELA 69 KV   MAR-VIE | 230/138.PineyGrove.AT20",
+      "contrib": 0.217,
+      "beta": -0.046,
+      "bind_h": 213,
+      "mean_mu": -4.769
+     },
+     {
+      "k": "PRESTON 69 KV   PRE-TAN | 230/138.Vienna.AT20",
+      "contrib": 0.206,
+      "beta": -0.035,
+      "bind_h": 417,
+      "mean_mu": -5.878
+     },
+     {
+      "k": "COOLSPRI230 KV  COL-MIL | L230.IndianRiver-Milford.23034",
+      "contrib": 0.201,
+      "beta": -0.176,
+      "bind_h": 176,
+      "mean_mu": -1.143
+     },
+     {
+      "k": "HOPECREE230 KV  HOP-SIL | Wildcat.CC",
+      "contrib": 0.198,
+      "beta": -0.235,
+      "bind_h": 113,
+      "mean_mu": -0.844
+     },
+     {
+      "k": "HOPECREE230 KV  HOP-SIL | L500.HopeCreek-RedLion.5015",
+      "contrib": 0.166,
+      "beta": -0.1,
+      "bind_h": 392,
+      "mean_mu": -1.656
+     },
+     {
+      "k": "LORETTO 138 KV  LOR-VIE | 230/138.PineyGrove.AT20",
+      "contrib": 0.162,
+      "beta": -0.079,
+      "bind_h": 280,
+      "mean_mu": -2.043
+     },
+     {
+      "k": "JUNIATA 500 KV  1 | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.161,
+      "beta": 0.103,
+      "bind_h": 71,
+      "mean_mu": -1.57
+     }
+    ],
+    "corridor_share": 0.96,
+    "top_facilities": {
+     "NOTTINGH230 KV  2-3": -1.926,
+     "VIENNA  230 KV  AT20": 1.436,
+     "TMI     500 KV  1 BANK": -1.01,
+     "HOPECREE230 KV  HOP-SIL": 0.727,
+     "BRIGHTON 6AB           CB      500 KV": -0.531,
+     "CONASTON230 KV  CNS-NOR2": -0.392,
+     "GRACETON230 KV  GRA-SAF": -0.372,
+     "PRESTON 69 KV   PRE-TAN": 0.324,
+     "BAGLEY  230 KV  BAG-RAP5": -0.302,
+     "MARDELA 69 KV   MAR-VIE": 0.272,
+     "COOLSPRI230 KV  COL-MIL": 0.201,
+     "JUNIATA 500 KV  2": -0.178,
+     "CONASTON500 KV  500-2": -0.164,
+     "LORETTO 138 KV  LOR-VIE": 0.162,
+     "JUNIATA 500 KV  1": -0.161
+    }
+   },
+   "Dominion-Western": {
+    "mean_spread": 1.287,
+    "fit_mean": 1.249,
+    "r2": 0.871,
+    "top_constraints": [
+     {
+      "k": "RAPPAHAN115 KV  RAP-WHIT | L230.Lanexa-Dunnsville-NorthernNeck.224",
+      "contrib": 0.217,
+      "beta": -0.019,
+      "bind_h": 510,
+      "mean_mu": -11.518
+     },
+     {
+      "k": "BRIGHTON 6AB           CB      500 KV | 500/230.Brighton.T1",
+      "contrib": 0.211,
+      "beta": -0.083,
+      "bind_h": 1094,
+      "mean_mu": -2.538
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": 0.16,
+      "beta": -0.011,
+      "bind_h": 2010,
+      "mean_mu": -14.543
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": 0.117,
+      "beta": -0.025,
+      "bind_h": 1217,
+      "mean_mu": -4.769
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L230.Conastone-Northwest.2310",
+      "contrib": 0.089,
+      "beta": -0.025,
+      "bind_h": 259,
+      "mean_mu": -3.549
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-RAP5 | L500.Brighton-Conastone.5011",
+      "contrib": 0.082,
+      "beta": -0.034,
+      "bind_h": 818,
+      "mean_mu": -2.407
+     },
+     {
+      "k": "KRENDALE138 KV  KRE-SHA | L500.Cabot-Cranberry",
+      "contrib": 0.075,
+      "beta": -0.047,
+      "bind_h": 132,
+      "mean_mu": -1.611
+     },
+     {
+      "k": "SEWARD  115 KV  SEW-TOW | L230.HomerCity-Quemahoning-Hooversville.2024",
+      "contrib": -0.074,
+      "beta": 0.069,
+      "bind_h": 23,
+      "mean_mu": -1.074
+     },
+     {
+      "k": "BUTL APS138 KV  BUT-KAR | L345.ErieWest-Ashtabula-Perry",
+      "contrib": -0.062,
+      "beta": 0.032,
+      "bind_h": 504,
+      "mean_mu": -1.937
+     },
+     {
+      "k": "TMI     500 KV  1 BANK | L500.Conastone-PeachBottom.5012",
+      "contrib": 0.052,
+      "beta": -0.005,
+      "bind_h": 1503,
+      "mean_mu": -9.987
+     },
+     {
+      "k": "PLEASNTV230 KV  274D | L230.PleasantView-Belmont.2180",
+      "contrib": 0.049,
+      "beta": -0.046,
+      "bind_h": 47,
+      "mean_mu": -1.07
+     },
+     {
+      "k": "PLEASNTV230 KV  274D | L230.Belmont-CochranMill-Ashburn-Beaumeade.227",
+      "contrib": 0.046,
+      "beta": -0.043,
+      "bind_h": 102,
+      "mean_mu": -1.065
+     },
+     {
+      "k": "PLEASNTV230 KV  274D | L230.Brambleton-PolandRoad.2183",
+      "contrib": 0.042,
+      "beta": -0.028,
+      "bind_h": 151,
+      "mean_mu": -1.539
+     },
+     {
+      "k": "CONASTON500 KV  500-4 | L500.Brighton-Conastone.5011",
+      "contrib": 0.039,
+      "beta": -0.032,
+      "bind_h": 95,
+      "mean_mu": -1.219
+     },
+     {
+      "k": "JUNIATA 500 KV  1 | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.038,
+      "beta": 0.024,
+      "bind_h": 71,
+      "mean_mu": -1.57
+     }
+    ],
+    "corridor_share": 0.357,
+    "top_facilities": {
+     "RAPPAHAN115 KV  RAP-WHIT": 0.217,
+     "BRIGHTON 6AB           CB      500 KV": 0.211,
+     "NOTTINGH230 KV  2-3": 0.16,
+     "PLEASNTV230 KV  274D": 0.146,
+     "GRACETON230 KV  GRA-SAF": 0.117,
+     "BUTL APS138 KV  BUT-KAR": -0.115,
+     "CONASTON230 KV  CNS-NOR2": 0.109,
+     "BAGLEY  230 KV  BAG-RAP5": 0.082,
+     "KRENDALE138 KV  KRE-SHA": 0.075,
+     "SEWARD  115 KV  SEW-TOW": -0.074,
+     "CUMB PL 230 KV  CUM-JUN": 0.056,
+     "TMI     500 KV  1 BANK": 0.052,
+     "JUNIATA 500 KV  2": -0.051,
+     "CONASTON500 KV  500-2": 0.048,
+     "FARMVILL230 KV  TX5": 0.045
+    }
+   },
+   "NJ-Dominion": {
+    "mean_spread": -7.289,
+    "fit_mean": -7.196,
+    "r2": 0.966,
+    "top_constraints": [
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -1.619,
+      "beta": 0.111,
+      "bind_h": 2010,
+      "mean_mu": -14.543
+     },
+     {
+      "k": "TMI     500 KV  1 BANK | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.962,
+      "beta": 0.096,
+      "bind_h": 1503,
+      "mean_mu": -9.987
+     },
+     {
+      "k": "BRIGHTON 6AB           CB      500 KV | 500/230.Brighton.T1",
+      "contrib": -0.717,
+      "beta": 0.282,
+      "bind_h": 1094,
+      "mean_mu": -2.538
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.504,
+      "beta": 0.106,
+      "bind_h": 1217,
+      "mean_mu": -4.769
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L230.Conastone-Northwest.2310",
+      "contrib": -0.396,
+      "beta": 0.112,
+      "bind_h": 259,
+      "mean_mu": -3.549
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-RAP5 | L500.Brighton-Conastone.5011",
+      "contrib": -0.359,
+      "beta": 0.149,
+      "bind_h": 818,
+      "mean_mu": -2.407
+     },
+     {
+      "k": "RAPPAHAN115 KV  RAP-WHIT | L230.Lanexa-Dunnsville-NorthernNeck.224",
+      "contrib": -0.215,
+      "beta": 0.019,
+      "bind_h": 510,
+      "mean_mu": -11.518
+     },
+     {
+      "k": "CONASTON500 KV  500-4 | L500.Brighton-Conastone.5011",
+      "contrib": -0.176,
+      "beta": 0.144,
+      "bind_h": 95,
+      "mean_mu": -1.219
+     },
+     {
+      "k": "HOPECREE230 KV  HOP-SIL | L500.HopeCreek-RedLion.5015",
+      "contrib": -0.145,
+      "beta": 0.088,
+      "bind_h": 392,
+      "mean_mu": -1.656
+     },
+     {
+      "k": "BAGLEY  230 KV  BAG-GRAC | L500.Brighton-Conastone.5011",
+      "contrib": -0.137,
+      "beta": 0.131,
+      "bind_h": 255,
+      "mean_mu": -1.047
+     },
+     {
+      "k": "JUNIATA 500 KV  1 | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.115,
+      "beta": 0.073,
+      "bind_h": 71,
+      "mean_mu": -1.57
+     },
+     {
+      "k": "CUMB PL 230 KV  CUM-JUN | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.112,
+      "beta": 0.032,
+      "bind_h": 268,
+      "mean_mu": -3.462
+     },
+     {
+      "k": "CONASTON500 KV  500-2 | L500.Brighton-Conastone.5011",
+      "contrib": -0.109,
+      "beta": 0.152,
+      "bind_h": 85,
+      "mean_mu": -0.72
+     },
+     {
+      "k": "Prest Tibb 138 kV l/o Prairie State Mt Vernon 345 kV | Prairie State-W Mt. Vernon 345",
+      "contrib": -0.085,
+      "beta": 0.003,
+      "bind_h": 963,
+      "mean_mu": -31.981
+     },
+     {
+      "k": "KRENDALE138 KV  KRE-SHA | L500.Cabot-Cranberry",
+      "contrib": -0.084,
+      "beta": 0.052,
+      "bind_h": 132,
+      "mean_mu": -1.611
+     }
+    ],
+    "corridor_share": 0.409,
+    "top_facilities": {
+     "NOTTINGH230 KV  2-3": -1.619,
+     "TMI     500 KV  1 BANK": -0.962,
+     "BRIGHTON 6AB           CB      500 KV": -0.717,
+     "GRACETON230 KV  GRA-SAF": -0.504,
+     "CONASTON230 KV  CNS-NOR2": -0.476,
+     "BAGLEY  230 KV  BAG-RAP5": -0.359,
+     "HOPECREE230 KV  HOP-SIL": -0.306,
+     "RAPPAHAN115 KV  RAP-WHIT": -0.215,
+     "CONASTON500 KV  500-2": -0.192,
+     "CONASTON500 KV  500-4": -0.176,
+     "CUMB PL 230 KV  CUM-JUN": -0.165,
+     "PLEASNTV230 KV  274D": -0.151,
+     "BAGLEY  230 KV  BAG-GRAC": -0.137,
+     "JUNIATA 500 KV  2": -0.123,
+     "JUNIATA 500 KV  1": -0.115
+    }
+   }
+  }
+ },
+ "2022": {
+  "hours": 8755,
+  "constraints_total": 1295,
+  "rent_share_kept": 0.9071,
+  "spreads": {
+   "NJ-Western": {
+    "mean_spread": -8.87,
+    "fit_mean": -8.792,
+    "r2": 0.94,
+    "top_constraints": [
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -5.309,
+      "beta": 0.105,
+      "bind_h": 4524,
+      "mean_mu": -50.8
+     },
+     {
+      "k": "BOONETWN230 KV  BOO-SRE | 500/230.Lauschtown.T3",
+      "contrib": -0.522,
+      "beta": 0.077,
+      "bind_h": 1698,
+      "mean_mu": -6.787
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L500.Brighton-Conastone.5011",
+      "contrib": -0.342,
+      "beta": 0.071,
+      "bind_h": 358,
+      "mean_mu": -4.808
+     },
+     {
+      "k": "LAUSCHTO500 KV  T3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.31,
+      "beta": 0.104,
+      "bind_h": 340,
+      "mean_mu": -2.973
+     },
+     {
+      "k": "CUMB PL 230 KV  CUM-JUN | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.273,
+      "beta": 0.021,
+      "bind_h": 575,
+      "mean_mu": -12.864
+     },
+     {
+      "k": "CONASTON500 KV  CNS-PEA | ACTUAL",
+      "contrib": -0.265,
+      "beta": 0.359,
+      "bind_h": 259,
+      "mean_mu": -0.737
+     },
+     {
+      "k": "MILLWDPL230 KV  MIL-SAK | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.26,
+      "beta": 0.095,
+      "bind_h": 246,
+      "mean_mu": -2.746
+     },
+     {
+      "k": "CONASTON500 KV  500-4 | L500.Brighton-Conastone.5011",
+      "contrib": -0.229,
+      "beta": 0.142,
+      "bind_h": 75,
+      "mean_mu": -1.62
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.225,
+      "beta": 0.089,
+      "bind_h": 352,
+      "mean_mu": -2.527
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.224,
+      "beta": 0.123,
+      "bind_h": 102,
+      "mean_mu": -1.824
+     },
+     {
+      "k": "FRACKVIL230 KV  FRA-SIE | L230.EastPalmerton-Harwood",
+      "contrib": 0.219,
+      "beta": -0.038,
+      "bind_h": 343,
+      "mean_mu": -5.754
+     },
+     {
+      "k": "BUTL APS138 KV  BUT-KAR | 345/138.Ashtabula.TR4",
+      "contrib": -0.205,
+      "beta": 0.036,
+      "bind_h": 171,
+      "mean_mu": -5.663
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.178,
+      "beta": 0.142,
+      "bind_h": 119,
+      "mean_mu": -1.259
+     },
+     {
+      "k": "RAMAPO  138 KV  RAM-SMA | 345/138.SouthMahwah.BK258",
+      "contrib": 0.162,
+      "beta": -0.211,
+      "bind_h": 1081,
+      "mean_mu": -0.769
+     },
+     {
+      "k": "BUTL APS138 KV  BUT-KAR | L345.Ashtabula-Perry",
+      "contrib": -0.159,
+      "beta": 0.03,
+      "bind_h": 392,
+      "mean_mu": -5.373
+     }
+    ],
+    "corridor_share": 0.787,
+    "top_facilities": {
+     "NOTTINGH230 KV  2-3": -5.532,
+     "BOONETWN230 KV  BOO-SRE": -0.522,
+     "CONASTON230 KV  CNS-NOR2": -0.414,
+     "GRACETON230 KV  GRA-SAF": -0.403,
+     "BUTL APS138 KV  BUT-KAR": -0.364,
+     "LAUSCHTO500 KV  T3": -0.31,
+     "CUMB PL 230 KV  CUM-JUN": -0.275,
+     "CONASTON500 KV  CNS-PEA": -0.265,
+     "MILLWDPL230 KV  MIL-SAK": -0.26,
+     "CONASTON500 KV  500-4": -0.229,
+     "FRACKVIL230 KV  FRA-SIE": 0.219,
+     "RAMAPO  138 KV  RAM-SMA": 0.162,
+     "FREMNT  138 KV  FRE-WFR1": -0.161,
+     "HOPECREE230 KV  HOP-SIL": -0.136,
+     "CONASTON230 KV  CNS-NOR1": -0.128
+    }
+   },
+   "Eastern-Western": {
+    "mean_spread": -6.937,
+    "fit_mean": -6.73,
+    "r2": 0.948,
+    "top_constraints": [
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -6.657,
+      "beta": 0.131,
+      "bind_h": 4524,
+      "mean_mu": -50.8
+     },
+     {
+      "k": "COOLSPRI230 KV  COL-MIL | L230.IndianRiver-Milford.23034",
+      "contrib": 1.253,
+      "beta": -0.181,
+      "bind_h": 383,
+      "mean_mu": -6.936
+     },
+     {
+      "k": "BOONETWN230 KV  BOO-SRE | 500/230.Lauschtown.T3",
+      "contrib": -0.482,
+      "beta": 0.071,
+      "bind_h": 1698,
+      "mean_mu": -6.787
+     },
+     {
+      "k": "VIENNA  230 KV  AT20 | L230.IndianRiver-Milford.23034",
+      "contrib": 0.41,
+      "beta": -0.204,
+      "bind_h": 110,
+      "mean_mu": -2.014
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L500.Brighton-Conastone.5011",
+      "contrib": -0.359,
+      "beta": 0.075,
+      "bind_h": 358,
+      "mean_mu": -4.808
+     },
+     {
+      "k": "LAUSCHTO500 KV  T3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.302,
+      "beta": 0.102,
+      "bind_h": 340,
+      "mean_mu": -2.973
+     },
+     {
+      "k": "CEDARCRE230 KV  CED-SIL | L230.Cartanza-Milford.23033",
+      "contrib": 0.289,
+      "beta": -0.205,
+      "bind_h": 241,
+      "mean_mu": -1.409
+     },
+     {
+      "k": "MARDELA 69 KV   MAR-VIE | 230/138.PineyGrove.AT20",
+      "contrib": 0.28,
+      "beta": -0.039,
+      "bind_h": 204,
+      "mean_mu": -7.206
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.278,
+      "beta": 0.153,
+      "bind_h": 102,
+      "mean_mu": -1.824
+     },
+     {
+      "k": "CONASTON500 KV  CNS-PEA | ACTUAL",
+      "contrib": -0.276,
+      "beta": 0.374,
+      "bind_h": 259,
+      "mean_mu": -0.737
+     },
+     {
+      "k": "MILLWDPL230 KV  MIL-SAK | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.261,
+      "beta": 0.095,
+      "bind_h": 246,
+      "mean_mu": -2.746
+     },
+     {
+      "k": "CONASTON500 KV  500-4 | L500.Brighton-Conastone.5011",
+      "contrib": -0.255,
+      "beta": 0.157,
+      "bind_h": 75,
+      "mean_mu": -1.62
+     },
+     {
+      "k": "CUMB PL 230 KV  CUM-JUN | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.252,
+      "beta": 0.02,
+      "bind_h": 575,
+      "mean_mu": -12.864
+     },
+     {
+      "k": "HOPECREE230 KV  HOP-SIL | L500.HopeCreek-RedLion.5015",
+      "contrib": 0.245,
+      "beta": -0.136,
+      "bind_h": 466,
+      "mean_mu": -1.805
+     },
+     {
+      "k": "KEENEY  230 KV  KEE-STE9 | L230.CedarCreek-SilverRun.23030",
+      "contrib": 0.243,
+      "beta": -0.223,
+      "bind_h": 91,
+      "mean_mu": -1.09
+     }
+    ],
+    "corridor_share": 1.216,
+    "top_facilities": {
+     "NOTTINGH230 KV  2-3": -6.935,
+     "COOLSPRI230 KV  COL-MIL": 1.253,
+     "BOONETWN230 KV  BOO-SRE": -0.482,
+     "VIENNA  230 KV  AT20": 0.465,
+     "CONASTON230 KV  CNS-NOR2": -0.431,
+     "GRACETON230 KV  GRA-SAF": -0.387,
+     "BUTL APS138 KV  BUT-KAR": -0.385,
+     "MARDELA 69 KV   MAR-VIE": 0.372,
+     "LAUSCHTO500 KV  T3": -0.302,
+     "CEDARCRE230 KV  CED-SIL": 0.289,
+     "CONASTON500 KV  CNS-PEA": -0.276,
+     "MILLWDPL230 KV  MIL-SAK": -0.261,
+     "CONASTON500 KV  500-4": -0.255,
+     "HOPECREE230 KV  HOP-SIL": 0.245,
+     "KEENEY  230 KV  KEE-STE9": 0.243
+    }
+   },
+   "Dominion-Western": {
+    "mean_spread": 3.675,
+    "fit_mean": 3.582,
+    "r2": 0.873,
+    "top_constraints": [
+     {
+      "k": "GREYSPT 115 KV  GRE-HARM | L230.Fredericksburg-Birchwood.2083",
+      "contrib": 0.652,
+      "beta": -0.017,
+      "bind_h": 749,
+      "mean_mu": -38.486
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": 0.593,
+      "beta": -0.012,
+      "bind_h": 4524,
+      "mean_mu": -50.8
+     },
+     {
+      "k": "BEAUMEAD 274T2206 CB | L230.EvergreenMills-YarleyRidge.2209",
+      "contrib": 0.542,
+      "beta": -0.042,
+      "bind_h": 392,
+      "mean_mu": -12.867
+     },
+     {
+      "k": "BUTL APS138 KV  BUT-KAR | L345.Ashtabula-Perry",
+      "contrib": -0.188,
+      "beta": 0.035,
+      "bind_h": 392,
+      "mean_mu": -5.373
+     },
+     {
+      "k": "BRAMBLET230 KV  BRA-EVRG | L230.Brambleton-PolandRoad.2183",
+      "contrib": 0.182,
+      "beta": -0.011,
+      "bind_h": 545,
+      "mean_mu": -17.128
+     },
+     {
+      "k": "BRAMBLET-EVRGREEN 2172B     A  230 KV | L230.Beaumead-Ashburn-PleasantView.274",
+      "contrib": 0.175,
+      "beta": -0.026,
+      "bind_h": 202,
+      "mean_mu": -6.672
+     },
+     {
+      "k": "IDYLWOO4230 KV  202A | L230.Brambleton-PolandRoad.2183",
+      "contrib": -0.165,
+      "beta": 0.02,
+      "bind_h": 92,
+      "mean_mu": -8.257
+     },
+     {
+      "k": "BUTL APS138 KV  BUT-KAR | 345/138.Ashtabula.TR4",
+      "contrib": -0.153,
+      "beta": 0.027,
+      "bind_h": 171,
+      "mean_mu": -5.663
+     },
+     {
+      "k": "APSOUTH | L500.Bedington-BlackOak",
+      "contrib": 0.141,
+      "beta": -0.119,
+      "bind_h": 228,
+      "mean_mu": -1.186
+     },
+     {
+      "k": "RAMAPO  138 KV  RAM-SMA | 345/138.SouthMahwah.BK258",
+      "contrib": 0.123,
+      "beta": -0.159,
+      "bind_h": 1081,
+      "mean_mu": -0.769
+     },
+     {
+      "k": "CUMB PL 230 KV  CUM-JUN | L500.Conastone-PeachBottom.5012",
+      "contrib": 0.114,
+      "beta": -0.009,
+      "bind_h": 575,
+      "mean_mu": -12.864
+     },
+     {
+      "k": "FARMVILL230 KV  TX5 | 230/115.Farmville.TX4",
+      "contrib": 0.113,
+      "beta": -0.029,
+      "bind_h": 189,
+      "mean_mu": -3.867
+     },
+     {
+      "k": "ASHBURN-COCHRANM 227A | L230.Beaumead-Ashburn-PleasantView.274",
+      "contrib": 0.104,
+      "beta": -0.041,
+      "bind_h": 69,
+      "mean_mu": -2.559
+     },
+     {
+      "k": "BRAMBLET230 KV  BRA-EVRG | L230.Beaumead-Ashburn-PleasantView.274",
+      "contrib": 0.101,
+      "beta": -0.01,
+      "bind_h": 241,
+      "mean_mu": -10.408
+     },
+     {
+      "k": "IDYLWOO4230 KV  202A | L230.Idylwood-Redfield-CIA.2035",
+      "contrib": -0.099,
+      "beta": 0.02,
+      "bind_h": 182,
+      "mean_mu": -4.993
+     }
+    ],
+    "corridor_share": 0.248,
+    "top_facilities": {
+     "GREYSPT 115 KV  GRE-HARM": 0.652,
+     "NOTTINGH230 KV  2-3": 0.603,
+     "BEAUMEAD 274T2206 CB": 0.542,
+     "BUTL APS138 KV  BUT-KAR": -0.34,
+     "IDYLWOO4230 KV  202A": -0.284,
+     "BRAMBLET230 KV  BRA-EVRG": 0.282,
+     "CUMB PL 230 KV  CUM-JUN": 0.197,
+     "BRAMBLET-EVRGREEN 2172B     A  230 KV": 0.175,
+     "APSOUTH": 0.141,
+     "FARMVILL230 KV  TX5": 0.131,
+     "RAMAPO  138 KV  RAM-SMA": 0.123,
+     "ASHBURN-COCHRANM 227A": 0.104,
+     "ASHBURN 230 KV  227A": 0.092,
+     "CENTRVIL138 KV  CEN-REU1": 0.09,
+     "COOLSPRI230 KV  COL-MIL": 0.09
+    }
+   },
+   "NJ-Dominion": {
+    "mean_spread": -12.544,
+    "fit_mean": -12.374,
+    "r2": 0.929,
+    "top_constraints": [
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -5.902,
+      "beta": 0.116,
+      "bind_h": 4524,
+      "mean_mu": -50.8
+     },
+     {
+      "k": "GREYSPT 115 KV  GRE-HARM | L230.Fredericksburg-Birchwood.2083",
+      "contrib": -0.58,
+      "beta": 0.015,
+      "bind_h": 749,
+      "mean_mu": -38.486
+     },
+     {
+      "k": "BOONETWN230 KV  BOO-SRE | 500/230.Lauschtown.T3",
+      "contrib": -0.509,
+      "beta": 0.075,
+      "bind_h": 1698,
+      "mean_mu": -6.787
+     },
+     {
+      "k": "BEAUMEAD 274T2206 CB | L230.EvergreenMills-YarleyRidge.2209",
+      "contrib": -0.492,
+      "beta": 0.038,
+      "bind_h": 392,
+      "mean_mu": -12.867
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L500.Brighton-Conastone.5011",
+      "contrib": -0.427,
+      "beta": 0.089,
+      "bind_h": 358,
+      "mean_mu": -4.808
+     },
+     {
+      "k": "CUMB PL 230 KV  CUM-JUN | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.387,
+      "beta": 0.03,
+      "bind_h": 575,
+      "mean_mu": -12.864
+     },
+     {
+      "k": "LAUSCHTO500 KV  T3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.339,
+      "beta": 0.114,
+      "bind_h": 340,
+      "mean_mu": -2.973
+     },
+     {
+      "k": "MILLWDPL230 KV  MIL-SAK | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.312,
+      "beta": 0.114,
+      "bind_h": 246,
+      "mean_mu": -2.746
+     },
+     {
+      "k": "CONASTON500 KV  CNS-PEA | ACTUAL",
+      "contrib": -0.303,
+      "beta": 0.41,
+      "bind_h": 259,
+      "mean_mu": -0.737
+     },
+     {
+      "k": "CONASTON500 KV  500-4 | L500.Brighton-Conastone.5011",
+      "contrib": -0.295,
+      "beta": 0.182,
+      "bind_h": 75,
+      "mean_mu": -1.62
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.263,
+      "beta": 0.104,
+      "bind_h": 352,
+      "mean_mu": -2.527
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.234,
+      "beta": 0.128,
+      "bind_h": 102,
+      "mean_mu": -1.824
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.215,
+      "beta": 0.171,
+      "bind_h": 119,
+      "mean_mu": -1.259
+     },
+     {
+      "k": "BRAMBLET230 KV  BRA-EVRG | L230.Brambleton-PolandRoad.2183",
+      "contrib": -0.183,
+      "beta": 0.011,
+      "bind_h": 545,
+      "mean_mu": -17.128
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR1 | L500.Brighton-Conastone.5011",
+      "contrib": -0.182,
+      "beta": 0.134,
+      "bind_h": 82,
+      "mean_mu": -1.359
+     }
+    ],
+    "corridor_share": 0.629,
+    "top_facilities": {
+     "NOTTINGH230 KV  2-3": -6.135,
+     "GREYSPT 115 KV  GRE-HARM": -0.58,
+     "BOONETWN230 KV  BOO-SRE": -0.509,
+     "CONASTON230 KV  CNS-NOR2": -0.493,
+     "BEAUMEAD 274T2206 CB": -0.492,
+     "GRACETON230 KV  GRA-SAF": -0.478,
+     "CUMB PL 230 KV  CUM-JUN": -0.472,
+     "LAUSCHTO500 KV  T3": -0.339,
+     "MILLWDPL230 KV  MIL-SAK": -0.312,
+     "CONASTON500 KV  CNS-PEA": -0.303,
+     "CONASTON500 KV  500-4": -0.295,
+     "BRAMBLET230 KV  BRA-EVRG": -0.289,
+     "IDYLWOO4230 KV  202A": 0.225,
+     "FREMNT  138 KV  FRE-WFR1": -0.191,
+     "CONASTON230 KV  CNS-NOR1": -0.182
+    }
+   }
+  }
+ },
+ "2023": {
+  "hours": 8755,
+  "constraints_total": 1322,
+  "rent_share_kept": 0.9047,
+  "spreads": {
+   "NJ-Western": {
+    "mean_spread": -8.09,
+    "fit_mean": -8.041,
+    "r2": 0.976,
+    "top_constraints": [
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -3.667,
+      "beta": 0.108,
+      "bind_h": 5341,
+      "mean_mu": -33.935
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.957,
+      "beta": 0.077,
+      "bind_h": 2944,
+      "mean_mu": -12.494
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L230.Conastone-Northwest.2310",
+      "contrib": -0.673,
+      "beta": 0.095,
+      "bind_h": 599,
+      "mean_mu": -7.074
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | 500/230.Conastone.500-4",
+      "contrib": -0.496,
+      "beta": 0.115,
+      "bind_h": 431,
+      "mean_mu": -4.322
+     },
+     {
+      "k": "BIGPINET138 KV  BIG-KIS | L138.Kittanning-AllDam6",
+      "contrib": -0.442,
+      "beta": 0.049,
+      "bind_h": 626,
+      "mean_mu": -8.942
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L500.Brighton-Conastone.5011",
+      "contrib": -0.377,
+      "beta": 0.087,
+      "bind_h": 428,
+      "mean_mu": -4.342
+     },
+     {
+      "k": "CONASTON500 KV  CNS-PEA | ACTUAL",
+      "contrib": -0.277,
+      "beta": 0.378,
+      "bind_h": 463,
+      "mean_mu": -0.734
+     },
+     {
+      "k": "NOTTINGHM 2-3 SER DEV       A  230 KV | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.205,
+      "beta": 0.098,
+      "bind_h": 143,
+      "mean_mu": -2.097
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.PeachBottom.BusTie.2",
+      "contrib": -0.164,
+      "beta": 0.109,
+      "bind_h": 120,
+      "mean_mu": -1.496
+     },
+     {
+      "k": "CONASTON500 KV  500-2 | L500.Brighton-Conastone.5011",
+      "contrib": -0.159,
+      "beta": 0.154,
+      "bind_h": 108,
+      "mean_mu": -1.031
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | 500/230.Conastone.500-4",
+      "contrib": -0.155,
+      "beta": 0.086,
+      "bind_h": 265,
+      "mean_mu": -1.802
+     },
+     {
+      "k": "GARDNERS115 KV  GAR-TEX | L115.MiddletownJct-Collins.975 (Sctnlz)",
+      "contrib": -0.106,
+      "beta": 0.011,
+      "bind_h": 1116,
+      "mean_mu": -9.538
+     },
+     {
+      "k": "NOTTINGHM 1-3 SER DEV       A  230 KV | L500.PeachBottom.BusTie.2",
+      "contrib": -0.079,
+      "beta": 0.108,
+      "bind_h": 48,
+      "mean_mu": -0.733
+     },
+     {
+      "k": "POSSUMP4500 KV  TX1 | L500.Morrisville-Spotsylvania.594",
+      "contrib": 0.054,
+      "beta": -0.017,
+      "bind_h": 247,
+      "mean_mu": -3.255
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.052,
+      "beta": 0.102,
+      "bind_h": 86,
+      "mean_mu": -0.51
+     }
+    ],
+    "corridor_share": 0.908,
+    "top_facilities": {
+     "NOTTINGH230 KV  2-3": -4.378,
+     "GRACETON230 KV  GRA-SAF": -1.164,
+     "CONASTON230 KV  CNS-NOR2": -1.05,
+     "BIGPINET138 KV  BIG-KIS": -0.49,
+     "CONASTON500 KV  CNS-PEA": -0.277,
+     "NOTTINGHM 2-3 SER DEV       A  230 KV": -0.205,
+     "CONASTON500 KV  500-2": -0.159,
+     "NOTTINGHM 1-3 SER DEV       A  230 KV": -0.079,
+     "GARDNERS115 KV  GAR-TEX": -0.073,
+     "POSSUMP4500 KV  TX1": 0.054,
+     "GARRETAP115 KV  GAR-GAR": 0.05,
+     "CEDARSUB230 KV  CED-WILF": 0.045,
+     "HOWARD2 138 KV  HOW-MEL1": 0.042,
+     "CEDARCRE230 KV  CED-SIL": 0.04,
+     "JUNIATA 500 KV  2": -0.036
+    }
+   },
+   "Eastern-Western": {
+    "mean_spread": -5.812,
+    "fit_mean": -5.746,
+    "r2": 0.987,
+    "top_constraints": [
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -4.584,
+      "beta": 0.135,
+      "bind_h": 5341,
+      "mean_mu": -33.935
+     },
+     {
+      "k": "COOLSPRI230 KV  COL-MIL | L230.IndianRiver-Milford.23034",
+      "contrib": 1.699,
+      "beta": -0.184,
+      "bind_h": 422,
+      "mean_mu": -9.254
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.903,
+      "beta": 0.072,
+      "bind_h": 2944,
+      "mean_mu": -12.494
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L230.Conastone-Northwest.2310",
+      "contrib": -0.705,
+      "beta": 0.1,
+      "bind_h": 599,
+      "mean_mu": -7.074
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | 500/230.Conastone.500-4",
+      "contrib": -0.639,
+      "beta": 0.148,
+      "bind_h": 431,
+      "mean_mu": -4.322
+     },
+     {
+      "k": "CEDARCRE230 KV  CED-SIL | L230.Cartanza-Milford.23033",
+      "contrib": 0.538,
+      "beta": -0.207,
+      "bind_h": 500,
+      "mean_mu": -2.593
+     },
+     {
+      "k": "BIGPINET138 KV  BIG-KIS | L138.Kittanning-AllDam6",
+      "contrib": -0.481,
+      "beta": 0.054,
+      "bind_h": 626,
+      "mean_mu": -8.942
+     },
+     {
+      "k": "MARDELA 69 KV   MAR-VIE | L138.Loretto-Vienna.13780",
+      "contrib": 0.417,
+      "beta": -0.041,
+      "bind_h": 174,
+      "mean_mu": -10.186
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L500.Brighton-Conastone.5011",
+      "contrib": -0.395,
+      "beta": 0.091,
+      "bind_h": 428,
+      "mean_mu": -4.342
+     },
+     {
+      "k": "PINEYGRO AT20 XFORMER       H  230 KV | 230/138.Vienna.AT20",
+      "contrib": 0.354,
+      "beta": -0.092,
+      "bind_h": 134,
+      "mean_mu": -3.833
+     },
+     {
+      "k": "CONASTON500 KV  CNS-PEA | ACTUAL",
+      "contrib": -0.311,
+      "beta": 0.423,
+      "bind_h": 463,
+      "mean_mu": -0.734
+     },
+     {
+      "k": "NOTTINGHM 2-3 SER DEV       A  230 KV | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.258,
+      "beta": 0.123,
+      "bind_h": 143,
+      "mean_mu": -2.097
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.PeachBottom.BusTie.2",
+      "contrib": -0.222,
+      "beta": 0.149,
+      "bind_h": 120,
+      "mean_mu": -1.496
+     },
+     {
+      "k": "LORETTO 138 KV  LOR-VIE | 230/138.PineyGrove.AT20",
+      "contrib": 0.192,
+      "beta": -0.078,
+      "bind_h": 405,
+      "mean_mu": -2.448
+     },
+     {
+      "k": "CONASTON500 KV  500-2 | L500.Brighton-Conastone.5011",
+      "contrib": -0.164,
+      "beta": 0.159,
+      "bind_h": 108,
+      "mean_mu": -1.031
+     }
+    ],
+    "corridor_share": 1.476,
+    "top_facilities": {
+     "NOTTINGH230 KV  2-3": -5.514,
+     "COOLSPRI230 KV  COL-MIL": 1.699,
+     "CONASTON230 KV  CNS-NOR2": -1.1,
+     "GRACETON230 KV  GRA-SAF": -1.095,
+     "CEDARCRE230 KV  CED-SIL": 0.538,
+     "BIGPINET138 KV  BIG-KIS": -0.529,
+     "MARDELA 69 KV   MAR-VIE": 0.417,
+     "PINEYGRO AT20 XFORMER       H  230 KV": 0.354,
+     "CONASTON500 KV  CNS-PEA": -0.311,
+     "NOTTINGHM 2-3 SER DEV       A  230 KV": -0.258,
+     "LORETTO 138 KV  LOR-VIE": 0.192,
+     "CONASTON500 KV  500-2": -0.164,
+     "PRESTON 69 KV   PRE-TAN": 0.16,
+     "NOTTINGHM 1-3 SER DEV       A  230 KV": -0.105,
+     "EDGEWDPL69 KV   EDG-NEL": 0.083
+    }
+   },
+   "Dominion-Western": {
+    "mean_spread": 0.392,
+    "fit_mean": 0.38,
+    "r2": 0.921,
+    "top_constraints": [
+     {
+      "k": "BIGPINET138 KV  BIG-KIS | L138.Kittanning-AllDam6",
+      "contrib": -0.504,
+      "beta": 0.056,
+      "bind_h": 626,
+      "mean_mu": -8.942
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": 0.428,
+      "beta": -0.013,
+      "bind_h": 5341,
+      "mean_mu": -33.935
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": 0.208,
+      "beta": -0.017,
+      "bind_h": 2944,
+      "mean_mu": -12.494
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L230.Conastone-Northwest.2310",
+      "contrib": 0.154,
+      "beta": -0.022,
+      "bind_h": 599,
+      "mean_mu": -7.074
+     },
+     {
+      "k": "DOUBS   500 KV  DOU-GOO | L500.BurchesHill-PossumPoint.560",
+      "contrib": 0.124,
+      "beta": -0.278,
+      "bind_h": 483,
+      "mean_mu": -0.446
+     },
+     {
+      "k": "POSSUMP4500 KV  TX1 | L500.Morrisville-Spotsylvania.594",
+      "contrib": -0.081,
+      "beta": 0.025,
+      "bind_h": 247,
+      "mean_mu": -3.255
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L500.Brighton-Conastone.5011",
+      "contrib": 0.072,
+      "beta": -0.017,
+      "bind_h": 428,
+      "mean_mu": -4.342
+     },
+     {
+      "k": "PLEASNTV-ASHBURN 274D | L230.EvergreenMills-Brableton.2172",
+      "contrib": 0.065,
+      "beta": -0.039,
+      "bind_h": 54,
+      "mean_mu": -1.686
+     },
+     {
+      "k": "BUTL APS138 KV  BUT-KAR | L345.Ashtabula-Perry",
+      "contrib": -0.058,
+      "beta": 0.036,
+      "bind_h": 70,
+      "mean_mu": -1.612
+     },
+     {
+      "k": "FARMVILL230 KV  TX5 | L230.Clover-Briery-Farmville.235",
+      "contrib": 0.05,
+      "beta": -0.025,
+      "bind_h": 179,
+      "mean_mu": -2.016
+     },
+     {
+      "k": "LOUISACT230 KV  2074A | L500.Morrisville-Spotsylvania.594",
+      "contrib": -0.046,
+      "beta": 0.086,
+      "bind_h": 155,
+      "mean_mu": -0.532
+     },
+     {
+      "k": "BIGPINET138 KV  BIG-KIS | L138.Springdale-All4Jct-All4Tap-All6-Brackenridge",
+      "contrib": -0.043,
+      "beta": 0.037,
+      "bind_h": 249,
+      "mean_mu": -1.158
+     },
+     {
+      "k": "BRAMBLET-EVRGREEN 2172B | L230.Brambleton-PolandRoad.2183",
+      "contrib": -0.039,
+      "beta": 0.016,
+      "bind_h": 42,
+      "mean_mu": -2.429
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | 500/230.Conastone.500-4",
+      "contrib": 0.035,
+      "beta": -0.019,
+      "bind_h": 265,
+      "mean_mu": -1.802
+     },
+     {
+      "k": "GARRETAP115 KV  GAR-GAR | ACTUAL",
+      "contrib": 0.031,
+      "beta": -0.049,
+      "bind_h": 691,
+      "mean_mu": -0.634
+     }
+    ],
+    "corridor_share": 2.569,
+    "top_facilities": {
+     "BIGPINET138 KV  BIG-KIS": -0.567,
+     "NOTTINGH230 KV  2-3": 0.461,
+     "GRACETON230 KV  GRA-SAF": 0.259,
+     "CONASTON230 KV  CNS-NOR2": 0.226,
+     "DOUBS   500 KV  DOU-GOO": 0.124,
+     "POSSUMP4500 KV  TX1": -0.081,
+     "BUTL APS138 KV  BUT-KAR": -0.077,
+     "PLEASNTV-ASHBURN 274D": 0.065,
+     "FARMVILL230 KV  TX5": 0.053,
+     "LOUISACT230 KV  2074A": -0.046,
+     "BRAMBLET-EVRGREEN 2172B": -0.039,
+     "GARRETAP115 KV  GAR-GAR": 0.039,
+     "SEWARD  230 KV  9 TX": -0.03,
+     "MAHANS LANE-TIDD            B  138 KV": -0.03,
+     "MOUN UGI230 KV  2": -0.029
+    }
+   },
+   "NJ-Dominion": {
+    "mean_spread": -8.483,
+    "fit_mean": -8.421,
+    "r2": 0.962,
+    "top_constraints": [
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -4.094,
+      "beta": 0.121,
+      "bind_h": 5341,
+      "mean_mu": -33.935
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -1.165,
+      "beta": 0.093,
+      "bind_h": 2944,
+      "mean_mu": -12.494
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L230.Conastone-Northwest.2310",
+      "contrib": -0.827,
+      "beta": 0.117,
+      "bind_h": 599,
+      "mean_mu": -7.074
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | 500/230.Conastone.500-4",
+      "contrib": -0.526,
+      "beta": 0.122,
+      "bind_h": 431,
+      "mean_mu": -4.322
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L500.Brighton-Conastone.5011",
+      "contrib": -0.449,
+      "beta": 0.103,
+      "bind_h": 428,
+      "mean_mu": -4.342
+     },
+     {
+      "k": "CONASTON500 KV  CNS-PEA | ACTUAL",
+      "contrib": -0.288,
+      "beta": 0.392,
+      "bind_h": 463,
+      "mean_mu": -0.734
+     },
+     {
+      "k": "NOTTINGHM 2-3 SER DEV       A  230 KV | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.226,
+      "beta": 0.108,
+      "bind_h": 143,
+      "mean_mu": -2.097
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | 500/230.Conastone.500-4",
+      "contrib": -0.19,
+      "beta": 0.106,
+      "bind_h": 265,
+      "mean_mu": -1.802
+     },
+     {
+      "k": "CONASTON500 KV  500-2 | L500.Brighton-Conastone.5011",
+      "contrib": -0.186,
+      "beta": 0.18,
+      "bind_h": 108,
+      "mean_mu": -1.031
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.PeachBottom.BusTie.2",
+      "contrib": -0.169,
+      "beta": 0.113,
+      "bind_h": 120,
+      "mean_mu": -1.496
+     },
+     {
+      "k": "DOUBS   500 KV  DOU-GOO | L500.BurchesHill-PossumPoint.560",
+      "contrib": -0.144,
+      "beta": 0.323,
+      "bind_h": 483,
+      "mean_mu": -0.446
+     },
+     {
+      "k": "POSSUMP4500 KV  TX1 | L500.Morrisville-Spotsylvania.594",
+      "contrib": 0.135,
+      "beta": -0.041,
+      "bind_h": 247,
+      "mean_mu": -3.255
+     },
+     {
+      "k": "GARDNERS115 KV  GAR-TEX | L115.MiddletownJct-Collins.975 (Sctnlz)",
+      "contrib": -0.118,
+      "beta": 0.012,
+      "bind_h": 1116,
+      "mean_mu": -9.538
+     },
+     {
+      "k": "NOTTINGHM 1-3 SER DEV       A  230 KV | L500.PeachBottom.BusTie.2",
+      "contrib": -0.086,
+      "beta": 0.117,
+      "bind_h": 48,
+      "mean_mu": -0.733
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.068,
+      "beta": 0.133,
+      "bind_h": 86,
+      "mean_mu": -0.51
+     }
+    ],
+    "corridor_share": 0.985,
+    "top_facilities": {
+     "NOTTINGH230 KV  2-3": -4.839,
+     "GRACETON230 KV  GRA-SAF": -1.423,
+     "CONASTON230 KV  CNS-NOR2": -1.276,
+     "CONASTON500 KV  CNS-PEA": -0.288,
+     "NOTTINGHM 2-3 SER DEV       A  230 KV": -0.226,
+     "CONASTON500 KV  500-2": -0.186,
+     "DOUBS   500 KV  DOU-GOO": -0.144,
+     "POSSUMP4500 KV  TX1": 0.135,
+     "NOTTINGHM 1-3 SER DEV       A  230 KV": -0.086,
+     "GARDNERS115 KV  GAR-TEX": -0.084,
+     "BIGPINET138 KV  BIG-KIS": 0.077,
+     "PLEASNTV-ASHBURN 274D": -0.062,
+     "RAMAPO  138 KV  RAM-SMA": -0.057,
+     "HOWARD2 138 KV  HOW-MEL1": 0.053,
+     "FARMVILL230 KV  TX5": -0.052
+    }
+   }
+  }
+ },
+ "2024": {
+  "hours": 8779,
+  "constraints_total": 1312,
+  "rent_share_kept": 0.8985,
+  "spreads": {
+   "NJ-Western": {
+    "mean_spread": -6.155,
+    "fit_mean": -5.982,
+    "r2": 0.946,
+    "top_constraints": [
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -1.613,
+      "beta": 0.108,
+      "bind_h": 3005,
+      "mean_mu": -14.991
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L230.Conastone-Northwest.2310",
+      "contrib": -0.842,
+      "beta": 0.087,
+      "bind_h": 751,
+      "mean_mu": -9.686
+     },
+     {
+      "k": "Yorkana B43 CB  230 KV | 500/230.Conastone.500-4",
+      "contrib": -0.416,
+      "beta": 0.033,
+      "bind_h": 672,
+      "mean_mu": -12.713
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | 500/230.Conastone.500-4",
+      "contrib": -0.398,
+      "beta": 0.099,
+      "bind_h": 603,
+      "mean_mu": -4.035
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.242,
+      "beta": 0.075,
+      "bind_h": 567,
+      "mean_mu": -3.251
+     },
+     {
+      "k": "CONASTON500 KV  500-4 | L500.Brighton-Conastone.5011",
+      "contrib": -0.241,
+      "beta": 0.131,
+      "bind_h": 270,
+      "mean_mu": -1.842
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | 500/230.Conastone.500-4",
+      "contrib": -0.166,
+      "beta": 0.067,
+      "bind_h": 419,
+      "mean_mu": -2.485
+     },
+     {
+      "k": "JUNIATA 500 KV  2 | 500/230.Juniata.T1",
+      "contrib": -0.163,
+      "beta": 0.045,
+      "bind_h": 430,
+      "mean_mu": -3.637
+     },
+     {
+      "k": "CONASTON500 KV  500-4 | ACTUAL",
+      "contrib": -0.141,
+      "beta": 0.066,
+      "bind_h": 98,
+      "mean_mu": -2.125
+     },
+     {
+      "k": "FREMNT  138 KV  FRE-FRE1 | L138/69.Fremont.T1 + 69.Fremont.Bus",
+      "contrib": -0.124,
+      "beta": 0.027,
+      "bind_h": 524,
+      "mean_mu": -4.555
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L500.Brighton-Conastone.5011",
+      "contrib": -0.122,
+      "beta": 0.076,
+      "bind_h": 120,
+      "mean_mu": -1.594
+     },
+     {
+      "k": "ETOWANDA-HILLSIDE 2002 TIE  A    230 KV | L500.Hopatcong-Lackawanna.5063",
+      "contrib": 0.088,
+      "beta": -0.007,
+      "bind_h": 1838,
+      "mean_mu": -12.587
+     },
+     {
+      "k": "WMOULTON69 KV   WMO-09S1 | ACTUAL",
+      "contrib": -0.083,
+      "beta": 0.016,
+      "bind_h": 418,
+      "mean_mu": -5.047
+     },
+     {
+      "k": "Prest - Tibbs 138 kV l/o Aster - Commodore 345 kV | Aster - CMDR 345 kV",
+      "contrib": -0.073,
+      "beta": 0.002,
+      "bind_h": 1612,
+      "mean_mu": -31.78
+     },
+     {
+      "k": "ELKRUNDP230 KV  ELK-ROLN | L500.Loudoun-Morrisville.569",
+      "contrib": -0.068,
+      "beta": 0.017,
+      "bind_h": 311,
+      "mean_mu": -4.051
+     }
+    ],
+    "corridor_share": 0.693,
+    "top_facilities": {
+     "NOTTINGH230 KV  2-3": -2.052,
+     "CONASTON230 KV  CNS-NOR2": -0.964,
+     "GRACETON230 KV  GRA-SAF": -0.453,
+     "Yorkana B43 CB  230 KV": -0.416,
+     "CONASTON500 KV  500-4": -0.382,
+     "JUNIATA 500 KV  2": -0.163,
+     "FREMNT  138 KV  FRE-FRE1": -0.149,
+     "BIGPINET138 KV  BIG-KIS": -0.098,
+     "WMOULTON69 KV   WMO-09S1": -0.089,
+     "ETOWANDA-HILLSIDE 2002 TIE  A    230 KV": 0.088,
+     "OTTCRKPL230 KV  OTT-YOR": -0.084,
+     "Prest - Tibbs 138 kV l/o Aster - Commodore 345 kV": -0.073,
+     "GOOSECRE500 KV  TX1": -0.069,
+     "LINCOLN 115 KV  LIN-STR": -0.069,
+     "ELKRUNDP230 KV  ELK-ROLN": -0.068
+    }
+   },
+   "Eastern-Western": {
+    "mean_spread": -3.09,
+    "fit_mean": -2.916,
+    "r2": 0.962,
+    "top_constraints": [
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -1.949,
+      "beta": 0.13,
+      "bind_h": 3005,
+      "mean_mu": -14.991
+     },
+     {
+      "k": "COOLSPRI230 KV  COL-MIL | L230.IndianRiver-Milford.23034",
+      "contrib": 1.105,
+      "beta": -0.176,
+      "bind_h": 304,
+      "mean_mu": -6.285
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L230.Conastone-Northwest.2310",
+      "contrib": -0.879,
+      "beta": 0.091,
+      "bind_h": 751,
+      "mean_mu": -9.686
+     },
+     {
+      "k": "CEDARCRE230 KV  CED-SIL | L230.Cartanza-Milford.23033",
+      "contrib": 0.72,
+      "beta": -0.207,
+      "bind_h": 297,
+      "mean_mu": -3.476
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | 500/230.Conastone.500-4",
+      "contrib": -0.503,
+      "beta": 0.125,
+      "bind_h": 603,
+      "mean_mu": -4.035
+     },
+     {
+      "k": "Yorkana B43 CB  230 KV | 500/230.Conastone.500-4",
+      "contrib": -0.394,
+      "beta": 0.031,
+      "bind_h": 672,
+      "mean_mu": -12.713
+     },
+     {
+      "k": "MARDELA 69 KV   MAR-VIE | 230/138.PineyGrove.AT20",
+      "contrib": 0.295,
+      "beta": -0.04,
+      "bind_h": 318,
+      "mean_mu": -7.409
+     },
+     {
+      "k": "LORETTO 138 KV  LOR-VIE | 230/138.PineyGrove.AT20",
+      "contrib": 0.29,
+      "beta": -0.09,
+      "bind_h": 584,
+      "mean_mu": -3.213
+     },
+     {
+      "k": "CONASTON500 KV  500-4 | L500.Brighton-Conastone.5011",
+      "contrib": -0.279,
+      "beta": 0.151,
+      "bind_h": 270,
+      "mean_mu": -1.842
+     },
+     {
+      "k": "PRESTON 69 KV   PRE-TAN | 230/138.Vienna.AT20",
+      "contrib": 0.237,
+      "beta": -0.036,
+      "bind_h": 946,
+      "mean_mu": -6.584
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.236,
+      "beta": 0.073,
+      "bind_h": 567,
+      "mean_mu": -3.251
+     },
+     {
+      "k": "PLYMOUTH230 KV  PLY-WHI3 | L230.Limerick-Lock.220-61",
+      "contrib": 0.185,
+      "beta": -0.055,
+      "bind_h": 51,
+      "mean_mu": -3.378
+     },
+     {
+      "k": "MARDELA 69 KV   MAR-VIE | L138.Loretto-Vienna.13780",
+      "contrib": 0.183,
+      "beta": -0.022,
+      "bind_h": 538,
+      "mean_mu": -8.426
+     },
+     {
+      "k": "PLYMOUTH230 KV  PLY-WHI4 | L230.Limerick-Lock.220-61",
+      "contrib": 0.182,
+      "beta": -0.054,
+      "bind_h": 45,
+      "mean_mu": -3.346
+     },
+     {
+      "k": "CONASTON500 KV  500-4 | ACTUAL",
+      "contrib": -0.156,
+      "beta": 0.073,
+      "bind_h": 98,
+      "mean_mu": -2.125
+     }
+    ],
+    "corridor_share": 1.543,
+    "top_facilities": {
+     "NOTTINGH230 KV  2-3": -2.502,
+     "COOLSPRI230 KV  COL-MIL": 1.105,
+     "CONASTON230 KV  CNS-NOR2": -1.006,
+     "CEDARCRE230 KV  CED-SIL": 0.72,
+     "MARDELA 69 KV   MAR-VIE": 0.557,
+     "CONASTON500 KV  500-4": -0.435,
+     "GRACETON230 KV  GRA-SAF": -0.429,
+     "Yorkana B43 CB  230 KV": -0.394,
+     "LORETTO 138 KV  LOR-VIE": 0.29,
+     "PRESTON 69 KV   PRE-TAN": 0.237,
+     "PLYMOUTH230 KV  PLY-WHI3": 0.209,
+     "PLYMOUTH230 KV  PLY-WHI4": 0.182,
+     "FREMNT  138 KV  FRE-FRE1": -0.17,
+     "JUNIATA 500 KV  2": -0.15,
+     "VIENNA   8110    CB": 0.108
+    }
+   },
+   "Dominion-Western": {
+    "mean_spread": 0.513,
+    "fit_mean": 0.487,
+    "r2": 0.912,
+    "top_constraints": [
+     {
+      "k": "PLEASNTV L3T203 CB | L230.PleasantView-DryMill-BKT-Hamilton.2098",
+      "contrib": -0.383,
+      "beta": 0.077,
+      "bind_h": 137,
+      "mean_mu": -5.001
+     },
+     {
+      "k": "ELKRUNDP230 KV  ELK-ROLN | L500.Loudoun-Morrisville.569",
+      "contrib": -0.247,
+      "beta": 0.061,
+      "bind_h": 311,
+      "mean_mu": -4.051
+     },
+     {
+      "k": "APSOUTH contingency | L500.Bedington-BlackOak",
+      "contrib": 0.152,
+      "beta": -0.162,
+      "bind_h": 181,
+      "mean_mu": -0.936
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L230.Conastone-Northwest.2310",
+      "contrib": 0.152,
+      "beta": -0.016,
+      "bind_h": 751,
+      "mean_mu": -9.686
+     },
+     {
+      "k": "GEORGEWA138 KV  GEO-KAM | L345.Kammer-WestBellaire",
+      "contrib": -0.148,
+      "beta": 0.024,
+      "bind_h": 314,
+      "mean_mu": -6.28
+     },
+     {
+      "k": "DICKERSH230 KV  DIC-DIC3 | L500.Doubs-GooseCreek.514",
+      "contrib": 0.133,
+      "beta": -0.054,
+      "bind_h": 185,
+      "mean_mu": -2.476
+     },
+     {
+      "k": "Yorkana B43 CB  230 KV | 500/230.Conastone.500-4",
+      "contrib": 0.115,
+      "beta": -0.009,
+      "bind_h": 672,
+      "mean_mu": -12.713
+     },
+     {
+      "k": "PRESTON 69 KV   PRE-TAN | 230/138.Vienna.AT20",
+      "contrib": 0.109,
+      "beta": -0.017,
+      "bind_h": 946,
+      "mean_mu": -6.584
+     },
+     {
+      "k": "EDWSFERY230 KV  23111 | L500.Doubs-GooseCreek.514",
+      "contrib": 0.095,
+      "beta": -0.183,
+      "bind_h": 175,
+      "mean_mu": -0.519
+     },
+     {
+      "k": "STAFFORD230 KV  2104B | L500.Ladysmith-Possum Point.568",
+      "contrib": -0.087,
+      "beta": 0.066,
+      "bind_h": 96,
+      "mean_mu": -1.323
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": 0.08,
+      "beta": -0.025,
+      "bind_h": 567,
+      "mean_mu": -3.251
+     },
+     {
+      "k": "LENOX-NMESHOPP NML 1090     B  115 KV | L230.ETowanda-Hillside.2002 [NYISO]",
+      "contrib": -0.075,
+      "beta": 0.001,
+      "bind_h": 4113,
+      "mean_mu": -97.291
+     },
+     {
+      "k": "ELIMSPOR230 KV  ELI-SUN | L230.Columbia-Montour",
+      "contrib": 0.074,
+      "beta": -0.072,
+      "bind_h": 143,
+      "mean_mu": -1.027
+     },
+     {
+      "k": "BIGPINET138 KV  BIG-KIS | L138.Springdale-All4Jct-All4Tap-All6-Brackenridge",
+      "contrib": -0.074,
+      "beta": 0.021,
+      "bind_h": 540,
+      "mean_mu": -3.516
+     },
+     {
+      "k": "EASTON  69 KV   EAS-EMU | ACTUAL",
+      "contrib": -0.07,
+      "beta": 0.051,
+      "bind_h": 1476,
+      "mean_mu": -1.385
+     }
+    ],
+    "corridor_share": 1.132,
+    "top_facilities": {
+     "PLEASNTV L3T203 CB": -0.383,
+     "ELKRUNDP230 KV  ELK-ROLN": -0.247,
+     "CONASTON230 KV  CNS-NOR2": 0.182,
+     "APSOUTH contingency": 0.152,
+     "GEORGEWA138 KV  GEO-KAM": -0.148,
+     "DICKERSH230 KV  DIC-DIC3": 0.133,
+     "GRACETON230 KV  GRA-SAF": 0.122,
+     "BIGPINET138 KV  BIG-KIS": -0.118,
+     "Yorkana B43 CB  230 KV": 0.115,
+     "PRESTON 69 KV   PRE-TAN": 0.109,
+     "EDWSFERY230 KV  23111": 0.095,
+     "STAFFORD230 KV  2104B": -0.087,
+     "FREMNT  138 KV  FRE-FRE1": 0.085,
+     "CONASTON500 KV  500-4": 0.082,
+     "CHAPRLTP230 KV  249B": 0.08
+    }
+   },
+   "NJ-Dominion": {
+    "mean_spread": -6.668,
+    "fit_mean": -6.469,
+    "r2": 0.912,
+    "top_constraints": [
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -1.634,
+      "beta": 0.109,
+      "bind_h": 3005,
+      "mean_mu": -14.991
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L230.Conastone-Northwest.2310",
+      "contrib": -0.994,
+      "beta": 0.103,
+      "bind_h": 751,
+      "mean_mu": -9.686
+     },
+     {
+      "k": "Yorkana B43 CB  230 KV | 500/230.Conastone.500-4",
+      "contrib": -0.531,
+      "beta": 0.042,
+      "bind_h": 672,
+      "mean_mu": -12.713
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | 500/230.Conastone.500-4",
+      "contrib": -0.455,
+      "beta": 0.113,
+      "bind_h": 603,
+      "mean_mu": -4.035
+     },
+     {
+      "k": "PLEASNTV L3T203 CB | L230.PleasantView-DryMill-BKT-Hamilton.2098",
+      "contrib": 0.326,
+      "beta": -0.065,
+      "bind_h": 137,
+      "mean_mu": -5.001
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.323,
+      "beta": 0.099,
+      "bind_h": 567,
+      "mean_mu": -3.251
+     },
+     {
+      "k": "CONASTON500 KV  500-4 | L500.Brighton-Conastone.5011",
+      "contrib": -0.293,
+      "beta": 0.159,
+      "bind_h": 270,
+      "mean_mu": -1.842
+     },
+     {
+      "k": "GRACETON230 KV  GRA-SAF | 500/230.Conastone.500-4",
+      "contrib": -0.189,
+      "beta": 0.076,
+      "bind_h": 419,
+      "mean_mu": -2.485
+     },
+     {
+      "k": "ELKRUNDP230 KV  ELK-ROLN | L500.Loudoun-Morrisville.569",
+      "contrib": 0.179,
+      "beta": -0.044,
+      "bind_h": 311,
+      "mean_mu": -4.051
+     },
+     {
+      "k": "CONASTON500 KV  500-4 | ACTUAL",
+      "contrib": -0.171,
+      "beta": 0.081,
+      "bind_h": 98,
+      "mean_mu": -2.125
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L500.Brighton-Conastone.5011",
+      "contrib": -0.152,
+      "beta": 0.096,
+      "bind_h": 120,
+      "mean_mu": -1.594
+     },
+     {
+      "k": "FREMNT  138 KV  FRE-FRE1 | L138/69.Fremont.T1 + 69.Fremont.Bus",
+      "contrib": -0.151,
+      "beta": 0.033,
+      "bind_h": 524,
+      "mean_mu": -4.555
+     },
+     {
+      "k": "DICKERSH230 KV  DIC-DIC3 | L500.Doubs-GooseCreek.514",
+      "contrib": -0.142,
+      "beta": 0.057,
+      "bind_h": 185,
+      "mean_mu": -2.476
+     },
+     {
+      "k": "GEORGEWA138 KV  GEO-KAM | L345.Kammer-WestBellaire",
+      "contrib": 0.14,
+      "beta": -0.022,
+      "bind_h": 314,
+      "mean_mu": -6.28
+     },
+     {
+      "k": "APSOUTH contingency | L500.Bedington-BlackOak",
+      "contrib": -0.137,
+      "beta": 0.146,
+      "bind_h": 181,
+      "mean_mu": -0.936
+     }
+    ],
+    "corridor_share": 0.727,
+    "top_facilities": {
+     "NOTTINGH230 KV  2-3": -2.132,
+     "CONASTON230 KV  CNS-NOR2": -1.146,
+     "GRACETON230 KV  GRA-SAF": -0.575,
+     "Yorkana B43 CB  230 KV": -0.531,
+     "CONASTON500 KV  500-4": -0.464,
+     "PLEASNTV L3T203 CB": 0.326,
+     "FREMNT  138 KV  FRE-FRE1": -0.234,
+     "ELKRUNDP230 KV  ELK-ROLN": 0.179,
+     "DICKERSH230 KV  DIC-DIC3": -0.142,
+     "GEORGEWA138 KV  GEO-KAM": 0.14,
+     "APSOUTH contingency": -0.137,
+     "CHAPRLTP230 KV  249B": -0.132,
+     "JUNIATA 500 KV  2": -0.123,
+     "WMOULTON69 KV   WMO-09S1": -0.12,
+     "PRESTON 69 KV   PRE-TAN": -0.117
+    }
+   }
+  }
+ },
+ "2025": {
+  "hours": 8755,
+  "constraints_total": 1553,
+  "rent_share_kept": 0.886,
+  "spreads": {
+   "NJ-Western": {
+    "mean_spread": -8.061,
+    "fit_mean": -8.067,
+    "r2": 0.899,
+    "top_constraints": [
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -1.83,
+      "beta": 0.106,
+      "bind_h": 2546,
+      "mean_mu": -17.219
+     },
+     {
+      "k": "GRACETON230 KV  GRA-MANO | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.734,
+      "beta": 0.089,
+      "bind_h": 472,
+      "mean_mu": -8.208
+     },
+     {
+      "k": "GRACETON230 KV  GRA-MANO | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.493,
+      "beta": 0.08,
+      "bind_h": 1127,
+      "mean_mu": -6.18
+     },
+     {
+      "k": "GRACETON_230KVGRA-MANO_1_LN | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.482,
+      "beta": 0.112,
+      "bind_h": 518,
+      "mean_mu": -4.298
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L500.Brighton-Conastone.5011",
+      "contrib": -0.389,
+      "beta": 0.062,
+      "bind_h": 451,
+      "mean_mu": -6.285
+     },
+     {
+      "k": "CONASTON_230KVCNS-NOR2_1_LN | L500.Brighton-Conastone.5011",
+      "contrib": -0.371,
+      "beta": 0.098,
+      "bind_h": 328,
+      "mean_mu": -3.8
+     },
+     {
+      "k": "BRUNNERI230 KV  BRU-YOR | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.297,
+      "beta": 0.065,
+      "bind_h": 546,
+      "mean_mu": -4.553
+     },
+     {
+      "k": "PLEASNTV TX3       XFORMER   H  500 KV | L230.GooseCreek-Ashburn-Beaumeade.227",
+      "contrib": -0.251,
+      "beta": 0.01,
+      "bind_h": 244,
+      "mean_mu": -24.547
+     },
+     {
+      "k": "94 HAURD-11323    11323     A  138 KV | L345.Nelson-ElectricJct.15502",
+      "contrib": 0.228,
+      "beta": -0.025,
+      "bind_h": 2368,
+      "mean_mu": -9.077
+     },
+     {
+      "k": "LENOX-NMESHOPP NML 1090     B  115 KV | L230.ETowanda-Hillside.2002 [NYISO]",
+      "contrib": -0.199,
+      "beta": 0.001,
+      "bind_h": 5771,
+      "mean_mu": -232.743
+     },
+     {
+      "k": "MILLWDPL230 KV  MIL-SAK | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.188,
+      "beta": 0.099,
+      "bind_h": 161,
+      "mean_mu": -1.899
+     },
+     {
+      "k": "NOTTINGH_NOT2302-3_1_LN | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.179,
+      "beta": 0.11,
+      "bind_h": 216,
+      "mean_mu": -1.631
+     },
+     {
+      "k": "KEYSTONE_230KVKEY-SHE_1_LN | ACTUAL",
+      "contrib": -0.134,
+      "beta": 0.109,
+      "bind_h": 124,
+      "mean_mu": -1.233
+     },
+     {
+      "k": "KAMMER2 138 KV  KAM-NAT | ACTUAL",
+      "contrib": -0.117,
+      "beta": 0.022,
+      "bind_h": 416,
+      "mean_mu": -5.383
+     },
+     {
+      "k": "BIGPINET_138KVBIG-KIS_1_LN | L138.Kittanning-AllDam6",
+      "contrib": -0.113,
+      "beta": 0.026,
+      "bind_h": 300,
+      "mean_mu": -4.417
+     }
+    ],
+    "corridor_share": 0.604,
+    "top_facilities": {
+     "NOTTINGH230 KV  2-3": -1.879,
+     "GRACETON230 KV  GRA-MANO": -1.227,
+     "GRACETON_230KVGRA-MANO_1_LN": -0.482,
+     "CONASTON230 KV  CNS-NOR2": -0.411,
+     "CONASTON_230KVCNS-NOR2_1_LN": -0.371,
+     "BRUNNERI230 KV  BRU-YOR": -0.297,
+     "CONASTON_230KVCNS-NOR1_1_LN": -0.253,
+     "PLEASNTV TX3       XFORMER   H  500 KV": -0.251,
+     "MILLWDPL230 KV  MIL-SAK": -0.24,
+     "94 HAURD-11323    11323     A  138 KV": 0.228,
+     "LENOX-NMESHOPP NML 1090     B  115 KV": -0.199,
+     "NOTTINGH_NOT2302-3_1_LN": -0.179,
+     "KEYSTONE_230KVKEY-SHE_1_LN": -0.134,
+     "KEYSTONE_T5_2304TX-S_XF": -0.125,
+     "BIGPINET_138KVBIG-KIS_1_LN": -0.12
+    }
+   },
+   "Eastern-Western": {
+    "mean_spread": -4.942,
+    "fit_mean": -4.919,
+    "r2": 0.937,
+    "top_constraints": [
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -2.259,
+      "beta": 0.131,
+      "bind_h": 2546,
+      "mean_mu": -17.219
+     },
+     {
+      "k": "COOLSPRI230 KV  COL-MIL | L230.IndianRiver-Milford.23034",
+      "contrib": 1.632,
+      "beta": -0.173,
+      "bind_h": 437,
+      "mean_mu": -9.455
+     },
+     {
+      "k": "CEDARCRE_230KVCED-SIL_1_LN | L230.Cartanza-Milford.23033",
+      "contrib": 1.154,
+      "beta": -0.184,
+      "bind_h": 260,
+      "mean_mu": -6.272
+     },
+     {
+      "k": "GRACETON230 KV  GRA-MANO | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.673,
+      "beta": 0.082,
+      "bind_h": 472,
+      "mean_mu": -8.208
+     },
+     {
+      "k": "GRACETON_230KVGRA-MANO_1_LN | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.473,
+      "beta": 0.11,
+      "bind_h": 518,
+      "mean_mu": -4.298
+     },
+     {
+      "k": "GRACETON230 KV  GRA-MANO | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.462,
+      "beta": 0.075,
+      "bind_h": 1127,
+      "mean_mu": -6.18
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L500.Brighton-Conastone.5011",
+      "contrib": -0.385,
+      "beta": 0.061,
+      "bind_h": 451,
+      "mean_mu": -6.285
+     },
+     {
+      "k": "CONASTON_230KVCNS-NOR2_1_LN | L500.Brighton-Conastone.5011",
+      "contrib": -0.356,
+      "beta": 0.094,
+      "bind_h": 328,
+      "mean_mu": -3.8
+     },
+     {
+      "k": "BRUNNERI230 KV  BRU-YOR | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.279,
+      "beta": 0.061,
+      "bind_h": 546,
+      "mean_mu": -4.553
+     },
+     {
+      "k": "LENOX-NMESHOPP NML 1090     B  115 KV | L230.ETowanda-Hillside.2002 [NYISO]",
+      "contrib": -0.257,
+      "beta": 0.001,
+      "bind_h": 5771,
+      "mean_mu": -232.743
+     },
+     {
+      "k": "PLEASNTV TX3       XFORMER   H  500 KV | L230.GooseCreek-Ashburn-Beaumeade.227",
+      "contrib": -0.24,
+      "beta": 0.01,
+      "bind_h": 244,
+      "mean_mu": -24.547
+     },
+     {
+      "k": "NOTTINGH_NOT2302-3_1_LN | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.225,
+      "beta": 0.138,
+      "bind_h": 216,
+      "mean_mu": -1.631
+     },
+     {
+      "k": "94 HAURD-11323    11323     A  138 KV | L345.Nelson-ElectricJct.15502",
+      "contrib": 0.187,
+      "beta": -0.021,
+      "bind_h": 2368,
+      "mean_mu": -9.077
+     },
+     {
+      "k": "MILLWDPL230 KV  MIL-SAK | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.175,
+      "beta": 0.092,
+      "bind_h": 161,
+      "mean_mu": -1.899
+     },
+     {
+      "k": "ASHBURN-GOOSECRE 227D       B  230 KV | L230.Beaumead-Ashburn-PleasantView.274",
+      "contrib": -0.161,
+      "beta": 0.013,
+      "bind_h": 835,
+      "mean_mu": -12.377
+     }
+    ],
+    "corridor_share": 1.067,
+    "top_facilities": {
+     "NOTTINGH230 KV  2-3": -2.332,
+     "COOLSPRI230 KV  COL-MIL": 1.632,
+     "CEDARCRE_230KVCED-SIL_1_LN": 1.154,
+     "GRACETON230 KV  GRA-MANO": -1.135,
+     "GRACETON_230KVGRA-MANO_1_LN": -0.473,
+     "CONASTON230 KV  CNS-NOR2": -0.409,
+     "CONASTON_230KVCNS-NOR2_1_LN": -0.356,
+     "CONASTON_230KVCNS-NOR1_1_LN": -0.282,
+     "BRUNNERI230 KV  BRU-YOR": -0.279,
+     "LENOX-NMESHOPP NML 1090     B  115 KV": -0.257,
+     "PLEASNTV TX3       XFORMER   H  500 KV": -0.24,
+     "NOTTINGH_NOT2302-3_1_LN": -0.225,
+     "MILLWDPL230 KV  MIL-SAK": -0.225,
+     "94 HAURD-11323    11323     A  138 KV": 0.187,
+     "ASHBURN-GOOSECRE 227D       B  230 KV": -0.161
+    }
+   },
+   "Dominion-Western": {
+    "mean_spread": 1.052,
+    "fit_mean": 1.079,
+    "r2": 0.908,
+    "top_constraints": [
+     {
+      "k": "PLEASNTV-ASHBURN  274D      A  230 KV | L230.GooseCreek-Ashburn-Beaumeade.227",
+      "contrib": 0.631,
+      "beta": -0.034,
+      "bind_h": 1293,
+      "mean_mu": -18.509
+     },
+     {
+      "k": "PLEASNTV TX3       XFORMER   H  500 KV | L230.GooseCreek-Ashburn-Beaumeade.227",
+      "contrib": -0.509,
+      "beta": 0.021,
+      "bind_h": 244,
+      "mean_mu": -24.547
+     },
+     {
+      "k": "DICKERSH230 KV  DIC-DIC3 | L500.Doubs-GooseCreek.514",
+      "contrib": 0.332,
+      "beta": -0.054,
+      "bind_h": 476,
+      "mean_mu": -6.166
+     },
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": 0.303,
+      "beta": -0.018,
+      "bind_h": 2546,
+      "mean_mu": -17.219
+     },
+     {
+      "k": "APSOUTH | ACTUAL",
+      "contrib": 0.23,
+      "beta": -0.175,
+      "bind_h": 186,
+      "mean_mu": -1.314
+     },
+     {
+      "k": "ASHBURN-GOOSECRE 227D       B  230 KV | L230.Beaumead-Ashburn-PleasantView.274",
+      "contrib": 0.215,
+      "beta": -0.017,
+      "bind_h": 835,
+      "mean_mu": -12.377
+     },
+     {
+      "k": "GRACETON_230KVGRA-MANO_1_LN | L500.Conastone-PeachBottom.5012",
+      "contrib": 0.171,
+      "beta": -0.04,
+      "bind_h": 518,
+      "mean_mu": -4.298
+     },
+     {
+      "k": "LENOX-NMESHOPP NML 1090     B  115 KV | L230.ETowanda-Hillside.2002 [NYISO]",
+      "contrib": -0.162,
+      "beta": 0.001,
+      "bind_h": 5771,
+      "mean_mu": -232.743
+     },
+     {
+      "k": "GRACETON230 KV  GRA-MANO | L500.Conastone-PeachBottom.5012",
+      "contrib": 0.157,
+      "beta": -0.025,
+      "bind_h": 1127,
+      "mean_mu": -6.18
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L500.Brighton-Conastone.5011",
+      "contrib": 0.153,
+      "beta": -0.024,
+      "bind_h": 451,
+      "mean_mu": -6.285
+     },
+     {
+      "k": "KEYSTONE_230KVKEY-SHE_1_LN | ACTUAL",
+      "contrib": -0.15,
+      "beta": 0.122,
+      "bind_h": 124,
+      "mean_mu": -1.233
+     },
+     {
+      "k": "HARWGATE230 KV  205C | L500.Carson-Midlothian.563",
+      "contrib": -0.137,
+      "beta": 0.027,
+      "bind_h": 305,
+      "mean_mu": -5.077
+     },
+     {
+      "k": "APSOUTH contingency | L500.Bedington-BlackOak",
+      "contrib": 0.13,
+      "beta": -0.203,
+      "bind_h": 146,
+      "mean_mu": -0.641
+     },
+     {
+      "k": "74 KEWAN B1Z1 DIS              138 KV | L138.Corbin-CrescentRidge.98105",
+      "contrib": -0.128,
+      "beta": 0.057,
+      "bind_h": 983,
+      "mean_mu": -2.241
+     },
+     {
+      "k": "GRACETON230 KV  GRA-MANO | L500.Hunterstown-Conastone.5013",
+      "contrib": 0.123,
+      "beta": -0.015,
+      "bind_h": 472,
+      "mean_mu": -8.208
+     }
+    ],
+    "corridor_share": 1.026,
+    "top_facilities": {
+     "PLEASNTV-ASHBURN  274D      A  230 KV": 0.631,
+     "PLEASNTV TX3       XFORMER   H  500 KV": -0.509,
+     "DICKERSH230 KV  DIC-DIC3": 0.332,
+     "NOTTINGH230 KV  2-3": 0.326,
+     "GRACETON230 KV  GRA-MANO": 0.28,
+     "APSOUTH": 0.23,
+     "ASHBURN-GOOSECRE 227D       B  230 KV": 0.215,
+     "GRACETON_230KVGRA-MANO_1_LN": 0.171,
+     "CONASTON230 KV  CNS-NOR2": 0.171,
+     "LENOX-NMESHOPP NML 1090     B  115 KV": -0.162,
+     "KEYSTONE_T5_2304TX-S_XF": -0.152,
+     "KEYSTONE_230KVKEY-SHE_1_LN": -0.15,
+     "BIGPINET_138KVBIG-KIS_1_LN": -0.142,
+     "HARWGATE230 KV  205C": -0.137,
+     "APSOUTH contingency": 0.13
+    }
+   },
+   "NJ-Dominion": {
+    "mean_spread": -9.113,
+    "fit_mean": -9.147,
+    "r2": 0.937,
+    "top_constraints": [
+     {
+      "k": "NOTTINGH230 KV  2-3 | L500.Conastone-PeachBottom.5012",
+      "contrib": -2.133,
+      "beta": 0.124,
+      "bind_h": 2546,
+      "mean_mu": -17.219
+     },
+     {
+      "k": "GRACETON230 KV  GRA-MANO | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.857,
+      "beta": 0.104,
+      "bind_h": 472,
+      "mean_mu": -8.208
+     },
+     {
+      "k": "PLEASNTV-ASHBURN  274D      A  230 KV | L230.GooseCreek-Ashburn-Beaumeade.227",
+      "contrib": -0.7,
+      "beta": 0.038,
+      "bind_h": 1293,
+      "mean_mu": -18.509
+     },
+     {
+      "k": "GRACETON_230KVGRA-MANO_1_LN | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.653,
+      "beta": 0.152,
+      "bind_h": 518,
+      "mean_mu": -4.298
+     },
+     {
+      "k": "GRACETON230 KV  GRA-MANO | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.649,
+      "beta": 0.105,
+      "bind_h": 1127,
+      "mean_mu": -6.18
+     },
+     {
+      "k": "CONASTON230 KV  CNS-NOR2 | L500.Brighton-Conastone.5011",
+      "contrib": -0.542,
+      "beta": 0.086,
+      "bind_h": 451,
+      "mean_mu": -6.285
+     },
+     {
+      "k": "CONASTON_230KVCNS-NOR2_1_LN | L500.Brighton-Conastone.5011",
+      "contrib": -0.427,
+      "beta": 0.112,
+      "bind_h": 328,
+      "mean_mu": -3.8
+     },
+     {
+      "k": "DICKERSH230 KV  DIC-DIC3 | L500.Doubs-GooseCreek.514",
+      "contrib": -0.363,
+      "beta": 0.059,
+      "bind_h": 476,
+      "mean_mu": -6.166
+     },
+     {
+      "k": "BRUNNERI230 KV  BRU-YOR | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.358,
+      "beta": 0.079,
+      "bind_h": 546,
+      "mean_mu": -4.553
+     },
+     {
+      "k": "ASHBURN-GOOSECRE 227D       B  230 KV | L230.Beaumead-Ashburn-PleasantView.274",
+      "contrib": -0.28,
+      "beta": 0.023,
+      "bind_h": 835,
+      "mean_mu": -12.377
+     },
+     {
+      "k": "PLEASNTV TX3       XFORMER   H  500 KV | L230.GooseCreek-Ashburn-Beaumeade.227",
+      "contrib": 0.258,
+      "beta": -0.011,
+      "bind_h": 244,
+      "mean_mu": -24.547
+     },
+     {
+      "k": "MILLWDPL230 KV  MIL-SAK | L500.Hunterstown-Conastone.5013",
+      "contrib": -0.229,
+      "beta": 0.121,
+      "bind_h": 161,
+      "mean_mu": -1.899
+     },
+     {
+      "k": "NOTTINGH_NOT2302-3_1_LN | L500.Conastone-PeachBottom.5012",
+      "contrib": -0.218,
+      "beta": 0.133,
+      "bind_h": 216,
+      "mean_mu": -1.631
+     },
+     {
+      "k": "APSOUTH | ACTUAL",
+      "contrib": -0.19,
+      "beta": 0.145,
+      "bind_h": 186,
+      "mean_mu": -1.314
+     },
+     {
+      "k": "911INDUS138 KV  911-NEWC | L345.McClelland-Shenango",
+      "contrib": -0.162,
+      "beta": 0.041,
+      "bind_h": 468,
+      "mean_mu": -3.99
+     }
+    ],
+    "corridor_share": 0.652,
+    "top_facilities": {
+     "NOTTINGH230 KV  2-3": -2.205,
+     "GRACETON230 KV  GRA-MANO": -1.507,
+     "PLEASNTV-ASHBURN  274D      A  230 KV": -0.7,
+     "GRACETON_230KVGRA-MANO_1_LN": -0.653,
+     "CONASTON230 KV  CNS-NOR2": -0.581,
+     "CONASTON_230KVCNS-NOR2_1_LN": -0.427,
+     "DICKERSH230 KV  DIC-DIC3": -0.363,
+     "BRUNNERI230 KV  BRU-YOR": -0.358,
+     "CONASTON_230KVCNS-NOR1_1_LN": -0.308,
+     "MILLWDPL230 KV  MIL-SAK": -0.284,
+     "ASHBURN-GOOSECRE 227D       B  230 KV": -0.28,
+     "PLEASNTV TX3       XFORMER   H  500 KV": 0.258,
+     "NOTTINGH_NOT2302-3_1_LN": -0.218,
+     "APSOUTH": -0.19,
+     "Monroe-Lallendorf 345 kV l/o Lulu 345 kV Sub": -0.166
+    }
+   }
+  }
+ }
+}

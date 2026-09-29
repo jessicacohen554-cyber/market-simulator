@@ -309,7 +309,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     caiso_ps_charge_shape_anchor: { cell: "." },
     caiso_ps_plant_params: { cell: "." },
     measured_interface_limits: { cell: "K", ev: "pjm measured TTC keeper" },
-    internal_congestion_split: { cell: "." },
+    internal_congestion_split: { cell: "G", ev: "PJM-NEXT-9 (2026-09-29, ZERO LP, docs/FINDING-pjm-next-9-east-south-boundary-2026-09-28.md) - REFUSED EX ANTE, owner card \"Record as limit; go card 3\". PJM DA binding-constraint record 2019-2025 regressed onto DA hub congestion (R2 0.90-0.98): the Peach Bottom/Conastone corridor (Nottingham 230 kV 2-3 for loss of Conastone-Peach Bottom 5012, Graceton-Safe Harbor, Conastone-Northwest) carries 35-91 % of NJ-Western congestion every year (2023: 91 %, Nottingham binding 5,341 h). It is the missing EMAAC/Central_PA -> SWMAAC boundary behind CC_REGULAR 2019/2020/2022/2023 (north over, Dominion/SWMAAC under). No published MW limit exists (single 230 kV facility; BC/PEPCO unposted; SWMAAC CETL is a misaligned planning quantity), so a zonal cut could only be sized from binding frequency or prices (rules 1/13): refused. Recorded as a sub-zonal model-class limit. Re-open only with a published zonal limit." },
     caiso_fsno_subzonal_topology: { cell: "." },
     spp_zone_partition: { cell: ".", ev: "n/a — the mechanism re-partitions SPP's own footprint by SPP's own reserve-zone registry; no PJM object. Row added by SPP-93 (2026-09-27) with the field, per rule 28(c)." },
     tsa_transfer_derate: { cell: "." },
