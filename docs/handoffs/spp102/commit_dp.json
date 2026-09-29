@@ -1,0 +1,198 @@
+{
+ "2019": {
+  "ASOM": {
+   "added_low_twh": 0.889,
+   "removed_low_twh": 0.014,
+   "added_low_h": 15451,
+   "added_low_cems_on_h": 6970,
+   "gap_low_h": 8831,
+   "gap_recovered_h": 6970,
+   "net_all_twh": 1.048,
+   "net_low_twh": 0.875,
+   "plants": 22,
+   "precision_added_low": 0.451,
+   "recall_gap_low": 0.789
+  },
+  "NREL": {
+   "added_low_twh": 0.854,
+   "removed_low_twh": 0.016,
+   "added_low_h": 14816,
+   "added_low_cems_on_h": 6627,
+   "gap_low_h": 8831,
+   "gap_recovered_h": 6627,
+   "net_all_twh": 1.03,
+   "net_low_twh": 0.839,
+   "plants": 22,
+   "precision_added_low": 0.447,
+   "recall_gap_low": 0.75
+  }
+ },
+ "2020": {
+  "ASOM": {
+   "added_low_twh": 1.176,
+   "removed_low_twh": 0.027,
+   "added_low_h": 18714,
+   "added_low_cems_on_h": 8212,
+   "gap_low_h": 11996,
+   "gap_recovered_h": 8212,
+   "net_all_twh": 1.167,
+   "net_low_twh": 1.149,
+   "plants": 22,
+   "precision_added_low": 0.439,
+   "recall_gap_low": 0.685
+  },
+  "NREL": {
+   "added_low_twh": 1.121,
+   "removed_low_twh": 0.029,
+   "added_low_h": 17658,
+   "added_low_cems_on_h": 7758,
+   "gap_low_h": 11996,
+   "gap_recovered_h": 7758,
+   "net_all_twh": 1.085,
+   "net_low_twh": 1.093,
+   "plants": 22,
+   "precision_added_low": 0.439,
+   "recall_gap_low": 0.647
+  }
+ },
+ "2021": {
+  "ASOM": {
+   "added_low_twh": 1.102,
+   "removed_low_twh": 0.149,
+   "added_low_h": 12029,
+   "added_low_cems_on_h": 6597,
+   "gap_low_h": 18633,
+   "gap_recovered_h": 6597,
+   "net_all_twh": 0.826,
+   "net_low_twh": 0.953,
+   "plants": 21,
+   "precision_added_low": 0.548,
+   "recall_gap_low": 0.354
+  },
+  "NREL": {
+   "added_low_twh": 1.055,
+   "removed_low_twh": 0.137,
+   "added_low_h": 11141,
+   "added_low_cems_on_h": 6399,
+   "gap_low_h": 18633,
+   "gap_recovered_h": 6399,
+   "net_all_twh": 0.93,
+   "net_low_twh": 0.918,
+   "plants": 21,
+   "precision_added_low": 0.574,
+   "recall_gap_low": 0.343
+  }
+ },
+ "2022": {
+  "ASOM": {
+   "added_low_twh": 0.441,
+   "removed_low_twh": 0.044,
+   "added_low_h": 4875,
+   "added_low_cems_on_h": 2626,
+   "gap_low_h": 15161,
+   "gap_recovered_h": 2626,
+   "net_all_twh": 0.114,
+   "net_low_twh": 0.397,
+   "plants": 22,
+   "precision_added_low": 0.539,
+   "recall_gap_low": 0.173
+  },
+  "NREL": {
+   "added_low_twh": 0.389,
+   "removed_low_twh": 0.046,
+   "added_low_h": 3992,
+   "added_low_cems_on_h": 2251,
+   "gap_low_h": 15161,
+   "gap_recovered_h": 2251,
+   "net_all_twh": 0.109,
+   "net_low_twh": 0.343,
+   "plants": 22,
+   "precision_added_low": 0.564,
+   "recall_gap_low": 0.148
+  }
+ },
+ "2023": {
+  "ASOM": {
+   "added_low_twh": 0.732,
+   "removed_low_twh": 0.23,
+   "added_low_h": 10871,
+   "added_low_cems_on_h": 5309,
+   "gap_low_h": 17709,
+   "gap_recovered_h": 5309,
+   "net_all_twh": -0.166,
+   "net_low_twh": 0.502,
+   "plants": 22,
+   "precision_added_low": 0.488,
+   "recall_gap_low": 0.3
+  },
+  "NREL": {
+   "added_low_twh": 0.73,
+   "removed_low_twh": 0.214,
+   "added_low_h": 10569,
+   "added_low_cems_on_h": 5287,
+   "gap_low_h": 17709,
+   "gap_recovered_h": 5287,
+   "net_all_twh": -0.107,
+   "net_low_twh": 0.516,
+   "plants": 22,
+   "precision_added_low": 0.5,
+   "recall_gap_low": 0.299
+  }
+ },
+ "2024": {
+  "ASOM": {
+   "added_low_twh": 0.998,
+   "removed_low_twh": 0.181,
+   "added_low_h": 14215,
+   "added_low_cems_on_h": 8081,
+   "gap_low_h": 19182,
+   "gap_recovered_h": 8081,
+   "net_all_twh": 0.386,
+   "net_low_twh": 0.817,
+   "plants": 21,
+   "precision_added_low": 0.568,
+   "recall_gap_low": 0.421
+  },
+  "NREL": {
+   "added_low_twh": 0.978,
+   "removed_low_twh": 0.181,
+   "added_low_h": 13641,
+   "added_low_cems_on_h": 7594,
+   "gap_low_h": 19182,
+   "gap_recovered_h": 7594,
+   "net_all_twh": 0.437,
+   "net_low_twh": 0.797,
+   "plants": 21,
+   "precision_added_low": 0.557,
+   "recall_gap_low": 0.396
+  }
+ },
+ "2025": {
+  "ASOM": {
+   "added_low_twh": 0.973,
+   "removed_low_twh": 0.124,
+   "added_low_h": 12350,
+   "added_low_cems_on_h": 7098,
+   "gap_low_h": 17585,
+   "gap_recovered_h": 7098,
+   "net_all_twh": 0.698,
+   "net_low_twh": 0.849,
+   "plants": 22,
+   "precision_added_low": 0.575,
+   "recall_gap_low": 0.404
+  },
+  "NREL": {
+   "added_low_twh": 0.958,
+   "removed_low_twh": 0.116,
+   "added_low_h": 11977,
+   "added_low_cems_on_h": 7039,
+   "gap_low_h": 17585,
+   "gap_recovered_h": 7039,
+   "net_all_twh": 0.816,
+   "net_low_twh": 0.842,
+   "plants": 22,
+   "precision_added_low": 0.588,
+   "recall_gap_low": 0.4
+  }
+ }
+}

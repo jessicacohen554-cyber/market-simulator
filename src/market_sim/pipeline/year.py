@@ -56,6 +56,7 @@ from market_sim.pipeline.commitment import (
 )
 from market_sim.pipeline.kwargs import (
     apply_ercot_commitment_posture,
+    apply_spp_commitment_posture,
     apply_reserve_coopt,
 )
 from market_sim.pipeline.solve import EnergySolveResult, run_energy_solve
@@ -309,6 +310,9 @@ def run_year_solve(
     # docs/handoffs/ercot-commitment-thinness-2026-07.md). No-op /
     # byte-identical for every non-ERCOT run and default-off ERCOT.
     apply_ercot_commitment_posture(dispatch_kwargs, config, fleet_arrays)
+    # SPP standalone commitment posture with min-up/min-down (SPP-102).
+    # No-op / byte-identical for every non-SPP run and default-off SPP.
+    apply_spp_commitment_posture(dispatch_kwargs, config, fleet_arrays)
 
     # P1-native CAISO RA must-offer bridge (P2 archived — CLAUDE.md: P0/P1
     # only): floor the merchant gas CC/CT fleet from the P0 run pattern before

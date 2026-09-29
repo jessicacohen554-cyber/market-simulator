@@ -607,4 +607,5 @@ DECLARED: dict[str, str | dict[str, str]] = {
     # R-ERCOT-14: declared at the PRE-ARM (empty-table) hash, exactly as
     # ISO_PLANT_ENTRIES was, so the Oklaunion exit re-keys ERCOT's bundles.
     "ISO_PLANT_EXITS": {"ERCOT": "a4d0fee78b233797"},
+    "SPP_POSTURE_MIN_DOWN_HOURS": "05ce3498cb8df05c",
 }

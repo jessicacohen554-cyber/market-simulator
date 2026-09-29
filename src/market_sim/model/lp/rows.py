@@ -1165,8 +1165,12 @@ def _build_posture_energy_rows(
     posture_gen_idx: np.ndarray,
     posture_col: np.ndarray,
     posture_mlf: np.ndarray,
+    *,
+    min_up_h: np.ndarray | None = None,
+    min_down_h: np.ndarray | None = None,
+    ucap: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
-    """Build the STANDALONE energy-only commitment-posture rows (ERCOT).
+    """Build the STANDALONE energy-only commitment-posture rows (ERCOT, SPP).
 
     The reserve-decoupled half of the pooled-linear commitment-posture lever
     (design note ``docs/multi-iso/miso-scarcity-posture-design-2026-07.md`` §A;
@@ -1190,9 +1194,23 @@ def _build_posture_energy_rows(
     * **Startup counting**, cyclic ``U[p,t] − U[p,t−1] − SU[p,t] <= 0`` — re-timing
       energy pays a real start (``q*T`` rows; SU cost enters build_cost_vector).
 
-    Returns one CSR block ``[headroom | min-load | startup]`` with its lower/upper
-    bound vectors, inserted before the mass_cap/RPS/reserve tail so the front
-    energy-balance and the end-anchored reserve/RPS duals keep their row indices.
+    Two optional TIME families (SPP-102 ``spp_commitment_posture``; absent —
+    and the block byte-identical — when ``min_up_h``/``min_down_h`` are None),
+    per pool with a positive window, cyclic like the startup rows:
+
+    * **Min-up** ``Σ_{k<UT} SU[p,t−k] − U[p,t] <= M_up[p,t] − ucap[p,t]`` —
+      capacity started in the last ``UT`` hours is still online. ``M_up`` is
+      the pool's max available capacity over that window, so a forced outage
+      (``ucap`` falling) is an allowance, never an infeasibility.
+    * **Min-down** ``Σ_{k<DT} SU[p,t−k] + U[p,t−DT] <= M_dn[p,t]`` — the
+      clustered form of "capacity stopped in the last ``DT`` hours cannot
+      restart" (the shutdown ``SD = SU − ΔU`` telescopes out, so no SD column
+      is needed); ``M_dn`` is the max available capacity over ``[t−DT, t]``.
+
+    Returns one CSR block ``[headroom | min-load | startup | min-up | min-down]``
+    with its lower/upper bound vectors, inserted before the mass_cap/RPS/reserve
+    tail so the front energy-balance and the end-anchored reserve/RPS duals keep
+    their row indices.
     """
     gidx = np.asarray(posture_gen_idx, dtype=int)
     col = np.asarray(posture_col, dtype=int)
@@ -1275,6 +1293,76 @@ def _build_posture_energy_rows(
     )
     lowers.append(np.full(q * T, -np.inf))
     uppers.append(np.zeros(q * T))
+
+    # (d)/(e) Min-up / min-down time coupling (SPP-102). One block per distinct
+    # window length (a handful), never a loop over hours.
+    if min_up_h is not None or min_down_h is not None:
+        if ucap is None:
+            raise ValueError(
+                "posture min-up/min-down rows need the pool available capacity "
+                "(ucap) for their outage allowance"
+            )
+        cap = np.asarray(ucap, dtype=float)
+        hours = np.arange(T)
+
+        def _window_sum(width: int) -> sp.csr_matrix:
+            """Cyclic T×T operator: row t sums columns t, t−1, …, t−width+1."""
+            k = np.arange(width)
+            return sp.csr_matrix(
+                (
+                    np.ones(T * width),
+                    (
+                        np.repeat(hours, width),
+                        (hours[:, None] - k[None, :]).ravel() % T,
+                    ),
+                ),
+                shape=(T, T),
+            )
+
+        def _window_max(c: np.ndarray, back: int) -> np.ndarray:
+            """Cyclic max of ``c`` (pools×T) over ``[t−back, t]``."""
+            out = c.copy()
+            for k in range(1, back + 1):
+                out = np.maximum(out, np.roll(c, k, axis=1))
+            return out
+
+        def _selector(pools: np.ndarray, off: int, val: float) -> sp.csr_matrix:
+            """(len(pools), vph) selector placing ``val`` at ``off + pool``."""
+            return sp.csr_matrix(
+                (np.full(pools.size, val), (np.arange(pools.size), off + pools)),
+                shape=(pools.size, vph),
+            )
+
+        su_off = layout._posture_su_off
+        u_off = layout._posture_u_off
+        for widths, kind in ((min_up_h, "up"), (min_down_h, "down")):
+            if widths is None:
+                continue
+            w = np.asarray(widths, dtype=int)
+            for width in np.unique(w[w > 0]):
+                pools = np.flatnonzero(w == width)
+                n_sel = pools.size
+                su_sel = _selector(pools, su_off, 1.0)
+                if kind == "up":
+                    mat = sp.kron(
+                        _window_sum(int(width)), su_sel, format="csr"
+                    ) + sp.kron(
+                        sp.eye(T, format="csr"),
+                        _selector(pools, u_off, -1.0),
+                        format="csr",
+                    )
+                    rhs = _window_max(cap[pools], int(width) - 1) - cap[pools]
+                else:
+                    shift = sp.csr_matrix(
+                        (np.ones(T), (hours, (hours - int(width)) % T)), shape=(T, T)
+                    )
+                    mat = sp.kron(
+                        _window_sum(int(width)), su_sel, format="csr"
+                    ) + sp.kron(shift, _selector(pools, u_off, 1.0), format="csr")
+                    rhs = _window_max(cap[pools], int(width))
+                blocks.append(mat)
+                lowers.append(np.full(n_sel * T, -np.inf))
+                uppers.append(rhs.T.reshape(-1))
 
     return (
         sp.vstack(blocks, format="csr"),
@@ -1367,6 +1455,9 @@ def build_constraints(
     posture_gen_idx: np.ndarray | None = None,
     posture_col: np.ndarray | None = None,
     posture_mlf: np.ndarray | None = None,
+    posture_min_up_h: np.ndarray | None = None,
+    posture_min_down_h: np.ndarray | None = None,
+    posture_ucap: np.ndarray | None = None,
     link_loss: np.ndarray | None = None,
     dis_tranche_arm_idx: np.ndarray | None = None,
     hydro_cascade: "HydroCascadeSpec | None" = None,
@@ -2121,6 +2212,9 @@ def build_constraints(
             posture_gen_idx,
             posture_col,
             posture_mlf,
+            min_up_h=posture_min_up_h,
+            min_down_h=posture_min_down_h,
+            ucap=posture_ucap,
         )
         blocks.append(pos_block)
         del pos_block

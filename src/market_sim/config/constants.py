@@ -444,6 +444,16 @@ RA_BRIDGE_ECON_MIN_DOWN_HOURS: float = 4.0
 SPP_GAS_BRIDGE_MIN_LOAD_FRAC: dict[str, float] = {"gas_cc": 0.209, "gas_st": 0.090}
 SPP_GAS_BRIDGE_MIN_RUN_HOURS: dict[str, float] = {"gas_cc": 15.0, "gas_st": 5.0}
 
+# SPP gas MINIMUM-DOWN time (h) for the SPP commitment posture's min-down
+# coupling (ScenarioConfig.spp_commitment_posture, SPP-102). Source: SPP MMU
+# Annual State of the Market 2024, "Average physical parameter values" (Fig
+# 3-10): gas min-down 8 h, published by fuel (gas unsplit) — recorded as the
+# admissible commitment-time source in FINDING-spp-83 §2. Cross-check, not the
+# identification: SPP's own CEMS CC off-spells have a p25 of 6-8 h in every
+# year 2019-2025 (docs/handoffs/spp102/trough_physics.json). Rules 5/13/21/23:
+# published physics, frozen against residuals; rule 25: SPP's own market.
+SPP_POSTURE_MIN_DOWN_HOURS: float = 8.0
+
 # Fast-start eligibility threshold (h) for the ERCOT offline fast-start pool
 # offer leg (ScenarioConfig.ercot_faststart_pool_offer): a unit is
 # SCED-startable intra-hour — the OFFQS/OFFNS telemetry family the pool
