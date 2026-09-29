@@ -151,5 +151,77 @@ def main() -> None:
         Path(a.json_out).write_text(json.dumps(res, indent=1))
 
 
+def census(years: list[int]) -> None:
+    """PRECOMMIT §2 phase-0 census: only gas fuel moves, and each moved unit keeps its annual mean."""
+    from replay_keeper import derived_run_year_inputs, run_year_kwargs
+    from run_calibration import run_year
+    from scripts.lib.bundle_fleet import clear_fleet_caches
+
+    meta = json.loads((SPAN / "meta.json").read_text())
+
+    def build(y: int, arm: bool) -> dict:
+        kw = run_year_kwargs(copy.deepcopy(meta))
+        kw.update(derived_run_year_inputs(str(SPAN), y))
+        if arm:
+            kw["gas_hh_monthly_shape"] = True
+        clear_fleet_caches()
+        with (
+            contextlib.redirect_stderr(io.StringIO()),
+            contextlib.redirect_stdout(io.StringIO()),
+        ):
+            st = run_year(
+                y,
+                meta["iso"],
+                T,
+                float(meta["gas_prices"][str(y)]),
+                {},
+                fleet_only=True,
+                **kw,
+            )
+        fa = st["fleet_arrays"]
+        fuel = np.asarray(st["fuel_prices"], float)
+        return dict(
+            ids=[str(u) for u in fa.unit_ids],
+            fuel=fuel if fuel.ndim == 2 else np.repeat(fuel[:, None], T, 1),
+            ft=np.asarray(fa.fuel_type_idx),
+            **{
+                f: np.asarray(getattr(fa, f), float)
+                for f in ("pmax", "availability", "heat_rate", "min_gen")
+            },
+        )
+
+    for y in years:
+        k, a = build(y, False), build(y, True)
+        same = k["ids"] == a["ids"] and all(
+            np.array_equal(k[f], a[f])
+            for f in ("pmax", "availability", "heat_rate", "min_gen")
+        )
+        moved = ~np.all(np.isclose(k["fuel"], a["fuel"], rtol=0, atol=1e-12), axis=1)
+        ft_moved = sorted(set(k["ft"][moved].tolist()))
+        ann = (
+            np.abs(a["fuel"][moved].mean(1) / k["fuel"][moved].mean(1) - 1).max()
+            if moved.any()
+            else 0.0
+        )
+        mon = np.array(
+            [
+                a["fuel"][moved][:, MONTH == m].mean()
+                / k["fuel"][moved][:, MONTH == m].mean()
+                for m in range(12)
+            ]
+        )
+        print(
+            f"{y}: arrays identical {same}; units moved {int(moved.sum())} of {len(k['ids'])}; "
+            f"fuel_type_idx moved {ft_moved}; max |annual mean ratio-1| {ann:.2e}; "
+            f"monthly fuel ratio {mon.min():.3f}-{mon.max():.3f}"
+        )
+
+
 if __name__ == "__main__":
-    main()
+    if "--census" in sys.argv:
+        census(
+            [int(v) for v in sys.argv[sys.argv.index("--census") + 1 :]]
+            or list(range(2019, 2026))
+        )
+    else:
+        main()
