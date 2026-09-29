@@ -3842,3 +3842,6 @@ results/calibration/nwppnext10xy_20*/
 # 2023 d8ef67b9 2024 dbca2693 2025 54f8f0d3 on claude/spp102-<y>. Numbers: RESULT-spp-102-commitment-posture-2026-09-29.md.
 results/calibration/spp102_arm_20*/
 results/calibration/spp102_arm_span/
+
+# R-ERCOT-17 per-year shard legs (rule 32(d)/31: local only, kept out of main)
+results/calibration/r_ercot17_arm_*/
