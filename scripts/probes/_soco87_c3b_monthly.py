@@ -2,7 +2,7 @@
 (``gas_hh_monthly_shape``) repair SOCO's flat monthly price profile?
 
 Rule 32 ``[R-SHARD]`` (a): never solves. Per year, two ``fleet_only`` rebuilds of the
-incumbent keeper's own recipe (``results/calibration/soco85_span`` through
+incumbent keeper's own recipe (``results/calibration/soco87_span`` through
 ``replay_keeper.run_year_kwargs``): the keeper as recorded (generic climatological
 ``GAS_MONTHLY_SEASONALITY``) and the keeper + ``gas_hh_monthly_shape=True`` (measured HH
 monthly shape, same annual level). Counterfactual = SAME-MARGINAL-UNIT re-pricing of the
@@ -11,6 +11,10 @@ sits within ``TOL`` $/MWh of the LP price is taken as price-setter and the price
 that unit's armed ``mc_base``; other hours are left unchanged. No merit-order reshuffle is
 modelled (first-order). Monthly load-weighted prices are then scored with the scorer's own
 ``_nrmse`` against the bench's ``rt_lw_mon``.
+
+REPOINTED after the soco-87 promotion (rule 35 pruned soco85_span): ``SPAN`` now reads
+soco87_span, which already arms the flag, so a re-run measures ~zero delta. The FINDING-soco-87
+numbers came from soco85_span at e44cf620 (git history is the record).
 
 Usage::
 
@@ -33,7 +37,7 @@ import numpy as np
 _ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(_ROOT / "scripts"), str(_ROOT / "src"), str(_ROOT)]
 
-SPAN = _ROOT / "results/calibration/soco85_span"
+SPAN = _ROOT / "results/calibration/soco87_span"
 RUN_ID = "2026-09-28-soco85-gas-daily-shape"
 T = 8760
 TOL = (
