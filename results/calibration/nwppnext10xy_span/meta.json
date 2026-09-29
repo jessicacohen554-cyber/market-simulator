@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-28T01:20:07",
+  "timestamp": "2026-09-29T03:36:03",
   "iso": "NWPP",
   "years": [
     2019,
@@ -81,7 +81,8 @@
     "coal_fuel_inventory_take_floor": true,
     "coal_takeorpay_from_data": false,
     "coal_committed_takeorpay_regulated": false,
-    "coal_fuel_inventory_monthly_pile": true
+    "coal_fuel_inventory_monthly_pile": true,
+    "unit_outage_exit_ym_from_eia860": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -288,9 +289,9 @@
   "nyiso_local_selfsupply": null,
   "nyiso_scr_edrp": null,
   "nyiso_scr_edrp_strike": null,
-  "nyiso_firm_imports": null,
   "nyiso_import_reconciliation": null,
   "nyiso_import_hub_prices": null,
+  "nyiso_ne_ac_node": null,
   "nyiso_iroquois_winter_spread": null,
   "nyiso_synchronised_reserve": null,
   "nyiso_li_locational_reserve": null,
@@ -373,8 +374,8 @@
     "unit_outages_layup": "../_shared/NWPP/unit_outages_layup-75441d347875.parquet",
     "hydro_plant_modes": "../_shared/NWPP/hydro_plant_modes-142afad248b2.parquet"
   },
-  "git_sha": "e7478536",
-  "basis_sha": "e7478536f46cade23e0aea71e79a329c0e29202a",
+  "git_sha": "0ec8eb79",
+  "basis_sha": "0ec8eb79e1202a8d1e815d2bf33d8722e5d5ffa9",
   "highspy_version": "1.15.1",
   "environment": {
     "python_version": "3.11.15",
@@ -396,25 +397,25 @@
     "market_sim_data_root": ""
   },
   "composed_from": {
-    "nwppnext8mp_2023": [
+    "nwppnext10xy_2023": [
       2023
     ],
-    "nwppnext8mp_2019": [
+    "nwppnext10xy_2019": [
       2019
     ],
-    "nwppnext8mp_2020": [
+    "nwppnext10xy_2020": [
       2020
     ],
-    "nwppnext8mp_2021": [
+    "nwppnext10xy_2021": [
       2021
     ],
-    "nwppnext8mp_2022": [
+    "nwppnext10xy_2022": [
       2022
     ],
-    "nwppnext8mp_2024": [
+    "nwppnext10xy_2024": [
       2024
     ],
-    "nwppnext8mp_2025": [
+    "nwppnext10xy_2025": [
       2025
     ]
   }

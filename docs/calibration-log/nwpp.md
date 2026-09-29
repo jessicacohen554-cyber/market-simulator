@@ -656,3 +656,35 @@ Page 5 receipts replace the ratable C/12 on both sides of the pile. G-DRIFT ALL 
 **Owner ruling 2026-09-29: "Reject, keep #15".** The probe was pruned (rule 31 (i)); the matrix cell is R.
 Also re-derived the stale `nwpp_plant_basis_energy.csv` provenance hash (only `source_sha256` moved).
 Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext9-coal-measured-receipts-2019-2025-2026-09-28.md`.
+
+## NWPP-NEXT-10 — 2026-09-29 — EIA-860 exit-month routing of the outage layer → KEEPER #16
+
+**Lever 1 closed (owner card "Close lever 1, pivot").** An inventory-management floor for C4 coal 2023 has no
+admissible identification:
+- PacifiCorp's per-plant targets (2021 Kaptur study) are redacted in the Utah DPU filings.
+- The only public band (2009, "two to three months" at the Utah plants) gives Bridger (+1.98 TWh of the Q1-2023
+  over-burn) no number.
+- 2023 stocks sat below that band all year.
+
+**Lever 2 root cause (zero LP).** Colstrip 2020 had 5.86 TWh available against 7.94 TWh generated.
+- Retired Units 1–2 (2020-01) carry CAMPD post-exit windows (Jan 2–Dec 31) that derated the surviving Units 3–4 bin.
+- The survivors' own windows divided by a retiree-inclusive denominator.
+- Existing repairs cannot remove this: `fleet_status_scope` and `per_unit_clip` are inert, and the two denominator
+  flags reach only 7.55–7.57 TWh.
+
+**The fix.** New default-off field `unit_outage_exit_ym_from_eia860`. It stamps `exit_ym` from EIA-860 and reuses
+PJM-NEXT-8's dated-bin accumulator.
+- Routing is live only at plants with a stamped row in the year. That guard is needed because Centralia's CAMPD ids
+  never match EIA-860, and without it the plant gains a spurious +2.58 TWh.
+- Census: only Colstrip 2020 moves, 5.855 → 7.913 TWh.
+- G-DRIFT ALL INERT. Seven shards at `0ec8eb79` (the first 2019 shard stalled and was replaced).
+
+**Result: NOT-YET on {dispatch_corr}, still ONE record (C4 coal 2023 r 0.695).**
+- 2019 and 2021–2025 are byte-identical to #15.
+- In 2020, 11 of 161 records move, all PASS → PASS:
+  - C4 coal 0.762 → 0.772;
+  - C1 CC_REGULAR +2.22 → +0.75 TWh;
+  - C1 COAL_PRB +2.14 → **+4.20 TWh (worse)**.
+
+**Owner card: "Promote on structure".** Keeper #16 `2026-09-29-nwppnext10-exit-month-routing`; #15 pruned (rule 35).
+Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext10-exit-ym-routing-2019-2025-2026-09-29.md`.

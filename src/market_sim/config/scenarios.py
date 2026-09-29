@@ -536,6 +536,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # overlay (GATED default-off; the extract is read unchanged while off, so
     # the off path is byte-inert). Registered IN THE SAME COMMIT as the field.
     "unit_outage_precod_clip",
+    # NWPP-NEXT-10 EIA-860 exit-month routing of the >= 5-day CAMPD unit-outage
+    # overlay onto mid_vintage_exit_carry's dated exit bins (GATED default-off;
+    # the extract is read unchanged while off, so the off path is byte-inert).
+    # Registered IN THE SAME COMMIT as the field.
+    "unit_outage_exit_ym_from_eia860",
     # miso-188 retiree-channel vintage-status scope (GATED default-off; the
     # sole consumer threads it via getattr into
     # data/fleet/eia860.py::load_retired_within_window, so the off path is
@@ -2468,6 +2473,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by soco-67 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_precod_clip": "False",
+    # Added by NWPP-NEXT-10 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_exit_ym_from_eia860": "False",
     # Added by miso-188 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "retiree_vintage_status_scope": "False",
@@ -17105,6 +17113,26 @@ class ScenarioConfig:
     # (rule 13); backcast-only, as the overlay is. Byte-inert off.
     # FINDING-soco-67 / data/outages.py::clip_precod_unit_windows.
     unit_outage_precod_clip: bool = False
+    # NWPP-NEXT-10 (rule 19 [R-ONE-MECH], rule 14 [R-ACCURATE]) EIA-860 EXIT
+    # MONTH ROUTING of the >= 5-day CAMPD unit-outage overlay. Where
+    # mid_vintage_exit_carry splits a plant into dated exit bins, the exit
+    # already zeroes a retired unit after its retirement month, yet the CAMPD
+    # deriver books the unit's post-retirement darkness as an outage window --
+    # which, lacking a dated key, derates the plant's SURVIVING bin (the exit
+    # removed twice, the second time from units that ran), while the
+    # survivors' own windows divide by a denominator still counting the
+    # retiree. Armed, each row's exit_ym is stamped from EIA-860's own
+    # per-unit retirement month iff that month is one of its facility's dated
+    # bins, and PJM-NEXT-8's accumulator routes it (the SAME construction as
+    # unit_outage_exit_cohort_repair, which reads exit_ym from a re-derived
+    # companion instead; the stamp never overwrites one). ZERO FREE PARAMETERS
+    # (rule 21). NWPP 2020: Colstrip 6076 units 1-2 (438 MW, retired 2020-01),
+    # windows 2020-01-02..12-31, left units 3-4's 1,480 MW bin 5.86 TWh of
+    # availability against the plant's own EIA-923 net 7.94 TWh. Regenerates
+    # wherever a CAMPD filing and an EIA-860 record exist (rule 13);
+    # backcast-only, as the overlay is. Byte-inert off.
+    # FINDING/PRECOMMIT-nwppnext10 / data/outages.py::stamp_exit_ym_from_eia860.
+    unit_outage_exit_ym_from_eia860: bool = False
 
     # Retiree-channel injection scoped by the EIA-860 vintage status oracle
     # (retiree_vintage_status_scope, off by default; miso-188,

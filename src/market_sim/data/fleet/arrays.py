@@ -1350,7 +1350,15 @@ def _apply_outage_overlays(
         # dated exit bin's capacity share of its plant's (plant_code, group),
         # so a unit's outage derates its OWN dated bin (rule 14). None = off.
         _exit_repair = bool(getattr(config, "unit_outage_exit_cohort_repair", False))
-        _dated_shares = _dated_exit_bin_shares(generators) if _exit_repair else None
+        # NWPP-NEXT-10 (ScenarioConfig.unit_outage_exit_ym_from_eia860): the SAME
+        # dated-bin routing, with each row's exit month read from EIA-860 at
+        # load time instead of from a re-derived companion's exit_ym column.
+        _exit_ym_eia = bool(getattr(config, "unit_outage_exit_ym_from_eia860", False))
+        _dated_shares = (
+            _dated_exit_bin_shares(generators)
+            if (_exit_repair or _exit_ym_eia)
+            else None
+        )
         ufac = unit_outage_derate_factors(
             config.weather_year,
             hours,
@@ -1464,7 +1472,16 @@ def _apply_outage_overlays(
             precod_clip=bool(getattr(config, "unit_outage_precod_clip", False)),
             exit_cohort_repair=_exit_repair,
             dated_bin_shares=_dated_shares,
+            exit_ym_from_eia860=_exit_ym_eia,
         )
+        if _exit_ym_eia and not _exit_repair and _dated_shares is not None:
+            # NWPP-NEXT-10: keep dated routing only at the plants the loader
+            # routed (a dated key in the factors), mirroring
+            # outages.routable_dated_shares; every other plant stays incumbent.
+            _routed = {int(k[0]) for k in ufac if len(k) == 4}
+            _dated_shares = (
+                tuple(e for e in _dated_shares if int(e[0][0]) in _routed) or None
+            )
         # DAM-first outage precedence (backcast overlay, gated per ISO). Where an
         # ISO publishes its own availability instrument, use it IN PLACE OF the
         # CAMPD unit-outage derate for the scope it covers, keeping the CAMPD
