@@ -55,6 +55,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     nwpp_demand_plant_basis: { cell: "." },
     ercot_tie_zonal_interchange: { cell: "." },
     ercot_offer_swcap_clip: { cell: "." },
+    ercot_swcap_vintage: { cell: "." },
     ercot_offer_surface_cleared_share_rt_room: { cell: "." },
     ercot_load_forecast_margin: { cell: "." },
     maxgen_emergency_tier_pricing: { cell: "I", ev: "nyiso-115 (ex-ante transfer adjudication, 0 solves; scripts/probes/_nyiso115_transfer_queue_adjudication.py -> results/calibration/nyiso115_transfer_queue_adjudication.json)" },

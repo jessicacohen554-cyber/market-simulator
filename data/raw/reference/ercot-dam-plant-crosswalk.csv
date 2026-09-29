@@ -40,6 +40,11 @@ SCES_UNIT1_J03,COAL,155.8,SCES_UNIT1,QSANDY,56611,Sandy Creek Energy Station,Sou
 TNP_ONE_TNP_O_1,COAL,155.0,TNP_TNP_O_1,QLONE2,7030,Major Oak Power,North,349.2,0.444,forensic_seed,,0,1
 TNP_ONE_TNP_O_2,COAL,155.0,TNP_TNP_O_2,QLONE2,7030,Major Oak Power,North,349.2,0.444,forensic_seed,,0,1
 SCES_UNIT1_J04,COAL,104.0,SCES_UNIT1,QLCRA,56611,Sandy Creek Energy Station,South_Central,936.0,0.111,forensic_seed,,0,1
+OKLA_OKLA_G1_J01,COAL,355.0,OKLA_OKLA_G1,,127,Oklaunion,North,720.0,0.493,dam_resource_name_r_ercot14,,0,1
+OKLA_OKLA_G1_J02,COAL,102.0,OKLA_OKLA_G1,,127,Oklaunion,North,720.0,0.142,dam_resource_name_r_ercot14,,0,1
+OKLA_OKLA_G1_J03,COAL,51.0,OKLA_OKLA_G1,,127,Oklaunion,North,720.0,0.071,dam_resource_name_r_ercot14,,0,1
+OKLA_OKLA_G1_J04,COAL,66.0,OKLA_OKLA_G1,,127,Oklaunion,North,720.0,0.092,dam_resource_name_r_ercot14,,0,1
+OKLA_OKLA_G1_J05,COAL,76.0,OKLA_OKLA_G1,,127,Oklaunion,North,720.0,0.106,dam_resource_name_r_ercot14,,0,1
 VICTPORT_CTG01,CT_PEAKER,47.0,VICTPORT_RN,QTENSK,61966,Victoria Port Power II LLC,South,100.0,0.47,token_prefix,0.75,1,1
 VICTPORT_CTG02,CT_PEAKER,47.0,VICTPORT_RN,QTENSK,61966,Victoria Port Power II LLC,South,100.0,0.47,token_prefix,0.75,1,1
 VICTPRT2_UNIT1,CT_PEAKER,46.0,VICTPORT_RN,QSHEL2,61966,Victoria Port Power II LLC,South,100.0,0.46,token_prefix,0.746,1,1

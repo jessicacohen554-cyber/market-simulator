@@ -46,6 +46,7 @@ from market_sim.config.constants import (
     ISO_BA_JOINS,
     ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE,
     ISO_PLANT_ENTRIES,
+    ISO_PLANT_EXITS,
 )
 
 #: Returned by :func:`ba_join_first_month` for a plant whose BA has not yet
@@ -426,6 +427,39 @@ def plant_entry_first_inside_row(iso: str, year: int) -> dict[int, int]:
     out: dict[int, int] = {
         p: 2**31 - 1 for p, s in stamps.items() if int(year) < s.year
     }
+    live = {p: s for p, s in stamps.items() if s.year == int(year)}
+    if live:
+        frame = _entry_clock(iso, year)
+        utc = pd.to_datetime(frame["UTC time"]).to_numpy()
+        out.update({p: int((utc < s.to_datetime64()).sum()) for p, s in live.items()})
+    return out
+
+
+# --- plant-grain EXIT (constants.ISO_PLANT_EXITS, lane R-ERCOT-14) ----------
+
+
+def plant_exit_stamps(iso: str) -> dict[int, pd.Timestamp]:
+    """``{plant: first hour OUTSIDE iso}`` from ``ISO_PLANT_EXITS[iso]``.
+
+    Same clock as :func:`plant_entry_stamps`. Empty for any region the
+    registry does not name.
+    """
+    return {
+        int(p): pd.Timestamp(t) for p, t in ISO_PLANT_EXITS.get(iso.upper(), {}).items()
+    }
+
+
+@lru_cache(maxsize=32)
+def plant_exit_first_outside_row(iso: str, year: int) -> dict[int, int]:
+    """``{plant: first LP row OUTSIDE iso}`` for registered exiting plants.
+
+    In the exit year the row is the count of the region's local-year frame
+    rows whose hour-ending ``UTC time`` precedes the stamp; in a later year
+    it is ``0`` (outside all year). Plants still inside all year are omitted,
+    as is every plant of an unregistered region.
+    """
+    stamps = plant_exit_stamps(iso)
+    out: dict[int, int] = {p: 0 for p, s in stamps.items() if int(year) > s.year}
     live = {p: s for p, s in stamps.items() if s.year == int(year)}
     if live:
         frame = _entry_clock(iso, year)

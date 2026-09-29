@@ -1,19 +1,19 @@
 {
-  "timestamp": "2026-09-28T05:22:05",
+  "timestamp": "2026-09-29T02:01:23",
   "git": {
-    "sha": "dac2fa2c",
-    "basis_sha": "dac2fa2c234c590920cbc944dd64c82aeaa95b72",
-    "branch": "claude/r-ercot13-arm-2019",
+    "sha": "edbfdad5",
+    "basis_sha": "edbfdad5235eae5bacc2e8b0248024cae625a503",
+    "branch": "claude/r-ercot14-b-2020",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "R-ERCOT-13 arm A: 2019 LR RRS credit + RTOLCAP supply cap (from_year 2020->2019)",
+  "model_changes_note": "R-ERCOT-14 arm B (Oklaunion + SWCAP vintage) 2020",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "ERCOT",
     "years": [
-      2019
+      2020
     ],
     "hours": 8760,
     "passes": [
@@ -22,7 +22,7 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2019": 2.57
+      "2020": 2.03
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -277,8 +277,7 @@
           "peak": 72.6
         }
       },
-      "ercot_load_resource_reserve_from_year": 2019,
-      "ercot_reserve_supply_cap_from_year": 2019
+      "ercot_swcap_vintage": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -347,13 +346,13 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "dac2fa2c"
+    "git_sha": "edbfdad5"
   },
   "scenario_config": {
-    "weather_year": 2019,
+    "weather_year": 2020,
     "iso": "ERCOT",
     "mode": "backcast",
-    "voll": 5000.0,
+    "voll": 9000.0,
     "hours": 8760,
     "start_year": null,
     "end_year": null,
@@ -665,10 +664,10 @@
     "nyiso_import_sil_retire": false,
     "nyiso_seam_par_attribution": false,
     "nyiso_li_seam_posted_limit_cap": false,
+    "nyiso_ne_ac_node": false,
     "nyiso_seam_deliverability_envelope": false,
     "nyiso_scr_edrp": false,
     "nyiso_scr_edrp_strike": 500.0,
-    "nyiso_firm_imports": false,
     "nyiso_import_reconciliation": false,
     "nyiso_import_hub_prices": false,
     "nyiso_iroquois_winter_spread": false,
@@ -774,7 +773,7 @@
     "caiso_reserve_online_scoped": false,
     "caiso_locational_as_families": false,
     "ercot_load_resource_reserve": true,
-    "ercot_load_resource_reserve_from_year": 2019,
+    "ercot_load_resource_reserve_from_year": 2020,
     "ercot_storage_as_reserve": true,
     "ercot_storage_as_reserve_from_year": 2023,
     "ercot_ecrs_requirement": false,
@@ -793,7 +792,7 @@
     "ercot_as_aware_commitment": false,
     "ercot_as_adequacy_frac": 1.0,
     "ercot_reserve_supply_cap": true,
-    "ercot_reserve_supply_cap_from_year": 2019,
+    "ercot_reserve_supply_cap_from_year": 2020,
     "ercot_reserve_supply_forward": false,
     "ercot_reserve_supply_cap_net_credits": true,
     "ercot_online_capacity_envelope": false,
@@ -981,6 +980,7 @@
     "ercot_offer_surface_lowcurve": false,
     "ercot_offer_surface_lowcurve_path": null,
     "ercot_offer_swcap_clip": true,
+    "ercot_swcap_vintage": true,
     "ercot_gas_commitment_bridge": true,
     "ercot_gas_bridge_min_load_frac": 0.574,
     "ercot_gas_bridge_startup": true,
@@ -1092,6 +1092,7 @@
     "campd_per_unit_attribution": false,
     "campd_unit_fuel_split": false,
     "campd_st_gas_span_coverage": false,
+    "campd_split_remap_companions": false,
     "campd_outage_merit_order_guard": false,
     "campd_dark_unit_year_windows": false,
     "unit_outage_membership_repair": false,
@@ -16244,6 +16245,7 @@
     "caiso_per_year_import_caps": false,
     "caiso_import_cap_floor_static": false,
     "caiso_tac_shares_standard_time": false,
+    "caiso_eia930_clock_repair": false,
     "pjm_congestion": false,
     "transmission_expansion_enabled": false,
     "pjm_seam_flow_limit": false,
@@ -16277,7 +16279,7 @@
     "unit_outage_maxgen_events": false,
     "maxgen_emergency_tier_pricing": false,
     "forecast_xyear_warmstart": true,
-    "gas_price_override": 2.57,
+    "gas_price_override": 2.03,
     "ercot_offer_hrmult_ep_rebasis": false,
     "ercot_offer_hrmult_ep_rebasis_bands": null,
     "ercot_capability_reconciliation": false,
@@ -16316,12 +16318,13 @@
   "solve_surface": {
     "schema": 1,
     "iso": "ERCOT",
-    "fingerprint": "179755c2f2cb063e",
-    "rows": 236,
+    "fingerprint": "f027075a5116fff7",
+    "rows": 238,
     "moved": {
       "CORRELATED_OUTAGE_CURVE": "57d222be86dd9007",
       "GENERIC_BASE_OFFER_CURVE": "bdc2b348ec6144d1",
       "ISO_PLANT_ENTRIES": "0ea953691398af1d",
+      "ISO_PLANT_EXITS": "3774f5780d62b262",
       "LABELS": "600aeac5bbcd256c",
       "MAINTENANCE_MONTHLY_SHAPE": "b4da945d5a2e8f77",
       "MIN_STABLE_PCT_PHYSICAL": "262e67a17cf047e0",
@@ -16331,18 +16334,18 @@
       "THERMAL_AVAILABILITY": "34ff308290e18439"
     },
     "epochs": [],
-    "git_sha": "dac2fa2c"
+    "git_sha": "edbfdad5"
   },
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v49-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.15.1",
+      "highspy": "1.14.0",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.6",
-      "pyarrow": "25.0.1",
-      "pydantic": "2.13.5"
+      "pandas": "3.0.3",
+      "pyarrow": "24.0.0",
+      "pydantic": "2.13.4"
     },
     "cache_key_path_roots": [
       [
@@ -16369,8 +16372,8 @@
       "armed": true,
       "path": "data/raw/campd-unit-outages-hourgrain.csv",
       "present": true,
-      "sha256": "40a4b2961a9589871d70684a8766c5a9a72c8be8553d70c52574fe467ac2ff74",
-      "bytes": 703852
+      "sha256": "c72e4645175d5a2c1a5b7c5eb736d54686bf4186152497b2a18cb32b4ad8353d",
+      "bytes": 704266
     },
     "thermal_tranches": {
       "armed": false,

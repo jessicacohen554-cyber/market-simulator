@@ -4212,6 +4212,7 @@ COAL_PLANT_COMMISSION_YEAR: dict[int, int] = {
     7030: 1990,  # Major Oak Power
     7097: 1992,  # J K Spruce
     56257: 2013,  # Sandy Creek
+    127: 1986,  # Oklaunion (EIA-860 Operating Year; R-ERCOT-14)
 }
 
 # Per-plant coal must-run percentage, keyed by EIA plant code. Derived from
