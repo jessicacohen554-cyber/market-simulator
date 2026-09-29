@@ -1098,7 +1098,12 @@ def _caiso_storage_envelope_clock_repaired(
     if not caiso_eia930_clock_repair_active():
         return None
     from market_sim.config.constants import EIA930_CISO_CLOCK_LATE_WINDOWS_UTC
-    from market_sim.config.paths import EIA_860_DIR, active_eia860_dir
+    from market_sim.config.paths import (
+        active_eia860_dir,
+        eia860_standby_admitted,
+        restore_eia860_dir,
+        set_eia860_vintage,
+    )
 
     first, last = (
         pd.Timestamp(t) for t in EIA930_CISO_CLOCK_LATE_WINDOWS_UTC["generation"]
@@ -1107,10 +1112,10 @@ def _caiso_storage_envelope_clock_repaired(
     year_hi = pd.Timestamp(year=year + 1, month=1, day=1, hour=9)
     if year_hi < first - pd.Timedelta(hours=1) or year_lo > last:
         return None
-    if active_eia860_dir() != EIA_860_DIR:
+    if eia860_standby_admitted():
         raise RuntimeError(
             "caiso_eia930_clock_repair: the battery envelope is re-derived on the "
-            "canonical EIA-860 fleet; a year-matched vintage is active"
+            "committed derivation's OP-only fleet; standby admission is armed"
         )
     raw = pd.read_parquet(
         _eia_hourly_path("CISO"), columns=["UTC time", "Local date", "Hour", "NG: OTH"]
@@ -1126,8 +1131,18 @@ def _caiso_storage_envelope_clock_repaired(
     net = net[:hours] if len(net) >= hours else np.pad(net, (0, hours - len(net)))
 
     cfg = ScenarioConfig(mode="backcast", storage_vintage_ramp=True)
+    # The committed derivation's denominator is the CANONICAL snapshot
+    # (``set_eia860_vintage(None)``), whatever vintage this solve reads
+    # (the CAISO keeper tracks the solve year). Switch for this one load and
+    # restore the solve's directory, so no later loader sees a different one.
+    solve_dir = active_eia860_dir()
+    set_eia860_vintage(None)
+    try:
+        storage_units = load_eia860_storage("CAISO", year, cfg)
+    finally:
+        restore_eia860_dir(solve_dir)
     fleet = np.zeros(12)
-    for u in load_eia860_storage("CAISO", year, cfg):
+    for u in storage_units:
         if u.tech_name == "pumped_storage":
             continue
         fleet += np.array(

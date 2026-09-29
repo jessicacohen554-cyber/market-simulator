@@ -140,6 +140,19 @@ def set_eia860_vintage(year: int | None) -> Path:
     return _ACTIVE_EIA_860_DIR
 
 
+def restore_eia860_dir(directory: Path) -> Path:
+    """Restore an EIA-860 directory previously read from :func:`active_eia860_dir`.
+
+    For a reader that must load one table on a different vintage than the
+    running solve (R-CAISO-15's battery envelope re-derivation reads the
+    canonical snapshot the committed derivation used) and then hand the
+    solve's own directory back unchanged. Returns the restored directory.
+    """
+    global _ACTIVE_EIA_860_DIR
+    _ACTIVE_EIA_860_DIR = Path(directory)
+    return _ACTIVE_EIA_860_DIR
+
+
 # --- EIA-860 operable status admission ------------------------------------
 # The fleet keeps EIA-860 ``Status == "OP"`` generators only. ``SB`` is EIA's
 # "Standby/Backup — available for service but not normally used for this

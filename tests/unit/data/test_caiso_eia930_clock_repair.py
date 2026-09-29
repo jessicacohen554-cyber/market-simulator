@@ -313,3 +313,25 @@ def test_live_envelope_armed_moves_2024_2025_one_hour_earlier():
                 np.corrcoef(new, np.roll(old, -1))[0, 1] > np.corrcoef(new, old)[0, 1]
             )
     assert S._caiso_storage_envelope_clock_repaired(2022) is None
+
+
+@requires_raw(_ENVELOPE, _CISO_EXTRACT)
+def test_live_envelope_under_solve_year_vintage_matches_canonical_and_restores():
+    """The keeper tracks the solve-year EIA-860 vintage: the envelope still uses
+    the canonical fleet (the committed derivation's) and hands the solve's
+    directory back unchanged (the R-CAISO-15 shard crash)."""
+    from market_sim.config import paths as P
+    from market_sim.model import storage as S
+
+    F.set_caiso_eia930_clock_repair(True)
+    P.set_eia860_vintage(None)
+    canonical = S._caiso_storage_envelope_clock_repaired(2024)
+    solve_dir = P.set_eia860_vintage(2024)
+    try:
+        assert solve_dir != P.EIA_860_DIR  # a year-matched vintage is active
+        under_vintage = S._caiso_storage_envelope_clock_repaired(2024)
+        assert P.active_eia860_dir() == solve_dir
+    finally:
+        P.set_eia860_vintage(None)
+    np.testing.assert_array_equal(under_vintage[0], canonical[0])
+    np.testing.assert_array_equal(under_vintage[1], canonical[1])
