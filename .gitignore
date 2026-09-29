@@ -3788,3 +3788,5 @@ results/calibration/r_ercot13_lr_2019/
 # A-2019 cec0ae848a1889cde9d2bf75e30b0c1bb0e8b778
 results/calibration/r_ercot14_a_20*/
 results/calibration/r_ercot14_b_20*/
+# R-ERCOT-14 arm-A composite (Oklaunion only; not promoted, owner chose B 2026-09-29) - local only, never on main
+results/calibration/r_ercot14_span_A/

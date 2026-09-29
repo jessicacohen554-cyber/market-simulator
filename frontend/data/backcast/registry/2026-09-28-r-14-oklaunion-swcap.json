@@ -1,8 +1,8 @@
 {
-  "id": "2026-09-28-r-13-2019-reserve",
-  "label": "r 13 2019 reserve",
+  "id": "2026-09-28-r-14-oklaunion-swcap",
+  "label": "r 14 oklaunion swcap",
   "date": "2026-09-28",
-  "shorthand": "r-13-2019-reserve",
+  "shorthand": "r-14-oklaunion-swcap",
   "definition": "R-ERCOT-12 ARM 2025: keeper 2026-09-28-r-11-parish-split recipe, UNCHANGED flags, on the R-ERCOT-12 membership correction (constants.ISO_PLANT_ENTRIES: Frontera 55098 outside ERCOT before 2023-04-13, fleet + benchmark) \u2014 PRECOMMIT-r-ercot-12-frontera-membership-2026-09-28",
   "years": [
     2019,
@@ -14,6 +14,6 @@
     2025
   ],
   "iso": "ERCOT",
-  "file": "frontend/data/backcast/runs/2026-09-28-r-13-2019-reserve.js",
-  "bundle": "results/calibration/r_ercot13_span"
+  "file": "frontend/data/backcast/runs/2026-09-28-r-14-oklaunion-swcap.js",
+  "bundle": "results/calibration/r_ercot14_span"
 }
