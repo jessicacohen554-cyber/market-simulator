@@ -37,7 +37,7 @@ from scripts.probes.rnyiso_compose_span import _offer_block  # noqa: E402
 
 sys.path.insert(0, str(_REPO / "src"))
 
-PIN = "4ba64817beb037bb58839c7a35c6913d123e0c30"
+PIN = "7d238cc95ed843e93c9b934e97983926345479dc"
 CAL = _REPO / "results" / "calibration"
 DELTA = {"nyiso_ne_ac_node": (False, True)}
 #: keys the replay path translates identically for control and arm (rule 26 deletions;
