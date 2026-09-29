@@ -23,6 +23,11 @@ from market_sim.data.eia930 import demand as D
 from market_sim.data.eia930 import frames as F
 from tests.helpers import requires_raw
 
+from market_sim.config.paths import RAW_DIR as _RAW
+
+_ENVELOPE = _RAW / "reference" / "caiso-storage-shape-envelope.csv"
+_CISO_EXTRACT = F._eia_hourly_path("CISO")
+
 
 @pytest.fixture(autouse=True)
 def _disarm():
@@ -261,3 +266,50 @@ def test_live_hsl_armed_moves_solar_centroid_and_conserves_curtailment():
         if year >= 2024:
             c = _solar_centroid_by_month(on["solar_gen_mw"].to_numpy(), year)
             assert ((c >= 11.5) & (c <= 12.0 + 5e-3)).all(), c
+
+
+# --- R-CAISO-15: the battery shape envelope (storage._caiso_storage_envelope_clock_repaired)
+
+
+def test_envelope_unarmed_returns_none():
+    """Off by default: the committed CSV row is used unchanged."""
+    from market_sim.model import storage as S
+
+    assert S._caiso_storage_envelope_clock_repaired(2024) is None
+
+
+@requires_raw(_ENVELOPE, _CISO_EXTRACT)
+def test_live_envelope_precondition_reproduces_committed_csv(monkeypatch):
+    """On the UNREPAIRED extract the reader's derivation equals the CSV p95."""
+    from market_sim.model import storage as S
+
+    F.set_caiso_eia930_clock_repair(True)
+    # Precondition probe: the same construction with the repair made a no-op.
+    monkeypatch.setattr(F, "_repair_clock_late_windows", lambda df, ba: df)
+    csv = pd.read_csv(_ENVELOPE)
+    for year in (2023, 2024, 2025):
+        chg, dis = S._caiso_storage_envelope_clock_repaired(year)
+        row = csv[csv["year"] == year].sort_values("hod")
+        np.testing.assert_array_equal(chg, row["chg_frac_p95"].to_numpy())
+        np.testing.assert_array_equal(dis, row["dis_frac_p95"].to_numpy())
+
+
+@requires_raw(_ENVELOPE, _CISO_EXTRACT)
+def test_live_envelope_armed_moves_2024_2025_one_hour_earlier():
+    """Armed 2024-25 caps are the committed caps rolled one hour earlier."""
+    from market_sim.model import storage as S
+
+    F.set_caiso_eia930_clock_repair(True)
+    csv = pd.read_csv(_ENVELOPE)
+    for year in (2024, 2025):
+        chg, dis = S._caiso_storage_envelope_clock_repaired(year)
+        row = csv[csv["year"] == year].sort_values("hod")
+        # Correlation with the committed row shifted one hour earlier beats
+        # correlation with the committed row itself.
+        for new, col in ((chg, "chg_frac_p95"), (dis, "dis_frac_p95")):
+            old = row[col].to_numpy()
+            assert np.corrcoef(new, np.roll(old, -1))[0, 1] > 0.97
+            assert (
+                np.corrcoef(new, np.roll(old, -1))[0, 1] > np.corrcoef(new, old)[0, 1]
+            )
+    assert S._caiso_storage_envelope_clock_repaired(2022) is None
