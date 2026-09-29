@@ -119,6 +119,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     coal_monthly_pile_measured_receipts: { cell: "U", ev: "ROW ADDED 2026-09-28 (NWPP-NEXT-9) WITH the field -- U: UNTESTED here (rule 28(d)); requires coal_fuel_inventory_monthly_pile and is gated to NWPP (COAL_TAKE_FLOOR_ISOS)." },
     nyiso_li_seam_posted_limit_cap: { cell: ".", ev: "n/a: NYISO-only clip (run_calibration.run_year gates it on iso == \"NYISO\"); added by the rule-28(c) same-PR duty, NYISO-NEXT-6 2026-09-27." },
     nyiso_ne_ac_node: { cell: ".", ev: "n/a: NYISO-only node (get_interchange_spec resolves it on iso == \"NYISO\" only); added by the rule-28(c) same-PR duty, NYISO-NEXT-11 2026-09-28." },
+    nyiso_ne_ac_recon_detach: { cell: ".", ev: "n/a: NYISO-only (applied in run_calibration.run_year on iso == \"NYISO\" with nyiso_ne_ac_node armed); added by the rule-28(c) same-PR duty, NYISO-NEXT-13 2026-09-29." },
     coal_takeorpay_committed: { cell: "." },
     coal_prb_committed_dispatchable: { cell: "." },
     coal_prb_committed_split: { cell: "." },
