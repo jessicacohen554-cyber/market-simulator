@@ -15260,3 +15260,94 @@ measured hubs ($23–27). The gap is out-of-merit (load-pocket / VLR) commitment
 Owner rulings: C1 ST_GAS 2019 is a **routed miss**, and **no frontier** is declared, because the rubric does not
 clear every year. MISO stays NOT-YET on the full span and CALIBRATED on the 2023–2025 train span. Next: the
 2021–22 ST_GAS in-merit gap.
+
+## miso-282 — 2026-09-28
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 on the 2021–22 C1 ST_GAS residual
+(−5.24 / −5.11 TWh, PASS). It is **not an in-merit shortfall**: South in-merit steam matches measured conduct
+(gap −0.19 / −0.36 TWh). The residual splits into three parts:
+- South out-of-merit steam above the floors: −2.3 / −2.2 TWh. On the C1 basis this is present in every year, from
+  −2.2 to −8.2 TWh, which corrects miso-281 §4.
+- EIA-860 `SB` Baxter Wilson, which the fleet drops: −0.75 / −0.31 TWh.
+- Non-South plants: −0.9 TWh.
+
+2023–24 read near zero only because the model's South price premium over the measured hubs lifts in-merit steam by
++4.6 / +5.8 TWh. Gas price, basis and the margin anchor were tested and are not the cause.
+
+`admit_standby_units` was sized and its cell stays U. It adds only +0.38 / +0.08 TWh of ST_GAS, and it would bring
+~1 TWh/yr of phantom coal from idled Taconite Harbor unless an outage companion is re-derived.
+`docs/FINDING-miso282-2021-22-stgas-gap-2026-09-28.md`.
+
+Owner ruling: next lane is the MISO-South price premium probe (zero LP). No frontier.
+
+## miso-283 — 2026-09-28
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 on the MISO-South price premium
+over the measured LA/MS/AR/TX hubs. At night, about 80 % of it is system-wide: Illinois is also +$5–9/MWh above
+ILLINOIS.HUB at h0–5 in every year, 2019–2025, and the model couples South to Illinois in 78 % of night hours
+(`diurnal_price_amplitude`, G). The South-specific spread error is +0.1 to +1.9 $/MWh (2021–22: +3.6 / +3.8 at
+night, up to +10 by day, where the North is under-priced; these are the routed objects). The premium is the same
+in DA and RT.
+
+Ruled out:
+- Gas: model South gas = Henry Hub + measured South CC variable transport, within ±0.1 $/MMBtu.
+- Reserve adders: $0 at night.
+- A CC markup: the night-marginal CC tranches are at the measured incremental HR plus ~$1.5.
+
+`committed_band_measured_basis` was sized and its MISO cell stays U. It leaves CC unchanged and raises coal
+committed offers by $18–29/MWh (a take-or-pay collision).
+
+What remains South-specific points at out-of-merit South commitment (routed RO-2). No frontier.
+`docs/FINDING-miso283-south-price-premium-2026-09-28.md`.
+
+Owner ruling: "Do standby units and un route ro2 before going after night overshoot". Order: admit_standby_units + outage companion, then RO-2 (un-routed) South load-pocket commitment, then the night overshoot.
+
+## miso-284 — 2026-09-29
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Ran the `admit_standby_units` conduct
+census on the material admitted SB plants, 2019–2025.
+
+Plants that ran while SB:
+- Baxter Wilson 2050 (494 MW ST_GAS, 2021–22): CEMS 771 / 318 GWh.
+- Marion 976 GT 5/6 (140 MW CT).
+
+Plants with no measured conduct:
+- Taconite Harbor 10075 (155 MW COAL_PRB, 2019–22): 0 op-hours in every year.
+- Louisiana 2 1392 (138 MW ST_GAS, 2023–25): no CEMS or EIA-923 record ever.
+- Wyandotte 1866 (42 MW, 2023–25): dark.
+
+No MISO outage extract covers the no-conduct plants, and re-deriving on OP+SB would not either. The
+`eia923_netzero` hook requires output in an on-disk 923 year (2018+). SOCO-61's dark-unit test requires output in
+an adjacent year. Midland ST2 (380 MW) is unobservable at unit grain. The flag admits 0 MW ST_GAS in 2019, so it
+cannot reach a failing criterion.
+
+Owner ruling: "Park, go to RO-2 (Recommended)". The cell stays U. Next lane: RO-2 `scuc_load_pocket_commitment`.
+No frontier. `docs/FINDING-miso284-standby-census-2026-09-28.md`.
+
+RO-2 (same session, zero LP): about 76 % of the South out-of-merit steam sits on the MTEP15 VLR-eligible plants
+(Ninemile, Sabine, Lewis Creek, Little Gypsy, Waterford), and it falls as in-pocket CCs enter (2019–21). The pocket
+MW requirement and import limit are unpublished: only outcome reports, interface names and capability deltas are
+public. Owner ruling: "Mark blocked, go to night (Recommended)". `scuc_load_pocket_commitment` moves · → G. Next:
+the system night overshoot. `docs/FINDING-miso284-ro2-identification-2026-09-29.md`.
+
+## miso-285 — 2026-09-29
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 on the system night overshoot.
+
+- **Price formation at matched quantities.** Night MW by class match CAMPD (coal and CC_REGULAR within ~±1 GW),
+  yet the night median sits +4.1 to +10.5 $/MWh above ILLINOIS.HUB RT, 2019–2025. It is a level shift: the model
+  has no night hours below $5 (hubs: 1.5–12 %).
+- **Ruled out:**
+  - Reserve duals: $0 every night hour.
+  - The P1 startup markup: the P0 stack cleared at the model's own night quantity reproduces P1 in 5 of 7 years;
+    2022 and 2025 carry a P1 residual of +5.1 / +1.9.
+  - Floors forcing a dearer marginal: coal sits at must-run + committed.
+- **Where it sits:** CC econ/committed tranches set the price at measured HR × delivered gas + VOM, with ~0 markup.
+- **Upper-bound sizing:** CC committed as price-taker −$0.6–1.9; all gas committed −$1.9–3.1.
+
+Both miso-130 successors are already in the keeper (`miso_reserve_online_gated`; CC committed 1.005 = phys).
+
+Owner ruling: "Charter EcoMin price-taker build". `diurnal_price_amplitude` G → O. Charter:
+`docs/handoffs/CHARTER-miso285-ecomin-price-taker-2026-09-29.md` (merchant CC only, measured LSL, P0 online
+hours, zero-LP pre-check with a kill rule before any shard). No frontier.
+`docs/FINDING-miso285-night-overshoot-phase0-2026-09-29.md`.

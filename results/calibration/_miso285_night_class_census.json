@@ -1,0 +1,436 @@
+{
+ "2019": {
+  "COAL_BIT": {
+   "night_model": 8261.0,
+   "night_campd": 8069.0,
+   "day_model": 9655.0,
+   "day_campd": 9818.0
+  },
+  "COAL_LIGNITE": {
+   "night_model": 1017.0,
+   "night_campd": 999.0,
+   "day_model": 1092.0,
+   "day_campd": 1051.0
+  },
+  "COAL_PRB": {
+   "night_model": 16294.0,
+   "night_campd": 15726.0,
+   "day_model": 19142.0,
+   "day_campd": 21303.0
+  },
+  "CC_REGULAR": {
+   "night_model": 11052.0,
+   "night_campd": 10551.0,
+   "day_model": 12920.0,
+   "day_campd": 12644.0
+  },
+  "CC_CHP": {
+   "night_model": 1245.0,
+   "night_campd": 3709.0,
+   "day_model": 1731.0,
+   "day_campd": 4430.0
+  },
+  "CT_CHP": {
+   "night_model": 664.0,
+   "night_campd": 1462.0,
+   "day_model": 804.0,
+   "day_campd": 1480.0
+  },
+  "ST_CHP": {
+   "night_model": 232.0,
+   "night_campd": 0.0,
+   "day_model": 311.0,
+   "day_campd": 0.0
+  },
+  "ST_GAS": {
+   "night_model": 982.0,
+   "night_campd": 1918.0,
+   "day_model": 1819.0,
+   "day_campd": 3195.0
+  },
+  "CT_PEAKER": {
+   "night_model": 4.0,
+   "night_campd": 166.0,
+   "day_model": 1563.0,
+   "day_campd": 946.0
+  },
+  "OTHER": {
+   "night_model": 1386.0,
+   "night_campd": 31.0,
+   "day_model": 1386.0,
+   "day_campd": 33.0
+  }
+ },
+ "2020": {
+  "COAL_BIT": {
+   "night_model": 6421.0,
+   "night_campd": 6564.0,
+   "day_model": 7273.0,
+   "day_campd": 7709.0
+  },
+  "COAL_LIGNITE": {
+   "night_model": 1065.0,
+   "night_campd": 935.0,
+   "day_model": 1123.0,
+   "day_campd": 1049.0
+  },
+  "COAL_PRB": {
+   "night_model": 13554.0,
+   "night_campd": 11969.0,
+   "day_model": 15342.0,
+   "day_campd": 16327.0
+  },
+  "CC_REGULAR": {
+   "night_model": 10757.0,
+   "night_campd": 10530.0,
+   "day_model": 13031.0,
+   "day_campd": 13008.0
+  },
+  "CC_CHP": {
+   "night_model": 1242.0,
+   "night_campd": 3643.0,
+   "day_model": 1813.0,
+   "day_campd": 4299.0
+  },
+  "CT_CHP": {
+   "night_model": 640.0,
+   "night_campd": 1384.0,
+   "day_model": 783.0,
+   "day_campd": 1408.0
+  },
+  "ST_CHP": {
+   "night_model": 230.0,
+   "night_campd": 0.0,
+   "day_model": 324.0,
+   "day_campd": 0.0
+  },
+  "ST_GAS": {
+   "night_model": 1108.0,
+   "night_campd": 1956.0,
+   "day_model": 2279.0,
+   "day_campd": 3416.0
+  },
+  "CT_PEAKER": {
+   "night_model": 22.0,
+   "night_campd": 337.0,
+   "day_model": 1356.0,
+   "day_campd": 1294.0
+  },
+  "OTHER": {
+   "night_model": 1351.0,
+   "night_campd": 668.0,
+   "day_model": 1351.0,
+   "day_campd": 791.0
+  }
+ },
+ "2021": {
+  "COAL_BIT": {
+   "night_model": 7588.0,
+   "night_campd": 7990.0,
+   "day_model": 9181.0,
+   "day_campd": 9037.0
+  },
+  "COAL_LIGNITE": {
+   "night_model": 925.0,
+   "night_campd": 1013.0,
+   "day_model": 1069.0,
+   "day_campd": 1073.0
+  },
+  "COAL_PRB": {
+   "night_model": 17171.0,
+   "night_campd": 17364.0,
+   "day_model": 20061.0,
+   "day_campd": 21290.0
+  },
+  "CC_REGULAR": {
+   "night_model": 9551.0,
+   "night_campd": 9803.0,
+   "day_model": 12378.0,
+   "day_campd": 12881.0
+  },
+  "CC_CHP": {
+   "night_model": 1146.0,
+   "night_campd": 3114.0,
+   "day_model": 1452.0,
+   "day_campd": 3880.0
+  },
+  "CT_CHP": {
+   "night_model": 719.0,
+   "night_campd": 1350.0,
+   "day_model": 828.0,
+   "day_campd": 1421.0
+  },
+  "ST_CHP": {
+   "night_model": 220.0,
+   "night_campd": 0.0,
+   "day_model": 284.0,
+   "day_campd": 0.0
+  },
+  "ST_GAS": {
+   "night_model": 953.0,
+   "night_campd": 1570.0,
+   "day_model": 1362.0,
+   "day_campd": 2322.0
+  },
+  "CT_PEAKER": {
+   "night_model": 17.0,
+   "night_campd": 299.0,
+   "day_model": 1408.0,
+   "day_campd": 1545.0
+  },
+  "OTHER": {
+   "night_model": 1448.0,
+   "night_campd": 35.0,
+   "day_model": 1448.0,
+   "day_campd": 40.0
+  }
+ },
+ "2022": {
+  "COAL_BIT": {
+   "night_model": 7505.0,
+   "night_campd": 7085.0,
+   "day_model": 8561.0,
+   "day_campd": 7777.0
+  },
+  "COAL_LIGNITE": {
+   "night_model": 722.0,
+   "night_campd": 763.0,
+   "day_model": 762.0,
+   "day_campd": 822.0
+  },
+  "COAL_PRB": {
+   "night_model": 15864.0,
+   "night_campd": 16030.0,
+   "day_model": 18339.0,
+   "day_campd": 19729.0
+  },
+  "CC_REGULAR": {
+   "night_model": 12296.0,
+   "night_campd": 12119.0,
+   "day_model": 15012.0,
+   "day_campd": 15535.0
+  },
+  "CC_CHP": {
+   "night_model": 1116.0,
+   "night_campd": 3292.0,
+   "day_model": 1488.0,
+   "day_campd": 3976.0
+  },
+  "CT_CHP": {
+   "night_model": 715.0,
+   "night_campd": 1512.0,
+   "day_model": 798.0,
+   "day_campd": 1565.0
+  },
+  "ST_CHP": {
+   "night_model": 315.0,
+   "night_campd": 0.0,
+   "day_model": 355.0,
+   "day_campd": 0.0
+  },
+  "ST_GAS": {
+   "night_model": 1080.0,
+   "night_campd": 1541.0,
+   "day_model": 1636.0,
+   "day_campd": 2407.0
+  },
+  "CT_PEAKER": {
+   "night_model": 52.0,
+   "night_campd": 268.0,
+   "day_model": 1342.0,
+   "day_campd": 1492.0
+  },
+  "OTHER": {
+   "night_model": 1430.0,
+   "night_campd": 38.0,
+   "day_model": 1430.0,
+   "day_campd": 45.0
+  }
+ },
+ "2023": {
+  "COAL_BIT": {
+   "night_model": 6132.0,
+   "night_campd": 6099.0,
+   "day_model": 6420.0,
+   "day_campd": 6793.0
+  },
+  "COAL_LIGNITE": {
+   "night_model": 711.0,
+   "night_campd": 844.0,
+   "day_model": 770.0,
+   "day_campd": 897.0
+  },
+  "COAL_PRB": {
+   "night_model": 11930.0,
+   "night_campd": 11986.0,
+   "day_model": 14174.0,
+   "day_campd": 16492.0
+  },
+  "CC_REGULAR": {
+   "night_model": 15070.0,
+   "night_campd": 15515.0,
+   "day_model": 17422.0,
+   "day_campd": 18228.0
+  },
+  "CC_CHP": {
+   "night_model": 1438.0,
+   "night_campd": 3670.0,
+   "day_model": 2132.0,
+   "day_campd": 4183.0
+  },
+  "CT_CHP": {
+   "night_model": 632.0,
+   "night_campd": 1498.0,
+   "day_model": 690.0,
+   "day_campd": 1547.0
+  },
+  "ST_CHP": {
+   "night_model": 299.0,
+   "night_campd": 0.0,
+   "day_model": 377.0,
+   "day_campd": 0.0
+  },
+  "ST_GAS": {
+   "night_model": 1069.0,
+   "night_campd": 830.0,
+   "day_model": 2559.0,
+   "day_campd": 1560.0
+  },
+  "CT_PEAKER": {
+   "night_model": 114.0,
+   "night_campd": 485.0,
+   "day_model": 2061.0,
+   "day_campd": 1808.0
+  },
+  "OTHER": {
+   "night_model": 1179.0,
+   "night_campd": 33.0,
+   "day_model": 1179.0,
+   "day_campd": 34.0
+  }
+ },
+ "2024": {
+  "COAL_BIT": {
+   "night_model": 5770.0,
+   "night_campd": 5743.0,
+   "day_model": 6154.0,
+   "day_campd": 6395.0
+  },
+  "COAL_LIGNITE": {
+   "night_model": 671.0,
+   "night_campd": 764.0,
+   "day_model": 704.0,
+   "day_campd": 835.0
+  },
+  "COAL_PRB": {
+   "night_model": 12057.0,
+   "night_campd": 11838.0,
+   "day_model": 13698.0,
+   "day_campd": 15401.0
+  },
+  "CC_REGULAR": {
+   "night_model": 15998.0,
+   "night_campd": 15468.0,
+   "day_model": 17792.0,
+   "day_campd": 17532.0
+  },
+  "CC_CHP": {
+   "night_model": 1609.0,
+   "night_campd": 3821.0,
+   "day_model": 2228.0,
+   "day_campd": 4105.0
+  },
+  "CT_CHP": {
+   "night_model": 638.0,
+   "night_campd": 1647.0,
+   "day_model": 691.0,
+   "day_campd": 1653.0
+  },
+  "ST_CHP": {
+   "night_model": 346.0,
+   "night_campd": 0.0,
+   "day_model": 418.0,
+   "day_campd": 0.0
+  },
+  "ST_GAS": {
+   "night_model": 1464.0,
+   "night_campd": 2100.0,
+   "day_model": 2886.0,
+   "day_campd": 3324.0
+  },
+  "CT_PEAKER": {
+   "night_model": 248.0,
+   "night_campd": 592.0,
+   "day_model": 2240.0,
+   "day_campd": 1912.0
+  },
+  "OTHER": {
+   "night_model": 945.0,
+   "night_campd": 30.0,
+   "day_model": 945.0,
+   "day_campd": 33.0
+  }
+ },
+ "2025": {
+  "COAL_BIT": {
+   "night_model": 6221.0,
+   "night_campd": 6236.0,
+   "day_model": 6875.0,
+   "day_campd": 6796.0
+  },
+  "COAL_LIGNITE": {
+   "night_model": 627.0,
+   "night_campd": 702.0,
+   "day_model": 669.0,
+   "day_campd": 746.0
+  },
+  "COAL_PRB": {
+   "night_model": 14368.0,
+   "night_campd": 15285.0,
+   "day_model": 16148.0,
+   "day_campd": 18184.0
+  },
+  "CC_REGULAR": {
+   "night_model": 15792.0,
+   "night_campd": 14431.0,
+   "day_model": 16590.0,
+   "day_campd": 15826.0
+  },
+  "CC_CHP": {
+   "night_model": 1646.0,
+   "night_campd": 3465.0,
+   "day_model": 2013.0,
+   "day_campd": 3691.0
+  },
+  "CT_CHP": {
+   "night_model": 660.0,
+   "night_campd": 1388.0,
+   "day_model": 688.0,
+   "day_campd": 1390.0
+  },
+  "ST_CHP": {
+   "night_model": 259.0,
+   "night_campd": 0.0,
+   "day_model": 297.0,
+   "day_campd": 0.0
+  },
+  "ST_GAS": {
+   "night_model": 1257.0,
+   "night_campd": 1837.0,
+   "day_model": 2369.0,
+   "day_campd": 2822.0
+  },
+  "CT_PEAKER": {
+   "night_model": 283.0,
+   "night_campd": 587.0,
+   "day_model": 2259.0,
+   "day_campd": 2027.0
+  },
+  "OTHER": {
+   "night_model": 666.0,
+   "night_campd": 0.0,
+   "day_model": 666.0,
+   "day_campd": 0.0
+  }
+ }
+}

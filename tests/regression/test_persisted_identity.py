@@ -766,22 +766,30 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   (`--declare-missing`, moves no key). +1 row everywhere.
 #   WHAT IT COSTS: nothing solved — no registry value moved, so no committed
 #   bundle's numbers change; the digest moves only because the row set grew.
+# 2026-09-28 ALL SIX ADVANCED (SPP-100) — ONE ROW ADDED, NO VALUE MOVED.
+#   SPP-100 added constants.CHP_STEAM_ALLHOURS_MIN_ON_FRAC (D-4's conduct bar,
+#   read only under the default-off chp_steam_floor_conduct_scope).
+#   `solve_surface_register.py --diff origin/main` -> "0 value(s) moved, 1
+#   added"; declared at its live hash (`--declare-missing`, moves no key).
+#   +1 row everywhere.
+#   WHAT IT COSTS: nothing solved — no registry value moved, so no committed
+#   bundle's numbers change; the digest moves only because the row set grew.
 # 2026-09-28 ERCOT ADVANCED (R-ERCOT-14) — ONE ROW ADDED, DECLARED AT ITS
 #   PRE-ARM HASH SO IT MOVES ERCOT'S KEY. constants.ISO_PLANT_EXITS =
 #   {"ERCOT": {127: "2020-10-01 06:00"}}: Oklaunion (an ERCOT resource that
 #   EIA-860 codes SWPP) joins ERCOT's curated bin sheet and leaves after
 #   operating day 2020-09-30; read only by data.ba_membership in the fleet hour
 #   mask. Declared at the empty-table hash (as ISO_PLANT_ENTRIES was), so the
-#   row reads as moved off its declaration for ERCOT only: 237 -> 238 rows.
+#   row reads as moved off its declaration for ERCOT only: 238 -> 239 rows (on top of SPP-100).
 #   WHAT IT COSTS: an ERCOT cache miss. 2021-2025 fleets are unchanged (the
 #   plant is masked all year); 2019/2020 gain the plant.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("f027075a5116fff7", 238),
-    "CAISO": ("9e8498829b85d3b9", 211),
-    "MISO": ("c47273705b10a23a", 217),
-    "PJM": ("c12a55de477c71d0", 221),
-    "NYISO": ("e24f81f7fdb24226", 218),
-    "NEISO": ("4486d4c5ac4eeeb6", 204),
+    "ERCOT": ("f996d301a3972c08", 239),
+    "CAISO": ("a478be168ecf1363", 212),
+    "MISO": ("572b759217c6d9b0", 218),
+    "PJM": ("ac8e1b6d77100e10", 222),
+    "NYISO": ("001ff291efbb3af3", 219),
+    "NEISO": ("b94901ef8254f41a", 205),
 }
 
 

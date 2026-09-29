@@ -492,6 +492,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # default-off; selects '-rederive-peakerkeep-unitfuel-' through the same
     # resolver, so the off path is byte-inert). Same commit as the field.
     "unit_outage_rederive_peaker_windows",
+    # PJM-NEXT-8 card 2, the exit-cohort repair of the CAMPD outage layer
+    # (GATED default-off; selects '-rederive-peakerkeep-exitfix-unitfuel-' and
+    # keys dated exit bins, so the off path is byte-inert). Same commit as the
+    # field.
+    "unit_outage_exit_cohort_repair",
     # PJM-NEXT-7 financially-settled DA virtual position (GATED default-off;
     # zeroes the virtual pseudo-units' bounds in P1 only, so the off path is
     # byte-inert). Same commit as the field.
@@ -2085,6 +2090,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # no sub-fields. SHARED field -- very end, per HOUSE-3. Registered IN THE
     # SAME COMMIT as the field (the nyiso-119 discipline).
     "chp_steam_duty_window",
+    # CHP steam-floor CONDUCT SCOPE (SPP-100, default off): dropped from the
+    # hash at its default so every pre-existing cached run -- every ISO's
+    # keepers included -- keeps its key. Byte-identical off by construction
+    # (the swap's eligibility test is skipped); an armed run withholds the
+    # level swap from metered cyclers and so earns a distinct key. Its one bar
+    # is constants.CHP_STEAM_ALLHOURS_MIN_ON_FRAC (D-4's own conduct test), so
+    # there are no sub-fields. SHARED field -- very end, per HOUSE-3.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "chp_steam_floor_conduct_scope",
     # Measured per-plant FOREBAY-STORAGE bound on within-month hydro
     # reallocation (hydro-1, default off): dropped from the hash at its default
     # so every pre-existing cached run -- every ISO's keepers included -- keeps
@@ -2206,6 +2220,18 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SHARED field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline).
     "coal_fuel_inventory_take_floor",
+    # NWPP-NEXT-8 (2026-09-28): MONTHLY cumulative grain of the per-yard coal
+    # pile identity (default off). Off, the yard rows keep their one annual
+    # column, so the LP is byte-identical. SHARED field -- very end, per
+    # HOUSE-3. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "coal_fuel_inventory_monthly_pile",
+    # NWPP-NEXT-9 (2026-09-28): same-year MEASURED monthly receipts on the
+    # monthly pile rows (default off). Off, build_coal_monthly_pile keeps its
+    # flat ratable m/12 profile, so the LP is byte-identical. SHARED field --
+    # very end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "coal_monthly_pile_measured_receipts",
     # NYISO-NEXT-6 (2026-09-27): Long Island posted-limit sub-clip (default
     # off). Byte-identical off by construction: its one applier,
     # data.nyiso_seam_envelope.nyiso_li_posted_limit_cap, is reached only inside
@@ -2400,6 +2426,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by PJM-NEXT-6 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_rederive_peaker_windows": "False",
+    # Added by PJM-NEXT-8 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_exit_cohort_repair": "False",
     # Added by PJM-NEXT-7 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "pjm_da_virtual_settle_financial": "False",
@@ -2985,6 +3014,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by caiso-293 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "chp_steam_duty_window": "False",
+    # Added by SPP-100 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "chp_steam_floor_conduct_scope": "False",
     # Added by hydro-1 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "hydro_pondage_bound": "False",
@@ -3021,6 +3053,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
     "coal_fuel_inventory_take_floor": "False",
+    # Added by NWPP-NEXT-8 WITH the field (the nyiso-119 discipline).
+    "coal_fuel_inventory_monthly_pile": "False",
+    # Added by NWPP-NEXT-9 WITH the field (the nyiso-119 discipline).
+    "coal_monthly_pile_measured_receipts": "False",
     # Added by NYISO-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nyiso_li_seam_posted_limit_cap": "False",
     "nyiso_ne_ac_node": "False",
@@ -12489,6 +12525,44 @@ class ScenarioConfig:
     # price. See data/coal_fuel_inventory.py:build_coal_take_floor and
     # coal_take_shortfall_price.
     coal_fuel_inventory_take_floor: bool = False
+    # MONTHLY PILE GRAIN of the per-yard coal identity (NWPP-NEXT-8, GATED
+    # default off, backcast-only, ZERO free parameters). Owner decision cards
+    # 2026-09-28 (reopening Q2 "annual" on the NEXT-8 seasonal census): the
+    # coal_fuel_inventory_plant_grain yard row becomes 12 CUMULATIVE rows, one
+    # per month-end m, bounding the yard's own pile on both sides:
+    #   max(0, S_dec + m/12 * C - S_max) * hc
+    #       <= sum_{g at yard, t <= end of m} HR[g] * P[g, t] + shortfall
+    #       <= (S_dec + m/12 * rate) * hc
+    # i.e. the pile never goes negative (ceiling) and never overflows the most
+    # it has ever held (floor), with receipts FLAT ratable within the year
+    # (owner card: the standard take-or-pay delivery form; no Y-1 timing is
+    # carried into Y). Month 12 is EXACTLY today's annual ceiling and take
+    # floor, so it is the same identity at a finer grain (rule 19), never a
+    # second mechanism. The soft floor's per-hour shortfall column enters every
+    # later cumulative row, so a missed take is paid once. Requires
+    # coal_fuel_inventory_take_floor. See
+    # data/coal_fuel_inventory.py:build_coal_monthly_pile.
+    coal_fuel_inventory_monthly_pile: bool = False
+    # SAME-YEAR MEASURED RECEIPTS on the monthly pile rows (NWPP-NEXT-9, GATED
+    # default off, backcast-only like the pile itself, ZERO free parameters).
+    # Owner decision card 2026-09-28 ("Backcast receipts overlay"), on the
+    # NEXT-9 zero-LP census: 2023 was a PacifiCorp coal-SUPPLY shortfall year
+    # (EIA-923 Page 5 receipts Bridger 105.1 -> 86.6, Hunter 58.8 -> 39.2,
+    # Huntington 56.0 -> 26.5 TBtu; December stocks at record lows), which the
+    # prior-years ratable rate cannot see. Armed, a yard's cumulative month-end
+    # rows read the year's OWN Page 5 receipts instead of m/12 of the proxies:
+    #   max(0, (S_dec - S_max) * hc + cumC_Y(m))
+    #       <= sum_{g at yard, t <= end of m} HR[g] * P[g, t] + shortfall
+    #       <= S_dec * hc + cumR_Y(m)
+    # where R_Y is every lot received and C_Y the contract lots (purchase types
+    # C / NC / T), each at its own reported heat content. A realised physical
+    # fuel-supply input of the same table and kind as the F923 delivered-price
+    # overlay (rule 13 backcast overlay, never a forecast methodology). A yard
+    # with no same-year Page 5 row, and every yard in a year with no curated
+    # receipts file, keeps the ratable profile (a missing input is never
+    # substituted). Requires coal_fuel_inventory_monthly_pile. See
+    # data/coal_fuel_inventory.py:build_coal_measured_receipts.
+    coal_monthly_pile_measured_receipts: bool = False
 
     # Commitment-floor WINDOW ranked on NET load instead of system load
     # (SPP-66, owner ruling "Shared gate" 2026-09-20; default off, so every
@@ -16845,6 +16919,27 @@ class ScenarioConfig:
     # '-rederive-unitfuel-' where not derived. Zero free parameters.
     # docs/PRECOMMIT-pjm-next-6-card1-f2-split-2026-09-27.md.
     unit_outage_rederive_peaker_windows: bool = False
+    # PJM-NEXT-8 card 2 (owner card "Build + solve", 2026-09-28; rule 14
+    # [R-ACCURATE], rule 19 [R-ONE-MECH]) — the EXIT-COHORT repair of the
+    # CAMPD unit-outage layer (docs/FINDING-pjm-next-7-coal-phase0-2026-09-28.md
+    # section 3). Three measured corrections, one object:
+    # (a) unit capacity from the derive year's OWN EIA-860 vintage (Chalk Point
+    #     1571's coal boilers took GT1/GT2's 16/35 MW because the post-retirement
+    #     snapshot has no ST rows; Sammis 3-4 fell to observed peaks);
+    # (b) a row at a plant split into dated exit bins (mid_vintage_exit_carry)
+    #     derates ITS OWN dated bin over that bin's capacity, keyed by the
+    #     unit's EIA retirement year-month (Bruce Mansfield 6094's unit-3
+    #     windows had left its bin 0.639 available);
+    # (c) one full-year window for a unit its own CAMPD id files dark every hour
+    #     of the year while the year's vintage carries it and retires it that
+    #     year or the next (Mansfield 1-2, Sammis 1-2, 2019).
+    # Selects '-rederive-peakerkeep-exitfix-unitfuel-' (deriver
+    # --exit-cohort-repair on the PJM-NEXT-6 construction); meaningful only
+    # WITH unit_outage_rederive_peaker_windows (it REPLACES that file, rule 19)
+    # and RAISES there when not derived. ZERO free parameters: every field is
+    # EIA's or CAMPD's own, and the construction regenerates for any year with
+    # a vintage and a CAMPD filing (rule 13).
+    unit_outage_exit_cohort_repair: bool = False
     # SPP-85 (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]) NET-LOAD-MASK REPAIR
     # of the CAMPD unit-outage extracts. The deriver's revealed-availability
     # filter (scripts/lib/outage_detect.filter_revealed_outages) keys on an
@@ -18093,6 +18188,36 @@ class ScenarioConfig:
     # off (every unit keeps ``chp_grid_pmin_on_frac = 1.0``, the all-hours
     # path).
     chp_steam_duty_window: bool = False
+
+    # CHP steam-floor CONDUCT SCOPE (SPP-100, 2026-09-28) — the level swap in
+    # ``chp_steam_floor_p25`` restricted to hosts whose own meter supports an
+    # all-hours floor. Composes with ``chp_steam_floor_p25``; inert without it.
+    #
+    # THE DEFECT. SPP-75 armed the swap on SPP and it did what it was built for
+    # (Eastman 55176 and Black Hawk 55064 run flat at 92-99 % of hours on their
+    # CAMPD meters and were floored at 1/3-1/2 of that), but the owner declined
+    # it ("Don't promote", 2026-09-24) because it also created a 4.6 MW 24/7
+    # floor at Lake Road (MO) 2098 ST_CHP, whose meter reads zero 72-95 % of
+    # hours: a new rule-17 D-4 unit-conduct FAIL in all seven years. The duty
+    # window above does not repair it: placed on SPP's system-load window,
+    # Lake Road's meter is still at zero in > 50 % of the window hours in 6 of
+    # 7 years (scripts/probes/_spp100_chp_duty_phase0.py).
+    #
+    # WHEN TRUE, a METERED CHP row (``status == "ok"``, so the artifact carries
+    # both ``steam_level_cf`` and ``median_cf``) takes the swapped level only
+    # if its pooled on-frequency ``steam_level_cf / median_cf`` (the exact
+    # identity thermal_tranche_chp_steam_duty recovers) exceeds
+    # constants.CHP_STEAM_ALLHOURS_MIN_ON_FRAC; otherwise it keeps its p2
+    # ``chp_pmin_cf`` floor. That bar is D-4's own conduct test applied ex
+    # ante, not a fitted number (rule 21 [R-DOF]); on SPP the partition is the
+    # same for any bar in (0.25, 0.98). CEMS-invisible ``eia923_cf`` rows carry
+    # no on-frequency and are untouched (never fail a mechanism for a missing
+    # meter). Rule 19 [R-ONE-MECH]: no new floor and no second level source —
+    # the one MECH_CHP_STEAM swap's eligibility. Rule 13 [R-MEASURED]: pooled
+    # multi-year CEMS, regenerates for a forward year from the same artifact.
+    # Rule 25 [R-ISO-SCOPE]: the artifact is per-ISO. Off by default;
+    # byte-identical off.
+    chp_steam_floor_conduct_scope: bool = False
 
     # Measured ERCOT GTC transfer limits (backcast/calibration overlay). When
     # True in backcast mode, the export-direction capability of the transfer
@@ -23640,6 +23765,8 @@ TIER_TAGS: dict[str, int] = {
     "coal_fuel_inventory": 1,
     "coal_fuel_inventory_plant_grain": 1,
     "coal_fuel_inventory_take_floor": 1,
+    "coal_fuel_inventory_monthly_pile": 1,
+    "coal_monthly_pile_measured_receipts": 1,
     "commitment_floor_window_netload": 1,
     "neiso_winter_fuel_start_fill_bbl": 1,
     "neiso_net_icr_requirement": 1,
@@ -23980,6 +24107,10 @@ TIER_TAGS: dict[str, int] = {
     # (steam_level_cf / median_cf), so the flag carries no free number of its
     # own (rule 21 [R-DOF]); the miso_coal_night_floor criterion exactly.
     "chp_steam_duty_window": 1,
+    # Structural gate (1): eligibility of the existing level swap, keyed on an
+    # exact identity over frozen artifact columns against D-4's own conduct
+    # bar (constants.CHP_STEAM_ALLHOURS_MIN_ON_FRAC); no free number (rule 21).
+    "chp_steam_floor_conduct_scope": 1,
     "ercot_gtc_limits_measured": 3,
     "pjm_measured_interface_limits": 3,
     "pjm_east_interface_cut": 3,

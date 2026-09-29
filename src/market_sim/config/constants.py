@@ -588,6 +588,18 @@ CHP_BTM_PCT_BY_SECTOR: dict[str, float] = {
 }
 CHP_ST_BTM_PCT: float = 90.0  # ST_CHP group (tiny chemical host-steam): near-full BTM
 
+# Minimum pooled measured on-frequency for a METERED CHP host to carry the
+# all-hours steam-level floor under ScenarioConfig.chp_steam_floor_conduct_scope
+# (SPP-100, 2026-09-28). Not a fitted value: it is rule 17 [R-FLOOR-WINDOW]'s
+# test as the D-4 per-unit conduct rider already operationalises it
+# (scripts/legitimacy_diagnostics.py, "the meter says the unit is offline in at
+# least half the hours the floor asserts it must be online" — median measured
+# output == 0), applied ex ante to the tranche artifact's pooled multi-year
+# on-frequency (steam_level_cf / median_cf) instead of ex post to a solved year.
+# An all-hours floor is admissible only where the plant is metered on in more
+# than half of its hours. docs/handoffs/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md.
+CHP_STEAM_ALLHOURS_MIN_ON_FRAC: float = 0.5
+
 # CC/CT startup costs ($/MW per start) keyed by ascending heat-rate cutoff.
 # Used to amortize startup cost into the monthly bid markup: a generator bids
 # above marginal cost to recover startup_cost / expected_run_length.

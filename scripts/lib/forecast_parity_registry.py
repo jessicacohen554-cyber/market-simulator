@@ -836,6 +836,29 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
             "docs/PRECOMMIT-miso268-coal-yard-grain-2026-09-24.md",
         ),
     ),
+    # NWPP-NEXT-7 / NEXT-8 (2026-09-27/28): the take floor and its monthly pile
+    # grain bound the SAME per-yard rows as coal_fuel_inventory_plant_grain
+    # (rule 19: one identity), so they carry that parent's disposition. Both are
+    # inert unless the yard rows are armed (run_calibration.resolve_coal_take_floor
+    # and resolve_coal_monthly_pile raise otherwise). Declared in NEXT-8, which
+    # found the NEXT-7 promotion had left the take floor undeclared.
+    ParityDeclaration(
+        fields=(
+            "coal_fuel_inventory_take_floor",
+            "coal_fuel_inventory_monthly_pile",
+            # NWPP-NEXT-9: the pile's same-year receipt profile (same rows).
+            "coal_monthly_pile_measured_receipts",
+        ),
+        disposition=PARAMETER_OF,
+        parent="coal_fuel_inventory_plant_grain",
+        why="lower bound (take floor) and month-end grain (monthly pile) of the "
+        "per-coal-yard pile identity whose rows coal_fuel_inventory_plant_grain "
+        "builds; inert unless those rows are armed",
+        evidence=(
+            _BACKCAST_ORCH,
+            "docs/handoffs/PRECOMMIT-nwppnext8-coal-monthly-pile-2019-2025-2026-09-28.md",
+        ),
+    ),
     # PJM-NEXT card 1 (2026-09-25) armed spp-49's benchmark membership union
     # in the PJM keeper. It is SCORING, not a mechanism: it widens which
     # plants' EIA-923 generation enter the backcast ACTUALS

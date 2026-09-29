@@ -663,6 +663,55 @@ def resolve_coal_take_floor(
     return True
 
 
+def resolve_coal_monthly_pile(
+    config: ScenarioConfig, iso: str, floor_armed: bool
+) -> bool:
+    """Validate and resolve the monthly pile grain of the yard rows for ``iso``.
+
+    NWPP-NEXT-8 (owner decision cards 2026-09-28). Raises ``ValueError`` when
+    ``coal_fuel_inventory_monthly_pile`` is armed without the take floor whose
+    identity it refines, or outside :data:`COAL_TAKE_FLOOR_ISOS` (rule 25).
+    """
+    if not bool(getattr(config, "coal_fuel_inventory_monthly_pile", False)):
+        return False
+    if not floor_armed:
+        raise ValueError(
+            "coal_fuel_inventory_monthly_pile refines the yard pile identity the "
+            "take floor bounds and requires coal_fuel_inventory_take_floor."
+        )
+    if iso.upper() not in COAL_TAKE_FLOOR_ISOS:
+        raise ValueError(
+            f"coal_fuel_inventory_monthly_pile is gated to {COAL_TAKE_FLOOR_ISOS} "
+            f"(rule 25 [R-ISO-SCOPE])."
+        )
+    return True
+
+
+def resolve_coal_measured_receipts(
+    config: ScenarioConfig, iso: str, pile_armed: bool
+) -> bool:
+    """Validate and resolve the same-year measured pile receipts for ``iso``.
+
+    NWPP-NEXT-9 (owner decision card 2026-09-28). Raises ``ValueError`` when
+    ``coal_monthly_pile_measured_receipts`` is armed without the monthly pile
+    whose receipt profile it replaces, or outside :data:`COAL_TAKE_FLOOR_ISOS`
+    (rule 25).
+    """
+    if not bool(getattr(config, "coal_monthly_pile_measured_receipts", False)):
+        return False
+    if not pile_armed:
+        raise ValueError(
+            "coal_monthly_pile_measured_receipts replaces the monthly pile's "
+            "ratable receipts and requires coal_fuel_inventory_monthly_pile."
+        )
+    if iso.upper() not in COAL_TAKE_FLOOR_ISOS:
+        raise ValueError(
+            f"coal_monthly_pile_measured_receipts is gated to "
+            f"{COAL_TAKE_FLOOR_ISOS} (rule 25 [R-ISO-SCOPE])."
+        )
+    return True
+
+
 def resolve_coal_budget_arms(config: ScenarioConfig, iso: str) -> tuple[bool, bool]:
     """Validate and resolve the two coal fuel-budget row families for ``iso``.
 
@@ -6398,6 +6447,8 @@ def run_year(
     coal_plant_floor = UNSET
     coal_plant_floor_price = UNSET
     _coal_floor_armed = resolve_coal_take_floor(config, iso, _coal_plant_armed)
+    _coal_pile_armed = resolve_coal_monthly_pile(config, iso, _coal_floor_armed)
+    _coal_meas_armed = resolve_coal_measured_receipts(config, iso, _coal_pile_armed)
     # Armable WITHOUT the pooled monthly rows since neiso-117 (the yard rows
     # alone are the annual identity's plant partition; resolve_coal_budget_arms
     # holds both limbs' ISO and backcast-only gates).
@@ -6504,6 +6555,74 @@ def run_year(
                         for k, (a, b) in _tf.per_yard.items()
                     },
                 )
+                if _coal_pile_armed:
+                    # NWPP-NEXT-8: the same rows at month-end grain. Month 12 is
+                    # the annual ceiling and floor just built, clips included.
+                    from market_sim.data.coal_fuel_inventory import (
+                        build_coal_measured_receipts,
+                        build_coal_monthly_pile,
+                    )
+
+                    _measured = None
+                    if _coal_meas_armed:
+                        # NWPP-NEXT-9: the year's own Page 5 receipts replace
+                        # the ratable m/12 profile yard by yard (backcast
+                        # overlay, rule 13); no same-year file -> all ratable.
+                        _mr = build_coal_measured_receipts(
+                            fleet_arrays, year, _cp_prov.yard_keys
+                        )
+                        if _mr is not None:
+                            _measured = (_mr[0], _mr[1])
+                            logger.info(
+                                "coal measured receipts (%s %d): %d yard rows "
+                                "measured, %d ratable; receipts %.2f TBtu, "
+                                "contract %.2f TBtu",
+                                iso,
+                                year,
+                                _mr[2].n_measured,
+                                _mr[2].n_ratable,
+                                _mr[2].receipts_mmbtu / 1e6,
+                                _mr[2].contract_mmbtu / 1e6,
+                            )
+                        else:
+                            logger.info(
+                                "coal measured receipts (%s %d): no curated "
+                                "same-year receipts; every yard stays ratable",
+                                iso,
+                                year,
+                            )
+
+                    (
+                        coal_plant_budget,
+                        coal_plant_floor,
+                        coal_plant_month_index,
+                        _pile,
+                    ) = build_coal_monthly_pile(
+                        fleet_arrays,
+                        coal_plant_gen_idx,
+                        coal_plant_group_index,
+                        coal_plant_gen_hour_coeff,
+                        coal_plant_budget,
+                        _cp_prov.stock_mmbtu,
+                        _tf.parts,
+                        config.hours,
+                        measured=_measured,
+                    )
+                    logger.info(
+                        "coal monthly pile (%s %d): %d yard rows x %d month-ends, "
+                        "cumulative; floor clipped %d cells to ceiling, %d to "
+                        "capacity; month-end floor TWh-equiv @HR10.661 %s",
+                        iso,
+                        year,
+                        _pile.n_rows,
+                        _pile.n_months,
+                        _pile.floor_clipped_to_ceiling,
+                        _pile.floor_clipped_to_capacity,
+                        [
+                            round(float(v) / 10.661 / 1e6, 2)
+                            for v in coal_plant_floor.sum(axis=0)
+                        ],
+                    )
 
     # Base dispatch kwargs + priced import-node band: the shared pipeline
     # assembly (orchestrator-unification Stage 2) — the same key set the

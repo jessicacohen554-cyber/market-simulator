@@ -606,3 +606,53 @@ Run `2026-09-27-nwppnext7-coal-take-floor`: **NOT-YET on {dispatch_corr}** (was 
 
 **Promoted 2026-09-27 (owner standing structure ruling):** keeper #14. Keeper #13 was pruned (rule 35); audit PASS.
 Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext7-coal-take-floor-2019-2025-2026-09-27.md`.
+
+## nwpp-next-8 — 2026-09-28 — monthly pile grain of the coal yard identity (owner cards) → KEEPER #15
+
+**Diagnosis (zero LP).** Keeper #14's C4 misfit was 65–81 % monthly.
+- The model swaps coal and gas by season.
+- NW delivered gas ran $3.8–5.1/MMBtu in Jan–Mar 2019 against $2.2 in summer, so the LP fuel-switches.
+- The annual take floor let the LP bank the whole obligated burn in the dear-gas months.
+- If the monthly shape alone were right, every C4 record would clear r ≥ 0.80.
+
+**Owner decision cards:**
+- A monthly pile balance, reopening Q2 "annual".
+- Flat ratable receipts (C/12).
+- Both floor and ceiling at every month-end.
+
+**The field.** New default-off field `coal_fuel_inventory_monthly_pile`: 12 cumulative yard rows. Month 12 is exactly
+the annual identity, and there are zero new parameters.
+
+**Solve.** 7 year-isolated shards at `e7478536`. 2019 needed a 180-min re-launch (P0 43 min).
+
+Run `2026-09-28-nwppnext8-coal-monthly-pile`: **NOT-YET on {dispatch_corr}, one record** (was four).
+- **C4 FAIL → PASS:** coal 2019 0.690 → 0.733, gas 2019 0.699 → 0.750, coal 2025 0.678 → 0.721.
+- **Still FAIL:** coal 2023 0.693 → 0.695. Its phase-0 footprint was 0.1 TWh, and this was predicted.
+- **Regression (still PASS):** gas 2025 0.864 → 0.854.
+- **Improved:** every other C4 record (e.g. gas 2021 0.757 → 0.854).
+- C1, C2, C6 and C8 PASS. Unserved energy is unchanged.
+
+**Promoted 2026-09-28 (owner standing structure ruling):** keeper #15. Keeper #14 was pruned (rule 35); audit PASS.
+Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext8-coal-monthly-pile-2019-2025-2026-09-28.md`.
+
+## NWPP-NEXT-9 — 2026-09-28/29 — measured coal receipts on the monthly pile: REJECTED (keeper #15 stands)
+
+**Census (zero LP).** C4 coal 2023 (r 0.695) comes from a 2023 PacifiCorp coal-supply shortfall.
+- EIA-923 Page 5 receipts fell: Bridger 105.1 → 86.6, Hunter 58.8 → 39.2, Huntington 56.0 → 26.5 TBtu.
+- December stocks were at record lows.
+- Bridger ran ~20 % load Feb–May 2023 while rebuilding its pile. It alone is +2.0 TWh of the Jan–Mar over-burn.
+- The candidate "pile ≥ historical minimum" was refuted at phase 0: Bridger went below its prior minimum in 2022.
+
+**Owner card: "Backcast receipts overlay".** New default-off field `coal_monthly_pile_measured_receipts`: same-year
+Page 5 receipts replace the ratable C/12 on both sides of the pile. G-DRIFT ALL INERT. 7 shards at `677273fb`.
+2025 is byte-identical, as predicted.
+
+**Result: NOT-YET on {dispatch_corr}, 1 → 3 records.**
+- C4 coal 2022 0.741 → 0.695 and 2024 0.739 → 0.664: PASS → FAIL.
+- C4 coal 2023 0.695 → 0.648.
+- C1 coal volume improved: COAL_BIT 2023 +4.73 → +0.72 TWh.
+- **Cause:** the LP spends scarcer coal in dear-gas winter months; real operators held stock.
+
+**Owner ruling 2026-09-29: "Reject, keep #15".** The probe was pruned (rule 31 (i)); the matrix cell is R.
+Also re-derived the stale `nwpp_plant_basis_energy.csv` provenance hash (only `source_sha256` moved).
+Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext9-coal-measured-receipts-2019-2025-2026-09-28.md`.

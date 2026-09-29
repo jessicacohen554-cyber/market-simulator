@@ -1,0 +1,3581 @@
+{
+ "keeper": "2026-09-28-miso-280-splitremap",
+ "vom_gas_st": 4.0,
+ "years": {
+  "2019": {
+   "south_all": {
+    "MM": 13.027,
+    "HM": 12.149,
+    "MC": 17.002,
+    "HC": 12.632,
+    "floor": 9.522,
+    "act": 20.15,
+    "act_in": 3.033
+   },
+   "south_c1_basis": {
+    "act": 14.309,
+    "act_in": 2.187,
+    "floor": 4.016,
+    "MM": 7.336,
+    "HM": 6.398,
+    "MC": 10.144,
+    "HC": 6.726,
+    "MC_hrok": 10.144,
+    "HC_hrok": 6.709,
+    "MM_hrok": 7.204
+   },
+   "by_month_c1": {
+    "0": {
+     "MM_above": 0.117,
+     "act_in": 0.075,
+     "pmod_minus_hub": 2.09
+    },
+    "1": {
+     "MM_above": 0.164,
+     "act_in": 0.058,
+     "pmod_minus_hub": 5.21
+    },
+    "2": {
+     "MM_above": 0.103,
+     "act_in": 0.059,
+     "pmod_minus_hub": 4.91
+    },
+    "3": {
+     "MM_above": 0.187,
+     "act_in": 0.172,
+     "pmod_minus_hub": 1.73
+    },
+    "4": {
+     "MM_above": 0.573,
+     "act_in": 0.227,
+     "pmod_minus_hub": 3.98
+    },
+    "5": {
+     "MM_above": 0.248,
+     "act_in": 0.196,
+     "pmod_minus_hub": 2.83
+    },
+    "6": {
+     "MM_above": 0.268,
+     "act_in": 0.393,
+     "pmod_minus_hub": 2.15
+    },
+    "7": {
+     "MM_above": 0.552,
+     "act_in": 0.409,
+     "pmod_minus_hub": 3.46
+    },
+    "8": {
+     "MM_above": 0.501,
+     "act_in": 0.303,
+     "pmod_minus_hub": 2.95
+    },
+    "9": {
+     "MM_above": 0.326,
+     "act_in": 0.194,
+     "pmod_minus_hub": 2.53
+    },
+    "10": {
+     "MM_above": 0.076,
+     "act_in": 0.06,
+     "pmod_minus_hub": 3.0
+    },
+    "11": {
+     "MM_above": 0.205,
+     "act_in": 0.041,
+     "pmod_minus_hub": 6.59
+    }
+   },
+   "by_hour_c1": {
+    "0": {
+     "MM_above": 0.011,
+     "act_in": 0.002,
+     "pmod_minus_hub": 5.64
+    },
+    "1": {
+     "MM_above": 0.007,
+     "act_in": 0.002,
+     "pmod_minus_hub": 5.67
+    },
+    "2": {
+     "MM_above": 0.007,
+     "act_in": 0.002,
+     "pmod_minus_hub": 5.96
+    },
+    "3": {
+     "MM_above": 0.007,
+     "act_in": 0.004,
+     "pmod_minus_hub": 5.74
+    },
+    "4": {
+     "MM_above": 0.009,
+     "act_in": 0.002,
+     "pmod_minus_hub": 5.53
+    },
+    "5": {
+     "MM_above": 0.015,
+     "act_in": 0.015,
+     "pmod_minus_hub": 4.5
+    },
+    "6": {
+     "MM_above": 0.039,
+     "act_in": 0.042,
+     "pmod_minus_hub": 2.74
+    },
+    "7": {
+     "MM_above": 0.08,
+     "act_in": 0.071,
+     "pmod_minus_hub": -0.15
+    },
+    "8": {
+     "MM_above": 0.108,
+     "act_in": 0.045,
+     "pmod_minus_hub": 3.23
+    },
+    "9": {
+     "MM_above": 0.119,
+     "act_in": 0.033,
+     "pmod_minus_hub": 3.53
+    },
+    "10": {
+     "MM_above": 0.086,
+     "act_in": 0.05,
+     "pmod_minus_hub": 3.97
+    },
+    "11": {
+     "MM_above": 0.123,
+     "act_in": 0.064,
+     "pmod_minus_hub": 4.48
+    },
+    "12": {
+     "MM_above": 0.19,
+     "act_in": 0.154,
+     "pmod_minus_hub": 3.58
+    },
+    "13": {
+     "MM_above": 0.252,
+     "act_in": 0.224,
+     "pmod_minus_hub": 1.23
+    },
+    "14": {
+     "MM_above": 0.303,
+     "act_in": 0.268,
+     "pmod_minus_hub": 0.31
+    },
+    "15": {
+     "MM_above": 0.331,
+     "act_in": 0.345,
+     "pmod_minus_hub": -3.26
+    },
+    "16": {
+     "MM_above": 0.343,
+     "act_in": 0.309,
+     "pmod_minus_hub": -1.88
+    },
+    "17": {
+     "MM_above": 0.327,
+     "act_in": 0.21,
+     "pmod_minus_hub": 2.53
+    },
+    "18": {
+     "MM_above": 0.286,
+     "act_in": 0.149,
+     "pmod_minus_hub": 1.93
+    },
+    "19": {
+     "MM_above": 0.231,
+     "act_in": 0.101,
+     "pmod_minus_hub": 3.58
+    },
+    "20": {
+     "MM_above": 0.18,
+     "act_in": 0.072,
+     "pmod_minus_hub": 4.67
+    },
+    "21": {
+     "MM_above": 0.168,
+     "act_in": 0.017,
+     "pmod_minus_hub": 6.61
+    },
+    "22": {
+     "MM_above": 0.072,
+     "act_in": 0.004,
+     "pmod_minus_hub": 6.49
+    },
+    "23": {
+     "MM_above": 0.024,
+     "act_in": 0.001,
+     "pmod_minus_hub": 6.07
+    }
+   },
+   "plants": [
+    {
+     "plant_code": 1403,
+     "state": "LA",
+     "c1_basis": false,
+     "pmax": 1473.3,
+     "hr_model": 11.421,
+     "hr_meas": 10.027,
+     "hr_plausible": true,
+     "gas_mean": 2.688,
+     "offer_econ_min": 31.286,
+     "cost_meas_mean": 30.949,
+     "pmod_mean": 28.264,
+     "hub_mean": 24.863,
+     "act_twh": 5.84,
+     "act_in_twh": 0.847,
+     "floor_twh": 5.505,
+     "h_in_model": 2626,
+     "h_in_meas": 824,
+     "coverage": 1.0,
+     "E_MM_twh": 5.69,
+     "E_HM_twh": 5.751,
+     "E_MC_twh": 6.858,
+     "E_HC_twh": 5.905
+    },
+    {
+     "plant_code": 3459,
+     "state": "TX",
+     "c1_basis": true,
+     "pmax": 1530.5,
+     "hr_model": 11.708,
+     "hr_meas": 10.649,
+     "hr_plausible": true,
+     "gas_mean": 2.607,
+     "offer_econ_min": 31.04,
+     "cost_meas_mean": 31.757,
+     "pmod_mean": 28.264,
+     "hub_mean": 26.51,
+     "act_twh": 3.249,
+     "act_in_twh": 0.464,
+     "floor_twh": 1.822,
+     "h_in_model": 2687,
+     "h_in_meas": 811,
+     "coverage": 1.0,
+     "E_MM_twh": 2.457,
+     "E_HM_twh": 2.218,
+     "E_MC_twh": 3.449,
+     "E_HC_twh": 2.323
+    },
+    {
+     "plant_code": 1402,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 932.4,
+     "hr_model": 10.5,
+     "hr_meas": 10.373,
+     "hr_plausible": true,
+     "gas_mean": 2.918,
+     "offer_econ_min": 32.916,
+     "cost_meas_mean": 34.264,
+     "pmod_mean": 28.264,
+     "hub_mean": 24.863,
+     "act_twh": 2.709,
+     "act_in_twh": 0.371,
+     "floor_twh": 0.204,
+     "h_in_model": 1262,
+     "h_in_meas": 593,
+     "coverage": 1.0,
+     "E_MM_twh": 0.935,
+     "E_HM_twh": 0.609,
+     "E_MC_twh": 1.183,
+     "E_HC_twh": 0.63
+    },
+    {
+     "plant_code": 3457,
+     "state": "TX",
+     "c1_basis": true,
+     "pmax": 503.0,
+     "hr_model": 11.364,
+     "hr_meas": 10.075,
+     "hr_plausible": true,
+     "gas_mean": 2.498,
+     "offer_econ_min": 28.643,
+     "cost_meas_mean": 29.164,
+     "pmod_mean": 28.264,
+     "hub_mean": 26.51,
+     "act_twh": 2.192,
+     "act_in_twh": 0.437,
+     "floor_twh": 0.825,
+     "h_in_model": 4101,
+     "h_in_meas": 1148,
+     "coverage": 1.0,
+     "E_MM_twh": 1.331,
+     "E_HM_twh": 1.039,
+     "E_MC_twh": 1.998,
+     "E_HC_twh": 1.149
+    },
+    {
+     "plant_code": 2050,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 494.3,
+     "hr_model": 11.637,
+     "hr_meas": 10.295,
+     "hr_plausible": true,
+     "gas_mean": 2.715,
+     "offer_econ_min": 30.567,
+     "cost_meas_mean": 31.954,
+     "pmod_mean": 28.264,
+     "hub_mean": 24.292,
+     "act_twh": 1.537,
+     "act_in_twh": 0.248,
+     "floor_twh": 0.516,
+     "h_in_model": 2467,
+     "h_in_meas": 819,
+     "coverage": 1.0,
+     "E_MM_twh": 0.711,
+     "E_HM_twh": 0.587,
+     "E_MC_twh": 0.994,
+     "E_HC_twh": 0.635
+    },
+    {
+     "plant_code": 6055,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 575.0,
+     "hr_model": 11.43,
+     "hr_meas": 10.548,
+     "hr_plausible": true,
+     "gas_mean": 2.765,
+     "offer_econ_min": 35.07,
+     "cost_meas_mean": 33.17,
+     "pmod_mean": 28.264,
+     "hub_mean": 24.863,
+     "act_twh": 1.477,
+     "act_in_twh": 0.19,
+     "floor_twh": 0.219,
+     "h_in_model": 578,
+     "h_in_meas": 648,
+     "coverage": 1.0,
+     "E_MM_twh": 0.335,
+     "E_HM_twh": 0.44,
+     "E_MC_twh": 0.846,
+     "E_HC_twh": 0.504
+    },
+    {
+     "plant_code": 1400,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 326.6,
+     "hr_model": 10.517,
+     "hr_meas": 10.373,
+     "hr_plausible": true,
+     "gas_mean": 2.642,
+     "offer_econ_min": 30.297,
+     "cost_meas_mean": 31.403,
+     "pmod_mean": 28.264,
+     "hub_mean": 24.863,
+     "act_twh": 0.989,
+     "act_in_twh": 0.182,
+     "floor_twh": 0.272,
+     "h_in_model": 2571,
+     "h_in_meas": 878,
+     "coverage": 1.0,
+     "E_MM_twh": 0.833,
+     "E_HM_twh": 0.46,
+     "E_MC_twh": 0.943,
+     "E_HC_twh": 0.485
+    },
+    {
+     "plant_code": 8056,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 828.5,
+     "hr_model": 11.149,
+     "hr_meas": 11.074,
+     "hr_plausible": true,
+     "gas_mean": 2.882,
+     "offer_econ_min": 35.539,
+     "cost_meas_mean": 35.909,
+     "pmod_mean": 28.264,
+     "hub_mean": 24.863,
+     "act_twh": 0.664,
+     "act_in_twh": 0.056,
+     "floor_twh": 0.0,
+     "h_in_model": 135,
+     "h_in_meas": 479,
+     "coverage": 1.0,
+     "E_MM_twh": 0.034,
+     "E_HM_twh": 0.178,
+     "E_MC_twh": 0.046,
+     "E_HC_twh": 0.179
+    },
+    {
+     "plant_code": 6190,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 423.5,
+     "hr_model": 12.478,
+     "hr_meas": 10.115,
+     "hr_plausible": true,
+     "gas_mean": 2.541,
+     "offer_econ_min": 32.621,
+     "cost_meas_mean": 29.706,
+     "pmod_mean": 28.264,
+     "hub_mean": 24.863,
+     "act_twh": 0.587,
+     "act_in_twh": 0.158,
+     "floor_twh": 0.121,
+     "h_in_model": 2127,
+     "h_in_meas": 1152,
+     "coverage": 1.0,
+     "E_MM_twh": 0.183,
+     "E_HM_twh": 0.181,
+     "E_MC_twh": 0.453,
+     "E_HC_twh": 0.248
+    },
+    {
+     "plant_code": 8054,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 727.5,
+     "hr_model": 11.616,
+     "hr_meas": 12.639,
+     "hr_plausible": true,
+     "gas_mean": 3.911,
+     "offer_econ_min": 34.719,
+     "cost_meas_mean": 53.427,
+     "pmod_mean": 28.264,
+     "hub_mean": 24.292,
+     "act_twh": 0.535,
+     "act_in_twh": 0.042,
+     "floor_twh": 0.0,
+     "h_in_model": 703,
+     "h_in_meas": 411,
+     "coverage": 1.0,
+     "E_MM_twh": 0.324,
+     "E_HM_twh": 0.31,
+     "E_MC_twh": 0.028,
+     "E_HC_twh": 0.264
+    },
+    {
+     "plant_code": 170,
+     "state": "AR",
+     "c1_basis": true,
+     "pmax": 522.0,
+     "hr_model": 12.1,
+     "hr_meas": 13.771,
+     "hr_plausible": true,
+     "gas_mean": 3.934,
+     "offer_econ_min": 37.192,
+     "cost_meas_mean": 58.175,
+     "pmod_mean": 28.264,
+     "hub_mean": 23.223,
+     "act_twh": 0.127,
+     "act_in_twh": 0.013,
+     "floor_twh": 0.0,
+     "h_in_model": 29,
+     "h_in_meas": 213,
+     "coverage": 1.0,
+     "E_MM_twh": 0.01,
+     "E_HM_twh": 0.145,
+     "E_MC_twh": 0.001,
+     "E_HC_twh": 0.103
+    },
+    {
+     "plant_code": 2053,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 197.7,
+     "hr_model": 10.3,
+     "hr_meas": 16.915,
+     "hr_plausible": false,
+     "gas_mean": 2.741,
+     "offer_econ_min": 31.391,
+     "cost_meas_mean": 50.371,
+     "pmod_mean": 28.264,
+     "hub_mean": 24.292,
+     "act_twh": 0.084,
+     "act_in_twh": 0.004,
+     "floor_twh": 0.0,
+     "h_in_model": 2099,
+     "h_in_meas": 217,
+     "coverage": 1.0,
+     "E_MM_twh": 0.132,
+     "E_HM_twh": 0.062,
+     "E_MC_twh": 0.0,
+     "E_HC_twh": 0.017
+    },
+    {
+     "plant_code": 1464,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 220.0,
+     "hr_model": 12.052,
+     "hr_meas": 12.353,
+     "hr_plausible": true,
+     "gas_mean": 2.765,
+     "offer_econ_min": 36.761,
+     "cost_meas_mean": 38.162,
+     "pmod_mean": 28.264,
+     "hub_mean": 24.863,
+     "act_twh": 0.082,
+     "act_in_twh": 0.008,
+     "floor_twh": 0.0,
+     "h_in_model": 88,
+     "h_in_meas": 422,
+     "coverage": 1.0,
+     "E_MM_twh": 0.009,
+     "E_HM_twh": 0.091,
+     "E_MC_twh": 0.007,
+     "E_HC_twh": 0.089
+    },
+    {
+     "plant_code": 1439,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 67.5,
+     "hr_model": 11.748,
+     "hr_meas": 9.659,
+     "hr_plausible": true,
+     "gas_mean": 2.765,
+     "offer_econ_min": 35.934,
+     "cost_meas_mean": 30.71,
+     "pmod_mean": 28.264,
+     "hub_mean": 24.863,
+     "act_twh": 0.062,
+     "act_in_twh": 0.012,
+     "floor_twh": 0.018,
+     "h_in_model": 267,
+     "h_in_meas": 888,
+     "coverage": 1.0,
+     "E_MM_twh": 0.025,
+     "E_HM_twh": 0.045,
+     "E_MC_twh": 0.177,
+     "E_HC_twh": 0.069
+    },
+    {
+     "plant_code": 2070,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 59.0,
+     "hr_model": 12.576,
+     "hr_meas": 13.477,
+     "hr_plausible": true,
+     "gas_mean": 2.918,
+     "offer_econ_min": 41.232,
+     "cost_meas_mean": 43.327,
+     "pmod_mean": 28.264,
+     "hub_mean": 24.292,
+     "act_twh": 0.014,
+     "act_in_twh": 0.003,
+     "floor_twh": 0.017,
+     "h_in_model": 48,
+     "h_in_meas": 280,
+     "coverage": 1.0,
+     "E_MM_twh": 0.018,
+     "E_HM_twh": 0.034,
+     "E_MC_twh": 0.018,
+     "E_HC_twh": 0.031
+    }
+   ]
+  },
+  "2020": {
+   "south_all": {
+    "MM": 15.857,
+    "HM": 11.696,
+    "MC": 19.659,
+    "HC": 12.305,
+    "floor": 9.634,
+    "act": 19.201,
+    "act_in": 2.705
+   },
+   "south_c1_basis": {
+    "act": 14.064,
+    "act_in": 1.942,
+    "floor": 3.947,
+    "MM": 9.56,
+    "HM": 5.864,
+    "MC": 12.656,
+    "HC": 6.353,
+    "MC_hrok": 12.656,
+    "HC_hrok": 6.353,
+    "MM_hrok": 9.56
+   },
+   "by_month_c1": {
+    "0": {
+     "MM_above": 0.395,
+     "act_in": 0.068,
+     "pmod_minus_hub": 6.71
+    },
+    "1": {
+     "MM_above": 0.318,
+     "act_in": 0.079,
+     "pmod_minus_hub": 5.89
+    },
+    "2": {
+     "MM_above": 0.61,
+     "act_in": 0.115,
+     "pmod_minus_hub": 5.09
+    },
+    "3": {
+     "MM_above": 0.405,
+     "act_in": 0.097,
+     "pmod_minus_hub": 4.2
+    },
+    "4": {
+     "MM_above": 0.523,
+     "act_in": 0.188,
+     "pmod_minus_hub": 5.52
+    },
+    "5": {
+     "MM_above": 0.76,
+     "act_in": 0.299,
+     "pmod_minus_hub": 5.77
+    },
+    "6": {
+     "MM_above": 1.315,
+     "act_in": 0.282,
+     "pmod_minus_hub": 5.76
+    },
+    "7": {
+     "MM_above": 0.357,
+     "act_in": 0.282,
+     "pmod_minus_hub": -5.92
+    },
+    "8": {
+     "MM_above": 0.426,
+     "act_in": 0.143,
+     "pmod_minus_hub": 4.63
+    },
+    "9": {
+     "MM_above": 0.193,
+     "act_in": 0.218,
+     "pmod_minus_hub": -0.18
+    },
+    "10": {
+     "MM_above": 0.08,
+     "act_in": 0.091,
+     "pmod_minus_hub": 2.0
+    },
+    "11": {
+     "MM_above": 0.231,
+     "act_in": 0.08,
+     "pmod_minus_hub": 3.43
+    }
+   },
+   "by_hour_c1": {
+    "0": {
+     "MM_above": 0.029,
+     "act_in": 0.006,
+     "pmod_minus_hub": 5.87
+    },
+    "1": {
+     "MM_above": 0.021,
+     "act_in": 0.003,
+     "pmod_minus_hub": 6.01
+    },
+    "2": {
+     "MM_above": 0.019,
+     "act_in": 0.003,
+     "pmod_minus_hub": 6.3
+    },
+    "3": {
+     "MM_above": 0.018,
+     "act_in": 0.002,
+     "pmod_minus_hub": 6.12
+    },
+    "4": {
+     "MM_above": 0.02,
+     "act_in": 0.002,
+     "pmod_minus_hub": 5.92
+    },
+    "5": {
+     "MM_above": 0.032,
+     "act_in": 0.003,
+     "pmod_minus_hub": 5.36
+    },
+    "6": {
+     "MM_above": 0.07,
+     "act_in": 0.021,
+     "pmod_minus_hub": 4.75
+    },
+    "7": {
+     "MM_above": 0.128,
+     "act_in": 0.05,
+     "pmod_minus_hub": 4.15
+    },
+    "8": {
+     "MM_above": 0.196,
+     "act_in": 0.044,
+     "pmod_minus_hub": 4.98
+    },
+    "9": {
+     "MM_above": 0.263,
+     "act_in": 0.048,
+     "pmod_minus_hub": 4.65
+    },
+    "10": {
+     "MM_above": 0.26,
+     "act_in": 0.067,
+     "pmod_minus_hub": 3.47
+    },
+    "11": {
+     "MM_above": 0.314,
+     "act_in": 0.098,
+     "pmod_minus_hub": 3.38
+    },
+    "12": {
+     "MM_above": 0.364,
+     "act_in": 0.163,
+     "pmod_minus_hub": 1.95
+    },
+    "13": {
+     "MM_above": 0.399,
+     "act_in": 0.178,
+     "pmod_minus_hub": 1.68
+    },
+    "14": {
+     "MM_above": 0.429,
+     "act_in": 0.198,
+     "pmod_minus_hub": -0.3
+    },
+    "15": {
+     "MM_above": 0.443,
+     "act_in": 0.247,
+     "pmod_minus_hub": -2.33
+    },
+    "16": {
+     "MM_above": 0.455,
+     "act_in": 0.257,
+     "pmod_minus_hub": -0.01
+    },
+    "17": {
+     "MM_above": 0.447,
+     "act_in": 0.208,
+     "pmod_minus_hub": 0.52
+    },
+    "18": {
+     "MM_above": 0.429,
+     "act_in": 0.137,
+     "pmod_minus_hub": 1.02
+    },
+    "19": {
+     "MM_above": 0.398,
+     "act_in": 0.096,
+     "pmod_minus_hub": 2.69
+    },
+    "20": {
+     "MM_above": 0.346,
+     "act_in": 0.062,
+     "pmod_minus_hub": 4.35
+    },
+    "21": {
+     "MM_above": 0.297,
+     "act_in": 0.029,
+     "pmod_minus_hub": 5.23
+    },
+    "22": {
+     "MM_above": 0.166,
+     "act_in": 0.014,
+     "pmod_minus_hub": 3.91
+    },
+    "23": {
+     "MM_above": 0.071,
+     "act_in": 0.006,
+     "pmod_minus_hub": 5.68
+    }
+   },
+   "plants": [
+    {
+     "plant_code": 1403,
+     "state": "LA",
+     "c1_basis": false,
+     "pmax": 1480.1,
+     "hr_model": 11.439,
+     "hr_meas": 10.046,
+     "hr_plausible": true,
+     "gas_mean": 2.144,
+     "offer_econ_min": 24.233,
+     "cost_meas_mean": 25.543,
+     "pmod_mean": 24.778,
+     "hub_mean": 20.635,
+     "act_twh": 5.137,
+     "act_in_twh": 0.763,
+     "floor_twh": 5.687,
+     "h_in_model": 3997,
+     "h_in_meas": 889,
+     "coverage": 1.0,
+     "E_MM_twh": 6.296,
+     "E_HM_twh": 5.832,
+     "E_MC_twh": 7.003,
+     "E_HC_twh": 5.951
+    },
+    {
+     "plant_code": 3459,
+     "state": "TX",
+     "c1_basis": true,
+     "pmax": 1511.1,
+     "hr_model": 11.801,
+     "hr_meas": 10.596,
+     "hr_plausible": true,
+     "gas_mean": 2.094,
+     "offer_econ_min": 24.243,
+     "cost_meas_mean": 26.188,
+     "pmod_mean": 24.778,
+     "hub_mean": 25.886,
+     "act_twh": 4.749,
+     "act_in_twh": 0.704,
+     "floor_twh": 1.895,
+     "h_in_model": 3892,
+     "h_in_meas": 846,
+     "coverage": 1.0,
+     "E_MM_twh": 3.646,
+     "E_HM_twh": 2.328,
+     "E_MC_twh": 4.698,
+     "E_HC_twh": 2.52
+    },
+    {
+     "plant_code": 3457,
+     "state": "TX",
+     "c1_basis": true,
+     "pmax": 500.0,
+     "hr_model": 11.31,
+     "hr_meas": 9.995,
+     "hr_plausible": true,
+     "gas_mean": 2.003,
+     "offer_econ_min": 22.299,
+     "cost_meas_mean": 24.019,
+     "pmod_mean": 24.778,
+     "hub_mean": 25.886,
+     "act_twh": 2.298,
+     "act_in_twh": 0.448,
+     "floor_twh": 0.782,
+     "h_in_model": 4989,
+     "h_in_meas": 1300,
+     "coverage": 1.0,
+     "E_MM_twh": 1.648,
+     "E_HM_twh": 0.986,
+     "E_MC_twh": 2.093,
+     "E_HC_twh": 1.122
+    },
+    {
+     "plant_code": 1402,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 926.0,
+     "hr_model": 11.216,
+     "hr_meas": 11.15,
+     "hr_plausible": true,
+     "gas_mean": 2.349,
+     "offer_econ_min": 29.728,
+     "cost_meas_mean": 30.196,
+     "pmod_mean": 24.778,
+     "hub_mean": 20.635,
+     "act_twh": 1.642,
+     "act_in_twh": 0.136,
+     "floor_twh": 0.16,
+     "h_in_model": 1656,
+     "h_in_meas": 488,
+     "coverage": 1.0,
+     "E_MM_twh": 0.886,
+     "E_HM_twh": 0.384,
+     "E_MC_twh": 1.055,
+     "E_HC_twh": 0.393
+    },
+    {
+     "plant_code": 2050,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 494.3,
+     "hr_model": 11.492,
+     "hr_meas": 10.112,
+     "hr_plausible": true,
+     "gas_mean": 2.187,
+     "offer_econ_min": 25.501,
+     "cost_meas_mean": 26.111,
+     "pmod_mean": 24.778,
+     "hub_mean": 19.945,
+     "act_twh": 1.536,
+     "act_in_twh": 0.195,
+     "floor_twh": 0.476,
+     "h_in_model": 3302,
+     "h_in_meas": 837,
+     "coverage": 1.0,
+     "E_MM_twh": 0.73,
+     "E_HM_twh": 0.544,
+     "E_MC_twh": 0.917,
+     "E_HC_twh": 0.581
+    },
+    {
+     "plant_code": 6055,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 570.0,
+     "hr_model": 12.771,
+     "hr_meas": 11.446,
+     "hr_plausible": true,
+     "gas_mean": 2.269,
+     "offer_econ_min": 32.275,
+     "cost_meas_mean": 29.97,
+     "pmod_mean": 24.778,
+     "hub_mean": 20.635,
+     "act_twh": 0.99,
+     "act_in_twh": 0.093,
+     "floor_twh": 0.177,
+     "h_in_model": 502,
+     "h_in_meas": 503,
+     "coverage": 1.0,
+     "E_MM_twh": 0.287,
+     "E_HM_twh": 0.324,
+     "E_MC_twh": 0.848,
+     "E_HC_twh": 0.38
+    },
+    {
+     "plant_code": 8054,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 706.5,
+     "hr_model": 11.559,
+     "hr_meas": 11.634,
+     "hr_plausible": true,
+     "gas_mean": 3.517,
+     "offer_econ_min": 30.162,
+     "cost_meas_mean": 44.916,
+     "pmod_mean": 24.778,
+     "hub_mean": 19.945,
+     "act_twh": 0.988,
+     "act_in_twh": 0.102,
+     "floor_twh": 0.0,
+     "h_in_model": 1144,
+     "h_in_meas": 378,
+     "coverage": 1.0,
+     "E_MM_twh": 0.525,
+     "E_HM_twh": 0.226,
+     "E_MC_twh": 0.574,
+     "E_HC_twh": 0.223
+    },
+    {
+     "plant_code": 6190,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 413.3,
+     "hr_model": 12.436,
+     "hr_meas": 10.376,
+     "hr_plausible": true,
+     "gas_mean": 2.128,
+     "offer_econ_min": 26.273,
+     "cost_meas_mean": 26.083,
+     "pmod_mean": 24.778,
+     "hub_mean": 20.635,
+     "act_twh": 0.693,
+     "act_in_twh": 0.142,
+     "floor_twh": 0.154,
+     "h_in_model": 3093,
+     "h_in_meas": 803,
+     "coverage": 1.0,
+     "E_MM_twh": 0.341,
+     "E_HM_twh": 0.229,
+     "E_MC_twh": 0.77,
+     "E_HC_twh": 0.282
+    },
+    {
+     "plant_code": 1400,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 331.4,
+     "hr_model": 10.61,
+     "hr_meas": 10.623,
+     "hr_plausible": true,
+     "gas_mean": 2.306,
+     "offer_econ_min": 27.317,
+     "cost_meas_mean": 28.492,
+     "pmod_mean": 24.778,
+     "hub_mean": 20.635,
+     "act_twh": 0.481,
+     "act_in_twh": 0.058,
+     "floor_twh": 0.272,
+     "h_in_model": 2581,
+     "h_in_meas": 629,
+     "coverage": 1.0,
+     "E_MM_twh": 0.873,
+     "E_HM_twh": 0.426,
+     "E_MC_twh": 0.895,
+     "E_HC_twh": 0.431
+    },
+    {
+     "plant_code": 170,
+     "state": "AR",
+     "c1_basis": true,
+     "pmax": 522.0,
+     "hr_model": 11.046,
+     "hr_meas": 10.988,
+     "hr_plausible": true,
+     "gas_mean": 3.516,
+     "offer_econ_min": 29.765,
+     "cost_meas_mean": 42.636,
+     "pmod_mean": 24.778,
+     "hub_mean": 19.813,
+     "act_twh": 0.478,
+     "act_in_twh": 0.044,
+     "floor_twh": 0.0,
+     "h_in_model": 1013,
+     "h_in_meas": 434,
+     "coverage": 1.0,
+     "E_MM_twh": 0.182,
+     "E_HM_twh": 0.075,
+     "E_MC_twh": 0.235,
+     "E_HC_twh": 0.073
+    },
+    {
+     "plant_code": 8056,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 831.9,
+     "hr_model": 11.528,
+     "hr_meas": 11.073,
+     "hr_plausible": true,
+     "gas_mean": 2.417,
+     "offer_econ_min": 31.32,
+     "cost_meas_mean": 30.765,
+     "pmod_mean": 24.778,
+     "hub_mean": 20.635,
+     "act_twh": 0.132,
+     "act_in_twh": 0.011,
+     "floor_twh": 0.0,
+     "h_in_model": 854,
+     "h_in_meas": 473,
+     "coverage": 1.0,
+     "E_MM_twh": 0.223,
+     "E_HM_twh": 0.189,
+     "E_MC_twh": 0.419,
+     "E_HC_twh": 0.21
+    },
+    {
+     "plant_code": 1464,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 220.0,
+     "hr_model": 12.177,
+     "hr_meas": 12.561,
+     "hr_plausible": true,
+     "gas_mean": 2.269,
+     "offer_econ_min": 30.96,
+     "cost_meas_mean": 32.501,
+     "pmod_mean": 24.778,
+     "hub_mean": 20.635,
+     "act_twh": 0.04,
+     "act_in_twh": 0.004,
+     "floor_twh": 0.0,
+     "h_in_model": 939,
+     "h_in_meas": 397,
+     "coverage": 1.0,
+     "E_MM_twh": 0.118,
+     "E_HM_twh": 0.081,
+     "E_MC_twh": 0.099,
+     "E_HC_twh": 0.076
+    },
+    {
+     "plant_code": 1439,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 67.5,
+     "hr_model": 12.253,
+     "hr_meas": 14.371,
+     "hr_plausible": true,
+     "gas_mean": 2.269,
+     "offer_econ_min": 31.128,
+     "cost_meas_mean": 36.609,
+     "pmod_mean": 24.778,
+     "hub_mean": 20.635,
+     "act_twh": 0.024,
+     "act_in_twh": 0.002,
+     "floor_twh": 0.018,
+     "h_in_model": 863,
+     "h_in_meas": 285,
+     "coverage": 1.0,
+     "E_MM_twh": 0.051,
+     "E_HM_twh": 0.042,
+     "E_MC_twh": 0.022,
+     "E_HC_twh": 0.035
+    },
+    {
+     "plant_code": 2070,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 59.0,
+     "hr_model": 11.746,
+     "hr_meas": 12.75,
+     "hr_plausible": true,
+     "gas_mean": 2.239,
+     "offer_econ_min": 28.63,
+     "cost_meas_mean": 32.548,
+     "pmod_mean": 24.778,
+     "hub_mean": 19.945,
+     "act_twh": 0.013,
+     "act_in_twh": 0.003,
+     "floor_twh": 0.012,
+     "h_in_model": 1212,
+     "h_in_meas": 355,
+     "coverage": 1.0,
+     "E_MM_twh": 0.05,
+     "E_HM_twh": 0.03,
+     "E_MC_twh": 0.029,
+     "E_HC_twh": 0.027
+    }
+   ]
+  },
+  "2021": {
+   "south_all": {
+    "MM": 9.488,
+    "HM": 10.321,
+    "MC": 14.709,
+    "HC": 12.196,
+    "floor": 8.108,
+    "act": 11.285,
+    "act_in": 2.026
+   },
+   "south_c1_basis": {
+    "act": 6.889,
+    "act_in": 1.346,
+    "floor": 3.27,
+    "MM": 4.424,
+    "HM": 5.274,
+    "MC": 9.122,
+    "HC": 7.034,
+    "MC_hrok": 6.074,
+    "HC_hrok": 5.395,
+    "MM_hrok": 4.281
+   },
+   "by_month_c1": {
+    "0": {
+     "MM_above": 0.067,
+     "act_in": 0.042,
+     "pmod_minus_hub": 7.54
+    },
+    "1": {
+     "MM_above": 0.166,
+     "act_in": 0.21,
+     "pmod_minus_hub": -14.0
+    },
+    "2": {
+     "MM_above": 0.233,
+     "act_in": 0.158,
+     "pmod_minus_hub": 1.75
+    },
+    "3": {
+     "MM_above": 0.079,
+     "act_in": 0.05,
+     "pmod_minus_hub": 3.98
+    },
+    "4": {
+     "MM_above": 0.172,
+     "act_in": 0.077,
+     "pmod_minus_hub": 5.17
+    },
+    "5": {
+     "MM_above": 0.107,
+     "act_in": 0.194,
+     "pmod_minus_hub": 3.98
+    },
+    "6": {
+     "MM_above": 0.072,
+     "act_in": 0.124,
+     "pmod_minus_hub": 5.66
+    },
+    "7": {
+     "MM_above": 0.156,
+     "act_in": 0.15,
+     "pmod_minus_hub": 8.31
+    },
+    "8": {
+     "MM_above": 0.007,
+     "act_in": 0.091,
+     "pmod_minus_hub": -1.87
+    },
+    "9": {
+     "MM_above": 0.01,
+     "act_in": 0.134,
+     "pmod_minus_hub": -4.46
+    },
+    "10": {
+     "MM_above": 0.008,
+     "act_in": 0.057,
+     "pmod_minus_hub": -1.52
+    },
+    "11": {
+     "MM_above": 0.075,
+     "act_in": 0.059,
+     "pmod_minus_hub": 1.23
+    }
+   },
+   "by_hour_c1": {
+    "0": {
+     "MM_above": 0.008,
+     "act_in": 0.013,
+     "pmod_minus_hub": 6.12
+    },
+    "1": {
+     "MM_above": 0.007,
+     "act_in": 0.011,
+     "pmod_minus_hub": 6.53
+    },
+    "2": {
+     "MM_above": 0.008,
+     "act_in": 0.008,
+     "pmod_minus_hub": 7.06
+    },
+    "3": {
+     "MM_above": 0.008,
+     "act_in": 0.007,
+     "pmod_minus_hub": 7.19
+    },
+    "4": {
+     "MM_above": 0.008,
+     "act_in": 0.009,
+     "pmod_minus_hub": 6.25
+    },
+    "5": {
+     "MM_above": 0.01,
+     "act_in": 0.017,
+     "pmod_minus_hub": 4.77
+    },
+    "6": {
+     "MM_above": 0.023,
+     "act_in": 0.035,
+     "pmod_minus_hub": 1.87
+    },
+    "7": {
+     "MM_above": 0.048,
+     "act_in": 0.051,
+     "pmod_minus_hub": -2.06
+    },
+    "8": {
+     "MM_above": 0.064,
+     "act_in": 0.041,
+     "pmod_minus_hub": 2.74
+    },
+    "9": {
+     "MM_above": 0.059,
+     "act_in": 0.043,
+     "pmod_minus_hub": 1.94
+    },
+    "10": {
+     "MM_above": 0.035,
+     "act_in": 0.046,
+     "pmod_minus_hub": -0.67
+    },
+    "11": {
+     "MM_above": 0.036,
+     "act_in": 0.058,
+     "pmod_minus_hub": 0.02
+    },
+    "12": {
+     "MM_above": 0.049,
+     "act_in": 0.087,
+     "pmod_minus_hub": -0.32
+    },
+    "13": {
+     "MM_above": 0.072,
+     "act_in": 0.099,
+     "pmod_minus_hub": 0.65
+    },
+    "14": {
+     "MM_above": 0.088,
+     "act_in": 0.124,
+     "pmod_minus_hub": 0.74
+    },
+    "15": {
+     "MM_above": 0.102,
+     "act_in": 0.147,
+     "pmod_minus_hub": 0.69
+    },
+    "16": {
+     "MM_above": 0.109,
+     "act_in": 0.133,
+     "pmod_minus_hub": -2.53
+    },
+    "17": {
+     "MM_above": 0.1,
+     "act_in": 0.124,
+     "pmod_minus_hub": -1.92
+    },
+    "18": {
+     "MM_above": 0.088,
+     "act_in": 0.095,
+     "pmod_minus_hub": -2.55
+    },
+    "19": {
+     "MM_above": 0.072,
+     "act_in": 0.074,
+     "pmod_minus_hub": -4.34
+    },
+    "20": {
+     "MM_above": 0.059,
+     "act_in": 0.06,
+     "pmod_minus_hub": -6.47
+    },
+    "21": {
+     "MM_above": 0.056,
+     "act_in": 0.033,
+     "pmod_minus_hub": -4.54
+    },
+    "22": {
+     "MM_above": 0.028,
+     "act_in": 0.017,
+     "pmod_minus_hub": 6.59
+    },
+    "23": {
+     "MM_above": 0.016,
+     "act_in": 0.013,
+     "pmod_minus_hub": 6.88
+    }
+   },
+   "plants": [
+    {
+     "plant_code": 1403,
+     "state": "LA",
+     "c1_basis": false,
+     "pmax": 1480.1,
+     "hr_model": 11.583,
+     "hr_meas": 10.372,
+     "hr_plausible": true,
+     "gas_mean": 4.053,
+     "offer_econ_min": 40.39,
+     "cost_meas_mean": 46.039,
+     "pmod_mean": 38.444,
+     "hub_mean": 36.421,
+     "act_twh": 4.396,
+     "act_in_twh": 0.68,
+     "floor_twh": 4.838,
+     "h_in_model": 1962,
+     "h_in_meas": 871,
+     "coverage": 1.0,
+     "E_MM_twh": 5.063,
+     "E_HM_twh": 5.047,
+     "E_MC_twh": 5.587,
+     "E_HC_twh": 5.162
+    },
+    {
+     "plant_code": 3459,
+     "state": "TX",
+     "c1_basis": true,
+     "pmax": 1511.1,
+     "hr_model": 12.158,
+     "hr_meas": 10.75,
+     "hr_plausible": true,
+     "gas_mean": 3.958,
+     "offer_econ_min": 43.66,
+     "cost_meas_mean": 46.554,
+     "pmod_mean": 38.444,
+     "hub_mean": 41.284,
+     "act_twh": 3.29,
+     "act_in_twh": 0.601,
+     "floor_twh": 1.913,
+     "h_in_model": 1495,
+     "h_in_meas": 916,
+     "coverage": 1.0,
+     "E_MM_twh": 2.289,
+     "E_HM_twh": 2.419,
+     "E_MC_twh": 3.082,
+     "E_HC_twh": 2.598
+    },
+    {
+     "plant_code": 3457,
+     "state": "TX",
+     "c1_basis": true,
+     "pmax": 500.0,
+     "hr_model": 12.224,
+     "hr_meas": 10.943,
+     "hr_plausible": true,
+     "gas_mean": 3.811,
+     "offer_econ_min": 43.124,
+     "cost_meas_mean": 45.706,
+     "pmod_mean": 38.444,
+     "hub_mean": 41.284,
+     "act_twh": 1.299,
+     "act_in_twh": 0.234,
+     "floor_twh": 0.805,
+     "h_in_model": 2194,
+     "h_in_meas": 1197,
+     "coverage": 1.0,
+     "E_MM_twh": 1.08,
+     "E_HM_twh": 1.015,
+     "E_MC_twh": 1.501,
+     "E_HC_twh": 1.151
+    },
+    {
+     "plant_code": 1402,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 926.0,
+     "hr_model": 12.27,
+     "hr_meas": 12.334,
+     "hr_plausible": true,
+     "gas_mean": 4.213,
+     "offer_econ_min": 52.437,
+     "cost_meas_mean": 55.97,
+     "pmod_mean": 38.444,
+     "hub_mean": 36.421,
+     "act_twh": 0.604,
+     "act_in_twh": 0.063,
+     "floor_twh": 0.058,
+     "h_in_model": 234,
+     "h_in_meas": 438,
+     "coverage": 1.0,
+     "E_MM_twh": 0.13,
+     "E_HM_twh": 0.348,
+     "E_MC_twh": 0.195,
+     "E_HC_twh": 0.346
+    },
+    {
+     "plant_code": 6190,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 426.2,
+     "hr_model": 12.918,
+     "hr_meas": 9.723,
+     "hr_plausible": true,
+     "gas_mean": 4.073,
+     "offer_econ_min": 49.061,
+     "cost_meas_mean": 43.604,
+     "pmod_mean": 38.444,
+     "hub_mean": 36.421,
+     "act_twh": 0.497,
+     "act_in_twh": 0.154,
+     "floor_twh": 0.134,
+     "h_in_model": 705,
+     "h_in_meas": 1177,
+     "coverage": 1.0,
+     "E_MM_twh": 0.179,
+     "E_HM_twh": 0.236,
+     "E_MC_twh": 0.63,
+     "E_HC_twh": 0.369
+    },
+    {
+     "plant_code": 6055,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 575.0,
+     "hr_model": 11.982,
+     "hr_meas": 7.489,
+     "hr_plausible": false,
+     "gas_mean": 4.19,
+     "offer_econ_min": 51.079,
+     "cost_meas_mean": 35.379,
+     "pmod_mean": 38.444,
+     "hub_mean": 36.421,
+     "act_twh": 0.274,
+     "act_in_twh": 0.168,
+     "floor_twh": 0.06,
+     "h_in_model": 298,
+     "h_in_meas": 2983,
+     "coverage": 1.0,
+     "E_MM_twh": 0.143,
+     "E_HM_twh": 0.312,
+     "E_MC_twh": 3.048,
+     "E_HC_twh": 1.639
+    },
+    {
+     "plant_code": 8056,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 831.9,
+     "hr_model": 11.354,
+     "hr_meas": 10.934,
+     "hr_plausible": true,
+     "gas_mean": 4.403,
+     "offer_econ_min": 51.2,
+     "cost_meas_mean": 52.137,
+     "pmod_mean": 38.444,
+     "hub_mean": 36.421,
+     "act_twh": 0.254,
+     "act_in_twh": 0.031,
+     "floor_twh": 0.0,
+     "h_in_model": 129,
+     "h_in_meas": 539,
+     "coverage": 1.0,
+     "E_MM_twh": 0.057,
+     "E_HM_twh": 0.269,
+     "E_MC_twh": 0.141,
+     "E_HC_twh": 0.293
+    },
+    {
+     "plant_code": 1400,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 336.2,
+     "hr_model": 11.034,
+     "hr_meas": 11.308,
+     "hr_plausible": true,
+     "gas_mean": 4.166,
+     "offer_econ_min": 47.332,
+     "cost_meas_mean": 51.112,
+     "pmod_mean": 38.444,
+     "hub_mean": 36.421,
+     "act_twh": 0.236,
+     "act_in_twh": 0.044,
+     "floor_twh": 0.272,
+     "h_in_model": 859,
+     "h_in_meas": 603,
+     "coverage": 1.0,
+     "E_MM_twh": 0.452,
+     "E_HM_twh": 0.44,
+     "E_MC_twh": 0.429,
+     "E_HC_twh": 0.424
+    },
+    {
+     "plant_code": 170,
+     "state": "AR",
+     "c1_basis": true,
+     "pmax": 522.0,
+     "hr_model": 11.592,
+     "hr_meas": 11.197,
+     "hr_plausible": true,
+     "gas_mean": 5.345,
+     "offer_econ_min": 56.409,
+     "cost_meas_mean": 63.851,
+     "pmod_mean": 38.444,
+     "hub_mean": 36.495,
+     "act_twh": 0.196,
+     "act_in_twh": 0.027,
+     "floor_twh": 0.0,
+     "h_in_model": 308,
+     "h_in_meas": 494,
+     "coverage": 1.0,
+     "E_MM_twh": 0.02,
+     "E_HM_twh": 0.045,
+     "E_MC_twh": 0.045,
+     "E_HC_twh": 0.046
+    },
+    {
+     "plant_code": 8054,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 706.5,
+     "hr_model": 11.419,
+     "hr_meas": 11.884,
+     "hr_plausible": true,
+     "gas_mean": 5.694,
+     "offer_econ_min": 55.001,
+     "cost_meas_mean": 71.664,
+     "pmod_mean": 38.444,
+     "hub_mean": 35.002,
+     "act_twh": 0.175,
+     "act_in_twh": 0.014,
+     "floor_twh": 0.0,
+     "h_in_model": 202,
+     "h_in_meas": 298,
+     "coverage": 1.0,
+     "E_MM_twh": 0.0,
+     "E_HM_twh": 0.033,
+     "E_MC_twh": 0.0,
+     "E_HC_twh": 0.031
+    },
+    {
+     "plant_code": 1464,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 220.0,
+     "hr_model": 12.251,
+     "hr_meas": 12.669,
+     "hr_plausible": true,
+     "gas_mean": 4.19,
+     "offer_econ_min": 52.139,
+     "cost_meas_mean": 57.082,
+     "pmod_mean": 38.444,
+     "hub_mean": 36.421,
+     "act_twh": 0.028,
+     "act_in_twh": 0.004,
+     "floor_twh": 0.0,
+     "h_in_model": 184,
+     "h_in_meas": 409,
+     "coverage": 1.0,
+     "E_MM_twh": 0.017,
+     "E_HM_twh": 0.089,
+     "E_MC_twh": 0.011,
+     "E_HC_twh": 0.08
+    },
+    {
+     "plant_code": 1439,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 67.5,
+     "hr_model": 12.022,
+     "hr_meas": 14.087,
+     "hr_plausible": true,
+     "gas_mean": 4.19,
+     "offer_econ_min": 51.24,
+     "cost_meas_mean": 63.025,
+     "pmod_mean": 38.444,
+     "hub_mean": 36.421,
+     "act_twh": 0.019,
+     "act_in_twh": 0.002,
+     "floor_twh": 0.018,
+     "h_in_model": 258,
+     "h_in_meas": 313,
+     "coverage": 1.0,
+     "E_MM_twh": 0.026,
+     "E_HM_twh": 0.046,
+     "E_MC_twh": 0.019,
+     "E_HC_twh": 0.037
+    },
+    {
+     "plant_code": 2070,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 59.0,
+     "hr_model": 11.503,
+     "hr_meas": 12.297,
+     "hr_plausible": true,
+     "gas_mean": 4.004,
+     "offer_econ_min": 46.216,
+     "cost_meas_mean": 53.238,
+     "pmod_mean": 38.444,
+     "hub_mean": 35.002,
+     "act_twh": 0.017,
+     "act_in_twh": 0.004,
+     "floor_twh": 0.009,
+     "h_in_model": 753,
+     "h_in_meas": 439,
+     "coverage": 1.0,
+     "E_MM_twh": 0.032,
+     "E_HM_twh": 0.022,
+     "E_MC_twh": 0.021,
+     "E_HC_twh": 0.02
+    }
+   ]
+  },
+  "2022": {
+   "south_all": {
+    "MM": 10.395,
+    "HM": 11.741,
+    "MC": 15.694,
+    "HC": 13.936,
+    "floor": 7.901,
+    "act": 12.07,
+    "act_in": 3.805
+   },
+   "south_c1_basis": {
+    "act": 7.713,
+    "act_in": 2.667,
+    "floor": 2.805,
+    "MM": 5.109,
+    "HM": 6.338,
+    "MC": 9.597,
+    "HC": 8.367,
+    "MC_hrok": 6.055,
+    "HC_hrok": 6.04,
+    "MM_hrok": 4.549
+   },
+   "by_month_c1": {
+    "0": {
+     "MM_above": 0.201,
+     "act_in": 0.035,
+     "pmod_minus_hub": 12.43
+    },
+    "1": {
+     "MM_above": 0.077,
+     "act_in": 0.021,
+     "pmod_minus_hub": 9.74
+    },
+    "2": {
+     "MM_above": 0.369,
+     "act_in": 0.084,
+     "pmod_minus_hub": 7.75
+    },
+    "3": {
+     "MM_above": 0.032,
+     "act_in": 0.11,
+     "pmod_minus_hub": -5.17
+    },
+    "4": {
+     "MM_above": 0.132,
+     "act_in": 0.32,
+     "pmod_minus_hub": -3.59
+    },
+    "5": {
+     "MM_above": 0.243,
+     "act_in": 0.598,
+     "pmod_minus_hub": -6.72
+    },
+    "6": {
+     "MM_above": 0.525,
+     "act_in": 0.821,
+     "pmod_minus_hub": -1.9
+    },
+    "7": {
+     "MM_above": 0.12,
+     "act_in": 0.234,
+     "pmod_minus_hub": -3.72
+    },
+    "8": {
+     "MM_above": 0.154,
+     "act_in": 0.176,
+     "pmod_minus_hub": 0.65
+    },
+    "9": {
+     "MM_above": 0.222,
+     "act_in": 0.112,
+     "pmod_minus_hub": 3.13
+    },
+    "10": {
+     "MM_above": 0.229,
+     "act_in": 0.155,
+     "pmod_minus_hub": 4.78
+    },
+    "11": {
+     "MM_above": 0.0,
+     "act_in": 0.0,
+     "pmod_minus_hub": NaN
+    }
+   },
+   "by_hour_c1": {
+    "0": {
+     "MM_above": 0.012,
+     "act_in": 0.008,
+     "pmod_minus_hub": 8.34
+    },
+    "1": {
+     "MM_above": 0.01,
+     "act_in": 0.005,
+     "pmod_minus_hub": 10.75
+    },
+    "2": {
+     "MM_above": 0.011,
+     "act_in": 0.001,
+     "pmod_minus_hub": 12.3
+    },
+    "3": {
+     "MM_above": 0.013,
+     "act_in": 0.003,
+     "pmod_minus_hub": 13.03
+    },
+    "4": {
+     "MM_above": 0.018,
+     "act_in": 0.005,
+     "pmod_minus_hub": 12.01
+    },
+    "5": {
+     "MM_above": 0.034,
+     "act_in": 0.01,
+     "pmod_minus_hub": 10.03
+    },
+    "6": {
+     "MM_above": 0.061,
+     "act_in": 0.028,
+     "pmod_minus_hub": 5.89
+    },
+    "7": {
+     "MM_above": 0.077,
+     "act_in": 0.049,
+     "pmod_minus_hub": 4.12
+    },
+    "8": {
+     "MM_above": 0.076,
+     "act_in": 0.048,
+     "pmod_minus_hub": 5.99
+    },
+    "9": {
+     "MM_above": 0.085,
+     "act_in": 0.056,
+     "pmod_minus_hub": 5.31
+    },
+    "10": {
+     "MM_above": 0.083,
+     "act_in": 0.087,
+     "pmod_minus_hub": 3.07
+    },
+    "11": {
+     "MM_above": 0.111,
+     "act_in": 0.145,
+     "pmod_minus_hub": -0.03
+    },
+    "12": {
+     "MM_above": 0.157,
+     "act_in": 0.205,
+     "pmod_minus_hub": -1.58
+    },
+    "13": {
+     "MM_above": 0.196,
+     "act_in": 0.236,
+     "pmod_minus_hub": -4.27
+    },
+    "14": {
+     "MM_above": 0.225,
+     "act_in": 0.284,
+     "pmod_minus_hub": -5.49
+    },
+    "15": {
+     "MM_above": 0.234,
+     "act_in": 0.3,
+     "pmod_minus_hub": -14.52
+    },
+    "16": {
+     "MM_above": 0.223,
+     "act_in": 0.302,
+     "pmod_minus_hub": -11.45
+    },
+    "17": {
+     "MM_above": 0.193,
+     "act_in": 0.269,
+     "pmod_minus_hub": -12.75
+    },
+    "18": {
+     "MM_above": 0.166,
+     "act_in": 0.231,
+     "pmod_minus_hub": -10.82
+    },
+    "19": {
+     "MM_above": 0.136,
+     "act_in": 0.185,
+     "pmod_minus_hub": -8.28
+    },
+    "20": {
+     "MM_above": 0.088,
+     "act_in": 0.124,
+     "pmod_minus_hub": -2.87
+    },
+    "21": {
+     "MM_above": 0.058,
+     "act_in": 0.051,
+     "pmod_minus_hub": 2.42
+    },
+    "22": {
+     "MM_above": 0.025,
+     "act_in": 0.023,
+     "pmod_minus_hub": 4.81
+    },
+    "23": {
+     "MM_above": 0.014,
+     "act_in": 0.011,
+     "pmod_minus_hub": 6.41
+    }
+   },
+   "plants": [
+    {
+     "plant_code": 1403,
+     "state": "LA",
+     "c1_basis": false,
+     "pmax": 1481.9,
+     "hr_model": 11.783,
+     "hr_meas": 10.379,
+     "hr_plausible": true,
+     "gas_mean": 6.505,
+     "offer_econ_min": 72.154,
+     "cost_meas_mean": 73.069,
+     "pmod_mean": 62.717,
+     "hub_mean": 62.017,
+     "act_twh": 4.357,
+     "act_in_twh": 1.138,
+     "floor_twh": 5.096,
+     "h_in_model": 2148,
+     "h_in_meas": 1307,
+     "coverage": 0.863,
+     "E_MM_twh": 5.286,
+     "E_HM_twh": 5.403,
+     "E_MC_twh": 6.098,
+     "E_HC_twh": 5.568
+    },
+    {
+     "plant_code": 3459,
+     "state": "TX",
+     "c1_basis": true,
+     "pmax": 1470.4,
+     "hr_model": 12.075,
+     "hr_meas": 10.879,
+     "hr_plausible": true,
+     "gas_mean": 6.764,
+     "offer_econ_min": 77.279,
+     "cost_meas_mean": 79.03,
+     "pmod_mean": 62.717,
+     "hub_mean": 61.398,
+     "act_twh": 2.552,
+     "act_in_twh": 0.663,
+     "floor_twh": 1.538,
+     "h_in_model": 1331,
+     "h_in_meas": 920,
+     "coverage": 0.863,
+     "E_MM_twh": 1.866,
+     "E_HM_twh": 2.091,
+     "E_MC_twh": 2.275,
+     "E_HC_twh": 2.194
+    },
+    {
+     "plant_code": 3457,
+     "state": "TX",
+     "c1_basis": true,
+     "pmax": 500.0,
+     "hr_model": 12.052,
+     "hr_meas": 10.729,
+     "hr_plausible": true,
+     "gas_mean": 6.183,
+     "offer_econ_min": 70.168,
+     "cost_meas_mean": 71.346,
+     "pmod_mean": 62.717,
+     "hub_mean": 61.398,
+     "act_twh": 1.652,
+     "act_in_twh": 0.48,
+     "floor_twh": 0.705,
+     "h_in_model": 2164,
+     "h_in_meas": 1344,
+     "coverage": 0.863,
+     "E_MM_twh": 0.975,
+     "E_HM_twh": 0.965,
+     "E_MC_twh": 1.41,
+     "E_HC_twh": 1.1
+    },
+    {
+     "plant_code": 8054,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 706.5,
+     "hr_model": 11.331,
+     "hr_meas": 11.638,
+     "hr_plausible": true,
+     "gas_mean": 7.451,
+     "offer_econ_min": 81.487,
+     "cost_meas_mean": 87.687,
+     "pmod_mean": 62.717,
+     "hub_mean": 60.603,
+     "act_twh": 0.747,
+     "act_in_twh": 0.2,
+     "floor_twh": 0.0,
+     "h_in_model": 1210,
+     "h_in_meas": 1059,
+     "coverage": 0.863,
+     "E_MM_twh": 0.501,
+     "E_HM_twh": 0.674,
+     "E_MC_twh": 0.4,
+     "E_HC_twh": 0.617
+    },
+    {
+     "plant_code": 1402,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 867.0,
+     "hr_model": 12.029,
+     "hr_meas": 11.608,
+     "hr_plausible": true,
+     "gas_mean": 6.705,
+     "offer_econ_min": 82.18,
+     "cost_meas_mean": 83.026,
+     "pmod_mean": 62.717,
+     "hub_mean": 62.017,
+     "act_twh": 0.707,
+     "act_in_twh": 0.206,
+     "floor_twh": 0.11,
+     "h_in_model": 747,
+     "h_in_meas": 945,
+     "coverage": 0.863,
+     "E_MM_twh": 0.29,
+     "E_HM_twh": 0.391,
+     "E_MC_twh": 0.456,
+     "E_HC_twh": 0.44
+    },
+    {
+     "plant_code": 6055,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 550.0,
+     "hr_model": 11.023,
+     "hr_meas": 7.065,
+     "hr_plausible": false,
+     "gas_mean": 6.605,
+     "offer_econ_min": 76.302,
+     "cost_meas_mean": 51.282,
+     "pmod_mean": 62.717,
+     "hub_mean": 62.017,
+     "act_twh": 0.657,
+     "act_in_twh": 0.555,
+     "floor_twh": 0.116,
+     "h_in_model": 1306,
+     "h_in_meas": 4486,
+     "coverage": 0.863,
+     "E_MM_twh": 0.56,
+     "E_HM_twh": 0.619,
+     "E_MC_twh": 3.542,
+     "E_HC_twh": 2.327
+    },
+    {
+     "plant_code": 6190,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 421.6,
+     "hr_model": 12.282,
+     "hr_meas": 10.464,
+     "hr_plausible": true,
+     "gas_mean": 6.222,
+     "offer_econ_min": 70.889,
+     "cost_meas_mean": 70.522,
+     "pmod_mean": 62.717,
+     "hub_mean": 62.017,
+     "act_twh": 0.553,
+     "act_in_twh": 0.281,
+     "floor_twh": 0.09,
+     "h_in_model": 1846,
+     "h_in_meas": 1509,
+     "coverage": 0.863,
+     "E_MM_twh": 0.165,
+     "E_HM_twh": 0.154,
+     "E_MC_twh": 0.344,
+     "E_HC_twh": 0.199
+    },
+    {
+     "plant_code": 8056,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 826.5,
+     "hr_model": 11.385,
+     "hr_meas": 10.846,
+     "hr_plausible": true,
+     "gas_mean": 6.989,
+     "offer_econ_min": 80.568,
+     "cost_meas_mean": 81.014,
+     "pmod_mean": 62.717,
+     "hub_mean": 62.017,
+     "act_twh": 0.321,
+     "act_in_twh": 0.103,
+     "floor_twh": 0.0,
+     "h_in_model": 434,
+     "h_in_meas": 937,
+     "coverage": 0.863,
+     "E_MM_twh": 0.168,
+     "E_HM_twh": 0.519,
+     "E_MC_twh": 0.576,
+     "E_HC_twh": 0.606
+    },
+    {
+     "plant_code": 1400,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 260.0,
+     "hr_model": 10.956,
+     "hr_meas": 11.038,
+     "hr_plausible": true,
+     "gas_mean": 6.682,
+     "offer_econ_min": 76.458,
+     "cost_meas_mean": 78.71,
+     "pmod_mean": 62.717,
+     "hub_mean": 62.017,
+     "act_twh": 0.245,
+     "act_in_twh": 0.103,
+     "floor_twh": 0.239,
+     "h_in_model": 1244,
+     "h_in_meas": 1028,
+     "coverage": 0.863,
+     "E_MM_twh": 0.413,
+     "E_HM_twh": 0.426,
+     "E_MC_twh": 0.417,
+     "E_HC_twh": 0.419
+    },
+    {
+     "plant_code": 170,
+     "state": "AR",
+     "c1_basis": true,
+     "pmax": 522.0,
+     "hr_model": 11.451,
+     "hr_meas": 11.614,
+     "hr_plausible": true,
+     "gas_mean": 7.827,
+     "offer_econ_min": 94.548,
+     "cost_meas_mean": 93.001,
+     "pmod_mean": 62.717,
+     "hub_mean": 58.922,
+     "act_twh": 0.205,
+     "act_in_twh": 0.05,
+     "floor_twh": 0.0,
+     "h_in_model": 434,
+     "h_in_meas": 684,
+     "coverage": 0.863,
+     "E_MM_twh": 0.122,
+     "E_HM_twh": 0.344,
+     "E_MC_twh": 0.131,
+     "E_HC_twh": 0.327
+    },
+    {
+     "plant_code": 1464,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 175.2,
+     "hr_model": 12.349,
+     "hr_meas": 12.698,
+     "hr_plausible": true,
+     "gas_mean": 6.605,
+     "offer_econ_min": 85.0,
+     "cost_meas_mean": 88.982,
+     "pmod_mean": 62.717,
+     "hub_mean": 62.017,
+     "act_twh": 0.054,
+     "act_in_twh": 0.018,
+     "floor_twh": 0.0,
+     "h_in_model": 172,
+     "h_in_meas": 682,
+     "coverage": 0.863,
+     "E_MM_twh": 0.017,
+     "E_HM_twh": 0.127,
+     "E_MC_twh": 0.017,
+     "E_HC_twh": 0.114
+    },
+    {
+     "plant_code": 2070,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 59.0,
+     "hr_model": 11.143,
+     "hr_meas": 11.725,
+     "hr_plausible": true,
+     "gas_mean": 6.727,
+     "offer_econ_min": 80.812,
+     "cost_meas_mean": 85.185,
+     "pmod_mean": 62.717,
+     "hub_mean": 60.603,
+     "act_twh": 0.018,
+     "act_in_twh": 0.009,
+     "floor_twh": 0.007,
+     "h_in_model": 1324,
+     "h_in_meas": 881,
+     "coverage": 0.863,
+     "E_MM_twh": 0.031,
+     "E_HM_twh": 0.029,
+     "E_MC_twh": 0.028,
+     "E_HC_twh": 0.025
+    }
+   ]
+  },
+  "2023": {
+   "south_all": {
+    "MM": 16.468,
+    "HM": 11.806,
+    "MC": 19.722,
+    "HC": 12.975,
+    "floor": 7.82,
+    "act": 13.204,
+    "act_in": 4.87
+   },
+   "south_c1_basis": {
+    "act": 9.466,
+    "act_in": 3.516,
+    "floor": 3.105,
+    "MM": 11.197,
+    "HM": 6.728,
+    "MC": 13.7,
+    "HC": 7.65,
+    "MC_hrok": 13.7,
+    "HC_hrok": 7.65,
+    "MM_hrok": 11.197
+   },
+   "by_month_c1": {
+    "0": {
+     "MM_above": 0.218,
+     "act_in": 0.034,
+     "pmod_minus_hub": 5.67
+    },
+    "1": {
+     "MM_above": 0.272,
+     "act_in": 0.055,
+     "pmod_minus_hub": 5.97
+    },
+    "2": {
+     "MM_above": 0.432,
+     "act_in": 0.092,
+     "pmod_minus_hub": 5.35
+    },
+    "3": {
+     "MM_above": 0.669,
+     "act_in": 0.268,
+     "pmod_minus_hub": 3.0
+    },
+    "4": {
+     "MM_above": 0.991,
+     "act_in": 0.494,
+     "pmod_minus_hub": 4.32
+    },
+    "5": {
+     "MM_above": 1.163,
+     "act_in": 0.614,
+     "pmod_minus_hub": 3.89
+    },
+    "6": {
+     "MM_above": 0.978,
+     "act_in": 0.575,
+     "pmod_minus_hub": 4.49
+    },
+    "7": {
+     "MM_above": 1.158,
+     "act_in": 0.754,
+     "pmod_minus_hub": 2.89
+    },
+    "8": {
+     "MM_above": 0.679,
+     "act_in": 0.289,
+     "pmod_minus_hub": 2.79
+    },
+    "9": {
+     "MM_above": 0.569,
+     "act_in": 0.132,
+     "pmod_minus_hub": 4.85
+    },
+    "10": {
+     "MM_above": 0.626,
+     "act_in": 0.173,
+     "pmod_minus_hub": 6.45
+    },
+    "11": {
+     "MM_above": 0.339,
+     "act_in": 0.036,
+     "pmod_minus_hub": 6.88
+    }
+   },
+   "by_hour_c1": {
+    "0": {
+     "MM_above": 0.041,
+     "act_in": 0.004,
+     "pmod_minus_hub": 7.05
+    },
+    "1": {
+     "MM_above": 0.028,
+     "act_in": 0.003,
+     "pmod_minus_hub": 7.54
+    },
+    "2": {
+     "MM_above": 0.025,
+     "act_in": 0.003,
+     "pmod_minus_hub": 8.05
+    },
+    "3": {
+     "MM_above": 0.033,
+     "act_in": 0.003,
+     "pmod_minus_hub": 8.44
+    },
+    "4": {
+     "MM_above": 0.053,
+     "act_in": 0.005,
+     "pmod_minus_hub": 8.82
+    },
+    "5": {
+     "MM_above": 0.135,
+     "act_in": 0.013,
+     "pmod_minus_hub": 8.45
+    },
+    "6": {
+     "MM_above": 0.216,
+     "act_in": 0.042,
+     "pmod_minus_hub": 6.69
+    },
+    "7": {
+     "MM_above": 0.26,
+     "act_in": 0.047,
+     "pmod_minus_hub": 5.06
+    },
+    "8": {
+     "MM_above": 0.334,
+     "act_in": 0.042,
+     "pmod_minus_hub": 7.56
+    },
+    "9": {
+     "MM_above": 0.406,
+     "act_in": 0.052,
+     "pmod_minus_hub": 7.59
+    },
+    "10": {
+     "MM_above": 0.427,
+     "act_in": 0.091,
+     "pmod_minus_hub": 6.91
+    },
+    "11": {
+     "MM_above": 0.478,
+     "act_in": 0.158,
+     "pmod_minus_hub": 6.14
+    },
+    "12": {
+     "MM_above": 0.518,
+     "act_in": 0.251,
+     "pmod_minus_hub": 5.11
+    },
+    "13": {
+     "MM_above": 0.543,
+     "act_in": 0.31,
+     "pmod_minus_hub": 2.36
+    },
+    "14": {
+     "MM_above": 0.567,
+     "act_in": 0.351,
+     "pmod_minus_hub": 1.43
+    },
+    "15": {
+     "MM_above": 0.602,
+     "act_in": 0.378,
+     "pmod_minus_hub": -0.2
+    },
+    "16": {
+     "MM_above": 0.641,
+     "act_in": 0.393,
+     "pmod_minus_hub": -4.07
+    },
+    "17": {
+     "MM_above": 0.663,
+     "act_in": 0.394,
+     "pmod_minus_hub": -0.76
+    },
+    "18": {
+     "MM_above": 0.639,
+     "act_in": 0.359,
+     "pmod_minus_hub": -1.26
+    },
+    "19": {
+     "MM_above": 0.567,
+     "act_in": 0.284,
+     "pmod_minus_hub": 1.17
+    },
+    "20": {
+     "MM_above": 0.434,
+     "act_in": 0.199,
+     "pmod_minus_hub": 3.62
+    },
+    "21": {
+     "MM_above": 0.278,
+     "act_in": 0.087,
+     "pmod_minus_hub": 5.04
+    },
+    "22": {
+     "MM_above": 0.13,
+     "act_in": 0.034,
+     "pmod_minus_hub": 5.84
+    },
+    "23": {
+     "MM_above": 0.072,
+     "act_in": 0.012,
+     "pmod_minus_hub": 6.4
+    }
+   },
+   "plants": [
+    {
+     "plant_code": 3459,
+     "state": "TX",
+     "c1_basis": true,
+     "pmax": 1508.1,
+     "hr_model": 11.799,
+     "hr_meas": 10.417,
+     "hr_plausible": true,
+     "gas_mean": 2.677,
+     "offer_econ_min": 31.217,
+     "cost_meas_mean": 31.882,
+     "pmod_mean": 32.123,
+     "hub_mean": 28.195,
+     "act_twh": 3.803,
+     "act_in_twh": 1.286,
+     "floor_twh": 1.708,
+     "h_in_model": 4665,
+     "h_in_meas": 1850,
+     "coverage": 1.0,
+     "E_MM_twh": 3.466,
+     "E_HM_twh": 2.431,
+     "E_MC_twh": 4.745,
+     "E_HC_twh": 2.863
+    },
+    {
+     "plant_code": 1403,
+     "state": "LA",
+     "c1_basis": false,
+     "pmax": 1453.4,
+     "hr_model": 11.695,
+     "hr_meas": 10.306,
+     "hr_plausible": true,
+     "gas_mean": 2.712,
+     "offer_econ_min": 32.894,
+     "cost_meas_mean": 31.952,
+     "pmod_mean": 32.123,
+     "hub_mean": 27.781,
+     "act_twh": 3.738,
+     "act_in_twh": 1.354,
+     "floor_twh": 4.715,
+     "h_in_model": 4532,
+     "h_in_meas": 1778,
+     "coverage": 1.0,
+     "E_MM_twh": 5.271,
+     "E_HM_twh": 5.078,
+     "E_MC_twh": 6.023,
+     "E_HC_twh": 5.324
+    },
+    {
+     "plant_code": 3457,
+     "state": "TX",
+     "c1_basis": true,
+     "pmax": 499.7,
+     "hr_model": 11.768,
+     "hr_meas": 10.394,
+     "hr_plausible": true,
+     "gas_mean": 2.348,
+     "offer_econ_min": 28.578,
+     "cost_meas_mean": 28.4,
+     "pmod_mean": 32.123,
+     "hub_mean": 28.195,
+     "act_twh": 1.789,
+     "act_in_twh": 0.875,
+     "floor_twh": 0.678,
+     "h_in_model": 6130,
+     "h_in_meas": 2924,
+     "coverage": 1.0,
+     "E_MM_twh": 1.615,
+     "E_HM_twh": 1.072,
+     "E_MC_twh": 2.07,
+     "E_HC_twh": 1.316
+    },
+    {
+     "plant_code": 6190,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 416.8,
+     "hr_model": 12.07,
+     "hr_meas": 11.025,
+     "hr_plausible": true,
+     "gas_mean": 2.48,
+     "offer_econ_min": 30.281,
+     "cost_meas_mean": 31.34,
+     "pmod_mean": 32.123,
+     "hub_mean": 27.781,
+     "act_twh": 1.325,
+     "act_in_twh": 0.518,
+     "floor_twh": 0.153,
+     "h_in_model": 5291,
+     "h_in_meas": 1914,
+     "coverage": 1.0,
+     "E_MM_twh": 0.426,
+     "E_HM_twh": 0.295,
+     "E_MC_twh": 0.537,
+     "E_HC_twh": 0.346
+    },
+    {
+     "plant_code": 6055,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 550.0,
+     "hr_model": 10.835,
+     "hr_meas": 10.987,
+     "hr_plausible": true,
+     "gas_mean": 2.789,
+     "offer_econ_min": 33.887,
+     "cost_meas_mean": 34.641,
+     "pmod_mean": 32.123,
+     "hub_mean": 27.781,
+     "act_twh": 0.974,
+     "act_in_twh": 0.409,
+     "floor_twh": 0.226,
+     "h_in_model": 3629,
+     "h_in_meas": 1401,
+     "coverage": 1.0,
+     "E_MM_twh": 1.495,
+     "E_HM_twh": 0.737,
+     "E_MC_twh": 1.467,
+     "E_HC_twh": 0.756
+    },
+    {
+     "plant_code": 1402,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 908.1,
+     "hr_model": 11.305,
+     "hr_meas": 11.272,
+     "hr_plausible": true,
+     "gas_mean": 2.978,
+     "offer_econ_min": 37.118,
+     "cost_meas_mean": 37.563,
+     "pmod_mean": 32.123,
+     "hub_mean": 27.781,
+     "act_twh": 0.576,
+     "act_in_twh": 0.141,
+     "floor_twh": 0.053,
+     "h_in_model": 1946,
+     "h_in_meas": 1018,
+     "coverage": 1.0,
+     "E_MM_twh": 0.518,
+     "E_HM_twh": 0.287,
+     "E_MC_twh": 0.57,
+     "E_HC_twh": 0.299
+    },
+    {
+     "plant_code": 8056,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 826.3,
+     "hr_model": 11.674,
+     "hr_meas": 11.052,
+     "hr_plausible": true,
+     "gas_mean": 2.859,
+     "offer_econ_min": 37.614,
+     "cost_meas_mean": 35.596,
+     "pmod_mean": 32.123,
+     "hub_mean": 27.781,
+     "act_twh": 0.236,
+     "act_in_twh": 0.082,
+     "floor_twh": 0.0,
+     "h_in_model": 1911,
+     "h_in_meas": 1202,
+     "coverage": 1.0,
+     "E_MM_twh": 1.241,
+     "E_HM_twh": 0.671,
+     "E_MC_twh": 2.06,
+     "E_HC_twh": 0.874
+    },
+    {
+     "plant_code": 8054,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 706.5,
+     "hr_model": 12.088,
+     "hr_meas": 12.449,
+     "hr_plausible": true,
+     "gas_mean": 3.911,
+     "offer_econ_min": 34.99,
+     "cost_meas_mean": 52.689,
+     "pmod_mean": 32.123,
+     "hub_mean": 26.31,
+     "act_twh": 0.213,
+     "act_in_twh": 0.066,
+     "floor_twh": 0.0,
+     "h_in_model": 2525,
+     "h_in_meas": 854,
+     "coverage": 1.0,
+     "E_MM_twh": 1.44,
+     "E_HM_twh": 0.572,
+     "E_MC_twh": 1.345,
+     "E_HC_twh": 0.557
+    },
+    {
+     "plant_code": 1400,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 250.0,
+     "hr_model": 11.079,
+     "hr_meas": 11.418,
+     "hr_plausible": true,
+     "gas_mean": 2.988,
+     "offer_econ_min": 37.046,
+     "cost_meas_mean": 38.121,
+     "pmod_mean": 32.123,
+     "hub_mean": 27.781,
+     "act_twh": 0.17,
+     "act_in_twh": 0.054,
+     "floor_twh": 0.272,
+     "h_in_model": 2003,
+     "h_in_meas": 935,
+     "coverage": 1.0,
+     "E_MM_twh": 0.58,
+     "E_HM_twh": 0.434,
+     "E_MC_twh": 0.519,
+     "E_HC_twh": 0.422
+    },
+    {
+     "plant_code": 170,
+     "state": "AR",
+     "c1_basis": true,
+     "pmax": 522.0,
+     "hr_model": 11.038,
+     "hr_meas": 11.003,
+     "hr_plausible": true,
+     "gas_mean": 4.193,
+     "offer_econ_min": 39.052,
+     "cost_meas_mean": 50.129,
+     "pmod_mean": 32.123,
+     "hub_mean": 25.882,
+     "act_twh": 0.169,
+     "act_in_twh": 0.019,
+     "floor_twh": 0.0,
+     "h_in_model": 2016,
+     "h_in_meas": 683,
+     "coverage": 1.0,
+     "E_MM_twh": 0.021,
+     "E_HM_twh": 0.024,
+     "E_MC_twh": 0.015,
+     "E_HC_twh": 0.022
+    },
+    {
+     "plant_code": 1464,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 171.9,
+     "hr_model": 12.179,
+     "hr_meas": 12.488,
+     "hr_plausible": true,
+     "gas_mean": 2.789,
+     "offer_econ_min": 37.593,
+     "cost_meas_mean": 38.826,
+     "pmod_mean": 32.123,
+     "hub_mean": 27.781,
+     "act_twh": 0.153,
+     "act_in_twh": 0.041,
+     "floor_twh": 0.0,
+     "h_in_model": 1709,
+     "h_in_meas": 881,
+     "coverage": 1.0,
+     "E_MM_twh": 0.218,
+     "E_HM_twh": 0.146,
+     "E_MC_twh": 0.207,
+     "E_HC_twh": 0.141
+    },
+    {
+     "plant_code": 2070,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 59.0,
+     "hr_model": 11.151,
+     "hr_meas": 11.56,
+     "hr_plausible": true,
+     "gas_mean": 2.582,
+     "offer_econ_min": 32.657,
+     "cost_meas_mean": 33.846,
+     "pmod_mean": 32.123,
+     "hub_mean": 26.31,
+     "act_twh": 0.058,
+     "act_in_twh": 0.027,
+     "floor_twh": 0.013,
+     "h_in_model": 4331,
+     "h_in_meas": 1115,
+     "coverage": 1.0,
+     "E_MM_twh": 0.178,
+     "E_HM_twh": 0.057,
+     "E_MC_twh": 0.164,
+     "E_HC_twh": 0.055
+    }
+   ]
+  },
+  "2024": {
+   "south_all": {
+    "MM": 18.162,
+    "HM": 12.109,
+    "MC": 20.209,
+    "HC": 13.044,
+    "floor": 8.211,
+    "act": 15.947,
+    "act_in": 4.93
+   },
+   "south_c1_basis": {
+    "act": 10.791,
+    "act_in": 3.421,
+    "floor": 2.672,
+    "MM": 11.889,
+    "HM": 6.327,
+    "MC": 13.207,
+    "HC": 7.06,
+    "MC_hrok": 13.207,
+    "HC_hrok": 7.06,
+    "MM_hrok": 11.889
+   },
+   "by_month_c1": {
+    "0": {
+     "MM_above": 0.488,
+     "act_in": 0.142,
+     "pmod_minus_hub": 6.51
+    },
+    "1": {
+     "MM_above": 0.675,
+     "act_in": 0.087,
+     "pmod_minus_hub": 7.1
+    },
+    "2": {
+     "MM_above": 1.174,
+     "act_in": 0.195,
+     "pmod_minus_hub": 5.65
+    },
+    "3": {
+     "MM_above": 0.901,
+     "act_in": 0.363,
+     "pmod_minus_hub": 3.04
+    },
+    "4": {
+     "MM_above": 0.951,
+     "act_in": 0.442,
+     "pmod_minus_hub": 1.08
+    },
+    "5": {
+     "MM_above": 0.578,
+     "act_in": 0.351,
+     "pmod_minus_hub": 1.77
+    },
+    "6": {
+     "MM_above": 1.067,
+     "act_in": 0.379,
+     "pmod_minus_hub": 4.85
+    },
+    "7": {
+     "MM_above": 1.1,
+     "act_in": 0.458,
+     "pmod_minus_hub": 8.17
+    },
+    "8": {
+     "MM_above": 0.623,
+     "act_in": 0.284,
+     "pmod_minus_hub": 3.05
+    },
+    "9": {
+     "MM_above": 0.474,
+     "act_in": 0.204,
+     "pmod_minus_hub": 0.35
+    },
+    "10": {
+     "MM_above": 0.835,
+     "act_in": 0.462,
+     "pmod_minus_hub": 6.31
+    },
+    "11": {
+     "MM_above": 0.351,
+     "act_in": 0.055,
+     "pmod_minus_hub": 4.59
+    }
+   },
+   "by_hour_c1": {
+    "0": {
+     "MM_above": 0.121,
+     "act_in": 0.024,
+     "pmod_minus_hub": 6.34
+    },
+    "1": {
+     "MM_above": 0.095,
+     "act_in": 0.017,
+     "pmod_minus_hub": 6.82
+    },
+    "2": {
+     "MM_above": 0.086,
+     "act_in": 0.013,
+     "pmod_minus_hub": 6.69
+    },
+    "3": {
+     "MM_above": 0.094,
+     "act_in": 0.012,
+     "pmod_minus_hub": 7.52
+    },
+    "4": {
+     "MM_above": 0.131,
+     "act_in": 0.013,
+     "pmod_minus_hub": 7.8
+    },
+    "5": {
+     "MM_above": 0.227,
+     "act_in": 0.034,
+     "pmod_minus_hub": 8.14
+    },
+    "6": {
+     "MM_above": 0.308,
+     "act_in": 0.077,
+     "pmod_minus_hub": 4.86
+    },
+    "7": {
+     "MM_above": 0.323,
+     "act_in": 0.087,
+     "pmod_minus_hub": 3.74
+    },
+    "8": {
+     "MM_above": 0.345,
+     "act_in": 0.062,
+     "pmod_minus_hub": 5.03
+    },
+    "9": {
+     "MM_above": 0.389,
+     "act_in": 0.065,
+     "pmod_minus_hub": 7.07
+    },
+    "10": {
+     "MM_above": 0.417,
+     "act_in": 0.092,
+     "pmod_minus_hub": 6.85
+    },
+    "11": {
+     "MM_above": 0.454,
+     "act_in": 0.122,
+     "pmod_minus_hub": 6.74
+    },
+    "12": {
+     "MM_above": 0.491,
+     "act_in": 0.169,
+     "pmod_minus_hub": 6.96
+    },
+    "13": {
+     "MM_above": 0.516,
+     "act_in": 0.226,
+     "pmod_minus_hub": 6.13
+    },
+    "14": {
+     "MM_above": 0.537,
+     "act_in": 0.245,
+     "pmod_minus_hub": 5.82
+    },
+    "15": {
+     "MM_above": 0.581,
+     "act_in": 0.302,
+     "pmod_minus_hub": 4.05
+    },
+    "16": {
+     "MM_above": 0.66,
+     "act_in": 0.328,
+     "pmod_minus_hub": -0.38
+    },
+    "17": {
+     "MM_above": 0.722,
+     "act_in": 0.367,
+     "pmod_minus_hub": -4.19
+    },
+    "18": {
+     "MM_above": 0.723,
+     "act_in": 0.351,
+     "pmod_minus_hub": -1.86
+    },
+    "19": {
+     "MM_above": 0.652,
+     "act_in": 0.309,
+     "pmod_minus_hub": 0.81
+    },
+    "20": {
+     "MM_above": 0.53,
+     "act_in": 0.249,
+     "pmod_minus_hub": -0.0
+    },
+    "21": {
+     "MM_above": 0.395,
+     "act_in": 0.151,
+     "pmod_minus_hub": 0.29
+    },
+    "22": {
+     "MM_above": 0.244,
+     "act_in": 0.07,
+     "pmod_minus_hub": 4.41
+    },
+    "23": {
+     "MM_above": 0.174,
+     "act_in": 0.035,
+     "pmod_minus_hub": 5.18
+    }
+   },
+   "plants": [
+    {
+     "plant_code": 1403,
+     "state": "LA",
+     "c1_basis": false,
+     "pmax": 1479.5,
+     "hr_model": 11.526,
+     "hr_meas": 10.106,
+     "hr_plausible": true,
+     "gas_mean": 2.468,
+     "offer_econ_min": 28.988,
+     "cost_meas_mean": 28.943,
+     "pmod_mean": 29.887,
+     "hub_mean": 26.105,
+     "act_twh": 5.156,
+     "act_in_twh": 1.509,
+     "floor_twh": 5.538,
+     "h_in_model": 5027,
+     "h_in_meas": 1918,
+     "coverage": 1.0,
+     "E_MM_twh": 6.273,
+     "E_HM_twh": 5.782,
+     "E_MC_twh": 7.002,
+     "E_HC_twh": 5.984
+    },
+    {
+     "plant_code": 3459,
+     "state": "TX",
+     "c1_basis": true,
+     "pmax": 1493.5,
+     "hr_model": 11.755,
+     "hr_meas": 10.464,
+     "hr_plausible": true,
+     "gas_mean": 2.289,
+     "offer_econ_min": 25.718,
+     "cost_meas_mean": 27.956,
+     "pmod_mean": 29.887,
+     "hub_mean": 25.886,
+     "act_twh": 4.222,
+     "act_in_twh": 1.455,
+     "floor_twh": 1.518,
+     "h_in_model": 5859,
+     "h_in_meas": 2086,
+     "coverage": 1.0,
+     "E_MM_twh": 3.872,
+     "E_HM_twh": 2.351,
+     "E_MC_twh": 5.025,
+     "E_HC_twh": 2.843
+    },
+    {
+     "plant_code": 3457,
+     "state": "TX",
+     "c1_basis": true,
+     "pmax": 500.0,
+     "hr_model": 11.79,
+     "hr_meas": 10.442,
+     "hr_plausible": true,
+     "gas_mean": 2.148,
+     "offer_econ_min": 25.21,
+     "cost_meas_mean": 26.429,
+     "pmod_mean": 29.887,
+     "hub_mean": 25.886,
+     "act_twh": 2.241,
+     "act_in_twh": 0.898,
+     "floor_twh": 0.758,
+     "h_in_model": 6517,
+     "h_in_meas": 2599,
+     "coverage": 1.0,
+     "E_MM_twh": 1.97,
+     "E_HM_twh": 1.162,
+     "E_MC_twh": 2.487,
+     "E_HC_twh": 1.443
+    },
+    {
+     "plant_code": 1402,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 899.3,
+     "hr_model": 11.593,
+     "hr_meas": 11.443,
+     "hr_plausible": true,
+     "gas_mean": 2.652,
+     "offer_econ_min": 33.784,
+     "cost_meas_mean": 34.351,
+     "pmod_mean": 29.887,
+     "hub_mean": 26.105,
+     "act_twh": 1.267,
+     "act_in_twh": 0.303,
+     "floor_twh": 0.155,
+     "h_in_model": 2218,
+     "h_in_meas": 1059,
+     "coverage": 1.0,
+     "E_MM_twh": 1.462,
+     "E_HM_twh": 0.808,
+     "E_MC_twh": 1.756,
+     "E_HC_twh": 0.886
+    },
+    {
+     "plant_code": 6190,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 420.6,
+     "hr_model": 12.074,
+     "hr_meas": 11.489,
+     "hr_plausible": true,
+     "gas_mean": 2.387,
+     "offer_econ_min": 26.575,
+     "cost_meas_mean": 31.423,
+     "pmod_mean": 29.887,
+     "hub_mean": 26.105,
+     "act_twh": 1.1,
+     "act_in_twh": 0.364,
+     "floor_twh": 0.011,
+     "h_in_model": 5362,
+     "h_in_meas": 1635,
+     "coverage": 1.0,
+     "E_MM_twh": 0.025,
+     "E_HM_twh": 0.015,
+     "E_MC_twh": 0.026,
+     "E_HC_twh": 0.015
+    },
+    {
+     "plant_code": 6055,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 562.6,
+     "hr_model": 10.39,
+     "hr_meas": 11.851,
+     "hr_plausible": true,
+     "gas_mean": 2.529,
+     "offer_econ_min": 28.487,
+     "cost_meas_mean": 33.97,
+     "pmod_mean": 29.887,
+     "hub_mean": 26.105,
+     "act_twh": 0.851,
+     "act_in_twh": 0.209,
+     "floor_twh": 0.226,
+     "h_in_model": 4692,
+     "h_in_meas": 1112,
+     "coverage": 1.0,
+     "E_MM_twh": 2.32,
+     "E_HM_twh": 0.973,
+     "E_MC_twh": 1.44,
+     "E_HC_twh": 0.767
+    },
+    {
+     "plant_code": 8054,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 706.5,
+     "hr_model": 11.712,
+     "hr_meas": 12.021,
+     "hr_plausible": true,
+     "gas_mean": 3.828,
+     "offer_econ_min": 34.06,
+     "cost_meas_mean": 50.015,
+     "pmod_mean": 29.887,
+     "hub_mean": 24.453,
+     "act_twh": 0.388,
+     "act_in_twh": 0.019,
+     "floor_twh": 0.0,
+     "h_in_model": 1902,
+     "h_in_meas": 758,
+     "coverage": 1.0,
+     "E_MM_twh": 0.99,
+     "E_HM_twh": 0.485,
+     "E_MC_twh": 0.882,
+     "E_HC_twh": 0.474
+    },
+    {
+     "plant_code": 8056,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 418.1,
+     "hr_model": 11.453,
+     "hr_meas": 10.617,
+     "hr_plausible": true,
+     "gas_mean": 2.529,
+     "offer_econ_min": 30.992,
+     "cost_meas_mean": 30.85,
+     "pmod_mean": 29.887,
+     "hub_mean": 26.105,
+     "act_twh": 0.317,
+     "act_in_twh": 0.09,
+     "floor_twh": 0.0,
+     "h_in_model": 3121,
+     "h_in_meas": 1576,
+     "coverage": 1.0,
+     "E_MM_twh": 0.692,
+     "E_HM_twh": 0.29,
+     "E_MC_twh": 1.051,
+     "E_HC_twh": 0.39
+    },
+    {
+     "plant_code": 170,
+     "state": "AR",
+     "c1_basis": true,
+     "pmax": 522.0,
+     "hr_model": 10.936,
+     "hr_meas": 11.05,
+     "hr_plausible": true,
+     "gas_mean": 3.704,
+     "offer_econ_min": 30.546,
+     "cost_meas_mean": 44.926,
+     "pmod_mean": 29.887,
+     "hub_mean": 23.996,
+     "act_twh": 0.3,
+     "act_in_twh": 0.056,
+     "floor_twh": 0.0,
+     "h_in_model": 2989,
+     "h_in_meas": 924,
+     "coverage": 1.0,
+     "E_MM_twh": 0.201,
+     "E_HM_twh": 0.07,
+     "E_MC_twh": 0.211,
+     "E_HC_twh": 0.072
+    },
+    {
+     "plant_code": 1464,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 172.8,
+     "hr_model": 12.37,
+     "hr_meas": 12.839,
+     "hr_plausible": true,
+     "gas_mean": 2.529,
+     "offer_econ_min": 33.153,
+     "cost_meas_mean": 36.469,
+     "pmod_mean": 29.887,
+     "hub_mean": 26.105,
+     "act_twh": 0.081,
+     "act_in_twh": 0.018,
+     "floor_twh": 0.0,
+     "h_in_model": 1990,
+     "h_in_meas": 884,
+     "coverage": 1.0,
+     "E_MM_twh": 0.268,
+     "E_HM_twh": 0.149,
+     "E_MC_twh": 0.245,
+     "E_HC_twh": 0.145
+    },
+    {
+     "plant_code": 2070,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 59.0,
+     "hr_model": 11.318,
+     "hr_meas": 11.858,
+     "hr_plausible": true,
+     "gas_mean": 2.368,
+     "offer_econ_min": 28.804,
+     "cost_meas_mean": 32.083,
+     "pmod_mean": 29.887,
+     "hub_mean": 24.453,
+     "act_twh": 0.026,
+     "act_in_twh": 0.009,
+     "floor_twh": 0.005,
+     "h_in_model": 4198,
+     "h_in_meas": 1164,
+     "coverage": 1.0,
+     "E_MM_twh": 0.091,
+     "E_HM_twh": 0.025,
+     "E_MC_twh": 0.085,
+     "E_HC_twh": 0.024
+    }
+   ]
+  },
+  "2025": {
+   "south_all": {
+    "MM": 15.081,
+    "HM": 11.516,
+    "MC": 17.035,
+    "HC": 11.972,
+    "floor": 8.669,
+    "act": 12.955,
+    "act_in": 2.888
+   },
+   "south_c1_basis": {
+    "act": 8.957,
+    "act_in": 2.131,
+    "floor": 2.857,
+    "MM": 8.71,
+    "HM": 5.439,
+    "MC": 10.3,
+    "HC": 5.823,
+    "MC_hrok": 10.3,
+    "HC_hrok": 5.823,
+    "MM_hrok": 8.71
+   },
+   "by_month_c1": {
+    "0": {
+     "MM_above": 0.307,
+     "act_in": 0.096,
+     "pmod_minus_hub": 8.96
+    },
+    "1": {
+     "MM_above": 0.219,
+     "act_in": 0.088,
+     "pmod_minus_hub": 3.06
+    },
+    "2": {
+     "MM_above": 0.093,
+     "act_in": 0.058,
+     "pmod_minus_hub": 2.49
+    },
+    "3": {
+     "MM_above": 0.205,
+     "act_in": 0.173,
+     "pmod_minus_hub": 2.8
+    },
+    "4": {
+     "MM_above": 0.547,
+     "act_in": 0.299,
+     "pmod_minus_hub": -14.08
+    },
+    "5": {
+     "MM_above": 0.93,
+     "act_in": 0.374,
+     "pmod_minus_hub": 6.06
+    },
+    "6": {
+     "MM_above": 1.27,
+     "act_in": 0.341,
+     "pmod_minus_hub": 10.26
+    },
+    "7": {
+     "MM_above": 0.772,
+     "act_in": 0.162,
+     "pmod_minus_hub": 10.06
+    },
+    "8": {
+     "MM_above": 0.735,
+     "act_in": 0.246,
+     "pmod_minus_hub": 1.83
+    },
+    "9": {
+     "MM_above": 0.389,
+     "act_in": 0.167,
+     "pmod_minus_hub": 6.68
+    },
+    "10": {
+     "MM_above": 0.268,
+     "act_in": 0.103,
+     "pmod_minus_hub": 5.66
+    },
+    "11": {
+     "MM_above": 0.117,
+     "act_in": 0.025,
+     "pmod_minus_hub": 6.5
+    }
+   },
+   "by_hour_c1": {
+    "0": {
+     "MM_above": 0.068,
+     "act_in": 0.012,
+     "pmod_minus_hub": 9.65
+    },
+    "1": {
+     "MM_above": 0.049,
+     "act_in": 0.008,
+     "pmod_minus_hub": 9.28
+    },
+    "2": {
+     "MM_above": 0.042,
+     "act_in": 0.009,
+     "pmod_minus_hub": 10.48
+    },
+    "3": {
+     "MM_above": 0.044,
+     "act_in": 0.009,
+     "pmod_minus_hub": 10.75
+    },
+    "4": {
+     "MM_above": 0.059,
+     "act_in": 0.009,
+     "pmod_minus_hub": 11.28
+    },
+    "5": {
+     "MM_above": 0.11,
+     "act_in": 0.014,
+     "pmod_minus_hub": 11.53
+    },
+    "6": {
+     "MM_above": 0.16,
+     "act_in": 0.032,
+     "pmod_minus_hub": 8.05
+    },
+    "7": {
+     "MM_above": 0.147,
+     "act_in": 0.044,
+     "pmod_minus_hub": 2.54
+    },
+    "8": {
+     "MM_above": 0.145,
+     "act_in": 0.017,
+     "pmod_minus_hub": 8.6
+    },
+    "9": {
+     "MM_above": 0.169,
+     "act_in": 0.018,
+     "pmod_minus_hub": 9.19
+    },
+    "10": {
+     "MM_above": 0.186,
+     "act_in": 0.032,
+     "pmod_minus_hub": 9.02
+    },
+    "11": {
+     "MM_above": 0.241,
+     "act_in": 0.079,
+     "pmod_minus_hub": 5.53
+    },
+    "12": {
+     "MM_above": 0.297,
+     "act_in": 0.107,
+     "pmod_minus_hub": 4.13
+    },
+    "13": {
+     "MM_above": 0.337,
+     "act_in": 0.143,
+     "pmod_minus_hub": -0.18
+    },
+    "14": {
+     "MM_above": 0.369,
+     "act_in": 0.175,
+     "pmod_minus_hub": -0.79
+    },
+    "15": {
+     "MM_above": 0.401,
+     "act_in": 0.185,
+     "pmod_minus_hub": 3.13
+    },
+    "16": {
+     "MM_above": 0.467,
+     "act_in": 0.186,
+     "pmod_minus_hub": 1.37
+    },
+    "17": {
+     "MM_above": 0.541,
+     "act_in": 0.253,
+     "pmod_minus_hub": -6.22
+    },
+    "18": {
+     "MM_above": 0.557,
+     "act_in": 0.277,
+     "pmod_minus_hub": -20.75
+    },
+    "19": {
+     "MM_above": 0.501,
+     "act_in": 0.206,
+     "pmod_minus_hub": -7.07
+    },
+    "20": {
+     "MM_above": 0.393,
+     "act_in": 0.164,
+     "pmod_minus_hub": -0.06
+    },
+    "21": {
+     "MM_above": 0.302,
+     "act_in": 0.101,
+     "pmod_minus_hub": 4.6
+    },
+    "22": {
+     "MM_above": 0.17,
+     "act_in": 0.035,
+     "pmod_minus_hub": 7.25
+    },
+    "23": {
+     "MM_above": 0.1,
+     "act_in": 0.017,
+     "pmod_minus_hub": 9.5
+    }
+   },
+   "plants": [
+    {
+     "plant_code": 1403,
+     "state": "LA",
+     "c1_basis": false,
+     "pmax": 1465.4,
+     "hr_model": 11.861,
+     "hr_meas": 11.126,
+     "hr_plausible": true,
+     "gas_mean": 3.826,
+     "offer_econ_min": 43.102,
+     "cost_meas_mean": 46.568,
+     "pmod_mean": 41.335,
+     "hub_mean": 40.071,
+     "act_twh": 3.998,
+     "act_in_twh": 0.757,
+     "floor_twh": 5.812,
+     "h_in_model": 3203,
+     "h_in_meas": 1014,
+     "coverage": 1.0,
+     "E_MM_twh": 6.372,
+     "E_HM_twh": 6.077,
+     "E_MC_twh": 6.735,
+     "E_HC_twh": 6.148
+    },
+    {
+     "plant_code": 3459,
+     "state": "TX",
+     "c1_basis": true,
+     "pmax": 1501.4,
+     "hr_model": 12.228,
+     "hr_meas": 11.68,
+     "hr_plausible": true,
+     "gas_mean": 3.645,
+     "offer_econ_min": 42.387,
+     "cost_meas_mean": 46.571,
+     "pmod_mean": 41.335,
+     "hub_mean": 35.915,
+     "act_twh": 3.481,
+     "act_in_twh": 0.683,
+     "floor_twh": 1.656,
+     "h_in_model": 3561,
+     "h_in_meas": 920,
+     "coverage": 1.0,
+     "E_MM_twh": 3.568,
+     "E_HM_twh": 2.379,
+     "E_MC_twh": 3.952,
+     "E_HC_twh": 2.455
+    },
+    {
+     "plant_code": 3457,
+     "state": "TX",
+     "c1_basis": true,
+     "pmax": 499.3,
+     "hr_model": 12.021,
+     "hr_meas": 10.743,
+     "hr_plausible": true,
+     "gas_mean": 3.174,
+     "offer_econ_min": 35.307,
+     "cost_meas_mean": 38.096,
+     "pmod_mean": 41.335,
+     "hub_mean": 35.915,
+     "act_twh": 1.868,
+     "act_in_twh": 0.6,
+     "floor_twh": 0.788,
+     "h_in_model": 5608,
+     "h_in_meas": 1806,
+     "coverage": 1.0,
+     "E_MM_twh": 1.823,
+     "E_HM_twh": 1.111,
+     "E_MC_twh": 2.395,
+     "E_HC_twh": 1.298
+    },
+    {
+     "plant_code": 6190,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 428.5,
+     "hr_model": 12.481,
+     "hr_meas": 11.707,
+     "hr_plausible": true,
+     "gas_mean": 3.503,
+     "offer_econ_min": 40.806,
+     "cost_meas_mean": 45.01,
+     "pmod_mean": 41.335,
+     "hub_mean": 40.071,
+     "act_twh": 0.855,
+     "act_in_twh": 0.2,
+     "floor_twh": 0.079,
+     "h_in_model": 3678,
+     "h_in_meas": 1127,
+     "coverage": 1.0,
+     "E_MM_twh": 0.257,
+     "E_HM_twh": 0.133,
+     "E_MC_twh": 0.303,
+     "E_HC_twh": 0.144
+    },
+    {
+     "plant_code": 1402,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 916.5,
+     "hr_model": 11.835,
+     "hr_meas": 12.181,
+     "hr_plausible": true,
+     "gas_mean": 3.948,
+     "offer_econ_min": 48.065,
+     "cost_meas_mean": 52.092,
+     "pmod_mean": 41.335,
+     "hub_mean": 40.071,
+     "act_twh": 0.772,
+     "act_in_twh": 0.173,
+     "floor_twh": 0.167,
+     "h_in_model": 1436,
+     "h_in_meas": 765,
+     "coverage": 1.0,
+     "E_MM_twh": 0.757,
+     "E_HM_twh": 0.604,
+     "E_MC_twh": 0.616,
+     "E_HC_twh": 0.579
+    },
+    {
+     "plant_code": 6055,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 546.4,
+     "hr_model": 11.391,
+     "hr_meas": 10.295,
+     "hr_plausible": true,
+     "gas_mean": 3.84,
+     "offer_econ_min": 45.077,
+     "cost_meas_mean": 43.531,
+     "pmod_mean": 41.335,
+     "hub_mean": 40.071,
+     "act_twh": 0.676,
+     "act_in_twh": 0.264,
+     "floor_twh": 0.163,
+     "h_in_model": 2351,
+     "h_in_meas": 1265,
+     "coverage": 1.0,
+     "E_MM_twh": 0.846,
+     "E_HM_twh": 0.491,
+     "E_MC_twh": 1.306,
+     "E_HC_twh": 0.588
+    },
+    {
+     "plant_code": 8054,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 701.1,
+     "hr_model": 11.185,
+     "hr_meas": 11.427,
+     "hr_plausible": true,
+     "gas_mean": 5.481,
+     "offer_econ_min": 50.835,
+     "cost_meas_mean": 66.628,
+     "pmod_mean": 41.335,
+     "hub_mean": 33.349,
+     "act_twh": 0.566,
+     "act_in_twh": 0.052,
+     "floor_twh": 0.0,
+     "h_in_model": 844,
+     "h_in_meas": 437,
+     "coverage": 1.0,
+     "E_MM_twh": 0.139,
+     "E_HM_twh": 0.094,
+     "E_MC_twh": 0.084,
+     "E_HC_twh": 0.083
+    },
+    {
+     "plant_code": 170,
+     "state": "AR",
+     "c1_basis": true,
+     "pmax": 522.0,
+     "hr_model": 11.71,
+     "hr_meas": 11.809,
+     "hr_plausible": true,
+     "gas_mean": 4.912,
+     "offer_econ_min": 46.311,
+     "cost_meas_mean": 62.013,
+     "pmod_mean": 41.335,
+     "hub_mean": 32.47,
+     "act_twh": 0.336,
+     "act_in_twh": 0.049,
+     "floor_twh": 0.0,
+     "h_in_model": 2053,
+     "h_in_meas": 520,
+     "coverage": 1.0,
+     "E_MM_twh": 0.561,
+     "E_HM_twh": 0.177,
+     "E_MC_twh": 0.595,
+     "E_HC_twh": 0.175
+    },
+    {
+     "plant_code": 8056,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 826.8,
+     "hr_model": 11.75,
+     "hr_meas": 10.933,
+     "hr_plausible": true,
+     "gas_mean": 3.84,
+     "offer_econ_min": 46.374,
+     "cost_meas_mean": 45.981,
+     "pmod_mean": 41.335,
+     "hub_mean": 40.071,
+     "act_twh": 0.335,
+     "act_in_twh": 0.093,
+     "floor_twh": 0.0,
+     "h_in_model": 1911,
+     "h_in_meas": 1074,
+     "coverage": 1.0,
+     "E_MM_twh": 0.566,
+     "E_HM_twh": 0.308,
+     "E_MC_twh": 0.908,
+     "E_HC_twh": 0.371
+    },
+    {
+     "plant_code": 1464,
+     "state": "LA",
+     "c1_basis": true,
+     "pmax": 174.5,
+     "hr_model": 12.615,
+     "hr_meas": 13.089,
+     "hr_plausible": true,
+     "gas_mean": 3.84,
+     "offer_econ_min": 49.493,
+     "cost_meas_mean": 54.261,
+     "pmod_mean": 41.335,
+     "hub_mean": 40.071,
+     "act_twh": 0.063,
+     "act_in_twh": 0.015,
+     "floor_twh": 0.0,
+     "h_in_model": 1066,
+     "h_in_meas": 680,
+     "coverage": 1.0,
+     "E_MM_twh": 0.146,
+     "E_HM_twh": 0.119,
+     "E_MC_twh": 0.114,
+     "E_HC_twh": 0.111
+    },
+    {
+     "plant_code": 2070,
+     "state": "MS",
+     "c1_basis": true,
+     "pmax": 59.0,
+     "hr_model": 11.757,
+     "hr_meas": 12.687,
+     "hr_plausible": true,
+     "gas_mean": 3.74,
+     "offer_econ_min": 45.972,
+     "cost_meas_mean": 51.448,
+     "pmod_mean": 41.335,
+     "hub_mean": 33.349,
+     "act_twh": 0.005,
+     "act_in_twh": 0.002,
+     "floor_twh": 0.005,
+     "h_in_model": 2111,
+     "h_in_meas": 564,
+     "coverage": 1.0,
+     "E_MM_twh": 0.046,
+     "E_HM_twh": 0.023,
+     "E_MC_twh": 0.026,
+     "E_HC_twh": 0.02
+    }
+   ]
+  }
+ }
+}

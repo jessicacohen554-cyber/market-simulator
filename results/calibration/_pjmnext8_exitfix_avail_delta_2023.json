@@ -1,0 +1,22 @@
+{
+ "year": 2023,
+ "by_class_twh": {
+  "COAL_BIT": -0.7085514167516773
+ },
+ "rows": [
+  {
+   "plant": "2866",
+   "class": "COAL_BIT",
+   "off_twh": 1.910839244939597,
+   "delta_twh": -0.6955878647516772,
+   "model_above_repaired_twh": 0.17470881649107484
+  },
+  {
+   "plant": "3122",
+   "class": "COAL_BIT",
+   "off_twh": 0.6300226680000002,
+   "delta_twh": -0.012963552000000142,
+   "model_above_repaired_twh": 0.007209381799550805
+  }
+ ]
+}

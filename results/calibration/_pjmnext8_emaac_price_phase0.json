@@ -1,0 +1,415 @@
+{
+ "bundle": "pjmnext7_vs_span",
+ "years": {
+  "2023": {
+   "alignment_lag_h": 0,
+   "load_corr": 0.9967305683669486,
+   "model_price_mean": {
+    "PJM_AEP_Ohio": 30.59,
+    "PJM_ATSI": 30.58,
+    "PJM_Central_PA": 30.19,
+    "PJM_ComEd": 29.4,
+    "PJM_Dominion": 31.16,
+    "PJM_EMAAC": 31.1,
+    "PJM_SWMAAC": 31.41,
+    "PJM_West_APS": 30.43,
+    "PJM_external": 29.34
+   },
+   "actual_hub_components": {
+    "NEW JERSEY HUB": {
+     "lmp_usd_per_mwh": 24.06,
+     "energy_usd_per_mwh": 29.61,
+     "congestion_usd_per_mwh": -5.63,
+     "loss_usd_per_mwh": 0.07
+    },
+    "EASTERN HUB": {
+     "lmp_usd_per_mwh": 27.32,
+     "energy_usd_per_mwh": 29.61,
+     "congestion_usd_per_mwh": -2.73,
+     "loss_usd_per_mwh": 0.44
+    },
+    "WESTERN HUB": {
+     "lmp_usd_per_mwh": 31.78,
+     "energy_usd_per_mwh": 29.61,
+     "congestion_usd_per_mwh": 1.96,
+     "loss_usd_per_mwh": 0.2
+    },
+    "DOMINION HUB": {
+     "lmp_usd_per_mwh": 32.56,
+     "energy_usd_per_mwh": 29.61,
+     "congestion_usd_per_mwh": 2.78,
+     "loss_usd_per_mwh": 0.17
+    }
+   },
+   "model_emaac_minus_cpa": {
+    "mean": 0.91,
+    "frac_abs_lt_0p5": 0.841,
+    "frac_gt_2": 0.02,
+    "frac_lt_m2": 0.0
+   },
+   "actual_nj_minus_western": {
+    "mean": -7.72,
+    "frac_lt_m2": 0.54,
+    "frac_gt_2": 0.008,
+    "nj_congestion_frac_lt_m1": 0.57
+   },
+   "model_emaac_minus_nj": 7.04,
+   "model_emaac_minus_nj_median": 8.67,
+   "model_sep_spike_hours_gt20": 32,
+   "model_sep_mean_share_from_spikes": 0.58,
+   "model_emaac_minus_swmaac": {
+    "mean": -0.31,
+    "frac_lt_m2_(EMAAC_export_bound)": 0.0
+   },
+   "model_cpa_minus_western": -1.58,
+   "links_touching_emaac": [
+    "PJM_Central_PA->PJM_EMAAC ttc=8168.0",
+    "PJM_EMAAC->PJM_Central_PA ttc=8168.0",
+    "PJM_SWMAAC->PJM_EMAAC ttc=5000.0",
+    "PJM_EMAAC->PJM_SWMAAC ttc=5000.0",
+    "PJM_external->PJM_EMAAC ttc=5700.0"
+   ],
+   "emaac_available_twh_by_class_rebuild": {
+    "": 55.96,
+    "CC_CHP": 4.76,
+    "CC_REGULAR": 58.17,
+    "COAL_BIT": 0.01,
+    "CT_CHP": 1.55,
+    "CT_PEAKER": 16.65,
+    "ST_CHP": 0.34,
+    "ST_GAS": 0.68,
+    "hydro": 0.11
+   },
+   "emaac_fossil_twh_model_vs_e923": {
+    "ST_GAS": [
+     0.09,
+     0.25,
+     -0.16
+    ],
+    "COAL_BIT": [
+     0.0,
+     -0.01,
+     0.01
+    ],
+    "CT_PEAKER": [
+     0.49,
+     0.69,
+     -0.21
+    ],
+    "CC_REGULAR": [
+     48.49,
+     39.51,
+     8.98
+    ],
+    "CC_CHP": [
+     6.25,
+     6.12,
+     0.13
+    ],
+    "CT_CHP": [
+     1.26,
+     1.18,
+     0.08
+    ],
+    "ST_CHP": [
+     0.4,
+     0.3,
+     0.1
+    ]
+   },
+   "emaac_net_position_twh": {
+    "model_demand": 131.23,
+    "metered_load": 128.78,
+    "fossil_model": 56.98,
+    "fossil_e923": 48.05,
+    "nuclear_avail_rebuild": 55.96,
+    "net_import_model_(demand-fossil-nuc)": 18.29,
+    "net_import_actual_(load-fossil-nuc)": 24.78
+   },
+   "average_eastern": {
+    "limit_mean": 7367.0,
+    "transfer_mean": 3720.0,
+    "frac_transfer_negative": 0.0,
+    "frac_util_ge_0p9": 0.046,
+    "nj_cong_mean_when_bind": -1.88,
+    "nj_cong_mean_when_slack": -5.81,
+    "model_sep_mean_when_bind": 2.5,
+    "model_sep_mean_when_slack": 0.83
+   },
+   "iface_5004_5005": {
+    "limit_mean": 2748.0,
+    "transfer_mean": 529.0,
+    "frac_util_ge_0p9": 0.001
+   },
+   "hot_hours": 6278,
+   "hot_nearest_mc_setter": {
+    "ComEd:CT_PEAKER": 834,
+    "AEP_Ohio:COAL_BIT": 599,
+    "EMAAC:CC_REGULAR": 518,
+    "AEP_Ohio:CT_PEAKER": 506,
+    "AEP_Ohio:CC_REGULAR": 368,
+    "West_APS:CT_PEAKER": 269,
+    "EMAAC:CT_PEAKER": 263,
+    "West_APS:COAL_BIT": 256,
+    "Central_PA:CT_PEAKER": 249,
+    "Central_PA:CC_REGULAR": 221
+   },
+   "hot_model_emaac_minus_cpa_mean": 1.06,
+   "hot_actual_nj_minus_western_mean": -7.77,
+   "hot_nj_congestion_mean": -6.12,
+   "emaac_cc_mc": {
+    "p10_mean": 21.96,
+    "p50_mean": 27.95,
+    "frac_hours_nj_below_p10": 0.555,
+    "frac_hours_model_emaac_below_p10": 0.002
+   },
+   "gas": {
+    "henry_hub": 2.536,
+    "PJM_EMAAC": {
+     "model_cc_fuel": 2.22,
+     "model_cc_mc": 27.42,
+     "hub": "Transco Z6 non-NY (NJ)",
+     "hh_plus_basis": 2.216
+    },
+    "PJM_Central_PA": {
+     "model_cc_fuel": 2.176,
+     "model_cc_mc": 21.1,
+     "hub": "TETCO M3 (PA)",
+     "hh_plus_basis": 2.104
+    },
+    "PJM_Dominion": {
+     "model_cc_fuel": 3.684,
+     "model_cc_mc": 38.51,
+     "hub": "Transco Z6 (VA)",
+     "hh_plus_basis": 3.297
+    },
+    "PJM_SWMAAC": {
+     "model_cc_fuel": 2.545,
+     "model_cc_mc": 34.67,
+     "hub": "Transco Z6 (MD)",
+     "hh_plus_basis": 2.96
+    }
+   },
+   "emaac_cc_gw": 10.7,
+   "monthly_model_emaac_minus_nj": [
+    9.4,
+    13.6,
+    6.2,
+    6.1,
+    7.9,
+    4.6,
+    3.0,
+    6.7,
+    7.9,
+    8.1,
+    4.6,
+    6.3
+   ]
+  },
+  "2024": {
+   "alignment_lag_h": 0,
+   "load_corr": 0.9976352178003004,
+   "model_price_mean": {
+    "PJM_AEP_Ohio": 29.57,
+    "PJM_ATSI": 29.78,
+    "PJM_Central_PA": 29.59,
+    "PJM_ComEd": 28.29,
+    "PJM_Dominion": 30.42,
+    "PJM_EMAAC": 33.1,
+    "PJM_SWMAAC": 30.95,
+    "PJM_West_APS": 29.81,
+    "PJM_external": 27.34
+   },
+   "actual_hub_components": {
+    "NEW JERSEY HUB": {
+     "lmp_usd_per_mwh": 27.82,
+     "energy_usd_per_mwh": 31.23,
+     "congestion_usd_per_mwh": -3.8,
+     "loss_usd_per_mwh": 0.39
+    },
+    "EASTERN HUB": {
+     "lmp_usd_per_mwh": 30.83,
+     "energy_usd_per_mwh": 31.23,
+     "congestion_usd_per_mwh": -1.17,
+     "loss_usd_per_mwh": 0.77
+    },
+    "WESTERN HUB": {
+     "lmp_usd_per_mwh": 33.23,
+     "energy_usd_per_mwh": 31.23,
+     "congestion_usd_per_mwh": 1.63,
+     "loss_usd_per_mwh": 0.37
+    },
+    "DOMINION HUB": {
+     "lmp_usd_per_mwh": 33.74,
+     "energy_usd_per_mwh": 31.23,
+     "congestion_usd_per_mwh": 2.48,
+     "loss_usd_per_mwh": 0.04
+    }
+   },
+   "model_emaac_minus_cpa": {
+    "mean": 3.51,
+    "frac_abs_lt_0p5": 0.622,
+    "frac_gt_2": 0.039,
+    "frac_lt_m2": 0.0
+   },
+   "actual_nj_minus_western": {
+    "mean": -5.41,
+    "frac_lt_m2": 0.333,
+    "frac_gt_2": 0.025,
+    "nj_congestion_frac_lt_m1": 0.347
+   },
+   "model_emaac_minus_nj": 5.28,
+   "model_emaac_minus_nj_median": 5.7,
+   "model_sep_spike_hours_gt20": 79,
+   "model_sep_mean_share_from_spikes": 0.825,
+   "model_emaac_minus_swmaac": {
+    "mean": 2.15,
+    "frac_lt_m2_(EMAAC_export_bound)": 0.001
+   },
+   "model_cpa_minus_western": -3.63,
+   "links_touching_emaac": [
+    "PJM_Central_PA->PJM_EMAAC ttc=8168.0",
+    "PJM_EMAAC->PJM_Central_PA ttc=8168.0",
+    "PJM_SWMAAC->PJM_EMAAC ttc=5000.0",
+    "PJM_EMAAC->PJM_SWMAAC ttc=5000.0",
+    "PJM_external->PJM_EMAAC ttc=5700.0"
+   ],
+   "emaac_available_twh_by_class_rebuild": {
+    "": 54.12,
+    "CC_CHP": 5.22,
+    "CC_REGULAR": 57.73,
+    "COAL_BIT": 1.6,
+    "CT_CHP": 1.55,
+    "CT_PEAKER": 16.2,
+    "ST_CHP": 0.34,
+    "ST_GAS": 1.42,
+    "hydro": 0.11
+   },
+   "emaac_fossil_twh_model_vs_e923": {
+    "ST_GAS": [
+     0.29,
+     0.39,
+     -0.1
+    ],
+    "COAL_BIT": [
+     0.08,
+     0.15,
+     -0.07
+    ],
+    "CT_PEAKER": [
+     0.57,
+     0.72,
+     -0.15
+    ],
+    "CC_REGULAR": [
+     34.34,
+     35.7,
+     -1.36
+    ],
+    "CC_CHP": [
+     6.94,
+     6.84,
+     0.1
+    ],
+    "CT_CHP": [
+     1.22,
+     1.17,
+     0.04
+    ],
+    "ST_CHP": [
+     0.41,
+     0.31,
+     0.1
+    ]
+   },
+   "emaac_net_position_twh": {
+    "model_demand": 135.33,
+    "metered_load": 132.84,
+    "fossil_model": 43.85,
+    "fossil_e923": 45.28,
+    "nuclear_avail_rebuild": 54.12,
+    "net_import_model_(demand-fossil-nuc)": 37.36,
+    "net_import_actual_(load-fossil-nuc)": 33.44
+   },
+   "average_eastern": {
+    "limit_mean": 8170.0,
+    "transfer_mean": 4304.0,
+    "frac_transfer_negative": 0.0,
+    "frac_util_ge_0p9": 0.0,
+    "nj_cong_mean_when_bind": 5.6,
+    "nj_cong_mean_when_slack": -3.8,
+    "model_sep_mean_when_bind": 0.82,
+    "model_sep_mean_when_slack": 3.51
+   },
+   "iface_5004_5005": {
+    "limit_mean": 3020.0,
+    "transfer_mean": 737.0,
+    "frac_util_ge_0p9": 0.001
+   },
+   "hot_hours": 4732,
+   "hot_nearest_mc_setter": {
+    "ComEd:CT_PEAKER": 717,
+    "AEP_Ohio:CT_PEAKER": 420,
+    "West_APS:CT_PEAKER": 394,
+    "AEP_Ohio:COAL_BIT": 366,
+    "EMAAC:CC_REGULAR": 355,
+    "Dominion:CC_REGULAR": 276,
+    "ATSI:CT_PEAKER": 266,
+    "AEP_Ohio:CC_REGULAR": 257,
+    "Central_PA:CC_REGULAR": 200,
+    "Dominion:CT_PEAKER": 190
+   },
+   "hot_model_emaac_minus_cpa_mean": 5.67,
+   "hot_actual_nj_minus_western_mean": -5.12,
+   "hot_nj_congestion_mean": -3.87,
+   "emaac_cc_mc": {
+    "p10_mean": 23.72,
+    "p50_mean": 31.59,
+    "frac_hours_nj_below_p10": 0.488,
+    "frac_hours_model_emaac_below_p10": 0.041
+   },
+   "gas": {
+    "henry_hub": 2.192,
+    "PJM_EMAAC": {
+     "model_cc_fuel": 2.362,
+     "model_cc_mc": 31.14,
+     "hub": "Transco Z6 non-NY (NJ)",
+     "hh_plus_basis": 2.317
+    },
+    "PJM_Central_PA": {
+     "model_cc_fuel": 2.109,
+     "model_cc_mc": 20.83,
+     "hub": "TETCO M3 (PA)",
+     "hh_plus_basis": 2.055
+    },
+    "PJM_Dominion": {
+     "model_cc_fuel": 3.123,
+     "model_cc_mc": 29.03,
+     "hub": "Transco Z6 (VA)",
+     "hh_plus_basis": 2.826
+    },
+    "PJM_SWMAAC": {
+     "model_cc_fuel": 3.12,
+     "model_cc_mc": 40.44,
+     "hub": "Transco Z6 (MD)",
+     "hh_plus_basis": 3.141
+    }
+   },
+   "emaac_cc_gw": 10.5,
+   "monthly_model_emaac_minus_nj": [
+    10.7,
+    5.3,
+    2.4,
+    0.9,
+    4.0,
+    2.0,
+    16.4,
+    9.2,
+    1.7,
+    3.0,
+    1.8,
+    6.1
+   ]
+  }
+ }
+}

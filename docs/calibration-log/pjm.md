@@ -6760,3 +6760,27 @@ COAL_BIT 2022; new CT_PEAKER 2021 −9.57, CC_REGULAR 2023, C3a 2022 −11.5 %).
 over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phantom, Chalk Point / Mansfield / Sammis);
 2021 has no measured operand. Records: `docs/RESULT-pjm-next-7-2026-09-28.md`,
 `docs/FINDING-pjm-next-7-coal-phase0-2026-09-28.md`.
+
+## PJM-NEXT-8 — 2026-09-28
+
+- **Promoted** `2026-09-28-pjm-next8-exitfix` (bundle `pjmnext8_xf_span`) on structure: `unit_outage_exit_cohort_repair`, the exit-cohort repair of the CAMPD outage layer (measured input, zero DOF). COAL_BIT 2019 +17.81 → +10.61 exactly as pre-registered; 2024–25 byte-identical; training span NOT-YET unchanged (CC_REGULAR 2023 +8.48); run-level 12 → 14 failing rows (2019 CC_REGULAR +10.86 and C3a +11.8 % unmasked). Prior keeper `2026-09-28-pjm-next-7-virtual` pruned.
+- **Card 1 (zero LP):** CC_REGULAR 2023 is a zonal price-formation defect — missing east-to-south congestion boundary; no measured operand in the repo.
+- Records: `docs/RESULT-pjm-next-8-2026-09-28.md`, `docs/PRECOMMIT-pjm-next-8-exitfix-2026-09-28.md`, `docs/FINDING-pjm-next-8-cc2023-phase0-2026-09-28.md`.
+
+## PJM-NEXT-9 — 2026-09-29 — east→south boundary identified, recorded as model-class limit (zero LP)
+
+- No solve, keeper unchanged (`2026-09-28-pjm-next8-exitfix`).
+- **Card 1:** PJM DA binding constraints 2019–2025 regressed on hub congestion. The missing boundary is the Peach Bottom/Conastone corridor (Nottingham 230 kV), 35–91 % of NJ–Western congestion every year. It explains CC_REGULAR 2019/20/22/23. No published limit exists, so the owner card was *"Record as limit"*; `internal_congestion_split` PJM → `G`.
+- **Card 2:** 2019 CC is the same zonal signature.
+- **Card 3 phase 0:** the COAL_BIT over-run is a flat monthly level offset; handed to PJM-NEXT-10.
+- Records: `docs/RESULT-pjm-next-9-2026-09-29.md`, `docs/FINDING-pjm-next-9-east-south-boundary-2026-09-28.md`.
+
+## PJM-NEXT-10 — 2026-09-29 — COAL_BIT loading and cards 2–3 recorded as model-class limits (zero LP)
+
+- No solve, no shard, keeper unchanged (`2026-09-28-pjm-next8-exitfix`).
+- **Card 1:** the COAL_BIT over-run is synced-unit loading. Within-synced share is +10.47 / +7.70 / +10.07 / +1.87 / −0.58 / −2.11 / +11.43 TWh (2019–25), online hours match CAMPD, and it is flat across hours. It tracks the delivered coal/gas ratio.
+  - Ruled out, measured: outage windows, Pmax, AEP–Western congestion, PJM's own offers, incremental-HR pricing, min-load committed repricing.
+  - Offer-band channel refused (no ex-ante value).
+  - Owner card: *"Record as limit"*.
+- **Cards 2–3:** CT_PEAKER 2021 is the same coal-displaces-gas swap. The model exports 10–14 TWh *less* than actual, so interchange can't explain the fossil surplus. C3a 2020/2022 and C3b 2022 are price-distribution compression. Owner card: *"Record, no successor"*.
+- Records: `docs/RESULT-pjm-next-10-2026-09-29.md`, `docs/FINDING-pjm-next-10-coal-loading-2026-09-29.md`.

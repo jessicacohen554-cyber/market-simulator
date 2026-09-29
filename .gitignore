@@ -3760,6 +3760,10 @@ results/calibration/rcaiso10_A_*/hourly/p0_*.parquet
 
 # SPP-98 per-year replay legs (composed into spp98_remap_span; provenance SHAs in the RESULT doc)
 results/calibration/spp98_rep_*/
+# SPP-99 per-year arm legs (rule 32(d)/36): composed into spp99_remap_span; legs stay out of main.
+# Provenance (rule 33(d), not a recovery route): 2019 b18f5f79 2020 46fd4ee9 2021 d5253ce6
+# 2022 0a0c3766 2023 e2f13142 2024 d006fec4 2025 23141bf5 on claude/spp99-<y>.
+results/calibration/spp99_arm_20*/
 # PJM-NEXT-7 per-year shard legs (rule 32(d)/36): the composite pjmnext7_vs_span is
 # the registered keeper; legs stay out of main. Provenance (rule 33(d), not a
 # recovery route): 2019 8a3b5094 2020 05cc491f 2021 173b48bb 2022 2b1ef9b3
@@ -3772,6 +3776,9 @@ results/calibration/pjmnext7_vs_20*/
 # 2022 04514ab6cc76831cb6dd57421df4b9f5d8f28dee, 2023 0b0e6631c68ac8ae45b78bbdb98a5c4c27ae747e,
 # 2024 cf22a08d8a8528ec44bbc2ea12758b6b83f61b46, 2025 cec0c6a2fd8aa237cde688709ca33a0ac244c771.
 results/calibration/nyisonext9_202[2-5]/
+
+# PJM-NEXT-8 per-year shard legs (rule 32(d): composite only reaches main). Provenance: claude/pjmnext8-xf-<y> SHAs in docs/RESULT-pjm-next-8.
+results/calibration/pjmnext8_xf_20[12][0-9]/
 # R-CAISO-11 per-year legs (TAC-share clock arm): local only, pushed to shard branches (rule 34(a)); composite span/fold go on main.
 # Provenance SHAs (rule 33(d), provenance only): 2019 d12cd90983f45d875a14fea73c8a657ce0dca9ce, 2020 80e94bf7db27e908b6cca8c2f8049ed54469c7a5, 2021 f851904369f10e2c8fd7fef7610e63598a2e49c5, 2022 05cc2f8c45a92a2ac45afc78d3ca943e8b5c482d, 2023 b719a2f318cfc235159f56aeed62e987a52ddf29, 2024 e8b23b12381aeab15a2afc25a932ec5bc84d1599, 2025 56268443416f9e00396ba6118a3d6780213ff521.
 results/calibration/rcaiso11_A_20*/**
@@ -3790,3 +3797,27 @@ results/calibration/r_ercot14_a_20*/
 results/calibration/r_ercot14_b_20*/
 # R-ERCOT-14 arm-A composite (Oklaunion only; not promoted, owner chose B 2026-09-29) - local only, never on main
 results/calibration/r_ercot14_span_A/
+# NWPP-NEXT-8 per-year shard legs: local only, composed into nwppnext8mp_span (rule 32(d)); leg SHAs in the RESULT doc.
+results/calibration/nwppnext8mp_20*/
+
+# soco-85 per-year shard legs (rule 32(d) / 33(d)): composed into results/calibration/soco85_span,
+# which is the registered keeper. Legs stay out of main; provenance SHAs (pinned 599df6a0):
+#   2019 268bb83a5d9802107292b4ddf98bade4f644c6d0  2020 7edc31fb22759b8e3c5f4c73f96539999d76802a
+#   2021 623e6255cf3be77f78d6cb660faef13f367471fc  2022 f8305b94aad8c30594eed5a39b8ab5753c61d45c
+#   2023 9792fadfb03be5bfb2431c291a8622cb5d82109a  2024 b80813cb67b6660a4ecdf5f842098693644da426
+#   2025 ee57f7c0e273d1c6582b952a5c5ff58a29fe4a7e
+results/calibration/soco85_20[12][0-9]/
+# NWPP-NEXT-9 per-year shard legs: local only, composed into nwppnext9mr_span (rule 32(d)); leg SHAs in the RESULT doc.
+results/calibration/nwppnext9mr_20*/
+# SPP-100 per-year arm legs (rule 32(d)/36): composed into spp100_arm_span; legs stay out of main.
+# Provenance only (rule 33(d)), round-2 pin 11b72265: 2019 7d463322 2020 d4d5530a 2021 65720bac
+# 2022 e5cb7754 2023 68667e64 2024 24ed08be 2025 7021af9b on claude/spp100-<y>.
+results/calibration/spp100_arm_20*/
+
+# soco-87 per-year shard legs (rule 32(d) / 33(d)): composed into results/calibration/soco87_span.
+# Legs stay out of main; provenance SHAs (pinned e44cf620):
+#   2019 0e21adbb141acb6ad0121891802678af973e86b1  2020 b0dabc1399eee4cd163a9df8d56db1b9519f8a47
+#   2021 be5f09649ff0be8e22d29e8ee984c660b9f4ef01  2022 2575149bef9c5b2b7dc416638d7fab45280e04ae
+#   2023 a66ce865297b7724a039f506286d45c728026f43  2024 d27132bbd0190aef95966a9deb7b860cc3af26e0
+#   2025 ddecb398ff6f585e1398c55ee935470f1c7a5b3f
+results/calibration/soco87_20[12][0-9]/
