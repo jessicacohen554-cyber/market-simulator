@@ -18040,6 +18040,13 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**SPP-101 (2026-09-29, `coal_prb_proxy_own_iso`, ZERO LP — `docs/handoffs/FINDING-spp-101-prb-proxy-own-iso-2026-09-29.md`; cell O → I).**
+- Off-queue (queue exhausted): the one SPP cell still flagged as a live rule-25 defect in SPP's fleet (NWPP-41).
+- **INERT:** 0 offer rows move in all seven years; the plant-monthly EIA-923 overlay overwrites every SPP PRB row
+  after the proxy is applied. SPP's own PRB pool is also cheaper than ERCOT's in 2019–22 (wrong sign for C1 coal).
+- **Do not redo** unless the plant-monthly overlay's coverage changes. The 2021/22 CC shortfall sits in actual-LMP
+  ≤ $15 hours (CC committed at low prices) — the owner-gated commitment-state object (SPP-73/82/83/97).
+
 **SPP-100 (2026-09-28, CHP STEAM-LEVEL SWAP SCOPED TO METERED NON-CYCLERS — new field `chp_steam_floor_conduct_scope`,
 `docs/handoffs/RESULT-spp-100-chp-conduct-scope-2026-09-28.md`, run `2026-09-28-spp-100-chp-scope`; cell K, PROMOTED 2026-09-29 on the owner card "Promote (Recommended)").**
 - Off-queue: the named re-open route of the R cell `chp_steam_following` (owner, 2026-09-24). The swap applies only where the
