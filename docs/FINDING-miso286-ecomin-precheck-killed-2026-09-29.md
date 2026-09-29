@@ -75,3 +75,8 @@ stack clear than in P1; both years' P0 stack already diverges from P1 (miso-285 
   position; `measured_offer_surface` is R (miso-151) and nothing here is new evidence against that.
 - **Still open, not chartered:** P1 sits +$5.1 (2022) and +$1.9 (2025) above the P0 stack at the same Q
   (miso-285 §5). 2022 is also the C3a routed-miss year.
+
+## 6. Owner ruling (2026-09-29)
+
+*"P1 vs P0 residual (Recommended)"*. The next lane (miso-287) runs a zero-LP phase 0 on why P1 clears +$5.1 (2022)
+and +$1.9 (2025) above the P0 stack at the same night quantity. 2022 is also the C3a routed-miss year.

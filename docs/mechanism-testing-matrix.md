@@ -5773,6 +5773,8 @@ loss.
 > (measured plant-basis min-load 0.3238). Its pre-registered pre-check moved the night median < $0.5 in 7 of 7
 > years (max −0.12). Flooring already-online units cannot move a merit clear unless the floored unit is marginal.
 > New row MISO = **I**; `diurnal_price_amplitude` **O → G**. No frontier.
+> **Owner ruling:** *"P1 vs P0 residual (Recommended)"*. **Next (miso-287):** zero-LP phase 0 on the P1-over-P0
+> night residual (+$5.1 in 2022, +$1.9 in 2025, at the same Q).
 
 > **QUEUE STAMP miso-285 (2026-09-29) — ZERO LP, NO SOLVE, keeper unchanged**
 > (`FINDING-miso285-night-overshoot-phase0-2026-09-29.md`). The night overshoot is **price formation at matched
