@@ -1,10 +1,12 @@
-# FINDING — PJM-NEXT-10: the COAL_BIT over-run is synced-unit loading in coal-cheap years; no measured operand closes it (zero LP)
+# FINDING — PJM-NEXT-10: the COAL_BIT over-run is synced-unit loading in coal-cheap years; no admissible lever found yet (zero LP)
+
+> **RELABELLED 2026-09-29 (owner instruction, same session): OPEN, not a model-class limit.** This session found no admissible lever; it did NOT show the LP is structurally unable to reproduce the loading. The over-run is year-dependent (2023/24 fit) and tracks the coal/gas ratio, which points to a fixable merit-order or offer input. Next test queued for PJM-NEXT-11: PJM's own offered EcoMax for the LONG_RUN segment by year (§5).
 
 **Keeper** `2026-09-28-pjm-next8-exitfix` (bundle `results/calibration/pjmnext8_xf_span`), unchanged. **Zero LP.**
 Probe `scripts/probes/_pjmnext10_coal_phase0.py` writes `results/calibration/_pjmnext10_coal_phase0.json`.
 Inputs: the keeper's run payload, the bench, its committed `hourly/system_<y>.parquet`, CAMPD unit-level
 hourly, the keeper's outage extracts, EIA-923 coal receipts, PJM DA hub LMPs, and PJM DA binding constraints.
-**Owner card:** *"Record as limit"* (card 1) and *"Record, no successor"* (cards 2–3).
+**Owner cards:** *"Record as limit"* (card 1) and *"Record, no successor"* (cards 2–3), both **superseded the same day** by *"Relabel as open and queue the test. Have the next session fetch the data."*
 
 ## 1. Where the over-run sits (bench COAL_BIT plants, model − CAMPD, TWh)
 
@@ -72,8 +74,15 @@ EIA-923 delivered coal (bench plants, MMBtu-weighted) ÷ the keeper's gas price:
 
 ## 5. Verdict
 
-**COAL_BIT's out-of-span over-run (2019 +10.61, 2021 +17.14) and CT_PEAKER 2021 (−9.59) are recorded as a model-class limit.** A pure LP loads synced coal to its offer steps whenever coal clears. Real PJM coal holds intermediate load in coal-cheap years, and no measured input on disk reproduces that. The out-of-span rows stay reported and non-gating (rule 30(c)). The training span's one failure (CC_REGULAR 2023 +8.48) is already a recorded limit (PJM-NEXT-9, `internal_congestion_split` G).
+**COAL_BIT's out-of-span over-run (2019 +10.61, 2021 +17.14) and CT_PEAKER 2021 (−9.59) are OPEN: no admissible lever found yet.** The LP loads synced coal to its offer steps whenever coal clears, while real PJM coal holds intermediate load in coal-cheap years. That describes the symptom; it is **not** shown to be structural. Three reasons against a limit label:
 
-**What would reopen it (new evidence, rule 28(a)):**
-1. A unit-identified PJM offered-MW (EcoMax) series for coal, by year. The DataMiner energy-offers feed carries `avg_ecomax` but is unit-masked.
-2. Or a published PJM/IMM measure of coal units' synchronized-reserve/regulation headroom.
+- The error is year-dependent. 2023/24 fit, and the error tracks the coal/gas ratio, which a structural LP limit would not do.
+- 2022 breaks the fuel-ratio story (the cheapest coal relative to gas, yet a small over-run). That was explained as a coal-supply year, untested.
+- PJM's offered EcoMax was dismissed as needing unit-identified data. It does not: the LONG_RUN segment can be totalled by year without unit identity.
+
+The out-of-span rows stay reported and non-gating (rule 30(c)). The training span's one failure (CC_REGULAR 2023 +8.48) is a separate, already-recorded limit (PJM-NEXT-9, `internal_congestion_split` G).
+
+**Queued for PJM-NEXT-11 (zero LP first):**
+1. **Offered EcoMax.** Re-fetch the PJM energy-offers corpus for 2019–2025 (`fetch_pjm_energy_offers.py --years 2019 … 2025`). Total `avg_ecomax` against offered capacity for the LONG_RUN segment (the `derive_pjm_offer_midcurve.py` segmentation) by year and hour. If real coal-like units offered materially less MW in 2019/21/25 than in 2023/24, that is a measured input (rule 14) and the candidate lever.
+2. **2022 coal-supply check.** Test whether 2022's small over-run reflects the coal-supply constraint (`coal_fuel_inventory`), or whether the fuel-ratio story is wrong.
+3. **C3a 2020/2022, C3b 2022.** Verify, rather than assume, that these are the pjm-h12 variance-compression object.
