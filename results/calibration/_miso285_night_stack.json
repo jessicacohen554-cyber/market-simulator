@@ -1,0 +1,962 @@
+{
+ "2023": {
+  "p0_stack_price_at_model_q": 27.32,
+  "p0_stack_price_median": 27.11,
+  "counterfactual_clears": {
+   "CF1_cc_regular_committed_taker": {
+    "mean": 26.24,
+    "median": 26.01
+   },
+   "CF2_gas_committed_taker": {
+    "mean": 24.15,
+    "median": 23.97
+   },
+   "CF3_cc_econ_minus_1usd": {
+    "mean": 27.11,
+    "median": 27.04
+   }
+  },
+  "p_model_median": 27.12,
+  "p_hub_median": 19.35,
+  "night_hours": 2190,
+  "p_model": 27.45,
+  "p_hub": 20.42,
+  "gap_flex_mw_total": 16403.0,
+  "gap_flex_mw_by_class_band": {
+   "CC_REGULAR|econ": 4901.0,
+   "CC_REGULAR|committed": 4710.0,
+   "COAL_PRB|econ": 928.0,
+   "CC_CHP|committed": 593.0,
+   "|PJM#5": 580.0,
+   "|PJM#6": 559.0,
+   "|PJM#4": 429.0,
+   "|PJM#7": 379.0,
+   "COAL_PRB|committed": 282.0,
+   "|SPP#1": 207.0,
+   "|PJM#3": 203.0,
+   "COAL_BIT|committed": 202.0,
+   "CT_PEAKER|econ": 193.0,
+   "|Manitoba#1": 181.0,
+   "COAL_BIT|mustrun": 167.0,
+   "|South#5": 165.0,
+   "CT_CHP|committed": 146.0,
+   "|South#4": 138.0,
+   "COAL_PRB|mustrun": 125.0,
+   "ST_GAS|econ": 115.0,
+   "|South#6": 108.0,
+   "ST_CHP|committed": 107.0,
+   "|Manitoba#2": 96.0,
+   "|PJM#8": 93.0,
+   "COAL_BIT|econ": 87.0,
+   "|PJM#2": 79.0,
+   "CC_CHP|econ": 75.0,
+   "CT_PEAKER|committed": 74.0,
+   "|South#3": 62.0,
+   "ST_GAS|committed": 49.0,
+   "|South#7": 48.0,
+   "COAL_LIGNITE|econ": 39.0,
+   "|SPP#2": 37.0,
+   "|Manitoba#3": 32.0,
+   "|South#8": 24.0,
+   "CT_CHP|econ": 23.0,
+   "ST_GAS|peak": 21.0,
+   "COAL_PRB|peak": 21.0,
+   "hydro|hydro": 21.0
+  },
+  "flex_mw_within_2usd_of_p_model": 7721.0,
+  "gap_offer_decomp": {
+   "CC_REGULAR": {
+    "gap_mw": 9621.0,
+    "offer": 22.09,
+    "hr_x_fuel": 20.03,
+    "vom": 2.0,
+    "rest": 0.07,
+    "hr": 7.254,
+    "fuel": 2.772
+   },
+   "COAL_PRB": {
+    "gap_mw": 1356.0,
+    "offer": 22.61,
+    "hr_x_fuel": 22.78,
+    "vom": 4.5,
+    "rest": -4.67,
+    "hr": 11.959,
+    "fuel": 1.916
+   },
+   "COAL_BIT": {
+    "gap_mw": 460.0,
+    "offer": 17.08,
+    "hr_x_fuel": 31.6,
+    "vom": 4.5,
+    "rest": -19.02,
+    "hr": 10.893,
+    "fuel": 2.879
+   },
+   "ST_GAS": {
+    "gap_mw": 185.0,
+    "offer": 32.05,
+    "hr_x_fuel": 27.27,
+    "vom": 4.0,
+    "rest": 0.78,
+    "hr": 11.159,
+    "fuel": 2.446
+   },
+   "CC_CHP": {
+    "gap_mw": 669.0,
+    "offer": 26.3,
+    "hr_x_fuel": 24.3,
+    "vom": 2.0,
+    "rest": 0.0,
+    "hr": 8.601,
+    "fuel": 2.837
+   },
+   "CT_CHP": {
+    "gap_mw": 177.0,
+    "offer": 21.77,
+    "hr_x_fuel": 17.85,
+    "vom": 3.5,
+    "rest": 0.42,
+    "hr": 6.541,
+    "fuel": 2.725
+   },
+   "ST_CHP": {
+    "gap_mw": 147.0,
+    "offer": 23.47,
+    "hr_x_fuel": 19.21,
+    "vom": 4.27,
+    "rest": -0.0,
+    "hr": 6.576,
+    "fuel": 2.94
+   }
+  },
+  "night_floor_mw": 10152.0,
+  "night_floor_by_class": {
+   "": 7165.0,
+   "ST_GAS": 928.0,
+   "CC_CHP": 848.0,
+   "hydro": 593.0,
+   "CT_CHP": 331.0,
+   "COAL_PRB": 156.0,
+   "ST_CHP": 86.0
+  }
+ },
+ "2019": {
+  "p0_stack_price_at_model_q": 24.03,
+  "p0_stack_price_median": 23.59,
+  "counterfactual_clears": {
+   "CF1_cc_regular_committed_taker": {
+    "mean": 23.31,
+    "median": 22.89
+   },
+   "CF2_gas_committed_taker": {
+    "mean": 21.37,
+    "median": 21.02
+   },
+   "CF3_cc_econ_minus_1usd": {
+    "mean": 23.81,
+    "median": 23.26
+   }
+  },
+  "p_model_median": 23.67,
+  "p_hub_median": 18.95,
+  "night_hours": 2190,
+  "p_model": 24.16,
+  "p_hub": 19.05,
+  "gap_flex_mw_total": 12895.0,
+  "gap_flex_mw_by_class_band": {
+   "CC_REGULAR|econ": 3904.0,
+   "CC_REGULAR|committed": 3716.0,
+   "COAL_PRB|econ": 1088.0,
+   "|PJM#4": 572.0,
+   "CC_CHP|committed": 324.0,
+   "|SPP#1": 321.0,
+   "COAL_BIT|econ": 273.0,
+   "|PJM#3": 253.0,
+   "|PJM#5": 251.0,
+   "COAL_PRB|committed": 238.0,
+   "|Manitoba#1": 219.0,
+   "CT_CHP|committed": 189.0,
+   "|South#3": 133.0,
+   "|Manitoba#2": 131.0,
+   "|South#2": 129.0,
+   "COAL_PRB|mustrun": 112.0,
+   "COAL_BIT|committed": 109.0,
+   "|South#1": 97.0,
+   "|SPP#2": 95.0,
+   "|South#4": 85.0,
+   "COAL_BIT|mustrun": 83.0,
+   "|PJM#2": 80.0,
+   "ST_CHP|committed": 78.0,
+   "CT_CHP|econ": 69.0,
+   "COAL_LIGNITE|econ": 59.0,
+   "|Manitoba#3": 52.0,
+   "|PJM#1": 38.0,
+   "CC_CHP|econ": 29.0,
+   "|South#5": 21.0,
+   "CT_CHP|peak": 21.0
+  },
+  "flex_mw_within_2usd_of_p_model": 9329.0,
+  "gap_offer_decomp": {
+   "CC_REGULAR": {
+    "gap_mw": 7620.0,
+    "offer": 20.66,
+    "hr_x_fuel": 18.58,
+    "vom": 2.0,
+    "rest": 0.08,
+    "hr": 7.238,
+    "fuel": 2.573
+   },
+   "COAL_PRB": {
+    "gap_mw": 1450.0,
+    "offer": 21.09,
+    "hr_x_fuel": 19.92,
+    "vom": 4.5,
+    "rest": -3.34,
+    "hr": 11.979,
+    "fuel": 1.672
+   },
+   "COAL_BIT": {
+    "gap_mw": 468.0,
+    "offer": 20.59,
+    "hr_x_fuel": 23.0,
+    "vom": 4.5,
+    "rest": -6.91,
+    "hr": 11.394,
+    "fuel": 2.025
+   },
+   "ST_GAS": {
+    "gap_mw": 19.0,
+    "offer": 30.06,
+    "hr_x_fuel": 25.72,
+    "vom": 4.0,
+    "rest": 0.34,
+    "hr": 10.487,
+    "fuel": 2.442
+   },
+   "CC_CHP": {
+    "gap_mw": 353.0,
+    "offer": 22.07,
+    "hr_x_fuel": 20.06,
+    "vom": 2.0,
+    "rest": 0.01,
+    "hr": 7.599,
+    "fuel": 2.657
+   },
+   "CT_CHP": {
+    "gap_mw": 279.0,
+    "offer": 21.08,
+    "hr_x_fuel": 17.1,
+    "vom": 3.5,
+    "rest": 0.48,
+    "hr": 6.712,
+    "fuel": 2.551
+   },
+   "ST_CHP": {
+    "gap_mw": 107.0,
+    "offer": 21.71,
+    "hr_x_fuel": 17.54,
+    "vom": 4.18,
+    "rest": 0.0,
+    "hr": 6.447,
+    "fuel": 2.729
+   }
+  },
+  "night_floor_mw": 12836.0,
+  "night_floor_by_class": {
+   "": 9829.0,
+   "ST_GAS": 959.0,
+   "CC_CHP": 871.0,
+   "hydro": 663.0,
+   "CT_CHP": 264.0,
+   "COAL_BIT": 150.0,
+   "ST_CHP": 86.0
+  }
+ },
+ "2020": {
+  "p0_stack_price_at_model_q": 20.48,
+  "p0_stack_price_median": 20.16,
+  "counterfactual_clears": {
+   "CF1_cc_regular_committed_taker": {
+    "mean": 19.31,
+    "median": 19.2
+   },
+   "CF2_gas_committed_taker": {
+    "mean": 17.12,
+    "median": 17.59
+   },
+   "CF3_cc_econ_minus_1usd": {
+    "mean": 20.23,
+    "median": 19.88
+   }
+  },
+  "p_model_median": 19.88,
+  "p_hub_median": 15.8,
+  "night_hours": 2190,
+  "p_model": 20.53,
+  "p_hub": 15.54,
+  "gap_flex_mw_total": 12016.0,
+  "gap_flex_mw_by_class_band": {
+   "CC_REGULAR|econ": 3372.0,
+   "CC_REGULAR|committed": 3178.0,
+   "COAL_PRB|econ": 539.0,
+   "|PJM#5": 512.0,
+   "COAL_PRB|committed": 421.0,
+   "CC_CHP|committed": 379.0,
+   "COAL_PRB|mustrun": 354.0,
+   "|PJM#4": 301.0,
+   "COAL_BIT|committed": 248.0,
+   "COAL_BIT|mustrun": 233.0,
+   "|PJM#6": 231.0,
+   "|SPP#1": 209.0,
+   "|Manitoba#2": 196.0,
+   "CT_CHP|committed": 172.0,
+   "|South#3": 171.0,
+   "|Manitoba#3": 140.0,
+   "|South#2": 129.0,
+   "|Manitoba#1": 128.0,
+   "|PJM#3": 114.0,
+   "COAL_BIT|econ": 99.0,
+   "|South#1": 85.0,
+   "|PJM#2": 83.0,
+   "|PJM#1": 83.0,
+   "|South#4": 76.0,
+   "ST_CHP|committed": 75.0,
+   "|Manitoba#4": 54.0,
+   "CT_CHP|econ": 51.0,
+   "hydro|hydro": 47.0,
+   "CC_CHP|econ": 43.0,
+   "ST_GAS|econ": 38.0,
+   "CT_PEAKER|econ": 36.0,
+   "COAL_LIGNITE|mustrun": 36.0,
+   "|SPP#2": 33.0,
+   "COAL_LIGNITE|committed": 22.0,
+   "CT_PEAKER|committed": 21.0,
+   "|PJM#7": 21.0
+  },
+  "flex_mw_within_2usd_of_p_model": 8853.0,
+  "gap_offer_decomp": {
+   "CC_REGULAR": {
+    "gap_mw": 6553.0,
+    "offer": 17.49,
+    "hr_x_fuel": 15.44,
+    "vom": 2.0,
+    "rest": 0.05,
+    "hr": 7.272,
+    "fuel": 2.127
+   },
+   "COAL_PRB": {
+    "gap_mw": 1321.0,
+    "offer": 12.53,
+    "hr_x_fuel": 19.58,
+    "vom": 4.5,
+    "rest": -11.54,
+    "hr": 11.279,
+    "fuel": 1.728
+   },
+   "COAL_BIT": {
+    "gap_mw": 583.0,
+    "offer": 9.82,
+    "hr_x_fuel": 21.6,
+    "vom": 4.5,
+    "rest": -16.28,
+    "hr": 10.789,
+    "fuel": 2.015
+   },
+   "ST_GAS": {
+    "gap_mw": 50.0,
+    "offer": 24.41,
+    "hr_x_fuel": 19.55,
+    "vom": 4.0,
+    "rest": 0.86,
+    "hr": 10.651,
+    "fuel": 1.845
+   },
+   "CC_CHP": {
+    "gap_mw": 422.0,
+    "offer": 19.41,
+    "hr_x_fuel": 17.4,
+    "vom": 2.0,
+    "rest": 0.01,
+    "hr": 8.276,
+    "fuel": 2.118
+   },
+   "CT_CHP": {
+    "gap_mw": 238.0,
+    "offer": 17.74,
+    "hr_x_fuel": 13.84,
+    "vom": 3.5,
+    "rest": 0.4,
+    "hr": 6.705,
+    "fuel": 2.073
+   },
+   "ST_CHP": {
+    "gap_mw": 102.0,
+    "offer": 18.5,
+    "hr_x_fuel": 14.31,
+    "vom": 4.19,
+    "rest": 0.0,
+    "hr": 6.597,
+    "fuel": 2.186
+   }
+  },
+  "night_floor_mw": 12795.0,
+  "night_floor_by_class": {
+   "": 9742.0,
+   "ST_GAS": 1039.0,
+   "CC_CHP": 845.0,
+   "hydro": 704.0,
+   "CT_CHP": 264.0,
+   "COAL_BIT": 111.0,
+   "ST_CHP": 86.0
+  }
+ },
+ "2021": {
+  "p0_stack_price_at_model_q": 30.85,
+  "p0_stack_price_median": 29.65,
+  "counterfactual_clears": {
+   "CF1_cc_regular_committed_taker": {
+    "mean": 28.38,
+    "median": 27.71
+   },
+   "CF2_gas_committed_taker": {
+    "mean": 25.71,
+    "median": 25.58
+   },
+   "CF3_cc_econ_minus_1usd": {
+    "mean": 30.6,
+    "median": 29.4
+   }
+  },
+  "p_model_median": 29.52,
+  "p_hub_median": 23.41,
+  "night_hours": 2189,
+  "p_model": 31.06,
+  "p_hub": 28.59,
+  "gap_flex_mw_total": 12915.0,
+  "gap_flex_mw_by_class_band": {
+   "CC_REGULAR|econ": 3194.0,
+   "CC_REGULAR|committed": 3071.0,
+   "COAL_PRB|econ": 2398.0,
+   "COAL_BIT|econ": 840.0,
+   "COAL_PRB|committed": 545.0,
+   "|PJM#4": 444.0,
+   "|PJM#3": 239.0,
+   "CC_CHP|committed": 236.0,
+   "|SPP#1": 201.0,
+   "CT_CHP|committed": 176.0,
+   "|South#4": 145.0,
+   "|South#5": 132.0,
+   "|PJM#5": 131.0,
+   "|Manitoba#1": 127.0,
+   "COAL_PRB|mustrun": 123.0,
+   "|PJM#2": 103.0,
+   "COAL_BIT|committed": 100.0,
+   "COAL_BIT|mustrun": 73.0,
+   "|PJM#1": 71.0,
+   "ST_CHP|committed": 68.0,
+   "COAL_LIGNITE|econ": 65.0,
+   "CT_CHP|econ": 61.0,
+   "|South#3": 45.0,
+   "COAL_PRB|peak": 45.0,
+   "|South#6": 41.0,
+   "|Manitoba#2": 39.0
+  },
+  "flex_mw_within_2usd_of_p_model": 8354.0,
+  "gap_offer_decomp": {
+   "CC_REGULAR": {
+    "gap_mw": 6265.0,
+    "offer": 26.82,
+    "hr_x_fuel": 24.66,
+    "vom": 2.0,
+    "rest": 0.16,
+    "hr": 7.26,
+    "fuel": 3.399
+   },
+   "COAL_PRB": {
+    "gap_mw": 3112.0,
+    "offer": 26.06,
+    "hr_x_fuel": 23.12,
+    "vom": 4.5,
+    "rest": -1.56,
+    "hr": 12.373,
+    "fuel": 1.871
+   },
+   "COAL_BIT": {
+    "gap_mw": 1023.0,
+    "offer": 26.55,
+    "hr_x_fuel": 25.18,
+    "vom": 4.5,
+    "rest": -3.13,
+    "hr": 12.094,
+    "fuel": 2.092
+   },
+   "ST_GAS": {
+    "gap_mw": 12.0,
+    "offer": 26.54,
+    "hr_x_fuel": 21.43,
+    "vom": 4.0,
+    "rest": 1.11,
+    "hr": 9.716,
+    "fuel": 2.334
+   },
+   "CC_CHP": {
+    "gap_mw": 254.0,
+    "offer": 27.41,
+    "hr_x_fuel": 25.38,
+    "vom": 2.0,
+    "rest": 0.03,
+    "hr": 7.584,
+    "fuel": 3.364
+   },
+   "CT_CHP": {
+    "gap_mw": 255.0,
+    "offer": 26.16,
+    "hr_x_fuel": 21.63,
+    "vom": 3.5,
+    "rest": 1.03,
+    "hr": 6.535,
+    "fuel": 3.32
+   },
+   "ST_CHP": {
+    "gap_mw": 83.0,
+    "offer": 26.97,
+    "hr_x_fuel": 22.78,
+    "vom": 4.19,
+    "rest": -0.0,
+    "hr": 6.574,
+    "fuel": 3.514
+   }
+  },
+  "night_floor_mw": 10953.0,
+  "night_floor_by_class": {
+   "": 7897.0,
+   "ST_GAS": 922.0,
+   "CC_CHP": 862.0,
+   "hydro": 663.0,
+   "CT_CHP": 335.0,
+   "COAL_BIT": 135.0,
+   "ST_CHP": 87.0
+  }
+ },
+ "2022": {
+  "p0_stack_price_at_model_q": 45.0,
+  "p0_stack_price_median": 42.99,
+  "counterfactual_clears": {
+   "CF1_cc_regular_committed_taker": {
+    "mean": 38.06,
+    "median": 36.65
+   },
+   "CF2_gas_committed_taker": {
+    "mean": 34.09,
+    "median": 34.38
+   },
+   "CF3_cc_econ_minus_1usd": {
+    "mean": 44.7,
+    "median": 42.73
+   }
+  },
+  "p_model_median": 48.09,
+  "p_hub_median": 42.68,
+  "night_hours": 1890,
+  "p_model": 50.6,
+  "p_hub": 42.97,
+  "gap_flex_mw_total": 12253.0,
+  "gap_flex_mw_by_class_band": {
+   "CC_REGULAR|econ": 3053.0,
+   "CC_REGULAR|committed": 2837.0,
+   "COAL_PRB|econ": 1885.0,
+   "COAL_BIT|econ": 904.0,
+   "COAL_PRB|committed": 630.0,
+   "|PJM#2": 267.0,
+   "COAL_PRB|mustrun": 253.0,
+   "|PJM#3": 235.0,
+   "CC_CHP|committed": 176.0,
+   "COAL_BIT|committed": 157.0,
+   "|PJM#1": 153.0,
+   "COAL_BIT|mustrun": 145.0,
+   "|PJM#4": 141.0,
+   "CT_CHP|committed": 131.0,
+   "COAL_PRB|peak": 123.0,
+   "|SPP#1": 118.0,
+   "|Manitoba#2": 95.0,
+   "|Manitoba#3": 87.0,
+   "ST_CHP|committed": 82.0,
+   "|Manitoba#1": 82.0,
+   "|Manitoba#4": 60.0,
+   "|PJM#5": 59.0,
+   "|South#5": 59.0,
+   "|South#6": 51.0,
+   "|South#8": 46.0,
+   "COAL_BIT|peak": 45.0,
+   "|SPP#2": 41.0,
+   "|South#7": 41.0,
+   "hydro|hydro": 40.0,
+   "CT_CHP|econ": 40.0,
+   "COAL_LIGNITE|econ": 39.0,
+   "|South#4": 34.0,
+   "CT_PEAKER|econ": 27.0
+  },
+  "flex_mw_within_2usd_of_p_model": 4630.0,
+  "gap_offer_decomp": {
+   "CC_REGULAR": {
+    "gap_mw": 5891.0,
+    "offer": 46.01,
+    "hr_x_fuel": 43.86,
+    "vom": 2.0,
+    "rest": 0.15,
+    "hr": 7.272,
+    "fuel": 6.047
+   },
+   "COAL_PRB": {
+    "gap_mw": 2891.0,
+    "offer": 28.9,
+    "hr_x_fuel": 28.7,
+    "vom": 4.5,
+    "rest": -4.3,
+    "hr": 12.758,
+    "fuel": 2.246
+   },
+   "COAL_BIT": {
+    "gap_mw": 1251.0,
+    "offer": 31.08,
+    "hr_x_fuel": 32.29,
+    "vom": 4.5,
+    "rest": -5.7,
+    "hr": 12.342,
+    "fuel": 2.601
+   },
+   "ST_GAS": {
+    "gap_mw": 15.0,
+    "offer": 55.53,
+    "hr_x_fuel": 49.69,
+    "vom": 4.0,
+    "rest": 1.84,
+    "hr": 10.967,
+    "fuel": 4.573
+   },
+   "CC_CHP": {
+    "gap_mw": 190.0,
+    "offer": 46.69,
+    "hr_x_fuel": 44.61,
+    "vom": 2.0,
+    "rest": 0.08,
+    "hr": 8.363,
+    "fuel": 5.397
+   },
+   "CT_CHP": {
+    "gap_mw": 183.0,
+    "offer": 44.87,
+    "hr_x_fuel": 40.34,
+    "vom": 3.5,
+    "rest": 1.03,
+    "hr": 6.84,
+    "fuel": 5.898
+   },
+   "ST_CHP": {
+    "gap_mw": 108.0,
+    "offer": 43.62,
+    "hr_x_fuel": 39.32,
+    "vom": 4.29,
+    "rest": 0.0,
+    "hr": 6.542,
+    "fuel": 6.051
+   }
+  },
+  "night_floor_mw": 10336.0,
+  "night_floor_by_class": {
+   "": 7097.0,
+   "ST_GAS": 1038.0,
+   "CC_CHP": 836.0,
+   "hydro": 621.0,
+   "CT_CHP": 345.0,
+   "COAL_BIT": 187.0,
+   "COAL_PRB": 121.0,
+   "ST_CHP": 90.0
+  }
+ },
+ "2024": {
+  "p0_stack_price_at_model_q": 25.18,
+  "p0_stack_price_median": 23.76,
+  "counterfactual_clears": {
+   "CF1_cc_regular_committed_taker": {
+    "mean": 24.31,
+    "median": 23.18
+   },
+   "CF2_gas_committed_taker": {
+    "mean": 22.78,
+    "median": 21.73
+   },
+   "CF3_cc_econ_minus_1usd": {
+    "mean": 24.98,
+    "median": 23.63
+   }
+  },
+  "p_model_median": 23.76,
+  "p_hub_median": 17.31,
+  "night_hours": 2190,
+  "p_model": 25.23,
+  "p_hub": 17.94,
+  "gap_flex_mw_total": 16428.0,
+  "gap_flex_mw_by_class_band": {
+   "CC_REGULAR|econ": 4818.0,
+   "CC_REGULAR|committed": 4649.0,
+   "COAL_PRB|econ": 647.0,
+   "CC_CHP|committed": 623.0,
+   "|PJM#5": 501.0,
+   "|PJM#4": 476.0,
+   "COAL_PRB|committed": 406.0,
+   "CT_PEAKER|econ": 346.0,
+   "|PJM#6": 330.0,
+   "|PJM#3": 323.0,
+   "ST_GAS|econ": 318.0,
+   "COAL_BIT|committed": 247.0,
+   "COAL_PRB|mustrun": 244.0,
+   "COAL_BIT|mustrun": 195.0,
+   "|PJM#2": 191.0,
+   "|SPP#1": 181.0,
+   "CT_PEAKER|committed": 142.0,
+   "CT_CHP|committed": 139.0,
+   "|Manitoba#1": 138.0,
+   "|South#5": 135.0,
+   "ST_CHP|committed": 127.0,
+   "|South#6": 119.0,
+   "COAL_BIT|econ": 117.0,
+   "CC_CHP|econ": 110.0,
+   "|Manitoba#2": 102.0,
+   "|PJM#1": 83.0,
+   "|South#7": 78.0,
+   "|South#4": 77.0,
+   "ST_GAS|committed": 76.0,
+   "|PJM#7": 59.0,
+   "|Manitoba#3": 55.0,
+   "ST_GAS|peak": 50.0,
+   "hydro|hydro": 40.0,
+   "CC_REGULAR|peak": 36.0,
+   "|South#8": 36.0,
+   "|South#3": 26.0,
+   "CT_CHP|econ": 24.0,
+   "ST_CHP|econ": 23.0,
+   "|SPP#2": 22.0,
+   "ST_CHP|peak": 22.0
+  },
+  "flex_mw_within_2usd_of_p_model": 8364.0,
+  "gap_offer_decomp": {
+   "CC_REGULAR": {
+    "gap_mw": 9504.0,
+    "offer": 19.88,
+    "hr_x_fuel": 17.86,
+    "vom": 2.0,
+    "rest": 0.02,
+    "hr": 7.265,
+    "fuel": 2.471
+   },
+   "COAL_PRB": {
+    "gap_mw": 1311.0,
+    "offer": 18.16,
+    "hr_x_fuel": 23.84,
+    "vom": 4.5,
+    "rest": -10.18,
+    "hr": 11.494,
+    "fuel": 2.072
+   },
+   "COAL_BIT": {
+    "gap_mw": 560.0,
+    "offer": 14.47,
+    "hr_x_fuel": 28.68,
+    "vom": 4.5,
+    "rest": -18.71,
+    "hr": 11.063,
+    "fuel": 2.625
+   },
+   "ST_GAS": {
+    "gap_mw": 444.0,
+    "offer": 28.49,
+    "hr_x_fuel": 24.27,
+    "vom": 4.0,
+    "rest": 0.22,
+    "hr": 10.615,
+    "fuel": 2.288
+   },
+   "CC_CHP": {
+    "gap_mw": 733.0,
+    "offer": 23.09,
+    "hr_x_fuel": 21.08,
+    "vom": 2.0,
+    "rest": 0.01,
+    "hr": 8.759,
+    "fuel": 2.415
+   },
+   "CT_CHP": {
+    "gap_mw": 170.0,
+    "offer": 19.65,
+    "hr_x_fuel": 15.86,
+    "vom": 3.5,
+    "rest": 0.29,
+    "hr": 6.724,
+    "fuel": 2.366
+   },
+   "ST_CHP": {
+    "gap_mw": 172.0,
+    "offer": 20.96,
+    "hr_x_fuel": 16.7,
+    "vom": 4.25,
+    "rest": -0.0,
+    "hr": 6.63,
+    "fuel": 2.539
+   }
+  },
+  "night_floor_mw": 9806.0,
+  "night_floor_by_class": {
+   "": 6741.0,
+   "ST_GAS": 1008.0,
+   "CC_CHP": 861.0,
+   "hydro": 609.0,
+   "CT_CHP": 329.0,
+   "COAL_BIT": 114.0,
+   "ST_CHP": 85.0,
+   "COAL_PRB": 59.0
+  }
+ },
+ "2025": {
+  "p0_stack_price_at_model_q": 34.0,
+  "p0_stack_price_median": 32.83,
+  "counterfactual_clears": {
+   "CF1_cc_regular_committed_taker": {
+    "mean": 33.06,
+    "median": 32.2
+   },
+   "CF2_gas_committed_taker": {
+    "mean": 31.01,
+    "median": 30.93
+   },
+   "CF3_cc_econ_minus_1usd": {
+    "mean": 33.81,
+    "median": 32.69
+   }
+  },
+  "p_model_median": 34.69,
+  "p_hub_median": 24.2,
+  "night_hours": 2190,
+  "p_model": 35.78,
+  "p_hub": 26.94,
+  "gap_flex_mw_total": 17930.0,
+  "gap_flex_mw_by_class_band": {
+   "CC_REGULAR|econ": 4760.0,
+   "CC_REGULAR|committed": 4415.0,
+   "COAL_PRB|econ": 2210.0,
+   "COAL_PRB|committed": 735.0,
+   "COAL_BIT|econ": 716.0,
+   "CC_CHP|committed": 605.0,
+   "|PJM#4": 516.0,
+   "|PJM#3": 434.0,
+   "|PJM#5": 409.0,
+   "CT_PEAKER|econ": 241.0,
+   "|PJM#6": 237.0,
+   "|PJM#2": 236.0,
+   "|SPP#1": 217.0,
+   "COAL_PRB|mustrun": 155.0,
+   "|Manitoba#2": 152.0,
+   "|South#4": 143.0,
+   "CT_CHP|committed": 138.0,
+   "CT_PEAKER|committed": 129.0,
+   "ST_GAS|econ": 126.0,
+   "COAL_BIT|committed": 116.0,
+   "|South#5": 112.0,
+   "CC_CHP|econ": 109.0,
+   "|Manitoba#1": 100.0,
+   "|South#3": 92.0,
+   "COAL_BIT|mustrun": 90.0,
+   "ST_CHP|committed": 85.0,
+   "COAL_LIGNITE|econ": 82.0,
+   "|South#6": 74.0,
+   "|PJM#1": 73.0,
+   "COAL_PRB|peak": 60.0,
+   "|South#7": 54.0,
+   "|Manitoba#3": 44.0,
+   "|SPP#2": 33.0,
+   "CT_CHP|econ": 29.0,
+   "hydro|hydro": 25.0,
+   "|PJM#7": 24.0,
+   "|South#2": 22.0,
+   "ST_GAS|committed": 21.0,
+   "ST_CHP|peak": 21.0
+  },
+  "flex_mw_within_2usd_of_p_model": 6738.0,
+  "gap_offer_decomp": {
+   "CC_REGULAR": {
+    "gap_mw": 9178.0,
+    "offer": 27.85,
+    "hr_x_fuel": 25.78,
+    "vom": 2.0,
+    "rest": 0.07,
+    "hr": 7.254,
+    "fuel": 3.562
+   },
+   "COAL_PRB": {
+    "gap_mw": 3160.0,
+    "offer": 29.39,
+    "hr_x_fuel": 27.5,
+    "vom": 4.5,
+    "rest": -2.61,
+    "hr": 12.313,
+    "fuel": 2.243
+   },
+   "COAL_BIT": {
+    "gap_mw": 936.0,
+    "offer": 29.32,
+    "hr_x_fuel": 30.32,
+    "vom": 4.5,
+    "rest": -5.5,
+    "hr": 11.875,
+    "fuel": 2.563
+   },
+   "ST_GAS": {
+    "gap_mw": 157.0,
+    "offer": 42.24,
+    "hr_x_fuel": 37.19,
+    "vom": 4.0,
+    "rest": 1.05,
+    "hr": 11.359,
+    "fuel": 3.275
+   },
+   "CC_CHP": {
+    "gap_mw": 714.0,
+    "offer": 32.51,
+    "hr_x_fuel": 30.48,
+    "vom": 2.0,
+    "rest": 0.03,
+    "hr": 8.72,
+    "fuel": 3.503
+   },
+   "CT_CHP": {
+    "gap_mw": 176.0,
+    "offer": 27.49,
+    "hr_x_fuel": 23.44,
+    "vom": 3.5,
+    "rest": 0.55,
+    "hr": 6.783,
+    "fuel": 3.459
+   },
+   "ST_CHP": {
+    "gap_mw": 124.0,
+    "offer": 29.98,
+    "hr_x_fuel": 25.64,
+    "vom": 4.33,
+    "rest": 0.0,
+    "hr": 6.7,
+    "fuel": 3.849
+   }
+  },
+  "night_floor_mw": 10284.0,
+  "night_floor_by_class": {
+   "": 7164.0,
+   "ST_GAS": 1055.0,
+   "CC_CHP": 878.0,
+   "hydro": 608.0,
+   "CT_CHP": 330.0,
+   "COAL_BIT": 122.0,
+   "ST_CHP": 69.0,
+   "COAL_PRB": 57.0
+  }
+ }
+}
