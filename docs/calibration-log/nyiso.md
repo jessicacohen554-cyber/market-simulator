@@ -15014,3 +15014,17 @@ too.
 - **Matrix:** `nyiso_firm_imports` K → R.
 - **Superseded and pruned:** `2026-09-27-nyisonext8-hq-dedupe-span` and its 2021 run.
 - **Record:** `docs/RESULT-nyiso-next9-hq-floor-2026-09-28.md`.
+
+## NYISO-NEXT-12 — 2026-09-29 — the NE AC tie on its own two-way node; keeper promoted on structure
+
+- **Lever:** `nyiso_ne_ac_node` (owner ruling Q-a, 2026-09-28: its own node, promote on structure only, never on C3a). Zero DOF. The NE row leaves the pooled ladder, the pooled Capital_Hudson envelope and the pooled hub repricing (rule 19).
+- **Launch defect fixed first:** `solve_and_persist` threaded a 6-zone demand array into a 7-zone solve. Fixed in PR #6867; the legs were relaunched at `7d238cc9`.
+- **Result:** keeper `2026-09-29-nyisonext12-neac-node-span` (2022–2025) plus the stamped `2026-09-29-nyisonext12-neac-node-2021`.
+  - G-1 exact in all five legs. G-2(a) two-way every year. G-2(b) zero-LP reconstruction PASS. G-2(c) |Δ import| ≤ 0.25 TWh. G-3 C6 / C8 PASS.
+  - C3a: 2021 −6.5 → −1.7 %, 2022 −11.3 → −10.1 %, 2023 −2.5 → −2.1 %, 2024 −0.9 → −0.9 %, 2025 −11.4 → −11.3 %. Price MAE falls every year.
+  - **New fail:** C1 2023 ST_GAS +2.7 → +3.2 pp (NYC steam units).
+  - Node net export in 2024 and 2025 exceeds measured; the node sits at its posted export bound 307–969 h/yr against 0–4 h measured.
+  - Span NOT-YET; 2021 CALIBRATED.
+- **Matrix:** `nyiso_ne_ac_node` U → K.
+- **Superseded and pruned:** `2026-09-28-nyisonext9-hq-floor-span` and its 2021 run.
+- **Record:** `docs/RESULT-nyiso-next12-ne-ac-node-2026-09-28.md`.
