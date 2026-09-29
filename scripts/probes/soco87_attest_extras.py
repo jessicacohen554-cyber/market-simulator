@@ -20,8 +20,9 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-# The incumbent keeper at soco-87 is soco85_span (the soco-83 recipe + gas_daily_shape).
-KEEPER = ROOT / "results/calibration/soco85_span/calibration_attestation.json"
+# Carried from soco85_span at soco-87 (it was the incumbent then); repointed after the soco-87
+# promotion pruned it (rule 35): the incumbent keeper is soco87_span.
+KEEPER = ROOT / "results/calibration/soco87_span/calibration_attestation.json"
 
 #: Keeper-only entries, carried by NAME PREFIX (soco83_attest_extras.CARRY + its ENTRY).
 CARRY = (

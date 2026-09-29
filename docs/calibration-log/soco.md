@@ -1949,3 +1949,13 @@ the keeper's committed hourlies, same marginal unit): C3b 2020 0.222→0.191, 20
 status flips. Admissible (rule 13 measured commodity input), zero DOF, one config for all years. Margins are thin, so a solve
 may land either side. `gas_electric_power_monthly_level` is inert for SOCO (no state-weight rows). No solve, keeper unchanged,
 NOT-YET 7/4/0/1/2. Record: docs/handoffs/r-soco/FINDING-soco-87-2026-09-29.md; probe scripts/probes/_soco87_c3b_monthly.py.
+
+OWNER RULING 2026-09-29 (soco-87 card, after FINDING-soco-87): **C3b lever: "Arm + solve 7 shards (Recommended)"** — arm
+`gas_hh_monthly_shape` on the soco-85 recipe; seven year-isolated shards; PRECOMMIT-soco-87 §7 governs the recommendation.
+
+RESULT (run 2026-09-29-soco87-gas-hh-monthly, seven year-isolated shards at e44cf620; PROMOTED on the owner's standing ruling,
+PRECOMMIT-soco-87 §7 held on all five; 2026-09-28-soco85-gas-daily-shape pruned per rule 35): soco-85 recipe + gas_hh_monthly_shape
+(measured Henry Hub monthly gas shape, zero DOF). C3b 2020 0.222->0.177, 2021 0.260->0.119, 2024 0.277->0.180 (FAIL->PASS); 2022
+0.389->0.275 still FAIL (Elliott December); no PASS->FAIL. C3a 2019 +14.0 / 2020 +14.4 / 2022 -12.7 % still FAIL; no C3a flips. C1/C2/C4/C6/C8
+no flips; unserved 0. NOT-YET, grade 7/4/0/1/2 (C3a 2019/2020/2022, C3b 2022). Record:
+docs/handoffs/r-soco/{FINDING,PRECOMMIT,RESULT}-soco-87-2026-09-29.md.
