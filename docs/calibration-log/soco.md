@@ -1935,3 +1935,27 @@ detector can see, hold 0.009 TWh; that is the class ceiling. The floor sits abov
 1.194 TWh (6.3 %), which only an outcome pin could close (rule 13). Matrix cell: I. No solve, no registration; keeper
 unchanged; NOT-YET 7/4/0/1/2. Record: docs/handoffs/r-soco/FINDING-soco-86-2026-09-28.md; probe
 scripts/probes/_soco86_layup_census.py.
+
+OWNER RULING 2026-09-28 (end of soco-86): **"C3b monthly diagnosis (Recommended)"** — a zero-LP lane decomposing the C3b
+monthly-price NRMSE misses (2020/2021/2022/2024) against the scorer's own benchmark; build nothing without a ruling.
+
+## 2026-09-29 — soco-87: C3b is a gas-SHAPE miss; `gas_hh_monthly_shape` is the lever (zero LP)
+
+The misses are shape, not level: bias explains ≤ 12 % of squared error in 2021/2022/2024. The model's monthly price is nearly
+flat because the keeper prices gas with the generic climatological `GAS_MONTHLY_SEASONALITY` (same shape every year, winter-high),
+not the measured Henry Hub monthly shape. First-order re-pricing (fleet_only mc under `gas_hh_monthly_shape=True`, applied to
+the keeper's committed hourlies, same marginal unit): C3b 2020 0.222→0.191, 2021 0.260→0.149, 2024 0.277→0.192 (FAIL→PASS);
+2022 0.389→0.284 (still FAIL; 58 % of the residual is Elliott December); passing years stay passing (2025 0.174→0.184). No C3a
+status flips. Admissible (rule 13 measured commodity input), zero DOF, one config for all years. Margins are thin, so a solve
+may land either side. `gas_electric_power_monthly_level` is inert for SOCO (no state-weight rows). No solve, keeper unchanged,
+NOT-YET 7/4/0/1/2. Record: docs/handoffs/r-soco/FINDING-soco-87-2026-09-29.md; probe scripts/probes/_soco87_c3b_monthly.py.
+
+OWNER RULING 2026-09-29 (soco-87 card, after FINDING-soco-87): **C3b lever: "Arm + solve 7 shards (Recommended)"** — arm
+`gas_hh_monthly_shape` on the soco-85 recipe; seven year-isolated shards; PRECOMMIT-soco-87 §7 governs the recommendation.
+
+RESULT (run 2026-09-29-soco87-gas-hh-monthly, seven year-isolated shards at e44cf620; PROMOTED on the owner's standing ruling,
+PRECOMMIT-soco-87 §7 held on all five; 2026-09-28-soco85-gas-daily-shape pruned per rule 35): soco-85 recipe + gas_hh_monthly_shape
+(measured Henry Hub monthly gas shape, zero DOF). C3b 2020 0.222->0.177, 2021 0.260->0.119, 2024 0.277->0.180 (FAIL->PASS); 2022
+0.389->0.275 still FAIL (Elliott December); no PASS->FAIL. C3a 2019 +14.0 / 2020 +14.4 / 2022 -12.7 % still FAIL; no C3a flips. C1/C2/C4/C6/C8
+no flips; unserved 0. NOT-YET, grade 7/4/0/1/2 (C3a 2019/2020/2022, C3b 2022). Record:
+docs/handoffs/r-soco/{FINDING,PRECOMMIT,RESULT}-soco-87-2026-09-29.md.

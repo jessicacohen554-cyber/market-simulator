@@ -3806,3 +3806,11 @@ results/calibration/nwppnext9mr_20*/
 # Provenance only (rule 33(d)), round-2 pin 11b72265: 2019 7d463322 2020 d4d5530a 2021 65720bac
 # 2022 e5cb7754 2023 68667e64 2024 24ed08be 2025 7021af9b on claude/spp100-<y>.
 results/calibration/spp100_arm_20*/
+
+# soco-87 per-year shard legs (rule 32(d) / 33(d)): composed into results/calibration/soco87_span.
+# Legs stay out of main; provenance SHAs (pinned e44cf620):
+#   2019 0e21adbb141acb6ad0121891802678af973e86b1  2020 b0dabc1399eee4cd163a9df8d56db1b9519f8a47
+#   2021 be5f09649ff0be8e22d29e8ee984c660b9f4ef01  2022 2575149bef9c5b2b7dc416638d7fab45280e04ae
+#   2023 a66ce865297b7724a039f506286d45c728026f43  2024 d27132bbd0190aef95966a9deb7b860cc3af26e0
+#   2025 ddecb398ff6f585e1398c55ee935470f1c7a5b3f
+results/calibration/soco87_20[12][0-9]/

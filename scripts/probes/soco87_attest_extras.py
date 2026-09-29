@@ -1,15 +1,16 @@
-"""SOCO-85: carry the keeper-only DOF entries forward; disclose the Henry Hub daily gas shape.
+"""SOCO-87: carry the keeper-only DOF entries forward; disclose the Henry Hub monthly gas shape.
 
-Runs LAST in the attestation chain, where ``soco83_attest_extras.py`` ran (after
+Runs LAST in the attestation chain, where ``soco85_attest_extras.py`` ran (after
 ``build_dof_ledger.py``, ``gen_soco60b_attestation.py``, ``gen_rsoco_attestation.py`` and
 ``gen_rsocob_attestation.py``). Carries soco-83's hand-added entries verbatim from the
-incumbent keeper, including soco-83's own ST_GAS out-of-merit level entry. ``gas_daily_shape``
-adds NO free parameter (a measured national daily series, mean-preserving per month), so
-``n_entries`` and ``n_residual`` are unchanged; it is recorded as a disclosure only.
+incumbent keeper (soco85_span), including soco-83's own ST_GAS out-of-merit level entry.
+``gas_hh_monthly_shape`` adds NO free parameter (a measured national monthly series,
+mean-preserving over the year), so ``n_entries`` and ``n_residual`` are unchanged; it is
+recorded as a disclosure only, beside soco-85's carried ``gas_daily_shape`` disclosure.
 
 Usage::
 
-    python3 scripts/probes/soco85_attest_extras.py --bundle results/calibration/soco87_span
+    python3 scripts/probes/soco87_attest_extras.py --bundle results/calibration/soco87_span
 """
 
 from __future__ import annotations
@@ -19,10 +20,8 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-# Repointed soco-85 (2026-09-28): soco83_span was pruned at the soco-85 promotion (rule 35);
-# the incumbent keeper is soco85_span (the soco-83 recipe + gas_daily_shape).
-# Repointed soco-87 (2026-09-29): soco85_span was pruned at the soco-87 promotion (rule 35);
-# the incumbent keeper is soco87_span (the soco-85 recipe + gas_hh_monthly_shape).
+# Carried from soco85_span at soco-87 (it was the incumbent then); repointed after the soco-87
+# promotion pruned it (rule 35): the incumbent keeper is soco87_span.
 KEEPER = ROOT / "results/calibration/soco87_span/calibration_attestation.json"
 
 #: Keeper-only entries, carried by NAME PREFIX (soco83_attest_extras.CARRY + its ENTRY).
@@ -39,11 +38,11 @@ CARRY = (
 )
 
 DISCLOSURE = (
-    "gas_daily_shape (soco-85, owner ruling 2026-09-28 'Arm + solve 7 shards'): every gas plant-month's "
-    "measured F923 delivered level carries the measured Henry Hub daily staircase / its own month's "
-    "calendar-day mean (fuel.hubs.gas_daily_shape_factors), mean-preserving per month. Zero DOF. It does "
-    "NOT carry the Southeast basis: no free daily SE hub exists 2019-2025 (FINDING-soco-85 section 4), so the "
-    "cold-snap peak gap (Elliott lambda 407 vs model ~93 $/MWh) is a stated data limitation."
+    "gas_hh_monthly_shape (soco-87, owner ruling 2026-09-29 'Arm + solve 7 shards'): the generic "
+    "climatological GAS_MONTHLY_SEASONALITY (identical every year) is replaced by the measured Henry Hub "
+    "monthly shape for the solve year, hour-weight-normalized so the annual level is unchanged "
+    "(fuel.gas_seasonal_shape). Zero DOF. It does NOT carry the Southeast daily basis (Elliott Dec-2022, "
+    "Jan-2024/2025 cold snaps) nor the 2019/2020 level offset (FINDING-soco-87 section 5)."
 )
 
 
@@ -74,10 +73,11 @@ def main() -> None:
         "soco81_two_sided_incremental_hr",
         "soco82_perunitdark_regen",
         "soco83_st_gas_oom_floor",
+        "soco85_gas_daily_shape",
     ):
         if k in kept.get("disclosures", {}):
             disc.setdefault(k, kept["disclosures"][k])
-    disc["soco85_gas_daily_shape"] = DISCLOSURE
+    disc["soco87_gas_hh_monthly_shape"] = DISCLOSURE
     path.write_text(json.dumps(att, indent=2, sort_keys=True) + "\n")
     print(f"{path}: {fp['n_entries']} entries, n_residual {fp['n_residual']}")
 

@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-29-soco87-gas-hh-monthly",
+  "label": "soco87 gas hh monthly",
+  "date": "2026-09-29",
+  "shorthand": "soco87-gas-hh-monthly",
+  "definition": "soco-87: soco-85 keeper recipe + gas_hh_monthly_shape (measured Henry Hub monthly shape)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-09-29-soco87-gas-hh-monthly.js",
+  "bundle": "results/calibration/soco87_span"
+}
