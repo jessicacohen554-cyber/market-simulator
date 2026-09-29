@@ -18059,6 +18059,22 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**SPP-103 (2026-09-29, PAIR POSTURE + PRICE FIX, DESIGN LANE, ZERO LP —
+`docs/handoffs/DESIGN-spp-103-pair-posture-price-fix-2026-09-29.md`, probe `scripts/probes/_spp103_pairing_requirement.py`;
+`spp_commitment_posture` stays R, recorded as tested-but-unpaired).**
+- **The posture moves only the body.** Arm − keeper by SPP-79 bucket: body −0.27..−0.54 $/MWh, upper tercile −0.05..+0.04.
+  The arm's body stays over-priced every year (+9..+33 % of the RT mean); its upper tercile is −25..−29 % in 2023–25. The
+  C3a 2024 break (−8.6 → −10.3 %, needs +$0.08) is SPP-79's cancellation, not a new object.
+- **A pairing fix must live in the upper tercile and be larger in 2023–25 than 2019–20.** None exists: every route in
+  SPP-80/81/81b/82/83/89 is dead or unavailable, and SPP-81's "mitigated-offer content" route is closed by SPP-81b's own
+  offer data (q90 did not rise).
+- **Missing CT outage (SPP-84 gas leg) is the only unexamined structural gap and fails the pairing**: re-clear +0.97 / +1.11
+  (2019 / 20) vs +0.47 / +3.34 (2023 / 24), 2025 unmeasured; no unit-level CEMS form; the aggregate rebase is SPP-84's
+  DO-NOT-REDO. A separate availability lane if chartered, judged on structure, never as this pairing.
+- **Do not redo** the posture alone or this screen. Re-open only on an upper-tercile driver that satisfies SPP-79.
+- **OWNER RULING (card "Record + CT outage lane")**: posture recorded tested-but-unpaired; 2019–22 misses recorded as
+  model-class limits; **SPP-104 chartered** for the missing CT_PEAKER outage, judged on structure (rules 1/14), not as a pairing.
+
 **SPP-102 (2026-09-29, CC COMMITMENT STATE — new field `spp_commitment_posture`, owner card "Build relaxed-UC engine";
 `docs/handoffs/DESIGN-spp-102-cc-commitment-state-2026-09-29.md`, `RESULT-spp-102-commitment-posture-2026-09-29.md`; cell O → R, NOT PROMOTED).**
 - Phase 0 (zero LP): hourly drivers are weak (net load / gas day / season AUC 0.55–0.70); 76–87 % of SPP's low-price CC
