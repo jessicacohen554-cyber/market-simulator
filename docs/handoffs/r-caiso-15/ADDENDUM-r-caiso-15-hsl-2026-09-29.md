@@ -122,3 +122,19 @@ carry no CAISO rows.
   battery caps; HSL, demand and frame are unchanged there. Reported at full magnitude, not a criterion.
 - **Left for the next link (recorded, not built):** #2 per-DIBA interchange lag re-scan, and its dependants #3; the
   weak/scalar gaps #4–#5; the zero-LP benchmark-rebuild seam.
+
+## 8. Shard crash and fix (2026-09-29, before any usable solve)
+
+- **Crash:** the first launch (pin `893545e3`) failed in shards 2019–2024 inside
+  `_caiso_storage_envelope_clock_repaired`. Its guard raised on any non-canonical EIA-860 vintage, and the keeper sets
+  `eia860_vintage_tracks_solve_year=true`, so every year with a `vintage_<Y>/` directory (2018–2024) hit it. The error
+  was mine (I checked `eia860_vintage_year` only). 2025 has no vintage directory and solved on the canonical snapshot.
+- **Fix:** the envelope denominator is loaded on the canonical snapshot inside a scoped switch
+  (`set_eia860_vintage(None)` then `paths.restore_eia860_dir(<solve dir>)`), exactly the committed derivation's basis.
+  The solve's own vintage is untouched. Standby admission (off in the keeper) still raises.
+- **Regression test:** `test_live_envelope_under_solve_year_vintage_matches_canonical_and_restores` reproduces the
+  crash on the old code and passes on the fix.
+- **2025 leg:** solved at `893545e3`. The only code difference to the new pin is this fix. With no vintage directory
+  for 2025 the active directory already is the canonical one, so the new path loads the same fleet: the 2025 leg is
+  valid as solved (G-DRIFT: INERT for 2025).
+- **Relaunch:** 2019–2024 at the new pin.
