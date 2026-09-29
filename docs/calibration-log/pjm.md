@@ -6795,3 +6795,12 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - **Audit (b):** the model's price floor is too high in every year. Implied heat rate at p10 is 6.9–8.4 (model) vs 4.8–5.5 (actual), so real PJM often prices below any gas unit's cost and the model does not. Plausibly the same object as (a).
 - COAL_BIT / CT_PEAKER 2021 / C3a 2019–20 remain **OPEN**. Next test: intake PJM's measured DA self-scheduled MW by fuel and year, plus marginal-fuel shares (IMM State of the Market). The offers corpus has no self-schedule flag.
 - Records: `docs/FINDING-pjm-next-11-offered-ecomax-2026-09-29.md`, `docs/RESULT-pjm-next-11-2026-09-29.md`.
+
+## PJM-NEXT-12 — 2026-09-29 — coal self-scheduling falsified; coal was the price-setter behind C3a 2019/2020 (zero LP)
+
+- No solve, no shard, keeper unchanged (`2026-09-28-pjm-next8-exitfix`).
+- **Intake:** PJM IMM SOM §3 2019–2025 → `som-competitive-conduct` (105 PJM rows: DA offer must-run shares, RT marginal-unit shares by fuel, RT LMP fuel components).
+- **Card 1:** coal must-run share of DA offered MW is 24.5 / 19.2 / 18.7 / 25.5 / 27.6 / 29.6 % (2019–24; definitions differ by vintage, 2025 not published). It is lowest in the over-run year 2021 and highest in the fit years. A must-run block is a floor, not a cap. **Falsified**, no design card.
+- **Card 2:** the coal-fuel share of RT LMP is 26 / 24 / 10 / 7 / 14 / 12 / 8 %, which discriminates C3a 2019/2020 but not the COAL_BIT over-run. Actual prices sit below 6.5 × gas in 26–45 % of hours; the model's in 0–3 %, every year.
+- OPEN: COAL_BIT, CT_PEAKER 2021, C3a 2019/2020. Next tests: coal availability vs CAMPD monthly max; production-area gas vs delivered; the model's coal-set LMP share.
+- Records: `docs/FINDING-pjm-next-12-selfsched-marginal-2026-09-29.md`, `docs/RESULT-pjm-next-12-2026-09-29.md`.
