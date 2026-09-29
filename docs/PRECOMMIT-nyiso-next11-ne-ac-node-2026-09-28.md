@@ -108,3 +108,13 @@ See §9 (appended before the pin, from the audit of every changed hunk).
 This session's own two commits are the arm (the rule-26 deletion is hash- and path-inert for NYISO: the keeper recorded `nyiso_firm_imports: false`). The delta from `08043ecf` to the pin is re-listed in the RESULT.
 
 **§9 addendum (`08043ecf` → `3aeffb33`, before the pin).** 7 files, R-CAISO-13's `caiso_eia930_clock_repair` (default off, a new field absent from the keeper recipe): the runner arms it only on `iso == "CAISO"`; `frames._repair_clock_late_windows` returns its input unchanged unless armed **and** `ba_code == "CISO"`; `demand._repair_supply_consistent_clock` is reached only when armed; `EIA930_CISO_CLOCK_LATE_WINDOWS_UTC` is read only there. **INERT for NYISO.**
+
+**§9 addendum 2 (NYISO-NEXT-12, before launch; pin `4ba64817` → `origin/main` `332c8048`).** 7 backcast-path commits, 12 files. The shards stay pinned at `4ba64817beb037bb58839c7a35c6913d123e0c30`; this records that nothing newer on `main` would have changed a NYISO solve. **Every hunk INERT for NYISO.**
+
+| commit | hunks | why inert |
+|---|---|---|
+| PJM-NEXT-8 `e9fc1a5e` | `unit_outage_exit_cohort_repair` (default off): `outages.py` dated exit-bin shares, `resolved_inputs.py` block key | new field, absent from both keeper recipes; every branch reached only when armed |
+| SPP-99 `e6845774` | `campd_fuel_split_selector` returns `PLAIN_SPLIT_REMAP_TAG` when `campd_split_remap_companions` is armed without the fuel split | flag absent from the recipe, so the selector is not reached; `resolved_inputs` guard differs only for the new tag |
+| NWPP-NEXT-8 `43b52817`, `fbc89ab9` | `coal_fuel_inventory_monthly_pile` (default off): `coal_fuel_inventory.py`, `arrays.py`, `rows.py` cumulative-month operator | recipe has `coal_fuel_inventory: false` and `coal_fuel_inventory_take_floor: false`; `rows.py` changes apply only inside the coal-yard block and reduce to the prior one-month form when `n_cp_months == 1`; take floor is `COAL_TAKE_FLOOR_ISOS`-gated |
+| SPP-100 `2ff9c9ae` | `chp_steam_floor_conduct_scope` (default off) + `CHP_STEAM_ALLHOURS_MIN_ON_FRAC` | `assembly.py` branch reached only when armed; the new constant enters the solve-surface fingerprint at its frozen declaration (key-inert) |
+| `forecast_parity_registry.py` | parity declarations | forecast tooling, not on the solve path |
