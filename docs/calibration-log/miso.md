@@ -15367,3 +15367,5 @@ floor (`miso_gas_ecomin_online_floor`, default off; measured plant-basis min-loa
 
 No frontier: the full span is NOT-YET on the three routed misses.
 `docs/FINDING-miso286-ecomin-precheck-killed-2026-09-29.md`.
+
+Owner ruling: "P1 vs P0 residual (Recommended)". Next: miso-287, zero-LP phase 0 on the 2022/2025 P1-over-P0 night residual.

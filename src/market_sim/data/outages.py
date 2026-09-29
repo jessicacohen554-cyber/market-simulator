@@ -1546,8 +1546,16 @@ def unit_outage_derate_factors(
     exit_cohort_repair: bool = False,
     dated_bin_shares: tuple | None = None,
     split_remap: bool = False,
+    exit_ym_from_eia860: bool = False,
 ) -> dict[tuple, np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
+
+    ``exit_ym_from_eia860`` (NWPP-NEXT-10,
+    ``ScenarioConfig.unit_outage_exit_ym_from_eia860``): the SAME dated-bin
+    routing as ``exit_cohort_repair``, on whatever extract the other flags
+    select, with each row's ``exit_ym`` stamped at load from EIA-860's own
+    per-unit retirement month (:func:`stamp_exit_ym_from_eia860`) instead of
+    read from the re-derived companion. Requires ``dated_bin_shares``.
 
     ``exit_cohort_repair`` / ``dated_bin_shares`` (PJM-NEXT-8,
     ``ScenarioConfig.unit_outage_exit_cohort_repair``): select the exit-fix
@@ -1619,6 +1627,12 @@ def unit_outage_derate_factors(
         # basis index, so the index keeps its unfiltered-extract contract.
         df = clip_precod_unit_windows(df)
     df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]
+    if exit_ym_from_eia860 and dated_bin_shares is not None:
+        # NWPP-NEXT-10 (rule 19 [R-ONE-MECH]): a retired unit's rows derate its
+        # OWN dated exit bin (whose post-exit hours the exit already zeroes),
+        # and its surviving siblings' rows the undated remainder.
+        df = stamp_exit_ym_from_eia860(df, dated_bin_shares)
+        dated_bin_shares = routable_dated_shares(df, dated_bin_shares, year, hours)
     return _unit_outage_factors_from_events(
         df,
         year,
@@ -1637,8 +1651,146 @@ def unit_outage_derate_factors(
         ),
         mid_vintage_exit_carry=mid_vintage_exit_carry,
         lp_bin_capacity=lp_bin_capacity,
-        dated_bin_shares=dated_bin_shares if exit_cohort_repair else None,
+        dated_bin_shares=(
+            dated_bin_shares if (exit_cohort_repair or exit_ym_from_eia860) else None
+        ),
     )
+
+
+def _eia860_unit_exit_ym(eia860_dir: str) -> dict[tuple[int, str], tuple[int, int]]:
+    """``{(plant_code, generator_id): (retirement_year, retirement_month)}``.
+
+    Read from the EIA-860 "Retired and Canceled" generator sheet of
+    ``eia860_dir`` (raw headers, :data:`_PARTIAL_EXIT_COLUMN_MAP`'s names),
+    falling back to the canonical :data:`EIA_860_DIR` when the directory ships
+    none (a year-matched native vintage past 2022 carries no such sheet). Rows
+    without an actual retirement year and month are skipped.
+    """
+    from market_sim.config.paths import EIA_860_DIR
+    from market_sim.data.fleet.eia860 import (
+        _PARTIAL_EXIT_COLUMN_MAP,
+        _RETIRED_CANCELED_PARQUET_NAME,
+    )
+
+    path = Path(eia860_dir) / _RETIRED_CANCELED_PARQUET_NAME
+    if not path.exists():
+        path = Path(EIA_860_DIR) / _RETIRED_CANCELED_PARQUET_NAME
+    if not path.exists():
+        return {}
+    raw = pd.read_parquet(path)
+    want = {
+        "Plant Code": "p",
+        "Generator ID": "g",
+        "Retirement Year": "ry",
+        "Retirement Month": "rm",
+    }
+    assert set(want) <= set(_PARTIAL_EXIT_COLUMN_MAP)
+    if not set(want) <= set(raw.columns):
+        return {}
+    d = raw[list(want)].rename(columns=want)
+    for c in ("p", "ry", "rm"):
+        d[c] = pd.to_numeric(d[c], errors="coerce")
+    d = d.dropna(subset=["p", "ry", "rm"])
+    return {
+        (int(r.p), str(r.g).strip().upper()): (int(r.ry), int(r.rm))
+        for r in d.itertuples(index=False)
+        if 1 <= int(r.rm) <= 12
+    }
+
+
+def stamp_exit_ym_from_eia860(
+    df: pd.DataFrame, dated_bin_shares: tuple, eia860_dir: str | None = None
+) -> pd.DataFrame:
+    """Stamp each outage row's ``exit_ym`` from EIA-860 (NWPP-NEXT-10).
+
+    ``ScenarioConfig.unit_outage_exit_ym_from_eia860`` (GATED, default off).
+    Where ``mid_vintage_exit_carry`` splits a plant into dated exit bins, the
+    exit already zeroes a retired unit's capacity after its retirement month,
+    and the CAMPD deriver books the same unit's post-retirement darkness as an
+    outage window. Without the dated key that window derates the plant's
+    SURVIVING bin (rule 19 [R-ONE-MECH]: the exit is removed twice, the second
+    time from units that did run), and the survivors' own windows divide by a
+    denominator that still counts the retiree. Measured case, NWPP 2020:
+    Colstrip (6076) units 1-2 (438 MW, retired 2020-01) carry windows
+    2020-01-02..12-31, which left units 3-4's 1,480 MW bin 5.86 TWh of
+    availability against the plant's own EIA-923 net generation of 7.94 TWh.
+
+    A row is stamped ``"YYYY-MM"`` iff its ``(facility_id, unit_id)`` carries an
+    actual retirement in EIA-860 (:func:`_eia860_unit_exit_ym`) AND that
+    year-month is one of its facility's dated exit bins in
+    ``dated_bin_shares`` — so a stamp can only name a bin the fleet actually
+    carries; every other row stays unstamped and derates the undated
+    remainder exactly as PJM-NEXT-8's accumulator does. ZERO free parameters
+    (rule 21): EIA's retirement month and the fleet's own dated bins.
+    Regenerates for any year with a CAMPD filing and an EIA-860 record (rule
+    13); backcast-only, as the overlay is. A frame that already carries
+    ``exit_ym`` (the PJM-NEXT-8 companion) is returned unchanged.
+    """
+    from market_sim.config.paths import active_eia860_dir
+
+    if df is None or df.empty or "exit_ym" in df.columns:
+        return df
+    tags: dict[int, set[tuple[int, int]]] = {}
+    for (plant, _group), shares in dated_bin_shares:
+        for ry, rm, _share in shares:
+            tags.setdefault(int(plant), set()).add((int(ry), int(rm)))
+    exits = _eia860_unit_exit_ym(
+        str(active_eia860_dir() if eia860_dir is None else eia860_dir)
+    )
+    out = df.copy()
+    stamps: list[object] = []
+    n = 0
+    for r in out.itertuples(index=False):
+        fid = int(r.facility_id)
+        ym = exits.get((fid, str(r.unit_id).strip().upper()))
+        if ym is not None and ym in tags.get(fid, ()):
+            stamps.append(f"{ym[0]:04d}-{ym[1]:02d}")
+            n += 1
+        else:
+            stamps.append(None)
+    out["exit_ym"] = stamps
+    if n:
+        logger.info(
+            "unit-outage exit_ym from EIA-860: %d row(s) stamped with a dated exit bin",
+            n,
+        )
+    return out
+
+
+def routable_dated_shares(
+    df: pd.DataFrame, dated_bin_shares: tuple | None, year: int, hours: int
+) -> tuple | None:
+    """Restrict ``dated_bin_shares`` to plants with a stamped row in ``year``.
+
+    NWPP-NEXT-10. Under PJM-NEXT-8's accumulator a dated tranche reads ONLY its
+    own dated key, so at a plant whose retiring units' rows were never stamped
+    (their CAMPD ids do not match EIA-860's generator ids — Centralia 3845's
+    ``BW21`` / ``BW22`` against generators ``1`` / ``2``) the dated bin would
+    silently lose every real window. Routing is therefore activated plant by
+    plant, only where at least one stamped row's window overlaps the solved
+    year on the model clock; every other plant keeps the incumbent plant-key
+    derate byte-for-byte. The fleet side applies the matching restriction from
+    the returned factors (``data/fleet/arrays.py``). ``None`` when no plant
+    qualifies.
+    """
+    if dated_bin_shares is None or df is None or "exit_ym" not in df.columns:
+        return None
+    has_hours = _has_hour_grain(df)
+    live: set[int] = set()
+    for r in df.itertuples(index=False):
+        if _parse_exit_ym(getattr(r, "exit_ym", None)) is None:
+            continue
+        w_start, w_stop = unit_outage_event_window(r, has_hours)
+        if outage_hour_mask(w_start, w_stop, year, hours).any():
+            live.add(int(r.facility_id))
+    out = tuple(e for e in dated_bin_shares if int(e[0][0]) in live)
+    if out:
+        logger.info(
+            "unit-outage exit_ym routing live (year %d): plants %s",
+            int(year),
+            sorted(live),
+        )
+    return out or None
 
 
 def _parse_exit_ym(value: object) -> tuple[int, int] | None:

@@ -1047,6 +1047,127 @@ def caiso_storage_as_soc_min(
     return soc_min
 
 
+# Hours per month of a non-leap 8760 model year, as
+# scripts/derive_caiso_storage_shape.py builds the envelope denominator.
+_STORAGE_ENVELOPE_DAYS_IN_MONTH: tuple[int, ...] = (
+    31,
+    28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31,
+)
+_STORAGE_ENVELOPE_QUANTILE: float = 0.95  # the committed envelope's p95 column
+
+
+def _caiso_storage_envelope_clock_repaired(
+    year: int,
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Re-derive one envelope year's p95 caps on the clock-repaired source.
+
+    ``caiso_eia930_clock_repair`` (completed R-CAISO-15) applied to the offline
+    battery envelope: ``scripts/derive_caiso_storage_shape.py`` built
+    ``caiso-storage-shape-envelope.csv`` from the raw EIA-930 CISO extract's
+    ``NG: OTH``, which EIA published one hour late inside
+    :data:`~market_sim.config.constants.EIA930_CISO_CLOCK_LATE_WINDOWS_UTC`
+    ``["generation"]``. This runs the derive script's own construction
+    (Local date / Hour order, NaN -> 0, the canonical EIA-860 battery fleet by
+    month, per-hour-of-day p95) on the extract after the frame seam's repair
+    (:func:`~market_sim.data.eia930.frames._repair_clock_late_windows`), so the
+    only difference from the committed row is the source clock. Precondition,
+    measured and pinned by test: run on the UNREPAIRED extract it reproduces the
+    committed p95 columns exactly (4 dp) for 2023-2025.
+
+    Rule 14 source repair; zero parameters; the committed CSV is never modified
+    (rule 23). Returns ``None`` unless the repair is armed and ``year``'s local
+    stamps reach the window. Raises if a non-canonical EIA-860 vintage is active
+    (the denominator would then differ from the committed derivation's).
+    """
+    from market_sim.data.eia930.frames import (
+        _eia_hourly_path,
+        _repair_clock_late_windows,
+        caiso_eia930_clock_repair_active,
+    )
+
+    if not caiso_eia930_clock_repair_active():
+        return None
+    from market_sim.config.constants import EIA930_CISO_CLOCK_LATE_WINDOWS_UTC
+    from market_sim.config.paths import (
+        active_eia860_dir,
+        eia860_standby_admitted,
+        restore_eia860_dir,
+        set_eia860_vintage,
+    )
+
+    first, last = (
+        pd.Timestamp(t) for t in EIA930_CISO_CLOCK_LATE_WINDOWS_UTC["generation"]
+    )
+    year_lo = pd.Timestamp(year=year, month=1, day=1, hour=7)
+    year_hi = pd.Timestamp(year=year + 1, month=1, day=1, hour=9)
+    if year_hi < first - pd.Timedelta(hours=1) or year_lo > last:
+        return None
+    if eia860_standby_admitted():
+        raise RuntimeError(
+            "caiso_eia930_clock_repair: the battery envelope is re-derived on the "
+            "committed derivation's OP-only fleet; standby admission is armed"
+        )
+    raw = pd.read_parquet(
+        _eia_hourly_path("CISO"), columns=["UTC time", "Local date", "Hour", "NG: OTH"]
+    )
+    d = _repair_clock_late_windows(raw, "CISO")
+    local = pd.to_datetime(d["Local date"])
+    d = d.assign(**{"Local date": local})
+    dy = d[local.dt.year == year].sort_values(["Local date", "Hour"])
+    net = np.nan_to_num(dy["NG: OTH"].to_numpy(dtype=float))
+    from market_sim.config.constants import HOURS_PER_YEAR
+
+    hours = HOURS_PER_YEAR
+    net = net[:hours] if len(net) >= hours else np.pad(net, (0, hours - len(net)))
+
+    cfg = ScenarioConfig(mode="backcast", storage_vintage_ramp=True)
+    # The committed derivation's denominator is the CANONICAL snapshot
+    # (``set_eia860_vintage(None)``), whatever vintage this solve reads
+    # (the CAISO keeper tracks the solve year). Switch for this one load and
+    # restore the solve's directory, so no later loader sees a different one.
+    solve_dir = active_eia860_dir()
+    set_eia860_vintage(None)
+    try:
+        storage_units = load_eia860_storage("CAISO", year, cfg)
+    finally:
+        restore_eia860_dir(solve_dir)
+    fleet = np.zeros(12)
+    for u in storage_units:
+        if u.tech_name == "pumped_storage":
+            continue
+        fleet += np.array(
+            u.monthly_power_mw
+            if u.monthly_power_mw is not None
+            else [u.power_cap_mw] * 12,
+            dtype=float,
+        )
+    month_of_hour = np.repeat(
+        np.arange(12), np.array(_STORAGE_ENVELOPE_DAYS_IN_MONTH) * 24
+    )[:hours]
+    fleet_h = fleet[month_of_hour]
+    chg_rate = np.clip(-net, 0.0, None) / fleet_h
+    dis_rate = np.clip(net, 0.0, None) / fleet_h
+    hod = np.arange(hours) % 24
+    q = _STORAGE_ENVELOPE_QUANTILE
+    chg = np.array(
+        [round(float(np.quantile(chg_rate[hod == h], q)), 4) for h in range(24)]
+    )
+    dis = np.array(
+        [round(float(np.quantile(dis_rate[hod == h], q)), 4) for h in range(24)]
+    )
+    return chg, dis
+
+
 def caiso_storage_shape_caps(
     power_cap: np.ndarray,
     units: list["StorageUnit"],
@@ -1092,6 +1213,9 @@ def caiso_storage_shape_caps(
     ey = env[env["year"] == use_year].sort_values("hod")
     chg_frac = ey["chg_frac_p95"].to_numpy(dtype=float)  # (24,)
     dis_frac = ey["dis_frac_p95"].to_numpy(dtype=float)
+    repaired = _caiso_storage_envelope_clock_repaired(int(use_year))
+    if repaired is not None:
+        chg_frac, dis_frac = repaired
     hod = np.arange(hours) % 24
 
     pc = np.asarray(power_cap, dtype=float)

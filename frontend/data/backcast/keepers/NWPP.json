@@ -1,5 +1,5 @@
 {
  "iso": "NWPP",
- "keeper": "2026-09-28-nwppnext8-coal-monthly-pile",
- "note": "NWPP keeper #15 (NWPP-NEXT-8): keeper #14 + monthly cumulative grain of the per-coal-yard pile identity (take floor and ceiling at every month-end, flat ratable receipts; owner decision cards 2026-09-28)"
+ "keeper": "2026-09-29-nwppnext10-exit-month-routing",
+ "note": "NWPP keeper #16 (NWPP-NEXT-10): keeper #15 + EIA-860 exit-month routing of the CAMPD outage layer (unit_outage_exit_ym_from_eia860; retired Colstrip 1-2's post-exit darkness no longer derates units 3-4; owner decision card 2026-09-29 'Promote on structure')"
 }
