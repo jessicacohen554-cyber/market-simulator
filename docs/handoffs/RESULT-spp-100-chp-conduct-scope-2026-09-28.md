@@ -80,3 +80,19 @@ not touched here.
   sidecar and its run payload. **Promotion costs zero re-solves.**
 - **Not on `main`:** the per-year legs (gitignored). The SHAs above are provenance, not a recovery route.
 - **Year set:** SPP's registered years are 2019–2025, all on `spp-99`. `spp-100` covers all seven.
+
+## 7. Owner ruling and promotion (rule 35)
+
+**Owner decision card, 2026-09-29: "Promote (Recommended)".** Executed in this session, in order:
+
+1. **Year set enumerated before the delete:** SPP's registered years were 2019–2025 (all on `spp-99`). The incoming
+   keeper covers all seven.
+2. **Promoted:** `keepers/SPP.json` (keeper, gates, note, both tiers of `config_partition`, `repointed_spp100`,
+   `keeper_at_promotion_spp100`), `calibration-complete.json` `complete.SPP`, and the SPP gate-(a) row in
+   `frontend/data/forecast/program-status.json` re-keyed. `status/SPP.js` rebuilt.
+3. **Verified:** `audit_keepers.py --iso SPP` E1 passes (only E13 failed before the prune). `check_promotion_completeness.py
+   --iso SPP` OK. FR-22 parity for SPP: 51 armed, 51 wired, 0 gaps.
+4. **Pruned:** `prune_iso_runs.py --iso SPP --force-uncite` removed `2026-09-28-spp-99-remap-rederive` (sidecar, payload,
+   bundle `spp99_remap_span`). Git history and this doc chain are the record. `audit_keepers` E13 then passes.
+5. **Matrix:** `chp_steam_floor_conduct_scope` O → **K**. The SPP shard's keeper stamp and the §5.7 header were
+   re-stamped.
