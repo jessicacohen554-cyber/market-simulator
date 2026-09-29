@@ -175,6 +175,54 @@ def ercot_zonal_gas_basis_by_zone(
     return {str(r.zone): float(r.basis_vs_hh_usd_mmbtu) for r in sub.itertuples()}
 
 
+# R-ERCOT-17 pooled South-Texas basis (``ScenarioConfig.ercot_south_texas_pooled_basis``,
+# owner ruling 2026-09-29 "Pool South Texas"). The table's South row is the
+# Sch5 quantity-weighted price of three small reporters (3630, 3631, 59391;
+# 5-35M MMBtu/yr) and prices ~4.3 GW of South gas, incl. merchant CCs that report
+# no receipts — in 2020 plant 59391 alone drives it to +3.53 over HH against
+# South_Central's +0.64 on 151M MMBtu. The pooled row is the SAME estimator over
+# the union of both zones' reporters (scripts/data/derive_ercot_zonal_gas_hub.py
+# ``--pooled-south-texas``), stored under its own zone label so the member rows
+# are never modified; the zone label is the derive's own constant.
+ERCOT_SOUTH_TEXAS_POOLED_ROW: str = "South_Texas_Pooled"
+_ERCOT_SOUTH_TEXAS_POOLED_MEMBERS: tuple[str, ...] = ("South_Central", "South")
+
+
+def pool_ercot_south_texas_basis(
+    basis: dict[str, float], year: int
+) -> dict[str, float]:
+    """Return ``basis`` with South and South_Central both on the pooled row.
+
+    Fail-closed: a year with no ``South_Texas_Pooled`` row (a forward year, or a
+    year not yet derived) returns ``basis`` unchanged, so the flag can never
+    silently price South Texas off a guessed value. Pure: never mutates its
+    input. Group membership for the EP reference is unaffected, because both
+    member rows keep their own EIA-923 ``source`` provenance.
+    """
+    pooled = basis.get(ERCOT_SOUTH_TEXAS_POOLED_ROW)
+    if pooled is None:
+        logger.info(
+            "ERCOT pooled South-Texas basis (%d): no %s row; South/South_Central "
+            "rows used as-is",
+            year,
+            ERCOT_SOUTH_TEXAS_POOLED_ROW,
+        )
+        return basis
+    out = dict(basis)
+    for zone in _ERCOT_SOUTH_TEXAS_POOLED_MEMBERS:
+        if zone in out:
+            out[zone] = float(pooled)
+    logger.info(
+        "ERCOT pooled South-Texas basis (%d): South %+.2f / South_Central %+.2f "
+        "-> pooled %+.2f $/MMBtu",
+        year,
+        basis.get("South", float("nan")),
+        basis.get("South_Central", float("nan")),
+        float(pooled),
+    )
+    return out
+
+
 # Provenance markers in ``ERCOT_ZONAL_GAS_HUB_PATH``'s own ``source`` column that
 # identify a row as an EIA-923 Schedule-5 MEASURED delivered price (as opposed to
 # a cited hub-vs-hub convention). ``proxy->North`` is Northeast, which carries
@@ -664,6 +712,10 @@ def apply_ercot_zonal_gas_basis(
     plant-monthly overwrite and before :func:`apply_dual_fuel_pricing`, so oil
     parity still caps any winter spike.
 
+    When ``config.ercot_south_texas_pooled_basis`` is set (R-ERCOT-17, default
+    off), South and South_Central both read the pooled South-Texas Sch5 row
+    (:func:`pool_ercot_south_texas_basis`) before anything else below.
+
     When ``config.ercot_zonal_spread_ep_referenced`` is set (ercot-255,
     default off), the EIA-923-sourced rows are first shifted by ``-ep_basis`` so
     they are referenced to the same statewide series the level term carries,
@@ -687,6 +739,12 @@ def apply_ercot_zonal_gas_basis(
     basis = ercot_zonal_gas_basis_by_zone(year, path)
     if basis is None:
         return
+    # R-ERCOT-17 (config.ercot_south_texas_pooled_basis, default off): South and
+    # South_Central both read the one pooled South-Texas Sch5 row. Applied to
+    # the raw vector BEFORE the EP reference and the recentring, so every later
+    # step composes with it exactly as with the unpooled rows.
+    if getattr(config, "ercot_south_texas_pooled_basis", False):
+        basis = pool_ercot_south_texas_basis(basis, year)
     from market_sim.config.iso_configs import get_iso_config
 
     zone_names = get_iso_config(config.iso).zone_names

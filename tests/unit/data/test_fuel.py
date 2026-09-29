@@ -3497,6 +3497,114 @@ def test_ercot_zonal_spread_ep_referenced_is_inert_for_a_forward_year():
     np.testing.assert_array_equal(out, base)
 
 
+def test_pool_ercot_south_texas_basis_trivial_dict():
+    """Trivial case first: both member zones read the pooled row, nothing else moves."""
+    from market_sim.data.fuel import pool_ercot_south_texas_basis
+
+    raw = {"North": 0.1, "South": 3.5, "South_Central": 0.6, "South_Texas_Pooled": 0.7}
+    out = pool_ercot_south_texas_basis(raw, 2020)
+    assert out["South"] == out["South_Central"] == 0.7
+    assert out["North"] == 0.1
+    assert raw["South"] == 3.5  # pure: the input is never mutated
+    # Fail-closed: no pooled row -> the member rows are returned untouched.
+    no_pool = {"North": 0.1, "South": 3.5, "South_Central": 0.6}
+    assert pool_ercot_south_texas_basis(no_pool, 2035) == no_pool
+
+
+def test_ercot_south_texas_pooled_row_is_a_weighted_mean_of_its_members():
+    """Every backcast year carries a pooled row inside its members' range.
+
+    The pooled row is the Sch5 qty-weighted price over the union of the South
+    and South_Central reporters, so it must lie between the two member rows
+    (up to the ~$0.05 final-vs-revision vintage noise the derive tolerates).
+    """
+    from market_sim.data.fuel import ercot_zonal_gas_basis_by_zone
+
+    for year in range(2019, 2026):
+        basis = ercot_zonal_gas_basis_by_zone(year)
+        assert basis is not None and "South_Texas_Pooled" in basis, year
+        lo = min(basis["South"], basis["South_Central"]) - 0.05
+        hi = max(basis["South"], basis["South_Central"]) + 0.05
+        assert lo <= basis["South_Texas_Pooled"] <= hi, year
+
+
+def test_ercot_south_texas_pooled_basis_is_byte_identical_when_off():
+    """Default-off is byte-identical to an explicit False."""
+    from market_sim.data.fuel import apply_ercot_zonal_gas_basis
+
+    hours = 24
+    fleet = _ercot_mixed_provenance_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.72)
+    cfg = ScenarioConfig(iso="ERCOT", hours=hours, ercot_zonal_gas_basis=True)
+    assert cfg.ercot_south_texas_pooled_basis is False
+    default = base.copy()
+    apply_ercot_zonal_gas_basis(default, fleet, cfg, 2020)
+    explicit_off = base.copy()
+    apply_ercot_zonal_gas_basis(
+        explicit_off,
+        fleet,
+        cfg.with_overrides(ercot_south_texas_pooled_basis=False),
+        2020,
+    )
+    np.testing.assert_array_equal(default, explicit_off)
+
+
+@pytest.mark.parametrize("ep_referenced", [False, True])
+def test_ercot_south_texas_pooled_basis_moves_only_the_south_texas_differential(
+    ep_referenced,
+):
+    """Armed, South_Central's differential to North moves by (pooled - raw SC).
+
+    North vs Houston is untouched: the pool changes one zone's row, and the
+    recentring then shifts every unit by the same constant. Holds with and
+    without the EP reference (both member rows stay in the F923 group).
+    """
+    from market_sim.data.fuel import (
+        apply_ercot_zonal_gas_basis,
+        ercot_zonal_gas_basis_by_zone,
+    )
+
+    hours = 24
+    fleet = _ercot_mixed_provenance_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.72)
+    cfg = ScenarioConfig(
+        iso="ERCOT",
+        hours=hours,
+        ercot_zonal_gas_basis=True,
+        ercot_zonal_spread_ep_referenced=ep_referenced,
+    )
+    raw = ercot_zonal_gas_basis_by_zone(2020)
+    control = base.copy()
+    apply_ercot_zonal_gas_basis(control, fleet, cfg, 2020)
+    arm = base.copy()
+    apply_ercot_zonal_gas_basis(
+        arm, fleet, cfg.with_overrides(ercot_south_texas_pooled_basis=True), 2020
+    )
+    # rows: 0 North, 1 South_Central, 2 Houston.
+    moved = (arm[1, 0] - arm[0, 0]) - (control[1, 0] - control[0, 0])
+    assert moved == pytest.approx(raw["South_Texas_Pooled"] - raw["South_Central"])
+    assert (arm[0, 0] - arm[2, 0]) == pytest.approx(
+        control[0, 0] - control[2, 0], abs=1e-12
+    )
+
+
+def test_ercot_south_texas_pooled_basis_is_inert_for_a_forward_year():
+    """No table rows for a forward year -> byte-identical, forecasts never move."""
+    from market_sim.data.fuel import apply_ercot_zonal_gas_basis
+
+    hours = 24
+    fleet = _ercot_mixed_provenance_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.72)
+    cfg = ScenarioConfig(iso="ERCOT", hours=hours, ercot_zonal_gas_basis=True)
+    control = base.copy()
+    apply_ercot_zonal_gas_basis(control, fleet, cfg, 2035)
+    arm = base.copy()
+    apply_ercot_zonal_gas_basis(
+        arm, fleet, cfg.with_overrides(ercot_south_texas_pooled_basis=True), 2035
+    )
+    np.testing.assert_array_equal(arm, control)
+
+
 def test_nyiso_total_east_cutset_ttc_replaces_central_east():
     """nyiso-224: armed, the link takes the TOTAL EAST cutset envelope, not CENT EAST.
 
