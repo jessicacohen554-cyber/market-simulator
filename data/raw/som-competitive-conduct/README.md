@@ -232,6 +232,28 @@ The only same-definition adjacent pair is 2020/2021 (coal must-run 19.2 % /
 18.7 %). Consumer: `scripts/probes/_pjmnext12_selfsched_marginal.py` /
 `docs/FINDING-pjm-next-12-selfsched-marginal-2026-09-29.md`.
 
+- **Monthly Platts spot fuel prices, DIGITIZED** (added 2026-09-29, lane
+  PJM-NEXT-13; `metric = spot_price_digitized_usd_per_mmbtu`, `period =
+  month_01` … `month_12` plus `annual` = mean of the 12 points; segments
+  `east_gas` / `west_gas` / `production_gas` / `napp_coal` / `capp_coal` /
+  `prb_coal`; 2019–2025). The IMM prints these only as the figure "Spot average
+  fuel price comparison" (2025 SOM §3, PDF p.81). The chart is VECTOR, so each
+  monthly point is read exactly from the PDF drawing paths by
+  `scripts/data/digitize_pjm_som_spot_fuel.py` — not a raster estimate. IMM
+  definitions (footnote under the figure): *East gas* = mean of TETCO M3,
+  Transco Z6 non-NY, Transco Z6 NY, Transco Z5 daily indices; *West gas* =
+  Columbia Appalachia + Chicago Citygate; *Production gas* = Dominion South
+  Point + Tennessee Zone 4 + Transco Leidy Line receipts; coal = Platts NAPP /
+  CAPP / PRB. All Platts. **Verification** (both must hold, both do):
+  (i) the report's own printed year-over-year changes — 2024 SOM: east +6.0 %
+  (digitized +5.9 %), west −3.4 % (−3.4 %), NAPP −16.1 % (−16.1 %), CAPP −9.9 %
+  (−9.9 %), PRB −3.9 % (−4.2 %); 2025 SOM: east +77.0 % (+77.1 %), west +57.1 %
+  (+57.0 %); (ii) the 2024 SOM's figure re-digitized over the same 2019–2024
+  months differs from the 2025 figure by ≤ $0.008/MMBtu (468 points).
+  Licensing: Platts-derived values as republished by the IMM in a public report;
+  only the 2019–2025 monthly means are transcribed, with page citation, as for
+  every other row here (`docs/data-licensing.md`).
+
 DATA NEEDED (PJM): a unit-level or fuel-level self-schedule MWh series
 (not only offered-MW shares). PJM DataMiner2 carries none that this lane
 found; the IMM publishes only the offered-MW shares above.
