@@ -9,6 +9,8 @@
 | `scripts/probes/_pjmnext11_offered_ecomax.py` | `results/calibration/_pjmnext11_offered_ecomax.json` | 1 |
 | `scripts/probes/_pjmnext11_ecomax_bound.py` | `results/calibration/_pjmnext11_ecomax_bound.json` | 1 |
 | `scripts/probes/_pjmnext11_c3_compression.py` | `results/calibration/_pjmnext11_c3_compression.json` | 3 |
+| `scripts/probes/_pjmnext11_margin_audit.py` | `results/calibration/_pjmnext11_margin_audit.json` | audit (a) |
+| `scripts/probes/_pjmnext11_bulk_price.py` | `results/calibration/_pjmnext11_bulk_price.json` | audit (b) |
 
 The LONG_RUN segment is the committed mid-curve surface's own segmentation, **imported** from `derive_pjm_offer_midcurve.py` (`_unit_physics` + `_segments`, own-year medians). Nothing was re-derived and the committed surface is untouched (rule 23).
 
@@ -78,12 +80,52 @@ Model = keeper P1 system price, load-weighted per hour. Actual = PJM RT (the C3a
 - **2019/2020 are NOT compression.** Their miss is a bulk-level excess (median +18 % / +26 %) with little top tail to offset it.
 - **The bulk excess is present in EVERY year** (median ratio 1.12–1.26). C3a passes in 2021 and 2023–25 **by cancellation** against the missing top tail. The training-span C3a pass is therefore not evidence that the price level is right. Stated at full magnitude.
 
-## 4. Verdict
+## 4. Audit (a) — the over-run is RESPONSE, not price (owner card: *"Do both audits here"*)
+
+Per bench COAL_BIT plant-hour: loading = MW ÷ the plant's CAMPD p99 net output, the same denominator on both sides. Model hours are binned by the keeper's own zonal P1 price, actual hours by the zone's PJM DA hub. The energy gap then splits exactly into **response** (more MW at the same price) + **price** (model hours sitting in dearer bins):
+
+| year | gap (TWh) | **response** | price | median price model / actual |
+|---|---|---|---|---|
+| 2019 | +18.76 | **+17.87** | +0.89 | 26.9 / 24.6 |
+| 2020 | +12.16 | +6.57 | **+5.59** | 22.9 / 19.2 |
+| 2021 | +15.66 | **+11.78** | +3.88 | 35.1 / 32.1 |
+| 2022 | +7.61 | **+10.17** | −2.56 | 61.6 / 61.3 |
+| 2023 | −0.11 | +1.67 | −1.79 | 30.2 / 29.0 |
+| 2024 | −0.07 | +2.80 | −2.86 | 27.6 / 27.5 |
+| 2025 | +13.71 | **+15.13** | −1.42 | 38.4 / 39.1 |
+
+Loading by price bin shows why:
+- **Real PJM coal is much flatter in price.** Across $15–60/MWh it loads at 0.36–0.50 of p99 in 2020–2025, rising only above ~$80. 2019 is the exception: it rises from 0.39 to 0.66 by $55, but still less steeply than the model (0.34 → 0.83).
+- **The model's coal is steep:** 0.3–0.4 at $15–25, rising to 0.6–0.9 at $40–80.
+- 2023/24 prices sit where the two curves cross, so those years fit. In 2019 (cheap coal) and 2021/2022/2025 (more hours at $35–80), the model loads coal up its offer stack and real coal does not.
+
+**PJM's own offers do not explain the flat curve either.** Their curves read at the actual price imply loading rising with price, the same way the model's does (§1, `D/E`). So the flat actual response is not produced by the offered MW (§1) or by the offered price. Something non-price holds real coal output at intermediate load. The candidate that fits a flat, price-insensitive curve is **DA self-scheduling** (fixed-MW, price-taking blocks), which the PJM IMM reports by fuel in its State of the Market. The offers corpus carries **no self-schedule flag**, so it cannot be tested from data in the repo. **OPEN**, next test named in §6.
+
+## 5. Audit (b) — the bulk price excess is a too-high price FLOOR, the same object seen from the price side
+
+Both prices are divided by the same daily delivered gas series (HH + PJM basis), giving an implied heat rate (MMBtu/MWh):
+
+| year | model p10 / p50 / p90 | actual p10 / p50 / p90 |
+|---|---|---|
+| 2019 | 7.1 / 8.2 / 10.8 | **5.2** / 7.0 / 10.6 |
+| 2020 | 7.1 / 8.5 / 11.2 | **4.8** / 6.7 / 10.6 |
+| 2021 | 6.9 / 8.1 / 10.6 | **5.1** / 7.1 / 11.8 |
+| 2022 | 7.4 / 8.9 / 10.9 | **5.5** / 8.0 / 13.9 |
+| 2023 | 7.6 / 9.5 / 11.5 | **4.9** / 7.8 / 13.6 |
+| 2024 | 8.4 / 10.3 / 12.2 | **5.0** / 8.6 / 17.5 |
+| 2025 | 7.8 / 9.4 / 12.4 | **5.1** / 8.2 / 16.6 |
+
+- In every year the actual low end prices **below any gas unit's fuel cost** (an implied heat rate of about 5). There the marginal unit is coal, nuclear, imports or renewables, i.e. something cheaper than gas.
+- The model almost never goes there: its p10 sits at gas-CC cost (about 7–8).
+- Read with §4, this is plausibly **one object**. In reality coal sits partially loaded and price-setting at the low end. In the model it loads fully and hands the margin to gas, which lifts the floor.
+- *Caveat:* the model's zone-hour marginal emission rate reads coal-marginal 19–37 % of hours, but an LP marginal emission rate blends units across binding constraints, so it is not a reliable class label. It is not used as evidence.
+
+## 6. Verdict
 
 | object | status | next test |
 |---|---|---|
-| COAL_BIT out-of-span over-run (2019 +10.61, 2021 +17.14), CT_PEAKER 2021 | **OPEN** — offered EcoMax falsified as the lever (≤ 14 %, misordered) | Per-plant zero-LP: the model's per-plant econ offer vs its own zonal LMP vs CAMPD loading-when-synced, by year. Is the over-loaded MW where the model's margin (LMP − offer) exceeds the real margin (price) or where the offer is below PJM's measured offer (offer)? |
-| C3a 2019/2020 | **OPEN — relabelled from "compression" to "bulk price level"** | Which class sets the model's bulk (p10–p90) price vs actual, per year. The bulk excess is universal, so the answer is a shared operand, not an out-of-span one. |
+| COAL_BIT out-of-span over-run (2019 +10.61, 2021 +17.14), CT_PEAKER 2021 | **OPEN.** Offered EcoMax falsified (≤ 14 %, misordered). The over-run is response, not price (§4): real coal is much flatter in price than model coal. | Intake PJM's measured **DA self-scheduled MW by fuel, by year** (IMM State of the Market). If coal self-scheduled share is year-discriminating, design a zero-DOF self-schedule block for the coal econ bands. Separately, PJM's published **marginal-fuel shares by year** test §5's "coal is the low-end marginal unit". |
+| C3a 2019/2020 | **OPEN — relabelled from "compression" to "price floor"** (§3, §5) | Same data as the row above. The floor and the coal response are plausibly one object and should be tested together. |
 | C3a/C3b 2022 | variance-compression object (pjm-h12), confirmed | unchanged |
 | 2022 COAL_BIT "exception" | explained: PJM's own 2022 offers, already in the keeper | none |
 
