@@ -2007,3 +2007,16 @@ Record: docs/handoffs/r-soco/FINDING-soco-90-2026-09-29.md; probe scripts/probes
 
 OWNER RULINGS 2026-09-29 (soco-90 cards): **"Don't buy"** (SE daily gas licence; fuel route for C3a closed) and
 **"Zero-LP intra-day census"** (soco-91: price setter, offer and loading by hour of day vs lambda; card back).
+
+## 2026-09-29 — soco-91: intra-day census; no unadjudicated intra-day structure explains C3a (zero LP)
+
+Owner ruling (soco-90 card): "Zero-LP intra-day census". At night (low-40 % λ hours), a CC_REGULAR plant at its flat
+average-HR offer sets the price in 41–71 % of hours, and λ is 0.75–0.83 × that offer in all seven years. The ratio is the
+same on weekdays and weekends, in every season, and whether the model's night coal is short or long vs EIA-930, so it is a
+proportional offer-level gap. Only CC incremental HR (refused) or replacement / daily fuel (closed) acts on it. In the
+afternoon (top-20 %), a CT_PEAKER at its average-HR offer sets the price in 37–67 % of hours, and λ sits +$1.0 to +$24.6
+above it: CT start (owner NO) or basis spikes (closed). The model's hydro + PS is 140–570 MW short at night and 650–1,200 MW
+long at peak vs EIA-930. That is a real structural miss, but a perfect-hindsight reshape moves C3a ≤ 1.1 pp with no flips.
+Floors cannot set an LP price (256–382 MW out-of-merit). Interchange is measured and on-clock. Band multipliers have no
+ex-ante source under G5. No solve; keeper unchanged; NOT-YET 7/4/0/1/2. Record: docs/handoffs/r-soco/FINDING-soco-91-2026-09-29.md;
+probe scripts/probes/_soco91_intraday_census.py.
