@@ -15329,3 +15329,25 @@ RO-2 (same session, zero LP): about 76 % of the South out-of-merit steam sits on
 MW requirement and import limit are unpublished: only outcome reports, interface names and capability deltas are
 public. Owner ruling: "Mark blocked, go to night (Recommended)". `scuc_load_pocket_commitment` moves · → G. Next:
 the system night overshoot. `docs/FINDING-miso284-ro2-identification-2026-09-29.md`.
+
+## miso-285 — 2026-09-29
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 on the system night overshoot.
+
+- **Price formation at matched quantities.** Night MW by class match CAMPD (coal and CC_REGULAR within ~±1 GW),
+  yet the night median sits +4.1 to +10.5 $/MWh above ILLINOIS.HUB RT, 2019–2025. It is a level shift: the model
+  has no night hours below $5 (hubs: 1.5–12 %).
+- **Ruled out:**
+  - Reserve duals: $0 every night hour.
+  - The P1 startup markup: the P0 stack cleared at the model's own night quantity reproduces P1 in 5 of 7 years;
+    2022 and 2025 carry a P1 residual of +5.1 / +1.9.
+  - Floors forcing a dearer marginal: coal sits at must-run + committed.
+- **Where it sits:** CC econ/committed tranches set the price at measured HR × delivered gas + VOM, with ~0 markup.
+- **Upper-bound sizing:** CC committed as price-taker −$0.6–1.9; all gas committed −$1.9–3.1.
+
+Both miso-130 successors are already in the keeper (`miso_reserve_online_gated`; CC committed 1.005 = phys).
+
+Owner ruling: "Charter EcoMin price-taker build". `diurnal_price_amplitude` G → O. Charter:
+`docs/handoffs/CHARTER-miso285-ecomin-price-taker-2026-09-29.md` (merchant CC only, measured LSL, P0 online
+hours, zero-LP pre-check with a kill rule before any shard). No frontier.
+`docs/FINDING-miso285-night-overshoot-phase0-2026-09-29.md`.
