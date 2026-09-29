@@ -314,7 +314,7 @@ order is a prior, not a mandate — a session with a better-identified lever
 goes off-queue and says so. Entries already adjudicated elsewhere are *not*
 repeated here; the matrix `R`/`G`/`I` cells are the DO-NOT-REDO list.
 
-### 5.1 ERCOT — keeper `2026-09-28-r-14-oklaunion-swcap` (**PROMOTED 2026-09-29, R-ERCOT-14**, owner decision card *"Promote B (Recommended)"* — the `2026-09-28-r-13-2019-reserve` recipe plus two zero-DOF structural corrections: Oklaunion (127) ERCOT membership and `ercot_swcap_vintage` on 2019-2021; ISO reads **NOT-YET** — 2023 carve-out C3a −20.0 % / C3b 0.293 (owner hold) and 2024 C3a −10.7 %; validation 2019 C3a +24.0 % / C3b 0.539, 2020 C3b 0.242, 2019/2020 C1 CC_REGULAR/COAL_PRB open (cheap-gas-year coal conduct, fenced); 2021/2022 CALIBRATED)
+### 5.1 ERCOT — keeper `2026-09-28-r-16-oklaunion-hr` (**PROMOTED 2026-09-29, R-ERCOT-16**, standing instruction *"Is it an improvement? Then promote"* — data hygiene: Oklaunion (127) measured CAMPD coal heat rate replaces its eGRID fallback, zero DOF, every determination identical; over **PROMOTED 2026-09-29, R-ERCOT-14**, owner decision card *"Promote B (Recommended)"* — the `2026-09-28-r-13-2019-reserve` recipe plus two zero-DOF structural corrections: Oklaunion (127) ERCOT membership and `ercot_swcap_vintage` on 2019-2021; ISO reads **NOT-YET** — 2023 carve-out C3a −20.0 % / C3b 0.293 (owner hold) and 2024 C3a −10.7 %; validation 2019 C3a +24.0 % / C3b 0.539, 2020 C3b 0.242, 2019/2020 C1 CC_REGULAR/COAL_PRB open (cheap-gas-year coal conduct, fenced); 2021/2022 CALIBRATED)
 
 > **ercot-234 EXECUTION (2026-08-25) — CARD Z SIGNED (Z-A) AND EXECUTED SAME
 > SESSION: THE IDENTITY REPAIR IS SOLVED, REGISTERED

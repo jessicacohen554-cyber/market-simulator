@@ -14914,3 +14914,17 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Routed:** South 2020 thin-sample F923 basis (+3.53); missing pre-2022 West Waha rows.
 - **Landed:** Sandy Creek 56611 key (byte-inert, measured); curated-sheet coal-HR population with 127 measured (2019 11.77, 2020 11.47). The latter is live for 2019/2020 — the next lane solves the 2019+2020 arm.
 - Record: `docs/handoffs/RESULT-r-ercot-15-phase0-2026-09-29.md`.
+
+## R-ERCOT-16 — 2026-09-29 — Oklaunion 127 measured CAMPD coal heat rate (rule 14/23); PROMOTED `2026-09-28-r-16-oklaunion-hr` (standing instruction "Is it an improvement? Then promote"); ISO NOT-YET
+
+- **Arm:** the R-ERCOT-15 staged arm, run exactly as precommitted. 2019/2020 were solved one shard each at `3c398753`; 2021–2025 are the keeper's own legs, fetched by SHA (zero re-solves). G-DRIFT was INERT, so there was no control solve.
+- **Result — a data-hygiene promotion:**
+  - Every determination is identical, and 2021–2025 are byte-identical.
+  - Oklaunion's mc falls 0.21 / 0.34 $/MWh, and COAL_PRB rises 0.02 / 0.01 TWh.
+  - 2020 C3b moves 0.242 → 0.241.
+  - All seven PRECOMMIT §6 predictions hit.
+- **Phase 0, Task 2 (zero LP):**
+  - The West Waha 2020/2021 annual basis is not citable, so nothing was armed. The 2019 basis and the 2019–2021 negative-day counts are citable.
+  - The South basis row is three small Sch5 plants. In 2020 it reads +3.53 (South_Central +0.64), and the model's South merchant gas runs 1.32 vs 10.68 TWh actual. That ratio is 0.12, against 0.71–1.53 in every other year.
+  - A pooled South-Texas basis would need no threshold but moves the training years, so it goes to the owner as a decision card.
+- Record: `docs/handoffs/RESULT-r-ercot-16-oklaunion-hr-2026-09-29.md`.
