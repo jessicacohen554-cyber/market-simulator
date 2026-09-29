@@ -15369,3 +15369,20 @@ No frontier: the full span is NOT-YET on the three routed misses.
 `docs/FINDING-miso286-ecomin-precheck-killed-2026-09-29.md`.
 
 Owner ruling: "P1 vs P0 residual (Recommended)". Next: miso-287, zero-LP phase 0 on the 2022/2025 P1-over-P0 night residual.
+
+## miso-287 — 2026-09-29
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 on the P1-over-P0 night residual.
+
+- **Correction to miso-285 §4:** the stack clear kept biomass + OTHER (injected must-run residuals, netted out of
+  LP demand) in its quantity. At the corrected quantity P1 sits $0.8–1.5 above the base stack in **every** year.
+- **Attribution (night medians):** startup markup +0.3–0.7 every year; hydro ~1 GW below the stack at night every
+  year (small); network, P1 seam floors and reserves ruled out. 2022 (+6.29) and 2025 (+1.93) are the
+  `coal_fuel_inventory` rows' dual: on 2022 summer nights P1 runs coal 16.6 GW below the merit clear and
+  CC 13.4 GW above it.
+- **Stock-carry successor pre-registered (5d7aac49) and KILLED:** 2022's annual fuel is 20 % short of base-cost
+  burn, so a carry raises 2022 nights +$3.04. In 2021/2025 it lowers them ~$1 but pushes summer coal over the bench.
+- **Cells:** `diurnal_price_amplitude` stays G; `coal_fuel_inventory` stays K (successor killed).
+
+No frontier: the full span is NOT-YET on the three routed misses.
+`docs/FINDING-miso287-p1-night-residual-2026-09-29.md`.
