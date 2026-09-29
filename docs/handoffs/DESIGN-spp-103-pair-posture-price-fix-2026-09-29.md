@@ -89,3 +89,16 @@ price fix.
 - **Route "CT_PEAKER carries no outage" as its own availability lane, if the owner wants one.** Judge it on
   structure (rule 1), and expect it to worsen 2019–20.
 - **Keeper unchanged.** No PRECOMMIT, no shards, no LP.
+
+## 5. Owner ruling
+
+**OWNER RULING (2026-09-29, decision card): "Record + CT outage lane."**
+- The posture is recorded as **tested-but-unpaired**. Cell `spp_commitment_posture` stays **R** and the field stays
+  default-off.
+- The 2019–22 validation misses (§4) are recorded as **model-class limits** under SPP-79's root.
+- **SPP-104 is chartered** as an availability lane for "CT_PEAKER carries no outage".
+  - It is judged on structure (rules 1 / 14), not on whether it pairs with the posture or improves the residual.
+  - It must find an SPP-own, forward-reproducible, unit- or class-level source.
+  - It must not re-run SPP-84's aggregate rebase, and must not pin to published totals (rule 13).
+  - Its expected cost of about +5 pts on C3a 2019 / 20 is stated in advance.
+- Keeper unchanged.

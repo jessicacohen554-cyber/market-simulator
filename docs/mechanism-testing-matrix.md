@@ -18070,6 +18070,8 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   (2019 / 20) vs +0.47 / +3.34 (2023 / 24), 2025 unmeasured; no unit-level CEMS form; the aggregate rebase is SPP-84's
   DO-NOT-REDO. A separate availability lane if chartered, judged on structure, never as this pairing.
 - **Do not redo** the posture alone or this screen. Re-open only on an upper-tercile driver that satisfies SPP-79.
+- **OWNER RULING (card "Record + CT outage lane")**: posture recorded tested-but-unpaired; 2019–22 misses recorded as
+  model-class limits; **SPP-104 chartered** for the missing CT_PEAKER outage, judged on structure (rules 1/14), not as a pairing.
 
 **SPP-102 (2026-09-29, CC COMMITMENT STATE — new field `spp_commitment_posture`, owner card "Build relaxed-UC engine";
 `docs/handoffs/DESIGN-spp-102-cc-commitment-state-2026-09-29.md`, `RESULT-spp-102-commitment-posture-2026-09-29.md`; cell O → R, NOT PROMOTED).**
