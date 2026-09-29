@@ -3822,6 +3822,11 @@ results/calibration/spp100_arm_20*/
 #   2025 ddecb398ff6f585e1398c55ee935470f1c7a5b3f
 results/calibration/soco87_20[12][0-9]/
 
+# NYISO-NEXT-12 per-year arm legs (composed into nyisonext12_span; rules 31/32(d)). Provenance: leg SHAs in docs/RESULT-nyiso-next12-ne-ac-node-2026-09-28.md
+results/calibration/nyisonext12_2022/
+results/calibration/nyisonext12_2023/
+results/calibration/nyisonext12_2024/
+results/calibration/nyisonext12_2025/
 # R-ERCOT-16 per-year shard legs (rule 32(d)) - local only, never on main. Provenance (rule 33(d)): arm-2019 33da37d00f717039c603125dfc907bcf3fd3b4eb, arm-2020 11db2df17b975c7b49ae04a0db21fda7ef686170
 results/calibration/r_ercot15_arm_20*/
 # R-CAISO-14 per-year legs (caiso_eia930_clock_repair arm): local only, pushed to shard branches (rule 34(a)); composite span/fold go on main.

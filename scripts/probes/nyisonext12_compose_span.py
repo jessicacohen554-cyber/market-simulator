@@ -37,7 +37,7 @@ from scripts.probes.rnyiso_compose_span import _offer_block  # noqa: E402
 
 sys.path.insert(0, str(_REPO / "src"))
 
-PIN = "4ba64817beb037bb58839c7a35c6913d123e0c30"
+PIN = "7d238cc95ed843e93c9b934e97983926345479dc"
 CAL = _REPO / "results" / "calibration"
 DELTA = {"nyiso_ne_ac_node": (False, True)}
 #: keys the replay path translates identically for control and arm (rule 26 deletions;
@@ -61,6 +61,18 @@ def _new_field_default(key: str, value: object) -> bool:
     return f is not None and f.default is not dataclasses.MISSING and f.default == value
 
 
+def _field_default(key: str) -> object:
+    """``ScenarioConfig``'s default for ``key`` (``None`` if it has none)."""
+    import dataclasses
+
+    from market_sim.config.scenarios import ScenarioConfig
+
+    for f in dataclasses.fields(ScenarioConfig):
+        if f.name == key and f.default is not dataclasses.MISSING:
+            return f.default
+    return None
+
+
 def _keeper(year: int) -> Path:
     """The keeper bundle carrying ``year``."""
     return CAL / ("nyisonext9_2021" if year == 2021 else "nyisonext9_span")
@@ -78,6 +90,9 @@ def check_legs(legs: list[Path]) -> None:
         if basis != PIN:
             errs.append(f"S0 basis_sha {basis!r}")
         sa, sk = rc["scenario_config"], kc["scenario_config"]
+        # a field that post-dates the keeper is read at its dataclass default
+        # (the keeper solved without it, i.e. at the default)
+        sk = {**{k: _field_default(k) for k in sa if k not in sk}, **sk}
         diff = {
             k: (sk.get(k), sa.get(k))
             for k in set(sa) | set(sk)
