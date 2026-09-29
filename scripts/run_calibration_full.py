@@ -5140,6 +5140,27 @@ def solve_and_persist(
             from market_sim.model.transmission import split_miso_south_external_node
 
             iso_config = split_miso_south_external_node(iso_config)
+        _ne_ac = (
+            nyiso_ne_ac_node
+            if nyiso_ne_ac_node is not None
+            else (prb_overrides or {}).get("nyiso_ne_ac_node", False)
+        )
+        if _ne_ac and iso == "NYISO":
+            # NYISO-NEXT-12: the NE AC tie's own zone-zero-load node, so this
+            # caller's zone_names / demand / must-run / report frames match
+            # run_year's solve (run_year applies the same split via
+            # apply_interchange_topology). Without it the demand threaded into
+            # run_year had one row fewer than the solve's zones and LP
+            # construction refused it. Only the zone SET matters to this
+            # caller; the link rating it carries is re-derived per year by
+            # run_year, so the first solve year's median posted limit is used.
+            from market_sim.model.interchange.nyiso import split_nyiso_ne_ac_node
+            from market_sim.model.interchange.spec import NYISO_NE_AC_LADDER_BY_YEAR
+
+            iso_config = split_nyiso_ne_ac_node(
+                iso_config,
+                float(NYISO_NE_AC_LADDER_BY_YEAR[min(years)]["import_mw"]),
+            )
     zone_names = iso_config.zone_names
     (run_dir / "dispatch").mkdir(parents=True, exist_ok=True)
 

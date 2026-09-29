@@ -15665,3 +15665,12 @@ Record: `docs/handoffs/r-caiso-12/`.
 - **The evening ramp-peak gap is not the clock** (2023 has no defect). Storage sets the plateau: price spread across interior-discharge hours has a median of $1.8–11. No admissible lever.
 
 Record: `docs/handoffs/r-caiso-13/`.
+
+## R-CAISO-14 — 2026-09-29: `caiso_eia930_clock_repair` solved, NOT promoted
+
+- 7 shards (2019–25) at `332c8048`; G-DRIFT all INERT. Span reads CALIBRATED (single ledgered C3c 2024); fold unchanged NOT-YET.
+- **The repair is incomplete.** It moves Demand 1 h earlier. It does not move solar or wind, which come from the offline `caiso_{Y}_hsl_hourly.parquet`; that file still carries the late EIA-930 stamps (2024–25 solar centroid 12.8–13.0 h PST).
+- P1–P3 FAIL, P4 PASS. C4 gas NRMSE 2024 0.254 → 0.262, 2025 0.294 → 0.300.
+- Owner card: "Complete repair, re-solve". R-CAISO-15 extends the arm to the HSL generation term and re-solves. Keeper unchanged.
+
+Record: `docs/handoffs/r-caiso-14/`.

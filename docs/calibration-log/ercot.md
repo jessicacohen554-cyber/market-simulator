@@ -14885,3 +14885,32 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Result:** 2019 C3a +53.6 → +41.4 %, C3b 1.228 → 0.874, shed 4,662 → 17 MWh; hours ≥ $1k 48 → 54 (P2 missed — the cap adds ORDC-short hours 394 → 1,329). C1 is unchanged, so the coal/CC object is separate. 2020–2025 are identical (R-ERCOT-12 legs recomposed; they were fetchable by full SHA, so there were zero re-solves).
 - **Routed:** R1, the 2019–21 shed ($5k) vs rigid-reserve ($9k) penalty inversion. R2, the scored price exceeding HCAP. R3+R4, the off-peak coal shortfall (Martin Lake −5.9, Sam Seymour −3.6 TWh in 2020; Oklaunion 127 absent from the 2020 fleet).
 - Record: `docs/handoffs/RESULT-r-ercot-13-2019-reserve-inputs-2026-09-28.md`.
+
+## R-ERCOT-14 — 2026-09-29 — Oklaunion 127 joins ERCOT (rule 14) + `ercot_swcap_vintage` (pre-2022 HCAP $9,000 on offer cap, ORDC and shed); PROMOTED `2026-09-28-r-14-oklaunion-swcap` (owner card: "Promote B (Recommended)"); ISO NOT-YET
+
+- **Phase 0 (zero LP):**
+  - Oklaunion (650 MW SUB coal) is an ERCOT resource: DAM `OKLA_OKLA_G1` J01–J05 through 2020-09-30, and an EIA-930 ERCO coal loading of 0.97. EIA-860 codes it SWPP, so the model dropped it in 2019 and 2020 (2.57 / 1.10 TWh CAMPD net).
+  - The rest of the coal gap is conduct, not availability: Martin Lake sits at a 5–30 % CF floor for 4,600–5,900 h. Routed, fenced.
+  - The pre-2022 SWCAP was half-vintaged: `ordc_voll` was $9,000 but `voll` was $5,000, which drove both the shed penalty and the offer clip.
+- **Build:**
+  - Oklaunion's bin row plus `ISO_PLANT_EXITS` (2020-10-01 06:00 UTC). The exit stamp is needed because the 2020 EIA-860 vintage drops it from the operable sheet.
+  - DAM crosswalk rows. They are required: unmapped, 127 absorbed the DAM plant-grain water-fill remainder, 1.12 vs 4.62 TWh-cap in 2019.
+  - Min-config and outage rows.
+  - `ercot_swcap_vintage` (default off).
+  - Five shards at `edbfdad5`. G-DRIFT all INERT.
+- **Result:**
+  - 2019: C3a +41.4 → +24.0 %, C3b 0.874 → 0.539, shed 17 → 0.
+  - 2020: C3a +11.3 → +6.0 % (PASS), C3b 0.343 → 0.242.
+  - 2021: C3b 0.104 → 0.067, still CALIBRATED.
+  - 2022–2025 identical.
+  - SWCAP is inert in 2019/2020 (max λ $2,649); it binds only the 49 Uri shed zone-hours of 2021, now priced at $9,000.
+- **Benchmark:** the 2019/2020 bench now includes Oklaunion's actual; the keeper was re-scored on it for the comparison.
+- Record: `docs/handoffs/RESULT-r-ercot-14-oklaunion-swcap-2026-09-29.md`.
+
+## R-ERCOT-15 — 2026-09-29 — phase 0 on 2020 C3b; vintage anchor `R`; Oklaunion measured coal HR + Sandy Creek key landed; arm staged, NOT solved (session-nesting limit); ISO NOT-YET, keeper unchanged
+
+- **2020 C3b 0.242:** August carries 45 % of the SSE, Feb/Mar 25 %, Jun/Jul 20 %. The driver is a year-invariant, zone-uniform mid-distribution over-price (+0.9 to +4.2 $/MWh in every year) — offer level, the owner-held channel.
+- **Vintage anchor `R` at zero LP:** the per-year bias is not linear in the anchor gap (slope +0.11, r² 0.02; 2022 is +4.2 where ≈ −11 is predicted).
+- **Routed:** South 2020 thin-sample F923 basis (+3.53); missing pre-2022 West Waha rows.
+- **Landed:** Sandy Creek 56611 key (byte-inert, measured); curated-sheet coal-HR population with 127 measured (2019 11.77, 2020 11.47). The latter is live for 2019/2020 — the next lane solves the 2019+2020 arm.
+- Record: `docs/handoffs/RESULT-r-ercot-15-phase0-2026-09-29.md`.

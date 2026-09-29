@@ -194,8 +194,10 @@ from market_sim.config.reserve_config import ERCOT_AS_PRODUCTS
 from market_sim.pipeline import (
     UNSET,
     DispatchSpec,
+    shed_penalty_voll,
     PriorYearResults,
     apply_ercot_commitment_posture,
+    apply_spp_commitment_posture,
     apply_reserve_coopt,
     build_base_dispatch_kwargs,
     resolve_hydro_cascade,
@@ -3512,7 +3514,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # carries its real cap (NYISO/CAISO/MISO/PJM $2,000 per FERC
                 # Order 831; ERCOT $5,000), so scarcity hours price at the cap
                 # the market actually clears against instead of a uniform $5k.
-                voll=iso_config.voll,
+                voll=shed_penalty_voll(config, iso_config),
                 incidence=incidence,
                 ttc=year_ttc,
                 interface_groups=year_interface_groups or None,
@@ -3818,6 +3820,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # docs/handoffs/ercot-commitment-thinness-2026-07.md). No-op /
             # byte-identical for every non-ERCOT run and default-off ERCOT.
             apply_ercot_commitment_posture(dispatch_kwargs, config, fleet_arrays)
+            # SPP standalone commitment posture with min-up/min-down (SPP-102).
+            # No-op / byte-identical for every non-SPP run and default-off SPP.
+            apply_spp_commitment_posture(dispatch_kwargs, config, fleet_arrays)
             # P0 → monthly startup markup → P1 via the shared pipeline solve
             # core (orchestrator-unification Stage 3) -- intra-year warm start
             # included, statement-for-statement the former inline sequence.

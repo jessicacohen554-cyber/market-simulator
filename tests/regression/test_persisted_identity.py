@@ -774,8 +774,17 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   +1 row everywhere.
 #   WHAT IT COSTS: nothing solved — no registry value moved, so no committed
 #   bundle's numbers change; the digest moves only because the row set grew.
+# 2026-09-28 ERCOT ADVANCED (R-ERCOT-14) — ONE ROW ADDED, DECLARED AT ITS
+#   PRE-ARM HASH SO IT MOVES ERCOT'S KEY. constants.ISO_PLANT_EXITS =
+#   {"ERCOT": {127: "2020-10-01 06:00"}}: Oklaunion (an ERCOT resource that
+#   EIA-860 codes SWPP) joins ERCOT's curated bin sheet and leaves after
+#   operating day 2020-09-30; read only by data.ba_membership in the fleet hour
+#   mask. Declared at the empty-table hash (as ISO_PLANT_ENTRIES was), so the
+#   row reads as moved off its declaration for ERCOT only: 238 -> 239 rows (on top of SPP-100).
+#   WHAT IT COSTS: an ERCOT cache miss. 2021-2025 fleets are unchanged (the
+#   plant is masked all year); 2019/2020 gain the plant.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("89ccdc59b17332e3", 238),
+    "ERCOT": ("f996d301a3972c08", 239),
     "CAISO": ("a478be168ecf1363", 212),
     "MISO": ("572b759217c6d9b0", 218),
     "PJM": ("ac8e1b6d77100e10", 222),
@@ -835,6 +844,9 @@ def test_solve_surface_fingerprint_is_pinned(iso: str) -> None:
 #: registry value that changed while every reader still believes the pin.
 LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
     "ERCOT": {
+        "ISO_PLANT_EXITS": (
+            "R-ERCOT-14 2026-09-28: Oklaunion 127 dated ERCOT exit (2020-10-01 06:00 UTC), declared at the pre-arm hash so ERCOT re-keys — see the 2026-09-28 R-ERCOT-14 cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
         "ISO_PLANT_ENTRIES": (
             "R-ERCOT-12 2026-09-28 (owner ruling 'Fleet + benchmark'): Frontera 55098 dated ERCOT membership, declared at the pre-arm hash so ERCOT re-keys — see the 2026-09-28 R-ERCOT-12 cause block on PINNED_SURFACE_ROWS_BY_ISO"
         ),

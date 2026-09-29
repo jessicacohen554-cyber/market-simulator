@@ -1352,6 +1352,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # scenario, and hashes distinctly. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline).
     "ercot_offer_swcap_clip",
+    # R-ERCOT-14 SWCAP vintage (GATED default off): dropped from the hash at
+    # its default so every pre-existing cache key stays byte-stable (the off
+    # path never touches voll); an armed pre-2022 ERCOT run solves on the
+    # published $9,000 HCAP and hashes distinctly (voll itself is tier-0 in
+    # the key). Registered IN THE SAME COMMIT as the field.
+    "ercot_swcap_vintage",
     # ercot-242 room-axis extension of the RT/SCED wall (GATED default off) +
     # its path: dropped from the hash at their defaults so every pre-existing
     # cache key stays byte-stable (the off path never loads the room artifact
@@ -2246,6 +2252,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # run solves a different SPP topology and so gets a distinct key.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "spp_zone_partition",
+    # SPP-102 commitment posture (default off): dropped from the hash at its
+    # default so every pre-existing run -- every ISO's keepers included --
+    # keeps its key. Byte-identical off by construction (the spec returns None,
+    # so no posture kwargs are merged and the P1 markup is untouched).
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "spp_commitment_posture",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2696,6 +2708,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-236 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_offer_swcap_clip": "False",
+    # Added by R-ERCOT-14 WITH the field (the nyiso-119 discipline).
+    "ercot_swcap_vintage": "False",
     # Added by ercot-242 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "ercot_offer_surface_cleared_share_rt_room": "False",
@@ -3054,6 +3068,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_ne_ac_node": "False",
     # Added by SPP-93 WITH the field (the nyiso-119 discipline).
     "spp_zone_partition": "'north_south'",
+    # Added by SPP-102 WITH the field (the nyiso-119 discipline).
+    "spp_commitment_posture": "False",
 }
 
 
@@ -9023,6 +9039,29 @@ class ScenarioConfig:
     # physics; window = self-windowing on the model's own run pattern (no
     # clock hour); forward story = regenerates from any year's own P0.
     spp_gas_commitment_bridge: bool = False
+    # SPP COMMITMENT POSTURE (default off, SPP-gated — lane SPP-102, owner
+    # decision card "Build relaxed-UC engine", 2026-09-29;
+    # docs/handoffs/DESIGN-spp-102-cc-commitment-state-2026-09-29.md). The SAME
+    # standalone energy-only pooled-linear commitment posture as
+    # ercot_commitment_posture (rule 19: one construction, ported not forked —
+    # model.reserves.spec._standalone_posture_pools), PLUS the min-up /
+    # min-down coupling the MISO design note deferred. Per (zone x gas-class)
+    # merchant-gas pool p (CHP excluded — owned by the CHP steam floors; CT
+    # exempt by the fast-start physics gate, rule 18), a continuous online-
+    # capacity variable U[p,t] with (i) headroom Σ P <= U, (ii) measured
+    # min-load Σ P >= mlf·U (SPP CAMPD CC 0.209), (iii) a startup charge on ΔU⁺
+    # (NREL class tables), (iv) min-up U[t] >= Σ_{k<UT} SU[t-k] (UT = SPP CAMPD
+    # CC run-length p25, 15 h) and (v) min-down Σ_{k<DT} SU[t-k] + U[t-DT] <=
+    # max(Ucap[t-DT..t]) (DT = SPP MMU ASOM gas min-down, 8 h). Both time rows
+    # carry an availability allowance so a forced outage never makes them
+    # infeasible. NOT a floor: it forces no exogenous energy; the min-load and
+    # min-up terms bind only capacity the LP itself chose to start (no D-2
+    # mechanism id; rule 17's window is the LP's own commitment). Rule 19: the
+    # P1 amortized startup markup is ZEROED on postured members when this gate
+    # is on (pipeline/solve.py) — the start cost lives in the LP, once. Mutually
+    # exclusive with spp_gas_commitment_bridge (R) and with any pergen posture.
+    # Zero fitted parameters (rule 21). Requires SPP; GATED CHANGE.
+    spp_commitment_posture: bool = False
     # SOCO GAS-STEAM CAMPAIGN COMMITMENT FLOOR (default off, SOCO-gated — lane
     # SOCO-53d, PRECOMMIT-soco-53d-2026-09-19). THE ONE FIELD this lane adds:
     # its level and horizon are per-plant MEASURED rows of a committed derive
@@ -13983,6 +14022,29 @@ class ScenarioConfig:
     # config.iso == "ERCOT"; other ISOs' offer caps are not the VOLL identity
     # and need their own identification before any transfer.
     ercot_offer_swcap_clip: bool = False
+
+    # ERCOT SWCAP VINTAGE (R-ERCOT-14, default off, ERCOT-gated; rules 1
+    # [R-STRUCT] / 14 [R-ACCURATE]). ERCOT's energy-only design sets the
+    # system-wide offer cap (HCAP), the ORDC's VOLL anchor and the value of
+    # firm-load shed to ONE published number — $9,000/MWh through 2021 and
+    # $5,000/MWh from 2022-01-01 (16 TAC 25.505/25.509, PUCT Project 52631).
+    # ercot-253 vintaged the ORDC half (constants.
+    # ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR -> ordc_voll) but left
+    # ``voll`` at the post-2022 $5,000, so a 2019-2021 solve (a) sheds firm
+    # load at $5,000 while the rigid RRS/Reg-Up step it could release costs
+    # $9,000 — the reverse of ERCOT's EEA sequence (RRS released in EEA2,
+    # load shed only in EEA3) — and (b) under ercot_offer_swcap_clip caps
+    # thermal offers at $4,999.99 in years whose real cap was $9,000.
+    # Armed, ``voll`` follows ``ordc_voll`` for ERCOT (coerced in
+    # __post_init__, so every consumer — the offer clip, the 0.95 x VOLL
+    # measured-surface caps and, through pipeline.spec.shed_penalty_voll,
+    # the LP slack cost — reads the one vintaged cap). ZERO free parameters
+    # (rules 21/24): the value is the published table ercot-253 already
+    # carries; no new constant. Byte-identical off, and byte-identical ON in
+    # every year the table leaves at $5,000 (2022-2025 and every forecast
+    # year), so only 2019-2021 can move. ERCOT-gated (rule 25): other ISOs'
+    # shed penalty is their own ISOConfig energy-offer cap, not this identity.
+    ercot_swcap_vintage: bool = False
 
     # ERCOT gas-CC COMMITMENT BRIDGE (default off, ERCOT-gated): the committed-
     # STATE half of the trough-price-formation circle, promoted from the
@@ -21519,6 +21581,9 @@ class ScenarioConfig:
                 f"got {self.mode!r}"
             )
         self._retire_bare_coal_class()
+        # R-ERCOT-14: one published ERCOT cap (see ercot_swcap_vintage).
+        if self.ercot_swcap_vintage and self.iso == "ERCOT":
+            self.voll = float(self.ordc_voll)
         from market_sim.config.constants import HYDRO_YEAR_MULTIPLIER
 
         if self.hydro_year not in HYDRO_YEAR_MULTIPLIER:
@@ -22679,6 +22744,18 @@ class ScenarioConfig:
                 "only posture for ERCOT's fleet-wide ORDC co-opt); use "
                 "miso_/caiso_/pjm_commitment_posture for those ISOs' pergen path."
             )
+        if self.spp_commitment_posture:
+            if str(self.iso) != "SPP":
+                raise ValueError(
+                    "spp_commitment_posture is SPP-only (SPP-102: SPP's own "
+                    "measured min-load / min-run and ASOM min-down, rule 25)."
+                )
+            if self.spp_gas_commitment_bridge:
+                raise ValueError(
+                    "spp_commitment_posture and spp_gas_commitment_bridge are "
+                    "mutually exclusive (rule 19: one mechanism for SPP gas "
+                    "commitment state)."
+                )
         # Measured CAISO battery AS reservation vs in-LP reserve co-opt: the
         # co-opt hands storage its own reserve columns and prices the
         # energy-vs-AS split endogenously, so pre-subtracting the measured
@@ -23894,6 +23971,7 @@ TIER_TAGS: dict[str, int] = {
     "nwpp_demand_plant_basis": 1,
     "demand_balance_screen": 1,
     "ercot_offer_swcap_clip": 1,
+    "ercot_swcap_vintage": 1,
     "caiso_storage_adaptive_expectation": 1,
     "caiso_adaptive_half_life_days": 2,
     "caiso_adaptive_beta": 2,
@@ -24160,6 +24238,11 @@ TIER_TAGS: dict[str, int] = {
     "gas_price_override": 3,
     "f923_gas_price_plausibility_screen": 1,
     "spp_zone_partition": 1,
+    # Structural gate (1): every number it installs is a registered measured /
+    # published constant (SPP_GAS_BRIDGE_MIN_LOAD_FRAC, SPP_GAS_BRIDGE_MIN_RUN_
+    # HOURS, SPP_POSTURE_MIN_DOWN_HOURS, the NREL class startup tables); no
+    # free number of its own (rule 21).
+    "spp_commitment_posture": 1,
 }
 
 # SweepDefinition (the sweep / named-case-matrix expansion engine) moved

@@ -1,0 +1,1900 @@
+{
+ "2019": {
+  "low_hours": 2980,
+  "da_low_share_of_low_rt": 0.63,
+  "plant_hours": 65560,
+  "cems_online_rate_low": 0.494,
+  "model_online_rate_low": 0.469,
+  "cems_online_rate_all": 0.577,
+  "gap_twh_minload": 0.906,
+  "auc": {
+   "nl_now": 0.63,
+   "nl_fwd24": 0.613,
+   "nl_gasday": 0.609,
+   "load_fwd24": 0.611,
+   "month_cold": 0.462,
+   "da_low": 0.468,
+   "conduct_lyo": 0.778
+  },
+  "long_spell_share_of_low_online": 0.856,
+  "median_spell_h_of_low_online": 378.0,
+  "auc_within_plant": {
+   "nl_now": 0.7,
+   "nl_fwd24": 0.668,
+   "nl_gasday": 0.664,
+   "load_fwd24": 0.657,
+   "month_cold": 0.437,
+   "da_low": 0.456
+  },
+  "class_always_on_gt0.8": {
+   "cems_on_rate_low": 0.757,
+   "model_on_rate_low": 0.6,
+   "gap_twh_minload": 0.278,
+   "cems_low_online_twh_minload": 1.066
+  },
+  "class_mid_0.5_0.8": {
+   "cems_on_rate_low": 0.574,
+   "model_on_rate_low": 0.563,
+   "gap_twh_minload": 0.551,
+   "cems_low_online_twh_minload": 3.204
+  },
+  "class_cycler_lt0.5": {
+   "cems_on_rate_low": 0.188,
+   "model_on_rate_low": 0.201,
+   "gap_twh_minload": 0.077,
+   "cems_low_online_twh_minload": 0.127
+  },
+  "rule_conduct_gt0.5": {
+   "precision": 0.608,
+   "recall": 0.896,
+   "reach_twh_minload_where_model_off": 2.188,
+   "correct_reach_twh_minload": 0.829
+  },
+  "plants": {
+   "165:CC_REGULAR": {
+    "name": "GREC",
+    "npl": 600.0,
+    "conduct_lyo": 0.725,
+    "on_all": 0.796,
+    "on_low": 0.712,
+    "model_on_low": 0.618,
+    "low_online_twh_minload": 0.266,
+    "gap_twh_minload": 0.054
+   },
+   "201": {
+    "name": "Thomas Fitzhugh",
+    "npl": 185.0,
+    "conduct_lyo": 0.388,
+    "on_all": 0.275,
+    "on_low": 0.244,
+    "model_on_low": 0.125,
+    "low_online_twh_minload": 0.028,
+    "gap_twh_minload": 0.02
+   },
+   "1239:CC_REGULAR": {
+    "name": "Riverton",
+    "npl": 267.0,
+    "conduct_lyo": 0.735,
+    "on_all": 0.684,
+    "on_low": 0.606,
+    "model_on_low": 0.444,
+    "low_online_twh_minload": 0.101,
+    "gap_twh_minload": 0.042
+   },
+   "2079:CC_REGULAR": {
+    "name": "Hawthorn",
+    "npl": 313.0,
+    "conduct_lyo": 0.205,
+    "on_all": 0.09,
+    "on_low": 0.087,
+    "model_on_low": 0.268,
+    "low_online_twh_minload": 0.017,
+    "gap_twh_minload": 0.006
+   },
+   "2963:CC_REGULAR": {
+    "name": "Northeastern",
+    "npl": 532.0,
+    "conduct_lyo": 0.675,
+    "on_all": 0.611,
+    "on_low": 0.571,
+    "model_on_low": 0.28,
+    "low_online_twh_minload": 0.189,
+    "gap_twh_minload": 0.128
+   },
+   "3006:CC_REGULAR": {
+    "name": "Anadarko Plant",
+    "npl": 315.0,
+    "conduct_lyo": 0.501,
+    "on_all": 0.464,
+    "on_low": 0.26,
+    "model_on_low": 0.209,
+    "low_online_twh_minload": 0.051,
+    "gap_twh_minload": 0.025
+   },
+   "3604": {
+    "name": "J Robert Massengale",
+    "npl": 84.0,
+    "conduct_lyo": 0.123,
+    "on_all": 0.418,
+    "on_low": 0.296,
+    "model_on_low": 0.245,
+    "low_online_twh_minload": 0.015,
+    "gap_twh_minload": 0.008
+   },
+   "7296:CC_REGULAR": {
+    "name": "State Line Combined Cycle",
+    "npl": 567.0,
+    "conduct_lyo": 0.741,
+    "on_all": 0.873,
+    "on_low": 0.844,
+    "model_on_low": 0.717,
+    "low_online_twh_minload": 0.298,
+    "gap_twh_minload": 0.056
+   },
+   "7546:CC_REGULAR": {
+    "name": "Ponca City",
+    "npl": 74.0,
+    "conduct_lyo": 0.059,
+    "on_all": 0.144,
+    "on_low": 0.129,
+    "model_on_low": 0.261,
+    "low_online_twh_minload": 0.006,
+    "gap_twh_minload": 0.002
+   },
+   "8000": {
+    "name": "Beatrice",
+    "npl": 247.0,
+    "conduct_lyo": 0.363,
+    "on_all": 0.479,
+    "on_low": 0.248,
+    "model_on_low": 0.111,
+    "low_online_twh_minload": 0.038,
+    "gap_twh_minload": 0.025
+   },
+   "8059": {
+    "name": "Comanche (OK)",
+    "npl": 294.0,
+    "conduct_lyo": 0.25,
+    "on_all": 0.201,
+    "on_low": 0.126,
+    "model_on_low": 0.196,
+    "low_online_twh_minload": 0.023,
+    "gap_twh_minload": 0.016
+   },
+   "50558": {
+    "name": "Frontier",
+    "npl": 131.0,
+    "conduct_lyo": 0.514,
+    "on_all": 0.151,
+    "on_low": 0.067,
+    "model_on_low": 0.266,
+    "low_online_twh_minload": 0.005,
+    "gap_twh_minload": 0.001
+   },
+   "55065": {
+    "name": "Mustang Station",
+    "npl": 521.0,
+    "conduct_lyo": 0.658,
+    "on_all": 0.858,
+    "on_low": 0.851,
+    "model_on_low": 0.735,
+    "low_online_twh_minload": 0.276,
+    "gap_twh_minload": 0.052
+   },
+   "55146": {
+    "name": "Green Country Power Station",
+    "npl": 904.0,
+    "conduct_lyo": 0.839,
+    "on_all": 0.93,
+    "on_low": 0.908,
+    "model_on_low": 0.798,
+    "low_online_twh_minload": 0.511,
+    "gap_twh_minload": 0.076
+   },
+   "55178": {
+    "name": "Dogwood Energy Facility",
+    "npl": 655.0,
+    "conduct_lyo": 0.537,
+    "on_all": 0.625,
+    "on_low": 0.483,
+    "model_on_low": 0.463,
+    "low_online_twh_minload": 0.197,
+    "gap_twh_minload": 0.044
+   },
+   "55225": {
+    "name": "Oneta Energy Center",
+    "npl": 1214.0,
+    "conduct_lyo": 0.792,
+    "on_all": 0.873,
+    "on_low": 0.818,
+    "model_on_low": 0.834,
+    "low_online_twh_minload": 0.619,
+    "gap_twh_minload": 0.046
+   },
+   "55457": {
+    "name": "McClain Energy Facility",
+    "npl": 551.0,
+    "conduct_lyo": 0.618,
+    "on_all": 0.738,
+    "on_low": 0.635,
+    "model_on_low": 0.69,
+    "low_online_twh_minload": 0.218,
+    "gap_twh_minload": 0.015
+   },
+   "55463": {
+    "name": "Redbud Power Plant",
+    "npl": 1434.0,
+    "conduct_lyo": 0.76,
+    "on_all": 0.88,
+    "on_low": 0.827,
+    "model_on_low": 0.871,
+    "low_online_twh_minload": 0.738,
+    "gap_twh_minload": 0.034
+   },
+   "55664": {
+    "name": "Harrison County Power Project",
+    "npl": 570.0,
+    "conduct_lyo": 0.737,
+    "on_all": 0.643,
+    "on_low": 0.56,
+    "model_on_low": 0.568,
+    "low_online_twh_minload": 0.199,
+    "gap_twh_minload": 0.039
+   },
+   "56458:CC_REGULAR": {
+    "name": "Hobbs Generating Station",
+    "npl": 675.0,
+    "conduct_lyo": 0.884,
+    "on_all": 0.802,
+    "on_low": 0.796,
+    "model_on_low": 0.487,
+    "low_online_twh_minload": 0.335,
+    "gap_twh_minload": 0.135
+   },
+   "56565": {
+    "name": "J Lamar Stall Unit",
+    "npl": 624.0,
+    "conduct_lyo": 0.829,
+    "on_all": 0.642,
+    "on_low": 0.566,
+    "model_on_low": 0.516,
+    "low_online_twh_minload": 0.22,
+    "gap_twh_minload": 0.067
+   },
+   "56610": {
+    "name": "Deer Creek Station",
+    "npl": 324.0,
+    "conduct_lyo": 0.509,
+    "on_all": 0.516,
+    "on_low": 0.23,
+    "model_on_low": 0.623,
+    "low_online_twh_minload": 0.046,
+    "gap_twh_minload": 0.015
+   }
+  }
+ },
+ "2020": {
+  "low_hours": 3978,
+  "da_low_share_of_low_rt": 0.671,
+  "plant_hours": 87516,
+  "cems_online_rate_low": 0.499,
+  "model_online_rate_low": 0.476,
+  "cems_online_rate_all": 0.575,
+  "gap_twh_minload": 1.351,
+  "auc": {
+   "nl_now": 0.56,
+   "nl_fwd24": 0.582,
+   "nl_gasday": 0.553,
+   "load_fwd24": 0.575,
+   "month_cold": 0.465,
+   "da_low": 0.453,
+   "conduct_lyo": 0.833
+  },
+  "long_spell_share_of_low_online": 0.867,
+  "median_spell_h_of_low_online": 303.0,
+  "auc_within_plant": {
+   "nl_now": 0.611,
+   "nl_fwd24": 0.643,
+   "nl_gasday": 0.583,
+   "load_fwd24": 0.62,
+   "month_cold": 0.448,
+   "da_low": 0.41
+  },
+  "class_always_on_gt0.8": {
+   "cems_on_rate_low": 0.847,
+   "model_on_rate_low": 0.602,
+   "gap_twh_minload": 0.355,
+   "cems_low_online_twh_minload": 1.094
+  },
+  "class_mid_0.5_0.8": {
+   "cems_on_rate_low": 0.635,
+   "model_on_rate_low": 0.602,
+   "gap_twh_minload": 0.909,
+   "cems_low_online_twh_minload": 4.612
+  },
+  "class_cycler_lt0.5": {
+   "cems_on_rate_low": 0.146,
+   "model_on_rate_low": 0.204,
+   "gap_twh_minload": 0.088,
+   "cems_low_online_twh_minload": 0.185
+  },
+  "rule_conduct_gt0.5": {
+   "precision": 0.664,
+   "recall": 0.907,
+   "reach_twh_minload_where_model_off": 2.734,
+   "correct_reach_twh_minload": 1.263
+  },
+  "plants": {
+   "165:CC_REGULAR": {
+    "name": "GREC",
+    "npl": 600.0,
+    "conduct_lyo": 0.726,
+    "on_all": 0.789,
+    "on_low": 0.766,
+    "model_on_low": 0.76,
+    "low_online_twh_minload": 0.382,
+    "gap_twh_minload": 0.032
+   },
+   "201": {
+    "name": "Thomas Fitzhugh",
+    "npl": 185.0,
+    "conduct_lyo": 0.366,
+    "on_all": 0.41,
+    "on_low": 0.385,
+    "model_on_low": 0.239,
+    "low_online_twh_minload": 0.059,
+    "gap_twh_minload": 0.028
+   },
+   "1239:CC_REGULAR": {
+    "name": "Riverton",
+    "npl": 267.0,
+    "conduct_lyo": 0.721,
+    "on_all": 0.739,
+    "on_low": 0.685,
+    "model_on_low": 0.554,
+    "low_online_twh_minload": 0.152,
+    "gap_twh_minload": 0.046
+   },
+   "2079:CC_REGULAR": {
+    "name": "Hawthorn",
+    "npl": 313.0,
+    "conduct_lyo": 0.198,
+    "on_all": 0.132,
+    "on_low": 0.034,
+    "model_on_low": 0.158,
+    "low_online_twh_minload": 0.009,
+    "gap_twh_minload": 0.003
+   },
+   "2963:CC_REGULAR": {
+    "name": "Northeastern",
+    "npl": 532.0,
+    "conduct_lyo": 0.647,
+    "on_all": 0.775,
+    "on_low": 0.754,
+    "model_on_low": 0.274,
+    "low_online_twh_minload": 0.333,
+    "gap_twh_minload": 0.239
+   },
+   "3604": {
+    "name": "J Robert Massengale",
+    "npl": 84.0,
+    "conduct_lyo": 0.189,
+    "on_all": 0.154,
+    "on_low": 0.058,
+    "model_on_low": 0.479,
+    "low_online_twh_minload": 0.004,
+    "gap_twh_minload": 0.002
+   },
+   "7296:CC_REGULAR": {
+    "name": "State Line Combined Cycle",
+    "npl": 567.0,
+    "conduct_lyo": 0.75,
+    "on_all": 0.819,
+    "on_low": 0.807,
+    "model_on_low": 0.738,
+    "low_online_twh_minload": 0.38,
+    "gap_twh_minload": 0.059
+   },
+   "7546:CC_REGULAR": {
+    "name": "Ponca City",
+    "npl": 74.0,
+    "conduct_lyo": 0.094,
+    "on_all": 0.037,
+    "on_low": 0.003,
+    "model_on_low": 0.047,
+    "low_online_twh_minload": 0.0,
+    "gap_twh_minload": 0.0
+   },
+   "7887:CC_REGULAR": {
+    "name": "Terry Bundy Generating Station",
+    "npl": 149.0,
+    "conduct_lyo": 0.22,
+    "on_all": 0.211,
+    "on_low": 0.042,
+    "model_on_low": 0.007,
+    "low_online_twh_minload": 0.005,
+    "gap_twh_minload": 0.005
+   },
+   "8000": {
+    "name": "Beatrice",
+    "npl": 247.0,
+    "conduct_lyo": 0.346,
+    "on_all": 0.581,
+    "on_low": 0.392,
+    "model_on_low": 0.431,
+    "low_online_twh_minload": 0.081,
+    "gap_twh_minload": 0.023
+   },
+   "8059": {
+    "name": "Comanche (OK)",
+    "npl": 294.0,
+    "conduct_lyo": 0.256,
+    "on_all": 0.166,
+    "on_low": 0.109,
+    "model_on_low": 0.07,
+    "low_online_twh_minload": 0.027,
+    "gap_twh_minload": 0.027
+   },
+   "50558": {
+    "name": "Frontier",
+    "npl": 131.0,
+    "conduct_lyo": 0.501,
+    "on_all": 0.229,
+    "on_low": 0.181,
+    "model_on_low": 0.543,
+    "low_online_twh_minload": 0.02,
+    "gap_twh_minload": 0.003
+   },
+   "55065": {
+    "name": "Mustang Station",
+    "npl": 521.0,
+    "conduct_lyo": 0.687,
+    "on_all": 0.687,
+    "on_low": 0.645,
+    "model_on_low": 0.551,
+    "low_online_twh_minload": 0.28,
+    "gap_twh_minload": 0.075
+   },
+   "55146": {
+    "name": "Green Country Power Station",
+    "npl": 904.0,
+    "conduct_lyo": 0.852,
+    "on_all": 0.85,
+    "on_low": 0.752,
+    "model_on_low": 0.781,
+    "low_online_twh_minload": 0.565,
+    "gap_twh_minload": 0.063
+   },
+   "55178": {
+    "name": "Dogwood Energy Facility",
+    "npl": 655.0,
+    "conduct_lyo": 0.543,
+    "on_all": 0.592,
+    "on_low": 0.399,
+    "model_on_low": 0.471,
+    "low_online_twh_minload": 0.217,
+    "gap_twh_minload": 0.065
+   },
+   "55225": {
+    "name": "Oneta Energy Center",
+    "npl": 1214.0,
+    "conduct_lyo": 0.787,
+    "on_all": 0.903,
+    "on_low": 0.826,
+    "model_on_low": 0.782,
+    "low_online_twh_minload": 0.833,
+    "gap_twh_minload": 0.122
+   },
+   "55457": {
+    "name": "McClain Energy Facility",
+    "npl": 551.0,
+    "conduct_lyo": 0.616,
+    "on_all": 0.75,
+    "on_low": 0.644,
+    "model_on_low": 0.607,
+    "low_online_twh_minload": 0.295,
+    "gap_twh_minload": 0.057
+   },
+   "55463": {
+    "name": "Redbud Power Plant",
+    "npl": 1434.0,
+    "conduct_lyo": 0.766,
+    "on_all": 0.841,
+    "on_low": 0.745,
+    "model_on_low": 0.851,
+    "low_online_twh_minload": 0.889,
+    "gap_twh_minload": 0.064
+   },
+   "55664": {
+    "name": "Harrison County Power Project",
+    "npl": 570.0,
+    "conduct_lyo": 0.724,
+    "on_all": 0.721,
+    "on_low": 0.663,
+    "model_on_low": 0.679,
+    "low_online_twh_minload": 0.314,
+    "gap_twh_minload": 0.033
+   },
+   "56458:CC_REGULAR": {
+    "name": "Hobbs Generating Station",
+    "npl": 675.0,
+    "conduct_lyo": 0.858,
+    "on_all": 0.957,
+    "on_low": 0.942,
+    "model_on_low": 0.422,
+    "low_online_twh_minload": 0.528,
+    "gap_twh_minload": 0.292
+   },
+   "56565": {
+    "name": "J Lamar Stall Unit",
+    "npl": 624.0,
+    "conduct_lyo": 0.794,
+    "on_all": 0.851,
+    "on_low": 0.836,
+    "model_on_low": 0.782,
+    "low_online_twh_minload": 0.434,
+    "gap_twh_minload": 0.07
+   },
+   "56610": {
+    "name": "Deer Creek Station",
+    "npl": 324.0,
+    "conduct_lyo": 0.521,
+    "on_all": 0.447,
+    "on_low": 0.308,
+    "model_on_low": 0.237,
+    "low_online_twh_minload": 0.083,
+    "gap_twh_minload": 0.044
+   }
+  }
+ },
+ "2021": {
+  "low_hours": 2958,
+  "da_low_share_of_low_rt": 0.617,
+  "plant_hours": 62118,
+  "cems_online_rate_low": 0.371,
+  "model_online_rate_low": 0.11,
+  "cems_online_rate_all": 0.515,
+  "gap_twh_minload": 2.417,
+  "auc": {
+   "nl_now": 0.631,
+   "nl_fwd24": 0.594,
+   "nl_gasday": 0.589,
+   "load_fwd24": 0.584,
+   "month_cold": 0.482,
+   "da_low": 0.436,
+   "conduct_lyo": 0.748
+  },
+  "long_spell_share_of_low_online": 0.762,
+  "median_spell_h_of_low_online": 181.0,
+  "auc_within_plant": {
+   "nl_now": 0.697,
+   "nl_fwd24": 0.641,
+   "nl_gasday": 0.633,
+   "load_fwd24": 0.625,
+   "month_cold": 0.468,
+   "da_low": 0.399
+  },
+  "class_always_on_gt0.8": {
+   "cems_on_rate_low": 0.626,
+   "model_on_rate_low": 0.147,
+   "gap_twh_minload": 0.988,
+   "cems_low_online_twh_minload": 1.231
+  },
+  "class_mid_0.5_0.8": {
+   "cems_on_rate_low": 0.424,
+   "model_on_rate_low": 0.148,
+   "gap_twh_minload": 1.364,
+   "cems_low_online_twh_minload": 1.76
+  },
+  "class_cycler_lt0.5": {
+   "cems_on_rate_low": 0.104,
+   "model_on_rate_low": 0.014,
+   "gap_twh_minload": 0.065,
+   "cems_low_online_twh_minload": 0.069
+  },
+  "rule_conduct_gt0.5": {
+   "precision": 0.478,
+   "recall": 0.92,
+   "reach_twh_minload_where_model_off": 5.175,
+   "correct_reach_twh_minload": 2.352
+  },
+  "plants": {
+   "165:CC_REGULAR": {
+    "name": "GREC",
+    "npl": 600.0,
+    "conduct_lyo": 0.761,
+    "on_all": 0.584,
+    "on_low": 0.5,
+    "model_on_low": 0.213,
+    "low_online_twh_minload": 0.185,
+    "gap_twh_minload": 0.11
+   },
+   "201": {
+    "name": "Thomas Fitzhugh",
+    "npl": 185.0,
+    "conduct_lyo": 0.394,
+    "on_all": 0.24,
+    "on_low": 0.126,
+    "model_on_low": 0.001,
+    "low_online_twh_minload": 0.014,
+    "gap_twh_minload": 0.014
+   },
+   "1239:CC_REGULAR": {
+    "name": "Riverton",
+    "npl": 267.0,
+    "conduct_lyo": 0.715,
+    "on_all": 0.762,
+    "on_low": 0.733,
+    "model_on_low": 0.084,
+    "low_online_twh_minload": 0.121,
+    "gap_twh_minload": 0.108
+   },
+   "2079:CC_REGULAR": {
+    "name": "Hawthorn",
+    "npl": 313.0,
+    "conduct_lyo": 0.194,
+    "on_all": 0.156,
+    "on_low": 0.025,
+    "model_on_low": 0.01,
+    "low_online_twh_minload": 0.005,
+    "gap_twh_minload": 0.004
+   },
+   "2963:CC_REGULAR": {
+    "name": "Northeastern",
+    "npl": 532.0,
+    "conduct_lyo": 0.645,
+    "on_all": 0.788,
+    "on_low": 0.751,
+    "model_on_low": 0.023,
+    "low_online_twh_minload": 0.247,
+    "gap_twh_minload": 0.242
+   },
+   "3006:CC_REGULAR": {
+    "name": "Anadarko Plant",
+    "npl": 315.0,
+    "conduct_lyo": 0.551,
+    "on_all": 0.213,
+    "on_low": 0.065,
+    "model_on_low": 0.0,
+    "low_online_twh_minload": 0.013,
+    "gap_twh_minload": 0.013
+   },
+   "3604": {
+    "name": "J Robert Massengale",
+    "npl": 84.0,
+    "conduct_lyo": 0.183,
+    "on_all": 0.177,
+    "on_low": 0.098,
+    "model_on_low": 0.01,
+    "low_online_twh_minload": 0.005,
+    "gap_twh_minload": 0.005
+   },
+   "7296:CC_REGULAR": {
+    "name": "State Line Combined Cycle",
+    "npl": 567.0,
+    "conduct_lyo": 0.782,
+    "on_all": 0.624,
+    "on_low": 0.47,
+    "model_on_low": 0.08,
+    "low_online_twh_minload": 0.165,
+    "gap_twh_minload": 0.14
+   },
+   "8000": {
+    "name": "Beatrice",
+    "npl": 247.0,
+    "conduct_lyo": 0.387,
+    "on_all": 0.338,
+    "on_low": 0.062,
+    "model_on_low": 0.0,
+    "low_online_twh_minload": 0.009,
+    "gap_twh_minload": 0.009
+   },
+   "8059": {
+    "name": "Comanche (OK)",
+    "npl": 294.0,
+    "conduct_lyo": 0.256,
+    "on_all": 0.164,
+    "on_low": 0.1,
+    "model_on_low": 0.047,
+    "low_online_twh_minload": 0.018,
+    "gap_twh_minload": 0.015
+   },
+   "50558": {
+    "name": "Frontier",
+    "npl": 131.0,
+    "conduct_lyo": 0.468,
+    "on_all": 0.425,
+    "on_low": 0.213,
+    "model_on_low": 0.018,
+    "low_online_twh_minload": 0.017,
+    "gap_twh_minload": 0.016
+   },
+   "55065": {
+    "name": "Mustang Station",
+    "npl": 521.0,
+    "conduct_lyo": 0.747,
+    "on_all": 0.327,
+    "on_low": 0.182,
+    "model_on_low": 0.023,
+    "low_online_twh_minload": 0.058,
+    "gap_twh_minload": 0.053
+   },
+   "55146": {
+    "name": "Green Country Power Station",
+    "npl": 904.0,
+    "conduct_lyo": 0.866,
+    "on_all": 0.767,
+    "on_low": 0.527,
+    "model_on_low": 0.109,
+    "low_online_twh_minload": 0.295,
+    "gap_twh_minload": 0.239
+   },
+   "55178": {
+    "name": "Dogwood Energy Facility",
+    "npl": 655.0,
+    "conduct_lyo": 0.56,
+    "on_all": 0.491,
+    "on_low": 0.211,
+    "model_on_low": 0.118,
+    "low_online_twh_minload": 0.085,
+    "gap_twh_minload": 0.06
+   },
+   "55225": {
+    "name": "Oneta Energy Center",
+    "npl": 1214.0,
+    "conduct_lyo": 0.83,
+    "on_all": 0.643,
+    "on_low": 0.4,
+    "model_on_low": 0.084,
+    "low_online_twh_minload": 0.3,
+    "gap_twh_minload": 0.246
+   },
+   "55457": {
+    "name": "McClain Energy Facility",
+    "npl": 551.0,
+    "conduct_lyo": 0.639,
+    "on_all": 0.613,
+    "on_low": 0.45,
+    "model_on_low": 0.063,
+    "low_online_twh_minload": 0.153,
+    "gap_twh_minload": 0.134
+   },
+   "55463": {
+    "name": "Redbud Power Plant",
+    "npl": 1434.0,
+    "conduct_lyo": 0.79,
+    "on_all": 0.7,
+    "on_low": 0.546,
+    "model_on_low": 0.197,
+    "low_online_twh_minload": 0.484,
+    "gap_twh_minload": 0.34
+   },
+   "55664": {
+    "name": "Harrison County Power Project",
+    "npl": 570.0,
+    "conduct_lyo": 0.718,
+    "on_all": 0.762,
+    "on_low": 0.628,
+    "model_on_low": 0.197,
+    "low_online_twh_minload": 0.221,
+    "gap_twh_minload": 0.16
+   },
+   "56458:CC_REGULAR": {
+    "name": "Hobbs Generating Station",
+    "npl": 675.0,
+    "conduct_lyo": 0.864,
+    "on_all": 0.921,
+    "on_low": 0.864,
+    "model_on_low": 0.082,
+    "low_online_twh_minload": 0.361,
+    "gap_twh_minload": 0.326
+   },
+   "56565": {
+    "name": "J Lamar Stall Unit",
+    "npl": 624.0,
+    "conduct_lyo": 0.808,
+    "on_all": 0.767,
+    "on_low": 0.715,
+    "model_on_low": 0.312,
+    "low_online_twh_minload": 0.276,
+    "gap_twh_minload": 0.177
+   },
+   "56610": {
+    "name": "Deer Creek Station",
+    "npl": 324.0,
+    "conduct_lyo": 0.536,
+    "on_all": 0.359,
+    "on_low": 0.13,
+    "model_on_low": 0.629,
+    "low_online_twh_minload": 0.026,
+    "gap_twh_minload": 0.003
+   }
+  }
+ },
+ "2022": {
+  "low_hours": 2119,
+  "da_low_share_of_low_rt": 0.549,
+  "plant_hours": 46618,
+  "cems_online_rate_low": 0.35,
+  "model_online_rate_low": 0.04,
+  "cems_online_rate_all": 0.528,
+  "gap_twh_minload": 1.988,
+  "auc": {
+   "nl_now": 0.618,
+   "nl_fwd24": 0.591,
+   "nl_gasday": 0.59,
+   "load_fwd24": 0.593,
+   "month_cold": 0.495,
+   "da_low": 0.43,
+   "conduct_lyo": 0.771
+  },
+  "long_spell_share_of_low_online": 0.793,
+  "median_spell_h_of_low_online": 162.0,
+  "auc_within_plant": {
+   "nl_now": 0.674,
+   "nl_fwd24": 0.631,
+   "nl_gasday": 0.634,
+   "load_fwd24": 0.625,
+   "month_cold": 0.484,
+   "da_low": 0.392
+  },
+  "class_always_on_gt0.8": {
+   "cems_on_rate_low": 0.604,
+   "model_on_rate_low": 0.07,
+   "gap_twh_minload": 0.774,
+   "cems_low_online_twh_minload": 0.861
+  },
+  "class_mid_0.5_0.8": {
+   "cems_on_rate_low": 0.43,
+   "model_on_rate_low": 0.052,
+   "gap_twh_minload": 1.171,
+   "cems_low_online_twh_minload": 1.235
+  },
+  "class_cycler_lt0.5": {
+   "cems_on_rate_low": 0.078,
+   "model_on_rate_low": 0.003,
+   "gap_twh_minload": 0.043,
+   "cems_low_online_twh_minload": 0.043
+  },
+  "rule_conduct_gt0.5": {
+   "precision": 0.476,
+   "recall": 0.929,
+   "reach_twh_minload_where_model_off": 4.11,
+   "correct_reach_twh_minload": 1.945
+  },
+  "plants": {
+   "165:CC_REGULAR": {
+    "name": "GREC",
+    "npl": 600.0,
+    "conduct_lyo": 0.764,
+    "on_all": 0.561,
+    "on_low": 0.379,
+    "model_on_low": 0.05,
+    "low_online_twh_minload": 0.101,
+    "gap_twh_minload": 0.091
+   },
+   "201": {
+    "name": "Thomas Fitzhugh",
+    "npl": 185.0,
+    "conduct_lyo": 0.36,
+    "on_all": 0.446,
+    "on_low": 0.239,
+    "model_on_low": 0.002,
+    "low_online_twh_minload": 0.02,
+    "gap_twh_minload": 0.02
+   },
+   "1239:CC_REGULAR": {
+    "name": "Riverton",
+    "npl": 267.0,
+    "conduct_lyo": 0.697,
+    "on_all": 0.834,
+    "on_low": 0.761,
+    "model_on_low": 0.003,
+    "low_online_twh_minload": 0.09,
+    "gap_twh_minload": 0.09
+   },
+   "2079:CC_REGULAR": {
+    "name": "Hawthorn",
+    "npl": 313.0,
+    "conduct_lyo": 0.187,
+    "on_all": 0.198,
+    "on_low": 0.037,
+    "model_on_low": 0.0,
+    "low_online_twh_minload": 0.005,
+    "gap_twh_minload": 0.005
+   },
+   "2963:CC_REGULAR": {
+    "name": "Northeastern",
+    "npl": 532.0,
+    "conduct_lyo": 0.68,
+    "on_all": 0.577,
+    "on_low": 0.413,
+    "model_on_low": 0.002,
+    "low_online_twh_minload": 0.097,
+    "gap_twh_minload": 0.097
+   },
+   "3006:CC_REGULAR": {
+    "name": "Anadarko Plant",
+    "npl": 315.0,
+    "conduct_lyo": 0.521,
+    "on_all": 0.363,
+    "on_low": 0.169,
+    "model_on_low": 0.0,
+    "low_online_twh_minload": 0.024,
+    "gap_twh_minload": 0.024
+   },
+   "3604": {
+    "name": "J Robert Massengale",
+    "npl": 84.0,
+    "conduct_lyo": 0.214,
+    "on_all": 0.054,
+    "on_low": 0.008,
+    "model_on_low": 0.006,
+    "low_online_twh_minload": 0.0,
+    "gap_twh_minload": 0.0
+   },
+   "7296:CC_REGULAR": {
+    "name": "State Line Combined Cycle",
+    "npl": 567.0,
+    "conduct_lyo": 0.748,
+    "on_all": 0.833,
+    "on_low": 0.756,
+    "model_on_low": 0.007,
+    "low_online_twh_minload": 0.19,
+    "gap_twh_minload": 0.188
+   },
+   "7546:CC_REGULAR": {
+    "name": "Ponca City",
+    "npl": 74.0,
+    "conduct_lyo": 0.078,
+    "on_all": 0.087,
+    "on_low": 0.0,
+    "model_on_low": 0.0,
+    "low_online_twh_minload": 0.0,
+    "gap_twh_minload": 0.0
+   },
+   "8000": {
+    "name": "Beatrice",
+    "npl": 247.0,
+    "conduct_lyo": 0.396,
+    "on_all": 0.279,
+    "on_low": 0.012,
+    "model_on_low": 0.0,
+    "low_online_twh_minload": 0.001,
+    "gap_twh_minload": 0.001
+   },
+   "8059": {
+    "name": "Comanche (OK)",
+    "npl": 294.0,
+    "conduct_lyo": 0.252,
+    "on_all": 0.192,
+    "on_low": 0.032,
+    "model_on_low": 0.003,
+    "low_online_twh_minload": 0.004,
+    "gap_twh_minload": 0.004
+   },
+   "50558": {
+    "name": "Frontier",
+    "npl": 131.0,
+    "conduct_lyo": 0.464,
+    "on_all": 0.454,
+    "on_low": 0.217,
+    "model_on_low": 0.009,
+    "low_online_twh_minload": 0.013,
+    "gap_twh_minload": 0.012
+   },
+   "55065": {
+    "name": "Mustang Station",
+    "npl": 521.0,
+    "conduct_lyo": 0.71,
+    "on_all": 0.55,
+    "on_low": 0.452,
+    "model_on_low": 0.042,
+    "low_online_twh_minload": 0.104,
+    "gap_twh_minload": 0.097
+   },
+   "55146": {
+    "name": "Green Country Power Station",
+    "npl": 904.0,
+    "conduct_lyo": 0.868,
+    "on_all": 0.753,
+    "on_low": 0.52,
+    "model_on_low": 0.061,
+    "low_online_twh_minload": 0.208,
+    "gap_twh_minload": 0.186
+   },
+   "55178": {
+    "name": "Dogwood Energy Facility",
+    "npl": 655.0,
+    "conduct_lyo": 0.561,
+    "on_all": 0.484,
+    "on_low": 0.193,
+    "model_on_low": 0.009,
+    "low_online_twh_minload": 0.056,
+    "gap_twh_minload": 0.055
+   },
+   "55225": {
+    "name": "Oneta Energy Center",
+    "npl": 1214.0,
+    "conduct_lyo": 0.822,
+    "on_all": 0.695,
+    "on_low": 0.42,
+    "model_on_low": 0.049,
+    "low_online_twh_minload": 0.226,
+    "gap_twh_minload": 0.205
+   },
+   "55457": {
+    "name": "McClain Energy Facility",
+    "npl": 551.0,
+    "conduct_lyo": 0.629,
+    "on_all": 0.675,
+    "on_low": 0.524,
+    "model_on_low": 0.028,
+    "low_online_twh_minload": 0.128,
+    "gap_twh_minload": 0.122
+   },
+   "55463": {
+    "name": "Redbud Power Plant",
+    "npl": 1434.0,
+    "conduct_lyo": 0.786,
+    "on_all": 0.72,
+    "on_low": 0.488,
+    "model_on_low": 0.006,
+    "low_online_twh_minload": 0.31,
+    "gap_twh_minload": 0.306
+   },
+   "55664": {
+    "name": "Harrison County Power Project",
+    "npl": 570.0,
+    "conduct_lyo": 0.727,
+    "on_all": 0.706,
+    "on_low": 0.459,
+    "model_on_low": 0.095,
+    "low_online_twh_minload": 0.116,
+    "gap_twh_minload": 0.095
+   },
+   "56458:CC_REGULAR": {
+    "name": "Hobbs Generating Station",
+    "npl": 675.0,
+    "conduct_lyo": 0.867,
+    "on_all": 0.906,
+    "on_low": 0.827,
+    "model_on_low": 0.048,
+    "low_online_twh_minload": 0.247,
+    "gap_twh_minload": 0.233
+   },
+   "56565": {
+    "name": "J Lamar Stall Unit",
+    "npl": 624.0,
+    "conduct_lyo": 0.803,
+    "on_all": 0.797,
+    "on_low": 0.65,
+    "model_on_low": 0.124,
+    "low_online_twh_minload": 0.18,
+    "gap_twh_minload": 0.15
+   },
+   "56610": {
+    "name": "Deer Creek Station",
+    "npl": 324.0,
+    "conduct_lyo": 0.521,
+    "on_all": 0.448,
+    "on_low": 0.13,
+    "model_on_low": 0.332,
+    "low_online_twh_minload": 0.019,
+    "gap_twh_minload": 0.007
+   }
+  }
+ },
+ "2023": {
+  "low_hours": 2665,
+  "da_low_share_of_low_rt": 0.61,
+  "plant_hours": 58630,
+  "cems_online_rate_low": 0.488,
+  "model_online_rate_low": 0.258,
+  "cems_online_rate_all": 0.616,
+  "gap_twh_minload": 2.052,
+  "auc": {
+   "nl_now": 0.621,
+   "nl_fwd24": 0.577,
+   "nl_gasday": 0.569,
+   "load_fwd24": 0.576,
+   "month_cold": 0.466,
+   "da_low": 0.443,
+   "conduct_lyo": 0.751
+  },
+  "long_spell_share_of_low_online": 0.815,
+  "median_spell_h_of_low_online": 185.0,
+  "auc_within_plant": {
+   "nl_now": 0.687,
+   "nl_fwd24": 0.619,
+   "nl_gasday": 0.609,
+   "load_fwd24": 0.607,
+   "month_cold": 0.466,
+   "da_low": 0.41
+  },
+  "class_always_on_gt0.8": {
+   "cems_on_rate_low": 0.776,
+   "model_on_rate_low": 0.368,
+   "gap_twh_minload": 0.356,
+   "cems_low_online_twh_minload": 0.667
+  },
+  "class_mid_0.5_0.8": {
+   "cems_on_rate_low": 0.62,
+   "model_on_rate_low": 0.324,
+   "gap_twh_minload": 1.424,
+   "cems_low_online_twh_minload": 2.598
+  },
+  "class_cycler_lt0.5": {
+   "cems_on_rate_low": 0.263,
+   "model_on_rate_low": 0.154,
+   "gap_twh_minload": 0.273,
+   "cems_low_online_twh_minload": 0.324
+  },
+  "rule_conduct_gt0.5": {
+   "precision": 0.644,
+   "recall": 0.779,
+   "reach_twh_minload_where_model_off": 3.341,
+   "correct_reach_twh_minload": 1.779
+  },
+  "plants": {
+   "165:CC_REGULAR": {
+    "name": "GREC",
+    "npl": 600.0,
+    "conduct_lyo": 0.719,
+    "on_all": 0.834,
+    "on_low": 0.762,
+    "model_on_low": 0.144,
+    "low_online_twh_minload": 0.255,
+    "gap_twh_minload": 0.207
+   },
+   "201": {
+    "name": "Thomas Fitzhugh",
+    "npl": 185.0,
+    "conduct_lyo": 0.373,
+    "on_all": 0.365,
+    "on_low": 0.239,
+    "model_on_low": 0.065,
+    "low_online_twh_minload": 0.025,
+    "gap_twh_minload": 0.022
+   },
+   "1239": {
+    "name": "Riverton",
+    "npl": 300.0,
+    "conduct_lyo": 0.703,
+    "on_all": 0.625,
+    "on_low": 0.596,
+    "model_on_low": 0.132,
+    "low_online_twh_minload": 0.1,
+    "gap_twh_minload": 0.08
+   },
+   "2079:CC_REGULAR": {
+    "name": "Hawthorn",
+    "npl": 313.0,
+    "conduct_lyo": 0.182,
+    "on_all": 0.228,
+    "on_low": 0.089,
+    "model_on_low": 0.247,
+    "low_online_twh_minload": 0.015,
+    "gap_twh_minload": 0.008
+   },
+   "2963:CC_REGULAR": {
+    "name": "Northeastern",
+    "npl": 532.0,
+    "conduct_lyo": 0.677,
+    "on_all": 0.597,
+    "on_low": 0.529,
+    "model_on_low": 0.016,
+    "low_online_twh_minload": 0.157,
+    "gap_twh_minload": 0.155
+   },
+   "3006:CC_REGULAR": {
+    "name": "Anadarko Plant",
+    "npl": 315.0,
+    "conduct_lyo": 0.462,
+    "on_all": 0.658,
+    "on_low": 0.591,
+    "model_on_low": 0.019,
+    "low_online_twh_minload": 0.104,
+    "gap_twh_minload": 0.102
+   },
+   "3604": {
+    "name": "J Robert Massengale",
+    "npl": 84.0,
+    "conduct_lyo": 0.201,
+    "on_all": 0.107,
+    "on_low": 0.026,
+    "model_on_low": 0.09,
+    "low_online_twh_minload": 0.001,
+    "gap_twh_minload": 0.001
+   },
+   "7296:CC_REGULAR": {
+    "name": "State Line Combined Cycle",
+    "npl": 567.0,
+    "conduct_lyo": 0.764,
+    "on_all": 0.735,
+    "on_low": 0.615,
+    "model_on_low": 0.366,
+    "low_online_twh_minload": 0.194,
+    "gap_twh_minload": 0.096
+   },
+   "7887:CC_REGULAR": {
+    "name": "Terry Bundy Generating Station",
+    "npl": 149.0,
+    "conduct_lyo": 0.212,
+    "on_all": 0.233,
+    "on_low": 0.042,
+    "model_on_low": 0.334,
+    "low_online_twh_minload": 0.004,
+    "gap_twh_minload": 0.001
+   },
+   "8000": {
+    "name": "Beatrice",
+    "npl": 247.0,
+    "conduct_lyo": 0.378,
+    "on_all": 0.391,
+    "on_low": 0.072,
+    "model_on_low": 0.284,
+    "low_online_twh_minload": 0.01,
+    "gap_twh_minload": 0.003
+   },
+   "8059": {
+    "name": "Comanche (OK)",
+    "npl": 294.0,
+    "conduct_lyo": 0.216,
+    "on_all": 0.407,
+    "on_low": 0.373,
+    "model_on_low": 0.002,
+    "low_online_twh_minload": 0.061,
+    "gap_twh_minload": 0.061
+   },
+   "50558": {
+    "name": "Frontier",
+    "npl": 131.0,
+    "conduct_lyo": 0.426,
+    "on_all": 0.678,
+    "on_low": 0.599,
+    "model_on_low": 0.163,
+    "low_online_twh_minload": 0.044,
+    "gap_twh_minload": 0.034
+   },
+   "55065": {
+    "name": "Mustang Station",
+    "npl": 521.0,
+    "conduct_lyo": 0.68,
+    "on_all": 0.729,
+    "on_low": 0.593,
+    "model_on_low": 0.624,
+    "low_online_twh_minload": 0.172,
+    "gap_twh_minload": 0.035
+   },
+   "55146": {
+    "name": "Green Country Power Station",
+    "npl": 904.0,
+    "conduct_lyo": 0.852,
+    "on_all": 0.854,
+    "on_low": 0.659,
+    "model_on_low": 0.43,
+    "low_online_twh_minload": 0.332,
+    "gap_twh_minload": 0.133
+   },
+   "55178": {
+    "name": "Dogwood Energy Facility",
+    "npl": 655.0,
+    "conduct_lyo": 0.54,
+    "on_all": 0.611,
+    "on_low": 0.38,
+    "model_on_low": 0.253,
+    "low_online_twh_minload": 0.139,
+    "gap_twh_minload": 0.073
+   },
+   "55225": {
+    "name": "Oneta Energy Center",
+    "npl": 1214.0,
+    "conduct_lyo": 0.793,
+    "on_all": 0.863,
+    "on_low": 0.694,
+    "model_on_low": 0.388,
+    "low_online_twh_minload": 0.469,
+    "gap_twh_minload": 0.242
+   },
+   "55457": {
+    "name": "McClain Energy Facility",
+    "npl": 551.0,
+    "conduct_lyo": 0.624,
+    "on_all": 0.706,
+    "on_low": 0.58,
+    "model_on_low": 0.236,
+    "low_online_twh_minload": 0.178,
+    "gap_twh_minload": 0.117
+   },
+   "55463": {
+    "name": "Redbud Power Plant",
+    "npl": 1434.0,
+    "conduct_lyo": 0.781,
+    "on_all": 0.752,
+    "on_low": 0.526,
+    "model_on_low": 0.336,
+    "low_online_twh_minload": 0.42,
+    "gap_twh_minload": 0.229
+   },
+   "55664": {
+    "name": "Harrison County Power Project",
+    "npl": 570.0,
+    "conduct_lyo": 0.714,
+    "on_all": 0.784,
+    "on_low": 0.714,
+    "model_on_low": 0.532,
+    "low_online_twh_minload": 0.227,
+    "gap_twh_minload": 0.07
+   },
+   "56458:CC_REGULAR": {
+    "name": "Hobbs Generating Station",
+    "npl": 675.0,
+    "conduct_lyo": 0.861,
+    "on_all": 0.943,
+    "on_low": 0.892,
+    "model_on_low": 0.306,
+    "low_online_twh_minload": 0.335,
+    "gap_twh_minload": 0.223
+   },
+   "56565": {
+    "name": "J Lamar Stall Unit",
+    "npl": 624.0,
+    "conduct_lyo": 0.79,
+    "on_all": 0.874,
+    "on_low": 0.828,
+    "model_on_low": 0.537,
+    "low_online_twh_minload": 0.288,
+    "gap_twh_minload": 0.119
+   },
+   "56610": {
+    "name": "Deer Creek Station",
+    "npl": 324.0,
+    "conduct_lyo": 0.499,
+    "on_all": 0.577,
+    "on_low": 0.339,
+    "model_on_low": 0.183,
+    "low_online_twh_minload": 0.061,
+    "gap_twh_minload": 0.042
+   }
+  }
+ },
+ "2024": {
+  "low_hours": 3353,
+  "da_low_share_of_low_rt": 0.668,
+  "plant_hours": 70413,
+  "cems_online_rate_low": 0.523,
+  "model_online_rate_low": 0.32,
+  "cems_online_rate_all": 0.629,
+  "gap_twh_minload": 2.21,
+  "auc": {
+   "nl_now": 0.588,
+   "nl_fwd24": 0.608,
+   "nl_gasday": 0.591,
+   "load_fwd24": 0.609,
+   "month_cold": 0.485,
+   "da_low": 0.441,
+   "conduct_lyo": 0.702
+  },
+  "long_spell_share_of_low_online": 0.849,
+  "median_spell_h_of_low_online": 282.0,
+  "auc_within_plant": {
+   "nl_now": 0.616,
+   "nl_fwd24": 0.628,
+   "nl_gasday": 0.602,
+   "load_fwd24": 0.622,
+   "month_cold": 0.473,
+   "da_low": 0.412
+  },
+  "class_always_on_gt0.8": {
+   "cems_on_rate_low": 0.759,
+   "model_on_rate_low": 0.459,
+   "gap_twh_minload": 0.51,
+   "cems_low_online_twh_minload": 1.184
+  },
+  "class_mid_0.5_0.8": {
+   "cems_on_rate_low": 0.591,
+   "model_on_rate_low": 0.364,
+   "gap_twh_minload": 1.372,
+   "cems_low_online_twh_minload": 2.957
+  },
+  "class_cycler_lt0.5": {
+   "cems_on_rate_low": 0.349,
+   "model_on_rate_low": 0.213,
+   "gap_twh_minload": 0.328,
+   "cems_low_online_twh_minload": 0.485
+  },
+  "rule_conduct_gt0.5": {
+   "precision": 0.63,
+   "recall": 0.746,
+   "reach_twh_minload_where_model_off": 3.729,
+   "correct_reach_twh_minload": 1.882
+  },
+  "plants": {
+   "165:CC_REGULAR": {
+    "name": "GREC",
+    "npl": 600.0,
+    "conduct_lyo": 0.725,
+    "on_all": 0.797,
+    "on_low": 0.783,
+    "model_on_low": 0.296,
+    "low_online_twh_minload": 0.329,
+    "gap_twh_minload": 0.225
+   },
+   "201": {
+    "name": "Thomas Fitzhugh",
+    "npl": 185.0,
+    "conduct_lyo": 0.363,
+    "on_all": 0.426,
+    "on_low": 0.352,
+    "model_on_low": 0.205,
+    "low_online_twh_minload": 0.046,
+    "gap_twh_minload": 0.028
+   },
+   "1239:CC_REGULAR": {
+    "name": "Riverton",
+    "npl": 267.0,
+    "conduct_lyo": 0.755,
+    "on_all": 0.602,
+    "on_low": 0.435,
+    "model_on_low": 0.166,
+    "low_online_twh_minload": 0.081,
+    "gap_twh_minload": 0.055
+   },
+   "2079:CC_REGULAR": {
+    "name": "Hawthorn",
+    "npl": 313.0,
+    "conduct_lyo": 0.175,
+    "on_all": 0.271,
+    "on_low": 0.112,
+    "model_on_low": 0.375,
+    "low_online_twh_minload": 0.025,
+    "gap_twh_minload": 0.004
+   },
+   "2963:CC_REGULAR": {
+    "name": "Northeastern",
+    "npl": 532.0,
+    "conduct_lyo": 0.675,
+    "on_all": 0.606,
+    "on_low": 0.531,
+    "model_on_low": 0.011,
+    "low_online_twh_minload": 0.198,
+    "gap_twh_minload": 0.197
+   },
+   "3006:CC_REGULAR": {
+    "name": "Anadarko Plant",
+    "npl": 315.0,
+    "conduct_lyo": 0.434,
+    "on_all": 0.798,
+    "on_low": 0.772,
+    "model_on_low": 0.124,
+    "low_online_twh_minload": 0.17,
+    "gap_twh_minload": 0.147
+   },
+   "7296:CC_REGULAR": {
+    "name": "State Line Combined Cycle",
+    "npl": 567.0,
+    "conduct_lyo": 0.773,
+    "on_all": 0.682,
+    "on_low": 0.612,
+    "model_on_low": 0.31,
+    "low_online_twh_minload": 0.243,
+    "gap_twh_minload": 0.137
+   },
+   "7887:CC_REGULAR": {
+    "name": "Terry Bundy Generating Station",
+    "npl": 149.0,
+    "conduct_lyo": 0.206,
+    "on_all": 0.253,
+    "on_low": 0.037,
+    "model_on_low": 0.007,
+    "low_online_twh_minload": 0.004,
+    "gap_twh_minload": 0.004
+   },
+   "8000": {
+    "name": "Beatrice",
+    "npl": 247.0,
+    "conduct_lyo": 0.39,
+    "on_all": 0.315,
+    "on_low": 0.139,
+    "model_on_low": 0.197,
+    "low_online_twh_minload": 0.024,
+    "gap_twh_minload": 0.005
+   },
+   "8059": {
+    "name": "Comanche (OK)",
+    "npl": 294.0,
+    "conduct_lyo": 0.226,
+    "on_all": 0.345,
+    "on_low": 0.345,
+    "model_on_low": 0.098,
+    "low_online_twh_minload": 0.071,
+    "gap_twh_minload": 0.07
+   },
+   "50558": {
+    "name": "Frontier",
+    "npl": 131.0,
+    "conduct_lyo": 0.416,
+    "on_all": 0.742,
+    "on_low": 0.659,
+    "model_on_low": 0.303,
+    "low_online_twh_minload": 0.061,
+    "gap_twh_minload": 0.036
+   },
+   "55065": {
+    "name": "Mustang Station",
+    "npl": 521.0,
+    "conduct_lyo": 0.666,
+    "on_all": 0.811,
+    "on_low": 0.726,
+    "model_on_low": 0.674,
+    "low_online_twh_minload": 0.265,
+    "gap_twh_minload": 0.053
+   },
+   "55146": {
+    "name": "Green Country Power Station",
+    "npl": 904.0,
+    "conduct_lyo": 0.839,
+    "on_all": 0.927,
+    "on_low": 0.834,
+    "model_on_low": 0.59,
+    "low_online_twh_minload": 0.528,
+    "gap_twh_minload": 0.18
+   },
+   "55178": {
+    "name": "Dogwood Energy Facility",
+    "npl": 655.0,
+    "conduct_lyo": 0.552,
+    "on_all": 0.539,
+    "on_low": 0.293,
+    "model_on_low": 0.291,
+    "low_online_twh_minload": 0.134,
+    "gap_twh_minload": 0.05
+   },
+   "55225": {
+    "name": "Oneta Energy Center",
+    "npl": 1214.0,
+    "conduct_lyo": 0.794,
+    "on_all": 0.859,
+    "on_low": 0.722,
+    "model_on_low": 0.544,
+    "low_online_twh_minload": 0.614,
+    "gap_twh_minload": 0.234
+   },
+   "55457": {
+    "name": "McClain Energy Facility",
+    "npl": 551.0,
+    "conduct_lyo": 0.649,
+    "on_all": 0.557,
+    "on_low": 0.468,
+    "model_on_low": 0.363,
+    "low_online_twh_minload": 0.181,
+    "gap_twh_minload": 0.053
+   },
+   "55463": {
+    "name": "Redbud Power Plant",
+    "npl": 1434.0,
+    "conduct_lyo": 0.776,
+    "on_all": 0.783,
+    "on_low": 0.618,
+    "model_on_low": 0.445,
+    "low_online_twh_minload": 0.621,
+    "gap_twh_minload": 0.282
+   },
+   "55664": {
+    "name": "Harrison County Power Project",
+    "npl": 570.0,
+    "conduct_lyo": 0.712,
+    "on_all": 0.794,
+    "on_low": 0.726,
+    "model_on_low": 0.542,
+    "low_online_twh_minload": 0.29,
+    "gap_twh_minload": 0.086
+   },
+   "56458:CC_REGULAR": {
+    "name": "Hobbs Generating Station",
+    "npl": 675.0,
+    "conduct_lyo": 0.903,
+    "on_all": 0.689,
+    "on_low": 0.691,
+    "model_on_low": 0.316,
+    "low_online_twh_minload": 0.327,
+    "gap_twh_minload": 0.182
+   },
+   "56565": {
+    "name": "J Lamar Stall Unit",
+    "npl": 624.0,
+    "conduct_lyo": 0.801,
+    "on_all": 0.808,
+    "on_low": 0.752,
+    "model_on_low": 0.472,
+    "low_online_twh_minload": 0.329,
+    "gap_twh_minload": 0.148
+   },
+   "56610": {
+    "name": "Deer Creek Station",
+    "npl": 324.0,
+    "conduct_lyo": 0.496,
+    "on_all": 0.598,
+    "on_low": 0.374,
+    "model_on_low": 0.398,
+    "low_online_twh_minload": 0.085,
+    "gap_twh_minload": 0.034
+   }
+  }
+ },
+ "2025": {
+  "low_hours": 2634,
+  "da_low_share_of_low_rt": 0.664,
+  "plant_hours": 57948,
+  "cems_online_rate_low": 0.43,
+  "model_online_rate_low": 0.169,
+  "cems_online_rate_all": 0.574,
+  "gap_twh_minload": 2.194,
+  "auc": {
+   "nl_now": 0.601,
+   "nl_fwd24": 0.581,
+   "nl_gasday": 0.583,
+   "load_fwd24": 0.587,
+   "month_cold": 0.457,
+   "da_low": 0.448,
+   "conduct_lyo": 0.774
+  },
+  "long_spell_share_of_low_online": 0.823,
+  "median_spell_h_of_low_online": 309.0,
+  "auc_within_plant": {
+   "nl_now": 0.638,
+   "nl_fwd24": 0.597,
+   "nl_gasday": 0.602,
+   "load_fwd24": 0.6,
+   "month_cold": 0.434,
+   "da_low": 0.419
+  },
+  "class_always_on_gt0.8": {
+   "cems_on_rate_low": 0.737,
+   "model_on_rate_low": 0.367,
+   "gap_twh_minload": 0.616,
+   "cems_low_online_twh_minload": 1.091
+  },
+  "class_mid_0.5_0.8": {
+   "cems_on_rate_low": 0.559,
+   "model_on_rate_low": 0.178,
+   "gap_twh_minload": 1.402,
+   "cems_low_online_twh_minload": 1.943
+  },
+  "class_cycler_lt0.5": {
+   "cems_on_rate_low": 0.185,
+   "model_on_rate_low": 0.094,
+   "gap_twh_minload": 0.176,
+   "cems_low_online_twh_minload": 0.229
+  },
+  "rule_conduct_gt0.5": {
+   "precision": 0.6,
+   "recall": 0.824,
+   "reach_twh_minload_where_model_off": 3.808,
+   "correct_reach_twh_minload": 2.019
+  },
+  "plants": {
+   "165:CC_REGULAR": {
+    "name": "GREC",
+    "npl": 600.0,
+    "conduct_lyo": 0.727,
+    "on_all": 0.786,
+    "on_low": 0.733,
+    "model_on_low": 0.209,
+    "low_online_twh_minload": 0.242,
+    "gap_twh_minload": 0.18
+   },
+   "201": {
+    "name": "Thomas Fitzhugh",
+    "npl": 185.0,
+    "conduct_lyo": 0.36,
+    "on_all": 0.441,
+    "on_low": 0.342,
+    "model_on_low": 0.055,
+    "low_online_twh_minload": 0.035,
+    "gap_twh_minload": 0.031
+   },
+   "1239": {
+    "name": "Riverton",
+    "npl": 300.0,
+    "conduct_lyo": 0.625,
+    "on_all": 0.703,
+    "on_low": 0.516,
+    "model_on_low": 0.035,
+    "low_online_twh_minload": 0.085,
+    "gap_twh_minload": 0.081
+   },
+   "2079:CC_REGULAR": {
+    "name": "Hawthorn",
+    "npl": 313.0,
+    "conduct_lyo": 0.179,
+    "on_all": 0.245,
+    "on_low": 0.11,
+    "model_on_low": 0.024,
+    "low_online_twh_minload": 0.019,
+    "gap_twh_minload": 0.018
+   },
+   "2963:CC_REGULAR": {
+    "name": "Northeastern",
+    "npl": 532.0,
+    "conduct_lyo": 0.659,
+    "on_all": 0.704,
+    "on_low": 0.638,
+    "model_on_low": 0.023,
+    "low_online_twh_minload": 0.187,
+    "gap_twh_minload": 0.182
+   },
+   "3006:CC_REGULAR": {
+    "name": "Anadarko Plant",
+    "npl": 315.0,
+    "conduct_lyo": 0.499,
+    "on_all": 0.475,
+    "on_low": 0.361,
+    "model_on_low": 0.018,
+    "low_online_twh_minload": 0.063,
+    "gap_twh_minload": 0.061
+   },
+   "7296:CC_REGULAR": {
+    "name": "State Line Combined Cycle",
+    "npl": 567.0,
+    "conduct_lyo": 0.761,
+    "on_all": 0.752,
+    "on_low": 0.663,
+    "model_on_low": 0.093,
+    "low_online_twh_minload": 0.207,
+    "gap_twh_minload": 0.18
+   },
+   "7546:CC_REGULAR": {
+    "name": "Ponca City",
+    "npl": 74.0,
+    "conduct_lyo": 0.089,
+    "on_all": 0.052,
+    "on_low": 0.005,
+    "model_on_low": 0.033,
+    "low_online_twh_minload": 0.0,
+    "gap_twh_minload": 0.0
+   },
+   "7887:CC_REGULAR": {
+    "name": "Terry Bundy Generating Station",
+    "npl": 149.0,
+    "conduct_lyo": 0.232,
+    "on_all": 0.174,
+    "on_low": 0.026,
+    "model_on_low": 0.009,
+    "low_online_twh_minload": 0.002,
+    "gap_twh_minload": 0.002
+   },
+   "8000": {
+    "name": "Beatrice",
+    "npl": 247.0,
+    "conduct_lyo": 0.397,
+    "on_all": 0.274,
+    "on_low": 0.043,
+    "model_on_low": 0.098,
+    "low_online_twh_minload": 0.006,
+    "gap_twh_minload": 0.005
+   },
+   "8059": {
+    "name": "Comanche (OK)",
+    "npl": 294.0,
+    "conduct_lyo": 0.246,
+    "on_all": 0.228,
+    "on_low": 0.143,
+    "model_on_low": 0.063,
+    "low_online_twh_minload": 0.023,
+    "gap_twh_minload": 0.022
+   },
+   "50558": {
+    "name": "Frontier",
+    "npl": 131.0,
+    "conduct_lyo": 0.447,
+    "on_all": 0.556,
+    "on_low": 0.304,
+    "model_on_low": 0.103,
+    "low_online_twh_minload": 0.022,
+    "gap_twh_minload": 0.018
+   },
+   "55065": {
+    "name": "Mustang Station",
+    "npl": 521.0,
+    "conduct_lyo": 0.661,
+    "on_all": 0.846,
+    "on_low": 0.767,
+    "model_on_low": 0.451,
+    "low_online_twh_minload": 0.22,
+    "gap_twh_minload": 0.093
+   },
+   "55146": {
+    "name": "Green Country Power Station",
+    "npl": 904.0,
+    "conduct_lyo": 0.847,
+    "on_all": 0.883,
+    "on_low": 0.751,
+    "model_on_low": 0.43,
+    "low_online_twh_minload": 0.374,
+    "gap_twh_minload": 0.172
+   },
+   "55178": {
+    "name": "Dogwood Energy Facility",
+    "npl": 655.0,
+    "conduct_lyo": 0.557,
+    "on_all": 0.508,
+    "on_low": 0.2,
+    "model_on_low": 0.082,
+    "low_online_twh_minload": 0.072,
+    "gap_twh_minload": 0.056
+   },
+   "55225": {
+    "name": "Oneta Energy Center",
+    "npl": 1214.0,
+    "conduct_lyo": 0.806,
+    "on_all": 0.788,
+    "on_low": 0.588,
+    "model_on_low": 0.39,
+    "low_online_twh_minload": 0.393,
+    "gap_twh_minload": 0.221
+   },
+   "55457": {
+    "name": "McClain Energy Facility",
+    "npl": 551.0,
+    "conduct_lyo": 0.673,
+    "on_all": 0.41,
+    "on_low": 0.227,
+    "model_on_low": 0.165,
+    "low_online_twh_minload": 0.069,
+    "gap_twh_minload": 0.042
+   },
+   "55463": {
+    "name": "Redbud Power Plant",
+    "npl": 1434.0,
+    "conduct_lyo": 0.779,
+    "on_all": 0.762,
+    "on_low": 0.546,
+    "model_on_low": 0.196,
+    "low_online_twh_minload": 0.431,
+    "gap_twh_minload": 0.309
+   },
+   "55664": {
+    "name": "Harrison County Power Project",
+    "npl": 570.0,
+    "conduct_lyo": 0.735,
+    "on_all": 0.657,
+    "on_low": 0.486,
+    "model_on_low": 0.183,
+    "low_online_twh_minload": 0.153,
+    "gap_twh_minload": 0.105
+   },
+   "56458:CC_REGULAR": {
+    "name": "Hobbs Generating Station",
+    "npl": 675.0,
+    "conduct_lyo": 0.87,
+    "on_all": 0.887,
+    "on_low": 0.872,
+    "model_on_low": 0.281,
+    "low_online_twh_minload": 0.324,
+    "gap_twh_minload": 0.223
+   },
+   "56565": {
+    "name": "J Lamar Stall Unit",
+    "npl": 624.0,
+    "conduct_lyo": 0.79,
+    "on_all": 0.875,
+    "on_low": 0.809,
+    "model_on_low": 0.341,
+    "low_online_twh_minload": 0.278,
+    "gap_twh_minload": 0.174
+   },
+   "56610": {
+    "name": "Deer Creek Station",
+    "npl": 324.0,
+    "conduct_lyo": 0.491,
+    "on_all": 0.626,
+    "on_low": 0.331,
+    "model_on_low": 0.445,
+    "low_online_twh_minload": 0.059,
+    "gap_twh_minload": 0.018
+   }
+  }
+ }
+}

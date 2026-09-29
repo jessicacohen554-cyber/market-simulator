@@ -125,8 +125,10 @@ from market_sim.data.input_completeness import check_clean_partitions  # noqa: E
 from market_sim.pipeline import (  # noqa: E402
     UNSET,
     DispatchSpec,
+    shed_penalty_voll,
     EnergySolveResult,
     apply_ercot_commitment_posture,
+    apply_spp_commitment_posture,
     apply_reserve_coopt,
     backcast_config,
     build_base_dispatch_kwargs,
@@ -6638,7 +6640,7 @@ def run_year(
         # MISO/PJM cap verifiable energy offers at $2,000 (FERC Order 831);
         # ERCOT at $5,000. Using the per-ISO cap makes scarcity hours price at
         # the ceiling the market actually clears against.
-        voll=iso_config.voll,
+        voll=shed_penalty_voll(config, iso_config),
         incidence=incidence,
         ttc=ttc,
         # Import-direction bound when the measured ERCOT GTC overlay made the
@@ -6981,6 +6983,9 @@ def run_year(
     # merged as its own dispatch kwargs after the reserve seam. No-op / byte-
     # identical for every non-ERCOT run and default-off ERCOT.
     apply_ercot_commitment_posture(dispatch_kwargs, config, fleet_arrays)
+    # SPP standalone commitment posture with min-up/min-down (SPP-102). No-op /
+    # byte-identical for every non-SPP run and default-off SPP.
+    apply_spp_commitment_posture(dispatch_kwargs, config, fleet_arrays)
 
     # P0 → monthly startup markup → P1 via the shared pipeline solve core
     # (orchestrator-unification Stage 3): the intra-year warm start, the

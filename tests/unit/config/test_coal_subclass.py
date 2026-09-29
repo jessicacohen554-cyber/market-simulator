@@ -215,7 +215,8 @@ def test_ercot_curated_bin_sheet_has_no_bare_coal():
     df = pd.read_csv(CAMPD_BINS_CSV, usecols=["Plant_Group", "Plant_Code"])
     assert "COAL" not in set(df["Plant_Group"])
     coal = df[df["Plant_Group"].isin(SUBCLASSES)]
-    assert len(coal) == 10
+    # 10 plants + Oklaunion 127 (R-ERCOT-14, an ERCOT resource retired 9/2020).
+    assert len(coal) == 11
     for code, grp in zip(coal["Plant_Code"], coal["Plant_Group"]):
         assert grp == pt.COAL_SUPPLY_TO_CLASS[COAL_PLANT_SUPPLY[int(code)]]
 

@@ -6303,6 +6303,10 @@ Sandy Creek Energy Station,56611,S01,1008.0,1008.0,100.0,COAL,eia_exact,2024-02-
 Sandy Creek Energy Station,56611,S01,1008.0,1008.0,100.0,COAL,eia_exact,2024-10-02,2024-10-20,18.5,0,1,6,17
 Sandy Creek Energy Station,56611,S01,1008.0,1008.0,100.0,COAL,eia_exact,2025-01-22,2025-01-29,6.6,0,1,14,3
 Sandy Creek Energy Station,56611,S01,1008.0,1008.0,100.0,COAL,eia_exact,2025-02-28,2025-12-31,306.0,0,1,23,23
+Oklaunion Power Station,127,1,707.0,707.0,100.0,COAL,observed_peak,2019-04-05,2019-04-27,21.9,0,1,23,19
+Oklaunion Power Station,127,1,707.0,707.0,100.0,COAL,observed_peak,2019-10-23,2019-12-31,69.9,0,1,2,23
+Oklaunion Power Station,127,1,698.0,698.0,100.0,COAL,observed_peak,2020-01-01,2020-05-19,139.5,0,1,0,11
+Oklaunion Power Station,127,1,698.0,698.0,100.0,COAL,observed_peak,2020-09-26,2020-12-31,97.0,0,1,0,23
 Cedar Bayou 4,56806,CBY41,267.8,535.5,50.0,CC_REGULAR,eia_digits_cc,2019-11-18,2019-12-01,12.8,1,2,22,15
 Cedar Bayou 4,56806,CBY41,267.8,535.5,50.0,CC_REGULAR,eia_digits_cc,2023-01-01,2023-01-12,11.4,1,2,0,9
 Cedar Bayou 4,56806,CBY41,267.8,535.5,50.0,CC_REGULAR,eia_digits_cc,2023-02-03,2023-02-10,6.5,1,2,21,9

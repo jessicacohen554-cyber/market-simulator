@@ -63,6 +63,7 @@ from market_sim.pipeline.commitment import (
 )
 from market_sim.pipeline.kwargs import (
     apply_ercot_commitment_posture,
+    apply_spp_commitment_posture,
     apply_reserve_coopt,
     build_base_dispatch_kwargs,
     resolve_hydro_cascade,
@@ -78,7 +79,7 @@ from market_sim.pipeline.solve import (
     run_energy_solve,
     take_pass_timing_log,
 )
-from market_sim.pipeline.spec import UNSET, DispatchSpec, ReserveSpec
+from market_sim.pipeline.spec import UNSET, DispatchSpec, ReserveSpec, shed_penalty_voll
 from market_sim.pipeline.ttc import (
     apply_iso_monthly_ttc,
     apply_iso_year_ttc,
@@ -91,6 +92,7 @@ __all__ = [
     "run_scenario",
     "run_pair",
     "DispatchSpec",
+    "shed_penalty_voll",
     "ReserveSpec",
     "UNSET",
     "PriorYearResults",
@@ -100,6 +102,7 @@ __all__ = [
     "resolve_hydro_period_hours",
     "apply_reserve_coopt",
     "apply_ercot_commitment_posture",
+    "apply_spp_commitment_posture",
     "apply_bid_max_target",
     "reset_pass_timing_log",
     "run_energy_solve",
