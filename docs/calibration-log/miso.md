@@ -15323,3 +15323,9 @@ cannot reach a failing criterion.
 
 Owner ruling: "Park, go to RO-2 (Recommended)". The cell stays U. Next lane: RO-2 `scuc_load_pocket_commitment`.
 No frontier. `docs/FINDING-miso284-standby-census-2026-09-28.md`.
+
+RO-2 (same session, zero LP): about 76 % of the South out-of-merit steam sits on the MTEP15 VLR-eligible plants
+(Ninemile, Sabine, Lewis Creek, Little Gypsy, Waterford), and it falls as in-pocket CCs enter (2019–21). The pocket
+MW requirement and import limit are unpublished: only outcome reports, interface names and capability deltas are
+public. Owner ruling: "Mark blocked, go to night (Recommended)". `scuc_load_pocket_commitment` moves · → G. Next:
+the system night overshoot. `docs/FINDING-miso284-ro2-identification-2026-09-29.md`.
