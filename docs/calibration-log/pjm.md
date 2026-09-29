@@ -6775,12 +6775,12 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - **Card 3 phase 0:** the COAL_BIT over-run is a flat monthly level offset; handed to PJM-NEXT-10.
 - Records: `docs/RESULT-pjm-next-9-2026-09-29.md`, `docs/FINDING-pjm-next-9-east-south-boundary-2026-09-28.md`.
 
-## PJM-NEXT-10 — 2026-09-29 — COAL_BIT loading and cards 2–3 recorded as model-class limits (zero LP)
+## PJM-NEXT-10 — 2026-09-29 — COAL_BIT loading and cards 2–3: no admissible lever found yet, OPEN (zero LP)
 
 - No solve, no shard, keeper unchanged (`2026-09-28-pjm-next8-exitfix`).
 - **Card 1:** the COAL_BIT over-run is synced-unit loading. Within-synced share is +10.47 / +7.70 / +10.07 / +1.87 / −0.58 / −2.11 / +11.43 TWh (2019–25), online hours match CAMPD, and it is flat across hours. It tracks the delivered coal/gas ratio.
   - Ruled out, measured: outage windows, Pmax, AEP–Western congestion, PJM's own offers, incremental-HR pricing, min-load committed repricing.
   - Offer-band channel refused (no ex-ante value).
-  - Owner card: *"Record as limit"*.
-- **Cards 2–3:** CT_PEAKER 2021 is the same coal-displaces-gas swap. The model exports 10–14 TWh *less* than actual, so interchange can't explain the fossil surplus. C3a 2020/2022 and C3b 2022 are price-distribution compression. Owner card: *"Record, no successor"*.
+  - Owner card *"Record as limit"*, superseded the same day by *"Relabel as open and queue the test"*: **OPEN**.
+- **Cards 2–3:** CT_PEAKER 2021 is the same coal-displaces-gas swap. The model exports 10–14 TWh *less* than actual, so interchange can't explain the fossil surplus. C3a 2020/2022 and C3b 2022 are price-distribution compression. Owner card *"Record, no successor"*, superseded: **OPEN**, successor PJM-NEXT-11 fetches the PJM offers corpus to test LONG_RUN offered EcoMax by year.
 - Records: `docs/RESULT-pjm-next-10-2026-09-29.md`, `docs/FINDING-pjm-next-10-coal-loading-2026-09-29.md`.
