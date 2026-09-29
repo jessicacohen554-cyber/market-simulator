@@ -1972,3 +1972,19 @@ inert 2021 and 2025. The level replaces HH + measured basis + HH monthly shape; 
 C3a 2019 +14.0→+14.3, 2020 +14.4→+13.5, 2022 −12.7→−15.4; no C3a or C3b flips. The N3045 level is within 1.6 % of the keeper's
 (−4.7 % in 2022), so gas level cannot explain a 13–14 % C3a gap. Matrix cell R. No solve; keeper unchanged; NOT-YET 7/4/0/1/2.
 Record: docs/handoffs/r-soco/FINDING-soco-88-2026-09-29.md; probe scripts/probes/_soco88_ep_level.py.
+
+OWNER RULING 2026-09-29 (end of soco-88): **"Both, one lane"** — a zero-LP lane running (A) a price-setter census on
+soco87_span (marginal class per zone-hour; decompose the 2019/2020/2022 C3a gap by class, month and hour band, passing years
+as controls) and (B) an audit of the FERC-714 system-lambda benchmark (weighting, clock/DST, fleet, gaps, units, construction
+break). One conclusion; build nothing without a ruling.
+
+## 2026-09-29 — soco-89: C3a is two offsetting errors present in every year; benchmark like-for-like (zero LP)
+
+Conclusion (c). (A) The model runs +$1.9 to +$3.2/MWh high in the cheapest 40 % of lambda hours in ALL seven years, and low in
+the top 20 % by an amount set by how spiky the year is (−0.3 in 2019/2020, −2 to −4.5 in 2021/2023–2025, −11.7 in 2022). 2019/2020
+fail because their lambda was flat; 2022 fails on the tail; the four passing years pass by cancellation. A one-sided repair
+fails 2024 (low-end only, −10.3 %) or leaves 2019/2020 failing (tail only). (B) The benchmark is like-for-like: load weighting
+matches, ±1 h clock shift ≤ 0.4 %, no gaps, no level break at CSV→XBRL; fleet scope (Southern pool vs whole BA) is not
+measurable. Every lever for either error is already adjudicated (CC incremental HR, replacement fuel, gas level, SE daily basis,
+CT start). No solve; keeper unchanged; NOT-YET 7/4/0/1/2. Record: docs/handoffs/r-soco/FINDING-soco-89-2026-09-29.md; probe
+scripts/probes/_soco89_price_setter_census.py.
