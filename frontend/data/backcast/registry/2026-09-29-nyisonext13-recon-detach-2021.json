@@ -3,7 +3,7 @@
  "label": "nyisonext13 recon detach 2021",
  "date": "2026-09-29",
  "shorthand": "nyisonext13-recon-detach-2021",
- "definition": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
+ "definition": "2021 leg of the same keeper config (nyiso_ne_ac_recon_detach on; the NE AC node priced by its own measured-spread bands, the monthly EIA-930 band pinning the pooled node alone). Determination NOT-YET (live verdict): C1 (2021 CC_REGULAR +3.73 TWh, share out of band), C3a (-14.3%) and C3b (NRMSE 0.219) fail; C2, C3c, C4, C6 and C8 pass.",
  "years": [
   2021
  ],
