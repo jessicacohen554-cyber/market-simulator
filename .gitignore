@@ -3821,3 +3821,6 @@ results/calibration/spp100_arm_20*/
 #   2023 a66ce865297b7724a039f506286d45c728026f43  2024 d27132bbd0190aef95966a9deb7b860cc3af26e0
 #   2025 ddecb398ff6f585e1398c55ee935470f1c7a5b3f
 results/calibration/soco87_20[12][0-9]/
+
+# R-ERCOT-16 per-year shard legs (rule 32(d)) - local only, never on main. Provenance (rule 33(d)): arm-2019 33da37d00f717039c603125dfc907bcf3fd3b4eb, arm-2020 11db2df17b975c7b49ae04a0db21fda7ef686170
+results/calibration/r_ercot15_arm_20*/
