@@ -1935,3 +1935,17 @@ detector can see, hold 0.009 TWh; that is the class ceiling. The floor sits abov
 1.194 TWh (6.3 %), which only an outcome pin could close (rule 13). Matrix cell: I. No solve, no registration; keeper
 unchanged; NOT-YET 7/4/0/1/2. Record: docs/handoffs/r-soco/FINDING-soco-86-2026-09-28.md; probe
 scripts/probes/_soco86_layup_census.py.
+
+OWNER RULING 2026-09-28 (end of soco-86): **"C3b monthly diagnosis (Recommended)"** — a zero-LP lane decomposing the C3b
+monthly-price NRMSE misses (2020/2021/2022/2024) against the scorer's own benchmark; build nothing without a ruling.
+
+## 2026-09-29 — soco-87: C3b is a gas-SHAPE miss; `gas_hh_monthly_shape` is the lever (zero LP)
+
+The misses are shape, not level: bias explains ≤ 12 % of squared error in 2021/2022/2024. The model's monthly price is nearly
+flat because the keeper prices gas with the generic climatological `GAS_MONTHLY_SEASONALITY` (same shape every year, winter-high),
+not the measured Henry Hub monthly shape. First-order re-pricing (fleet_only mc under `gas_hh_monthly_shape=True`, applied to
+the keeper's committed hourlies, same marginal unit): C3b 2020 0.222→0.191, 2021 0.260→0.149, 2024 0.277→0.192 (FAIL→PASS);
+2022 0.389→0.284 (still FAIL; 58 % of the residual is Elliott December); passing years stay passing (2025 0.174→0.184). No C3a
+status flips. Admissible (rule 13 measured commodity input), zero DOF, one config for all years. Margins are thin, so a solve
+may land either side. `gas_electric_power_monthly_level` is inert for SOCO (no state-weight rows). No solve, keeper unchanged,
+NOT-YET 7/4/0/1/2. Record: docs/handoffs/r-soco/FINDING-soco-87-2026-09-29.md; probe scripts/probes/_soco87_c3b_monthly.py.
