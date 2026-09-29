@@ -77,9 +77,9 @@ the repair: a rebuild of an armed bundle would regenerate the e930 bench unrepai
 
 ## 5. G-DRIFT 332c8048 → pin
 
-PIN_PLACEHOLDER
+**Pin:** the full 40-char origin/main HEAD after this lane's build PR merges; recorded in the shard prompts and the RESULT.
 
-9 non-merge commits touch the solve-path set between `332c8048` and `2cc1e2ae`. Every hunk is INERT for a CAISO
+11 non-merge commits touch the solve-path set between `332c8048` and `3145578d` (main at build time). Every hunk is INERT for a CAISO
 backcast.
 
 | Commit | Verdict | Gate |
@@ -90,7 +90,9 @@ backcast.
 | c1cb07f0 soco-88 | INERT | SOCO rows in `iso-gas-capacity-state-weights.csv` only |
 | 196d1e69 / c23608b8 spp-102 | INERT | `spp_commitment_posture` (default off). `_standalone_posture_pools` refactor keeps ERCOT's call byte-identical; `zero_posture_markup` returns the same object when the field is off; LP min-up/down columns gated on `standalone_posture` |
 | 70baf173 NYISO-NEXT-12 | INERT | `nyiso_ne_ac_node` and `iso == "NYISO"` |
-| this lane | THE ARM | `renewables._repair_caiso_hsl_clock`, under the existing flag |
+| e44fd9fa miso-286 | INERT | `miso_gas_ecomin_online_floor` (default off) and `iso == "MISO"` (`build_miso_gas_ecomin_p1_prep` returns `None`, and `or None` leaves the prep unchanged); `caiso_ra_mustoffer_min_gen` is called, not modified |
+| 6dd5d81d NYISO-NEXT-13 | INERT | `nyiso_ne_ac_recon_detach` (default off), NYISO interchange module |
+| this lane | THE ARM | `renewables._repair_caiso_hsl_clock` and `storage._caiso_storage_envelope_clock_repaired`, under the existing flag |
 
 No `ScenarioConfig` default flip. Solve-surface: the two new names (`ISO_PLANT_EXITS`, `SPP_POSTURE_MIN_DOWN_HOURS`)
 carry no CAISO rows.
