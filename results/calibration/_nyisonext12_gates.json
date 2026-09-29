@@ -1,0 +1,89 @@
+{
+ "2023": {
+  "lw_price_delta": {
+   "Capital_Hudson": 0.652,
+   "Long_Island": 0.455,
+   "Lower_Hudson": 0.685,
+   "NYC": 0.624,
+   "NYISO_NE_AC": {
+    "arm": 34.433682814080264,
+    "keeper": null
+   },
+   "NYISO_external": -1.341,
+   "Upstate_West": -0.768,
+   "system": 0.125
+  },
+  "class_twh_delta": {
+   "CC_CHP": -0.379,
+   "CC_REGULAR": -0.3736,
+   "CT_CHP": 0.1235,
+   "CT_PEAKER": 0.0454,
+   "ST_CHP": -0.0316,
+   "ST_GAS": 0.5756,
+   "hydro": 0.1992,
+   "import": -0.0582,
+   "oil": -0.0406
+  },
+  "import_twh": {
+   "keeper": 23.3209,
+   "arm": 23.2627,
+   "delta": -0.0582
+  },
+  "G2c_pass": true,
+  "node": {
+   "n_units": 16,
+   "hours_exporting": 4571,
+   "hours_importing": 3485,
+   "export_twh": -4.2385,
+   "import_twh": 1.2629,
+   "net_twh": -2.9755,
+   "measured_net_twh": -4.47,
+   "hours_at_posted_import": 9,
+   "hours_at_posted_export": 382
+  },
+  "G2a_pass": true
+ },
+ "2024": {
+  "lw_price_delta": {
+   "Capital_Hudson": 0.526,
+   "Long_Island": 0.405,
+   "Lower_Hudson": 0.551,
+   "NYC": 0.446,
+   "NYISO_NE_AC": {
+    "arm": 37.55004980113281,
+    "keeper": null
+   },
+   "NYISO_external": -1.963,
+   "Upstate_West": -0.852,
+   "system": 0.008
+  },
+  "class_twh_delta": {
+   "CC_CHP": -0.3695,
+   "CC_REGULAR": -0.3011,
+   "CT_CHP": 0.1322,
+   "CT_PEAKER": 0.022,
+   "ST_CHP": 0.0567,
+   "ST_GAS": 0.6068,
+   "import": 0.141,
+   "oil": -0.0832
+  },
+  "import_twh": {
+   "keeper": 20.5693,
+   "arm": 20.7103,
+   "delta": 0.141
+  },
+  "G2c_pass": true,
+  "node": {
+   "n_units": 16,
+   "hours_exporting": 7499,
+   "hours_importing": 967,
+   "export_twh": -7.7152,
+   "import_twh": 0.3676,
+   "net_twh": -7.3476,
+   "measured_net_twh": -5.84,
+   "hours_at_posted_import": 38,
+   "hours_at_posted_export": 891
+  },
+  "G2a_pass": true
+ }
+}
