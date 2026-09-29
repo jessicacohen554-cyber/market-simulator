@@ -206,6 +206,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # keeps its key (the pinned default 603c2498bf71d21d stays byte-stable);
     # an armed run carries a real min-gen floor and so gets a distinct key.
     "miso_coal_night_floor",
+    # MISO merchant-CC EcoMin online floor (miso-286, default off): dropped
+    # from the hash at its default so every pre-existing cached run keeps its
+    # key; an armed run carries a real min-gen floor and gets a distinct key.
+    "miso_gas_ecomin_online_floor",
     # pjm-134 measured AP-South interface cut (default off): dropped from the
     # hash at its default so every pre-existing cached run keeps its key -- the
     # field's own docstring promises "byte-identical off" and without this
@@ -2326,6 +2330,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "coal_prb_committed_dispatchable": "False",
     "coal_prb_committed_split": "False",
     "miso_coal_night_floor": "False",
+    "miso_gas_ecomin_online_floor": "False",
     "pjm_apsouth_interface_cut": "False",
     "pjm_external_net_position_cut": "False",
     "temp_derate_classes": "None",
@@ -12984,6 +12989,33 @@ class ScenarioConfig:
     # pre-registered BEFORE the binding measurement and before any solve:
     # results/calibration/PREREG-miso113-prb-night-floor-2026-08-01.md.
     miso_coal_night_floor: bool = False
+
+    # MISO merchant-CC EcoMin online floor (miso-286, owner charter
+    # docs/handoffs/CHARTER-miso285-ecomin-price-taker-2026-09-29.md).
+    # STRUCTURE (rule 1): a committed non-fast-start MISO unit's EcoMin energy
+    # is must-take while it is synchronized — its cost is recovered through
+    # no-load / make-whole, not through the incremental energy curve that sets
+    # LMP (MISO ELMP extends commitment-cost pricing to fast-start resources
+    # only). The LP otherwise offers the CC committed band as free economic
+    # energy, so that block can set the night price (FINDING-miso285 §4).
+    # MECHANISM: the shared P0-detected-run detector
+    # (model.commitment.caiso_ra_mustoffer_min_gen via
+    # pipeline.commitment.build_miso_gas_ecomin_p1_prep, injected at the
+    # P0->P1 seam) with ONLY the ercot141 online-hours leg; no gap-bridge,
+    # startup or min-run leg (the miso-130 §5 census found MISO's night-off
+    # pool ~empty — not this object). LEVEL: MEASURED plant-basis minimum
+    # stable load constants.MISO_GAS_ECOMIN_MIN_LOAD_FRAC = 0.323767 (MISO
+    # CAMPD 2023-2025, frozen deriver, rule 23), capped at the committed
+    # tranche's own capacity. ELIGIBILITY by physics (rule 18): gas_cc
+    # committed tranches with class min-down >= 4 h; CHP excluded (host
+    # must-run), ST_GAS not in scope (p25/OOM floors, rule 19). Rule 17
+    # [R-FLOOR-WINDOW]: driver = commitment non-convexity; window = the
+    # unit's own P0-detected online hours (no clock rule, an offline unit is
+    # never floored); forward story = regenerates from any year's own P0
+    # pattern plus the frozen measured fraction. Rule 13: no measured output
+    # enters. D-2 id MECH_MISO_GAS_ECOMIN_ONLINE; D-4 window in
+    # scripts/legitimacy_diagnostics.py. Default off (byte-identical).
+    miso_gas_ecomin_online_floor: bool = False
 
     # Lignite (mine-mouth): take-or-pay fixed costs are sunk, so in
     # cheap-gas months lignite discounts its BID (not its cost) to hold
@@ -24094,6 +24126,9 @@ TIER_TAGS: dict[str, int] = {
     # Structural gate (1), not a parameter: the LEVEL it applies is measured
     # per plant from a frozen artifact, so the flag carries no free number.
     "miso_coal_night_floor": 1,
+    # Structural gate (1): its level is a measured constants.py statistic
+    # (MISO_GAS_ECOMIN_MIN_LOAD_FRAC), so the flag carries no free number.
+    "miso_gas_ecomin_online_floor": 1,
     "coal_lignite_passthrough_sigmoid": 3,
     "coal_lignite_passthrough_floor": 3,
     "coal_lignite_passthrough_ceil": 3,

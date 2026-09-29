@@ -1588,6 +1588,166 @@ def build_miso_coal_night_floor_p1_prep(config, iso: str, fleet: list, fleet_arr
     return _fleet_prep
 
 
+def miso_gas_ecomin_min_load_fracs(
+    fleet: list, fleet_arrays, min_load_frac: float
+) -> np.ndarray:
+    """Return the ``(n_gen,)`` per-row level vector of the MISO EcoMin floor.
+
+    A row is in scope iff (rule 18 [R-PHYSICS], unit parameters only):
+    fuel ``gas_cc``, not a ``*_CHP`` cogen (host must-run, rule 19), admitted
+    by ``model.commitment._ra_bridge_unit_params`` (a committable tranche with
+    a class min-down) with min-down ``>= RA_BRIDGE_ECON_MIN_DOWN_HOURS``, AND
+    it is its plant's BASE block — the lowest-heat-rate startup-bearing tranche
+    of the plant. The last condition is needed because MISO's CC ``_peak``
+    tranches (duct-firing, HR ~17 MMBtu/MWh) also carry a startup cost, so the
+    detector's own gate admits them; a minimum stable load sits at the bottom
+    of a plant's capability, never in its top block (miso-286 pre-check
+    finding: 27 such rows in 2024). Scoped rows carry ``min_load_frac``; every
+    other row carries 0 and is skipped by the detector.
+    """
+    from market_sim.config.constants import RA_BRIDGE_ECON_MIN_DOWN_HOURS
+    from market_sim.model.commitment import _ra_bridge_unit_params
+
+    hr = np.asarray(fleet_arrays.heat_rate, dtype=float)
+    base_row: dict[str, int] = {}
+    for g, gen in enumerate(fleet):
+        if gen.fuel_type != "gas_cc" or gen.plant_group.endswith("_CHP"):
+            continue
+        resolved = _ra_bridge_unit_params(gen, float(hr[g]))
+        if resolved is None or resolved[0] < RA_BRIDGE_ECON_MIN_DOWN_HOURS:
+            continue
+        key = (
+            gen.unit_id.rpartition("_")[0]
+            if getattr(gen, "is_campd_bin", False)
+            else gen.unit_id
+        )
+        if key not in base_row or hr[g] < hr[base_row[key]]:
+            base_row[key] = g
+    out = np.zeros(len(fleet), dtype=float)
+    out[list(base_row.values())] = min_load_frac
+    return out
+
+
+def _miso_gas_ecomin_floor(
+    fleet: list,
+    fleet_arrays,
+    p0_dispatch: np.ndarray,
+    min_load_frac: float,
+) -> np.ndarray | None:
+    """Compute the raw ``(n_gen, T)`` MISO merchant-CC EcoMin online floor.
+
+    Runs the ISO-neutral detector (:func:`model.commitment.
+    caiso_ra_mustoffer_min_gen`) over the merchant gas_cc fleet with ONLY the
+    ercot141 online-hours leg (``floor_online_hours=True``): in every hour of
+    a P0-detected run the unit's committed tranche is floored at
+    ``min_load_frac x plant pmax x availability``, capped at the tranche's own
+    capacity. The economic startup leg is not armed; the detector's physical
+    restart bar (an idle gap shorter than min-down) has no off switch, so the
+    floor is masked back to the detected run hours afterwards (see below) and
+    no gap is ever floored.
+
+    Eligibility (rule 18 [R-PHYSICS]) is :func:`miso_gas_ecomin_min_load_fracs`:
+    the plant's base startup-bearing gas_cc tranche with min-down >= 4 h,
+    CHP excluded.
+
+    Returns ``None`` when the detector floors nothing.
+    """
+    from market_sim.model.commitment import caiso_ra_mustoffer_min_gen, find_runs
+
+    frac_by_gen = miso_gas_ecomin_min_load_fracs(fleet, fleet_arrays, min_load_frac)
+    n_scoped = int((frac_by_gen > 0.0).sum())
+    if n_scoped == 0:
+        logger.info("MISO gas EcoMin online floor: no eligible CC tranche — inert")
+        return None
+    floor = caiso_ra_mustoffer_min_gen(
+        p0_dispatch,
+        fleet_arrays,
+        fleet,
+        0.0,  # unused: the per-unit vector supplies every level
+        fuel_types=("gas_cc",),
+        floor_online_hours=True,
+        min_load_frac_by_gen=frac_by_gen,
+    )
+    # ONLINE HOURS ONLY (charter §2: "no gap-bridge legs"). The detector's
+    # physical restart bar (an idle gap shorter than min-down) is always on;
+    # this mechanism's declared window is the detected run itself, so the
+    # floor is masked back to the hours the committed tranche is dispatched
+    # above the detector's run threshold in P0.
+    pmax = np.asarray(fleet_arrays.pmax, dtype=float)
+    online = p0_dispatch > (0.05 * pmax)[:, None]
+    floor = np.where(online, floor, 0.0)
+    if not np.any(floor > 0.0):
+        logger.info(
+            "MISO gas EcoMin online floor: %d eligible tranches, no P0 run — inert",
+            n_scoped,
+        )
+        return None
+    seg = np.array(
+        [
+            e - s
+            for g in np.flatnonzero((floor > 0.0).any(axis=1))
+            for s, e in find_runs(floor[g] > 0.0)
+        ]
+    )
+    logger.info(
+        "MISO gas EcoMin online floor: %d eligible tranches (min_load_frac "
+        "%.4f), %d unit-hours floored (%.3f TWh floor volume), %d online "
+        "blocks, median %.0f h",
+        n_scoped,
+        min_load_frac,
+        int((floor > 0.0).sum()),
+        float(floor.sum()) / 1e6,
+        int(seg.size),
+        float(np.median(seg)) if seg.size else 0.0,
+    )
+    return floor
+
+
+def build_miso_gas_ecomin_p1_prep(config, iso: str, fleet: list, fleet_arrays):
+    """Return a ``p1_fleet_prep`` hook for the MISO merchant-CC EcoMin floor.
+
+    ``ScenarioConfig.miso_gas_ecomin_online_floor`` (miso-286, owner charter
+    CHARTER-miso285-ecomin-price-taker-2026-09-29): a synchronized
+    non-fast-start MISO combined cycle's EcoMin energy is must-take while it
+    is online, so it cannot set the energy price. Detector:
+    :func:`_miso_gas_ecomin_floor`; D-2 attribution:
+    ``MECH_MISO_GAS_ECOMIN_ONLINE``. ``preserve_absorption=True`` for the same
+    reason as the MISO coal night floor (MISO's priced export sinks).
+
+    Returns ``None`` when the mechanism is off or the ISO is not MISO, so
+    every other path is byte-identical.
+
+    Raises:
+        ValueError: If ``miso_coal_night_floor`` is armed too — the orchestrators
+            carry one ``p1_fleet_prep``, and composing the two is not built.
+    """
+    if not (getattr(config, "miso_gas_ecomin_online_floor", False) and iso == "MISO"):
+        return None
+    if getattr(config, "miso_coal_night_floor", False):
+        raise ValueError(
+            "miso_gas_ecomin_online_floor and miso_coal_night_floor share the "
+            "single p1_fleet_prep slot; composing them is not implemented"
+        )
+
+    from market_sim.config.constants import MISO_GAS_ECOMIN_MIN_LOAD_FRAC
+    from market_sim.data.floor_mechanisms import MECH_MISO_GAS_ECOMIN_ONLINE
+
+    def _fleet_prep(r0):
+        floor = _miso_gas_ecomin_floor(
+            fleet, fleet_arrays, r0.dispatch, MISO_GAS_ECOMIN_MIN_LOAD_FRAC
+        )
+        if floor is None:
+            return None
+        return _bridge_floored_fleet(
+            fleet_arrays,
+            floor,
+            MECH_MISO_GAS_ECOMIN_ONLINE,
+            preserve_absorption=True,
+        )
+
+    return _fleet_prep
+
+
 def _pjm_unit_commitment_physics(fleet_arrays) -> tuple[np.ndarray, np.ndarray]:
     """Per-unit ``(min_down_hours, startup $/MW)`` from the published class tables.
 

@@ -53,6 +53,9 @@ _BRIDGE_BUILDERS: dict[str, str] = {
     # caught it missing from two of the three orchestrators before the arm was
     # ever solved, which is exactly what it is for.
     "build_soco_gas_st_campaign_p1_prep": "soco_campaign_prep",
+    # miso-286: the MISO merchant-CC EcoMin online floor, on the roster in the
+    # PR that wires it (the miso-113 lesson).
+    "build_miso_gas_ecomin_p1_prep": "miso_ecomin_prep",
 }
 
 _ORCHESTRATORS: tuple[str, ...] = (

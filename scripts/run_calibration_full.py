@@ -4966,6 +4966,7 @@ def solve_and_persist(
     spp_gas_commitment_bridge: bool | None = None,
     soco_gas_st_campaign_commitment: bool | None = None,
     miso_coal_night_floor: bool | None = None,
+    miso_gas_ecomin_online_floor: bool | None = None,
     nyiso_gas_bridge_cc_min_load_frac: float | None = None,
     nyiso_gas_bridge_st_min_load_frac: float | None = None,
     nyiso_gas_bridge_startup: bool | None = None,
@@ -6039,6 +6040,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 miso_coal_night_floor=miso_coal_night_floor
             )
+        if miso_gas_ecomin_online_floor is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                miso_gas_ecomin_online_floor=miso_gas_ecomin_online_floor
+            )
         if nyiso_gas_bridge_cc_min_load_frac is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_bridge_cc_min_load_frac=nyiso_gas_bridge_cc_min_load_frac
@@ -7011,6 +7016,7 @@ def solve_and_persist(
             spp_gas_commitment_bridge=spp_gas_commitment_bridge,
             soco_gas_st_campaign_commitment=soco_gas_st_campaign_commitment,
             miso_coal_night_floor=miso_coal_night_floor,
+            miso_gas_ecomin_online_floor=miso_gas_ecomin_online_floor,
             nyiso_gas_bridge_cc_min_load_frac=nyiso_gas_bridge_cc_min_load_frac,
             nyiso_gas_bridge_st_min_load_frac=nyiso_gas_bridge_st_min_load_frac,
             nyiso_gas_bridge_startup=nyiso_gas_bridge_startup,
@@ -8003,6 +8009,7 @@ def solve_and_persist(
         "spp_gas_commitment_bridge": spp_gas_commitment_bridge,
         "soco_gas_st_campaign_commitment": soco_gas_st_campaign_commitment,
         "miso_coal_night_floor": miso_coal_night_floor,
+        "miso_gas_ecomin_online_floor": miso_gas_ecomin_online_floor,
         "nyiso_gas_bridge_cc_min_load_frac": nyiso_gas_bridge_cc_min_load_frac,
         "nyiso_gas_bridge_st_min_load_frac": nyiso_gas_bridge_st_min_load_frac,
         "nyiso_gas_bridge_startup": nyiso_gas_bridge_startup,
@@ -14885,6 +14892,18 @@ def main() -> None:
         "stacked on them (rule 19).",
     )
     parser.add_argument(
+        "--miso-gas-ecomin-online-floor",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="MISO P1-native merchant-CC EcoMin online floor (miso-286): in "
+        "every P0-online hour, hold each merchant gas_cc committed tranche "
+        "(min-down >= 4 h; CHP excluded) at its MEASURED plant-basis minimum "
+        "stable load (constants.MISO_GAS_ECOMIN_MIN_LOAD_FRAC 0.3238, MISO "
+        "CAMPD 2023-2025), so synchronized EcoMin energy is must-take and "
+        "cannot set the price. Online-hours leg only; no gap bridge. Default "
+        "off (byte-identical).",
+    )
+    parser.add_argument(
         "--spp-gas-commitment-bridge",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -15947,6 +15966,7 @@ def main() -> None:
         spp_gas_commitment_bridge=args.spp_gas_commitment_bridge,
         soco_gas_st_campaign_commitment=args.soco_gas_st_campaign_commitment,
         miso_coal_night_floor=args.miso_coal_night_floor,
+        miso_gas_ecomin_online_floor=args.miso_gas_ecomin_online_floor,
         nyiso_gas_bridge_cc_min_load_frac=args.nyiso_gas_bridge_cc_min_load_frac,
         nyiso_gas_bridge_st_min_load_frac=args.nyiso_gas_bridge_st_min_load_frac,
         nyiso_gas_bridge_startup=args.nyiso_gas_bridge_startup,

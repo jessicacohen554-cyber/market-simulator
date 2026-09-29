@@ -123,6 +123,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     coal_prb_committed_dispatchable: { cell: "." },
     coal_prb_committed_split: { cell: "." },
     miso_coal_night_floor: { cell: "." },
+    miso_gas_ecomin_online_floor: { cell: ".", ev: "MISO-exclusive field (rule 25 [R-ISO-SCOPE]); line added 2026-09-29 by miso-286 (rule 28c)." },
     coal_min_load_floor: { cell: "K", ev: "ERCOT-127 §§2-4; ERCOT-128 §§1-6 + §§P1-P5 (run 2026-07-28-ercot128-unit-grain-coal); ERCOT-130 §§2-4 (UPPER-bound leg REFUTED ex ante, no LP built); ERCOT-142 Phase 1 (docs/DIAGNOSIS-ercot142-lignite-shape-2026-07-30.md, probe scripts/probes/ercot142_lignite_shape_probe.py); ERCOT-143 Phase 2 — LANE CLOSED (docs/DIAGNOSIS-ercot143-lignite-offer-slope-2026-07-30.md, probe scripts/probes/ercot143_lignite_offer_slope.py)" },
     st_gas_mustrun_p25: { cell: "." },
     historic_outage_overlay: { cell: "U" },

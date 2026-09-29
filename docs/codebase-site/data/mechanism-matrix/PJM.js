@@ -123,6 +123,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     coal_prb_committed_dispatchable: { cell: "." },
     coal_prb_committed_split: { cell: "." },
     miso_coal_night_floor: { cell: "." },
+    miso_gas_ecomin_online_floor: { cell: ".", ev: "MISO-exclusive field (rule 25 [R-ISO-SCOPE]); line added 2026-09-29 by miso-286 (rule 28c)." },
     coal_min_load_floor: { cell: "." },
     st_gas_mustrun_p25: { cell: "I", ev: "pjm-153 (results/calibration/FINDING-pjm153-queue-clear-2026-08-04.md §3; probe scripts/probes/pjm153_queue_screens.py; machine record results/calibration/_pjm153_queue_screens.json) — INERT ex ante on PJM's OWN artifact, no solve spent" },
     historic_outage_overlay: { cell: "U" },

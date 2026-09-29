@@ -206,6 +206,7 @@ from market_sim.pipeline import (
     build_caiso_reserve_p1_prep,
     build_ercot_gas_bridge_p1_preps,
     build_miso_coal_night_floor_p1_prep,
+    build_miso_gas_ecomin_p1_prep,
     build_nyiso_gas_bridge_p1_prep,
     build_soco_gas_st_campaign_p1_prep,
     build_spp_gas_bridge_p1_prep,
@@ -3933,6 +3934,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             miso_night_floor_prep = build_miso_coal_night_floor_p1_prep(
                 config, iso, dispatch_fleet, fleet_arrays
             )
+            # P1-native MISO merchant-CC EcoMin online floor (miso-286).
+            # None for every non-MISO / gate-off run (byte-identical).
+            miso_ecomin_prep = build_miso_gas_ecomin_p1_prep(
+                config, iso, dispatch_fleet, fleet_arrays
+            )
             # P1-native PJM commitment-scoped reserve supply (path B, G-20b):
             # fa_p2-style availability mask from the P0 run pattern + the
             # deliverable supply cap recomputed on the masked fleet. (None,
@@ -3971,6 +3977,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     or spp_bridge_prep
                     or soco_campaign_prep
                     or miso_night_floor_prep
+                    or miso_ecomin_prep
                     or pjm_fleet_prep
                 ),
                 p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
