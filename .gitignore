@@ -3842,3 +3842,10 @@ results/calibration/nwppnext10xy_20*/
 # 2023 d8ef67b9 2024 dbca2693 2025 54f8f0d3 on claude/spp102-<y>. Numbers: RESULT-spp-102-commitment-posture-2026-09-29.md.
 results/calibration/spp102_arm_20*/
 results/calibration/spp102_arm_span/
+
+# soco-90 (2026-09-29): owner-licensed Southeast daily gas hub series (owner ruling
+# "License SE daily gas", FINDING-soco-89 §6). NOT redistributable (docs/data-licensing.md §5):
+# the payload is NEVER committed. Only the identity record (README + SHA256SUMS) is tracked.
+data/raw/gas-prices/licensed/*
+!data/raw/gas-prices/licensed/README.md
+!data/raw/gas-prices/licensed/SHA256SUMS.txt
