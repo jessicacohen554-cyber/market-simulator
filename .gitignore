@@ -3821,3 +3821,9 @@ results/calibration/spp100_arm_20*/
 #   2023 a66ce865297b7724a039f506286d45c728026f43  2024 d27132bbd0190aef95966a9deb7b860cc3af26e0
 #   2025 ddecb398ff6f585e1398c55ee935470f1c7a5b3f
 results/calibration/soco87_20[12][0-9]/
+
+# NYISO-NEXT-12 per-year arm legs (composed into nyisonext12_span; rules 31/32(d)). Provenance: leg SHAs in docs/RESULT-nyiso-next12-ne-ac-node-2026-09-28.md
+results/calibration/nyisonext12_2022/
+results/calibration/nyisonext12_2023/
+results/calibration/nyisonext12_2024/
+results/calibration/nyisonext12_2025/
