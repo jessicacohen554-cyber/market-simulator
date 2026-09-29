@@ -276,7 +276,10 @@ document can respond "yes" instead of "unclear."
 ## 8. Hand-curated / derived-from-public-filings data
 
 **Applies to:** `confirmed-retirements/`, `capacity-deliverability/`,
-`winter-fuel-inventory/`, `miso-pra/`, `miso-wind-shape/` (NASA POWER, CC0 /
+`winter-fuel-inventory/`, `som-competitive-conduct/` (numbers
+transcribed with page citations from monitor reports — PJM rows from the
+© Monitoring Analytics SOM, SPP/MISO/ERCOT rows from the monitors' SOMs; the
+PDFs themselves are not committed for PJM/SPP), `miso-pra/`, `miso-wind-shape/` (NASA POWER, CC0 /
 public-domain-equivalent per NASA's open data policy), `_processed-legacy/`,
 `_validation-source/`, `reference/`.
 
