@@ -1352,6 +1352,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # scenario, and hashes distinctly. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline).
     "ercot_offer_swcap_clip",
+    # R-ERCOT-14 SWCAP vintage (GATED default off): dropped from the hash at
+    # its default so every pre-existing cache key stays byte-stable (the off
+    # path never touches voll); an armed pre-2022 ERCOT run solves on the
+    # published $9,000 HCAP and hashes distinctly (voll itself is tier-0 in
+    # the key). Registered IN THE SAME COMMIT as the field.
+    "ercot_swcap_vintage",
     # ercot-242 room-axis extension of the RT/SCED wall (GATED default off) +
     # its path: dropped from the hash at their defaults so every pre-existing
     # cache key stays byte-stable (the off path never loads the room artifact
@@ -2702,6 +2708,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-236 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_offer_swcap_clip": "False",
+    # Added by R-ERCOT-14 WITH the field (the nyiso-119 discipline).
+    "ercot_swcap_vintage": "False",
     # Added by ercot-242 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "ercot_offer_surface_cleared_share_rt_room": "False",
@@ -14015,6 +14023,29 @@ class ScenarioConfig:
     # and need their own identification before any transfer.
     ercot_offer_swcap_clip: bool = False
 
+    # ERCOT SWCAP VINTAGE (R-ERCOT-14, default off, ERCOT-gated; rules 1
+    # [R-STRUCT] / 14 [R-ACCURATE]). ERCOT's energy-only design sets the
+    # system-wide offer cap (HCAP), the ORDC's VOLL anchor and the value of
+    # firm-load shed to ONE published number — $9,000/MWh through 2021 and
+    # $5,000/MWh from 2022-01-01 (16 TAC 25.505/25.509, PUCT Project 52631).
+    # ercot-253 vintaged the ORDC half (constants.
+    # ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR -> ordc_voll) but left
+    # ``voll`` at the post-2022 $5,000, so a 2019-2021 solve (a) sheds firm
+    # load at $5,000 while the rigid RRS/Reg-Up step it could release costs
+    # $9,000 — the reverse of ERCOT's EEA sequence (RRS released in EEA2,
+    # load shed only in EEA3) — and (b) under ercot_offer_swcap_clip caps
+    # thermal offers at $4,999.99 in years whose real cap was $9,000.
+    # Armed, ``voll`` follows ``ordc_voll`` for ERCOT (coerced in
+    # __post_init__, so every consumer — the offer clip, the 0.95 x VOLL
+    # measured-surface caps and, through pipeline.spec.shed_penalty_voll,
+    # the LP slack cost — reads the one vintaged cap). ZERO free parameters
+    # (rules 21/24): the value is the published table ercot-253 already
+    # carries; no new constant. Byte-identical off, and byte-identical ON in
+    # every year the table leaves at $5,000 (2022-2025 and every forecast
+    # year), so only 2019-2021 can move. ERCOT-gated (rule 25): other ISOs'
+    # shed penalty is their own ISOConfig energy-offer cap, not this identity.
+    ercot_swcap_vintage: bool = False
+
     # ERCOT gas-CC COMMITMENT BRIDGE (default off, ERCOT-gated): the committed-
     # STATE half of the trough-price-formation circle, promoted from the
     # ERCOT-62b probe (docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md
@@ -21550,6 +21581,9 @@ class ScenarioConfig:
                 f"got {self.mode!r}"
             )
         self._retire_bare_coal_class()
+        # R-ERCOT-14: one published ERCOT cap (see ercot_swcap_vintage).
+        if self.ercot_swcap_vintage and self.iso == "ERCOT":
+            self.voll = float(self.ordc_voll)
         from market_sim.config.constants import HYDRO_YEAR_MULTIPLIER
 
         if self.hydro_year not in HYDRO_YEAR_MULTIPLIER:
@@ -23937,6 +23971,7 @@ TIER_TAGS: dict[str, int] = {
     "nwpp_demand_plant_basis": 1,
     "demand_balance_screen": 1,
     "ercot_offer_swcap_clip": 1,
+    "ercot_swcap_vintage": 1,
     "caiso_storage_adaptive_expectation": 1,
     "caiso_adaptive_half_life_days": 2,
     "caiso_adaptive_beta": 2,

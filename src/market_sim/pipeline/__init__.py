@@ -79,7 +79,7 @@ from market_sim.pipeline.solve import (
     run_energy_solve,
     take_pass_timing_log,
 )
-from market_sim.pipeline.spec import UNSET, DispatchSpec, ReserveSpec
+from market_sim.pipeline.spec import UNSET, DispatchSpec, ReserveSpec, shed_penalty_voll
 from market_sim.pipeline.ttc import (
     apply_iso_monthly_ttc,
     apply_iso_year_ttc,
@@ -92,6 +92,7 @@ __all__ = [
     "run_scenario",
     "run_pair",
     "DispatchSpec",
+    "shed_penalty_voll",
     "ReserveSpec",
     "UNSET",
     "PriorYearResults",

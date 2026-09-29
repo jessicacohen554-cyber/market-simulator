@@ -104,6 +104,17 @@ def iso_coal_plant_codes(iso: str) -> set[int]:
     return {int(c) for c in df.loc[grp.str.startswith("COAL"), "Plant_Code"]}
 
 
+def _operable_coal_rows(path: Path, codes: set[int]) -> pd.DataFrame:
+    """Operable coal generator rows of ``codes`` from one EIA-860 operable sheet."""
+    if not path.exists():
+        return pd.DataFrame()
+    g = pd.read_parquet(path)
+    g["Plant Code"] = pd.to_numeric(g["Plant Code"], errors="coerce")
+    g = g[g["Plant Code"].isin(codes)]
+    g = g[g["Energy Source 1"].astype(str).str.upper().isin(COAL_FUEL_CODES)]
+    return g[g["Status"].astype(str).str.upper().isin(OPERABLE_STATUSES)].copy()
+
+
 def coal_min_config(iso: str) -> pd.DataFrame:
     """Return one row per coal plant with its minimum online configuration.
 
@@ -111,11 +122,30 @@ def coal_min_config(iso: str) -> pd.DataFrame:
     ``cap_mw``, ``min_config_mw``, ``min_config_frac_of_cap``, ``connected``,
     ``gap_mw``, ``status``, ``source``.
     """
-    g = pd.read_parquet(paths.RAW_DIR / "eia-860" / "eia860_generator_operable.parquet")
-    g["Plant Code"] = pd.to_numeric(g["Plant Code"], errors="coerce")
-    g = g[g["Plant Code"].isin(iso_coal_plant_codes(iso))]
-    g = g[g["Energy Source 1"].astype(str).str.upper().isin(COAL_FUEL_CODES)]
-    g = g[g["Status"].astype(str).str.upper().isin(OPERABLE_STATUSES)]
+    codes = iso_coal_plant_codes(iso)
+    g = _operable_coal_rows(
+        paths.RAW_DIR / "eia-860" / "eia860_generator_operable.parquet", codes
+    )
+    g["_source"] = "eia860_generator_operable: min over units of Minimum Load (MW)"
+    # A plant the ISO's sheet carries that has RETIRED since a backcast year is
+    # absent from the canonical operable sheet (R-ERCOT-14: Oklaunion 127,
+    # retired 9/2020). Read its registration from the NEWEST native vintage
+    # whose operable sheet still carries it — the same EIA-860 field, from the
+    # last filing in which the unit existed. Plants in the canonical sheet are
+    # never touched, so their rows are byte-identical.
+    missing = codes - set(g["Plant Code"].dropna().astype(int))
+    for vdir in sorted((paths.RAW_DIR / "eia-860").glob("vintage_*"), reverse=True):
+        if not missing:
+            break
+        vg = _operable_coal_rows(vdir / "eia860_generator_operable.parquet", missing)
+        if vg.empty:
+            continue
+        vg["_source"] = (
+            f"eia-860/{vdir.name}/eia860_generator_operable (retired since): "
+            "min over units of Minimum Load (MW)"
+        )
+        g = pd.concat([g, vg], ignore_index=True)
+        missing -= set(vg["Plant Code"].astype(int))
 
     units = pd.DataFrame(
         {
@@ -124,6 +154,7 @@ def coal_min_config(iso: str) -> pd.DataFrame:
             "state": g["State"].astype(str).str.upper(),
             "cap_mw": pd.to_numeric(g["Summer Capacity (MW)"], errors="coerce"),
             "min_load_mw": pd.to_numeric(g["Minimum Load (MW)"], errors="coerce"),
+            "source": g["_source"],
         }
     ).dropna(subset=["plant_code", "cap_mw", "min_load_mw"])
     units = units[(units.cap_mw > 0.0) & (units.min_load_mw > 0.0)]
@@ -161,7 +192,7 @@ def coal_min_config(iso: str) -> pd.DataFrame:
                 "connected": bool(len(merged) == 1),
                 "gap_mw": round(float(gap_mw), 1),
                 "status": "ok",
-                "source": "eia860_generator_operable: min over units of Minimum Load (MW)",
+                "source": u.source.iloc[0],
             }
         )
     return pd.DataFrame(rows).sort_values("plant_code").reset_index(drop=True)

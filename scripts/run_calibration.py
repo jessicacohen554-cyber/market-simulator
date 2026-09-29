@@ -125,6 +125,7 @@ from market_sim.data.input_completeness import check_clean_partitions  # noqa: E
 from market_sim.pipeline import (  # noqa: E402
     UNSET,
     DispatchSpec,
+    shed_penalty_voll,
     EnergySolveResult,
     apply_ercot_commitment_posture,
     apply_reserve_coopt,
@@ -6638,7 +6639,7 @@ def run_year(
         # MISO/PJM cap verifiable energy offers at $2,000 (FERC Order 831);
         # ERCOT at $5,000. Using the per-ISO cap makes scarcity hours price at
         # the ceiling the market actually clears against.
-        voll=iso_config.voll,
+        voll=shed_penalty_voll(config, iso_config),
         incidence=incidence,
         ttc=ttc,
         # Import-direction bound when the measured ERCOT GTC overlay made the

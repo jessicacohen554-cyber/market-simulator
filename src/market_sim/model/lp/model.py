@@ -601,9 +601,7 @@ class DispatchModel:
             posture_col=(posture_col if standalone_posture else None),
             posture_mlf=(posture_mlf if standalone_posture else None),
             posture_min_up_h=(posture_min_up_h if standalone_posture else None),
-            posture_min_down_h=(
-                posture_min_down_h if standalone_posture else None
-            ),
+            posture_min_down_h=(posture_min_down_h if standalone_posture else None),
             posture_ucap=(posture_ucap if standalone_posture else None),
             link_loss=link_loss,
             dis_tranche_arm_idx=(dis_tranche_arm_idx if dis_tranche_on else None),
