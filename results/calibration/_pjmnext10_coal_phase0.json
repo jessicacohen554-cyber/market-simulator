@@ -1,0 +1,411 @@
+{
+ "run_id": "2026-09-28-pjm-next8-exitfix",
+ "years": {
+  "2019": {
+   "c1_coal_bit_twh": 10.61,
+   "decomposition": {
+    "total": 18.76,
+    "above_synced": 6.43,
+    "within_synced_loading": 10.47,
+    "no_cems": 1.85
+   },
+   "fuel_ratio": {
+    "gas": 2.57,
+    "coal_delivered": 2.137,
+    "coal_over_gas": 0.832
+   },
+   "window_coverage": [
+    {
+     "bin": "(-1e+09,35]",
+     "dark_pct_of_cap": 43.7,
+     "windowed_pct_of_dark": 94.5,
+     "unwindowed_dark_twh": 8.6
+    },
+    {
+     "bin": "(35,50]",
+     "dark_pct_of_cap": 36.7,
+     "windowed_pct_of_dark": 95.4,
+     "unwindowed_dark_twh": 0.72
+    },
+    {
+     "bin": "(50,1e+09]",
+     "dark_pct_of_cap": 23.5,
+     "windowed_pct_of_dark": 97.8,
+     "unwindowed_dark_twh": 0.04
+    }
+   ],
+   "pmax": {
+    "model_mw": 38642,
+    "campd_mw": 37921,
+    "pct": 1.9
+   },
+   "hour_shape": {
+    "mean_gw": 2.14,
+    "night_00_05": 2.22,
+    "day_10_19": 2.16,
+    "weekday": 2.24,
+    "weekend": 1.89
+   },
+   "aep_western_spread": {
+    "mean_spread": -0.285,
+    "r2": 0.9,
+    "top_facilities": {
+     "SEWARD  115 KV  SEW-TOW": -0.088,
+     "SIEGFRIE230 KV  5": -0.052,
+     "KRENDALE138 KV  KRE-SHA": 0.051,
+     "MONR AE 69 KV   MON-VINE": 0.049,
+     "SMITHTON138 KV  SMI-YUK2": 0.04,
+     "KEYSTONE B14 CB                500 KV": 0.039
+    }
+   }
+  },
+  "2020": {
+   "c1_coal_bit_twh": 3.91,
+   "decomposition": {
+    "total": 12.16,
+    "above_synced": 4.28,
+    "within_synced_loading": 7.7,
+    "no_cems": 0.17
+   },
+   "fuel_ratio": {
+    "gas": 2.03,
+    "coal_delivered": 2.088,
+    "coal_over_gas": 1.029
+   },
+   "window_coverage": [
+    {
+     "bin": "(-1e+09,35]",
+     "dark_pct_of_cap": 47.0,
+     "windowed_pct_of_dark": 96.3,
+     "unwindowed_dark_twh": 6.32
+    },
+    {
+     "bin": "(35,50]",
+     "dark_pct_of_cap": 34.3,
+     "windowed_pct_of_dark": 96.6,
+     "unwindowed_dark_twh": 0.15
+    },
+    {
+     "bin": "(50,1e+09]",
+     "dark_pct_of_cap": 26.2,
+     "windowed_pct_of_dark": 96.9,
+     "unwindowed_dark_twh": 0.02
+    }
+   ],
+   "pmax": {
+    "model_mw": 34743,
+    "campd_mw": 32923,
+    "pct": 5.5
+   },
+   "hour_shape": {
+    "mean_gw": 1.39,
+    "night_00_05": 1.36,
+    "day_10_19": 1.47,
+    "weekday": 1.39,
+    "weekend": 1.39
+   },
+   "aep_western_spread": {
+    "mean_spread": -0.312,
+    "r2": 0.915,
+    "top_facilities": {
+     "SEWARD  115 KV  SEW-TOW": -0.163,
+     "SMITHTON138 KV  SMI-YUK2": 0.065,
+     "BUTL APS138 KV  BUT-KAR": -0.052,
+     "BAGLEY  230 KV  BAG-GRA": -0.039,
+     "PLEASNTV230 KV  274D": 0.038,
+     "Paradise-BR Tap 161kV l/o Wilson BR Unit 1": 0.038
+    }
+   }
+  },
+  "2021": {
+   "c1_coal_bit_twh": 17.14,
+   "decomposition": {
+    "total": 15.66,
+    "above_synced": 4.96,
+    "within_synced_loading": 10.07,
+    "no_cems": 0.63
+   },
+   "fuel_ratio": {
+    "gas": 3.72,
+    "coal_delivered": 2.063,
+    "coal_over_gas": 0.555
+   },
+   "window_coverage": [
+    {
+     "bin": "(-1e+09,35]",
+     "dark_pct_of_cap": 41.7,
+     "windowed_pct_of_dark": 94.0,
+     "unwindowed_dark_twh": 5.74
+    },
+    {
+     "bin": "(35,50]",
+     "dark_pct_of_cap": 40.8,
+     "windowed_pct_of_dark": 95.2,
+     "unwindowed_dark_twh": 1.73
+    },
+    {
+     "bin": "(50,1e+09]",
+     "dark_pct_of_cap": 49.7,
+     "windowed_pct_of_dark": 97.7,
+     "unwindowed_dark_twh": 0.97
+    }
+   ],
+   "pmax": {
+    "model_mw": 40852,
+    "campd_mw": 40471,
+    "pct": 0.9
+   },
+   "hour_shape": {
+    "mean_gw": 1.79,
+    "night_00_05": 1.69,
+    "day_10_19": 2.0,
+    "weekday": 1.74,
+    "weekend": 1.91
+   },
+   "aep_western_spread": {
+    "mean_spread": -0.56,
+    "r2": 0.85,
+    "top_facilities": {
+     "BUTL APS138 KV  BUT-KAR": -0.142,
+     "KRENDALE138 KV  KRE-SHA": 0.116,
+     "JUNIATA 500 KV  2": -0.075,
+     "TMI     500 KV  1 BANK": -0.073,
+     "PLEASNTV230 KV  274D": 0.073,
+     "SEWARD  115 KV  SEW-TOW": -0.072
+    }
+   }
+  },
+  "2022": {
+   "c1_coal_bit_twh": 6.79,
+   "decomposition": {
+    "total": 7.61,
+    "above_synced": 5.06,
+    "within_synced_loading": 1.87,
+    "no_cems": 0.68
+   },
+   "fuel_ratio": {
+    "gas": 6.45,
+    "coal_delivered": 2.627,
+    "coal_over_gas": 0.407
+   },
+   "window_coverage": [
+    {
+     "bin": "(-1e+09,35]",
+     "dark_pct_of_cap": 49.8,
+     "windowed_pct_of_dark": 90.1,
+     "unwindowed_dark_twh": 0.89
+    },
+    {
+     "bin": "(35,50]",
+     "dark_pct_of_cap": 45.9,
+     "windowed_pct_of_dark": 93.3,
+     "unwindowed_dark_twh": 2.66
+    },
+    {
+     "bin": "(50,1e+09]",
+     "dark_pct_of_cap": 42.7,
+     "windowed_pct_of_dark": 95.0,
+     "unwindowed_dark_twh": 5.52
+    }
+   ],
+   "pmax": {
+    "model_mw": 37707,
+    "campd_mw": 36110,
+    "pct": 4.4
+   },
+   "hour_shape": {
+    "mean_gw": 0.87,
+    "night_00_05": 0.56,
+    "day_10_19": 1.29,
+    "weekday": 0.9,
+    "weekend": 0.78
+   },
+   "aep_western_spread": {
+    "mean_spread": -1.854,
+    "r2": 0.886,
+    "top_facilities": {
+     "BUTL APS138 KV  BUT-KAR": -0.4,
+     "BEAUMEAD 274T2206 CB": 0.241,
+     "NOTTINGH230 KV  2-3": -0.188,
+     "FRACKVIL230 KV  FRA-SIE": -0.167,
+     "RAMAPO  138 KV  RAM-SMA": -0.166,
+     "BED-BLA contingency 55": -0.137
+    }
+   }
+  },
+  "2023": {
+   "c1_coal_bit_twh": 0.27,
+   "decomposition": {
+    "total": -0.11,
+    "above_synced": 1.22,
+    "within_synced_loading": -0.58,
+    "no_cems": -0.75
+   },
+   "fuel_ratio": {
+    "gas": 2.54,
+    "coal_delivered": 3.075,
+    "coal_over_gas": 1.211
+   },
+   "window_coverage": [
+    {
+     "bin": "(-1e+09,35]",
+     "dark_pct_of_cap": 47.5,
+     "windowed_pct_of_dark": 97.3,
+     "unwindowed_dark_twh": 2.87
+    },
+    {
+     "bin": "(35,50]",
+     "dark_pct_of_cap": 48.2,
+     "windowed_pct_of_dark": 98.0,
+     "unwindowed_dark_twh": 0.69
+    },
+    {
+     "bin": "(50,1e+09]",
+     "dark_pct_of_cap": 46.8,
+     "windowed_pct_of_dark": 98.7,
+     "unwindowed_dark_twh": 0.13
+    }
+   ],
+   "pmax": {
+    "model_mw": 27700,
+    "campd_mw": 29206,
+    "pct": -5.2
+   },
+   "hour_shape": {
+    "mean_gw": -0.01,
+    "night_00_05": 0.23,
+    "day_10_19": -0.07,
+    "weekday": -0.01,
+    "weekend": -0.01
+   },
+   "aep_western_spread": {
+    "mean_spread": -1.843,
+    "r2": 0.971,
+    "top_facilities": {
+     "BIGPINET138 KV  BIG-KIS": -0.617,
+     "NOTTINGH230 KV  2-3": -0.198,
+     "BUTL APS138 KV  BUT-KAR": -0.146,
+     "MAHANS LANE-TIDD            B  138 KV": -0.095,
+     "POSSUMP4500 KV  TX1": 0.078,
+     "CHARLTSV230 KV  2054B1": -0.075
+    }
+   }
+  },
+  "2024": {
+   "c1_coal_bit_twh": 0.88,
+   "decomposition": {
+    "total": -0.07,
+    "above_synced": 2.3,
+    "within_synced_loading": -2.11,
+    "no_cems": -0.25
+   },
+   "fuel_ratio": {
+    "gas": 2.19,
+    "coal_delivered": 3.014,
+    "coal_over_gas": 1.376
+   },
+   "window_coverage": [
+    {
+     "bin": "(-1e+09,35]",
+     "dark_pct_of_cap": 46.4,
+     "windowed_pct_of_dark": 96.6,
+     "unwindowed_dark_twh": 3.49
+    },
+    {
+     "bin": "(35,50]",
+     "dark_pct_of_cap": 41.9,
+     "windowed_pct_of_dark": 97.5,
+     "unwindowed_dark_twh": 0.6
+    },
+    {
+     "bin": "(50,1e+09]",
+     "dark_pct_of_cap": 32.9,
+     "windowed_pct_of_dark": 97.3,
+     "unwindowed_dark_twh": 0.26
+    }
+   ],
+   "pmax": {
+    "model_mw": 28807,
+    "campd_mw": 30293,
+    "pct": -4.9
+   },
+   "hour_shape": {
+    "mean_gw": -0.01,
+    "night_00_05": 0.07,
+    "day_10_19": 0.09,
+    "weekday": -0.04,
+    "weekend": 0.07
+   },
+   "aep_western_spread": {
+    "mean_spread": -2.394,
+    "r2": 0.962,
+    "top_facilities": {
+     "PLEASNTV L3T203 CB": -0.264,
+     "GEORGEWA138 KV  GEO-KAM": -0.19,
+     "BIGPINET138 KV  BIG-KIS": -0.169,
+     "CHAPRLTP230 KV  249B": -0.152,
+     "APSOUTH contingency": -0.129,
+     "ELKRUNDP230 KV  ELK-ROLN": -0.12
+    }
+   }
+  },
+  "2025": {
+   "c1_coal_bit_twh": 11.29,
+   "decomposition": {
+    "total": 13.71,
+    "above_synced": 2.9,
+    "within_synced_loading": 11.43,
+    "no_cems": -0.62
+   },
+   "fuel_ratio": {
+    "gas": 3.52,
+    "coal_delivered": null,
+    "coal_over_gas": null
+   },
+   "window_coverage": [
+    {
+     "bin": "(-1e+09,35]",
+     "dark_pct_of_cap": 40.7,
+     "windowed_pct_of_dark": 95.3,
+     "unwindowed_dark_twh": 2.12
+    },
+    {
+     "bin": "(35,50]",
+     "dark_pct_of_cap": 39.8,
+     "windowed_pct_of_dark": 95.3,
+     "unwindowed_dark_twh": 1.79
+    },
+    {
+     "bin": "(50,1e+09]",
+     "dark_pct_of_cap": 34.6,
+     "windowed_pct_of_dark": 96.3,
+     "unwindowed_dark_twh": 1.04
+    }
+   ],
+   "pmax": {
+    "model_mw": 29543,
+    "campd_mw": 29645,
+    "pct": -0.3
+   },
+   "hour_shape": {
+    "mean_gw": 1.57,
+    "night_00_05": 1.83,
+    "day_10_19": 1.57,
+    "weekday": 1.52,
+    "weekend": 1.69
+   },
+   "aep_western_spread": {
+    "mean_spread": -4.165,
+    "r2": 0.922,
+    "top_facilities": {
+     "PLEASNTV TX3       XFORMER   H  500 KV": -0.563,
+     "PLEASNTV-ASHBURN  274D      A  230 KV": 0.216,
+     "94 HAURD-11323    11323     A  138 KV": 0.186,
+     "APSOUTH": -0.178,
+     "CHAPRLTP230 KV  249B": -0.17,
+     "BIGPINET_138KVBIG-KIS_1_LN": -0.151
+    }
+   }
+  }
+ }
+}
