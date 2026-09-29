@@ -6784,3 +6784,12 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
   - Owner card *"Record as limit"*, superseded the same day by *"Relabel as open and queue the test"*: **OPEN**.
 - **Cards 2–3:** CT_PEAKER 2021 is the same coal-displaces-gas swap. The model exports 10–14 TWh *less* than actual, so interchange can't explain the fossil surplus. C3a 2020/2022 and C3b 2022 are price-distribution compression. Owner card *"Record, no successor"*, superseded: **OPEN**, successor PJM-NEXT-11 fetches the PJM offers corpus to test LONG_RUN offered EcoMax by year.
 - Records: `docs/RESULT-pjm-next-10-2026-09-29.md`, `docs/FINDING-pjm-next-10-coal-loading-2026-09-29.md`.
+
+## PJM-NEXT-11 — 2026-09-29 — offered EcoMax falsified as the COAL_BIT lever; C3a 2019/2020 relabelled a bulk price-level error (zero LP)
+
+- No solve, no shard, keeper unchanged (`2026-09-28-pjm-next8-exitfix`). The PJM offers corpus (2019–2025, 84 month-files) was re-fetched.
+- **Card 1:** LONG_RUN offered EcoMax ÷ curve top is 0.923–0.949 in every year, flat across hours and net-load bins. Capping COAL_BIT at it closes at most −1.5 / −1.9 / −1.9 TWh of the 2019 / 2021 / 2025 over-run, and it misorders the years (2020 over-runs at the fit years' ratio; 2022 has the lowest). Not a lever; no solve. The feed has no fuel-conservation status field.
+- **Card 2:** 2022's small over-run is PJM's own 2022 LONG_RUN offers (about 2× delivered fuel cost), already in the keeper through the measured mid-curve floor. PJM-NEXT-10's delivered coal/gas ratio was the wrong operand for 2022. No coal-inventory ceiling is needed.
+- **Card 3:** C3a/C3b 2022 are confirmed as the pjm-h12 tail-compression object (top decile −$9.19 vs bulk +$4.36). **C3a 2019/2020 are NOT:** they are a bulk-level excess (median ratio 1.18 / 1.26). That bulk excess is present in every year (1.12–1.26), and C3a passes in 2021 and 2023–25 only by cancellation against the missing top tail.
+- COAL_BIT / CT_PEAKER 2021 / C3a 2019–20 remain **OPEN**. Next tests: (a) a per-plant margin audit (model offer vs model zonal LMP vs CAMPD loading); (b) which class sets the model's bulk price.
+- Records: `docs/FINDING-pjm-next-11-offered-ecomax-2026-09-29.md`, `docs/RESULT-pjm-next-11-2026-09-29.md`.
