@@ -57,9 +57,11 @@ import _soco81_census as census  # noqa: E402
 # Repointed soco-83 (2026-09-28): soco81_span was pruned at the soco-82 promotion (rule 35).
 # Repointed again soco-84 (2026-09-28): soco82_span was pruned at the soco-83 promotion;
 # the incumbent keeper is soco83_span (soco83_compose_span imports this module).
-KEEPER_SPAN = ROOT / "results/calibration/soco83_span"
+# Repointed soco-85 (2026-09-28): soco83_span was pruned at the soco-85 promotion (rule 35);
+# the incumbent keeper is soco85_span (the soco-83 recipe + gas_daily_shape).
+KEEPER_SPAN = ROOT / "results/calibration/soco85_span"
 census.SPAN = KEEPER_SPAN
-census.KEEPER = "2026-09-28-soco83-st-oom-floor"
+census.KEEPER = "2026-09-28-soco85-gas-daily-shape"
 DARK = ROOT / "data/raw/campd-unit-outages-perunitdark-SOCO.csv"
 DARK_SHA = "03ce606cfe118ef28e560739d12a005b2240aa112609e119c51a9f86ea2fd37c"
 WANSLEY = "COAL_SOCO_GA_p6052_"
@@ -94,10 +96,14 @@ def assert_input_census(legs: list[Path]) -> dict:
         bad = {
             x: (round(float(got[x]), 3), round(want[x], 3))
             for x in got.index
-            if x in want and not x.endswith("_committed") and not abs(got[x] - want[x]) <= TOL
+            if x in want
+            and not x.endswith("_committed")
+            and not abs(got[x] - want[x]) <= TOL
         }
         if bad:
-            raise SystemExit(f"{leg.name}: offer mismatch on {len(bad)} units, e.g. {list(bad.items())[:5]}")
+            raise SystemExit(
+                f"{leg.name}: offer mismatch on {len(bad)} units, e.g. {list(bad.items())[:5]}"
+            )
         mwcol = next(c for c in ("mw", "gen_mw", "p", "gen") if c in u.columns)
         over = 0.0
         w_twh = 0.0
@@ -110,9 +116,13 @@ def assert_input_census(legs: list[Path]) -> dict:
             over = max(over, float(np.max(g - cap, initial=0.0)))
             w_twh += g.sum() / 1e6
         if over > 1e-3:
-            raise SystemExit(f"{leg.name}: Wansley dispatches {over:.3f} MW above its availability")
+            raise SystemExit(
+                f"{leg.name}: Wansley dispatches {over:.3f} MW above its availability"
+            )
         report[y] = dict(units_checked=int(len(got)), wansley_twh=round(w_twh, 3))
-        print(f"  {leg.name}: {len(got)} units at the HEAD build's offers; Wansley {w_twh:.3f} TWh, within availability")
+        print(
+            f"  {leg.name}: {len(got)} units at the HEAD build's offers; Wansley {w_twh:.3f} TWh, within availability"
+        )
     return report
 
 
@@ -131,7 +141,9 @@ def assert_keeper_years(legs: list[Path]) -> None:
         d = (a.groupby("klass").mw.sum() - k.groupby("klass").mw.sum()).abs() / 1e6
         worst = float(d.max())
         if worst > TOL_TWH:
-            raise SystemExit(f"{leg.name}: class TWh moved vs keeper by {worst:.4f} ({d.idxmax()})")
+            raise SystemExit(
+                f"{leg.name}: class TWh moved vs keeper by {worst:.4f} ({d.idxmax()})"
+            )
         print(f"  {leg.name}: every class within {worst:.4f} TWh of the keeper")
 
 

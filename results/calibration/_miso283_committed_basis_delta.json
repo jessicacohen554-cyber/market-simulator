@@ -1,0 +1,168 @@
+{
+ "year": 2023,
+ "n_units": 2743,
+ "n_moved": 232,
+ "moved_by_class_band": [
+  {
+   "g": "CC_CHP",
+   "b": "committed",
+   "mw": 2175.89,
+   "n": 24.0,
+   "d_mw_wtd": 10.27
+  },
+  {
+   "g": "COAL_BIT",
+   "b": "committed",
+   "mw": 4432.05,
+   "n": 16.0,
+   "d_mw_wtd": 28.66
+  },
+  {
+   "g": "COAL_LIGNITE",
+   "b": "committed",
+   "mw": 442.12,
+   "n": 2.0,
+   "d_mw_wtd": 22.26
+  },
+  {
+   "g": "COAL_PRB",
+   "b": "committed",
+   "mw": 12193.29,
+   "n": 37.0,
+   "d_mw_wtd": 18.65
+  },
+  {
+   "g": "CT_CHP",
+   "b": "committed",
+   "mw": 428.24,
+   "n": 48.0,
+   "d_mw_wtd": -5.1
+  },
+  {
+   "g": "CT_PEAKER",
+   "b": "committed",
+   "mw": 2915.53,
+   "n": 81.0,
+   "d_mw_wtd": -3.06
+  },
+  {
+   "g": "ST_GAS",
+   "b": "committed",
+   "mw": 2534.94,
+   "n": 24.0,
+   "d_mw_wtd": 2.7
+  }
+ ],
+ "committed_offer_by_class": [
+  {
+   "g": "CC_CHP",
+   "mw": 2175.9,
+   "offer0": 29.69,
+   "offer1": 39.96
+  },
+  {
+   "g": "CC_REGULAR",
+   "mw": 11915.5,
+   "offer0": 22.91,
+   "offer1": 22.91
+  },
+  {
+   "g": "COAL_BIT",
+   "mw": 4432.1,
+   "offer0": 6.19,
+   "offer1": 34.85
+  },
+  {
+   "g": "COAL_LIGNITE",
+   "mw": 442.1,
+   "offer0": 4.5,
+   "offer1": 26.76
+  },
+  {
+   "g": "COAL_PRB",
+   "mw": 12193.3,
+   "offer0": 10.78,
+   "offer1": 29.43
+  },
+  {
+   "g": "CT_CHP",
+   "mw": 428.2,
+   "offer0": 25.14,
+   "offer1": 20.04
+  },
+  {
+   "g": "CT_PEAKER",
+   "mw": 2915.5,
+   "offer0": 44.8,
+   "offer1": 41.74
+  },
+  {
+   "g": "ST_CHP",
+   "mw": 425.5,
+   "offer0": 31.13,
+   "offer1": 31.13
+  },
+  {
+   "g": "ST_GAS",
+   "mw": 2534.9,
+   "offer0": 38.2,
+   "offer1": 40.9
+  }
+ ],
+ "MISO-South_static_dprice_hod": [
+  0.1,
+  0.04,
+  0.12,
+  0.18,
+  0.02,
+  0.02,
+  -0.05,
+  -0.14,
+  -0.03,
+  -0.07,
+  0.1,
+  -0.02,
+  0.11,
+  0.3,
+  0.09,
+  -0.05,
+  -0.01,
+  0.16,
+  0.15,
+  0.15,
+  0.12,
+  -0.04,
+  -0.01,
+  -0.02
+ ],
+ "MISO-South_static_dprice_night": 0.08,
+ "MISO-South_static_dprice_all": 0.05,
+ "MISO-Illinois_static_dprice_hod": [
+  -0.33,
+  -0.28,
+  -0.31,
+  -0.34,
+  -0.37,
+  -0.43,
+  -0.41,
+  -0.43,
+  -0.44,
+  -0.49,
+  -0.42,
+  -0.45,
+  -0.38,
+  -0.36,
+  -0.49,
+  -0.34,
+  -0.32,
+  -0.5,
+  -0.49,
+  -0.51,
+  -0.49,
+  -0.54,
+  -0.55,
+  -0.48
+ ],
+ "MISO-Illinois_static_dprice_night": -0.34,
+ "MISO-Illinois_static_dprice_all": -0.42
+}

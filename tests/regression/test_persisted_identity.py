@@ -766,13 +766,21 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   (`--declare-missing`, moves no key). +1 row everywhere.
 #   WHAT IT COSTS: nothing solved — no registry value moved, so no committed
 #   bundle's numbers change; the digest moves only because the row set grew.
+# 2026-09-28 ALL SIX ADVANCED (SPP-100) — ONE ROW ADDED, NO VALUE MOVED.
+#   SPP-100 added constants.CHP_STEAM_ALLHOURS_MIN_ON_FRAC (D-4's conduct bar,
+#   read only under the default-off chp_steam_floor_conduct_scope).
+#   `solve_surface_register.py --diff origin/main` -> "0 value(s) moved, 1
+#   added"; declared at its live hash (`--declare-missing`, moves no key).
+#   +1 row everywhere.
+#   WHAT IT COSTS: nothing solved — no registry value moved, so no committed
+#   bundle's numbers change; the digest moves only because the row set grew.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("896a6f8abc3ed118", 237),
-    "CAISO": ("9e8498829b85d3b9", 211),
-    "MISO": ("c47273705b10a23a", 217),
-    "PJM": ("c12a55de477c71d0", 221),
-    "NYISO": ("e24f81f7fdb24226", 218),
-    "NEISO": ("4486d4c5ac4eeeb6", 204),
+    "ERCOT": ("89ccdc59b17332e3", 238),
+    "CAISO": ("a478be168ecf1363", 212),
+    "MISO": ("572b759217c6d9b0", 218),
+    "PJM": ("ac8e1b6d77100e10", 222),
+    "NYISO": ("001ff291efbb3af3", 219),
+    "NEISO": ("b94901ef8254f41a", 205),
 }
 
 

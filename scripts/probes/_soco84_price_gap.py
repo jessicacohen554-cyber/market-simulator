@@ -34,8 +34,10 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "scripts"), str(ROOT / "src"), str(ROOT)]
 import calibration_verdict as cv  # noqa: E402
 
-KEEPER = "2026-09-28-soco83-st-oom-floor"
-SPAN = ROOT / "results/calibration/soco83_span"
+# Repointed soco-85 (2026-09-28): soco83_span was pruned at the soco-85 promotion (rule 35);
+# the incumbent keeper is soco85_span (the soco-83 recipe + gas_daily_shape).
+KEEPER = "2026-09-28-soco85-gas-daily-shape"
+SPAN = ROOT / "results/calibration/soco85_span"
 LAM = ROOT / "data/raw/_validation-source/actual_lmp_hourly_SOCO.parquet"
 BENCH = ROOT / "frontend/data/backcast/bench/SOCO"
 GAS = ("CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP")
@@ -74,8 +76,12 @@ def _curve_price(price: np.ndarray, gas: np.ndarray, gas_new: np.ndarray) -> np.
         if edges.size < 3:
             continue
         idx = np.clip(np.searchsorted(edges, g, side="right") - 1, 0, edges.size - 2)
-        xs = np.array([g[idx == i].mean() for i in range(edges.size - 1) if (idx == i).any()])
-        ys = np.array([np.median(p[idx == i]) for i in range(edges.size - 1) if (idx == i).any()])
+        xs = np.array(
+            [g[idx == i].mean() for i in range(edges.size - 1) if (idx == i).any()]
+        )
+        ys = np.array(
+            [np.median(p[idx == i]) for i in range(edges.size - 1) if (idx == i).any()]
+        )
         ys = np.maximum.accumulate(ys)  # a supply curve is non-decreasing
         # shift each hour's own price by the curve's change (keeps hourly noise)
         out[sel] = p + np.interp(gas_new[sel], xs, ys) - np.interp(g, xs, ys)
@@ -94,12 +100,23 @@ def main() -> None:
         s = s[s["pass"] == "P1"]
         dem = s.groupby("hour")["demand"].sum().sort_index().to_numpy()
         price = (
-            (s.price * s.demand).groupby(s.hour).sum() / s.groupby("hour")["demand"].sum()
-        ).sort_index().to_numpy()
+            (
+                (s.price * s.demand).groupby(s.hour).sum()
+                / s.groupby("hour")["demand"].sum()
+            )
+            .sort_index()
+            .to_numpy()
+        )
         lam = lam_all[lam_all.year == y].sort_values("hour")["rt"].to_numpy(float)
         ch = pd.read_parquet(SPAN / f"hourly/class_hourly_{y}.parquet")
         ch = ch[ch["pass"] == "P1"]
-        gas = ch[ch.klass.isin(GAS)].groupby("hour")["mw"].sum().reindex(range(T), fill_value=0).to_numpy()
+        gas = (
+            ch[ch.klass.isin(GAS)]
+            .groupby("hour")["mw"]
+            .sum()
+            .reindex(range(T), fill_value=0)
+            .to_numpy()
+        )
         act_c, mod_c = _hourly_coal(ypay, ybench)
         dcoal = act_c - mod_c
         cf = _curve_price(price, gas, np.maximum(gas - dcoal, 0.0))
@@ -117,7 +134,10 @@ def main() -> None:
                 lam=lw(lam),
                 model=lw(price),
                 gap_pct=100 * (lw(price) / lw(lam) - 1),
-                **{f"q{i+1}": lw(price, quint == i) - lw(lam, quint == i) for i in range(5)},
+                **{
+                    f"q{i + 1}": lw(price, quint == i) - lw(lam, quint == i)
+                    for i in range(5)
+                },
                 summer=lw(price, summer) - lw(lam, summer),
                 other=lw(price, ~summer) - lw(lam, ~summer),
                 h_above5=int((price - lam > 5).sum()),
@@ -153,6 +173,7 @@ RECIPE_SETS = (
     "st_gas_mustrun_per_plant",
     "st_gas_mustrun_p25_level",
     "st_gas_mustrun_oom_level",
+    "gas_daily_shape",
 )
 
 
@@ -168,9 +189,19 @@ def fleet(year: int) -> dict:
     kw = run_year_kwargs(meta)
     kw.update(derived_run_year_inputs(str(SPAN), year))
     kw.setdefault("prb_overrides", {}).update({k: True for k in RECIPE_SETS})
-    with contextlib.redirect_stderr(io.StringIO()), contextlib.redirect_stdout(io.StringIO()):
-        st = run_year(year, meta["iso"], T, float(meta["gas_prices"][str(year)]), {},
-                      fleet_only=True, **kw)
+    with (
+        contextlib.redirect_stderr(io.StringIO()),
+        contextlib.redirect_stdout(io.StringIO()),
+    ):
+        st = run_year(
+            year,
+            meta["iso"],
+            T,
+            float(meta["gas_prices"][str(year)]),
+            {},
+            fleet_only=True,
+            **kw,
+        )
     fa = st["fleet_arrays"]
     mc = np.asarray(st["mc_base"], float)
     return dict(
@@ -196,8 +227,14 @@ def main_setter(years=(2019, 2022, 2023)) -> None:
         quint = np.searchsorted(np.quantile(dem, [0.2, 0.4, 0.6, 0.8]), dem)
         near = np.abs(f["mc"] - price[None, :]) <= 0.25  # units x hours
         classes = sorted(set(f["klass"]))
-        print(f"\n{y}: zone price spread p95 ${np.percentile(pz.max(1) - pz.min(1), 95):.2f}")
-        hdr = "quint  model  lambda  " + " ".join(f"{c[:9]:>9}" for c in classes) + "   none"
+        print(
+            f"\n{y}: zone price spread p95 ${np.percentile(pz.max(1) - pz.min(1), 95):.2f}"
+        )
+        hdr = (
+            "quint  model  lambda  "
+            + " ".join(f"{c[:9]:>9}" for c in classes)
+            + "   none"
+        )
         print(hdr)
         for qi in range(5):
             h = quint == qi
@@ -205,16 +242,21 @@ def main_setter(years=(2019, 2022, 2023)) -> None:
             for c in classes:
                 shares.append(near[f["klass"] == c][:, h].any(axis=0).mean())
             none = (~near[:, h].any(axis=0)).mean()
-            print(f"  q{qi+1}  {price[h].mean():6.2f} {lam[h].mean():6.2f}  "
-                  + " ".join(f"{v:9.2f}" for v in shares) + f"  {none:5.2f}")
+            print(
+                f"  q{qi + 1}  {price[h].mean():6.2f} {lam[h].mean():6.2f}  "
+                + " ".join(f"{v:9.2f}" for v in shares)
+                + f"  {none:5.2f}"
+            )
         # the off-peak setters' heat rates (q1): mean HR of units near the price
         h = quint == 0
         for c in classes:
             u = (f["klass"] == c) & near[:, h].any(axis=1)
             if u.any():
-                print(f"    q1 {c}: {int(u.sum())} units near price, HR mean "
-                      f"{np.average(f['hr'][u], weights=f['pmax'][u]):.2f} MMBtu/MWh, "
-                      f"mc median ${np.median(f['mc'][u][:, h]):.2f}")
+                print(
+                    f"    q1 {c}: {int(u.sum())} units near price, HR mean "
+                    f"{np.average(f['hr'][u], weights=f['pmax'][u]):.2f} MMBtu/MWh, "
+                    f"mc median ${np.median(f['mc'][u][:, h]):.2f}"
+                )
 
 
 if __name__ == "__main__" and len(sys.argv) > 1 and sys.argv[1] == "setter":

@@ -15279,3 +15279,47 @@ Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 
 `docs/FINDING-miso282-2021-22-stgas-gap-2026-09-28.md`.
 
 Owner ruling: next lane is the MISO-South price premium probe (zero LP). No frontier.
+
+## miso-283 — 2026-09-28
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 on the MISO-South price premium
+over the measured LA/MS/AR/TX hubs. At night, about 80 % of it is system-wide: Illinois is also +$5–9/MWh above
+ILLINOIS.HUB at h0–5 in every year, 2019–2025, and the model couples South to Illinois in 78 % of night hours
+(`diurnal_price_amplitude`, G). The South-specific spread error is +0.1 to +1.9 $/MWh (2021–22: +3.6 / +3.8 at
+night, up to +10 by day, where the North is under-priced; these are the routed objects). The premium is the same
+in DA and RT.
+
+Ruled out:
+- Gas: model South gas = Henry Hub + measured South CC variable transport, within ±0.1 $/MMBtu.
+- Reserve adders: $0 at night.
+- A CC markup: the night-marginal CC tranches are at the measured incremental HR plus ~$1.5.
+
+`committed_band_measured_basis` was sized and its MISO cell stays U. It leaves CC unchanged and raises coal
+committed offers by $18–29/MWh (a take-or-pay collision).
+
+What remains South-specific points at out-of-merit South commitment (routed RO-2). No frontier.
+`docs/FINDING-miso283-south-price-premium-2026-09-28.md`.
+
+Owner ruling: "Do standby units and un route ro2 before going after night overshoot". Order: admit_standby_units + outage companion, then RO-2 (un-routed) South load-pocket commitment, then the night overshoot.
+
+## miso-284 — 2026-09-29
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Ran the `admit_standby_units` conduct
+census on the material admitted SB plants, 2019–2025.
+
+Plants that ran while SB:
+- Baxter Wilson 2050 (494 MW ST_GAS, 2021–22): CEMS 771 / 318 GWh.
+- Marion 976 GT 5/6 (140 MW CT).
+
+Plants with no measured conduct:
+- Taconite Harbor 10075 (155 MW COAL_PRB, 2019–22): 0 op-hours in every year.
+- Louisiana 2 1392 (138 MW ST_GAS, 2023–25): no CEMS or EIA-923 record ever.
+- Wyandotte 1866 (42 MW, 2023–25): dark.
+
+No MISO outage extract covers the no-conduct plants, and re-deriving on OP+SB would not either. The
+`eia923_netzero` hook requires output in an on-disk 923 year (2018+). SOCO-61's dark-unit test requires output in
+an adjacent year. Midland ST2 (380 MW) is unobservable at unit grain. The flag admits 0 MW ST_GAS in 2019, so it
+cannot reach a failing criterion.
+
+Owner ruling: "Park, go to RO-2 (Recommended)". The cell stays U. Next lane: RO-2 `scuc_load_pocket_commitment`.
+No frontier. `docs/FINDING-miso284-standby-census-2026-09-28.md`.
