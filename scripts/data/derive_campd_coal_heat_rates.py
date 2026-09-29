@@ -171,6 +171,39 @@ _HR_MAX_NET: float = 27.0
 _HSL_PCTILE: float = 90.0
 
 
+#: ISOs whose solve fleet is the curated bin sheet (``paths.CAMPD_BINS_CSV``,
+#: ``use_campd_bins``) rather than the EIA-860 BA-filtered loader. For these
+#: the sheet IS the dispatched coal population, and ``resolve_bin_heat_rates``
+#: reads this artifact for every sheet row — so a sheet plant the BA-filtered
+#: fleet omits must still be measured here, or it silently falls through to
+#: eGRID. R-ERCOT-15: Oklaunion (127) is an ERCOT resource EIA-860 codes SWPP
+#: (R-ERCOT-14, rule 14), so it was in the sheet but not in the population.
+CURATED_SHEET_ISOS: frozenset[str] = frozenset({"ERCOT"})
+
+
+def curated_sheet_coal_plants(iso: str) -> tuple[dict[int, float], dict[int, float]]:
+    """Return ``({code: nameplate MW}, {code: sheet HR})`` for the sheet's coal rows.
+
+    Empty for an ISO outside :data:`CURATED_SHEET_ISOS`. Only the coal
+    subclasses (``plant_taxonomy.COAL_CLASSES``) are read; a split-child row
+    (``parent*10+digit``) is never a coal row, so no synthetic code enters.
+    """
+    if iso.upper() not in CURATED_SHEET_ISOS:
+        return {}, {}
+    from market_sim.config.paths import CAMPD_BINS_CSV
+    from market_sim.config.plant_taxonomy import COAL_CLASSES
+
+    sheet = pd.read_csv(CAMPD_BINS_CSV)
+    sheet = sheet[sheet["Plant_Group"].isin(COAL_CLASSES)]
+    caps: dict[int, float] = {}
+    hrs: dict[int, float] = {}
+    for r in sheet.itertuples(index=False):
+        code = int(r.Plant_Code)
+        caps[code] = caps.get(code, 0.0) + float(r.Nameplate_MW)
+        hrs[code] = float(r.Plant_Avg_HR_MMBtu_MWh)
+    return caps, hrs
+
+
 def parasitic_factors() -> dict[int, float]:
     """Return the committed ``{plant_id: net/gross}`` map, or ``{}`` if absent.
 
@@ -454,13 +487,28 @@ def main(argv: list[str] | None = None) -> int:
         )
         if plain_caps != caps:
             raise SystemExit(f"{iso}: the provenance recipe moved the plant population")
+    # R-ERCOT-15: a curated-sheet ISO also measures every sheet coal plant the
+    # BA-filtered fleet omits. Additive only — a plant already in the population
+    # keeps its fleet capacity and provenance rate, so every existing row
+    # reproduces (rule 23: re-derived because the POPULATION changed).
+    sheet_caps, sheet_hrs = curated_sheet_coal_plants(iso)
+    added = sorted(set(sheet_caps) - set(caps))
+    for code in added:
+        caps[code] = sheet_caps[code]
+    if added:
+        print(f"  curated-sheet coal plants added to the population: {added}")
+
+    def _provenance_hrs(fleet: list) -> dict[int, float]:
+        out = class_heat_rates(fleet, TARGET_CLASS)
+        for code in added:
+            out.setdefault(code, sheet_hrs[code])
+        return out
+
     factors = parasitic_factors()
     units = unit_operating_heat_rates(iso, years, set(caps))
     if units.empty:
         raise SystemExit(f"{iso}: no unit cleared the steady-state screen")
-    pooled = plant_table(
-        units, iso, years, caps, class_heat_rates(union, TARGET_CLASS), factors
-    )
+    pooled = plant_table(units, iso, years, caps, _provenance_hrs(union), factors)
 
     def _year_table(year: int) -> pd.DataFrame | None:
         # The SAME estimator on year Y's hours alone: a per-year row exists
@@ -473,7 +521,7 @@ def main(argv: list[str] | None = None) -> int:
             iso,
             [year],
             caps,
-            class_heat_rates(fleets.get(year, []), TARGET_CLASS),
+            _provenance_hrs(fleets.get(year, [])),
             factors,
         )
 

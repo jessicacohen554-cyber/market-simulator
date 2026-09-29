@@ -14906,3 +14906,11 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - SWCAP is inert in 2019/2020 (max λ $2,649); it binds only the 49 Uri shed zone-hours of 2021, now priced at $9,000.
 - **Benchmark:** the 2019/2020 bench now includes Oklaunion's actual; the keeper was re-scored on it for the comparison.
 - Record: `docs/handoffs/RESULT-r-ercot-14-oklaunion-swcap-2026-09-29.md`.
+
+## R-ERCOT-15 — 2026-09-29 — phase 0 on 2020 C3b; vintage anchor `R`; Oklaunion measured coal HR + Sandy Creek key landed; arm staged, NOT solved (session-nesting limit); ISO NOT-YET, keeper unchanged
+
+- **2020 C3b 0.242:** August carries 45 % of the SSE, Feb/Mar 25 %, Jun/Jul 20 %. The driver is a year-invariant, zone-uniform mid-distribution over-price (+0.9 to +4.2 $/MWh in every year) — offer level, the owner-held channel.
+- **Vintage anchor `R` at zero LP:** the per-year bias is not linear in the anchor gap (slope +0.11, r² 0.02; 2022 is +4.2 where ≈ −11 is predicted).
+- **Routed:** South 2020 thin-sample F923 basis (+3.53); missing pre-2022 West Waha rows.
+- **Landed:** Sandy Creek 56611 key (byte-inert, measured); curated-sheet coal-HR population with 127 measured (2019 11.77, 2020 11.47). The latter is live for 2019/2020 — the next lane solves the 2019+2020 arm.
+- Record: `docs/handoffs/RESULT-r-ercot-15-phase0-2026-09-29.md`.
