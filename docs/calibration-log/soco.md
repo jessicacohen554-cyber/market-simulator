@@ -1988,3 +1988,10 @@ matches, ±1 h clock shift ≤ 0.4 %, no gaps, no level break at CSV→XBRL; fle
 measurable. Every lever for either error is already adjudicated (CC incremental HR, replacement fuel, gas level, SE daily basis,
 CT start). No solve; keeper unchanged; NOT-YET 7/4/0/1/2. Record: docs/handoffs/r-soco/FINDING-soco-89-2026-09-29.md; probe
 scripts/probes/_soco89_price_setter_census.py.
+
+OWNER RULINGS 2026-09-29 (decision cards, soco-89):
+- **SOCO C3a: "Reopen joint repair"**: a combined low-end + tail repair (a one-sided fix fails 2024 or leaves 2019/2020 failing).
+- **Joint repair: "License SE daily gas (Recommended)"**: lift "free-data only" for one licensed daily Southeast hub series
+  (Transco Z4/Z5 or Sonat) used as replacement fuel, matching lambda's definition (incremental cost × replacement fuel). The owner
+  supplies the file; it is non-redistributable (data-licensing §5), so it stays gitignored. soco-90 greedies both halves, zero LP,
+  then brings a build card.
