@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-29-nyisonext13-recon-detach-span",
+  "label": "nyisonext13 recon detach span",
+  "date": "2026-09-29",
+  "shorthand": "nyisonext13-recon-detach-span",
+  "definition": "Detaches the NE AC node from the monthly EIA-930 reconciliation band (nyiso_ne_ac_recon_detach false->true, one-field delta vs the prior keeper): the NE AC node follows its own measured-spread bands at its own LMP in 99.89-100.0% of hours 2021-2025, and the band pins the pooled node alone (EIA-930 total minus the measured P-32 NE AC schedule); zero free parameters. Determination NOT-YET (live verdict): C1 (2023 ST_GAS), C3a (2022 -13.6%, 2025 -11.3%), C3b (2022 NRMSE 0.226) and C3c fail; C2, C4, C6 and C8 pass. Promoted on the pre-registered structure rule (price-fit regression accepted by the owner), not on the residual.",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-29-nyisonext13-recon-detach-span.js",
+  "bundle": "results/calibration/nyisonext13_span"
+}
