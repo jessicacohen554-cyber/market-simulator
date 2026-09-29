@@ -1,0 +1,2469 @@
+{
+ "2019": {
+  "hub_lag_h": 0,
+  "hub_lag_r": {
+   "-2": 0.2815,
+   "-1": 0.3333,
+   "0": 0.3638,
+   "1": 0.3551,
+   "2": 0.3192
+  },
+  "night_price": {
+   "model_IL": 24.16,
+   "hub_IL": 19.05,
+   "diff": 5.12
+  },
+  "night_supply_mw": {
+   "coal": {
+    "model": 25572.0,
+    "actual": 21867.0
+   },
+   "gas": {
+    "model": 14179.0,
+    "actual": 17487.0
+   },
+   "nuclear": {
+    "model": 11139.0,
+    "actual": 11747.0
+   },
+   "wind": {
+    "model": 7265.0,
+    "actual": 6909.0
+   },
+   "solar": {
+    "model": 0.0,
+    "actual": 0.0
+   },
+   "hydro": {
+    "model": 886.0,
+    "actual": 975.0
+   },
+   "other": {
+    "model": 2456.0,
+    "actual": 742.0
+   },
+   "interchange": {
+    "model": 4438.0,
+    "actual": -5917.0
+   },
+   "battery": {
+    "model": NaN,
+    "actual": NaN
+   },
+   "demand_internal": {
+    "model": 64925.0
+   }
+  },
+  "night_band_mw": {
+   "CC_CHP": {
+    "": 0.0,
+    "committed": 335.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 356.0,
+    "econlo": 553.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "CC_REGULAR": {
+    "": 0.0,
+    "committed": 5224.0,
+    "econ": 0.0,
+    "econc00": 1066.0,
+    "econc01": 1032.0,
+    "econc02": 999.0,
+    "econc03": 958.0,
+    "econc04": 911.0,
+    "econc05": 862.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "COAL_BIT": {
+    "": 0.0,
+    "committed": 3306.0,
+    "econ": 0.0,
+    "econc00": 100.0,
+    "econc01": 88.0,
+    "econc02": 67.0,
+    "econc03": 58.0,
+    "econc04": 49.0,
+    "econc05": 42.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 4545.0,
+    "peak": 5.0
+   },
+   "COAL_LIGNITE": {
+    "": 0.0,
+    "committed": 340.0,
+    "econ": 0.0,
+    "econc00": 12.0,
+    "econc01": 12.0,
+    "econc02": 12.0,
+    "econc03": 12.0,
+    "econc04": 12.0,
+    "econc05": 11.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 606.0,
+    "peak": 0.0
+   },
+   "COAL_PRB": {
+    "": 0.0,
+    "committed": 7866.0,
+    "econ": 0.0,
+    "econc00": 269.0,
+    "econc01": 221.0,
+    "econc02": 182.0,
+    "econc03": 152.0,
+    "econc04": 128.0,
+    "econc05": 107.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 7357.0,
+    "peak": 13.0
+   },
+   "CT_CHP": {
+    "": 0.0,
+    "committed": 309.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 166.0,
+    "econlo": 166.0,
+    "mustrun": 0.0,
+    "peak": 22.0
+   },
+   "CT_PEAKER": {
+    "": 0.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 2.0,
+    "econlo": 2.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "OTHER": {
+    "": 1386.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "ST_CHP": {
+    "": 0.0,
+    "committed": 101.0,
+    "econ": 115.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 16.0
+   },
+   "ST_GAS": {
+    "": 0.0,
+    "committed": 519.0,
+    "econ": 0.0,
+    "econc00": 181.0,
+    "econc01": 132.0,
+    "econc02": 51.0,
+    "econc03": 32.0,
+    "econc04": 25.0,
+    "econc05": 24.0,
+    "econhi": 3.0,
+    "econlo": 4.0,
+    "mustrun": 0.0,
+    "peak": 11.0
+   },
+   "biomass": {
+    "": 1069.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "hydro": {
+    "": 886.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "import": {
+    "": 4438.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "nuclear": {
+    "": 11139.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "oil": {
+    "": 0.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "solar": {
+    "": 0.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "wind": {
+    "": 7265.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   }
+  },
+  "night_reserve": [
+   {
+    "family": "miso_rbdc",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 3400.4599609375,
+    "held": 5271.7998046875,
+    "short": 0.0
+   },
+   {
+    "family": "miso_subregional_or_midwest",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 3000.4599609375,
+    "held": 3000.4599609375,
+    "short": 0.0
+   },
+   {
+    "family": "miso_zonal_or_miso_south",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 2271.35009765625,
+    "held": 2271.35009765625,
+    "short": 0.0
+   }
+  ],
+  "night_zone_price": {
+   "MISO-East": 24.16,
+   "MISO-Illinois": 24.16,
+   "MISO-Indiana": 24.16,
+   "MISO-Plains": 24.16,
+   "MISO-South": 24.53,
+   "MISO-West": 24.16,
+   "MISO_external": 23.96,
+   "MISO_external_South": 24.32
+  }
+ },
+ "2020": {
+  "hub_lag_h": 1,
+  "hub_lag_r": {
+   "-2": 0.2625,
+   "-1": 0.2942,
+   "0": 0.3131,
+   "1": 0.3158,
+   "2": 0.2975
+  },
+  "night_price": {
+   "model_IL": 20.53,
+   "hub_IL": 15.71,
+   "diff": 4.82
+  },
+  "night_supply_mw": {
+   "coal": {
+    "model": 21039.0,
+    "actual": 17630.0
+   },
+   "gas": {
+    "model": 14001.0,
+    "actual": 17846.0
+   },
+   "nuclear": {
+    "model": 11138.0,
+    "actual": 10889.0
+   },
+   "wind": {
+    "model": 8961.0,
+    "actual": 8522.0
+   },
+   "solar": {
+    "model": 1.0,
+    "actual": 1.0
+   },
+   "hydro": {
+    "model": 932.0,
+    "actual": 943.0
+   },
+   "other": {
+    "model": 2346.0,
+    "actual": 722.0
+   },
+   "interchange": {
+    "model": 5250.0,
+    "actual": -6574.0
+   },
+   "battery": {
+    "model": NaN,
+    "actual": NaN
+   },
+   "demand_internal": {
+    "model": 62392.0
+   }
+  },
+  "night_band_mw": {
+   "CC_CHP": {
+    "": 0.0,
+    "committed": 346.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 357.0,
+    "econlo": 540.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "CC_REGULAR": {
+    "": 0.0,
+    "committed": 5082.0,
+    "econ": 0.0,
+    "econc00": 1032.0,
+    "econc01": 1001.0,
+    "econc02": 967.0,
+    "econc03": 932.0,
+    "econc04": 893.0,
+    "econc05": 849.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 1.0
+   },
+   "COAL_BIT": {
+    "": 0.0,
+    "committed": 2803.0,
+    "econ": 0.0,
+    "econc00": 45.0,
+    "econc01": 40.0,
+    "econc02": 36.0,
+    "econc03": 33.0,
+    "econc04": 27.0,
+    "econc05": 26.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 3408.0,
+    "peak": 4.0
+   },
+   "COAL_LIGNITE": {
+    "": 0.0,
+    "committed": 396.0,
+    "econ": 0.0,
+    "econc00": 2.0,
+    "econc01": 2.0,
+    "econc02": 2.0,
+    "econc03": 2.0,
+    "econc04": 2.0,
+    "econc05": 2.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 655.0,
+    "peak": 0.0
+   },
+   "COAL_PRB": {
+    "": 0.0,
+    "committed": 6544.0,
+    "econ": 0.0,
+    "econc00": 158.0,
+    "econc01": 135.0,
+    "econc02": 118.0,
+    "econc03": 101.0,
+    "econc04": 92.0,
+    "econc05": 83.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 6315.0,
+    "peak": 7.0
+   },
+   "CT_CHP": {
+    "": 0.0,
+    "committed": 299.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 161.0,
+    "econlo": 161.0,
+    "mustrun": 0.0,
+    "peak": 19.0
+   },
+   "CT_PEAKER": {
+    "": 0.0,
+    "committed": 7.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 7.0,
+    "econlo": 7.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "OTHER": {
+    "": 1351.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "ST_CHP": {
+    "": 0.0,
+    "committed": 100.0,
+    "econ": 114.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 16.0
+   },
+   "ST_GAS": {
+    "": 0.0,
+    "committed": 553.0,
+    "econ": 0.0,
+    "econc00": 178.0,
+    "econc01": 131.0,
+    "econc02": 65.0,
+    "econc03": 55.0,
+    "econc04": 48.0,
+    "econc05": 46.0,
+    "econhi": 5.0,
+    "econlo": 7.0,
+    "mustrun": 0.0,
+    "peak": 21.0
+   },
+   "biomass": {
+    "": 995.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "hydro": {
+    "": 932.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "import": {
+    "": 5250.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "nuclear": {
+    "": 11138.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "oil": {
+    "": 0.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "solar": {
+    "": 1.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "wind": {
+    "": 8961.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   }
+  },
+  "night_reserve": [
+   {
+    "family": "miso_rbdc",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 3394.18994140625,
+    "held": 5265.5400390625,
+    "short": 0.0
+   },
+   {
+    "family": "miso_subregional_or_midwest",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 2994.18994140625,
+    "held": 2994.18994140625,
+    "short": 0.0
+   },
+   {
+    "family": "miso_zonal_or_miso_south",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 2271.35009765625,
+    "held": 2271.35009765625,
+    "short": 0.0
+   }
+  ],
+  "night_zone_price": {
+   "MISO-East": 20.53,
+   "MISO-Illinois": 20.53,
+   "MISO-Indiana": 20.53,
+   "MISO-Plains": 20.53,
+   "MISO-South": 21.17,
+   "MISO-West": 20.53,
+   "MISO_external": 20.12,
+   "MISO_external_South": 20.76
+  }
+ },
+ "2021": {
+  "hub_lag_h": 1,
+  "hub_lag_r": {
+   "-2": 0.5394,
+   "-1": 0.5679,
+   "0": 0.5895,
+   "1": 0.5909,
+   "2": 0.5782
+  },
+  "night_price": {
+   "model_IL": 31.07,
+   "hub_IL": 28.31,
+   "diff": 2.75
+  },
+  "night_supply_mw": {
+   "coal": {
+    "model": 25684.0,
+    "actual": 23555.0
+   },
+   "gas": {
+    "model": 12606.0,
+    "actual": 15657.0
+   },
+   "nuclear": {
+    "model": 10686.0,
+    "actual": 11000.0
+   },
+   "wind": {
+    "model": 10294.0,
+    "actual": 9790.0
+   },
+   "solar": {
+    "model": 1.0,
+    "actual": 1.0
+   },
+   "hydro": {
+    "model": 836.0,
+    "actual": 862.0
+   },
+   "other": {
+    "model": 2397.0,
+    "actual": 814.0
+   },
+   "interchange": {
+    "model": 2965.0,
+    "actual": -3706.0
+   },
+   "battery": {
+    "model": NaN,
+    "actual": NaN
+   },
+   "demand_internal": {
+    "model": 64461.0
+   }
+  },
+  "night_band_mw": {
+   "CC_CHP": {
+    "": 0.0,
+    "committed": 260.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 344.0,
+    "econlo": 542.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "CC_REGULAR": {
+    "": 0.0,
+    "committed": 4269.0,
+    "econ": 0.0,
+    "econc00": 1044.0,
+    "econc01": 993.0,
+    "econc02": 928.0,
+    "econc03": 860.0,
+    "econc04": 773.0,
+    "econc05": 682.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "COAL_BIT": {
+    "": 0.0,
+    "committed": 3142.0,
+    "econ": 0.0,
+    "econc00": 161.0,
+    "econc01": 144.0,
+    "econc02": 127.0,
+    "econc03": 116.0,
+    "econc04": 104.0,
+    "econc05": 94.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 3687.0,
+    "peak": 13.0
+   },
+   "COAL_LIGNITE": {
+    "": 0.0,
+    "committed": 362.0,
+    "econ": 0.0,
+    "econc00": 11.0,
+    "econc01": 10.0,
+    "econc02": 10.0,
+    "econc03": 10.0,
+    "econc04": 10.0,
+    "econc05": 10.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 499.0,
+    "peak": 1.0
+   },
+   "COAL_PRB": {
+    "": 0.0,
+    "committed": 7816.0,
+    "econ": 0.0,
+    "econc00": 554.0,
+    "econc01": 495.0,
+    "econc02": 434.0,
+    "econc03": 382.0,
+    "econc04": 339.0,
+    "econc05": 302.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 6811.0,
+    "peak": 37.0
+   },
+   "CT_CHP": {
+    "": 0.0,
+    "committed": 294.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 201.0,
+    "econlo": 201.0,
+    "mustrun": 0.0,
+    "peak": 22.0
+   },
+   "CT_PEAKER": {
+    "": 0.0,
+    "committed": 1.0,
+    "econ": 0.0,
+    "econc00": 1.0,
+    "econc01": 1.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 6.0,
+    "econlo": 7.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "OTHER": {
+    "": 1448.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "ST_CHP": {
+    "": 0.0,
+    "committed": 105.0,
+    "econ": 102.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 14.0
+   },
+   "ST_GAS": {
+    "": 0.0,
+    "committed": 502.0,
+    "econ": 0.0,
+    "econc00": 170.0,
+    "econc01": 117.0,
+    "econc02": 43.0,
+    "econc03": 37.0,
+    "econc04": 31.0,
+    "econc05": 30.0,
+    "econhi": 3.0,
+    "econlo": 6.0,
+    "mustrun": 0.0,
+    "peak": 14.0
+   },
+   "biomass": {
+    "": 947.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "hydro": {
+    "": 836.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "import": {
+    "": 2965.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "nuclear": {
+    "": 10686.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "oil": {
+    "": 3.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "solar": {
+    "": 1.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "wind": {
+    "": 10294.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   }
+  },
+  "night_reserve": [
+   {
+    "family": "miso_rbdc",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 3387.929931640625,
+    "held": 5259.27001953125,
+    "short": 0.0
+   },
+   {
+    "family": "miso_subregional_or_midwest",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 2987.929931640625,
+    "held": 2987.929931640625,
+    "short": 0.0
+   },
+   {
+    "family": "miso_zonal_or_miso_south",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 2271.35009765625,
+    "held": 2271.35009765625,
+    "short": 0.0
+   }
+  ],
+  "night_zone_price": {
+   "MISO-East": 31.07,
+   "MISO-Illinois": 31.07,
+   "MISO-Indiana": 31.07,
+   "MISO-Plains": 31.07,
+   "MISO-South": 34.19,
+   "MISO-West": 31.07,
+   "MISO_external": 29.96,
+   "MISO_external_South": 33.09
+  }
+ },
+ "2022": {
+  "hub_lag_h": 0,
+  "hub_lag_r": {
+   "-2": 0.5675,
+   "-1": 0.5847,
+   "0": 0.5865,
+   "1": 0.5722,
+   "2": 0.5457
+  },
+  "night_price": {
+   "model_IL": 50.6,
+   "hub_IL": 42.97,
+   "diff": 7.63
+  },
+  "night_supply_mw": {
+   "coal": {
+    "model": 24091.0,
+    "actual": 21535.0
+   },
+   "gas": {
+    "model": 15575.0,
+    "actual": 18694.0
+   },
+   "nuclear": {
+    "model": 10267.0,
+    "actual": 10503.0
+   },
+   "wind": {
+    "model": 12521.0,
+    "actual": 11908.0
+   },
+   "solar": {
+    "model": 36.0,
+    "actual": 36.0
+   },
+   "hydro": {
+    "model": 804.0,
+    "actual": 864.0
+   },
+   "other": {
+    "model": 2424.0,
+    "actual": 793.0
+   },
+   "interchange": {
+    "model": 1472.0,
+    "actual": -3707.0
+   },
+   "battery": {
+    "model": NaN,
+    "actual": NaN
+   },
+   "demand_internal": {
+    "model": 66327.0
+   }
+  },
+  "night_band_mw": {
+   "CC_CHP": {
+    "": 0.0,
+    "committed": 252.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 338.0,
+    "econlo": 526.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "CC_REGULAR": {
+    "": 0.0,
+    "committed": 5615.0,
+    "econ": 0.0,
+    "econc00": 1295.0,
+    "econc01": 1238.0,
+    "econc02": 1166.0,
+    "econc03": 1086.0,
+    "econc04": 995.0,
+    "econc05": 902.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "COAL_BIT": {
+    "": 0.0,
+    "committed": 3049.0,
+    "econ": 0.0,
+    "econc00": 194.0,
+    "econc01": 169.0,
+    "econc02": 153.0,
+    "econc03": 141.0,
+    "econc04": 126.0,
+    "econc05": 114.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 3541.0,
+    "peak": 18.0
+   },
+   "COAL_LIGNITE": {
+    "": 0.0,
+    "committed": 320.0,
+    "econ": 0.0,
+    "econc00": 20.0,
+    "econc01": 20.0,
+    "econc02": 20.0,
+    "econc03": 20.0,
+    "econc04": 20.0,
+    "econc05": 20.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 278.0,
+    "peak": 6.0
+   },
+   "COAL_PRB": {
+    "": 0.0,
+    "committed": 7219.0,
+    "econ": 0.0,
+    "econc00": 504.0,
+    "econc01": 439.0,
+    "econc02": 381.0,
+    "econc03": 331.0,
+    "econc04": 289.0,
+    "econc05": 251.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 6416.0,
+    "peak": 34.0
+   },
+   "CT_CHP": {
+    "": 0.0,
+    "committed": 294.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 201.0,
+    "econlo": 201.0,
+    "mustrun": 0.0,
+    "peak": 20.0
+   },
+   "CT_PEAKER": {
+    "": 0.0,
+    "committed": 21.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 15.0,
+    "econlo": 16.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "OTHER": {
+    "": 1430.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "ST_CHP": {
+    "": 0.0,
+    "committed": 166.0,
+    "econ": 118.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 31.0
+   },
+   "ST_GAS": {
+    "": 0.0,
+    "committed": 530.0,
+    "econ": 0.0,
+    "econc00": 176.0,
+    "econc01": 126.0,
+    "econc02": 55.0,
+    "econc03": 50.0,
+    "econc04": 48.0,
+    "econc05": 45.0,
+    "econhi": 10.0,
+    "econlo": 11.0,
+    "mustrun": 0.0,
+    "peak": 29.0
+   },
+   "biomass": {
+    "": 994.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "hydro": {
+    "": 804.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "import": {
+    "": 1472.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "nuclear": {
+    "": 10267.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "oil": {
+    "": 0.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "solar": {
+    "": 36.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "wind": {
+    "": 12521.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   }
+  },
+  "night_reserve": [
+   {
+    "family": "miso_rbdc",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 3381.659912109375,
+    "held": 5253.009765625,
+    "short": 0.0
+   },
+   {
+    "family": "miso_subregional_or_midwest",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 2981.659912109375,
+    "held": 2981.659912109375,
+    "short": 0.0
+   },
+   {
+    "family": "miso_zonal_or_miso_south",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 2271.35009765625,
+    "held": 2271.35009765625,
+    "short": 0.0
+   }
+  ],
+  "night_zone_price": {
+   "MISO-East": 50.21,
+   "MISO-Illinois": 50.21,
+   "MISO-Indiana": 50.21,
+   "MISO-Plains": 50.21,
+   "MISO-South": 55.12,
+   "MISO-West": 50.21,
+   "MISO_external": 51.42,
+   "MISO_external_South": 56.32
+  }
+ },
+ "2023": {
+  "hub_lag_h": -1,
+  "hub_lag_r": {
+   "-2": 0.3947,
+   "-1": 0.4292,
+   "0": 0.4197,
+   "1": 0.3769,
+   "2": 0.327
+  },
+  "night_price": {
+   "model_IL": 27.45,
+   "hub_IL": 21.46,
+   "diff": 5.99
+  },
+  "night_supply_mw": {
+   "coal": {
+    "model": 18774.0,
+    "actual": 16302.0
+   },
+   "gas": {
+    "model": 18623.0,
+    "actual": 23019.0
+   },
+   "nuclear": {
+    "model": 9977.0,
+    "actual": 10023.0
+   },
+   "wind": {
+    "model": 11633.0,
+    "actual": 11064.0
+   },
+   "solar": {
+    "model": 18.0,
+    "actual": 18.0
+   },
+   "hydro": {
+    "model": 780.0,
+    "actual": 820.0
+   },
+   "other": {
+    "model": 2107.0,
+    "actual": 494.0
+   },
+   "interchange": {
+    "model": 4382.0,
+    "actual": -4387.0
+   },
+   "battery": {
+    "model": NaN,
+    "actual": NaN
+   },
+   "demand_internal": {
+    "model": 64820.0
+   }
+  },
+  "night_band_mw": {
+   "CC_CHP": {
+    "": 0.0,
+    "committed": 501.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 384.0,
+    "econlo": 553.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "CC_REGULAR": {
+    "": 0.0,
+    "committed": 7295.0,
+    "econ": 0.0,
+    "econc00": 1384.0,
+    "econc01": 1353.0,
+    "econc02": 1320.0,
+    "econc03": 1281.0,
+    "econc04": 1238.0,
+    "econc05": 1195.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 4.0
+   },
+   "COAL_BIT": {
+    "": 0.0,
+    "committed": 3115.0,
+    "econ": 0.0,
+    "econc00": 26.0,
+    "econc01": 26.0,
+    "econc02": 24.0,
+    "econc03": 23.0,
+    "econc04": 22.0,
+    "econc05": 21.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 2870.0,
+    "peak": 6.0
+   },
+   "COAL_LIGNITE": {
+    "": 0.0,
+    "committed": 369.0,
+    "econ": 0.0,
+    "econc00": 4.0,
+    "econc01": 4.0,
+    "econc02": 4.0,
+    "econc03": 4.0,
+    "econc04": 4.0,
+    "econc05": 4.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 317.0,
+    "peak": 0.0
+   },
+   "COAL_PRB": {
+    "": 0.0,
+    "committed": 5914.0,
+    "econ": 0.0,
+    "econc00": 218.0,
+    "econc01": 190.0,
+    "econc02": 166.0,
+    "econc03": 147.0,
+    "econc04": 130.0,
+    "econc05": 115.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 5039.0,
+    "peak": 11.0
+   },
+   "CT_CHP": {
+    "": 0.0,
+    "committed": 263.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 178.0,
+    "econlo": 179.0,
+    "mustrun": 0.0,
+    "peak": 11.0
+   },
+   "CT_PEAKER": {
+    "": 0.0,
+    "committed": 44.0,
+    "econ": 0.0,
+    "econc00": 4.0,
+    "econc01": 2.0,
+    "econc02": 1.0,
+    "econc03": 1.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 30.0,
+    "econlo": 32.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "OTHER": {
+    "": 1179.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "ST_CHP": {
+    "": 0.0,
+    "committed": 150.0,
+    "econ": 121.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 28.0
+   },
+   "ST_GAS": {
+    "": 0.0,
+    "committed": 475.0,
+    "econ": 0.0,
+    "econc00": 185.0,
+    "econc01": 145.0,
+    "econc02": 59.0,
+    "econc03": 45.0,
+    "econc04": 36.0,
+    "econc05": 34.0,
+    "econhi": 27.0,
+    "econlo": 26.0,
+    "mustrun": 0.0,
+    "peak": 36.0
+   },
+   "biomass": {
+    "": 928.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "hydro": {
+    "": 780.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "import": {
+    "": 4382.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "nuclear": {
+    "": 9977.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "oil": {
+    "": 0.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "solar": {
+    "": 18.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "wind": {
+    "": 11633.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   }
+  },
+  "night_reserve": [
+   {
+    "family": "miso_rbdc",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 2399.56005859375,
+    "held": 2399.56005859375,
+    "short": 0.0
+   },
+   {
+    "family": "miso_rbdc_regspin",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 1306.6099853515625,
+    "held": 1328.760009765625,
+    "short": 0.0
+   },
+   {
+    "family": "miso_subregional_or_midwest",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 2041.6300048828125,
+    "held": 2041.6300048828125,
+    "short": 0.0
+   },
+   {
+    "family": "miso_zonal_or_miso_south",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 357.92999267578125,
+    "held": 357.92999267578125,
+    "short": 0.0
+   }
+  ],
+  "night_zone_price": {
+   "MISO-East": 27.45,
+   "MISO-Illinois": 27.45,
+   "MISO-Indiana": 27.45,
+   "MISO-Plains": 27.45,
+   "MISO-South": 27.7,
+   "MISO-West": 27.45,
+   "MISO_external": 27.19,
+   "MISO_external_South": 27.44
+  }
+ },
+ "2024": {
+  "hub_lag_h": -1,
+  "hub_lag_r": {
+   "-2": 0.2031,
+   "-1": 0.2107,
+   "0": 0.2048,
+   "1": 0.173,
+   "2": 0.1372
+  },
+  "night_price": {
+   "model_IL": 25.23,
+   "hub_IL": 18.95,
+   "diff": 6.28
+  },
+  "night_supply_mw": {
+   "coal": {
+    "model": 18499.0,
+    "actual": 16012.0
+   },
+   "gas": {
+    "model": 20304.0,
+    "actual": 24736.0
+   },
+   "nuclear": {
+    "model": 10274.0,
+    "actual": 10367.0
+   },
+   "wind": {
+    "model": 12371.0,
+    "actual": 11766.0
+   },
+   "solar": {
+    "model": 29.0,
+    "actual": 29.0
+   },
+   "hydro": {
+    "model": 828.0,
+    "actual": 861.0
+   },
+   "other": {
+    "model": 1772.0,
+    "actual": 295.0
+   },
+   "interchange": {
+    "model": 2829.0,
+    "actual": -2884.0
+   },
+   "battery": {
+    "model": NaN,
+    "actual": NaN
+   },
+   "demand_internal": {
+    "model": 65444.0
+   }
+  },
+  "night_band_mw": {
+   "CC_CHP": {
+    "": 0.0,
+    "committed": 608.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 430.0,
+    "econlo": 571.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "CC_REGULAR": {
+    "": 0.0,
+    "committed": 7784.0,
+    "econ": 0.0,
+    "econc00": 1449.0,
+    "econc01": 1423.0,
+    "econc02": 1393.0,
+    "econc03": 1354.0,
+    "econc04": 1312.0,
+    "econc05": 1270.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 11.0
+   },
+   "COAL_BIT": {
+    "": 0.0,
+    "committed": 2963.0,
+    "econ": 0.0,
+    "econc00": 34.0,
+    "econc01": 31.0,
+    "econc02": 28.0,
+    "econc03": 26.0,
+    "econc04": 24.0,
+    "econc05": 22.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 2642.0,
+    "peak": 2.0
+   },
+   "COAL_LIGNITE": {
+    "": 0.0,
+    "committed": 353.0,
+    "econ": 0.0,
+    "econc00": 2.0,
+    "econc01": 2.0,
+    "econc02": 2.0,
+    "econc03": 2.0,
+    "econc04": 2.0,
+    "econc05": 2.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 308.0,
+    "peak": 0.0
+   },
+   "COAL_PRB": {
+    "": 0.0,
+    "committed": 6109.0,
+    "econ": 0.0,
+    "econc00": 207.0,
+    "econc01": 186.0,
+    "econc02": 169.0,
+    "econc03": 154.0,
+    "econc04": 141.0,
+    "econc05": 131.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 4939.0,
+    "peak": 20.0
+   },
+   "CT_CHP": {
+    "": 0.0,
+    "committed": 268.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 179.0,
+    "econlo": 180.0,
+    "mustrun": 0.0,
+    "peak": 11.0
+   },
+   "CT_PEAKER": {
+    "": 0.0,
+    "committed": 89.0,
+    "econ": 0.0,
+    "econc00": 12.0,
+    "econc01": 8.0,
+    "econc02": 5.0,
+    "econc03": 3.0,
+    "econc04": 2.0,
+    "econc05": 1.0,
+    "econhi": 60.0,
+    "econlo": 67.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "OTHER": {
+    "": 945.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "ST_CHP": {
+    "": 0.0,
+    "committed": 186.0,
+    "econ": 127.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 33.0
+   },
+   "ST_GAS": {
+    "": 0.0,
+    "committed": 557.0,
+    "econ": 0.0,
+    "econc00": 202.0,
+    "econc01": 157.0,
+    "econc02": 79.0,
+    "econc03": 66.0,
+    "econc04": 59.0,
+    "econc05": 55.0,
+    "econhi": 109.0,
+    "econlo": 103.0,
+    "mustrun": 0.0,
+    "peak": 77.0
+   },
+   "biomass": {
+    "": 826.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "hydro": {
+    "": 828.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "import": {
+    "": 2829.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "nuclear": {
+    "": 10274.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "oil": {
+    "": 0.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "solar": {
+    "": 29.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "wind": {
+    "": 12371.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   }
+  },
+  "night_reserve": [
+   {
+    "family": "miso_rbdc",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 2508.89990234375,
+    "held": 2512.47998046875,
+    "short": 0.0
+   },
+   {
+    "family": "miso_rbdc_regspin",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 1410.6400146484375,
+    "held": 1431.5899658203125,
+    "short": 0.0
+   },
+   {
+    "family": "miso_subregional_or_midwest",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 2075.5400390625,
+    "held": 2075.5400390625,
+    "short": 0.0
+   },
+   {
+    "family": "miso_zonal_or_miso_south",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 433.3599853515625,
+    "held": 436.94000244140625,
+    "short": 0.0
+   }
+  ],
+  "night_zone_price": {
+   "MISO-East": 25.23,
+   "MISO-Illinois": 25.23,
+   "MISO-Indiana": 25.23,
+   "MISO-Plains": 25.23,
+   "MISO-South": 25.66,
+   "MISO-West": 25.23,
+   "MISO_external": 25.0,
+   "MISO_external_South": 25.44
+  }
+ },
+ "2025": {
+  "hub_lag_h": -1,
+  "hub_lag_r": {
+   "-2": 0.4241,
+   "-1": 0.4868,
+   "0": 0.4766,
+   "1": 0.3852,
+   "2": 0.3097
+  },
+  "night_price": {
+   "model_IL": 35.78,
+   "hub_IL": 28.65,
+   "diff": 7.13
+  },
+  "night_supply_mw": {
+   "coal": {
+    "model": 21217.0,
+    "actual": 19469.0
+   },
+   "gas": {
+    "model": 19898.0,
+    "actual": 23120.0
+   },
+   "nuclear": {
+    "model": 10325.0,
+    "actual": 10468.0
+   },
+   "wind": {
+    "model": 12614.0,
+    "actual": 11996.0
+   },
+   "solar": {
+    "model": 54.0,
+    "actual": 54.0
+   },
+   "hydro": {
+    "model": 866.0,
+    "actual": 884.0
+   },
+   "other": {
+    "model": 1000.0,
+    "actual": 393.0
+   },
+   "interchange": {
+    "model": 2689.0,
+    "actual": -2452.0
+   },
+   "battery": {
+    "model": 0.0,
+    "actual": -51.0
+   },
+   "demand_internal": {
+    "model": 67318.0
+   }
+  },
+  "night_band_mw": {
+   "CC_CHP": {
+    "": 0.0,
+    "committed": 628.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 442.0,
+    "econlo": 576.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "CC_REGULAR": {
+    "": 0.0,
+    "committed": 7584.0,
+    "econ": 0.0,
+    "econc00": 1435.0,
+    "econc01": 1414.0,
+    "econc02": 1390.0,
+    "econc03": 1358.0,
+    "econc04": 1324.0,
+    "econc05": 1286.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "COAL_BIT": {
+    "": 0.0,
+    "committed": 2914.0,
+    "econ": 0.0,
+    "econc00": 140.0,
+    "econc01": 122.0,
+    "econc02": 111.0,
+    "econc03": 101.0,
+    "econc04": 91.0,
+    "econc05": 84.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 2647.0,
+    "peak": 11.0
+   },
+   "COAL_LIGNITE": {
+    "": 0.0,
+    "committed": 293.0,
+    "econ": 0.0,
+    "econc00": 14.0,
+    "econc01": 14.0,
+    "econc02": 13.0,
+    "econc03": 13.0,
+    "econc04": 13.0,
+    "econc05": 13.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 252.0,
+    "peak": 1.0
+   },
+   "COAL_PRB": {
+    "": 0.0,
+    "committed": 7004.0,
+    "econ": 0.0,
+    "econc00": 445.0,
+    "econc01": 402.0,
+    "econc02": 364.0,
+    "econc03": 329.0,
+    "econc04": 296.0,
+    "econc05": 266.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 5212.0,
+    "peak": 51.0
+   },
+   "CT_CHP": {
+    "": 0.0,
+    "committed": 279.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 183.0,
+    "econlo": 184.0,
+    "mustrun": 0.0,
+    "peak": 14.0
+   },
+   "CT_PEAKER": {
+    "": 0.0,
+    "committed": 111.0,
+    "econ": 0.0,
+    "econc00": 12.0,
+    "econc01": 7.0,
+    "econc02": 4.0,
+    "econc03": 3.0,
+    "econc04": 2.0,
+    "econc05": 1.0,
+    "econhi": 68.0,
+    "econlo": 75.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "OTHER": {
+    "": 666.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "ST_CHP": {
+    "": 0.0,
+    "committed": 126.0,
+    "econ": 102.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 31.0
+   },
+   "ST_GAS": {
+    "": 0.0,
+    "committed": 570.0,
+    "econ": 0.0,
+    "econc00": 224.0,
+    "econc01": 171.0,
+    "econc02": 66.0,
+    "econc03": 54.0,
+    "econc04": 48.0,
+    "econc05": 43.0,
+    "econhi": 25.0,
+    "econlo": 28.0,
+    "mustrun": 0.0,
+    "peak": 28.0
+   },
+   "biomass": {
+    "": 334.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "hydro": {
+    "": 866.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "import": {
+    "": 2689.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "nuclear": {
+    "": 10325.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "oil": {
+    "": 0.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "solar": {
+    "": 54.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   },
+   "wind": {
+    "": 12614.0,
+    "committed": 0.0,
+    "econ": 0.0,
+    "econc00": 0.0,
+    "econc01": 0.0,
+    "econc02": 0.0,
+    "econc03": 0.0,
+    "econc04": 0.0,
+    "econc05": 0.0,
+    "econhi": 0.0,
+    "econlo": 0.0,
+    "mustrun": 0.0,
+    "peak": 0.0
+   }
+  },
+  "night_reserve": [
+   {
+    "family": "miso_rbdc",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 2587.610107421875,
+    "held": 2587.610107421875,
+    "short": 0.0
+   },
+   {
+    "family": "miso_rbdc_regspin",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 1498.199951171875,
+    "held": 1518.0799560546875,
+    "short": 0.0
+   },
+   {
+    "family": "miso_subregional_or_midwest",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 2054.409912109375,
+    "held": 2054.409912109375,
+    "short": 0.0
+   },
+   {
+    "family": "miso_zonal_or_miso_south",
+    "reserve_class": 0,
+    "dual": 0.0,
+    "req": 533.2100219726562,
+    "held": 533.2100219726562,
+    "short": 0.0
+   }
+  ],
+  "night_zone_price": {
+   "MISO-East": 35.78,
+   "MISO-Illinois": 35.78,
+   "MISO-Indiana": 35.78,
+   "MISO-Plains": 35.78,
+   "MISO-South": 37.14,
+   "MISO-West": 35.78,
+   "MISO_external": 35.23,
+   "MISO_external_South": 36.59
+  }
+ }
+}
