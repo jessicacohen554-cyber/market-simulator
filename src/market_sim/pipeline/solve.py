@@ -296,6 +296,27 @@ def _swcap_clip_level(config) -> Optional[float]:
     return float(config.voll) - ERCOT_SWCAP_SHED_TIEBREAK_EPS
 
 
+def zero_posture_markup(
+    markup: np.ndarray, config, dispatch_kwargs: dict
+) -> np.ndarray:
+    """Zero the P1 startup markup on SPP commitment-posture members (rule 19).
+
+    ``spp_commitment_posture`` (SPP-102) charges each start in the LP itself (the
+    SU cost on the pooled online capacity), so the amortized P1 startup markup
+    on the SAME postured members would count the start twice. The start cost
+    lives in the LP, once. Gated on the SPP field only: ERCOT's posture and
+    every other path return ``markup`` unchanged (the same object).
+    """
+    if not getattr(config, "spp_commitment_posture", False):
+        return markup
+    members = dispatch_kwargs.get("posture_gen_idx")
+    if members is None:
+        return markup
+    out = np.array(markup, dtype=float, copy=True)
+    out[np.asarray(members, dtype=int)] = 0.0
+    return out
+
+
 def run_energy_solve(
     fleet,
     fleet_arrays: "FleetArrays",
@@ -610,6 +631,7 @@ def run_energy_solve(
         coal_warm_committed=getattr(config, "coal_warm_committed", False),
         run_ratio_t=startup_run_ratio_t,
     )
+    markup = zero_posture_markup(markup, config, dispatch_kwargs)
     _t3 = time.perf_counter()
     mc_bid = mc_base + markup
     # P1-only bid adjustment (ERCOT condition-responsive offer surface): an additive

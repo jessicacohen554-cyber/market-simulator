@@ -196,6 +196,7 @@ from market_sim.pipeline import (
     DispatchSpec,
     PriorYearResults,
     apply_ercot_commitment_posture,
+    apply_spp_commitment_posture,
     apply_reserve_coopt,
     build_base_dispatch_kwargs,
     resolve_hydro_cascade,
@@ -3818,6 +3819,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # docs/handoffs/ercot-commitment-thinness-2026-07.md). No-op /
             # byte-identical for every non-ERCOT run and default-off ERCOT.
             apply_ercot_commitment_posture(dispatch_kwargs, config, fleet_arrays)
+            # SPP standalone commitment posture with min-up/min-down (SPP-102).
+            # No-op / byte-identical for every non-SPP run and default-off SPP.
+            apply_spp_commitment_posture(dispatch_kwargs, config, fleet_arrays)
             # P0 → monthly startup markup → P1 via the shared pipeline solve
             # core (orchestrator-unification Stage 3) -- intra-year warm start
             # included, statement-for-statement the former inline sequence.

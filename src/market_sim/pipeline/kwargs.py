@@ -636,8 +636,62 @@ def apply_ercot_commitment_posture(
     return True
 
 
+def apply_spp_commitment_posture(
+    dispatch_kwargs: dict,
+    config,
+    fleet_arrays: "FleetArrays",
+) -> bool:
+    """Merge the SPP standalone commitment-posture kwargs (with min-up/down).
+
+    Gated on ``config.spp_commitment_posture`` (SPP-only, SPP-102). The same
+    reserve-decoupled construction as :func:`apply_ercot_commitment_posture`
+    (``posture_gen_idx``/``posture_col``/``posture_mlf``/``posture_startup``)
+    plus the per-pool ``posture_min_up_h`` / ``posture_min_down_h`` coupling
+    (``docs/handoffs/DESIGN-spp-102-cc-commitment-state-2026-09-29.md``).
+    Returns True when merged (a no-op otherwise, byte-identical).
+    """
+    if str(getattr(config, "iso", "")) != "SPP":
+        return False
+    if not getattr(config, "spp_commitment_posture", False):
+        return False
+    from market_sim.config.reserve_config import spp_commitment_posture_spec
+
+    spec = spp_commitment_posture_spec(config, fleet_arrays)
+    if spec is None:
+        logger.info(
+            "SPP COMMITMENT POSTURE (spp_commitment_posture): ON but no "
+            "postured pools (all merchant-gas pools fast-start-exempt) — no-op"
+        )
+        return False
+    gen_idx, col, mlf, startup, min_up, min_down = spec
+    dispatch_kwargs.update(
+        posture_gen_idx=gen_idx,
+        posture_col=col,
+        posture_mlf=mlf,
+        posture_startup=startup,
+        posture_min_up_h=min_up,
+        posture_min_down_h=min_down,
+    )
+    logger.info(
+        "SPP COMMITMENT POSTURE (spp_commitment_posture): %d postured "
+        "(zone, gas-class) pool(s) over %d merchant-gas members, mlf %.3f "
+        "(CAMPD), startup $%.0f-$%.0f/MW (NREL), min-up %d h (CAMPD p25), "
+        "min-down %d h (ASOM) — energy-only; P1 startup markup zeroed on "
+        "members (rule 19)",
+        int(mlf.size),
+        int(gen_idx.size),
+        float(mlf.max()),
+        float(startup.min()),
+        float(startup.max()),
+        int(min_up.max()),
+        int(min_down.max()),
+    )
+    return True
+
+
 __all__ = [
     "build_base_dispatch_kwargs",
     "apply_reserve_coopt",
     "apply_ercot_commitment_posture",
+    "apply_spp_commitment_posture",
 ]

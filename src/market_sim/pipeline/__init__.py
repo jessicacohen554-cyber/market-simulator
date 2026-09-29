@@ -63,6 +63,7 @@ from market_sim.pipeline.commitment import (
 )
 from market_sim.pipeline.kwargs import (
     apply_ercot_commitment_posture,
+    apply_spp_commitment_posture,
     apply_reserve_coopt,
     build_base_dispatch_kwargs,
     resolve_hydro_cascade,
@@ -100,6 +101,7 @@ __all__ = [
     "resolve_hydro_period_hours",
     "apply_reserve_coopt",
     "apply_ercot_commitment_posture",
+    "apply_spp_commitment_posture",
     "apply_bid_max_target",
     "reset_pass_timing_log",
     "run_energy_solve",

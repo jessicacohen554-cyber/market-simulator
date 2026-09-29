@@ -604,4 +604,5 @@ DECLARED: dict[str, str | dict[str, str]] = {
     "ISO_PLANT_ENTRIES": {"ERCOT": "a4d0fee78b233797"},
     "EIA930_CISO_CLOCK_LATE_WINDOWS_UTC": "65677404b01b1492",
     "CHP_STEAM_ALLHOURS_MIN_ON_FRAC": "cfabfbece983e46a",
+    "SPP_POSTURE_MIN_DOWN_HOURS": "05ce3498cb8df05c",
 }

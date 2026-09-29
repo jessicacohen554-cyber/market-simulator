@@ -1330,7 +1330,36 @@ def ercot_commitment_posture_spec(
     """
     if not getattr(config, "ercot_commitment_posture", False):
         return None
+    pools = _standalone_posture_pools(
+        fleet_arrays,
+        "ERCOT",
+        float(getattr(config, "ercot_commitment_posture_min_load_frac", 0.574)),
+    )
+    return None if pools is None else pools[:4]
 
+
+def _standalone_posture_pools(
+    fleet_arrays: FleetArrays,
+    iso: str,
+    cc_mlf: float,
+    *,
+    pool_by_plant: bool = False,
+) -> Optional[tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]]:
+    """Pool the merchant gas fleet for a STANDALONE energy-only posture.
+
+    The shared body of :func:`ercot_commitment_posture_spec` and
+    :func:`spp_commitment_posture_spec` (one construction, rule 19): members are
+    gas_cc + gas_ct units outside :data:`_ERCOT_POSTURE_CHP_GROUPS`, pooled by
+    (zone, fuel-class); the fast-start pools are exempted by the physics gate of
+    :func:`_posture_pool_params` (rule 18); gas_cc pools take the ISO's measured
+    ``cc_mlf``, any other postured pool keeps the WWSIS-2 physical fallback.
+    ``pool_by_plant`` pools by (plant, fuel-class) instead — one commitment
+    unit per plant, the grain on which SPP's min-load and min-run are measured.
+
+    Returns ``(posture_gen_idx, posture_col, posture_mlf, posture_startup,
+    posture_fuel)`` — the last is each postured pool's fuel-type index — or
+    ``None`` when no pool is postured.
+    """
     fuel = np.asarray(fleet_arrays.fuel_type_idx, dtype=int)
     cc_idx = FUEL_TYPE_NAMES.index("gas_cc")
     ct_idx = FUEL_TYPE_NAMES.index("gas_ct")
@@ -1344,14 +1373,20 @@ def ercot_commitment_posture_spec(
     if members.size == 0:
         return None
 
-    # Pool by (zone, fuel-class) — the MISO/CAISO/PJM convention.
-    zone = np.asarray(fleet_arrays.zone_idx, dtype=int)[members]
-    keys = np.stack([zone, fuel[members]], axis=1)
+    # Pool by (zone, fuel-class) — the MISO/CAISO/PJM convention — or by
+    # (plant, fuel-class) when the ISO's commitment physics is plant-basis.
+    group_key = (
+        np.asarray(fleet_arrays.plant_code, dtype=int)[members]
+        if pool_by_plant
+        else np.asarray(fleet_arrays.zone_idx, dtype=int)[members]
+    )
+    keys = np.stack([group_key, fuel[members]], axis=1)
     _, col = np.unique(keys, axis=0, return_inverse=True)
+    col = np.asarray(col).reshape(-1)
     n_r = int(col.max()) + 1
 
     posture_pools, pool_mlf_phys, pool_su = _posture_pool_params(
-        fleet_arrays, members, col, n_r, "ERCOT"
+        fleet_arrays, members, col, n_r, iso
     )
     if posture_pools.size == 0:
         return None
@@ -1361,12 +1396,10 @@ def ercot_commitment_posture_spec(
     pool_fuel[col] = fuel[members]
     posture_fuel = pool_fuel[posture_pools]
 
-    # Measured mlf: gas_cc pools take the frozen LSL/HSL p50; any non-CC
-    # postured pool keeps the physical WWSIS-2 fallback from _posture_pool_params.
+    # Measured mlf: gas_cc pools take the ISO's frozen measured value; any
+    # non-CC postured pool keeps the physical WWSIS-2 fallback.
     mlf = np.asarray(pool_mlf_phys, dtype=float).copy()
-    mlf[posture_fuel == cc_idx] = float(
-        getattr(config, "ercot_commitment_posture_min_load_frac", 0.574)
-    )
+    mlf[posture_fuel == cc_idx] = float(cc_mlf)
 
     # Dense-remap members onto the postured pools (0..q-1).
     remap = np.full(n_r, -1, dtype=int)
@@ -1378,6 +1411,72 @@ def ercot_commitment_posture_spec(
         member_new_col[keep].astype(int),
         mlf,
         np.asarray(pool_su, dtype=float),
+        posture_fuel,
+    )
+
+
+def spp_commitment_posture_spec(
+    config,
+    fleet_arrays: FleetArrays,
+) -> Optional[
+    tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]
+]:
+    """Return the SPP standalone posture spec WITH min-up/min-down, or ``None``.
+
+    ``spp_commitment_posture`` (SPP-102, owner card "Build relaxed-UC engine",
+    ``docs/handoffs/DESIGN-spp-102-cc-commitment-state-2026-09-29.md``): the
+    SAME standalone energy-only construction as ERCOT's
+    (:func:`_standalone_posture_pools` — headroom, measured min-load, startup
+    charge on the pooled online capacity U), plus the min-up / min-down
+    coupling the MISO design note deferred, so a pool that starts stays online
+    for its minimum run and a pool that stops stays off for its minimum down
+    time. SPP runs no reserve co-opt, so it is the standalone (not the pergen)
+    posture. Every input is measured or published (rule 21, zero fitted):
+
+    * **mlf** (gas_cc pools): SPP's CAMPD plant-basis CC min-load,
+      :data:`~market_sim.config.constants.SPP_GAS_BRIDGE_MIN_LOAD_FRAC`
+      ``["gas_cc"]`` = 0.209 (FINDING-spp-44 §1).
+    * **Startup** ($/MW): the NREL/SR-5500-55433 class tables, capacity-weighted
+      per pool — the posture family's own source.
+    * **Min-up** (h): SPP's CAMPD CC run-length p25,
+      ``SPP_GAS_BRIDGE_MIN_RUN_HOURS["gas_cc"]`` = 15 (rule 14: the CC-specific
+      SPP measurement over the ASOM's unsplit gas average).
+    * **Min-down** (h): the SPP MMU ASOM gas min-down,
+      :data:`~market_sim.config.constants.SPP_POSTURE_MIN_DOWN_HOURS` = 8.
+
+    Returns ``(posture_gen_idx, posture_col, posture_mlf, posture_startup,
+    posture_min_up_h, posture_min_down_h)``; the last two are per-pool integer
+    hours, 0 for a non-CC postured pool (no rows).
+    """
+    if str(getattr(config, "iso", "")) != "SPP":
+        return None
+    if not getattr(config, "spp_commitment_posture", False):
+        return None
+    from market_sim.config.constants import (
+        SPP_GAS_BRIDGE_MIN_LOAD_FRAC,
+        SPP_GAS_BRIDGE_MIN_RUN_HOURS,
+        SPP_POSTURE_MIN_DOWN_HOURS,
+    )
+
+    pools = _standalone_posture_pools(
+        fleet_arrays,
+        "SPP",
+        float(SPP_GAS_BRIDGE_MIN_LOAD_FRAC["gas_cc"]),
+        pool_by_plant=True,
+    )
+    if pools is None:
+        return None
+    gen_idx, col, mlf, startup, pfuel = pools
+    is_cc = pfuel == FUEL_TYPE_NAMES.index("gas_cc")
+    min_up = np.where(is_cc, int(SPP_GAS_BRIDGE_MIN_RUN_HOURS["gas_cc"]), 0)
+    min_down = np.where(is_cc, int(SPP_POSTURE_MIN_DOWN_HOURS), 0)
+    return (
+        gen_idx,
+        col,
+        mlf,
+        startup,
+        min_up.astype(int),
+        min_down.astype(int),
     )
 
 

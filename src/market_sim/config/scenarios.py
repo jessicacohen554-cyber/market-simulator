@@ -2246,6 +2246,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # run solves a different SPP topology and so gets a distinct key.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "spp_zone_partition",
+    # SPP-102 commitment posture (default off): dropped from the hash at its
+    # default so every pre-existing run -- every ISO's keepers included --
+    # keeps its key. Byte-identical off by construction (the spec returns None,
+    # so no posture kwargs are merged and the P1 markup is untouched).
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "spp_commitment_posture",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -3054,6 +3060,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_ne_ac_node": "False",
     # Added by SPP-93 WITH the field (the nyiso-119 discipline).
     "spp_zone_partition": "'north_south'",
+    # Added by SPP-102 WITH the field (the nyiso-119 discipline).
+    "spp_commitment_posture": "False",
 }
 
 
@@ -9023,6 +9031,29 @@ class ScenarioConfig:
     # physics; window = self-windowing on the model's own run pattern (no
     # clock hour); forward story = regenerates from any year's own P0.
     spp_gas_commitment_bridge: bool = False
+    # SPP COMMITMENT POSTURE (default off, SPP-gated — lane SPP-102, owner
+    # decision card "Build relaxed-UC engine", 2026-09-29;
+    # docs/handoffs/DESIGN-spp-102-cc-commitment-state-2026-09-29.md). The SAME
+    # standalone energy-only pooled-linear commitment posture as
+    # ercot_commitment_posture (rule 19: one construction, ported not forked —
+    # model.reserves.spec._standalone_posture_pools), PLUS the min-up /
+    # min-down coupling the MISO design note deferred. Per (zone x gas-class)
+    # merchant-gas pool p (CHP excluded — owned by the CHP steam floors; CT
+    # exempt by the fast-start physics gate, rule 18), a continuous online-
+    # capacity variable U[p,t] with (i) headroom Σ P <= U, (ii) measured
+    # min-load Σ P >= mlf·U (SPP CAMPD CC 0.209), (iii) a startup charge on ΔU⁺
+    # (NREL class tables), (iv) min-up U[t] >= Σ_{k<UT} SU[t-k] (UT = SPP CAMPD
+    # CC run-length p25, 15 h) and (v) min-down Σ_{k<DT} SU[t-k] + U[t-DT] <=
+    # max(Ucap[t-DT..t]) (DT = SPP MMU ASOM gas min-down, 8 h). Both time rows
+    # carry an availability allowance so a forced outage never makes them
+    # infeasible. NOT a floor: it forces no exogenous energy; the min-load and
+    # min-up terms bind only capacity the LP itself chose to start (no D-2
+    # mechanism id; rule 17's window is the LP's own commitment). Rule 19: the
+    # P1 amortized startup markup is ZEROED on postured members when this gate
+    # is on (pipeline/solve.py) — the start cost lives in the LP, once. Mutually
+    # exclusive with spp_gas_commitment_bridge (R) and with any pergen posture.
+    # Zero fitted parameters (rule 21). Requires SPP; GATED CHANGE.
+    spp_commitment_posture: bool = False
     # SOCO GAS-STEAM CAMPAIGN COMMITMENT FLOOR (default off, SOCO-gated — lane
     # SOCO-53d, PRECOMMIT-soco-53d-2026-09-19). THE ONE FIELD this lane adds:
     # its level and horizon are per-plant MEASURED rows of a committed derive
@@ -22679,6 +22710,18 @@ class ScenarioConfig:
                 "only posture for ERCOT's fleet-wide ORDC co-opt); use "
                 "miso_/caiso_/pjm_commitment_posture for those ISOs' pergen path."
             )
+        if self.spp_commitment_posture:
+            if str(self.iso) != "SPP":
+                raise ValueError(
+                    "spp_commitment_posture is SPP-only (SPP-102: SPP's own "
+                    "measured min-load / min-run and ASOM min-down, rule 25)."
+                )
+            if self.spp_gas_commitment_bridge:
+                raise ValueError(
+                    "spp_commitment_posture and spp_gas_commitment_bridge are "
+                    "mutually exclusive (rule 19: one mechanism for SPP gas "
+                    "commitment state)."
+                )
         # Measured CAISO battery AS reservation vs in-LP reserve co-opt: the
         # co-opt hands storage its own reserve columns and prices the
         # energy-vs-AS split endogenously, so pre-subtracting the measured
@@ -24160,6 +24203,11 @@ TIER_TAGS: dict[str, int] = {
     "gas_price_override": 3,
     "f923_gas_price_plausibility_screen": 1,
     "spp_zone_partition": 1,
+    # Structural gate (1): every number it installs is a registered measured /
+    # published constant (SPP_GAS_BRIDGE_MIN_LOAD_FRAC, SPP_GAS_BRIDGE_MIN_RUN_
+    # HOURS, SPP_POSTURE_MIN_DOWN_HOURS, the NREL class startup tables); no
+    # free number of its own (rule 21).
+    "spp_commitment_posture": 1,
 }
 
 # SweepDefinition (the sweep / named-case-matrix expansion engine) moved
