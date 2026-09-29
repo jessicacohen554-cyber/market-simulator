@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-28-nwppnext8-coal-monthly-pile",
+  "run_id": "2026-09-29-nwppnext10-exit-month-routing",
   "iso": "NWPP",
-  "label": "nwppnext8 coal monthly pile",
+  "label": "nwppnext10 exit month routing",
   "target_years": [
     2019,
     2020,
@@ -30,11 +30,11 @@
     2024,
     2025
   ],
-  "rubric_version": 3.9,
+  "rubric_version": "3.10",
   "determination": "NOT-YET",
   "reasons": [
     "undocumented out-of-tolerance (FAIL) criteria: dispatch_corr",
-    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for NWPP, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2019, 2020, 2021, 2022, 2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2019: $27.92/MWh, 2020: $31.54/MWh, 2021: $44.10/MWh, 2022: $57.63/MWh, 2023: $51.70/MWh, 2024: $32.00/MWh, 2025: $33.76/MWh."
+    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for NWPP, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2019, 2020, 2021, 2022, 2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2019: $27.92/MWh, 2020: $31.04/MWh, 2021: $44.10/MWh, 2022: $57.63/MWh, 2023: $51.70/MWh, 2024: $32.00/MWh, 2025: $33.76/MWh."
   ],
   "notes": [],
   "criteria": {
@@ -100,7 +100,7 @@
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
         "2019": "-10.3%",
-        "2020": "-5.4%",
+        "2020": "-3.8%",
         "2021": "-6.0%",
         "2022": "-3.5%",
         "2023": "-3.9%",
@@ -162,7 +162,7 @@
     ],
     "model_mean_lmp_by_year": {
       "2019": 27.92,
-      "2020": 31.54,
+      "2020": 31.04,
       "2021": 44.1,
       "2022": 57.63,
       "2023": 51.7,

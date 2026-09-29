@@ -1,0 +1,19 @@
+{
+ "id": "2026-09-29-nwppnext10-exit-month-routing",
+ "label": "nwppnext10 exit month routing",
+ "date": "2026-09-29",
+ "shorthand": "nwppnext10-exit-month-routing",
+ "definition": "NWPP keeper #16 (NWPP-NEXT-10): keeper #15 recipe + unit_outage_exit_ym_from_eia860 (EIA-860 exit-month routing of the CAMPD outage layer; retired Colstrip 1-2's post-exit darkness no longer derates units 3-4, Colstrip 2020 available 5.86 -> 7.91 TWh vs 7.94 generated). 2019 and 2021-2025 byte-identical to #15. Determination NOT-YET on dispatch_corr (C4 coal 2023 r 0.695 / NRMSE 0.283); price unscored.",
+ "years": [
+  2019,
+  2020,
+  2021,
+  2022,
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NWPP",
+ "file": "frontend/data/backcast/runs/2026-09-29-nwppnext10-exit-month-routing.js",
+ "bundle": "results/calibration/nwppnext10xy_span"
+}

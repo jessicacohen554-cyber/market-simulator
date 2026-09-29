@@ -1,19 +1,19 @@
 {
-  "timestamp": "2026-09-28T01:15:55",
+  "timestamp": "2026-09-29T03:36:03",
   "git": {
-    "sha": "e7478536",
-    "basis_sha": "e7478536f46cade23e0aea71e79a329c0e29202a",
+    "sha": "0ec8eb79",
+    "basis_sha": "0ec8eb79e1202a8d1e815d2bf33d8722e5d5ffa9",
     "branch": "HEAD",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "NWPP-NEXT-8 monthly pile: keeper #14 recipe + cumulative month-end yard rows (flat ratable receipts)",
+  "model_changes_note": "NWPP-NEXT-10 exit-month routing: keeper #15 recipe + EIA-860 exit_ym routing of the CAMPD outage layer",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NWPP",
     "years": [
-      2021
+      2023
     ],
     "hours": 8760,
     "passes": [
@@ -22,7 +22,7 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2021": 3.72
+      "2023": 2.54
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -58,7 +58,8 @@
       "coal_fuel_inventory_take_floor": true,
       "coal_takeorpay_from_data": false,
       "coal_committed_takeorpay_regulated": false,
-      "coal_fuel_inventory_monthly_pile": true
+      "coal_fuel_inventory_monthly_pile": true,
+      "unit_outage_exit_ym_from_eia860": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -75,10 +76,10 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "e7478536"
+    "git_sha": "0ec8eb79"
   },
   "scenario_config": {
-    "weather_year": 2021,
+    "weather_year": 2023,
     "iso": "NWPP",
     "mode": "backcast",
     "voll": 5000.0,
@@ -393,10 +394,10 @@
     "nyiso_import_sil_retire": false,
     "nyiso_seam_par_attribution": false,
     "nyiso_li_seam_posted_limit_cap": false,
+    "nyiso_ne_ac_node": false,
     "nyiso_seam_deliverability_envelope": false,
     "nyiso_scr_edrp": false,
     "nyiso_scr_edrp_strike": 500.0,
-    "nyiso_firm_imports": false,
     "nyiso_import_reconciliation": false,
     "nyiso_import_hub_prices": false,
     "nyiso_iroquois_winter_spread": false,
@@ -616,6 +617,7 @@
     "nwpp_path76_alturas_link": true,
     "coal_fuel_inventory_take_floor": true,
     "coal_fuel_inventory_monthly_pile": true,
+    "coal_monthly_pile_measured_receipts": false,
     "commitment_floor_window_netload": false,
     "coal_econ_srmc_bound": false,
     "coal_econ_marginal_hr_bound": false,
@@ -770,6 +772,7 @@
     "caiso_offer_surface_min_bin": 0,
     "caiso_offer_surface_price_cap_frac": 0.95,
     "pjm_da_virtual_bids": false,
+    "pjm_da_virtual_settle_financial": false,
     "pjm_da_virtual_surface_path": null,
     "pjm_offer_midcurve_conditional": false,
     "pjm_offer_midcurve_path": null,
@@ -816,15 +819,20 @@
     "unit_outage_window_hour_grain": false,
     "campd_per_unit_attribution": false,
     "campd_unit_fuel_split": false,
+    "campd_st_gas_span_coverage": false,
+    "campd_split_remap_companions": false,
     "campd_outage_merit_order_guard": false,
     "campd_dark_unit_year_windows": false,
     "unit_outage_membership_repair": false,
     "unit_outage_unit_fuel_routing": false,
     "unit_outage_full_rederive": false,
+    "unit_outage_rederive_peaker_windows": false,
+    "unit_outage_exit_cohort_repair": false,
     "unit_outage_netload_mask_repair": false,
     "unit_outage_coal_extract_basis_share": false,
     "nuclear_dormancy_defers_to_vintage_exit": false,
     "unit_outage_precod_clip": false,
+    "unit_outage_exit_ym_from_eia860": true,
     "retiree_vintage_status_scope": false,
     "partial_plant_exit_carry": true,
     "mid_vintage_exit_carry": true,
@@ -990,6 +998,7 @@
     "chp_export_floor_measured": false,
     "chp_steam_floor_p25": false,
     "chp_steam_duty_window": false,
+    "chp_steam_floor_conduct_scope": false,
     "ercot_gtc_limits_measured": false,
     "pjm_measured_interface_limits": false,
     "pjm_east_interface_cut": false,
@@ -1049,6 +1058,9 @@
     "caiso_zonal_gas_basis": false,
     "caiso_asymmetric_path_ratings": false,
     "caiso_per_year_import_caps": false,
+    "caiso_import_cap_floor_static": false,
+    "caiso_tac_shares_standard_time": false,
+    "caiso_eia930_clock_repair": false,
     "pjm_congestion": false,
     "transmission_expansion_enabled": false,
     "pjm_seam_flow_limit": false,
@@ -1082,7 +1094,7 @@
     "unit_outage_maxgen_events": false,
     "maxgen_emergency_tier_pricing": false,
     "forecast_xyear_warmstart": true,
-    "gas_price_override": 3.72,
+    "gas_price_override": 2.54,
     "ercot_offer_hrmult_ep_rebasis": false,
     "ercot_offer_hrmult_ep_rebasis_bands": null,
     "ercot_capability_reconciliation": false,
@@ -1121,8 +1133,8 @@
   "solve_surface": {
     "schema": 1,
     "iso": "NWPP",
-    "fingerprint": "eb1f926fca028d7d",
-    "rows": 186,
+    "fingerprint": "8308fffff2922f05",
+    "rows": 188,
     "moved": {
       "GENERIC_BASE_OFFER_CURVE": "bdc2b348ec6144d1",
       "LABELS": "600aeac5bbcd256c",
@@ -1133,11 +1145,11 @@
       "THERMAL_AVAILABILITY": "34ff308290e18439"
     },
     "epochs": [],
-    "git_sha": "e7478536"
+    "git_sha": "0ec8eb79"
   },
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.44-fc-v42-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.15.1",
       "numpy": "2.4.6",
