@@ -1,0 +1,170 @@
+{
+ "2019": {
+  "gas_mean": 3.22,
+  "implied_hr_model": {
+   "p10": 7.08,
+   "p25": 7.45,
+   "p50": 8.23,
+   "p75": 9.41,
+   "p90": 10.75
+  },
+  "implied_hr_actual": {
+   "p10": 5.18,
+   "p25": 6.02,
+   "p50": 6.98,
+   "p75": 8.25,
+   "p90": 10.57
+  },
+  "bulk_marginal_class_share_model": {
+   "coal": 0.405,
+   "gas_st_ct": 0.305,
+   "gas_cc": 0.251,
+   "other": 0.039
+  },
+  "bulk_mer_mean_model": 0.698
+ },
+ "2020": {
+  "gas_mean": 2.69,
+  "implied_hr_model": {
+   "p10": 7.1,
+   "p25": 7.82,
+   "p50": 8.47,
+   "p75": 9.66,
+   "p90": 11.22
+  },
+  "implied_hr_actual": {
+   "p10": 4.75,
+   "p25": 5.57,
+   "p50": 6.73,
+   "p75": 8.17,
+   "p90": 10.56
+  },
+  "bulk_marginal_class_share_model": {
+   "coal": 0.351,
+   "gas_st_ct": 0.33,
+   "gas_cc": 0.293,
+   "other": 0.026
+  },
+  "bulk_mer_mean_model": 0.674
+ },
+ "2021": {
+  "gas_mean": 4.53,
+  "implied_hr_model": {
+   "p10": 6.92,
+   "p25": 7.39,
+   "p50": 8.08,
+   "p75": 9.28,
+   "p90": 10.63
+  },
+  "implied_hr_actual": {
+   "p10": 5.07,
+   "p25": 5.74,
+   "p50": 7.06,
+   "p75": 8.91,
+   "p90": 11.84
+  },
+  "bulk_marginal_class_share_model": {
+   "coal": 0.285,
+   "gas_st_ct": 0.257,
+   "gas_cc": 0.394,
+   "other": 0.064
+  },
+  "bulk_mer_mean_model": 0.594
+ },
+ "2022": {
+  "gas_mean": 7.1,
+  "implied_hr_model": {
+   "p10": 7.43,
+   "p25": 8.04,
+   "p50": 8.88,
+   "p75": 9.91,
+   "p90": 10.92
+  },
+  "implied_hr_actual": {
+   "p10": 5.48,
+   "p25": 6.37,
+   "p50": 7.95,
+   "p75": 10.3,
+   "p90": 13.94
+  },
+  "bulk_marginal_class_share_model": {
+   "coal": 0.284,
+   "gas_st_ct": 0.297,
+   "gas_cc": 0.346,
+   "other": 0.073
+  },
+  "bulk_mer_mean_model": 0.61
+ },
+ "2023": {
+  "gas_mean": 3.2,
+  "implied_hr_model": {
+   "p10": 7.61,
+   "p25": 8.45,
+   "p50": 9.53,
+   "p75": 10.52,
+   "p90": 11.52
+  },
+  "implied_hr_actual": {
+   "p10": 4.89,
+   "p25": 6.16,
+   "p50": 7.8,
+   "p75": 10.18,
+   "p90": 13.61
+  },
+  "bulk_marginal_class_share_model": {
+   "coal": 0.264,
+   "gas_st_ct": 0.398,
+   "gas_cc": 0.214,
+   "other": 0.124
+  },
+  "bulk_mer_mean_model": 0.597
+ },
+ "2024": {
+  "gas_mean": 2.92,
+  "implied_hr_model": {
+   "p10": 8.37,
+   "p25": 9.34,
+   "p50": 10.29,
+   "p75": 11.25,
+   "p90": 12.24
+  },
+  "implied_hr_actual": {
+   "p10": 4.96,
+   "p25": 6.39,
+   "p50": 8.61,
+   "p75": 12.14,
+   "p90": 17.45
+  },
+  "bulk_marginal_class_share_model": {
+   "coal": 0.228,
+   "gas_st_ct": 0.386,
+   "gas_cc": 0.311,
+   "other": 0.075
+  },
+  "bulk_mer_mean_model": 0.598
+ },
+ "2025": {
+  "gas_mean": 4.21,
+  "implied_hr_model": {
+   "p10": 7.77,
+   "p25": 8.41,
+   "p50": 9.39,
+   "p75": 10.8,
+   "p90": 12.41
+  },
+  "implied_hr_actual": {
+   "p10": 5.12,
+   "p25": 6.33,
+   "p50": 8.17,
+   "p75": 11.47,
+   "p90": 16.61
+  },
+  "bulk_marginal_class_share_model": {
+   "coal": 0.202,
+   "gas_st_ct": 0.434,
+   "gas_cc": 0.277,
+   "other": 0.087
+  },
+  "bulk_mer_mean_model": 0.576
+ }
+}
