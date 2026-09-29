@@ -444,6 +444,21 @@ RA_BRIDGE_ECON_MIN_DOWN_HOURS: float = 4.0
 SPP_GAS_BRIDGE_MIN_LOAD_FRAC: dict[str, float] = {"gas_cc": 0.209, "gas_st": 0.090}
 SPP_GAS_BRIDGE_MIN_RUN_HOURS: dict[str, float] = {"gas_cc": 15.0, "gas_st": 5.0}
 
+# MISO merchant-CC EcoMin online floor (ScenarioConfig.miso_gas_ecomin_online_
+# floor, lane miso-286, CHARTER-miso285-ecomin-price-taker-2026-09-29 §2): the
+# MEASURED plant-basis minimum stable load of MISO's CC_REGULAR fleet, from the
+# CAMPD 2023-2025 loading-when-on derive on the PLANT basis
+# (scripts/data/derive_campd_gas_commitment_params.py --iso MISO --plant-basis
+# -> data/raw/_processed-legacy/campd_gas_commitment_params_plant_MISO.csv):
+# HSL-weighted p50 of plant lsl_frac = 0.323767 (p25 0.286 / p75 0.449, 39
+# units, 27,753 MW). PLANT basis because the shared detector floors
+# min_load_frac x PLANT pmax, clipped to the committed tranche (the SPP
+# precedent above; FINDING-caiso135 §A / §R). Rules 5/13/21/23: a measured
+# unit-conduct statistic that re-derives only when the CAMPD extracts update.
+# Rule 25: MISO's own data; SPP's 0.209 / NYISO's 0.523 are not inherited.
+# Read only when the MISO gate is on.
+MISO_GAS_ECOMIN_MIN_LOAD_FRAC: float = 0.323767
+
 # SPP gas MINIMUM-DOWN time (h) for the SPP commitment posture's min-down
 # coupling (ScenarioConfig.spp_commitment_posture, SPP-102). Source: SPP MMU
 # Annual State of the Market 2024, "Average physical parameter values" (Fig

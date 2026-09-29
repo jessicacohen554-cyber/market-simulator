@@ -10,6 +10,18 @@ overshoot. Also the stack slope ($/GW) at the model's clearing point and the
 offer decomposition (fuel x HR, VOM, rest) of the tranches inside the gap.
 
 Output: ``results/calibration/_miso285_night_stack.json``. Rule 13: nothing here feeds a solve.
+
+miso-286 (``--cf4``): the PRE-REGISTERED zero-LP pre-check of the chartered
+``miso_gas_ecomin_online_floor`` (charter §3). CF4 floors ONLY the rows the
+mechanism floors — ``pipeline.commitment.miso_gas_ecomin_min_load_fracs``: each
+plant's base startup-bearing gas_cc tranche (min-down >= 4 h), CHP excluded —
+at the MEASURED plant-basis ``min_load_frac`` (MISO CAMPD, 0.3238), capped at
+the tranche's own capacity, and ONLY in hours the unit is online. The online
+pattern is the stack's OWN per-hour P0 clear (a row dispatched above the
+detector's 5 % run threshold), the zero-LP analogue of the P0 run pattern; the
+keeper's P1 class-band committed MW is reported beside it as the check on that
+proxy. Kill rule (fixed ex ante): a night-median move < $0.5 in >= 4 of 7 years
+stops the lane. Output key ``cf4`` per year in the same JSON.
 """
 
 from __future__ import annotations
@@ -38,6 +50,8 @@ def main() -> int:
     """CLI entry point."""
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--years", type=int, nargs="+", default=list(range(2019, 2026)))
+    ap.add_argument("--cf4", action="store_true", help="miso-286 pre-check only")
+    ap.add_argument("--min-load-frac", type=float, default=None)
     args = ap.parse_args()
     from scripts.run_calibration import _load_reference, run_year  # type: ignore
     from scripts.run_calibration_full import _henry_hub_actual  # type: ignore
@@ -125,6 +139,23 @@ def main() -> int:
             return pr
 
         p0 = clear(mc, mg, flex)
+        if args.cf4:
+            out.setdefault(str(y), {})["cf4"] = _cf4(
+                st, mc, cap, mg, flex, grp, fam, t, q, pm, ph, p0, args.min_load_frac
+            )
+            cb = pd.read_parquet(KEEPER / f"hourly/class_band_hourly_{y}.parquet")
+            cb = cb[
+                (cb["pass"] == "P1")
+                & cb.klass.astype(str).isin(["CC_REGULAR", "CC_INTERMEDIATE"])
+                & (cb.band.astype(str) == "committed")
+            ]
+            kc = cb.groupby("hour").mw.sum().reindex(range(8760)).fillna(0)
+            out[str(y)]["cf4"]["keeper_p1_cc_committed_night_mw"] = round(
+                float(kc.to_numpy()[t].mean()), 0
+            )
+            print(y, json.dumps(out[str(y)]["cf4"]), flush=True)
+            path.write_text(json.dumps(out, indent=1))
+            continue
 
         # Counterfactual stacks (SIZING ONLY, no mechanism is proposed by them):
         # CF1 CC_REGULAR committed band price-taking (commitment non-convexity);
@@ -191,6 +222,85 @@ def main() -> int:
         print(y, json.dumps(out[str(y)])[:1500], flush=True)
         path.write_text(json.dumps(out, indent=1))
     return 0
+
+
+def _cf4(st, mc, cap, mg, flex, grp, fam, t, q, pm, ph, p0, frac_arg):
+    """miso-286 CF4: floor only detector-eligible CC committed rows while online."""
+    frac = frac_arg
+    if frac is None:
+        src = REPO / (
+            "data/raw/_processed-legacy/campd_gas_commitment_params_plant_MISO.csv"
+        )
+        tab = pd.read_csv(src)
+        frac = float(tab.loc[tab.plant_class == "CC_REGULAR", "min_load_frac"].iloc[0])
+    fa = st["fleet_arrays"]
+    fleet = st["fleet"]
+    n = len(fleet)
+    pmax = np.asarray(fa.pmax, float)
+    avail = np.asarray(fa.availability, float)
+    plant_pmax: dict[str, float] = {}
+    for g, gen in enumerate(fleet):
+        if getattr(gen, "is_campd_bin", False):
+            k = gen.unit_id.rpartition("_")[0]
+            plant_pmax[k] = plant_pmax.get(k, 0.0) + pmax[g]
+    from market_sim.pipeline.commitment import miso_gas_ecomin_min_load_fracs
+
+    fr = miso_gas_ecomin_min_load_fracs(fleet, fa, frac)
+    target = np.zeros(n)
+    for g, gen in enumerate(fleet):
+        if fr[g] <= 0.0:
+            continue
+        pp = (
+            plant_pmax.get(gen.unit_id.rpartition("_")[0], pmax[g])
+            if getattr(gen, "is_campd_bin", False)
+            else pmax[g]
+        )
+        target[g] = min(fr[g] * pp, pmax[g])
+    elig = target > 0.0
+    pr0 = np.full(len(t), np.nan)
+    pr4 = np.full(len(t), np.nan)
+    comm_mw = np.zeros(len(t))
+    floored_add = np.zeros(len(t))
+    for j, tt in enumerate(t):
+        o = np.argsort(mc[:, tt])
+        cum = mg[:, tt].sum() + np.cumsum(flex[o, tt])
+        k = min(int(np.searchsorted(cum, q[j])), n - 1)
+        pr0[j] = mc[o[k], tt]
+        disp = np.zeros(n)
+        disp[o[:k]] = flex[o[:k], tt]
+        prev = cum[k - 1] if k > 0 else mg[:, tt].sum()
+        disp[o[k]] = max(0.0, q[j] - prev)
+        disp += mg[:, tt]
+        online = elig & (disp > 0.05 * pmax)
+        comm_mw[j] = disp[elig].sum()
+        fl = np.where(online, target * avail[:, tt], 0.0)
+        # Only floored rows change: a zeros-init max() would collapse the
+        # priced export sinks' pmin < 0 to 0 (the caiso-138 §D defect the
+        # mechanism avoids with preserve_absorption=True).
+        mg2 = np.where(
+            online, np.maximum(mg[:, tt], np.minimum(fl, cap[:, tt])), mg[:, tt]
+        )
+        floored_add[j] = (mg2 - mg[:, tt]).sum()
+        f2 = cap[:, tt] - mg2
+        cum2 = mg2.sum() + np.cumsum(f2[o])
+        k2 = min(int(np.searchsorted(cum2, q[j])), n - 1)
+        pr4[j] = mc[o[k2], tt]
+    return {
+        "min_load_frac": round(frac, 4),
+        "eligible_rows": int(elig.sum()),
+        "eligible_mw": round(float(pmax[elig].sum()), 0),
+        "eligible_groups": sorted(set(grp[elig].tolist())),
+        "p0_median": round(float(np.nanmedian(pr0)), 2),
+        "cf4_median": round(float(np.nanmedian(pr4)), 2),
+        "delta_median": round(float(np.nanmedian(pr4) - np.nanmedian(pr0)), 2),
+        "delta_mean": round(float(np.nanmean(pr4) - np.nanmean(pr0)), 2),
+        "hub_median": round(float(np.nanmedian(ph[t])), 2),
+        "p1_median": round(float(np.median(pm[t])), 2),
+        "stack_online_eligible_committed_mw": round(float(comm_mw.mean()), 0),
+        "floor_mw_added_vs_min_gen": round(float(floored_add.mean()), 0),
+        "hours_price_moved": int((np.abs(pr4 - pr0) > 0.01).sum()),
+        "night_hours": int(len(t)),
+    }
 
 
 if __name__ == "__main__":
