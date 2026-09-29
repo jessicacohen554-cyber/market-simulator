@@ -688,3 +688,25 @@ PJM-NEXT-8's dated-bin accumulator.
 
 **Owner card: "Promote on structure".** Keeper #16 `2026-09-29-nwppnext10-exit-month-routing`; #15 pruned (rule 35).
 Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext10-exit-ym-routing-2019-2025-2026-09-29.md`.
+
+## NWPP-NEXT-11 — 2026-09-29 — zero-LP decomposition of the coal records (keeper #16 stands)
+
+No solve. Everything was read from committed artifacts. Record:
+`docs/handoffs/FINDING-nwppnext11-coal-c1-c4-decomposition-2026-09-29.md`.
+
+- **COAL_PRB 2020 (+4.20 TWh) is mostly a benchmark effect.** `reconcile_vintage_classes` scales every fossil class
+  by one factor (0.87–0.92 in 2019–2024) to match EIA-930 gas + coal.
+  - That factor alone accounts for 2.47 TWh.
+  - Against raw EIA-923, the model is only +1.73 TWh over: Dave Johnston +0.66, Boardman spring +0.60, Wyodak +0.44.
+- **C4 coal 2023 is a real miss, and it is Jim Bridger.**
+  - EIA-930 and CEMS agree in shape (r 0.989).
+  - Bridger's plant-level r is 0.07. Swapping in its CEMS hourly alone lifts fleet r to 0.84.
+  - Annual energy matches (9.19 vs 9.11 TWh), but the timing is inverted. The units held minimum load Feb–May,
+    which is fuel conservation; the model burned Jan–Mar.
+  - No new public identification exists for that behaviour.
+- **Lever 3.** The NWPP merit-guard lay-up companion has only 17 rows (2023–25), and no per-unit merit family exists.
+  Boardman (single-unit) has no outage windows at all.
+- **Owner cards:**
+  - "Fidelity levers": NEXT-12 derives the per-unit merit extract, then tests levers 3 and 2.
+  - "Route to scorer lane": cross-ISO CEMS-anchored coal target, in
+    `HANDOFF-scorer-coal-reconcile-2026-09-29.md`.

@@ -104,3 +104,11 @@ which scales **every** fossil class by ONE factor so gas + coal matches EIA-930 
    - lever 3: derive the NWPP per-unit merit extract, then test the guard;
    - Boardman's single-unit spring shutdowns;
    - lever 2 (coal availability below measured generation).
+
+## 5. Owner rulings (decision cards, 2026-09-29)
+
+- **C4 2023 → "Fidelity levers".** Keeper #16 stands and C4 coal 2023 stays open. NWPP-NEXT-12 derives the NWPP
+  per-unit merit-guard extract, then tests lay-up (lever 3) and coal availability (lever 2). Neither is expected to
+  clear C4 2023.
+- **Benchmark reconcile → "Route to scorer lane".** A separate cross-ISO lane designs a CEMS-anchored coal target.
+  NWPP changes nothing now. Handoff: `docs/handoffs/HANDOFF-scorer-coal-reconcile-2026-09-29.md`.
