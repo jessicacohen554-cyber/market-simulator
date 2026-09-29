@@ -3837,3 +3837,8 @@ results/calibration/rcaiso13_A_span/
 results/calibration/rcaiso13_A_tp_2019_2021/
 # NWPP-NEXT-10 per-year shard legs (composed into nwppnext10xy_span; rule 32(d))
 results/calibration/nwppnext10xy_20*/
+# SPP-102 arm (spp_commitment_posture): owner ruled "Don't promote" 2026-09-29; legs + composite stay out of main.
+# Provenance only (rule 33(d)), pin 62ac90e2: 2019 9efe9d9e 2020 7646a1dc 2021 012273be 2022 807adee2
+# 2023 d8ef67b9 2024 dbca2693 2025 54f8f0d3 on claude/spp102-<y>. Numbers: RESULT-spp-102-commitment-posture-2026-09-29.md.
+results/calibration/spp102_arm_20*/
+results/calibration/spp102_arm_span/

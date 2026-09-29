@@ -18057,6 +18057,18 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**SPP-102 (2026-09-29, CC COMMITMENT STATE — new field `spp_commitment_posture`, owner card "Build relaxed-UC engine";
+`docs/handoffs/DESIGN-spp-102-cc-commitment-state-2026-09-29.md`, `RESULT-spp-102-commitment-posture-2026-09-29.md`; cell O → R, NOT PROMOTED).**
+- Phase 0 (zero LP): hourly drivers are weak (net load / gas day / season AUC 0.55–0.70); 76–87 % of SPP's low-price CC
+  online hours sit in spells > 48 h; a perfect-physics DP bounded the gain at +0.9 / +0.1 TWh CC (2021 / 22).
+- Built: ERCOT's standalone posture pooled per CC plant + new min-up (15 h, CAMPD) / min-down (8 h, ASOM) rows; P1
+  startup markup zeroed on members (rule 19). Seven year-isolated shards (round 1 stopped at the ARMED check:
+  `run_calibration.py` never merged the kwargs — fixed, regression-tested).
+- Effect: CC +0.85..+2.21 TWh/yr, coal −0.8..−1.6, price −$0.31..−$0.58. Every 2019–22 row improves (C4 gas 2021 → PASS;
+  C1 CC 2021 −9.65 → −7.61). **C3a 2024 −8.6 → −10.3 % breaks the train tier** (E5 FAIL) → owner "Don't promote".
+- **Re-open only as SPP-103 (owner card "Pair posture + price fix"):** the posture together with a structural,
+  measured driver of the 2023+ price shortfall (SPP-79/82/83 found none yet). Do not re-run the posture alone.
+
 **SPP-101 (2026-09-29, `coal_prb_proxy_own_iso`, ZERO LP — `docs/handoffs/FINDING-spp-101-prb-proxy-own-iso-2026-09-29.md`; cell O → I).**
 - Off-queue (queue exhausted): the one SPP cell still flagged as a live rule-25 defect in SPP's fleet (NWPP-41).
 - **INERT:** 0 offer rows move in all seven years; the plant-monthly EIA-923 overlay overwrites every SPP PRB row
