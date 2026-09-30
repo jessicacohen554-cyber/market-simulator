@@ -1763,8 +1763,10 @@ def campd_fuel_split_selector(config: object) -> bool | str:
     per_unit, merit_guard = campd_attribution_selectors(config)
     split_remap = _campd.split_remap_armed(config)
     if per_unit and bool(getattr(config, "campd_unit_fuel_split", False)):
-        if merit_guard or split_remap or bool(
-            getattr(config, "campd_st_gas_span_coverage", False)
+        if (
+            merit_guard
+            or split_remap
+            or bool(getattr(config, "campd_st_gas_span_coverage", False))
         ):
             raise ValueError(
                 "campd_unit_fuel_split under campd_per_unit_attribution composes "

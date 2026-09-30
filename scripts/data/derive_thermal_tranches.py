@@ -1710,7 +1710,9 @@ def per_unit_fuel_split_companion_path(iso: str) -> Path:
     return PROCESSED_DIR / f"thermal_tranches-perunit-fuelsplit-{iso.upper()}.csv"
 
 
-def _write_per_unit_fuel_split_companion(iso: str, years: list[int]) -> dict[str, object]:
+def _write_per_unit_fuel_split_companion(
+    iso: str, years: list[int]
+) -> dict[str, object]:
     """Derive the ``-perunit-fuelsplit-`` companion of an ISO's per-unit tranche artifact.
 
     NWPP-NEXT-14 (owner card "Both", 2026-09-30). The per-unit artifact
