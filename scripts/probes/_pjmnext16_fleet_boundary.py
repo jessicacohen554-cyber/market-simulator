@@ -34,7 +34,21 @@ import _pjmnext16_cc_loading as P  # noqa: E402
 OUT = REPO / "results/calibration/_pjmnext16_fleet_boundary.json"
 F923 = REPO / "data/raw/eia-923-generation-fuel/eia923_generation_fuel_2019_2025.csv"
 TIES = REPO / "data/raw/iso-specific-transmission"
-FOSSIL = ("BIT", "SUB", "LIG", "RC", "WC", "NG", "OG", "BFG", "DFO", "RFO", "KER", "JF", "PC")
+FOSSIL = (
+    "BIT",
+    "SUB",
+    "LIG",
+    "RC",
+    "WC",
+    "NG",
+    "OG",
+    "BFG",
+    "DFO",
+    "RFO",
+    "KER",
+    "JF",
+    "PC",
+)
 
 
 def main() -> None:
@@ -48,24 +62,33 @@ def main() -> None:
         .drop_duplicates("Plant Code")
         .set_index("Plant Code")["Plant Name"]
     )
-    res = {"what": "PJM-NEXT-16 energy identity + fleet boundary. ZERO LP.", "years": {}}
+    res = {
+        "what": "PJM-NEXT-16 energy identity + fleet boundary. ZERO LP.",
+        "years": {},
+    }
     for y in P.YEARS:
         bench = json.load(gzip.open(P.BENCH / f"{y}.json.gz"))["bench"]
         cf = bench["classFull"]
         cm = pd.read_parquet(P.HOURLY / f"class_hourly_{y}.parquet")
         cm = cm.groupby("klass").mw.sum() / 1e6
         dm = pd.read_parquet(P.HOURLY / f"system_{y}.parquet").demand.sum() / 1e6
-        phys = [k for k in cm.index if k not in ("import", "VIRTUAL_DEC", "VIRTUAL_INC")]
+        phys = [
+            k for k in cm.index if k not in ("import", "VIRTUAL_DEC", "VIRTUAL_INC")
+        ]
         gm, xm = float(cm[phys].sum()), float(-cm["import"])
         tie = pd.read_csv(TIES / f"PJM_{y}_import_export_act_sch_interchange.csv")
         xa = float(-tie.actual_flow.sum() / 1e6)
         da = float(P._e930(y).demand.sum() / 1e6)
         ga = float(sum(cf.values()))
         members = set(R._iso_plant_ids("PJM", y, True))
-        fleet = {int(str(k).split(":")[0]) for k in pay[y] if str(k).split(":")[0].isdigit()}
+        fleet = {
+            int(str(k).split(":")[0]) for k in pay[y] if str(k).split(":")[0].isdigit()
+        }
         gy = g[(g.year == y) & g.fuel_type.isin(FOSSIL)]
         gen = gy.groupby("plant_id").net_generation_mwh.sum() / 1e6
-        missing = gen.reindex(sorted(members - fleet)).fillna(0).sort_values(ascending=False)
+        missing = (
+            gen.reindex(sorted(members - fleet)).fillna(0).sort_values(ascending=False)
+        )
         bit_sum = sum(
             float(p.get("e_ann") or p.get("c_ann") or 0)
             for p in bench["plants"].values()

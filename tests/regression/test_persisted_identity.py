@@ -815,12 +815,15 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   measured plant-basis CC statistics, read only under the default-off
 #   pjm_gas_commitment_bridge). Declared at their live hash
 #   (`--declare-missing`, moves no key); the names carry the PJM token, so only
-#   PJM's row set grows: 224 -> 226.
+#   PJM's row set grows: 224 -> 226. Rebased onto R-CAISO-20, whose unscoped
+#   EGRID_CC_HR_PHYSICAL_FLOOR (+1 row everywhere, declared at its live hash)
+#   landed without advancing any pin: PJM's pin carries it, 226 -> 227; the
+#   other five ISOs' pins are that lane's to advance.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
     "ERCOT": ("bdfc68c278f7eff8", 240),
     "CAISO": ("289c8c383a78f4d9", 213),
     "MISO": ("52d6fa6795d5e276", 220),
-    "PJM": ("7f0e7318aac915b0", 226),
+    "PJM": ("1ddeae0aa33dc222", 227),
     "NYISO": ("a64df99bd6857677", 221),
     "NEISO": ("e082dd92b5c22723", 206),
 }
