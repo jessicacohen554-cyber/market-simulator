@@ -202,6 +202,10 @@ _SUMMER_CLASS_DERATE: dict[str, float] = SUMMER_CLASS_DERATE
 # the shoulder-month POF would double-count. Combustion turbines (CT_PEAKER /
 # CT_CHP) keep POF — they have no historic overlay coverage and are excluded
 # from the unit derate.
+# Gas fuel types the SPP-105 CROW-residual carrier covers (every gas class,
+# CHP included): the portal's "Natural Gas MW" column is fuel-level.
+_GAS_FUEL_TYPES: frozenset[str] = frozenset({"gas_cc", "gas_ct", "gas_st"})
+
 _POF_DROP_GROUPS: frozenset[str] = frozenset(
     {"CC_REGULAR", "CC_CHP", "ST_GAS", "ST_CHP"}
 )
@@ -433,6 +437,7 @@ def _availability_matrix(
     _iso: str | None,
     year: int | None,
     ct_floor_plants: set[int],
+    crow_rate_out: dict[int, float] | None = None,
 ) -> None:
     """Apply the statistical thermal availability model in place.
 
@@ -441,6 +446,12 @@ def _availability_matrix(
     derate curves. Pure array helper extracted verbatim from
     ``generators_to_fleet_arrays`` (fleet-package split sub-task (a));
     mutates ``availability`` in place.
+
+    ``crow_rate_out`` (SPP-105, ``spp_gas_crow_residual_outage``): when a dict
+    is passed, every gas row's statistical WEFOR / POF is zeroed and the annual
+    outage rate it would have carried is written there by row index, as the
+    allocation key of :func:`market_sim.data.spp_gas_outage.allocate_crow_residual`.
+    ``None`` (every caller but the armed one) is byte-inert.
     """
     # Summer peak, spring/autumn shoulder, and winter — a 3-way partition of
     # the year. The shoulder absorbs the outage shifted out of summer; winter
@@ -886,6 +897,21 @@ def _availability_matrix(
                 )
                 if _s > 0.0:
                     wefor = (1.0 - _s) * wefor + _s * min(wefor, wefor_res)
+            if crow_rate_out is not None and gen.fuel_type in _GAS_FUEL_TYPES:
+                # SPP-105 CROW residual (rule 19): the statistical WEFOR / POF
+                # is REPLACED by SPP's measured residual, applied after the
+                # CAMPD overlays in generators_to_fleet_arrays. The annual rate
+                # the row would have carried (seasonal WEFOR split conserves the
+                # annual mean; the backcast POF is the flat shoulder block) is
+                # kept as the allocation key. Derates are untouched.
+                _pof_key = (
+                    0.0
+                    if drop_coal_pof and gen.plant_group in _POF_DROP_GROUPS
+                    else pof
+                )
+                crow_rate_out[g_idx] = float(wefor + _pof_key * shoulder_frac)
+                wefor = 0.0
+                pof = 0.0
             if is_cc_np and cc_np_derate_backcast:
                 # CC nameplate, historic backcast: the CAMPD outage overlay below
                 # carries every SUSTAINED outage, so the statistical POF and the
@@ -4287,13 +4313,88 @@ def generators_to_fleet_arrays(
                 int(_yr), hours, _iso or "ERCOT"
             )
     rd_deploy_plants = set(rd_deploy_floor)
-    _availability_matrix(
-        generators, availability, hours, config, _iso, year, ct_floor_plants
+    # SPP-105 (ScenarioConfig.spp_gas_crow_residual_outage): armed only for an
+    # SPP backcast on the historic outage source; None elsewhere (byte-inert).
+    _crow_rate: dict[int, float] | None = (
+        {}
+        if (
+            config is not None
+            and getattr(config, "spp_gas_crow_residual_outage", False)
+            and getattr(config, "mode", "forecast") == "backcast"
+            and getattr(config, "outage_source", "statistical") == "historic"
+            and _iso == "SPP"
+            and _yr is not None
+        )
+        else None
     )
+    _availability_matrix(
+        generators,
+        availability,
+        hours,
+        config,
+        _iso,
+        year,
+        ct_floor_plants,
+        crow_rate_out=_crow_rate,
+    )
+    if _crow_rate is not None:
+        _crow_idx = np.array(sorted(_crow_rate), dtype=int)
+        _crow_pre = availability[_crow_idx, :hours].copy()
 
     _apply_outage_overlays(
         generators, availability, pmax, heat_rate, hours, config, _iso, _yr
     )
+
+    if _crow_rate is not None and _crow_idx.size:
+        from market_sim.data.spp_gas_outage import (
+            allocate_crow_residual,
+            spp_published_gas_outage_mw,
+        )
+
+        # The COD ramp is applied last (below); its in-service months are
+        # read here so a not-yet-built / retired month is neither an event
+        # nor a place to put the residual (same mask, same inputs).
+        _crow_online = None
+        if getattr(config, "cod_ramp_enabled", True):
+            _cod_m, _ucod_m = _pkg_ns().load_cod_map(), _pkg_ns().load_unit_cod_map()
+            _crow_online = np.array(
+                [
+                    generator_online_mask(
+                        int(generators[i].plant_code),
+                        generators[i].plant_group,
+                        generators[i].online_year,
+                        generators[i].online_month,
+                        generators[i].retirement_year,
+                        generators[i].retirement_month,
+                        bool(generators[i].is_campd_bin),
+                        _cod_m,
+                        _ucod_m,
+                        int(_yr),
+                    )[0]
+                    for i in _crow_idx
+                ]
+            )[:, _hour_to_month_index(hours)]
+        _crow_new, _crow_diag = allocate_crow_residual(
+            np.asarray(pmax, dtype=float)[_crow_idx],
+            _crow_pre,
+            availability[_crow_idx, :hours],
+            np.array([_crow_rate[i] for i in _crow_idx]),
+            spp_published_gas_outage_mw(int(_yr), hours),
+            online=_crow_online,
+        )
+        availability[_crow_idx, :hours] = _crow_new
+        logger.info(
+            "SPP CROW gas residual (SPP %d): %d gas rows; statistical WEFOR/POF "
+            "replaced; events %.3f GW, residual %.3f GW (binding %.1f%% of "
+            "hours), placed %.3f GW, unplaced %.3f GW",
+            int(_yr),
+            _crow_idx.size,
+            _crow_diag["event_gw_mean"],
+            _crow_diag["residual_gw_mean"],
+            100.0 * _crow_diag["binding_hour_share"],
+            _crow_diag["placed_gw_mean"],
+            _crow_diag["unplaced_gw_mean"],
+        )
 
     # Hydro RoR flat dispatch, availability half (config.hydro_ror_split,
     # stamped by data.hydro.build_hydro_fleet): cap the unit at its flat

@@ -291,6 +291,12 @@ MISO_HSL_DIR: Path = RAW_DATA_DIR / "miso-hsl"
 # Potomac Economics table. Landed by lane SPP-12; read by
 # market_sim.data.renewables for SPP's reference curtailment rate.
 SPP_HSL_DIR: Path = RAW_DATA_DIR / "spp-hsl"
+# SPP's published hourly capacity of generation on outage, by fuel (portal product
+# capacity-of-generation-on-outage, 2019-2025, one CSV). Built by
+# scripts/data/fetch_spp_capacity_gen_outage.py; read by market_sim.data.spp_gas_outage
+# under ScenarioConfig.spp_gas_crow_residual_outage (SPP-105).
+SPP_GEN_OUTAGE_DIR: Path = RAW_DATA_DIR / "spp-gen-outage"
+SPP_GEN_OUTAGE_CSV: Path = SPP_GEN_OUTAGE_DIR / "spp_capacity_gen_outage_hourly.csv"
 # Per-zone wind SHAPE (NASA POWER MERRA-2 reanalysis → power curve), one parquet
 # per backcast year. Built by scripts/data/build_miso_wind_shape.py; read by
 # market_sim.data.renewables to give MISO's three regions distinct wind diurnal/
