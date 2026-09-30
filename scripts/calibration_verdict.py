@@ -565,9 +565,32 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       rule, so v3.10 can never make a C3c failure "lone".
 #       NO SOLVE RAN — scorer-side only. Genealogy:
 #       docs/governance/rule-history.md §23.
+# v3.11 — 2026-09-30 owner ruling, soco-94 decision cards (verbatim): "Rubric:
+#       ledger C3a vs λ"; scope "Exact rows, direction-bound"; budget "Spend the
+#       slot, downgrade". Record: docs/handoffs/r-soco/FINDING-soco-94-2026-09-30.md.
+#       THREE MORE SCOPED ROWS, on the v3.10 table and machinery unchanged:
+#       (SOCO, 2019, price_mean) OVER, (SOCO, 2020, price_mean) OVER,
+#       (SOCO, 2022, price_mean) UNDER. THE EVIDENCE (FINDING-soco-94 §2-§7):
+#       the model's fuel tracks each plant's own EIA-923 Sch. 2 delivered price
+#       (gas -4.2 % to +2.9 %, coal exact); the C3a sign pattern is not the gas
+#       level (equal-HH pairs 2019/2023 and 2020/2024 differ by 12-18 pp); it is
+#       a stable +$1.9-3.3/MWh low-end offset (λ ~0.75-0.83 x the CC setter's
+#       offer, the incremental-HR term, owner "Keep refused") plus a peak
+#       premium in λ (implied CT HR 12.8-16.3 in 2021-25 vs 11.2-11.5 in
+#       2019-20) whose only remaining Sch. 6 term is replacement fuel (owner
+#       "Don't buy"). A cost-based LP on delivered fuel cannot reproduce either
+#       without a fitted mechanism: an accepted model-class limitation against
+#       a cost-based system-lambda benchmark. The rows are DIRECTION-BOUND to
+#       the sign each year carries, so a sign flip on re-solve FAILs. Every
+#       v3.10 guard (a)-(f) binds unchanged: exact key, governance must pass,
+#       never a PASS, spends the single ledgered slot (budgets checked first —
+#       with the 2019 COAL_BIT row already holding it, the SOCO keeper stays
+#       NOT-YET), and it DOWNGRADES. LEDGERABLE_CRITERIA is unchanged.
+#       NO SOLVE RAN — scorer-side only. Genealogy:
+#       docs/governance/rule-history.md §24.
 # A STRING from v3.10 on: the float 3.10 == 3.1, which would collide with the
 # v3.1 amendment. Display-only everywhere it is read.
-RUBRIC_VERSION = "3.10"
+RUBRIC_VERSION = "3.11"
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -933,8 +956,21 @@ LEDGERABLE_CRITERIA = frozenset({"price_tail"})
 # Rubric v3.10 (owner ruling 2026-09-27, soco-82 card: "Ledger as limitation").
 # The ONLY rows admitted to the ledger outside LEDGERABLE_CRITERIA, keyed
 # exactly (iso, year, criterion, key), each with the direction its evidence
-# explains ("under": model < actual). A new row is an owner amendment.
-SCOPED_LEDGER_ENTRIES: dict[tuple[str, int, str, str], dict] = {
+# explains ("under": model < actual; "over": model > actual). A new row is an
+# owner amendment. v3.11 (owner ruling 2026-09-30, soco-94 cards) added the
+# three SOCO C3a rows; C3a records carry ``key`` None.
+_C3A_REASON = (
+    "rubric v3.11 scoped ledger (owner ruling 2026-09-30, soco-94 cards: "
+    "'Rubric: ledger C3a vs λ'): the model's fuel tracks each plant's own "
+    "EIA-923 delivered price; the C3a miss is a low-end offset (λ below the "
+    "CC setter's average-HR offer: the incremental-HR term) plus a peak "
+    "premium in λ whose only remaining Sch. 6 term is replacement fuel "
+    "(FINDING-soco-94) — neither reproducible by a cost-based LP on "
+    "delivered fuel without a fitted mechanism. Reported at full magnitude; "
+    "spends the single ledgered slot; DOWNGRADES the determination."
+)
+
+SCOPED_LEDGER_ENTRIES: dict[tuple[str, int, str, str | None], dict] = {
     ("SOCO", 2019, "fuelmix", "COAL_BIT"): {
         "direction": "under",
         "rule": "soco-2019-coal-bit-out-of-merit-2026-09-27",
@@ -948,6 +984,21 @@ SCOPED_LEDGER_ENTRIES: dict[tuple[str, int, str, str], dict] = {
             "mechanism. Reported at full magnitude; spends the single ledgered "
             "slot; DOWNGRADES the determination."
         ),
+    },
+    ("SOCO", 2019, "price_mean", None): {
+        "direction": "over",
+        "rule": "soco-2019-c3a-vs-system-lambda-2026-09-30",
+        "reason": _C3A_REASON,
+    },
+    ("SOCO", 2020, "price_mean", None): {
+        "direction": "over",
+        "rule": "soco-2020-c3a-vs-system-lambda-2026-09-30",
+        "reason": _C3A_REASON,
+    },
+    ("SOCO", 2022, "price_mean", None): {
+        "direction": "under",
+        "rule": "soco-2022-c3a-vs-system-lambda-2026-09-30",
+        "reason": _C3A_REASON,
     },
 }
 
@@ -1572,7 +1623,7 @@ def _apply_scoped_ledger(records: list[dict], iso: str, gov: dict) -> None:
     Only a record whose exact ``(iso, year, criterion, key)`` is in
     :data:`SCOPED_LEDGER_ENTRIES` can move, only when governance PASSES, and
     only in the direction the entry's evidence explains (``"under"``: model <
-    actual). It becomes a CAVEAT classified :data:`MODEL_LIMIT`, keeps its
+    actual; ``"over"``: model > actual). It becomes a CAVEAT classified :data:`MODEL_LIMIT`, keeps its
     magnitude, and is flagged ``scoped_ledger`` so the determination counts it
     as a DOWNGRADING ledgered caveat (it still spends the single ledgered
     slot). Every other record is untouched.
@@ -1601,8 +1652,9 @@ def _apply_scoped_ledger(records: list[dict], iso: str, gov: dict) -> None:
             m, a = float(rec["model"]), float(rec["actual"])
         except (KeyError, TypeError, ValueError):
             continue  # no magnitude to check the direction on -- fail closed
-        if entry["direction"] != "under" or not m < a:
-            continue
+        d = entry["direction"]
+        if not ((d == "under" and m < a) or (d == "over" and m > a)):
+            continue  # fail-closed: only the sign the entry's evidence explains
         rec["status"] = CAVEAT
         rec["classification"] = MODEL_LIMIT
         rec["ledger_reason"] = entry["reason"]
@@ -3861,11 +3913,12 @@ def determine_from_artifacts(
             determination = caveat_label
             if scoped_caveats:
                 reasons.append(
-                    "rubric v3.10 scoped ledgered caveat(s) — owner-accepted "
-                    "measured out-of-merit conduct, REPORTED AT FULL MAGNITUDE and "
+                    "rubric v3.10/v3.11 scoped ledgered caveat(s) — owner-accepted "
+                    "model-class limitation, REPORTED AT FULL MAGNITUDE and "
                     "determination-DOWNGRADING: "
                     + "; ".join(
-                        f"{r['year']} {r.get('key')} ({r.get('magnitude')})"
+                        f"{r['year']} {r.get('key') or r.get('criterion')} "
+                        f"({r.get('magnitude')})"
                         for c in scoped_caveats
                         for r in c["records"]
                         if r.get("scoped_ledger")

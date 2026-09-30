@@ -125,3 +125,28 @@ average (soco-92, wrong sign). The replacement fuel `FC` is the daily SE gas ser
 emission price in `EC`. `TPF` is a few percent at most. **The premium's only candidate object is replacement fuel.**
 Its timing (summer peaks and cold snaps; §4) is also the signature of SE daily gas spikes, which HH daily does not
 carry (Elliott: HH 117.8 vs SE 406.8, soco-89 §4).
+
+## 8. Owner ruling 2 (decision cards, 2026-09-30): "Rubric: ledger C3a vs λ" — implemented as rubric v3.11
+
+The owner chose "Exact rows, direction-bound" for scope and "Spend the slot, downgrade" for budget. The rows are
+`(SOCO, 2019, price_mean)` over, `(SOCO, 2020, price_mean)` over and `(SOCO, 2022, price_mean)` under, on the v3.10
+scoped-ledger machinery with every guard unchanged (`scripts/calibration_verdict.py`; genealogy
+`docs/governance/rule-history.md` §24; tests `tests/scoring/test_calibration_verdict_scoped_ledger.py`).
+
+**Effect**, re-scored over all 11 registered runs × full span and every single-year subset (72 verdicts):
+
+| scope | before | after |
+|---|---|---|
+| SOCO keeper, 2019–2025 | NOT-YET 7/4/0/1/2 (FAIL: price_mean, price_shape) | **NOT-YET 7/4/0/2/1** (FAIL: price_shape) |
+| SOCO keeper, 2019 alone | NOT-YET | NOT-YET (budget: ledgered 2/1) |
+| SOCO keeper, 2020 alone | NOT-YET | CALIBRATED-WITH-CAVEATS |
+| SOCO keeper, 2022 alone | NOT-YET | NOT-YET (C3b 0.275) |
+| every other run / year | — | byte-identical verdict |
+
+**SOCO is not frontier.** Two things still stand between it and a clean determination. The C3b 2022 FAIL (0.275
+vs ≤ 0.20) remains. And the ledgered budget is now 2 against 1 (C1 2019 COAL_BIT plus C3a), so even a C3b fix would
+leave the full span NOT-YET unless the owner also rules on the budget.
+
+Refreshed surfaces: `results/calibration/soco93_span/metrics.json` (`--write-metrics`), `frontend/data/backcast/status/`
+(`build_status.py --iso SOCO`; `shared.js` moves only its `rubric_version`), the keeper sidecar's definition line,
+and the SOCO matrix shard's keeper/gates stamp. No matrix cell moves: no mechanism was tested.
