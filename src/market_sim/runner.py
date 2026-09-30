@@ -1413,6 +1413,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         if iso == "SPP"
         else "north_south"
     )
+    # NYISO-NEXT-17 F/G re-partition: BACKCAST-ONLY (its upstate legs are the
+    # backcast measured envelopes; run_calibration.run_year refuses it in
+    # forecast mode), so the forecast orchestrator always clears the
+    # process-wide variant rather than inheriting a prior solve's state.
+    from market_sim.config.topology_variant import set_nyiso_fg_split
+
+    set_nyiso_fg_split(False)
     # PJM-NEXT fleet_zone_vintage_coords: armed per solve, like the partition
     # above, before the first fleet load reads the zone lookup.
     from market_sim.data.zone_assignment import set_fleet_zone_vintage_coords

@@ -455,6 +455,7 @@ def inject_caiso_per_hub_intertie_prices(
     gap_fill_measured_gas: bool = False,
     gap_fill_measured_dam: bool = False,
     partial_year_measured: bool = False,
+    unprinted_year_measured_gas: bool = False,
 ) -> bool:
     """Price each CAISO per-hub corridor at its OWN measured intertie hub.
 
@@ -495,6 +496,11 @@ def inject_caiso_per_hub_intertie_prices(
     keeps its current (static-ladder) price in the unprinted ones — the same
     per-hour mask the clean-depth triggers arm on.
 
+    ``unprinted_year_measured_gas``
+    (``ScenarioConfig.caiso_intertie_unprinted_year_measured_gas``, R-CAISO-18)
+    is handed to the loader: a >25 %-gap hub's unprinted hours (all of 2019-2020,
+    Jan-Apr 2021) are priced on the measured-gas reference formula.
+
     Returns ``True`` when the tie was repriced, ``False`` (byte-identical) when
     CAISO has no measured hub series for the year (e.g. 2023's OASIS gap), so the
     per-hub legs keep their static-ladder placeholder prices.
@@ -508,6 +514,7 @@ def inject_caiso_per_hub_intertie_prices(
         gap_fill_measured_gas=gap_fill_measured_gas,
         gap_fill_measured_dam=gap_fill_measured_dam,
         partial_year_measured=partial_year_measured,
+        unprinted_year_measured_gas=unprinted_year_measured_gas,
     )
     if not prices:
         return False
@@ -1719,6 +1726,8 @@ def _caiso_measured_hub_unprinted_masks(
             getattr(config, "caiso_intertie_gap_fill_measured_dam", False)
         ),
         partial_year_measured=partial,
+        unprinted_year_measured_gas=per_hub
+        and bool(getattr(config, "caiso_intertie_unprinted_year_measured_gas", False)),
     )
     if not prices:
         return {}

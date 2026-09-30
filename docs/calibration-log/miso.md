@@ -15425,3 +15425,52 @@ No frontier: the full span is NOT-YET on the three routed misses.
 `docs/FINDING-miso289-minstock-pile-killed-2026-09-30.md`.
 
 Owner ruling: *"Pile + take floor (Recommended)"*. Next: miso-290, zero-LP pre-check of the pile + a MISO-derived contract take floor and pile capacity.
+
+## miso-290 — 2026-09-30
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Pre-check of the per-yard monthly
+coal pile + a contract take floor from MISO's own EIA-923 Page 5 census.
+
+- **Identification:** coal ~95 % contracted every year; floor 67–82 % of the ceiling; admissible 2019–2025.
+- **Solver fixed before the candidate:** PILE0 residual 0.83 → 0.013 (miso-289's PILE0 number was unconverged).
+- **Pre-check** pre-registered (86f1017f) and **KILLED** at 2022: nights +$6.47 vs incumbent (K1/K2), Jan–Apr
+  coal 58.6 vs bench 74.7 (K5). Pile grain alone +2.66; min stock + floor +1.61; discount disarm +2.20. The floor
+  binds on only 11–14 yards: 2022 opened ~480 M MMBtu below prior maximum stocks.
+- **Cells:** `coal_fuel_inventory_take_floor` MISO U → R; `_monthly_pile` stays R.
+
+No frontier: the full span is NOT-YET on the three routed misses.
+`docs/FINDING-miso290-pile-take-floor-killed-2026-09-30.md`.
+
+Owner ruling: *"Close coal line; C3a 2022 (Recommended)"*. Coal budget-grain line closed. Next: miso-291, zero-LP phase 0 on C3a 2022.
+
+## miso-291 — 2026-09-30
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 on C3a 2022 (−15.5 %).
+
+- **Gap −11.03 $/MWh** (model 59.98 vs INDIANA.HUB RT 71.01, Jan–Oct): Indiana congestion + losses **−8.47**
+  (2023–25: −2.3 to −2.5), energy vs MEC −4.02, load-weight term +1.45. At normal congestion: −7.7 % (PASS).
+- **Energy part:** lower half +4.95 (night overshoot, coal dual), p75–p99 −6.29, p99+ −2.43; evening −14 $/MWh
+  vs MEC. Actual 260 h > $150, model 0.
+- **Ruled out:** gas (model North gas above Chicago hub), dispatch mix (gas shortfall present every year),
+  multipliers (one config; 2023–25 energy at/above MEC). Congestion G, ORDC G, coal line closed.
+- **Basis defect:** 2019/2022 scored on the legacy equal-hour basis; consistent load-weighted basis reads 2022
+  −19.5 %, 2019 +2.8 %. No status flips. Not fixed (bench regeneration hazard, miso-266); put to owner.
+
+No frontier: the full span is NOT-YET on the three routed misses.
+`docs/FINDING-miso291-c3a2022-phase0-2026-09-30.md`.
+
+Owner ruling: *"Repair basis (Recommended)"* + *"Charter flowgate program"*. Next: miso-292, lw basis repair for 2019/2022, then zero-LP charter of a flowgate program.
+
+## miso-292 — 2026-09-30
+
+Zero LP, keeper unchanged (`2026-09-28-miso-280-splitremap`).
+
+- **Part 1, basis repair (owner ruling "Repair basis").** `lw_retrofit` run for MISO 2019/2022; the four
+  `avgLMP.*_lw*` keys copied into the two bench parts by a surgical edit (no regeneration; every other field
+  byte-identical; freshness 0 STALE). C3a 2019 +5.7 → **+2.8 %**, C3a 2022 −15.5 → **−18.5 %**, C3b 2019
+  0.089 → 0.080, **C3b 2022 0.190 → 0.224 (PASS → FAIL, new)**. Determination NOT-YET unchanged.
+  `docs/RESULT-miso292-c3a-lw-basis-2026-09-30.md`.
+- **Part 2, flowgate charter (owner ruling "Charter flowgate program").**
+  `docs/CHARTER-miso292-flowgate-program-2026-09-30.md`.
+
+No frontier: full span NOT-YET on C1 ST_GAS 2019, C3a 2022, C3b 2021, C3b 2022.

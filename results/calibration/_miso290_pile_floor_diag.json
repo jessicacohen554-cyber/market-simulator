@@ -1,0 +1,82 @@
+{
+ "2022": {
+  "p1_night_median": 48.05,
+  "coal_twh_p1_month": [
+   20.68,
+   20.37,
+   18.63,
+   16.15,
+   20.16,
+   20.5,
+   20.89,
+   20.83,
+   20.48,
+   17.8,
+   17.46,
+   20.55
+  ],
+  "coal_twh_p1_annual": 234.5,
+  "coal_twh_bench_month": [
+   22.92,
+   19.95,
+   17.05,
+   14.76,
+   17.04,
+   19.31,
+   24.34,
+   23.19,
+   17.63,
+   14.96,
+   15.1,
+   20.03
+  ],
+  "coal_twh_bench_annual": 226.29,
+  "bench_jan_apr": 74.69,
+  "bench_jul_aug": 47.53,
+  "CAND_KO": {
+   "night_median": 55.72,
+   "mean": 60.69,
+   "night_median_by_month": [
+    51.71,
+    53.05,
+    54.11,
+    54.57,
+    61.83,
+    62.81,
+    59.0,
+    64.83,
+    59.63,
+    53.1,
+    51.52,
+    51.55
+   ],
+   "coal_twh_month": [
+    17.77,
+    15.78,
+    14.54,
+    13.06,
+    17.73,
+    21.11,
+    24.63,
+    25.42,
+    19.89,
+    14.88,
+    14.91,
+    19.45
+   ],
+   "coal_twh_annual": 219.16,
+   "jan_apr_coal_twh": 61.14,
+   "jul_aug_coal_twh": 50.05,
+   "rows_ceiling_binding": 58,
+   "rows_floor_binding": 11,
+   "rows_floor_scaled": 0,
+   "iterations": 240,
+   "last_iterate_residual": 0.0367,
+   "averaged_residual": 0.0398,
+   "max_rel_violation": 0.0349,
+   "returned": "iterate 179",
+   "shortfall_mmbtu_m": 7.95,
+   "rows_at_shortfall_cap": 3
+  }
+ }
+}

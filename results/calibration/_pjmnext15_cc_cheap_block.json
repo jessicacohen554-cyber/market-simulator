@@ -1,0 +1,597 @@
+{
+ "2019": {
+  "by_band": {
+   "0-25": {
+    "below_ecomin_frac": 0.992,
+    "le0": 0.0,
+    "lt_cheap": 0.173,
+    "lt_deliv": 0.565,
+    "lt_prod": 0.247,
+    "offered_twh": 16.38
+   },
+   "25-45": {
+    "below_ecomin_frac": 0.899,
+    "le0": 0.0,
+    "lt_cheap": 0.122,
+    "lt_deliv": 0.69,
+    "lt_prod": 0.26,
+    "offered_twh": 68.81
+   },
+   "45-65": {
+    "below_ecomin_frac": 0.816,
+    "le0": 0.018,
+    "lt_cheap": 0.175,
+    "lt_deliv": 0.725,
+    "lt_prod": 0.318,
+    "offered_twh": 197.69
+   },
+   "65-85": {
+    "below_ecomin_frac": 0.255,
+    "le0": 0.011,
+    "lt_cheap": 0.054,
+    "lt_deliv": 0.579,
+    "lt_prod": 0.103,
+    "offered_twh": 124.0
+   },
+   "85-100": {
+    "below_ecomin_frac": 0.142,
+    "le0": 0.002,
+    "lt_cheap": 0.022,
+    "lt_deliv": 0.375,
+    "lt_prod": 0.052,
+    "offered_twh": 229.77
+   }
+  },
+  "le0_below_ecomin_fraction": 0.982,
+  "le0_mid_25_65_above_ecomin_share": 0.0,
+  "le0_mid_25_65_share": 0.014,
+  "le0_share_of_offered": 0.009,
+  "lt_cheap_below_ecomin_fraction": 0.861,
+  "lt_cheap_mid_25_65_above_ecomin_share": 0.05,
+  "lt_cheap_mid_25_65_share": 0.161,
+  "lt_cheap_share_of_offered": 0.091,
+  "lt_deliv_below_ecomin_fraction": 0.561,
+  "lt_deliv_mid_25_65_above_ecomin_share": 0.544,
+  "lt_deliv_mid_25_65_share": 0.716,
+  "lt_deliv_share_of_offered": 0.562,
+  "lt_prod_below_ecomin_fraction": 0.803,
+  "lt_prod_mid_25_65_above_ecomin_share": 0.137,
+  "lt_prod_mid_25_65_share": 0.303,
+  "lt_prod_share_of_offered": 0.172,
+  "n_cc_like_units": 264,
+  "offered_twh": 636.6,
+  "share_below_ecomin_of_offered": 0.477,
+  "units_cheap": {
+   "cheap_share_capw": 0.481,
+   "cold_start_per_mw_med": 3.0,
+   "ecomax_gw": 8.31,
+   "ecomin_ratio_capw": 0.572,
+   "first_bid_x_gas_med": 0.31,
+   "min_runtime_med": 8.0,
+   "n": 21,
+   "no_load_per_ecomin_mwh_med": 3.2,
+   "no_load_per_ecomin_x_gas_med": 1.03
+  },
+  "units_rest": {
+   "cheap_share_capw": 0.005,
+   "cold_start_per_mw_med": 13.6,
+   "ecomax_gw": 69.4,
+   "ecomin_ratio_capw": 0.511,
+   "first_bid_x_gas_med": 8.21,
+   "min_runtime_med": 6.0,
+   "n": 241,
+   "no_load_per_ecomin_mwh_med": 6.33,
+   "no_load_per_ecomin_x_gas_med": 1.99
+  }
+ },
+ "2020": {
+  "by_band": {
+   "0-25": {
+    "below_ecomin_frac": 0.995,
+    "le0": 0.0,
+    "lt_cheap": 0.3,
+    "lt_deliv": 0.638,
+    "lt_prod": 0.257,
+    "offered_twh": 14.75
+   },
+   "25-45": {
+    "below_ecomin_frac": 0.916,
+    "le0": 0.009,
+    "lt_cheap": 0.26,
+    "lt_deliv": 0.662,
+    "lt_prod": 0.229,
+    "offered_twh": 59.29
+   },
+   "45-65": {
+    "below_ecomin_frac": 0.809,
+    "le0": 0.017,
+    "lt_cheap": 0.329,
+    "lt_deliv": 0.787,
+    "lt_prod": 0.309,
+    "offered_twh": 177.22
+   },
+   "65-85": {
+    "below_ecomin_frac": 0.188,
+    "le0": 0.011,
+    "lt_cheap": 0.103,
+    "lt_deliv": 0.608,
+    "lt_prod": 0.084,
+    "offered_twh": 106.37
+   },
+   "85-100": {
+    "below_ecomin_frac": 0.123,
+    "le0": 0.004,
+    "lt_cheap": 0.058,
+    "lt_deliv": 0.388,
+    "lt_prod": 0.038,
+    "offered_twh": 206.25
+   }
+  },
+  "le0_below_ecomin_fraction": 0.865,
+  "le0_mid_25_65_above_ecomin_share": 0.001,
+  "le0_mid_25_65_share": 0.015,
+  "le0_share_of_offered": 0.01,
+  "lt_cheap_below_ecomin_fraction": 0.744,
+  "lt_cheap_mid_25_65_above_ecomin_share": 0.174,
+  "lt_cheap_mid_25_65_share": 0.312,
+  "lt_cheap_share_of_offered": 0.179,
+  "lt_deliv_below_ecomin_fraction": 0.534,
+  "lt_deliv_mid_25_65_above_ecomin_share": 0.591,
+  "lt_deliv_mid_25_65_share": 0.756,
+  "lt_deliv_share_of_offered": 0.59,
+  "lt_prod_below_ecomin_fraction": 0.793,
+  "lt_prod_mid_25_65_above_ecomin_share": 0.137,
+  "lt_prod_mid_25_65_share": 0.289,
+  "lt_prod_share_of_offered": 0.158,
+  "n_cc_like_units": 232,
+  "offered_twh": 563.9,
+  "share_below_ecomin_of_offered": 0.457,
+  "units_cheap": {
+   "cheap_share_capw": 0.541,
+   "cold_start_per_mw_med": 3.2,
+   "ecomax_gw": 17.0,
+   "ecomin_ratio_capw": 0.536,
+   "first_bid_x_gas_med": 2.82,
+   "min_runtime_med": 8.0,
+   "n": 42,
+   "no_load_per_ecomin_mwh_med": 3.98,
+   "no_load_per_ecomin_x_gas_med": 1.52
+  },
+  "units_rest": {
+   "cheap_share_capw": 0.009,
+   "cold_start_per_mw_med": 11.3,
+   "ecomax_gw": 54.27,
+   "ecomin_ratio_capw": 0.51,
+   "first_bid_x_gas_med": 8.49,
+   "min_runtime_med": 6.0,
+   "n": 188,
+   "no_load_per_ecomin_mwh_med": 4.97,
+   "no_load_per_ecomin_x_gas_med": 1.9
+  }
+ },
+ "2021": {
+  "by_band": {
+   "0-25": {
+    "below_ecomin_frac": 0.982,
+    "le0": 0.0,
+    "lt_cheap": 0.234,
+    "lt_deliv": 0.52,
+    "lt_prod": 0.369,
+    "offered_twh": 14.89
+   },
+   "25-45": {
+    "below_ecomin_frac": 0.938,
+    "le0": 0.046,
+    "lt_cheap": 0.286,
+    "lt_deliv": 0.791,
+    "lt_prod": 0.481,
+    "offered_twh": 70.17
+   },
+   "45-65": {
+    "below_ecomin_frac": 0.762,
+    "le0": 0.002,
+    "lt_cheap": 0.128,
+    "lt_deliv": 0.734,
+    "lt_prod": 0.338,
+    "offered_twh": 172.85
+   },
+   "65-85": {
+    "below_ecomin_frac": 0.184,
+    "le0": 0.009,
+    "lt_cheap": 0.055,
+    "lt_deliv": 0.652,
+    "lt_prod": 0.175,
+    "offered_twh": 105.79
+   },
+   "85-100": {
+    "below_ecomin_frac": 0.113,
+    "le0": 0.007,
+    "lt_cheap": 0.072,
+    "lt_deliv": 0.377,
+    "lt_prod": 0.119,
+    "offered_twh": 205.2
+   }
+  },
+  "le0_below_ecomin_fraction": 0.845,
+  "le0_mid_25_65_above_ecomin_share": 0.003,
+  "le0_mid_25_65_share": 0.014,
+  "le0_share_of_offered": 0.01,
+  "lt_cheap_below_ecomin_fraction": 0.638,
+  "lt_cheap_mid_25_65_above_ecomin_share": 0.133,
+  "lt_cheap_mid_25_65_share": 0.173,
+  "lt_cheap_share_of_offered": 0.117,
+  "lt_deliv_below_ecomin_fraction": 0.517,
+  "lt_deliv_mid_25_65_above_ecomin_share": 0.55,
+  "lt_deliv_mid_25_65_share": 0.751,
+  "lt_deliv_share_of_offered": 0.592,
+  "lt_prod_below_ecomin_fraction": 0.626,
+  "lt_prod_mid_25_65_above_ecomin_share": 0.302,
+  "lt_prod_mid_25_65_share": 0.379,
+  "lt_prod_share_of_offered": 0.247,
+  "n_cc_like_units": 227,
+  "offered_twh": 568.9,
+  "share_below_ecomin_of_offered": 0.448,
+  "units_cheap": {
+   "cheap_share_capw": 0.493,
+   "cold_start_per_mw_med": 4.7,
+   "ecomax_gw": 9.21,
+   "ecomin_ratio_capw": 0.495,
+   "first_bid_x_gas_med": 1.67,
+   "min_runtime_med": 8.0,
+   "n": 25,
+   "no_load_per_ecomin_mwh_med": 2.53,
+   "no_load_per_ecomin_x_gas_med": 0.61
+  },
+  "units_rest": {
+   "cheap_share_capw": 0.009,
+   "cold_start_per_mw_med": 21.0,
+   "ecomax_gw": 60.31,
+   "ecomin_ratio_capw": 0.528,
+   "first_bid_x_gas_med": 8.94,
+   "min_runtime_med": 6.0,
+   "n": 200,
+   "no_load_per_ecomin_mwh_med": 7.34,
+   "no_load_per_ecomin_x_gas_med": 1.71
+  }
+ },
+ "2022": {
+  "by_band": {
+   "0-25": {
+    "below_ecomin_frac": 0.961,
+    "le0": 0.0,
+    "lt_cheap": 0.163,
+    "lt_deliv": 0.624,
+    "lt_prod": 0.477,
+    "offered_twh": 14.09
+   },
+   "25-45": {
+    "below_ecomin_frac": 0.954,
+    "le0": 0.028,
+    "lt_cheap": 0.262,
+    "lt_deliv": 0.731,
+    "lt_prod": 0.56,
+    "offered_twh": 72.51
+   },
+   "45-65": {
+    "below_ecomin_frac": 0.819,
+    "le0": 0.008,
+    "lt_cheap": 0.081,
+    "lt_deliv": 0.653,
+    "lt_prod": 0.411,
+    "offered_twh": 178.85
+   },
+   "65-85": {
+    "below_ecomin_frac": 0.272,
+    "le0": 0.009,
+    "lt_cheap": 0.047,
+    "lt_deliv": 0.516,
+    "lt_prod": 0.238,
+    "offered_twh": 123.3
+   },
+   "85-100": {
+    "below_ecomin_frac": 0.139,
+    "le0": 0.007,
+    "lt_cheap": 0.08,
+    "lt_deliv": 0.326,
+    "lt_prod": 0.175,
+    "offered_twh": 223.73
+   }
+  },
+  "le0_below_ecomin_fraction": 0.77,
+  "le0_mid_25_65_above_ecomin_share": 0.017,
+  "le0_mid_25_65_share": 0.014,
+  "le0_share_of_offered": 0.01,
+  "lt_cheap_below_ecomin_fraction": 0.59,
+  "lt_cheap_mid_25_65_above_ecomin_share": 0.11,
+  "lt_cheap_mid_25_65_share": 0.133,
+  "lt_cheap_share_of_offered": 0.097,
+  "lt_deliv_below_ecomin_fraction": 0.54,
+  "lt_deliv_mid_25_65_above_ecomin_share": 0.547,
+  "lt_deliv_mid_25_65_share": 0.675,
+  "lt_deliv_share_of_offered": 0.514,
+  "lt_prod_below_ecomin_fraction": 0.597,
+  "lt_prod_mid_25_65_above_ecomin_share": 0.391,
+  "lt_prod_mid_25_65_share": 0.454,
+  "lt_prod_share_of_offered": 0.309,
+  "n_cc_like_units": 261,
+  "offered_twh": 612.5,
+  "share_below_ecomin_of_offered": 0.48,
+  "units_cheap": {
+   "cheap_share_capw": 0.636,
+   "cold_start_per_mw_med": 12.3,
+   "ecomax_gw": 7.78,
+   "ecomin_ratio_capw": 0.5,
+   "first_bid_x_gas_med": 1.01,
+   "min_runtime_med": 12.0,
+   "n": 27,
+   "no_load_per_ecomin_mwh_med": 0.0,
+   "no_load_per_ecomin_x_gas_med": 0.0
+  },
+  "units_rest": {
+   "cheap_share_capw": 0.002,
+   "cold_start_per_mw_med": 34.2,
+   "ecomax_gw": 66.15,
+   "ecomin_ratio_capw": 0.548,
+   "first_bid_x_gas_med": 12.18,
+   "min_runtime_med": 6.0,
+   "n": 232,
+   "no_load_per_ecomin_mwh_med": 13.07,
+   "no_load_per_ecomin_x_gas_med": 1.86
+  }
+ },
+ "2023": {
+  "by_band": {
+   "0-25": {
+    "below_ecomin_frac": 0.971,
+    "le0": 0.001,
+    "lt_cheap": 0.378,
+    "lt_deliv": 0.751,
+    "lt_prod": 0.32,
+    "offered_twh": 12.27
+   },
+   "25-45": {
+    "below_ecomin_frac": 0.962,
+    "le0": 0.033,
+    "lt_cheap": 0.368,
+    "lt_deliv": 0.75,
+    "lt_prod": 0.331,
+    "offered_twh": 73.06
+   },
+   "45-65": {
+    "below_ecomin_frac": 0.856,
+    "le0": 0.04,
+    "lt_cheap": 0.287,
+    "lt_deliv": 0.65,
+    "lt_prod": 0.249,
+    "offered_twh": 172.12
+   },
+   "65-85": {
+    "below_ecomin_frac": 0.329,
+    "le0": 0.022,
+    "lt_cheap": 0.215,
+    "lt_deliv": 0.575,
+    "lt_prod": 0.182,
+    "offered_twh": 128.16
+   },
+   "85-100": {
+    "below_ecomin_frac": 0.194,
+    "le0": 0.053,
+    "lt_cheap": 0.141,
+    "lt_deliv": 0.349,
+    "lt_prod": 0.119,
+    "offered_twh": 236.05
+   }
+  },
+  "le0_below_ecomin_fraction": 0.677,
+  "le0_mid_25_65_above_ecomin_share": 0.06,
+  "le0_mid_25_65_share": 0.038,
+  "le0_share_of_offered": 0.039,
+  "lt_cheap_below_ecomin_fraction": 0.631,
+  "lt_cheap_mid_25_65_above_ecomin_share": 0.296,
+  "lt_cheap_mid_25_65_share": 0.311,
+  "lt_cheap_share_of_offered": 0.228,
+  "lt_deliv_below_ecomin_fraction": 0.554,
+  "lt_deliv_mid_25_65_above_ecomin_share": 0.576,
+  "lt_deliv_mid_25_65_share": 0.68,
+  "lt_deliv_share_of_offered": 0.534,
+  "lt_prod_below_ecomin_fraction": 0.662,
+  "lt_prod_mid_25_65_above_ecomin_share": 0.224,
+  "lt_prod_mid_25_65_share": 0.273,
+  "lt_prod_share_of_offered": 0.197,
+  "n_cc_like_units": 279,
+  "offered_twh": 621.7,
+  "share_below_ecomin_of_offered": 0.511,
+  "units_cheap": {
+   "cheap_share_capw": 0.726,
+   "cold_start_per_mw_med": 0.0,
+   "ecomax_gw": 24.15,
+   "ecomin_ratio_capw": 0.533,
+   "first_bid_x_gas_med": 1.95,
+   "min_runtime_med": 6.0,
+   "n": 58,
+   "no_load_per_ecomin_mwh_med": 3.49,
+   "no_load_per_ecomin_x_gas_med": 1.11
+  },
+  "units_rest": {
+   "cheap_share_capw": 0.007,
+   "cold_start_per_mw_med": 28.6,
+   "ecomax_gw": 52.09,
+   "ecomin_ratio_capw": 0.569,
+   "first_bid_x_gas_med": 13.94,
+   "min_runtime_med": 6.0,
+   "n": 220,
+   "no_load_per_ecomin_mwh_med": 6.67,
+   "no_load_per_ecomin_x_gas_med": 2.18
+  }
+ },
+ "2024": {
+  "by_band": {
+   "0-25": {
+    "below_ecomin_frac": 0.985,
+    "le0": 0.002,
+    "lt_cheap": 0.2,
+    "lt_deliv": 0.771,
+    "lt_prod": 0.305,
+    "offered_twh": 13.25
+   },
+   "25-45": {
+    "below_ecomin_frac": 0.95,
+    "le0": 0.065,
+    "lt_cheap": 0.321,
+    "lt_deliv": 0.664,
+    "lt_prod": 0.371,
+    "offered_twh": 88.83
+   },
+   "45-65": {
+    "below_ecomin_frac": 0.835,
+    "le0": 0.062,
+    "lt_cheap": 0.289,
+    "lt_deliv": 0.587,
+    "lt_prod": 0.334,
+    "offered_twh": 188.79
+   },
+   "65-85": {
+    "below_ecomin_frac": 0.348,
+    "le0": 0.029,
+    "lt_cheap": 0.177,
+    "lt_deliv": 0.499,
+    "lt_prod": 0.219,
+    "offered_twh": 149.75
+   },
+   "85-100": {
+    "below_ecomin_frac": 0.147,
+    "le0": 0.053,
+    "lt_cheap": 0.116,
+    "lt_deliv": 0.331,
+    "lt_prod": 0.135,
+    "offered_twh": 234.06
+   }
+  },
+  "le0_below_ecomin_fraction": 0.69,
+  "le0_mid_25_65_above_ecomin_share": 0.112,
+  "le0_mid_25_65_share": 0.063,
+  "le0_share_of_offered": 0.051,
+  "lt_cheap_below_ecomin_fraction": 0.652,
+  "lt_cheap_mid_25_65_above_ecomin_share": 0.322,
+  "lt_cheap_mid_25_65_share": 0.299,
+  "lt_cheap_share_of_offered": 0.207,
+  "lt_deliv_below_ecomin_fraction": 0.549,
+  "lt_deliv_mid_25_65_above_ecomin_share": 0.596,
+  "lt_deliv_mid_25_65_share": 0.611,
+  "lt_deliv_share_of_offered": 0.492,
+  "lt_prod_below_ecomin_fraction": 0.641,
+  "lt_prod_mid_25_65_above_ecomin_share": 0.345,
+  "lt_prod_mid_25_65_share": 0.345,
+  "lt_prod_share_of_offered": 0.244,
+  "n_cc_like_units": 303,
+  "offered_twh": 674.7,
+  "share_below_ecomin_of_offered": 0.506,
+  "units_cheap": {
+   "cheap_share_capw": 0.699,
+   "cold_start_per_mw_med": 0.0,
+   "ecomax_gw": 20.9,
+   "ecomin_ratio_capw": 0.526,
+   "first_bid_x_gas_med": 0.3,
+   "min_runtime_med": 6.0,
+   "n": 51,
+   "no_load_per_ecomin_mwh_med": 3.34,
+   "no_load_per_ecomin_x_gas_med": 1.27
+  },
+  "units_rest": {
+   "cheap_share_capw": 0.0,
+   "cold_start_per_mw_med": 31.7,
+   "ecomax_gw": 58.8,
+   "ecomin_ratio_capw": 0.572,
+   "first_bid_x_gas_med": 15.99,
+   "min_runtime_med": 5.5,
+   "n": 251,
+   "no_load_per_ecomin_mwh_med": 7.28,
+   "no_load_per_ecomin_x_gas_med": 2.66
+  }
+ },
+ "2025": {
+  "by_band": {
+   "0-25": {
+    "below_ecomin_frac": 0.993,
+    "le0": 0.03,
+    "lt_cheap": 0.275,
+    "lt_deliv": 0.85,
+    "lt_prod": 0.533,
+    "offered_twh": 15.02
+   },
+   "25-45": {
+    "below_ecomin_frac": 0.947,
+    "le0": 0.069,
+    "lt_cheap": 0.312,
+    "lt_deliv": 0.691,
+    "lt_prod": 0.437,
+    "offered_twh": 89.57
+   },
+   "45-65": {
+    "below_ecomin_frac": 0.848,
+    "le0": 0.05,
+    "lt_cheap": 0.252,
+    "lt_deliv": 0.651,
+    "lt_prod": 0.394,
+    "offered_twh": 179.7
+   },
+   "65-85": {
+    "below_ecomin_frac": 0.316,
+    "le0": 0.019,
+    "lt_cheap": 0.124,
+    "lt_deliv": 0.525,
+    "lt_prod": 0.234,
+    "offered_twh": 143.5
+   },
+   "85-100": {
+    "below_ecomin_frac": 0.14,
+    "le0": 0.051,
+    "lt_cheap": 0.113,
+    "lt_deliv": 0.337,
+    "lt_prod": 0.163,
+    "offered_twh": 231.6
+   }
+  },
+  "le0_below_ecomin_fraction": 0.71,
+  "le0_mid_25_65_above_ecomin_share": 0.096,
+  "le0_mid_25_65_share": 0.057,
+  "le0_share_of_offered": 0.046,
+  "lt_cheap_below_ecomin_fraction": 0.677,
+  "lt_cheap_mid_25_65_above_ecomin_share": 0.267,
+  "lt_cheap_mid_25_65_share": 0.272,
+  "lt_cheap_share_of_offered": 0.184,
+  "lt_deliv_below_ecomin_fraction": 0.558,
+  "lt_deliv_mid_25_65_above_ecomin_share": 0.64,
+  "lt_deliv_mid_25_65_share": 0.664,
+  "lt_deliv_share_of_offered": 0.523,
+  "lt_prod_below_ecomin_fraction": 0.647,
+  "lt_prod_mid_25_65_above_ecomin_share": 0.366,
+  "lt_prod_mid_25_65_share": 0.408,
+  "lt_prod_share_of_offered": 0.287,
+  "n_cc_like_units": 301,
+  "offered_twh": 659.4,
+  "share_below_ecomin_of_offered": 0.5,
+  "units_cheap": {
+   "cheap_share_capw": 0.654,
+   "cold_start_per_mw_med": 0.0,
+   "ecomax_gw": 17.68,
+   "ecomin_ratio_capw": 0.527,
+   "first_bid_x_gas_med": 0.01,
+   "min_runtime_med": 8.0,
+   "n": 43,
+   "no_load_per_ecomin_mwh_med": 3.3,
+   "no_load_per_ecomin_x_gas_med": 0.81
+  },
+  "units_rest": {
+   "cheap_share_capw": 0.005,
+   "cold_start_per_mw_med": 45.7,
+   "ecomax_gw": 62.85,
+   "ecomin_ratio_capw": 0.556,
+   "first_bid_x_gas_med": 15.84,
+   "min_runtime_med": 6.0,
+   "n": 257,
+   "no_load_per_ecomin_mwh_med": 9.95,
+   "no_load_per_ecomin_x_gas_med": 2.46
+  }
+ }
+}

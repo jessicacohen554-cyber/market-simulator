@@ -783,13 +783,30 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   row reads as moved off its declaration for ERCOT only: 238 -> 239 rows (on top of SPP-100).
 #   WHAT IT COSTS: an ERCOT cache miss. 2021-2025 fleets are unchanged (the
 #   plant is masked all year); 2019/2020 gain the plant.
+# 2026-09-30 ALL SIX ADVANCED (R-CAISO-17) — ONE ROW ADDED, NO VALUE MOVED.
+#   R-CAISO-17 added constants.EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC (the CISO
+#   early-stamp generation window 2019-01 .. 2022-06-13, read only under
+#   caiso_eia930_clock_repair). `solve_surface_register.py --diff origin/main`
+#   -> "0 value(s) moved, 1 added"; declared at its live hash, as its late
+#   sibling was (moves no key). +1 row everywhere.
+#   WHAT IT COSTS: the armed CAISO path changes in 2019-2022 without a key
+#   move; no local results cache crosses a shard container, and the lane
+#   re-solves every CAISO year (docs/handoffs/r-caiso-17/).
+# 2026-09-30 NYISO ADVANCED (NYISO-NEXT-17) — ONE ROW ADDED, NO VALUE MOVED.
+#   NYISO-NEXT-17 added constants.NYISO_TE_NONCE_ENVELOPE_BY_MONTH (the measured
+#   non-CENTRAL-EAST TOTAL EAST envelope, read only under the default-off
+#   nyiso_fg_split). `solve_surface_register.py --diff origin/main` -> "0
+#   value(s) moved, 1 added"; declared at its live hash (moves no key). The
+#   name carries the NYISO token, so only NYISO's row set grows: 220 -> 221.
+#   WHAT IT COSTS: nothing solved — no registry value moved, so no committed
+#   bundle's numbers change; the digest moves only because the row set grew.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("f996d301a3972c08", 239),
-    "CAISO": ("a478be168ecf1363", 212),
-    "MISO": ("572b759217c6d9b0", 218),
-    "PJM": ("ac8e1b6d77100e10", 222),
-    "NYISO": ("001ff291efbb3af3", 219),
-    "NEISO": ("b94901ef8254f41a", 205),
+    "ERCOT": ("bdfc68c278f7eff8", 240),
+    "CAISO": ("289c8c383a78f4d9", 213),
+    "MISO": ("52d6fa6795d5e276", 220),
+    "PJM": ("2bff80b5fa602668", 223),
+    "NYISO": ("a64df99bd6857677", 221),
+    "NEISO": ("e082dd92b5c22723", 206),
 }
 
 

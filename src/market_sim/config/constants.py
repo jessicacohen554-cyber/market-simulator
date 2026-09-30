@@ -2427,6 +2427,37 @@ EIA930_CISO_CLOCK_LATE_WINDOWS_UTC: dict[str, tuple[str, str]] = {
     "demand": ("2022-06-16 08:00", "2025-12-02 22:00"),
 }
 
+# --- EIA-930 CISO published one hour EARLY (R-CAISO-17, 2026-09-30) ----------
+# The sibling of ``EIA930_CISO_CLOCK_LATE_WINDOWS_UTC``, applied at the same
+# frame seam under the SAME flag (``caiso_eia930_clock_repair``, rule 19):
+# inclusive windows of the extract's hour-ENDING ``UTC time`` stamps whose
+# value is the TRUE value of the NEXT hour (stamped early). Same column
+# families as the late registry ("generation" = the ``NG:`` cells and
+# ``Net generation``); ``Total interchange``, ``Demand`` and ``Demand
+# forecast`` are on the true clock here and never move.
+# Measured against three clocks independent of EIA-930, zero fitted
+# parameters (rule 14 source repair; re-derive only when the extract changes,
+# rule 23):
+#   * CAISO Today's Outlook 5-minute fuel mix (2019-2021): NG: SUN, NG: NG,
+#     NG: WND, NG: WAT and Net generation best lag -1 h in every month; -TI
+#     against Outlook imports lag 0. At 5-minute resolution the lead is
+#     ~45 min (the hourly re-stamp is the nearest whole-hour repair).
+#   * EPA CAMPD California gas gross load: NG: NG best lag -1 h in every month
+#     2019-01 .. 2022-05, lag 0 from 2022-06.
+#   * Solar geometry: the NG: SUN centroid is 11.0-11.5 h PST through
+#     2022-06-13, ~11.8 h 2022-07 .. 2023-10 (true), 12.7-12.8 h in the late
+#     window.
+# The window opens at the last local-2018 stamp (its value is the true value
+# of the first 2019 model hour; the corpus holds no Outlook/CEMS hour before
+# 2019, so nothing earlier is asserted) and closes at local 2022-06-13 HE24;
+# 2022-06-14/15 are mixed and not asserted, exactly as the demand late window
+# (which the same publisher shift opened). Probes:
+# scripts/probes/_rcaiso17_pre2022_clock_scan.py, _rcaiso17_subhour_offset.py;
+# docs/handoffs/r-caiso-17/PRECOMMIT-r-caiso-17-2026-09-30.md.
+EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC: dict[str, tuple[str, str]] = {
+    "generation": ("2019-01-01 08:00", "2022-06-14 07:00"),
+}
+
 # --- EIA-930 remote generation booked by TWO balancing authorities ------------
 # Per EIA-930 BA code: ``{fuel column: BA that already books the same plants}``.
 # The listed member's published fuel column is energy from a jointly-owned plant
@@ -5824,6 +5855,157 @@ NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH: dict[int, dict[tuple[str, str], list[float]]
             3100.0,
             4375.0,
             4775.0,
+        ]
+    },
+}
+
+
+# MEASURED non-CENTRAL-EAST TOTAL EAST transfer envelope (MW), one 12-element
+# list (Jan..Dec) per backcast year for the Upstate_West -> Lower_Hudson link
+# that ScenarioConfig.nyiso_fg_split (NYISO-NEXT-17, default OFF) adds. Under
+# that re-partition Capital_Hudson is NYISO load zone F alone and Lower_Hudson
+# is G+H+I, so the A-E -> F+ cutset (TOTAL EAST) has two physical legs in the
+# model: CENTRAL EAST (E -> F) on Upstate_West -> Capital_Hudson at its posted
+# DAM TTC (NYISO_INTERFACE_TTC_BY_MONTH), and the remaining TOTAL EAST paths on
+# this link. The pair REPLACES NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH on the upstate
+# seam (rule 19 [R-ONE-MECH], pipeline.ttc.apply_iso_monthly_ttc).
+#
+# CONSTRUCTION — INHERITED, NOT CHOSEN (rule 21 [R-DOF]: zero free parameters):
+# verbatim the TOTAL EAST envelope's (p90 of the directionally-clipped measured
+# transfer per calendar month, rounded to 25 MW), applied to the hourly series
+# TOTAL EAST minus CENTRAL EAST from the same P-32 posting. Rule 14
+# [R-ACCURATE] misalignment, declared: the posting does not attribute the
+# non-CE paths to a landing zone; they are assigned to G on the interface
+# definitions. BACKCAST-ONLY, on the identical classification as the two tables
+# above (rule 13 [R-MEASURED]). Regenerate with
+# scripts/data/derive_nyiso_te_nonce_envelope.py.
+NYISO_TE_NONCE_ENVELOPE_BY_MONTH: dict[int, dict[tuple[str, str], list[float]]] = {
+    2018: {
+        ("Upstate_West", "Lower_Hudson"): [
+            2600.0,
+            2375.0,
+            2175.0,
+            2000.0,
+            1475.0,
+            2125.0,
+            2350.0,
+            2525.0,
+            2175.0,
+            1525.0,
+            2175.0,
+            2175.0,
+        ]
+    },
+    2019: {
+        ("Upstate_West", "Lower_Hudson"): [
+            2750.0,
+            2350.0,
+            2775.0,
+            2225.0,
+            1850.0,
+            2250.0,
+            2450.0,
+            2275.0,
+            2000.0,
+            1925.0,
+            1900.0,
+            2300.0,
+        ]
+    },
+    2020: {
+        ("Upstate_West", "Lower_Hudson"): [
+            1950.0,
+            1775.0,
+            1600.0,
+            2000.0,
+            1850.0,
+            2050.0,
+            2050.0,
+            2275.0,
+            2200.0,
+            1950.0,
+            1925.0,
+            2550.0,
+        ]
+    },
+    2021: {
+        ("Upstate_West", "Lower_Hudson"): [
+            2475.0,
+            2500.0,
+            1825.0,
+            1975.0,
+            2250.0,
+            2375.0,
+            2625.0,
+            2450.0,
+            2600.0,
+            2225.0,
+            2175.0,
+            2875.0,
+        ]
+    },
+    2022: {
+        ("Upstate_West", "Lower_Hudson"): [
+            2875.0,
+            3075.0,
+            2375.0,
+            1300.0,
+            1675.0,
+            1900.0,
+            2225.0,
+            2375.0,
+            2050.0,
+            1800.0,
+            1625.0,
+            2750.0,
+        ]
+    },
+    2023: {
+        ("Upstate_West", "Lower_Hudson"): [
+            2875.0,
+            2775.0,
+            1950.0,
+            1600.0,
+            1850.0,
+            2225.0,
+            2300.0,
+            2350.0,
+            2125.0,
+            2000.0,
+            2200.0,
+            2300.0,
+        ]
+    },
+    2024: {
+        ("Upstate_West", "Lower_Hudson"): [
+            2425.0,
+            2125.0,
+            1575.0,
+            1475.0,
+            1525.0,
+            2225.0,
+            2275.0,
+            2050.0,
+            1850.0,
+            1825.0,
+            2100.0,
+            2575.0,
+        ]
+    },
+    2025: {
+        ("Upstate_West", "Lower_Hudson"): [
+            2550.0,
+            2625.0,
+            2225.0,
+            2050.0,
+            2250.0,
+            1700.0,
+            1725.0,
+            1725.0,
+            1650.0,
+            1525.0,
+            2225.0,
+            2275.0,
         ]
     },
 }

@@ -64,11 +64,11 @@ LEGACY = ROOT / "data/raw/_processed-legacy"
 # Repointed soco-85 (2026-09-28): soco83_span was pruned at the soco-85 promotion (rule 35);
 # the incumbent keeper is soco85_span (the soco-83 recipe + gas_daily_shape).
 # Repointed soco-87 (2026-09-29): soco85_span was pruned at the soco-87 promotion (rule 35);
-# the incumbent keeper is soco92_span (the soco-85 recipe + gas_hh_monthly_shape).
+# the incumbent keeper is soco93_span (soco-93: the soco-92 recipe + hydro_pondage_bound).
 KEEPER = "2026-09-28-soco85-gas-daily-shape"
 SPAN = (
-    ROOT / "results/calibration/soco92_span"
-)  # repointed soco-92 (rule 35 prune of soco92_span)
+    ROOT / "results/calibration/soco93_span"
+)  # repointed soco-93 (rule 35 prune of soco92_span)
 YEARS = tuple(range(2019, 2026))
 T = 8760
 RECIPE_SETS = (  # PRECOMMIT-soco-83 §5 --set flags (same list as _soco84_price_gap)

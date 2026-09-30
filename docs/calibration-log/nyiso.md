@@ -15066,3 +15066,16 @@ too.
 - **Matrix:** `nyiso_import_landing_band` U → K.
 - **Superseded and pruned:** `2026-09-30-nyisonext14-total-east-span` and its 2021 run.
 - **Record:** `docs/RESULT-nyiso-next15-landing-band-2026-09-30.md`.
+
+## NYISO-NEXT-16 — 2026-09-30 — zonal gas on each zone's own hub; keeper promoted by owner override, span CALIBRATED
+
+- **Phase 0 (zero LP):** C3b 2022 splits into winter downstate under-pricing (48 % of the squared error) and Upstate_West shoulder over-pricing, which is the CENTRAL EAST object (41 %). A CE distribution-factor cap on the single link fails ex ante: measured TOTAL EAST exceeds it in 30–33 % of 2021–22 hours. Record: `docs/FINDING-nyiso-next16-c3b-2022-phase0-2026-09-30.md`.
+- **Lever:** `nyiso_iroquois_winter_spread`, re-opened from R by owner card "Re-test, 5 yrs". NEXT-14's cutset link removed nyiso-150's coupled-block premise.
+- **Result:** keeper `2026-09-30-nyisonext16-winter-spread-span` (2022–2025), plus the stamped `2026-09-30-nyisonext16-winter-spread-2021`.
+  - Gates: G-1/3/4/5/6 pass. G-2(a) fails as drafted: its anchor was wrong, and the east-zone annual gas equals the keeper's to 4 dp. G-7 fails: new D-4 bridge rows for plant 54574 (2024) and plant 55405 (2025).
+  - **Promoted by owner override** (card "Promote (override)").
+  - C3b: 2022 0.200 → 0.159, 2023 0.132, 2024 0.117, 2025 0.147. C3a: 2022 +2.6 %, 2023 +5.4 %, 2024 −1.1 %, 2025 −8.6 %.
+  - **Span NOT-YET → CALIBRATED.** 2021 NOT-YET (C3a +11.1 %).
+- **Matrix:** `nyiso_iroquois_winter_spread` R → K.
+- **Superseded and pruned:** `2026-09-30-nyisonext15-landing-band-span` and its 2021 run.
+- **Record:** `docs/RESULT-nyiso-next16-winter-spread-2026-09-30.md`.

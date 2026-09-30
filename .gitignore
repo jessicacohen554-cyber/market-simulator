@@ -3888,6 +3888,11 @@ results/calibration/rcaiso15_A_20*/**
 results/calibration/rcaiso15_A_span/hourly/p0_*
 results/calibration/rcaiso15_A_tp_2019_2021/hourly/p0_*
 
+# SPP-104 per-year shard legs (composed into spp104_arm_span; kept on disk, out of main — rules 31/32(d)).
+# Leg SHAs: 2019 d70150e5925bd5419da61bc70d296cb8dab50bcd 2020 b9a6aa04b131aea98ff2cbc2f73670323afcf50d 2021 ad69a3cef15a66ca2b1f98d26b3f7b6ff2d37a3d 2022 92eb6165a7a441fc1ab3c66fe3aaaa6e6206105a
+# 2023 e0de6f60aacc2f3207f7fd1ea3ec766eeed97d76 2024 e6dfaec45a7c0baaa32e5026be50bea8e852ed91 2025 e7291627784fa80cd2d8383d275996538b2efb98
+results/calibration/spp104_arm_20*/
+results/calibration/spp104_arm_span/
 # NYISO-NEXT-15 per-year shard legs: kept out of main (rule 32(d)); only the composite registers.
 results/calibration/nyisonext15_202[2-5]/
 
@@ -3895,3 +3900,21 @@ results/calibration/nyisonext15_202[2-5]/
 results/calibration/r_ercot19_arm_*/
 results/calibration/r_ercot19b_arm_*/
 results/calibration/r_ercot19c_arm_*/
+# soco-93 zero-LP probe outputs (G-DRIFT identity); numbers live in PRECOMMIT-soco-93 §3
+results/calibration/_soco93/
+
+# soco-93 per-year shard legs (rule 32(d): kept out of main; the composite soco93_span is registered).
+# Leg SHAs are provenance only (rule 33(d)): RESULT-soco-93-2026-09-30.md section 4.
+results/calibration/soco93_20*/
+
+# NYISO-NEXT-16 per-year legs (rule 32 (d)); bytes composed into nyisonext16_span. Provenance (rule 33 (d)): 2021 70700d0e22ab1fafce3371130ced144065456ccd, 2022 b776d58d1e5fd2457c12da1a060cc9b7c94a1426, 2023 a78d46de16dedf30bdfe67bf9e66a0a640a72057, 2024 7c83b4fdfea151e94310a302c8ff36ef8240a112, 2025 f2fe82ba5a2967b7111a1f2b7ba34ef079c93489
+results/calibration/nyisonext16_202[2-5]/
+# R-CAISO-17 per-year shard legs (transport only; the composites are committed). Leg SHAs in docs/handoffs/r-caiso-17/RESULT.
+results/calibration/rcaiso17_A_20*/
+
+# NWPP-NEXT-13 per-year shard legs: parent-tree only, never main (rules 31, 32(d)); composite nwppnext13pu_span is committed instead.
+# Legs recorded by SHA (provenance only, rule 33(d)): 2020 99e56f93 2021 4662e793 2022 eb9a0bb2 2023 e4f96c37 2025 17704998 2024 139f0cfa 2019 1e4d57b7
+results/calibration/nwppnext13pu_20[0-9][0-9]/
+
+# R-CAISO-18 per-year shard legs: kept local, out of main (rules 31 / 32(d)); composites rcaiso18_A_span / rcaiso18_A_tp_2019_2021 are committed.
+results/calibration/rcaiso18_A_20*/

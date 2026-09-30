@@ -48,12 +48,18 @@ ARM_META = {"hydro_backfill_year": 2024, "hydro_eia930_monthly": True}
 GULF = {643, 641, 7715, 57502}
 
 
-def verify(sc: dict, meta: dict, reconciled_floor: bool = False) -> None:
+def verify(
+    sc: dict, meta: dict, reconciled_floor: bool = False, pondage_bound: bool = False
+) -> None:
     """Raise unless the bundle is the declared merged recipe off the keeper.
 
     ``reconciled_floor`` (soco-92, PRECOMMIT-soco-92 §1): the lane's declared delta
     arms ``hydro_min_flow_floor`` WITH ``hydro_ror_split`` (the rule-19 reconciled form
     ``data.hydro.build_hydro_fleet`` implements). It must then be True; otherwise False.
+
+    ``pondage_bound`` (soco-93, PRECOMMIT-soco-93 §1): the lane's declared delta arms
+    ``hydro_pondage_bound`` beside ``hydro_ror_split`` (RoR-flat rows carry no pondage
+    row, rule 19). It must then be True; otherwise False. Never implied.
     """
     _verify_inherited(sc)
     want_floor = bool(reconciled_floor)
@@ -64,8 +70,9 @@ def verify(sc: dict, meta: dict, reconciled_floor: bool = False) -> None:
         raise SystemExit(
             f"expected hydro_ror_split=True, hydro_min_flow_floor={want_floor}"
         )
+    if bool(sc.get("hydro_pondage_bound")) != bool(pondage_bound):
+        raise SystemExit(f"expected hydro_pondage_bound={bool(pondage_bound)}")
     for name in (
-        "hydro_pondage_bound",
         "hydro_dispatch_envelope",
         "hydro_budget_period_by_instrument",
         "hydro_cascade_coupling",
@@ -250,13 +257,19 @@ def main() -> None:
         help="the bundle's declared delta arms hydro_min_flow_floor reconciled "
         "under hydro_ror_split (soco-92); never implied",
     )
+    ap.add_argument(
+        "--pondage-bound",
+        action="store_true",
+        help="the bundle's declared delta arms hydro_pondage_bound beside "
+        "hydro_ror_split (soco-93); never implied",
+    )
     a = ap.parse_args()
     bundle = Path(a.bundle)
     att_path = bundle / "calibration_attestation.json"
     att = json.loads(att_path.read_text()) if att_path.exists() else {}
     sc = json.loads((bundle / "run_config.json").read_text())["scenario_config"]
     meta = json.loads((bundle / "meta.json").read_text())
-    verify(sc, meta, a.reconciled_min_flow_floor)
+    verify(sc, meta, a.reconciled_min_flow_floor, a.pondage_bound)
     years = sorted(int(y) for y in meta["years"])
     ev = verify_scope(
         bundle,

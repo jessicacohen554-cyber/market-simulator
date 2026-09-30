@@ -1,0 +1,3300 @@
+{
+ "2020": {
+  "imm": {
+   "east_gas": 1.738,
+   "west_gas": 1.744,
+   "production_gas": 1.362
+  },
+  "total_cc_mw": 52863.0,
+  "tiers": {
+   "appalachian_receipt": {
+    "mw": 7659.0,
+    "mw_share": 0.145,
+    "n_plants": 9,
+    "keeper_fuel_capw": 1.952,
+    "keeper_fuel_p10_p90": [
+     1.865,
+     2.114
+    ],
+    "minus_imm_production": 0.59
+   },
+   "imm_production": {
+    "mw": 7702.0,
+    "mw_share": 0.146,
+    "n_plants": 10,
+    "keeper_fuel_capw": 1.851,
+    "keeper_fuel_p10_p90": [
+     1.77,
+     1.952
+    ],
+    "minus_imm_production": 0.489
+   },
+   "market": {
+    "mw": 36960.0,
+    "mw_share": 0.699,
+    "n_plants": 44,
+    "keeper_fuel_capw": 2.167,
+    "keeper_fuel_p10_p90": [
+     1.936,
+     2.753
+    ],
+    "minus_imm_production": 0.805
+   },
+   "not_in_860": {
+    "mw": 541.0,
+    "mw_share": 0.01,
+    "n_plants": 4,
+    "keeper_fuel_capw": 1.936,
+    "keeper_fuel_p10_p90": [
+     1.936,
+     1.936
+    ],
+    "minus_imm_production": 0.574
+   }
+  },
+  "plants": {
+   "59913": {
+    "mw": 1773.0,
+    "fuel": 2.904,
+    "tier": "market",
+    "st": "VA"
+   },
+   "60357": {
+    "mw": 1665.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "PA"
+   },
+   "58260": {
+    "mw": 1472.0,
+    "fuel": 2.761,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55939": {
+    "mw": 1472.0,
+    "fuel": 2.422,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55524": {
+    "mw": 1449.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55736": {
+    "mw": 1430.0,
+    "fuel": 1.884,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "2406": {
+    "mw": 1356.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "55298": {
+    "mw": 1338.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55131": {
+    "mw": 1256.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55502": {
+    "mw": 1232.0,
+    "fuel": 1.884,
+    "tier": "market",
+    "st": "IN"
+   },
+   "2398": {
+    "mw": 1202.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "60589": {
+    "mw": 1197.0,
+    "fuel": 1.936,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "60368": {
+    "mw": 1194.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55297": {
+    "mw": 1176.0,
+    "fuel": 1.884,
+    "tier": "market",
+    "st": "MI"
+   },
+   "60464": {
+    "mw": 1134.0,
+    "fuel": 1.789,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "59220": {
+    "mw": 1114.0,
+    "fuel": 2.753,
+    "tier": "market",
+    "st": "MD"
+   },
+   "59906": {
+    "mw": 1058.0,
+    "fuel": 1.936,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "61028": {
+    "mw": 1034.0,
+    "fuel": 1.789,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "55690": {
+    "mw": 1018.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55439": {
+    "mw": 1011.0,
+    "fuel": 2.583,
+    "tier": "market",
+    "st": "VA"
+   },
+   "7153": {
+    "mw": 1003.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "DE"
+   },
+   "60376": {
+    "mw": 962.0,
+    "fuel": 2.114,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55503": {
+    "mw": 952.0,
+    "fuel": 1.884,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55976": {
+    "mw": 898.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "PA"
+   },
+   "59764": {
+    "mw": 892.0,
+    "fuel": 2.114,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "58426": {
+    "mw": 882.0,
+    "fuel": 1.936,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "58420": {
+    "mw": 870.0,
+    "fuel": 1.936,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "55239": {
+    "mw": 821.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59004": {
+    "mw": 812.0,
+    "fuel": 2.583,
+    "tier": "market",
+    "st": "VA"
+   },
+   "57794": {
+    "mw": 780.0,
+    "fuel": 1.884,
+    "tier": "market",
+    "st": "IN"
+   },
+   "55337": {
+    "mw": 778.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "PA"
+   },
+   "56846": {
+    "mw": 775.0,
+    "fuel": 2.753,
+    "tier": "market",
+    "st": "MD"
+   },
+   "60302": {
+    "mw": 774.0,
+    "fuel": 2.753,
+    "tier": "market",
+    "st": "MD"
+   },
+   "57839": {
+    "mw": 773.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "56963": {
+    "mw": 755.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "52019": {
+    "mw": 752.0,
+    "fuel": 2.583,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55701": {
+    "mw": 740.0,
+    "fuel": 2.096,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "58079": {
+    "mw": 735.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59773": {
+    "mw": 731.0,
+    "fuel": 1.884,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "55397": {
+    "mw": 715.0,
+    "fuel": 1.884,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55350": {
+    "mw": 678.0,
+    "fuel": 1.593,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "56807": {
+    "mw": 656.0,
+    "fuel": 3.047,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55667": {
+    "mw": 652.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55516": {
+    "mw": 644.0,
+    "fuel": 1.789,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "55183": {
+    "mw": 628.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55231": {
+    "mw": 614.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "PA"
+   },
+   "3804": {
+    "mw": 613.0,
+    "fuel": 2.148,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55193": {
+    "mw": 590.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55710": {
+    "mw": 556.0,
+    "fuel": 1.789,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "2411": {
+    "mw": 553.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59326": {
+    "mw": 544.0,
+    "fuel": 1.884,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55188": {
+    "mw": 540.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "IL"
+   },
+   "61035": {
+    "mw": 525.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "PA"
+   },
+   "3797": {
+    "mw": 447.0,
+    "fuel": 2.403,
+    "tier": "market",
+    "st": "VA"
+   },
+   "2393": {
+    "mw": 351.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "10308": {
+    "mw": 324.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "57349": {
+    "mw": 310.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "DE"
+   },
+   "50561": {
+    "mw": 252.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "54844": {
+    "mw": 248.0,
+    "fuel": 2.446,
+    "tier": "market",
+    "st": "VA"
+   },
+   "3096": {
+    "mw": 215.0,
+    "fuel": 1.789,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "50385": {
+    "mw": 192.0,
+    "fuel": 1.936,
+    "tier": "not_in_860",
+    "st": null
+   },
+   "10099": {
+    "mw": 174.0,
+    "fuel": 1.936,
+    "tier": "not_in_860",
+    "st": null
+   },
+   "10751": {
+    "mw": 139.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "50799": {
+    "mw": 135.0,
+    "fuel": 1.936,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "3176": {
+    "mw": 127.0,
+    "fuel": 1.936,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "50852": {
+    "mw": 116.0,
+    "fuel": 1.936,
+    "tier": "not_in_860",
+    "st": null
+   },
+   "54693": {
+    "mw": 59.0,
+    "fuel": 1.936,
+    "tier": "not_in_860",
+    "st": null
+   }
+  }
+ },
+ "2019": {
+  "imm": {
+   "east_gas": 2.515,
+   "west_gas": 2.315,
+   "production_gas": 2.083
+  },
+  "total_cc_mw": 52038.0,
+  "tiers": {
+   "appalachian_receipt": {
+    "mw": 7659.0,
+    "mw_share": 0.147,
+    "n_plants": 9,
+    "keeper_fuel_capw": 2.572,
+    "keeper_fuel_p10_p90": [
+     2.502,
+     2.643
+    ],
+    "minus_imm_production": 0.489
+   },
+   "imm_production": {
+    "mw": 6669.0,
+    "mw_share": 0.128,
+    "n_plants": 9,
+    "keeper_fuel_capw": 2.614,
+    "keeper_fuel_p10_p90": [
+     2.484,
+     2.847
+    ],
+    "minus_imm_production": 0.531
+   },
+   "market": {
+    "mw": 37198.0,
+    "mw_share": 0.715,
+    "n_plants": 45,
+    "keeper_fuel_capw": 2.827,
+    "keeper_fuel_p10_p90": [
+     2.502,
+     3.631
+    ],
+    "minus_imm_production": 0.744
+   },
+   "not_in_860": {
+    "mw": 513.0,
+    "mw_share": 0.01,
+    "n_plants": 4,
+    "keeper_fuel_capw": 2.502,
+    "keeper_fuel_p10_p90": [
+     2.502,
+     2.502
+    ],
+    "minus_imm_production": 0.419
+   }
+  },
+  "plants": {
+   "59913": {
+    "mw": 1773.0,
+    "fuel": 3.726,
+    "tier": "market",
+    "st": "VA"
+   },
+   "60357": {
+    "mw": 1665.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "PA"
+   },
+   "58260": {
+    "mw": 1472.0,
+    "fuel": 3.651,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55939": {
+    "mw": 1472.0,
+    "fuel": 3.14,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55524": {
+    "mw": 1449.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55736": {
+    "mw": 1430.0,
+    "fuel": 2.568,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "2406": {
+    "mw": 1356.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "55298": {
+    "mw": 1338.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55131": {
+    "mw": 1256.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55502": {
+    "mw": 1232.0,
+    "fuel": 2.568,
+    "tier": "market",
+    "st": "IN"
+   },
+   "2398": {
+    "mw": 1202.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "60589": {
+    "mw": 1197.0,
+    "fuel": 2.502,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "60368": {
+    "mw": 1194.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55297": {
+    "mw": 1176.0,
+    "fuel": 2.568,
+    "tier": "market",
+    "st": "MI"
+   },
+   "60464": {
+    "mw": 1134.0,
+    "fuel": 2.847,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "59220": {
+    "mw": 1114.0,
+    "fuel": 3.631,
+    "tier": "market",
+    "st": "MD"
+   },
+   "59906": {
+    "mw": 1058.0,
+    "fuel": 2.502,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "55690": {
+    "mw": 1018.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55439": {
+    "mw": 1011.0,
+    "fuel": 3.353,
+    "tier": "market",
+    "st": "VA"
+   },
+   "7153": {
+    "mw": 1003.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "DE"
+   },
+   "60376": {
+    "mw": 962.0,
+    "fuel": 2.592,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55503": {
+    "mw": 952.0,
+    "fuel": 2.568,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55976": {
+    "mw": 898.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "PA"
+   },
+   "59764": {
+    "mw": 892.0,
+    "fuel": 2.592,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "58426": {
+    "mw": 882.0,
+    "fuel": 2.502,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "58420": {
+    "mw": 870.0,
+    "fuel": 2.502,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "55239": {
+    "mw": 821.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59004": {
+    "mw": 812.0,
+    "fuel": 3.353,
+    "tier": "market",
+    "st": "VA"
+   },
+   "57794": {
+    "mw": 780.0,
+    "fuel": 2.568,
+    "tier": "market",
+    "st": "IN"
+   },
+   "55337": {
+    "mw": 778.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "PA"
+   },
+   "60302": {
+    "mw": 774.0,
+    "fuel": 3.631,
+    "tier": "market",
+    "st": "MD"
+   },
+   "57839": {
+    "mw": 773.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "56963": {
+    "mw": 755.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "52019": {
+    "mw": 752.0,
+    "fuel": 3.353,
+    "tier": "market",
+    "st": "VA"
+   },
+   "56846": {
+    "mw": 746.0,
+    "fuel": 3.631,
+    "tier": "market",
+    "st": "MD"
+   },
+   "55701": {
+    "mw": 740.0,
+    "fuel": 2.515,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "58079": {
+    "mw": 735.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59773": {
+    "mw": 731.0,
+    "fuel": 2.568,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "55397": {
+    "mw": 715.0,
+    "fuel": 2.568,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55350": {
+    "mw": 678.0,
+    "fuel": 2.411,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "56807": {
+    "mw": 656.0,
+    "fuel": 3.699,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55667": {
+    "mw": 652.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55516": {
+    "mw": 644.0,
+    "fuel": 2.847,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "55183": {
+    "mw": 628.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55231": {
+    "mw": 614.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "PA"
+   },
+   "3804": {
+    "mw": 613.0,
+    "fuel": 3.149,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55193": {
+    "mw": 590.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55710": {
+    "mw": 556.0,
+    "fuel": 2.847,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "2411": {
+    "mw": 553.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59326": {
+    "mw": 544.0,
+    "fuel": 2.568,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55188": {
+    "mw": 540.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "IL"
+   },
+   "61035": {
+    "mw": 525.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "PA"
+   },
+   "3797": {
+    "mw": 447.0,
+    "fuel": 3.239,
+    "tier": "market",
+    "st": "VA"
+   },
+   "2393": {
+    "mw": 351.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "10308": {
+    "mw": 324.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "57349": {
+    "mw": 310.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "DE"
+   },
+   "50966": {
+    "mw": 267.0,
+    "fuel": 3.353,
+    "tier": "market",
+    "st": "VA"
+   },
+   "50561": {
+    "mw": 252.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "54844": {
+    "mw": 248.0,
+    "fuel": 3.177,
+    "tier": "market",
+    "st": "VA"
+   },
+   "3096": {
+    "mw": 215.0,
+    "fuel": 2.847,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "10099": {
+    "mw": 171.0,
+    "fuel": 2.502,
+    "tier": "not_in_860",
+    "st": null
+   },
+   "50385": {
+    "mw": 170.0,
+    "fuel": 2.502,
+    "tier": "not_in_860",
+    "st": null
+   },
+   "10751": {
+    "mw": 139.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "50799": {
+    "mw": 135.0,
+    "fuel": 2.502,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "3176": {
+    "mw": 127.0,
+    "fuel": 2.502,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "50852": {
+    "mw": 114.0,
+    "fuel": 2.502,
+    "tier": "not_in_860",
+    "st": null
+   },
+   "54693": {
+    "mw": 58.0,
+    "fuel": 2.502,
+    "tier": "not_in_860",
+    "st": null
+   }
+  }
+ },
+ "2021": {
+  "imm": {
+   "east_gas": 3.582,
+   "west_gas": 4.244,
+   "production_gas": 2.985
+  },
+  "total_cc_mw": 55110.0,
+  "tiers": {
+   "appalachian_receipt": {
+    "mw": 8916.0,
+    "mw_share": 0.162,
+    "n_plants": 11,
+    "keeper_fuel_capw": 3.73,
+    "keeper_fuel_p10_p90": [
+     3.28,
+     3.969
+    ],
+    "minus_imm_production": 0.745
+   },
+   "imm_production": {
+    "mw": 8913.0,
+    "mw_share": 0.162,
+    "n_plants": 11,
+    "keeper_fuel_capw": 3.635,
+    "keeper_fuel_p10_p90": [
+     3.28,
+     3.957
+    ],
+    "minus_imm_production": 0.65
+   },
+   "market": {
+    "mw": 36794.0,
+    "mw_share": 0.668,
+    "n_plants": 44,
+    "keeper_fuel_capw": 3.833,
+    "keeper_fuel_p10_p90": [
+     3.565,
+     4.394
+    ],
+    "minus_imm_production": 0.848
+   },
+   "not_in_860": {
+    "mw": 488.0,
+    "mw_share": 0.009,
+    "n_plants": 4,
+    "keeper_fuel_capw": 3.575,
+    "keeper_fuel_p10_p90": [
+     3.57,
+     3.581
+    ],
+    "minus_imm_production": 0.59
+   }
+  },
+  "plants": {
+   "59913": {
+    "mw": 1773.0,
+    "fuel": 4.134,
+    "tier": "market",
+    "st": "VA"
+   },
+   "60357": {
+    "mw": 1498.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "PA"
+   },
+   "58260": {
+    "mw": 1472.0,
+    "fuel": 4.102,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55939": {
+    "mw": 1472.0,
+    "fuel": 4.479,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55524": {
+    "mw": 1449.0,
+    "fuel": 3.565,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55736": {
+    "mw": 1430.0,
+    "fuel": 3.957,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "2406": {
+    "mw": 1356.0,
+    "fuel": 3.565,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "55298": {
+    "mw": 1338.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55131": {
+    "mw": 1256.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55502": {
+    "mw": 1232.0,
+    "fuel": 3.957,
+    "tier": "market",
+    "st": "IN"
+   },
+   "60356": {
+    "mw": 1210.0,
+    "fuel": 3.957,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "2398": {
+    "mw": 1202.0,
+    "fuel": 3.565,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "60589": {
+    "mw": 1197.0,
+    "fuel": 3.581,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "60368": {
+    "mw": 1194.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55297": {
+    "mw": 1176.0,
+    "fuel": 3.957,
+    "tier": "market",
+    "st": "MI"
+   },
+   "60464": {
+    "mw": 1134.0,
+    "fuel": 3.28,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "59220": {
+    "mw": 1114.0,
+    "fuel": 4.535,
+    "tier": "market",
+    "st": "MD"
+   },
+   "59906": {
+    "mw": 1058.0,
+    "fuel": 3.581,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "61028": {
+    "mw": 1034.0,
+    "fuel": 3.28,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "55690": {
+    "mw": 1018.0,
+    "fuel": 3.565,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55439": {
+    "mw": 1011.0,
+    "fuel": 4.148,
+    "tier": "market",
+    "st": "VA"
+   },
+   "7153": {
+    "mw": 1003.0,
+    "fuel": 3.565,
+    "tier": "market",
+    "st": "DE"
+   },
+   "60376": {
+    "mw": 962.0,
+    "fuel": 3.969,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55503": {
+    "mw": 952.0,
+    "fuel": 3.957,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55976": {
+    "mw": 898.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "PA"
+   },
+   "59764": {
+    "mw": 892.0,
+    "fuel": 3.969,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "58426": {
+    "mw": 882.0,
+    "fuel": 3.581,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "58420": {
+    "mw": 870.0,
+    "fuel": 3.581,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "55239": {
+    "mw": 821.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59004": {
+    "mw": 812.0,
+    "fuel": 4.148,
+    "tier": "market",
+    "st": "VA"
+   },
+   "57794": {
+    "mw": 780.0,
+    "fuel": 3.957,
+    "tier": "market",
+    "st": "IN"
+   },
+   "55337": {
+    "mw": 778.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "PA"
+   },
+   "56846": {
+    "mw": 775.0,
+    "fuel": 4.535,
+    "tier": "market",
+    "st": "MD"
+   },
+   "60302": {
+    "mw": 774.0,
+    "fuel": 4.535,
+    "tier": "market",
+    "st": "MD"
+   },
+   "57839": {
+    "mw": 773.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "56963": {
+    "mw": 755.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "52019": {
+    "mw": 752.0,
+    "fuel": 4.128,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55701": {
+    "mw": 740.0,
+    "fuel": 3.919,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "58079": {
+    "mw": 735.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59773": {
+    "mw": 731.0,
+    "fuel": 3.957,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "55397": {
+    "mw": 715.0,
+    "fuel": 3.957,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55516": {
+    "mw": 715.0,
+    "fuel": 3.28,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "55350": {
+    "mw": 678.0,
+    "fuel": 3.355,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "62565": {
+    "mw": 665.0,
+    "fuel": 3.28,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "56807": {
+    "mw": 656.0,
+    "fuel": 4.56,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55667": {
+    "mw": 652.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55183": {
+    "mw": 628.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55231": {
+    "mw": 614.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "PA"
+   },
+   "3804": {
+    "mw": 613.0,
+    "fuel": 3.957,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55193": {
+    "mw": 590.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55710": {
+    "mw": 556.0,
+    "fuel": 3.28,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "2411": {
+    "mw": 553.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59326": {
+    "mw": 544.0,
+    "fuel": 3.957,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55188": {
+    "mw": 540.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "IL"
+   },
+   "61035": {
+    "mw": 525.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "PA"
+   },
+   "61322": {
+    "mw": 522.0,
+    "fuel": 3.957,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "3797": {
+    "mw": 447.0,
+    "fuel": 3.801,
+    "tier": "market",
+    "st": "VA"
+   },
+   "2393": {
+    "mw": 351.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "10308": {
+    "mw": 324.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "57349": {
+    "mw": 310.0,
+    "fuel": 3.565,
+    "tier": "market",
+    "st": "DE"
+   },
+   "50561": {
+    "mw": 252.0,
+    "fuel": 3.565,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "54844": {
+    "mw": 248.0,
+    "fuel": 4.197,
+    "tier": "market",
+    "st": "VA"
+   },
+   "3096": {
+    "mw": 215.0,
+    "fuel": 3.28,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "50385": {
+    "mw": 192.0,
+    "fuel": 3.581,
+    "tier": "not_in_860",
+    "st": null
+   },
+   "10099": {
+    "mw": 174.0,
+    "fuel": 3.565,
+    "tier": "not_in_860",
+    "st": null
+   },
+   "10751": {
+    "mw": 139.0,
+    "fuel": 3.581,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "50799": {
+    "mw": 135.0,
+    "fuel": 3.565,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "3176": {
+    "mw": 127.0,
+    "fuel": 3.581,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "50852": {
+    "mw": 69.0,
+    "fuel": 3.581,
+    "tier": "not_in_860",
+    "st": null
+   },
+   "54693": {
+    "mw": 52.0,
+    "fuel": 3.581,
+    "tier": "not_in_860",
+    "st": null
+   }
+  }
+ },
+ "2022": {
+  "imm": {
+   "east_gas": 7.279,
+   "west_gas": 5.876,
+   "production_gas": 5.51
+  },
+  "total_cc_mw": 57378.0,
+  "tiers": {
+   "appalachian_receipt": {
+    "mw": 8916.0,
+    "mw_share": 0.155,
+    "n_plants": 11,
+    "keeper_fuel_capw": 6.313,
+    "keeper_fuel_p10_p90": [
+     5.993,
+     6.623
+    ],
+    "minus_imm_production": 0.803
+   },
+   "imm_production": {
+    "mw": 8913.0,
+    "mw_share": 0.155,
+    "n_plants": 11,
+    "keeper_fuel_capw": 6.349,
+    "keeper_fuel_p10_p90": [
+     5.993,
+     6.531
+    ],
+    "minus_imm_production": 0.839
+   },
+   "market": {
+    "mw": 39257.0,
+    "mw_share": 0.684,
+    "n_plants": 46,
+    "keeper_fuel_capw": 6.73,
+    "keeper_fuel_p10_p90": [
+     5.993,
+     7.777
+    ],
+    "minus_imm_production": 1.22
+   },
+   "not_in_860": {
+    "mw": 292.0,
+    "mw_share": 0.005,
+    "n_plants": 2,
+    "keeper_fuel_capw": 6.835,
+    "keeper_fuel_p10_p90": [
+     6.835,
+     6.835
+    ],
+    "minus_imm_production": 1.325
+   }
+  },
+  "plants": {
+   "59913": {
+    "mw": 1773.0,
+    "fuel": 7.061,
+    "tier": "market",
+    "st": "VA"
+   },
+   "60357": {
+    "mw": 1498.0,
+    "fuel": 5.993,
+    "tier": "market",
+    "st": "PA"
+   },
+   "58260": {
+    "mw": 1472.0,
+    "fuel": 6.979,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55939": {
+    "mw": 1472.0,
+    "fuel": 7.38,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55524": {
+    "mw": 1449.0,
+    "fuel": 5.993,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55736": {
+    "mw": 1430.0,
+    "fuel": 6.339,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "2406": {
+    "mw": 1356.0,
+    "fuel": 6.835,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "55298": {
+    "mw": 1338.0,
+    "fuel": 6.835,
+    "tier": "market",
+    "st": "PA"
+   },
+   "62926": {
+    "mw": 1289.0,
+    "fuel": 6.101,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55131": {
+    "mw": 1256.0,
+    "fuel": 6.101,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55502": {
+    "mw": 1232.0,
+    "fuel": 6.339,
+    "tier": "market",
+    "st": "IN"
+   },
+   "60356": {
+    "mw": 1210.0,
+    "fuel": 6.339,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "2398": {
+    "mw": 1202.0,
+    "fuel": 6.835,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "60589": {
+    "mw": 1197.0,
+    "fuel": 5.993,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "60368": {
+    "mw": 1194.0,
+    "fuel": 5.993,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55297": {
+    "mw": 1176.0,
+    "fuel": 6.339,
+    "tier": "market",
+    "st": "MI"
+   },
+   "55460": {
+    "mw": 1174.0,
+    "fuel": 6.339,
+    "tier": "market",
+    "st": "MI"
+   },
+   "60464": {
+    "mw": 1134.0,
+    "fuel": 6.531,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "59220": {
+    "mw": 1114.0,
+    "fuel": 8.236,
+    "tier": "market",
+    "st": "MD"
+   },
+   "59906": {
+    "mw": 1058.0,
+    "fuel": 5.993,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "61028": {
+    "mw": 1034.0,
+    "fuel": 6.531,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "55690": {
+    "mw": 1018.0,
+    "fuel": 5.993,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55439": {
+    "mw": 1011.0,
+    "fuel": 7.277,
+    "tier": "market",
+    "st": "VA"
+   },
+   "7153": {
+    "mw": 1003.0,
+    "fuel": 6.835,
+    "tier": "market",
+    "st": "DE"
+   },
+   "60376": {
+    "mw": 962.0,
+    "fuel": 6.623,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55503": {
+    "mw": 952.0,
+    "fuel": 6.339,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55976": {
+    "mw": 898.0,
+    "fuel": 5.993,
+    "tier": "market",
+    "st": "PA"
+   },
+   "59764": {
+    "mw": 892.0,
+    "fuel": 6.623,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "58426": {
+    "mw": 882.0,
+    "fuel": 5.993,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "58420": {
+    "mw": 870.0,
+    "fuel": 5.993,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "55239": {
+    "mw": 821.0,
+    "fuel": 6.835,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59004": {
+    "mw": 812.0,
+    "fuel": 7.277,
+    "tier": "market",
+    "st": "VA"
+   },
+   "57794": {
+    "mw": 780.0,
+    "fuel": 6.339,
+    "tier": "market",
+    "st": "IN"
+   },
+   "55337": {
+    "mw": 778.0,
+    "fuel": 5.993,
+    "tier": "market",
+    "st": "PA"
+   },
+   "56846": {
+    "mw": 775.0,
+    "fuel": 8.236,
+    "tier": "market",
+    "st": "MD"
+   },
+   "60302": {
+    "mw": 774.0,
+    "fuel": 8.236,
+    "tier": "market",
+    "st": "MD"
+   },
+   "57839": {
+    "mw": 773.0,
+    "fuel": 6.835,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "56963": {
+    "mw": 755.0,
+    "fuel": 6.835,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "52019": {
+    "mw": 752.0,
+    "fuel": 7.277,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55701": {
+    "mw": 740.0,
+    "fuel": 6.557,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "58079": {
+    "mw": 735.0,
+    "fuel": 6.835,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59773": {
+    "mw": 731.0,
+    "fuel": 6.339,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "55516": {
+    "mw": 715.0,
+    "fuel": 6.531,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "55397": {
+    "mw": 715.0,
+    "fuel": 6.339,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55350": {
+    "mw": 678.0,
+    "fuel": 6.004,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "62565": {
+    "mw": 665.0,
+    "fuel": 6.531,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "56807": {
+    "mw": 656.0,
+    "fuel": 7.596,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55667": {
+    "mw": 652.0,
+    "fuel": 5.993,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55183": {
+    "mw": 628.0,
+    "fuel": 6.101,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55231": {
+    "mw": 614.0,
+    "fuel": 6.835,
+    "tier": "market",
+    "st": "PA"
+   },
+   "3804": {
+    "mw": 613.0,
+    "fuel": 7.957,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55193": {
+    "mw": 590.0,
+    "fuel": 5.993,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55710": {
+    "mw": 556.0,
+    "fuel": 6.531,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "2411": {
+    "mw": 553.0,
+    "fuel": 6.835,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59326": {
+    "mw": 544.0,
+    "fuel": 6.339,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55188": {
+    "mw": 540.0,
+    "fuel": 6.101,
+    "tier": "market",
+    "st": "IL"
+   },
+   "61035": {
+    "mw": 525.0,
+    "fuel": 5.993,
+    "tier": "market",
+    "st": "PA"
+   },
+   "61322": {
+    "mw": 522.0,
+    "fuel": 6.339,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "3797": {
+    "mw": 447.0,
+    "fuel": 7.056,
+    "tier": "market",
+    "st": "VA"
+   },
+   "2393": {
+    "mw": 351.0,
+    "fuel": 6.835,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "10308": {
+    "mw": 324.0,
+    "fuel": 6.835,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "57349": {
+    "mw": 310.0,
+    "fuel": 6.835,
+    "tier": "market",
+    "st": "DE"
+   },
+   "50561": {
+    "mw": 252.0,
+    "fuel": 6.835,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "54844": {
+    "mw": 248.0,
+    "fuel": 8.623,
+    "tier": "market",
+    "st": "VA"
+   },
+   "3096": {
+    "mw": 215.0,
+    "fuel": 6.531,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "50385": {
+    "mw": 152.0,
+    "fuel": 6.835,
+    "tier": "not_in_860",
+    "st": null
+   },
+   "10099": {
+    "mw": 140.0,
+    "fuel": 6.835,
+    "tier": "not_in_860",
+    "st": null
+   },
+   "10751": {
+    "mw": 139.0,
+    "fuel": 6.835,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "50799": {
+    "mw": 135.0,
+    "fuel": 6.835,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "3176": {
+    "mw": 127.0,
+    "fuel": 5.993,
+    "tier": "imm_production",
+    "st": "PA"
+   }
+  }
+ },
+ "2023": {
+  "imm": {
+   "east_gas": 2.126,
+   "west_gas": 2.048,
+   "production_gas": 1.624
+  },
+  "total_cc_mw": 60253.0,
+  "tiers": {
+   "appalachian_receipt": {
+    "mw": 10720.0,
+    "mw_share": 0.178,
+    "n_plants": 12,
+    "keeper_fuel_capw": 2.465,
+    "keeper_fuel_p10_p90": [
+     2.154,
+     2.77
+    ],
+    "minus_imm_production": 0.841
+   },
+   "imm_production": {
+    "mw": 8960.0,
+    "mw_share": 0.149,
+    "n_plants": 11,
+    "keeper_fuel_capw": 2.538,
+    "keeper_fuel_p10_p90": [
+     2.154,
+     2.776
+    ],
+    "minus_imm_production": 0.914
+   },
+   "market": {
+    "mw": 40573.0,
+    "mw_share": 0.673,
+    "n_plants": 47,
+    "keeper_fuel_capw": 2.632,
+    "keeper_fuel_p10_p90": [
+     2.154,
+     3.651
+    ],
+    "minus_imm_production": 1.008
+   }
+  },
+  "plants": {
+   "62949": {
+    "mw": 1804.0,
+    "fuel": 2.473,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "59913": {
+    "mw": 1773.0,
+    "fuel": 3.84,
+    "tier": "market",
+    "st": "VA"
+   },
+   "60357": {
+    "mw": 1498.0,
+    "fuel": 2.154,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55939": {
+    "mw": 1472.0,
+    "fuel": 3.265,
+    "tier": "market",
+    "st": "VA"
+   },
+   "58260": {
+    "mw": 1472.0,
+    "fuel": 3.801,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55524": {
+    "mw": 1449.0,
+    "fuel": 2.154,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55736": {
+    "mw": 1430.0,
+    "fuel": 2.473,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "2406": {
+    "mw": 1356.0,
+    "fuel": 2.266,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "55298": {
+    "mw": 1338.0,
+    "fuel": 2.266,
+    "tier": "market",
+    "st": "PA"
+   },
+   "63931": {
+    "mw": 1300.0,
+    "fuel": 2.478,
+    "tier": "market",
+    "st": "IL"
+   },
+   "62926": {
+    "mw": 1289.0,
+    "fuel": 2.478,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55131": {
+    "mw": 1256.0,
+    "fuel": 2.478,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55502": {
+    "mw": 1232.0,
+    "fuel": 2.473,
+    "tier": "market",
+    "st": "IN"
+   },
+   "60356": {
+    "mw": 1210.0,
+    "fuel": 2.473,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "2398": {
+    "mw": 1202.0,
+    "fuel": 2.266,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "60589": {
+    "mw": 1197.0,
+    "fuel": 2.154,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "60368": {
+    "mw": 1194.0,
+    "fuel": 2.154,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55297": {
+    "mw": 1192.0,
+    "fuel": 2.449,
+    "tier": "market",
+    "st": "MI"
+   },
+   "55460": {
+    "mw": 1174.0,
+    "fuel": 2.473,
+    "tier": "market",
+    "st": "MI"
+   },
+   "60464": {
+    "mw": 1134.0,
+    "fuel": 2.776,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "59220": {
+    "mw": 1114.0,
+    "fuel": 2.596,
+    "tier": "market",
+    "st": "MD"
+   },
+   "59906": {
+    "mw": 1105.0,
+    "fuel": 2.154,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "61028": {
+    "mw": 1034.0,
+    "fuel": 2.776,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "55690": {
+    "mw": 1018.0,
+    "fuel": 2.154,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55439": {
+    "mw": 1011.0,
+    "fuel": 3.651,
+    "tier": "market",
+    "st": "VA"
+   },
+   "7153": {
+    "mw": 1003.0,
+    "fuel": 2.266,
+    "tier": "market",
+    "st": "DE"
+   },
+   "60376": {
+    "mw": 962.0,
+    "fuel": 2.711,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55503": {
+    "mw": 952.0,
+    "fuel": 2.473,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55976": {
+    "mw": 898.0,
+    "fuel": 2.154,
+    "tier": "market",
+    "st": "PA"
+   },
+   "59764": {
+    "mw": 892.0,
+    "fuel": 2.711,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "58426": {
+    "mw": 882.0,
+    "fuel": 2.154,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "58420": {
+    "mw": 870.0,
+    "fuel": 2.154,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "55239": {
+    "mw": 821.0,
+    "fuel": 2.266,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59004": {
+    "mw": 812.0,
+    "fuel": 3.651,
+    "tier": "market",
+    "st": "VA"
+   },
+   "57794": {
+    "mw": 780.0,
+    "fuel": 2.473,
+    "tier": "market",
+    "st": "IN"
+   },
+   "55337": {
+    "mw": 778.0,
+    "fuel": 2.154,
+    "tier": "market",
+    "st": "PA"
+   },
+   "56846": {
+    "mw": 775.0,
+    "fuel": 2.596,
+    "tier": "market",
+    "st": "MD"
+   },
+   "60302": {
+    "mw": 774.0,
+    "fuel": 2.596,
+    "tier": "market",
+    "st": "MD"
+   },
+   "57839": {
+    "mw": 773.0,
+    "fuel": 2.266,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "56963": {
+    "mw": 755.0,
+    "fuel": 2.266,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "52019": {
+    "mw": 752.0,
+    "fuel": 3.651,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55701": {
+    "mw": 740.0,
+    "fuel": 2.67,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "58079": {
+    "mw": 735.0,
+    "fuel": 2.266,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59773": {
+    "mw": 731.0,
+    "fuel": 2.473,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "55397": {
+    "mw": 715.0,
+    "fuel": 2.473,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55516": {
+    "mw": 715.0,
+    "fuel": 2.776,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "55350": {
+    "mw": 678.0,
+    "fuel": 2.382,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "62565": {
+    "mw": 665.0,
+    "fuel": 2.776,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "56807": {
+    "mw": 656.0,
+    "fuel": 4.148,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55667": {
+    "mw": 652.0,
+    "fuel": 2.154,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55183": {
+    "mw": 628.0,
+    "fuel": 2.478,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55231": {
+    "mw": 614.0,
+    "fuel": 2.266,
+    "tier": "market",
+    "st": "PA"
+   },
+   "3804": {
+    "mw": 613.0,
+    "fuel": 3.653,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55193": {
+    "mw": 590.0,
+    "fuel": 2.154,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55710": {
+    "mw": 556.0,
+    "fuel": 2.776,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "2411": {
+    "mw": 553.0,
+    "fuel": 2.266,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59326": {
+    "mw": 544.0,
+    "fuel": 2.473,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55188": {
+    "mw": 540.0,
+    "fuel": 2.478,
+    "tier": "market",
+    "st": "IL"
+   },
+   "61035": {
+    "mw": 525.0,
+    "fuel": 2.154,
+    "tier": "market",
+    "st": "PA"
+   },
+   "61322": {
+    "mw": 522.0,
+    "fuel": 2.473,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "3797": {
+    "mw": 447.0,
+    "fuel": 3.557,
+    "tier": "market",
+    "st": "VA"
+   },
+   "2393": {
+    "mw": 351.0,
+    "fuel": 2.266,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "10308": {
+    "mw": 324.0,
+    "fuel": 2.266,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "57349": {
+    "mw": 310.0,
+    "fuel": 2.266,
+    "tier": "market",
+    "st": "DE"
+   },
+   "50561": {
+    "mw": 252.0,
+    "fuel": 2.266,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "54844": {
+    "mw": 248.0,
+    "fuel": 3.182,
+    "tier": "market",
+    "st": "VA"
+   },
+   "3096": {
+    "mw": 215.0,
+    "fuel": 2.776,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "10751": {
+    "mw": 139.0,
+    "fuel": 2.266,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "50799": {
+    "mw": 135.0,
+    "fuel": 2.266,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "3176": {
+    "mw": 127.0,
+    "fuel": 2.154,
+    "tier": "imm_production",
+    "st": "PA"
+   }
+  }
+ },
+ "2024": {
+  "imm": {
+   "east_gas": 2.253,
+   "west_gas": 1.979,
+   "production_gas": 1.672
+  },
+  "total_cc_mw": 60118.0,
+  "tiers": {
+   "appalachian_receipt": {
+    "mw": 10720.0,
+    "mw_share": 0.178,
+    "n_plants": 12,
+    "keeper_fuel_capw": 2.282,
+    "keeper_fuel_p10_p90": [
+     2.082,
+     2.424
+    ],
+    "minus_imm_production": 0.61
+   },
+   "imm_production": {
+    "mw": 8960.0,
+    "mw_share": 0.149,
+    "n_plants": 11,
+    "keeper_fuel_capw": 2.277,
+    "keeper_fuel_p10_p90": [
+     2.082,
+     2.424
+    ],
+    "minus_imm_production": 0.605
+   },
+   "market": {
+    "mw": 40438.0,
+    "mw_share": 0.673,
+    "n_plants": 46,
+    "keeper_fuel_capw": 2.52,
+    "keeper_fuel_p10_p90": [
+     2.082,
+     3.185
+    ],
+    "minus_imm_production": 0.848
+   }
+  },
+  "plants": {
+   "62949": {
+    "mw": 1804.0,
+    "fuel": 2.424,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "59913": {
+    "mw": 1773.0,
+    "fuel": 3.122,
+    "tier": "market",
+    "st": "VA"
+   },
+   "60357": {
+    "mw": 1498.0,
+    "fuel": 2.082,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55939": {
+    "mw": 1472.0,
+    "fuel": 3.285,
+    "tier": "market",
+    "st": "VA"
+   },
+   "58260": {
+    "mw": 1472.0,
+    "fuel": 3.031,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55524": {
+    "mw": 1449.0,
+    "fuel": 2.082,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55736": {
+    "mw": 1430.0,
+    "fuel": 2.424,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "2406": {
+    "mw": 1356.0,
+    "fuel": 2.344,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "55298": {
+    "mw": 1338.0,
+    "fuel": 2.344,
+    "tier": "market",
+    "st": "PA"
+   },
+   "63931": {
+    "mw": 1300.0,
+    "fuel": 2.339,
+    "tier": "market",
+    "st": "IL"
+   },
+   "62926": {
+    "mw": 1289.0,
+    "fuel": 2.339,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55131": {
+    "mw": 1256.0,
+    "fuel": 2.339,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55502": {
+    "mw": 1232.0,
+    "fuel": 2.424,
+    "tier": "market",
+    "st": "IN"
+   },
+   "60356": {
+    "mw": 1210.0,
+    "fuel": 2.424,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "2398": {
+    "mw": 1202.0,
+    "fuel": 2.344,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "60589": {
+    "mw": 1197.0,
+    "fuel": 2.082,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "60368": {
+    "mw": 1194.0,
+    "fuel": 2.082,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55297": {
+    "mw": 1192.0,
+    "fuel": 2.14,
+    "tier": "market",
+    "st": "MI"
+   },
+   "55460": {
+    "mw": 1174.0,
+    "fuel": 2.424,
+    "tier": "market",
+    "st": "MI"
+   },
+   "60464": {
+    "mw": 1134.0,
+    "fuel": 2.124,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "59220": {
+    "mw": 1114.0,
+    "fuel": 3.186,
+    "tier": "market",
+    "st": "MD"
+   },
+   "59906": {
+    "mw": 1105.0,
+    "fuel": 2.082,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "61028": {
+    "mw": 1034.0,
+    "fuel": 2.124,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "55690": {
+    "mw": 1018.0,
+    "fuel": 2.082,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55439": {
+    "mw": 1011.0,
+    "fuel": 3.045,
+    "tier": "market",
+    "st": "VA"
+   },
+   "7153": {
+    "mw": 1003.0,
+    "fuel": 2.344,
+    "tier": "market",
+    "st": "DE"
+   },
+   "60376": {
+    "mw": 962.0,
+    "fuel": 2.368,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55503": {
+    "mw": 952.0,
+    "fuel": 2.424,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55976": {
+    "mw": 898.0,
+    "fuel": 2.082,
+    "tier": "market",
+    "st": "PA"
+   },
+   "59764": {
+    "mw": 892.0,
+    "fuel": 2.368,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "58426": {
+    "mw": 882.0,
+    "fuel": 2.082,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "58420": {
+    "mw": 870.0,
+    "fuel": 2.082,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "55239": {
+    "mw": 821.0,
+    "fuel": 2.344,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59004": {
+    "mw": 812.0,
+    "fuel": 3.045,
+    "tier": "market",
+    "st": "VA"
+   },
+   "57794": {
+    "mw": 780.0,
+    "fuel": 2.424,
+    "tier": "market",
+    "st": "IN"
+   },
+   "55337": {
+    "mw": 778.0,
+    "fuel": 2.082,
+    "tier": "market",
+    "st": "PA"
+   },
+   "56846": {
+    "mw": 775.0,
+    "fuel": 3.186,
+    "tier": "market",
+    "st": "MD"
+   },
+   "60302": {
+    "mw": 774.0,
+    "fuel": 3.186,
+    "tier": "market",
+    "st": "MD"
+   },
+   "57839": {
+    "mw": 773.0,
+    "fuel": 2.344,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "56963": {
+    "mw": 755.0,
+    "fuel": 2.344,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "52019": {
+    "mw": 752.0,
+    "fuel": 3.045,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55701": {
+    "mw": 740.0,
+    "fuel": 2.303,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "58079": {
+    "mw": 735.0,
+    "fuel": 2.344,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59773": {
+    "mw": 731.0,
+    "fuel": 2.424,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "55397": {
+    "mw": 715.0,
+    "fuel": 2.424,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55516": {
+    "mw": 715.0,
+    "fuel": 2.124,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "55350": {
+    "mw": 678.0,
+    "fuel": 2.529,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "62565": {
+    "mw": 665.0,
+    "fuel": 2.124,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "56807": {
+    "mw": 656.0,
+    "fuel": 3.183,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55667": {
+    "mw": 652.0,
+    "fuel": 2.082,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55183": {
+    "mw": 628.0,
+    "fuel": 2.339,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55231": {
+    "mw": 614.0,
+    "fuel": 2.344,
+    "tier": "market",
+    "st": "PA"
+   },
+   "3804": {
+    "mw": 613.0,
+    "fuel": 2.982,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55193": {
+    "mw": 590.0,
+    "fuel": 2.082,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55710": {
+    "mw": 556.0,
+    "fuel": 2.124,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "2411": {
+    "mw": 553.0,
+    "fuel": 2.344,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59326": {
+    "mw": 544.0,
+    "fuel": 2.424,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55188": {
+    "mw": 540.0,
+    "fuel": 2.339,
+    "tier": "market",
+    "st": "IL"
+   },
+   "61035": {
+    "mw": 525.0,
+    "fuel": 2.082,
+    "tier": "market",
+    "st": "PA"
+   },
+   "61322": {
+    "mw": 522.0,
+    "fuel": 2.424,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "3797": {
+    "mw": 447.0,
+    "fuel": 3.278,
+    "tier": "market",
+    "st": "VA"
+   },
+   "2393": {
+    "mw": 351.0,
+    "fuel": 2.344,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "10308": {
+    "mw": 324.0,
+    "fuel": 2.344,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "57349": {
+    "mw": 310.0,
+    "fuel": 2.344,
+    "tier": "market",
+    "st": "DE"
+   },
+   "50561": {
+    "mw": 252.0,
+    "fuel": 2.344,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "54844": {
+    "mw": 248.0,
+    "fuel": 3.093,
+    "tier": "market",
+    "st": "VA"
+   },
+   "3096": {
+    "mw": 215.0,
+    "fuel": 2.124,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "10751": {
+    "mw": 139.0,
+    "fuel": 2.344,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "3176": {
+    "mw": 127.0,
+    "fuel": 2.082,
+    "tier": "imm_production",
+    "st": "PA"
+   }
+  }
+ },
+ "2025": {
+  "imm": {
+   "east_gas": 3.991,
+   "west_gas": 3.107,
+   "production_gas": 2.815
+  },
+  "total_cc_mw": 60537.0,
+  "tiers": {
+   "appalachian_receipt": {
+    "mw": 10344.0,
+    "mw_share": 0.171,
+    "n_plants": 12,
+    "keeper_fuel_capw": 3.41,
+    "keeper_fuel_p10_p90": [
+     3.239,
+     3.512
+    ],
+    "minus_imm_production": 0.595
+   },
+   "imm_production": {
+    "mw": 8960.0,
+    "mw_share": 0.148,
+    "n_plants": 11,
+    "keeper_fuel_capw": 3.361,
+    "keeper_fuel_p10_p90": [
+     3.239,
+     3.507
+    ],
+    "minus_imm_production": 0.546
+   },
+   "market": {
+    "mw": 40820.0,
+    "mw_share": 0.674,
+    "n_plants": 48,
+    "keeper_fuel_capw": 3.95,
+    "keeper_fuel_p10_p90": [
+     3.239,
+     4.422
+    ],
+    "minus_imm_production": 1.135
+   },
+   "not_in_860": {
+    "mw": 414.0,
+    "mw_share": 0.007,
+    "n_plants": 4,
+    "keeper_fuel_capw": 3.507,
+    "keeper_fuel_p10_p90": [
+     3.507,
+     3.507
+    ],
+    "minus_imm_production": 0.692
+   }
+  },
+  "plants": {
+   "62949": {
+    "mw": 1804.0,
+    "fuel": 3.507,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "59913": {
+    "mw": 1773.0,
+    "fuel": 4.155,
+    "tier": "market",
+    "st": "VA"
+   },
+   "60357": {
+    "mw": 1498.0,
+    "fuel": 3.239,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55939": {
+    "mw": 1472.0,
+    "fuel": 4.138,
+    "tier": "market",
+    "st": "VA"
+   },
+   "58260": {
+    "mw": 1472.0,
+    "fuel": 4.175,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55524": {
+    "mw": 1449.0,
+    "fuel": 3.239,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55736": {
+    "mw": 1430.0,
+    "fuel": 3.507,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "2406": {
+    "mw": 1356.0,
+    "fuel": 4.422,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "55298": {
+    "mw": 1338.0,
+    "fuel": 4.422,
+    "tier": "market",
+    "st": "PA"
+   },
+   "63931": {
+    "mw": 1300.0,
+    "fuel": 3.518,
+    "tier": "market",
+    "st": "IL"
+   },
+   "62926": {
+    "mw": 1289.0,
+    "fuel": 3.518,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55131": {
+    "mw": 1256.0,
+    "fuel": 3.518,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55502": {
+    "mw": 1232.0,
+    "fuel": 3.507,
+    "tier": "market",
+    "st": "IN"
+   },
+   "60356": {
+    "mw": 1210.0,
+    "fuel": 3.507,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "2398": {
+    "mw": 1202.0,
+    "fuel": 4.422,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "60368": {
+    "mw": 1194.0,
+    "fuel": 3.239,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55297": {
+    "mw": 1192.0,
+    "fuel": 3.47,
+    "tier": "market",
+    "st": "MI"
+   },
+   "55460": {
+    "mw": 1174.0,
+    "fuel": 3.507,
+    "tier": "market",
+    "st": "MI"
+   },
+   "60464": {
+    "mw": 1134.0,
+    "fuel": 3.274,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "59220": {
+    "mw": 1114.0,
+    "fuel": 5.344,
+    "tier": "market",
+    "st": "MD"
+   },
+   "59906": {
+    "mw": 1105.0,
+    "fuel": 3.239,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "61028": {
+    "mw": 1034.0,
+    "fuel": 3.274,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "55690": {
+    "mw": 1018.0,
+    "fuel": 3.239,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55439": {
+    "mw": 1011.0,
+    "fuel": 4.034,
+    "tier": "market",
+    "st": "VA"
+   },
+   "7153": {
+    "mw": 1003.0,
+    "fuel": 4.422,
+    "tier": "market",
+    "st": "DE"
+   },
+   "60376": {
+    "mw": 962.0,
+    "fuel": 3.513,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55503": {
+    "mw": 952.0,
+    "fuel": 3.507,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55976": {
+    "mw": 898.0,
+    "fuel": 3.239,
+    "tier": "market",
+    "st": "PA"
+   },
+   "59764": {
+    "mw": 892.0,
+    "fuel": 3.513,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "58426": {
+    "mw": 882.0,
+    "fuel": 3.239,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "58420": {
+    "mw": 870.0,
+    "fuel": 3.239,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "60589": {
+    "mw": 821.0,
+    "fuel": 3.239,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "55239": {
+    "mw": 821.0,
+    "fuel": 4.422,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59004": {
+    "mw": 812.0,
+    "fuel": 4.034,
+    "tier": "market",
+    "st": "VA"
+   },
+   "57794": {
+    "mw": 780.0,
+    "fuel": 3.507,
+    "tier": "market",
+    "st": "IN"
+   },
+   "55337": {
+    "mw": 778.0,
+    "fuel": 3.239,
+    "tier": "market",
+    "st": "PA"
+   },
+   "56846": {
+    "mw": 775.0,
+    "fuel": 5.344,
+    "tier": "market",
+    "st": "MD"
+   },
+   "60302": {
+    "mw": 774.0,
+    "fuel": 5.344,
+    "tier": "market",
+    "st": "MD"
+   },
+   "57839": {
+    "mw": 773.0,
+    "fuel": 4.422,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "56963": {
+    "mw": 755.0,
+    "fuel": 4.422,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "52019": {
+    "mw": 752.0,
+    "fuel": 4.034,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55701": {
+    "mw": 740.0,
+    "fuel": 3.419,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "58079": {
+    "mw": 735.0,
+    "fuel": 4.422,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59773": {
+    "mw": 731.0,
+    "fuel": 3.507,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "55397": {
+    "mw": 715.0,
+    "fuel": 3.507,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55516": {
+    "mw": 715.0,
+    "fuel": 3.274,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "55350": {
+    "mw": 678.0,
+    "fuel": 3.171,
+    "tier": "imm_production",
+    "st": "OH"
+   },
+   "62565": {
+    "mw": 665.0,
+    "fuel": 3.274,
+    "tier": "appalachian_receipt",
+    "st": "PA"
+   },
+   "56807": {
+    "mw": 656.0,
+    "fuel": 4.338,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55667": {
+    "mw": 652.0,
+    "fuel": 3.239,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55183": {
+    "mw": 628.0,
+    "fuel": 3.518,
+    "tier": "market",
+    "st": "IL"
+   },
+   "55231": {
+    "mw": 614.0,
+    "fuel": 4.422,
+    "tier": "market",
+    "st": "PA"
+   },
+   "3804": {
+    "mw": 613.0,
+    "fuel": 3.915,
+    "tier": "market",
+    "st": "VA"
+   },
+   "55193": {
+    "mw": 590.0,
+    "fuel": 3.239,
+    "tier": "market",
+    "st": "PA"
+   },
+   "55710": {
+    "mw": 556.0,
+    "fuel": 3.274,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "2411": {
+    "mw": 553.0,
+    "fuel": 4.422,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "59326": {
+    "mw": 544.0,
+    "fuel": 3.507,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "55188": {
+    "mw": 540.0,
+    "fuel": 3.518,
+    "tier": "market",
+    "st": "IL"
+   },
+   "61035": {
+    "mw": 525.0,
+    "fuel": 3.239,
+    "tier": "market",
+    "st": "PA"
+   },
+   "61322": {
+    "mw": 522.0,
+    "fuel": 3.507,
+    "tier": "appalachian_receipt",
+    "st": "OH"
+   },
+   "3797": {
+    "mw": 447.0,
+    "fuel": 4.127,
+    "tier": "market",
+    "st": "VA"
+   },
+   "2393": {
+    "mw": 351.0,
+    "fuel": 4.422,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "10308": {
+    "mw": 324.0,
+    "fuel": 4.422,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "57349": {
+    "mw": 310.0,
+    "fuel": 4.422,
+    "tier": "market",
+    "st": "DE"
+   },
+   "50966": {
+    "mw": 267.0,
+    "fuel": 4.034,
+    "tier": "market",
+    "st": "VA"
+   },
+   "50561": {
+    "mw": 252.0,
+    "fuel": 4.422,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "54844": {
+    "mw": 248.0,
+    "fuel": 4.039,
+    "tier": "market",
+    "st": "VA"
+   },
+   "3096": {
+    "mw": 215.0,
+    "fuel": 3.274,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "50385": {
+    "mw": 152.0,
+    "fuel": 3.507,
+    "tier": "not_in_860",
+    "st": null
+   },
+   "10099": {
+    "mw": 140.0,
+    "fuel": 3.507,
+    "tier": "not_in_860",
+    "st": null
+   },
+   "10751": {
+    "mw": 139.0,
+    "fuel": 4.422,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "3176": {
+    "mw": 127.0,
+    "fuel": 3.239,
+    "tier": "imm_production",
+    "st": "PA"
+   },
+   "50799": {
+    "mw": 115.0,
+    "fuel": 4.422,
+    "tier": "market",
+    "st": "NJ"
+   },
+   "50852": {
+    "mw": 69.0,
+    "fuel": 3.507,
+    "tier": "not_in_860",
+    "st": null
+   },
+   "54693": {
+    "mw": 52.0,
+    "fuel": 3.507,
+    "tier": "not_in_860",
+    "st": null
+   }
+  }
+ }
+}

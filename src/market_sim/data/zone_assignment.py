@@ -555,6 +555,11 @@ NYISO_CAPITAL_HUDSON_COUNTIES: frozenset[int] = frozenset(
     }
 )
 
+# Hudson Valley (zone G) — the subset of NYISO_CAPITAL_HUDSON_COUNTIES that the
+# NYISO-NEXT-17 F/G re-partition (ScenarioConfig.nyiso_fg_split, armed through
+# config.topology_variant) moves to Lower_Hudson, leaving Capital_Hudson = F.
+NYISO_HUDSON_VALLEY_COUNTIES: frozenset[int] = frozenset({27, 71, 87, 105, 111})
+
 # NYISO downstate lat/lon fallback boundaries, used only when a plant carries
 # no NY county code (the NJ merchant-cable resources) or for the coordinate
 # API. The precise assignment is county-based; these bands are the backstop.
@@ -567,6 +572,9 @@ _NYISO_UPSTATE_LON: float = -75.0
 _NYISO_NORTH_LAT: float = 43.3
 _NYISO_CAPITAL_LAT: float = 41.4
 _NYISO_LOWER_HUDSON_LAT: float = 41.0
+# Under the F/G re-partition the Capital/Lower boundary is the F/G county line
+# (the southern edge of Greene / Columbia counties, ~42.05 N).
+_NYISO_CAPITAL_LAT_FG_SPLIT: float = 42.05
 _NYISO_LONG_ISLAND_LON: float = -73.5
 
 # NEISO model zone by FIPS state code. ISO-NE's aggregated zones follow state
@@ -849,6 +857,13 @@ def _caiso_zone(
     return _LARGEST_ZONE["CAISO"]
 
 
+def _nyiso_fg_split() -> bool:
+    """Return True when the NYISO F/G re-partition is armed (topology_variant)."""
+    from market_sim.config.topology_variant import nyiso_fg_split_active
+
+    return nyiso_fg_split_active()
+
+
 def _nyiso_zone(
     lat: float | None,
     lon: float | None,
@@ -875,6 +890,8 @@ def _nyiso_zone(
         if fips_county in NYISO_LOWER_HUDSON_COUNTIES:
             return "Lower_Hudson"
         if fips_county in NYISO_CAPITAL_HUDSON_COUNTIES:
+            if fips_county in NYISO_HUDSON_VALLEY_COUNTIES and _nyiso_fg_split():
+                return "Lower_Hudson"
             return "Capital_Hudson"
         return "Upstate_West"
     return _nyiso_zone_from_latlon(lat, lon)
@@ -893,7 +910,10 @@ def _nyiso_zone_from_latlon(lat: float | None, lon: float | None) -> str:
         return _LARGEST_ZONE["NYISO"]
     if lon < _NYISO_UPSTATE_LON or lat >= _NYISO_NORTH_LAT:
         return "Upstate_West"
-    if lat >= _NYISO_CAPITAL_LAT:
+    capital_lat = (
+        _NYISO_CAPITAL_LAT_FG_SPLIT if _nyiso_fg_split() else _NYISO_CAPITAL_LAT
+    )
+    if lat >= capital_lat:
         return "Capital_Hudson"
     if lat >= _NYISO_LOWER_HUDSON_LAT:
         return "Lower_Hudson"
@@ -1684,13 +1704,15 @@ def build_zone_lookup(iso: str) -> dict[int, str]:
     """
     from market_sim.config.topology_variant import (
         caiso_fsno_partition_active,
+        nyiso_fg_split_active,
         spp_west_east_active,
     )
 
     iso_u = iso.upper()
     fsno = caiso_fsno_partition_active() if iso_u == "CAISO" else False
     spp_we = spp_west_east_active() if iso_u == "SPP" else False
-    return dict(_build_zone_lookup_cached(iso_u, _use_clean(), fsno, spp_we))
+    nyiso_fg = nyiso_fg_split_active() if iso_u == "NYISO" else False
+    return dict(_build_zone_lookup_cached(iso_u, _use_clean(), fsno, spp_we, nyiso_fg))
 
 
 def _ercot_dam_admitted_zones(egrid: pd.DataFrame, members: set[int]) -> dict[int, str]:
@@ -1741,9 +1763,18 @@ def _ercot_dam_admitted_zones(egrid: pd.DataFrame, members: set[int]) -> dict[in
 
 @lru_cache(maxsize=16)
 def _build_zone_lookup_cached(
-    iso: str, use_clean: bool, caiso_fsno: bool = False, spp_we: bool = False
+    iso: str,
+    use_clean: bool,
+    caiso_fsno: bool = False,
+    spp_we: bool = False,
+    nyiso_fg: bool = False,
 ) -> dict[int, str]:
-    """Cache-bearing core of :func:`build_zone_lookup` (already-uppercased ISO)."""
+    """Cache-bearing core of :func:`build_zone_lookup` (already-uppercased ISO).
+
+    ``nyiso_fg`` is carried only as a cache-key bit: the NYISO F/G re-partition
+    is read inside :func:`_nyiso_zone` from ``config.topology_variant``, and the
+    bit keeps a lookup built under one partition from serving the other.
+    """
     codes = _iso_ba_codes(iso)
     if not codes:
         return {}

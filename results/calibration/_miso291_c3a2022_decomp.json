@@ -1,0 +1,1861 @@
+{
+ "keeper": "2026-09-28-miso-280-splitremap",
+ "bundle": "results/calibration/miso280_span",
+ "years": {
+  "2019": {
+   "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "hours": 8759,
+   "model_lw": 27.91,
+   "actual_indiana_rt": 26.41,
+   "gap": 1.5,
+   "gap_pct": 5.7,
+   "load_weight_term": 0.35,
+   "equal_hour_gap": 1.15,
+   "bands": {
+    "p0-50": {
+     "n": 4368,
+     "actual_lo": 2.26,
+     "actual_hi": 23.33,
+     "contrib_vs_indiana": 2.6
+    },
+    "p50-75": {
+     "n": 2200,
+     "actual_lo": 23.33,
+     "actual_hi": 26.68,
+     "contrib_vs_indiana": 1.09
+    },
+    "p75-90": {
+     "n": 1314,
+     "actual_lo": 26.68,
+     "actual_hi": 33.72,
+     "contrib_vs_indiana": 0.15
+    },
+    "p90-95": {
+     "n": 439,
+     "actual_lo": 33.72,
+     "actual_hi": 42.72,
+     "contrib_vs_indiana": -0.33
+    },
+    "p95-99": {
+     "n": 350,
+     "actual_lo": 42.72,
+     "actual_hi": 81.23,
+     "contrib_vs_indiana": -0.96
+    },
+    "p99-100": {
+     "n": 88,
+     "actual_lo": 81.23,
+     "actual_hi": 936.4,
+     "contrib_vs_indiana": -1.39
+    }
+   },
+   "hour_groups": {
+    "night_h0_5": {
+     "n": 2190,
+     "contrib_vs_indiana": 0.61,
+     "mean_diff_vs_indiana": 2.43
+    },
+    "morning_h6": {
+     "n": 365,
+     "contrib_vs_indiana": -0.17,
+     "mean_diff_vs_indiana": -4.13
+    },
+    "day_h7_14": {
+     "n": 2920,
+     "contrib_vs_indiana": -0.13,
+     "mean_diff_vs_indiana": -0.38
+    },
+    "evening_h15_20": {
+     "n": 2190,
+     "contrib_vs_indiana": 0.1,
+     "mean_diff_vs_indiana": 0.39
+    },
+    "late_h21_23": {
+     "n": 1094,
+     "contrib_vs_indiana": 0.75,
+     "mean_diff_vs_indiana": 5.99
+    }
+   },
+   "by_hod_vs_indiana": [
+    5.0,
+    4.8,
+    4.6,
+    3.3,
+    0.0,
+    -3.1,
+    -4.1,
+    -1.7,
+    -1.2,
+    0.8,
+    1.8,
+    0.9,
+    0.0,
+    -0.7,
+    -3.1,
+    -2.1,
+    -1.3,
+    -2.5,
+    0.9,
+    2.7,
+    4.5,
+    6.3,
+    6.1,
+    5.6
+   ],
+   "months_detail": {
+    "1": {
+     "actual": 31.02,
+     "model": 29.66,
+     "contrib_vs_indiana": -0.12,
+     "chicago_gas": 3.244,
+     "ihr_actual": 9.56,
+     "ihr_model": 9.14
+    },
+    "2": {
+     "actual": 26.5,
+     "model": 29.87,
+     "contrib_vs_indiana": 0.26,
+     "chicago_gas": 2.65,
+     "ihr_actual": 10.0,
+     "ihr_model": 11.27
+    },
+    "3": {
+     "actual": 27.48,
+     "model": 29.04,
+     "contrib_vs_indiana": 0.13,
+     "chicago_gas": 3.364,
+     "ihr_actual": 8.17,
+     "ihr_model": 8.63
+    },
+    "4": {
+     "actual": 27.1,
+     "model": 27.39,
+     "contrib_vs_indiana": 0.02,
+     "chicago_gas": 2.45,
+     "ihr_actual": 11.06,
+     "ihr_model": 11.18
+    },
+    "5": {
+     "actual": 24.59,
+     "model": 27.98,
+     "contrib_vs_indiana": 0.29,
+     "chicago_gas": 2.358,
+     "ihr_actual": 10.43,
+     "ihr_model": 11.86
+    },
+    "6": {
+     "actual": 24.02,
+     "model": 25.88,
+     "contrib_vs_indiana": 0.15,
+     "chicago_gas": 2.106,
+     "ihr_actual": 11.4,
+     "ihr_model": 12.29
+    },
+    "7": {
+     "actual": 28.41,
+     "model": 26.89,
+     "contrib_vs_indiana": -0.13,
+     "chicago_gas": 2.142,
+     "ihr_actual": 13.27,
+     "ihr_model": 12.56
+    },
+    "8": {
+     "actual": 23.99,
+     "model": 26.41,
+     "contrib_vs_indiana": 0.21,
+     "chicago_gas": 1.98,
+     "ihr_actual": 12.11,
+     "ihr_model": 13.34
+    },
+    "9": {
+     "actual": 27.19,
+     "model": 27.24,
+     "contrib_vs_indiana": 0.0,
+     "chicago_gas": 2.125,
+     "ihr_actual": 12.8,
+     "ihr_model": 12.82
+    },
+    "10": {
+     "actual": 25.76,
+     "model": 25.77,
+     "contrib_vs_indiana": 0.0,
+     "chicago_gas": 1.97,
+     "ihr_actual": 13.07,
+     "ihr_model": 13.08
+    },
+    "11": {
+     "actual": 28.08,
+     "model": 27.82,
+     "contrib_vs_indiana": -0.02,
+     "chicago_gas": 2.498,
+     "ihr_actual": 11.24,
+     "ihr_model": 11.14
+    },
+    "12": {
+     "actual": 22.87,
+     "model": 27.01,
+     "contrib_vs_indiana": 0.35,
+     "chicago_gas": 2.154,
+     "ihr_actual": 10.62,
+     "ihr_model": 12.54
+    }
+   },
+   "chicago_gas_mean": 2.42,
+   "ihr_actual": 10.92,
+   "ihr_model": 11.39,
+   "model_max": 57.27,
+   "actual_max": 936.4,
+   "hours_actual_gt_150": 27,
+   "hours_model_gt_150": 0
+  },
+  "2020": {
+   "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "hours": 8760,
+   "model_lw": 24.51,
+   "actual_indiana_rt": 22.31,
+   "gap": 2.2,
+   "gap_pct": 9.9,
+   "load_weight_term": 0.44,
+   "equal_hour_gap": 1.76,
+   "bands": {
+    "p0-50": {
+     "n": 4379,
+     "actual_lo": -23.58,
+     "actual_hi": 19.86,
+     "contrib_vs_indiana": 2.52
+    },
+    "p50-75": {
+     "n": 2191,
+     "actual_lo": 19.86,
+     "actual_hi": 23.09,
+     "contrib_vs_indiana": 1.17
+    },
+    "p75-90": {
+     "n": 1314,
+     "actual_lo": 23.09,
+     "actual_hi": 29.72,
+     "contrib_vs_indiana": 0.25
+    },
+    "p90-95": {
+     "n": 438,
+     "actual_lo": 29.72,
+     "actual_hi": 39.17,
+     "contrib_vs_indiana": -0.3
+    },
+    "p95-99": {
+     "n": 350,
+     "actual_lo": 39.17,
+     "actual_hi": 77.63,
+     "contrib_vs_indiana": -0.98
+    },
+    "p99-100": {
+     "n": 88,
+     "actual_lo": 77.63,
+     "actual_hi": 325.12,
+     "contrib_vs_indiana": -0.91
+    }
+   },
+   "hour_groups": {
+    "night_h0_5": {
+     "n": 2190,
+     "contrib_vs_indiana": 0.81,
+     "mean_diff_vs_indiana": 3.23
+    },
+    "morning_h6": {
+     "n": 365,
+     "contrib_vs_indiana": -0.04,
+     "mean_diff_vs_indiana": -0.91
+    },
+    "day_h7_14": {
+     "n": 2920,
+     "contrib_vs_indiana": 0.08,
+     "mean_diff_vs_indiana": 0.24
+    },
+    "evening_h15_20": {
+     "n": 2190,
+     "contrib_vs_indiana": 0.28,
+     "mean_diff_vs_indiana": 1.11
+    },
+    "late_h21_23": {
+     "n": 1095,
+     "contrib_vs_indiana": 0.63,
+     "mean_diff_vs_indiana": 5.05
+    }
+   },
+   "by_hod_vs_indiana": [
+    4.2,
+    5.0,
+    4.7,
+    3.5,
+    1.6,
+    0.3,
+    -0.9,
+    -0.3,
+    0.3,
+    -0.4,
+    -0.3,
+    -0.2,
+    1.3,
+    1.3,
+    0.2,
+    -1.0,
+    -2.5,
+    -0.4,
+    1.9,
+    3.4,
+    5.3,
+    4.8,
+    5.1,
+    5.3
+   ],
+   "months_detail": {
+    "1": {
+     "actual": 23.65,
+     "model": 25.86,
+     "contrib_vs_indiana": 0.19,
+     "chicago_gas": 1.918,
+     "ihr_actual": 12.33,
+     "ihr_model": 13.48
+    },
+    "2": {
+     "actual": 20.65,
+     "model": 24.62,
+     "contrib_vs_indiana": 0.3,
+     "chicago_gas": 1.745,
+     "ihr_actual": 11.83,
+     "ihr_model": 14.11
+    },
+    "3": {
+     "actual": 19.48,
+     "model": 22.61,
+     "contrib_vs_indiana": 0.27,
+     "chicago_gas": 1.576,
+     "ihr_actual": 12.36,
+     "ihr_model": 14.35
+    },
+    "4": {
+     "actual": 20.37,
+     "model": 21.42,
+     "contrib_vs_indiana": 0.09,
+     "chicago_gas": 1.67,
+     "ihr_actual": 12.2,
+     "ihr_model": 12.83
+    },
+    "5": {
+     "actual": 19.83,
+     "model": 23.01,
+     "contrib_vs_indiana": 0.27,
+     "chicago_gas": 1.662,
+     "ihr_actual": 11.93,
+     "ihr_model": 13.84
+    },
+    "6": {
+     "actual": 20.54,
+     "model": 22.32,
+     "contrib_vs_indiana": 0.15,
+     "chicago_gas": 1.568,
+     "ihr_actual": 13.1,
+     "ihr_model": 14.23
+    },
+    "7": {
+     "actual": 26.67,
+     "model": 24.88,
+     "contrib_vs_indiana": -0.15,
+     "chicago_gas": 1.677,
+     "ihr_actual": 15.91,
+     "ihr_model": 14.84
+    },
+    "8": {
+     "actual": 23.94,
+     "model": 24.56,
+     "contrib_vs_indiana": 0.05,
+     "chicago_gas": 2.066,
+     "ihr_actual": 11.59,
+     "ihr_model": 11.89
+    },
+    "9": {
+     "actual": 20.07,
+     "model": 22.93,
+     "contrib_vs_indiana": 0.23,
+     "chicago_gas": 1.782,
+     "ihr_actual": 11.26,
+     "ihr_model": 12.87
+    },
+    "10": {
+     "actual": 25.18,
+     "model": 24.67,
+     "contrib_vs_indiana": -0.04,
+     "chicago_gas": 2.134,
+     "ihr_actual": 11.8,
+     "ihr_model": 11.56
+    },
+    "11": {
+     "actual": 22.65,
+     "model": 24.43,
+     "contrib_vs_indiana": 0.15,
+     "chicago_gas": 2.316,
+     "ihr_actual": 9.78,
+     "ihr_model": 10.55
+    },
+    "12": {
+     "actual": 24.31,
+     "model": 27.38,
+     "contrib_vs_indiana": 0.26,
+     "chicago_gas": 2.466,
+     "ihr_actual": 9.86,
+     "ihr_model": 11.1
+    }
+   },
+   "chicago_gas_mean": 1.883,
+   "ihr_actual": 11.84,
+   "ihr_model": 12.78,
+   "model_max": 39.47,
+   "actual_max": 325.12,
+   "hours_actual_gt_150": 13,
+   "hours_model_gt_150": 0
+  },
+  "2021": {
+   "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "hours": 8759,
+   "model_lw": 37.03,
+   "actual_indiana_rt": 39.46,
+   "gap": -2.43,
+   "gap_pct": -6.2,
+   "load_weight_term": 0.89,
+   "equal_hour_gap": -3.32,
+   "bands": {
+    "p0-50": {
+     "n": 4378,
+     "actual_lo": 1.99,
+     "actual_hi": 31.06,
+     "contrib_vs_indiana": 3.62
+    },
+    "p50-75": {
+     "n": 2190,
+     "actual_lo": 31.06,
+     "actual_hi": 46.43,
+     "contrib_vs_indiana": 0.02
+    },
+    "p75-90": {
+     "n": 1315,
+     "actual_lo": 46.43,
+     "actual_hi": 64.88,
+     "contrib_vs_indiana": -1.94
+    },
+    "p90-95": {
+     "n": 438,
+     "actual_lo": 64.88,
+     "actual_hi": 79.57,
+     "contrib_vs_indiana": -1.35
+    },
+    "p95-99": {
+     "n": 350,
+     "actual_lo": 79.57,
+     "actual_hi": 146.84,
+     "contrib_vs_indiana": -2.0
+    },
+    "p99-100": {
+     "n": 88,
+     "actual_lo": 146.84,
+     "actual_hi": 647.0,
+     "contrib_vs_indiana": -1.67
+    }
+   },
+   "hour_groups": {
+    "night_h0_5": {
+     "n": 2189,
+     "contrib_vs_indiana": -0.07,
+     "mean_diff_vs_indiana": -0.27
+    },
+    "morning_h6": {
+     "n": 365,
+     "contrib_vs_indiana": -0.46,
+     "mean_diff_vs_indiana": -11.11
+    },
+    "day_h7_14": {
+     "n": 2920,
+     "contrib_vs_indiana": -1.51,
+     "mean_diff_vs_indiana": -4.52
+    },
+    "evening_h15_20": {
+     "n": 2190,
+     "contrib_vs_indiana": -1.75,
+     "mean_diff_vs_indiana": -6.99
+    },
+    "late_h21_23": {
+     "n": 1095,
+     "contrib_vs_indiana": 0.47,
+     "mean_diff_vs_indiana": 3.72
+    }
+   },
+   "by_hod_vs_indiana": [
+    3.3,
+    3.5,
+    2.6,
+    0.8,
+    -4.0,
+    -7.7,
+    -11.1,
+    -4.5,
+    -4.8,
+    -4.4,
+    -4.7,
+    -5.0,
+    -4.1,
+    -3.8,
+    -4.9,
+    -9.8,
+    -11.0,
+    -10.2,
+    -8.5,
+    -3.0,
+    0.5,
+    4.2,
+    4.3,
+    2.6
+   ],
+   "months_detail": {
+    "1": {
+     "actual": 25.7,
+     "model": 29.62,
+     "contrib_vs_indiana": 0.33,
+     "chicago_gas": 2.54,
+     "ihr_actual": 10.12,
+     "ihr_model": 11.66
+    },
+    "2": {
+     "actual": 42.65,
+     "model": 45.63,
+     "contrib_vs_indiana": 0.23,
+     "chicago_gas": 22.714,
+     "ihr_actual": 1.88,
+     "ihr_model": 2.01
+    },
+    "3": {
+     "actual": 23.42,
+     "model": 29.19,
+     "contrib_vs_indiana": 0.49,
+     "chicago_gas": 2.472,
+     "ihr_actual": 9.47,
+     "ihr_model": 11.81
+    },
+    "4": {
+     "actual": 30.05,
+     "model": 30.33,
+     "contrib_vs_indiana": 0.02,
+     "chicago_gas": 2.547,
+     "ihr_actual": 11.8,
+     "ihr_model": 11.91
+    },
+    "5": {
+     "actual": 26.49,
+     "model": 31.12,
+     "contrib_vs_indiana": 0.39,
+     "chicago_gas": 2.765,
+     "ihr_actual": 9.58,
+     "ihr_model": 11.26
+    },
+    "6": {
+     "actual": 33.5,
+     "model": 33.09,
+     "contrib_vs_indiana": -0.03,
+     "chicago_gas": 3.151,
+     "ihr_actual": 10.63,
+     "ihr_model": 10.5
+    },
+    "7": {
+     "actual": 36.71,
+     "model": 39.1,
+     "contrib_vs_indiana": 0.2,
+     "chicago_gas": 3.612,
+     "ihr_actual": 10.16,
+     "ihr_model": 10.83
+    },
+    "8": {
+     "actual": 42.53,
+     "model": 43.09,
+     "contrib_vs_indiana": 0.05,
+     "chicago_gas": 3.927,
+     "ihr_actual": 10.83,
+     "ihr_model": 10.97
+    },
+    "9": {
+     "actual": 46.16,
+     "model": 36.75,
+     "contrib_vs_indiana": -0.77,
+     "chicago_gas": 4.839,
+     "ihr_actual": 9.54,
+     "ihr_model": 7.59
+    },
+    "10": {
+     "actual": 58.96,
+     "model": 40.5,
+     "contrib_vs_indiana": -1.57,
+     "chicago_gas": 5.241,
+     "ihr_actual": 11.25,
+     "ihr_model": 7.73
+    },
+    "11": {
+     "actual": 66.39,
+     "model": 40.68,
+     "contrib_vs_indiana": -2.11,
+     "chicago_gas": 4.981,
+     "ihr_actual": 13.33,
+     "ihr_model": 8.17
+    },
+    "12": {
+     "actual": 41.85,
+     "model": 35.36,
+     "contrib_vs_indiana": -0.55,
+     "chicago_gas": 3.622,
+     "ihr_actual": 11.55,
+     "ihr_model": 9.76
+    }
+   },
+   "chicago_gas_mean": 5.071,
+   "ihr_actual": 7.78,
+   "ihr_model": 7.13,
+   "model_max": 166.03,
+   "actual_max": 647.0,
+   "hours_actual_gt_150": 83,
+   "hours_model_gt_150": 5
+  },
+  "2022": {
+   "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+   ],
+   "hours": 7296,
+   "model_lw": 59.98,
+   "actual_indiana_rt": 71.01,
+   "gap": -11.03,
+   "gap_pct": -15.5,
+   "load_weight_term": 1.45,
+   "equal_hour_gap": -12.49,
+   "components_hours": 7296,
+   "components_lmp_vs_actuals_maxabs": 0.0,
+   "indiana_mcc_mean": 5.84,
+   "indiana_mlc_mean": 2.63,
+   "mec_mean": 62.54,
+   "model_eq_minus_mec": -4.02,
+   "hub_mcc_plus_mlc": {
+    "MINN.HUB": -17.17,
+    "ILLINOIS.HUB": 0.85,
+    "INDIANA.HUB": 8.47,
+    "MICHIGAN.HUB": 4.15,
+    "ARKANSAS.HUB": -3.07
+   },
+   "bands": {
+    "p0-50": {
+     "n": 3648,
+     "actual_lo": -4.43,
+     "actual_hi": 60.15,
+     "contrib_vs_indiana": 2.44,
+     "contrib_vs_mec": 4.95,
+     "contrib_wedge": -2.51
+    },
+    "p50-75": {
+     "n": 1824,
+     "actual_lo": 60.15,
+     "actual_hi": 83.74,
+     "contrib_vs_indiana": -2.37,
+     "contrib_vs_mec": -0.25,
+     "contrib_wedge": -2.12
+    },
+    "p75-90": {
+     "n": 1094,
+     "actual_lo": 83.74,
+     "actual_hi": 110.42,
+     "contrib_vs_indiana": -3.56,
+     "contrib_vs_mec": -2.07,
+     "contrib_wedge": -1.5
+    },
+    "p90-95": {
+     "n": 364,
+     "actual_lo": 110.42,
+     "actual_hi": 134.39,
+     "contrib_vs_indiana": -2.28,
+     "contrib_vs_mec": -1.6,
+     "contrib_wedge": -0.68
+    },
+    "p95-99": {
+     "n": 293,
+     "actual_lo": 134.39,
+     "actual_hi": 244.47,
+     "contrib_vs_indiana": -3.7,
+     "contrib_vs_mec": -2.62,
+     "contrib_wedge": -1.07
+    },
+    "p99-100": {
+     "n": 73,
+     "actual_lo": 244.47,
+     "actual_hi": 1082.57,
+     "contrib_vs_indiana": -3.02,
+     "contrib_vs_mec": -2.43,
+     "contrib_wedge": -0.59
+    }
+   },
+   "hour_groups": {
+    "night_h0_5": {
+     "n": 1824,
+     "contrib_vs_indiana": -0.48,
+     "mean_diff_vs_indiana": -1.91,
+     "contrib_vs_mec": 1.61,
+     "mean_diff_vs_mec": 6.42
+    },
+    "morning_h6": {
+     "n": 304,
+     "contrib_vs_indiana": -0.46,
+     "mean_diff_vs_indiana": -11.11,
+     "contrib_vs_mec": -0.11,
+     "mean_diff_vs_mec": -2.56
+    },
+    "day_h7_14": {
+     "n": 2432,
+     "contrib_vs_indiana": -5.58,
+     "mean_diff_vs_indiana": -16.74,
+     "contrib_vs_mec": -2.62,
+     "mean_diff_vs_mec": -7.86
+    },
+    "evening_h15_20": {
+     "n": 1824,
+     "contrib_vs_indiana": -5.67,
+     "mean_diff_vs_indiana": -22.68,
+     "contrib_vs_mec": -3.5,
+     "mean_diff_vs_mec": -14.01
+    },
+    "late_h21_23": {
+     "n": 912,
+     "contrib_vs_indiana": -0.3,
+     "mean_diff_vs_indiana": -2.38,
+     "contrib_vs_mec": 0.6,
+     "mean_diff_vs_mec": 4.81
+    }
+   },
+   "by_hod_vs_indiana": [
+    2.1,
+    3.6,
+    3.6,
+    -1.1,
+    -7.7,
+    -12.0,
+    -11.1,
+    -9.7,
+    -11.6,
+    -11.6,
+    -16.6,
+    -18.3,
+    -19.6,
+    -18.9,
+    -27.6,
+    -27.1,
+    -32.0,
+    -32.3,
+    -25.0,
+    -13.3,
+    -6.4,
+    -1.9,
+    -4.0,
+    -1.3
+   ],
+   "by_hod_vs_mec": [
+    9.1,
+    10.3,
+    10.6,
+    7.5,
+    2.5,
+    -1.5,
+    -2.6,
+    -2.2,
+    -4.0,
+    -3.8,
+    -8.5,
+    -8.9,
+    -9.4,
+    -9.4,
+    -16.6,
+    -16.2,
+    -22.4,
+    -22.0,
+    -16.9,
+    -6.3,
+    -0.1,
+    4.7,
+    3.3,
+    6.4
+   ],
+   "months_detail": {
+    "1": {
+     "actual": 53.97,
+     "model": 48.23,
+     "contrib_vs_indiana": -0.59,
+     "chicago_gas": 4.214,
+     "ihr_actual": 12.81,
+     "ihr_model": 11.44,
+     "mec": 44.96,
+     "ihr_mec": 10.67
+    },
+    "2": {
+     "actual": 46.74,
+     "model": 45.14,
+     "contrib_vs_indiana": -0.15,
+     "chicago_gas": 4.45,
+     "ihr_actual": 10.5,
+     "ihr_model": 10.14,
+     "mec": 41.13,
+     "ihr_mec": 9.24
+    },
+    "3": {
+     "actual": 49.64,
+     "model": 46.47,
+     "contrib_vs_indiana": -0.32,
+     "chicago_gas": 4.646,
+     "ihr_actual": 10.68,
+     "ihr_model": 10.0,
+     "mec": 39.9,
+     "ihr_mec": 8.59
+    },
+    "4": {
+     "actual": 68.24,
+     "model": 49.4,
+     "contrib_vs_indiana": -1.86,
+     "chicago_gas": 6.44,
+     "ihr_actual": 10.6,
+     "ihr_model": 7.67,
+     "mec": 56.55,
+     "ihr_mec": 8.78
+    },
+    "5": {
+     "actual": 76.22,
+     "model": 60.23,
+     "contrib_vs_indiana": -1.63,
+     "chicago_gas": 7.838,
+     "ihr_actual": 9.72,
+     "ihr_model": 7.68,
+     "mec": 70.85,
+     "ihr_mec": 9.04
+    },
+    "6": {
+     "actual": 85.95,
+     "model": 66.14,
+     "contrib_vs_indiana": -1.96,
+     "chicago_gas": 7.356,
+     "ihr_actual": 11.68,
+     "ihr_model": 8.99,
+     "mec": 77.44,
+     "ihr_mec": 10.53
+    },
+    "7": {
+     "actual": 88.4,
+     "model": 75.11,
+     "contrib_vs_indiana": -1.35,
+     "chicago_gas": 6.869,
+     "ihr_actual": 12.87,
+     "ihr_model": 10.93,
+     "mec": 80.75,
+     "ihr_mec": 11.76
+    },
+    "8": {
+     "actual": 100.8,
+     "model": 79.52,
+     "contrib_vs_indiana": -2.17,
+     "chicago_gas": 8.325,
+     "ihr_actual": 12.11,
+     "ihr_model": 9.55,
+     "mec": 91.32,
+     "ihr_mec": 10.97
+    },
+    "9": {
+     "actual": 78.24,
+     "model": 62.35,
+     "contrib_vs_indiana": -1.57,
+     "chicago_gas": 6.889,
+     "ihr_actual": 11.36,
+     "ihr_model": 9.05,
+     "mec": 70.0,
+     "ihr_mec": 10.16
+    },
+    "10": {
+     "actual": 60.18,
+     "model": 51.41,
+     "contrib_vs_indiana": -0.89,
+     "chicago_gas": 5.069,
+     "ihr_actual": 11.87,
+     "ihr_model": 10.14,
+     "mec": 50.98,
+     "ihr_mec": 10.06
+    }
+   },
+   "chicago_gas_mean": 6.22,
+   "ihr_actual": 11.42,
+   "ihr_model": 9.41,
+   "ihr_mec": 10.05,
+   "model_max": 98.59,
+   "actual_max": 1082.57,
+   "hours_actual_gt_150": 260,
+   "hours_model_gt_150": 0
+  },
+  "2023": {
+   "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "hours": 8760,
+   "model_lw": 32.74,
+   "actual_indiana_rt": 31.79,
+   "gap": 0.95,
+   "gap_pct": 3.0,
+   "load_weight_term": 0.64,
+   "equal_hour_gap": 0.31,
+   "components_hours": 8760,
+   "components_lmp_vs_actuals_maxabs": 0.09,
+   "indiana_mcc_mean": 1.75,
+   "indiana_mlc_mean": 0.71,
+   "mec_mean": 29.33,
+   "model_eq_minus_mec": 2.77,
+   "hub_mcc_plus_mlc": {
+    "MINN.HUB": -0.58,
+    "ILLINOIS.HUB": -1.13,
+    "INDIANA.HUB": 2.46,
+    "MICHIGAN.HUB": 0.63,
+    "ARKANSAS.HUB": -3.45
+   },
+   "bands": {
+    "p0-50": {
+     "n": 4380,
+     "actual_lo": -3.25,
+     "actual_hi": 27.14,
+     "contrib_vs_indiana": 3.27,
+     "contrib_vs_mec": 3.82,
+     "contrib_wedge": -0.55
+    },
+    "p50-75": {
+     "n": 2190,
+     "actual_lo": 27.14,
+     "actual_hi": 33.78,
+     "contrib_vs_indiana": 1.03,
+     "contrib_vs_mec": 1.4,
+     "contrib_wedge": -0.38
+    },
+    "p75-90": {
+     "n": 1314,
+     "actual_lo": 33.78,
+     "actual_hi": 43.75,
+     "contrib_vs_indiana": -0.09,
+     "contrib_vs_mec": 0.21,
+     "contrib_wedge": -0.3
+    },
+    "p90-95": {
+     "n": 438,
+     "actual_lo": 43.75,
+     "actual_hi": 58.79,
+     "contrib_vs_indiana": -0.63,
+     "contrib_vs_mec": -0.34,
+     "contrib_wedge": -0.29
+    },
+    "p95-99": {
+     "n": 349,
+     "actual_lo": 58.79,
+     "actual_hi": 118.17,
+     "contrib_vs_indiana": -1.7,
+     "contrib_vs_mec": -0.98,
+     "contrib_wedge": -0.73
+    },
+    "p99-100": {
+     "n": 89,
+     "actual_lo": 118.17,
+     "actual_hi": 585.12,
+     "contrib_vs_indiana": -1.56,
+     "contrib_vs_mec": -1.34,
+     "contrib_wedge": -0.22
+    }
+   },
+   "hour_groups": {
+    "night_h0_5": {
+     "n": 2190,
+     "contrib_vs_indiana": 0.57,
+     "mean_diff_vs_indiana": 2.29,
+     "contrib_vs_mec": 1.32,
+     "mean_diff_vs_mec": 5.26
+    },
+    "morning_h6": {
+     "n": 365,
+     "contrib_vs_indiana": -0.17,
+     "mean_diff_vs_indiana": -3.98,
+     "contrib_vs_mec": -0.01,
+     "mean_diff_vs_mec": -0.35
+    },
+    "day_h7_14": {
+     "n": 2920,
+     "contrib_vs_indiana": 0.1,
+     "mean_diff_vs_indiana": 0.3,
+     "contrib_vs_mec": 0.75,
+     "mean_diff_vs_mec": 2.24
+    },
+    "evening_h15_20": {
+     "n": 2190,
+     "contrib_vs_indiana": -0.8,
+     "mean_diff_vs_indiana": -3.21,
+     "contrib_vs_mec": -0.13,
+     "mean_diff_vs_mec": -0.51
+    },
+    "late_h21_23": {
+     "n": 1095,
+     "contrib_vs_indiana": 0.6,
+     "mean_diff_vs_indiana": 4.81,
+     "contrib_vs_mec": 0.85,
+     "mean_diff_vs_mec": 6.77
+    }
+   },
+   "by_hod_vs_indiana": [
+    5.5,
+    5.3,
+    4.7,
+    2.5,
+    -1.5,
+    -2.7,
+    -4.0,
+    0.0,
+    -0.0,
+    0.5,
+    1.5,
+    0.2,
+    -0.2,
+    1.2,
+    -0.7,
+    -7.0,
+    -7.2,
+    -6.6,
+    -2.2,
+    0.0,
+    3.7,
+    5.3,
+    4.4,
+    4.7
+   ],
+   "by_hod_vs_mec": [
+    7.3,
+    7.4,
+    7.1,
+    5.6,
+    2.6,
+    1.6,
+    -0.4,
+    2.1,
+    1.6,
+    2.1,
+    3.2,
+    2.1,
+    1.8,
+    3.2,
+    1.8,
+    -3.7,
+    -4.1,
+    -3.9,
+    -0.0,
+    2.5,
+    6.1,
+    7.1,
+    6.4,
+    6.8
+   ],
+   "months_detail": {
+    "1": {
+     "actual": 37.69,
+     "model": 34.6,
+     "contrib_vs_indiana": -0.26,
+     "chicago_gas": 5.074,
+     "ihr_actual": 7.43,
+     "ihr_model": 6.82,
+     "mec": 33.24,
+     "ihr_mec": 6.55
+    },
+    "2": {
+     "actual": 26.39,
+     "model": 28.4,
+     "contrib_vs_indiana": 0.15,
+     "chicago_gas": 2.342,
+     "ihr_actual": 11.27,
+     "ihr_model": 12.12,
+     "mec": 24.98,
+     "ihr_mec": 10.67
+    },
+    "3": {
+     "actual": 29.44,
+     "model": 31.36,
+     "contrib_vs_indiana": 0.16,
+     "chicago_gas": 2.324,
+     "ihr_actual": 12.67,
+     "ihr_model": 13.49,
+     "mec": 25.9,
+     "ihr_mec": 11.14
+    },
+    "4": {
+     "actual": 30.39,
+     "model": 29.04,
+     "contrib_vs_indiana": -0.11,
+     "chicago_gas": 2.002,
+     "ihr_actual": 15.18,
+     "ihr_model": 14.51,
+     "mec": 25.71,
+     "ihr_mec": 12.85
+    },
+    "5": {
+     "actual": 32.75,
+     "model": 30.9,
+     "contrib_vs_indiana": -0.16,
+     "chicago_gas": 1.935,
+     "ihr_actual": 16.92,
+     "ihr_model": 15.96,
+     "mec": 27.44,
+     "ihr_mec": 14.18
+    },
+    "6": {
+     "actual": 29.63,
+     "model": 31.66,
+     "contrib_vs_indiana": 0.17,
+     "chicago_gas": 2.027,
+     "ihr_actual": 14.61,
+     "ihr_model": 15.62,
+     "mec": 29.31,
+     "ihr_mec": 14.46
+    },
+    "7": {
+     "actual": 33.82,
+     "model": 34.68,
+     "contrib_vs_indiana": 0.07,
+     "chicago_gas": 2.292,
+     "ihr_actual": 14.75,
+     "ihr_model": 15.13,
+     "mec": 33.83,
+     "ihr_mec": 14.76
+    },
+    "8": {
+     "actual": 33.96,
+     "model": 34.88,
+     "contrib_vs_indiana": 0.08,
+     "chicago_gas": 2.351,
+     "ihr_actual": 14.44,
+     "ihr_model": 14.83,
+     "mec": 34.11,
+     "ihr_mec": 14.51
+    },
+    "9": {
+     "actual": 32.32,
+     "model": 32.52,
+     "contrib_vs_indiana": 0.02,
+     "chicago_gas": 2.276,
+     "ihr_actual": 14.2,
+     "ihr_model": 14.28,
+     "mec": 30.53,
+     "ihr_mec": 13.41
+    },
+    "10": {
+     "actual": 35.33,
+     "model": 33.63,
+     "contrib_vs_indiana": -0.14,
+     "chicago_gas": 2.358,
+     "ihr_actual": 14.98,
+     "ihr_model": 14.26,
+     "mec": 32.82,
+     "ihr_mec": 13.92
+    },
+    "11": {
+     "actual": 32.29,
+     "model": 32.9,
+     "contrib_vs_indiana": 0.05,
+     "chicago_gas": 2.404,
+     "ihr_actual": 13.43,
+     "ihr_model": 13.69,
+     "mec": 28.32,
+     "ihr_mec": 11.78
+    },
+    "12": {
+     "actual": 26.87,
+     "model": 30.15,
+     "contrib_vs_indiana": 0.28,
+     "chicago_gas": 2.21,
+     "ihr_actual": 12.16,
+     "ihr_model": 13.64,
+     "mec": 25.23,
+     "ihr_mec": 11.42
+    }
+   },
+   "chicago_gas_mean": 2.471,
+   "ihr_actual": 12.87,
+   "ihr_model": 12.99,
+   "ihr_mec": 11.87,
+   "model_max": 235.33,
+   "actual_max": 585.12,
+   "hours_actual_gt_150": 49,
+   "hours_model_gt_150": 3
+  },
+  "2024": {
+   "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "hours": 8760,
+   "model_lw": 30.78,
+   "actual_indiana_rt": 30.8,
+   "gap": -0.02,
+   "gap_pct": -0.0,
+   "load_weight_term": 1.05,
+   "equal_hour_gap": -1.06,
+   "components_hours": 8760,
+   "components_lmp_vs_actuals_maxabs": 12.42,
+   "indiana_mcc_mean": 1.55,
+   "indiana_mlc_mean": 0.77,
+   "mec_mean": 28.48,
+   "model_eq_minus_mec": 1.26,
+   "hub_mcc_plus_mlc": {
+    "MINN.HUB": -1.05,
+    "ILLINOIS.HUB": -1.95,
+    "INDIANA.HUB": 2.32,
+    "MICHIGAN.HUB": 1.35,
+    "ARKANSAS.HUB": -4.49
+   },
+   "bands": {
+    "p0-50": {
+     "n": 4380,
+     "actual_lo": -27.82,
+     "actual_hi": 24.55,
+     "contrib_vs_indiana": 2.72,
+     "contrib_vs_mec": 3.39,
+     "contrib_wedge": -0.67
+    },
+    "p50-75": {
+     "n": 2190,
+     "actual_lo": 24.55,
+     "actual_hi": 31.46,
+     "contrib_vs_indiana": 0.86,
+     "contrib_vs_mec": 1.29,
+     "contrib_wedge": -0.43
+    },
+    "p75-90": {
+     "n": 1314,
+     "actual_lo": 31.46,
+     "actual_hi": 45.65,
+     "contrib_vs_indiana": -0.43,
+     "contrib_vs_mec": 0.0,
+     "contrib_wedge": -0.43
+    },
+    "p90-95": {
+     "n": 438,
+     "actual_lo": 45.65,
+     "actual_hi": 65.27,
+     "contrib_vs_indiana": -0.79,
+     "contrib_vs_mec": -0.58,
+     "contrib_wedge": -0.22
+    },
+    "p95-99": {
+     "n": 350,
+     "actual_lo": 65.27,
+     "actual_hi": 138.94,
+     "contrib_vs_indiana": -1.67,
+     "contrib_vs_mec": -1.24,
+     "contrib_wedge": -0.42
+    },
+    "p99-100": {
+     "n": 88,
+     "actual_lo": 138.94,
+     "actual_hi": 704.06,
+     "contrib_vs_indiana": -1.76,
+     "contrib_vs_mec": -1.62,
+     "contrib_wedge": -0.14
+    }
+   },
+   "hour_groups": {
+    "night_h0_5": {
+     "n": 2190,
+     "contrib_vs_indiana": 0.44,
+     "mean_diff_vs_indiana": 1.75,
+     "contrib_vs_mec": 1.08,
+     "mean_diff_vs_mec": 4.32
+    },
+    "morning_h6": {
+     "n": 365,
+     "contrib_vs_indiana": -0.14,
+     "mean_diff_vs_indiana": -3.41,
+     "contrib_vs_mec": -0.02,
+     "mean_diff_vs_mec": -0.52
+    },
+    "day_h7_14": {
+     "n": 2920,
+     "contrib_vs_indiana": 0.22,
+     "mean_diff_vs_indiana": 0.66,
+     "contrib_vs_mec": 0.78,
+     "mean_diff_vs_mec": 2.35
+    },
+    "evening_h15_20": {
+     "n": 2190,
+     "contrib_vs_indiana": -1.88,
+     "mean_diff_vs_indiana": -7.54,
+     "contrib_vs_mec": -1.15,
+     "mean_diff_vs_mec": -4.61
+    },
+    "late_h21_23": {
+     "n": 1095,
+     "contrib_vs_indiana": 0.31,
+     "mean_diff_vs_indiana": 2.47,
+     "contrib_vs_mec": 0.57,
+     "mean_diff_vs_mec": 4.53
+    }
+   },
+   "by_hod_vs_indiana": [
+    4.5,
+    3.6,
+    3.9,
+    2.3,
+    -0.2,
+    -3.6,
+    -3.4,
+    -0.3,
+    0.2,
+    1.7,
+    -0.2,
+    0.8,
+    1.7,
+    2.2,
+    -0.9,
+    -6.7,
+    -14.8,
+    -11.4,
+    -4.1,
+    -4.6,
+    -3.6,
+    2.8,
+    2.2,
+    2.4
+   ],
+   "by_hod_vs_mec": [
+    6.3,
+    5.7,
+    6.2,
+    5.0,
+    3.0,
+    -0.3,
+    -0.5,
+    1.3,
+    1.9,
+    2.9,
+    1.4,
+    2.6,
+    3.6,
+    4.0,
+    1.1,
+    -3.8,
+    -11.0,
+    -8.2,
+    -1.3,
+    -2.1,
+    -1.3,
+    4.7,
+    4.1,
+    4.8
+   ],
+   "months_detail": {
+    "1": {
+     "actual": 40.47,
+     "model": 42.73,
+     "contrib_vs_indiana": 0.19,
+     "chicago_gas": 5.47,
+     "ihr_actual": 7.4,
+     "ihr_model": 7.81,
+     "mec": 39.74,
+     "ihr_mec": 7.26
+    },
+    "2": {
+     "actual": 26.52,
+     "model": 25.54,
+     "contrib_vs_indiana": -0.08,
+     "chicago_gas": 1.557,
+     "ihr_actual": 17.03,
+     "ihr_model": 16.4,
+     "mec": 24.68,
+     "ihr_mec": 15.85
+    },
+    "3": {
+     "actual": 23.45,
+     "model": 24.65,
+     "contrib_vs_indiana": 0.1,
+     "chicago_gas": 1.418,
+     "ihr_actual": 16.53,
+     "ihr_model": 17.38,
+     "mec": 20.58,
+     "ihr_mec": 14.51
+    },
+    "4": {
+     "actual": 28.36,
+     "model": 24.31,
+     "contrib_vs_indiana": -0.33,
+     "chicago_gas": 1.401,
+     "ihr_actual": 20.24,
+     "ihr_model": 17.35,
+     "mec": 22.93,
+     "ihr_mec": 16.36
+    },
+    "5": {
+     "actual": 34.25,
+     "model": 28.43,
+     "contrib_vs_indiana": -0.49,
+     "chicago_gas": 1.673,
+     "ihr_actual": 20.48,
+     "ihr_model": 17.0,
+     "mec": 29.8,
+     "ihr_mec": 17.82
+    },
+    "6": {
+     "actual": 31.85,
+     "model": 28.78,
+     "contrib_vs_indiana": -0.25,
+     "chicago_gas": 1.961,
+     "ihr_actual": 16.24,
+     "ihr_model": 14.68,
+     "mec": 27.87,
+     "ihr_mec": 14.22
+    },
+    "7": {
+     "actual": 34.6,
+     "model": 31.05,
+     "contrib_vs_indiana": -0.3,
+     "chicago_gas": 1.843,
+     "ihr_actual": 18.78,
+     "ihr_model": 16.85,
+     "mec": 33.95,
+     "ihr_mec": 18.43
+    },
+    "8": {
+     "actual": 30.4,
+     "model": 32.97,
+     "contrib_vs_indiana": 0.22,
+     "chicago_gas": 1.702,
+     "ihr_actual": 17.86,
+     "ihr_model": 19.37,
+     "mec": 28.67,
+     "ihr_mec": 16.84
+    },
+    "9": {
+     "actual": 31.2,
+     "model": 29.09,
+     "contrib_vs_indiana": -0.17,
+     "chicago_gas": 1.963,
+     "ihr_actual": 15.9,
+     "ihr_model": 14.82,
+     "mec": 29.4,
+     "ihr_mec": 14.98
+    },
+    "10": {
+     "actual": 27.6,
+     "model": 26.92,
+     "contrib_vs_indiana": -0.06,
+     "chicago_gas": 1.977,
+     "ihr_actual": 13.96,
+     "ihr_model": 13.61,
+     "mec": 25.52,
+     "ihr_mec": 12.91
+    },
+    "11": {
+     "actual": 26.49,
+     "model": 28.12,
+     "contrib_vs_indiana": 0.13,
+     "chicago_gas": 1.761,
+     "ihr_actual": 15.04,
+     "ihr_model": 15.97,
+     "mec": 24.36,
+     "ihr_mec": 13.83
+    },
+    "12": {
+     "actual": 33.8,
+     "model": 33.56,
+     "contrib_vs_indiana": -0.02,
+     "chicago_gas": 2.781,
+     "ihr_actual": 12.16,
+     "ihr_model": 12.07,
+     "mec": 33.58,
+     "ihr_mec": 12.08
+    }
+   },
+   "chicago_gas_mean": 2.134,
+   "ihr_actual": 14.43,
+   "ihr_model": 13.93,
+   "ihr_mec": 13.35,
+   "model_max": 500.0,
+   "actual_max": 704.06,
+   "hours_actual_gt_150": 73,
+   "hours_model_gt_150": 17
+  },
+  "2025": {
+   "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "hours": 8759,
+   "model_lw": 41.67,
+   "actual_indiana_rt": 42.85,
+   "gap": -1.18,
+   "gap_pct": -2.8,
+   "load_weight_term": 1.25,
+   "equal_hour_gap": -2.43,
+   "components_hours": 8759,
+   "components_lmp_vs_actuals_maxabs": 0.0,
+   "indiana_mcc_mean": 1.56,
+   "indiana_mlc_mean": 0.88,
+   "mec_mean": 40.4,
+   "model_eq_minus_mec": 0.01,
+   "hub_mcc_plus_mlc": {
+    "MINN.HUB": -0.21,
+    "ILLINOIS.HUB": -3.05,
+    "INDIANA.HUB": 2.45,
+    "MICHIGAN.HUB": 2.48,
+    "ARKANSAS.HUB": -7.93
+   },
+   "bands": {
+    "p0-50": {
+     "n": 4378,
+     "actual_lo": 4.11,
+     "actual_hi": 32.74,
+     "contrib_vs_indiana": 4.28,
+     "contrib_vs_mec": 4.51,
+     "contrib_wedge": -0.23
+    },
+    "p50-75": {
+     "n": 2191,
+     "actual_lo": 32.74,
+     "actual_hi": 43.56,
+     "contrib_vs_indiana": 1.04,
+     "contrib_vs_mec": 1.73,
+     "contrib_wedge": -0.69
+    },
+    "p75-90": {
+     "n": 1314,
+     "actual_lo": 43.56,
+     "actual_hi": 63.03,
+     "contrib_vs_indiana": -0.66,
+     "contrib_vs_mec": -0.06,
+     "contrib_wedge": -0.6
+    },
+    "p90-95": {
+     "n": 438,
+     "actual_lo": 63.03,
+     "actual_hi": 89.14,
+     "contrib_vs_indiana": -1.09,
+     "contrib_vs_mec": -0.85,
+     "contrib_wedge": -0.24
+    },
+    "p95-99": {
+     "n": 350,
+     "actual_lo": 89.14,
+     "actual_hi": 200.12,
+     "contrib_vs_indiana": -2.67,
+     "contrib_vs_mec": -2.24,
+     "contrib_wedge": -0.43
+    },
+    "p99-100": {
+     "n": 88,
+     "actual_lo": 200.12,
+     "actual_hi": 1782.55,
+     "contrib_vs_indiana": -3.33,
+     "contrib_vs_mec": -3.08,
+     "contrib_wedge": -0.26
+    }
+   },
+   "hour_groups": {
+    "night_h0_5": {
+     "n": 2190,
+     "contrib_vs_indiana": 0.28,
+     "mean_diff_vs_indiana": 1.11,
+     "contrib_vs_mec": 1.4,
+     "mean_diff_vs_mec": 5.6
+    },
+    "morning_h6": {
+     "n": 365,
+     "contrib_vs_indiana": -0.33,
+     "mean_diff_vs_indiana": -8.03,
+     "contrib_vs_mec": -0.16,
+     "mean_diff_vs_mec": -3.73
+    },
+    "day_h7_14": {
+     "n": 2920,
+     "contrib_vs_indiana": 0.42,
+     "mean_diff_vs_indiana": 1.26,
+     "contrib_vs_mec": 0.6,
+     "mean_diff_vs_mec": 1.8
+    },
+    "evening_h15_20": {
+     "n": 2190,
+     "contrib_vs_indiana": -3.26,
+     "mean_diff_vs_indiana": -13.02,
+     "contrib_vs_mec": -2.69,
+     "mean_diff_vs_mec": -10.74
+    },
+    "late_h21_23": {
+     "n": 1094,
+     "contrib_vs_indiana": 0.46,
+     "mean_diff_vs_indiana": 3.67,
+     "contrib_vs_mec": 0.86,
+     "mean_diff_vs_mec": 6.85
+    }
+   },
+   "by_hod_vs_indiana": [
+    3.7,
+    5.7,
+    3.9,
+    2.3,
+    -2.6,
+    -6.3,
+    -8.0,
+    1.7,
+    0.6,
+    3.8,
+    -0.4,
+    1.0,
+    1.7,
+    -0.5,
+    2.2,
+    -3.0,
+    -18.4,
+    -34.7,
+    -16.0,
+    -5.5,
+    -0.4,
+    2.3,
+    4.1,
+    4.6
+   ],
+   "by_hod_vs_mec": [
+    7.1,
+    9.2,
+    8.1,
+    7.0,
+    2.8,
+    -0.6,
+    -3.7,
+    3.6,
+    2.5,
+    5.2,
+    0.1,
+    0.9,
+    0.7,
+    -1.1,
+    2.4,
+    -2.1,
+    -16.1,
+    -31.8,
+    -13.3,
+    -3.1,
+    2.0,
+    5.3,
+    7.1,
+    8.1
+   ],
+   "months_detail": {
+    "1": {
+     "actual": 48.91,
+     "model": 45.25,
+     "contrib_vs_indiana": -0.31,
+     "chicago_gas": 4.419,
+     "ihr_actual": 11.07,
+     "ihr_model": 10.24,
+     "mec": 43.26,
+     "ihr_mec": 9.79
+    },
+    "2": {
+     "actual": 44.54,
+     "model": 42.91,
+     "contrib_vs_indiana": -0.12,
+     "chicago_gas": 4.111,
+     "ihr_actual": 10.83,
+     "ihr_model": 10.44,
+     "mec": 41.5,
+     "ihr_mec": 10.09
+    },
+    "3": {
+     "actual": 37.48,
+     "model": 35.9,
+     "contrib_vs_indiana": -0.13,
+     "chicago_gas": 3.483,
+     "ihr_actual": 10.76,
+     "ihr_model": 10.31,
+     "mec": 33.09,
+     "ihr_mec": 9.5
+    },
+    "4": {
+     "actual": 37.19,
+     "model": 35.96,
+     "contrib_vs_indiana": -0.1,
+     "chicago_gas": 2.979,
+     "ihr_actual": 12.49,
+     "ihr_model": 12.07,
+     "mec": 31.46,
+     "ihr_mec": 10.56
+    },
+    "5": {
+     "actual": 33.13,
+     "model": 37.08,
+     "contrib_vs_indiana": 0.34,
+     "chicago_gas": 2.827,
+     "ihr_actual": 11.72,
+     "ihr_model": 13.12,
+     "mec": 38.1,
+     "ihr_mec": 13.48
+    },
+    "6": {
+     "actual": 51.33,
+     "model": 41.28,
+     "contrib_vs_indiana": -0.83,
+     "chicago_gas": 2.709,
+     "ihr_actual": 18.95,
+     "ihr_model": 15.24,
+     "mec": 49.03,
+     "ihr_mec": 18.1
+    },
+    "7": {
+     "actual": 55.41,
+     "model": 51.92,
+     "contrib_vs_indiana": -0.3,
+     "chicago_gas": 2.945,
+     "ihr_actual": 18.81,
+     "ihr_model": 17.63,
+     "mec": 54.5,
+     "ihr_mec": 18.5
+    },
+    "8": {
+     "actual": 37.92,
+     "model": 38.85,
+     "contrib_vs_indiana": 0.08,
+     "chicago_gas": 2.625,
+     "ihr_actual": 14.44,
+     "ihr_model": 14.8,
+     "mec": 38.47,
+     "ihr_mec": 14.65
+    },
+    "9": {
+     "actual": 44.14,
+     "model": 39.49,
+     "contrib_vs_indiana": -0.38,
+     "chicago_gas": 2.763,
+     "ihr_actual": 15.98,
+     "ihr_model": 14.29,
+     "mec": 43.53,
+     "ihr_mec": 15.76
+    },
+    "10": {
+     "actual": 38.04,
+     "model": 36.55,
+     "contrib_vs_indiana": -0.13,
+     "chicago_gas": 2.849,
+     "ihr_actual": 13.35,
+     "ihr_model": 12.83,
+     "mec": 33.13,
+     "ihr_mec": 11.63
+    },
+    "11": {
+     "actual": 39.98,
+     "model": 38.32,
+     "contrib_vs_indiana": -0.14,
+     "chicago_gas": 3.413,
+     "ihr_actual": 11.72,
+     "ihr_model": 11.23,
+     "mec": 36.51,
+     "ihr_mec": 10.7
+    },
+    "12": {
+     "actual": 46.34,
+     "model": 41.53,
+     "contrib_vs_indiana": -0.41,
+     "chicago_gas": 3.832,
+     "ihr_actual": 12.09,
+     "ihr_model": 10.84,
+     "mec": 42.31,
+     "ihr_mec": 11.04
+    }
+   },
+   "chicago_gas_mean": 3.242,
+   "ihr_actual": 13.22,
+   "ihr_model": 12.47,
+   "ihr_mec": 12.46,
+   "model_max": 390.86,
+   "actual_max": 1782.55,
+   "hours_actual_gt_150": 159,
+   "hours_model_gt_150": 14
+  }
+ }
+}

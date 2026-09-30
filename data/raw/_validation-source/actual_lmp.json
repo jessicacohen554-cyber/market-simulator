@@ -7321,7 +7321,38 @@
           "proxy": "MINN.HUB+ILLINOIS.HUB mean (no LRZ 3/5 hub)"
         }
       },
-      "zones_src": "MISO RT-final/DA-ex-post LMP, named trading hubs mapped to model zones (actual_lmp_hourly_zonal_MISO.parquet; MISO-Plains = MINN+ILLINOIS hub mean proxy, no LRZ 3/5 hub exists)"
+      "zones_src": "MISO RT-final/DA-ex-post LMP, named trading hubs mapped to model zones (actual_lmp_hourly_zonal_MISO.parquet; MISO-Plains = MINN+ILLINOIS hub mean proxy, no LRZ 3/5 hub exists)",
+      "rt_lw": 73.45,
+      "rt_lw_mon": [
+        54.49,
+        47.19,
+        50.18,
+        69.19,
+        79.51,
+        91.41,
+        92.58,
+        105.82,
+        81.81,
+        61.54,
+        39.3,
+        22.82
+      ],
+      "da_lw": 73.37,
+      "da_lw_mon": [
+        53.51,
+        50.24,
+        50.07,
+        67.87,
+        80.23,
+        96.67,
+        93.63,
+        102.35,
+        87.71,
+        59.84,
+        56.93,
+        55.86
+      ],
+      "src_lw": "system hub hourly series load-weighted by measured system demand (eia_loader.load_demand)"
     },
     "2026": {
       "da": 53.15,
@@ -8539,7 +8570,38 @@
           "proxy": "MINN.HUB+ILLINOIS.HUB mean (no LRZ 3/5 hub)"
         }
       },
-      "zones_src": "MISO RT-final/DA-ex-post LMP, named trading hubs mapped to model zones (actual_lmp_hourly_zonal_MISO.parquet; MISO-Plains = MINN+ILLINOIS hub mean proxy, no LRZ 3/5 hub exists)"
+      "zones_src": "MISO RT-final/DA-ex-post LMP, named trading hubs mapped to model zones (actual_lmp_hourly_zonal_MISO.parquet; MISO-Plains = MINN+ILLINOIS hub mean proxy, no LRZ 3/5 hub exists)",
+      "rt_lw": 27.15,
+      "rt_lw_mon": [
+        31.97,
+        26.75,
+        27.78,
+        27.33,
+        25.05,
+        24.77,
+        29.5,
+        24.91,
+        28.51,
+        26.61,
+        28.83,
+        23.24
+      ],
+      "da_lw": 27.73,
+      "da_lw_mon": [
+        33.81,
+        27.46,
+        29.73,
+        27.48,
+        26.34,
+        25.36,
+        29.76,
+        26.18,
+        28.03,
+        25.68,
+        28.21,
+        23.91
+      ],
+      "src_lw": "system hub hourly series load-weighted by measured system demand (eia_loader.load_demand)"
     }
   },
   "SPP": {

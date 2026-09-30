@@ -1,0 +1,111 @@
+{
+ "2020": {
+  "n_payload_plants_partial": 250,
+  "low_hour_share": 0.011,
+  "median_actual_rt_low": 7.14,
+  "median_prod_gas_x6p5": 8.42,
+  "low_end_hours": {
+   "zonehour_weight_share_no_candidate": 0.022,
+   "by_class": {
+    "CT_CHP": 0.529,
+    "COAL_WC": 0.105,
+    "CC_REGULAR": 0.095,
+    "ST_CHP": 0.091,
+    "": 0.079,
+    "CC_CHP": 0.047,
+    "COAL_BIT": 0.029,
+    "ST_GAS": 0.004,
+    "CT_PEAKER": 0.0,
+    "OTHER_FOSSIL": 0.0,
+    "COAL_PRB": 0.0
+   },
+   "by_class_kind": {
+    "CT_CHP:committed": 0.424,
+    "CT_CHP:econ_own": 0.1,
+    "COAL_WC:econ_own": 0.089,
+    ":other": 0.079,
+    "CC_REGULAR:committed": 0.075,
+    "ST_CHP:committed": 0.069,
+    "CC_CHP:committed": 0.047,
+    "ST_CHP:econ_own": 0.022,
+    "CC_REGULAR:econ_own": 0.019,
+    "COAL_BIT:econ_floored": 0.017,
+    "COAL_WC:econ_floored": 0.016,
+    "COAL_BIT:committed": 0.012
+   },
+   "median_model_price": 17.52,
+   "median_nearest_bid": 19.26,
+   "median_abs_gap": 1.63,
+   "share_gap_le_1usd": 0.366
+  },
+  "low_hour_share_delivered": 0.449,
+  "low_end_hours_delivered": {
+   "zonehour_weight_share_no_candidate": 0.047,
+   "by_class": {
+    "CT_CHP": 0.399,
+    "COAL_BIT": 0.142,
+    "CC_REGULAR": 0.087,
+    "COAL_WC": 0.083,
+    "": 0.071,
+    "CC_CHP": 0.054,
+    "ST_CHP": 0.054,
+    "ST_GAS": 0.05,
+    "COAL_PRB": 0.01,
+    "CT_PEAKER": 0.002,
+    "OTHER_FOSSIL": 0.0
+   },
+   "by_class_kind": {
+    "CT_CHP:committed": 0.306,
+    "COAL_BIT:econ_floored": 0.099,
+    ":other": 0.071,
+    "COAL_WC:econ_own": 0.066,
+    "CT_CHP:econ_own": 0.061,
+    "CC_CHP:committed": 0.05,
+    "ST_CHP:committed": 0.049,
+    "CC_REGULAR:committed": 0.049,
+    "COAL_BIT:econ_own": 0.039,
+    "CC_REGULAR:econ_own": 0.037,
+    "CT_CHP:peak": 0.031,
+    "ST_GAS:econ_own": 0.019
+   },
+   "median_model_price": 20.05,
+   "median_nearest_bid": 22.22,
+   "median_abs_gap": 1.0,
+   "share_gap_le_1usd": 0.5
+  },
+  "all_hours": {
+   "zonehour_weight_share_no_candidate": 0.065,
+   "by_class": {
+    "CT_CHP": 0.329,
+    "COAL_BIT": 0.205,
+    "ST_GAS": 0.109,
+    "COAL_WC": 0.073,
+    "CC_CHP": 0.062,
+    "CC_REGULAR": 0.058,
+    "": 0.046,
+    "ST_CHP": 0.032,
+    "CT_PEAKER": 0.013,
+    "COAL_PRB": 0.008,
+    "OTHER_FOSSIL": 0.001
+   },
+   "by_class_kind": {
+    "CT_CHP:committed": 0.251,
+    "COAL_BIT:econ_own": 0.105,
+    "COAL_BIT:econ_floored": 0.098,
+    "ST_GAS:econ_own": 0.084,
+    "COAL_WC:econ_own": 0.062,
+    "CC_CHP:committed": 0.05,
+    ":other": 0.046,
+    "CT_CHP:econ_own": 0.044,
+    "CT_CHP:peak": 0.034,
+    "ST_CHP:committed": 0.03,
+    "CC_REGULAR:econ_own": 0.028,
+    "CC_REGULAR:committed": 0.028
+   },
+   "median_model_price": 22.27,
+   "median_nearest_bid": 23.61,
+   "median_abs_gap": 0.89,
+   "share_gap_le_1usd": 0.529
+  }
+ }
+}
