@@ -3866,6 +3866,12 @@ results/calibration/nyisonext14_202[2-5]/
 # NWPP-NEXT-12 per-year shard legs (rule 32(d)); the composite nwppnext12mr_span is what registers.
 # Legs: 2019 5450179e1a3750ce039eb7c4aae3613e0bdf8e25, 2020 63c0d7a4a68623e356bd93c20a4420dde0876443, 2021 a1080ac8ade95be59da975f8a26721045e21a866, 2024 a8d1d8ff9d0c2263e9724eb4b43141f735645e59, 2025 008511829d908c6d6b91ab9bd96853f91238612e, 2022 7569ec7a3ef18e4132e9a90da3d0578339ffb1b9, 2023 adc7a2933a985e10d43979b284d48b6a4f8385c1 (provenance, rule 33(d)).
 results/calibration/nwppnext12mr_20*/
+# R-ERCOT-18 per-year shard legs (rule 32(d)/36): composed into r_ercot18_span; legs stay out of main.
+# Provenance only (rule 33(d)), pinned 0bd29417: 2019 cf1d0acce8b56bdfb78ede1b5bb861e9a5098125
+#   2020 2d716c1eb4aeead323e0113e17a10fbac0b9bb3f  2021 acd1f38992b37e71bb754e1b9e6cb83c5563df5d
+#   2022 832e8e7f49d9d3c46d38957c134bfafe180bc482  2023 7b1be416d8a4af52392b4b14e2a881e3177f08f6
+#   2024 4a4f63c69f23678979a7ce960872caa571fa432f  2025 511cad258e6a032acbf00059c5a7968db098cc3f
+results/calibration/r_ercot18_arm_20*/
 # soco-92 per-year shard legs (composed into soco92_span; rules 31/32(d)). Provenance (rule 33(d), not a
 # recovery route): 2019 17bbfb2a435f726e0946f4beacaad9ed5731ebf7, 2020 41884fa419c0f313728f047ba6f8dd70763d979a,
 # 2021 2b11478a0a31bc20f8e798fae9a737a8342e0239, 2022 e70cf06e6bdf448ed3aefdd72cfa992299262fb2,

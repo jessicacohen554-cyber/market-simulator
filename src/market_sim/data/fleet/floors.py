@@ -207,6 +207,7 @@ def apply_netload_reliability_floor(
     layup_removed: dict[tuple[int, str], np.ndarray] | None = None,
     merit_allocation: bool = False,
     persist_params: "list[tuple[float, dict[str, float]]] | None" = None,
+    prior_overnight_mwh: dict[int, float] | None = None,
 ) -> bool:
     """Impose a net-load-indexed reliability-commitment min-gen floor on a class.
 
@@ -308,6 +309,18 @@ def apply_netload_reliability_floor(
     smoothed across its own window (rule 17 [R-FLOOR-WINDOW]); ``None`` is
     byte-identical.
 
+    ``prior_overnight_mwh`` (``config.netload_drag_prior_year_commitment_index``,
+    R-ERCOT-18) replaces the pro-rata ALLOCATION of the same mandate, and
+    nothing else (rule 19). It maps each METERED plant to its measured
+    overnight net MWh in the PRIOR year; each such plant's fraction becomes
+    ``floor_frac x k_p`` with ``k_p = (E_p / B_p) / (sum E / sum B)`` over the
+    metered plants present in ``rows``, ``B_p`` the plant's summed row ``pmax``
+    — so ``sum k_p B_p = sum B_p`` and the nominal fleet mandate is preserved.
+    Plants absent from the map keep ``k = 1``. ``None`` (or an empty map, or a
+    metered fleet with zero overnight energy) is byte-identical to pro-rata.
+    Composes with the pro-rata branch only; merit allocation fills by cost and
+    ignores it.
+
     Modifies ``fleet_arrays`` in place. Returns ``True`` when a floor was
     applied, ``False`` (byte-identical) when the class has no reliability units.
     """
@@ -405,8 +418,15 @@ def apply_netload_reliability_floor(
             )
         targets = _netload_drag_merit_targets(rows, generators, pmax, basis, merit_frac)
     else:
+        k_plant = _prior_overnight_index(rows, generators, pmax, prior_overnight_mwh)
         targets = {
-            g: np.minimum(_frac_for(g) * pmax[g], basis[g] * pmax[g]) for g in rows
+            g: np.minimum(
+                _frac_for(g)
+                * k_plant.get(int(getattr(generators[g], "plant_code", 0) or 0), 1.0)
+                * pmax[g],
+                basis[g] * pmax[g],
+            )
+            for g in rows
         }
 
     for g, target in targets.items():
@@ -414,6 +434,93 @@ def apply_netload_reliability_floor(
         fleet_arrays.min_gen[g, :] = np.maximum(fleet_arrays.min_gen[g, :], target)
         mech[g, raised] = mech_id
     return True
+
+
+def _prior_overnight_index(
+    rows: list[int],
+    generators: list[Generator],
+    pmax: np.ndarray,
+    prior_overnight_mwh: dict[int, float] | None,
+) -> dict[int, float]:
+    """Per-plant allocation index ``k_p`` for the drag floor (R-ERCOT-18).
+
+    ``k_p = (E_p / B_p) / (sum E / sum B)`` over the metered plants of ``rows``,
+    where ``E_p`` is the plant's prior-year measured overnight net MWh and
+    ``B_p`` the summed ``pmax`` of its floored rows (the floor's own basis), so
+    the capacity-weighted mean of ``k`` over the metered plants is exactly 1.
+    Returns ``{}`` (every plant ``k = 1``, i.e. pro-rata) when no map is given,
+    no floored plant is metered, or the metered fleet has zero overnight energy.
+    """
+    if not prior_overnight_mwh:
+        return {}
+    basis_mw: dict[int, float] = {}
+    for g in rows:
+        code = int(getattr(generators[g], "plant_code", 0) or 0)
+        if code in prior_overnight_mwh:
+            basis_mw[code] = basis_mw.get(code, 0.0) + float(pmax[g])
+    b_tot = sum(basis_mw.values())
+    e_tot = sum(float(prior_overnight_mwh[c]) for c in basis_mw)
+    if b_tot <= 0.0 or e_tot <= 0.0:
+        return {}
+    fleet_rate = e_tot / b_tot
+    return {
+        c: (float(prior_overnight_mwh[c]) / b) / fleet_rate if b > 0 else 1.0
+        for c, b in basis_mw.items()
+    }
+
+
+def load_prior_year_overnight_mwh(
+    config: ScenarioConfig, iso: str, year: int
+) -> dict[int, float] | None:
+    """Prior-year measured ST_GAS overnight MWh per metered plant, or ``None``.
+
+    Gate for ``ScenarioConfig.netload_drag_prior_year_commitment_index``
+    (R-ERCOT-18). BACKCAST ONLY (rule 13 [R-MEASURED]); reads the frozen
+    artifact ``ercot_stgas_overnight_commitment.csv``
+    (``scripts/data/derive_ercot_stgas_overnight_commitment.py``) for vintage
+    ``year - 1`` (``weather_year - 1`` when one is pinned). Fail-closed:
+    ``None`` — pro-rata, byte-identical — when the flag is off, the run is not
+    a backcast, the artifact is absent, or it carries no row for this ISO and
+    vintage (e.g. 2019, whose 2018 CAMPD vintage is not on disk).
+    """
+    if not getattr(config, "netload_drag_prior_year_commitment_index", False):
+        return None
+    if getattr(config, "mode", "forecast") != "backcast":
+        return None
+    from market_sim.config import paths as _paths
+
+    path = _paths.CALIBRATION_DIR / "ercot_stgas_overnight_commitment.csv"
+    if not path.exists():
+        logger.warning(
+            "netload_drag_prior_year_commitment_index: %s absent — pro-rata", path
+        )
+        return None
+    import pandas as pd
+
+    vintage = int(getattr(config, "weather_year", 0) or year) - 1
+    df = pd.read_csv(path)
+    sub = df[
+        (df["iso"].astype(str).str.upper() == (iso or "").upper())
+        & (df["year"] == vintage)
+        & (df["metered"].astype(str).str.lower() == "true")
+    ]
+    if sub.empty:
+        logger.info(
+            "netload_drag_prior_year_commitment_index: no %s %d vintage — pro-rata",
+            iso,
+            vintage,
+        )
+        return None
+    logger.info(
+        "netload_drag_prior_year_commitment_index ARMED (%s %d): vintage %d, "
+        "%d metered plants, %.1f GWh overnight",
+        iso,
+        year,
+        vintage,
+        len(sub),
+        float(sub["overnight_net_mwh"].sum()) / 1e3,
+    )
+    return {int(r.plant_code): float(r.overnight_net_mwh) for r in sub.itertuples()}
 
 
 def _load_ercot_stgas_seasonal_drag(
@@ -488,6 +595,7 @@ def apply_gas_st_netload_drag_floor(
     net_load_mw: np.ndarray,
     config: ScenarioConfig,
     layup_removed: dict[tuple[int, str], np.ndarray] | None = None,
+    prior_overnight_mwh: dict[int, float] | None = None,
 ) -> bool:
     """Impose the net-load-indexed ST_GAS reliability-drag min-gen floor.
 
@@ -577,6 +685,9 @@ def apply_gas_st_netload_drag_floor(
             if getattr(config, "netload_drag_min_run_persistence", False)
             else None
         ),
+        # R-ERCOT-18: allocation-only index of the SAME mandate (rule 19);
+        # None unless netload_drag_prior_year_commitment_index is armed.
+        prior_overnight_mwh=prior_overnight_mwh,
     )
 
 
@@ -795,7 +906,12 @@ def apply_netload_drag_floors(
         lp_bin_capacity=_drag_lp_bin_capacity(config, iso, generators, fleet_arrays),
     )
     if apply_gas_st_netload_drag_floor(
-        fleet_arrays, generators, net_load, config, layup_removed
+        fleet_arrays,
+        generators,
+        net_load,
+        config,
+        layup_removed,
+        prior_overnight_mwh=load_prior_year_overnight_mwh(config, iso, year),
     ):
         logger.info(
             "%s %d: ST_GAS net-load reliability-drag floor applied "
