@@ -44,6 +44,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "scripts"), str(ROOT / "src"), str(ROOT)]
 
 SPAN = ROOT / "results/calibration/soco92_span"
+SPAN_HOURLY = SPAN  # --span overrides the hourly frames only (E1 on an arm)
 ARTIFACT = ROOT / "data/raw/soco-hydro/soco_hydro_pondage.csv"
 YEARS = tuple(range(2019, 2026))
 T = 8760
@@ -204,14 +205,14 @@ def census(year: int, cache: Path, ddir: Path) -> dict:
             )
         )
     # soco-92's shape instrument: model hydro+PS vs EIA-930 WAT(+PS) by lambda band
-    ch = pd.read_parquet(SPAN / f"hourly/class_hourly_{year}.parquet")
+    ch = pd.read_parquet(SPAN_HOURLY / f"hourly/class_hourly_{year}.parquet")
     hyd = (
         ch[(ch["pass"] == "P1") & (ch.klass == "hydro")]
         .set_index("hour")
         .mw.reindex(range(T), fill_value=0.0)
         .to_numpy(float)
     )
-    stg = pd.read_parquet(SPAN / f"hourly/storage_{year}.parquet")
+    stg = pd.read_parquet(SPAN_HOURLY / f"hourly/storage_{year}.parquet")
     ps = stg[(stg["pass"] == "P1") & (stg.tech == "pumped_storage")].set_index("hour")
     H = hyd + ps.discharge_mw.reindex(range(T), fill_value=0.0).to_numpy(float)
     e = eia930(year)
@@ -255,7 +256,17 @@ def main() -> None:
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--dispatch-dir", type=Path, required=True)
     ap.add_argument("--years", type=int, nargs="+", default=list(YEARS))
+    ap.add_argument(
+        "--span",
+        type=Path,
+        default=None,
+        help="bundle whose hourly frames are read (default: the keeper); the "
+        "hydro budgets always come from the keeper recipe's rebuild",
+    )
     a = ap.parse_args()
+    if a.span is not None:
+        global SPAN_HOURLY
+        SPAN_HOURLY = a.span
     a.out.mkdir(parents=True, exist_ok=True)
     rows, plants = [], []
     for y in a.years:
