@@ -3890,3 +3890,5 @@ results/calibration/rcaiso15_A_tp_2019_2021/hourly/p0_*
 
 # NYISO-NEXT-15 per-year shard legs: kept out of main (rule 32(d)); only the composite registers.
 results/calibration/nyisonext15_202[2-5]/
+# soco-93 zero-LP probe outputs (G-DRIFT identity); numbers live in PRECOMMIT-soco-93 §3
+results/calibration/_soco93/
