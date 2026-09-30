@@ -106,3 +106,19 @@ seven.
 | B recipe checked as arm A | FAIL | **FAIL** (RECIPE) |
 
 Prompt: `docs/handoffs/spp105/shard_prompt_template.txt`.
+
+## Addendum A (2026-09-30, before any solve): G-DRIFT over the `main` merged into this PR
+
+`origin/main` moved to `fd1269a7` while this PR was open, so it was merged in. The only conflicts were
+matrix anchor digits. The shards pin the resulting merge SHA, so the audit extends over
+`457fa8fa → fd1269a7` on the rule-29(b) path set:
+
+| commit(s) | files | verdict | reason |
+|---|---|---|---|
+| NYISO-NEXT-17 `1f4793ae` `4ddb0ae4` | `topology_variant.py`, `zone_assignment.py`, `eia930/envelopes.py`, `eia930/zonal_shares.py`, `pipeline/ttc.py`, `interchange/spec.py`, `nyiso_*`, `iso_configs.py`, `constants.py`, `scenarios.py`, `run_calibration*.py`, `reference/nyiso-market-solar-capacity-fgsplit.csv` | INERT | `nyiso_fg_split`: default False, set only when `iso == "NYISO"`. Every new branch reads `nyiso_fg_split_active()`, which is False for SPP |
+| R-CAISO-18 `d757b216` | `interchange/caiso.py`, `import_nodes.py`, `neighbor_price.py`, `fuel/electric_power.py` (new function only), `scenarios.py`, `runner.py` | INERT | `caiso_intertie_unprinted_year_measured_gas`: default False, CAISO intertie-hub path only |
+| miso-292 `13b721ea` | `_validation-source/actual_lmp.json` (MISO `rt_lw` keys), `scripts/lib` scoring | INERT for the solve | MISO benchmark keys only; SPP's entries and the solve path are untouched |
+
+All rows are INERT, so the committed keeper remains the control. After the merge,
+`check_cache_key_registration` is ok, the matrix guard with `--base origin/main` reports "1 new field(s)
+all registered", and `tests/iso/spp` passes (65 tests).
