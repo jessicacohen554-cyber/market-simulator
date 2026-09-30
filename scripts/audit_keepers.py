@@ -275,56 +275,23 @@ def marker_currency_failures(
 
 
 def _live_iso_determination(iso: str, run_id: str) -> str | None:
-    """The ISO-level determination a marker is verified against, computed live.
+    """The live ISO-level determination the M1b marker check compares against.
 
-    Default (every single-keeper ISO): the unrestricted registered verdict of
-    ``run_id`` — the original D-5(b) M1b comparison, unchanged.
-
-    For an ISO whose keeper shard carries an owner-declared ``config_partition``
-    WITH the owner-ruled ``iso_determination`` field (the ercot-246 ruling,
-    2026-08-31: a partitioned keeper's ISO-level determination is the WORST
-    config determination over the DESIGNATED spans), the live value is that
-    rollup RECOMPUTED here from the committed artifacts — each config scored on
-    its designated span via ``calibration_verdict.determine(run, years=span)``,
-    worst taken under the conservative ordering (NOT-YET < CAVEATS <
-    CALIBRATED). The shard's own stored ``iso_determination`` is never trusted:
-    a stale stored value is caught because the recomputed rollup is what the
-    marker's assertion must match. Fail-closed on both edges: a partition
-    without the ruling field keeps the plain single-run comparison, and an
-    unscorable config raises (surfacing as an M1b failure), never skips.
+    Rubric v3.13 (owner 2026-09-30: "Shouldn't be considered calibrated if
+    holdout years miss."): the ISO determination is
+    ``calibration_verdict.iso_determination`` — worst over the keeper's
+    designated scopes (every ``config_partition`` config, whatever its tier)
+    plus every run folded to the keeper via ``holdout.keeper``, each scored on
+    its own caveat budget and RECOMPUTED here from committed artifacts. The
+    shard's stored ``iso_determination`` is never trusted, and an unscorable
+    scope raises (surfacing as an M1b failure), never skips. This replaces the
+    rule 30(c) train-tier-only rollup of 2026-09-05, which the amendment
+    reverses.
     """
     shard = keeper_store.load_shard(iso) or {}
-    cp = shard.get("config_partition") or {}
-    if not (cp.get("iso_determination") and cp.get("configs")):
-        return cv.determine(run_id).get("determination")
-
-    def _rank(det: str | None) -> int:
-        d = (det or "").upper()
-        if "NOT" in d:
-            return 0
-        if "CAVEAT" in d:
-            return 1
-        return 2
-
-    # RULE 30(c) [R-TOUCHPOINT-FOLD]: "The ISO's calibration determination is
-    # the train-tier (2023-2025) verdict and nothing else. A validation-tier
-    # score is iterable model-SELECTION evidence ... it cannot certify and it
-    # cannot decertify." Since ercot-255 a partition may designate a HELD-OUT
-    # span (ERCOT 2021/2022), so a config marked `tier: "validation"` is
-    # excluded from this rollup while still being scored and rendered
-    # everywhere else. Absent/`train` keeps every pre-existing ISO's rollup
-    # byte-identical, and the fold stays fail-closed: a partition whose configs
-    # are ALL held-out has no train-tier verdict to assert, so it falls back to
-    # the plain single-run comparison rather than silently passing.
-    span_dets = []
-    for cfg in cp["configs"]:
-        if str(cfg.get("tier") or "train").lower() != "train":
-            continue
-        span = [int(y) for y in cfg.get("years", [])]
-        span_dets.append(cv.determine(cfg["run_id"], years=span).get("determination"))
-    if not span_dets:
-        return cv.determine(run_id).get("determination")
-    return min(span_dets, key=_rank)
+    return cv.iso_determination(iso, run_id, shard.get("config_partition")).get(
+        "determination"
+    )
 
 
 def ablation_twin_finding(

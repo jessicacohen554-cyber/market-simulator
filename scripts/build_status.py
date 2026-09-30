@@ -495,24 +495,8 @@ def _src_tag(run_id: str) -> str:
 
 
 def _holdout_companions(iso: str, keeper_run_id: str) -> list[dict]:
-    """Registry sidecars whose ``holdout.keeper`` folds them onto this keeper.
-
-    A rule-22 validation touchpoint is the designated keeper's OWN frozen recipe
-    replayed on a year it was never tuned on (rule 30 [R-TOUCHPOINT-FOLD]), so
-    it is found the same way the Run Explorer folds it — never hand-authored.
-    """
-    out = []
-    for sidecar in sorted(cv.REGISTRY_DIR.glob("*.json")):
-        try:
-            reg = json.loads(sidecar.read_text())
-        except (OSError, ValueError):
-            continue
-        if reg.get("iso") != iso or reg.get("id") == keeper_run_id:
-            continue
-        if (reg.get("holdout") or {}).get("keeper") != keeper_run_id:
-            continue
-        out.append(reg)
-    return out
+    """Registry sidecars folded onto this keeper (``calibration_verdict.folded_touchpoints``)."""
+    return cv.folded_touchpoints(iso, keeper_run_id)
 
 
 def build_years(iso: str, keeper_run_id: str, configs: list[dict]) -> list[dict]:
@@ -526,10 +510,10 @@ def build_years(iso: str, keeper_run_id: str, configs: list[dict]) -> list[dict]
     on its own (NEISO 2020+2021 reads NOT-YET as a bundle; 2021 alone is
     CALIBRATED), and a partitioned keeper's designated config differs per year.
 
-    Held-out rows NEVER gate: the ISO determination is the train-tier
-    (2023-2025) verdict — rule 22 as amended 2026-09-05, an ISO stays CALIBRATED
-    even when a held-out year degrades, because a validation-tier score is
-    iterable model-SELECTION evidence and not a certification.
+    Every row GATES (rubric v3.13, owner 2026-09-30: "Shouldn't be considered
+    calibrated if holdout years miss."): the ISO determination is
+    ``calibration_verdict.iso_determination`` over the same scopes these rows
+    are drawn from, so a held-out year reading NOT-YET makes the ISO NOT-YET.
 
     Args:
         iso: ISO id, used to scope the registry scan for folded companions.
@@ -564,7 +548,13 @@ def build_years(iso: str, keeper_run_id: str, configs: list[dict]) -> list[dict]
     if configs:
         for cfg in configs:
             for year in sorted(int(y) for y in cfg.get("years", [])):
-                add(cfg["run_id"], year, "training", cfg.get("role"))
+                tier = str(cfg.get("tier") or "train").lower()
+                add(
+                    cfg["run_id"],
+                    year,
+                    "training" if tier == "train" else tier,
+                    cfg.get("role"),
+                )
     else:
         sidecar = json.loads((cv.REGISTRY_DIR / f"{keeper_run_id}.json").read_text())
         for year in sorted(int(y) for y in (sidecar.get("years") or [])):
@@ -587,8 +577,9 @@ def merge_holdout_records(iso: str, keeper_run_id: str, verdict: dict) -> None:
     in the same columns, rather than in a parallel block with its own layout.
 
     Records only — the criterion-level ``status`` badges and ``grade_summary``
-    are the train-tier verdict and are left untouched, so folding a held-out
-    year in can never move the ISO's determination (rule 22).
+    stay the keeper run's own verdict. The ISO determination that folds these
+    years in is computed separately by ``calibration_verdict.iso_determination``
+    (rubric v3.13).
     """
     for reg in _holdout_companions(iso, keeper_run_id):
         try:
@@ -739,8 +730,8 @@ def build_part(iso: str) -> dict | None:
     # Owner-declared TOUCHPOINT designation (the shard's "frontier_touchpoint"
     # block): a statement that the ISO's folded held-out rungs (rule 30
     # [R-TOUCHPOINT-FOLD]) score CALIBRATED in their own right, which is the
-    # strictly stronger claim than rule 30(c)'s "a held-out year never
-    # downgrades the ISO". Same contract as "frontier" and "standing_note"
+    # claim rubric v3.13 now REQUIRES of a CALIBRATED ISO (rule 30(c) as
+    # amended 2026-09-30: a held-out year that misses downgrades it). Same contract as "frontier" and "standing_note"
     # above: purely declarative, attached AFTER determine(), never gating,
     # never touching a verdict, grade, caveat budget or magnitude. It is NOT a
     # skill claim -- since [R-HOLDOUT] was removed (2026-09-09) no year is
@@ -766,30 +757,28 @@ def build_part(iso: str) -> dict | None:
     # `registered_determination`/`registered_reasons` and per config below,
     # and every criterion record keeps reporting its own number — the
     # ruling moves the headline, never the magnitudes.
-    if rec.get("config_partition"):
-        cp = rec["config_partition"]
+    # Owner-declared CONFIG PARTITION (the shard's "config_partition" block —
+    # the two-config keeper structure, owner ruling 2026-08-26): each config is
+    # scored LIVE on its designated span and on its full registered span, and
+    # the page renders BOTH. Since rubric v3.13 EVERY config gates, whatever
+    # its ``tier`` — the ercot-255 exclusion of held-out configs from the
+    # worst-over-spans fold is REVERSED by the owner's 2026-09-30 instruction
+    # ("Shouldn't be considered calibrated if holdout years miss.").
+    cp = rec.get("config_partition")
+    if cp:
         scored_configs = []
         for cfg in cp.get("configs", []):
             span = [int(y) for y in cfg.get("years", [])]
             span_v = cv.determine(cfg["run_id"], years=span)
             full_v = cv.determine(cfg["run_id"])
-            # RULE 30(c) [R-TOUCHPOINT-FOLD]: "The ISO's calibration
-            # determination is the train-tier (2023-2025) verdict and nothing
-            # else. A validation-tier score is iterable model-SELECTION evidence
-            # ... it cannot certify and it cannot decertify." A partition may
-            # now designate a HELD-OUT span (ERCOT 2021/2022 since ercot-255),
-            # so such a config is scored and RENDERED exactly like any other but
-            # is excluded from the ISO-level worst-over-spans fold below.
-            # Absent/`train` keeps every pre-existing ISO byte-identical.
-            cfg_tier = str(cfg.get("tier") or "train").lower()
             scored_configs.append(
                 {
                     "role": cfg.get("role"),
                     "label": cfg.get("label"),
                     "run_id": cfg["run_id"],
                     "years": span,
-                    "tier": cfg_tier,
-                    "gating": cfg_tier == "train",
+                    "tier": str(cfg.get("tier") or "train").lower(),
+                    "gating": True,
                     "determination": span_v["determination"],
                     "reasons": span_v.get("reasons", []),
                     "grade_summary": span_v.get("grade_summary"),
@@ -798,44 +787,42 @@ def build_part(iso: str) -> dict | None:
                     "registered_years": full_v.get("target_years", []),
                 }
             )
-
-        def _det_rank(det: str) -> int:
-            # Worst-first ordering, mirroring the renderer's partition accent.
-            d = (det or "").upper()
-            if "NOT" in d:
-                return 0
-            if "CAVEAT" in d:
-                return 1
-            return 2
-
-        # Rule 30(c): fold over the TRAIN-tier configs only. Held-out configs
-        # stay in scored_configs (so the page renders them at full magnitude)
-        # but never move the ISO headline in either direction.
-        partition_det = min(
-            (c["determination"] for c in scored_configs if c["gating"]),
-            key=_det_rank,
-            default=verdict["determination"],
-        )
-        verdict["registered_determination"] = verdict["determination"]
-        verdict["registered_reasons"] = verdict.get("reasons", [])
-        verdict["determination"] = partition_det
-        verdict["reasons"] = [
-            r for c in scored_configs if c["gating"] for r in c["reasons"]
-        ]
-        verdict["determination_basis"] = (
-            "config-partition: worst config determination over the DESIGNATED "
-            "spans (owner ruling 2026-08-31, session ercot-246). The forward "
-            "keeper's registered full-span determination is preserved in "
-            "registered_determination and per config, at full magnitude."
-        )
         verdict["config_partition"] = {
             "declared": cp.get("declared"),
             "ruling": cp.get("ruling"),
-            "iso_determination": partition_det,
             "iso_determination_ruling": cp.get("iso_determination_ruling"),
             "coverage_invariant": cp.get("coverage_invariant"),
             "configs": scored_configs,
         }
+    # THE ISO DETERMINATION covers EVERY registered year (rubric v3.13, rule 30
+    # [R-TOUCHPOINT-FOLD] (c) as amended 2026-09-30): worst over the keeper's
+    # designated scopes plus every run folded to it via ``holdout.keeper``. The
+    # keeper run's own registered verdict is preserved at full magnitude in
+    # ``registered_determination`` / ``registered_reasons``.
+    iso_det = cv.iso_determination(iso, run_id, cp)
+    verdict["registered_determination"] = verdict["determination"]
+    verdict["registered_reasons"] = verdict.get("reasons", [])
+    verdict["determination"] = iso_det["determination"]
+    verdict["reasons"] = iso_det["reasons"]
+    verdict["determination_basis"] = iso_det["basis"]
+    verdict["determination_scopes"] = [
+        {
+            k: sc[k]
+            for k in (
+                "kind",
+                "role",
+                "run_id",
+                "years",
+                "determination",
+                "failing",
+                "basis_sha",
+                "stale",
+            )
+        }
+        for sc in iso_det["scopes"]
+    ]
+    if cp:
+        verdict["config_partition"]["iso_determination"] = iso_det["determination"]
     d7 = statmode.get("isos", {}).get(iso)
     if d7:
         # REPORTED line, never gating: the overlay-vs-statistical fail
@@ -855,10 +842,9 @@ def build_part(iso: str) -> dict | None:
         # verdict, grade, caveat budget or magnitude.
         verdict["system_lambda"] = lam
     # ONE uniform per-year table — training years (per designated config) and
-    # rule-22 held-out years in the same rows, scored the same way, and every
-    # held-out year's criterion records folded into the SAME per-criterion
-    # tables (rule 30 [R-TOUCHPOINT-FOLD]). Held-out rows report; they never
-    # gate — the ISO determination above is the train-tier verdict (rule 22).
+    # held-out years in the same rows, scored the same way, and every held-out
+    # year's criterion records folded into the SAME per-criterion tables (rule
+    # 30 [R-TOUCHPOINT-FOLD]). Every row gates (rubric v3.13).
     verdict["years"] = build_years(
         iso, run_id, (verdict.get("config_partition") or {}).get("configs") or []
     )
