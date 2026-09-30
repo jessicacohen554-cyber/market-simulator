@@ -3894,3 +3894,4 @@ results/calibration/nyisonext15_202[2-5]/
 # R-ERCOT-19 per-year shard legs: local only, kept until the owner rules (rule 31); provenance SHAs in the RESULT doc.
 results/calibration/r_ercot19_arm_*/
 results/calibration/r_ercot19b_arm_*/
+results/calibration/r_ercot19c_arm_*/
