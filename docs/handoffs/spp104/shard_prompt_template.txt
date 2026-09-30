@@ -1,0 +1,39 @@
+# Replace every __Y__ with the year (2019..2025) and __SHA__ with the PRECOMMIT merge SHA. One shard per year.
+SPP-104 SHARD — year __Y__. ONE solve (the SPP keeper replayed with ONE flag armed: spp_ct_lole_efor), then push the bundle and report. You are a SHARD, not a lane.
+DATA PROFILE: spp
+MODEL: Opus or Fable (rule 27). CLAUDE.md is binding; rules 31–36 matter most here.
+Record of what you are solving: docs/handoffs/PRECOMMIT-spp-104-ct-lole-efor-2026-09-30.md (read §4 and §5 only).
+
+A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+HARD STOPS (check each; if any fails, STOP, do not push, and report why):
+1. `git rev-parse HEAD` must equal __SHA__. Never rebase, never `git pull`, never "sync" the checkout.
+2. `sha256sum data/raw/_processed-legacy/thermal_tranches-splitremap-SPP.csv` must start with 92ed67de.
+3. The shard check (step 4 below) must print `SHARD CHECK: PASS`. It verifies the recipe is the keeper's plus EXACTLY spp_ct_lole_efor=true, the gas price, ten input sha256s, the resolved -splitremap- extract and tranche artifact, SPP-North/SPP-South topology, that dispatch/__Y___P1.parquet exists, the CEMS remap rows, the pinned LOLE EFOR table, and that the leg differs from the keeper.
+4. Do not pass --holdout-authorized or any flag not written below. Do not pass --no-container-preflight.
+
+STEPS
+1. python3 scripts/hydrate_data.py --profile spp   (the project venv is .venv; use .venv/bin/python for everything; if .venv is missing, `uv sync` once)
+2. Solve (runner unmodified; it provisions swap itself):
+   .venv/bin/python scripts/replay_keeper.py results/calibration/spp100_arm_span --years __Y__ \
+     --set spp_ct_lole_efor=true \
+     --out-dir results/calibration/spp104_arm___Y__ \
+     --note "SPP-104 __Y__: keeper + spp_ct_lole_efor (SPP LOLE-study EFOR replaces CT_PEAKER WEFOR)"
+   Budget: stop and report if no artifact after 20 minutes of solve.
+3. Confirm results/calibration/spp104_arm___Y__/dispatch/__Y___P1.parquet exists.
+4. .venv/bin/python scripts/probes/_spp104_shard_check.py --year __Y__ --leg results/calibration/spp104_arm___Y__
+5. Push ONLY your bundle, to your own branch:
+   git checkout -b claude/spp104-__Y__
+   printf '\n!results/calibration/spp104_arm___Y__/**\n' >> .gitignore
+   git add .gitignore && git add results/calibration/spp104_arm___Y__
+   git status --short   # MUST show nothing staged outside .gitignore and results/calibration/spp104_arm___Y__/
+   git commit -m "SPP-104 shard __Y__: bundle"   (end the message with the session attribution lines)
+   git push -u origin claude/spp104-__Y__   (on HTTP 408/500: git config http.version HTTP/1.1 and retry)
+   Then `git rev-parse HEAD` and `git ls-tree -r --name-only HEAD -- results/calibration/spp104_arm___Y__ | wc -l`.
+
+FORBIDDEN, by name: `git add -A`, `git add .`, `git add -f`; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, anything under frontend/data/backcast/**; any edit under src/ or scripts/; opening a PR; deleting any result (rule 31); rebasing, pulling or force-pushing.
+
+REPORT, in numbers, in your final message:
+- the pushed commit SHA and the ls-tree file count;
+- the full shard-check output lines from "RECIPE CHECK" to "SHARD CHECK" (including "PARAMS CHECK", "ARMED CHECK", "class TWh leg - keeper", "price_mean_dw leg - keeper", "max hourly |dprice|" and slack);
+- the `container preflight:` and `memory peak:` log lines and the solve wallclock.
