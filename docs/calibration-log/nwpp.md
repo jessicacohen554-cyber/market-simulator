@@ -710,3 +710,29 @@ No solve. Everything was read from committed artifacts. Record:
   - "Fidelity levers": NEXT-12 derives the per-unit merit extract, then tests levers 3 and 2.
   - "Route to scorer lane": cross-ISO CEMS-anchored coal target, in
     `HANDOFF-scorer-coal-reconcile-2026-09-29.md`.
+
+## NWPP-NEXT-12 — 2026-09-29/30 — lay-up guard rejected, lever 2 re-scoped, Boardman membership repair (keeper #17)
+
+Zero-LP record: `docs/handoffs/FINDING-nwppnext12-layup-guard-and-coal-availability-2026-09-29.md`.
+
+- **Lever 3, the merit guard: R.** The derived NWPP per-unit merit extract reclassifies 48 windows, all coal.
+  - The panel's clearing cost is a fossil-only band ($26–30/MWh in 2020) that excludes hydro and imports.
+  - As a result it ranks units, not windows: 24 of 27 windows in unit-years that are out of merit all year are
+    reclassified, against 4 of 271 elsewhere.
+  - The per-unit crosswalk it rides on also re-routes 2,951 Clark CC windows, a separate question (cell O).
+- **Lever 2: mostly a census artifact.** Naughton's and Bridger's "shortfalls" were their gas-converted units'
+  generation in the whole-plant 923 total.
+  - Coal-only, the gap is 0.04–0.61 TWh/yr, material only at Colstrip in 2022–23.
+  - The source is GADS WEFOR × `wefor_multiplier` 0.7, stacked on measured windows, i.e. a double count.
+  - Routed to a phase-0 lane: miso-273's relief needs `unit_outage_dispatched_bin_denominator`.
+- **Boardman: a membership defect.** The committed extract never scanned facility 6106.
+  - `unit_outage_membership_repair` with a new NWPP companion adds its six measured windows.
+  - Seven year-isolated shards ran at `0b1d2cfe`. 2021–2025 are byte-identical to #16.
+  - Boardman 2020 goes 2.23 → 1.91 TWh against EIA-923 1.63, and its monthly shape now tracks CEMS.
+  - 20 of 161 records move, with no status change. C4 gas 2019 0.750 → 0.735 and 2020 0.830 → 0.812 (regressions,
+    PASS); C1 COAL_PRB 2020 +1.40 → +1.28 pp.
+
+**Owner card: "Promote + prune #16".** Keeper #17 `2026-09-29-nwppnext12-boardman-membership`. #16 was pruned
+(rule 35); `audit_keepers` PASS; promotion completeness OK. Determination unchanged: NOT-YET on {dispatch_corr},
+C4 coal 2023 r 0.695.
+Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext12-boardman-membership-*.md`.
