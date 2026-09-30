@@ -3901,3 +3901,6 @@ results/calibration/_soco93/
 # soco-93 per-year shard legs (rule 32(d): kept out of main; the composite soco93_span is registered).
 # Leg SHAs are provenance only (rule 33(d)): RESULT-soco-93-2026-09-30.md section 4.
 results/calibration/soco93_20*/
+
+# NYISO-NEXT-16 per-year legs (rule 32 (d)); bytes composed into nyisonext16_span. Provenance (rule 33 (d)): 2021 70700d0e22ab1fafce3371130ced144065456ccd, 2022 b776d58d1e5fd2457c12da1a060cc9b7c94a1426, 2023 a78d46de16dedf30bdfe67bf9e66a0a640a72057, 2024 7c83b4fdfea151e94310a302c8ff36ef8240a112, 2025 f2fe82ba5a2967b7111a1f2b7ba34ef079c93489
+results/calibration/nyisonext16_202[2-5]/

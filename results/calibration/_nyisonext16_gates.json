@@ -1,0 +1,481 @@
+{
+ "2021": {
+  "G2_conservation_delta": {
+   "Upstate_West": 0.0,
+   "Capital_Hudson": 0.0537,
+   "Lower_Hudson": 0.0537,
+   "NYC": 0.0537,
+   "Long_Island": 0.0537
+  },
+  "G2_djf_abs_dlmp": {
+   "Capital_Hudson": 4.78,
+   "Long_Island": 9.47,
+   "Lower_Hudson": 4.82,
+   "NYC": 4.78,
+   "Upstate_West": 4.39
+  },
+  "G2_pass": false,
+  "G3_link_binding_share": 0.1755,
+  "G3_pass": true,
+  "G4_upstate_h_le_0": 0,
+  "G4_pass": true,
+  "G6_slack_gwh": {
+   "arm": 0.0,
+   "keeper": 0.0
+  },
+  "G6_pass": true,
+  "G7_new_d4_failures": [],
+  "G7_pass": true,
+  "djf_spread_vs_upstate": {
+   "Capital_Hudson": {
+    "arm": 3.54,
+    "keeper": 3.13,
+    "measured_da": 21.18
+   },
+   "Lower_Hudson": {
+    "arm": 3.99,
+    "keeper": 3.55,
+    "measured_da": 16.48
+   },
+   "NYC": {
+    "arm": 4.29,
+    "keeper": 3.98,
+    "measured_da": 17.93
+   },
+   "Long_Island": {
+    "arm": 11.94,
+    "keeper": 6.82,
+    "measured_da": 35.07
+   }
+  },
+  "reported": {
+   "link_limit_up_mean_mw": 4378.0,
+   "link_flow_mean_mw": 3618.3,
+   "market_ce_binding_share": 0.192,
+   "coincidence": {
+    "both_h": 460,
+    "expected_if_independent": 295.1,
+    "lift": 1.56,
+    "precision": 0.299,
+    "recall": 0.273
+   },
+   "spread_model_in_link_binding_h": 2.54,
+   "basis_measured_in_market_ce_binding_h": 20.19,
+   "hydro_twh": {
+    "arm": 27.25,
+    "eia923": 28.76
+   },
+   "upstate_h_at_pooled_node_price": 670,
+   "lw_price": {
+    "Capital_Hudson": {
+     "keeper": 43.57,
+     "arm": 43.48
+    },
+    "Long_Island": {
+     "keeper": 47.38,
+     "arm": 47.43
+    },
+    "Lower_Hudson": {
+     "keeper": 44.46,
+     "arm": 44.31
+    },
+    "NYC": {
+     "keeper": 44.85,
+     "arm": 44.62
+    },
+    "Upstate_West": {
+     "keeper": 41.23,
+     "arm": 41.15
+    },
+    "system": {
+     "keeper": 43.72,
+     "arm": 43.61
+    }
+   }
+  }
+ },
+ "2022": {
+  "G2_conservation_delta": {
+   "Upstate_West": 0.0,
+   "Capital_Hudson": -0.182,
+   "Lower_Hudson": -0.182,
+   "NYC": -0.182,
+   "Long_Island": -0.182
+  },
+  "G2_djf_abs_dlmp": {
+   "Capital_Hudson": 10.08,
+   "Long_Island": 11.74,
+   "Lower_Hudson": 10.18,
+   "NYC": 10.04,
+   "Upstate_West": 10.02
+  },
+  "G2_pass": false,
+  "G3_link_binding_share": 0.1858,
+  "G3_pass": true,
+  "G4_upstate_h_le_0": 0,
+  "G4_pass": true,
+  "G6_slack_gwh": {
+   "arm": 0.0,
+   "keeper": 0.0
+  },
+  "G6_pass": true,
+  "G7_new_d4_failures": [],
+  "G7_pass": true,
+  "djf_spread_vs_upstate": {
+   "Capital_Hudson": {
+    "arm": 8.07,
+    "keeper": 6.4,
+    "measured_da": 50.44
+   },
+   "Lower_Hudson": {
+    "arm": 9.19,
+    "keeper": 7.44,
+    "measured_da": 34.41
+   },
+   "NYC": {
+    "arm": 10.08,
+    "keeper": 8.25,
+    "measured_da": 36.7
+   },
+   "Long_Island": {
+    "arm": 15.0,
+    "keeper": 10.99,
+    "measured_da": 46.03
+   }
+  },
+  "reported": {
+   "link_limit_up_mean_mw": 3955.1,
+   "link_flow_mean_mw": 3088.4,
+   "market_ce_binding_share": 0.1001,
+   "coincidence": {
+    "both_h": 191,
+    "expected_if_independent": 163.0,
+    "lift": 1.17,
+    "precision": 0.117,
+    "recall": 0.218
+   },
+   "spread_model_in_link_binding_h": 6.37,
+   "basis_measured_in_market_ce_binding_h": 55.8,
+   "hydro_twh": {
+    "arm": 26.18,
+    "eia923": 27.43
+   },
+   "upstate_h_at_pooled_node_price": 732,
+   "lw_price": {
+    "Capital_Hudson": {
+     "keeper": 83.93,
+     "arm": 83.55
+    },
+    "Long_Island": {
+     "keeper": 89.81,
+     "arm": 89.18
+    },
+    "Lower_Hudson": {
+     "keeper": 86.0,
+     "arm": 85.42
+    },
+    "NYC": {
+     "keeper": 86.63,
+     "arm": 85.86
+    },
+    "Upstate_West": {
+     "keeper": 78.14,
+     "arm": 78.01
+    },
+    "system": {
+     "keeper": 83.7,
+     "arm": 83.23
+    }
+   }
+  }
+ },
+ "2023": {
+  "G2_conservation_delta": {
+   "Upstate_West": 0.0,
+   "Capital_Hudson": 0.068,
+   "Lower_Hudson": 0.068,
+   "NYC": 0.068,
+   "Long_Island": 0.068
+  },
+  "G2_djf_abs_dlmp": {
+   "Capital_Hudson": 2.86,
+   "Long_Island": 2.86,
+   "Lower_Hudson": 2.88,
+   "NYC": 2.84,
+   "Upstate_West": 2.62
+  },
+  "G2_pass": false,
+  "G3_link_binding_share": 0.1484,
+  "G3_pass": true,
+  "G4_upstate_h_le_0": 0,
+  "G4_pass": true,
+  "G6_slack_gwh": {
+   "arm": 0.0,
+   "keeper": 0.0
+  },
+  "G6_pass": true,
+  "G7_new_d4_failures": [],
+  "G7_pass": true,
+  "djf_spread_vs_upstate": {
+   "Capital_Hudson": {
+    "arm": 2.35,
+    "keeper": 2.12,
+    "measured_da": 15.28
+   },
+   "Lower_Hudson": {
+    "arm": 2.81,
+    "keeper": 2.58,
+    "measured_da": 9.89
+   },
+   "NYC": {
+    "arm": 3.09,
+    "keeper": 2.82,
+    "measured_da": 10.18
+   },
+   "Long_Island": {
+    "arm": 3.85,
+    "keeper": 3.51,
+    "measured_da": 19.88
+   }
+  },
+  "reported": {
+   "link_limit_up_mean_mw": 3717.7,
+   "link_flow_mean_mw": 2762.3,
+   "market_ce_binding_share": 0.0436,
+   "coincidence": {
+    "both_h": 109,
+    "expected_if_independent": 56.7,
+    "lift": 1.92,
+    "precision": 0.084,
+    "recall": 0.285
+   },
+   "spread_model_in_link_binding_h": 1.88,
+   "basis_measured_in_market_ce_binding_h": 19.7,
+   "hydro_twh": {
+    "arm": 26.83,
+    "eia923": 28.4
+   },
+   "upstate_h_at_pooled_node_price": 0,
+   "lw_price": {
+    "Capital_Hudson": {
+     "keeper": 34.08,
+     "arm": 34.11
+    },
+    "Long_Island": {
+     "keeper": 36.58,
+     "arm": 36.15
+    },
+    "Lower_Hudson": {
+     "keeper": 34.71,
+     "arm": 34.69
+    },
+    "NYC": {
+     "keeper": 34.75,
+     "arm": 34.68
+    },
+    "Upstate_West": {
+     "keeper": 32.36,
+     "arm": 32.41
+    },
+    "system": {
+     "keeper": 34.07,
+     "arm": 34.01
+    }
+   }
+  }
+ },
+ "2024": {
+  "G2_conservation_delta": {
+   "Upstate_West": 0.0,
+   "Capital_Hudson": -0.0856,
+   "Lower_Hudson": -0.0856,
+   "NYC": -0.0856,
+   "Long_Island": -0.0856
+  },
+  "G2_djf_abs_dlmp": {
+   "Capital_Hudson": 5.33,
+   "Long_Island": 6.07,
+   "Lower_Hudson": 5.42,
+   "NYC": 5.33,
+   "Upstate_West": 5.06
+  },
+  "G2_pass": false,
+  "G3_link_binding_share": 0.0535,
+  "G3_pass": true,
+  "G4_upstate_h_le_0": 0,
+  "G4_pass": true,
+  "G6_slack_gwh": {
+   "arm": 0.0,
+   "keeper": 0.0
+  },
+  "G6_pass": true,
+  "G7_new_d4_failures": [
+   "(2024, 'nyiso_gas_commitment_bridge \u00d7 CC_REGULAR', '54574')"
+  ],
+  "G7_pass": false,
+  "djf_spread_vs_upstate": {
+   "Capital_Hudson": {
+    "arm": 3.35,
+    "keeper": 2.96,
+    "measured_da": 11.06
+   },
+   "Lower_Hudson": {
+    "arm": 4.32,
+    "keeper": 3.85,
+    "measured_da": 10.06
+   },
+   "NYC": {
+    "arm": 5.28,
+    "keeper": 4.87,
+    "measured_da": 13.16
+   },
+   "Long_Island": {
+    "arm": 6.84,
+    "keeper": 5.65,
+    "measured_da": 17.05
+   }
+  },
+  "reported": {
+   "link_limit_up_mean_mw": 4157.2,
+   "link_flow_mean_mw": 2775.7,
+   "market_ce_binding_share": 0.0251,
+   "coincidence": {
+    "both_h": 24,
+    "expected_if_independent": 11.8,
+    "lift": 2.04,
+    "precision": 0.051,
+    "recall": 0.109
+   },
+   "spread_model_in_link_binding_h": 2.46,
+   "basis_measured_in_market_ce_binding_h": 34.7,
+   "hydro_twh": {
+    "arm": 26.74,
+    "eia923": 27.88
+   },
+   "upstate_h_at_pooled_node_price": 9,
+   "lw_price": {
+    "Capital_Hudson": {
+     "keeper": 37.74,
+     "arm": 38.05
+    },
+    "Long_Island": {
+     "keeper": 39.63,
+     "arm": 39.72
+    },
+    "Lower_Hudson": {
+     "keeper": 38.4,
+     "arm": 38.62
+    },
+    "NYC": {
+     "keeper": 38.59,
+     "arm": 38.7
+    },
+    "Upstate_West": {
+     "keeper": 35.45,
+     "arm": 35.7
+    },
+    "system": {
+     "keeper": 37.51,
+     "arm": 37.7
+    }
+   }
+  }
+ },
+ "2025": {
+  "G2_conservation_delta": {
+   "Upstate_West": 0.0,
+   "Capital_Hudson": -0.5581,
+   "Lower_Hudson": -0.5581,
+   "NYC": -0.5581,
+   "Long_Island": -0.5581
+  },
+  "G2_djf_abs_dlmp": {
+   "Capital_Hudson": 9.31,
+   "Long_Island": 10.19,
+   "Lower_Hudson": 9.35,
+   "NYC": 9.36,
+   "Upstate_West": 8.62
+  },
+  "G2_pass": false,
+  "G3_link_binding_share": 0.0313,
+  "G3_pass": true,
+  "G4_upstate_h_le_0": 0,
+  "G4_pass": true,
+  "G6_slack_gwh": {
+   "arm": 0.0,
+   "keeper": 0.0
+  },
+  "G6_pass": true,
+  "G7_new_d4_failures": [
+   "(2025, 'nyiso_gas_commitment_bridge \u00d7 CC_REGULAR', '55405')"
+  ],
+  "G7_pass": false,
+  "djf_spread_vs_upstate": {
+   "Capital_Hudson": {
+    "arm": 7.1,
+    "keeper": 6.47,
+    "measured_da": 27.18
+   },
+   "Lower_Hudson": {
+    "arm": 7.74,
+    "keeper": 7.08,
+    "measured_da": 17.8
+   },
+   "NYC": {
+    "arm": 8.48,
+    "keeper": 7.81,
+    "measured_da": 23.69
+   },
+   "Long_Island": {
+    "arm": 11.13,
+    "keeper": 9.48,
+    "measured_da": 32.12
+   }
+  },
+  "reported": {
+   "link_limit_up_mean_mw": 4135.7,
+   "link_flow_mean_mw": 2580.8,
+   "market_ce_binding_share": 0.0362,
+   "coincidence": {
+    "both_h": 21,
+    "expected_if_independent": 9.9,
+    "lift": 2.12,
+    "precision": 0.077,
+    "recall": 0.066
+   },
+   "spread_model_in_link_binding_h": 3.02,
+   "basis_measured_in_market_ce_binding_h": 42.11,
+   "hydro_twh": {
+    "arm": 24.06,
+    "eia923": 24.1
+   },
+   "upstate_h_at_pooled_node_price": 0,
+   "lw_price": {
+    "Capital_Hudson": {
+     "keeper": 61.41,
+     "arm": 62.06
+    },
+    "Long_Island": {
+     "keeper": 63.38,
+     "arm": 63.5
+    },
+    "Lower_Hudson": {
+     "keeper": 62.27,
+     "arm": 62.79
+    },
+    "NYC": {
+     "keeper": 61.43,
+     "arm": 61.67
+    },
+    "Upstate_West": {
+     "keeper": 57.24,
+     "arm": 57.88
+    },
+    "system": {
+     "keeper": 60.3,
+     "arm": 60.73
+    }
+   }
+  }
+ }
+}
