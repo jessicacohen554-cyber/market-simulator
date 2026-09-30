@@ -62,18 +62,44 @@ def main() -> None:
         drag_a = (fa.min_gen_mechanism == MECH_ST_NETLOAD_DRAG).any(axis=1)
         drag_b = (fb.min_gen_mechanism == MECH_ST_NETLOAD_DRAG).any(axis=1)
         other = ~(drag_a | drag_b)
-        assert np.array_equal(fa.min_gen[other], fb.min_gen[other]), "non-drag min_gen moved"
+        assert np.array_equal(fa.min_gen[other], fb.min_gen[other]), (
+            "non-drag min_gen moved"
+        )
         pc = np.array([int(getattr(g, "plant_code", 0) or 0) for g in off["fleet"]])
         rows = np.flatnonzero(drag_a | drag_b)
         yr = {}
         for p in sorted(set(pc[rows])):
             r = rows[pc[rows] == p]
-            a = float(np.where(fa.min_gen_mechanism[r] == MECH_ST_NETLOAD_DRAG, fa.min_gen[r], 0).sum()) / 1e6
-            b = float(np.where(fb.min_gen_mechanism[r] == MECH_ST_NETLOAD_DRAG, fb.min_gen[r], 0).sum()) / 1e6
+            a = (
+                float(
+                    np.where(
+                        fa.min_gen_mechanism[r] == MECH_ST_NETLOAD_DRAG,
+                        fa.min_gen[r],
+                        0,
+                    ).sum()
+                )
+                / 1e6
+            )
+            b = (
+                float(
+                    np.where(
+                        fb.min_gen_mechanism[r] == MECH_ST_NETLOAD_DRAG,
+                        fb.min_gen[r],
+                        0,
+                    ).sum()
+                )
+                / 1e6
+            )
             yr[str(p)] = [round(a, 4), round(b, 4)]
-        tot = [round(sum(v[0] for v in yr.values()), 4), round(sum(v[1] for v in yr.values()), 4)]
-        report[year] = {"plants_off_on_twh": yr, "total_off_on_twh": tot,
-                        "byte_identical": bool(np.array_equal(fa.min_gen, fb.min_gen))}
+        tot = [
+            round(sum(v[0] for v in yr.values()), 4),
+            round(sum(v[1] for v in yr.values()), 4),
+        ]
+        report[year] = {
+            "plants_off_on_twh": yr,
+            "total_off_on_twh": tot,
+            "byte_identical": bool(np.array_equal(fa.min_gen, fb.min_gen)),
+        }
         print(json.dumps({year: report[year]}), flush=True)
     out = Path("docs/handoffs/r-ercot/r_ercot18_drag_index_delta.json")
     prev = json.loads(out.read_text()) if out.exists() else {}
