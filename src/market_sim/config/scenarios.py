@@ -1606,6 +1606,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinctly, keeping the control/arm A/B off one cache entry. Registered
     # IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "netload_drag_min_run_persistence",
+    # R-ERCOT-18 PRIOR-YEAR OVERNIGHT-COMMITMENT allocation index for the
+    # ST_GAS net-load drag (GATED default off): dropped from the hash at its
+    # default — the off path never reads the artifact, byte-identical by
+    # construction. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "netload_drag_prior_year_commitment_index",
     # miso-180 anchored SPREAD-ONLY dispersion graft (GATED default off):
     # dropped from the hash at its False default so every pre-existing cache
     # key of all six ISOs stays byte-stable — the off path returns before
@@ -2878,6 +2884,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by pjm-177 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "netload_drag_min_run_persistence": "False",
+    # Added by R-ERCOT-18 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "netload_drag_prior_year_commitment_index": "False",
     # Added 2026-08-22 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "hindcast_verified_announced_exits": "False",
@@ -3768,6 +3777,9 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
         "must-run floor zeroed where the plant cannot carry its committed level"
     ),
     "netload_drag_layup_window_mask": "measured lay-up windows mask the net-load drag floor",
+    "netload_drag_prior_year_commitment_index": (
+        "prior-year measured overnight commitment allocates the net-load drag floor"
+    ),
     "coal_lignite_mustrun_override": "measured lignite must-run level",
     "coal_prb_mustrun_override": "measured PRB must-run level",
     "chp_export_floor_measured": "measured steam-host export floor",
@@ -13559,6 +13571,46 @@ class ScenarioConfig:
     # shape-and-provenance escalation (D-1 cv_ratio toward 1.0), never waived.
     # Evidence: results/calibration/FINDING-pjm177-st-gas-commitment-persistence-2026-09-09.md
     netload_drag_min_run_persistence: bool = False
+
+    # R-ERCOT-18 PRIOR-YEAR OVERNIGHT-COMMITMENT ALLOCATION of the ST_GAS
+    # net-load drag (default off; owner decision card 2026-09-30, "Build
+    # prior-year index (Recommended)"). An ALLOCATION-only swap of the same
+    # mandate, the sibling of netload_drag_merit_allocation above — same curve,
+    # same membership, same mech id, no second floor (rule 19 [R-ONE-MECH]).
+    #
+    # The defect (rule 17 [R-FLOOR-WINDOW]). The drag's driver is the FLEET
+    # overnight (23-05h) capacity factor of the drag-covered ST_GAS fleet; the
+    # pro-rata applier puts that one fraction on every plant. Lake Hubbard
+    # (3452) is a two-shift cycler — online by day, off every night — whose own
+    # overnight CF was 0.000-0.012 in 2019-2022, yet the floor holds it at the
+    # fleet's ~0.15 in every hour. The keeper's own D-4 per-unit conduct rider
+    # convicts it in 2019-2023 (2022: 4,662 binding hours, meter at zero in
+    # 76 % of them), and it is the one row denying 2022 its C8 above-cap escape.
+    # Merit allocation (ercot-259/260) moved the mandate by heat rate and left
+    # 3452 convicted; the lay-up mask (ercot-256) cannot see sub-5-day stops.
+    #
+    # When True, each plant's floor fraction becomes ``floor_frac x k_p`` with
+    # ``k_p = (E_p / B_p) / (sum E / sum B)``: E_p the plant's measured overnight
+    # net MWh in the PRIOR calendar year (Y-1) and B_p the floor's own pmax
+    # basis for that plant's drag rows, normalised over the metered drag plants
+    # so the nominal fleet mandate is preserved (sum k_p B_p = sum B_p). This is
+    # the plant decomposition of the drag's OWN driver statistic, from the same
+    # CAMPD source, window and unit routing the curve's derive uses
+    # (scripts/data/derive_ercot_stgas_overnight_commitment.py →
+    # data/raw/_validation-source/ercot_stgas_overnight_commitment.csv, frozen
+    # rule 23). Unmetered plants keep k = 1 and sit outside the normalisation.
+    # FAIL-CLOSED: no Y-1 vintage in the artifact (2019, since TX 2018 CAMPD is
+    # not on disk) → pro-rata, byte-identical.
+    #
+    # Rule 13 [R-MEASURED]: the index reads the PRIOR year only, never the
+    # solve year's own conduct — information on file before the year opens, the
+    # same vintage gate step 0/1b apply to instrument dates. BACKCAST ONLY
+    # (mode-gated in the applier, and listed in _BACKCAST_ONLY_OVERLAY_FIELDS);
+    # a forecast year keeps the pro-rata allocation. Rule 21 [R-DOF]: ZERO free
+    # parameters — the window is the curve's own, the lag is the latest complete
+    # vintage, and nothing is fitted or swept. Rule 25: ERCOT-only by its
+    # artifact (the loader keys on iso).
+    netload_drag_prior_year_commitment_index: bool = False
 
     # ERCOT G-22 condition-responsive CT/peaker offer surface (default off,
     # ERCOT-gated). In the missed tail hours the model offers online CT/peaker
