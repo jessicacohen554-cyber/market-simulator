@@ -76,3 +76,14 @@ Registered expectations, stated as bounds rather than signs:
 - Each shard runs `replay_keeper.py results/calibration/pjmnext8_xf_span --years <y> --out-dir results/calibration/pjmnext16_<A|B>_<y> [--set …]`.
 - Each shard pushes its full bundle (incl. `dispatch/<y>_P1.parquet` and `hourly/unit_hourly_<y>.parquet`) via a `.gitignore` negation plus a plain `git add` (rule 34).
 - The parent composes, scores (run-level and train tier), attests and registers.
+
+## 6. Addendum (2026-09-30, before any B solve): arm B re-pinned
+
+- The first B launch (pinned `6d4c7749`) was **stopped during setup, before any solve**.
+- The regression sweep caught `tests/unit/pipeline/test_p1_prep_wiring.py`: the new P1 prep was wired into `pipeline/year.py` only.
+  - `scripts/run_calibration.py` (the backcast path the shards run) and `runner.py` keep their own chains.
+  - B would therefore have solved with the bridge flag set and the hook **inert**.
+- Fixed in the next commit. B's seven shards are relaunched at that commit's SHA.
+- Arm A is unaffected (the bridge flag is off there) and keeps pin `6d4c7749`.
+- The fix only adds a flag-gated hook, so A's legs at `6d4c7749` and any leg at the new SHA are identical for A's recipe.
+- Predictions and decision rule are unchanged.
