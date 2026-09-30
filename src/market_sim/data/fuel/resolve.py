@@ -47,7 +47,7 @@ from .basis import (
     apply_miso_winter_citygate_daily,
     apply_miso_winter_gas_daily_delivered,
 )
-from .dual_fuel import apply_dual_fuel_pricing
+from .dual_fuel import apply_dual_fuel_pricing, apply_measured_oil_burn_pricing
 from .hubs import apply_hub_basis_overlay, gas_daily_shape_factors
 from .plant_prices import apply_plant_monthly_fuel_prices
 from .trajectories import (
@@ -101,7 +101,11 @@ def resolve_fuel_prices(
     When ``config.dual_fuel_switching`` is set (and ``apply_monthly`` is
     True), EIA-860 oil/gas switch-capable gas units are finally capped at
     the delivered oil price per hour (:func:`apply_dual_fuel_pricing`), so
-    their marginal cost is ``min(gas_mc, oil_mc)``.
+    their marginal cost is ``min(gas_mc, oil_mc)``. When
+    ``config.dual_fuel_measured_oil_burn`` is set (backcast only), gas units at
+    plants with a measured oil-burn day are first priced at that plant-day's
+    measured gas/oil mix (:func:`apply_measured_oil_burn_pricing`), which the
+    switch then leaves untouched on those cells (rule 19).
 
     The same code path runs both backcasts and forward projections. The
     F923 plant-monthly overlay (:func:`apply_plant_monthly_fuel_prices`)
@@ -309,6 +313,19 @@ def resolve_fuel_prices(
                 )
             else:
                 appliers[iso_name](fuel_prices, fleet, config, year)
-        apply_dual_fuel_pricing(fuel_prices, fleet, config, year)
+        # soco-96 measured oil burn (backcast-only, default off): the plant-day
+        # MEASURED gas/oil mix, on the final delivered gas price. Its written
+        # mask is handed to the dual-fuel switch as skip_cells, so on a covered
+        # plant-day the measured mix REPLACES min(gas, oil) (rule 19); None
+        # when inert, which keeps the dual-fuel call byte-identical.
+        oil_burn_cells = apply_measured_oil_burn_pricing(
+            fuel_prices, fleet, config, year
+        )
+        if oil_burn_cells is None:
+            apply_dual_fuel_pricing(fuel_prices, fleet, config, year)
+        else:
+            apply_dual_fuel_pricing(
+                fuel_prices, fleet, config, year, skip_cells=oil_burn_cells
+            )
 
     return fuel_prices
