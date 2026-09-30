@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 
 sys.path[:0] = [".", "src", "scripts"]
-from scripts.data.derive_caiso_import_tranches import corridor_net_import
+from scripts.data.derive_caiso_import_tranches import corridor_net_import  # noqa: E402
 
 S = sys.argv[1]
 meas = corridor_net_import(years=range(2019, 2026))
