@@ -1995,3 +1995,15 @@ OWNER RULINGS 2026-09-29 (decision cards, soco-89):
   (Transco Z4/Z5 or Sonat) used as replacement fuel, matching lambda's definition (incremental cost × replacement fuel). The owner
   supplies the file; it is non-redistributable (data-licensing §5), so it stays gitignored. soco-90 greedies both halves, zero LP,
   then brings a build card.
+
+## 2026-09-29 — soco-90: a daily replacement-fuel series cannot do the joint C3a repair (zero LP)
+
+The licensed SE daily file was not supplied, so the lane bounded it. Greedy on soco87_span with replacement = HH daily
+(the SE-basis = 0 reference, not a candidate): C3a 2019 +14.0→+7.1 and 2020 +14.4→+3.8 pass, while 2022 −12.7→−25.0,
+2023 +2.3→−11.1, 2024 −3.6→−19.0 and 2025 −1.5→−12.6 fail. Required SE-over-HH premium: −0.17 to −0.61 $/MMBtu in low-40 %
+lambda hours every year, +0.26 to +1.63 in Mar–Nov top-20 % hours. In 2023–25, 70–83 % of top-20 % hours share a day with
+low-40 % hours, so one daily price cannot meet both. The error is intra-day, not fuel. No solve; keeper unchanged; NOT-YET 7/4/0/1/2.
+Record: docs/handoffs/r-soco/FINDING-soco-90-2026-09-29.md; probe scripts/probes/_soco90_se_daily_replacement.py.
+
+OWNER RULINGS 2026-09-29 (soco-90 cards): **"Don't buy"** (SE daily gas licence; fuel route for C3a closed) and
+**"Zero-LP intra-day census"** (soco-91: price setter, offer and loading by hour of day vs lambda; card back).

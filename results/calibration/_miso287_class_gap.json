@@ -1,0 +1,357 @@
+{
+ "2022": {
+  "months": [
+   6,
+   7,
+   8
+  ],
+  "night_hours": 552,
+  "p1_median": 65.19,
+  "p0_stack_median": 48.02,
+  "class_mw": {
+   "COAL_PRB": {
+    "stack": 28111.0,
+    "p1": 15807.0,
+    "p1_minus_stack": -12304.0
+   },
+   "COAL_BIT": {
+    "stack": 10915.0,
+    "p1": 6824.0,
+    "p1_minus_stack": -4091.0
+   },
+   "hydro": {
+    "stack": 1864.0,
+    "p1": 765.0,
+    "p1_minus_stack": -1099.0
+   },
+   "COAL_LIGNITE": {
+    "stack": 948.0,
+    "p1": 766.0,
+    "p1_minus_stack": -182.0
+   },
+   "nuclear": {
+    "stack": 10981.0,
+    "p1": 10981.0,
+    "p1_minus_stack": 0.0
+   },
+   "ST_GAS": {
+    "stack": 1223.0,
+    "p1": 1227.0,
+    "p1_minus_stack": 4.0
+   },
+   "CT_PEAKER": {
+    "stack": 12.0,
+    "p1": 101.0,
+    "p1_minus_stack": 89.0
+   },
+   "ST_CHP": {
+    "stack": 197.0,
+    "p1": 405.0,
+    "p1_minus_stack": 208.0
+   },
+   "CC_CHP": {
+    "stack": 902.0,
+    "p1": 1121.0,
+    "p1_minus_stack": 219.0
+   },
+   "CT_CHP": {
+    "stack": 497.0,
+    "p1": 821.0,
+    "p1_minus_stack": 324.0
+   },
+   "biomass": {
+    "stack": 0.0,
+    "p1": 1021.0,
+    "p1_minus_stack": 1021.0
+   },
+   "OTHER": {
+    "stack": 0.0,
+    "p1": 1425.0,
+    "p1_minus_stack": 1425.0
+   },
+   "import": {
+    "stack": 641.0,
+    "p1": 4024.0,
+    "p1_minus_stack": 3383.0
+   },
+   "wind": {
+    "stack": 0.0,
+    "p1": 8803.0,
+    "p1_minus_stack": 8803.0
+   },
+   "CC_REGULAR": {
+    "stack": 3186.0,
+    "p1": 16635.0,
+    "p1_minus_stack": 13449.0
+   }
+  },
+  "cap_offered_below_p1_price_by_zone_class": {
+   "MISO-East|CC_REGULAR": 3920.0,
+   "MISO-East|COAL_BIT": 1100.0,
+   "MISO-East|COAL_PRB": 9338.0,
+   "MISO-East|CT_CHP": 221.0,
+   "MISO-East|hydro": 624.0,
+   "MISO-East|nuclear": 2170.0,
+   "MISO-Illinois|CC_REGULAR": 362.0,
+   "MISO-Illinois|COAL_BIT": 2043.0,
+   "MISO-Illinois|COAL_PRB": 3205.0,
+   "MISO-Illinois|nuclear": 1196.0,
+   "MISO-Indiana|CC_REGULAR": 1308.0,
+   "MISO-Indiana|COAL_BIT": 7467.0,
+   "MISO-Indiana|COAL_PRB": 313.0,
+   "MISO-Plains|CC_REGULAR": 1183.0,
+   "MISO-Plains|COAL_PRB": 7806.0,
+   "MISO-Plains|hydro": 380.0,
+   "MISO-Plains|nuclear": 1105.0,
+   "MISO-South|CC_CHP": 242.0,
+   "MISO-South|CC_REGULAR": 7745.0,
+   "MISO-South|COAL_PRB": 4980.0,
+   "MISO-South|CT_CHP": 328.0,
+   "MISO-South|hydro": 509.0,
+   "MISO-South|nuclear": 4971.0,
+   "MISO-West|CC_REGULAR": 972.0,
+   "MISO-West|COAL_BIT": 1144.0,
+   "MISO-West|COAL_LIGNITE": 964.0,
+   "MISO-West|COAL_PRB": 3355.0,
+   "MISO-West|nuclear": 1538.0,
+   "MISO_external|import": 5313.0
+  },
+  "flex_offered_below_p1_price_total": 65343.0
+ },
+ "2023": {
+  "months": [
+   6,
+   7,
+   8
+  ],
+  "night_hours": 552,
+  "p1_median": 26.89,
+  "p0_stack_median": 25.44,
+  "class_mw": {
+   "hydro": {
+    "stack": 1754.0,
+    "p1": 601.0,
+    "p1_minus_stack": -1153.0
+   },
+   "COAL_PRB": {
+    "stack": 15094.0,
+    "p1": 14909.0,
+    "p1_minus_stack": -185.0
+   },
+   "COAL_BIT": {
+    "stack": 6933.0,
+    "p1": 6910.0,
+    "p1_minus_stack": -23.0
+   },
+   "CC_CHP": {
+    "stack": 1433.0,
+    "p1": 1417.0,
+    "p1_minus_stack": -16.0
+   },
+   "COAL_LIGNITE": {
+    "stack": 680.0,
+    "p1": 666.0,
+    "p1_minus_stack": -14.0
+   },
+   "nuclear": {
+    "stack": 11098.0,
+    "p1": 11098.0,
+    "p1_minus_stack": 0.0
+   },
+   "ST_CHP": {
+    "stack": 276.0,
+    "p1": 284.0,
+    "p1_minus_stack": 8.0
+   },
+   "CT_CHP": {
+    "stack": 600.0,
+    "p1": 610.0,
+    "p1_minus_stack": 10.0
+   },
+   "ST_GAS": {
+    "stack": 1362.0,
+    "p1": 1406.0,
+    "p1_minus_stack": 44.0
+   },
+   "import": {
+    "stack": 5009.0,
+    "p1": 5479.0,
+    "p1_minus_stack": 470.0
+   },
+   "CC_REGULAR": {
+    "stack": 17139.0,
+    "p1": 17999.0,
+    "p1_minus_stack": 860.0
+   },
+   "biomass": {
+    "stack": 0.0,
+    "p1": 950.0,
+    "p1_minus_stack": 950.0
+   },
+   "OTHER": {
+    "stack": 0.0,
+    "p1": 1344.0,
+    "p1_minus_stack": 1344.0
+   },
+   "wind": {
+    "stack": 0.0,
+    "p1": 7640.0,
+    "p1_minus_stack": 7640.0
+   }
+  },
+  "cap_offered_below_p1_price_by_zone_class": {
+   "MISO-East|CC_CHP": 308.0,
+   "MISO-East|CC_REGULAR": 3217.0,
+   "MISO-East|COAL_PRB": 5286.0,
+   "MISO-East|hydro": 593.0,
+   "MISO-East|nuclear": 2155.0,
+   "MISO-Illinois|CC_REGULAR": 463.0,
+   "MISO-Illinois|COAL_BIT": 1995.0,
+   "MISO-Illinois|COAL_PRB": 357.0,
+   "MISO-Illinois|nuclear": 1047.0,
+   "MISO-Indiana|CC_REGULAR": 1302.0,
+   "MISO-Indiana|COAL_BIT": 3881.0,
+   "MISO-Plains|CC_REGULAR": 911.0,
+   "MISO-Plains|COAL_PRB": 6085.0,
+   "MISO-Plains|hydro": 352.0,
+   "MISO-Plains|nuclear": 1190.0,
+   "MISO-South|CC_CHP": 636.0,
+   "MISO-South|CC_REGULAR": 11123.0,
+   "MISO-South|COAL_PRB": 2178.0,
+   "MISO-South|CT_CHP": 334.0,
+   "MISO-South|hydro": 466.0,
+   "MISO-South|nuclear": 5135.0,
+   "MISO-West|CC_REGULAR": 760.0,
+   "MISO-West|COAL_BIT": 1068.0,
+   "MISO-West|COAL_LIGNITE": 697.0,
+   "MISO-West|COAL_PRB": 1241.0,
+   "MISO-West|nuclear": 1571.0,
+   "MISO_external|import": 6685.0
+  },
+  "flex_offered_below_p1_price_total": 50200.0
+ },
+ "2025": {
+  "months": [
+   6,
+   7,
+   8
+  ],
+  "night_hours": 552,
+  "p1_median": 36.3,
+  "p0_stack_median": 31.63,
+  "class_mw": {
+   "COAL_PRB": {
+    "stack": 17117.0,
+    "p1": 15336.0,
+    "p1_minus_stack": -1781.0
+   },
+   "hydro": {
+    "stack": 1788.0,
+    "p1": 884.0,
+    "p1_minus_stack": -904.0
+   },
+   "COAL_BIT": {
+    "stack": 6564.0,
+    "p1": 6165.0,
+    "p1_minus_stack": -399.0
+   },
+   "COAL_LIGNITE": {
+    "stack": 725.0,
+    "p1": 719.0,
+    "p1_minus_stack": -6.0
+   },
+   "nuclear": {
+    "stack": 10647.0,
+    "p1": 10647.0,
+    "p1_minus_stack": 0.0
+   },
+   "CT_CHP": {
+    "stack": 652.0,
+    "p1": 682.0,
+    "p1_minus_stack": 30.0
+   },
+   "ST_CHP": {
+    "stack": 259.0,
+    "p1": 303.0,
+    "p1_minus_stack": 44.0
+   },
+   "solar": {
+    "stack": 0.0,
+    "p1": 133.0,
+    "p1_minus_stack": 133.0
+   },
+   "ST_GAS": {
+    "stack": 1359.0,
+    "p1": 1624.0,
+    "p1_minus_stack": 265.0
+   },
+   "CC_CHP": {
+    "stack": 1876.0,
+    "p1": 2193.0,
+    "p1_minus_stack": 317.0
+   },
+   "biomass": {
+    "stack": 0.0,
+    "p1": 360.0,
+    "p1_minus_stack": 360.0
+   },
+   "CT_PEAKER": {
+    "stack": 186.0,
+    "p1": 586.0,
+    "p1_minus_stack": 400.0
+   },
+   "CC_REGULAR": {
+    "stack": 19570.0,
+    "p1": 20336.0,
+    "p1_minus_stack": 766.0
+   },
+   "OTHER": {
+    "stack": 0.0,
+    "p1": 773.0,
+    "p1_minus_stack": 773.0
+   },
+   "import": {
+    "stack": 2957.0,
+    "p1": 4224.0,
+    "p1_minus_stack": 1267.0
+   },
+   "wind": {
+    "stack": 0.0,
+    "p1": 8495.0,
+    "p1_minus_stack": 8495.0
+   }
+  },
+  "cap_offered_below_p1_price_by_zone_class": {
+   "MISO-East|CC_CHP": 969.0,
+   "MISO-East|CC_REGULAR": 4990.0,
+   "MISO-East|COAL_PRB": 6755.0,
+   "MISO-East|CT_PEAKER": 419.0,
+   "MISO-East|hydro": 638.0,
+   "MISO-East|nuclear": 2327.0,
+   "MISO-Illinois|COAL_BIT": 1917.0,
+   "MISO-Illinois|COAL_PRB": 901.0,
+   "MISO-Illinois|nuclear": 1063.0,
+   "MISO-Indiana|CC_REGULAR": 1728.0,
+   "MISO-Indiana|COAL_BIT": 4229.0,
+   "MISO-Indiana|COAL_PRB": 263.0,
+   "MISO-Plains|CC_REGULAR": 1291.0,
+   "MISO-Plains|COAL_PRB": 6225.0,
+   "MISO-Plains|hydro": 364.0,
+   "MISO-Plains|nuclear": 701.0,
+   "MISO-South|CC_CHP": 678.0,
+   "MISO-South|CC_REGULAR": 10857.0,
+   "MISO-South|COAL_PRB": 2595.0,
+   "MISO-South|CT_CHP": 383.0,
+   "MISO-South|ST_GAS": 573.0,
+   "MISO-South|hydro": 462.0,
+   "MISO-South|nuclear": 5060.0,
+   "MISO-West|CC_REGULAR": 1243.0,
+   "MISO-West|COAL_BIT": 999.0,
+   "MISO-West|COAL_LIGNITE": 805.0,
+   "MISO-West|COAL_PRB": 2163.0,
+   "MISO-West|nuclear": 1496.0,
+   "MISO_external|import": 5399.0
+  },
+  "flex_offered_below_p1_price_total": 57045.0
+ }
+}
