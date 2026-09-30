@@ -38,7 +38,17 @@ def _hourly(a: np.ndarray, n: int, t: int = 8760) -> np.ndarray:
     raise ValueError(f"unexpected shape {a.shape} for n={n}")
 
 
-def _rebuild(year: int) -> dict:
+#: The ARM recipe (PJM-NEXT-13 PRECOMMIT): replacement-cost fuel on, and the three
+#: gas-keyed coal passthrough gates it supersedes (rule 19) off.
+ARM_SET: dict[str, bool] = {
+    "pjm_replacement_cost_fuel": True,
+    "coal_bit_passthrough_sigmoid": False,
+    "coal_prb_passthrough_sigmoid": False,
+    "coal_prb_passthrough_tiered": False,
+}
+
+
+def _rebuild(year: int, arm: bool = False) -> dict:
     """``reconstruct_bundle_fleet`` with ONE override: ``pjm_da_virtual_bids`` off.
 
     The DA virtual INC/DEC units are demand-side LP rows (``VIRTUAL_*`` groups) that
@@ -56,6 +66,16 @@ def _rebuild(year: int) -> dict:
     meta = json.loads((BUNDLE / "meta.json").read_text())
     kw = BF.full_run_year_kwargs(meta)
     kw["pjm_da_virtual_bids"] = False
+    if arm:
+        # Both channels, exactly as replay_keeper --set routes a key.
+        kw["prb_overrides"] = {**(kw.get("prb_overrides") or {}), **ARM_SET}
+        for k, v in ARM_SET.items():
+            if k in kw:
+                kw[k] = v
+        # The bit gate's run_year kwarg is named ``coal_bit_sigmoid`` (meta and
+        # ScenarioConfig say ``coal_bit_passthrough_sigmoid``); it re-arms the
+        # field after prb_overrides, so the kwarg must be disarmed too.
+        kw["coal_bit_sigmoid"] = False
     state = run_year(
         year,
         meta["iso"],
@@ -70,9 +90,9 @@ def _rebuild(year: int) -> dict:
     return state
 
 
-def dump(year: int, out_dir: Path) -> Path:
-    """Rebuild ``year`` and write the npz."""
-    state = _rebuild(year)
+def dump(year: int, out_dir: Path, arm: bool = False) -> Path:
+    """Rebuild ``year`` (keeper, or the ARM recipe) and write the npz."""
+    state = _rebuild(year, arm)
     fa = state["fleet_arrays"]
     n = len(fa.unit_ids)
     zones = list(state["config"].zones) if hasattr(state["config"], "zones") else None
@@ -98,7 +118,24 @@ def dump(year: int, out_dir: Path) -> Path:
                 arrs[key] = _hourly(v, n)
             except ValueError as e:
                 print(f"  {key}: {e}", flush=True)
-    dest = out_dir / f"pjmnext13_fleet_{year}.npz"
+    # The P1 mid-curve offer FLOOR (pjm_offer_midcurve_conditional), exactly as
+    # run_year builds it at the mc_bid_adjust seam, so the arm delta is read on
+    # the bid the LP sees rather than on mc_base (the floor only raises bids).
+    cfg = state["config"]
+    if getattr(cfg, "pjm_offer_midcurve_conditional", False):
+        from market_sim.data.fleet import build_pjm_offer_midcurve_conditional_markup
+
+        net = (
+            state["demand"].sum(axis=0)
+            - (state["solar_cap"][:, None] * state["solar_cf"]).sum(axis=0)
+            - (state["wind_cap"][:, None] * state["wind_cf"]).sum(axis=0)
+        )
+        mk = build_pjm_offer_midcurve_conditional_markup(
+            fa, state["fleet"], state["mc_base"], net, cfg, year
+        )
+        if mk is not None:
+            arrs["midcurve_markup"] = _hourly(mk, n)
+    dest = out_dir / f"pjmnext13_fleet_{year}{'_arm' if arm else ''}.npz"
     np.savez_compressed(dest, **arrs, allow_pickle=True)
     print(f"{year}: {n} units -> {dest}", flush=True)
     return dest
@@ -108,5 +145,6 @@ if __name__ == "__main__":
     logging.disable(logging.CRITICAL)
     out = Path(sys.argv[1])
     out.mkdir(parents=True, exist_ok=True)
-    for y in [int(a) for a in sys.argv[2:]]:
-        dump(y, out)
+    arm = "--arm" in sys.argv
+    for y in [int(a) for a in sys.argv[2:] if a != "--arm"]:
+        dump(y, out, arm)

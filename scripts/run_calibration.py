@@ -109,6 +109,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_nyiso_downstate_ct_gas_daily,
     apply_nyiso_ldc_generator_delivered_gas,
     apply_nyiso_zonal_gas_basis,
+    apply_pjm_replacement_cost_fuel,
     apply_pjm_zonal_gas_basis,
     apply_plant_monthly_fuel_prices,
     dual_fuel_switch_mask,
@@ -5037,6 +5038,19 @@ def run_year(
     # dual-fuel min. No-op unless pjm_zonal_gas_basis is set (PJM only). The
     # print-derived-cell mask is passed always; the applier consumes it only
     # under pjm_zonal_gas_basis_skip_923_priced (PJM-NEXT-2; off => identical).
+    # PJM-NEXT-13 (owner ruling 2026-09-29): PJM gas and priceable coal at
+    # REPLACEMENT cost (IMM regional Platts spot + measured variable transport)
+    # instead of the EIA-923 average print. Off by default, byte-identical off.
+    # Its written mask joins print_cells, which the PJM zonal-basis applier
+    # honours under this flag, so the mean-zero spread is not stacked on the
+    # regional hub (rule 19). Mirrors resolve_fuel_prices.
+    _repl_cells = apply_pjm_replacement_cost_fuel(
+        fuel_prices, fleet_arrays, config, year
+    )
+    if _repl_cells is not None:
+        print_cells = (
+            _repl_cells if print_cells is None else (print_cells | _repl_cells)
+        )
     apply_pjm_zonal_gas_basis(
         fuel_prices, fleet_arrays, config, year, skip_cells=print_cells
     )
