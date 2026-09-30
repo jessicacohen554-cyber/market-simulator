@@ -132,11 +132,12 @@ def check_rule22_tier_reading_on_status_page(src: str) -> bool:
     The run explorer no longer marks a held-out year at all (owner instruction
     2026-09-06), so the only thing standing between a validation number and
     being quoted as a certified out-of-sample skill number is the Calibration
-    Status page's per-year table: a Tier column plus the line that says a
-    held-out row is reported, not gating. That is rule 30(b)'s surface and it is
-    what this check pins.
+    Status page's per-year table: a Tier column plus the line that says every
+    year gates, held-out years included (rubric v3.13, rule 30(c) as amended
+    2026-09-30: "Shouldn't be considered calibrated if holdout years miss.").
+    That is rule 30(b)'s surface and it is what this check pins.
     """
-    return "Held-out years are reported, not gating" in src and "Tier" in src
+    return "Every year gates, held-out years included" in src and "Tier" in src
 
 
 class TestHoldoutRendersAsAnOrdinaryYear(unittest.TestCase):
@@ -199,7 +200,7 @@ class TestHoldoutRendersAsAnOrdinaryYear(unittest.TestCase):
                 STATUS_JS.read_text(encoding="utf-8")
             ),
             "The Calibration Status page must keep its per-year Tier column and "
-            "the 'reported, not gating' line: with the run explorer stripped of "
+            "the 'every year gates' line: with the run explorer stripped of "
             "every designation, it is the only surface that stops a validation "
             "number being read as a certified out-of-sample skill number "
             "(rule 22, rule 30(b)).",
@@ -269,7 +270,7 @@ class TestGuardActuallyGuards(unittest.TestCase):
 
     def test_status_tier_check_fires_when_the_reading_is_dropped(self):
         src = STATUS_JS.read_text(encoding="utf-8")
-        mutated = src.replace("Held-out years are reported, not gating", "", 1)
+        mutated = src.replace("Every year gates, held-out years included", "", 1)
         self.assertNotEqual(mutated, src, "mutation did not apply")
         self.assertFalse(check_rule22_tier_reading_on_status_page(mutated))
 

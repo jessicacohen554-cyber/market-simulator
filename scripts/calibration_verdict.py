@@ -606,9 +606,30 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       (C1, C3a, C3b) against 1 and stays NOT-YET on the budget alone.
 #       NO SOLVE RAN — scorer-side only. Genealogy:
 #       docs/governance/rule-history.md §25.
+# v3.13 — 2026-09-30 owner instruction, session soco-96 (verbatim): "Shouldn't
+#       be considered calibrated if holdout years miss." REVERSES rule 30
+#       [R-TOUCHPOINT-FOLD] (c) of 2026-09-05 ("A HELD-OUT YEAR NEVER DOWNGRADES
+#       THE ISO"). The ISO determination (:func:`iso_determination`, read by
+#       build_status and audit_keepers) now covers EVERY registered year: the
+#       keeper's designated scopes (all partition configs — the ercot-255
+#       ``tier: validation`` exclusion is gone) PLUS every run folded to it via
+#       ``holdout.keeper``; a held-out year reading NOT-YET makes the ISO
+#       NOT-YET, and the basis line names the year and the criterion. Owner
+#       decision cards, same sitting: budget "Per run, worst-of" (each scope
+#       keeps its own caveat budget; the ISO reads the worst scope — the
+#       ercot-246 rollup extended to held-out years); stale rung "Counts;
+#       flagged stale" (a folded run solved at a different basis sha than the
+#       keeper still gates, and is flagged for re-solve). WHAT IS UNTOUCHED:
+#       every band, tier, ledger row, both caveat budgets and the v3.6 C3c
+#       out-of-training limb — :func:`determine_from_artifacts` is byte-
+#       unchanged, so every RUN-LEVEL determination is unchanged (measured: 11
+#       of 11 registered runs, 0 moves). ISO HEADLINES THAT MOVE, measured
+#       against the pre-change scorer: CAISO, MISO, NYISO, SPP CALIBRATED ->
+#       NOT-YET; NEISO stays CALIBRATED; ERCOT, NWPP, PJM, SOCO were already
+#       NOT-YET. NO SOLVE RAN. Genealogy: docs/governance/rule-history.md §26.
 # A STRING from v3.10 on: the float 3.10 == 3.1, which would collide with the
 # v3.1 amendment. Display-only everywhere it is read.
-RUBRIC_VERSION = "3.12"
+RUBRIC_VERSION = "3.13"
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -3689,6 +3710,178 @@ def determine(run_id: str, years: list[int] | None = None) -> dict:
     full-span determination.
     """
     return determine_from_artifacts(run_id, load_artifacts(run_id), years=years)
+
+
+def _determination_rank(det: str | None) -> int:
+    """Worst-first rank of a determination string (NOT-YET < CAVEATS < CLEAN)."""
+    d = (det or "").upper()
+    if "NOT" in d:
+        return 0
+    if "CAVEAT" in d:
+        return 1
+    return 2
+
+
+def _failing_criterion_years(verdict: dict) -> list[str]:
+    """``"<criterion> <year>[/<year>...]"`` for every FAIL record of a verdict."""
+    by_crit: dict[str, set[int]] = {}
+    for cid, crit in (verdict.get("criteria") or {}).items():
+        for rec in crit.get("records") or []:
+            if rec.get("status") == FAIL and rec.get("year") is not None:
+                by_crit.setdefault(cid, set()).add(int(rec["year"]))
+    return [
+        f"{cid} {'/'.join(str(y) for y in sorted(ys))}"
+        for cid, ys in sorted(by_crit.items())
+    ]
+
+
+def folded_touchpoints(iso: str, keeper_run_id: str) -> list[dict]:
+    """Registry sidecars whose ``holdout.keeper`` folds them onto this keeper.
+
+    Rule 30 [R-TOUCHPOINT-FOLD] (a): a touchpoint is the keeper's own frozen
+    recipe replayed on another year, found the same way the Run Explorer folds
+    it — never hand-authored.
+    """
+    out = []
+    for sidecar in sorted(REGISTRY_DIR.glob("*.json")):
+        try:
+            reg = json.loads(sidecar.read_text())
+        except (OSError, ValueError):
+            continue
+        if reg.get("iso") != iso or reg.get("id") == keeper_run_id:
+            continue
+        if (reg.get("holdout") or {}).get("keeper") != keeper_run_id:
+            continue
+        out.append(reg)
+    return out
+
+
+def _basis_sha(run_id: str) -> str | None:
+    """The git basis sha a run was solved at, from its bundle's run_config."""
+    try:
+        side = json.loads((REGISTRY_DIR / f"{run_id}.json").read_text())
+        bundle = Path(side["bundle"])
+        bundle = bundle if bundle.is_absolute() else REPO / bundle
+        cfg = json.loads((bundle / "run_config.json").read_text())
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+    git = cfg.get("git") or {}
+    sha = git.get("basis_sha") or git.get("sha")
+    return str(sha)[:8] if sha else None
+
+
+def iso_determination(
+    iso: str, keeper_run_id: str, config_partition: dict | None = None
+) -> dict:
+    """The ISO-level calibration determination over EVERY registered year (v3.13).
+
+    Owner instruction 2026-09-30, verbatim: "Shouldn't be considered calibrated
+    if holdout years miss." This REVERSES rule 30 [R-TOUCHPOINT-FOLD] (c) as it
+    stood from 2026-09-05 ("A HELD-OUT YEAR NEVER DOWNGRADES THE ISO"). The ISO
+    determination now covers the keeper's own span PLUS every run folded to it
+    through ``holdout.keeper``, and a held-out year that reads NOT-YET makes the
+    ISO NOT-YET.
+
+    The owner's rulings on the two open design questions (soco-96 decision
+    cards, 2026-09-30):
+
+      * BUDGET — "Per run, worst-of": each SCOPE is scored by the unchanged
+        rubric with its own caveat budget, and the ISO reads the WORST scope.
+        A scope is one designated partition config on its designated span
+        (every tier now gates — the ercot-255 ``tier: validation`` exclusion is
+        gone), or the keeper's whole registered span when it has no partition,
+        plus each folded touchpoint run on its own registered span. This is the
+        ercot-246 partition rollup extended to held-out years; a single bundle
+        that already spans 2019-2025 (NEISO, SOCO) is one pooled scope, as it
+        always was.
+      * STALE RUNG — "Counts; flagged stale": a folded run gates as-is. When
+        its solve basis sha differs from the keeper's it is flagged
+        ``stale`` (reported only), and the lane owes a re-solve under rules
+        34(c)/35(c). Fail-safe: a stale failing rung still downgrades.
+
+    Thresholds, caveat budgets, the scoped ledger and the v3.6 C3c
+    out-of-training limb are untouched — every scope is scored by
+    :func:`determine` exactly as before; only which scopes the ISO headline
+    folds over changes.
+
+    Args:
+        iso: ISO id (scopes the folded-touchpoint registry scan).
+        keeper_run_id: The ISO's designated keeper run id.
+        config_partition: The keeper shard's ``config_partition`` block, if any.
+
+    Returns:
+        ``determination`` (worst scope), ``reasons`` (one basis line per
+        non-clean scope naming its years and failing criterion-years),
+        ``scopes`` (every scope scored, gating or not — all gate now) and
+        ``years`` (the union of years the determination covers).
+    """
+    keeper_sha = _basis_sha(keeper_run_id)
+    scopes: list[dict] = []
+
+    def add(kind: str, run_id: str, years: list[int] | None, role=None) -> None:
+        v = determine(run_id, years=years)
+        span = sorted(int(y) for y in (v.get("target_years") or []))
+        sha = _basis_sha(run_id)
+        scopes.append(
+            {
+                "kind": kind,
+                "role": role,
+                "run_id": run_id,
+                "years": span,
+                "determination": v["determination"],
+                "reasons": v.get("reasons") or [],
+                "failing": _failing_criterion_years(v),
+                "grade_summary": v.get("grade_summary"),
+                "basis_sha": sha,
+                "stale": bool(
+                    kind == "folded" and keeper_sha and sha and sha != keeper_sha
+                ),
+            }
+        )
+
+    configs = (config_partition or {}).get("configs") or []
+    if configs:
+        for cfg in configs:
+            add(
+                "partition",
+                cfg["run_id"],
+                [int(y) for y in cfg.get("years", [])],
+                cfg.get("role"),
+            )
+    else:
+        add("keeper", keeper_run_id, None)
+    for reg in folded_touchpoints(iso, keeper_run_id):
+        add("folded", reg["id"], None)
+
+    det = min((s["determination"] for s in scopes), key=_determination_rank)
+    reasons = []
+    for s in scopes:
+        if _determination_rank(s["determination"]) == 2:
+            continue
+        span = "/".join(str(y) for y in s["years"])
+        label = f"{s['kind']}{' ' + s['role'] if s['role'] else ''}"
+        detail = "; ".join(s["reasons"])
+        fails = f" — failing: {', '.join(s['failing'])}" if s["failing"] else ""
+        stale = (
+            " [STALE: solved at a different basis than the keeper]"
+            if s["stale"]
+            else ""
+        )
+        reasons.append(
+            f"{span} ({label}, {s['run_id']}): {s['determination']} — {detail}{fails}{stale}"
+        )
+    return {
+        "determination": det,
+        "reasons": reasons,
+        "scopes": scopes,
+        "years": sorted({y for s in scopes for y in s["years"]}),
+        "basis": (
+            "all registered years (rubric v3.13, owner 2026-09-30: \"Shouldn't be "
+            'considered calibrated if holdout years miss."): worst determination '
+            "over the keeper's designated scopes plus every run folded to it via "
+            "holdout.keeper, each scope under its own caveat budget."
+        ),
+    }
 
 
 def determine_from_artifacts(

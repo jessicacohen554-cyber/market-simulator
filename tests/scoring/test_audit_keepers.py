@@ -52,7 +52,7 @@ class MarkerCurrencyTests(unittest.TestCase):
 
     def _stub(self, keepers, determinations):
         ak.keeper_store.keeper_ids = lambda: keepers
-        ak.cv.determine = lambda rid: {"determination": determinations[rid]}
+        ak.cv.determine = lambda rid, years=None: {"determination": determinations[rid]}
 
     def _write_marker(self, complete):
         self.marker.write_text(json.dumps({"complete": complete}))
