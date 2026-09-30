@@ -15054,3 +15054,15 @@ too.
 - **Matrix:** `nyiso_total_east_cutset_ttc` R → K.
 - **Superseded and pruned:** `2026-09-29-nyisonext13-recon-detach-span` and its 2021 run.
 - **Record:** `docs/RESULT-nyiso-next14-total-east-cutset-2026-09-30.md`.
+
+## NYISO-NEXT-15 — 2026-09-30 — per-landing import band; keeper promoted on structure, span NOT-YET on C3b 2022
+
+- **Phase 0 (zero LP):** the market's CENTRAL EAST binds when TOTAL EAST flow is high; in those hours the model's link carries 0.5–1.6 GW too little. Part of the cause is the pooled import node: downstate links sit at their p90 envelopes (+400–560 MW over measured), and Upstate_West runs 264–375 MW short. Record: `docs/FINDING-nyiso-next15-landing-allocation-phase0-2026-09-30.md`.
+- **Lever:** new flag `nyiso_import_landing_band`. Each pooled border link is banded monthly on its own P-32 attributed schedule, replacing the pooled EIA-930 band. Owner cards: "Build + test 5 yrs", then "P-32 per link" (the EIA-930-share split was infeasible on Long_Island).
+- **Result:** keeper `2026-09-30-nyisonext15-landing-band-span` (2022–2025), plus the stamped `2026-09-30-nyisonext15-landing-band-2021`. G-1 to G-6 pass all five years; promoted per the pre-registered rule (owner card "Promote per rule").
+  - C3a: 2021 +11.4 %, 2022 +3.2 %, 2023 +5.6 %, 2024 −1.6 %, 2025 −9.2 %.
+  - C3b 2022 0.195 → 0.200: **span CALIBRATED → NOT-YET.** 2021 NOT-YET.
+  - Zonal prices move ≤ $0.8/MWh. Binding-hour lift and spread do not improve: the overshoot is not an import-allocation effect.
+- **Matrix:** `nyiso_import_landing_band` U → K.
+- **Superseded and pruned:** `2026-09-30-nyisonext14-total-east-span` and its 2021 run.
+- **Record:** `docs/RESULT-nyiso-next15-landing-band-2026-09-30.md`.

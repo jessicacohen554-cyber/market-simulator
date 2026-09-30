@@ -1,8 +1,8 @@
 {
  "iso": "NYISO",
- "keeper": "2026-09-30-nyisonext14-total-east-span",
- "promotion_note": "PROMOTED 2026-09-30 (session NYISO-NEXT-14) under the promotion rule pre-registered in docs/PRECOMMIT-nyiso-next14-total-east-cutset-2026-09-30.md sec. 6 (structure; C1/C3 reported, not gating). The owner re-opened cell R nyiso_total_east_cutset_ttc by decision card ('Re-test all 5 years', 2026-09-29) on the zero-LP finding docs/FINDING-nyiso-next14-upstate-evacuation-phase0-2026-09-29.md. G-1 exact in all five legs (pin ac7d36d6, one-field delta nyiso_total_east_cutset_ttc false->true); G-2 the Upstate_West>Capital_Hudson link binds in 7.3/17.2/7.1/3.0/5.5 % of P1 hours 2021-2025 (band 1-50 %; market CENTRAL EAST 19.2/10.0/4.4/2.5/3.6 %); G-3 Upstate_West hours at <= $0 are 0 in every year (keeper 3,110/1,263/723/0/0; measured A-E DA 0); G-4 C6 and C8 PASS. Basis rule 14 misalignment exception: the one link is the A-E -> east cutset (TOTAL EAST), previously capped at its CENTRAL EAST sub-cutset, which measured cutset flow exceeded in 60-99 % of hours. Zero free parameters. Record: docs/RESULT-nyiso-next14-total-east-cutset-2026-09-30.md.",
- "determination_note": "Registered full span (2022-2025): CALIBRATED (C3c ledgered, rubric v3.3). C3a 2022 -13.6 -> +2.3 %, 2023 -7.0 -> +5.0 %, 2024 -2.5 -> -1.4 %, 2025 -11.3 -> -8.8 %; C3b 2022 0.226 -> 0.195; C1 2023 ST_GAS +3.5 -> +2.5 pp (PASS). C2, C4, C6, C8 PASS. Reported: Upstate_West now OVERSHOOTS measured RT (2022 77.4 vs 56.7, 2023 32.1 vs 25.3); the link's binding hours coincide with the market's CENTRAL EAST binding hours no better than chance (lift 1.37/0.74/1.07/0.31/0.69), and its rent in those hours is small (the nyiso-225 caveat, unchanged). The held-out 2021 run reads NOT-YET: C3a -14.3 -> +10.9 % (Upstate_West 41.1 vs 28.5), C3b 0.219 -> 0.165 PASS, C1 PASS; rule 30(c): a held-out year never downgrades the ISO.",
+ "keeper": "2026-09-30-nyisonext15-landing-band-span",
+ "promotion_note": "PROMOTED 2026-09-30 (session NYISO-NEXT-15) under the promotion rule pre-registered in docs/PRECOMMIT-nyiso-next15-landing-band-2026-09-30.md sec. 5 (structure; C1/C3 reported, not gating), confirmed by owner decision card 'Promote per rule' after the rubric cost was put to the owner. Owner decision cards 'Build + test 5 yrs' and 'P-32 per link' on the zero-LP finding docs/FINDING-nyiso-next15-landing-allocation-phase0-2026-09-30.md. G-1 exact in all five legs (pin 4c98e6dd, one-field delta nyiso_import_landing_band false->true); G-2 every pooled border link within max(3 %, 25 MW) of its measured P-32 attributed mean in every year (keeper: downstate +35..+246 MW, Upstate_West -264..-375 MW); G-3 the Upstate_West>Capital_Hudson link binds in 16.9/27.2/17.3/8.9/12.8 % of P1 hours 2021-2025; G-4 Upstate_West hours at <= $0 are 0 every year; G-5 C6 and C8 PASS; G-6 load slack 0 GWh (keeper 0). Rule 19: the per-landing bands replace the pooled EIA-930 band; rule 14 alignment: pooled total EIA-930 -> P-32 sum (-2..+1 %). Zero free parameters. Record: docs/RESULT-nyiso-next15-landing-band-2026-09-30.md.",
+ "determination_note": "Registered full span (2022-2025): NOT-YET. C3b 2022 NRMSE 0.195 -> 0.200 crosses the <= 0.20 band, so C3c (ledgered) is no longer the lone failure. C3a 2022 +2.3 -> +3.2 %, 2023 +5.0 -> +5.6 %, 2024 -1.4 -> -1.6 %, 2025 -8.8 -> -9.2 %; C3b 2023 0.141 -> 0.146, 2024 0.155 -> 0.158, 2025 0.160 -> 0.164. C1, C2, C4, C6, C8 PASS. Reported: zonal prices move <= $0.8/MWh; the link's flow in the market's CENTRAL EAST binding hours rises 150-420 MW (2021 4,142 vs 4,197 MW measured TOTAL EAST) but its binding-hour lift (1.20/0.65/0.93/0.87/0.59) and spread ($1.6-5.5 vs measured basis $20-56) do not improve: the Upstate_West overshoot is not an import-allocation effect. NYC ST_GAS rises (2023 8.31 -> 8.65 TWh vs 2.56 EIA-923). The held-out 2021 run reads NOT-YET: C3a +10.9 -> +11.4 %; rule 30(c): a held-out year never downgrades the ISO.",
  "de_designation_history": {
   "date": "2026-07-26",
   "former_keeper": "2026-07-26-nyiso-75-solar-shape",
@@ -12,8 +12,8 @@
  },
  "superseded": {
   "date": "2026-09-30",
-  "former_keeper": "2026-09-29-nyisonext13-recon-detach-span",
-  "reason": "superseded by NYISO-NEXT-14's re-test of the Total-East cutset envelope (nyiso_total_east_cutset_ttc false -> true; owner decision card 'Re-test all 5 years', promotion on the pre-registered structural rule), zero new free parameters; three stores pruned in the promoting session (rule 35(a)) via --force-uncite (rule 35(d)).",
+  "former_keeper": "2026-09-30-nyisonext14-total-east-span",
+  "reason": "superseded by NYISO-NEXT-15's per-landing-link monthly import band (nyiso_import_landing_band false -> true; owner decision cards 'Build + test 5 yrs', 'P-32 per link', 'Promote per rule'; promotion on the pre-registered structural rule), zero new free parameters; three stores pruned in the promoting session (rule 35(a)) via --force-uncite (rule 35(d)).",
   "year_set_before_prune": [
    2021,
    2022,
@@ -29,9 +29,9 @@
    2025
   ],
   "previous": {
-   "date": "2026-09-29",
-   "former_keeper": "2026-09-29-nyisonext12-neac-node-span",
-   "reason": "superseded by NYISO-NEXT-13's detachment of the NE AC node from the monthly net-interchange band (nyiso_ne_ac_recon_detach false -> true; pre-registered structural rule, owner ruling 'Promote per rule' 2026-09-29), zero new free parameters; three stores pruned in the promoting session (rule 35(a)) via --force-uncite (rule 35(d)).",
+   "date": "2026-09-30",
+   "former_keeper": "2026-09-29-nyisonext13-recon-detach-span",
+   "reason": "superseded by NYISO-NEXT-14's re-test of the Total-East cutset envelope (nyiso_total_east_cutset_ttc false -> true; owner decision card 'Re-test all 5 years', promotion on the pre-registered structural rule), zero new free parameters; three stores pruned in the promoting session (rule 35(a)) via --force-uncite (rule 35(d)).",
    "year_set_before_prune": [
     2021,
     2022,
@@ -48,8 +48,8 @@
    ],
    "previous": {
     "date": "2026-09-29",
-    "former_keeper": "2026-09-28-nyisonext9-hq-floor-span",
-    "reason": "superseded by NYISO-NEXT-12's NE AC tie on its own two-way node (nyiso_ne_ac_node false -> true; owner ruling Q-a 2026-09-28, promotion on structure), zero new free parameters; three stores pruned in the promoting session (rule 35(a)) via --force-uncite (rule 35(d)).",
+    "former_keeper": "2026-09-29-nyisonext12-neac-node-span",
+    "reason": "superseded by NYISO-NEXT-13's detachment of the NE AC node from the monthly net-interchange band (nyiso_ne_ac_recon_detach false -> true; pre-registered structural rule, owner ruling 'Promote per rule' 2026-09-29), zero new free parameters; three stores pruned in the promoting session (rule 35(a)) via --force-uncite (rule 35(d)).",
     "year_set_before_prune": [
      2021,
      2022,
@@ -65,9 +65,9 @@
      2025
     ],
     "previous": {
-     "date": "2026-09-28",
-     "former_keeper": "2026-09-27-nyisonext8-hq-dedupe-span",
-     "reason": "superseded by NYISO-NEXT-9's removal of the always-on 900 MW HQ_hydro firm-import floor (nyiso_firm_imports True -> False; rule 17 [R-FLOOR-WINDOW] / rule 13 / rule 19), zero new free parameters; three stores pruned in the promoting session (rule 35(a)) via --force-uncite (rule 35(d)).",
+     "date": "2026-09-29",
+     "former_keeper": "2026-09-28-nyisonext9-hq-floor-span",
+     "reason": "superseded by NYISO-NEXT-12's NE AC tie on its own two-way node (nyiso_ne_ac_node false -> true; owner ruling Q-a 2026-09-28, promotion on structure), zero new free parameters; three stores pruned in the promoting session (rule 35(a)) via --force-uncite (rule 35(d)).",
      "year_set_before_prune": [
       2021,
       2022,
@@ -83,9 +83,9 @@
       2025
      ],
      "previous": {
-      "date": "2026-09-27",
-      "former_keeper": "2026-09-27-nyisonext6-li-cap-span",
-      "reason": "superseded by NYISO-NEXT-8's rule-14 derivation correction of the NYISO import ladder (HQ accounting duplicate removed); keeper recipe unchanged, zero new free parameters; three stores pruned in the promoting session (rule 35(a)) via --force-uncite (rule 35(d)).",
+      "date": "2026-09-28",
+      "former_keeper": "2026-09-27-nyisonext8-hq-dedupe-span",
+      "reason": "superseded by NYISO-NEXT-9's removal of the always-on 900 MW HQ_hydro firm-import floor (nyiso_firm_imports True -> False; rule 17 [R-FLOOR-WINDOW] / rule 13 / rule 19), zero new free parameters; three stores pruned in the promoting session (rule 35(a)) via --force-uncite (rule 35(d)).",
       "year_set_before_prune": [
        2021,
        2022,
@@ -102,8 +102,8 @@
       ],
       "previous": {
        "date": "2026-09-27",
-       "former_keeper": "2026-09-26-nyisonext3-tranche-basis-span",
-       "reason": "superseded by NYISO-NEXT-6's one-field arm nyiso_li_seam_posted_limit_cap (Long Island import cap clipped at the ties' posted import limits, a clip inside the armed seam envelope), zero new free parameters; three stores pruned in the promoting session (rule 35(a)).",
+       "former_keeper": "2026-09-27-nyisonext6-li-cap-span",
+       "reason": "superseded by NYISO-NEXT-8's rule-14 derivation correction of the NYISO import ladder (HQ accounting duplicate removed); keeper recipe unchanged, zero new free parameters; three stores pruned in the promoting session (rule 35(a)) via --force-uncite (rule 35(d)).",
        "year_set_before_prune": [
         2021,
         2022,
@@ -118,11 +118,10 @@
         2024,
         2025
        ],
-       "prune_status": "PRUNED 2026-09-27 in the promoting session (rule 35(a))",
-       "prior_superseded": {
-        "date": "2026-09-26",
-        "former_keeper": "2026-09-26-nyisonext2-astoria-pair-span",
-        "reason": "superseded by NYISO-NEXT-3's correctness repair: the bin builder's committed share read on the full CAMPD artifact selector pair and the '-perunitmerit-' tranche artifact re-derived on the current outage basis; zero scenario_config changes, zero new free parameters; three stores pruned in the promoting session (rule 35(a)).",
+       "previous": {
+        "date": "2026-09-27",
+        "former_keeper": "2026-09-26-nyisonext3-tranche-basis-span",
+        "reason": "superseded by NYISO-NEXT-6's one-field arm nyiso_li_seam_posted_limit_cap (Long Island import cap clipped at the ties' posted import limits, a clip inside the armed seam envelope), zero new free parameters; three stores pruned in the promoting session (rule 35(a)).",
         "year_set_before_prune": [
          2021,
          2022,
@@ -137,11 +136,11 @@
          2024,
          2025
         ],
-        "prune_status": "PRUNED 2026-09-26 in the promoting session (rule 35(a))",
+        "prune_status": "PRUNED 2026-09-27 in the promoting session (rule 35(a))",
         "prior_superseded": {
          "date": "2026-09-26",
-         "former_keeper": "2026-09-26-nyisonext-floor-layup-span",
-         "reason": "superseded by NYISO-NEXT-2's data repair of the merit-guarded hour-grain unit-outage extract (Astoria stack-duplicate fold), zero scenario_config changes, zero new free parameters; three stores pruned in the promoting session (rule 35(a)).",
+         "former_keeper": "2026-09-26-nyisonext2-astoria-pair-span",
+         "reason": "superseded by NYISO-NEXT-3's correctness repair: the bin builder's committed share read on the full CAMPD artifact selector pair and the '-perunitmerit-' tranche artifact re-derived on the current outage basis; zero scenario_config changes, zero new free parameters; three stores pruned in the promoting session (rule 35(a)).",
          "year_set_before_prune": [
           2021,
           2022,
@@ -159,8 +158,8 @@
          "prune_status": "PRUNED 2026-09-26 in the promoting session (rule 35(a))",
          "prior_superseded": {
           "date": "2026-09-26",
-          "former_keeper": "2026-09-25-nyiso-stgas-ldc-leg",
-          "reason": "superseded by NYISO-NEXT's one-field arm reliability_floor_layup_window_mask (merit-guarded lay-up windows mask the pro_rata reliability-floor basis), zero new free parameters; three stores pruned in the promoting session (rule 35(a)).",
+          "former_keeper": "2026-09-26-nyisonext-floor-layup-span",
+          "reason": "superseded by NYISO-NEXT-2's data repair of the merit-guarded hour-grain unit-outage extract (Astoria stack-duplicate fold), zero scenario_config changes, zero new free parameters; three stores pruned in the promoting session (rule 35(a)).",
           "year_set_before_prune": [
            2021,
            2022,
@@ -177,10 +176,11 @@
           ],
           "prune_status": "PRUNED 2026-09-26 in the promoting session (rule 35(a))",
           "prior_superseded": {
-           "date": "2026-09-25",
-           "former_keeper": "2026-09-24-nyiso-r-inputs-860vintage",
-           "reason": "superseded by NYISO-STGAS-2023's one-field arm nyiso_ldc_generator_delivered_gas (filed Con Ed SC 9 Rate D(2) delivery leg), zero new free parameters; three stores pruned in the promoting session (rule 35(a)).",
+           "date": "2026-09-26",
+           "former_keeper": "2026-09-25-nyiso-stgas-ldc-leg",
+           "reason": "superseded by NYISO-NEXT's one-field arm reliability_floor_layup_window_mask (merit-guarded lay-up windows mask the pro_rata reliability-floor basis), zero new free parameters; three stores pruned in the promoting session (rule 35(a)).",
            "year_set_before_prune": [
+            2021,
             2022,
             2023,
             2024,
@@ -193,11 +193,11 @@
             2024,
             2025
            ],
-           "prune_status": "PRUNED 2026-09-25 in the promoting session (rule 35(a))",
+           "prune_status": "PRUNED 2026-09-26 in the promoting session (rule 35(a))",
            "prior_superseded": {
             "date": "2026-09-25",
-            "former_keeper": "2026-09-22-nyiso-hydro3-ror-split",
-            "reason": "superseded by R-NYISO's re-solve of the same recipe on the F1 corrected backcast inputs (year-matched EIA-860 vintage + measured coal/ST/CC heat rates), owner ruling 'Yes promote' 2026-09-25. Zero mechanisms added or removed, offer curves byte-identical, zero new DOF; three stores pruned in the promoting session (rule 35(a)).",
+            "former_keeper": "2026-09-24-nyiso-r-inputs-860vintage",
+            "reason": "superseded by NYISO-STGAS-2023's one-field arm nyiso_ldc_generator_delivered_gas (filed Con Ed SC 9 Rate D(2) delivery leg), zero new free parameters; three stores pruned in the promoting session (rule 35(a)).",
             "year_set_before_prune": [
              2022,
              2023,
@@ -205,6 +205,7 @@
              2025
             ],
             "year_set_after": [
+             2021,
              2022,
              2023,
              2024,
@@ -212,9 +213,9 @@
             ],
             "prune_status": "PRUNED 2026-09-25 in the promoting session (rule 35(a))",
             "prior_superseded": {
-             "date": "2026-09-22",
-             "former_keeper": "2026-09-20-nyiso247-fuel-invariance-disarm",
-             "reason": "superseded by hydro-3's arming of hydro_ror_split (run-of-river-class plants dispatch flat at their own EIA-923 monthly water; ORNL-EHA/HILARRI classifier after hydro-1's HYBRID-label repair, 94 RoR / 70 reservoir). Single delta on the incumbent recipe, zero DOF; three stores pruned in the promoting session (rule 35(a)).",
+             "date": "2026-09-25",
+             "former_keeper": "2026-09-22-nyiso-hydro3-ror-split",
+             "reason": "superseded by R-NYISO's re-solve of the same recipe on the F1 corrected backcast inputs (year-matched EIA-860 vintage + measured coal/ST/CC heat rates), owner ruling 'Yes promote' 2026-09-25. Zero mechanisms added or removed, offer curves byte-identical, zero new DOF; three stores pruned in the promoting session (rule 35(a)).",
              "year_set_before_prune": [
               2022,
               2023,
@@ -227,32 +228,32 @@
               2024,
               2025
              ],
-             "prune_status": "PRUNED 2026-09-22 in the promoting session (rule 35(a))",
+             "prune_status": "PRUNED 2026-09-25 in the promoting session (rule 35(a))",
              "prior_superseded": {
-              "date": "2026-09-20",
-              "former_keeper": "2026-09-19-nyiso241-ct-committed-measured",
-              "reason": "superseded by nyiso-247's disarm of gas_offer_net_revenue_margin's fuel-invariance limb, refuted on the NYISO MIS P-27 offer book: the armed term makes the offer's implied heat rate FALL as delivered gas rises where the market's RISES. The outgoing keeper's three stores (registry sidecar, runs payload, bundle dir) were pruned in the promoting session per rule 35 [R-PROMOTE] (a); git history is the record for the bytes, and its recipe survives verbatim in the incoming keeper minus exactly that one mechanism.",
+              "date": "2026-09-22",
+              "former_keeper": "2026-09-20-nyiso247-fuel-invariance-disarm",
+              "reason": "superseded by hydro-3's arming of hydro_ror_split (run-of-river-class plants dispatch flat at their own EIA-923 monthly water; ORNL-EHA/HILARRI classifier after hydro-1's HYBRID-label repair, 94 RoR / 70 reservoir). Single delta on the incumbent recipe, zero DOF; three stores pruned in the promoting session (rule 35(a)).",
+              "year_set_before_prune": [
+               2022,
+               2023,
+               2024,
+               2025
+              ],
+              "year_set_after": [
+               2022,
+               2023,
+               2024,
+               2025
+              ],
+              "prune_status": "PRUNED 2026-09-22 in the promoting session (rule 35(a))",
               "prior_superseded": {
-               "date": "2026-09-19",
-               "former_keeper": "2026-09-17-nyiso240-bench-attribution",
-               "reason": "superseded by nyiso-241's grounding of CT_PEAKER's `committed` band on NYISO's own measured phys_committed 0.843, in place of a transferred 1.35 resting on a three-way NYISO/CAISO/NEISO citation ring in which no ISO cites a measurement, and which double-charges a start the tranche_startup_amortization mechanism already recovers at $12-16/MWh. Rules 14 / 19 / 21 / 25; zero free parameters; exact confinement (22 rows, max |delta| $0.00 elsewhere). The registered determination falls CALIBRATED -> NOT-YET on two 2022 crossings (C3a -9.7 -> -10.8 %, C3b 0.196 -> 0.201), accepted under rule 14's discovered-bug clause: the ~94 missing RT scarcity hours in 2022 (model 7 vs 101 actual > $300) are worth more than twice the $0.84/MWh this repair moves, so the old band was masking an absent price tail rather than holding up a real price level.",
-               "year_set_before_prune": [
-                2022,
-                2023,
-                2024,
-                2025
-               ],
-               "year_set_after": [
-                2022,
-                2023,
-                2024,
-                2025
-               ],
-               "prune_status": "PRUNED 2026-09-19 in the promoting session (rule 35(a))",
+               "date": "2026-09-20",
+               "former_keeper": "2026-09-19-nyiso241-ct-committed-measured",
+               "reason": "superseded by nyiso-247's disarm of gas_offer_net_revenue_margin's fuel-invariance limb, refuted on the NYISO MIS P-27 offer book: the armed term makes the offer's implied heat rate FALL as delivered gas rises where the market's RISES. The outgoing keeper's three stores (registry sidecar, runs payload, bundle dir) were pruned in the promoting session per rule 35 [R-PROMOTE] (a); git history is the record for the bytes, and its recipe survives verbatim in the incoming keeper minus exactly that one mechanism.",
                "prior_superseded": {
                 "date": "2026-09-19",
-                "former_keeper": "2026-09-17-nyiso239-bench-oil-basis",
-                "reason": "superseded by the nyiso-240 benchmark boundary repairs (R1 EIA-923 withheld months, R2 dual-fuel oil class re-attribution) on the owner's explicit ruling to promote. THE MODEL IS IDENTICAL AND NO LP WAS SPENT -- the incoming bundle is this keeper's own four per-year shard bundles re-fetched by full SHA, re-composed and re-rendered, so the dispatch is bit-for-bit the same and G-1 replay fidelity is preserved by construction. What changed is the C1 benchmark: an EIA-923 respondent's withheld months are now filled from CAMPD (the annual-floor backfill is blind to them), and a dual-fuel plant's oil MWh are booked to the class its units are modelled in. Determination UNCHANGED at CALIBRATED (grade 7, fails 0, C3c the lone ledgered caveat) with ZERO C1 status flips; the gain is MARGIN -- 2022 CC_REGULAR headroom 0.05 -> 1.07 pp of a +-3.0 pp band. Cross-ISO census run BEFORE landing: zero of the eight ISO determinations flip.",
+                "former_keeper": "2026-09-17-nyiso240-bench-attribution",
+                "reason": "superseded by nyiso-241's grounding of CT_PEAKER's `committed` band on NYISO's own measured phys_committed 0.843, in place of a transferred 1.35 resting on a three-way NYISO/CAISO/NEISO citation ring in which no ISO cites a measurement, and which double-charges a start the tranche_startup_amortization mechanism already recovers at $12-16/MWh. Rules 14 / 19 / 21 / 25; zero free parameters; exact confinement (22 rows, max |delta| $0.00 elsewhere). The registered determination falls CALIBRATED -> NOT-YET on two 2022 crossings (C3a -9.7 -> -10.8 %, C3b 0.196 -> 0.201), accepted under rule 14's discovered-bug clause: the ~94 missing RT scarcity hours in 2022 (model 7 vs 101 actual > $300) are worth more than twice the $0.84/MWh this repair moves, so the old band was masking an absent price tail rather than holding up a real price level.",
                 "year_set_before_prune": [
                  2022,
                  2023,
@@ -267,26 +268,44 @@
                 ],
                 "prune_status": "PRUNED 2026-09-19 in the promoting session (rule 35(a))",
                 "prior_superseded": {
-                 "date": "2026-09-17",
-                 "former_keeper": "2026-09-16-nyiso-238-hydro-budget",
-                 "reason": "superseded by the nyiso-239 benchmark gas/oil attribution repair on the owner's explicit ruling to promote. The MODEL is identical -- this is that keeper's recipe replayed byte-faithfully (G-1 worst deviation 5.0e-7 TWh over four years); what changed is the C1 benchmark's reconcile family, which now spans gas+coal+oil on both sides. Determination NOT-YET -> CALIBRATED with zero PASS -> FAIL flips.",
+                 "date": "2026-09-19",
+                 "former_keeper": "2026-09-17-nyiso239-bench-oil-basis",
+                 "reason": "superseded by the nyiso-240 benchmark boundary repairs (R1 EIA-923 withheld months, R2 dual-fuel oil class re-attribution) on the owner's explicit ruling to promote. THE MODEL IS IDENTICAL AND NO LP WAS SPENT -- the incoming bundle is this keeper's own four per-year shard bundles re-fetched by full SHA, re-composed and re-rendered, so the dispatch is bit-for-bit the same and G-1 replay fidelity is preserved by construction. What changed is the C1 benchmark: an EIA-923 respondent's withheld months are now filled from CAMPD (the annual-floor backfill is blind to them), and a dual-fuel plant's oil MWh are booked to the class its units are modelled in. Determination UNCHANGED at CALIBRATED (grade 7, fails 0, C3c the lone ledgered caveat) with ZERO C1 status flips; the gain is MARGIN -- 2022 CC_REGULAR headroom 0.05 -> 1.07 pp of a +-3.0 pp band. Cross-ISO census run BEFORE landing: zero of the eight ISO determinations flip.",
+                 "year_set_before_prune": [
+                  2022,
+                  2023,
+                  2024,
+                  2025
+                 ],
+                 "year_set_after": [
+                  2022,
+                  2023,
+                  2024,
+                  2025
+                 ],
+                 "prune_status": "PRUNED 2026-09-19 in the promoting session (rule 35(a))",
                  "prior_superseded": {
-                  "date": "2026-09-13",
-                  "former_keeper": "2026-09-13-nyiso231-anchor-span",
-                  "reason": "superseded by the nyiso-232 promotion of nyiso_st_gas_econ_bands_deleaked, on the owner's explicit ruling \"Arm it\". The incoming keeper carries all four registered years (2022-2025) in ONE bundle, so the year set is unchanged and rule 35 [R-PROMOTE] (c) is met by the bundle itself. Pruned in this session per rule 35(a) via --force-uncite, which rule 35(d) names as the INTENDED route rather than a safety override (the guard exists to make the operator look, and the year-set enumeration above is the looking). Rule 31 [R-RETAIN]'s trigger (i) is met: the owner has ruled on promotion. Git history is the record for the bytes, and this id stays cited as history here and in calibration-complete.json and the RESULT doc.",
-                  "year_set_before_prune": [
-                   2022,
-                   2023,
-                   2024,
-                   2025
-                  ],
-                  "year_set_after": [
-                   2022,
-                   2023,
-                   2024,
-                   2025
-                  ],
-                  "prune_status": "PRUNED 2026-09-13 in the promoting session (rule 35(a))"
+                  "date": "2026-09-17",
+                  "former_keeper": "2026-09-16-nyiso-238-hydro-budget",
+                  "reason": "superseded by the nyiso-239 benchmark gas/oil attribution repair on the owner's explicit ruling to promote. The MODEL is identical -- this is that keeper's recipe replayed byte-faithfully (G-1 worst deviation 5.0e-7 TWh over four years); what changed is the C1 benchmark's reconcile family, which now spans gas+coal+oil on both sides. Determination NOT-YET -> CALIBRATED with zero PASS -> FAIL flips.",
+                  "prior_superseded": {
+                   "date": "2026-09-13",
+                   "former_keeper": "2026-09-13-nyiso231-anchor-span",
+                   "reason": "superseded by the nyiso-232 promotion of nyiso_st_gas_econ_bands_deleaked, on the owner's explicit ruling \"Arm it\". The incoming keeper carries all four registered years (2022-2025) in ONE bundle, so the year set is unchanged and rule 35 [R-PROMOTE] (c) is met by the bundle itself. Pruned in this session per rule 35(a) via --force-uncite, which rule 35(d) names as the INTENDED route rather than a safety override (the guard exists to make the operator look, and the year-set enumeration above is the looking). Rule 31 [R-RETAIN]'s trigger (i) is met: the owner has ruled on promotion. Git history is the record for the bytes, and this id stays cited as history here and in calibration-complete.json and the RESULT doc.",
+                   "year_set_before_prune": [
+                    2022,
+                    2023,
+                    2024,
+                    2025
+                   ],
+                   "year_set_after": [
+                    2022,
+                    2023,
+                    2024,
+                    2025
+                   ],
+                   "prune_status": "PRUNED 2026-09-13 in the promoting session (rule 35(a))"
+                  }
                  }
                 }
                }
@@ -298,9 +317,9 @@
          }
         }
        }
-      }
-     },
-     "prune_status": "PRUNED 2026-09-28 in the promoting session (rule 35(a))"
+      },
+      "prune_status": "PRUNED 2026-09-28 in the promoting session (rule 35(a))"
+     }
     }
    }
   }
@@ -367,5 +386,6 @@
  "dearm_declaration_2026_09_28": "RULE-35 / E11 DECLARATION (NYISO-NEXT-9) - every recipe field this promotion moves, named literally: (1) nyiso_firm_imports True -> False - THE delta, the 900 MW HQ_hydro always-on firm-import floor removed on structure (PRECOMMIT-nyiso-next9-hq-floor-2026-09-28.md sec. 2). (2) retiree_cems_cap: deleted from the codebase by PJM-NEXT-5 under rule 26 (was False in the former keeper, never armed for NYISO); replay_keeper translates it. (3) fields born since the former solve, all recorded at their inert defaults: coal_econ_marginal_hr_two_sided False, caiso_intertie_partial_year_measured False, spp_zone_partition north_south, pjm_offer_midcurve_shape_segments None.",
  "dearm_declaration_2026_09_29": "RULE-35 / E11 DECLARATION (NYISO-NEXT-12) - every recipe field this promotion moves, named literally: (1) nyiso_ne_ac_node False -> True - THE delta, the NE AC tie on its own two-way node (PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md sec. 2). (2) nyiso_firm_imports: deleted from the codebase under rule 26 (owner ruling Q-b, f26384a7); recorded False in the former keeper, hash-inert. (3) fields born since the former solve, all recorded at their inert defaults: pjm_da_virtual_settle_financial, caiso_tac_shares_standard_time, coal_fuel_inventory_monthly_pile, unit_outage_rederive_peaker_windows, caiso_eia930_clock_repair, campd_split_remap_companions, spp_commitment_posture, chp_steam_floor_conduct_scope, caiso_import_cap_floor_static, coal_monthly_pile_measured_receipts, unit_outage_exit_cohort_repair, ercot_swcap_vintage, campd_st_gas_span_coverage - all False.",
  "dearm_declaration_2026_09_29_next13": "RULE-35 / E11 DECLARATION (NYISO-NEXT-13) - every recipe field this promotion moves, named literally: (1) nyiso_ne_ac_recon_detach False -> True - THE delta, the NE AC node out of the monthly net-interchange band (PRECOMMIT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md sec. 2). (2) fields born since the former solve, recorded at their inert defaults: miso_gas_ecomin_online_floor - False. (3) solver environment: highspy 1.14.0 -> 1.15.1 in the shard containers (requirements.txt pins 1.14.0; the same off-pin state as the CAISO keeper, reported by test_audit_keepers_solve_pin).",
- "dearm_declaration_2026_09_30_next14": "RULE-35 / E11 DECLARATION (NYISO-NEXT-14) - every recipe field this promotion moves, named literally: (1) nyiso_total_east_cutset_ttc False -> True - THE delta, the Upstate_West -> Capital_Hudson link at the measured TOTAL EAST cutset p90 envelope in place of the CENTRAL EAST table (PRECOMMIT-nyiso-next14-total-east-cutset-2026-09-30.md sec. 1). (2) fields born since the former solve, recorded at their inert defaults: unit_outage_exit_ym_from_eia860 - False. (3) nothing else moves; offer curves byte-identical."
+ "dearm_declaration_2026_09_30_next14": "RULE-35 / E11 DECLARATION (NYISO-NEXT-14) - every recipe field this promotion moves, named literally: (1) nyiso_total_east_cutset_ttc False -> True - THE delta, the Upstate_West -> Capital_Hudson link at the measured TOTAL EAST cutset p90 envelope in place of the CENTRAL EAST table (PRECOMMIT-nyiso-next14-total-east-cutset-2026-09-30.md sec. 1). (2) fields born since the former solve, recorded at their inert defaults: unit_outage_exit_ym_from_eia860 - False. (3) nothing else moves; offer curves byte-identical.",
+ "dearm_declaration_2026_09_30_next15": "RULE-35 / E11 DECLARATION (NYISO-NEXT-15) - every recipe field this promotion moves, named literally: (1) nyiso_import_landing_band False -> True - THE delta, each pooled border link banded monthly on its own measured P-32 attributed schedule, replacing the pooled EIA-930 band (PRECOMMIT-nyiso-next15-landing-band-2026-09-30.md sec. 1). (2) fields born since the former solve, recorded at their inert defaults: ercot_south_texas_pooled_basis - False; pjm_replacement_cost_fuel - False. (3) nothing else moves; offer curves byte-identical."
 }
