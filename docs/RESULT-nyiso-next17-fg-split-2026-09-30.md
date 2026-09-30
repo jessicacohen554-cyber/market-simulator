@@ -4,10 +4,12 @@
 - **Pre-registration:** `docs/PRECOMMIT-nyiso-next17-fg-split-2026-09-30.md`, merged in PR #6925 before any shard. Pin `fd1269a703a68c8298beee97f28533ede43c8d79`.
 - **Design and phase 0:** `docs/DESIGN-nyiso-next17-fg-split-2026-09-30.md`.
 - **Owner card:** "Build design A anyway".
-- **Registered (not promoted):**
-  - `2026-09-30-nyisonext17-fg-split-span` (2022–2025): **CALIBRATED**, with C3c the lone ledgered caveat.
-  - `2026-09-30-nyisonext17-fg-split-2021`: **NOT-YET** (C3a).
-- **Verdict under the pre-registered rule: NOT PROMOTABLE.** G-3 fails in 2024 and 2025. G-7 fails in 2021, 2022, 2023 and 2025. The promotion decision is the owner's (rule 31).
+- **Outcome: DECLINED by owner card ("Decline; land as rejected").** NEXT-16 stays keeper.
+  - Both runs were registered and scored, then pruned at the ruling (rule 31 trigger (i); `audit_keepers` E13 clean). This doc and git history (commit `7c9c18de`) are the record:
+    - `2026-09-30-nyisonext17-fg-split-span` (2022–2025): **CALIBRATED**, with C3c the lone ledgered caveat.
+    - `2026-09-30-nyisonext17-fg-split-2021`: **NOT-YET** (C3a).
+  - `nyiso_fg_split` stays in the code, default off (matrix cell **R**).
+- **Pre-registered rule: NOT PROMOTABLE.** G-3 fails in 2024 and 2025. G-7 fails in 2021, 2022, 2023 and 2025.
 
 ## 1. Gates (arm vs the NEXT-16 keeper's committed bundles, form 4)
 
@@ -55,5 +57,5 @@ Record: `results/calibration/_nyisonext17_gates.json`.
 | 2025 | `c09e1194c827aea919afeaa7fe1b2f551ebfde38` | 17 |
 
 - **Composition:** zero LP. The span's shared benchmark inputs were rebuilt to the four-year frames, and they hash-equal the keeper's exactly.
-- **Retrievability:** the registered span and 2021 bundles land on `main` with this PR. The 2022–2025 legs are gitignored (rule 32 (d)). A leg not on `main` costs a re-solve (~6 min of LP per year).
-- **Benchmark parts:** the per-year `bench/NYISO/<y>.json.gz` re-render only relabels seven zone-G plants' `zone` to Lower_Hudson. It was **not** committed, so the incumbent keeper's view is unchanged. A promotion would commit it.
+- **Retrievability:** nothing lands on `main`. The run was declined and its bundles pruned; they exist in git history only (commit `7c9c18de`). Reproducing any year costs a re-solve (~6 min of LP per year).
+- **Benchmark parts:** the per-year `bench/NYISO/<y>.json.gz` re-render only relabels seven zone-G plants' `zone` to Lower_Hudson. It was **not** committed, so the keeper's view is unchanged.
