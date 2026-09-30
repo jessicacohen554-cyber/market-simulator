@@ -51,13 +51,13 @@ from market_sim.data.eia_loader import (
     _MISO_SUBBA_ZONE_GROUPS,
     _MONTH_START_HOUR,
     _NEISO_LOAD_ZONE_GROUPS,
-    _NYISO_LOAD_ZONE_GROUPS,
     _PJM_LOAD_ZONE_GROUPS,
     _eia_hourly_frame_filled,
     _hourly_shares_from_groups,
     _hours_of_year,
     _miso_utc_to_local_hoy,
 )
+from market_sim.data.eia930.zonal_shares import nyiso_load_zone_groups
 from scripts.lib.clean_io import write_clean
 
 logger = logging.getLogger(__name__)
@@ -421,7 +421,7 @@ def parse_nyiso_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
         + (ts_local.dt.day.to_numpy() - 1) * 24
         + ts_local.dt.hour.to_numpy()
     )
-    df["_mzone"] = df[zone_col].astype(str).str.strip().map(_NYISO_LOAD_ZONE_GROUPS)
+    df["_mzone"] = df[zone_col].astype(str).str.strip().map(nyiso_load_zone_groups())
     unmapped = df["_mzone"].isna()
     if unmapped.any():
         missing = sorted(df.loc[unmapped, zone_col].unique())

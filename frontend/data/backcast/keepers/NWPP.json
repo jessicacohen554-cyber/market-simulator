@@ -1,5 +1,5 @@
 {
  "iso": "NWPP",
- "keeper": "2026-09-29-nwppnext12-boardman-membership",
- "note": "NWPP keeper #17 (NWPP-NEXT-12): keeper #16 + Boardman 6106 membership repair of the CAMPD outage layer (unit_outage_membership_repair; the committed extract never scanned Boardman, so its measured 2019-2020 whole-plant stops were absent; owner standing ruling: promote on structural integrity)"
+ "keeper": "2026-09-30-nwppnext13-per-unit-attribution",
+ "note": "NWPP keeper #18 (NWPP-NEXT-13): keeper #17 + CAMPD per-unit attribution (campd_per_unit_attribution; Clark 2322 / Silverhawk 55841 GT-peaker windows no longer derate CC_REGULAR, whose available energy sat below its own EIA-923 generation; per-unit tranche rows give Jim Bridger a measured coal row; owner decision card 2026-09-30 'Promote + prune #17', on structural integrity with the C4 coal 2023 regression 0.695 -> 0.662 reported)"
 }

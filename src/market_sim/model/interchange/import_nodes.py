@@ -35,12 +35,12 @@ from market_sim.model.interchange.spec import (
     EXPORT_TRANCHES_BY_YEAR,
     EXTERNAL_SIMULTANEOUS_LIMITS,
     IMPORT_EFORD,
-    IMPORT_NODE_LINKS,
     IMPORT_TRANCHES,
     IMPORT_TRANCHES_BY_YEAR,
     IMPORT_TRANCHE_EF,
     IMPORT_ZONE,
     NeighborInterface,
+    import_node_links,
 )
 
 _logger = logging.getLogger(__name__)
@@ -730,9 +730,10 @@ def extend_with_import_node(iso_config: ISOConfig) -> ISOConfig:
     zone = IMPORT_ZONE.get(iso)
     if zone is None or zone in iso_config.zone_names:
         return iso_config
+    border_links = import_node_links(iso)
     links = [
         TransferLink(from_zone=zone, to_zone=border, ttc_mw=ttc)
-        for border, ttc in IMPORT_NODE_LINKS.get(iso, [])
+        for border, ttc in border_links
     ]
     # SIL/SEC: aggregate simultaneous import/export limit across all border
     # links, built dynamically so the link references always match the border
@@ -744,7 +745,7 @@ def extend_with_import_node(iso_config: ISOConfig) -> ISOConfig:
         new_interface_limits.append(
             InterfaceLimit(
                 name=name,
-                links=[(zone, border) for border, _ in IMPORT_NODE_LINKS[iso]],
+                links=[(zone, border) for border, _ in border_links],
                 cap_mw=cap_mw,
                 bidirectional=bidirectional,
             )

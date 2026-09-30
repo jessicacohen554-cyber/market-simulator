@@ -25,6 +25,7 @@ import numpy as np
 
 from market_sim.config.constants import (
     NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH,
+    NYISO_TE_NONCE_ENVELOPE_BY_MONTH,
     NYISO_INTERFACE_TTC_BY_MONTH,
     NYISO_INTERFACE_TTC_BY_YEAR,
 )
@@ -280,6 +281,26 @@ def apply_iso_monthly_ttc(
     if not monthly:
         _refuse_missing_year(table_name, year, table)
         return ttc
+    # NYISO-NEXT-17 F/G re-partition (ScenarioConfig.nyiso_fg_split, which
+    # requires the cutset flag): the TOTAL EAST cutset has two links, so it is
+    # carried by its two measured legs — CENTRAL EAST (E -> F) at its posted
+    # DAM TTC on Upstate_West -> Capital_Hudson, and TOTAL EAST minus CENTRAL
+    # EAST on Upstate_West -> Lower_Hudson. The pair REPLACES the one-link
+    # cutset envelope (rule 19 [R-ONE-MECH]); never stacked on it.
+    if cutset and bool(getattr(config, "nyiso_fg_split", False)):
+        table_name = "NYISO_TE_NONCE_ENVELOPE_BY_MONTH"
+        nonce = NYISO_TE_NONCE_ENVELOPE_BY_MONTH.get(year)
+        ce = NYISO_INTERFACE_TTC_BY_MONTH.get(year)
+        if not nonce or not ce:
+            _refuse_missing_year(
+                table_name if not nonce else "NYISO_INTERFACE_TTC_BY_MONTH",
+                year,
+                NYISO_TE_NONCE_ENVELOPE_BY_MONTH
+                if not nonce
+                else NYISO_INTERFACE_TTC_BY_MONTH,
+            )
+            return ttc
+        monthly = {**ce, **nonce}
     leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
     days_per_month = [31, 29 if leap else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     month_of_hour = np.repeat(np.arange(1, 13), [d * 24 for d in days_per_month])[
@@ -299,10 +320,6 @@ def apply_iso_monthly_ttc(
             link.to_zone,
             prof.min(),
             prof.max(),
-            (
-                "measured TOTAL EAST cutset p90 transfer"
-                if cutset
-                else "measured Central-East DAM postings"
-            ),
+            table_name,
         )
     return ttc_t

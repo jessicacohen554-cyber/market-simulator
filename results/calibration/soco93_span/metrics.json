@@ -22,10 +22,10 @@
   ],
   "data_blocked_years": [],
   "price_reference_blocked_years": [],
-  "rubric_version": "3.11",
+  "rubric_version": "3.12",
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_shape"
+    "caveat budget exceeded (protective 0/0, ledgered 3/1)"
   ],
   "notes": [
     "C8 2020 ST_GAS: grounded above budget \u2014 38.6% forced (2.0422 of 5.2917 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.979 (\u22650.8) & off-peak CV ratio 1.46 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
@@ -55,7 +55,8 @@
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
@@ -82,7 +83,8 @@
     "protective": [],
     "ledgered": [
       "C1 fuel-mix by class (grid-delivered)",
-      "C3a mean LMP"
+      "C3a mean LMP",
+      "C3b price duration/shape"
     ],
     "commercial_band": [],
     "budget": {
@@ -94,8 +96,8 @@
     "scored": 7,
     "target_grade": 4,
     "commercial_grade": 0,
-    "ledgered": 2,
-    "fails": 1
+    "ledgered": 3,
+    "fails": 0
   },
   "reported": {
     "co2": {

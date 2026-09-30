@@ -15694,3 +15694,33 @@ Record: `docs/handoffs/r-caiso-15/`.
 - Promoted on the pre-registered structure rule: keeper `2026-09-30-caiso-r16-tiontime` (+ `-touchpoints`); r15 pruned.
 
 Record: `docs/handoffs/r-caiso-16/`.
+
+## R-CAISO-17 — 2026-09-30: pre-2022 generation cells published EARLY, PROMOTED
+
+- Phase 0 (zero LP): EIA-930 CISO `NG:` cells and `Net generation` are stamped about 1 h EARLY from the first fuel row through local 2022-06-13. Demand and TI are on the true clock.
+  - The references: CAISO Outlook 5-min (−1 in 36/36 months; the 5-min peak is at +45 min), EPA CEMS gas (−1 every month to 2022-05), and the solar centroid.
+  - The OASIS TAC clock was verified first.
+  - The 2022-06-14/15 publisher shift that opened the Demand late window closed this one.
+- Build: `EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC` under the same flag, zero parameters. It reaches the frame, the caiso-80 term, the HSL term and the NG: WAT hydro backfill.
+- 7 shards at `ca84177c`. 2023–25 byte-reproduce the incumbent. The span stays CALIBRATED (single ledgered C3c 2024).
+- C4 gas 2022: NRMSE 0.262 → 0.252, r 0.896 → 0.904.
+- The fold stays NOT-YET. Its dispatch_corr r improves every year: 0.882 / 0.879 / 0.816 → 0.892 / 0.902 / 0.853.
+- Promoted on the pre-registered structure rule: keeper `2026-09-30-caiso-r17-earlyclock` (+ `-touchpoints`). r16 was pruned.
+
+Record: `docs/handoffs/r-caiso-17/`.
+
+## R-CAISO-18 — 2026-09-30: unprinted intertie-hub years priced on measured gas, PROMOTED
+
+- Phase 0 (zero LP): the fold's CC_REGULAR excess (+23.1 / +25.3 / +10.5 TWh) is not a benchmark basis shift, and not demand, hydro or fleet. It is missing DSW imports (−23 / −25 / −11 TWh vs EIA-930).
+  - Cause: OASIS serves no intertie hub price before 2021-04-27, so the DSW gas blocks sit on the static $68 / $110 ladder.
+- New evidence: EIA withholds AZ/OR N3045 for 2019–21. The rebuild from the states' own EIA-923 receipts reproduces N3045 where it prints (AZ r 0.980, OR r 0.975).
+- Build: `caiso_intertie_unprinted_year_measured_gas`, zero parameters (PR #6924). It prices the unprinted hub hours on the existing measured-gas formula.
+- 7 shards at `d757b216`. 2022–25 byte-reproduce the incumbent. The span stays CALIBRATED (single ledgered C3c 2024).
+- Fold (reported only):
+  - C1 CC_REGULAR +23.1 / +25.3 / +10.5 → +14.5 / +22.4 / +10.7 TWh;
+  - DSW import 21.3 / 17.4 / 29.7 → 31.4 / 21.3 / 29.9 TWh;
+  - C4 gas NRMSE 0.564 / 0.514 / 0.354 → 0.454 / 0.470 / 0.369.
+  - It stays NOT-YET.
+- Promoted on the pre-registered structure rule: keeper `2026-09-30-caiso-r18-dswgas` (+ `-touchpoints`). r17 was pruned.
+
+Record: `docs/handoffs/r-caiso-18/`.

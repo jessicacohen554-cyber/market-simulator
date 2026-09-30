@@ -1,0 +1,404 @@
+{
+ "MISO-West": {
+  "1": {
+   "model": 5.023,
+   "chicago": 4.214,
+   "henry": 4.334
+  },
+  "2": {
+   "model": 5.36,
+   "chicago": 4.45,
+   "henry": 4.629
+  },
+  "3": {
+   "model": 6.305,
+   "chicago": 4.646,
+   "henry": 4.903
+  },
+  "4": {
+   "model": 7.438,
+   "chicago": 6.44,
+   "henry": 6.523
+  },
+  "5": {
+   "model": 8.459,
+   "chicago": 7.838,
+   "henry": 8.054
+  },
+  "6": {
+   "model": 8.223,
+   "chicago": 7.356,
+   "henry": 7.629
+  },
+  "7": {
+   "model": 7.176,
+   "chicago": 6.869,
+   "henry": 7.149
+  },
+  "8": {
+   "model": 8.513,
+   "chicago": 8.325,
+   "henry": 8.815
+  },
+  "9": {
+   "model": 8.404,
+   "chicago": 6.889,
+   "henry": 7.902
+  },
+  "10": {
+   "model": 6.763,
+   "chicago": 5.069,
+   "henry": 5.65
+  },
+  "11": {
+   "model": 7.947,
+   "chicago": 4.815,
+   "henry": 5.195
+  },
+  "12": {
+   "model": 10.18,
+   "chicago": 9.686,
+   "henry": 5.785
+  },
+  "annual": {
+   "model": 7.494,
+   "chicago": 6.399,
+   "henry": 6.39
+  }
+ },
+ "MISO-Plains": {
+  "1": {
+   "model": 5.116,
+   "chicago": 4.214,
+   "henry": 4.334
+  },
+  "2": {
+   "model": 5.452,
+   "chicago": 4.45,
+   "henry": 4.629
+  },
+  "3": {
+   "model": 4.624,
+   "chicago": 4.646,
+   "henry": 4.903
+  },
+  "4": {
+   "model": 5.908,
+   "chicago": 6.44,
+   "henry": 6.523
+  },
+  "5": {
+   "model": 6.987,
+   "chicago": 7.838,
+   "henry": 8.054
+  },
+  "6": {
+   "model": 7.0,
+   "chicago": 7.356,
+   "henry": 7.629
+  },
+  "7": {
+   "model": 6.669,
+   "chicago": 6.869,
+   "henry": 7.149
+  },
+  "8": {
+   "model": 7.872,
+   "chicago": 8.325,
+   "henry": 8.815
+  },
+  "9": {
+   "model": 6.96,
+   "chicago": 6.889,
+   "henry": 7.902
+  },
+  "10": {
+   "model": 5.447,
+   "chicago": 5.069,
+   "henry": 5.65
+  },
+  "11": {
+   "model": 5.44,
+   "chicago": 4.815,
+   "henry": 5.195
+  },
+  "12": {
+   "model": 10.273,
+   "chicago": 9.686,
+   "henry": 5.785
+  },
+  "annual": {
+   "model": 6.489,
+   "chicago": 6.399,
+   "henry": 6.39
+  }
+ },
+ "MISO-Illinois": {
+  "1": {
+   "model": 7.949,
+   "chicago": 4.214,
+   "henry": 4.334
+  },
+  "2": {
+   "model": 8.285,
+   "chicago": 4.45,
+   "henry": 4.629
+  },
+  "3": {
+   "model": 4.689,
+   "chicago": 4.646,
+   "henry": 4.903
+  },
+  "4": {
+   "model": 6.603,
+   "chicago": 6.44,
+   "henry": 6.523
+  },
+  "5": {
+   "model": 8.294,
+   "chicago": 7.838,
+   "henry": 8.054
+  },
+  "6": {
+   "model": 7.988,
+   "chicago": 7.356,
+   "henry": 7.629
+  },
+  "7": {
+   "model": 7.412,
+   "chicago": 6.869,
+   "henry": 7.149
+  },
+  "8": {
+   "model": 9.033,
+   "chicago": 8.325,
+   "henry": 8.815
+  },
+  "9": {
+   "model": 7.904,
+   "chicago": 6.889,
+   "henry": 7.902
+  },
+  "10": {
+   "model": 5.465,
+   "chicago": 5.069,
+   "henry": 5.65
+  },
+  "11": {
+   "model": 5.704,
+   "chicago": 4.815,
+   "henry": 5.195
+  },
+  "12": {
+   "model": 13.012,
+   "chicago": 9.686,
+   "henry": 5.785
+  },
+  "annual": {
+   "model": 7.697,
+   "chicago": 6.399,
+   "henry": 6.39
+  }
+ },
+ "MISO-Indiana": {
+  "1": {
+   "model": 4.819,
+   "chicago": 4.214,
+   "henry": 4.334
+  },
+  "2": {
+   "model": 5.155,
+   "chicago": 4.45,
+   "henry": 4.629
+  },
+  "3": {
+   "model": 5.453,
+   "chicago": 4.646,
+   "henry": 4.903
+  },
+  "4": {
+   "model": 6.536,
+   "chicago": 6.44,
+   "henry": 6.523
+  },
+  "5": {
+   "model": 8.277,
+   "chicago": 7.838,
+   "henry": 8.054
+  },
+  "6": {
+   "model": 8.07,
+   "chicago": 7.356,
+   "henry": 7.629
+  },
+  "7": {
+   "model": 7.62,
+   "chicago": 6.869,
+   "henry": 7.149
+  },
+  "8": {
+   "model": 8.76,
+   "chicago": 8.325,
+   "henry": 8.815
+  },
+  "9": {
+   "model": 7.253,
+   "chicago": 6.889,
+   "henry": 7.902
+  },
+  "10": {
+   "model": 5.893,
+   "chicago": 5.069,
+   "henry": 5.65
+  },
+  "11": {
+   "model": 5.554,
+   "chicago": 4.815,
+   "henry": 5.195
+  },
+  "12": {
+   "model": 9.976,
+   "chicago": 9.686,
+   "henry": 5.785
+  },
+  "annual": {
+   "model": 6.963,
+   "chicago": 6.399,
+   "henry": 6.39
+  }
+ },
+ "MISO-East": {
+  "1": {
+   "model": 4.649,
+   "chicago": 4.214,
+   "henry": 4.334
+  },
+  "2": {
+   "model": 4.986,
+   "chicago": 4.45,
+   "henry": 4.629
+  },
+  "3": {
+   "model": 4.988,
+   "chicago": 4.646,
+   "henry": 4.903
+  },
+  "4": {
+   "model": 5.834,
+   "chicago": 6.44,
+   "henry": 6.523
+  },
+  "5": {
+   "model": 7.144,
+   "chicago": 7.838,
+   "henry": 8.054
+  },
+  "6": {
+   "model": 7.307,
+   "chicago": 7.356,
+   "henry": 7.629
+  },
+  "7": {
+   "model": 7.101,
+   "chicago": 6.869,
+   "henry": 7.149
+  },
+  "8": {
+   "model": 8.062,
+   "chicago": 8.325,
+   "henry": 8.815
+  },
+  "9": {
+   "model": 7.709,
+   "chicago": 6.889,
+   "henry": 7.902
+  },
+  "10": {
+   "model": 6.179,
+   "chicago": 5.069,
+   "henry": 5.65
+  },
+  "11": {
+   "model": 5.717,
+   "chicago": 4.815,
+   "henry": 5.195
+  },
+  "12": {
+   "model": 9.806,
+   "chicago": 9.686,
+   "henry": 5.785
+  },
+  "annual": {
+   "model": 6.637,
+   "chicago": 6.399,
+   "henry": 6.39
+  }
+ },
+ "MISO-South": {
+  "1": {
+   "model": 4.685,
+   "chicago": 4.214,
+   "henry": 4.334
+  },
+  "2": {
+   "model": 4.991,
+   "chicago": 4.45,
+   "henry": 4.629
+  },
+  "3": {
+   "model": 5.132,
+   "chicago": 4.646,
+   "henry": 4.903
+  },
+  "4": {
+   "model": 6.993,
+   "chicago": 6.44,
+   "henry": 6.523
+  },
+  "5": {
+   "model": 8.393,
+   "chicago": 7.838,
+   "henry": 8.054
+  },
+  "6": {
+   "model": 8.075,
+   "chicago": 7.356,
+   "henry": 7.629
+  },
+  "7": {
+   "model": 7.542,
+   "chicago": 6.869,
+   "henry": 7.149
+  },
+  "8": {
+   "model": 8.969,
+   "chicago": 8.325,
+   "henry": 8.815
+  },
+  "9": {
+   "model": 8.312,
+   "chicago": 6.889,
+   "henry": 7.902
+  },
+  "10": {
+   "model": 5.874,
+   "chicago": 5.069,
+   "henry": 5.65
+  },
+  "11": {
+   "model": 5.496,
+   "chicago": 4.815,
+   "henry": 5.195
+  },
+  "12": {
+   "model": 5.931,
+   "chicago": 9.686,
+   "henry": 5.785
+  },
+  "annual": {
+   "model": 6.708,
+   "chicago": 6.399,
+   "henry": 6.39
+  }
+ }
+}

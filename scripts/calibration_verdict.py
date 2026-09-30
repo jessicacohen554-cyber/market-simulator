@@ -588,9 +588,27 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       NOT-YET), and it DOWNGRADES. LEDGERABLE_CRITERIA is unchanged.
 #       NO SOLVE RAN — scorer-side only. Genealogy:
 #       docs/governance/rule-history.md §24.
+# v3.12 — 2026-09-30 owner ruling, soco-95 decision cards (verbatim): C3b 2022
+#       "Scoped ledger row"; budget "Keep budget at 1". Record:
+#       docs/handoffs/r-soco/FINDING-soco-95-2026-09-30.md.
+#       ONE MORE SCOPED ROW: (SOCO, 2022, price_shape) with the new direction
+#       "above_band". THE EVIDENCE (FINDING-soco-95 §1-§3): the whole C3b 2022
+#       miss sits in λ's top-20 % hours (model = λ there reads 0.055), i.e. it
+#       is the same λ peak premium v3.11 ledgered for C3a; Winter Storm Elliott
+#       (Dec 23-26, λ $406.8 vs model $86.7) is 67.5 % of the squared error; the
+#       only untested measured input (setter plant-month EIA-923 fuel) reads
+#       0.240 and moves passing 2023 0.095 -> 0.181. A C3b record carries no
+#       ``actual`` (it is an NRMSE), so "above_band" binds the row to the
+#       record's model NRMSE exceeding PRICE_SHAPE_NRMSE_MAX — a re-solve that
+#       brings 2022 inside the band simply PASSes, and nothing else can move.
+#       Every v3.10 guard binds unchanged; MAX_LEDGERED_CAVEATS STAYS 1 by the
+#       owner's budget ruling, so the SOCO span now carries 3 ledgered caveats
+#       (C1, C3a, C3b) against 1 and stays NOT-YET on the budget alone.
+#       NO SOLVE RAN — scorer-side only. Genealogy:
+#       docs/governance/rule-history.md §25.
 # A STRING from v3.10 on: the float 3.10 == 3.1, which would collide with the
 # v3.1 amendment. Display-only everywhere it is read.
-RUBRIC_VERSION = "3.11"
+RUBRIC_VERSION = "3.12"
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -958,7 +976,10 @@ LEDGERABLE_CRITERIA = frozenset({"price_tail"})
 # exactly (iso, year, criterion, key), each with the direction its evidence
 # explains ("under": model < actual; "over": model > actual). A new row is an
 # owner amendment. v3.11 (owner ruling 2026-09-30, soco-94 cards) added the
-# three SOCO C3a rows; C3a records carry ``key`` None.
+# three SOCO C3a rows; C3a records carry ``key`` None. v3.12 (owner ruling
+# 2026-09-30, soco-95 cards) added the SOCO C3b 2022 row with direction
+# "above_band": the record's model value exceeds the criterion's band in
+# :data:`_SCOPED_BAND_MAX` (C3b records carry no ``actual``).
 _C3A_REASON = (
     "rubric v3.11 scoped ledger (owner ruling 2026-09-30, soco-94 cards: "
     "'Rubric: ledger C3a vs λ'): the model's fuel tracks each plant's own "
@@ -969,6 +990,8 @@ _C3A_REASON = (
     "delivered fuel without a fitted mechanism. Reported at full magnitude; "
     "spends the single ledgered slot; DOWNGRADES the determination."
 )
+
+_SCOPED_BAND_MAX: dict[str, float] = {"price_shape": PRICE_SHAPE_NRMSE_MAX}
 
 SCOPED_LEDGER_ENTRIES: dict[tuple[str, int, str, str | None], dict] = {
     ("SOCO", 2019, "fuelmix", "COAL_BIT"): {
@@ -999,6 +1022,20 @@ SCOPED_LEDGER_ENTRIES: dict[tuple[str, int, str, str | None], dict] = {
         "direction": "under",
         "rule": "soco-2022-c3a-vs-system-lambda-2026-09-30",
         "reason": _C3A_REASON,
+    },
+    ("SOCO", 2022, "price_shape", None): {
+        "direction": "above_band",
+        "rule": "soco-2022-c3b-vs-system-lambda-2026-09-30",
+        "reason": (
+            "rubric v3.12 scoped ledger (owner ruling 2026-09-30, soco-95 card: "
+            "'Scoped ledger row'): the C3b 2022 monthly-shape miss sits entirely "
+            "in λ's top-20 % hours — the same λ peak premium ledgered for C3a "
+            "(v3.11) — and Winter Storm Elliott (Dec 23-26, λ $406.8 vs model "
+            "$86.7/MWh) is 67.5 % of its squared error (FINDING-soco-95); no "
+            "measured, year-regenerable input repairs it without moving the "
+            "passing years. Reported at full magnitude; spends the single "
+            "ledgered slot; DOWNGRADES the determination."
+        ),
     },
 }
 
@@ -1623,7 +1660,8 @@ def _apply_scoped_ledger(records: list[dict], iso: str, gov: dict) -> None:
     Only a record whose exact ``(iso, year, criterion, key)`` is in
     :data:`SCOPED_LEDGER_ENTRIES` can move, only when governance PASSES, and
     only in the direction the entry's evidence explains (``"under"``: model <
-    actual; ``"over"``: model > actual). It becomes a CAVEAT classified :data:`MODEL_LIMIT`, keeps its
+    actual; ``"over"``: model > actual; ``"above_band"``: the record's model
+    value exceeds the criterion's band in :data:`_SCOPED_BAND_MAX`). It becomes a CAVEAT classified :data:`MODEL_LIMIT`, keeps its
     magnitude, and is flagged ``scoped_ledger`` so the determination counts it
     as a DOWNGRADING ledgered caveat (it still spends the single ledgered
     slot). Every other record is untouched.
@@ -1648,13 +1686,22 @@ def _apply_scoped_ledger(records: list[dict], iso: str, gov: dict) -> None:
         )
         if entry is None:
             continue
-        try:
-            m, a = float(rec["model"]), float(rec["actual"])
-        except (KeyError, TypeError, ValueError):
-            continue  # no magnitude to check the direction on -- fail closed
         d = entry["direction"]
-        if not ((d == "under" and m < a) or (d == "over" and m > a)):
-            continue  # fail-closed: only the sign the entry's evidence explains
+        if d == "above_band":
+            band = _SCOPED_BAND_MAX.get(rec.get("criterion"))
+            try:
+                m = float(rec["model"])
+            except (KeyError, TypeError, ValueError):
+                continue  # no magnitude to check the band on -- fail closed
+            if band is None or not m > band:
+                continue  # fail-closed: only a miss beyond the criterion's band
+        else:
+            try:
+                m, a = float(rec["model"]), float(rec["actual"])
+            except (KeyError, TypeError, ValueError):
+                continue  # no magnitude to check the direction on -- fail closed
+            if not ((d == "under" and m < a) or (d == "over" and m > a)):
+                continue  # fail-closed: only the sign the entry's evidence explains
         rec["status"] = CAVEAT
         rec["classification"] = MODEL_LIMIT
         rec["ledger_reason"] = entry["reason"]
@@ -3913,7 +3960,7 @@ def determine_from_artifacts(
             determination = caveat_label
             if scoped_caveats:
                 reasons.append(
-                    "rubric v3.10/v3.11 scoped ledgered caveat(s) — owner-accepted "
+                    "rubric v3.10-v3.12 scoped ledgered caveat(s) — owner-accepted "
                     "model-class limitation, REPORTED AT FULL MAGNITUDE and "
                     "determination-DOWNGRADING: "
                     + "; ".join(
