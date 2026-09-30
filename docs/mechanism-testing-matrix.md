@@ -5772,7 +5772,7 @@ loss.
 > (`FINDING-miso290-pile-take-floor-killed-2026-09-30.md`). Per-yard cumulative pile (miso-289 min-stock ceiling)
 > + a soft contract take floor from MISO's own EIA-923 Page 5 census (~95 % contracted) and pile capacity
 > (max stock Y-3..Y-1), per-hour take-or-pay discounts disarmed (rule 19). Solver fixed first (PILE0 residual
-> 0.83 → 0.013). Pre-registered (c2ee3162) and **killed** at 2022: nights **+$6.47** vs incumbent, Jan–Apr coal
+> 0.83 → 0.013). Pre-registered (86f1017f) and **killed** at 2022: nights **+$6.47** vs incumbent, Jan–Apr coal
 > 58.6 vs bench 74.7 (winter guard). Pile grain alone +2.66; the floor binds on only 11–14 yards because 2022
 > opened far below prior maximum stocks. Fourth budget-grain kill. `coal_fuel_inventory_take_floor` MISO
 > **U → R**. No frontier.
