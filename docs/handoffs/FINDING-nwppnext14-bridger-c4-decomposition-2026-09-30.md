@@ -98,3 +98,29 @@ deepening**, and repairing it will not restore the class default. It is a rule-1
   - (c) lever 2, the CT/CC widening;
   - (d) lever 3, coal WEFOR, which needs a live-capacity denominator variant.
 - Never tune to r. `wefor_multiplier`, offer bands and the pile are untouched.
+
+## 5. Lever 2 (CT under / CC over): Clark 2322's CC block is priced at an impossible heat rate
+
+Zero LP, from the two payloads, the benchmark and a fleet-only rebuild of keeper #18
+(`docs/handoffs/nwppnext14/ccfloor_census.json`).
+
+- At #18, Clark's CC_REGULAR block (462 MW) dispatches 3.69 TWh in **every** year, at 70–75 % CF in every hour
+  (min 70 %). EIA-923 CC net is 0.43–0.86 TWh. At #17 the same block was nearly unavailable, because its GT-peaker
+  outage windows were misrouted onto it, so the defect was masked. Per-unit attribution (#18) restored its
+  availability and exposed it.
+- **Cause: its heat rate is 3.007 MMBtu/MWh** (3.394 in 2020, 3.703 in 2019): eGRID's plant `PLHTRT`. eGRID's plant
+  heat input covers only the CEMS-reporting GT peakers, while its net generation also covers the non-CEMS combined
+  cycle. No combined cycle beats `HEAT_RATE_BINS["gas_cc"]["h_class"]` = 6.3. NWPP's CC median is 7.3.
+- Clark's own EIA-923 filing (Page 1, CT + CA prime movers) gives **9.00–9.59 MMBtu/MWh**, e.g. 2023: 4,100,891 MMBtu
+  / 432,784 MWh = 9.476. At 3.0 the block offers at about a third of its fuel cost and runs baseload.
+- No existing construction reaches it:
+  - The eGRID CC-ceiling repair catches only values that are too high.
+  - The SPP-49 simple-cycle floor covers only all-GT/IC plants, and Clark mixes CC and GT.
+  - `egrid_family_heat_rates` does not cover Clark: eGRID publishes no unit heat input for its CC units, so its only
+    live family is GT (derived here for NWPP, 6 plants covered, Clark absent).
+- **Repair (owner card "Build + solve with vintage"): `cc_subfloor_eia923_heat_rates`.**
+  - It is the CC mirror of SPP-49. A non-CHP CC-part row (CT/CA/CS/CC) whose plant rate is below the CC physical
+    floor takes the plant's own EIA-923 CC prime-mover rate, or the floor where that rate is unusable.
+  - Zero DOF. It is applied at the eGRID seam, so CAMPD-measured rates keep precedence.
+  - Census: only Clark's three CC tranches move, in all seven years. Class availability is unchanged. Plant 55700
+    also trips the floor (3.47 → 7.53) but a downstream measured rate overrides it, so it does not reach the LP.

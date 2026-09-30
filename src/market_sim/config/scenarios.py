@@ -284,6 +284,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # key; an armed run carries a different fleet cost and so gets a distinct
     # key.
     "egrid_family_heat_rates",
+    # NWPP-NEXT-14 combined-cycle physical floor on the eGRID plant rate
+    # (GATED default-off; data/fleet/eia860.py::_apply_cc_subfloor_eia923_hr at
+    # the eGRID seam, so the off path is byte-inert). Registered IN THE SAME
+    # COMMIT as the field.
+    "cc_subfloor_eia923_heat_rates",
     # eGRID steam-collapse identity heat rates (nyiso-189, default off):
     # dropped from the hash at its default so every pre-existing cached run
     # keeps its key; an armed run carries a different fleet cost and so gets
@@ -2416,6 +2421,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "measured_chp_heat_rates": "False",
     "egrid_identity_heat_rates": "False",
     "egrid_family_heat_rates": "False",
+    # Added by NWPP-NEXT-14 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "cc_subfloor_eia923_heat_rates": "False",
     "egrid_steam_collapse_heat_rates": "False",
     "cc_steam_part_capacity": "False",
     "cc_steam_part_reclass": "False",
@@ -6132,6 +6140,30 @@ class ScenarioConfig:
     # scripts/data/derive_egrid_family_heat_rates.py), a no-op for an ISO
     # with none. See PREREG-nyiso184-stgas-heat-rate-basis.md §1, §3 R1.
     egrid_family_heat_rates: bool = False
+
+    # COMBINED-CYCLE PHYSICAL FLOOR on the eGRID plant heat rate, repaired from
+    # the plant's own EIA-923 CC fuel filing (NWPP-NEXT-14, GATED default off,
+    # byte-identical off; rule 14 [R-ACCURATE]). The CC mirror of the SPP-49
+    # simple-cycle floor (data/fleet/eia860.py::_apply_simple_cycle_hr_floor).
+    # A combined-cycle part (EIA-860 prime mover CT / CA / CS / CC) whose
+    # plant-grain eGRID PLHTRT sits below HEAT_RATE_BINS["gas_cc"]["h_class"]
+    # (EGRID_CC_HR_PHYSICAL_FLOOR, EIA Table 8) is on mismatched boundaries:
+    # Clark 2322 (NWPP) reads 3.007 MMBtu/MWh because eGRID's heat input covers
+    # only its CEMS GT peakers while its net covers the non-CEMS combined cycle
+    # too, so its 462 MW CC block offered at ~1/3 of its fuel cost and ran
+    # 70-75 % CF in every hour of keeper #18 (3.69 TWh/yr against 0.43-0.86
+    # EIA-923). Armed, such a row takes the plant's own EIA-923 CC prime-mover
+    # rate (sum elec fuel / sum net over CT+CA+CS+CC; the solve year's own where
+    # reported, else pooled), and the floor itself only where that measured
+    # rate is absent or outside [floor, EGRID_CC_HR_PHYSICAL_CEILING]. CHP
+    # plants are out of scope (the CHP chain owns steam-credited rates, as for
+    # SPP-49). Applied at the eGRID seam, so measured_cc_heat_rates (CAMPD) and
+    # the CHP measured rates keep their precedence. ZERO free parameters (two
+    # aliases of cited constants and a measured filing); rule 13: the owner's
+    # annual fuel filing regenerates for any year; rule 23: the trigger is the
+    # physical impossibility, never a residual. See
+    # docs/handoffs/FINDING-nwppnext14-bridger-c4-decomposition-2026-09-30.md §5.
+    cc_subfloor_eia923_heat_rates: bool = False
 
     # eGRID STEAM-COLLAPSE identity heat rates (nyiso-189; owner ruling
     # 2026-09-05, form B2; default OFF, byte-identical off). eGRID's plant

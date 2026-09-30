@@ -46,6 +46,8 @@ for p in (str(REPO), str(REPO / "src")):
 BUNDLE = REPO / "results/calibration/nwppnext13pu_span"
 GEN = REPO / "data/raw/eia-923-generation-fuel/eia923_generation_fuel_2019_2025.csv"
 VARIANTS = {"B": {}, "PU": {"campd_per_unit_vintage_denominator": True}}
+# --flags overrides the armed set (NWPP-NEXT-14 also censuses
+# cc_subfloor_eia923_heat_rates, alone and with the vintage denominator).
 
 
 def _frame(st: dict) -> pd.DataFrame:
@@ -76,7 +78,10 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--years", nargs="+", type=int, default=list(range(2019, 2026)))
     ap.add_argument("--out", required=True)
+    ap.add_argument("--flags", nargs="+", default=None)
     args = ap.parse_args()
+    if args.flags:
+        VARIANTS["PU"] = {f: True for f in args.flags}
 
     from scripts import run_calibration_full as rcf
     from scripts.replay_keeper import derived_run_year_inputs, run_year_kwargs
