@@ -31,7 +31,7 @@ Records: `results/calibration/_nyisonext15_gates.json`, `_nyisonext15_compare_sp
 | **G-6** P1 load slack, GWh (keeper) | 0 (0) | 0 (0) | 0 (0) | 0 (0) | 0 (0) |
 | link flow in market CE-binding h, arm / keeper / measured TE (MW) | 4,142 / 3,719 / 4,197 | 3,856 / 3,479 / 4,556 | 3,399 / 3,059 / 3,777 | 3,722 / 3,574 / 5,212 | 3,904 / 3,674 / 5,039 |
 | C3a, keeper → arm | +10.9 → +11.4 % | +2.3 → +3.2 % | +5.0 → +5.6 % | −1.4 → −1.6 % | −8.8 → −9.2 % |
-| C3b NRMSE, keeper → arm | 0.165 → (PASS) | 0.195 → **0.200** | 0.141 → 0.146 | 0.155 → 0.158 | 0.160 → 0.164 |
+| C3b NRMSE, keeper → arm | 0.165 → 0.169 | 0.195 → **0.200** | 0.141 → 0.146 | 0.155 → 0.158 | 0.160 → 0.164 |
 | Upstate_West $/MWh, keeper → arm | 41.07 → 41.23 | 77.40 → 78.14 | 32.14 → 32.36 | 35.55 → 35.45 | 57.52 → 57.24 |
 | binding-hour lift vs market (keeper) | 1.20 (1.37) | 0.65 (0.74) | 0.93 (1.07) | 0.87 (0.31) | 0.59 (0.69) |
 | CH − UW spread in binding h, model (measured basis) | 2.3 (20.2) | 5.5 (55.8) | 1.6 (19.7) | 1.7 (34.7) | 2.4 (42.1) |
