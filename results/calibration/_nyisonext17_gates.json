@@ -1,0 +1,473 @@
+{
+ "2021": {
+  "G2": {
+   "total_gwh": {
+    "arm": 151979.89,
+    "keeper": 151979.89
+   },
+   "ch_plus_lh_gwh": {
+    "arm": 29748.93,
+    "keeper": 29748.93
+   },
+   "zone_gwh_arm": {
+    "Upstate_West": 53132.2,
+    "Capital_Hudson": 11820.2,
+    "Lower_Hudson": 17928.7,
+    "NYC": 48819.3,
+    "Long_Island": 20279.4
+   },
+   "zone_gwh_keeper": {
+    "Upstate_West": 53132.2,
+    "Capital_Hudson": 21088.9,
+    "Lower_Hudson": 8660.0,
+    "NYC": 48819.3,
+    "Long_Island": 20279.4
+   },
+   "other_zone_rel_pct": {
+    "Upstate_West": 0.0,
+    "NYC": 0.0,
+    "Long_Island": 0.0
+   }
+  },
+  "G2_pass": true,
+  "G3_ce_link": {
+   "present": true,
+   "mean_mw": 1394.5,
+   "at_bound_pct": 24.3,
+   "positive_pct": 96.86
+  },
+  "G3_nonce_link": {
+   "present": true,
+   "mean_mw": 2219.5,
+   "at_bound_pct": 80.53,
+   "positive_pct": 99.95
+  },
+  "G3_pass": true,
+  "G4_upstate_h_le_0": 0,
+  "G4_pass": true,
+  "G6_slack_gwh": {
+   "arm": 0.0,
+   "keeper": 0.0
+  },
+  "G6_pass": true,
+  "G7_new_d4_failures": [
+   "(2021, 'reliability_floor \u00d7 ST_GAS', '8006')"
+  ],
+  "G7_pass": false,
+  "reported": {
+   "zone_lw_price": {
+    "Upstate_West": {
+     "arm": 41.07,
+     "keeper": 41.15,
+     "meas_da": 28.51
+    },
+    "Capital_Hudson": {
+     "arm": 43.33,
+     "keeper": 43.48,
+     "meas_da": 44.6
+    },
+    "Lower_Hudson": {
+     "arm": 44.21,
+     "keeper": 44.31,
+     "meas_da": 41.33
+    },
+    "NYC": {
+     "arm": 44.56,
+     "keeper": 44.62,
+     "meas_da": 42.52
+    },
+    "Long_Island": {
+     "arm": 47.37,
+     "keeper": 47.43,
+     "meas_da": 54.06
+    }
+   },
+   "ce_hi_share_pct": 72.6,
+   "ce_hi_capital_minus_upstate": {
+    "arm": 2.16,
+    "keeper": 2.11,
+    "measured_da": 19.12
+   },
+   "keeper_link_uw_ch": {
+    "present": true,
+    "mean_mw": 3618.3,
+    "at_bound_pct": 17.55,
+    "positive_pct": 100.0
+   },
+   "d4_cleared": [
+    "(2021, 'reliability_floor \u00d7 ST_GAS', '2480')"
+   ]
+  }
+ },
+ "2022": {
+  "G2": {
+   "total_gwh": {
+    "arm": 152681.67,
+    "keeper": 152681.67
+   },
+   "ch_plus_lh_gwh": {
+    "arm": 29937.49,
+    "keeper": 29937.49
+   },
+   "zone_gwh_arm": {
+    "Upstate_West": 52907.0,
+    "Capital_Hudson": 11933.9,
+    "Lower_Hudson": 18003.6,
+    "NYC": 49741.9,
+    "Long_Island": 20095.2
+   },
+   "zone_gwh_keeper": {
+    "Upstate_West": 52907.0,
+    "Capital_Hudson": 21260.0,
+    "Lower_Hudson": 8677.5,
+    "NYC": 49741.9,
+    "Long_Island": 20095.2
+   },
+   "other_zone_rel_pct": {
+    "Upstate_West": 0.0,
+    "NYC": 0.0,
+    "Long_Island": 0.0
+   }
+  },
+  "G2_pass": true,
+  "G3_ce_link": {
+   "present": true,
+   "mean_mw": 1186.7,
+   "at_bound_pct": 24.04,
+   "positive_pct": 90.86
+  },
+  "G3_nonce_link": {
+   "present": true,
+   "mean_mw": 1900.0,
+   "at_bound_pct": 68.96,
+   "positive_pct": 99.24
+  },
+  "G3_pass": true,
+  "G4_upstate_h_le_0": 0,
+  "G4_pass": true,
+  "G6_slack_gwh": {
+   "arm": 0.0,
+   "keeper": 0.0
+  },
+  "G6_pass": true,
+  "G7_new_d4_failures": [
+   "(2022, 'nyiso_gas_commitment_bridge \u00d7 ST_GAS', '8906')",
+   "(2022, 'reliability_floor \u00d7 ST_GAS', '8006')"
+  ],
+  "G7_pass": false,
+  "reported": {
+   "zone_lw_price": {
+    "Upstate_West": {
+     "arm": 77.97,
+     "keeper": 78.01,
+     "meas_da": 55.41
+    },
+    "Capital_Hudson": {
+     "arm": 82.99,
+     "keeper": 83.55,
+     "meas_da": 94.52
+    },
+    "Lower_Hudson": {
+     "arm": 85.35,
+     "keeper": 85.42,
+     "meas_da": 82.94
+    },
+    "NYC": {
+     "arm": 85.74,
+     "keeper": 85.86,
+     "meas_da": 84.45
+    },
+    "Long_Island": {
+     "arm": 89.07,
+     "keeper": 89.18,
+     "meas_da": 95.27
+    }
+   },
+   "ce_hi_share_pct": 59.0,
+   "ce_hi_capital_minus_upstate": {
+    "arm": 4.64,
+    "keeper": 4.66,
+    "measured_da": 48.03
+   },
+   "keeper_link_uw_ch": "unavailable (keeper leg branch deleted; rule 33 (f))",
+   "d4_cleared": []
+  }
+ },
+ "2023": {
+  "G2": {
+   "total_gwh": {
+    "arm": 147048.85,
+    "keeper": 147048.85
+   },
+   "ch_plus_lh_gwh": {
+    "arm": 28206.07,
+    "keeper": 28206.07
+   },
+   "zone_gwh_arm": {
+    "Upstate_West": 51174.4,
+    "Capital_Hudson": 11094.1,
+    "Lower_Hudson": 17112.0,
+    "NYC": 48284.4,
+    "Long_Island": 19384.0
+   },
+   "zone_gwh_keeper": {
+    "Upstate_West": 51174.4,
+    "Capital_Hudson": 20108.8,
+    "Lower_Hudson": 8097.3,
+    "NYC": 48284.4,
+    "Long_Island": 19384.0
+   },
+   "other_zone_rel_pct": {
+    "Upstate_West": 0.0,
+    "NYC": 0.0,
+    "Long_Island": 0.0
+   }
+  },
+  "G2_pass": true,
+  "G3_ce_link": {
+   "present": true,
+   "mean_mw": 922.1,
+   "at_bound_pct": 16.38,
+   "positive_pct": 87.13
+  },
+  "G3_nonce_link": {
+   "present": true,
+   "mean_mw": 1838.6,
+   "at_bound_pct": 47.12,
+   "positive_pct": 99.37
+  },
+  "G3_pass": true,
+  "G4_upstate_h_le_0": 0,
+  "G4_pass": true,
+  "G6_slack_gwh": {
+   "arm": 0.0,
+   "keeper": 0.0
+  },
+  "G6_pass": true,
+  "G7_new_d4_failures": [
+   "(2023, 'nyiso_gas_commitment_bridge \u00d7 ST_GAS', '8906')"
+  ],
+  "G7_pass": false,
+  "reported": {
+   "zone_lw_price": {
+    "Upstate_West": {
+     "arm": 32.35,
+     "keeper": 32.41,
+     "meas_da": 26.08
+    },
+    "Capital_Hudson": {
+     "arm": 34.02,
+     "keeper": 34.11,
+     "meas_da": 36.38
+    },
+    "Lower_Hudson": {
+     "arm": 34.62,
+     "keeper": 34.69,
+     "meas_da": 33.58
+    },
+    "NYC": {
+     "arm": 34.59,
+     "keeper": 34.68,
+     "meas_da": 33.95
+    },
+    "Long_Island": {
+     "arm": 36.07,
+     "keeper": 36.15,
+     "meas_da": 40.76
+    }
+   },
+   "ce_hi_share_pct": 41.1,
+   "ce_hi_capital_minus_upstate": {
+    "arm": 1.8,
+    "keeper": 1.77,
+    "measured_da": 17.73
+   },
+   "keeper_link_uw_ch": "unavailable (keeper leg branch deleted; rule 33 (f))",
+   "d4_cleared": []
+  }
+ },
+ "2024": {
+  "G2": {
+   "total_gwh": {
+    "arm": 150516.66,
+    "keeper": 150516.66
+   },
+   "ch_plus_lh_gwh": {
+    "arm": 29094.85,
+    "keeper": 29094.85
+   },
+   "zone_gwh_arm": {
+    "Upstate_West": 52095.0,
+    "Capital_Hudson": 11368.1,
+    "Lower_Hudson": 17726.8,
+    "NYC": 49575.9,
+    "Long_Island": 19750.9
+   },
+   "zone_gwh_keeper": {
+    "Upstate_West": 52095.0,
+    "Capital_Hudson": 20629.5,
+    "Lower_Hudson": 8465.4,
+    "NYC": 49575.9,
+    "Long_Island": 19750.9
+   },
+   "other_zone_rel_pct": {
+    "Upstate_West": 0.0,
+    "NYC": 0.0,
+    "Long_Island": 0.0
+   }
+  },
+  "G2_pass": true,
+  "G3_ce_link": {
+   "present": true,
+   "mean_mw": 1004.2,
+   "at_bound_pct": 0.91,
+   "positive_pct": 86.29
+  },
+  "G3_nonce_link": {
+   "present": true,
+   "mean_mw": 1769.3,
+   "at_bound_pct": 65.48,
+   "positive_pct": 99.71
+  },
+  "G3_pass": false,
+  "G4_upstate_h_le_0": 0,
+  "G4_pass": true,
+  "G6_slack_gwh": {
+   "arm": 0.0,
+   "keeper": 0.0
+  },
+  "G6_pass": true,
+  "G7_new_d4_failures": [],
+  "G7_pass": true,
+  "reported": {
+   "zone_lw_price": {
+    "Upstate_West": {
+     "arm": 35.63,
+     "keeper": 35.7,
+     "meas_da": 33.62
+    },
+    "Capital_Hudson": {
+     "arm": 37.83,
+     "keeper": 38.05,
+     "meas_da": 38.17
+    },
+    "Lower_Hudson": {
+     "arm": 38.67,
+     "keeper": 38.62,
+     "meas_da": 38.09
+    },
+    "NYC": {
+     "arm": 38.62,
+     "keeper": 38.7,
+     "meas_da": 39.43
+    },
+    "Long_Island": {
+     "arm": 39.64,
+     "keeper": 39.72,
+     "meas_da": 43.44
+    }
+   },
+   "ce_hi_share_pct": 11.5,
+   "ce_hi_capital_minus_upstate": {
+    "arm": 3.74,
+    "keeper": 3.74,
+    "measured_da": 21.42
+   },
+   "keeper_link_uw_ch": "unavailable (keeper leg branch deleted; rule 33 (f))",
+   "d4_cleared": []
+  }
+ },
+ "2025": {
+  "G2": {
+   "total_gwh": {
+    "arm": 151589.75,
+    "keeper": 151589.75
+   },
+   "ch_plus_lh_gwh": {
+    "arm": 29652.74,
+    "keeper": 29652.74
+   },
+   "zone_gwh_arm": {
+    "Upstate_West": 51873.5,
+    "Capital_Hudson": 11588.0,
+    "Lower_Hudson": 18064.7,
+    "NYC": 50106.4,
+    "Long_Island": 19957.2
+   },
+   "zone_gwh_keeper": {
+    "Upstate_West": 51873.5,
+    "Capital_Hudson": 21101.1,
+    "Lower_Hudson": 8551.7,
+    "NYC": 50106.4,
+    "Long_Island": 19957.2
+   },
+   "other_zone_rel_pct": {
+    "Upstate_West": 0.0,
+    "NYC": 0.0,
+    "Long_Island": 0.0
+   }
+  },
+  "G2_pass": true,
+  "G3_ce_link": {
+   "present": true,
+   "mean_mw": 892.7,
+   "at_bound_pct": 0.55,
+   "positive_pct": 79.76
+  },
+  "G3_nonce_link": {
+   "present": true,
+   "mean_mw": 1686.3,
+   "at_bound_pct": 52.31,
+   "positive_pct": 98.87
+  },
+  "G3_pass": false,
+  "G4_upstate_h_le_0": 0,
+  "G4_pass": true,
+  "G6_slack_gwh": {
+   "arm": 0.0,
+   "keeper": 0.0
+  },
+  "G6_pass": true,
+  "G7_new_d4_failures": [
+   "(2025, 'nyiso_gas_commitment_bridge \u00d7 CC_REGULAR', '54574')"
+  ],
+  "G7_pass": false,
+  "reported": {
+   "zone_lw_price": {
+    "Upstate_West": {
+     "arm": 57.75,
+     "keeper": 57.88,
+     "meas_da": 55.89
+    },
+    "Capital_Hudson": {
+     "arm": 61.69,
+     "keeper": 62.06,
+     "meas_da": 65.15
+    },
+    "Lower_Hudson": {
+     "arm": 62.77,
+     "keeper": 62.79,
+     "meas_da": 62.99
+    },
+    "NYC": {
+     "arm": 61.46,
+     "keeper": 61.67,
+     "meas_da": 65.41
+    },
+    "Long_Island": {
+     "arm": 63.28,
+     "keeper": 63.5,
+     "meas_da": 68.87
+    }
+   },
+   "ce_hi_share_pct": 14.3,
+   "ce_hi_capital_minus_upstate": {
+    "arm": 6.02,
+    "keeper": 6.09,
+    "measured_da": 35.94
+   },
+   "keeper_link_uw_ch": "unavailable (keeper leg branch deleted; rule 33 (f))",
+   "d4_cleared": []
+  }
+ }
+}
