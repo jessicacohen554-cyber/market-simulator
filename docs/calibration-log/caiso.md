@@ -15724,3 +15724,17 @@ Record: `docs/handoffs/r-caiso-17/`.
 - Promoted on the pre-registered structure rule: keeper `2026-09-30-caiso-r18-dswgas` (+ `-touchpoints`). r17 was pruned.
 
 Record: `docs/handoffs/r-caiso-18/`.
+
+## R-CAISO-19 — 2026-09-30: fold DSW residual = the absent clean rungs, zero LP, nothing built
+
+- The fold's DSW gap (−13.3 / −20.6 / −11.0 TWh vs EIA-930) matches what the four clean rungs carry in 2021–25 (12.5–20.6 TWh). They carry 0 MW in 2019–20 because their arming needs a raw OASIS print.
+- The gas-tranche stack (hub + $4 wheel + border carbon) is identical to 2022–25, and the formula hub carries neither term, so nothing is counted twice.
+- No measured instrument can arm the rungs in 2019–20, and none exists in the repo.
+- Owner card 2026-09-30 selected all four next links:
+  1. arm the overnight rung before 2021 on the formula hub — an **owner ruling**, not a measured admission;
+  2. ledger the residual left after it;
+  3. evening under-price;
+  4. C3c 2024.
+- R-CAISO-20 takes (1), then ledgers (2).
+
+Record: `docs/handoffs/r-caiso-19/`.

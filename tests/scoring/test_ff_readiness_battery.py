@@ -352,7 +352,12 @@ def test_marker_state_reflects_committed_markers():
     # confirmed R-BD); NYISO OUT (WITHDRAWN 2026-09-25 by owner ruling R-BC,
     # the Q5 uniform rule on a NOT-YET keeper -- its fourth withdrawal; the
     # prior entry nested whole as `withdrawn.NYISO.prior_record_complete_entry`).
-    complete = {"ERCOT", "NEISO", "PJM", "CAISO", "SPP"}
+    # ERCOT OUT (WITHDRAWN 2026-09-27, R-ERCOT-8, Q5 on a NOT-YET keeper -- a
+    # move this assertion lagged). CAISO and SPP OUT (WITHDRAWN 2026-09-30,
+    # session soco-96: rubric v3.13 makes every registered year gate -- owner,
+    # "Shouldn't be considered calibrated if holdout years miss." -- so both
+    # keepers read NOT-YET and Q5 takes the markers down).
+    complete = {"NEISO", "PJM"}
     marker_doc = json.loads(B._MARKER_PATH.read_text())
     assert set(marker_doc["complete"]) == complete
     keepers_dir = B._MARKER_PATH.parent / "keepers"
@@ -366,6 +371,8 @@ def test_marker_state_reflects_committed_markers():
     assert nyiso["marker"] == "withdrawn"
     assert nyiso["withdrawn"] == "2026-09-25"
     assert nyiso["keeper"] == "2026-09-06-nyiso-202-startup-aware"
+    for iso in ("CAISO", "SPP"):
+        assert B._marker_state(iso)["marker"] == "withdrawn", iso
 
 
 def test_t1f_verdict_reads_ff2d_hold():

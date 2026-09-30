@@ -22,6 +22,7 @@ from market_sim.config.constants import (
     EGRID_CC_HR_PHYSICAL_CEILING,
     EGRID_COLOCATION_RADIUS_KM,
     EGRID_CT_HR_PHYSICAL_FLOOR,
+    EGRID_CC_HR_PHYSICAL_FLOOR,
     EGRID_UNIT_VINTAGE_TOL_YEARS,
     FUEL_CO2_FACTOR_PER_MMBTU,
     HEAT_RATE_BINS,
@@ -997,6 +998,127 @@ def _apply_simple_cycle_hr_floor(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+#: The combined-cycle PARTS among EIA-860 / EIA-923 prime movers (the "CC"
+#: family of the eGRID prime-mover families): CT = the combustion turbine of a
+#: combined cycle, CA = its steam part, CS = single-shaft, CC = whole block.
+_CC_PART_PRIME_MOVERS: frozenset[str] = frozenset({"CT", "CA", "CS", "CC"})
+
+
+def eia923_cc_prime_mover_heat_rates(year: int | None = None) -> dict[int, float]:
+    """Return ``{plant_id: MMBtu/MWh}``: each plant's EIA-923 combined-cycle rate.
+
+    EIA-923 Page 1 (:data:`~market_sim.config.paths.EIA_923_GENERATION_FUEL_PATH`)
+    reports electric fuel consumption and net generation per plant x prime
+    mover, the owner's own fuel filing, independent of CEMS. The CC rate is
+    ``sum(elec_fuel_mmbtu) / sum(net_generation_mwh)`` over the plant's
+    :data:`_CC_PART_PRIME_MOVERS` rows -- the CA steam part burns no fuel, so
+    its net generation belongs in the denominator exactly as a CC block's
+    rate requires. ``year``'s own rate where that year has positive fuel and
+    net generation, else the rate pooled over every year in the file.
+    Empty when the file is absent.
+    """
+    from market_sim.config.paths import EIA_923_GENERATION_FUEL_PATH
+
+    path = Path(EIA_923_GENERATION_FUEL_PATH)
+    if not path.exists():
+        return {}
+    g = pd.read_csv(
+        path,
+        usecols=[
+            "year",
+            "plant_id",
+            "prime_mover",
+            "elec_fuel_mmbtu",
+            "net_generation_mwh",
+        ],
+    )
+    pm = g["prime_mover"].astype(str).str.strip().str.upper()
+    g = g[pm.isin(_CC_PART_PRIME_MOVERS)]
+    cols = ["elec_fuel_mmbtu", "net_generation_mwh"]
+    pooled = g.groupby("plant_id")[cols].sum()
+    by_year = g.groupby(["plant_id", "year"])[cols].sum()
+    out: dict[int, float] = {}
+    for code, r in pooled.iterrows():
+        fuel, net = float(r.elec_fuel_mmbtu), float(r.net_generation_mwh)
+        if year is not None and (code, year) in by_year.index:
+            ry = by_year.loc[(code, year)]
+            if float(ry.elec_fuel_mmbtu) > 0.0 and float(ry.net_generation_mwh) > 0.0:
+                fuel, net = float(ry.elec_fuel_mmbtu), float(ry.net_generation_mwh)
+        if fuel > 0.0 and net > 0.0:
+            out[int(code)] = fuel / net
+    return out
+
+
+def _apply_cc_subfloor_eia923_hr(
+    df: pd.DataFrame, year: int | None = None
+) -> pd.DataFrame:
+    """Replace a sub-floor eGRID rate on CC parts with the plant's EIA-923 CC rate.
+
+    The CC-side mirror of :func:`_apply_simple_cycle_hr_floor`
+    (``ScenarioConfig.cc_subfloor_eia923_heat_rates``, NWPP-NEXT-14, GATED
+    default off). A combined-cycle part (prime mover in
+    :data:`_CC_PART_PRIME_MOVERS`) cannot run at a plant rate below
+    :data:`EGRID_CC_HR_PHYSICAL_FLOOR` (``HEAT_RATE_BINS["gas_cc"]["h_class"]``,
+    EIA Table 8). Where eGRID's plant-grain ``PLHTRT`` does -- a plant whose
+    CEMS heat input covers only its peakers while its net generation covers a
+    non-CEMS combined cycle too (Clark 2322: 3.007 against a measured ~9.5) --
+    the value is arithmetic on mismatched boundaries, not efficiency. Unlike
+    the simple-cycle floor this does NOT stop at the bound: the plant's own
+    MEASURED combined-cycle rate exists in EIA-923
+    (:func:`eia923_cc_prime_mover_heat_rates`), so rule 14 prefers it. Only
+    where that rate is absent, or itself outside the CC physical band
+    ``[EGRID_CC_HR_PHYSICAL_FLOOR, EGRID_CC_HR_PHYSICAL_CEILING]``, does the
+    row fall back to the floor (the SPP-49 posture). CHP plants are out of
+    scope, exactly as for the simple-cycle floor (a steam-credited CHP rate is
+    the published convention, owned by the CHP chain). Frame-level, at the
+    eGRID seam, so every measured class-scoped mechanism downstream
+    (``measured_cc_heat_rates``, the CHP measured rates) keeps its precedence.
+    Zero free parameters: two aliases of cited constants and a measured
+    filing. The input is never mutated.
+    """
+    needed = {"heat_rate", "plant_id", "prime_mover"}
+    if not needed.issubset(df.columns):
+        return df
+    hr = pd.to_numeric(df["heat_rate"], errors="coerce")
+    codes = pd.to_numeric(df["plant_id"], errors="coerce")
+    pm = df["prime_mover"].astype(str).str.strip().str.upper()
+    if "chp" in df.columns:
+        is_chp = df["chp"].astype(str).str.strip().str.upper().str.startswith("Y")
+        any_chp = is_chp.groupby(codes).transform("any")
+    else:
+        any_chp = pd.Series(False, index=df.index)
+    hit = (
+        pm.isin(_CC_PART_PRIME_MOVERS)
+        & ~any_chp
+        & codes.notna()
+        & hr.notna()
+        & (hr < EGRID_CC_HR_PHYSICAL_FLOOR)
+    )
+    if not hit.any():
+        return df
+    rates = eia923_cc_prime_mover_heat_rates(year)
+    df = df.copy()
+    for code, grp in df.loc[hit].groupby(codes[hit]):
+        measured = rates.get(int(code))
+        ok = (
+            measured is not None
+            and EGRID_CC_HR_PHYSICAL_FLOOR <= measured <= EGRID_CC_HR_PHYSICAL_CEILING
+        )
+        value = float(measured) if ok else EGRID_CC_HR_PHYSICAL_FLOOR
+        logger.warning(
+            "eGRID plant %d heat rate %.3f MMBtu/MWh is below the combined-cycle "
+            "physical floor %.3f on %d CC-part row(s) — %s %.3f (NWPP-NEXT-14)",
+            int(code),
+            float(hr[grp.index].iloc[0]),
+            EGRID_CC_HR_PHYSICAL_FLOOR,
+            int(len(grp)),
+            "EIA-923 CC prime-mover rate" if ok else "clamped to the floor",
+            value,
+        )
+        df.loc[grp.index, "heat_rate"] = value
+    return df
+
+
 #: Plants whose carried pmax the CC guard CLIPPED off the published net-summer
 #: basis onto ``max(nameplate, demonstrated_peak)``, per ISO — rewritten on
 #: every fleet load by :func:`_reconcile_cc_pmax_to_nameplate`.
@@ -1214,6 +1336,7 @@ def _rows_to_generators(
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
+    cc_subfloor_eia923_heat_rates: bool = False,
     heat_rate_year: int | None = None,
 ) -> list[Generator]:
     """Convert a normalized generator DataFrame into :class:`Generator` objects.
@@ -1292,6 +1415,15 @@ def _rows_to_generators(
     # is clamped to that floor. Same seam, unconditional, so every read path and
     # every measured mechanism below keep their precedence.
     df = _apply_simple_cycle_hr_floor(df)
+
+    # Combined-cycle physical FLOOR (config.cc_subfloor_eia923_heat_rates,
+    # NWPP-NEXT-14, default off, byte-identical off): the CC mirror of the
+    # simple-cycle floor above. A CC part whose plant-grain eGRID rate sits
+    # below HEAT_RATE_BINS["gas_cc"]["h_class"] takes the plant's own EIA-923
+    # CC prime-mover rate (the floor where that is unusable). Same seam, so
+    # every measured mechanism below keeps its precedence.
+    if cc_subfloor_eia923_heat_rates:
+        df = _apply_cc_subfloor_eia923_hr(df, heat_rate_year)
 
     # eGRID prime-mover-FAMILY heat rates (config.egrid_family_heat_rates,
     # default off, byte-identical off): at a plant hosting two or more
@@ -2080,6 +2212,7 @@ def _load_fleet_from_parquet(
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
+    cc_subfloor_eia923_heat_rates: bool = False,
     cc_block_summer_rating: bool = False,
 ) -> list[Generator] | None:
     """Load an ISO's fleet from the committed EIA-860 generator parquet.
@@ -2164,6 +2297,7 @@ def _load_fleet_from_parquet(
         cc_steam_part_capacity=cc_steam_part_capacity,
         cc_steam_part_reclass=cc_steam_part_reclass,
         egrid_family_heat_rates=egrid_family_heat_rates,
+        cc_subfloor_eia923_heat_rates=cc_subfloor_eia923_heat_rates,
         heat_rate_year=year,
     )
     if not generators:
@@ -2249,6 +2383,7 @@ def _load_fleet_from_clean(
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
+    cc_subfloor_eia923_heat_rates: bool = False,
 ) -> list[Generator] | None:
     """Load an ISO's fleet from the curated clean ``fleet`` registry.
 
@@ -2282,6 +2417,7 @@ def _load_fleet_from_clean(
         cc_steam_part_capacity=cc_steam_part_capacity,
         cc_steam_part_reclass=cc_steam_part_reclass,
         egrid_family_heat_rates=egrid_family_heat_rates,
+        cc_subfloor_eia923_heat_rates=cc_subfloor_eia923_heat_rates,
         heat_rate_year=year,
     )
     if not generators:
@@ -2525,6 +2661,7 @@ def load_fleet_from_csv(
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
+    cc_subfloor_eia923_heat_rates: bool = False,
     egrid_steam_collapse_heat_rates: bool = False,
     cc_block_summer_rating: bool = False,
 ) -> list[Generator]:
@@ -2679,6 +2816,7 @@ def load_fleet_from_csv(
             cc_steam_part_capacity=cc_steam_part_capacity,
             cc_steam_part_reclass=cc_steam_part_reclass,
             egrid_family_heat_rates=egrid_family_heat_rates,
+            cc_subfloor_eia923_heat_rates=cc_subfloor_eia923_heat_rates,
             heat_rate_year=year,
         )
         source = csv_path
@@ -2705,6 +2843,7 @@ def load_fleet_from_csv(
             cc_steam_part_capacity=cc_steam_part_capacity,
             cc_steam_part_reclass=cc_steam_part_reclass,
             egrid_family_heat_rates=egrid_family_heat_rates,
+            cc_subfloor_eia923_heat_rates=cc_subfloor_eia923_heat_rates,
         )
         if from_clean is None:
             raise FileNotFoundError(
@@ -2728,6 +2867,7 @@ def load_fleet_from_csv(
             cc_steam_part_capacity=cc_steam_part_capacity,
             cc_steam_part_reclass=cc_steam_part_reclass,
             egrid_family_heat_rates=egrid_family_heat_rates,
+            cc_subfloor_eia923_heat_rates=cc_subfloor_eia923_heat_rates,
             cc_block_summer_rating=cc_block_summer_rating,
         )
         if from_parquet is None:

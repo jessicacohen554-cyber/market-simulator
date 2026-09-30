@@ -176,9 +176,9 @@
         // Color accent from ISO palette
         const colorVar = isoColorVar(keeper.iso);
 
-        // Header. ONE determination badge, always — the ISO's train-tier
-        // verdict (already the worst designated-config read for a partitioned
-        // keeper). Per-year and per-config detail belongs in the one year table
+        // Header. ONE determination badge, always — the ISO determination
+        // over EVERY registered year (rubric v3.13: worst over the designated
+        // configs and every folded held-out run). Per-year and per-config detail belongs in the one year table
         // in the detail pane, not in a second badge dialect up here.
         let html = `
           <div class="cs-card-header">
@@ -302,11 +302,11 @@
       // designated config per year is just the Config column, and a rule-22
       // touchpoint is just a row with a different tier.
       //
-      // Held-out rows are REPORTED, never gating (rule 22, as amended
-      // 2026-09-05): the determination above is the train-tier verdict and a
-      // held-out year that degrades does NOT downgrade the ISO. The line under
-      // the table says so, rather than leaving a reader to infer that a NOT-YET
-      // row beside a CALIBRATED headline is a contradiction.
+      // EVERY row gates (rubric v3.13, rule 30(c) as amended 2026-09-30,
+      // owner: "Shouldn't be considered calibrated if holdout years miss."):
+      // the determination above is the worst over the keeper's designated
+      // scopes plus every run folded to it, so a held-out year that reads
+      // NOT-YET makes the ISO NOT-YET. The line under the table says so.
       const years = keeper.years || [];
       if (years.length) {
         const TIER_TXT = { training: 'training', validation: 'validation holdout', locked_test: 'locked test' };
@@ -338,7 +338,7 @@
             <tbody>${rows}</tbody>
           </table>
         </div>
-        <p class="bc-mute" style="font-size:0.75rem;margin:6px 0 0">Held-out years are reported, not gating &mdash; the ISO determination is the 2023&ndash;2025 verdict (rule&nbsp;22).${noRef.size ? ` Price ref <em>none</em> (${[...noRef].sort().join(', ')}): no measured LMP series exists on disk for those years, so C3a/C3b/C3c are <strong>unscoreable there, not passing</strong>.` : ''}</p>`;
+        <p class="bc-mute" style="font-size:0.75rem;margin:6px 0 0">Every year gates, held-out years included &mdash; the ISO determination is the worst over all of them (rubric v3.13, rule&nbsp;30(c)).${noRef.size ? ` Price ref <em>none</em> (${[...noRef].sort().join(', ')}): no measured LMP series exists on disk for those years, so C3a/C3b/C3c are <strong>unscoreable there, not passing</strong>.` : ''}</p>`;
       }
 
       // Reasons — only when something FAILED. On a clean or caveated run they

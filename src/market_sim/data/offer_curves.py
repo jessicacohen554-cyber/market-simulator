@@ -894,6 +894,7 @@ def apply_cc_committed_offer_margin(
     generators: list,
     fleet_arrays: "FleetArrays",
     config: ScenarioConfig,
+    year: int | None = None,
 ) -> None:
     """Reprice the CC committed block to its MEASURED net-revenue offer level.
 
@@ -961,6 +962,19 @@ def apply_cc_committed_offer_margin(
             (``cc_committed_offer_margin``), the measured level
             (``cc_committed_offer_level``) and the shared delivered-gas anchor
             (``gas_offer_margin_anchor``).
+        year: Solve year. Only the backcast call site passes it; it is what
+            the R-ERCOT-19 sub-gate
+            ``cc_committed_prior_year_commitment_eligibility`` needs to read
+            the ``year - 1`` commitment profile. When that gate is armed each
+            repriced row's shift is weighted per hour by the plant's prior-year
+            measured online capacity share ``q_p(t)`` (month x hour-of-day)::
+
+                mc[g, t] += q_p(t) x (level − HR_g × anchor − vom_g)
+
+            ``q = 1`` is the keeper's bid exactly; ``q = 0`` leaves the band's
+            registered multiplier form (the price of a block that must first be
+            committed). Unmetered plants keep ``q = 1``; no Y-1 vintage (or
+            ``year=None``, the forecast path) is byte-identical to the gate off.
 
     Raises:
         ValueError: flag armed without a resolved level or anchor (rule 25 —
@@ -982,7 +996,22 @@ def apply_cc_committed_offer_margin(
             "identification point for the whole gas offer surface."
         )
     level, anchor = float(level), float(anchor)
+    profile = None
+    if year is not None:
+        from market_sim.data.commitment_profile import (
+            load_prior_year_commitment_profile,
+        )
+
+        profile = load_prior_year_commitment_profile(
+            config,
+            str(getattr(config, "iso", "") or ""),
+            int(year),
+            "CC_REGULAR",
+            "cc_committed_prior_year_commitment_eligibility",
+            mc.shape[1],
+        )
     n_repriced = 0
+    n_weighted = 0
     for g, gen in enumerate(generators):
         # Suffix vocabulary matches gas_offer_margin_markup_mult's
         # ``committed*``: the plain ``committed`` block plus the ``committedNN``
@@ -994,7 +1023,19 @@ def apply_cc_committed_offer_margin(
             and str(gen.unit_id).rpartition("_")[2].startswith("committed")
         ):
             continue
-        mc[g, :] += level - fleet_arrays.heat_rate[g] * anchor - fleet_arrays.vom[g]
+        shift = level - fleet_arrays.heat_rate[g] * anchor - fleet_arrays.vom[g]
+        q = (
+            None
+            if profile is None
+            else profile.get(int(getattr(gen, "plant_code", 0) or 0))
+        )
+        if q is None:
+            mc[g, :] += shift
+        else:
+            # R-ERCOT-19: expected offer over the commitment state (rule 19 —
+            # the same row and the same price owner, only weighted).
+            mc[g, :] += (q * shift).astype(mc.dtype, copy=False)
+            n_weighted += 1
         n_repriced += 1
     if n_repriced:
         logger.info(
@@ -1004,6 +1045,13 @@ def apply_cc_committed_offer_margin(
             n_repriced,
             level,
             anchor,
+        )
+    if n_weighted:
+        logger.info(
+            "cc_committed_prior_year_commitment_eligibility: %d of %d _committed "
+            "tranche(s) weighted by their plant's prior-year online share",
+            n_weighted,
+            n_repriced,
         )
 
 

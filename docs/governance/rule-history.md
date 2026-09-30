@@ -1574,10 +1574,58 @@ verdict changes in any field. A budget raise was measured and declined: at budge
 CALIBRATED-WITH-CAVEATS, and no non-SOCO verdict would move under either a global raise or a SOCO-scoped
 exemption. Tests: `tests/scoring/test_calibration_verdict_scoped_ledger.py`. NO SOLVE RAN.
 
-## 26. Changes to this file
+## 26. Rule 30 `[R-TOUCHPOINT-FOLD]` (c) REVERSED — a held-out year that misses DOWNGRADES the ISO; rubric v3.13 (owner, 2026-09-30)
+
+**Owner instruction, verbatim** (session soco-96, 2026-09-30):
+
+> "Shouldn't be considered calibrated if holdout years miss."
+
+**What it reverses.** Rule 30 (c) as ruled 2026-09-05 (*"An iso can stay calibrated even if it degrades on
+holdout years"*) made the ISO determination the train-tier (2023–2025) verdict and nothing else. Two code paths
+carried it: `build_status.build_part` excluded any `config_partition` config marked `tier: validation` from the
+ercot-246 worst-over-spans fold (added at ercot-255), and folded touchpoint runs (`holdout.keeper`) contributed
+criterion records to the page but never to the headline. `audit_keepers._live_iso_determination` (M1b) mirrored
+the first exclusion.
+
+**Owner decision cards, same sitting** (clickable, verbatim option labels):
+
+> Budget: "Per run, worst-of" — Stale rung: "Counts; flagged stale" — Markers: "Also withdraw frontiers"
+
+**What changed.** One shared function, `calibration_verdict.iso_determination`, now computes the ISO
+determination for both `build_status` and `audit_keepers`: the worst determination over the keeper's designated
+scopes (every partition config on its designated span, whatever its tier; else the keeper's whole registered span)
+**plus** every run folded to the keeper via `holdout.keeper`, each scope scored by the unchanged
+`determine()` under its own caveat budget. The basis line names each non-clean scope's years and its failing
+criterion-years. A folded run whose solve basis sha differs from the keeper's still gates and is flagged
+`stale` (the lane owes a re-solve under rules 34 (c) / 35 (c)). `RUBRIC_VERSION` becomes `"3.13"`.
+
+**What is untouched.** `determine_from_artifacts` is byte-unchanged: every band, tier, ledger row, both caveat
+budgets (`MAX_LEDGERED_CAVEATS` stays 1) and the v3.6 C3c out-of-training limb. The fold (a) and the status
+ladder (b) are unchanged.
+
+**Measured at amendment** against the pre-change scorer, no solve: **0 of 11** registered runs change run-level
+determination. ISO headlines:
+
+| ISO | before | after | what moves it |
+|---|---|---|---|
+| CAISO | CALIBRATED | **NOT-YET** | folded 2019/2020/2021: fuelmix 2019–21, dispatch_corr 2019–21, price_mean 2021 |
+| MISO | CALIBRATED | **NOT-YET** | validation config 2019–2022: fuelmix 2019, price_shape 2021/2022, price_mean 2022 |
+| NYISO | CALIBRATED | **NOT-YET** | folded 2021: price_mean 2021 |
+| SPP | CALIBRATED | **NOT-YET** | validation config 2019–2022: price_mean 2019/2020, price_shape 2020, fuelmix + dispatch_corr 2021/2022 |
+| NEISO | CALIBRATED | CALIBRATED | all seven years pass in its one 2019–2025 bundle |
+| ERCOT, NWPP, PJM, SOCO | NOT-YET | NOT-YET | (already NOT-YET; ERCOT's basis line now also names its 2019–2022 config) |
+
+**Markers revoked** under the standing Q5 rule ("a `complete` marker cannot stand on a NOT-YET keeper") and the
+"Also withdraw frontiers" card: `calibration-complete.json` `complete.CAISO` and `complete.SPP` move to
+`withdrawn`; the `frontier` blocks of `keepers/CAISO.json` and `keepers/NYISO.json` are withdrawn (renamed
+`frontier_withdrawn_2026_09_30`, text kept). PJM's `complete` marker already stood on a NOT-YET keeper before
+this change; the owner card left it for the PJM lane. Tests: `tests/scoring/test_iso_determination_holdout.py`.
+
+## 27. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-30 | Added §26: **rule 30 `[R-TOUCHPOINT-FOLD]` (c) reversed, rubric v3.13** — the ISO determination covers every registered year, held-out and folded runs included (owner instruction and decision cards verbatim in §26). 0 run-level moves; CAISO, MISO, NYISO, SPP headlines CALIBRATED → NOT-YET; CAISO/SPP `complete` and CAISO/NYISO `frontier` withdrawn. "Changes to this file" renumbered §26 → §27 (the only external citation of §26 is the new one in `calibration_verdict.py`). |
 | 2026-09-30 | Added §25: **rubric v3.12**, one scoped SOCO C3b 2022 row (new `above_band` direction; downgrading, spending the single slot); budget kept at 1 (owner rulings verbatim in §25). Only the SOCO keeper's verdict moves; its full span stays NOT-YET on the budget. "Changes to this file" renumbered §25 → §26 (no external reference cited §25). |
 | 2026-09-30 | Added §24: **rubric v3.11**, three scoped SOCO C3a rows (2019 over, 2020 over, 2022 under; downgrading, spending the single slot), owner rulings verbatim in §24. Only the SOCO keeper's verdict moves; its full span stays NOT-YET. "Changes to this file" renumbered §24 → §25 (no external reference cited §24). |
 | 2026-09-28 | Added §23: **rubric v3.10**, one scoped ledger row (SOCO 2019 COAL_BIT, under-run only, downgrading, spends the single slot) past the v3.1 C3c-only guard (owner ruling verbatim in §23). One determination moves across all registered runs and per-year subsets (SOCO 2019 alone). "Changes to this file" renumbered §23 → §24 (no external reference cited §23). |

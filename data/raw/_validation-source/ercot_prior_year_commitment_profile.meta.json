@@ -1,0 +1,194 @@
+{
+ "derive": "scripts/data/derive_ercot_prior_year_commitment_profile.py",
+ "source": "data/raw/campd-unit-level/TX_<year>.parquet",
+ "source_sha256": {
+  "2019": "91970a8f9a317f9ad6ff57ad1a291df0943b32cd63724d5bf8e7c63483626ee8",
+  "2020": "724c864a84850e9959082b22b40115a10f764bbfda782ceede392a45c4e9ff89",
+  "2021": "ab65bf3316f34fb3f2f80a4dbd9ede77e610808784c0af5cd854e8d8844771bc",
+  "2022": "a671d6d66304f005323963209c5bc53af8981a0678f2dde456ade8d9034d87d1",
+  "2023": "be95c968bf6c62da0425628f355623bbea09aafe121daa274fb44934459b4b23",
+  "2024": "7e809c5bcb08834a45de27c1dd0555d4f3b0d506bd6fa5a61913b0810980e379"
+ },
+ "unmetered": [
+  {
+   "year": 2019,
+   "klass": "CC_REGULAR",
+   "plant_code": 7512
+  },
+  {
+   "year": 2019,
+   "klass": "CC_REGULAR",
+   "plant_code": 50127
+  },
+  {
+   "year": 2019,
+   "klass": "CC_REGULAR",
+   "plant_code": 55501
+  },
+  {
+   "year": 2019,
+   "klass": "CC_REGULAR",
+   "plant_code": 55545
+  },
+  {
+   "year": 2019,
+   "klass": "CC_REGULAR",
+   "plant_code": 56233
+  },
+  {
+   "year": 2019,
+   "klass": "ST_GAS",
+   "plant_code": 56708
+  },
+  {
+   "year": 2020,
+   "klass": "CC_REGULAR",
+   "plant_code": 7512
+  },
+  {
+   "year": 2020,
+   "klass": "CC_REGULAR",
+   "plant_code": 50127
+  },
+  {
+   "year": 2020,
+   "klass": "CC_REGULAR",
+   "plant_code": 55501
+  },
+  {
+   "year": 2020,
+   "klass": "CC_REGULAR",
+   "plant_code": 55545
+  },
+  {
+   "year": 2020,
+   "klass": "CC_REGULAR",
+   "plant_code": 56233
+  },
+  {
+   "year": 2020,
+   "klass": "ST_GAS",
+   "plant_code": 56708
+  },
+  {
+   "year": 2021,
+   "klass": "CC_REGULAR",
+   "plant_code": 7512
+  },
+  {
+   "year": 2021,
+   "klass": "CC_REGULAR",
+   "plant_code": 50127
+  },
+  {
+   "year": 2021,
+   "klass": "CC_REGULAR",
+   "plant_code": 55501
+  },
+  {
+   "year": 2021,
+   "klass": "CC_REGULAR",
+   "plant_code": 55545
+  },
+  {
+   "year": 2021,
+   "klass": "CC_REGULAR",
+   "plant_code": 56233
+  },
+  {
+   "year": 2021,
+   "klass": "ST_GAS",
+   "plant_code": 56708
+  },
+  {
+   "year": 2022,
+   "klass": "CC_REGULAR",
+   "plant_code": 7512
+  },
+  {
+   "year": 2022,
+   "klass": "CC_REGULAR",
+   "plant_code": 50127
+  },
+  {
+   "year": 2022,
+   "klass": "CC_REGULAR",
+   "plant_code": 55501
+  },
+  {
+   "year": 2022,
+   "klass": "CC_REGULAR",
+   "plant_code": 55545
+  },
+  {
+   "year": 2022,
+   "klass": "CC_REGULAR",
+   "plant_code": 56233
+  },
+  {
+   "year": 2022,
+   "klass": "ST_GAS",
+   "plant_code": 56708
+  },
+  {
+   "year": 2023,
+   "klass": "CC_REGULAR",
+   "plant_code": 7512
+  },
+  {
+   "year": 2023,
+   "klass": "CC_REGULAR",
+   "plant_code": 50127
+  },
+  {
+   "year": 2023,
+   "klass": "CC_REGULAR",
+   "plant_code": 55501
+  },
+  {
+   "year": 2023,
+   "klass": "CC_REGULAR",
+   "plant_code": 55545
+  },
+  {
+   "year": 2023,
+   "klass": "CC_REGULAR",
+   "plant_code": 56233
+  },
+  {
+   "year": 2023,
+   "klass": "ST_GAS",
+   "plant_code": 56708
+  },
+  {
+   "year": 2024,
+   "klass": "CC_REGULAR",
+   "plant_code": 7512
+  },
+  {
+   "year": 2024,
+   "klass": "CC_REGULAR",
+   "plant_code": 50127
+  },
+  {
+   "year": 2024,
+   "klass": "CC_REGULAR",
+   "plant_code": 55501
+  },
+  {
+   "year": 2024,
+   "klass": "CC_REGULAR",
+   "plant_code": 55545
+  },
+  {
+   "year": 2024,
+   "klass": "CC_REGULAR",
+   "plant_code": 56233
+  },
+  {
+   "year": 2024,
+   "klass": "ST_GAS",
+   "plant_code": 56708
+  }
+ ]
+}
