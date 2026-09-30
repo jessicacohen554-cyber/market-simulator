@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-30-caiso-r18-dswgas-touchpoints",
+  "label": "caiso r18 dswgas touchpoints",
+  "date": "2026-09-30",
+  "shorthand": "caiso-r18-dswgas-touchpoints",
+  "definition": "R-CAISO-18 A 2019: keeper recipe + caiso_intertie_unprinted_year_measured_gas=true (PRECOMMIT-r-caiso-18)",
+  "years": [
+    2019,
+    2020,
+    2021
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-30-caiso-r18-dswgas-touchpoints.js",
+  "bundle": "results/calibration/rcaiso18_A_tp_2019_2021"
+}
