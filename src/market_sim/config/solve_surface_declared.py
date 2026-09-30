@@ -609,4 +609,5 @@ DECLARED: dict[str, str | dict[str, str]] = {
     "ISO_PLANT_EXITS": {"ERCOT": "a4d0fee78b233797"},
     "SPP_POSTURE_MIN_DOWN_HOURS": "05ce3498cb8df05c",
     "MISO_GAS_ECOMIN_MIN_LOAD_FRAC": "8dbeefa4395b85e6",
+    "SPP_LOLE_GAS_EFOR_BY_SIZE": "2a0a954cca71b7cb",
 }

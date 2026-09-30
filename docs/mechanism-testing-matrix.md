@@ -18080,6 +18080,19 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**SPP-104 (2026-09-29, CT_PEAKER OUTAGE, DESIGN LANE, ZERO LP —
+`docs/handoffs/DESIGN-spp-104-ct-outage-2026-09-29.md`, probe `scripts/probes/_spp104_ct_availability_phase0.py`; no cell verdict moves).**
+- **The premise "CT_PEAKER carries no outage" is a measurement artifact.** CTs carry the statistical GADS stack (WEFOR 0.07 × 0.7,
+  shoulder POF 0.03, flat derate 0.05, 12.5 % summer derate): 1.54–1.91 GW rated, 0.63–0.91 GW outage-type. They lack only a CAMPD
+  event layer. SPP-84's metric (each row's max available MW as capacity) cannot see flat unavailability.
+- **Restated gas gap, outage-type basis (keeper − SPP published): −1.04 / −0.31 / +0.80 / +1.97 / −0.46 / −1.29 / +0.60 GW
+  (2019–25)**; 2025 measured from the portal's daily CSVs (8.99 GW). There is no consistent sign, and the class is not identifiable.
+- **No admissible CT-specific source:** the portal is fuel-only; the MMU's "simple-cycle" class includes gas steam and is chart-only;
+  the LOLE EFOR is fuel × size on a service-hour basis (its calendar-hour mapping would be a free parameter); CAMPD cannot see peaker
+  outages; 860M is closed.
+- **Do not redo** a CT outage layer on these sources. Re-open only on a published SPP CT-class (or unit-level) calendar-hour outage
+  series.
+
 **SPP-103 (2026-09-29, PAIR POSTURE + PRICE FIX, DESIGN LANE, ZERO LP —
 `docs/handoffs/DESIGN-spp-103-pair-posture-price-fix-2026-09-29.md`, probe `scripts/probes/_spp103_pairing_requirement.py`;
 `spp_commitment_posture` stays R, recorded as tested-but-unpaired).**

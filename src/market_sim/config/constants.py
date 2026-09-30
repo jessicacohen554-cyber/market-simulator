@@ -625,6 +625,33 @@ CHP_ST_BTM_PCT: float = 90.0  # ST_CHP group (tiny chemical host-steam): near-fu
 # than half of its hours. docs/handoffs/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md.
 CHP_STEAM_ALLHOURS_MIN_ON_FRAC: float = 0.5
 
+# SPP's own seasonal Equivalent Forced Outage Rate for NATURAL-GAS thermal
+# resources by unit size, read under ScenarioConfig.spp_ct_lole_efor (SPP-104,
+# 2026-09-30, owner card "Build LOLE-EFOR CT swap"). Rows are
+# (unit-size upper edge MW, summer EFOR, winter EFOR); a unit falls in the
+# first row whose edge is >= its MW. Source: SPP Resource Adequacy, "2023 SPP
+# Loss of Load Expectation Report" (June 2024), s4.3.2 Tables 9 (summer) and 10
+# (winter) — the SPP-fleet weighted average of each resource's own NERC GADS
+# EFOR, Jan 2015 - Dec 2022, "include de-rates and full forced outages". Bins
+# 0-50 / 51-100 / 101-200 / 201-400 / 401-600; the report publishes no 601+
+# natural-gas value, so none is carried. Summer = Jun 1 - Sep 30 (the study's
+# SERVM season), which is exactly this model's summer month set {6,7,8,9}.
+# CALENDAR-HOUR BASIS, not a mapping chosen here: SERVM runs each unit through
+# ttf/ttr draws in every hour with ttf = ttr(1 - EFOR)/EFOR (the report's
+# Appendix A), whose steady-state outage probability is EFOR itself, so SPP's
+# own model applies these numbers as all-hours unavailability. Zero free
+# parameters (rule 21); SPP's own fleet (rule 25). Rule-14 misalignment,
+# declared: the table is by FUEL x size, so a CT takes the natural-gas rate of
+# its size bin, which in the 51-200 MW bins also averages gas steam units.
+# docs/handoffs/DESIGN-spp-104-ct-outage-2026-09-29.md.
+SPP_LOLE_GAS_EFOR_BY_SIZE: tuple[tuple[float, float, float], ...] = (
+    (50.0, 0.17, 0.23),  # 0-50 MW — Tables 9/10
+    (100.0, 0.23, 0.28),  # 51-100 MW
+    (200.0, 0.13, 0.20),  # 101-200 MW
+    (400.0, 0.12, 0.16),  # 201-400 MW
+    (600.0, 0.22, 0.27),  # 401-600 MW
+)
+
 # CC/CT startup costs ($/MW per start) keyed by ascending heat-rate cutoff.
 # Used to amortize startup cost into the monthly bid markup: a generator bids
 # above marginal cost to recover startup_cost / expected_run_length.

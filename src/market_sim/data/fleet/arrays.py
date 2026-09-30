@@ -812,6 +812,34 @@ def _availability_matrix(
                 len(_screened_share),
                 sum(s * dict(_roster).get(k, 0.0) for k, s in _screened_share.items()),
             )
+        # SPP-104 (ScenarioConfig.spp_ct_lole_efor): SPP's own LOLE-study
+        # seasonal EFOR REPLACES the statistical CT_PEAKER WEFOR (rule 19) —
+        # no wefor_multiplier, no SUMMER_WEFOR_SHARE redistribution, no age
+        # escalation (the rates are each unit's own GADS history). POF and the
+        # performance / summer derates are untouched. Empty (byte-inert) off.
+        _ct_lole: dict[int, tuple[float, float]] = {}
+        if getattr(config, "spp_ct_lole_efor", False):
+            from market_sim.data.fleet.ct_lole_efor import spp_ct_plant_efor
+
+            _ct_lole = spp_ct_plant_efor(
+                _iso or "",
+                int(fleet_year),
+                cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
+                mid_vintage_exit_carry=getattr(config, "mid_vintage_exit_carry", False),
+            )
+            _ct_rows = [g for g in generators if g.plant_group == "CT_PEAKER"]
+            _miss = {
+                int(g.plant_code) for g in _ct_rows if int(g.plant_code) not in _ct_lole
+            }
+            logger.info(
+                "SPP LOLE CT EFOR (%s %d): %d CT_PEAKER plant(s) on SPP's own "
+                "seasonal EFOR; %d plant(s) absent from the unit roster keep the "
+                "statistical WEFOR",
+                _iso,
+                int(fleet_year),
+                len({int(g.plant_code) for g in _ct_rows} - _miss),
+                len(_miss),
+            )
         for g_idx, gen in enumerate(generators):
             if gen.plant_group not in THERMAL_AVAILABILITY:
                 continue
@@ -892,6 +920,16 @@ def _availability_matrix(
                 # clip it. Keep only the flat performance derate (the summer
                 # ambient derate still multiplies in below).
                 availability[g_idx, :] = 1.0 - derate
+            elif gen.plant_group == "CT_PEAKER" and int(gen.plant_code) in _ct_lole:
+                # SPP-104: SPP's own seasonal EFOR in place of the statistical
+                # WEFOR (Jun-Sep takes the summer rate, every other month the
+                # winter rate, as the LOLE study's SERVM seasons do). CTs keep
+                # the shoulder POF exactly as the default branch below does.
+                efor_s, efor_w = _ct_lole[int(gen.plant_code)]
+                maint_h = _maint_derate(gen.plant_group, pof, pof)
+                availability[g_idx, :] = 1.0 - efor_w - derate
+                availability[g_idx, summer] = 1.0 - efor_s - derate
+                availability[g_idx, :] -= maint_h
             elif getattr(gen, "coal_sync_pmin_mw", 0.0) > 0.0:
                 # Coal synchronization floor tranche (_mustrun / _sync): held at
                 # the measured online Pmin via min_gen below. The STATISTICAL
