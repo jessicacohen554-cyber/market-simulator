@@ -15694,3 +15694,17 @@ Record: `docs/handoffs/r-caiso-15/`.
 - Promoted on the pre-registered structure rule: keeper `2026-09-30-caiso-r16-tiontime` (+ `-touchpoints`); r15 pruned.
 
 Record: `docs/handoffs/r-caiso-16/`.
+
+## R-CAISO-17 — 2026-09-30: pre-2022 generation cells published EARLY, PROMOTED
+
+- Phase 0 (zero LP): EIA-930 CISO `NG:` cells and `Net generation` are stamped about 1 h EARLY from the first fuel row through local 2022-06-13. Demand and TI are on the true clock.
+  - The references: CAISO Outlook 5-min (−1 in 36/36 months; the 5-min peak is at +45 min), EPA CEMS gas (−1 every month to 2022-05), and the solar centroid.
+  - The OASIS TAC clock was verified first.
+  - The 2022-06-14/15 publisher shift that opened the Demand late window closed this one.
+- Build: `EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC` under the same flag, zero parameters. It reaches the frame, the caiso-80 term, the HSL term and the NG: WAT hydro backfill.
+- 7 shards at `ca84177c`. 2023–25 byte-reproduce the incumbent. The span stays CALIBRATED (single ledgered C3c 2024).
+- C4 gas 2022: NRMSE 0.262 → 0.252, r 0.896 → 0.904.
+- The fold stays NOT-YET. Its dispatch_corr r improves every year: 0.882 / 0.879 / 0.816 → 0.892 / 0.902 / 0.853.
+- Promoted on the pre-registered structure rule: keeper `2026-09-30-caiso-r17-earlyclock` (+ `-touchpoints`). r16 was pruned.
+
+Record: `docs/handoffs/r-caiso-17/`.
