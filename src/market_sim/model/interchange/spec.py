@@ -1247,6 +1247,36 @@ IMPORT_NODE_LINKS: dict[str, list[tuple[str, float]]] = {
     ],
 }
 
+# NYISO-NEXT-17 F/G re-partition (ScenarioConfig.nyiso_fg_split, armed through
+# config.topology_variant): zone G joins Lower_Hudson, so the Capital_Hudson
+# eastern-seam capability splits along its own documented tie geography above —
+# the PJM Ramapo 345 kV share (~1,000 MW, ZONE G) moves to Lower_Hudson, and the
+# ISO-NE AC share (~600 MW) stays on Capital_Hudson with the NE AC landing. Same
+# 1,600 MW in total, no new import energy; backcast statics are overwritten by
+# the attributed envelopes (data.nyiso_par_attribution).
+NYISO_IMPORT_NODE_LINKS_FG_SPLIT: list[tuple[str, float]] = [
+    ("Upstate_West", 3000.0),
+    ("Capital_Hudson", 600.0),
+    ("NYC", 1000.0),
+    ("Long_Island", 1200.0),
+    ("Lower_Hudson", 1000.0),
+]
+
+
+def import_node_links(iso: str) -> list[tuple[str, float]]:
+    """Return the ISO's border links for the active topology variant.
+
+    :data:`IMPORT_NODE_LINKS` unchanged except under the NYISO F/G
+    re-partition, which returns :data:`NYISO_IMPORT_NODE_LINKS_FG_SPLIT`.
+    """
+    if iso == "NYISO":
+        from market_sim.config.topology_variant import nyiso_fg_split_active
+
+        if nyiso_fg_split_active():
+            return NYISO_IMPORT_NODE_LINKS_FG_SPLIT
+    return IMPORT_NODE_LINKS.get(iso, [])
+
+
 # ISOs whose backcasts serve interchange through the priced import/export
 # node by default (no --priced-interchange flag required).
 PRICED_INTERCHANGE_DEFAULT_ISOS: frozenset[str] = frozenset({"CAISO"})

@@ -5107,6 +5107,13 @@ def solve_and_persist(
         if iso == "SPP"
         else "north_south"
     )
+    # NYISO-NEXT-17 F/G re-partition, armed at the same seam for the same
+    # reason (config.topology_variant); False for every other ISO.
+    from market_sim.config.topology_variant import set_nyiso_fg_split
+
+    set_nyiso_fg_split(
+        iso == "NYISO" and bool((prb_overrides or {}).get("nyiso_fg_split", False))
+    )
     iso_config = get_iso_config(iso)
     # caiso-110: the endogenous WECC-West node keeps the SINGLE WECC_import zone
     # (no per-hub split — run_year does not split it either), so this caller's

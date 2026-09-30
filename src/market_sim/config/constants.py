@@ -5860,6 +5860,157 @@ NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH: dict[int, dict[tuple[str, str], list[float]]
 }
 
 
+# MEASURED non-CENTRAL-EAST TOTAL EAST transfer envelope (MW), one 12-element
+# list (Jan..Dec) per backcast year for the Upstate_West -> Lower_Hudson link
+# that ScenarioConfig.nyiso_fg_split (NYISO-NEXT-17, default OFF) adds. Under
+# that re-partition Capital_Hudson is NYISO load zone F alone and Lower_Hudson
+# is G+H+I, so the A-E -> F+ cutset (TOTAL EAST) has two physical legs in the
+# model: CENTRAL EAST (E -> F) on Upstate_West -> Capital_Hudson at its posted
+# DAM TTC (NYISO_INTERFACE_TTC_BY_MONTH), and the remaining TOTAL EAST paths on
+# this link. The pair REPLACES NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH on the upstate
+# seam (rule 19 [R-ONE-MECH], pipeline.ttc.apply_iso_monthly_ttc).
+#
+# CONSTRUCTION — INHERITED, NOT CHOSEN (rule 21 [R-DOF]: zero free parameters):
+# verbatim the TOTAL EAST envelope's (p90 of the directionally-clipped measured
+# transfer per calendar month, rounded to 25 MW), applied to the hourly series
+# TOTAL EAST minus CENTRAL EAST from the same P-32 posting. Rule 14
+# [R-ACCURATE] misalignment, declared: the posting does not attribute the
+# non-CE paths to a landing zone; they are assigned to G on the interface
+# definitions. BACKCAST-ONLY, on the identical classification as the two tables
+# above (rule 13 [R-MEASURED]). Regenerate with
+# scripts/data/derive_nyiso_te_nonce_envelope.py.
+NYISO_TE_NONCE_ENVELOPE_BY_MONTH: dict[int, dict[tuple[str, str], list[float]]] = {
+    2018: {
+        ("Upstate_West", "Lower_Hudson"): [
+            2600.0,
+            2375.0,
+            2175.0,
+            2000.0,
+            1475.0,
+            2125.0,
+            2350.0,
+            2525.0,
+            2175.0,
+            1525.0,
+            2175.0,
+            2175.0,
+        ]
+    },
+    2019: {
+        ("Upstate_West", "Lower_Hudson"): [
+            2750.0,
+            2350.0,
+            2775.0,
+            2225.0,
+            1850.0,
+            2250.0,
+            2450.0,
+            2275.0,
+            2000.0,
+            1925.0,
+            1900.0,
+            2300.0,
+        ]
+    },
+    2020: {
+        ("Upstate_West", "Lower_Hudson"): [
+            1950.0,
+            1775.0,
+            1600.0,
+            2000.0,
+            1850.0,
+            2050.0,
+            2050.0,
+            2275.0,
+            2200.0,
+            1950.0,
+            1925.0,
+            2550.0,
+        ]
+    },
+    2021: {
+        ("Upstate_West", "Lower_Hudson"): [
+            2475.0,
+            2500.0,
+            1825.0,
+            1975.0,
+            2250.0,
+            2375.0,
+            2625.0,
+            2450.0,
+            2600.0,
+            2225.0,
+            2175.0,
+            2875.0,
+        ]
+    },
+    2022: {
+        ("Upstate_West", "Lower_Hudson"): [
+            2875.0,
+            3075.0,
+            2375.0,
+            1300.0,
+            1675.0,
+            1900.0,
+            2225.0,
+            2375.0,
+            2050.0,
+            1800.0,
+            1625.0,
+            2750.0,
+        ]
+    },
+    2023: {
+        ("Upstate_West", "Lower_Hudson"): [
+            2875.0,
+            2775.0,
+            1950.0,
+            1600.0,
+            1850.0,
+            2225.0,
+            2300.0,
+            2350.0,
+            2125.0,
+            2000.0,
+            2200.0,
+            2300.0,
+        ]
+    },
+    2024: {
+        ("Upstate_West", "Lower_Hudson"): [
+            2425.0,
+            2125.0,
+            1575.0,
+            1475.0,
+            1525.0,
+            2225.0,
+            2275.0,
+            2050.0,
+            1850.0,
+            1825.0,
+            2100.0,
+            2575.0,
+        ]
+    },
+    2025: {
+        ("Upstate_West", "Lower_Hudson"): [
+            2550.0,
+            2625.0,
+            2225.0,
+            2050.0,
+            2250.0,
+            1700.0,
+            1725.0,
+            1725.0,
+            1650.0,
+            1525.0,
+            2225.0,
+            2275.0,
+        ]
+    },
+}
+
+
 # Crosswalk from ERCOT's published Generic Transmission Constraints (GTCs, the
 # stability-limited export interfaces reported in NP6-86 "SCED Shadow Prices
 # and Binding Transmission Constraints") onto the reduced 7-zone topology's

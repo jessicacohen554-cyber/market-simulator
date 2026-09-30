@@ -614,4 +614,5 @@ DECLARED: dict[str, str | dict[str, str]] = {
     # is unscoped (CISO is not an ISO token), so a pre-arm declaration would
     # re-key every ISO; the window is live only under caiso_eia930_clock_repair.
     "EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC": "4feaa46927c60d38",
+    "NYISO_TE_NONCE_ENVELOPE_BY_MONTH": "6ab1620b99d6d1ce",
 }

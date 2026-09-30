@@ -100,6 +100,11 @@ import numpy as np
 from market_sim.config.paths import RAW_DIR
 
 ARTIFACT: Path = RAW_DIR / "reference" / "nyiso-market-solar-capacity.csv"
+# The same registry crosswalked under the NYISO-NEXT-17 F/G re-partition (zone G
+# -> Lower_Hudson); read when ``config.topology_variant`` has it armed.
+ARTIFACT_FG_SPLIT: Path = (
+    RAW_DIR / "reference" / "nyiso-market-solar-capacity-fgsplit.csv"
+)
 
 MONTHS_PER_YEAR: int = 12
 
@@ -190,7 +195,12 @@ def load_market_solar_monthly(
     """
     if iso.upper() != "NYISO":
         return None
-    src = Path(path) if path is not None else ARTIFACT
+    if path is not None:
+        src = Path(path)
+    else:
+        from market_sim.config.topology_variant import nyiso_fg_split_active
+
+        src = ARTIFACT_FG_SPLIT if nyiso_fg_split_active() else ARTIFACT
     if not src.exists():
         raise FileNotFoundError(
             f"nyiso_solar_market_generator_basis is armed but {src} is missing; "

@@ -75,6 +75,22 @@ INTERFACE_ZONE: dict[str, str] = {
     "west": "Upstate_West",
 }
 
+
+def interface_zone() -> dict[str, str]:
+    """Return :data:`INTERFACE_ZONE` for the active NYISO partition.
+
+    Ramapo and South Mahwah / Waldwick land in ZONE G (the citations above).
+    Under the NYISO-NEXT-17 F/G re-partition (``ScenarioConfig.nyiso_fg_split``,
+    armed through ``config.topology_variant``) zone G belongs to
+    ``Lower_Hudson``, so those two interfaces land there.
+    """
+    from market_sim.config.topology_variant import nyiso_fg_split_active
+
+    if not nyiso_fg_split_active():
+        return INTERFACE_ZONE
+    return {**INTERFACE_ZONE, "ramapo": "Lower_Hudson", "jk": "Lower_Hudson"}
+
+
 # The share the posting leaves on the free-flowing western AC ties when every
 # PAR is in service: 1 - (2x16 % + 3x5 % + 3x7 %). A derived identity, not a
 # parameter — it is whatever the eight published percentages do not cover.
@@ -148,22 +164,28 @@ def zone_shares(outages: pd.DataFrame, year: int) -> dict[str, np.ndarray]:
         freq="h",
         inclusive="left",
     )
+    landing = interface_zone()
     out: dict[str, np.ndarray] = {
-        zone: np.zeros(len(index)) for zone in set(INTERFACE_ZONE.values())
+        zone: np.zeros(len(index)) for zone in set(landing.values())
     }
     for ptid, (_par, _name, interface, share) in PAR_REGISTRY.items():
         live = (~par_out_mask(outages, ptid, index)).astype(float)
-        out[INTERFACE_ZONE[interface]] += live * share
+        out[landing[interface]] += live * share
         # The posting's own closure rule: an out-of-service PAR's share goes west.
-        out[INTERFACE_ZONE["west"]] += (1.0 - live) * share
-    out[INTERFACE_ZONE["west"]] += WEST_RESIDUAL_SHARE
+        out[landing["west"]] += (1.0 - live) * share
+    out[landing["west"]] += WEST_RESIDUAL_SHARE
     return out
 
 
 # Every P-32 ``SCH -`` row, attributed to the model zone its ties physically land
 # in. The NYCA aggregation is A-E -> Upstate_West, F-G -> Capital_Hudson,
 # H-I -> Lower_Hudson, J -> NYC, K -> Long_Island (iso_configs NYISO docstring);
-# Lower_Hudson has no external ties and correctly has no border link.
+# Lower_Hudson has no external ties and correctly has no border link. Under the
+# NYISO-NEXT-17 F/G re-partition zone G joins Lower_Hudson, so the PJM Ramapo /
+# South Mahwah share lands there (interface_zone) and it gets a border link; the
+# NE AC tie (New Scotland F / Pleasant Valley G) stays on Capital_Hudson, the
+# landing ``nyiso_ne_ac_node`` already uses (a declared F-side reconciliation:
+# the posting carries the tie as one row).
 # ``SCH - PJ - NY`` is absent here because it is the one row that does NOT land in
 # a single zone — it is split hourly by the published PAR shares (zone_shares).
 SEAM_ROW_ZONE: dict[str, str] = {
@@ -416,6 +438,22 @@ def nyiso_par_attributed_ttc_hourly(
     if exclude_rows:
         frame = frame[~frame["interface"].isin(exclude_rows)]
     envelopes = attributed_envelope_by_zone(frame, year, hours, pct)
+
+    # A pooled border link whose zone receives no attributed posted row hosts
+    # no measured seam, so both its caps are zero — never its static stand-in.
+    # Every pooled link is attributed in the base partition (byte-identical);
+    # under the F/G re-partition with ``nyiso_ne_ac_node`` the pooled
+    # Capital_Hudson link is left with no row once Ramapo moves to G.
+    for zone, i in link_idx.items():
+        if zone not in envelopes:
+            logger.info(
+                "nyiso_seam_par_attribution %d: %s has no attributed seam row; "
+                "pooled border link capped at 0 MW both ways",
+                year,
+                zone,
+            )
+            ttc_hourly[:, i] = 0.0
+            ttc_import[:, i] = 0.0
 
     n_capped = 0
     for zone, (import_cap, export_cap) in envelopes.items():
