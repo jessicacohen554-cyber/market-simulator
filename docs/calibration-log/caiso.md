@@ -15674,3 +15674,12 @@ Record: `docs/handoffs/r-caiso-13/`.
 - Owner card: "Complete repair, re-solve". R-CAISO-15 extends the arm to the HSL generation term and re-solves. Keeper unchanged.
 
 Record: `docs/handoffs/r-caiso-14/`.
+
+## R-CAISO-15 — 2026-09-29/30: clock repair completed, PROMOTED
+
+- Extended `caiso_eia930_clock_repair` to the HSL solar/wind generation term and (owner card "Add battery envelope") the battery shape envelope; the zero-LP benchmark rebuild now arms from the bundle. Zero parameters.
+- 7 shards (2019–24 at `789c70a0`, 2025 at `893545e3`). Span CALIBRATED (single ledgered C3c 2024). C4 gas NRMSE 2024 0.254 → 0.249, 2025 0.294 → 0.290.
+- P2 PASS (battery lag +1 → 0). P1 narrow miss (4 of 24 months at 12.02–12.09 h, from the curtailment term). P3 mixed.
+- Owner card "Promote": keeper `2026-09-29-caiso-r15-clockfull` (+ `-touchpoints`); r11 pruned. Open: per-DIBA interchange lag.
+
+Record: `docs/handoffs/r-caiso-15/`.
