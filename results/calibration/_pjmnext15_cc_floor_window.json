@@ -1,0 +1,215 @@
+{
+ "what": "PJM-NEXT-15 card 2b (zero LP): where does the keeper's CC commitment floor bind vs reality?",
+ "years": {
+  "2019": {
+   "all": {
+    "n": 61,
+    "committed_gw": 24.72,
+    "floor_twh": 186.04,
+    "floor_off_twh": 28.03,
+    "pooled_minus_year_on": 0.042
+   },
+   "low": {
+    "n": 22,
+    "committed_gw": 7.01,
+    "floor_twh": 50.42,
+    "floor_off_twh": 16.61,
+    "pooled_minus_year_on": 0.197
+   },
+   "mid": {
+    "n": 19,
+    "committed_gw": 8.34,
+    "floor_twh": 61.18,
+    "floor_off_twh": 7.64,
+    "pooled_minus_year_on": -0.007
+   },
+   "high": {
+    "n": 20,
+    "committed_gw": 9.37,
+    "floor_twh": 74.44,
+    "floor_off_twh": 3.77,
+    "pooled_minus_year_on": -0.03
+   }
+  },
+  "2020": {
+   "all": {
+    "n": 61,
+    "committed_gw": 25.27,
+    "floor_twh": 190.41,
+    "floor_off_twh": 20.75,
+    "pooled_minus_year_on": 0.001
+   },
+   "low": {
+    "n": 23,
+    "committed_gw": 5.76,
+    "floor_twh": 38.87,
+    "floor_off_twh": 9.86,
+    "pooled_minus_year_on": 0.1
+   },
+   "mid": {
+    "n": 18,
+    "committed_gw": 8.45,
+    "floor_twh": 64.61,
+    "floor_off_twh": 5.84,
+    "pooled_minus_year_on": -0.021
+   },
+   "high": {
+    "n": 20,
+    "committed_gw": 11.07,
+    "floor_twh": 86.92,
+    "floor_off_twh": 5.06,
+    "pooled_minus_year_on": -0.034
+   }
+  },
+  "2021": {
+   "all": {
+    "n": 65,
+    "committed_gw": 26.8,
+    "floor_twh": 202.11,
+    "floor_off_twh": 27.93,
+    "pooled_minus_year_on": 0.034
+   },
+   "low": {
+    "n": 25,
+    "committed_gw": 5.57,
+    "floor_twh": 35.54,
+    "floor_off_twh": 15.4,
+    "pooled_minus_year_on": 0.215
+   },
+   "mid": {
+    "n": 21,
+    "committed_gw": 10.01,
+    "floor_twh": 76.36,
+    "floor_off_twh": 7.85,
+    "pooled_minus_year_on": -0.006
+   },
+   "high": {
+    "n": 19,
+    "committed_gw": 11.23,
+    "floor_twh": 90.2,
+    "floor_off_twh": 4.69,
+    "pooled_minus_year_on": -0.021
+   }
+  },
+  "2022": {
+   "all": {
+    "n": 67,
+    "committed_gw": 27.92,
+    "floor_twh": 210.08,
+    "floor_off_twh": 26.72,
+    "pooled_minus_year_on": 0.024
+   },
+   "low": {
+    "n": 24,
+    "committed_gw": 5.82,
+    "floor_twh": 36.88,
+    "floor_off_twh": 11.54,
+    "pooled_minus_year_on": 0.119
+   },
+   "mid": {
+    "n": 22,
+    "committed_gw": 10.23,
+    "floor_twh": 78.85,
+    "floor_off_twh": 10.04,
+    "pooled_minus_year_on": 0.028
+   },
+   "high": {
+    "n": 21,
+    "committed_gw": 11.87,
+    "floor_twh": 94.35,
+    "floor_off_twh": 5.13,
+    "pooled_minus_year_on": -0.026
+   }
+  },
+  "2023": {
+   "all": {
+    "n": 69,
+    "committed_gw": 29.33,
+    "floor_twh": 220.48,
+    "floor_off_twh": 25.06,
+    "pooled_minus_year_on": 0.01
+   },
+   "low": {
+    "n": 25,
+    "committed_gw": 6.3,
+    "floor_twh": 39.07,
+    "floor_off_twh": 10.53,
+    "pooled_minus_year_on": 0.06
+   },
+   "mid": {
+    "n": 21,
+    "committed_gw": 10.59,
+    "floor_twh": 81.11,
+    "floor_off_twh": 8.9,
+    "pooled_minus_year_on": 0.007
+   },
+   "high": {
+    "n": 23,
+    "committed_gw": 12.44,
+    "floor_twh": 100.3,
+    "floor_off_twh": 5.63,
+    "pooled_minus_year_on": -0.013
+   }
+  },
+  "2024": {
+   "all": {
+    "n": 69,
+    "committed_gw": 29.33,
+    "floor_twh": 220.48,
+    "floor_off_twh": 20.21,
+    "pooled_minus_year_on": -0.012
+   },
+   "low": {
+    "n": 27,
+    "committed_gw": 5.69,
+    "floor_twh": 35.32,
+    "floor_off_twh": 6.59,
+    "pooled_minus_year_on": 0.003
+   },
+   "mid": {
+    "n": 19,
+    "committed_gw": 10.33,
+    "floor_twh": 80.81,
+    "floor_off_twh": 7.44,
+    "pooled_minus_year_on": 0.002
+   },
+   "high": {
+    "n": 23,
+    "committed_gw": 13.31,
+    "floor_twh": 104.36,
+    "floor_off_twh": 6.18,
+    "pooled_minus_year_on": -0.028
+   }
+  },
+  "2025": {
+   "all": {
+    "n": 69,
+    "committed_gw": 29.33,
+    "floor_twh": 220.48,
+    "floor_off_twh": 24.2,
+    "pooled_minus_year_on": 0.006
+   },
+   "low": {
+    "n": 27,
+    "committed_gw": 6.13,
+    "floor_twh": 37.99,
+    "floor_off_twh": 8.39,
+    "pooled_minus_year_on": 0.017
+   },
+   "mid": {
+    "n": 20,
+    "committed_gw": 10.61,
+    "floor_twh": 83.35,
+    "floor_off_twh": 8.56,
+    "pooled_minus_year_on": 0.021
+   },
+   "high": {
+    "n": 22,
+    "committed_gw": 12.59,
+    "floor_twh": 99.14,
+    "floor_off_twh": 7.25,
+    "pooled_minus_year_on": -0.012
+   }
+  }
+ }
+}

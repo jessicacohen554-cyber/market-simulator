@@ -6837,3 +6837,17 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
   - PJM's price-taking CC block (p25 ≤ 3.5 × delivered gas at mid-curve) is present in 2020 and 2023 alike.
 - OPEN, not limits: C3a 2019/2020 and the floor; COAL_BIT 2019/2021; CT_PEAKER 2021. Next: PJM's price-taking CC block, all seven years, jointly with the CC volume over-run (pjm-h20/h21).
 - Records: `docs/FINDING-pjm-next-14-lowend-units-supply-point-midcurve-2026-09-30.md`, `docs/RESULT-pjm-next-14-2026-09-30.md`, `docs/PRECOMMIT-pjm-next-14-lowend-replay-2026-09-30.md`.
+
+## PJM-NEXT-15 — 2026-09-30 — the cheap CC block is the min-load block and inverts by year; the CC over-run's year signal is loading, not commitment (zero LP)
+
+- Zero LP, zero shards, nothing registered; keeper unchanged (`2026-09-28-pjm-next8-exitfix`). Offers corpus 2019–2025 re-fetched (84 month-files, no errors).
+- **Card 1 (cheap CC block, all seven years):**
+  - 59–86 % of the < 3.5 × delivered-gas block sits at or below ecomin: PJM's min-load block, carried by a distinct ~0-start-cost unit set.
+  - Above ecomin, its mid-curve share is 0.05 / 0.17 in 2019 / 2020 against 0.30 / 0.32 in 2023 / 2024, inverted against the C3a miss. **Refuted as the C3a lever.**
+- **Card 2 (CC volume):**
+  - Commitment is a constant +2–8 TWh on-hours bias every year, in short real off-runs, and the model starts CCs as often as CAMPD or more.
+  - The year signal is loading when on: +3.0 to +5.7 TWh in the C1-fail years, −4.7 to −10.0 in the pass years.
+  - The `cc_mustrun_per_plant` window puts 20–28 TWh/yr of committed MW in real off-hours, flat across years (rule-17 structural question, not a C1 lever).
+- Card 3 not reached: no admissible, year-discriminating design.
+- OPEN, not limits. Next: the loading term by zone/hour against the coal econ bid and net interchange (zero LP). Owner call: whether to charter a P0-pattern CC min-load bridge replacing the system-load window.
+- Records: `docs/FINDING-pjm-next-15-cc-cheap-block-and-commitment-2026-09-30.md`, `docs/RESULT-pjm-next-15-2026-09-30.md`.
