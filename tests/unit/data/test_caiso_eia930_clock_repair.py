@@ -335,3 +335,28 @@ def test_live_envelope_under_solve_year_vintage_matches_canonical_and_restores()
         P.set_eia860_vintage(None)
     np.testing.assert_array_equal(under_vintage[0], canonical[0])
     np.testing.assert_array_equal(under_vintage[1], canonical[1])
+
+
+def test_benchmark_rebuild_arms_from_bundle_and_restores(tmp_path, monkeypatch):
+    """A zero-LP benchmark rebuild uses the bundle's own clock-repair setting
+    and leaves the process switch as it found it (R-CAISO-15 census)."""
+    import json
+
+    import scripts.run_calibration_full as rcf
+
+    (tmp_path / "meta.json").write_text(json.dumps({"iso": "CAISO", "years": [2024]}))
+    (tmp_path / "run_config.json").write_text(
+        json.dumps({"scenario_config": {"caiso_eia930_clock_repair": True}})
+    )
+    seen = []
+    monkeypatch.setattr(
+        rcf,
+        "_build_benchmark_frames",
+        lambda b: seen.append(F.caiso_eia930_clock_repair_active()) or ("CAISO", {}),
+    )
+    assert rcf._bundle_caiso_clock_repair(tmp_path) is True
+    rcf.build_benchmark_frames(tmp_path)
+    assert seen == [True]
+    assert F.caiso_eia930_clock_repair_active() is False
+    (tmp_path / "meta.json").write_text(json.dumps({"iso": "ERCOT", "years": [2024]}))
+    assert rcf._bundle_caiso_clock_repair(tmp_path) is False
