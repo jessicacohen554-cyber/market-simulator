@@ -505,6 +505,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # zeroes the virtual pseudo-units' bounds in P1 only, so the off path is
     # byte-inert). Same commit as the field.
     "pjm_da_virtual_settle_financial",
+    # NWPP-NEXT-14 vintage denominator of the per-unit tranche companion, a
+    # SUB-GATE of campd_per_unit_attribution (GATED default-off; selects the
+    # '-perunit-vintage-' companion through campd_bins.campd_fuel_split_selector,
+    # so the off path is byte-inert). Registered IN THE SAME COMMIT as the field.
+    "campd_per_unit_vintage_denominator",
     # miso-278 unit-fuel split of the thermal-tranche family (GATED default-off;
     # selects the four '-fuelsplit-' companions through
     # campd_bins.campd_fuel_split_selector, so the off path is byte-inert).
@@ -2508,6 +2513,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by PJM-NEXT-7 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "pjm_da_virtual_settle_financial": "False",
+    # Added by NWPP-NEXT-14 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "campd_per_unit_vintage_denominator": "False",
     # Added by miso-278 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_unit_fuel_split": "False",
@@ -16986,6 +16994,28 @@ class ScenarioConfig:
     # so the off path is byte-inert and no ISO but NYISO is reachable today.
     # See docs/FINDING-nyiso176-input-artifact-reproducibility-2026-09-02.md.
     campd_per_unit_attribution: bool = False
+
+    # VINTAGE DENOMINATOR of the per-unit tranche companion (NWPP-NEXT-14,
+    # GATED default off; a SUB-GATE of campd_per_unit_attribution, ignored
+    # without it; rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]). The per-unit
+    # deriver routes each CAMPD unit by THAT year's fuel label but divided every
+    # year by the run-default (2025) EIA-860 bin nameplate, so at a coal-to-gas
+    # conversion a pre-conversion year's coal gross landed on the post-conversion
+    # coal bin: Jim Bridger 8066 2023 carries four coal units over 1,049 MW (46 %
+    # of its hourly samples above 100 % CF), North Valmy 8224 2023-24 two units
+    # over 268 MW. Armed, the '-perunit-vintage-' companion written by
+    # derive_thermal_tranches.py --per-unit-attribution --vintage-denominator is
+    # read: every year routed against and divided by that year's own vintage
+    # bins (the outage derate's plant capacity too), the convention
+    # _routed_family_rows (miso-278) already applies; the row nameplate is the
+    # window's largest vintage nameplate. ZERO free parameters. Rule 23: the
+    # trigger is the denominator defect, never a residual (it is NOT the cause
+    # of the keeper-#18 C4 coal 2023 deepening:
+    # docs/handoffs/FINDING-nwppnext14-bridger-c4-decomposition-2026-09-30.md).
+    # Not combinable with campd_outage_merit_order_guard (no merit-guarded
+    # vintage companion exists; the selector raises). Self-scoping: an ISO
+    # without the companion falls back to its '-perunit-' artifact.
+    campd_per_unit_vintage_denominator: bool = False
 
     # UNIT-FUEL SPLIT of the CAMPD thermal-tranche family (miso-278, GATED
     # default off; rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]). The incumbent
