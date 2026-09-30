@@ -1,7 +1,7 @@
 {
   "as_reserve_formula": false,
   "as_reserve_withholding": false,
-  "basis_sha": "0bd29417487453cfa33392dab17fd2dce8fc10c2",
+  "basis_sha": "a63b8e945c88fa397e06d1d8698692c8f2b94c60",
   "battery_dispatch_adder": 10.0,
   "btm_backfill_year": null,
   "caiso_asymmetric_path_ratings": null,
@@ -162,10 +162,10 @@
     "r_ercot18_arm_2023": [
       2023
     ],
-    "r_ercot18_arm_2024": [
+    "r_ercot19_arm_2024": [
       2024
     ],
-    "r_ercot18_arm_2025": [
+    "r_ercot19_arm_2025": [
       2025
     ]
   },
@@ -1060,7 +1060,7 @@
       }
     },
     "_schema": "composite-per-year-recipe/v1",
-    "_why": "meta.json carries ONE config (for a composite bundle, the base recipe recorded in run_config_2024.json). These are the EXACT extra ScenarioConfig keys each other year solved under, DERIVED by diffing that year's own committed run_config scenario_config against the base \u2014 never hand-typed. Year-driven fields (gas_price_override, ordc_mcl_mw, ordc_voll, weather_year) are excluded: they differ because the legs cover different YEARS, not because the recipe differs. Consumed by replay_keeper.enforce_single_recipe_partition; re-derivable with scripts/stamp_config_partition.py --check."
+    "_why": "meta.json carries ONE config (for a composite bundle, the base recipe recorded in run_config.json). These are the EXACT extra ScenarioConfig keys each other year solved under, DERIVED by diffing that year's own committed run_config scenario_config against the base \u2014 never hand-typed. Year-driven fields (gas_price_override, ordc_mcl_mw, ordc_voll, weather_year) are excluded: they differ because the legs cover different YEARS, not because the recipe differs. Consumed by replay_keeper.enforce_single_recipe_partition; re-derivable with scripts/stamp_config_partition.py --check."
   },
   "ct_drag_overrides": {},
   "ct_intermediate_cf_threshold": null,
@@ -1173,7 +1173,7 @@
   },
   "gas_st_drag_overrides": {},
   "gas_st_netload_drag": false,
-  "git_sha": "0bd29417",
+  "git_sha": "a63b8e94",
   "highspy_version": "1.14.0",
   "hours": 8760,
   "hydro_backfill_year": null,
@@ -1383,7 +1383,7 @@
   "temp_derate_mean_anchored": false,
   "temp_derate_slope_ct_chp": null,
   "temp_derate_slope_st_chp": null,
-  "timestamp": "2026-09-30T02:54:37",
+  "timestamp": "2026-09-30T04:17:28",
   "tranche_startup_amortization": false,
   "tranche_startup_conditional_runs": false,
   "tranche_startup_measured_runs": false,

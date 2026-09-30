@@ -404,7 +404,7 @@
    "withdrawn": "2026-09-27",
    "keeper_at_declaration": "2026-08-31 declaration (ercot-246/247); keeper at declaration per the prior record below",
    "keeper_at_withdrawal": "2026-09-27-r-8-fusco",
-   "keeper": "2026-09-30-r-18-drag-index",
+   "keeper": "2026-09-30-r-19-eia-923",
    "keeper_rekey_2026_09_28": {
     "from": "2026-09-27-r-8-fusco",
     "to": "2026-09-27-r-10-parish-fuelscope",
@@ -428,6 +428,11 @@
     "keeper_rekey_policy": "RE-KEY ON PROMOTION with per-promotion determination re-verification (owner decision D-5(b), OPTION B). The `keeper` field tracks ERCOT's current designated dashboard keeper; `keeper_at_declaration` preserves the declaration-time partition. While the config_partition stands, the re-verification target is the ISO-level partition rollup (worst over designated spans, recomputed live \u2014 the partition-aware M1b leg); if the partition is ever dissolved back to a single keeper, M1b reverts to the plain single-run comparison automatically. A re-verified determination that is WORSE stops the promotion and escalates to the owner (D-5(b), unchanged).",
     "keeper_rekey_history": "RE-KEYED 2026-09-05 (ercot-248) from 2026-08-25-234-eastex-identity per rule 22 D-5(b): determination re-verified on committed artifacts against the new run BEFORE the commit landed \u2014 CALIBRATED, unchanged (not worse, so no owner escalation). The re-key is a CONSOLIDATION, not a recipe change: 2026-09-05-ercot248-two-config-keeper carries the 2023 carve-out config (formerly 2026-08-25-236-swcap-clip-k33) and the 2024/2025 forward config (formerly 2026-08-25-234-eastex-identity) byte-for-byte; both former runs are pruned from the dashboard on the same owner instruction. keeper_at_declaration is untouched.",
     "keeper_supersession": "Re-keyed 2026-09-26 (R-ERCOT-5) from 2026-09-25-r-4-day-guard to 2026-09-25-r-5-hour-grain on owner instruction (\"If so plz promote\"); determination unchanged CALIBRATED; year set unchanged {2019..2025}. Record: docs/handoffs/RESULT-r-ercot-5-hour-grain-2026-09-26.md. || PRIOR: Re-keyed 2026-09-25 (R-ERCOT-4) from 2026-09-25-r-ercot2-chp-off to 2026-09-25-r-4-day-guard on owner instruction (\"If so plz promote\"); determination unchanged CALIBRATED; 2021 rung NOT-YET -> CALIBRATED; year set unchanged {2019..2025}. Record: docs/handoffs/RESULT-r-ercot-4-day-guard-2026-09-25.md. || PRIOR: Re-keyed 2026-09-25 (R-ERCOT-3) from 2026-09-24-r-inputs-2019-2025 to 2026-09-25-r-ercot2-chp-off on owner instruction (\"Promote, prune fallback\"); determination moves NOT-YET -> CALIBRATED; year set unchanged {2019..2025}. Record: docs/handoffs/RESULT-r-ercot-2-dam-backyears-chp-test-2026-09-25.md. || PRIOR: Re-keyed 2026-09-25 from 2026-09-19-ercot266-mer-five-year to 2026-09-24-r-inputs-2019-2025 on owner instruction (\"Yes promote\"), the R-ERCOT corrected-inputs arm (year-matched EIA-860, plant heat rates, granular CAMPD outages) spanning 2019-2025; determination moves CALIBRATED -> NOT-YET, escalated and ruled as above. || PRIOR: Re-keyed 2026-09-19 from 2026-09-09-ercot265-receipts-fallback to 2026-09-19-ercot266-mer-five-year on owner instruction (\"Promote it\"). NOT a recipe change: the same configuration re-solved at HEAD, every scored criterion identical, determination unchanged at CALIBRATED, year set unchanged {2021..2025}. The superseded id is retained in frontier_basis and elsewhere in this file as the historical record of how the designation came about (rule 35(d) [R-PROMOTE] -- the delete touches the three stores, never the narrative). Record: docs/handoffs/RESULT-ercot-mer-keeper-resolve-2026-09-19.md."
+   },
+   "keeper_rekey_2026_09_30_r19": {
+    "from": "2026-09-30-r-18-drag-index",
+    "to": "2026-09-30-r-19-eia-923",
+    "by": "session R-ERCOT-19 on owner decision card (\"Promote A only (Recommended)\", rule 35); EIA-923 Sch5 Finals zonal-gas refresh for 2024/2025 (rule 23), recipe unchanged - designates the keeper, does not re-declare; the marker stays withdrawn, ISO NOT-YET (2023 carve-out; 2024 C3a -10.7%); no determination moves."
    },
    "keeper_rekey_2026_09_30_r18": {
     "from": "2026-09-29-r-17-south-texas",

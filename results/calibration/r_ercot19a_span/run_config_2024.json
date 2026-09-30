@@ -1,19 +1,19 @@
 {
-  "timestamp": "2026-09-30T02:54:37",
+  "timestamp": "2026-09-30T04:19:29",
   "git": {
-    "sha": "0bd29417",
-    "basis_sha": "0bd29417487453cfa33392dab17fd2dce8fc10c2",
-    "branch": "claude/r-ercot18-arm-2025",
+    "sha": "a63b8e94",
+    "basis_sha": "a63b8e945c88fa397e06d1d8698692c8f2b94c60",
+    "branch": "claude/r-ercot19-arm-2024",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "R-ERCOT-18 ARM 2025: keeper 2026-09-29-r-17-south-texas recipe + netload_drag_prior_year_commitment_index=true (ST_GAS drag mandate allocated by each plant's prior-year measured overnight commitment; owner decision card 2026-09-30) \u2014 PRECOMMIT-r-ercot-18-drag-overnight-index-2026-09-30",
+  "model_changes_note": "R-ERCOT-19 ARM 2024: keeper 2026-09-30-r-18-drag-index recipe UNCHANGED, re-solved on the refreshed data/raw/ercot_zonal_gas_hub.csv (2024/2025 North/Northeast/South/South_Central member rows re-derived on the EIA-923 Schedule 5 Finals, rule 23) \u2014 PRECOMMIT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "ERCOT",
     "years": [
-      2025
+      2024
     ],
     "hours": 8760,
     "passes": [
@@ -22,7 +22,7 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2025": 3.52
+      "2024": 2.19
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -94,6 +94,7 @@
       "measured_coal_heat_rates": true,
       "measured_ct_heat_rates": true,
       "measured_st_heat_rates": true,
+      "netload_drag_prior_year_commitment_index": true,
       "oil_primary_bin_fuel": true,
       "partial_plant_exit_carry": true,
       "unit_outage_short_windows": true,
@@ -103,8 +104,7 @@
       "wefor_residual_groups": [
         "ST_CHP",
         "ST_GAS"
-      ],
-      "netload_drag_prior_year_commitment_index": true
+      ]
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -173,10 +173,10 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "0bd29417"
+    "git_sha": "a63b8e94"
   },
   "scenario_config": {
-    "weather_year": 2025,
+    "weather_year": 2024,
     "iso": "ERCOT",
     "mode": "backcast",
     "voll": 5000.0,
@@ -493,6 +493,7 @@
     "nyiso_li_seam_posted_limit_cap": false,
     "nyiso_ne_ac_node": false,
     "nyiso_ne_ac_recon_detach": false,
+    "nyiso_import_landing_band": false,
     "nyiso_seam_deliverability_envelope": false,
     "nyiso_scr_edrp": false,
     "nyiso_scr_edrp_strike": 500.0,
@@ -16020,6 +16021,7 @@
     "chp_steam_floor_p25": false,
     "chp_steam_duty_window": false,
     "chp_steam_floor_conduct_scope": false,
+    "spp_ct_lole_efor": false,
     "ercot_gtc_limits_measured": true,
     "pjm_measured_interface_limits": false,
     "pjm_east_interface_cut": false,
@@ -16069,6 +16071,7 @@
     "miso_zonal_gas_basis": false,
     "miso_zonal_gas_basis_skip_923_priced": false,
     "pjm_zonal_gas_basis_skip_923_priced": false,
+    "pjm_replacement_cost_fuel": false,
     "miso_winter_citygate_daily": false,
     "miso_gas_marginal_commodity_pricing": false,
     "miso_gas_variable_transport": false,
@@ -16116,7 +16119,7 @@
     "unit_outage_maxgen_events": false,
     "maxgen_emergency_tier_pricing": false,
     "forecast_xyear_warmstart": true,
-    "gas_price_override": 3.52,
+    "gas_price_override": 2.19,
     "ercot_offer_hrmult_ep_rebasis": false,
     "ercot_offer_hrmult_ep_rebasis_bands": null,
     "ercot_capability_reconciliation": false,
@@ -16171,7 +16174,7 @@
       "THERMAL_AVAILABILITY": "34ff308290e18439"
     },
     "epochs": [],
-    "git_sha": "0bd29417"
+    "git_sha": "a63b8e94"
   },
   "environment": {
     "python_version": "3.11.15",

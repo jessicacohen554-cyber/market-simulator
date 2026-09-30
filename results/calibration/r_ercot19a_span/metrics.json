@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-30-r-18-drag-index",
+  "run_id": "2026-09-30-r-19-eia-923",
   "iso": "ERCOT",
-  "label": "r 18 drag index",
+  "label": "r 19 eia 923",
   "target_years": [
     2019,
     2020,
@@ -101,7 +101,7 @@
         "2022": "+1.7%",
         "2023": "-1.0%",
         "2024": "-1.4%",
-        "2025": "+1.4%"
+        "2025": "+1.3%"
       }
     },
     "diurnal_amplitude": {
@@ -112,8 +112,8 @@
         "2021": "amplitude 123.9% of measured (hod range $59.16 vs $47.76); peak h18 vs h18, trough h10 vs h11 \u2014 phase OK; hod r +0.701; 365 complete days",
         "2022": "amplitude 70.3% of measured (hod range $55.16 vs $78.44); peak h16 vs h15, trough h03 vs h02 \u2014 phase OK; hod r +0.957; 365 complete days",
         "2023": "amplitude 70.1% of measured (hod range $124.43 vs $177.51); peak h18 vs h18, trough h02 vs h02 \u2014 phase OK; hod r +0.974; 365 complete days",
-        "2024": "amplitude 38.5% of measured (hod range $23.99 vs $62.29); peak h19 vs h18, trough h02 vs h09 \u2014 phase OFF; hod r +0.941; 365 complete days",
-        "2025": "amplitude 46.9% of measured (hod range $20.93 vs $44.63); peak h19 vs h18, trough h10 vs h09 \u2014 phase OK; hod r +0.954; 365 complete days"
+        "2024": "amplitude 38.5% of measured (hod range $23.98 vs $62.29); peak h19 vs h18, trough h02 vs h09 \u2014 phase OFF; hod r +0.941; 365 complete days",
+        "2025": "amplitude 47.0% of measured (hod range $21.00 vs $44.63); peak h19 vs h18, trough h10 vs h09 \u2014 phase OK; hod r +0.954; 365 complete days"
       }
     }
   },
