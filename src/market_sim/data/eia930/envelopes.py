@@ -734,6 +734,51 @@ def _fill_unprinted_measured_gas(
     return out
 
 
+def measured_intertie_hub_unprinted_year_mask(
+    iso: str, year: int, hours: int, hub: str, gap_fill_measured_dam: bool = False
+) -> np.ndarray | None:
+    """Return the hours ONE hub's R-CAISO-18 unprinted-year branch prices.
+
+    The mask of :func:`measured_import_hub_prices` hours that
+    ``unprinted_year_measured_gas`` fills: the hub's raw series (DAM gap fill
+    and ``limit=2`` interpolation applied exactly as there) is unprinted in more
+    than 25 % of the year — every hour of a year absent from the OASIS extract
+    (2019-2020) — and :func:`_fill_unprinted_measured_gas` prices the hour. A
+    hub at or under the 25 % bound (the 2023 Jan-Feb retention gap) returns an
+    all-``False`` mask: those hours are the <=25 % fill path's, never this
+    branch's, so the closed winter lane stays closed by construction.
+
+    Used by the R-CAISO-20 overnight arm
+    (``ScenarioConfig.caiso_dsw_overnight_clean_unprinted_arm``). Returns a
+    boolean ``(hours,)`` mask, or ``None`` when the ISO is not CAISO or the
+    parquet is absent.
+    """
+    if iso.upper() != "CAISO":
+        return None
+    path = _calibration_dir() / f"wecc_intertie_lmp_hourly_{iso.upper()}.parquet"
+    if not path.exists():
+        return None
+    frame = pd.read_parquet(path)
+    frame = frame[(frame["year"] == year) & (frame["hub"] == hub)]
+    if frame.empty:
+        price = np.full(hours, np.nan)
+    else:
+        raw = pd.to_numeric(
+            frame.sort_values("hour")["price"], errors="coerce"
+        ).reset_index(drop=True)
+        if gap_fill_measured_dam:
+            raw = _apply_dam_gap_fill(raw, iso, year, hub, hours)
+        price = raw.interpolate(limit=2).to_numpy(dtype=float)
+        if price.shape[0] < hours:
+            return np.zeros(hours, dtype=bool)
+        price = price[:hours].copy()
+    gap = ~np.isfinite(price)
+    if not gap.any() or gap.mean() <= 0.25:
+        return np.zeros(hours, dtype=bool)
+    filled = _fill_unprinted_measured_gas(price, gap, hub, year, hours)
+    return gap & np.isfinite(filled)
+
+
 def measured_intertie_hub_price_raw(
     iso: str, year: int, hours: int, hub: str, gap_fill_measured_dam: bool = False
 ) -> np.ndarray | None:
