@@ -3,7 +3,7 @@
 
 Rule 32 ``[R-SHARD]`` (a): never solves. Same construction as
 ``_soco87_c3b_monthly.py``: per year, two ``fleet_only`` rebuilds of the incumbent
-keeper's recipe (``results/calibration/soco87_span``) — as recorded, and with
+keeper's recipe (``results/calibration/soco92_span``) — as recorded, and with
 ``gas_electric_power_monthly_level=True`` — then SAME-MARGINAL-UNIT re-pricing of the
 keeper's committed ``hourly/system_<y>.parquet`` (the unit whose keeper ``mc_base`` sits
 within ``TOL`` of the LP price moves to its armed ``mc_base``; no merit-order reshuffle).
@@ -31,7 +31,7 @@ sys.path[:0] = [str(_ROOT / "scripts"), str(_ROOT / "src"), str(_ROOT)]
 
 from probes import _soco87_c3b_monthly as p87  # noqa: E402
 
-KEEPER_ID = "2026-09-29-soco87-gas-hh-monthly"
+KEEPER_ID = "2026-09-30-soco92-hydro-min-flow"
 T = p87.T
 TOL = p87.TOL
 

@@ -50,7 +50,7 @@ import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-BUNDLE = REPO / "results/calibration/soco87_span"  # soco-92: the soco-87 keeper
+BUNDLE = REPO / "results/calibration/soco92_span"  # soco-92: the soco-87 keeper
 DEFAULT_OUT = REPO / "results/calibration/_soco92/gdrift_input_identity.json"
 YEARS = (2019, 2020, 2021, 2022, 2023, 2024, 2025)
 T = 8760

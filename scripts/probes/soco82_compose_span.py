@@ -60,8 +60,10 @@ import _soco81_census as census  # noqa: E402
 # Repointed soco-85 (2026-09-28): soco83_span was pruned at the soco-85 promotion (rule 35);
 # the incumbent keeper is soco85_span (the soco-83 recipe + gas_daily_shape).
 # Repointed soco-87 (2026-09-29): soco85_span was pruned at the soco-87 promotion (rule 35);
-# the incumbent keeper is soco87_span (the soco-85 recipe + gas_hh_monthly_shape).
-KEEPER_SPAN = ROOT / "results/calibration/soco87_span"
+# the incumbent keeper is soco92_span (the soco-85 recipe + gas_hh_monthly_shape).
+KEEPER_SPAN = (
+    ROOT / "results/calibration/soco92_span"
+)  # repointed soco-92 (rule 35 prune of soco92_span)
 census.SPAN = KEEPER_SPAN
 census.KEEPER = "2026-09-28-soco85-gas-daily-shape"
 DARK = ROOT / "data/raw/campd-unit-outages-perunitdark-SOCO.csv"

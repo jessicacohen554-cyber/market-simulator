@@ -115,3 +115,9 @@ plant ranking, not level.
   `soco92_greedy_<arm>.json`, `fleet91_<y>.npz`) are not committed.
 - Matrix: note only, no verdict minted without the owner card.
 - Retrievability: no bundle.
+
+## 8. Owner ruling (decision card, 2026-09-30)
+
+**"Close the reopen"**: CC two-part cost is recorded `I` for SOCO C3a (`committed_band_measured_basis`), CT start stays
+`G`, and the residual night gap is named as the fuel-price basis in Southern's λ. The DO-NOT-REDO lift granted for this
+design is spent. Both entries return to the SOCO DO-NOT-REDO list.

@@ -9,7 +9,7 @@ cycling depth only if a measured, year-regenerable driver exists. Rule 32
 
 Per year:
 
-1. ``fleet_only`` rebuild of the keeper recipe (``results/calibration/soco87_span``
+1. ``fleet_only`` rebuild of the keeper recipe (``results/calibration/soco92_span``
    via ``replay_keeper.run_year_kwargs`` + ``derived_run_year_inputs``) with the
    floor OFF (keeper) and ON (arm). Reports every unit whose ``min_gen``,
    ``pmax``, ``availability`` or ``mc_base`` moved, and the fleet floor by month
@@ -45,7 +45,9 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "scripts"), str(ROOT / "src"), str(ROOT)]
 
-SPAN = ROOT / "results/calibration/soco87_span"
+SPAN = (
+    ROOT / "results/calibration/soco92_span"
+)  # repointed soco-92 (rule 35 prune of soco92_span)
 YEARS = tuple(range(2019, 2026))
 T = 8760
 _DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
