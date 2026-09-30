@@ -95,3 +95,43 @@ A zone-hour counts as coal-marginal when a coal plant's hourly MW (run payload) 
 | C3a/C3b 2022 | pjm-h12 tail compression | the coal-spot lead above also lands on 2022 |
 
 Nothing here is called a model-class limit.
+
+## Addendum (2026-09-30): the ruled arm, built and refuted at zero LP
+
+**Owner rulings.** Card 2 was ruled *"Hub + transport, joint with coal"* and the zone map *"Accept as proposed"*. Both were built as `pjm_replacement_cost_fuel` (default off, every keeper byte-identical):
+- `src/market_sim/data/fuel/basis/pjm_replacement.py`;
+- the frozen derive `scripts/data/derive_pjm_replacement_fuel.py`;
+- new raw intakes `data/raw/eia-coal-mine-region/` (MSHA ID → EIA coal supply region) and `data/raw/eia-coal-transport-rates/` (EIA basin → state → mode transport, $/ton);
+- tests and the matrix row.
+
+**Before any solve**, the zero-LP offer delta was taken on paired `fleet_only` rebuilds (`scripts/probes/_pjmnext13_arm_delta.py` → `results/calibration/_pjmnext13_arm_delta.json`). It reads the P1 bid (`mc_base` + the mid-curve floor) and a static marginal-unit re-pricing of the keeper's own zonal prices, with no re-dispatch.
+
+| year | CC_REGULAR Δfuel / Δbid | CT_PEAKER Δbid | ST_GAS Δbid | COAL_BIT Δbid | static Δ LW price, joint / gas leg only | C3a keeper → static arm |
+|---|---|---|---|---|---|---|
+| 2019 | −0.02 / −0.07 | +1.66 | +9.87 | +4.08 | +2.71 / +1.25 | +11.8 % → +22.0 % |
+| 2020 | −0.06 / −0.42 | +1.73 | +10.11 | +3.81 | +2.10 / +1.02 | +15.9 % → +25.8 % |
+| 2021 | +0.17 / +1.45 | +5.63 | +11.86 | +1.65 | +2.60 / +2.22 | +1.8 % → +8.5 % |
+| 2022 | +0.13 / +1.12 | −0.18 | +10.32 | +3.04 | +1.85 / +2.01 | −11.5 % → −9.0 % |
+| 2023 | −0.24 / −1.99 | −1.68 | +8.93 | +4.23 | +0.53 / −0.11 | +5.2 % → +7.0 % |
+| 2024 | −0.05 / −0.37 | +0.60 | +9.52 | +2.93 | +1.37 / +0.89 | +0.5 % → +4.8 % |
+| 2025 | −0.03 / −0.24 | +0.55 | +10.39 | +0.49 | +1.48 / +1.46 | −1.9 % → +1.4 % |
+
+**Why the arm moves the wrong way:**
+1. **Measured transport cancels the hub gap for the CC fleet.**
+   - In the ruled regions (east / west for 6 of 8 zones), the keeper's delivered CC gas is only +0.2–0.5 $/MMBtu above hub.
+   - The measured variable transport is +0.244 for the 11 CCs with own receipts. The class pool is +0.535, and it is what the ~240 CCs with no EIA-923 gas print receive.
+   - Net CC fuel moves −0.24 to +0.17. Card 2's "+0.7–1.1 over production gas" was a comparison against the cheapest region; under the ruled map it applies only to West_APS / Central_PA.
+2. **The coal leg removes a discount.** Rule 19 requires the gas-keyed BIT/PRB passthrough sigmoids off. The BIT sigmoid (floor 0.65) had been bidding coal at a fraction of delivered cost when gas is cheap. Spot + transport ≈ delivered on average, so coal bids rise $0.5–4.2/MWh.
+3. **The coal leg contradicts PJM's own offers — a structural falsifier, not a fit statistic.** In the keeper, 41–63 % of COAL_BIT econ capacity-hours are floored UP to PJM's measured offer (the mid-curve surface). In those hours the arm's cost bid EXCEEDS the measured offer 32–61 % of the time (2019 0.61, 2021 0.32, 2023 0.48, 2025 0.32). Real PJM coal offered **below** spot replacement cost. That is consistent with contract / inventory fuel-cost policies, not with a spot opportunity cost.
+4. **ST_GAS** takes +$9–12/MWh from a transport pool identified on 2 plants. It is thin identification, stated.
+
+**Owner ruling (2026-09-30), on the decision card presenting the table above: *"Don't solve; record."*** No shard was launched. The field stays in the code default-off, as the record of the tested construction (the matrix cell is R). Deleting it is the next lane's call under rule 26 if no successor uses it.
+
+**What this closes and what stays open:**
+- The **floor gap is real** (card 2: real low-end prices are an efficient CC burning production-area gas).
+- **"Replace delivered with hub + measured transport" is not the repair.** The measured transport carries most of the delivered premium.
+- The next measured test: the low end is priced by **production-area CCs** (West_APS / Central_PA, and Marcellus-connected plants elsewhere) at production-gas cost. That needs:
+  - (i) per-plant pipeline receipt points (EIA-176 / EIA-757 or FERC 549 connection data), to map CCs to production vs market-area supply rather than by zone;
+  - (ii) the keeper's P1 hourly marginal units in low-price hours, which needs the dispatch parquet (not committed), so a replay of one year.
+
+The field is left as a construction; the lane's status is **OPEN**, not a model-class limit.
