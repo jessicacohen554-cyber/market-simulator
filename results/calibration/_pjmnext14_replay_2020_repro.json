@@ -1,0 +1,104 @@
+{
+ "year": 2020,
+ "pass": "P1",
+ "keeper": "pjmnext8_xf_span",
+ "replay": "pjmnext14_replay_2020",
+ "by_class": {
+  "CC_CHP": {
+   "keeper_twh": 5.93720006942749,
+   "replay_twh": 5.93720006942749,
+   "delta": 0.0
+  },
+  "CC_REGULAR": {
+   "keeper_twh": 297.59478759765625,
+   "replay_twh": 297.59478759765625,
+   "delta": 0.0
+  },
+  "COAL_BIT": {
+   "keeper_twh": 143.63470458984375,
+   "replay_twh": 143.63470458984375,
+   "delta": 0.0
+  },
+  "COAL_PRB": {
+   "keeper_twh": 3.4403998851776123,
+   "replay_twh": 3.4403998851776123,
+   "delta": 0.0
+  },
+  "COAL_WC": {
+   "keeper_twh": 3.8731000423431396,
+   "replay_twh": 3.8731000423431396,
+   "delta": 0.0
+  },
+  "CT_CHP": {
+   "keeper_twh": 1.628999948501587,
+   "replay_twh": 1.628999948501587,
+   "delta": 0.0
+  },
+  "CT_PEAKER": {
+   "keeper_twh": 15.307900428771973,
+   "replay_twh": 15.307900428771973,
+   "delta": 0.0
+  },
+  "OTHER": {
+   "keeper_twh": 7.5960001945495605,
+   "replay_twh": 7.5960001945495605,
+   "delta": 0.0
+  },
+  "ST_CHP": {
+   "keeper_twh": 1.027400016784668,
+   "replay_twh": 1.027400016784668,
+   "delta": 0.0
+  },
+  "ST_GAS": {
+   "keeper_twh": 5.349599838256836,
+   "replay_twh": 5.349599838256836,
+   "delta": 0.0
+  },
+  "VIRTUAL_DEC": {
+   "keeper_twh": 0.0,
+   "replay_twh": 0.0,
+   "delta": 0.0
+  },
+  "VIRTUAL_INC": {
+   "keeper_twh": 0.0,
+   "replay_twh": 0.0,
+   "delta": 0.0
+  },
+  "biomass": {
+   "keeper_twh": 6.400400161743164,
+   "replay_twh": 6.400400161743164,
+   "delta": 0.0
+  },
+  "hydro": {
+   "keeper_twh": 10.036600112915039,
+   "replay_twh": 10.036600112915039,
+   "delta": 0.0
+  },
+  "import": {
+   "keeper_twh": -28.091699600219727,
+   "replay_twh": -28.091699600219727,
+   "delta": 0.0
+  },
+  "nuclear": {
+   "keeper_twh": 272.0461120605469,
+   "replay_twh": 272.0461120605469,
+   "delta": 0.0
+  },
+  "oil": {
+   "keeper_twh": 0.0012000000569969416,
+   "replay_twh": 0.0012000000569969416,
+   "delta": 0.0
+  },
+  "solar": {
+   "keeper_twh": 3.120800018310547,
+   "replay_twh": 3.120800018310547,
+   "delta": 0.0
+  },
+  "wind": {
+   "keeper_twh": 22.40180015563965,
+   "replay_twh": 22.40180015563965,
+   "delta": 0.0
+  }
+ },
+ "max_abs_delta_twh": 0.0
+}

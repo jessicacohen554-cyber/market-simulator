@@ -6820,3 +6820,20 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - **Card 3 (coal-set share):** model coal is marginal in 35 / 33 / 28 / 22 / 14 / 19 / 15 % of load-weighted zone-hours (upper bound) against the IMM's 24 / 18 / 14 / 10 / 9 / 10 / 8 %. The year ordering matches, so coal is not under-represented as a price-setter.
 - OPEN: COAL_BIT 2019/2021, CT_PEAKER 2021, C3a 2019/2020 and the all-year floor. Next: the plant-level supply point of the CCs that set the low-end price (production- vs market-area gas), and the keeper's own marginal units in low-price hours.
 - Records: `docs/FINDING-pjm-next-13-availability-gas-coalmarginal-2026-09-29.md`, `docs/RESULT-pjm-next-13-2026-09-30.md`.
+
+## PJM-NEXT-14 — 2026-09-30 — low-end price-setters named; supply point, normalizer and median aggregation refuted (owner: "Record, hand off")
+
+- One diagnostic keeper replay (2020, one shard pinned `5ceb890e`, Δ = 0.000 TWh in every class against the keeper). Nothing registered, keeper unchanged (`2026-09-28-pjm-next8-exitfix`).
+- **Card 1 (the LP's own marginal units, `unit_hourly` interior and zero reduced cost, pooled per hour):**
+  - In 2020 low-end hours (RT < 6.5 × delivered gas, 45 %) the price-setters are CC econ/min-load 32 % and COAL_BIT econ 18 %.
+  - Median offer 7.8 × delivered gas against an actual 5.5 ×.
+  - PRECOMMIT P1–P4 all held.
+- **Card 2 (plant-level supply point, EIA-860 pipeline fields, 99.5 % of CC MW):**
+  - 28–33 % of CC MW is on production-area supply.
+  - The keeper prices it at production + 0.51–0.87, tracking the EIA-923 premium of the two production-area CCs with prints (+0.37–0.86) year by year. **Closed.**
+- **Card 3 (mid-curve floor):**
+  - The normalizer is inert (CC shape form cancels it; LONG_RUN round-trips exactly).
+  - Rank-matching the median **raises** bids (COAL_BIT +2.3 / +9.6 $/MWh in 2020 / 2023; marginal CC +2.7).
+  - PJM's price-taking CC block (p25 ≤ 3.5 × delivered gas at mid-curve) is present in 2020 and 2023 alike.
+- OPEN, not limits: C3a 2019/2020 and the floor; COAL_BIT 2019/2021; CT_PEAKER 2021. Next: PJM's price-taking CC block, all seven years, jointly with the CC volume over-run (pjm-h20/h21).
+- Records: `docs/FINDING-pjm-next-14-lowend-units-supply-point-midcurve-2026-09-30.md`, `docs/RESULT-pjm-next-14-2026-09-30.md`, `docs/PRECOMMIT-pjm-next-14-lowend-replay-2026-09-30.md`.
