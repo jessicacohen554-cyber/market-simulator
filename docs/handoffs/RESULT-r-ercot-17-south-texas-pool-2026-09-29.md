@@ -6,7 +6,7 @@ PRECOMMIT: `docs/handoffs/PRECOMMIT-r-ercot-17-south-texas-pool-2026-09-29.md` (
 
 - **The pool fixes the object it was ruled for.** South merchant gas: 2020 1.32 → **10.88 TWh** (actual 10.68), 2021 15.98 → **11.05** (actual 10.46). Prices barely move (C3a within 0.3 pp every year).
 - **One train-year determination flips worse: 2022 CALIBRATED → NOT-YET**, on C8 alone. ST_GAS forced share goes 28.7 % → **30.4 %** (cap 30 %). The above-cap escape fails on a **pre-existing** D-4 conduct defect: `st_netload_drag` floors plant 3452 in hours its meter reads zero (76 %), present identically in the keeper (0.4255 TWh floored, D-4 FAIL there too). The keeper sat 1.3 pp under the cap; the arm trims ST_GAS energy 12.54 → 12.19 TWh and crosses it.
-- Per the PRECOMMIT §7 decision rule, **not promoted by this session**. Owner decision requested.
+- Per the PRECOMMIT §7 decision rule the session did not self-promote. It put a decision card to the owner, answer verbatim: **"Promote; fix 3452 next (Recommended)"**. **PROMOTED 2026-09-30.**
 
 ## Per year (keeper r-16 → arm r-17, P1)
 
@@ -46,10 +46,16 @@ Keeper South merchant TWh are R-ERCOT-16's; the arm's are computed here the same
 - G-DRIFT (rule 29(b)): ALL INERT; measured 2022 fleet byte-identity at the oldest leg SHA vs HEAD (PRECOMMIT §8). Keeper legs are the control (form 4).
 - Composed with `_r_ercot_compose_span.py --side arm --chp-off` (flag added to `MUST_AGREE`); `stamp_config_partition --check` OK; attestation carried with governance re-attested; registered `--no-prune`; scored `calibration_verdict --years <Y> --json` for both runs.
 
+## Promotion (rule 35)
+
+- Year set before prune (both sidecars): {2019 … 2025}; the incoming keeper covers all seven.
+- Re-keyed: `keepers/ERCOT.json` (keeper, promotion note, all three config_partition configs, `r_ercot17_extension`), `calibration-complete.json` (keeper + `keeper_rekey_2026_09_30_r17`; marker stays withdrawn), `forecast/program-status.json` ERCOT gate (a) only (status stays fail), `status/ERCOT.js` rebuilt, ERCOT matrix shard keeper stamp + `ercot_south_texas_pooled_basis` cell K, `mechanism-testing-matrix.md` §5.1 header.
+- `audit_keepers --iso ERCOT` was run between the promotion and the prune: E1 resolved; only the expected E13/S1 failed. `prune_iso_runs.py --iso ERCOT --force-uncite` then removed the r-16 sidecar, payload and bundle. After the prune: `audit_keepers` 0/0; `check_promotion_completeness --iso ERCOT` OK; `check_mechanism_matrix --base origin/main` OK.
+
 ## Where the bytes are (rule 34(e))
 
-- **Composite bundle and registration:** local in this session (`results/calibration/r_ercot17_span`, `frontend/data/backcast/{registry,runs}/2026-09-29-r-17-south-texas.*`). They land on `main` only with a promotion.
-- **Legs (provenance only, rule 33(d)):** 2019 `9f7256a1da5c4713cdf63a0e5368e86a6a6860ed`, 2020 `80c386e7da678a547efd512d47e1d0a625fc0434`, 2021 `85edeabb4fc7bcd52d9364663e5fc9832ec3e4e4`, 2022 `f32dcdb5955aeadf26e17a98ca5099833f2b77bd`, 2023 `e1cdb013f383977e8abce1a5b33eccbd2a07a887`, 2024 `d3d81d1c118cebcab4852e381f6ef50c387ea850`, 2025 `aebe9947b7ae194245f1cd4c8fbc552925ccfb2f`. If this container is reclaimed before a decision, a promotion costs a re-solve of seven shards (~25 min wall-clock in parallel).
+- **On `main` with the promotion:** `results/calibration/r_ercot17_span` (slim, 54 files incl. hourly sidecars), its registry sidecar and run payload.
+- **Legs (provenance only, rule 33(d)):** 2019 `9f7256a1da5c4713cdf63a0e5368e86a6a6860ed`, 2020 `80c386e7da678a547efd512d47e1d0a625fc0434`, 2021 `85edeabb4fc7bcd52d9364663e5fc9832ec3e4e4`, 2022 `f32dcdb5955aeadf26e17a98ca5099833f2b77bd`, 2023 `e1cdb013f383977e8abce1a5b33eccbd2a07a887`, 2024 `d3d81d1c118cebcab4852e381f6ef50c387ea850`, 2025 `aebe9947b7ae194245f1cd4c8fbc552925ccfb2f`.
 
 ## Routed
 
