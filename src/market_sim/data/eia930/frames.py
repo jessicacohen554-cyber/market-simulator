@@ -559,10 +559,77 @@ _CISO_CLOCK_FAMILY_COLUMNS: dict[str, Callable[[str], bool]] = {
 }
 
 
-def _repair_clock_late_windows(df: pd.DataFrame, ba_code: str) -> pd.DataFrame:
-    """Pull CISO's published one-hour-LATE windows back onto the true hour.
+def _ciso_clock_windows() -> list[tuple[str, pd.Timestamp, pd.Timestamp, int]]:
+    """Return every registered CISO clock window as ``(family, first, last, step)``.
 
-    Inside each registered window of hour-ending ``UTC time`` stamps
+    ``step`` is where the value published at stamp ``s`` belongs: ``-1`` (hours)
+    for the LATE registry (:data:`~market_sim.config.constants.
+    EIA930_CISO_CLOCK_LATE_WINDOWS_UTC`, R-CAISO-13) and ``+1`` for the EARLY
+    one (:data:`~market_sim.config.constants.EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC`,
+    R-CAISO-17). Both registries ride the one flag (rule 19).
+    """
+    from market_sim.config.constants import (
+        EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC,
+        EIA930_CISO_CLOCK_LATE_WINDOWS_UTC,
+    )
+
+    out = []
+    for registry, step in (
+        (EIA930_CISO_CLOCK_LATE_WINDOWS_UTC, -1),
+        (EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC, 1),
+    ):
+        for family, (first, last) in registry.items():
+            out.append((family, pd.Timestamp(first), pd.Timestamp(last), step))
+    return out
+
+
+def ciso_generation_windows_reach(year: int) -> bool:
+    """Return True when a local ``year``'s rows touch a CISO generation window.
+
+    Hour-ending UTC stamps of the local year (PST/PDT) lie inside
+    ``[Jan 1 07:00, Jan 1 of year+1 09:00]``; a repaired row reads the stamp
+    one hour either side, so each window is widened by an hour. Used by the
+    offline-artifact seams (HSL generation term, battery envelope) to return
+    their input untouched for a year no window reaches.
+    """
+    year_lo = pd.Timestamp(year=year, month=1, day=1, hour=7)
+    year_hi = pd.Timestamp(year=year + 1, month=1, day=1, hour=9)
+    hour = pd.Timedelta(hours=1)
+    return any(
+        not (year_hi < first - hour or year_lo > last + hour)
+        for family, first, last, _ in _ciso_clock_windows()
+        if family == "generation"
+    )
+
+
+def ciso_generation_source_stamps(stamps: pd.DatetimeIndex) -> pd.DatetimeIndex:
+    """Map repaired CISO row stamps to the published stamp whose value they carry.
+
+    For the ``generation`` family only: with the clock repair armed, a row
+    stamped ``s`` holds the value published at ``s + 1 h`` inside a late window
+    and at ``s - 1 h`` inside an early one; every other row (the seam rows
+    included) maps to itself. A reader that aligns an outside series to the
+    PUBLISHED grid (the CISO hydro backfill) re-aligns through this. Unarmed,
+    it is the identity.
+    """
+    stamps = pd.DatetimeIndex(stamps)
+    if not _CISO_CLOCK_REPAIR:
+        return stamps
+    src = stamps
+    hour = pd.Timedelta(hours=1)
+    for family, lo, hi, step in _ciso_clock_windows():
+        if family != "generation":
+            continue
+        pub = stamps - step * hour
+        hit = (pub >= lo) & (pub <= hi)
+        src = pd.DatetimeIndex(np.where(hit, pub, src))
+    return src
+
+
+def _repair_clock_late_windows(df: pd.DataFrame, ba_code: str) -> pd.DataFrame:
+    """Move CISO's published one-hour-LATE and -EARLY windows onto the true hour.
+
+    Inside each registered LATE window of hour-ending ``UTC time`` stamps
     ``[first, last]`` the value stamped ``s`` is the true value of ``s - 1 h``
     (:data:`~market_sim.config.constants.EIA930_CISO_CLOCK_LATE_WINDOWS_UTC`,
     measured against the OASIS TAC clock and solar geometry). The repair writes
@@ -573,6 +640,13 @@ def _repair_clock_late_windows(df: pd.DataFrame, ba_code: str) -> pd.DataFrame:
     row before the window is overwritten with a value equal to its own truth
     (the source published that hour twice).
 
+    EARLY windows (:data:`~market_sim.config.constants.
+    EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC`, R-CAISO-17, measured against the
+    Outlook 5-minute fuel mix, EPA CEMS and solar geometry) are the mirror
+    image: ``published(s)`` is written to row ``s + 1 h``, the window's FIRST
+    row (whose truth was never published) takes its neighbours' mean, and the
+    row after the window is overwritten with a value equal to its own truth.
+
     Rule 14 [R-ACCURATE] source repair; zero fitted parameters; the raw extract
     is never modified. Returns the input UNCHANGED (the same object) unless the
     repair is armed and ``ba_code == "CISO"``, so every other BA and the
@@ -580,8 +654,6 @@ def _repair_clock_late_windows(df: pd.DataFrame, ba_code: str) -> pd.DataFrame:
     """
     if not _CISO_CLOCK_REPAIR or ba_code != "CISO" or "UTC time" not in df.columns:
         return df
-    from market_sim.config.constants import EIA930_CISO_CLOCK_LATE_WINDOWS_UTC
-
     utc = pd.DatetimeIndex(df["UTC time"])
     if utc.tz is not None:
         utc = utc.tz_convert("UTC").tz_localize(None)
@@ -589,27 +661,28 @@ def _repair_clock_late_windows(df: pd.DataFrame, ba_code: str) -> pd.DataFrame:
     pos = pos[~pos.index.duplicated(keep="first")]
     out = df.copy()
     hour = pd.Timedelta(hours=1)
-    for family, (first, last) in EIA930_CISO_CLOCK_LATE_WINDOWS_UTC.items():
+    for family, lo, hi, step in _ciso_clock_windows():
         cols = [c for c in df.columns if _CISO_CLOCK_FAMILY_COLUMNS[family](c)]
         if not cols:
             continue
-        lo, hi = pd.Timestamp(first), pd.Timestamp(last)
         src_stamps = pos.index[(pos.index >= lo) & (pos.index <= hi)]
         if src_stamps.empty:
             continue
-        dst = pos.reindex(src_stamps - hour)
+        dst = pos.reindex(src_stamps + step * hour)
         have = dst.notna().to_numpy()
         src_rows = pos.loc[src_stamps].to_numpy()[have]
         dst_rows = dst.to_numpy()[have].astype(int)
+        # The seam: the row whose truth the source never published — the
+        # late window's last stamp, the early window's first — takes the mean
+        # of the two published values either side of it.
+        seam, other = (hi, hi + hour) if step < 0 else (lo, lo - hour)
         for col in cols:
             raw = pd.to_numeric(df[col], errors="coerce").to_numpy(dtype=float)
             new = out[col].to_numpy(dtype=float, copy=True)
             new[dst_rows] = raw[src_rows]
-            # The seam hour: the stamp ``last`` carries no true value of its
-            # own once the window is pulled back.
-            if hi in pos.index and hi + hour in pos.index:
-                r_last, r_next = int(pos.loc[hi]), int(pos.loc[hi + hour])
-                new[r_last] = 0.5 * (raw[r_last] + raw[r_next])
+            if seam in pos.index and other in pos.index:
+                r_seam, r_other = int(pos.loc[seam]), int(pos.loc[other])
+                new[r_seam] = 0.5 * (raw[r_seam] + raw[r_other])
             out[col] = new
     return out
 

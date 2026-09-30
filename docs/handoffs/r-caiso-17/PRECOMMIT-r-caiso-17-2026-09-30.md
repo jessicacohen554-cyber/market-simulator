@@ -175,3 +175,65 @@ EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC = {"generation": ("2019-01-01 08:00", "2022-
   a criterion either way.
 - **Otherwise** the trade goes to the owner as a decision card.
 - A worse fit on 2022 or on the fold is not a reason to withhold the repair (rules 1 and 14). It is a root-cause lead.
+
+## ADDENDUM (written after the build, before any solve)
+
+### Build
+- A new constant `EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC`.
+- A shared window iterator `frames._ciso_clock_windows()`, with step −1 for late windows and +1 for early ones. Four seams
+  were extended:
+  - frame, `_repair_clock_late_windows`;
+  - caiso-80 demand term, `_repair_supply_consistent_clock`;
+  - the HSL gate and the battery-envelope gate, through `frames.ciso_generation_windows_reach`;
+  - hydro backfill, through `frames.ciso_generation_source_stamps`.
+- The benchmark rebuild inherits the frame seam.
+- The surface declaration is at the live hash, as the late sibling's was. The name is unscoped (CISO is not an ISO token),
+  so a pre-arm declaration would re-key every ISO; the lane re-solves every CAISO year instead.
+- The persisted-identity pins advance +1 row in every ISO. MISO's pin was already one row stale on main; it now reads
+  current.
+
+### Armed-vs-unarmed counts (these are the shard hard stop)
+
+Columns: Demand, NG: SUN, caiso-80, HSL solar, HSL wind, TI.
+
+| Year | Demand | NG: SUN | caiso-80 | HSL solar | HSL wind | TI |
+|---|---|---|---|---|---|---|
+| 2019 | 0 | 7007 | 8752 | 7007 | 8729 | 0 |
+| 2020 | 0 | 7119 | 8757 | 7117 | 8739 | 0 |
+| 2021 | 0 | 7321 | 8753 | 7321 | 8741 | 0 |
+| 2022 | 4776 | 3530 | 3934 | 3530 | 3931 | 0 |
+| 2023 | 8752 | 1140 | 1466 | 1140 | 1454 | 0 |
+| 2024 | 8758 | 7666 | 8753 | 7664 | 8743 | 0 |
+| 2025 | 8049 | 6943 | 8048 | 6943 | 8031 | 0 |
+
+- 2023–25 are unchanged from R-CAISO-16.
+- The battery envelope is unchanged: 2023 → 34, 2024 → 40, 2025 → 38.
+
+### Delivered solar centroid on the HSL generation term, h PST, by month
+
+| | Unarmed | Armed |
+|---|---|---|
+| 2019 | 10.96–11.46 | 11.96–12.43 |
+| 2020 | 10.99–11.45 | 11.99–12.45 |
+| 2021 | 11.03–11.43 | 12.03–12.43 |
+| 2024–25 (true clock, reference) | — | 11.53–12.00 |
+
+The whole-hour repair overshoots the ≈ 45-minute lead (§2.4): 2019–21 now sit ≈ 0.3–0.4 h later than the true-clock
+years. The error drops from ≈ −0.6 h to ≈ +0.35 h by centroid, and from −45 min to +15 min by the 5-minute correlation
+peak. It is reported; it is not tuned.
+
+### Anomalies noted, not repaired
+- **2019-10-03..08:** NG: SUN alone runs at daily lag 0..+2 against Outlook solar, while NG: NG stays at −1. That is a
+  solar-cell defect, not the family's clock. October 2019 is the one month whose armed centroid moves 0.73 h rather than
+  1.0.
+- **caiso-80, 2019 row 0:** no 2018 artifact exists to supply the year-edge value, so the row keeps its own. That is one
+  hour.
+- **2019-10..2020-08, the `NG: WAT` hydro backfill:** armed, it now reads Outlook one hour earlier, matching its moved
+  neighbours. Verified: exact equality on the armed frame at lag 1, and 0 % at lag 0.
+
+### Tests
+- `tests/unit/data/test_caiso_eia930_clock_repair.py`: 27 pass, 7 of them new.
+- `tests/regression/test_persisted_identity.py`: 24 pass.
+- `tests/unit/data`: every test passes except the 3 that also fail on origin/main. They are unrelated: gas anchor vintage
+  and cc committed offer margin.
+- `check_cache_key_registration`: OK.

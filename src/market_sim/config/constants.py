@@ -2427,6 +2427,37 @@ EIA930_CISO_CLOCK_LATE_WINDOWS_UTC: dict[str, tuple[str, str]] = {
     "demand": ("2022-06-16 08:00", "2025-12-02 22:00"),
 }
 
+# --- EIA-930 CISO published one hour EARLY (R-CAISO-17, 2026-09-30) ----------
+# The sibling of ``EIA930_CISO_CLOCK_LATE_WINDOWS_UTC``, applied at the same
+# frame seam under the SAME flag (``caiso_eia930_clock_repair``, rule 19):
+# inclusive windows of the extract's hour-ENDING ``UTC time`` stamps whose
+# value is the TRUE value of the NEXT hour (stamped early). Same column
+# families as the late registry ("generation" = the ``NG:`` cells and
+# ``Net generation``); ``Total interchange``, ``Demand`` and ``Demand
+# forecast`` are on the true clock here and never move.
+# Measured against three clocks independent of EIA-930, zero fitted
+# parameters (rule 14 source repair; re-derive only when the extract changes,
+# rule 23):
+#   * CAISO Today's Outlook 5-minute fuel mix (2019-2021): NG: SUN, NG: NG,
+#     NG: WND, NG: WAT and Net generation best lag -1 h in every month; -TI
+#     against Outlook imports lag 0. At 5-minute resolution the lead is
+#     ~45 min (the hourly re-stamp is the nearest whole-hour repair).
+#   * EPA CAMPD California gas gross load: NG: NG best lag -1 h in every month
+#     2019-01 .. 2022-05, lag 0 from 2022-06.
+#   * Solar geometry: the NG: SUN centroid is 11.0-11.5 h PST through
+#     2022-06-13, ~11.8 h 2022-07 .. 2023-10 (true), 12.7-12.8 h in the late
+#     window.
+# The window opens at the last local-2018 stamp (its value is the true value
+# of the first 2019 model hour; the corpus holds no Outlook/CEMS hour before
+# 2019, so nothing earlier is asserted) and closes at local 2022-06-13 HE24;
+# 2022-06-14/15 are mixed and not asserted, exactly as the demand late window
+# (which the same publisher shift opened). Probes:
+# scripts/probes/_rcaiso17_pre2022_clock_scan.py, _rcaiso17_subhour_offset.py;
+# docs/handoffs/r-caiso-17/PRECOMMIT-r-caiso-17-2026-09-30.md.
+EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC: dict[str, tuple[str, str]] = {
+    "generation": ("2019-01-01 08:00", "2022-06-14 07:00"),
+}
+
 # --- EIA-930 remote generation booked by TWO balancing authorities ------------
 # Per EIA-930 BA code: ``{fuel column: BA that already books the same plants}``.
 # The listed member's published fuel column is energy from a jointly-owned plant

@@ -610,4 +610,8 @@ DECLARED: dict[str, str | dict[str, str]] = {
     "SPP_POSTURE_MIN_DOWN_HOURS": "05ce3498cb8df05c",
     "MISO_GAS_ECOMIN_MIN_LOAD_FRAC": "8dbeefa4395b85e6",
     "SPP_LOLE_GAS_EFOR_BY_SIZE": "2a0a954cca71b7cb",
+    # R-CAISO-17: declared at its live hash, as its late sibling was. The name
+    # is unscoped (CISO is not an ISO token), so a pre-arm declaration would
+    # re-key every ISO; the window is live only under caiso_eia930_clock_repair.
+    "EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC": "4feaa46927c60d38",
 }

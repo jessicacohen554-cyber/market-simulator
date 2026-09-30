@@ -115,6 +115,15 @@ def repair_measured_gaps(
         stamps = pd.DatetimeIndex(frame["UTC time"])
         if stamps.tz is not None:
             stamps = stamps.tz_convert("UTC").tz_localize(None)
+        if ba_code == "CISO":
+            # The fill is aligned to the PUBLISHED stamp grid (lag 0, module
+            # docstring). With caiso_eia930_clock_repair armed the frame's
+            # generation cells have been moved off that grid (R-CAISO-17: the
+            # 2019-2022 early window), so each row reads the source at the
+            # published stamp whose value it now carries. Unarmed: identity.
+            from market_sim.data.eia930.frames import ciso_generation_source_stamps
+
+            stamps = ciso_generation_source_stamps(stamps)
         fill = src.reindex(stamps).to_numpy(float)
         base = frame if out is None else out
         cell = pd.to_numeric(base[col], errors="coerce").to_numpy(float)
