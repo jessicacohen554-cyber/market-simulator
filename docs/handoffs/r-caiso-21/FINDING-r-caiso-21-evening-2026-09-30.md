@@ -83,3 +83,14 @@ curtailment in the midday. Offered to the owner as an option, not opened here.
 
 No admissible, structural, measured lever for link 3. Nothing built, no solve, keeper unchanged.
 Next choice put to the owner as a decision card.
+
+## 7. Owner ruling (decision card, 2026-09-30) — all three options selected
+
+1. **Close link 3, go to C3c.** The evening under-price is closed as an object: DART basis plus the C3c tail.
+   R-CAISO-22 (C3c 2024) inherits the evening tail hours (§2).
+2. **Open the midday north–south spread** (§5) as a new link after C3c: link 5, R-CAISO-23.
+3. **Scope battery disaggregation** for the RT h18 ramp peak (§2b) — SCOPING ONLY, as a PRECOMMIT; no solve.
+   Link 6, R-CAISO-24.
+
+Nothing built, no solve, no shard launched, keeper unchanged. The matrix CAISO shard stamp and §5.2
+header are updated; no cell moved.
