@@ -1,5 +1,5 @@
 {
  "iso": "NWPP",
- "keeper": "2026-09-29-nwppnext10-exit-month-routing",
- "note": "NWPP keeper #16 (NWPP-NEXT-10): keeper #15 + EIA-860 exit-month routing of the CAMPD outage layer (unit_outage_exit_ym_from_eia860; retired Colstrip 1-2's post-exit darkness no longer derates units 3-4; owner decision card 2026-09-29 'Promote on structure')"
+ "keeper": "2026-09-29-nwppnext12-boardman-membership",
+ "note": "NWPP keeper #17 (NWPP-NEXT-12): keeper #16 + Boardman 6106 membership repair of the CAMPD outage layer (unit_outage_membership_repair; the committed extract never scanned Boardman, so its measured 2019-2020 whole-plant stops were absent; owner standing ruling: promote on structural integrity)"
 }
