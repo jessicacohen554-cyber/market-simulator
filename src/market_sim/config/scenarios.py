@@ -2261,6 +2261,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # construction: measured_import_hub_prices reads it only when handed
     # unprinted_year_measured_gas=True from the flag.
     "caiso_intertie_unprinted_year_measured_gas",
+    # R-CAISO-20 (2026-09-30), default off, registered IN THE SAME COMMIT as
+    # the field (the nyiso-119 discipline). Byte-identical off by
+    # construction: inject_caiso_dsw_overnight_clean reads the unprinted-year
+    # mask only when handed unprinted_year_arm=True from the flag.
+    "caiso_dsw_overnight_clean_unprinted_arm",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -3162,6 +3167,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_eia930_clock_repair": "False",
     # Added by R-CAISO-18 WITH the field (the nyiso-119 discipline).
     "caiso_intertie_unprinted_year_measured_gas": "False",
+    # Added by R-CAISO-20 WITH the field (the nyiso-119 discipline).
+    "caiso_dsw_overnight_clean_unprinted_arm": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
@@ -10360,6 +10367,26 @@ class ScenarioConfig:
     # the shared apply_interchange_injections seam. Requires
     # caiso_per_hub_intertie (+ caiso_firm_import_shape). Default off
     # (byte-identical); CAISO-only.
+    caiso_dsw_overnight_clean_unprinted_arm: bool = False  # R-CAISO-20
+    # (2026-09-30), OWNER RULING (card 2026-09-30, "Arm overnight rung
+    # pre-2021") — authorised by the ruling, NOT admitted as a measured input.
+    # Extends caiso_dsw_overnight_clean's hod 0-5 evidence gate from "raw Palo
+    # Verde print is finite" to also "the R-CAISO-18 unprinted-year branch
+    # prices the hub" (all of 2019-2020; the unprinted Jan-Apr 2021), carrying
+    # the 2022-25 measured overnight no-wedge structure into years OASIS no
+    # longer serves (GroupZip's earliest trade date is 2021-04-27). The WEIM
+    # DSW footprint was smaller then (AZPS/NEVP; SRP from 2020-04), which is
+    # why this is a ruling and not a measurement (R-CAISO-19 FINDING §3).
+    # Depth: derive_caiso_overnight_clean_depth.py's own p95 over the extra
+    # years (2019 6,566 / 2020 7,166 MW; 2021 keeps the static 6,187), the
+    # percentile NOT re-sized (rule 1). Headroom still net of the firm block and
+    # surplus rung (rule 19). Every other clean rung stays raw-print gated.
+    # The 2023 Jan-Feb OASIS gap is a <=25 % gap the mask never contains, so
+    # the closed winter lane stays closed and 2022-2025 are inert by
+    # construction. Requires caiso_dsw_overnight_clean AND
+    # caiso_intertie_unprinted_year_measured_gas (the pricing; without it the
+    # arm is a no-op). Default off; CAISO-only; backcast-only.
+    # docs/handoffs/r-caiso-20/PRECOMMIT-r-caiso-20-2026-09-30.md.
     caiso_dsw_daytime_clean: bool = False  # Carry the MEASURED DAYTIME
     # trigger-OFF (hod 6-21) WEIM clean import depth on the south (Palo Verde /
     # Path-46) corridor (caiso-94; FINDING-caiso94-daytime-wedge-2026-07-17,
