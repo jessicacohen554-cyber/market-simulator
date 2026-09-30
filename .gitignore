@@ -3908,5 +3908,5 @@ results/calibration/nyisonext16_202[2-5]/
 results/calibration/rcaiso17_A_20*/
 
 # NWPP-NEXT-13 per-year shard legs: parent-tree only, never main (rules 31, 32(d)); composite nwppnext13pu_span is committed instead.
-# Legs recorded by SHA (provenance only, rule 33(d)): 2020 99e56f93 2021 4662e793 2022 eb9a0bb2 2023 e4f96c37 2025 17704998
+# Legs recorded by SHA (provenance only, rule 33(d)): 2020 99e56f93 2021 4662e793 2022 eb9a0bb2 2023 e4f96c37 2025 17704998 2024 139f0cfa
 results/calibration/nwppnext13pu_20[0-9][0-9]/
