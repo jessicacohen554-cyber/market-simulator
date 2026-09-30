@@ -15386,3 +15386,5 @@ Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 
 
 No frontier: the full span is NOT-YET on the three routed misses.
 `docs/FINDING-miso287-p1-night-residual-2026-09-29.md`.
+
+Owner ruling: "2022 coal-scarcity study". Next: miso-288, zero-LP data-first study of how the real 2022 fleet expressed its coal shortage.

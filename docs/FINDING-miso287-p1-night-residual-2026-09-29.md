@@ -109,3 +109,10 @@ case this lane can promote on.
   committed artifacts.
 - **Cells:** `diurnal_price_amplitude` stays **G** (now decomposed; §2 corrects miso-285).
   `coal_fuel_inventory` stays **K**; its named carry successor is recorded as **pre-check killed**.
+
+## 6. Owner ruling (2026-09-30)
+
+*"2022 coal-scarcity study"*. The next lane (miso-288) runs a zero-LP, data-first study of how the real 2022 MISO
+fleet expressed its coal shortage: offer adders (fuel-conservation opportunity cost) vs derates, outages and
+deferred burn. The question it answers is whether the LP's uniform coal dual on 2022 nights is realistic. It may
+find nothing admissible.
