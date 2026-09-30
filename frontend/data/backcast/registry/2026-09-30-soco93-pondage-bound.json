@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-30-soco93-pondage-bound",
+  "label": "soco93 pondage bound",
+  "date": "2026-09-30",
+  "shorthand": "soco93-pondage-bound",
+  "definition": "soco-93 2019: soco-92 keeper recipe + hydro_pondage_bound (SOCO NID forebay)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-09-30-soco93-pondage-bound.js",
+  "bundle": "results/calibration/soco93_span"
+}
