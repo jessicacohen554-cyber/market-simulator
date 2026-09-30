@@ -1756,7 +1756,7 @@ def campd_fuel_split_selector(config: object) -> bool | str:
     remapped outage extracts. Under ``campd_per_unit_attribution`` it still
     raises: no per-unit split-remap companion has been derived.
     """
-    per_unit, _ = campd_attribution_selectors(config)
+    per_unit, merit_guard = campd_attribution_selectors(config)
     split_remap = _campd.split_remap_armed(config)
     if per_unit or not bool(getattr(config, "campd_unit_fuel_split", False)):
         if split_remap:
@@ -1767,6 +1767,18 @@ def campd_fuel_split_selector(config: object) -> bool | str:
                     "tranche companion has been derived"
                 )
             return PLAIN_SPLIT_REMAP_TAG
+        if per_unit and bool(
+            getattr(config, "campd_per_unit_vintage_denominator", False)
+        ):
+            # NWPP-NEXT-14: the per-unit companion's vintage-denominator
+            # variant, selected for every tranche reader at once.
+            if merit_guard:
+                raise ValueError(
+                    "campd_per_unit_vintage_denominator does not compose with "
+                    "campd_outage_merit_order_guard: no merit-guarded "
+                    "'-perunit-vintage-' tranche companion has been derived"
+                )
+            return PER_UNIT_VINTAGE_TAG
         return False
     if bool(getattr(config, "campd_st_gas_span_coverage", False)):
         tag: bool | str = ST_GAS_SPAN_COVERAGE_TAG
@@ -1779,6 +1791,13 @@ def campd_fuel_split_selector(config: object) -> bool | str:
             else _campd.SPLIT_REMAP_TAG
         )
     return tag
+
+
+#: Selector value for the per-unit tranche companion's VINTAGE-DENOMINATOR
+#: variant (``ScenarioConfig.campd_per_unit_vintage_denominator``, NWPP-NEXT-14):
+#: :func:`thermal_tranche_csv_for_iso` resolves ``-perunit-vintage-``; the
+#: fuel-split readers (by-year / p25-measured / oom) treat it as no fuel split.
+PER_UNIT_VINTAGE_TAG: str = "perunit-vintage"
 
 
 #: Selector value for the PLAIN tranche family under
@@ -1796,6 +1815,9 @@ def _fuel_split_companion(base: Path, fuel_split: bool | str = True) -> Path:
     the plain fuel-split companion (the coverage append is additive, so its
     absence degrades to the fuel split, never past it).
     """
+    if fuel_split == PER_UNIT_VINTAGE_TAG:
+        # NWPP-NEXT-14: not a fuel split -- the reader keeps its own artifact.
+        return base
     if fuel_split == PLAIN_SPLIT_REMAP_TAG:
         # SPP-99: the plain artifact's own split-remap companion, no fuel split.
         return _campd.split_remap_companion(base)
@@ -1872,6 +1894,12 @@ def thermal_tranche_csv_for_iso(
     (:func:`campd_fuel_split_selector`). Falls back to the incumbent where the
     companion has not been derived (MISO only at this writing, so the flag is
     self-scoping, rule 25 ``[R-ISO-SCOPE]``).
+
+    Under ``per_unit`` a ``fuel_split`` of :data:`PER_UNIT_VINTAGE_TAG`
+    (``ScenarioConfig.campd_per_unit_vintage_denominator``, NWPP-NEXT-14)
+    selects the ``-perunit-vintage-`` companion: the same per-unit routing with
+    each year divided by that year's EIA-860 vintage bin nameplate. Falls back
+    to the ``-perunit-`` companion where it has not been derived.
     """
     base = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
     if fuel_split and not per_unit:
@@ -1881,6 +1909,10 @@ def thermal_tranche_csv_for_iso(
     if per_unit:
         if merit_guard:
             alt = base.with_name(f"thermal_tranches-perunitmerit-{iso.upper()}.csv")
+            if alt.exists():
+                return alt
+        if fuel_split == PER_UNIT_VINTAGE_TAG:
+            alt = base.with_name(f"thermal_tranches-perunit-vintage-{iso.upper()}.csv")
             if alt.exists():
                 return alt
         alt = base.with_name(f"thermal_tranches-perunit-{iso.upper()}.csv")

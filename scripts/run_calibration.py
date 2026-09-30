@@ -4293,6 +4293,7 @@ def run_year(
                 cc_steam_part_reclass=config.cc_steam_part_reclass,
                 egrid_identity_heat_rates=config.egrid_identity_heat_rates,
                 egrid_family_heat_rates=config.egrid_family_heat_rates,
+                cc_subfloor_eia923_heat_rates=config.cc_subfloor_eia923_heat_rates,
                 egrid_steam_collapse_heat_rates=config.egrid_steam_collapse_heat_rates,
                 cc_block_summer_rating=config.cc_block_summer_rating,
             )
