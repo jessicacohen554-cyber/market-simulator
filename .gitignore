@@ -3886,3 +3886,4 @@ results/calibration/rcaiso15_A_tp_2019_2021/hourly/p0_*
 # Leg SHAs: 2019 d70150e5925bd5419da61bc70d296cb8dab50bcd 2020 b9a6aa04b131aea98ff2cbc2f73670323afcf50d 2021 ad69a3cef15a66ca2b1f98d26b3f7b6ff2d37a3d 2022 92eb6165a7a441fc1ab3c66fe3aaaa6e6206105a
 # 2023 e0de6f60aacc2f3207f7fd1ea3ec766eeed97d76 2024 e6dfaec45a7c0baaa32e5026be50bea8e852ed91 2025 e7291627784fa80cd2d8383d275996538b2efb98
 results/calibration/spp104_arm_20*/
+results/calibration/spp104_arm_span/

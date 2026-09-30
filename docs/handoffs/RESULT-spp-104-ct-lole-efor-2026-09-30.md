@@ -99,3 +99,13 @@ refused the aggregate pro-rata rebase, so this needs an owner charter and a rule
 - **25:** SPP only.
 - **29(b):** keeper as control; G-DRIFT all INERT.
 - **31–36:** the parent solved nothing, bytes are in hand before archive, one year per shard.
+
+## 7. Owner ruling (2026-09-30)
+
+**"Don't promote (Rec.)."** Keeper `2026-09-28-spp-100-chp-scope` stands (train tier CALIBRATED).
+- The field `spp_ct_lole_efor` stays in the code, off by default. Its SPP matrix cell goes O → **R**, with the reading in
+  §4.
+- The local registration (sidecar and payload) was removed before any commit, under rule 15 keeper-only retention and
+  rule 31 trigger (i).
+- `spp104_arm_span` and the seven legs are gitignored and were not pushed to `main`. This doc and git history are the
+  record.
