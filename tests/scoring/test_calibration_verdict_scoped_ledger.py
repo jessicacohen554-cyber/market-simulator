@@ -13,7 +13,9 @@ These tests pin that nothing else moves:
 * failing governance blocks it; the ledgered budget is still checked first;
 * LEDGERABLE_CRITERIA is unchanged and the scoped table holds exactly the
   v3.10 row plus the three v3.11 SOCO C3a rows (owner ruling 2026-09-30,
-  soco-94: exact rows, direction-bound, spend the slot, downgrade).
+  soco-94: exact rows, direction-bound, spend the slot, downgrade) plus the
+  v3.12 SOCO C3b 2022 row (owner ruling 2026-09-30, soco-95: "Scoped ledger
+  row", budget "Keep budget at 1"), bound to an NRMSE above the C3b band.
 """
 
 import unittest
@@ -33,6 +35,8 @@ _C3A_KEYS = {
     ("SOCO", 2020, "price_mean", None),
     ("SOCO", 2022, "price_mean", None),
 }
+# Rubric v3.12 (owner ruling 2026-09-30, soco-95): the SOCO C3b 2022 row.
+_C3B_KEY = ("SOCO", 2022, "price_shape", None)
 
 
 def _art(iso="SOCO", year=2019, coal_bit=45.0, attestation=True):
@@ -69,7 +73,7 @@ def _rec(v, year, key):
 
 class ScopedLedgerTests(unittest.TestCase):
     def test_table_is_exactly_one_row_and_c3c_guard_unchanged(self):
-        self.assertEqual(set(cv.SCOPED_LEDGER_ENTRIES), {_KEY, *_C3A_KEYS})
+        self.assertEqual(set(cv.SCOPED_LEDGER_ENTRIES), {_KEY, *_C3A_KEYS, _C3B_KEY})
         self.assertEqual(cv.LEDGERABLE_CRITERIA, frozenset({"price_tail"}))
         self.assertEqual(cv.MAX_LEDGERED_CAVEATS, 1)
         self.assertEqual(cv.SCOPED_LEDGER_ENTRIES[_KEY]["direction"], "under")
@@ -86,7 +90,7 @@ class ScopedLedgerTests(unittest.TestCase):
         self.assertEqual(v["grade_summary"]["ledgered"], 1)
         # It DOWNGRADES: the caveat rung, never the clean one.
         self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
-        self.assertIn("rubric v3.10/v3.11 scoped ledgered caveat", v["reasons"][0])
+        self.assertIn("rubric v3.10-v3.12 scoped ledgered caveat", v["reasons"][0])
         self.assertFalse(
             any(
                 "NOT determination-downgrading under rubric v3.3" in x
@@ -240,6 +244,95 @@ class ScopedLedgerC3aTests(unittest.TestCase):
         v = cv.determine_from_artifacts("t", art)
         self.assertEqual(_c3a(v, 2019)["status"], cv.CAVEAT)
         self.assertEqual(_rec(v, 2019, "COAL_BIT")["status"], cv.CAVEAT)
+        self.assertEqual(v["determination"], cv.NOT_YET)
+        self.assertIn("caveat budget exceeded", v["reasons"][0])
+
+
+# Monthly actuals with the fixture's ~$29 annual mean (so C3a stays clean):
+# alternating 19/39 is an NRMSE ~0.34 FAIL against the flat model month, and
+# 26/32 an NRMSE ~0.10 PASS.
+_SHAPE_FAIL = [19.0, 39.0] * 6
+_SHAPE_PASS = [26.0, 32.0] * 6
+
+
+def _c3b_art(year, mon, iso="SOCO", attestation=True):
+    """The clean fixture with the monthly actual (C3b's input) set to ``mon``."""
+    d = DeterminationTests()
+    kw = d._clean_bench_args()
+    kw["avg_lmp"] = {"rt": 29.0, "rt_mon": list(mon)}
+    art = _artifacts(
+        d._clean_year_payload(),
+        iso=iso,
+        year=year,
+        attestation=_clean_attestation() if attestation else None,
+        **kw,
+    )
+    art["legitimacy"] = _legit_artifact(year=year, r=0.9, cv_ratio=0.02, share=0.05)
+    return art
+
+
+def _c3b(v, year):
+    """The C3b record for ``year`` in a verdict."""
+    for r in v["criteria"]["price_shape"]["records"]:
+        if int(r["year"]) == year:
+            return r
+    raise AssertionError(f"no price_shape record {year}")
+
+
+class ScopedLedgerC3bTests(unittest.TestCase):
+    """Rubric v3.12: the SOCO C3b 2022 row, bound to an NRMSE above the band."""
+
+    def test_direction_and_band(self):
+        self.assertEqual(cv.SCOPED_LEDGER_ENTRIES[_C3B_KEY]["direction"], "above_band")
+        self.assertEqual(cv._SCOPED_BAND_MAX, {"price_shape": cv.PRICE_SHAPE_NRMSE_MAX})
+
+    def test_row_reaches_2022_and_downgrades(self):
+        v = cv.determine_from_artifacts("t", _c3b_art(2022, _SHAPE_FAIL))
+        r = _c3b(v, 2022)
+        self.assertEqual(r["status"], cv.CAVEAT)
+        self.assertEqual(r["classification"], cv.MODEL_LIMIT)
+        self.assertTrue(r["scoped_ledger"])
+        self.assertGreater(float(r["model"]), cv.PRICE_SHAPE_NRMSE_MAX)
+        self.assertEqual(v["grade_summary"]["ledgered"], 1)
+        self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
+        self.assertIn("price_shape", v["reasons"][0])
+
+    def test_inside_band_is_a_plain_pass(self):
+        v = cv.determine_from_artifacts("t", _c3b_art(2022, _SHAPE_PASS))
+        r = _c3b(v, 2022)
+        self.assertEqual(r["status"], cv.PASS)
+        self.assertFalse(r.get("scoped_ledger", False))
+
+    def test_other_soco_years_stay_fail(self):
+        for year in (2019, 2020, 2021, 2023, 2024, 2025):
+            with self.subTest(year=year):
+                v = cv.determine_from_artifacts("t", _c3b_art(year, _SHAPE_FAIL))
+                self.assertEqual(_c3b(v, year)["status"], cv.FAIL)
+
+    def test_other_isos_stay_fail(self):
+        for iso in ("PJM", "MISO", "NWPP", "ERCOT", "CAISO", "NYISO", "NEISO", "SPP"):
+            with self.subTest(iso=iso):
+                v = cv.determine_from_artifacts(
+                    "t", _c3b_art(2022, _SHAPE_FAIL, iso=iso)
+                )
+                self.assertEqual(_c3b(v, 2022)["status"], cv.FAIL)
+
+    def test_failing_governance_blocks_it(self):
+        v = cv.determine_from_artifacts(
+            "t", _c3b_art(2022, _SHAPE_FAIL, attestation=False)
+        )
+        self.assertEqual(_c3b(v, 2022)["status"], cv.FAIL)
+        self.assertEqual(v["determination"], cv.NOT_YET)
+
+    def test_c3a_and_c3b_together_exceed_the_kept_budget_of_one(self):
+        # Owner "Keep budget at 1": two scoped criteria in one run are NOT-YET.
+        art = _c3b_art(2022, _SHAPE_FAIL)
+        art["bench"] = _c3a_art(2022, 34.0)["bench"]
+        art["bench"][2022]["avgLMP"]["rt_mon"] = list(_SHAPE_FAIL)
+        v = cv.determine_from_artifacts("t", art)
+        self.assertEqual(_c3a(v, 2022)["status"], cv.CAVEAT)
+        self.assertEqual(_c3b(v, 2022)["status"], cv.CAVEAT)
+        self.assertEqual(cv.MAX_LEDGERED_CAVEATS, 1)
         self.assertEqual(v["determination"], cv.NOT_YET)
         self.assertIn("caveat budget exceeded", v["reasons"][0])
 
