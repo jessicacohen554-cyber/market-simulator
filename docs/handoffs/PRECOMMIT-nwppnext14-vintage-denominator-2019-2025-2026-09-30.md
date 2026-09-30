@@ -88,6 +88,16 @@ this branch rebased on main `46e1b31e` (audit first run at `c018dcba`, then exte
 - No other NWPP input changed.
 - The mechanical second check is each leg's `solve_surface.json` fingerprint.
 
+### 3.1 Addendum: main `46e1b31e` → `ecadf27c` (merged before the pin)
+
+| source | what | class |
+|---|---|---|
+| SPP-105 `spp_gas_crow_residual_outage` (fleet/arrays, spp_gas_outage, paths) | SPP-only; `__post_init__` refuses non-SPP; `crow_rate_out=None` otherwise | INERT |
+| R-ERCOT-19 `netload_drag_prior_year_hour_profile`, `cc_committed_prior_year_commitment_eligibility` (floors, offer_curves, commitment_profile, ercot csv) | default off; `hour_profile=None` makes the refactored `targets` arithmetically identical; `cc_committed_offer_margin` is False in the recipe | INERT |
+| soco-96 rubric v3.13 (held-out years gate the determination) | scorer, not the solve | INERT for the solve; **the verdict diff reads both keepers under the same rubric** |
+
+**Still ALL INERT.**
+
 ## 4. Recipe (per shard, year Y)
 
 The NEXT-13 §4 recipe verbatim, plus one `--set`:
