@@ -5776,6 +5776,8 @@ loss.
 > 58.6 vs bench 74.7 (winter guard). Pile grain alone +2.66; the floor binds on only 11–14 yards because 2022
 > opened far below prior maximum stocks. Fourth budget-grain kill. `coal_fuel_inventory_take_floor` MISO
 > **U → R**. No frontier.
+> **Owner ruling:** *"Close coal line; C3a 2022 (Recommended)"*. Coal budget-grain line CLOSED. **Next (miso-291):** zero-LP phase 0 on
+> C3a 2022 (−15.5 %, daytime shoulder/tail underpricing per miso-206). No frontier.
 
 > **QUEUE STAMP miso-289 (2026-09-30) — ZERO LP, NO SOLVE, keeper unchanged**
 > (`FINDING-miso289-minstock-pile-killed-2026-09-30.md`). Per-yard cumulative monthly pile + a prior-years

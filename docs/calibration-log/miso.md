@@ -15440,3 +15440,5 @@ coal pile + a contract take floor from MISO's own EIA-923 Page 5 census.
 
 No frontier: the full span is NOT-YET on the three routed misses.
 `docs/FINDING-miso290-pile-take-floor-killed-2026-09-30.md`.
+
+Owner ruling: *"Close coal line; C3a 2022 (Recommended)"*. Coal budget-grain line closed. Next: miso-291, zero-LP phase 0 on C3a 2022.
