@@ -38,7 +38,7 @@ file). The floor applies only where that rate is unusable.
 ## 2. Prediction (zero LP: `docs/handoffs/nwppnext14/vintage_census.json`, `ccfloor_census.json`, `both_census.json`)
 
 **Key 2.** Only Clark 2322's three CC_REGULAR tranches (462 MW) move. Their heat rate goes
-3.703 / 3.394 / 3.007 ×5 → 9.376 / 9.272 / 9.592 / 9.299 / 9.476 / 9.004 / 9.038 (2019–2025). Class availability
+3.703 / 3.394 / 3.007 ×5 → 9.376 / 9.272 / 9.004 / 9.299 / 9.476 / 9.038 / 9.592 (2019–2025; corrected after the pin — the per-year values in the shard prompts were always these). Class availability
 is unchanged. Expected effect: Clark CC falls from 3.69 TWh/yr toward its 0.43–0.86 TWh actual, with the energy
 moving to other CC and to CT. This is the direction of both C1 residuals (CC_REGULAR over, CT_PEAKER under).
 
