@@ -37,6 +37,10 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts/probes"))
 import _pjmnext10_coal_phase0 as P10  # noqa: E402
+from _pjmnext13_cards import ZONES  # noqa: E402
+
+sys.path.insert(0, str(REPO))
+from scripts.data.derive_pjm_offer_surface import _pjm_fuel_daily  # noqa: E402
 
 OUT = REPO / "results/calibration/_pjmnext14_lowend_marginal.json"
 BUNDLE = P10.BUNDLE
@@ -103,10 +107,14 @@ def analyse(y: int, f: dict, run: dict) -> dict:
     act = pd.read_parquet(ACTUAL)
     rt = act[act.year == y].sort_values("hour").rt.to_numpy()[:8760]
     low = rt < LOW_HR * prod_gas_hourly(y)
+    days = pd.date_range(f"{y}-01-01", periods=8760, freq="h").normalize()
+    deliv = _pjm_fuel_daily().reindex(days).to_numpy(float)
+    low_deliv = rt < LOW_HR * deliv
 
     uid = f["unit_ids"].astype(str)
-    grp, pc, zn = f["plant_group"].astype(str), f["plant_code"].astype(str), f["zone"]
-    zn = zn.astype(str)
+    grp, pc = f["plant_group"].astype(str), f["plant_code"].astype(str)
+    # The dump stores the zone as an index into the keeper's zone order.
+    zn = np.asarray([ZONES[int(i)] for i in f["zone"]], dtype=object)
     avail = (f["pmax"][:, None] * f["availability"])[:, :8760]
     mk = f.get("midcurve_markup")
     mk = np.zeros_like(avail) if mk is None else mk[:, :8760]
@@ -198,6 +206,8 @@ def analyse(y: int, f: dict, run: dict) -> dict:
         else None,
         "median_prod_gas_x6p5": round(float(np.median(LOW_HR * prod_gas_hourly(y))), 2),
         "low_end_hours": table(low) if low.any() else None,
+        "low_hour_share_delivered": round(float(low_deliv.mean()), 3),
+        "low_end_hours_delivered": table(low_deliv),
         "all_hours": table(np.ones(8760, bool)),
     }
 
