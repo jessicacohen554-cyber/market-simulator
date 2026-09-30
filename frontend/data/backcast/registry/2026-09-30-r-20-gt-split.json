@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-30-r-20-gt-split",
+  "label": "r 20 gt split",
+  "date": "2026-09-30",
+  "shorthand": "r-20-gt-split",
+  "definition": "R-ERCOT-20 ARM 2025: keeper 2026-09-30-r-19-eia-923 recipe unchanged, on the GT-split inputs (T H Wharton / Sand Hill / Colorado Bend simple-cycle GTs as CT_PEAKER split children 34693 / 79003 / 563503) - PRECOMMIT-r-ercot-20-gt-split",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-09-30-r-20-gt-split.js",
+  "bundle": "results/calibration/r_ercot20_span"
+}
