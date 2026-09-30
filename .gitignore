@@ -3849,6 +3849,8 @@ results/calibration/nwppnext10xy_20*/
 results/calibration/spp102_arm_20*/
 results/calibration/spp102_arm_span/
 
+# R-ERCOT-17 per-year shard legs (rule 32(d)/31: local only, kept out of main)
+results/calibration/r_ercot17_arm_*/
 # soco-90 (2026-09-29): owner-licensed Southeast daily gas hub series (owner ruling
 # "License SE daily gas", FINDING-soco-89 §6). NOT redistributable (docs/data-licensing.md §5):
 # the payload is NEVER committed. Only the identity record (README + SHA256SUMS) is tracked.
