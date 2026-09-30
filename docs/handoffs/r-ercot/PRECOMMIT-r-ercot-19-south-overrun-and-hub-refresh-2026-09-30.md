@@ -145,3 +145,99 @@ The keeper's committed legs are the control (form 4). No control solve.
 - **Promote** under the standing instruction ("Is it an improvement? Then promote") if no year's determination flips worse. The basis is rule 23/14 (the source was updated), not the residual.
 - **If 2025 flips worse,** put a decision card to the owner and keep every bundle (rule 31). Rule 14 says the accurate input stays; the question is whether to promote now or hold until the price-side root cause is addressed.
 - DOF ledger: unchanged (zero added; a data refresh).
+
+---
+
+## ADDENDUM A (written before the arm-B solves): owner ruling and the commitment-eligibility build
+
+**Owner decision card, 2026-09-30.** Asked "Build it?" on §1's diagnosis; the answer, verbatim: **"Build commit eligibility (Recommended)"**. The card offered it as one design used twice: the CC committed block, and the residual `st_netload_drag` D-4 rows.
+
+### A.1 Construction
+
+Two default-off, backcast-only, zero-DOF sub-gates. Both read one frozen artifact: `scripts/data/derive_ercot_prior_year_commitment_profile.py` → `data/raw/_validation-source/ercot_prior_year_commitment_profile.csv`.
+
+- The artifact is each plant's CAMPD online capacity share by month × hour-of-day (`opTime > 0`, unit-weighted by measured max gross load; CC = CT/CC units; ST = the drag derive's unit routing).
+- Vintages 2019–2024 are read as Y−1 by 2020–2025.
+- 37 of 42 CC_REGULAR plants and 10 drag-covered ST_GAS plants are metered. Unmetered plants are untouched (e.g. Hidalgo 55545 and Silas Ray 3559).
+
+The two sub-gates:
+
+- **`cc_committed_prior_year_commitment_eligibility`**
+  - Construction: a sub-gate inside `cc_committed_offer_margin` (rule 19). `mc += q_p(t) × (level − HR×anchor − vom)`, where q = 1 is the keeper and q = 0 is the band's multiplier form.
+  - Code: `offer_curves.apply_cc_committed_offer_margin(…, year)`. Only the backcast call site passes `year`.
+- **`netload_drag_prior_year_hour_profile`**
+  - Construction: a sub-gate inside `netload_drag_floors` (rule 19). Each metered plant's drag rows are multiplied by `q_p / mean q_p`, then rescaled per plant so its **delivered** floor energy equals the pro-rata path's (aggregate-neutral, the ercot-259 discipline).
+  - Code: `fleet.floors._reshape_delivered`.
+
+**Build correction, stated.** The first build preserved the *nominal* floor before the clip. The zero-LP delta then showed the 2022 delivered drag rising 6.70 → 8.60 TWh (the floor escaped the lay-up mask's windows), which would have raised forcing. The build was changed to delivered-preservation *before any solve*.
+
+### A.2 Zero-LP delta through the real path
+
+Record: `scripts/probes/_r_ercot19_commit_eligibility_delta.py` → `docs/handoffs/r-ercot/r_ercot19_commit_eligibility_delta.json`.
+
+- **2019:** `mc` and `min_gen` byte-identical (fail-closed). The keeper's 2019 leg is reused; no solve.
+- **2020–2025:** pmax, availability, every non-CC-committed `mc` row and every non-drag `min_gen` row are byte-identical (asserted).
+- **CC committed bids** rise on 36 of 42 plants:
+
+| Year | Mean rise $/MWh | Max rise $/MWh |
+|---|---|---|
+| 2020 | +3.35 | 15.6 |
+| 2021 | +3.79 | 15.5 |
+| 2022 | +3.80 | 14.6 |
+| 2023 | +3.12 | 12.4 |
+| 2024 | +3.10 | 13.1 |
+| 2025 | +2.99 | 13.8 |
+
+- **2022 examples:**
+
+| Plant | Committed bid rise $/MWh |
+|---|---|
+| Gregory | +8.8 |
+| Barney Davis | +6.9 |
+| Sam Rayburn | +6.8 |
+| Nueces Bay | +5.7 |
+| T H Wharton | +14.6 |
+| Efficient baseload CCs | +1.0–1.3 |
+
+- **Drag:** delivered floor energy is identical per plant and in total, every year. Only the hours move.
+
+### A.3 Tests and G-DRIFT
+
+- Tests: `tests/unit/data/test_prior_year_commitment_profile.py` (11). The config/data suites show the identical failure set to main (7 base-red).
+- G-DRIFT: §4 plus this branch's own code. The only LIVE hunks are the two sub-gates, and they are the arm.
+
+### A.4 Arm B
+
+Six shards (2020–2025) at the pinned SHA. Each runs:
+
+`replay_keeper.py results/calibration/r_ercot18_span --years <Y> --set cc_committed_prior_year_commitment_eligibility=true --set netload_drag_prior_year_hour_profile=true`
+
+- The table is the refreshed hub table, so arm B = keeper + hub refresh + commitment.
+- Controls:
+  - 2020–2023: the keeper legs (the hub rows are unchanged there).
+  - 2024/2025: the arm-A (hub refresh) legs.
+
+### A.5 Predictions (before solving)
+
+| Year | C3a | C8 ST_GAS | Other |
+|---|---|---|---|
+| 2020 | +5.6 → +6 to +9 % (risk toward +10) | ±2 pp | CC_REGULAR C1 +12.4 → +8 to +11; COAL_PRB −11.6 → −11 to −9.5 |
+| 2021 | +4.6 → +5 to +8 % | ±2 pp | |
+| 2022 | −8.7 → −8 to −6 % | 30.1 % → 28–31 %; escape expected to hold (D-4 improves) | |
+| 2023 | −19.8 → −19 to −17 % | ±2 pp | |
+| 2024 | −10.7 → −10 to −8 %; **may flip to CALIBRATED** | ±2 pp | |
+| 2025 | −9.6 → −9 to −7 % (off the edge) | ±2 pp | |
+
+Across years:
+
+- South merchant gas falls 5–12 %. The over-run ratio (1.15–1.22) moves toward 1.05–1.12. The heat-rate correlation (0.68–0.80) falls but stays positive, since the econ ramp is untouched.
+- C3b ±0.03. Slack unchanged.
+- D-4 `st_netload_drag` unit-conduct FAILs 8 → ≤ 4 (the two 2019 rows stay: fail-closed).
+
+**Direction risk.** Dearer CC shoulder bids lift prices. That helps 2022–2025 (negative C3a) and hurts 2020/2021 (positive C3a).
+
+### A.6 Decision rule
+
+- **Promote** under the standing instruction if no year's determination flips worse and the South over-run falls.
+- **Decision card, every bundle kept (rule 31),** if any year flips worse.
+- DOF ledger: unchanged (zero added).

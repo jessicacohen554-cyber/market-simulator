@@ -208,6 +208,7 @@ def apply_netload_reliability_floor(
     merit_allocation: bool = False,
     persist_params: "list[tuple[float, dict[str, float]]] | None" = None,
     prior_overnight_mwh: dict[int, float] | None = None,
+    hour_profile: dict[int, np.ndarray] | None = None,
 ) -> bool:
     """Impose a net-load-indexed reliability-commitment min-gen floor on a class.
 
@@ -321,6 +322,21 @@ def apply_netload_reliability_floor(
     Composes with the pro-rata branch only; merit allocation fills by cost and
     ignores it.
 
+    ``hour_profile`` (``config.netload_drag_prior_year_hour_profile``,
+    R-ERCOT-19) is the HOUR-eligibility sibling of that index, and also moves
+    nothing but where the same mandate lands (rule 19). It maps each METERED
+    plant to its prior-year measured online capacity share ``q_p(t)`` on the
+    model clock; each such plant's floored rows are multiplied by
+    ``s_p(t) = q_p(t) / mean_t q_p`` BEFORE the availability clip, so the
+    plant's nominal annual floor is preserved and only moved toward the hours
+    its own meter says it is committed (rule 17 [R-FLOOR-WINDOW]); the result
+    is then rescaled per plant so its DELIVERED floor energy (after the
+    availability / lay-up clip) equals the pro-rata path's
+    (:func:`_reshape_delivered` — aggregate-neutral, the ercot-259 discipline,
+    so the sub-gate cannot act as a level knob). A plant absent from the map,
+    or with ``mean q_p = 0``, keeps ``s = 1``; ``None`` is byte-identical.
+    Pro-rata branch only, like the index.
+
     Modifies ``fleet_arrays`` in place. Returns ``True`` when a floor was
     applied, ``False`` (byte-identical) when the class has no reliability units.
     """
@@ -419,21 +435,93 @@ def apply_netload_reliability_floor(
         targets = _netload_drag_merit_targets(rows, generators, pmax, basis, merit_frac)
     else:
         k_plant = _prior_overnight_index(rows, generators, pmax, prior_overnight_mwh)
-        targets = {
-            g: np.minimum(
-                _frac_for(g)
-                * k_plant.get(int(getattr(generators[g], "plant_code", 0) or 0), 1.0)
-                * pmax[g],
-                basis[g] * pmax[g],
-            )
+        nominal = {
+            g: _frac_for(g)
+            * k_plant.get(int(getattr(generators[g], "plant_code", 0) or 0), 1.0)
+            * pmax[g]
             for g in rows
         }
+        targets = {g: np.minimum(nominal[g], basis[g] * pmax[g]) for g in rows}
+        shape = _prior_hour_shape(hour_profile, hours)
+        if shape:
+            by_plant: dict[int, list[int]] = {}
+            for g in rows:
+                code = int(getattr(generators[g], "plant_code", 0) or 0)
+                if code in shape:
+                    by_plant.setdefault(code, []).append(g)
+            for code, grows in by_plant.items():
+                targets.update(
+                    _reshape_delivered(
+                        grows,
+                        {g: nominal[g] for g in grows},
+                        {g: basis[g] * pmax[g] for g in grows},
+                        {g: targets[g] for g in grows},
+                        shape[code],
+                    )
+                )
 
     for g, target in targets.items():
         raised = fleet_arrays.min_gen[g, :] < target
         fleet_arrays.min_gen[g, :] = np.maximum(fleet_arrays.min_gen[g, :], target)
         mech[g, raised] = mech_id
     return True
+
+
+def _reshape_delivered(
+    rows: list[int],
+    nominal: dict[int, np.ndarray],
+    cap: dict[int, np.ndarray],
+    delivered: dict[int, np.ndarray],
+    s_p: np.ndarray,
+) -> dict[int, np.ndarray]:
+    """Move one plant's drag floor onto ``s_p`` at its OWN delivered energy.
+
+    ``min(c x nominal x s_p, cap)`` summed over the plant's rows and hours is
+    monotone in ``c``; ``c`` is solved by bisection so it equals the plant's
+    pro-rata delivered floor energy (``delivered``). The swap is therefore
+    aggregate-neutral per plant — the ercot-259 discipline: an hour-eligibility
+    sub-gate may not double as a level knob (rule 19) — and has no free
+    parameter (the scale is a normalization, rule 21). If ``cap`` inside the
+    eligible hours cannot hold the target, the plant delivers what fits.
+    """
+    target = float(sum(float(delivered[g].sum()) for g in rows))
+
+    def _got(c: float) -> float:
+        return float(
+            sum(float(np.minimum(c * nominal[g] * s_p, cap[g]).sum()) for g in rows)
+        )
+
+    if target <= 0.0:
+        return {g: np.zeros_like(delivered[g]) for g in rows}
+    lo, hi = 0.0, 1.0
+    while _got(hi) < target and hi < 1e6:
+        lo, hi = hi, hi * 2.0
+    for _ in range(60):
+        mid = 0.5 * (lo + hi)
+        if _got(mid) < target:
+            lo = mid
+        else:
+            hi = mid
+    return {g: np.minimum(hi * nominal[g] * s_p, cap[g]) for g in rows}
+
+
+def _prior_hour_shape(
+    hour_profile: dict[int, np.ndarray] | None, hours: int
+) -> dict[int, np.ndarray]:
+    """Per-plant mean-one hour shape ``s_p = q_p / mean q_p`` (R-ERCOT-19).
+
+    ``{}`` when no profile is given; a plant whose measured online share is
+    zero all year is omitted (it keeps ``s = 1``, never a divide-by-zero).
+    """
+    if not hour_profile:
+        return {}
+    out: dict[int, np.ndarray] = {}
+    for code, q in hour_profile.items():
+        q = np.asarray(q, dtype=float)[:hours]
+        m = float(q.mean()) if q.size else 0.0
+        if m > 0.0:
+            out[int(code)] = q / m
+    return out
 
 
 def _prior_overnight_index(
@@ -467,6 +555,30 @@ def _prior_overnight_index(
         c: (float(prior_overnight_mwh[c]) / b) / fleet_rate if b > 0 else 1.0
         for c, b in basis_mw.items()
     }
+
+
+def _load_drag_hour_profile(
+    config: ScenarioConfig, iso: str, year: int, hours: int
+) -> dict[int, np.ndarray] | None:
+    """ST_GAS prior-year commitment profile for the drag hour shape, or ``None``.
+
+    Thin gate over :func:`market_sim.data.commitment_profile.
+    load_prior_year_commitment_profile` for
+    ``config.netload_drag_prior_year_hour_profile`` (R-ERCOT-19; backcast only,
+    fail-closed with no ``year - 1`` vintage).
+    """
+    if not getattr(config, "netload_drag_prior_year_hour_profile", False):
+        return None
+    from market_sim.data.commitment_profile import load_prior_year_commitment_profile
+
+    return load_prior_year_commitment_profile(
+        config,
+        iso,
+        year,
+        "ST_GAS",
+        "netload_drag_prior_year_hour_profile",
+        hours,
+    )
 
 
 def load_prior_year_overnight_mwh(
@@ -596,6 +708,7 @@ def apply_gas_st_netload_drag_floor(
     config: ScenarioConfig,
     layup_removed: dict[tuple[int, str], np.ndarray] | None = None,
     prior_overnight_mwh: dict[int, float] | None = None,
+    hour_profile: dict[int, np.ndarray] | None = None,
 ) -> bool:
     """Impose the net-load-indexed ST_GAS reliability-drag min-gen floor.
 
@@ -688,6 +801,9 @@ def apply_gas_st_netload_drag_floor(
         # R-ERCOT-18: allocation-only index of the SAME mandate (rule 19);
         # None unless netload_drag_prior_year_commitment_index is armed.
         prior_overnight_mwh=prior_overnight_mwh,
+        # R-ERCOT-19: hour-eligibility shape of the SAME mandate (rule 19);
+        # None unless netload_drag_prior_year_hour_profile is armed.
+        hour_profile=hour_profile,
     )
 
 
@@ -912,6 +1028,9 @@ def apply_netload_drag_floors(
         config,
         layup_removed,
         prior_overnight_mwh=load_prior_year_overnight_mwh(config, iso, year),
+        hour_profile=_load_drag_hour_profile(
+            config, iso, year, int(fleet_arrays.availability.shape[1])
+        ),
     ):
         logger.info(
             "%s %d: ST_GAS net-load reliability-drag floor applied "

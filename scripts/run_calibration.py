@@ -5358,7 +5358,10 @@ def run_year(
     # apply_gas_offer_margin (which is provably inert on this row — ERCOT-138
     # §J) and on the BASE cost, so P0 run discovery and the P1 bid see the same
     # offer curve. Byte-identical when off (no-op return).
-    apply_cc_committed_offer_margin(mc_base, fleet, fleet_arrays, config)
+    # R-ERCOT-19: `year` is passed ONLY here (the backcast path) so the
+    # cc_committed_prior_year_commitment_eligibility sub-gate can read the
+    # Y-1 commitment profile; the forecast call in runner.py passes none.
+    apply_cc_committed_offer_margin(mc_base, fleet, fleet_arrays, config, year)
     # ERCOT G-22 condition-responsive CT/peaker offer surface (default off,
     # ERCOT-gated): raise the CT/peaker econ+peak tranche bid to the MEASURED
     # self-withholding level (60-Day DAM disclosure) in the top-net-load hours
