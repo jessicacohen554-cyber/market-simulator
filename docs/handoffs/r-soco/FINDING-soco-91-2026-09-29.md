@@ -160,3 +160,15 @@ in low-40 % hours vs 438 measured and discharges 725 MW in top-20 % hours vs 502
 - Matrix: notes only, no verdict moves. `hydro_min_flow_floor` stays O and `pumped_storage_cycling_depth` stays U,
   each with the §4 bound cited. No ScenarioConfig field was added or tested.
 - Retrievability: no bundle was produced. Keeper unchanged; SOCO is not frontier.
+
+## 7. Owner rulings on this FINDING (decision cards, 2026-09-29)
+
+1. **SOCO C3a: "Reopen two-part cost"**. A design lane, zero LP first: CC incremental cost + no-load and CT
+   start/no-load as ONE coherent construction. It reverses two earlier refusals (CC incremental "Keep refused",
+   CT start "NO"), so both DO-NOT-REDO entries lift for this design only. The design must deal with soco-85's
+   measurement: CC incremental is ≥ average above the ramp bottom (0.81 only at LSL). It must also set every
+   value ex ante from measured unit data, never from λ (rules 1/13/21), and return with a build card before
+   any solve.
+2. **Hydro shape: "Queue as next SOCO lane (Recommended)"**. Build the reconciled reservoir min-flow floor under
+   `hydro_ror_split` (`hydro_min_flow_floor` re-open path) plus PS cycling depth, for structure (rule 1), not
+   for C3a. PRECOMMIT, then seven year-isolated shards.
