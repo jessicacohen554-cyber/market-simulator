@@ -109,3 +109,6 @@ refused the aggregate pro-rata rebase, so this needs an owner charter and a rule
   rule 31 trigger (i).
 - `spp104_arm_span` and the seven legs are gitignored and were not pushed to `main`. This doc and git history are the
   record.
+
+**Owner card SPP-105 (2026-09-30): "Continue: gas-family design".** SPP-105 is chartered as a zero-LP design lane. Its
+handoff is `docs/handoffs/spp104/SPP-105-handoff.md`.
