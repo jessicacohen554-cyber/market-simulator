@@ -62,6 +62,7 @@ OUT = {
     "census": REPO / "results/calibration/_miso290_pile_floor_census.json",
     "solver": REPO / "results/calibration/_miso290_pile_floor_solver.json",
     "precheck": REPO / "results/calibration/_miso290_pile_floor_precheck.json",
+    "diag": REPO / "results/calibration/_miso290_pile_floor_diag.json",
 }
 SMAX_WINDOW = 3  # pile capacity window [Y-3, Y-1]; declared, never swept
 N_RATE_YEARS = 2  # the budget's own receipts-rate window (build_coal_plant_budget)
@@ -431,6 +432,11 @@ def run_arms(y: int, b: dict, arms: tuple[str, ...]) -> dict:
             bid = mcc + mk
             ceil, pl, mg_a = b["cand_ceil"], None, None
             floor, pcap = b["cand_floor"], b["short_price"]
+        elif arm == "CAND_KO":
+            # Diagnostic only (not gated): CAND's rows on the KEEPER offers,
+            # i.e. the regulated take-or-pay discount left armed.
+            ceil, pl, mg_a = b["cand_ceil"], None, None
+            floor, pcap = b["cand_floor"], b["short_price"]
         else:
             raise ValueError(arm)
         if mg_a is None:
@@ -490,8 +496,17 @@ def main() -> int:
     g = ap.add_mutually_exclusive_group()
     g.add_argument("--census", action="store_true")
     g.add_argument("--solver-test", action="store_true")
+    g.add_argument("--diag", action="store_true", help="CAND_KO diagnostic")
     args = ap.parse_args()
-    mode = "census" if args.census else "solver" if args.solver_test else "precheck"
+    mode = (
+        "census"
+        if args.census
+        else "solver"
+        if args.solver_test
+        else "diag"
+        if args.diag
+        else "precheck"
+    )
     out_path = OUT[mode]
     out = json.loads(out_path.read_text()) if out_path.exists() else {}
     for y in args.years:
@@ -499,6 +514,8 @@ def main() -> int:
         print(y, "rebuilt", round(time.time() - T0), "s", flush=True)
         if mode == "census":
             out[str(y)] = census(y, b)
+        elif mode == "diag":
+            out[str(y)] = run_arms(y, b, ("CAND_KO",))
         elif mode == "solver":
             out[str(y)] = run_arms(y, b, ("INC", "PILE0"))
         else:
