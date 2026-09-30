@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-30-soco92-hydro-min-flow",
+  "label": "soco92 hydro min flow",
+  "date": "2026-09-30",
+  "shorthand": "soco92-hydro-min-flow",
+  "definition": "soco-92 2019: soco-87 keeper recipe + hydro_min_flow_floor (reconciled under hydro_ror_split)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-09-30-soco92-hydro-min-flow.js",
+  "bundle": "results/calibration/soco92_span"
+}
