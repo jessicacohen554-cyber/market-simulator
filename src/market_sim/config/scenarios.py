@@ -2303,6 +2303,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # is constants.SPP_LOLE_GAS_EFOR_BY_SIZE; no sub-fields. Registered IN THE
     # SAME COMMIT as the field (the nyiso-119 discipline).
     "spp_ct_lole_efor",
+    # SPP-105 gas CROW residual (default off): dropped from the hash at its
+    # default so every pre-existing run keeps its key. Byte-identical off by
+    # construction (crow_rate_out is None, so no gas row leaves the statistical
+    # branch and no residual is placed). Its one input is the committed
+    # data/raw/spp-gen-outage CSV; no sub-fields. Registered IN THE SAME COMMIT
+    # as the field (the nyiso-119 discipline).
+    "spp_gas_crow_residual_outage",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -3134,6 +3141,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "spp_commitment_posture": "False",
     # Added by SPP-104 WITH the field (the nyiso-119 discipline).
     "spp_ct_lole_efor": "False",
+    # Added by SPP-105 WITH the field (the nyiso-119 discipline).
+    "spp_gas_crow_residual_outage": "False",
 }
 
 
@@ -18458,6 +18467,28 @@ class ScenarioConfig:
     # docs/handoffs/DESIGN-spp-104-ct-outage-2026-09-29.md.
     spp_ct_lole_efor: bool = False
 
+    # SPP gas-family outage from SPP's OWN published hourly gas outage, the
+    # "CROW residual" (SPP-105, 2026-09-30; owner card "Build carrier a and b",
+    # carrier B). ISO-exclusive: raises if armed for any ISO but SPP (rule 25).
+    #
+    # WHEN TRUE, in an SPP backcast on outage_source="historic", every gas row
+    # (CC / ST / CT and their CHP) loses its statistical WEFOR and POF, and SPP's
+    # measured residual R(t) = max(0, SPP published Natural Gas outage(t) - the
+    # CAMPD event MW(t)) is removed from the gas rows after the measured event
+    # overlays, pro rata to each row's would-be annual statistical outage (the
+    # incumbent class rates as the key), capped at the row's available MW. The
+    # CAMPD windows are untouched; flat derates are untouched. Rule 19: a
+    # REPLACEMENT of the statistical terms, never a stack. Rule 21: zero free
+    # parameters. Rule 13, DECLARED AT THE GATE: wherever SPP's total exceeds
+    # the CAMPD events (41-94 % of hours, DESIGN s4) the model's gas outage
+    # EQUALS the published total -- the pin the SPP-105 charter names; the owner
+    # ruled to build it anyway. Forecast / non-historic runs: inert (a forward
+    # year has no published series; the statistical stack stands). Data:
+    # data/raw/spp-gen-outage (market_sim.data.spp_gas_outage). Mutually
+    # exclusive with spp_ct_lole_efor. Default off; byte-identical off.
+    # docs/handoffs/DESIGN-spp-105-gas-family-outage-2026-09-30.md.
+    spp_gas_crow_residual_outage: bool = False
+
     # Measured ERCOT GTC transfer limits (backcast/calibration overlay). When
     # True in backcast mode, the export-direction capability of the transfer
     # links that carry ERCOT's published Generic Transmission Constraints
@@ -23029,6 +23060,16 @@ class ScenarioConfig:
                 "spp_ct_lole_efor is SPP-only (SPP-104: SPP's own LOLE-study "
                 "EFOR table, rule 25)."
             )
+        if self.spp_gas_crow_residual_outage and str(self.iso) != "SPP":
+            raise ValueError(
+                "spp_gas_crow_residual_outage is SPP-only (SPP-105: SPP's own "
+                "published gas outage, rule 25)."
+            )
+        if self.spp_gas_crow_residual_outage and self.spp_ct_lole_efor:
+            raise ValueError(
+                "spp_gas_crow_residual_outage and spp_ct_lole_efor are mutually "
+                "exclusive (rule 19: one replacement for the CT statistical WEFOR)."
+            )
         # Measured CAISO battery AS reservation vs in-LP reserve co-opt: the
         # co-opt hands storage its own reserve columns and prices the
         # energy-vs-AS split endogenously, so pre-subtracting the measured
@@ -24527,6 +24568,10 @@ TIER_TAGS: dict[str, int] = {
     # published LOLE EFOR table (constants.SPP_LOLE_GAS_EFOR_BY_SIZE); no free
     # number of its own (rule 21).
     "spp_ct_lole_efor": 1,
+    # Structural gate (1): replaces the gas statistical WEFOR / POF with SPP's
+    # own published hourly gas outage residual; allocation key is the incumbent
+    # class rates; no free number of its own (rule 21).
+    "spp_gas_crow_residual_outage": 1,
 }
 
 # SweepDefinition (the sweep / named-case-matrix expansion engine) moved
