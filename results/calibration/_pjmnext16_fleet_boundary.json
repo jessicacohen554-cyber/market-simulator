@@ -1,0 +1,383 @@
+{
+ "what": "PJM-NEXT-16 energy identity + fleet boundary. ZERO LP.",
+ "years": {
+  "2019": {
+   "model_gen": 822.88,
+   "classFull": 810.11,
+   "d_gen": 12.77,
+   "export_model": 18.93,
+   "export_tie": 31.56,
+   "d_export": -12.63,
+   "losses_model": 3.69,
+   "U_a": 21.77,
+   "bench_not_fleet_fossil_twh": 15.04,
+   "bench_not_fleet_top": [
+    [
+     983,
+     "Clifty Creek",
+     5.72
+    ],
+    [
+     2876,
+     "Kyger Creek",
+     5.52
+    ],
+    [
+     2878,
+     "FirstEnergy Bay Shore",
+     0.68
+    ],
+    [
+     50732,
+     "Mon Valley Works",
+     0.4
+    ],
+    [
+     54640,
+     "NAEA Lakewood LLC",
+     0.35
+    ],
+    [
+     56848,
+     "Haverhill North Cogeneration Facility",
+     0.33
+    ],
+    [
+     57822,
+     "Middletown Coke Company, LLC",
+     0.31
+    ],
+    [
+     50410,
+     "Chester Operations",
+     0.2
+    ]
+   ],
+   "classFull_minus_bench_plants_COAL_BIT": 10.77
+  },
+  "2020": {
+   "model_gen": 799.4,
+   "classFull": 791.08,
+   "d_gen": 8.32,
+   "export_model": 28.09,
+   "export_tie": 41.68,
+   "d_export": -13.59,
+   "losses_model": 3.47,
+   "U_a": 19.25,
+   "bench_not_fleet_fossil_twh": 12.84,
+   "bench_not_fleet_top": [
+    [
+     2876,
+     "Kyger Creek",
+     4.65
+    ],
+    [
+     983,
+     "Clifty Creek",
+     4.38
+    ],
+    [
+     2878,
+     "FirstEnergy Bay Shore",
+     1.06
+    ],
+    [
+     50732,
+     "Mon Valley Works",
+     0.47
+    ],
+    [
+     57822,
+     "Middletown Coke Company, LLC",
+     0.32
+    ],
+    [
+     56848,
+     "Haverhill North Cogeneration Facility",
+     0.27
+    ],
+    [
+     54640,
+     "NAEA Lakewood LLC",
+     0.24
+    ],
+    [
+     10017,
+     "WestRock-West Point Mill",
+     0.22
+    ]
+   ],
+   "classFull_minus_bench_plants_COAL_BIT": 8.76
+  },
+  "2021": {
+   "model_gen": 824.8,
+   "classFull": 815.72,
+   "d_gen": 9.07,
+   "export_model": 24.6,
+   "export_tie": 37.81,
+   "d_export": -13.22,
+   "losses_model": 4.02,
+   "U_a": 18.25,
+   "bench_not_fleet_fossil_twh": 3.88,
+   "bench_not_fleet_top": [
+    [
+     2878,
+     "FirstEnergy Bay Shore",
+     0.97
+    ],
+    [
+     50732,
+     "Mon Valley Works",
+     0.45
+    ],
+    [
+     57822,
+     "Middletown Coke Company, LLC",
+     0.36
+    ],
+    [
+     56848,
+     "Haverhill North Cogeneration Facility",
+     0.33
+    ],
+    [
+     54640,
+     "NAEA Lakewood LLC",
+     0.28
+    ],
+    [
+     10017,
+     "WestRock-West Point Mill",
+     0.21
+    ],
+    [
+     50627,
+     "ExxonMobil Oil Joliet Refinery",
+     0.19
+    ],
+    [
+     10398,
+     "Cleveland Works",
+     0.15
+    ]
+   ],
+   "classFull_minus_bench_plants_COAL_BIT": -1.17
+  },
+  "2022": {
+   "model_gen": 836.52,
+   "classFull": 820.28,
+   "d_gen": 16.24,
+   "export_model": 22.18,
+   "export_tie": 31.77,
+   "d_export": -9.6,
+   "losses_model": 4.16,
+   "U_a": 21.76,
+   "bench_not_fleet_fossil_twh": 6.28,
+   "bench_not_fleet_top": [
+    [
+     1573,
+     "Morgantown Generating Plant",
+     1.25
+    ],
+    [
+     883,
+     "Waukegan",
+     1.23
+    ],
+    [
+     2878,
+     "FirstEnergy Bay Shore",
+     0.9
+    ],
+    [
+     50732,
+     "Mon Valley Works",
+     0.42
+    ],
+    [
+     54640,
+     "NAEA Lakewood LLC",
+     0.38
+    ],
+    [
+     57822,
+     "Middletown Coke Company, LLC",
+     0.35
+    ],
+    [
+     56848,
+     "Haverhill North Cogeneration Facility",
+     0.32
+    ],
+    [
+     10017,
+     "WestRock-West Point Mill",
+     0.2
+    ]
+   ],
+   "classFull_minus_bench_plants_COAL_BIT": 2.19
+  },
+  "2023": {
+   "model_gen": 816.52,
+   "classFull": 809.78,
+   "d_gen": 6.74,
+   "export_model": 28.11,
+   "export_tie": 39.97,
+   "d_export": -11.87,
+   "losses_model": 3.59,
+   "U_a": 15.13,
+   "bench_not_fleet_fossil_twh": 3.73,
+   "bench_not_fleet_top": [
+    [
+     2878,
+     "FirstEnergy Bay Shore",
+     0.94
+    ],
+    [
+     50732,
+     "Mon Valley Works",
+     0.47
+    ],
+    [
+     56848,
+     "Haverhill North Cogeneration Facility",
+     0.35
+    ],
+    [
+     57822,
+     "Middletown Coke Company, LLC",
+     0.33
+    ],
+    [
+     54640,
+     "NAEA Lakewood LLC",
+     0.25
+    ],
+    [
+     10017,
+     "WestRock-West Point Mill",
+     0.2
+    ],
+    [
+     50627,
+     "ExxonMobil Oil Joliet Refinery",
+     0.18
+    ],
+    [
+     10398,
+     "Cleveland Works",
+     0.14
+    ]
+   ],
+   "classFull_minus_bench_plants_COAL_BIT": 0.23
+  },
+  "2024": {
+   "model_gen": 838.13,
+   "classFull": 838.23,
+   "d_gen": -0.1,
+   "export_model": 21.04,
+   "export_tie": 32.87,
+   "d_export": -11.82,
+   "losses_model": 4.31,
+   "U_a": 7.55,
+   "bench_not_fleet_fossil_twh": 3.95,
+   "bench_not_fleet_top": [
+    [
+     2878,
+     "FirstEnergy Bay Shore",
+     1.0
+    ],
+    [
+     50732,
+     "Mon Valley Works",
+     0.43
+    ],
+    [
+     57822,
+     "Middletown Coke Company, LLC",
+     0.35
+    ],
+    [
+     56848,
+     "Haverhill North Cogeneration Facility",
+     0.33
+    ],
+    [
+     10398,
+     "Cleveland Works",
+     0.31
+    ],
+    [
+     54640,
+     "NAEA Lakewood LLC",
+     0.23
+    ],
+    [
+     10017,
+     "WestRock-West Point Mill",
+     0.2
+    ],
+    [
+     50627,
+     "ExxonMobil Oil Joliet Refinery",
+     0.18
+    ]
+   ],
+   "classFull_minus_bench_plants_COAL_BIT": 0.31
+  },
+  "2025": {
+   "model_gen": 871.17,
+   "classFull": 863.78,
+   "d_gen": 7.39,
+   "export_model": 22.98,
+   "export_tie": 32.92,
+   "d_export": -9.95,
+   "losses_model": 5.0,
+   "U_a": 12.34,
+   "bench_not_fleet_fossil_twh": 4.56,
+   "bench_not_fleet_top": [
+    [
+     2878,
+     "FirstEnergy Bay Shore",
+     0.99
+    ],
+    [
+     50732,
+     "Mon Valley Works",
+     0.48
+    ],
+    [
+     10398,
+     "Cleveland Works",
+     0.36
+    ],
+    [
+     56848,
+     "Haverhill North Cogeneration Facility",
+     0.32
+    ],
+    [
+     57822,
+     "Middletown Coke Company, LLC",
+     0.3
+    ],
+    [
+     594,
+     "Indian River Generating Station",
+     0.26
+    ],
+    [
+     54640,
+     "NAEA Lakewood LLC",
+     0.24
+    ],
+    [
+     10017,
+     "WestRock-West Point Mill",
+     0.21
+    ]
+   ],
+   "classFull_minus_bench_plants_COAL_BIT": 1.98
+  }
+ }
+}
