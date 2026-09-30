@@ -89,3 +89,10 @@ actuals, so this goes to the owner.
 Keeper unchanged. Train 2023–2025 CALIBRATED (C3c ledgered). Full span **NOT-YET** on three routed misses:
 C1 ST_GAS 2019, C3a 2022, C3b 2021. **No frontier.** The only structural route left for C3a 2022 is an
 owner-chartered reduced-network (flowgate) program, the miso-277 route.
+
+## 7. Owner ruling (2026-09-30)
+
+*"Repair basis (Recommended)"* and *"Charter flowgate program"*. Next lane (miso-292): (1) re-run the
+load-weighted C3a basis (`lw_retrofit`) for MISO 2019/2022 only, verifying no other bench field moves
+(miso-266 hazard); (2) zero-LP charter of a reduced-network (flowgate) program for MISO's internal
+congestion: data plan, admissible limit sources, forward story, kill rule — no tuned limits (rules 1, 13).
