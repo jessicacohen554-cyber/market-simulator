@@ -15041,3 +15041,16 @@ too.
 - **Matrix:** `nyiso_ne_ac_recon_detach` U → K.
 - **Superseded and pruned:** `2026-09-29-nyisonext12-neac-node-span` and its 2021 run.
 - **Record:** `docs/RESULT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md`.
+
+## NYISO-NEXT-14 — 2026-09-30 — the Total-East cutset re-tested on five years; keeper promoted, span CALIBRATED
+
+- **Phase 0 (zero LP):** the 2021–2023 C3a miss is entirely the Upstate_West collapse (with Upstate_West exact, C3a would be +4.6 / −1.2 / +0.4 %). The one upstate→east link was capped at CENTRAL EAST, which the measured TOTAL EAST flow exceeds in 60–99 % of hours. Queue item 1 (the pooled ladder) is this object seen from the import side. Record: `docs/FINDING-nyiso-next14-upstate-evacuation-phase0-2026-09-29.md`.
+- **Lever:** `nyiso_total_east_cutset_ttc` (existing flag, cell R since nyiso-224). The owner re-opened it by decision card ("Re-test all 5 years").
+- **Result:** keeper `2026-09-30-nyisonext14-total-east-span` (2022–2025), plus the stamped `2026-09-30-nyisonext14-total-east-2021`. Promoted per the pre-registered structural rule.
+  - G-1 exact. G-2: the link binds in 7.3 / 17.2 / 7.1 / 3.0 / 5.5 % of hours. G-3: 0 upstate hours at ≤ $0 every year. G-4: C6 / C8 PASS.
+  - C3a: 2021 −14.3 → +10.9 %, 2022 −13.6 → +2.3 %, 2023 −7.0 → +5.0 %, 2024 −2.5 → −1.4 %, 2025 −11.3 → −8.8 %.
+  - **Span CALIBRATED** (was NOT-YET). 2021 NOT-YET (C3a +10.9 %).
+- **Open:** Upstate_West overshoots measured in 2021–2023. The link binds in the wrong hours (nyiso-225's caveat, reported).
+- **Matrix:** `nyiso_total_east_cutset_ttc` R → K.
+- **Superseded and pruned:** `2026-09-29-nyisonext13-recon-detach-span` and its 2021 run.
+- **Record:** `docs/RESULT-nyiso-next14-total-east-cutset-2026-09-30.md`.
