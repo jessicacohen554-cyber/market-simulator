@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-30-caiso-r20-overnight",
+  "label": "caiso r20 overnight",
+  "date": "2026-09-30",
+  "shorthand": "caiso-r20-overnight",
+  "definition": "R-CAISO-20 A 2022: keeper recipe + caiso_dsw_overnight_clean_unprinted_arm=true (owner ruling 2026-09-30; PRECOMMIT-r-caiso-20)",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-30-caiso-r20-overnight.js",
+  "bundle": "results/calibration/rcaiso20_A_span"
+}
