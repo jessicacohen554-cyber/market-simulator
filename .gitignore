@@ -3920,3 +3920,6 @@ results/calibration/nwppnext13pu_20[0-9][0-9]/
 results/calibration/nyisonext17_202[2-5]/
 # R-CAISO-18 per-year shard legs: kept local, out of main (rules 31 / 32(d)); composites rcaiso18_A_span / rcaiso18_A_tp_2019_2021 are committed.
 results/calibration/rcaiso18_A_20*/
+
+# R-ERCOT-20 shard legs: kept out of main (rule 32(d)); provenance SHAs in RESULT doc
+results/calibration/r_ercot20_arm_*/
