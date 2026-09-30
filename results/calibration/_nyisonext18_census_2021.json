@@ -1,0 +1,173 @@
+{
+ "year": 2021,
+ "flags": [
+  "mid_vintage_exit_carry",
+  "fleet_zone_vintage_coords",
+  "retiree_vintage_status_scope"
+ ],
+ "added": {
+  "8907_3": [
+   "8907",
+   "Lower_Hudson",
+   "",
+   1039.4,
+   2894.7
+  ],
+  "CC_CHP_NYC_p52056_committed": [
+   "52056",
+   "NYC",
+   "CC_CHP",
+   24.8,
+   204.3
+  ],
+  "CC_CHP_NYC_p52056_econc00": [
+   "52056",
+   "NYC",
+   "CC_CHP",
+   1.0,
+   8.2
+  ],
+  "CC_CHP_NYC_p52056_econc01": [
+   "52056",
+   "NYC",
+   "CC_CHP",
+   1.0,
+   8.2
+  ],
+  "CC_CHP_NYC_p52056_econc02": [
+   "52056",
+   "NYC",
+   "CC_CHP",
+   1.0,
+   8.2
+  ],
+  "CC_CHP_NYC_p52056_econc03": [
+   "52056",
+   "NYC",
+   "CC_CHP",
+   1.0,
+   8.2
+  ],
+  "CC_CHP_NYC_p52056_econc04": [
+   "52056",
+   "NYC",
+   "CC_CHP",
+   1.0,
+   8.2
+  ],
+  "CC_CHP_NYC_p52056_econc05": [
+   "52056",
+   "NYC",
+   "CC_CHP",
+   1.0,
+   8.2
+  ],
+  "CC_CHP_NYC_p52056_peak": [
+   "52056",
+   "NYC",
+   "CC_CHP",
+   5.0,
+   41.3
+  ],
+  "CT_CHP_NYC_p58815_committed": [
+   "58815",
+   "NYC",
+   "CT_CHP",
+   0.5,
+   4.2
+  ],
+  "CT_PEAKER_Upstate_West_p62424_r202106_econlo": [
+   "62424",
+   "Upstate_West",
+   "CT_PEAKER",
+   2.1,
+   7.7
+  ],
+  "CT_PEAKER_Upstate_West_p62424_r202106_econhi": [
+   "62424",
+   "Upstate_West",
+   "CT_PEAKER",
+   1.9,
+   6.9
+  ]
+ },
+ "removed": {
+  "CC_CHP_Upstate_West_p52056_committed": [
+   "52056",
+   "Upstate_West",
+   "CC_CHP",
+   24.8,
+   204.3
+  ],
+  "CC_CHP_Upstate_West_p52056_econc00": [
+   "52056",
+   "Upstate_West",
+   "CC_CHP",
+   1.0,
+   8.2
+  ],
+  "CC_CHP_Upstate_West_p52056_econc01": [
+   "52056",
+   "Upstate_West",
+   "CC_CHP",
+   1.0,
+   8.2
+  ],
+  "CC_CHP_Upstate_West_p52056_econc02": [
+   "52056",
+   "Upstate_West",
+   "CC_CHP",
+   1.0,
+   8.2
+  ],
+  "CC_CHP_Upstate_West_p52056_econc03": [
+   "52056",
+   "Upstate_West",
+   "CC_CHP",
+   1.0,
+   8.2
+  ],
+  "CC_CHP_Upstate_West_p52056_econc04": [
+   "52056",
+   "Upstate_West",
+   "CC_CHP",
+   1.0,
+   8.2
+  ],
+  "CC_CHP_Upstate_West_p52056_econc05": [
+   "52056",
+   "Upstate_West",
+   "CC_CHP",
+   1.0,
+   8.2
+  ],
+  "CC_CHP_Upstate_West_p52056_peak": [
+   "52056",
+   "Upstate_West",
+   "CC_CHP",
+   5.0,
+   41.3
+  ],
+  "CT_CHP_Upstate_West_p58815_committed": [
+   "58815",
+   "Upstate_West",
+   "CT_CHP",
+   0.5,
+   4.2
+  ]
+ },
+ "changed": {},
+ "demand_identical": true,
+ "headroom": {
+  "ce_ge_085": {
+   "uw_gas_available_mw": 1239,
+   "uw_gas_below_uw_price_mw": 657,
+   "uw_gas_dispatched_mw_bench_plants": 711
+  },
+  "all": {
+   "uw_gas_available_mw": 1300,
+   "uw_gas_below_uw_price_mw": 724,
+   "uw_gas_dispatched_mw_bench_plants": 774
+  }
+ }
+}
