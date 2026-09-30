@@ -1546,10 +1546,39 @@ the budget of 1). 2020 alone moves NOT-YET → CALIBRATED-WITH-CAVEATS; 2019 alo
 No other ISO's verdict changes in any field. Tests: `tests/scoring/test_calibration_verdict_scoped_ledger.py`.
 NO SOLVE RAN.
 
-## 25. Changes to this file
+## 25. Rubric v3.12 — one more SCOPED ledger row: SOCO C3b 2022 vs the system lambda; budget kept at 1 (owner, 2026-09-30)
+
+**Owner rulings, verbatim** (soco-95 decision cards, 2026-09-30):
+
+> C3b 2022: "Scoped ledger row" — Caveat budget: "Keep budget at 1"
+
+**Why a ledger, not a lever.** FINDING-soco-95: the whole C3b 2022 miss (monthly NRMSE 0.275 vs ≤ 0.20) sits in
+λ's top-20 % hours (model = λ there reads 0.055), which is the same λ peak premium v3.11 ledgered for C3a. Winter
+Storm Elliott (Dec 23–26; λ $406.8/MWh, max 1,657, vs model $86.7) is 67.5 % of the squared error (0.158 without
+it; 0.206 as the only miss). The only untested measured input, the setter's own plant-month EIA-923 fuel, reads
+0.240 and moves passing 2023 from 0.095 to 0.181.
+
+**What changed** (`scripts/calibration_verdict.py`): one row joins `SCOPED_LEDGER_ENTRIES`:
+`(SOCO, 2022, price_shape, None)` with a new direction, **`above_band`**. A C3b record carries no `actual`, so
+the row binds to the record's model NRMSE exceeding the criterion's band in the new `_SCOPED_BAND_MAX`
+(`{"price_shape": PRICE_SHAPE_NRMSE_MAX}`). A re-solve inside the band simply PASSes. Every v3.10 guard binds
+unchanged: exact key, governance must pass, never a PASS, spends the single ledgered slot (budgets checked
+first), downgrades. **`MAX_LEDGERED_CAVEATS` stays 1** by the budget ruling, as does `LEDGERABLE_CRITERIA`.
+`RUBRIC_VERSION` becomes `"3.12"`.
+
+**Measured at amendment** over all 11 registered runs, full span and every single-year subset (72 verdicts),
+against the pre-change scorer on `origin/main`: only the SOCO keeper `2026-09-30-soco93-pondage-bound` moves. Its
+full span stays NOT-YET: grade 7/4/0/2/1 → 7/4/0/3/0, and the reason changes from "undocumented FAIL:
+price_shape" to "caveat budget exceeded (ledgered 3/1)". 2022 alone stays NOT-YET (ledgered 2/1). No other ISO's
+verdict changes in any field. A budget raise was measured and declined: at budget 3 the SOCO span would read
+CALIBRATED-WITH-CAVEATS, and no non-SOCO verdict would move under either a global raise or a SOCO-scoped
+exemption. Tests: `tests/scoring/test_calibration_verdict_scoped_ledger.py`. NO SOLVE RAN.
+
+## 26. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-30 | Added §25: **rubric v3.12**, one scoped SOCO C3b 2022 row (new `above_band` direction; downgrading, spending the single slot); budget kept at 1 (owner rulings verbatim in §25). Only the SOCO keeper's verdict moves; its full span stays NOT-YET on the budget. "Changes to this file" renumbered §25 → §26 (no external reference cited §25). |
 | 2026-09-30 | Added §24: **rubric v3.11**, three scoped SOCO C3a rows (2019 over, 2020 over, 2022 under; downgrading, spending the single slot), owner rulings verbatim in §24. Only the SOCO keeper's verdict moves; its full span stays NOT-YET. "Changes to this file" renumbered §24 → §25 (no external reference cited §24). |
 | 2026-09-28 | Added §23: **rubric v3.10**, one scoped ledger row (SOCO 2019 COAL_BIT, under-run only, downgrading, spends the single slot) past the v3.1 C3c-only guard (owner ruling verbatim in §23). One determination moves across all registered runs and per-year subsets (SOCO 2019 alone). "Changes to this file" renumbered §23 → §24 (no external reference cited §23). |
 | 2026-09-20 | Added §22: **rule 33 `[R-SHARD-ARCHIVE]` (d)/(f) — a shard branch is TRANSPORT, not STORAGE** (owner instruction, verbatim in §22). The five-step ordered-delete procedure is removed, along with both premises it rested on, each falsified by measurement in lane nwpp-42 on one day: (1) the environment deletes an unmerged shard branch when the **PARENT's** PR merges — `claude/nwpp-42-{arm-2023,arm-2024,mer-2025}` vanished on the lane PR's merge with none of their commits an ancestor of `main`, two holding an arm leg's per-plant dispatch layer and one the entire 2025 control; and (2) a session cannot delete a ref at all (HTTP 403 over nine refs, no MCP counterpart to `create_branch`), so the procedure was unperformable end to end. The lane's own "fix" — mirroring leg SHAs to PR-free refs — was strictly worse and is now banned by name, since those refs can never be cleared in-session. Replacement: what must survive lands on `main` inside the registered keeper bundle before the lane's PR merges; a shard's unique FINDING doc is still rescued; screen and control bundles stay disposable by design (rule 29(c) / rule 15 forbid them reaching `main` anyway). KEPT: rule 31 `[R-RETAIN]` untouched and still outranking; rule 34(a) "the bundle is pushed, always" untouched as the transport mechanism; clause (d)'s full-SHA discipline demoted from recovery route to **provenance**; rule 33 (a)/(b)/(c)/(e) unchanged. Rule 34 (d)/(e) annotated — a passing `git ls-tree` is necessary, not sufficient. Nothing scored moves. "Changes to this file" renumbered §22 → §23 (no external reference cited §22). |

@@ -102,4 +102,30 @@ above the band).
 
 - Probe: `scripts/probes/_soco95_c3b_2022.py` (`--out DIR` writes `c3b_<y>.json` and caches `fleet94_<y>.npz`; ~25 s
   per year).
-- Keeper unchanged. SOCO is not frontier.
+- Keeper unchanged.
+
+## 6. Owner rulings (decision cards, 2026-09-30) — implemented as rubric v3.12
+
+The owner chose **"Scoped ledger row"** for C3b 2022 and **"Keep budget at 1"** for the budget.
+
+- `SCOPED_LEDGER_ENTRIES` gains `(SOCO, 2022, price_shape, None)` with a new direction, `above_band`. The row binds
+  to the record's NRMSE exceeding `PRICE_SHAPE_NRMSE_MAX` through `_SCOPED_BAND_MAX`. Every v3.10 guard is
+  unchanged. `MAX_LEDGERED_CAVEATS` stays 1 and `RUBRIC_VERSION` becomes `"3.12"`. Genealogy is
+  `docs/governance/rule-history.md` §25; tests are in `tests/scoring/test_calibration_verdict_scoped_ledger.py`
+  (35 pass).
+- **Re-scored** 72 verdicts (11 registered runs × full span + every single year) against the `origin/main` scorer.
+  Only SOCO rows differ:
+
+| scope | before (v3.11) | after (v3.12) |
+|---|---|---|
+| SOCO keeper, 2019–2025 | NOT-YET 7/4/0/2/1 (FAIL: price_shape) | **NOT-YET 7/4/0/3/0** (caveat budget exceeded, ledgered 3/1) |
+| SOCO keeper, 2022 alone | NOT-YET (C3b FAIL) | NOT-YET (ledgered 2/1) |
+| SOCO keeper, 2020 alone | CALIBRATED-WITH-CAVEATS | unchanged (reason text now reads "v3.10-v3.12") |
+| every other run / year | — | byte-identical |
+
+- Refreshed: `results/calibration/soco93_span/metrics.json` (`--write-metrics`). `build_status.py` was run for every
+  ISO; in the eight non-SOCO parts only `rubric_version` moves (checked by hash with that field masked). Also
+  refreshed: the SOCO registry definition and the SOCO matrix `gates` stamp.
+- **SOCO is not frontier.** No criterion fails, but the determination is NOT-YET on the budget alone: 3 ledgered
+  (C1 2019 COAL_BIT, C3a, C3b) against 1. It can move only through a budget ruling (declined this session) or by
+  removing ledgered rows through model repair.
