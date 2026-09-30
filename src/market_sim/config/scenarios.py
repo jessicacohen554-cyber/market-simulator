@@ -19824,6 +19824,10 @@ class ScenarioConfig:
     # (rules 21/24). Wired on the backcast calibration path only, like
     # caiso_tac_shares_standard_time. CAISO-only; default off.
     # docs/handoffs/r-caiso-13/RESULT-r-caiso-13-2026-09-28.md.
+    # R-CAISO-17 extends the same flag (rule 19) to the EARLY window: the
+    # generation frame is stamped ~1 h early 2019-01 .. 2022-06-13
+    # (constants.EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC; Outlook 5-min, EPA CEMS,
+    # solar geometry). docs/handoffs/r-caiso-17/.
     caiso_eia930_clock_repair: bool = False
 
     # PJM transmission-congestion lever (break the copper-plate). PJM clears as a

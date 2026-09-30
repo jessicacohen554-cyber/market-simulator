@@ -320,39 +320,50 @@ def _model_row_starts_utc(year: int) -> pd.DatetimeIndex:
 
 
 def _repair_supply_consistent_clock(year: int, demand: np.ndarray) -> np.ndarray:
-    """Move the supply-consistent series' EIA-930 term off CISO's late stamps.
+    """Move the supply-consistent series' EIA-930 term off CISO's mis-stamps.
 
     ``caiso_eia930_clock_repair`` (R-CAISO-13) applied to the derived caiso-80
     artifact: its ``NetGen - NG_cell`` term was built on the CISO generation
     frame, which EIA published one hour late inside
     :data:`~market_sim.config.constants.EIA930_CISO_CLOCK_LATE_WINDOWS_UTC`
-    ``["generation"]``; its ``TI`` term is on the true clock (R-CAISO-16) and
-    stays put. That term is pulled back one hour exactly as the frame
-    seam repairs the extract (the window's last hour takes its neighbours'
-    mean); the CEMS gas term and the flat fold-ins ride their own clocks and
-    are untouched. The artifact on disk is never modified. The first row of
-    ``year + 1`` supplies the value that crosses a year edge.
+    ``["generation"]`` and one hour EARLY inside
+    :data:`~market_sim.config.constants.EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC`
+    ``["generation"]`` (R-CAISO-17); its ``TI`` term is on the true clock
+    (R-CAISO-16) and stays put. That term is moved one hour exactly as the
+    frame seam repairs the extract (the late window's last hour and the early
+    window's first take their neighbours' mean); the CEMS gas term and the
+    flat fold-ins ride their own clocks and are untouched. The artifact on disk
+    is never modified. The first row of ``year + 1`` (last row of
+    ``year - 1``) supplies the value that crosses a year edge.
     """
-    from market_sim.config.constants import EIA930_CISO_CLOCK_LATE_WINDOWS_UTC
+    from market_sim.data.eia930.frames import _ciso_clock_windows
 
     g = _supply_consistent_eia930_term(year)
     if g is None:
         return demand
-    g_next = _supply_consistent_eia930_term(year + 1)
     stamps = _model_row_starts_utc(year) + pd.Timedelta(hours=1)  # hour-ending
-    first, last = (
-        pd.Timestamp(t) for t in EIA930_CISO_CLOCK_LATE_WINDOWS_UTC["generation"]
-    )
-    nxt = g_next[0] if g_next is not None else g[-1]
-    g_after = np.r_[g[1:], nxt]  # the value published one stamp later
-    inside_next = (stamps + pd.Timedelta(hours=1) >= first) & (
-        stamps + pd.Timedelta(hours=1) <= last
-    )
-    fixed = np.where(inside_next, g_after, g)
-    seam = np.flatnonzero(stamps == last)
-    if seam.size:
-        k = int(seam[0])
-        fixed[k] = 0.5 * (g[k] + g_after[k])
+    hour = pd.Timedelta(hours=1)
+    fixed = g.copy()
+    for family, first, last, step in _ciso_clock_windows():
+        if family != "generation":
+            continue
+        if step < 0:
+            g_next = _supply_consistent_eia930_term(year + 1)
+            edge = g_next[0] if g_next is not None else g[-1]
+            moved = np.r_[g[1:], edge]  # the value published one stamp later
+            seam_stamp = last
+        else:
+            g_prev = _supply_consistent_eia930_term(year - 1)
+            edge = g_prev[-1] if g_prev is not None else g[0]
+            moved = np.r_[edge, g[:-1]]  # the value published one stamp earlier
+            seam_stamp = first
+        pub = stamps - step * hour
+        inside = (pub >= first) & (pub <= last)
+        fixed = np.where(inside, moved, fixed)
+        seam = np.flatnonzero(stamps == seam_stamp)
+        if seam.size:
+            k = int(seam[0])
+            fixed[k] = 0.5 * (g[k] + moved[k])
     return demand - g + fixed
 
 

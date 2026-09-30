@@ -61,6 +61,10 @@ def _windows(monkeypatch, gen, dem):
     )
 
 
+def _early(monkeypatch, windows):
+    monkeypatch.setattr(constants, "EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC", windows)
+
+
 def test_unarmed_returns_same_object():
     """Off by default: the input object comes back untouched."""
     df = _extract()
@@ -197,6 +201,7 @@ def test_hsl_year_outside_window_returns_same_object(monkeypatch):
         ("2023-11-01 08:00", "2025-12-02 22:00"),
         ("2022-06-16 08:00", "2025-12-02 22:00"),
     )
+    _early(monkeypatch, {})
     F.set_caiso_eia930_clock_repair(True)
     df = _hsl_frame()
     for year in (2019, 2022, 2026):
@@ -251,15 +256,22 @@ def test_live_hsl_precondition_file_gen_is_unarmed_loader():
 
 @requires_raw(_CAISO_HSL / "caiso_2024_hsl_hourly.parquet")
 def test_live_hsl_armed_moves_solar_centroid_and_conserves_curtailment():
-    """2024-25 solar centroid lands at 11.5-12.0 h PST every month; 2019-22 inert."""
+    """2024-25 solar centroid lands at 11.5-12.0 h PST every month; 2019-21
+    (the R-CAISO-17 early window) move exactly one hour later every month."""
     for year in range(2019, 2026):
         F.set_caiso_eia930_clock_repair(False)
         off = R.load_hsl_hourly("CAISO", year)
         F.set_caiso_eia930_clock_repair(True)
         on = R.load_hsl_hourly("CAISO", year)
-        if year <= 2022:
-            pd.testing.assert_frame_equal(on, off)
-            continue
+        if year <= 2021:
+            c_on = _solar_centroid_by_month(on["solar_gen_mw"].to_numpy(), year)
+            c_off = _solar_centroid_by_month(off["solar_gen_mw"].to_numpy(), year)
+            # Every month but one moves by 1.00 +- 0.05 h. The exception is
+            # October 2019, whose NG: SUN is itself anomalous on 2019-10-03..08
+            # (daily best lag 0..+2 against Outlook solar while NG: NG stays at
+            # -1; PRECOMMIT-r-caiso-17 addendum) — a solar-cell defect, not
+            # the family's clock.
+            assert (np.abs(c_on - c_off - 1.0) < 0.05).sum() >= 11, c_on - c_off
         for fuel in ("wind", "solar"):
             curt_on = (on[f"{fuel}_hsl_mw"] - on[f"{fuel}_gen_mw"]).sum()
             curt_off = (off[f"{fuel}_hsl_mw"] - off[f"{fuel}_gen_mw"]).sum()
@@ -313,7 +325,8 @@ def test_live_envelope_armed_moves_2024_2025_one_hour_earlier():
             assert (
                 np.corrcoef(new, np.roll(old, -1))[0, 1] > np.corrcoef(new, old)[0, 1]
             )
-    assert S._caiso_storage_envelope_clock_repaired(2022) is None
+    # No window reaches 2017 (the early window opens at the last 2018 stamp).
+    assert S._caiso_storage_envelope_clock_repaired(2017) is None
 
 
 @requires_raw(_ENVELOPE, _CISO_EXTRACT)
@@ -407,3 +420,134 @@ def test_live_armed_frame_ti_is_raw_and_matches_diba_feed():
     j = pd.concat({"f": feed, "t": ti}, axis=1, join="inner").dropna()
     assert len(j) > 8000
     assert ((j["f"] - j["t"]).abs() < 1.0).mean() > 0.99
+
+
+# --- R-CAISO-17: the EARLY registry (EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC) -----
+
+
+def test_early_window_pushes_forward_one_hour_with_mean_seam(monkeypatch):
+    """Stamps 02..05 are early: row s+1 takes s; the first row takes the mean."""
+    _windows(
+        monkeypatch,
+        ("2030-01-01 00:00", "2030-01-02 00:00"),
+        ("2030-01-01 00:00", "2030-01-02 00:00"),
+    )
+    _early(monkeypatch, {"generation": ("2024-01-01 02:00", "2024-01-01 05:00")})
+    F.set_caiso_eia930_clock_repair(True)
+    df = _extract()
+    out = F._repair_clock_late_windows(df, "CISO")
+    # Row 2 (the seam) = mean(published 1, published 2); rows 3..6 take the
+    # values published at 2..5; rows 0, 1, 7 are untouched.
+    exp = np.array([0, 1, 1.5, 2, 3, 4, 5, 7], dtype=float)
+    for col, base in (("Net generation", 200.0), ("NG: SUN", 400.0)):
+        np.testing.assert_allclose(out[col].to_numpy(), base + exp)
+    # Outside the generation family: never moved.
+    for col in ("Demand", "Demand forecast", "Total interchange"):
+        np.testing.assert_allclose(out[col], df[col])
+    np.testing.assert_allclose(df["NG: SUN"], 400.0 + np.arange(8))
+
+
+def test_early_and_late_windows_compose(monkeypatch):
+    """Disjoint early and late generation windows both apply, independently."""
+    _windows(
+        monkeypatch,
+        ("2024-01-01 05:00", "2024-01-01 06:00"),
+        ("2030-01-01 00:00", "2030-01-02 00:00"),
+    )
+    _early(monkeypatch, {"generation": ("2024-01-01 01:00", "2024-01-01 02:00")})
+    F.set_caiso_eia930_clock_repair(True)
+    out = F._repair_clock_late_windows(_extract(), "CISO")
+    np.testing.assert_allclose(
+        out["NG: SUN"], 400.0 + np.array([0, 0.5, 1, 2, 5, 6, 6.5, 7])
+    )
+
+
+def test_early_unarmed_is_identity(monkeypatch):
+    """Unarmed, the early registry changes nothing and maps stamps to themselves."""
+    _early(monkeypatch, {"generation": ("2024-01-01 02:00", "2024-01-01 05:00")})
+    df = _extract()
+    assert F._repair_clock_late_windows(df, "CISO") is df
+    stamps = pd.DatetimeIndex(df["UTC time"])
+    assert F.ciso_generation_source_stamps(stamps).equals(stamps)
+
+
+def test_source_stamps_follow_the_row_mapping(monkeypatch):
+    """Armed, a repaired row maps to the published stamp whose value it holds."""
+    _windows(
+        monkeypatch,
+        ("2024-01-01 05:00", "2024-01-01 06:00"),
+        ("2030-01-01 00:00", "2030-01-02 00:00"),
+    )
+    _early(monkeypatch, {"generation": ("2024-01-01 01:00", "2024-01-01 02:00")})
+    F.set_caiso_eia930_clock_repair(True)
+    stamps = pd.DatetimeIndex(_extract()["UTC time"])
+    src = F.ciso_generation_source_stamps(stamps)
+    # rows 2, 3 <- published 1, 2 (early); rows 4, 5 <- published 5, 6 (late)
+    assert [t.hour for t in src] == [0, 1, 1, 2, 5, 6, 6, 7]
+
+
+def test_supply_consistent_early_window_moves_forward(monkeypatch):
+    """Early window: the 930 term moves one row later; the first row is the mean."""
+    g = np.arange(D.HOURS_PER_YEAR, dtype=float)
+    rest = np.full(D.HOURS_PER_YEAR, 1000.0)
+    monkeypatch.setattr(
+        D, "_supply_consistent_eia930_term", lambda y: g if y == 2024 else None
+    )
+    stamps = D._model_row_starts_utc(2024) + pd.Timedelta(hours=1)
+    first, last = stamps[10], stamps[20]
+    _windows(
+        monkeypatch,
+        ("2030-01-01 00:00", "2030-01-02 00:00"),
+        ("2030-01-01 00:00", "2030-01-02 00:00"),
+    )
+    _early(monkeypatch, {"generation": (str(first), str(last))})
+    out = D._repair_supply_consistent_clock(2024, g + rest)
+    moved = out - rest
+    np.testing.assert_allclose(moved[:10], g[:10])
+    assert moved[10] == pytest.approx(0.5 * (g[9] + g[10]))
+    np.testing.assert_allclose(moved[11:22], g[10:21])
+    np.testing.assert_allclose(moved[22:], g[22:])
+
+
+def test_windows_reach_widens_by_the_early_registry(monkeypatch):
+    """The artifact seams' year gate covers both registries."""
+    _windows(
+        monkeypatch,
+        ("2023-11-01 08:00", "2025-12-02 22:00"),
+        ("2022-06-16 08:00", "2025-12-02 22:00"),
+    )
+    _early(monkeypatch, {"generation": ("2019-01-01 08:00", "2022-06-14 07:00")})
+    reach = {y: F.ciso_generation_windows_reach(y) for y in range(2017, 2027)}
+    assert reach == {
+        2017: False,
+        2018: True,
+        2019: True,
+        2020: True,
+        2021: True,
+        2022: True,
+        2023: True,
+        2024: True,
+        2025: True,
+        2026: False,
+    }
+
+
+@requires_raw(_CISO_EXTRACT)
+def test_live_hydro_backfill_rides_the_early_repair():
+    """Armed, the 2020 NG: WAT fill sits on the repaired (true) clock: each row
+    equals the Outlook hour one stamp earlier, exactly as its neighbours moved."""
+    from market_sim.data.eia930.caiso_hydro_backfill import outlook_hourly_hydro
+
+    src = outlook_hourly_hydro(2020)
+    if src is None:
+        pytest.skip("no committed Outlook 2020 file")
+    for armed, lag in ((False, 0), (True, 1)):
+        F.set_caiso_eia930_clock_repair(armed)
+        fr = F._eia_hourly_frame("CISO", 2020)
+        st = pd.DatetimeIndex(fr["UTC time"])
+        hole = (st >= "2020-01-01") & (st < "2020-08-20")
+        ref = src.reindex(st - pd.Timedelta(hours=lag)).to_numpy()
+        wat = fr["NG: WAT"].to_numpy(float)
+        ok = hole & np.isfinite(ref) & np.isfinite(wat)
+        assert ok.sum() > 5000
+        np.testing.assert_allclose(wat[ok], ref[ok])

@@ -1874,7 +1874,9 @@ def _repair_caiso_hsl_clock(iso: str, year: int, df: pd.DataFrame) -> pd.DataFra
     ``*_gen_mw`` from :func:`~market_sim.data.eia930.actuals.load_eia_hourly_renewable_gen`
     before the repair existed, so inside
     :data:`~market_sim.config.constants.EIA930_CISO_CLOCK_LATE_WINDOWS_UTC`
-    ``["generation"]`` it carries the one-hour-late stamps. The term is re-read
+    ``["generation"]`` it carries the one-hour-late stamps, and inside
+    :data:`~market_sim.config.constants.EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC`
+    ``["generation"]`` (R-CAISO-17) the one-hour-early ones. The term is re-read
     from that same loader, whose frame the seam
     (:func:`~market_sim.data.eia930.frames._repair_clock_late_windows`) has
     already repaired — the identical row mapping, seam hour and year edge. The
@@ -1891,17 +1893,9 @@ def _repair_caiso_hsl_clock(iso: str, year: int, df: pd.DataFrame) -> pd.DataFra
 
     if iso != "CAISO" or not caiso_eia930_clock_repair_active():
         return df
-    from market_sim.config.constants import EIA930_CISO_CLOCK_LATE_WINDOWS_UTC
+    from market_sim.data.eia930.frames import ciso_generation_windows_reach
 
-    first, last = (
-        pd.Timestamp(t) for t in EIA930_CISO_CLOCK_LATE_WINDOWS_UTC["generation"]
-    )
-    hour = pd.Timedelta(hours=1)
-    # Hour-ending UTC stamps of the local year (PST/PDT) lie inside
-    # [Jan 1 07:00, Jan 1 of year+1 09:00]; a row reads its successor's stamp.
-    year_lo = pd.Timestamp(year=year, month=1, day=1, hour=7)
-    year_hi = pd.Timestamp(year=year + 1, month=1, day=1, hour=9)
-    if year_hi < first - hour or year_lo > last:
+    if not ciso_generation_windows_reach(year):
         return df
     from market_sim.data.eia930.actuals import load_eia_hourly_renewable_gen
 

@@ -82,9 +82,7 @@ def tac() -> tuple[pd.Series, pd.DataFrame]:
                 "rows": len(s),
                 "dup_utc": int(s.index.duplicated().sum()),
                 "missing_utc": int(len(full.difference(s.index))),
-                "missing_list": ";".join(
-                    str(m) for m in full.difference(s.index)[:6]
-                ),
+                "missing_list": ";".join(str(m) for m in full.difference(s.index)[:6]),
             }
         )
         parts.append(s)
@@ -100,11 +98,7 @@ def outlook() -> pd.DataFrame:
         wall = pd.to_datetime(o["date"] + " " + o["time"], errors="coerce")
         o = o.assign(wall=wall).dropna(subset=["wall"])
         num = ["solar", "natural_gas", "imports"]
-        sup = [
-            c
-            for c in o.columns
-            if c not in ("date", "time", "wall")
-        ]
+        sup = [c for c in o.columns if c not in ("date", "time", "wall")]
         o[sup] = o[sup].apply(pd.to_numeric, errors="coerce")
         o["supply"] = o[sup].sum(axis=1, min_count=1)
         # fall-back day repeats 01:xx; keep the unambiguous hours only
@@ -118,8 +112,12 @@ def outlook() -> pd.DataFrame:
     h = pd.concat(out)
     h = h[~h.index.duplicated()].asfreq("h")
     return h.rename(
-        columns={"solar": "o_sun", "natural_gas": "o_gas", "imports": "o_imp",
-                 "supply": "o_sup"}
+        columns={
+            "solar": "o_sun",
+            "natural_gas": "o_gas",
+            "imports": "o_imp",
+            "supply": "o_sup",
+        }
     )
 
 
@@ -172,7 +170,11 @@ def main() -> None:
     t, audit = tac()
     o = outlook()
     c = cems()
-    ref = pd.concat({"tac": t}, axis=1).join(o, how="outer").join(c.rename("cems"), how="outer")
+    ref = (
+        pd.concat({"tac": t}, axis=1)
+        .join(o, how="outer")
+        .join(c.rename("cems"), how="outer")
+    )
     df = x.join(ref, how="left")
     df = df[(df.index >= "2019-01-01") & (df.index < "2023-01-01")]
 
@@ -184,7 +186,9 @@ def main() -> None:
     for (y, m), g in df.groupby([df.index.year, df.index.month]):
         r = best_lag(g["o_sup"], g["tac"]) if g["o_sup"].notna().sum() > 48 else None
         if r:
-            rows.append({"year": y, "month": m, **{f"tacclk_{k}": v for k, v in r.items()}})
+            rows.append(
+                {"year": y, "month": m, **{f"tacclk_{k}": v for k, v in r.items()}}
+            )
     tacclk = pd.DataFrame(rows)
 
     # Monthly best lag per pair.
@@ -200,9 +204,15 @@ def main() -> None:
         # Solar-geometry centroid of NG: SUN on PST (UTC-8), interval midpoint.
         sun = g["SUN"].clip(lower=0)
         hpst = ((g.index - pd.Timedelta(hours=8)).hour + 0.5).to_numpy()
-        row["SUN_centroid_PST"] = round(float((sun * hpst).sum() / sun.sum()), 2) if sun.sum() > 0 else np.nan
+        row["SUN_centroid_PST"] = (
+            round(float((sun * hpst).sum() / sun.sum()), 2) if sun.sum() > 0 else np.nan
+        )
         osun = g["o_sun"].clip(lower=0)
-        row["OUTsun_centroid_PST"] = round(float((osun * hpst).sum() / osun.sum()), 2) if osun.sum() > 0 else np.nan
+        row["OUTsun_centroid_PST"] = (
+            round(float((osun * hpst).sum() / osun.sum()), 2)
+            if osun.sum() > 0
+            else np.nan
+        )
         mrows.append(row)
     monthly = pd.DataFrame(mrows).merge(tacclk, on=["year", "month"], how="left")
 
@@ -218,15 +228,23 @@ def main() -> None:
 
     pd.set_option("display.width", 250)
     pd.set_option("display.max_columns", 60)
-    lagcols = ["year", "month"] + [p[2] for p in PAIRS] + [
-        "SUN_centroid_PST", "OUTsun_centroid_PST", "tacclk_best"]
+    lagcols = (
+        ["year", "month"]
+        + [p[2] for p in PAIRS]
+        + ["SUN_centroid_PST", "OUTsun_centroid_PST", "tacclk_best"]
+    )
     print("\n== Monthly best lag (+1 = EIA-930 late) ==")
     print(monthly[[c for c in lagcols if c in monthly]].to_string(index=False))
     print("\n== Daily best-lag share per year (fraction of days at each lag) ==")
     daily["year"] = pd.to_datetime(daily["day"]).dt.year
     for _, _, lab in PAIRS:
         if lab in daily:
-            tab = daily.groupby("year")[lab].value_counts(normalize=True).unstack().round(3)
+            tab = (
+                daily.groupby("year")[lab]
+                .value_counts(normalize=True)
+                .unstack()
+                .round(3)
+            )
             print(f"-- {lab}\n{tab.to_string()}")
     monthly.to_csv(outdir / "phase0-monthly.csv", index=False)
     daily.to_csv(outdir / "phase0-daily.csv", index=False)
