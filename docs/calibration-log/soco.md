@@ -2020,3 +2020,10 @@ long at peak vs EIA-930. That is a real structural miss, but a perfect-hindsight
 Floors cannot set an LP price (256–382 MW out-of-merit). Interchange is measured and on-clock. Band multipliers have no
 ex-ante source under G5. No solve; keeper unchanged; NOT-YET 7/4/0/1/2. Record: docs/handoffs/r-soco/FINDING-soco-91-2026-09-29.md;
 probe scripts/probes/_soco91_intraday_census.py.
+
+OWNER RULINGS 2026-09-29 (decision cards, soco-91):
+- **SOCO C3a: "Reopen two-part cost"**: a zero-LP design lane for CC incremental + no-load and CT start/no-load as one
+  coherent construction. It lifts the CC-incremental and CT-start DO-NOT-REDO entries for this design only, and returns
+  with a build card.
+- **Hydro shape: "Queue as next SOCO lane"**: build the reconciled reservoir min-flow floor under hydro_ror_split, plus
+  PS cycling depth, for structure (not C3a). PRECOMMIT + 7 year-isolated shards.
