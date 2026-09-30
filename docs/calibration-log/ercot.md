@@ -14958,3 +14958,11 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - C8 up 1–3 pp in 2020/2023/2024, all PASS.
 - **Promoted** under the standing instruction. ISO stays NOT-YET (2023 carve-out hold; 2024 C3a −10.7 %).
 - **Records:** `docs/handoffs/r-ercot/PRECOMMIT-r-ercot-18-drag-overnight-index-2026-09-30.md`, `docs/handoffs/r-ercot/RESULT-r-ercot-18-drag-overnight-index-2026-09-30.md`.
+
+## R-ERCOT-19 — 2026-09-30 — EIA-923 Finals zonal-gas refresh — PROMOTED `2026-09-30-r-19-eia-923`
+
+- **Phase 0:** the South over-run is ISO-wide heat-rate merit compression, not a South or congestion effect. On the EIA-923 basis the ratio is 1.03–1.22.
+- **Arm A (promoted, owner card "Promote A only (Recommended)"):** 2024/2025 zonal-gas member rows re-derived on the EIA-923 Sch5 Finals (rule 23). Recipe unchanged; no determination moves. 2025 C3a −9.6 → −9.8 %.
+- **Arm B (both commit-profile limbs) and arm C (CC limb only):** probes, not promoted. Both flip 2022 NOT-YET on C1 CC_REGULAR (−8.42 / −8.66). B flips 2024 CALIBRATED at a 0.12 pp margin; C misses by 0.04 pp. B's drag-hour limb left D-4 at 8 → 8. Both limbs stay default-off, and both runs were pruned.
+- ISO stays NOT-YET (2023 carve-out hold; 2024 C3a −10.7 %).
+- Record: `docs/handoffs/r-ercot/RESULT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md`.

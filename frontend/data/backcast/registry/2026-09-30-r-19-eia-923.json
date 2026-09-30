@@ -1,6 +1,6 @@
 {
   "id": "2026-09-30-r-19-eia-923",
-  "label": "r 19 eia 923",
+  "label": "R-ERCOT-19: EIA-923 Finals zonal-gas refresh (keeper)",
   "date": "2026-09-30",
   "shorthand": "r-19-eia-923",
   "definition": "R-ERCOT-19 ARM 2025: keeper 2026-09-30-r-18-drag-index recipe UNCHANGED, re-solved on the refreshed data/raw/ercot_zonal_gas_hub.csv (2024/2025 North/Northeast/South/South_Central member rows re-derived on the EIA-923 Schedule 5 Finals, rule 23) \u2014 PRECOMMIT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30",
