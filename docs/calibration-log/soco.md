@@ -2035,8 +2035,12 @@ reconciled form already in `build_hydro_fleet`; no new field, zero DOF). Seven y
 inert (LP inputs bit-identical 7/7). Registered PROBE `2026-09-30-soco92-hydro-min-flow` (soco92_span), NOT-YET 7/4/0/1/2 =
 keeper. PRECOMMIT §7 holds on all six: reservoir-below-floor hours 697–2,181 → 0; unserved 0; C6/C8 PASS, D-4 0 fails; zero
 status flips anywhere. Night hydro+PS up +11..+170 MW, peak down −1..−109 MW (toward EIA-930); C3a moves ≤ 0.2 pp. PS cycling
-depth not built (model RTE 0.804 = measured 0.811; volume excess is an outcome). **Promotion awaits the owner (rule 31).**
+depth not built (model RTE 0.804 = measured 0.811; volume excess is an outcome).
 Track B (owner "Reopen two-part cost"): measured night CC incremental at the real operating point is 0.92–0.97 × average (λ
 needs 0.75–0.83); the coherent pure-LP posture form raises night prices in 6/7 years; measured CT start $0.2–3.3/MWh vs a
 $1–25 gap. Recommendation: do not build for C3a. Records: docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-92-2026-09-30.md,
 FINDING-soco-92-two-part-2026-09-30.md.
+
+OWNER RULINGS 2026-09-30 (soco-92 cards): **"Promote"**: KEEPER → `2026-09-30-soco92-hydro-min-flow` (soco87 pruned, rule 35);
+**"Close the reopen"**: two-part CC/CT cost closed for C3a (`committed_band_measured_basis` I, CT start G); **"Pondage bound
+phase 0"**: soco-93 derives a SOCO NID pondage artifact for `hydro_pondage_bound`, zero LP first.

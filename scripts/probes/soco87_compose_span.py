@@ -13,7 +13,7 @@ Usage::
     PYTHONPATH=.:src:scripts python3 scripts/probes/soco87_compose_span.py --check-only \\
         --pinned-sha <sha> --legs results/calibration/soco87_{2019,...,2025}
     PYTHONPATH=.:src:scripts python3 scripts/probes/soco87_compose_span.py --pinned-sha <sha> \\
-        --legs results/calibration/soco87_{2019,...,2025} --out results/calibration/soco87_span
+        --legs results/calibration/soco87_{2019,...,2025} --out results/calibration/soco92_span
 """
 
 from __future__ import annotations

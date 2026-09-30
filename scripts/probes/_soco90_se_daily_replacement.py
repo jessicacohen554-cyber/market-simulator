@@ -60,8 +60,10 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "scripts"), str(ROOT / "src"), str(ROOT)]
 
-KEEPER = "2026-09-29-soco87-gas-hh-monthly"
-SPAN = ROOT / "results/calibration/soco87_span"
+KEEPER = "2026-09-30-soco92-hydro-min-flow"
+SPAN = (
+    ROOT / "results/calibration/soco92_span"
+)  # repointed soco-92 (rule 35 prune of soco92_span)
 YEARS = tuple(range(2019, 2026))
 T = 8760
 _DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
