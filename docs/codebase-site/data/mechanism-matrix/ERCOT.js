@@ -121,6 +121,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     nyiso_li_seam_posted_limit_cap: { cell: ".", ev: "n/a: NYISO-only clip (run_calibration.run_year gates it on iso == \"NYISO\"); added by the rule-28(c) same-PR duty, NYISO-NEXT-6 2026-09-27." },
     nyiso_ne_ac_node: { cell: ".", ev: "n/a: NYISO-only node (get_interchange_spec resolves it on iso == \"NYISO\" only); added by the rule-28(c) same-PR duty, NYISO-NEXT-11 2026-09-28." },
     nyiso_ne_ac_recon_detach: { cell: ".", ev: "n/a: NYISO-only (applied in run_calibration.run_year on iso == \"NYISO\" with nyiso_ne_ac_node armed); added by the rule-28(c) same-PR duty, NYISO-NEXT-13 2026-09-29." },
+    nyiso_import_landing_band: { cell: ".", ev: "n/a: NYISO-only (applied in run_calibration.run_year on iso == \"NYISO\" with nyiso_import_reconciliation armed); added by the rule-28(c) same-PR duty, NYISO-NEXT-15 2026-09-30." },
     coal_takeorpay_committed: { cell: "." },
     coal_prb_committed_dispatchable: { cell: "." },
     coal_prb_committed_split: { cell: "." },

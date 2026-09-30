@@ -2274,6 +2274,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # "nyiso_ne_ac_recon_detach", False)`` in run_calibration.run_year.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "nyiso_ne_ac_recon_detach",
+    # NYISO-NEXT-15 (2026-09-30): per-landing-link monthly band (default off).
+    # Byte-identical off by construction: its one applier is reached only
+    # inside ``getattr(config, "nyiso_import_landing_band", False)`` in
+    # run_calibration.run_year. Registered IN THE SAME COMMIT as the field.
+    "nyiso_import_landing_band",
     # SPP-93 West/East re-partition (default "north_south"): dropped from the
     # hash at its default so every pre-existing run keeps its key; an armed
     # run solves a different SPP topology and so gets a distinct key.
@@ -3105,6 +3110,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_ne_ac_node": "False",
     # Added by NYISO-NEXT-13 WITH the field (the nyiso-119 discipline).
     "nyiso_ne_ac_recon_detach": "False",
+    # Added by NYISO-NEXT-15 WITH the field (the nyiso-119 discipline).
+    "nyiso_import_landing_band": "False",
     # Added by SPP-93 WITH the field (the nyiso-119 discipline).
     "spp_zone_partition": "'north_south'",
     # Added by SPP-102 WITH the field (the nyiso-119 discipline).
@@ -8477,6 +8484,19 @@ class ScenarioConfig:
     # outcomes pinned (rule 13); zero free parameters (the same band_frac).
     # Requires nyiso_ne_ac_node and nyiso_import_reconciliation; backcast-only.
     # PRECOMMIT: docs/PRECOMMIT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md.
+    # Default off; NYISO.
+    nyiso_import_landing_band: bool = False  # NYISO-NEXT-15: replace the
+    # pooled node's monthly EIA-930 net-interchange band with one monthly band
+    # per pooled border link on that link's OWN measured P-32 attributed
+    # schedule (the source its hourly p90 envelope is built from). Phase 0: the
+    # pooled band lets the LP land imports wherever the zonal price is highest,
+    # so the downstate links sit at their p90 caps (+400-560 MW over measured)
+    # and Upstate_West runs 264-375 MW short, a phantom import east of the
+    # Central-East cutset. Rule 19: replaces, never stacks; rule 14 alignment:
+    # the pooled total moves EIA-930 -> P-32 sum (-2..+1 %); zero free
+    # parameters (published PAR split, the same band_frac). Requires
+    # nyiso_import_reconciliation and nyiso_seam_par_attribution; backcast-only.
+    # PRECOMMIT: docs/PRECOMMIT-nyiso-next15-landing-band-2026-09-30.md.
     # Default off; NYISO.
     nyiso_seam_deliverability_envelope: bool = False  # NYISO external seam
     # deliverability envelope (nyiso-125, data.nyiso_seam_envelope): replace the
@@ -23988,6 +24008,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_import_hub_prices": 1,
     "nyiso_ne_ac_node": 1,
     "nyiso_ne_ac_recon_detach": 1,
+    "nyiso_import_landing_band": 1,
     "nyiso_iroquois_winter_spread": 1,
     "nyiso_synchronised_reserve": 1,
     "nyiso_li_locational_reserve": 1,
