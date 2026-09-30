@@ -8,7 +8,8 @@ PROBE   : scripts/probes/_miso290_pile_floor_precheck.py
           --census      : identification only (measured, §3; no price computed)
           --solver-test : INC + PILE0 (the miso-289 arms) on the revised solver (§4; no candidate)
           default       : INC / CAND emulation (run AFTER this file is pushed)
-STATUS  : pre-registration. §3 census and §4 solver test measured; no CAND price or dispatch exists.
+STATUS  : pre-registration, PUSHED BEFORE the CAND arm runs. §3 census and §4 solver test measured;
+          no CAND price or dispatch number exists yet.
 ```
 
 ## 1. The candidate (CAND)
@@ -86,7 +87,12 @@ flip, grow ×1.1 capped at the start value; 240 iterations; tail dual averaging 
 returned point is the lowest-residual of every iterate and the averaged duals (selected on feasibility
 only, never on price). Validated on the two non-candidate arms:
 
-SOLVER_TABLE
+| 2022 arm | miso-289 solver: residual | revised: last iterate | revised: tail average | returned | night median (289 → 290) | annual coal TWh (289 → 290) |
+|---|---:|---:|---:|---|---|---|
+| INC | 0.0191 | 0.0191 | 0.0191 | iterate 50 (0.0155) | 51.62 → 51.45 | 235.15 → 235.29 |
+| PILE0 | 0.8321 | 0.0163 | 0.2141 | iterate 223 (0.0131) | 53.35 → 54.11 | 239.89 → 234.81 |
+
+Reading: INC reproduces miso-289 (same residual, night median within $0.2). PILE0 now converges (0.83 → 0.0131); its night median moves 53.35 → 54.11, i.e. the miso-289 PILE0 number was a non-converged point. Tail averaging did not help on either arm (kept only as a fallback). Solver is frozen here: 240 iterations, the rule above.
 
 **Convergence gate (new, fixed now).** A CAND year counts as PASSING only if its returned residual is
 ≤ **0.05**. A non-converged CAND year cannot pass; a FAIL verdict with residual > 0.05 is reported with
