@@ -15683,3 +15683,14 @@ Record: `docs/handoffs/r-caiso-14/`.
 - Owner card "Promote": keeper `2026-09-29-caiso-r15-clockfull` (+ `-touchpoints`); r11 pruned. Open: per-DIBA interchange lag.
 
 Record: `docs/handoffs/r-caiso-15/`.
+
+## R-CAISO-16 — 2026-09-30: interchange lag closed; TI kept on its true clock, PROMOTED
+
+- Phase 0 (zero LP): the per-DIBA feed equals the extract's `Total interchange` to the MW on the pinned read-seam clock. The feed is right; census rows #2/#3 are closed and nothing was rebuilt.
+- Independent clocks (OASIS TAC regression; BPAT/PACW/NEVP counterparty legs): inside the generation late window NG is +1 h late, but TI is on time. The armed repair was shifting TI 1 h early, which put a ~±1 GW diurnal error into caiso-80 demand.
+- Owner card "Narrow the repair": TI was dropped from the generation family at the frame seam and from the caiso-80 re-stamped term. Same flag, zero parameters.
+- 7 shards at `b8eade78`. 2019–22 byte-reproduce the incumbent. Span CALIBRATED (single ledgered C3c 2024).
+- C4 gas NRMSE 2023–25 0.248/0.249/0.290 → 0.247/0.247/0.288. C3b 2024 0.116 → 0.112.
+- Promoted on the pre-registered structure rule: keeper `2026-09-30-caiso-r16-tiontime` (+ `-touchpoints`); r15 pruned.
+
+Record: `docs/handoffs/r-caiso-16/`.
