@@ -98,3 +98,19 @@ SPP's registered years are 2019–2025, all on keeper `2026-09-28-spp-100-chp-sc
 - the exact recipe with a leg identical to the keeper → **FAIL** (ARMED).
 
 Prompt: `docs/handoffs/spp104/shard_prompt_template.txt`.
+
+## Addendum A (2026-09-30, before any solve) — G-DRIFT over the `main` merged into this PR
+
+The PR had a merge conflict (mechanism-matrix anchor digits only), so `origin/main` was merged into the branch. The
+shards pin the resulting merge SHA, so the audit now extends over `6b1e7593 → origin/main` (the rule-29(b) path set
+plus `scripts/replay_keeper.py`):
+
+| commit | files | verdict | reason |
+|---|---|---|---|
+| PJM-NEXT-13 `3901ae61` | `fuel/basis/pjm_replacement.py`, `fuel/resolve.py`, `run_calibration.py`, `reference/pjm_*` | INERT | `apply_pjm_replacement_cost_fuel` returns `None` unless `pjm_replacement_cost_fuel` (default False) is set, and raises off PJM. The `resolve.py` skip leg ORs on `repl_cells is not None`, so it is unchanged when off |
+| R-ERCOT-17 `2386952f` | `fuel/basis/ercot.py` | INERT | `ercot_south_texas_pooled_basis`: default False, ERCOT basis path |
+| NYISO-NEXT-13 `853ff96f` | `scripts/lib/forecast_parity_registry.py` | INERT | Forecast-parity declaration only |
+
+Still all INERT, so the committed keeper remains the control. After the merge: `check_cache_key_registration` ok,
+matrix guard exit 0, and the SPP tests pass. The only failing test is the MISO solve-surface pin, which fails the same
+way on `main`.
