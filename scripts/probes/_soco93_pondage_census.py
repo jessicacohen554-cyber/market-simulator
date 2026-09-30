@@ -79,7 +79,7 @@ def rebuild_hydro(year: int, cache: Path) -> dict:
             contextlib.redirect_stderr(io.StringIO()),
             contextlib.redirect_stdout(io.StringIO()),
         ):
-            rc.run_year(
+            st = rc.run_year(
                 year,
                 meta["iso"],
                 T,
@@ -104,6 +104,13 @@ def rebuild_hydro(year: int, cache: Path) -> dict:
         pmax=np.array([float(fleet[i].pmax_mw) for i in hidx]),
         energy=np.asarray(energy, float),
     )
+    # The LP's hourly hydro floor (min-flow floor + RoR flat), by unit id.
+    fa = st["fleet_arrays"]
+    row = {str(g.unit_id): k for k, g in enumerate(st["fleet"])}
+    mg = np.asarray(fa.min_gen, float)
+    r["floor"] = np.vstack(
+        [(mg[row[u]] if mg.ndim == 2 else np.full(T, mg[row[u]])) for u in r["unit_id"]]
+    ).astype(np.float32)
     np.savez(f, **r)
     return r
 
@@ -175,6 +182,10 @@ def census(year: int, cache: Path, ddir: Path) -> dict:
         n_pm += int(active.sum())
         n_pm_viol += int((mviol & active).sum())
         Pc = clip(P, inflow, B)
+        # Floor/row compatibility: the floor is a forced minimum draw, so the
+        # forebay must cover its running deficit against inflow (else the
+        # armed LP is infeasible for this unit).
+        fneed = float(deficit(h["floor"][i].astype(float), inflow).max())
         dP += P - Pc
         recs.append(
             dict(
@@ -189,6 +200,7 @@ def census(year: int, cache: Path, ddir: Path) -> dict:
                 viol_h=int(viol.sum()),
                 viol_months=int((mviol & active).sum()),
                 clipped_gwh=round(float((P - Pc).sum() / 1e3), 2),
+                floor_need_over_B=round(fneed / B, 3),
             )
         )
     # soco-92's shape instrument: model hydro+PS vs EIA-930 WAT(+PS) by lambda band
@@ -221,6 +233,10 @@ def census(year: int, cache: Path, ddir: Path) -> dict:
             plant_months=n_pm,
             plant_months_violated=n_pm_viol,
             units_violating=sum(r["viol_h"] > 0 for r in recs),
+            floor_infeasible_units=sum(r["floor_need_over_B"] > 1.0 for r in recs),
+            max_floor_need_over_B=max(
+                (r["floor_need_over_B"] for r in recs), default=0.0
+            ),
             clipped_gwh=round(float(dP.sum() / 1e3), 1),
             top20_model_mw=round(float(H[hi].mean()), 0),
             top20_eia_mw=round(float(A[hi].mean()), 0),
