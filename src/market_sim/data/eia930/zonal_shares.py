@@ -110,6 +110,26 @@ _NYISO_LOAD_ZONE_GROUPS: dict[str, str] = {
     "LONGIL": "Long_Island",
 }
 
+
+def nyiso_load_zone_groups() -> dict[str, str]:
+    """Return the NYISO load-zone -> model-zone map for the active partition.
+
+    The base map is :data:`_NYISO_LOAD_ZONE_GROUPS`. Under the NYISO-NEXT-17
+    F/G re-partition (``ScenarioConfig.nyiso_fg_split``, armed through
+    ``config.topology_variant``) zone G (Hudson Valley) maps to
+    ``Lower_Hudson``, so ``Capital_Hudson`` is zone F alone.
+    """
+    from market_sim.config.topology_variant import nyiso_fg_split_active
+
+    if not nyiso_fg_split_active():
+        return _NYISO_LOAD_ZONE_GROUPS
+    return {
+        **_NYISO_LOAD_ZONE_GROUPS,
+        "G": "Lower_Hudson",
+        "HUD VL": "Lower_Hudson",
+    }
+
+
 # Directory for NYISO zonal actual-load CSVs (upload U3). Absent until the
 # user uploads NYISO OASIS "pal" actual-load files.
 _NYISO_ZONAL_LOAD_DIR: Path = _ZONAL_LOAD_DIR / "NYISO"
@@ -316,6 +336,14 @@ def load_zonal_shares(
     # parses the measured raw sub-BA file with its own grouping.
     if iso == "SPP" and "SPP-West" in zone_names:
         return _zonal_shares_from_raw(iso, year, zone_names)
+    # NYISO-NEXT-17 F/G re-partition: the curated parquet holds the BASE F+G
+    # grouping under the same zone names, so the variant always parses the
+    # measured raw A-K file with its own grouping (nyiso_load_zone_groups).
+    if iso == "NYISO":
+        from market_sim.config.topology_variant import nyiso_fg_split_active
+
+        if nyiso_fg_split_active():
+            return _zonal_shares_from_raw(iso, year, zone_names)
     return _load_zonal_shares_base(iso, year, zone_names)
 
 

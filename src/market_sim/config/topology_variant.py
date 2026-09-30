@@ -19,10 +19,12 @@ source of truth remains the registered ScenarioConfig field
 settable outside the config seams, and the run's ``run_config.json``
 records the field like any other.
 
-Two variants exist, each default off with the base topology byte-identical:
+Three variants exist, each default off with the base topology byte-identical:
 the CAISO FSNO sub-zonal partition (PRECOMMIT-caiso224-fsno-arm-2026-08-30.md
-§1/§3; the caiso-223 P-A' partition), and the SPP West/East re-partition
-(``ScenarioConfig.spp_zone_partition``; PRECOMMIT-spp-93-west-east-2026-09-27.md).
+§1/§3; the caiso-223 P-A' partition), the SPP West/East re-partition
+(``ScenarioConfig.spp_zone_partition``; PRECOMMIT-spp-93-west-east-2026-09-27.md),
+and the NYISO F/G re-partition (``ScenarioConfig.nyiso_fg_split``;
+DESIGN-nyiso-next17-fg-split-2026-09-30.md).
 """
 
 from __future__ import annotations
@@ -71,3 +73,25 @@ def set_spp_zone_partition(partition: str) -> None:
 def spp_west_east_active() -> bool:
     """Return True when the SPP West/East re-partition is armed."""
     return _spp_zone_partition == "west_east"
+
+
+_nyiso_fg_split: bool = False
+
+
+def set_nyiso_fg_split(active: bool) -> None:
+    """Arm/disarm the NYISO F/G re-partition for this process (NYISO-NEXT-17).
+
+    Called from the same per-solve config seams as
+    :func:`set_caiso_fsno_partition`, with ``ScenarioConfig.nyiso_fg_split`` for
+    a NYISO solve and ``False`` for any other ISO. Armed, NYISO load zone G
+    (Hudson Valley) leaves ``Capital_Hudson`` for ``Lower_Hudson``, so
+    ``Capital_Hudson`` is zone F alone and the CENTRAL EAST interface (E -> F)
+    is its own link (``docs/DESIGN-nyiso-next17-fg-split-2026-09-30.md``).
+    """
+    global _nyiso_fg_split
+    _nyiso_fg_split = bool(active)
+
+
+def nyiso_fg_split_active() -> bool:
+    """Return True when the NYISO F/G re-partition is armed."""
+    return _nyiso_fg_split

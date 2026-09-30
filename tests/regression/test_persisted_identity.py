@@ -792,12 +792,20 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   WHAT IT COSTS: the armed CAISO path changes in 2019-2022 without a key
 #   move; no local results cache crosses a shard container, and the lane
 #   re-solves every CAISO year (docs/handoffs/r-caiso-17/).
+# 2026-09-30 NYISO ADVANCED (NYISO-NEXT-17) — ONE ROW ADDED, NO VALUE MOVED.
+#   NYISO-NEXT-17 added constants.NYISO_TE_NONCE_ENVELOPE_BY_MONTH (the measured
+#   non-CENTRAL-EAST TOTAL EAST envelope, read only under the default-off
+#   nyiso_fg_split). `solve_surface_register.py --diff origin/main` -> "0
+#   value(s) moved, 1 added"; declared at its live hash (moves no key). The
+#   name carries the NYISO token, so only NYISO's row set grows: 220 -> 221.
+#   WHAT IT COSTS: nothing solved — no registry value moved, so no committed
+#   bundle's numbers change; the digest moves only because the row set grew.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
     "ERCOT": ("bdfc68c278f7eff8", 240),
     "CAISO": ("289c8c383a78f4d9", 213),
     "MISO": ("52d6fa6795d5e276", 220),
     "PJM": ("2bff80b5fa602668", 223),
-    "NYISO": ("194708a29fb5c95c", 220),
+    "NYISO": ("a64df99bd6857677", 221),
     "NEISO": ("e082dd92b5c22723", 206),
 }
 
