@@ -80,3 +80,9 @@ below PILE0's everywhere, and PILE0 alone already sits +$1.73 above INC.
   (NWPP-NEXT-9) are a backcast overlay only and give no forward story (rule 13).
 - **Where MISO stands.** Keeper unchanged. Train 2023–2025 CALIBRATED (C3c ledgered). Full span **NOT-YET** on
   three routed misses: C1 ST_GAS 2019, C3a 2022, C3b 2021. **No frontier.** Routed misses are failures.
+
+## 6. Owner ruling (2026-09-30)
+
+*"Pile + take floor (Recommended)"*. Next lane (miso-290): zero-LP pre-check of the same per-yard pile plus a take floor, identified from MISO's
+own EIA-923 Page 5 contract census (purchase types C/NC/T) and pile capacity (max month-end stock over Y-3..Y-1),
+under the same kill rule. The floor is the one identified, admissible stop on winter-to-summer banking.

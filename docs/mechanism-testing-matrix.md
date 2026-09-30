@@ -5775,6 +5775,8 @@ loss.
 > 2022: nights **+$4.64** vs incumbent. It fixes summer (Jul −$6.8) but starves winter (Jan–Apr coal −13 TWh vs
 > bench, nights +$8–10): a cumulative pile with ratable receipts is a perfect-foresight bank. Third budget-grain
 > kill (carry, yard-only, pile+floor). `coal_fuel_inventory_monthly_pile` MISO **U → R**. No frontier.
+> **Owner ruling:** *"Pile + take floor (Recommended)"*. **Next (miso-290):** zero-LP pre-check of the pile + a MISO-derived contract take
+> floor (EIA-923 Page 5 C/NC/T) and pile capacity (max stock, Y-3..Y-1); same kill rule. No frontier.
 
 > **QUEUE STAMP miso-288 (2026-09-30) — ZERO LP, NO SOLVE, keeper unchanged**
 > (`FINDING-miso288-coal-scarcity-study-2026-09-30.md`). The real 2022 fleet priced its coal shortage as an

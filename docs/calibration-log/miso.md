@@ -15423,3 +15423,5 @@ coal pile with a prior-years minimum-stock floor.
 
 No frontier: the full span is NOT-YET on the three routed misses.
 `docs/FINDING-miso289-minstock-pile-killed-2026-09-30.md`.
+
+Owner ruling: *"Pile + take floor (Recommended)"*. Next: miso-290, zero-LP pre-check of the pile + a MISO-derived contract take floor and pile capacity.
