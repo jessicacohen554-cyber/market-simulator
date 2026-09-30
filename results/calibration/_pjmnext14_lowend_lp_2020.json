@@ -1,0 +1,157 @@
+{
+ "year": 2020,
+ "n_zonehours": 78840,
+ "all": {
+  "hour_share": 1.0,
+  "no_thermal_marginal_share": 0.823,
+  "by_class": {
+   "CC_REGULAR": 0.049,
+   "COAL_BIT": 0.043,
+   "ST_GAS": 0.024,
+   "CT_PEAKER": 0.023,
+   "ST_CHP": 0.016,
+   "hydro": 0.01,
+   "COAL_WC": 0.006,
+   "CC_CHP": 0.003,
+   "COAL_PRB": 0.002,
+   "CT_CHP": 0.001,
+   "": 0.0
+  },
+  "by_class_kind": {
+   "COAL_BIT:econ": 0.04,
+   "CC_REGULAR:econ": 0.038,
+   "ST_GAS:econ": 0.022,
+   "CT_PEAKER:econ": 0.018,
+   "ST_CHP:committed": 0.016,
+   "CC_REGULAR:committed": 0.011,
+   "hydro:other": 0.01,
+   "CT_PEAKER:committed": 0.005,
+   "COAL_WC:econ": 0.005,
+   "CC_CHP:econ": 0.002,
+   "COAL_BIT:peak": 0.002,
+   "COAL_PRB:econ": 0.002,
+   "CC_CHP:committed": 0.001,
+   "ST_GAS:committed": 0.001
+  },
+  "cc_by_tier": {
+   "market": 0.044,
+   "not_in_860": 0.004,
+   "imm_production": 0.003,
+   "appalachian_receipt": 0.002
+  },
+  "median_model_price": 22.27,
+  "median_actual_rt": 18.08,
+  "median_marginal_mc": 22.0,
+  "marginal_mc_implied_hr_delivered_p10_p50_p90": [
+   6.46,
+   8.34,
+   11.1
+  ],
+  "cc_mc_implied_hr_production_by_tier_p50": {
+   "appalachian_receipt": 15.83,
+   "imm_production": 15.28,
+   "market": 15.92,
+   "not_in_860": 18.61
+  },
+  "share_marginal_mc_below_6p5_x_delivered": 0.012
+ },
+ "low_delivered": {
+  "hour_share": 0.449,
+  "no_thermal_marginal_share": 0.825,
+  "by_class": {
+   "CC_REGULAR": 0.066,
+   "COAL_BIT": 0.055,
+   "ST_CHP": 0.021,
+   "CT_PEAKER": 0.009,
+   "ST_GAS": 0.009,
+   "hydro": 0.006,
+   "COAL_WC": 0.004,
+   "COAL_PRB": 0.003,
+   "CC_CHP": 0.002,
+   "CT_CHP": 0.001,
+   "": 0.0
+  },
+  "by_class_kind": {
+   "COAL_BIT:econ": 0.052,
+   "CC_REGULAR:econ": 0.047,
+   "ST_CHP:committed": 0.021,
+   "CC_REGULAR:committed": 0.019,
+   "ST_GAS:econ": 0.008,
+   "CT_PEAKER:econ": 0.006,
+   "hydro:other": 0.006,
+   "COAL_WC:econ": 0.004,
+   "CT_PEAKER:committed": 0.003,
+   "COAL_PRB:econ": 0.002,
+   "COAL_BIT:peak": 0.002,
+   "COAL_BIT:committed": 0.001,
+   "CC_CHP:econ": 0.001,
+   "CC_CHP:committed": 0.001
+  },
+  "cc_by_tier": {
+   "market": 0.058,
+   "imm_production": 0.004,
+   "appalachian_receipt": 0.004,
+   "not_in_860": 0.002
+  },
+  "median_model_price": 20.05,
+  "median_actual_rt": 14.5,
+  "median_marginal_mc": 20.4,
+  "marginal_mc_implied_hr_delivered_p10_p50_p90": [
+   6.4,
+   7.78,
+   8.84
+  ],
+  "cc_mc_implied_hr_production_by_tier_p50": {
+   "appalachian_receipt": 15.68,
+   "imm_production": 15.04,
+   "market": 15.01,
+   "not_in_860": 21.41
+  },
+  "share_marginal_mc_below_6p5_x_delivered": 0.011
+ },
+ "low_production": {
+  "hour_share": 0.011,
+  "no_thermal_marginal_share": 0.902,
+  "by_class": {
+   "CC_REGULAR": 0.05,
+   "ST_CHP": 0.023,
+   "COAL_BIT": 0.02,
+   "CC_CHP": 0.002,
+   "COAL_WC": 0.001,
+   "CT_CHP": 0.001,
+   "hydro": 0.001,
+   "": 0.0
+  },
+  "by_class_kind": {
+   "CC_REGULAR:econ": 0.031,
+   "ST_CHP:committed": 0.023,
+   "CC_REGULAR:committed": 0.019,
+   "COAL_BIT:econ": 0.018,
+   "COAL_BIT:committed": 0.002,
+   "CC_CHP:committed": 0.002,
+   "COAL_WC:econ": 0.001,
+   "CT_CHP:committed": 0.001,
+   "hydro:other": 0.001,
+   ":other": 0.0
+  },
+  "cc_by_tier": {
+   "market": 0.047,
+   "appalachian_receipt": 0.003,
+   "imm_production": 0.002
+  },
+  "median_model_price": 17.52,
+  "median_actual_rt": 7.14,
+  "median_marginal_mc": 17.8,
+  "marginal_mc_implied_hr_delivered_p10_p50_p90": [
+   5.8,
+   7.31,
+   8.1
+  ],
+  "cc_mc_implied_hr_production_by_tier_p50": {
+   "appalachian_receipt": 12.94,
+   "imm_production": 12.51,
+   "market": 13.1
+  },
+  "share_marginal_mc_below_6p5_x_delivered": 0.007
+ }
+}
