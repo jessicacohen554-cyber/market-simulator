@@ -1,0 +1,13 @@
+{
+  "id": "2026-09-30-nyisonext14-total-east-2021",
+  "label": "nyisonext14 total east 2021",
+  "date": "2026-09-30",
+  "shorthand": "nyisonext14-total-east-2021",
+  "definition": "NYISO-NEXT-14 arm: keeper + nyiso_total_east_cutset_ttc",
+  "years": [
+    2021
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-30-nyisonext14-total-east-2021.js",
+  "bundle": "results/calibration/nyisonext14_2021"
+}
