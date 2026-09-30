@@ -18118,6 +18118,30 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**SPP-105 (2026-09-30, GAS-FAMILY OUTAGE ALLOCATION — design lane, then two arms solved on the owner card "Build carrier a and b";
+`docs/handoffs/DESIGN-spp-105-gas-family-outage-2026-09-30.md`, `RESULT-spp-105-gas-family-outage-2026-09-30.md`; cells
+`spp_gas_crow_residual_outage` and `wefor_residual` → R, NOT PROMOTED).**
+- **Phase 0.** The keeper's gas outage already tracks SPP's published hourly Natural Gas outage.
+  - Hourly r is 0.65–0.91; the measured part is CAMPD events, 6.0–8.1 GW.
+  - The upper-tercile gap is −0.70 / −1.85 / +0.36 GW (2023 / 24 / 25). Its sign varies by year, so it is event variance,
+    not a rate error.
+  - **No SPP-own CT / ST / CC split exists** for 2024–25 (portal fuel-only; the MMU ASOM class charts end at 2023 and put gas
+    steam in "simple-cycle"; the MMU Dec 2025 report pools CT/CC/IC).
+  - The keeper's CC share (29–32 %) matches the MMU's only figure (~31 %, 2022).
+- **Arm A** (`wefor_residual` 0.0 on CC/ST, the "double count" repair) was rejected (E4 / E5 / E6):
+  - price is −0.2..−1.0 $/MWh every year;
+  - C3a 2024 goes −8.6 → −12.5 % (FAIL);
+  - it moves away from SPP's data in 5 of 7 years, because the CC/ST WEFOR stands in for sub-5-day outages.
+- **Arm B** (new `spp_gas_crow_residual_outage`, pins gas outage to SPP's published total where it exceeds CAMPD) was rejected
+  (E3 / E5):
+  - unserved energy is +64 GWh (2024) and +20 GWh (2025), all in shoulder months;
+  - C3a 2024 goes to +17.9 %, and C3b fails in 2024 and 2025;
+  - the price move is scarcity. The model's fleet and SPP's CROW fleet are not one boundary for gas in the shoulders
+    (rule 14).
+- **Closes SPP-104's named successor.** The 2023+ upper-tercile price shortfall is **not** an outage-availability object.
+  The remaining candidates are offer / commitment-side (MMU Dec 2025: reliability commitment status 4 % of conventional
+  capacity; emergency-max shortfall 1.5–3 %).
+
 **SPP-104 (2026-09-29, CT_PEAKER OUTAGE, DESIGN LANE, ZERO LP —
 `docs/handoffs/DESIGN-spp-104-ct-outage-2026-09-29.md`, probe `scripts/probes/_spp104_ct_availability_phase0.py`; no cell verdict moves).**
 - **The premise "CT_PEAKER carries no outage" is a measurement artifact.** CTs carry the statistical GADS stack (WEFOR 0.07 × 0.7,
