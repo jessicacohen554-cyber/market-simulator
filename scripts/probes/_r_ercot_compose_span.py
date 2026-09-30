@@ -66,6 +66,9 @@ MUST_AGREE = (
     "ercot_south_texas_pooled_basis",
     # R-ERCOT-18: the prior-year overnight drag allocation must be uniform.
     "netload_drag_prior_year_commitment_index",
+    # R-ERCOT-19: the prior-year commitment-profile sub-gates must be uniform.
+    "cc_committed_prior_year_commitment_eligibility",
+    "netload_drag_prior_year_hour_profile",
 ) + FIELDS
 
 
