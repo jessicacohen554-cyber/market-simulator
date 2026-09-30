@@ -1,0 +1,74 @@
+{
+ "2022": {
+  "stock_years_used": [
+   2019,
+   2020,
+   2021
+  ],
+  "yard_rows": 69,
+  "rows_identified": 66,
+  "rows_identified_mw": 52918.0,
+  "rowed_mw": 53217.0,
+  "d_min_p10_p50_p90": [
+   1.6,
+   31.9,
+   128.0
+  ],
+  "d_min_mw_weighted": 43.0,
+  "rows_opening_below_target": 0,
+  "mw_opening_below_target": 0.0,
+  "annual_budget_inc_mmbtu_m": 2802.4,
+  "stock_open_mmbtu_m": 465.8,
+  "s_min_mmbtu_m": 220.6,
+  "s_floor_mmbtu_m": 220.6,
+  "annual_budget_cand_mmbtu_m": 2581.9,
+  "annual_cut_pct": 7.9
+ },
+ "2019": {
+  "stock_years_used": [
+   2018
+  ],
+  "yard_rows": 83,
+  "rows_identified": 74,
+  "rows_identified_mw": 57834.0,
+  "rowed_mw": 58314.0,
+  "d_min_p10_p50_p90": [
+   6.0,
+   46.9,
+   132.1
+  ],
+  "d_min_mw_weighted": 52.9,
+  "rows_opening_below_target": 2,
+  "mw_opening_below_target": 3520.0,
+  "annual_budget_inc_mmbtu_m": 3737.9,
+  "stock_open_mmbtu_m": 555.5,
+  "s_min_mmbtu_m": 412.6,
+  "s_floor_mmbtu_m": 412.3,
+  "annual_budget_cand_mmbtu_m": 3325.6,
+  "annual_cut_pct": 11.0
+ },
+ "2020": {
+  "stock_years_used": [
+   2018,
+   2019
+  ],
+  "yard_rows": 75,
+  "rows_identified": 68,
+  "rows_identified_mw": 55206.0,
+  "rowed_mw": 55649.0,
+  "d_min_p10_p50_p90": [
+   7.3,
+   37.6,
+   119.1
+  ],
+  "d_min_mw_weighted": 46.4,
+  "rows_opening_below_target": 0,
+  "mw_opening_below_target": 0.0,
+  "annual_budget_inc_mmbtu_m": 3602.2,
+  "stock_open_mmbtu_m": 668.9,
+  "s_min_mmbtu_m": 329.4,
+  "s_floor_mmbtu_m": 329.4,
+  "annual_budget_cand_mmbtu_m": 3272.8,
+  "annual_cut_pct": 9.1
+ }
+}
