@@ -39,6 +39,9 @@ EDGE_H = 30 * 24
 def rebuild(y: int, cache: Path, variant: str = "keeper") -> dict:
     """``fleet_only`` rebuild of the keeper's year ``y`` (cached): rows, rated pmax, availability.
 
+    ``variant="arm"`` / ``"arm_outage"`` rebuild with ``spp_ct_lole_efor`` armed (SPP-104's
+    field; zero-LP prediction of its availability footprint).
+
     ``variant="outage"`` is a DECOMPOSITION instrument, never a config: it zeroes the two
     non-outage capacity terms of the statistical stack (the flat GADS weather/performance
     ``derate`` and the flat summer ambient class derate) so the remaining unavailability is the
@@ -53,12 +56,23 @@ def rebuild(y: int, cache: Path, variant: str = "keeper") -> dict:
     from market_sim.data.fleet import arrays as _arr
 
     orig_out, orig_sum = _arr._thermal_outage, dict(_arr._SUMMER_CLASS_DERATE)
-    if variant == "outage":
+    from market_sim.config.scenarios import ScenarioConfig
+
+    orig_post = ScenarioConfig.__post_init__
+    if variant.startswith("arm"):
+
+        def _armed(self):
+            orig_post(self)
+            object.__setattr__(self, "spp_ct_lole_efor", True)
+
+        ScenarioConfig.__post_init__ = _armed
+    if variant in ("outage", "arm_outage"):
         _arr._thermal_outage = lambda c, a: (*orig_out(c, a)[:2], 0.0)
         _arr._SUMMER_CLASS_DERATE.clear()
     try:
         st, _ = reconstruct_bundle_fleet(BUNDLE, y, verbose=False)
     finally:
+        ScenarioConfig.__post_init__ = orig_post
         _arr._thermal_outage = orig_out
         _arr._SUMMER_CLASS_DERATE.clear()
         _arr._SUMMER_CLASS_DERATE.update(orig_sum)
@@ -151,7 +165,9 @@ def main() -> None:
     ap.add_argument("--cache", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--years", type=int, nargs="*", default=list(YEARS))
-    ap.add_argument("--variant", choices=("keeper", "outage"), default="keeper")
+    ap.add_argument(
+        "--variant", choices=("keeper", "outage", "arm", "arm_outage"), default="keeper"
+    )
     a = ap.parse_args()
     a.cache.mkdir(parents=True, exist_ok=True)
     res = [year_stats(y, a.cache, a.variant) for y in a.years]

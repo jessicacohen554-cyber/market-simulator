@@ -2273,6 +2273,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # so no posture kwargs are merged and the P1 markup is untouched).
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "spp_commitment_posture",
+    # SPP-104 CT_PEAKER LOLE EFOR (default off): dropped from the hash at its
+    # default so every pre-existing run -- every ISO's keepers included --
+    # keeps its key. Byte-identical off by construction (the per-plant EFOR
+    # map is empty, so no CT row leaves the statistical branch). Its one table
+    # is constants.SPP_LOLE_GAS_EFOR_BY_SIZE; no sub-fields. Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 discipline).
+    "spp_ct_lole_efor",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -3091,6 +3098,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "spp_zone_partition": "'north_south'",
     # Added by SPP-102 WITH the field (the nyiso-119 discipline).
     "spp_commitment_posture": "False",
+    # Added by SPP-104 WITH the field (the nyiso-119 discipline).
+    "spp_ct_lole_efor": "False",
 }
 
 
@@ -18332,6 +18341,32 @@ class ScenarioConfig:
     # byte-identical off.
     chp_steam_floor_conduct_scope: bool = False
 
+    # SPP CT_PEAKER forced outage from SPP's OWN LOLE-study EFOR (SPP-104,
+    # 2026-09-30; owner card "Build LOLE-EFOR CT swap"). ISO-exclusive: raises
+    # if armed for any ISO but SPP (rule 25 [R-ISO-SCOPE]).
+    #
+    # THE OBJECT. The keeper's CT_PEAKER rows carry no CAMPD event layer (a
+    # peaker's idle state is its normal state, so zero output identifies no
+    # outage) and take the national NERC-GADS statistical WEFOR 0.07, scaled by
+    # wefor_multiplier and redistributed by the uncited SUMMER_WEFOR_SHARE.
+    # SPP publishes its own fleet's seasonal EFOR by fuel and unit size.
+    #
+    # WHEN TRUE, each SPP CT_PEAKER plant found in the per-unit EIA-860 roster
+    # takes the capacity-weighted mean of its units' natural-gas EFOR for their
+    # size bins (constants.SPP_LOLE_GAS_EFOR_BY_SIZE): the summer rate in
+    # Jun-Sep and the winter rate in every other month, as the study's SERVM
+    # seasons do. It REPLACES the WEFOR term (rule 19 [R-ONE-MECH]): no
+    # wefor_multiplier, no SUMMER_WEFOR_SHARE, no age escalation. The shoulder
+    # POF, the flat performance derate and the summer class derate are
+    # unchanged. A plant absent from the roster keeps the statistical WEFOR, and
+    # the count is logged. Zero free parameters (rule 21 [R-DOF]): the
+    # calendar-hour basis is SERVM's own (steady-state P(out) = EFOR). Rule 13
+    # [R-MEASURED]: a published multi-year GADS rate, regenerated with each
+    # biennial LOLE study for a forward year. Rule 14, declared misalignment:
+    # the table is fuel x size, not technology. Default off; byte-identical off.
+    # docs/handoffs/DESIGN-spp-104-ct-outage-2026-09-29.md.
+    spp_ct_lole_efor: bool = False
+
     # Measured ERCOT GTC transfer limits (backcast/calibration overlay). When
     # True in backcast mode, the export-direction capability of the transfer
     # links that carry ERCOT's published Generic Transmission Constraints
@@ -22838,6 +22873,11 @@ class ScenarioConfig:
                     "mutually exclusive (rule 19: one mechanism for SPP gas "
                     "commitment state)."
                 )
+        if self.spp_ct_lole_efor and str(self.iso) != "SPP":
+            raise ValueError(
+                "spp_ct_lole_efor is SPP-only (SPP-104: SPP's own LOLE-study "
+                "EFOR table, rule 25)."
+            )
         # Measured CAISO battery AS reservation vs in-LP reserve co-opt: the
         # co-opt hands storage its own reserve columns and prices the
         # energy-vs-AS split endogenously, so pre-subtracting the measured
@@ -24329,6 +24369,10 @@ TIER_TAGS: dict[str, int] = {
     # HOURS, SPP_POSTURE_MIN_DOWN_HOURS, the NREL class startup tables); no
     # free number of its own (rule 21).
     "spp_commitment_posture": 1,
+    # Structural gate (1): replaces the CT_PEAKER WEFOR with SPP's own
+    # published LOLE EFOR table (constants.SPP_LOLE_GAS_EFOR_BY_SIZE); no free
+    # number of its own (rule 21).
+    "spp_ct_lole_efor": 1,
 }
 
 # SweepDefinition (the sweep / named-case-matrix expansion engine) moved

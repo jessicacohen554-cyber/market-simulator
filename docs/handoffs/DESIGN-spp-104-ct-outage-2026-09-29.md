@@ -140,3 +140,45 @@ The charter pre-accepted ~5 pts of C3a damage in 2019/20. The issue is not the d
   - 21: the only design needs an unidentified mapping.
   - 25: SPP data only.
   - 29(b) / 31–36: no solve, shard, bundle or registration.
+
+## 6. Owner ruling and the zero-LP arm census (2026-09-30)
+
+**Owner card: "Build LOLE-EFOR CT swap"**, over §5's recommendation. Built, default off:
+- **Field** `spp_ct_lole_efor`. It is SPP-only and raises for any other ISO.
+- **Table** `constants.SPP_LOLE_GAS_EFOR_BY_SIZE`: 2023 SPP LOLE Report Tables 9/10, GADS 2015–2022.
+- **Helper** `data/fleet/ct_lole_efor.py`: a per-plant, capacity-weighted mean over the per-unit EIA-860 roster.
+- **Branch** in `arrays._availability_matrix`: `1 − EFOR(season) − derate − POF(shoulder)`, then the unchanged summer
+  class derate. `wefor_multiplier`, `SUMMER_WEFOR_SHARE` and WEFOR age escalation no longer reach a CT row.
+- **Tests** `tests/iso/spp/test_spp_ct_lole_efor.py`, plus the matrix row and a cell in every shard.
+
+**The §4 "unidentified mapping" is resolved without a free parameter.** Each LOLE report's Appendix A defines SERVM's
+unit process as `ttf = ttr·(1−EFOR)/EFOR`, running in every hour. Its steady-state outage probability is EFOR itself. So
+SPP's own model already applies the published EFOR as an all-hours rate, and this field copies that construction; it
+does not choose one.
+
+**Vintage, declared ex ante.** One table for every year (rule 1(b) spirit): the 2023 report. Its GADS window 2015–2022
+covers the 2019–22 backcast years. The 2025 report (April 2026) publishes only projected 2030/2032-fleet columns, which
+fit a forecast year, not a 2019–25 fleet. For a forward year, the latest biennial report regenerates the table (rule 13).
+The 2017 report used EFORd, a different statistic, and is not mixed in.
+
+**Zero-LP arm census** (keeper rebuilt `fleet_only` with the field armed; `_spp104_ct_availability_phase0.json`,
+`arm_*` blocks). All CT plants resolve in the roster in every year; 0 fall back.
+
+| GW, annual mean | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|---|
+| CT unavailable, rated: keeper → arm | 1.54 → 3.22 | 1.55 → 3.23 | 1.55 → 3.20 | 1.56 → 3.27 | 1.58 → 3.31 | 1.60 → 3.33 | 1.91 → 3.70 |
+| CT outage-type: keeper → arm | 0.63 → 2.38 | 0.63 → 2.39 | 0.65 → 2.38 | 0.64 → 2.42 | 0.65 → 2.44 | 0.65 → 2.47 | 0.91 → 2.78 |
+| gas outage-type − SPP published: keeper | −1.04 | −0.31 | +0.80 | +1.97 | −0.46 | −1.29 | +0.60 |
+| gas outage-type − SPP published: **arm** | **+0.71** | **+1.45** | **+2.53** | **+3.75** | **+1.33** | **+0.52** | **+2.47** |
+
+**Reading.**
+- The arm overshoots SPP's own measured gas outage in **every** year, not only in the three years §4 predicted.
+- Its summer is the sharpest cross-check. The CT class alone is out ~1.85–2.2 GW in Jun–Sep, against SPP's published
+  **all-gas** outage of ~2.7 GW in Jul–Aug 2025 (5.1 GW Aug 2019). That puts ~70 % of SPP's total gas outage on CTs.
+- This is the rule-14 signature of the service-hour-basis EFOR overstating a peaker's calendar-hour unavailability.
+- **Price prediction**, from SPP-84's gas-only re-clear sensitivity scaled to +1.7 GW: roughly
+  **+0.7 / +1.4 / large / ≈0 / +0.6 / +2.6 $/MWh** (2019 / 20 / 21 / 22 / 23 / 24).
+  - 2021 is Uri-dominated and non-linear in SPP-84's instrument (+7.06 on only +0.38 GW), so a large rise is expected
+    there.
+  - 2022 took +0.03 on +1.04 GW.
+  - Every sign is **up**, which is the wrong direction for the already over-priced 2019–21 C3a years.

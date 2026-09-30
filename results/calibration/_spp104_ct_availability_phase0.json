@@ -1353,5 +1353,1354 @@
    "gas_rated_unavail_gw": 9.593,
    "gas_spp84basis_unavail_gw": 8.868
   }
- ]
+ ],
+ "arm_rated_basis": [
+  {
+   "year": 2019,
+   "variant": "arm",
+   "classes": {
+    "CC_CHP": {
+     "n_rows": 3,
+     "pmax_gw": 0.266,
+     "live_pmax_gw_mean": 0.266,
+     "rated_unavail_gw": 0.027,
+     "spp84basis_unavail_gw": 0.014,
+     "rated_unavail_frac": 0.1004
+    },
+    "CC_REGULAR": {
+     "n_rows": 86,
+     "pmax_gw": 9.947,
+     "live_pmax_gw_mean": 9.855,
+     "rated_unavail_gw": 3.154,
+     "spp84basis_unavail_gw": 2.524,
+     "rated_unavail_frac": 0.3201
+    },
+    "COAL_LIGNITE": {
+     "n_rows": 15,
+     "pmax_gw": 2.241,
+     "live_pmax_gw_mean": 2.241,
+     "rated_unavail_gw": 0.526,
+     "spp84basis_unavail_gw": 0.478,
+     "rated_unavail_frac": 0.2345
+    },
+    "COAL_PRB": {
+     "n_rows": 152,
+     "pmax_gw": 19.583,
+     "live_pmax_gw_mean": 18.959,
+     "rated_unavail_gw": 5.785,
+     "spp84basis_unavail_gw": 5.342,
+     "rated_unavail_frac": 0.3052
+    },
+    "CT_CHP": {
+     "n_rows": 20,
+     "pmax_gw": 0.214,
+     "live_pmax_gw_mean": 0.214,
+     "rated_unavail_gw": 0.025,
+     "spp84basis_unavail_gw": 0.011,
+     "rated_unavail_frac": 0.1177
+    },
+    "CT_PEAKER": {
+     "n_rows": 370,
+     "pmax_gw": 10.23,
+     "live_pmax_gw_mean": 10.227,
+     "rated_unavail_gw": 3.216,
+     "spp84basis_unavail_gw": 0.255,
+     "rated_unavail_frac": 0.3145
+    },
+    "ST_CHP": {
+     "n_rows": 9,
+     "pmax_gw": 0.116,
+     "live_pmax_gw_mean": 0.116,
+     "rated_unavail_gw": 0.01,
+     "spp84basis_unavail_gw": 0.005,
+     "rated_unavail_frac": 0.086
+    },
+    "ST_GAS": {
+     "n_rows": 136,
+     "pmax_gw": 9.807,
+     "live_pmax_gw_mean": 8.675,
+     "rated_unavail_gw": 5.913,
+     "spp84basis_unavail_gw": 4.891,
+     "rated_unavail_frac": 0.6817
+    },
+    "oil": {
+     "n_rows": 336,
+     "pmax_gw": 1.704,
+     "live_pmax_gw_mean": 1.703,
+     "rated_unavail_gw": 0.17,
+     "spp84basis_unavail_gw": 0.0,
+     "rated_unavail_frac": 0.1
+    }
+   },
+   "ct_rated_unavail_monthly_gw": [
+    2.962,
+    2.962,
+    3.269,
+    3.269,
+    3.268,
+    3.338,
+    3.338,
+    3.338,
+    3.338,
+    3.268,
+    3.268,
+    2.961
+   ],
+   "ct_mw_weighted_age": 9.0,
+   "ct_rows_min_avail": 0.63,
+   "gas_rated_unavail_gw": 12.346,
+   "gas_spp84basis_unavail_gw": 7.7
+  },
+  {
+   "year": 2020,
+   "variant": "arm",
+   "classes": {
+    "CC_CHP": {
+     "n_rows": 3,
+     "pmax_gw": 0.271,
+     "live_pmax_gw_mean": 0.271,
+     "rated_unavail_gw": 0.043,
+     "spp84basis_unavail_gw": 0.03,
+     "rated_unavail_frac": 0.1581
+    },
+    "CC_REGULAR": {
+     "n_rows": 86,
+     "pmax_gw": 9.991,
+     "live_pmax_gw_mean": 9.818,
+     "rated_unavail_gw": 2.745,
+     "spp84basis_unavail_gw": 2.181,
+     "rated_unavail_frac": 0.2796
+    },
+    "COAL_LIGNITE": {
+     "n_rows": 15,
+     "pmax_gw": 2.216,
+     "live_pmax_gw_mean": 2.216,
+     "rated_unavail_gw": 0.602,
+     "spp84basis_unavail_gw": 0.555,
+     "rated_unavail_frac": 0.2719
+    },
+    "COAL_PRB": {
+     "n_rows": 152,
+     "pmax_gw": 19.327,
+     "live_pmax_gw_mean": 18.375,
+     "rated_unavail_gw": 6.442,
+     "spp84basis_unavail_gw": 6.03,
+     "rated_unavail_frac": 0.3506
+    },
+    "CT_CHP": {
+     "n_rows": 20,
+     "pmax_gw": 0.205,
+     "live_pmax_gw_mean": 0.205,
+     "rated_unavail_gw": 0.024,
+     "spp84basis_unavail_gw": 0.011,
+     "rated_unavail_frac": 0.1177
+    },
+    "CT_PEAKER": {
+     "n_rows": 363,
+     "pmax_gw": 10.259,
+     "live_pmax_gw_mean": 10.259,
+     "rated_unavail_gw": 3.232,
+     "spp84basis_unavail_gw": 0.256,
+     "rated_unavail_frac": 0.3151
+    },
+    "ST_CHP": {
+     "n_rows": 9,
+     "pmax_gw": 0.116,
+     "live_pmax_gw_mean": 0.116,
+     "rated_unavail_gw": 0.01,
+     "spp84basis_unavail_gw": 0.005,
+     "rated_unavail_frac": 0.086
+    },
+    "ST_GAS": {
+     "n_rows": 124,
+     "pmax_gw": 9.791,
+     "live_pmax_gw_mean": 7.892,
+     "rated_unavail_gw": 4.982,
+     "spp84basis_unavail_gw": 4.048,
+     "rated_unavail_frac": 0.6313
+    },
+    "oil": {
+     "n_rows": 349,
+     "pmax_gw": 1.714,
+     "live_pmax_gw_mean": 1.711,
+     "rated_unavail_gw": 0.171,
+     "spp84basis_unavail_gw": 0.0,
+     "rated_unavail_frac": 0.1
+    }
+   },
+   "ct_rated_unavail_monthly_gw": [
+    2.977,
+    2.987,
+    3.284,
+    3.284,
+    3.287,
+    3.355,
+    3.355,
+    3.355,
+    3.353,
+    3.284,
+    3.274,
+    2.977
+   ],
+   "ct_mw_weighted_age": 10.0,
+   "ct_rows_min_avail": 0.63,
+   "gas_rated_unavail_gw": 11.036,
+   "gas_spp84basis_unavail_gw": 6.53
+  },
+  {
+   "year": 2021,
+   "variant": "arm",
+   "classes": {
+    "CC_CHP": {
+     "n_rows": 3,
+     "pmax_gw": 0.271,
+     "live_pmax_gw_mean": 0.271,
+     "rated_unavail_gw": 0.071,
+     "spp84basis_unavail_gw": 0.058,
+     "rated_unavail_frac": 0.2621
+    },
+    "CC_REGULAR": {
+     "n_rows": 85,
+     "pmax_gw": 10.065,
+     "live_pmax_gw_mean": 9.883,
+     "rated_unavail_gw": 3.236,
+     "spp84basis_unavail_gw": 2.668,
+     "rated_unavail_frac": 0.3274
+    },
+    "COAL_LIGNITE": {
+     "n_rows": 15,
+     "pmax_gw": 2.216,
+     "live_pmax_gw_mean": 2.216,
+     "rated_unavail_gw": 0.714,
+     "spp84basis_unavail_gw": 0.667,
+     "rated_unavail_frac": 0.3224
+    },
+    "COAL_PRB": {
+     "n_rows": 142,
+     "pmax_gw": 18.463,
+     "live_pmax_gw_mean": 18.324,
+     "rated_unavail_gw": 5.67,
+     "spp84basis_unavail_gw": 5.262,
+     "rated_unavail_frac": 0.3094
+    },
+    "CT_CHP": {
+     "n_rows": 22,
+     "pmax_gw": 0.208,
+     "live_pmax_gw_mean": 0.208,
+     "rated_unavail_gw": 0.025,
+     "spp84basis_unavail_gw": 0.011,
+     "rated_unavail_frac": 0.1177
+    },
+    "CT_PEAKER": {
+     "n_rows": 339,
+     "pmax_gw": 10.108,
+     "live_pmax_gw_mean": 10.108,
+     "rated_unavail_gw": 3.204,
+     "spp84basis_unavail_gw": 0.272,
+     "rated_unavail_frac": 0.3169
+    },
+    "ST_CHP": {
+     "n_rows": 12,
+     "pmax_gw": 0.123,
+     "live_pmax_gw_mean": 0.122,
+     "rated_unavail_gw": 0.01,
+     "spp84basis_unavail_gw": 0.005,
+     "rated_unavail_frac": 0.0861
+    },
+    "ST_GAS": {
+     "n_rows": 116,
+     "pmax_gw": 9.771,
+     "live_pmax_gw_mean": 7.917,
+     "rated_unavail_gw": 5.423,
+     "spp84basis_unavail_gw": 4.477,
+     "rated_unavail_frac": 0.685
+    },
+    "oil": {
+     "n_rows": 369,
+     "pmax_gw": 1.915,
+     "live_pmax_gw_mean": 1.914,
+     "rated_unavail_gw": 0.191,
+     "spp84basis_unavail_gw": 0.0,
+     "rated_unavail_frac": 0.1
+    }
+   },
+   "ct_rated_unavail_monthly_gw": [
+    2.96,
+    2.96,
+    3.262,
+    3.262,
+    3.262,
+    3.331,
+    3.331,
+    3.331,
+    3.331,
+    3.234,
+    3.234,
+    2.931
+   ],
+   "ct_mw_weighted_age": 11.0,
+   "ct_rows_min_avail": 0.5688,
+   "gas_rated_unavail_gw": 11.968,
+   "gas_spp84basis_unavail_gw": 7.492
+  },
+  {
+   "year": 2022,
+   "variant": "arm",
+   "classes": {
+    "CC_CHP": {
+     "n_rows": 3,
+     "pmax_gw": 0.271,
+     "live_pmax_gw_mean": 0.271,
+     "rated_unavail_gw": 0.048,
+     "spp84basis_unavail_gw": 0.035,
+     "rated_unavail_frac": 0.1771
+    },
+    "CC_REGULAR": {
+     "n_rows": 84,
+     "pmax_gw": 10.074,
+     "live_pmax_gw_mean": 9.952,
+     "rated_unavail_gw": 3.105,
+     "spp84basis_unavail_gw": 2.534,
+     "rated_unavail_frac": 0.312
+    },
+    "COAL_LIGNITE": {
+     "n_rows": 15,
+     "pmax_gw": 2.216,
+     "live_pmax_gw_mean": 2.216,
+     "rated_unavail_gw": 0.37,
+     "spp84basis_unavail_gw": 0.322,
+     "rated_unavail_frac": 0.1667
+    },
+    "COAL_PRB": {
+     "n_rows": 139,
+     "pmax_gw": 18.46,
+     "live_pmax_gw_mean": 18.46,
+     "rated_unavail_gw": 5.92,
+     "spp84basis_unavail_gw": 5.51,
+     "rated_unavail_frac": 0.3207
+    },
+    "CT_CHP": {
+     "n_rows": 22,
+     "pmax_gw": 0.205,
+     "live_pmax_gw_mean": 0.205,
+     "rated_unavail_gw": 0.024,
+     "spp84basis_unavail_gw": 0.011,
+     "rated_unavail_frac": 0.1177
+    },
+    "CT_PEAKER": {
+     "n_rows": 379,
+     "pmax_gw": 10.403,
+     "live_pmax_gw_mean": 10.382,
+     "rated_unavail_gw": 3.271,
+     "spp84basis_unavail_gw": 0.259,
+     "rated_unavail_frac": 0.315
+    },
+    "ST_CHP": {
+     "n_rows": 12,
+     "pmax_gw": 0.122,
+     "live_pmax_gw_mean": 0.122,
+     "rated_unavail_gw": 0.01,
+     "spp84basis_unavail_gw": 0.005,
+     "rated_unavail_frac": 0.086
+    },
+    "ST_GAS": {
+     "n_rows": 120,
+     "pmax_gw": 9.738,
+     "live_pmax_gw_mean": 8.964,
+     "rated_unavail_gw": 6.002,
+     "spp84basis_unavail_gw": 5.231,
+     "rated_unavail_frac": 0.6696
+    },
+    "oil": {
+     "n_rows": 329,
+     "pmax_gw": 1.712,
+     "live_pmax_gw_mean": 1.7,
+     "rated_unavail_gw": 0.17,
+     "spp84basis_unavail_gw": 0.0,
+     "rated_unavail_frac": 0.1
+    }
+   },
+   "ct_rated_unavail_monthly_gw": [
+    3.002,
+    3.002,
+    3.313,
+    3.33,
+    3.326,
+    3.398,
+    3.398,
+    3.398,
+    3.398,
+    3.326,
+    3.326,
+    3.015
+   ],
+   "ct_mw_weighted_age": 12.0,
+   "ct_rows_min_avail": 0.63,
+   "gas_rated_unavail_gw": 12.46,
+   "gas_spp84basis_unavail_gw": 8.074
+  },
+  {
+   "year": 2023,
+   "variant": "arm",
+   "classes": {
+    "CC_CHP": {
+     "n_rows": 3,
+     "pmax_gw": 0.271,
+     "live_pmax_gw_mean": 0.271,
+     "rated_unavail_gw": 0.045,
+     "spp84basis_unavail_gw": 0.032,
+     "rated_unavail_frac": 0.1676
+    },
+    "CC_REGULAR": {
+     "n_rows": 85,
+     "pmax_gw": 10.057,
+     "live_pmax_gw_mean": 10.001,
+     "rated_unavail_gw": 2.735,
+     "spp84basis_unavail_gw": 2.169,
+     "rated_unavail_frac": 0.2735
+    },
+    "COAL_LIGNITE": {
+     "n_rows": 15,
+     "pmax_gw": 2.21,
+     "live_pmax_gw_mean": 1.718,
+     "rated_unavail_gw": 0.418,
+     "spp84basis_unavail_gw": 0.371,
+     "rated_unavail_frac": 0.2429
+    },
+    "COAL_PRB": {
+     "n_rows": 139,
+     "pmax_gw": 18.476,
+     "live_pmax_gw_mean": 18.209,
+     "rated_unavail_gw": 7.092,
+     "spp84basis_unavail_gw": 6.035,
+     "rated_unavail_frac": 0.3895
+    },
+    "CT_CHP": {
+     "n_rows": 25,
+     "pmax_gw": 0.211,
+     "live_pmax_gw_mean": 0.211,
+     "rated_unavail_gw": 0.025,
+     "spp84basis_unavail_gw": 0.011,
+     "rated_unavail_frac": 0.1177
+    },
+    "CT_PEAKER": {
+     "n_rows": 373,
+     "pmax_gw": 10.492,
+     "live_pmax_gw_mean": 10.492,
+     "rated_unavail_gw": 3.305,
+     "spp84basis_unavail_gw": 0.261,
+     "rated_unavail_frac": 0.315
+    },
+    "ST_CHP": {
+     "n_rows": 11,
+     "pmax_gw": 0.121,
+     "live_pmax_gw_mean": 0.12,
+     "rated_unavail_gw": 0.01,
+     "spp84basis_unavail_gw": 0.005,
+     "rated_unavail_frac": 0.086
+    },
+    "ST_GAS": {
+     "n_rows": 116,
+     "pmax_gw": 9.719,
+     "live_pmax_gw_mean": 8.32,
+     "rated_unavail_gw": 4.67,
+     "spp84basis_unavail_gw": 3.97,
+     "rated_unavail_frac": 0.5613
+    },
+    "oil": {
+     "n_rows": 321,
+     "pmax_gw": 1.795,
+     "live_pmax_gw_mean": 1.786,
+     "rated_unavail_gw": 0.179,
+     "spp84basis_unavail_gw": 0.0,
+     "rated_unavail_frac": 0.1
+    }
+   },
+   "ct_rated_unavail_monthly_gw": [
+    3.043,
+    3.043,
+    3.358,
+    3.358,
+    3.358,
+    3.43,
+    3.43,
+    3.43,
+    3.43,
+    3.358,
+    3.358,
+    3.043
+   ],
+   "ct_mw_weighted_age": 13.0,
+   "ct_rows_min_avail": 0.63,
+   "gas_rated_unavail_gw": 10.79,
+   "gas_spp84basis_unavail_gw": 6.449
+  },
+  {
+   "year": 2024,
+   "variant": "arm",
+   "classes": {
+    "CC_CHP": {
+     "n_rows": 3,
+     "pmax_gw": 0.271,
+     "live_pmax_gw_mean": 0.271,
+     "rated_unavail_gw": 0.045,
+     "spp84basis_unavail_gw": 0.032,
+     "rated_unavail_frac": 0.1665
+    },
+    "CC_REGULAR": {
+     "n_rows": 81,
+     "pmax_gw": 9.955,
+     "live_pmax_gw_mean": 9.707,
+     "rated_unavail_gw": 2.984,
+     "spp84basis_unavail_gw": 2.445,
+     "rated_unavail_frac": 0.3074
+    },
+    "COAL_LIGNITE": {
+     "n_rows": 10,
+     "pmax_gw": 1.56,
+     "live_pmax_gw_mean": 1.56,
+     "rated_unavail_gw": 0.342,
+     "spp84basis_unavail_gw": 0.306,
+     "rated_unavail_frac": 0.2191
+    },
+    "COAL_PRB": {
+     "n_rows": 136,
+     "pmax_gw": 18.29,
+     "live_pmax_gw_mean": 18.263,
+     "rated_unavail_gw": 7.442,
+     "spp84basis_unavail_gw": 6.87,
+     "rated_unavail_frac": 0.4075
+    },
+    "CT_CHP": {
+     "n_rows": 21,
+     "pmax_gw": 0.209,
+     "live_pmax_gw_mean": 0.209,
+     "rated_unavail_gw": 0.025,
+     "spp84basis_unavail_gw": 0.011,
+     "rated_unavail_frac": 0.1177
+    },
+    "CT_PEAKER": {
+     "n_rows": 393,
+     "pmax_gw": 10.592,
+     "live_pmax_gw_mean": 10.587,
+     "rated_unavail_gw": 3.334,
+     "spp84basis_unavail_gw": 0.265,
+     "rated_unavail_frac": 0.3149
+    },
+    "ST_CHP": {
+     "n_rows": 12,
+     "pmax_gw": 0.123,
+     "live_pmax_gw_mean": 0.123,
+     "rated_unavail_gw": 0.011,
+     "spp84basis_unavail_gw": 0.005,
+     "rated_unavail_frac": 0.086
+    },
+    "ST_GAS": {
+     "n_rows": 120,
+     "pmax_gw": 9.515,
+     "live_pmax_gw_mean": 9.179,
+     "rated_unavail_gw": 5.3,
+     "spp84basis_unavail_gw": 4.495,
+     "rated_unavail_frac": 0.5774
+    },
+    "oil": {
+     "n_rows": 329,
+     "pmax_gw": 1.777,
+     "live_pmax_gw_mean": 1.77,
+     "rated_unavail_gw": 0.177,
+     "spp84basis_unavail_gw": 0.0,
+     "rated_unavail_frac": 0.1
+    }
+   },
+   "ct_rated_unavail_monthly_gw": [
+    3.073,
+    3.084,
+    3.391,
+    3.391,
+    3.393,
+    3.462,
+    3.462,
+    3.462,
+    3.459,
+    3.388,
+    3.369,
+    3.063
+   ],
+   "ct_mw_weighted_age": 14.0,
+   "ct_rows_min_avail": 0.3607,
+   "gas_rated_unavail_gw": 11.698,
+   "gas_spp84basis_unavail_gw": 7.253
+  },
+  {
+   "year": 2025,
+   "variant": "arm",
+   "classes": {
+    "CC_CHP": {
+     "n_rows": 3,
+     "pmax_gw": 0.271,
+     "live_pmax_gw_mean": 0.271,
+     "rated_unavail_gw": 0.034,
+     "spp84basis_unavail_gw": 0.021,
+     "rated_unavail_frac": 0.1265
+    },
+    "CC_REGULAR": {
+     "n_rows": 85,
+     "pmax_gw": 10.048,
+     "live_pmax_gw_mean": 9.96,
+     "rated_unavail_gw": 3.344,
+     "spp84basis_unavail_gw": 2.792,
+     "rated_unavail_frac": 0.3358
+    },
+    "COAL_LIGNITE": {
+     "n_rows": 15,
+     "pmax_gw": 2.21,
+     "live_pmax_gw_mean": 1.56,
+     "rated_unavail_gw": 0.398,
+     "spp84basis_unavail_gw": 0.362,
+     "rated_unavail_frac": 0.2549
+    },
+    "COAL_PRB": {
+     "n_rows": 141,
+     "pmax_gw": 18.485,
+     "live_pmax_gw_mean": 17.632,
+     "rated_unavail_gw": 5.828,
+     "spp84basis_unavail_gw": 5.43,
+     "rated_unavail_frac": 0.3305
+    },
+    "CT_CHP": {
+     "n_rows": 21,
+     "pmax_gw": 0.21,
+     "live_pmax_gw_mean": 0.21,
+     "rated_unavail_gw": 0.025,
+     "spp84basis_unavail_gw": 0.011,
+     "rated_unavail_frac": 0.1177
+    },
+    "CT_PEAKER": {
+     "n_rows": 397,
+     "pmax_gw": 11.847,
+     "live_pmax_gw_mean": 11.367,
+     "rated_unavail_gw": 3.703,
+     "spp84basis_unavail_gw": 0.462,
+     "rated_unavail_frac": 0.3258
+    },
+    "ST_CHP": {
+     "n_rows": 13,
+     "pmax_gw": 0.112,
+     "live_pmax_gw_mean": 0.108,
+     "rated_unavail_gw": 0.009,
+     "spp84basis_unavail_gw": 0.004,
+     "rated_unavail_frac": 0.086
+    },
+    "ST_GAS": {
+     "n_rows": 140,
+     "pmax_gw": 10.463,
+     "live_pmax_gw_mean": 9.681,
+     "rated_unavail_gw": 5.916,
+     "spp84basis_unavail_gw": 5.102,
+     "rated_unavail_frac": 0.6111
+    },
+    "oil": {
+     "n_rows": 345,
+     "pmax_gw": 1.793,
+     "live_pmax_gw_mean": 1.765,
+     "rated_unavail_gw": 0.176,
+     "spp84basis_unavail_gw": 0.0,
+     "rated_unavail_frac": 0.1
+    }
+   },
+   "ct_rated_unavail_monthly_gw": [
+    3.569,
+    3.569,
+    3.886,
+    3.816,
+    3.816,
+    3.869,
+    3.869,
+    3.721,
+    3.721,
+    3.618,
+    3.665,
+    3.315
+   ],
+   "ct_mw_weighted_age": 15.0,
+   "ct_rows_min_avail": 0.238,
+   "gas_rated_unavail_gw": 13.031,
+   "gas_spp84basis_unavail_gw": 8.392
+  }
+ ],
+ "arm_outage_type_basis": [
+  {
+   "year": 2019,
+   "variant": "arm_outage",
+   "classes": {
+    "CC_CHP": {
+     "n_rows": 3,
+     "pmax_gw": 0.266,
+     "live_pmax_gw_mean": 0.266,
+     "rated_unavail_gw": 0.013,
+     "spp84basis_unavail_gw": 0.011,
+     "rated_unavail_frac": 0.0493
+    },
+    "CC_REGULAR": {
+     "n_rows": 86,
+     "pmax_gw": 9.947,
+     "live_pmax_gw_mean": 9.855,
+     "rated_unavail_gw": 2.719,
+     "spp84basis_unavail_gw": 2.534,
+     "rated_unavail_frac": 0.2759
+    },
+    "COAL_LIGNITE": {
+     "n_rows": 15,
+     "pmax_gw": 2.241,
+     "live_pmax_gw_mean": 2.241,
+     "rated_unavail_gw": 0.486,
+     "spp84basis_unavail_gw": 0.486,
+     "rated_unavail_frac": 0.2169
+    },
+    "COAL_PRB": {
+     "n_rows": 152,
+     "pmax_gw": 19.583,
+     "live_pmax_gw_mean": 18.959,
+     "rated_unavail_gw": 5.472,
+     "spp84basis_unavail_gw": 5.449,
+     "rated_unavail_frac": 0.2886
+    },
+    "CT_CHP": {
+     "n_rows": 20,
+     "pmax_gw": 0.214,
+     "live_pmax_gw_mean": 0.214,
+     "rated_unavail_gw": 0.01,
+     "spp84basis_unavail_gw": 0.008,
+     "rated_unavail_frac": 0.0476
+    },
+    "CT_PEAKER": {
+     "n_rows": 370,
+     "pmax_gw": 10.23,
+     "live_pmax_gw_mean": 10.227,
+     "rated_unavail_gw": 2.376,
+     "spp84basis_unavail_gw": 0.533,
+     "rated_unavail_frac": 0.2323
+    },
+    "ST_CHP": {
+     "n_rows": 9,
+     "pmax_gw": 0.116,
+     "live_pmax_gw_mean": 0.116,
+     "rated_unavail_gw": 0.007,
+     "spp84basis_unavail_gw": 0.005,
+     "rated_unavail_frac": 0.056
+    },
+    "ST_GAS": {
+     "n_rows": 136,
+     "pmax_gw": 9.807,
+     "live_pmax_gw_mean": 8.675,
+     "rated_unavail_gw": 5.781,
+     "spp84basis_unavail_gw": 5.095,
+     "rated_unavail_frac": 0.6664
+    },
+    "oil": {
+     "n_rows": 336,
+     "pmax_gw": 1.704,
+     "live_pmax_gw_mean": 1.703,
+     "rated_unavail_gw": 0.17,
+     "spp84basis_unavail_gw": 0.0,
+     "rated_unavail_frac": 0.1
+    }
+   },
+   "ct_rated_unavail_monthly_gw": [
+    2.451,
+    2.451,
+    2.758,
+    2.758,
+    2.757,
+    1.843,
+    1.843,
+    1.843,
+    1.843,
+    2.757,
+    2.757,
+    2.45
+   ],
+   "ct_mw_weighted_age": 9.0,
+   "ct_rows_min_avail": 0.69,
+   "gas_rated_unavail_gw": 10.906,
+   "gas_spp84basis_unavail_gw": 8.186
+  },
+  {
+   "year": 2020,
+   "variant": "arm_outage",
+   "classes": {
+    "CC_CHP": {
+     "n_rows": 3,
+     "pmax_gw": 0.271,
+     "live_pmax_gw_mean": 0.271,
+     "rated_unavail_gw": 0.029,
+     "spp84basis_unavail_gw": 0.027,
+     "rated_unavail_frac": 0.1085
+    },
+    "CC_REGULAR": {
+     "n_rows": 86,
+     "pmax_gw": 9.991,
+     "live_pmax_gw_mean": 9.818,
+     "rated_unavail_gw": 2.303,
+     "spp84basis_unavail_gw": 2.2,
+     "rated_unavail_frac": 0.2346
+    },
+    "COAL_LIGNITE": {
+     "n_rows": 15,
+     "pmax_gw": 2.216,
+     "live_pmax_gw_mean": 2.216,
+     "rated_unavail_gw": 0.565,
+     "spp84basis_unavail_gw": 0.565,
+     "rated_unavail_frac": 0.2551
+    },
+    "COAL_PRB": {
+     "n_rows": 152,
+     "pmax_gw": 19.327,
+     "live_pmax_gw_mean": 18.375,
+     "rated_unavail_gw": 6.157,
+     "spp84basis_unavail_gw": 6.155,
+     "rated_unavail_frac": 0.3351
+    },
+    "CT_CHP": {
+     "n_rows": 20,
+     "pmax_gw": 0.205,
+     "live_pmax_gw_mean": 0.205,
+     "rated_unavail_gw": 0.01,
+     "spp84basis_unavail_gw": 0.008,
+     "rated_unavail_frac": 0.0476
+    },
+    "CT_PEAKER": {
+     "n_rows": 363,
+     "pmax_gw": 10.259,
+     "live_pmax_gw_mean": 10.259,
+     "rated_unavail_gw": 2.39,
+     "spp84basis_unavail_gw": 0.534,
+     "rated_unavail_frac": 0.2329
+    },
+    "ST_CHP": {
+     "n_rows": 9,
+     "pmax_gw": 0.116,
+     "live_pmax_gw_mean": 0.116,
+     "rated_unavail_gw": 0.007,
+     "spp84basis_unavail_gw": 0.005,
+     "rated_unavail_frac": 0.056
+    },
+    "ST_GAS": {
+     "n_rows": 124,
+     "pmax_gw": 9.791,
+     "live_pmax_gw_mean": 7.892,
+     "rated_unavail_gw": 4.842,
+     "spp84basis_unavail_gw": 4.212,
+     "rated_unavail_frac": 0.6136
+    },
+    "oil": {
+     "n_rows": 349,
+     "pmax_gw": 1.714,
+     "live_pmax_gw_mean": 1.711,
+     "rated_unavail_gw": 0.171,
+     "spp84basis_unavail_gw": 0.0,
+     "rated_unavail_frac": 0.1
+    }
+   },
+   "ct_rated_unavail_monthly_gw": [
+    2.464,
+    2.474,
+    2.772,
+    2.772,
+    2.742,
+    1.856,
+    1.856,
+    1.856,
+    1.887,
+    2.772,
+    2.761,
+    2.464
+   ],
+   "ct_mw_weighted_age": 10.0,
+   "ct_rows_min_avail": 0.69,
+   "gas_rated_unavail_gw": 9.581,
+   "gas_spp84basis_unavail_gw": 6.985
+  },
+  {
+   "year": 2021,
+   "variant": "arm_outage",
+   "classes": {
+    "CC_CHP": {
+     "n_rows": 3,
+     "pmax_gw": 0.271,
+     "live_pmax_gw_mean": 0.271,
+     "rated_unavail_gw": 0.058,
+     "spp84basis_unavail_gw": 0.056,
+     "rated_unavail_frac": 0.2153
+    },
+    "CC_REGULAR": {
+     "n_rows": 85,
+     "pmax_gw": 10.065,
+     "live_pmax_gw_mean": 9.883,
+     "rated_unavail_gw": 2.801,
+     "spp84basis_unavail_gw": 2.697,
+     "rated_unavail_frac": 0.2834
+    },
+    "COAL_LIGNITE": {
+     "n_rows": 15,
+     "pmax_gw": 2.216,
+     "live_pmax_gw_mean": 2.216,
+     "rated_unavail_gw": 0.68,
+     "spp84basis_unavail_gw": 0.68,
+     "rated_unavail_frac": 0.307
+    },
+    "COAL_PRB": {
+     "n_rows": 142,
+     "pmax_gw": 18.463,
+     "live_pmax_gw_mean": 18.324,
+     "rated_unavail_gw": 5.371,
+     "spp84basis_unavail_gw": 5.371,
+     "rated_unavail_frac": 0.2931
+    },
+    "CT_CHP": {
+     "n_rows": 22,
+     "pmax_gw": 0.208,
+     "live_pmax_gw_mean": 0.208,
+     "rated_unavail_gw": 0.01,
+     "spp84basis_unavail_gw": 0.008,
+     "rated_unavail_frac": 0.0476
+    },
+    "CT_PEAKER": {
+     "n_rows": 339,
+     "pmax_gw": 10.108,
+     "live_pmax_gw_mean": 10.108,
+     "rated_unavail_gw": 2.376,
+     "spp84basis_unavail_gw": 0.535,
+     "rated_unavail_frac": 0.2351
+    },
+    "ST_CHP": {
+     "n_rows": 12,
+     "pmax_gw": 0.123,
+     "live_pmax_gw_mean": 0.122,
+     "rated_unavail_gw": 0.007,
+     "spp84basis_unavail_gw": 0.005,
+     "rated_unavail_frac": 0.0561
+    },
+    "ST_GAS": {
+     "n_rows": 116,
+     "pmax_gw": 9.771,
+     "live_pmax_gw_mean": 7.917,
+     "rated_unavail_gw": 5.304,
+     "spp84basis_unavail_gw": 4.667,
+     "rated_unavail_frac": 0.6699
+    },
+    "oil": {
+     "n_rows": 369,
+     "pmax_gw": 1.915,
+     "live_pmax_gw_mean": 1.914,
+     "rated_unavail_gw": 0.191,
+     "spp84basis_unavail_gw": 0.0,
+     "rated_unavail_frac": 0.1
+    }
+   },
+   "ct_rated_unavail_monthly_gw": [
+    2.457,
+    2.457,
+    2.759,
+    2.759,
+    2.759,
+    1.86,
+    1.86,
+    1.86,
+    1.86,
+    2.729,
+    2.729,
+    2.426
+   ],
+   "ct_mw_weighted_age": 11.0,
+   "ct_rows_min_avail": 0.6167,
+   "gas_rated_unavail_gw": 10.556,
+   "gas_spp84basis_unavail_gw": 7.967
+  },
+  {
+   "year": 2022,
+   "variant": "arm_outage",
+   "classes": {
+    "CC_CHP": {
+     "n_rows": 3,
+     "pmax_gw": 0.271,
+     "live_pmax_gw_mean": 0.271,
+     "rated_unavail_gw": 0.036,
+     "spp84basis_unavail_gw": 0.033,
+     "rated_unavail_frac": 0.1311
+    },
+    "CC_REGULAR": {
+     "n_rows": 84,
+     "pmax_gw": 10.074,
+     "live_pmax_gw_mean": 9.952,
+     "rated_unavail_gw": 2.651,
+     "spp84basis_unavail_gw": 2.546,
+     "rated_unavail_frac": 0.2664
+    },
+    "COAL_LIGNITE": {
+     "n_rows": 15,
+     "pmax_gw": 2.216,
+     "live_pmax_gw_mean": 2.216,
+     "rated_unavail_gw": 0.327,
+     "spp84basis_unavail_gw": 0.327,
+     "rated_unavail_frac": 0.1476
+    },
+    "COAL_PRB": {
+     "n_rows": 139,
+     "pmax_gw": 18.46,
+     "live_pmax_gw_mean": 18.46,
+     "rated_unavail_gw": 5.622,
+     "spp84basis_unavail_gw": 5.622,
+     "rated_unavail_frac": 0.3045
+    },
+    "CT_CHP": {
+     "n_rows": 22,
+     "pmax_gw": 0.205,
+     "live_pmax_gw_mean": 0.205,
+     "rated_unavail_gw": 0.01,
+     "spp84basis_unavail_gw": 0.008,
+     "rated_unavail_frac": 0.0476
+    },
+    "CT_PEAKER": {
+     "n_rows": 379,
+     "pmax_gw": 10.403,
+     "live_pmax_gw_mean": 10.382,
+     "rated_unavail_gw": 2.418,
+     "spp84basis_unavail_gw": 0.54,
+     "rated_unavail_frac": 0.2329
+    },
+    "ST_CHP": {
+     "n_rows": 12,
+     "pmax_gw": 0.122,
+     "live_pmax_gw_mean": 0.122,
+     "rated_unavail_gw": 0.007,
+     "spp84basis_unavail_gw": 0.005,
+     "rated_unavail_frac": 0.056
+    },
+    "ST_GAS": {
+     "n_rows": 120,
+     "pmax_gw": 9.738,
+     "live_pmax_gw_mean": 8.964,
+     "rated_unavail_gw": 5.861,
+     "spp84basis_unavail_gw": 5.449,
+     "rated_unavail_frac": 0.6539
+    },
+    "oil": {
+     "n_rows": 329,
+     "pmax_gw": 1.712,
+     "live_pmax_gw_mean": 1.7,
+     "rated_unavail_gw": 0.17,
+     "spp84basis_unavail_gw": 0.0,
+     "rated_unavail_frac": 0.1
+    }
+   },
+   "ct_rated_unavail_monthly_gw": [
+    2.485,
+    2.485,
+    2.795,
+    2.81,
+    2.807,
+    1.88,
+    1.88,
+    1.88,
+    1.88,
+    2.807,
+    2.807,
+    2.495
+   ],
+   "ct_mw_weighted_age": 12.0,
+   "ct_rows_min_avail": 0.69,
+   "gas_rated_unavail_gw": 10.982,
+   "gas_spp84basis_unavail_gw": 8.58
+  },
+  {
+   "year": 2023,
+   "variant": "arm_outage",
+   "classes": {
+    "CC_CHP": {
+     "n_rows": 3,
+     "pmax_gw": 0.271,
+     "live_pmax_gw_mean": 0.271,
+     "rated_unavail_gw": 0.032,
+     "spp84basis_unavail_gw": 0.03,
+     "rated_unavail_frac": 0.118
+    },
+    "CC_REGULAR": {
+     "n_rows": 85,
+     "pmax_gw": 10.057,
+     "live_pmax_gw_mean": 10.001,
+     "rated_unavail_gw": 2.276,
+     "spp84basis_unavail_gw": 2.171,
+     "rated_unavail_frac": 0.2276
+    },
+    "COAL_LIGNITE": {
+     "n_rows": 15,
+     "pmax_gw": 2.21,
+     "live_pmax_gw_mean": 1.718,
+     "rated_unavail_gw": 0.386,
+     "spp84basis_unavail_gw": 0.379,
+     "rated_unavail_frac": 0.2248
+    },
+    "COAL_PRB": {
+     "n_rows": 139,
+     "pmax_gw": 18.476,
+     "live_pmax_gw_mean": 18.209,
+     "rated_unavail_gw": 6.828,
+     "spp84basis_unavail_gw": 6.158,
+     "rated_unavail_frac": 0.375
+    },
+    "CT_CHP": {
+     "n_rows": 25,
+     "pmax_gw": 0.211,
+     "live_pmax_gw_mean": 0.211,
+     "rated_unavail_gw": 0.01,
+     "spp84basis_unavail_gw": 0.008,
+     "rated_unavail_frac": 0.0476
+    },
+    "CT_PEAKER": {
+     "n_rows": 373,
+     "pmax_gw": 10.492,
+     "live_pmax_gw_mean": 10.492,
+     "rated_unavail_gw": 2.443,
+     "spp84basis_unavail_gw": 0.546,
+     "rated_unavail_frac": 0.2328
+    },
+    "ST_CHP": {
+     "n_rows": 11,
+     "pmax_gw": 0.121,
+     "live_pmax_gw_mean": 0.12,
+     "rated_unavail_gw": 0.007,
+     "spp84basis_unavail_gw": 0.005,
+     "rated_unavail_frac": 0.056
+    },
+    "ST_GAS": {
+     "n_rows": 116,
+     "pmax_gw": 9.719,
+     "live_pmax_gw_mean": 8.32,
+     "rated_unavail_gw": 4.497,
+     "spp84basis_unavail_gw": 4.13,
+     "rated_unavail_frac": 0.5405
+    },
+    "oil": {
+     "n_rows": 321,
+     "pmax_gw": 1.795,
+     "live_pmax_gw_mean": 1.786,
+     "rated_unavail_gw": 0.179,
+     "spp84basis_unavail_gw": 0.0,
+     "rated_unavail_frac": 0.1
+    }
+   },
+   "ct_rated_unavail_monthly_gw": [
+    2.519,
+    2.519,
+    2.833,
+    2.833,
+    2.833,
+    1.897,
+    1.897,
+    1.897,
+    1.897,
+    2.833,
+    2.833,
+    2.519
+   ],
+   "ct_mw_weighted_age": 13.0,
+   "ct_rows_min_avail": 0.69,
+   "gas_rated_unavail_gw": 9.264,
+   "gas_spp84basis_unavail_gw": 6.889
+  },
+  {
+   "year": 2024,
+   "variant": "arm_outage",
+   "classes": {
+    "CC_CHP": {
+     "n_rows": 3,
+     "pmax_gw": 0.271,
+     "live_pmax_gw_mean": 0.271,
+     "rated_unavail_gw": 0.031,
+     "spp84basis_unavail_gw": 0.029,
+     "rated_unavail_frac": 0.1158
+    },
+    "CC_REGULAR": {
+     "n_rows": 81,
+     "pmax_gw": 9.955,
+     "live_pmax_gw_mean": 9.707,
+     "rated_unavail_gw": 2.551,
+     "spp84basis_unavail_gw": 2.449,
+     "rated_unavail_frac": 0.2628
+    },
+    "COAL_LIGNITE": {
+     "n_rows": 10,
+     "pmax_gw": 1.56,
+     "live_pmax_gw_mean": 1.56,
+     "rated_unavail_gw": 0.312,
+     "spp84basis_unavail_gw": 0.312,
+     "rated_unavail_frac": 0.1997
+    },
+    "COAL_PRB": {
+     "n_rows": 136,
+     "pmax_gw": 18.29,
+     "live_pmax_gw_mean": 18.263,
+     "rated_unavail_gw": 7.184,
+     "spp84basis_unavail_gw": 7.02,
+     "rated_unavail_frac": 0.3933
+    },
+    "CT_CHP": {
+     "n_rows": 21,
+     "pmax_gw": 0.209,
+     "live_pmax_gw_mean": 0.209,
+     "rated_unavail_gw": 0.01,
+     "spp84basis_unavail_gw": 0.008,
+     "rated_unavail_frac": 0.0476
+    },
+    "CT_PEAKER": {
+     "n_rows": 393,
+     "pmax_gw": 10.592,
+     "live_pmax_gw_mean": 10.587,
+     "rated_unavail_gw": 2.465,
+     "spp84basis_unavail_gw": 0.552,
+     "rated_unavail_frac": 0.2328
+    },
+    "ST_CHP": {
+     "n_rows": 12,
+     "pmax_gw": 0.123,
+     "live_pmax_gw_mean": 0.123,
+     "rated_unavail_gw": 0.007,
+     "spp84basis_unavail_gw": 0.005,
+     "rated_unavail_frac": 0.056
+    },
+    "ST_GAS": {
+     "n_rows": 120,
+     "pmax_gw": 9.515,
+     "live_pmax_gw_mean": 9.179,
+     "rated_unavail_gw": 5.114,
+     "spp84basis_unavail_gw": 4.676,
+     "rated_unavail_frac": 0.5571
+    },
+    "oil": {
+     "n_rows": 329,
+     "pmax_gw": 1.777,
+     "live_pmax_gw_mean": 1.77,
+     "rated_unavail_gw": 0.177,
+     "spp84basis_unavail_gw": 0.0,
+     "rated_unavail_frac": 0.1
+    }
+   },
+   "ct_rated_unavail_monthly_gw": [
+    2.544,
+    2.555,
+    2.862,
+    2.862,
+    2.831,
+    1.914,
+    1.914,
+    1.914,
+    1.945,
+    2.859,
+    2.841,
+    2.535
+   ],
+   "ct_mw_weighted_age": 14.0,
+   "ct_rows_min_avail": 0.3868,
+   "gas_rated_unavail_gw": 10.177,
+   "gas_spp84basis_unavail_gw": 7.718
+  },
+  {
+   "year": 2025,
+   "variant": "arm_outage",
+   "classes": {
+    "CC_CHP": {
+     "n_rows": 3,
+     "pmax_gw": 0.271,
+     "live_pmax_gw_mean": 0.271,
+     "rated_unavail_gw": 0.02,
+     "spp84basis_unavail_gw": 0.018,
+     "rated_unavail_frac": 0.075
+    },
+    "CC_REGULAR": {
+     "n_rows": 85,
+     "pmax_gw": 10.048,
+     "live_pmax_gw_mean": 9.96,
+     "rated_unavail_gw": 2.911,
+     "spp84basis_unavail_gw": 2.787,
+     "rated_unavail_frac": 0.2922
+    },
+    "COAL_LIGNITE": {
+     "n_rows": 15,
+     "pmax_gw": 2.21,
+     "live_pmax_gw_mean": 1.56,
+     "rated_unavail_gw": 0.369,
+     "spp84basis_unavail_gw": 0.369,
+     "rated_unavail_frac": 0.2366
+    },
+    "COAL_PRB": {
+     "n_rows": 141,
+     "pmax_gw": 18.485,
+     "live_pmax_gw_mean": 17.632,
+     "rated_unavail_gw": 5.544,
+     "spp84basis_unavail_gw": 5.544,
+     "rated_unavail_frac": 0.3144
+    },
+    "CT_CHP": {
+     "n_rows": 21,
+     "pmax_gw": 0.21,
+     "live_pmax_gw_mean": 0.21,
+     "rated_unavail_gw": 0.01,
+     "spp84basis_unavail_gw": 0.008,
+     "rated_unavail_frac": 0.0476
+    },
+    "CT_PEAKER": {
+     "n_rows": 397,
+     "pmax_gw": 11.847,
+     "live_pmax_gw_mean": 11.367,
+     "rated_unavail_gw": 2.777,
+     "spp84basis_unavail_gw": 0.764,
+     "rated_unavail_frac": 0.2443
+    },
+    "ST_CHP": {
+     "n_rows": 13,
+     "pmax_gw": 0.112,
+     "live_pmax_gw_mean": 0.108,
+     "rated_unavail_gw": 0.006,
+     "spp84basis_unavail_gw": 0.004,
+     "rated_unavail_frac": 0.056
+    },
+    "ST_GAS": {
+     "n_rows": 140,
+     "pmax_gw": 10.463,
+     "live_pmax_gw_mean": 9.681,
+     "rated_unavail_gw": 5.735,
+     "spp84basis_unavail_gw": 5.308,
+     "rated_unavail_frac": 0.5924
+    },
+    "oil": {
+     "n_rows": 345,
+     "pmax_gw": 1.793,
+     "live_pmax_gw_mean": 1.765,
+     "rated_unavail_gw": 0.176,
+     "spp84basis_unavail_gw": 0.0,
+     "rated_unavail_frac": 0.1
+    }
+   },
+   "ct_rated_unavail_monthly_gw": [
+    3.041,
+    3.041,
+    3.358,
+    3.283,
+    3.283,
+    2.209,
+    2.209,
+    2.03,
+    2.03,
+    3.042,
+    3.081,
+    2.731
+   ],
+   "ct_mw_weighted_age": 15.0,
+   "ct_rows_min_avail": 0.2543,
+   "gas_rated_unavail_gw": 11.46,
+   "gas_spp84basis_unavail_gw": 8.889
+  }
+ ],
+ "arm_note": "spp_ct_lole_efor armed via ScenarioConfig.__post_init__ patch in the fleet_only rebuild (zero LP); 0 CT plants fall back to the statistical WEFOR in any year"
 }
