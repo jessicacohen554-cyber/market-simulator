@@ -104,3 +104,24 @@ January 2021. Model reserve margin (available capacity − demand, ÷ demand) in
 - Probe: `scripts/probes/_soco94_year_pattern.py` (`--out DIR` writes `year_<y>.json`, `regression.json` and the
   cached `fleet94_<y>.npz`).
 - Keeper unchanged; NOT-YET 7/4/0/1/2. SOCO is not frontier.
+
+## 7. Owner ruling 1 (decision card, 2026-09-30): "Reopen CT start/no-load" — checked at zero LP, refuted
+
+Before any work, the reopen was checked against three facts. Together they close it on the benchmark's own
+definition, not on a residual.
+
+1. **Southern's λ has no start or no-load term.** Its Schedule VI formula is
+   `λ = [(2aP + b)(FC + EC) + VOM + FH] × TPF` (soco-82 §3): incremental HR × (replacement fuel + emission cost), plus
+   VOM, fuel handling and loss penalty. A start cost cannot appear in λ, so it cannot explain λ's premium.
+2. **soco-92 §4 already bounded its reach.** A start amortized over SOCO's measured CT runs adds $0.2–3.3/MWh against
+   a $6–47 premium, and the no-load half moves the CT offer down (wrong sign). Owner: "Close the reopen".
+3. **The model has no CT block at λ's implied heat rate.** In top-20 % λ hours the model's available CT fleet is
+   8.5–9.1 GW at a capacity-weighted HR of 11.4–11.6. Only 160–330 MW sits at HR ≥ 13, and 8.5–10.6 GW is offered
+   above the price and left unused. λ's implied 12.8–16.3 in 2021–25 matches no material block of SOCO's CT stack, so
+   a tighter peak would not reach it either.
+
+Every term left in the formula is therefore closed or inadmissible. The incremental HR `2aP + b` for a CT is below
+average (soco-92, wrong sign). The replacement fuel `FC` is the daily SE gas series (owner "Don't buy"). SOCO has no
+emission price in `EC`. `TPF` is a few percent at most. **The premium's only candidate object is replacement fuel.**
+Its timing (summer peaks and cold snaps; §4) is also the signature of SE daily gas spikes, which HH daily does not
+carry (Elliott: HH 117.8 vs SE 406.8, soco-89 §4).
