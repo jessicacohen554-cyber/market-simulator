@@ -43,6 +43,8 @@ ARM_FLAG_SETS: dict[str, tuple[str, ...]] = {
 }
 ARM_FLAGS: tuple[str, ...] = ()
 PINNED_SHA = "6d4c77491e469e06f3a9c0e3d4f2b7c37b15fba3"
+#: Arm B was re-pinned after the orchestrator-wiring fix (PRECOMMIT §6).
+PINNED_SHA_BY_ARM: dict[str, str] = {"A": PINNED_SHA, "B": "5b813f34370a2a41a45fbc6e01c7e8a1628d46fd"}
 MUST_BE_TRUE = (
     "eia860_vintage_tracks_solve_year",
     "measured_ct_heat_rates",
@@ -164,8 +166,9 @@ def main() -> int:
     ap.add_argument("--out", required=True)
     ap.add_argument("--check-only", action="store_true")
     args = ap.parse_args()
-    global ARM_FLAGS
+    global ARM_FLAGS, PINNED_SHA
     ARM_FLAGS = ARM_FLAG_SETS[args.arm]
+    PINNED_SHA = PINNED_SHA_BY_ARM[args.arm]
     legs: dict[str, list[int]] = {}
     for spec in args.leg:
         ys, _, name = spec.partition("=")
