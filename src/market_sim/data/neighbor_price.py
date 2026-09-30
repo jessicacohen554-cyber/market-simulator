@@ -628,6 +628,7 @@ def caiso_hub_measured_gas_reference_price(
     spec: "CaisoHubNeighbor",
     year: int,
     hours: int,
+    eia923_fallback: bool = False,
 ) -> np.ndarray | None:
     """Return a CAISO corridor's reference price on MEASURED regional gas ($/MWh).
 
@@ -641,14 +642,27 @@ def caiso_hub_measured_gas_reference_price(
     state does not print are ``NaN`` (the caller falls back to the forward fill
     there); ``None`` when the hub has no mapped state, the state prints nothing
     for ``year``, or the load shape cannot be resolved.
+
+    ``eia923_fallback`` (R-CAISO-18, ``ScenarioConfig.caiso_intertie_unprinted_year_measured_gas``;
+    default off = byte-identical): a month N3045 withholds takes the same
+    quantity rebuilt from the state's own EIA-923 receipts
+    (:func:`~market_sim.data.fuel.electric_power.state_electric_power_monthly_gas_eia923`).
+    A printed N3045 month is never replaced.
     """
-    from market_sim.data.fuel.electric_power import state_electric_power_monthly_gas
+    from market_sim.data.fuel.electric_power import (
+        state_electric_power_monthly_gas,
+        state_electric_power_monthly_gas_eia923,
+    )
     from market_sim.model.interchange.spec import CAISO_INTERTIE_HUB_GAS_STATE
 
     state = CAISO_INTERTIE_HUB_GAS_STATE.get(spec.hub)
     if state is None:
         return None
     gas = state_electric_power_monthly_gas(state, year)
+    if eia923_fallback:
+        rebuilt = state_electric_power_monthly_gas_eia923(state, year)
+        if rebuilt is not None:
+            gas = rebuilt if gas is None else np.where(np.isfinite(gas), gas, rebuilt)
     if gas is None:
         return None
     shape = caiso_hub_load_shape(spec, year, hours)

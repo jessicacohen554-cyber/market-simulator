@@ -64,13 +64,20 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from market_sim.config.paths import GAS_PRICES_DIR, REFERENCE_DIR
+from market_sim.config.paths import GAS_PRICES_DIR, PROCESSED_DIR, REFERENCE_DIR
 
 #: EIA N3045 monthly "natural gas price sold to electric power consumers",
 #: every state, $/Mcf. Intake and coverage:
 #: ``data/raw/gas-prices/SOURCES_eia_delivered_gas_electric_power_by_state.md``.
 ELECTRIC_POWER_GAS_BY_STATE_PATH: Path = (
     GAS_PRICES_DIR / "eia_delivered_gas_electric_power_by_state_monthly_2018-2026.csv"
+)
+
+#: EIA-923 Schedule 2 per-plant monthly delivered fuel cost (``price_per_mmbtu``,
+#: ``quantity``) — the plant-level receipts EIA aggregates into N3045. Read by
+#: :func:`state_electric_power_monthly_gas_eia923` where N3045 is withheld.
+EIA923_MONTHLY_FUEL_COSTS_PATH: Path = (
+    PROCESSED_DIR / "eia923_monthly_fuel_costs.parquet"
 )
 
 #: Per-ISO gas-capacity share by state (``scripts/data/derive_iso_gas_state_weights.py``).
@@ -203,3 +210,50 @@ def state_electric_power_monthly_gas(
     if not np.isfinite(out).any():
         return None
     return out / MCF_TO_MMBTU
+
+
+def state_electric_power_monthly_gas_eia923(
+    state: str,
+    year: int,
+    costs_path: str | None = None,
+) -> np.ndarray | None:
+    """Return ONE state's ``(12,)`` delivered-to-electric-power gas from EIA-923 ($/MMBtu).
+
+    R-CAISO-18. N3045 is EIA's own aggregate of the EIA-923 Schedule 2 receipts
+    of the state's power plants, and EIA WITHHOLDS it where too few respondents
+    report (Arizona and Oregon, 2019-2021). This rebuilds the same quantity from
+    the same receipts: the quantity-weighted mean of the state's plants'
+    delivered natural-gas ``price_per_mmbtu`` per month. No parameter. Where
+    N3045 prints it reproduces it (2018-2025: AZ r = 0.980, mean -0.21
+    $/MMBtu, 47 months; OR r = 0.975, +0.47 $/MMBtu, 36 months;
+    ``docs/handoffs/r-caiso-18/PRECOMMIT-r-caiso-18-2026-09-30.md`` §2).
+    A month with no reporting plant is ``NaN``; ``None`` when no month prints.
+
+    Args:
+        state: Two-letter US state code (e.g. ``"AZ"``).
+        year: Calendar year.
+        costs_path: Override for the EIA-923 monthly fuel-cost parquet (tests).
+
+    Returns:
+        A ``(12,)`` array of $/MMBtu indexed January..December, or ``None``.
+    """
+    resolved = Path(costs_path) if costs_path else EIA923_MONTHLY_FUEL_COSTS_PATH
+    if not resolved.exists():
+        return None
+    frame = pd.read_parquet(resolved)
+    frame = frame[
+        (frame["state"] == state.upper())
+        & (frame["year"] == year)
+        & (frame["fuel_group"] == "Natural Gas")
+        & frame["price_per_mmbtu"].notna()
+        & (frame["quantity"] > 0)
+    ]
+    if frame.empty:
+        return None
+    cost = (frame["price_per_mmbtu"] * frame["quantity"]).groupby(frame["month"]).sum()
+    qty = frame["quantity"].groupby(frame["month"]).sum()
+    monthly = (cost / qty).reindex(list(_MONTHS))
+    out = monthly.to_numpy(dtype=float)
+    if not np.isfinite(out).any():
+        return None
+    return out
