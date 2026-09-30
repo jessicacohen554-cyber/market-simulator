@@ -5903,6 +5903,9 @@ def run_year(
                 partial_year_measured=getattr(
                     config, "caiso_intertie_partial_year_measured", False
                 ),
+                unprinted_year_measured_gas=getattr(
+                    config, "caiso_intertie_unprinted_year_measured_gas", False
+                ),
             ):
                 logger.info(
                     "%s %d: per-hub WECC intertie — two signed corridors (Malin/COI "

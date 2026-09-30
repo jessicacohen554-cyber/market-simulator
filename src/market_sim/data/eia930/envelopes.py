@@ -543,6 +543,7 @@ def measured_import_hub_prices(
     gap_fill_measured_gas: bool = False,
     gap_fill_measured_dam: bool = False,
     partial_year_measured: bool = False,
+    unprinted_year_measured_gas: bool = False,
 ) -> dict[str, np.ndarray] | None:
     """Return each CAISO import tranche's measured hourly neighbor-hub price.
 
@@ -588,6 +589,19 @@ def measured_import_hub_prices(
     printed hours at the measured hub and leaves the NaN hours on the ladder.
     A hub at or under the bound takes the existing fill path unchanged.
 
+    ``unprinted_year_measured_gas``
+    (``ScenarioConfig.caiso_intertie_unprinted_year_measured_gas``, R-CAISO-18,
+    default off = byte-identical) prices the unprinted hours of a hub whose gap
+    exceeds the 25 % bound — including a year OASIS no longer serves at all
+    (2019-2020; GroupZip's earliest trade date is 2021-04-27) — on the
+    measured-gas reference formula (the same one the <=25 % path uses), with
+    the hub host state's N3045 rebuilt from its own EIA-923 receipts where EIA
+    withholds it. Never the forward Henry Hub fill: the 25 % bound on a
+    FORECAST estimate inside a backcast year is untouched. Hours the measured
+    formula cannot price stay unprinted (ladder per hour under
+    ``partial_year_measured``, else the hub is dropped as before). The <=25 %
+    path is not consulted, so a year it governs is byte-identical.
+
     Returns ``{tranche_name: (hours,) $/MWh}`` for every tranche whose hub has a
     measured series, or ``None`` when the ISO is not CAISO, the parquet is
     absent (forecast years / before the OASIS fetch lands), or the year is
@@ -601,7 +615,20 @@ def measured_import_hub_prices(
     frame = pd.read_parquet(path)
     frame = frame[frame["year"] == year]
     if frame.empty:
-        return None
+        if not unprinted_year_measured_gas:
+            return None
+        # R-CAISO-18: a year the OASIS extract does not carry is a hub with
+        # every hour unprinted; the measured-gas branch below prices it.
+        from market_sim.config.interchange_config import CAISO_PER_HUB_NEIGHBORS
+
+        frame = pd.DataFrame(
+            [
+                (year, h, spec.hub, np.nan)
+                for spec in CAISO_PER_HUB_NEIGHBORS.values()
+                for h in range(hours)
+            ],
+            columns=["year", "hour", "hub", "price"],
+        )
 
     out: dict[str, np.ndarray] = {}
     for hub, sub in frame.groupby("hub"):
@@ -629,6 +656,16 @@ def measured_import_hub_prices(
             # the filled hours are the same hours absent from the actual-LMP
             # benchmark, so C3 price scoring never reads the filled values.
             if gap.mean() > 0.25:
+                if unprinted_year_measured_gas:
+                    price = _fill_unprinted_measured_gas(
+                        price, gap, str(hub), year, hours
+                    )
+                    gap = ~np.isfinite(price)
+                    if not gap.any():
+                        for tranche, mapped_hub in _CAISO_IMPORT_TRANCHE_HUB.items():
+                            if mapped_hub == hub:
+                                out[tranche] = price
+                        continue
                 if not partial_year_measured:
                     continue
                 # R-CAISO-8: a mostly-unprinted year keeps its printed hours;
@@ -669,6 +706,32 @@ def measured_import_hub_prices(
             if mapped_hub == hub:
                 out[tranche] = price
     return out or None
+
+
+def _fill_unprinted_measured_gas(
+    price: np.ndarray, gap: np.ndarray, hub: str, year: int, hours: int
+) -> np.ndarray:
+    """Fill a >25 %-gap hub's unprinted hours on the measured-gas formula (R-CAISO-18).
+
+    :func:`market_sim.data.neighbor_price.caiso_hub_measured_gas_reference_price`
+    with its EIA-923 fallback armed. Hours the formula cannot price (no state
+    month, no load shape) are left ``NaN``. Returns a copy.
+    """
+    from market_sim.config.interchange_config import CAISO_PER_HUB_NEIGHBORS
+    from market_sim.data.neighbor_price import caiso_hub_measured_gas_reference_price
+
+    out = price.copy()
+    spec = next((s for s in CAISO_PER_HUB_NEIGHBORS.values() if s.hub == hub), None)
+    if spec is None:
+        return out
+    ref = caiso_hub_measured_gas_reference_price(
+        spec, year, hours, eia923_fallback=True
+    )
+    if ref is None:
+        return out
+    fill = gap & np.isfinite(ref)
+    out[fill] = ref[fill]
+    return out
 
 
 def measured_intertie_hub_price_raw(

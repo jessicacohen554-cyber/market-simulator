@@ -2234,6 +2234,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # construction: frames._repair_clock_late_windows returns its input
     # object unless the per-solve switch is armed from this flag.
     "caiso_eia930_clock_repair",
+    # R-CAISO-18 (2026-09-30), default off, registered IN THE SAME COMMIT as
+    # the field (the nyiso-119 discipline). Byte-identical off by
+    # construction: measured_import_hub_prices reads it only when handed
+    # unprinted_year_measured_gas=True from the flag.
+    "caiso_intertie_unprinted_year_measured_gas",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -3113,6 +3118,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_tac_shares_standard_time": "False",
     # Added by R-CAISO-13 WITH the field (the nyiso-119 discipline).
     "caiso_eia930_clock_repair": "False",
+    # Added by R-CAISO-18 WITH the field (the nyiso-119 discipline).
+    "caiso_intertie_unprinted_year_measured_gas": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
@@ -9681,6 +9688,28 @@ class ScenarioConfig:
     # (2019-20): only 2021 moves. Default off; CAISO-only; backcast-only (the
     # measured overlay never runs in a forecast).
     # docs/handoffs/r-caiso-8/PRECOMMIT-r-caiso-8-2026-09-27.md.
+    caiso_intertie_unprinted_year_measured_gas: bool = False  # R-CAISO-18
+    # (2026-09-30): price the UNPRINTED hours of a WECC intertie hub whose gap
+    # exceeds the 25 % bound -- all of 2019-2020 (OASIS GroupZip's earliest
+    # trade date is 2021-04-27, so no measured print exists) and Jan-Apr 2021 --
+    # on the MEASURED-GAS reference formula caiso_intertie_gap_fill_measured_gas
+    # already uses for a <=25 % gap (hub host state's delivered-to-power gas x
+    # marginal HR x neighbour load shape), with that state's N3045 rebuilt from
+    # its own EIA-923 Schedule 2 receipts where EIA withholds it (AZ/OR
+    # 2019-2021). Replaces the static Tier-3 ladder (DSW_CCGT $68, DSW_CT $110,
+    # "static-fitted-pending-measured", spec.IMPORT_TRANCHES) in those hours.
+    # Rule 14 [R-ACCURATE]: a measured-input estimate over a static fitted proxy
+    # -- on ICE on-peak days the 2019/2020 formula reads -4.4/-22.3 $/MWh vs
+    # ICE Palo Verde, inside its own 2021-24 out-of-sample range, while the
+    # ladder sits +35/+15 above ICE. Rule 13: the formula IS the forecast's
+    # hub construction on measured gas, so it regenerates forward. Rule 19: no
+    # new mechanism, the existing hub injector. Zero parameters (rules 21/24).
+    # NOT the forward Henry Hub fill (the 25 % bound on a forecast estimate
+    # inside a backcast year stands) and NOT the clean-depth arming, which
+    # still reads the raw measured print only. Inert by construction in
+    # 2022-2025 (full print, or a <=25 % gap on the untouched path). Default
+    # off; CAISO-only; backcast-only; per-hub topology only.
+    # docs/handoffs/r-caiso-18/PRECOMMIT-r-caiso-18-2026-09-30.md.
     cc_eia923_identity_emission_basis: bool = False  # R-CAISO-4 (2026-09-26):
     # a CC_REGULAR plant whose measured heat rate is the EIA-923 identity rate
     # (its CEMS record REFUSED by the CC derive: flag eia923_identity) books
