@@ -48,11 +48,22 @@ ARM_META = {"hydro_backfill_year": 2024, "hydro_eia930_monthly": True}
 GULF = {643, 641, 7715, 57502}
 
 
-def verify(sc: dict, meta: dict) -> None:
-    """Raise unless the bundle is the declared merged recipe off the keeper."""
+def verify(sc: dict, meta: dict, reconciled_floor: bool = False) -> None:
+    """Raise unless the bundle is the declared merged recipe off the keeper.
+
+    ``reconciled_floor`` (soco-92, PRECOMMIT-soco-92 §1): the lane's declared delta
+    arms ``hydro_min_flow_floor`` WITH ``hydro_ror_split`` (the rule-19 reconciled form
+    ``data.hydro.build_hydro_fleet`` implements). It must then be True; otherwise False.
+    """
     _verify_inherited(sc)
-    if sc.get("hydro_ror_split") is not True or sc.get("hydro_min_flow_floor"):
-        raise SystemExit("expected hydro_ror_split=True, hydro_min_flow_floor=False")
+    want_floor = bool(reconciled_floor)
+    if (
+        sc.get("hydro_ror_split") is not True
+        or bool(sc.get("hydro_min_flow_floor")) != want_floor
+    ):
+        raise SystemExit(
+            f"expected hydro_ror_split=True, hydro_min_flow_floor={want_floor}"
+        )
     for name in (
         "hydro_pondage_bound",
         "hydro_dispatch_envelope",
@@ -233,13 +244,19 @@ def main() -> None:
         "did not (soco-67: COAL-SUB added 2); each such change's moved keys are "
         "declared with --declared-inert-moved after a measured G-DRIFT; never implied",
     )
+    ap.add_argument(
+        "--reconciled-min-flow-floor",
+        action="store_true",
+        help="the bundle's declared delta arms hydro_min_flow_floor reconciled "
+        "under hydro_ror_split (soco-92); never implied",
+    )
     a = ap.parse_args()
     bundle = Path(a.bundle)
     att_path = bundle / "calibration_attestation.json"
     att = json.loads(att_path.read_text()) if att_path.exists() else {}
     sc = json.loads((bundle / "run_config.json").read_text())["scenario_config"]
     meta = json.loads((bundle / "meta.json").read_text())
-    verify(sc, meta)
+    verify(sc, meta, a.reconciled_min_flow_floor)
     years = sorted(int(y) for y in meta["years"])
     ev = verify_scope(
         bundle,

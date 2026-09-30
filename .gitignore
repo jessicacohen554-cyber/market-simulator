@@ -3866,3 +3866,9 @@ results/calibration/nyisonext14_202[2-5]/
 # NWPP-NEXT-12 per-year shard legs (rule 32(d)); the composite nwppnext12mr_span is what registers.
 # Legs: 2019 5450179e1a3750ce039eb7c4aae3613e0bdf8e25, 2020 63c0d7a4a68623e356bd93c20a4420dde0876443, 2021 a1080ac8ade95be59da975f8a26721045e21a866, 2024 a8d1d8ff9d0c2263e9724eb4b43141f735645e59, 2025 008511829d908c6d6b91ab9bd96853f91238612e, 2022 7569ec7a3ef18e4132e9a90da3d0578339ffb1b9, 2023 adc7a2933a985e10d43979b284d48b6a4f8385c1 (provenance, rule 33(d)).
 results/calibration/nwppnext12mr_20*/
+# soco-92 per-year shard legs (composed into soco92_span; rules 31/32(d)). Provenance (rule 33(d), not a
+# recovery route): 2019 17bbfb2a435f726e0946f4beacaad9ed5731ebf7, 2020 41884fa419c0f313728f047ba6f8dd70763d979a,
+# 2021 2b11478a0a31bc20f8e798fae9a737a8342e0239, 2022 e70cf06e6bdf448ed3aefdd72cfa992299262fb2,
+# 2023 ad934fc7ea522a1e211754faa800f275c64d6b5f, 2024 64b32fc890997c1cc871327a2e05e1a4c2e64dca,
+# 2025 dd17f5cdca9d6224a5b68c456ef6527159d96aa0
+results/calibration/soco92_20*/
