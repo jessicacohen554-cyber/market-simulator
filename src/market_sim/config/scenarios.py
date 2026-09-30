@@ -284,6 +284,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # key; an armed run carries a different fleet cost and so gets a distinct
     # key.
     "egrid_family_heat_rates",
+    # NWPP-NEXT-15 captive-mine marginal coal price (GATED default-off;
+    # data/fuel/captive_coal.py inside the coal_plant_monthly_pricing seam, so
+    # the off path is byte-inert). Registered IN THE SAME COMMIT as the field.
+    "coal_captive_marginal_fuel_price",
     # eGRID steam-collapse identity heat rates (nyiso-189, default off):
     # dropped from the hash at its default so every pre-existing cached run
     # keeps its key; an armed run carries a different fleet cost and so gets
@@ -2440,6 +2444,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "measured_chp_heat_rates": "False",
     "egrid_identity_heat_rates": "False",
     "egrid_family_heat_rates": "False",
+    # Added by NWPP-NEXT-15 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry.
+    "coal_captive_marginal_fuel_price": "False",
     "egrid_steam_collapse_heat_rates": "False",
     "cc_steam_part_capacity": "False",
     "cc_steam_part_reclass": "False",
@@ -19195,6 +19202,29 @@ class ScenarioConfig:
     # costs, so per-plant coal pricing stays on by default.
     coal_plant_monthly_pricing: bool = True
 
+    # NWPP-NEXT-15 captive-mine MARGINAL coal price (GATED default-off; owner
+    # ruling 2026-09-30 "Build, no threshold"; design
+    # docs/handoffs/DESIGN-nwppnext14-captive-mine-marginal-fuel-2026-09-30.md,
+    # rule + census + rule-19 map
+    # docs/handoffs/PHASE0-nwppnext15-captive-mine-2026-09-30.md). At a coal
+    # plant whose EIA-923 Page 5 receipts in the solve year are MIXED-source
+    # (0 < captive MMBtu share < 1; captive = TC/TR mine-mouth mode, mine state
+    # == plant state, not spot; NO minimum share), the ECON and PEAKING
+    # tranches take the MMBtu-weighted NON-CAPTIVE delivered price (plant-
+    # monthly, else the year's) instead of the blended cost the
+    # coal_plant_monthly_pricing seam writes; must-run / committed keep the
+    # blend. Lives INSIDE that seam and REPLACES its value on those cells
+    # (rule 19 [R-ONE-MECH]); requires coal_plant_monthly_pricing. Zero free
+    # parameters (rule 21): every input is a filed Page 5 field. Inherits the
+    # seam's mode gate (a no-op in forecast mode; rule 13 -- Page 5 regenerates
+    # for any backcast year from that year's filing). Like its host seam and
+    # the nearby-fallback refinements of it, deliberately NOT in
+    # _BACKCAST_ONLY_OVERLAY_FIELDS (the host seam is consumed by the capacity
+    # hindcast by owner-approved design; this refines what it writes). Any ISO
+    # may arm it; nothing is transferred (rule 25). A year with no Page 5 file
+    # (2025 at this writing) is left untouched and logged.
+    coal_captive_marginal_fuel_price: bool = False
+
     # Per-plant monthly gas pricing. OFF by default: every gas generator pays
     # the same Henry Hub trajectory + ISO basis (optionally seasonally shaped),
     # so units in the same zone are not split by patchy EIA-923 Schedule-5
@@ -24823,6 +24853,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_wtx_panhandle_owner": 3,
     "coal_supply_repricing": 3,
     "coal_plant_monthly_pricing": 3,
+    "coal_captive_marginal_fuel_price": 3,
     "nearby_fuel_price_fallback": 3,
     "nearby_fuel_price_min_state_plants": 3,
     "nearby_fuel_price_zone_donor_guard": 3,

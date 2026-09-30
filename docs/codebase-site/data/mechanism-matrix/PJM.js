@@ -268,6 +268,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     dual_fuel_switching: { cell: "K" },
     gas_price_override: { cell: "K" },
     coal_plant_monthly_pricing: { cell: "K" },
+    coal_captive_marginal_fuel_price: { cell: "U", ev: "Row added by NWPP-NEXT-15 (2026-09-30) with the field, same PR (rule 28c) -- NO adjudication made or implied here (rules 25 / 28(d)). Moves only econ/peak coal tranches at plants whose EIA-923 Page 5 receipts mix captive (TC/TR in-state non-spot) and non-captive coal; this ISO\u0027s own lane must census its fleet before arming." },
     coal_prb_proxy_own_iso: { cell: "O", ev: "OPEN, and PJM is AFFECTED TODAY. Measured by NWPP-41 (zero LP, not a PJM solve): the ERCOT-pooled PRB proxy currently reaches 2 non-reporting PJM PRB plants (876, 879) in each of 2023/2024/2025. NOT FIXED HERE \u2014 rule 25 / rule 28(d): PJM's own lane derives its own pool from its own data (coal_supply_PJM.csv already exists). Evidence: docs/handoffs/PRECOMMIT-nwpp-41-2026-09-17.md \u00a73." },
     campd_outage_windows: { cell: "K" },
     outage_artifact_provenance: { cell: "I", ev: "xiso-2 §4 (byte-identical)" },

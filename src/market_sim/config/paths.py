@@ -292,6 +292,11 @@ GAS_PRICES_DIR: Path = RAW_DATA_DIR / "gas-prices"
 # stays the monthly EIA-923 receipt (data.fuel.oil_daily_shape_factors).
 OIL_PRICES_DIR: Path = RAW_DATA_DIR / "oil-prices"
 COAL_PRICES_DIR: Path = RAW_DATA_DIR / "coal-prices"
+# EIA-923 Page 5 coal receipts, verbatim coal subset
+# (scripts/data/fetch_eia923_coal_receipts.py). The clean `coal-receipts`
+# datatype aggregates away the mine state and mine type, so the captive-mine
+# classifier (data.fuel.captive_coal, NWPP-NEXT-15) reads the raw lots here.
+COAL_RECEIPTS_RAW_DIR: Path = RAW_DATA_DIR / "coal-receipts"
 ERCOT_HSL_DIR: Path = RAW_DATA_DIR / "ercot-hsl"
 CAISO_HSL_DIR: Path = RAW_DATA_DIR / "caiso-hsl"
 # CAISO Production-and-Curtailments workbooks (5-minute), the source for the

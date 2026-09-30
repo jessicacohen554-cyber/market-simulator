@@ -268,6 +268,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     dual_fuel_switching: { cell: "U" },
     gas_price_override: { cell: "K" },
     coal_plant_monthly_pricing: { cell: "K" },
+    coal_captive_marginal_fuel_price: { cell: "U", ev: "Row added by NWPP-NEXT-15 (2026-09-30) with the field, same PR (rule 28c) -- NO adjudication made or implied here (rules 25 / 28(d)). Moves only econ/peak coal tranches at plants whose EIA-923 Page 5 receipts mix captive (TC/TR in-state non-spot) and non-captive coal; this ISO\u0027s own lane must census its fleet before arming." },
     coal_prb_proxy_own_iso: { cell: ".", ev: "n/a \u2014 the DEFAULT pool IS ERCOT's own reporters (data.coal.COAL_PLANT_SUPPLY is the hand-curated ERCOT map), so arming this flag for ERCOT would change nothing: coal_supply_by_iso(\"ERCOT\") is empty by construction and the armed path falls back to the same series. Nothing to test." },
     campd_outage_windows: { cell: "K" },
     outage_artifact_provenance: { cell: "I", ev: "xiso-2 §4 (byte-identical)" },
