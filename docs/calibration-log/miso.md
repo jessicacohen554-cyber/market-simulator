@@ -15425,3 +15425,18 @@ No frontier: the full span is NOT-YET on the three routed misses.
 `docs/FINDING-miso289-minstock-pile-killed-2026-09-30.md`.
 
 Owner ruling: *"Pile + take floor (Recommended)"*. Next: miso-290, zero-LP pre-check of the pile + a MISO-derived contract take floor and pile capacity.
+
+## miso-290 — 2026-09-30
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Pre-check of the per-yard monthly
+coal pile + a contract take floor from MISO's own EIA-923 Page 5 census.
+
+- **Identification:** coal ~95 % contracted every year; floor 67–82 % of the ceiling; admissible 2019–2025.
+- **Solver fixed before the candidate:** PILE0 residual 0.83 → 0.013 (miso-289's PILE0 number was unconverged).
+- **Pre-check** pre-registered (c2ee3162) and **KILLED** at 2022: nights +$6.47 vs incumbent (K1/K2), Jan–Apr
+  coal 58.6 vs bench 74.7 (K5). Pile grain alone +2.66; min stock + floor +1.61; discount disarm +2.20. The floor
+  binds on only 11–14 yards: 2022 opened ~480 M MMBtu below prior maximum stocks.
+- **Cells:** `coal_fuel_inventory_take_floor` MISO U → R; `_monthly_pile` stays R.
+
+No frontier: the full span is NOT-YET on the three routed misses.
+`docs/FINDING-miso290-pile-take-floor-killed-2026-09-30.md`.
