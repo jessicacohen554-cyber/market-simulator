@@ -64,6 +64,8 @@ MUST_AGREE = (
     "outage_source",
     # R-ERCOT-17: the pooled South-Texas gas basis must be uniform across legs.
     "ercot_south_texas_pooled_basis",
+    # R-ERCOT-18: the prior-year overnight drag allocation must be uniform.
+    "netload_drag_prior_year_commitment_index",
 ) + FIELDS
 
 

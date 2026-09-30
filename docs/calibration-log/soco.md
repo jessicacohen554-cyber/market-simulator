@@ -2044,3 +2044,20 @@ FINDING-soco-92-two-part-2026-09-30.md.
 OWNER RULINGS 2026-09-30 (soco-92 cards): **"Promote"**: KEEPER → `2026-09-30-soco92-hydro-min-flow` (soco87 pruned, rule 35);
 **"Close the reopen"**: two-part CC/CT cost closed for C3a (`committed_band_measured_basis` I, CT start G); **"Pondage bound
 phase 0"**: soco-93 derives a SOCO NID pondage artifact for `hydro_pondage_bound`, zero LP first.
+
+## 2026-09-30 — soco-93: `hydro_pondage_bound` phase 0 (zero LP)
+
+Owner "Pondage bound phase 0". SOCO NID intake (vintage 2026-9-23; subset `data/raw/nid/nid_soco_hydro_dams.csv`, 41 dams)
+→ `data/raw/soco-hydro/soco_hydro_pondage.csv` (41 plants / 3,311 MW, byte-identical rebuild from the subset, zero DOF).
+Coverage 100 % of hydro MW. Rows bind for 15–16 reservoir units (829–957 MW); 12–13 large reservoirs hold > a month (their
+rows are redundant); 14–15 units are RoR-flat. Census on soco92_span: the keeper violates the forebay in 52–67 % of bounded
+plant-months (0.18–0.27 TWh/yr infeasible timing, concentrated in plants holding 0.2–9 h). The clip upper bound on the
+top-20 % λ-hour cut is 59–77 MW vs a 650–1,208 MW excess (≤ 11 %), so it is real structure but not a C3a lever. No solve;
+keeper unchanged. Record: docs/handoffs/r-soco/FINDING-soco-93-pondage-phase0-2026-09-30.md.
+
+**soco-93 build + PROMOTION (2026-09-30).** Owner "Build/solve": seven year-isolated shards at `68f90096` (G-DRIFT
+measured inert). Registered `2026-09-30-soco93-pondage-bound` (soco93_span), PRECOMMIT §7 holds on all six. Pondage rows
+15/16/15/15/16/15/15. Worst-plant forebay need is 1.000× B, against up to 929× in the keeper. Peak-20 % hydro+PS falls
+23–41 MW and low-40 % rises 1–17 MW. C3a moves ≤ 0.1 pp, with zero status flips; D-2/D-4 are unchanged. NOT-YET
+7/4/0/1/2. Owner **"Promote"**: KEEPER → `2026-09-30-soco93-pondage-bound`, and soco92 pruned (rule 35). Owner next lane:
+**soco-94 zero-LP C3a year-pattern diagnosis**. Records: docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-93-2026-09-30.md.

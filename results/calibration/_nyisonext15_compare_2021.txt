@@ -1,0 +1,20 @@
+{"2026-09-30-nyisonext14-total-east-2021": "NOT-YET", "2026-09-30-nyisonext15-landing-band-2021": "NOT-YET"}
+== 2021
+  dispatch_corr:coal           ['coal fleet immaterial (<5 TWh); hourly correlation degenerate', 'SKIPPED'] -> ['coal fleet immaterial (<5 TWh); hourly correlation degenerate', 'SKIPPED']
+  dispatch_corr:gas            ['r=0.891, NRMSE=0.206', 'PASS'] -> ['r=0.884, NRMSE=0.216', 'PASS']
+  forced_share:CC_REGULAR      ['1.3% forced (0.3915 of 31.1788 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)', 'PASS'] -> ['1.2% forced (0.3913 of 31.4687 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)', 'PASS']
+  forced_share:CT_PEAKER       ['CT_PEAKER immaterial (1.7% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced', 'SKIPPED'] -> ['CT_PEAKER immaterial (1.7% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced', 'SKIPPED']
+  forced_share:ST_GAS          ['23.2% forced (2.0945 of 9.0299 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)', 'PASS'] -> ['22.9% forced (2.0932 of 9.1497 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)', 'PASS']
+  forced_share:hydro           ['0.0% forced (0.0 of 27.2528 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)', 'PASS'] -> ['0.0% forced (0.0 of 27.2528 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)', 'PASS']
+  fuelmix:CC_CHP               ['+1.47 TWh, share +1.2pp', 'PASS'] -> ['+1.70 TWh, share +1.3pp', 'PASS']
+  fuelmix:CC_REGULAR           ['+2.37 TWh, share +1.9pp', 'PASS'] -> ['+2.66 TWh, share +2.0pp', 'PASS']
+  fuelmix:CT_PEAKER            ['+0.40 TWh, share +0.3pp', 'PASS'] -> ['+0.48 TWh, share +0.4pp', 'PASS']
+  fuelmix:ST_GAS               ['-2.18 TWh, share -1.7pp', 'PASS'] -> ['-2.07 TWh, share -1.7pp', 'PASS']
+  price_mean:None              ['+10.9%', 'FAIL'] -> ['+11.4%', 'FAIL']
+  price_mean:da_diagnostic     ['+11.6% vs DA (DA−RT premium $-0.24)', 'SKIPPED'] -> ['+12.1% vs DA (DA−RT premium $-0.24)', 'SKIPPED']
+  price_shape:None             ['NRMSE 0.165', 'PASS'] -> ['NRMSE 0.169', 'PASS']
+  price_tail:None              ['model 0h [energy-only LMP] vs RT actual 3h (small-count |Δ|≤10h, >$300)', 'PASS'] -> ['model 0h [energy-only LMP] vs RT actual 3h (small-count |Δ|≤10h, >$300)', 'PASS']
+  price_tail:da_diagnostic     ['model 0h vs DA actual 0h (out-of-representation companion)', 'SKIPPED'] -> ['model 0h vs DA actual 0h (out-of-representation companion)', 'SKIPPED']
+  ST_GAS zone [keeper, arm, 923]: {'Capital_Hudson': [0.29, 0.28, 1.13], 'NYC': [3.94, 4.06, 1.98], 'Long_Island': [2.74, 2.74, 5.75], 'Upstate_West': [0.15, 0.15, 0.45]}
+  ST_GAS plant: {'2490:ST_GAS Arthur Kill Generating Station': [0.68, 0.68, 0.87], '2500:ST_GAS Ravenswood': [1.07, 1.11, 0.44], '2511:ST_GAS E F Barrett': [0.74, 0.74, 1.37], '2516 Northport': [1.93, 1.93, 3.95], '2517:ST_GAS Port Jefferson': [0.07, 0.07, 0.43], '2527 Greenidge Generation LLC': [0.15, 0.15, 0.45], '2625 Bowline Point': [0.19, 0.19, 0.98], '8906:ST_GAS Astoria Generating Station': [2.19, 2.27, 0.66]}
+  price bias/MAE: {'keeper': (5.21, 11.75), 'arm': (5.42, 11.89)}

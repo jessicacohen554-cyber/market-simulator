@@ -292,7 +292,12 @@ def _load_caiso_supply_consistent_demand(year: int) -> np.ndarray:
 
 
 def _supply_consistent_eia930_term(year: int) -> np.ndarray | None:
-    """Return the artifact's EIA-930 term ``NetGen - NG_cell - TI`` (MW)."""
+    """Return the artifact's late-stamped EIA-930 term ``NetGen - NG_cell`` (MW).
+
+    ``TI`` is excluded: R-CAISO-16 measured CISO's ``Total interchange`` on
+    the true clock inside the generation late window, so only the generation
+    half of the artifact's ``NetGen - NG_cell - TI`` term is re-stamped.
+    """
     from market_sim.config.paths import CAISO_SUPPLY_CONSISTENT_DEMAND_DIR
 
     path = (
@@ -301,8 +306,8 @@ def _supply_consistent_eia930_term(year: int) -> np.ndarray | None:
     )
     if not path.exists():
         return None
-    df = pd.read_csv(path, usecols=["netgen_mw", "ng_cell_mw", "ti_mw"])
-    return (df["netgen_mw"] - df["ng_cell_mw"] - df["ti_mw"]).to_numpy(dtype=float)
+    df = pd.read_csv(path, usecols=["netgen_mw", "ng_cell_mw"])
+    return (df["netgen_mw"] - df["ng_cell_mw"]).to_numpy(dtype=float)
 
 
 def _model_row_starts_utc(year: int) -> pd.DatetimeIndex:
@@ -318,10 +323,11 @@ def _repair_supply_consistent_clock(year: int, demand: np.ndarray) -> np.ndarray
     """Move the supply-consistent series' EIA-930 term off CISO's late stamps.
 
     ``caiso_eia930_clock_repair`` (R-CAISO-13) applied to the derived caiso-80
-    artifact: its ``NetGen - NG_cell - TI`` term was built on the CISO
-    generation frame, which EIA published one hour late inside
+    artifact: its ``NetGen - NG_cell`` term was built on the CISO generation
+    frame, which EIA published one hour late inside
     :data:`~market_sim.config.constants.EIA930_CISO_CLOCK_LATE_WINDOWS_UTC`
-    ``["generation"]``. That term is pulled back one hour exactly as the frame
+    ``["generation"]``; its ``TI`` term is on the true clock (R-CAISO-16) and
+    stays put. That term is pulled back one hour exactly as the frame
     seam repairs the extract (the window's last hour takes its neighbours'
     mean); the CEMS gas term and the flat fold-ins ride their own clocks and
     are untouched. The artifact on disk is never modified. The first row of

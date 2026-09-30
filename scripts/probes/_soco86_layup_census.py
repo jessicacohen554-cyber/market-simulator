@@ -1,7 +1,7 @@
 """soco-86 zero-LP census: does ``mustrun_layup_window_mask`` move SOCO's must-run floors?
 
 Rule 32 ``[R-SHARD]`` (a): never solves. Two ``fleet_only`` rebuilds per year on the
-incumbent keeper's OWN recipe (``results/calibration/soco92_span`` through
+incumbent keeper's OWN recipe (``results/calibration/soco93_span`` through
 ``replay_keeper.run_year_kwargs``, the sanctioned reconstruction): the keeper as
 recorded, and the keeper plus ``mustrun_layup_window_mask=True`` routed through the
 same ``coal_prb_sigmoid_overrides`` bag every soco-83/85 structural flag rides.
@@ -30,8 +30,8 @@ _ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(_ROOT / "scripts"), str(_ROOT / "src"), str(_ROOT)]
 
 SPAN = (
-    _ROOT / "results/calibration/soco92_span"
-)  # repointed soco-92 (rule 35 prune of soco92_span)
+    _ROOT / "results/calibration/soco93_span"
+)  # repointed soco-93 (rule 35 prune of soco92_span)
 FLOOR_PLANTS = (26, 728, 2049)
 T = 8760
 

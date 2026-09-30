@@ -223,7 +223,7 @@ def greedy(out: Path, arm: str) -> None:
 
     vom_cc = float(VOM["gas_cc"]) if not isinstance(VOM["gas_cc"], dict) else 2.0
     rows = []
-    art = cv.load_artifacts("2026-09-30-soco92-hydro-min-flow")
+    art = cv.load_artifacts("2026-09-30-soco93-pondage-bound")
     for y in YEARS:
         h = dict(np.load(out / f"cc92_{y}.npz"))
         f = S91.rebuild(y, out)

@@ -14941,3 +14941,20 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Predictions:** price-direction predictions MISSED (2019/2020 LW price fell slightly instead of rising). The South TWh ranges MISSED high (the gap closed fully). The C3b and 2021–2025 C3a predictions HIT. The 2022 C8 flip was not anticipated.
 - **Next lane:** plant 3452 `st_netload_drag` provenance (zero LP first).
 - Record: `docs/handoffs/RESULT-r-ercot-17-south-texas-pool-2026-09-29.md`.
+
+## R-ERCOT-18 — 2026-09-30 — prior-year overnight-commitment allocation of the ST_GAS drag — PROMOTED `2026-09-30-r-18-drag-index`
+
+- **Object:** 2022 NOT-YET on C8 alone (ST_GAS 30.4 %), escape denied by the plant-3452 `st_netload_drag` D-4 conduct FAIL.
+- **Zero-LP finding:** 3452 Lake Hubbard is a two-shift cycler. Its overnight (23–05h, the drag's driver window) CF was 0.000–0.012 in 2019–22; the pro-rata floor gave it the fleet's ~0.15 in every hour (rule 17).
+- **Build (owner card "Build prior-year index (Recommended)"):** `netload_drag_prior_year_commitment_index`.
+  - Allocation-only sub-gate (rule 19); the mandate is weighted by each plant's Y−1 measured overnight MWh over its pmax basis.
+  - Zero DOF, backcast-only, fail-closed in 2019.
+  - Artifact: `ercot_stgas_overnight_commitment.csv`, frozen derive.
+- **Solve:** 7 shards at `0bd29417`; G-DRIFT all inert.
+- **Result:**
+  - 2022 NOT-YET → **CALIBRATED** (C8 30.1 % grounded PASS; the 3452 FAIL is cleared).
+  - No year worse; 2025 C3a −9.9 → −9.6 %.
+  - D-4 st_netload_drag FAILs 9 → 8.
+  - C8 up 1–3 pp in 2020/2023/2024, all PASS.
+- **Promoted** under the standing instruction. ISO stays NOT-YET (2023 carve-out hold; 2024 C3a −10.7 %).
+- **Records:** `docs/handoffs/r-ercot/PRECOMMIT-r-ercot-18-drag-overnight-index-2026-09-30.md`, `docs/handoffs/r-ercot/RESULT-r-ercot-18-drag-overnight-index-2026-09-30.md`.

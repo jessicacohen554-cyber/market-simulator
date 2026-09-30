@@ -1,0 +1,65 @@
+Data Last Updated:,2026-9-23
+Dam Name,NID ID,State,Owner Names,Primary Purpose,Normal Storage (Acre-Ft),Max Storage (Acre-Ft),Hydraulic Height (Ft),NID Height (Ft),Surface Area (Acres),River or Stream Name,Latitude,Longitude
+Point A,AL01413,Alabama,"Alabama Electric Cooperative, Inc.",Hydroelectric,2300.0,2300.0,41.0,56,700.0,"Conecuh River, Patsaliga River",31.361,-86.5184
+Gantt,AL01414,Alabama,"Alabama Electric Cooperative, Inc.",Hydroelectric,14645.0,14645.0,36.0,44,2767.0,Conecuh River                 ,31.4032,-86.4796
+Weiss - Highway 411 Dike,AL01415,Alabama,Alabama Power Company,Hydroelectric,306400.0,306400.0,19.0,90,30200.0,Coosa                         ,34.176969,-85.741683
+Weiss - Main Dam,AL01415,Alabama,Alabama Power Company,Hydroelectric,306400.0,306400.0,49.0,86,30200.0,Coosa                         ,34.132313,-85.793958
+Weiss - Saddle Dike A,AL01415,Alabama,Alabama Power Company,Hydroelectric,306400.0,306400.0,,10,30200.0,Coosa                         ,34.162449,-85.685007
+Weiss - Saddle Dike B,AL01415,Alabama,Alabama Power Company,Hydroelectric,306400.0,306400.0,,10,30200.0,Coosa                         ,34.162953,-85.704052
+Weiss - Saddle Dike C,AL01415,Alabama,Alabama Power Company,Hydroelectric,306400.0,306400.0,,10,30200.0,Coosa                         ,34.164494,-85.715302
+Weiss - Spillway Diversion Dam,AL01415,Alabama,Alabama Power Company,Hydroelectric,306400.0,306400.0,19.0,90,30200.0,Coosa                         ,34.171995,-85.753935
+H. Neely Henry,AL01416,Alabama,Alabama Power Company,Hydroelectric,121860.0,121860.0,53.0,104,11235.0,Coosa River                   ,33.783793,-86.053423
+Logan Martin,AL01417,Alabama,Alabama Power Company,Hydroelectric,273000.0,650000.0,95.0,142,15263.0,Coosa                         ,33.425453,-86.336879
+Lay,AL01418,Alabama,Alabama Power Company,Hydroelectric,262800.0,262800.0,86.0,130,12000.0,Coosa                         ,32.9637,-86.5171
+Pigeon Roost Creek,AL01419,Alabama,Alabama Power Company,Hydroelectric,48000.0,48000.0,45.0,45,920.0,Pigeon Roost Creek            ,32.5994,-86.2816
+Walter Bouldin,AL01419,Alabama,Alabama Power Company,Hydroelectric,48000.0,48000.0,133.0,174,920.0,Coosa River                   ,32.5838,-86.2833
+Walter Bouldin Saddle Dike,AL01419,Alabama,Alabama Power Company,Hydroelectric,48000.0,48000.0,,10,920.0,Coosa River                   ,32.608582,-86.27157
+Lewis Smith,AL01420,Alabama,Alabama Power Company,Hydroelectric,1390000.0,1670600.0,210.0,300,21200.0,"Sipsey Fork, Warrior River    ",33.942138,-87.106498
+Yates,AL01421,Alabama,Alabama Power Company,Hydroelectric,54000.0,54000.0,61.0,87,2000.0,Tallapoosa River              ,32.574245,-85.889644
+Thurlow,AL01422,Alabama,Alabama Power Company,Hydroelectric,18250.0,18250.0,46.0,62,574.0,Tallapoosa River              ,32.535466,-85.887854
+Jordan,AL01423,Alabama,Alabama Power Company,Hydroelectric,235000.0,235000.0,89.0,125,6800.0,Coosa River                   ,32.6187,-86.2583
+Mitchell,AL01424,Alabama,Alabama Power Company,Hydroelectric,172000.0,172000.0,60.0,106,5850.0,Coosa River                   ,32.805669,-86.445045
+Martin,AL01425,Alabama,Alabama Power Company,Hydroelectric,1622000.0,1622000.0,163.0,168,40000.0,Tallapoosa River              ,32.680237,-85.910389
+Holt Lock and Dam,AL01426,Alabama,USACE - Mobile District,Navigation,117990.0,187400.0,108.0,120,3300.0,Black Warrior River,33.254051804,-87.4494828379999
+John Hollis Bankhead Lock and Dam,AL01427,Alabama,USACE - Mobile District,Navigation,269215.0,296000.0,103.0,111,9245.0,Black Warrior River,33.458401414,-87.356357563
+Walter F. George Lock and Dam,AL01432,Alabama,USACE - Mobile District,Hydroelectric,934000.0,934400.0,101.0,171,45181.0,Chattahoochee River,31.62527444,-85.06435947
+Robert F. Henry Lock and Dam,AL01434,Alabama,USACE - Mobile District,Navigation,234200.0,234200.0,70.0,110,12300.0,Alabama River,32.324236404,-86.784002345
+Millers Ferry Lock and Dam,AL01435,Alabama,USACE - Mobile District,Recreation,331800.0,331800.0,55.0,100,17200.0,Alabama River,32.1008900040001,-87.39982889
+R. L. Harris,AL83001,Alabama,Alabama Power Company,Hydroelectric,426000.0,426000.0,121.0,163,10661.0,Tallapoosa River              ,33.258289,-85.616065
+R. L. Harris East Saddle Dike,AL83001,Alabama,Alabama Power Company,Hydroelectric,426000.0,426000.0,30.0,30,10661.0,Tallapoosa River              ,33.256312,-85.606294
+R. L. Harris West Saddle Dike,AL83001,Alabama,Alabama Power Company,Hydroelectric,426000.0,426000.0,40.0,40,10661.0,Tallapoosa River              ,33.257407,-85.608825
+Milstead,GA00192,Georgia,,Hydroelectric,70.0,225.0,43.0,43,18.0,Yellow River                  ,33.691,-83.9942
+Plant Crisp Ccw Impoundment Dam,GA00706,Georgia,Crisp County Power Commission,Tailings,29.0,181.0,,22,6.5,,31.845389,-83.94525
+West Point Dam,GA00820,Georgia,USACE - Mobile District,Hydroelectric,605000.0,940000.0,106.0,132,25864.0,Chattahoochee River,32.9184543740001,-85.188072266
+Carters Main Dam,GA00821,Georgia,USACE - Mobile District,Hydroelectric,383565.0,472800.0,463.0,464,3275.0,Coosawattee River,34.6133310000001,-84.670295
+Buford Dam,GA00824,Georgia,USACE - Mobile District,Flood Risk Reduction,1917000.0,2554000.0,193.0,231,47182.0,Chattahoochee River,34.16032625,-84.073875278
+Buford Dam - Saddle Dike 1,GA00824,Georgia,USACE - Mobile District,,1917000.0,2554000.0,30.0,36,,Chattahoochee,34.1707010000001,-84.077974
+Buford Dam - Saddle Dike 2,GA00824,Georgia,USACE - Mobile District,,1917000.0,2554000.0,42.0,48,,Chattahoochee,34.1659270000001,-84.076805
+Buford Dam - Saddle Dike 3,GA00824,Georgia,USACE - Mobile District,,1917000.0,2554000.0,64.0,70,,Chattahoochee,34.149098,-84.053916
+Goat Rock,GA00826,Georgia,Georgia Power Company,Hydroelectric,8500.0,10000.0,69.0,69,960.0,Chattahoochee River           ,32.6096,-85.0795
+"Bartletts Ferry, Labyrinth Spillway",GA00830,Alabama,Georgia Power Company,Hydroelectric,183000.0,183000.0,11.0,11,5850.0,Chattahoochee River           ,32.658403,-85.099191
+"Bartletts Ferry, Main Dam",GA00830,Georgia,Georgia Power Company,Hydroelectric,183000.0,183000.0,116.0,150,5850.0,Chattahoochee                 ,32.663,-85.0908
+Flint River,GA00835,Georgia,Georgia Power Company,Hydroelectric,8000.0,37000.0,31.0,60,1400.0,Flint                         ,31.6026,-84.137
+Muckafoonee Creek Dam,GA00835,Georgia,Georgia Power Company,Hydroelectric,8000.0,37000.0,26.0,42,1400.0,"Muckafoonee Creek, Flint River",31.607577,-84.145458
+Sinclair,GA00836,Georgia,Georgia Power Company,Hydroelectric,333000.0,490000.0,92.0,105,15330.0,Oconee                        ,33.1405,-83.2018
+Oliver,GA00837,Georgia,Georgia Power Company,Hydroelectric,32000.0,32000.0,69.0,69,2280.0,Chattahoochee                 ,32.51555,-84.999565
+Morgan Falls,GA00842,Georgia,Georgia Power Company,Hydroelectric,3150.0,3150.0,53.0,65,750.0,Chattahoochee                 ,33.9681,-84.3841
+Tugalo,GA00844,Georgia,Georgia Power Company,Hydroelectric,43000.0,43000.0,155.0,155,597.0,Tallulah River                ,34.713989,-83.352174
+Tallassee Shoals,GA00845,Georgia,Oglethorpe Power Corporation,Hydroelectric,270.0,500.0,46.0,48,18.0,Middle Oconee River           ,33.991527,-83.502339
+North Highlands,GA00853,Georgia,Georgia Power Company,Hydroelectric,1172.0,1643.0,37.0,37,115.48,Chattahoochee River           ,32.499396,-84.996513
+Wallace,GA00854,Georgia,Georgia Power Company,Hydroelectric,370000.0,400000.0,95.0,120,19050.0,Oconee                        ,33.3502,-83.1574
+Wallace Saddle Dike,GA00854,Georgia,Georgia Power Company,Hydroelectric,370000.0,400000.0,10.0,10,19050.0,Oconee                        ,33.357619,-83.15501
+Tallulah Falls,GA00855,Georgia,Georgia Power Company,Hydroelectric,2400.0,2450.0,140.0,140,63.0,Tallulah River                ,34.738783,-83.395557
+Mathis & Terrora,GA00856,Georgia,Georgia Power Company,Hydroelectric,27250.0,31000.0,113.0,113,834.0,Tallulah River                ,34.765309,-83.416215
+Saddle Dam A,GA00856,Georgia,Georgia Power Company,Hydroelectric,27250.0,31000.0,10.0,78,834.0,Tallulah River                ,34.771559,-83.41845
+Nacoochee,GA00861,Georgia,Georgia Power Company,Hydroelectric,8250.0,8250.0,75.0,75,260.0,Tallulah River                ,34.754958,-83.501024
+Burton,GA00864,Georgia,Georgia Power Company,Hydroelectric,108000.0,108000.0,129.0,129,2775.0,Tallulah River                ,34.793993,-83.540403
+Lloyd Shoals - Emergency Spillway,GA00873,Georgia,Georgia Power Company,Hydroelectric,97000.0,107000.0,,10,4500.0,Ocmulgee River                ,33.319,-83.845
+Lloyd Shoals - North Saddle Dike,GA00873,Georgia,Georgia Power Company,Hydroelectric,97000.0,107000.0,20.0,20,4500.0,Ocmulgee River                ,33.331902,-83.834039
+Lloyd Shoals Main Dam,GA00873,Georgia,Georgia Power Company,Hydroelectric,97000.0,107000.0,102.0,105,4500.0,Ocmulgee                      ,33.3207,-83.8414
+Yonah,GA00874,South Carolina,Georgia Power Company,Hydroelectric,10200.0,10200.0,92.0,92,325.0,Tugalo River                  ,34.682059,-83.341781
+Yonah Low Reservoir Rim,GA00874,Georgia,Georgia Power Company,Hydroelectric,10200.0,10200.0,20.0,20,325.0,Tugalo River                  ,34.680573,-83.348934
+Allatoona Dam,GA03742,Georgia,USACE - Mobile District,Flood Risk Reduction,367471.0,886200.0,170.0,188,11862.0,Etowah,34.1641625240001,-84.727985237
+Allatoona Dam - Saddle Dike,GA03742,Georgia,USACE - Mobile District,Flood Risk Reduction,367471.0,886200.0,33.0,37,11862.0,Etowah,34.112355,-84.713096
+Allatoona Dam - Saddle Dike 2a,GA03742,Georgia,USACE - Mobile District,Flood Risk Reduction,367471.0,886200.0,,15,11862.0,,34.092203,-84.723532
+Allatoona Dam - Saddle Dike 2b,GA03742,Georgia,USACE - Mobile District,Flood Risk Reduction,367471.0,886200.0,,30,11862.0,,34.090087,-84.721742

@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-30-r-18-drag-index",
+  "label": "r 18 drag index",
+  "date": "2026-09-30",
+  "shorthand": "r-18-drag-index",
+  "definition": "R-ERCOT-18 ARM 2025: keeper 2026-09-29-r-17-south-texas recipe + netload_drag_prior_year_commitment_index=true (ST_GAS drag mandate allocated by each plant's prior-year measured overnight commitment; owner decision card 2026-09-30) \u2014 PRECOMMIT-r-ercot-18-drag-overnight-index-2026-09-30",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-09-30-r-18-drag-index.js",
+  "bundle": "results/calibration/r_ercot18_span"
+}
