@@ -2397,6 +2397,9 @@ EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC: dict[str, tuple[tuple[str, str], .
 # --- EIA-930 CISO published one hour LATE (R-CAISO-13, 2026-09-28) -----------
 # Per column family: inclusive windows of the extract's hour-ENDING ``UTC time``
 # stamps whose value is the TRUE value of the PREVIOUS hour (stamped 1 h late).
+# The "generation" family is the ``NG:`` cells and ``Net generation`` only:
+# ``Total interchange`` is on the true clock (R-CAISO-16; the frame seam's
+# column map carries the measurement).
 # Applied at the frame seam (``data.eia930.frames._repair_clock_late_windows``)
 # only while ``ScenarioConfig.caiso_eia930_clock_repair`` is armed.
 # Measured against two clocks independent of EIA-930, zero fitted parameters
