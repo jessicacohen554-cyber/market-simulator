@@ -1,21 +1,21 @@
 {
- "id": "2026-09-28-caiso-r11-tacpst-touchpoints",
- "label": "caiso r11 tacpst touchpoints",
- "date": "2026-09-28",
- "shorthand": "caiso-r11-tacpst-touchpoints",
- "definition": "R-CAISO-11 A 2019: keeper recipe + caiso_tac_shares_standard_time=true (PRECOMMIT-r-caiso-11-2026-09-28)",
+ "id": "2026-09-29-caiso-r15-clockfull-touchpoints",
+ "label": "caiso r15 clockfull touchpoints",
+ "date": "2026-09-29",
+ "shorthand": "caiso-r15-clockfull-touchpoints",
+ "definition": "R-CAISO-15 A 2019: keeper recipe + caiso_eia930_clock_repair=true incl. HSL gen term + battery envelope (PRECOMMIT-r-caiso-13 + ADDENDUM-r-caiso-15)",
  "years": [
   2019,
   2020,
   2021
  ],
  "iso": "CAISO",
- "file": "frontend/data/backcast/runs/2026-09-28-caiso-r11-tacpst-touchpoints.js",
- "bundle": "results/calibration/rcaiso11_A_tp_2019_2021",
+ "file": "frontend/data/backcast/runs/2026-09-29-caiso-r15-clockfull-touchpoints.js",
+ "bundle": "results/calibration/rcaiso15_A_tp_2019_2021",
  "holdout": {
   "tier": "validation",
   "year": 2022,
-  "keeper": "2026-09-28-caiso-r11-tacpst",
+  "keeper": "2026-09-29-caiso-r15-clockfull",
   "keeperDetermination": "CALIBRATED",
   "keeperYears": [
    2022,
