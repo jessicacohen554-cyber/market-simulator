@@ -95,5 +95,30 @@
   "s_floor_mmbtu_m": 277.1,
   "annual_budget_cand_mmbtu_m": 3056.5,
   "annual_cut_pct": 8.3
+ },
+ "2023": {
+  "stock_years_used": [
+   2020,
+   2021,
+   2022
+  ],
+  "yard_rows": 57,
+  "rows_identified": 56,
+  "rows_identified_mw": 45648.0,
+  "rowed_mw": 45655.0,
+  "d_min_p10_p50_p90": [
+   3.3,
+   32.4,
+   113.9
+  ],
+  "d_min_mw_weighted": 41.3,
+  "rows_opening_below_target": 0,
+  "mw_opening_below_target": 0.0,
+  "annual_budget_inc_mmbtu_m": 2810.1,
+  "stock_open_mmbtu_m": 495.8,
+  "s_min_mmbtu_m": 221.0,
+  "s_floor_mmbtu_m": 221.0,
+  "annual_budget_cand_mmbtu_m": 2589.0,
+  "annual_cut_pct": 7.9
  }
 }
