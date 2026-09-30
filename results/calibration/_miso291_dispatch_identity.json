@@ -1,0 +1,940 @@
+{
+ "2019": {
+  "night_h0_5": {
+   "coal": {
+    "model_twh": 56.0,
+    "actual_twh": 47.89
+   },
+   "gas": {
+    "model_twh": 31.05,
+    "actual_twh": 38.3
+   },
+   "wind": {
+    "model_twh": 15.91,
+    "actual_twh": 15.13
+   },
+   "nuclear": {
+    "model_twh": 24.4,
+    "actual_twh": 25.73
+   },
+   "interchange": {
+    "model_twh": 9.72,
+    "actual_twh": -12.96
+   }
+  },
+  "morning_h6": {
+   "coal": {
+    "model_twh": 9.93,
+    "actual_twh": 8.87
+   },
+   "gas": {
+    "model_twh": 5.69,
+    "actual_twh": 7.23
+   },
+   "wind": {
+    "model_twh": 2.53,
+    "actual_twh": 2.41
+   },
+   "nuclear": {
+    "model_twh": 4.07,
+    "actual_twh": 4.29
+   },
+   "interchange": {
+    "model_twh": 1.84,
+    "actual_twh": -2.01
+   }
+  },
+  "day_h7_14": {
+   "coal": {
+    "model_twh": 87.91,
+    "actual_twh": 85.34
+   },
+   "gas": {
+    "model_twh": 55.92,
+    "actual_twh": 68.29
+   },
+   "wind": {
+    "model_twh": 18.71,
+    "actual_twh": 17.79
+   },
+   "nuclear": {
+    "model_twh": 32.53,
+    "actual_twh": 34.31
+   },
+   "interchange": {
+    "model_twh": 18.08,
+    "actual_twh": -16.56
+   }
+  },
+  "evening_h15_20": {
+   "coal": {
+    "model_twh": 67.23,
+    "actual_twh": 66.95
+   },
+   "gas": {
+    "model_twh": 45.69,
+    "actual_twh": 54.2
+   },
+   "wind": {
+    "model_twh": 14.65,
+    "actual_twh": 13.94
+   },
+   "nuclear": {
+    "model_twh": 24.4,
+    "actual_twh": 25.71
+   },
+   "interchange": {
+    "model_twh": 14.01,
+    "actual_twh": -12.38
+   }
+  },
+  "late_h21_23": {
+   "coal": {
+    "model_twh": 31.3,
+    "actual_twh": 29.88
+   },
+   "gas": {
+    "model_twh": 18.5,
+    "actual_twh": 22.97
+   },
+   "wind": {
+    "model_twh": 8.16,
+    "actual_twh": 7.76
+   },
+   "nuclear": {
+    "model_twh": 12.2,
+    "actual_twh": 12.86
+   },
+   "interchange": {
+    "model_twh": 6.33,
+    "actual_twh": -6.17
+   }
+  },
+  "summer_day_evening_h7_20": {
+   "coal": {
+    "model_twh": 69.22,
+    "actual_twh": 68.34
+   },
+   "gas": {
+    "model_twh": 52.06,
+    "actual_twh": 59.93
+   },
+   "wind": {
+    "model_twh": 10.51,
+    "actual_twh": 10.0
+   },
+   "nuclear": {
+    "model_twh": 24.7,
+    "actual_twh": 25.33
+   },
+   "interchange": {
+    "model_twh": 14.34,
+    "actual_twh": -14.2
+   }
+  }
+ },
+ "2020": {
+  "night_h0_5": {
+   "coal": {
+    "model_twh": 46.08,
+    "actual_twh": 38.61
+   },
+   "gas": {
+    "model_twh": 30.66,
+    "actual_twh": 39.08
+   },
+   "wind": {
+    "model_twh": 19.62,
+    "actual_twh": 18.66
+   },
+   "nuclear": {
+    "model_twh": 24.39,
+    "actual_twh": 23.85
+   },
+   "interchange": {
+    "model_twh": 11.5,
+    "actual_twh": -14.4
+   }
+  },
+  "morning_h6": {
+   "coal": {
+    "model_twh": 7.94,
+    "actual_twh": 6.92
+   },
+   "gas": {
+    "model_twh": 5.55,
+    "actual_twh": 7.2
+   },
+   "wind": {
+    "model_twh": 3.16,
+    "actual_twh": 3.01
+   },
+   "nuclear": {
+    "model_twh": 4.07,
+    "actual_twh": 3.99
+   },
+   "interchange": {
+    "model_twh": 2.07,
+    "actual_twh": -2.28
+   }
+  },
+  "day_h7_14": {
+   "coal": {
+    "model_twh": 69.58,
+    "actual_twh": 68.23
+   },
+   "gas": {
+    "model_twh": 57.26,
+    "actual_twh": 70.76
+   },
+   "wind": {
+    "model_twh": 23.5,
+    "actual_twh": 22.35
+   },
+   "nuclear": {
+    "model_twh": 32.52,
+    "actual_twh": 31.86
+   },
+   "interchange": {
+    "model_twh": 20.36,
+    "actual_twh": -18.69
+   }
+  },
+  "evening_h15_20": {
+   "coal": {
+    "model_twh": 53.37,
+    "actual_twh": 54.08
+   },
+   "gas": {
+    "model_twh": 46.92,
+    "actual_twh": 56.38
+   },
+   "wind": {
+    "model_twh": 18.52,
+    "actual_twh": 17.61
+   },
+   "nuclear": {
+    "model_twh": 24.39,
+    "actual_twh": 23.88
+   },
+   "interchange": {
+    "model_twh": 15.89,
+    "actual_twh": -14.07
+   }
+  },
+  "late_h21_23": {
+   "coal": {
+    "model_twh": 25.06,
+    "actual_twh": 23.82
+   },
+   "gas": {
+    "model_twh": 18.95,
+    "actual_twh": 23.95
+   },
+   "wind": {
+    "model_twh": 10.11,
+    "actual_twh": 9.61
+   },
+   "nuclear": {
+    "model_twh": 12.2,
+    "actual_twh": 11.94
+   },
+   "interchange": {
+    "model_twh": 7.07,
+    "actual_twh": -6.93
+   }
+  },
+  "summer_day_evening_h7_20": {
+   "coal": {
+    "model_twh": 56.9,
+    "actual_twh": 57.9
+   },
+   "gas": {
+    "model_twh": 52.04,
+    "actual_twh": 60.39
+   },
+   "wind": {
+    "model_twh": 14.46,
+    "actual_twh": 13.75
+   },
+   "nuclear": {
+    "model_twh": 24.79,
+    "actual_twh": 23.73
+   },
+   "interchange": {
+    "model_twh": 15.92,
+    "actual_twh": -14.61
+   }
+  }
+ },
+ "2021": {
+  "night_h0_5": {
+   "coal": {
+    "model_twh": 56.25,
+    "actual_twh": 51.59
+   },
+   "gas": {
+    "model_twh": 27.61,
+    "actual_twh": 34.29
+   },
+   "wind": {
+    "model_twh": 22.54,
+    "actual_twh": 21.44
+   },
+   "nuclear": {
+    "model_twh": 23.4,
+    "actual_twh": 24.09
+   },
+   "interchange": {
+    "model_twh": 6.49,
+    "actual_twh": -8.12
+   }
+  },
+  "morning_h6": {
+   "coal": {
+    "model_twh": 9.95,
+    "actual_twh": 9.22
+   },
+   "gas": {
+    "model_twh": 5.06,
+    "actual_twh": 6.45
+   },
+   "wind": {
+    "model_twh": 3.61,
+    "actual_twh": 3.44
+   },
+   "nuclear": {
+    "model_twh": 3.9,
+    "actual_twh": 4.02
+   },
+   "interchange": {
+    "model_twh": 1.18,
+    "actual_twh": -1.36
+   }
+  },
+  "day_h7_14": {
+   "coal": {
+    "model_twh": 88.92,
+    "actual_twh": 83.59
+   },
+   "gas": {
+    "model_twh": 51.52,
+    "actual_twh": 65.13
+   },
+   "wind": {
+    "model_twh": 26.61,
+    "actual_twh": 25.31
+   },
+   "nuclear": {
+    "model_twh": 31.2,
+    "actual_twh": 32.11
+   },
+   "interchange": {
+    "model_twh": 11.5,
+    "actual_twh": -12.51
+   }
+  },
+  "evening_h15_20": {
+   "coal": {
+    "model_twh": 68.58,
+    "actual_twh": 64.48
+   },
+   "gas": {
+    "model_twh": 42.75,
+    "actual_twh": 53.67
+   },
+   "wind": {
+    "model_twh": 20.75,
+    "actual_twh": 19.74
+   },
+   "nuclear": {
+    "model_twh": 23.4,
+    "actual_twh": 24.06
+   },
+   "interchange": {
+    "model_twh": 8.95,
+    "actual_twh": -9.5
+   }
+  },
+  "late_h21_23": {
+   "coal": {
+    "model_twh": 31.7,
+    "actual_twh": 30.22
+   },
+   "gas": {
+    "model_twh": 17.04,
+    "actual_twh": 21.5
+   },
+   "wind": {
+    "model_twh": 11.5,
+    "actual_twh": 10.94
+   },
+   "nuclear": {
+    "model_twh": 11.7,
+    "actual_twh": 12.04
+   },
+   "interchange": {
+    "model_twh": 3.72,
+    "actual_twh": -4.03
+   }
+  },
+  "summer_day_evening_h7_20": {
+   "coal": {
+    "model_twh": 72.98,
+    "actual_twh": 71.36
+   },
+   "gas": {
+    "model_twh": 48.75,
+    "actual_twh": 57.11
+   },
+   "wind": {
+    "model_twh": 15.05,
+    "actual_twh": 14.31
+   },
+   "nuclear": {
+    "model_twh": 23.69,
+    "actual_twh": 23.97
+   },
+   "interchange": {
+    "model_twh": 9.57,
+    "actual_twh": -10.22
+   }
+  }
+ },
+ "2022": {
+  "night_h0_5": {
+   "coal": {
+    "model_twh": 43.97,
+    "actual_twh": 39.47
+   },
+   "gas": {
+    "model_twh": 28.83,
+    "actual_twh": 33.87
+   },
+   "wind": {
+    "model_twh": 21.91,
+    "actual_twh": 20.84
+   },
+   "nuclear": {
+    "model_twh": 18.92,
+    "actual_twh": 19.06
+   },
+   "interchange": {
+    "model_twh": 2.95,
+    "actual_twh": -7.31
+   }
+  },
+  "morning_h6": {
+   "coal": {
+    "model_twh": 8.01,
+    "actual_twh": 7.31
+   },
+   "gas": {
+    "model_twh": 5.47,
+    "actual_twh": 6.76
+   },
+   "wind": {
+    "model_twh": 3.52,
+    "actual_twh": 3.34
+   },
+   "nuclear": {
+    "model_twh": 3.15,
+    "actual_twh": 3.18
+   },
+   "interchange": {
+    "model_twh": 0.72,
+    "actual_twh": -1.22
+   }
+  },
+  "day_h7_14": {
+   "coal": {
+    "model_twh": 68.79,
+    "actual_twh": 64.32
+   },
+   "gas": {
+    "model_twh": 52.47,
+    "actual_twh": 64.53
+   },
+   "wind": {
+    "model_twh": 26.23,
+    "actual_twh": 24.95
+   },
+   "nuclear": {
+    "model_twh": 25.23,
+    "actual_twh": 25.42
+   },
+   "interchange": {
+    "model_twh": 6.71,
+    "actual_twh": -9.18
+   }
+  },
+  "evening_h15_20": {
+   "coal": {
+    "model_twh": 52.44,
+    "actual_twh": 49.77
+   },
+   "gas": {
+    "model_twh": 42.22,
+    "actual_twh": 51.19
+   },
+   "wind": {
+    "model_twh": 20.67,
+    "actual_twh": 19.66
+   },
+   "nuclear": {
+    "model_twh": 18.92,
+    "actual_twh": 19.04
+   },
+   "interchange": {
+    "model_twh": 5.29,
+    "actual_twh": -6.59
+   }
+  },
+  "late_h21_23": {
+   "coal": {
+    "model_twh": 23.29,
+    "actual_twh": 21.96
+   },
+   "gas": {
+    "model_twh": 16.27,
+    "actual_twh": 19.36
+   },
+   "wind": {
+    "model_twh": 11.22,
+    "actual_twh": 10.67
+   },
+   "nuclear": {
+    "model_twh": 9.46,
+    "actual_twh": 9.51
+   },
+   "interchange": {
+    "model_twh": 1.84,
+    "actual_twh": -3.28
+   }
+  },
+  "summer_day_evening_h7_20": {
+   "coal": {
+    "model_twh": 64.72,
+    "actual_twh": 61.76
+   },
+   "gas": {
+    "model_twh": 56.94,
+    "actual_twh": 69.53
+   },
+   "wind": {
+    "model_twh": 18.32,
+    "actual_twh": 17.42
+   },
+   "nuclear": {
+    "model_twh": 22.59,
+    "actual_twh": 22.71
+   },
+   "interchange": {
+    "model_twh": 9.96,
+    "actual_twh": -9.41
+   }
+  }
+ },
+ "2023": {
+  "night_h0_5": {
+   "coal": {
+    "model_twh": 41.11,
+    "actual_twh": 35.7
+   },
+   "gas": {
+    "model_twh": 40.78,
+    "actual_twh": 50.41
+   },
+   "wind": {
+    "model_twh": 25.48,
+    "actual_twh": 24.23
+   },
+   "nuclear": {
+    "model_twh": 21.85,
+    "actual_twh": 21.95
+   },
+   "interchange": {
+    "model_twh": 9.6,
+    "actual_twh": -9.61
+   }
+  },
+  "morning_h6": {
+   "coal": {
+    "model_twh": 7.39,
+    "actual_twh": 6.88
+   },
+   "gas": {
+    "model_twh": 8.07,
+    "actual_twh": 9.59
+   },
+   "wind": {
+    "model_twh": 4.03,
+    "actual_twh": 3.83
+   },
+   "nuclear": {
+    "model_twh": 3.64,
+    "actual_twh": 3.66
+   },
+   "interchange": {
+    "model_twh": 1.39,
+    "actual_twh": -1.58
+   }
+  },
+  "day_h7_14": {
+   "coal": {
+    "model_twh": 62.69,
+    "actual_twh": 62.06
+   },
+   "gas": {
+    "model_twh": 74.29,
+    "actual_twh": 85.87
+   },
+   "wind": {
+    "model_twh": 29.51,
+    "actual_twh": 28.07
+   },
+   "nuclear": {
+    "model_twh": 29.13,
+    "actual_twh": 29.28
+   },
+   "interchange": {
+    "model_twh": 12.91,
+    "actual_twh": -13.25
+   }
+  },
+  "evening_h15_20": {
+   "coal": {
+    "model_twh": 48.69,
+    "actual_twh": 49.55
+   },
+   "gas": {
+    "model_twh": 60.47,
+    "actual_twh": 67.69
+   },
+   "wind": {
+    "model_twh": 24.04,
+    "actual_twh": 22.86
+   },
+   "nuclear": {
+    "model_twh": 21.85,
+    "actual_twh": 21.96
+   },
+   "interchange": {
+    "model_twh": 7.67,
+    "actual_twh": -9.15
+   }
+  },
+  "late_h21_23": {
+   "coal": {
+    "model_twh": 21.58,
+    "actual_twh": 20.75
+   },
+   "gas": {
+    "model_twh": 23.01,
+    "actual_twh": 27.68
+   },
+   "wind": {
+    "model_twh": 13.38,
+    "actual_twh": 12.72
+   },
+   "nuclear": {
+    "model_twh": 10.92,
+    "actual_twh": 10.97
+   },
+   "interchange": {
+    "model_twh": 4.82,
+    "actual_twh": -4.33
+   }
+  },
+  "summer_day_evening_h7_20": {
+   "coal": {
+    "model_twh": 54.51,
+    "actual_twh": 53.64
+   },
+   "gas": {
+    "model_twh": 70.03,
+    "actual_twh": 76.53
+   },
+   "wind": {
+    "model_twh": 14.73,
+    "actual_twh": 14.01
+   },
+   "nuclear": {
+    "model_twh": 22.47,
+    "actual_twh": 22.67
+   },
+   "interchange": {
+    "model_twh": 9.32,
+    "actual_twh": -11.92
+   }
+  }
+ },
+ "2024": {
+  "night_h0_5": {
+   "coal": {
+    "model_twh": 40.51,
+    "actual_twh": 35.07
+   },
+   "gas": {
+    "model_twh": 44.47,
+    "actual_twh": 54.17
+   },
+   "wind": {
+    "model_twh": 27.09,
+    "actual_twh": 25.77
+   },
+   "nuclear": {
+    "model_twh": 22.5,
+    "actual_twh": 22.7
+   },
+   "interchange": {
+    "model_twh": 6.19,
+    "actual_twh": -6.32
+   }
+  },
+  "morning_h6": {
+   "coal": {
+    "model_twh": 7.18,
+    "actual_twh": 6.64
+   },
+   "gas": {
+    "model_twh": 8.66,
+    "actual_twh": 10.03
+   },
+   "wind": {
+    "model_twh": 4.34,
+    "actual_twh": 4.12
+   },
+   "nuclear": {
+    "model_twh": 3.75,
+    "actual_twh": 3.79
+   },
+   "interchange": {
+    "model_twh": 0.68,
+    "actual_twh": -1.02
+   }
+  },
+  "day_h7_14": {
+   "coal": {
+    "model_twh": 59.62,
+    "actual_twh": 57.83
+   },
+   "gas": {
+    "model_twh": 75.46,
+    "actual_twh": 87.22
+   },
+   "wind": {
+    "model_twh": 32.23,
+    "actual_twh": 30.65
+   },
+   "nuclear": {
+    "model_twh": 30.0,
+    "actual_twh": 30.27
+   },
+   "interchange": {
+    "model_twh": 7.11,
+    "actual_twh": -7.6
+   }
+  },
+  "evening_h15_20": {
+   "coal": {
+    "model_twh": 47.09,
+    "actual_twh": 47.22
+   },
+   "gas": {
+    "model_twh": 63.2,
+    "actual_twh": 70.71
+   },
+   "wind": {
+    "model_twh": 25.7,
+    "actual_twh": 24.45
+   },
+   "nuclear": {
+    "model_twh": 22.5,
+    "actual_twh": 22.69
+   },
+   "interchange": {
+    "model_twh": 3.81,
+    "actual_twh": -5.55
+   }
+  },
+  "late_h21_23": {
+   "coal": {
+    "model_twh": 21.17,
+    "actual_twh": 20.32
+   },
+   "gas": {
+    "model_twh": 25.18,
+    "actual_twh": 29.95
+   },
+   "wind": {
+    "model_twh": 13.95,
+    "actual_twh": 13.27
+   },
+   "nuclear": {
+    "model_twh": 11.25,
+    "actual_twh": 11.35
+   },
+   "interchange": {
+    "model_twh": 2.97,
+    "actual_twh": -2.59
+   }
+  },
+  "summer_day_evening_h7_20": {
+   "coal": {
+    "model_twh": 50.87,
+    "actual_twh": 49.56
+   },
+   "gas": {
+    "model_twh": 70.74,
+    "actual_twh": 77.37
+   },
+   "wind": {
+    "model_twh": 18.1,
+    "actual_twh": 17.21
+   },
+   "nuclear": {
+    "model_twh": 23.33,
+    "actual_twh": 23.54
+   },
+   "interchange": {
+    "model_twh": 4.37,
+    "actual_twh": -7.03
+   }
+  }
+ },
+ "2025": {
+  "night_h0_5": {
+   "coal": {
+    "model_twh": 46.46,
+    "actual_twh": 42.64
+   },
+   "gas": {
+    "model_twh": 43.58,
+    "actual_twh": 50.63
+   },
+   "wind": {
+    "model_twh": 27.62,
+    "actual_twh": 26.27
+   },
+   "nuclear": {
+    "model_twh": 22.61,
+    "actual_twh": 22.93
+   },
+   "interchange": {
+    "model_twh": 5.89,
+    "actual_twh": -5.37
+   }
+  },
+  "morning_h6": {
+   "coal": {
+    "model_twh": 8.39,
+    "actual_twh": 7.83
+   },
+   "gas": {
+    "model_twh": 8.13,
+    "actual_twh": 9.32
+   },
+   "wind": {
+    "model_twh": 4.36,
+    "actual_twh": 4.15
+   },
+   "nuclear": {
+    "model_twh": 3.77,
+    "actual_twh": 3.83
+   },
+   "interchange": {
+    "model_twh": 0.61,
+    "actual_twh": -0.9
+   }
+  },
+  "day_h7_14": {
+   "coal": {
+    "model_twh": 67.28,
+    "actual_twh": 64.68
+   },
+   "gas": {
+    "model_twh": 67.17,
+    "actual_twh": 77.55
+   },
+   "wind": {
+    "model_twh": 31.97,
+    "actual_twh": 30.41
+   },
+   "nuclear": {
+    "model_twh": 30.15,
+    "actual_twh": 30.56
+   },
+   "interchange": {
+    "model_twh": 5.99,
+    "actual_twh": -5.12
+   }
+  },
+  "evening_h15_20": {
+   "coal": {
+    "model_twh": 54.94,
+    "actual_twh": 52.55
+   },
+   "gas": {
+    "model_twh": 59.64,
+    "actual_twh": 67.68
+   },
+   "wind": {
+    "model_twh": 25.78,
+    "actual_twh": 24.52
+   },
+   "nuclear": {
+    "model_twh": 22.61,
+    "actual_twh": 22.91
+   },
+   "interchange": {
+    "model_twh": 2.81,
+    "actual_twh": -5.29
+   }
+  },
+  "late_h21_23": {
+   "coal": {
+    "model_twh": 25.06,
+    "actual_twh": 24.4
+   },
+   "gas": {
+    "model_twh": 24.16,
+    "actual_twh": 28.04
+   },
+   "wind": {
+    "model_twh": 14.3,
+    "actual_twh": 13.6
+   },
+   "nuclear": {
+    "model_twh": 11.31,
+    "actual_twh": 11.45
+   },
+   "interchange": {
+    "model_twh": 2.6,
+    "actual_twh": -2.27
+   }
+  },
+  "summer_day_evening_h7_20": {
+   "coal": {
+    "model_twh": 54.28,
+    "actual_twh": 51.69
+   },
+   "gas": {
+    "model_twh": 67.84,
+    "actual_twh": 73.58
+   },
+   "wind": {
+    "model_twh": 15.53,
+    "actual_twh": 14.77
+   },
+   "nuclear": {
+    "model_twh": 21.85,
+    "actual_twh": 22.06
+   },
+   "interchange": {
+    "model_twh": 4.82,
+    "actual_twh": -7.8
+   }
+  }
+ }
+}
