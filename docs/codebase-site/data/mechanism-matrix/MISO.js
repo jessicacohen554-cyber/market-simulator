@@ -664,3 +664,4 @@ window.MECH_MATRIX_SHARDS.MISO = {
 /* 2026-09-28 miso-279: KEEPER re-stamped -> 2026-09-27-miso-279-stcov; campd_st_gas_span_coverage O -> K; miso-278 pruned (rule 35). */
 /* 2026-09-28 miso-280: KEEPER re-stamped -> 2026-09-28-miso-280-splitremap; campd_split_remap_companions O -> K; miso-279 pruned (rule 35). */
 /* 2026-09-29 miso-286: ZERO LP, keeper UNCHANGED (2026-09-28-miso-280-splitremap). miso_gas_ecomin_online_floor row added (rule 28c), MISO cell I (killed at its pre-registered pre-check, < $0.5 in 7/7 years); diurnal_price_amplitude O -> G. Record: docs/FINDING-miso286-ecomin-precheck-killed-2026-09-29.md. */
+/* 2026-09-30 miso-291: ZERO LP, keeper UNCHANGED (2026-09-28-miso-280-splitremap). C3a 2022 phase 0: 77 % of the gap is INDIANA.HUB congestion+losses (-8.47 vs -2.3..-2.5 in 2023-25); internal_congestion_split stays G, ordc_scarcity_overlay stays G, no cell moves. Record: docs/FINDING-miso291-c3a2022-phase0-2026-09-30.md. */
