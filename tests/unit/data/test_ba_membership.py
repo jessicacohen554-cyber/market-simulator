@@ -39,8 +39,8 @@ def _rcf():
     return mod
 
 
-def test_join_registry_is_soco_powersouth_only():
-    assert ISO_BA_JOINS == {"SOCO": {"AEC": (2021, 9)}}
+def test_join_registry_is_soco_powersouth_and_pjm_ovec():
+    assert ISO_BA_JOINS == {"SOCO": {"AEC": (2021, 9)}, "PJM": {"OVEC": (2019, 1)}}
 
 
 def test_joining_codes_by_year():
@@ -48,8 +48,12 @@ def test_joining_codes_by_year():
     assert bm.joining_ba_codes("SOCO", 2020) == ()
     assert bm.joining_ba_codes("SOCO", 2021) == ("AEC",)
     assert bm.joining_ba_codes("soco", 2023) == ("AEC",)
-    for iso in ("ERCOT", "MISO", "PJM", "NWPP"):
+    for iso in ("ERCOT", "MISO", "NWPP"):
         assert bm.joining_ba_codes(iso, 2021) == ()
+    # PJM-NEXT-16: OVEC is inside PJM for the whole backcast corpus.
+    assert bm.joining_ba_codes("PJM", 2018) == ()
+    assert bm.joining_ba_codes("PJM", 2019) == ("OVEC",)
+    assert bm.joining_ba_codes("PJM", 2025) == ("OVEC",)
 
 
 def test_recode_drop_returns_same_object_when_unregistered_or_clean():
@@ -117,6 +121,31 @@ def test_benchmark_membership_gates_powersouth_by_year_and_month():
     assert (aec["annual_mwh"] - aec[months[8:]].sum(axis=1)).abs().max() < 1e-6
     # Any other ISO's membership is untouched by the joins registry.
     assert rcf._iso_plant_ids("MISO", 2019) == rcf._iso_plant_ids("MISO", None)
+
+
+_OVEC = {983, 2876}
+
+
+@pytest.mark.skipif(not _HAVE_860, reason="EIA-860 vintages not hydrated")
+def test_pjm_ovec_admitted_all_year_in_2019_and_2020():
+    """PJM-NEXT-16: vintages 2019/2020 code Clifty/Kyger Creek OVEC; PJM admits them.
+
+    The join month is the corpus bound (2019-01), so no month is masked in any
+    backcast year, and the benchmark membership (which already carried them
+    through the eGRID zone lookup) is unchanged.
+    """
+    from market_sim.data.fleet import load_fleet_from_csv
+
+    for year in (2019, 2020):
+        first = bm.ba_join_first_month("PJM", year)
+        assert set(first) == (_OVEC if year == 2019 else set())
+        assert set(first.values()) <= {1}
+        fleet = load_fleet_from_csv(
+            "PJM", data_dir=_EIA860 / f"vintage_{year}", year=year
+        )
+        assert _OVEC <= {int(g.plant_code) for g in fleet}
+    rcf = _rcf()
+    assert _OVEC <= rcf._iso_plant_ids("PJM", 2019)
 
 
 def test_exit_registry_is_soco_gulf_to_fpl_only():

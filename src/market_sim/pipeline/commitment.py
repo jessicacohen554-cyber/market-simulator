@@ -1416,6 +1416,133 @@ def build_spp_gas_bridge_p1_prep(config, iso: str, fleet: list, fleet_arrays, mc
     return _fleet_prep
 
 
+# PJM gas commitment bridge (PJM-NEXT-16): the PJM leg offers the shared
+# detector ONE fuel, ``gas_cc`` (CC_REGULAR; the detector excludes every
+# ``*_CHP`` group). The owner's charter is the CC min-load block
+# (PJM-NEXT-15 card 2); PJM's gas steam is not offered. Scoping is still by
+# unit physics inside the detector (rule 18 [R-PHYSICS]).
+_PJM_BRIDGE_FUELS: tuple[str, ...] = ("gas_cc",)
+
+
+def _pjm_bridge_min_run_hours(fleet: list) -> np.ndarray:
+    """Return the ``(n_gen,)`` minimum run duration for the PJM bridge.
+
+    The MEASURED plant-basis class value
+    (``constants.PJM_GAS_BRIDGE_MIN_RUN_HOURS``, the cap-weighted p25 of the
+    CAMPD 2023-2025 plant run-length distribution: CC 11 h) on every eligible
+    row; every other row carries 0, which the detector reads as "no extension".
+
+    Args:
+        fleet: The dispatch fleet.
+
+    Returns:
+        A ``(n_gen,)`` float array of minimum run hours.
+    """
+    from market_sim.config.constants import PJM_GAS_BRIDGE_MIN_RUN_HOURS
+
+    out = np.zeros(len(fleet), dtype=float)
+    for g, gen in enumerate(fleet):
+        if gen.fuel_type in _PJM_BRIDGE_FUELS and not gen.plant_group.endswith("_CHP"):
+            out[g] = float(PJM_GAS_BRIDGE_MIN_RUN_HOURS[gen.fuel_type])
+    return out
+
+
+def _pjm_gas_bridge_floor(
+    fleet: list,
+    fleet_arrays,
+    p0_dispatch: np.ndarray,
+    p0_prices: np.ndarray,
+    mc_base: np.ndarray,
+) -> np.ndarray | None:
+    """Compute the raw ``(n_gen, T)`` PJM gas commitment-bridge floor.
+
+    The SPP leg's construction (:func:`_spp_gas_bridge_floor`) on PJM's
+    merchant CCs at PJM's own measured statistics
+    (``constants.PJM_GAS_BRIDGE_MIN_LOAD_FRAC`` 0.436 /
+    ``PJM_GAS_BRIDGE_MIN_RUN_HOURS`` 11 h): the physical restart bar, the
+    economic restart inequality capped at one DA operating day, the measured
+    minimum-run extension and the commitment-real run screen
+    (``startup_aware``). Every input is the model's own P0 solution plus
+    registered physics and the two measured constants. Returns ``None`` when
+    it floors nothing.
+    """
+    from market_sim.config.constants import (
+        DA_COMMITMENT_HORIZON_HOURS,
+        PJM_GAS_BRIDGE_MIN_LOAD_FRAC,
+    )
+    from market_sim.model.commitment import caiso_ra_mustoffer_min_gen
+
+    min_run = _pjm_bridge_min_run_hours(fleet)
+    total = None
+    for fuel in _PJM_BRIDGE_FUELS:
+        frac = float(PJM_GAS_BRIDGE_MIN_LOAD_FRAC[fuel])
+        stats: dict = {}
+        part = caiso_ra_mustoffer_min_gen(
+            p0_dispatch,
+            fleet_arrays,
+            fleet,
+            frac,
+            p1_prices=p0_prices,
+            base_mc=mc_base,
+            startup_bridge=True,
+            fuel_types=(fuel,),
+            max_econ_gap_hours=float(DA_COMMITMENT_HORIZON_HOURS),
+            min_run_hours=min_run,
+            startup_aware=True,
+            screen_stats=stats,
+        )
+        logger.info(
+            "PJM gas bridge leg %s (min_load_frac %.3f): %d P0 runs detected, "
+            "%d dropped as phantom covering %d P0 online hours; %d unit-hours "
+            "floored, %.4f TWh floor volume",
+            fuel,
+            frac,
+            int(stats.get("runs_detected", 0)),
+            int(stats.get("runs_dropped", 0)),
+            int(stats.get("dropped_hours", 0)),
+            int((part > 0.0).sum()),
+            float(part.sum()) / 1e6,
+        )
+        total = part if total is None else np.maximum(total, part)
+    if total is None or not np.any(total > 0.0):
+        return None
+    return total
+
+
+def build_pjm_gas_bridge_p1_prep(config, iso: str, fleet: list, fleet_arrays, mc_base):
+    """Return a ``p1_fleet_prep`` hook for the PJM gas commitment bridge.
+
+    The PJM leg of the P1-native committed-state bridge family (PJM-NEXT-16,
+    owner ruling "Charter + solve with OVEC"): PJM's merchant combined cycles
+    are held at their measured plant-basis minimum stable load while the
+    model's own base-cost P0 has them committed (plus the restart and
+    minimum-run legs), so a committed CC's min-load block is must-take and
+    never the price-setting margin. It REPLACES ``cc_mustrun_per_plant``'s
+    system-load window (rule 19; ScenarioConfig refuses both armed). Detector:
+    :func:`_pjm_gas_bridge_floor`; D-2 attribution:
+    ``MECH_PJM_GAS_COMMITMENT_BRIDGE``.
+
+    Returns ``None`` when the mechanism is off or the ISO is not PJM, so every
+    other path is byte-identical.
+    """
+    if not (getattr(config, "pjm_gas_commitment_bridge", False) and iso == "PJM"):
+        return None
+
+    from market_sim.data.floor_mechanisms import MECH_PJM_GAS_COMMITMENT_BRIDGE
+
+    def _fleet_prep(r0):
+        bridge_floor = _pjm_gas_bridge_floor(
+            fleet, fleet_arrays, r0.dispatch, r0.prices, mc_base
+        )
+        if bridge_floor is None:
+            return None
+        return _bridge_floored_fleet(
+            fleet_arrays, bridge_floor, MECH_PJM_GAS_COMMITMENT_BRIDGE
+        )
+
+    return _fleet_prep
+
+
 _MISO_NIGHT_FLOOR_SUPPLIES = ("prb", "subbituminous")
 
 

@@ -800,11 +800,27 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   name carries the NYISO token, so only NYISO's row set grows: 220 -> 221.
 #   WHAT IT COSTS: nothing solved — no registry value moved, so no committed
 #   bundle's numbers change; the digest moves only because the row set grew.
+# 2026-09-30 PJM ADVANCED (PJM-NEXT-16, owner ruling "Build + solve") — ONE
+#   ROW MOVED, DECLARED AT ITS PRE-ARM HASH SO IT MOVES PJM'S KEY.
+#   constants.ISO_BA_JOINS gains {"PJM": {"OVEC": (2019, 1)}}: Clifty Creek 983
+#   and Kyger Creek 2876 are inside PJM's BA in every corpus hour but EIA-860
+#   vintages 2018-2020 code them OVEC, so the 2019/2020 fleet had dropped them.
+#   `solve_surface_register.py --diff origin/main` -> "1 value(s) moved:
+#   ISO_BA_JOINS: PJM". Declared at the empty-table hash (as SOCO's and
+#   ERCOT's membership rows were): 223 -> 224 rows, PJM only.
+#   WHAT IT COSTS: a PJM cache miss. 2019/2020 fleets gain 2.39 GW of coal;
+#   2021-2025 fleets are unchanged (those vintages already code them PJM).
+#   SAME LANE, SAME DAY — TWO ROWS ADDED, NO VALUE MOVED:
+#   constants.PJM_GAS_BRIDGE_MIN_LOAD_FRAC / PJM_GAS_BRIDGE_MIN_RUN_HOURS (the
+#   measured plant-basis CC statistics, read only under the default-off
+#   pjm_gas_commitment_bridge). Declared at their live hash
+#   (`--declare-missing`, moves no key); the names carry the PJM token, so only
+#   PJM's row set grows: 224 -> 226.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
     "ERCOT": ("bdfc68c278f7eff8", 240),
     "CAISO": ("289c8c383a78f4d9", 213),
     "MISO": ("52d6fa6795d5e276", 220),
-    "PJM": ("2bff80b5fa602668", 223),
+    "PJM": ("7f0e7318aac915b0", 226),
     "NYISO": ("a64df99bd6857677", 221),
     "NEISO": ("e082dd92b5c22723", 206),
 }
@@ -963,6 +979,9 @@ LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
         ),
     },
     "PJM": {
+        "ISO_BA_JOINS": (
+            "PJM-NEXT-16 2026-09-30 (owner ruling 'Build + solve'): OVEC (Clifty Creek 983, Kyger Creek 2876) admitted to PJM from the corpus bound 2019-01, declared at the pre-arm hash so PJM re-keys — see the 2026-09-30 PJM-NEXT-16 cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
         "GENERIC_BASE_OFFER_CURVE": (
             "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
         ),

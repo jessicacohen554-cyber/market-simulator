@@ -225,6 +225,17 @@ MECH_SOCO_GAS_ST_CAMPAIGN: int = 25
 # attribution stays per-mechanism. A merchant commitment floor — subject to the
 # D-2 forced-share gate.
 MECH_MISO_GAS_ECOMIN_ONLINE: int = 26
+# pjm_gas_commitment_bridge (PJM-NEXT-16, pipeline.commitment.
+# build_pjm_gas_bridge_p1_prep): the PJM leg of the gas commitment bridge
+# family on PJM's merchant combined cycles, at the MEASURED plant-basis minimum
+# stable load (constants.PJM_GAS_BRIDGE_MIN_LOAD_FRAC) with the measured
+# minimum-run extension (constants.PJM_GAS_BRIDGE_MIN_RUN_HOURS) and the
+# commitment-real run screen. Rule 19 [R-ONE-MECH]: it REPLACES
+# cc_mustrun_per_plant's system-load window (ScenarioConfig refuses both armed),
+# so the CC committed floor is placed by the plant's own P0 run pattern. Its
+# own id (the MECH_SPP_GAS_COMMITMENT_BRIDGE precedent). A merchant commitment
+# floor — subject to the D-2 forced-share gate.
+MECH_PJM_GAS_COMMITMENT_BRIDGE: int = 27
 
 MECH_NAMES: dict[int, str] = {
     MECH_NONE: "none",
@@ -254,6 +265,7 @@ MECH_NAMES: dict[int, str] = {
     MECH_SPP_GAS_COMMITMENT_BRIDGE: "spp_gas_commitment_bridge",
     MECH_SOCO_GAS_ST_CAMPAIGN: "soco_gas_st_campaign_commitment",
     MECH_MISO_GAS_ECOMIN_ONLINE: "miso_gas_ecomin_online_floor",
+    MECH_PJM_GAS_COMMITMENT_BRIDGE: "pjm_gas_commitment_bridge",
 }
 
 # Mechanisms whose forced energy is exempt from the D-2 merchant-class gates
@@ -326,6 +338,8 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
     # SOCO-53d: the SOCO gas-steam CAMPAIGN commitment floor, ABLATED like
     # every other leg of the family (a visible, switchable merchant floor).
     MECH_SOCO_GAS_ST_CAMPAIGN: {"soco_gas_st_campaign_commitment": False},
+    # PJM-NEXT-16: the PJM leg, ABLATED like every other leg of the family.
+    MECH_PJM_GAS_COMMITMENT_BRIDGE: {"pjm_gas_commitment_bridge": False},
 }
 
 # Mechanisms KEPT in the ablation twin (carry NO ablation entry): the structural

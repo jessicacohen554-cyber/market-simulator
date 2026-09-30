@@ -456,6 +456,24 @@ RA_BRIDGE_ECON_MIN_DOWN_HOURS: float = 4.0
 SPP_GAS_BRIDGE_MIN_LOAD_FRAC: dict[str, float] = {"gas_cc": 0.209, "gas_st": 0.090}
 SPP_GAS_BRIDGE_MIN_RUN_HOURS: dict[str, float] = {"gas_cc": 15.0, "gas_st": 5.0}
 
+# PJM gas commitment bridge (ScenarioConfig.pjm_gas_commitment_bridge, lane
+# PJM-NEXT-16, owner ruling 2026-09-30 "Charter + solve with OVEC"): the two
+# MEASURED statistics the PJM leg's floor reads, keyed by LP fuel type, from the
+# SAME construction as SPP's (scripts/data/derive_campd_gas_commitment_params.py
+# --iso PJM --plant-basis, CAMPD 2023-2025, the script's default pool ->
+# data/raw/_processed-legacy/campd_gas_commitment_params_plant_PJM.csv):
+#   min_load_frac = HSL-weighted p50 of plant lsl_frac: CC_REGULAR 0.436
+#                   (p25 0.293 / p75 0.535, 69 plants, 59,464 MW);
+#   min_run_hours = capacity-weighted p25 of the plant-basis run lengths:
+#                   CC_REGULAR 11 h (7,143 runs).
+# CC only: the owner's charter is the CC min-load block (PJM-NEXT-15 card 2);
+# ST_GAS is measured in the same artifact (0.128 / 11 h) and NOT read.
+# Rules 5/13/21/23: measured unit conduct, re-derived only when CAMPD updates;
+# rule 25: PJM's own plants, nothing inherited from SPP/NYISO. Read only when
+# the PJM bridge gate is on.
+PJM_GAS_BRIDGE_MIN_LOAD_FRAC: dict[str, float] = {"gas_cc": 0.436}
+PJM_GAS_BRIDGE_MIN_RUN_HOURS: dict[str, float] = {"gas_cc": 11.0}
+
 # MISO merchant-CC EcoMin online floor (ScenarioConfig.miso_gas_ecomin_online_
 # floor, lane miso-286, CHARTER-miso285-ecomin-price-taker-2026-09-29 §2): the
 # MEASURED plant-basis minimum stable load of MISO's CC_REGULAR fleet, from the
@@ -2579,7 +2597,29 @@ ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE: dict[str, bool] = {"SOCO": True}
 # Springhill 56522 LFG (4.8 MW) — are appended to that vintage's processed
 # table by ``scripts/data/process_eia860.py --rescope-from-parquet
 # data/raw/eia-860/vintage_2021 --admit-ba AEC``.
-ISO_BA_JOINS: dict[str, dict[str, tuple[int, int]]] = {"SOCO": {"AEC": (2021, 9)}}
+#
+# PJM (lane PJM-NEXT-16, 2026-09-30, owner ruling "Build + solve"): the Ohio
+# Valley Electric Corporation (EIA BA code ``OVEC``) — Clifty Creek 983 and
+# Kyger Creek 2876, 2.2 GW of coal — is inside the PJM balancing authority in
+# every hour of the backcast corpus, but EIA-860 vintages 2018-2020 still code
+# both plants ``OVEC`` (vintages 2021+ code them ``PJM``), so the modelled-BA
+# filter dropped them from the 2019/2020 LP fleet while PJM's EIA-930 demand
+# and the EIA-923 benchmark (``build_zone_lookup``) both carry them (11.24 /
+# 9.03 TWh). Measured: ``eia-930-interchange/PJM interchange hourly.parquet``
+# has NO ``OVEC`` directly-interconnected-BA leg in any hour from 2019-01-01,
+# the EIA-930 BALANCE files carry no ``OVEC`` BA in 2019-2021, and PJM's
+# tie-line meter lists no OVEC tie in any year
+# (docs/FINDING-pjm-next-16-cc-loading-and-the-ovec-boundary-2026-09-30.md).
+# The integration date PRECEDES the corpus, so the registered month is the
+# corpus bound 2019-01: every date <= 2019-01 is solve-identical (no backcast
+# year precedes 2019, and a forecast reads a vintage that codes them PJM).
+# Vintages 2019/2020 are rescoped by ``scripts/data/process_eia860.py
+# --rescope-from-parquet data/raw/eia-860/vintage_2019
+# data/raw/eia-860/vintage_2020 --admit-ba OVEC``.
+ISO_BA_JOINS: dict[str, dict[str, tuple[int, int]]] = {
+    "SOCO": {"AEC": (2021, 9)},
+    "PJM": {"OVEC": (2019, 1)},
+}
 
 # --- Balancing authorities that plants/load LEFT a modelled region to ---------
 # ``{iso: {destination_ba: first_hour_outside}}`` — the twin of

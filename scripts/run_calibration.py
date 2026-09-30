@@ -1016,6 +1016,7 @@ def run_year(
     nyiso_east_reserve_families: bool | None = None,
     nyiso_gas_commitment_bridge: bool | None = None,
     spp_gas_commitment_bridge: bool | None = None,
+    pjm_gas_commitment_bridge: bool | None = None,
     soco_gas_st_campaign_commitment: bool | None = None,
     miso_coal_night_floor: bool | None = None,
     miso_gas_ecomin_online_floor: bool | None = None,
@@ -2115,6 +2116,10 @@ def run_year(
     if spp_gas_commitment_bridge is not None:
         config = config.with_overrides(
             spp_gas_commitment_bridge=spp_gas_commitment_bridge
+        )
+    if pjm_gas_commitment_bridge is not None:
+        config = config.with_overrides(
+            pjm_gas_commitment_bridge=pjm_gas_commitment_bridge
         )
     if miso_coal_night_floor is not None:
         config = config.with_overrides(miso_coal_night_floor=miso_coal_night_floor)

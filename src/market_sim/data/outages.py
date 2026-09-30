@@ -1046,6 +1046,52 @@ def _fleet_cache_dir_key() -> str:
     return f"{key}|SB" if eia860_standby_admitted() else key
 
 
+def _joining_ba_generators(
+    iso: str, iso_config, year: int | None, cc_steam_part_reclass: bool = False
+) -> list:
+    """Generators of the plants a registered JOINING BA code carries this vintage.
+
+    PJM-NEXT-16 (rule 19 ``[R-ONE-MECH]``: one membership boundary). The two
+    fleet-derived outage maps below load the fleet WITHOUT a solve year, and
+    ``load_fleet_from_csv`` admits a :data:`~market_sim.config.constants.ISO_BA_JOINS`
+    BA only for a known year (``joining_ba_codes(iso, None) == ()``). So a plant
+    the LP fleet DOES dispatch because it sits in a joining BA (PJM 2019/2020:
+    Clifty Creek 983 and Kyger Creek 2876, coded ``OVEC`` by EIA-860 vintages
+    2018-2020) was absent from the denominator and the roster, every one of its
+    CAMPD outage windows routed to a missing ``(plant_code, plant_group)`` and was
+    skipped, and the unit ran at its generic availability all year.
+
+    Returns ONLY those plants' generators, loaded exactly as the LP fleet loads
+    them for ``year`` (so their bins match the dispatched fleet's). Empty for
+    ``year=None``, for any region with no registered join, and for a vintage that
+    codes no plant to a joining BA (PJM 2021+) — so every such map is unchanged.
+    Zero free parameters; the membership is the registry's own (rules 21 / 24).
+    """
+    from market_sim.config.paths import active_eia860_dir
+    from market_sim.data.ba_membership import joining_ba_codes
+    from market_sim.data.fleet import load_fleet_from_csv
+
+    if year is None:
+        return []
+    joins = set(joining_ba_codes(iso, int(year)))
+    path = active_eia860_dir() / "eia860_plant.parquet"
+    if not joins or not path.exists():
+        return []
+    plant = pd.read_parquet(path, columns=["Plant Code", "Balancing Authority Code"])
+    ba = plant["Balancing Authority Code"].astype(str).str.strip()
+    codes = set(
+        pd.to_numeric(plant.loc[ba.isin(joins), "Plant Code"], errors="coerce")
+        .dropna()
+        .astype(int)
+    )
+    if not codes:
+        return []
+    fleet = load_fleet_from_csv(
+        iso, iso_config, year=int(year), cc_steam_part_reclass=cc_steam_part_reclass
+    )
+    return [g for g in fleet if int(g.plant_code) in codes]
+
+
 def _iso_plant_unit_capacity(
     iso: str,
     cc_steam_part_reclass: bool = False,
@@ -1112,6 +1158,11 @@ def _iso_plant_unit_capacity_cached(
         year=retiree_year if mid_vintage_exit_carry else None,
         mid_vintage_exit_carry=mid_vintage_exit_carry,
     )
+    if mid_vintage_exit_carry:
+        # PJM-NEXT-16: the joining-BA plants the year-less load cannot admit.
+        fleet += _joining_ba_generators(
+            iso, iso_config, retiree_year, cc_steam_part_reclass
+        )
     out: dict[tuple[int, str], dict[str, float]] = {}
     for g in fleet:
         code = int(g.plant_code)
@@ -1349,6 +1400,12 @@ def _iso_plant_capacity_cached(
         year=retiree_year if mid_vintage_exit_carry else None,
         mid_vintage_exit_carry=mid_vintage_exit_carry,
     )
+    if mid_vintage_exit_carry:
+        # PJM-NEXT-16: the joining-BA plants the year-less load cannot admit, so
+        # their CAMPD windows find a denominator (_joining_ba_generators).
+        fleet += _joining_ba_generators(
+            iso, iso_config, retiree_year, cc_steam_part_reclass
+        )
     cap: dict[tuple[int, str], float] = {}
     for g in fleet:
         code = int(g.plant_code)
