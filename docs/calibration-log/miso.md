@@ -15388,3 +15388,22 @@ No frontier: the full span is NOT-YET on the three routed misses.
 `docs/FINDING-miso287-p1-night-residual-2026-09-29.md`.
 
 Owner ruling: "2022 coal-scarcity study". Next: miso-288, zero-LP data-first study of how the real 2022 fleet expressed its coal shortage.
+
+## miso-288 — 2026-09-30
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Data-first study of how the real 2022
+fleet expressed its coal shortage.
+
+- **Real expression:** an opportunity-cost offer adder in reference levels (IMM 2022 SOM §IV.H, §VI.B) on
+  ~11–22 GW of ~47 GW coal. Burn was seasonal: the pile was drawn Jun–Aug to 63 days and rebuilt Sep–Nov.
+  No derate or dark-unit signature. The summer night/day coal ratio matches the keeper.
+- **Keeper:** right form (a dual acting as an adder), wrong grain. 86 % of coal MW sits under a binding yard, and
+  the month profile is flat. It is short of summer coal in all hours, not just at night.
+- **Yard-only candidate** (pooled monthly limb off) pre-registered (c4ffbefa) and **KILLED** on all four gates:
+  Gate V +$3.57, 2022 nights +$2.29, Jul+Aug coal 54.0 vs cap 52.3.
+- **Cells:** `coal_fuel_inventory` and `_plant_grain` stay K (notes added).
+
+No frontier: the full span is NOT-YET on the three routed misses.
+`docs/FINDING-miso288-coal-scarcity-study-2026-09-30.md`.
+
+Owner ruling: "Min-stock target design (Recommended)". Next: miso-289, zero-LP design of a per-yard monthly pile + prior-years minimum-stock target, pre-check with a kill rule first.
