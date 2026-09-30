@@ -3858,3 +3858,6 @@ data/raw/gas-prices/licensed/*
 
 # miso-287 zero-LP probe hourly dumps (parent-local; numbers live in the FINDING)
 results/calibration/_miso287_hourly_*.parquet
+
+# NYISO-NEXT-14 per-year shard legs: kept out of main (rule 32(d)); only the composite registers.
+results/calibration/nyisonext14_20*/
