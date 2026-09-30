@@ -1518,10 +1518,39 @@ against a pre-change scorer on `origin/main`: one determination moves — SOCO k
 Its full span stays NOT-YET (2021 CC_REGULAR). No other ISO's verdict changes in any field compared.
 Tests: `tests/scoring/test_calibration_verdict_scoped_ledger.py`. NO SOLVE RAN.
 
-## 24. Changes to this file
+## 24. Rubric v3.11 — three more SCOPED ledger rows: SOCO C3a 2019 / 2020 / 2022 vs the system lambda (owner, 2026-09-30)
+
+**Owner rulings, verbatim** (soco-94 decision cards, 2026-09-30):
+
+> "Rubric: ledger C3a vs λ" — scope: "Exact rows, direction-bound" — budget: "Spend the slot, downgrade"
+
+**Why a ledger, not a lever.** FINDING-soco-94: the model's fuel tracks each plant's own EIA-923 Sch. 2
+delivered price (gas −4.2 % to +2.9 %, coal exact), and the C3a sign pattern is not the gas level (at equal
+Henry Hub, 2019/2023 and 2020/2024 differ by 12–18 pp). It is a stable low-end offset (λ ≈ 0.75–0.83 × the CC
+setter's average-HR offer: Southern's incremental-HR term, owner "Keep refused") plus a peak premium in λ
+(implied CT HR 12.8–16.3 in 2021–25 vs 11.2–11.5 in 2019–20). Southern's Sch. 6 formula has no start term, and
+the only term left for the premium is replacement fuel (owner "Don't buy"). A cost-based LP on delivered fuel
+cannot reproduce either without a mechanism rule 1 `[R-STRUCT]` forbids.
+
+**What changed** (`scripts/calibration_verdict.py`): three rows join `SCOPED_LEDGER_ENTRIES` —
+`(SOCO, 2019, price_mean, None)` **over**, `(SOCO, 2020, price_mean, None)` **over**,
+`(SOCO, 2022, price_mean, None)` **under** — and `_apply_scoped_ledger` now honours an `"over"` direction
+(model > actual). Every v3.10 guard binds unchanged: exact key, governance must pass, never a PASS, spends
+the single ledgered slot (budgets checked first), downgrades. A re-solve that flips a row's sign FAILs.
+`LEDGERABLE_CRITERIA` and `MAX_LEDGERED_CAVEATS` are unchanged. `RUBRIC_VERSION` becomes `"3.11"`.
+
+**Measured at amendment** over all 11 registered runs, full span and every single-year subset (72 verdicts),
+against the pre-change scorer: only the SOCO keeper `2026-09-30-soco93-pondage-bound` moves. Its full span
+stays NOT-YET (grade 7/4/0/1/2 → 7/4/0/2/1; the remaining fail is C3b 2022, and the ledgered count 2 exceeds
+the budget of 1). 2020 alone moves NOT-YET → CALIBRATED-WITH-CAVEATS; 2019 alone and 2022 alone stay NOT-YET.
+No other ISO's verdict changes in any field. Tests: `tests/scoring/test_calibration_verdict_scoped_ledger.py`.
+NO SOLVE RAN.
+
+## 25. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-30 | Added §24: **rubric v3.11**, three scoped SOCO C3a rows (2019 over, 2020 over, 2022 under; downgrading, spending the single slot), owner rulings verbatim in §24. Only the SOCO keeper's verdict moves; its full span stays NOT-YET. "Changes to this file" renumbered §24 → §25 (no external reference cited §24). |
 | 2026-09-28 | Added §23: **rubric v3.10**, one scoped ledger row (SOCO 2019 COAL_BIT, under-run only, downgrading, spends the single slot) past the v3.1 C3c-only guard (owner ruling verbatim in §23). One determination moves across all registered runs and per-year subsets (SOCO 2019 alone). "Changes to this file" renumbered §23 → §24 (no external reference cited §23). |
 | 2026-09-20 | Added §22: **rule 33 `[R-SHARD-ARCHIVE]` (d)/(f) — a shard branch is TRANSPORT, not STORAGE** (owner instruction, verbatim in §22). The five-step ordered-delete procedure is removed, along with both premises it rested on, each falsified by measurement in lane nwpp-42 on one day: (1) the environment deletes an unmerged shard branch when the **PARENT's** PR merges — `claude/nwpp-42-{arm-2023,arm-2024,mer-2025}` vanished on the lane PR's merge with none of their commits an ancestor of `main`, two holding an arm leg's per-plant dispatch layer and one the entire 2025 control; and (2) a session cannot delete a ref at all (HTTP 403 over nine refs, no MCP counterpart to `create_branch`), so the procedure was unperformable end to end. The lane's own "fix" — mirroring leg SHAs to PR-free refs — was strictly worse and is now banned by name, since those refs can never be cleared in-session. Replacement: what must survive lands on `main` inside the registered keeper bundle before the lane's PR merges; a shard's unique FINDING doc is still rescued; screen and control bundles stay disposable by design (rule 29(c) / rule 15 forbid them reaching `main` anyway). KEPT: rule 31 `[R-RETAIN]` untouched and still outranking; rule 34(a) "the bundle is pushed, always" untouched as the transport mechanism; clause (d)'s full-SHA discipline demoted from recovery route to **provenance**; rule 33 (a)/(b)/(c)/(e) unchanged. Rule 34 (d)/(e) annotated — a passing `git ls-tree` is necessary, not sufficient. Nothing scored moves. "Changes to this file" renumbered §22 → §23 (no external reference cited §22). |
 | 2026-09-16 | Added §21: **rule 29 `[R-SCREEN]`'s SCREEN-YEAR REGIME REMOVED** (owner instruction, verbatim in §21) — a new config goes straight to the full span; the one-year screen solve, the footprint-named screen year, the span's conditionality and the structural STOP gate are all gone as requirements. The ordinal and ID do **not** move (the §18 `[R-HOLDOUT]` discipline), because `[R-SCREEN]` is cited by name in `check_registry_payload_parity.py`, `keepers/README.md` and rules 15/31/32(b)/34(b): clause (b) (`G-DRIFT`, no control solves) and clause (c) (delete before merge) survive verbatim, and clause (0) survives as practice rather than gate. §19's *"a single-year shard is still correct for a rule-29 SCREEN"* carve-out is spent — a single-year shard is now one leg of rule 34 (c)'s per-year fan-out, pushing its full bundle. Rules 1/16/34 untouched. The trade is recorded rather than hidden: the screen saved ~2 of every 3 years on a dead arm (pjm-h6/h7/h8 each spent one), and dead arms are now paid for in full. Nothing scored moves. "Changes to this file" renumbered §21 → §22 (no external reference cited §21). |

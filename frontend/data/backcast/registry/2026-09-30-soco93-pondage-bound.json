@@ -3,7 +3,7 @@
   "label": "soco93 pondage bound",
   "date": "2026-09-30",
   "shorthand": "soco93-pondage-bound",
-  "definition": "SOCO keeper (soco-93): the soco-92 recipe + hydro_pondage_bound (per-plant forebay water balance; B = SOCO's own USACE NID volume x head via HILARRI v4, inflow = own monthly budget; zero DOF). NOT-YET 7/4/0/1/2: C3a fails 2019 +14.1 / 2020 +14.4 / 2022 -12.4 %, C3b 2022 0.275; worst-plant forebay need 1.000x B (keeper up to 929x), peak hydro+PS -23..-41 MW, zero status flips.",
+  "definition": "SOCO keeper (soco-93): the soco-92 recipe + hydro_pondage_bound (per-plant forebay water balance; B = SOCO's own USACE NID volume x head via HILARRI v4, inflow = own monthly budget; zero DOF). NOT-YET 7/4/0/2/1 (rubric v3.11): C3a 2019 +14.1 / 2020 +14.4 / 2022 -12.4 % ledgered as model-class caveats (soco-94), C3b 2022 0.275 FAIL; worst-plant forebay need 1.000x B (keeper up to 929x), peak hydro+PS -23..-41 MW, zero status flips.",
   "years": [
     2019,
     2020,
