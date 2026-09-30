@@ -1195,3 +1195,109 @@ def detach_nyiso_ne_ac_from_reconciliation(
     mid = (np.asarray(lo, float) + np.asarray(hi, float)) / 2.0 - ne_monthly
     half = abs(band_frac) * np.abs(mid)
     return node_idx[~is_ne], mid - half, mid + half
+
+
+# ---------------------------------------------------------------------------
+# Per-landing monthly band (nyiso_import_landing_band, NYISO-NEXT-15)
+# ---------------------------------------------------------------------------
+
+
+def build_nyiso_import_landing_band(
+    iso_config,
+    year: int,
+    hours: int,
+    exclude_rows: tuple[str, ...] = (),
+    band_frac: float = NYISO_IMPORT_RECON_BAND_FRAC,
+    frame=None,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Band each pooled border link's monthly net flow on its own P-32 schedule.
+
+    ``ScenarioConfig.nyiso_import_landing_band`` (NYISO-NEXT-15, owner decision
+    cards 2026-09-30). The backcast band (:func:`build_import_node_reconciliation`)
+    pins only the pooled ``NYISO_external`` node's TOTAL monthly net import, so
+    the LP lands that volume wherever the zonal price is highest: phase 0
+    measured the three downstate border links (``Capital_Hudson``, ``NYC``,
+    ``Long_Island``) at their p90 envelopes in 96-99 % of hours, together
+    +400-560 MW over their measured attributed schedules, and ``Upstate_West``
+    264-375 MW short, every year 2021-2025 — a phantom import east of the
+    Central-East cutset (``docs/FINDING-nyiso-next15-landing-allocation-phase0-2026-09-30.md``).
+
+    This builds one monthly band per pooled border link on the link's OWN
+    measured attributed net schedule — the P-32 rows placed by
+    :func:`~market_sim.data.nyiso_par_attribution.attributed_zone_net` (the
+    published PAR split), i.e. the very series each link's hourly p90 envelope is
+    taken from, so the band and the envelope share one source and are feasible
+    together by construction. It REPLACES the pooled EIA-930 band (rule 19
+    ``[R-ONE-MECH]``): the pooled node's net import is exactly the sum of its
+    border-link flows, so the four link bands partition the node's volume.
+    Rule 14 alignment, declared: the pooled total moves from the EIA-930 BA
+    total to the P-32 schedule sum (-2 / -4 / -4 / +1 / +1 % in 2021-2025).
+    Zero free parameters: the published PAR shares and the same ``band_frac``.
+    Backcast only (rule 13): the forecast band targets the neighbour's forward
+    net position and is unaffected.
+
+    Args:
+        iso_config: The NYISO ``ISOConfig`` whose ``links`` order is the LP's.
+        year: Backcast year.
+        hours: Dispatch horizon.
+        exclude_rows: P-32 rows served by their own node (``("SCH - NE - NY",)``
+            with ``nyiso_ne_ac_node``), dropped before attribution.
+        band_frac: Band half-width as a fraction of each link's monthly target.
+        frame: Optional pre-read ``nyiso-interface-flows`` partition (tests).
+
+    Returns:
+        ``(link_idx, monthly_lo, monthly_hi)``: ``link_idx`` ``(n_band,)`` into
+        ``iso_config.links``; the bounds are ``(n_band, n_months)`` MWh of
+        signed forward (import-positive) flow.
+
+    Raises:
+        FileNotFoundError: No clean partition (the mechanism never no-ops).
+        ValueError: An attributed zone has no pooled border link.
+    """
+    from market_sim.data.fleet import _hour_to_month_index
+    from market_sim.data.nyiso_par_attribution import attributed_zone_net
+
+    if frame is None:
+        try:
+            from scripts.lib.clean_io import read_clean
+
+            frame = read_clean(
+                "nyiso-interface-flows", iso="NYISO", year=year, validate=False
+            )
+        except Exception as exc:  # noqa: BLE001 — re-raised as the gated error
+            raise FileNotFoundError(
+                f"nyiso_import_landing_band {year}: could not read the "
+                f"'nyiso-interface-flows' clean partition ({exc})"
+            ) from exc
+    if exclude_rows:
+        frame = frame[~frame["interface"].isin(exclude_rows)]
+    net = attributed_zone_net(frame, year)
+
+    pooled = IMPORT_ZONE.get("NYISO")
+    link_of = {
+        link.to_zone: i
+        for i, link in enumerate(iso_config.links)
+        if link.from_zone == pooled
+    }
+    month_index = _hour_to_month_index(hours)
+    n_months = int(month_index.max()) + 1
+    idx, lo, hi = [], [], []
+    for zone, sub in sorted(net.groupby("zone"), key=lambda kv: str(kv[0])):
+        i = link_of.get(str(zone))
+        if i is None:
+            raise ValueError(
+                f"nyiso_import_landing_band {year}: attributed zone {zone!r} has "
+                "no pooled border link (the mechanism never silently no-ops)"
+            )
+        hourly = _on_model_clock(sub["local_hour"], sub["flow_mw"].to_numpy(), hours)
+        target = np.bincount(month_index, weights=hourly, minlength=n_months)
+        half = abs(band_frac) * np.abs(target)
+        idx.append(i)
+        lo.append(target - half)
+        hi.append(target + half)
+    if not idx:
+        raise ValueError(
+            f"nyiso_import_landing_band {year}: no attributed seam rows "
+            "(the mechanism never silently no-ops)"
+        )
+    return np.asarray(idx, dtype=int), np.vstack(lo), np.vstack(hi)

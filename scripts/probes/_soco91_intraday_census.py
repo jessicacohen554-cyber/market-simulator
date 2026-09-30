@@ -3,7 +3,7 @@ offer and loading, and where does the model-minus-lambda gap sit?
 
 Owner ruling 2026-09-29 (soco-90 card): "Zero-LP intra-day census". Rule 32
 ``[R-SHARD]`` (a): this never solves. Per year it does one ``fleet_only`` rebuild of
-the keeper recipe (``results/calibration/soco87_span``, the soco-89/90 construction)
+the keeper recipe (``results/calibration/soco92_span``, the soco-89/90 construction)
 for each unit's ``mc_base[g,t]``, ``pmax``, ``availability``, ``min_gen`` and its D-2
 ``min_gen_mechanism``, then reads the keeper's committed hourly sidecars
 (``system`` / ``class_band_hourly`` / ``class_hourly`` / ``storage``), Southern's
@@ -44,7 +44,9 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "scripts"), str(ROOT / "src"), str(ROOT)]
 
-SPAN = ROOT / "results/calibration/soco87_span"
+SPAN = (
+    ROOT / "results/calibration/soco92_span"
+)  # repointed soco-92 (rule 35 prune of soco92_span)
 YEARS = tuple(range(2019, 2026))
 T = 8760
 TOL = 0.50  # $/MWh offer-to-price match window (diagnostic only; soco-89's value)
@@ -515,7 +517,7 @@ def hydro_shape_arm(year: int, cache: Path) -> dict:
     q = np.quantile(lam, [0.4, 0.8])
     lo, hi = lam <= q[0], lam > q[1]
 
-    art = cv.load_artifacts("2026-09-29-soco87-gas-hh-monthly")
+    art = cv.load_artifacts("2026-09-30-soco92-hydro-min-flow")
     ypay = copy.deepcopy(art["payload"]["years"][str(year)])
     yb = art["bench"].get(year, {})
     base = {

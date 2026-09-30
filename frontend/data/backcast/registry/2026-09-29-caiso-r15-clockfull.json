@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-29-caiso-r15-clockfull",
+  "label": "caiso r15 clockfull",
+  "date": "2026-09-29",
+  "shorthand": "caiso-r15-clockfull",
+  "definition": "R-CAISO-15 A 2022: keeper recipe + caiso_eia930_clock_repair=true incl. HSL gen term + battery envelope (PRECOMMIT-r-caiso-13 + ADDENDUM-r-caiso-15)",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-29-caiso-r15-clockfull.js",
+  "bundle": "results/calibration/rcaiso15_A_span"
+}

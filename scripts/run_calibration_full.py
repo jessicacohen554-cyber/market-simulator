@@ -9875,7 +9875,58 @@ def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:
         )
 
 
+def _bundle_caiso_clock_repair(bundle: Path) -> bool:
+    """Return the ``caiso_eia930_clock_repair`` value a CAISO bundle was solved with.
+
+    Read from every place a solve records it — the top level, the calibration
+    flags, the ``replay_keeper --set`` override bag and the resolved
+    ``scenario_config`` — the same four places the spp-49 recovery below reads.
+    ``False`` for any other ISO or a bundle that never recorded it.
+    """
+    meta = json.loads((bundle / "meta.json").read_text())
+    if meta.get("iso") != "CAISO":
+        return False
+    rc = bundle / "run_config.json"
+    if not rc.exists():
+        return False
+    cfg = json.loads(rc.read_text())
+    flags = cfg.get("calibration_flags") or {}
+    for blk in (
+        cfg,
+        flags,
+        flags.get("coal_prb_sigmoid_overrides") or {},
+        cfg.get("scenario_config") or {},
+    ):
+        if isinstance(blk, dict) and "caiso_eia930_clock_repair" in blk:
+            return bool(blk["caiso_eia930_clock_repair"])
+    return False
+
+
 def build_benchmark_frames(bundle: Path) -> tuple[str, dict[str, "pd.DataFrame"]]:
+    """Rebuild a bundle's benchmark frames with the bundle's own EIA-930 clock.
+
+    The in-solve benchmark is built after the solve seam arms
+    ``caiso_eia930_clock_repair``; a zero-LP rebuild runs in a fresh process
+    where the switch is off, so without this an armed CAISO bundle would be
+    re-benchmarked on the UNREPAIRED EIA-930 frame (a bench/model clock split,
+    R-CAISO-15 census). The switch is set from the bundle's recorded config for
+    the rebuild and restored afterwards. Everything else is
+    :func:`_build_benchmark_frames`.
+    """
+    from market_sim.data.eia930.frames import (
+        caiso_eia930_clock_repair_active,
+        set_caiso_eia930_clock_repair,
+    )
+
+    before = caiso_eia930_clock_repair_active()
+    set_caiso_eia930_clock_repair(_bundle_caiso_clock_repair(bundle))
+    try:
+        return _build_benchmark_frames(bundle)
+    finally:
+        set_caiso_eia930_clock_repair(before)
+
+
+def _build_benchmark_frames(bundle: Path) -> tuple[str, dict[str, "pd.DataFrame"]]:
     """Rebuild a bundle's benchmark frames from its own ``meta.json`` recipe.
 
     Returns ``(iso, {name: frame})`` over the :data:`SHARED_INPUT_NAMES` family

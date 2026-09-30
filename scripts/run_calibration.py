@@ -109,6 +109,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_nyiso_downstate_ct_gas_daily,
     apply_nyiso_ldc_generator_delivered_gas,
     apply_nyiso_zonal_gas_basis,
+    apply_pjm_replacement_cost_fuel,
     apply_pjm_zonal_gas_basis,
     apply_plant_monthly_fuel_prices,
     dual_fuel_switch_mask,
@@ -4866,6 +4867,7 @@ def run_year(
     # priced tranches still setting the marginal price within each month's
     # envelope. Only fires with priced interchange + the flag + a priced node.
     import_node_recon = None
+    import_link_band = None
     if priced_interchange and getattr(config, "nyiso_import_reconciliation", False):
         from market_sim.model.transmission import build_import_node_reconciliation
 
@@ -4920,6 +4922,55 @@ def run_year(
                 _n_before,
                 int(import_node_recon[0].size),
             )
+        # [measured: P-32 attributed per-landing monthly schedules | forecast
+        #  substitute: not wired — backcast-only; the forecast band above targets
+        #  the neighbour's forward position and never enters this branch].
+        # NYISO-NEXT-15: one monthly band per pooled border link on its own
+        # measured schedule REPLACES the pooled node band (rule 19).
+        if (
+            import_node_recon is not None
+            and iso == "NYISO"
+            and getattr(config, "nyiso_import_landing_band", False)
+        ):
+            if getattr(config, "mode", "backcast") == "forecast":
+                raise ValueError(
+                    "nyiso_import_landing_band is backcast-only (its target is "
+                    "the measured P-32 schedule)"
+                )
+            if not getattr(config, "nyiso_seam_par_attribution", False):
+                raise ValueError(
+                    "nyiso_import_landing_band requires nyiso_seam_par_attribution "
+                    "(the band shares the attributed series with the envelope)"
+                )
+            from market_sim.model.interchange.nyiso import (
+                build_nyiso_import_landing_band,
+            )
+            from market_sim.model.interchange.spec import NYISO_NE_AC_SEAM_ROW
+
+            import_link_band = build_nyiso_import_landing_band(
+                iso_config,
+                year,
+                int(demand.shape[1]),
+                exclude_rows=(NYISO_NE_AC_SEAM_ROW,)
+                if getattr(config, "nyiso_ne_ac_node", False)
+                else (),
+            )
+            _lb_idx, _lb_lo, _lb_hi = import_link_band
+            logger.info(
+                "%s %d: nyiso_import_landing_band — pooled node band (%d rows) "
+                "replaced by %d per-landing monthly bands on the measured P-32 "
+                "schedule: %s",
+                iso,
+                year,
+                int(import_node_recon[0].size),
+                int(_lb_idx.size),
+                ", ".join(
+                    f"{iso_config.links[i].to_zone} "
+                    f"[{lo.sum() / 1e6:.2f}, {hi.sum() / 1e6:.2f}] TWh"
+                    for i, lo, hi in zip(_lb_idx, _lb_lo, _lb_hi)
+                ),
+            )
+            import_node_recon = None
         if import_node_recon is not None:
             node_idx, recon_lo, recon_hi = import_node_recon
             _recon_target = (
@@ -4937,6 +4988,16 @@ def run_year(
                 recon_lo.sum() / 1e6,
                 recon_hi.sum() / 1e6,
             )
+
+    if (
+        iso == "NYISO"
+        and getattr(config, "nyiso_import_landing_band", False)
+        and import_link_band is None
+    ):
+        raise ValueError(
+            "nyiso_import_landing_band requires nyiso_import_reconciliation with a "
+            "priced import node (there is no pooled band to replace)"
+        )
 
     # NYISO Long Island local self-supply floor: force the cable-islanded LI
     # pocket to meet a forward fraction of its own load with in-zone thermal
@@ -5037,6 +5098,19 @@ def run_year(
     # dual-fuel min. No-op unless pjm_zonal_gas_basis is set (PJM only). The
     # print-derived-cell mask is passed always; the applier consumes it only
     # under pjm_zonal_gas_basis_skip_923_priced (PJM-NEXT-2; off => identical).
+    # PJM-NEXT-13 (owner ruling 2026-09-29): PJM gas and priceable coal at
+    # REPLACEMENT cost (IMM regional Platts spot + measured variable transport)
+    # instead of the EIA-923 average print. Off by default, byte-identical off.
+    # Its written mask joins print_cells, which the PJM zonal-basis applier
+    # honours under this flag, so the mean-zero spread is not stacked on the
+    # regional hub (rule 19). Mirrors resolve_fuel_prices.
+    _repl_cells = apply_pjm_replacement_cost_fuel(
+        fuel_prices, fleet_arrays, config, year
+    )
+    if _repl_cells is not None:
+        print_cells = (
+            _repl_cells if print_cells is None else (print_cells | _repl_cells)
+        )
     apply_pjm_zonal_gas_basis(
         fuel_prices, fleet_arrays, config, year, skip_cells=print_cells
     )
@@ -6784,7 +6858,9 @@ def run_year(
         T=config.hours,
     )
     dispatch_kwargs = build_base_dispatch_kwargs(
-        dispatch_spec, import_node_recon=import_node_recon
+        dispatch_spec,
+        import_node_recon=import_node_recon,
+        import_link_band=import_link_band,
     )
     # Overgeneration-dump guard domain (dump_cost_full_offer_domain, GATED
     # default off — caiso-139): widen build_cost_vector's dump price over every

@@ -124,7 +124,7 @@ def _assert_mer(leg: Path, year: int) -> dict:
     return {"rows": int(len(df)), "nonzero": int((m.fillna(0.0) != 0.0).sum())}
 
 
-def compose(legs: list[Path], out: Path) -> None:
+def compose(legs: list[Path], out: Path, absent_defaults: dict | None = None) -> None:
     legs = sorted(legs, key=_leg_year)
     years = [_leg_year(l) for l in legs]
     print(f"legs : {[l.name for l in legs]}\nyears: {years}")
@@ -134,25 +134,31 @@ def compose(legs: list[Path], out: Path) -> None:
 
     cfgs = [json.loads((l / "run_config.json").read_text()) for l in legs]
     scs = [c.get("scenario_config") or {} for c in cfgs]
+    # Comparison-only view: a key a leg's run_config predates reads at its
+    # declared default (the leg's own run_config is never rewritten).
+    cmp_scs = [
+        {**{k: v for k, v in (absent_defaults or {}).items() if k not in sc}, **sc}
+        for sc in scs
+    ]
 
     # --- posture + MER, per leg, BEFORE anything is written ------------------
     for leg, sc, y in zip(legs, scs, years):
-        drift = {
-            k: (v, sc.get(k)) for k, v in KEEPER_POSTURE.items() if sc.get(k) != v
-        }
+        drift = {k: (v, sc.get(k)) for k, v in KEEPER_POSTURE.items() if sc.get(k) != v}
         if drift:
             raise SystemExit(f"{leg.name}: posture drift (want, got) {drift}")
         arm_bad = {k: (v, sc.get(k)) for k, v in ARM_FIELDS.items() if sc.get(k) != v}
         if arm_bad:
-            raise SystemExit(f"{leg.name}: R-CAISO arm posture wrong (want, got) {arm_bad}")
+            raise SystemExit(
+                f"{leg.name}: R-CAISO arm posture wrong (want, got) {arm_bad}"
+            )
         cen = _assert_mer(leg, y)
         print(
             f"  {leg.name}: posture OK, R-CAISO arm OK, MER live "
             f"({cen['nonzero']}/{cen['rows']} nonzero)"
         )
 
-    base_sc = scs[0]
-    for leg, sc in zip(legs[1:], scs[1:]):
+    base_sc = cmp_scs[0]
+    for leg, sc in zip(legs[1:], cmp_scs[1:]):
         diff = {k for k in set(base_sc) | set(sc) if base_sc.get(k) != sc.get(k)}
         unexpected = diff - PER_YEAR_CONFIG_FIELDS
         if unexpected:
@@ -222,7 +228,9 @@ def compose(legs: list[Path], out: Path) -> None:
                 )
             got = sorted(df.year.unique().tolist())
             if got != [y]:
-                raise SystemExit(f"{leg.name}/{name} carries years {got}, expected [{y}]")
+                raise SystemExit(
+                    f"{leg.name}/{name} carries years {got}, expected [{y}]"
+                )
             frames.append(df)
         if not frames:
             continue
@@ -253,7 +261,9 @@ def compose(legs: list[Path], out: Path) -> None:
     (out / "meta.json").write_text(json.dumps(meta, indent=2, sort_keys=True))
     print(f"meta.json: years={meta['years']} composed_from={meta['composed_from']}")
     print(f"\nCOMPOSED -> {out}")
-    print("metrics.json / legitimacy_diagnostics.json NOT copied -- regenerate in the parent.")
+    print(
+        "metrics.json / legitimacy_diagnostics.json NOT copied -- regenerate in the parent."
+    )
 
 
 def _respan_shared_inputs(meta: dict, out: Path) -> None:
@@ -298,7 +308,20 @@ def main() -> None:
         help="extra arm field every leg must carry (repeatable), e.g. "
         "--require cc_eia923_identity_emission_basis=true (R-CAISO-4)",
     )
+    ap.add_argument(
+        "--absent-default",
+        action="append",
+        default=[],
+        metavar="KEY=JSON",
+        help="a ScenarioConfig field added between leg pins: a leg whose "
+        "run_config predates it (key ABSENT) is read at this declared default "
+        "for the cross-leg comparison only (R-CAISO-15 2025 leg). A leg that "
+        "CARRIES the key at any other value still refuses.",
+    )
     a = ap.parse_args()
+    absent_defaults = {
+        k: json.loads(v) for k, v in (i.split("=", 1) for i in a.absent_default)
+    }
     for item in a.require:
         k, v = item.split("=", 1)
         ARM_FIELDS[k] = json.loads(v)
@@ -308,7 +331,7 @@ def main() -> None:
             KEEPER_POSTURE[k] = json.loads(v)
     legs = [ROOT / p if not Path(p).is_absolute() else Path(p) for p in a.legs]
     out = ROOT / a.out if not Path(a.out).is_absolute() else Path(a.out)
-    compose(legs, out)
+    compose(legs, out, absent_defaults)
 
 
 if __name__ == "__main__":

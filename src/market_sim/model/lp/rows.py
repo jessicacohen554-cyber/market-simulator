@@ -668,6 +668,56 @@ def _build_import_node_rows(
     )
 
 
+def _build_import_link_rows(
+    layout: VariableLayout,
+    link_idx: np.ndarray,
+    month_index: np.ndarray,
+    monthly_lo: np.ndarray,
+    monthly_hi: np.ndarray,
+) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
+    """Return the per-landing-link monthly net-flow band rows (NYISO-NEXT-15).
+
+    One row per (banded link, month)::
+
+        monthly_lo[l, m] <= sum_{t in month m} Flow[link_idx[l], t] <= monthly_hi[l, m]
+
+    ``nyiso_import_landing_band``: the pooled import node's border links, each
+    held to its own measured attributed P-32 monthly schedule (see
+    :func:`market_sim.model.interchange.nyiso.build_nyiso_import_landing_band`).
+    It replaces :func:`_build_import_node_rows` rather than stacking on it: the
+    node's net import is the sum of these flows. Assembled in one ``coo_matrix``
+    from the hour-to-month map, no Python loop over hours (rule 2).
+
+    Args:
+        layout: Variable layout describing the column structure.
+        link_idx: Link indices (``iso_config.links`` order), shape ``(n_band,)``.
+        month_index: Month index of each hour, shape ``(T,)``.
+        monthly_lo: Lower bounds in MWh, shape ``(n_band, n_months)``.
+        monthly_hi: Upper bounds in MWh, shape ``(n_band, n_months)``.
+
+    Returns:
+        ``(block, row_lower, row_upper)``, ``block`` of shape
+        ``(n_band * n_months, layout.total_columns)``; row ``l * n_months + m``.
+    """
+    T = layout.T  # T: number of hours
+    vph = layout.vars_per_hour
+    lidx = np.asarray(link_idx, dtype=int)  # (n_band,)
+    month_index = np.asarray(month_index, dtype=int)  # (T,)
+    lo = np.asarray(monthly_lo, dtype=float)
+    hi = np.asarray(monthly_hi, dtype=float)
+    n_band, n_months = lo.shape
+    hours = np.arange(T)  # t: hour index
+    band = np.arange(n_band)  # l: banded-link ordinal
+    rows = (band[:, None] * n_months + month_index[None, :]).ravel()
+    cols = (hours[None, :] * vph + layout._flow_off + lidx[:, None]).ravel()
+    data = np.ones(n_band * T, dtype=float)
+    block = sp.coo_matrix(
+        (data, (rows, cols)),
+        shape=(n_band * n_months, layout.total_columns),
+    ).tocsr()
+    return block, lo.ravel(), hi.ravel()
+
+
 def _build_storage_daily_cycle_rows(
     layout: VariableLayout, cycle_hours: int
 ) -> sp.csr_matrix:
@@ -1426,6 +1476,7 @@ def build_constraints(
     import_node_monthly_lo: np.ndarray | None = None,
     import_node_monthly_hi: np.ndarray | None = None,
     import_node_month_index: np.ndarray | None = None,
+    import_link_band: tuple | None = None,
     mass_cap_coeffs: np.ndarray | None = None,
     mass_cap_rhs: np.ndarray | None = None,
     reserve_requirement: np.ndarray | None = None,
@@ -2182,7 +2233,24 @@ def build_constraints(
     # Appended after hydro and before the RPS/reserve rows so the front-anchored
     # energy-balance duals and the end-anchored RPS/reserve duals keep their
     # positions. No rows (identical LP) when no node indices are supplied.
-    if import_node_gen_idx is not None and import_node_monthly_lo is not None:
+    if import_link_band is not None:
+        # nyiso_import_landing_band (NYISO-NEXT-15): per-landing-link monthly
+        # bands REPLACE the pooled node band (rule 19); the caller never
+        # supplies both. Same slot, so every anchored dual keeps its position.
+        link_idx_b, link_lo, link_hi = import_link_band
+        link_block, link_lower, link_upper = _build_import_link_rows(
+            layout,
+            link_idx_b,
+            _hour_to_month_index(T)
+            if import_node_month_index is None
+            else import_node_month_index,
+            link_lo,
+            link_hi,
+        )
+        blocks.append(link_block)
+        del link_block
+        _add_bounds(link_lower, link_upper)
+    elif import_node_gen_idx is not None and import_node_monthly_lo is not None:
         node_idx = np.asarray(import_node_gen_idx, dtype=int)
         if node_idx.size:
             if import_node_month_index is None:

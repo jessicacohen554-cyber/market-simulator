@@ -91,12 +91,13 @@ def test_window_pulls_back_one_hour_with_mean_seam(monkeypatch):
     for col, base in (
         ("Demand", 100.0),
         ("Net generation", 200.0),
-        ("Total interchange", 300.0),
         ("NG: SUN", 400.0),
     ):
         np.testing.assert_allclose(out[col].to_numpy(), base + exp)
-    # Not in any family: never moved.
+    # Not in any family: never moved. Total interchange is on the true clock
+    # (R-CAISO-16), so it is outside the generation family.
     np.testing.assert_allclose(out["Demand forecast"], df["Demand forecast"])
+    np.testing.assert_allclose(out["Total interchange"], df["Total interchange"])
     # The raw input is never edited in place.
     np.testing.assert_allclose(df["Demand"], 100.0 + np.arange(8))
 
@@ -335,3 +336,74 @@ def test_live_envelope_under_solve_year_vintage_matches_canonical_and_restores()
         P.set_eia860_vintage(None)
     np.testing.assert_array_equal(under_vintage[0], canonical[0])
     np.testing.assert_array_equal(under_vintage[1], canonical[1])
+
+
+def test_benchmark_rebuild_arms_from_bundle_and_restores(tmp_path, monkeypatch):
+    """A zero-LP benchmark rebuild uses the bundle's own clock-repair setting
+    and leaves the process switch as it found it (R-CAISO-15 census)."""
+    import json
+
+    import scripts.run_calibration_full as rcf
+
+    (tmp_path / "meta.json").write_text(json.dumps({"iso": "CAISO", "years": [2024]}))
+    (tmp_path / "run_config.json").write_text(
+        json.dumps({"scenario_config": {"caiso_eia930_clock_repair": True}})
+    )
+    seen = []
+    monkeypatch.setattr(
+        rcf,
+        "_build_benchmark_frames",
+        lambda b: seen.append(F.caiso_eia930_clock_repair_active()) or ("CAISO", {}),
+    )
+    assert rcf._bundle_caiso_clock_repair(tmp_path) is True
+    rcf.build_benchmark_frames(tmp_path)
+    assert seen == [True]
+    assert F.caiso_eia930_clock_repair_active() is False
+    (tmp_path / "meta.json").write_text(json.dumps({"iso": "ERCOT", "years": [2024]}))
+    assert rcf._bundle_caiso_clock_repair(tmp_path) is False
+
+
+def test_supply_consistent_term_excludes_ti(tmp_path, monkeypatch):
+    """R-CAISO-16: the re-stamped caiso-80 term is NetGen - NG_cell; TI stays put."""
+    from market_sim.config import paths as P
+
+    pd.DataFrame(
+        {"netgen_mw": [10.0, 20.0], "ng_cell_mw": [1.0, 2.0], "ti_mw": [100.0, 300.0]}
+    ).to_csv(tmp_path / "caiso_supply_consistent_demand_2024.csv", index=False)
+    monkeypatch.setattr(P, "CAISO_SUPPLY_CONSISTENT_DEMAND_DIR", tmp_path)
+    np.testing.assert_allclose(D._supply_consistent_eia930_term(2024), [9.0, 18.0])
+
+
+def test_live_armed_frame_ti_is_raw_and_matches_diba_feed():
+    """Armed: CISO TI is byte-identical to unarmed, and still equals the per-DIBA
+    feed summed on the pinned read-seam clock inside the late window."""
+    from market_sim.data.eia930 import envelopes
+
+    raw = F._eia_hourly_frame("CISO", 2024)
+    if raw is None:
+        pytest.skip("CISO extract not hydrated")
+    F.set_caiso_eia930_clock_repair(True)
+    armed = F._eia_hourly_frame("CISO", 2024)
+    np.testing.assert_array_equal(
+        armed["Total interchange"].to_numpy(), raw["Total interchange"].to_numpy()
+    )
+    assert not np.array_equal(
+        armed["Net generation"].to_numpy(), raw["Net generation"].to_numpy()
+    )
+    from market_sim.config import paths as P
+
+    path = P.RAW_DATA_DIR / "eia-930-interchange" / "CISO interchange hourly.parquet"
+    ic = pd.read_parquet(path)
+    s = ic.groupby("local_time", observed=True)["mw"].sum(min_count=1).sort_index()
+    feed = pd.Series(
+        s.to_numpy(),
+        index=envelopes._caiso_interchange_model_clock(pd.DatetimeIndex(s.index)),
+    )
+    utc = pd.DatetimeIndex(armed["UTC time"])
+    utc = utc.tz_convert("UTC").tz_localize(None) if utc.tz is not None else utc
+    ti = pd.Series(
+        armed["Total interchange"].to_numpy(float), index=utc - pd.Timedelta(hours=9)
+    )
+    j = pd.concat({"f": feed, "t": ti}, axis=1, join="inner").dropna()
+    assert len(j) > 8000
+    assert ((j["f"] - j["t"]).abs() < 1.0).mean() > 0.99

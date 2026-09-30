@@ -1629,6 +1629,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # cells), default off: dropped from the hash at its default so every
     # existing keeper keeps its key. Registered IN THE SAME COMMIT as the field.
     "pjm_zonal_gas_basis_skip_923_priced",
+    # PJM-NEXT-13 replacement-cost fuel (IMM regional spot + measured variable
+    # transport, gas and coal), default off: dropped from the hash at its default
+    # so every existing keeper keeps its key. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 discipline).
+    "pjm_replacement_cost_fuel",
     # ercot-254 monthly resolution of the ERCOT delivered-gas LEVEL anchor,
     # default off: dropped from the hash at its False default so every
     # pre-existing ERCOT key (the designated keeper's included) stays
@@ -2275,6 +2280,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # "nyiso_ne_ac_recon_detach", False)`` in run_calibration.run_year.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "nyiso_ne_ac_recon_detach",
+    # NYISO-NEXT-15 (2026-09-30): per-landing-link monthly band (default off).
+    # Byte-identical off by construction: its one applier is reached only
+    # inside ``getattr(config, "nyiso_import_landing_band", False)`` in
+    # run_calibration.run_year. Registered IN THE SAME COMMIT as the field.
+    "nyiso_import_landing_band",
     # SPP-93 West/East re-partition (default "north_south"): dropped from the
     # hash at its default so every pre-existing run keeps its key; an armed
     # run solves a different SPP topology and so gets a distinct key.
@@ -2286,6 +2296,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # so no posture kwargs are merged and the P1 markup is untouched).
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "spp_commitment_posture",
+    # SPP-104 CT_PEAKER LOLE EFOR (default off): dropped from the hash at its
+    # default so every pre-existing run -- every ISO's keepers included --
+    # keeps its key. Byte-identical off by construction (the per-plant EFOR
+    # map is empty, so no CT row leaves the statistical branch). Its one table
+    # is constants.SPP_LOLE_GAS_EFOR_BY_SIZE; no sub-fields. Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 discipline).
+    "spp_ct_lole_efor",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2824,6 +2841,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_zonal_gas_basis_skip_923_priced": "False",
     "pjm_zonal_gas_basis_skip_923_priced": "False",
+    # Added by PJM-NEXT-13 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "pjm_replacement_cost_fuel": "False",
     # Added by ercot-254 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_ep_gas_basis_monthly": "False",
@@ -3106,10 +3126,14 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_ne_ac_node": "False",
     # Added by NYISO-NEXT-13 WITH the field (the nyiso-119 discipline).
     "nyiso_ne_ac_recon_detach": "False",
+    # Added by NYISO-NEXT-15 WITH the field (the nyiso-119 discipline).
+    "nyiso_import_landing_band": "False",
     # Added by SPP-93 WITH the field (the nyiso-119 discipline).
     "spp_zone_partition": "'north_south'",
     # Added by SPP-102 WITH the field (the nyiso-119 discipline).
     "spp_commitment_posture": "False",
+    # Added by SPP-104 WITH the field (the nyiso-119 discipline).
+    "spp_ct_lole_efor": "False",
 }
 
 
@@ -3691,6 +3715,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "gas_hub_basis_daily": "daily resolution of the same measured hub basis",
     "miso_winter_citygate_daily": "measured Chicago Citygate daily prints",
     "miso_gas_marginal_commodity_pricing": "measured Chicago Citygate + Henry Hub daily spot (marginal-commodity gas offers)",
+    "pjm_replacement_cost_fuel": "measured IMM Platts monthly regional spot + measured variable transport (replacement-cost gas and coal offers)",
     "miso_gas_variable_transport": "measured per-plant variable transport over that hub (EIA-923 receipts, frozen derive)",
     "miso_winter_gas_daily_delivered": "measured Chicago Citygate + Henry Hub daily spot in Dec/Jan/Feb, plus measured per-plant variable transport",
     "caiso_citygate_spot_level": "measured CA daily citygate spot series",
@@ -8480,6 +8505,19 @@ class ScenarioConfig:
     # outcomes pinned (rule 13); zero free parameters (the same band_frac).
     # Requires nyiso_ne_ac_node and nyiso_import_reconciliation; backcast-only.
     # PRECOMMIT: docs/PRECOMMIT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md.
+    # Default off; NYISO.
+    nyiso_import_landing_band: bool = False  # NYISO-NEXT-15: replace the
+    # pooled node's monthly EIA-930 net-interchange band with one monthly band
+    # per pooled border link on that link's OWN measured P-32 attributed
+    # schedule (the source its hourly p90 envelope is built from). Phase 0: the
+    # pooled band lets the LP land imports wherever the zonal price is highest,
+    # so the downstate links sit at their p90 caps (+400-560 MW over measured)
+    # and Upstate_West runs 264-375 MW short, a phantom import east of the
+    # Central-East cutset. Rule 19: replaces, never stacks; rule 14 alignment:
+    # the pooled total moves EIA-930 -> P-32 sum (-2..+1 %); zero free
+    # parameters (published PAR split, the same band_frac). Requires
+    # nyiso_import_reconciliation and nyiso_seam_par_attribution; backcast-only.
+    # PRECOMMIT: docs/PRECOMMIT-nyiso-next15-landing-band-2026-09-30.md.
     # Default off; NYISO.
     nyiso_seam_deliverability_envelope: bool = False  # NYISO external seam
     # deliverability envelope (nyiso-125, data.nyiso_seam_envelope): replace the
@@ -18394,6 +18432,32 @@ class ScenarioConfig:
     # byte-identical off.
     chp_steam_floor_conduct_scope: bool = False
 
+    # SPP CT_PEAKER forced outage from SPP's OWN LOLE-study EFOR (SPP-104,
+    # 2026-09-30; owner card "Build LOLE-EFOR CT swap"). ISO-exclusive: raises
+    # if armed for any ISO but SPP (rule 25 [R-ISO-SCOPE]).
+    #
+    # THE OBJECT. The keeper's CT_PEAKER rows carry no CAMPD event layer (a
+    # peaker's idle state is its normal state, so zero output identifies no
+    # outage) and take the national NERC-GADS statistical WEFOR 0.07, scaled by
+    # wefor_multiplier and redistributed by the uncited SUMMER_WEFOR_SHARE.
+    # SPP publishes its own fleet's seasonal EFOR by fuel and unit size.
+    #
+    # WHEN TRUE, each SPP CT_PEAKER plant found in the per-unit EIA-860 roster
+    # takes the capacity-weighted mean of its units' natural-gas EFOR for their
+    # size bins (constants.SPP_LOLE_GAS_EFOR_BY_SIZE): the summer rate in
+    # Jun-Sep and the winter rate in every other month, as the study's SERVM
+    # seasons do. It REPLACES the WEFOR term (rule 19 [R-ONE-MECH]): no
+    # wefor_multiplier, no SUMMER_WEFOR_SHARE, no age escalation. The shoulder
+    # POF, the flat performance derate and the summer class derate are
+    # unchanged. A plant absent from the roster keeps the statistical WEFOR, and
+    # the count is logged. Zero free parameters (rule 21 [R-DOF]): the
+    # calendar-hour basis is SERVM's own (steady-state P(out) = EFOR). Rule 13
+    # [R-MEASURED]: a published multi-year GADS rate, regenerated with each
+    # biennial LOLE study for a forward year. Rule 14, declared misalignment:
+    # the table is fuel x size, not technology. Default off; byte-identical off.
+    # docs/handoffs/DESIGN-spp-104-ct-outage-2026-09-29.md.
+    spp_ct_lole_efor: bool = False
+
     # Measured ERCOT GTC transfer limits (backcast/calibration overlay). When
     # True in backcast mode, the export-direction capability of the transfer
     # links that carry ERCOT's published Generic Transmission Constraints
@@ -19448,6 +19512,36 @@ class ScenarioConfig:
     # _CACHE_KEY_OPTIONAL_FIELDS).
     # docs/PRECOMMIT-pjm-next-2-card2-basis-scope-2026-09-25.md.
     pjm_zonal_gas_basis_skip_923_priced: bool = False
+
+    # PJM-NEXT-13 (owner ruling 2026-09-29, decision card "Hub + transport, joint
+    # with coal"; zone map "Accept as proposed"). Price PJM dispatch fuel at
+    # REPLACEMENT cost, the traded commodity plus measured variable transport,
+    # instead of the EIA-923 monthly AVERAGE delivered print. The print carries
+    # reservation/demand charges and contract commodity prices amortized over the
+    # month's takes: an average cost on a basis misaligned to a dispatch offer
+    # (rule 14 misalignment clause). PJM cost-based offers use the fuel-cost
+    # policy's expected incremental cost (Manual 15), and the IMM prices LMP fuel
+    # components at Platts spot.
+    #   GAS: the IMM's digitized Platts monthly spot for the zone's ruled region
+    #   (east: EMAAC/SWMAAC/Dominion; west: ComEd/AEP_Ohio/ATSI; production:
+    #   West_APS/Central_PA) + the plant's measured variable transport (the
+    #   miso-225 WLS estimator ported to PJM's own receipts, one value per plant
+    #   over 2019-2025). The incoming within-month shape is kept.
+    #   COAL (COAL_BIT/COAL_PRB): per plant-year, measured basin shares (EIA-923
+    #   receipts x EIA mine-level supply region) x (IMM NAPP/CAPP/PRB spot + EIA
+    #   basin->state->mode transport rate). The unpriced share (Illinois Basin,
+    #   mine-mouth conveyor, unmatched mines) keeps the plant's own price.
+    # Frozen derive (rule 23): scripts/data/derive_pjm_replacement_fuel.py ->
+    # data/raw/reference/pjm_{gas_variable_transport,coal_replacement}.csv. Zero
+    # fitted scalars (rules 21/24). Rule 19: supersedes the PJM mean-zero zonal
+    # basis on the cells it writes, and HARD-ERRORS with the gas-keyed coal
+    # passthrough sigmoids armed (they are the incumbent proxy for the same coal
+    # opportunity cost). PJM-only (rule 25, hard error elsewhere). Backcast-only
+    # overlay; it fails closed for a year the IMM series does not cover. Off by
+    # default (every keeper byte-identical; in _CACHE_KEY_OPTIONAL_FIELDS).
+    # docs/FINDING-pjm-next-13-availability-gas-coalmarginal-2026-09-29.md;
+    # market_sim.data.fuel.basis.pjm_replacement.
+    pjm_replacement_cost_fuel: bool = False
 
     # MISO winter fuel-security daily citygate overlay (miso-72). In the winter
     # months (Dec/Jan/Feb) only, for the MISO gas units in the Chicago-hub zones
@@ -22926,6 +23020,11 @@ class ScenarioConfig:
                     "mutually exclusive (rule 19: one mechanism for SPP gas "
                     "commitment state)."
                 )
+        if self.spp_ct_lole_efor and str(self.iso) != "SPP":
+            raise ValueError(
+                "spp_ct_lole_efor is SPP-only (SPP-104: SPP's own LOLE-study "
+                "EFOR table, rule 25)."
+            )
         # Measured CAISO battery AS reservation vs in-LP reserve co-opt: the
         # co-opt hands storage its own reserve columns and prices the
         # energy-vs-AS split endogenously, so pre-subtracting the measured
@@ -24001,6 +24100,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_import_hub_prices": 1,
     "nyiso_ne_ac_node": 1,
     "nyiso_ne_ac_recon_detach": 1,
+    "nyiso_import_landing_band": 1,
     "nyiso_iroquois_winter_spread": 1,
     "nyiso_synchronised_reserve": 1,
     "nyiso_li_locational_reserve": 1,
@@ -24367,6 +24467,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_zonal_gas_basis": 3,
     "miso_zonal_gas_basis_skip_923_priced": 3,
     "pjm_zonal_gas_basis_skip_923_priced": 3,
+    "pjm_replacement_cost_fuel": 3,
     "miso_winter_citygate_daily": 3,
     "miso_gas_marginal_commodity_pricing": 3,
     "miso_gas_variable_transport": 3,
@@ -24418,6 +24519,10 @@ TIER_TAGS: dict[str, int] = {
     # HOURS, SPP_POSTURE_MIN_DOWN_HOURS, the NREL class startup tables); no
     # free number of its own (rule 21).
     "spp_commitment_posture": 1,
+    # Structural gate (1): replaces the CT_PEAKER WEFOR with SPP's own
+    # published LOLE EFOR table (constants.SPP_LOLE_GAS_EFOR_BY_SIZE); no free
+    # number of its own (rule 21).
+    "spp_ct_lole_efor": 1,
 }
 
 # SweepDefinition (the sweep / named-case-matrix expansion engine) moved

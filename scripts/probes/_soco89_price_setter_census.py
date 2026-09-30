@@ -2,7 +2,7 @@
 C3a gap vs Southern's FERC-714 system lambda come from?
 
 Rule 32 ``[R-SHARD]`` (a): never solves. Per year one ``fleet_only`` rebuild of the keeper
-recipe (``results/calibration/soco87_span`` via ``replay_keeper.run_year_kwargs``, the same
+recipe (``results/calibration/soco92_span`` via ``replay_keeper.run_year_kwargs``, the same
 construction as ``_soco87_c3b_monthly.py``) supplies each unit's ``mc_base[g, t]``. In each
 zone-hour of the keeper's committed ``hourly/system_<y>.parquet`` the live unit IN THAT ZONE
 (else any zone) whose ``mc_base`` sits within ``TOL`` of the LP price is taken as the

@@ -75,7 +75,8 @@ columns:
     description: >-
       Aggregation window within the year: "annual" for SOM full-year values,
       or the IMM quarterly-report season ("spring", "summer", "fall",
-      "winter") for quarterly values.
+      "winter") for quarterly values; or "month_01".."month_12" for the PJM
+      digitized monthly spot fuel prices (PJM-NEXT-13).
   - name: fleet_segment
     dtype: string
     unit: none
@@ -96,7 +97,10 @@ columns:
       Monitoring Analytics SOM DA-offer status table's unit-type rows) and
       reuses "coal" / "gas_combined_cycle" / "gas_simple_cycle" / "wind"
       for RT marginal-resource shares, and "gas_fuel" / "coal_fuel" for the
-      RT LMP fuel components.
+      RT LMP fuel components. PJM-NEXT-13 adds "east_gas" / "west_gas" /
+      "production_gas" / "napp_coal" / "capp_coal" / "prb_coal" for the IMM's
+      digitized monthly Platts spot fuel prices
+      ("spot_price_digitized_usd_per_mmbtu").
   - name: metric
     dtype: string
     unit: none

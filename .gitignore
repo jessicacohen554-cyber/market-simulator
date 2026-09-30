@@ -3872,3 +3872,18 @@ results/calibration/nwppnext12mr_20*/
 #   2022 832e8e7f49d9d3c46d38957c134bfafe180bc482  2023 7b1be416d8a4af52392b4b14e2a881e3177f08f6
 #   2024 4a4f63c69f23678979a7ce960872caa571fa432f  2025 511cad258e6a032acbf00059c5a7968db098cc3f
 results/calibration/r_ercot18_arm_20*/
+# soco-92 per-year shard legs (composed into soco92_span; rules 31/32(d)). Provenance (rule 33(d), not a
+# recovery route): 2019 17bbfb2a435f726e0946f4beacaad9ed5731ebf7, 2020 41884fa419c0f313728f047ba6f8dd70763d979a,
+# 2021 2b11478a0a31bc20f8e798fae9a737a8342e0239, 2022 e70cf06e6bdf448ed3aefdd72cfa992299262fb2,
+# 2023 ad934fc7ea522a1e211754faa800f275c64d6b5f, 2024 64b32fc890997c1cc871327a2e05e1a4c2e64dca,
+# 2025 dd17f5cdca9d6224a5b68c456ef6527159d96aa0
+results/calibration/soco92_20*/
+# R-CAISO-15: per-year shard legs stay off main (rule 32(d)); the composites
+# rcaiso15_A_span / rcaiso15_A_tp_2019_2021 are the registered keeper shape.
+# Leg provenance (full SHAs, not a recovery route — rule 33(d)): 2019 f24f4e3ab8973e264e091c811db2121b8753e40a,
+# 2020 103a520741334e1d872969048350cea912e2c763, 2021 0b18f71e2e8d06c358d8220dac461b9396d6091c,
+# 2022 cfb055201e3dc65def48d7db6c2be976f8e5217a, 2023 cc7b0d6cfbc5deac5512b39b5b51d721bb841118,
+# 2024 aede9d31fa7fd87f2ea8a14fce831ea1ead34adc, 2025 0b8b4378aa663c5ddf100249ff6c1a08050471a4.
+results/calibration/rcaiso15_A_20*/**
+results/calibration/rcaiso15_A_span/hourly/p0_*
+results/calibration/rcaiso15_A_tp_2019_2021/hourly/p0_*
