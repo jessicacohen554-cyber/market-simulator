@@ -1683,6 +1683,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
     # discipline).
     "nyiso_total_east_cutset_ttc",
+    # NYISO-NEXT-17 F/G re-partition, default off: dropped from the hash at
+    # its False default so every pre-existing key stays valid, and ON it
+    # changes the zone membership and the upstate links and hashes distinctly.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "nyiso_fg_split",
     # miso-253 host-steam/BTM partition of the injected must-run residual
     # classes, default off: dropped from the hash at its False default so every
     # pre-existing key in every ISO (each designated keeper's included) stays
@@ -2863,6 +2868,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by nyiso-224 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "nyiso_total_east_cutset_ttc": "False",
+    # Added by NYISO-NEXT-17 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "nyiso_fg_split": "False",
     # Added by miso-253 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_chp_btm_holdout": "False",
@@ -19398,6 +19406,24 @@ class ScenarioConfig:
     # market_sim.pipeline.ttc.apply_iso_monthly_ttc.
     nyiso_total_east_cutset_ttc: bool = False
 
+    # Tier 3 (calibration) — NYISO-NEXT-17 (owner decision card "Build design A
+    # anyway", 2026-09-30). The F/G re-partition: NYISO load zone G (Hudson
+    # Valley) leaves Capital_Hudson for Lower_Hudson, so Capital_Hudson is zone
+    # F alone and the TOTAL EAST cutset is carried by its two physical legs —
+    # CENTRAL EAST (E -> F) at its posted DAM TTC on Upstate_West ->
+    # Capital_Hudson, and TOTAL EAST minus CENTRAL EAST
+    # (``constants.NYISO_TE_NONCE_ENVELOPE_BY_MONTH``, the same p90 construction)
+    # on a new Upstate_West -> Lower_Hudson link. It REPLACES the one-link
+    # cutset envelope (rule 19 [R-ONE-MECH]) and REQUIRES
+    # ``nyiso_total_east_cutset_ttc``. Zone membership moves with it
+    # everywhere through ``config.topology_variant`` (county -> zone, A-K load
+    # shares, SCR/EDRP, market solar, PAR landings of Ramapo / South Mahwah,
+    # border links, and the G-only ST_GAS reliability-floor limbs). ZERO free
+    # parameters; backcast-only (the envelope is a backcast overlay). Off by
+    # default so every other ISO, every registered keeper and every forecast
+    # is byte-identical. docs/DESIGN-nyiso-next17-fg-split-2026-09-30.md.
+    nyiso_fg_split: bool = False
+
     # --- NYISO downstate-peaker structural pricing (2026-07, issue #1344 /
     # --- B-NYI-1 de-leak follow-up). New fields added as one contiguous block.
     #
@@ -21878,6 +21904,14 @@ class ScenarioConfig:
                 f"got {self.mode!r}"
             )
         self._retire_bare_coal_class()
+        # NYISO-NEXT-17: the F/G re-partition carries the TOTAL EAST cutset as
+        # its two measured legs, so it refines — and requires — the cutset
+        # construction (pipeline.ttc.apply_iso_monthly_ttc). Refused alone
+        # rather than silently solving the CENT EAST table on one link.
+        if self.nyiso_fg_split and not self.nyiso_total_east_cutset_ttc:
+            raise ValueError(
+                "ScenarioConfig.nyiso_fg_split requires nyiso_total_east_cutset_ttc"
+            )
         # R-ERCOT-14: one published ERCOT cap (see ercot_swcap_vintage).
         if self.ercot_swcap_vintage and self.iso == "ERCOT":
             self.voll = float(self.ordc_voll)
@@ -24515,6 +24549,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_ep_gas_basis_receipts_fallback": 3,
     "nyiso_hub_gap_month_level": 3,
     "nyiso_total_east_cutset_ttc": 3,
+    "nyiso_fg_split": 3,
     "mustrun_chp_btm_holdout": 3,
     "benchmark_membership_vintage_union": 3,
     "ercot_zonal_spread_ep_referenced": 3,

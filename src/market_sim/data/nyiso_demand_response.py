@@ -52,6 +52,21 @@ _ZONE_TO_MODEL: dict[str, str] = {
     "K": "Long_Island",
 }
 
+
+def nyiso_zone_to_model() -> dict[str, str]:
+    """Return the A-K -> model-zone map for the active NYISO partition.
+
+    Under the NYISO-NEXT-17 F/G re-partition (``ScenarioConfig.nyiso_fg_split``,
+    armed through ``config.topology_variant``) zone G maps to ``Lower_Hudson``;
+    otherwise this is :data:`_ZONE_TO_MODEL` unchanged.
+    """
+    from market_sim.config.topology_variant import nyiso_fg_split_active
+
+    if not nyiso_fg_split_active():
+        return _ZONE_TO_MODEL
+    return {**_ZONE_TO_MODEL, "G": "Lower_Hudson"}
+
+
 # The DR programs are dispatched only in NYISO-declared reliability events. In
 # reality those are summer heat peaks, but a merchant-idle winter cold snap is
 # also possible, so both capability periods carry their registered MW. The
@@ -123,11 +138,12 @@ def load_scr_edrp_enrollment(year: int) -> dict[str, dict[str, float]]:
     agg: dict[str, dict[str, float]] = defaultdict(
         lambda: {"summer": 0.0, "winter": 0.0}
     )
+    zone_map = nyiso_zone_to_model()
     with path.open(newline="") as f:
         for row in csv.DictReader(f):
             if int(row["gold_book_year"]) != gb_year:
                 continue
-            model_zone = _ZONE_TO_MODEL[row["nyiso_zone"]]
+            model_zone = zone_map[row["nyiso_zone"]]
             agg[model_zone][row["season"]] += float(row["enrolled_mw"])
     return {z: v for z, v in agg.items() if v["summer"] > 0.0 or v["winter"] > 0.0}
 

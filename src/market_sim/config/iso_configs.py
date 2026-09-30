@@ -1552,6 +1552,46 @@ def _nyiso_config() -> ISOConfig:
         TransferLink(from_zone="Lower_Hudson", to_zone="NYC", ttc_mw=3900.0),
         TransferLink(from_zone="NYC", to_zone="Long_Island", ttc_mw=1650.0),
     ]
+    # NYISO-NEXT-17 F/G re-partition (ScenarioConfig.nyiso_fg_split, default
+    # off; armed per solve through config.topology_variant). NYISO load zone G
+    # (Hudson Valley) leaves Capital_Hudson for Lower_Hudson, so Capital_Hudson
+    # is zone F alone and Lower_Hudson is G+H+I. The upstate cutset then has
+    # its two physical legs as two links: CENTRAL EAST (E -> F) into
+    # Capital_Hudson, and the rest of TOTAL EAST (the non-CE paths into G)
+    # into Lower_Hudson. Capital_Hudson -> Lower_Hudson becomes the F -> G
+    # boundary and keeps the static 5,150 MW (it does not bind in the
+    # backcast; constants NYISO_INTERFACE_TTC_BY_YEAR note). Static values are
+    # fallbacks only: backcast years overwrite both upstate links hour by hour
+    # (pipeline.ttc.apply_iso_monthly_ttc) and zone loads come from the
+    # measured A-K hourly shares. Static load shares re-split the 0.175 F+G
+    # share by the measured 2021-2025 F : G energy ratio (7.7 : 6.2 % of NYCA,
+    # data/raw/zone-specific-demand/NYISO). The Upstate_West -> Lower_Hudson
+    # static is the 2024-2025 mean of the measured non-CE envelope
+    # (constants.NYISO_TE_NONCE_ENVELOPE_BY_MONTH).
+    # docs/DESIGN-nyiso-next17-fg-split-2026-09-30.md.
+    from market_sim.config.topology_variant import nyiso_fg_split_active
+
+    if nyiso_fg_split_active():
+        zones = [
+            Zone(name="Upstate_West", iso="NYISO", load_share=0.365),
+            Zone(name="Capital_Hudson", iso="NYISO", load_share=0.097),
+            Zone(name="Lower_Hudson", iso="NYISO", load_share=0.138),
+            Zone(name="NYC", iso="NYISO", load_share=0.28),
+            Zone(name="Long_Island", iso="NYISO", load_share=0.12),
+        ]
+        links = [
+            TransferLink(
+                from_zone="Upstate_West", to_zone="Capital_Hudson", ttc_mw=2850.0
+            ),
+            TransferLink(
+                from_zone="Capital_Hudson", to_zone="Lower_Hudson", ttc_mw=5150.0
+            ),
+            TransferLink(from_zone="Lower_Hudson", to_zone="NYC", ttc_mw=3900.0),
+            TransferLink(from_zone="NYC", to_zone="Long_Island", ttc_mw=1650.0),
+            TransferLink(
+                from_zone="Upstate_West", to_zone="Lower_Hudson", ttc_mw=2025.0
+            ),
+        ]
     # NYISO bid cap is $2,000/MWh for energy. NYISO has an installed
     # capacity market (ICAP) that provides capacity revenue outside the
     # energy market, similar to PJM's RPM and CAISO's RA, so the energy-only
@@ -2728,6 +2768,46 @@ def drop_obligation_owned_reliability_specs(
         s
         for s in specs
         if (s.zone, s.plant_class) not in _INCITY_OBLIGATION_OWNED_LIMBS
+    ]
+
+
+# The Capital_Hudson floor classes whose measured membership is ENTIRELY in
+# NYISO load zone G (no zone-F nameplate: EIA-860 NY F-county gas steam = 0 MW;
+# Roseton / Danskammer / Bowline are all G). Under the NYISO-NEXT-17 F/G
+# re-partition those plants move to Lower_Hudson, so their limbs move with them.
+_NYISO_FG_SPLIT_G_ONLY_FLOOR_CLASSES: frozenset[str] = frozenset({"ST_GAS"})
+
+
+def remap_nyiso_fg_split_floor_specs(
+    specs: list[ReliabilityFloorSpec],
+    iso: str,
+) -> list[ReliabilityFloorSpec]:
+    """Move the G-only Capital_Hudson floor limbs to Lower_Hudson under the F/G split.
+
+    No-op unless ``iso`` is NYISO and ``config.topology_variant`` has the
+    NYISO-NEXT-17 F/G re-partition armed, so every other run is byte-identical.
+    A limb's coefficients are measured from its (zone, class) plants; when every
+    one of those plants now sits in ``Lower_Hudson`` the limb follows them
+    unchanged (rule 23 [R-FROZEN-DERIVE]: nothing is re-derived). Its
+    ``threshold`` is the zone p95 tmax, which is 31.1 C on both the
+    Capital_Hudson and Lower_Hudson series (``data/raw/nyiso-weather``,
+    2018-2026), so the driver window is identical by the same construction.
+    Applied AFTER ``reliability_floor_overrides``, whose keys name the limb's
+    registered identity. Classes with F nameplate (CC, CT) stay on
+    Capital_Hudson.
+    """
+    from market_sim.config.topology_variant import nyiso_fg_split_active
+
+    if iso != "NYISO" or not nyiso_fg_split_active():
+        return specs
+    import dataclasses as _dc
+
+    return [
+        _dc.replace(s, zone="Lower_Hudson")
+        if s.zone == "Capital_Hudson"
+        and s.plant_class in _NYISO_FG_SPLIT_G_ONLY_FLOOR_CLASSES
+        else s
+        for s in specs
     ]
 
 

@@ -93,7 +93,11 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.paths import RAW_DIR  # noqa: E402
-from market_sim.data.nyiso_demand_response import _ZONE_TO_MODEL  # noqa: E402
+from market_sim.config.topology_variant import set_nyiso_fg_split  # noqa: E402
+from market_sim.data.nyiso_demand_response import (  # noqa: E402
+    _ZONE_TO_MODEL,
+    nyiso_zone_to_model,
+)
 
 # Gold Book vintage -> workbook. Vintage N states the year-N capability and the
 # year-(N-1) net energy, so the union across vintages plus each row's published
@@ -122,6 +126,10 @@ SKIPROWS: int = 8
 # three vintages lists them) — a stated limitation, not a free parameter.
 YEARS: tuple[int, ...] = (2022, 2023, 2024, 2025)
 OUT = RAW_DIR / "reference" / "nyiso-market-solar-capacity.csv"
+# NYISO-NEXT-17 F/G re-partition variant (ScenarioConfig.nyiso_fg_split): the
+# identical registry with zone G crosswalked to Lower_Hudson. Written by
+# ``--fg-split``; read by data.nyiso_market_solar when the partition is armed.
+OUT_FG_SPLIT = RAW_DIR / "reference" / "nyiso-market-solar-capacity-fgsplit.csv"
 
 # EIA-860 operable generator schedule — the second published in-service date
 # basis (nyiso-133). Same file the EIA-860 solar path already reads.
@@ -302,8 +310,9 @@ def monthly_capacity(reg: pd.DataFrame) -> pd.DataFrame:
         basis, nyiso-133). The two bases differ ONLY in the month a unit's
         capacity switches on — membership and nameplate are identical.
     """
-    model_zones = sorted(set(_ZONE_TO_MODEL.values()))
-    reg = reg.assign(model_zone=reg["zone"].map(_ZONE_TO_MODEL))
+    zone_map = nyiso_zone_to_model()
+    model_zones = sorted(set(zone_map.values()))
+    reg = reg.assign(model_zone=reg["zone"].map(zone_map))
     # EIA-860 date where the crosswalk verifies, published Gold Book date
     # otherwise — an unmatched unit is never given an invented date.
     cod = _eia860_cod_dates(reg)
@@ -340,8 +349,15 @@ def monthly_capacity(reg: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def main() -> int:
-    """Build the artifact and write it, printing the registry and the totals."""
+def main(argv: list[str] | None = None) -> int:
+    """Build the artifact and write it, printing the registry and the totals.
+
+    ``--fg-split`` arms the NYISO F/G re-partition for this process and writes
+    :data:`OUT_FG_SPLIT` instead of :data:`OUT` (NYISO-NEXT-17).
+    """
+    fg_split = "--fg-split" in (sys.argv[1:] if argv is None else argv)
+    set_nyiso_fg_split(fg_split)
+    out_path = OUT_FG_SPLIT if fg_split else OUT
     reg = build_registry()
     print(
         f"NYISO market-generator PV registry: {len(reg)} units, "
@@ -381,14 +397,21 @@ def main() -> int:
             f"ratio {row['capacity_mw_cod'] / row['capacity_mw']:.4f}"
         )
 
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUT, "w") as fh:
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(out_path, "w") as fh:
         fh.write(
             "# NYISO front-of-meter (market-generator) solar capacity by model zone.\n"
             "# SOURCE: NYISO Gold Book Table III-2a 'NYISO Market Generators',\n"
             "#   vintages 2023 / 2024 / 2025 (data/raw/NYISO/*.xlsx) — published\n"
             "#   nameplate rating MW, published in-service date, published A-K load\n"
-            "#   zone, crosswalked by data.nyiso_demand_response._ZONE_TO_MODEL.\n"
+            + (
+                "#   zone, crosswalked by data.nyiso_demand_response.nyiso_zone_to_model\n"
+                "#   UNDER THE F/G RE-PARTITION (zone G -> Lower_Hudson; NYISO-NEXT-17,\n"
+                "#   ScenarioConfig.nyiso_fg_split).\n"
+                if fg_split
+                else "#   zone, crosswalked by data.nyiso_demand_response._ZONE_TO_MODEL.\n"
+            )
+            + 
             "# WHY: EIA-860 utility-scale NY solar includes ~2 GW of distribution-\n"
             "#   connected NY-Sun community solar that is NOT a NYISO market\n"
             "#   generator and is already netted out of the EIA-930 NYIS demand\n"
@@ -421,7 +444,7 @@ def main() -> int:
                 "n_units_cod",
             ]
         ].to_csv(fh, index=False, header=False)
-    print(f"\nwrote {OUT}")
+    print(f"\nwrote {out_path}")
     return 0
 
 

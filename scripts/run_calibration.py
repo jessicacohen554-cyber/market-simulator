@@ -3203,6 +3203,17 @@ def run_year(
         if iso == "SPP"
         else "north_south"
     )
+    # NYISO-NEXT-17 F/G re-partition, armed at the same seam for the same
+    # reason (config.topology_variant); False for every other ISO.
+    from market_sim.config.topology_variant import set_nyiso_fg_split
+
+    _fg_split = iso == "NYISO" and getattr(config, "nyiso_fg_split", False)
+    if _fg_split and getattr(config, "mode", "backcast") == "forecast":
+        raise ValueError(
+            "nyiso_fg_split is backcast-only (its upstate legs are the measured "
+            "backcast envelopes, pipeline.ttc.apply_iso_monthly_ttc)"
+        )
+    set_nyiso_fg_split(_fg_split)
     # PJM-NEXT fleet_zone_vintage_coords: armed per solve, like the partition
     # above, before the first fleet load reads the zone lookup.
     from market_sim.data.zone_assignment import set_fleet_zone_vintage_coords
@@ -4687,6 +4698,7 @@ def run_year(
             apply_reliability_floor_plant_exclusions,
             drop_drag_owned_reliability_specs,
             drop_obligation_owned_reliability_specs,
+            remap_nyiso_fg_split_floor_specs,
         )
         from market_sim.model.transmission import inject_reliability_floor
 
@@ -4694,6 +4706,10 @@ def run_year(
             RELIABILITY_FLOOR_REGISTRY.get(iso, []),
             getattr(config, "reliability_floor_overrides", None),
         )
+        # NYISO-NEXT-17 F/G re-partition: G-only Capital_Hudson limbs follow
+        # their plants to Lower_Hudson (after the overrides, which key on the
+        # registered identity). No-op otherwise.
+        _floor_specs = remap_nyiso_fg_split_floor_specs(_floor_specs, iso)
         # Rule 19: when a net-load drag owns a class's commitment (CT_PEAKER via
         # ct_netload_drag), drop that class's reliability-floor limbs so the two
         # do not stack into an all-day floor binding overnight (the D-4
