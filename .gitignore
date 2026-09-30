@@ -3890,3 +3890,7 @@ results/calibration/rcaiso15_A_tp_2019_2021/hourly/p0_*
 
 # NYISO-NEXT-15 per-year shard legs: kept out of main (rule 32(d)); only the composite registers.
 results/calibration/nyisonext15_202[2-5]/
+
+# R-ERCOT-19 per-year shard legs: local only, kept until the owner rules (rule 31); provenance SHAs in the RESULT doc.
+results/calibration/r_ercot19_arm_*/
+results/calibration/r_ercot19b_arm_*/
