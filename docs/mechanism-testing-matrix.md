@@ -5777,6 +5777,8 @@ loss.
 > (`internal_congestion_split` G, `measured_interface_limits` R, `ordc_scarcity_overlay` G, coal line closed).
 > Basis defect found: 2019/2022 still on the legacy equal-hour C3a basis (`lw_retrofit` never re-run);
 > consistent basis reads 2022 −19.5 %, 2019 +2.8 %, no status flips. No cell moves. No frontier.
+> **Owner ruling:** *"Repair basis (Recommended)"* + *"Charter flowgate program"*. **Next (miso-292):** lw basis repair for
+> 2019/2022, then zero-LP charter of a reduced-network (flowgate) program. No frontier.
 
 > **QUEUE STAMP miso-290 (2026-09-30) — ZERO LP, NO SOLVE, keeper unchanged**
 > (`FINDING-miso290-pile-take-floor-killed-2026-09-30.md`). Per-yard cumulative pile (miso-289 min-stock ceiling)

@@ -15458,3 +15458,5 @@ Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 
 
 No frontier: the full span is NOT-YET on the three routed misses.
 `docs/FINDING-miso291-c3a2022-phase0-2026-09-30.md`.
+
+Owner ruling: *"Repair basis (Recommended)"* + *"Charter flowgate program"*. Next: miso-292, lw basis repair for 2019/2022, then zero-LP charter of a flowgate program.
