@@ -44,7 +44,10 @@ ARM_FLAG_SETS: dict[str, tuple[str, ...]] = {
 ARM_FLAGS: tuple[str, ...] = ()
 PINNED_SHA = "6d4c77491e469e06f3a9c0e3d4f2b7c37b15fba3"
 #: Arm B was re-pinned after the orchestrator-wiring fix (PRECOMMIT §6).
-PINNED_SHA_BY_ARM: dict[str, str] = {"A": PINNED_SHA, "B": "5b813f34370a2a41a45fbc6e01c7e8a1628d46fd"}
+PINNED_SHA_BY_ARM: dict[str, str] = {
+    "A": PINNED_SHA,
+    "B": "42e87bcde2621cdd171b94b8076dac6108fa2771",
+}
 MUST_BE_TRUE = (
     "eia860_vintage_tracks_solve_year",
     "measured_ct_heat_rates",
