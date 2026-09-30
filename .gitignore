@@ -3922,3 +3922,5 @@ results/calibration/nyisonext17_202[2-5]/
 results/calibration/rcaiso18_A_20*/
 # R-CAISO-20 per-year shard legs: kept local, out of main (rules 31 / 32(d)); composites are committed.
 results/calibration/rcaiso20_A_20*/
+
+results/calibration/_rcaiso21/
