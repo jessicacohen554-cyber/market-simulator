@@ -3934,3 +3934,8 @@ results/calibration/_rcaiso21/
 
 results/calibration/_rcaiso22/
 results/calibration/_rcaiso23/
+# soco-96 per-year shard legs (rule 32(d): kept out of main; the composite soco96_span is registered).
+# Leg SHAs are provenance only (rule 33(d)): RESULT-soco-96-2026-09-30.md.
+results/calibration/soco96_20*/
+# soco-96 zero-LP probe outputs (G-DRIFT identity); numbers live in PRECOMMIT-soco-96 section 3
+results/calibration/_soco96/
