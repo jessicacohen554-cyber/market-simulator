@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-30-caiso-r17-earlyclock",
+  "label": "caiso r17 earlyclock",
+  "date": "2026-09-30",
+  "shorthand": "caiso-r17-earlyclock",
+  "definition": "R-CAISO-17 A 2022: keeper recipe, caiso_eia930_clock_repair=true plus the 2019-2022 early generation window (PRECOMMIT-r-caiso-17)",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-30-caiso-r17-earlyclock.js",
+  "bundle": "results/calibration/rcaiso17_A_span"
+}
