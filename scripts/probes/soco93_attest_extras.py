@@ -3,7 +3,8 @@
 Runs LAST in the attestation chain, where ``soco87_attest_extras.py`` ran (after
 ``build_dof_ledger.py``, ``gen_soco60b_attestation.py``, ``gen_rsoco_attestation.py`` and
 ``gen_rsocob_attestation.py``). Carries soco-83's hand-added entries verbatim from the
-incumbent keeper (soco92_span). ``hydro_pondage_bound`` adds NO free parameter (NID volume x
+incumbent keeper (soco92_span when first run; soco93_span after the soco-93 promotion).
+``hydro_pondage_bound`` adds NO free parameter (NID volume x
 NID head at eta 1.0, inflow = the plant's own monthly budget), so ``n_entries`` and
 ``n_residual`` are unchanged; it is recorded as a disclosure only, beside the carried
 soco-85/87/92 disclosures.
@@ -21,7 +22,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 # The incumbent keeper at soco-93.
-KEEPER = ROOT / "results/calibration/soco92_span/calibration_attestation.json"
+KEEPER = ROOT / "results/calibration/soco93_span/calibration_attestation.json"
 
 #: Keeper-only entries, carried by NAME PREFIX (soco83_attest_extras.CARRY + its ENTRY).
 CARRY = (

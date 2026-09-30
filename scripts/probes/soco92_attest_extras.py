@@ -22,8 +22,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 # The incumbent keeper at soco-92.
 KEEPER = (
-    ROOT / "results/calibration/soco92_span/calibration_attestation.json"
-)  # repointed soco-92 (rule 35 prune of soco92_span)
+    ROOT / "results/calibration/soco93_span/calibration_attestation.json"
+)  # repointed soco-93 (rule 35 prune of soco92_span)
 
 #: Keeper-only entries, carried by NAME PREFIX (soco83_attest_extras.CARRY + its ENTRY).
 CARRY = (

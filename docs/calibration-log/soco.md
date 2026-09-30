@@ -2054,3 +2054,10 @@ rows are redundant); 14–15 units are RoR-flat. Census on soco92_span: the keep
 plant-months (0.18–0.27 TWh/yr infeasible timing, concentrated in plants holding 0.2–9 h). The clip upper bound on the
 top-20 % λ-hour cut is 59–77 MW vs a 650–1,208 MW excess (≤ 11 %), so it is real structure but not a C3a lever. No solve;
 keeper unchanged. Record: docs/handoffs/r-soco/FINDING-soco-93-pondage-phase0-2026-09-30.md.
+
+**soco-93 build + PROMOTION (2026-09-30).** Owner "Build/solve": seven year-isolated shards at `68f90096` (G-DRIFT
+measured inert). Registered `2026-09-30-soco93-pondage-bound` (soco93_span), PRECOMMIT §7 holds on all six. Pondage rows
+15/16/15/15/16/15/15. Worst-plant forebay need is 1.000× B, against up to 929× in the keeper. Peak-20 % hydro+PS falls
+23–41 MW and low-40 % rises 1–17 MW. C3a moves ≤ 0.1 pp, with zero status flips; D-2/D-4 are unchanged. NOT-YET
+7/4/0/1/2. Owner **"Promote"**: KEEPER → `2026-09-30-soco93-pondage-bound`, and soco92 pruned (rule 35). Owner next lane:
+**soco-94 zero-LP C3a year-pattern diagnosis**. Records: docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-93-2026-09-30.md.
