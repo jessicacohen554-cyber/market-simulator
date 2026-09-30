@@ -169,6 +169,91 @@
    "no_load_per_ecomin_x_gas_med": 1.9
   }
  },
+ "2021": {
+  "by_band": {
+   "0-25": {
+    "below_ecomin_frac": 0.982,
+    "le0": 0.0,
+    "lt_cheap": 0.234,
+    "lt_deliv": 0.52,
+    "lt_prod": 0.369,
+    "offered_twh": 14.89
+   },
+   "25-45": {
+    "below_ecomin_frac": 0.938,
+    "le0": 0.046,
+    "lt_cheap": 0.286,
+    "lt_deliv": 0.791,
+    "lt_prod": 0.481,
+    "offered_twh": 70.17
+   },
+   "45-65": {
+    "below_ecomin_frac": 0.762,
+    "le0": 0.002,
+    "lt_cheap": 0.128,
+    "lt_deliv": 0.734,
+    "lt_prod": 0.338,
+    "offered_twh": 172.85
+   },
+   "65-85": {
+    "below_ecomin_frac": 0.184,
+    "le0": 0.009,
+    "lt_cheap": 0.055,
+    "lt_deliv": 0.652,
+    "lt_prod": 0.175,
+    "offered_twh": 105.79
+   },
+   "85-100": {
+    "below_ecomin_frac": 0.113,
+    "le0": 0.007,
+    "lt_cheap": 0.072,
+    "lt_deliv": 0.377,
+    "lt_prod": 0.119,
+    "offered_twh": 205.2
+   }
+  },
+  "le0_below_ecomin_fraction": 0.845,
+  "le0_mid_25_65_above_ecomin_share": 0.003,
+  "le0_mid_25_65_share": 0.014,
+  "le0_share_of_offered": 0.01,
+  "lt_cheap_below_ecomin_fraction": 0.638,
+  "lt_cheap_mid_25_65_above_ecomin_share": 0.133,
+  "lt_cheap_mid_25_65_share": 0.173,
+  "lt_cheap_share_of_offered": 0.117,
+  "lt_deliv_below_ecomin_fraction": 0.517,
+  "lt_deliv_mid_25_65_above_ecomin_share": 0.55,
+  "lt_deliv_mid_25_65_share": 0.751,
+  "lt_deliv_share_of_offered": 0.592,
+  "lt_prod_below_ecomin_fraction": 0.626,
+  "lt_prod_mid_25_65_above_ecomin_share": 0.302,
+  "lt_prod_mid_25_65_share": 0.379,
+  "lt_prod_share_of_offered": 0.247,
+  "n_cc_like_units": 227,
+  "offered_twh": 568.9,
+  "share_below_ecomin_of_offered": 0.448,
+  "units_cheap": {
+   "cheap_share_capw": 0.493,
+   "cold_start_per_mw_med": 4.7,
+   "ecomax_gw": 9.21,
+   "ecomin_ratio_capw": 0.495,
+   "first_bid_x_gas_med": 1.67,
+   "min_runtime_med": 8.0,
+   "n": 25,
+   "no_load_per_ecomin_mwh_med": 2.53,
+   "no_load_per_ecomin_x_gas_med": 0.61
+  },
+  "units_rest": {
+   "cheap_share_capw": 0.009,
+   "cold_start_per_mw_med": 21.0,
+   "ecomax_gw": 60.31,
+   "ecomin_ratio_capw": 0.528,
+   "first_bid_x_gas_med": 8.94,
+   "min_runtime_med": 6.0,
+   "n": 200,
+   "no_load_per_ecomin_mwh_med": 7.34,
+   "no_load_per_ecomin_x_gas_med": 1.71
+  }
+ },
  "2023": {
   "by_band": {
    "0-25": {
