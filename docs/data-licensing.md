@@ -279,7 +279,11 @@ document can respond "yes" instead of "unclear."
 `winter-fuel-inventory/`, `som-competitive-conduct/` (numbers
 transcribed with page citations from monitor reports — PJM rows from the
 © Monitoring Analytics SOM, SPP/MISO/ERCOT rows from the monitors' SOMs; the
-PDFs themselves are not committed for PJM/SPP), `miso-pra/`, `miso-wind-shape/` (NASA POWER, CC0 /
+PDFs themselves are not committed for PJM/SPP; the PJM monthly spot fuel
+prices, PJM-NEXT-13, are Platts values as republished in the IMM's public
+SOM figure, digitized from its vector paths by
+`scripts/data/digitize_pjm_som_spot_fuel.py` — the source URL and sha256 are
+in `som-competitive-conduct/README.md`; no Platts product was accessed), `miso-pra/`, `miso-wind-shape/` (NASA POWER, CC0 /
 public-domain-equivalent per NASA's open data policy), `_processed-legacy/`,
 `_validation-source/`, `reference/`.
 

@@ -43,6 +43,7 @@ from ._shared import (
 from .basis import (
     ZONAL_BASIS_ORDER,
     apply_miso_gas_marginal_commodity,
+    apply_pjm_replacement_cost_fuel,
     apply_miso_winter_citygate_daily,
     apply_miso_winter_gas_daily_delivered,
 )
@@ -256,6 +257,15 @@ def resolve_fuel_prices(
             print_cells = (
                 spot_cells if print_cells is None else (print_cells | spot_cells)
             )
+        # PJM-NEXT-13 (owner ruling 2026-09-29): PJM gas and priceable coal at
+        # REPLACEMENT cost (IMM regional Platts spot + measured variable
+        # transport). Off by default, byte-identical off. Its written mask joins
+        # the print-derived mask so the PJM zonal basis is not stacked (rule 19).
+        repl_cells = apply_pjm_replacement_cost_fuel(fuel_prices, fleet, config, year)
+        if repl_cells is not None:
+            print_cells = (
+                repl_cells if print_cells is None else (print_cells | repl_cells)
+            )
         # Per-ISO zonal gas basis: walk the ZONAL_BASIS_APPLIERS registry in
         # ZONAL_BASIS_ORDER. Each applier self-gates on config.iso + its own
         # config flag, so at most one fires per run and the walk reproduces the
@@ -282,7 +292,10 @@ def resolve_fuel_prices(
         skip_for_pjm = (
             print_cells
             if config.iso == "PJM"
-            and getattr(config, "pjm_zonal_gas_basis_skip_923_priced", False)
+            and (
+                getattr(config, "pjm_zonal_gas_basis_skip_923_priced", False)
+                or repl_cells is not None
+            )
             else None
         )
         for iso_name in ZONAL_BASIS_ORDER:

@@ -1,0 +1,14 @@
+rung,key,v_usd_mmbtu
+zone_group,PJM_AEP_Ohio|CC_REGULAR,0.121819
+zone_group,PJM_AEP_Ohio|CT_PEAKER,0.498714
+zone_group,PJM_AEP_Ohio|ST_GAS,0.955364
+zone_group,PJM_ATSI|CC_REGULAR,0.302855
+zone_group,PJM_ATSI|CT_PEAKER,1.146318
+zone_group,PJM_Dominion|CC_REGULAR,0.631075
+zone_group,PJM_Dominion|CT_PEAKER,0.450601
+zone_group,PJM_Dominion|ST_GAS,2.192787
+zone_group,PJM_SWMAAC|CC_REGULAR,-0.01578
+group,CC_REGULAR,0.534507
+group,CT_PEAKER,0.504437
+group,ST_GAS,1.321434
+pjm,__PJM__,0.549253

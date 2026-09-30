@@ -63,9 +63,16 @@ def apply_pjm_zonal_gas_basis(
     behaviour is byte-identical whatever the caller passes. On masked cells the
     increment is not added (rule 19 ``[R-ONE-MECH]``: the EIA-923 print already
     carries the regional delivered premium); unmasked cells still receive it.
+    ``pjm_replacement_cost_fuel`` (PJM-NEXT-13) also makes the applier honour the
+    mask, which then includes the cells that mechanism repriced.
     """
     use_skip = skip_cells is not None and bool(
         getattr(config, "pjm_zonal_gas_basis_skip_923_priced", False)
+        # PJM-NEXT-13 (rule 19): under replacement-cost fuel the caller's mask
+        # carries the cells that mechanism REPRICED at the owner-ruled regional
+        # hub, which already carries the zonal gradient — never stack the
+        # mean-zero spread on it.
+        or getattr(config, "pjm_replacement_cost_fuel", False)
     )
     _apply_meanzero_zonal_gas_basis(
         fuel_prices,

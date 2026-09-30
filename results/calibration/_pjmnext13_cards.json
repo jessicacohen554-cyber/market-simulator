@@ -1,0 +1,408 @@
+{
+ "2019": {
+  "card1": {
+   "n_plant_months": 440,
+   "gap_twh": 18.76,
+   "excess_over_real_max_twh": 2.91,
+   "real_max_over_avail": 0.979,
+   "model_max_over_avail": 0.972,
+   "hp_months": 119,
+   "hp_real_max_over_avail": 0.979,
+   "hp_model_max_over_avail": 0.967,
+   "dark_but_available_twh": 0.57
+  },
+  "card2": {
+   "CC_REGULAR": {
+    "PJM_ComEd": 2.502,
+    "PJM_AEP_Ohio": 2.555,
+    "PJM_ATSI": 2.57,
+    "PJM_West_APS": 2.847,
+    "PJM_Central_PA": 2.502,
+    "PJM_Dominion": 3.436,
+    "PJM_EMAAC": 2.502,
+    "PJM_SWMAAC": 3.631,
+    "ALL": 2.759
+   },
+   "CT_PEAKER": {
+    "PJM_ComEd": 2.502,
+    "PJM_AEP_Ohio": 2.648,
+    "PJM_ATSI": 2.705,
+    "PJM_West_APS": 2.847,
+    "PJM_Central_PA": 2.502,
+    "PJM_Dominion": 2.955,
+    "PJM_EMAAC": 2.502,
+    "PJM_SWMAAC": 3.631,
+    "ALL": 2.735
+   },
+   "imm": {
+    "east_gas": 2.515,
+    "west_gas": 2.315,
+    "production_gas": 2.083
+   }
+  },
+  "card3": {
+   "model_coal_partial_hour_share": 0.952,
+   "top_bands": {
+    "COAL_BIT:econc04": 0.603,
+    "COAL_BIT:econc05": 0.601,
+    "COAL_BIT:sync": 0.592,
+    "COAL_BIT:peak": 0.583,
+    "COAL_BIT:econc03": 0.515,
+    "COAL_BIT:econc02": 0.445
+   },
+   "imm_rt_marginal_unit_share_coal": 0.244,
+   "imm_rt_lmp_share_coal_fuel": 0.264,
+   "n_coal_plants": 61,
+   "coal_marginal_zonehour_share_load_weighted": 0.348,
+   "hours_with_any_coal_marginal": 0.925
+  }
+ },
+ "2020": {
+  "card1": {
+   "n_plant_months": 385,
+   "gap_twh": 12.16,
+   "excess_over_real_max_twh": 1.13,
+   "real_max_over_avail": 0.972,
+   "model_max_over_avail": 0.959,
+   "hp_months": 28,
+   "hp_real_max_over_avail": 0.89,
+   "hp_model_max_over_avail": 0.929,
+   "dark_but_available_twh": 0.73
+  },
+  "card2": {
+   "CC_REGULAR": {
+    "PJM_ComEd": 1.936,
+    "PJM_AEP_Ohio": 1.86,
+    "PJM_ATSI": 2.109,
+    "PJM_West_APS": 1.789,
+    "PJM_Central_PA": 1.936,
+    "PJM_Dominion": 2.639,
+    "PJM_EMAAC": 1.936,
+    "PJM_SWMAAC": 2.753,
+    "ALL": 2.087
+   },
+   "CT_PEAKER": {
+    "PJM_ComEd": 1.936,
+    "PJM_AEP_Ohio": 2.01,
+    "PJM_ATSI": 2.177,
+    "PJM_West_APS": 1.789,
+    "PJM_Central_PA": 1.936,
+    "PJM_Dominion": 2.276,
+    "PJM_EMAAC": 1.936,
+    "PJM_SWMAAC": 2.753,
+    "ALL": 2.083
+   },
+   "imm": {
+    "east_gas": 1.738,
+    "west_gas": 1.744,
+    "production_gas": 1.362
+   }
+  },
+  "card3": {
+   "model_coal_partial_hour_share": 0.969,
+   "top_bands": {
+    "COAL_BIT:econc02": 0.611,
+    "COAL_BIT:peak": 0.596,
+    "COAL_BIT:econc03": 0.592,
+    "COAL_BIT:econc01": 0.582,
+    "COAL_BIT:econc04": 0.579,
+    "COAL_WC:econc02": 0.566
+   },
+   "imm_rt_marginal_unit_share_coal": 0.175,
+   "imm_rt_lmp_share_coal_fuel": 0.237,
+   "n_coal_plants": 53,
+   "coal_marginal_zonehour_share_load_weighted": 0.334,
+   "hours_with_any_coal_marginal": 0.948
+  }
+ },
+ "2021": {
+  "card1": {
+   "n_plant_months": 419,
+   "gap_twh": 15.66,
+   "excess_over_real_max_twh": 1.54,
+   "real_max_over_avail": 0.974,
+   "model_max_over_avail": 0.98,
+   "hp_months": 296,
+   "hp_real_max_over_avail": 0.972,
+   "hp_model_max_over_avail": 0.976,
+   "dark_but_available_twh": 0.31
+  },
+  "card2": {
+   "CC_REGULAR": {
+    "PJM_ComEd": 3.581,
+    "PJM_AEP_Ohio": 3.916,
+    "PJM_ATSI": 3.955,
+    "PJM_West_APS": 3.28,
+    "PJM_Central_PA": 3.578,
+    "PJM_Dominion": 4.19,
+    "PJM_EMAAC": 3.575,
+    "PJM_SWMAAC": 4.535,
+    "ALL": 3.782
+   },
+   "CT_PEAKER": {
+    "PJM_ComEd": 3.58,
+    "PJM_AEP_Ohio": 4.088,
+    "PJM_ATSI": 4.029,
+    "PJM_West_APS": 3.271,
+    "PJM_Central_PA": 3.578,
+    "PJM_Dominion": 4.157,
+    "PJM_EMAAC": 3.569,
+    "PJM_SWMAAC": 4.513,
+    "ALL": 3.87
+   },
+   "imm": {
+    "east_gas": 3.582,
+    "west_gas": 4.244,
+    "production_gas": 2.985
+   }
+  },
+  "card3": {
+   "model_coal_partial_hour_share": 0.941,
+   "top_bands": {
+    "COAL_BIT:peak": 0.732,
+    "COAL_BIT:econc04": 0.706,
+    "COAL_BIT:econc03": 0.696,
+    "COAL_BIT:econc02": 0.631,
+    "COAL_BIT:econc01": 0.545,
+    "COAL_BIT:econc05": 0.537
+   },
+   "imm_rt_marginal_unit_share_coal": 0.141,
+   "imm_rt_lmp_share_coal_fuel": 0.103,
+   "n_coal_plants": 54,
+   "coal_marginal_zonehour_share_load_weighted": 0.277,
+   "hours_with_any_coal_marginal": 0.869
+  }
+ },
+ "2022": {
+  "card1": {
+   "n_plant_months": 356,
+   "gap_twh": 7.61,
+   "excess_over_real_max_twh": 1.42,
+   "real_max_over_avail": 0.967,
+   "model_max_over_avail": 0.969,
+   "hp_months": 332,
+   "hp_real_max_over_avail": 0.967,
+   "hp_model_max_over_avail": 0.969,
+   "dark_but_available_twh": 1.1
+  },
+  "card2": {
+   "CC_REGULAR": {
+    "PJM_ComEd": 6.101,
+    "PJM_AEP_Ohio": 6.318,
+    "PJM_ATSI": 6.604,
+    "PJM_West_APS": 6.531,
+    "PJM_Central_PA": 5.993,
+    "PJM_Dominion": 7.298,
+    "PJM_EMAAC": 6.835,
+    "PJM_SWMAAC": 8.236,
+    "ALL": 6.607
+   },
+   "CT_PEAKER": {
+    "PJM_ComEd": 6.101,
+    "PJM_AEP_Ohio": 6.327,
+    "PJM_ATSI": 6.69,
+    "PJM_West_APS": 6.531,
+    "PJM_Central_PA": 5.993,
+    "PJM_Dominion": 8.402,
+    "PJM_EMAAC": 6.835,
+    "PJM_SWMAAC": 8.236,
+    "ALL": 6.792
+   },
+   "imm": {
+    "east_gas": 7.279,
+    "west_gas": 5.876,
+    "production_gas": 5.51
+   }
+  },
+  "card3": {
+   "model_coal_partial_hour_share": 0.967,
+   "top_bands": {
+    "COAL_BIT:econc02": 0.78,
+    "COAL_BIT:econc01": 0.723,
+    "COAL_BIT:econc03": 0.621,
+    "COAL_BIT:econc00": 0.609,
+    "COAL_BIT:peak": 0.567,
+    "COAL_WC:peak": 0.472
+   },
+   "imm_rt_marginal_unit_share_coal": 0.1,
+   "imm_rt_lmp_share_coal_fuel": 0.071,
+   "n_coal_plants": 50,
+   "coal_marginal_zonehour_share_load_weighted": 0.217,
+   "hours_with_any_coal_marginal": 0.743
+  }
+ },
+ "2023": {
+  "card1": {
+   "n_plant_months": 293,
+   "gap_twh": -0.11,
+   "excess_over_real_max_twh": 0.83,
+   "real_max_over_avail": 0.959,
+   "model_max_over_avail": 0.867,
+   "hp_months": 198,
+   "hp_real_max_over_avail": 0.954,
+   "hp_model_max_over_avail": 0.846,
+   "dark_but_available_twh": 0.14
+  },
+  "card2": {
+   "CC_REGULAR": {
+    "PJM_ComEd": 2.478,
+    "PJM_AEP_Ohio": 2.466,
+    "PJM_ATSI": 2.699,
+    "PJM_West_APS": 2.776,
+    "PJM_Central_PA": 2.154,
+    "PJM_Dominion": 3.668,
+    "PJM_EMAAC": 2.266,
+    "PJM_SWMAAC": 2.596,
+    "ALL": 2.588
+   },
+   "CT_PEAKER": {
+    "PJM_ComEd": 2.478,
+    "PJM_AEP_Ohio": 2.531,
+    "PJM_ATSI": 2.815,
+    "PJM_West_APS": 2.776,
+    "PJM_Central_PA": 2.154,
+    "PJM_Dominion": 3.64,
+    "PJM_EMAAC": 2.266,
+    "PJM_SWMAAC": 2.596,
+    "ALL": 2.698
+   },
+   "imm": {
+    "east_gas": 2.126,
+    "west_gas": 2.048,
+    "production_gas": 1.624
+   }
+  },
+  "card3": {
+   "model_coal_partial_hour_share": 0.999,
+   "top_bands": {
+    "COAL_BIT:econc00": 0.738,
+    "COAL_BIT:econc01": 0.701,
+    "COAL_BIT:econc02": 0.644,
+    "COAL_BIT:sync": 0.564,
+    "COAL_WC:peak": 0.542,
+    "COAL_BIT:econc03": 0.538
+   },
+   "imm_rt_marginal_unit_share_coal": 0.091,
+   "imm_rt_lmp_share_coal_fuel": 0.144,
+   "n_coal_plants": 42,
+   "coal_marginal_zonehour_share_load_weighted": 0.14,
+   "hours_with_any_coal_marginal": 0.809
+  }
+ },
+ "2024": {
+  "card1": {
+   "n_plant_months": 290,
+   "gap_twh": -0.07,
+   "excess_over_real_max_twh": 1.65,
+   "real_max_over_avail": 0.947,
+   "model_max_over_avail": 0.902,
+   "hp_months": 195,
+   "hp_real_max_over_avail": 0.945,
+   "hp_model_max_over_avail": 0.904,
+   "dark_but_available_twh": 0.61
+  },
+  "card2": {
+   "CC_REGULAR": {
+    "PJM_ComEd": 2.339,
+    "PJM_AEP_Ohio": 2.403,
+    "PJM_ATSI": 2.349,
+    "PJM_West_APS": 2.124,
+    "PJM_Central_PA": 2.082,
+    "PJM_Dominion": 3.114,
+    "PJM_EMAAC": 2.344,
+    "PJM_SWMAAC": 3.186,
+    "ALL": 2.441
+   },
+   "CT_PEAKER": {
+    "PJM_ComEd": 2.339,
+    "PJM_AEP_Ohio": 2.566,
+    "PJM_ATSI": 2.481,
+    "PJM_West_APS": 2.124,
+    "PJM_Central_PA": 2.082,
+    "PJM_Dominion": 2.878,
+    "PJM_EMAAC": 2.344,
+    "PJM_SWMAAC": 3.181,
+    "ALL": 2.524
+   },
+   "imm": {
+    "east_gas": 2.253,
+    "west_gas": 1.979,
+    "production_gas": 1.672
+   }
+  },
+  "card3": {
+   "model_coal_partial_hour_share": 0.997,
+   "top_bands": {
+    "COAL_BIT:econc00": 0.87,
+    "COAL_BIT:econc01": 0.854,
+    "COAL_BIT:econc02": 0.79,
+    "COAL_BIT:econc03": 0.666,
+    "COAL_BIT:peak": 0.577,
+    "COAL_BIT:econc04": 0.516
+   },
+   "imm_rt_marginal_unit_share_coal": 0.103,
+   "imm_rt_lmp_share_coal_fuel": 0.121,
+   "n_coal_plants": 41,
+   "coal_marginal_zonehour_share_load_weighted": 0.19,
+   "hours_with_any_coal_marginal": 0.848
+  }
+ },
+ "2025": {
+  "card1": {
+   "n_plant_months": 266,
+   "gap_twh": 13.71,
+   "excess_over_real_max_twh": 0.71,
+   "real_max_over_avail": 0.989,
+   "model_max_over_avail": 0.969,
+   "hp_months": 252,
+   "hp_real_max_over_avail": 0.989,
+   "hp_model_max_over_avail": 0.969,
+   "dark_but_available_twh": 0.04
+  },
+  "card2": {
+   "CC_REGULAR": {
+    "PJM_ComEd": 3.518,
+    "PJM_AEP_Ohio": 3.487,
+    "PJM_ATSI": 3.486,
+    "PJM_West_APS": 3.274,
+    "PJM_Central_PA": 3.239,
+    "PJM_Dominion": 4.112,
+    "PJM_EMAAC": 4.422,
+    "PJM_SWMAAC": 5.344,
+    "ALL": 3.768
+   },
+   "CT_PEAKER": {
+    "PJM_ComEd": 3.518,
+    "PJM_AEP_Ohio": 3.805,
+    "PJM_ATSI": 3.665,
+    "PJM_West_APS": 3.274,
+    "PJM_Central_PA": 3.239,
+    "PJM_Dominion": 3.803,
+    "PJM_EMAAC": 4.422,
+    "PJM_SWMAAC": 5.242,
+    "ALL": 3.832
+   },
+   "imm": {
+    "east_gas": 3.991,
+    "west_gas": 3.107,
+    "production_gas": 2.815
+   }
+  },
+  "card3": {
+   "model_coal_partial_hour_share": 0.979,
+   "top_bands": {
+    "COAL_BIT:econc03": 0.829,
+    "COAL_BIT:econc02": 0.776,
+    "COAL_BIT:peak": 0.733,
+    "COAL_BIT:econc01": 0.712,
+    "COAL_BIT:econc04": 0.707,
+    "COAL_BIT:econc05": 0.644
+   },
+   "imm_rt_marginal_unit_share_coal": 0.079,
+   "imm_rt_lmp_share_coal_fuel": 0.077,
+   "n_coal_plants": 60,
+   "coal_marginal_zonehour_share_load_weighted": 0.148,
+   "hours_with_any_coal_marginal": 0.618
+  }
+ }
+}

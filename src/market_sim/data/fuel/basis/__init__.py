@@ -69,6 +69,7 @@ from .nyiso import (
     nyiso_zonal_gas_ratios_monthly,
 )
 from .pjm import apply_pjm_zonal_gas_basis, pjm_zonal_gas_basis_by_zone
+from .pjm_replacement import apply_pjm_replacement_cost_fuel
 
 # The application order resolve_fuel_prices walks. Identical mutation sequence
 # to the pre-split call list for every ISO: each applier is a no-op unless
@@ -116,6 +117,7 @@ __all__ = [
     "ldc_generator_transport_monthly",
     "eia860_plant_gas_ldc",
     "apply_nyiso_zonal_gas_basis",
+    "apply_pjm_replacement_cost_fuel",
     "apply_pjm_zonal_gas_basis",
     "caiso_zonal_gas_basis_by_zone",
     "ercot_electric_power_gas_basis",

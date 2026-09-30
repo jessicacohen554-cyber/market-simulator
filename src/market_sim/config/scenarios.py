@@ -1623,6 +1623,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # cells), default off: dropped from the hash at its default so every
     # existing keeper keeps its key. Registered IN THE SAME COMMIT as the field.
     "pjm_zonal_gas_basis_skip_923_priced",
+    # PJM-NEXT-13 replacement-cost fuel (IMM regional spot + measured variable
+    # transport, gas and coal), default off: dropped from the hash at its default
+    # so every existing keeper keeps its key. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 discipline).
+    "pjm_replacement_cost_fuel",
     # ercot-254 monthly resolution of the ERCOT delivered-gas LEVEL anchor,
     # default off: dropped from the hash at its False default so every
     # pre-existing ERCOT key (the designated keeper's included) stays
@@ -2818,6 +2823,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_zonal_gas_basis_skip_923_priced": "False",
     "pjm_zonal_gas_basis_skip_923_priced": "False",
+    # Added by PJM-NEXT-13 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "pjm_replacement_cost_fuel": "False",
     # Added by ercot-254 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_ep_gas_basis_monthly": "False",
@@ -3682,6 +3690,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "gas_hub_basis_daily": "daily resolution of the same measured hub basis",
     "miso_winter_citygate_daily": "measured Chicago Citygate daily prints",
     "miso_gas_marginal_commodity_pricing": "measured Chicago Citygate + Henry Hub daily spot (marginal-commodity gas offers)",
+    "pjm_replacement_cost_fuel": "measured IMM Platts monthly regional spot + measured variable transport (replacement-cost gas and coal offers)",
     "miso_gas_variable_transport": "measured per-plant variable transport over that hub (EIA-923 receipts, frozen derive)",
     "miso_winter_gas_daily_delivered": "measured Chicago Citygate + Henry Hub daily spot in Dec/Jan/Feb, plus measured per-plant variable transport",
     "caiso_citygate_spot_level": "measured CA daily citygate spot series",
@@ -19397,6 +19406,36 @@ class ScenarioConfig:
     # docs/PRECOMMIT-pjm-next-2-card2-basis-scope-2026-09-25.md.
     pjm_zonal_gas_basis_skip_923_priced: bool = False
 
+    # PJM-NEXT-13 (owner ruling 2026-09-29, decision card "Hub + transport, joint
+    # with coal"; zone map "Accept as proposed"). Price PJM dispatch fuel at
+    # REPLACEMENT cost, the traded commodity plus measured variable transport,
+    # instead of the EIA-923 monthly AVERAGE delivered print. The print carries
+    # reservation/demand charges and contract commodity prices amortized over the
+    # month's takes: an average cost on a basis misaligned to a dispatch offer
+    # (rule 14 misalignment clause). PJM cost-based offers use the fuel-cost
+    # policy's expected incremental cost (Manual 15), and the IMM prices LMP fuel
+    # components at Platts spot.
+    #   GAS: the IMM's digitized Platts monthly spot for the zone's ruled region
+    #   (east: EMAAC/SWMAAC/Dominion; west: ComEd/AEP_Ohio/ATSI; production:
+    #   West_APS/Central_PA) + the plant's measured variable transport (the
+    #   miso-225 WLS estimator ported to PJM's own receipts, one value per plant
+    #   over 2019-2025). The incoming within-month shape is kept.
+    #   COAL (COAL_BIT/COAL_PRB): per plant-year, measured basin shares (EIA-923
+    #   receipts x EIA mine-level supply region) x (IMM NAPP/CAPP/PRB spot + EIA
+    #   basin->state->mode transport rate). The unpriced share (Illinois Basin,
+    #   mine-mouth conveyor, unmatched mines) keeps the plant's own price.
+    # Frozen derive (rule 23): scripts/data/derive_pjm_replacement_fuel.py ->
+    # data/raw/reference/pjm_{gas_variable_transport,coal_replacement}.csv. Zero
+    # fitted scalars (rules 21/24). Rule 19: supersedes the PJM mean-zero zonal
+    # basis on the cells it writes, and HARD-ERRORS with the gas-keyed coal
+    # passthrough sigmoids armed (they are the incumbent proxy for the same coal
+    # opportunity cost). PJM-only (rule 25, hard error elsewhere). Backcast-only
+    # overlay; it fails closed for a year the IMM series does not cover. Off by
+    # default (every keeper byte-identical; in _CACHE_KEY_OPTIONAL_FIELDS).
+    # docs/FINDING-pjm-next-13-availability-gas-coalmarginal-2026-09-29.md;
+    # market_sim.data.fuel.basis.pjm_replacement.
+    pjm_replacement_cost_fuel: bool = False
+
     # MISO winter fuel-security daily citygate overlay (miso-72). In the winter
     # months (Dec/Jan/Feb) only, for the MISO gas units in the Chicago-hub zones
     # only (MISO-Illinois/Indiana/East, read from miso_zonal_gas_hub.csv), replace
@@ -24315,6 +24354,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_zonal_gas_basis": 3,
     "miso_zonal_gas_basis_skip_923_priced": 3,
     "pjm_zonal_gas_basis_skip_923_priced": 3,
+    "pjm_replacement_cost_fuel": 3,
     "miso_winter_citygate_daily": 3,
     "miso_gas_marginal_commodity_pricing": 3,
     "miso_gas_variable_transport": 3,

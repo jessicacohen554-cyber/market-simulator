@@ -6804,3 +6804,19 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - **Card 2:** the coal-fuel share of RT LMP is 26 / 24 / 10 / 7 / 14 / 12 / 8 %, which discriminates C3a 2019/2020 but not the COAL_BIT over-run. Actual prices sit below 6.5 × gas in 26–45 % of hours; the model's in 0–3 %, every year.
 - OPEN: COAL_BIT, CT_PEAKER 2021, C3a 2019/2020. Next tests: coal availability vs CAMPD monthly max; production-area gas vs delivered; the model's coal-set LMP share.
 - Records: `docs/FINDING-pjm-next-12-selfsched-marginal-2026-09-29.md`, `docs/RESULT-pjm-next-12-2026-09-29.md`.
+
+## PJM-NEXT-13 — 2026-09-30 — availability falsified; replacement-cost fuel built and refuted at zero LP (owner: "Don't solve; record")
+
+- No solve, no shard, keeper unchanged (`2026-09-28-pjm-next8-exitfix`).
+- **Intake:** the IMM SOM monthly Platts spot fuel prices (east / west / production gas, NAPP / CAPP / PRB coal, 2019–2025). They were digitized exactly from the SOM figure's vector paths and verified against the report's printed year-over-year changes. Also the EIA mine-level coal supply regions and the EIA coal transportation rates.
+- **Card 1 (availability):** real monthly max ÷ model available MW is 0.95–0.99 in every year and lowest in the fit years. A monthly derate could remove ≤ 0.7–2.9 TWh. **Falsified.**
+- **Card 2 (gas basis):** at IMM production gas, real sub-CC-cost hours fall from 26–45 % to 1–8 %, so the floor gap is real. The owner ruled *"Hub + transport, joint with coal"*.
+  - Built as `pjm_replacement_cost_fuel` (default off).
+  - The zero-LP delta moves prices **up** in every year (+0.5 to +2.7 $/MWh; C3a 2019 → ~+22 %, 2020 → ~+26 %):
+    - measured transport cancels the CC hub gap;
+    - the rule-19 removal of the BIT sigmoid raises coal bids;
+    - arm coal bids exceed PJM's own measured offers in 32–61 % of floored hours.
+  - Owner ruling: *"Don't solve; record."* Matrix cell **R**.
+- **Card 3 (coal-set share):** model coal is marginal in 35 / 33 / 28 / 22 / 14 / 19 / 15 % of load-weighted zone-hours (upper bound) against the IMM's 24 / 18 / 14 / 10 / 9 / 10 / 8 %. The year ordering matches, so coal is not under-represented as a price-setter.
+- OPEN: COAL_BIT 2019/2021, CT_PEAKER 2021, C3a 2019/2020 and the all-year floor. Next: the plant-level supply point of the CCs that set the low-end price (production- vs market-area gas), and the keeper's own marginal units in low-price hours.
+- Records: `docs/FINDING-pjm-next-13-availability-gas-coalmarginal-2026-09-29.md`, `docs/RESULT-pjm-next-13-2026-09-30.md`.
