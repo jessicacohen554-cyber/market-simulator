@@ -1,0 +1,147 @@
+facility_name,facility_id,unit_id,year,unit_capacity_mw,plant_group,capacity_source,when_operable_cf
+Centralia,3845,BW21,2019,693.0,COAL,observed_peak,0.7223
+Centralia,3845,BW22,2019,720.0,COAL,observed_peak,0.7994
+Dave Johnston,4158,BW41,2019,110.0,COAL,observed_peak,0.7677
+Dave Johnston,4158,BW42,2019,115.0,COAL,observed_peak,0.7994
+Dave Johnston,4158,BW43,2019,248.0,COAL,observed_peak,0.7435
+Dave Johnston,4158,BW44,2019,379.0,COAL,observed_peak,0.7298
+Naughton,4162,1,2019,163.2,COAL,eia_exact,0.8896
+Naughton,4162,2,2019,217.6,COAL,eia_exact,0.8482
+Colstrip,6076,1,2019,340.0,COAL,observed_peak,0.8453
+Colstrip,6076,2,2019,339.0,COAL,observed_peak,0.8756
+Colstrip,6076,3,2019,823.7,COAL,eia_exact,0.8417
+Colstrip,6076,4,2019,823.7,COAL,eia_exact,0.8027
+Wyodak,6101,BW91,2019,376.0,COAL,observed_peak,0.7102
+Hunter,6165,1,2019,488.3,COAL,eia_exact,0.764
+Hunter,6165,2,2019,488.3,COAL,eia_exact,0.7766
+Hunter,6165,3,2019,495.6,COAL,eia_exact,0.745
+Bonanza,7790,1-1,2019,492.0,COAL,observed_peak,0.9223
+Jim Bridger,8066,BW71,2019,574.0,COAL,observed_peak,0.5767
+Jim Bridger,8066,BW72,2019,573.0,COAL,observed_peak,0.6052
+Jim Bridger,8066,BW73,2019,565.0,COAL,observed_peak,0.6772
+Jim Bridger,8066,BW74,2019,563.0,COAL,observed_peak,0.6675
+Huntington,8069,1,2019,498.0,COAL,eia_exact,0.708
+Huntington,8069,2,2019,517.5,COAL,eia_exact,0.5847
+North Valmy,8224,1,2019,277.2,COAL,eia_exact,0.5779
+North Valmy,8224,2,2019,289.8,COAL,eia_exact,0.6135
+Sunnyside Cogeneration Associates,50951,1,2019,58.1,COAL,eia_digits,0.9781
+Hardin Generating Station,55749,U1,2019,115.7,COAL,eia_digits,0.6818
+TS Power Plant,56224,001,2019,242.0,COAL,eia_exact,0.596
+Centralia,3845,BW21,2020,681.0,COAL,observed_peak,0.7355
+Centralia,3845,BW22,2020,716.0,COAL,observed_peak,0.7601
+Dave Johnston,4158,BW41,2020,111.0,COAL,observed_peak,0.7107
+Dave Johnston,4158,BW42,2020,113.0,COAL,observed_peak,0.7389
+Dave Johnston,4158,BW43,2020,247.0,COAL,observed_peak,0.6636
+Dave Johnston,4158,BW44,2020,371.0,COAL,observed_peak,0.6877
+Naughton,4162,1,2020,163.2,COAL,eia_exact,0.8985
+Naughton,4162,2,2020,217.6,COAL,eia_exact,0.8067
+Colstrip,6076,1,2020,184.0,COAL,observed_peak,0.9896
+Colstrip,6076,2,2020,254.0,COAL,observed_peak,0.7146
+Colstrip,6076,3,2020,823.7,COAL,eia_exact,0.7601
+Colstrip,6076,4,2020,823.7,COAL,eia_exact,0.7217
+Wyodak,6101,BW91,2020,371.0,COAL,observed_peak,0.6339
+Hunter,6165,1,2020,488.3,COAL,eia_exact,0.7544
+Hunter,6165,2,2020,488.3,COAL,eia_exact,0.751
+Hunter,6165,3,2020,495.6,COAL,eia_exact,0.6474
+Bonanza,7790,1-1,2020,492.0,COAL,observed_peak,0.818
+Jim Bridger,8066,BW71,2020,570.0,COAL,observed_peak,0.5514
+Jim Bridger,8066,BW72,2020,576.0,COAL,observed_peak,0.6289
+Jim Bridger,8066,BW74,2020,564.0,COAL,observed_peak,0.5929
+Huntington,8069,1,2020,498.0,COAL,eia_exact,0.5736
+Sunnyside Cogeneration Associates,50951,1,2020,58.1,COAL,eia_digits,0.9335
+Hardin Generating Station,55749,U1,2020,115.7,COAL,eia_digits,0.5804
+TS Power Plant,56224,001,2020,242.0,COAL,eia_exact,0.561
+Centralia,3845,BW22,2021,712.0,COAL,observed_peak,0.8447
+Dave Johnston,4158,BW41,2021,107.0,COAL,observed_peak,0.7212
+Dave Johnston,4158,BW42,2021,115.0,COAL,observed_peak,0.7831
+Dave Johnston,4158,BW43,2021,241.0,COAL,observed_peak,0.6425
+Dave Johnston,4158,BW44,2021,368.0,COAL,observed_peak,0.61
+Naughton,4162,1,2021,163.2,COAL,eia_exact,0.918
+Naughton,4162,2,2021,217.6,COAL,eia_exact,0.7609
+Colstrip,6076,3,2021,823.7,COAL,eia_exact,0.8841
+Colstrip,6076,4,2021,823.7,COAL,eia_exact,0.8657
+Wyodak,6101,BW91,2021,376.0,COAL,observed_peak,0.6129
+Hunter,6165,1,2021,488.3,COAL,eia_exact,0.7608
+Hunter,6165,2,2021,488.3,COAL,eia_exact,0.7683
+Hunter,6165,3,2021,495.6,COAL,eia_exact,0.8111
+Bonanza,7790,1-1,2021,491.0,COAL,observed_peak,0.8215
+Jim Bridger,8066,BW71,2021,574.0,COAL,observed_peak,0.584
+Jim Bridger,8066,BW72,2021,576.0,COAL,observed_peak,0.6019
+Jim Bridger,8066,BW73,2021,561.0,COAL,observed_peak,0.5613
+Jim Bridger,8066,BW74,2021,577.0,COAL,observed_peak,0.5743
+Huntington,8069,1,2021,498.0,COAL,eia_exact,0.777
+Huntington,8069,2,2021,517.5,COAL,eia_exact,0.7505
+North Valmy,8224,2,2021,289.8,COAL,eia_exact,0.6105
+Sunnyside Cogeneration Associates,50951,1,2021,58.1,COAL,eia_digits,0.9599
+Hardin Generating Station,55749,U1,2021,115.7,COAL,eia_digits,0.6441
+TS Power Plant,56224,001,2021,242.0,COAL,eia_exact,0.7164
+Centralia,3845,BW22,2022,770.0,COAL,observed_peak,0.7799
+Dave Johnston,4158,BW41,2022,109.0,COAL,observed_peak,0.7079
+Dave Johnston,4158,BW42,2022,114.0,COAL,observed_peak,0.8063
+Dave Johnston,4158,BW43,2022,242.0,COAL,observed_peak,0.6236
+Naughton,4162,1,2022,163.2,COAL,eia_exact,0.8499
+Naughton,4162,2,2022,217.6,COAL,eia_exact,0.7094
+Colstrip,6076,3,2022,823.7,COAL,eia_exact,0.9119
+Colstrip,6076,4,2022,823.7,COAL,eia_exact,0.8842
+Wyodak,6101,BW91,2022,376.0,COAL,observed_peak,0.751
+Hunter,6165,1,2022,488.3,COAL,eia_exact,0.7534
+Hunter,6165,2,2022,488.3,COAL,eia_exact,0.723
+Hunter,6165,3,2022,495.6,COAL,eia_exact,0.6883
+Bonanza,7790,1-1,2022,490.0,COAL,observed_peak,0.8553
+Jim Bridger,8066,BW71,2022,581.0,COAL,observed_peak,0.6193
+Jim Bridger,8066,BW72,2022,589.0,COAL,observed_peak,0.6061
+Jim Bridger,8066,BW73,2022,576.0,COAL,observed_peak,0.5603
+Jim Bridger,8066,BW74,2022,572.0,COAL,observed_peak,0.6327
+Huntington,8069,1,2022,498.0,COAL,eia_exact,0.7477
+Huntington,8069,2,2022,517.5,COAL,eia_exact,0.7184
+Sunnyside Cogeneration Associates,50951,1,2022,58.1,COAL,eia_digits,0.9743
+Hardin Generating Station,55749,U1,2022,115.7,COAL,eia_digits,0.719
+TS Power Plant,56224,001,2022,242.0,COAL,eia_exact,0.7839
+Centralia,3845,BW22,2023,712.0,COAL,observed_peak,0.8374
+Dave Johnston,4158,BW41,2023,101.0,COAL,observed_peak,0.6216
+Dave Johnston,4158,BW42,2023,107.0,COAL,observed_peak,0.6014
+Dave Johnston,4158,BW43,2023,227.0,COAL,observed_peak,0.6261
+Dave Johnston,4158,BW44,2023,369.0,COAL,observed_peak,0.6028
+Naughton,4162,1,2023,163.2,COAL,eia_exact,0.7647
+Naughton,4162,2,2023,217.6,COAL,eia_exact,0.6998
+Colstrip,6076,3,2023,823.7,COAL,eia_exact,0.8896
+Colstrip,6076,4,2023,823.7,COAL,eia_exact,0.8711
+Wyodak,6101,BW91,2023,376.0,COAL,observed_peak,0.6804
+Bonanza,7790,1-1,2023,493.0,COAL,observed_peak,0.8783
+Sunnyside Cogeneration Associates,50951,1,2023,58.1,COAL,eia_digits,0.899
+Hardin Generating Station,55749,U1,2023,115.7,COAL,eia_digits,0.6177
+TS Power Plant,56224,001,2023,242.0,COAL,eia_exact,0.6551
+Centralia,3845,BW22,2024,708.0,COAL,observed_peak,0.748
+Dave Johnston,4158,BW41,2024,102.0,COAL,observed_peak,0.6343
+Dave Johnston,4158,BW42,2024,107.0,COAL,observed_peak,0.6237
+Dave Johnston,4158,BW43,2024,240.0,COAL,observed_peak,0.6744
+Dave Johnston,4158,BW44,2024,364.0,COAL,observed_peak,0.6274
+Naughton,4162,1,2024,163.2,COAL,eia_exact,0.5813
+Naughton,4162,2,2024,217.6,COAL,eia_exact,0.5762
+Colstrip,6076,3,2024,823.7,COAL,eia_exact,0.8483
+Colstrip,6076,4,2024,823.7,COAL,eia_exact,0.8834
+Wyodak,6101,BW91,2024,376.0,COAL,observed_peak,0.6949
+Bonanza,7790,1-1,2024,490.0,COAL,observed_peak,0.7973
+Sunnyside Cogeneration Associates,50951,1,2024,58.1,COAL,eia_digits,0.9082
+Hardin Generating Station,55749,U1,2024,115.7,COAL,eia_digits,0.6949
+TS Power Plant,56224,001,2024,242.0,COAL,eia_exact,0.6813
+Centralia,3845,BW22,2025,710.0,COAL,observed_peak,0.7808
+Dave Johnston,4158,BW41,2025,102.0,COAL,observed_peak,0.7396
+Dave Johnston,4158,BW42,2025,108.0,COAL,observed_peak,0.7686
+Dave Johnston,4158,BW43,2025,229.0,COAL,observed_peak,0.8049
+Dave Johnston,4158,BW44,2025,359.0,COAL,observed_peak,0.7659
+Naughton,4162,1,2025,163.2,COAL,eia_exact,0.633
+Naughton,4162,2,2025,217.6,COAL,eia_exact,0.5952
+Colstrip,6076,3,2025,823.7,COAL,eia_exact,0.8747
+Colstrip,6076,4,2025,823.7,COAL,eia_exact,0.8404
+Wyodak,6101,BW91,2025,383.0,COAL,observed_peak,0.7504
+Hunter,6165,1,2025,488.3,COAL,eia_exact,0.5912
+Hunter,6165,2,2025,488.3,COAL,eia_exact,0.6001
+Hunter,6165,3,2025,495.6,COAL,eia_exact,0.5795
+Bonanza,7790,1-1,2025,494.0,COAL,observed_peak,0.9014
+Jim Bridger,8066,BW73,2025,561.0,COAL,observed_peak,0.5938
+Jim Bridger,8066,BW74,2025,564.0,COAL,observed_peak,0.6787
+Huntington,8069,1,2025,498.0,COAL,eia_exact,0.5771
+Sunnyside Cogeneration Associates,50951,1,2025,58.1,COAL,eia_digits,0.8513
+Hardin Generating Station,55749,U1,2025,115.7,COAL,eia_digits,0.5976
+TS Power Plant,56224,001,2025,242.0,COAL,eia_exact,0.7574

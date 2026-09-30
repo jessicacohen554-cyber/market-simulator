@@ -736,3 +736,22 @@ Zero-LP record: `docs/handoffs/FINDING-nwppnext12-layup-guard-and-coal-availabil
 (rule 35); `audit_keepers` PASS; promotion completeness OK. Determination unchanged: NOT-YET on {dispatch_corr},
 C4 coal 2023 r 0.695.
 Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext12-boardman-membership-*.md`.
+
+## NWPP-NEXT-13 — 2026-09-30 — coal WEFOR relief blocked; per-unit attribution (keeper #18)
+
+Zero-LP record: `docs/handoffs/FINDING-nwppnext13-wefor-and-perunit-phase0-2026-09-30.md`.
+
+- **Lever 1, coal WEFOR double count: identified, not armable.** On the screened set, W_s 4.0–4.6 % < X_s 16–24 %
+  in every year (residual 0). But `unit_outage_dispatched_bin_denominator` is **R** on NWPP: it divides by bins that
+  still carry retired exit cohorts (Centralia BW21, Colstrip 1–2), leaving Centralia BW22 250–280 MW available through
+  its measured full outages. The screened share inherits the dilution; `wefor_residual_short_screened_coal` → G.
+- **Lever 2, Clark CC routing: per-unit crosswalk is right (EIA-860 GT peakers).** Keeper #17's Clark CC was
+  available 0.002–0.68 TWh/yr vs 0.43–0.86 TWh generated. Two tranche-deriver repairs (COAL-SUB family token; coal
+  fuel guard) make the per-unit tranche artifact correct; Jim Bridger gets a measured coal row (must-run 953.5 →
+  351.8 MW).
+- **Solve:** seven year-isolated shards at `f2cfda46`, all hard stops PASS. 0 of 161 records change status.
+  C4 coal 2023 0.695 → 0.662 (regression), C4 gas 2023 0.844 → 0.771, C4 coal 2024 0.739 → 0.755.
+
+**Owner card: "Promote + prune #17".** Keeper #18 `2026-09-30-nwppnext13-per-unit-attribution`. #17 pruned (rule 35);
+`audit_keepers` PASS; promotion completeness OK. Determination unchanged: NOT-YET on {dispatch_corr}, C4 coal 2023
+r 0.662. Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext13-perunit-attribution-*.md`.

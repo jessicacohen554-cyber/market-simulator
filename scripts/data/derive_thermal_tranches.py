@@ -636,11 +636,18 @@ def _fleet_nameplate_and_group(
             if m and float(m) > 0:
                 cap[(int(c), str(g))] = cap.get((int(c), str(g)), 0.0) + float(m)
     else:
+        from market_sim.config.plant_taxonomy import is_coal_class
+
         for gen in load_fleet_from_csv(iso, get_iso_config(iso)):
             code = int(gen.plant_code)
             if code <= 0 or not gen.plant_group:
                 continue
-            key = (code, gen.plant_group)
+            # COAL-SUB (2026-09-25): a coal generator carries its subclass; the
+            # artifact keys on the coal family token, as _vintage_fleet_capacity
+            # does, or every coal bin fails the _THERMAL_GROUPS filter and the
+            # re-derive silently emits no coal rows (NWPP-NEXT-13).
+            group = "COAL" if is_coal_class(gen.plant_group) else gen.plant_group
+            key = (code, group)
             cap[key] = cap.get(key, 0.0) + float(gen.pmax_mw)
     primary: dict[int, str] = {}
     best: dict[int, float] = {}
@@ -654,6 +661,7 @@ def _per_unit_group_resolver(
     cap: dict[tuple[int, str], float],
     primary: dict[int, str],
     iso: str,
+    unit_fuel: dict[tuple[int, str], str] | None = None,
 ) -> "callable":
     """Build the ``group_of`` callback for per-unit CAMPD attribution.
 
@@ -690,6 +698,17 @@ def _per_unit_group_resolver(
     Rule 21 ``[R-DOF]``: zero free parameters — no threshold, no scalar, nothing
     fitted to any residual. Rule 23 ``[R-FROZEN-DERIVE]``: a crosswalk repair
     justified by the attribution defect, not a re-derivation against a residual.
+
+    THE COAL GUARD (NWPP-NEXT-13). The shared crosswalk is a GAS-class
+    construction: :func:`~scripts.lib.campd_measured_classes.campd_unittype_class`
+    resolves every boiler to a steam-gas class and leaves "the caller" to filter
+    coal on fuel. At a plant carrying BOTH a ``COAL`` and an ``ST_GAS`` bin (a
+    partial coal-to-gas conversion: NWPP Naughton 4162, North Valmy 8224) the
+    crosswalk therefore put the coal boilers' gross on ``ST_GAS`` and the COAL
+    row vanished. ``unit_fuel`` is :func:`_unit_fuel_by_unit` (CAMPD's own
+    ``primaryFuelInfo``): a unit it classes ``COAL`` at a plant carrying a
+    ``COAL`` bin routes there. Inert at a plant with no ``COAL`` bin (every NYISO
+    plant), zero parameters.
     """
     from market_sim.config.paths import RAW_DATA_DIR
     from market_sim.data.chp import _chp_by_plant
@@ -711,6 +730,12 @@ def _per_unit_group_resolver(
     memo: dict[tuple[int, str], str | None] = {}
 
     def group_of(plant_id: int, unit_id: str, unit_type: str) -> str | None:
+        if (
+            unit_fuel
+            and "COAL" in groups_by_plant.get(plant_id, {})
+            and unit_fuel.get((plant_id, str(unit_id))) == "COAL"
+        ):
+            return "COAL"
         key = (plant_id, unit_type)
         if key not in memo:
             klass = corrected_unit_class(
@@ -2176,7 +2201,12 @@ def main() -> None:
             # own series over their own denominator. See
             # :func:`_per_unit_group_resolver`.
             net_by_group = campd.plant_group_hourly_net(
-                df, factors, year, _per_unit_group_resolver(cap, primary, iso)
+                df,
+                factors,
+                year,
+                _per_unit_group_resolver(
+                    cap, primary, iso, _unit_fuel_by_unit(tuple(states), year)
+                ),
             )
             net = {}
         else:
