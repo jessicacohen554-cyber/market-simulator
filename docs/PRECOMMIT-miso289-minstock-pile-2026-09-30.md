@@ -7,7 +7,7 @@ LP      : none. Fleet-only rebuilds + keeper committed P1 hourly sidecars + run 
 PROBE   : scripts/probes/_miso289_minstock_precheck.py
           --census : identification only (measured, §2; no price computed)
           default  : INC / PILE0 / CAND emulation (run AFTER this file is pushed)
-STATUS  : pre-registration. No price or dispatch number in §5 exists yet.
+STATUS  : pre-registration. §3 census measured; no price or dispatch number exists yet.
 ```
 
 ## 1. The candidate (CAND)
@@ -54,7 +54,21 @@ Per yard row (the keeper's `coal_yard_groups`) and solve year `Y`:
 
 ## 3. Census (measured with `--census`, identification only)
 
-CENSUS_TABLE
+| year | stock yrs | yard rows (id'd) | id'd MW / rowed MW | d_min p10/p50/p90 | MW-wtd d_min | opening < target | S_floor (M MMBtu) | annual budget INC → CAND | cut |
+|---|---|---|---|---|---:|---|---:|---|---:|
+| 2019 | 2018–2018 | 83 (74) | 57.8 / 58.3 GW | 6.0/46.9/132.1 | 52.9 | 2 (3.5 GW) | 412.3 | 3737.9 → 3325.6 | 11.0 % |
+| 2020 | 2018–2019 | 75 (68) | 55.2 / 55.6 GW | 7.3/37.6/119.1 | 46.4 | 0 (0.0 GW) | 329.4 | 3602.2 → 3272.8 | 9.1 % |
+| 2021 | 2018–2020 | 74 (70) | 54.9 / 55.2 GW | 3.8/37.5/114.2 | 46.1 | 1 (0.3 GW) | 277.1 | 3333.7 → 3056.5 | 8.3 % |
+| 2022 | 2019–2021 | 69 (66) | 52.9 / 53.2 GW | 1.6/31.9/128.0 | 43.0 | 0 (0.0 GW) | 220.6 | 2802.4 → 2581.9 | 7.9 % |
+| 2023 | 2020–2022 | 57 (56) | 45.6 / 45.7 GW | 3.3/32.4/113.9 | 41.3 | 0 (0.0 GW) | 221.0 | 2810.1 → 2589.0 | 7.9 % |
+| 2024 | 2021–2023 | 54 (53) | 44.5 / 44.5 GW | 4.2/32.9/105.7 | 41.8 | 0 (0.0 GW) | 227.6 | 2970.3 → 2742.8 | 7.7 % |
+| 2025 | 2022–2024 | 57 (54) | 48.8 / 49.0 GW | 1.3/43.7/102.5 | 51.7 | 0 (0.0 GW) | 255.8 | 2707.7 → 2451.9 | 9.4 % |
+
+Reading: identified on 97–100 % of rowed coal MW in every year; the floor removes **7.7–11.0 %** of the
+annual yard budget (largest in 2019, the one-year window, as §2 predicted); at most two yards open
+below target. Admissible and non-degenerate in every year 2019–2025. Fleet-level cross-check
+(MISO-BA, same window rule): the 2022 floored annual cap is 130.0 Mt against a measured 2022 burn of
+130.2 Mt. That burn is an outcome and is quoted only as a sanity check; it sizes nothing.
 
 ## 4. The emulator and its gate
 
