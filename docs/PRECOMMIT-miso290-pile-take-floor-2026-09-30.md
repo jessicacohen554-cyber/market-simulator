@@ -58,7 +58,17 @@ Per yard row (the keeper's `coal_yard_groups`) and solve year `Y`:
 
 ## 3. Census (measured with `--census`, identification only)
 
-CENSUS_TABLE
+| year | S_max yrs | rows (w/ inputs) | MW w/ inputs / rowed | contract share, MW-wtd (p10/p50/p90) | C/R | rows floored (MW) | 1st floored month, p50 | Jan–Apr cum. floor | annual floor / min-stock ceiling (M MMBtu) | clip cells ceil / cap | shortfall $/MMBtu p50 |
+|---|---|---|---|---|---:|---|---:|---:|---|---|---:|
+| 2019 | [2018] | 83 (76) | 58.2 / 58.3 GW | 0.94 (0.8/1.0/1.0) | 0.95 | 74 (57.7 GW) | 1 | 761 | 2714 / 3326 (82 %) | 12 / 102 | 2.04 |
+| 2020 | [2018, 2019] | 75 (68) | 55.3 / 55.6 GW | 0.95 (0.78/1.0/1.0) | 0.95 | 66 (54.9 GW) | 1 | 687 | 2532 / 3273 (77 %) | 12 / 177 | 1.98 |
+| 2021 | [2018, 2019, 2020] | 74 (68) | 54.9 / 55.2 GW | 0.96 (0.84/1.0/1.0) | 0.96 | 64 (53.6 GW) | 1 | 615 | 2224 / 3056 (73 %) | 0 / 57 | 2.01 |
+| 2022 | [2019, 2020, 2021] | 69 (62) | 52.9 / 53.2 GW | 0.96 (0.88/1.0/1.0) | 0.97 | 56 (49.8 GW) | 2 | 362 | 1739 / 2582 (67 %) | 0 / 69 | 2.24 |
+| 2023 | [2020, 2021, 2022] | 57 (53) | 45.6 / 45.7 GW | 0.95 (0.83/1.0/1.0) | 0.96 | 47 (42.7 GW) | 2 | 383 | 1728 / 2589 (67 %) | 0 / 82 | 2.39 |
+| 2024 | [2021, 2022, 2023] | 54 (51) | 44.5 / 44.5 GW | 0.97 (0.88/1.0/1.0) | 0.97 | 50 (44.3 GW) | 1 | 552 | 1925 / 2743 (70 %) | 0 / 106 | 2.33 |
+| 2025 | [2022, 2023, 2024] | 57 (52) | 48.3 / 49.0 GW | 0.97 (0.93/1.0/1.0) | 0.97 | 48 (46.4 GW) | 2 | 467 | 1746 / 2452 (71 %) | 0 / 74 | 2.42 |
+
+Reading: MISO coal is ~95 % contracted in every year, so `C ≈ R` and the band between floor and ceiling is narrow: the annual floor is **67–82 %** of the min-stock ceiling, positive on 48–74 yards (87–99 % of rowed MW), and binding from January or February for the median yard. Tightest in 2019–2020, where the one- and two-year `S_max` windows apply (as §2 predicted). 2022 and 2023 carry the most pile headroom (`S_max − S_dec`), so their winter floors are the weakest (Jan–Apr cumulative 362 / 383 M MMBtu ≈ 34–36 TWh at HR 10.66, against a 2022 bench Jan–Apr of 74.7 TWh). Zero cells clip to the min-stock ceiling in any year; one yard row in each of 2019 and 2020 clips to the NWPP ceiling in all 12 months; 57–177 cells clip to capacity. Admissible and non-degenerate in all seven years.
 
 ## 4. The emulator and the solver fix
 
