@@ -114,3 +114,15 @@ plus `scripts/replay_keeper.py`):
 Still all INERT, so the committed keeper remains the control. After the merge: `check_cache_key_registration` ok,
 matrix guard exit 0, and the SPP tests pass. The only failing test is the MISO solve-surface pin, which fails the same
 way on `main`.
+
+## Addendum B (2026-09-30, before any solve) — G-DRIFT over the PR's own merge
+
+The PR merged as `264dbb2af75fdd73f3ff5450bef110bce37ebff8`, **the SHA every shard pins**. That merge also brings in
+`main` commits beyond Addendum A's base: R-CAISO-15 `431bbb16`, `bb9f1e82`, `b580fabd` and NYISO-NEXT-15 `a16e4828`.
+
+| commit(s) | files | verdict | reason |
+|---|---|---|---|
+| NYISO-NEXT-15 `a16e4828` | `lp/rows.py` (`_build_import_link_rows`), `lp/model.py`, `lp/__init__.py`, `pipeline/kwargs.py`, `interchange/nyiso.py`, `scenarios.py`, `run_calibration.py` | INERT | `nyiso_import_landing_band`: default False, `iso == "NYISO"` gated; the rows are built only when their kwargs are present |
+| R-CAISO-15 `431bbb16` `bb9f1e82` `b580fabd` | `run_calibration_full.py::_bundle_caiso_clock_repair` and CAISO bundle/benchmark files | INERT | Returns False for any non-CAISO bundle; the rest is CAISO promotion files and docs |
+
+Still all INERT, so the committed keeper remains the control.

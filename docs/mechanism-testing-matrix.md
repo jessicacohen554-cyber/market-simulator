@@ -18102,6 +18102,15 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   outages; 860M is closed.
 - **Do not redo** a CT outage layer on these sources. Re-open only on a published SPP CT-class (or unit-level) calendar-hour outage
   series.
+- **OWNER CARDS 2026-09-30 — "Build LOLE-EFOR CT swap", then "Solve all 7 years", then "Don't promote (Rec.)".** The field
+  `spp_ct_lole_efor` is built (default off). Its seven-year solve is in `RESULT-spp-104-ct-lole-efor-2026-09-30.md`:
+  - **Train improves:** 2023–25 stays CALIBRATED and moves toward RT (C3a 2024 −8.6 → +1.4 %; C3b better in 5 of 7
+    years). 2019/20 C3a is +3.1 / +1.8 pts worse.
+  - **Rejected:** unserved energy rises in 2022/24/25, one knife-edge new D-4 row (2021, plant 6095), and the input
+    over-states CT outage against SPP's own published outage (rule 14). Cell **R**.
+  - **Reading:** the 2023+ keeper is short of gas unavailability in the scarce hours. The admissible vehicle is a
+    gas-family outage allocation tied to SPP's measured hourly outage, with an SPP-own CT/ST split. That split does not
+    exist yet.
 
 **SPP-103 (2026-09-29, PAIR POSTURE + PRICE FIX, DESIGN LANE, ZERO LP —
 `docs/handoffs/DESIGN-spp-103-pair-posture-price-fix-2026-09-29.md`, probe `scripts/probes/_spp103_pairing_requirement.py`;
