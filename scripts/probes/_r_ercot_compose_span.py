@@ -62,6 +62,8 @@ MUST_AGREE = (
     # R-ERCOT-6: the unit-scoped window x partial composition must be uniform.
     "ercot_dam_availability_event_cap_unit_scoped",
     "outage_source",
+    # R-ERCOT-17: the pooled South-Texas gas basis must be uniform across legs.
+    "ercot_south_texas_pooled_basis",
 ) + FIELDS
 
 

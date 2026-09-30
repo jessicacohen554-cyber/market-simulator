@@ -1,0 +1,327 @@
+{
+ "2021": {
+  "c3a": {
+   "rt_lw": 39.26,
+   "model_lw": 33.65,
+   "pct": -14.3,
+   "pct_if_upstate_exact": 4.6,
+   "upstate_load_share": 0.35
+  },
+  "zones": {
+   "Capital_Hudson": {
+    "model": 46.58,
+    "rt": 44.21,
+    "twh": 21.09
+   },
+   "Long_Island": {
+    "model": 49.61,
+    "rt": 54.86,
+    "twh": 20.28
+   },
+   "Lower_Hudson": {
+    "model": 47.49,
+    "rt": 41.12,
+    "twh": 8.66
+   },
+   "NYC": {
+    "model": 47.65,
+    "rt": 42.49,
+    "twh": 48.82
+   },
+   "Upstate_West": {
+    "model": 7.3,
+    "rt": 28.51,
+    "twh": 53.13
+   }
+  },
+  "upstate_pin": {
+   "h_eq_pooled_node": 8403,
+   "h_le_1p40": 4727,
+   "h_le_0": 3110,
+   "h_below_capital_minus_5": 8538,
+   "median": 1.4
+  },
+  "hydro": {
+   "model_twh": 24.32,
+   "eia923_twh": 28.76,
+   "import_model_twh": 29.1
+  },
+  "cutset": {
+   "model_link_cap_mean_mw": 2014.0,
+   "total_east_flow_mean_mw": 3677.0,
+   "central_east_flow_mean_mw": 1788.0,
+   "share_h_total_east_above_model_cap": 0.99,
+   "non_ce_mean_mw": 1889.0,
+   "non_ce_regression_r2": 0.43,
+   "non_ce_regression_coef": {
+    "const": 1386.32,
+    "NE_AC": 0.05,
+    "PJ_AC": 0.5,
+    "DC_downstate": -0.17,
+    "HQ": -0.08,
+    "OH": 0.32,
+    "MOSES_SOUTH": 0.2
+   }
+  }
+ },
+ "2022": {
+  "c3a": {
+   "rt_lw": 81.12,
+   "model_lw": 70.07,
+   "pct": -13.6,
+   "pct_if_upstate_exact": -1.2,
+   "upstate_load_share": 0.347
+  },
+  "zones": {
+   "Capital_Hudson": {
+    "model": 90.46,
+    "rt": 97.02,
+    "twh": 21.26
+   },
+   "Long_Island": {
+    "model": 95.15,
+    "rt": 97.63,
+    "twh": 20.1
+   },
+   "Lower_Hudson": {
+    "model": 92.67,
+    "rt": 85.72,
+    "twh": 8.68
+   },
+   "NYC": {
+    "model": 92.53,
+    "rt": 87.24,
+    "twh": 49.74
+   },
+   "Upstate_West": {
+    "model": 27.53,
+    "rt": 56.67,
+    "twh": 52.91
+   }
+  },
+  "upstate_pin": {
+   "h_eq_pooled_node": 7769,
+   "h_le_1p40": 3210,
+   "h_le_0": 1263,
+   "h_below_capital_minus_5": 8744,
+   "median": 14.77
+  },
+  "hydro": {
+   "model_twh": 24.69,
+   "eia923_twh": 27.43,
+   "import_model_twh": 27.42
+  },
+  "cutset": {
+   "model_link_cap_mean_mw": 1818.0,
+   "total_east_flow_mean_mw": 3171.0,
+   "central_east_flow_mean_mw": 1544.0,
+   "share_h_total_east_above_model_cap": 0.961,
+   "non_ce_mean_mw": 1626.0,
+   "non_ce_regression_r2": 0.73,
+   "non_ce_regression_coef": {
+    "const": 830.73,
+    "NE_AC": -0.19,
+    "PJ_AC": 0.53,
+    "DC_downstate": -0.0,
+    "HQ": -0.42,
+    "OH": 0.33,
+    "MOSES_SOUTH": 0.52
+   }
+  }
+ },
+ "2023": {
+  "c3a": {
+   "rt_lw": 32.25,
+   "model_lw": 29.98,
+   "pct": -7.0,
+   "pct_if_upstate_exact": 0.4,
+   "upstate_load_share": 0.348
+  },
+  "zones": {
+   "Capital_Hudson": {
+    "model": 35.34,
+    "rt": 34.58,
+    "twh": 20.11
+   },
+   "Long_Island": {
+    "model": 37.6,
+    "rt": 41.05,
+    "twh": 19.38
+   },
+   "Lower_Hudson": {
+    "model": 35.99,
+    "rt": 32.49,
+    "twh": 8.1
+   },
+   "NYC": {
+    "model": 35.97,
+    "rt": 33.47,
+    "twh": 48.28
+   },
+   "Upstate_West": {
+    "model": 18.39,
+    "rt": 25.32,
+    "twh": 51.17
+   }
+  },
+  "upstate_pin": {
+   "h_eq_pooled_node": 5533,
+   "h_le_1p40": 1441,
+   "h_le_0": 723,
+   "h_below_capital_minus_5": 7519,
+   "median": 18.67
+  },
+  "hydro": {
+   "model_twh": 26.1,
+   "eia923_twh": 28.4,
+   "import_model_twh": 24.01
+  },
+  "cutset": {
+   "model_link_cap_mean_mw": 1761.0,
+   "total_east_flow_mean_mw": 3005.0,
+   "central_east_flow_mean_mw": 1328.0,
+   "share_h_total_east_above_model_cap": 0.964,
+   "non_ce_mean_mw": 1677.0,
+   "non_ce_regression_r2": 0.62,
+   "non_ce_regression_coef": {
+    "const": 921.66,
+    "NE_AC": -0.16,
+    "PJ_AC": 0.56,
+    "DC_downstate": -0.13,
+    "HQ": -0.31,
+    "OH": 0.4,
+    "MOSES_SOUTH": 0.59
+   }
+  }
+ },
+ "2024": {
+  "c3a": {
+   "rt_lw": 38.12,
+   "model_lw": 37.17,
+   "pct": -2.5,
+   "pct_if_upstate_exact": -2.8,
+   "upstate_load_share": 0.346
+  },
+  "zones": {
+   "Capital_Hudson": {
+    "model": 38.49,
+    "rt": 36.79,
+    "twh": 20.63
+   },
+   "Long_Island": {
+    "model": 40.08,
+    "rt": 42.23,
+    "twh": 19.75
+   },
+   "Lower_Hudson": {
+    "model": 39.13,
+    "rt": 37.22,
+    "twh": 8.47
+   },
+   "NYC": {
+    "model": 39.08,
+    "rt": 39.52,
+    "twh": 49.58
+   },
+   "Upstate_West": {
+    "model": 33.4,
+    "rt": 33.06,
+    "twh": 52.1
+   }
+  },
+  "upstate_pin": {
+   "h_eq_pooled_node": 5297,
+   "h_le_1p40": 0,
+   "h_le_0": 0,
+   "h_below_capital_minus_5": 2110,
+   "median": 29.26
+  },
+  "hydro": {
+   "model_twh": 26.74,
+   "eia923_twh": 27.88,
+   "import_model_twh": 22.58
+  },
+  "cutset": {
+   "model_link_cap_mean_mw": 2854.0,
+   "total_east_flow_mean_mw": 3220.0,
+   "central_east_flow_mean_mw": 1759.0,
+   "share_h_total_east_above_model_cap": 0.634,
+   "non_ce_mean_mw": 1461.0,
+   "non_ce_regression_r2": 0.61,
+   "non_ce_regression_coef": {
+    "const": 374.45,
+    "NE_AC": -0.15,
+    "PJ_AC": 0.53,
+    "DC_downstate": 0.05,
+    "HQ": -0.32,
+    "OH": 0.34,
+    "MOSES_SOUTH": 0.49
+   }
+  }
+ },
+ "2025": {
+  "c3a": {
+   "rt_lw": 66.43,
+   "model_lw": 58.91,
+   "pct": -11.3,
+   "pct_if_upstate_exact": -8.7,
+   "upstate_load_share": 0.342
+  },
+  "zones": {
+   "Capital_Hudson": {
+    "model": 62.98,
+    "rt": 63.46,
+    "twh": 21.1
+   },
+   "Long_Island": {
+    "model": 64.62,
+    "rt": 70.35,
+    "twh": 19.96
+   },
+   "Lower_Hudson": {
+    "model": 63.84,
+    "rt": 63.17,
+    "twh": 8.55
+   },
+   "NYC": {
+    "model": 62.79,
+    "rt": 67.16,
+    "twh": 50.11
+   },
+   "Upstate_West": {
+    "model": 50.5,
+    "rt": 55.52,
+    "twh": 51.87
+   }
+  },
+  "upstate_pin": {
+   "h_eq_pooled_node": 4624,
+   "h_le_1p40": 0,
+   "h_le_0": 0,
+   "h_below_capital_minus_5": 4134,
+   "median": 42.67
+  },
+  "hydro": {
+   "model_twh": 24.06,
+   "eia923_twh": 24.1,
+   "import_model_twh": 19.47
+  },
+  "cutset": {
+   "model_link_cap_mean_mw": 2856.0,
+   "total_east_flow_mean_mw": 3129.0,
+   "central_east_flow_mean_mw": 1664.0,
+   "share_h_total_east_above_model_cap": 0.596,
+   "non_ce_mean_mw": 1465.0,
+   "non_ce_regression_r2": 0.63,
+   "non_ce_regression_coef": {
+    "const": 1226.1,
+    "NE_AC": -0.16,
+    "PJ_AC": 0.5,
+    "DC_downstate": -0.44,
+    "HQ": -0.18,
+    "OH": 0.26,
+    "MOSES_SOUTH": 0.32
+   }
+  }
+ }
+}
