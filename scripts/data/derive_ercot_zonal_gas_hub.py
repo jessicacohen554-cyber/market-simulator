@@ -22,6 +22,16 @@ methodology as the committed 2023-2025 rows
   ``--waha-annual-avg`` (and ``--waha-source``) are passed explicitly. Absent
   zones degrade to a zero spread in ``apply_ercot_zonal_gas_basis``.
 
+* **South_Texas_Pooled** (``--pooled-south-texas``; R-ERCOT-17, owner ruling
+  2026-09-29 "Pool South Texas") — ONE quantity-weighted delivered price over
+  the UNION of the South and South_Central Sch5 reporters, minus HH. The South
+  row alone is three small plants (3630, 3631, 59391) pricing ~4.3 GW of South
+  gas; pooling removes that thin-sample misalignment with no threshold and no
+  free parameter (weights are the measured Sch5 MMBtu). Written as its own
+  ``zone == "South_Texas_Pooled"`` rows — the South / South_Central rows are
+  never touched — and read only under
+  ``ScenarioConfig.ercot_south_texas_pooled_basis``.
+
 A partial year (e.g. 2026 with receipts published Jan-Apr) is labelled
 ``PARTIAL YEAR`` in ``source`` and uses the HH mean over the same months.
 Existing rows are never modified.
@@ -31,6 +41,8 @@ Usage:
         --f923 /path/EIA923_Schedules_2_3_4_5_M_12_2023_Final_Revision.xlsx
     python scripts/data/derive_ercot_zonal_gas_hub.py --year 2022 \
         --f923 /path/EIA923_Schedules_2_3_4_5_M_12_2022_Final_Revision.xlsx
+    python scripts/data/derive_ercot_zonal_gas_hub.py --pooled-south-texas \
+        --f923 /path/EIA923_Schedules_2_3_4_5_M_12_2020_Final_Revision.xlsx
 """
 
 from __future__ import annotations
@@ -70,11 +82,15 @@ _MONTH_ABBR = (
 
 # Committed per-zone conventions (data/raw/ercot_zonal_gas_hub.csv 2023-2025).
 _SCH5_ZONES = ("North", "South_Central", "South")
+# R-ERCOT-17 pooled South-Texas row: its own zone label, the union it pools.
+POOLED_SOUTH_TEXAS_ZONE = "South_Texas_Pooled"
+_POOLED_SOUTH_TEXAS_MEMBERS = ("South_Central", "South")
 _HUB_LABEL = {
     "North": "North/East TX",
     "Northeast": "North/East TX",
     "South_Central": "South TX",
     "South": "South TX/Agua Dulce",
+    POOLED_SOUTH_TEXAS_ZONE: "South TX (pooled South+South_Central)",
     "Houston": "Houston Ship Channel",
     "West": "Waha",
     "Panhandle": "Waha",
@@ -151,6 +167,16 @@ def _zone_stats(
             continue
         price = (g["usd_mmbtu"] * g["mmbtu"]).sum() / g["mmbtu"].sum()
         out[zone] = (price - hh_mean, g["plant_id"].nunique(), g["mmbtu"].sum())
+    # Pooled South-Texas row: the same estimator over the union of the two
+    # zones' receipts (so it is the MMBtu-weighted mean of their two rows).
+    pool = sub[sub["zone"].isin(_POOLED_SOUTH_TEXAS_MEMBERS)]
+    if not pool.empty:
+        price = (pool["usd_mmbtu"] * pool["mmbtu"]).sum() / pool["mmbtu"].sum()
+        out[POOLED_SOUTH_TEXAS_ZONE] = (
+            price - hh_mean,
+            pool["plant_id"].nunique(),
+            pool["mmbtu"].sum(),
+        )
     return out, months
 
 
@@ -179,6 +205,56 @@ def validate(f923: Path) -> int:
             print(f"{line} committed {c:+.2f} {'OK' if ok else 'MISMATCH'}")
     print(f"months covered: {months}")
     return bad
+
+
+def extend_pooled(f923: Path) -> None:
+    """Append the workbook year's pooled South-Texas row (never modifies rows).
+
+    The member rows' reproduction is printed first so the log carries the
+    vintage evidence the pooled value was derived on (``validate`` semantics).
+    """
+    with HUB_PATH.open() as fh:
+        reader = csv.DictReader(fh)
+        header = list(reader.fieldnames or [])
+        rows = [dict(r) for r in reader]
+    tx = _read_sch5_tx_gas(f923)
+    year = int(tx["year"].mode().iloc[0])
+    validate(f923)
+    stats, months = _zone_stats(tx, year, _henry_hub())
+    if POOLED_SOUTH_TEXAS_ZONE not in stats:
+        print(
+            f"  {POOLED_SOUTH_TEXAS_ZONE} {year}: no Sch5 cost reporters; NOT written"
+        )
+        return
+    if any(
+        r["zone"] == POOLED_SOUTH_TEXAS_ZONE and int(r["year"]) == year for r in rows
+    ):
+        print(f"  {POOLED_SOUTH_TEXAS_ZONE} {year}: exists, skipped")
+        return
+    if len(months) < 12:
+        sys.exit(f"{year}: partial year ({months}); pooled rows are full-year only")
+    basis, n, mmbtu = stats[POOLED_SOUTH_TEXAS_ZONE]
+    row = {
+        "zone": POOLED_SOUTH_TEXAS_ZONE,
+        "year": year,
+        "basis_vs_hh_usd_mmbtu": round(basis, 2),
+        "hub": _HUB_LABEL[POOLED_SOUTH_TEXAS_ZONE],
+        "source": (
+            f"EIA-923 Sch5 qty-weighted delivered gas minus HH, POOLED over the "
+            f"South+South_Central reporters ({n} plants {mmbtu / 1e6:.0f}M MMBtu; "
+            f"{f923.name}); read only under ercot_south_texas_pooled_basis "
+            f"(R-ERCOT-17, owner ruling 2026-09-29)"
+        ),
+        "neg_day_freq": "",
+        "neg_day_freq_source": "",
+    }
+    rows.append({k: row.get(k, "") for k in header})
+    print(f"  + {POOLED_SOUTH_TEXAS_ZONE} {year}: {basis:+.2f} ({n} plants)")
+    with HUB_PATH.open("w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=header)
+        w.writeheader()
+        w.writerows(rows)
+    print(f"wrote {HUB_PATH} ({len(rows)} rows)")
 
 
 def extend(
@@ -308,7 +384,15 @@ def main() -> None:
         default="",
         help="citation for --waha-neg-day-freq",
     )
+    ap.add_argument(
+        "--pooled-south-texas",
+        action="store_true",
+        help="append the workbook year's pooled South+South_Central row",
+    )
     args = ap.parse_args()
+    if args.pooled_south_texas:
+        extend_pooled(args.f923)
+        return
     if args.validate:
         sys.exit(1 if validate(args.f923) else 0)
     if args.year is None:

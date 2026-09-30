@@ -1700,6 +1700,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # different merit order) and hashes distinctly.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "ercot_zonal_spread_ep_referenced",
+    # R-ERCOT-17 pooled South-Texas gas basis, default off: dropped from the
+    # hash at its False default so every pre-existing ERCOT key (the designated
+    # keeper's included) stays byte-stable — the off path never reads the
+    # pooled rows. Armed, South and South_Central read one pooled Sch5 row (a
+    # different cross-zonal split) and hash distinctly. Registered IN THE SAME
+    # COMMIT as the field (the nyiso-119 discipline).
+    "ercot_south_texas_pooled_basis",
     # Hindcast announced-exit verification (owner directive 2026-08-22, the
     # PJM Byron/Dresden false-retire investigation): dropped from the hash at
     # its False default so every pre-existing cache key of all six ISOs stays
@@ -2842,6 +2849,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-255 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_zonal_spread_ep_referenced": "False",
+    # Added by R-ERCOT-17 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "ercot_south_texas_pooled_basis": "False",
     # Added by miso-170 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_plant_exclusions": "False",
@@ -20047,6 +20057,32 @@ class ScenarioConfig:
     # docs/PRECOMMIT-ercot255-zonal-spread-ep-reference-2026-09-07.md.
     ercot_zonal_spread_ep_referenced: bool = False
 
+    # Tier 3 (calibration) — POOLED South-Texas gas basis (R-ERCOT-17, owner
+    # ruling 2026-09-29, verbatim: "Pool South Texas (Recommended)").
+    #
+    # data/raw/ercot_zonal_gas_hub.csv's South row is the EIA-923 Sch5
+    # quantity-weighted delivered price of THREE small reporters (plants 3630,
+    # 3631, 59391; 5-35M MMBtu/yr) and it prices ~4.3 GW of South gas,
+    # including merchant CCs that report no receipts. In 2020 plant 59391's
+    # $8.13/MMBtu drives the row to +3.53 over HH against South_Central's +0.64
+    # (13 plants, 151M MMBtu), and South merchant gas runs at 0.12x its EIA-923
+    # actual. Rule 14 [R-ACCURATE] misalignment exception: the zone boundary
+    # samples a thin, unrepresentative subset of the gas the zone actually
+    # burns; the reconciled measured quantity is the Sch5 price over the whole
+    # South-Texas reporter set.
+    #
+    # ON, South and South_Central both read one pooled row (``zone ==
+    # "South_Texas_Pooled"``, written by scripts/data/derive_ercot_zonal_gas_hub.py
+    # ``--pooled-south-texas`` from the published EIA-923 workbooks; member rows
+    # untouched). No threshold and ZERO free parameters (rules 21 / 24): the
+    # weights are the measured Sch5 MMBtu. Fail-closed: a year with no pooled
+    # row (every forecast year) keeps the member rows, so the off path and
+    # every forward solve are byte-identical. No-op unless
+    # ercot_zonal_gas_basis is also on and iso == "ERCOT". See
+    # market_sim.data.fuel.basis.ercot.pool_ercot_south_texas_basis and
+    # docs/handoffs/PRECOMMIT-r-ercot-17-south-texas-pool-2026-09-29.md.
+    ercot_south_texas_pooled_basis: bool = False
+
     # Tier 3 (calibration) — delivered-gas floor on the ERCOT zonal basis above.
     # The West/Panhandle basis in data/raw/ercot_zonal_gas_hub.csv is a Waha *hub*
     # (pooling-point) basis (2024 -2.19): the takeaway-constrained price at which
@@ -24336,6 +24372,7 @@ TIER_TAGS: dict[str, int] = {
     "mustrun_chp_btm_holdout": 3,
     "benchmark_membership_vintage_union": 3,
     "ercot_zonal_spread_ep_referenced": 3,
+    "ercot_south_texas_pooled_basis": 3,
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,
     "oil_primary_bin_fuel": 3,

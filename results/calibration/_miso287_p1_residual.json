@@ -1,0 +1,289 @@
+{
+ "2019": {
+  "p1_median": 23.67,
+  "p0_stack_median": 22.15,
+  "bid_stack_median": 22.73,
+  "p1_mean": 24.16,
+  "p0_stack_mean": 22.96,
+  "bid_stack_mean": 23.33,
+  "all_hours_median": {
+   "p1": 27.91,
+   "p0_stack": 26.57,
+   "bid_stack": 27.37
+  },
+  "marginal_p0_stack": {
+   "CC_REGULAR|econ": 0.286,
+   "CC_REGULAR|committed": 0.264,
+   "COAL_PRB|econ": 0.109,
+   "|PJM#4": 0.063,
+   "CC_CHP|committed": 0.037,
+   "COAL_BIT|econ": 0.03
+  },
+  "marginal_bid_stack": {
+   "CC_REGULAR|econ": 0.303,
+   "CC_REGULAR|committed": 0.21,
+   "COAL_PRB|econ": 0.137,
+   "|PJM#4": 0.053,
+   "COAL_BIT|econ": 0.041,
+   "|PJM#5": 0.035
+  },
+  "marginal_row_markup_bid_stack_median": 0.0,
+  "night_markup_when_online_by_label": {
+   "CT_CHP|econ": 2.14,
+   "CT_PEAKER|committed": 2.11,
+   "CT_CHP|peak": 2.09,
+   "CT_PEAKER|econ": 2.09,
+   "ST_GAS|committed": 0.72,
+   "CC_CHP|committed": 0.62,
+   "CC_REGULAR|committed": 0.59,
+   "ST_CHP|committed": 0.58
+  },
+  "gas_price": 2.57
+ },
+ "2020": {
+  "p1_median": 19.88,
+  "p0_stack_median": 19.09,
+  "bid_stack_median": 19.53,
+  "p1_mean": 20.53,
+  "p0_stack_mean": 19.39,
+  "bid_stack_mean": 19.84,
+  "all_hours_median": {
+   "p1": 23.71,
+   "p0_stack": 22.53,
+   "bid_stack": 23.32
+  },
+  "marginal_p0_stack": {
+   "CC_REGULAR|econ": 0.301,
+   "CC_REGULAR|committed": 0.271,
+   "COAL_PRB|econ": 0.071,
+   "CC_CHP|committed": 0.047,
+   "|PJM#5": 0.045,
+   "|PJM#6": 0.044
+  },
+  "marginal_bid_stack": {
+   "CC_REGULAR|econ": 0.333,
+   "CC_REGULAR|committed": 0.218,
+   "COAL_PRB|econ": 0.084,
+   "|PJM#5": 0.057,
+   "|PJM#6": 0.038,
+   "|SPP#1": 0.03
+  },
+  "marginal_row_markup_bid_stack_median": 0.0,
+  "night_markup_when_online_by_label": {
+   "CC_REGULAR|peak": 5.6,
+   "CT_CHP|econ": 2.12,
+   "CT_CHP|peak": 2.07,
+   "CT_PEAKER|econ": 2.06,
+   "CT_PEAKER|committed": 2.06,
+   "CC_CHP|committed": 0.93,
+   "ST_GAS|committed": 0.89,
+   "ST_CHP|committed": 0.7
+  },
+  "gas_price": 2.03
+ },
+ "2021": {
+  "p1_median": 29.52,
+  "p0_stack_median": 28.69,
+  "bid_stack_median": 29.01,
+  "p1_mean": 31.07,
+  "p0_stack_mean": 29.61,
+  "bid_stack_mean": 29.98,
+  "all_hours_median": {
+   "p1": 33.04,
+   "p0_stack": 31.27,
+   "bid_stack": 31.66
+  },
+  "marginal_p0_stack": {
+   "CC_REGULAR|econ": 0.275,
+   "CC_REGULAR|committed": 0.212,
+   "COAL_PRB|econ": 0.207,
+   "COAL_BIT|econ": 0.084,
+   "COAL_PRB|committed": 0.038,
+   "|PJM#4": 0.024
+  },
+  "marginal_bid_stack": {
+   "CC_REGULAR|econ": 0.306,
+   "COAL_PRB|econ": 0.221,
+   "CC_REGULAR|committed": 0.162,
+   "COAL_BIT|econ": 0.093,
+   "COAL_PRB|committed": 0.042,
+   "|SPP#1": 0.028
+  },
+  "marginal_row_markup_bid_stack_median": 0.0,
+  "night_markup_when_online_by_label": {
+   "CT_PEAKER|peak": 7.27,
+   "CT_PEAKER|committed": 2.4,
+   "CT_PEAKER|econ": 2.28,
+   "CT_CHP|econ": 2.07,
+   "CT_CHP|peak": 2.05,
+   "CC_REGULAR|committed": 0.94,
+   "ST_GAS|committed": 0.76,
+   "CC_CHP|committed": 0.76
+  },
+  "gas_price": 3.72
+ },
+ "2022": {
+  "p1_median": 48.05,
+  "p0_stack_median": 41.28,
+  "bid_stack_median": 41.76,
+  "p1_mean": 50.21,
+  "p0_stack_mean": 42.67,
+  "bid_stack_mean": 43.2,
+  "all_hours_median": {
+   "p1": 52.24,
+   "p0_stack": 46.31,
+   "bid_stack": 47.74
+  },
+  "marginal_p0_stack": {
+   "CC_REGULAR|econ": 0.275,
+   "CC_REGULAR|committed": 0.242,
+   "COAL_PRB|econ": 0.148,
+   "COAL_BIT|econ": 0.083,
+   "|PJM#3": 0.038,
+   "|Manitoba#1": 0.021
+  },
+  "marginal_bid_stack": {
+   "CC_REGULAR|econ": 0.293,
+   "CC_REGULAR|committed": 0.208,
+   "COAL_PRB|econ": 0.142,
+   "COAL_BIT|econ": 0.1,
+   "|PJM#3": 0.037,
+   "|PJM#4": 0.025
+  },
+  "marginal_row_markup_bid_stack_median": 0.0,
+  "night_markup_when_online_by_label": {
+   "CC_REGULAR|peak": 25.0,
+   "CT_PEAKER|econ": 2.19,
+   "CT_CHP|peak": 2.09,
+   "CT_CHP|econ": 2.04,
+   "CC_REGULAR|committed": 1.56,
+   "CC_CHP|committed": 0.96,
+   "ST_CHP|committed": 0.87,
+   "ST_GAS|committed": 0.81
+  },
+  "gas_price": 6.45
+ },
+ "2023": {
+  "p1_median": 27.12,
+  "p0_stack_median": 25.87,
+  "bid_stack_median": 26.45,
+  "p1_mean": 27.45,
+  "p0_stack_mean": 26.15,
+  "bid_stack_mean": 26.68,
+  "all_hours_median": {
+   "p1": 32.25,
+   "p0_stack": 30.56,
+   "bid_stack": 31.66
+  },
+  "marginal_p0_stack": {
+   "CC_REGULAR|econ": 0.273,
+   "CC_REGULAR|committed": 0.208,
+   "COAL_PRB|econ": 0.07,
+   "CC_CHP|committed": 0.068,
+   "|PJM#6": 0.045,
+   "|PJM#7": 0.036
+  },
+  "marginal_bid_stack": {
+   "CC_REGULAR|econ": 0.275,
+   "CC_REGULAR|committed": 0.209,
+   "COAL_PRB|econ": 0.097,
+   "|PJM#6": 0.053,
+   "CC_CHP|committed": 0.047,
+   "|PJM#7": 0.042
+  },
+  "marginal_row_markup_bid_stack_median": 0.0,
+  "night_markup_when_online_by_label": {
+   "CC_REGULAR|peak": 4.55,
+   "CT_PEAKER|econ": 2.62,
+   "CT_CHP|peak": 2.04,
+   "CT_CHP|econ": 2.03,
+   "CT_PEAKER|committed": 1.88,
+   "CC_CHP|committed": 1.28,
+   "ST_GAS|committed": 0.75,
+   "ST_CHP|committed": 0.68
+  },
+  "gas_price": 2.54
+ },
+ "2024": {
+  "p1_median": 23.76,
+  "p0_stack_median": 22.83,
+  "bid_stack_median": 23.49,
+  "p1_mean": 25.23,
+  "p0_stack_mean": 24.22,
+  "bid_stack_mean": 24.84,
+  "all_hours_median": {
+   "p1": 28.39,
+   "p0_stack": 27.06,
+   "bid_stack": 28.04
+  },
+  "marginal_p0_stack": {
+   "CC_REGULAR|econ": 0.24,
+   "CC_REGULAR|committed": 0.221,
+   "CC_CHP|committed": 0.06,
+   "COAL_PRB|econ": 0.058,
+   "ST_GAS|econ": 0.046,
+   "|PJM#6": 0.046
+  },
+  "marginal_bid_stack": {
+   "CC_REGULAR|econ": 0.247,
+   "CC_REGULAR|committed": 0.199,
+   "COAL_PRB|econ": 0.079,
+   "CC_CHP|committed": 0.059,
+   "ST_GAS|econ": 0.053,
+   "|PJM#6": 0.052
+  },
+  "marginal_row_markup_bid_stack_median": 0.0,
+  "night_markup_when_online_by_label": {
+   "CC_CHP|peak": 15.0,
+   "CC_REGULAR|peak": 6.02,
+   "CT_PEAKER|peak": 3.67,
+   "CT_PEAKER|econ": 2.57,
+   "CT_PEAKER|committed": 2.06,
+   "CT_CHP|econ": 2.01,
+   "CT_CHP|peak": 2.01,
+   "CC_CHP|committed": 1.33
+  },
+  "gas_price": 2.19
+ },
+ "2025": {
+  "p1_median": 34.69,
+  "p0_stack_median": 32.38,
+  "bid_stack_median": 32.76,
+  "p1_mean": 35.78,
+  "p0_stack_mean": 33.39,
+  "bid_stack_mean": 33.98,
+  "all_hours_median": {
+   "p1": 37.83,
+   "p0_stack": 35.61,
+   "bid_stack": 36.21
+  },
+  "marginal_p0_stack": {
+   "CC_REGULAR|econ": 0.234,
+   "CC_REGULAR|committed": 0.166,
+   "COAL_PRB|econ": 0.162,
+   "CC_CHP|committed": 0.061,
+   "COAL_BIT|econ": 0.06,
+   "COAL_PRB|committed": 0.04
+  },
+  "marginal_bid_stack": {
+   "CC_REGULAR|econ": 0.233,
+   "CC_REGULAR|committed": 0.174,
+   "COAL_PRB|econ": 0.165,
+   "COAL_BIT|econ": 0.067,
+   "COAL_PRB|committed": 0.042,
+   "CC_CHP|committed": 0.04
+  },
+  "marginal_row_markup_bid_stack_median": 0.0,
+  "night_markup_when_online_by_label": {
+   "CC_REGULAR|peak": 9.64,
+   "CT_PEAKER|econ": 2.53,
+   "CT_PEAKER|committed": 2.08,
+   "CT_CHP|peak": 1.99,
+   "CT_CHP|econ": 1.99,
+   "CC_CHP|committed": 1.68,
+   "ST_CHP|committed": 0.81,
+   "CC_REGULAR|committed": 0.78
+  },
+  "gas_price": 3.52
+ }
+}

@@ -729,6 +729,18 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "year, per the ercot_gtc_limits_measured adjudication",
         evidence=(_BACKCAST_ORCH, "src/market_sim/data/nyiso_seam_envelope.py"),
     ),
+    # NYISO-NEXT-13 (2026-09-29): declared in the promoting PR (owner ruling R-BF).
+    ParityDeclaration(
+        fields=("nyiso_ne_ac_recon_detach",),
+        disposition=BACKCAST_ONLY,
+        why="takes the NE AC node out of the MEASURED EIA-930 monthly "
+        "net-interchange band and subtracts the tie's measured P-32 schedule "
+        "from its target; the band is itself the backcast measured-schedule "
+        "pin (the forecast band targets the neighbour's forecast position), "
+        "and the node it detaches (nyiso_ne_ac_node) is backcast-only by "
+        "construction (anchored on the measured Roseton DA price)",
+        evidence=(_BACKCAST_ORCH, "src/market_sim/model/interchange/nyiso.py"),
+    ),
     # Same fork class again, one keeper later: armed by the caiso-241 promotion
     # (2026-09-03, #4663) whose lane left the FR-22 duty undischarged. Filed by
     # the Y-4 audit lane under the R-X route.

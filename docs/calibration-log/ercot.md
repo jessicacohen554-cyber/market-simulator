@@ -14928,3 +14928,16 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - The South basis row is three small Sch5 plants. In 2020 it reads +3.53 (South_Central +0.64), and the model's South merchant gas runs 1.32 vs 10.68 TWh actual. That ratio is 0.12, against 0.71–1.53 in every other year.
   - A pooled South-Texas basis would need no threshold but moves the training years, so it goes to the owner as a decision card.
 - Record: `docs/handoffs/RESULT-r-ercot-16-oklaunion-hr-2026-09-29.md`.
+
+## R-ERCOT-17 — 2026-09-30 — pooled South-Texas gas basis (owner ruling "Pool South Texas (Recommended)"); PROMOTED `2026-09-29-r-17-south-texas` (owner card "Promote; fix 3452 next (Recommended)"); ISO NOT-YET
+
+- **Arm:** new default-off `ercot_south_texas_pooled_basis`. South and South_Central read one EIA-923 Sch5 qty-weighted row (`South_Texas_Pooled`, derived from the published workbooks; member rows untouched), zero DOF. All seven years were solved one shard each at `4aaa1a1f`. G-DRIFT was ALL INERT (2022 fleet byte-identical at the oldest leg SHA vs HEAD), so there was no control solve.
+- **Result:**
+  - South merchant gas: 2020 1.32 → 10.88 TWh (actual 10.68); 2021 15.98 → 11.05 (10.46).
+  - C3a moves ≤ 0.3 pp every year; 2020 C3b 0.241 → 0.229.
+  - 2020 CC_REGULAR worsens +9.11 → +12.41; COAL_PRB improves −13.11 → −11.57.
+  - South now over-runs 1.13–1.24× in 2019 and 2022–2025. This is newly visible and routed.
+- **Cost (at full magnitude):** 2022 goes CALIBRATED → NOT-YET on C8 alone (ST_GAS forced 28.7 → 30.4 %). The above-cap escape is denied by the pre-existing plant-3452 `st_netload_drag` D-4 unit-conduct FAIL. 2025 holds CALIBRATED at C3a −9.9 %.
+- **Predictions:** price-direction predictions MISSED (2019/2020 LW price fell slightly instead of rising). The South TWh ranges MISSED high (the gap closed fully). The C3b and 2021–2025 C3a predictions HIT. The 2022 C8 flip was not anticipated.
+- **Next lane:** plant 3452 `st_netload_drag` provenance (zero LP first).
+- Record: `docs/handoffs/RESULT-r-ercot-17-south-texas-pool-2026-09-29.md`.
