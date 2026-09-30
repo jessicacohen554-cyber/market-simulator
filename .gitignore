@@ -3911,5 +3911,5 @@ results/calibration/rcaiso17_A_20*/
 # Legs recorded by SHA (provenance only, rule 33(d)): 2020 99e56f93 2021 4662e793 2022 eb9a0bb2 2023 e4f96c37 2025 17704998 2024 139f0cfa 2019 1e4d57b7
 results/calibration/nwppnext13pu_20[0-9][0-9]/
 
-# NYISO-NEXT-17 per-year legs (rule 32 (d)); composed into nyisonext17_span. Provenance (rule 33 (d)): 2022 5faec6e4c37cddb82a048060131dbdcebf31af4c, 2025 c09e1194c827aea919afeaa7fe1b2f551ebfde38
-results/calibration/nyisonext17_202[2-5]/
+# NYISO-NEXT-17 per-year legs (rule 32 (d)); composed into nyisonext17_span. Provenance (rule 33 (d)): 2021 53e240a65ff60c837c92d43383e8239485e8893b, 2022 5faec6e4c37cddb82a048060131dbdcebf31af4c, 2023 1ad333b364acb2d6bbcd5b9ec51bbd37e5c003de, 2024 5af0e1b11cf19996fbae40eb28aa650cf293c42f, 2025 c09e1194c827aea919afeaa7fe1b2f551ebfde38
+results/calibration/nyisonext17_202[1-5]/
