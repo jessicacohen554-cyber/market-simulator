@@ -64,6 +64,7 @@ from market_sim.data.outages import (
     shared_unit_hours,
     short_screened_coal_shares,
     unit_outage_active_units,
+    dispatched_bin_live_year,
     lp_bin_capacity_index,
     unit_outage_derate_factors,
     unit_outage_maxgen_derate_factors,
@@ -811,7 +812,12 @@ def _availability_matrix(
                     "wefor_residual_short_screened_coal requires "
                     "unit_outage_dispatched_bin_denominator"
                 )
-            _roster = lp_bin_capacity_index(generators)
+            # NWPP-NEXT-15: under the live sub-gate the screened share
+            # divides by the LIVE bin, the same roster the outage share uses.
+            _roster = lp_bin_capacity_index(
+                generators,
+                live_year=dispatched_bin_live_year(config, int(fleet_year)),
+            )
             _screened_share = short_screened_coal_shares(
                 int(fleet_year), _iso or "", _roster
             )
@@ -823,6 +829,22 @@ def _availability_matrix(
                 len(_screened_share),
                 sum(s * dict(_roster).get(k, 0.0) for k, s in _screened_share.items()),
             )
+        # NWPP-NEXT-15 (ScenarioConfig.unit_outage_dispatched_bin_live_
+        # denominator, GATED default-off): with the screened-coal relief armed,
+        # a COAL row takes the relief on its measured screened share ONLY —
+        # never the full cap — even when ``wefor_residual_groups`` (or its
+        # None default, which covers all coal) names its class. The
+        # ``wefor_residual_groups`` membership test then decides the full cap
+        # for the NON-coal classes alone, so naming just the coal classes
+        # scopes ``wefor_residual`` to screened coal (FINDING-nwppnext13 §1.3.3:
+        # NWPP's None groups otherwise zero WEFOR on all coal AND all CC/ST
+        # gas, and the screened branch below never fires). One relief
+        # mechanism, re-ordered — not a second one (rule 19 [R-ONE-MECH]).
+        # False while off, so every existing config keeps the covered-first
+        # order byte-identically (MISO's keeper names no coal class).
+        _screened_coal_first = bool(_screened_share) and bool(
+            getattr(config, "unit_outage_dispatched_bin_live_denominator", False)
+        )
         # SPP-104 (ScenarioConfig.spp_ct_lole_efor): SPP's own LOLE-study
         # seasonal EFOR REPLACES the statistical CT_PEAKER WEFOR (rule 19) —
         # no wefor_multiplier, no SUMMER_WEFOR_SHARE redistribution, no age
@@ -889,7 +911,11 @@ def _availability_matrix(
                 if _relief_groups
                 else (gen.fuel_type == "coal" or gen.plant_group in _POF_DROP_GROUPS)
             )
-            if wefor_res is not None and _covered:
+            if (
+                wefor_res is not None
+                and _covered
+                and not (_screened_coal_first and gen.fuel_type == "coal")
+            ):
                 wefor = min(wefor, wefor_res)
             elif _screened_share and gen.fuel_type == "coal":
                 _s = _screened_share.get(
@@ -1375,8 +1401,15 @@ def _apply_outage_overlays(
         # because one denominator is one mechanism (rule 19 [R-ONE-MECH]).
         # ``None`` while off, so every loader takes its incumbent argument and
         # the off path is byte-inert.
+        # NWPP-NEXT-15 (ScenarioConfig.unit_outage_dispatched_bin_live_
+        # denominator, a sub-gate of the above): the same roster, restricted to
+        # rows LIVE in the solve year — a dated exit cohort retired before it is
+        # carried by the LP at zero availability and must not dilute the divide.
+        # Read (and its requirement checked) unconditionally here so an armed
+        # sub-gate without its parent fails closed. None while off.
+        _live_yr = dispatched_bin_live_year(config, _yr)
         _lp_bins = (
-            lp_bin_capacity_index(generators, pmax)
+            lp_bin_capacity_index(generators, pmax, live_year=_live_yr)
             if (
                 getattr(config, "unit_outage_dispatched_bin_denominator", False)
                 and not is_ercot
@@ -3264,7 +3297,13 @@ def _compose_min_gen_floors(
             # (rule 19 [R-ONE-MECH], the same reasoning st_capacity_basis and
             # per_unit_clip are threaded here under).
             lp_bin_capacity=(
-                lp_bin_capacity_index(generators, pmax)
+                lp_bin_capacity_index(
+                    generators,
+                    pmax,
+                    live_year=dispatched_bin_live_year(
+                        config, getattr(config, "weather_year", None) or _yr
+                    ),
+                )
                 if (
                     getattr(config, "unit_outage_dispatched_bin_denominator", False)
                     and (_iso or "ERCOT") != "ERCOT"
