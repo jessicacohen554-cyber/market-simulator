@@ -246,6 +246,7 @@ def build_base_dispatch_kwargs(
     spec: DispatchSpec,
     *,
     import_node_recon: Optional[tuple] = None,
+    import_link_band: Optional[tuple] = None,
 ) -> dict:
     """Build the base ``dispatch_kwargs`` dict for the per-year LP.
 
@@ -261,6 +262,10 @@ def build_base_dispatch_kwargs(
         spec: The typed base-kwargs bundle.
         import_node_recon: Optional ``(node_gen_idx, monthly_lo, monthly_hi)``
             from ``transmission.build_import_node_reconciliation``.
+        import_link_band: Optional ``(link_idx, monthly_lo, monthly_hi)`` from
+            ``interchange.nyiso.build_nyiso_import_landing_band``
+            (``nyiso_import_landing_band``); it REPLACES the node band, so
+            supplying both is refused (rule 19).
 
     Returns:
         The ``dispatch_kwargs`` dict, ready for the gated per-orchestrator
@@ -268,6 +273,13 @@ def build_base_dispatch_kwargs(
         :func:`apply_reserve_coopt`.
     """
     dispatch_kwargs = spec.to_dispatch_kwargs()
+    if import_link_band is not None:
+        if import_node_recon is not None:
+            raise ValueError(
+                "import_link_band replaces the pooled import-node band; "
+                "supplying both would stack two bands on one volume (rule 19)"
+            )
+        dispatch_kwargs.update(import_link_band=import_link_band)
     if import_node_recon is not None:
         node_idx, recon_lo, recon_hi = import_node_recon
         dispatch_kwargs.update(
