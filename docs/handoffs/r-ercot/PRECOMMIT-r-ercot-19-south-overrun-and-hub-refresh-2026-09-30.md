@@ -241,3 +241,37 @@ Across years:
 - **Promote** under the standing instruction if no year's determination flips worse and the South over-run falls.
 - **Decision card, every bundle kept (rule 31),** if any year flips worse.
 - DOF ledger: unchanged (zero added).
+
+---
+
+## ADDENDUM B (written before the arm-C solves): arm-B result, owner ruling, arm C
+
+**Arm B result.** Registered `2026-09-30-r-19-b-prior` (bundle `r_ercot19b_span`). Scored against the keeper `2026-09-30-r-18-drag-index`, with arm A (`2026-09-30-r-19-eia-923`) between.
+
+| Year | C3a keeper → B | C3b keeper → B | C1 CC_REGULAR keeper → B | C8 ST_GAS keeper → B | Determination keeper → B |
+|---|---|---|---|---|---|
+| 2019 | +23.9 → +23.9 % | 0.538 → 0.538 | +9.70 → +9.70 | 18.1 → 18.1 % | NOT-YET → NOT-YET (byte-identical) |
+| 2020 | +5.6 → +6.5 % | 0.229 → 0.222 | +12.39 → +11.33 | 24.5 → 26.7 % | NOT-YET → NOT-YET |
+| 2021 | +4.6 → +5.0 % | 0.067 → 0.069 | −0.54 → −1.48 | 22.7 → 26.1 % | CALIBRATED → CALIBRATED |
+| 2022 | −8.7 → −7.6 % | 0.167 → 0.161 | −7.69 → **−8.42 (FAIL, ±8.00)** | 30.1 → 31.3 % | **CALIBRATED → NOT-YET** |
+| 2023 | −19.8 → −19.4 % | 0.289 → 0.288 | +3.72 → +2.78 | 19.6 → 21.4 % | NOT-YET → NOT-YET (hold) |
+| 2024 | −10.7 → **−9.9 %** | 0.190 → 0.187 | −1.28 → −2.20 | 16.5 → 17.2 % | **NOT-YET → CALIBRATED** |
+| 2025 | −9.6 → −9.0 % | 0.129 → 0.120 | −1.21 → −1.60 | 21.9 → 24.0 % | CALIBRATED → CALIBRATED |
+
+- **South merchant model/EIA-923:** 2020 1.03 → 0.99, 2021 1.07 → 1.05, 2022 1.20 → 1.18, 2023 1.22 → 1.16, 2024 1.15 → 1.12, 2025 1.19 → 1.15.
+- **D-4 `st_netload_drag` unit-conduct FAILs: 8 → 8, the same rows.** The drag-hour limb **missed** its object. A month × hour profile still lands floor on individual days the plant was off, so the binary rider still convicts.
+
+**Owner decision card, answer verbatim: "CC limb only, re-solve".**
+
+**Arm C.**
+- Recipe: keeper recipe + `cc_committed_prior_year_commitment_eligibility=true` only (`netload_drag_prior_year_hour_profile` stays false), on the refreshed zonal-gas table.
+- Seven shards at the SAME pinned solve SHA `41e0f2422bf7147a2f66652aa5bcefeffe0d1e27`. The code and data are identical to arm B's, so G-DRIFT is trivially inert.
+- 2019 is fail-closed by construction.
+
+**Predictions:**
+- The CC effects of arm B mostly persist: 2024 C3a about −9.9 to −10.1 %, so the 2024 flip is at risk; 2025 C3a about −9.0 to −9.2 %.
+- C8 ST_GAS falls back toward the keeper, by about 0.5–3 pp.
+- 2022 C1 CC_REGULAR stays near −8.3 to −8.5 TWh, so 2022 likely stays NOT-YET on C1. This is the CC limb's effect, not the drag limb's.
+- D-4 drag rows: 8 (the keeper's).
+
+**Decision rule:** unchanged (A.6). If any year flips worse (2022 is expected to), a decision card goes to the owner, arm B vs arm C side by side.
