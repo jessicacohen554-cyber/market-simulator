@@ -2320,6 +2320,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # data/raw/spp-gen-outage CSV; no sub-fields. Registered IN THE SAME COMMIT
     # as the field (the nyiso-119 discipline).
     "spp_gas_crow_residual_outage",
+    # EIA-923 CC-family heat rates (NWPP-NEXT-14, default off): dropped from
+    # the hash at its default so every pre-existing run -- every ISO's keepers
+    # included -- keeps its key. Byte-identical off by construction (the seam
+    # is skipped). Registered IN THE SAME COMMIT as the field.
+    "eia923_cc_family_heat_rates",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -3158,6 +3163,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "spp_ct_lole_efor": "False",
     # Added by SPP-105 WITH the field (the nyiso-119 discipline).
     "spp_gas_crow_residual_outage": "False",
+    # Added by NWPP-NEXT-14 WITH the field (the nyiso-119 discipline).
+    "eia923_cc_family_heat_rates": "False",
 }
 
 
@@ -6144,6 +6151,31 @@ class ScenarioConfig:
     # X 54131 (9.807 -> 6.996). See
     # results/calibration/PREREG-nyiso189-steam-collapse-identity-ab.md.
     egrid_steam_collapse_heat_rates: bool = False
+
+    # EIA-923 CC-FAMILY heat rates (NWPP-NEXT-14; owner card "EIA-923
+    # CC-family HR", 2026-09-30; default OFF, byte-identical off). The fleet's
+    # heat rate is eGRID's plant-grain PLHTRT = PLHTIAN / PLNGENAN; where CEMS
+    # meters only SOME of a plant's machines, PLHTIAN covers those while
+    # PLNGENAN covers the whole plant, and the rate falls below anything a
+    # combined cycle can do. Clark 2322 (NV Energy): CAMPD meters its 24 GT
+    # peakers, not its combined cycle, and eGRID reads 3.007 MMBtu/MWh while
+    # EIA-923 measures the CC block (CT fuel / CT + CA net) at 9.04-9.59 in
+    # 2019-2025 -- an $11/MWh offer the LP runs flat out, +2.8-3.3 TWh/yr over
+    # EIA-923 once campd_per_unit_attribution made the block available. The
+    # eGRID family construction cannot reach it (no unit heat input to split).
+    # When True, a NON-CHP plant's CC-prime-mover rows (CT/CA/CS/CC) whose
+    # loaded rate is below fleet/eia860.py::EGRID_CC_HR_PHYSICAL_FLOOR take the
+    # plant's own EIA-923 CC-family rate from the committed per-ISO artifact
+    # (data/raw/_processed-legacy/eia923_cc_family_heat_rates_<ISO>.csv,
+    # scripts/data/derive_eia923_cc_family_heat_rates.py) for the eGRID
+    # vintage the join reads, accepted only inside [floor, ceiling]. A
+    # POPULATION rule (rule 24, never a carve); skips plants the family
+    # construction covered (rule 19); every class-scoped measured mechanism
+    # keeps its precedence. Rule 14 misalignment exception; rule 13 (EIA-923
+    # regenerates for any year); rule 21: zero free parameters; rule 25:
+    # per-ISO artifact, a no-op for an ISO with none. See
+    # docs/handoffs/FINDING-nwppnext14-bridger-and-clark-phase0-2026-09-30.md.
+    eia923_cc_family_heat_rates: bool = False
 
     # Combined-cycle STEAM-part capacity repair (miso-126; default OFF,
     # byte-identical off). EIA-860's ``Energy Source 1`` on a ``CA``
