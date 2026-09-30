@@ -83,6 +83,21 @@ def cc_capacity_reconcile_path(iso: str) -> Path:
     return PROCESSED_DIR / f"cc_capacity_reconcile_{iso.upper()}.csv"
 
 
+def measured_oil_burn_days_path(iso: str) -> Path:
+    """Canonical on-disk path of an ISO's measured plant-day oil-burn table.
+
+    ``PROCESSED_DIR/campd_measured_oil_burn_days_<ISO>.csv`` — per (year,
+    plant_code, date) oil share of gas-unit heat input from the CAMPD CO2 /
+    heat-input mixing identity, written by
+    ``scripts/data/derive_measured_oil_burn_days.py`` and read by
+    :func:`market_sim.data.fuel.apply_measured_oil_burn_pricing` under
+    ``ScenarioConfig.dual_fuel_measured_oil_burn`` (soco-96). Per-ISO file so
+    no ISO's measured conduct is read by another (rule 25). A missing file is a
+    no-op at the consumer.
+    """
+    return PROCESSED_DIR / f"campd_measured_oil_burn_days_{iso.upper()}.csv"
+
+
 # inputs/raw-data/ subdirectories -----------------------------------------
 EIA_860_DIR: Path = RAW_DATA_DIR / "eia-860"
 

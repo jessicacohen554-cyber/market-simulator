@@ -2342,6 +2342,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # included -- keeps its key. Byte-identical off by construction (the seam
     # is skipped). Registered IN THE SAME COMMIT as the field.
     "eia923_cc_family_heat_rates",
+    # soco-96 measured oil burn (default off): dropped from the hash at its
+    # default so every pre-existing run -- every ISO's keepers included --
+    # keeps its key. Byte-identical off by construction (the applier returns
+    # None before reading anything, and the dual-fuel call is the unchanged
+    # pre-existing one). Its one input is the per-ISO derived CSV
+    # paths.measured_oil_burn_days_path; no sub-fields. Registered IN THE SAME
+    # COMMIT as the field (the nyiso-119 discipline).
+    "dual_fuel_measured_oil_burn",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -3191,6 +3199,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "spp_gas_crow_residual_outage": "False",
     # Added by NWPP-NEXT-14 WITH the field (the nyiso-119 discipline).
     "eia923_cc_family_heat_rates": "False",
+    # Added by soco-96 WITH the field (the nyiso-119 discipline).
+    "dual_fuel_measured_oil_burn": "False",
 }
 
 
@@ -3781,6 +3791,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "caiso_citygate_spot_coverage": "own-print month coverage of that measured series",
     "caiso_citygate_blackout_bridge": "measured Henry Hub daily spot + the two bracketing measured citygate prints, across EIA's publication blackouts",
     "dual_fuel_oil_daily_parity": "measured daily oil prints for the parity cap",
+    "dual_fuel_measured_oil_burn": "measured CAMPD plant-day oil burn (soco-96)",
     # --- measured availability / outage records ---
     "caiso_dam_outages": "CAISO's published DAM outage record for the year",
     "miso_native_outage_source": "MISO's published outage record for the year",
@@ -20665,6 +20676,52 @@ class ScenarioConfig:
     # dual_fuel_switching; inert without it. Default off, byte-identical when
     # off (and when the daily series is absent, which resolves to all-ones).
 
+    # Tier 1 (structural, backcast-only) — dual-fuel pricing on MEASURED oil
+    # burn (soco-96, 2026-09-30). OWNER RULING, decision card answer verbatim:
+    # "Oil price at measured burn". ISO-generic code; the derived artifact
+    # exists only for SOCO, so it is inert everywhere else.
+    #
+    # WHEN TRUE, in a backcast, every GAS generator whose EIA plant code has a
+    # row for the solve year in paths.measured_oil_burn_days_path(iso) is
+    # priced, on each covered calendar day, at the plant's OWN measured
+    # heat-input-weighted fuel mix: price = f*oil + (1-f)*gas, where f is the
+    # plant-day oil share of gas-unit heat input, oil is the delivered oil
+    # series the dual-fuel switch uses (data.fuel.dual_fuel_oil_price_series:
+    # EIA-923 monthly delivered petroleum, hourly), and gas is the cell's final
+    # delivered gas (after the F923 plant-monthly and hub/zonal overlays).
+    # data.fuel.apply_measured_oil_burn_pricing; wired in resolve_fuel_prices
+    # and scripts/run_calibration.py at the dual-fuel seam.
+    #
+    # DRIVER / DERIVATION (zero free parameters, rule 21): f per plant-day is
+    # the two-fuel mixing identity applied ONCE to the plant-day aggregate
+    # ratio r = sum co2Mass / sum heatInput (so hourly rounding noise does not
+    # bias it upward), clip((r - R_GAS)/(R_OIL - R_GAS), 0, 1), with R_GAS /
+    # R_OIL the 40 CFR Part 75 App. G Eq. G-4 signatures CAMPD books co2Mass
+    # on (constants.CAMPD_CO2_SHORT_TONS_PER_MMBTU_GAS/_OIL). Eligible units:
+    # gas-primary CEMS units at the plant that are NOT coal-capable (no coal
+    # code in any EIA-860 Energy Source 1..6 of a generator they map to, via
+    # the EPA CAMD-EIA crosswalk, at the solve year's vintage) — the identity
+    # is two-fuel, so coal co-firing would read as oil. No threshold, no
+    # scaling. scripts/data/derive_measured_oil_burn_days.py.
+    #
+    # RULE 19 [R-ONE-MECH]: if dual_fuel_switching is also on, the measured mix
+    # REPLACES min(gas, oil) on the plant-days it covers (the applier's written
+    # mask is the switch's skip_cells); uncovered cells keep the switch.
+    # Objective-only: heat rate and emissions stay on the gas characterization
+    # (the simplification apply_dual_fuel_pricing documents).
+    #
+    # RULE 13 [R-MEASURED] ADMISSIBILITY NOTE: the TRIGGER is the unit's
+    # measured fuel conduct in that year. It is admitted here as a
+    # backcast-only measured physical input, analogous to CAMPD outage
+    # windows; it has no forward edition, so it is in
+    # _BACKCAST_ONLY_OVERLAY_FIELDS (a forecast config arming it raises) and
+    # the applier is inert outside mode == "backcast". Its FORWARD SUBSTITUTE
+    # is dual_fuel_switching's price-parity switch. Phase-0 reach bound
+    # (soco-96, zero LP): C3a 2022 +0.07 to +0.14 $/MWh.
+    #
+    # Default off; byte-identical off.
+    dual_fuel_measured_oil_burn: bool = False
+
     # Tier 3 (calibration) — thermal availability source. "statistical"
     # (default) builds coal/CC availability from the seasonal WEFOR/POF model;
     # "historic" additionally overlays actual ERCOT outages (coal/CC plants,
@@ -24787,6 +24844,10 @@ TIER_TAGS: dict[str, int] = {
     # own published hourly gas outage residual; allocation key is the incumbent
     # class rates; no free number of its own (rule 21).
     "spp_gas_crow_residual_outage": 1,
+    # Structural gate (1): the plant-day measured gas/oil mix (CAMPD CO2 /
+    # heat-input identity on Part 75 factors); no free number of its own
+    # (rule 21). Backcast-only (rule 13).
+    "dual_fuel_measured_oil_burn": 1,
 }
 
 # SweepDefinition (the sweep / named-case-matrix expansion engine) moved
