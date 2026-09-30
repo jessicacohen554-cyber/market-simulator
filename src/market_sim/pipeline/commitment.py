@@ -1536,8 +1536,17 @@ def build_pjm_gas_bridge_p1_prep(config, iso: str, fleet: list, fleet_arrays, mc
         )
         if bridge_floor is None:
             return None
+        # preserve_absorption: the priced export sinks (pmin < 0) keep their
+        # range. Without it the zero-initialised floor collapses every sink's
+        # lower bound to 0 and P1 solves with PJM's export outlet deleted —
+        # the caiso-138 §D defect, measured here in the first arm-B leg
+        # (2021: net export 24.6 TWh -> 0 in all 8,760 hours; PRECOMMIT §7).
+        # The unbridged keeper P1 keeps its sinks, so this restores it.
         return _bridge_floored_fleet(
-            fleet_arrays, bridge_floor, MECH_PJM_GAS_COMMITMENT_BRIDGE
+            fleet_arrays,
+            bridge_floor,
+            MECH_PJM_GAS_COMMITMENT_BRIDGE,
+            preserve_absorption=True,
         )
 
     return _fleet_prep

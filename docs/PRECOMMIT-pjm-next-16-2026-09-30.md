@@ -87,3 +87,13 @@ Registered expectations, stated as bounds rather than signs:
 - Arm A is unaffected (the bridge flag is off there) and keeps pin `6d4c7749`.
 - The fix only adds a flag-gated hook, so A's legs at `6d4c7749` and any leg at the new SHA are identical for A's recipe.
 - Predictions and decision rule are unchanged.
+
+## 7. Addendum (2026-09-30): arm B re-pinned a second time — export sinks
+
+- The first completed B leg (2021, pin `5b813f34`) showed PJM net export at **0 in every hour**, against 24.6 TWh in the keeper.
+- Cause: `_bridge_floored_fleet` max-composed the bridge's zero-initialised floor onto the priced export sinks (`pmin < 0`), pinning them off in P1. This is the caiso-138 §D defect; the existing remedy is `preserve_absorption=True`, which the PJM leg omitted.
+- The unbridged keeper P1 keeps its sinks, so passing it restores the keeper's export outlet and changes nothing else.
+- Every `5b813f34` B leg is invalid by construction. The six still running were stopped and archived; the two that finished (2020, 2021) are not used.
+- B is relaunched at the next commit's SHA, with a new hard stop: the leg's annual net `import` must be below −5 TWh (PJM is a net exporter in every year).
+- Arm A is unaffected (no P1 prep) and keeps pin `6d4c7749`.
+- Predictions and decision rule are unchanged.

@@ -118,6 +118,22 @@ class TestPjmBridge(unittest.TestCase):
         self.assertTrue(np.all(mech[0, 24:40] == MECH_PJM_GAS_COMMITMENT_BRIDGE))
         self.assertTrue(np.all(mech[1:] != MECH_PJM_GAS_COMMITMENT_BRIDGE))
 
+    def test_export_sinks_keep_their_range(self):
+        """An absorption row (pmin < 0, a priced export sink) is never pinned off."""
+        import dataclasses
+
+        gens, fa = _fleet()
+        pmin = np.asarray(fa.pmin, dtype=float).copy()
+        pmin[3] = -200.0  # make the cogen row a sink stand-in
+        fa = dataclasses.replace(fa, pmin=pmin, min_gen=None)
+        on = _pjm(pjm_gas_commitment_bridge=True, cc_mustrun_per_plant=False)
+        mc = np.zeros((len(gens), _HOURS))
+        prep = build_pjm_gas_bridge_p1_prep(on, "PJM", gens, fa, mc)
+        d, prices, _mc = _rich_p0(fa)
+        fa_p1 = prep(_R0(d, prices))
+        self.assertTrue(np.all(np.asarray(fa_p1.min_gen)[3] == -200.0))
+        self.assertTrue(np.all(np.asarray(fa_p1.min_gen)[0, 24:40] > 0.0))
+
     def test_rule19_refusals(self):
         with self.assertRaises(ValueError):
             _pjm(pjm_gas_commitment_bridge=True, cc_mustrun_per_plant=True)
