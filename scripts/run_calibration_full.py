@@ -5112,8 +5112,7 @@ def solve_and_persist(
     from market_sim.config.topology_variant import set_nyiso_fg_split
 
     set_nyiso_fg_split(
-        iso == "NYISO"
-        and bool((prb_overrides or {}).get("nyiso_fg_split", False))
+        iso == "NYISO" and bool((prb_overrides or {}).get("nyiso_fg_split", False))
     )
     iso_config = get_iso_config(iso)
     # caiso-110: the endogenous WECC-West node keeps the SINGLE WECC_import zone

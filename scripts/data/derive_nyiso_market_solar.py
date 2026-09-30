@@ -411,8 +411,7 @@ def main(argv: list[str] | None = None) -> int:
                 if fg_split
                 else "#   zone, crosswalked by data.nyiso_demand_response._ZONE_TO_MODEL.\n"
             )
-            + 
-            "# WHY: EIA-860 utility-scale NY solar includes ~2 GW of distribution-\n"
+            + "# WHY: EIA-860 utility-scale NY solar includes ~2 GW of distribution-\n"
             "#   connected NY-Sun community solar that is NOT a NYISO market\n"
             "#   generator and is already netted out of the EIA-930 NYIS demand\n"
             "#   series (NYIS 'NG: SUN' is identically zero, nyiso-106). Carrying it\n"
