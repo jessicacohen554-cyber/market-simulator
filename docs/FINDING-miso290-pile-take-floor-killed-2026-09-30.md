@@ -83,3 +83,8 @@ Night median by month ($/MWh):
   or a month-of-year pile envelope. Same-year receipts (NWPP-NEXT-9) remain backcast-only (rule 13).
 - **Where MISO stands.** Keeper unchanged. Train 2023–2025 CALIBRATED (C3c ledgered). Full span **NOT-YET** on
   three routed misses: C1 ST_GAS 2019, C3a 2022, C3b 2021. **No frontier.** Routed misses are failures.
+
+## 7. Owner ruling (2026-09-30)
+
+*"Close coal line; C3a 2022 (Recommended)"*. The coal budget-grain line is closed; the keeper's pooled `B/12` limb stays. Next lane (miso-291): zero-LP
+phase 0 on the C3a 2022 miss (−15.5 %), which miso-206 located mostly in daytime shoulder and tail underpricing.
