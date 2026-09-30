@@ -2832,3 +2832,13 @@ tests/scoring/test_audit_keepers_orphan_runs.py` clears it.
 Record: `results/calibration/PRECOMMIT-nyiso231-mirror-repair-rescreen.md`,
 `docs/RESULT-nyiso231-the-mirror-and-the-2022-rescreen-2026-09-13.md`,
 `docs/calibration-log/nyiso.md` "## nyiso-231 — 2026-09-13".
+
+## scorer-coal-1 — 2026-09-29
+
+The C1 fossil reconcile's uniform factor k was measured across every keeper (zero LP), and two coal
+allocations were re-scored against the status quo. The combined EIA-930 gap sits on different fuels:
+gas in NWPP, coal (gross metering) in SPP 2023–25, and 930's coal cell in MISO 2019. Both "coal at 923"
+and "coal at CEMS×k" flip SPP's 2023–25 determination from CALIBRATED to NOT-YET through that
+misattribution. **Owner ruling: status quo + route.** No scorer change; every determination stands.
+Successor: `docs/handoffs/HANDOFF-benchmark-basis-all-iso-2026-09-30.md`.
+Record: `docs/handoffs/RESULT-scorer-coal1-reconcile-options-2026-09-29.md`.

@@ -24,8 +24,10 @@ ROOT = Path(__file__).resolve().parents[2]
 # Repointed soco-85 (2026-09-28): soco83_span was pruned at the soco-85 promotion (rule 35);
 # the incumbent keeper is soco85_span (the soco-83 recipe + gas_daily_shape).
 # Repointed soco-87 (2026-09-29): soco85_span was pruned at the soco-87 promotion (rule 35);
-# the incumbent keeper is soco87_span (the soco-85 recipe + gas_hh_monthly_shape).
-KEEPER = ROOT / "results/calibration/soco87_span/calibration_attestation.json"
+# the incumbent keeper is soco92_span (the soco-85 recipe + gas_hh_monthly_shape).
+KEEPER = (
+    ROOT / "results/calibration/soco92_span/calibration_attestation.json"
+)  # repointed soco-92 (rule 35 prune of soco92_span)
 
 #: Keeper-only entries, carried by NAME PREFIX (soco82_attest_extras.CARRY).
 CARRY = (

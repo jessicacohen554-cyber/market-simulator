@@ -1995,3 +1995,52 @@ OWNER RULINGS 2026-09-29 (decision cards, soco-89):
   (Transco Z4/Z5 or Sonat) used as replacement fuel, matching lambda's definition (incremental cost × replacement fuel). The owner
   supplies the file; it is non-redistributable (data-licensing §5), so it stays gitignored. soco-90 greedies both halves, zero LP,
   then brings a build card.
+
+## 2026-09-29 — soco-90: a daily replacement-fuel series cannot do the joint C3a repair (zero LP)
+
+The licensed SE daily file was not supplied, so the lane bounded it. Greedy on soco87_span with replacement = HH daily
+(the SE-basis = 0 reference, not a candidate): C3a 2019 +14.0→+7.1 and 2020 +14.4→+3.8 pass, while 2022 −12.7→−25.0,
+2023 +2.3→−11.1, 2024 −3.6→−19.0 and 2025 −1.5→−12.6 fail. Required SE-over-HH premium: −0.17 to −0.61 $/MMBtu in low-40 %
+lambda hours every year, +0.26 to +1.63 in Mar–Nov top-20 % hours. In 2023–25, 70–83 % of top-20 % hours share a day with
+low-40 % hours, so one daily price cannot meet both. The error is intra-day, not fuel. No solve; keeper unchanged; NOT-YET 7/4/0/1/2.
+Record: docs/handoffs/r-soco/FINDING-soco-90-2026-09-29.md; probe scripts/probes/_soco90_se_daily_replacement.py.
+
+OWNER RULINGS 2026-09-29 (soco-90 cards): **"Don't buy"** (SE daily gas licence; fuel route for C3a closed) and
+**"Zero-LP intra-day census"** (soco-91: price setter, offer and loading by hour of day vs lambda; card back).
+
+## 2026-09-29 — soco-91: intra-day census; no unadjudicated intra-day structure explains C3a (zero LP)
+
+Owner ruling (soco-90 card): "Zero-LP intra-day census". At night (low-40 % λ hours), a CC_REGULAR plant at its flat
+average-HR offer sets the price in 41–71 % of hours, and λ is 0.75–0.83 × that offer in all seven years. The ratio is the
+same on weekdays and weekends, in every season, and whether the model's night coal is short or long vs EIA-930, so it is a
+proportional offer-level gap. Only CC incremental HR (refused) or replacement / daily fuel (closed) acts on it. In the
+afternoon (top-20 %), a CT_PEAKER at its average-HR offer sets the price in 37–67 % of hours, and λ sits +$1.0 to +$24.6
+above it: CT start (owner NO) or basis spikes (closed). The model's hydro + PS is 140–570 MW short at night and 650–1,200 MW
+long at peak vs EIA-930. That is a real structural miss, but a perfect-hindsight reshape moves C3a ≤ 1.1 pp with no flips.
+Floors cannot set an LP price (256–382 MW out-of-merit). Interchange is measured and on-clock. Band multipliers have no
+ex-ante source under G5. No solve; keeper unchanged; NOT-YET 7/4/0/1/2. Record: docs/handoffs/r-soco/FINDING-soco-91-2026-09-29.md;
+probe scripts/probes/_soco91_intraday_census.py.
+
+OWNER RULINGS 2026-09-29 (decision cards, soco-91):
+- **SOCO C3a: "Reopen two-part cost"**: a zero-LP design lane for CC incremental + no-load and CT start/no-load as one
+  coherent construction. It lifts the CC-incremental and CT-start DO-NOT-REDO entries for this design only, and returns
+  with a build card.
+- **Hydro shape: "Queue as next SOCO lane"**: build the reconciled reservoir min-flow floor under hydro_ror_split, plus
+  PS cycling depth, for structure (not C3a). PRECOMMIT + 7 year-isolated shards.
+
+## 2026-09-30 — soco-92: reconciled reservoir min-flow floor (probe, §7 holds) + two-part cost design (zero LP)
+
+Track A (owner "Queue as next SOCO lane"): `hydro_min_flow_floor` armed WITH the keeper's `hydro_ror_split` (the rule-19
+reconciled form already in `build_hydro_fleet`; no new field, zero DOF). Seven year-isolated shards at a3d92499; G-DRIFT all
+inert (LP inputs bit-identical 7/7). Registered PROBE `2026-09-30-soco92-hydro-min-flow` (soco92_span), NOT-YET 7/4/0/1/2 =
+keeper. PRECOMMIT §7 holds on all six: reservoir-below-floor hours 697–2,181 → 0; unserved 0; C6/C8 PASS, D-4 0 fails; zero
+status flips anywhere. Night hydro+PS up +11..+170 MW, peak down −1..−109 MW (toward EIA-930); C3a moves ≤ 0.2 pp. PS cycling
+depth not built (model RTE 0.804 = measured 0.811; volume excess is an outcome).
+Track B (owner "Reopen two-part cost"): measured night CC incremental at the real operating point is 0.92–0.97 × average (λ
+needs 0.75–0.83); the coherent pure-LP posture form raises night prices in 6/7 years; measured CT start $0.2–3.3/MWh vs a
+$1–25 gap. Recommendation: do not build for C3a. Records: docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-92-2026-09-30.md,
+FINDING-soco-92-two-part-2026-09-30.md.
+
+OWNER RULINGS 2026-09-30 (soco-92 cards): **"Promote"**: KEEPER → `2026-09-30-soco92-hydro-min-flow` (soco87 pruned, rule 35);
+**"Close the reopen"**: two-part CC/CT cost closed for C3a (`committed_band_measured_basis` I, CT start G); **"Pondage bound
+phase 0"**: soco-93 derives a SOCO NID pondage artifact for `hydro_pondage_bound`, zero LP first.

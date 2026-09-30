@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-30-soco92-hydro-min-flow",
+  "label": "soco92 hydro min flow",
+  "date": "2026-09-30",
+  "shorthand": "soco92-hydro-min-flow",
+  "definition": "SOCO keeper (soco-92): the soco-87 recipe + hydro_min_flow_floor reconciled under hydro_ror_split (EIA-930 Q95 low-flow level less the RoR base, on the reservoir class; zero DOF). NOT-YET 7/4/0/1/2: C3a fails 2019 +14.1 / 2020 +14.4 / 2022 -12.5 %, C3b 2022 0.276; reservoir-below-floor hours 697-2,181 -> 0.",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-09-30-soco92-hydro-min-flow.js",
+  "bundle": "results/calibration/soco92_span"
+}

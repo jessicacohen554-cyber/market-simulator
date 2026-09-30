@@ -1623,6 +1623,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # cells), default off: dropped from the hash at its default so every
     # existing keeper keeps its key. Registered IN THE SAME COMMIT as the field.
     "pjm_zonal_gas_basis_skip_923_priced",
+    # PJM-NEXT-13 replacement-cost fuel (IMM regional spot + measured variable
+    # transport, gas and coal), default off: dropped from the hash at its default
+    # so every existing keeper keeps its key. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 discipline).
+    "pjm_replacement_cost_fuel",
     # ercot-254 monthly resolution of the ERCOT delivered-gas LEVEL anchor,
     # default off: dropped from the hash at its False default so every
     # pre-existing ERCOT key (the designated keeper's included) stays
@@ -1695,6 +1700,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # different merit order) and hashes distinctly.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "ercot_zonal_spread_ep_referenced",
+    # R-ERCOT-17 pooled South-Texas gas basis, default off: dropped from the
+    # hash at its False default so every pre-existing ERCOT key (the designated
+    # keeper's included) stays byte-stable — the off path never reads the
+    # pooled rows. Armed, South and South_Central read one pooled Sch5 row (a
+    # different cross-zonal split) and hash distinctly. Registered IN THE SAME
+    # COMMIT as the field (the nyiso-119 discipline).
+    "ercot_south_texas_pooled_basis",
     # Hindcast announced-exit verification (owner directive 2026-08-22, the
     # PJM Byron/Dresden false-retire investigation): dropped from the hash at
     # its False default so every pre-existing cache key of all six ISOs stays
@@ -2818,6 +2830,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_zonal_gas_basis_skip_923_priced": "False",
     "pjm_zonal_gas_basis_skip_923_priced": "False",
+    # Added by PJM-NEXT-13 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "pjm_replacement_cost_fuel": "False",
     # Added by ercot-254 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_ep_gas_basis_monthly": "False",
@@ -2841,6 +2856,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-255 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_zonal_spread_ep_referenced": "False",
+    # Added by R-ERCOT-17 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "ercot_south_texas_pooled_basis": "False",
     # Added by miso-170 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_plant_exclusions": "False",
@@ -3681,6 +3699,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "gas_hub_basis_daily": "daily resolution of the same measured hub basis",
     "miso_winter_citygate_daily": "measured Chicago Citygate daily prints",
     "miso_gas_marginal_commodity_pricing": "measured Chicago Citygate + Henry Hub daily spot (marginal-commodity gas offers)",
+    "pjm_replacement_cost_fuel": "measured IMM Platts monthly regional spot + measured variable transport (replacement-cost gas and coal offers)",
     "miso_gas_variable_transport": "measured per-plant variable transport over that hub (EIA-923 receipts, frozen derive)",
     "miso_winter_gas_daily_delivered": "measured Chicago Citygate + Henry Hub daily spot in Dec/Jan/Feb, plus measured per-plant variable transport",
     "caiso_citygate_spot_level": "measured CA daily citygate spot series",
@@ -19422,6 +19441,36 @@ class ScenarioConfig:
     # docs/PRECOMMIT-pjm-next-2-card2-basis-scope-2026-09-25.md.
     pjm_zonal_gas_basis_skip_923_priced: bool = False
 
+    # PJM-NEXT-13 (owner ruling 2026-09-29, decision card "Hub + transport, joint
+    # with coal"; zone map "Accept as proposed"). Price PJM dispatch fuel at
+    # REPLACEMENT cost, the traded commodity plus measured variable transport,
+    # instead of the EIA-923 monthly AVERAGE delivered print. The print carries
+    # reservation/demand charges and contract commodity prices amortized over the
+    # month's takes: an average cost on a basis misaligned to a dispatch offer
+    # (rule 14 misalignment clause). PJM cost-based offers use the fuel-cost
+    # policy's expected incremental cost (Manual 15), and the IMM prices LMP fuel
+    # components at Platts spot.
+    #   GAS: the IMM's digitized Platts monthly spot for the zone's ruled region
+    #   (east: EMAAC/SWMAAC/Dominion; west: ComEd/AEP_Ohio/ATSI; production:
+    #   West_APS/Central_PA) + the plant's measured variable transport (the
+    #   miso-225 WLS estimator ported to PJM's own receipts, one value per plant
+    #   over 2019-2025). The incoming within-month shape is kept.
+    #   COAL (COAL_BIT/COAL_PRB): per plant-year, measured basin shares (EIA-923
+    #   receipts x EIA mine-level supply region) x (IMM NAPP/CAPP/PRB spot + EIA
+    #   basin->state->mode transport rate). The unpriced share (Illinois Basin,
+    #   mine-mouth conveyor, unmatched mines) keeps the plant's own price.
+    # Frozen derive (rule 23): scripts/data/derive_pjm_replacement_fuel.py ->
+    # data/raw/reference/pjm_{gas_variable_transport,coal_replacement}.csv. Zero
+    # fitted scalars (rules 21/24). Rule 19: supersedes the PJM mean-zero zonal
+    # basis on the cells it writes, and HARD-ERRORS with the gas-keyed coal
+    # passthrough sigmoids armed (they are the incumbent proxy for the same coal
+    # opportunity cost). PJM-only (rule 25, hard error elsewhere). Backcast-only
+    # overlay; it fails closed for a year the IMM series does not cover. Off by
+    # default (every keeper byte-identical; in _CACHE_KEY_OPTIONAL_FIELDS).
+    # docs/FINDING-pjm-next-13-availability-gas-coalmarginal-2026-09-29.md;
+    # market_sim.data.fuel.basis.pjm_replacement.
+    pjm_replacement_cost_fuel: bool = False
+
     # MISO winter fuel-security daily citygate overlay (miso-72). In the winter
     # months (Dec/Jan/Feb) only, for the MISO gas units in the Chicago-hub zones
     # only (MISO-Illinois/Indiana/East, read from miso_zonal_gas_hub.csv), replace
@@ -20042,6 +20091,32 @@ class ScenarioConfig:
     # .basis.ercot.ercot_zonal_gas_basis_source_group, and
     # docs/PRECOMMIT-ercot255-zonal-spread-ep-reference-2026-09-07.md.
     ercot_zonal_spread_ep_referenced: bool = False
+
+    # Tier 3 (calibration) — POOLED South-Texas gas basis (R-ERCOT-17, owner
+    # ruling 2026-09-29, verbatim: "Pool South Texas (Recommended)").
+    #
+    # data/raw/ercot_zonal_gas_hub.csv's South row is the EIA-923 Sch5
+    # quantity-weighted delivered price of THREE small reporters (plants 3630,
+    # 3631, 59391; 5-35M MMBtu/yr) and it prices ~4.3 GW of South gas,
+    # including merchant CCs that report no receipts. In 2020 plant 59391's
+    # $8.13/MMBtu drives the row to +3.53 over HH against South_Central's +0.64
+    # (13 plants, 151M MMBtu), and South merchant gas runs at 0.12x its EIA-923
+    # actual. Rule 14 [R-ACCURATE] misalignment exception: the zone boundary
+    # samples a thin, unrepresentative subset of the gas the zone actually
+    # burns; the reconciled measured quantity is the Sch5 price over the whole
+    # South-Texas reporter set.
+    #
+    # ON, South and South_Central both read one pooled row (``zone ==
+    # "South_Texas_Pooled"``, written by scripts/data/derive_ercot_zonal_gas_hub.py
+    # ``--pooled-south-texas`` from the published EIA-923 workbooks; member rows
+    # untouched). No threshold and ZERO free parameters (rules 21 / 24): the
+    # weights are the measured Sch5 MMBtu. Fail-closed: a year with no pooled
+    # row (every forecast year) keeps the member rows, so the off path and
+    # every forward solve are byte-identical. No-op unless
+    # ercot_zonal_gas_basis is also on and iso == "ERCOT". See
+    # market_sim.data.fuel.basis.ercot.pool_ercot_south_texas_basis and
+    # docs/handoffs/PRECOMMIT-r-ercot-17-south-texas-pool-2026-09-29.md.
+    ercot_south_texas_pooled_basis: bool = False
 
     # Tier 3 (calibration) — delivered-gas floor on the ERCOT zonal basis above.
     # The West/Panhandle basis in data/raw/ercot_zonal_gas_hub.csv is a Waha *hub*
@@ -24319,6 +24394,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_zonal_gas_basis": 3,
     "miso_zonal_gas_basis_skip_923_priced": 3,
     "pjm_zonal_gas_basis_skip_923_priced": 3,
+    "pjm_replacement_cost_fuel": 3,
     "miso_winter_citygate_daily": 3,
     "miso_gas_marginal_commodity_pricing": 3,
     "miso_gas_variable_transport": 3,
@@ -24336,6 +24412,7 @@ TIER_TAGS: dict[str, int] = {
     "mustrun_chp_btm_holdout": 3,
     "benchmark_membership_vintage_union": 3,
     "ercot_zonal_spread_ep_referenced": 3,
+    "ercot_south_texas_pooled_basis": 3,
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,
     "oil_primary_bin_fuel": 3,

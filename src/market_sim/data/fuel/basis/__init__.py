@@ -36,6 +36,7 @@ from .ercot import (
     ercot_west_oversupply_collapse_freq,
     ercot_zonal_gas_basis_by_zone,
     ercot_zonal_gas_basis_source_group,
+    pool_ercot_south_texas_basis,
 )
 from .meanzero import (
     CAISO_ZONAL_GAS_HUB_PATH,
@@ -68,6 +69,7 @@ from .nyiso import (
     nyiso_zonal_gas_ratios_monthly,
 )
 from .pjm import apply_pjm_zonal_gas_basis, pjm_zonal_gas_basis_by_zone
+from .pjm_replacement import apply_pjm_replacement_cost_fuel
 
 # The application order resolve_fuel_prices walks. Identical mutation sequence
 # to the pre-split call list for every ISO: each applier is a no-op unless
@@ -115,6 +117,7 @@ __all__ = [
     "ldc_generator_transport_monthly",
     "eia860_plant_gas_ldc",
     "apply_nyiso_zonal_gas_basis",
+    "apply_pjm_replacement_cost_fuel",
     "apply_pjm_zonal_gas_basis",
     "caiso_zonal_gas_basis_by_zone",
     "ercot_electric_power_gas_basis",
@@ -125,6 +128,7 @@ __all__ = [
     "ercot_west_oversupply_collapse_freq",
     "ercot_zonal_gas_basis_by_zone",
     "ercot_zonal_gas_basis_source_group",
+    "pool_ercot_south_texas_basis",
     "miso_chicago_daily_shape_factors",
     "miso_zonal_gas_basis_by_zone",
     "nyiso_downstate_ct_gas_premium",

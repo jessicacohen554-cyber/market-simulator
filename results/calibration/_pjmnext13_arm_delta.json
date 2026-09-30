@@ -1,0 +1,226 @@
+{
+ "2019": {
+  "class": {
+   "CC_REGULAR": {
+    "dfuel": -0.018,
+    "dbid": -0.07
+   },
+   "CC_CHP": {
+    "dfuel": 0.109,
+    "dbid": 0.6
+   },
+   "CT_PEAKER": {
+    "dfuel": 0.136,
+    "dbid": 1.66
+   },
+   "ST_GAS": {
+    "dfuel": 0.883,
+    "dbid": 9.87
+   },
+   "COAL_BIT": {
+    "dfuel": 0.165,
+    "dbid": 4.08
+   },
+   "COAL_PRB": {
+    "dfuel": -0.243,
+    "dbid": -0.88
+   }
+  },
+  "keeper_lw_price": 29.68,
+  "static_arm_lw_price": 32.39,
+  "static_dprice": 2.71,
+  "static_dprice_gas_only": 1.25
+ },
+ "2020": {
+  "class": {
+   "CC_REGULAR": {
+    "dfuel": -0.057,
+    "dbid": -0.42
+   },
+   "CC_CHP": {
+    "dfuel": 0.044,
+    "dbid": 0.17
+   },
+   "CT_PEAKER": {
+    "dfuel": 0.139,
+    "dbid": 1.73
+   },
+   "ST_GAS": {
+    "dfuel": 0.876,
+    "dbid": 10.11
+   },
+   "COAL_BIT": {
+    "dfuel": -0.056,
+    "dbid": 3.81
+   },
+   "COAL_PRB": {
+    "dfuel": -0.445,
+    "dbid": -2.06
+   }
+  },
+  "keeper_lw_price": 24.57,
+  "static_arm_lw_price": 26.67,
+  "static_dprice": 2.1,
+  "static_dprice_gas_only": 1.02
+ },
+ "2021": {
+  "class": {
+   "CC_REGULAR": {
+    "dfuel": 0.165,
+    "dbid": 1.45
+   },
+   "CC_CHP": {
+    "dfuel": 0.27,
+    "dbid": 1.8
+   },
+   "CT_PEAKER": {
+    "dfuel": 0.471,
+    "dbid": 5.63
+   },
+   "ST_GAS": {
+    "dfuel": 1.011,
+    "dbid": 11.86
+   },
+   "COAL_BIT": {
+    "dfuel": 0.346,
+    "dbid": 1.65
+   },
+   "COAL_PRB": {
+    "dfuel": -0.09,
+    "dbid": 0.11
+   }
+  },
+  "keeper_lw_price": 39.21,
+  "static_arm_lw_price": 41.81,
+  "static_dprice": 2.6,
+  "static_dprice_gas_only": 2.22
+ },
+ "2022": {
+  "class": {
+   "CC_REGULAR": {
+    "dfuel": 0.129,
+    "dbid": 1.12
+   },
+   "CC_CHP": {
+    "dfuel": 0.434,
+    "dbid": 2.94
+   },
+   "CT_PEAKER": {
+    "dfuel": 0.014,
+    "dbid": -0.18
+   },
+   "ST_GAS": {
+    "dfuel": 0.901,
+    "dbid": 10.32
+   },
+   "COAL_BIT": {
+    "dfuel": 1.798,
+    "dbid": 3.04
+   },
+   "COAL_PRB": {
+    "dfuel": 0.107,
+    "dbid": 0.75
+   }
+  },
+  "keeper_lw_price": 65.58,
+  "static_arm_lw_price": 67.43,
+  "static_dprice": 1.85,
+  "static_dprice_gas_only": 2.01
+ },
+ "2023": {
+  "class": {
+   "CC_REGULAR": {
+    "dfuel": -0.244,
+    "dbid": -1.99
+   },
+   "CC_CHP": {
+    "dfuel": -0.007,
+    "dbid": -0.38
+   },
+   "CT_PEAKER": {
+    "dfuel": -0.152,
+    "dbid": -1.68
+   },
+   "ST_GAS": {
+    "dfuel": 0.806,
+    "dbid": 8.93
+   },
+   "COAL_BIT": {
+    "dfuel": -0.021,
+    "dbid": 4.23
+   },
+   "COAL_PRB": {
+    "dfuel": -0.126,
+    "dbid": -0.4
+   }
+  },
+  "keeper_lw_price": 31.12,
+  "static_arm_lw_price": 31.65,
+  "static_dprice": 0.53,
+  "static_dprice_gas_only": -0.11
+ },
+ "2024": {
+  "class": {
+   "CC_REGULAR": {
+    "dfuel": -0.053,
+    "dbid": -0.37
+   },
+   "CC_CHP": {
+    "dfuel": 0.089,
+    "dbid": 0.45
+   },
+   "CT_PEAKER": {
+    "dfuel": 0.051,
+    "dbid": 0.6
+   },
+   "ST_GAS": {
+    "dfuel": 0.875,
+    "dbid": 9.52
+   },
+   "COAL_BIT": {
+    "dfuel": -0.23,
+    "dbid": 2.93
+   },
+   "COAL_PRB": {
+    "dfuel": -0.308,
+    "dbid": -1.44
+   }
+  },
+  "keeper_lw_price": 31.51,
+  "static_arm_lw_price": 32.88,
+  "static_dprice": 1.37,
+  "static_dprice_gas_only": 0.89
+ },
+ "2025": {
+  "class": {
+   "CC_REGULAR": {
+    "dfuel": -0.032,
+    "dbid": -0.24
+   },
+   "CC_CHP": {
+    "dfuel": -0.018,
+    "dbid": -0.18
+   },
+   "CT_PEAKER": {
+    "dfuel": 0.041,
+    "dbid": 0.55
+   },
+   "ST_GAS": {
+    "dfuel": 0.908,
+    "dbid": 10.39
+   },
+   "COAL_BIT": {
+    "dfuel": -0.042,
+    "dbid": 0.49
+   },
+   "COAL_PRB": {
+    "dfuel": -0.19,
+    "dbid": -1.62
+   }
+  },
+  "keeper_lw_price": 45.04,
+  "static_arm_lw_price": 46.52,
+  "static_dprice": 1.48,
+  "static_dprice_gas_only": 1.46
+ }
+}

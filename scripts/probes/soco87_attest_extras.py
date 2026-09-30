@@ -10,7 +10,7 @@ recorded as a disclosure only, beside soco-85's carried ``gas_daily_shape`` disc
 
 Usage::
 
-    python3 scripts/probes/soco87_attest_extras.py --bundle results/calibration/soco87_span
+    python3 scripts/probes/soco87_attest_extras.py --bundle results/calibration/soco92_span
 """
 
 from __future__ import annotations
@@ -21,8 +21,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 # Carried from soco85_span at soco-87 (it was the incumbent then); repointed after the soco-87
-# promotion pruned it (rule 35): the incumbent keeper is soco87_span.
-KEEPER = ROOT / "results/calibration/soco87_span/calibration_attestation.json"
+# promotion pruned it (rule 35): the incumbent keeper is soco92_span.
+KEEPER = (
+    ROOT / "results/calibration/soco92_span/calibration_attestation.json"
+)  # repointed soco-92 (rule 35 prune of soco92_span)
 
 #: Keeper-only entries, carried by NAME PREFIX (soco83_attest_extras.CARRY + its ENTRY).
 CARRY = (
