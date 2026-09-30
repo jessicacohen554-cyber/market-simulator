@@ -39,14 +39,19 @@ import score_bundle_price_shape as sps  # noqa: E402
 from scripts.lib.clean_io import read_clean  # noqa: E402
 
 CAL = REPO / "results/calibration"
-BUNDLE = {2021: "nyisonext16_2021", **{y: "nyisonext16_span" for y in range(2022, 2026)}}
+BUNDLE = {
+    2021: "nyisonext16_2021",
+    **{y: "nyisonext16_span" for y in range(2022, 2026)},
+}
 p13.BUNDLE = BUNDLE
 YEARS = (2021, 2022, 2023, 2024, 2025)
 
 
 def _mon() -> np.ndarray:
     """Hour-of-year -> month 0..11 on the scorer's month edges."""
-    return np.clip(np.searchsorted(sps.rch._CUM, np.arange(8760), side="right") - 1, 0, 11)
+    return np.clip(
+        np.searchsorted(sps.rch._CUM, np.arange(8760), side="right") - 1, 0, 11
+    )
 
 
 def _ce_ratio(y: int) -> np.ndarray:
@@ -56,7 +61,11 @@ def _ce_ratio(y: int) -> np.ndarray:
     f["lh"] = pd.to_datetime(f.interval_start_local).dt.floor("h")
     g = f.groupby("lh").agg(fl=("flow_mw", "mean"), lim=("positive_limit_mw", "mean"))
     g = g[g.index.year == y]
-    hoy = ((g.index - pd.Timestamp(f"{y}-01-01")) / pd.Timedelta("1h")).astype(int).to_numpy()
+    hoy = (
+        ((g.index - pd.Timestamp(f"{y}-01-01")) / pd.Timedelta("1h"))
+        .astype(int)
+        .to_numpy()
+    )
     out = np.full(8760, np.nan)
     ok = (hoy >= 0) & (hoy < 8760)
     out[hoy[ok]] = (g.fl / g.lim).to_numpy()[ok]
@@ -68,18 +77,25 @@ def year_block(y: int) -> dict:
     meas, mod = p13.meas_da(y), p13.model_prices(y)
     sy = pd.read_parquet(CAL / BUNDLE[y] / "hourly" / f"system_{y}.parquet")
     sy = sy[sy["pass"] == "P1"]
-    dem = sy.pivot_table(index="hour", columns="zone", values="demand").reindex(range(8760))
+    dem = sy.pivot_table(index="hour", columns="zone", values="demand").reindex(
+        range(8760)
+    )
     zones = list(p13.MODEL_TO_MEAS)
     W = dem[zones].to_numpy()
     PM = mod[zones].to_numpy()
-    PA = np.column_stack([meas[list(c)].mean(axis=1).to_numpy() for c in p13.MODEL_TO_MEAS.values()])
+    PA = np.column_stack(
+        [meas[list(c)].mean(axis=1).to_numpy() for c in p13.MODEL_TO_MEAS.values()]
+    )
     ok = np.isfinite(PA).all(axis=1)
     wtot = W[ok].sum()
     mon = _mon()
     contrib = {}
     for j, z in enumerate(zones):
         contrib[z] = [
-            round(float(((PM[:, j] - PA[:, j]) * W[:, j])[ok & (mon == m)].sum() / wtot), 3)
+            round(
+                float(((PM[:, j] - PA[:, j]) * W[:, j])[ok & (mon == m)].sum() / wtot),
+                3,
+            )
             for m in range(12)
         ]
     bench = sps.bench_year("NYISO", y)["avgLMP"]
@@ -92,10 +108,16 @@ def year_block(y: int) -> dict:
 
     def lwmean(x, m, j):
         s = m & np.isfinite(x)
-        return round(float((x[s] * W[s, j]).sum() / W[s, j].sum()), 2) if s.any() else None
+        return (
+            round(float((x[s] * W[s, j]).sum() / W[s, j].sum()), 2) if s.any() else None
+        )
 
     ce = {}
-    for name, m in (("ce_ge_085", hi), ("ce_070_085", ~hi & ~lo & np.isfinite(ratio)), ("ce_lt_070", lo)):
+    for name, m in (
+        ("ce_ge_085", hi),
+        ("ce_070_085", ~hi & ~lo & np.isfinite(ratio)),
+        ("ce_lt_070", lo),
+    ):
         ce[name] = {
             "share_h_pct": round(float(m.mean()) * 100, 1),
             "uw_err": lwmean(PM[:, uw] - PA[:, uw], m, uw),
@@ -103,7 +125,9 @@ def year_block(y: int) -> dict:
             "ef_spread_meas": lwmean(PA[:, ch] - mhk, m, ch),
             "ch_uw_spread_meas": lwmean(PA[:, ch] - PA[:, uw], m, ch),
             "ch_uw_spread_model": lwmean(PM[:, ch] - PM[:, uw], m, ch),
-            "uw_err_contrib_sys": round(float(((PM[:, uw] - PA[:, uw]) * W[:, uw])[ok & m].sum() / wtot), 3),
+            "uw_err_contrib_sys": round(
+                float(((PM[:, uw] - PA[:, uw]) * W[:, uw])[ok & m].sum() / wtot), 3
+            ),
         }
     return {
         "rt_lw": bench.get("rt_lw"),

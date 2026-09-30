@@ -59,7 +59,22 @@ Armed per solve through `config.topology_variant.set_nyiso_fg_split` at the `run
   - Reserves: SENY = Lower_Hudson + NYC + Long_Island now equals NYISO's G–K.
   - The loss surface is per zone pair.
 
-## 4. Tests
+## 4. Zero-LP pre-flight (fleet-only rebuild of the keeper recipe, 2023)
+
+`scripts/probes/nyisonext17_fleet_check.py 2023` rebuilds through the sanctioned `replay_keeper.run_year_kwargs` path twice (control, arm). No LP.
+
+| zone | demand GWh, control → arm | thermal MW, control → arm |
+|---|---|---|
+| Upstate_West | 51,174.4 → 51,174.4 | 11,917.9 → 11,917.9 |
+| Capital_Hudson | 20,108.8 → 11,094.1 | 8,584.3 → 3,705.5 |
+| Lower_Hudson | 8,097.3 → 17,112.0 | 99.8 → 4,978.6 |
+| NYC / Long_Island | unchanged | unchanged |
+| **NYCA total** | **147,048.9 → 147,048.9** | **42,955.0 → 42,955.0** |
+
+- The totals are conserved exactly; 9,014.7 GWh of load and 4,878.8 MW of thermal move from F+G to G+H+I.
+- Links (armed): the base four, plus `Upstate_West>Lower_Hudson`. The border links go from CH 1,600 to CH 600 + LH 1,000.
+
+## 5. Tests
 
 `tests/iso/nyiso/test_nyiso_fg_split.py` covers:
 
