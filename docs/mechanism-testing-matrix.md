@@ -5776,6 +5776,8 @@ loss.
 > The yard-only candidate was **pre-registered (c4ffbefa) and killed** on all four gates: 2022 nights +$2.29, and
 > Jul+Aug coal 54.0 TWh vs a 52.3 cap. The successor needs a per-yard minimum-stock target, which is a new
 > identification. No frontier.
+> **Owner ruling:** *"Min-stock target design (Recommended)"*. **Next (miso-289):** zero-LP design of a per-yard
+> monthly pile + prior-years minimum-stock target; pre-check with a kill rule first. No frontier.
 
 > **QUEUE STAMP miso-287 (2026-09-29) — ZERO LP, NO SOLVE, keeper unchanged**
 > (`FINDING-miso287-p1-night-residual-2026-09-29.md`). The P1-over-P0 night residual is the **coal fuel-budget

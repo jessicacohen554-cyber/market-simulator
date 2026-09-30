@@ -88,3 +88,11 @@ family carries one.
     masked offer corpus has no fuel attribute (miso-138 refuted the class bridge).
 - **Where MISO stands.** Keeper unchanged. Train 2023–2025 CALIBRATED (C3c ledgered). Full span **NOT-YET** on
   three routed misses: C1 ST_GAS 2019, C3a 2022, C3b 2021. **No frontier.** Routed misses are failures.
+
+## 5. Owner ruling (2026-09-30)
+
+*"Min-stock target design (Recommended)"*. The next lane (miso-289) is a zero-LP design lane. The design is a
+per-yard monthly pile (the NWPP-NEXT-8 construction, MISO-gated on its own evidence) plus a minimum-stock /
+winter-inventory target. The target is identified from prior-years days-of-burn history, never the solve year's
+own stock path. A pre-check with a kill rule comes before any shard. The pile REPLACES the pooled flat `B/12` limb
+(rule 19).

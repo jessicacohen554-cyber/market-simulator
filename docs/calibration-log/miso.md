@@ -15405,3 +15405,5 @@ fleet expressed its coal shortage.
 
 No frontier: the full span is NOT-YET on the three routed misses.
 `docs/FINDING-miso288-coal-scarcity-study-2026-09-30.md`.
+
+Owner ruling: "Min-stock target design (Recommended)". Next: miso-289, zero-LP design of a per-yard monthly pile + prior-years minimum-stock target, pre-check with a kill rule first.
