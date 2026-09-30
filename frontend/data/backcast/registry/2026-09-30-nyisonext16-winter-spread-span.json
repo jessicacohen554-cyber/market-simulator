@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-30-nyisonext16-winter-spread-span",
+  "label": "nyisonext16 winter spread span",
+  "date": "2026-09-30",
+  "shorthand": "nyisonext16-winter-spread-span",
+  "definition": "NYISO-NEXT-16 arm: keeper + nyiso_iroquois_winter_spread (PRECOMMIT-nyiso-next16-winter-spread-2026-09-30.md)",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-30-nyisonext16-winter-spread-span.js",
+  "bundle": "results/calibration/nyisonext16_span"
+}

@@ -9,8 +9,8 @@ G-3: the ``Upstate_West>Capital_Hudson`` link sits at its forward bound in
      >= 1 % and <= 50 % of P1 hours.
 G-4: Upstate_West P1 hours at <= $0 are <= 100.
 G-6: P1 load-slack energy exceeds the keeper's by <= 1 GWh.
-G-7: no D-4 failure row keyed (year, check, floor, plant) in the arm that is
-     absent from the keeper.
+G-7: no D-4 failure row keyed (year, mechanism x class, plant) in the arm
+     that is absent from the keeper (read from the COMPOSED bundles, as the keeper's are).
 Reported: NEXT-14's reported block (lift, spread, hydro, zonal LW price vs the
 keeper) and the DJF downstate - Upstate_West spread, arm / keeper / measured DA.
 Record: ``results/calibration/_nyisonext16_gates.json``.
@@ -77,17 +77,18 @@ def _prices(bundle: str, y: int) -> pd.DataFrame:
 
 
 def _d4_fail_keys(bundle: str, y: int) -> set[tuple]:
+    """D-4 failures keyed (year, mechanism x class, plant); the rows are prose strings."""
+    import re
+
     d = json.loads((CAL / bundle / "legitimacy_diagnostics.json").read_text())[
         "diagnostics"
     ]["D4"]
-    rows = d.get("failures") or [
-        r for r in d.get("rows", []) if r.get("verdict") not in ("pass", None)
-    ]
-    return {
-        (r.get("year"), r.get("check"), r.get("floor"), str(r.get("plant")))
-        for r in rows
-        if isinstance(r, dict) and int(r.get("year", y)) == y
-    }
+    keys = set()
+    for r in d.get("failures") or []:
+        m = re.match(r"(\d{4}) (.+?): plant (\S+) ", str(r))
+        if m and int(m.group(1)) == y:
+            keys.add((int(m.group(1)), m.group(2), m.group(3)))
+    return keys
 
 
 def year(y: int) -> dict:
@@ -140,7 +141,11 @@ def year(y: int) -> dict:
     slack_k = float(sk[sk["pass"] == "P1"].slack.sum()) / 1e3
 
     new_d4 = sorted(
-        map(str, _d4_fail_keys(f"nyisonext16_{y}", y) - _d4_fail_keys(KEEP[y], y))
+        map(
+            str,
+            _d4_fail_keys("nyisonext16_2021" if y == 2021 else "nyisonext16_span", y)
+            - _d4_fail_keys(KEEP[y], y),
+        )
     )
     return {
         "G2_conservation_delta": cons,
