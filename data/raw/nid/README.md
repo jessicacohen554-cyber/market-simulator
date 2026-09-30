@@ -114,3 +114,30 @@ The two traps above (a `NID ID` is a project, not a structure; hydraulic height 
 unchanged and are handled by the builder's `groupby("NID ID").max()` and its labelled
 `nid_height_proxy` fallback. For NWPP, 11 of 168 plants (175.7 of 31,746.8 MW, 0.6 %) fall back
 to the labelled NID-height proxy; the rest carry a hydraulic height.
+
+---
+
+# SOCO hydro subset (lane soco-93, 2026-09-30)
+
+`nid_soco_hydro_dams.csv` — **63 structure rows / 41 distinct `NID ID`s** (Georgia 33, Alabama 29, South
+Carolina 1 structure rows), the subset of the national export whose `NID ID` is named by an ORNL HILARRI v4
+linkage row for a SOCO conventional-hydro plant (EHA FY2024 `Operational`, `BACode` in `ba_codes("SOCO")`,
+`CH_MW > 0`). Every one of the 41 linked `NID ID`s is present in the national file; none is missing. Line 1
+keeps the file's own vintage banner so `scripts/data/build_hydro_pondage.py::load_nid` reads it unchanged.
+
+* **Data vintage:** `Data Last Updated: 2026-9-23`
+* **Fetched:** 2026-09-30 from `https://nid.sec.usace.army.mil/api/nation/csv`
+* **National file:** 67,285,174 bytes, sha256
+  `d2ab9d97237f8ed814761cef953aa82d2761b909c3dfd8b66352f71c5e2ca645` (not committed; re-fetchable)
+* **Fields retained:** identical to the NWPP subset above.
+* **Cross-reference registry:** `HYDRO_PONDAGE_EXTRA_NID_BY_PLANT` carries no SOCO entry; every link is HILARRI.
+
+**Reproducibility gate (checked 2026-09-30):** `build_hydro_pondage.py --iso SOCO --nid-csv
+data/raw/nid/nid_soco_hydro_dams.csv` writes `data/raw/soco-hydro/soco_hydro_pondage.csv`
+**byte-identical** to the build from the full national file.
+
+Head basis: 40 of 41 plants carry a hydraulic height; one (plant 752, 17.2 MW) falls back to the labelled
+NID-height proxy. Consumer: `data/raw/soco-hydro/soco_hydro_pondage.csv` → `data/hydro.py::load_hydro_pondage`,
+only when `ScenarioConfig.hydro_pondage_bound` is armed. It is **not armed in any committed SOCO run**, so the
+SOCO keeper is byte-identical with this file on disk. Phase-0 record:
+`docs/handoffs/r-soco/FINDING-soco-93-pondage-phase0-2026-09-30.md`.
