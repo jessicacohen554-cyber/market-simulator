@@ -26,6 +26,7 @@ import gzip
 import json
 import re
 import sys
+import time
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
@@ -43,13 +44,13 @@ from scripts.probes._miso287_p1_residual import (  # noqa: E402
     NIGHT_H,
     NON_LP,
     T,
-    clear_all,
     run_ratio,
 )
 
 PAYLOAD = REPO / "frontend/data/backcast/runs/2026-09-28-miso-280-splitremap.js"
 OUT = REPO / "results/calibration/_miso288_yard_precheck.json"
 MAX_IT = 200
+T0 = time.time()
 TOL = 0.01
 
 
@@ -103,6 +104,11 @@ def solve_lams(bid, mg, flex, q, add_pool, month_idx, pool_cap, yard_rows):
             gp = np.zeros(12)
             viol_p = np.zeros(12)
         worst = float(max(viol_y.max(initial=0), viol_p.max()))
+        print(
+            f"  it {it} worst {worst:.4f} yards>0 {(ly > 0).sum()} "
+            f"lam_pool max {lp.max():.2f} t {time.time() - T0:.0f}s",
+            flush=True,
+        )
         if worst <= TOL:
             break
         # adaptive per-row step: halve on sign flip, grow slowly otherwise
@@ -164,7 +170,8 @@ def main() -> int:
         q = ch_lp.groupby("hour").mw.sum().reindex(range(T)).fillna(0).to_numpy()
         night = np.arange(T) % 24 < NIGHT_H
 
-        _, _, d0 = clear_all(mc, mg, flex, q)
+        print(y, "rows", n, "rebuilt", round(time.time() - T0), "s", flush=True)
+        _, d0 = clear_block(mc, mg, flex, q)
         mk = compute_monthly_markup(
             fleet,
             fa,
