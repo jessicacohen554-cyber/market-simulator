@@ -1,0 +1,719 @@
+{
+ "2024": {
+  "model_lw": 27.837,
+  "actual_lw": 31.184,
+  "gap_usd": -3.347,
+  "err_pct": -10.73,
+  "level": {
+   "trough<=15": {
+    "n": 2232,
+    "load_share": 0.227,
+    "model": 16.36,
+    "actual": 8.438,
+    "contrib_usd": 1.8,
+    "share_of_gap": -0.538
+   },
+   "15-25": {
+    "n": 3458,
+    "load_share": 0.397,
+    "model": 23.695,
+    "actual": 20.104,
+    "contrib_usd": 1.424,
+    "share_of_gap": -0.426
+   },
+   "25-40": {
+    "n": 1928,
+    "load_share": 0.232,
+    "model": 31.052,
+    "actual": 30.788,
+    "contrib_usd": 0.061,
+    "share_of_gap": -0.018
+   },
+   "40-100": {
+    "n": 950,
+    "load_share": 0.118,
+    "model": 42.965,
+    "actual": 58.431,
+    "contrib_usd": -1.831,
+    "share_of_gap": 0.547
+   },
+   "tight>100": {
+    "n": 192,
+    "load_share": 0.026,
+    "model": 93.458,
+    "actual": 277.133,
+    "contrib_usd": -4.801,
+    "share_of_gap": 1.434
+   }
+  },
+  "hod": {
+   "00-05": {
+    "n": 2190,
+    "load_share": 0.215,
+    "model": 22.467,
+    "actual": 21.79,
+    "contrib_usd": 0.146,
+    "share_of_gap": -0.043
+   },
+   "06-09": {
+    "n": 1460,
+    "load_share": 0.16,
+    "model": 23.651,
+    "actual": 22.57,
+    "contrib_usd": 0.173,
+    "share_of_gap": -0.052
+   },
+   "10-15": {
+    "n": 2190,
+    "load_share": 0.274,
+    "model": 25.711,
+    "actual": 24.958,
+    "contrib_usd": 0.207,
+    "share_of_gap": -0.062
+   },
+   "16-20": {
+    "n": 1825,
+    "load_share": 0.23,
+    "model": 38.861,
+    "actual": 57.076,
+    "contrib_usd": -4.184,
+    "share_of_gap": 1.25
+   },
+   "21-23": {
+    "n": 1095,
+    "load_share": 0.121,
+    "model": 26.8,
+    "actual": 24.219,
+    "contrib_usd": 0.313,
+    "share_of_gap": -0.093
+   }
+  },
+  "month": {
+   "1": {
+    "n": 744,
+    "load_share": 0.083,
+    "model": 40.147,
+    "actual": 39.919,
+    "contrib_usd": 0.019,
+    "share_of_gap": -0.006
+   },
+   "2": {
+    "n": 696,
+    "load_share": 0.066,
+    "model": 15.324,
+    "actual": 15.065,
+    "contrib_usd": 0.017,
+    "share_of_gap": -0.005
+   },
+   "3": {
+    "n": 744,
+    "load_share": 0.07,
+    "model": 20.528,
+    "actual": 24.365,
+    "contrib_usd": -0.269,
+    "share_of_gap": 0.081
+   },
+   "4": {
+    "n": 720,
+    "load_share": 0.073,
+    "model": 22.038,
+    "actual": 27.184,
+    "contrib_usd": -0.376,
+    "share_of_gap": 0.112
+   },
+   "5": {
+    "n": 744,
+    "load_share": 0.087,
+    "model": 30.12,
+    "actual": 45.285,
+    "contrib_usd": -1.32,
+    "share_of_gap": 0.394
+   },
+   "6": {
+    "n": 720,
+    "load_share": 0.097,
+    "model": 33.299,
+    "actual": 32.088,
+    "contrib_usd": 0.118,
+    "share_of_gap": -0.035
+   },
+   "7": {
+    "n": 744,
+    "load_share": 0.097,
+    "model": 26.192,
+    "actual": 24.565,
+    "contrib_usd": 0.158,
+    "share_of_gap": -0.047
+   },
+   "8": {
+    "n": 744,
+    "load_share": 0.107,
+    "model": 34.517,
+    "actual": 41.952,
+    "contrib_usd": -0.792,
+    "share_of_gap": 0.237
+   },
+   "9": {
+    "n": 720,
+    "load_share": 0.089,
+    "model": 26.104,
+    "actual": 27.299,
+    "contrib_usd": -0.106,
+    "share_of_gap": 0.032
+   },
+   "10": {
+    "n": 744,
+    "load_share": 0.085,
+    "model": 27.415,
+    "actual": 27.842,
+    "contrib_usd": -0.036,
+    "share_of_gap": 0.011
+   },
+   "11": {
+    "n": 720,
+    "load_share": 0.073,
+    "model": 24.669,
+    "actual": 33.684,
+    "contrib_usd": -0.655,
+    "share_of_gap": 0.196
+   },
+   "12": {
+    "n": 720,
+    "load_share": 0.073,
+    "model": 26.277,
+    "actual": 27.685,
+    "contrib_usd": -0.103,
+    "share_of_gap": 0.031
+   }
+  },
+  "zone": {
+   "Houston": {
+    "n": 8760,
+    "load_share": 0.267,
+    "model": 27.632,
+    "actual": 29.209,
+    "contrib_usd": -0.421,
+    "share_of_gap": 0.126
+   },
+   "North": {
+    "n": 8760,
+    "load_share": 0.308,
+    "model": 28.407,
+    "actual": 29.259,
+    "contrib_usd": -0.263,
+    "share_of_gap": 0.078
+   },
+   "Northeast": {
+    "n": 8760,
+    "load_share": 0.032,
+    "model": 27.801,
+    "actual": 27.626,
+    "contrib_usd": 0.006,
+    "share_of_gap": -0.002
+   },
+   "South": {
+    "n": 8760,
+    "load_share": 0.081,
+    "model": 27.65,
+    "actual": 34.166,
+    "contrib_usd": -0.526,
+    "share_of_gap": 0.157
+   },
+   "South_Central": {
+    "n": 8760,
+    "load_share": 0.161,
+    "model": 28.382,
+    "actual": 33.297,
+    "contrib_usd": -0.792,
+    "share_of_gap": 0.237
+   },
+   "West": {
+    "n": 8760,
+    "load_share": 0.151,
+    "model": 26.561,
+    "actual": 35.513,
+    "contrib_usd": -1.35,
+    "share_of_gap": 0.404
+   }
+  },
+  "gap_if_both_capped_100": 0.935
+ },
+ "2025": {
+  "model_lw": 32.915,
+  "actual_lw": 36.502,
+  "gap_usd": -3.587,
+  "err_pct": -9.83,
+  "level": {
+   "trough<=15": {
+    "n": 876,
+    "load_share": 0.09,
+    "model": 15.987,
+    "actual": 6.951,
+    "contrib_usd": 0.813,
+    "share_of_gap": -0.227
+   },
+   "15-25": {
+    "n": 2509,
+    "load_share": 0.276,
+    "model": 25.192,
+    "actual": 20.854,
+    "contrib_usd": 1.198,
+    "share_of_gap": -0.334
+   },
+   "25-40": {
+    "n": 3259,
+    "load_share": 0.374,
+    "model": 32.529,
+    "actual": 31.341,
+    "contrib_usd": 0.444,
+    "share_of_gap": -0.124
+   },
+   "40-100": {
+    "n": 1862,
+    "load_share": 0.228,
+    "model": 45.04,
+    "actual": 56.588,
+    "contrib_usd": -2.629,
+    "share_of_gap": 0.733
+   },
+   "tight>100": {
+    "n": 254,
+    "load_share": 0.032,
+    "model": 65.187,
+    "actual": 171.143,
+    "contrib_usd": -3.413,
+    "share_of_gap": 0.952
+   }
+  },
+  "hod": {
+   "00-05": {
+    "n": 2190,
+    "load_share": 0.216,
+    "model": 30.445,
+    "actual": 32.649,
+    "contrib_usd": -0.476,
+    "share_of_gap": 0.133
+   },
+   "06-09": {
+    "n": 1460,
+    "load_share": 0.16,
+    "model": 29.763,
+    "actual": 30.567,
+    "contrib_usd": -0.129,
+    "share_of_gap": 0.036
+   },
+   "10-15": {
+    "n": 2190,
+    "load_share": 0.274,
+    "model": 27.667,
+    "actual": 27.241,
+    "contrib_usd": 0.116,
+    "share_of_gap": -0.032
+   },
+   "16-20": {
+    "n": 1825,
+    "load_share": 0.229,
+    "model": 41.702,
+    "actual": 55.439,
+    "contrib_usd": -3.15,
+    "share_of_gap": 0.878
+   },
+   "21-23": {
+    "n": 1095,
+    "load_share": 0.121,
+    "model": 36.713,
+    "actual": 36.286,
+    "contrib_usd": 0.052,
+    "share_of_gap": -0.014
+   }
+  },
+  "month": {
+   "1": {
+    "n": 744,
+    "load_share": 0.083,
+    "model": 36.542,
+    "actual": 36.127,
+    "contrib_usd": 0.034,
+    "share_of_gap": -0.01
+   },
+   "2": {
+    "n": 672,
+    "load_share": 0.071,
+    "model": 34.528,
+    "actual": 42.667,
+    "contrib_usd": -0.578,
+    "share_of_gap": 0.161
+   },
+   "3": {
+    "n": 744,
+    "load_share": 0.071,
+    "model": 27.42,
+    "actual": 30.089,
+    "contrib_usd": -0.19,
+    "share_of_gap": 0.053
+   },
+   "4": {
+    "n": 720,
+    "load_share": 0.075,
+    "model": 29.502,
+    "actual": 35.116,
+    "contrib_usd": -0.42,
+    "share_of_gap": 0.117
+   },
+   "5": {
+    "n": 744,
+    "load_share": 0.085,
+    "model": 32.664,
+    "actual": 40.225,
+    "contrib_usd": -0.639,
+    "share_of_gap": 0.178
+   },
+   "6": {
+    "n": 720,
+    "load_share": 0.093,
+    "model": 31.853,
+    "actual": 31.525,
+    "contrib_usd": 0.03,
+    "share_of_gap": -0.008
+   },
+   "7": {
+    "n": 744,
+    "load_share": 0.098,
+    "model": 35.431,
+    "actual": 36.337,
+    "contrib_usd": -0.089,
+    "share_of_gap": 0.025
+   },
+   "8": {
+    "n": 744,
+    "load_share": 0.101,
+    "model": 39.031,
+    "actual": 39.516,
+    "contrib_usd": -0.049,
+    "share_of_gap": 0.014
+   },
+   "9": {
+    "n": 720,
+    "load_share": 0.09,
+    "model": 31.36,
+    "actual": 35.299,
+    "contrib_usd": -0.355,
+    "share_of_gap": 0.099
+   },
+   "10": {
+    "n": 744,
+    "load_share": 0.084,
+    "model": 31.109,
+    "actual": 36.443,
+    "contrib_usd": -0.448,
+    "share_of_gap": 0.125
+   },
+   "11": {
+    "n": 720,
+    "load_share": 0.073,
+    "model": 32.181,
+    "actual": 36.501,
+    "contrib_usd": -0.314,
+    "share_of_gap": 0.088
+   },
+   "12": {
+    "n": 744,
+    "load_share": 0.077,
+    "model": 30.72,
+    "actual": 38.127,
+    "contrib_usd": -0.57,
+    "share_of_gap": 0.159
+   }
+  },
+  "zone": {
+   "Houston": {
+    "n": 8760,
+    "load_share": 0.265,
+    "model": 32.728,
+    "actual": 34.513,
+    "contrib_usd": -0.473,
+    "share_of_gap": 0.132
+   },
+   "North": {
+    "n": 8760,
+    "load_share": 0.305,
+    "model": 33.302,
+    "actual": 34.692,
+    "contrib_usd": -0.424,
+    "share_of_gap": 0.118
+   },
+   "Northeast": {
+    "n": 8760,
+    "load_share": 0.032,
+    "model": 33.094,
+    "actual": 34.158,
+    "contrib_usd": -0.034,
+    "share_of_gap": 0.009
+   },
+   "South": {
+    "n": 8760,
+    "load_share": 0.08,
+    "model": 32.908,
+    "actual": 34.97,
+    "contrib_usd": -0.166,
+    "share_of_gap": 0.046
+   },
+   "South_Central": {
+    "n": 8760,
+    "load_share": 0.159,
+    "model": 33.358,
+    "actual": 39.414,
+    "contrib_usd": -0.965,
+    "share_of_gap": 0.269
+   },
+   "West": {
+    "n": 8760,
+    "load_share": 0.159,
+    "model": 32.013,
+    "actual": 41.602,
+    "contrib_usd": -1.527,
+    "share_of_gap": 0.426
+   }
+  },
+  "gap_if_both_capped_100": -1.048
+ },
+ "2022": {
+  "model_lw": 68.539,
+  "actual_lw": 75.082,
+  "gap_usd": -6.542,
+  "err_pct": -8.71,
+  "level": {
+   "trough<=15": {
+    "n": 510,
+    "load_share": 0.046,
+    "model": 27.147,
+    "actual": 6.154,
+    "contrib_usd": 0.971,
+    "share_of_gap": -0.148
+   },
+   "15-25": {
+    "n": 996,
+    "load_share": 0.097,
+    "model": 31.613,
+    "actual": 21.003,
+    "contrib_usd": 1.034,
+    "share_of_gap": -0.158
+   },
+   "25-40": {
+    "n": 2087,
+    "load_share": 0.214,
+    "model": 40.048,
+    "actual": 32.274,
+    "contrib_usd": 1.661,
+    "share_of_gap": -0.254
+   },
+   "40-100": {
+    "n": 4558,
+    "load_share": 0.554,
+    "model": 67.176,
+    "actual": 63.759,
+    "contrib_usd": 1.893,
+    "share_of_gap": -0.289
+   },
+   "tight>100": {
+    "n": 609,
+    "load_share": 0.089,
+    "model": 207.911,
+    "actual": 344.411,
+    "contrib_usd": -12.101,
+    "share_of_gap": 1.85
+   }
+  },
+  "hod": {
+   "00-05": {
+    "n": 2190,
+    "load_share": 0.213,
+    "model": 44.748,
+    "actual": 42.179,
+    "contrib_usd": 0.548,
+    "share_of_gap": -0.084
+   },
+   "06-09": {
+    "n": 1460,
+    "load_share": 0.161,
+    "model": 55.294,
+    "actual": 64.724,
+    "contrib_usd": -1.517,
+    "share_of_gap": 0.232
+   },
+   "10-15": {
+    "n": 2190,
+    "load_share": 0.275,
+    "model": 79.336,
+    "actual": 97.981,
+    "contrib_usd": -5.129,
+    "share_of_gap": 0.784
+   },
+   "16-20": {
+    "n": 1825,
+    "load_share": 0.23,
+    "model": 94.676,
+    "actual": 97.402,
+    "contrib_usd": -0.628,
+    "share_of_gap": 0.096
+   },
+   "21-23": {
+    "n": 1095,
+    "load_share": 0.12,
+    "model": 53.671,
+    "actual": 52.137,
+    "contrib_usd": 0.185,
+    "share_of_gap": -0.028
+   }
+  },
+  "month": {
+   "1": {
+    "n": 744,
+    "load_share": 0.078,
+    "model": 35.619,
+    "actual": 31.601,
+    "contrib_usd": 0.312,
+    "share_of_gap": -0.048
+   },
+   "2": {
+    "n": 672,
+    "load_share": 0.073,
+    "model": 55.917,
+    "actual": 56.038,
+    "contrib_usd": -0.009,
+    "share_of_gap": 0.001
+   },
+   "3": {
+    "n": 744,
+    "load_share": 0.071,
+    "model": 37.291,
+    "actual": 36.722,
+    "contrib_usd": 0.04,
+    "share_of_gap": -0.006
+   },
+   "4": {
+    "n": 720,
+    "load_share": 0.072,
+    "model": 50.291,
+    "actual": 57.017,
+    "contrib_usd": -0.483,
+    "share_of_gap": 0.074
+   },
+   "5": {
+    "n": 744,
+    "load_share": 0.09,
+    "model": 80.686,
+    "actual": 105.827,
+    "contrib_usd": -2.251,
+    "share_of_gap": 0.344
+   },
+   "6": {
+    "n": 720,
+    "load_share": 0.097,
+    "model": 70.092,
+    "actual": 71.234,
+    "contrib_usd": -0.111,
+    "share_of_gap": 0.017
+   },
+   "7": {
+    "n": 744,
+    "load_share": 0.106,
+    "model": 140.615,
+    "actual": 165.506,
+    "contrib_usd": -2.648,
+    "share_of_gap": 0.405
+   },
+   "8": {
+    "n": 744,
+    "load_share": 0.1,
+    "model": 97.854,
+    "actual": 93.993,
+    "contrib_usd": 0.384,
+    "share_of_gap": -0.059
+   },
+   "9": {
+    "n": 720,
+    "load_share": 0.087,
+    "model": 71.364,
+    "actual": 67.794,
+    "contrib_usd": 0.31,
+    "share_of_gap": -0.047
+   },
+   "10": {
+    "n": 744,
+    "load_share": 0.075,
+    "model": 47.401,
+    "actual": 53.302,
+    "contrib_usd": -0.443,
+    "share_of_gap": 0.068
+   },
+   "11": {
+    "n": 720,
+    "load_share": 0.073,
+    "model": 42.539,
+    "actual": 43.708,
+    "contrib_usd": -0.085,
+    "share_of_gap": 0.013
+   },
+   "12": {
+    "n": 744,
+    "load_share": 0.079,
+    "model": 48.52,
+    "actual": 68.267,
+    "contrib_usd": -1.56,
+    "share_of_gap": 0.238
+   }
+  },
+  "zone": {
+   "Houston": {
+    "n": 8760,
+    "load_share": 0.274,
+    "model": 68.069,
+    "actual": 80.622,
+    "contrib_usd": -3.443,
+    "share_of_gap": 0.526
+   },
+   "North": {
+    "n": 8760,
+    "load_share": 0.322,
+    "model": 70.232,
+    "actual": 74.907,
+    "contrib_usd": -1.506,
+    "share_of_gap": 0.23
+   },
+   "Northeast": {
+    "n": 8760,
+    "load_share": 0.036,
+    "model": 68.992,
+    "actual": 73.639,
+    "contrib_usd": -0.167,
+    "share_of_gap": 0.025
+   },
+   "South": {
+    "n": 8760,
+    "load_share": 0.08,
+    "model": 68.297,
+    "actual": 68.13,
+    "contrib_usd": 0.013,
+    "share_of_gap": -0.002
+   },
+   "South_Central": {
+    "n": 8760,
+    "load_share": 0.165,
+    "model": 69.802,
+    "actual": 77.333,
+    "contrib_usd": -1.24,
+    "share_of_gap": 0.19
+   },
+   "West": {
+    "n": 8760,
+    "load_share": 0.123,
+    "model": 63.487,
+    "actual": 65.115,
+    "contrib_usd": -0.2,
+    "share_of_gap": 0.031
+   }
+  },
+  "gap_if_both_capped_100": 4.731
+ }
+}
