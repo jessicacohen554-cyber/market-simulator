@@ -15407,3 +15407,21 @@ No frontier: the full span is NOT-YET on the three routed misses.
 `docs/FINDING-miso288-coal-scarcity-study-2026-09-30.md`.
 
 Owner ruling: "Min-stock target design (Recommended)". Next: miso-289, zero-LP design of a per-yard monthly pile + prior-years minimum-stock target, pre-check with a kill rule first.
+
+## miso-289 — 2026-09-30
+
+Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Design + pre-check of a per-yard monthly
+coal pile with a prior-years minimum-stock floor.
+
+- **Identification:** each yard's own minimum month-end days on hand over the prior three EIA-923 stock years,
+  converted at its budget receipts rate. Admissible and non-degenerate 2019–2025 (MW-weighted 41–53 days;
+  annual budget cut 7.7–11.0 %).
+- **Pre-check** pre-registered (ed7981a8) and **KILLED** at 2022: Gate V passes; nights +$4.64 vs incumbent
+  (K1/K2 fail); Jul+Aug and annual coal guards pass. Summer nights improve, winter nights rise $8–10 because the
+  cumulative pile banks winter coal for summer.
+- **Cells:** `coal_fuel_inventory_monthly_pile` MISO U → R.
+
+No frontier: the full span is NOT-YET on the three routed misses.
+`docs/FINDING-miso289-minstock-pile-killed-2026-09-30.md`.
+
+Owner ruling: *"Pile + take floor (Recommended)"*. Next: miso-290, zero-LP pre-check of the pile + a MISO-derived contract take floor and pile capacity.
