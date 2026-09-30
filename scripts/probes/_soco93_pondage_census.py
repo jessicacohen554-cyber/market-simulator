@@ -4,7 +4,7 @@ Owner ruling 2026-09-30 (soco-92 card "Next lane"): "Pondage bound phase 0". Rul
 ``[R-SHARD]`` (a): this never solves. Per year it
 
 1. does one ``fleet_only`` rebuild of the keeper recipe
-   (``results/calibration/soco92_span``) and captures, from ``build_dispatch_fleet``,
+   (``results/calibration/soco93_span``; the FINDING ran on the then-keeper soco92_span) and captures, from ``build_dispatch_fleet``,
    the hydro generators, their EIA plant codes, the RoR-flat flags and the MEASURED
    ``(n_hydro, 12)`` monthly budget the LP carries;
 2. selects the plants ``data.hydro.load_hydro_pondage`` would give a row, with its own
@@ -43,7 +43,9 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "scripts"), str(ROOT / "src"), str(ROOT)]
 
-SPAN = ROOT / "results/calibration/soco92_span"
+SPAN = (
+    ROOT / "results/calibration/soco93_span"
+)  # repointed soco-93 (rule 35); FINDING ran on soco92_span
 SPAN_HOURLY = SPAN  # --span overrides the hourly frames only (E1 on an arm)
 ARTIFACT = ROOT / "data/raw/soco-hydro/soco_hydro_pondage.csv"
 YEARS = tuple(range(2019, 2026))
