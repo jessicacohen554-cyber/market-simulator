@@ -170,5 +170,48 @@
    2.24,
    2.82
   ]
+ },
+ "2023": {
+  "stock_years": "[2020, 2021, 2022]",
+  "yard_rows": 57,
+  "rows_with_inputs": 53,
+  "rows_with_inputs_mw": 45640.0,
+  "rowed_mw": 45655.0,
+  "contract_share_mw_weighted": 0.955,
+  "contract_share_p10_p50_p90": [
+   0.83,
+   1.0,
+   1.0
+  ],
+  "c_over_r_fleet": 0.956,
+  "headroom_smax_minus_sdec_mmbtu_m": 419.1,
+  "rows_positive_floor": 47,
+  "positive_floor_mw": 42702.0,
+  "floor_first_month_p50": 2,
+  "annual_floor_mmbtu_m": 1727.6,
+  "annual_ceiling_mmbtu_m": 2589.0,
+  "floor_over_ceiling_annual": 0.667,
+  "floor_by_month_mmbtu_m": [
+   34.9,
+   129.9,
+   249.0,
+   383.1,
+   534.1,
+   698.0,
+   874.5,
+   1048.7,
+   1216.0,
+   1384.5,
+   1557.4,
+   1727.6
+  ],
+  "clip_to_ceiling_cells": 0,
+  "clip_to_minstock_ceiling_cells": 0,
+  "clip_to_capacity_cells": 82,
+  "shortfall_price_p10_p50_p90": [
+   1.78,
+   2.39,
+   2.91
+  ]
  }
 }
