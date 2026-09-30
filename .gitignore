@@ -3892,3 +3892,7 @@ results/calibration/rcaiso15_A_tp_2019_2021/hourly/p0_*
 results/calibration/nyisonext15_202[2-5]/
 # soco-93 zero-LP probe outputs (G-DRIFT identity); numbers live in PRECOMMIT-soco-93 §3
 results/calibration/_soco93/
+
+# soco-93 per-year shard legs (rule 32(d): kept out of main; the composite soco93_span is registered).
+# Leg SHAs are provenance only (rule 33(d)): RESULT-soco-93-2026-09-30.md section 4.
+results/calibration/soco93_20*/
