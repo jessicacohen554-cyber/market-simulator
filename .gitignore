@@ -3944,3 +3944,11 @@ results/calibration/_rcaiso23/
 results/calibration/soco96_20*/
 # soco-96 zero-LP probe outputs (G-DRIFT identity); numbers live in PRECOMMIT-soco-96 section 3
 results/calibration/_soco96/
+
+# NWPP-NEXT-15: PR #6932's per-year legs (competing NEXT-14 arm, eia923_cc_family_heat_rates + per-unit fuel-split) and its
+# composite — scored as a COMPARISON only, never registered, never main (owner card "Score, then close"; rules 31/32(d)).
+# Provenance (rule 33(d)): 2019 cd4ceba8 2020 d3498dec 2021 cb9d7e61 2022 7e75c269 2023 ab503a60 2024 36e0ea7c 2025 f589faf2
+results/calibration/nwppnext14_20[0-9][0-9]/
+results/calibration/nwppnext14_pr6932_span/
+# NWPP-NEXT-15 per-year legs of THIS lane's arm (transport only; composite nwppnext14vd_span is registered).
+results/calibration/nwppnext14vd_20[0-9][0-9]/
