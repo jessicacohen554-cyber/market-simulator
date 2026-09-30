@@ -5771,7 +5771,7 @@ loss.
 > **QUEUE STAMP miso-289 (2026-09-30) — ZERO LP, NO SOLVE, keeper unchanged**
 > (`FINDING-miso289-minstock-pile-killed-2026-09-30.md`). Per-yard cumulative monthly pile + a prior-years
 > minimum-stock floor (each yard's own minimum days on hand over Y-3..Y-1), replacing the pooled `B/12` limb.
-> Identification admissible in all 7 years (annual cut 7.7–11.0 %). Pre-registered (f4361995) and **killed** at
+> Identification admissible in all 7 years (annual cut 7.7–11.0 %). Pre-registered (ed7981a8) and **killed** at
 > 2022: nights **+$4.64** vs incumbent. It fixes summer (Jul −$6.8) but starves winter (Jan–Apr coal −13 TWh vs
 > bench, nights +$8–10): a cumulative pile with ratable receipts is a perfect-foresight bank. Third budget-grain
 > kill (carry, yard-only, pile+floor). `coal_fuel_inventory_monthly_pile` MISO **U → R**. No frontier.

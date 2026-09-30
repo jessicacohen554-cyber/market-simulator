@@ -15416,7 +15416,7 @@ coal pile with a prior-years minimum-stock floor.
 - **Identification:** each yard's own minimum month-end days on hand over the prior three EIA-923 stock years,
   converted at its budget receipts rate. Admissible and non-degenerate 2019–2025 (MW-weighted 41–53 days;
   annual budget cut 7.7–11.0 %).
-- **Pre-check** pre-registered (f4361995) and **KILLED** at 2022: Gate V passes; nights +$4.64 vs incumbent
+- **Pre-check** pre-registered (ed7981a8) and **KILLED** at 2022: Gate V passes; nights +$4.64 vs incumbent
   (K1/K2 fail); Jul+Aug and annual coal guards pass. Summer nights improve, winter nights rise $8–10 because the
   cumulative pile banks winter coal for summer.
 - **Cells:** `coal_fuel_inventory_monthly_pile` MISO U → R.

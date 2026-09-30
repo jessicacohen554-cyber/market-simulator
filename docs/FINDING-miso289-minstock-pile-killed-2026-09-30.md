@@ -4,7 +4,7 @@
 LANE     : miso-289 (owner ruling "Min-stock target design (Recommended)", miso-288 §5)
 KEEPER   : 2026-09-28-miso-280-splitremap (results/calibration/miso280_span, 2019-2025), unchanged
 LP       : none
-PRECOMMIT: docs/PRECOMMIT-miso289-minstock-pile-2026-09-30.md (f4361995, pushed before the emulator ran)
+PRECOMMIT: docs/PRECOMMIT-miso289-minstock-pile-2026-09-30.md (ed7981a8, pushed before the emulator ran)
 PROBE    : scripts/probes/_miso289_minstock_precheck.py (--census, then the INC/PILE0/CAND pre-check)
 OUTPUTS  : results/calibration/_miso289_minstock_{census,precheck}.json
 CELLS    : coal_fuel_inventory_monthly_pile MISO U -> R (pre-check kill, no LP); no other verdict moves
