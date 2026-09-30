@@ -11,7 +11,9 @@ These tests pin that nothing else moves:
   spends the single ledgered slot and DOWNGRADES to the caveat rung;
 * any other ISO, year, class, or the over-run direction stays a FAIL;
 * failing governance blocks it; the ledgered budget is still checked first;
-* LEDGERABLE_CRITERIA is unchanged and the scoped table holds one row.
+* LEDGERABLE_CRITERIA is unchanged and the scoped table holds exactly the
+  v3.10 row plus the three v3.11 SOCO C3a rows (owner ruling 2026-09-30,
+  soco-94: exact rows, direction-bound, spend the slot, downgrade).
 """
 
 import unittest
@@ -25,6 +27,12 @@ from tests.scoring.test_calibration_verdict import (
 )
 
 _KEY = ("SOCO", 2019, "fuelmix", "COAL_BIT")
+# Rubric v3.11 (owner ruling 2026-09-30, soco-94): the three SOCO C3a rows.
+_C3A_KEYS = {
+    ("SOCO", 2019, "price_mean", None),
+    ("SOCO", 2020, "price_mean", None),
+    ("SOCO", 2022, "price_mean", None),
+}
 
 
 def _art(iso="SOCO", year=2019, coal_bit=45.0, attestation=True):
@@ -61,7 +69,7 @@ def _rec(v, year, key):
 
 class ScopedLedgerTests(unittest.TestCase):
     def test_table_is_exactly_one_row_and_c3c_guard_unchanged(self):
-        self.assertEqual(set(cv.SCOPED_LEDGER_ENTRIES), {_KEY})
+        self.assertEqual(set(cv.SCOPED_LEDGER_ENTRIES), {_KEY, *_C3A_KEYS})
         self.assertEqual(cv.LEDGERABLE_CRITERIA, frozenset({"price_tail"}))
         self.assertEqual(cv.MAX_LEDGERED_CAVEATS, 1)
         self.assertEqual(cv.SCOPED_LEDGER_ENTRIES[_KEY]["direction"], "under")
@@ -78,7 +86,7 @@ class ScopedLedgerTests(unittest.TestCase):
         self.assertEqual(v["grade_summary"]["ledgered"], 1)
         # It DOWNGRADES: the caveat rung, never the clean one.
         self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
-        self.assertIn("rubric v3.10 scoped ledgered caveat", v["reasons"][0])
+        self.assertIn("rubric v3.10/v3.11 scoped ledgered caveat", v["reasons"][0])
         self.assertFalse(
             any(
                 "NOT determination-downgrading under rubric v3.3" in x
@@ -151,6 +159,89 @@ class ScopedLedgerTests(unittest.TestCase):
         art["attestation"] = att
         v = cv.determine_from_artifacts("t", art)
         self.assertEqual(_rec(v, 2020, "COAL_BIT")["status"], cv.FAIL)
+
+
+def _c3a_art(year, actual_rt, iso="SOCO", attestation=True):
+    """The clean fixture with C1 clean and the C3a actual moved to ``actual_rt``.
+
+    The fixture's model mean is ~$29/MWh, so an actual of 25 is a +16 % over-run
+    FAIL and 34 a -15 % under-run FAIL. The monthly actual stays flat at 29 so
+    C3b is unaffected.
+    """
+    d = DeterminationTests()
+    kw = d._clean_bench_args()
+    kw["avg_lmp"] = {"rt": actual_rt, "rt_mon": [29] * 12}
+    art = _artifacts(
+        d._clean_year_payload(),
+        iso=iso,
+        year=year,
+        attestation=_clean_attestation() if attestation else None,
+        **kw,
+    )
+    art["legitimacy"] = _legit_artifact(year=year, r=0.9, cv_ratio=0.02, share=0.05)
+    return art
+
+
+def _c3a(v, year):
+    """The C3a record for ``year`` in a verdict."""
+    for r in v["criteria"]["price_mean"]["records"]:
+        if int(r["year"]) == year:
+            return r
+    raise AssertionError(f"no price_mean record {year}")
+
+
+class ScopedLedgerC3aTests(unittest.TestCase):
+    """Rubric v3.11: the three SOCO C3a rows, each bound to its year's sign."""
+
+    def test_directions(self):
+        dirs = {k[1]: cv.SCOPED_LEDGER_ENTRIES[k]["direction"] for k in _C3A_KEYS}
+        self.assertEqual(dirs, {2019: "over", 2020: "over", 2022: "under"})
+
+    def test_rows_reach_in_their_own_direction_and_downgrade(self):
+        for year, actual in ((2019, 25.0), (2020, 25.0), (2022, 34.0)):
+            with self.subTest(year=year):
+                v = cv.determine_from_artifacts("t", _c3a_art(year, actual))
+                r = _c3a(v, year)
+                self.assertEqual(r["status"], cv.CAVEAT)
+                self.assertEqual(r["classification"], cv.MODEL_LIMIT)
+                self.assertTrue(r["scoped_ledger"])
+                self.assertEqual(v["grade_summary"]["ledgered"], 1)
+                self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
+                self.assertIn("price_mean", v["reasons"][0])
+
+    def test_wrong_sign_stays_fail(self):
+        for year, actual in ((2019, 34.0), (2020, 34.0), (2022, 25.0)):
+            with self.subTest(year=year):
+                v = cv.determine_from_artifacts("t", _c3a_art(year, actual))
+                self.assertEqual(_c3a(v, year)["status"], cv.FAIL)
+                self.assertEqual(v["determination"], cv.NOT_YET)
+
+    def test_other_soco_years_stay_fail(self):
+        for year in (2021, 2023, 2024, 2025):
+            for actual in (25.0, 34.0):
+                with self.subTest(year=year, actual=actual):
+                    v = cv.determine_from_artifacts("t", _c3a_art(year, actual))
+                    self.assertEqual(_c3a(v, year)["status"], cv.FAIL)
+
+    def test_other_isos_stay_fail(self):
+        for iso in ("PJM", "MISO", "NWPP", "ERCOT", "CAISO", "NYISO", "NEISO", "SPP"):
+            with self.subTest(iso=iso):
+                v = cv.determine_from_artifacts("t", _c3a_art(2019, 25.0, iso=iso))
+                self.assertEqual(_c3a(v, 2019)["status"], cv.FAIL)
+
+    def test_failing_governance_blocks_it(self):
+        v = cv.determine_from_artifacts("t", _c3a_art(2019, 25.0, attestation=False))
+        self.assertEqual(_c3a(v, 2019)["status"], cv.FAIL)
+        self.assertEqual(v["determination"], cv.NOT_YET)
+
+    def test_c1_and_c3a_together_exceed_the_single_slot(self):
+        art = _art(year=2019)
+        art["bench"] = _c3a_art(2019, 25.0)["bench"]
+        v = cv.determine_from_artifacts("t", art)
+        self.assertEqual(_c3a(v, 2019)["status"], cv.CAVEAT)
+        self.assertEqual(_rec(v, 2019, "COAL_BIT")["status"], cv.CAVEAT)
+        self.assertEqual(v["determination"], cv.NOT_YET)
+        self.assertIn("caveat budget exceeded", v["reasons"][0])
 
 
 if __name__ == "__main__":

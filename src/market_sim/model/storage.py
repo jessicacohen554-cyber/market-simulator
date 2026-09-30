@@ -1097,20 +1097,15 @@ def _caiso_storage_envelope_clock_repaired(
 
     if not caiso_eia930_clock_repair_active():
         return None
-    from market_sim.config.constants import EIA930_CISO_CLOCK_LATE_WINDOWS_UTC
     from market_sim.config.paths import (
         active_eia860_dir,
         eia860_standby_admitted,
         restore_eia860_dir,
         set_eia860_vintage,
     )
+    from market_sim.data.eia930.frames import ciso_generation_windows_reach
 
-    first, last = (
-        pd.Timestamp(t) for t in EIA930_CISO_CLOCK_LATE_WINDOWS_UTC["generation"]
-    )
-    year_lo = pd.Timestamp(year=year, month=1, day=1, hour=7)
-    year_hi = pd.Timestamp(year=year + 1, month=1, day=1, hour=9)
-    if year_hi < first - pd.Timedelta(hours=1) or year_lo > last:
+    if not ciso_generation_windows_reach(year):
         return None
     if eia860_standby_admitted():
         raise RuntimeError(
