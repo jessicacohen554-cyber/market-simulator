@@ -5775,6 +5775,8 @@ loss.
 > miso-285 §4:** its stack clear kept injected biomass + OTHER in the quantity, so P1 actually sits $0.8–1.5 above
 > the base stack in every year. The named stock-carry successor was **pre-registered (5d7aac49) and killed**:
 > 2022's annual fuel is 20 % short, so a carry raises 2022 nights +$3.04. No frontier.
+> **Owner ruling:** *"2022 coal-scarcity study"*. **Next (miso-288):** zero-LP, data-first study of how the real
+> 2022 fleet expressed its coal shortage (offer adders vs derates/outages/deferred burn). No frontier.
 
 > **QUEUE STAMP miso-286 (2026-09-29) — ZERO LP, NO SOLVE, keeper unchanged**
 > (`FINDING-miso286-ecomin-precheck-killed-2026-09-29.md`). Built `miso_gas_ecomin_online_floor` default off
