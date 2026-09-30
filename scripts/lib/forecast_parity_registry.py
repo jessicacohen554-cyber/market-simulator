@@ -729,6 +729,17 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "year, per the ercot_gtc_limits_measured adjudication",
         evidence=(_BACKCAST_ORCH, "src/market_sim/data/nyiso_seam_envelope.py"),
     ),
+    # NYISO-NEXT-15 (2026-09-30): declared in the promoting PR (owner ruling R-BF).
+    ParityDeclaration(
+        fields=("nyiso_import_landing_band",),
+        disposition=BACKCAST_ONLY,
+        why="replaces the MEASURED EIA-930 monthly net-interchange band with one "
+        "monthly band per pooled border link on that link's own measured P-32 "
+        "attributed schedule; both bands are the backcast measured-schedule pin "
+        "(the forecast band targets the neighbour's forecast position, and the "
+        "orchestrator refuses the flag in forecast mode)",
+        evidence=(_BACKCAST_ORCH, "src/market_sim/model/interchange/nyiso.py"),
+    ),
     # NYISO-NEXT-13 (2026-09-29): declared in the promoting PR (owner ruling R-BF).
     ParityDeclaration(
         fields=("nyiso_ne_ac_recon_detach",),
