@@ -1,14 +1,18 @@
-# PRECOMMIT — miso-297: the JOINT arm — MISO gas at marginal commodity + measured variable transport (owner-ruled form) AND the coal econ bands through the authorized channel, the multiplier identified ex ante by the IMM marginal-share census
+# PRECOMMIT — miso-297 (NOT LAUNCHED: the identification failed its own pre-stated rule, §3.3) — the JOINT arm — MISO gas at marginal commodity + measured variable transport (owner-ruled form) AND the coal econ bands through the authorized channel, the multiplier identified ex ante by the IMM marginal-share census
 
 ```
+STATUS  : NOT LAUNCHED. The §3.1 rules (pooling, grid, crossing) were committed at 025012a7 before the pooled curve
+          existed; the joint leg's pooled coal marginal share peaks at 0.305 (m = 0.80) and never reaches the IMM
+          pooled 0.3633, so by the crossing rule no m* exists, no arm table was written and no shard was launched.
+          Reading and owner options: docs/records/miso/FINDING-miso297-census-identification-2026-10-01.md
 LANE    : miso-297 (owner rulings 2026-10-01, miso-296 decision cards: "PRECOMMIT the joint arm (Recommended)" and
           "IMM marginal-share census (Recommended)"; FINDING-miso296 §7 named successor)
 KEEPER  : 2026-09-28-miso-280-splitremap (results/calibration/miso280_span, 2019-2025), legs solved at 8f765fef
 ARM     : keeper recipe + THREE declared fields (§2): miso_gas_marginal_commodity_pricing=true,
           miso_gas_variable_transport=true, offer_curve_by_group replaced by the full table
           docs/records/miso/miso297-arm-offer-curve-by-group.json (keeper table sha256 6708af72b01cf4f6 ->
-          arm table {{ARM_SHA}}; the only cells that move are the four coal subclasses' econ_low / econ_high,
-          each x m* = {{M_STAR}})
+          arm table n/a (not written); the only cells that move are the four coal subclasses' econ_low / econ_high,
+          each x m* = m*)
 CONTROL : none solved. G-DRIFT 8f765fef..this SHA (§4): the keeper bundle IS the control (rule 29(b) form 4)
 SHARDS  : 7 arm legs, one year each 2019-2025 (rules 34(c), 36), pinned to this document's commit SHA
 DATA    : DATA PROFILE: miso — no intake; every input the shards read is pinned in _miso297_shard_check.INPUT_SHA
@@ -60,7 +64,15 @@ marginal-commodity line PRESENT **with** the transport clause (the bare-hub clau
 
 ### 2.1 The table delta (eight cells; `committed` and `peak` held)
 
-{{ARM_TABLE_ROWS}}
+| class | committed (held) | econ_low keeper → arm | econ_high keeper → arm | peak (held) |
+|---|---:|---:|---:|---:|
+| COAL_PRB | 1.1 | 1.1 → 1.1·m* | 1.309 → 1.309·m* | 1.628 |
+| COAL_BIT | 1.1 | 1.1 → 1.1·m* | 1.21 → 1.21·m* | 1.595 |
+| COAL_LIGNITE | 1.1 | 1.254 → 1.254·m* | 1.265 → 1.265·m* | 1.705 |
+| COAL_WC | 1.1 | 1.1 → 1.1·m* | 1.122 → 1.122·m* | 1.32 |
+
+(`scripts/probes/_miso297_arm_table.py --m <m*>` writes the table and asserts exactly these eight cells move. **Not written: no m* was identified (§3.3).**)
+
 
 **Why the econ bands only, and not all four as miso-275 did.** miso-275 undid a uniform lift, so it moved the four
 bands uniformly. The owner-ruled identification here is the *marginal share*, and the IMM evidence is specific about
@@ -96,27 +108,94 @@ acts on the delivered fuel price, not on the band multiplier, so the LP builds e
 
 ### 3.2 What the rebuild measured (identities)
 
-{{IDENTITY_TABLE}}
+| | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| LP rows (fleet-only rebuild) | 3010 | 2998 | 2982 | 2983 | 2743 | 2727 | 3218 |
+| gas fuel cap-wtd, keeper print → ruled form $/MMBtu | 2.958 → 3.299 | 2.441 → 2.748 | 4.855 → 5.053 | 6.882 → 7.203 | 3.076 → 3.121 | 2.757 → 2.903 | 3.871 → 4.066 |
+| CC_REGULAR fuel cap-wtd, keeper → ruled | 2.686 → 2.796 | 2.238 → 2.306 | 4.529 → 4.616 | 6.670 → 6.809 | 2.920 → 2.675 | 2.606 → 2.477 | 3.674 → 3.626 |
+| CC_REGULAR econ: max |Δmc − HR·Δfuel| $/MWh | 6.69 | 1.65 | 2.12 | 3.89 | 3.44 | 1.80 | 1.87 |
+| non-gas rows identical between legs | yes | yes | yes | yes | yes | yes | yes |
+| coal econ rows / cap GW (mean) | 498 / 14.5 | 462 / 11.7 | 462 / 12.7 | 438 / 11.8 | 324 / 8.6 | 300 / 8.6 | 492 / 9.1 |
+| coal econ offer cap-wtd = HR·fuel + VOM + resid | 31.2 = 26.7 + 4.5 + 0.00 | 34.9 = 30.4 + 4.5 + 0.00 | 38.0 = 33.5 + 4.5 + 0.00 | 34.7 = 30.2 + 4.5 + 0.00 | 36.7 = 32.2 + 4.5 + 0.00 | 35.6 = 31.1 + 4.5 + 0.00 | 34.8 = 30.3 + 4.5 + 0.00 |
+
+Reading: the two legs differ on gas rows only; the CC_REGULAR econ offer moves by exactly HR × Δfuel up to the few-$ rows the dual-fuel oil-parity cap touches (max-abs column). The coal econ residual is 0.00 in every year, so `offer(m) = offer − HR·fuel·(1 − m)` is exact. **The ruled gas form RAISES the gas fuel level in 2019–2022** (own-plant variable transport $0.24–0.36/MMBtu cap-weighted on CC_REGULAR, $0.71–0.84 on all gas, against a print-over-hub wedge of $0.13–0.39 in those years) **and lowers CC_REGULAR in 2023–2025** (−$0.25 / −$0.13 / −$0.05) — the opposite sign from the 2023-only miso-225 screen in the early years.
+
 
 ### 3.3 The census curve (pooled 2019–2024 bid-stack coal marginal share; IMM pooled 0.3633)
 
-{{CURVE_TABLE}}
+| m | coal-only pooled | joint pooled (P1 bid) | joint P0 | joint 2019 | joint 2020 | joint 2021 | joint 2022 | joint 2023 | joint 2024 |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1.00 | 0.274 | **0.284** | 0.257 | 0.462 | 0.275 | 0.384 | 0.161 | 0.221 | 0.204 |
+| 0.95 | 0.281 | **0.288** | 0.265 | 0.474 | 0.289 | 0.368 | 0.152 | 0.228 | 0.216 |
+| 0.90 | 0.292 | **0.296** | 0.274 | 0.492 | 0.304 | 0.365 | 0.142 | 0.241 | 0.230 |
+| 0.85 | 0.292 | **0.303** | 0.279 | 0.500 | 0.342 | 0.355 | 0.129 | 0.254 | 0.240 |
+| 0.80 | 0.298 | **0.305** | 0.287 | 0.486 | 0.376 | 0.339 | 0.122 | 0.256 | 0.252 |
+| 0.75 | 0.296 | **0.302** | 0.284 | 0.476 | 0.384 | 0.330 | 0.107 | 0.261 | 0.257 |
+| 0.70 | 0.288 | **0.297** | 0.284 | 0.466 | 0.397 | 0.293 | 0.107 | 0.257 | 0.261 |
+| 0.65 | 0.274 | **0.282** | 0.271 | 0.425 | 0.398 | 0.264 | 0.103 | 0.246 | 0.256 |
+| 0.60 | 0.257 | **0.267** | 0.259 | 0.375 | 0.399 | 0.234 | 0.097 | 0.239 | 0.257 |
+| 0.55 | 0.232 | **0.241** | 0.235 | 0.319 | 0.362 | 0.209 | 0.096 | 0.222 | 0.238 |
+| 0.50 | 0.207 | **0.216** | 0.213 | 0.265 | 0.338 | 0.183 | 0.098 | 0.192 | 0.222 |
+| 0.45 | 0.175 | **0.183** | 0.180 | 0.207 | 0.289 | 0.157 | 0.096 | 0.155 | 0.195 |
+| 0.40 | 0.149 | **0.161** | 0.157 | 0.190 | 0.245 | 0.147 | 0.096 | 0.121 | 0.166 |
+| 0.35 | 0.125 | **0.133** | 0.129 | 0.166 | 0.181 | 0.135 | 0.094 | 0.094 | 0.129 |
+| 0.30 | 0.107 | **0.116** | 0.111 | 0.149 | 0.149 | 0.132 | 0.093 | 0.080 | 0.095 |
+| IMM | 0.363 | 0.363 | 0.363 | 0.47 | 0.40 | 0.35 | 0.24 | 0.36 | 0.36 |
 
-**Declared value: m* = {{M_STAR}}** ({{M_STAR_SENTENCE}})
+
+**Declared value: m* = **none** — the joint leg's pooled share never reaches 0.3633: it rises from 0.285 (m = 1.00) to a maximum of **0.305 at m = 0.80** and falls to 0.116 at m = 0.30; the coal-only leg peaks at 0.298 (m = 0.80). By the crossing rule fixed in §3.1 **no arm is launched**** (the pooled maximum falls 0.058 short of the IMM; the low-gas years 2020 / 2023 / 2024 rise toward the IMM (2020 reaches 0.40 at m = 0.70) while 2019 / 2021 / 2022 fall as their coal econ ramp drops below gas and becomes fully infra-marginal; one value cannot serve both regimes)
 
 ### 3.4 Per-year shares at m* (joint leg) beside the IMM and the keeper
 
-{{PER_YEAR_TABLE}}
+| | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| IMM SMP coal | 0.47 | 0.4 | 0.35 | 0.24 | 0.36 | 0.36 | n/a |
+| keeper stack (coal-only m=1.00): coal all-hours | 0.432 | 0.254 | 0.371 | 0.177 | 0.215 | 0.197 | 0.277 |
+| keeper stack (coal-only m=1.00): coal q1 / q5 | 0.16 / 0.63 | 0.07 / 0.48 | 0.38 / 0.28 | 0.32 / 0.06 | 0.11 / 0.29 | 0.07 / 0.34 | 0.22 / 0.17 |
+| gas-only (joint m=1.00): coal all-hours | 0.462 | 0.275 | 0.384 | 0.161 | 0.221 | 0.204 | 0.282 |
+| gas-only (joint m=1.00): coal q1 / q5 | 0.20 / 0.63 | 0.08 / 0.50 | 0.41 / 0.29 | 0.29 / 0.06 | 0.10 / 0.33 | 0.08 / 0.34 | 0.25 / 0.15 |
+| joint m=0.80 (pooled max): coal all-hours | 0.486 | 0.376 | 0.339 | 0.122 | 0.256 | 0.252 | 0.239 |
+| joint m=0.80 (pooled max): coal q1 / q5 | 0.35 / 0.55 | 0.17 / 0.57 | 0.51 / 0.14 | 0.28 / 0.02 | 0.16 / 0.27 | 0.14 / 0.33 | 0.31 / 0.08 |
+| joint m=0.70: coal all-hours | 0.466 | 0.397 | 0.293 | 0.107 | 0.257 | 0.261 | 0.189 |
+| joint m=0.70: coal q1 / q5 | 0.47 / 0.44 | 0.26 / 0.49 | 0.53 / 0.09 | 0.27 / 0.01 | 0.21 / 0.24 | 0.16 / 0.26 | 0.28 / 0.06 |
+| keeper P1 (miso-296 published) | 0.42 | 0.25 | 0.37 | 0.19 | 0.21 | 0.20 | 0.28 |
+
 
 ### 3.5 Why both halves are needed (the legs)
 
-{{LEGS_TABLE}}
+| leg | pooled coal share 2019–2024 | what it says |
+|---|---:|---|
+| keeper (print gas, m = 1.00) | 0.274 | reproduces miso-296 block B within ±0.013 (2020 exact) |
+| gas-only (ruled form, m = 1.00) | 0.284 | +0.010: the ruled form does NOT take coal's margin at zero LP — it raises CC fuel in 2019–2022 (§3.2) and lowers it only in 2023–2025 |
+| coal-only maximum (print gas, m = 0.80) | 0.298 | the coal lever alone peaks 0.065 short |
+| joint maximum (ruled gas, m = 0.80) | 0.305 | both together peak 0.058 short; the gas form adds ~0.01 at every m |
+
 
 ### 3.6 Merit-order consequence and the static price move at m* (joint leg vs keeper stack)
 
-{{DISPATCH_TABLE}}
+| joint m = 0.80 minus keeper stack (static, mean GW; ×8.76 = TWh/yr) | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| coal | +3.00 | +1.88 | +2.05 | +0.73 | +1.31 | +1.33 | +1.60 |
+| coal econ | +3.27 | +2.00 | +2.25 | +0.80 | +1.48 | +1.44 | +1.76 |
+| CC_REGULAR | -1.85 | -1.12 | -1.65 | -0.68 | +0.11 | -0.24 | -0.98 |
+| gas (all) | -2.30 | -1.69 | -1.84 | -0.76 | -0.60 | -0.88 | -1.23 |
+| seam imports | -0.69 | -0.19 | -0.20 | +0.03 | -0.71 | -0.45 | -0.38 |
+| coal econ dispatched share, keeper → m 0.80 | 0.28 → 0.50 | 0.18 → 0.35 | 0.59 → 0.77 | 0.89 → 0.96 | 0.32 → 0.49 | 0.26 → 0.42 | 0.59 → 0.79 |
 
-{{PRICE_TABLE}}
+
+| static bid-stack price, $/MWh | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| actual q1 / q2 median | 19.2 / 21.2 | 15.1 / 17.1 | 23.3 / 25.8 | 40.2 / 48.4 | 19.6 / 23.1 | 16.9 / 20.4 | 24.2 / 27.7 |
+| keeper stack: q1 / q2 / q5 median | 22.5 / 25.1 / 29.9 | 18.2 / 21.4 / 27.2 | 27.4 / 29.9 / 36.4 | 41.1 / 45.8 / 62.0 | 25.4 / 28.6 / 36.5 | 21.5 / 24.9 / 34.4 | 30.5 / 33.7 / 46.4 |
+| keeper stack: LW err all / q1–q2 | +1.38 / +2.87 | +1.80 / +3.33 | -4.77 / -0.48 | -12.43 / -1.72 | +1.69 / +4.82 | +0.55 / +3.56 | -2.74 / +3.19 |
+| gas-only: q1 / q2 / q5 median | 23.3 / 25.8 / 30.1 | 19.1 / 21.6 / 27.8 | 27.8 / 30.3 / 37.6 | 42.1 / 47.1 / 62.9 | 24.5 / 27.7 / 36.4 | 20.8 / 25.0 / 34.6 | 30.7 / 33.6 / 46.3 |
+| gas-only: LW err all / q1–q2 | +1.84 / +3.41 | +2.24 / +3.81 | -4.36 / -0.13 | -11.62 / -0.54 | +1.22 / +4.06 | +0.45 / +3.17 | -2.60 / +3.18 |
+| joint m 0.80: q1 / q2 / q5 median | 22.4 / 24.0 / 26.8 | 18.6 / 20.9 / 25.3 | 25.2 / 27.8 / 37.1 | 41.1 / 46.6 / 62.7 | 24.3 / 27.1 / 34.2 | 20.6 / 24.6 / 32.2 | 29.1 / 31.4 / 46.2 |
+| joint m 0.80: LW err all / q1–q2 | -0.31 / +2.00 | +0.86 / +3.22 | -5.77 / -2.00 | -12.24 / -1.63 | +0.05 / +3.35 | -0.66 / +2.67 | -3.80 / +1.78 |
+| joint m 0.70: q1 / q2 / q5 median | 21.3 / 22.5 / 26.0 | 18.2 / 20.5 / 23.7 | 23.6 / 26.9 / 36.8 | 40.6 / 46.4 / 62.8 | 23.9 / 26.4 / 33.8 | 20.4 / 23.9 / 31.4 | 27.9 / 30.8 / 46.2 |
+| joint m 0.70: LW err all / q1–q2 | -1.35 / +1.03 | -0.03 / +2.69 | -6.34 / -2.98 | -12.45 / -2.08 | -0.60 / +2.81 | -1.29 / +2.25 | -4.22 / +1.12 |
+| startup markup at the q1–q2 margin (median) | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+
 
 Reading rules: these are static re-merits at a fixed thermal quantity. miso-224/225 measured the LP's coal response at
 0.27–0.275× the static prediction (commitment structure holds coal where the static stack does not), so the LP's
@@ -126,7 +205,14 @@ decide. The quintile-1 overshoot is the C3a 2020 object (FINDING-miso296 §1); t
 
 ### 3.7 Transport-table coverage of the 2019–2022 fleets (the table was derived on 2023–2025 receipts)
 
-{{TRANSPORT_TABLE}}
+| | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| gas plants in fleet / with own-plant rung | 321 / 89 | 324 / 93 | 321 / 95 | 322 / 98 | 324 / 100 | 327 / 100 | 350 / 102 |
+| gas capacity on own-plant rung | 68 % | 68 % | 70 % | 72 % | 73 % | 73 % | 74 % |
+| CC_REGULAR capacity on own-plant rung | 86 % | 86 % | 88 % | 89 % | 91 % | 90 % | 91 % |
+| v cap-wtd: CC_REGULAR / all gas $/MMBtu | 0.35 / 0.84 | 0.36 / 0.81 | 0.28 / 0.72 | 0.26 / 0.75 | 0.25 / 0.71 | 0.26 / 0.72 | 0.24 / 0.71 |
+| CT_PEAKER / ST_GAS own-plant share | 64 % / 77 % | 65 % / 76 % | 66 % / 79 % | 66 % / 82 % | 67 % / 86 % | 66 % / 84 % | 67 % / 88 % |
+
 
 Fallback, named: a plant absent from the table takes the declared ladder of the frozen derive — its `zone|group` pooled
 rung, else its `group` rung, else the MISO-wide $0.5036 (`.pool.csv`). That is the mechanism's own documented
@@ -201,18 +287,18 @@ Promotion is the owner's (rule 31); no solved bundle is deleted before the rulin
 `governance.authorized_price_tuning` (keeper block, amended):
 
 - `value`: "x1.10 on committed/econ_low/econ_high/peak for 8 non-steam fossil classes (…unchanged…); PLUS, miso-297:
-  the four coal subclasses' econ_low / econ_high x m* = {{M_STAR}} (COAL_PRB 1.1/1.309 -> {{PRB_LO}}/{{PRB_HI}}, COAL_BIT
-  1.1/1.21 -> {{BIT_LO}}/{{BIT_HI}}, COAL_LIGNITE 1.254/1.265 -> {{LIG_LO}}/{{LIG_HI}}, COAL_WC 1.1/1.122 ->
-  {{WC_LO}}/{{WC_HI}}); committed and peak held; phys_* and econ_low_share/pct_peaking untouched in every class"
+  the four coal subclasses' econ_low / econ_high x m* = m* (COAL_PRB 1.1/1.309 -> ·m*/·m*, COAL_BIT
+  1.1/1.21 -> ·m*/·m*, COAL_LIGNITE 1.254/1.265 -> ·m*/·m*, COAL_WC 1.1/1.122 ->
+  ·m*/·m*); committed and peak held; phys_* and econ_low_share/pct_peaking untouched in every class"
 - `ruling`: appended "— coal econ bands by owner ruling 2026-10-01 (miso-296 cards): 'PRECOMMIT the joint arm
   (Recommended)' + 'IMM marginal-share census (Recommended)'"
 - `prereg`: appended "; docs/records/miso/PRECOMMIT-miso297-joint-gas-coal-2026-10-01.md @ <pin>"
-- `dof_entry`: appended "; coal econ multiplier m* = {{M_STAR}} identified by the IMM SOM Table 1 coal SMP share pooled
+- `dof_entry`: appended "; coal econ multiplier m* = m* identified by the IMM SOM Table 1 coal SMP share pooled
   2019–2024 (0.3633) on the zero-LP bid-stack census (miso-297, no new parameter: a second ruling-identified value on
   the same entry)"
-- `years_held_basis`: this run's own seven single-year legs pinned to <pin>; table sha {{ARM_SHA}} byte-identical in
+- `years_held_basis`: this run's own seven single-year legs pinned to <pin>; table sha n/a (not written) byte-identical in
   all seven (composer MUST_AGREE).
-- `mechanism_armed`: replaced by the miso-297 block (fields, level "m* = {{M_STAR}} from the IMM census; transport
+- `mechanism_armed`: replaced by the miso-297 block (fields, level "m* = m* from the IMM census; transport
   table = the frozen derive, zero fitted scalars", basis, one_mechanism (rule 19: the hub form supersedes the print,
   the winter overlay, the winter daily-delivered form and the zonal increment on gas rows), control, prereg).
 - A `miso297` block (precommit, pin, delta, ruling, legs, control, dof_added 0).
@@ -243,4 +329,5 @@ miso-275). Score: `scripts/calibration_verdict.py`; `scripts/legitimacy_diagnost
 
 ## 9. Launch record
 
-(appended after the pin; §1–§8 unchanged)
+No shard launched (STATUS block). §5–§8 stand as the arm's pre-registered form should the owner re-identify m by a
+new ex-ante rule (FINDING-miso297 §4 options); any such re-identification is a new ruling recorded before any shard.
