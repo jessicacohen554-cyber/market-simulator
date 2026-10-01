@@ -7026,6 +7026,35 @@ def run_year(
         )
         if _tier_slack is not None:
             dispatch_kwargs.update(slack_cost=_tier_slack)
+    # R-ERCOT-23 hourly effective SWCAP, half (b): ERCOT's value of firm-load
+    # shed is the SWCAP, so inside a published LCAP window the load-slack cost
+    # is the LCAP. Composed with any existing per-zone-hour override by min()
+    # (each is a cap). A year with no window leaves the key untouched.
+    from market_sim.results.scarcity import (
+        ercot_effective_swcap_series,
+        ercot_swcap_effective_active,
+    )
+
+    if ercot_swcap_effective_active(config):
+        _shed = float(
+            dispatch_kwargs.get("voll", shed_penalty_voll(config, iso_config))
+        )
+        _sw = ercot_effective_swcap_series(year, config.hours, _shed)
+        if np.any(_sw != _shed):
+            _base = dispatch_kwargs.get("slack_cost")
+            _grid = (
+                np.full((len(zone_names), config.hours), _shed)
+                if _base is None
+                else np.asarray(_base, dtype=float)
+            )
+            dispatch_kwargs.update(slack_cost=np.minimum(_grid, _sw[np.newaxis, :]))
+            logger.info(
+                "ercot_swcap_effective_hourly: load-shed cost at the effective "
+                "SWCAP in %d of %d hours (min $%.0f/MWh)",
+                int((_sw != _shed).sum()),
+                int(config.hours),
+                float(_sw.min()),
+            )
     # Emissions mass-cap rows (policy constraint path, gated; G-29). Mirrors
     # runner.py's forecast-path `mass_caps` block so the backcast calibration
     # harness shares the identical seam — before this wire-through,

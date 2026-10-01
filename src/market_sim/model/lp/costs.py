@@ -29,6 +29,7 @@ def build_cost_vector(
     dis_tranche_arm_idx: np.ndarray | None = None,
     dis_tranche_price: np.ndarray | None = None,
     coal_take_price: np.ndarray | None = None,
+    ordc_penalty_hour_scale: np.ndarray | None = None,
 ) -> np.ndarray:
     """Assemble the flat LP objective cost vector.
 
@@ -88,6 +89,11 @@ def build_cost_vector(
             overgeneration-dump guard below (``dump_cost_full_offer_domain``).
             ``None`` keeps the guard on the renewable/storage-credit set alone
             — byte-identical, and the historical behaviour.
+        ordc_penalty_hour_scale: Optional ``(T,)`` multiplier on every ORDC
+            shortfall-step penalty in hour ``t`` (ERCOT
+            ``ercot_swcap_effective_hourly``: the VOLL-anchored reserve demand
+            curves re-anchored on the hour's effective SWCAP). ``None`` keeps
+            the static ``(n_ordc_steps,)`` broadcast (byte-identical).
 
     Returns:
         Cost vector of length ``layout.total_columns``.
@@ -225,7 +231,17 @@ def build_cost_vector(
             raise ValueError(
                 f"ordc_penalties shape {pen.shape} != ({layout.n_ordc_steps},)"
             )
-        block[:, layout._ordc_off : layout._ordc_off + layout.n_ordc_steps] = pen
+        if ordc_penalty_hour_scale is None:
+            block[:, layout._ordc_off : layout._ordc_off + layout.n_ordc_steps] = pen
+        else:
+            scale = np.asarray(ordc_penalty_hour_scale, dtype=float)
+            if scale.shape != (layout.T,):
+                raise ValueError(
+                    f"ordc_penalty_hour_scale shape {scale.shape} != ({layout.T},)"
+                )
+            block[:, layout._ordc_off : layout._ordc_off + layout.n_ordc_steps] = (
+                scale[:, np.newaxis] * pen[np.newaxis, :]
+            )
 
     # Storage-reserve columns RS[c,z,t] (duration gate): NO direct cost, exactly
     # like the thermal reserve R[c,z] above. Storage and thermal reserve must

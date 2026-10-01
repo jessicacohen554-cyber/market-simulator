@@ -366,6 +366,7 @@ def solve_dispatch(
     so2_price: np.ndarray | float = 0,
     voll: float = 5000,  # default matches ScenarioConfig.voll for ERCOT
     slack_cost: np.ndarray | None = None,
+    ordc_penalty_hour_scale: np.ndarray | None = None,
     incidence: np.ndarray | sp.spmatrix | None = None,
     ttc: np.ndarray | None = None,
     ttc_import: np.ndarray | None = None,
@@ -508,6 +509,9 @@ def solve_dispatch(
         slack_cost: Optional ``(n_zones, T)`` per-zone-hour load-slack cost
             override (declared-window ELMP emergency-tier repricing). ``None``
             keeps the flat ``voll`` broadcast (byte-identical).
+        ordc_penalty_hour_scale: Optional ``(T,)`` hourly multiplier on the
+            ORDC step penalties (ERCOT ``ercot_swcap_effective_hourly``).
+            ``None`` keeps the static penalties (byte-identical).
         dump_cost_full_offer_domain: Take the overgeneration-dump guard over
             every ``mc`` row that can inject, not just the renewable/storage
             production credits (``ScenarioConfig.dump_cost_full_offer_domain``,
@@ -627,6 +631,7 @@ def solve_dispatch(
         solar_cap=solar_cap,
         voll=voll,
         slack_cost=slack_cost,
+        ordc_penalty_hour_scale=ordc_penalty_hour_scale,
         incidence=incidence,
         ttc=ttc,
         ttc_import=ttc_import,

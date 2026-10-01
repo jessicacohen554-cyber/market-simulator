@@ -56,6 +56,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     ercot_tie_zonal_interchange: { cell: "." },
     ercot_offer_swcap_clip: { cell: "." },
     ercot_swcap_vintage: { cell: "." },
+    ercot_swcap_effective_hourly: { cell: "." },
     ercot_offer_surface_cleared_share_rt_room: { cell: "." },
     ercot_load_forecast_margin: { cell: "." },
     maxgen_emergency_tier_pricing: { cell: "." },

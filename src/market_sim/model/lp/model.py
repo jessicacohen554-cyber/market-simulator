@@ -200,6 +200,7 @@ class DispatchModel:
         link_flow_cost: np.ndarray | None = None,
         link_loss: np.ndarray | None = None,
         slack_cost: np.ndarray | None = None,
+        ordc_penalty_hour_scale: np.ndarray | None = None,
         dump_cost_full_offer_domain: bool = False,
         dis_tranche_arm_idx: np.ndarray | None = None,
         dis_tranche_width: np.ndarray | None = None,
@@ -963,6 +964,9 @@ class DispatchModel:
         # Co-opt state for re-costing and dual extraction.
         self._coopt = coopt
         self.ordc_penalties = ordc_penalties
+        # (T,) hourly ORDC penalty multiplier (ERCOT hourly effective SWCAP,
+        # R-ERCOT-23). None -> static penalties, byte-identical.
+        self.ordc_penalty_hour_scale = ordc_penalty_hour_scale
         # Reserve block = shared-headroom rows (n_headroom_rows*n_zones*T) +
         # reserve-balance rows (n_families*T), appended last; the balance rows
         # are the final n_families*T (family-major within each hour). The
@@ -1241,6 +1245,7 @@ class DispatchModel:
             storage_discharge_eac=self.storage_discharge_eac,
             storage_discharge_cost=self.storage_discharge_cost,
             ordc_penalties=self.ordc_penalties,
+            ordc_penalty_hour_scale=self.ordc_penalty_hour_scale,
             posture_startup_cost=self._posture_startup,
             rps_acp_price=(
                 self.rps_region_acp_price

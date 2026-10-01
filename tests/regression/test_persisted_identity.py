@@ -835,8 +835,14 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   ERCOT (soco-96's seven unscoped CAMPD/Part-75 CO2 constants, declared at
 #   their live hash, no value moved — the PJM block above records them for
 #   PJM). The other ISOs' stale pins are their own lanes' (rule 25).
+# 2026-10-01 ERCOT ADVANCED (R-ERCOT-23) — ONE ROW ADDED, NO VALUE MOVED.
+#   constants.ERCOT_LCAP_WINDOWS_BY_YEAR (the published 2021 LCAP window, read
+#   only under the default-off ercot_swcap_effective_hourly) is declared at its
+#   live hash (`solve_surface_register.py --declare`, moves no key). The name
+#   carries the ERCOT token, so only ERCOT's row set grows: 247 -> 248.
+#   WHAT IT COSTS: nothing — no existing ERCOT key re-keys at default.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("4e4acc5b60f2bd20", 247),
+    "ERCOT": ("4166ef2a4f8fd8ad", 248),
     "CAISO": ("289c8c383a78f4d9", 213),
     "MISO": ("52d6fa6795d5e276", 220),
     "PJM": ("254a954525afd690", 233),
