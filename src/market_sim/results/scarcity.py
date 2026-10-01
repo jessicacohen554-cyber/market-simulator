@@ -81,6 +81,7 @@ from market_sim.config.constants import (
     ERCOT_RTOLCAP_FWD_ONLINE_SHARE,
     ERCOT_RTOLCAP_FWD_SEASON_BY_MONTH,
     ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC,
+    ERCOT_LCAP_WINDOWS_BY_YEAR,
 )
 from market_sim.config.plant_taxonomy import artifact_class_array
 from market_sim.config.reserve_config import (
@@ -466,6 +467,45 @@ def ordc_adder(
 
     # Protocol cap: lambda + adders <= VOLL (the system-wide offer cap).
     return np.minimum(adder, headroom_to_cap)
+
+
+def ercot_effective_swcap_series(year: int, hours: int, hcap: float) -> np.ndarray:
+    """Hourly effective ERCOT system-wide offer cap ($/MWh) for one year.
+
+    ``hcap`` in every hour, except inside a published LCAP window
+    (``constants.ERCOT_LCAP_WINDOWS_BY_YEAR``: the Peaker-Net-Margin drop to the
+    Low System-Wide Offer Cap, 16 TAC 25.505(g)(6)), where it is that window's
+    LCAP from its first hour to the end of the year. The LCAP is never allowed
+    above ``hcap``. ERCOT sets the ORDC VOLL, the energy offer cap and the
+    price bound to this one number (ORDC methodology OBD §2.1), so every
+    consumer of :class:`ScenarioConfig` ``ercot_swcap_effective_hourly`` reads
+    this series. A year with no window returns a flat ``hcap`` array.
+
+    Args:
+        year: Calendar (solve) year.
+        hours: Horizon length on the non-leap model clock.
+        hcap: The year's high system-wide offer cap (the configured VOLL).
+
+    Returns:
+        ``(hours,)`` float array.
+    """
+    out = np.full(int(hours), float(hcap), dtype=float)
+    window = ERCOT_LCAP_WINDOWS_BY_YEAR.get(int(year))
+    if window is not None:
+        start, lcap = window
+        out[int(start) :] = min(float(lcap), float(hcap))
+    return out
+
+
+def ercot_swcap_effective_active(config) -> bool:
+    """True when the hourly effective-SWCAP mechanism is armed for this config.
+
+    ERCOT-gated (rule 25 [R-ISO-SCOPE]): the LCAP schedule and the VOLL = SWCAP
+    identity are ERCOT market design.
+    """
+    return bool(getattr(config, "ercot_swcap_effective_hourly", False)) and (
+        str(getattr(config, "iso", "")) == "ERCOT"
+    )
 
 
 def floor_active_mask(year: int, hours: int) -> np.ndarray:

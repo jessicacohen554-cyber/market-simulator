@@ -150,9 +150,6 @@
     "r_ercot21_arm_2020": [
       2020
     ],
-    "r_ercot21_arm_2021": [
-      2021
-    ],
     "r_ercot21_arm_2022": [
       2022
     ],
@@ -165,8 +162,11 @@
     "r_ercot21_arm_2025": [
       2025
     ],
-    "r_ercot22_arm_2019": [
+    "r_ercot23_arm_2019": [
       2019
+    ],
+    "r_ercot23_arm_2021": [
+      2021
     ]
   },
   "config_partition_overrides": {
@@ -176,6 +176,7 @@
       "ercot_load_resource_reserve_from_year": 2019,
       "ercot_offer_swcap_clip": true,
       "ercot_reserve_supply_cap_from_year": 2019,
+      "ercot_swcap_effective_hourly": true,
       "ercot_swcap_vintage": true,
       "offer_curve_by_group": {
         "CC_CHP": {
@@ -534,7 +535,10 @@
       "voll": 9000.0
     },
     "2021": {
+      "coal_captive_marginal_fuel_price": false,
+      "dual_fuel_measured_oil_burn": false,
       "ercot_offer_swcap_clip": true,
+      "ercot_swcap_effective_hourly": true,
       "ercot_swcap_vintage": true,
       "offer_curve_by_group": {
         "CC_CHP": {
@@ -709,6 +713,9 @@
           "peak": 72.6
         }
       },
+      "pjm_gas_commitment_bridge": false,
+      "spp_mmu_offer_unavailability": false,
+      "unit_outage_dispatched_bin_live_denominator": false,
       "voll": 9000.0
     },
     "2022": {

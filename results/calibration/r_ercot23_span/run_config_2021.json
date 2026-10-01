@@ -1,19 +1,19 @@
 {
-  "timestamp": "2026-10-01T03:19:57",
+  "timestamp": "2026-10-01T04:27:21",
   "git": {
-    "sha": "f4d29d72",
-    "basis_sha": "f4d29d72fa9839e49518453ac9dd45f6ea739734",
-    "branch": "claude/r-ercot22-arm-2019",
+    "sha": "651723e3",
+    "basis_sha": "651723e30ac9598689bffb9782493a58eb493445",
+    "branch": "claude/r-ercot23-arm-2021",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "R-ERCOT-22 ARM 2019: keeper 2026-10-01-r-21-lostpines-ccid recipe unchanged; PUCT 48551 ORDC LOLP shift vintaged (2019 = 0.25 sigma via ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR) - PRECOMMIT-r-ercot-22-ordc-shift-vintage",
+  "model_changes_note": "R-ERCOT-23 ARM 2021: keeper 2026-10-01-r-22-ordc-shift recipe unchanged + ercot_swcap_effective_hourly (2021 LCAP window, protocol price cap) - PRECOMMIT-r-ercot-23-swcap-effective-hourly",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "ERCOT",
     "years": [
-      2019
+      2021
     ],
     "hours": 8760,
     "passes": [
@@ -22,7 +22,7 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2019": 2.57
+      "2021": 3.72
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -105,9 +105,7 @@
         "ST_CHP",
         "ST_GAS"
       ],
-      "ercot_load_resource_reserve_from_year": 2019,
       "ercot_offer_swcap_clip": true,
-      "ercot_reserve_supply_cap_from_year": 2019,
       "ercot_swcap_vintage": true,
       "offer_curve_by_group": {
         "CC_CHP": {
@@ -282,7 +280,8 @@
           "peak": 72.6
         }
       },
-      "voll": 9000.0
+      "voll": 9000.0,
+      "ercot_swcap_effective_hourly": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -351,10 +350,10 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "f4d29d72"
+    "git_sha": "651723e3"
   },
   "scenario_config": {
-    "weather_year": 2019,
+    "weather_year": 2021,
     "iso": "ERCOT",
     "mode": "backcast",
     "voll": 9000.0,
@@ -573,7 +572,7 @@
     "ordc_mcl_mw": 2000.0,
     "ordc_lolp_sigma_mw": 1400.0,
     "ordc_lolp_mu_mw": 0.0,
-    "ordc_lolp_shift_sigma": 0.25,
+    "ordc_lolp_shift_sigma": 0.5,
     "ordc_multistep_floor": true,
     "ordc_as_plan_mw": 0.0,
     "ordc_lolp_params_path": null,
@@ -785,7 +784,7 @@
     "caiso_reserve_online_scoped": false,
     "caiso_locational_as_families": false,
     "ercot_load_resource_reserve": true,
-    "ercot_load_resource_reserve_from_year": 2019,
+    "ercot_load_resource_reserve_from_year": 2020,
     "ercot_storage_as_reserve": true,
     "ercot_storage_as_reserve_from_year": 2023,
     "ercot_ecrs_requirement": false,
@@ -804,7 +803,7 @@
     "ercot_as_aware_commitment": false,
     "ercot_as_adequacy_frac": 1.0,
     "ercot_reserve_supply_cap": true,
-    "ercot_reserve_supply_cap_from_year": 2019,
+    "ercot_reserve_supply_cap_from_year": 2020,
     "ercot_reserve_supply_forward": false,
     "ercot_reserve_supply_cap_net_credits": true,
     "ercot_online_capacity_envelope": false,
@@ -998,6 +997,7 @@
     "ercot_offer_surface_lowcurve_path": null,
     "ercot_offer_swcap_clip": true,
     "ercot_swcap_vintage": true,
+    "ercot_swcap_effective_hourly": true,
     "ercot_gas_commitment_bridge": true,
     "ercot_gas_bridge_min_load_frac": 0.574,
     "ercot_gas_bridge_startup": true,
@@ -16310,7 +16310,7 @@
     "unit_outage_maxgen_events": false,
     "maxgen_emergency_tier_pricing": false,
     "forecast_xyear_warmstart": true,
-    "gas_price_override": 2.57,
+    "gas_price_override": 3.72,
     "ercot_offer_hrmult_ep_rebasis": false,
     "ercot_offer_hrmult_ep_rebasis_bands": null,
     "ercot_capability_reconciliation": false,
@@ -16349,8 +16349,8 @@
   "solve_surface": {
     "schema": 1,
     "iso": "ERCOT",
-    "fingerprint": "4e4acc5b60f2bd20",
-    "rows": 247,
+    "fingerprint": "4166ef2a4f8fd8ad",
+    "rows": 248,
     "moved": {
       "CORRELATED_OUTAGE_CURVE": "57d222be86dd9007",
       "ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR": "7c4051076503cbf3",
@@ -16366,7 +16366,7 @@
       "THERMAL_AVAILABILITY": "34ff308290e18439"
     },
     "epochs": [],
-    "git_sha": "f4d29d72"
+    "git_sha": "651723e3"
   },
   "environment": {
     "python_version": "3.11.15",

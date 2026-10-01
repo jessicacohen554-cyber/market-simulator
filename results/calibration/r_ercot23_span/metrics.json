@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-10-01-r-22-ordc-shift",
+  "run_id": "2026-10-01-r-23-swcap-hourly",
   "iso": "ERCOT",
-  "label": "r 22 ordc shift",
+  "label": "r 23 swcap hourly",
   "target_years": [
     2019,
     2020,
@@ -105,9 +105,9 @@
     "diurnal_amplitude": {
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
-        "2019": "amplitude 112.3% of measured (hod range $131.08 vs $116.77); peak h15 vs h15, trough h02 vs h02 \u2014 phase OK; hod r +0.992; 365 complete days",
+        "2019": "amplitude 109.5% of measured (hod range $127.86 vs $116.77); peak h15 vs h15, trough h02 vs h02 \u2014 phase OK; hod r +0.992; 365 complete days",
         "2020": "amplitude 105.8% of measured (hod range $32.51 vs $30.73); peak h14 vs h14, trough h02 vs h02 \u2014 phase OK; hod r +0.976; 365 complete days",
-        "2021": "amplitude 123.6% of measured (hod range $59.05 vs $47.76); peak h18 vs h18, trough h10 vs h11 \u2014 phase OK; hod r +0.697; 365 complete days",
+        "2021": "amplitude 106.3% of measured (hod range $50.75 vs $47.76); peak h18 vs h18, trough h03 vs h11 \u2014 phase OFF; hod r +0.705; 365 complete days",
         "2022": "amplitude 70.3% of measured (hod range $55.16 vs $78.44); peak h16 vs h15, trough h03 vs h02 \u2014 phase OK; hod r +0.957; 365 complete days",
         "2023": "amplitude 65.0% of measured (hod range $115.46 vs $177.51); peak h18 vs h18, trough h02 vs h02 \u2014 phase OK; hod r +0.971; 365 complete days",
         "2024": "amplitude 33.7% of measured (hod range $20.97 vs $62.29); peak h19 vs h18, trough h02 vs h09 \u2014 phase OFF; hod r +0.937; 365 complete days",

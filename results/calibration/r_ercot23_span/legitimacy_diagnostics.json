@@ -1,6 +1,6 @@
 {
  "schema": "legitimacy-diagnostics/v1",
- "bundle": "/home/user/market-simulator/results/calibration/r_ercot22_span",
+ "bundle": "/home/user/market-simulator/results/calibration/r_ercot23_span",
  "iso": "ERCOT",
  "years": [
   2019,
@@ -764,7 +764,7 @@
      "class": "CC_REGULAR",
      "mechanism": "gas_commitment_bridge",
      "forced_twh": 2.9679,
-     "class_total_twh": 113.0287,
+     "class_total_twh": 113.0282,
      "share_of_class": 0.0263
     },
     {
@@ -772,15 +772,15 @@
      "class": "COAL_LIGNITE",
      "mechanism": "coal_min_config",
      "forced_twh": 0.7394,
-     "class_total_twh": 16.9385,
-     "share_of_class": 0.0436
+     "class_total_twh": 16.9384,
+     "share_of_class": 0.0437
     },
     {
      "year": 2021,
      "class": "COAL_PRB",
      "mechanism": "coal_min_config",
      "forced_twh": 1.6246,
-     "class_total_twh": 56.4287,
+     "class_total_twh": 56.428,
      "share_of_class": 0.0288
     },
     {
@@ -803,9 +803,9 @@
      "year": 2021,
      "class": "ST_GAS",
      "mechanism": "st_netload_drag",
-     "forced_twh": 2.7258,
-     "class_total_twh": 12.376,
-     "share_of_class": 0.2203
+     "forced_twh": 2.7254,
+     "class_total_twh": 12.3777,
+     "share_of_class": 0.2202
     },
     {
      "year": 2022,
@@ -1255,7 +1255,7 @@
      "year": 2021,
      "class": "CC_REGULAR",
      "forced_twh": 2.9679,
-     "class_total_twh": 113.0287,
+     "class_total_twh": 113.0282,
      "forced_share": 0.0263,
      "limit": 0.3,
      "load_share": 0.2889,
@@ -1268,8 +1268,8 @@
      "year": 2021,
      "class": "COAL_LIGNITE",
      "forced_twh": 0.7394,
-     "class_total_twh": 16.9385,
-     "forced_share": 0.0436,
+     "class_total_twh": 16.9384,
+     "forced_share": 0.0437,
      "limit": 0.3,
      "load_share": 0.0433,
      "immaterial": false,
@@ -1281,7 +1281,7 @@
      "year": 2021,
      "class": "COAL_PRB",
      "forced_twh": 1.6246,
-     "class_total_twh": 56.4287,
+     "class_total_twh": 56.428,
      "forced_share": 0.0288,
      "limit": 0.3,
      "load_share": 0.1513,
@@ -1294,7 +1294,7 @@
      "year": 2021,
      "class": "CT_PEAKER",
      "forced_twh": 0.0,
-     "class_total_twh": 4.2889,
+     "class_total_twh": 4.2884,
      "forced_share": 0.0,
      "limit": 0.15,
      "load_share": 0.011,
@@ -1306,9 +1306,9 @@
     {
      "year": 2021,
      "class": "ST_GAS",
-     "forced_twh": 2.7258,
-     "class_total_twh": 12.376,
-     "forced_share": 0.2203,
+     "forced_twh": 2.7254,
+     "class_total_twh": 12.3777,
+     "forced_share": 0.2202,
      "limit": 0.3,
      "load_share": 0.0316,
      "immaterial": false,
@@ -3355,7 +3355,7 @@
      "floor": "st_netload_drag",
      "window": "h0-23",
      "plant": "",
-     "floored_twh": 2.7258,
+     "floored_twh": 2.7254,
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "binding_hours": "",
@@ -3385,7 +3385,7 @@
      "plant": "3460",
      "floored_twh": 0.6303,
      "offwindow_twh": "",
-     "offwindow_share": 0.2312,
+     "offwindow_share": 0.2313,
      "binding_hours": 2689,
      "measured_median_mw": 337.0,
      "measured_zero_share": 0.1469,
@@ -3397,12 +3397,12 @@
      "floor": "st_netload_drag",
      "window": "h0-23",
      "plant": "3491",
-     "floored_twh": 0.278,
+     "floored_twh": 0.2781,
      "offwindow_twh": "",
      "offwindow_share": 0.102,
-     "binding_hours": 3996,
+     "binding_hours": 3997,
      "measured_median_mw": 92.565,
-     "measured_zero_share": 0.3964,
+     "measured_zero_share": 0.3965,
      "verdict": "pass"
     },
     {
@@ -3411,12 +3411,12 @@
      "floor": "st_netload_drag",
      "window": "h0-23",
      "plant": "3601",
-     "floored_twh": 0.1863,
+     "floored_twh": 0.1862,
      "offwindow_twh": "",
-     "offwindow_share": 0.0684,
-     "binding_hours": 3281,
+     "offwindow_share": 0.0683,
+     "binding_hours": 3280,
      "measured_median_mw": 18.692,
-     "measured_zero_share": 0.4828,
+     "measured_zero_share": 0.4826,
      "verdict": "pass"
     },
     {
@@ -3425,12 +3425,12 @@
      "floor": "st_netload_drag",
      "window": "h0-23",
      "plant": "3611",
-     "floored_twh": 0.4311,
+     "floored_twh": 0.4307,
      "offwindow_twh": "",
-     "offwindow_share": 0.1581,
-     "binding_hours": 3235,
+     "offwindow_share": 0.158,
+     "binding_hours": 3233,
      "measured_median_mw": 151.656,
-     "measured_zero_share": 0.0352,
+     "measured_zero_share": 0.0346,
      "verdict": "pass"
     },
     {
@@ -3441,7 +3441,7 @@
      "plant": "3612",
      "floored_twh": 0.4147,
      "offwindow_twh": "",
-     "offwindow_share": 0.1521,
+     "offwindow_share": 0.1522,
      "binding_hours": 3788,
      "measured_median_mw": 421.039,
      "measured_zero_share": 0.0008,
@@ -3455,10 +3455,10 @@
      "plant": "3628",
      "floored_twh": 0.0443,
      "offwindow_twh": "",
-     "offwindow_share": 0.0163,
-     "binding_hours": 3053,
+     "offwindow_share": 0.0162,
+     "binding_hours": 3051,
      "measured_median_mw": 42.952,
-     "measured_zero_share": 0.3275,
+     "measured_zero_share": 0.3271,
      "verdict": "pass"
     },
     {
@@ -3467,10 +3467,10 @@
      "floor": "st_netload_drag",
      "window": "h0-23",
      "plant": "6243",
-     "floored_twh": 0.2039,
+     "floored_twh": 0.204,
      "offwindow_twh": "",
      "offwindow_share": 0.0748,
-     "binding_hours": 5757,
+     "binding_hours": 5758,
      "measured_median_mw": 13.891,
      "measured_zero_share": 0.003,
      "verdict": "pass"
@@ -7605,31 +7605,31 @@
    "passed": true,
    "rows": [
     {
-     "bundle": "r_ercot22_span",
+     "bundle": "r_ercot23_span",
      "check": "ct_deployment_overlay",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "r_ercot22_span",
+     "bundle": "r_ercot23_span",
      "check": "reliability_deployment_overlay",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "r_ercot22_span",
+     "bundle": "r_ercot23_span",
      "check": "ct_mustrun_per_plant",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "r_ercot22_span",
+     "bundle": "r_ercot23_span",
      "check": "ordc_reliability_deployment_mw",
      "value": null,
      "verdict": "pass"
     },
     {
-     "bundle": "r_ercot22_span",
+     "bundle": "r_ercot23_span",
      "check": "caiso_gas_commitment_floor",
      "value": false,
      "verdict": "pass"
