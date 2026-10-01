@@ -801,6 +801,33 @@ def iso_hub_monthly_gas_prices(
     return monthly
 
 
+def nyiso_transco_z6_flow_daily(
+    config: ScenarioConfig, year: int, transco_path: Path | None = None
+) -> np.ndarray | None:
+    """Return the ``(365,)`` FLOW-dated Transco Z6 NY staircase, or ``None``.
+
+    NYISO-NEXT-23 (``config.nyiso_gas_flow_date``): the single construction both
+    NYISO Z6 consumers read when armed — the hub daily shape
+    (:func:`_nyiso_hub_daily_gas_prices`) and the downstate CT delivered index
+    (:func:`~market_sim.data.fuel.basis.nyiso.apply_nyiso_downstate_ct_gas_daily`).
+    Each EIA print is placed on its gas flow day(s) by :func:`_flow_date_staircase`
+    (trade + 1; Friday's print covers the holiday-extended weekend package). The
+    year-start edge takes the prior December trade only under
+    ``config.gas_flow_date_year_start_package``, exactly as the CAISO and MISO
+    callers. ``None`` when the flag is off, the ISO is not NYISO, or the year has
+    no prints — the caller then keeps its trade-date construction.
+    """
+    if not getattr(config, "nyiso_gas_flow_date", False) or config.iso != "NYISO":
+        return None
+    dated = _pkg_ns()._transco_z6_daily_dated(transco_path)
+    prior = (
+        dated.get(year - 1)
+        if getattr(config, "gas_flow_date_year_start_package", False)
+        else None
+    )
+    return _flow_date_staircase(dated.get(year, {}), year, prior_year_dated=prior)
+
+
 def _nyiso_hub_daily_gas_prices(
     config: ScenarioConfig,
     year: int,
@@ -864,6 +891,12 @@ def _nyiso_hub_daily_gas_prices(
     transco_dated = _pkg_ns()._transco_z6_daily_dated(transco_path).get(year, {})
     iroquois_prints = _iroquois_z2_daily(None).get(year, {})
     gap_month_level = bool(getattr(config, "nyiso_hub_gap_month_level", False))
+    flow = nyiso_transco_z6_flow_daily(config, year, transco_path)
+    if flow is not None and gap_month_level:
+        raise ValueError(
+            "nyiso_gas_flow_date and nyiso_hub_gap_month_level both define the "
+            "Transco Z6 NY days no print sits on; arm one (rule 19 [R-ONE-MECH])"
+        )
     T = config.hours
     out = np.full(T, np.nan, dtype=float)
     hour = 0
@@ -877,7 +910,14 @@ def _nyiso_hub_daily_gas_prices(
                 days = np.array(sorted(dated), dtype=float)
                 vals = np.array([dated[int(d)] for d in days], dtype=float)
                 mean = float(vals.mean())
-                if mean > 0:
+                if flow is not None:
+                    # NYISO-NEXT-23: each print on its FLOW day(s), staircased;
+                    # dividing by the month's own flow-day mean keeps the month
+                    # exactly mean-preserving, as the trade-date branch below.
+                    day0 = sum(_DAYS_IN_MONTH[:m])
+                    seg = flow[day0 : day0 + n_days]
+                    day_hub = hub_m * (seg / float(seg.mean()))
+                elif mean > 0:
                     # Place each trading-day quote on its true calendar day and
                     # interpolate the gaps (weekends/holiday weeks inherit the
                     # bracketing trading values), then renormalize so the

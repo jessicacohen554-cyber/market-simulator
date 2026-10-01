@@ -598,6 +598,35 @@ def _downstate_delivered_gas_hourly_by_zone(
     return out or None
 
 
+def _z6_flow_minus_trade_hourly(
+    config: ScenarioConfig, year: int, hours: int
+) -> np.ndarray | None:
+    """Return ``(hours,)`` flow-dated minus trade-interpolated Transco Z6 NY, or ``None``.
+
+    NYISO-NEXT-23 (``config.nyiso_gas_flow_date``). The curated downstate index is
+    ``Z6_interp + LDC adder``, where ``Z6_interp`` is the builder's trade-date
+    linear interpolation (``scripts/lib/nyiso_downstate_gas._interp_to_calendar``).
+    Adding this delta swaps that component for the flow-date staircase
+    (:func:`~market_sim.data.fuel.hubs.nyiso_transco_z6_flow_daily`) and leaves the
+    measured LDC adder untouched. ``None`` when the flag is off.
+    """
+    from market_sim.data.fuel.hubs import (
+        TRANSCO_Z6_NY_DAILY_PATH,
+        nyiso_transco_z6_flow_daily,
+    )
+
+    flow = nyiso_transco_z6_flow_daily(config, year)
+    if flow is None:
+        return None
+    from scripts.lib.nyiso_downstate_gas import _daily_series, _interp_to_calendar
+
+    raw = pd.read_csv(TRANSCO_Z6_NY_DAILY_PATH)
+    trade = _interp_to_calendar(_daily_series(raw, "transco_z6_ny_usd_mmbtu"), year)
+    trade = trade[~((trade.index.month == 2) & (trade.index.day == 29))].round(4)
+    delta = flow - trade.to_numpy(dtype=float)
+    return np.repeat(delta, 24)[:hours]
+
+
 def apply_nyiso_downstate_ct_gas_daily(
     fuel_prices: np.ndarray,
     fleet: FleetArrays,
@@ -656,6 +685,9 @@ def apply_nyiso_downstate_ct_gas_daily(
     )
     if not by_zone:
         return
+    flow_delta = _z6_flow_minus_trade_hourly(config, year, fuel_prices.shape[1])
+    if flow_delta is not None:
+        by_zone = {z: arr + flow_delta for z, arr in by_zone.items()}
     from market_sim.config.iso_configs import get_iso_config
 
     zone_names = get_iso_config(config.iso).zone_names
