@@ -1390,6 +1390,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # published $9,000 HCAP and hashes distinctly (voll itself is tier-0 in
     # the key). Registered IN THE SAME COMMIT as the field.
     "ercot_swcap_vintage",
+    # R-ERCOT-23 hourly effective SWCAP (GATED default off): dropped from the
+    # hash at its default so every pre-existing cache key stays byte-stable
+    # (the off path never builds the series). Registered IN THE SAME COMMIT as
+    # the field.
+    "ercot_swcap_effective_hourly",
     # ercot-242 room-axis extension of the RT/SCED wall (GATED default off) +
     # its path: dropped from the hash at their defaults so every pre-existing
     # cache key stays byte-stable (the off path never loads the room artifact
@@ -1706,6 +1711,21 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
     # discipline).
     "nyiso_hub_gap_month_level",
+    # NYISO-NEXT-23 Transco Z6 NY flow-date placement, default off: dropped
+    # from the hash at its False default so every pre-existing key (the NYISO
+    # keeper's included) stays valid; ON it moves the NYISO delivered-gas array
+    # and hashes distinctly. Registered IN THE SAME COMMIT as the field.
+    "nyiso_gas_flow_date",
+    # NYISO-NEXT-25 print-level daily gas, default off: dropped from the hash at
+    # its False default so every pre-existing key (the NYISO keeper's included)
+    # stays valid; ON it moves the NYISO delivered-gas array and hashes
+    # distinctly. Registered IN THE SAME COMMIT as the field.
+    "nyiso_gas_daily_print_level",
+    # NYISO-NEXT-26 all-hours Zone-K TSL window, default off: dropped from the
+    # hash at its False default so every pre-existing key (the NYISO keeper's
+    # included) stays valid; ON it moves the NYC->Long_Island TTC and hashes
+    # distinctly. Registered IN THE SAME COMMIT as the field.
+    "nyiso_li_tsl_all_hours",
     # nyiso-224 NYISO TOTAL EAST cutset transfer envelope, default off: dropped
     # from the hash at its False default so every pre-existing NYISO key (the
     # designated keeper's included) stays valid, and ON it selects a different
@@ -2850,6 +2870,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_offer_swcap_clip": "False",
     # Added by R-ERCOT-14 WITH the field (the nyiso-119 discipline).
     "ercot_swcap_vintage": "False",
+    # Added by R-ERCOT-23 WITH the field (the nyiso-119 discipline).
+    "ercot_swcap_effective_hourly": "False",
     # Added by ercot-242 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "ercot_offer_surface_cleared_share_rt_room": "False",
@@ -2946,6 +2968,12 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by nyiso-223 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "nyiso_hub_gap_month_level": "False",
+    # Added by NYISO-NEXT-23 WITH the field, same commit.
+    "nyiso_gas_flow_date": "False",
+    # Added by NYISO-NEXT-25 WITH the field, same commit.
+    "nyiso_gas_daily_print_level": "False",
+    # Added by NYISO-NEXT-26 WITH the field, same commit.
+    "nyiso_li_tsl_all_hours": "False",
     # Added by nyiso-224 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "nyiso_total_east_cutset_ttc": "False",
@@ -8460,6 +8488,26 @@ class ScenarioConfig:
     # skips Long_Island (one mechanism per phenomenon, rule 19); the 0.45
     # scalar remains only for the default-off legacy path. Default off
     # (byte-identical); NYISO-only.
+    nyiso_li_tsl_all_hours: bool = False  # NYISO-NEXT-26: the Zone-K cap
+    # (nyiso_li_lcr_tsl, on the basis nyiso_li_tsl_n11_security selects) binds
+    # in EVERY hour, not only the HB14-21 design-cooling window. A rule-17
+    # [R-FLOOR-WINDOW] window correction on a transmission bound: the window
+    # must follow the constraint's own driver, and NYISO's DAM limiting-
+    # constraint posting binds the Zone-K import security set (Y50 Dunwoodie-
+    # Shore Road for loss of Y49, Y49 Sprain Brook-East Garden City, the
+    # ConEd-LIPA interface, the Shore Road 345/138 transformer) in 1,680-5,782
+    # hours a year 2021-2025, in every season, with 58-64 % of those hours and
+    # 44-52 % of their shadow cost OUTSIDE HB14-21. Off the window the link
+    # otherwise reads the 1,650 MW Gold-Book seed (iso_configs.py, "Tier 3 --
+    # verify"), which the measured implied net AC import into Zone K (zonal
+    # load - CAMPD gross - P-32 LI seam schedules) never approaches (p99
+    # 670-1,190 MW by season-year) -- rule 14 [R-ACCURATE], a published limit
+    # replaces an unverified estimate. ZERO free parameters: same published
+    # number, same link, same symmetry. Caveat carried to the record: the 940 MW
+    # is computed at summer design conditions (Y50 @ LTE 964 MVA); no winter
+    # rating is in the corpus. Effective only when nyiso_li_lcr_tsl is on;
+    # NYISO-only; default off (byte-identical). Evidence:
+    # docs/records/nyiso/FINDING-nyiso-next26-li-import-window-phase0-2026-10-01.md.
     nyiso_li_tsl_n11_security: bool = False  # NYISO Zone-K cap reads the
     # PUBLISHED N-1-1 TRANSMISSION SECURITY LIMIT instead of the loss-of-source-
     # net locality import limit (nyiso-130). A rule-14 [R-ACCURATE] / rule-19
@@ -14449,6 +14497,32 @@ class ScenarioConfig:
     # shed penalty is their own ISOConfig energy-offer cap, not this identity.
     ercot_swcap_vintage: bool = False
 
+    # ERCOT HOURLY EFFECTIVE SWCAP (R-ERCOT-23, default off, ERCOT-gated; rules
+    # 1 [R-STRUCT] / 14 [R-ACCURATE]). ercot_swcap_vintage made the cap one
+    # number per YEAR; ERCOT's cap is one number per HOUR. Under 16 TAC
+    # 25.505(g)(6) a year whose Peaker Net Margin crosses its threshold runs the
+    # rest of the year at the Low System-Wide Offer Cap, and the ORDC's VOLL
+    # follows the SWCAP daily (OBD §2.1) - 2021 ran at LCAP $2,000 from
+    # 2021-03-04 (constants.ERCOT_LCAP_WINDOWS_BY_YEAR carries the citations).
+    # Armed, results.scarcity.ercot_effective_swcap_series feeds the four
+    # places ERCOT's cap binds, one mechanism (rule 19 [R-ONE-MECH]):
+    # (a) the VOLL-anchored reserve demand curves - every ERCOT reserve-family
+    # step penalty is linear in VOLL, so the cost block is scaled hourly by
+    # SWCAP_t / ordc_voll; (b) the LP load-shed cost, min(voll, SWCAP_t);
+    # (c) under ercot_offer_swcap_clip, the energy-offer clip at SWCAP_t - eps;
+    # (d) post-solve, the protocol cap "System Lambda plus all Price Adders
+    # <= SWCAP" (ERCOT 2022 Biennial ORDC Report §1.2), applied to the summed
+    # ORDC adder + measured RTORDPA + DAM-AS overlays against the model's
+    # demand-weighted energy dual - the adders are reduced, never lambda.
+    # ZERO free parameters (rules 21/24): a published date, a published value
+    # and a published protocol bound. Outside an LCAP window (a)-(c) are the
+    # identity, so only 2021 moves in-LP; (d) also binds in HCAP hours where
+    # model lambda + the measured RTORDPA overlay exceeds the cap (the Uri
+    # hours). The series is anchored on ordc_voll (the year's published HCAP,
+    # ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR); arm it with
+    # ercot_swcap_vintage so the LP's voll is that same number.
+    ercot_swcap_effective_hourly: bool = False
+
     # ERCOT gas-CC COMMITMENT BRIDGE (default off, ERCOT-gated): the committed-
     # STATE half of the trough-price-formation circle, promoted from the
     # ERCOT-62b probe (docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md
@@ -19775,6 +19849,54 @@ class ScenarioConfig:
     # market_sim.data.fuel.hubs._nyiso_hub_daily_gas_prices.
     nyiso_hub_gap_month_level: bool = False
 
+    # Tier 3 (calibration) — NYISO-NEXT-23. FLOW-DATE the measured Transco Z6 NY
+    # daily prints NYISO's daily gas reads. The EIA daily is a NEXT-DAY delivery
+    # index: a print keyed to trade day T prices gas that FLOWS on T+1, and
+    # Friday's trade prices the whole Sat-Mon (holiday-extended) package — the
+    # convention ``hubs._flow_date_staircase`` already encodes for CAISO
+    # (``caiso_citygate_flow_date``) and MISO. Off, NYISO places each print on
+    # its TRADE day and linearly interpolates across the weekend, so the
+    # 2025-01-17 $97.90 MLK-weekend print prices Fri 1/17 (NYC DA $117) and
+    # decays across the four days it actually priced (DA $106-302). Armed, BOTH
+    # NYISO Z6 consumers take the flow-date staircase: the hub daily shape
+    # (``_nyiso_hub_daily_gas_prices``, still exactly mean-preserving per month)
+    # and the downstate CT delivered index (``apply_nyiso_downstate_ct_gas_daily``,
+    # whose LDC transport adder is unchanged). Rule 14 [R-ACCURATE] on the source
+    # convention is the whole case (rule 1: the direction of any residual is
+    # evidence for nothing); rule 13: the identical construction regenerates
+    # from forward prints; ZERO free parameters. Refuses to stack with
+    # ``nyiso_hub_gap_month_level`` (rule 19: both define the unpriced days).
+    # The year-start left edge follows ``gas_flow_date_year_start_package``
+    # exactly as the CAISO / MISO callers do. Off by default so every other ISO,
+    # every registered keeper and every forecast is byte-identical.
+    nyiso_gas_flow_date: bool = False
+
+    # Tier 3 (calibration) — NYISO-NEXT-25. Price each day of NYISO's daily gas at
+    # its OWN measured Transco Z6 NY print (times the zone-month hub ratio), not at
+    # the print rescaled so the month's CALENDAR-day mean equals the monthly hub
+    # level. The monthly level is a TRADE-day statistic (the EIA mean of daily
+    # quotes, one per trading day), while the day series it is renormalised over is
+    # a CALENDAR-day series in which a Friday / holiday print covers 3-4 flow days.
+    # In a month whose spike sits on such a package the calendar mean exceeds the
+    # trade-day mean and the renormalisation scales EVERY ordinary day down by
+    # trade_mean / calendar_mean (Jan-2025: 0.78 trade-dated, 0.65 flow-dated, the
+    # $97.90 MLK package) — and the spike days it pays for are clipped by the
+    # dual-fuel oil cap anyway, so the month's mean is not even preserved after the
+    # cap. The downstate CT peakers in the same zones are already SET to the raw
+    # print plus LDC transport (``apply_nyiso_downstate_ct_gas_daily``), so off,
+    # one commodity carries two levels in one zone. Armed, both
+    # ``_nyiso_hub_daily_gas_prices`` branches (trade-date interpolation and the
+    # ``nyiso_gas_flow_date`` staircase) divide by the month's trade-day print
+    # mean only: a priced day is ``hub_level * print / trade_mean``, i.e. for NYC
+    # the Z6 print itself on that day. Rule 14 [R-ACCURATE] (the measured print is
+    # the day's price) and rule 19 (one level for one commodity); rule 13: the
+    # identical construction regenerates from forward prints; ZERO free
+    # parameters. NOT mean-preserving by design: a spike month's level rises to
+    # the calendar average of its prints. Off by default so every other ISO, every
+    # registered keeper and every forecast is byte-identical. Evidence:
+    # docs/records/nyiso/FINDING-nyiso-next25-offcap-winter-gap-phase0-2026-10-01.md.
+    nyiso_gas_daily_print_level: bool = False
+
     # Tier 3 (calibration) — nyiso-224. The model's ONE
     # ``Upstate_West -> Capital_Hudson`` link is the A-E -> F+ cutset, whose
     # NYISO name is TOTAL EAST; ``NYISO_INTERFACE_TTC_BY_MONTH`` caps it at the
@@ -24788,6 +24910,7 @@ TIER_TAGS: dict[str, int] = {
     "demand_balance_screen": 1,
     "ercot_offer_swcap_clip": 1,
     "ercot_swcap_vintage": 1,
+    "ercot_swcap_effective_hourly": 1,
     "caiso_storage_adaptive_expectation": 1,
     "caiso_adaptive_half_life_days": 2,
     "caiso_adaptive_beta": 2,
@@ -25027,6 +25150,9 @@ TIER_TAGS: dict[str, int] = {
     "ercot_ep_gas_basis_corroborated": 3,
     "ercot_ep_gas_basis_receipts_fallback": 3,
     "nyiso_hub_gap_month_level": 3,
+    "nyiso_gas_flow_date": 3,
+    "nyiso_gas_daily_print_level": 3,
+    "nyiso_li_tsl_all_hours": 3,
     "nyiso_total_east_cutset_ttc": 3,
     "nyiso_fg_split": 3,
     "mustrun_chp_btm_holdout": 3,

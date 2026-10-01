@@ -277,8 +277,12 @@ def apply_bid_max_target(mc_bid: np.ndarray, target: np.ndarray) -> np.ndarray:
     return np.where(binding, np.maximum(mc_bid, target), mc_bid)
 
 
-def _swcap_clip_level(config) -> Optional[float]:
+def _swcap_clip_level(config) -> "Optional[float | np.ndarray]":
     """The armed SWCAP offer-clip level ($/MWh), or ``None`` when off.
+
+    A scalar, or a ``(1, T)`` hourly row when ``ercot_swcap_effective_hourly``
+    puts some hour of the solve year inside a published LCAP window (it
+    broadcasts against the ``(n_gen, T)`` offer arrays).
 
     ``ercot_offer_swcap_clip`` (see the ScenarioConfig field's docstring for
     the market grounding): every real SCED energy offer is capped at the
@@ -293,7 +297,23 @@ def _swcap_clip_level(config) -> Optional[float]:
         return None
     if getattr(config, "iso", "") != "ERCOT":
         return None
-    return float(config.voll) - ERCOT_SWCAP_SHED_TIEBREAK_EPS
+    level = float(config.voll) - ERCOT_SWCAP_SHED_TIEBREAK_EPS
+    # R-ERCOT-23 hourly effective SWCAP, half (c): inside a published LCAP
+    # window the offer cap is the LCAP, so the clip is hourly. Returned as a
+    # (T,) row only where some hour differs — a year with no window keeps the
+    # scalar clip, byte-identical.
+    from market_sim.results.scarcity import (
+        ercot_effective_swcap_series,
+        ercot_swcap_effective_active,
+    )
+
+    if ercot_swcap_effective_active(config):
+        swcap = ercot_effective_swcap_series(
+            int(config.weather_year), int(config.hours), float(config.voll)
+        )
+        if np.any(swcap != float(config.voll)):
+            return (swcap - ERCOT_SWCAP_SHED_TIEBREAK_EPS)[np.newaxis, :]
+    return level
 
 
 def zero_posture_markup(

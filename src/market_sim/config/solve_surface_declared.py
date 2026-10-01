@@ -625,4 +625,5 @@ DECLARED: dict[str, str | dict[str, str]] = {
     "PART75_FC_OIL_SCF_PER_MMBTU": "01e772fcb6b9c8f7",
     "PART75_MW_CO2_LB_PER_LBMOL": "cb228f33e27e7d53",
     "PART75_UF_LBMOL_PER_SCF": "39dec01c2170fd47",
+    "ERCOT_LCAP_WINDOWS_BY_YEAR": "305a9aefd42822ba",
 }

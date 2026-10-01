@@ -1407,8 +1407,19 @@ def _system_frame(
     ercot_ordc_adder_family_counterpart: bool = False,
     ordc_voll: "float | None" = None,
     ercot_ordc_realized_adder: "np.ndarray | None" = None,
+    swcap_hourly: "np.ndarray | None" = None,
 ) -> pd.DataFrame:
     """Return the per-zone hourly price / slack / demand frame.
+
+    ``swcap_hourly`` (R-ERCOT-23, ``ercot_swcap_effective_hourly``) is the
+    hour's effective system-wide offer cap. When given, the summed post-solve
+    adders are bounded by the protocol cap "System Lambda plus all Price Adders
+    <= SWCAP" against the LP's demand-weighted energy dual: the ORDC adder is
+    trimmed to the headroom first, then the measured RTORDPA overlay, then the
+    DAM-AS overlay, in the order ERCOT computes them (RTORDPA is calculated
+    after lambda and RTORPA — 2022 Biennial ORDC Report §1.2). The persisted
+    component columns carry the trimmed values, so they still sum to the
+    price uplift. ``None`` is byte-identical.
 
     Also carries ``marginal_emission_rate`` (tCO2/MWh) when the solve produced
     one — the emissions dual, i.e. the CO2 consequence of a marginal MWh in
@@ -1675,6 +1686,23 @@ def _system_frame(
         mer = np.asarray(mer, dtype=float)
         if mer.shape != (n_zones, T):
             mer = None
+    if swcap_hourly is not None and iso == "ERCOT":
+        _dem = demand[:, :T]
+        _tot = _dem.sum(axis=0)
+        _lam = np.where(
+            _tot > 0.0,
+            (prices[:, :T] * _dem).sum(axis=0) / np.where(_tot > 0.0, _tot, 1.0),
+            prices[:, :T].mean(axis=0),
+        )
+        _room = np.maximum(np.asarray(swcap_hourly, dtype=float)[:T] - _lam, 0.0)
+        if ordc_adder is not None:
+            ordc_adder = np.minimum(ordc_adder, _room)
+            _room = _room - ordc_adder
+        if overlay is not None:
+            overlay = np.minimum(overlay, _room)
+            _room = _room - overlay
+        if dam_as is not None:
+            dam_as = np.minimum(dam_as, _room)
     total_overlay = np.zeros(T, dtype=float)
     if overlay is not None:
         total_overlay = total_overlay + overlay
@@ -6634,6 +6662,21 @@ def solve_and_persist(
         # generic ScenarioConfig overrides, and ``ordc_voll`` is exactly the
         # kind of published parameter a scenario probe would move.
         _ordc_voll_eff = float((prb_overrides or {}).get("ordc_voll", cfg.ordc_voll))
+        # R-ERCOT-23 hourly effective SWCAP, half (d): the protocol price cap
+        # the system frame applies to the post-solve adders. Read through the
+        # same prb_overrides-first channel as ordc_voll above.
+        _swcap_hourly_eff = None
+        if iso == "ERCOT" and bool(
+            (prb_overrides or {}).get(
+                "ercot_swcap_effective_hourly",
+                getattr(cfg, "ercot_swcap_effective_hourly", False),
+            )
+        ):
+            from market_sim.results.scarcity import ercot_effective_swcap_series
+
+            _swcap_hourly_eff = ercot_effective_swcap_series(
+                year, hours, _ordc_voll_eff
+            )
 
         # Effective CAISO demand flags: they arrive through the generic
         # ``prb_overrides`` ScenarioConfig channel, which run_year's own
@@ -7188,6 +7231,7 @@ def solve_and_persist(
                 ercot_ordc_realized_adder=(
                     p2_state.get("ercot_ordc_realized_adder") if label == "P1" else None
                 ),
+                swcap_hourly=_swcap_hourly_eff,
             )
             if _endog_wecc:
                 # caiso-110: the results pipeline is zone-blind, so the

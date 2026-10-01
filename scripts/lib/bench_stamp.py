@@ -242,6 +242,11 @@ PAYLOAD_FINGERPRINT_BY_BUILDER: dict[str, str] = {
     # `docs/records/governance/FINDING-y15-flipset-sweep-2026-09-06.md` §3.5 and
     # `docs/records/governance/FINDING-y17-bench-payload-fingerprint-2026-09-06.md`.
     "b2f21b9a00d3": "643eac24b565",
+    # The aggregate every committed part carried on 2026-10-01 (all nine ISOs,
+    # 2019-2025): the builder modules moved under the cleanup-D/-C merges (path
+    # rewrites and the coal-subclass taxonomy) while the three payload blobs
+    # resolve to the same payload fingerprint, so the parts are current.
+    "f979bd82fd43": "29bf6a6f5186",
 }
 
 

@@ -18,7 +18,7 @@ Every class's P1 TWh matches the keeper's committed `class_hourly`, **Δ = 0.000
   - It is `unit_hourly` minus `red_cost`, plus an int8 `marginal` flag (interior and `|red_cost| ≤ $0.01`).
   - Built by `scripts/lib/unit_marginal.py`, which streams one row group at a time.
 - **Every solve now writes it** (`run_calibration_full.py`). The full `unit_hourly` stays local and gitignored.
-- **CLAUDE.md rule 15** requires the layer in every keeper bundle. **`check_promotion_completeness.py` leg (e)** fails a promoting PR that lacks it. The leg is prospective: it is armed only for a keeper that changed against `--base`.
+- **CLAUDE.md rule 15** requires the layer in every keeper bundle. **`scripts/promote_keeper.py` preflight** enforces it at promotion: it derives the layer from `unit_hourly` when absent and refuses a new keeper with neither. (It was first written as `check_promotion_completeness.py` leg (e); that script was removed by cleanup-A the same day, so the check moved into the one promotion path.)
 - **PJM keeper:** the layer is attached for 2019–2025.
   - Size: 10.2–11.5 MB/yr, 76 MB in total.
   - Marginal sets are identical to the full frames (16,913 / 14,293 / 13,892 / 14,919 / 15,465 / 13,742 / 12,451 unit-hours).

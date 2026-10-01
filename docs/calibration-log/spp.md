@@ -3934,3 +3934,24 @@ SPP-67 treated 2020/2021 as unpublished. The 2022 and 2021 ASOMs print 244 MW an
 added (PR #6812, merge `020bb1c5`, PRECOMMIT first). The armed year-own seam now uses 2.55 % / 6.37 % instead of 9.65 %. Wind
 headroom: 2020 −6.62 TWh, 2021 −3.60 TWh; every other year byte-identical. The seven shards were refused at lineage depth 8, so
 nothing was solved. Keeper unchanged. Record: `docs/records/spp/FINDING-spp-94-curtail-rows-2026-09-28.md`.
+
+## spp-106 — 2026-10-01 — MMU offer-side unavailability: designed, built on owner override, solved, HELD
+
+**Design (zero LP).** The MMU Dec 2025 white paper's classes are annual system-wide MW for 2020–24, digitized. Only
+reliability status is split by fuel; nothing is published at unit, class or hour grain. Re-clear: the best carrier moves the
+2023–25 upper tercile ≤ $3 of an $11–15 gap, with the wrong shape (moves 2019–21 as much). The lane recommended a model-class
+limit. The owner ruled **"Build EX anyway"**.
+
+**Built.** `spp_mmu_offer_unavailability` (default off, zero DOF) replaces the flat fossil performance and summer class
+derates with the MMU above-emergency-max, economic→emergency-max and ambient bands. PR #6954, merge `392633a1`.
+
+**Solved.** 7 year-isolated shards, form 4 vs keeper.
+- Train tier stays CALIBRATED. C3a −6.7 / −8.6 / −5.4 → −4.4 / −6.0 / −1.6 %. COAL_PRB over-count 2023 / 24 +3.3 / +3.6 →
+  +0.6 / +0.8 TWh.
+- **E3 FAILS:** unserved +2.9 GWh (2024) and +1.4 GWh (2025), in SPP-South with the N→S link at 3,400 MW.
+- Validation 2021 C3a PASS → FAIL.
+
+**Owner: "Hold, investigate shortfall".** Zero-LP diagnosis: the bands are taken as a share of RATED pmax on
+partially-outaged units, while the MMU measures against the derated amount. The economic→emergency band is removed in the
+reliability hours it exists for. Both repairs are definitional → SPP-107. Keeper unchanged, cell O. Record:
+`docs/records/spp/RESULT-spp-106-offer-side-unavailability-2026-10-01.md`.

@@ -8,6 +8,7 @@ as far as your question needs.
 
 ```
 L0  docs/README.md ................ this index (you are here)
+    docs/RUNBOOK.md ............... the calibration-lane procedure (setup → phase 0 → shards → compose → promote)
 L1  model-methodology-spec.md ..... THE spec (economic/market design, LP formulation)
     docs/codebase/ ............... code-derived engineering reference (what the code does)
 L2  living per-area references .... standing methodology/reference docs (table below)

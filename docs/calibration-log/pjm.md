@@ -6895,7 +6895,7 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 ## PJM-NEXT-18 — 2026-10-01 — low-end census 2019–2025; model coal sets price ~2× the IMM rate; keeper per-unit layer lands
 
 - **Solves and keeper:** seven one-year diagnostic keeper replays (rule 36), reproducing the keeper exactly (Δ = 0.000 TWh, every class, every year). Never registered. Keeper unchanged (`2026-09-30-pjm-next16-ovec`); 10 failing cells, NOT-YET.
-- **Owner instruction, all ISOs:** keeper bundles commit `hourly/unit_marginal_<y>.parquet`. This is `unit_hourly` minus `red_cost` plus an int8 `marginal` flag (owner card "Slim layer"), because the full PJM layer is 69–81 MB/yr. Every solve writes it. Rule 15 now requires it, and `check_promotion_completeness` leg (e) enforces it. Attached to the PJM keeper, 76 MB for 2019–2025.
+- **Owner instruction, all ISOs:** keeper bundles commit `hourly/unit_marginal_<y>.parquet`. This is `unit_hourly` minus `red_cost` plus an int8 `marginal` flag (owner card "Slim layer"), because the full PJM layer is 69–81 MB/yr. Every solve writes it. Rule 15 now requires it, and `promote_keeper.py` preflight enforces it. Attached to the PJM keeper, 76 MB for 2019–2025.
 - **Card 1 (low end):**
   - The low-end price-floor gap is **larger in the fit years** (3.3–3.7 × gas in 2023/24 vs 1.6–2.2 in 2019–21), so it is not the year lever.
   - Model coal sets the price ×1.7–2.6 more often than the IMM's marginal-fuel shares, in every year.

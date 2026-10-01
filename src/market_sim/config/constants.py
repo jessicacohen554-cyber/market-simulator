@@ -3009,6 +3009,33 @@ ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR: dict[int, dict[str, float]] = {
     2025: {"ordc_voll": 5000.0, "ordc_mcl_mw": 3000.0, "ordc_lolp_shift_sigma": 0.5},
 }
 
+# ERCOT LOW SYSTEM-WIDE OFFER CAP (LCAP) WINDOWS (R-ERCOT-23, rules 1 [R-STRUCT]
+# / 14 [R-ACCURATE]). 16 TAC 25.505(g)(6): once the calendar year's Peaker Net
+# Margin passes its threshold, the system-wide offer cap drops from HCAP to
+# LCAP for the rest of that year — and since OBDRR015 (2019) the ORDC's VOLL "is
+# set on a daily basis to be equal to the SWCAP" (ORDC methodology OBD §2.1,
+# every version 2.1-3.8). Winter Storm Uri crossed the PNM threshold on
+# Operating Day 2021-02-16 (ERCOT market notice M-C021521-02); the PUCT's
+# 2021-02-15 order suspended LCAP until its next open meeting, which lifted the
+# suspension on 2021-03-03, and ERCOT moved Real-Time to LCAP for Operating Day
+# 2021-03-04 (market notice M-B030321-01). ERCOT's 2022 Biennial ORDC Report
+# §1.3: "SWCAP (and therefore VOLL) was reduced to the LCAP of $2,000/MWh from
+# March 4, 2021, until the end of that year." LCAP = max($2,000, 50 x FIP); FIP
+# never exceeded $40/MMBtu after Uri, so the value is $2,000 throughout.
+# Measured (zero LP, scripts/probes/_r_ercot23_lcap_id.py): the published
+# RTORPA formula on ERCOT's own measured RTOLCAP / RTOFFCAP / lambda reads
+# 2021 at 1.59x of measured RTORPA (r 0.876) with VOLL = $9,000 all year — 10.3x
+# over Mar-Dec — and 1.14x (r 0.985) with this window. No other year 2019-2025
+# entered LCAP (every year's measured lambda + adders reaches its HCAP).
+# (year -> (first hour of the window on the non-leap model clock, LCAP $/MWh));
+# the window runs to the year's last hour. Operating Day 2021-03-04 is before
+# the 2021-03-14 DST change, so CPT = CST = the model clock: hour 62 x 24.
+# Zero DOF: a published date and a published value, fixed before any solve.
+# Tier: 1 (published market design)
+ERCOT_LCAP_WINDOWS_BY_YEAR: dict[int, tuple[int, float]] = {
+    2021: (62 * 24, 2000.0),
+}
+
 # Per-year nuclear monthly capacity factor derived from EIA-923 net generation
 # (the actual staggered refueling cadence each year, not a fixed seasonal
 # average). When a (ISO, year) is present it overrides NUCLEAR_MONTHLY_CF in the

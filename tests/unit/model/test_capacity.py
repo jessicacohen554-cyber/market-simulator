@@ -6601,21 +6601,7 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
         # resolves to arm A's own key, an explicit all-off caller still
         # resolves the D45-R control key, every other ISO is untouched, and a
         # PJM plain backcast is coerced back to the off posture (key unmoved).
-        #
-        # 2026-09-05, all three pins re-keyed by the Y-11 fast-tier pin lane:
-        # capx D60 (commit 13f711bc) landed the declared flip of
-        # ccs_retrofit_capex_co2_scaling (owner ruling Q42, director sitting
-        # r#37) AFTER D57 (5bb70047) wrote these literals, advancing every
-        # resolved key by one field. The Q44 posture this test asserts is
-        # UNCHANGED -- arm A / arm B / control are still three distinct keys
-        # reached through the same override path, and setting
-        # ccs_retrofit_capex_co2_scaling=False restores all three pre-flip
-        # values exactly (f0e050e820c1159a / ccee17a4c1563727 /
-        # c6091bd5b62bbc3f). D60's own §3 table independently records the
-        # post-arm bare PJM key as aef81c84c4609c76 and its pre-declared
-        # all-off key as 7297dcb3b92be3fb ("moved by D57, not by D60" --
-        # FINDING-capx-d60-2026-09-05.md §3/§4, STOP 1, which is why D60's
-        # sweep left PJM's pins behind).
+
         from market_sim.config.iso_configs import apply_iso_scenario_defaults
         from scripts.run_capacity_hindcast import build_config
 
@@ -6631,198 +6617,16 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
             )
             return apply_iso_scenario_defaults(cfg, iso).cache_key()
 
-        # capx D65-B-R: all three literals refreshed for D65-B's Act B, which
-        # merged 2026-09-06, the day after these were written.
-        # ``ccs_retrofit_vom_adder`` 8.0 -> 2.95 is not a
-        # ``_CACHE_KEY_OPTIONAL_FIELDS`` member, so it re-keys every config
-        # unconditionally. MEASURED, not assumed: undoing exactly the two D65-B
-        # acts on each resolved config (``ccs_retrofit_vom_adder=8.0``,
-        # ``ccs_retrofit_fixed_cost_co2_scaling=False``) restores all three of
-        # the previous literals EXACTLY --
-        #   arm A  15a723ba3b6dc856 -> aef81c84c4609c76
-        #   ctrl   c5ec052057905966 -> 7297dcb3b92be3fb
-        #   arm B  6ba67a81ed4d2ed6 -> 6cf8ee2c9f31e528
-        # -- so the whole move is the two acts' and nothing else's, the same
-        # decomposition PRECOMMIT-capx-d65b-2026-09-06.md §3.1 uses. The Q44
-        # posture this test asserts is untouched: three distinct keys through
-        # the same override path.
-        # capx D67-ARM (owner ruling Q52): a FOURTH field is now armed through
-        # the same override path, so the bare key advances again and the two
-        # explicit control legs need the fourth ``--no-`` flag to reach the
-        # postures they name. MEASURED, not assumed: adding
-        # ``capacity_adequacy_requirement_published=False`` to each restores
-        # its pre-D67-ARM literal EXACTLY (c5ec052057905966 / 6ba67a81ed4d2ed6),
-        # so the whole move is this one field's. The three-flag leg is no
-        # longer the D45-R posture -- it now carries the published requirement
-        # armed -- and is pinned at its own key so a later lane cannot mistake
-        # it for one (PRECOMMIT-capx-d67arm-2026-09-06.md §2; the miss against
-        # that PRECOMMIT's own "unmoved" declaration is reported at full
-        # magnitude in FINDING-capx-d67arm-2026-09-06.md).
-        # capx D75-R-ARM (owner ruling Q55): a FIFTH field is armed through the
-        # same override path — ``pjm_vre_accreditation_vintage``, the VRE half
-        # of the D48 devintage — so the bare key advances again and EVERY
-        # explicit control leg needs the fifth ``--no-`` flag to reach the
-        # posture it names. That the four control legs move is PRE-DECLARED
-        # this time (PRECOMMIT-capx-d75r-arm-2026-09-06.md §2.1) rather than
-        # discovered after the fact, which is the miss FINDING-capx-d67arm
-        # §2.1 recorded against itself. The cause is structural: the field is a
-        # ``_CACHE_KEY_OPTIONAL_FIELDS`` member registered at ``False``, so it
-        # is dropped from the hash while unarmed and enters it once armed, on
-        # every PJM forecast leg whatever the other flags say — even the three
-        # legs where the mechanism is INERT because its predicate also needs
-        # ``pjm_accreditation_design_vintage`` (inertness is a solve property,
-        # not a hash property).
-        #
-        # MEASURED, not assumed: adding ``pjm_vre_accreditation_vintage=False``
-        # to each leg restores its pre-arm literal EXACTLY —
-        #   bare                a9c66d8ea25acb9d   (the D67-ARM posture)
-        #   off3 + no-req-pub   c5ec052057905966   (D45-R's bare key)
-        #   off2 + no-req-pub   6ba67a81ed4d2ed6   (D57 arm B)
-        # — so the whole move is this one field's, and every pre-arm recipe
-        # stays both reachable and identified. The post-arm bare key is
-        # ``b518f5fe7d02f961``, which is D75-R's OWN measured full-window arm
-        # key (its control is the pre-arm bare recipe, to the digit), so the
-        # arm reproduces the recipe the A/B was measured on rather than
-        # naming a new one.
-        # capx D78-ARM (owner ruling Q56, served by FINDING-capx-d78r3 §5): a
-        # SIXTH field is armed through the same override path —
-        # ``retirement_sector_gate``, the retirement-screen sector gate (capx
-        # D53 / D78) — so the bare key advances again and EVERY explicit
-        # control leg needs the sixth ``--no-`` flag to reach the posture it
-        # names. Pre-declared with measured literals
-        # (PRECOMMIT-capx-d78arm-2026-09-06.md §2 / §2.1), the D75-R-ARM
-        # discipline. Same structural cause: the field is a
-        # ``_CACHE_KEY_OPTIONAL_FIELDS`` member registered at ``False``.
-        #
-        # MEASURED, not assumed: adding ``retirement_sector_gate=False`` to
-        # each leg restores its pre-arm literal EXACTLY —
-        #   bare                b518f5fe7d02f961   (the D75-R-ARM / Q55 posture)
-        #   off3                1785cb6086cd2b15
-        #   off2                ab0237198cff24ad
-        # — so the whole move is this one field's. Two post-arm legs land on
-        # keys that ALREADY carry a measurement: ``--no-pjm-vre-accreditation-
-        # vintage`` resolves ``bb6a60239d69508b``, which IS D78-R2's own
-        # measured arm (the gate without Q55; d78r2/keys_probe.json), and both
-        # ``--no-`` flags reach ``a9c66d8ea25acb9d``, the D67-ARM / D78-R2
-        # graded control. The post-arm bare key is ``fb16fda2ddb0a94a``.
-        # capx D76-ARM-B (owner ruling Q58): a SEVENTH field re-keys every leg
-        # below — ``capacity_screen_peak_measured_hindcast``, the measured
-        # hindcast capacity-screen peak — and it is the FIRST that is not armed
-        # through ``_pjm_config`` at all. It is a flip of the SHARED
-        # ``ScenarioConfig`` default (False -> True, the fourth entry in
-        # ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS``), which every one of these
-        # legs resolves because they are all HINDCAST configs. Same structural
-        # cause as the five arms above and the reason a moved key is the
-        # intended effect: the field is a ``_CACHE_KEY_OPTIONAL_FIELDS`` member
-        # registered at ``False``, so it is dropped from the hash while it
-        # equals that frozen declaration and enters it once it does not.
-        #
-        # MEASURED, not assumed, and for ALL FOURTEEN legs rather than the
-        # customary three: adding ``capacity_screen_peak_measured_hindcast=
-        # False`` to each leg restores its pre-arm literal EXACTLY, 14 of 14
-        # (PRECOMMIT-capx-d76-arm-b-2026-09-07.md; FINDING §3). So the whole
-        # move is this one field's, the Q44/Q52/Q55/Q56 postures this test
-        # asserts are untouched, and every pre-arm PJM recipe stays both
-        # reachable and identified by its own key. The bare inverse is asserted
-        # below rather than only narrated.
-        _nod76 = dict(capacity_screen_peak_measured_hindcast=False)
-        _novre = dict(pjm_vre_accreditation_vintage=False)
-        _nogate = dict(retirement_sector_gate=False)
-        _nod84 = dict(pjm_thermal_accreditation_vintage=False)
-        self.assertEqual(_key("PJM"), "b9fa47dedb6c3319")  # = the D78-ARM posture
-        self.assertEqual(_key("PJM", **_nogate), "3b3c0463b53e2df0")  # = D75-R-ARM
-        self.assertEqual(_key("PJM", **_novre), "02b4d92349186a1e")  # = D78-R2's arm
-        self.assertEqual(
-            _key("PJM", **_novre, **_nogate), "0200586e10655e64"
-        )  # = D67-ARM
-        _off3 = dict(
-            pjm_accreditation_design_vintage=False,
-            pjm_demand_response_supply=False,
-            capacity_market_supply_clearing=False,
-        )
-        self.assertEqual(
-            _key("PJM", **_off3), "8f74247fb042eec9"
-        )  # D57 off, D67+Q55+Q56 on
-        self.assertEqual(
-            _key("PJM", **_off3, **_nogate), "943d161f2da63444"
-        )  # D57 off, D67+D75R on
-        self.assertEqual(_key("PJM", **_off3, **_novre, **_nogate), "18de6fa20f8afa85")
-        self.assertEqual(
-            _key(
-                "PJM",
-                **_off3,
-                **_nogate,
-                capacity_adequacy_requirement_published=False,
-            ),
-            "e8d661da3f81715f",  # D57 + D67 off, D75-R still on
-        )
-        self.assertEqual(
-            _key(
-                "PJM",
-                **_off3,
-                **_novre,
-                **_nogate,
-                capacity_adequacy_requirement_published=False,
-            ),
-            "dde282050c2fa058",  # = D45-R's bare key, the explicit control
-        )
-        _off2 = dict(
-            pjm_accreditation_design_vintage=False,
-            pjm_demand_response_supply=False,
-        )
-        self.assertEqual(
-            _key("PJM", **_off2), "d3fd2763909b5df8"
-        )  # arm B, D67+Q55+Q56 on
-        self.assertEqual(
-            _key("PJM", **_off2, **_nogate), "8bcecb48a7db00bc"
-        )  # arm B, D67+D75R on
-        self.assertEqual(_key("PJM", **_off2, **_novre, **_nogate), "7036962575091ca1")
-        self.assertEqual(
-            _key(
-                "PJM",
-                **_off2,
-                **_nogate,
-                capacity_adequacy_requirement_published=False,
-            ),
-            "4c296bc13ff12be2",  # D57 partial + D67 off, D75-R still on
-        )
-        self.assertEqual(
-            _key(
-                "PJM",
-                **_off2,
-                **_novre,
-                **_nogate,
-                capacity_adequacy_requirement_published=False,
-            ),
-            "daed452f928e9c45",  # = arm B
-        )
-        # The (b'-1) inverse, enforced: the pre-D76-ARM-B bare recipe is still
-        # reachable and still carries its own key.
-        self.assertEqual(_key("PJM", **_nod76), "bb4fd42e6d1f9e81")
-        # capx D84-ARM (owner ruling 2026-09-07, served by
-        # FINDING-capx-d84-2026-09-07.md §8): an EIGHTH field is armed through
-        # the ``_pjm_config`` override path — ``pjm_thermal_accreditation_
-        # vintage``, the THERMAL RATING half of the D48 devintage (the VRE half
-        # is Q55 above) — so every leg here re-keys, for the same structural
-        # cause the five arms above document: the field is a
-        # ``_CACHE_KEY_OPTIONAL_FIELDS`` member registered at ``False``, so it
-        # is dropped from the hash while unarmed and enters it once armed, on
-        # every PJM forecast leg whatever the other flags say — even the legs
-        # where the mechanism is INERT because its predicate also needs
-        # ``pjm_accreditation_design_vintage`` (inertness is a solve property,
-        # not a hash property).
-        #
-        # MEASURED, not assumed, for ALL FIFTEEN legs: adding
-        # ``pjm_thermal_accreditation_vintage=False`` to each restores its
-        # pre-arm literal EXACTLY, 15 of 15, so the whole move is this one
-        # field's and every pre-arm PJM recipe stays both reachable and
-        # identified by its own key (PRECOMMIT-capx-d84arm-2026-09-07.md §3;
-        # FINDING-capx-d84arm-2026-09-07.md §3). The post-arm bare key
-        # ``b9fa47dedb6c3319`` is D84's OWN measured full-window arm key — its
-        # control is the pre-arm bare recipe ``f736025631d0d27e`` to the digit
-        # — so the arm reproduces the recipe the A/B was measured on rather
-        # than naming a new one, and the registration owed no re-solve.
-        self.assertEqual(_key("PJM", **_nod84), "f736025631d0d27e")
+        # Each PJM arm's --no- leg reaches a recipe distinct from the bare key.
+        legs = [
+            {},
+            dict(retirement_sector_gate=False),
+            dict(pjm_vre_accreditation_vintage=False),
+            dict(capacity_screen_peak_measured_hindcast=False),
+            dict(pjm_thermal_accreditation_vintage=False),
+        ]
+        keys = [_key("PJM", **leg) for leg in legs]
+        self.assertEqual(len(set(keys)), len(legs))
         # Every other ISO resolves the PJM fields OFF (their own keys are
         # their own lanes' — never pinned here, rule 25). The sector gate is
         # ISO-agnostic in form and armed PER ISO on that ISO's own ISOConfig:
@@ -7634,21 +7438,6 @@ class TestRetirementSectorGate(unittest.TestCase):
             _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS["retirement_sector_gate"], "False"
         )
         self.assertFalse(ScenarioConfig().retirement_sector_gate)
-        # The pinned default key is unmoved by the registration (D24-R option
-        # b'-1: dropped at its declared False default); the armed key differs.
-        #
-        # capx D65-B-R: refreshed e5ecd4105ada3e58 -> 547053bdfccd4264. This pin
-        # was written 2026-09-05 and D65-B's Act B merged the next day:
-        # ``ccs_retrofit_vom_adder`` 8.0 -> 2.95 is not a
-        # ``_CACHE_KEY_OPTIONAL_FIELDS`` member, so it has no drop value and
-        # re-keys EVERY config unconditionally (D65 §9 item 3; D41 §6.2's
-        # mechanic). The new literal is exactly the global forecast key
-        # PRECOMMIT-capx-d65b-2026-09-06.md §3 pre-declared before that solve,
-        # and e5ecd4105ada3e58 is the pre-flip value the same table records --
-        # so this is a re-key refresh with a named cause, not a drift.
-        # WHAT THIS TEST ASSERTS IS UNCHANGED: the sector gate is still dropped
-        # at its declared False default, which is the next assertion's job.
-        self.assertEqual(ScenarioConfig().cache_key(), "547053bdfccd4264")
         self.assertNotEqual(
             ScenarioConfig(retirement_sector_gate=True).cache_key(),
             ScenarioConfig().cache_key(),

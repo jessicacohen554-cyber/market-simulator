@@ -48,3 +48,20 @@ def test_missing_source_writes_nothing(tmp_path):
         um.write_unit_marginal(tmp_path / "nope.parquet", tmp_path / "o.parquet")
         is None
     )
+
+
+def test_promote_preflight_derives_or_refuses(tmp_path):
+    from scripts import promote_keeper as pk
+
+    hourly = tmp_path / "hourly"
+    hourly.mkdir()
+    pq.write_table(_frame(), hourly / "unit_hourly_2023.parquet")
+    # 2023 derivable, 2024 has neither: a NEW keeper is refused ...
+    try:
+        pk.ensure_unit_marginal(tmp_path, [2023, 2024], new=True)
+        raise AssertionError("expected refusal")
+    except SystemExit as exc:
+        assert "[2024]" in str(exc)
+    assert (hourly / "unit_marginal_2023.parquet").exists()
+    # ... a re-designated keeper only warns.
+    assert pk.ensure_unit_marginal(tmp_path, [2023, 2024], new=False) == [2024]

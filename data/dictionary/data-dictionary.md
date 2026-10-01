@@ -62,7 +62,7 @@ for the market split.
 | confirmed-retirements | — | — | — | — | — | — | — | — |
 | nuclear-license-status | — | — | — | — | — | — | — | — |
 | gtc-limits | — | — | — | — | — | — | — | — |
-| transfer-interface-limits | — | — | — | — | — | — | — | — |
+| transfer-interface-limits | — | 2023–2025 | — | — | — | — | — | — |
 | transmission-expansion | — | — | — | — | — | — | — | — |
 | ramp-capability | — | — | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — | — | — |
@@ -955,12 +955,12 @@ Schema:
 
 | column | dtype | unit | nullable | description |
 |---|---|---|---|---|
-| `iso` | `string` | `none` | no | ISO/RTO code (currently PJM). |
+| `iso` | `string` | `none` | no | ISO/RTO code (PJM, CAISO). |
 | `interface` | `string` | `none` | no | Interface / transfer-limit-area name exactly as published by the source (e.g. "AP-South Post-Contingency", "AEP/DOM Post-Contingency", "Average Western"). The model-side link crosswalk (market_sim.data.transfer_interface_limits) maps the representable ones onto model links. |
 | `hour` | `int64` | `hour_index` | no | Index 0-8759 on the fixed non-leap 8760-hour ISO-local clock (Feb 29 dropped) — the model's dispatch clock. |
 | `interval_start_local` | `datetime64[ns]` | `local_timestamp` | yes | Wall-clock local start of the hour (naive, ISO-local). |
 | `limit_mw` | `float64` | `mw` | no | Enforced transfer limit (MW) for the interface over the local clock hour (mean of the source rows merged into the hour — one normally, two at the DST fall-back). Kept faithful to the source, including the rare zero/negative published values; the model-side consumer documents how those are reconciled onto link bounds. |
-| `transfer_mw` | `float64` | `mw` | yes | Measured actual transfer (MW) across the interface over the hour (mean of merged source rows); null on the filled spring-forward hour. Diagnostic column for crosswalk sanity checks only — never a model input or target. |
+| `transfer_mw` | `float64` | `mw` | yes | Measured actual transfer (MW) across the interface over the hour (mean of merged source rows); null on the filled spring-forward hour. Diagnostic column for crosswalk sanity checks only — never a model input or target. CAISO: the DAM scheduled net energy on the ITC (OASIS ENE_IMPORT_MW, positive = net import), not a metered flow. |
 | `n_source_rows` | `int64` | `count` | no | Source rows merged into the clock hour: 1 normally, 2 at the DST fall-back repeat, 0 for the spring-forward hour that never occurs locally (limit_mw filled from the neighbouring hours). |
 
 ## transmission-expansion
@@ -1550,8 +1550,8 @@ the Potomac Economics SOM reports and IMM quarterlies. Schema:
 |---|---|---|---|---|
 | `iso` | `string` | `none` | no | ISO identifier (MISO seeded; NYISO/ERCOT/NEISO extend). |
 | `year` | `int64` | `none` | no | Market year the statistic describes (not the publication year). |
-| `period` | `string` | `none` | no | Aggregation window within the year: "annual" for SOM full-year values, or the IMM quarterly-report season ("spring", "summer", "fall", "winter") for quarterly values. |
-| `fleet_segment` | `string` | `none` | no | Fleet the metric describes: "system" (all suppliers), "coal_regulated" (SOM Table 7 "Regulated Utilities" coal rows), "coal_merchant" (SOM Table 7 "Merchants" coal rows), "new_gas_ct" / "new_gas_cc" (the ERCOT SOM Net Revenue Analysis hypothetical new-entrant proxies: CT 10.5 / CC 7.0 MMBtu/MWh heat rate, $4/MWh VOM, 10% outage rate), or "coal_existing" / "nuclear_existing" (the SOM existing-unit profitability discussions' cost benchmarks). SPP adds "coal" / "wind" (the SPP MMU's fuel-type marginal-resource markup averages); SPP-81 adds "gas_combined_cycle" / "gas_simple_cycle" / "other" for the marginal-technology shares. PJM (PJM-NEXT-12, 2026-09-29) adds "steam_coal" / "all_units" (the Monitoring Analytics SOM DA-offer status table's unit-type rows) and reuses "coal" / "gas_combined_cycle" / "gas_simple_cycle" / "wind" for RT marginal-resource shares, and "gas_fuel" / "coal_fuel" for the RT LMP fuel components. |
+| `period` | `string` | `none` | no | Aggregation window within the year: "annual" for SOM full-year values, or the IMM quarterly-report season ("spring", "summer", "fall", "winter") for quarterly values; or "month_01".."month_12" for the PJM digitized monthly spot fuel prices (PJM-NEXT-13). |
+| `fleet_segment` | `string` | `none` | no | Fleet the metric describes: "system" (all suppliers), "coal_regulated" (SOM Table 7 "Regulated Utilities" coal rows), "coal_merchant" (SOM Table 7 "Merchants" coal rows), "new_gas_ct" / "new_gas_cc" (the ERCOT SOM Net Revenue Analysis hypothetical new-entrant proxies: CT 10.5 / CC 7.0 MMBtu/MWh heat rate, $4/MWh VOM, 10% outage rate), or "coal_existing" / "nuclear_existing" (the SOM existing-unit profitability discussions' cost benchmarks). SPP adds "coal" / "wind" (the SPP MMU's fuel-type marginal-resource markup averages); SPP-81 adds "gas_combined_cycle" / "gas_simple_cycle" / "other" for the marginal-technology shares. PJM (PJM-NEXT-12, 2026-09-29) adds "steam_coal" / "all_units" (the Monitoring Analytics SOM DA-offer status table's unit-type rows) and reuses "coal" / "gas_combined_cycle" / "gas_simple_cycle" / "wind" for RT marginal-resource shares, and "gas_fuel" / "coal_fuel" for the RT LMP fuel components. PJM-NEXT-13 adds "east_gas" / "west_gas" / "production_gas" / "napp_coal" / "capp_coal" / "prb_coal" for the IMM's digitized monthly Platts spot fuel prices ("spot_price_digitized_usd_per_mmbtu"). |
 | `metric` | `string` | `none` | no | Metric code: "price_cost_markup" (simulated actual-offer vs reference-level SMP difference, fraction), "output_gap_share_of_load" (low-threshold monthly-average output gap as a fraction of load), "output_gap_low_threshold_mw" (low-threshold output gap, MW/hr), "starts" (coal unit commitments in the year), "starts_econ_offered_share" (fraction of starts offered economically / scheduled day-ahead), "starts_mustrun_profitable_share" / "starts_mustrun_unprofitable_share" (fraction of starts with must-run [self-commit] status, split by whether market revenues covered commitment + variable cost by the first full day), "net_revenue_usd_per_mwh" (net operating revenue of the segment's starts). ERCOT SOM net-revenue rows add: "net_revenue_usd_per_kw_yr" (single published value; "_min"/"_max" variants for locational ranges; "_houston"/"_west" variants for the named-zone values), "net_revenue_ex_uri_usd_per_kw_yr_min"/"_max" (the 2021 SOM's own published Winter-Storm-Uri counterfactual — what the year's net revenue "would have ranged" absent Uri; the monitor's number, not a derived one), "ecrs_effect_share_of_net_revenue" (share of 2023 net revenue the monitor attributes to ECRS price effects), "cone_usd_per_kw_yr_min"/"_max" (Potomac CONE estimates), "cone_planning_usd_per_kw_yr" / "cone_pnm_threshold_usd_per_kw_yr" (PUCT planning CONE vs legacy PNM-threshold CONE), "peaker_net_margin_usd_per_kw_yr", and existing-unit cost benchmarks "fixed_om_usd_per_kw_yr", "vom_usd_per_mwh", "fuel_cost_usd_per_mwh", "marginal_cost_usd_per_mwh", "total_generating_cost_usd_per_mwh". SPP MMU SOM rows (SPP-80, 2026-09-25) add: "offer_markup_{onpeak,offpeak}_usd_per_mwh" (MW-weighted average marginal-resource offer markup, market-based minus mitigated offer, $/MWh — a DIFFERENT construct from MISO's fractional "price_cost_markup"), "_exfeb_" variants (the 2021 SOM's own February-excluded averages), "_digitized_" variants (read from the SOM bar chart's average marker where the report prints no value — the note carries the bias correction), "offer_markup_usd_per_mwh" on the "coal"/"wind" segments, "congestion_payments_usd" (DA+RT congestion payments), "rt_scarcity_intervals" (five-minute RT intervals with any reserve scarcity), and "avg_{da,rt}_price_usd_per_mwh" (+ "_exfeb_"). SPP-81 (2026-09-25) adds "rt_marginal_interval_share_digitized" (share of RT intervals each technology segment was marginal, digitized from the SOM "Generation on the margin, real-time" bars, fraction) and "rt_implied_heat_rate" (the MMU's annual implied heat rate, btu_per_kwh), and "gas_hub_price_annual_avg" on the "panhandle_eastern" / "southern_star" / "henry_hub" segments (usd_per_mmbtu). PJM IMM SOM rows (PJM-NEXT-12, 2026-09-29) add the DA offer-status shares of offered MW "da_offer_mustrun_share" / "da_offer_ecomin_share" / "da_offer_dispatchable_share" / "da_offer_emergency_share" (2020-2024), the 2019 layout's "da_offer_selfsched_fixed_share" / "_ecomin_share" / "_total_share", the redesigned 2025 layout's "da_offer_block_loaded_share" and "_totalmw_basis" variants (the note carries each vintage's printed definition; they differ), and "rt_marginal_resource_share" (share of RT marginal resources by fuel/technology, fraction), and the RT LMP decomposition "rt_lmp_component" (usd_per_mwh) / "rt_lmp_component_share" (fraction) on the "gas_fuel" / "coal_fuel" segments plus "rt_lmp_load_weighted_total" (usd_per_mwh) on "system". |
 | `value` | `float64` | `mixed` | no | Metric value; unit given by the unit column. |
 | `unit` | `string` | `none` | no | One of "fraction", "count", "usd_per_mwh", "usd_per_kw_yr", "mw", "usd", "btu_per_kwh" (SPP MMU implied heat rate), "usd_per_mmbtu" (SPP MMU gas-hub averages); both added by SPP-81. |
@@ -1575,7 +1575,8 @@ parameter). Schema:
   soft-offer-cap / CPUC RA report fixed-proxy — onto one canonical metric
   vocabulary (`net_cone`, `irm`, `price_cap`, `curve_point`, `soft_offer_cap`,
   `ra_report_price`). ERCOT excluded (energy-only). See
-  `docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md` §3-4.
+  `docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md`
+  §3-4.
 
 | column | dtype | unit | nullable | description |
 |---|---|---|---|---|
@@ -1752,7 +1753,7 @@ price-formation lane. Schema:
   row — never reconstructed from prices or a residual; adjudicated absences
   (Jan-2024 Heather, Jan-2025 Enzo) live in the raw README. Scopes the M-2
   `unit_outage_maxgen_events` revealed-derate channel
-  (docs/handoffs/miso-price-formation-design-2026-07.md).
+  (docs/records/miso/miso-price-formation-design-2026-07.md).
 
 | column | dtype | unit | nullable | description |
 |---|---|---|---|---|
