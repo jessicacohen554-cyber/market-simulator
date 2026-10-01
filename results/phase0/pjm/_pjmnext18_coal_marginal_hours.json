@@ -1,0 +1,65 @@
+{
+ "2019": {
+  "coal_set_hours": 2678,
+  "coal_set_share_of_year": 0.306,
+  "median_coal_marginal_offer": 24.57,
+  "median_model_lw_price": 24.63,
+  "median_actual_rt": 21.35,
+  "median_efficient_cc_cost": 20.8,
+  "share_actual_below_coal_offer": 0.854
+ },
+ "2020": {
+  "coal_set_hours": 2273,
+  "coal_set_share_of_year": 0.259,
+  "median_coal_marginal_offer": 22.16,
+  "median_model_lw_price": 22.24,
+  "median_actual_rt": 17.97,
+  "median_efficient_cc_cost": 16.84,
+  "share_actual_below_coal_offer": 0.881
+ },
+ "2021": {
+  "coal_set_hours": 1536,
+  "coal_set_share_of_year": 0.175,
+  "median_coal_marginal_offer": 32.68,
+  "median_model_lw_price": 32.7,
+  "median_actual_rt": 26.92,
+  "median_efficient_cc_cost": 27.5,
+  "share_actual_below_coal_offer": 0.805
+ },
+ "2022": {
+  "coal_set_hours": 1664,
+  "coal_set_share_of_year": 0.19,
+  "median_coal_marginal_offer": 58.14,
+  "median_model_lw_price": 58.18,
+  "median_actual_rt": 52.19,
+  "median_efficient_cc_cost": 41.34,
+  "share_actual_below_coal_offer": 0.671
+ },
+ "2023": {
+  "coal_set_hours": 1187,
+  "coal_set_share_of_year": 0.136,
+  "median_coal_marginal_offer": 30.87,
+  "median_model_lw_price": 30.8,
+  "median_actual_rt": 25.88,
+  "median_efficient_cc_cost": 20.47,
+  "share_actual_below_coal_offer": 0.718
+ },
+ "2024": {
+  "coal_set_hours": 1536,
+  "coal_set_share_of_year": 0.175,
+  "median_coal_marginal_offer": 28.43,
+  "median_model_lw_price": 28.54,
+  "median_actual_rt": 25.2,
+  "median_efficient_cc_cost": 18.14,
+  "share_actual_below_coal_offer": 0.686
+ },
+ "2025": {
+  "coal_set_hours": 1034,
+  "coal_set_share_of_year": 0.118,
+  "median_coal_marginal_offer": 34.58,
+  "median_model_lw_price": 34.94,
+  "median_actual_rt": 30.1,
+  "median_efficient_cc_cost": 25.48,
+  "share_actual_below_coal_offer": 0.738
+ }
+}

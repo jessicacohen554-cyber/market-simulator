@@ -752,16 +752,17 @@ results/calibration/*/floors/
 #     CANNOT be re-solved into byte-identity once main has moved (caiso-155 vertex
 #     dependence), so for such a keeper this layer is PERMANENTLY unrecoverable.
 #
-# POLICY FLIP for unit_hourly (owner instruction 2026-10-01, PJM-NEXT-18: "Make
-# sure this is captured in the keeper bundle moving forward" / "Moving forward for
-# all ISOs"): unit_hourly_<year>.parquet is NO LONGER ignored. Every KEEPER bundle
-# commits it for every year (CLAUDE.md rule 15 [R-DASHBOARD]; enforced on the
-# promoting PR by scripts/check_promotion_completeness.py leg (e)). It is the only
-# artifact naming the LP's marginal units (mw, cap_mw, P1 offer mc, red_cost);
-# PJM-NEXT-14 and PJM-NEXT-18 each paid a per-year keeper replay to get it back.
-# network_<year>.parquet stays opt-in (``git add -f``, see the
-# unit_network_layer_sidecar matrix row).
+# KEEPER per-unit layer (owner instruction 2026-10-01, PJM-NEXT-18: "Moving forward
+# for all ISOs"; owner card "Slim layer"): every KEEPER bundle commits
+# hourly/unit_marginal_<year>.parquet for every year (CLAUDE.md rule 15
+# [R-DASHBOARD]; enforced on the promoting PR by check_promotion_completeness leg (e)).
+# It is unit_hourly minus the raw red_cost plus an int8 `marginal` flag
+# (scripts/lib/unit_marginal.py), ~10-12 MB/yr for PJM. The FULL unit_hourly stays
+# ignored: PJM measures 69-81 MB/yr, 65 of 77 MB of it red_cost. network_<year>
+# stays opt-in (``git add -f``, see the unit_network_layer_sidecar matrix row).
+results/calibration/*/hourly/unit_hourly_*.parquet
 results/calibration/*/hourly/network_*.parquet
+results/calibration/*/*/hourly/unit_hourly_*.parquet
 results/calibration/*/*/hourly/network_*.parquet
 results/calibration/*/solve.log
 results/calibration/*-capdel-probe.log

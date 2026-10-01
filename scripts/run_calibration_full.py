@@ -139,6 +139,7 @@ from scripts.lib.bundle_io import (  # noqa: E402
     write_derived_solve_inputs,
     write_shared_input,
 )
+from scripts.lib.unit_marginal import write_unit_marginal  # noqa: E402
 from scripts.lib.solve_container import (  # noqa: E402
     ensure_solve_container,
     log_peak_memory,
@@ -7390,7 +7391,14 @@ def solve_and_persist(
         _write_p0_commitment_sidecar(run_dir, year, p2_state)
         _write_p0_dispatch_sidecar(run_dir, year, p2_state)
         _write_storage_hourly_sidecar(run_dir, year, storage_frames)
-        _write_hourly_sidecar(run_dir, year, "unit_hourly", unit_frames)
+        _unit_path = _write_hourly_sidecar(run_dir, year, "unit_hourly", unit_frames)
+        # The COMMITTED per-unit layer (rule 15, owner 2026-10-01 "Slim layer"):
+        # unit_hourly minus red_cost plus the int8 ``marginal`` flag, streamed
+        # from the file just written so no second 25 M-row frame is built.
+        if _unit_path is not None:
+            write_unit_marginal(
+                _unit_path, _unit_path.with_name(f"unit_marginal_{year}.parquet")
+            )
         _write_hourly_sidecar(run_dir, year, "network", network_frames)
         _write_hourly_sidecar(run_dir, year, "reserve_family", reserve_family_frames)
         _write_hourly_sidecar(run_dir, year, "hydro_cascade", hydro_cascade_frames)

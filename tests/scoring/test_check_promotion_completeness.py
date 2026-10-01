@@ -4,7 +4,7 @@
 ISOs whose keeper shard changed against the PR base:
 (a) gate-(a) provenance, (b) the ``complete`` marker names the new keeper,
 (c) FR-22 has 0 UNACCOUNTED, (d) E13 is clean, and (e) the new keeper's bundle
-commits ``hourly/unit_hourly_<year>.parquet`` for every year (rule 15, owner
+commits ``hourly/unit_marginal_<year>.parquet`` for every year (rule 15, owner
 2026-10-01; prospective, armed only for a keeper that changed vs ``--base``).
 
 These tests pin three things. Each leg's pass and fail. The diff scoping: an
@@ -120,17 +120,17 @@ def _keeper_bundle(repo, years, have):
     hourly = repo / "results/calibration/b/hourly"
     hourly.mkdir(parents=True, exist_ok=True)
     for y in have:
-        (hourly / f"unit_hourly_{y}.parquet").write_bytes(b"x")
+        (hourly / f"unit_marginal_{y}.parquet").write_bytes(b"x")
 
 
-def test_leg_e_passes_when_every_year_carries_unit_hourly(tmp_path):
+def test_leg_e_passes_when_every_year_carries_unit_marginal(tmp_path):
     _keeper_bundle(tmp_path, [2023, 2024, 2025], [2023, 2024, 2025])
-    assert cpc.leg_e_unit_hourly(NEW, tmp_path) == []
+    assert cpc.leg_e_unit_marginal(NEW, tmp_path) == []
 
 
-def test_leg_e_names_the_years_missing_unit_hourly(tmp_path):
+def test_leg_e_names_the_years_missing_unit_marginal(tmp_path):
     _keeper_bundle(tmp_path, [2023, 2024, 2025], [2024])
-    problems = cpc.leg_e_unit_hourly(NEW, tmp_path)
+    problems = cpc.leg_e_unit_marginal(NEW, tmp_path)
     assert len(problems) == 1 and "[2023, 2025]" in problems[0]
 
 
