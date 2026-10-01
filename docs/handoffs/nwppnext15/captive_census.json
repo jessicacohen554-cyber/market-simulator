@@ -1,0 +1,1285 @@
+{
+ "rule_commit": "f6e07ffe",
+ "fleet_source": "data/raw/_processed-legacy/thermal_tranches-perunit-vintage-NWPP.csv",
+ "rows": [
+  {
+   "year": 2019,
+   "plant": 3845,
+   "name": "Transalta Centralia Generation",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "RAWHIDE MINE",
+    "SPRING CREEK COAL COMPANY"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2019,
+   "plant": 4158,
+   "name": "Dave Johnston",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 0.97,
+   "p_blend": 0.97,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "DRY FORK MINE",
+    "NORTH ANTELOPE ROCHELLE MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2019,
+   "plant": 4162,
+   "name": "Naughton",
+   "captive_share": 1.0,
+   "p_captive": 2.389,
+   "p_noncaptive": null,
+   "p_blend": 2.389,
+   "captive_sources": [
+    "KEMMERER MINE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2019,
+   "plant": 6076,
+   "name": "Colstrip",
+   "captive_share": 1.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "ROSEBUD MINE&CRUSHER/CONVEYOR"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2019,
+   "plant": 6101,
+   "name": "Wyodak",
+   "captive_share": 1.0,
+   "p_captive": 1.159,
+   "p_noncaptive": null,
+   "p_blend": 1.159,
+   "captive_sources": [
+    "WYODAK MINE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2019,
+   "plant": 6165,
+   "name": "Hunter",
+   "captive_share": 1.0,
+   "p_captive": 1.796,
+   "p_noncaptive": null,
+   "p_blend": 1.796,
+   "captive_sources": [
+    "SUFCO"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2019,
+   "plant": 7790,
+   "name": "Bonanza",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 1.887,
+   "p_blend": 1.887,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "DESERADO MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2019,
+   "plant": 8066,
+   "name": "Jim Bridger",
+   "captive_share": 0.71,
+   "p_captive": 2.803,
+   "p_noncaptive": 2.37,
+   "p_blend": 2.677,
+   "captive_sources": [
+    "BRIDGER UNDERGROUND COAL MINE",
+    "JIM BRIDGER MINE"
+   ],
+   "noncaptive_sources": [
+    "BLACK BUTTE AND LEUCITE HILLS"
+   ],
+   "mixed": true,
+   "gap": 0.307
+  },
+  {
+   "year": 2019,
+   "plant": 8069,
+   "name": "Huntington",
+   "captive_share": 0.995,
+   "p_captive": 1.97,
+   "p_noncaptive": 1.247,
+   "p_blend": 1.967,
+   "captive_sources": [
+    "BEAR CANYON #4",
+    "DUGOUT CANYON MINE",
+    "EMERY MINE",
+    "LILA CANYON",
+    "SKYLINE MINE #3",
+    "SUFCO"
+   ],
+   "noncaptive_sources": [
+    "DEER CREEK MINE"
+   ],
+   "mixed": true,
+   "gap": 0.72
+  },
+  {
+   "year": 2019,
+   "plant": 8224,
+   "name": "North Valmy",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 2.762,
+   "p_blend": 2.762,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "BLACK BUTTE AND LEUCITE HILLS",
+    "EMERY MINE",
+    "SKYLINE MINE #3",
+    "SUFCO",
+    "WEST ELK MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2019,
+   "plant": 50951,
+   "name": "Sunnyside Cogen Associates",
+   "captive_share": 1.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "SUNNYSIDE WASTE COAL SITE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2019,
+   "plant": 55749,
+   "name": "Hardin Generator Project",
+   "captive_share": 1.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "ABSALOKA MINE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2019,
+   "plant": 56224,
+   "name": "TS Power Plant",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "BLACK THUNDER"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2020,
+   "plant": 3845,
+   "name": "Transalta Centralia Generation",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "CENTRALIA COAL MINE"
+   ],
+   "noncaptive_sources": [
+    "RAWHIDE MINE",
+    "SPRING CREEK COAL COMPANY"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2020,
+   "plant": 4158,
+   "name": "Dave Johnston",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 0.993,
+   "p_blend": 0.993,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "CABALLO MINE",
+    "COAL CREEK MINE",
+    "NORTH ANTELOPE ROCHELLE MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2020,
+   "plant": 4162,
+   "name": "Naughton",
+   "captive_share": 1.0,
+   "p_captive": 2.439,
+   "p_noncaptive": null,
+   "p_blend": 2.439,
+   "captive_sources": [
+    "KEMMERER MINE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2020,
+   "plant": 6076,
+   "name": "Colstrip",
+   "captive_share": 1.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "ROSEBUD MINE&CRUSHER/CONVEYOR"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2020,
+   "plant": 6101,
+   "name": "Wyodak",
+   "captive_share": 1.0,
+   "p_captive": 1.213,
+   "p_noncaptive": null,
+   "p_blend": 1.213,
+   "captive_sources": [
+    "WYODAK MINE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2020,
+   "plant": 6165,
+   "name": "Hunter",
+   "captive_share": 1.0,
+   "p_captive": 1.8,
+   "p_noncaptive": null,
+   "p_blend": 1.8,
+   "captive_sources": [
+    "EMERY MINE",
+    "SUFCO"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2020,
+   "plant": 7790,
+   "name": "Bonanza",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 2.385,
+   "p_blend": 2.385,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "DESERADO MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2020,
+   "plant": 8066,
+   "name": "Jim Bridger",
+   "captive_share": 0.633,
+   "p_captive": 2.983,
+   "p_noncaptive": 2.39,
+   "p_blend": 2.766,
+   "captive_sources": [
+    "BRIDGER UNDERGROUND COAL MINE",
+    "JIM BRIDGER MINE"
+   ],
+   "noncaptive_sources": [
+    "BLACK BUTTE AND LEUCITE HILLS"
+   ],
+   "mixed": true,
+   "gap": 0.376
+  },
+  {
+   "year": 2020,
+   "plant": 8069,
+   "name": "Huntington",
+   "captive_share": 1.0,
+   "p_captive": 1.978,
+   "p_noncaptive": null,
+   "p_blend": 1.978,
+   "captive_sources": [
+    "BEAR CANYON #4",
+    "LILA CANYON",
+    "SKYLINE MINE #3",
+    "SUFCO"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2020,
+   "plant": 8224,
+   "name": "North Valmy",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 2.338,
+   "p_blend": 2.338,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "BLACK BUTTE AND LEUCITE HILLS",
+    "SKYLINE MINE #3",
+    "WEST ELK MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2020,
+   "plant": 50951,
+   "name": "Sunnyside Cogen Associates",
+   "captive_share": 1.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "SUNNYSIDE WASTE COAL SITE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2020,
+   "plant": 55749,
+   "name": "Hardin Generator Project",
+   "captive_share": 1.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "ABSALOKA MINE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2020,
+   "plant": 56224,
+   "name": "TS Power Plant",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "BLACK THUNDER"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2021,
+   "plant": 3845,
+   "name": "Transalta Centralia Generation",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "CENTRALIA COAL MINE"
+   ],
+   "noncaptive_sources": [
+    "RAWHIDE MINE",
+    "SPRING CREEK COAL COMPANY"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2021,
+   "plant": 4158,
+   "name": "Dave Johnston",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 1.032,
+   "p_blend": 1.032,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "CABALLO MINE",
+    "COAL CREEK MINE",
+    "NORTH ANTELOPE ROCHELLE MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2021,
+   "plant": 4162,
+   "name": "Naughton",
+   "captive_share": 1.0,
+   "p_captive": 2.6,
+   "p_noncaptive": null,
+   "p_blend": 2.6,
+   "captive_sources": [
+    "KEMMERER MINE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2021,
+   "plant": 6076,
+   "name": "Colstrip",
+   "captive_share": 1.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "ROSEBUD MINE&CRUSHER/CONVEYOR"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2021,
+   "plant": 6101,
+   "name": "Wyodak",
+   "captive_share": 1.0,
+   "p_captive": 1.214,
+   "p_noncaptive": null,
+   "p_blend": 1.214,
+   "captive_sources": [
+    "WYODAK MINE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2021,
+   "plant": 6165,
+   "name": "Hunter",
+   "captive_share": 1.0,
+   "p_captive": 1.701,
+   "p_noncaptive": null,
+   "p_blend": 1.701,
+   "captive_sources": [
+    "EMERY MINE",
+    "SUFCO"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2021,
+   "plant": 7790,
+   "name": "Bonanza",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 2.304,
+   "p_blend": 2.304,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "DESERADO MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2021,
+   "plant": 8066,
+   "name": "Jim Bridger",
+   "captive_share": 0.703,
+   "p_captive": 2.76,
+   "p_noncaptive": 2.428,
+   "p_blend": 2.661,
+   "captive_sources": [
+    "BRIDGER UNDERGROUND COAL MINE",
+    "JIM BRIDGER MINE"
+   ],
+   "noncaptive_sources": [
+    "BLACK BUTTE AND LEUCITE HILLS"
+   ],
+   "mixed": true,
+   "gap": 0.233
+  },
+  {
+   "year": 2021,
+   "plant": 8069,
+   "name": "Huntington",
+   "captive_share": 1.0,
+   "p_captive": 1.939,
+   "p_noncaptive": null,
+   "p_blend": 1.939,
+   "captive_sources": [
+    "BEAR CANYON #4",
+    "LILA CANYON",
+    "SKYLINE MINE #3",
+    "SUFCO"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2021,
+   "plant": 8224,
+   "name": "North Valmy",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 2.338,
+   "p_blend": 2.338,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "SKYLINE MINE #3",
+    "WEST ELK MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2021,
+   "plant": 50951,
+   "name": "Sunnyside Cogen Associates",
+   "captive_share": 1.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "SUNNYSIDE WASTE COAL SITE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2021,
+   "plant": 55749,
+   "name": "Hardin Generator Project",
+   "captive_share": 1.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "ABSALOKA MINE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2021,
+   "plant": 56224,
+   "name": "TS Power Plant",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "BLACK THUNDER"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2022,
+   "plant": 3845,
+   "name": "Transalta Centralia Generation",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "RAWHIDE MINE",
+    "SPRING CREEK COAL COMPANY"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2022,
+   "plant": 4158,
+   "name": "Dave Johnston",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 1.117,
+   "p_blend": 1.117,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "CABALLO MINE",
+    "COAL CREEK MINE",
+    "NORTH ANTELOPE ROCHELLE MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2022,
+   "plant": 4162,
+   "name": "Naughton",
+   "captive_share": 1.0,
+   "p_captive": 2.35,
+   "p_noncaptive": null,
+   "p_blend": 2.35,
+   "captive_sources": [
+    "KEMMERER MINE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2022,
+   "plant": 6076,
+   "name": "Colstrip",
+   "captive_share": 1.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "ROSEBUD MINE&CRUSHER/CONVEYOR"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2022,
+   "plant": 6101,
+   "name": "Wyodak",
+   "captive_share": 1.0,
+   "p_captive": 1.322,
+   "p_noncaptive": null,
+   "p_blend": 1.322,
+   "captive_sources": [
+    "WYODAK MINE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2022,
+   "plant": 6165,
+   "name": "Hunter",
+   "captive_share": 0.995,
+   "p_captive": 1.818,
+   "p_noncaptive": 2.41,
+   "p_blend": 1.82,
+   "captive_sources": [
+    "EMERY MINE",
+    "SUFCO"
+   ],
+   "noncaptive_sources": [
+    "DESERADO MINE"
+   ],
+   "mixed": true,
+   "gap": -0.59
+  },
+  {
+   "year": 2022,
+   "plant": 7790,
+   "name": "Bonanza",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 2.383,
+   "p_blend": 2.383,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "DESERADO MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2022,
+   "plant": 8066,
+   "name": "Jim Bridger",
+   "captive_share": 0.705,
+   "p_captive": 2.45,
+   "p_noncaptive": 2.637,
+   "p_blend": 2.505,
+   "captive_sources": [
+    "BLACK BUTTE AND LEUCITE HILLS",
+    "BRIDGER UNDERGROUND COAL MINE",
+    "JIM BRIDGER MINE"
+   ],
+   "noncaptive_sources": [
+    "BLACK BUTTE AND LEUCITE HILLS"
+   ],
+   "mixed": true,
+   "gap": -0.132
+  },
+  {
+   "year": 2022,
+   "plant": 8069,
+   "name": "Huntington",
+   "captive_share": 0.937,
+   "p_captive": 2.155,
+   "p_noncaptive": 1.48,
+   "p_blend": 2.113,
+   "captive_sources": [
+    "BEAR CANYON #4",
+    "DUGOUT CANYON MINE",
+    "LILA CANYON",
+    "SKYLINE MINE #3",
+    "SUFCO"
+   ],
+   "noncaptive_sources": [
+    "DEER CREEK MINE"
+   ],
+   "mixed": true,
+   "gap": 0.633
+  },
+  {
+   "year": 2022,
+   "plant": 8224,
+   "name": "North Valmy",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 3.287,
+   "p_blend": 3.287,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "BLACK BUTTE AND LEUCITE HILLS",
+    "LILA CANYON",
+    "SKYLINE MINE #3",
+    "SUFCO",
+    "WEST ELK MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2022,
+   "plant": 50951,
+   "name": "Sunnyside Cogen Associates",
+   "captive_share": 1.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "SUNNYSIDE WASTE COAL SITE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2022,
+   "plant": 55749,
+   "name": "Hardin Generator Project",
+   "captive_share": 1.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "ABSALOKA MINE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2022,
+   "plant": 56224,
+   "name": "TS Power Plant",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "BLACK THUNDER"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2023,
+   "plant": 3845,
+   "name": "Transalta Centralia Generation",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "RAWHIDE MINE",
+    "SPRING CREEK COAL COMPANY"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2023,
+   "plant": 4158,
+   "name": "Dave Johnston",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 1.136,
+   "p_blend": 1.136,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "CABALLO MINE",
+    "COAL CREEK MINE",
+    "EAGLE BUTTE MINE",
+    "NORTH ANTELOPE ROCHELLE MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2023,
+   "plant": 4162,
+   "name": "Naughton",
+   "captive_share": 1.0,
+   "p_captive": 2.488,
+   "p_noncaptive": null,
+   "p_blend": 2.488,
+   "captive_sources": [
+    "KEMMERER MINE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2023,
+   "plant": 6076,
+   "name": "Colstrip",
+   "captive_share": 1.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "ROSEBUD MINE&CRUSHER/CONVEYOR"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2023,
+   "plant": 6101,
+   "name": "Wyodak",
+   "captive_share": 1.0,
+   "p_captive": 1.359,
+   "p_noncaptive": null,
+   "p_blend": 1.359,
+   "captive_sources": [
+    "WYODAK MINE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2023,
+   "plant": 6165,
+   "name": "Hunter",
+   "captive_share": 0.904,
+   "p_captive": 2.684,
+   "p_noncaptive": 2.454,
+   "p_blend": 2.662,
+   "captive_sources": [
+    "BEAR CANYON #3 MINE",
+    "EMERY MINE",
+    "SUFCO",
+    "WELLINGTON PREP PLANT AREA"
+   ],
+   "noncaptive_sources": [
+    "DESERADO MINE",
+    "WELLINGTON PREP PLANT AREA"
+   ],
+   "mixed": true,
+   "gap": 0.208
+  },
+  {
+   "year": 2023,
+   "plant": 7790,
+   "name": "Bonanza",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 2.458,
+   "p_blend": 2.458,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "DESERADO MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2023,
+   "plant": 8066,
+   "name": "Jim Bridger",
+   "captive_share": 0.559,
+   "p_captive": 4.211,
+   "p_noncaptive": 2.569,
+   "p_blend": 3.487,
+   "captive_sources": [
+    "BRIDGER UNDERGROUND COAL MINE",
+    "JIM BRIDGER MINE"
+   ],
+   "noncaptive_sources": [
+    "BLACK BUTTE AND LEUCITE HILLS",
+    "NORTH ANTELOPE ROCHELLE MINE"
+   ],
+   "mixed": true,
+   "gap": 0.918
+  },
+  {
+   "year": 2023,
+   "plant": 8069,
+   "name": "Huntington",
+   "captive_share": 1.0,
+   "p_captive": 2.308,
+   "p_noncaptive": null,
+   "p_blend": 2.308,
+   "captive_sources": [
+    "SKYLINE MINE #3",
+    "SUFCO"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2023,
+   "plant": 8224,
+   "name": "North Valmy",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 5.146,
+   "p_blend": 5.146,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "BLACK BUTTE AND LEUCITE HILLS",
+    "FOIDEL CREEK MINE",
+    "KEMMERER MINE",
+    "SPRING CREEK COAL COMPANY",
+    "WEST ELK MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2023,
+   "plant": 50951,
+   "name": "Sunnyside Cogen Associates",
+   "captive_share": 1.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "SUNNYSIDE WASTE COAL SITE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2023,
+   "plant": 55749,
+   "name": "Hardin Generator Project",
+   "captive_share": 0.871,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "ABSALOKA MINE"
+   ],
+   "noncaptive_sources": [
+    "SPRING CREEK COAL COMPANY"
+   ],
+   "mixed": true,
+   "gap": null
+  },
+  {
+   "year": 2023,
+   "plant": 56224,
+   "name": "TS Power Plant",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "BLACK THUNDER"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2024,
+   "plant": 3845,
+   "name": "Transalta Centralia Generation",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "RAWHIDE MINE",
+    "SPRING CREEK COAL COMPANY"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2024,
+   "plant": 4158,
+   "name": "Dave Johnston",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 1.192,
+   "p_blend": 1.192,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "CABALLO MINE",
+    "EAGLE BUTTE MINE",
+    "NORTH ANTELOPE ROCHELLE MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2024,
+   "plant": 4162,
+   "name": "Naughton",
+   "captive_share": 1.0,
+   "p_captive": 2.653,
+   "p_noncaptive": null,
+   "p_blend": 2.653,
+   "captive_sources": [
+    "KEMMERER MINE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2024,
+   "plant": 6076,
+   "name": "Colstrip",
+   "captive_share": 1.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "ROSEBUD MINE&CRUSHER/CONVEYOR"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2024,
+   "plant": 6101,
+   "name": "Wyodak",
+   "captive_share": 1.0,
+   "p_captive": 1.369,
+   "p_noncaptive": null,
+   "p_blend": 1.369,
+   "captive_sources": [
+    "WYODAK MINE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2024,
+   "plant": 6165,
+   "name": "Hunter",
+   "captive_share": 0.933,
+   "p_captive": 3.459,
+   "p_noncaptive": 3.367,
+   "p_blend": 3.453,
+   "captive_sources": [
+    "BEAR CANYON #3 MINE",
+    "EMERY MINE",
+    "SUFCO"
+   ],
+   "noncaptive_sources": [
+    "DESERADO MINE"
+   ],
+   "mixed": true,
+   "gap": 0.086
+  },
+  {
+   "year": 2024,
+   "plant": 7790,
+   "name": "Bonanza",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 3.365,
+   "p_blend": 3.365,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "DESERADO MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2024,
+   "plant": 8066,
+   "name": "Jim Bridger",
+   "captive_share": 0.79,
+   "p_captive": 3.113,
+   "p_noncaptive": 2.6,
+   "p_blend": 3.005,
+   "captive_sources": [
+    "JIM BRIDGER MINE"
+   ],
+   "noncaptive_sources": [
+    "BLACK BUTTE AND LEUCITE HILLS",
+    "JIM BRIDGER MINE",
+    "NORTH ANTELOPE ROCHELLE MINE"
+   ],
+   "mixed": true,
+   "gap": 0.405
+  },
+  {
+   "year": 2024,
+   "plant": 8069,
+   "name": "Huntington",
+   "captive_share": 1.0,
+   "p_captive": 3.719,
+   "p_noncaptive": null,
+   "p_blend": 3.719,
+   "captive_sources": [
+    "SKYLINE MINE #3",
+    "SUFCO"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2024,
+   "plant": 8224,
+   "name": "North Valmy",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": 4.515,
+   "p_blend": 4.515,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "BLACK BUTTE AND LEUCITE HILLS",
+    "KEMMERER MINE",
+    "NORTH ANTELOPE ROCHELLE MINE",
+    "SPRING CREEK COAL COMPANY",
+    "WEST ELK MINE"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2024,
+   "plant": 50951,
+   "name": "Sunnyside Cogen Associates",
+   "captive_share": 1.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [
+    "SUNNYSIDE WASTE COAL SITE"
+   ],
+   "noncaptive_sources": [],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2024,
+   "plant": 55749,
+   "name": "Hardin Generator Project",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "ABSALOKA MINE",
+    "BULL MOUNTAINS MINE #1"
+   ],
+   "mixed": false,
+   "gap": null
+  },
+  {
+   "year": 2024,
+   "plant": 56224,
+   "name": "TS Power Plant",
+   "captive_share": 0.0,
+   "p_captive": null,
+   "p_noncaptive": null,
+   "p_blend": null,
+   "captive_sources": [],
+   "noncaptive_sources": [
+    "BLACK THUNDER"
+   ],
+   "mixed": false,
+   "gap": null
+  }
+ ],
+ "no_receipts": {
+  "2019": [],
+  "2020": [],
+  "2021": [],
+  "2022": [],
+  "2023": [],
+  "2024": []
+ }
+}

@@ -818,3 +818,22 @@ card "Keep #19; retire dup Clark field":
 - `cc_subfloor_eia923_heat_rates` is DELETED (rules 19 / 26); it duplicated the solved `eia923_cc_family_heat_rates`.
 - `campd_per_unit_vintage_denominator` stays default-off as NEXT-15's replacement candidate for the fuel-split
   composition, because it also repairs North Valmy.
+
+## NWPP-NEXT-15 — 2026-10-01 — vintage-denominator arm solved (not promoted); captive-mine and live-denominator built
+
+- **Solve:** NEXT-14's PRECOMMIT arm — #18 + `campd_per_unit_vintage_denominator` + the since-deleted
+  `cc_subfloor_eia923_heat_rates` — 2019–2025, 7 year-isolated shards at `b4e567fb`, solved off-pin.
+- **Vs main's keeper #19** (the parallel lane, merged first in PR #6951): identical determination, 0 status
+  differences. C4 coal 2023 r 0.670 in both. Other C4 records within ±0.007 (4 higher, 7 lower); C1 closer in 25 / farther
+  in 11.
+- **Owner (2026-10-01): supersede only if better.** It is not decisively better, and the two Bridger fixes are
+  alternatives. So it is **not promoted**, and NEXT-16 solves the **combined run** (keeper #19, fuel-split → vintage
+  denominator) on pin. Record: `docs/handoffs/RESULT-nwppnext15-vintage-denominator-2019-2025-2026-09-30.md`.
+- **Captive-mine marginal fuel.** Phase 0 is in `PHASE0-nwppnext15-captive-mine-2026-09-30.md`; the identification rule
+  was fixed before the census (one code-table erratum). Effectively a Jim Bridger lever: 2023 gap +$0.92/MMBtu, 2022
+  −$0.13. Owner card "Build, no threshold" → `coal_captive_marginal_fuel_price` (default off, zero LP, not solved).
+- **Live-capacity denominator:** `unit_outage_dispatched_bin_live_denominator` (default off, zero LP, not solved).
+  Centralia 1,340 → 670 MW and Colstrip 2,094 → 1,480 MW in 2021, 2022 and 2025; 2020 still diluted. Coal-only
+  `wefor_residual` scoping sits behind the same flag. It does not reach Bridger.
+- **Off-pin libraries** (owner card "Merge now, fix recipe"): `pip install -e .` in shard prompts pulls highspy 1.15.1
+  etc. against the pins. Main's #19 and today's NYISO keeper are off-pin too. NEXT-16 installs from `requirements.txt`.

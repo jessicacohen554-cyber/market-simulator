@@ -284,6 +284,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # key; an armed run carries a different fleet cost and so gets a distinct
     # key.
     "egrid_family_heat_rates",
+    # NWPP-NEXT-15 captive-mine marginal coal price (GATED default-off;
+    # data/fuel/captive_coal.py inside the coal_plant_monthly_pricing seam, so
+    # the off path is byte-inert). Registered IN THE SAME COMMIT as the field.
+    "coal_captive_marginal_fuel_price",
     # eGRID steam-collapse identity heat rates (nyiso-189, default off):
     # dropped from the hash at its default so every pre-existing cached run
     # keeps its key; an armed run carries a different fleet cost and so gets
@@ -445,6 +449,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # byte-inert). Registered IN THE SAME COMMIT as the field (the nyiso-119 /
     # caiso-186 discipline), so the pinned default key never moves.
     "unit_outage_dispatched_bin_denominator",
+    # NWPP-NEXT-15 LIVE sub-gate of the dispatched-bin denominator (GATED
+    # default-off; every consumer reads it through
+    # ``outages.dispatched_bin_live_year`` or
+    # ``getattr(config, "unit_outage_dispatched_bin_live_denominator", False)``
+    # in data/fleet/arrays.py, so the off path is byte-inert). Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline), so the
+    # pinned default key never moves.
+    "unit_outage_dispatched_bin_live_denominator",
     # nyiso-229 unit-outage window at its DETECTED HOUR grain (GATED
     # default-off; selects the ``-perunitmerithour-`` extract, so the off path
     # is byte-inert -- it reads the same committed file it always did).
@@ -2440,6 +2452,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "measured_chp_heat_rates": "False",
     "egrid_identity_heat_rates": "False",
     "egrid_family_heat_rates": "False",
+    # Added by NWPP-NEXT-15 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry.
+    "coal_captive_marginal_fuel_price": "False",
     "egrid_steam_collapse_heat_rates": "False",
     "cc_steam_part_capacity": "False",
     "cc_steam_part_reclass": "False",
@@ -2504,6 +2519,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-266 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_dispatched_bin_denominator": "False",
+    # Added by NWPP-NEXT-15 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_dispatched_bin_live_denominator": "False",
     # Added by nyiso-229 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_window_hour_grain": "False",
@@ -17018,6 +17036,44 @@ class ScenarioConfig:
     # retract it. Byte-inert while off.
     unit_outage_dispatched_bin_denominator: bool = False
 
+    # LIVE-CAPACITY SUB-GATE OF THE DISPATCHED-BIN DENOMINATOR (NWPP-NEXT-15,
+    # GATED default-off; REQUIRES unit_outage_dispatched_bin_denominator — the
+    # point-of-use accessor outages.dispatched_bin_live_year raises if armed
+    # alone). The parent reads the roster "off the year's own fleet", but a
+    # DATED EXIT COHORT (fleet/assembly.py's ``_p{plant}_r{yyyy}{mm}`` bin,
+    # miso-191) whose retirement year precedes the solve year is still CARRIED
+    # by the LP under the plant's (plant_code, plant_group) key, at zero
+    # availability every hour (cod_ramp.monthly_online_mask), so its pmax
+    # dilutes the divide. Measured on NWPP (FINDING-nwppnext13 §1.3, zero LP):
+    # Centralia 3845's dead _r202012 BW21 and Colstrip 6076's dead _r202001
+    # units 1-2 put the coal bin at 1,340 / 2,094 MW against the live 670 /
+    # 1,480 MW, and Centralia BW22's measured full outages (2021-04-03 ->
+    # 06-26, 2022-04-24 -> 07-10) leave 250-280 MW falsely available. Armed, the
+    # roster drops every dated exit-cohort row retired before the solve year (a
+    # cohort retiring IN the year is live through its month and stays) — at
+    # every consumer the parent reaches (outage/short/partial/maxgen layers,
+    # the lay-up loaders, and the miso-273 screened-coal share, which divides
+    # by the same roster).
+    #
+    # SECOND LIMB, same flag (rule 19 [R-ONE-MECH] — one relief mechanism
+    # re-ordered, not a new one): with wefor_residual_short_screened_coal armed,
+    # a COAL row takes the wefor_residual relief on its measured screened share
+    # ONLY, ahead of the covered-class full cap; wefor_residual_groups then
+    # decides the full cap for non-coal classes alone. So wefor_residual_groups
+    # naming just the coal classes scopes wefor_residual to screened coal
+    # (FINDING-nwppnext13 §1.3.3: NWPP's None groups otherwise zero WEFOR on all
+    # coal AND all CC/ST gas, and the screened branch never fires). MISO's
+    # keeper names no coal class in its groups, so the limb would be inert there
+    # even if armed.
+    #
+    # ZERO free parameters (rule 21 [R-DOF]): the exit month is the cohort's own
+    # stamped EIA-860 retirement; no per-plant list, no constant. Rule 13
+    # forward-regenerable exactly as the parent is. Chosen on construction
+    # (rule 14 [R-ACCURATE]: the denominator must be the capacity the multiplier
+    # is applied to in hours the unit can run), never on a residual.
+    # Byte-inert while off.
+    unit_outage_dispatched_bin_live_denominator: bool = False
+
     # UNIT-OUTAGE WINDOW AT ITS DETECTED HOUR GRAIN (nyiso-229, GATED
     # default-off). The CAMPD unit-outage detector has always worked in HOURS
     # (``start = clock[s]``, ``last = clock[e - 1]`` in
@@ -19194,6 +19250,29 @@ class ScenarioConfig:
     # supply classes (lignite mine-mouth vs railed PRB) are physically distinct
     # costs, so per-plant coal pricing stays on by default.
     coal_plant_monthly_pricing: bool = True
+
+    # NWPP-NEXT-15 captive-mine MARGINAL coal price (GATED default-off; owner
+    # ruling 2026-09-30 "Build, no threshold"; design
+    # docs/handoffs/DESIGN-nwppnext14-captive-mine-marginal-fuel-2026-09-30.md,
+    # rule + census + rule-19 map
+    # docs/handoffs/PHASE0-nwppnext15-captive-mine-2026-09-30.md). At a coal
+    # plant whose EIA-923 Page 5 receipts in the solve year are MIXED-source
+    # (0 < captive MMBtu share < 1; captive = TC/TR mine-mouth mode, mine state
+    # == plant state, not spot; NO minimum share), the ECON and PEAKING
+    # tranches take the MMBtu-weighted NON-CAPTIVE delivered price (plant-
+    # monthly, else the year's) instead of the blended cost the
+    # coal_plant_monthly_pricing seam writes; must-run / committed keep the
+    # blend. Lives INSIDE that seam and REPLACES its value on those cells
+    # (rule 19 [R-ONE-MECH]); requires coal_plant_monthly_pricing. Zero free
+    # parameters (rule 21): every input is a filed Page 5 field. Inherits the
+    # seam's mode gate (a no-op in forecast mode; rule 13 -- Page 5 regenerates
+    # for any backcast year from that year's filing). Like its host seam and
+    # the nearby-fallback refinements of it, deliberately NOT in
+    # _BACKCAST_ONLY_OVERLAY_FIELDS (the host seam is consumed by the capacity
+    # hindcast by owner-approved design; this refines what it writes). Any ISO
+    # may arm it; nothing is transferred (rule 25). A year with no Page 5 file
+    # (2025 at this writing) is left untouched and logged.
+    coal_captive_marginal_fuel_price: bool = False
 
     # Per-plant monthly gas pricing. OFF by default: every gas generator pays
     # the same Henry Hub trajectory + ISO basis (optionally seasonally shaped),
@@ -24823,6 +24902,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_wtx_panhandle_owner": 3,
     "coal_supply_repricing": 3,
     "coal_plant_monthly_pricing": 3,
+    "coal_captive_marginal_fuel_price": 3,
     "nearby_fuel_price_fallback": 3,
     "nearby_fuel_price_min_state_plants": 3,
     "nearby_fuel_price_zone_donor_guard": 3,

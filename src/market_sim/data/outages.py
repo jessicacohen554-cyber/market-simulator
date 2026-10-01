@@ -1520,9 +1520,85 @@ def _dispatched_denominator(
     return merged
 
 
+def exit_cohort_tag(gen: object) -> tuple[int, int] | None:
+    """``(ret_year, ret_month)`` of a dated exit-cohort row, read off its unit id.
+
+    ``fleet.assembly`` (miso-191) gives every date-scoped exit-cohort bin a
+    ``_p{plant}_r{yyyy}{mm}`` token in its unit id, stamped from the cohort's
+    own EIA-860 retirement (month 12 when the filing names none) — the SAME
+    retirement it stamps on the tranche's ``retirement_year`` /
+    ``retirement_month``. An ordinary tranche carries no such token and returns
+    ``None``. Reading the id rather than the attributes lets the one test serve
+    the callers that hold only ``FleetArrays`` (``unit_ids`` + ``plant_code``),
+    which carry no retirement attributes.
+
+    Args:
+        gen: Any object exposing ``unit_id`` and ``plant_code``.
+
+    Returns:
+        ``(ret_year, ret_month)``, or ``None`` for a row that is not a dated
+        exit-cohort row.
+    """
+    uid = str(getattr(gen, "unit_id", "") or "")
+    code = int(getattr(gen, "plant_code", 0) or 0)
+    if code <= 0:
+        return None
+    tag = f"_p{code}_r"
+    i = uid.find(tag)
+    if i < 0:
+        return None
+    digits = uid[i + len(tag) : i + len(tag) + 6]
+    if len(digits) != 6 or not digits.isdigit():
+        return None
+    return int(digits[:4]), int(digits[4:])
+
+
+def dispatched_bin_live_year(config: object, year: int | None) -> int | None:
+    """Solve year for the LIVE dispatched-bin denominator, or ``None`` while off.
+
+    ``ScenarioConfig.unit_outage_dispatched_bin_live_denominator``
+    (NWPP-NEXT-15), a SUB-GATE of ``unit_outage_dispatched_bin_denominator``
+    (miso-266). The one accessor every :func:`lp_bin_capacity_index` call site
+    reads its ``live_year`` through, so the sub-gate and its requirement are
+    checked in one place (rule 19 ``[R-ONE-MECH]``). Enforced at the point of
+    use, like every cross-field invariant in this codebase (a config is
+    assembled by long ``with_overrides`` chains, so ``__post_init__`` sees
+    legitimately split intermediate configs — see its miso-225 note).
+
+    Args:
+        config: The run's ``ScenarioConfig`` (or ``None``).
+        year: The year the outage loaders are keyed on at the call site.
+
+    Returns:
+        ``int(year)`` when the sub-gate is armed, else ``None`` (the parent's
+        incumbent roster, byte-identical).
+
+    Raises:
+        ValueError: armed without the parent flag, or with no year to test
+            liveness against.
+    """
+    if config is None or not getattr(
+        config, "unit_outage_dispatched_bin_live_denominator", False
+    ):
+        return None
+    if not getattr(config, "unit_outage_dispatched_bin_denominator", False):
+        raise ValueError(
+            "unit_outage_dispatched_bin_live_denominator requires "
+            "unit_outage_dispatched_bin_denominator: it narrows the dispatched-"
+            "bin roster that flag builds, and has no roster to narrow alone"
+        )
+    if year is None:
+        raise ValueError(
+            "unit_outage_dispatched_bin_live_denominator needs the solve year "
+            "to decide which exit cohorts are live"
+        )
+    return int(year)
+
+
 def lp_bin_capacity_index(
     generators: Sequence[object],
     pmax: np.ndarray | None = None,
+    live_year: int | None = None,
 ) -> tuple[tuple[tuple[int, str], float], ...]:
     """Return the DISPATCHED fleet's own ``(plant_code, plant_group) -> MW`` roster.
 
@@ -1565,10 +1641,28 @@ def lp_bin_capacity_index(
     the map is read off the year's own fleet, so a cohort that has retired out
     of a later year leaves the denominator on its own.
 
+    **The LIVE sub-gate** (``live_year``; NWPP-NEXT-15,
+    ``ScenarioConfig.unit_outage_dispatched_bin_live_denominator``). "Read off
+    the year's own fleet" is not the same as "live in the year": a dated exit
+    cohort (:func:`exit_cohort_tag`) whose retirement year precedes the solve
+    year is still CARRIED by the LP under the plant's key, at zero availability
+    for every hour (``cod_ramp.monthly_online_mask``: ``retirement_year <
+    run_year`` -> all months off), so its ``pmax`` dilutes the denominator.
+    Measured on NWPP (FINDING-nwppnext13 §1.3): Centralia 3845's dead
+    ``_r202012`` BW21 and Colstrip 6076's dead ``_r202001`` units 1-2 put the
+    coal bin at 1,340 / 2,094 MW against the live 670 / 1,480 MW, so a measured
+    full outage of the live unit leaves 250-280 MW falsely available. With
+    ``live_year`` set, such a row is skipped. A cohort retiring IN the solve
+    year is live through its retirement month and is kept. Zero free
+    parameters: the exit date is the cohort's own stamped EIA-860 month.
+
     Args:
         generators: The LP's generator objects, in fleet-array row order.
         pmax: Row-aligned ``pmax`` MW. Defaults to each generator's own
             ``pmax_mw``, which is what the fleet arrays are built from.
+        live_year: ``None`` (default) keeps every row — the miso-266 roster,
+            byte-identical. A solve year drops the dated exit-cohort rows
+            retired before it (:func:`dispatched_bin_live_year`).
 
     Returns:
         A SORTED tuple of ``((plant_code, plant_group), mw)`` pairs — hashable,
@@ -1581,6 +1675,10 @@ def lp_bin_capacity_index(
         group = str(getattr(gen, "plant_group", "") or "")
         if code <= 0 or not group:
             continue
+        if live_year is not None:
+            _exit = exit_cohort_tag(gen)
+            if _exit is not None and _exit[0] < live_year:
+                continue
         # Artifact vocabulary, matching the extract rows (COAL-SUB).
         group = artifact_class(group)
         mw = float(pmax[i]) if pmax is not None else float(getattr(gen, "pmax_mw", 0.0))

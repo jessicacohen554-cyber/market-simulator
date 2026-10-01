@@ -1,0 +1,227 @@
+{
+ "2019": {
+  "focus": {
+   "3845:COAL": [
+    1340.0,
+    1340.0
+   ],
+   "6076:COAL": [
+    2094.0,
+    2094.0
+   ]
+  },
+  "moved": {},
+  "dead_rows": []
+ },
+ "2020": {
+  "focus": {
+   "3845:COAL": [
+    1340.0,
+    1340.0
+   ],
+   "6076:COAL": [
+    2094.0,
+    2094.0
+   ]
+  },
+  "moved": {
+   "56163:COAL": [
+    75.0,
+    0.0
+   ]
+  },
+  "dead_rows": [
+   "COAL_NWPP-EAST_p56163_r201912_committed",
+   "COAL_NWPP-EAST_p56163_r201912_econhi",
+   "COAL_NWPP-EAST_p56163_r201912_econlo",
+   "COAL_NWPP-EAST_p56163_r201912_mustrun",
+   "COAL_NWPP-EAST_p56163_r201912_peak"
+  ]
+ },
+ "2021": {
+  "focus": {
+   "3845:COAL": [
+    1340.0,
+    670.0
+   ],
+   "6076:COAL": [
+    2094.0,
+    1480.0
+   ]
+  },
+  "moved": {
+   "3845:COAL": [
+    1340.0,
+    670.0
+   ],
+   "6076:COAL": [
+    2094.0,
+    1480.0
+   ],
+   "56163:COAL": [
+    75.0,
+    0.0
+   ]
+  },
+  "dead_rows": [
+   "COAL_NWPP-EAST_p56163_r201912_committed",
+   "COAL_NWPP-EAST_p56163_r201912_econhi",
+   "COAL_NWPP-EAST_p56163_r201912_econlo",
+   "COAL_NWPP-EAST_p56163_r201912_mustrun",
+   "COAL_NWPP-EAST_p56163_r201912_peak",
+   "COAL_NWPP-INLAND_p6076_r202001_committed",
+   "COAL_NWPP-INLAND_p6076_r202001_econhi",
+   "COAL_NWPP-INLAND_p6076_r202001_econlo",
+   "COAL_NWPP-INLAND_p6076_r202001_mustrun",
+   "COAL_NWPP-INLAND_p6076_r202001_peak",
+   "COAL_NWPP-NW_p3845_r202012_committed",
+   "COAL_NWPP-NW_p3845_r202012_econhi",
+   "COAL_NWPP-NW_p3845_r202012_econlo",
+   "COAL_NWPP-NW_p3845_r202012_mustrun",
+   "COAL_NWPP-NW_p3845_r202012_peak"
+  ]
+ },
+ "2022": {
+  "focus": {
+   "3845:COAL": [
+    1340.0,
+    670.0
+   ],
+   "6076:COAL": [
+    2094.0,
+    1480.0
+   ]
+  },
+  "moved": {
+   "3845:COAL": [
+    1340.0,
+    670.0
+   ],
+   "6076:COAL": [
+    2094.0,
+    1480.0
+   ],
+   "56163:COAL": [
+    75.0,
+    0.0
+   ]
+  },
+  "dead_rows": [
+   "COAL_NWPP-EAST_p56163_r201912_committed",
+   "COAL_NWPP-EAST_p56163_r201912_econhi",
+   "COAL_NWPP-EAST_p56163_r201912_econlo",
+   "COAL_NWPP-EAST_p56163_r201912_mustrun",
+   "COAL_NWPP-EAST_p56163_r201912_peak",
+   "COAL_NWPP-INLAND_p6076_r202001_committed",
+   "COAL_NWPP-INLAND_p6076_r202001_econhi",
+   "COAL_NWPP-INLAND_p6076_r202001_econlo",
+   "COAL_NWPP-INLAND_p6076_r202001_mustrun",
+   "COAL_NWPP-INLAND_p6076_r202001_peak",
+   "COAL_NWPP-NW_p3845_r202012_committed",
+   "COAL_NWPP-NW_p3845_r202012_econhi",
+   "COAL_NWPP-NW_p3845_r202012_econlo",
+   "COAL_NWPP-NW_p3845_r202012_mustrun",
+   "COAL_NWPP-NW_p3845_r202012_peak"
+  ]
+ },
+ "2023": {
+  "focus": {
+   "3845:COAL": [
+    670.0,
+    670.0
+   ],
+   "6076:COAL": [
+    1480.0,
+    1480.0
+   ]
+  },
+  "moved": {},
+  "dead_rows": []
+ },
+ "2024": {
+  "focus": {
+   "3845:COAL": [
+    670.0,
+    670.0
+   ],
+   "6076:COAL": [
+    1480.0,
+    1480.0
+   ]
+  },
+  "moved": {},
+  "dead_rows": []
+ },
+ "2025": {
+  "focus": {
+   "3845:COAL": [
+    1340.0,
+    670.0
+   ],
+   "6076:COAL": [
+    2094.0,
+    1480.0
+   ]
+  },
+  "moved": {
+   "3845:COAL": [
+    1340.0,
+    670.0
+   ],
+   "6076:COAL": [
+    2094.0,
+    1480.0
+   ],
+   "7028:CT_CHP": [
+    21.6,
+    15.9
+   ],
+   "7111:CT_PEAKER": [
+    18.8,
+    17.5
+   ],
+   "7408:CT_PEAKER": [
+    8.6,
+    4.8
+   ],
+   "54374:CT_CHP": [
+    1.8,
+    0.7
+   ],
+   "56163:COAL": [
+    75.0,
+    0.0
+   ]
+  },
+  "dead_rows": [
+   "COAL_NWPP-EAST_p56163_r201912_committed",
+   "COAL_NWPP-EAST_p56163_r201912_econhi",
+   "COAL_NWPP-EAST_p56163_r201912_econlo",
+   "COAL_NWPP-EAST_p56163_r201912_mustrun",
+   "COAL_NWPP-EAST_p56163_r201912_peak",
+   "COAL_NWPP-INLAND_p6076_r202001_committed",
+   "COAL_NWPP-INLAND_p6076_r202001_econhi",
+   "COAL_NWPP-INLAND_p6076_r202001_econlo",
+   "COAL_NWPP-INLAND_p6076_r202001_mustrun",
+   "COAL_NWPP-INLAND_p6076_r202001_peak",
+   "COAL_NWPP-NW_p3845_r202012_committed",
+   "COAL_NWPP-NW_p3845_r202012_econhi",
+   "COAL_NWPP-NW_p3845_r202012_econlo",
+   "COAL_NWPP-NW_p3845_r202012_mustrun",
+   "COAL_NWPP-NW_p3845_r202012_peak",
+   "CT_CHP_NWPP-EAST_p54374_r202204_committed",
+   "CT_CHP_NWPP-EAST_p7028_r202305_committed",
+   "CT_CHP_NWPP-EAST_p7028_r202305_econhi",
+   "CT_CHP_NWPP-EAST_p7028_r202305_econlo",
+   "CT_CHP_NWPP-EAST_p7028_r202309_committed",
+   "CT_CHP_NWPP-EAST_p7028_r202309_econhi",
+   "CT_CHP_NWPP-EAST_p7028_r202309_econlo",
+   "CT_PEAKER_NWPP-EAST_p7111_r202410_econhi",
+   "CT_PEAKER_NWPP-EAST_p7111_r202410_econlo",
+   "CT_PEAKER_NWPP-EAST_p7408_r202408_econhi",
+   "CT_PEAKER_NWPP-EAST_p7408_r202408_econlo",
+   "CT_PEAKER_NWPP-EAST_p7408_r202409_econhi",
+   "CT_PEAKER_NWPP-EAST_p7408_r202409_econlo"
+  ]
+ }
+}
