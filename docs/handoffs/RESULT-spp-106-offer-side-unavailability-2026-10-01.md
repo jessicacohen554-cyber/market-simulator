@@ -99,3 +99,45 @@ What the solve shows, at full magnitude:
 - **25:** SPP only.
 - **29(b):** the keeper is the control.
 - **31–36:** the parent solved nothing; bytes were in hand before archive; one year per shard.
+
+## 7. Owner ruling (2026-10-01) and the shortfall investigation (zero LP)
+
+**Owner card: "Hold, investigate shortfall".** Nothing is promoted. Keeper `2026-09-28-spp-100-chp-scope` stands. The
+composite stays on local disk (gitignored) and will not survive this session; re-solving costs ~10 min wall.
+
+**Where the extra unserved energy is.** Every short hour is in **SPP-South**:
+- 2022: 3 h on 19 May;
+- 2024: 5 h on 21 Oct, 13:00–17:00;
+- 2025: 4 h on 21 Dec, 10:00–13:00.
+
+In 2024 and 2025 these are the keeper's own scarcity events (keeper slack 862 / 136 MWh in the same hours), widened. In
+every short hour the North→South link is at its 3,400 MW limit. South fossil is already deeply derated by measured
+outages, e.g. 2024-10-21:
+
+| class | South rated, MW | available, keeper | available, EX |
+|---|---:|---:|---:|
+| gas CC | 7,921 | 3,554 | 3,278 |
+| gas CT | 4,035 | 3,410 | 3,394 |
+| gas ST | 8,657 | 1,984 | 1,901 |
+| coal | 7,149 | 3,280 | 3,071 |
+
+**Two construction errors in EX, both against the MMU's own definitions** (sized at zero LP on the keeper and armed `fleet_only`
+rebuilds, South fossil rows, in the short hours):
+
+1. **The bands are taken as a share of RATED capacity, even from units already on partial outage.** The MMU measures
+   "above emergency maximum" against *the derated amount* when a CROW derate is active (report §3.1.2). It excludes
+   units on outage from the economic→emergency comparison.
+   - So on a partially-outaged unit the band should scale with the MW still available.
+   - Multiplicative application (share × available MW) would remove **359 MW less** in South on 2024-10-21 and
+     **200 MW less** on 2025-12-21.
+2. **The economic→emergency band is removed in the very hours it exists for.** The MMU: those MW "are only accessible
+   when SPP anticipates or identifies a reliability issue".
+   - A load-shed hour is that event. In the model the band should be **available at the scarcity price**, not removed.
+   - That is **464–525 MW** of South capacity in these hours.
+
+Repaired that way, EX removes less South capacity in these hours than the keeper's flat derates do. **Predicted at zero
+LP:** unserved returns to roughly the keeper's level. (2) only binds when load would otherwise be shed. (1) also restores
+some capacity in non-scarcity hours, so it will give back part of the train-tier C3a gain; that effect is **not yet
+measured**. This is a design for SPP-107, not a solve.
+
+**Matrix:** SPP cell `spp_mmu_offer_unavailability` stays **O** (solved, held, repair identified).
