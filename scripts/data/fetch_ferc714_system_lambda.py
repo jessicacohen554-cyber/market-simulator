@@ -41,7 +41,7 @@ Clock (see the README "Clock handling" section for the evidence):
   pattern or a timezone code outside {CPT, CST} appears.
 
 Neighbour mode (``--set neighbors``; owner ruling soco-97 option (d), data
-step 1 of ``docs/handoffs/r-soco/FINDING-soco-97-interchange-rule14-phase0-2026-10-01.md``
+step 1 of ``docs/records/soco/r-soco/FINDING-soco-97-interchange-rule14-phase0-2026-10-01.md``
 §5) builds ``data/raw/ferc-714/soco_neighbor_hourly_system_lambda_2019_2025.csv``
 — the same columns plus ``ba_code``, long form — for every filer in
 :data:`market_sim.data.ferc714.SOCO_NEIGHBOR_LAMBDA_RESPONDENTS`, from the same
