@@ -15111,3 +15111,10 @@ too.
 - C3a 2021 +2.9 % (PASS), 2022 −2.4, 2023 +1.2, 2024 −4.0, **2025 −11.6 % (FAIL)**. Span NOT-YET; 2021 CALIBRATED;
   ISO NOT-YET. Residual is spatial (Upstate_West high, Long Island low) plus the 2025 downstate top decile.
 - Record: `docs/records/nyiso/RESULT-nyiso-next22-zone-resolved-basis-2026-10-01.md`.
+
+## NYISO-NEXT-23 — 2026-10-01 — Transco Z6 NY on its flow day; registered, not promoted (G-5)
+
+- Phase 0 (zero LP): the 2025 C3a miss is the tail (deciles 1–8 +$3.4; hours > $150 −$8.8 of −$8.0). January sits below DA too. NYISO's daily Z6 gas was trade-dated and interpolated across weekends (the $97.90 MLK print priced Fri 1/17).
+- New flag `nyiso_gas_flow_date` (default off, zero DOF, rule 14), PR #6980. Five year-isolated shards at `f2b83ef2`.
+- G-1..G-4 PASS; G-5 FAIL (one tiny new bridge unit-conduct D-4 row per year 2021–2024). C3a 2022/2024 better, 2025 −11.6 → −12.7 %; determinations unchanged (span NOT-YET, 2021 CALIBRATED, ISO NOT-YET).
+- Runs `2026-10-01-nyisonext23-flowdate-span` / `-2021` registered; owner card open. Next: the dual-fuel parity cap. Record: `docs/records/nyiso/RESULT-nyiso-next23-z6-flow-date-2026-10-01.md`.
