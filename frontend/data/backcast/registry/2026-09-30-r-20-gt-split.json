@@ -1,6 +1,6 @@
 {
   "id": "2026-09-30-r-20-gt-split",
-  "label": "r 20 gt split",
+  "label": "R-ERCOT-20: GT split at three CC sites (keeper)",
   "date": "2026-09-30",
   "shorthand": "r-20-gt-split",
   "definition": "R-ERCOT-20 ARM 2025: keeper 2026-09-30-r-19-eia-923 recipe unchanged, on the GT-split inputs (T H Wharton / Sand Hill / Colorado Bend simple-cycle GTs as CT_PEAKER split children 34693 / 79003 / 563503) - PRECOMMIT-r-ercot-20-gt-split",
