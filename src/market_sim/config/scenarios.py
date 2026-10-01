@@ -16221,9 +16221,11 @@ class ScenarioConfig:
     # placement of the same window) and reaches only the CC_REGULAR leg -- the
     # ST_GAS leg and the coal synchronization seam keep their own placement.
     # A plant with no profile row (or a year with no other artifact year) keeps
-    # the incumbent hour ranking. Measured ex ante, zero LP: it removes
-    # 0.2-2.6 TWh/yr (1-12 %) of PJM's committed-MW floor from metered-offline
-    # hours, flat across years (§2 of
+    # the incumbent hour ranking. REFUSED FOR PJM at zero LP (owner card
+    # "Refuse; keep built, off", 2026-10-01): on the real fleet the floor in
+    # metered-offline hours ROSE 8-19 % (2019/2021/2023/2025) -- outage windows
+    # already zero most real off-hours, and conduct ranking moves the window into
+    # short non-outage off-runs (§2 of
     # docs/FINDING-pjm-next-17-coal-response-and-cc-conduct-window-2026-10-01.md).
     # Off by default: every existing keeper is byte-identical.
     cc_mustrun_conduct_window: bool = False

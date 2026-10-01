@@ -75,3 +75,11 @@
   - annual net `import` < −5 TWh.
 - Each shard pushes its full bundle (including `dispatch/<y>_P1.parquet` and `hourly/unit_hourly_<y>.parquet`) via `.gitignore` negation plus a plain `git add` (rule 34).
 - The parent composes, rebuilds the bench, attests, registers (`--no-prune`), scores, and asks the owner about promotion.
+
+## 6. Addendum (2026-10-01, before any solve): arm C refused at zero LP
+
+The §2 zero-LP check ran on the real fleet (`_pjmnext17_conduct_fleet_delta.py`, flag off vs on).
+- Only CC must-run rows moved.
+- **The floor in metered-offline hours ROSE:** 3.306 → 3.564 (2019), 4.508 → 5.349 (2021), 2.815 → 3.094 (2023), 2.883 → 3.150 TWh (2025).
+- §3's structural condition therefore fails. Owner card: *"Refuse; keep built, off"*.
+- No shard was launched, no SHA was pinned, and nothing was solved or registered.

@@ -71,7 +71,24 @@
 - The NEXT-17 ON census agrees independently: only 1.4–3.0 TWh/yr of model-on/real-off CC energy falls in cells where the plant's own history says "usually off".
 - Neither number varies by year in the C1 direction.
 
-**Verdict, card 2:** the design is admissible and has zero free parameters, but the zero-LP delta says it is a **small rule-17 hygiene repair, not a C1 lever.** The rule-17 window question is now sized: the irreducible part is irregular real off-runs, a commitment-timing object the floor's size × calendar construction cannot express.
+**Real-fleet check (owner: "Build + solve anyway", then verified before launch).** The field was built (`cc_mustrun_conduct_window`, default off) and two `fleet_only` rebuilds of the keeper were compared, flag off vs on (`scripts/probes/_pjmnext17_conduct_fleet_delta.py` → `results/calibration/_pjmnext17_conduct_fleet_delta.json`).
+
+| floor in metered-offline hours, TWh | 2019 | 2021 | 2023 | 2025 |
+|---|---|---|---|---|
+| keeper | 3.306 | 4.508 | 2.815 | 2.883 |
+| conduct window | 3.564 | 5.349 | 3.094 | 3.150 |
+| change | +8 % | +19 % | +10 % | +9 % |
+| CC floor energy, TWh (off → on) | 153.4 → 155.3 | 171.3 → 172.5 | 189.3 → 192.6 | 189.4 → 192.4 |
+
+- **Wiring:** only CC must-run rows move (61–69 per year); no other row changes.
+- **Why the real build reverses the census:**
+  - In the real fleet, most metered-offline hours are already CAMPD outage windows, and the availability clip zeroes the floor there. That is why the keeper's real exposure is 2.8–4.5 TWh, not the census's 18–26 TWh upper bound.
+  - The conduct ranking moves the window into cells the plant usually runs, which are mostly outside outage windows. More floor therefore lands in the plant's short, irregular, non-outage off-runs, and total floor energy rises 1–2 %.
+
+**Verdict, card 2: REFUSED at zero LP** (owner card *"Refuse; keep built, off"*).
+- The PRECOMMIT's structural condition (offline-hour floor falls in every year) fails in all four years checked, so no solve was spent.
+- `cc_mustrun_conduct_window` stays in the code, default off. PJM matrix cell: **R**.
+- **The rule-17 window question is now answered for PJM:** the off-hour floor is 2.8–4.5 TWh/yr, about 2 % of CC floor energy. It sits in non-outage short off-runs that no calendar-cell window reaches. This is sized and structural, and it is not a C1 lever.
 
 ## 3. Dispatch-vs-offer audit (owner card *"Dispatch-vs-offer audit"*)
 
