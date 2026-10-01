@@ -1903,12 +1903,30 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
     #     TWh/yr while its lambda sits above TVA's/DEC's): a contract-dominated
     #     book. Recommendation recorded: do NOT arm as a calibration lever.
     #
-    # ``marginal_heat_rate`` anchors are TIER-3, labelled, default-off:
-    #   * SOCO_MISO — MISO-South zonal RT mean over HH + MISO's own basis, the
-    #     construction SPP-51 used for the same MISO zone: 27.0420 / 25.1159 /
-    #     35.4525 $/MWh (actual_lmp_hourly_zonal_MISO, zone MISO-South) over
-    #     HH 2.536 / 2.192 / 3.529 + 0.30 = 2.836 / 2.492 / 3.829 -> 9.54 /
-    #     10.08 / 9.26; flat = their mean 9.63. gas_basis = MISO's registry.
+    # ``hr_by_year`` (lane soco-98, 2026-10-01; FINDING-soco-97 §5 step 3,
+    #   FINDING-soco-33 §7 R-1/R-2/R-3) is the OUTPUT of
+    #   ``scripts/data/derive_neighbor_hr_by_year.py --iso SOCO --years
+    #   2019..2025 --skip-shapeless``, not typed: HR[y] = annual-mean anchor
+    #   / ((HH[y] + gas_basis) x K[y]), K = 1.0 (exponent 1, mean-1 shape).
+    #   Inert in every backcast (the blocks are off) and in every forecast
+    #   year (no forecast year is tabulated); a forecast-lane INPUT only.
+    #   * SOCO_MISO — MISO-South's own zonal RT LMP (actual_lmp_hourly_zonal_MISO,
+    #     the SPP-51 construction for the same zone, rule 19), now 2019-2025;
+    #     2023-25 adopt the producer's 9.52 / 10.09 / 9.28 (R-3, was the
+    #     hand-computed 9.54 / 10.08 / 9.26). gas_basis = MISO's registry.
+    #   * SOCO_TVA / SOCO_DUK / SOCO_SC / SOCO_FPC / SOCO_TAL — the
+    #     neighbour's OWN FERC 714 Part II Sch. 6 system lambda
+    #     (data/raw/ferc-714/soco_neighbor_hourly_system_lambda_2019_2025.csv,
+    #     REPORTED-ONLY), annual mean only, filed zeros dropped as filing
+    #     gaps. Rule 13: the hourly lambda is a measured outcome and is never
+    #     a seam price. FPC / TAL carry 2023-24 only: their FLA load-shape
+    #     extract covers 2023-01..2025-01 (R-4, a data-lane fetch).
+    #   * NOT anchored: SOCO_SCEG (Dominion SC files 0.00 every hour) and
+    #     SOCO_FPL (lambda ~40 % below its peers, basis unresolved).
+    # ``marginal_heat_rate`` anchors are TIER-3, labelled, default-off, and
+    # UNCHANGED by soco-98 (the seam-own flat mean is a forecast-lane arming
+    # choice, recorded in FINDING-soco-98):
+    #   * SOCO_MISO — 9.63, the mean of the SOCO-20 2023-25 cells.
     #   * every other neighbour publishes NO LMP (TVA, Duke, Dominion SC,
     #     Santee Cooper, the Florida BAs). The 11.6 flat is the value PJM's
     #     registry already carries for the SAME TVA / Carolinas systems
@@ -1946,6 +1964,15 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             interface_limit_mw=478.0,
             border_zones=("SOCO_AL", "SOCO_GA", "SOCO_MS"),
             load_shape_exponent=1.0,
+            hr_by_year={
+                2019: 8.62,
+                2020: 8.26,
+                2021: 8.38,
+                2022: 9.8,
+                2023: 8.71,
+                2024: 10.65,
+                2025: 9.62,
+            },
         ),
         NeighborInterface(
             # Winter Avg TC 2,374 (summer 1,791); measured envelope
@@ -1958,7 +1985,15 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             interface_limit_mw=2374.0,
             border_zones=("SOCO_MS",),
             load_shape_exponent=1.0,
-            hr_by_year={2023: 9.54, 2024: 10.08, 2025: 9.26},
+            hr_by_year={
+                2019: 8.63,
+                2020: 9.24,
+                2021: 8.86,
+                2022: 9.04,
+                2023: 9.52,
+                2024: 10.09,
+                2025: 9.28,
+            },
         ),
         NeighborInterface(
             # Duke Energy Carolinas. Winter Avg TC 407 (summer 34); measured
@@ -1973,6 +2008,15 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             interface_limit_mw=407.0,
             border_zones=("SOCO_GA",),
             load_shape_exponent=1.0,
+            hr_by_year={
+                2019: 9.86,
+                2020: 8.47,
+                2021: 8.72,
+                2022: 12.08,
+                2023: 9.72,
+                2024: 11.16,
+                2025: 11.03,
+            },
         ),
         NeighborInterface(
             # Dominion Energy South Carolina (SCEG). Winter Avg TC 126
@@ -2001,6 +2045,15 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             interface_limit_mw=533.0,
             border_zones=("SOCO_GA",),
             load_shape_exponent=1.0,
+            hr_by_year={
+                2019: 12.11,
+                2020: 12.0,
+                2021: 8.71,
+                2022: 11.02,
+                2023: 14.54,
+                2024: 17.27,
+                2025: 10.56,
+            },
         ),
         NeighborInterface(
             # Florida Power & Light incl. FPL-Northwest (the former Gulf
@@ -2030,6 +2083,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             interface_limit_mw=50.0,
             border_zones=("SOCO_GA",),
             load_shape_exponent=1.0,
+            hr_by_year={2023: 8.66, 2024: 9.69},
         ),
         NeighborInterface(
             # City of Tallahassee. Winter Avg TC 20 (summer 12); measured
@@ -2044,6 +2098,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             interface_limit_mw=20.0,
             border_zones=("SOCO_GA",),
             load_shape_exponent=1.0,
+            hr_by_year={2023: 7.6, 2024: 7.69},
         ),
     ],
 }
