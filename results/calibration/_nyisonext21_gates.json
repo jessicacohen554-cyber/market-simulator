@@ -1,0 +1,426 @@
+{
+ "2021": {
+  "G2_astoria_twh": {
+   "arm": 0.497,
+   "keeper": 2.08,
+   "campd": 0.719
+  },
+  "G2_pass": true,
+  "G3_zone_demand_delta_gwh": {
+   "Upstate_West": 0.0,
+   "Capital_Hudson": 0.0,
+   "Lower_Hudson": 0.0,
+   "NYC": 0.0,
+   "Long_Island": 0.0
+  },
+  "G3_slack_gwh": {
+   "arm": 0.0,
+   "keeper": 0.0
+  },
+  "G3_pass": true,
+  "G5_new_d4_failures": [],
+  "G5_pass": true,
+  "reported": {
+   "steam_twh": {
+    "Astoria": {
+     "arm": 0.497,
+     "keeper": 2.08,
+     "campd": 0.719
+    },
+    "Ravenswood": {
+     "arm": 1.042,
+     "keeper": 0.781,
+     "campd": 0.51
+    },
+    "Arthur Kill": {
+     "arm": 0.621,
+     "keeper": 0.554,
+     "campd": 0.941
+    },
+    "Northport": {
+     "arm": 2.308,
+     "keeper": 2.178,
+     "campd": 4.172
+    },
+    "E F Barrett": {
+     "arm": 0.886,
+     "keeper": 0.853,
+     "campd": 1.462
+    },
+    "Bowline": {
+     "arm": 0.41,
+     "keeper": 0.382,
+     "campd": 1.029
+    }
+   },
+   "nyc_steam_twh": {
+    "arm": 2.16,
+    "keeper": 3.415,
+    "campd": 2.17
+   },
+   "d4_cleared": [
+    "(2021, 'nyiso_gas_commitment_bridge \u00d7 ST_GAS', '8906')"
+   ],
+   "zone_lw_price": {
+    "Upstate_West": {
+     "arm": 40.82,
+     "keeper": 40.4
+    },
+    "Capital_Hudson": {
+     "arm": 43.14,
+     "keeper": 42.69
+    },
+    "Lower_Hudson": {
+     "arm": 44.0,
+     "keeper": 43.53
+    },
+    "NYC": {
+     "arm": 44.46,
+     "keeper": 43.91
+    },
+    "Long_Island": {
+     "arm": 47.3,
+     "keeper": 46.87
+    }
+   }
+  }
+ },
+ "2022": {
+  "G2_astoria_twh": {
+   "arm": 1.477,
+   "keeper": 3.049,
+   "campd": 0.889
+  },
+  "G2_pass": true,
+  "G3_zone_demand_delta_gwh": {
+   "Upstate_West": 0.0,
+   "Capital_Hudson": 0.0,
+   "Lower_Hudson": 0.0,
+   "NYC": 0.0,
+   "Long_Island": 0.0
+  },
+  "G3_slack_gwh": {
+   "arm": 0.0,
+   "keeper": 0.0
+  },
+  "G3_pass": true,
+  "G5_new_d4_failures": [],
+  "G5_pass": true,
+  "reported": {
+   "steam_twh": {
+    "Astoria": {
+     "arm": 1.477,
+     "keeper": 3.049,
+     "campd": 0.889
+    },
+    "Ravenswood": {
+     "arm": 0.864,
+     "keeper": 0.767,
+     "campd": 0.55
+    },
+    "Arthur Kill": {
+     "arm": 1.076,
+     "keeper": 0.939,
+     "campd": 1.033
+    },
+    "Northport": {
+     "arm": 2.148,
+     "keeper": 1.983,
+     "campd": 3.09
+    },
+    "E F Barrett": {
+     "arm": 0.769,
+     "keeper": 0.715,
+     "campd": 1.281
+    },
+    "Bowline": {
+     "arm": 0.467,
+     "keeper": 0.435,
+     "campd": 1.538
+    }
+   },
+   "nyc_steam_twh": {
+    "arm": 3.417,
+    "keeper": 4.755,
+    "campd": 2.472
+   },
+   "d4_cleared": [],
+   "zone_lw_price": {
+    "Upstate_West": {
+     "arm": 78.89,
+     "keeper": 77.85
+    },
+    "Capital_Hudson": {
+     "arm": 84.51,
+     "keeper": 83.38
+    },
+    "Lower_Hudson": {
+     "arm": 86.42,
+     "keeper": 85.24
+    },
+    "NYC": {
+     "arm": 86.97,
+     "keeper": 85.63
+    },
+    "Long_Island": {
+     "arm": 90.16,
+     "keeper": 88.96
+    }
+   }
+  }
+ },
+ "2023": {
+  "G2_astoria_twh": {
+   "arm": 1.359,
+   "keeper": 2.881,
+   "campd": 0.773
+  },
+  "G2_pass": true,
+  "G3_zone_demand_delta_gwh": {
+   "Upstate_West": 0.0,
+   "Capital_Hudson": 0.0,
+   "Lower_Hudson": 0.0,
+   "NYC": 0.0,
+   "Long_Island": 0.0
+  },
+  "G3_slack_gwh": {
+   "arm": 0.0,
+   "keeper": 0.0
+  },
+  "G3_pass": true,
+  "G5_new_d4_failures": [],
+  "G5_pass": true,
+  "reported": {
+   "steam_twh": {
+    "Astoria": {
+     "arm": 1.359,
+     "keeper": 2.881,
+     "campd": 0.773
+    },
+    "Ravenswood": {
+     "arm": 4.003,
+     "keeper": 3.491,
+     "campd": 0.848
+    },
+    "Arthur Kill": {
+     "arm": 1.748,
+     "keeper": 1.503,
+     "campd": 1.117
+    },
+    "Northport": {
+     "arm": 1.575,
+     "keeper": 1.573,
+     "campd": 2.558
+    },
+    "E F Barrett": {
+     "arm": 0.694,
+     "keeper": 0.691,
+     "campd": 1.386
+    },
+    "Bowline": {
+     "arm": 0.227,
+     "keeper": 0.224,
+     "campd": 0.977
+    }
+   },
+   "nyc_steam_twh": {
+    "arm": 7.11,
+    "keeper": 7.875,
+    "campd": 2.738
+   },
+   "d4_cleared": [],
+   "zone_lw_price": {
+    "Upstate_West": {
+     "arm": 32.73,
+     "keeper": 32.41
+    },
+    "Capital_Hudson": {
+     "arm": 34.44,
+     "keeper": 34.11
+    },
+    "Lower_Hudson": {
+     "arm": 35.02,
+     "keeper": 34.69
+    },
+    "NYC": {
+     "arm": 35.02,
+     "keeper": 34.67
+    },
+    "Long_Island": {
+     "arm": 36.44,
+     "keeper": 36.15
+    }
+   }
+  }
+ },
+ "2024": {
+  "G2_astoria_twh": {
+   "arm": 1.429,
+   "keeper": 2.402,
+   "campd": 0.92
+  },
+  "G2_pass": true,
+  "G3_zone_demand_delta_gwh": {
+   "Upstate_West": 0.0,
+   "Capital_Hudson": 0.0,
+   "Lower_Hudson": 0.0,
+   "NYC": 0.0,
+   "Long_Island": 0.0
+  },
+  "G3_slack_gwh": {
+   "arm": 0.0,
+   "keeper": 0.0
+  },
+  "G3_pass": true,
+  "G5_new_d4_failures": [],
+  "G5_pass": true,
+  "reported": {
+   "steam_twh": {
+    "Astoria": {
+     "arm": 1.429,
+     "keeper": 2.402,
+     "campd": 0.92
+    },
+    "Ravenswood": {
+     "arm": 1.68,
+     "keeper": 1.632,
+     "campd": 0.679
+    },
+    "Arthur Kill": {
+     "arm": 1.25,
+     "keeper": 1.123,
+     "campd": 1.352
+    },
+    "Northport": {
+     "arm": 3.005,
+     "keeper": 2.924,
+     "campd": 3.916
+    },
+    "E F Barrett": {
+     "arm": 1.033,
+     "keeper": 1.006,
+     "campd": 1.137
+    },
+    "Bowline": {
+     "arm": 0.705,
+     "keeper": 0.666,
+     "campd": 1.354
+    }
+   },
+   "nyc_steam_twh": {
+    "arm": 4.359,
+    "keeper": 5.157,
+    "campd": 2.951
+   },
+   "d4_cleared": [
+    "(2024, 'nyiso_gas_commitment_bridge \u00d7 ST_GAS', '8906')"
+   ],
+   "zone_lw_price": {
+    "Upstate_West": {
+     "arm": 35.98,
+     "keeper": 35.7
+    },
+    "Capital_Hudson": {
+     "arm": 38.35,
+     "keeper": 38.05
+    },
+    "Lower_Hudson": {
+     "arm": 38.93,
+     "keeper": 38.62
+    },
+    "NYC": {
+     "arm": 39.02,
+     "keeper": 38.7
+    },
+    "Long_Island": {
+     "arm": 40.01,
+     "keeper": 39.72
+    }
+   }
+  }
+ },
+ "2025": {
+  "G2_astoria_twh": {
+   "arm": 1.825,
+   "keeper": 2.923,
+   "campd": 1.354
+  },
+  "G2_pass": true,
+  "G3_zone_demand_delta_gwh": {
+   "Upstate_West": 0.0,
+   "Capital_Hudson": 0.0,
+   "Lower_Hudson": 0.0,
+   "NYC": 0.0,
+   "Long_Island": 0.0
+  },
+  "G3_slack_gwh": {
+   "arm": 0.0,
+   "keeper": 0.0
+  },
+  "G3_pass": true,
+  "G5_new_d4_failures": [],
+  "G5_pass": true,
+  "reported": {
+   "steam_twh": {
+    "Astoria": {
+     "arm": 1.825,
+     "keeper": 2.923,
+     "campd": 1.354
+    },
+    "Ravenswood": {
+     "arm": 1.269,
+     "keeper": 1.2,
+     "campd": 1.07
+    },
+    "Arthur Kill": {
+     "arm": 1.932,
+     "keeper": 1.785,
+     "campd": 2.16
+    },
+    "Northport": {
+     "arm": 3.151,
+     "keeper": 2.991,
+     "campd": 4.307
+    },
+    "E F Barrett": {
+     "arm": 0.812,
+     "keeper": 0.78,
+     "campd": 1.035
+    },
+    "Bowline": {
+     "arm": 0.816,
+     "keeper": 0.77,
+     "campd": 2.061
+    }
+   },
+   "nyc_steam_twh": {
+    "arm": 5.026,
+    "keeper": 5.908,
+    "campd": 4.584
+   },
+   "d4_cleared": [],
+   "zone_lw_price": {
+    "Upstate_West": {
+     "arm": 58.31,
+     "keeper": 57.88
+    },
+    "Capital_Hudson": {
+     "arm": 62.52,
+     "keeper": 62.06
+    },
+    "Lower_Hudson": {
+     "arm": 63.24,
+     "keeper": 62.79
+    },
+    "NYC": {
+     "arm": 62.15,
+     "keeper": 61.67
+    },
+    "Long_Island": {
+     "arm": 63.92,
+     "keeper": 63.5
+    }
+   }
+  }
+ }
+}
