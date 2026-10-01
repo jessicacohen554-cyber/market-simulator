@@ -102,3 +102,9 @@ Exact per-shard prompts: `docs/handoffs/nwppnext16/shards/shard_<A>_<Y>.txt`.
 Per arm: compose with `scripts/probes/_nwpp42_compose_span.py --skip-diagnostics` (2023 leg first) into
 `nwppnext16<A>_span`; legitimacy diagnostics; attestation; `dashboard_add_run --no-prune`; `calibration_verdict` diffed
 per (criterion, year, key) vs keeper #19 and vs C. One owner card carries promotion + prune (rule 35).
+
+## Addendum (post-solve, 2026-10-01) — §3 library line corrected
+
+Keeper #19's own `run_config_<Y>.json` record highspy 1.14.0 / pandas 3.0.3 / pyarrow 24.0.0 / pydantic 2.13.4 (runtime
+`importlib.metadata`). #19 was on pin; the off-pin solve was NEXT-15's unmerged run. The "Libraries: LIVE" line in §3 is
+withdrawn: C vs #19 is a clean A/B. Results: `RESULT-nwppnext16-combined-captive-live-2026-10-01.md`.
