@@ -1,0 +1,2304 @@
+{
+ "_rule": {
+  "pooling": "hours-weighted over 2019-2024 = equal-year mean (8760 h each)",
+  "imm_pooled_coal": 0.3633,
+  "identification": "joint leg, P1 bid stack, all hours; first crossing of the pooled IMM coal share descending from m = 1.00; linear interpolation between grid points; rounded to 2 decimals",
+  "bands_scaled": "coal econ_low + econ_high (fuel component x m); committed and peak unchanged",
+  "grid": [
+   1.0,
+   0.95,
+   0.9,
+   0.85,
+   0.8,
+   0.75,
+   0.7,
+   0.65,
+   0.6,
+   0.55,
+   0.5,
+   0.45,
+   0.4,
+   0.35,
+   0.3
+  ]
+ },
+ "2020": {
+  "gas_leg_identity": {
+   "non_gas_rows_identical": true,
+   "cc_regular_econ_mc_delta_equals_hr_x_fuel_delta_max_abs_err": 1.648,
+   "gas_fuel_cap_wtd_keeper": 2.441,
+   "gas_fuel_cap_wtd_ruled": 2.748,
+   "cc_regular_fuel_cap_wtd_keeper": 2.238,
+   "cc_regular_fuel_cap_wtd_ruled": 2.306,
+   "n_rows": 2998
+  },
+  "transport_coverage": {
+   "gas_cap_gw": 45.83,
+   "own_plant_cap_share": 0.685,
+   "n_gas_plants": 324,
+   "n_gas_plants_own": 93,
+   "by_group": {
+    "CC_CHP": {
+     "cap_gw": 3.17,
+     "own_plant_cap_share": 0.05,
+     "v_cap_wtd": 0.529
+    },
+    "CC_REGULAR": {
+     "cap_gw": 16.12,
+     "own_plant_cap_share": 0.863,
+     "v_cap_wtd": 0.356
+    },
+    "CT_CHP": {
+     "cap_gw": 0.93,
+     "own_plant_cap_share": 0.0,
+     "v_cap_wtd": -0.137
+    },
+    "CT_PEAKER": {
+     "cap_gw": 17.82,
+     "own_plant_cap_share": 0.646,
+     "v_cap_wtd": 1.311
+    },
+    "ST_CHP": {
+     "cap_gw": 0.49,
+     "own_plant_cap_share": 0.45,
+     "v_cap_wtd": 0.53
+    },
+    "ST_GAS": {
+     "cap_gw": 7.29,
+     "own_plant_cap_share": 0.765,
+     "v_cap_wtd": 0.871
+    }
+   },
+   "v_cap_wtd_all_gas": 0.813
+  },
+  "coal_econ_anatomy": {
+   "n_rows": 462,
+   "bands": {
+    "mustrun": 88,
+    "committed": 79,
+    "econc00": 77,
+    "econc01": 77,
+    "econc02": 77,
+    "econc03": 77,
+    "econc04": 77,
+    "econc05": 77,
+    "peak": 76
+   },
+   "cap_gw_mean": 11.65,
+   "offer_cap_wtd": 34.911,
+   "fuel_component_cap_wtd": 30.411,
+   "vom_cap_wtd": 4.5,
+   "resid_cap_wtd": 0.0,
+   "resid_max_abs": 0.0
+  },
+  "reference": {
+   "actual_lw_mean": 21.969,
+   "keeper_p1_lw_mean": 24.511,
+   "actual_q1_median": 15.122,
+   "actual_q2_median": 17.096,
+   "keeper_p1_q1_median": 19.134,
+   "keeper_p1_q2_median": 21.6,
+   "coverage_hours": 8760,
+   "imm_smp_share": {
+    "coal": 0.4,
+    "gas": 0.57,
+    "wind": 0.01,
+    "hydro": 0.01,
+    "other": 0.0
+   }
+  },
+  "scan": {
+   "coal_only|1.00": {
+    "leg": "coal_only",
+    "m": 1.0,
+    "p0_all": {
+     "gas": 0.583,
+     "coal": 0.209,
+     "seam": 0.207
+    },
+    "bid_all": {
+     "gas": 0.539,
+     "coal": 0.254,
+     "seam": 0.207
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.642,
+      "seam": 0.283,
+      "coal": 0.075
+     },
+     "q2": {
+      "gas": 0.611,
+      "seam": 0.262,
+      "coal": 0.127
+     },
+     "q3": {
+      "gas": 0.575,
+      "coal": 0.218,
+      "seam": 0.207
+     },
+     "q4": {
+      "gas": 0.455,
+      "coal": 0.374,
+      "seam": 0.171
+     },
+     "q5": {
+      "coal": 0.476,
+      "gas": 0.411,
+      "seam": 0.113
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.856,
+     "committed": 0.122,
+     "peak": 0.015,
+     "mustrun": 0.007
+    },
+    "coal_econ_dispatched_share": 0.181,
+    "coal_econ_dispatched_share_q12": 0.074,
+    "dispatch_gw_mean": {
+     "coal": 23.491,
+     "coal_econ": 2.103,
+     "gas": 17.124,
+     "cc_regular": 11.708,
+     "seam": 17.643
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 19.78,
+     "coal_econ": 0.751,
+     "gas": 12.301,
+     "cc_regular": 9.067,
+     "seam": 15.926
+    },
+    "price": {
+     "bid_q1_median": 18.227,
+     "bid_q2_median": 21.411,
+     "bid_q5_median": 27.209,
+     "bid_lw_mean": 23.77,
+     "bid_minus_actual_q12_median": 4.165,
+     "bid_minus_actual_lw_mean": 1.801,
+     "bid_minus_actual_lw_mean_q12": 3.332,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "coal_only|0.95": {
+    "leg": "coal_only",
+    "m": 0.95,
+    "p0_all": {
+     "gas": 0.554,
+     "coal": 0.229,
+     "seam": 0.217
+    },
+    "bid_all": {
+     "gas": 0.524,
+     "coal": 0.271,
+     "seam": 0.204
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.645,
+      "seam": 0.284,
+      "coal": 0.071
+     },
+     "q2": {
+      "gas": 0.603,
+      "seam": 0.256,
+      "coal": 0.141
+     },
+     "q3": {
+      "gas": 0.547,
+      "coal": 0.261,
+      "seam": 0.192
+     },
+     "q4": {
+      "gas": 0.447,
+      "coal": 0.382,
+      "seam": 0.171
+     },
+     "q5": {
+      "coal": 0.501,
+      "gas": 0.38,
+      "seam": 0.119
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.897,
+     "committed": 0.088,
+     "peak": 0.011,
+     "mustrun": 0.004
+    },
+    "coal_econ_dispatched_share": 0.209,
+    "coal_econ_dispatched_share_q12": 0.087,
+    "dispatch_gw_mean": {
+     "coal": 23.779,
+     "coal_econ": 2.432,
+     "gas": 16.884,
+     "cc_regular": 11.604,
+     "seam": 17.595
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 19.908,
+     "coal_econ": 0.886,
+     "gas": 12.205,
+     "cc_regular": 9.007,
+     "seam": 15.894
+    },
+    "price": {
+     "bid_q1_median": 18.145,
+     "bid_q2_median": 21.22,
+     "bid_q5_median": 26.74,
+     "bid_lw_mean": 23.5,
+     "bid_minus_actual_q12_median": 4.067,
+     "bid_minus_actual_lw_mean": 1.532,
+     "bid_minus_actual_lw_mean_q12": 3.243,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "coal_only|0.90": {
+    "leg": "coal_only",
+    "m": 0.9,
+    "p0_all": {
+     "gas": 0.536,
+     "coal": 0.252,
+     "seam": 0.212
+    },
+    "bid_all": {
+     "gas": 0.497,
+     "coal": 0.295,
+     "seam": 0.208
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.619,
+      "seam": 0.287,
+      "coal": 0.094
+     },
+     "q2": {
+      "gas": 0.549,
+      "seam": 0.263,
+      "coal": 0.188
+     },
+     "q3": {
+      "gas": 0.513,
+      "coal": 0.283,
+      "seam": 0.204
+     },
+     "q4": {
+      "gas": 0.436,
+      "coal": 0.396,
+      "seam": 0.169
+     },
+     "q5": {
+      "coal": 0.517,
+      "gas": 0.368,
+      "seam": 0.115
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.902,
+     "committed": 0.085,
+     "peak": 0.009,
+     "mustrun": 0.003
+    },
+    "coal_econ_dispatched_share": 0.244,
+    "coal_econ_dispatched_share_q12": 0.106,
+    "dispatch_gw_mean": {
+     "coal": 24.145,
+     "coal_econ": 2.843,
+     "gas": 16.6,
+     "cc_regular": 11.464,
+     "seam": 17.513
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 20.092,
+     "coal_econ": 1.076,
+     "gas": 12.083,
+     "cc_regular": 8.922,
+     "seam": 15.831
+    },
+    "price": {
+     "bid_q1_median": 18.116,
+     "bid_q2_median": 21.101,
+     "bid_q5_median": 26.301,
+     "bid_lw_mean": 23.197,
+     "bid_minus_actual_q12_median": 3.977,
+     "bid_minus_actual_lw_mean": 1.229,
+     "bid_minus_actual_lw_mean_q12": 3.136,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "coal_only|0.85": {
+    "leg": "coal_only",
+    "m": 0.85,
+    "p0_all": {
+     "gas": 0.511,
+     "coal": 0.287,
+     "seam": 0.202
+    },
+    "bid_all": {
+     "gas": 0.477,
+     "coal": 0.32,
+     "seam": 0.204
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.588,
+      "seam": 0.285,
+      "coal": 0.127
+     },
+     "q2": {
+      "gas": 0.531,
+      "seam": 0.261,
+      "coal": 0.208
+     },
+     "q3": {
+      "gas": 0.461,
+      "coal": 0.333,
+      "seam": 0.205
+     },
+     "q4": {
+      "coal": 0.422,
+      "gas": 0.402,
+      "seam": 0.175
+     },
+     "q5": {
+      "coal": 0.509,
+      "gas": 0.4,
+      "seam": 0.091
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.939,
+     "committed": 0.051,
+     "peak": 0.007,
+     "mustrun": 0.003
+    },
+    "coal_econ_dispatched_share": 0.285,
+    "coal_econ_dispatched_share_q12": 0.129,
+    "dispatch_gw_mean": {
+     "coal": 24.586,
+     "coal_econ": 3.316,
+     "gas": 16.266,
+     "cc_regular": 11.291,
+     "seam": 17.406
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 20.319,
+     "coal_econ": 1.306,
+     "gas": 11.923,
+     "cc_regular": 8.813,
+     "seam": 15.765
+    },
+    "price": {
+     "bid_q1_median": 18.074,
+     "bid_q2_median": 20.879,
+     "bid_q5_median": 25.61,
+     "bid_lw_mean": 22.855,
+     "bid_minus_actual_q12_median": 3.861,
+     "bid_minus_actual_lw_mean": 0.886,
+     "bid_minus_actual_lw_mean_q12": 2.999,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "coal_only|0.80": {
+    "leg": "coal_only",
+    "m": 0.8,
+    "p0_all": {
+     "gas": 0.495,
+     "coal": 0.313,
+     "seam": 0.192
+    },
+    "bid_all": {
+     "gas": 0.458,
+     "coal": 0.346,
+     "seam": 0.197
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.575,
+      "seam": 0.285,
+      "coal": 0.14
+     },
+     "q2": {
+      "gas": 0.482,
+      "coal": 0.269,
+      "seam": 0.248
+     },
+     "q3": {
+      "gas": 0.436,
+      "coal": 0.368,
+      "seam": 0.196
+     },
+     "q4": {
+      "gas": 0.42,
+      "coal": 0.418,
+      "seam": 0.162
+     },
+     "q5": {
+      "coal": 0.533,
+      "gas": 0.374,
+      "seam": 0.093
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.954,
+     "committed": 0.036,
+     "peak": 0.007,
+     "mustrun": 0.003
+    },
+    "coal_econ_dispatched_share": 0.329,
+    "coal_econ_dispatched_share_q12": 0.156,
+    "dispatch_gw_mean": {
+     "coal": 25.088,
+     "coal_econ": 3.835,
+     "gas": 15.878,
+     "cc_regular": 11.067,
+     "seam": 17.292
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 20.587,
+     "coal_econ": 1.578,
+     "gas": 11.726,
+     "cc_regular": 8.675,
+     "seam": 15.694
+    },
+    "price": {
+     "bid_q1_median": 18.03,
+     "bid_q2_median": 20.671,
+     "bid_q5_median": 24.911,
+     "bid_lw_mean": 22.47,
+     "bid_minus_actual_q12_median": 3.688,
+     "bid_minus_actual_lw_mean": 0.501,
+     "bid_minus_actual_lw_mean_q12": 2.829,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "coal_only|0.75": {
+    "leg": "coal_only",
+    "m": 0.75,
+    "p0_all": {
+     "gas": 0.476,
+     "coal": 0.34,
+     "seam": 0.184
+    },
+    "bid_all": {
+     "gas": 0.429,
+     "coal": 0.373,
+     "seam": 0.198
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.552,
+      "seam": 0.271,
+      "coal": 0.178
+     },
+     "q2": {
+      "gas": 0.456,
+      "coal": 0.285,
+      "seam": 0.259
+     },
+     "q3": {
+      "coal": 0.415,
+      "gas": 0.406,
+      "seam": 0.179
+     },
+     "q4": {
+      "coal": 0.453,
+      "gas": 0.388,
+      "seam": 0.16
+     },
+     "q5": {
+      "coal": 0.535,
+      "gas": 0.345,
+      "seam": 0.12
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.959,
+     "committed": 0.032,
+     "peak": 0.005,
+     "mustrun": 0.004
+    },
+    "coal_econ_dispatched_share": 0.379,
+    "coal_econ_dispatched_share_q12": 0.19,
+    "dispatch_gw_mean": {
+     "coal": 25.659,
+     "coal_econ": 4.414,
+     "gas": 15.439,
+     "cc_regular": 10.776,
+     "seam": 17.16
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 20.929,
+     "coal_econ": 1.923,
+     "gas": 11.474,
+     "cc_regular": 8.488,
+     "seam": 15.604
+    },
+    "price": {
+     "bid_q1_median": 18.002,
+     "bid_q2_median": 20.463,
+     "bid_q5_median": 24.182,
+     "bid_lw_mean": 22.059,
+     "bid_minus_actual_q12_median": 3.483,
+     "bid_minus_actual_lw_mean": 0.09,
+     "bid_minus_actual_lw_mean_q12": 2.614,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "coal_only|0.70": {
+    "leg": "coal_only",
+    "m": 0.7,
+    "p0_all": {
+     "gas": 0.467,
+     "coal": 0.35,
+     "seam": 0.183
+    },
+    "bid_all": {
+     "gas": 0.42,
+     "coal": 0.389,
+     "seam": 0.191
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.506,
+      "seam": 0.263,
+      "coal": 0.231
+     },
+     "q2": {
+      "gas": 0.458,
+      "coal": 0.315,
+      "seam": 0.227
+     },
+     "q3": {
+      "coal": 0.409,
+      "gas": 0.395,
+      "seam": 0.196
+     },
+     "q4": {
+      "coal": 0.463,
+      "gas": 0.389,
+      "seam": 0.148
+     },
+     "q5": {
+      "coal": 0.527,
+      "gas": 0.349,
+      "seam": 0.124
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.962,
+     "committed": 0.031,
+     "peak": 0.005,
+     "mustrun": 0.002
+    },
+    "coal_econ_dispatched_share": 0.436,
+    "coal_econ_dispatched_share_q12": 0.235,
+    "dispatch_gw_mean": {
+     "coal": 26.314,
+     "coal_econ": 5.075,
+     "gas": 14.964,
+     "cc_regular": 10.427,
+     "seam": 16.981
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 21.386,
+     "coal_econ": 2.384,
+     "gas": 11.175,
+     "cc_regular": 8.251,
+     "seam": 15.447
+    },
+    "price": {
+     "bid_q1_median": 17.88,
+     "bid_q2_median": 20.394,
+     "bid_q5_median": 23.276,
+     "bid_lw_mean": 21.62,
+     "bid_minus_actual_q12_median": 3.22,
+     "bid_minus_actual_lw_mean": -0.349,
+     "bid_minus_actual_lw_mean_q12": 2.358,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "coal_only|0.65": {
+    "leg": "coal_only",
+    "m": 0.65,
+    "p0_all": {
+     "gas": 0.463,
+     "coal": 0.364,
+     "seam": 0.173
+    },
+    "bid_all": {
+     "gas": 0.42,
+     "coal": 0.386,
+     "seam": 0.194
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.513,
+      "coal": 0.254,
+      "seam": 0.233
+     },
+     "q2": {
+      "gas": 0.425,
+      "coal": 0.352,
+      "seam": 0.223
+     },
+     "q3": {
+      "coal": 0.422,
+      "gas": 0.402,
+      "seam": 0.176
+     },
+     "q4": {
+      "coal": 0.433,
+      "gas": 0.389,
+      "seam": 0.179
+     },
+     "q5": {
+      "coal": 0.468,
+      "gas": 0.373,
+      "seam": 0.159
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.963,
+     "committed": 0.032,
+     "peak": 0.003,
+     "mustrun": 0.002
+    },
+    "coal_econ_dispatched_share": 0.501,
+    "coal_econ_dispatched_share_q12": 0.291,
+    "dispatch_gw_mean": {
+     "coal": 27.069,
+     "coal_econ": 5.839,
+     "gas": 14.449,
+     "cc_regular": 10.023,
+     "seam": 16.74
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 21.95,
+     "coal_econ": 2.954,
+     "gas": 10.795,
+     "cc_regular": 7.94,
+     "seam": 15.263
+    },
+    "price": {
+     "bid_q1_median": 17.88,
+     "bid_q2_median": 19.88,
+     "bid_q5_median": 22.628,
+     "bid_lw_mean": 21.181,
+     "bid_minus_actual_q12_median": 2.94,
+     "bid_minus_actual_lw_mean": -0.788,
+     "bid_minus_actual_lw_mean_q12": 2.04,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "coal_only|0.60": {
+    "leg": "coal_only",
+    "m": 0.6,
+    "p0_all": {
+     "gas": 0.463,
+     "coal": 0.368,
+     "seam": 0.17
+    },
+    "bid_all": {
+     "gas": 0.422,
+     "coal": 0.382,
+     "seam": 0.195
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.501,
+      "coal": 0.283,
+      "seam": 0.216
+     },
+     "q2": {
+      "coal": 0.4,
+      "gas": 0.389,
+      "seam": 0.211
+     },
+     "q3": {
+      "coal": 0.416,
+      "gas": 0.382,
+      "seam": 0.201
+     },
+     "q4": {
+      "gas": 0.429,
+      "coal": 0.408,
+      "seam": 0.163
+     },
+     "q5": {
+      "gas": 0.412,
+      "coal": 0.405,
+      "seam": 0.183
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.964,
+     "committed": 0.03,
+     "peak": 0.003,
+     "mustrun": 0.002
+    },
+    "coal_econ_dispatched_share": 0.571,
+    "coal_econ_dispatched_share_q12": 0.356,
+    "dispatch_gw_mean": {
+     "coal": 27.868,
+     "coal_econ": 6.647,
+     "gas": 13.894,
+     "cc_regular": 9.569,
+     "seam": 16.497
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 22.597,
+     "coal_econ": 3.607,
+     "gas": 10.35,
+     "cc_regular": 7.568,
+     "seam": 15.06
+    },
+    "price": {
+     "bid_q1_median": 17.88,
+     "bid_q2_median": 19.133,
+     "bid_q5_median": 21.793,
+     "bid_lw_mean": 20.739,
+     "bid_minus_actual_q12_median": 2.547,
+     "bid_minus_actual_lw_mean": -1.23,
+     "bid_minus_actual_lw_mean_q12": 1.676,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "coal_only|0.55": {
+    "leg": "coal_only",
+    "m": 0.55,
+    "p0_all": {
+     "gas": 0.467,
+     "coal": 0.358,
+     "seam": 0.175
+    },
+    "bid_all": {
+     "gas": 0.439,
+     "coal": 0.363,
+     "seam": 0.198
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.457,
+      "coal": 0.37,
+      "seam": 0.173
+     },
+     "q2": {
+      "coal": 0.4,
+      "gas": 0.381,
+      "seam": 0.22
+     },
+     "q3": {
+      "gas": 0.428,
+      "coal": 0.38,
+      "seam": 0.193
+     },
+     "q4": {
+      "gas": 0.459,
+      "coal": 0.344,
+      "seam": 0.196
+     },
+     "q5": {
+      "gas": 0.471,
+      "coal": 0.32,
+      "seam": 0.209
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.961,
+     "committed": 0.032,
+     "peak": 0.004,
+     "mustrun": 0.003
+    },
+    "coal_econ_dispatched_share": 0.646,
+    "coal_econ_dispatched_share_q12": 0.434,
+    "dispatch_gw_mean": {
+     "coal": 28.734,
+     "coal_econ": 7.518,
+     "gas": 13.28,
+     "cc_regular": 9.044,
+     "seam": 16.245
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 23.392,
+     "coal_econ": 4.407,
+     "gas": 9.808,
+     "cc_regular": 7.103,
+     "seam": 14.807
+    },
+    "price": {
+     "bid_q1_median": 17.469,
+     "bid_q2_median": 18.453,
+     "bid_q5_median": 21.6,
+     "bid_lw_mean": 20.328,
+     "bid_minus_actual_q12_median": 2.135,
+     "bid_minus_actual_lw_mean": -1.641,
+     "bid_minus_actual_lw_mean_q12": 1.259,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "coal_only|0.50": {
+    "leg": "coal_only",
+    "m": 0.5,
+    "p0_all": {
+     "gas": 0.479,
+     "coal": 0.337,
+     "seam": 0.184
+    },
+    "bid_all": {
+     "gas": 0.456,
+     "coal": 0.339,
+     "seam": 0.205
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.459,
+      "coal": 0.387,
+      "seam": 0.154
+     },
+     "q2": {
+      "coal": 0.43,
+      "gas": 0.375,
+      "seam": 0.195
+     },
+     "q3": {
+      "gas": 0.441,
+      "coal": 0.346,
+      "seam": 0.213
+     },
+     "q4": {
+      "gas": 0.5,
+      "coal": 0.275,
+      "seam": 0.225
+     },
+     "q5": {
+      "gas": 0.503,
+      "coal": 0.259,
+      "seam": 0.238
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.952,
+     "committed": 0.039,
+     "mustrun": 0.005,
+     "peak": 0.004
+    },
+    "coal_econ_dispatched_share": 0.723,
+    "coal_econ_dispatched_share_q12": 0.527,
+    "dispatch_gw_mean": {
+     "coal": 29.625,
+     "coal_econ": 8.416,
+     "gas": 12.629,
+     "cc_regular": 8.464,
+     "seam": 16.005
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 24.315,
+     "coal_econ": 5.341,
+     "gas": 9.157,
+     "cc_regular": 6.516,
+     "seam": 14.535
+    },
+    "price": {
+     "bid_q1_median": 16.822,
+     "bid_q2_median": 17.88,
+     "bid_q5_median": 21.46,
+     "bid_lw_mean": 19.973,
+     "bid_minus_actual_q12_median": 1.654,
+     "bid_minus_actual_lw_mean": -1.995,
+     "bid_minus_actual_lw_mean_q12": 0.812,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "coal_only|0.45": {
+    "leg": "coal_only",
+    "m": 0.45,
+    "p0_all": {
+     "gas": 0.529,
+     "coal": 0.289,
+     "seam": 0.182
+    },
+    "bid_all": {
+     "gas": 0.506,
+     "coal": 0.283,
+     "seam": 0.211
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.432,
+      "coal": 0.422,
+      "seam": 0.147
+     },
+     "q2": {
+      "gas": 0.429,
+      "coal": 0.378,
+      "seam": 0.193
+     },
+     "q3": {
+      "gas": 0.518,
+      "coal": 0.267,
+      "seam": 0.216
+     },
+     "q4": {
+      "gas": 0.563,
+      "seam": 0.255,
+      "coal": 0.182
+     },
+     "q5": {
+      "gas": 0.589,
+      "seam": 0.246,
+      "coal": 0.165
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.938,
+     "committed": 0.05,
+     "mustrun": 0.007,
+     "peak": 0.004
+    },
+    "coal_econ_dispatched_share": 0.798,
+    "coal_econ_dispatched_share_q12": 0.63,
+    "dispatch_gw_mean": {
+     "coal": 30.487,
+     "coal_econ": 9.296,
+     "gas": 11.93,
+     "cc_regular": 7.827,
+     "seam": 15.841
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 25.335,
+     "coal_econ": 6.387,
+     "gas": 8.333,
+     "cc_regular": 5.754,
+     "seam": 14.339
+    },
+    "price": {
+     "bid_q1_median": 16.271,
+     "bid_q2_median": 17.256,
+     "bid_q5_median": 21.46,
+     "bid_lw_mean": 19.68,
+     "bid_minus_actual_q12_median": 1.187,
+     "bid_minus_actual_lw_mean": -2.289,
+     "bid_minus_actual_lw_mean_q12": 0.359,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "coal_only|0.40": {
+    "leg": "coal_only",
+    "m": 0.4,
+    "p0_all": {
+     "gas": 0.583,
+     "coal": 0.234,
+     "seam": 0.183
+    },
+    "bid_all": {
+     "gas": 0.537,
+     "coal": 0.233,
+     "seam": 0.23
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.457,
+      "coal": 0.402,
+      "seam": 0.141
+     },
+     "q2": {
+      "gas": 0.445,
+      "coal": 0.333,
+      "seam": 0.222
+     },
+     "q3": {
+      "gas": 0.542,
+      "seam": 0.252,
+      "coal": 0.205
+     },
+     "q4": {
+      "gas": 0.61,
+      "seam": 0.253,
+      "coal": 0.138
+     },
+     "q5": {
+      "gas": 0.63,
+      "seam": 0.284,
+      "coal": 0.086
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.906,
+     "committed": 0.065,
+     "mustrun": 0.021,
+     "peak": 0.008
+    },
+    "coal_econ_dispatched_share": 0.863,
+    "coal_econ_dispatched_share_q12": 0.732,
+    "dispatch_gw_mean": {
+     "coal": 31.217,
+     "coal_econ": 10.045,
+     "gas": 11.282,
+     "cc_regular": 7.223,
+     "seam": 15.76
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 26.345,
+     "coal_econ": 7.424,
+     "gas": 7.439,
+     "cc_regular": 4.918,
+     "seam": 14.223
+    },
+    "price": {
+     "bid_q1_median": 15.564,
+     "bid_q2_median": 16.942,
+     "bid_q5_median": 21.46,
+     "bid_lw_mean": 19.463,
+     "bid_minus_actual_q12_median": 0.771,
+     "bid_minus_actual_lw_mean": -2.506,
+     "bid_minus_actual_lw_mean_q12": -0.052,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "coal_only|0.35": {
+    "leg": "coal_only",
+    "m": 0.35,
+    "p0_all": {
+     "gas": 0.629,
+     "seam": 0.2,
+     "coal": 0.171
+    },
+    "bid_all": {
+     "gas": 0.585,
+     "seam": 0.242,
+     "coal": 0.173
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.483,
+      "coal": 0.338,
+      "seam": 0.179
+     },
+     "q2": {
+      "gas": 0.514,
+      "seam": 0.251,
+      "coal": 0.235
+     },
+     "q3": {
+      "gas": 0.595,
+      "seam": 0.258,
+      "coal": 0.147
+     },
+     "q4": {
+      "gas": 0.666,
+      "seam": 0.241,
+      "coal": 0.093
+     },
+     "q5": {
+      "gas": 0.667,
+      "seam": 0.283,
+      "coal": 0.05
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.87,
+     "committed": 0.093,
+     "mustrun": 0.026,
+     "peak": 0.011
+    },
+    "coal_econ_dispatched_share": 0.911,
+    "coal_econ_dispatched_share_q12": 0.821,
+    "dispatch_gw_mean": {
+     "coal": 31.769,
+     "coal_econ": 10.608,
+     "gas": 10.822,
+     "cc_regular": 6.793,
+     "seam": 15.667
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 27.232,
+     "coal_econ": 8.326,
+     "gas": 6.739,
+     "cc_regular": 4.268,
+     "seam": 14.035
+    },
+    "price": {
+     "bid_q1_median": 15.139,
+     "bid_q2_median": 16.718,
+     "bid_q5_median": 21.5,
+     "bid_lw_mean": 19.301,
+     "bid_minus_actual_q12_median": 0.434,
+     "bid_minus_actual_lw_mean": -2.667,
+     "bid_minus_actual_lw_mean_q12": -0.412,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "coal_only|0.30": {
+    "leg": "coal_only",
+    "m": 0.3,
+    "p0_all": {
+     "gas": 0.637,
+     "seam": 0.218,
+     "coal": 0.145
+    },
+    "bid_all": {
+     "gas": 0.603,
+     "seam": 0.259,
+     "coal": 0.137
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.491,
+      "coal": 0.285,
+      "seam": 0.224
+     },
+     "q2": {
+      "gas": 0.535,
+      "seam": 0.259,
+      "coal": 0.205
+     },
+     "q3": {
+      "gas": 0.636,
+      "seam": 0.268,
+      "coal": 0.096
+     },
+     "q4": {
+      "gas": 0.676,
+      "seam": 0.264,
+      "coal": 0.06
+     },
+     "q5": {
+      "gas": 0.677,
+      "seam": 0.283,
+      "coal": 0.04
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.83,
+     "committed": 0.115,
+     "mustrun": 0.039,
+     "peak": 0.017
+    },
+    "coal_econ_dispatched_share": 0.937,
+    "coal_econ_dispatched_share_q12": 0.871,
+    "dispatch_gw_mean": {
+     "coal": 32.065,
+     "coal_econ": 10.91,
+     "gas": 10.584,
+     "cc_regular": 6.565,
+     "seam": 15.609
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 27.726,
+     "coal_econ": 8.83,
+     "gas": 6.367,
+     "cc_regular": 3.912,
+     "seam": 13.913
+    },
+    "price": {
+     "bid_q1_median": 14.823,
+     "bid_q2_median": 16.646,
+     "bid_q5_median": 21.546,
+     "bid_lw_mean": 19.176,
+     "bid_minus_actual_q12_median": 0.21,
+     "bid_minus_actual_lw_mean": -2.792,
+     "bid_minus_actual_lw_mean_q12": -0.724,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "joint|1.00": {
+    "leg": "joint",
+    "m": 1.0,
+    "p0_all": {
+     "gas": 0.581,
+     "coal": 0.224,
+     "seam": 0.195
+    },
+    "bid_all": {
+     "gas": 0.528,
+     "coal": 0.275,
+     "seam": 0.197
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.63,
+      "seam": 0.29,
+      "coal": 0.08
+     },
+     "q2": {
+      "gas": 0.58,
+      "seam": 0.259,
+      "coal": 0.161
+     },
+     "q3": {
+      "gas": 0.552,
+      "coal": 0.252,
+      "seam": 0.196
+     },
+     "q4": {
+      "gas": 0.467,
+      "coal": 0.385,
+      "seam": 0.148
+     },
+     "q5": {
+      "coal": 0.499,
+      "gas": 0.412,
+      "seam": 0.089
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.857,
+     "committed": 0.121,
+     "peak": 0.017,
+     "mustrun": 0.004
+    },
+    "coal_econ_dispatched_share": 0.197,
+    "coal_econ_dispatched_share_q12": 0.083,
+    "dispatch_gw_mean": {
+     "coal": 23.712,
+     "coal_econ": 2.293,
+     "gas": 16.715,
+     "cc_regular": 11.306,
+     "seam": 17.831
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 19.894,
+     "coal_econ": 0.847,
+     "gas": 11.955,
+     "cc_regular": 8.66,
+     "seam": 16.158
+    },
+    "price": {
+     "bid_q1_median": 19.11,
+     "bid_q2_median": 21.6,
+     "bid_q5_median": 27.837,
+     "bid_lw_mean": 24.211,
+     "bid_minus_actual_q12_median": 4.649,
+     "bid_minus_actual_lw_mean": 2.242,
+     "bid_minus_actual_lw_mean_q12": 3.806,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "joint|0.95": {
+    "leg": "joint",
+    "m": 0.95,
+    "p0_all": {
+     "gas": 0.554,
+     "coal": 0.242,
+     "seam": 0.204
+    },
+    "bid_all": {
+     "gas": 0.513,
+     "coal": 0.289,
+     "seam": 0.197
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.603,
+      "seam": 0.293,
+      "coal": 0.104
+     },
+     "q2": {
+      "gas": 0.583,
+      "seam": 0.241,
+      "coal": 0.175
+     },
+     "q3": {
+      "gas": 0.529,
+      "coal": 0.27,
+      "seam": 0.201
+     },
+     "q4": {
+      "gas": 0.459,
+      "coal": 0.389,
+      "seam": 0.151
+     },
+     "q5": {
+      "coal": 0.508,
+      "gas": 0.393,
+      "seam": 0.099
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.899,
+     "committed": 0.091,
+     "peak": 0.007,
+     "mustrun": 0.002
+    },
+    "coal_econ_dispatched_share": 0.227,
+    "coal_econ_dispatched_share_q12": 0.099,
+    "dispatch_gw_mean": {
+     "coal": 24.022,
+     "coal_econ": 2.647,
+     "gas": 16.451,
+     "cc_regular": 11.182,
+     "seam": 17.785
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 20.038,
+     "coal_econ": 1.002,
+     "gas": 11.844,
+     "cc_regular": 8.586,
+     "seam": 16.125
+    },
+    "price": {
+     "bid_q1_median": 19.042,
+     "bid_q2_median": 21.528,
+     "bid_q5_median": 27.187,
+     "bid_lw_mean": 23.919,
+     "bid_minus_actual_q12_median": 4.551,
+     "bid_minus_actual_lw_mean": 1.95,
+     "bid_minus_actual_lw_mean_q12": 3.701,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "joint|0.90": {
+    "leg": "joint",
+    "m": 0.9,
+    "p0_all": {
+     "gas": 0.525,
+     "coal": 0.268,
+     "seam": 0.207
+    },
+    "bid_all": {
+     "gas": 0.484,
+     "coal": 0.304,
+     "seam": 0.211
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.594,
+      "seam": 0.295,
+      "coal": 0.111
+     },
+     "q2": {
+      "gas": 0.54,
+      "seam": 0.277,
+      "coal": 0.183
+     },
+     "q3": {
+      "gas": 0.477,
+      "coal": 0.317,
+      "seam": 0.205
+     },
+     "q4": {
+      "gas": 0.444,
+      "coal": 0.388,
+      "seam": 0.168
+     },
+     "q5": {
+      "coal": 0.524,
+      "gas": 0.365,
+      "seam": 0.111
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.909,
+     "committed": 0.082,
+     "peak": 0.006,
+     "mustrun": 0.003
+    },
+    "coal_econ_dispatched_share": 0.265,
+    "coal_econ_dispatched_share_q12": 0.119,
+    "dispatch_gw_mean": {
+     "coal": 24.407,
+     "coal_econ": 3.081,
+     "gas": 16.15,
+     "cc_regular": 11.025,
+     "seam": 17.701
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 20.237,
+     "coal_econ": 1.209,
+     "gas": 11.706,
+     "cc_regular": 8.487,
+     "seam": 16.064
+    },
+    "price": {
+     "bid_q1_median": 18.959,
+     "bid_q2_median": 21.46,
+     "bid_q5_median": 26.645,
+     "bid_lw_mean": 23.595,
+     "bid_minus_actual_q12_median": 4.446,
+     "bid_minus_actual_lw_mean": 1.626,
+     "bid_minus_actual_lw_mean_q12": 3.577,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "joint|0.85": {
+    "leg": "joint",
+    "m": 0.85,
+    "p0_all": {
+     "gas": 0.513,
+     "coal": 0.291,
+     "seam": 0.196
+    },
+    "bid_all": {
+     "gas": 0.454,
+     "coal": 0.342,
+     "seam": 0.204
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.566,
+      "seam": 0.298,
+      "coal": 0.136
+     },
+     "q2": {
+      "gas": 0.507,
+      "seam": 0.251,
+      "coal": 0.241
+     },
+     "q3": {
+      "gas": 0.437,
+      "coal": 0.348,
+      "seam": 0.216
+     },
+     "q4": {
+      "coal": 0.432,
+      "gas": 0.399,
+      "seam": 0.169
+     },
+     "q5": {
+      "coal": 0.551,
+      "gas": 0.361,
+      "seam": 0.087
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.933,
+     "committed": 0.055,
+     "peak": 0.008,
+     "mustrun": 0.004
+    },
+    "coal_econ_dispatched_share": 0.306,
+    "coal_econ_dispatched_share_q12": 0.144,
+    "dispatch_gw_mean": {
+     "coal": 24.859,
+     "coal_econ": 3.569,
+     "gas": 15.819,
+     "cc_regular": 10.835,
+     "seam": 17.58
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 20.481,
+     "coal_econ": 1.46,
+     "gas": 11.541,
+     "cc_regular": 8.37,
+     "seam": 15.985
+    },
+    "price": {
+     "bid_q1_median": 18.872,
+     "bid_q2_median": 21.215,
+     "bid_q5_median": 25.985,
+     "bid_lw_mean": 23.232,
+     "bid_minus_actual_q12_median": 4.302,
+     "bid_minus_actual_lw_mean": 1.263,
+     "bid_minus_actual_lw_mean_q12": 3.421,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "joint|0.80": {
+    "leg": "joint",
+    "m": 0.8,
+    "p0_all": {
+     "gas": 0.493,
+     "coal": 0.322,
+     "seam": 0.185
+    },
+    "bid_all": {
+     "gas": 0.433,
+     "coal": 0.376,
+     "seam": 0.191
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.555,
+      "seam": 0.28,
+      "coal": 0.166
+     },
+     "q2": {
+      "gas": 0.458,
+      "coal": 0.3,
+      "seam": 0.242
+     },
+     "q3": {
+      "gas": 0.42,
+      "coal": 0.396,
+      "seam": 0.185
+     },
+     "q4": {
+      "coal": 0.45,
+      "gas": 0.388,
+      "seam": 0.162
+     },
+     "q5": {
+      "coal": 0.57,
+      "gas": 0.343,
+      "seam": 0.087
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.952,
+     "committed": 0.037,
+     "peak": 0.007,
+     "mustrun": 0.004
+    },
+    "coal_econ_dispatched_share": 0.352,
+    "coal_econ_dispatched_share_q12": 0.173,
+    "dispatch_gw_mean": {
+     "coal": 25.367,
+     "coal_econ": 4.099,
+     "gas": 15.433,
+     "cc_regular": 10.59,
+     "seam": 17.458
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 20.773,
+     "coal_econ": 1.756,
+     "gas": 11.329,
+     "cc_regular": 8.216,
+     "seam": 15.904
+    },
+    "price": {
+     "bid_q1_median": 18.646,
+     "bid_q2_median": 20.905,
+     "bid_q5_median": 25.286,
+     "bid_lw_mean": 22.824,
+     "bid_minus_actual_q12_median": 4.113,
+     "bid_minus_actual_lw_mean": 0.856,
+     "bid_minus_actual_lw_mean_q12": 3.222,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "joint|0.75": {
+    "leg": "joint",
+    "m": 0.75,
+    "p0_all": {
+     "gas": 0.47,
+     "coal": 0.347,
+     "seam": 0.183
+    },
+    "bid_all": {
+     "gas": 0.425,
+     "coal": 0.384,
+     "seam": 0.191
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.54,
+      "seam": 0.263,
+      "coal": 0.197
+     },
+     "q2": {
+      "gas": 0.457,
+      "coal": 0.303,
+      "seam": 0.24
+     },
+     "q3": {
+      "coal": 0.41,
+      "gas": 0.386,
+      "seam": 0.204
+     },
+     "q4": {
+      "coal": 0.478,
+      "gas": 0.374,
+      "seam": 0.147
+     },
+     "q5": {
+      "coal": 0.534,
+      "gas": 0.366,
+      "seam": 0.1
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.958,
+     "committed": 0.031,
+     "peak": 0.008,
+     "mustrun": 0.003
+    },
+    "coal_econ_dispatched_share": 0.403,
+    "coal_econ_dispatched_share_q12": 0.209,
+    "dispatch_gw_mean": {
+     "coal": 25.951,
+     "coal_econ": 4.693,
+     "gas": 14.987,
+     "cc_regular": 10.277,
+     "seam": 17.32
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 21.138,
+     "coal_econ": 2.124,
+     "gas": 11.067,
+     "cc_regular": 8.011,
+     "seam": 15.802
+    },
+    "price": {
+     "bid_q1_median": 18.479,
+     "bid_q2_median": 20.769,
+     "bid_q5_median": 24.52,
+     "bid_lw_mean": 22.388,
+     "bid_minus_actual_q12_median": 3.853,
+     "bid_minus_actual_lw_mean": 0.419,
+     "bid_minus_actual_lw_mean_q12": 2.973,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "joint|0.70": {
+    "leg": "joint",
+    "m": 0.7,
+    "p0_all": {
+     "gas": 0.45,
+     "coal": 0.362,
+     "seam": 0.188
+    },
+    "bid_all": {
+     "gas": 0.412,
+     "coal": 0.397,
+     "seam": 0.192
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.489,
+      "coal": 0.263,
+      "seam": 0.249
+     },
+     "q2": {
+      "gas": 0.433,
+      "coal": 0.324,
+      "seam": 0.243
+     },
+     "q3": {
+      "coal": 0.432,
+      "gas": 0.377,
+      "seam": 0.191
+     },
+     "q4": {
+      "coal": 0.47,
+      "gas": 0.381,
+      "seam": 0.148
+     },
+     "q5": {
+      "coal": 0.494,
+      "gas": 0.379,
+      "seam": 0.127
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.961,
+     "committed": 0.033,
+     "peak": 0.004,
+     "mustrun": 0.002
+    },
+    "coal_econ_dispatched_share": 0.462,
+    "coal_econ_dispatched_share_q12": 0.257,
+    "dispatch_gw_mean": {
+     "coal": 26.626,
+     "coal_econ": 5.375,
+     "gas": 14.494,
+     "cc_regular": 9.905,
+     "seam": 17.138
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 21.616,
+     "coal_econ": 2.605,
+     "gas": 10.747,
+     "cc_regular": 7.749,
+     "seam": 15.644
+    },
+    "price": {
+     "bid_q1_median": 18.211,
+     "bid_q2_median": 20.488,
+     "bid_q5_median": 23.696,
+     "bid_lw_mean": 21.935,
+     "bid_minus_actual_q12_median": 3.578,
+     "bid_minus_actual_lw_mean": -0.034,
+     "bid_minus_actual_lw_mean_q12": 2.686,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "joint|0.65": {
+    "leg": "joint",
+    "m": 0.65,
+    "p0_all": {
+     "gas": 0.452,
+     "coal": 0.379,
+     "seam": 0.169
+    },
+    "bid_all": {
+     "gas": 0.412,
+     "coal": 0.398,
+     "seam": 0.19
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.469,
+      "coal": 0.311,
+      "seam": 0.22
+     },
+     "q2": {
+      "gas": 0.423,
+      "coal": 0.362,
+      "seam": 0.215
+     },
+     "q3": {
+      "coal": 0.427,
+      "gas": 0.379,
+      "seam": 0.194
+     },
+     "q4": {
+      "coal": 0.454,
+      "gas": 0.372,
+      "seam": 0.174
+     },
+     "q5": {
+      "coal": 0.437,
+      "gas": 0.415,
+      "seam": 0.148
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.967,
+     "committed": 0.028,
+     "peak": 0.003,
+     "mustrun": 0.002
+    },
+    "coal_econ_dispatched_share": 0.528,
+    "coal_econ_dispatched_share_q12": 0.315,
+    "dispatch_gw_mean": {
+     "coal": 27.386,
+     "coal_econ": 6.144,
+     "gas": 13.973,
+     "cc_regular": 9.48,
+     "seam": 16.899
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 22.197,
+     "coal_econ": 3.193,
+     "gas": 10.366,
+     "cc_regular": 7.422,
+     "seam": 15.444
+    },
+    "price": {
+     "bid_q1_median": 18.03,
+     "bid_q2_median": 19.967,
+     "bid_q5_median": 23.026,
+     "bid_lw_mean": 21.491,
+     "bid_minus_actual_q12_median": 3.266,
+     "bid_minus_actual_lw_mean": -0.478,
+     "bid_minus_actual_lw_mean_q12": 2.356,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "joint|0.60": {
+    "leg": "joint",
+    "m": 0.6,
+    "p0_all": {
+     "gas": 0.453,
+     "coal": 0.368,
+     "seam": 0.18
+    },
+    "bid_all": {
+     "gas": 0.411,
+     "coal": 0.399,
+     "seam": 0.191
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.458,
+      "coal": 0.353,
+      "seam": 0.189
+     },
+     "q2": {
+      "coal": 0.407,
+      "gas": 0.37,
+      "seam": 0.223
+     },
+     "q3": {
+      "coal": 0.433,
+      "gas": 0.376,
+      "seam": 0.191
+     },
+     "q4": {
+      "coal": 0.414,
+      "gas": 0.41,
+      "seam": 0.175
+     },
+     "q5": {
+      "gas": 0.439,
+      "coal": 0.387,
+      "seam": 0.174
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.962,
+     "committed": 0.033,
+     "peak": 0.003,
+     "mustrun": 0.002
+    },
+    "coal_econ_dispatched_share": 0.596,
+    "coal_econ_dispatched_share_q12": 0.38,
+    "dispatch_gw_mean": {
+     "coal": 28.174,
+     "coal_econ": 6.94,
+     "gas": 13.431,
+     "cc_regular": 9.018,
+     "seam": 16.653
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 22.854,
+     "coal_econ": 3.857,
+     "gas": 9.921,
+     "cc_regular": 7.032,
+     "seam": 15.231
+    },
+    "price": {
+     "bid_q1_median": 18.01,
+     "bid_q2_median": 19.321,
+     "bid_q5_median": 22.714,
+     "bid_lw_mean": 21.057,
+     "bid_minus_actual_q12_median": 2.874,
+     "bid_minus_actual_lw_mean": -0.912,
+     "bid_minus_actual_lw_mean_q12": 1.969,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "joint|0.55": {
+    "leg": "joint",
+    "m": 0.55,
+    "p0_all": {
+     "gas": 0.457,
+     "coal": 0.361,
+     "seam": 0.182
+    },
+    "bid_all": {
+     "gas": 0.432,
+     "coal": 0.362,
+     "seam": 0.206
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.431,
+      "coal": 0.373,
+      "seam": 0.196
+     },
+     "q2": {
+      "coal": 0.404,
+      "gas": 0.375,
+      "seam": 0.221
+     },
+     "q3": {
+      "gas": 0.399,
+      "coal": 0.389,
+      "seam": 0.212
+     },
+     "q4": {
+      "gas": 0.461,
+      "coal": 0.338,
+      "seam": 0.201
+     },
+     "q5": {
+      "gas": 0.495,
+      "coal": 0.306,
+      "seam": 0.199
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.954,
+     "committed": 0.036,
+     "mustrun": 0.005,
+     "peak": 0.005
+    },
+    "coal_econ_dispatched_share": 0.667,
+    "coal_econ_dispatched_share_q12": 0.459,
+    "dispatch_gw_mean": {
+     "coal": 29.0,
+     "coal_econ": 7.773,
+     "gas": 12.864,
+     "cc_regular": 8.518,
+     "seam": 16.394
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 23.643,
+     "coal_econ": 4.651,
+     "gas": 9.411,
+     "cc_regular": 6.58,
+     "seam": 14.954
+    },
+    "price": {
+     "bid_q1_median": 17.728,
+     "bid_q2_median": 18.615,
+     "bid_q5_median": 22.216,
+     "bid_lw_mean": 20.642,
+     "bid_minus_actual_q12_median": 2.435,
+     "bid_minus_actual_lw_mean": -1.327,
+     "bid_minus_actual_lw_mean_q12": 1.526,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "joint|0.50": {
+    "leg": "joint",
+    "m": 0.5,
+    "p0_all": {
+     "gas": 0.473,
+     "coal": 0.342,
+     "seam": 0.184
+    },
+    "bid_all": {
+     "gas": 0.448,
+     "coal": 0.338,
+     "seam": 0.214
+    },
+    "bid_q": {
+     "q1": {
+      "coal": 0.436,
+      "gas": 0.396,
+      "seam": 0.168
+     },
+     "q2": {
+      "coal": 0.413,
+      "gas": 0.382,
+      "seam": 0.205
+     },
+     "q3": {
+      "gas": 0.439,
+      "coal": 0.338,
+      "seam": 0.222
+     },
+     "q4": {
+      "gas": 0.481,
+      "coal": 0.275,
+      "seam": 0.245
+     },
+     "q5": {
+      "gas": 0.541,
+      "seam": 0.229,
+      "coal": 0.229
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.952,
+     "committed": 0.04,
+     "mustrun": 0.005,
+     "peak": 0.003
+    },
+    "coal_econ_dispatched_share": 0.739,
+    "coal_econ_dispatched_share_q12": 0.547,
+    "dispatch_gw_mean": {
+     "coal": 29.826,
+     "coal_econ": 8.606,
+     "gas": 12.287,
+     "cc_regular": 8.0,
+     "seam": 16.145
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 24.531,
+     "coal_econ": 5.552,
+     "gas": 8.81,
+     "cc_regular": 6.043,
+     "seam": 14.666
+    },
+    "price": {
+     "bid_q1_median": 16.96,
+     "bid_q2_median": 17.88,
+     "bid_q5_median": 21.66,
+     "bid_lw_mean": 20.281,
+     "bid_minus_actual_q12_median": 1.925,
+     "bid_minus_actual_lw_mean": -1.687,
+     "bid_minus_actual_lw_mean_q12": 1.059,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "joint|0.45": {
+    "leg": "joint",
+    "m": 0.45,
+    "p0_all": {
+     "gas": 0.511,
+     "coal": 0.291,
+     "seam": 0.199
+    },
+    "bid_all": {
+     "gas": 0.482,
+     "coal": 0.289,
+     "seam": 0.23
+    },
+    "bid_q": {
+     "q1": {
+      "coal": 0.449,
+      "gas": 0.382,
+      "seam": 0.169
+     },
+     "q2": {
+      "coal": 0.41,
+      "gas": 0.38,
+      "seam": 0.21
+     },
+     "q3": {
+      "gas": 0.498,
+      "coal": 0.262,
+      "seam": 0.24
+     },
+     "q4": {
+      "gas": 0.54,
+      "seam": 0.274,
+      "coal": 0.186
+     },
+     "q5": {
+      "gas": 0.608,
+      "seam": 0.255,
+      "coal": 0.137
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.931,
+     "committed": 0.057,
+     "peak": 0.007,
+     "mustrun": 0.006
+    },
+    "coal_econ_dispatched_share": 0.806,
+    "coal_econ_dispatched_share_q12": 0.639,
+    "dispatch_gw_mean": {
+     "coal": 30.588,
+     "coal_econ": 9.387,
+     "gas": 11.693,
+     "cc_regular": 7.458,
+     "seam": 15.976
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 25.431,
+     "coal_econ": 6.478,
+     "gas": 8.109,
+     "cc_regular": 5.401,
+     "seam": 14.467
+    },
+    "price": {
+     "bid_q1_median": 16.281,
+     "bid_q2_median": 17.411,
+     "bid_q5_median": 21.6,
+     "bid_lw_mean": 19.98,
+     "bid_minus_actual_q12_median": 1.43,
+     "bid_minus_actual_lw_mean": -1.989,
+     "bid_minus_actual_lw_mean_q12": 0.593,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "joint|0.40": {
+    "leg": "joint",
+    "m": 0.4,
+    "p0_all": {
+     "gas": 0.555,
+     "coal": 0.24,
+     "seam": 0.205
+    },
+    "bid_all": {
+     "gas": 0.52,
+     "coal": 0.245,
+     "seam": 0.236
+    },
+    "bid_q": {
+     "q1": {
+      "coal": 0.436,
+      "gas": 0.391,
+      "seam": 0.174
+     },
+     "q2": {
+      "gas": 0.434,
+      "coal": 0.353,
+      "seam": 0.213
+     },
+     "q3": {
+      "gas": 0.517,
+      "seam": 0.261,
+      "coal": 0.223
+     },
+     "q4": {
+      "gas": 0.596,
+      "seam": 0.276,
+      "coal": 0.128
+     },
+     "q5": {
+      "gas": 0.66,
+      "seam": 0.255,
+      "coal": 0.085
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.906,
+     "committed": 0.07,
+     "mustrun": 0.014,
+     "peak": 0.01
+    },
+    "coal_econ_dispatched_share": 0.86,
+    "coal_econ_dispatched_share_q12": 0.723,
+    "dispatch_gw_mean": {
+     "coal": 31.193,
+     "coal_econ": 10.012,
+     "gas": 11.189,
+     "cc_regular": 6.99,
+     "seam": 15.877
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 26.255,
+     "coal_econ": 7.331,
+     "gas": 7.429,
+     "cc_regular": 4.772,
+     "seam": 14.323
+    },
+    "price": {
+     "bid_q1_median": 15.533,
+     "bid_q2_median": 16.96,
+     "bid_q5_median": 21.6,
+     "bid_lw_mean": 19.725,
+     "bid_minus_actual_q12_median": 0.951,
+     "bid_minus_actual_lw_mean": -2.244,
+     "bid_minus_actual_lw_mean_q12": 0.125,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "joint|0.35": {
+    "leg": "joint",
+    "m": 0.35,
+    "p0_all": {
+     "gas": 0.593,
+     "seam": 0.218,
+     "coal": 0.189
+    },
+    "bid_all": {
+     "gas": 0.564,
+     "seam": 0.255,
+     "coal": 0.181
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.427,
+      "coal": 0.334,
+      "seam": 0.239
+     },
+     "q2": {
+      "gas": 0.48,
+      "coal": 0.265,
+      "seam": 0.255
+     },
+     "q3": {
+      "gas": 0.582,
+      "seam": 0.263,
+      "coal": 0.155
+     },
+     "q4": {
+      "gas": 0.638,
+      "seam": 0.267,
+      "coal": 0.095
+     },
+     "q5": {
+      "gas": 0.691,
+      "seam": 0.253,
+      "coal": 0.057
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.86,
+     "committed": 0.107,
+     "mustrun": 0.024,
+     "peak": 0.009
+    },
+    "coal_econ_dispatched_share": 0.904,
+    "coal_econ_dispatched_share_q12": 0.804,
+    "dispatch_gw_mean": {
+     "coal": 31.694,
+     "coal_econ": 10.526,
+     "gas": 10.799,
+     "cc_regular": 6.622,
+     "seam": 15.765
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 27.068,
+     "coal_econ": 8.159,
+     "gas": 6.841,
+     "cc_regular": 4.22,
+     "seam": 14.098
+    },
+    "price": {
+     "bid_q1_median": 14.796,
+     "bid_q2_median": 16.758,
+     "bid_q5_median": 21.6,
+     "bid_lw_mean": 19.539,
+     "bid_minus_actual_q12_median": 0.557,
+     "bid_minus_actual_lw_mean": -2.43,
+     "bid_minus_actual_lw_mean_q12": -0.273,
+     "markup_at_margin_q12_median": 0.0
+    }
+   },
+   "joint|0.30": {
+    "leg": "joint",
+    "m": 0.3,
+    "p0_all": {
+     "gas": 0.621,
+     "seam": 0.228,
+     "coal": 0.151
+    },
+    "bid_all": {
+     "gas": 0.586,
+     "seam": 0.265,
+     "coal": 0.149
+    },
+    "bid_q": {
+     "q1": {
+      "gas": 0.437,
+      "coal": 0.317,
+      "seam": 0.246
+     },
+     "q2": {
+      "gas": 0.529,
+      "seam": 0.252,
+      "coal": 0.219
+     },
+     "q3": {
+      "gas": 0.611,
+      "seam": 0.284,
+      "coal": 0.104
+     },
+     "q4": {
+      "gas": 0.659,
+      "seam": 0.284,
+      "coal": 0.058
+     },
+     "q5": {
+      "gas": 0.696,
+      "seam": 0.257,
+      "coal": 0.047
+     }
+    },
+    "bid_coal_band_all": {
+     "econ": 0.838,
+     "committed": 0.116,
+     "mustrun": 0.032,
+     "peak": 0.015
+    },
+    "coal_econ_dispatched_share": 0.932,
+    "coal_econ_dispatched_share_q12": 0.86,
+    "dispatch_gw_mean": {
+     "coal": 32.016,
+     "coal_econ": 10.855,
+     "gas": 10.554,
+     "cc_regular": 6.394,
+     "seam": 15.688
+    },
+    "dispatch_gw_mean_q12": {
+     "coal": 27.618,
+     "coal_econ": 8.72,
+     "gas": 6.442,
+     "cc_regular": 3.853,
+     "seam": 13.947
+    },
+    "price": {
+     "bid_q1_median": 14.409,
+     "bid_q2_median": 16.644,
+     "bid_q5_median": 21.6,
+     "bid_lw_mean": 19.39,
+     "bid_minus_actual_q12_median": 0.262,
+     "bid_minus_actual_lw_mean": -2.579,
+     "bid_minus_actual_lw_mean_q12": -0.614,
+     "markup_at_margin_q12_median": 0.0
+    }
+   }
+  },
+  "elapsed_s": 263.9
+ }
+}
