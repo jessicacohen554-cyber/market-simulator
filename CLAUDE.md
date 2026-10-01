@@ -395,17 +395,31 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       block so the ladder says which year did what. **This clause is UNAFFECTED by the (a)
       amendment**: the de-designation is the Run Explorer's Report view only — the status page's
       holdout ladder is per-year by design, is a different surface, and stays.
-    - **(c) A HELD-OUT YEAR NEVER DOWNGRADES THE ISO.** *(Owner ruling 2026-09-05, verbatim: "An
-      iso can stay calibrated even if it degrades on holdout years".)* The ISO's calibration
-      determination is the **train-tier (2023–2025) verdict** and nothing else. A validation-tier
-      score is iterable model-SELECTION evidence and cannot be quoted as a certified skill
-      number, so it cannot certify and it cannot decertify. (Since `[R-HOLDOUT]` was removed
-      2026-09-09 that is true of EVERY year, not only held-out ones — no year is protected
-      from being iterated against any more, so no year certifies. Rule 22's ordinal now
-      carries `[R-C3C]`.) A degraded rung is REPORTED — on the
-      keeper's panel, on the status card, and in the session's assessment doc — and the ISO's
-      headline is untouched. Both surfaces state this in place rather than leaving a reader to
-      infer that a NOT-YET rung beside a CALIBRATED headline is a contradiction.
+    - **(c) A HELD-OUT YEAR THAT MISSES DOWNGRADES THE ISO.** *(AMENDED 2026-09-30, owner
+      instruction, verbatim: "Shouldn't be considered calibrated if holdout years miss." This
+      REVERSES the clause as ruled 2026-09-05 — "A HELD-OUT YEAR NEVER DOWNGRADES THE ISO", owner
+      verbatim "An iso can stay calibrated even if it degrades on holdout years" — under which the
+      determination was the train-tier (2023–2025) verdict alone. Executed by session soco-96 as
+      rubric **v3.13**; genealogy `docs/governance/rule-history.md` §26.)* The ISO's calibration
+      determination covers **EVERY year the ISO has registered**: the keeper's own designated
+      scopes (every `config_partition` config on its designated span, whatever its `tier`; else the
+      keeper's whole registered span) **plus every run folded to it via `holdout.keeper`**. It is
+      computed once, by `scripts/calibration_verdict.py::iso_determination`, which
+      `build_status.py` and `audit_keepers.py` (M1b) both read — never re-derived elsewhere. A
+      held-out year that reads NOT-YET makes the ISO NOT-YET, and the determination basis names
+      the year and the failing criterion. Owner decision cards, same sitting: **(i) budget "Per run,
+      worst-of"** — each scope is scored by the unchanged rubric under its own caveat budget and the
+      ISO reads the worst scope (the ercot-246 partition rollup extended to held-out years; a single
+      bundle already spanning every year is one scope); **(ii) stale rung "Counts; flagged
+      stale"** — a folded run solved at a different basis than the keeper still gates, is flagged
+      `stale` on the status page, and its lane owes a re-solve (rules 34 (c) / 35 (c)). **What is
+      untouched**: every band, tier, ledger row, both caveat budgets and the v3.6 C3c limb below —
+      only which scopes the headline folds over changed, so no RUN-level determination moved (0 of
+      11 at the amendment). A passing held-out year is still model-SELECTION evidence, not a
+      certified skill number: since `[R-HOLDOUT]` was removed no year is protected from being
+      iterated against, so a CALIBRATED ISO certifies that every registered year clears the rubric,
+      nothing more. `frontier_touchpoint` blocks are unaffected in form; their claim is now what a
+      CALIBRATED headline already requires.
 
     The companion scorer change is rubric **v3.6** (owner, same sitting, verbatim: *"c3c should be
     an accepted caveat on all holdout years"*): on an out-of-training year the C3c standing rule's

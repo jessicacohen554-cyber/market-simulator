@@ -1,0 +1,20 @@
+{
+ "year": 2024,
+ "flags": [
+  "mid_vintage_exit_carry",
+  "fleet_zone_vintage_coords",
+  "retiree_vintage_status_scope"
+ ],
+ "added": {
+  "2485_GT1": [
+   "2485",
+   "Capital_Hudson",
+   "",
+   21.3,
+   41.4
+  ]
+ },
+ "removed": {},
+ "changed": {},
+ "demand_identical": true
+}

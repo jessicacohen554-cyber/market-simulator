@@ -3895,6 +3895,11 @@ results/calibration/spp104_arm_20*/
 results/calibration/spp104_arm_span/
 # NYISO-NEXT-15 per-year shard legs: kept out of main (rule 32(d)); only the composite registers.
 results/calibration/nyisonext15_202[2-5]/
+
+# R-ERCOT-19 per-year shard legs: local only, kept until the owner rules (rule 31); provenance SHAs in the RESULT doc.
+results/calibration/r_ercot19_arm_*/
+results/calibration/r_ercot19b_arm_*/
+results/calibration/r_ercot19c_arm_*/
 # soco-93 zero-LP probe outputs (G-DRIFT identity); numbers live in PRECOMMIT-soco-93 §3
 results/calibration/_soco93/
 
@@ -3918,3 +3923,7 @@ results/calibration/rcaiso18_A_20*/
 
 # NWPP-NEXT-14 per-year shard legs (transport; composite is registered). Provenance: 2019 cd4ceba85ac600ec07475d017991d2dddd961ba8, 2020 d3498dec9fece60c5744e352caab846a1f313f5f, 2021 cb9d7e61f7c1b1b3fe8d5466ad3386ec2af96fc6, 2022 7e75c2694e2058c4ba269b586c9ddaab97b09bd8, 2023 ab503a6037c6d9f93628af85042365e84b3ae254, 2024 36e0ea7c304d8928457fa66ff7a589e99c4ddb43, 2025 f589faf2ae89682417d9001ef6e6b42f5e140f79
 results/calibration/nwppnext14_20[0-9][0-9]/
+# R-CAISO-20 per-year shard legs: kept local, out of main (rules 31 / 32(d)); composites are committed.
+results/calibration/rcaiso20_A_20*/
+
+results/calibration/_rcaiso21/

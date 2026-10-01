@@ -1,0 +1,303 @@
+{
+ "2019": {
+  "class_d_avail_twh": {},
+  "class_d_pmax": {},
+  "moved": [
+   {
+    "plant": 2322,
+    "group": "CC_REGULAR",
+    "pmax": 462.0,
+    "avail_B_twh": 3.693,
+    "d_avail_twh": 0.0,
+    "d_pmax": 0.0,
+    "hr_units_moved": 3,
+    "d_min_gen_twh": 0.0,
+    "eia923_twh_by_pm": {
+     "CA": 0.157,
+     "CT": 0.289,
+     "GT": 0.223
+    }
+   }
+  ],
+  "moved_units": [
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_committed",
+    "pmax": 207.9,
+    "pmax_p": 207.9,
+    "d_min_gen_twh": 0.0
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_econhi",
+    "pmax": 127.05,
+    "pmax_p": 127.05,
+    "d_min_gen_twh": 0.0
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_econlo",
+    "pmax": 127.05,
+    "pmax_p": 127.05,
+    "d_min_gen_twh": 0.0
+   }
+  ],
+  "units_added": [],
+  "units_dropped": []
+ },
+ "2020": {
+  "class_d_avail_twh": {},
+  "class_d_pmax": {},
+  "moved": [
+   {
+    "plant": 2322,
+    "group": "CC_REGULAR",
+    "pmax": 462.0,
+    "avail_B_twh": 3.693,
+    "d_avail_twh": 0.0,
+    "d_pmax": 0.0,
+    "hr_units_moved": 3,
+    "d_min_gen_twh": 0.0,
+    "eia923_twh_by_pm": {
+     "CA": 0.187,
+     "CT": 0.374,
+     "GT": 0.253
+    }
+   }
+  ],
+  "moved_units": [
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_committed",
+    "pmax": 207.9,
+    "pmax_p": 207.9,
+    "d_min_gen_twh": 0.0
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_econhi",
+    "pmax": 127.05,
+    "pmax_p": 127.05,
+    "d_min_gen_twh": 0.0
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_econlo",
+    "pmax": 127.05,
+    "pmax_p": 127.05,
+    "d_min_gen_twh": 0.0
+   }
+  ],
+  "units_added": [],
+  "units_dropped": []
+ },
+ "2021": {
+  "class_d_avail_twh": {},
+  "class_d_pmax": {},
+  "moved": [
+   {
+    "plant": 2322,
+    "group": "CC_REGULAR",
+    "pmax": 462.0,
+    "avail_B_twh": 3.693,
+    "d_avail_twh": 0.0,
+    "d_pmax": 0.0,
+    "hr_units_moved": 3,
+    "d_min_gen_twh": 0.0,
+    "eia923_twh_by_pm": {
+     "CA": 0.247,
+     "CT": 0.452,
+     "GT": 0.273
+    }
+   }
+  ],
+  "moved_units": [
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_committed",
+    "pmax": 207.9,
+    "pmax_p": 207.9,
+    "d_min_gen_twh": 0.0
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_econhi",
+    "pmax": 127.05,
+    "pmax_p": 127.05,
+    "d_min_gen_twh": 0.0
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_econlo",
+    "pmax": 127.05,
+    "pmax_p": 127.05,
+    "d_min_gen_twh": 0.0
+   }
+  ],
+  "units_added": [],
+  "units_dropped": []
+ },
+ "2022": {
+  "class_d_avail_twh": {},
+  "class_d_pmax": {},
+  "moved": [
+   {
+    "plant": 2322,
+    "group": "CC_REGULAR",
+    "pmax": 462.0,
+    "avail_B_twh": 3.693,
+    "d_avail_twh": 0.0,
+    "d_pmax": 0.0,
+    "hr_units_moved": 3,
+    "d_min_gen_twh": 0.0,
+    "eia923_twh_by_pm": {
+     "CA": 0.253,
+     "CT": 0.517,
+     "GT": 0.253
+    }
+   }
+  ],
+  "moved_units": [
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_committed",
+    "pmax": 207.9,
+    "pmax_p": 207.9,
+    "d_min_gen_twh": 0.0
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_econhi",
+    "pmax": 127.05,
+    "pmax_p": 127.05,
+    "d_min_gen_twh": 0.0
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_econlo",
+    "pmax": 127.05,
+    "pmax_p": 127.05,
+    "d_min_gen_twh": 0.0
+   }
+  ],
+  "units_added": [],
+  "units_dropped": []
+ },
+ "2023": {
+  "class_d_avail_twh": {},
+  "class_d_pmax": {},
+  "moved": [
+   {
+    "plant": 2322,
+    "group": "CC_REGULAR",
+    "pmax": 462.0,
+    "avail_B_twh": 3.693,
+    "d_avail_twh": 0.0,
+    "d_pmax": 0.0,
+    "hr_units_moved": 3,
+    "d_min_gen_twh": 0.0,
+    "eia923_twh_by_pm": {
+     "CA": 0.136,
+     "CT": 0.297,
+     "GT": 0.138
+    }
+   }
+  ],
+  "moved_units": [
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_committed",
+    "pmax": 207.9,
+    "pmax_p": 207.9,
+    "d_min_gen_twh": 0.0
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_econhi",
+    "pmax": 127.05,
+    "pmax_p": 127.05,
+    "d_min_gen_twh": 0.0
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_econlo",
+    "pmax": 127.05,
+    "pmax_p": 127.05,
+    "d_min_gen_twh": 0.0
+   }
+  ],
+  "units_added": [],
+  "units_dropped": []
+ },
+ "2024": {
+  "class_d_avail_twh": {},
+  "class_d_pmax": {},
+  "moved": [
+   {
+    "plant": 2322,
+    "group": "CC_REGULAR",
+    "pmax": 462.0,
+    "avail_B_twh": 3.693,
+    "d_avail_twh": 0.0,
+    "d_pmax": 0.0,
+    "hr_units_moved": 3,
+    "d_min_gen_twh": 0.0,
+    "eia923_twh_by_pm": {
+     "CA": 0.282,
+     "CT": 0.579,
+     "GT": 0.123
+    }
+   }
+  ],
+  "moved_units": [
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_committed",
+    "pmax": 207.9,
+    "pmax_p": 207.9,
+    "d_min_gen_twh": 0.0
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_econhi",
+    "pmax": 127.05,
+    "pmax_p": 127.05,
+    "d_min_gen_twh": 0.0
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_econlo",
+    "pmax": 127.05,
+    "pmax_p": 127.05,
+    "d_min_gen_twh": 0.0
+   }
+  ],
+  "units_added": [],
+  "units_dropped": []
+ },
+ "2025": {
+  "class_d_avail_twh": {},
+  "class_d_pmax": {},
+  "moved": [
+   {
+    "plant": 2322,
+    "group": "CC_REGULAR",
+    "pmax": 462.0,
+    "avail_B_twh": 3.693,
+    "d_avail_twh": 0.0,
+    "d_pmax": 0.0,
+    "hr_units_moved": 3,
+    "d_min_gen_twh": 0.0,
+    "eia923_twh_by_pm": {
+     "CA": 0.198,
+     "CT": 0.467,
+     "GT": 0.073
+    }
+   }
+  ],
+  "moved_units": [
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_committed",
+    "pmax": 207.9,
+    "pmax_p": 207.9,
+    "d_min_gen_twh": 0.0
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_econhi",
+    "pmax": 127.05,
+    "pmax_p": 127.05,
+    "d_min_gen_twh": 0.0
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-SNV_p2322_econlo",
+    "pmax": 127.05,
+    "pmax_p": 127.05,
+    "d_min_gen_twh": 0.0
+   }
+  ],
+  "units_added": [],
+  "units_dropped": []
+ }
+}

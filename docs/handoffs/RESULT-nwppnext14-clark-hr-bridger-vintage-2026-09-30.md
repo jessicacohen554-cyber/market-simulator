@@ -59,6 +59,23 @@ vintage-static coal row are repaired, with zero new DOF. Every regression above 
 Retrievability: the composed keeper bundle lands on `main` with this PR. The per-year legs were transport only, and a
 leg not on `main` is costed as a re-solve (~35–60 min each, ~135 min for 2019).
 
+## 3a. Reconciliation with the parallel NEXT-14 lane (PR #6935)
+
+Two sessions ran the same handoff. The other built `cc_subfloor_eia923_heat_rates` (Clark, the same EIA-923 CC rate)
+and `campd_per_unit_vintage_denominator` (per-unit rows on each year's own EIA-860 vintage nameplate; also repairs North
+Valmy), merged them, and could not solve (nesting limit). Owner card **"Keep #19; retire dup Clark field"**:
+
+- `cc_subfloor_eia923_heat_rates` is **DELETED** (rules 19 / 26): field, cache-key entry, seam, test, matrix row and
+  cells.
+- Its `EGRID_CC_HR_PHYSICAL_FLOOR` constant moved back into `data/fleet/eia860.py`. In `config/constants.py` it had
+  added a solve-surface row and turned `test_persisted_identity` red on `main` for five ISOs; the move restores every
+  pin, with no value moved.
+- `campd_per_unit_vintage_denominator` stays default-off as NEXT-15's replacement candidate for the fuel-split
+  composition. The selector now **refuses** arming it beside `campd_unit_fuel_split` (rule 19).
+- The other lane's `PRECOMMIT-nwppnext14-vintage-denominator-*` and `docs/handoffs/nwppnext14/shards/*` arm the deleted
+  field. They are **stale and must not be launched**.
+- Re-scored on `main`'s rubric v3.13: same determination, same single FAIL record.
+
 ## 4. Open, for the next lane
 
 1. **C4 coal 2023 (0.670) is Jim Bridger's offer** (FINDING-nwppnext14 §1).

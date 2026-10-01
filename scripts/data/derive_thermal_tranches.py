@@ -2070,6 +2070,23 @@ def main() -> None:
         "attributions are a clean single delta. Zero free parameters.",
     )
     ap.add_argument(
+        "--vintage-denominator",
+        action="store_true",
+        help="Per-unit derive whose every year is divided by THAT year's "
+        "EIA-860 vintage bin nameplate (and routed against that year's bins), "
+        "instead of the run-default fleet's. The per-unit resolver routes by "
+        "the year's own CAMPD fuel label, so at a coal-to-gas conversion "
+        "(NWPP Jim Bridger 8066 units 1-2 in 2024, North Valmy 8224 unit 2 in "
+        "2025) a pre-conversion year's coal gross lands on the post-conversion "
+        "coal bin's nameplate: Bridger 2023 carries four units' coal over "
+        "1,049 MW. The vintage-denominator convention is the one "
+        "_routed_family_rows (miso-278) already applies; the row's "
+        "nameplate_mw is the largest vintage nameplate in the window. Writes "
+        "the '-perunit-vintage' companion, never an overwrite. Requires "
+        "--per-unit-attribution; not combinable with --merit-order-guard. "
+        "Zero free parameters (NWPP-NEXT-14).",
+    )
+    ap.add_argument(
         "--merit-order-guard",
         action="store_true",
         help="Derive against the MERIT-ORDER-GUARDED unit-outage companion "
@@ -2191,9 +2208,17 @@ def main() -> None:
     merit_guard = bool(getattr(args, "merit_order_guard", False))
     if merit_guard and not per_unit:
         raise SystemExit("--merit-order-guard requires --per-unit-attribution")
+    vintage_denominator = bool(getattr(args, "vintage_denominator", False))
+    if vintage_denominator and (not per_unit or merit_guard):
+        raise SystemExit(
+            "--vintage-denominator requires --per-unit-attribution and is not "
+            "combinable with --merit-order-guard"
+        )
     default_name = (
         f"thermal_tranches-perunitmerit-{iso}.csv"
         if (per_unit and merit_guard)
+        else f"thermal_tranches-perunit-vintage-{iso}.csv"
+        if vintage_denominator
         else f"thermal_tranches-perunit-{iso}.csv"
         if per_unit
         else f"thermal_tranches_{iso}.csv"
@@ -2276,6 +2301,25 @@ def main() -> None:
     cap, primary = _fleet_nameplate_and_group(iso)
     factors = _parasitic_factor_map()
     chp_sectors = _chp_sector_map(args.years)
+    # VINTAGE DENOMINATOR (NWPP-NEXT-14): each year's bins and nameplates come
+    # from THAT year's EIA-860 vintage, as _routed_family_rows (miso-278) does;
+    # the row nameplate is the window's largest vintage nameplate. Built in a
+    # pre-pass so the vintage override never leaks into the loaders below.
+    cap_by_year: dict[int, dict[tuple[int, str], float]] = {}
+    row_cap = cap
+    if vintage_denominator:
+        from market_sim.config.paths import set_eia860_vintage
+
+        try:
+            for year in args.years:
+                set_eia860_vintage(int(year))
+                cap_by_year[int(year)] = _vintage_thermal_bins(iso, int(year))[0]
+        finally:
+            set_eia860_vintage(None)
+        row_cap = {}
+        for cap_y in cap_by_year.values():
+            for key, mw in cap_y.items():
+                row_cap[key] = max(row_cap.get(key, 0.0), mw)
 
     # Pool the available-CF samples across the requested years, per (code, group).
     online_cf: dict[tuple[int, str], list[np.ndarray]] = {}
@@ -2285,6 +2329,7 @@ def main() -> None:
     # pooled across years, per (code, group). frac = synced / total, capped 1.0.
     sync_hours: dict[tuple[int, str], list[int]] = {}
     for year in args.years:
+        cap_iter = cap_by_year[int(year)] if vintage_denominator else cap
         # Per-unit attribution NEEDS the unit-level extract: a state present in
         # both directories (NY is) resolves facility-first by default, and a
         # facility-level frame has already summed its units away. Requesting it
@@ -2304,7 +2349,7 @@ def main() -> None:
                 factors,
                 year,
                 _per_unit_group_resolver(
-                    cap, primary, iso, _unit_fuel_by_unit(tuple(states), year)
+                    cap_iter, primary, iso, _unit_fuel_by_unit(tuple(states), year)
                 ),
             )
             net = {}
@@ -2320,15 +2365,28 @@ def main() -> None:
         # nyiso-175b shipped and disclosed (its East River CT_CHP row was
         # derived un-derated because every window there still routed to
         # ST_CHP). One crosswalk, both artifacts (rule 19 [R-ONE-MECH]).
-        derate = unit_outage_derate_factors(
-            year,
-            iso=iso,
-            per_unit_crosswalk=per_unit,
-            merit_order_guard=merit_guard,
-            # SPP-99: the plain family's denominator on the remapped identity.
-            split_remap=split_remap_denominator,
-        )
-        for (code, group), nameplate in cap.items():
+        if vintage_denominator:
+            # The derate's plant-capacity denominator is the EIA-860 fleet too:
+            # read it at the same vintage as the bins it derates.
+            from market_sim.config.paths import set_eia860_vintage
+
+            try:
+                set_eia860_vintage(int(year))
+                derate = unit_outage_derate_factors(
+                    year, iso=iso, per_unit_crosswalk=per_unit
+                )
+            finally:
+                set_eia860_vintage(None)
+        else:
+            derate = unit_outage_derate_factors(
+                year,
+                iso=iso,
+                per_unit_crosswalk=per_unit,
+                merit_order_guard=merit_guard,
+                # SPP-99: the plain family's denominator on the remapped identity.
+                split_remap=split_remap_denominator,
+            )
+        for (code, group), nameplate in cap_iter.items():
             if group not in _THERMAL_GROUPS or nameplate <= 0:
                 continue
             if per_unit:
@@ -2379,7 +2437,7 @@ def main() -> None:
             names[int(gen.plant_code)] = gen.name
 
     rows: list[dict] = []
-    for (code, group), nameplate in sorted(cap.items()):
+    for (code, group), nameplate in sorted(row_cap.items()):
         if group not in _THERMAL_GROUPS:
             continue
         # Under per-unit attribution every bin the plant's units reached is a
@@ -2531,6 +2589,11 @@ def main() -> None:
             "iso": iso,
             "years": [int(y) for y in args.years],
             "chp_floors_from": args.chp_floors_from,
+            **(
+                {"per_unit_attribution": True, "vintage_denominator": True}
+                if vintage_denominator
+                else {}
+            ),
         },
         note=(
             "group sets in force in scripts/data/derive_thermal_tranches.py "

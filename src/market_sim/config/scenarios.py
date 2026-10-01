@@ -505,6 +505,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # zeroes the virtual pseudo-units' bounds in P1 only, so the off path is
     # byte-inert). Same commit as the field.
     "pjm_da_virtual_settle_financial",
+    # NWPP-NEXT-14 vintage denominator of the per-unit tranche companion, a
+    # SUB-GATE of campd_per_unit_attribution (GATED default-off; selects the
+    # '-perunit-vintage-' companion through campd_bins.campd_fuel_split_selector,
+    # so the off path is byte-inert). Registered IN THE SAME COMMIT as the field.
+    "campd_per_unit_vintage_denominator",
     # miso-278 unit-fuel split of the thermal-tranche family (GATED default-off;
     # selects the four '-fuelsplit-' companions through
     # campd_bins.campd_fuel_split_selector, so the off path is byte-inert).
@@ -1612,6 +1617,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # construction. Registered IN THE SAME COMMIT as the field (the nyiso-119
     # discipline).
     "netload_drag_prior_year_commitment_index",
+    # R-ERCOT-19 PRIOR-YEAR COMMITMENT-PROFILE sub-gates (GATED default off):
+    # the CC committed-block eligibility weight and the ST_GAS drag-floor hour
+    # profile. Dropped from the hash at their defaults — the off paths never
+    # read the artifact, byte-identical by construction. Registered IN THE
+    # SAME COMMIT as the fields (the nyiso-119 discipline).
+    "cc_committed_prior_year_commitment_eligibility",
+    "netload_drag_prior_year_hour_profile",
     # miso-180 anchored SPREAD-ONLY dispersion graft (GATED default off):
     # dropped from the hash at its False default so every pre-existing cache
     # key of all six ISOs stays byte-stable — the off path returns before
@@ -2244,6 +2256,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # construction: measured_import_hub_prices reads it only when handed
     # unprinted_year_measured_gas=True from the flag.
     "caiso_intertie_unprinted_year_measured_gas",
+    # R-CAISO-20 (2026-09-30), default off, registered IN THE SAME COMMIT as
+    # the field (the nyiso-119 discipline). Byte-identical off by
+    # construction: inject_caiso_dsw_overnight_clean reads the unprinted-year
+    # mask only when handed unprinted_year_arm=True from the flag.
+    "caiso_dsw_overnight_clean_unprinted_arm",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -2506,6 +2523,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by PJM-NEXT-7 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "pjm_da_virtual_settle_financial": "False",
+    # Added by NWPP-NEXT-14 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "campd_per_unit_vintage_denominator": "False",
     # Added by miso-278 WITH the field, same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_unit_fuel_split": "False",
@@ -2932,6 +2952,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by R-ERCOT-18 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "netload_drag_prior_year_commitment_index": "False",
+    # Added by R-ERCOT-19 WITH the fields, in the same commit as their
+    # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
+    "cc_committed_prior_year_commitment_eligibility": "False",
+    "netload_drag_prior_year_hour_profile": "False",
     # Added 2026-08-22 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "hindcast_verified_announced_exits": "False",
@@ -3140,6 +3164,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_eia930_clock_repair": "False",
     # Added by R-CAISO-18 WITH the field (the nyiso-119 discipline).
     "caiso_intertie_unprinted_year_measured_gas": "False",
+    # Added by R-CAISO-20 WITH the field (the nyiso-119 discipline).
+    "caiso_dsw_overnight_clean_unprinted_arm": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
@@ -3835,6 +3861,12 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "netload_drag_layup_window_mask": "measured lay-up windows mask the net-load drag floor",
     "netload_drag_prior_year_commitment_index": (
         "prior-year measured overnight commitment allocates the net-load drag floor"
+    ),
+    "cc_committed_prior_year_commitment_eligibility": (
+        "prior-year measured CC commitment profile weights the committed-block level"
+    ),
+    "netload_drag_prior_year_hour_profile": (
+        "prior-year measured ST_GAS commitment profile shapes the net-load drag floor"
     ),
     "coal_lignite_mustrun_override": "measured lignite must-run level",
     "coal_prb_mustrun_override": "measured PRB must-run level",
@@ -10335,6 +10367,26 @@ class ScenarioConfig:
     # the shared apply_interchange_injections seam. Requires
     # caiso_per_hub_intertie (+ caiso_firm_import_shape). Default off
     # (byte-identical); CAISO-only.
+    caiso_dsw_overnight_clean_unprinted_arm: bool = False  # R-CAISO-20
+    # (2026-09-30), OWNER RULING (card 2026-09-30, "Arm overnight rung
+    # pre-2021") — authorised by the ruling, NOT admitted as a measured input.
+    # Extends caiso_dsw_overnight_clean's hod 0-5 evidence gate from "raw Palo
+    # Verde print is finite" to also "the R-CAISO-18 unprinted-year branch
+    # prices the hub" (all of 2019-2020; the unprinted Jan-Apr 2021), carrying
+    # the 2022-25 measured overnight no-wedge structure into years OASIS no
+    # longer serves (GroupZip's earliest trade date is 2021-04-27). The WEIM
+    # DSW footprint was smaller then (AZPS/NEVP; SRP from 2020-04), which is
+    # why this is a ruling and not a measurement (R-CAISO-19 FINDING §3).
+    # Depth: derive_caiso_overnight_clean_depth.py's own p95 over the extra
+    # years (2019 6,566 / 2020 7,166 MW; 2021 keeps the static 6,187), the
+    # percentile NOT re-sized (rule 1). Headroom still net of the firm block and
+    # surplus rung (rule 19). Every other clean rung stays raw-print gated.
+    # The 2023 Jan-Feb OASIS gap is a <=25 % gap the mask never contains, so
+    # the closed winter lane stays closed and 2022-2025 are inert by
+    # construction. Requires caiso_dsw_overnight_clean AND
+    # caiso_intertie_unprinted_year_measured_gas (the pricing; without it the
+    # arm is a no-op). Default off; CAISO-only; backcast-only.
+    # docs/handoffs/r-caiso-20/PRECOMMIT-r-caiso-20-2026-09-30.md.
     caiso_dsw_daytime_clean: bool = False  # Carry the MEASURED DAYTIME
     # trigger-OFF (hod 6-21) WEIM clean import depth on the south (Palo Verde /
     # Path-46) corridor (caiso-94; FINDING-caiso94-daytime-wedge-2026-07-17,
@@ -13728,6 +13780,29 @@ class ScenarioConfig:
     # artifact (the loader keys on iso).
     netload_drag_prior_year_commitment_index: bool = False
 
+    # R-ERCOT-19 PRIOR-YEAR HOUR PROFILE of the ST_GAS net-load drag (default
+    # off; owner decision card 2026-09-30, "Build commit eligibility
+    # (Recommended)"). An HOUR-ELIGIBILITY sub-gate of the same mandate, the
+    # sibling of netload_drag_min_run_persistence / netload_drag_layup_window_mask
+    # — same curve, membership and mech id, no second floor (rule 19).
+    # The defect (rule 17 [R-FLOOR-WINDOW]): after R-ERCOT-18's allocation
+    # index, small residual floors still bind at 3452 / 3628 / 3491 in hours the
+    # plant's own meter reads zero, and D-4's binary conduct rider convicts
+    # them. When True, each metered plant's floored rows are multiplied hour by
+    # hour by s_p(t) = q_p(m(t), h(t)) / mean_t q_p, where q_p is the plant's
+    # PRIOR-YEAR (Y-1) measured online capacity share by month x hour-of-day
+    # (scripts/data/derive_ercot_prior_year_commitment_profile.py ->
+    # data/raw/_validation-source/ercot_prior_year_commitment_profile.csv,
+    # frozen rule 23), then rescaled per plant so its DELIVERED floor energy
+    # (after the availability / lay-up clip) equals the pro-rata path's — the
+    # ercot-259 aggregate-neutral discipline, so the sub-gate only moves the
+    # floor toward the hours the plant is actually committed and can never act
+    # as a level knob. Unmetered plants and a plant with zero measured
+    # commitment keep s = 1. FAIL-CLOSED where no Y-1 vintage exists (2019).
+    # BACKCAST ONLY (rule 13; _BACKCAST_ONLY_OVERLAY_FIELDS). ZERO free
+    # parameters (rule 21). ERCOT-only by its artifact (rule 25).
+    netload_drag_prior_year_hour_profile: bool = False
+
     # ERCOT G-22 condition-responsive CT/peaker offer surface (default off,
     # ERCOT-gated). In the missed tail hours the model offers online CT/peaker
     # economic+peak tranches at flat heat_rate x gas (~$50-150/MWh) — "phantom
@@ -16979,6 +17054,28 @@ class ScenarioConfig:
     # See docs/FINDING-nyiso176-input-artifact-reproducibility-2026-09-02.md.
     campd_per_unit_attribution: bool = False
 
+    # VINTAGE DENOMINATOR of the per-unit tranche companion (NWPP-NEXT-14,
+    # GATED default off; a SUB-GATE of campd_per_unit_attribution, ignored
+    # without it; rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]). The per-unit
+    # deriver routes each CAMPD unit by THAT year's fuel label but divided every
+    # year by the run-default (2025) EIA-860 bin nameplate, so at a coal-to-gas
+    # conversion a pre-conversion year's coal gross landed on the post-conversion
+    # coal bin: Jim Bridger 8066 2023 carries four coal units over 1,049 MW (46 %
+    # of its hourly samples above 100 % CF), North Valmy 8224 2023-24 two units
+    # over 268 MW. Armed, the '-perunit-vintage-' companion written by
+    # derive_thermal_tranches.py --per-unit-attribution --vintage-denominator is
+    # read: every year routed against and divided by that year's own vintage
+    # bins (the outage derate's plant capacity too), the convention
+    # _routed_family_rows (miso-278) already applies; the row nameplate is the
+    # window's largest vintage nameplate. ZERO free parameters. Rule 23: the
+    # trigger is the denominator defect, never a residual (it is NOT the cause
+    # of the keeper-#18 C4 coal 2023 deepening:
+    # docs/handoffs/FINDING-nwppnext14-bridger-c4-decomposition-2026-09-30.md).
+    # Not combinable with campd_outage_merit_order_guard (no merit-guarded
+    # vintage companion exists; the selector raises). Self-scoping: an ISO
+    # without the companion falls back to its '-perunit-' artifact.
+    campd_per_unit_vintage_denominator: bool = False
+
     # UNIT-FUEL SPLIT of the CAMPD thermal-tranche family (miso-278, GATED
     # default off; rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]). The incumbent
     # tranche artifact attributes a plant's FACILITY-summed CAMPD net to its
@@ -18142,6 +18239,28 @@ class ScenarioConfig:
     # its source disclosure changes, via
     # scripts/data/derive_cc_committed_offer_margin.py.
     cc_committed_offer_level: float | None = None
+    # R-ERCOT-19 PRIOR-YEAR COMMITMENT ELIGIBILITY of the CC committed block
+    # (default off; owner decision card 2026-09-30, "Build commit eligibility
+    # (Recommended)"). A sub-gate INSIDE cc_committed_offer_margin (rule 19: no
+    # new band, no new row, no second price owner). The ERCOT-139 level is the
+    # measured SCED curve bottom of ONLINE CCs; the LP has no commitment state,
+    # so it made that below-cost block available in every available hour, and
+    # the model part-loads high-heat-rate CCs through hours they are really off
+    # (corr(measured HR, log model/EIA-923) 0.68-0.80 in every year; 60-Day DAM
+    # offers heat-rate-flat, DAM ON-share falling with HR —
+    # docs/handoffs/r-ercot/PRECOMMIT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md).
+    # When True the ERCOT-139 shift is weighted per hour by the plant's
+    # PRIOR-YEAR (Y-1) measured online capacity share q_p(month, hour-of-day):
+    #   mc[g, t] += q_p(t) x (level - HR_g x anchor - vom_g)
+    # so an hour the plant is always online bids the measured level exactly
+    # (q = 1, byte-identical to the keeper), an hour it is never online bids the
+    # band's registered multiplier form (q = 0), and between them the expected
+    # offer over the commitment state. Unmetered plants keep q = 1. FAIL-CLOSED
+    # where no Y-1 vintage exists (2019: no TX 2018 CAMPD). BACKCAST ONLY
+    # (rule 13 — prior-year conduct only; _BACKCAST_ONLY_OVERLAY_FIELDS, and the
+    # forecast call site passes no year). ZERO free parameters (rule 21).
+    # ERCOT-only by its artifact (rule 25).
+    cc_committed_prior_year_commitment_eligibility: bool = False
 
     # Coal `_peak`-tranche measured offer margin (ERCOT-140,
     # docs/PRECOMMIT-ercot140-coal-peak-offer-2026-07-30.md — the coal

@@ -48,6 +48,16 @@ CLOSED — do NOT redo:
 - The benchmark fossil reconcile belongs to the scorer lane. Do not touch the scorer or the bench.
 
 OPEN LEVERS, highest value first
+0. RULE-19 DEBT: campd_per_unit_vintage_denominator (parallel NEXT-14 lane, default off) and the armed
+   campd_unit_fuel_split composition repair the same defect, the per-unit tranche artifact's head-vintage denominator.
+   - Theirs is broader: it also repairs North Valmy 8224's must-run (40.7 -> 24.5 %).
+   - Test it as the REPLACEMENT: arm vintage_denominator, disarm campd_unit_fuel_split (the selector refuses both),
+     run 7 shards, and diff against keeper #19.
+   - If promoted, DELETE the per-unit fuel-split path (rule 26).
+   - Do NOT launch the other lane's docs/handoffs/nwppnext14/shards/* or PRECOMMIT-nwppnext14-vintage-denominator:
+     they arm the DELETED cc_subfloor_eia923_heat_rates. Write a fresh PRECOMMIT on keeper #19's recipe.
+   - Also read DESIGN-nwppnext14-captive-mine-marginal-fuel-2026-09-30.md (lever 1 below): in 2023 the captive mine
+     was booked at $4.21/MMBtu while contract sources ran $2.42–2.62.
 1. C4 coal 2023 (0.670) is Jim Bridger's OFFER (FINDING-nwppnext14 §1):
    - Bridger's delivered-cost offer ($38–51/MWh, F923 $3.42/MMBtu at 11.02 MMBtu/MWh) idles it Jun–Oct.
    - Its 2023 burn equals the soft take floor exactly (93.9 TBtu vs CEMS 100.4), and the LP spends the take in

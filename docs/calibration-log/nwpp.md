@@ -756,7 +756,35 @@ Zero-LP record: `docs/handoffs/FINDING-nwppnext13-wefor-and-perunit-phase0-2026-
 `audit_keepers` PASS; promotion completeness OK. Determination unchanged: NOT-YET on {dispatch_corr}, C4 coal 2023
 r 0.662. Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext13-perunit-attribution-*.md`.
 
-## NWPP-NEXT-14 — 2026-09-30 — Clark CC heat rate + Bridger vintage tranche row (keeper #19)
+## NWPP-NEXT-14 — 2026-09-30 — C4 coal 2023 decomposed; two structural repairs built (solve owed)
+
+Zero-LP record: `docs/handoffs/FINDING-nwppnext14-bridger-c4-decomposition-2026-09-30.md`.
+
+- **C4 coal 2023's deepening (0.695 → 0.662) is entirely Jim Bridger.** Swapping only Bridger's hourly back to #17
+  gives 0.709. With Bridger = CEMS **outside** Feb–May the fleet reads **0.810 (PASS)**; fixing only the closed
+  Feb–May window gives 0.698.
+- **Why Bridger's Jun–Oct is wrong.** Its must-run fell to the measured 352 MW, so ~6 TWh now rides econ tranches
+  that the monthly pile schedules just-in-time: full in Aug at $34, zero in Jul/Sep/Oct at $31–33. Its own 2023
+  EIA-923 delivered coal cost ($3.0–4.2/MMBtu, up from $2.3–2.9) sits above summer LMP.
+- **The vintage-static tranche hypothesis is a real defect, but not the cause.** The per-unit deriver divided each
+  window year by the 2025 nameplate: 46 % of Bridger's 2023 samples exceed 100 % CF, and North Valmy has two units
+  over one unit's nameplate. Repair `campd_per_unit_vintage_denominator` (new, default off): Valmy must-run
+  40.7 → 24.5 %, Bridger 16.6 → 15.4 %.
+- **Lever 2: Clark 2322's CC block is priced at eGRID's 3.007 MMBtu/MWh.** eGRID's heat input covers only the CEMS
+  peakers. The block runs 70–75 % CF every hour (3.69 TWh/yr vs 0.43–0.86 EIA-923). Repair
+  `cc_subfloor_eia923_heat_rates` (new, default off; CC mirror of SPP-49) gives it its own EIA-923 CC rate,
+  9.0–9.6.
+- **Captive-mine fuel cost:** design only
+  (`docs/handoffs/DESIGN-nwppnext14-captive-mine-marginal-fuel-2026-09-30.md`). In 2023 the captive mine was booked
+  at $4.21/MMBtu while contract sources ran $2.42–2.62.
+- **Coal WEFOR live-capacity sub-flag:** owner authorized a later lane to build it (new gated field; MISO
+  byte-identical).
+- **Solve NOT run.** This session hit the session-nesting limit (depth 8) and cannot launch shards; the parent never
+  solves (rule 32(a)). PRECOMMIT and the seven shard prompts are committed
+  (`docs/handoffs/PRECOMMIT-nwppnext14-vintage-denominator-2019-2025-2026-09-30.md`,
+  `docs/handoffs/nwppnext14/shards/`). Pin: `b4e567fb1de9a53146730e0e75f95cb8db505c66`. G-DRIFT: all inert.
+  Keeper #18 stands: NOT-YET on {dispatch_corr} under rubric v3.13.
+## NWPP-NEXT-14 (solve lane, session 01VuR49n) — 2026-09-30 — Clark CC heat rate + Bridger vintage tranche row (keeper #19)
 
 Zero-LP record: `docs/handoffs/FINDING-nwppnext14-bridger-and-clark-phase0-2026-09-30.md`.
 
@@ -783,3 +811,10 @@ Zero-LP record: `docs/handoffs/FINDING-nwppnext14-bridger-and-clark-phase0-2026-
 **Owner card: "Promote + prune #18".** Keeper #19 `2026-09-30-nwppnext14-clark-hr-bridger`. #18 pruned (rule 35);
 `audit_keepers` PASS; promotion completeness OK. Determination unchanged: NOT-YET on {dispatch_corr}, C4 coal 2023
 r 0.670. Records: `docs/handoffs/{FINDING,PRECOMMIT,RESULT}-nwppnext14-*.md`.
+
+**Reconciliation with the parallel NEXT-14 lane (above; PR #6935).** Two sessions ran the same handoff. The other built
+`cc_subfloor_eia923_heat_rates` and `campd_per_unit_vintage_denominator` but could not solve (nesting limit). Owner
+card "Keep #19; retire dup Clark field":
+- `cc_subfloor_eia923_heat_rates` is DELETED (rules 19 / 26); it duplicated the solved `eia923_cc_family_heat_rates`.
+- `campd_per_unit_vintage_denominator` stays default-off as NEXT-15's replacement candidate for the fuel-split
+  composition, because it also repairs North Valmy.

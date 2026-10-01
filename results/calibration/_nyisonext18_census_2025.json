@@ -1,0 +1,97 @@
+{
+ "year": 2025,
+ "flags": [
+  "mid_vintage_exit_carry",
+  "fleet_zone_vintage_coords",
+  "retiree_vintage_status_scope"
+ ],
+ "added": {},
+ "removed": {
+  "55243_11": [
+   "55243",
+   "NYC",
+   "",
+   23.8,
+   0.0
+  ],
+  "CT_PEAKER_Upstate_West_p51035_econlo": [
+   "51035",
+   "Upstate_West",
+   "CT_PEAKER",
+   1.1,
+   0.0
+  ],
+  "CT_PEAKER_Upstate_West_p51035_econhi": [
+   "51035",
+   "Upstate_West",
+   "CT_PEAKER",
+   1.0,
+   0.0
+  ],
+  "COAL_Upstate_West_p2554_mustrun": [
+   "2554",
+   "Upstate_West",
+   "COAL_PRB",
+   234.0,
+   0.0
+  ],
+  "COAL_Upstate_West_p2554_committed": [
+   "2554",
+   "Upstate_West",
+   "COAL_PRB",
+   26.0,
+   0.0
+  ],
+  "COAL_Upstate_West_p2554_econc00": [
+   "2554",
+   "Upstate_West",
+   "COAL_PRB",
+   41.6,
+   0.0
+  ],
+  "COAL_Upstate_West_p2554_econc01": [
+   "2554",
+   "Upstate_West",
+   "COAL_PRB",
+   41.6,
+   0.0
+  ],
+  "COAL_Upstate_West_p2554_econc02": [
+   "2554",
+   "Upstate_West",
+   "COAL_PRB",
+   41.6,
+   0.0
+  ],
+  "COAL_Upstate_West_p2554_econc03": [
+   "2554",
+   "Upstate_West",
+   "COAL_PRB",
+   41.6,
+   0.0
+  ],
+  "COAL_Upstate_West_p2554_econc04": [
+   "2554",
+   "Upstate_West",
+   "COAL_PRB",
+   41.6,
+   0.0
+  ],
+  "COAL_Upstate_West_p2554_econc05": [
+   "2554",
+   "Upstate_West",
+   "COAL_PRB",
+   41.6,
+   0.0
+  ],
+  "COAL_Upstate_West_p2554_peak": [
+   "2554",
+   "Upstate_West",
+   "COAL_PRB",
+   10.4,
+   0.0
+  ]
+ },
+ "changed": {},
+ "demand_identical": true
+}

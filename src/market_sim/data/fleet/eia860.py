@@ -1207,7 +1207,9 @@ def _apply_egrid_family_heat_rates(
 #: power better than the newest H-class block, ``HEAT_RATE_BINS["gas_cc"]
 #: ["h_class"]`` (EIA Table 8). A plant-grain eGRID rate below it on a plant's
 #: CC rows is arithmetic on mismatched boundaries (Clark 2322: 3.007), not
-#: measured efficiency. An alias of an existing cited constant, no new number.
+#: measured efficiency. An alias of an existing cited constant, no new number;
+#: kept here rather than in config/constants.py so the per-ISO solve-surface
+#: fingerprints (config/solve_surface.py) are unchanged.
 EGRID_CC_HR_PHYSICAL_FLOOR: float = HEAT_RATE_BINS["gas_cc"]["h_class"]
 
 #: EIA-860 prime movers of the combined-cycle family (the eGRID family

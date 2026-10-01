@@ -912,7 +912,11 @@ def inject_caiso_dsw_surplus_clean(
 
 
 def inject_caiso_dsw_overnight_clean(
-    fleet_arrays, iso: str, year: int, gap_fill_measured_dam: bool = False
+    fleet_arrays,
+    iso: str,
+    year: int,
+    gap_fill_measured_dam: bool = False,
+    unprinted_year_arm: bool = False,
 ) -> bool:
     """Arm the south-corridor OVERNIGHT clean import depth (caiso-93).
 
@@ -946,6 +950,20 @@ def inject_caiso_dsw_overnight_clean(
       ``DSW_surplus_clean`` tranche's armed capability, so overlap hours
       (overnight ∩ surplus-trigger) never double-carry clean depth — the
       hourly clean total is ``max(firm + surplus, depth_year)``.
+
+    With ``unprinted_year_arm`` (R-CAISO-20,
+    ``ScenarioConfig.caiso_dsw_overnight_clean_unprinted_arm``; handed in only
+    together with ``caiso_intertie_unprinted_year_measured_gas``) the
+    ``overnight[t]`` evidence gate ALSO admits the hod 0-5 hours the R-CAISO-18
+    unprinted-year branch prices on the measured-gas formula
+    (:func:`~market_sim.data.eia930.envelopes.measured_intertie_hub_unprinted_year_mask`:
+    all of 2019-2020, the unprinted Jan-Apr 2021). This is an OWNER RULING
+    (card 2026-09-30, "Arm overnight rung pre-2021"), NOT a measured admission:
+    it carries the 2022-25 measured overnight no-wedge structure into years
+    with no raw print. The 2023 Jan-Feb gap is a <=25 % gap, which the mask
+    never contains, so the closed winter lane stays closed. Only this rung is
+    extended; the surplus, daytime and late-evening triggers stay raw-print
+    gated (R-CAISO-19 FINDING §3).
 
     A capability, not a floor (``pmin`` stays 0); the corridor ATC envelope
     still caps delivered flow; the fossil rungs are unchanged and price the
@@ -982,12 +1000,27 @@ def inject_caiso_dsw_overnight_clean(
         CAISO_IMPORT_TRANCHE_HUB[CAISO_DSW_OVERNIGHT_CLEAN_NAME],
         gap_fill_measured_dam=gap_fill_measured_dam,
     )
-    if hub is None:
+    evidence = np.zeros(hours, dtype=bool) if hub is None else np.isfinite(hub)
+    if unprinted_year_arm:
+        from market_sim.data.eia930.envelopes import (
+            measured_intertie_hub_unprinted_year_mask,
+        )
+
+        # R-CAISO-20 owner ruling: the unprinted-year formula-priced hours arm
+        # too (never the <=25 % gap fill — the mask cannot contain it).
+        unprinted = measured_intertie_hub_unprinted_year_mask(
+            iso,
+            year,
+            hours,
+            CAISO_IMPORT_TRANCHE_HUB[CAISO_DSW_OVERNIGHT_CLEAN_NAME],
+            gap_fill_measured_dam=gap_fill_measured_dam,
+        )
+        if unprinted is not None:
+            evidence = evidence | unprinted
+    elif hub is None:
         return False
     # t = hour index on the model clock; hod = t mod 24 (local calendar).
-    overnight = (np.arange(hours) % 24 <= CAISO_OVERNIGHT_CLEAN_HOD_MAX) & np.isfinite(
-        hub
-    )
+    overnight = (np.arange(hours) % 24 <= CAISO_OVERNIGHT_CLEAN_HOD_MAX) & evidence
     if not overnight.any():
         return False
     depth = CAISO_DSW_OVERNIGHT_CLEAN_DEPTH_BY_YEAR.get(
@@ -2618,8 +2651,17 @@ def apply_caiso_seam_injections(
     # (no wheel). Must run AFTER the firm-shape and surplus-clean blocks (its
     # headroom nets both).
     if per_hub_intertie and getattr(config, "caiso_dsw_overnight_clean", False):
+        # R-CAISO-20 owner ruling: arm the unprinted-year hours only where the
+        # R-CAISO-18 loader prices them (never unpriced on the $180 placeholder).
+        _unprinted_arm = bool(
+            getattr(config, "caiso_dsw_overnight_clean_unprinted_arm", False)
+        ) and bool(getattr(config, "caiso_intertie_unprinted_year_measured_gas", False))
         if inject_caiso_dsw_overnight_clean(
-            fleet_arrays, iso, year, gap_fill_measured_dam=_dam_fill
+            fleet_arrays,
+            iso,
+            year,
+            gap_fill_measured_dam=_dam_fill,
+            unprinted_year_arm=_unprinted_arm,
         ):
             _logger.info(
                 "%s %d: south-corridor OVERNIGHT clean import depth armed "

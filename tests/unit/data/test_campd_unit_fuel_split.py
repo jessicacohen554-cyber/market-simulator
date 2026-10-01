@@ -195,3 +195,16 @@ def test_fuel_split_reaches_the_st_gas_floor_readers():
     assert (1702, "ST_GAS") not in cb.thermal_tranche_online_frac(
         "MISO", False, False, True
     )
+
+
+def test_per_unit_fuel_split_and_vintage_denominator_are_exclusive():
+    """Rule 19: the two repairs of the per-unit head-vintage denominator never
+    compose (NWPP-NEXT-14 reconciliation); arming both raises."""
+    with pytest.raises(ValueError):
+        cb.campd_fuel_split_selector(
+            ScenarioConfig(
+                campd_unit_fuel_split=True,
+                campd_per_unit_attribution=True,
+                campd_per_unit_vintage_denominator=True,
+            )
+        )
