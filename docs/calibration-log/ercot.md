@@ -15009,3 +15009,14 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - 80–85 % of the 2019/2023 ΔLW is in hours above $200, i.e. the scarcity tail.
 - **Promotion:** on owner card *"Promote (Recommended)"* (rule 14). r-20 pruned; year union {2019–2025}.
 - **Record:** `docs/handoffs/r-ercot/RESULT-r-ercot-21-lostpines-cc-identity-2026-10-01.md`.
+
+## R-ERCOT-22 — 2026-10-01 — PUCT 48551 ORDC LOLP shift vintaged (2019 = 0.25σ, rule 14) — PROMOTED `2026-10-01-r-22-ordc-shift` (standing instruction "Is it an improvement? Then promote"); ISO NOT-YET
+
+- **Phase 0 (zero LP), Task 1:** the R-ERCOT-21 tail move was the ENERGY dual, not the ORDC. In the r-20 > $200 hours, every reserve family's dual, held and shortfall is identical r-20 vs r-21, because reserve supply is capped at measured RTOLCAP. 2019: ΔLW −2.38 = energy −2.76 + adder +0.38. The 365 MW moved the margin down the measured top-of-stack offer surface. 2024 C3a −11.1 % is all energy λ in ERCOT's 192 hours above $100 (the closed compressed-distribution object, not re-opened); the 2024 adder matches RTORPA.
+- **Found:** the model's ORDC adder exceeds RTORPA in 2019 (+5.5 $/MWh LW). On measured RTOLCAP/RTOFFCAP/λ the published formula reads 1.64× of 2019 RTORPA with the shipped 0.5σ and 1.04× (r 0.997) with the 0.25σ in force (PUCT 48551 steps 2019-03-01 / 2020-03-01).
+- **Built:** `ordc_lolp_shift_sigma` joins `ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR` (2019 = 0.25; 2020+ = 0.5); it is year-driven in `stamp_config_partition`; the ERCOT solve-surface pin is advanced. Zero DOF.
+- **Solve:** one shard (2019) at `f4d29d72`; G-DRIFT ALL INERT, so 2020–2025 reuse the r-21 legs.
+- **Result:** 2019 C3a +19.4 → +7.5 % (PASS), C3b 0.446 → 0.231, C3c 121 → 100 h (106 actual), h > $1k 39 → 30, C1 unchanged. Every other year is byte-identical.
+- **Promotion:** r-21 pruned; year union {2019–2025}.
+- **Next:** the 2020/2021 adder (1.45× / 1.59×) needs ERCOT's per-year NP6-576 μ/σ tables (data intake).
+- **Record:** `docs/handoffs/r-ercot/RESULT-r-ercot-22-ordc-shift-vintage-2026-10-01.md`.
