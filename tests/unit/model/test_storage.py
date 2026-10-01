@@ -222,7 +222,7 @@ class TestBuildDefaultStorage(unittest.TestCase):
         # CAISO re-vintage must all leave ERCOT's hand-entered row alone
         # (rule 25 [R-ISO-SCOPE]). ERCOT's row is itself off the documented
         # EIA-860 construction (17,000 shipped vs 13,709.3 measured) and is
-        # ROUTED, not fixed, in docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md.
+        # ROUTED, not fixed, in docs/records/forecast/ffr-4d-caiso-fleet-vintage-2026-08-04.md.
         self.assertEqual(
             STORAGE_BASE_FLEET_MW["ERCOT"],
             {"low": 12_000.0, "mid": 17_000.0, "high": 25_000.0},

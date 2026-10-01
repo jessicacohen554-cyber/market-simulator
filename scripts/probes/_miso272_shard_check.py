@@ -4,7 +4,7 @@
 Copy of ``_miso271_shard_check.py`` re-pointed at the current MISO keeper
 (``results/calibration/miso271_span``, 2026-09-25-miso-271-wefor-stack, every year
 2019-2025). The arm's delta is ``cc_block_summer_rating`` False -> True
-(docs/PRECOMMIT-miso272-cc-block-summer-rating-2026-09-25.md §4); the keeper was
+(docs/records/miso/PRECOMMIT-miso272-cc-block-summer-rating-2026-09-25.md §4); the keeper was
 solved at 40d995ba and G-DRIFT (§3) found every hunk INERT, so there is no control
 leg and the keeper bundle is the control (rule 29(b) form 4). The keeper already
 carries the COAL-SUB fold, so no COAL tolerance is needed; it is kept, harmless.
@@ -70,7 +70,7 @@ EXPECTED: dict[str, tuple] = {}
 ARM_GROUPS: list[str] = []  # set from --groups (the PRECOMMIT's G-IDENT scope, sorted)
 YEAR_DRIVEN = {"gas_offer_margin_anchor", "gas_price_override", "weather_year", "ordc_mcl_mw", "ordc_voll"}
 INPUT_SHA: dict[str, str] = {
-    # Pinned at the PRECOMMIT (docs/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md §3).
+    # Pinned at the PRECOMMIT (docs/records/miso/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md §3).
     "data/raw/campd-unit-outages-unitroute-MISO.csv": "a91706662b335e34984c567029843bb46e0a8889f02a20792d987b698206873b",
     "data/raw/campd-unit-outages-short-MISO.csv": "becfd7bdd042f97d407decc2d4b737f015bcd948704f73a3bb827749a2093a1a",
     "data/raw/campd-unit-outages-shortgas-MISO.csv": "3bac354606270ee7c1094f5fa19c26bac8e9c2ec45cbc96700adafd440af44bc",

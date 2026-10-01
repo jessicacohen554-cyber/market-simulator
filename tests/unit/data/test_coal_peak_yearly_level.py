@@ -1,9 +1,9 @@
 """Tests for the per-year coal `_peak` offer LEVEL (ercot-192).
 
 ``ScenarioConfig.coal_peak_offer_yearly_level`` — matrix §5.1 item 13, owner
-signature **B1** on ``docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``
+signature **B1** on ``docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``
 card B. What must hold (the precommit's construction contract,
-``docs/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md`` §4):
+``docs/records/ercot/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md`` §4):
 
 - a solve year PRESENT in the year table prices `_peak` at
   ``level_year + GAS_HR × (gas_cc(t) − anchor)``;

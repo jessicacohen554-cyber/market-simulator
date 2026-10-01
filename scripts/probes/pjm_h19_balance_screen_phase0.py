@@ -3,8 +3,8 @@
 Runs the screen on each ISO's ACTUAL loader output (after the existing
 dropout and spike screens) for every year 2018-2025 on disk and records each
 flagged hour with its neighbours and the balance-identity reading ``NG - TI``.
-Output: ``results/calibration/_pjm_h19_balance_screen_phase0.json``.
-Bar declared before measurement: docs/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md §2.
+Output: ``results/phase0/pjm/_pjm_h19_balance_screen_phase0.json``.
+Bar declared before measurement: docs/records/pjm/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md §2.
 """
 
 from __future__ import annotations
@@ -69,7 +69,7 @@ def main() -> None:
                 rec["status"] = "inert by construction (no single-BA balance frame)"
             out["iso_years"][f"{iso}-{year}"] = rec
             print(iso, year, rec["status"], hours)
-    path = REPO_ROOT / "results" / "calibration" / "_pjm_h19_balance_screen_phase0.json"
+    path = REPO_ROOT / "results" / "phase0" / "pjm" / "_pjm_h19_balance_screen_phase0.json"
     path.write_text(json.dumps(out, indent=1))
     print("wrote", path)
 

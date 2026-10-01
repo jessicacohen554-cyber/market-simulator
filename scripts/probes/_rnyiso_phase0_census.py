@@ -24,9 +24,9 @@ record built under it is stamped ``diagnostic_solar_substitution: true``.
 
 Usage:
     python scripts/probes/_rnyiso_phase0_census.py --years 2021 2022 2023 2024 2025 \
-        --out results/calibration/_rnyiso_phase0_census.json
+        --out results/phase0/nyiso/_rnyiso_phase0_census.json
     python scripts/probes/_rnyiso_phase0_census.py --years 2019 2020 --diagnostic-solar-substitution \
-        --out results/calibration/_rnyiso_phase0_census.json
+        --out results/phase0/nyiso/_rnyiso_phase0_census.json
 """
 
 from __future__ import annotations

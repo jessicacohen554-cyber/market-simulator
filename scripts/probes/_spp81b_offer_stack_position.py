@@ -1,6 +1,6 @@
 """SPP-81b (zero LP): where does the RT upper-tercile MEC sit in SPP's own offer stack?
 
-Record: ``docs/handoffs/FINDING-spp-81-upper-tercile-residual-2026-09-25.md`` §4. Companion
+Record: ``docs/records/spp/FINDING-spp-81-upper-tercile-residual-2026-09-25.md`` §4. Companion
 of ``_spp81b_upper_tercile_marginal_unit.py`` (whose ``--cache`` supplies the keeper's
 rebuilt fleets for the model-side comparison).
 

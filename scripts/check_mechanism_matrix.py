@@ -38,7 +38,7 @@ Two layers:
    rule 28(c): the diff gate below can only ever see a field in the PR that
    adds it, so before these ran diff-free, a field that reached `main`
    unregistered was invisible to every later run of this script
-   (`docs/handoffs/FINDING-scn-mxr-2026-09-06.md` §1.1 — PR #4870 merged five
+   (`docs/records/forecast/FINDING-scn-mxr-2026-09-06.md` §1.1 — PR #4870 merged five
    seconds after opening, with the diff gate red and unread). A slipped field
    is now red until its row lands, and each baseline may only SHRINK.
 
@@ -586,7 +586,7 @@ def absent_shared_ratchet(matrix_text: str, source: str) -> list[str]:
     """Errors for SHARED fields the matrix never mentions, keeper-armed or not.
 
     THE POST-MERGE HALF of rule 28(c), and the hole
-    ``docs/handoffs/FINDING-scn-mxr-2026-09-06.md`` §1.1 diagnosed. Before this
+    ``docs/records/forecast/FINDING-scn-mxr-2026-09-06.md`` §1.1 diagnosed. Before this
     leg, exactly one check inspected a NEW field's registration — the ``--base``
     diff gate — so a field that reached ``main`` without its row was invisible
     to every later run of this script, on ``main`` and on every subsequent PR

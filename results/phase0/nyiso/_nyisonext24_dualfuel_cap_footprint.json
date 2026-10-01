@@ -1,0 +1,862 @@
+[
+ {
+  "year": 2021,
+  "capable_tranches": 290,
+  "capable_mw": 17147.260822718446,
+  "binding_gen_days": 348,
+  "binding_days": 2,
+  "by_zone": {
+   "Capital_Hudson": {
+    "gen_days": 128,
+    "mw_days": 9591.0,
+    "mw_wtd_oil_share": 0.0,
+    "share_mw_below_1pct": 1.0,
+    "share_mw_above_50pct": 0.0,
+    "relief_wtd_oil_share": 0.0
+   },
+   "Long_Island": {
+    "gen_days": 118,
+    "mw_days": 7076.0,
+    "mw_wtd_oil_share": 0.147,
+    "share_mw_below_1pct": 0.61,
+    "share_mw_above_50pct": 0.165,
+    "relief_wtd_oil_share": 0.144
+   },
+   "NYC": {
+    "gen_days": 102,
+    "mw_days": 8255.0,
+    "mw_wtd_oil_share": 0.102,
+    "share_mw_below_1pct": 0.646,
+    "share_mw_above_50pct": 0.074,
+    "relief_wtd_oil_share": 0.108
+   }
+  },
+  "all": {
+   "mw_wtd_oil_share": 0.075,
+   "relief_wtd_oil_share": 0.065,
+   "share_mw_days_near_parity_lt_1usd": 0.0,
+   "share_mw_below_1pct_when_relief_ge_5usd": 0.834,
+   "share_mw_below_1pct": 0.772
+  },
+  "nyc_days": 1,
+  "nyc_median": {
+   "nyc_da": 89.5,
+   "implied_fuel": 6.82,
+   "gas": 15.31,
+   "oil": 14.02,
+   "meas_mix_price": 15.18,
+   "meas_f": 0.1
+  },
+  "nyc_closest": {
+   "cap_min_gas_oil": 1,
+   "measured_mix": 0
+  },
+  "nyc_mae": {
+   "cap": 7.2,
+   "measured_mix": 8.36,
+   "gas_uncapped": 8.49
+  },
+  "nyc_top10": [
+   {
+    "date": "2021-02-17",
+    "nyc_da": 89.5,
+    "hr": 12.67,
+    "implied_fuel": 6.82,
+    "gas": 15.31,
+    "oil": 14.02,
+    "meas_f": 0.102,
+    "meas_mix_price": 15.18
+   }
+  ],
+  "nyc_days_table": [
+   {
+    "date": "2021-02-17",
+    "nyc_da": 89.5,
+    "hr": 12.67,
+    "implied_fuel": 6.82,
+    "gas": 15.31,
+    "oil": 14.02,
+    "meas_f": 0.102,
+    "meas_mix_price": 15.18
+   }
+  ]
+ },
+ {
+  "year": 2022,
+  "capable_tranches": 290,
+  "capable_mw": 16947.105987093448,
+  "binding_gen_days": 3432,
+  "binding_days": 25,
+  "by_zone": {
+   "Capital_Hudson": {
+    "gen_days": 1700,
+    "mw_days": 114803.0,
+    "mw_wtd_oil_share": 0.166,
+    "share_mw_below_1pct": 0.766,
+    "share_mw_above_50pct": 0.155,
+    "relief_wtd_oil_share": 0.19
+   },
+   "Long_Island": {
+    "gen_days": 1182,
+    "mw_days": 79234.0,
+    "mw_wtd_oil_share": 0.647,
+    "share_mw_below_1pct": 0.207,
+    "share_mw_above_50pct": 0.702,
+    "relief_wtd_oil_share": 0.686
+   },
+   "NYC": {
+    "gen_days": 550,
+    "mw_days": 47595.0,
+    "mw_wtd_oil_share": 0.395,
+    "share_mw_below_1pct": 0.485,
+    "share_mw_above_50pct": 0.433,
+    "relief_wtd_oil_share": 0.324
+   }
+  },
+  "all": {
+   "mw_wtd_oil_share": 0.369,
+   "relief_wtd_oil_share": 0.384,
+   "share_mw_days_near_parity_lt_1usd": 0.072,
+   "share_mw_below_1pct_when_relief_ge_5usd": 0.548,
+   "share_mw_below_1pct": 0.527
+  },
+  "nyc_days": 10,
+  "nyc_median": {
+   "nyc_da": 208.75,
+   "implied_fuel": 13.46,
+   "gas": 24.75,
+   "oil": 22.66,
+   "meas_mix_price": 24.3,
+   "meas_f": 0.42
+  },
+  "nyc_closest": {
+   "cap_min_gas_oil": 10,
+   "measured_mix": 0
+  },
+  "nyc_mae": {
+   "cap": 7.88,
+   "measured_mix": 9.79,
+   "gas_uncapped": 10.62
+  },
+  "nyc_top10": [
+   {
+    "date": "2022-12-26",
+    "nyc_da": 302.1,
+    "hr": 12.45,
+    "implied_fuel": 24.01,
+    "gas": 30.6,
+    "oil": 25.86,
+    "meas_f": 0.429,
+    "meas_mix_price": 28.99
+   },
+   {
+    "date": "2022-12-27",
+    "nyc_da": 241.9,
+    "hr": 12.45,
+    "implied_fuel": 19.18,
+    "gas": 30.6,
+    "oil": 26.79,
+    "meas_f": 0.316,
+    "meas_mix_price": 29.95
+   },
+   {
+    "date": "2022-12-25",
+    "nyc_da": 235.2,
+    "hr": 12.45,
+    "implied_fuel": 18.64,
+    "gas": 30.6,
+    "oil": 25.86,
+    "meas_f": 0.447,
+    "meas_mix_price": 29.29
+   },
+   {
+    "date": "2022-12-24",
+    "nyc_da": 232.1,
+    "hr": 12.45,
+    "implied_fuel": 18.38,
+    "gas": 30.6,
+    "oil": 25.86,
+    "meas_f": 0.505,
+    "meas_mix_price": 28.28
+   },
+   {
+    "date": "2022-12-23",
+    "nyc_da": 117.4,
+    "hr": 13.38,
+    "implied_fuel": 8.53,
+    "gas": 28.24,
+    "oil": 25.86,
+    "meas_f": 0.424,
+    "meas_mix_price": 27.36
+   },
+   {
+    "date": "2022-01-31",
+    "nyc_da": 213.1,
+    "hr": 15.25,
+    "implied_fuel": 13.74,
+    "gas": 21.26,
+    "oil": 19.3,
+    "meas_f": 0.005,
+    "meas_mix_price": 21.25
+   },
+   {
+    "date": "2022-01-29",
+    "nyc_da": 176.0,
+    "hr": 15.25,
+    "implied_fuel": 11.31,
+    "gas": 21.26,
+    "oil": 19.45,
+    "meas_f": 0.412,
+    "meas_mix_price": 20.52
+   },
+   {
+    "date": "2022-01-30",
+    "nyc_da": 178.6,
+    "hr": 15.25,
+    "implied_fuel": 11.48,
+    "gas": 21.26,
+    "oil": 19.45,
+    "meas_f": 0.176,
+    "meas_mix_price": 20.94
+   },
+   {
+    "date": "2022-01-21",
+    "nyc_da": 204.4,
+    "hr": 15.25,
+    "implied_fuel": 13.17,
+    "gas": 19.73,
+    "oil": 18.79,
+    "meas_f": 0.439,
+    "meas_mix_price": 19.32
+   },
+   {
+    "date": "2022-01-07",
+    "nyc_da": 116.4,
+    "hr": 15.25,
+    "implied_fuel": 7.4,
+    "gas": 17.91,
+    "oil": 17.45,
+    "meas_f": 0.244,
+    "meas_mix_price": 17.8
+   }
+  ],
+  "nyc_days_table": [
+   {
+    "date": "2022-01-07",
+    "nyc_da": 116.4,
+    "hr": 15.25,
+    "implied_fuel": 7.4,
+    "gas": 17.91,
+    "oil": 17.45,
+    "meas_f": 0.244,
+    "meas_mix_price": 17.8
+   },
+   {
+    "date": "2022-01-21",
+    "nyc_da": 204.4,
+    "hr": 15.25,
+    "implied_fuel": 13.17,
+    "gas": 19.73,
+    "oil": 18.79,
+    "meas_f": 0.439,
+    "meas_mix_price": 19.32
+   },
+   {
+    "date": "2022-01-29",
+    "nyc_da": 176.0,
+    "hr": 15.25,
+    "implied_fuel": 11.31,
+    "gas": 21.26,
+    "oil": 19.45,
+    "meas_f": 0.412,
+    "meas_mix_price": 20.52
+   },
+   {
+    "date": "2022-01-30",
+    "nyc_da": 178.6,
+    "hr": 15.25,
+    "implied_fuel": 11.48,
+    "gas": 21.26,
+    "oil": 19.45,
+    "meas_f": 0.176,
+    "meas_mix_price": 20.94
+   },
+   {
+    "date": "2022-01-31",
+    "nyc_da": 213.1,
+    "hr": 15.25,
+    "implied_fuel": 13.74,
+    "gas": 21.26,
+    "oil": 19.3,
+    "meas_f": 0.005,
+    "meas_mix_price": 21.25
+   },
+   {
+    "date": "2022-12-23",
+    "nyc_da": 117.4,
+    "hr": 13.38,
+    "implied_fuel": 8.53,
+    "gas": 28.24,
+    "oil": 25.86,
+    "meas_f": 0.424,
+    "meas_mix_price": 27.36
+   },
+   {
+    "date": "2022-12-24",
+    "nyc_da": 232.1,
+    "hr": 12.45,
+    "implied_fuel": 18.38,
+    "gas": 30.6,
+    "oil": 25.86,
+    "meas_f": 0.505,
+    "meas_mix_price": 28.28
+   },
+   {
+    "date": "2022-12-25",
+    "nyc_da": 235.2,
+    "hr": 12.45,
+    "implied_fuel": 18.64,
+    "gas": 30.6,
+    "oil": 25.86,
+    "meas_f": 0.447,
+    "meas_mix_price": 29.29
+   },
+   {
+    "date": "2022-12-26",
+    "nyc_da": 302.1,
+    "hr": 12.45,
+    "implied_fuel": 24.01,
+    "gas": 30.6,
+    "oil": 25.86,
+    "meas_f": 0.429,
+    "meas_mix_price": 28.99
+   },
+   {
+    "date": "2022-12-27",
+    "nyc_da": 241.9,
+    "hr": 12.45,
+    "implied_fuel": 19.18,
+    "gas": 30.6,
+    "oil": 26.79,
+    "meas_f": 0.316,
+    "meas_mix_price": 29.95
+   }
+  ]
+ },
+ {
+  "year": 2023,
+  "capable_tranches": 279,
+  "capable_mw": 16309.717847093447,
+  "binding_gen_days": 214,
+  "binding_days": 1,
+  "by_zone": {
+   "Capital_Hudson": {
+    "gen_days": 60,
+    "mw_days": 4316.0,
+    "mw_wtd_oil_share": 0.283,
+    "share_mw_below_1pct": 0.432,
+    "share_mw_above_50pct": 0.283,
+    "relief_wtd_oil_share": 0.283
+   },
+   "Long_Island": {
+    "gen_days": 62,
+    "mw_days": 3567.0,
+    "mw_wtd_oil_share": 0.694,
+    "share_mw_below_1pct": 0.183,
+    "share_mw_above_50pct": 0.805,
+    "relief_wtd_oil_share": 0.717
+   },
+   "NYC": {
+    "gen_days": 92,
+    "mw_days": 7868.0,
+    "mw_wtd_oil_share": 0.29,
+    "share_mw_below_1pct": 0.36,
+    "share_mw_above_50pct": 0.403,
+    "relief_wtd_oil_share": 0.293
+   }
+  },
+  "all": {
+   "mw_wtd_oil_share": 0.38,
+   "relief_wtd_oil_share": 0.423,
+   "share_mw_days_near_parity_lt_1usd": 0.0,
+   "share_mw_below_1pct_when_relief_ge_5usd": 0.339,
+   "share_mw_below_1pct": 0.339
+  },
+  "nyc_days": 1,
+  "nyc_median": {
+   "nyc_da": 161.7,
+   "implied_fuel": 12.77,
+   "gas": 31.2,
+   "oil": 14.9,
+   "meas_mix_price": 26.43,
+   "meas_f": 0.29
+  },
+  "nyc_closest": {
+   "cap_min_gas_oil": 1,
+   "measured_mix": 0
+  },
+  "nyc_mae": {
+   "cap": 2.13,
+   "measured_mix": 13.66,
+   "gas_uncapped": 18.43
+  },
+  "nyc_top10": [
+   {
+    "date": "2023-02-03",
+    "nyc_da": 161.7,
+    "hr": 12.42,
+    "implied_fuel": 12.77,
+    "gas": 31.2,
+    "oil": 14.9,
+    "meas_f": 0.29,
+    "meas_mix_price": 26.43
+   }
+  ],
+  "nyc_days_table": [
+   {
+    "date": "2023-02-03",
+    "nyc_da": 161.7,
+    "hr": 12.42,
+    "implied_fuel": 12.77,
+    "gas": 31.2,
+    "oil": 14.9,
+    "meas_f": 0.29,
+    "meas_mix_price": 26.43
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "capable_tranches": 287,
+  "capable_mw": 17100.685900718447,
+  "binding_gen_days": 1128,
+  "binding_days": 8,
+  "by_zone": {
+   "Capital_Hudson": {
+    "gen_days": 544,
+    "mw_days": 41671.0,
+    "mw_wtd_oil_share": 0.056,
+    "share_mw_below_1pct": 0.941,
+    "share_mw_above_50pct": 0.059,
+    "relief_wtd_oil_share": 0.126
+   },
+   "Long_Island": {
+    "gen_days": 427,
+    "mw_days": 26671.0,
+    "mw_wtd_oil_share": 0.319,
+    "share_mw_below_1pct": 0.571,
+    "share_mw_above_50pct": 0.355,
+    "relief_wtd_oil_share": 0.41
+   },
+   "NYC": {
+    "gen_days": 157,
+    "mw_days": 12698.0,
+    "mw_wtd_oil_share": 0.178,
+    "share_mw_below_1pct": 0.748,
+    "share_mw_above_50pct": 0.204,
+    "relief_wtd_oil_share": 0.142
+   }
+  },
+  "all": {
+   "mw_wtd_oil_share": 0.162,
+   "relief_wtd_oil_share": 0.222,
+   "share_mw_days_near_parity_lt_1usd": 0.031,
+   "share_mw_below_1pct_when_relief_ge_5usd": 0.672,
+   "share_mw_below_1pct": 0.789
+  },
+  "nyc_days": 5,
+  "nyc_median": {
+   "nyc_da": 159.1,
+   "implied_fuel": 9.97,
+   "gas": 19.61,
+   "oil": 18.2,
+   "meas_mix_price": 19.61,
+   "meas_f": 0.0
+  },
+  "nyc_closest": {
+   "cap_min_gas_oil": 5,
+   "measured_mix": 0
+  },
+  "nyc_mae": {
+   "cap": 9.12,
+   "measured_mix": 10.64,
+   "gas_uncapped": 10.87
+  },
+  "nyc_top10": [
+   {
+    "date": "2024-01-17",
+    "nyc_da": 186.8,
+    "hr": 12.36,
+    "implied_fuel": 14.87,
+    "gas": 20.96,
+    "oil": 18.01,
+    "meas_f": 0.218,
+    "meas_mix_price": 20.52
+   },
+   {
+    "date": "2024-01-13",
+    "nyc_da": 50.1,
+    "hr": 15.61,
+    "implied_fuel": 2.98,
+    "gas": 19.61,
+    "oil": 18.2,
+    "meas_f": 0.0,
+    "meas_mix_price": 19.61
+   },
+   {
+    "date": "2024-01-14",
+    "nyc_da": 95.6,
+    "hr": 15.61,
+    "implied_fuel": 5.9,
+    "gas": 19.61,
+    "oil": 18.2,
+    "meas_f": 0.0,
+    "meas_mix_price": 19.61
+   },
+   {
+    "date": "2024-01-15",
+    "nyc_da": 159.1,
+    "hr": 15.61,
+    "implied_fuel": 9.97,
+    "gas": 19.61,
+    "oil": 18.2,
+    "meas_f": 0.0,
+    "meas_mix_price": 19.61
+   },
+   {
+    "date": "2024-01-16",
+    "nyc_da": 180.0,
+    "hr": 15.61,
+    "implied_fuel": 11.31,
+    "gas": 19.61,
+    "oil": 18.01,
+    "meas_f": 0.454,
+    "meas_mix_price": 18.88
+   }
+  ],
+  "nyc_days_table": [
+   {
+    "date": "2024-01-13",
+    "nyc_da": 50.1,
+    "hr": 15.61,
+    "implied_fuel": 2.98,
+    "gas": 19.61,
+    "oil": 18.2,
+    "meas_f": 0.0,
+    "meas_mix_price": 19.61
+   },
+   {
+    "date": "2024-01-14",
+    "nyc_da": 95.6,
+    "hr": 15.61,
+    "implied_fuel": 5.9,
+    "gas": 19.61,
+    "oil": 18.2,
+    "meas_f": 0.0,
+    "meas_mix_price": 19.61
+   },
+   {
+    "date": "2024-01-15",
+    "nyc_da": 159.1,
+    "hr": 15.61,
+    "implied_fuel": 9.97,
+    "gas": 19.61,
+    "oil": 18.2,
+    "meas_f": 0.0,
+    "meas_mix_price": 19.61
+   },
+   {
+    "date": "2024-01-16",
+    "nyc_da": 180.0,
+    "hr": 15.61,
+    "implied_fuel": 11.31,
+    "gas": 19.61,
+    "oil": 18.01,
+    "meas_f": 0.454,
+    "meas_mix_price": 18.88
+   },
+   {
+    "date": "2024-01-17",
+    "nyc_da": 186.8,
+    "hr": 12.36,
+    "implied_fuel": 14.87,
+    "gas": 20.96,
+    "oil": 18.01,
+    "meas_f": 0.218,
+    "meas_mix_price": 20.52
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "capable_tranches": 280,
+  "capable_mw": 16823.56719271845,
+  "binding_gen_days": 2522,
+  "binding_days": 18,
+  "by_zone": {
+   "Capital_Hudson": {
+    "gen_days": 976,
+    "mw_days": 80138.0,
+    "mw_wtd_oil_share": 0.23,
+    "share_mw_below_1pct": 0.736,
+    "share_mw_above_50pct": 0.239,
+    "relief_wtd_oil_share": 0.309
+   },
+   "Long_Island": {
+    "gen_days": 831,
+    "mw_days": 52722.0,
+    "mw_wtd_oil_share": 0.525,
+    "share_mw_below_1pct": 0.325,
+    "share_mw_above_50pct": 0.514,
+    "relief_wtd_oil_share": 0.607
+   },
+   "NYC": {
+    "gen_days": 715,
+    "mw_days": 58792.0,
+    "mw_wtd_oil_share": 0.266,
+    "share_mw_below_1pct": 0.594,
+    "share_mw_above_50pct": 0.271,
+    "relief_wtd_oil_share": 0.266
+   }
+  },
+  "all": {
+   "mw_wtd_oil_share": 0.322,
+   "relief_wtd_oil_share": 0.373,
+   "share_mw_days_near_parity_lt_1usd": 0.015,
+   "share_mw_below_1pct_when_relief_ge_5usd": 0.527,
+   "share_mw_below_1pct": 0.58
+  },
+  "nyc_days": 11,
+  "nyc_median": {
+   "nyc_da": 177.1,
+   "implied_fuel": 12.23,
+   "gas": 20.51,
+   "oil": 18.88,
+   "meas_mix_price": 20.42,
+   "meas_f": 0.23
+  },
+  "nyc_closest": {
+   "cap_min_gas_oil": 11,
+   "measured_mix": 0
+  },
+  "nyc_mae": {
+   "cap": 5.44,
+   "measured_mix": 18.9,
+   "gas_uncapped": 24.14
+  },
+  "nyc_top10": [
+   {
+    "date": "2025-01-18",
+    "nyc_da": 106.5,
+    "hr": 12.35,
+    "implied_fuel": 8.37,
+    "gas": 69.86,
+    "oil": 19.89,
+    "meas_f": 0.0,
+    "meas_mix_price": 69.86
+   },
+   {
+    "date": "2025-01-19",
+    "nyc_da": 211.9,
+    "hr": 12.35,
+    "implied_fuel": 16.91,
+    "gas": 69.86,
+    "oil": 19.89,
+    "meas_f": 0.054,
+    "meas_mix_price": 67.45
+   },
+   {
+    "date": "2025-01-20",
+    "nyc_da": 276.8,
+    "hr": 12.35,
+    "implied_fuel": 22.17,
+    "gas": 69.86,
+    "oil": 19.89,
+    "meas_f": 0.492,
+    "meas_mix_price": 46.64
+   },
+   {
+    "date": "2025-01-21",
+    "nyc_da": 301.9,
+    "hr": 12.35,
+    "implied_fuel": 24.21,
+    "gas": 69.86,
+    "oil": 19.43,
+    "meas_f": 0.592,
+    "meas_mix_price": 41.92
+   },
+   {
+    "date": "2025-01-22",
+    "nyc_da": 298.5,
+    "hr": 16.5,
+    "implied_fuel": 17.88,
+    "gas": 30.56,
+    "oil": 18.88,
+    "meas_f": 0.229,
+    "meas_mix_price": 27.88
+   },
+   {
+    "date": "2025-01-23",
+    "nyc_da": 205.3,
+    "hr": 16.5,
+    "implied_fuel": 12.23,
+    "gas": 20.51,
+    "oil": 18.84,
+    "meas_f": 0.055,
+    "meas_mix_price": 20.42
+   },
+   {
+    "date": "2025-02-19",
+    "nyc_da": 177.1,
+    "hr": 16.5,
+    "implied_fuel": 10.52,
+    "gas": 19.74,
+    "oil": 19.51,
+    "meas_f": 0.105,
+    "meas_mix_price": 19.72
+   },
+   {
+    "date": "2025-01-08",
+    "nyc_da": 154.3,
+    "hr": 16.5,
+    "implied_fuel": 9.14,
+    "gas": 17.97,
+    "oil": 17.82,
+    "meas_f": 0.226,
+    "meas_mix_price": 17.94
+   },
+   {
+    "date": "2025-12-13",
+    "nyc_da": 114.0,
+    "hr": 12.35,
+    "implied_fuel": 8.98,
+    "gas": 17.26,
+    "oil": 15.38,
+    "meas_f": 0.0,
+    "meas_mix_price": 17.26
+   },
+   {
+    "date": "2025-12-14",
+    "nyc_da": 139.8,
+    "hr": 12.35,
+    "implied_fuel": 11.08,
+    "gas": 17.26,
+    "oil": 15.38,
+    "meas_f": 0.314,
+    "meas_mix_price": 16.83
+   }
+  ],
+  "nyc_days_table": [
+   {
+    "date": "2025-01-08",
+    "nyc_da": 154.3,
+    "hr": 16.5,
+    "implied_fuel": 9.14,
+    "gas": 17.97,
+    "oil": 17.82,
+    "meas_f": 0.226,
+    "meas_mix_price": 17.94
+   },
+   {
+    "date": "2025-01-18",
+    "nyc_da": 106.5,
+    "hr": 12.35,
+    "implied_fuel": 8.37,
+    "gas": 69.86,
+    "oil": 19.89,
+    "meas_f": 0.0,
+    "meas_mix_price": 69.86
+   },
+   {
+    "date": "2025-01-19",
+    "nyc_da": 211.9,
+    "hr": 12.35,
+    "implied_fuel": 16.91,
+    "gas": 69.86,
+    "oil": 19.89,
+    "meas_f": 0.054,
+    "meas_mix_price": 67.45
+   },
+   {
+    "date": "2025-01-20",
+    "nyc_da": 276.8,
+    "hr": 12.35,
+    "implied_fuel": 22.17,
+    "gas": 69.86,
+    "oil": 19.89,
+    "meas_f": 0.492,
+    "meas_mix_price": 46.64
+   },
+   {
+    "date": "2025-01-21",
+    "nyc_da": 301.9,
+    "hr": 12.35,
+    "implied_fuel": 24.21,
+    "gas": 69.86,
+    "oil": 19.43,
+    "meas_f": 0.592,
+    "meas_mix_price": 41.92
+   },
+   {
+    "date": "2025-01-22",
+    "nyc_da": 298.5,
+    "hr": 16.5,
+    "implied_fuel": 17.88,
+    "gas": 30.56,
+    "oil": 18.88,
+    "meas_f": 0.229,
+    "meas_mix_price": 27.88
+   },
+   {
+    "date": "2025-01-23",
+    "nyc_da": 205.3,
+    "hr": 16.5,
+    "implied_fuel": 12.23,
+    "gas": 20.51,
+    "oil": 18.84,
+    "meas_f": 0.055,
+    "meas_mix_price": 20.42
+   },
+   {
+    "date": "2025-02-19",
+    "nyc_da": 177.1,
+    "hr": 16.5,
+    "implied_fuel": 10.52,
+    "gas": 19.74,
+    "oil": 19.51,
+    "meas_f": 0.105,
+    "meas_mix_price": 19.72
+   },
+   {
+    "date": "2025-12-13",
+    "nyc_da": 114.0,
+    "hr": 12.35,
+    "implied_fuel": 8.98,
+    "gas": 17.26,
+    "oil": 15.38,
+    "meas_f": 0.0,
+    "meas_mix_price": 17.26
+   },
+   {
+    "date": "2025-12-14",
+    "nyc_da": 139.8,
+    "hr": 12.35,
+    "implied_fuel": 11.08,
+    "gas": 17.26,
+    "oil": 15.38,
+    "meas_f": 0.314,
+    "meas_mix_price": 16.83
+   },
+   {
+    "date": "2025-12-15",
+    "nyc_da": 163.1,
+    "hr": 12.35,
+    "implied_fuel": 12.96,
+    "gas": 17.26,
+    "oil": 15.23,
+    "meas_f": 0.474,
+    "meas_mix_price": 16.41
+   }
+  ]
+ }
+]

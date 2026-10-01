@@ -2,7 +2,7 @@
 
 The pjm-136 M2 derive (frozen, CLAUDE.md rule 23 `[R-FROZEN-DERIVE]` — re-derives
 ONLY when its source data updates; charter
-`results/calibration/FINDING-pjm136-zonal-dual-structure-2026-07-28.md`). Reads
+`docs/records/pjm/FINDING-pjm136-zonal-dual-structure-2026-07-28.md`). Reads
 the pjm-136 zonal LMP-component intake (`data/raw/pjm-zonal-lmp/`, PJM DataMiner2
 `da_hrl_lmps` `type = ZONE` rows, 2023-2025) and emits the dimensionless per-zone
 (month) marginal delivery-factor deviation surface consumed by the gated

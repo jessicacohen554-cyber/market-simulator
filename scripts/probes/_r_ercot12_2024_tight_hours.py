@@ -6,7 +6,7 @@ committed actual LZ RT settlement series plus ERCOT's measured
 lambda / RTORPA / RTORDPA / PRC split, hour by hour.
 
 Usage: ``python3 scripts/probes/_r_ercot12_2024_tight_hours.py <old_hourly_dir>``.
-Record: ``docs/handoffs/FINDING-r-ercot-12-2024-tight-hours-2026-09-28.md``.
+Record: ``docs/records/ercot/FINDING-r-ercot-12-2024-tight-hours-2026-09-28.md``.
 """
 
 import sys

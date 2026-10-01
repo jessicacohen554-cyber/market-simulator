@@ -61,7 +61,7 @@ ISO = "NYISO"
 YEARS = [2023, 2024, 2025]
 UNIT_LEVEL_DIR = RAW_DIR / "campd-unit-level"
 LAYUP_CSV = RAW_DIR / "_processed-legacy" / "campd_bridge_layup_exclusions_NYISO.csv"
-OUT = REPO / "results/calibration/_nyiso146_perplant_minrun_phase0.json"
+OUT = REPO / "results/phase0/nyiso/_nyiso146_perplant_minrun_phase0.json"
 
 # The keeper's class scalars (run_config.json of
 # results/calibration/nyiso144_layup_arm): the values under test.

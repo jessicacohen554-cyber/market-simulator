@@ -360,6 +360,32 @@ def apply_reserve_coopt(
     )
     coopt_kw = build_reserve_dispatch_kwargs(design)
     ReserveSpec.from_reserve_kwargs(coopt_kw).merge_into(dispatch_kwargs)
+    # R-ERCOT-23 hourly effective SWCAP, half (a): every ERCOT reserve-family
+    # step penalty is VOLL-anchored (linear in ordc_voll), and ERCOT's VOLL
+    # follows the hour's SWCAP (ORDC OBD §2.1), so the whole ORDC cost block is
+    # re-anchored by SWCAP_t / ordc_voll. Set only where some hour differs
+    # from the static curve, so a year with no LCAP window passes no kwarg
+    # and stays byte-identical.
+    from market_sim.results.scarcity import (
+        ercot_effective_swcap_series,
+        ercot_swcap_effective_active,
+    )
+
+    if ercot_swcap_effective_active(config) and len(
+        dispatch_kwargs.get("ordc_penalties", ())
+    ):
+        _yr = int(sim_year) if sim_year is not None else int(config.weather_year)
+        _voll = float(config.ordc_voll)
+        _scale = ercot_effective_swcap_series(_yr, hours, _voll) / _voll
+        if np.any(_scale != 1.0):
+            dispatch_kwargs["ordc_penalty_hour_scale"] = _scale
+            logger.info(
+                "ercot_swcap_effective_hourly: ORDC penalties re-anchored on "
+                "the effective SWCAP in %d of %d hours (min scale %.4f)",
+                int((_scale != 1.0).sum()),
+                int(hours),
+                float(_scale.min()),
+            )
     _log_reserve_coopt(iso, config, fleet_arrays, design, coopt_kw)
     return design
 
@@ -608,7 +634,7 @@ def apply_ercot_commitment_posture(
     :func:`apply_reserve_coopt` — the ERCOT posture is reserve-decoupled (ERCOT
     has no pergen substrate), so its ``posture_gen_idx``/``posture_col``/
     ``posture_mlf``/``posture_startup`` are threaded as their own dispatch
-    kwargs (design note §A; ``docs/handoffs/ercot-commitment-thinness-2026-07.md``).
+    kwargs (design note §A; ``docs/records/ercot/ercot-commitment-thinness-2026-07.md``).
     Returns True when the posture was merged (a no-op otherwise, byte-identical).
     """
     if str(getattr(config, "iso", "")) != "ERCOT":
@@ -659,7 +685,7 @@ def apply_spp_commitment_posture(
     reserve-decoupled construction as :func:`apply_ercot_commitment_posture`
     (``posture_gen_idx``/``posture_col``/``posture_mlf``/``posture_startup``)
     plus the per-pool ``posture_min_up_h`` / ``posture_min_down_h`` coupling
-    (``docs/handoffs/DESIGN-spp-102-cc-commitment-state-2026-09-29.md``).
+    (``docs/records/spp/DESIGN-spp-102-cc-commitment-state-2026-09-29.md``).
     Returns True when merged (a no-op otherwise, byte-identical).
     """
     if str(getattr(config, "iso", "")) != "SPP":

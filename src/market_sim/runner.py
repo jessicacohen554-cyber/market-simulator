@@ -970,7 +970,7 @@ def _forward_expectation_signal(
     year's demand (plus the committed pipeline, when armed) minus the same
     instrument at the current year's dispatched demand. Locational AND
     forward-looking — the developer-pro-forma corner neither measured arm of
-    the disarm probe tested (``docs/FINDING-entry-signal-disarm-2026-08.md``
+    the disarm probe tested (``docs/records/misc/FINDING-entry-signal-disarm-2026-08.md``
     §6). Exact arithmetic, no coefficient anywhere (rule 21 ``[R-DOF]``);
     returns a NEW array — the duals are never mutated. Gated by
     ``entry_forward_expectation_signal`` at the ``_screen_signal_for`` seam.
@@ -1019,7 +1019,7 @@ def _dispersion_expectation_signal(
 ) -> np.ndarray:
     """Compose the dispersion-carrying capacity-screen entry signal (zero-DOF).
 
-    capx D43 (``docs/handoffs/FINDING-capx-d39-entry-underbuild-2026-09-02.md``
+    capx D43 (``docs/records/forecast/FINDING-capx-d39-entry-underbuild-2026-09-02.md``
     §0/§3.1 is the object; the CAISO A/B is the adjudication). The screens'
     price object becomes each zone's OWN realized price-duration curve — the
     prior solve's hourly zonal LP duals, ``econ_prices`` with the same
@@ -1066,7 +1066,7 @@ class _EntryRepriceWalk:
     """Shared repricer state for the margin-exhaustion entry walk (D11-R).
 
     The live productionization of the L-1b closure
-    (``docs/FINDING-entry-signal-l1-2026-08.md`` §2, gated
+    (``docs/records/misc/FINDING-entry-signal-l1-2026-08.md`` §2, gated
     ``entry_margin_exhaustion``): one object per priced entering year,
     threaded through ``prior_results.entry_reprice`` into BOTH allocators —
     the thermal/VRE screen (``apply_economic_new_entry``) first, then the
@@ -1253,7 +1253,7 @@ def _confirmed_exits_active(config: ScenarioConfig) -> bool:
 
     Forecast-mode only, regardless of ``confirmed_exits_enabled``'s default --
     a backcast run is a hard no-op even after the 2026-07-05 default flip
-    (`docs/handoffs/confirmed-retirement-plan-2026-07.md` §7), since backcast's
+    (`docs/records/misc/confirmed-retirement-plan-2026-07.md` §7), since backcast's
     historical exits ride the vintage snapshot instead.
     """
     return config.mode == "forecast" and config.confirmed_exits_enabled
@@ -3476,6 +3476,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 )
 
                 _li_n11 = bool(getattr(config, "nyiso_li_tsl_n11_security", False))
+                _li_all = bool(getattr(config, "nyiso_li_tsl_all_hours", False))
                 year_ttc = apply_nyiso_li_tsl_import_cap(
                     year_ttc,
                     _year_iso_config,
@@ -3483,13 +3484,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     year,
                     year_demand.shape[1],
                     n11_security_basis=_li_n11,
+                    all_hours=_li_all,
                 )
                 logger.info(
                     "%s %d: Zone-K LCR/TSL import cap on NYC->Long_Island "
-                    "(HB14-21, published %s; replaces the "
+                    "(%s, published %s; replaces the "
                     "LI self-supply energy floor)",
                     iso,
                     year,
+                    "all hours" if _li_all else "HB14-21",
                     "N-1-1 transmission security limit"
                     if _li_n11
                     else "locality import limit",
@@ -3826,7 +3829,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 sim_year=year,
             )
             # ERCOT standalone energy-only commitment-posture (reserve-decoupled;
-            # docs/handoffs/ercot-commitment-thinness-2026-07.md). No-op /
+            # docs/records/ercot/ercot-commitment-thinness-2026-07.md). No-op /
             # byte-identical for every non-ERCOT run and default-off ERCOT.
             apply_ercot_commitment_posture(dispatch_kwargs, config, fleet_arrays)
             # SPP standalone commitment posture with min-up/min-down (SPP-102).
@@ -4451,7 +4454,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # committed. The netting this replaces was guarding the same
                 # phenomenon at the wrong object -- the annual flow caps
                 # (rule 19 [R-ONE-MECH];
-                # docs/handoffs/ffr-4a-entry-ladder-2026-08-04.md §3.5).
+                # docs/records/forecast/ffr-4a-entry-ladder-2026-08-04.md §3.5).
                 _pipe_arrays = _pipe_mc = _pipe_vre = None
                 if getattr(config, "entry_pipeline_aware_signal", False):
                     _pipe_arrays, _pipe_mc, _pipe_vre = _pipeline_lookahead_terms(
@@ -4572,7 +4575,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 )
                 # ENTRY-SIGNAL forward-expectation composition (GATED
                 # default-OFF, entry_forward_expectation_signal;
-                # docs/FINDING-entry-signal-disarm-2026-08.md §6). The
+                # docs/records/misc/FINDING-entry-signal-disarm-2026-08.md §6). The
                 # screens' price object becomes the run's own prior-year
                 # hourly ZONAL LP dual surface (econ_prices — locational,
                 # real intraday shape, realized scarcity) re-leveled hour by
@@ -4643,7 +4646,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     )
                 # capx D43 DISPERSION-CARRYING expectation (GATED default-OFF,
                 # entry_dispersion_expectation_signal; the D39 object:
-                # docs/handoffs/FINDING-capx-d39-entry-underbuild-2026-09-02.md
+                # docs/records/forecast/FINDING-capx-d39-entry-underbuild-2026-09-02.md
                 # §0/§3.1/§7). The screens' price object becomes each zone's
                 # OWN realized price-duration curve (econ_prices — the
                 # prior-year zonal duals with the run's own scarcity

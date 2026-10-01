@@ -9,7 +9,7 @@ share of the plant's fuel it attributes to **useful thermal output**, so
 fuel into power. Fed to the LP as a marginal cost it makes CHP the cheapest
 thermal on the system — six ISOs' CHP rates measure 12-62 % understated on a
 consistent net basis
-(``results/calibration/FINDING-caiso128-heat-rate-provenance-2026-07-27.md``
+(``docs/records/caiso/FINDING-caiso128-heat-rate-provenance-2026-07-27.md``
 §4), which is also why the ISO-keyed hand factors this artifact replaces
 (:data:`market_sim.data.fleet.CHP_STEAM_CREDIT_HR_CORRECTION_ISOS`, a single
 1.8x topping factor) cannot be right everywhere: caiso-128 measured them
@@ -36,7 +36,7 @@ calibration benchmark holds out against (measured: ``net923 / PLNGENAN`` =
 1.000000 on every MISO thermal plant). The correction is therefore a single
 change to the incumbent input — eGRID's own CHP allocation, undone — with the
 basis, the source, the vintage and the denominator all held fixed. This is what
-unblocks the design ``results/calibration/FINDING-miso98-chp-sector-ab-2026-07.md``
+unblocks the design ``docs/records/miso/FINDING-miso98-chp-sector-ab-2026-07.md``
 §6.1 stopped on: the CEMS route needed a CHP-specific gross-to-net ratio that
 ``compute_parasitic_factors`` cannot supply (a cogen's CEMS gross-load channel
 misses the units EIA-923 counts, so the reconciliation falls out of band on
@@ -111,7 +111,7 @@ topping population, both definitional and both frozen at derive time (rule 23
    (515 MW), NYISO 2493 East River 37.5 % (306 MW, ``below_credited`` — see
    above), NEISO 1595 Kendall 1.2 % (206 MW); PJM and CAISO carry none above
    0.1 %. Evidence:
-   ``results/calibration/FINDING-miso122-hybrid-cogen-scope-gate-2026-08-03.md``,
+   ``docs/records/miso/FINDING-miso122-hybrid-cogen-scope-gate-2026-08-03.md``,
    probe ``scripts/probes/_miso122_hybrid_cogen_scope.py``.
 
 Rule 14 `[R-ACCURATE]`'s named "different boundary" exception is what all

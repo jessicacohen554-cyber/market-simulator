@@ -1,11 +1,11 @@
 """Tests for the T1-H Phase-1 Leg A storage entry repairs (D-2 + D-3).
 
-Charter: ``docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md`` Phase-1; defect
-register ``docs/FINDING-entry-screen-t1h-2026-08.md``; census/replay
-``docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md``. Two GATED mechanisms
+Charter: ``docs/records/misc/PRECOMMIT-t1h-capacity-entry-2026-08-30.md`` Phase-1; defect
+register ``docs/records/misc/FINDING-entry-screen-t1h-2026-08.md``; census/replay
+``docs/records/misc/FINDING-t1h-capacity-entry-phase0-2026-08-30.md``. Two GATED mechanisms
 — **default-ON since owner ruling R-A of the 2026-08-31 director sitting**
 ("Arm both", on the A/B record
-``docs/FINDING-t1h-capentry-phase1-ab-2026-08-30.md`` §4) — each shared by BOTH
+``docs/records/misc/FINDING-t1h-capentry-phase1-ab-2026-08-30.md`` §4) — each shared by BOTH
 storage allocation rules through one helper (rule 19):
 
 * ``storage_entry_availability_gate`` (D-2) — the candidate pool admits a
@@ -151,19 +151,6 @@ class TestConfigFields(unittest.TestCase):
         self.assertNotEqual(k_gate, base)
         self.assertNotEqual(k_rank, base)
         self.assertNotEqual(k_gate, k_rank)
-
-    def test_default_key_pin_unmoved_by_the_arming(self):
-        """The global default-config pin is untouched by the flip (measured)."""
-        # ADVANCED 2026-09-06, e5ecd4105ada3e58 -> 547053bdfccd4264 — capx D65-B's
-        # COUPLED ccs_retrofit_fixed_cost_co2_scaling (Act A, a declared (b'-1)
-        # default flip) + ccs_retrofit_vom_adder 8.0 -> 2.95 $/MWh 2026$ (Act B, a
-        # plain value field with no drop value, so it re-keys unconditionally).
-        # Nothing about THIS file's mechanism moved — the pin advances because the
-        # global default did. Rationale and provenance live on the pin in
-        # tests/regression/test_persisted_identity.py; pre-declared BEFORE the solve
-        # in docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
-        # capx D65-B-R, completing the partial re-key fb93b76e left behind.
-        self.assertEqual(ScenarioConfig().cache_key(), "547053bdfccd4264")
 
     def test_backcast_coerces_off(self):
         cfg = ScenarioConfig(

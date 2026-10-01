@@ -39,7 +39,7 @@ ENTRY = {
     "sub-cutset, which the measured cutset flow exceeds in 60-99 % of hours; the "
     "upstate surplus then cleared at the pooled node price, <= $0 for up to 3,110 h/yr "
     "against 0 h measured. Rule 14 misalignment exception. Record: "
-    "docs/PRECOMMIT-nyiso-next14-total-east-cutset-2026-09-30.md.",
+    "docs/records/nyiso/PRECOMMIT-nyiso-next14-total-east-cutset-2026-09-30.md.",
 }
 
 
@@ -61,7 +61,7 @@ def main() -> None:
         "2026-09-29-nyisonext13-recon-detach-span replayed with ONE recipe delta, "
         "nyiso_total_east_cutset_ttc true (the upstate->east link at the measured "
         "TOTAL EAST cutset envelope; owner card 'Re-test all 5 years'). Pre-registration: "
-        "docs/PRECOMMIT-nyiso-next14-total-east-cutset-2026-09-30.md; arm pinned at "
+        "docs/records/nyiso/PRECOMMIT-nyiso-next14-total-east-cutset-2026-09-30.md; arm pinned at "
         f"{a.pin}. Offer curves byte-identical to the keeper (rule 1(c)); no "
         "multiplier tuned; zero free parameters added. PRIOR: "
     )

@@ -12,7 +12,7 @@ inherited lane assertion (via :mod:`scripts.probes.soco71_compose_span`, whose c
    config alone cannot show the lever fired; (2) does.
 2. :func:`assert_gas_census` — PRECOMMIT-soco-72 §7(2): every gas econ/peak tranche
    in 2019-2022 solved at the median ``mc`` the zero-LP census
-   (``docs/handoffs/r-soco/soco72_gas_census.json``, arm column) predicts, ±$0.01.
+   (``docs/records/soco/r-soco/soco72_gas_census.json``, arm column) predicts, ±$0.01.
 3. :func:`assert_identity` — §6 E1 / §7(2): every leg's hourly ``cap_mw`` equals the
    soco-71 leg's, and 2023-2025 dispatch (unit ``mw``) and zone price are
    byte-identical to the soco-71 legs.
@@ -58,7 +58,7 @@ from scripts.probes.soco71_compose_span import (  # noqa: E402
 
 #: PRECOMMIT-soco-72 §2: the extended table this lane arms.
 BASIS = {2019: 0.27, 2020: 0.32, 2021: 0.30, 2022: 1.20, 2023: 0.49, 2024: 0.64, 2025: 0.65}
-CENSUS = ROOT / "docs/handoffs/r-soco/soco72_gas_census.json"
+CENSUS = ROOT / "docs/records/soco/r-soco/soco72_gas_census.json"
 CONTROL = ROOT / "results/calibration/soco71_{y}"
 IDENTITY_YEARS = (2023, 2024, 2025)
 TOL = 0.01

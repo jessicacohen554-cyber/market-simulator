@@ -5,7 +5,7 @@ Source basis for the RA must-offer bridge's STARTUP-TRAJECTORY extension
 ``model.commitment.caiso_ra_mustoffer_min_gen(startup_lead_hours=…)``): the
 measured hours a combined-cycle plant takes from first synchronization to full
 load. The caiso-95 who-serves-the-day decomposition
-(results/calibration/FINDING-caiso95-who-serves-the-day-2026-07-18.md §3) found
+(docs/records/caiso/FINDING-caiso95-who-serves-the-day-2026-07-18.md §3) found
 the model's evening CCs start ~3 h after the metered fleet: a real CC started
 for the evening peak fires hours early (start-to-load trajectory + DAM
 operating-day positioning), while the continuous-variable LP pays no startup

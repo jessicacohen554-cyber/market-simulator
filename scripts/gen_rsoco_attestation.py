@@ -5,7 +5,7 @@ bundle, so every inherited claim is re-verified by execution: the SOCO-58 postur
 the offer-curve identity, the hydro budgets, the B1 plant boundary and the B2
 gas-fold refusal. This module then verifies the lane's input corrections against
 the keeper ``2026-09-24-soco61-dark-unit``
-(``docs/handoffs/r-soco/PRECOMMIT-r-soco-2026-09-24.md`` §5):
+(``docs/records/soco/r-soco/PRECOMMIT-r-soco-2026-09-24.md`` §5):
 
 * every F1/F2 field is True in the resolved config. The fields are
   ``eia860_vintage_tracks_solve_year``, ``measured_chp_heat_rates``,
@@ -135,7 +135,7 @@ def main() -> None:
         "re-verified on this bundle by gen_soco60b_attestation.py: " + inherited
     )
     att["disclosures"]["precommit"] = (
-        "docs/handoffs/r-soco/PRECOMMIT-r-soco-2026-09-24.md"
+        "docs/records/soco/r-soco/PRECOMMIT-r-soco-2026-09-24.md"
     )
     att["disclosures"]["rsoco_scope"] = (
         "2023-2025 only. SOCO has no 2019-2022 EIA-930 / FERC-714 / seam / gas-hub / "

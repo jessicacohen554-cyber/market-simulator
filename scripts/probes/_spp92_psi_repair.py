@@ -1,13 +1,13 @@
 """SPP-92 (zero LP): SPP-53's ψ / T* construction re-run with the bubble-average spread and the GMT clock.
 
-Pre-declared in docs/handoffs/spp92/PREDECLARE-psi-repair.md (committed before this ran). Spec is SPP-53's
-(docs/handoffs/spp53/{parse_2325,psi_regression,aggregate_ttc}.py); L_f from SPP-53's committed tables.
+Pre-declared in docs/records/spp/spp92/PREDECLARE-psi-repair.md (committed before this ran). Spec is SPP-53's
+(docs/records/spp/spp53/{parse_2325,psi_regression,aggregate_ttc}.py); L_f from SPP-53's committed tables.
 Needs the bubble hourly files from scripts/probes/_spp92_bubble_spread.py.
 """
 import glob, re, zipfile, importlib.util, sys
 import numpy as np, pandas as pd
 
-ROOT = "/home/user/market-simulator"; R = f"{ROOT}/data/raw/spp-binding-constraints"; D53 = f"{ROOT}/docs/handoffs/spp53"
+ROOT = "/home/user/market-simulator"; R = f"{ROOT}/data/raw/spp-binding-constraints"; D53 = f"{ROOT}/docs/records/spp/spp53"
 spec = importlib.util.spec_from_file_location("g", f"{ROOT}/scripts/probes/_spp92_seam_probe.py"); g = importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
 
 def hoy_from(t):
@@ -100,6 +100,6 @@ if __name__ == "__main__":
             out[f"{clock}/{kind}"] = {"n": n, "R2": round(r2, 3), "corridor_constituents": len(cor), "identified_NtoS": int(cor.identified.sum()),
                 "StoN_loaded": int(((cor.psi < 0) & (cor.t <= -2)).sum()), "identified_with_L": nid,
                 "T_p25_p50_p75": [round(x) for x in qs] if qs else None, "TTC_rounded": round(qs[1], -2) if qs else None}
-            O.sort_values("hours", ascending=False).to_csv(f"{ROOT}/docs/handoffs/spp92/tstar_{clock}_{kind}.csv", index=False)
+            O.sort_values("hours", ascending=False).to_csv(f"{ROOT}/docs/records/spp/spp92/tstar_{clock}_{kind}.csv", index=False)
             print(clock, kind, out[f"{clock}/{kind}"], flush=True)
-    import json; json.dump(out, open(f"{ROOT}/docs/handoffs/spp92/psi_repair.json", "w"), indent=1)
+    import json; json.dump(out, open(f"{ROOT}/docs/records/spp/spp92/psi_repair.json", "w"), indent=1)

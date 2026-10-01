@@ -58,7 +58,7 @@ from market_sim.data.fuel.hubs import (  # noqa: E402
     _miso_citygate_daily_dated,
 )
 
-OUT = Path("results/calibration/_xiso8_left_edge_census.json")
+OUT = Path("results/phase0/governance/_xiso8_left_edge_census.json")
 
 #: CAISO CC_REGULAR cap-weighted base heat rate, MMBtu/MWh. Identical to
 #: ``caiso288_blackout_census.CC_HR``; converts a $/MMBtu fuel error into the

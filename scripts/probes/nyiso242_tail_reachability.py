@@ -172,7 +172,7 @@ def main() -> None:
     ap.add_argument("--years", nargs="+", type=int, default=[2022, 2023, 2024, 2025])
     ap.add_argument(
         "--out",
-        default=str(REPO / "results" / "calibration" / "_nyiso242_tail_reachability.json"),
+        default=str(REPO / "results" / "phase0" / "nyiso" / "_nyiso242_tail_reachability.json"),
     )
     args = ap.parse_args()
 

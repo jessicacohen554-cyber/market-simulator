@@ -4,7 +4,7 @@ Covers :func:`market_sim.data.fleet.eia860._egrid_boundary_hr_repairs` and its
 frame-level applier. The reconciliation repairs plant heat rates that eGRID
 computes as a ratio of two different boundaries — CEMS facility heat input over
 single-EIA-plant net generation — where co-located plants share a CEMS
-facilityId. See ``docs/handoffs/miso-88-egrid-hr-boundary-plan-2026-07.md``.
+facilityId. See ``docs/records/miso/miso-88-egrid-hr-boundary-plan-2026-07.md``.
 """
 
 import unittest

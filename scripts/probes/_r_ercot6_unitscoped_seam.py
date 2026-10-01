@@ -17,7 +17,7 @@ Usage::
 
     PYTHONPATH=.:src:scripts python3 scripts/probes/_r_ercot6_unitscoped_seam.py <cache-dir>
 
-Record: docs/handoffs/FINDING-r-ercot-6-double-count-retest-2026-09-26.md.
+Record: docs/records/ercot/FINDING-r-ercot-6-double-count-retest-2026-09-26.md.
 """
 
 import sys

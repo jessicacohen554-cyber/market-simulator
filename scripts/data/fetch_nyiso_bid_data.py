@@ -1,7 +1,7 @@
 """Download NYISO's public masked generator bid data (MIS report P-27).
 
 **Why this source exists in the repo.** The nyiso-242 intake charter
-(`docs/RESULT-nyiso242-cc-winter-refused-and-the-intake-charter-2026-09-20.md`
+(`docs/records/nyiso/RESULT-nyiso242-cc-winter-refused-and-the-intake-charter-2026-09-20.md`
 §2.5) refuted the CAMPD cold-hour availability census on its own discriminator:
 CAMPD meters what **ran**, and every route from "what ran" to "what could have
 run" passes through dispatch, commitment and reserve holding. The charter's

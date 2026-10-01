@@ -1,7 +1,7 @@
 """Derive the ERCOT offline fast-start pool offer ladder + pool share.
 
 The ERCOT-88 apply artifact for the §6.2 mechanism of
-``docs/handoffs/ercot-residual-midband-formation-lane-2026-07.md`` (charter §9)
+``docs/records/ercot/ercot-residual-midband-formation-lane-2026-07.md`` (charter §9)
 — ``ScenarioConfig.ercot_faststart_pool_offer``. The ERCOT-87 measurement
 adjudicated that the actual $150-500 moderate-tightness band prices on the
 **offline startable CT pool** (``Telemetered Resource Status`` OFFQS/OFFNS:
@@ -509,7 +509,7 @@ def _main_position_tail(args) -> None:
     prov = result.setdefault("_provenance", {})
     prov["conditioning"] = POSITIONTAIL_TAG
     prov["positiontail"] = {
-        "precommit": "docs/PRECOMMIT-ercot181-quantity-position-2026-08-09.md",
+        "precommit": "docs/records/ercot/PRECOMMIT-ercot181-quantity-position-2026-08-09.md",
         "statistic": (
             "per (CT, year, bin): the MW-weighted empirical quantile "
             "function of the SAME offline above-LSL startable segment "
@@ -644,7 +644,7 @@ def main() -> None:
                 "<= 12 h (constants.RA_BRIDGE_ECON_MIN_DOWN_HOURS / "
                 "OFFLINE_COMMIT_MIN_DOWN_HOURS_MAX / OFFLINE_COMMIT_MIN_RUN_"
                 "HOURS_MAX) — the within-day start-and-run band, ERCOT-176 "
-                "(docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md §1)"
+                "(docs/records/ercot/PRECOMMIT-ercot176-offline-increment-2026-08-07.md §1)"
             ),
             "offline_pool_statuses": list(OFFLINE_POOL),
             "class_restypes": {k: list(v) for k, v in POOL_CLASS_RESTYPES.items()},
@@ -882,7 +882,7 @@ def _main_topscoped(args) -> None:
             "conditioning": TOPSCOPED_TAG,
             "netload_pct_edges": list(edges_ext),
             "new_edges": list(new_edges),
-            "edge_identification": "results/calibration/"
+            "edge_identification": "results/phase0/ercot/"
             "ercot180_edge_identification.json",
             "ladder_quantiles": list(LADDER_QUANTILES),
             "apply_gate": frozen["_provenance"].get("apply_gate"),

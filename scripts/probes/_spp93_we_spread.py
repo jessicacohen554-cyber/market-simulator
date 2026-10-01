@@ -13,7 +13,7 @@ Only the partition differs.
 A1: mean(E - W) > 0 in every year 2019-2025.
 A2: mean |E - W| > mean |S - N| in >= 5 of 7 years.
 Input: the load-SL parquet from ``_spp92_load_lmp_fetch.py`` (argv[1]). Output: argv[2] (json); optional argv[3] = a dir for the hourly bubble parquets (the ψ rating's spread).
-Record: docs/handoffs/PRECOMMIT-spp-93-west-east-2026-09-27.md.
+Record: docs/records/spp/PRECOMMIT-spp-93-west-east-2026-09-27.md.
 """
 import glob
 import json

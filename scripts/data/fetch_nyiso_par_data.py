@@ -1,7 +1,7 @@
 """Fetch and curate NYISO's NY-NJ PAR postings: P-33 ``outSched`` + P-34 ``ParFlows``.
 
 Both halves of the eastern-seam attribution identified at nyiso-126 and amended
-at nyiso-127 (``results/calibration/PREREG-nyiso127-addendum-eastern-seam-availability-source-2026-08-05.md``).
+at nyiso-127 (``docs/records/nyiso/PREREG-nyiso127-addendum-eastern-seam-availability-source-2026-08-05.md``).
 
 Why two postings
 ----------------

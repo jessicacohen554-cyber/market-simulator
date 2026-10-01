@@ -15,7 +15,7 @@ recorded config, while ``run_year`` sets the overlay *before* it resolves. The
 bundle was internally inconsistent: ``gas_hub_basis_overlay: true`` beside
 anchors that only reproduce at ``overlay=False``. Two of that screen's four
 pre-registered gates failed on that single line, and NEITHER measured the
-mechanism (``docs/RESULT-nyiso231-the-mirror-and-the-2022-rescreen-2026-09-13.md``).
+mechanism (``docs/records/nyiso/RESULT-nyiso231-the-mirror-and-the-2022-rescreen-2026-09-13.md``).
 
 The repair makes the resolution **structural rather than positional**: one shared
 helper, ``run_calibration_full.mirror_solve_year_gas_anchors``, fused to

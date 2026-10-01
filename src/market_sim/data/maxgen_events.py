@@ -11,7 +11,7 @@ ISO's bid cap to the declared tier's emergency offer floor —
 ``min(voll, tier_floor(level))`` — per the SOM-footnoted tier schedule
 (:data:`market_sim.config.reserve_config.MISO_EMERGENCY_TIER1_OFFER_FLOOR` /
 ``..TIER2..``). Frozen design:
-``docs/handoffs/miso-f5-scarcity-depth-design-2026-07.md`` §1.
+``docs/records/miso/miso-f5-scarcity-depth-design-2026-07.md`` §1.
 
 Clock and scoping conventions are SHARED with the M-2 revealed-derate
 deriver (``scripts/data/derive_campd_maxgen_outages.py`` reads
@@ -57,7 +57,7 @@ logger = logging.getLogger(__name__)
 # time: MISO declares in EST (Tariff Module A) but the model's 8760 index is
 # CST hour-beginning — MEASURED (miso-208, r = 1.000 on two independent
 # witnesses; the per-ISO input clocks are catalogued in
-# docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md). Etc/GMT+6 is UTC-6.
+# docs/records/pjm/FINDING-debug-b-pjm-input-clock-2026-08-15.md). Etc/GMT+6 is UTC-6.
 # Read by derive_campd_maxgen_outages.MODEL_TZ so both consumers of the
 # registry place their windows with one constant. History: "Etc/GMT+5" from
 # the F5 build (2026-07) until miso-210 (2026-09-04) — one hour late.

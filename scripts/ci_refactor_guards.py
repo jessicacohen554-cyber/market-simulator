@@ -52,7 +52,7 @@ _CODE_SUFFIXES = (".py", ".sh", ".bash", ".yml", ".yaml")
 # Left boundary: a match must not continue a longer path segment. Without it a
 # nested ``tests/unit/scripts/<name>`` path was read as a repo-root script
 # reference (the false positive recorded in
-# docs/handoffs/soco-desk-ledger-2026-09.md R-k). A ``./`` or ``${ROOT}/``
+# docs/records/soco/soco-desk-ledger-2026-09.md R-k). A ``./`` or ``${ROOT}/``
 # prefix still matches; a ``<word>/`` or ``<word>`` prefix does not.
 _SCRIPT_REF_RE = re.compile(r"(?<![\w\-]/)(?<![\w\-])scripts/[\w/.\-]+\.py")
 

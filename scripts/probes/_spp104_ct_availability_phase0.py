@@ -1,6 +1,6 @@
 """SPP-104 (zero LP): how the keeper represents CT_PEAKER availability, against SPP's own published gas outage.
 
-Record: ``docs/handoffs/DESIGN-spp-104-ct-outage-2026-09-29.md``.
+Record: ``docs/records/spp/DESIGN-spp-104-ct-outage-2026-09-29.md``.
 
 Rebuilds the designated keeper ``results/calibration/spp100_arm_span`` ``fleet_only`` per year
 (``scripts.lib.bundle_fleet.reconstruct_bundle_fleet``, no LP) and measures, per thermal class,

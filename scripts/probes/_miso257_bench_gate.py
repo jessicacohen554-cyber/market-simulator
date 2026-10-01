@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Regenerate MISO's committed bench parts at zero LP, behind a hard gate.
 
-miso-257, following ``docs/RESULT-pjm-h4-bench-move-landed-2026-09-13.md`` §2.1.
+miso-257, following ``docs/records/pjm/RESULT-pjm-h4-bench-move-landed-2026-09-13.md`` §2.1.
 ``_miso257_bench_rebuild.py`` reconstructs the three gitignored solve artifacts
 a SLIM bundle is missing; this script then runs the real payload builder and
 writes the resulting bench parts through the real writer — but ONLY if the

@@ -19,7 +19,7 @@ meter says they are off: across every ERCOT CC plant, corr(measured heat rate,
 log model/EIA-923) is 0.68-0.80 in all seven years, while 2024-25 60-Day DAM
 first-segment offers are heat-rate-flat (corr +0.19 / -0.16) and DAM ON-share
 falls with heat rate (corr -0.60 / -0.34)
-(``docs/handoffs/r-ercot/PRECOMMIT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md``).
+(``docs/records/ercot/r-ercot/PRECOMMIT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md``).
 The same hour-eligibility question is what convicts the residual
 ``st_netload_drag`` D-4 rows (3452, 3628, 3491): the floor binds in hours the
 plant's own meter says it is off.

@@ -11,7 +11,7 @@ received in the next". ``docs/FINDING-miso256-2022-passthrough-inversion-
 
 **There is no LP consumer yet, and no ``ScenarioConfig`` flag.** This module is
 the read seam only: it serves the zero-LP falsification in
-``docs/FINDING-miso258-coal-stock-falsification-2026-09-14.md`` and whatever
+``docs/records/miso/FINDING-miso258-coal-stock-falsification-2026-09-14.md`` and whatever
 mechanism the owner later charters. Nothing here changes a solve.
 
 RULE 13 ``[R-MEASURED]`` — THE TRAP, STATED AT THE SEAM. ``ending_stock_tons``

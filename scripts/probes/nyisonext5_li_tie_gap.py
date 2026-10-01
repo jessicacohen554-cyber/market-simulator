@@ -54,7 +54,7 @@ BUNDLES = {
 }
 LMPDIR = REPO / "data/raw/lmp-data/NYISO"
 EXTRA = Path(os.environ.get("NYRT_DIR", "/nonexistent"))
-OUT = REPO / "results/calibration/_nyisonext5_li_tie_gap.json"
+OUT = REPO / "results/phase0/nyiso/_nyisonext5_li_tie_gap.json"
 TIES = NYISO_SEAM_TIE_LANDING["Long_Island"]
 SHORT = {
     "SCH - PJM_NEPTUNE": "neptune",

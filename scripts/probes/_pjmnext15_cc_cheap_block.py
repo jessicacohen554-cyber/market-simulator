@@ -19,7 +19,7 @@ And per unit (median over its hours): ``min_runtime``, ecomin/ecomax, ``no_load_
 3.5 x delivered gas; units are split into CHEAP (that share >= 25 %) vs the rest so the
 block's physics and three-part cost can be compared.
 
-Writes ``results/calibration/_pjmnext15_cc_cheap_block.json`` (merged per year).
+Writes ``results/phase0/pjm/_pjmnext15_cc_cheap_block.json`` (merged per year).
 Run: ``python3 scripts/probes/_pjmnext15_cc_cheap_block.py <year> [...]``
 """
 
@@ -46,7 +46,7 @@ from scripts.data.derive_pjm_offer_surface import (  # noqa: E402
     _pjm_fuel_daily,
 )
 
-OUT = REPO / "results/calibration/_pjmnext15_cc_cheap_block.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext15_cc_cheap_block.json"
 SOM = REPO / "data/raw/som-competitive-conduct/som_competitive_conduct.csv"
 BANDS = (0.0, 0.25, 0.45, 0.65, 0.85, 1.0001)
 BAND_NAMES = ("0-25", "25-45", "45-65", "65-85", "85-100")

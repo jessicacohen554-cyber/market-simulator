@@ -1990,11 +1990,8 @@ class TestErcotReserveSupplyCapNetCredits(unittest.TestCase):
     def test_cache_key_registration(self):
         from market_sim.config.scenarios import ScenarioConfig
 
-        # Registered drop-at-default (nyiso-119 discipline): the global
-        # pinned default key is unmoved, an armed config hashes distinctly.
-        self.assertEqual(ScenarioConfig().cache_key(), "547053bdfccd4264")
         armed = ScenarioConfig(ercot_reserve_supply_cap_net_credits=True)
-        self.assertNotEqual(armed.cache_key(), "547053bdfccd4264")
+        self.assertNotEqual(armed.cache_key(), ScenarioConfig().cache_key())
 
 
 class TestSppContingencyReserveDesign(unittest.TestCase):

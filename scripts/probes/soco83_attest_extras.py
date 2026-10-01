@@ -54,7 +54,7 @@ ENTRY = {
         "(derive_thermal_tranche_oom_level_mw.py --condition lambda; the frozen family's online mask, net, "
         "derate, percentile and clamp). Armed through st_gas_mustrun_per_plant + st_gas_mustrun_p25_level + "
         "st_gas_mustrun_oom_level; those plants leave soco_gas_st_campaign_commitment (rule 19 partition). "
-        "Zero fitted: n_residual unchanged. docs/handoffs/r-soco/PRECOMMIT-soco-83-2026-09-28.md."
+        "Zero fitted: n_residual unchanged. docs/records/soco/r-soco/PRECOMMIT-soco-83-2026-09-28.md."
     ),
 }
 

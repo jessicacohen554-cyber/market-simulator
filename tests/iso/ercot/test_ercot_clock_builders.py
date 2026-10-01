@@ -4,7 +4,7 @@ The 2026-07-07 clock-unification round (PR #1725 + this round's parquet
 rebuilds) fixed the shared placement defect where Central-*Prevailing*-Time
 report labels were placed on the model's fixed CST clock unconverted, leaving
 the whole mid-Mar-early-Nov series one hour late (Jan best lag 0 / Jul best
-lag +1 vs EIA-930; ``docs/handoffs/ercot-g22-demand-side-design-2026-07.md``
+lag +1 vs EIA-930; ``docs/records/ercot/ercot-g22-demand-side-design-2026-07.md``
 §6-§7). These tests mirror ``tests/iso/ercot/test_ercot_hsl.py`` for the remaining
 prevailing-stamped builders: winter identity (CST labels unshifted), summer
 -1 h (CDT labels), and gapless duplicate-free coverage through both DST

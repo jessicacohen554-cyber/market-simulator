@@ -30,7 +30,7 @@ keeper #13's model coal and the NWPP-NEXT-5 census ``burn_floor_B_twh``.
 Usage::
 
     python3 scripts/probes/_nwppnext7_take_floor_phase0.py \
-        --out results/calibration/_nwppnext7_take_floor_phase0.json
+        --out results/phase0/nwpp/_nwppnext7_take_floor_phase0.json
 """
 
 from __future__ import annotations
@@ -51,7 +51,7 @@ for p in (str(REPO), str(REPO / "src")):
 
 BUNDLE = REPO / "results/calibration/nwppnext8mp_span"
 KEEPER = "2026-09-28-nwppnext8-coal-monthly-pile"
-CENSUS = REPO / "results/calibration/_nwppnext5_coal_contract_census.json"
+CENSUS = REPO / "results/phase0/nwpp/_nwppnext5_coal_contract_census.json"
 ARM = {
     "coal_fuel_inventory_plant_grain": True,
     "coal_fuel_inventory_take_floor": True,

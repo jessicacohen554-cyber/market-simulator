@@ -10,10 +10,10 @@ forecast trajectory (docs/cross-year-warmstart.md "Why the forecast path is not
 wired").
 
 The same-year P1 basis seed (``MARKET_SIM_P1_BASIS_SEED``, wallclock desk item
-B; owner memo ``docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`` §6) is
+B; owner memo ``docs/records/misc/p1-basis-seed-decision-memo-2026-09.md`` §6) is
 the switch family's third member and is pinned here too: the sibling resolver's
 precedence, the seed firing on its OWN env var INDEPENDENT of the cross-year
-gate (PERF-C S1, 2026-09-20 — ``docs/handoffs/FINDING-perfc-s1-p1-seed-2026-09-20.md``),
+gate (PERF-C S1, 2026-09-20 — ``docs/records/governance/FINDING-perfc-s1-p1-seed-2026-09-20.md``),
 never on the forecast path (an explicit ``xyear_warmstart`` bool), the
 adaptive-pass leg (``export_p1_basis`` → ``reuse_p0_from.p1_basis``), the
 optimality guard that discards a seeded basis whose solve did not reach

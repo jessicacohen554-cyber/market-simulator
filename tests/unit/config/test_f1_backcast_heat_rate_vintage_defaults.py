@@ -1,6 +1,6 @@
 """F1: vintage-matched eGRID heat rates, per-year measured rates, backcast defaults.
 
-docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5.1 item 7.
+docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5.1 item 7.
 Trivial cases first (a synthetic eGRID table, a one-plant artifact), then the
 committed-config key stability of the six backcast-default flips.
 """

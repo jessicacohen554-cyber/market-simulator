@@ -166,7 +166,7 @@ def _correct_chp_steam_credit_hr(
     once. The designed successor is the plant's own CEMS power-only rate
     (caiso-128 §6), ISO-generic and default-off. Filed, NOT built — it is a
     separate delta from the sector correction (rule 19 [R-ONE-MECH]).
-    Full measurement: results/calibration/FINDING-miso97-chp-sector-btm-2026-07.md
+    Full measurement: docs/records/miso/FINDING-miso97-chp-sector-btm-2026-07.md
     ** MISO/ISO-generic 2026-07-28 (miso-99): the designed successor IS BUILT and
     armable — :func:`apply_measured_chp_heat_rates` /
     ``ScenarioConfig.measured_chp_heat_rates``, default off. Its measurement is

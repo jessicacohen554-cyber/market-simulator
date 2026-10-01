@@ -47,7 +47,7 @@ HUBS = ("TH_NP15_GEN-APND", "TH_SP15_GEN-APND", "TH_ZP26_GEN-APND")
 # retention-aged Jan-Mar 2023 window (wecc_intertie_lmp_hourly_CAISO.parquet
 # 2023 starts at hour 2040 and the per-hub corridors fall back to the static
 # fitted ladder before it — the Lane-W miss month in
-# docs/DIAGNOSIS-caiso-lmp-jan2023-backfill-2026-07.md). Every aggregate
+# docs/records/caiso/DIAGNOSIS-caiso-lmp-jan2023-backfill-2026-07.md). Every aggregate
 # consumer selects its nodes explicitly (derive_actual_lmp keeps the three TH
 # hubs; curate_lmp is node-generic), so the extra nodes are additive.
 NODES = HUBS + tuple(n for ns in INTERTIE_NODES.values() for n in ns)

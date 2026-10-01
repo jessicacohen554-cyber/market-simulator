@@ -5,7 +5,7 @@ NYISO's downstate steam fleet (ST_GAS — Ravenswood/Astoria-area NYC boilers pl
 the Long Island Northport / E.F. Barrett / Port Jefferson steamers) runs a
 genuine persistent 24h reliability base: measured CAMPD overnight CF 0.11-0.17
 with the NYC/LI plants online 100 % of the year (G-05 adjudication,
-``docs/handoffs/g05-forced-energy-caiso-ct-nyiso-stgas-2026-07.md``). The
+``docs/records/caiso/g05-forced-energy-caiso-ct-nyiso-stgas-2026-07.md``). The
 nyiso-56 keeper carries that base as fixed ``reliability_floor`` limbs
 (``reliability_floor_coeffs_NYISO.csv``: NYC persistent 0.391, LI 0.289 —
 flat all-day fractions plus a hard HB14-21 evening step), which is why its C8

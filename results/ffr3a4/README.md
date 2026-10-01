@@ -5,7 +5,7 @@ Fourth and closing pass at FFR-3A. Two jobs, neither of them tuning:
 1. **Measure the one leg the battery never got** — MISO T1-X (2023–2027
    crossover, vintage 2023), which FFR-3A-3 launched twice and lost twice to
    OOM and correctly left as a null board cell rather than a stale value
-   (`docs/handoffs/ffr-3a3-battery-close-2026-08-04.md` §6.1).
+   (`docs/records/forecast/ffr-3a3-battery-close-2026-08-04.md` §6.1).
 2. **Close the instrument debt** FFR-3A-3 left: the strict
    `ScenarioConfig.from_yaml` that strands every bundle older than a rule-26
    field deletion, the unguarded run-id collision in the hindcast registration
@@ -32,8 +32,8 @@ than solver output and are tracked with `git add -f`:
 
 ## Predecessors
 
-* `docs/handoffs/ffr-3a2-battery-close-2026-08-03.md` — the 14-leg battery and
+* `docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md` — the 14-leg battery and
   its provenance ceiling.
-* `docs/handoffs/ffr-3a3-battery-close-2026-08-04.md` — the six-leg post-fix
+* `docs/records/forecast/ffr-3a3-battery-close-2026-08-04.md` — the six-leg post-fix
   re-measurement that corrects it.
-* `docs/handoffs/ffr-3a4-miso-t1x-instrument-debt-2026-08-04.md` — this lane.
+* `docs/records/forecast/ffr-3a4-miso-t1x-instrument-debt-2026-08-04.md` — this lane.

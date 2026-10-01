@@ -5,7 +5,7 @@ Same weights as the scorer; compares the model against the zonal LZ benchmark
 so the difference is the actual LZ-over-hub basis a model zone price must carry.
 
 Usage: ``python3 scripts/probes/_r_ercot6_c3a_basis.py 2023 2024 2025``.
-Record: ``docs/handoffs/FINDING-r-ercot-6-double-count-retest-2026-09-26.md``.
+Record: ``docs/records/ercot/FINDING-r-ercot-6-double-count-retest-2026-09-26.md``.
 """
 
 import sys

@@ -292,7 +292,7 @@ Benchmarks and strips remain context, never fit targets, regardless of the pick.
   backcast reader of any refreshed trajectory is the neighbor-price seam reading
   gas ≤2025, which is unchanged; coal/oil trajectories are forecast-only
   (`resolve_fuel_prices` mode gate); nuclear is untouched. Demonstration in the
-  handoff (`docs/handoffs/ff-g2-fuel-forward-2026-07.md`).
+  handoff (`docs/records/forecast/ff-g2-fuel-forward-2026-07.md`).
 - **T0 forecast probe (optional, ≤5 solve-years):** ERCOT 2026 single-year
   before/after — result in the handoff.
 

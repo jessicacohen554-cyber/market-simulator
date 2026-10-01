@@ -38,7 +38,7 @@ LMPDIR = REPO / "data/raw/lmp-data/NYISO"
 import os
 
 EXTRA = Path(os.environ.get("NYRT_DIR", "/nonexistent"))
-OUT = REPO / "results/calibration/_nyisonext4_c3a_decompose.json"
+OUT = REPO / "results/phase0/nyiso/_nyisonext4_c3a_decompose.json"
 ZMAP = {  # iso_configs._nyiso: A-E, F-G, H-I, J, K
     "WEST": "Upstate_West",
     "GENESE": "Upstate_West",

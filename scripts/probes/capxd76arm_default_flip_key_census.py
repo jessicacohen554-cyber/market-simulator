@@ -68,9 +68,9 @@ Usage::
 
     # ex ante, before scenarios.py is touched
     uv run python scripts/probes/capxd76arm_default_flip_key_census.py \
-        --variant a --out docs/handoffs/d76arm/key-census-variant-a.json
+        --variant a --out docs/records/forecast/d76arm/key-census-variant-a.json
     uv run python scripts/probes/capxd76arm_default_flip_key_census.py \
-        --variant b --out docs/handoffs/d76arm/key-census-variant-b.json
+        --variant b --out docs/records/forecast/d76arm/key-census-variant-b.json
 
 Exit code 0 iff the instrument validates AND the total move count is zero; 2
 when the instrument validates but keys move (the STOP the ruling names); 1 on an

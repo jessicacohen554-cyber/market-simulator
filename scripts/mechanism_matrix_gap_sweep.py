@@ -33,7 +33,7 @@ and once, ISO-agnostically (y20):
   not. Both censuses above carry a qualifier a slipped field can simply not
   satisfy (an ISO stem; a backcast keeper arming it), so a forecast-only shared
   field with no row had no census at all — the hole
-  ``docs/handoffs/FINDING-scn-mxr-2026-09-06.md`` §1.1 diagnosed after PR #4870
+  ``docs/records/forecast/FINDING-scn-mxr-2026-09-06.md`` §1.1 diagnosed after PR #4870
   merged two such fields five seconds after opening, past a red diff gate.
 
 The output is evidence for adding matrix rows (rule 28(c)); it never adjudicates
@@ -374,7 +374,7 @@ def absent_shared_census(
     """SHARED fields the matrix never mentions — the whole class, ISO-agnostic.
 
     The third and widest rule-28(c) census, and the one that closes the hole
-    ``docs/handoffs/FINDING-scn-mxr-2026-09-06.md`` §1.1 diagnosed. The two
+    ``docs/records/forecast/FINDING-scn-mxr-2026-09-06.md`` §1.1 diagnosed. The two
     censuses above each carry a qualifier that a slipped field can simply not
     satisfy: :func:`sweep_iso`'s ``family`` needs an ISO stem, and its
     ``shared_armed_on_keeper`` needs a designated BACKCAST keeper to arm the
@@ -560,7 +560,7 @@ def main() -> None:
                 "never mentions, armed or not: a forecast-only field that no "
                 "backcast keeper can arm was invisible to all three of the "
                 "older checks, on both sides of the merge "
-                "(docs/handoffs/FINDING-scn-mxr-2026-09-06.md §1.1). It opens "
+                "(docs/records/forecast/FINDING-scn-mxr-2026-09-06.md §1.1). It opens "
                 "large because it is the first check ever to look at that "
                 "class; the backlog is the owning desks' work and the ratchet "
                 "only guarantees it never grows. CI FAILS if a field appears "

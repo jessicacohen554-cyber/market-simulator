@@ -3,7 +3,7 @@
 ``fleet.load_mothballed_but_operating`` re-carries an OA (mothballed) unit for
 backcast solve year Y iff it is OP in the year-matched EIA-860 vintage — the
 zero-DOF vintage-status availability oracle. Design charter:
-``docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md`` §5/§7.
+``docs/records/miso/miso-cc-vintage-undercarry-plan-2026-07.md`` §5/§7.
 
 Trivial synthetic cases first (one plant, two units, tmp-dir snapshot +
 vintage), then the real committed-data case (Cottonwood 55358).

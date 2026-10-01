@@ -2,7 +2,7 @@
 """Derive EIA-923 COMBINED-CYCLE-family heat rates per plant-year.
 
 THE OBJECT (NWPP-NEXT-14; owner card "EIA-923 CC-family HR", 2026-09-30;
-``docs/handoffs/FINDING-nwppnext14-bridger-and-clark-phase0-2026-09-30.md``):
+``docs/records/nwpp/FINDING-nwppnext14-bridger-and-clark-phase0-2026-09-30.md``):
 the fleet's heat rate is eGRID's plant-grain ``PLHTRT`` = ``PLHTIAN`` /
 ``PLNGENAN``. Where CEMS meters only some of a plant's machines, ``PLHTIAN``
 covers those machines while ``PLNGENAN`` covers the whole plant, so the rate

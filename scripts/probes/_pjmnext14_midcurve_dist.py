@@ -24,7 +24,7 @@ Two questions about the EXISTING mechanism (``pjm_offer_midcurve_conditional``),
     inside its class-year. Reported as the capacity-weighted mean $/MWh difference, so the
     size of the aggregate's lift is on the table before anyone designs anything.
 
-Writes ``results/calibration/_pjmnext14_midcurve_dist.json``.
+Writes ``results/phase0/pjm/_pjmnext14_midcurve_dist.json``.
 Run: ``python3 scripts/probes/_pjmnext14_midcurve_dist.py <dump_dir> <year> [...]``
 """
 
@@ -53,7 +53,7 @@ from scripts.data.derive_pjm_offer_surface import (  # noqa: E402
     _pjm_fuel_daily,
 )
 
-OUT = REPO / "results/calibration/_pjmnext14_midcurve_dist.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext14_midcurve_dist.json"
 QS = (0.10, 0.25, 0.50, 0.75, 0.90)
 LONG_RUN_CLASSES = ("COAL_BIT", "COAL_WC", "COAL_PRB", "ST_GAS")
 

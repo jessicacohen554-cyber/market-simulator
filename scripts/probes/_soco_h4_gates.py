@@ -4,7 +4,7 @@ Reads only committed sidecars — ``hourly/class_hourly_<y>.parquet`` of the leg
 and of its control (the keeper bundle for 2023/2024, the ``fix_2025`` leg for
 2025, per PRECOMMIT addendum A) — plus the measured EIA-930 ``NG: WAT`` series
 and the zero-LP stamped mechanism level from ``build_hydro_fleet``. Gates are
-the ones fixed in ``docs/handoffs/PRECOMMIT-soco-hydro-4-2026-09-22.md`` §4.
+the ones fixed in ``docs/records/soco/PRECOMMIT-soco-hydro-4-2026-09-22.md`` §4.
 
 Usage::
 

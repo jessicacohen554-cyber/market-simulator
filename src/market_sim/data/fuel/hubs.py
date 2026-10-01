@@ -443,7 +443,7 @@ def _henry_hub_daily_dated(
     spreading the month's quote list evenly across calendar days (which
     mislocated the Winter Storm Heather Friday 2024-01-12 spike onto Jan-13 —
     the miso-72 §3.7 all-ISO correctness finding,
-    ``docs/handoffs/miso-winter-fuel-security-design-2026-07.md``). Same
+    ``docs/records/miso/miso-winter-fuel-security-design-2026-07.md``). Same
     clean-tree opt-in as the list view; cached per path.
     """
     if path is None and _use_clean_data():
@@ -714,7 +714,7 @@ def gas_daily_shape_factors(
     representative daily shape), so it is not backcast-only.
 
     True-date placement is REQUIRED, not cosmetic (the miso-72 §3.7 all-ISO
-    correctness fix, ``docs/handoffs/miso-winter-fuel-security-design-2026-07.md``):
+    correctness fix, ``docs/records/miso/miso-winter-fuel-security-design-2026-07.md``):
     the previous even-spread ``np.interp`` resampling of the month's quote LIST
     onto the calendar grid mislocated any spike bracketed by a trading gap —
     the Winter Storm Heather Friday 2024-01-12 Henry Hub print priced Jan-13 in
@@ -726,7 +726,7 @@ def gas_daily_shape_factors(
     post-hoc renormalization: the divisor is the same staircase's own
     calendar-day mean, so the factors average to exactly 1.0 in every full
     month (this subsumes the earlier G-A1 explicit-renormalization fix,
-    docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md, which corrected the
+    docs/records/pjm/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md, which corrected the
     non-mean-preserving bare-``np.interp`` resampling). What the staircase
     changes about the mean's WEIGHTING is honest and documented: a quote
     bracketing a weekend/holiday gap now enters the month mean once per
@@ -801,6 +801,33 @@ def iso_hub_monthly_gas_prices(
     return monthly
 
 
+def nyiso_transco_z6_flow_daily(
+    config: ScenarioConfig, year: int, transco_path: Path | None = None
+) -> np.ndarray | None:
+    """Return the ``(365,)`` FLOW-dated Transco Z6 NY staircase, or ``None``.
+
+    NYISO-NEXT-23 (``config.nyiso_gas_flow_date``): the single construction both
+    NYISO Z6 consumers read when armed — the hub daily shape
+    (:func:`_nyiso_hub_daily_gas_prices`) and the downstate CT delivered index
+    (:func:`~market_sim.data.fuel.basis.nyiso.apply_nyiso_downstate_ct_gas_daily`).
+    Each EIA print is placed on its gas flow day(s) by :func:`_flow_date_staircase`
+    (trade + 1; Friday's print covers the holiday-extended weekend package). The
+    year-start edge takes the prior December trade only under
+    ``config.gas_flow_date_year_start_package``, exactly as the CAISO and MISO
+    callers. ``None`` when the flag is off, the ISO is not NYISO, or the year has
+    no prints — the caller then keeps its trade-date construction.
+    """
+    if not getattr(config, "nyiso_gas_flow_date", False) or config.iso != "NYISO":
+        return None
+    dated = _pkg_ns()._transco_z6_daily_dated(transco_path)
+    prior = (
+        dated.get(year - 1)
+        if getattr(config, "gas_flow_date_year_start_package", False)
+        else None
+    )
+    return _flow_date_staircase(dated.get(year, {}), year, prior_year_dated=prior)
+
+
 def _nyiso_hub_daily_gas_prices(
     config: ScenarioConfig,
     year: int,
@@ -855,6 +882,12 @@ def _nyiso_hub_daily_gas_prices(
     (the ``fbar`` renormalisation is applied after it), so it moves WHICH days
     are dear and never how dear the month is; annual gas burn and fuel mix are
     unchanged by construction.
+
+    Under ``ScenarioConfig.nyiso_gas_daily_print_level`` (default OFF, NYISO-NEXT-25)
+    both branches divide by the month's TRADE-day print mean only, so a priced day
+    is ``hub_level * print / trade_mean`` and the month is NOT re-centred on its
+    calendar-day mean: a multi-day package print no longer scales every ordinary
+    day of its month down by ``trade_mean / calendar_mean``.
     """
     monthly = _pkg_ns().iso_hub_monthly_gas_prices(
         config, year, basis_path, henry_hub_path
@@ -864,6 +897,13 @@ def _nyiso_hub_daily_gas_prices(
     transco_dated = _pkg_ns()._transco_z6_daily_dated(transco_path).get(year, {})
     iroquois_prints = _iroquois_z2_daily(None).get(year, {})
     gap_month_level = bool(getattr(config, "nyiso_hub_gap_month_level", False))
+    print_level = bool(getattr(config, "nyiso_gas_daily_print_level", False))
+    flow = nyiso_transco_z6_flow_daily(config, year, transco_path)
+    if flow is not None and gap_month_level:
+        raise ValueError(
+            "nyiso_gas_flow_date and nyiso_hub_gap_month_level both define the "
+            "Transco Z6 NY days no print sits on; arm one (rule 19 [R-ONE-MECH])"
+        )
     T = config.hours
     out = np.full(T, np.nan, dtype=float)
     hour = 0
@@ -877,7 +917,19 @@ def _nyiso_hub_daily_gas_prices(
                 days = np.array(sorted(dated), dtype=float)
                 vals = np.array([dated[int(d)] for d in days], dtype=float)
                 mean = float(vals.mean())
-                if mean > 0:
+                if flow is not None:
+                    # NYISO-NEXT-23: each print on its FLOW day(s), staircased;
+                    # dividing by the month's own flow-day mean keeps the month
+                    # exactly mean-preserving, as the trade-date branch below.
+                    day0 = sum(_DAYS_IN_MONTH[:m])
+                    seg = flow[day0 : day0 + n_days]
+                    # NYISO-NEXT-25 (nyiso_gas_daily_print_level): divide by the
+                    # month's TRADE-day print mean, the statistic hub_m is, so a
+                    # day is priced at its own print, not rescaled to the
+                    # calendar-day mean of a staircase whose packages repeat.
+                    denom = mean if (print_level and mean > 0) else float(seg.mean())
+                    day_hub = hub_m * (seg / denom)
+                elif mean > 0:
                     # Place each trading-day quote on its true calendar day and
                     # interpolate the gaps (weekends/holiday weeks inherit the
                     # bracketing trading values), then renormalize so the
@@ -911,7 +963,10 @@ def _nyiso_hub_daily_gas_prices(
                         unpriced = (grid < days[0] - 1.0) | (grid > days[-1] - 1.0)
                         day_factor[unpriced] = 1.0
                     fbar = float(day_factor.mean())
-                    if fbar > 0:
+                    if fbar > 0 and not print_level:
+                        # nyiso_gas_daily_print_level skips this calendar-day
+                        # renormalisation (NYISO-NEXT-25): the factors are
+                        # already print / trade-day mean.
                         day_factor = day_factor / fbar
                     day_hub = hub_m * day_factor
                 else:
@@ -962,15 +1017,15 @@ def _nyiso_hub_daily_gas_prices(
 # RESTATED 2026-09-20 by caiso-289 (rule 23 [R-FROZEN-DERIVE] re-derivation,
 # cited to a SOURCE-DATA change and never to a residual): caiso-288 recovered 85
 # published prints the fetcher had been discarding (1,806 -> 1,891 rows;
-# docs/RESULT-caiso288-the-prints-were-published-2026-09-20.md), so the
+# docs/records/caiso/RESULT-caiso288-the-prints-were-published-2026-09-20.md), so the
 # histogram above is NOT the one this threshold was first read off. The VERDICT
 # is unchanged - 6 still sits in an empty region and still cannot be selected
 # against any result - but 14 of the 35 blackouts turned out to be measurements
 # all along and are now prints, leaving 21. NINETEEN of those 21 are 2018-2020;
 # the only two in any scored CAISO year are the Thanksgiving weeks of 2024 and
 # 2025, which the caiso-288 G-DUP guard deliberately refuses. Audit:
-# results/calibration/_caiso289_postrepair_audit.json,
-# docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md.
+# results/phase0/caiso/_caiso289_postrepair_audit.json,
+# docs/records/caiso/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md.
 _GAS_BLACKOUT_MIN_GAP_DAYS = 6
 
 
@@ -1093,7 +1148,7 @@ def _year_start_package_seed(
     $3.38 at the next measurement. Constant-extending that across New Year would
     be a far worse construction than the back-fill it replaces. Per-ISO,
     per-year census: ``scripts/probes/xiso8_left_edge_census.py`` ->
-    ``results/calibration/_xiso8_left_edge_census.json``.
+    ``results/phase0/governance/_xiso8_left_edge_census.json``.
 
     No new threshold is introduced: ``_GAS_BLACKOUT_MIN_GAP_DAYS`` is reused at
     the value caiso-289 §2 identified (the gap histogram is empty at 6 and 7, so
@@ -1189,7 +1244,7 @@ def _flow_date_staircase(
     cross-ISO, solve-affecting change that moves two ISOs' keepers. The owner
     ruled 2026-09-20 that it is opened as **its own cross-ISO object**, not
     taken by a CAISO lane in passing. See
-    ``docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md``.
+    ``docs/records/caiso/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md``.
     """
     stamps = {
         pd.Timestamp(year=year, month=m, day=d) + pd.Timedelta(days=1): v
@@ -1236,7 +1291,7 @@ def _flow_date_staircase(
         # unbridged branch builds it. The left-edge defect itself is real and
         # is being repaired as its own cross-ISO object (the function is shared
         # with MISO) — see
-        # docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md.
+        # docs/records/caiso/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md.
         interior: list[pd.Timestamp] = []
         measured = flow_all.dropna().index
         for left, right in zip(measured, measured[1:]):

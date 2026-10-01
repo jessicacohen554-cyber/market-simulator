@@ -2,7 +2,7 @@
 
 The PJM generalization of ``scripts/data/derive_ercot_nuclear_availability.py``
 (pjm-nuc-1b, owner-ordered 2026-07-16 —
-``docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md`` §8.2.1):
+``docs/records/pjm/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md`` §8.2.1):
 ``NUCLEAR_MONTHLY_CF_BY_YEAR`` carries the measured EIA-923 fleet monthly
 energy but smears it uniformly across all reactors and every hour of the
 month, so a unit-specific refuel/trip inside a scarcity hour is invisible

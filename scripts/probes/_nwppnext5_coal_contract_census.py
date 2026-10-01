@@ -38,7 +38,7 @@ Three parts:
 Usage::
 
     PYTHONPATH=.:src python3 scripts/probes/_nwppnext5_coal_contract_census.py \
-        [--json results/calibration/_nwppnext5_coal_contract_census.json]
+        [--json results/phase0/nwpp/_nwppnext5_coal_contract_census.json]
 """
 
 from __future__ import annotations
@@ -57,7 +57,7 @@ YEARS = (2019, 2020, 2021, 2022, 2023, 2024, 2025)
 N = 8760
 RECEIPTS = Path("data/raw/coal-receipts")
 BUNDLE = Path("results/calibration/nwppnext4_span/hourly")
-CENSUS = Path("results/calibration/_nwppnext4_coal_census.json")
+CENSUS = Path("results/phase0/nwpp/_nwppnext4_coal_census.json")
 CONTRACT_TYPES = ("C", "NC", "T")
 # A: Y-1 contract tonnage still in force in Y, pro-rated by months covered.
 # B: all Y-1 contract tonnage (assumes renewal at the same volume).

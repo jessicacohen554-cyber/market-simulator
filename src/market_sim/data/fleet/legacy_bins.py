@@ -808,7 +808,7 @@ def apply_coal_tranches(
     (gas-parity opportunity pricing of the marginal coal MW) while delivered
     coal moved the other way, so coal-fuel tracking is REMOVED on these rows
     — that is the measured finding, not an omission
-    (``docs/PRECOMMIT-ercot140-coal-peak-offer-2026-07-30.md`` §0.1).
+    (``docs/records/ercot/PRECOMMIT-ercot140-coal-peak-offer-2026-07-30.md`` §0.1).
     ``gas_cc(t)`` is the pmax-cap-weighted mean of the CC_REGULAR CAMPD
     rows' delivered-gas series — the identification's own fuel basis
     (ERCOT-138 §J ``fuel_capwtd``). The anchor is the SHARED gas anchor

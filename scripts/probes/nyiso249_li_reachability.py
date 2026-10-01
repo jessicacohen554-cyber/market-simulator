@@ -45,7 +45,7 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-OUT = REPO / "results" / "calibration" / "_nyiso249_li_reachability.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso249_li_reachability.json"
 THRESHOLD = 300.0
 ZONES_OF_INTEREST = ("Long_Island", "NYC")
 

@@ -1,0 +1,420 @@
+{
+ "per_term": {
+  "2019": {
+   "full_hour_term_ratio": 0.941,
+   "half_hour_term_ratio": 1.31
+  },
+  "2020": {
+   "full_hour_term_ratio": 1.164,
+   "half_hour_term_ratio": 2.181,
+   "by_month_model_actual": {
+    "2": [
+     204,
+     144
+    ],
+    "3": [
+     1267,
+     764
+    ],
+    "4": [
+     2170,
+     1538
+    ],
+    "5": [
+     1091,
+     678
+    ],
+    "7": [
+     1581,
+     895
+    ],
+    "8": [
+     9182,
+     7789
+    ],
+    "9": [
+     1942,
+     1125
+    ],
+    "10": [
+     4965,
+     2956
+    ],
+    "11": [
+     801,
+     407
+    ],
+    "12": [
+     198,
+     55
+    ]
+   }
+  },
+  "2021": {
+   "full_hour_term_ratio": 1.426,
+   "half_hour_term_ratio": 1.905,
+   "by_month_model_actual": {
+    "2": [
+     65121,
+     58025
+    ],
+    "4": [
+     13958,
+     1095
+    ],
+    "5": [
+     696,
+     76
+    ],
+    "6": [
+     13101,
+     1461
+    ],
+    "7": [
+     2617,
+     310
+    ],
+    "8": [
+     493,
+     44
+    ],
+    "10": [
+     744,
+     77
+    ],
+    "11": [
+     313,
+     29
+    ]
+   }
+  },
+  "2022": {
+   "full_hour_term_ratio": 0.931,
+   "half_hour_term_ratio": 1.188
+  },
+  "2023": {
+   "full_hour_term_ratio": 1.007,
+   "half_hour_term_ratio": 1.225
+  },
+  "2024": {
+   "full_hour_term_ratio": 0.895,
+   "half_hour_term_ratio": 0.7
+  }
+ },
+ "rtorpa_identification": {
+  "2019": {
+   "actual_sum": 54424,
+   "keeper": {
+    "ratio": 1.039,
+    "r": 0.997
+   },
+   "keeper+LCAP": {
+    "ratio": 1.039,
+    "r": 0.997
+   },
+   "diag_OBD_half+LCAP": {
+    "ratio": 0.991,
+    "r": 0.998
+   },
+   "diag_fig3_mu_sigma+OBD_half+LCAP": {
+    "ratio": 0.935,
+    "r": 0.996
+   }
+  },
+  "2020": {
+   "actual_sum": 16407,
+   "keeper": {
+    "ratio": 1.435,
+    "r": 0.985
+   },
+   "keeper+LCAP": {
+    "ratio": 1.435,
+    "r": 0.985
+   },
+   "diag_OBD_half+LCAP": {
+    "ratio": 1.254,
+    "r": 0.99
+   },
+   "diag_fig3_mu_sigma+OBD_half+LCAP": {
+    "ratio": 0.855,
+    "r": 0.995
+   }
+  },
+  "2021": {
+   "actual_sum": 61156,
+   "keeper": {
+    "ratio": 1.591,
+    "r": 0.876
+   },
+   "keeper+LCAP": {
+    "ratio": 1.138,
+    "r": 0.985
+   },
+   "diag_OBD_half+LCAP": {
+    "ratio": 1.073,
+    "r": 0.981
+   },
+   "diag_fig3_mu_sigma+OBD_half+LCAP": {
+    "ratio": 1.06,
+    "r": 0.985
+   }
+  },
+  "2022": {
+   "actual_sum": 45373,
+   "keeper": {
+    "ratio": 1.083,
+    "r": 0.994
+   },
+   "keeper+LCAP": {
+    "ratio": 1.083,
+    "r": 0.994
+   },
+   "diag_OBD_half+LCAP": {
+    "ratio": 0.919,
+    "r": 0.995
+   },
+   "diag_fig3_mu_sigma+OBD_half+LCAP": {
+    "ratio": 0.879,
+    "r": 0.994
+   }
+  },
+  "2023": {
+   "actual_sum": 8281,
+   "keeper": {
+    "ratio": 1.09,
+    "r": 0.942
+   },
+   "keeper+LCAP": {
+    "ratio": 1.09,
+    "r": 0.942
+   },
+   "diag_OBD_half+LCAP": {
+    "ratio": 0.958,
+    "r": 0.942
+   }
+  },
+  "2024": {
+   "actual_sum": 1777,
+   "keeper": {
+    "ratio": 0.846,
+    "r": 0.945
+   },
+   "keeper+LCAP": {
+    "ratio": 0.846,
+    "r": 0.945
+   },
+   "diag_OBD_half+LCAP": {
+    "ratio": 0.792,
+    "r": 0.947
+   }
+  },
+  "2025": {
+   "skipped": "non-finite RTORPA in the measured series"
+  }
+ },
+ "prediction_on_r22_keeper": {
+  "2019": {
+   "hours_lambda_plus_adders_gt_swcap": 2,
+   "max_system_price": [
+    9656,
+    9000
+   ],
+   "LW": [
+    50.03,
+    49.81
+   ],
+   "actual_LW": 47.03,
+   "C3a_proxy": [
+    0.0637,
+    0.059
+   ],
+   "lcap_window_adder_LW": {
+    "model_before": 0.0,
+    "model_after": 0.0,
+    "measured_rtorpa": 0.0
+   },
+   "h_gt_1k": [
+    30,
+    30
+   ],
+   "h_gt_200": [
+    100,
+    100
+   ]
+  },
+  "2020": {
+   "hours_lambda_plus_adders_gt_swcap": 0,
+   "max_system_price": [
+    1903,
+    1903
+   ],
+   "LW": [
+    26.73,
+    26.73
+   ],
+   "actual_LW": 25.59,
+   "C3a_proxy": [
+    0.0448,
+    0.0448
+   ],
+   "lcap_window_adder_LW": {
+    "model_before": 0.0,
+    "model_after": 0.0,
+    "measured_rtorpa": 0.0
+   },
+   "h_gt_1k": [
+    3,
+    3
+   ],
+   "h_gt_200": [
+    38,
+    38
+   ]
+  },
+  "2021": {
+   "hours_lambda_plus_adders_gt_swcap": 47,
+   "max_system_price": [
+    10771,
+    9000
+   ],
+   "LW": [
+    172.88,
+    167.67
+   ],
+   "actual_LW": 165.88,
+   "C3a_proxy": [
+    0.0422,
+    0.0108
+   ],
+   "lcap_window_adder_LW": {
+    "model_before": 4.6,
+    "model_after": 1.02,
+    "measured_rtorpa": 0.47
+   },
+   "h_gt_1k": [
+    122,
+    113
+   ],
+   "h_gt_200": [
+    664,
+    653
+   ]
+  },
+  "2022": {
+   "hours_lambda_plus_adders_gt_swcap": 0,
+   "max_system_price": [
+    3312,
+    3312
+   ],
+   "LW": [
+    68.07,
+    68.07
+   ],
+   "actual_LW": 74.7,
+   "C3a_proxy": [
+    -0.0888,
+    -0.0888
+   ],
+   "lcap_window_adder_LW": {
+    "model_before": 0.0,
+    "model_after": 0.0,
+    "measured_rtorpa": 0.0
+   },
+   "h_gt_1k": [
+    17,
+    17
+   ],
+   "h_gt_200": [
+    96,
+    96
+   ]
+  },
+  "2023": {
+   "hours_lambda_plus_adders_gt_swcap": 1,
+   "max_system_price": [
+    5025,
+    5000
+   ],
+   "LW": [
+    49.28,
+    49.28
+   ],
+   "actual_LW": 65.65,
+   "C3a_proxy": [
+    -0.2493,
+    -0.2494
+   ],
+   "lcap_window_adder_LW": {
+    "model_before": 0.0,
+    "model_after": 0.0,
+    "measured_rtorpa": 0.0
+   },
+   "h_gt_1k": [
+    34,
+    34
+   ],
+   "h_gt_200": [
+    140,
+    140
+   ]
+  },
+  "2024": {
+   "hours_lambda_plus_adders_gt_swcap": 0,
+   "max_system_price": [
+    882,
+    882
+   ],
+   "LW": [
+    27.72,
+    27.72
+   ],
+   "actual_LW": 31.35,
+   "C3a_proxy": [
+    -0.116,
+    -0.116
+   ],
+   "lcap_window_adder_LW": {
+    "model_before": 0.0,
+    "model_after": 0.0,
+    "measured_rtorpa": 0.0
+   },
+   "h_gt_1k": [
+    0,
+    0
+   ],
+   "h_gt_200": [
+    12,
+    12
+   ]
+  },
+  "2025": {
+   "hours_lambda_plus_adders_gt_swcap": 0,
+   "max_system_price": [
+    142,
+    142
+   ],
+   "LW": [
+    33.13,
+    33.13
+   ],
+   "actual_LW": NaN,
+   "C3a_proxy": [
+    NaN,
+    NaN
+   ],
+   "lcap_window_adder_LW": {
+    "model_before": 0.0,
+    "model_after": 0.0,
+    "measured_rtorpa": 0.0
+   },
+   "h_gt_1k": [
+    0,
+    0
+   ],
+   "h_gt_200": [
+    0,
+    0
+   ]
+  }
+ }
+}

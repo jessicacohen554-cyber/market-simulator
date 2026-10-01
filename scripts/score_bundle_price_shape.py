@@ -8,7 +8,7 @@ route to a C3b number, and rule 29 ``[R-SCREEN]``/31 ``[R-RETAIN]`` may leave
 that bundle on an ephemeral container that never reaches the parent. nyiso-226
 hit exactly that wall: five independent retrieval routes were blocked and the
 tightest-margin load-bearing criterion went unmeasured through a whole
-three-year span (``docs/ADDENDUM-nyiso226-not-promoted-and-main-reverted-2026-09-10.md``
+three-year span (``docs/records/nyiso/ADDENDUM-nyiso226-not-promoted-and-main-reverted-2026-09-10.md``
 §3).
 
 This module closes that gap **without weakening anything**: it does not

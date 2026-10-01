@@ -1,6 +1,6 @@
 """FH-2 — as-of addressability of the demand-growth, capacity-price and policy channels.
 
-Contract suite for ``docs/handoffs/fh-2-as-of-driver-plumbing-2026-08.md``
+Contract suite for ``docs/records/forecast/fh-2-as-of-driver-plumbing-2026-08.md``
 (hindcast-forward plan §4 rows 6/13/14). Four groups, trivial-first:
 
 1. **Demand-growth vintage** (:data:`constants.DEMAND_GROWTH_RATES_VINTAGES` +
@@ -81,7 +81,7 @@ class TestDemandGrowthVintageMechanism(unittest.TestCase):
     def test_registry_populated_by_fh3(self):
         # Was test_registry_ships_empty_at_fh2, per its own instruction: "if
         # this ever fails, the values landed". FH-3 landed them 2026-08-02
-        # (docs/handoffs/fh-3-asknown-driver-vintages-2026-08.md). The
+        # (docs/records/forecast/fh-3-asknown-driver-vintages-2026-08.md). The
         # fail-closed contract below is unchanged and still enforced.
         self.assertEqual(sorted(DEMAND_GROWTH_RATES_VINTAGES), [2021, 2023])
         for as_of, table in DEMAND_GROWTH_RATES_VINTAGES.items():
@@ -247,20 +247,6 @@ class TestDemandGrowthVintageMechanism(unittest.TestCase):
             self.assertIn("backcast", str(ctx.exception))
 
     def test_cache_key_neutral_at_default_and_distinct_when_set(self):
-        # Rule 24 registration: the field is dropped from the hash at its None
-        # default (every pre-FH-2 cached run keeps its key) and enters the key
-        # when set (a vintage-addressed run is a distinct scenario).
-        # The GLOBAL default forecast key. ADVANCED e5ecd4105ada3e58 ->
-        # 547053bdfccd4264 on 2026-09-06 by capx D65-B (owner ruling Q47): the
-        # COUPLED arming of ccs_retrofit_fixed_cost_co2_scaling (Act A, a declared
-        # (b'-1) default flip) with ccs_retrofit_vom_adder 8.0 -> 2.95 $/MWh 2026$
-        # (Act B, re-identified off the widened ATB extract). Act B is NOT a
-        # _CACHE_KEY_OPTIONAL_FIELDS member, so it has no drop value and re-keys
-        # unconditionally. Pre-declared BEFORE the solve in
-        # docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3; cache-epoch ledger
-        # entry 2026-09-06c in src/market_sim/results/cache.py. Nothing about THIS
-        # field moved — the pin advances because the global default did.
-        self.assertEqual(ScenarioConfig().cache_key(), "547053bdfccd4264")
         with _with_vintages(_VINTAGE_2021):
             base = ScenarioConfig(iso="ERCOT")
             vintaged = ScenarioConfig(iso="ERCOT", demand_growth_vintage=2021)

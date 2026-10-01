@@ -5,7 +5,7 @@ PB-2) answers "we don't know the *inputs*." It does **not** answer "given the
 inputs, the model itself is wrong by this much." This module owns that second
 term and convolves the two into the *published* emissions band.
 
-Design source: ``docs/handoffs/probability-bounds-plan-2026-07.md`` §3. The prior
+Design source: ``docs/records/misc/probability-bounds-plan-2026-07.md`` §3. The prior
 is fit from the committed **D-7 statistical-mode probes**
 (``docs/statistical-mode-results-2026-07.md``). Statistical mode strips every
 measured backcast overlay but keeps realized annual gas price, load and weather,
@@ -38,7 +38,7 @@ the frozen PB-2 ``bands.parquet`` schema.
 
 **Emissions-basis staleness (2026-07-05).** The D-7 probes were solved and
 scored *before* the R2 measured-rate CO2 basis merged (PR #1371). Per the
-W0-P4 split (``docs/handoffs/forecast-validation-program-2026-07.md`` §0/§3.2):
+W0-P4 split (``docs/records/forecast/forecast-validation-program-2026-07.md`` §0/§3.2):
 carbon-zero ISOs (ERCOT/PJM/MISO) are provably solve-unaffected (carbon = $0 so
 the CO2 rate never enters ``mc``) and :func:`default_prior` **re-scores** their
 committed numbers under the current basis with no solve

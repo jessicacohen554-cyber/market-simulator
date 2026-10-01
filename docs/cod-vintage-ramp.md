@@ -152,7 +152,7 @@ the unit's date is the measured input, the plant mean is the estimate; rule 25
   (`MARKET_SIM_USE_CLEAN`), whose frozen fleet schema carries no month.
 
 Repair evidence, blast radius at LP grain for all seven keepers, and the A/B:
-`docs/handoffs/PRECOMMIT-soco-15-2026-09-13.md` / `FINDING-soco-15-2026-09-13.md`.
+`docs/records/soco/PRECOMMIT-soco-15-2026-09-13.md` / `FINDING-soco-15-2026-09-13.md`.
 
 ## Year-matched vintage option (`eia860_vintage_year`)
 

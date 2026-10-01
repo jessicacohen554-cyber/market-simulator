@@ -9,7 +9,7 @@ capacity-hours on them. A cap that reaches zero fleet rows is inert in the
 solve whatever it would remove on paper.
 
 Run: ``python3 scripts/probes/pjm_next5_card3b_retiree_cap_phase0.py 2019 ... 2025``
-Writes ``results/calibration/_pjm_next5_card3b_retiree_cap_phase0.json``.
+Writes ``results/phase0/pjm/_pjm_next5_card3b_retiree_cap_phase0.json``.
 """
 
 from __future__ import annotations
@@ -89,7 +89,7 @@ def main() -> None:
             "plants": paper,
         }
         print(y, {k: v for k, v in out["years"][str(y)].items() if k != "plants"}, flush=True)
-    dest = REPO / "results/calibration/_pjm_next5_card3b_retiree_cap_phase0.json"
+    dest = REPO / "results/phase0/pjm/_pjm_next5_card3b_retiree_cap_phase0.json"
     dest.write_text(json.dumps(out, indent=1))
     print("wrote", dest)
 

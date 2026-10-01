@@ -85,8 +85,35 @@ def test_miso_zone_map_from_archive(miso_archive):
 
 
 def test_registry_scope_is_ruled_isos_only():
-    """Only owner-ruled ISOs carry a zone-resolved source (miso-294 scope)."""
-    assert set(dal.ZONAL_LW_SOURCES) == {"ERCOT", "MISO"}
+    """Only owner-ruled ISOs carry a zone-resolved source (miso-294, NYISO-NEXT-22)."""
+    assert set(dal.ZONAL_LW_SOURCES) == {"ERCOT", "MISO", "NYISO"}
+
+
+NYISO_ZONES = ["Upstate_West", "Capital_Hudson", "Lower_Hudson", "NYC", "Long_Island"]
+
+
+def test_nyiso_zone_resolved_weighting(tmp_path, monkeypatch):
+    """NYISO: each model zone is its own series, then zone-demand-weighted."""
+    price = {z: 10.0 * (i + 1) for i, z in enumerate(NYISO_ZONES)}
+    pd.concat(
+        pd.DataFrame(
+            {"year": 2023, "hour": np.arange(T), "zone": z, "rt": p, "da": p + 1.0}
+        )
+        for z, p in price.items()
+    ).to_parquet(tmp_path / dal.NYISO_ZONAL_PARQUET)
+    monkeypatch.setattr(dal, "HOURLY_OUT", tmp_path)
+    # Measured demand in the model's own zone order (iso_configs), weights 1..5.
+    from market_sim.config.iso_configs import get_iso_config
+
+    order = [zn.name for zn in get_iso_config("NYISO").zones]
+    w = {z: float(i + 1) for i, z in enumerate(order)}
+    demand = np.vstack([np.full(T, w[z]) for z in order])
+    monkeypatch.setattr(dal, "_measured_zone_demand", lambda iso, year: demand)
+    out = dal._lw_fields("NYISO", 2023)
+    expect = sum(price[z] * w[z] for z in order) / sum(w.values())
+    assert out["rt_lw"] == pytest.approx(round(expect, 2))
+    assert out["da_lw"] == pytest.approx(round(expect + 1.0, 2))
+    assert out["src_lw"] == dal.ZONAL_LW_SOURCES["NYISO"]["src_lw"]
 
 
 def test_unregistered_iso_keeps_system_hub(tmp_path, monkeypatch):

@@ -294,7 +294,7 @@ CC_STEAM_PART_PRIME_MOVER: str = "CA"
 # data, that the capacity is measurably absent from its fleet and that the
 # plant's joined heat rate is already a BLOCK rate — a verdict in one ISO never
 # fills another ISO's cell. MISO's verification is
-# ``results/calibration/FINDING-miso126-cc-steam-part-capacity-2026-08-04.md``
+# ``docs/records/miso/FINDING-miso126-cc-steam-part-capacity-2026-08-04.md``
 # (55088 Dearborn ``ST1``, 250.0 MW). Named but NOT entered: CAISO 54912
 # Martinez ``STG1`` 20.0 MW and NEISO 6081 Stony Brook ``CA1`` 96.0 MW, each
 # handed to its own lane unstamped. NEISO's ``CA1`` is NOT a member of this
@@ -328,7 +328,7 @@ CC_STEAM_PART_REPAIR_ISOS: frozenset[str] = frozenset({"MISO"})
 # Rule 25 ``[R-ISO-SCOPE]``: an ISO enters only after its OWN session verifies,
 # on its OWN market's data, that the row is a genuine fuel-less steam part.
 # NEISO's verification is
-# ``results/calibration/FINDING-neiso83-stonybrook-ca1-2026-08-05.md``
+# ``docs/records/neiso/FINDING-neiso83-stonybrook-ca1-2026-08-05.md``
 # (6081 Stony Brook ``CA1``, 96.0 MW — NEISO's ENTIRE population is that one
 # row). MISO is deliberately absent: its only member would be Edwardsport.
 CC_STEAM_PART_RECLASS_ISOS: frozenset[str] = frozenset({"NEISO"})
@@ -460,7 +460,7 @@ def classify_plant(
         # because ``_pumped_storage_plant_ids`` holds these rows back out again
         # — the guard this repair makes live for the first time.
         # Rule 26 ``[R-DELETE]`` (fix it, do not flag it both ways);
-        # gov-hydro-seam-1, docs/FINDING-pjm-h1-hydro-accounting-seam-2026-09-12.md §5.
+        # gov-hydro-seam-1, docs/records/pjm/FINDING-pjm-h1-hydro-accounting-seam-2026-09-12.md §5.
         return "OTHER"
     if fuel == "WAT" or pm in HYDRO_PRIME_MOVERS:
         return "hydro"

@@ -2,7 +2,7 @@
 
 Differences each per-year arm bundle against the keeper bundle it was replayed
 from (rule 29(b) form 4 — the committed keeper IS the control), on the
-statistics ``docs/PRECOMMIT-hydro-5-2026-09-22.md`` §5 pre-registered:
+statistics ``docs/records/misc/PRECOMMIT-hydro-5-2026-09-22.md`` §5 pre-registered:
 
 * **G1** — liveness: the arm's hourly hydro minimum against the mechanism's
   predicted monthly base (RoR flat base or the floor level, recomputed from

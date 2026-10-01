@@ -16,7 +16,7 @@ what the gate reads (nyiso-117 PREREG §3.1).
 
 Run:
     PYTHONPATH=.:src python scripts/probes/_nyiso118_span_construction_probe.py \\
-        --json-out results/calibration/nyiso118_span_construction_probe.json
+        --json-out results/phase0/nyiso/nyiso118_span_construction_probe.json
 """
 
 from __future__ import annotations

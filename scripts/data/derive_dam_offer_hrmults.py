@@ -180,7 +180,7 @@ HCAP_USD_MWH = 5000.0
 # quantiles of the per-resource top-of-curve multiplier (mode-B basis,
 # near-cap bids included), each rung clamped FROM BELOW at the class p50.
 # The upper rungs are the real market's always-posted scarcity wall the p50
-# collapse deleted (docs/FINDING-ercot-priceshape-2026-07.md §4 — why the
+# collapse deleted (docs/records/ercot/FINDING-ercot-priceshape-2026-07.md §4 — why the
 # modeled duals top out at ~$150-200). The below-median clamp is structural,
 # not a fit: the sub-p50 top-of-curve dispersion belongs to resources whose
 # ENTIRE curve is cheap — their MW is already priced by those plants' cheaper
@@ -476,7 +476,7 @@ def derive_peak_binned(
     that bin) is reduced to equal-capacity quantile rungs (:func:`_peak_ladder_from`).
     So the tightest bin carries the wall QSEs post when scarcity is anticipated, the
     loose bins the competitive body — the measured condition response
-    (docs/FINDING-ercot-priceshape-2026-07.md §4). ``floor_mult`` clamps every rung
+    (docs/records/ercot/FINDING-ercot-priceshape-2026-07.md §4). ``floor_mult`` clamps every rung
     from below (the class all-hours peak median) so no bin lowers the stack.
 
     Returns one ladder (``[[share, mult], ...]``) per bin, loosest first. A bin with
@@ -595,7 +595,7 @@ def main() -> None:
         "per-resource top-of-curve multiplier, top rung clamped at the "
         "published HCAP. Represents the measured across-resource offer "
         "dispersion (the scarcity wall) instead of collapsing it to the p50 "
-        "(docs/FINDING-ercot-priceshape-2026-07.md §4).",
+        "(docs/records/ercot/FINDING-ercot-priceshape-2026-07.md §4).",
     )
     ap.add_argument(
         "--condition-binned",
@@ -1087,7 +1087,7 @@ def derive_condition_topscoped(out_json: str | None) -> None:
             "conditioning": TOPSCOPED_TAG,
             "netload_pct_edges": list(edges_ext),
             "new_edges": list(new_edges),
-            "edge_identification": "results/calibration/"
+            "edge_identification": "results/phase0/ercot/"
             "ercot180_edge_identification.json",
             "peak_ladder_quantiles": list(PEAK_LADDER_QUANTILES),
             "hcap_usd_mwh": HCAP_USD_MWH,
@@ -1416,7 +1416,7 @@ def derive_ep_basis_yearly(out_json: str | None, body_cap: float) -> None:
     2026-07-22 slimming, the parsed intermediate was never committed, the free
     MIS path's ~2.3-year retention has already lost all 2023 publications, and
     the credentialed archive was owner-declined
-    (docs/handoffs/ercot-as-coopt-plan-2026-07.md §WS-E). A per-year committed
+    (docs/records/ercot/ercot-as-coopt-plan-2026-07.md §WS-E). A per-year committed
     rebasis is therefore not measurable today; re-deriving it is an owner
     decision (archive access, or a 2024/25-only partial intake).
 

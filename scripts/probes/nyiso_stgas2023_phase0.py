@@ -3,7 +3,7 @@
 Reads ONLY committed artifacts: the keeper's run payload (per-plant hourly model CF),
 the NYISO bench parts (per-plant CAMPD hourly + EIA-923), the keeper bundles'
 ``hourly/class_band_hourly_<y>.parquet`` and ``legitimacy_diagnostics.json`` (D-2/D-4).
-Writes ``results/calibration/_nyiso_stgas2023_phase0.json``.
+Writes ``results/phase0/nyiso/_nyiso_stgas2023_phase0.json``.
 
 2021 inputs (``results/calibration/rnyiso_2021``, run payload ``2026-09-25-nyiso-r-inputs-2021``
 and ``bench/NYISO/2021.json.gz``) come from R-NYISO-2021's branch head
@@ -146,7 +146,7 @@ def main() -> None:
             ],
             "plants": plants,
         }
-    dst = ROOT / "results/calibration/_nyiso_stgas2023_phase0.json"
+    dst = ROOT / "results/phase0/nyiso/_nyiso_stgas2023_phase0.json"
     dst.write_text(json.dumps(out, indent=1))
     for y, v in out["years"].items():
         print(

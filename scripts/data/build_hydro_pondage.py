@@ -5,7 +5,7 @@ hydro-1, 2026-09-20). The dispatch LP's hydro family caps each plant's
 MONTHLY energy and imposes no bound at all on how that energy is distributed
 inside the month, so a plant may bank ~730 hours of water at zero cost and
 land it on the peak. nyiso-219 measured what the fleet can physically hold
-(``docs/FINDING-nyiso219-pondage-duration-2026-09-07.md``): **72.01 % of
+(``docs/records/nyiso/FINDING-nyiso219-pondage-duration-2026-09-07.md``): **72.01 % of
 NYISO's scored hydro MW cannot hold even ONE DAY of its own full output** and
 98.31 % cannot hold a month. This script turns that measurement into the LP's
 bound.

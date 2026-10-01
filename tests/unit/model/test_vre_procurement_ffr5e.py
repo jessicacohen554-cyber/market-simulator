@@ -3,7 +3,7 @@
 The channel is a GATED (``vre_procurement_additions_enabled``, default OFF)
 wind/solar limb of capacity-evolution step 4, implementing owner decision
 D-18(a) to the design in
-``docs/handoffs/ffr-5b-procurement-channel-design-2026-08-05.md`` §§2-3.
+``docs/records/forecast/ffr-5b-procurement-channel-design-2026-08-05.md`` §§2-3.
 
 Separate additive file (not ``test_capacity.py`` / ``test_eia860.py``) per the
 FF-2A precedent and rule 27 — core files are not bulk-rewritten to carry new
@@ -108,16 +108,6 @@ class TestProcurementGate(unittest.TestCase):
         from market_sim.config.scenarios import _CACHE_KEY_OPTIONAL_FIELDS
 
         self.assertIn("vre_procurement_additions_enabled", _CACHE_KEY_OPTIONAL_FIELDS)
-        # ADVANCED 2026-09-06, e5ecd4105ada3e58 -> 547053bdfccd4264 — capx D65-B's
-        # COUPLED ccs_retrofit_fixed_cost_co2_scaling (Act A, a declared (b'-1)
-        # default flip) + ccs_retrofit_vom_adder 8.0 -> 2.95 $/MWh 2026$ (Act B, a
-        # plain value field with no drop value, so it re-keys unconditionally).
-        # Nothing about THIS file's mechanism moved — the pin advances because the
-        # global default did. Rationale and provenance live on the pin in
-        # tests/regression/test_persisted_identity.py; pre-declared BEFORE the solve
-        # in docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
-        # capx D65-B-R, completing the partial re-key fb93b76e left behind.
-        self.assertEqual(ScenarioConfig().cache_key(), "547053bdfccd4264")
 
     def test_armed_run_gets_a_distinct_cache_key(self):
         # An armed run is a different scenario, not a cache collision — which

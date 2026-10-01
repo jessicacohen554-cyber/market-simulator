@@ -266,7 +266,7 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "reconstructed from prices or a residual; adjudicated absences "
             "(Jan-2024 Heather, Jan-2025 Enzo) live in the raw README. "
             "Scopes the M-2 `unit_outage_maxgen_events` revealed-derate "
-            "channel (docs/handoffs/miso-price-formation-design-2026-07.md)."
+            "channel (docs/records/miso/miso-price-formation-design-2026-07.md)."
         ),
     },
     "carbon-auction-results": {
@@ -1072,7 +1072,7 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "fixed-proxy — onto one canonical metric vocabulary (`net_cone`, "
             "`irm`, `price_cap`, `curve_point`, `soft_offer_cap`, "
             "`ra_report_price`). ERCOT excluded (energy-only). See "
-            "`docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md` "
+            "`docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md` "
             "§3-4."
         ),
     },

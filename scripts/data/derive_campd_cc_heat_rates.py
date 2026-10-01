@@ -148,6 +148,7 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
 from market_sim.config.paths import (  # noqa: E402
+    CAMPD_BINS_CSV,
     EIA_923_GENERATION_FUEL_PATH,
     PROCESSED_DIR,
     RAW_DIR,
@@ -243,9 +244,54 @@ _GROSS_NET_IDENTITY_MIN: float = 1.0
 #: ``gross_below_net``; no threshold, no parameter; the physical net band still
 #: binds. Written with flag ``eia923_identity``, which the model applies
 #: (data/fleet/campd_bins._APPLIED_MEASURED_FLAGS). Rules 14 / 19 / 23.
+#:
+#: R-ERCOT-21 (2026-10-01, owner card "Build A+B"): ``steam_not_metered`` is
+#: the SAME refusal class one step further out — CAMPD's gross load holds the
+#: combustion turbines only (ratio ~0.65-0.88), so its ``heatInput/grossLoad``
+#: is the CT rate, and the former terminal (eGRID, CEMS heat input / EIA-923
+#: net) is the PLANT average: at T H Wharton (3469) it includes the six
+#: simple-cycle GTs R-ERCOT-20 split into their own CT_PEAKER child, so the
+#: CC-only parent was priced at 10.43-11.84 against its own CT+CA filing of
+#: 9.18-9.88. The EIA-923 CC-prime-mover identity is the rate on the parent's
+#: own boundary. One more key, no threshold, no parameter (rules 14 / 19).
 _EIA923_IDENTITY_FLAG: str = "eia923_identity"
-_EIA923_IDENTITY_REFUSALS: frozenset[str] = frozenset({"gross_below_net"})
+_EIA923_IDENTITY_REFUSALS: frozenset[str] = frozenset(
+    {"gross_below_net", "steam_not_metered"}
+)
 _CC_PRIME_MOVERS: tuple[str, ...] = ("CT", "CA", "CS")
+
+
+def ercot_solve_fleet_supplement(
+    caps: dict[int, float], path: Path = CAMPD_BINS_CSV
+) -> dict[int, float]:
+    """Add the ERCOT solve fleet's CC_REGULAR plants the EIA-860 union misses.
+
+    ERCOT dispatches the curated CAMPD-bin sheet (``use_campd_bins``), not the
+    EIA-860 fleet this derive loads, so a plant ERCOT admits by its own 60-Day
+    DAM settlement record (``zone_assignment._ercot_dam_admitted_zones``) but
+    whose EIA-860 BA is another ISO's is in the solve and absent from the
+    derive's population. Measured case (R-ERCOT-21): Jack Fusco 55357 (DAM
+    site BVE_CC1, EIA-860 BA "MISO") — present in the committed artifact,
+    dropped by the HEAD derive, so a regen would have silently sent it back to
+    eGRID. A supplemented plant takes the sheet's nameplate as its capacity;
+    plants already in ``caps`` are untouched, and a sheet plant with no CAMPD
+    combined-cycle hours yields no row (rule 14; zero parameters).
+    """
+    if not Path(path).exists():
+        return caps
+    sheet = pd.read_csv(path)
+    sheet = sheet[sheet["Plant_Group"] == TARGET_CLASS]
+    out = dict(caps)
+    added = []
+    for code, mw in zip(sheet["Plant_Code"].astype(int), sheet["Nameplate_MW"]):
+        if code not in out and float(mw) > 0.0:
+            out[code] = float(mw)
+            added.append(code)
+    if added:
+        print(
+            f"ERCOT: solve-fleet supplement added {sorted(added)} to the CC population"
+        )
+    return out
 
 
 def eia923_identity_rates(
@@ -376,7 +422,7 @@ def _campd_cc_hours(iso: str, years: list[int], codes: set[int]) -> pd.DataFrame
         # outage and emissions derives already do. Without it El Segundo
         # (510 MW, no eGRID row in any vintage) matched no fleet plant and
         # stayed at the HEAT_RATE_BINS class table (R-CAISO phase 0,
-        # docs/handoffs/r-caiso/PRECOMMIT-r-caiso-2026-09-24.md §2).
+        # docs/records/caiso/r-caiso/PRECOMMIT-r-caiso-2026-09-24.md §2).
         fac = df["facilityId"].fillna(-1).astype(int)
         uid = df["unitId"].astype(str)
         at_split = fac.isin(campd.CAMPD_SPLIT_FACILITIES)
@@ -676,6 +722,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     union = union_fleet(fleets)
     caps = class_capacity(union, TARGET_CLASS)
+    if iso == "ERCOT":
+        caps = ercot_solve_fleet_supplement(caps)
     if not caps:
         raise SystemExit(f"{iso}: model fleet carries no {TARGET_CLASS} generator")
     print(f"{iso}: {len(caps)} {TARGET_CLASS} plants, {sum(caps.values()):,.1f} MW")

@@ -6,7 +6,7 @@ measured LONG_RUN ``E/T`` (``_pjmnext11_offered_ecomax.json``). That is an UPPER
 capping the plant at its offered EcoMax could remove (it assumes every coal unit carries the
 segment-mean ratio and that the model maximum is the curve top). CAMPD is read the same way, so
 the bound's model-minus-actual difference is the most the cap could move C1.
-Writes ``results/calibration/_pjmnext11_ecomax_bound.json``.
+Writes ``results/phase0/pjm/_pjmnext11_ecomax_bound.json``.
 """
 
 from __future__ import annotations
@@ -21,8 +21,8 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts/probes"))
 import _pjmnext10_coal_phase0 as P10  # noqa: E402
 
-RATIO = REPO / "results/calibration/_pjmnext11_offered_ecomax.json"
-OUT = REPO / "results/calibration/_pjmnext11_ecomax_bound.json"
+RATIO = REPO / "results/phase0/pjm/_pjmnext11_offered_ecomax.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext11_ecomax_bound.json"
 
 
 def above(x: np.ndarray, r: float) -> float:

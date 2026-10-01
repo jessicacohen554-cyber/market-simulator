@@ -3,7 +3,7 @@
 Each case is a MEASURED shape from the real EIA Natural Gas Weekly Update
 archive, cited to the page it came from — never a synthetic string invented to
 make a pattern pass. Evidence:
-``docs/FINDING-neiso109-the-agt-series-is-contaminated-2026-09-16.md``.
+``docs/records/neiso/FINDING-neiso109-the-agt-series-is-contaminated-2026-09-16.md``.
 """
 
 from __future__ import annotations

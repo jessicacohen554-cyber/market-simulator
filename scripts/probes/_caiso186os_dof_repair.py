@@ -35,7 +35,7 @@ Usage::
 
     uv run python scripts/probes/_caiso186os_dof_repair.py
 
-Writes ``results/calibration/_caiso186os_dof_repair.json``.
+Writes ``results/phase0/caiso/_caiso186os_dof_repair.json``.
 """
 
 from __future__ import annotations
@@ -45,7 +45,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 CAL = REPO / "results/calibration"
-OUT = CAL / "_caiso186os_dof_repair.json"
+OUT = CAL.parent / "phase0" / "caiso" / "_caiso186os_dof_repair.json"
 
 # Current designated keeper of every ISO, read from the committed keeper shards
 # at HEAD (frontend/data/backcast/keepers/<ISO>.json → registry sidecar bundle).

@@ -3,7 +3,7 @@ assembled at HEAD under the keeper's own ``run_config.json`` and priced against
 the keeper's own committed P1 zonal prices.
 
 Pre-registration (pushed at ``06918ca1`` BEFORE this probe ran):
-``results/calibration/PREREG-miso134-ct-peaker-night-order-screen-2026-08-05.md``.
+``docs/records/miso/PREREG-miso134-ct-peaker-night-order-screen-2026-08-05.md``.
 
 The object: MISO's ``CT_PEAKER`` econ band is offered at a residual-identified
 1.0 x base heat rate while the class's own measured incremental burn is
@@ -77,7 +77,7 @@ from market_sim.data.fuel import (  # noqa: E402
 from market_sim.data.offer_curves import apply_gas_offer_margin  # noqa: E402
 
 BUNDLE = REPO / "results/calibration/miso132_ccmin_B"
-OUT = REPO / "results/calibration/_miso134_ct_night_order_screen.json"
+OUT = REPO / "results/phase0/miso/_miso134_ct_night_order_screen.json"
 YEARS = (2023, 2024, 2025)  # rule 22: the ONLY years touched anywhere below
 
 MONTH_LEN = {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30,
@@ -437,7 +437,7 @@ def main() -> None:
         "session": "miso-134",
         "keeper": "2026-08-05-miso-132b-cc-committed",
         "bundle": "results/calibration/miso132_ccmin_B",
-        "prereg": ("results/calibration/"
+        "prereg": ("docs/records/miso/"
                    "PREREG-miso134-ct-peaker-night-order-screen-2026-08-05.md"),
         "prereg_pushed_at": "06918ca1",
         "note": ("pre-registered ORDER screen; NO LP solved. S-4 declared "

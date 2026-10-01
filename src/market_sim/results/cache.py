@@ -46,7 +46,7 @@ basis"*, a re-derived ``DEMAND_GROWTH_RATES``, a repaired demand curve — now
 moves the key by itself, scoped to the ISOs whose rows moved, and the bundle
 records what it solved on in ``solve_surface.json`` beside its ``config.yaml``.
 Landing declared every name at its live hash, so it moved ZERO keys and
-invalidated nothing (`docs/handoffs/capxd79-solve-surface-no-op-record.json`).
+invalidated nothing (`docs/records/forecast/capxd79-solve-surface-no-op-record.json`).
 **What it still cannot see is CODE** — the D55 class, a behaviour change with no
 value and no field behind it — which is why everything below stands unchanged.
 
@@ -78,7 +78,7 @@ Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
 **Epoch 2026-09-25 (b) — R-SOCO-B2: the Gulf Power exit is DATED (owner ruling
 (C), hour grain). KEY-MOVING for SOCO only.** Record:
-``docs/handoffs/r-soco/FINDING-r-soco-b2-boundary-2026-09-25.md`` and
+``docs/records/soco/r-soco/FINDING-r-soco-b2-boundary-2026-09-25.md`` and
 ``PRECOMMIT-r-soco-b2-2026-09-25.md``. WHAT CHANGED: ``ISO_BA_EXITS``
 (``{"SOCO": {"FPL": "2022-07-13 12:00"}}``) dates R-SOCO-B's R2 — the former
 Gulf Power plants are SOCO members until hour-ending UTC 2022-07-13 12:00 in the
@@ -94,7 +94,7 @@ them). **PROSE + KEY MOVE** (no ``SolveEpoch``).
 **Epoch 2026-09-25 — R-SOCO-B: SOCO's balancing-authority boundary (owner
 rulings (A) and (B), 2026-09-25). KEY-MOVING for SOCO only, so NOT a same-key
 invalidation; recorded here because part of it is a code-level change a value
-hash cannot see.** Record: ``docs/handoffs/r-soco/PRECOMMIT-r-soco-b-2026-09-25.md``.
+hash cannot see.** Record: ``docs/records/soco/r-soco/PRECOMMIT-r-soco-b-2026-09-25.md``.
 WHAT CHANGED: (R1) ``EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC`` negates
 EIA's published sign-inverted SOCO ``Total interchange`` for UTC 2019-01-01
 07:00 .. 2019-09-11 05:00 at the frame seam; (R2) the existing
@@ -122,11 +122,11 @@ every other state is byte-identical (``coal_scope`` defaults ``True``). No
 committed ``run_config*.json`` carries that state (checked 2026-09-24 over every
 ``results/calibration/*/run_config*.json``), so nothing cached or registered is
 invalidated. **PROSE-ONLY** (no ``SolveEpoch``): there is nothing to re-key.
-Record: ``docs/handoffs/r-neiso/PRECOMMIT-r-neiso-2026-09-24.md``.
+Record: ``docs/records/neiso/r-neiso/PRECOMMIT-r-neiso-2026-09-24.md``.
 
 **Epoch 2026-09-24 — R-ERCOT: ERCOT's curated-bin heat rates re-resolved per
 backcast solve year. A SAME-KEY INVALIDATION for ERCOT backcasts only.**
-Record: ``docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md``.
+Record: ``docs/records/ercot/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md``.
 WHAT CHANGED (code): ``run_calibration.run_year`` passes the solve year and the
 five F1 measured-heat-rate flags + ``eia860_vintage_tracks_solve_year`` to
 ``load_campd_bins``, which now re-resolves every sheet row (measured CAMPD year
@@ -142,8 +142,8 @@ coerced off outside it).
 heat rates in every EIA-860 table, and per-year measured heat-rate artifacts
 for every ISO. A SAME-KEY INVALIDATION for every config whose key the
 accompanying default flip does not move.** Record:
-``docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md`` §5.1
-and ``docs/handoffs/f1/``.
+``docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md`` §5.1
+and ``docs/records/misc/f1/``.
 
 **WHAT CHANGED (data, not config).** (1) ``heat_rate`` is re-joined in
 ``vintage_2018``…``vintage_2024``/``eia860_generators.parquet`` (eGRID of the
@@ -293,7 +293,7 @@ CAISO, ERCOT, MISO, NEISO, NYISO and PJM — whose 2028-2030 retrofit sets,
 ``gas_cc``/``gas_cc_ccs`` capacity splits and CO2 rows are mis-stated. The
 reconstructed per-year duals and the direction and cap-bounded magnitude of each
 leg's correction are tabulated in
-``docs/handoffs/PRECOMMIT-capx-d87-2026-09-08.md`` §2.5; the measured NYISO
+``docs/records/forecast/PRECOMMIT-capx-d87-2026-09-08.md`` §2.5; the measured NYISO
 correction is in ``FINDING-capx-d87-2026-09-08.md``. D87 re-solves none of the
 other eleven and re-states none of the six ISO policy FINDINGs' numbers: that
 re-statement is ROUTED to the SCN desk.
@@ -325,7 +325,7 @@ No keeper, sidecar, determination or dashboard row moves — no FF-2D verdict is
 keyed to a target-row run, and committed artifacts are files, not cache lookups.
 
 Recorded 2026-09-08 by capx D87, the lane that made the change
-(``docs/handoffs/PRECOMMIT-capx-d87-2026-09-08.md`` §4, pushed before its screen
+(``docs/records/forecast/PRECOMMIT-capx-d87-2026-09-08.md`` §4, pushed before its screen
 solve). This entry changes no key and no default.
 
 
@@ -348,7 +348,7 @@ equals the drop value and enters the hash.
 
 **Measured at the arm over all 190 committed** ``run_config.json``
 (``scripts/probes/capxd76arm_default_flip_key_census.py --variant b``, records
-under ``docs/handoffs/d76armb/``, run against BOTH the pre-edit and the
+under ``docs/records/forecast/d76armb/``, run against BOTH the pre-edit and the
 post-edit tree and agreeing to the config): **34 keys move and every one of them
 is a hindcast bundle the gate governs** — PJM 10, MISO 9, NEISO 6, NYISO 5,
 ERCOT 3, CAISO 1 — with **ZERO backcast moves and ZERO non-hindcast forecast
@@ -425,7 +425,7 @@ is registered** — that re-key lands WITH the registration, never before it, so
 ``pjm-t1h`` never names a bundle that does not exist. Measured over every
 committed run config at the arm
 (``scripts/probes/capxd78arm_iso_override_no_op_check.py``, records under
-``docs/handoffs/d78arm/``, re-measured at HEAD 2026-09-07): of **173** committed
+``docs/records/forecast/d78arm/``, re-measured at HEAD 2026-09-07): of **173** committed
 configs, the **25 PJM forecast** configs move and **all 148 others — every
 non-PJM config of every ISO, and every backcast config including PJM's two —
 are byte-identical**. The probe
@@ -462,7 +462,7 @@ Because the key advances, **nothing is silently re-interpreted**: the D67-ARM
 bundle that holds the bare ``pjm-t1h`` id keeps its own key
 (``a9c66d8ea25acb9d``) under its own id. Measured over every committed run
 config at the arm (``scripts/probes/capxd75rarm_iso_override_no_op_check.py``,
-records under ``docs/handoffs/d75rarm/``): of **153** committed configs, the
+records under ``docs/records/forecast/d75rarm/``): of **153** committed configs, the
 **21 PJM forecast** configs move and **all 132 others — every non-PJM config of
 every ISO, and every backcast config including PJM's two — are byte-identical**.
 FOUR explicit control legs change meaning and are re-pinned in
@@ -540,7 +540,7 @@ backcast reaches neither step 1b nor the clearing), every clearing-off ISO
 (with the clearing off the routing is byte-identical, asserted by test), and
 every year below ``ccs_retrofit_available_year`` = 2028 on the retrofit limb,
 where the set is empty by construction. Record:
-``docs/handoffs/PRECOMMIT-capx-d81-2026-09-06.md`` §2 and
+``docs/records/forecast/PRECOMMIT-capx-d81-2026-09-06.md`` §2 and
 ``FINDING-capx-d81-2026-09-06.md``.
 
 **Epoch 2026-09-06d — capx D78 / owner ruling Q53 (reading 1): the
@@ -561,7 +561,7 @@ every MISO bundle with the gate on (the ``miso-t1h`` keeper family — the
 clearing is off there, and the D78 construction is byte-identical with the
 clearing off, asserted by test), every gate-off bundle of every ISO, and every
 backcast (the gate is coerced to its default in a backcast). Record:
-``docs/handoffs/DESIGN-capx-d78-sector-gate-offer-seam-2026-09-06.md`` §3.4.
+``docs/records/forecast/DESIGN-capx-d78-sector-gate-offer-seam-2026-09-06.md`` §3.4.
 
 **Epoch 2026-09-06c — capx D65-B / owner ruling Q47: the CCS-retrofit
 fixed-cost SHAPE gate arms as the default posture (Act A) COUPLED with the
@@ -592,7 +592,7 @@ does NOT recur here.
 **BOTH DEFAULT KEYS MOVE:** forecast default ``e5ecd4105ada3e58`` ->
 ``547053bdfccd4264``, bare backcast ``6a2845e50951394e`` ->
 ``f61891696e671969``. Every per-ISO bare key moves too; the full pre-declared
-table is ``docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md`` §3, written before
+table is ``docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md`` §3, written before
 the solve.
 
 **Act A's drop-value mechanic is nonetheless INTACT, measured by decomposition**
@@ -661,7 +661,7 @@ unabated gas_cc's 0.4663. It is a DISPATCH defect as well as an accounting one.
 **FORECAST-lane** bundle solved before this epoch whose horizon reaches **2028**
 (``ccs_retrofit_available_year``) AND whose fleet retrofits at least one unit.
 The committed census is 45 bundles across all six ISOs
-(``docs/handoffs/FINDING-capx-d77-2026-09-06.md`` §8), whose CO2 rows, CCS
+(``docs/records/forecast/FINDING-capx-d77-2026-09-06.md`` §8), whose CO2 rows, CCS
 generation and -- wherever a carbon price applies -- merit order are mis-stated.
 D77 re-solves none of them: that batch belongs to capx D65-B, at one HEAD,
 carrying this fix.
@@ -675,7 +675,7 @@ with the persisted-identity / fleet-golden / backcast-inertness regression tests
 not by argument. No keeper, sidecar, determination or dashboard row moves.
 
 Recorded 2026-09-06 by capx D77, the lane that made the change
-(``docs/handoffs/PRECOMMIT-capx-d77-2026-09-06.md`` §3, pushed before its screen
+(``docs/records/forecast/PRECOMMIT-capx-d77-2026-09-06.md`` §3, pushed before its screen
 solve; ``FINDING-capx-d77-2026-09-06.md``). This entry changes no key and no
 default.
 
@@ -725,9 +725,9 @@ before and after), leaving the path to apply alone exactly as it did; and every
 0.0 there, so the floor cannot resurrect a program the bundle switched off.
 
 Recorded 2026-09-06 by SCN-WS1c, the lane that made the change
-(``docs/handoffs/PRECOMMIT-scn-ws1c-2026-09-06.md`` §3,
+(``docs/records/forecast/PRECOMMIT-scn-ws1c-2026-09-06.md`` §3,
 ``FINDING-scn-ws1c-2026-09-06.md`` §4; desk ledger
-``docs/handoffs/scenario-desk-ledger-2026-09.md`` §2 ruling S2). This entry
+``docs/records/misc/scenario-desk-ledger-2026-09.md`` §2 ruling S2). This entry
 changes no key and no default.
 
 **Epoch 2026-09-05b — SCN-WS4a populates ``DATACENTER_ZONE_SHARE["MISO"]``
@@ -766,9 +766,9 @@ unchanged. No keeper, determination or dashboard row moves.
 Recorded 2026-09-06 by SCN-MX-R-r2 on the scenario desk's explicit grant of
 this one entry, not by the lane that made the change: ``results/cache.py``
 was outside SCN-WS4a's file region and the lane routed the entry rather than
-write it (``docs/handoffs/FINDING-scn-ws4a-2026-09-05.md`` §6, whose scope
+write it (``docs/records/forecast/FINDING-scn-ws4a-2026-09-05.md`` §6, whose scope
 paragraph the INVALIDATED / NOT-invalidated block above reproduces; desk
-ledger ``docs/handoffs/scenario-desk-ledger-2026-09.md`` §4). Derivation of
+ledger ``docs/records/misc/scenario-desk-ledger-2026-09.md`` §4). Derivation of
 the shares: that FINDING §2. This entry changes no key and no default.
 
 **Epoch 2026-09-05 — capx D60 / owner ruling Q42: the CCS-retrofit capex
@@ -780,8 +780,8 @@ actually captures (against the ATB reference host, 0.32319 t/MWh — the same
 host ``new_entry._emerging_lcoe`` charges the ATB increment against) and
 cogeneration hosts (``plant_group`` CC_CHP) leave the candidate set. Owner
 ruling Q42 of the director sitting r#37 (2026-09-05) on the measurement
-``docs/handoffs/FINDING-capx-d50-2026-09-04.md`` §8; execution record
-``docs/handoffs/FINDING-capx-d60-2026-09-05.md``.
+``docs/records/forecast/FINDING-capx-d50-2026-09-04.md`` §8; execution record
+``docs/records/forecast/FINDING-capx-d60-2026-09-05.md``.
 
 **BOTH KEYS MOVE:** default ``4c6b03ae098b6e3e`` -> ``e5ecd4105ada3e58``, bare
 backcast ``8211c72bb1960adc`` -> ``6a2845e50951394e``. The field IS a
@@ -816,8 +816,8 @@ owner's filed EIA-860 Schedule-3 fossil retirement date becomes an exogenous,
 vintage-gated step-1 input (reversal registry armed), and the economic
 retirement screen runs on the residual UNDATED fleet. Owner ruling Q30 of the
 director sitting r#31 (2026-09-02) on the measurement
-``docs/handoffs/FINDING-capx-d42-fossil-dates-ab-2026-09-02.md``; execution
-record ``docs/handoffs/FINDING-capx-d44-fossil-dates-arm-2026-09-03.md``.
+``docs/records/forecast/FINDING-capx-d42-fossil-dates-ab-2026-09-02.md``; execution
+record ``docs/records/forecast/FINDING-capx-d44-fossil-dates-arm-2026-09-03.md``.
 
 **BOTH KEYS MOVE:** default ``cedadc285f8603b9`` -> ``4c6b03ae098b6e3e``, bare
 backcast ``e006dfd7cef8bedd`` -> ``8211c72bb1960adc``. The field IS a
@@ -861,7 +861,7 @@ reader looking for "why did my bundle stop resolving on 2026-09-02" will look
 here first. ``ScenarioConfig.fixed_om_gas_cc_ccs`` 25.0 -> 65.0 $/kW-yr and
 ``ScenarioConfig.ccs_retrofit_capex_kw`` 900.0 -> 1521.4 $/kW, both onto the
 model's own NREL ATB 2024 (2026$) basis, repairing the two legs
-``docs/handoffs/FINDING-capx-d30-45q-pace-2026-09-02.md`` §5 rows 6-7
+``docs/records/forecast/FINDING-capx-d30-45q-pace-2026-09-02.md`` §5 rows 6-7
 adjudicated DEFECT-CANDIDATE. Owner-authorized in the D41 session sitting.
 
 **BOTH KEYS MOVE:** default ``603c2498bf71d21d`` -> ``cedadc285f8603b9``, bare
@@ -887,13 +887,13 @@ backcast fleet contains a ``gas_cc_ccs`` unit and no backcast year reaches 2028,
 so dispatch, scores and every other ``run_config.json`` value are unmoved; no
 keeper, sidecar, determination or dashboard row is affected and nothing needs
 re-scoring (committed artifacts are files, not cache lookups). Screen-grain
-before/after: ``docs/handoffs/FINDING-capx-d41-ccs-fixedcost-2026-09-02.md``.
+before/after: ``docs/records/forecast/FINDING-capx-d41-ccs-fixedcost-2026-09-02.md``.
 
 **Epoch 2026-08-31 — owner ruling R-A, the T1-H storage-entry Leg A arming
 (every ISO's forecast lane).** ``ScenarioConfig.storage_entry_availability_gate``
 and ``ScenarioConfig.storage_entry_cost_normalized_rank`` flip default
 ``False`` -> ``True`` (director sitting 2026-08-31, "Arm both", on the A/B
-record ``docs/FINDING-t1h-capentry-phase1-ab-2026-08-30.md`` §4: both
+record ``docs/records/misc/FINDING-t1h-capentry-phase1-ab-2026-08-30.md`` §4: both
 kill-gates PASS, zero new DOF). The armed storage entry screen admits a
 technology only at/after its measured first-US-operating year and ranks
 clearing technologies per unit capital cost, so the storage BUILD MIX differs
@@ -984,9 +984,9 @@ replayed, and their recorded flag is inert.
 ``capacity_market.QUEUE_CAP_PER_TECH_GW["ERCOT"]["solar"]`` is re-derived from
 the post-2020 EIA-860 demonstrated-COD record, ``5.0 → 8.0`` GW/yr (owner
 decision D-31, signed 2026-08-13; derivation
-``docs/FINDING-rc-ercot-solar-queue-cap-2026-08-11.md``, prereg ``d938f29`` /
+``docs/records/ercot/FINDING-rc-ercot-solar-queue-cap-2026-08-11.md``, prereg ``d938f29`` /
 measurement ``6e6e50b``; adoption
-``docs/handoffs/d31-adopt-2026-08-13.md``). A **constants-level** change with no
+``docs/records/forecast/d31-adopt-2026-08-13.md``). A **constants-level** change with no
 ``ScenarioConfig`` field, so **no key moves** — measured: ``ScenarioConfig()``
 hashes to ``603c2498bf71d21d`` after the change, identical to the pinned default
 key, and the ERCOT forecast config hashes to the same value. **This is the
@@ -1033,7 +1033,7 @@ added, removed or re-defaulted** — the governing field is the existing
 ``_CACHE_KEY_OPTIONAL_FIELDS``-registered) and the switch is the existing
 ``hindcast`` × ``eia860_vintage_year`` pair — so no key moves and the pinned
 default key is unchanged. See
-``docs/handoffs/ffr-9a-storage-vintage-seed-2026-08-09.md``.
+``docs/records/forecast/ffr-9a-storage-vintage-seed-2026-08-09.md``.
 
 *Invalidated:* **every cached bundle with ``hindcast=True`` and a committed
 ``eia860_vintage_year``** — T1-H plain hindcasts, T1-X crossovers, T1-FF
@@ -1073,7 +1073,7 @@ key moves and the pinned default key is unchanged. Vintage-2020 seed change
 26,050/2,048; NYISO 2,400/1,500 → 1,989/664; NEISO 1,400/2,700 → 1,500/1,519.
 The direction is not uniform — at vintage 2023 MISO solar goes 7,000 → 7,348
 and NEISO wind 1,400 → 1,538 — and it is adopted in both directions (rule 14
-[R-ACCURATE]). See ``docs/handoffs/ffr-3v-fix-2026-08-08.md`` and the finding
+[R-ACCURATE]). See ``docs/records/forecast/ffr-3v-fix-2026-08-08.md`` and the finding
 it closes, ``ffr-3v-miso-entry-screen-2026-08-04.md`` §6.1.
 
 *Invalidated:* **every cached bundle with ``hindcast=True`` and a committed
@@ -1101,7 +1101,7 @@ and the backcast/forward pair that predates this change).
 D-13). NO KEY MOVES AT THE DEFAULT.** The new-entry screen's wind LCOE now
 levelizes the §45 PTC over ``min(10 statutory years, book life)`` instead of
 crediting the full rate for the plant's whole 30-year book life
-(``docs/handoffs/ffr-4c-wind-ptc-window-2026-08-04.md``; the defect and its
+(``docs/records/forecast/ffr-4c-wind-ptc-window-2026-08-04.md``; the defect and its
 arithmetic: ``ffr-3v-miso-entry-screen-2026-08-04.md`` §6.2). The window is the
 new ``ScenarioConfig.ira_ptc_credit_window_years`` (default 10, statutory —
 26 U.S.C. §45(a)(2)(A)(ii)), registered in ``_CACHE_KEY_OPTIONAL_FIELDS``, so a
@@ -1133,7 +1133,7 @@ default-off ``wind_ptc_vintage_offers`` — is untouched on every path.
 
 **Epoch 2026-08-04c — FFR-4D CAISO base-fleet re-vintage. NO KEY MOVES; CAISO
 BUNDLES IN BOTH MODES ARE INVALIDATED.** Three CAISO-scoped changes
-(``docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md``), all of which move
+(``docs/records/forecast/ffr-4d-caiso-fleet-vintage-2026-08-04.md``), all of which move
 CAISO output under **unchanged cache keys**:
 
 * **``STORAGE_BASE_FLEET_MW["CAISO"]`` re-vintaged** — ``low/mid/high``
@@ -1183,7 +1183,7 @@ CAISO alone. ERCOT/PJM/MISO/NYISO/NEISO keepers are untouched (rule 25
 
 **Epoch 2026-08-04b — FFR-3U bridge-seam fix + the D-11 two-key quarantine. NO
 KEY MOVES; TWO KEYS ARE PERMANENTLY REFUSED.** The seam fix
-(``docs/handoffs/ffr-3u-bridge-seam-2026-08-04.md``) scopes the runner's
+(``docs/records/forecast/ffr-3u-bridge-seam-2026-08-04.md``) scopes the runner's
 un-bridging clause to genuine T1-X crossover forward years, so a T1-FF window
 whose boundary sits at its own base year again BRIDGES 2022 (and 2026) instead
 of solving them. It is a guard change, not a mechanism: **no ``ScenarioConfig``
@@ -1213,7 +1213,7 @@ ADVANCE, NOT A SAME-KEY INVALIDATION — recorded here anyway because it is the
 entry a reader looking for "why did every forecast key move on 2026-08-04" will
 come to.** Owner decision D-10 (sitting ``ffr-owner-sitting-2026-08-02.md``
 Addendum K.3, implemented by FFR-3T,
-``docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md``): every shipped forecast
+``docs/records/forecast/ffr-3t-warmstart-off-2026-08-04.md``): every shipped forecast
 runner now passes ``forecast_xyear_warmstart=False`` explicitly, so a resumed
 forecast solves its first post-kill year the same way its control does — cold —
 and the kill-resume drill (FF-3E part c) is structurally passable.
@@ -1254,7 +1254,7 @@ start from ``MARKET_SIM_WARMSTART_XYEAR`` (default ON) exactly as before.
 
 **Epoch 2026-08-03b — FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).**
 ``constants.DEMAND_GROWTH_RATES["NYISO"]`` is re-derived from the 2026 Gold Book
-(``docs/handoffs/ffr-sc-transmission-ab-2026-08-03.md`` §7): mid near
+(``docs/records/forecast/ffr-sc-transmission-ab-2026-08-03.md`` §7): mid near
 ``0.018 → 0.0122``, long ``0.012 → 0.0127``, low ``0.008/0.006 → -0.0024/0.0028``,
 high ``0.030/0.020 → 0.0263/0.0196``. A **constants-level** change with no
 ``ScenarioConfig`` field, so **no key moves** — measured: ``ScenarioConfig()``
@@ -1270,7 +1270,7 @@ concurrent ATB pin move (v3.0.0 → v4.0.0) invalidates nothing at all: every
 derived constant is byte-identical under both versions.
 
 **Epoch 2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips.**
-Taken at FFR-3A step 0 (`docs/handoffs/ffr-t1-regate-2026-08-02.md`), clearing
+Taken at FFR-3A step 0 (`docs/records/forecast/ffr-t1-regate-2026-08-02.md`), clearing
 the epoch debt the owner sitting recorded as outstanding
 (`ffr-owner-sitting-2026-08-02.md` Addendum B.6, "FFR-3A must clear this debt
 before its consolidated battery — it is now a concrete item, not a
@@ -1341,7 +1341,7 @@ the three fields).
 
 **Epoch 2026-08-02 — FFR Wave-1 forecast fixes (FR-1, FR-2, FR-7, FR-8).**
 Taken once at the Wave-1 close (`docs/forecast-readiness-prompt-pack-2026-07.md`
-§W1-X; `docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md`). Four merged fixes
+§W1-X; `docs/records/forecast/ffr-w1x-wave1-close-2026-08-02.md`). Four merged fixes
 change forecast output under **unchanged cache keys** — none added, removed or
 re-defaulted a ``ScenarioConfig`` field, so no key moved and a pre-Wave-1 bundle
 would be silently re-used:
@@ -1445,8 +1445,8 @@ def cache_root(root: "Path | str"):
 
 
 # Cache keys whose on-disk bundles are CONTAMINATED and may never be served
-# (owner decision D-11 condition 2, ``docs/handoffs/ffr-owner-sitting-2026-08-02.md``
-# Addendum L.2; discharged by FFR-3U, ``docs/handoffs/ffr-3u-bridge-seam-2026-08-04.md``).
+# (owner decision D-11 condition 2, ``docs/records/forecast/ffr-owner-sitting-2026-08-02.md``
+# Addendum L.2; discharged by FFR-3U, ``docs/records/forecast/ffr-3u-bridge-seam-2026-08-04.md``).
 #
 # Why a denylist and not an epoch bump: the epoch ledger above is human-read and
 # never auto-invalidates, and the FFR-3U seam fix deliberately moves NO cache key
@@ -1564,7 +1564,7 @@ def cache_config_disagreements(
     ``cache_key`` DROPS every ``_CACHE_KEY_OPTIONAL_FIELDS`` member sitting at
     its default, so the key names a config largely by omission — a run's key
     drops 115–215 of its registered fields
-    (``docs/handoffs/FINDING-capx-d24-cache-key-defect-2026-09-01.md`` §3). Two
+    (``docs/records/forecast/FINDING-capx-d24-cache-key-defect-2026-09-01.md`` §3). Two
     materially different postures can therefore address one bundle, and D24
     demonstrated both forms among the committed runs:
 

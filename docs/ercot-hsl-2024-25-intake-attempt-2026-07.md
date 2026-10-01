@@ -10,7 +10,7 @@ solar potential in the scarcity window. Fixed with a CPT→CST conversion
 (`_prevailing_to_standard`, DSTFLAG-disambiguated fall-back repeat), both
 years rebuilt (annual totals unchanged — this was a shape defect), regression
 tests added. Full evidence + the sibling intakes carrying the same defect
-class: `docs/handoffs/ercot-g22-demand-side-design-2026-07.md` §6–7. The 2023
+class: `docs/records/ercot/ercot-g22-demand-side-design-2026-07.md` §6–7. The 2023
 UMass series (positional aggregation) was never affected.
 
 **Follow-up 2026-07-06 (bug fix on the committed 2024/2025 parquets).** A
@@ -43,7 +43,7 @@ character (real, documented scope divergence — see the table below and
 `data/raw/ercot-hsl/np6/README.md`), not something this fix touches.
 
 **Update 2026-07-06 (final).** The credentialed-fetch route below remains
-closed per the owner decision in `docs/handoffs/ercot-as-coopt-plan-2026-07.md`
+closed per the owner decision in `docs/records/ercot/ercot-as-coopt-plan-2026-07.md`
 §WS-E (re-verified this session: `apiexplorer.ercot.com`, `api.ercot.com`,
 and the legacy MIS path all return the identical 302/401 gate as before).
 Separately, the owner manually downloaded ERCOT NP6 reports through the
@@ -103,7 +103,7 @@ unused by default (`MARKET_SIM_USE_CLEAN` unset), so no clean-tree
 regeneration was required for this to take effect.
 
 **Update 2026-07-06.** The credentialed-fetch route below remains closed
-per the owner decision in `docs/handoffs/ercot-as-coopt-plan-2026-07.md`
+per the owner decision in `docs/records/ercot/ercot-as-coopt-plan-2026-07.md`
 §WS-E (re-verified this session: `apiexplorer.ercot.com`, `api.ercot.com`,
 and the legacy MIS path all return the identical 302/401 gate as before).
 Separately, the owner manually downloaded ERCOT NP6 reports through the
@@ -126,7 +126,7 @@ supplied, in either the plain (NP4-732) or by-geography (NP4-742) report
 family — both carry an identical system-wide actual/HSL column pair, so
 either works.
 
-**Scope.** WS-E of `docs/handoffs/ercot-as-coopt-plan-2026-07.md` / P4 remainder
+**Scope.** WS-E of `docs/records/ercot/ercot-as-coopt-plan-2026-07.md` / P4 remainder
 of `docs/forecast-methodology-gaps-2026-06.md` G7: intake the published ERCOT
 NP4-732/737 (wind/solar HSL) reports for 2024 and 2025 so
 `renewables.hsl_potential_mw` stops falling back to the reference-curtailment-

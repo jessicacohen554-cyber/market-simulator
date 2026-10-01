@@ -1,6 +1,6 @@
 """Tests for the dispersion-carrying capacity-screen entry signal (capx D43).
 
-The D39 object (``docs/handoffs/FINDING-capx-d39-entry-underbuild-2026-09-02.md``
+The D39 object (``docs/records/forecast/FINDING-capx-d39-entry-underbuild-2026-09-02.md``
 §0/§3.1): the zone-flat tail-free stack re-price discards the energy leg's
 DISPERSION. The construction under test replaces it with each zone's OWN
 realized price-duration curve indexed by the entering year's headroom rank on

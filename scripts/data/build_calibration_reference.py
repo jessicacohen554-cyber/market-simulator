@@ -248,7 +248,7 @@ CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     # Data Exchange fallback needs MISO_PRICING_API_KEY, absent here — re-probed
     # 404 on 2026-09-10), so C3a/C3b/C3c are unscorable on it and no 2020 rung
     # can read CALIBRATED until that key lands. See
-    # docs/PRECOMMIT-miso251-holdout-ladder-2026-09-10.md section 2.3.
+    # docs/records/miso/PRECOMMIT-miso251-holdout-ladder-2026-09-10.md section 2.3.
     "MISO": (2020, 2021, 2022, 2023, 2024, 2025),
     # SPP is the Stage-G addition (registered 2026-09-06 by lane SPP-20; this
     # block landed 2026-09-07 by lane SPP-31). TRAINING TIER ONLY: 2023-2025,

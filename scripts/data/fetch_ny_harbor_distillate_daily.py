@@ -10,7 +10,7 @@ Transco Z6 NY / Iroquois hub overlay, ``gas_daily_shape_factors``), so on the
 coldest days of a NYISO winter the delivered gas price spikes into a
 *monthly-flat* oil cap and ~16.5 GW of downstate dual-fuel capacity pins there:
 120 of the 744 Jan-2025 hours clear on that flat cap, and the polar-vortex
-price peak cannot form (docs/handoffs/nyiso-overrun-underrun-2026-07.md §2, §6).
+price peak cannot form (docs/records/nyiso/nyiso-overrun-underrun-2026-07.md §2, §6).
 
 The defect is granularity, not level. This script supplies the missing daily
 SHAPE: EIA's New York Harbor Ultra-Low Sulfur No. 2 Diesel spot price, the

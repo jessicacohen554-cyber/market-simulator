@@ -13,7 +13,7 @@ that every plant carries the fleet's overnight commitment. The meter says a
 two-shifting plant carries none of it: Lake Hubbard (3452) ran an overnight CF
 of 0.000–0.012 in 2019–2022 (online by day, off every night), and it is the
 plant the D-4 per-unit conduct rider convicts in 2019–2023
-(``docs/handoffs/r-ercot/PRECOMMIT-r-ercot-18-drag-overnight-index-2026-09-30.md``).
+(``docs/records/ercot/r-ercot/PRECOMMIT-r-ercot-18-drag-overnight-index-2026-09-30.md``).
 This artifact is the plant decomposition of the drag's OWN driver statistic,
 from the SAME source, window and unit routing the curve's derive uses.
 

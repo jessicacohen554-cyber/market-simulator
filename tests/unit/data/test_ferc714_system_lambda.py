@@ -6,6 +6,9 @@ file), and the rebuild script's two parsers
 (``scripts/data/fetch_ferc714_system_lambda.py``) on synthetic CSV-era and
 XBRL-era zips — including the fixed-UTC-6, hour-ending -> hour-beginning clock
 conversion and the guards that refuse a clock the reading cannot support.
+Lane soco-97 adds the neighbour registry, the long-form neighbour loader
+route, the XBRL hour-24 instant spellings and the per-respondent-year clock
+classifier (fixed / prevailing / refuse) with its UTC conversion.
 """
 
 from __future__ import annotations
@@ -17,10 +20,13 @@ import pandas as pd
 import pytest
 
 from market_sim.data.ferc714 import (
+    FERC714_NEIGHBOR_SYSTEM_LAMBDA_FILE,
     FERC714_SYSTEM_LAMBDA_FILES,
+    NEIGHBOR_SYSTEM_LAMBDA_COLUMNS,
     SOCO_EIA_UTILITY_ID,
     SOCO_FERC714_RESPONDENT_ID,
     SOCO_FERC714_XBRL_CID,
+    SOCO_NEIGHBOR_LAMBDA_RESPONDENTS,
     SYSTEM_LAMBDA_COLUMNS,
     load_ferc714_system_lambda,
 )
@@ -276,3 +282,107 @@ def test_xbrl_parser_absent_filer(tmp_path):
     z = _xbrl_zip(tmp_path, 2021, {"Other_Co_form714_Q4_1.xbrl": "<x/>"})
     df, note = fetch.parse_xbrl_year(z, 2021)
     assert df.empty and note == "absent"
+
+
+# ------------------------------------------------- neighbours (lane soco-97)
+
+
+def test_neighbor_registry_constants():
+    """Nine neighbours, unique ids/CIDs, DESC (respondent 250) deliberately absent."""
+    regs = SOCO_NEIGHBOR_LAMBDA_RESPONDENTS
+    assert set(regs) == {"TVA", "DUK", "CPLE", "FPC", "FPL", "SC", "TAL", "JEA", "MISO"}
+    assert all(k == r.ba_code for k, r in regs.items())
+    ids = [r.respondent_id for r in regs.values()]
+    assert len(set(ids)) == len(ids) and 250 not in ids
+    assert SOCO_FERC714_RESPONDENT_ID not in ids
+    assert len({r.xbrl_cid for r in regs.values()}) == len(regs)
+    assert regs["TVA"].standard_utc_offset_hours == -6
+    assert NEIGHBOR_SYSTEM_LAMBDA_COLUMNS == ("ba_code", *SYSTEM_LAMBDA_COLUMNS)
+
+
+def _write_neighbor_extract(tmp_path: Path, rows: list[tuple]) -> None:
+    """Write a long-form neighbour extract with rows of (ba_code, utc, lambda)."""
+    regs = SOCO_NEIGHBOR_LAMBDA_RESPONDENTS
+    df = pd.DataFrame(
+        [
+            (ba, 2022, ts, lam, regs[ba].respondent_id, regs[ba].eia_utility_id, "xbrl")
+            for ba, ts, lam in rows
+        ],
+        columns=list(NEIGHBOR_SYSTEM_LAMBDA_COLUMNS),
+    )
+    df.to_csv(tmp_path / FERC714_NEIGHBOR_SYSTEM_LAMBDA_FILE, index=False)
+
+
+def test_loader_reads_one_neighbor_from_long_file(tmp_path):
+    _write_neighbor_extract(
+        tmp_path,
+        [
+            ("TVA", "2022-12-24 03:00:00", 3300.0),
+            ("DUK", "2022-12-24 03:00:00", 990.48),
+            ("TVA", "2022-12-24 02:00:00", 100.0),
+        ],
+    )
+    tva = SOCO_NEIGHBOR_LAMBDA_RESPONDENTS["TVA"].respondent_id
+    out = load_ferc714_system_lambda(respondent_id=tva, raw_dir=tmp_path)
+    assert out["system_lambda_usd_mwh"].tolist() == [100.0, 3300.0]
+    # A registered neighbour with no rows is an error, not an empty frame.
+    jea = SOCO_NEIGHBOR_LAMBDA_RESPONDENTS["JEA"].respondent_id
+    with pytest.raises(ValueError, match="no rows"):
+        load_ferc714_system_lambda(respondent_id=jea, raw_dir=tmp_path)
+
+
+def test_parse_instant_hour24_spellings():
+    """Next-day T00, T24 and a date-only instant all mean midnight ending the day."""
+    want = pd.Timestamp("2022-12-25 00:00")
+    assert fetch.parse_instant("2022-12-25T00:00:00") == want
+    assert fetch.parse_instant("2022-12-24T24:00:00") == want
+    assert fetch.parse_instant("2022-12-24") == want
+    assert fetch.parse_instant("2022-12-24T05:00:00") == pd.Timestamp(
+        "2022-12-24 05:00"
+    )
+
+
+def _local_year(year: int, drop: list[str] = (), zero: list[str] = ()) -> pd.DataFrame:
+    """A full local hour-ending year with ``drop`` instants removed and ``zero`` zeroed."""
+    he = pd.date_range(f"{year}-01-01 01:00", f"{year + 1}-01-01 00:00", freq="h")
+    df = pd.DataFrame({"local_hour_ending": he, "value": 20.0})
+    df.loc[df["local_hour_ending"].isin(pd.DatetimeIndex(zero)), "value"] = 0.0
+    return df[~df["local_hour_ending"].isin(pd.DatetimeIndex(drop))].reset_index(
+        drop=True
+    )
+
+
+def test_classify_clock_fixed_and_prevailing():
+    duk = SOCO_NEIGHBOR_LAMBDA_RESPONDENTS["DUK"]
+    verdict, keep, _ = fetch.classify_clock(_local_year(2023), 2023, duk)
+    assert verdict == fetch.CLOCK_FIXED and keep.all()
+    # Zero placeholder in the non-existent slot -> prevailing, placeholder dropped.
+    loc = _local_year(2023, zero=["2023-03-12 03:00"])
+    verdict, keep, _ = fetch.classify_clock(loc, 2023, duk)
+    assert verdict == fetch.CLOCK_PREVAILING and (~keep).sum() == 1
+    utc = fetch.neighbor_to_utc(loc[keep.to_numpy()], verdict, duk)
+    assert utc.is_unique
+    # 00:00-01:00 EST begins 05:00 UTC; July HE18 EDT begins 21:00 UTC.
+    assert utc.min() == pd.Timestamp("2023-01-01 05:00")
+    july = loc.index[loc["local_hour_ending"] == pd.Timestamp("2023-07-01 18:00")][0]
+    assert utc[july] == pd.Timestamp("2023-07-01 21:00")
+    # Spring day contiguous across the gap: HE01 -> 06 UTC, HE02 -> 07, HE04 -> 08.
+    spring = utc[loc["local_hour_ending"].dt.normalize() == pd.Timestamp("2023-03-12")]
+    assert spring.diff().dropna().eq(pd.Timedelta(hours=1)).all()
+
+
+def test_classify_clock_prevailing_omitted_instant_central():
+    tva = SOCO_NEIGHBOR_LAMBDA_RESPONDENTS["TVA"]
+    loc = _local_year(2022, drop=["2022-03-13 02:00"])
+    verdict, keep, evidence = fetch.classify_clock(loc, 2022, tva)
+    assert verdict == fetch.CLOCK_PREVAILING and keep.all()
+    assert "HE02 instant omitted" in evidence
+    utc = fetch.neighbor_to_utc(loc, verdict, tva)
+    assert utc.is_unique and utc.min() == pd.Timestamp("2022-01-01 06:00")
+
+
+def test_classify_clock_refuses_unclassifiable_spring_day():
+    duk = SOCO_NEIGHBOR_LAMBDA_RESPONDENTS["DUK"]
+    loc = _local_year(2023, zero=["2023-03-12 02:00", "2023-03-12 03:00"])
+    with pytest.raises(SystemExit, match="unclassifiable"):
+        fetch.classify_clock(loc, 2023, duk)

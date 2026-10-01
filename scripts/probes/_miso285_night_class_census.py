@@ -5,7 +5,7 @@ Model side: the keeper's committed P1 ``class_hourly``. Actual side: the
 benchmark CAMPD net-MW frame, each plant mapped to its class by the
 benchmark's own EIA-923 plant->class rows (``build_benchmark_frames``). CHP
 classes carry the host-steam basis caveat (miso-116), so they are reported
-but not read as a level. Output: ``results/calibration/_miso285_night_class_census.json``.
+but not read as a level. Output: ``results/phase0/miso/_miso285_night_class_census.json``.
 Rule 13: nothing here feeds a solve.
 """
 
@@ -71,7 +71,7 @@ def main() -> int:
             }
             for k in CLASSES
         }
-    (REPO / "results/calibration/_miso285_night_class_census.json").write_text(
+    (REPO / "results/phase0/miso/_miso285_night_class_census.json").write_text(
         json.dumps(out, indent=1)
     )
     print("night MW  model-campd (campd)   | day model-campd")

@@ -6,7 +6,7 @@ NWPP keeper's hydro object and the measured input NWPP-36 (Columbia mainstem
 hydraulic coupling, owner ruling N3) is built against. Everything here is a
 **join, a reconciliation and a flag** — no modelling, no gap-filling, no
 rescaling, no fitted scalar. Charter: ``docs/multi-iso/nwpp-addition-plan-2026-09.md``
-§2.7 / §5 row NWPP-32; pre-registration ``docs/handoffs/PRECOMMIT-nwpp-32-2026-09-14.md``.
+§2.7 / §5 row NWPP-32; pre-registration ``docs/records/nwpp/PRECOMMIT-nwpp-32-2026-09-14.md``.
 
 Inputs (all committed):
 

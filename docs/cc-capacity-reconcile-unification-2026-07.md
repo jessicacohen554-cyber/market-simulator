@@ -1,6 +1,6 @@
 # CC capacity reconcile — unification into one measured-capability stack (2026-07)
 
-Executes Part A of `docs/handoffs/pjm-cc-capacity-reconcile-2026-07.md` (A.4
+Executes Part A of `docs/records/pjm/pjm-cc-capacity-reconcile-2026-07.md` (A.4
 cross-ISO consistency first, then A.1–A.3 the measured-capability stack). This
 lands the CC-capacity mechanism as **one ISO-agnostic model** (per-ISO switches
 + data, no `if iso ==` code), not a PJM patch.

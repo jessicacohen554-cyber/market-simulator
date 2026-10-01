@@ -1,7 +1,7 @@
 """Download ISO-NE hourly DA / RT-final LMP at the NY-facing external nodes.
 
 WHY THIS EXISTS (NYISO-NEXT-10, 2026-09-28).  NEXT-7
-(``docs/FINDING-nyiso-next7-star-node-2026-09-27.md`` §3(c)) refused a
+(``docs/records/nyiso/FINDING-nyiso-next7-star-node-2026-09-27.md`` §3(c)) refused a
 per-neighbour NYISO seam construction because the repo held no measured price on
 the ISO-NE side of the NY ties: SMD carries only the eight load zones and the
 hub.  ISO-NE's own hourly LMP report prices every external node, including the

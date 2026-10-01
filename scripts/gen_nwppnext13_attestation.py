@@ -1,7 +1,7 @@
 """Emit the NWPP-NEXT-13 calibration attestation for the per-unit attribution span bundle.
 
 NWPP-NEXT-13 (PRECOMMIT
-``docs/handoffs/PRECOMMIT-nwppnext13-perunit-attribution-2019-2025-2026-09-30.md``) is
+``docs/records/nwpp/PRECOMMIT-nwppnext13-perunit-attribution-2019-2025-2026-09-30.md``) is
 keeper #17's recipe (NWPP-NEXT-12) plus ``campd_per_unit_attribution``: the committed
 NWPP CAMPD outage extract routed Clark 2322's and Silverhawk 55841's GT simple-cycle
 peakers onto CC_REGULAR, and the tranche artifact attributed facility-summed CAMPD net to

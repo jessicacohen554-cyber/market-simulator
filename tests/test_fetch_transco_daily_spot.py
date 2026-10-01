@@ -6,7 +6,7 @@ fixtures are trimmed transcriptions of the real EIA markup.
 
 The two defects this file pins are the ones that put a wrong delivered gas price
 in front of the whole NYISO gas fleet
-(``docs/FINDING-nyiso234b-the-gas-series-was-published-2026-09-14.md``):
+(``docs/records/nyiso/FINDING-nyiso234b-the-gas-series-was-published-2026-09-14.md``):
 
 1. **A page can carry MORE THAN ONE live table, and the extra ones are the only
    published record of the weeks EIA skips.** EIA publishes no Weekly Update over

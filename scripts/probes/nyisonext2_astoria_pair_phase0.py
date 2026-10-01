@@ -23,7 +23,7 @@ swapped into ``data/raw`` for the build and restored in a ``finally``). It repor
   uint8 quantum of ``pmax x availability``) -- an upper bound on the first-order
   energy the repair can add (the LP may also re-dispatch economically elsewhere).
 
-Writes ``results/calibration/_nyisonext2_astoria_pair_phase0.json``.
+Writes ``results/phase0/nyiso/_nyisonext2_astoria_pair_phase0.json``.
 """
 
 from __future__ import annotations
@@ -184,7 +184,7 @@ def main() -> None:
     ap.add_argument(
         "--out",
         type=Path,
-        default=REPO / "results/calibration/_nyisonext2_astoria_pair_phase0.json",
+        default=REPO / "results/phase0/nyiso/_nyisonext2_astoria_pair_phase0.json",
     )
     a = ap.parse_args()
     res = {str(y): measure(y, a.arm_dir) for y in a.years}

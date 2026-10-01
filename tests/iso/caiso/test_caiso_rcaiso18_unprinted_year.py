@@ -5,7 +5,7 @@ hub whose gap exceeds the 25 % bound (2019-2020 entirely; Jan-Apr 2021) on the
 measured-gas reference formula, with the host state's N3045 rebuilt from its
 own EIA-923 receipts where EIA withholds it. Default off and byte-identical
 off; inert in 2022-2025 on. Trivial cases first. Record:
-``docs/handoffs/r-caiso-18/PRECOMMIT-r-caiso-18-2026-09-30.md``.
+``docs/records/caiso/r-caiso-18/PRECOMMIT-r-caiso-18-2026-09-30.md``.
 """
 
 from __future__ import annotations

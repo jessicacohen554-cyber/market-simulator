@@ -57,7 +57,7 @@ The Gold Book in-service date is a registration / interconnection-service date
 and **leads the plant's metered commercial start**; EIA-860's ``Operating
 Month`` matches it. Measured on this very registry against EIA-923 metered
 monthly output (probe ``scripts/probes/_nyiso133_commissioning_ramp.py``, record
-``results/calibration/_nyiso133_commissioning_ramp.json``): EIA-860's month
+``results/phase0/nyiso/_nyiso133_commissioning_ramp.json``): EIA-860's month
 equals the first metered-output month in **11 of the 12 uncensored plants**,
 while the Gold Book date leads by **+2 months on Morris Ridge (179 MW)**, +1 on
 High River (90 MW) and East Point (50 MW) — and trails by 1 and 3 months on two
@@ -427,7 +427,7 @@ def main(argv: list[str] | None = None) -> int:
             "#                       the crosswalked plant, which matches the first\n"
             "#                       METERED month of output in 11 of 12 uncensored\n"
             "#                       plants (EIA-923); Gold Book date where unmatched.\n"
-            "#   Evidence: results/calibration/_nyiso133_commissioning_ramp.json.\n"
+            "#   Evidence: results/phase0/nyiso/_nyiso133_commissioning_ramp.json.\n"
             "# Regenerate: python scripts/data/derive_nyiso_market_solar.py\n"
             "iso,year,month,model_zone,capacity_mw,n_units,capacity_mw_cod,n_units_cod\n"
         )

@@ -27,7 +27,7 @@ Solve semantics (unchanged, statement-for-statement):
   cleared prices or generation.
 - Same-year P1 basis seed (``MARKET_SIM_P1_BASIS_SEED=1``, default off; the
   calibration CLIs default it ON, ``--no-p1-basis-seed`` opts out — wallclock
-  desk item B, owner memo ``docs/handoffs/p1-basis-seed-decision-memo-2026-09.md``,
+  desk item B, owner memo ``docs/records/misc/p1-basis-seed-decision-memo-2026-09.md``,
   signed (A) FLIP 2026-09-06). On the ISOs whose keeper carries a P1-native
   floor bridge (ERCOT / NYISO gas commitment bridges, CAISO RA must-offer) the
   P1 cannot re-cost the live P0 model, so a SECOND ``DispatchModel`` is built
@@ -105,7 +105,7 @@ logger = logging.getLogger(__name__)
 # pass's ``p1.build_time`` and two solve times, so every earlier pass's ENTIRE
 # build and both HiGHS runs — and, on a cold-P1 year, the P0 model's build —
 # were booked as ``markup`` (91-94 % of an ERCOT year's ``markup`` field;
-# ``docs/FINDING-perfb-s2-markup-attribution-2026-09.md`` §1). The backcast
+# ``docs/records/governance/FINDING-perfb-s2-markup-attribution-2026-09.md`` §1). The backcast
 # orchestrator now SUMS ``build_s`` / ``solve_p0_s`` / ``solve_p1_s`` over this
 # log (``run_calibration._aggregate_pass_timing``), and each entry's ``build_s``
 # is EVERY matrix build of that pass, so the three fields count every build and
@@ -277,8 +277,12 @@ def apply_bid_max_target(mc_bid: np.ndarray, target: np.ndarray) -> np.ndarray:
     return np.where(binding, np.maximum(mc_bid, target), mc_bid)
 
 
-def _swcap_clip_level(config) -> Optional[float]:
+def _swcap_clip_level(config) -> "Optional[float | np.ndarray]":
     """The armed SWCAP offer-clip level ($/MWh), or ``None`` when off.
+
+    A scalar, or a ``(1, T)`` hourly row when ``ercot_swcap_effective_hourly``
+    puts some hour of the solve year inside a published LCAP window (it
+    broadcasts against the ``(n_gen, T)`` offer arrays).
 
     ``ercot_offer_swcap_clip`` (see the ScenarioConfig field's docstring for
     the market grounding): every real SCED energy offer is capped at the
@@ -293,7 +297,23 @@ def _swcap_clip_level(config) -> Optional[float]:
         return None
     if getattr(config, "iso", "") != "ERCOT":
         return None
-    return float(config.voll) - ERCOT_SWCAP_SHED_TIEBREAK_EPS
+    level = float(config.voll) - ERCOT_SWCAP_SHED_TIEBREAK_EPS
+    # R-ERCOT-23 hourly effective SWCAP, half (c): inside a published LCAP
+    # window the offer cap is the LCAP, so the clip is hourly. Returned as a
+    # (T,) row only where some hour differs — a year with no window keeps the
+    # scalar clip, byte-identical.
+    from market_sim.results.scarcity import (
+        ercot_effective_swcap_series,
+        ercot_swcap_effective_active,
+    )
+
+    if ercot_swcap_effective_active(config):
+        swcap = ercot_effective_swcap_series(
+            int(config.weather_year), int(config.hours), float(config.voll)
+        )
+        if np.any(swcap != float(config.voll)):
+            return (swcap - ERCOT_SWCAP_SHED_TIEBREAK_EPS)[np.newaxis, :]
+    return level
 
 
 def zero_posture_markup(
@@ -473,7 +493,7 @@ def run_energy_solve(
     # its P0 would build a matrix and cold-solve an LP that is bit-identical,
     # objective included, to the previous pass's P0, then discard the answer
     # (measured 6.6 s build + 372.8 s ``h.run()`` on ERCOT 2023;
-    # docs/FINDING-perfb-s2-markup-attribution-2026-09.md §0). When the caller
+    # docs/records/governance/FINDING-perfb-s2-markup-attribution-2026-09.md §0). When the caller
     # hands over the previous pass's result, its ``r0`` is reused and the P0
     # build + solve are skipped. ADMISSIBLE ONLY when the previous pass's P1
     # was COLD (``p1_cold``): on that route P1 solves a freshly built model, so
@@ -517,10 +537,10 @@ def run_energy_solve(
     else:
         _xwarm = _warm and bool(xyear_warmstart)
     # Same-year P1 basis seed gate (wallclock item B; owner memo
-    # docs/handoffs/p1-basis-seed-decision-memo-2026-09.md §6, signed (A)).
+    # docs/records/misc/p1-basis-seed-decision-memo-2026-09.md §6, signed (A)).
     #
     # UN-NESTED FROM THE CROSS-YEAR GATE, PERF-C S1 2026-09-20
-    # (docs/handoffs/FINDING-perfc-s1-p1-seed-2026-09-20.md). This condition
+    # (docs/records/governance/FINDING-perfc-s1-p1-seed-2026-09-20.md). This condition
     # used to lead with ``_xwarm``, which made the SAME-year seed a slave of
     # the CROSS-year knob: when rule 36 [R-YEAR-ISOLATION] (owner ruling
     # 2026-09-19, miso-262) defaulted ``MARKET_SIM_WARMSTART_XYEAR`` OFF on
@@ -598,7 +618,7 @@ def run_energy_solve(
         # reported one. Its result is read for the primal blocks, ``prices``,
         # ``objective_value``, ``status`` and the two timings and for nothing
         # else (the enumeration is
-        # ``docs/handoffs/FINDING-perfc-s2-p0-slim-2026-09-20.md`` §1: the
+        # ``docs/records/governance/FINDING-perfc-s2-p0-slim-2026-09-20.md`` §1: the
         # markup/bridge detectors here and in ``pipeline.commitment``, the
         # ``p1_*_prep`` hooks, the opt-in ``hourly/p0_{commitment,dispatch}_``
         # sidecars and the O7 harness). Skipping the diagnostic extraction

@@ -5,7 +5,7 @@
 --replay-bundle``). These tests pin its strict contract: a meta key that maps
 to no ``solve_and_persist`` kwarg is a HARD ERROR, never a silent drop — the
 miso-50..53 runs reconstructed a recipe from a lossy channel and silently
-islanded MISO (see ``results/calibration/FINDING-miso-august-scarcity-2026-07.md``).
+islanded MISO (see ``docs/records/miso/FINDING-miso-august-scarcity-2026-07.md``).
 """
 
 import json

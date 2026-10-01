@@ -42,7 +42,7 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-OUT = REPO / "results" / "calibration" / "_nyiso249_window_tail_overlap.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso249_window_tail_overlap.json"
 THRESHOLD = 300.0
 
 #: Pre-registered bar (PRECOMMIT addendum A1): the form is a C3c route only if

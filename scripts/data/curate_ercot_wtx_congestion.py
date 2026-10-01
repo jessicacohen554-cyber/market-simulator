@@ -31,7 +31,7 @@ UTC-6, the model clock — reusing ``build_ercot_hsl._prevailing_to_standard``)
 BEFORE placement, then aggregated onto the fixed non-leap 8760-hour ERCOT-local
 **standard**-time clock (Feb 29 dropped — the convention shared with the
 ``ercot-hsl`` / ORDC / ercot-AS series after the 2026-07-07 clock-unification
-round; ``docs/handoffs/ercot-g22-demand-side-design-2026-07.md`` §7). The
+round; ``docs/records/ercot/ercot-g22-demand-side-design-2026-07.md`` §7). The
 pre-fix build placed the prevailing stamps unconverted, shifting the summer
 binding-frequency hour cells one hour late. Output is DENSE: one row per local
 clock hour, carrying how many SCED executions ran,
@@ -119,7 +119,7 @@ HOURS_PER_YEAR = 8760
 #     family(c)    = "D" if day_share(c) > exposure(y) else "N"
 #
 # Measured separation (ercot-165 Phase 0,
-# results/calibration/ercot165_family_split_phase0.json): family D peaks h14-15
+# results/phase0/ercot/ercot165_family_split_phase0.json): family D peaks h14-15
 # and correlates +0.775..+0.959 with ACTUAL solar curtailment in every year;
 # family N peaks h21-23 and correlates -0.838..-0.961 with it. LOYO membership
 # agreement (binding-weighted) 0.755 / 0.942 / 0.968 with held-out family-share

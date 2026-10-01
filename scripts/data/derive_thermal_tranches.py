@@ -64,7 +64,7 @@ Every derive additionally writes a **vintage sidecar**
 group sets in force (:data:`_ONLINE_FRAC_GROUPS` et al.), the column set, the
 per-group coverage census and the CSV's sha256 — so "which groups was this
 file's vintage emitting?" is a one-line read (see
-``results/calibration/FINDING-xiso5-thermal-tranche-coverage-2026-08-04.md``).
+``docs/records/governance/FINDING-xiso5-thermal-tranche-coverage-2026-08-04.md``).
 ``--backfill-sidecar`` writes the DESCRIPTIVE form of the same sidecar for an
 already-committed artifact without touching its bytes or running any
 derivation.
@@ -122,7 +122,7 @@ _CHP_PMIN_PCTILE: int = 2
 
 # Percentile of the ONLINE-hours available-CF distribution used in a CHP
 # cogen's steam-host OPERATING level (``steam_level_cf``). WP-3 (owner-ruled
-# 2026-07-19, `docs/handoffs/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md`,
+# 2026-07-19, `docs/records/caiso/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md`,
 # rule-23 re-derivation citing FINDING-caiso95 §5): the former p25-of-all-hours
 # statistic mixed economic/host-driven offline zeros into the LEVEL, so a host
 # that runs a high baseload when on but takes offline stretches (the measured
@@ -189,7 +189,7 @@ _CHP_STEAM_LEVEL_ON_PCTILE: int = 50
 # steam host imposes is a never-below level, which is this column.
 #
 # DECLARED EX ANTE, NEVER SWEPT (rule 1 [R-STRUCT]): the percentile was fixed
-# in docs/PRECOMMIT-caiso294-chp-steam-level-2026-09-20.md §3 and pushed before
+# in docs/records/caiso/PRECOMMIT-caiso294-chp-steam-level-2026-09-20.md §3 and pushed before
 # the statistic was computed. ``p25_cf`` — which would have needed no derive
 # change at all — was refused there for the same reason caiso-293 refused it:
 # the only argument for it is that it lands between p2 and p50, i.e. that it
@@ -454,7 +454,7 @@ _MUSTRUN_CAP: float = 0.60
 # Merrimack 150.0) sits in an artifact with no `online_frac` column, so no plant
 # clears the runtime's `level>0 AND online_frac>0` gate; MISO — the one ISO that
 # arms the pair — tops out at 67.4 % across all 16 armable rows.
-# nyiso-106; results/calibration/FINDING-nyiso106-solar-benchmark-vintage-2026-07-31.md
+# nyiso-106; docs/records/nyiso/FINDING-nyiso106-solar-benchmark-vintage-2026-07-31.md
 _P25_CAP: float = 1.0
 
 # Combined-cycle groups that derive a duct-firing peaking share.
@@ -517,7 +517,7 @@ _BACKFILL_NOTE: str = (
     "observed column set and per-group populated counts of the committed CSV "
     "bytes only. The deriver group sets in force when the CSV was derived are "
     "UNKNOWN — not recoverable from the file itself; see "
-    "results/calibration/FINDING-xiso5-thermal-tranche-coverage-2026-08-04.md "
+    "docs/records/governance/FINDING-xiso5-thermal-tranche-coverage-2026-08-04.md "
     "for the vintage adjudication. It makes no claim about what HEAD would emit."
 )
 
@@ -686,7 +686,7 @@ def _per_unit_group_resolver(
     THE FALLBACK CLAUSE is not incidental — it is what makes this a strict
     crosswalk repair rather than a reclassification, and it was forced by the
     pre-registered gate K2
-    (``results/calibration/PREREG-nyiso175b-tranche-attribution-repair.md``).
+    (``docs/records/nyiso/PREREG-nyiso175b-tranche-attribution-repair.md``).
     Without it, three ST_GAS-only plants (2490, 8906, 2516 Northport) whose
     CAMPD combustion turbines correct to ``CT_PEAKER`` — a bin those plants do
     not carry — would have had 0.0051 TWh silently dropped out of the ``ST_GAS``
@@ -1206,7 +1206,7 @@ def unit_fuel_split_rows(
     """Re-derive the tranche rows of every MIXED-FUEL plant with per-unit fuel routing.
 
     THE DEFECT THIS REPAIRS (miso-277 phase 0 §2; charter
-    ``docs/handoffs/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md``).
+    ``docs/records/miso/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md``).
     :func:`main` attributes a plant's FACILITY-summed CAMPD net to its
     largest-nameplate group, so at a plant whose units burn different fuels the
     whole facility's conduct lands on one bin: Brame 6190's gas-steam unit 1 and
@@ -1520,7 +1520,7 @@ def st_gas_span_coverage_rows(
     has no measured floor, however it was committed. MISO: Baxter Wilson 2050
     unit 1 (1.59 TWh CEMS gross, 2019), Teche 1400 unit 3 (1.03 TWh, its CT
     unit 4 holds the plant's only row), Big Cajun 1 1464, Houma 1439, Rex Brown
-    2053 (docs/FINDING-miso279-stgas-span-coverage-2026-09-27.md §1). The same
+    2053 (docs/records/miso/FINDING-miso279-stgas-span-coverage-2026-09-27.md §1). The same
     source-coverage defect soco-70 closed for coal (:func:`coal_unit_coverage_rows`).
 
     THE CONSTRUCTION IS THE INCUMBENT'S, UNIT-ROUTED. For every plant whose
@@ -2389,7 +2389,7 @@ def main() -> None:
             # NEVER-BELOW-WHEN-ONLINE level (caiso-294): the SAME percentile as
             # chp_pmin_cf above, over the ONLINE sample instead of the
             # all-hours one. Declared ex ante in
-            # docs/PRECOMMIT-caiso294-chp-steam-level-2026-09-20.md §3, before
+            # docs/records/caiso/PRECOMMIT-caiso294-chp-steam-level-2026-09-20.md §3, before
             # it was computed, and NOT swept — see _CHP_STEAM_FLOOR_ON_PCTILE.
             row["chp_pmin_on_cf"] = round(
                 100.0 * float(np.percentile(on_cat, _CHP_STEAM_FLOOR_ON_PCTILE)), 1

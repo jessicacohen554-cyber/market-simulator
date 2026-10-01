@@ -1,7 +1,7 @@
 """SPP-73 (lever b, commitment reach): could ANY hourly commitment lever price SPP's tail?
 
 Zero-LP measurement, pre-registered in
-``docs/handoffs/PRECOMMIT-spp-73-commitment-reach-2026-09-22.md`` (pushed at ``91df082f``
+``docs/records/spp/PRECOMMIT-spp-73-commitment-reach-2026-09-22.md`` (pushed at ``91df082f``
 before any number below was read). Hour sets reuse SPP-72 exactly (top-88 by measured RT on
 the fixed-CST model clock, ``_spp72_demand_tightness.model_clock_index``).
 

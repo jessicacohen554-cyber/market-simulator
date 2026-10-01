@@ -1,6 +1,6 @@
 """SOCO-58: write ``calibration_attestation.json`` for the warm-boiler-exemption arm.
 
-Adapted from :mod:`scripts.gen_soco57_attestation`, which is the SOCO desk's
+Adapted from the SOCO-57 generator (deleted; git history), which is the SOCO desk's
 convention. What differs is the delta being attested, the disclosures, and the
 FORM the by-execution verification has to take.
 
@@ -81,7 +81,7 @@ KEEPER_RECIPE = (
 MEASURED_BASIS = {2023: 0.49, 2024: 0.64, 2025: 0.65}
 
 #: soco-72: the SAME construction's 2019-2022 rows, added when the keeper's span
-#: reached 2019 (docs/handoffs/r-soco/PRECOMMIT-soco-72-2026-09-26.md §2). The live
+#: reached 2019 (docs/records/soco/r-soco/PRECOMMIT-soco-72-2026-09-26.md §2). The live
 #: table must equal SOCO-55's rows plus these; the ledger keeps SOCO-55's three
 #: inherited entries and soco-72's single entry is appended by that lane.
 SOCO72_BASIS = {2019: 0.27, 2020: 0.32, 2021: 0.30, 2022: 1.20}

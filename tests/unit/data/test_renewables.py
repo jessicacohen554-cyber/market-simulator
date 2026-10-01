@@ -1036,7 +1036,7 @@ def test_2026_07_25_nyiso_solar_fallback_is_shaped_not_flat(year):
     (NEISO), corrected for the two fleets' EIA-860 tracking mixes by the
     clear-sky POA ratio. Asserts the properties a solar profile cannot fail:
     a daytime peak, a night floor far below it, and real hour-to-hour
-    resolution. See docs/FINDING-nyiso-class-delta-shape-2026-07-24.md rank 4.
+    resolution. See docs/records/nyiso/FINDING-nyiso-class-delta-shape-2026-07-24.md rank 4.
     """
     iso_config = get_iso_config("NYISO")
     config = ScenarioConfig(iso="NYISO", mode="backcast", weather_year=year)

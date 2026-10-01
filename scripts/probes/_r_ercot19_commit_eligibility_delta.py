@@ -123,7 +123,7 @@ def main() -> None:
             ),
             flush=True,
         )
-    out = Path("docs/handoffs/r-ercot/r_ercot19_commit_eligibility_delta.json")
+    out = Path("docs/records/ercot/r-ercot/r_ercot19_commit_eligibility_delta.json")
     prev = json.loads(out.read_text()) if out.exists() else {}
     prev.update({str(k): v for k, v in report.items()})
     out.write_text(json.dumps(prev, indent=1, sort_keys=True) + "\n")

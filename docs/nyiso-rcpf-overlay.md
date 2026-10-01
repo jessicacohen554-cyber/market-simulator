@@ -10,7 +10,7 @@ reserve-shortage rent in the LBMP. Enabling both is now a **hard error** in
 runs only, never a stack on the co-opt duals. The condition-varying
 requirement channel (issue #1344, `nyiso_dynamic_reserve_requirements`,
 `data.nyiso_reserve_requirements` — awaiting the Ask-B intake,
-`docs/handoffs/nyiso-data-asks-2026-07.md`) extends the in-LP families, not
+`docs/records/nyiso/nyiso-data-asks-2026-07.md`) extends the in-LP families, not
 this overlay.
 **Code:** `src/market_sim/results/rcpf.py`,
 `scripts/data/derive_nyiso_rcpf_overlay.py`,
@@ -273,7 +273,7 @@ measured version of the gating finding above.
 > the pre-repair reference and their measured side is superseded by the
 > figures above** — the model side is unchanged, so the modelled adder is
 > closer to the measured downstate level than those lines suggest. Details:
-> `docs/FINDING-nyiso166-as-reference-repair-2026-08-31.md`.
+> `docs/records/nyiso/FINDING-nyiso166-as-reference-repair-2026-08-31.md`.
 
 ## Usage
 

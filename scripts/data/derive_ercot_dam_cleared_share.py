@@ -727,7 +727,7 @@ def _main_topscoped(args) -> None:
             "conditioning": TOPSCOPED_TAG,
             "netload_pct_edges": list(edges_ext),
             "new_edges": list(new_edges),
-            "edge_identification": "results/calibration/"
+            "edge_identification": "results/phase0/ercot/"
             "ercot180_edge_identification.json",
             "ladder_quantiles": list(LADDER_QUANTILES),
             "hcap_usd_mwh": HCAP_USD_MWH,

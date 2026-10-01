@@ -12,7 +12,7 @@ nowhere, so the payload cannot be regenerated in-session: that needs a
 re-solve, which the CI-cost policy and rule 12 keep out of this lane.
 
 The tracked id is the surviving casualty of the API-only push rule (see
-``docs/handoffs/dashboard-payload-push-gap-2026-07.md``): its session could
+``docs/records/misc/dashboard-payload-push-gap-2026-07.md``): its session could
 push the small sidecar via ``push_files`` but not the 400 KB–1 MB payload
 (over the ~457 KB per-payload cap), and the local commit died with the
 ephemeral container. The rule was amended 2026-07-26 (CLAUDE.md
@@ -32,7 +32,7 @@ deliberately NOT a blanket ignore: only these exact ids are tolerated, and only
 for the artifact-absent failure class they cause.
 
 RESOLUTION (owner decision 2026-07-26, recorded in
-``docs/handoffs/dashboard-payload-push-gap-2026-07.md``): the NEISO 2022
+``docs/records/misc/dashboard-payload-push-gap-2026-07.md``): the NEISO 2022
 holdout validation run is AUTHORIZED for a re-solve in a solve-capable
 session (``--holdout-authorized``, rule 22 validation tier, session-logged);
 re-register via the ``calibration-report`` skill, push the payload over

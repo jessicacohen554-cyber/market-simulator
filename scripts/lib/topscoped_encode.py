@@ -38,7 +38,8 @@ TOPSCOPED_TAG = "topscoped-netload-bins"
 EDGE_ID_JSON = (
     Path(__file__).resolve().parents[2]
     / "results"
-    / "calibration"
+    / "phase0"
+    / "ercot"
     / "ercot180_edge_identification.json"
 )
 

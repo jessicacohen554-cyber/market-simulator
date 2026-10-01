@@ -2,7 +2,7 @@
 
 Rebuilds NWPP's LP-facing fleet with ``run_year(fleet_only=True)`` per year
 under two recipes and reports what the audit
-(``docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md``
+(``docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md``
 §5.3.5) asks phase 0 to show:
 
 * ``pre``  — the incumbent keeper recipe (``nwpp49_ror_span``) in its
@@ -27,7 +27,7 @@ reported as such.
 Usage::
 
     PYTHONPATH=.:src python3 scripts/probes/_rnwpp_census.py \
-        [--years 2019 ... 2025] [--out results/calibration/_rnwpp_census.json]
+        [--years 2019 ... 2025] [--out results/phase0/nwpp/_rnwpp_census.json]
 """
 
 from __future__ import annotations
@@ -225,7 +225,7 @@ def main() -> None:
     """Run the census for every year and write the JSON record."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", type=int, nargs="+", default=list(range(2019, 2026)))
-    ap.add_argument("--out", type=Path, default=Path("results/calibration/_rnwpp_census.json"))
+    ap.add_argument("--out", type=Path, default=Path("results/phase0/nwpp/_rnwpp_census.json"))
     args = ap.parse_args()
     bins = _class_table_values()
     out = []

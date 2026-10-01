@@ -136,7 +136,7 @@
         "lineage_solves": "unknown",
         "n_scalars": 0,
         "source": "per-unit EPA CAMPD hourly gross generation (scripts/data/derive_campd_unit_outages.py --short-windows); identification guards: coal-only detector + unit annual CF >= 0.55 (the partial-outage detector's baseload constant) + the revealed-availability in-merit filter (outage_detect.filter_revealed_outages; the full-stop override cannot engage below the 5-day cap)",
-        "note": "the >= 5-day duration floor makes event-coincident short forced outages invisible (MISO Jul 28-29 2025: ~2.8 GW coal offline at the peak block beyond the overlay; docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md); CT/CC event unavailability stays unmodeled pending a max-gen-event registry intake (no identification without it)"
+        "note": "the >= 5-day duration floor makes event-coincident short forced outages invisible (MISO Jul 28-29 2025: ~2.8 GW coal offline at the peak block beyond the overlay; docs/records/miso/DIAGNOSIS-miso-july2025-lmp-2026-07.md); CT/CC event unavailability stays unmodeled pending a max-gen-event registry intake (no identification without it)"
       }
     ]
   },

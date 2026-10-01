@@ -1,7 +1,7 @@
 """SPP-94 shard self-check: the leg == the committed keeper's recipe, solved on the 2020/2021 curtailment rows.
 
 Run by each SPP-94 shard AFTER its solve and BEFORE it pushes (rule 32(c)(4) hard stops). Zero LP.
-Pre-registered in ``docs/handoffs/PRECOMMIT-spp-94-curtail-rows-2026-09-27.md``. Adapted from
+Pre-registered in ``docs/records/spp/PRECOMMIT-spp-94-curtail-rows-2026-09-27.md``. Adapted from
 ``_spp93_shard_check.py``; the control is the committed keeper ``spp86_arm_span`` (rule 29(b) form 4).
 
 The arm is a DATA change (two published rows in ``spp_wind_curtailment_annual.csv``), not a config

@@ -9,7 +9,7 @@ keeper's own year (``pjmnext7_vs_span/run_config_<y>.json``) EXACTLY apart from
 the arm's flags (``--arm A``: none — the OVEC join is a registry fact at the
 pinned commit; ``--arm B``: ``pjm_gas_commitment_bridge`` and
 ``cc_mustrun_per_plant``) — and every leg must be solved at the pinned
-PRECOMMIT commit (docs/PRECOMMIT-pjm-next-16-2026-09-30.md), with the
+PRECOMMIT commit (docs/records/pjm/PRECOMMIT-pjm-next-16-2026-09-30.md), with the
 COAL-SUB bare-``COAL`` offer-curve fold still tolerated.
 Anything else differing aborts, so a control leg or a wrong-recipe leg can
 never compose in.

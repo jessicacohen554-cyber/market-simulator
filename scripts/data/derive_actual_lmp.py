@@ -96,7 +96,7 @@ produced for the price-duration-curve overlay (J3a):
     parquet was indexed on the prevailing clock directly, which paired every
     hourly comparison one real hour off for the ~5,600 DST hours/year — the
     scoring-clock artifact in
-    docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md §1.)
+    docs/records/ercot/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md §1.)
 
 Run after refreshing ``data/raw/lmp-data/``; commit the JSON and the
 hourly parquet. Missing source files for an ISO/year are skipped, so a
@@ -1366,12 +1366,13 @@ def build(years, isos=None) -> tuple[dict, dict]:
 # but the legacy ``rt``/``da`` fields above are EQUAL-HOUR means of a hub
 # series — a mixed basis whose wedge grows with tail realism (a byte-perfect
 # ERCOT 2023 model scores +33.5% against its own actual; see
-# docs/handoffs/ercot-ordc-capdual-adder-2026-07.md §4). The ``*_lw`` fields
+# docs/records/ercot/ercot-ordc-capdual-adder-2026-07.md §4). The ``*_lw`` fields
 # below put the ACTUAL on the same basis as the model: each ISO's committed
 # hourly actual series weighted by the MEASURED hourly load the model itself
 # dispatches in a backcast (``eia_loader.load_demand`` — same series, so the
 # two sides of C3a finally share weights). Where a committed ZONAL hourly
-# archive is registered in ``ZONAL_LW_SOURCES`` (ERCOT; MISO since miso-294),
+# archive is registered in ``ZONAL_LW_SOURCES`` (ERCOT; MISO since miso-294;
+# NYISO since NYISO-NEXT-22),
 # the construction mirrors the scorer zone-by-zone; elsewhere it weights the
 # system hub series by system load. The legacy equal-hour fields stay
 # untouched (display continuity + fallback basis).
@@ -1398,6 +1399,13 @@ ERCOT_ZONAL_PARQUET = "actual_lmp_zonal_ERCOT.parquet"
 # takes the hubs the zonal archive itself assigns it (``zone`` column), a
 # multi-hub zone (MISO-South) their simple mean.
 MISO_ZONAL_PARQUET = "actual_lmp_hourly_zonal_MISO.parquet"
+
+# NYISO: one series per MODEL zone — the simple mean of its constituent NYISO
+# internal zones (``NYISO_ZONE_MAP``), already built by ``nyiso_zone_hourly``
+# and written to this parquet by ``scripts/data/derive_nyiso_zonal_lmp.py``.
+# Identity map: each model zone is its own series. (Owner ruling 2026-10-01,
+# NYISO-NEXT-22: "Adopt for NYISO now".)
+NYISO_ZONAL_PARQUET = "actual_lmp_hourly_zonal_NYISO.parquet"
 MISO_PLAINS_PROXY_HUBS: tuple[str, ...] = ("MINN.HUB", "ILLINOIS.HUB")
 
 
@@ -1441,6 +1449,18 @@ ZONAL_LW_SOURCES: dict[str, dict] = {
             "weighted across zones (owner ruling 2026-10-01, miso-294)"
         ),
     },
+    "NYISO": {
+        "parquet": NYISO_ZONAL_PARQUET,
+        "key": "zone",
+        "zone_map": lambda z: {str(k): (str(k),) for k in z["zone"].unique()},
+        "src_lw": (
+            "zone-resolved: per model zone the simple mean of its constituent "
+            "NYISO internal zones' LBMP (actual_lmp_hourly_zonal_NYISO.parquet; "
+            "RTD 5-min averaged to the hour / DAM hourly) load-weighted by "
+            "measured zonal demand (eia_loader.load_demand), zone-demand-"
+            "weighted across zones (owner ruling 2026-10-01, NYISO-NEXT-22)"
+        ),
+    },
 }
 
 
@@ -1478,7 +1498,7 @@ def _measured_zone_demand(iso: str, year: int) -> np.ndarray | None:
 def _lw_fields(iso: str, year: int) -> dict | None:
     """Return the ``*_lw`` record fields for one ISO-year, or ``None``.
 
-    ISOs in :data:`ZONAL_LW_SOURCES` (ERCOT, MISO): zone-resolved — the
+    ISOs in :data:`ZONAL_LW_SOURCES` (ERCOT, MISO, NYISO): zone-resolved — the
     scorer's exact formula mirrored on the actual (per-model-zone hourly
     series, multi-series zones averaged, weighted by that zone's measured
     demand, then zone-demand-weighted across zones). Other ISOs: the

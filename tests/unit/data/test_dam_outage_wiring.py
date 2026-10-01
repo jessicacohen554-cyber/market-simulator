@@ -30,7 +30,7 @@ _ZONES = ["Z"]
 
 # The four DAM-gate fields live in ``scenarios.py`` (8242 lines), which exceeds
 # the API-only push path's single-call emission limit, so that change ships as
-# ``docs/handoffs/patches/dam-outage-wiring-4iso-scenarios.patch``. These tests
+# ``docs/records/misc/patches/dam-outage-wiring-4iso-scenarios.patch``. These tests
 # require the fields; skip until the patch is applied so main stays green in the
 # interim, and activate automatically once the fields exist (``arrays.py`` guards
 # the same fields with ``getattr(..., False)``, so the wiring is an inert no-op
@@ -76,7 +76,7 @@ def _build(gens, iso, **overrides):
 @unittest.skipUnless(
     _DAM_GATES_PRESENT,
     "DAM gate fields not yet in ScenarioConfig — apply "
-    "docs/handoffs/patches/dam-outage-wiring-4iso-scenarios.patch",
+    "docs/records/misc/patches/dam-outage-wiring-4iso-scenarios.patch",
 )
 class DamOutageWiringTest(unittest.TestCase):
     def test_caiso_per_plant_precedence_and_fallback(self):

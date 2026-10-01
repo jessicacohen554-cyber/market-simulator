@@ -200,6 +200,7 @@ class DispatchModel:
         link_flow_cost: np.ndarray | None = None,
         link_loss: np.ndarray | None = None,
         slack_cost: np.ndarray | None = None,
+        ordc_penalty_hour_scale: np.ndarray | None = None,
         dump_cost_full_offer_domain: bool = False,
         dis_tranche_arm_idx: np.ndarray | None = None,
         dis_tranche_width: np.ndarray | None = None,
@@ -963,6 +964,9 @@ class DispatchModel:
         # Co-opt state for re-costing and dual extraction.
         self._coopt = coopt
         self.ordc_penalties = ordc_penalties
+        # (T,) hourly ORDC penalty multiplier (ERCOT hourly effective SWCAP,
+        # R-ERCOT-23). None -> static penalties, byte-identical.
+        self.ordc_penalty_hour_scale = ordc_penalty_hour_scale
         # Reserve block = shared-headroom rows (n_headroom_rows*n_zones*T) +
         # reserve-balance rows (n_families*T), appended last; the balance rows
         # are the final n_families*T (family-major within each hour). The
@@ -1160,7 +1164,7 @@ class DispatchModel:
         reproduce the internal state a *searched* solve leaves behind, so on the
         route where P1 re-solves this same live model it moves P1's simplex
         path — warm-start class, measured over six NEISO years
-        (``docs/handoffs/FINDING-perfc-s6-p0-cache-2026-09-22.md``). That is why
+        (``docs/records/governance/FINDING-perfc-s6-p0-cache-2026-09-22.md``). That is why
         it is off by default and why arming it is a declarable choice.
         ``p0_cache_key`` / ``p0_cache_hit`` carry the provenance.
 
@@ -1183,7 +1187,7 @@ class DispatchModel:
                 ``solve_time`` — and every optional field is left at its
                 ``None`` default. That union is the measured consumer set of
                 the **P0** result (PERF-C S2,
-                ``docs/handoffs/FINDING-perfc-s2-p0-slim-2026-09-20.md`` §1):
+                ``docs/records/governance/FINDING-perfc-s2-p0-slim-2026-09-20.md`` §1):
                 the commitment-bridge detectors, the P1 prep hooks, the two
                 opt-in P0 sidecars and the O7 attribution harness read nothing
                 else from it. Skipping the rest avoids the whole-``col_dual``
@@ -1241,6 +1245,7 @@ class DispatchModel:
             storage_discharge_eac=self.storage_discharge_eac,
             storage_discharge_cost=self.storage_discharge_cost,
             ordc_penalties=self.ordc_penalties,
+            ordc_penalty_hour_scale=self.ordc_penalty_hour_scale,
             posture_startup_cost=self._posture_startup,
             rps_acp_price=(
                 self.rps_region_acp_price
@@ -1742,7 +1747,7 @@ class DispatchModel:
         objective_value = h.getObjectiveValue()
         status = h.modelStatusToString(h.getModelStatus())
         # DELIBERATELY NOT GATED ON ``full_extract`` — measured, PERF-C S2
-        # (``docs/handoffs/FINDING-perfc-s2-p0-slim-2026-09-20.md`` §2).
+        # (``docs/records/governance/FINDING-perfc-s2-p0-slim-2026-09-20.md`` §2).
         #
         # Every consumer of this rate reads the P1 result (results.export,
         # results.outputs, run_full_horizon), so skipping it on P0 looks free,

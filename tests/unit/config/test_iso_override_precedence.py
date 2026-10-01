@@ -1,7 +1,7 @@
 """The OVERRIDE-FIX seam: an ISO default fills only a field the caller did NOT pass.
 
 **The defect this pins closed**
-(``docs/handoffs/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md``).
+(``docs/records/forecast/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md``).
 ``iso_configs.apply_iso_scenario_defaults`` used to decide "the caller left this
 field unset" by comparing the caller's value against the ``ScenarioConfig``
 field default. Every promotable flag defaults ``False``/``None``, so *the OFF
@@ -27,7 +27,7 @@ What these tests hold, in both directions:
   posture (ERCOT's five stage-B flags plus the D12-A entry pair armed at
   ``68a207068509f2b0`` — the pole was ``8d9ef77edb3e44cb`` until the Q15
   arming of 2026-08-30 moved it, see
-  ``docs/handoffs/FINDING-capx-d12a-arming-2026-08-30.md`` — the global
+  ``docs/records/forecast/FINDING-capx-d12a-arming-2026-08-30.md`` — the global
   pin unmoved BY THE FIX: ``cedadc285f8603b9`` when this was written,
   ``4c6b03ae098b6e3e`` since capx D44's 2026-09-03 flip of an unrelated
   field), and a non-default explicit value still wins as it always did. The
@@ -56,8 +56,7 @@ from market_sim.config.scenarios import ScenarioConfig, explicitly_set_fields
 
 ALL_ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP", "SOCO")
 
-# The D-30 stage-B five and their armed values (PREREG §1.6), plus the pinned
-# poles the epoch declaration rests on.
+# The D-30 stage-B five and their armed values (PREREG §1.6).
 STAGE_B = {
     "capacity_screen_unified_lookahead": True,
     "capacity_screen_scarcity_restoration": True,
@@ -65,48 +64,6 @@ STAGE_B = {
     "smr_available_year": 2030,
     "vre_procurement_additions_enabled": True,
 }
-# The LIVE resolved ERCOT forecast-lane default key. D-30 declared it at
-# "8d9ef77edb3e44cb"; the D12-A arming (owner ruling Q15, 2026-08-30 —
-# entry_margin_exhaustion + entry_forward_reserve_leg, epoch probe
-# scripts/probes/_d12a_arming_cache_epoch.py) moved it here. This module pins
-# the CURRENT pole; the per-epoch genealogy lives in
-# tests/unit/config/test_ercot_stageb_arming.py, which reconstructs each
-# prior pole explicitly.
-# ADVANCED 2026-09-02, 68a207068509f2b0 -> 6bb61037c072502d, by a NON-ERCOT
-# cause: the owner-authorized capx D41 re-identification of the shared defaults
-# fixed_om_gas_cc_ccs (25.0 -> 65.0) and ccs_retrofit_capex_kw (900.0 -> 1521.4)
-# onto the NREL ATB 2024 (2026$) basis. Neither is a _CACHE_KEY_OPTIONAL_FIELDS
-# member, so every config re-keys and this pole moved with the global pin — the
-# D12-A arming itself is untouched, and the "pole unmoved by the fix" property
-# this file pins holds exactly as before. Cause block:
-# tests/regression/test_persisted_identity.py.
-# ADVANCED AGAIN 2026-09-03, 6bb61037c072502d -> 1e1002d480fc180d, by another
-# NON-ERCOT cause: capx D44's declared default flip of
-# fossil_announced_exits_enabled (owner ruling Q30). It IS registered, but the
-# key drops it at its FROZEN "False" declaration (capx D24-R (b'-1)), so the
-# armed default enters every digest and this pole moves with the global pin —
-# the D12-A arming and the "pole unmoved by the fix" property are untouched.
-# ADVANCED AGAIN 2026-09-05, 1e1002d480fc180d -> b5ab30d0fae9f8a3, by a third
-# NON-ERCOT cause of the same class: capx D60's declared default flip of
-# ccs_retrofit_capex_co2_scaling (owner ruling Q42), the SECOND entry in
-# _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS. Registered, dropped at its FROZEN
-# "False" declaration, so the armed default enters every digest and this pole
-# moves with the global pin — the D12-A arming and the "pole unmoved by the
-# fix" property are untouched.
-# ADVANCED AGAIN 2026-09-06, b5ab30d0fae9f8a3 -> 95d789d6dfb98831, by a FOURTH
-# non-ERCOT cause — and the first of a different CLASS. capx D65-B (owner
-# ruling Q47) arms ccs_retrofit_fixed_cost_co2_scaling as a declared (b'-1)
-# default flip (the THIRD _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS entry, same
-# mechanic as the three causes above) COUPLED with a plain VALUE change,
-# ccs_retrofit_vom_adder 8.0 -> 2.95 $/MWh 2026$, re-identified off the ATB
-# 2024 v4.0.0 basis. The value change is NOT a registered-optional field, so it
-# has no frozen declaration to drop at and re-keys unconditionally — which is
-# why this advance also moves keys the three earlier flips left alone.
-# The D12-A arming and the 'pole unmoved by the fix' property are untouched.
-# Pre-declared before the solve: docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md
-# §3; cache-epoch ledger entry 2026-09-06c in src/market_sim/results/cache.py.
-ERCOT_ARMED_KEY = "95d789d6dfb98831"
-GLOBAL_PINNED_KEY = "547053bdfccd4264"
 
 FIELD_DEFAULTS = {
     f.name: getattr(ScenarioConfig(), f.name)
@@ -232,13 +189,6 @@ class TestUnsetStillArms:
     def test_no_arg_ercot_still_arms_all_five_stage_b_flags(self):
         resolved = apply_iso_scenario_defaults(ScenarioConfig(iso="ERCOT"), "ERCOT")
         assert {f: getattr(resolved, f) for f in STAGE_B} == STAGE_B
-
-    def test_the_declared_ercot_epoch_pole_is_unmoved(self):
-        """The LIVE declared armed pole (D12-A since 2026-08-30) and the
-        global pin both survive the fix."""
-        resolved = apply_iso_scenario_defaults(ScenarioConfig(iso="ERCOT"), "ERCOT")
-        assert resolved.cache_key() == ERCOT_ARMED_KEY
-        assert ScenarioConfig().cache_key() == GLOBAL_PINNED_KEY
 
     @pytest.mark.parametrize(("iso", "field", "iso_value"), PROMOTED, ids=PROMOTED_IDS)
     def test_a_non_default_explicit_value_still_wins(self, iso, field, iso_value):

@@ -6,7 +6,7 @@ The forward analogue of the measured ERCOT on-line responsive reserve-supply cap
 ``data/raw/ercot/ercot_<year>_ordc_reserves_hourly.parquet`` and returns ``None``
 for any year with no measured parquet — so forecast years run UNCAPPED and the
 whole ORDC-era supply re-scope goes inert forward). WS-A of
-``docs/handoffs/ercot-as-coopt-plan-2026-07.md``: the last AS-path lever with no
+``docs/records/ercot/ercot-as-coopt-plan-2026-07.md``: the last AS-path lever with no
 forward analogue.
 
 Construction (derived committed-share × capability, the
@@ -501,7 +501,7 @@ def derive_online_capacity():
     rows, so the LP cannot dispatch (or reserve) more thermal than the real
     system had on-line — the ~3.2 GW phantom sub-$200 spare the P1
     perfect-commitment assumption manufactures beyond RTOLCAP
-    (``docs/FINDING-ercot-priceshape-2026-07.md`` §3, structural conclusion #2).
+    (``docs/records/ercot/FINDING-ercot-priceshape-2026-07.md`` §3, structural conclusion #2).
 
     ``deliv_env`` is fit to the measured on-line HSL quantity — CAMPD on-line
     gross + measured RTOLCAP (the thermal portion, storage-AS removed) — a MW

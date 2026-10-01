@@ -551,21 +551,9 @@ class TestErcotAdaptiveFixedPoint:
         )
         assert TIER_TAGS["ercot_adaptive_fixed_point"] == 1
 
-    def test_default_cache_key_unmoved_and_armed_distinct(self):
+    def test_armed_cache_key_distinct(self):
         import dataclasses
 
         c0 = ScenarioConfig()
         c1 = dataclasses.replace(c0, ercot_adaptive_fixed_point=True)
-        # The pinned default key (ercot-221 FINDING §5) must not move with
-        # the field at its default; an armed run is a distinct scenario.
-        # ADVANCED 2026-09-06, e5ecd4105ada3e58 -> 547053bdfccd4264 — capx D65-B's
-        # COUPLED ccs_retrofit_fixed_cost_co2_scaling (Act A, a declared (b'-1)
-        # default flip) + ccs_retrofit_vom_adder 8.0 -> 2.95 $/MWh 2026$ (Act B, a
-        # plain value field with no drop value, so it re-keys unconditionally).
-        # Nothing about THIS file's mechanism moved — the pin advances because the
-        # global default did. Rationale and provenance live on the pin in
-        # tests/regression/test_persisted_identity.py; pre-declared BEFORE the solve
-        # in docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
-        # capx D65-B-R, completing the partial re-key fb93b76e left behind.
-        assert c0.cache_key()[:16] == "547053bdfccd4264"
         assert c1.cache_key() != c0.cache_key()

@@ -131,7 +131,7 @@ def parse_spot_table(html: str, page_year: int, page_month: int) -> list[dict]:
     catch-up week was silently dropped, leaving a 14-15 day hole across every
     year-end in ``transco_z6_ny_daily.csv`` and a flat interpolated fill across
     the largest gas event in Northeast history
-    (``docs/FINDING-nyiso234-tail-gas-is-unobserved-2026-09-14.md``). Rule 23
+    (``docs/records/nyiso/FINDING-nyiso234-tail-gas-is-unobserved-2026-09-14.md``). Rule 23
     ``[R-FROZEN-DERIVE]``: this re-derivation is cited to that source-coverage
     defect, never to a residual.
 

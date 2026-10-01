@@ -1,7 +1,7 @@
 """Capture current-HEAD golden baselines for the calibration keeper configs.
 
 Stage 0 of the orchestrator-unification plan
-(``docs/handoffs/orchestrator-unification-plan-2026-07.md`` §6-§7) needs a
+(``docs/records/misc/orchestrator-unification-plan-2026-07.md`` §6-§7) needs a
 deterministic, faithful re-solve of every registered keeper bundle *at the
 current commit*, so a later refactor stage can capture an "after" set and diff
 it against this "before" set for dispatch neutrality.
@@ -43,7 +43,7 @@ single ISO's entry into the existing file, every capture silently RE-STAMPED
 that one block for all the earlier captures — so a manifest with six captures
 taken at six trees ended up asserting one tree for all six, and the five older
 rows carried a sha that was *valid and wrong* (the perfb-stage0 defect;
-``docs/FINDING-stage0-provenance-repair-2026-09.md``). In v2 those four fields
+``docs/records/misc/FINDING-stage0-provenance-repair-2026-09.md``). In v2 those four fields
 live inside ``keepers.<ISO>.provenance``, stamped by the capture that wrote the
 entry and never touched again; the top level keeps only what is genuinely
 global to the file (``schema_version``, ``stage_tag``, ``hash_scheme``,
@@ -53,7 +53,7 @@ Config-partition entries (2026-09-02) — ADDITIVE to schema v2, no version bump
 An ISO whose keeper shard carries a ``config_partition`` block designates more
 than one config, each covering a disjoint slice of the training window: ERCOT is
 the first (owner ruling 2026-08-26,
-``docs/FINDING-ercot-two-config-keeper-2026-08-26.md``) — a **forward** config
+``docs/records/ercot/FINDING-ercot-two-config-keeper-2026-08-26.md``) — a **forward** config
 for {2024, 2025} and a 2023 **carve-out** for the ECRS-era regime. The manifest
 keyed one entry per bare ISO, so only the designated ``keeper`` was reachable and
 full coverage of such an ISO was structurally impossible.
@@ -120,7 +120,7 @@ forward config verbatim), the rules this script applies are:
   — a ``keeper_id`` records which run's outputs were actually captured — and are
   never rewritten; the gate reports them without comparing them to the shard.
 
-Record: ``docs/handoffs/FINDING-y14-ercot-golden-forward-2026-09-05.md``.
+Record: ``docs/records/governance/FINDING-y14-ercot-golden-forward-2026-09-05.md``.
 
 Each entry also carries a ``keeper_snapshot`` copied from the provenance run's
 registry sidecar at capture time. Top-15-per-ISO registry retention will prune
@@ -835,7 +835,7 @@ def _partition_block(info: dict) -> dict | None:
     ``years``; the replayed run's REGISTERED span is recorded separately as the
     entry's ``registered_years``. They legitimately differ (ERCOT's forward
     config is registered 3-year but designated {2024, 2025}), and conflating
-    them is exactly the gloss ``docs/FINDING-stage0-capture-neiso-ercot-2026-09.md``
+    them is exactly the gloss ``docs/records/neiso/FINDING-stage0-capture-neiso-ercot-2026-09.md``
     §2 warns against. Present on a partitioned ISO's bare entry too, since that
     entry is its forward role.
     """
@@ -880,7 +880,7 @@ def pin_determinism_env() -> None:
     HiGHS then refused every later LP whose ``threads`` differed from the
     already-initialized process-global scheduler (``model status 'Not Set'``) —
     the latent, scheduling-dependent CI red behind every inflated local test
-    count the program has recorded (``docs/FINDING-fast-tier-repair-2026-09.md``
+    count the program has recorded (``docs/records/misc/FINDING-fast-tier-repair-2026-09.md``
     §4b/§7.6). The test side wraps its loads in an environ snapshot; this closes
     the same hole at the source, so a future by-path load is safe by
     construction.

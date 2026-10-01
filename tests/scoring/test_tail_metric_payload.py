@@ -131,7 +131,7 @@ class ActualHourlyLmpTests(unittest.TestCase):
         determination moved (the C3c gate reads the pure-RT
         ``tail/actual_tail.json``, and nothing reads the payload field).
         Rules 13 `[R-MEASURED]` / 14 `[R-ACCURATE]` / 26 `[R-DELETE]`;
-        ``docs/RESULT-caiso284-rescore-on-rt-audit-2026-09-16.md`` §2 rows 10-12.
+        ``docs/records/caiso/RESULT-caiso284-rescore-on-rt-audit-2026-09-16.md`` §2 rows 10-12.
         """
         import tempfile
 

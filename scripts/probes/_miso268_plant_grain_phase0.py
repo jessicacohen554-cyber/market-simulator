@@ -136,7 +136,7 @@ def measure(year: int) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", nargs="+", type=int, default=list(LEG_SHA))
-    ap.add_argument("--out", type=Path, default=REPO / "results/calibration/_miso268_plant_grain_phase0.json")
+    ap.add_argument("--out", type=Path, default=REPO / "results/phase0/miso/_miso268_plant_grain_phase0.json")
     a = ap.parse_args()
     out = [measure(y) for y in a.years]
     for r in out:

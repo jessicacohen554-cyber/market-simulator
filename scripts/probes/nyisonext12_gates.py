@@ -1,13 +1,13 @@
 """NYISO-NEXT-12 G-2 (a) / (c) and G-4 (ZERO LP): each arm leg vs the keeper's committed hourlies.
 
-``docs/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md`` sec. 6:
+``docs/records/nyiso/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md`` sec. 6:
 
 G-2 (a): in P1 the NE AC node exports (sum of its ``_exp#`` rows < 0) in >= 1 h AND
      imports (sum of its ``_imp#`` rows > 0) in >= 1 h, every year.
 G-2 (c): |annual import-class TWh (arm - keeper)| <= 4 % of the keeper's, every year.
 G-4 (reported, not a criterion): per-zone load-weighted P1 price move; class TWh moves;
      the node's net TWh vs the measured tie; hours the node sits at a posted bound.
-G-2 (b) is ``nyisonext12_g2b.py``. Record: ``results/calibration/_nyisonext12_gates.json``.
+G-2 (b) is ``nyisonext12_g2b.py``. Record: ``results/phase0/nyiso/_nyisonext12_gates.json``.
 """
 
 from __future__ import annotations
@@ -150,7 +150,7 @@ def year(y: int, arm_bundle: str) -> dict:
 if __name__ == "__main__":
     ys = [int(x) for x in sys.argv[1:]] or [2021, 2022, 2023, 2024, 2025]
     res = {y: year(y, f"nyisonext12_{y}") for y in ys}
-    p = REPO / "results/calibration/_nyisonext12_gates.json"
+    p = REPO / "results/phase0/nyiso/_nyisonext12_gates.json"
     old = json.loads(p.read_text()) if p.exists() else {}
     old.update({str(y): v for y, v in res.items()})
     p.write_text(json.dumps(old, indent=1))

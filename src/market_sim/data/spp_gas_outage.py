@@ -1,7 +1,7 @@
 """SPP's published hourly natural-gas outage and the gas-family CROW-residual carrier (SPP-105).
 
 Armed by ``ScenarioConfig.spp_gas_crow_residual_outage`` (default off, SPP-only, backcast with
-``outage_source="historic"`` only). Record: ``docs/handoffs/DESIGN-spp-105-gas-family-outage-2026-09-30.md``
+``outage_source="historic"`` only). Record: ``docs/records/spp/DESIGN-spp-105-gas-family-outage-2026-09-30.md``
 (carrier B), owner card "Build carrier a and b" (2026-09-30).
 
 The carrier REPLACES the statistical WEFOR / POF on every gas row (rule 19 [R-ONE-MECH]). Those terms are

@@ -1,7 +1,7 @@
 """Emit the NWPP-NEXT-16 calibration attestation for an arm C / D / E span bundle.
 
 NWPP-NEXT-16 (PRECOMMIT
-``docs/handoffs/PRECOMMIT-nwppnext16-combined-captive-live-2019-2025-2026-10-01.md``) is keeper
+``docs/records/nwpp/PRECOMMIT-nwppnext16-combined-captive-live-2019-2025-2026-10-01.md``) is keeper
 #19's recipe (NWPP-NEXT-14) with the Bridger per-unit tranche fix swapped:
 ``campd_unit_fuel_split`` off and ``campd_per_unit_vintage_denominator`` on (rule 19: the
 selector refuses both; the vintage denominator also repairs North Valmy). Arm D adds

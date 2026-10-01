@@ -5,7 +5,7 @@ rebuild of the keeper's own recipe, which enters no LP; everything else reads
 the keeper's committed sidecars and the P-27 bid corpus.
 
 Every threshold below is fixed in
-``docs/PRECOMMIT-nyiso244-measured-offer-surface-design-2026-09-20.md`` §3,
+``docs/records/nyiso/PRECOMMIT-nyiso244-measured-offer-surface-design-2026-09-20.md`` §3,
 committed at ``2e5097a5`` before any number here was computed (rule 1
 ``[R-STRUCT]``).
 
@@ -49,7 +49,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 BUNDLE = REPO / "results" / "calibration" / "nyiso241_ctcommitted_span"
 GENBIDS = REPO / "data" / "raw" / "nyiso-bid-data" / "genbids"
-OUT = REPO / "results" / "calibration" / "_nyiso244_offer_surface_design.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso244_offer_surface_design.json"
 
 HOURS = 8760
 THRESHOLD = 300.0
@@ -493,7 +493,7 @@ def main() -> None:
 
     config = json.loads((BUNDLE / "run_config.json").read_text())["scenario_config"]
     result: dict = {
-        "precommit": "docs/PRECOMMIT-nyiso244-measured-offer-surface-design-2026-09-20.md",
+        "precommit": "docs/records/nyiso/PRECOMMIT-nyiso244-measured-offer-surface-design-2026-09-20.md",
         "precommit_sha": "2e5097a5",
         "bundle": str(BUNDLE.relative_to(REPO)),
     }

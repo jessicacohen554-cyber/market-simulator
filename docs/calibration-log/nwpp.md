@@ -5,7 +5,7 @@ the **Northwest Power Pool / Western Power Pool footprint** — a **pool of ~17 
 (BPAT PACE PACW PGE PSEI AVA IPCO NWMT CHPD DOPD GCPD SCL TPWR AVRN GRID WAUW NEVP), NERC WECC.
 **NWPP is neither a balancing authority nor an ISO**, the first such region in this repo; every name
 downstream still says "ISO". Program: `docs/multi-iso/nwpp-addition-plan-2026-09.md` (charters, cards,
-wave graph, lane table); desk ledger `docs/handoffs/nwpp-desk-ledger-2026-09.md` — **the ledger wins
+wave graph, lane table); desk ledger `docs/records/nwpp/nwpp-desk-ledger-2026-09.md` — **the ledger wins
 where the two diverge**; Phase-0 census `docs/multi-iso/nwpp-data-audit.md`.
 
 Entries are appended **verbatim** by the NWPP ADDITION DESK from each lane's FINDING `## Log entry`
@@ -19,7 +19,7 @@ Lever queue: `docs/mechanism-testing-matrix.md` §5.9; cell verdicts
 ## Lane state at file creation (2026-09-14, lane NWPP-35)
 
 **No keeper exists.** NWPP was registered on 2026-09-14 by lane NWPP-20
-(`docs/handoffs/FINDING-nwpp-20-2026-09-14.md`), so
+(`docs/records/nwpp/FINDING-nwpp-20-2026-09-14.md`), so
 `frontend/data/backcast/keepers/NWPP.json` does not exist, no bundle has been solved, and this lane
 has no run to score, no determination and no gates. The first solve is lane **NWPP-40**, which is
 **gated on NWPP-36** (owner ruling N3 — see below). Training window **2023–2025**, and rule 16
@@ -38,7 +38,7 @@ Facts every NWPP session inherits, so nobody rediscovers them in a residual:
 - **THERE IS NO NWPP PRICE, and the rubric already knows it.** Card **N2** was ruled 2026-09-13 in
   both limbs. Limb (a) chartered lane **NWPP-13** to build a WEIM-derived hourly series under a STOP
   gate pre-registered before any data was read; **it read NO**
-  (`docs/handoffs/FINDING-nwpp-13-2026-09-13.md`). Gate D3 — reconciliation against the independent
+  (`docs/records/nwpp/FINDING-nwpp-13-2026-09-13.md`). Gate D3 — reconciliation against the independent
   Mid-C Peak index — failed in **every** year: the NW-group WEIM on-peak price sits
   **−37.5 % / −22.6 % / −23.6 %** (2023 Jun–Dec / 2024 / 2025) against Mid-C, daily correlation
   0.74 / 0.95 / 0.67, against pre-registered bars of ±10 % and ≥ 0.80. **No bar was moved after the
@@ -175,9 +175,9 @@ non-uniform — 2023 P0 0.99×, **2024 P1 2.26×**, **2025 P1 0.90×** — with 
 **Attempt 1 was lost to a platform restart** mid-2025-P1 after ~13 h; reuse was foreclosed (verified
 in code), the owner ruled relaunch, and 2023/2024 reproduced to four decimals across attempts.
 
-Records: `docs/handoffs/FINDING-nwpp-41-2026-09-19.md`,
-`docs/handoffs/PRECOMMIT-nwpp-41-2026-09-17.md` (nine addenda),
-`docs/handoffs/NWPP41-attempt2-solve-log-excerpt.txt`, `scripts/gen_nwpp41_attestation.py`,
+Records: `docs/records/nwpp/FINDING-nwpp-41-2026-09-19.md`,
+`docs/records/nwpp/PRECOMMIT-nwpp-41-2026-09-17.md` (nine addenda),
+`docs/records/nwpp/NWPP41-attempt2-solve-log-excerpt.txt`, `scripts/gen_nwpp41_attestation.py`,
 `scripts/probes/_nwpp41_coalrank_phase0.py`. Full 36-file bundle recoverable at
 `1fb4b6b5c680ca5ae0ef9375eb11b7cbbb08d64d`.
 
@@ -296,8 +296,8 @@ TRACKED files and is a genuine `check_registry_payload_parity.py` RED belonging 
 22 failures in `tests/scoring` are pre-existing on `main` (confirmed identical with this lane's
 changes stashed) and belong to the golden-manifest / forecast-parity lanes.
 
-Records: `docs/handoffs/PRECOMMIT-nwpp-42-2026-09-19.md`,
-`docs/handoffs/FINDING-nwpp-42-2026-09-20.md`, `scripts/gen_nwpp42_attestation.py`,
+Records: `docs/records/nwpp/PRECOMMIT-nwpp-42-2026-09-19.md`,
+`docs/records/nwpp/FINDING-nwpp-42-2026-09-20.md`, `scripts/gen_nwpp42_attestation.py`,
 `scripts/data/derive_campd_coal_heat_rates.py`, `scripts/probes/_nwpp42_compose_span.py`,
 `scripts/probes/_nwpp42_leg_check.py`.
 
@@ -365,8 +365,8 @@ remains an **OPEN OWNER DECISION** (`FINDING-nwpp-45` §8); the 2025 energy bala
 `thermal_tranches_NWPP.csv`; the NWPP-40/41/42 attestation corrections **still owed**. New:
 EIA-930 2025 NWPP hydro carries a **−44,969 MW hour** (does not affect the robust p95 ceiling).
 
-Records: `docs/handoffs/PRECOMMIT-nwpp-46-2026-09-22.md`,
-`docs/handoffs/RESULT-nwpp-46-2026-09-22.md`, `scripts/gen_nwpp46_attestation.py`,
+Records: `docs/records/nwpp/PRECOMMIT-nwpp-46-2026-09-22.md`,
+`docs/records/nwpp/RESULT-nwpp-46-2026-09-22.md`, `scripts/gen_nwpp46_attestation.py`,
 `scripts/probes/_nwpp46_{coal_stack,marginal_hr,hydro_envelope}_phase0.py`,
 `scripts/probes/_nwpp46_gates.py`.
 
@@ -582,7 +582,7 @@ Zero LP on keeper #13's committed payload, benchmark and the NWPP-NEXT-5 contrac
 - Secondary: PGE Beaver 8073 has no CEMS, so it has no benchmark plant row and no measured CC rate (model 2.41 vs
   0.37 TWh in 2020). The benchmark's per-plant CC sum and its classFull disagree by −2.2 to +4.6 TWh.
 
-Record: `docs/handoffs/FINDING-nwppnext7-cc-long-is-coal-short-2026-09-26.md`.
+Record: `docs/records/nwpp/FINDING-nwppnext7-cc-long-is-coal-short-2026-09-26.md`.
 
 ## nwpp-next-7 (cont.) — 2026-09-27 — coal take floor (owner rulings Q1–Q5, soft) → KEEPER #14
 
@@ -692,7 +692,7 @@ Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext10-exit-ym-routing-2019-2025-
 ## NWPP-NEXT-11 — 2026-09-29 — zero-LP decomposition of the coal records (keeper #16 stands)
 
 No solve. Everything was read from committed artifacts. Record:
-`docs/handoffs/FINDING-nwppnext11-coal-c1-c4-decomposition-2026-09-29.md`.
+`docs/records/nwpp/FINDING-nwppnext11-coal-c1-c4-decomposition-2026-09-29.md`.
 
 - **COAL_PRB 2020 (+4.20 TWh) is mostly a benchmark effect.** `reconcile_vintage_classes` scales every fossil class
   by one factor (0.87–0.92 in 2019–2024) to match EIA-930 gas + coal.
@@ -713,7 +713,7 @@ No solve. Everything was read from committed artifacts. Record:
 
 ## NWPP-NEXT-12 — 2026-09-29/30 — lay-up guard rejected, lever 2 re-scoped, Boardman membership repair (keeper #17)
 
-Zero-LP record: `docs/handoffs/FINDING-nwppnext12-layup-guard-and-coal-availability-2026-09-29.md`.
+Zero-LP record: `docs/records/nwpp/FINDING-nwppnext12-layup-guard-and-coal-availability-2026-09-29.md`.
 
 - **Lever 3, the merit guard: R.** The derived NWPP per-unit merit extract reclassifies 48 windows, all coal.
   - The panel's clearing cost is a fossil-only band ($26–30/MWh in 2020) that excludes hydro and imports.
@@ -739,7 +739,7 @@ Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext12-boardman-membership-*.md`.
 
 ## NWPP-NEXT-13 — 2026-09-30 — coal WEFOR relief blocked; per-unit attribution (keeper #18)
 
-Zero-LP record: `docs/handoffs/FINDING-nwppnext13-wefor-and-perunit-phase0-2026-09-30.md`.
+Zero-LP record: `docs/records/nwpp/FINDING-nwppnext13-wefor-and-perunit-phase0-2026-09-30.md`.
 
 - **Lever 1, coal WEFOR double count: identified, not armable.** On the screened set, W_s 4.0–4.6 % < X_s 16–24 %
   in every year (residual 0). But `unit_outage_dispatched_bin_denominator` is **R** on NWPP: it divides by bins that
@@ -758,7 +758,7 @@ r 0.662. Records: `docs/handoffs/{PRECOMMIT,RESULT}-nwppnext13-perunit-attributi
 
 ## NWPP-NEXT-14 — 2026-09-30 — C4 coal 2023 decomposed; two structural repairs built (solve owed)
 
-Zero-LP record: `docs/handoffs/FINDING-nwppnext14-bridger-c4-decomposition-2026-09-30.md`.
+Zero-LP record: `docs/records/nwpp/FINDING-nwppnext14-bridger-c4-decomposition-2026-09-30.md`.
 
 - **C4 coal 2023's deepening (0.695 → 0.662) is entirely Jim Bridger.** Swapping only Bridger's hourly back to #17
   gives 0.709. With Bridger = CEMS **outside** Feb–May the fleet reads **0.810 (PASS)**; fixing only the closed
@@ -775,18 +775,18 @@ Zero-LP record: `docs/handoffs/FINDING-nwppnext14-bridger-c4-decomposition-2026-
   `cc_subfloor_eia923_heat_rates` (new, default off; CC mirror of SPP-49) gives it its own EIA-923 CC rate,
   9.0–9.6.
 - **Captive-mine fuel cost:** design only
-  (`docs/handoffs/DESIGN-nwppnext14-captive-mine-marginal-fuel-2026-09-30.md`). In 2023 the captive mine was booked
+  (`docs/records/nwpp/DESIGN-nwppnext14-captive-mine-marginal-fuel-2026-09-30.md`). In 2023 the captive mine was booked
   at $4.21/MMBtu while contract sources ran $2.42–2.62.
 - **Coal WEFOR live-capacity sub-flag:** owner authorized a later lane to build it (new gated field; MISO
   byte-identical).
 - **Solve NOT run.** This session hit the session-nesting limit (depth 8) and cannot launch shards; the parent never
   solves (rule 32(a)). PRECOMMIT and the seven shard prompts are committed
-  (`docs/handoffs/PRECOMMIT-nwppnext14-vintage-denominator-2019-2025-2026-09-30.md`,
-  `docs/handoffs/nwppnext14/shards/`). Pin: `b4e567fb1de9a53146730e0e75f95cb8db505c66`. G-DRIFT: all inert.
+  (`docs/records/nwpp/PRECOMMIT-nwppnext14-vintage-denominator-2019-2025-2026-09-30.md`,
+  `docs/records/nwpp/nwppnext14/shards/`). Pin: `b4e567fb1de9a53146730e0e75f95cb8db505c66`. G-DRIFT: all inert.
   Keeper #18 stands: NOT-YET on {dispatch_corr} under rubric v3.13.
 ## NWPP-NEXT-14 (solve lane, session 01VuR49n) — 2026-09-30 — Clark CC heat rate + Bridger vintage tranche row (keeper #19)
 
-Zero-LP record: `docs/handoffs/FINDING-nwppnext14-bridger-and-clark-phase0-2026-09-30.md`.
+Zero-LP record: `docs/records/nwpp/FINDING-nwppnext14-bridger-and-clark-phase0-2026-09-30.md`.
 
 - **C4 coal 2023 is Jim Bridger, and at #18 the decisive window is Jun–Oct.** Swapping Bridger to CEMS for Jun–Oct
   alone lifts fleet r 0.662 → 0.821. The Feb–May conservation window alone reaches only 0.697.
@@ -828,7 +828,7 @@ card "Keep #19; retire dup Clark field":
   in 11.
 - **Owner (2026-10-01): supersede only if better.** It is not decisively better, and the two Bridger fixes are
   alternatives. So it is **not promoted**, and NEXT-16 solves the **combined run** (keeper #19, fuel-split → vintage
-  denominator) on pin. Record: `docs/handoffs/RESULT-nwppnext15-vintage-denominator-2019-2025-2026-09-30.md`.
+  denominator) on pin. Record: `docs/records/nwpp/RESULT-nwppnext15-vintage-denominator-2019-2025-2026-09-30.md`.
 - **Captive-mine marginal fuel.** Phase 0 is in `PHASE0-nwppnext15-captive-mine-2026-09-30.md`; the identification rule
   was fixed before the census (one code-table erratum). Effectively a Jim Bridger lever: 2023 gap +$0.92/MMBtu, 2022
   −$0.13. Owner card "Build, no threshold" → `coal_captive_marginal_fuel_price` (default off, zero LP, not solved).
@@ -847,4 +847,4 @@ card "Keep #19; retire dup Clark field":
 - **D (captive-mine price):** C4 coal 2023 0.669 → 0.650; Bridger's extra energy lands in Nov–Dec, not Jun–Oct. R.
 - **E (live-capacity screened-coal WEFOR):** 4 new C4 FAILs (coal 2019/2022/2025, gas 2019). R.
 - **Correction:** #19 was on pin (its run_configs record the pinned libraries); the off-pin note belonged to NEXT-15's run.
-- Record: `docs/handoffs/RESULT-nwppnext16-combined-captive-live-2026-10-01.md`. Next: Bridger seasonal offer (NEXT-17).
+- Record: `docs/records/nwpp/RESULT-nwppnext16-combined-captive-live-2026-10-01.md`. Next: Bridger seasonal offer (NEXT-17).

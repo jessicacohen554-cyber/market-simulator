@@ -7,7 +7,7 @@ the cap-weighted CC_REGULAR econ bid (``mc_base + markup``, ex startup
 amortization) is reported by rung and by zone, beside COAL_BIT econ.
 
 Run: ``python3 scripts/probes/pjm_next5_card1_shape_census.py 2019 ... 2025``
-Writes ``results/calibration/_pjm_next5_card1_shape_census.json``.
+Writes ``results/phase0/pjm/_pjm_next5_card1_shape_census.json``.
 """
 
 from __future__ import annotations
@@ -85,7 +85,7 @@ def main() -> None:
         }
         out["years"][str(y)] = yr
         print(y, json.dumps(yr), flush=True)
-    dest = REPO / "results/calibration/_pjm_next5_card1_shape_census.json"
+    dest = REPO / "results/phase0/pjm/_pjm_next5_card1_shape_census.json"
     dest.write_text(json.dumps(out, indent=1))
     print("wrote", dest)
 

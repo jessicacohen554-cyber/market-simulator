@@ -3,7 +3,7 @@
 Pins the demand convention NWPP-10 §1.3 established (Adjusted column, per-
 member dropout screen, NO spike screen, AVRN/GRID as 0.0, UTC join onto the
 Pacific local year) and the served-interchange construction fixed in
-``docs/handoffs/PRECOMMIT-nwpp-20-2026-09-14.md`` §3.4. Reads the committed
+``docs/records/nwpp/PRECOMMIT-nwpp-20-2026-09-14.md`` §3.4. Reads the committed
 per-BA extracts NWPP-11 landed; skipped when they are not hydrated.
 """
 

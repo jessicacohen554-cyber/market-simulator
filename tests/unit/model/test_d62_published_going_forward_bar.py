@@ -5,7 +5,7 @@ published default gross Avoidable Cost Rate (Manual 18 Rev 62 §5.4.8.4(B)) and
 credits the tariff's published reactive component as the single out-of-market
 leg of the screen's margin. Charter: ``docs/handoffs/
 PRECOMMIT-capx-d62-pjm-acr-bar-2026-09-06.md``; measurement it executes:
-``docs/handoffs/FINDING-capx-d61-2026-09-05.md`` §4.
+``docs/records/forecast/FINDING-capx-d61-2026-09-05.md`` §4.
 
 Five properties, one test class each:
 

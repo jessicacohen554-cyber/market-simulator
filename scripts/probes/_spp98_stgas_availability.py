@@ -6,7 +6,7 @@ CAMPD ST_GAS energy in hours where the model's available MW is below CAMPD's act
 (availability-BLOCKED energy), and the share blocked with model availability == 0.
 
 Usage: uv run python scripts/probes/_spp98_stgas_availability.py <year> [<year> ...]
-Writes docs/handoffs/spp98/stgas_avail_<year>.json
+Writes docs/records/spp/spp98/stgas_avail_<year>.json
 """
 
 import base64
@@ -29,7 +29,7 @@ CLS = "ST_GAS"
 def main():
     """Measure availability-blocked CAMPD ST_GAS energy for each requested year."""
     meta = json.loads((B / "meta.json").read_text())
-    out_dir = REPO / "docs/handoffs/spp98"
+    out_dir = REPO / "docs/records/spp/spp98"
     out_dir.mkdir(parents=True, exist_ok=True)
     for y in map(int, sys.argv[1:]):
         kw = run_year_kwargs(meta)

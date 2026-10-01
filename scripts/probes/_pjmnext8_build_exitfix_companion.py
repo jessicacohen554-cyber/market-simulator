@@ -1,7 +1,7 @@
 """PJM-NEXT-8 card 2 — build the '-rederive-peakerkeep-exitfix-unitfuel-' companion. ZERO LP.
 
 Owner card 2026-09-28 ("Build + solve"): the exit-cohort repair of the CAMPD
-unit-outage layer (docs/FINDING-pjm-next-7-coal-phase0-2026-09-28.md §3). The
+unit-outage layer (docs/records/pjm/FINDING-pjm-next-7-coal-phase0-2026-09-28.md §3). The
 construction is the keeper's own (PJM-NEXT-6, step for step) with ONE switch:
 
 1. derive_campd_unit_outages.py --iso PJM --years 2019..2025

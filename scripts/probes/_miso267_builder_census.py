@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """miso-267: what the benchmark-builder repair does to EVERY ISO (rule 25), ZERO LP.
 
-The repair (``docs/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md``)
+The repair (``docs/records/miso/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md``)
 is in the shared bench path, so it reaches every ISO's parts at that ISO's next
 registration. nyiso-240 set the precedent this follows: measure each ISO's
 exposure and re-score each registered run against a repaired copy of its own

@@ -5,7 +5,7 @@
 asserts: the hydro-2 arm (``hydro_ror_split``) is now the KEEPER's own recipe
 and joins the incumbent posture, and the one field separating arm from
 control is ``demand_balance_screen``
-(docs/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md §1).
+(docs/records/pjm/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md §1).
 
 Usage::
 

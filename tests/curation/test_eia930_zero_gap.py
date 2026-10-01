@@ -10,7 +10,7 @@ Motivating measurement (2026-07-24, NYISO lane): the NYIS extract reads exactly
 0 MW of ``NG: NUC`` for 1,275 h of 2023 against a four-unit ~3.4 GW baseload
 fleet that NYISO's own hourly fuel-mix posting never shows below 1,989 MW — a
 3.46 TWh benchmark deflation that read as the model over-running nuclear. See
-``docs/FINDING-nyiso-import-hour-assignment-and-nuclear-benchmark-2026-07-24.md``.
+``docs/records/nyiso/FINDING-nyiso-import-hour-assignment-and-nuclear-benchmark-2026-07-24.md``.
 """
 
 import tempfile

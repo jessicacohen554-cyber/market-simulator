@@ -155,7 +155,7 @@ def inject_nyiso_import_hub_prices(
 # the LCR locality requirements are defined at (NYISO Locality Bulk-Power
 # Transmission Capability reports, design cooling day) — and is inactive
 # overnight, where measured LI net import runs well below its cable ceiling
-# (docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md Finding 4: LI inflow
+# (docs/records/nyiso/nyiso-downstate-reserve-incidence-2026-06.md Finding 4: LI inflow
 # max 2,480 MW vs ~2,850 MW ceiling, 0 h > 90%) and measured LI CT_PEAKER CF is
 # ~0.06 flat. Applied all-hours the floor force-committed in-pocket LM6000 baseload
 # overnight (D-2: nyiso_local_selfsupply forced 1.84/2.87/1.86 TWh of CT_PEAKER,
@@ -193,6 +193,7 @@ def apply_nyiso_li_tsl_import_cap(
     year: int,
     hours: int,
     n11_security_basis: bool = False,
+    all_hours: bool = False,
 ) -> np.ndarray:
     """Cap the NYC->Long_Island link at the published Zone-K locality import
     limit during the peak window (issue #1345, ``config.nyiso_li_lcr_tsl``).
@@ -262,6 +263,13 @@ def apply_nyiso_li_tsl_import_cap(
         n11_security_basis: read the published N-1-1 transmission security
             limit (``transfer_security_limit``) instead of the loss-of-source-
             net ``import_limit``. Default ``False`` — byte-identical.
+        all_hours: apply the cap in every hour, not only HB14-21
+            (NYISO-NEXT-26, ``config.nyiso_li_tsl_all_hours``). NYISO's own DAM
+            binds the Zone-K import security constraints (Y50 Dunwoodie-Shore
+            Road for loss of Y49, Y49 Sprain Brook-East Garden City, the
+            ConEd-LIPA interface) in every season, 58-64 % of binding hours
+            outside HB14-21, so the window is narrower than the constraint's
+            own measured driver (rule 17). Default ``False`` — byte-identical.
 
     Returns:
         ``(hours, n_links)`` per-hour TTC matrix with the in-window LI cap
@@ -314,6 +322,8 @@ def apply_nyiso_li_tsl_import_cap(
         ttc_t = ttc_arr.copy()
     hod = np.arange(int(hours)) % 24
     in_window = np.isin(hod, np.asarray(NYISO_SELFSUPPLY_FLOOR_HOURS))
+    if all_hours:
+        in_window = np.ones(int(hours), dtype=bool)
     for i in li_idx:
         ttc_t[in_window, i] = np.minimum(ttc_t[in_window, i], float(tsl))
     return ttc_t
@@ -733,7 +743,7 @@ def apply_nyiso_zonal_loss_links(iso_config):
 
     The nyiso-159 topology transform (gated on
     ``ScenarioConfig.nyiso_zonal_loss_surface``; charter
-    ``results/calibration/PREREG-nyiso159-zonal-loss-surface-2026-08-30.md``
+    ``docs/records/nyiso/PREREG-nyiso159-zonal-loss-surface-2026-08-30.md``
     §1): each of the four bidirectional internal chain links (UW↔CH, CH↔LH,
     LH↔NYC, NYC↔LI) becomes TWO one-way links (``is_bidirectional=False``,
     same TTC each way), each charged the
@@ -1220,7 +1230,7 @@ def build_nyiso_import_landing_band(
     ``Long_Island``) at their p90 envelopes in 96-99 % of hours, together
     +400-560 MW over their measured attributed schedules, and ``Upstate_West``
     264-375 MW short, every year 2021-2025 — a phantom import east of the
-    Central-East cutset (``docs/FINDING-nyiso-next15-landing-allocation-phase0-2026-09-30.md``).
+    Central-East cutset (``docs/records/nyiso/FINDING-nyiso-next15-landing-allocation-phase0-2026-09-30.md``).
 
     This builds one monthly band per pooled border link on the link's OWN
     measured attributed net schedule — the P-32 rows placed by

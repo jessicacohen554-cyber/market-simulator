@@ -47,7 +47,7 @@ _ZONES: tuple[str, ...] = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"
 # 2023 a 2022 solve silently used the 2023 Gold Book — ~1.23 GW of emergency DR
 # at a $500/MWh strike placed at the wrong vintage, inside the scarcity band C3c
 # measures (defect D-3 of
-# results/calibration/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md).
+# docs/records/nyiso/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md).
 #
 # 2018 IS MEASURED-ABSENT, NOT SKIPPED: the 2018 edition carries NO per-zone
 # SCR/EDRP table. It reports only NYCA totals, in prose (p.39: summer SCR 1,219

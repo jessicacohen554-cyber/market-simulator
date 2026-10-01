@@ -2,7 +2,7 @@
 
 The one un-run HiGHS experiment from the wall-clock lane
 (``docs/refactor-consolidation-plan-2026-07.md`` §7-H4,
-``docs/handoffs/wallclock-baseline-2026-07.md``). It is **not** the thread
+``docs/records/misc/wallclock-baseline-2026-07.md``). It is **not** the thread
 experiment: Exp 3 there swept ``MARKET_SIM_HIGHS_THREADS`` (HiGHS's
 ``threads`` option) and found no scaling. ``threads`` bounds how many threads
 HiGHS *may* use; ``parallel`` chooses whether the simplex runs its

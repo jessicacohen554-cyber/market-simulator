@@ -92,16 +92,9 @@ class SolveSurfaceSidecarTest(unittest.TestCase):
         self.assertEqual(stamp["epochs"], S.applicable_epochs(config_from_disk))
         self.assertEqual(stamp["rows"], len(S.surface_rows("ERCOT")))
 
-        # Not a weakening: an UNLEDGERED move still fails here. The ledger is
-        # owned by tests/regression/test_persisted_identity.py (imported, never
-        # copied — one ledger, one place to advance when a row legitimately
-        # moves).
-        from tests.regression.test_persisted_identity import (
-            LEDGERED_SURFACE_MOVES_BY_ISO,
-        )
-
-        ledgered = LEDGERED_SURFACE_MOVES_BY_ISO.get("ERCOT", {})
-        self.assertEqual(sorted(set(stamp["moved"]) - set(ledgered)), [])
+        # (The cross-file check against a hand-maintained move ledger was
+        # removed 2026-10-01 with the pin-ledger tests; the property above —
+        # the sidecar equals the live surface — is what the stamp guarantees.)
 
     def test_sidecar_and_config_agree(self):
         """The stamp describes the surface the STORED config would hash under."""

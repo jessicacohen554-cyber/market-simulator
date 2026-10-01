@@ -6,9 +6,9 @@
     "branch": "claude/scn-ws4c-load-hi-probes-o85iyi",
     "dirty": true,
     "changed_files": [
-      "ocs/handoffs/scn-ws4c/launch_arm.sh"
+      "ocs/records/forecast/scn-ws4c/launch_arm.sh"
     ],
-    "diffstat": "docs/handoffs/scn-ws4c/launch_arm.sh | 6 +++++-\n 1 file changed, 5 insertions(+), 1 deletion(-)"
+    "diffstat": "docs/records/forecast/scn-ws4c/launch_arm.sh | 6 +++++-\n 1 file changed, 5 insertions(+), 1 deletion(-)"
   },
   "scenario_config_source": "results/scn-ws4-probe/neiso/REF/NEISO/c3592c1adbc8ac17/config.yaml",
   "scenario_config": {

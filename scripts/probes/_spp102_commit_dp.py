@@ -22,7 +22,7 @@ Scored inside actual-RT <= $15 hours against CEMS online (CF >= 5 %):
   precision      share of DP-added low-price plant-hours in which CEMS was online
   recall         share of the CEMS-on / keeper-off low-price gap the DP recovers
 and over ALL hours: net delta CC TWh (the C1 CC_REGULAR reach).
-Writes docs/handoffs/spp102/commit_dp.json. Usage:
+Writes docs/records/spp/spp102/commit_dp.json. Usage:
   uv run python scripts/probes/_spp102_commit_dp.py <decoded payload.json> <stack dir>
 """
 
@@ -216,7 +216,9 @@ def main() -> int:
             }
         out[y] = res
         print(y, json.dumps(res))
-    (REPO / "docs/handoffs/spp102/commit_dp.json").write_text(json.dumps(out, indent=1))
+    (REPO / "docs/records/spp/spp102/commit_dp.json").write_text(
+        json.dumps(out, indent=1)
+    )
     return 0
 
 

@@ -23,7 +23,7 @@ keeper's ``wefor_residual = 0.0`` is identified, not tuned.
 
 Usage::
 
-    uv run python scripts/probes/_miso273_screened_phase0.py --out results/calibration/_miso273_screened_phase0.json
+    uv run python scripts/probes/_miso273_screened_phase0.py --out results/phase0/miso/_miso273_screened_phase0.json
 """
 
 from __future__ import annotations

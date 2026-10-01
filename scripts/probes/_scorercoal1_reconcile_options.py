@@ -8,7 +8,7 @@ Measures, for every ISO and every bench year a registered keeper scores:
     ``coal_923 × (1 − k)``.
 
 Then re-scores every registered run under three options, each defined BEFORE any
-number was read (docs/handoffs/RESULT-scorer-coal1-reconcile-options-2026-09-29.md §2):
+number was read (docs/records/misc/RESULT-scorer-coal1-reconcile-options-2026-09-29.md §2):
   (c) STATUS QUO — the committed classFull.
   (a) COAL-AT-923 — the combined-band TRIGGER is unchanged (same years reconcile),
       and the combined target is unchanged; coal is held at its own 923 grid level

@@ -1,49 +1,16 @@
 name: CI
 
-# Restored per-PR safety net (owner decision D-2, refactor-consolidation plan
-# §2-A). All four workflows and the .claude hooks cite
-# (ci.yml, lint.yml, clean-parity.yml, forecast-invariants.yml) were DELETED
-# wholesale on 2026-07-14 (commit 27c0152 "Remove all GitHub Actions workflows
-# and patch cruft" — the sweep that killed the per-task solve/apply workflows
-# burning Actions minutes) and never restored; the CI safety net was collateral.
-# This one durable workflow is sanctioned CI infrastructure — NOT a per-task
-# workflow — and folds the former standalone lint.yml back in as the `lint` job.
+# The per-PR safety net: three jobs, seconds-to-minutes each, path-filtered,
+# no LP solves, no data regeneration, no cron (heavy work runs in sessions —
+# this repo is private and runner minutes are billed). Cut from twelve jobs to
+# three on 2026-10-01 (owner decision, cleanup-A): lint, the fast test tier,
+# and one repo-checks job carrying every committed-artifact gate that is still
+# load-bearing. The forecast-board, promotion-completeness, cache-key-pin and
+# refactor-guard jobs are gone; their pin-ledger tests went with them
+# (docs/testing.md: a test asserts behaviour, never a stored digest).
 #
-# Every job is seconds-to-a-few-minutes and path-filtered; the jobs run in
-# parallel, so wall time is the slowest job (fast-tests). NO LP solves, no data
-# regeneration, no cron — heavy work runs in Claude sessions, per the repo CI
-# cost policy.
-#
-# SPARSE CHECKOUT — why nine of the ten jobs carry `DATA-FREE CHECKOUT`.
-# data/raw is ~7.5 GB tracked. Every job here used a plain unfiltered
-# actions/checkout, so a single PR run pulled it TEN times (~75 GB) — and only
-# fast-tests reads a byte of it. Each of the other nine now checks out the tree
-# MINUS data/raw, cutting per-PR transfer by ~90% at zero behavioural cost.
-#
-# Established empirically 2026-08-14, not by inspection: data/raw was moved
-# aside and every job's own commands were re-run against the resulting tree.
-# All nine pass identically with it absent. Three jobs were already red on main
-# for unrelated content reasons (forecast-parity-guard: two armed-but-undeclared
-# mechanisms; forecast-invariant-artifacts: three PJM runs with undeclared I7;
-# refactor-guards: a dangling script reference in gen_caiso189_attestation.py) —
-# each produced byte-identical output with and without data/raw, so those reds
-# are pre-existing and independent of this change.
-#
-# fast-tests carries its OWN sparse block — the data-INCLUDING one, not the
-# nine jobs' data-free exclusion. The tier hard-requires a measured ~2.0 GiB
-# subset of data/raw (removing data/raw wholesale takes it from green to ~780
-# failures + 81 errors), while a full checkout no longer fits a standard
-# runner at all (PERF-A 2026-08-15: 8.7 GiB tip pack + 9.0 GiB worktree vs
-# 15 GB runner disk — every fast-tests run died inside actions/checkout with
-# pytest never invoked). Its block lists exactly what the tier opens; do NOT
-# swap it for the nine jobs' `!/data/raw/` exclusion, and extend it (never
-# let a skip stand) when a test grows a new data dependency — see the job's
-# own comment and docs/handoffs/perf-recheck-2026-08.md §1.3.
-#
-# Non-cone mode is required — cone mode has no negation. The pattern set is the
-# same base pair scripts/hydrate_data.py applies (`/*` + `!/data/raw/`), so the
-# two stay in step. A job that later grows a data/raw dependency must DROP its
-# sparse block, never silently skip the input.
+# SPARSE CHECKOUT: data/raw is ~7.5 GB. lint and repo-checks exclude it;
+# fast-tests carries its own data-INCLUDING list (see that job).
 
 on:
   pull_request:
@@ -56,9 +23,6 @@ on:
       - ".python-version"
       - "conftest.py"
       - "frontend/data/backcast/**"
-      # FFR-1D (audit FR-24): the forecast namespaces were absent from these
-      # filters entirely, so a forecast-registration commit triggered NO CI at
-      # all — not even the registry gates that keep the two namespaces apart.
       - "frontend/data/hindcast/**"
       - "frontend/data/forecast/**"
       - "tests/golden/**"
@@ -66,415 +30,19 @@ on:
       - "docs/codebase-site/data/mechanism-matrix/**"
       - "CLAUDE.md"
       - ".github/workflows/ci.yml"
-      # THE PATH-FILTER TRAP (audit rulings R-AB / R-AE, 2026-09-04; board v24
-      # addendum; H-1's remedy). GitHub's rule, verbatim from "Handling skipped
-      # but required checks": a workflow SKIPPED BY PATH FILTERING leaves its
-      # checks "Pending", and a PR requiring them is blocked from merging — but
-      # a JOB skipped by a CONDITIONAL reports "Success". So once the owner
-      # makes this file's six jobs required, a PR touching only paths absent
-      # from this list shows those checks pending FOREVER. Records and finding
-      # PRs are exactly that shape, so the three paths below are enrolled: they
-      # now run CI (~10 min of billed runner minutes per such PR) instead of
-      # deadlocking.
-      #
-      # WHY NOT A PASSTHROUGH WORKFLOW. The alternative considered was a second
-      # always-run workflow whose one echo job stands in for the skipped CI.
-      # GitHub's own workaround is narrower than that: the second workflow must
-      # carry THE SAME `name:` KEY AND THE SAME REQUIRED JOB NAMES as the first,
-      # with the INVERSE path filter. A passthrough job under a NEW name only
-      # adds a seventh always-green check; the six required ones still never
-      # report, so docs-only PRs stay blocked. Building the name-matching
-      # version instead means an inverse filter maintained in lockstep with this
-      # list, and six jobs that report green having tested nothing — a false
-      # green by construction. That is an owner decision, not a lane's, so this
-      # widens the filter rather than weakening what "green" means. The required
-      # set is NOT touched either way.
-      #
-      # Deliberately NOT `docs/**`: running the suite on every docs PR is the
-      # runner-minute cost the repo CI policy exists to avoid.
-      - "docs/handoffs/audit-program-director-board-2026-08.md"
+      - "docs/records/governance/audit-program-director-board-2026-08.md"
       - "docs/model-audit-release-plan-2026-08.md"
       - "docs/FINDING-*.md"
-      # Y-26 (2026-09-06): THE GLOB ABOVE DOES NOT REACH THE PATH THE PROGRAM
-      # ACTUALLY WRITES TO. In a GitHub path filter a single `*` does not cross
-      # `/`, so `docs/FINDING-*.md` matches docs/FINDING-*.md (191 files at
-      # bed0a064) and NOT docs/handoffs/FINDING-*.md (147 files, growing) — and
-      # only ONE docs/handoffs path was enrolled, by exact filename. Raised by
-      # docs/handoffs/FINDING-y9-branch-protection-2026-09-05.md §5, which is
-      # itself a file in the unenrolled path.
-      #
-      # Census over the last 60 merged PRs at bed0a064 (and re-run over all 195
-      # non-empty merges in local history, same answer): 25/60 = 42% of merged
-      # PRs trigger ZERO CI today. The three prefixes below are the ones the
-      # census proves are records-shaped and unenrolled; together they rescue
-      # 24 of those 25 (86 of 88 over the 195-merge window).
-      #
-      #   docs/handoffs/**      12 of 25 rescued alone — FINDINGs, PRECOMMITs,
-      #                         handoff prompts; the live convention.
-      #   results/calibration/** 7 of 25 rescued alone — PREREG / PRECOMMIT /
-      #                         ADDENDUM records + phase-0 JSON. Rule 29
-      #                         [R-SCREEN] MANDATES these docs and rule 29(c)
-      #                         deletes the bundle, so the .md IS the record:
-      #                         records-shaped despite living under results/.
-      #   docs/calibration-log/** per-ISO calibration history (CLAUDE.md
-      #                         Reference Docs). 1 PR rescued alone over 195.
-      #
-      # Measured NOT to need enrolling, and deliberately left out (rule 26
-      # [R-DELETE] discipline — do not add these speculatively):
-      #   docs/multi-iso/**   0 PRs rescued alone in either window; it only ever
-      #                       co-occurs with docs/handoffs/**, already rescued.
-      #   docs/governance/**  0 PRs touched in either window.
-      #   data/raw/**         2 PRs, but data intake is NOT records-shaped and
-      #                       this is the ~7.5 GB tree nine jobs sparse-exclude
-      #                       on purpose. Enrolling it is a separate decision;
-      #                       such a PR still deadlocks. See the FINDING.
-      #
-      # COST, stated rather than buried: this repo is PRIVATE and runner minutes
-      # are billed. A CI run is ~21 BILLED minutes (10 jobs, billed per job
-      # rounded up; fast-tests alone is ~12 of them) — not the ~10 min of wall
-      # time cited above. At 589 merged PRs/week and a 44% newly-enrolled share
-      # that is ~260 PRs/week × 21 min ≈ 5,500 runner-min/week. That is
-      # material; the alternatives (and why a lane must not choose one
-      # unilaterally) are in
-      # docs/handoffs/FINDING-y26-ci-path-filter-2026-09-06.md §5.
-      - "docs/handoffs/**"
+      - "docs/records/**"
       - "results/calibration/**"
+      - "results/phase0/**"
       - "docs/calibration-log/**"
+
 
 permissions:
   contents: read
 
 jobs:
-  quarantine-gates:
-    name: Keeper-integrity gates
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          # DATA-FREE CHECKOUT (see header): this job reads no data/raw, with
-          # ONE exception: the 188 KB committed price reference actual_lmp.json.
-          # calibration_verdict._price_reference_absent is fail-closed on an
-          # unreadable reference, so without it every no-price ISO (SOCO, NWPP)
-          # re-scores as CALIBRATED-WITH-CAVEATS and S1 reports its status part
-          # stale against the verdict a provisioned checkout computes (soco-67).
-          sparse-checkout-cone-mode: false
-          sparse-checkout: |
-            /*
-            !/data/raw/*
-            /data/raw/_validation-source/
-            !/data/raw/_validation-source/*
-            /data/raw/_validation-source/actual_lmp.json
-      - name: Set up uv + Python
-        uses: astral-sh/setup-uv@v5
-        with:
-          python-version: "3.11"
-      - name: Install dependencies
-        run: uv sync
-      # E1-E9 keeper-text integrity (audit D-9; re-arms CLAUDE.md rules 24/25).
-      # Fast (reads committed artifacts). The H1 holdout-quarantine leg is GONE:
-      # [R-HOLDOUT] was removed 2026-09-09 by owner instruction.
-      - name: audit_keepers --check
-        run: uv run python scripts/audit_keepers.py --check
-      # D-9 overlay quarantine. (The D-6 holdout quarantine is GONE with
-      # [R-HOLDOUT], removed 2026-09-09.) --no-d2-recompute skips the D-2 recompute-vs-committed
-      # check, which rebuilds per-plant floors via run_year (needs each keeper's
-      # FETCHED raw inputs — uncommitted — and minutes of compute), so it is
-      # unfit for the fast hermetic PR tier; run the full --keepers in a
-      # data-provisioned lane. See scripts/legitimacy_diagnostics.py.
-      - name: legitimacy_diagnostics --keepers (fast tier)
-        run: uv run python scripts/legitimacy_diagnostics.py --keepers --no-d2-recompute
-      # Registry sidecar <-> run payload 1:1 parity (a sidecar-only run never
-      # renders in the Run Explorer). Tolerates only the tracked known-unsynced
-      # ids (scripts/lib/known_unsynced_keepers.py); any new gap fails.
-      - name: check_registry_payload_parity
-        run: uv run python scripts/check_registry_payload_parity.py
-      # Regression-golden manifests: per-entry provenance (no shared top-level
-      # git_sha that one capture re-stamps for every other) + the retention
-      # invariant (an entry whose provenance run retention has pruned must
-      # already carry its own keeper_snapshot). Lives in this job because it is
-      # the same registry-vs-artifact coupling the parity gate above checks —
-      # and it is the leg that was missing when top-15 retention orphaned five
-      # of six stage-0 captures with every gate green. Reads committed
-      # artifacts only; no solve. See
-      # docs/FINDING-stage0-provenance-repair-2026-09.md.
-      - name: check_golden_manifest
-        run: uv run python scripts/check_golden_manifest.py
-
-  forecast-invariant-artifacts:
-    name: Forecast-invariant artifact audit
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
-          sparse-checkout-cone-mode: false
-          sparse-checkout: |
-            /*
-            !/data/raw/
-      - name: Set up uv + Python
-        uses: astral-sh/setup-uv@v5
-        with:
-          python-version: "3.11"
-      - name: Install dependencies
-        run: uv sync
-      # FR-24: check_forecast_invariants.py had NO CI wiring anywhere — the
-      # standalone forecast-invariants.yml workflow was deleted 2026-07-14 and
-      # never restored, while the FF plan claimed the invariants were
-      # "CI-wired". Re-running the checker over a run needs that run's cache
-      # directory (per-year parquet + ledgers, gigabytes, uncommitted), so it
-      # can NEVER be a CI job — but auditing the invariant verdicts each
-      # registration COMMITS can. This is that gate: schema + full-battery
-      # coverage + a declared-failure ledger, so a newly registered run that
-      # fails an invariant is a reviewed line in
-      # frontend/data/hindcast/invariant-failures.json rather than a number
-      # that lands on the forecast dashboard unremarked.
-      #
-      # ARTIFACT-LEVEL, NO LP, NO SOLVE, NO data fetch — it reads committed
-      # JSON only, and runs in seconds (repo CI cost policy). The `uv sync`
-      # above is for the checker module's own imports, not for the audit.
-      - name: check_forecast_invariants --sidecar-dir
-        run: uv run python scripts/check_forecast_invariants.py --sidecar-dir
-
-  forecast-staleness-warn:
-    name: FR-21 forecast-board staleness (WARN only)
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      # Fetch full history: the check measures the commit distance from the
-      # board's newest scored-at sha to HEAD, and a shallow clone cannot reach
-      # a sha more than one commit back. With fetch-depth unset the distance
-      # reads "(unknown)" — honestly reported, but useless as a signal.
-      - uses: actions/checkout@v4
-        with:
-          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
-          sparse-checkout-cone-mode: false
-          sparse-checkout: |
-            /*
-            !/data/raw/
-          fetch-depth: 0
-      # FR-21: the T1 gate evidence went stale and NOTHING detected it. FF-2D
-      # scored 2026-07-20; over the following ten days ~20 keeper promotions
-      # landed, the pinned default config cache key moved twice and was
-      # broken-and-restored once, and the NYISO forecast orchestrator was
-      # rewired — with no FC verdict re-scored and no signal anywhere. This
-      # step is the signal: it reads the provenance stamps
-      # (scripts/lib/forecast_provenance.py) off the committed board artifacts
-      # and reports how far solve-affecting paths have moved past the newest
-      # scored sha.
-      #
-      # WARN-LEVEL BY DESIGN — the step never fails the build (the script exits
-      # 0 unless --fail-on-stale, which is deliberately NOT passed). Backcast
-      # calibration velocity must not be blocked by forecast-board freshness:
-      # the two lanes run concurrently, and the backcast lane is the one
-      # producing the keepers that make the board stale. Visibility, not a gate.
-      #
-      # Stdlib-only, no uv sync, no LP, no data fetch — it reads committed JSON
-      # and runs `git rev-list`, in seconds (repo CI cost policy).
-      - name: check_forecast_staleness
-        run: python3 scripts/check_forecast_staleness.py
-      # Audit board F-5: four of six gate-(a) rows in program-status.json were
-      # keyed to superseded keepers, and ERCOT's was VERDICT-FLIPPING (it read
-      # complete=False while ERCOT had held the rule-22 `complete` marker).
-      # The step above cannot see any of it — by design: the gate-(a) block
-      # deliberately avoids the forecast-provenance/v1 field names so a
-      # keeper/marker DERIVATION stamp can never be read as a forecast
-      # RE-SCORE. This is a SEPARATE script rather than a leg of that one so
-      # the separation stays structural: staleness reads provenance stamps and
-      # nothing else; this reads the gate-(a) row against the backcast keeper
-      # shards and calibration-complete.json, and touches no provenance stamp.
-      #
-      # HARD GATE (unlike the WARN above): a row citing a keeper that is not
-      # the ISO's designated one is a false statement about committed
-      # artifacts, not a freshness lag, and it is cheap and unambiguous to fix.
-      # It compares IDENTITY and MARKER STATE only — it never reads or
-      # re-derives a DETERMINATION, which is build_status.py's partition-aware
-      # rollup and must have exactly one instrument.
-      #
-      # Stdlib-only, no uv sync, no LP, no data fetch — committed JSON only.
-      - name: check_gate_a_provenance
-        run: python3 scripts/check_gate_a_provenance.py
-
-  forecast-parity-guard:
-    name: FR-22 backcast->forecast parity
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
-          sparse-checkout-cone-mode: false
-          sparse-checkout: |
-            /*
-            !/data/raw/
-      # FR-22: a mechanism armed in an ISO's keeper posture must have a
-      # forecast-orchestrator consumer or an explicit backcast-only-by-design
-      # declaration (scripts/lib/forecast_parity_registry.py). The nyiso-102
-      # gap (three NYISO downstate mechanisms wired only in the backcast
-      # orchestrator) was found by accident; this makes it a gate. Stdlib-only,
-      # no LP. Filed gaps (ffr-1e findings doc §4) report but do not fail —
-      # --strict-gaps flips that once they are closed.
-      #
-      # Held back by FFR-1E (which built the checker) because ci.yml was
-      # FFR-1D's file in Wave 1; landed here at the Wave-1 close (§W1-X item 4)
-      # verbatim from ffr-1e-forecast-parity-check-2026-07-31.md §6. The four
-      # path filters that section asks for are already subsumed by the broader
-      # globs at the top of this file — src/market_sim/** and
-      # scripts/{run_calibration*.py,lib/forecast_parity_registry.py} by
-      # `src/**` and `scripts/**`, frontend/data/backcast/keepers/** by
-      # `frontend/data/backcast/**` — so no filter edit is needed; narrower
-      # duplicates would only be noise.
-      - name: check_forecast_parity
-        run: python3 scripts/check_forecast_parity.py
-
-  promotion-completeness:
-    name: Promotion completeness (changed keepers)
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
-          sparse-checkout-cone-mode: false
-          sparse-checkout: |
-            /*
-            !/data/raw/
-      - name: Fetch PR base
-        run: git fetch --no-tags --depth=1 origin ${{ github.event.pull_request.base.sha }}
-      # Owner ruling R-BF (director board v43, 2026-09-25; proposal
-      # docs/handoffs/FINDING-y29-promotion-provenance-2026-09-24.md §6). The
-      # whole-tree guards (gate-(a) provenance, FR-22 parity, audit_keepers
-      # E13) all run above, yet promotion debt piled up. Each promoter left a
-      # stale gate-(a) row, a stale marker or an unpruned predecessor, and the
-      # red then showed on whichever unrelated PR ran next. This job is scoped
-      # to the ISOs whose keepers/<ISO>.json `keeper` changed against the PR
-      # base, so the failure lands on the PROMOTER's PR. For each such ISO it
-      # requires (a) gate-(a) provenance passes, (b) complete.<ISO>.keeper
-      # names the new keeper, (c) 0 FR-22 UNACCOUNTED, and (d) E13 clean.
-      # A PR that changes no keeper passes in seconds.
-      #
-      # FAILS on pull_request. Branch protection stays OFF (owner ruling R-BG),
-      # so it is advisory in effect: a red on the promoting PR, not a blocked
-      # merge. Stdlib-only, no uv sync, no LP.
-      - name: check_promotion_completeness
-        run: python3 scripts/check_promotion_completeness.py --base ${{ github.event.pull_request.base.sha }}
-
-  mechanism-matrix-guard:
-    name: Rule-28 mechanism-matrix guard
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
-          sparse-checkout-cone-mode: false
-          sparse-checkout: |
-            /*
-            !/data/raw/
-      - name: Fetch PR base
-        run: git fetch --no-tags --depth=1 origin ${{ github.event.pull_request.base.sha }}
-      # Rule 28 [R-MECH-MATRIX]: matrix integrity always; on the diff, a new
-      # ScenarioConfig field missing from the matrix FAILS (28c), and a new
-      # registry sidecar / calibration CLI flag without a matrix touch WARNS
-      # (28b). Stdlib-only — no uv sync needed, runs in seconds.
-      - name: check_mechanism_matrix
-        run: python3 scripts/check_mechanism_matrix.py --base ${{ github.event.pull_request.base.sha }}
-
-  cache-key-guard:
-    name: Cache-key registration guard
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
-          sparse-checkout-cone-mode: false
-          sparse-checkout: |
-            /*
-            !/data/raw/
-      - name: Fetch PR base
-        run: git fetch --no-tags --depth=1 origin ${{ github.event.pull_request.base.sha }}
-      # A new ScenarioConfig field that is not listed in
-      # _CACHE_KEY_OPTIONAL_FIELDS moves the DEFAULT cache key and orphans every
-      # on-disk cache, even when the field ships default-off. That has happened
-      # FIVE times (coal_committed_takeorpay_sunk_fixed, measured_ct_heat_rates,
-      # pjm_apsouth_interface_cut, pjm_external_net_position_cut / temp_derate_*
-      # / ramp_limits, pjm_zonal_loss_surface) and each time surfaced only as a
-      # pinned-literal test failure in an unrelated session, whose tempting and
-      # WRONG remedy is to re-pin the literal. This moves detection to the PR
-      # that adds the field. Stdlib-only — no uv sync needed, runs in seconds.
-      #
-      # FFR-3D added check 3, the DEFAULT-FLIP half (FFR-3A blocker 4). A
-      # registration is only meaningful against a fixed default: cache_key()
-      # drops a registered field when it equals the LIVE default, so MOVING that
-      # default makes the new-default run hash identically to the old-default run
-      # it supersedes — a silent same-key collision the registration itself
-      # cannot see. It has already happened once (the D-1/D-2 flips left the
-      # default key at 603c2498bf71d21d across a behavioral change). Check 3
-      # requires every registered field's live default to match its declared
-      # entry in _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS, so a flip cannot land until
-      # it is declared and its collision classified (byte-identical, or a
-      # cache-epoch entry + purge).
-      #
-      # Check 3 is a HEAD-only invariant, so the first step already covers it.
-      # The second re-runs it base-less so the invariant still holds if the
-      # PR-base fetch fails — a lane must not depend on a later session noticing
-      # a moved default (blocker 4 is "structural, needs a decision not a patch").
-      - name: check_cache_key_registration
-        run: python3 scripts/check_cache_key_registration.py --base ${{ github.event.pull_request.base.sha }}
-      - name: check_cache_key_declared_defaults (HEAD-only invariant)
-        if: always()
-        run: python3 scripts/check_cache_key_registration.py
-
-  cache-key-pin:
-    name: Pinned default cache key
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
-          sparse-checkout-cone-mode: false
-          sparse-checkout: |
-            /*
-            !/data/raw/
-      - name: Set up uv + Python
-        uses: astral-sh/setup-uv@v5
-        with:
-          python-version: "3.11"
-      - name: Install dependencies
-        run: uv sync
-      # HOUSE-1 (X.2, the red-main CI gap). These same tests were ALREADY in
-      # two job-level-blocking places when nyiso-128's unregistered field
-      # landed (PR #3624): test_persisted_identity.py in refactor-guards, both
-      # files collected by fast-tests — and both jobs correctly FAILED, as did
-      # cache-key-guard. None of it stopped the merge, for two reasons this
-      # job addresses one of and names the other:
-      #
-      # 1. SIGNAL ISOLATION (addressed here). Every job those tests ride is
-      #    also red for unrelated reasons whenever main carries baseline
-      #    failures (it did then; it does today), so a moved pinned key is
-      #    indistinguishable from ambient red without opening logs. THIS check
-      #    is red if and only if the persisted-identity / pinned-cache-key
-      #    contract is broken: red cache-key-pin = a moved default key, no log
-      #    forensics needed.
-      # 2. ENFORCEMENT (not addressable from inside a workflow file). PR #3624
-      #    was merged 86 s after creation — before ANY check completed. A
-      #    GitHub check, "blocking" or not, only gates a merge when the branch
-      #    is protected by required status checks and the merge waits for
-      #    them. That is a repo-settings act (owner): mark THIS check name
-      #    ("Pinned default cache key") required on main. Until then this job,
-      #    like every job in this file, is advisory in effect.
-      #
-      # Runs the two pin/guard files only (~2 s of pytest after uv sync), so
-      # its verdict lands minutes before the tiers that need the full suite.
-      - name: Pinned-key + declared-default guard tests
-        run: >-
-          uv run python -m pytest -q
-          tests/regression/test_persisted_identity.py
-          tests/unit/config/test_cache_key_default_flip_guard.py
-
   lint:
     name: Ruff lint + format
     runs-on: ubuntu-latest
@@ -501,51 +69,13 @@ jobs:
   fast-tests:
     name: Fast test tier
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
-          # PERF-A (2026-08-15): measured sparse checkout — the ONE job that
-          # needs data/raw gets exactly the subset the tier opens, instead of a
-          # full checkout that no longer fits a standard runner (8.7 GiB tip
-          # pack + 9.0 GiB worktree vs 15 GB disk; every run died inside this
-          # step, pytest never invoked). actions/checkout adds
-          # --filter=blob:none automatically when sparse-checkout is set, so
-          # transfer/disk is bounded by the ~2.0 GiB materialized set.
-          # The list = golden-data-tier.yml's audited 43 patterns + the
-          # fast-tier extension measured by running the full tier against
-          # exactly this restriction (0 failed / baseline skips locally;
-          # 6,837/6,838 + the scope2 line on a real runner, 10m50s job wall).
-          # Contract unchanged from the header: a job that grows a data/raw
-          # dependency extends this list, never silently skips the input —
-          # a missing corpus surfaces as FileNotFoundError or a skip-count
-          # rise over the 31-skip baseline. Measurement record + rerun recipe:
-          # docs/handoffs/perf-recheck-2026-08.md §1.3.
-          #
-          # y21 (2026-09-06) added /data/raw/load-forecast/ under that contract.
-          # SCN-LOAD (d14a7ed0, PR #4970) armed the electrification layers off
-          # curated load-forecast inputs, which gave the fast-tier test
-          # tests/unit/data/test_electrification_layers.py a data/raw
-          # dependency without extending this list. It surfaced exactly as the
-          # contract above says it would ("a missing corpus surfaces as
-          # FileNotFoundError"): the ERCOT EV leg raised on the absent
-          # ercot_ev_hourly_profile_2030.csv and reddened Fast test tier on
-          # main for every PR. The corpus is tracked, 18 files / 4.9 MiB, so
-          # honoring the dependency costs nothing measurable against the
-          # ~2.0 GiB materialized set.
-          #
-          # Y-30 (2026-09-24) added /shard-artifacts/ (36 tracked files,
-          # 7.1 MiB): test_cache_config_agreement's committed-corpus replay
-          # reads every tracked run_config.json, and the nyiso223 shard
-          # artifacts under that root raised FileNotFoundError outside the cone.
-          # Same lane added /data/raw/spp-hsl/spp_wind_curtailment_annual.csv:
-          # SPP-67's test_spp67_year_own_curtailment_rate reads it through
-          # renewables._spp_wind_reference_curtailment_rate, whose missing-file
-          # branch returns None — 7 fast-tier reds, not input drift.
-          # soco-85 (2026-09-28) added the two SOCO paths soco-84's tests read:
-          # tests/scoring/test_soco_lambda_benchmark.py (FERC-714 Sch. 6 lambda,
-          # 2.7 MB) and tests/unit/data/test_soco_energy_auction.py (committed
-          # auction store, 4.7 MB) — 2 fast-tier reds on main since soco-84.
+          # fast-tests needs the measured ~2.0 GiB data/raw subset below (a full
+          # checkout no longer fits a runner; a missing corpus surfaces as
+          # FileNotFoundError — extend the list, never let a skip stand).
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             /*
@@ -628,6 +158,8 @@ jobs:
             /data/raw/ercot/ASPLANNP433_*.parquet
             /data/raw/load-forecast/
             /data/raw/spp-hsl/spp_wind_curtailment_annual.csv
+            /data/raw/spp-gen-outage/
+            /data/raw/spp-mmu-unavailable-capacity/
             /data/raw/ercot/ercot_2024_ordc_reserves_hourly.parquet
             /data/raw/CAISO-AS/asreq_ALL_2023*.csv
             /data/raw/CAISO-AS/asreq_ALL_2024*.csv
@@ -639,67 +171,57 @@ jobs:
           python-version: "3.11"
       - name: Install dependencies
         run: uv sync
-      # Parallel fast tier. The `fulldata` mark is not yet registered (lands
-      # with Wave 2D); naming it in the -m expression is harmless (it simply
-      # matches nothing today), so this line needs no edit when 2D adds it.
-      #
-      # BLOCKING since 2026-07-27. Ran advisory from the workflow's restoration
-      # through two held flips; the full history — the 141-failure triage, the
-      # perf-budget measurement, and the path-dependent cache-key pin that held
-      # the last one — is in docs/handoffs/fast-tier-triage-2026-07-26.md
-      # §9-§9.3. Do not re-add `continue-on-error` to silence a red: fix the
-      # red, or escalate it there.
+      # The fast tier is BLOCKING. Fix the red; never re-add continue-on-error.
       - name: Fast pytest tier
         run: uv run python -m pytest -n 2 -m "not slow and not integration and not fulldata"
 
-  refactor-guards:
-    name: Structural refactor guards
+  repo-checks:
+    name: Repo checks (keeper integrity, parity, matrix, cache-key registration, imports)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
-          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
+          # Reads no data/raw except the 188 KB committed price reference
+          # (calibration_verdict is fail-closed on an unreadable reference).
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             /*
-            !/data/raw/
+            !/data/raw/*
+            /data/raw/_validation-source/
+            !/data/raw/_validation-source/*
+            /data/raw/_validation-source/actual_lmp.json
+      - name: Fetch PR base
+        run: git fetch --no-tags --depth=1 origin ${{ github.event.pull_request.base.sha }}
       - name: Set up uv + Python
         uses: astral-sh/setup-uv@v5
         with:
           python-version: "3.11"
       - name: Install dependencies
         run: uv sync
-      # Byte-compile every module (a syntax break anywhere fails fast).
+      # Keeper text vs committed artifacts (E1-E14; rule 35 E13 invariant).
+      - name: audit_keepers --check
+        run: uv run python scripts/audit_keepers.py --check
+      # Registry sidecar <-> run payload <-> bundle dir parity (rule 15).
+      - name: check_registry_payload_parity
+        run: uv run python scripts/check_registry_payload_parity.py
+      # Rule 28: a new ScenarioConfig field must have a matrix row (FAIL);
+      # stale line anchors only warn.
+      - name: check_mechanism_matrix
+        run: python3 scripts/check_mechanism_matrix.py --base ${{ github.event.pull_request.base.sha }}
+      # A new ScenarioConfig field must be registered in the cache key, and a
+      # registered field's live default must match its declaration.
+      - name: check_cache_key_registration
+        run: python3 scripts/check_cache_key_registration.py --base ${{ github.event.pull_request.base.sha }}
+      - name: check_cache_key_declared_defaults (HEAD-only invariant)
+        if: always()
+        run: python3 scripts/check_cache_key_registration.py
+      # Syntax + import walk + dangling script references.
       - name: compileall
         run: uv run python -m compileall -q src scripts
-      # pkgutil import-walk of market_sim + a script-reference lint (a moved or
-      # deleted script that leaves a live code/config invocation dangling).
       - name: import-walk + script-reference lint
         run: uv run python scripts/ci_refactor_guards.py
-      # Facade re-export + persisted-identity pins (BLOCKING, unlike the
-      # advisory fast tier): every split package must keep its full pre-split
-      # surface, and the pickle-borne classes their frozen module paths.
-      # test_pipeline_facade_shims.py joined this list on 2026-07-26, when the
-      # orchestrator-extraction alias conversion it pins finally landed
-      # (fast-tier escalation D4) — the shims are now the guard that a later
-      # cleanup cannot silently drop one.
-      #
-      # These ten live in tests/regression/ since the Wave-5A tests/ migration
-      # (they are frozen-surface guards, not unit tests). This list is one of
-      # the two path inventories that migration has to keep in step — moving
-      # any of them without editing this block silently disarms the only
-      # BLOCKING test gate in CI.
-      - name: facade re-export + persisted-identity tests
-        run: >-
-          uv run python -m pytest -q
-          tests/regression/test_persisted_identity.py
-          tests/regression/test_pipeline_facade_shims.py
-          tests/regression/test_constants_facade.py
-          tests/regression/test_dispatch_facade.py
-          tests/regression/test_eia930_facade.py
-          tests/regression/test_fuel_facade.py
-          tests/regression/test_fleet_facade.py
-          tests/regression/test_capacity_evolution_facade.py
-          tests/regression/test_transmission_facade.py
-          tests/regression/test_scenarios_facade.py
+      # Backcast->forecast parity of armed keeper fields: informational.
+      - name: check_forecast_parity (non-blocking)
+        continue-on-error: true
+        run: uv run python scripts/check_forecast_parity.py

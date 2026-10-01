@@ -2,7 +2,7 @@
  "provenance": "reconstruction",
  "reconstruction": {
   "status": "RECONSTRUCTED \u2014 NOT ORIGINAL",
-  "reconstructed_by": "capx-D8, 2026-08-30 \u2014 docs/handoffs/FINDING-capx-d8-dof-ledger-2026-08-30.md \u00a74 (method, evidence chain, verification)",
+  "reconstructed_by": "capx-D8, 2026-08-30 \u2014 docs/records/forecast/FINDING-capx-d8-dof-ledger-2026-08-30.md \u00a74 (method, evidence chain, verification)",
   "solve_sha_recorded": "292f577e (pre-rewrite launch base; unmapped \u2014 not among the 95 load-bearing commits in the citation map)",
   "solve_sha_mapped": "edb8d0c2c544d339507f1a4c2ddb5eb72483a561 (= pre-rewrite 6fbd3f28, the leg's recorded scored_at sha, mapped via docs/governance/citation-commit-map.txt) \u2014 used because the config surface there reproduces the leg's committed cache key exactly (see verification)",
   "method": "run_capacity_hindcast.build_config imported at the mapped sha in a sparse worktree and called with the invocation committed VERBATIM in the PREREG; the resolved ScenarioConfig asdict() is this file's scenario_config. No solve was run.",

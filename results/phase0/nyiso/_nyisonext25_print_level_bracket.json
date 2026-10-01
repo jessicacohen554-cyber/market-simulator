@@ -1,0 +1,817 @@
+[
+ {
+  "year": 2021,
+  "rows_changed": 448,
+  "max_abs_gas_delta": 1.034,
+  "zones": {
+   "Upstate_West": {
+    "cc_hr": 11.49,
+    "annual": {
+     "gas_off": 3.367,
+     "gas_on": 3.372,
+     "da": 28.52,
+     "keeper": 39.82,
+     "bracket_lo": 39.88,
+     "bracket_hi": 39.84,
+     "err_pct_keeper": 39.7,
+     "err_pct_lo": 39.8,
+     "err_pct_hi": 39.7
+    },
+    "winter": {
+     "gas_off": 3.365,
+     "gas_on": 3.394,
+     "da": 31.04,
+     "keeper": 45.14,
+     "bracket_lo": 45.48,
+     "bracket_hi": 45.3,
+     "err_pct_keeper": 45.4,
+     "err_pct_lo": 46.5,
+     "err_pct_hi": 45.9
+    },
+    "by_month_gas_ratio": {
+     "1": 0.97,
+     "2": 1.046,
+     "3": 0.99,
+     "4": 0.988,
+     "5": 1.0,
+     "6": 1.014,
+     "7": 1.008,
+     "8": 0.995,
+     "9": 0.988,
+     "10": 0.984,
+     "11": 1.024,
+     "12": 0.984
+    }
+   },
+   "Capital_Hudson": {
+    "cc_hr": 8.29,
+    "annual": {
+     "gas_off": 4.369,
+     "gas_on": 4.371,
+     "da": 44.6,
+     "keeper": 41.81,
+     "bracket_lo": 41.83,
+     "bracket_hi": 41.82,
+     "err_pct_keeper": -6.3,
+     "err_pct_lo": -6.2,
+     "err_pct_hi": -6.2
+    },
+    "winter": {
+     "gas_off": 6.855,
+     "gas_on": 6.865,
+     "da": 52.22,
+     "keeper": 48.59,
+     "bracket_lo": 48.67,
+     "bracket_hi": 48.7,
+     "err_pct_keeper": -7.0,
+     "err_pct_lo": -6.8,
+     "err_pct_hi": -6.8
+    },
+    "by_month_gas_ratio": {
+     "1": 0.97,
+     "2": 1.042,
+     "3": 0.99,
+     "4": 0.988,
+     "5": 1.0,
+     "6": 1.014,
+     "7": 1.008,
+     "8": 0.995,
+     "9": 0.988,
+     "10": 0.984,
+     "11": 1.024,
+     "12": 0.984
+    }
+   },
+   "NYC": {
+    "cc_hr": 8.46,
+    "annual": {
+     "gas_off": 3.659,
+     "gas_on": 3.662,
+     "da": 42.52,
+     "keeper": 43.19,
+     "bracket_lo": 43.22,
+     "bracket_hi": 43.2,
+     "err_pct_keeper": 1.6,
+     "err_pct_lo": 1.6,
+     "err_pct_hi": 1.6
+    },
+    "winter": {
+     "gas_off": 4.045,
+     "gas_on": 4.063,
+     "da": 48.96,
+     "keeper": 49.46,
+     "bracket_lo": 49.61,
+     "bracket_hi": 49.59,
+     "err_pct_keeper": 1.0,
+     "err_pct_lo": 1.3,
+     "err_pct_hi": 1.3
+    },
+    "by_month_gas_ratio": {
+     "1": 0.971,
+     "2": 1.041,
+     "3": 0.99,
+     "4": 0.988,
+     "5": 1.0,
+     "6": 1.014,
+     "7": 1.007,
+     "8": 0.995,
+     "9": 0.989,
+     "10": 0.984,
+     "11": 1.024,
+     "12": 0.985
+    }
+   },
+   "Long_Island": {
+    "cc_hr": 8.39,
+    "annual": {
+     "gas_off": 4.346,
+     "gas_on": 4.344,
+     "da": 54.06,
+     "keeper": 45.38,
+     "bracket_lo": 45.36,
+     "bracket_hi": 45.35,
+     "err_pct_keeper": -16.1,
+     "err_pct_lo": -16.1,
+     "err_pct_hi": -16.1
+    },
+    "winter": {
+     "gas_off": 6.761,
+     "gas_on": 6.755,
+     "da": 66.11,
+     "keeper": 57.22,
+     "bracket_lo": 57.17,
+     "bracket_hi": 57.16,
+     "err_pct_keeper": -13.5,
+     "err_pct_lo": -13.5,
+     "err_pct_hi": -13.5
+    },
+    "by_month_gas_ratio": {
+     "1": 0.97,
+     "2": 1.037,
+     "3": 0.99,
+     "4": 0.988,
+     "5": 1.0,
+     "6": 1.014,
+     "7": 1.008,
+     "8": 0.995,
+     "9": 0.988,
+     "10": 0.984,
+     "11": 1.024,
+     "12": 0.984
+    }
+   }
+  }
+ },
+ {
+  "year": 2022,
+  "rows_changed": 337,
+  "max_abs_gas_delta": 3.531,
+  "zones": {
+   "Upstate_West": {
+    "cc_hr": 11.59,
+    "annual": {
+     "gas_off": 5.759,
+     "gas_on": 5.783,
+     "da": 55.41,
+     "keeper": 76.18,
+     "bracket_lo": 76.47,
+     "bracket_hi": 76.55,
+     "err_pct_keeper": 37.5,
+     "err_pct_lo": 38.0,
+     "err_pct_hi": 38.1
+    },
+    "winter": {
+     "gas_off": 4.205,
+     "gas_on": 4.331,
+     "da": 77.82,
+     "keeper": 92.66,
+     "bracket_lo": 94.12,
+     "bracket_hi": 94.46,
+     "err_pct_keeper": 19.1,
+     "err_pct_lo": 20.9,
+     "err_pct_hi": 21.4
+    },
+    "by_month_gas_ratio": {
+     "1": 0.977,
+     "2": 1.029,
+     "3": 1.009,
+     "4": 1.0,
+     "5": 1.0,
+     "6": 0.991,
+     "7": 0.984,
+     "8": 1.0,
+     "9": 1.011,
+     "10": 0.978,
+     "11": 1.018,
+     "12": 1.071
+    }
+   },
+   "Capital_Hudson": {
+    "cc_hr": 8.24,
+    "annual": {
+     "gas_off": 8.349,
+     "gas_on": 8.407,
+     "da": 94.51,
+     "keeper": 80.45,
+     "bracket_lo": 80.93,
+     "bracket_hi": 80.86,
+     "err_pct_keeper": -14.9,
+     "err_pct_lo": -14.4,
+     "err_pct_hi": -14.4
+    },
+    "winter": {
+     "gas_off": 14.081,
+     "gas_on": 14.343,
+     "da": 128.26,
+     "keeper": 100.84,
+     "bracket_lo": 103.0,
+     "bracket_hi": 102.81,
+     "err_pct_keeper": -21.4,
+     "err_pct_lo": -19.7,
+     "err_pct_hi": -19.8
+    },
+    "by_month_gas_ratio": {
+     "1": 0.984,
+     "2": 1.027,
+     "3": 1.009,
+     "4": 1.0,
+     "5": 1.0,
+     "6": 0.991,
+     "7": 0.984,
+     "8": 1.0,
+     "9": 1.011,
+     "10": 0.978,
+     "11": 1.018,
+     "12": 1.061
+    }
+   },
+   "NYC": {
+    "cc_hr": 8.43,
+    "annual": {
+     "gas_off": 6.977,
+     "gas_on": 7.002,
+     "da": 84.44,
+     "keeper": 83.11,
+     "bracket_lo": 83.32,
+     "bracket_hi": 83.42,
+     "err_pct_keeper": -1.6,
+     "err_pct_lo": -1.3,
+     "err_pct_hi": -1.2
+    },
+    "winter": {
+     "gas_off": 8.695,
+     "gas_on": 8.825,
+     "da": 114.52,
+     "keeper": 102.87,
+     "bracket_lo": 103.96,
+     "bracket_hi": 104.46,
+     "err_pct_keeper": -10.2,
+     "err_pct_lo": -9.2,
+     "err_pct_hi": -8.8
+    },
+    "by_month_gas_ratio": {
+     "1": 0.979,
+     "2": 1.028,
+     "3": 1.008,
+     "4": 1.0,
+     "5": 1.0,
+     "6": 0.991,
+     "7": 0.984,
+     "8": 1.0,
+     "9": 1.011,
+     "10": 0.979,
+     "11": 1.017,
+     "12": 1.051
+    }
+   },
+   "Long_Island": {
+    "cc_hr": 8.49,
+    "annual": {
+     "gas_off": 8.231,
+     "gas_on": 8.287,
+     "da": 95.26,
+     "keeper": 84.45,
+     "bracket_lo": 84.93,
+     "bracket_hi": 84.85,
+     "err_pct_keeper": -11.3,
+     "err_pct_lo": -10.9,
+     "err_pct_hi": -10.9
+    },
+    "winter": {
+     "gas_off": 13.603,
+     "gas_on": 13.856,
+     "da": 123.85,
+     "keeper": 107.54,
+     "bracket_lo": 109.69,
+     "bracket_hi": 109.53,
+     "err_pct_keeper": -13.2,
+     "err_pct_lo": -11.4,
+     "err_pct_hi": -11.6
+    },
+    "by_month_gas_ratio": {
+     "1": 0.987,
+     "2": 1.026,
+     "3": 1.009,
+     "4": 1.0,
+     "5": 1.0,
+     "6": 0.991,
+     "7": 0.984,
+     "8": 1.0,
+     "9": 1.011,
+     "10": 0.978,
+     "11": 1.018,
+     "12": 1.056
+    }
+   }
+  }
+ },
+ {
+  "year": 2023,
+  "rows_changed": 328,
+  "max_abs_gas_delta": 8.752,
+  "zones": {
+   "Upstate_West": {
+    "cc_hr": 11.56,
+    "annual": {
+     "gas_off": 1.823,
+     "gas_on": 1.807,
+     "da": 26.08,
+     "keeper": 31.86,
+     "bracket_lo": 31.69,
+     "bracket_hi": 31.46,
+     "err_pct_keeper": 22.2,
+     "err_pct_lo": 21.5,
+     "err_pct_hi": 20.6
+    },
+    "winter": {
+     "gas_off": 2.021,
+     "gas_on": 1.939,
+     "da": 32.03,
+     "keeper": 37.7,
+     "bracket_lo": 36.75,
+     "bracket_hi": 35.73,
+     "err_pct_keeper": 17.7,
+     "err_pct_lo": 14.7,
+     "err_pct_hi": 11.5
+    },
+    "by_month_gas_ratio": {
+     "1": 0.998,
+     "2": 0.875,
+     "3": 1.011,
+     "4": 1.013,
+     "5": 0.981,
+     "6": 0.992,
+     "7": 0.985,
+     "8": 0.995,
+     "9": 1.016,
+     "10": 1.007,
+     "11": 1.03,
+     "12": 0.976
+    }
+   },
+   "Capital_Hudson": {
+    "cc_hr": 8.24,
+    "annual": {
+     "gas_off": 3.259,
+     "gas_on": 3.19,
+     "da": 36.38,
+     "keeper": 33.36,
+     "bracket_lo": 32.8,
+     "bracket_hi": 32.93,
+     "err_pct_keeper": -8.3,
+     "err_pct_lo": -9.8,
+     "err_pct_hi": -9.5
+    },
+    "winter": {
+     "gas_off": 5.146,
+     "gas_on": 4.834,
+     "da": 47.31,
+     "keeper": 40.07,
+     "bracket_lo": 37.49,
+     "bracket_hi": 37.98,
+     "err_pct_keeper": -15.3,
+     "err_pct_lo": -20.7,
+     "err_pct_hi": -19.7
+    },
+    "by_month_gas_ratio": {
+     "1": 0.998,
+     "2": 0.879,
+     "3": 1.011,
+     "4": 1.013,
+     "5": 0.981,
+     "6": 0.992,
+     "7": 0.985,
+     "8": 0.995,
+     "9": 1.016,
+     "10": 1.007,
+     "11": 1.03,
+     "12": 0.976
+    }
+   },
+   "NYC": {
+    "cc_hr": 8.31,
+    "annual": {
+     "gas_off": 2.078,
+     "gas_on": 2.054,
+     "da": 33.94,
+     "keeper": 34.2,
+     "bracket_lo": 34.0,
+     "bracket_hi": 33.81,
+     "err_pct_keeper": 0.7,
+     "err_pct_lo": 0.1,
+     "err_pct_hi": -0.4
+    },
+    "winter": {
+     "gas_off": 2.979,
+     "gas_on": 2.857,
+     "da": 42.21,
+     "keeper": 40.82,
+     "bracket_lo": 39.81,
+     "bracket_hi": 38.94,
+     "err_pct_keeper": -3.3,
+     "err_pct_lo": -5.7,
+     "err_pct_hi": -7.7
+    },
+    "by_month_gas_ratio": {
+     "1": 0.998,
+     "2": 0.901,
+     "3": 1.01,
+     "4": 1.012,
+     "5": 0.982,
+     "6": 0.992,
+     "7": 0.986,
+     "8": 0.995,
+     "9": 1.015,
+     "10": 1.006,
+     "11": 1.028,
+     "12": 0.977
+    }
+   },
+   "Long_Island": {
+    "cc_hr": 8.38,
+    "annual": {
+     "gas_off": 3.198,
+     "gas_on": 3.139,
+     "da": 40.76,
+     "keeper": 35.09,
+     "bracket_lo": 34.6,
+     "bracket_hi": 34.67,
+     "err_pct_keeper": -13.9,
+     "err_pct_lo": -15.1,
+     "err_pct_hi": -15.0
+    },
+    "winter": {
+     "gas_off": 4.898,
+     "gas_on": 4.626,
+     "da": 51.91,
+     "keeper": 41.54,
+     "bracket_lo": 39.26,
+     "bracket_hi": 39.45,
+     "err_pct_keeper": -20.0,
+     "err_pct_lo": -24.4,
+     "err_pct_hi": -24.0
+    },
+    "by_month_gas_ratio": {
+     "1": 0.998,
+     "2": 0.884,
+     "3": 1.011,
+     "4": 1.013,
+     "5": 0.981,
+     "6": 0.992,
+     "7": 0.985,
+     "8": 0.995,
+     "9": 1.016,
+     "10": 1.007,
+     "11": 1.03,
+     "12": 0.976
+    }
+   }
+  }
+ },
+ {
+  "year": 2024,
+  "rows_changed": 330,
+  "max_abs_gas_delta": 6.041,
+  "zones": {
+   "Upstate_West": {
+    "cc_hr": 11.58,
+    "annual": {
+     "gas_off": 1.835,
+     "gas_on": 1.893,
+     "da": 33.66,
+     "keeper": 34.66,
+     "bracket_lo": 35.34,
+     "bracket_hi": 35.84,
+     "err_pct_keeper": 3.0,
+     "err_pct_lo": 5.0,
+     "err_pct_hi": 6.5
+    },
+    "winter": {
+     "gas_off": 2.279,
+     "gas_on": 2.508,
+     "da": 46.44,
+     "keeper": 48.74,
+     "bracket_lo": 51.39,
+     "bracket_hi": 53.37,
+     "err_pct_keeper": 5.0,
+     "err_pct_lo": 10.7,
+     "err_pct_hi": 14.9
+    },
+    "by_month_gas_ratio": {
+     "1": 1.214,
+     "2": 1.015,
+     "3": 1.001,
+     "4": 0.978,
+     "5": 0.994,
+     "6": 0.996,
+     "7": 1.012,
+     "8": 0.997,
+     "9": 0.988,
+     "10": 1.003,
+     "11": 1.038,
+     "12": 1.017
+    }
+   },
+   "Capital_Hudson": {
+    "cc_hr": 8.28,
+    "annual": {
+     "gas_off": 2.774,
+     "gas_on": 2.891,
+     "da": 38.2,
+     "keeper": 36.47,
+     "bracket_lo": 37.44,
+     "bracket_hi": 37.57,
+     "err_pct_keeper": -4.5,
+     "err_pct_lo": -2.0,
+     "err_pct_hi": -1.7
+    },
+    "winter": {
+     "gas_off": 5.945,
+     "gas_on": 6.406,
+     "da": 57.12,
+     "keeper": 52.14,
+     "bracket_lo": 55.95,
+     "bracket_hi": 56.45,
+     "err_pct_keeper": -8.7,
+     "err_pct_lo": -2.0,
+     "err_pct_hi": -1.2
+    },
+    "by_month_gas_ratio": {
+     "1": 1.165,
+     "2": 1.016,
+     "3": 1.002,
+     "4": 0.978,
+     "5": 0.994,
+     "6": 0.996,
+     "7": 1.012,
+     "8": 0.997,
+     "9": 0.988,
+     "10": 1.003,
+     "11": 1.037,
+     "12": 1.016
+    }
+   },
+   "NYC": {
+    "cc_hr": 8.6,
+    "annual": {
+     "gas_off": 2.234,
+     "gas_on": 2.311,
+     "da": 39.48,
+     "keeper": 37.84,
+     "bracket_lo": 38.5,
+     "bracket_hi": 38.88,
+     "err_pct_keeper": -4.1,
+     "err_pct_lo": -2.5,
+     "err_pct_hi": -1.5
+    },
+    "winter": {
+     "gas_off": 3.681,
+     "gas_on": 3.98,
+     "da": 59.34,
+     "keeper": 54.1,
+     "bracket_lo": 56.67,
+     "bracket_hi": 58.16,
+     "err_pct_keeper": -8.8,
+     "err_pct_lo": -4.5,
+     "err_pct_hi": -2.0
+    },
+    "by_month_gas_ratio": {
+     "1": 1.145,
+     "2": 1.014,
+     "3": 1.001,
+     "4": 0.98,
+     "5": 0.994,
+     "6": 0.996,
+     "7": 1.012,
+     "8": 0.997,
+     "9": 0.989,
+     "10": 1.003,
+     "11": 1.036,
+     "12": 1.017
+    }
+   },
+   "Long_Island": {
+    "cc_hr": 8.59,
+    "annual": {
+     "gas_off": 2.757,
+     "gas_on": 2.86,
+     "da": 43.48,
+     "keeper": 38.28,
+     "bracket_lo": 39.17,
+     "bracket_hi": 39.37,
+     "err_pct_keeper": -12.0,
+     "err_pct_lo": -9.9,
+     "err_pct_hi": -9.4
+    },
+    "winter": {
+     "gas_off": 5.874,
+     "gas_on": 6.278,
+     "da": 63.11,
+     "keeper": 55.55,
+     "bracket_lo": 59.02,
+     "bracket_hi": 59.8,
+     "err_pct_keeper": -12.0,
+     "err_pct_lo": -6.5,
+     "err_pct_hi": -5.2
+    },
+    "by_month_gas_ratio": {
+     "1": 1.146,
+     "2": 1.016,
+     "3": 1.002,
+     "4": 0.978,
+     "5": 0.994,
+     "6": 0.996,
+     "7": 1.012,
+     "8": 0.997,
+     "9": 0.988,
+     "10": 1.003,
+     "11": 1.037,
+     "12": 1.016
+    }
+   }
+  }
+ },
+ {
+  "year": 2025,
+  "rows_changed": 342,
+  "max_abs_gas_delta": 28.275,
+  "zones": {
+   "Upstate_West": {
+    "cc_hr": 11.43,
+    "annual": {
+     "gas_off": 2.936,
+     "gas_on": 3.05,
+     "da": 55.89,
+     "keeper": 54.98,
+     "bracket_lo": 56.29,
+     "bracket_hi": 58.12,
+     "err_pct_keeper": -1.6,
+     "err_pct_lo": 0.7,
+     "err_pct_hi": 4.0
+    },
+    "winter": {
+     "gas_off": 3.601,
+     "gas_on": 4.112,
+     "da": 90.74,
+     "keeper": 90.16,
+     "bracket_lo": 96.01,
+     "bracket_hi": 103.56,
+     "err_pct_keeper": -0.6,
+     "err_pct_lo": 5.8,
+     "err_pct_hi": 14.1
+    },
+    "by_month_gas_ratio": {
+     "1": 1.262,
+     "2": 1.103,
+     "3": 0.998,
+     "4": 0.99,
+     "5": 0.973,
+     "6": 1.012,
+     "7": 1.002,
+     "8": 0.992,
+     "9": 0.985,
+     "10": 0.978,
+     "11": 1.013,
+     "12": 1.062
+    }
+   },
+   "Capital_Hudson": {
+    "cc_hr": 8.27,
+    "annual": {
+     "gas_off": 5.035,
+     "gas_on": 5.399,
+     "da": 65.15,
+     "keeper": 57.92,
+     "bracket_lo": 60.94,
+     "bracket_hi": 60.89,
+     "err_pct_keeper": -11.1,
+     "err_pct_lo": -6.5,
+     "err_pct_hi": -6.5
+    },
+    "winter": {
+     "gas_off": 11.628,
+     "gas_on": 13.15,
+     "da": 117.92,
+     "keeper": 97.31,
+     "bracket_lo": 109.9,
+     "bracket_hi": 110.05,
+     "err_pct_keeper": -17.5,
+     "err_pct_lo": -6.8,
+     "err_pct_hi": -6.7
+    },
+    "by_month_gas_ratio": {
+     "1": 1.234,
+     "2": 1.082,
+     "3": 0.998,
+     "4": 0.99,
+     "5": 0.973,
+     "6": 1.012,
+     "7": 1.002,
+     "8": 0.992,
+     "9": 0.985,
+     "10": 0.978,
+     "11": 1.013,
+     "12": 1.052
+    }
+   },
+   "NYC": {
+    "cc_hr": 8.58,
+    "annual": {
+     "gas_off": 3.809,
+     "gas_on": 3.992,
+     "da": 65.41,
+     "keeper": 59.43,
+     "bracket_lo": 61.0,
+     "bracket_hi": 62.15,
+     "err_pct_keeper": -9.1,
+     "err_pct_lo": -6.7,
+     "err_pct_hi": -5.0
+    },
+    "winter": {
+     "gas_off": 7.055,
+     "gas_on": 7.84,
+     "da": 114.43,
+     "keeper": 98.77,
+     "bracket_lo": 105.51,
+     "bracket_hi": 110.47,
+     "err_pct_keeper": -13.7,
+     "err_pct_lo": -7.8,
+     "err_pct_hi": -3.5
+    },
+    "by_month_gas_ratio": {
+     "1": 1.165,
+     "2": 1.101,
+     "3": 0.999,
+     "4": 0.991,
+     "5": 0.974,
+     "6": 1.011,
+     "7": 1.002,
+     "8": 0.992,
+     "9": 0.986,
+     "10": 0.979,
+     "11": 1.012,
+     "12": 1.056
+    }
+   },
+   "Long_Island": {
+    "cc_hr": 8.47,
+    "annual": {
+     "gas_off": 4.849,
+     "gas_on": 5.135,
+     "da": 68.87,
+     "keeper": 60.04,
+     "bracket_lo": 62.47,
+     "bracket_hi": 62.83,
+     "err_pct_keeper": -12.8,
+     "err_pct_lo": -9.3,
+     "err_pct_hi": -8.8
+    },
+    "winter": {
+     "gas_off": 10.874,
+     "gas_on": 12.081,
+     "da": 122.86,
+     "keeper": 101.26,
+     "bracket_lo": 111.49,
+     "bracket_hi": 113.28,
+     "err_pct_keeper": -17.6,
+     "err_pct_lo": -9.3,
+     "err_pct_hi": -7.8
+    },
+    "by_month_gas_ratio": {
+     "1": 1.205,
+     "2": 1.072,
+     "3": 0.998,
+     "4": 0.99,
+     "5": 0.973,
+     "6": 1.012,
+     "7": 1.002,
+     "8": 0.992,
+     "9": 0.985,
+     "10": 0.978,
+     "11": 1.013,
+     "12": 1.047
+    }
+   }
+  }
+ }
+]

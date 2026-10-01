@@ -167,7 +167,7 @@ CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR: float = 6.3
 # in. PJM added 2026-07-07: its CHP reports cap-weighted HRs of CC_CHP ~4.95 /
 # CT_CHP ~6.14 MMBtu/MWh (both physically impossible power-only), which let
 # steam-credited CHP clear as the cheapest thermal and over-deliver grid energy
-# +52-67% vs EIA-923 net-to-grid (docs/FINDING-pjm-burndown-2026-07.md). Other
+# +52-67% vs EIA-923 net-to-grid (docs/records/pjm/FINDING-pjm-burndown-2026-07.md). Other
 # ISOs join as their CHP HR distributions are audited in the all-ISO sweep.
 #
 # MISO was AUDITED 2026-07-08 and deliberately NOT added: although its reported
@@ -210,6 +210,72 @@ _GAS_FUEL_TYPES: frozenset[str] = frozenset({"gas_cc", "gas_ct", "gas_st"})
 _POF_DROP_GROUPS: frozenset[str] = frozenset(
     {"CC_REGULAR", "CC_CHP", "ST_GAS", "ST_CHP"}
 )
+
+# Fossil fuel types the SPP-106 MMU offer-side carrier covers (the MMU's
+# "conventional" thermal capacity less nuclear / hydro, which the keeper models
+# outside THERMAL_AVAILABILITY). Coal rows also match by class.
+_MMU_FOSSIL_FUELS: frozenset[str] = frozenset(
+    {"gas_cc", "gas_ct", "gas_st", "coal", "oil"}
+)
+
+
+def _spp_mmu_armed(config: "ScenarioConfig | None", iso: str | None) -> bool:
+    """True when ScenarioConfig.spp_mmu_offer_unavailability is armed for SPP."""
+    return (
+        config is not None
+        and bool(getattr(config, "spp_mmu_offer_unavailability", False))
+        and iso == "SPP"
+    )
+
+
+def _mmu_fossil(gen: "Generator") -> bool:
+    """True for a row the SPP-106 MMU carrier covers (gas, coal, oil)."""
+    return gen.fuel_type in _MMU_FOSSIL_FUELS or is_coal_class(gen.plant_group)
+
+
+def _apply_spp_mmu_bands(
+    generators: list["Generator"],
+    availability: np.ndarray,
+    pmax: np.ndarray,
+    hours: int,
+    year: int,
+) -> None:
+    """Remove the SPP MMU offer-side bands from every fossil row, in place (SPP-106).
+
+    ScenarioConfig.spp_mmu_offer_unavailability; DESIGN-spp-106 s5 (carrier EX).
+    Every fossil row loses the "above emergency max" and "economic to emergency
+    max" shares all year, plus the ambient MW-days spread over Jun-Sep as a
+    share of fossil pmax. Clipped at 0, so a row on full outage stays at 0.
+    The caller runs it after the outage overlays and before the COD ramp. The
+    flat derates it replaces are skipped in ``_availability_matrix`` (rule 19).
+    """
+    from market_sim.data.spp_mmu_unavailability import mmu_shares
+
+    idx = np.array([i for i, g in enumerate(generators) if _mmu_fossil(g)], dtype=int)
+    if not idx.size:
+        return
+    sh = mmu_shares(year)
+    fos_mw = float(np.asarray(pmax, dtype=float)[idx].sum())
+    amb = sh.ambient_mw / fos_mw if fos_mw > 0.0 else 0.0
+    cut = np.full(hours, sh.above_emer + sh.eco_to_emer)
+    cut[np.isin(_hour_to_month_index(hours), (5, 6, 7, 8))] += amb  # Jun-Sep
+    availability[idx, :hours] = np.maximum(
+        0.0, availability[idx, :hours] - cut[None, :]
+    )
+    logger.info(
+        "SPP MMU offer-side bands (SPP %d, MMU year %d): %d fossil rows; flat "
+        "perf + summer class derate replaced; above-emer %.4f + eco-to-emer "
+        "%.4f all year, ambient %.4f Jun-Sep (%.0f MW of %.0f MW fossil pmax)",
+        year,
+        sh.year_used,
+        idx.size,
+        sh.above_emer,
+        sh.eco_to_emer,
+        amb,
+        sh.ambient_mw,
+        fos_mw,
+    )
+
 
 # Per-plant coal sustained-output ceilings now live in
 # constants.COAL_MAX_CF_BY_PLANT (re-derived from CAMPD outage-adjusted
@@ -873,6 +939,11 @@ def _availability_matrix(
                 len({int(g.plant_code) for g in _ct_rows} - _miss),
                 len(_miss),
             )
+        # SPP-106 (ScenarioConfig.spp_mmu_offer_unavailability): the MMU's
+        # measured bands REPLACE the flat GADS performance derate and the flat
+        # summer class derate on fossil rows (rule 19); the bands themselves are
+        # removed after the outage overlays in generators_to_fleet_arrays.
+        _mmu_on = _spp_mmu_armed(config, _iso)
         for g_idx, gen in enumerate(generators):
             if gen.plant_group not in THERMAL_AVAILABILITY:
                 continue
@@ -880,6 +951,9 @@ def _availability_matrix(
             pof, wefor, derate = _thermal_outage(
                 gen.plant_group, fleet_year - gen.online_year
             )
+            _mmu_row = _mmu_on and _mmu_fossil(gen)
+            if _mmu_row:
+                derate = 0.0
             # ISO-gated gas-steam forced-outage base override. The global ST_GAS
             # WEFOR base (0.21) is fitted to ERCOT's once-through steamers and is
             # >2x every other thermal class — an implicit availability crush that
@@ -1084,7 +1158,11 @@ def _availability_matrix(
                             availability[g_idx, ~summer] *= _wr
                 else:
                     summer_derate = _SUMMER_CLASS_DERATE.get(gen.plant_group)
-                    if summer_derate and not _basis_aware_suppresses(gen):
+                    if (
+                        summer_derate
+                        and not _basis_aware_suppresses(gen)
+                        and not _mmu_row
+                    ):
                         availability[g_idx, summer] *= 1.0 - summer_derate
             # Per-plant coal max-CF ceilings: cap availability so the unit
             # cannot dispatch above its sustained operating limit.
@@ -1383,7 +1461,7 @@ def _apply_outage_overlays(
     # removed 2026-07-17 because summing a plant's
     # units hid single-unit outages and folded daily-cycling combined cycles
     # into phantom summer outages
-    # (results/calibration/FINDING-ercot79-phantom-outage-2026-07.md).
+    # (docs/records/ercot/FINDING-ercot79-phantom-outage-2026-07.md).
     if (
         config is not None
         and getattr(config, "outage_source", "statistical") == "historic"
@@ -2081,7 +2159,7 @@ def _apply_outage_overlays(
     # measured level. Tranches cap at 1.0; a 3-pass water-fill redistributes
     # the clipped mass so the class-day total still lands on the measured
     # fraction where feasible. Provenance + June/Sep-2023 forensics:
-    # docs/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md.
+    # docs/records/ercot/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md.
     if (
         config is not None
         and _iso == "ERCOT"
@@ -2348,7 +2426,7 @@ def _apply_outage_overlays(
         # (config-collapse train-aliasing, partial site acceptance) plus true
         # OFF-at-HSL filings through certified dead stops — see the
         # ScenarioConfig field comment and
-        # docs/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md. CT_PEAKER is
+        # docs/records/ercot/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md. CT_PEAKER is
         # in scope on principle and provably inert (peakers carry no windows
         # by the detector's design). Coal-only arms stay byte-identical: for
         # a coal generator the (plant_code, artifact_class(plant_group)) layer
@@ -2778,7 +2856,7 @@ def _apply_outage_overlays(
         )
 
         # FLEET grain, not class grain, and the ex-ante measurement is why
-        # (results/calibration/_pjm161_removeonly_exante.json). PJM publishes
+        # (results/phase0/pjm/_pjm161_removeonly_exante.json). PJM publishes
         # ONE fleet number; `pjm_dam_availability_series` spreads it into a
         # single availability FRACTION handed to every covered class, which as
         # a remove-only cap degenerates into "every class ceilinged at the
@@ -2940,6 +3018,14 @@ def _apply_outage_overlays(
                 "CC_REGULAR outage derate reallocated top-of-stack for %d plant(s)",
                 realloc_plants,
             )
+
+
+# Month x hour-of-day conduct cell of each hour of the model's 8760 clock (Feb 29
+# dropped, as the CAMPD hour index is) -- the grain of
+# ``cc_conduct_profile`` (config.cc_mustrun_conduct_window, PJM-NEXT-17).
+_CONDUCT_CELL: np.ndarray = np.repeat(
+    np.arange(12), [744, 672, 744, 720, 744, 720, 744, 744, 720, 744, 720, 744]
+) * 24 + np.tile(np.arange(24), 365)
 
 
 def _commitment_day_order(sys_load: np.ndarray | None, hours: int) -> np.ndarray | None:
@@ -3246,6 +3332,28 @@ def _compose_min_gen_floors(
         config is not None
         and getattr(config, "coal_sync_window_commitment_grain", False)
     )
+    # PLANT-CONDUCT placement of the CC_REGULAR leg of the per-plant must-run
+    # window (config.cc_mustrun_conduct_window, PJM-NEXT-17; see the field). Same
+    # SIZE, level, membership and clip; the hours are ranked by the plant's own
+    # measured CAMPD online probability in the hour's month x hour-of-day cell,
+    # ties by system load. A backcast excludes its own solve year's meter
+    # (rule 13); a forecast pools every artifact year. Empty => the incumbent
+    # system-load ranking stands for every plant (byte-identical when off).
+    _cc_conduct: dict[int, np.ndarray] = {}
+    if config is not None and getattr(config, "cc_mustrun_conduct_window", False):
+        _excl = (
+            int(_yr)
+            if _yr is not None and getattr(config, "mode", "forecast") == "backcast"
+            else None
+        )
+        _cc_conduct = _pkg_ns().cc_conduct_profile(_iso or "ERCOT", _excl)
+        logger.info(
+            "cc_mustrun_conduct_window ARMED (%s, excluded year %s): %d plant "
+            "conduct profile(s)",
+            _iso or "ERCOT",
+            _excl,
+            len(_cc_conduct),
+        )
     # MEASURED LAY-UP WINDOW MASK for both per-plant must-run seams
     # (config.mustrun_layup_window_mask, miso-173). The merit-order guard's
     # economic-lay-up companion extract records, per unit and dated window, the
@@ -3756,6 +3864,10 @@ def _compose_min_gen_floors(
             # (config.mustrun_window_commitment_grain, spp-27) — see the gate
             # block above. ``None`` when unarmed, so the hour grain stands.
             day_order = _commitment_day_order(sys_load, hours) if _day_grain else None
+            _load_pos = None
+            if _cc_conduct and load_rank is not None:
+                _load_pos = np.empty(hours, dtype=np.int64)
+                _load_pos[load_rank] = np.arange(hours)
             for g_idx, gen in enumerate(generators):
                 pmin_mw = getattr(gen, "cc_mustrun_pmin_mw", 0.0)
                 if pmin_mw <= 0.0:
@@ -3816,7 +3928,18 @@ def _compose_min_gen_floors(
                     k = int(round(frac * hours))
                     if k <= 0:
                         continue
-                    hrs = _mustrun_window_hours(load_rank, day_order, k, _day_grain)
+                    _prof = (
+                        _cc_conduct.get(int(getattr(gen, "plant_code", 0) or 0))
+                        if mech_id == MECH_CC_MUSTRUN_PER_PLANT
+                        and _load_pos is not None
+                        and hours == _CONDUCT_CELL.size
+                        else None
+                    )
+                    if _prof is not None:
+                        # Conduct rank first, system-load rank as the tiebreak.
+                        hrs = np.lexsort((_load_pos, -_prof[_CONDUCT_CELL]))[:k]
+                    else:
+                        hrs = _mustrun_window_hours(load_rank, day_order, k, _day_grain)
                     if _lu is not None:
                         vals = np.minimum(
                             pmin_mw,
@@ -4252,8 +4375,8 @@ def generators_to_fleet_arrays(
     # every crossover year -- proved by an on-recipe ``fleet_only`` rebuild of all
     # seven backcast keepers and the T1-F/T1-H recipes before this landed.
     # Costs one set build per call; changes no decision.
-    # docs/handoffs/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §2.1/§2.4
-    # docs/handoffs/FINDING-capx-d88-2026-09-08.md
+    # docs/records/forecast/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §2.1/§2.4
+    # docs/records/forecast/FINDING-capx-d88-2026-09-08.md
     _unit_ids = [g.unit_id for g in generators]
     if len(set(_unit_ids)) != len(_unit_ids):
         _counts = Counter(_unit_ids)
@@ -4383,6 +4506,9 @@ def generators_to_fleet_arrays(
     _apply_outage_overlays(
         generators, availability, pmax, heat_rate, hours, config, _iso, _yr
     )
+
+    if _spp_mmu_armed(config, _iso) and _yr is not None:
+        _apply_spp_mmu_bands(generators, availability, pmax, hours, int(_yr))
 
     if _crow_rate is not None and _crow_idx.size:
         from market_sim.data.spp_gas_outage import (

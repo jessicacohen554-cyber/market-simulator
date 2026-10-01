@@ -4,7 +4,7 @@
 DSW_CT) by the measured commodity-gas delta so they track the same Henry-Hub-
 plus-citygate-basis spot the hub-basis overlay applies to in-state gas — the
 forecast-consistent, no-OASIS replacement for the desert-SW leg of lever A. See
-``results/calibration/PLAN-caiso-gas-coupled-imports-2026-06-20.md``.
+``docs/records/caiso/PLAN-caiso-gas-coupled-imports-2026-06-20.md``.
 """
 
 from __future__ import annotations

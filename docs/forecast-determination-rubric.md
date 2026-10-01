@@ -91,7 +91,7 @@ adopted, adapted, and rejected:
    realized-fuel vs as-known variants and the CO2 decomposition table);
    (c) projection-vs-projection context tables (our FC-5 corridor, with the
    sharper divergence-explanation discipline from
-   `docs/handoffs/cross-model-corridor-2026-07-13.md` — divergence is not
+   `docs/records/misc/cross-model-corridor-2026-07-13.md` — divergence is not
    failure; *unexplained* divergence is).
    **Rejected:** ReEDS' documented practice of adjusting state-level cost
    coefficients until generation matches history — that is answer-key fitting
@@ -122,7 +122,7 @@ adopted, adapted, and rejected:
    corridor benchmarks are context, never fit targets (rule 13, plan §7.6).
 5. **Monitor/market-design anchors** (Potomac SOM net-revenue tables, ORDC
    design parameters, RTO planning reserve margins/VRR curves — the on-disk
-   corpus plus `docs/handoffs/cross-model-corridor-2026-07-13.md` §2).
+   corpus plus `docs/records/misc/cross-model-corridor-2026-07-13.md` §2).
    **Adopted:** as the design-target source for FC-2's adequacy/equilibrium
    corridors (planning-RM bands, ORDC-plausible scarcity frequency,
    position-vs-curve via T-R4). These are market-design facts, not fitted
@@ -194,7 +194,7 @@ status is the worst of its row statuses (`FAIL` > `CAVEAT` > `PASS`);
      over-fire signature). Bounds set from the design role of the channel,
      before any FF-0B baseline exists.*
   5. **Curve-ON position trajectory (curve-ON ISOs only).** Import **T-R4 by
-     reference** (`docs/handoffs/forecast-retirement-calibration-plan-2026-07.md`
+     reference** (`docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md`
      §3): model position vs published auction position within T-R4's own
      bands; scored from the committed position-validation artifact. Absent
      artifact for a curve-ON ISO ⇒ `SKIPPED` (counts as unscored evidence).
@@ -224,7 +224,7 @@ status is the worst of its row statuses (`FAIL` > `CAVEAT` > `PASS`);
   `score_capacity_hindcast.py` output on the 2021–2025 (2020-vintage,
   2022-bridged) window; optionally a committed T-R scorecard.
 - **Metric & thresholds: imported by reference, never restated.** The gating
-  bands are exactly `docs/handoffs/forecast-validation-program-2026-07.md`
+  bands are exactly `docs/records/forecast/forecast-validation-program-2026-07.md`
   §1.4 (cumulative thermal retired ±10% total / ±20% per fuel; unit recall
   ≥ 70% for >300 MW units; false-retire ≤ 15%; timing ≤ 1.5 yr; additions by
   tech ±15% wind/solar/gas, ±25% storage; tech-mix shares Δ ≤ 5 pp; hindcast
@@ -502,10 +502,10 @@ responsibility, exactly as backcast C6.
    moves any other row, or that follows a read of the failing row without a
    pushed pre-declaration, is the post-hoc route golden-1 refused and GOLDEN-2
    §3 pre-declared against, and is refused here. The model case is
-   `docs/handoffs/FINDING-capx-d47-golden3-attestation-2026-09-04.md` §1
+   `docs/records/forecast/FINDING-capx-d47-golden3-attestation-2026-09-04.md` §1
    (GOLDEN-3: pre-declaration at `71dd390e`, `scored_at_sha 71dd390ed56f`,
    exactly one row moved, determination unchanged); the ruling's signature is
-   `docs/handoffs/capx-director-ledger-2026-08.md` §3 Q37. The limb provides
+   `docs/records/forecast/capx-director-ledger-2026-08.md` §3 Q37. The limb provides
    for the deviation D47 had to disclose; it certifies provenance, not
    accuracy, exactly as limb 1.
 
@@ -531,7 +531,7 @@ memo was built from web fetches, which is not reproducible scoring input.
 > (6) `ISONE_CELT_2026`, (7) `CAISO_IEPR_2025` and (8) `MISO_FUTURES` are
 > reachable hosts whose tables sit behind a JavaScript portal, a docket-search
 > UI, or a 403, and land with no new code once the file is in hand. Full record:
-> `docs/handoffs/FINDING-capx-d22-fc5-corridor-2026-08-31.md`. The list below is
+> `docs/records/forecast/FINDING-capx-d22-fc5-corridor-2026-08-31.md`. The list below is
 > preserved as the original work order.
 
 **On disk (usable already):**

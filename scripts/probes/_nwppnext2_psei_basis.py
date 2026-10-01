@@ -1,6 +1,6 @@
 """NWPP-NEXT-2 item 4 probe (zero LP): PSEI EIA-930 basis vs FERC 714, the Colstrip
 double booking, and the non-balance demand flag. Record:
-docs/handoffs/FINDING-nwppnext2-psei-basis-2026-09-25.md. Run from repo root.
+docs/records/nwpp/FINDING-nwppnext2-psei-basis-2026-09-25.md. Run from repo root.
 """
 
 # ruff: noqa

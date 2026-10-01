@@ -340,7 +340,8 @@ def campd_boiler_units(iso: str, years: list[int], codes: set[int]) -> pd.DataFr
 
     Returns:
         The pooled hourly frame, boiler units only, positive load and heat
-        input only.
+        input only, with every CAMPD stack-duplicate pair merged into the one
+        boiler it physically is (:func:`merge_stack_duplicates`).
     """
     frames: list[pd.DataFrame] = []
     for state in campd.states_for_iso(iso):
@@ -355,6 +356,8 @@ def campd_boiler_units(iso: str, years: list[int], codes: set[int]) -> pd.DataFr
                     "facilityId",
                     "facilityName",
                     "unitId",
+                    "date",
+                    "hour",
                     "opTime",
                     "grossLoad",
                     "heatInput",
@@ -369,10 +372,53 @@ def campd_boiler_units(iso: str, years: list[int], codes: set[int]) -> pd.DataFr
                 frames.append(df.assign(year=year))
     if not frames:
         raise SystemExit(f"{iso}: no CAMPD boiler hours at any {TARGET_CLASS} plant")
-    pooled = pd.concat(frames, ignore_index=True).dropna(
-        subset=["grossLoad", "heatInput"]
-    )
+    pooled = merge_stack_duplicates(pd.concat(frames, ignore_index=True))
+    pooled = pooled.dropna(subset=["grossLoad", "heatInput"])
     return pooled[(pooled["grossLoad"] > 0.0) & (pooled["heatInput"] > 0.0)]
+
+
+def merge_stack_duplicates(pooled: pd.DataFrame) -> pd.DataFrame:
+    """Merge each CAMPD stack-duplicate pair into the single boiler it is.
+
+    CEMS reports a split-boiler unit on two monitored paths (Astoria 8906:
+    ``31RH``/``32SH`` and ``51RH``/``52SH``, :data:`campd.CAMPD_STACK_DUPLICATE_UNITS`)
+    and repeats the unit's FULL ``grossLoad`` on both rows while each row
+    carries only ITS OWN path's ``heatInput``. Scored as separate units, each
+    half divides half the fuel by all of the load (an implied ~5.6 MMBtu/MWh,
+    below any physical steam boiler), and the per-hour band screen then keeps
+    only the minority of hours in which one path happened to carry most of the
+    fuel — a selection-biased rate (Astoria pooled 9.45 net against the merged
+    meter's ~11.7). Same repair, same helpers, as the nyiso-192 merit-order
+    panel (``outage_detect.build_merit_order_panel``): per hour, the
+    duplicate's ``grossLoad`` is dropped (:func:`campd.stack_duplicate_mask`),
+    the row is relabelled onto its primary
+    (:func:`campd.merge_stack_duplicate_units`), and the pair is summed —
+    generation counted once, heat input over both paths. ``opTime`` takes the
+    pair's max. Rows at every other facility are returned untouched and in
+    their original order, so no other unit's sums move by a bit.
+    """
+    dup_fac = pooled["facilityId"].isin(list(campd.CAMPD_STACK_DUPLICATE_FACILITIES))
+    if not dup_fac.any():
+        return pooled
+    rest = pooled[~dup_fac]
+    dup = pooled[dup_fac].copy()
+    dup.loc[
+        campd.stack_duplicate_mask(dup["facilityId"], dup["unitId"]), "grossLoad"
+    ] = 0.0
+    dup["unitId"] = campd.merge_stack_duplicate_units(dup["facilityId"], dup["unitId"])
+    merged = (
+        dup.groupby(["facilityId", "unitId", "year", "date", "hour"], sort=True)
+        .agg(
+            facilityName=("facilityName", "first"),
+            opTime=("opTime", "max"),
+            grossLoad=("grossLoad", lambda x: x.sum(min_count=1)),
+            heatInput=("heatInput", lambda x: x.sum(min_count=1)),
+            primaryFuelInfo=("primaryFuelInfo", "first"),
+            unitType=("unitType", "first"),
+        )
+        .reset_index()
+    )
+    return pd.concat([rest, merged[rest.columns]], ignore_index=True)
 
 
 def pair_units_to_rows(

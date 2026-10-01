@@ -3,7 +3,7 @@
 ``ScenarioConfig.coal_perplant_offer_yearly`` — matrix §5.1 item 12's rule-23
 re-derivation of the armed ERCOT-144 identification from the delivery-2023
 corpus. What must hold (the precommit's construction contract,
-``docs/PRECOMMIT-ercot168-coal-perplant-year-curves-2026-08-05.md``):
+``docs/records/ercot/PRECOMMIT-ercot168-coal-perplant-year-curves-2026-08-05.md``):
 
 - a solve year PRESENT in the year table prices committed/econ tranches per
   (months × hours) window on the window's own curve, on the model's fixed-CST

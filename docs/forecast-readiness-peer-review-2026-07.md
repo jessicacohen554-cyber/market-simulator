@@ -16,8 +16,8 @@ EGEAS). This review does **not** re-derive the comparison tables — the repo al
 design-legitimacy review against exactly this reference set
 (`docs/third-party-peer-review-2026-07.md`), a standing per-mechanism research mandate
 (forecast plan §4, "consult the field before inventing"), and completed adopted/adapted/rejected
-tables for the retirement rule (`docs/handoffs/ff-retirement-rule-redesign-2026-07.md`), the
-entry stack (`docs/handoffs/ff-entry-stack-completion-2026-07.md`), new-build costs
+tables for the retirement rule (`docs/records/forecast/ff-retirement-rule-redesign-2026-07.md`), the
+entry stack (`docs/records/forecast/ff-entry-stack-completion-2026-07.md`), new-build costs
 (`docs/new-build-cost-methodology-2026-07.md`), fuel forwards
 (`docs/fuel-forward-methodology-2026-07.md`), and capacity-price formation
 (`docs/capacity-price-forward-methodology-2026-07.md`). What this review adds is the
@@ -210,7 +210,7 @@ this list verbatim until the underlying item changes state:
 > two bundles are gone and their two cache keys are mechanically refused
 > (`results/cache.CONTAMINATED_CACHE_KEYS`), so no later run can silently cache-hit the
 > contaminated solve. The seam is fixed and regression-tested (FFR-3U,
-> `docs/handoffs/ffr-3u-bridge-seam-2026-08-04.md`); an audit of every committed artifact
+> `docs/records/forecast/ffr-3u-bridge-seam-2026-08-04.md`); an audit of every committed artifact
 > (82 hindcast-harness legs replayed through the fixed predicate) found **no other run
 > affected**. Disclosed here because a holdout-discipline incident is material to how any
 > out-of-sample claim in this program should be read, whatever the determination.

@@ -317,6 +317,14 @@ SPP_HSL_DIR: Path = RAW_DATA_DIR / "spp-hsl"
 # under ScenarioConfig.spp_gas_crow_residual_outage (SPP-105).
 SPP_GEN_OUTAGE_DIR: Path = RAW_DATA_DIR / "spp-gen-outage"
 SPP_GEN_OUTAGE_CSV: Path = SPP_GEN_OUTAGE_DIR / "spp_capacity_gen_outage_hourly.csv"
+# SPP MMU "Unavailable Generation Capacity in SPP Markets" (Dec 2025) annual
+# offer-side / unreported-derate MW, 2020-2024, digitized (README). Read by
+# market_sim.data.spp_mmu_unavailability under
+# ScenarioConfig.spp_mmu_offer_unavailability (SPP-106).
+SPP_MMU_UNAVAILABLE_DIR: Path = RAW_DATA_DIR / "spp-mmu-unavailable-capacity"
+SPP_MMU_UNAVAILABLE_CSV: Path = (
+    SPP_MMU_UNAVAILABLE_DIR / "spp_mmu_unavailable_capacity.csv"
+)
 # Per-zone wind SHAPE (NASA POWER MERRA-2 reanalysis → power curve), one parquet
 # per backcast year. Built by scripts/data/build_miso_wind_shape.py; read by
 # market_sim.data.renewables to give MISO's three regions distinct wind diurnal/
@@ -460,7 +468,7 @@ CAISO_HUB_MEMBERSHIP_CSV: Path = REFERENCE_DIR / "caiso-plant-hub-membership.csv
 
 # Measured CAISO plant->sub-zone membership for the FSNO sub-zonal partition
 # (caiso-223 §B recut of the caiso-217 crosswalk — the committed
-# results/calibration/_caiso223_membership_recut.csv rows with subzone in
+# results/phase0/caiso/_caiso223_membership_recut.csv rows with subzone in
 # {FSNO, NP15, ZP26}; SP15-side rows are hub-unchanged by construction).
 # Read by data.zone_assignment ONLY when ScenarioConfig
 # caiso_fsno_subzonal_topology is armed (config.topology_variant)

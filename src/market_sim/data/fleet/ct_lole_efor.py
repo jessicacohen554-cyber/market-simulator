@@ -8,7 +8,7 @@ forced-outage rate: each plant's capacity-weighted mean of its CT units' SPP
 natural-gas EFOR for their size bin (``constants.SPP_LOLE_GAS_EFOR_BY_SIZE``),
 one summer and one winter value. It REPLACES the WEFOR term; it never stacks on it
 (rule 19 [R-ONE-MECH]). Zero free parameters (rule 21 [R-DOF]).
-docs/handoffs/DESIGN-spp-104-ct-outage-2026-09-29.md.
+docs/records/spp/DESIGN-spp-104-ct-outage-2026-09-29.md.
 """
 
 from __future__ import annotations

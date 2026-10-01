@@ -1,13 +1,13 @@
 """caiso-285 — WHY so few CAISO CC units become RA-bridge candidates. ZERO LP.
 
-Executes ``docs/PRECOMMIT-caiso285-instrumented-probe-2026-09-17.md`` section 6
+Executes ``docs/records/caiso/PRECOMMIT-caiso285-instrumented-probe-2026-09-17.md`` section 6
 verbatim. Every threshold, bucket definition, hour set and verdict word was
 fixed and pushed (``b48448cbacc3eabebf57a051039797847ff9cf14``) before the
 instrumented shard was launched; nothing here selects a cut.
 
 WHAT IT READS
 -------------
-* ``results/calibration/_caiso285_belly_2024.json`` — the frozen 876-hour belly
+* ``results/phase0/caiso/_caiso285_belly_2024.json`` — the frozen 876-hour belly
   set (``sha256[:16] = c5948fb0d43620a1``), built from the KEEPER's committed
   sidecars and re-verified here.
 * the instrumented probe bundle's ``hourly/p0_commitment_<year>.parquet`` — the
@@ -59,7 +59,7 @@ from market_sim.model.commitment import find_runs  # noqa: E402
 YEAR = 2024
 T = 8760
 MIN_LOAD_FRAC = 0.26  # the keeper's measured caiso_ra_min_load_frac (rule 23)
-BELLY = REPO / "results/calibration/_caiso285_belly_2024.json"
+BELLY = REPO / "results/phase0/caiso/_caiso285_belly_2024.json"
 KEEPER = REPO / "results/calibration/caiso275_B_gascoupling_span"
 
 #: PRE-REGISTERED verdict cuts (PRECOMMIT section 6.3). Never swept.
@@ -273,7 +273,7 @@ def main(probe_bundle: Path, fleet_npz: Path, out_path: Path) -> None:
 
     report: dict = {
         "lane": "caiso-285",
-        "precommit": "docs/PRECOMMIT-caiso285-instrumented-probe-2026-09-17.md",
+        "precommit": "docs/records/caiso/PRECOMMIT-caiso285-instrumented-probe-2026-09-17.md",
         "precommit_sha": "b48448cbacc3eabebf57a051039797847ff9cf14",
         "probe_bundle": str(probe_bundle.relative_to(REPO)),
         "keeper_bundle": str(KEEPER.relative_to(REPO)),
@@ -422,7 +422,7 @@ if __name__ == "__main__":
     ap.add_argument("--probe-bundle", default="results/calibration/caiso285_instr_2024")
     ap.add_argument("--fleet-npz", required=True)
     ap.add_argument(
-        "--out", default="results/calibration/_caiso285_bridge_candidacy.json"
+        "--out", default="results/phase0/caiso/_caiso285_bridge_candidacy.json"
     )
     a = ap.parse_args()
     main(REPO / a.probe_bundle, Path(a.fleet_npz), REPO / a.out)

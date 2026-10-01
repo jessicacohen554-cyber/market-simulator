@@ -2,7 +2,7 @@
 
 > ### ⚠️ TWO DOCUMENTS EXECUTE RULING R-D. THIS IS ONE OF THEM. NEITHER IS WRONG.
 >
-> **The companion is `docs/DECISION-MAP-ercot-wind-entry-2026-08-31.md`** (266
+> **The companion is `docs/records/ercot/DECISION-MAP-ercot-wind-entry-2026-08-31.md`** (266
 > lines, the records lane's R-D execution). Both were produced against R-D in the
 > same window by two different lanes. **That duplication was a DIRECTOR DISPATCH
 > ERROR — this map was dispatched to the C-1 lane after the records lane had
@@ -34,7 +34,7 @@
 _2026-08-31 · C-1 ERCOT wind-entry lane, discharging the **MAP** half of owner
 ruling **R-D** (2026-08-31 director sitting), which placed this lane at
 **TERMINAL REST + MAP**. The rest half was executed by
-`docs/FINDING-c1-joint-wind-ab-2026-08-31.md` (ruling R-B's joint A/B); this
+`docs/records/misc/FINDING-c1-joint-wind-ab-2026-08-31.md` (ruling R-B's joint A/B); this
 document is the map that ruling owed and that had never been produced._
 
 **ZERO SOLVE.** No LP, no year solved, no bundle registered on either
@@ -48,7 +48,7 @@ already adjudicated there.
 
 **R-D itself is not yet in the committed record.** At this base
 (`origin/main` @ `54d5772c`) the director board
-`docs/handoffs/audit-program-director-board-2026-08.md` §111–130 records only
+`docs/records/governance/audit-program-director-board-2026-08.md` §111–130 records only
 R-A / R-B / R-C from the same sitting. This document is therefore the first
 artifact to carry R-D, and it carries it as what it is: a ruling recorded, not
 a ruling adjudicated here.
@@ -94,9 +94,9 @@ the backcast-lane verdict, `fc` the forecast-lane verdict.
 | 1 | `vre_procurement_additions` (armed) | same | *supplies all 0.350* | — | *defines the baseline* | `O` / **`fc K`** | FFR-9C §3.6 via the ERCOT shard cell: wind **350.2 MW** injected at the 2022 step; committed cohort 6,761 MW (wind 1,847 / solar 4,914); ~4,921 MW effective-2021 remainder **held-and-discarded** at base year 2021 |
 | 2 | `entry_lookahead_reprice` **DISARMED** (dual-based signal object) | `…-t1h-disarm` / `2eab21467a4214c7` | **1.442** | **+1.092** | **8.87 %** | **`K`** / **`fc O`** | `FINDING-entry-signal-disarm-2026-08.md` §0; share computed at `FINDING-t1h-capacity-entry-phase0-2026-08-30.md` §4.1 |
 | 3 | `entry_forward_expectation_signal` (duals re-levelled forward) | `…-t1h-fwdexp` / `a2dc52ffebf14761` | **1.442** | **+1.092** | **8.87 %** | `O` / `fc O` | `FINDING-entry-signal-forward-expectation-2026-08-25.md` §2 P2, §5 |
-| 4 | `entry_margin_exhaustion` alone (D11-R volume rule, on the shipped signal) | `…-t1h-d11r-exhaustion` / `cc7bbe1170db65c2` | 0.954 | +0.604 | **4.91 %** | `O` / **`fc K`** | `docs/handoffs/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md` §3 (wind 603.4 MW enters 2023) |
+| 4 | `entry_margin_exhaustion` alone (D11-R volume rule, on the shipped signal) | `…-t1h-d11r-exhaustion` / `cc7bbe1170db65c2` | 0.954 | +0.604 | **4.91 %** | `O` / **`fc K`** | `docs/records/forecast/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md` §3 (wind 603.4 MW enters 2023) |
 | 5 | **JOINT** — disarm **+** `entry_margin_exhaustion` | `…-t1h-c1joint-arm` / `0490af522537a67c` | **1.442** | **+1.092** | **8.87 %** | both cells stamped with this A/B | `FINDING-c1-joint-wind-ab-2026-08-31.md` §3.3 — **`NON_COMPLEMENTARY`** |
-| 6 | `entry_margin_exhaustion` **+** `entry_forward_reserve_leg` — **the ERCOT forecast default at HEAD** (ruling Q15) | `…-t1h-d12c-armed` / `f061b2646bfaac8b` | **0.350** | **0.000** | **0.00 %** | `O` / `fc K` (both fields) | `docs/handoffs/FINDING-capx-d12c-confirm-pair-2026-08-30.md` §3–§4.1 row R-3/R-4/R-5: "wind 0.350"; arming `FINDING-capx-d12a-arming-2026-08-30.md` |
+| 6 | `entry_margin_exhaustion` **+** `entry_forward_reserve_leg` — **the ERCOT forecast default at HEAD** (ruling Q15) | `…-t1h-d12c-armed` / `f061b2646bfaac8b` | **0.350** | **0.000** | **0.00 %** | `O` / `fc K` (both fields) | `docs/records/forecast/FINDING-capx-d12c-confirm-pair-2026-08-30.md` §3–§4.1 row R-3/R-4/R-5: "wind 0.350"; arming `FINDING-capx-d12a-arming-2026-08-30.md` |
 | 7 | `storage_entry_availability_gate` **+** `storage_entry_cost_normalized_rank` (Leg A pair, armed by R-A) | `…-t1h-capentry-repair` / `dcbd3b9567b2fe26` | **0.350** | **0.000** | **0.00 %** | `O` / `fc K` (both fields) | `FINDING-t1h-capentry-phase1-ab-2026-08-30.md` §3.1 wind row: `Δ\|err\| 0.0000`; arming §7 |
 | 8 | `entry_dampers` | — | — | **0.000** | **0.00 %** | **`I`** / **`I`** | FFR-3L §2/§3 + FFR-9B §3 via the ERCOT shard cell — inert |
 | 9 | `entry_vre_capacity_revenue` | — | — | **0.000** | **0.00 %** | **`I`** / **`I`** | `FINDING-entry-screen-t1h-2026-08.md` §7 cell table — inert: ERCOT is energy-only, capacity pays \$0 |
@@ -288,9 +288,9 @@ such — that absence is reported, not filled.
 
 | cell | verdict | citation |
 |---|---|---|
-| `entry_dampers` | **`I` / `I`** | FFR-3L (`docs/handoffs/ffr-3l-ercot-t1x-attribution-2026-08-04.md` §2/§3 — four-arm 2×2, A≡C and D≡B exactly; the dampers carry the scored-window delta in the **wrong** direction, ruled out as the cause) + FFR-9B (`docs/handoffs/ffr-9b-vre-entry-diagnosis-2026-08-09.md` §3, diagnosis only: at the three hot screens every candidate clears cost 9–24×, so **the caps are the ENTIRE allocator**) |
-| `entry_vre_capacity_revenue` | **`I` / `I`** | **No `ev` string in the shard.** The adjudication is in `docs/FINDING-entry-screen-t1h-2026-08.md` §7 cell table: *"DO NOT re-propose for ERCOT (inert: energy-only pays \$0)"* — ERCOT `MARKET_DESIGN.capacity_market = False` |
-| `forecast_xyear_warmstart` | `.` / **`fc R`** | D-9 arming A/B (`docs/handoffs/wallclock-baseline-2026-07.md` Exp 5) + the retirement tie-flip that made Option 3 unacceptable (`docs/cross-year-warmstart.md`) |
+| `entry_dampers` | **`I` / `I`** | FFR-3L (`docs/records/forecast/ffr-3l-ercot-t1x-attribution-2026-08-04.md` §2/§3 — four-arm 2×2, A≡C and D≡B exactly; the dampers carry the scored-window delta in the **wrong** direction, ruled out as the cause) + FFR-9B (`docs/records/forecast/ffr-9b-vre-entry-diagnosis-2026-08-09.md` §3, diagnosis only: at the three hot screens every candidate clears cost 9–24×, so **the caps are the ENTIRE allocator**) |
+| `entry_vre_capacity_revenue` | **`I` / `I`** | **No `ev` string in the shard.** The adjudication is in `docs/records/misc/FINDING-entry-screen-t1h-2026-08.md` §7 cell table: *"DO NOT re-propose for ERCOT (inert: energy-only pays \$0)"* — ERCOT `MARKET_DESIGN.capacity_market = False` |
+| `forecast_xyear_warmstart` | `.` / **`fc R`** | D-9 arming A/B (`docs/records/misc/wallclock-baseline-2026-07.md` Exp 5) + the retirement tie-flip that made Option 3 unacceptable (`docs/cross-year-warmstart.md`) |
 
 ### 4.2 Price-object cells the entry signal is built on
 
@@ -306,8 +306,8 @@ such — that absence is reported, not filled.
 
 | cell | verdict | citation |
 |---|---|---|
-| `wind_ptc_vintage_offers` | **`I`** | **No `ev` string in the shard.** Adjudicated in `CLAUDE.md` (Dispatch & Commitment) as *"probe-adjudicated provably inert"*, with the reasoning in `docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§7–10. This is a **dispatch-side offer** mechanism; the **screen-side** wind PTC is a different object and is already live (§5.1) |
-| `negative_renewable_offers` | **`G`** | **No `ev` string in the shard.** `CLAUDE.md` records it default-off as rule-25 `[R-ISO-SCOPE]`-refused; reasoning in `docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§7–10 |
+| `wind_ptc_vintage_offers` | **`I`** | **No `ev` string in the shard.** Adjudicated in `CLAUDE.md` (Dispatch & Commitment) as *"probe-adjudicated provably inert"*, with the reasoning in `docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§7–10. This is a **dispatch-side offer** mechanism; the **screen-side** wind PTC is a different object and is already live (§5.1) |
+| `negative_renewable_offers` | **`G`** | **No `ev` string in the shard.** `CLAUDE.md` records it default-off as rule-25 `[R-ISO-SCOPE]`-refused; reasoning in `docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§7–10 |
 | `ercot_wind_zone_shape` | `K` (keeper, **not** a DO-NOT-REDO) | listed only so a reader does not mistake it for an open wind lever — it is the armed backcast wind shape object |
 
 ### 4.4 Standing refusals a wind lane will meet
@@ -507,14 +507,14 @@ Zero solves; every figure is re-readable from committed artifacts.
 #   each bundle's committed score.json, via its registry sidecar:
 #     frontend/data/forecast/registry/ercot-2021-2025-realized-t1h-*.json
 # the A/B artifacts that carry the per-step rows and the complementarity read
-results/calibration/joint_wind_entry_ab_ercot.json         # rows 2/4/5 + K1/K2
-results/calibration/entry_volume_rule_ab_ercot.json        # row 4
-results/calibration/entry_confirm_pair_d12c_ercot.json     # row 6
-results/calibration/storage_entry_repair_ab_ercot.json     # row 7
-results/calibration/entry_signal_fwd_expectation_ercot.json# row 3
-results/calibration/entry_signal_disarm_ledger_ercot.json  # row 2 per-step ledger
-results/calibration/entry_signal_l1_dual_replay_ercot.json # section 3.2 capture ratios
-results/calibration/entry_screen_t1h_phase0_ercot.json     # the baseline screen replay
+results/phase0/ercot/joint_wind_entry_ab_ercot.json         # rows 2/4/5 + K1/K2
+results/phase0/ercot/entry_volume_rule_ab_ercot.json        # row 4
+results/phase0/forecast/entry_confirm_pair_d12c_ercot.json     # row 6
+results/phase0/ercot/storage_entry_repair_ab_ercot.json     # row 7
+results/phase0/ercot/entry_signal_fwd_expectation_ercot.json# row 3
+results/phase0/ercot/entry_signal_disarm_ledger_ercot.json  # row 2 per-step ledger
+results/phase0/ercot/entry_signal_l1_dual_replay_ercot.json # section 3.2 capture ratios
+results/phase0/ercot/entry_screen_t1h_phase0_ercot.json     # the baseline screen replay
 
 # the zero-solve Phase-0 probe that produced section 3.2 items 2-4
 python3 scripts/probes/_t1h_capentry_phase0.py --section legb
