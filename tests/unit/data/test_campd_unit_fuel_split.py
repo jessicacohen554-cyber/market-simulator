@@ -11,6 +11,7 @@ byte-identical, which is what makes the gate a clean single delta.
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -77,16 +78,61 @@ def test_replace_plant_rows_is_byte_safe(tmp_path):
     )
 
 
-def test_selector_default_off_and_per_unit_precedence():
-    """Off by default; ignored under per-unit attribution (no such variant)."""
+def test_selector_default_off_and_per_unit_composition():
+    """Off by default; under per-unit attribution it selects the per-unit
+    family's own fuel-split companion (NWPP-NEXT-14), and refuses the merit
+    guard beside it (no such companion)."""
     assert cb.campd_fuel_split_selector(ScenarioConfig()) is False
     assert cb.campd_fuel_split_selector(ScenarioConfig(campd_unit_fuel_split=True))
     assert (
         cb.campd_fuel_split_selector(
             ScenarioConfig(campd_unit_fuel_split=True, campd_per_unit_attribution=True)
         )
-        is False
+        == cb.PER_UNIT_FUEL_SPLIT_TAG
     )
+    with pytest.raises(ValueError):
+        cb.campd_fuel_split_selector(
+            ScenarioConfig(
+                campd_unit_fuel_split=True,
+                campd_per_unit_attribution=True,
+                campd_outage_merit_order_guard=True,
+            )
+        )
+
+
+def test_per_unit_fuel_split_resolves_its_own_companion():
+    """The pooled read takes '-perunit-fuelsplit-' where derived (NWPP), else
+    the per-unit artifact (NYISO); a level artifact never takes a plain
+    '-fuelsplit-' file under the per-unit tag."""
+    tag = cb.PER_UNIT_FUEL_SPLIT_TAG
+    assert cb.thermal_tranche_csv_for_iso("NWPP", True, False, tag).name == (
+        "thermal_tranches-perunit-fuelsplit-NWPP.csv"
+    )
+    assert cb.thermal_tranche_csv_for_iso("NYISO", True, False, tag).name == (
+        "thermal_tranches-perunit-NYISO.csv"
+    )
+    lvl = cb._fuel_split_companion(
+        Path("thermal_tranches_online_frac_by_year_MISO.csv"), tag
+    )
+    assert lvl.name == "thermal_tranches_online_frac_by_year-perunit-fuelsplit-MISO.csv"
+
+
+def test_per_unit_fuel_split_companion_moves_only_bridger_coal():
+    """The committed NWPP companion differs from '-perunit-' in ONE line: Jim
+    Bridger 8066's COAL row, now on each window year's own vintage bin."""
+    from market_sim.config.paths import PROCESSED_DIR
+
+    a = (PROCESSED_DIR / "thermal_tranches-perunit-NWPP.csv").read_text().splitlines()
+    b = (
+        (PROCESSED_DIR / "thermal_tranches-perunit-fuelsplit-NWPP.csv")
+        .read_text()
+        .splitlines()
+    )
+    assert a[0] == b[0]
+    gone, new = set(a) - set(b), set(b) - set(a)
+    assert len(gone) == len(new) == 1
+    (row,) = new
+    assert row.startswith("8066,COAL,Jim Bridger,ok,25211,2119.0,")
 
 
 def test_resolver_falls_back_where_not_derived():
@@ -149,3 +195,16 @@ def test_fuel_split_reaches_the_st_gas_floor_readers():
     assert (1702, "ST_GAS") not in cb.thermal_tranche_online_frac(
         "MISO", False, False, True
     )
+
+
+def test_per_unit_fuel_split_and_vintage_denominator_are_exclusive():
+    """Rule 19: the two repairs of the per-unit head-vintage denominator never
+    compose (NWPP-NEXT-14 reconciliation); arming both raises."""
+    with pytest.raises(ValueError):
+        cb.campd_fuel_split_selector(
+            ScenarioConfig(
+                campd_unit_fuel_split=True,
+                campd_per_unit_attribution=True,
+                campd_per_unit_vintage_denominator=True,
+            )
+        )

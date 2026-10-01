@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-30-nyisonext18-retiree-carry-span",
+  "label": "nyisonext18 retiree carry span",
+  "date": "2026-09-30",
+  "shorthand": "nyisonext18-retiree-carry-span",
+  "definition": "NYISO-NEXT-18 keeper (2022-2025): the NEXT-16 recipe with mid_vintage_exit_carry, fleet_zone_vintage_coords and retiree_vintage_status_scope true. Restores Indian Point 3 (1,039 MW, zone H, retired 2021-04-30) in Lower_Hudson for Jan-Apr 2021 and keeps dormant Dunkirk out; 2022-2025 change only by small NYC/Capital retiree CTs. Zero free parameters. Determination CALIBRATED (C3c ledgered).",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-30-nyisonext18-retiree-carry-span.js",
+  "bundle": "results/calibration/nyisonext18_span"
+}

@@ -281,18 +281,6 @@ EGRID_CC_HR_PHYSICAL_CEILING: float = HEAT_RATE_BINS["gas_ct"]["older"]
 # number. Scoped to simple-cycle-only plants: a mixed plant's blend rate is the
 # egrid_family_heat_rates object, never this.
 EGRID_CT_HR_PHYSICAL_FLOOR: float = HEAT_RATE_BINS["gas_ct"]["aero"]
-# Physical FLOOR for a COMBINED-CYCLE part's plant heat rate (NWPP-NEXT-14) --
-# the CC mirror of the simple-cycle floor above. No combined cycle converts fuel
-# to net electricity better than the newest H-class unit,
-# HEAT_RATE_BINS["gas_cc"]["h_class"] (EIA Table 8). A plant-grain eGRID PLHTRT
-# below it on a CC part (prime mover CT / CA / CS / CC) is arithmetic on
-# mismatched boundaries: Clark 2322 (NWPP) reads 3.007 MMBtu/MWh because eGRID's
-# heat input covers only its CEMS-reporting GT peakers while its net generation
-# covers the non-CEMS combined cycle too; the plant's own EIA-923 CC fuel over CC
-# net is 9.0-9.5. Consumed by data/fleet/eia860.py::_apply_cc_subfloor_eia923_hr
-# under ScenarioConfig.cc_subfloor_eia923_heat_rates. An alias of an existing
-# cited constant, no new number.
-EGRID_CC_HR_PHYSICAL_FLOOR: float = HEAT_RATE_BINS["gas_cc"]["h_class"]
 
 # ercot-261. Maximum |disagreement| in $/MMBtu between the two independent
 # measurements of the Texas delivered-to-electric-power gas price -- the EIA
