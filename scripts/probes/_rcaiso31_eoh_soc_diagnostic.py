@@ -139,6 +139,105 @@ def keeper_soc(year: int) -> dict | None:
     }
 
 
+def chart(out: dict) -> Path:
+    """Render the envelope-vs-keeper and coverage panels next to the JSON."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.ticker import PercentFormatter
+
+    blue, orange, ink, mute = "#2a78d6", "#eb6834", "#1a1a19", "#6b6a63"
+    fig, ax = plt.subplots(
+        1, 4, figsize=(15, 3.8), gridspec_kw={"width_ratios": [1, 1, 1, 1.1]}
+    )
+    hours = list(range(24))
+    for i, y in enumerate(str(y) for y in YEARS):
+        a, e, k = ax[i], out[y]["envelope"]["all"], out[y]["keeper_soc_frac"]
+        lo = [e[str(h)]["min_frac"] for h in hours]
+        hi = [e[str(h)]["max_frac"] for h in hours]
+        a.fill_between(
+            hours,
+            lo,
+            hi,
+            color=blue,
+            alpha=0.18,
+            lw=0,
+            label="Submitters' bound (min-max)",
+        )
+        a.plot(hours, lo, color=blue, lw=2)
+        a.plot(hours, hi, color=blue, lw=2)
+        if k:
+            a.plot(
+                hours,
+                [k[str(h)] for h in hours],
+                color=orange,
+                lw=2,
+                label="Keeper fleet SOC",
+            )
+        share = out[y]["coverage"]["year_mean_mw_share"]
+        a.set_title(
+            f"{y} · {share:.0%} of storage MW submit",
+            fontsize=10,
+            color=ink,
+            loc="left",
+        )
+        a.set_xlim(0, 23)
+        a.set_ylim(0, 1.02)
+        a.set_xticks([0, 6, 12, 18, 23])
+        a.set_xlabel("Hour of day (Pacific)", color=mute, fontsize=9)
+        if i == 0:
+            a.set_ylabel("Share of energy capacity", color=mute, fontsize=9)
+            a.legend(fontsize=8, frameon=False, loc="center left")
+    a, months = ax[3], list(range(1, 13))
+    for y, col in zip((str(y) for y in YEARS), ("#9ec5f4", "#5598e7", "#184f95")):
+        bm = out[y]["coverage"]["by_month"]
+        a.plot(
+            months,
+            [bm[str(m)]["mw_share"] for m in months],
+            color=col,
+            lw=2,
+            marker="o",
+            ms=4,
+        )
+        a.annotate(
+            y,
+            (12, bm["12"]["mw_share"]),
+            xytext=(4, 0),
+            textcoords="offset points",
+            fontsize=8,
+            color=ink,
+            va="center",
+        )
+    a.set_title(
+        "Submitters' share of storage MW, by month", fontsize=10, color=ink, loc="left"
+    )
+    a.set_xlim(1, 13)
+    a.set_ylim(0, 0.3)
+    a.yaxis.set_major_formatter(PercentFormatter(1.0))
+    a.set_xticks([1, 4, 7, 10])
+    a.set_xticklabels(["Jan", "Apr", "Jul", "Oct"])
+    for a in ax:
+        a.grid(axis="y", color="#e6e5df", lw=0.8)
+        a.set_axisbelow(True)
+        for side in ("top", "right"):
+            a.spines[side].set_visible(False)
+        for side in ("left", "bottom"):
+            a.spines[side].set_color("#c3c2b7")
+        a.tick_params(colors=mute, labelsize=8)
+    fig.suptitle(
+        "CAISO RTM end-of-hour SOC bounds (participant-submitted, self-selected subset) vs keeper fleet SOC — report-only",
+        fontsize=11,
+        color=ink,
+        x=0.01,
+        ha="left",
+    )
+    fig.tight_layout()
+    png = OUT.with_name("eoh_soc_envelope.png")
+    fig.savefig(png, dpi=130, facecolor="white")
+    return png
+
+
 def main() -> int:
     """Compute and write the diagnostic record."""
     out = {
@@ -164,7 +263,11 @@ def main() -> int:
             "min_frac h13/h17/h20",
             [e["all"].get(h, {}).get("min_frac") for h in (13, 17, 20)],
         )
-    print("wrote", OUT.relative_to(REPO))
+    print(
+        "wrote",
+        OUT.relative_to(REPO),
+        chart(json.loads(json.dumps(out))).relative_to(REPO),
+    )
     return 0
 
 

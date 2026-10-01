@@ -87,6 +87,11 @@ H1-2021 are dead in both markets), and the boundary is rolling — re-measure,
 never hardcode. Raw zips are gitignored and regenerable by the downloader
 (~1.7 h per market-year at `--sleep 16`).
 
+**Retention re-measured (R-CAISO-31, 2026-10-01):** earliest RTM trade date served is now **2021-09-01**
+(2021-08-15..08-31 aged out since caiso-281). The 2023-25 RTM corpus was re-fetched in full (1,095 of 1,096;
+hole 2024-07-03), and its storage end-of-hour SOC bounds are committed as a compact extract in
+`data/raw/caiso-rtm-eoh-soc/` (report-only, never a solve input).
+
 ## Intake status (caiso-178, 2026-08-06)
 
 **FETCHED IN FULL for the 2023–2025 training window: 1,095 of 1,096 trade dates.**

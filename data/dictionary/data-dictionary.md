@@ -85,6 +85,7 @@ for the market split.
 | transfer-constraint-binding | — | — | — | — | — | — | — | — |
 | maxgen-events | — | — | — | — | — | — | — | — |
 | storage-as-awards | — | — | — | — | — | — | — | — |
+| storage-soc-bounds | — | 2023–2025 | — | — | — | — | — | — |
 | capacity-market-avoidable-cost-rate | — | — | — | — | — | — | — | — |
 | benchmark-corridor | — | — | — | — | — | — | — | — |
 | hydro-plant-modes | — | — | — | — | — | — | — | — |
@@ -1900,6 +1901,32 @@ example). Schema:
 | `market` | `string` | `none` | no | Market run — "DAM" (day-ahead; CAISO IFM) or "RTM" (real-time; CAISO RTPD, hourly-averaged). |
 | `product` | `string` | `none` | no | AS product on the reconciled taxonomy — "reg_up", "reg_down", "spin", "nonspin". |
 | `award_mw` | `float64` | `mw` | no | Hourly-mean awarded AS capacity held by the class, MW. |
+
+## storage-soc-bounds
+
+Participant-submitted storage end-of-hour SOC bid bounds per masked resource
+and hour. REPORT-ONLY diagnostic: a conduct parameter with no forward driver,
+never a solve input (rule 13). Schema:
+[`schema/storage-soc-bounds.schema.yaml`](schema/storage-soc-bounds.schema.yaml).
+
+- **Keys:** `iso`, `market`, `resource_id`, `interval_start_utc`
+- **Reconciles:** CAISO OASIS PUB_RTM_GRP MIN/MAXEOHSTATEOFCHARGE (via the
+  committed data/raw/caiso-rtm-eoh-soc extract) onto one tidy per resource-hour
+  frame, with the resource's energy-bid MW range for scale.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `interval_start_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | UTC start of the hourly bid interval the bound applies to (end of hour = start + 1 h). |
+| `interval_start_local` | `datetime64[ns]` | `local_timestamp` | no | Wall-clock ISO-local start of the hour (naive; CAISO Pacific prevailing time). |
+| `iso` | `string` | `none` | no | ISO/RTO code (CAISO). |
+| `market` | `string` | `none` | no | Market run the bid was submitted to (CAISO - RTM; the parameter is RT-only). |
+| `resource_id` | `string` | `none` | no | Masked resource id as published (CAISO RESOURCEBID_SEQ; persistent across days, no unit identity). |
+| `sc_id` | `string` | `none` | no | Masked scheduling-coordinator id as published (CAISO SCHEDULINGCOORDINATOR_SEQ). |
+| `min_eoh_soc_mwh` | `float64` | `mwh` | no | Submitted minimum end-of-hour state of charge (MWh). |
+| `max_eoh_soc_mwh` | `float64` | `mwh` | no | Submitted maximum end-of-hour state of charge (MWh); its resource-level ceiling tracks energy capacity (~4 h x injection MW). |
+| `en_min_mw` | `float64` | `mw` | yes | Most negative MW (withdrawal) on the resource's energy bid curve that trade date; null if it bid no energy curve. |
+| `en_max_mw` | `float64` | `mw` | yes | Largest MW (injection) on the resource's energy bid curve that trade date; null if it bid no energy curve. |
+| `is_storage_s1` | `bool` | `flag` | no | True when the trade date's energy bid curve spans <= -1 MW and >= +1 MW (the caiso-178 S1 storage test). |
 
 ## capacity-market-avoidable-cost-rate
 
