@@ -1042,6 +1042,15 @@ def build_reserve_dispatch_kwargs(
         wid_list.append(fam.ordc_step_widths)
         counts[f] = fam.ordc_penalties.shape[0]
 
+    # Penalties are static (n_steps,) per family except an hourly-curve family
+    # (ERCOT ercot_ordc_published_curve: ERCOT's seasonal mu / sigma), which
+    # carries (n_steps, T); then the stack is promoted to (n_ordc_steps, T),
+    # static families broadcast across the horizon (numerically identical).
+    if any(np.ndim(p) == 2 for p in pen_list):
+        pen_list = [
+            p if np.ndim(p) == 2 else np.repeat(np.asarray(p)[:, None], T, axis=1)
+            for p in pen_list
+        ]
     ordc_penalties = np.concatenate(pen_list) if pen_list else np.zeros(0)
     # Widths are static (n_steps,) per family on every published-curve design.
     # A family whose demand curve translates with an hour-varying requirement
@@ -1483,6 +1492,33 @@ def spp_commitment_posture_spec(
 # ---- ERCOT single-product -------------------------------------------------
 
 
+
+def _ercot_ordc_curve(
+    config, hours, year, resolve_lolp_params, ercot_ordc_demand_steps, published_active
+):
+    """The ERCOT ORDC demand curve both ERCOT co-opt families price.
+
+    Default: one static curve at the year-mean mu / sigma (``(n_steps,)``
+    penalties). Under ``ercot_ordc_published_curve`` (R-ERCOT-24): ERCOT's
+    hourly seasonal mu / sigma on one reserve grid plus the OBD first-half form
+    — ``(n_steps, T)`` penalties, static widths and requirement.
+    """
+    published = published_active(config)
+    mu, sigma = resolve_lolp_params(
+        config, hours, year=int(year) if published else None
+    )
+    if not published:
+        mu, sigma = float(np.mean(mu)), float(np.mean(sigma))
+    return ercot_ordc_demand_steps(
+        voll=config.ordc_voll,
+        mcl_mw=config.ordc_mcl_mw,
+        mu_mw=mu,
+        sigma_mw=sigma,
+        shift_sigma=config.ordc_lolp_shift_sigma,
+        multistep_floor=config.ordc_multistep_floor,
+        obd_half_shift=published,
+    )
+
 def _ercot_design(
     config,
     fleet_arrays: FleetArrays,
@@ -1509,29 +1545,27 @@ def _ercot_design(
         ercot_ecrs_requirement_mw,
         ercot_load_resource_reserve_credit_mw,
         ercot_ordc_demand_steps,
+        ercot_ordc_published_curve_active,
         ercot_rtolcap_supply_cap_mw,
         ercot_storage_as_reserve_mw,
         resolve_lolp_params,
     )
-
-    mu, sigma = resolve_lolp_params(config, hours)
-    mu_s = float(np.mean(mu))
-    sigma_s = float(np.mean(sigma))
-    req_total, penalties, widths = ercot_ordc_demand_steps(
-        voll=config.ordc_voll,
-        mcl_mw=config.ordc_mcl_mw,
-        mu_mw=mu_s,
-        sigma_mw=sigma_s,
-        shift_sigma=config.ordc_lolp_shift_sigma,
-        multistep_floor=config.ordc_multistep_floor,
-    )
-    requirement = np.full(int(hours), req_total, dtype=float)
 
     # FR-12: from-year onset gates and per-year artifact lookups key the SOLVE
     # year (the fleet clock), never the pinned weather year — in backcast the
     # two coincide (sim_year falls back to weather_year), in forecast the date
     # gates now track the horizon instead of freezing at the weather pin.
     solve_year = _reserve_solve_year(config, sim_year)
+
+    req_total, penalties, widths = _ercot_ordc_curve(
+        config,
+        int(hours),
+        solve_year,
+        resolve_lolp_params,
+        ercot_ordc_demand_steps,
+        ercot_ordc_published_curve_active,
+    )
+    requirement = np.full(int(hours), req_total, dtype=float)
 
     if getattr(config, "ercot_ecrs_requirement", False) and solve_year >= int(
         getattr(config, "ercot_ecrs_requirement_from_year", 2023)
@@ -2296,20 +2330,18 @@ def _ercot_multiproduct_design(
     if getattr(config, "ercot_ordc_total_reserve", False):
         from market_sim.results.scarcity import (
             ercot_ordc_demand_steps,
+            ercot_ordc_published_curve_active,
             ercot_storage_as_reserve_mw,
             resolve_lolp_params,
         )
 
-        mu, sigma = resolve_lolp_params(config, T)
-        mu_s = float(np.mean(mu))
-        sigma_s = float(np.mean(sigma))
-        req_total, total_pens, total_wids = ercot_ordc_demand_steps(
-            voll=config.ordc_voll,
-            mcl_mw=config.ordc_mcl_mw,
-            mu_mw=mu_s,
-            sigma_mw=sigma_s,
-            shift_sigma=config.ordc_lolp_shift_sigma,
-            multistep_floor=config.ordc_multistep_floor,
+        req_total, total_pens, total_wids = _ercot_ordc_curve(
+            config,
+            T,
+            year,
+            resolve_lolp_params,
+            ercot_ordc_demand_steps,
+            ercot_ordc_published_curve_active,
         )
         total_req = np.full(T, req_total, dtype=float)
         if getattr(config, "ercot_load_resource_reserve", False) and year >= int(
