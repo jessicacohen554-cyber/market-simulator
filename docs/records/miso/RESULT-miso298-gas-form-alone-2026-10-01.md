@@ -4,7 +4,7 @@
 LANE     : miso-298 (owner ruling 2026-10-01, miso-297 card "What should miso-298 do?": "Gas form alone, full span (Recommended)")
 PREREG   : docs/records/miso/PRECOMMIT-miso298-gas-form-alone-2026-10-01.md (pin 351f8efb8c125dc6f606a6df70fde59e29961ec3, pushed before any shard)
 KEEPER   : 2026-09-28-miso-280-splitremap (results/calibration/miso280_span, 2019-2025) — UNCHANGED
-ARM      : 2026-10-01-miso-298-gas-form (results/calibration/miso298_span, 2019-2025), registered on the dashboard (rule 15; keeper-only retention prunes it at the next promotion)
+ARM      : 2026-10-01-miso-298-gas-form (results/calibration/miso298_span, 2019-2025), registered on completion (rule 15) at commit c14c5e13, then taken off the registered set in this PR (rule 35 (f) / audit E13: keeper-only); git history is the record
 DELTA    : miso_gas_marginal_commodity_pricing=true + miso_gas_variable_transport=true, nothing else (offer_curve_by_group byte-identical). DOF +0
 CONTROL  : keeper bundle (G-DRIFT 8f765fef..351f8efb: 0 LIVE; solve_surface_register MISO moved rows 0; rule 29(b) form 4)
 VERDICT  : KILLED — K-1 fires (C1 COAL_PRB 2019, C1 CC_REGULAR 2021, C3a 2019 PASS→FAIL) and K-2 fails; K-4 passes. Determination NOT-YET both runs; failing criterion-years 3 → 6
@@ -119,22 +119,31 @@ C3a 2019, C3a 2020, C7 gas 2021). C3c stays the lone ledgered caveat (identical 
 
 ## 4. Where the bytes are (rule 31 / 33 / 34)
 
-- `results/calibration/miso298_span` — the composed span (slim: text files + `hourly/` incl. `unit_marginal_<Y>.parquet` for
-  every year, attestation with a `miso298` block and the inherited blocks nested, regenerated `legitimacy_diagnostics.json`,
-  stamped partition passing `--check`) is on `main` with this PR, with its registry sidecar
-  `frontend/data/backcast/registry/2026-10-01-miso-298-gas-form.json`, payload `runs/2026-10-01-miso-298-gas-form.js` and
-  the refreshed MISO bench parts (builder fingerprint only; bench content byte-equal).
+- **Registration, then retention.** The composed span was registered on completion as `2026-10-01-miso-298-gas-form`
+  (rule 15) and committed at **`c14c5e13`** on this lane's branch (slim bundle incl. `hourly/` with `unit_marginal_<Y>.parquet`
+  for every year, attestation with a `miso298` block and the inherited blocks nested, regenerated `legitimacy_diagnostics.json`,
+  stamped partition passing `--check`; registry sidecar + payload; refreshed MISO bench parts — builder fingerprint only, bench
+  content byte-equal). CI's keeper-integrity audit (E13, rule 35 (f)) admits only the keeper on the registered set, so the
+  same PR takes the sidecar, the payload and the bundle back off the tree; the bundle dir is **gitignored, never `rm`-ed**
+  (rule 31) and stays on disk in this container. Recover everything at zero LP once the PR has merged (the commit is
+  reachable from `main`):
+
+  ```
+  git checkout c14c5e13 -- results/calibration/miso298_span \
+      frontend/data/backcast/registry/2026-10-01-miso-298-gas-form.json \
+      frontend/data/backcast/runs/2026-10-01-miso-298-gas-form.js
+  ```
 - Per-year leg dirs `results/calibration/miso_298_<Y>` are parent-local and gitignored; the leg SHAs in §1 are provenance
-  only. Full bundles incl. `dispatch/<Y>_P1.parquet` sit on the shard branches until the PR merges cuts them. A re-solve of
-  any leg costs 20–35 min (2022 ~56 min).
-- Phase-0 / scoring artifacts: `results/phase0/miso/_miso298_gate_table.json`, `_miso298_readout_arm.json`;
+  only. Full bundles incl. `dispatch/<Y>_P1.parquet` sit on the shard branches until the PR merge cuts them. A re-solve of
+  any leg costs 20–35 min (2022 ~56 min); a promotion from the recovered span costs no re-solve (every year, every sidecar).
+- Phase-0 / scoring artifacts on `main`: `results/phase0/miso/_miso298_gate_table.json`, `_miso298_readout_arm.json`;
   probes `scripts/probes/_miso298_{shard_check,compose_span,attest,gate_table}.py`.
-- No solved bundle was deleted. Retention is keeper-only (rule 15): the registered probe is pruned at MISO's next promotion.
+- No solved bundle was deleted (rule 31). The bench parts keep their refreshed builder fingerprint.
 
 ## 5. Promotion question and next
 
 **Promotion: NOT recommended** (K-1 fired; the determination's failing criterion-years go 3 → 6). The owner's call under
-rule 31; the bundle is registered and on `main` either way. Owner card in the session's final message:
+rule 31; the bundle is recoverable at zero LP from `c14c5e13` either way (§4). Owner card in the session's final message:
 
 - (A) **Record the kill; keeper unchanged.** The remaining full-span failures are C1 ST_GAS 2019 (routed), C3a 2020 (no
   admissible identified lever), C3b 2021 (routed). The chain's next lane is a zero-LP phase 0 of the owner's choice.

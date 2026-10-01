@@ -15614,8 +15614,9 @@ Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIB
 
 ## miso-298 — 2026-10-01 — the owner-ruled gas form ALONE, full span 2019–2025 (7 shards): KILLED by ex-ante kill rule K-1; keeper unchanged; both O cells → R
 
-Keeper unchanged (`2026-09-28-miso-280-splitremap`). Arm registered as `2026-10-01-miso-298-gas-form` (`results/calibration/miso298_span`,
-on `main`, keeper-only retention). Records: `docs/records/miso/PRECOMMIT-miso298-gas-form-alone-2026-10-01.md` (pin 351f8efb),
+Keeper unchanged (`2026-09-28-miso-280-splitremap`). Arm registered on completion as `2026-10-01-miso-298-gas-form` (`results/calibration/miso298_span`) at commit
+`c14c5e13`, then taken off the registered set in the same PR (rule 35 (f) / audit E13, keeper-only retention; bundle gitignored,
+not deleted; recovery command in RESULT §4). Records: `docs/records/miso/PRECOMMIT-miso298-gas-form-alone-2026-10-01.md` (pin 351f8efb),
 `RESULT-miso298-gas-form-alone-2026-10-01.md`, `GDRIFT-miso298-keeper-8f765fef-2026-10-01.md` (0 LIVE; MISO moved rows 0);
 probes `scripts/probes/_miso298_*.py`; scoring `results/phase0/miso/_miso298_gate_table.json`, `_miso298_readout_arm.json`.
 
