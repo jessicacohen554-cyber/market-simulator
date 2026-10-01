@@ -3931,3 +3931,6 @@ results/calibration/rcaiso20_A_20*/
 results/calibration/_rcaiso21/
 
 results/calibration/_rcaiso22/
+
+# R-ERCOT-21 shard legs: kept out of main (rule 32(d)); provenance SHAs in RESULT doc
+results/calibration/r_ercot21_arm_*/
