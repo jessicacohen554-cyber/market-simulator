@@ -818,13 +818,13 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   (`--declare-missing`, moves no key); the names carry the PJM token, so only
 #   PJM's row set grows: 224 -> 226. Rebased onto R-CAISO-20, whose unscoped
 #   EGRID_CC_HR_PHYSICAL_FLOOR (+1 row everywhere, declared at its live hash)
-#   landed without advancing any pin: PJM's pin carries it, 226 -> 227; the
-#   other five ISOs' pins are that lane's to advance.
+#   landed without advancing any pin: PJM's pin carried it, 226 -> 227. Main
+#   then removed that row (no value moved), so PJM returns to 226 rows.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
     "ERCOT": ("bdfc68c278f7eff8", 240),
     "CAISO": ("289c8c383a78f4d9", 213),
     "MISO": ("52d6fa6795d5e276", 220),
-    "PJM": ("1ddeae0aa33dc222", 227),
+    "PJM": ("7f0e7318aac915b0", 226),
     "NYISO": ("a64df99bd6857677", 221),
     "NEISO": ("e082dd92b5c22723", 206),
 }
