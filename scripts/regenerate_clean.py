@@ -125,6 +125,9 @@ DATATYPES: tuple[str, ...] = (
     # decompositions. Consumed by constants.DEMAND_GROWTH_RATES,
     # DATACENTER_ADDITIONS_MW, DATACENTER_ZONE_SHARE and ELECTRIFICATION_LAYERS.
     "load-forecast",
+    # R-CAISO-31: participant-submitted storage end-of-hour SOC bid bounds
+    # (OASIS PUB_RTM_GRP). REPORT-ONLY diagnostic -- never a solve input (rule 13).
+    "storage-soc-bounds",
 )
 
 SCRIPTS_DIR = Path(__file__).resolve().parent

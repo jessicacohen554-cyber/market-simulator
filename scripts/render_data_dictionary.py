@@ -135,6 +135,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "ira-credit-parameters",
     "nrel-atb",
     "storage-as-awards",
+    "storage-soc-bounds",
     "capacity-market-avoidable-cost-rate",
     "uranium-marketing-price",
     "benchmark-corridor",
@@ -333,6 +334,18 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "Report, and siblings per the schema header) onto one tidy frame; "
             "awarded MW is capacity committed to reserves that cannot "
             "simultaneously offer energy arbitrage."
+        ),
+    },
+    "storage-soc-bounds": {
+        "summary": (
+            "Participant-submitted storage end-of-hour SOC bid bounds per masked "
+            "resource and hour. REPORT-ONLY diagnostic: a conduct parameter with "
+            "no forward driver, never a solve input (rule 13)."
+        ),
+        "reconciles": (
+            "CAISO OASIS PUB_RTM_GRP MIN/MAXEOHSTATEOFCHARGE (via the committed "
+            "data/raw/caiso-rtm-eoh-soc extract) onto one tidy per resource-hour "
+            "frame, with the resource's energy-bid MW range for scale."
         ),
     },
     "capacity-market-avoidable-cost-rate": {

@@ -1,0 +1,535 @@
+{
+ "what": "PJM-NEXT-20 card 1: coal over-run by underwater plant-hour. ZERO LP.",
+ "2019": {
+  "plants_model": 74,
+  "plants_benched": 55,
+  "model_twh": 200.21,
+  "benched_model_twh": 194.71,
+  "bench_twh": 180.58,
+  "gap_model_minus_rt": {
+   "median_all": 3.5,
+   "median_rt_lt_25": 4.51,
+   "coal_twh_in_rt_lt_25": 116.72
+  },
+  "coal_set": {
+   "underwater": {
+    "model": 6.24,
+    "bench": 5.69,
+    "gap": 0.55
+   },
+   "abovewater": {
+    "model": 51.27,
+    "bench": 47.64,
+    "gap": 3.63
+   }
+  },
+  "other": {
+   "underwater": {
+    "model": 10.87,
+    "bench": 10.03,
+    "gap": 0.84
+   },
+   "abovewater": {
+    "model": 126.33,
+    "bench": 117.21,
+    "gap": 9.12
+   }
+  },
+  "abovewater_by_margin": {
+   "0-5": 5.59,
+   "5-15": 6.03,
+   "15-inf": 1.13
+  },
+  "real_on_net_loading_by_margin": {
+   "-inf..0": {
+    "model": 0.636,
+    "bench": 0.618,
+    "twh_gap": 0.44
+   },
+   "0..5": {
+    "model": 0.768,
+    "bench": 0.667,
+    "twh_gap": 4.53
+   },
+   "5..15": {
+    "model": 0.855,
+    "bench": 0.815,
+    "twh_gap": 5.02
+   },
+   "15..inf": {
+    "model": 0.963,
+    "bench": 0.939,
+    "twh_gap": 0.82
+   }
+  },
+  "abovewater_by_state": {
+   "real_off": 3.19,
+   "real_on": 9.55,
+   "model_full": 6.54,
+   "model_part": 6.21,
+   "model_off": -0.83,
+   "real_on_loading_model_vs_bench": [
+    0.855,
+    0.804
+   ]
+  },
+  "underwater_depth_median": 1.98,
+  "underwater_rt_lt_25_share": 0.93
+ },
+ "2020": {
+  "plants_model": 62,
+  "plants_benched": 52,
+  "model_twh": 158.61,
+  "benched_model_twh": 156.37,
+  "bench_twh": 146.64,
+  "gap_model_minus_rt": {
+   "median_all": 4.46,
+   "median_rt_lt_25": 5.07,
+   "coal_twh_in_rt_lt_25": 125.67
+  },
+  "coal_set": {
+   "underwater": {
+    "model": 5.79,
+    "bench": 6.3,
+    "gap": -0.51
+   },
+   "abovewater": {
+    "model": 34.09,
+    "bench": 31.54,
+    "gap": 2.55
+   }
+  },
+  "other": {
+   "underwater": {
+    "model": 14.46,
+    "bench": 15.65,
+    "gap": -1.19
+   },
+   "abovewater": {
+    "model": 102.04,
+    "bench": 93.16,
+    "gap": 8.88
+   }
+  },
+  "abovewater_by_margin": {
+   "0-5": 6.69,
+   "5-15": 4.24,
+   "15-inf": 0.5
+  },
+  "real_on_net_loading_by_margin": {
+   "-inf..0": {
+    "model": 0.558,
+    "bench": 0.633,
+    "twh_gap": -2.54
+   },
+   "0..5": {
+    "model": 0.745,
+    "bench": 0.65,
+    "twh_gap": 6.03
+   },
+   "5..15": {
+    "model": 0.836,
+    "bench": 0.789,
+    "twh_gap": 3.9
+   },
+   "15..inf": {
+    "model": 0.915,
+    "bench": 0.897,
+    "twh_gap": 0.38
+   }
+  },
+  "abovewater_by_state": {
+   "real_off": 1.87,
+   "real_on": 9.56,
+   "model_full": 4.98,
+   "model_part": 6.5,
+   "model_off": -0.8,
+   "real_on_loading_model_vs_bench": [
+    0.812,
+    0.749
+   ]
+  },
+  "underwater_depth_median": 2.14,
+  "underwater_rt_lt_25_share": 0.991
+ },
+ "2021": {
+  "plants_model": 59,
+  "plants_benched": 52,
+  "model_twh": 192.91,
+  "benched_model_twh": 191.48,
+  "bench_twh": 174.77,
+  "gap_model_minus_rt": {
+   "median_all": 5.12,
+   "median_rt_lt_25": 7.22,
+   "coal_twh_in_rt_lt_25": 60.15
+  },
+  "coal_set": {
+   "underwater": {
+    "model": 3.99,
+    "bench": 3.91,
+    "gap": 0.08
+   },
+   "abovewater": {
+    "model": 31.2,
+    "bench": 28.65,
+    "gap": 2.54
+   }
+  },
+  "other": {
+   "underwater": {
+    "model": 11.31,
+    "bench": 10.95,
+    "gap": 0.35
+   },
+   "abovewater": {
+    "model": 144.99,
+    "bench": 131.26,
+    "gap": 13.73
+   }
+  },
+  "abovewater_by_margin": {
+   "0-5": 4.19,
+   "5-15": 6.59,
+   "15-inf": 5.48
+  },
+  "real_on_net_loading_by_margin": {
+   "-inf..0": {
+    "model": 0.66,
+    "bench": 0.659,
+    "twh_gap": 0.03
+   },
+   "0..5": {
+    "model": 0.834,
+    "bench": 0.722,
+    "twh_gap": 3.61
+   },
+   "5..15": {
+    "model": 0.886,
+    "bench": 0.815,
+    "twh_gap": 5.83
+   },
+   "15..inf": {
+    "model": 0.953,
+    "bench": 0.887,
+    "twh_gap": 5.16
+   }
+  },
+  "abovewater_by_state": {
+   "real_off": 2.72,
+   "real_on": 13.55,
+   "model_full": 10.44,
+   "model_part": 5.83,
+   "model_off": -1.05,
+   "real_on_loading_model_vs_bench": [
+    0.905,
+    0.829
+   ]
+  },
+  "underwater_depth_median": 2.78,
+  "underwater_rt_lt_25_share": 0.626
+ },
+ "2022": {
+  "plants_model": 55,
+  "plants_benched": 48,
+  "model_twh": 164.97,
+  "benched_model_twh": 162.75,
+  "bench_twh": 153.62,
+  "gap_model_minus_rt": {
+   "median_all": 4.77,
+   "median_rt_lt_25": 17.99,
+   "coal_twh_in_rt_lt_25": 2.23
+  },
+  "coal_set": {
+   "underwater": {
+    "model": 1.65,
+    "bench": 1.45,
+    "gap": 0.19
+   },
+   "abovewater": {
+    "model": 31.28,
+    "bench": 29.07,
+    "gap": 2.22
+   }
+  },
+  "other": {
+   "underwater": {
+    "model": 6.09,
+    "bench": 6.06,
+    "gap": 0.03
+   },
+   "abovewater": {
+    "model": 123.72,
+    "bench": 117.04,
+    "gap": 6.69
+   }
+  },
+  "abovewater_by_margin": {
+   "0-5": 1.03,
+   "5-15": 3.19,
+   "15-inf": 4.69
+  },
+  "real_on_net_loading_by_margin": {
+   "-inf..0": {
+    "model": 0.624,
+    "bench": 0.679,
+    "twh_gap": -0.6
+   },
+   "0..5": {
+    "model": 0.731,
+    "bench": 0.662,
+    "twh_gap": 0.62
+   },
+   "5..15": {
+    "model": 0.783,
+    "bench": 0.694,
+    "twh_gap": 2.54
+   },
+   "15..inf": {
+    "model": 0.823,
+    "bench": 0.801,
+    "twh_gap": 3.33
+   }
+  },
+  "abovewater_by_state": {
+   "real_off": 3.15,
+   "real_on": 5.75,
+   "model_full": 7.37,
+   "model_part": 1.53,
+   "model_off": -0.73,
+   "real_on_loading_model_vs_bench": [
+    0.813,
+    0.778
+   ]
+  },
+  "underwater_depth_median": 4.02,
+  "underwater_rt_lt_25_share": 0.119
+ },
+ "2023": {
+  "plants_model": 47,
+  "plants_benched": 40,
+  "model_twh": 112.05,
+  "benched_model_twh": 111.62,
+  "bench_twh": 112.84,
+  "gap_model_minus_rt": {
+   "median_all": 4.78,
+   "median_rt_lt_25": 8.39,
+   "coal_twh_in_rt_lt_25": 49.7
+  },
+  "coal_set": {
+   "underwater": {
+    "model": 1.72,
+    "bench": 2.08,
+    "gap": -0.36
+   },
+   "abovewater": {
+    "model": 14.22,
+    "bench": 13.83,
+    "gap": 0.39
+   }
+  },
+  "other": {
+   "underwater": {
+    "model": 9.94,
+    "bench": 12.44,
+    "gap": -2.5
+   },
+   "abovewater": {
+    "model": 85.74,
+    "bench": 84.49,
+    "gap": 1.25
+   }
+  },
+  "abovewater_by_margin": {
+   "0-5": 1.45,
+   "5-15": 1.38,
+   "15-inf": -1.2
+  },
+  "real_on_net_loading_by_margin": {
+   "-inf..0": {
+    "model": 0.547,
+    "bench": 0.665,
+    "twh_gap": -2.49
+   },
+   "0..5": {
+    "model": 0.698,
+    "bench": 0.642,
+    "twh_gap": 1.51
+   },
+   "5..15": {
+    "model": 0.728,
+    "bench": 0.707,
+    "twh_gap": 1.27
+   },
+   "15..inf": {
+    "model": 0.767,
+    "bench": 0.795,
+    "twh_gap": -1.29
+   }
+  },
+  "abovewater_by_state": {
+   "real_off": 0.83,
+   "real_on": 0.81,
+   "model_full": 2.58,
+   "model_part": -0.8,
+   "model_off": -0.81,
+   "real_on_loading_model_vs_bench": [
+    0.737,
+    0.725
+   ]
+  },
+  "underwater_depth_median": 2.87,
+  "underwater_rt_lt_25_share": 0.903
+ },
+ "2024": {
+  "plants_model": 46,
+  "plants_benched": 38,
+  "model_twh": 115.56,
+  "benched_model_twh": 112.88,
+  "bench_twh": 115.38,
+  "gap_model_minus_rt": {
+   "median_all": 3.46,
+   "median_rt_lt_25": 7.82,
+   "coal_twh_in_rt_lt_25": 51.03
+  },
+  "coal_set": {
+   "underwater": {
+    "model": 2.65,
+    "bench": 2.93,
+    "gap": -0.28
+   },
+   "abovewater": {
+    "model": 18.15,
+    "bench": 18.44,
+    "gap": -0.29
+   }
+  },
+  "other": {
+   "underwater": {
+    "model": 12.48,
+    "bench": 13.62,
+    "gap": -1.14
+   },
+   "abovewater": {
+    "model": 79.6,
+    "bench": 80.39,
+    "gap": -0.79
+   }
+  },
+  "abovewater_by_margin": {
+   "0-5": 0.95,
+   "5-15": -0.23,
+   "15-inf": -1.8
+  },
+  "real_on_net_loading_by_margin": {
+   "-inf..0": {
+    "model": 0.583,
+    "bench": 0.633,
+    "twh_gap": -1.27
+   },
+   "0..5": {
+    "model": 0.7,
+    "bench": 0.667,
+    "twh_gap": 0.95
+   },
+   "5..15": {
+    "model": 0.725,
+    "bench": 0.732,
+    "twh_gap": -0.35
+   },
+   "15..inf": {
+    "model": 0.786,
+    "bench": 0.823,
+    "twh_gap": -1.79
+   }
+  },
+  "abovewater_by_state": {
+   "real_off": 0.66,
+   "real_on": -1.74,
+   "model_full": 1.91,
+   "model_part": -2.92,
+   "model_off": -0.61,
+   "real_on_loading_model_vs_bench": [
+    0.744,
+    0.752
+   ]
+  },
+  "underwater_depth_median": 3.08,
+  "underwater_rt_lt_25_share": 0.898
+ },
+ "2025": {
+  "plants_model": 65,
+  "plants_benched": 31,
+  "model_twh": 149.79,
+  "benched_model_twh": 149.53,
+  "bench_twh": 135.64,
+  "gap_model_minus_rt": {
+   "median_all": 4.33,
+   "median_rt_lt_25": 10.03,
+   "coal_twh_in_rt_lt_25": 25.17
+  },
+  "coal_set": {
+   "underwater": {
+    "model": 1.36,
+    "bench": 1.3,
+    "gap": 0.06
+   },
+   "abovewater": {
+    "model": 15.44,
+    "bench": 13.82,
+    "gap": 1.61
+   }
+  },
+  "other": {
+   "underwater": {
+    "model": 9.4,
+    "bench": 8.69,
+    "gap": 0.71
+   },
+   "abovewater": {
+    "model": 123.33,
+    "bench": 111.83,
+    "gap": 11.51
+   }
+  },
+  "abovewater_by_margin": {
+   "0-5": 2.11,
+   "5-15": 5.33,
+   "15-inf": 5.68
+  },
+  "real_on_net_loading_by_margin": {
+   "-inf..0": {
+    "model": 0.719,
+    "bench": 0.668,
+    "twh_gap": 0.76
+   },
+   "0..5": {
+    "model": 0.783,
+    "bench": 0.686,
+    "twh_gap": 2.03
+   },
+   "5..15": {
+    "model": 0.868,
+    "bench": 0.773,
+    "twh_gap": 5.04
+   },
+   "15..inf": {
+    "model": 0.939,
+    "bench": 0.873,
+    "twh_gap": 5.21
+   }
+  },
+  "abovewater_by_state": {
+   "real_off": 1.48,
+   "real_on": 11.64,
+   "model_full": 8.04,
+   "model_part": 5.08,
+   "model_off": -0.64,
+   "real_on_loading_model_vs_bench": [
+    0.893,
+    0.813
+   ]
+  },
+  "underwater_depth_median": 3.36,
+  "underwater_rt_lt_25_share": 0.583
+ }
+}

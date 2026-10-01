@@ -15138,3 +15138,23 @@ The pure LP loads the returned capacity at thin spreads: p50 840 MW when on, aga
 Records: `docs/records/nyiso/FINDING-nyiso-next28-ravenswood-2023-phase0-2026-10-01.md`, `results/phase0/nyiso/_nyisonext28_ravenswood_phase0.json`, `scripts/probes/nyisonext28_ravenswood_2023_phase0.py`.
 
 Owner cards #6992 / #6987 / #6984 / NEXT-24 are unchanged; no ruling was found.
+
+## NYISO-NEXT-30 — 2026-10-01 — Zone-K import-limit drivers, phase 0 (zero LP, keeper unchanged)
+
+The question was whether any public posting gives a forward-reproducible driver of the effective Zone-K import limit. That is open item 2, which carries 69–100 % of the K−J spread miss (NEXT-29).
+
+**Sources found (2021–2025, all 60 months):**
+- MIS P-33 `outSched`: outage windows for Y49, Y50, 901, 903, the PARs and the Shore Road banks, at minute grain.
+- MIS P-34 `ParFlows`: 5-min measured flow on the 901/903 and East Garden City PARs.
+- Neither publishes an effective limit.
+
+**Tests:**
+- **Y49/Y50 outage hours** hold 31–76 % of the DA K−J mass. Matched within the month, the effect is −0.8 to +13 $/MWh (medians −0.2 to +4), on 1–5 months a year. Y49 out is already the 940 MW TSL's design case.
+- **901+903 net wheel:** −1 to 45 MW a year; month-demeaned correlation with the spread 0.08.
+- **Y49 PAR flow:** an operator setpoint with no published rule, so feeding it in would be pinning.
+
+**Disposition:** no lever and no PRECOMMIT. New owner card: ledger open item 2 as a model-class limitation, like CENTRAL EAST.
+
+Records: `docs/records/nyiso/FINDING-nyiso-next30-zone-k-import-drivers-phase0-2026-10-01.md`, `results/phase0/nyiso/_nyisonext30_zone_k_import_drivers.json`, `scripts/probes/nyisonext30_zone_k_import_drivers.py`.
+
+Owner cards #6992 / #6987 / #6984 / NEXT-24 are unchanged; no ruling was found.

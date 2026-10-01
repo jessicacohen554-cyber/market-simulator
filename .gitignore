@@ -3993,3 +3993,17 @@ results/calibration/nyisonext26_202[2-5]/
 results/calibration/nyisonext26p_202[2-5]/
 # PJM-NEXT-18: year-isolated diagnostic keeper replays (never on main; rule 29(c)/32(d)).
 results/calibration/pjmnext18_rp_*/
+
+# miso-298 (2026-10-01) per-year ARM LEGS: kept out of main (rule 32(d)); the
+# composite miso298_span is the registrable bundle. Provenance SHAs in
+# docs/records/miso/RESULT-miso298-gas-form-alone-2026-10-01.md.
+results/calibration/miso_298_20*/
+
+# miso-298 (2026-10-01) KILLED arm span: registered on completion (rule 15) at commit
+# c14c5e13 (sidecar + payload + slim bundle incl. hourly/unit_marginal_<Y>), then taken off
+# the registered set in the same PR because keeper-only retention (rule 35 (f), audit E13)
+# admits only the keeper. Ignored, never rm-ed (rule 31). Recover at zero LP:
+#   git checkout c14c5e13 -- results/calibration/miso298_span \
+#     frontend/data/backcast/registry/2026-10-01-miso-298-gas-form.json \
+#     frontend/data/backcast/runs/2026-10-01-miso-298-gas-form.js
+results/calibration/miso298_span/
