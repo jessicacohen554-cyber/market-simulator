@@ -1721,6 +1721,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # stays valid; ON it moves the NYISO delivered-gas array and hashes
     # distinctly. Registered IN THE SAME COMMIT as the field.
     "nyiso_gas_daily_print_level",
+    # NYISO-NEXT-26 all-hours Zone-K TSL window, default off: dropped from the
+    # hash at its False default so every pre-existing key (the NYISO keeper's
+    # included) stays valid; ON it moves the NYC->Long_Island TTC and hashes
+    # distinctly. Registered IN THE SAME COMMIT as the field.
+    "nyiso_li_tsl_all_hours",
     # nyiso-224 NYISO TOTAL EAST cutset transfer envelope, default off: dropped
     # from the hash at its False default so every pre-existing NYISO key (the
     # designated keeper's included) stays valid, and ON it selects a different
@@ -2967,6 +2972,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_gas_flow_date": "False",
     # Added by NYISO-NEXT-25 WITH the field, same commit.
     "nyiso_gas_daily_print_level": "False",
+    # Added by NYISO-NEXT-26 WITH the field, same commit.
+    "nyiso_li_tsl_all_hours": "False",
     # Added by nyiso-224 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "nyiso_total_east_cutset_ttc": "False",
@@ -8481,6 +8488,26 @@ class ScenarioConfig:
     # skips Long_Island (one mechanism per phenomenon, rule 19); the 0.45
     # scalar remains only for the default-off legacy path. Default off
     # (byte-identical); NYISO-only.
+    nyiso_li_tsl_all_hours: bool = False  # NYISO-NEXT-26: the Zone-K cap
+    # (nyiso_li_lcr_tsl, on the basis nyiso_li_tsl_n11_security selects) binds
+    # in EVERY hour, not only the HB14-21 design-cooling window. A rule-17
+    # [R-FLOOR-WINDOW] window correction on a transmission bound: the window
+    # must follow the constraint's own driver, and NYISO's DAM limiting-
+    # constraint posting binds the Zone-K import security set (Y50 Dunwoodie-
+    # Shore Road for loss of Y49, Y49 Sprain Brook-East Garden City, the
+    # ConEd-LIPA interface, the Shore Road 345/138 transformer) in 1,680-5,782
+    # hours a year 2021-2025, in every season, with 58-64 % of those hours and
+    # 44-52 % of their shadow cost OUTSIDE HB14-21. Off the window the link
+    # otherwise reads the 1,650 MW Gold-Book seed (iso_configs.py, "Tier 3 --
+    # verify"), which the measured implied net AC import into Zone K (zonal
+    # load - CAMPD gross - P-32 LI seam schedules) never approaches (p99
+    # 670-1,190 MW by season-year) -- rule 14 [R-ACCURATE], a published limit
+    # replaces an unverified estimate. ZERO free parameters: same published
+    # number, same link, same symmetry. Caveat carried to the record: the 940 MW
+    # is computed at summer design conditions (Y50 @ LTE 964 MVA); no winter
+    # rating is in the corpus. Effective only when nyiso_li_lcr_tsl is on;
+    # NYISO-only; default off (byte-identical). Evidence:
+    # docs/records/nyiso/FINDING-nyiso-next26-li-import-window-phase0-2026-10-01.md.
     nyiso_li_tsl_n11_security: bool = False  # NYISO Zone-K cap reads the
     # PUBLISHED N-1-1 TRANSMISSION SECURITY LIMIT instead of the loss-of-source-
     # net locality import limit (nyiso-130). A rule-14 [R-ACCURATE] / rule-19
@@ -25125,6 +25152,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_hub_gap_month_level": 3,
     "nyiso_gas_flow_date": 3,
     "nyiso_gas_daily_print_level": 3,
+    "nyiso_li_tsl_all_hours": 3,
     "nyiso_total_east_cutset_ttc": 3,
     "nyiso_fg_split": 3,
     "mustrun_chp_btm_holdout": 3,

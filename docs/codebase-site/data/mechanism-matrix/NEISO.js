@@ -370,6 +370,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     import_shape_lever: { cell: "." },
     nyiso_import_sil_retire: { cell: "." },
     nyiso_li_tsl_n11_security: { cell: "." },
+    nyiso_li_tsl_all_hours: { cell: ".", ev: "NYISO-only seam (apply_nyiso_li_tsl_import_cap returns ttc unchanged for every other ISO). Rule 25 [R-ISO-SCOPE]: nothing transfers." },
     nyiso_central_east_measured_ttc: { cell: ".", fc: "." },
     nyiso_gj_locality_tsl: { cell: "." },
     caiso_firm_envelope_clip: { cell: "." },

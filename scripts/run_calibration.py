@@ -3457,6 +3457,7 @@ def run_year(
         from market_sim.model.transmission import apply_nyiso_li_tsl_import_cap
 
         _li_n11 = bool(getattr(config, "nyiso_li_tsl_n11_security", False))
+        _li_all = bool(getattr(config, "nyiso_li_tsl_all_hours", False))
         ttc = apply_nyiso_li_tsl_import_cap(
             ttc,
             iso_config,
@@ -3464,12 +3465,14 @@ def run_year(
             year,
             demand.shape[1],
             n11_security_basis=_li_n11,
+            all_hours=_li_all,
         )
         logger.info(
-            "%s %d: Zone-K LCR/TSL import cap on NYC->Long_Island (HB14-21, "
+            "%s %d: Zone-K LCR/TSL import cap on NYC->Long_Island (%s, "
             "published %s; replaces the LI self-supply energy floor)",
             iso,
             year,
+            "all hours" if _li_all else "HB14-21",
             "N-1-1 transmission security limit" if _li_n11 else "locality import limit",
         )
     # NYISO Zone-J (NYC) LCR/TSL mechanism (nyiso-61, config.nyiso_nyc_lcr_tsl):

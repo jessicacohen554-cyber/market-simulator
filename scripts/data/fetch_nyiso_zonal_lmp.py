@@ -13,7 +13,7 @@ as the DA "regeneration" recipe, and it is the fetch half of the NYISO RTD
 interval-convention repair (session nyiso-139, owner decision D3 option (b),
 "re-stage the NYISO RT archive, repair first").
 
-Two products, both public and uncredentialed:
+Three products, all public and uncredentialed:
 
 * **DA** ``csv/damlbmp/<YYYYMM>01damlbmp_zone_csv.zip`` — hourly day-ahead
   zonal LBMP. ``derive_actual_lmp._nyiso_wide`` reads these from a single
@@ -23,6 +23,9 @@ Two products, both public and uncredentialed:
   expects).
 * **RT** ``csv/realtime/<YYYYMM>01realtime_zone_csv.zip`` — 5-minute
   preliminary ex-post zonal LBMP, read flat from the same directory.
+* **DLC** ``csv/DAMLimitingConstraints/<YYYYMM>01DAMLimitingConstraints_csv.zip``
+  — hourly DAM binding facility, contingency and shadow cost (``--kind dlc``,
+  never part of ``both``; a diagnosis series read by probes only).
 
 Idempotent by design: an existing file that opens as a valid zip is left
 untouched, so the 21 RT months already committed to the pack (including the
@@ -39,6 +42,7 @@ Usage::
 
     python scripts/data/fetch_nyiso_zonal_lmp.py                  # 2018-01..2026-06, both
     python scripts/data/fetch_nyiso_zonal_lmp.py --kind rt
+    python scripts/data/fetch_nyiso_zonal_lmp.py --kind dlc --start 202101 --end 202512
     python scripts/data/fetch_nyiso_zonal_lmp.py --start 202301 --end 202512
     python scripts/data/fetch_nyiso_zonal_lmp.py --check          # report coverage, fetch nothing
 """
@@ -73,6 +77,9 @@ BASE_URL = "http://mis.nyiso.com/public/csv"
 _PRODUCTS = {
     "da": ("damlbmp", "damlbmp_zone_csv"),
     "rt": ("realtime", "realtime_zone_csv"),
+    # DAM limiting constraints: hourly binding facility, contingency and
+    # shadow cost (NYISO-NEXT-26, a diagnosis series; never a solve input).
+    "dlc": ("DAMLimitingConstraints", "DAMLimitingConstraints_csv"),
 }
 
 #: The committed parquet's span. 2026 is H1 only — the block was built that
@@ -104,7 +111,7 @@ def months(start: int, end: int) -> list[int]:
 
 
 def filename(month: int, kind: str) -> str:
-    """Local/remote basename for one ``YYYYMM`` month of ``kind`` (``da``/``rt``)."""
+    """Local/remote basename for one ``YYYYMM`` month of ``kind`` (``da``/``rt``/``dlc``)."""
     _, stem = _PRODUCTS[kind]
     return f"{month}01{stem}.zip"
 
@@ -189,7 +196,7 @@ def main() -> int:
     ap.add_argument(
         "--end", type=int, default=DEFAULT_END, help="YYYYMM (default 202606)"
     )
-    ap.add_argument("--kind", choices=["da", "rt", "both"], default="both")
+    ap.add_argument("--kind", choices=["da", "rt", "dlc", "both"], default="both")
     ap.add_argument(
         "--jobs", type=int, default=6, help="concurrent downloads (default 6)"
     )

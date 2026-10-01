@@ -1,0 +1,468 @@
+{
+ "attribution": {
+  "2021": {
+   "mean_da_cong_kj": 11.14,
+   "fitted_mean": 10.93,
+   "r2": 0.965,
+   "by_class": {
+    "li_internal": 0.74,
+    "other": 0.45,
+    "zone_k_import": 9.73
+   },
+   "top": {
+    "CONED - LIPA": {
+     "coef": 1.046,
+     "contrib": 3.923
+    },
+    "DUNWODIE 345 SHORE_RD 345 1": {
+     "coef": 0.919,
+     "contrib": 3.353
+    },
+    "SHORE_RD 345 SHORE_RD 138 1": {
+     "coef": 0.952,
+     "contrib": 1.949
+    },
+    "CENTRAL EAST - VC": {
+     "coef": 0.04,
+     "contrib": 0.873
+    },
+    "ELWOOD    69 PULASKLI  69 1": {
+     "coef": 0.061,
+     "contrib": 0.784
+    },
+    "SPRNBRK  345 EGRDNCTR 345 1": {
+     "coef": 0.78,
+     "contrib": 0.623
+    },
+    "FRESHKLS 138 WILLWBRK 138 1": {
+     "coef": -0.08,
+     "contrib": -0.282
+    },
+    "SCH - NPX_1385": {
+     "coef": -0.035,
+     "contrib": -0.116
+    }
+   }
+  },
+  "2022": {
+   "mean_da_cong_kj": 10.07,
+   "fitted_mean": 9.99,
+   "r2": 0.943,
+   "by_class": {
+    "li_internal": 0.72,
+    "other": -0.06,
+    "zone_k_import": 9.34
+   },
+   "top": {
+    "DUNWODIE 345 SHORE_RD 345 1": {
+     "coef": 0.925,
+     "contrib": 7.986
+    },
+    "SHORE_RD 345 SHORE_RD 138 1": {
+     "coef": 0.754,
+     "contrib": 0.827
+    },
+    "ELWOOD    69 PULASKLI  69 1": {
+     "coef": 0.053,
+     "contrib": 0.591
+    },
+    "SPRNBRK  345 EGRDNCTR 345 1": {
+     "coef": 0.249,
+     "contrib": 0.351
+    },
+    "E179THST 138 HELLGATE 138 1": {
+     "coef": -0.26,
+     "contrib": -0.316
+    },
+    "FRESHKLS 138 WILLWBRK 138 1": {
+     "coef": -0.082,
+     "contrib": -0.281
+    },
+    "SCH - NE - NY": {
+     "coef": -0.143,
+     "contrib": 0.208
+    },
+    "SCH - NPX_1385": {
+     "coef": 0.039,
+     "contrib": 0.172
+    }
+   }
+  },
+  "2023": {
+   "mean_da_cong_kj": 6.33,
+   "fitted_mean": 6.2,
+   "r2": 0.94,
+   "by_class": {
+    "li_internal": 1.92,
+    "other": 0.4,
+    "zone_k_import": 3.88
+   },
+   "top": {
+    "DUNWODIE 345 SHORE_RD 345 1": {
+     "coef": 0.893,
+     "contrib": 3.454
+    },
+    "ELWOOD    69 PULASKLI  69 1": {
+     "coef": 0.104,
+     "contrib": 1.233
+    },
+    "SPRNBRK  345 EGRDNCTR 345 1": {
+     "coef": 0.544,
+     "contrib": 0.419
+    },
+    "DEPOSIT   69 INDIANHD  69 1": {
+     "coef": 0.142,
+     "contrib": 0.307
+    },
+    "EGRDNCTY 345 EGRDNCTY 138 1": {
+     "coef": 0.964,
+     "contrib": 0.305
+    },
+    "CENTRAL EAST - VC": {
+     "coef": 0.016,
+     "contrib": 0.174
+    },
+    "FRESHKLS 138 WILLWBRK 138 1": {
+     "coef": -0.088,
+     "contrib": -0.161
+    },
+    "SCH - NE - NY": {
+     "coef": -0.114,
+     "contrib": 0.125
+    }
+   }
+  },
+  "2024": {
+   "mean_da_cong_kj": 3.63,
+   "fitted_mean": 3.47,
+   "r2": 0.927,
+   "by_class": {
+    "li_internal": 1.82,
+    "other": -0.41,
+    "zone_k_import": 2.05
+   },
+   "top": {
+    "SPRNBRK  345 EGRDNCTR 345 1": {
+     "coef": 0.852,
+     "contrib": 1.767
+    },
+    "ELWOOD    69 PULASKLI  69 1": {
+     "coef": 0.115,
+     "contrib": 0.984
+    },
+    "E179THST 138 HELLGATE 138 1": {
+     "coef": -0.296,
+     "contrib": -0.536
+    },
+    "EGRDNCTY 345 EGRDNCTY 138 1": {
+     "coef": 0.918,
+     "contrib": 0.471
+    },
+    "DUNWODIE 345 SHORE_RD 345 1": {
+     "coef": 0.777,
+     "contrib": 0.216
+    },
+    "ASTANNEX 138 ASTORIAE 138 1": {
+     "coef": 0.811,
+     "contrib": 0.197
+    },
+    "ASTANNEX 345 E13THSTA 345 1": {
+     "coef": -1.078,
+     "contrib": -0.153
+    },
+    "NRTHPORT 138 PILGRIM  138 2": {
+     "coef": 0.102,
+     "contrib": 0.132
+    }
+   }
+  },
+  "2025": {
+   "mean_da_cong_kj": 3.11,
+   "fitted_mean": 3.27,
+   "r2": 0.824,
+   "by_class": {
+    "li_internal": 0.77,
+    "other": -0.16,
+    "zone_k_import": 2.66
+   },
+   "top": {
+    "SPRNBRK  345 EGRDNCTR 345 1": {
+     "coef": 0.97,
+     "contrib": 1.578
+    },
+    "DUNWODIE 345 SHORE_RD 345 1": {
+     "coef": 0.812,
+     "contrib": 1.067
+    },
+    "ELWOOD    69 PULASKLI  69 1": {
+     "coef": 0.1,
+     "contrib": 0.424
+    },
+    "GOETHALS 345 GOWANUS  345 1": {
+     "coef": -0.065,
+     "contrib": -0.389
+    },
+    "STEWRTAV 138 VALLYSTR 138 1": {
+     "coef": 0.13,
+     "contrib": 0.331
+    },
+    "EGRDNCTY 138 VALLYSTR 138 1": {
+     "coef": -0.076,
+     "contrib": -0.273
+    },
+    "STEWRTAV 138 VALLYSTR 138 2": {
+     "coef": 0.074,
+     "contrib": 0.237
+    },
+    "SPRNBRK  345 STRANSSB 345 1": {
+     "coef": 1.269,
+     "contrib": 0.221
+    }
+   }
+  }
+ },
+ "window_census": {
+  "2021": {
+   "binding_hours": 5782,
+   "share_hours_outside_hb14_21": 0.611,
+   "share_cost_outside_hb14_21": 0.486,
+   "hours_by_season": {
+    "winter": 1958,
+    "summer": 1657,
+    "fall": 1209,
+    "spring": 958
+   },
+   "contingency_hours": 3174,
+   "base_case_hours": 4019
+  },
+  "2022": {
+   "binding_hours": 5432,
+   "share_hours_outside_hb14_21": 0.6,
+   "share_cost_outside_hb14_21": 0.441,
+   "hours_by_season": {
+    "spring": 1528,
+    "summer": 1381,
+    "winter": 1322,
+    "fall": 1201
+   },
+   "contingency_hours": 4244,
+   "base_case_hours": 2402
+  },
+  "2023": {
+   "binding_hours": 5227,
+   "share_hours_outside_hb14_21": 0.619,
+   "share_cost_outside_hb14_21": 0.524,
+   "hours_by_season": {
+    "summer": 1625,
+    "winter": 1505,
+    "spring": 1197,
+    "fall": 900
+   },
+   "contingency_hours": 4758,
+   "base_case_hours": 2242
+  },
+  "2024": {
+   "binding_hours": 3148,
+   "share_hours_outside_hb14_21": 0.641,
+   "share_cost_outside_hb14_21": 0.474,
+   "hours_by_season": {
+    "summer": 1397,
+    "winter": 778,
+    "spring": 500,
+    "fall": 473
+   },
+   "contingency_hours": 2450,
+   "base_case_hours": 1130
+  },
+  "2025": {
+   "binding_hours": 1680,
+   "share_hours_outside_hb14_21": 0.58,
+   "share_cost_outside_hb14_21": 0.475,
+   "hours_by_season": {
+    "winter": 1202,
+    "summer": 279,
+    "spring": 165,
+    "fall": 34
+   },
+   "contingency_hours": 1277,
+   "base_case_hours": 451
+  }
+ },
+ "cap_estimate": {
+  "2021": {
+   "hours_model_net_import_gt_940": 2099,
+   "of_which_outside_hb14_21": 1977,
+   "mean_excess_mw": 270.0,
+   "hours_measured_implied_gt_940": 351,
+   "hours_li_headroom_short": 0,
+   "K_err_pct_keeper": -16.1,
+   "K_err_pct_static_estimate": -9.3,
+   "season": {
+    "winter": {
+     "err_keeper": -13.5,
+     "err_est": 4.6,
+     "meas_implied_p99": 1024.0,
+     "model_p99": 1650.0
+    },
+    "spring": {
+     "err_keeper": -8.9,
+     "err_est": -6.4,
+     "meas_implied_p99": 908.0,
+     "model_p99": 1322.0
+    },
+    "summer": {
+     "err_keeper": -27.7,
+     "err_est": -26.5,
+     "meas_implied_p99": 1131.0,
+     "model_p99": 1349.0
+    },
+    "fall": {
+     "err_keeper": -11.3,
+     "err_est": -9.1,
+     "meas_implied_p99": 998.0,
+     "model_p99": 1383.0
+    }
+   }
+  },
+  "2022": {
+   "hours_model_net_import_gt_940": 1246,
+   "of_which_outside_hb14_21": 1188,
+   "mean_excess_mw": 243.0,
+   "hours_measured_implied_gt_940": 340,
+   "hours_li_headroom_short": 0,
+   "K_err_pct_keeper": -11.3,
+   "K_err_pct_static_estimate": -8.9,
+   "season": {
+    "winter": {
+     "err_keeper": -13.2,
+     "err_est": -7.8,
+     "meas_implied_p99": 981.0,
+     "model_p99": 1607.0
+    },
+    "spring": {
+     "err_keeper": -9.8,
+     "err_est": -8.2,
+     "meas_implied_p99": 953.0,
+     "model_p99": 1304.0
+    },
+    "summer": {
+     "err_keeper": -13.2,
+     "err_est": -12.0,
+     "meas_implied_p99": 1187.0,
+     "model_p99": 1386.0
+    },
+    "fall": {
+     "err_keeper": -7.1,
+     "err_est": -7.0,
+     "meas_implied_p99": 919.0,
+     "model_p99": 949.0
+    }
+   }
+  },
+  "2023": {
+   "hours_model_net_import_gt_940": 1333,
+   "of_which_outside_hb14_21": 1251,
+   "mean_excess_mw": 280.0,
+   "hours_measured_implied_gt_940": 133,
+   "hours_li_headroom_short": 0,
+   "K_err_pct_keeper": -13.9,
+   "K_err_pct_static_estimate": -11.3,
+   "season": {
+    "winter": {
+     "err_keeper": -20.0,
+     "err_est": -15.7,
+     "meas_implied_p99": 804.0,
+     "model_p99": 1650.0
+    },
+    "spring": {
+     "err_keeper": -3.5,
+     "err_est": -2.8,
+     "meas_implied_p99": 506.0,
+     "model_p99": 1107.0
+    },
+    "summer": {
+     "err_keeper": -17.3,
+     "err_est": -14.4,
+     "meas_implied_p99": 1116.0,
+     "model_p99": 1650.0
+    },
+    "fall": {
+     "err_keeper": -11.1,
+     "err_est": -9.2,
+     "meas_implied_p99": 942.0,
+     "model_p99": 1406.0
+    }
+   }
+  },
+  "2024": {
+   "hours_model_net_import_gt_940": 1056,
+   "of_which_outside_hb14_21": 1019,
+   "mean_excess_mw": 276.0,
+   "hours_measured_implied_gt_940": 49,
+   "hours_li_headroom_short": 0,
+   "K_err_pct_keeper": -12.0,
+   "K_err_pct_static_estimate": -9.4,
+   "season": {
+    "winter": {
+     "err_keeper": -12.0,
+     "err_est": -7.0,
+     "meas_implied_p99": 879.0,
+     "model_p99": 1645.0
+    },
+    "spring": {
+     "err_keeper": 1.2,
+     "err_est": 3.3,
+     "meas_implied_p99": 902.0,
+     "model_p99": 1343.0
+    },
+    "summer": {
+     "err_keeper": -24.5,
+     "err_est": -23.5,
+     "meas_implied_p99": 967.0,
+     "model_p99": 1529.0
+    },
+    "fall": {
+     "err_keeper": -5.6,
+     "err_est": -4.9,
+     "meas_implied_p99": 790.0,
+     "model_p99": 1142.0
+    }
+   }
+  },
+  "2025": {
+   "hours_model_net_import_gt_940": 1016,
+   "of_which_outside_hb14_21": 970,
+   "mean_excess_mw": 247.0,
+   "hours_measured_implied_gt_940": 171,
+   "hours_li_headroom_short": 0,
+   "K_err_pct_keeper": -12.8,
+   "K_err_pct_static_estimate": -11.0,
+   "season": {
+    "winter": {
+     "err_keeper": -17.6,
+     "err_est": -14.6,
+     "meas_implied_p99": 1025.0,
+     "model_p99": 1650.0
+    },
+    "spring": {
+     "err_keeper": -6.3,
+     "err_est": -4.4,
+     "meas_implied_p99": 996.0,
+     "model_p99": 1432.0
+    },
+    "summer": {
+     "err_keeper": -13.2,
+     "err_est": -12.7,
+     "meas_implied_p99": 961.0,
+     "model_p99": 1257.0
+    },
+    "fall": {
+     "err_keeper": -6.4,
+     "err_est": -6.2,
+     "meas_implied_p99": 670.0,
+     "model_p99": 1057.0
+    }
+   }
+  }
+ }
+}

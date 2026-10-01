@@ -3476,6 +3476,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 )
 
                 _li_n11 = bool(getattr(config, "nyiso_li_tsl_n11_security", False))
+                _li_all = bool(getattr(config, "nyiso_li_tsl_all_hours", False))
                 year_ttc = apply_nyiso_li_tsl_import_cap(
                     year_ttc,
                     _year_iso_config,
@@ -3483,13 +3484,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     year,
                     year_demand.shape[1],
                     n11_security_basis=_li_n11,
+                    all_hours=_li_all,
                 )
                 logger.info(
                     "%s %d: Zone-K LCR/TSL import cap on NYC->Long_Island "
-                    "(HB14-21, published %s; replaces the "
+                    "(%s, published %s; replaces the "
                     "LI self-supply energy floor)",
                     iso,
                     year,
+                    "all hours" if _li_all else "HB14-21",
                     "N-1-1 transmission security limit"
                     if _li_n11
                     else "locality import limit",
