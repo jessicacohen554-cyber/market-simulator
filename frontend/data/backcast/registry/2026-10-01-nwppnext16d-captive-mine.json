@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-01-nwppnext16d-captive-mine",
+  "label": "nwppnext16d captive mine",
+  "date": "2026-10-01",
+  "shorthand": "nwppnext16d-captive-mine",
+  "definition": "NWPP-NEXT-16 arm D: keeper #19 recipe, fuel split -> vintage denominator + captive-mine marginal coal price",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-10-01-nwppnext16d-captive-mine.js",
+  "bundle": "results/calibration/nwppnext16d_span"
+}
