@@ -53,3 +53,16 @@ Re-run the probe at the solve sha of any future arm (`--base fdc41f36 --head <sh
 ## Lane state
 
 Queue owner-blocked (cards 1–6 unruled). No lever proposed; no PRECOMMIT.
+
+## Delta, NYISO-NEXT-33: `7a65272a` → `9209f610` (zero LP)
+
+Same probe (`--base 7a65272a --head 9209f610`). Two commits touch the backcast path:
+`d3e16f23` (R-CAISO-31) and `2eac46ec` (soco-98).
+
+| Class | Files | Why INERT for the keeper |
+|---|---|---|
+| added | `scripts/lib/storage_soc_bounds/{__init__,caiso}.py` | imported only by `scripts/data/curate_storage_soc_bounds.py` (CAISO data intake); not on any solve path |
+| code | `src/market_sim/model/interchange/spec.py` (`INTERFACE_NEIGHBORS`) | adds/edits `hr_by_year` on the six `SOCO_*` neighbour entries only; `INTERFACE_NEIGHBORS["NYISO"]` repr hash `dc937b598926` at both shas |
+
+`surface_rows("NYISO")`: 228 rows, hash `50e8e6cf8632` at both shas (unchanged
+from the `fdc41f36` baseline). HEAD remains INERT on the keeper's backcast path.
