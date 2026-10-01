@@ -3,7 +3,9 @@
 ``scripts/check_promotion_completeness.py`` runs four legs, but only for the
 ISOs whose keeper shard changed against the PR base:
 (a) gate-(a) provenance, (b) the ``complete`` marker names the new keeper,
-(c) FR-22 has 0 UNACCOUNTED, and (d) E13 is clean.
+(c) FR-22 has 0 UNACCOUNTED, (d) E13 is clean, and (e) the new keeper's bundle
+commits ``hourly/unit_hourly_<year>.parquet`` for every year (rule 15, owner
+2026-10-01; prospective, armed only for a keeper that changed vs ``--base``).
 
 These tests pin three things. Each leg's pass and fail. The diff scoping: an
 unchanged ISO is never checked, and a new shard counts as changed. And one live
@@ -107,6 +109,43 @@ def test_leg_d_fails_when_the_outgoing_keeper_is_left_registered(tmp_path):
     assert len(problems) == 1 and OLD in problems[0] and "E13" in problems[0]
 
 
+# --- leg (e) ---------------------------------------------------------------
+
+
+def _keeper_bundle(repo, years, have):
+    reg = repo / cpc.REGISTRY_REL
+    reg.mkdir(parents=True, exist_ok=True)
+    rec = {"id": NEW, "iso": "PJM", "years": years, "bundle": "results/calibration/b"}
+    (reg / f"{NEW}.json").write_text(json.dumps(rec))
+    hourly = repo / "results/calibration/b/hourly"
+    hourly.mkdir(parents=True, exist_ok=True)
+    for y in have:
+        (hourly / f"unit_hourly_{y}.parquet").write_bytes(b"x")
+
+
+def test_leg_e_passes_when_every_year_carries_unit_hourly(tmp_path):
+    _keeper_bundle(tmp_path, [2023, 2024, 2025], [2023, 2024, 2025])
+    assert cpc.leg_e_unit_hourly(NEW, tmp_path) == []
+
+
+def test_leg_e_names_the_years_missing_unit_hourly(tmp_path):
+    _keeper_bundle(tmp_path, [2023, 2024, 2025], [2024])
+    problems = cpc.leg_e_unit_hourly(NEW, tmp_path)
+    assert len(problems) == 1 and "[2023, 2025]" in problems[0]
+
+
+def test_leg_e_is_armed_only_for_a_promoted_keeper(tmp_path, monkeypatch):
+    _keeper_bundle(tmp_path, [2023], [])
+    monkeypatch.setattr(cpc, "leg_a_gate", lambda *a: ([], []))
+    monkeypatch.setattr(cpc, "leg_b_marker", lambda *a: [])
+    monkeypatch.setattr(cpc, "leg_c_parity", lambda *a: [])
+    monkeypatch.setattr(cpc, "leg_d_e13", lambda *a: [])
+    problems, notes = cpc.check_iso("PJM", NEW, tmp_path, promoted=False)
+    assert problems == [] and any("leg (e)" in n for n in notes)
+    problems, _ = cpc.check_iso("PJM", NEW, tmp_path, promoted=True)
+    assert len(problems) == 1 and problems[0].startswith("(e)")
+
+
 # --- diff scoping ----------------------------------------------------------
 
 
@@ -146,7 +185,7 @@ def test_unresolvable_base_exits_2(tmp_path):
 # --- the committed tree ----------------------------------------------------
 
 
-def test_every_current_keeper_passes_all_four_legs():
+def test_every_current_keeper_passes_all_four_legs():  # leg (e) is PR-scoped
     """Each current keeper shard passes (a)-(d) on the committed tree."""
     isos = sorted(cpc.head_keepers(cpc.REPO))
     assert isos, "no keeper shards found"

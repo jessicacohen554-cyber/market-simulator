@@ -29,6 +29,18 @@ the one reading it. For each such ISO it requires, in the resulting tree:
     for that ISO's keeper posture.
 (d) ``audit_keepers`` E13 is clean for that ISO. Every registered run is the
     keeper or stamped to it, meaning the outgoing keeper was pruned.
+(e) The new keeper's bundle COMMITS ``hourly/unit_hourly_<year>.parquet`` for
+    every year its registry sidecar declares (CLAUDE.md rule 15 ``[R-DASHBOARD]``,
+    owner instruction 2026-10-01: "Moving forward for all ISOs"). The per-unit
+    hourly layer (``mw``, ``cap_mw``, the P1 offer ``mc``, HiGHS ``red_cost``) is
+    the only artifact that names the LP's own marginal units; without it every
+    unit-grain question costs one diagnostic keeper replay per year (PJM-NEXT-14
+    and PJM-NEXT-18 each paid that bill). ~1-2 MB per ISO-year since the
+    DELTA_BINARY_PACKED ``hour`` encoding (``.gitignore`` note, nyiso-116).
+    Prospective only: the leg runs for ISOs whose keeper CHANGED against
+    ``--base``; a ``--iso``-forced check notes it as not applicable, so keepers
+    designated before this leg existed are re-checked when their ISO next
+    promotes, never retroactively.
 
 WHAT IT DOES NOT DO. It never reads, recomputes or asserts a DETERMINATION;
 each leg reuses the existing checker's own function, so there is still exactly
@@ -243,13 +255,46 @@ def leg_d_e13(iso: str, keeper: str, registry_dir: Path) -> list[str]:
     return [f"(d) E13 {f}" for f in findings]
 
 
-def check_iso(iso: str, keeper: str, repo: Path) -> tuple[list[str], list[str]]:
-    """Run all four legs for one promoted ISO.
+def leg_e_unit_hourly(keeper: str, repo: Path) -> list[str]:
+    """Leg (e): the new keeper's bundle commits ``unit_hourly`` for every year.
+
+    Args:
+        keeper: The ISO's new designated keeper.
+        repo: Repository root.
+
+    Returns:
+        Problems: a missing sidecar/bundle, or one line naming every year whose
+        ``hourly/unit_hourly_<year>.parquet`` is absent from the bundle.
+    """
+    side = _load(repo / REGISTRY_REL / f"{keeper}.json")
+    bundle_rel, years = side.get("bundle"), side.get("years") or []
+    if not bundle_rel:
+        return [f"(e) {keeper}: registry sidecar names no bundle"]
+    hourly = repo / bundle_rel / "hourly"
+    missing = [
+        int(y)
+        for y in years
+        if not (hourly / f"unit_hourly_{int(y)}.parquet").is_file()
+    ]
+    if missing:
+        return [
+            f"(e) {keeper}: {bundle_rel}/hourly/ lacks unit_hourly_<year>.parquet for "
+            f"{missing}. A keeper bundle commits the per-unit hourly layer for every "
+            f"year it carries (rule 15); compose it from the solve legs' bundles."
+        ]
+    return []
+
+
+def check_iso(
+    iso: str, keeper: str, repo: Path, promoted: bool = False
+) -> tuple[list[str], list[str]]:
+    """Run all five legs for one promoted ISO.
 
     Args:
         iso: ISO code.
         keeper: The ISO's new designated keeper.
         repo: Repository root.
+        promoted: The keeper changed against the PR base; arms leg (e).
 
     Returns:
         ``(problems, notes)``.
@@ -260,6 +305,12 @@ def check_iso(iso: str, keeper: str, repo: Path) -> tuple[list[str], list[str]]:
     problems += leg_b_marker(iso, keeper, complete_doc)
     problems += leg_c_parity(iso, repo)
     problems += leg_d_e13(iso, keeper, repo / REGISTRY_REL)
+    if promoted:
+        problems += leg_e_unit_hourly(keeper, repo)
+    else:
+        notes.append(
+            f"{iso}: keeper unchanged vs base — leg (e) unit_hourly not applied"
+        )
     return problems, notes
 
 
@@ -303,8 +354,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     all_problems: list[str] = []
+    promoted = set(targets) if args.base else set()
     for iso, (before, keeper) in sorted(targets.items()):
-        problems, notes = check_iso(iso, keeper, repo)
+        problems, notes = check_iso(iso, keeper, repo, promoted=iso in promoted)
         print(f"{iso}: keeper {before or '(none)'} -> {keeper}")
         for n in notes:
             print(f"  note: {n}")
@@ -314,6 +366,7 @@ def main(argv: list[str] | None = None) -> int:
         else:
             print(
                 "  OK   (a) gate-(a) row  (b) complete marker  (c) FR-22 parity  (d) E13"
+                + ("  (e) unit_hourly" if iso in promoted else "")
             )
         all_problems += problems
 
@@ -321,8 +374,8 @@ def main(argv: list[str] | None = None) -> int:
         print(
             f"\npromotion completeness FAILED: {len(all_problems)} problem(s). A promotion "
             f"PR re-keys gate (a) and the `complete` marker, accounts for every armed "
-            f"field under FR-22, and prunes the outgoing keeper (rule 35) in the SAME PR "
-            f"(owner ruling R-BF).",
+            f"field under FR-22, and prunes the outgoing keeper (rule 35) and commits the keeper's "
+            f"per-unit hourly layer (rule 15) in the SAME PR (owner ruling R-BF).",
             file=sys.stderr,
         )
         return 1

@@ -752,13 +752,16 @@ results/calibration/*/floors/
 #     CANNOT be re-solved into byte-identity once main has moved (caiso-155 vertex
 #     dependence), so for such a keeper this layer is PERMANENTLY unrecoverable.
 #
-# So the default stays (these are still the bundle's largest frames and most
-# bundles are never interrogated at unit grain), but a lane that WILL interrogate
-# a bundle commits its layer deliberately with ``git add -f`` — see the
-# unit_network_layer_sidecar matrix row. Opt-in per bundle, not a policy flip.
-results/calibration/*/hourly/unit_hourly_*.parquet
+# POLICY FLIP for unit_hourly (owner instruction 2026-10-01, PJM-NEXT-18: "Make
+# sure this is captured in the keeper bundle moving forward" / "Moving forward for
+# all ISOs"): unit_hourly_<year>.parquet is NO LONGER ignored. Every KEEPER bundle
+# commits it for every year (CLAUDE.md rule 15 [R-DASHBOARD]; enforced on the
+# promoting PR by scripts/check_promotion_completeness.py leg (e)). It is the only
+# artifact naming the LP's marginal units (mw, cap_mw, P1 offer mc, red_cost);
+# PJM-NEXT-14 and PJM-NEXT-18 each paid a per-year keeper replay to get it back.
+# network_<year>.parquet stays opt-in (``git add -f``, see the
+# unit_network_layer_sidecar matrix row).
 results/calibration/*/hourly/network_*.parquet
-results/calibration/*/*/hourly/unit_hourly_*.parquet
 results/calibration/*/*/hourly/network_*.parquet
 results/calibration/*/solve.log
 results/calibration/*-capdel-probe.log
@@ -3970,3 +3973,6 @@ results/calibration/r_ercot22_arm_*/
 # NYISO-NEXT-21 per-year legs (rule 32 (d)); composed into nyisonext21_span. Provenance (rule 33 (d)): 2021 83b4652a03e8eb4e6c3c98d3840933fd724f6cb2, 2022 2578b154db0029de0f4fe0e591a9dc8782e9df57, 2023 4c519e1512ed8e3f0851f65041c22e5e0f4e4563, 2024 80cbd1fd52d74ec1f74456083f8ad1ae41c75748, 2025 61b01f799a9cb9458999ea6faf23212c51d96bc7
 results/calibration/nyisonext21_202[2-5]/
 results/calibration/_rcaiso28/
+
+# PJM-NEXT-18: year-isolated diagnostic keeper replays (never on main; rule 29(c)/32(d)).
+results/calibration/pjmnext18_rp_*/
