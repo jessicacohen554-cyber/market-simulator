@@ -2909,6 +2909,14 @@ def _apply_outage_overlays(
             )
 
 
+# Month x hour-of-day conduct cell of each hour of the model's 8760 clock (Feb 29
+# dropped, as the CAMPD hour index is) -- the grain of
+# ``cc_conduct_profile`` (config.cc_mustrun_conduct_window, PJM-NEXT-17).
+_CONDUCT_CELL: np.ndarray = np.repeat(
+    np.arange(12), [744, 672, 744, 720, 744, 720, 744, 744, 720, 744, 720, 744]
+) * 24 + np.tile(np.arange(24), 365)
+
+
 def _commitment_day_order(sys_load: np.ndarray | None, hours: int) -> np.ndarray | None:
     """Operating days ranked by that day's MEAN system load, highest first.
 
@@ -3213,6 +3221,28 @@ def _compose_min_gen_floors(
         config is not None
         and getattr(config, "coal_sync_window_commitment_grain", False)
     )
+    # PLANT-CONDUCT placement of the CC_REGULAR leg of the per-plant must-run
+    # window (config.cc_mustrun_conduct_window, PJM-NEXT-17; see the field). Same
+    # SIZE, level, membership and clip; the hours are ranked by the plant's own
+    # measured CAMPD online probability in the hour's month x hour-of-day cell,
+    # ties by system load. A backcast excludes its own solve year's meter
+    # (rule 13); a forecast pools every artifact year. Empty => the incumbent
+    # system-load ranking stands for every plant (byte-identical when off).
+    _cc_conduct: dict[int, np.ndarray] = {}
+    if config is not None and getattr(config, "cc_mustrun_conduct_window", False):
+        _excl = (
+            int(_yr)
+            if _yr is not None and getattr(config, "mode", "forecast") == "backcast"
+            else None
+        )
+        _cc_conduct = _pkg_ns().cc_conduct_profile(_iso or "ERCOT", _excl)
+        logger.info(
+            "cc_mustrun_conduct_window ARMED (%s, excluded year %s): %d plant "
+            "conduct profile(s)",
+            _iso or "ERCOT",
+            _excl,
+            len(_cc_conduct),
+        )
     # MEASURED LAY-UP WINDOW MASK for both per-plant must-run seams
     # (config.mustrun_layup_window_mask, miso-173). The merit-order guard's
     # economic-lay-up companion extract records, per unit and dated window, the
@@ -3717,6 +3747,10 @@ def _compose_min_gen_floors(
             # (config.mustrun_window_commitment_grain, spp-27) — see the gate
             # block above. ``None`` when unarmed, so the hour grain stands.
             day_order = _commitment_day_order(sys_load, hours) if _day_grain else None
+            _load_pos = None
+            if _cc_conduct and load_rank is not None:
+                _load_pos = np.empty(hours, dtype=np.int64)
+                _load_pos[load_rank] = np.arange(hours)
             for g_idx, gen in enumerate(generators):
                 pmin_mw = getattr(gen, "cc_mustrun_pmin_mw", 0.0)
                 if pmin_mw <= 0.0:
@@ -3777,7 +3811,18 @@ def _compose_min_gen_floors(
                     k = int(round(frac * hours))
                     if k <= 0:
                         continue
-                    hrs = _mustrun_window_hours(load_rank, day_order, k, _day_grain)
+                    _prof = (
+                        _cc_conduct.get(int(getattr(gen, "plant_code", 0) or 0))
+                        if mech_id == MECH_CC_MUSTRUN_PER_PLANT
+                        and _load_pos is not None
+                        and hours == _CONDUCT_CELL.size
+                        else None
+                    )
+                    if _prof is not None:
+                        # Conduct rank first, system-load rank as the tiebreak.
+                        hrs = np.lexsort((_load_pos, -_prof[_CONDUCT_CELL]))[:k]
+                    else:
+                        hrs = _mustrun_window_hours(load_rank, day_order, k, _day_grain)
                     if _lu is not None:
                         vals = np.minimum(
                             pmin_mw,

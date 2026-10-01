@@ -2374,6 +2374,45 @@ def thermal_tranche_online_frac_by_year(
     return out
 
 
+@lru_cache(maxsize=16)
+def cc_conduct_profile(
+    iso: str, exclude_year: int | None = None
+) -> dict[int, np.ndarray]:
+    """Return ``{plant_code: (288,) online probability}`` per month x hour-of-day cell.
+
+    The CC_REGULAR conduct profile consumed by ``config.cc_mustrun_conduct_window``
+    (PJM-NEXT-17): each plant's measured CAMPD online-hour count over hour count in
+    every (month, hour-of-day) cell, pooled over the artifact years, with
+    *exclude_year* left out (a backcast passes its solve year, so no same-year
+    outcome enters -- rule 13). Read from
+    ``data/raw/_processed-legacy/cc_conduct_profile_<ISO>.csv``
+    (``scripts/data/derive_cc_conduct_profile.py``). Cell index is
+    ``month * 24 + hour_of_day`` with month 0-based. Empty when the ISO has no
+    artifact; a plant whose only rows are the excluded year is absent.
+    """
+    path = PROCESSED_DIR / f"cc_conduct_profile_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if exclude_year is not None:
+        df = df[df["year"] != int(exclude_year)]
+    if df.empty:
+        return {}
+    df = df.assign(cell=df["month"].astype(int) * 24 + df["hod"].astype(int))
+    agg = df.groupby(["plant_code", "cell"])[["sync_hours", "hours"]].sum()
+    out: dict[int, np.ndarray] = {}
+    for code, sub in agg.groupby(level=0):
+        on = np.zeros(288)
+        n = np.zeros(288)
+        cells = sub.index.get_level_values(1).to_numpy()
+        on[cells] = sub["sync_hours"].to_numpy(dtype=float)
+        n[cells] = sub["hours"].to_numpy(dtype=float)
+        if n.sum() <= 0:
+            continue
+        out[int(code)] = np.divide(on, n, out=np.zeros(288), where=n > 0)
+    return out
+
+
 @lru_cache(maxsize=8)
 def thermal_tranche_p25_measured_level(
     iso: str, fuel_split: bool | str = False

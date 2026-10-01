@@ -639,6 +639,7 @@ from market_sim.data.fleet.campd_bins import (  # noqa: F401
     thermal_tranche_online_frac,
     thermal_tranche_oom_level,
     thermal_tranche_online_frac_by_year,
+    cc_conduct_profile,
     thermal_tranche_overrides,
     thermal_tranche_p25_level,
     thermal_tranche_p25_measured_level,
