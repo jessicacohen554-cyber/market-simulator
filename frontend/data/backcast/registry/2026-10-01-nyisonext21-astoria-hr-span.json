@@ -3,7 +3,7 @@
   "label": "nyisonext21 astoria hr span",
   "date": "2026-10-01",
   "shorthand": "nyisonext21-astoria-hr-span",
-  "definition": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
+  "definition": "NYISO-NEXT-21 keeper (2022-2025): the NEXT-18 recipe unchanged, on the re-derived measured ST_GAS heat-rate artifact. Astoria 8906 is priced on its merged CEMS stack-duplicate meter (9.449 -> 11.645 MMBtu/MWh; eGRID 11.75). Astoria energy moves 35-76 % toward CAMPD, and both Astoria bridge D-4 rows clear. Span CALIBRATED (C3c ledgered); stamped 2021 NOT-YET on C3a +10.4 %.",
   "years": [
     2022,
     2023,
