@@ -15485,3 +15485,20 @@ chain"*. `internal_congestion_split` G → O. Kill condition 3 waived; condition
 non-tuned sources; full DOF ledger; no fit to hub MCC). Next: miso-293, Stage 1 design at zero LP. Charter §9.
 
 No frontier.
+
+## miso-293 — 2026-10-01 — flowgate program Stage 1 (zero LP): recommend KILL; the 2022 pair is a comparator-geography question
+
+Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/DESIGN-miso293-flowgate-stage1-2026-10-01.md`.
+
+- **A network cannot raise the scored price through congestion.** Zone-demand-weighted hub MCC+MLC: −1.64 (2022),
+  −0.31 / −0.73 / −0.90 (2023–25), against INDIANA.HUB +8.72 / +2.35 / +2.28 / +2.44. A perfect zonal network moves
+  C3a 2022 to about −20.7 %. Redispatch effects on the system energy price are unbounded by public data.
+- **Representation:** only PTDF flowgates on the existing six zones can express the West–East spread. On public data
+  (HIFLD: no reactance, no rating, no transformers, 65 % inferred, one 2023 vintage) every electrical value is a
+  convention (≥ 17 DOF), and the convention decides what binds. Kill conditions 1–2 hold in substance.
+- **Basis:** rubric v2.4 says the actual is zone-resolved where a zonal archive exists; code does this for ERCOT only.
+  Zone-resolved MISO actual (in-memory re-score): C3a 2022 −5.1 % PASS, C3b 2022 0.122 PASS, **C3a 2020 +11.6 % FAIL**,
+  C3b 2021 0.201 FAIL. Full span still NOT-YET. Put to the owner as a cross-ISO governance question.
+- `internal_congestion_split` stays **O** pending the go/kill ruling. Probes: `scripts/probes/_miso293_*`.
+
+No frontier.
