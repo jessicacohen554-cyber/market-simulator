@@ -1,5 +1,50 @@
 # Changelog
 
+## 2026-10-01 — Repo cleanup: protocol condensed, records filed, dead weight pruned, clean-data profiles
+
+Orchestrated from one parent session over five shards (PRs #6968, #6973, #6974, #6979, #6982). No
+solve-affecting change to any registered keeper; every keeper's cache key is untouched. Owner decisions
+were taken as clickable cards and are quoted in the commit messages they authorize.
+
+- **Protocol (PR #6968).** `scripts/promote_keeper.py` runs the whole promotion chain in rule-35 order
+  (enumerate years → register → attest → designate → fold → re-key `calibration-complete.json` and the
+  forecast gate-(a) stamp → `build_status` → `audit_keepers --check` → prune → parity); it refuses a
+  promotion that shrinks an ISO's registered year set. `scripts/shard_prompt.py` emits the per-year
+  solve-shard prompt with every hard stop baked in. `docs/RUNBOOK.md` is the one-page lane procedure.
+  `CLAUDE.md` 1,098 → 151 lines: every `[R-*]` rule kept; genealogy lives only in
+  `docs/governance/rule-history.md`. The keeper-audit PostToolUse hook is removed (the promotion tool
+  runs the audit). `pyproject.toml` pins the numeric stack exactly so `uv sync` and `pip install -e .`
+  resolve the same HiGHS (two keepers had been solved off-pin).
+- **Records (PR #6974).** 5,537 session records moved: `docs/` root and `docs/handoffs/` prefixed
+  files → `docs/records/<lane>/`; loose `results/calibration/*.md` → `docs/records/<lane>/`; loose
+  `results/calibration/_*.json|csv` → `results/phase0/<lane>/`. `scripts/lib/record_lanes.py` assigns
+  the lane. 4,113 files had path references rewritten; 0 dangling. `docs/` root 1,029 → 141 files.
+- **Clean data (PR #6973).** `scripts/regenerate_clean.py --solve-profile <ISO>` builds only the
+  datatypes that ISO's backcast solve reads (3–7 per ISO; registry `scripts/lib/clean_profiles.py`)
+  with a per-datatype incremental manifest. Measured: 46 s cold / 2 s warm against a full default
+  rebuild that was still running at 20.6 min (emissions alone 17 min). The eGRID sheet mirrors and
+  boundary-repair memos (30 files, 5.8 MB, content-addressed) are committed, saving ~28 s per container.
+- **Scripts and results (PR #6979).** `scripts/*.py` 227 → 121 (99 superseded `gen_*_attestation.py`
+  and 7 orphans deleted; 23 generators kept because the current keepers' generators import them);
+  `scripts/probes/` 821 → 739 (`scripts/lib/probe_census.py` is the repeatable sweep; ~650 probes added
+  in the last 14 days were retained as active-lane material). `results/calibration` 64 → 12 dirs and
+  472 → 216 MB (52 non-keeper bundle dirs, 49 unreferenced `_shared` inputs); `results/regression-goldens`
+  (67 captures against superseded keepers) deleted; `capture_keeper_goldens.py` re-captures on demand.
+- **CI and tests (PR #6982).** `ci.yml` cut from 12 jobs to `lint`, `fast-tests` and one `repo-checks`
+  job; four dead workflows deleted (`calibration-solve`, `golden-data-tier`, `perf-a-ci-probe`,
+  `cleanup-large-blobs`). Pin-ledger tests (solve-surface fingerprint pins, pinned default cache keys,
+  requirements-vs-lock equality, golden digests) removed or rewritten as the property they stood for;
+  the 20 tests measured at 20-85 s carry `slow` via `tests/conftest.py::SLOW_NODEIDS`. Session-named
+  tests were triaged but left in place (they test live mechanisms; renaming is cosmetic).
+- **CI red on `main` for every PR since 2026-09-30 is fixed** except one red left by decision: the NYISO
+  delivered-gas anchor drift (`test_gas_offer_zonal_anchor_vintage.py`, two tests; the NYISO lane
+  re-derives under rule 23).
+- **Not done, by decision or by limit.** Root clutter (`patches/`, `context/`, `tools/launcher.py`,
+  `run-simulator.*`, `model-updates.html`) was not granted. Four unreferenced `results/` dirs
+  (`ff-t1f-d65-a1`, `ffr3c`, `ffr4b`, `scn-campaign-load-2026-09-06-r2`) are removed here; every other
+  `results/<dir>` is read by a forecast sidecar, test or script and stays. A session cannot delete remote branches (403);
+  the 52 leftover `claude/*` refs are the owner's to clear.
+
 ## 2026-09-24 — Docs: nine registered regions, CAISO's five zones (audit desk v42 follow-up)
 
 Docs only — no code, no data, no registry; no cache key moves.
