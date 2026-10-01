@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-01-r-23-swcap-hourly",
+  "label": "r 23 swcap hourly",
+  "date": "2026-10-01",
+  "shorthand": "r-23-swcap-hourly",
+  "definition": "R-ERCOT-23: hourly effective ERCOT system-wide offer cap (ercot_swcap_effective_hourly, ERCOT-gated, zero DOF) on 2019 and 2021 - the published 2021 LCAP window (Operating Day 2021-03-04, $2,000) feeds the VOLL-anchored reserve penalties, shed cost and offer clip hourly, and post-solve the protocol cap bounds lambda + adders; 2020 and 2022-2025 are byte-identical to the r-21 legs. Per year: 2021 C3a +4.2% -> +1.0%, 2019 C3a +7.5% -> +7.0% and C3b 0.231 -> 0.219, no determination moves. Live verdict NOT-YET (C1 fuel-mix, C3a mean LMP and C3b price shape fail; C3c is a ledgered caveat).",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-10-01-r-23-swcap-hourly.js",
+  "bundle": "results/calibration/r_ercot23_span"
+}

@@ -15020,3 +15020,12 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Promotion:** r-21 pruned; year union {2019–2025}.
 - **Next:** the 2020/2021 adder (1.45× / 1.59×) needs ERCOT's per-year NP6-576 μ/σ tables (data intake).
 - **Record:** `docs/handoffs/r-ercot/RESULT-r-ercot-22-ordc-shift-vintage-2026-10-01.md`.
+
+## R-ERCOT-23 — 2026-10-01 — hourly effective SWCAP: the 2021 LCAP window + protocol price cap (rules 1/14) — PROMOTED `2026-10-01-r-23-swcap-hourly` (standing instruction "Is it an improvement? Then promote"); ISO NOT-YET
+
+- **Phase 0 (zero LP):** measured RTOFFPA splits RTORPA's two terms. Uri (Feb 2021) reproduces; Apr–Nov 2021 reads 8–10× over in every month — the VOLL, not the curve. Uri crossed the Peaker Net Margin threshold and Real-Time ran at the LCAP $2,000 from Operating Day 2021-03-04 (M-B030321-01; 16 TAC 25.505(g)(6)); VOLL = SWCAP (ORDC OBD §2.1; ERCOT 2022 Biennial ORDC Report §1.3). The published formula reads 2021 at 1.59× (r 0.876) without the window and 1.14× (r 0.985) with it. Separately, the model stacked measured RTORDPA uncapped above its own λ + adder (max $10,771); the protocol caps λ + adders at the SWCAP.
+- **Built:** `ercot_swcap_effective_hourly` (default off, ERCOT-gated, zero DOF): one hourly SWCAP series feeds the VOLL-anchored reserve penalties, the shed cost, the offer clip and the post-solve protocol cap. `constants.ERCOT_LCAP_WINDOWS_BY_YEAR`; matrix row + cells; solve-surface name declared; ERCOT pin 247 → 248 rows.
+- **Solve:** 2019 and 2021 one shard each at `651723e3`; 2020/2022–2025 reuse the r-21 legs (zero binding hours; G-DRIFT empty).
+- **Result:** 2021 C3a +4.2 → +1.0 %, LW 172.88 → 167.58, LCAP-window adder 4.60 → 1.02 (measured 0.47), max $10,771 → $9,000; 2019 C3a +7.5 → +7.0 %, C3b 0.231 → 0.219. C1/C8 unchanged; every determination unchanged.
+- **Carded:** the ORDC curve-parameter vintage (OBD half-hour mean 0.5(μ+Sσ) + ERCOT's published seasonal μ/σ) takes 2020 from 1.43× to 0.85× of measured RTORPA, but moves every year incl. the 2023 hold.
+- **Record:** `docs/records/ercot/r-ercot/RESULT-r-ercot-23-swcap-effective-hourly-2026-10-01.md`.

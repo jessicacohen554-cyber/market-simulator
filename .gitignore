@@ -3965,8 +3965,13 @@ results/calibration/nwppnext14_pr6932_span/
 results/calibration/nwppnext14vd_20[0-9][0-9]/
 results/calibration/_rcaiso24/
 
+# SPP-106 per-year shard legs and the local composite (rule 29(c) / 31: kept out of main until the owner rules)
+results/calibration/spp106EX_20*/
+results/calibration/spp106EX_span/
 # R-ERCOT-22 per-year legs: kept out of main (rule 29(c)/32(d)); the composite is registered
 results/calibration/r_ercot22_arm_*/
+# R-ERCOT-23 per-year legs (rule 29(c)/32(d)); composite r_ercot23_span is registered. Provenance (rule 33(d)): 2019 1bc2fa1db8ddfe4e40513daa244756b71babb5c2, 2021 48e7a6334b8eaf8d7214edf2aced4526664fb240; 2020/2022-2025 are the r-21 legs (keepers/ERCOT.json r_ercot22_extension)
+results/calibration/r_ercot23_arm_*/
 # NYISO-NEXT-21 per-year legs (rule 32 (d)); composed into nyisonext21_span. Provenance (rule 33 (d)): 2021 83b4652a03e8eb4e6c3c98d3840933fd724f6cb2, 2022 2578b154db0029de0f4fe0e591a9dc8782e9df57, 2023 4c519e1512ed8e3f0851f65041c22e5e0f4e4563, 2024 80cbd1fd52d74ec1f74456083f8ad1ae41c75748, 2025 61b01f799a9cb9458999ea6faf23212c51d96bc7
 results/calibration/nyisonext21_202[2-5]/
 results/calibration/_rcaiso28/
