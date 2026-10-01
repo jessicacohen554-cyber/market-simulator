@@ -118,36 +118,9 @@ def test_requirements_parser_tolerates_a_missing_file(tmp_path: Path) -> None:
     assert _requirements_pins(tmp_path / "nope.txt") == {}
 
 
-def test_the_live_keepers_are_on_pin() -> None:
-    """Every designated keeper on disk is on-pin — the state E14 landed in.
-
-    Skips any keeper whose bundle is not hydrated in this container, so the
-    test is meaningful under a partial data profile rather than vacuous.
-    """
-    import json
-
-    from scripts import calibration_verdict as cv
-
-    pins = _requirements_pins(REPO_ROOT / "requirements.txt")
-    assert pins, "requirements.txt must carry exact pins for E14 to mean anything"
-
-    checked = 0
-    for shard in sorted((REPO_ROOT / "frontend/data/backcast/keepers").glob("*.json")):
-        if shard.stem == "index":
-            continue
-        keeper_id = json.loads(shard.read_text()).get("keeper")
-        side_path = cv.REGISTRY_DIR / f"{keeper_id}.json"
-        if not keeper_id or not side_path.exists():
-            continue
-        bundle = json.loads(side_path.read_text()).get("bundle") or ""
-        run_config = REPO_ROOT / bundle / "run_config.json"
-        if not bundle or not run_config.exists():
-            continue
-        env = json.loads(run_config.read_text()).get("environment") or {}
-        mismatches, _ = solve_pin_findings(env.get("packages"), pins)
-        assert mismatches == [], (
-            f"{shard.stem} keeper {keeper_id} is off-pin: {mismatches}"
-        )
-        checked += 1
-
-    assert checked > 0, "no keeper bundle was hydrated — the assertion would be vacuous"
+# The live-tree assertion that every keeper's recorded environment equals
+# requirements.txt was REMOVED 2026-10-01 (owner decision, cleanup-D card
+# 'Off-pin keepers': 'Drop the live-tree test'). PJM and NYISO were solved on
+# highspy 1.15.1 by shards that used `pip install -e .`; E14 keeps reporting
+# the drift as a WARN, and pyproject now pins the numeric stack exactly so
+# both install routes resolve the same solver.

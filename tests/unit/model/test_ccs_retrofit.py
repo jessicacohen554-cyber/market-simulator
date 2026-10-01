@@ -933,7 +933,12 @@ class TestCapexCo2Scaling(unittest.TestCase):
             ScenarioConfig(
                 ccs_retrofit_capex_co2_scaling=False, ccs_retrofit_vom_adder=8.0
             ).cache_key(),
-            "4c6b03ae098b6e3e",
+            # ADVANCED 2026-10-01 (cleanup-D) from "4c6b03ae098b6e3e": the
+            # whole-config key moved under default changes merged after
+            # 2026-09-06 (unrelated to either CCS field); the reachability
+            # property is unchanged — the explicit (False, 8.0) pair still
+            # keys apart from every other config above.
+            "e5cf3cb10057034f",
         )
 
     def test_island_scales_with_captured_co2(self):

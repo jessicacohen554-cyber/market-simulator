@@ -52,6 +52,16 @@ Run the fast lane under `-n auto` (xdist) for the parallel speedup; the full
 lane runs serial because the data-backed and LP tests each hold several GB and
 must not run concurrently (CLAUDE.md rule 12).
 
+## One rule for new tests
+
+A test asserts **behaviour**, never a stored digest, version string or
+registered number reproduced from a frozen derive. Pin-ledger tests (a
+literal cache key, a solve-surface fingerprint, requirements-vs-lock
+equality) go red on every unrelated data or default change and teach lanes
+to ignore CI; where an invariant matters, assert the *property* (an explicit
+default hashes like an absent one; a derived table equals its derive on the
+same inputs) rather than the literal.
+
 ## Marker taxonomy
 
 Registered in `pyproject.toml` (`[tool.pytest.ini_options].markers`):
