@@ -15111,3 +15111,10 @@ too.
 - C3a 2021 +2.9 % (PASS), 2022 −2.4, 2023 +1.2, 2024 −4.0, **2025 −11.6 % (FAIL)**. Span NOT-YET; 2021 CALIBRATED;
   ISO NOT-YET. Residual is spatial (Upstate_West high, Long Island low) plus the 2025 downstate top decile.
 - Record: `docs/records/nyiso/RESULT-nyiso-next22-zone-resolved-basis-2026-10-01.md`.
+
+## NYISO-NEXT-26 — 2026-10-01 — Zone-K import security cap in every hour; gates pass, owner card
+
+- PRECOMMIT #6988, pin `4213945e`; ten year-isolated shards (arm A keeper + `nyiso_li_tsl_all_hours`; arm B + `nyiso_gas_daily_print_level`).
+- Arm A: G-1..G-6 PASS all five years (cap live 1,016–2,099 h/yr above 940 MW in the control; no new D-4 row). Zone K vs DA −16.1 → −10.7 % (2021), −11.3 → −10.1, −13.9 → −13.2, −12.0 → −11.4, −12.8 → −11.9; LI fossil +5–46 MW vs a 180–390 MW CAMPD gap. C3a ≤ 0.5 pt; no determination change (span NOT-YET, 2021 CALIBRATED).
+- Arm B: gates PASS vs NEXT-25 arm A; system scores equal to A's, K 2025 −10.9 → −10.1; span and ISO CALIBRATED (C3c lone, rule 22).
+- Four runs registered; owner card open (promote B recommended). Record: `docs/records/nyiso/RESULT-nyiso-next26-li-tsl-all-hours-2026-10-01.md`.

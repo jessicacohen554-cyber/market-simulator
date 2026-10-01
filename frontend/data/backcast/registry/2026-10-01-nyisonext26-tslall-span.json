@@ -1,0 +1,16 @@
+{
+  "id": "2026-10-01-nyisonext26-tslall-span",
+  "label": "nyisonext26 tslall span",
+  "date": "2026-10-01",
+  "shorthand": "nyisonext26-tslall-span",
+  "definition": "NYISO-NEXT-26 arm A: all-hours Zone-K TSL",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-10-01-nyisonext26-tslall-span.js",
+  "bundle": "results/calibration/nyisonext26_span"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "2026-10-01-nyisonext26p-tslprint-2021",
+  "label": "nyisonext26p tslprint 2021",
+  "date": "2026-10-01",
+  "shorthand": "nyisonext26p-tslprint-2021",
+  "definition": "NYISO-NEXT-26 arm B: print-level + all-hours Zone-K TSL",
+  "years": [
+    2021
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-10-01-nyisonext26p-tslprint-2021.js",
+  "bundle": "results/calibration/nyisonext26p_2021"
+}
