@@ -62,7 +62,7 @@ for the market split.
 | confirmed-retirements | — | — | — | — | — | — | — | — |
 | nuclear-license-status | — | — | — | — | — | — | — | — |
 | gtc-limits | — | — | — | — | — | — | — | — |
-| transfer-interface-limits | — | 2023–2025 | — | — | — | — | — | — |
+| transfer-interface-limits | — | — | — | — | — | — | — | — |
 | transmission-expansion | — | — | — | — | — | — | — | — |
 | ramp-capability | — | — | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — | — | — |
