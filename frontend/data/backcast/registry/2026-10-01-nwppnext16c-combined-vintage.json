@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-01-nwppnext16c-combined-vintage",
+  "label": "nwppnext16c combined vintage",
+  "date": "2026-10-01",
+  "shorthand": "nwppnext16c-combined-vintage",
+  "definition": "NWPP-NEXT-16 arm C: keeper #19 recipe, fuel split -> vintage denominator",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-10-01-nwppnext16c-combined-vintage.js",
+  "bundle": "results/calibration/nwppnext16c_span"
+}
