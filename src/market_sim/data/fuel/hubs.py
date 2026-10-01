@@ -882,6 +882,12 @@ def _nyiso_hub_daily_gas_prices(
     (the ``fbar`` renormalisation is applied after it), so it moves WHICH days
     are dear and never how dear the month is; annual gas burn and fuel mix are
     unchanged by construction.
+
+    Under ``ScenarioConfig.nyiso_gas_daily_print_level`` (default OFF, NYISO-NEXT-25)
+    both branches divide by the month's TRADE-day print mean only, so a priced day
+    is ``hub_level * print / trade_mean`` and the month is NOT re-centred on its
+    calendar-day mean: a multi-day package print no longer scales every ordinary
+    day of its month down by ``trade_mean / calendar_mean``.
     """
     monthly = _pkg_ns().iso_hub_monthly_gas_prices(
         config, year, basis_path, henry_hub_path
@@ -891,6 +897,7 @@ def _nyiso_hub_daily_gas_prices(
     transco_dated = _pkg_ns()._transco_z6_daily_dated(transco_path).get(year, {})
     iroquois_prints = _iroquois_z2_daily(None).get(year, {})
     gap_month_level = bool(getattr(config, "nyiso_hub_gap_month_level", False))
+    print_level = bool(getattr(config, "nyiso_gas_daily_print_level", False))
     flow = nyiso_transco_z6_flow_daily(config, year, transco_path)
     if flow is not None and gap_month_level:
         raise ValueError(
@@ -916,7 +923,12 @@ def _nyiso_hub_daily_gas_prices(
                     # exactly mean-preserving, as the trade-date branch below.
                     day0 = sum(_DAYS_IN_MONTH[:m])
                     seg = flow[day0 : day0 + n_days]
-                    day_hub = hub_m * (seg / float(seg.mean()))
+                    # NYISO-NEXT-25 (nyiso_gas_daily_print_level): divide by the
+                    # month's TRADE-day print mean, the statistic hub_m is, so a
+                    # day is priced at its own print, not rescaled to the
+                    # calendar-day mean of a staircase whose packages repeat.
+                    denom = mean if (print_level and mean > 0) else float(seg.mean())
+                    day_hub = hub_m * (seg / denom)
                 elif mean > 0:
                     # Place each trading-day quote on its true calendar day and
                     # interpolate the gaps (weekends/holiday weeks inherit the
@@ -951,7 +963,10 @@ def _nyiso_hub_daily_gas_prices(
                         unpriced = (grid < days[0] - 1.0) | (grid > days[-1] - 1.0)
                         day_factor[unpriced] = 1.0
                     fbar = float(day_factor.mean())
-                    if fbar > 0:
+                    if fbar > 0 and not print_level:
+                        # nyiso_gas_daily_print_level skips this calendar-day
+                        # renormalisation (NYISO-NEXT-25): the factors are
+                        # already print / trade-day mean.
                         day_factor = day_factor / fbar
                     day_hub = hub_m * day_factor
                 else:
