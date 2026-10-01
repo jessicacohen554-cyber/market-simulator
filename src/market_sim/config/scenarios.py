@@ -2355,6 +2355,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # data/raw/spp-gen-outage CSV; no sub-fields. Registered IN THE SAME COMMIT
     # as the field (the nyiso-119 discipline).
     "spp_gas_crow_residual_outage",
+    # SPP-106 MMU offer-side bands (default off): dropped from the hash at its
+    # default so every pre-existing run keeps its key. Byte-identical off by
+    # construction (_spp_mmu_armed is False, so no derate is skipped and no
+    # band is removed). Its one input is the committed
+    # data/raw/spp-mmu-unavailable-capacity CSV; no sub-fields. Registered IN
+    # THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "spp_mmu_offer_unavailability",
     # EIA-923 CC-family heat rates (NWPP-NEXT-14, default off): dropped from
     # the hash at its default so every pre-existing run -- every ISO's keepers
     # included -- keeps its key. Byte-identical off by construction (the seam
@@ -3224,6 +3231,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "spp_ct_lole_efor": "False",
     # Added by SPP-105 WITH the field (the nyiso-119 discipline).
     "spp_gas_crow_residual_outage": "False",
+    # Added by SPP-106 WITH the field (the nyiso-119 discipline).
+    "spp_mmu_offer_unavailability": "False",
     # Added by NWPP-NEXT-14 WITH the field (the nyiso-119 discipline).
     "eia923_cc_family_heat_rates": "False",
     # Added by soco-96 WITH the field (the nyiso-119 discipline).
@@ -18785,6 +18794,27 @@ class ScenarioConfig:
     # docs/handoffs/DESIGN-spp-105-gas-family-outage-2026-09-30.md.
     spp_gas_crow_residual_outage: bool = False
 
+    # SPP offer-side unavailability from the SPP MMU's own measured classes
+    # (SPP-106, 2026-10-01; owner card "Build EX anyway", carrier EX).
+    # ISO-exclusive: raises if armed for any ISO but SPP (rule 25).
+    #
+    # WHEN TRUE, on every SPP fossil row (gas, coal, oil) the flat GADS
+    # performance derate and the flat summer class derate are dropped, and after
+    # the outage overlays three MMU bands are removed as shares of pmax: the
+    # "above emergency maximum" share and the "between economic and emergency
+    # maximum" share (MMU MW / MMU rated conventional MW), all year, plus the
+    # MMU's unreported ambient derate MW-days spread over Jun-Sep as a share of
+    # fossil pmax. Rule 19: a REPLACEMENT of the flat derates, never a stack.
+    # Rule 21: zero free parameters (every value is read from the table). Rule
+    # 13: years outside 2020-2024 hold the nearest published MMU year, which is
+    # also the forward story. Declared at the gate: the inputs are annual MW
+    # digitized from a one-off white paper, and the zero-LP prediction is
+    # +$0.4-0.7/MWh in the 2023-25 upper tercile against an $11-15 gap
+    # (DESIGN s4-s5). Data: data/raw/spp-mmu-unavailable-capacity
+    # (market_sim.data.spp_mmu_unavailability). Default off; byte-identical off.
+    # docs/handoffs/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md.
+    spp_mmu_offer_unavailability: bool = False
+
     # Measured ERCOT GTC transfer limits (backcast/calibration overlay). When
     # True in backcast mode, the export-direction capability of the transfer
     # links that carry ERCOT's published Generic Transmission Constraints
@@ -23476,6 +23506,11 @@ class ScenarioConfig:
                 "spp_gas_crow_residual_outage is SPP-only (SPP-105: SPP's own "
                 "published gas outage, rule 25)."
             )
+        if self.spp_mmu_offer_unavailability and str(self.iso) != "SPP":
+            raise ValueError(
+                "spp_mmu_offer_unavailability is SPP-only (SPP-106: the SPP MMU's "
+                "own measured unavailability classes, rule 25)."
+            )
         if self.spp_gas_crow_residual_outage and self.spp_ct_lole_efor:
             raise ValueError(
                 "spp_gas_crow_residual_outage and spp_ct_lole_efor are mutually "
@@ -24988,6 +25023,10 @@ TIER_TAGS: dict[str, int] = {
     # own published hourly gas outage residual; allocation key is the incumbent
     # class rates; no free number of its own (rule 21).
     "spp_gas_crow_residual_outage": 1,
+    # Structural gate (1): replaces the flat fossil performance / summer class
+    # derates with the SPP MMU's measured offer-side and unreported-derate
+    # bands; no free number of its own (rule 21).
+    "spp_mmu_offer_unavailability": 1,
     # Structural gate (1): the plant-day measured gas/oil mix (CAMPD CO2 /
     # heat-input identity on Part 75 factors); no free number of its own
     # (rule 21). Backcast-only (rule 13).

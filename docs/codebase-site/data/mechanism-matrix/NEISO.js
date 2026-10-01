@@ -291,6 +291,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     wefor_statistical_stack: { cell: "K" },
     spp_ct_lole_efor: { cell: ".", ev: "SPP-exclusive field (rule 25 [R-ISO-SCOPE]): SPP's own LOLE-study EFOR table; raises if armed for this ISO. An own-ISO analogue would need this ISO's own published class/size outage rates (SPP-104, 2026-09-30)." },
     spp_gas_crow_residual_outage: { cell: ".", ev: "SPP-exclusive field (rule 25 [R-ISO-SCOPE]): SPP's own published hourly gas outage (portal capacity-of-generation-on-outage); raises if armed for this ISO. An own-ISO analogue would need this ISO's own published hourly outage by fuel (SPP-105, 2026-09-30)." },
+    spp_mmu_offer_unavailability: { cell: ".", ev: "SPP-exclusive field (rule 25 [R-ISO-SCOPE]): the SPP MMU's own measured offer-side / unreported-derate classes (Dec 2025 white paper); raises if armed for this ISO. An own-ISO analogue would need this ISO's own market monitor's measured offer-limit data (SPP-106, 2026-10-01)." },
     dual_fuel_measured_oil_burn: { cell: "U", ev: "soco-96 (2026-09-30) added the row; ISO-generic code but no NEISO measured oil-burn artifact exists, so it is inert here. U: UNTESTED. Rule 28(d): no verdict transfers." },
     correlated_forced_outage: { cell: ".", fc: "I" },
     retiree_cems_cap: { cell: "." },

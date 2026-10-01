@@ -546,6 +546,11 @@ jobs:
           # tests/scoring/test_soco_lambda_benchmark.py (FERC-714 Sch. 6 lambda,
           # 2.7 MB) and tests/unit/data/test_soco_energy_auction.py (committed
           # auction store, 4.7 MB) — 2 fast-tier reds on main since soco-84.
+          # SPP-106 (2026-10-01) added the two SPP paths the SPP-105 / SPP-106
+          # tests read: data/raw/spp-gen-outage/ (SPP's published hourly outage
+          # by fuel, 5.1 MB; test_spp_gas_crow_residual, red on main since
+          # SPP-105) and data/raw/spp-mmu-unavailable-capacity/ (the MMU table,
+          # 16 KB; test_spp_mmu_offer_unavailability, 3 reds).
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             /*
@@ -628,6 +633,8 @@ jobs:
             /data/raw/ercot/ASPLANNP433_*.parquet
             /data/raw/load-forecast/
             /data/raw/spp-hsl/spp_wind_curtailment_annual.csv
+            /data/raw/spp-gen-outage/
+            /data/raw/spp-mmu-unavailable-capacity/
             /data/raw/ercot/ercot_2024_ordc_reserves_hourly.parquet
             /data/raw/CAISO-AS/asreq_ALL_2023*.csv
             /data/raw/CAISO-AS/asreq_ALL_2024*.csv
