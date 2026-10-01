@@ -6915,3 +6915,12 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - **Card 2:** CC_REGULAR 2023 +8.5 = Dominion −12.7 vs EMAAC +9.0 / Central PA +5.1 / ComEd +5.6. Dominion's EIA-923 gas is +1.63 over IMM eastern spot in 2023 (offer $42 vs EMAAC $27). This is the NEXT-8/9/13 ground; nothing new there to re-test. The 2023→24 benchmark grows 6.8 TWh more than the model can (U_a −7.6).
 - Card 3 not reached. **OPEN, not limits.**
 - **Record:** `docs/records/pjm/RESULT-pjm-next-19-2026-10-01.md`.
+
+## PJM-NEXT-20 — 2026-10-01 — low-end price gap is not the coal mover; U_a fall is an EIA-923 vs EIA-930 gas gap (zero LP)
+
+- **Solves and keeper:** zero LP, zero shards. Keeper unchanged (`2026-09-30-pjm-next16-ovec`); 10 failing cells, NOT-YET.
+- **Card 1:** the model's price sits $3.5–5.1 above actual RT in coal hours in every year, but the coal over-run is ≈ 0 where actual RT is below the keeper's own coal offer. It sits where the plant is in merit at actual RT and the real plant is online (+9.6 / +9.6 / +13.6 / +11.6 TWh in 2019/20/21/25). Real coal's loading-vs-margin curve is near-identical across years; the keeper's is +0.04 to +0.11 steeper at $0–15 in the miss years. Neither the price-gap volume nor the econ-ladder width orders 2025. **Refuted as framed; OPEN.**
+- **Card 2:** U_a −7.6 TWh (2023 → 24) is gas: EIA-930 / PJM fuel-mix gas +7.8 vs benchmark EIA-923 +17.7. No boundary plant, no tie or demand definition change. ≈ 3.4 TWh booked as oil/"Multiple Fuels", ≈ 1.1 TWh Hopewell Cogeneration absent from 930, ≈ 5 TWh fleet-wide from June 2023. Not an LP input (rule 13); a possible rule-14 scoring reconciliation for the owner.
+- Card 3 not reached.
+- **Record:** `docs/records/pjm/RESULT-pjm-next-20-2026-10-01.md`.
+

@@ -55,7 +55,23 @@ The card's second half (real coal's own-curve output at actual vs model price) w
 
 ## 2. Card 2 — U_a, 2023 → 2024
 
-_Pending (section written when the census lands)._
+**Question.** What supply serving PJM load sits outside the C1 benchmark, and why does it fall 2023 → 2024 (U_a −7.6 TWh, the CC 2023 tracking gap)?
+
+**Decomposition (exact; reproduces NEXT-16's U_a every year).** U_a = Σ fuel (EIA-930 − classFull) + fuels-vs-net-gen + (tie export − 930 interchange) + 930 (D + TI − NG). TWh:
+
+| | gas | coal | nuclear | hydro | oil | other | fuels vs NG | tie vs TI | D+TI−NG | **U_a** |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 2023 | −5.7 | +8.2 | +1.2 | +6.5 | +2.6 | +1.1 | −1.4 | −0.0 | −0.0 | **15.1** |
+| 2024 | −15.7 | +6.7 | −0.2 | +7.0 | +3.9 | +3.2 | −2.4 | +0.3 | −0.0 | **7.5** |
+| **Δ** | **−9.9** | −1.4 | −1.4 | +0.5 | +1.3 | +2.1 | −1.0 | +0.3 | −0.0 | **−7.6** |
+
+**Reading.**
+- **The fall is gas, and it is a data-product gap, not missing supply.** EIA-930 gas (= PJM's own fuel-mix feed) rises 360.8 → 368.6; classFull gas 366.6 → 384.3; raw EIA-923 for benchmark gas plants 376.6 → 394.5.
+- **No boundary candidate.** All 20 largest 2023 → 24 gas risers carry EIA-860 BA = PJM in every vintage; no PJM-BA gas plant is outside the benchmark; tie meters equal 930 interchange; 930 demand tracks PJM metered load. No pseudo-tie inventory exists in the repo, and none is needed to close the identity.
+- **Attribution (partial).** ≈ 3.4 TWh is gas-plant output booked by PJM as oil / "Multiple Fuels" (Martins Creek, Montour); ≈ 1.1 TWh is Hopewell Cogeneration, consistently absent from 930 gas (hourly regression coefficient −0.9 to −1.5, 2022–25). The remaining ≈ 5 TWh is fleet-wide, and the monthly gap steps down in June 2023. The new 2023 CCs (Guernsey, CPV Three Rivers) are counted by 930.
+- **Rule 13.** It fails as a model input: it is the difference between two measurement products, with no forward driver. At most it is a **scoring-side** reconciliation under rule 14 (benchmark boundary misalignment), never an LP adder.
+
+**Verdict, card 2.** Object identified: CC 2023's tracking gap is partly the benchmark (EIA-923) growing ~10 TWh more than PJM's own telemetry (EIA-930 / fuel-mix), while the model is driven by EIA-930 demand. Not an LP mechanism. Whether C1 should be scored against a reconciled boundary is an **owner decision** (governance, rule 14), sized in NEXT-21 before any card.
 
 ## 3. Card 3
 
@@ -63,6 +79,7 @@ Not reached.
 
 ## 4. Next (NEXT-21)
 
-_Pending._
+1. **Size the rule-14 reconciliation (zero LP).** Score C1 CC_REGULAR 2023–2025 against a benchmark reconciled to PJM's fuel-mix telemetry (EIA-930 gas by month, apportioned to benchmark CCs; Hopewell and the oil/"Multiple Fuels" bookings handled explicitly). Report whether C1 CC_REGULAR 2023 (+8.48 vs ±8.00) moves, and by how much in every year, before proposing any scoring change. Bring the result to the owner as a decision card; nothing is changed on the scoring side without that ruling.
+2. **Coal in-merit loading (card 1).** The miss is the keeper's loading response at $0–15 margin with the real plant online. Next measurable: per-unit PJM offer-curve slope over the same band (offers corpus, refetch Jan/Apr/Jul/Oct), against the keeper's econ ladder per plant. Not re-tested: price level, offered EcoMax, outages, self-scheduling (NEXT-10–19).
 
 **Retrievability:** no bundles. Probe JSONs are committed under `results/phase0/pjm/`.
