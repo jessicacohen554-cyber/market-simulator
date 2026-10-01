@@ -69,6 +69,11 @@ The DAM-schedule column is diagnostic only. Gross ITC schedules and BA net inter
 - No DSW comparison was made, because the DSW ITC set (Palo Verde, North Gila, Eldorado, Mead, McCullough, SunZia, …) has no identified crosswalk.
 - The matrix cell `measured_interface_limits` is unchanged at K; a NOTE was prepended.
 
-## 5. Owner decisions
+## 5. Owner ruling (decision card, 2026-10-01)
 
-Recorded in §6 after the card.
+**"None, report-only."** TRNS_USAGE stays a measured record with no consumer. The owner queued neither follow-up:
+
+- no ITC→corridor crosswalk scoping
+- no TRNS_OUTAGE intake
+
+Do not re-ask either. Links 13–15 proceed as planned.
