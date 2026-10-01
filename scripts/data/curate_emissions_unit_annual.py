@@ -4,7 +4,7 @@ Rolls the hourly **unit-level** CAMPD extracts under
 ``data/raw/campd-unit-level/{STATE}_{YEAR}.parquet`` up to one row per
 ``(plant_id, unit_id, year)`` — the small, queryable product the forward
 per-plant CO2-rate estimator consumes
-(``docs/handoffs/emissions-co2-rate-plan-2026-07.md`` §4).
+(``docs/records/misc/emissions-co2-rate-plan-2026-07.md`` §4).
 
 It reads **only** ``data/raw/campd-unit-level`` (the unit grain is the whole
 point — it dissolves the mixed coal/gas facility exclusion by giving each unit
@@ -349,7 +349,7 @@ def _detect_years(unit_dir: Path) -> list[int]:
 def _intake_authorized_isos() -> set[str]:
     """Return ISOs with a logged rule-22 data-intake authorization (uppercased).
 
-    Rule 22 (Option 2, docs/handoffs/holdout-policy-memo-2026-07.md §(e)) permits
+    Rule 22 (Option 2, docs/records/governance/holdout-policy-memo-2026-07.md §(e)) permits
     out-of-training DATA INTAKE for any ISO under explicit, session-logged owner
     authorization — a channel *separate* from the calibration-complete marker,
     which gates only solve / score / dashboard registration. Every ISO named in an

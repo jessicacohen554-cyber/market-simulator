@@ -7,7 +7,7 @@ re-serializes them into one valid CSV per (dataset, year) under
     realtime-events/NYISO_realtime_events_<year>.csv   (P-35 Real-Time Events)
     oper-messages/NYISO_oper_messages_<year>.csv       (P-25 Operational Messages)
 
-These are the Ask-B2 event logs of `docs/handoffs/nyiso-data-asks-2026-07.md`:
+These are the Ask-B2 event logs of `docs/records/nyiso/nyiso-data-asks-2026-07.md`:
 Thunderstorm Alert declarations, system state changes (normal / alert / major
 emergency), reserve pick-ups, emergency energy transactions and out-of-merit
 commitment requests — the measured inputs from which the condition-varying

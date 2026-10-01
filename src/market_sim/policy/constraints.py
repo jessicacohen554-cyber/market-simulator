@@ -69,7 +69,7 @@ def build_mass_cap_dispatch_kwargs(
     which ``scripts/run_calibration_full.py::solve_and_persist`` calls
     directly) can share the identical seam — previously it never called
     :func:`get_active_policy_constraints` at all, so ``mass_cap_enabled`` was
-    inert there (G-29, ``docs/handoffs/emissions-mass-cap-plan-2026-07.md``
+    inert there (G-29, ``docs/records/misc/emissions-mass-cap-plan-2026-07.md``
     "Non-blocking follow-ons"). Returns ``{}`` (no dispatch_kwargs change,
     identical LP) when no cap is active for this (ISO, year, config) — the
     default, since ``mass_cap_enabled`` defaults ``False``.

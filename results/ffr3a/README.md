@@ -7,7 +7,7 @@ convention for every other forecast lane (`/results/ffr1a/`, `/results/full-hori
 `scripts/register_forecast_run.py`, **never** as tracked bundles here (CLAUDE.md rule 15).
 
 **Nothing in this directory is a registered result.** The lane's findings live in
-`docs/handoffs/ffr-t1-regate-2026-08-02.md`.
+`docs/records/forecast/ffr-t1-regate-2026-08-02.md`.
 
 ## History of this directory
 

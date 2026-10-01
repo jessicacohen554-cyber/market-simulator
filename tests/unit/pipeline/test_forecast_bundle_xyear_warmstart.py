@@ -1,9 +1,9 @@
 """D-10 — cross-year LP warm start is OFF for every FORECAST BUNDLE.
 
 Owner decision **D-10** (signed 2026-08-04, sitting
-``docs/handoffs/ffr-owner-sitting-2026-08-02.md`` Addendum K.3, on FFR-3M's
+``docs/records/forecast/ffr-owner-sitting-2026-08-02.md`` Addendum K.3, on FFR-3M's
 measured adjudication of FF-3E part c; implemented by FFR-3T,
-``docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md``): a forecast bundle runs
+``docs/records/forecast/ffr-3t-warmstart-off-2026-08-04.md``): a forecast bundle runs
 ``forecast_xyear_warmstart=False``, so a killed-and-resumed forecast solves its
 first post-kill year exactly as its uninterrupted control does — cold — instead
 of landing on a different vertex of a degenerate optimal face.
@@ -57,7 +57,7 @@ class TestPosture:
         Flipping it would (a) drop the new value from the cache key, so a cold
         forecast run would silently re-use a warm bundle, and (b) move all six
         backcast keeper keys, which carry an explicit ``true``. Both measured in
-        ``docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md`` §3.
+        ``docs/records/forecast/ffr-3t-warmstart-off-2026-08-04.md`` §3.
         """
         assert ScenarioConfig().forecast_xyear_warmstart is True
 

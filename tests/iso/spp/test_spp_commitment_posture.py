@@ -1,6 +1,6 @@
 """Tests for the SPP standalone commitment posture with min-up / min-down (SPP-102).
 
-``spp_commitment_posture`` (``docs/handoffs/DESIGN-spp-102-cc-commitment-state-2026-09-29.md``)
+``spp_commitment_posture`` (``docs/records/spp/DESIGN-spp-102-cc-commitment-state-2026-09-29.md``)
 reuses the ERCOT standalone energy-only posture (headroom, measured min-load,
 startup charge on the pooled online capacity U) and adds the min-up / min-down
 coupling. Trivial cases first per the repo testing pattern: 1 zone, a 1-3 gen CC

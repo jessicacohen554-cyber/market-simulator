@@ -1,6 +1,6 @@
 """Tests for the SPP gas-family CROW-residual outage carrier (SPP-105, carrier B).
 
-``spp_gas_crow_residual_outage`` (``docs/handoffs/DESIGN-spp-105-gas-family-outage-2026-09-30.md``)
+``spp_gas_crow_residual_outage`` (``docs/records/spp/DESIGN-spp-105-gas-family-outage-2026-09-30.md``)
 replaces every gas row's statistical WEFOR / POF with SPP's published gas outage minus the CAMPD
 events. Trivial cases first per the repo testing pattern: two or three rows, a handful of hours for the
 allocator, a full-year index where seasons matter.

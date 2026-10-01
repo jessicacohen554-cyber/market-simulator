@@ -5,7 +5,7 @@ Reads only committed artifacts: the keeper's hourly sidecars
 (``frontend/data/backcast/bench/NYISO/<y>.json.gz``), the zonal RT table
 (``data/raw/_validation-source/actual_lmp.json``), the EIA-923 hydro bench, and the
 ``nyiso-interface-flows`` clean partition (MIS P-32 postings). Writes
-``results/calibration/_nyisonext14_phase0.json``.
+``results/phase0/nyiso/_nyisonext14_phase0.json``.
 
 Blocks:
 * ``c3a_by_zone``: model vs measured RT zonal mean, and C3a if Upstate_West alone were exact.
@@ -39,7 +39,7 @@ BUN = {2021: "nyisonext13_2021"} | {y: "nyisonext13_span" for y in (2022, 2023, 
 EXT = ("NYISO_external", "NYISO_NE_AC")
 LINK = ("Upstate_West", "Capital_Hudson")
 DC = ["SCH - PJM_HTP", "SCH - PJM_VFT", "SCH - PJM_NEPTUNE", "SCH - NPX_CSC", "SCH - NPX_1385"]
-OUT = CAL / "_nyisonext14_phase0.json"
+OUT = CAL.parent / "phase0" / "nyiso" / "_nyisonext14_phase0.json"
 
 
 def _sys(y: int) -> pd.DataFrame:

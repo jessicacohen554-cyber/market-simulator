@@ -19,7 +19,7 @@ results/calibration/nwpp49_ror_span`` and
 Usage::
 
     PYTHONPATH=.:src python3 scripts/probes/_nwpp51_vintage_census.py \
-        [--years 2023 2024 2025] [--out results/calibration/_nwpp51_vintage_census.json]
+        [--years 2023 2024 2025] [--out results/phase0/nwpp/_nwpp51_vintage_census.json]
 """
 
 from __future__ import annotations
@@ -155,7 +155,7 @@ def main() -> None:
     """Run the census for every year and write the JSON record."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", type=int, nargs="+", default=[2023, 2024, 2025])
-    ap.add_argument("--out", type=Path, default=Path("results/calibration/_nwpp51_vintage_census.json"))
+    ap.add_argument("--out", type=Path, default=Path("results/phase0/nwpp/_nwpp51_vintage_census.json"))
     args = ap.parse_args()
     out = []
     for y in args.years:

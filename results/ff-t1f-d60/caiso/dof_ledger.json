@@ -24,8 +24,8 @@
       "group": "other",
       "identification": "design-decision",
       "status": "IDENTIFIED",
-      "source": "Owner decision D-10 (signed 2026-08-04, docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum K.3): forecast bundles run cross-year LP warm start OFF so a killed-and-resumed forecast reproduces from its own cache",
-      "evidence": "market_sim.config.scenarios.FORECAST_BUNDLE_XYEAR_WARMSTART (the one registry carrier) read through scripts/lib/forecast_posture.py::shipped_forecast_xyear_warmstart; measurement docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md",
+      "source": "Owner decision D-10 (signed 2026-08-04, docs/records/forecast/ffr-owner-sitting-2026-08-02.md Addendum K.3): forecast bundles run cross-year LP warm start OFF so a killed-and-resumed forecast reproduces from its own cache",
+      "evidence": "market_sim.config.scenarios.FORECAST_BUNDLE_XYEAR_WARMSTART (the one registry carrier) read through scripts/lib/forecast_posture.py::shipped_forecast_xyear_warmstart; measurement docs/records/forecast/ffr-3t-warmstart-off-2026-08-04.md",
       "value": false,
       "provenance": "runner-posture"
     },
@@ -36,7 +36,7 @@
       "identification": "design-decision",
       "status": "IDENTIFIED",
       "source": "The representation of CAISO's ACTUAL renewable offer conduct: California renewables bid BELOW $0 in oversupply to keep producing for their RPS/REC and federal-PTC value, so in the spring-midday solar glut the marginal (curtailed) unit clears negative (2024 RT da_pct: p5 -$10, p1 -$24, min -$41). The model's wind/solar are availability-capped LP slices carrying a $0 (solar) or -PTC (wind) offer that are never marginal, so without the gate the model floors at $0. CAISO's by the ERCOT-65 rule-25 [R-ISO-SCOPE] adjudication recorded in the same registry block. THE GATE CARRIES NO MAGNITUDE: the floor LEVEL lives in the separate registered field renewable_keep_running_value, held at its shipped default and therefore not an entry of this ledger",
-      "evidence": "src/market_sim/config/scenarios.py::negative_renewable_offers and ::renewable_keep_running_value cite blocks (CA RPS PCC1 REC $10-25/MWh; federal section 45 wind PTC ~$28/MWh; the ERCOT-65 rule-25 scope ruling); src/market_sim/config/iso_configs.py::_caiso_config default_scenario_overrides cite block; mechanism policy.eac.apply_negative_renewable_offer_floor, tested tests/test_negative_renewable_offers.py; THE CAISO BACKCAST KEEPER RECORD -- keeper 2026-09-05-caiso-252-b1-notrim carries negative_renewable_offers True at renewable_keep_running_value 20.0 in results/calibration/caiso252_b1_notrim/run_config.json, and the CAISO mechanism-matrix cell reads K on the caiso-216 measurement (results/calibration/FINDING-caiso216-belly-lever-plan-2026-08-23.md, _caiso216_belly_surplus.json B3)",
+      "evidence": "src/market_sim/config/scenarios.py::negative_renewable_offers and ::renewable_keep_running_value cite blocks (CA RPS PCC1 REC $10-25/MWh; federal section 45 wind PTC ~$28/MWh; the ERCOT-65 rule-25 scope ruling); src/market_sim/config/iso_configs.py::_caiso_config default_scenario_overrides cite block; mechanism policy.eac.apply_negative_renewable_offer_floor, tested tests/test_negative_renewable_offers.py; THE CAISO BACKCAST KEEPER RECORD -- keeper 2026-09-05-caiso-252-b1-notrim carries negative_renewable_offers True at renewable_keep_running_value 20.0 in results/calibration/caiso252_b1_notrim/run_config.json, and the CAISO mechanism-matrix cell reads K on the caiso-216 measurement (docs/records/caiso/FINDING-caiso216-belly-lever-plan-2026-08-23.md, _caiso216_belly_surplus.json B3)",
       "provenance": "iso-registry",
       "value": true
     }

@@ -184,7 +184,7 @@ def main() -> None:
     for p in rec["predictions"]:
         print(json.dumps(p, indent=1))
     print(json.dumps(rec["jb_measured_row_approx"], indent=1))
-    Path("results/calibration/_nwpp51_predict.json").write_text(json.dumps(rec, indent=1))
+    Path("results/phase0/nwpp/_nwpp51_predict.json").write_text(json.dumps(rec, indent=1))
 
 
 if __name__ == "__main__":

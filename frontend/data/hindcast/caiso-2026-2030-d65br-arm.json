@@ -118,8 +118,8 @@
     "d65br": {
       "lane": "capx D65-B-R — the coupled arming (Act A + Act B) batch",
       "authority": "owner ruling Q47; r#48 §3(a) gates; r#51 §3(b) adjudication",
-      "precommit": "docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md Addendum C (+D/E/F/G)",
-      "finding": "docs/handoffs/FINDING-capx-d65br-2026-09-06.md",
+      "precommit": "docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md Addendum C (+D/E/F/G)",
+      "finding": "docs/records/forecast/FINDING-capx-d65br-2026-09-06.md",
       "solve_key_matches_predeclaration": true,
       "gates": "ALL CLEAR, and this leg is the CONTROL CASE that turns the two RGGI unbindings from a correlation into a mechanism. G5′ PASS — cap-bound in all three years (99.9 / 99.9 / 96.4 %), as D64 §2.4 predicts. G4′ invariants IDENTICAL to the committed caiso-t1f: changed none; I7 and I12 were already FAIL pre-D65-B, zero flips.",
       "retrofits": [

@@ -2,7 +2,7 @@
 
 This block ships **with** the band, not after it (goal B: survive a hostile
 referee). Nothing below is softened. It restates, for this specific run, the
-caveats the probability-bounds plan (`docs/handoffs/probability-bounds-plan-2026-07.md`
+caveats the probability-bounds plan (`docs/records/misc/probability-bounds-plan-2026-07.md`
 §3.4, §7) pre-registered, plus two run-specific ones.
 
 ## What this run is

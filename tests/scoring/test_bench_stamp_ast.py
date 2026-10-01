@@ -6,7 +6,7 @@ not written by the builder that would run now. Until 2026-09-05 the stamp
 hashed the RAW BYTES of four whole files, so any edit to any byte moved it —
 and 53 % of that surface is comments and docstrings, which cannot change a
 bench payload under any circumstances
-(``docs/handoffs/FINDING-y10-bench-stamp-instrument-2026-09-05.md`` §2).
+(``docs/records/governance/FINDING-y10-bench-stamp-instrument-2026-09-05.md`` §2).
 All three fingerprint moves of 2026-09-05 were adjudicated payload-inert; one
 (``677b605a``) was a single reworded COMMENT that cost a dedicated lane to
 re-stamp 20 artifacts.

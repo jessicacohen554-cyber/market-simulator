@@ -2,8 +2,8 @@
 
 The CAISO analogue of ``scripts/data/derive_pjm_offer_surface.py`` (C1
 CC-over/CT-under lane, WP-A — the measured route named by
-``results/calibration/FINDING-caiso91b-ct-committed-conduct-refuted-2026-07-16.md``
-and ``docs/DIAGNOSIS-caiso-evening-merit-c1-c3c-2026-07.md`` §3-4): from the
+``docs/records/caiso/FINDING-caiso91b-ct-committed-conduct-refuted-2026-07-16.md``
+and ``docs/records/caiso/DIAGNOSIS-caiso-evening-merit-c1-c3c-2026-07.md`` §3-4): from the
 90-day-lag masked OASIS Public Bid Data (``dam-public-bids`` clean datatype,
 ``scripts/data/fetch_caiso_public_bids.py`` + ``scripts/data/curate_dam_public_bids.py``),
 measure the CC-like and CT-like gas fleets' DAM energy-bid curves and freeze
@@ -38,7 +38,7 @@ Method (measured, NOT fit to any residual — CLAUDE.md rules 1/13/23)
    resources fit with r 0.90-0.99).
 
    The slope estimator is THEIL-SEN, not least squares (caiso-153,
-   ``results/calibration/FINDING-caiso153-offer-classifier-reid-2026-08-02.md``).
+   ``docs/records/caiso/FINDING-caiso153-offer-classifier-reid-2026-08-02.md``).
    The regressor's variance is dominated by an extreme tail — the citygate
    reaches $24.29/MMBtu in January 2023 against a 2023-25 median near $3-4 —
    so an OLS slope is levered on a few days of one month of one year and
@@ -362,7 +362,7 @@ def _load_bids_reduced(years: list[int]) -> pd.DataFrame:
     ``--no-st-split`` over this store reproduces the frozen 2026-08-02
     artifact's consumed bands, and the same store reproduced the frozen bucket
     populations EXACTLY (46 / 11.935 GW and 100 / 9.950 GW) in
-    ``results/calibration/_caiso253b_ct_bucket_bimodality.json``.
+    ``results/phase0/caiso/_caiso253b_ct_bucket_bimodality.json``.
     """
     # CORPUS-COVERAGE GUARD (caiso-255). The G-BIMODAL probe refuses an
     # under-covered corpus (its `gate()`, added by caiso-254 after a mid-fetch
@@ -718,7 +718,7 @@ def main(argv: list[str] | None = None) -> int:
     # gas gates, statistic, VOM, carbon netting and band geometry are all
     # untouched). Admitted by G-BIMODAL on the pooled 2023-25 population:
     # antimode 11.738 inside [10.9, 12.5] with 2.559 GW above it, inside
-    # [1.5, 4.5] GW (results/calibration/_caiso253b_ct_bucket_bimodality.json).
+    # [1.5, 4.5] GW (results/phase0/caiso/_caiso253b_ct_bucket_bimodality.json).
     st_cut = None if args.no_st_split else locate_st_cut(res, args.hr_cut)
     if st_cut is not None:
         res["cls"] = _assign_classes(res, args.hr_cut, st_cut)

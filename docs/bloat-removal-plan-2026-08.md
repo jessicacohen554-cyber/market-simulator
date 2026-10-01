@@ -17,7 +17,7 @@ and the deliverable lands there.
 **Inherited charter honoured (2026-08-13):** the FFR desk withdrew RAW-UNTRACK
 into this workstream (`ffr-owner-sitting-2026-08-02.md` AS.5;
 `forecast-readiness-prompt-pack-2026-07.md` §0as — never re-dispatched). The
-three inherited inputs — `docs/FINDING-rewrite-prep-2026-08-11.md` §8 (GO half),
+three inherited inputs — `docs/records/governance/FINDING-rewrite-prep-2026-08-11.md` §8 (GO half),
 `docs/fast-clone.md` (#3909), §0ar-3's pre-merge checklist — are reconciled with
 the per-corpus candidates in §1, which is this plan's charter-mandated first
 section.
@@ -33,7 +33,7 @@ section.
   (the prunes are tip-state), but the conversion class's restore-from-pin
   recovery contracts (§3–§4 below) were invalidated — the pins no longer
   resolve and the superseded blobs are stripped. Record:
-  `docs/FINDING-history-rewrite-2026-08-16.md`.]*
+  `docs/records/governance/FINDING-history-rewrite-2026-08-16.md`.]*
 - `cleanup-large-blobs.yml` may be run **as a dry run only** (`dry_run=true`
   input verified present in the workflow; the real-run `confirm=REWRITE-HISTORY`
   phrase is never to be supplied). Planned in §8 as the BLOAT-B close-out
@@ -875,7 +875,7 @@ elsewhere, e.g. the D-13 cache-key gate):
     ≈ 3,311.9 MiB after the §4.2/§4.7 keep-verdicts, full untrack → tip
     ≈ 3.0 GiB; the report's §7 adds the A2-precedent and rewrite-NO-GO
     hardening notes.)* *(Decision card DRAFTED AND SERVED 2026-08-16, session
-    BLOAT-3 — `docs/DECISION-CARD-bloat3-stage2-charter-2026-08-16.md`. The
+    BLOAT-3 — `docs/records/governance/DECISION-CARD-bloat3-stage2-charter-2026-08-16.md`. The
     2026-08-16 history rewrite invalidated the history-as-archive premise the
     stage was chartered on, so the card's central question is the RECOVERY
     STORY, not just the untrack: (a) per-corpus re-fetch evidence-passed /
@@ -895,7 +895,7 @@ elsewhere, e.g. the D-13 cache-key gate):
     passes ran for six corpora and the passing subset was untracked in
     per-corpus commits (PR-2/PR-5 idiom, `intentional-shrink`), **−444.5 MiB
     / 144 files** at tip, tree-sha-verified before hashing. Verdict table
-    (full evidence: `docs/FINDING-bloat-s2-evidence-passes-2026-08-17.md`):
+    (full evidence: `docs/records/governance/FINDING-bloat-s2-evidence-passes-2026-08-17.md`):
     `storage-as-awards` **PASS** −165.2 · `data/raw/PJM` **PASS (zero
     consumers — a naming-trap orphan)** −107.1 · `campd-unit-level`
     **SPLIT** −105.1 (2018 only; 2019–2026 are solve-time year-keyed inputs
@@ -925,7 +925,7 @@ elsewhere, e.g. the D-13 cache-key gate):
     reader; no revert-restore applies.** The proof obligation rolls to the
     next green run — a post-fix `workflow_dispatch` recommended over waiting
     out the week. Full diagnosis:
-    `docs/FINDING-golden-tier-cron-red-2026-08-17.md`.)*
+    `docs/records/misc/FINDING-golden-tier-cron-red-2026-08-17.md`.)*
 
 ---
 

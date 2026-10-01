@@ -1,10 +1,10 @@
 """Emit the SPP-100 calibration attestation for the composed 2019-2025 bundle ``spp100_arm_span``.
 
-SPP-100 (``docs/handoffs/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md``) replays SPP's keeper
+SPP-100 (``docs/records/spp/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md``) replays SPP's keeper
 ``2026-09-28-spp-99-remap-rederive`` one year per shard (rule 36) with two fields armed:
 ``chp_steam_floor_p25`` (the existing CHP steam-level swap) and ``chp_steam_floor_conduct_scope``
 (the swap withheld from metered hosts metered on in <= half their hours). Adapted from
-``gen_spp99_attestation.py``: the keeper's attestation is inherited, the offer curve is verified
+the SPP-99 generator (deleted; git history): the keeper's attestation is inherited, the offer curve is verified
 byte-identical per year, every other scenario field is verified unmoved, and the two fields are
 recorded under ``governance.mechanism_armed``.
 
@@ -25,8 +25,8 @@ sys.path.insert(0, str(REPO / "src"))
 from market_sim.config.scenarios import _CACHE_KEY_RETIRED_FIELDS  # noqa: E402
 
 CAL = REPO / "results" / "calibration"
-PRECOMMIT = "docs/handoffs/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md"
-RESULT = "docs/handoffs/RESULT-spp-100-chp-conduct-scope-2026-09-28.md"
+PRECOMMIT = "docs/records/spp/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md"
+RESULT = "docs/records/spp/RESULT-spp-100-chp-conduct-scope-2026-09-28.md"
 PINNED = "11b72265e362a07912b2c2364a5708805697e58e"
 COMPOSITE = "spp100_arm_span"
 KEEPER = "spp99_remap_span"

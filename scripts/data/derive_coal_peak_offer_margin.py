@@ -4,7 +4,7 @@ The identification constants of the ``coal_peak_offer_margin`` mechanism
 (``constants.COAL_PEAK_OFFER_LEVEL_BY_ISO`` /
 ``COAL_PEAK_OFFER_GAS_HR_BY_ISO``) — the coal offer-curve UPPER-TAIL
 successor ERCOT-123 §7.2 chartered, executed as the ERCOT-140 lane
-(``docs/PRECOMMIT-ercot140-coal-peak-offer-2026-07-30.md``).
+(``docs/records/ercot/PRECOMMIT-ercot140-coal-peak-offer-2026-07-30.md``).
 
 ERCOT-138 §5.6 measured the defect this level repairs: at p90 the model's
 COAL curve runs **$9.6–15.5/MWh UNDER** its own fleet's measured SCED TPO
@@ -75,7 +75,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
 # Committed measured artifacts (the ONLY inputs — rule 23):
-ERCOT138_RANKING = REPO / "results/calibration/ercot138_coal_gas_ranking.json"
+ERCOT138_RANKING = REPO / "results/phase0/ercot/ercot138_coal_gas_ranking.json"
 
 #: The measured class whose conduct identifies the constants. ERCOT-138's
 #: measured COAL side is the full CLLIG fleet at ~100 % RT curve coverage
@@ -212,7 +212,7 @@ def _verify_year_mode(year: int, limb_key: str, constant_name: str) -> int:
     ``level_year = measured_instrument_year - HR x (fuel_year - anchor)`` is
     compared against the armed constant inside the identification's OWN cited
     cross-subset dispersion band. Decision rule pre-registered in
-    ``docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md``; this mode
+    ``docs/records/ercot/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md``; this mode
     applies it, it does not choose it. Nothing is written and no residual is
     consulted — a REFUTED or NOT-IDENTIFIABLE outcome is reported, never repaired
     here (rules 13/23).

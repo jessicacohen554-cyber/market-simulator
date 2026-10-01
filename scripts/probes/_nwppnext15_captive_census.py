@@ -1,7 +1,7 @@
 """NWPP-NEXT-15 phase 0: captive vs non-captive coal receipts census (zero LP).
 
 Applies the identification rule fixed in
-docs/handoffs/PHASE0-nwppnext15-captive-mine-2026-09-30.md §1 (commit f6e07ffe) to the
+docs/records/nwpp/PHASE0-nwppnext15-captive-mine-2026-09-30.md §1 (commit f6e07ffe) to the
 NWPP model coal fleet, 2019-2024, and writes a JSON census next to that doc.
 """
 

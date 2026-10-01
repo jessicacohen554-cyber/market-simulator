@@ -786,7 +786,7 @@ def ercot_storage_capability_caps(
     disclosure registered non-OUT HSL (``data/raw/ercot-storage-capability.csv``)
     instead of the EIA-860 COD-ramped schedule, which the summer-availability
     audit measured ~2 GW low in both summers (5.8 vs 7.7 GW Aug-2024, 10.6 vs
-    12.5 GW Jul-2025 -- docs/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md
+    12.5 GW Jul-2025 -- docs/records/ercot/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md
     §1c). The measured series embeds real COD energization timing, hybrid
     halves, and real storage outages, so it replaces both the EIA-860 MW ramp
     and the (absent) storage outage model.
@@ -1913,8 +1913,8 @@ def _storage_entry_candidates(
     both paths or on neither.
 
     Gated by ``config.storage_entry_availability_gate`` (GATED default OFF —
-    the D-2 repair, docs/FINDING-entry-screen-t1h-2026-08.md §6 /
-    docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md Phase-1 Leg A). Off, the
+    the D-2 repair, docs/records/misc/FINDING-entry-screen-t1h-2026-08.md §6 /
+    docs/records/misc/PRECOMMIT-t1h-capacity-entry-2026-08-30.md Phase-1 Leg A). Off, the
     full ``STORAGE_TECHS`` pool is returned in registry order — byte-identical
     to the ungated legacy behaviour. On, a technology is admissible only from
     its measured first-US-operating year (``STORAGE_TECH_AVAILABLE_YEAR``,
@@ -1950,7 +1950,7 @@ def _storage_entry_rank_score(
     structural bias toward the most capital-intensive machine (a bigger
     machine earns a bigger absolute margin; Phase-0 measured flow_battery 2nd
     of 6 absolute and LAST per $/kW,
-    docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md §3.2). Rule 21
+    docs/records/misc/FINDING-t1h-capacity-entry-phase0-2026-08-30.md §3.2). Rule 21
     [R-DOF]: a ratio of two quantities the screen already holds — no new
     parameter; the Phase-0 §3.2 sensitivity shows the build mix is invariant
     to the cost denominator (capital vs annualized). Sign-preserving
@@ -2005,7 +2005,7 @@ def apply_storage_new_entry(
 
     Two GATED default-OFF repairs, each shared by BOTH allocation rules
     through one helper (rule 19; charter
-    ``docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md`` Phase-1 Leg A):
+    ``docs/records/misc/PRECOMMIT-t1h-capacity-entry-2026-08-30.md`` Phase-1 Leg A):
     ``config.storage_entry_availability_gate`` (D-2) restricts the candidate
     pool to technologies at/after their measured first-US-operating year
     (:func:`_storage_entry_candidates` over ``STORAGE_TECH_AVAILABLE_YEAR``,

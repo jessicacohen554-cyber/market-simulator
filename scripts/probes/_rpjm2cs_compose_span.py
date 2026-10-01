@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Compose R-PJM2-CS's seven per-year legs into one 2019-2025 bundle.
 
-Lane R-PJM2-CS (``docs/handoffs/r-pjm2-coalsub/PRECOMMIT.md``) replays the
+Lane R-PJM2-CS (``docs/records/pjm/r-pjm2-coalsub/PRECOMMIT.md``) replays the
 designated PJM keeper ``rpjm2_span`` unchanged at a HEAD carrying COAL-SUB.
 Rule 36 ``[R-YEAR-ISOLATION]`` solved each year in its own shard; composition
 is the parent's zero-LP job (rule 32 ``[R-SHARD]`` (d)), reusing

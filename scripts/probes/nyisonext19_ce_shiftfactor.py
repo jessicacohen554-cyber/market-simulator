@@ -22,7 +22,7 @@ Blocks: ``ratio`` (per-zone ratio quantiles, all active intervals), ``svd``
 Usage::
 
     python3 scripts/probes/nyisonext19_ce_shiftfactor.py \
-        --out results/calibration/_nyisonext19_ce_shiftfactor.json
+        --out results/phase0/nyiso/_nyisonext19_ce_shiftfactor.json
 """
 
 from __future__ import annotations
@@ -70,7 +70,7 @@ def main(argv: list[str] | None = None) -> int:
     """Run the probe and write the JSON record."""
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--out", type=Path,
-                    default=REPO / "results/calibration/_nyisonext19_ce_shiftfactor.json")
+                    default=REPO / "results/phase0/nyiso/_nyisonext19_ce_shiftfactor.json")
     a = ap.parse_args(argv)
 
     rel = load_rt_congestion()

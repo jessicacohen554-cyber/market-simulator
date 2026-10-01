@@ -40,7 +40,7 @@ ENTRY = {
     "its own bands by the band's dual (phase 0: 34-63 % of hours on its bands). "
     "Detaching pins strictly fewer measured outcomes (rule 13) and leaves one "
     "mechanism setting the node's flow (rule 19). Record: "
-    "docs/PRECOMMIT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md.",
+    "docs/records/nyiso/PRECOMMIT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md.",
 }
 
 
@@ -62,7 +62,7 @@ def main() -> None:
         "2026-09-29-nyisonext12-neac-node-span replayed with ONE recipe delta, "
         "nyiso_ne_ac_recon_detach true (the NE AC node out of the monthly "
         "net-interchange band). Pre-registration: "
-        "docs/PRECOMMIT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md; arm pinned at "
+        "docs/records/nyiso/PRECOMMIT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md; arm pinned at "
         f"{a.pin}. Offer curves byte-identical to the keeper (rule 1(c)); no "
         "multiplier tuned; zero free parameters added. PRIOR: "
     )

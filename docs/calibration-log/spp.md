@@ -9,14 +9,14 @@ per-ISO calibration sessions never conflict (the per-ISO lane convention,
 ## Lane state at file creation (2026-09-07, lane SPP-34)
 
 **No keeper exists.** SPP was registered as the seventh ISO on 2026-09-06 by
-lane SPP-20 (`docs/handoffs/FINDING-spp-20-2026-09-06.md`); the first-ever solve
+lane SPP-20 (`docs/records/spp/FINDING-spp-20-2026-09-06.md`); the first-ever solve
 and the first keeper are lane **SPP-40**'s, whose four preconditions are
 SPP-30 / SPP-31 / SPP-32 / SPP-53 (plan §4 critical path, owner ruling r#5). So
 `frontend/data/backcast/keepers/SPP.json` does not exist yet, and this lane has
 no run to score, no determination and no gates.
 
 Program docs: `docs/multi-iso/spp-addition-plan-2026-09.md` (charters, cards,
-wave graph, lane table), `docs/handoffs/spp-desk-ledger-2026-09.md` (live state
+wave graph, lane table), `docs/records/spp/spp-desk-ledger-2026-09.md` (live state
 — **the ledger wins where the two diverge**), `docs/multi-iso/spp-data-audit.md`
 (the Phase-0 census). Lever queue: `docs/mechanism-testing-matrix.md` §5.7;
 cell verdicts `docs/codebase-site/data/mechanism-matrix/SPP.js`.
@@ -27,7 +27,7 @@ Two facts every SPP session inherits, so nobody rediscovers them in a residual:
   North zone's own EIA-860 2025 ER summer capability). No public document states
   an SPP North↔South transfer capability — SPP-13 swept all four candidates and
   found the rated interface data is NDA / CEII
-  (`docs/handoffs/FINDING-spp-13-2026-09-06.md` §0). Until lever **SPP-53**
+  (`docs/records/spp/FINDING-spp-13-2026-09-06.md` §0). Until lever **SPP-53**
   reconciles one, an SPP solve is a **two-zone copperplate on price**, and
   SPP-40's P7 STOP gate ("link binds in the measured direction/season") cannot
   be met. Never tune the placeholder to a price residual (rules 1 / 13 / 14).
@@ -73,8 +73,8 @@ which survive `-w`). Compare the parsed tree instead:
 ## 2026-09-07 — spp-1: SPP-40 first SPP solve — rule-29(a) screen (2024) KILLED at the P7 STOP gate
 
 **Result: SCREEN KILLED on the direction leg; the full span was NOT spent; no bundle registered, no
-keeper.** Records: `docs/handoffs/PRECOMMIT-spp-40-2026-09-07.md` (pushed at `45d02b0e` before the
-solve) and `docs/handoffs/FINDING-spp-40-2026-09-07.md` (every screen number; the bundle
+keeper.** Records: `docs/records/spp/PRECOMMIT-spp-40-2026-09-07.md` (pushed at `45d02b0e` before the
+solve) and `docs/records/spp/FINDING-spp-40-2026-09-07.md` (every screen number; the bundle
 `_spp40_screen` was deleted before merge, rule 29(c)).
 
 - **Recipe**: the all-defaults backcast (`run_calibration_full.py --iso SPP --year 2024`, no other
@@ -138,7 +138,7 @@ bundle is the rule-29(b) control for every later SPP lane** (P7). Record: `FINDI
   direction holds in 2023 and 2025. Mean |S−N| zonal spread still ~$1 vs $12–17 measured; negative
   hours 9 / 7 / 6 vs ~1,000–1,170; wind 1.07 / 1.11 / 1.11× EIA-930 (0.0 % re-curtailment).
 - **C1/C4-2023 wind: UNSCORED pending SPP-41** (r#6 addendum; the h3907 +3.5857 TWh EIA-930 slip on the
-  bench path). 2024/2025 clean. *(DISCHARGED 2026-09-07 by lane SPP-43: the re-solve on the SPP-41 screened loader landed `bench/SPP/2023` wind 106.634 -> 103.049 and scored C1/C4-2023 wind at +10.68 %, the same value 2024/2025 read. See `docs/handoffs/FINDING-spp-43-2026-09-07.md` §3–§4.)*
+  bench path). 2024/2025 clean. *(DISCHARGED 2026-09-07 by lane SPP-43: the re-solve on the SPP-41 screened loader landed `bench/SPP/2023` wind 106.634 -> 103.049 and scored C1/C4-2023 wind at +10.68 %, the same value 2024/2025 read. See `docs/records/spp/FINDING-spp-43-2026-09-07.md` §3–§4.)*
 - Gas basis: the run log records no 2025 basis fallback line (the per-plant EIA-923 delivered path
   served every year; state-series basis not consulted).
 - Rule 22: 2023–2025 only; SPP holds no marker. Rule 25: nothing crossed. Lever queue corroborated:
@@ -147,7 +147,7 @@ bundle is the rule-29(b) control for every later SPP lane** (P7). Record: `FINDI
 ## 2026-09-07 — spp-3: SPP-42 coal supply-class crosswalk (R-7) + 2025 hydro vintage repair (R-8) → SECOND SPP KEEPER `2026-09-07-spp-2-crosswalk-hydro`
 
 **Result: PROMOTED — determination NOT-YET (unchanged headline; nothing flipped PASS→FAIL vs spp-1).**
-Record: `docs/handoffs/FINDING-spp-42-2026-09-07.md`. Bundle `results/calibration/spp42_crosswalk_B` (+ `hourly/`),
+Record: `docs/records/spp/FINDING-spp-42-2026-09-07.md`. Bundle `results/calibration/spp42_crosswalk_B` (+ `hourly/`),
 457 s wall, **5.55 GB peak RSS**. Control = the spp-1 keeper's committed bundle (rule 29(b) form 4; G-DRIFT since
 its `git_sha` 4639a309: one changed solve-path file, `scripts/lib/transmission_expansion/spp.py`, forecast-only —
 INERT). Precondition: **SPP-41 has NOT landed** (no branch, no commit, no FINDING on `origin/main` at 40b54ce7;
@@ -193,9 +193,9 @@ r#7 re-issued it as v2, unlaunched), so C1/C4-2023 wind stays UNSCORED.
 ## 2026-09-07 — spp-4: SPP-57 Oklahoma pocket (third zone, FCITC chain links) — rule-29(a) screen (2025) KILLED at the STOP gate
 
 **Result: KILLED — not a keeper candidate; full span not spent; nothing registered; topology NOT landed.**
-Record: `docs/handoffs/PRECOMMIT-spp-57-2026-09-07.md` (pushed at `910fd5b1` before any limit or price was read;
+Record: `docs/records/spp/PRECOMMIT-spp-57-2026-09-07.md` (pushed at `910fd5b1` before any limit or price was read;
 addendum A re-pinned the control to keeper-2 after SPP-42 landed mid-lane) + `FINDING-spp-57-2026-09-07.md` +
-`docs/handoffs/spp57/`. Control = `spp42_crosswalk_B` (rule 29(b) form 4; G-DRIFT from its sha `33034499`: four
+`docs/records/spp/spp57/`. Control = `spp42_crosswalk_B` (rule 29(b) form 4; G-DRIFT from its sha `33034499`: four
 CAISO-keyed hunks + its own recorded `backcast_config.py` change — all INERT). Screen bundle deleted before the
 PR (29c); every number is in the FINDING.
 
@@ -230,8 +230,8 @@ PR (29c); every number is in the FINDING.
 ## 2026-09-07 — spp-5: SPP-57b Oklahoma pocket, constituent sets re-declared (SPP-57 R-12) — rule-29(a) screen (2025) KILLED at the STOP gate
 
 **Result: KILLED — not a keeper candidate; full span not spent; nothing registered; topology NOT landed.**
-Record: `docs/handoffs/PRECOMMIT-spp-57b-2026-09-07.md` (pushed at `42ed8ff6` before any number was derived) +
-`FINDING-spp-57b-2026-09-07.md` + `docs/handoffs/spp57b/`. Control = keeper-2 `spp42_crosswalk_B` (rule 29(b) form 4;
+Record: `docs/records/spp/PRECOMMIT-spp-57b-2026-09-07.md` (pushed at `42ed8ff6` before any number was derived) +
+`FINDING-spp-57b-2026-09-07.md` + `docs/records/spp/spp57b/`. Control = keeper-2 `spp42_crosswalk_B` (rule 29(b) form 4;
 G-DRIFT from `33034499` → `dcb609f4`: 9 hunks, all INERT for a 2025 backcast; the SPP-41 wind screen LIVE in 2023
 only, reproduced by the census). Screen bundle deleted before the PR (29c).
 
@@ -262,7 +262,7 @@ only, reproduced by the census). Screen bundle deleted before the PR (29c).
 
 **Result: `2026-09-07-spp-3-screened-input` registered; `keepers/SPP.json` UNTOUCHED; keeper-1 and keeper-2
 NOT pruned. Determination NOT-YET on the same four criteria as keeper-2.** Record:
-`docs/handoffs/PRECOMMIT-spp-43-2026-09-07.md` (pushed at `623184f3` before the solve) +
+`docs/records/spp/PRECOMMIT-spp-43-2026-09-07.md` (pushed at `623184f3` before the solve) +
 `FINDING-spp-43-2026-09-07.md`. Control = `spp42_crosswalk_B` (rule 29(b) form 4; G-DRIFT from its sha
 `33034499`: 11 files, all hunks INERT except the SPP-41 seam, LIVE for SPP 2023 only — `backcast_config.py`'s
 five coal keys are keeper-2's OWN recipe, already in its committed `run_config`). Rule 29(a): the object
@@ -344,8 +344,8 @@ negative hours).
 ## 2026-09-07 — spp-7: SPP-44 SPP gas commitment bridge (`spp_gas_commitment_bridge`) — rule-29(a) screen (2023) KILLED at the STOP gate
 
 **Result: KILLED — not a keeper candidate; full span not spent; nothing registered; the field landed default-off.**
-Record: `docs/handoffs/PRECOMMIT-spp-44-2026-09-07.md` (pushed before any solve) + `FINDING-spp-44-2026-09-07.md` +
-`docs/handoffs/spp44/`. Control = keeper-2 for 2024/2025 and, because the SPP-41 seam is LIVE for 2023 (G-DRIFT
+Record: `docs/records/spp/PRECOMMIT-spp-44-2026-09-07.md` (pushed before any solve) + `FINDING-spp-44-2026-09-07.md` +
+`docs/records/spp/spp44/`. Control = keeper-2 for 2024/2025 and, because the SPP-41 seam is LIVE for 2023 (G-DRIFT
 hunk 6), a flag-free 2023 re-solve of keeper-2's recipe at HEAD for the screen year (rule 29(b)'s LIVE-hunk
 clause; measured dispatch effect of the seam: wind −25 GWh, every criterion row unchanged). Both bundles deleted
 before the PR (29c); every number is in the FINDING.
@@ -370,8 +370,8 @@ before the PR (29c); every number is in the FINDING.
 ## 2026-09-07 — spp-8: SPP MERIT-ORDER / MHR rotation — **BOTH candidate arms REFUSED at phase 0, ZERO LP spent**
 
 Lane SPP MERIT-ORDER (Opus), branch `claude/spp-merit-order-mhr-rotation-cbx1pu` off `origin/main`
-`e042a9f5`. **PRECOMMIT `docs/handoffs/PRECOMMIT-spp-merit-order-2026-09-07.md` and FINDING
-`docs/handoffs/FINDING-spp-merit-order-2026-09-07.md` pushed BEFORE any LP — and no LP followed.**
+`e042a9f5`. **PRECOMMIT `docs/records/spp/PRECOMMIT-spp-merit-order-2026-09-07.md` and FINDING
+`docs/records/spp/FINDING-spp-merit-order-2026-09-07.md` pushed BEFORE any LP — and no LP followed.**
 Control = keeper-3 `2026-09-07-spp-3-screened-input` / `spp43_screened_B` (`git_sha 623184f3`), rule
 29(b) form 4. **`keepers/SPP.json` untouched; no bundle created, none registered, nothing to prune.**
 
@@ -438,8 +438,8 @@ Control = keeper-3 `2026-09-07-spp-3-screened-input` / `spp43_screened_B` (`git_
 
 ## 2026-09-07 — spp-9: SPP-58 ψ₂ — the second, independent shift-factor identification (zero-LP): OUTSIDE the band on every object; `ttc_mw` untouched; card served
 
-**Result: no keeper touched, no solve, no value edited.** Record: `docs/handoffs/PRECOMMIT-spp-58-2026-09-07.md`
-(pushed `da1bb516` before any PTDF) + `FINDING-spp-58-2026-09-07.md` + `docs/handoffs/spp58/` (the reduced DC
+**Result: no keeper touched, no solve, no value edited.** Record: `docs/records/spp/PRECOMMIT-spp-58-2026-09-07.md`
+(pushed `da1bb516` before any PTDF) + `FINDING-spp-58-2026-09-07.md` + `docs/records/spp/spp58/` (the reduced DC
 network, the element map, ψ₂ per constituent, the aggregates).
 
 - **Construction:** ψ₂ = DC PTDF (OTDF where the contingency resolves) on a reduced network from public HIFLD
@@ -466,8 +466,8 @@ network, the element map, ψ₂ per constituent, the aggregates).
 
 **Result: KILLED — no solve spent (rule 29 step 0); not a keeper candidate; nothing registered; the SPP reserve entry
 landed default-off under the existing `energy_reserve_coopt` gate (no new field).**
-Record: `docs/handoffs/PRECOMMIT-spp-55-2026-09-07.md` (its own commit, before the implementation) +
-`FINDING-spp-55-2026-09-07.md` + `docs/handoffs/spp55/`. Control = keeper-3 (G-DRIFT `623184f3` → HEAD all-INERT).
+Record: `docs/records/spp/PRECOMMIT-spp-55-2026-09-07.md` (its own commit, before the implementation) +
+`FINDING-spp-55-2026-09-07.md` + `docs/records/spp/spp55/`. Control = keeper-3 (G-DRIFT `623184f3` → HEAD all-INERT).
 
 - **The object, from SPP's own protocols (not the VRLs):** the Contingency Reserve Demand Curve — scarcity factor
   0.25 / 0.5 / 1.0 × (Safety-Net Energy Offer Cap $1,000 + Contingency Reserve Offer Cap $100) = **$275 / $550 /
@@ -497,8 +497,8 @@ Record: `docs/handoffs/PRECOMMIT-spp-55-2026-09-07.md` (its own commit, before t
 
 **Result: NO SOLVE SPENT — not a keeper candidate (nothing to grade); design complete on the design commit `8d427adc`;
 topology NOT landed on main (solve path restored byte-identical, the SPP-57/57b posture).** Record:
-`docs/handoffs/PRECOMMIT-spp-54-2026-09-07.md` (pushed at `c9742b58` before any limit, ψ, price or flow was read) +
-`FINDING-spp-54-2026-09-07.md` + `docs/handoffs/spp54/`. Control = keeper-3 `spp43_screened_B` (rule 29(b) form 4;
+`docs/records/spp/PRECOMMIT-spp-54-2026-09-07.md` (pushed at `c9742b58` before any limit, ψ, price or flow was read) +
+`FINDING-spp-54-2026-09-07.md` + `docs/records/spp/spp54/`. Control = keeper-3 `spp43_screened_B` (rule 29(b) form 4;
 G-DRIFT `623184f3` → `9708d69e`: 13 files, all INERT — SPP-44 default-off, ercot-255 ERCOT-only, two surface
 declarations; solve surface 0 moved).
 
@@ -543,7 +543,7 @@ declarations; solve surface 0 moved).
 
 ## 2026-09-07 — spp-12: SPP-51 priced seams (MISO / AECI / ERCOT, cards P2/P3) — three adjudications LANDED; arm KILLED at rule-29 PHASE 0 on the measured record, NO LP spent
 
-- **Lane** SPP-51 (Fable) · `docs/handoffs/PRECOMMIT-spp-51-2026-09-07.md` · `FINDING-spp-51-2026-09-07.md` ·
+- **Lane** SPP-51 (Fable) · `docs/records/spp/PRECOMMIT-spp-51-2026-09-07.md` · `FINDING-spp-51-2026-09-07.md` ·
   control keeper-3 (`623184f3`, G-DRIFT all INERT). **No solve, no bundle, no registration, keeper untouched.**
 - **Adjudications (spec.py SPP list only; producer; tests):** (a) SPP-33 R1 — `derive_neighbor_hr_by_year.py`
   anchor map is now PER ISO (`NEIGHBOR_LMP_ANCHORS`), SPP anchored on MISO-West / MISO-South zonal rows, SPP hub
@@ -576,8 +576,8 @@ declarations; solve surface 0 moved).
 
 ## 2026-09-07 — spp-13: SPP-46 the C1-2024 gas split — BOTH R-17 candidates KILLED at rule-29 PHASE 0, ZERO LP; the object is a measured-input plausibility defect on three seams (EIA-923 own-month prices, plant-level eGRID heat rates, Harrington's fuel vintage) + a self-commitment residual — ROUTED`
 
-- **Lane** SPP-46 (Fable) · `docs/handoffs/PRECOMMIT-spp-46-2026-09-07.md` · `FINDING-spp-46-2026-09-07.md` ·
-  `docs/handoffs/spp46/` · control keeper-3 (`623184f3`, G-DRIFT 7 hunk groups all INERT). **No solve, no bundle, no
+- **Lane** SPP-46 (Fable) · `docs/records/spp/PRECOMMIT-spp-46-2026-09-07.md` · `FINDING-spp-46-2026-09-07.md` ·
+  `docs/records/spp/spp46/` · control keeper-3 (`623184f3`, G-DRIFT 7 hunk groups all INERT). **No solve, no bundle, no
   registration, keeper untouched, no field / constant / parameter added.**
 - **Phase 0.1 (CAMPD census):** the CT over-run is mid/low-load (2024: 6.5 / 3.2 / 1.3 TWh mid / low / top-decile);
   the ST_GAS committed-state footprint is 2.4 / 0.3 / 1.0 TWh against 8.0 / 5.1 / 7.9 TWh under-runs, ≤ 0.44 TWh of
@@ -605,7 +605,7 @@ declarations; solve surface 0 moved).
 
 ## 2026-09-07 — spp-14: SPP-47 EIA-923 incomplete-vintage swap loop extended to each ISO's own extra benchmarked fuels — **LANDED repo-wide, 6 cells, ZERO LP, every determination unchanged**
 
-- **Lane** SPP-47 (Opus) · `docs/handoffs/FINDING-spp-47-2026-09-07.md` · owner ruling **P16** (r#12) on
+- **Lane** SPP-47 (Opus) · `docs/records/spp/FINDING-spp-47-2026-09-07.md` · owner ruling **P16** (r#12) on
   SPP-43 §6 / SPP-57 R-15, both **DISCHARGED**. **No solve, no bundle, no registration, keeper untouched.**
 - **The change:** one executable line in `build_calibration_reference.py::_incomplete_renewable_fuels` —
   `("wind","solar")` → `("wind","solar") + _EIA923_EXTRA_FUELS_BY_ISO.get(iso, ())`. Same 0.80 threshold,
@@ -661,14 +661,14 @@ byte-identical to the committed parquets. Deltas: SPP two-zone North +1.915 / +2
 opposite), up to 9.0 GW in a zone-hour -> keeper-3 needs a re-baseline; MISO Plains +1.4...+1.8 TWh, Illinois
 -7...-8 %, up to 4.6 GW -> routed to MISO's desk. Solve path restored to origin/main's bytes; no parquet on the
 solve path regenerated or committed (SPP-46 is solving against keeper-3 in parallel). Zero LP.
-FINDING: docs/handoffs/FINDING-spp-48-2026-09-07.md
+FINDING: docs/records/spp/FINDING-spp-48-2026-09-07.md
 
 ---
 
 ## 2026-09-08 — spp-16: SPP-49 (Fable) — BOTH INPUT-SEAM REPAIRS LANDED REPO-WIDE (owner ruling P19) — the EIA-923 own-month gas-price plausibility screen as a REGISTERED GATE (default ON, 18 armed backcast keys re-key, 0 off-target) and the simple-cycle heat-rate floor as a CONSTRUCTION; zero LP; SPP-46's attribution reproduced pre and post; SPP / MISO / PJM owe re-solves`
 
-- **Lane** SPP-49 · `docs/handoffs/PRECOMMIT-spp-49-2026-09-08.md` (`395c9417`, before either seam file was edited) ·
-  `FINDING-spp-49-2026-09-08.md` · `docs/handoffs/spp49/`. **No solve, no bundle, no registration, no keeper shard,
+- **Lane** SPP-49 · `docs/records/spp/PRECOMMIT-spp-49-2026-09-08.md` (`395c9417`, before either seam file was edited) ·
+  `FINDING-spp-49-2026-09-08.md` · `docs/records/spp/spp49/`. **No solve, no bundle, no registration, no keeper shard,
   status, bench, sidecar or log touched.**
 - **Adjudication**: seam 1 (`plant_prices.py`) = registered gate `f923_gas_price_plausibility_screen`, default ON via the
   (b′-1) route, because a desk can legitimately want its raw series (Permian / Waha); seam 2 (`eia860.py`) =
@@ -724,7 +724,7 @@ not improve, C1 gains a gated failing row, 2025's reported C2 pair worsens on bo
 misses. keepers/SPP.json UNTOUCHED, keeper-3 NOT pruned -- the promotion is card P15. Bundle is on local
 disk, gitignored from the PRECOMMIT commit onward (rule 31: nothing deleted), and will NOT survive this
 ephemeral container.
-FINDING: docs/handoffs/FINDING-spp-50-2026-09-08.md
+FINDING: docs/records/spp/FINDING-spp-50-2026-09-08.md
 OWNER RULING P15 (SPP desk r#15, 2026-09-08), recorded by the desk after the lane closed: **PROMOTION
 DECLINED — keeper-3 stands.** Verbatim: "I think we just open the price level and don't bother promoting."
 SPP-50 remains a REGISTERED, non-promoted run on the dashboard (sidecar + payload committed; its bundle did
@@ -812,7 +812,7 @@ forward from keeper-3's committed ledger; the builder-vs-committed discrepancy s
 **Disclosed:** the post-solve report stage was killed (~4.8 GB, no traceback) after the 2025
 price-duration block — the LP completed and wrote every hourly sidecar, and `metrics.json` is a
 registration artifact, not a solve one. Cell `vre_curtailment_oversupply_allocation` **R → K**.
-Records: `docs/handoffs/FINDING-spp-51c-2026-09-09.md` (+ ADDENDUM 2),
+Records: `docs/records/spp/FINDING-spp-51c-2026-09-09.md` (+ ADDENDUM 2),
 `PRECOMMIT-spp-51c-2026-09-09.md` + ADDENDUM.
 
 ---
@@ -1030,7 +1030,7 @@ stay exactly 0.0"*. The shard measured the **control** at **177.596 MWh** of sla
 **unsatisfiable by any run including the incumbent** and discriminated nothing — I carried the clause
 forward from the predecessor PRECOMMIT without measuring the incumbent's baseline, which is what phase 0 is
 for. Re-cut to the strictest satisfiable form (dump exactly 0.000; slack ≤ 2× the control) in
-`docs/handoffs/ADDENDUM-spp58-the-flag-was-parsed-and-dropped-and-my-G4-was-unsatisfiable-2026-09-10.md`,
+`docs/records/spp/ADDENDUM-spp58-the-flag-was-parsed-and-dropped-and-my-G4-was-unsatisfiable-2026-09-10.md`,
 **written while no arm result existed**, so it is not a gate re-cut in the light of the result it decides.
 
 **NO CELL VERDICT IS MINTED.** `spp_curtailment_ceiling` stays **`U`** in SPP's matrix shard and
@@ -1093,7 +1093,7 @@ object**, and the only thing between SPP and the rule-22 lone-C3c path to CALIBR
 fills no other ISO's cell. **Routed not touched:** `run_calibration_full` builds the bench
 `group_by_code` before `run_year` sets the year's vintage — measured effect for SPP exactly zero.
 
-Records: `docs/handoffs/PRECOMMIT-spp-61-2026-09-10.md`, `docs/handoffs/RESULT-spp-61-2026-09-10.md`.
+Records: `docs/records/spp/PRECOMMIT-spp-61-2026-09-10.md`, `docs/records/spp/RESULT-spp-61-2026-09-10.md`.
 ---
 
 ## 2026-09-10 — spp-21: SPP-61 the Harrington fuel-vintage repair — the charter's BENCH SIDE IS FALSIFIED at zero LP, and the model-side arm is KILLED at the rule-29 screen gate G3 on a prerequisite it exposed
@@ -1101,8 +1101,8 @@ Records: `docs/handoffs/PRECOMMIT-spp-61-2026-09-10.md`, `docs/handoffs/RESULT-s
 **ONE year of LP, in one shard** (rule 32 `[R-SHARD]`: this session orchestrated and solved nothing).
 **Determination UNCHANGED — `NOT-YET`, keeper 5 `2026-09-09-spp-52a-fossil-offer`.** Nothing registered
 (a rule-29 screen never is), no keeper moved, `keepers/SPP.json` and `calibration-complete.json` untouched.
-Record: `docs/handoffs/PRECOMMIT-spp-61-2026-09-10.md` (pushed before the solve) and
-`docs/handoffs/FINDING-spp-61-2026-09-10.md`.
+Record: `docs/records/spp/PRECOMMIT-spp-61-2026-09-10.md` (pushed before the solve) and
+`docs/records/spp/FINDING-spp-61-2026-09-10.md`.
 
 **THE CHARTER'S TWO-SIDED PREMISE IS FALSE, AND PHASE 0 PROVED IT BEFORE ANY LP.** The charter had the
 benchmark booking Harrington's coal under `ST_GAS` (`e_ann` 3.44 / 2.23 TWh). It does not. The SPP EIA-923
@@ -1129,7 +1129,7 @@ answer — the units' own filed repower dates are 2/2025, 3/2025, 6/2025).
 
 **GATES — 4 of 5 pass; G3 stops the arm.** G1 fleet identity PASS. **G2 footprint confinement PASS EXACTLY:
 94 plants move in 2023 and 63 in 2024, and ZERO are unexplained** by that year's own EIA-860 release
-differing from the canonical snapshot (`results/calibration/_spp61_g2_footprint.json`). G5 bench inertness
+differing from the canonical snapshot (`results/phase0/spp/_spp61_g2_footprint.json`). G5 bench inertness
 PASS. G4 PASS on what was measured — system volume **+0.0054 TWh**, mean price **24.69 → 24.87 $/MWh
 (+0.72 %)**; **C3b went UNMEASURED** (no channel from this session to a cloud shard) and that is stated, not
 glossed. **G3 FAIL ⇒ STOP**, and the split matters: its **magnitude** limb PASSES — coal-family net
@@ -1188,10 +1188,10 @@ scarcity / C3c.
 
 **Lane SPP-62 · R-ay, the coal supply-class census vintage repair · KEEPER 7 PROMOTED
 (`2026-09-10-spp-62-vintage-census`, bundle `results/calibration/spp62_span`) by owner ruling
-in-session.** PRECOMMIT `docs/handoffs/PRECOMMIT-spp-62-2026-09-10.md` (pushed at
+in-session.** PRECOMMIT `docs/records/spp/PRECOMMIT-spp-62-2026-09-10.md` (pushed at
 `67feede7403240374091cc73a536d836ba6d08c4` before any solve); FINDING
-`docs/handoffs/FINDING-spp-62-2026-09-10.md`; shard reports
-`docs/handoffs/SHARD-spp62-screen-2023.md` + `SHARD-spp62-span.md`.
+`docs/records/spp/FINDING-spp-62-2026-09-10.md`; shard reports
+`docs/records/spp/SHARD-spp62-screen-2023.md` + `SHARD-spp62-span.md`.
 
 **LP spent: 2 shards, 590 s total** — a 150 s rule-29 screen (2023) and a 440 s full span
 (2023/2024/2025, ONE invocation). Rule 32 `[R-SHARD]`: this session ran no LP in its own
@@ -1318,7 +1318,7 @@ model ~1), then SPP-55/56 scarcity / C3c.
 commitment defect**, named by SPP-62 §7 as the successor that "reaches either failing C1 row."
 **Refused at phase 0 under rule 29 `[R-SCREEN]` clause 0** — the arm has a computable pre-solve gate
 and does not pass it, so no shard was launched. Record:
-`docs/handoffs/FINDING-spp-63-2026-09-10.md`. **Keeper UNCHANGED**
+`docs/records/spp/FINDING-spp-63-2026-09-10.md`. **Keeper UNCHANGED**
 (`2026-09-10-spp-62-vintage-census`); nothing registered, nothing promoted, **no matrix cell verdict
 minted**.
 
@@ -1414,8 +1414,8 @@ cannot fire.
 **Owner instruction, 2026-09-10, verbatim: _"No spp 58 was killed just proceed with your solve"_** —
 issued against this lane's recommendation to defer to SPP-58. SPP-58 is dead, so
 `spp_curtailment_ceiling` was unowned and SPP-63 took it. **PRECOMMIT**
-`docs/handoffs/PRECOMMIT-spp-63-curtailment-ceiling-2026-09-10.md` pushed at `efd60202` **before any
-solve**. **RESULT** `docs/handoffs/RESULT-spp-63-screen-2026-09-10.md`. **LP spent: ONE year
+`docs/records/spp/PRECOMMIT-spp-63-curtailment-ceiling-2026-09-10.md` pushed at `efd60202` **before any
+solve**. **RESULT** `docs/records/spp/RESULT-spp-63-screen-2026-09-10.md`. **LP spent: ONE year
 (~150 s)**, shard pinned `92b59c73`, branch `claude/spp63-screen-2025`. **THE SPAN WAS NOT SPENT.**
 **Keeper UNCHANGED** `2026-09-10-spp-62-vintage-census`; nothing registered, nothing promoted.
 
@@ -1483,7 +1483,7 @@ spread), **SPP-55/56** (scarcity / C3c). **SPP remains NOT-YET and is not calibr
 without the phantom wind** — root-cause the C3b regression and the loss of all 167 negative-price
 hours that killed SPP-63's ceiling screen. **Root-caused at phase 0**; every candidate arm was
 refused on a computable pre-solve gate under rule 29 `[R-SCREEN]` clause 0, so no shard was launched.
-Record: `docs/handoffs/FINDING-spp-64-2026-09-10.md`. **Keeper UNCHANGED**
+Record: `docs/records/spp/FINDING-spp-64-2026-09-10.md`. **Keeper UNCHANGED**
 (`2026-09-10-spp-62-vintage-census`); nothing registered, nothing promoted, **no matrix cell verdict
 minted**.
 
@@ -1564,11 +1564,11 @@ and is not calibrated** — two criteria fail, so rule 22 `[R-C3C]` still cannot
 
 **SPP-64 SPAN — `st_gas_mustrun_per_plant` armed on SPP's ST_GAS fleet, 2023–2025. SOLVED,
 REGISTERED, NOT PROMOTED.** Run `2026-09-10-spp-64-stgas-selfcommit`, bundle
-`results/calibration/spp64_span`. Records: `docs/RESULT-spp64-span.md`, charter
-`docs/handoffs/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md`, screen
-`docs/handoffs/RESULT-spp64-screen-2023.md` (six of six §6 STOP gates PASS), arithmetic correction
-`docs/handoffs/ADDENDUM-spp-64-g2-arithmetic-2026-09-10.md`, root cause
-`docs/handoffs/FINDING-spp-64-2026-09-10.md`.
+`results/calibration/spp64_span`. Records: `docs/records/spp/RESULT-spp64-span.md`, charter
+`docs/records/spp/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md`, screen
+`docs/records/spp/handoffs/RESULT-spp64-screen-2023.md` (six of six §6 STOP gates PASS), arithmetic correction
+`docs/records/spp/ADDENDUM-spp-64-g2-arithmetic-2026-09-10.md`, root cause
+`docs/records/spp/FINDING-spp-64-2026-09-10.md`.
 
 **THE HEADLINE: the scorer returns `CALIBRATED` — SPP's first — grade 7 of 8, 0 fails, 1 ledgered
 caveat.** ONE `--years 2023 2024 2025` invocation, years sequential (rules 12 / 16), 12 min 5 s.
@@ -1698,7 +1698,7 @@ keeper / holdout / marker / status rows all clean) · `check_registry_payload_pa
 73 bundle dirs, 0 unsynced) · `check_gate_a_provenance.py` OK · `check_mechanism_matrix.py` exit 0 ·
 the promoted run re-scores **CALIBRATED** by run id.
 
-**WHAT THE KEEPER IS AND WHAT IT CARRIES** is spp-25 above and `docs/RESULT-spp64-span.md`; the
+**WHAT THE KEEPER IS AND WHAT IT CARRIES** is spp-25 above and `docs/records/spp/RESULT-spp64-span.md`; the
 headline is unchanged by promotion — grade 7 of 8, 0 fails, 1 ledgered C3c caveat; C1 FAIL → PASS on
 both failing ST_GAS rows (volume **and** share); free-class C1 16/16 · 12/12; and **the flip is C1's
 alone** (C3c unchanged at full magnitude, 0/5/0 vs 42/59/68). **The keeper carries a known,
@@ -1729,10 +1729,10 @@ GRAIN, and the grain half LANDS. The card does NOT close, and this entry says so
 anything else.** New registered run `2026-09-10-spp-27-commitment-grain`
 (`results/calibration/spp27_span`), **CALIBRATED**, grade 7 of 8, 0 fails, 1 ledgered C3c caveat —
 **identical to keeper 8 on every scored criterion**, both re-scored live at HEAD rubric v3.7.
-Records: `docs/RESULT-spp27-span.md`, `docs/RESULT-spp27-screen-2023.md`,
-`docs/handoffs/PRECOMMIT-spp-27-commitment-grain-2026-09-10.md`,
-`docs/handoffs/ADDENDUM-spp-27-registration-seam-2026-09-10.md`,
-`docs/SHARDREPORT-spp27-screen-2023.md`, `docs/SHARDREPORT-spp27-span.md`.
+Records: `docs/records/spp/RESULT-spp27-span.md`, `docs/records/spp/RESULT-spp27-screen-2023.md`,
+`docs/records/spp/PRECOMMIT-spp-27-commitment-grain-2026-09-10.md`,
+`docs/records/spp/ADDENDUM-spp-27-registration-seam-2026-09-10.md`,
+`docs/records/spp/SHARDREPORT-spp27-screen-2023.md`, `docs/records/spp/SHARDREPORT-spp27-span.md`.
 **NOT PROMOTED — `frontend/data/backcast/keepers/SPP.json` is UNTOUCHED and SPP's designated keeper
 remains keeper 8 (lane SPP-64). Promotion is the owner's call (rule 31 `[R-RETAIN]`).** SPP still
 holds **no `complete` marker and no `frontier` declaration**, and this lane creates neither.
@@ -1913,7 +1913,7 @@ CLOSED as chartered. ZERO LP SPENT** (rule 29 `[R-SCREEN]` clause 0). **Keeper U
 (`2026-09-10-spp-27-commitment-grain`, read never written), **determination UNCHANGED**
 (`CALIBRATED`, grade 7 of 8, 0 fails, 1 ledgered C3c caveat). Nothing solved, nothing registered,
 no verdict minted, **no `rm` issued**, and no promotion question to put because nothing promotable
-was produced. Record: `docs/handoffs/FINDING-spp-29-c3c-price-tail-2026-09-11.md`; instrument
+was produced. Record: `docs/records/spp/FINDING-spp-29-c3c-price-tail-2026-09-11.md`; instrument
 `scripts/probes/_spp29_c3c_phase0.py` (`--report` reproduces every number).
 
 **THE REFUSAL.** `FINDING-spp-64` §9 chartered R-bd as *"the upper tail is CONGESTION RENT, not
@@ -2021,7 +2021,7 @@ declaration is added, requested or implied.
 ZERO LP SPENT** (rule 32 `[R-SHARD]` (a) — an orchestrator with nothing to orchestrate). **Keeper
 UNCHANGED and UNTOUCHED** `2026-09-10-spp-27-commitment-grain`. **No marker file touched, nothing
 registered, no verdict minted, no matrix cell moved, no `rm` issued.** Record:
-`docs/handoffs/PLAN-spp-31-complete-frontier-2026-09-12.md`. Base `9e499b0e`.
+`docs/records/spp/PLAN-spp-31-complete-frontier-2026-09-12.md`. Base `9e499b0e`.
 *(Lane SPP-30 — SPP's out-of-training price coverage — runs independently and was neither waited on
 nor duplicated.)*
 
@@ -2125,9 +2125,9 @@ VERDICT: ARM B (COAL+GAS) IS KILLED on two pre-registered gates; ARM A (COAL) cl
 is STOPPED by the fifth — a gate this lane wrote badly and says so rather than rewriting.** Parent LP
 **ZERO** (rule 32 `[R-SHARD]` (a)); shard LP **340 s** across two containers. **Keeper UNCHANGED**
 `2026-09-10-spp-27-commitment-grain`. Nothing registered, no marker touched, **no `rm` issued**.
-Records: `docs/RESULT-spp-32-shortwindow-screen-2026-09-12.md`,
-`docs/handoffs/PRECOMMIT-spp-32-shortwindow-availability-2026-09-12.md`,
-`docs/handoffs/SHARDREPORT-spp32-A-2025.md`, `docs/handoffs/SHARDREPORT-spp32-B-2025.md`.
+Records: `docs/records/spp/RESULT-spp-32-shortwindow-screen-2026-09-12.md`,
+`docs/records/spp/PRECOMMIT-spp-32-shortwindow-availability-2026-09-12.md`,
+`docs/records/spp/SHARDREPORT-spp32-A-2025.md`, `docs/records/spp/SHARDREPORT-spp32-B-2025.md`.
 
 **WHY THIS LANE EXISTED.** SPP's LP ignored **every** sub-5-day unit outage in its own CAMPD record.
 The coal extract (620 windows, 24 plants, 39 units, 620/620 `plant_group` COAL) had sat committed and
@@ -2227,9 +2227,9 @@ conditions.**
 ruling in-session**, verbatim: *"Is this a recommended keeper candidate? If so plz promote. If
 structural integrity improves but gates regress that may still be a keeper."* `keepers/SPP.json` was
 untouched until the ruling (rule 31 `[R-RETAIN]`). Records:
-`docs/RESULT-spp-36-shortwindow-span-2026-09-12.md`,
-`docs/handoffs/PRECOMMIT-spp-36-shortwindow-span-2026-09-12.md`,
-`docs/handoffs/SHARDREPORT-spp36-span.md`, `docs/handoffs/FINDING-spp-36-runyear-kwarg-2026-09-12.md`.
+`docs/records/spp/RESULT-spp-36-shortwindow-span-2026-09-12.md`,
+`docs/records/spp/PRECOMMIT-spp-36-shortwindow-span-2026-09-12.md`,
+`docs/records/spp/SHARDREPORT-spp36-span.md`, `docs/records/spp/FINDING-spp-36-runyear-kwarg-2026-09-12.md`.
 
 **THE ARM.** Keeper 9's recipe plus EXACTLY ONE armed gate, `unit_outage_short_windows` — the
 < 5-day baseload-coal CAMPD overlay SPP's LP had ignored **entirely**. The extract (620 windows /
@@ -2284,7 +2284,7 @@ A/B is unaffected (both legs are 3-year invocations), but a lane should settle i
 ISO's solve path was dead** at HEAD (both runners). Found by an SPP-36 shard that stopped and
 reported rather than patching. Repaired in `scripts/run_calibration.py` (default `None`, byte-inert)
 plus a new AST guard `tests/unit/pipeline/test_run_year_kwarg_binding.py`, proven to fail on the
-unrepaired tree. `docs/handoffs/FINDING-spp-36-runyear-kwarg-2026-09-12.md`.
+unrepaired tree. `docs/records/spp/FINDING-spp-36-runyear-kwarg-2026-09-12.md`.
 
 **Rule 28(b):** `unit_outage_short_windows` **`O` → `K`** in SPP's shard, with the keeper and gates
 stamps re-cut. **Rule 15:** keeper-only retention executed, keeper 9 pruned (1 pruned, 1 kept) —
@@ -2303,7 +2303,7 @@ diff (the `ensure_ascii` trap avoided), `check_gate_a_provenance.py` OK, 7 rows.
 **THE SPAN/SINGLE-YEAR DIVERGENCE IS AN EIA-860 VINTAGE CACHE LEAK. YEARS 2+ OF EVERY
 SPP SPAN SOLVE ON A STALE FLEET SNAPSHOT.** Card A closed at **phase 0 — zero LP, zero
 shards.** Base `9ae27cd7fca1e401c3a977eb0f86383242ad2090`.
-`docs/handoffs/FINDING-spp-37-order-sensitivity-2026-09-12.md`; probe
+`docs/records/spp/FINDING-spp-37-order-sensitivity-2026-09-12.md`; probe
 `scripts/probes/_spp37_vintage_cache_census.py`.
 
 **The mechanism.** SPP keeper 10 carries `eia860_vintage_tracks_solve_year = True`, so
@@ -2427,7 +2427,7 @@ CONSTRUCTION MISMATCH IN THE PARENT'S OWN DESIGN" and declared the span-vs-span 
 one". **The repaired span reproduces those exact numbers.** The single-year legs were right; the
 span carried the defect. The SPP-36 A/B itself survives (both legs shared the identical stale
 state, so the DIFFERENCE is real) but the LEVEL either leg reported for 2024/2025 was not. The
-note stands as the historical record; `docs/handoffs/RESULT-spp-38-vintage-repair-2026-09-13.md`
+note stands as the historical record; `docs/records/spp/RESULT-spp-38-vintage-repair-2026-09-13.md`
 is the correction.
 
 **GATES REPORTED AT FULL MAGNITUDE, GATED ON NOTHING.** C3a err % **+2.43/+2.24/+3.29 →
@@ -2537,7 +2537,7 @@ done.** The §5 recovery pins stay live as a result.
 **CARD R-be (DAY SELECTION) DOES NOT CLOSE, contrary to the prompt pack's expectation.** ZERO LP;
 no shard. Evidence read off **keeper 11** (`2026-09-13-spp-38-vintage-cache`), as the SPP-38
 handoff required, never keeper 10's superseded bundle.
-Record: `docs/handoffs/FINDING-spp-39-day-selection-2026-09-13.md`.
+Record: `docs/records/spp/FINDING-spp-39-day-selection-2026-09-13.md`.
 
 **A CORRECTION TO SPP-38'S OWN RECORD.** The SPP-38 RESULT, its log entry and keeper 11's promotion
 note all say D-4 is "identical to keeper 10, 71 rows". The **71 is the TOTAL** and is right; the
@@ -2600,7 +2600,7 @@ faithful instrument. Only if net load still wins AND a driver lands does this be
 
 **Run** `2026-09-13-spp-40-holdout-span` · bundle `results/calibration/spp40_holdout` ·
 stamped to keeper 11 `2026-09-13-spp-38-vintage-cache` (rule 30 `[R-TOUCHPOINT-FOLD]` (a)).
-Full write-up: `docs/handoffs/RESULT-spp-40-holdout-span-2026-09-13.md`.
+Full write-up: `docs/records/spp/RESULT-spp-40-holdout-span-2026-09-13.md`.
 
 Keeper 11's recipe, **no `--set` at all**, one `--years 2019 2020 2021 2022` invocation, one
 shard, one bundle. **SPP's headline determination is UNCHANGED at `CALIBRATED`** — rule 30 (c),
@@ -2655,7 +2655,7 @@ gas-price counterfactual before any solve is spent.
 **ZERO LP. NO SOLVE, NO SCREEN, NO BUNDLE, NO KEEPER CHANGE, NO REGISTRATION.**
 Base `75f0e4561d13977477910077714c15a8dbc5132b`. Control = keeper 11's COMMITTED bundle
 (rule 29(b) form 4); no control solve was spent and none was needed, because nothing was solved.
-Full write-up: `docs/handoffs/RESULT-spp-41-coal-gas-crossover-2026-09-14.md`.
+Full write-up: `docs/records/spp/RESULT-spp-41-coal-gas-crossover-2026-09-14.md`.
 
 **STEP 0 — the bracket cannot be narrowed.** Re-ran `audit_eia923_completeness.py --year 2025`
 against the raw at HEAD; it reproduces the committed part. Both SPP families read INCOMPLETE
@@ -2759,8 +2759,8 @@ owner decision on the Schedule-5 coal receipts/stocks intake, not a modelling se
 **NO PROMOTION. `frontend/data/backcast/keepers/SPP.json` is UNTOUCHED** and SPP's designated
 keeper remains 11, `2026-09-13-spp-38-vintage-cache` (rule 31 `[R-RETAIN]` — promotion is the
 owner's act). SPP's determination is UNCHANGED: `CALIBRATED` on the 2023–2025 train-tier verdict.
-Full write-up: `docs/handoffs/RESULT-spp-42-commitment-feasibility-2026-09-16.md`; charter
-`docs/handoffs/PRECOMMIT-spp-42-commitment-feasibility-2026-09-14.md`.
+Full write-up: `docs/records/spp/RESULT-spp-42-commitment-feasibility-2026-09-16.md`; charter
+`docs/records/spp/PRECOMMIT-spp-42-commitment-feasibility-2026-09-14.md`.
 
 **PHASE 0 ESTABLISHED THE SELECTION EXACTLY, THEN OVERTURNED THE CARD'S OWN READING OF IT.**
 The floor's hours are the top `round(online_frac × 8760 / 24)` whole operating days ranked by
@@ -2906,8 +2906,8 @@ keeper remains 12, `2026-09-16-spp-42-commitment-feasibility` (rule 31 `[R-RETAI
 is the owner's act, and this lane asks the question rather than pre-empting it). SPP's
 determination is UNCHANGED: `CALIBRATED` on the 2023–2025 train-tier verdict, and
 `audit_keepers --iso SPP` passes clean. Full write-up:
-`docs/handoffs/RESULT-spp-43-unit-outage-intake-2026-09-16.md`; charter
-`docs/handoffs/PRECOMMIT-spp-43-unit-outage-intake-2026-09-16.md`.
+`docs/records/spp/RESULT-spp-43-unit-outage-intake-2026-09-16.md`; charter
+`docs/records/spp/PRECOMMIT-spp-43-unit-outage-intake-2026-09-16.md`.
 
 **THE SOURCE SURVEY CAME FIRST AND IS WHAT LICENSED THE INTAKE** (rule 29 `[R-SCREEN]` step 0,
 `scripts/probes/_spp43_source_survey.py`). 13 of SPP's 14 CAMPD detection states carry a complete
@@ -3034,7 +3034,7 @@ itself is unaffected — its availability arrays are byte-identical, proven abov
 (`2026-09-16-spp-43-outage-intake`) are both UNCHANGED, and no `ScenarioConfig`
 field, default or keeper file was touched.** Base
 `d54cd9c571359b85cb1a8e1cd5cab68c080a6b0c`. Record:
-`docs/handoffs/RESULT-spp-44-coal-deliverability-2026-09-16.md`; probe
+`docs/records/spp/RESULT-spp-44-coal-deliverability-2026-09-16.md`; probe
 `scripts/probes/_spp44_coal_deliverability_phase0.py`.
 
 *(Lane-name collision: the 2026-09-07 SPP-44 was the `spp_gas_commitment_bridge`
@@ -3136,7 +3136,7 @@ extract block.
 **Base** `d54cd9c5`. **Keeper 12 `2026-09-16-spp-42-commitment-feasibility` (`spp42_span_a`)
 — UNCHANGED.** 2019–2022 rung `2026-09-16-spp-43-outage-intake` — UNCHANGED. **ZERO LP; no
 bundle, no run registered, no cell armed, no shard launched.** Record:
-`docs/handoffs/RESULT-spp-45-ponca-reach-2026-09-17.md`; probe
+`docs/records/spp/RESULT-spp-45-ponca-reach-2026-09-17.md`; probe
 `scripts/probes/_spp45_ponca_reach_phase0.py`.
 
 **THE GATE CLOSES, BUT NOT WHERE IT WAS EXPECTED TO.** SPP-43 §7 item 1 routed the frozen
@@ -3218,7 +3218,7 @@ or delivery-reliability) — an owner data-procurement decision, not a modelling
 **SPP's four rubric failures on the 2019–2022 rung, adjudicated at ZERO LP.** Base
 `8f0d41df`. Keeper `2026-09-16-spp-42-commitment-feasibility` and rung
 `2026-09-16-spp-43-outage-intake` **both UNCHANGED**. No LP, no bundle, no shard, no
-registration, no cell armed. Record: `docs/handoffs/RESULT-spp-47-four-failures-2026-09-18.md`.
+registration, no cell armed. Record: `docs/records/spp/RESULT-spp-47-four-failures-2026-09-18.md`.
 
 **THE BRIEF'S CENTRAL HYPOTHESIS IS REFUTED.** "2020's COAL_PRB shortfall is the single thread
 tying three of the four criteria together" is false. C3a/C3b-2020 is not a coal-volume defect:
@@ -3339,8 +3339,8 @@ a different object, about relative merit-order elasticity, not coal supply.
 `2026-09-19-spp-48-midvintage-exit` (`results/calibration/spp48_arm_span`, 2019–2022),
 **determination NOT-YET on the same failing set as the control** {C1, C3a, C3b, C4}. Keeper 12
 `2026-09-16-spp-42-commitment-feasibility` **UNCHANGED and proven un-movable by this lane**.
-Full record: `docs/handoffs/PRECOMMIT-spp-48-midvintage-exit-2026-09-19.md` (+ Addendum A) and
-`docs/handoffs/RESULT-spp-48-midvintage-exit-2026-09-19.md`.
+Full record: `docs/records/spp/PRECOMMIT-spp-48-midvintage-exit-2026-09-19.md` (+ Addendum A) and
+`docs/records/spp/RESULT-spp-48-midvintage-exit-2026-09-19.md`.
 
 **ONE FALSE ASSUMPTION, THREE SEAMS — and SPP-47 named only the first.** Fixing the injection gate
 alone put Oklaunion online in **all twelve months of 2020**, three of them after it retired (a
@@ -3577,7 +3577,7 @@ and **PJM carries 8.8 TWh missing from its 2025 ACTUAL** through the separate
 ancestor). Keeper `2026-09-16-spp-42-commitment-feasibility` UNCHANGED. Rung
 `2026-09-19-spp-49-benchmark-membership` UNCHANGED. No LP, no shard, no bundle, no registration,
 no matrix cell letter moved, nothing deleted.** Record:
-`docs/handoffs/RESULT-spp-50-coal-cc-elasticity-2026-09-20.md`; probe
+`docs/records/spp/RESULT-spp-50-coal-cc-elasticity-2026-09-20.md`; probe
 `scripts/probes/_spp50_curtailment_headroom_census.py` (legs `elasticity`/`floor`/`headroom`/`census`).
 
 **THE ELASTICITY SURVIVES IN SIGN AND COLLAPSES AS A COEFFICIENT.** Re-fit on the committed
@@ -3660,7 +3660,7 @@ Keeper 12 (`2026-09-16-spp-42-commitment-feasibility`) and the SPP-49 rung prune
 RECOMMENDED promotion and did NOT act until the ruling** (rule 31 `[R-RETAIN]`). LP: **7 shards ×
 2 legs (control + arm), one shard per year 2019–2025** (rules 32 `[R-SHARD]` / 36
 `[R-YEAR-ISOLATION]`); the parent ran none. Record:
-`docs/handoffs/RESULT-spp-51-coal-sync-floor-2026-09-20.md`; PRECOMMIT + window ADDENDUM pushed
+`docs/records/spp/RESULT-spp-51-coal-sync-floor-2026-09-20.md`; PRECOMMIT + window ADDENDUM pushed
 BEFORE any solve (`f80de3e1`, `0a7f5c06`); probes `scripts/probes/_spp51_*.py`; composition
 `_spp51_compose_span.py`; attestation `scripts/gen_spp51_attestation.py`.
 
@@ -3812,8 +3812,8 @@ interpolating is a free parameter — refused); **R-bc is not closed** — this 
 exists, never whether the LP spends it; R-ba, R-be and C3c untouched. **MISO carries the identical
 `[R-HOLDOUT]` residue** in `_MISO_REFERENCE_RATE_YEARS` — reported, not acted on (rule 25).
 
-Records: `docs/handoffs/PRECOMMIT-spp-67-year-own-rate-2026-09-20.md`,
-`docs/handoffs/RESULT-spp-67-year-own-rate-2026-09-20.md`,
+Records: `docs/records/spp/PRECOMMIT-spp-67-year-own-rate-2026-09-20.md`,
+`docs/records/spp/RESULT-spp-67-year-own-rate-2026-09-20.md`,
 `scripts/probes/_spp67_wind_decomposition.py`, `scripts/gen_spp67_attestation.py`,
 `tests/unit/data/test_spp67_year_own_curtailment_rate.py`.
 
@@ -3826,8 +3826,8 @@ price_tail}) and `2026-09-20-spp-68-rung-ceiling` (2019-2022, FAILs {fuelmix, pr
 price_shape}). LP: **SEVEN shards, ONE PER YEAR 2019-2025** (rules 32 / 34(c) / 36), each pushing
 its full bundle; **the parent ran none**. Control is keeper 14's COMMITTED bundle (rule 29(b) form
 4 — G-DRIFT found ONE changed file on the audited solve path, a NYISO artifact SPP does not have).
-Records: `docs/handoffs/PRECOMMIT-spp-68-curtailment-ceiling-retest-2026-09-20.md`,
-`docs/handoffs/RESULT-spp-68-curtailment-ceiling-retest-2026-09-20.md`; probes
+Records: `docs/records/spp/PRECOMMIT-spp-68-curtailment-ceiling-retest-2026-09-20.md`,
+`docs/records/spp/RESULT-spp-68-curtailment-ceiling-retest-2026-09-20.md`; probes
 `scripts/probes/_spp68_{ceiling_phase0,arm_vs_control,compose_span}.py`;
 `scripts/gen_spp68_attestation.py`.
 
@@ -3892,7 +3892,7 @@ promotion question was put to the owner explicitly and was OPEN at close; both c
 `main`, so a promotion would cost **zero re-solves**.
 
 **SECOND DELIVERABLE, taken independently: the `[R-HOLDOUT]` footprint sweep**
-(`docs/handoffs/FINDING-spp-68-deleted-rule-footprint-sweep-2026-09-20.md`). Five live instances;
+(`docs/records/spp/FINDING-spp-68-deleted-rule-footprint-sweep-2026-09-20.md`). Five live instances;
 the largest is a **hard gate**, not a stale comment — `run_capacity_hindcast.py:364` still raises
 `SystemExit("rule-22 holdout policy refuses this window")` for any hindcast solve year outside
 {2021, 2023-2025}, refusing by `holdout_policy.tier_for_year`, while that module's own docstring
@@ -3919,18 +3919,18 @@ pre-registered two-sided test fails, so nothing was armed and no shard was launc
 Two items routed, not built: (1) blended-plant rows at GRDA 165 and Hawthorn 2079 (a rule-14 level
 case for its own lane); (2) F923 January 2022 CC delivered gas at $147.15/MMBtu for Hawthorn and
 State Line MO, which survives into the offers. The crossover defect has no measured driver in the
-offer stack. Record: `docs/handoffs/RESULT-spp-76-crossover-heat-rates-2026-09-24.md`.
+offer stack. Record: `docs/records/spp/RESULT-spp-76-crossover-heat-rates-2026-09-24.md`.
 
 ## spp-93 — 2026-09-27 — West/East re-partition: admissible, rated, STOPPED pre-solve at C-3 (zero LP)
 
 Built `spp_zone_partition` (default `north_south` = keeper, byte-identical). West = SPP reserve zones {1,2,3,5}, East = RZ 4,
 one 4,000 MW W↔E link replacing N↔S. Measured-price admissibility passes 7/7 years. The ψ rating passes R1–R4. The census and
 the wind identity pass. C-3 STOPS: 14 East afternoon hours go margin-negative where N/S was ≥ 0. No shard launched, keeper
-unchanged, cell `spp_zone_partition` = O. Record: `docs/handoffs/FINDING-spp-93-west-east-2026-09-27.md`.
+unchanged, cell `spp_zone_partition` = O. Record: `docs/records/spp/FINDING-spp-93-west-east-2026-09-27.md`.
 
 ## spp-94 — 2026-09-28 — SPP's own 2020/2021 wind curtailment rows landed; solve blocked at nesting depth
 
 SPP-67 treated 2020/2021 as unpublished. The 2022 and 2021 ASOMs print 244 MW and 725 MW (average hourly wind). The rows were
 added (PR #6812, merge `020bb1c5`, PRECOMMIT first). The armed year-own seam now uses 2.55 % / 6.37 % instead of 9.65 %. Wind
 headroom: 2020 −6.62 TWh, 2021 −3.60 TWh; every other year byte-identical. The seven shards were refused at lineage depth 8, so
-nothing was solved. Keeper unchanged. Record: `docs/handoffs/FINDING-spp-94-curtail-rows-2026-09-28.md`.
+nothing was solved. Keeper unchanged. Record: `docs/records/spp/FINDING-spp-94-curtail-rows-2026-09-28.md`.

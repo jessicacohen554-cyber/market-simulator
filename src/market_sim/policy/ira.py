@@ -29,7 +29,7 @@ CCUS_45Q_CREDIT_PER_TON: float = 85.0  # $/tCO2 geologically stored
 # into the 0.3-cent rate and then subtracted an UNMULTIPLIED reduction,
 # which left the phase-down slope 5x too shallow (0.16 vs 0.80 $/$) and
 # pushed the zero-out price out to $118.75/MWh — finding F-1 of
-# docs/handoffs/d28-45u-composition-memo-2026-08-08.md §1.1/§4, corroborated
+# docs/records/forecast/d28-45u-composition-memo-2026-08-08.md §1.1/§4, corroborated
 # there against the primary text and an independent industry worked example.
 # This module assumes the prevailing-wage rate throughout (the same
 # convention already used for the wind PTC's ``ira_ptc_wind``, which is
@@ -321,7 +321,7 @@ def ira_phaseout_fraction(year: int, config: ScenarioConfig) -> float:
     2033/2034/2035/2036 breakpoints defaulted in ScenarioConfig. Values
     landed in data/raw/policy/ira-credit-parameters/ira-credit-parameters.csv;
     provenance narrative in that directory's README.md and
-    docs/handoffs/ffr-pb-atb-statute-intake-2026-07-31.md.
+    docs/records/forecast/ffr-pb-atb-statute-intake-2026-07-31.md.
 
     This REPLACES the module's previous continuous 5-step-implied linear
     ramp (2028 full / 2033 zero, an undocumented estimate that predates this

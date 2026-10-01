@@ -1,0 +1,67 @@
+SHARD r-caiso-9-A-{Y} — ONE-YEAR CAISO BACKCAST SOLVE ({Y}): KEEPER RECIPE + caiso_import_cap_floor_static (lane R-CAISO-9)
+DATA PROFILE: caiso
+MODEL: Opus or Fable
+
+You are a SHARD. You solve ONE year, push its full bundle to your own branch, report numbers, and stop.
+"A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE."
+
+FIRST ACTION (exactly this, before anything else):
+  git fetch origin {SHA} || git fetch origin claude/r-caiso-9; git checkout --detach {SHA}
+Then HARD STOP 1: `git rev-parse HEAD` must print {SHA}. Never rebase, never `git pull`, never "sync", never force-push.
+
+PRECOMMIT: docs/records/caiso/r-caiso-9/PRECOMMIT-r-caiso-9-2026-09-27.md (read §1 and §2 only).
+
+SETUP (in this order):
+  pip install -r requirements.txt && pip install -e .     (only if imports fail; if PyYAML refuses to uninstall add --ignore-installed PyYAML; if zoneinfo cannot find US/Pacific, `pip install tzdata`)
+  python3 scripts/hydrate_data.py --profile caiso        (if it refuses because the clone is not partial, continue)
+  PYTHONPATH=. python3 scripts/data/curate_capacity_deliverability.py --isos CAISO     (MANDATORY)
+
+HARD STOPS — check each; if any fails, STOP, do not push, report which one:
+2. Before solving: `sha256sum data/raw/capacity-deliverability/caiso/caiso.csv data/raw/campd-unit-outages-CAISO.csv data/raw/_processed-legacy/plant_emission_rates_v2.parquet data/raw/_validation-source/wecc_intertie_lmp_hourly_CAISO.parquet data/raw/_validation-source/caiso_offer_curve_measured.json` must print, in order:
+   e58594ae05df0c520d37cfc8aa89e0f4330937f612ff2be7a28b653dfa1506dc
+   cf156483e08dcd701bd89898ca14670d3c797eb09d9ad30efc7f51cb381390b5
+   15d634654db8f5c6b8cc30d614a702a1800904ffb086a46afcba444d04bdf7b7
+   b44acc27df23216811d7e29cf52ebebf61bd81dffab3e5497bff7b7425a46a5d
+   a5ab4c925a1291820d63c33c3777fa57982d506e2c66d7275fedaafda49182e5
+   Also: `python3 -c "from market_sim.config.constants import ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO as M; print(M)"` must print {'CAISO': 1.154}.
+   Also: `python3 -c "from market_sim.config.iso_configs import get_iso_config as g; from market_sim.model.transmission import apply_caiso_local_import_limits as f; print({(l.from_zone,l.to_zone):l.ttc_mw for l in f(g('CAISO'),'CAISO',{Y},sd_floor_static=True).links}[('SP15_rest','SDGE')])"`
+   must print {SDCAP} (2019–2023: 1436.0; 2024: 2074.0; 2025: 2071.0).
+3. After the solve, results/calibration/rcaiso9_A_{Y}/run_config.json must show:
+   scenario_config: caiso_import_cap_floor_static=true, caiso_intertie_partial_year_measured=true,
+   caiso_st_gas_peak_measured=true, caiso_per_hub_intertie=true, caiso_perhub_firm_base=true,
+   caiso_import_gas_coupling_ladder_only=true, caiso_intertie_gap_fill_measured_dam=true,
+   cc_eia923_identity_emission_basis=true, capacity_deliverability_limits=true, caiso_per_year_import_caps=true,
+   mode="backcast", iso="CAISO"; calibration_flags.offer_curve_overrides == {} and offer_curve_deltas == {}.
+   The solve log must contain "firm import blocks shaped".
+
+SOLVE (exactly this, unmodified, IN THE FOREGROUND — never nohup / & / run_in_background; never pass --no-container-preflight):
+  python3 scripts/replay_keeper.py results/calibration/{SRC} --years {Y} \
+    --set caiso_import_cap_floor_static=true \
+    --out-dir results/calibration/rcaiso9_A_{Y} \
+    --note "R-CAISO-9 A {Y}: keeper recipe + caiso_import_cap_floor_static (PRECOMMIT-r-caiso-9-2026-09-27)"
+  Budget: ~25 min. If it approaches 40 min with no bundle, stop and report.
+
+PUSH (rule 34(a) — plain git add, NEVER `git add -f`, NEVER `git add -A` / `git add .`):
+  git checkout -b claude/r-caiso-9-A-{Y}
+  printf '\n!results/calibration/rcaiso9_A_{Y}/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/rcaiso9_A_{Y}
+  git status --short   # must show NOTHING staged outside .gitignore and results/calibration/rcaiso9_A_{Y}/
+  ls results/calibration/rcaiso9_A_{Y}/dispatch/{Y}_P1.parquet   # must exist and be staged
+  git commit -m "r-caiso-9-A-{Y}: one-year bundle (R-CAISO-9)" && git push -u origin claude/r-caiso-9-A-{Y}
+  (If the push fails with HTTP 408/500: `git config http.version HTTP/1.1` and retry. If a pre-push hook
+  blocks on lint of files you did not touch, report it and stop — do not reformat anything.)
+  Then verify: `git ls-remote origin claude/r-caiso-9-A-{Y}` must print your commit sha, and
+  `git ls-tree -r HEAD -- results/calibration/rcaiso9_A_{Y} | wc -l` must be > 10.
+
+FORBIDDEN, by name: `git add -A`, `git add .`, `git add -f`; scripts/dashboard_add_run.py, build_manifest.py,
+build_status.py, prune_iso_runs.py, anything under frontend/data/backcast/**; ANY edit under src/ or scripts/
+(except running them); opening a PR; deleting any result (rule 31); rebasing / pulling / force-pushing.
+
+REPORT in your final message, in numbers:
+- HEAD sha; the pushed commit sha (FULL 40 chars); the ls-tree file count
+- the `container preflight:` and `memory peak:` log lines; wall time of the solve
+- hard-stop 3 values as read from run_config.json
+- per-class annual TWh (model) from hourly/class_hourly_{Y}.parquet, pass P1: CC_REGULAR, CT_PEAKER, import (and per corridor WECC_PNW / WECC_DSW if the file splits them), ST_GAS, CC_CHP, hydro
+- from hourly/system_{Y}.parquet, pass P1: SDGE annual slack (unserved) MWh, SDGE mean price, and the count of hours with price(SDGE) − price(SP15_rest) > 0.01
+- whether the log contains "per-hub WECC intertie" for this year
+- any WARNING about a fallback / missing input

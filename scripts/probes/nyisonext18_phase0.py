@@ -22,11 +22,11 @@ Blocks, per year, split by measured CENTRAL EAST loading (>= 0.85 of posted limi
 
 The 2021 upstate headroom test (every UW gas MW cheaper than the UW model price
 already runs) needs the fleet-only rebuild and lives in
-``nyisonext18_fleet_census.py``. Record: ``results/calibration/_nyisonext18_phase0.json``.
+``nyisonext18_fleet_census.py``. Record: ``results/phase0/nyiso/_nyisonext18_phase0.json``.
 
 Usage::
 
-    python3 scripts/probes/nyisonext18_phase0.py --out results/calibration/_nyisonext18_phase0.json
+    python3 scripts/probes/nyisonext18_phase0.py --out results/phase0/nyiso/_nyisonext18_phase0.json
 """
 
 from __future__ import annotations

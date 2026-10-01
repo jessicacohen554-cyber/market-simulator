@@ -187,7 +187,7 @@ def main() -> None:
             print(f"     monthly live hours:    {o.get('monthly_live_hours')}")
             print(f"     monthly available GWh: {o.get('monthly_available_gwh')}")
 
-    out = REPO / "results/calibration/_spp48_midvintage_fleet_reach.json"
+    out = REPO / "results/phase0/spp/_spp48_midvintage_fleet_reach.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(results, indent=1))
     print(f"\nwrote {out}")

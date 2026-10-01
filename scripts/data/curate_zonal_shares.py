@@ -112,7 +112,7 @@ def parse_pjm_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
     # clock (Etc/GMT+5, no DST) — the prevailing datetime_beginning_ept stamp
     # places the DST-months rows one hour late against demand and the EIA-930
     # series. Byte-identical outside DST, exactly one hour earlier inside. See
-    # docs/handoffs/debug-b-pjm-input-clock-charter-2026-08.md §3.
+    # docs/records/pjm/debug-b-pjm-input-clock-charter-2026-08.md §3.
     ts = (
         pd.to_datetime(df["datetime_beginning_utc"], format="mixed", errors="coerce")
         .dt.tz_localize("UTC")
@@ -211,7 +211,7 @@ def parse_caiso_shares(
     total these shares multiply rides. The default (False) keeps the historical
     prevailing-time (DST-following) placement, which lands every DST-month
     share one hour LATE against that total (rule 14 source-clock defect;
-    docs/handoffs/r-caiso-11/RESULT-r-caiso-11-2026-09-28.md sec 4).
+    docs/records/caiso/r-caiso-11/RESULT-r-caiso-11-2026-09-28.md sec 4).
 
     Reads ``data/raw/zone-specific-demand/CAISO/CAISO_tac_load_hourly_{year}.csv``
     (upload U4: OASIS SLD_FCST with market_run_id=ACTUAL), maps the four TAC
@@ -504,7 +504,7 @@ def parse_neiso_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
 # (``eia930.zonal_shares._zonal_shares_from_raw`` imports ``_PARSE_FUNCS`` from
 # here), so nothing downstream can tell the difference.  Folding the two ISOs'
 # crosswalks back together is a consolidation routed to SPP-DESK in
-# ``docs/handoffs/FINDING-spp-32-2026-09-07.md``, not a defect in either.
+# ``docs/records/spp/FINDING-spp-32-2026-09-07.md``, not a defect in either.
 # ---------------------------------------------------------------------------
 
 # EIA-930 SPP sub-BA -> model zone.  EIA-930 reports SWPP hourly demand at
@@ -982,7 +982,7 @@ def parse_nwpp_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
     group (owner ruling N5; ``zone_assignment._NWPP_BA_ZONES``), so the zonal
     shares are that same sum taken in five parts instead of one — a REGROUP of
     the identical arithmetic, not a second data source.  Three consequences,
-    all measured by this lane (``docs/handoffs/FINDING-nwpp-33-2026-09-14.md``):
+    all measured by this lane (``docs/records/nwpp/FINDING-nwpp-33-2026-09-14.md``):
 
     * **The shares are exact, not approximate.**  Because the numerator parts
       and the denominator come from one pass over one set of arrays, the

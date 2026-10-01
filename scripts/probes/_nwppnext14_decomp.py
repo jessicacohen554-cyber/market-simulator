@@ -5,7 +5,7 @@ Keeper #17 vs #18 coal-class hourly (committed sidecars; #17 from git history at
 series swapped for #17's or for its CEMS series. Inputs are staged in a scratch
 dir (argv[1]): ``e930coal2023.npy`` (run_calibration_full._eia930_frame),
 ``k17_ch2023.parquet`` and ``k17.js`` (git show). Record:
-docs/handoffs/FINDING-nwppnext14-bridger-and-clark-phase0-2026-09-30.md §1.
+docs/records/nwpp/FINDING-nwppnext14-bridger-and-clark-phase0-2026-09-30.md §1.
 """
 
 import sys

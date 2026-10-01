@@ -3,7 +3,7 @@
 Runs a base forecast scenario once per named case in a
 :class:`~market_sim.config.scenarios.SweepDefinition` (``cases`` mode --
 ``configs/scenario_matrix.yaml`` holds the 13 cases from
-``docs/handoffs/probability-bounds-plan-2026-07.md`` §1.2) and reports each
+``docs/records/misc/probability-bounds-plan-2026-07.md`` §1.2) and reports each
 case's emissions trajectory plus the min/max envelope across cases.
 
 THIS IS A DETERMINISTIC SCENARIO RANGE, NOT A PROBABILITY BAND (plan §1.3):

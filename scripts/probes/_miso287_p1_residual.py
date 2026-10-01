@@ -19,7 +19,7 @@ an LP:
    beside P0-stack and P1, plus which class/band sets the night price in each
    stack and the markup it carries.
 
-Output: ``results/calibration/_miso287_p1_residual.json``. Rule 13: nothing here
+Output: ``results/phase0/miso/_miso287_p1_residual.json``. Rule 13: nothing here
 feeds a solve.
 """
 
@@ -100,7 +100,7 @@ def main() -> int:
     from market_sim.model.commitment import compute_monthly_markup
 
     dec.KEEPER = KEEPER
-    path = REPO / "results/calibration/_miso287_p1_residual.json"
+    path = REPO / "results/phase0/miso/_miso287_p1_residual.json"
     out = json.loads(path.read_text()) if path.exists() else {}
     for y in args.years:
         hh = _henry_hub_actual(_load_reference(), y)

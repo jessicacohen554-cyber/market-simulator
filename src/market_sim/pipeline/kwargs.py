@@ -634,7 +634,7 @@ def apply_ercot_commitment_posture(
     :func:`apply_reserve_coopt` — the ERCOT posture is reserve-decoupled (ERCOT
     has no pergen substrate), so its ``posture_gen_idx``/``posture_col``/
     ``posture_mlf``/``posture_startup`` are threaded as their own dispatch
-    kwargs (design note §A; ``docs/handoffs/ercot-commitment-thinness-2026-07.md``).
+    kwargs (design note §A; ``docs/records/ercot/ercot-commitment-thinness-2026-07.md``).
     Returns True when the posture was merged (a no-op otherwise, byte-identical).
     """
     if str(getattr(config, "iso", "")) != "ERCOT":
@@ -685,7 +685,7 @@ def apply_spp_commitment_posture(
     reserve-decoupled construction as :func:`apply_ercot_commitment_posture`
     (``posture_gen_idx``/``posture_col``/``posture_mlf``/``posture_startup``)
     plus the per-pool ``posture_min_up_h`` / ``posture_min_down_h`` coupling
-    (``docs/handoffs/DESIGN-spp-102-cc-commitment-state-2026-09-29.md``).
+    (``docs/records/spp/DESIGN-spp-102-cc-commitment-state-2026-09-29.md``).
     Returns True when merged (a no-op otherwise, byte-identical).
     """
     if str(getattr(config, "iso", "")) != "SPP":

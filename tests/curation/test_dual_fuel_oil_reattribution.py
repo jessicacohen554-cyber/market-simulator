@@ -2,7 +2,7 @@
 
 ``run_calibration_full._reattribute_dual_fuel_oil`` (nyiso-240) books a modelled
 plant's EIA-923 ``oil`` rows into the classes its units dispatch in. miso-267
-(``docs/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md``)
+(``docs/records/miso/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md``)
 found three defects, each pinned here on trivial synthetic fixtures (no on-disk
 data):
 

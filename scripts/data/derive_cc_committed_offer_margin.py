@@ -4,7 +4,7 @@ The identification constant of the ``cc_committed_offer_margin`` mechanism
 (``constants.CC_COMMITTED_OFFER_LEVEL_BY_ISO``) — the gas-CC analogue of the
 coal min-load net-revenue margin ERCOT-137 promoted
 (``scripts/data/derive_coal_offer_margin_anchor.py``), chartered by
-``docs/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md`` §6.
+``docs/records/ercot/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md`` §6.
 
 ERCOT-138 measured the defect this level repairs: against ERCOT's own SCED
 TPO conduct the model's CC committed/econ bands bid **+$2.8–6.6 /MWh too
@@ -29,7 +29,7 @@ re-run, nothing touches a residual:
   AT the anchor: 60-Day SCED ``Submitted TPO-Price1`` capacity-weighted p50,
   pooled res-hours-weighted across the four 2024–2025 disclosure subsets,
   from the committed ERCOT-136 artifact
-  ``results/calibration/ercot136_coal_headroom_conduct.json``
+  ``results/phase0/ercot/ercot136_coal_headroom_conduct.json``
   (``B1_curve_bottom``, **CC** rows — the same measurement, same instrument,
   same construction and same loader that supplied coal's promoted level, read
   off its COAL twin). Curve coverage on those rows is 95.1–98.0 % of
@@ -100,8 +100,8 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
 # Committed measured artifacts (the ONLY inputs — rule 23):
-ERCOT136_CONDUCT = REPO / "results/calibration/ercot136_coal_headroom_conduct.json"
-ERCOT138_RANKING = REPO / "results/calibration/ercot138_coal_gas_ranking.json"
+ERCOT136_CONDUCT = REPO / "results/phase0/ercot/ercot136_coal_headroom_conduct.json"
+ERCOT138_RANKING = REPO / "results/phase0/ercot/ercot138_coal_gas_ranking.json"
 
 #: The measured class whose conduct identifies the level. ERCOT-138's
 #: ``MODEL_CC_GROUPS`` is ``("CC_REGULAR",)`` — CC_CHP is reported there as a
@@ -274,7 +274,7 @@ def _verify_year_mode(year: int, limb_key: str, constant_name: str) -> int:
     ``level_year = measured_instrument_year - HR x (fuel_year - anchor)`` is
     compared against the armed constant inside the identification's OWN cited
     cross-subset dispersion band. Decision rule pre-registered in
-    ``docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md``; this mode
+    ``docs/records/ercot/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md``; this mode
     applies it, it does not choose it. Nothing is written and no residual is
     consulted — a REFUTED or NOT-IDENTIFIABLE outcome is reported, never repaired
     here (rules 13/23).

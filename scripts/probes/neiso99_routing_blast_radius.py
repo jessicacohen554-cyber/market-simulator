@@ -136,7 +136,7 @@ def main() -> None:
                 f"bins={v['fleet_bins']}"
             )
 
-    out = ROOT / "results" / "calibration" / "_neiso99_routing_blast_radius.json"
+    out = ROOT / "results" / "phase0" / "neiso" / "_neiso99_routing_blast_radius.json"
     out.write_text(json.dumps(result, indent=1, sort_keys=True, default=str))
     print("\nwrote", out)
 

@@ -4,7 +4,7 @@
 L-CAP) · **Datatype:** `nuclear-license-status`
 (`data/raw/nuclear-license-status/`, schema
 `data/dictionary/schema/nuclear-license-status.schema.yaml`) · **Design memo +
-session record:** `docs/handoffs/ff-g5-nuclear-registry-2026-07.md`.
+session record:** `docs/records/forecast/ff-g5-nuclear-registry-2026-07.md`.
 
 **Data + design only — no mechanism code, no ScenarioConfig field, no
 constants.py value, and zero LP solves in this session** (task scope §3). The
@@ -16,7 +16,7 @@ subject and is chartered to a separate implementing session.
 
 2035–2050 clean-firm supply is ungrounded. Mechanism facts (verified against
 `src/market_sim/config/constants.py` ~L3527–3535 and
-`docs/handoffs/confirmed-retirement-plan-2026-07.md`):
+`docs/records/misc/confirmed-retirement-plan-2026-07.md`):
 
 - Announced non-fossil retirement dates are honored only within
   `EIA860_OPERABLE_VINTAGE (2025) + NONFOSSIL_ANNOUNCED_HORIZON_YEARS (5)` — i.e.

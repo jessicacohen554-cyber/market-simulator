@@ -1,7 +1,7 @@
 """Fetch PJM Day-Ahead virtual bid curves + demand bids from DataMiner2.
 
 Downloads the two DA demand-side bid feeds behind the G-22 lever-B
-DA-procurement-depth mechanism (docs/FINDING-pjm-offer-surface-noop-2026-07.md
+DA-procurement-depth mechanism (docs/records/pjm/FINDING-pjm-offer-surface-noop-2026-07.md
 §Re-scoped levers):
 
 * ``hrl_da_incs_decs`` — hourly INCrement offer (virtual supply) and

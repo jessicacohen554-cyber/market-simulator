@@ -43,7 +43,7 @@ import numpy as np
 
 REPO = Path(__file__).resolve().parents[2]
 CACHE = REPO / "results" / "calibration" / "_nyiso245_cache"
-OUT = REPO / "results" / "calibration" / "_nyiso248_gas_grain_census.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso248_gas_grain_census.json"
 YEARS = (2022, 2023, 2024, 2025)
 HOURS = 8760
 GAS_CLASS_TOKENS = ("CC", "CT", "ST_GAS")

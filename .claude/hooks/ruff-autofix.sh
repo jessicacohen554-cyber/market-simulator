@@ -7,7 +7,7 @@
 # bytes are already ruff-clean by the time the agent stages and pushes them.
 #
 # SCOPED TO THE EDITED FILE ONLY (HOUSE-1 repair 2026-08-08; incident: sitting
-# Addendum T.1, docs/handoffs/ffr-owner-sitting-2026-08-02.md). This hook
+# Addendum T.1, docs/records/forecast/ffr-owner-sitting-2026-08-02.md). This hook
 # originally ran `ruff check --fix .` / `ruff format .` over the WHOLE TREE on
 # any .py Write/Edit, "matching CI's scope". That was a hazard, not a
 # guarantee: whenever main itself carries bytes failing `ruff format --check`

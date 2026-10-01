@@ -28,7 +28,7 @@ support for 4,206.4 MW of it. Georgia PSC approved uprates in the 2025 IRP
 order (+58 MW Hatch 1-2, +54 MW Vogtle 1-2, published at two-unit grain and
 carried once on each plant's unit-1 row). Nothing in the solve path consumes
 this registry yet, for any ISO (the forward-channel design is
-``docs/handoffs/ff-g5-nuclear-registry-2026-07.md``).
+``docs/records/forecast/ff-g5-nuclear-registry-2026-07.md``).
 
 Registered 2026-09-14 by lane SOCO-20.
 """

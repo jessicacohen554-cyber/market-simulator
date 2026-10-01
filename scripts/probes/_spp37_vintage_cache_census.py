@@ -4,8 +4,8 @@ WHAT THIS ANSWERS
 -----------------
 SPP-36 measured that a 3-year span invocation does NOT reproduce three
 single-year invocations of the same recipe: 2023 matched to 4 dp, 2024 and 2025
-did not (``docs/RESULT-spp-36-shortwindow-span-2026-09-12.md`` §4,
-``docs/handoffs/SHARDREPORT-spp36-span.md`` §5). This script reproduces the
+did not (``docs/records/spp/RESULT-spp-36-shortwindow-span-2026-09-12.md`` §4,
+``docs/records/spp/SHARDREPORT-spp36-span.md`` §5). This script reproduces the
 cause at ZERO LP cost.
 
 THE MECHANISM
@@ -46,7 +46,7 @@ Usage::
     python3 scripts/probes/_spp37_vintage_cache_census.py
 
 Read-only: allocates nothing any solve depends on and changes no committed file.
-Cited by ``docs/handoffs/FINDING-spp-37-order-sensitivity-2026-09-12.md``.
+Cited by ``docs/records/spp/FINDING-spp-37-order-sensitivity-2026-09-12.md``.
 """
 
 from __future__ import annotations

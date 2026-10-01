@@ -1,0 +1,4621 @@
+{
+ "2021": {
+  "n_zone_hours": 43795,
+  "total_usd": 1.615,
+  "act_lw": 41.745,
+  "pct": 3.87,
+  "act_da_lw": 41.257,
+  "median_err": 4.397,
+  "zone": [
+   {
+    "zone": "Capital_Hudson",
+    "contrib_usd": -0.126,
+    "load_share": 0.139,
+    "model": 43.142,
+    "act": 44.049
+   },
+   {
+    "zone": "Long_Island",
+    "contrib_usd": -1.997,
+    "load_share": 0.133,
+    "model": 47.302,
+    "act": 62.269
+   },
+   {
+    "zone": "Lower_Hudson",
+    "contrib_usd": -0.01,
+    "load_share": 0.057,
+    "model": 44.006,
+    "act": 44.174
+   },
+   {
+    "zone": "NYC",
+    "contrib_usd": -0.085,
+    "load_share": 0.321,
+    "model": 44.464,
+    "act": 44.728
+   },
+   {
+    "zone": "Upstate_West",
+    "contrib_usd": 3.832,
+    "load_share": 0.35,
+    "model": 40.823,
+    "act": 29.861
+   }
+  ],
+  "month": [
+   {
+    "month": "1",
+    "contrib_usd": 0.396,
+    "load_share": 0.087,
+    "model": 40.249,
+    "act": 35.698
+   },
+   {
+    "month": "2",
+    "contrib_usd": 0.781,
+    "load_share": 0.08,
+    "model": 59.054,
+    "act": 49.281
+   },
+   {
+    "month": "3",
+    "contrib_usd": 0.352,
+    "load_share": 0.078,
+    "model": 30.497,
+    "act": 26.009
+   },
+   {
+    "month": "4",
+    "contrib_usd": 0.436,
+    "load_share": 0.07,
+    "model": 27.485,
+    "act": 21.24
+   },
+   {
+    "month": "5",
+    "contrib_usd": 0.265,
+    "load_share": 0.074,
+    "model": 28.988,
+    "act": 25.43
+   },
+   {
+    "month": "6",
+    "contrib_usd": -0.307,
+    "load_share": 0.091,
+    "model": 36.888,
+    "act": 40.282
+   },
+   {
+    "month": "7",
+    "contrib_usd": -0.061,
+    "load_share": 0.098,
+    "model": 41.393,
+    "act": 42.015
+   },
+   {
+    "month": "8",
+    "contrib_usd": -0.787,
+    "load_share": 0.103,
+    "model": 48.005,
+    "act": 55.655
+   },
+   {
+    "month": "9",
+    "contrib_usd": 0.173,
+    "load_share": 0.083,
+    "model": 49.913,
+    "act": 47.828
+   },
+   {
+    "month": "10",
+    "contrib_usd": 0.028,
+    "load_share": 0.076,
+    "model": 51.813,
+    "act": 51.438
+   },
+   {
+    "month": "11",
+    "contrib_usd": 0.017,
+    "load_share": 0.076,
+    "model": 53.367,
+    "act": 53.149
+   },
+   {
+    "month": "12",
+    "contrib_usd": 0.323,
+    "load_share": 0.083,
+    "model": 50.034,
+    "act": 46.157
+   }
+  ],
+  "band": [
+   {
+    "band": "night",
+    "contrib_usd": 1.132,
+    "load_share": 0.213,
+    "model": 36.37,
+    "act": 31.053
+   },
+   {
+    "band": "morning",
+    "contrib_usd": 0.839,
+    "load_share": 0.248,
+    "model": 42.464,
+    "act": 39.078
+   },
+   {
+    "band": "afternoon",
+    "contrib_usd": -0.49,
+    "load_share": 0.272,
+    "model": 47.31,
+    "act": 49.112
+   },
+   {
+    "band": "evening",
+    "contrib_usd": 0.134,
+    "load_share": 0.267,
+    "model": 45.742,
+    "act": 45.241
+   }
+  ],
+  "decile": [
+   {
+    "decile": "1",
+    "contrib_usd": 1.917,
+    "load_share": 0.085,
+    "model": 29.595,
+    "act": 7.151
+   },
+   {
+    "decile": "2",
+    "contrib_usd": 1.134,
+    "load_share": 0.088,
+    "model": 30.779,
+    "act": 17.949
+   },
+   {
+    "decile": "3",
+    "contrib_usd": 1.004,
+    "load_share": 0.094,
+    "model": 33.607,
+    "act": 22.875
+   },
+   {
+    "decile": "4",
+    "contrib_usd": 0.89,
+    "load_share": 0.097,
+    "model": 36.472,
+    "act": 27.325
+   },
+   {
+    "decile": "5",
+    "contrib_usd": 0.762,
+    "load_share": 0.099,
+    "model": 39.42,
+    "act": 31.722
+   },
+   {
+    "decile": "6",
+    "contrib_usd": 0.649,
+    "load_share": 0.101,
+    "model": 42.869,
+    "act": 36.431
+   },
+   {
+    "decile": "7",
+    "contrib_usd": 0.477,
+    "load_share": 0.102,
+    "model": 46.238,
+    "act": 41.569
+   },
+   {
+    "decile": "8",
+    "contrib_usd": 0.114,
+    "load_share": 0.106,
+    "model": 49.13,
+    "act": 48.058
+   },
+   {
+    "decile": "9",
+    "contrib_usd": -0.457,
+    "load_share": 0.11,
+    "model": 54.732,
+    "act": 58.898
+   },
+   {
+    "decile": "10",
+    "contrib_usd": -4.875,
+    "load_share": 0.117,
+    "model": 61.722,
+    "act": 103.251
+   }
+  ],
+  "marg_class": [
+   {
+    "marg_class": "CC_CHP",
+    "contrib_usd": 0.945,
+    "load_share": 0.169,
+    "model": 39.306,
+    "act": 33.705
+   },
+   {
+    "marg_class": "CC_REGULAR",
+    "contrib_usd": 0.076,
+    "load_share": 0.107,
+    "model": 32.118,
+    "act": 31.404
+   },
+   {
+    "marg_class": "CT_CHP",
+    "contrib_usd": -0.553,
+    "load_share": 0.401,
+    "model": 45.811,
+    "act": 47.19
+   },
+   {
+    "marg_class": "CT_PEAKER",
+    "contrib_usd": 0.476,
+    "load_share": 0.106,
+    "model": 32.844,
+    "act": 28.345
+   },
+   {
+    "marg_class": "ST_CHP",
+    "contrib_usd": 0.713,
+    "load_share": 0.136,
+    "model": 40.05,
+    "act": 34.803
+   },
+   {
+    "marg_class": "oil",
+    "contrib_usd": -0.041,
+    "load_share": 0.082,
+    "model": 73.578,
+    "act": 74.083
+   }
+  ],
+  "zone_x_band": [
+   {
+    "zone": "Capital_Hudson",
+    "band": "night",
+    "contrib_usd": -0.014,
+    "load_share": 0.03,
+    "model": 36.66,
+    "act": 37.124
+   },
+   {
+    "zone": "Capital_Hudson",
+    "band": "morning",
+    "contrib_usd": 0.014,
+    "load_share": 0.034,
+    "model": 42.697,
+    "act": 42.296
+   },
+   {
+    "zone": "Capital_Hudson",
+    "band": "afternoon",
+    "contrib_usd": -0.039,
+    "load_share": 0.037,
+    "model": 46.831,
+    "act": 47.887
+   },
+   {
+    "zone": "Capital_Hudson",
+    "band": "evening",
+    "contrib_usd": -0.087,
+    "load_share": 0.038,
+    "model": 45.024,
+    "act": 47.295
+   },
+   {
+    "zone": "Long_Island",
+    "band": "night",
+    "contrib_usd": -0.136,
+    "load_share": 0.027,
+    "model": 37.527,
+    "act": 42.517
+   },
+   {
+    "zone": "Long_Island",
+    "band": "morning",
+    "contrib_usd": -0.188,
+    "load_share": 0.032,
+    "model": 44.006,
+    "act": 49.936
+   },
+   {
+    "zone": "Long_Island",
+    "band": "afternoon",
+    "contrib_usd": -1.048,
+    "load_share": 0.037,
+    "model": 52.926,
+    "act": 81.204
+   },
+   {
+    "zone": "Long_Island",
+    "band": "evening",
+    "contrib_usd": -0.624,
+    "load_share": 0.037,
+    "model": 51.668,
+    "act": 68.399
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "night",
+    "contrib_usd": 0.03,
+    "load_share": 0.012,
+    "model": 37.232,
+    "act": 34.688
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "morning",
+    "contrib_usd": 0.031,
+    "load_share": 0.014,
+    "model": 43.486,
+    "act": 41.305
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "afternoon",
+    "contrib_usd": -0.039,
+    "load_share": 0.016,
+    "model": 47.622,
+    "act": 50.097
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "evening",
+    "contrib_usd": -0.031,
+    "load_share": 0.016,
+    "model": 45.87,
+    "act": 47.837
+   },
+   {
+    "zone": "NYC",
+    "band": "night",
+    "contrib_usd": 0.168,
+    "load_share": 0.068,
+    "model": 37.329,
+    "act": 34.837
+   },
+   {
+    "zone": "NYC",
+    "band": "morning",
+    "contrib_usd": 0.102,
+    "load_share": 0.08,
+    "model": 43.691,
+    "act": 42.415
+   },
+   {
+    "zone": "NYC",
+    "band": "afternoon",
+    "contrib_usd": -0.251,
+    "load_share": 0.089,
+    "model": 48.465,
+    "act": 51.282
+   },
+   {
+    "zone": "NYC",
+    "band": "evening",
+    "contrib_usd": -0.104,
+    "load_share": 0.084,
+    "model": 46.691,
+    "act": 47.928
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "night",
+    "contrib_usd": 1.084,
+    "load_share": 0.077,
+    "model": 34.869,
+    "act": 20.72
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "morning",
+    "contrib_usd": 0.881,
+    "load_share": 0.088,
+    "model": 40.535,
+    "act": 30.516
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "afternoon",
+    "contrib_usd": 0.888,
+    "load_share": 0.093,
+    "model": 44.092,
+    "act": 34.521
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "evening",
+    "contrib_usd": 0.979,
+    "load_share": 0.092,
+    "model": 42.755,
+    "act": 32.141
+   }
+  ],
+  "zone_x_month": [
+   {
+    "zone": "Capital_Hudson",
+    "month": "1",
+    "contrib_usd": -0.005,
+    "load_share": 0.013,
+    "model": 39.954,
+    "act": 40.384
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "2",
+    "contrib_usd": 0.016,
+    "load_share": 0.012,
+    "model": 59.5,
+    "act": 58.107
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "3",
+    "contrib_usd": -0.038,
+    "load_share": 0.011,
+    "model": 30.864,
+    "act": 34.318
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "4",
+    "contrib_usd": -0.011,
+    "load_share": 0.01,
+    "model": 27.453,
+    "act": 28.564
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "5",
+    "contrib_usd": -0.001,
+    "load_share": 0.01,
+    "model": 28.747,
+    "act": 28.82
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "6",
+    "contrib_usd": -0.068,
+    "load_share": 0.013,
+    "model": 36.803,
+    "act": 42.111
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "7",
+    "contrib_usd": 0.042,
+    "load_share": 0.013,
+    "model": 40.253,
+    "act": 37.025
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "8",
+    "contrib_usd": 0.012,
+    "load_share": 0.014,
+    "model": 47.502,
+    "act": 46.62
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "9",
+    "contrib_usd": 0.017,
+    "load_share": 0.011,
+    "model": 49.436,
+    "act": 47.854
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "10",
+    "contrib_usd": -0.022,
+    "load_share": 0.01,
+    "model": 51.472,
+    "act": 53.644
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "11",
+    "contrib_usd": -0.062,
+    "load_share": 0.011,
+    "model": 53.528,
+    "act": 59.396
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "12",
+    "contrib_usd": -0.007,
+    "load_share": 0.012,
+    "model": 49.291,
+    "act": 49.881
+   },
+   {
+    "zone": "Long_Island",
+    "month": "1",
+    "contrib_usd": -0.097,
+    "load_share": 0.011,
+    "model": 48.005,
+    "act": 56.887
+   },
+   {
+    "zone": "Long_Island",
+    "month": "2",
+    "contrib_usd": -0.107,
+    "load_share": 0.01,
+    "model": 65.958,
+    "act": 76.648
+   },
+   {
+    "zone": "Long_Island",
+    "month": "3",
+    "contrib_usd": -0.044,
+    "load_share": 0.01,
+    "model": 31.786,
+    "act": 36.398
+   },
+   {
+    "zone": "Long_Island",
+    "month": "4",
+    "contrib_usd": -0.036,
+    "load_share": 0.009,
+    "model": 28.407,
+    "act": 32.576
+   },
+   {
+    "zone": "Long_Island",
+    "month": "5",
+    "contrib_usd": -0.037,
+    "load_share": 0.01,
+    "model": 30.503,
+    "act": 34.297
+   },
+   {
+    "zone": "Long_Island",
+    "month": "6",
+    "contrib_usd": -0.174,
+    "load_share": 0.013,
+    "model": 38.888,
+    "act": 52.442
+   },
+   {
+    "zone": "Long_Island",
+    "month": "7",
+    "contrib_usd": -0.251,
+    "load_share": 0.015,
+    "model": 45.008,
+    "act": 61.737
+   },
+   {
+    "zone": "Long_Island",
+    "month": "8",
+    "contrib_usd": -0.868,
+    "load_share": 0.015,
+    "model": 50.676,
+    "act": 107.524
+   },
+   {
+    "zone": "Long_Island",
+    "month": "9",
+    "contrib_usd": -0.193,
+    "load_share": 0.012,
+    "model": 51.794,
+    "act": 67.94
+   },
+   {
+    "zone": "Long_Island",
+    "month": "10",
+    "contrib_usd": -0.088,
+    "load_share": 0.01,
+    "model": 53.534,
+    "act": 62.555
+   },
+   {
+    "zone": "Long_Island",
+    "month": "11",
+    "contrib_usd": -0.073,
+    "load_share": 0.009,
+    "model": 56.268,
+    "act": 64.079
+   },
+   {
+    "zone": "Long_Island",
+    "month": "12",
+    "contrib_usd": -0.03,
+    "load_share": 0.01,
+    "model": 63.939,
+    "act": 66.769
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "1",
+    "contrib_usd": 0.012,
+    "load_share": 0.005,
+    "model": 40.695,
+    "act": 38.356
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "2",
+    "contrib_usd": 0.03,
+    "load_share": 0.005,
+    "model": 59.885,
+    "act": 53.424
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "3",
+    "contrib_usd": 0.003,
+    "load_share": 0.004,
+    "model": 31.031,
+    "act": 30.432
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "4",
+    "contrib_usd": 0.008,
+    "load_share": 0.004,
+    "model": 28.059,
+    "act": 25.835
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "5",
+    "contrib_usd": 0.001,
+    "load_share": 0.004,
+    "model": 29.633,
+    "act": 29.466
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "6",
+    "contrib_usd": -0.035,
+    "load_share": 0.005,
+    "model": 38.259,
+    "act": 44.835
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "7",
+    "contrib_usd": -0.022,
+    "load_share": 0.006,
+    "model": 41.86,
+    "act": 45.627
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "8",
+    "contrib_usd": 0.003,
+    "load_share": 0.006,
+    "model": 48.651,
+    "act": 48.098
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "9",
+    "contrib_usd": 0.008,
+    "load_share": 0.005,
+    "model": 50.498,
+    "act": 48.86
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "10",
+    "contrib_usd": -0.009,
+    "load_share": 0.004,
+    "model": 52.465,
+    "act": 54.66
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "11",
+    "contrib_usd": -0.011,
+    "load_share": 0.004,
+    "model": 54.38,
+    "act": 56.892
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "12",
+    "contrib_usd": 0.003,
+    "load_share": 0.005,
+    "model": 49.727,
+    "act": 49.035
+   },
+   {
+    "zone": "NYC",
+    "month": "1",
+    "contrib_usd": 0.036,
+    "load_share": 0.026,
+    "model": 41.057,
+    "act": 39.68
+   },
+   {
+    "zone": "NYC",
+    "month": "2",
+    "contrib_usd": 0.144,
+    "load_share": 0.024,
+    "model": 60.531,
+    "act": 54.61
+   },
+   {
+    "zone": "NYC",
+    "month": "3",
+    "contrib_usd": 0.034,
+    "load_share": 0.025,
+    "model": 31.421,
+    "act": 30.027
+   },
+   {
+    "zone": "NYC",
+    "month": "4",
+    "contrib_usd": 0.056,
+    "load_share": 0.022,
+    "model": 28.372,
+    "act": 25.838
+   },
+   {
+    "zone": "NYC",
+    "month": "5",
+    "contrib_usd": 0.017,
+    "load_share": 0.024,
+    "model": 30.096,
+    "act": 29.376
+   },
+   {
+    "zone": "NYC",
+    "month": "6",
+    "contrib_usd": -0.154,
+    "load_share": 0.03,
+    "model": 38.082,
+    "act": 43.249
+   },
+   {
+    "zone": "NYC",
+    "month": "7",
+    "contrib_usd": -0.1,
+    "load_share": 0.034,
+    "model": 42.715,
+    "act": 45.701
+   },
+   {
+    "zone": "NYC",
+    "month": "8",
+    "contrib_usd": -0.051,
+    "load_share": 0.034,
+    "model": 49.154,
+    "act": 50.64
+   },
+   {
+    "zone": "NYC",
+    "month": "9",
+    "contrib_usd": 0.0,
+    "load_share": 0.028,
+    "model": 51.449,
+    "act": 51.432
+   },
+   {
+    "zone": "NYC",
+    "month": "10",
+    "contrib_usd": -0.048,
+    "load_share": 0.025,
+    "model": 53.399,
+    "act": 55.33
+   },
+   {
+    "zone": "NYC",
+    "month": "11",
+    "contrib_usd": -0.043,
+    "load_share": 0.024,
+    "model": 55.141,
+    "act": 56.931
+   },
+   {
+    "zone": "NYC",
+    "month": "12",
+    "contrib_usd": 0.022,
+    "load_share": 0.025,
+    "model": 49.734,
+    "act": 48.873
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "1",
+    "contrib_usd": 0.45,
+    "load_share": 0.032,
+    "model": 37.005,
+    "act": 23.022
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "2",
+    "contrib_usd": 0.698,
+    "load_share": 0.029,
+    "model": 55.165,
+    "act": 31.355
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "3",
+    "contrib_usd": 0.398,
+    "load_share": 0.029,
+    "model": 29.059,
+    "act": 15.277
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "4",
+    "contrib_usd": 0.418,
+    "load_share": 0.026,
+    "model": 26.34,
+    "act": 10.085
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "5",
+    "contrib_usd": 0.284,
+    "load_share": 0.026,
+    "model": 27.404,
+    "act": 16.564
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "6",
+    "contrib_usd": 0.122,
+    "load_share": 0.03,
+    "model": 34.642,
+    "act": 30.551
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "7",
+    "contrib_usd": 0.269,
+    "load_share": 0.031,
+    "model": 38.612,
+    "act": 29.931
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "8",
+    "contrib_usd": 0.116,
+    "load_share": 0.034,
+    "model": 45.719,
+    "act": 42.263
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "9",
+    "contrib_usd": 0.34,
+    "load_share": 0.027,
+    "model": 47.542,
+    "act": 34.833
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "10",
+    "contrib_usd": 0.196,
+    "load_share": 0.027,
+    "model": 49.756,
+    "act": 42.49
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "11",
+    "contrib_usd": 0.206,
+    "load_share": 0.028,
+    "model": 50.697,
+    "act": 43.42
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "12",
+    "contrib_usd": 0.334,
+    "load_share": 0.031,
+    "model": 45.892,
+    "act": 35.021
+   }
+  ]
+ },
+ "2022": {
+  "n_zone_hours": 43795,
+  "total_usd": -0.369,
+  "act_lw": 84.587,
+  "pct": -0.44,
+  "act_da_lw": 81.296,
+  "median_err": 8.468,
+  "zone": [
+   {
+    "zone": "Capital_Hudson",
+    "contrib_usd": -1.915,
+    "load_share": 0.139,
+    "model": 84.513,
+    "act": 98.27
+   },
+   {
+    "zone": "Long_Island",
+    "contrib_usd": -2.337,
+    "load_share": 0.132,
+    "model": 90.163,
+    "act": 107.921
+   },
+   {
+    "zone": "Lower_Hudson",
+    "contrib_usd": -0.426,
+    "load_share": 0.057,
+    "model": 86.423,
+    "act": 93.924
+   },
+   {
+    "zone": "NYC",
+    "contrib_usd": -2.027,
+    "load_share": 0.326,
+    "model": 86.967,
+    "act": 93.19
+   },
+   {
+    "zone": "Upstate_West",
+    "contrib_usd": 6.338,
+    "load_share": 0.347,
+    "model": 78.896,
+    "act": 60.607
+   }
+  ],
+  "month": [
+   {
+    "month": "1",
+    "contrib_usd": -0.498,
+    "load_share": 0.091,
+    "model": 128.773,
+    "act": 134.213
+   },
+   {
+    "month": "2",
+    "contrib_usd": -0.732,
+    "load_share": 0.079,
+    "model": 77.351,
+    "act": 86.655
+   },
+   {
+    "month": "3",
+    "contrib_usd": -0.06,
+    "load_share": 0.079,
+    "model": 57.637,
+    "act": 58.389
+   },
+   {
+    "month": "4",
+    "contrib_usd": 1.099,
+    "load_share": 0.071,
+    "model": 70.757,
+    "act": 55.175
+   },
+   {
+    "month": "5",
+    "contrib_usd": 1.235,
+    "load_share": 0.076,
+    "model": 84.136,
+    "act": 67.775
+   },
+   {
+    "month": "6",
+    "contrib_usd": 0.032,
+    "load_share": 0.083,
+    "model": 76.919,
+    "act": 76.533
+   },
+   {
+    "month": "7",
+    "contrib_usd": -0.062,
+    "load_share": 0.103,
+    "model": 95.277,
+    "act": 95.876
+   },
+   {
+    "month": "8",
+    "contrib_usd": -0.665,
+    "load_share": 0.104,
+    "model": 106.279,
+    "act": 112.657
+   },
+   {
+    "month": "9",
+    "contrib_usd": 0.341,
+    "load_share": 0.081,
+    "model": 78.593,
+    "act": 74.372
+   },
+   {
+    "month": "10",
+    "contrib_usd": 0.478,
+    "load_share": 0.073,
+    "model": 56.714,
+    "act": 50.145
+   },
+   {
+    "month": "11",
+    "contrib_usd": 0.756,
+    "load_share": 0.075,
+    "model": 60.35,
+    "act": 50.253
+   },
+   {
+    "month": "12",
+    "contrib_usd": -2.295,
+    "load_share": 0.085,
+    "model": 95.148,
+    "act": 122.001
+   }
+  ],
+  "band": [
+   {
+    "band": "night",
+    "contrib_usd": 1.039,
+    "load_share": 0.215,
+    "model": 70.354,
+    "act": 65.522
+   },
+   {
+    "band": "morning",
+    "contrib_usd": -0.039,
+    "load_share": 0.247,
+    "model": 81.692,
+    "act": 81.851
+   },
+   {
+    "band": "afternoon",
+    "contrib_usd": -0.507,
+    "load_share": 0.269,
+    "model": 92.83,
+    "act": 94.717
+   },
+   {
+    "band": "evening",
+    "contrib_usd": -0.862,
+    "load_share": 0.269,
+    "model": 89.03,
+    "act": 92.236
+   }
+  ],
+  "decile": [
+   {
+    "decile": "1",
+    "contrib_usd": 2.911,
+    "load_share": 0.084,
+    "model": 56.743,
+    "act": 22.197
+   },
+   {
+    "decile": "2",
+    "contrib_usd": 2.473,
+    "load_share": 0.088,
+    "model": 62.246,
+    "act": 34.077
+   },
+   {
+    "decile": "3",
+    "contrib_usd": 2.006,
+    "load_share": 0.09,
+    "model": 64.976,
+    "act": 42.787
+   },
+   {
+    "decile": "4",
+    "contrib_usd": 1.637,
+    "load_share": 0.093,
+    "model": 67.721,
+    "act": 50.068
+   },
+   {
+    "decile": "5",
+    "contrib_usd": 1.47,
+    "load_share": 0.095,
+    "model": 72.314,
+    "act": 56.902
+   },
+   {
+    "decile": "6",
+    "contrib_usd": 1.259,
+    "load_share": 0.1,
+    "model": 77.483,
+    "act": 64.84
+   },
+   {
+    "decile": "7",
+    "contrib_usd": 0.913,
+    "load_share": 0.105,
+    "model": 84.354,
+    "act": 75.618
+   },
+   {
+    "decile": "8",
+    "contrib_usd": 0.283,
+    "load_share": 0.111,
+    "model": 93.183,
+    "act": 90.641
+   },
+   {
+    "decile": "9",
+    "contrib_usd": -0.904,
+    "load_share": 0.115,
+    "model": 107.128,
+    "act": 115.014
+   },
+   {
+    "decile": "10",
+    "contrib_usd": -12.417,
+    "load_share": 0.119,
+    "model": 131.8,
+    "act": 235.766
+   }
+  ],
+  "marg_class": [
+   {
+    "marg_class": "CC_CHP",
+    "contrib_usd": -1.078,
+    "load_share": 0.1,
+    "model": 76.625,
+    "act": 87.412
+   },
+   {
+    "marg_class": "CC_REGULAR",
+    "contrib_usd": -0.222,
+    "load_share": 0.088,
+    "model": 74.977,
+    "act": 77.503
+   },
+   {
+    "marg_class": "CT_CHP",
+    "contrib_usd": 2.926,
+    "load_share": 0.225,
+    "model": 61.855,
+    "act": 48.865
+   },
+   {
+    "marg_class": "CT_PEAKER",
+    "contrib_usd": 2.733,
+    "load_share": 0.316,
+    "model": 70.384,
+    "act": 61.722
+   },
+   {
+    "marg_class": "ST_CHP",
+    "contrib_usd": 0.089,
+    "load_share": 0.01,
+    "model": 59.553,
+    "act": 50.262
+   },
+   {
+    "marg_class": "oil",
+    "contrib_usd": -4.817,
+    "load_share": 0.262,
+    "model": 127.024,
+    "act": 145.42
+   }
+  ],
+  "zone_x_band": [
+   {
+    "zone": "Capital_Hudson",
+    "band": "night",
+    "contrib_usd": -0.285,
+    "load_share": 0.03,
+    "model": 70.976,
+    "act": 80.358
+   },
+   {
+    "zone": "Capital_Hudson",
+    "band": "morning",
+    "contrib_usd": -0.435,
+    "load_share": 0.034,
+    "model": 82.329,
+    "act": 95.174
+   },
+   {
+    "zone": "Capital_Hudson",
+    "band": "afternoon",
+    "contrib_usd": -0.481,
+    "load_share": 0.036,
+    "model": 92.958,
+    "act": 106.179
+   },
+   {
+    "zone": "Capital_Hudson",
+    "band": "evening",
+    "contrib_usd": -0.715,
+    "load_share": 0.039,
+    "model": 89.133,
+    "act": 107.636
+   },
+   {
+    "zone": "Long_Island",
+    "band": "night",
+    "contrib_usd": -0.153,
+    "load_share": 0.027,
+    "model": 73.147,
+    "act": 78.758
+   },
+   {
+    "zone": "Long_Island",
+    "band": "morning",
+    "contrib_usd": -0.369,
+    "load_share": 0.031,
+    "model": 85.431,
+    "act": 97.226
+   },
+   {
+    "zone": "Long_Island",
+    "band": "afternoon",
+    "contrib_usd": -0.943,
+    "load_share": 0.036,
+    "model": 101.086,
+    "act": 127.155
+   },
+   {
+    "zone": "Long_Island",
+    "band": "evening",
+    "contrib_usd": -0.872,
+    "load_share": 0.037,
+    "model": 96.013,
+    "act": 119.635
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "night",
+    "contrib_usd": -0.023,
+    "load_share": 0.012,
+    "model": 72.308,
+    "act": 74.238
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "morning",
+    "contrib_usd": -0.084,
+    "load_share": 0.014,
+    "model": 83.887,
+    "act": 89.917
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "afternoon",
+    "contrib_usd": -0.159,
+    "load_share": 0.016,
+    "model": 94.756,
+    "act": 104.939
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "evening",
+    "contrib_usd": -0.161,
+    "load_share": 0.015,
+    "model": 91.064,
+    "act": 101.431
+   },
+   {
+    "zone": "NYC",
+    "band": "night",
+    "contrib_usd": -0.071,
+    "load_share": 0.068,
+    "model": 72.307,
+    "act": 73.338
+   },
+   {
+    "zone": "NYC",
+    "band": "morning",
+    "contrib_usd": -0.393,
+    "load_share": 0.082,
+    "model": 84.145,
+    "act": 88.965
+   },
+   {
+    "zone": "NYC",
+    "band": "afternoon",
+    "contrib_usd": -0.763,
+    "load_share": 0.09,
+    "model": 96.068,
+    "act": 104.52
+   },
+   {
+    "zone": "NYC",
+    "band": "evening",
+    "contrib_usd": -0.801,
+    "load_share": 0.086,
+    "model": 91.793,
+    "act": 101.16
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "night",
+    "contrib_usd": 1.571,
+    "load_share": 0.077,
+    "model": 67.094,
+    "act": 46.748
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "morning",
+    "contrib_usd": 1.242,
+    "load_share": 0.087,
+    "model": 77.436,
+    "act": 63.124
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "afternoon",
+    "contrib_usd": 1.839,
+    "load_share": 0.09,
+    "model": 85.9,
+    "act": 65.536
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "evening",
+    "contrib_usd": 1.687,
+    "load_share": 0.092,
+    "model": 83.291,
+    "act": 65.011
+   }
+  ],
+  "zone_x_month": [
+   {
+    "zone": "Capital_Hudson",
+    "month": "1",
+    "contrib_usd": -0.325,
+    "load_share": 0.013,
+    "model": 129.402,
+    "act": 154.033
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "2",
+    "contrib_usd": -0.252,
+    "load_share": 0.011,
+    "model": 78.638,
+    "act": 100.967
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "3",
+    "contrib_usd": -0.142,
+    "load_share": 0.011,
+    "model": 58.353,
+    "act": 71.352
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "4",
+    "contrib_usd": 0.014,
+    "load_share": 0.009,
+    "model": 70.885,
+    "act": 69.372
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "5",
+    "contrib_usd": -0.016,
+    "load_share": 0.01,
+    "model": 83.784,
+    "act": 85.35
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "6",
+    "contrib_usd": -0.035,
+    "load_share": 0.011,
+    "model": 75.255,
+    "act": 78.318
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "7",
+    "contrib_usd": -0.24,
+    "load_share": 0.014,
+    "model": 93.966,
+    "act": 110.82
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "8",
+    "contrib_usd": -0.167,
+    "load_share": 0.015,
+    "model": 105.185,
+    "act": 116.671
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "9",
+    "contrib_usd": -0.015,
+    "load_share": 0.011,
+    "model": 77.932,
+    "act": 79.324
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "10",
+    "contrib_usd": 0.024,
+    "load_share": 0.01,
+    "model": 56.613,
+    "act": 54.275
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "11",
+    "contrib_usd": -0.151,
+    "load_share": 0.011,
+    "model": 61.342,
+    "act": 75.538
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "12",
+    "contrib_usd": -0.61,
+    "load_share": 0.012,
+    "model": 98.164,
+    "act": 147.828
+   },
+   {
+    "zone": "Long_Island",
+    "month": "1",
+    "contrib_usd": -0.151,
+    "load_share": 0.011,
+    "model": 142.384,
+    "act": 155.693
+   },
+   {
+    "zone": "Long_Island",
+    "month": "2",
+    "contrib_usd": -0.231,
+    "load_share": 0.01,
+    "model": 84.648,
+    "act": 108.749
+   },
+   {
+    "zone": "Long_Island",
+    "month": "3",
+    "contrib_usd": -0.269,
+    "load_share": 0.01,
+    "model": 59.534,
+    "act": 87.484
+   },
+   {
+    "zone": "Long_Island",
+    "month": "4",
+    "contrib_usd": -0.028,
+    "load_share": 0.008,
+    "model": 73.251,
+    "act": 76.568
+   },
+   {
+    "zone": "Long_Island",
+    "month": "5",
+    "contrib_usd": -0.122,
+    "load_share": 0.01,
+    "model": 88.466,
+    "act": 101.074
+   },
+   {
+    "zone": "Long_Island",
+    "month": "6",
+    "contrib_usd": -0.215,
+    "load_share": 0.012,
+    "model": 81.686,
+    "act": 100.368
+   },
+   {
+    "zone": "Long_Island",
+    "month": "7",
+    "contrib_usd": -0.285,
+    "load_share": 0.016,
+    "model": 100.755,
+    "act": 118.97
+   },
+   {
+    "zone": "Long_Island",
+    "month": "8",
+    "contrib_usd": -0.308,
+    "load_share": 0.016,
+    "model": 111.526,
+    "act": 131.066
+   },
+   {
+    "zone": "Long_Island",
+    "month": "9",
+    "contrib_usd": -0.055,
+    "load_share": 0.011,
+    "model": 82.282,
+    "act": 87.219
+   },
+   {
+    "zone": "Long_Island",
+    "month": "10",
+    "contrib_usd": -0.027,
+    "load_share": 0.009,
+    "model": 58.357,
+    "act": 61.356
+   },
+   {
+    "zone": "Long_Island",
+    "month": "11",
+    "contrib_usd": -0.054,
+    "load_share": 0.009,
+    "model": 62.804,
+    "act": 68.69
+   },
+   {
+    "zone": "Long_Island",
+    "month": "12",
+    "contrib_usd": -0.592,
+    "load_share": 0.011,
+    "model": 102.402,
+    "act": 157.656
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "1",
+    "contrib_usd": -0.081,
+    "load_share": 0.005,
+    "model": 131.999,
+    "act": 147.777
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "2",
+    "contrib_usd": -0.073,
+    "load_share": 0.004,
+    "model": 79.069,
+    "act": 95.845
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "3",
+    "contrib_usd": -0.03,
+    "load_share": 0.004,
+    "model": 58.787,
+    "act": 65.568
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "4",
+    "contrib_usd": 0.03,
+    "load_share": 0.004,
+    "model": 72.479,
+    "act": 64.871
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "5",
+    "contrib_usd": 0.024,
+    "load_share": 0.004,
+    "model": 86.39,
+    "act": 80.671
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "6",
+    "contrib_usd": -0.018,
+    "load_share": 0.005,
+    "model": 77.924,
+    "act": 81.628
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "7",
+    "contrib_usd": -0.035,
+    "load_share": 0.006,
+    "model": 96.543,
+    "act": 102.193
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "8",
+    "contrib_usd": -0.079,
+    "load_share": 0.006,
+    "model": 107.856,
+    "act": 120.541
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "9",
+    "contrib_usd": 0.003,
+    "load_share": 0.005,
+    "model": 79.986,
+    "act": 79.283
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "10",
+    "contrib_usd": 0.019,
+    "load_share": 0.004,
+    "model": 57.607,
+    "act": 52.911
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "11",
+    "contrib_usd": 0.005,
+    "load_share": 0.004,
+    "model": 62.304,
+    "act": 61.13
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "12",
+    "contrib_usd": -0.192,
+    "load_share": 0.005,
+    "model": 99.618,
+    "act": 139.524
+   },
+   {
+    "zone": "NYC",
+    "month": "1",
+    "contrib_usd": -0.466,
+    "load_share": 0.028,
+    "model": 133.193,
+    "act": 149.923
+   },
+   {
+    "zone": "NYC",
+    "month": "2",
+    "contrib_usd": -0.408,
+    "load_share": 0.024,
+    "model": 79.223,
+    "act": 96.155
+   },
+   {
+    "zone": "NYC",
+    "month": "3",
+    "contrib_usd": -0.123,
+    "load_share": 0.025,
+    "model": 59.087,
+    "act": 64.001
+   },
+   {
+    "zone": "NYC",
+    "month": "4",
+    "contrib_usd": 0.187,
+    "load_share": 0.023,
+    "model": 73.156,
+    "act": 64.973
+   },
+   {
+    "zone": "NYC",
+    "month": "5",
+    "contrib_usd": 0.166,
+    "load_share": 0.025,
+    "model": 87.151,
+    "act": 80.485
+   },
+   {
+    "zone": "NYC",
+    "month": "6",
+    "contrib_usd": -0.019,
+    "load_share": 0.028,
+    "model": 80.661,
+    "act": 81.336
+   },
+   {
+    "zone": "NYC",
+    "month": "7",
+    "contrib_usd": -0.138,
+    "load_share": 0.036,
+    "model": 98.33,
+    "act": 102.192
+   },
+   {
+    "zone": "NYC",
+    "month": "8",
+    "contrib_usd": -0.391,
+    "load_share": 0.036,
+    "model": 108.895,
+    "act": 119.838
+   },
+   {
+    "zone": "NYC",
+    "month": "9",
+    "contrib_usd": 0.013,
+    "load_share": 0.028,
+    "model": 80.996,
+    "act": 80.514
+   },
+   {
+    "zone": "NYC",
+    "month": "10",
+    "contrib_usd": 0.081,
+    "load_share": 0.024,
+    "model": 58.289,
+    "act": 54.872
+   },
+   {
+    "zone": "NYC",
+    "month": "11",
+    "contrib_usd": 0.036,
+    "load_share": 0.024,
+    "model": 62.154,
+    "act": 60.629
+   },
+   {
+    "zone": "NYC",
+    "month": "12",
+    "contrib_usd": -0.965,
+    "load_share": 0.027,
+    "model": 99.297,
+    "act": 135.634
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "1",
+    "contrib_usd": 0.526,
+    "load_share": 0.034,
+    "model": 119.854,
+    "act": 104.365
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "2",
+    "contrib_usd": 0.232,
+    "load_share": 0.029,
+    "model": 72.677,
+    "act": 64.75
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "3",
+    "contrib_usd": 0.504,
+    "load_share": 0.029,
+    "model": 55.335,
+    "act": 38.116
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "4",
+    "contrib_usd": 0.896,
+    "load_share": 0.026,
+    "model": 67.545,
+    "act": 33.107
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "5",
+    "contrib_usd": 1.183,
+    "load_share": 0.026,
+    "model": 79.443,
+    "act": 34.282
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "6",
+    "contrib_usd": 0.318,
+    "load_share": 0.027,
+    "model": 71.606,
+    "act": 60.007
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "7",
+    "contrib_usd": 0.636,
+    "load_share": 0.031,
+    "model": 89.42,
+    "act": 69.167
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "8",
+    "contrib_usd": 0.28,
+    "load_share": 0.032,
+    "model": 100.958,
+    "act": 92.198
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "9",
+    "contrib_usd": 0.395,
+    "load_share": 0.027,
+    "model": 74.606,
+    "act": 59.855
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "10",
+    "contrib_usd": 0.382,
+    "load_share": 0.026,
+    "model": 54.616,
+    "act": 39.918
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "11",
+    "contrib_usd": 0.92,
+    "load_share": 0.027,
+    "model": 57.24,
+    "act": 23.265
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "12",
+    "contrib_usd": 0.065,
+    "load_share": 0.031,
+    "model": 87.213,
+    "act": 85.122
+   }
+  ]
+ },
+ "2023": {
+  "n_zone_hours": 43795,
+  "total_usd": 0.754,
+  "act_lw": 33.576,
+  "pct": 2.25,
+  "act_da_lw": 34.046,
+  "median_err": 4.45,
+  "zone": [
+   {
+    "zone": "Capital_Hudson",
+    "contrib_usd": -0.127,
+    "load_share": 0.137,
+    "model": 34.439,
+    "act": 35.365
+   },
+   {
+    "zone": "Long_Island",
+    "contrib_usd": -1.179,
+    "load_share": 0.132,
+    "model": 36.442,
+    "act": 45.384
+   },
+   {
+    "zone": "Lower_Hudson",
+    "contrib_usd": 0.001,
+    "load_share": 0.055,
+    "model": 35.021,
+    "act": 35.008
+   },
+   {
+    "zone": "NYC",
+    "contrib_usd": -0.092,
+    "load_share": 0.328,
+    "model": 35.018,
+    "act": 35.298
+   },
+   {
+    "zone": "Upstate_West",
+    "contrib_usd": 2.151,
+    "load_share": 0.348,
+    "model": 32.728,
+    "act": 26.548
+   }
+  ],
+  "month": [
+   {
+    "month": "1",
+    "contrib_usd": 0.124,
+    "load_share": 0.086,
+    "model": 41.004,
+    "act": 39.569
+   },
+   {
+    "month": "2",
+    "contrib_usd": -0.003,
+    "load_share": 0.078,
+    "model": 46.426,
+    "act": 46.47
+   },
+   {
+    "month": "3",
+    "contrib_usd": 0.62,
+    "load_share": 0.082,
+    "model": 36.189,
+    "act": 28.584
+   },
+   {
+    "month": "4",
+    "contrib_usd": 0.167,
+    "load_share": 0.071,
+    "model": 30.142,
+    "act": 27.8
+   },
+   {
+    "month": "5",
+    "contrib_usd": 0.368,
+    "load_share": 0.074,
+    "model": 26.229,
+    "act": 21.237
+   },
+   {
+    "month": "6",
+    "contrib_usd": 0.102,
+    "load_share": 0.082,
+    "model": 30.093,
+    "act": 28.843
+   },
+   {
+    "month": "7",
+    "contrib_usd": -0.182,
+    "load_share": 0.106,
+    "model": 38.217,
+    "act": 39.934
+   },
+   {
+    "month": "8",
+    "contrib_usd": -0.203,
+    "load_share": 0.095,
+    "model": 29.612,
+    "act": 31.753
+   },
+   {
+    "month": "9",
+    "contrib_usd": -0.801,
+    "load_share": 0.085,
+    "model": 33.954,
+    "act": 43.328
+   },
+   {
+    "month": "10",
+    "contrib_usd": -0.028,
+    "load_share": 0.077,
+    "model": 28.984,
+    "act": 29.345
+   },
+   {
+    "month": "11",
+    "contrib_usd": 0.291,
+    "load_share": 0.079,
+    "model": 35.498,
+    "act": 31.801
+   },
+   {
+    "month": "12",
+    "contrib_usd": 0.299,
+    "load_share": 0.085,
+    "model": 33.878,
+    "act": 30.362
+   }
+  ],
+  "band": [
+   {
+    "band": "night",
+    "contrib_usd": 1.0,
+    "load_share": 0.216,
+    "model": 29.414,
+    "act": 24.786
+   },
+   {
+    "band": "morning",
+    "contrib_usd": 0.429,
+    "load_share": 0.247,
+    "model": 33.82,
+    "act": 32.085
+   },
+   {
+    "band": "afternoon",
+    "contrib_usd": -0.386,
+    "load_share": 0.267,
+    "model": 36.573,
+    "act": 38.019
+   },
+   {
+    "band": "evening",
+    "contrib_usd": -0.289,
+    "load_share": 0.27,
+    "model": 36.511,
+    "act": 37.58
+   }
+  ],
+  "decile": [
+   {
+    "decile": "1",
+    "contrib_usd": 1.463,
+    "load_share": 0.086,
+    "model": 28.405,
+    "act": 11.305
+   },
+   {
+    "decile": "2",
+    "contrib_usd": 0.876,
+    "load_share": 0.088,
+    "model": 28.281,
+    "act": 18.352
+   },
+   {
+    "decile": "3",
+    "contrib_usd": 0.718,
+    "load_share": 0.091,
+    "model": 29.157,
+    "act": 21.26
+   },
+   {
+    "decile": "4",
+    "contrib_usd": 0.656,
+    "load_share": 0.094,
+    "model": 30.434,
+    "act": 23.447
+   },
+   {
+    "decile": "5",
+    "contrib_usd": 0.609,
+    "load_share": 0.097,
+    "model": 31.835,
+    "act": 25.585
+   },
+   {
+    "decile": "6",
+    "contrib_usd": 0.519,
+    "load_share": 0.101,
+    "model": 33.089,
+    "act": 27.937
+   },
+   {
+    "decile": "7",
+    "contrib_usd": 0.42,
+    "load_share": 0.105,
+    "model": 34.562,
+    "act": 30.563
+   },
+   {
+    "decile": "8",
+    "contrib_usd": 0.265,
+    "load_share": 0.109,
+    "model": 36.45,
+    "act": 34.018
+   },
+   {
+    "decile": "9",
+    "contrib_usd": -0.125,
+    "load_share": 0.112,
+    "model": 38.986,
+    "act": 40.111
+   },
+   {
+    "decile": "10",
+    "contrib_usd": -4.646,
+    "load_share": 0.118,
+    "model": 46.803,
+    "act": 86.226
+   }
+  ],
+  "marg_class": [
+   {
+    "marg_class": "CC_CHP",
+    "contrib_usd": -0.393,
+    "load_share": 0.254,
+    "model": 35.999,
+    "act": 37.55
+   },
+   {
+    "marg_class": "CC_REGULAR",
+    "contrib_usd": -0.077,
+    "load_share": 0.039,
+    "model": 31.753,
+    "act": 33.702
+   },
+   {
+    "marg_class": "CT_CHP",
+    "contrib_usd": -0.318,
+    "load_share": 0.227,
+    "model": 34.113,
+    "act": 35.511
+   },
+   {
+    "marg_class": "CT_PEAKER",
+    "contrib_usd": 1.803,
+    "load_share": 0.425,
+    "model": 32.94,
+    "act": 28.702
+   },
+   {
+    "marg_class": "ST_CHP",
+    "contrib_usd": -0.005,
+    "load_share": 0.049,
+    "model": 32.723,
+    "act": 32.817
+   },
+   {
+    "marg_class": "oil",
+    "contrib_usd": -0.257,
+    "load_share": 0.005,
+    "model": 109.009,
+    "act": 157.218
+   }
+  ],
+  "zone_x_band": [
+   {
+    "zone": "Capital_Hudson",
+    "band": "night",
+    "contrib_usd": 0.075,
+    "load_share": 0.03,
+    "model": 29.66,
+    "act": 27.174
+   },
+   {
+    "zone": "Capital_Hudson",
+    "band": "morning",
+    "contrib_usd": -0.014,
+    "load_share": 0.033,
+    "model": 34.072,
+    "act": 34.498
+   },
+   {
+    "zone": "Capital_Hudson",
+    "band": "afternoon",
+    "contrib_usd": -0.07,
+    "load_share": 0.035,
+    "model": 36.62,
+    "act": 38.608
+   },
+   {
+    "zone": "Capital_Hudson",
+    "band": "evening",
+    "contrib_usd": -0.117,
+    "load_share": 0.038,
+    "model": 36.503,
+    "act": 39.568
+   },
+   {
+    "zone": "Long_Island",
+    "band": "night",
+    "contrib_usd": 0.015,
+    "load_share": 0.027,
+    "model": 30.424,
+    "act": 29.895
+   },
+   {
+    "zone": "Long_Island",
+    "band": "morning",
+    "contrib_usd": -0.129,
+    "load_share": 0.031,
+    "model": 34.985,
+    "act": 39.096
+   },
+   {
+    "zone": "Long_Island",
+    "band": "afternoon",
+    "contrib_usd": -0.576,
+    "load_share": 0.036,
+    "model": 39.569,
+    "act": 55.594
+   },
+   {
+    "zone": "Long_Island",
+    "band": "evening",
+    "contrib_usd": -0.489,
+    "load_share": 0.037,
+    "model": 39.09,
+    "act": 52.249
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "night",
+    "contrib_usd": 0.043,
+    "load_share": 0.011,
+    "model": 30.083,
+    "act": 26.297
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "morning",
+    "contrib_usd": 0.009,
+    "load_share": 0.014,
+    "model": 34.52,
+    "act": 33.882
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "afternoon",
+    "contrib_usd": -0.027,
+    "load_share": 0.015,
+    "model": 37.104,
+    "act": 38.898
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "evening",
+    "contrib_usd": -0.024,
+    "load_share": 0.015,
+    "model": 37.144,
+    "act": 38.752
+   },
+   {
+    "zone": "NYC",
+    "band": "night",
+    "contrib_usd": 0.246,
+    "load_share": 0.069,
+    "model": 30.03,
+    "act": 26.452
+   },
+   {
+    "zone": "NYC",
+    "band": "morning",
+    "contrib_usd": 0.059,
+    "load_share": 0.082,
+    "model": 34.502,
+    "act": 33.786
+   },
+   {
+    "zone": "NYC",
+    "band": "afternoon",
+    "contrib_usd": -0.229,
+    "load_share": 0.091,
+    "model": 37.205,
+    "act": 39.722
+   },
+   {
+    "zone": "NYC",
+    "band": "evening",
+    "contrib_usd": -0.168,
+    "load_share": 0.086,
+    "model": 37.186,
+    "act": 39.138
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "night",
+    "contrib_usd": 0.621,
+    "load_share": 0.078,
+    "model": 28.325,
+    "act": 20.382
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "morning",
+    "contrib_usd": 0.504,
+    "load_share": 0.087,
+    "model": 32.549,
+    "act": 26.751
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "afternoon",
+    "contrib_usd": 0.516,
+    "load_share": 0.09,
+    "model": 34.625,
+    "act": 28.875
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "evening",
+    "contrib_usd": 0.51,
+    "load_share": 0.093,
+    "model": 34.76,
+    "act": 29.288
+   }
+  ],
+  "zone_x_month": [
+   {
+    "zone": "Capital_Hudson",
+    "month": "1",
+    "contrib_usd": -0.019,
+    "load_share": 0.012,
+    "model": 41.415,
+    "act": 42.927
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "2",
+    "contrib_usd": -0.117,
+    "load_share": 0.011,
+    "model": 47.335,
+    "act": 57.929
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "3",
+    "contrib_usd": -0.002,
+    "load_share": 0.011,
+    "model": 36.262,
+    "act": 36.444
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "4",
+    "contrib_usd": -0.031,
+    "load_share": 0.01,
+    "model": 30.044,
+    "act": 33.257
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "5",
+    "contrib_usd": 0.03,
+    "load_share": 0.01,
+    "model": 26.213,
+    "act": 23.107
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "6",
+    "contrib_usd": 0.016,
+    "load_share": 0.011,
+    "model": 30.075,
+    "act": 28.651
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "7",
+    "contrib_usd": 0.017,
+    "load_share": 0.014,
+    "model": 38.047,
+    "act": 36.856
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "8",
+    "contrib_usd": -0.02,
+    "load_share": 0.012,
+    "model": 29.154,
+    "act": 30.727
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "9",
+    "contrib_usd": -0.086,
+    "load_share": 0.011,
+    "model": 33.476,
+    "act": 40.993
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "10",
+    "contrib_usd": 0.012,
+    "load_share": 0.01,
+    "model": 28.97,
+    "act": 27.852
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "11",
+    "contrib_usd": 0.023,
+    "load_share": 0.011,
+    "model": 35.451,
+    "act": 33.328
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "12",
+    "contrib_usd": 0.049,
+    "load_share": 0.012,
+    "model": 33.998,
+    "act": 29.954
+   },
+   {
+    "zone": "Long_Island",
+    "month": "1",
+    "contrib_usd": -0.081,
+    "load_share": 0.01,
+    "model": 42.982,
+    "act": 50.742
+   },
+   {
+    "zone": "Long_Island",
+    "month": "2",
+    "contrib_usd": -0.246,
+    "load_share": 0.009,
+    "model": 48.653,
+    "act": 74.847
+   },
+   {
+    "zone": "Long_Island",
+    "month": "3",
+    "contrib_usd": -0.018,
+    "load_share": 0.01,
+    "model": 37.442,
+    "act": 39.286
+   },
+   {
+    "zone": "Long_Island",
+    "month": "4",
+    "contrib_usd": -0.003,
+    "load_share": 0.009,
+    "model": 31.045,
+    "act": 31.426
+   },
+   {
+    "zone": "Long_Island",
+    "month": "5",
+    "contrib_usd": 0.003,
+    "load_share": 0.009,
+    "model": 27.32,
+    "act": 27.043
+   },
+   {
+    "zone": "Long_Island",
+    "month": "6",
+    "contrib_usd": -0.069,
+    "load_share": 0.011,
+    "model": 32.258,
+    "act": 38.452
+   },
+   {
+    "zone": "Long_Island",
+    "month": "7",
+    "contrib_usd": -0.192,
+    "load_share": 0.016,
+    "model": 40.416,
+    "act": 52.086
+   },
+   {
+    "zone": "Long_Island",
+    "month": "8",
+    "contrib_usd": -0.203,
+    "load_share": 0.014,
+    "model": 32.743,
+    "act": 46.956
+   },
+   {
+    "zone": "Long_Island",
+    "month": "9",
+    "contrib_usd": -0.274,
+    "load_share": 0.012,
+    "model": 37.764,
+    "act": 60.083
+   },
+   {
+    "zone": "Long_Island",
+    "month": "10",
+    "contrib_usd": -0.06,
+    "load_share": 0.01,
+    "model": 30.181,
+    "act": 36.394
+   },
+   {
+    "zone": "Long_Island",
+    "month": "11",
+    "contrib_usd": -0.029,
+    "load_share": 0.01,
+    "model": 38.752,
+    "act": 41.794
+   },
+   {
+    "zone": "Long_Island",
+    "month": "12",
+    "contrib_usd": -0.005,
+    "load_share": 0.011,
+    "model": 35.912,
+    "act": 36.371
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "1",
+    "contrib_usd": 0.003,
+    "load_share": 0.005,
+    "model": 42.155,
+    "act": 41.451
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "2",
+    "contrib_usd": -0.016,
+    "load_share": 0.004,
+    "model": 47.657,
+    "act": 51.429
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "3",
+    "contrib_usd": 0.019,
+    "load_share": 0.004,
+    "model": 36.915,
+    "act": 32.635
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "4",
+    "contrib_usd": -0.002,
+    "load_share": 0.004,
+    "model": 30.824,
+    "act": 31.354
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "5",
+    "contrib_usd": 0.017,
+    "load_share": 0.004,
+    "model": 26.917,
+    "act": 22.75
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "6",
+    "contrib_usd": 0.008,
+    "load_share": 0.004,
+    "model": 30.466,
+    "act": 28.653
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "7",
+    "contrib_usd": 0.0,
+    "load_share": 0.006,
+    "model": 38.894,
+    "act": 38.881
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "8",
+    "contrib_usd": -0.009,
+    "load_share": 0.005,
+    "model": 29.862,
+    "act": 31.49
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "9",
+    "contrib_usd": -0.053,
+    "load_share": 0.005,
+    "model": 34.627,
+    "act": 45.861
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "10",
+    "contrib_usd": 0.002,
+    "load_share": 0.004,
+    "model": 29.484,
+    "act": 28.98
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "11",
+    "contrib_usd": 0.013,
+    "load_share": 0.004,
+    "model": 36.079,
+    "act": 33.129
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "12",
+    "contrib_usd": 0.019,
+    "load_share": 0.005,
+    "model": 34.505,
+    "act": 30.475
+   },
+   {
+    "zone": "NYC",
+    "month": "1",
+    "contrib_usd": 0.025,
+    "load_share": 0.027,
+    "model": 42.374,
+    "act": 41.436
+   },
+   {
+    "zone": "NYC",
+    "month": "2",
+    "contrib_usd": -0.075,
+    "load_share": 0.024,
+    "model": 47.871,
+    "act": 50.967
+   },
+   {
+    "zone": "NYC",
+    "month": "3",
+    "contrib_usd": 0.118,
+    "load_share": 0.026,
+    "model": 37.094,
+    "act": 32.543
+   },
+   {
+    "zone": "NYC",
+    "month": "4",
+    "contrib_usd": -0.011,
+    "load_share": 0.024,
+    "model": 31.011,
+    "act": 31.461
+   },
+   {
+    "zone": "NYC",
+    "month": "5",
+    "contrib_usd": 0.105,
+    "load_share": 0.025,
+    "model": 27.072,
+    "act": 22.857
+   },
+   {
+    "zone": "NYC",
+    "month": "6",
+    "contrib_usd": 0.055,
+    "load_share": 0.027,
+    "model": 30.529,
+    "act": 28.514
+   },
+   {
+    "zone": "NYC",
+    "month": "7",
+    "contrib_usd": -0.079,
+    "load_share": 0.037,
+    "model": 38.833,
+    "act": 40.968
+   },
+   {
+    "zone": "NYC",
+    "month": "8",
+    "contrib_usd": -0.061,
+    "load_share": 0.033,
+    "model": 29.987,
+    "act": 31.858
+   },
+   {
+    "zone": "NYC",
+    "month": "9",
+    "contrib_usd": -0.292,
+    "load_share": 0.029,
+    "model": 34.809,
+    "act": 44.712
+   },
+   {
+    "zone": "NYC",
+    "month": "10",
+    "contrib_usd": -0.049,
+    "load_share": 0.025,
+    "model": 29.723,
+    "act": 31.66
+   },
+   {
+    "zone": "NYC",
+    "month": "11",
+    "contrib_usd": 0.078,
+    "load_share": 0.025,
+    "model": 36.195,
+    "act": 33.055
+   },
+   {
+    "zone": "NYC",
+    "month": "12",
+    "contrib_usd": 0.094,
+    "load_share": 0.026,
+    "model": 34.648,
+    "act": 31.08
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "1",
+    "contrib_usd": 0.196,
+    "load_share": 0.032,
+    "model": 38.917,
+    "act": 32.872
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "2",
+    "contrib_usd": 0.451,
+    "load_share": 0.029,
+    "model": 43.957,
+    "act": 28.329
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "3",
+    "contrib_usd": 0.503,
+    "load_share": 0.03,
+    "model": 34.873,
+    "act": 18.219
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "4",
+    "contrib_usd": 0.214,
+    "load_share": 0.025,
+    "model": 28.95,
+    "act": 20.521
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "5",
+    "contrib_usd": 0.214,
+    "load_share": 0.026,
+    "model": 24.923,
+    "act": 16.63
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "6",
+    "contrib_usd": 0.092,
+    "load_share": 0.028,
+    "model": 28.726,
+    "act": 25.365
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "7",
+    "contrib_usd": 0.072,
+    "load_share": 0.032,
+    "model": 36.344,
+    "act": 34.138
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "8",
+    "contrib_usd": 0.089,
+    "load_share": 0.03,
+    "model": 27.859,
+    "act": 24.886
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "9",
+    "contrib_usd": -0.096,
+    "load_share": 0.028,
+    "model": 31.422,
+    "act": 34.902
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "10",
+    "contrib_usd": 0.067,
+    "load_share": 0.028,
+    "model": 27.823,
+    "act": 25.4
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "11",
+    "contrib_usd": 0.207,
+    "load_share": 0.029,
+    "model": 33.753,
+    "act": 26.632
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "12",
+    "contrib_usd": 0.142,
+    "load_share": 0.031,
+    "model": 32.383,
+    "act": 27.828
+   }
+  ]
+ },
+ "2024": {
+  "n_zone_hours": 43795,
+  "total_usd": -1.4,
+  "act_lw": 39.406,
+  "pct": -3.55,
+  "act_da_lw": 39.89,
+  "median_err": 2.465,
+  "zone": [
+   {
+    "zone": "Capital_Hudson",
+    "contrib_usd": -0.16,
+    "load_share": 0.137,
+    "model": 38.353,
+    "act": 39.519
+   },
+   {
+    "zone": "Long_Island",
+    "contrib_usd": -0.825,
+    "load_share": 0.131,
+    "model": 40.012,
+    "act": 46.301
+   },
+   {
+    "zone": "Lower_Hudson",
+    "contrib_usd": -0.081,
+    "load_share": 0.056,
+    "model": 38.93,
+    "act": 40.364
+   },
+   {
+    "zone": "NYC",
+    "contrib_usd": -0.824,
+    "load_share": 0.329,
+    "model": 39.026,
+    "act": 41.528
+   },
+   {
+    "zone": "Upstate_West",
+    "contrib_usd": 0.489,
+    "load_share": 0.346,
+    "model": 35.985,
+    "act": 34.571
+   }
+  ],
+  "month": [
+   {
+    "month": "1",
+    "contrib_usd": 0.366,
+    "load_share": 0.089,
+    "model": 62.349,
+    "act": 58.256
+   },
+   {
+    "month": "2",
+    "contrib_usd": 0.163,
+    "load_share": 0.079,
+    "model": 32.992,
+    "act": 30.922
+   },
+   {
+    "month": "3",
+    "contrib_usd": 0.184,
+    "load_share": 0.077,
+    "model": 28.781,
+    "act": 26.394
+   },
+   {
+    "month": "4",
+    "contrib_usd": 0.034,
+    "load_share": 0.071,
+    "model": 28.238,
+    "act": 27.756
+   },
+   {
+    "month": "5",
+    "contrib_usd": 0.062,
+    "load_share": 0.076,
+    "model": 28.502,
+    "act": 27.684
+   },
+   {
+    "month": "6",
+    "contrib_usd": -0.1,
+    "load_share": 0.091,
+    "model": 35.065,
+    "act": 36.158
+   },
+   {
+    "month": "7",
+    "contrib_usd": -0.915,
+    "load_share": 0.107,
+    "model": 38.828,
+    "act": 47.343
+   },
+   {
+    "month": "8",
+    "contrib_usd": -0.313,
+    "load_share": 0.095,
+    "model": 33.74,
+    "act": 37.014
+   },
+   {
+    "month": "9",
+    "contrib_usd": 0.037,
+    "load_share": 0.079,
+    "model": 32.852,
+    "act": 32.384
+   },
+   {
+    "month": "10",
+    "contrib_usd": -0.033,
+    "load_share": 0.074,
+    "model": 32.298,
+    "act": 32.736
+   },
+   {
+    "month": "11",
+    "contrib_usd": -0.065,
+    "load_share": 0.075,
+    "model": 32.744,
+    "act": 33.611
+   },
+   {
+    "month": "12",
+    "contrib_usd": -0.821,
+    "load_share": 0.086,
+    "model": 62.992,
+    "act": 72.52
+   }
+  ],
+  "band": [
+   {
+    "band": "night",
+    "contrib_usd": 0.485,
+    "load_share": 0.218,
+    "model": 31.882,
+    "act": 29.657
+   },
+   {
+    "band": "morning",
+    "contrib_usd": -0.014,
+    "load_share": 0.246,
+    "model": 36.884,
+    "act": 36.941
+   },
+   {
+    "band": "afternoon",
+    "contrib_usd": -0.857,
+    "load_share": 0.265,
+    "model": 41.064,
+    "act": 44.294
+   },
+   {
+    "band": "evening",
+    "contrib_usd": -1.014,
+    "load_share": 0.271,
+    "model": 40.946,
+    "act": 44.684
+   }
+  ],
+  "decile": [
+   {
+    "decile": "1",
+    "contrib_usd": 0.851,
+    "load_share": 0.085,
+    "model": 26.399,
+    "act": 16.429
+   },
+   {
+    "decile": "2",
+    "contrib_usd": 0.623,
+    "load_share": 0.088,
+    "model": 27.777,
+    "act": 20.73
+   },
+   {
+    "decile": "3",
+    "contrib_usd": 0.541,
+    "load_share": 0.091,
+    "model": 29.091,
+    "act": 23.166
+   },
+   {
+    "decile": "4",
+    "contrib_usd": 0.461,
+    "load_share": 0.094,
+    "model": 30.385,
+    "act": 25.501
+   },
+   {
+    "decile": "5",
+    "contrib_usd": 0.379,
+    "load_share": 0.097,
+    "model": 32.002,
+    "act": 28.098
+   },
+   {
+    "decile": "6",
+    "contrib_usd": 0.304,
+    "load_share": 0.101,
+    "model": 34.284,
+    "act": 31.258
+   },
+   {
+    "decile": "7",
+    "contrib_usd": 0.172,
+    "load_share": 0.106,
+    "model": 36.715,
+    "act": 35.083
+   },
+   {
+    "decile": "8",
+    "contrib_usd": -0.003,
+    "load_share": 0.109,
+    "model": 39.831,
+    "act": 39.859
+   },
+   {
+    "decile": "9",
+    "contrib_usd": -0.317,
+    "load_share": 0.112,
+    "model": 46.281,
+    "act": 49.104
+   },
+   {
+    "decile": "10",
+    "contrib_usd": -4.412,
+    "load_share": 0.116,
+    "model": 67.295,
+    "act": 105.38
+   }
+  ],
+  "marg_class": [
+   {
+    "marg_class": "CC_CHP",
+    "contrib_usd": -2.541,
+    "load_share": 0.169,
+    "model": 53.963,
+    "act": 69.011
+   },
+   {
+    "marg_class": "CC_REGULAR",
+    "contrib_usd": -0.002,
+    "load_share": 0.049,
+    "model": 31.707,
+    "act": 31.741
+   },
+   {
+    "marg_class": "CT_CHP",
+    "contrib_usd": 0.126,
+    "load_share": 0.146,
+    "model": 30.935,
+    "act": 30.073
+   },
+   {
+    "marg_class": "CT_PEAKER",
+    "contrib_usd": -0.276,
+    "load_share": 0.235,
+    "model": 35.993,
+    "act": 37.167
+   },
+   {
+    "marg_class": "ST_CHP",
+    "contrib_usd": -0.1,
+    "load_share": 0.092,
+    "model": 41.455,
+    "act": 42.546
+   },
+   {
+    "marg_class": "ST_GAS",
+    "contrib_usd": 0.628,
+    "load_share": 0.287,
+    "model": 27.105,
+    "act": 24.92
+   },
+   {
+    "marg_class": "oil",
+    "contrib_usd": 0.764,
+    "load_share": 0.021,
+    "model": 128.271,
+    "act": 92.705
+   }
+  ],
+  "zone_x_band": [
+   {
+    "zone": "Capital_Hudson",
+    "band": "night",
+    "contrib_usd": 0.055,
+    "load_share": 0.031,
+    "model": 32.317,
+    "act": 30.509
+   },
+   {
+    "zone": "Capital_Hudson",
+    "band": "morning",
+    "contrib_usd": -0.005,
+    "load_share": 0.033,
+    "model": 37.553,
+    "act": 37.715
+   },
+   {
+    "zone": "Capital_Hudson",
+    "band": "afternoon",
+    "contrib_usd": -0.059,
+    "load_share": 0.035,
+    "model": 41.401,
+    "act": 43.089
+   },
+   {
+    "zone": "Capital_Hudson",
+    "band": "evening",
+    "contrib_usd": -0.151,
+    "load_share": 0.039,
+    "model": 41.043,
+    "act": 44.931
+   },
+   {
+    "zone": "Long_Island",
+    "band": "night",
+    "contrib_usd": 0.022,
+    "load_share": 0.028,
+    "model": 32.944,
+    "act": 32.15
+   },
+   {
+    "zone": "Long_Island",
+    "band": "morning",
+    "contrib_usd": -0.066,
+    "load_share": 0.031,
+    "model": 38.104,
+    "act": 40.222
+   },
+   {
+    "zone": "Long_Island",
+    "band": "afternoon",
+    "contrib_usd": -0.464,
+    "load_share": 0.036,
+    "model": 43.615,
+    "act": 56.639
+   },
+   {
+    "zone": "Long_Island",
+    "band": "evening",
+    "contrib_usd": -0.318,
+    "load_share": 0.037,
+    "model": 43.389,
+    "act": 51.951
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "night",
+    "contrib_usd": 0.025,
+    "load_share": 0.012,
+    "model": 32.877,
+    "act": 30.769
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "morning",
+    "contrib_usd": -0.001,
+    "load_share": 0.014,
+    "model": 37.877,
+    "act": 37.919
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "afternoon",
+    "contrib_usd": -0.046,
+    "load_share": 0.015,
+    "model": 41.59,
+    "act": 44.614
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "evening",
+    "contrib_usd": -0.058,
+    "load_share": 0.015,
+    "model": 41.838,
+    "act": 45.628
+   },
+   {
+    "zone": "NYC",
+    "band": "night",
+    "contrib_usd": 0.148,
+    "load_share": 0.069,
+    "model": 32.58,
+    "act": 30.442
+   },
+   {
+    "zone": "NYC",
+    "band": "morning",
+    "contrib_usd": -0.12,
+    "load_share": 0.082,
+    "model": 37.568,
+    "act": 39.028
+   },
+   {
+    "zone": "NYC",
+    "band": "afternoon",
+    "contrib_usd": -0.4,
+    "load_share": 0.091,
+    "model": 42.302,
+    "act": 46.687
+   },
+   {
+    "zone": "NYC",
+    "band": "evening",
+    "contrib_usd": -0.452,
+    "load_share": 0.086,
+    "model": 42.127,
+    "act": 47.355
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "night",
+    "contrib_usd": 0.235,
+    "load_share": 0.079,
+    "model": 30.579,
+    "act": 27.598
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "morning",
+    "contrib_usd": 0.178,
+    "load_share": 0.086,
+    "model": 35.368,
+    "act": 33.287
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "afternoon",
+    "contrib_usd": 0.112,
+    "load_share": 0.088,
+    "model": 38.53,
+    "act": 37.259
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "evening",
+    "contrib_usd": -0.036,
+    "load_share": 0.094,
+    "model": 38.7,
+    "act": 39.079
+   }
+  ],
+  "zone_x_month": [
+   {
+    "zone": "Capital_Hudson",
+    "month": "1",
+    "contrib_usd": 0.055,
+    "load_share": 0.013,
+    "model": 62.257,
+    "act": 57.968
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "2",
+    "contrib_usd": 0.029,
+    "load_share": 0.011,
+    "model": 33.145,
+    "act": 30.484
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "3",
+    "contrib_usd": 0.025,
+    "load_share": 0.01,
+    "model": 29.113,
+    "act": 26.745
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "4",
+    "contrib_usd": 0.009,
+    "load_share": 0.009,
+    "model": 28.095,
+    "act": 27.099
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "5",
+    "contrib_usd": 0.02,
+    "load_share": 0.01,
+    "model": 28.212,
+    "act": 26.189
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "6",
+    "contrib_usd": 0.009,
+    "load_share": 0.012,
+    "model": 34.654,
+    "act": 33.911
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "7",
+    "contrib_usd": -0.139,
+    "load_share": 0.015,
+    "model": 38.301,
+    "act": 47.663
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "8",
+    "contrib_usd": -0.026,
+    "load_share": 0.013,
+    "model": 33.662,
+    "act": 35.749
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "9",
+    "contrib_usd": 0.011,
+    "load_share": 0.01,
+    "model": 32.913,
+    "act": 31.882
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "10",
+    "contrib_usd": -0.008,
+    "load_share": 0.01,
+    "model": 32.508,
+    "act": 33.255
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "11",
+    "contrib_usd": -0.01,
+    "load_share": 0.011,
+    "model": 33.083,
+    "act": 34.0
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "12",
+    "contrib_usd": -0.135,
+    "load_share": 0.013,
+    "model": 63.834,
+    "act": 74.423
+   },
+   {
+    "zone": "Long_Island",
+    "month": "1",
+    "contrib_usd": -0.008,
+    "load_share": 0.011,
+    "model": 67.052,
+    "act": 67.811
+   },
+   {
+    "zone": "Long_Island",
+    "month": "2",
+    "contrib_usd": -0.006,
+    "load_share": 0.01,
+    "model": 35.337,
+    "act": 35.918
+   },
+   {
+    "zone": "Long_Island",
+    "month": "3",
+    "contrib_usd": 0.017,
+    "load_share": 0.009,
+    "model": 29.755,
+    "act": 27.958
+   },
+   {
+    "zone": "Long_Island",
+    "month": "4",
+    "contrib_usd": -0.025,
+    "load_share": 0.009,
+    "model": 29.295,
+    "act": 32.258
+   },
+   {
+    "zone": "Long_Island",
+    "month": "5",
+    "contrib_usd": -0.013,
+    "load_share": 0.01,
+    "model": 29.747,
+    "act": 31.088
+   },
+   {
+    "zone": "Long_Island",
+    "month": "6",
+    "contrib_usd": -0.167,
+    "load_share": 0.013,
+    "model": 37.192,
+    "act": 50.097
+   },
+   {
+    "zone": "Long_Island",
+    "month": "7",
+    "contrib_usd": -0.317,
+    "load_share": 0.016,
+    "model": 41.261,
+    "act": 61.085
+   },
+   {
+    "zone": "Long_Island",
+    "month": "8",
+    "contrib_usd": -0.127,
+    "load_share": 0.014,
+    "model": 35.293,
+    "act": 44.192
+   },
+   {
+    "zone": "Long_Island",
+    "month": "9",
+    "contrib_usd": 0.004,
+    "load_share": 0.011,
+    "model": 33.801,
+    "act": 33.396
+   },
+   {
+    "zone": "Long_Island",
+    "month": "10",
+    "contrib_usd": 0.004,
+    "load_share": 0.009,
+    "model": 33.125,
+    "act": 32.637
+   },
+   {
+    "zone": "Long_Island",
+    "month": "11",
+    "contrib_usd": -0.019,
+    "load_share": 0.009,
+    "model": 34.346,
+    "act": 36.436
+   },
+   {
+    "zone": "Long_Island",
+    "month": "12",
+    "contrib_usd": -0.168,
+    "load_share": 0.011,
+    "model": 67.91,
+    "act": 83.678
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "1",
+    "contrib_usd": 0.03,
+    "load_share": 0.005,
+    "model": 64.038,
+    "act": 57.987
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "2",
+    "contrib_usd": 0.012,
+    "load_share": 0.004,
+    "model": 33.772,
+    "act": 31.023
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "3",
+    "contrib_usd": 0.01,
+    "load_share": 0.004,
+    "model": 29.35,
+    "act": 27.007
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "4",
+    "contrib_usd": 0.006,
+    "load_share": 0.004,
+    "model": 28.843,
+    "act": 27.351
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "5",
+    "contrib_usd": 0.002,
+    "load_share": 0.004,
+    "model": 28.992,
+    "act": 28.511
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "6",
+    "contrib_usd": -0.007,
+    "load_share": 0.005,
+    "model": 35.487,
+    "act": 36.719
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "7",
+    "contrib_usd": -0.054,
+    "load_share": 0.006,
+    "model": 39.491,
+    "act": 47.908
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "8",
+    "contrib_usd": -0.016,
+    "load_share": 0.005,
+    "model": 34.561,
+    "act": 37.434
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "9",
+    "contrib_usd": 0.004,
+    "load_share": 0.004,
+    "model": 33.338,
+    "act": 32.487
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "10",
+    "contrib_usd": -0.004,
+    "load_share": 0.004,
+    "model": 32.796,
+    "act": 33.818
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "11",
+    "contrib_usd": -0.005,
+    "load_share": 0.004,
+    "model": 33.636,
+    "act": 34.726
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "12",
+    "contrib_usd": -0.059,
+    "load_share": 0.005,
+    "model": 65.051,
+    "act": 77.067
+   },
+   {
+    "zone": "NYC",
+    "month": "1",
+    "contrib_usd": -0.134,
+    "load_share": 0.028,
+    "model": 65.903,
+    "act": 70.739
+   },
+   {
+    "zone": "NYC",
+    "month": "2",
+    "contrib_usd": 0.034,
+    "load_share": 0.025,
+    "model": 33.931,
+    "act": 32.572
+   },
+   {
+    "zone": "NYC",
+    "month": "3",
+    "contrib_usd": 0.046,
+    "load_share": 0.025,
+    "model": 29.458,
+    "act": 27.601
+   },
+   {
+    "zone": "NYC",
+    "month": "4",
+    "contrib_usd": 0.001,
+    "load_share": 0.023,
+    "model": 29.102,
+    "act": 29.049
+   },
+   {
+    "zone": "NYC",
+    "month": "5",
+    "contrib_usd": -0.015,
+    "load_share": 0.026,
+    "model": 29.514,
+    "act": 30.092
+   },
+   {
+    "zone": "NYC",
+    "month": "6",
+    "contrib_usd": 0.003,
+    "load_share": 0.031,
+    "model": 36.353,
+    "act": 36.266
+   },
+   {
+    "zone": "NYC",
+    "month": "7",
+    "contrib_usd": -0.264,
+    "load_share": 0.037,
+    "model": 40.396,
+    "act": 47.502
+   },
+   {
+    "zone": "NYC",
+    "month": "8",
+    "contrib_usd": -0.102,
+    "load_share": 0.033,
+    "model": 34.681,
+    "act": 37.796
+   },
+   {
+    "zone": "NYC",
+    "month": "9",
+    "contrib_usd": 0.003,
+    "load_share": 0.027,
+    "model": 33.646,
+    "act": 33.528
+   },
+   {
+    "zone": "NYC",
+    "month": "10",
+    "contrib_usd": -0.017,
+    "load_share": 0.025,
+    "model": 33.06,
+    "act": 33.756
+   },
+   {
+    "zone": "NYC",
+    "month": "11",
+    "contrib_usd": -0.037,
+    "load_share": 0.024,
+    "model": 33.868,
+    "act": 35.408
+   },
+   {
+    "zone": "NYC",
+    "month": "12",
+    "contrib_usd": -0.343,
+    "load_share": 0.027,
+    "model": 64.789,
+    "act": 77.687
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "1",
+    "contrib_usd": 0.423,
+    "load_share": 0.033,
+    "model": 57.559,
+    "act": 44.695
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "2",
+    "contrib_usd": 0.094,
+    "load_share": 0.029,
+    "model": 31.219,
+    "act": 27.973
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "3",
+    "contrib_usd": 0.087,
+    "load_share": 0.028,
+    "model": 27.658,
+    "act": 24.597
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "4",
+    "contrib_usd": 0.043,
+    "load_share": 0.026,
+    "model": 27.066,
+    "act": 25.385
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "5",
+    "contrib_usd": 0.067,
+    "load_share": 0.026,
+    "model": 27.066,
+    "act": 24.467
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "6",
+    "contrib_usd": 0.062,
+    "load_share": 0.029,
+    "model": 32.832,
+    "act": 30.72
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "7",
+    "contrib_usd": -0.141,
+    "load_share": 0.033,
+    "model": 35.999,
+    "act": 40.268
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "8",
+    "contrib_usd": -0.041,
+    "load_share": 0.03,
+    "model": 31.871,
+    "act": 33.236
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "9",
+    "contrib_usd": 0.015,
+    "load_share": 0.027,
+    "model": 31.582,
+    "act": 31.022
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "10",
+    "contrib_usd": -0.008,
+    "load_share": 0.026,
+    "model": 31.146,
+    "act": 31.456
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "11",
+    "contrib_usd": 0.005,
+    "load_share": 0.027,
+    "model": 30.963,
+    "act": 30.78
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "12",
+    "contrib_usd": -0.116,
+    "load_share": 0.031,
+    "model": 59.117,
+    "act": 62.825
+   }
+  ]
+ },
+ "2025": {
+  "n_zone_hours": 43785,
+  "total_usd": -8.033,
+  "act_lw": 69.223,
+  "pct": -11.6,
+  "act_da_lw": 67.145,
+  "median_err": 2.329,
+  "zone": [
+   {
+    "zone": "Capital_Hudson",
+    "contrib_usd": -1.089,
+    "load_share": 0.139,
+    "model": 62.523,
+    "act": 70.347
+   },
+   {
+    "zone": "Long_Island",
+    "contrib_usd": -2.273,
+    "load_share": 0.132,
+    "model": 63.926,
+    "act": 81.188
+   },
+   {
+    "zone": "Lower_Hudson",
+    "contrib_usd": -0.51,
+    "load_share": 0.056,
+    "model": 63.247,
+    "act": 72.286
+   },
+   {
+    "zone": "NYC",
+    "contrib_usd": -3.625,
+    "load_share": 0.331,
+    "model": 62.162,
+    "act": 73.128
+   },
+   {
+    "zone": "Upstate_West",
+    "contrib_usd": -0.536,
+    "load_share": 0.342,
+    "model": 58.319,
+    "act": 59.886
+   }
+  ],
+  "month": [
+   {
+    "month": "1",
+    "contrib_usd": -1.611,
+    "load_share": 0.094,
+    "model": 101.742,
+    "act": 118.959
+   },
+   {
+    "month": "2",
+    "contrib_usd": -1.186,
+    "load_share": 0.081,
+    "model": 89.65,
+    "act": 104.224
+   },
+   {
+    "month": "3",
+    "contrib_usd": -0.075,
+    "load_share": 0.077,
+    "model": 47.416,
+    "act": 48.391
+   },
+   {
+    "month": "4",
+    "contrib_usd": -0.105,
+    "load_share": 0.071,
+    "model": 41.206,
+    "act": 42.692
+   },
+   {
+    "month": "5",
+    "contrib_usd": 0.042,
+    "load_share": 0.073,
+    "model": 35.466,
+    "act": 34.891
+   },
+   {
+    "month": "6",
+    "contrib_usd": -2.606,
+    "load_share": 0.087,
+    "model": 52.93,
+    "act": 82.782
+   },
+   {
+    "month": "7",
+    "contrib_usd": -1.93,
+    "load_share": 0.107,
+    "model": 66.962,
+    "act": 84.939
+   },
+   {
+    "month": "8",
+    "contrib_usd": -0.023,
+    "load_share": 0.09,
+    "model": 45.114,
+    "act": 45.365
+   },
+   {
+    "month": "9",
+    "contrib_usd": -0.211,
+    "load_share": 0.078,
+    "model": 37.827,
+    "act": 40.545
+   },
+   {
+    "month": "10",
+    "contrib_usd": -0.173,
+    "load_share": 0.073,
+    "model": 43.423,
+    "act": 45.774
+   },
+   {
+    "month": "11",
+    "contrib_usd": -0.24,
+    "load_share": 0.077,
+    "model": 52.479,
+    "act": 55.61
+   },
+   {
+    "month": "12",
+    "contrib_usd": 0.085,
+    "load_share": 0.092,
+    "model": 100.102,
+    "act": 99.177
+   }
+  ],
+  "band": [
+   {
+    "band": "night",
+    "contrib_usd": 0.148,
+    "load_share": 0.221,
+    "model": 52.149,
+    "act": 51.479
+   },
+   {
+    "band": "morning",
+    "contrib_usd": -0.715,
+    "load_share": 0.245,
+    "model": 58.744,
+    "act": 61.663
+   },
+   {
+    "band": "afternoon",
+    "contrib_usd": -3.662,
+    "load_share": 0.262,
+    "model": 65.188,
+    "act": 79.192
+   },
+   {
+    "band": "evening",
+    "contrib_usd": -3.804,
+    "load_share": 0.273,
+    "model": 66.877,
+    "act": 80.823
+   }
+  ],
+  "decile": [
+   {
+    "decile": "1",
+    "contrib_usd": 1.02,
+    "load_share": 0.082,
+    "model": 32.718,
+    "act": 20.266
+   },
+   {
+    "decile": "2",
+    "contrib_usd": 0.673,
+    "load_share": 0.087,
+    "model": 36.234,
+    "act": 28.457
+   },
+   {
+    "decile": "3",
+    "contrib_usd": 0.685,
+    "load_share": 0.09,
+    "model": 40.984,
+    "act": 33.371
+   },
+   {
+    "decile": "4",
+    "contrib_usd": 0.477,
+    "load_share": 0.093,
+    "model": 43.267,
+    "act": 38.159
+   },
+   {
+    "decile": "5",
+    "contrib_usd": 0.285,
+    "load_share": 0.096,
+    "model": 45.907,
+    "act": 42.952
+   },
+   {
+    "decile": "6",
+    "contrib_usd": 0.262,
+    "load_share": 0.103,
+    "model": 51.528,
+    "act": 48.987
+   },
+   {
+    "decile": "7",
+    "contrib_usd": 0.135,
+    "load_share": 0.107,
+    "model": 57.977,
+    "act": 56.708
+   },
+   {
+    "decile": "8",
+    "contrib_usd": -0.265,
+    "load_share": 0.111,
+    "model": 68.134,
+    "act": 70.527
+   },
+   {
+    "decile": "9",
+    "contrib_usd": -1.315,
+    "load_share": 0.112,
+    "model": 85.823,
+    "act": 97.537
+   },
+   {
+    "decile": "10",
+    "contrib_usd": -9.99,
+    "load_share": 0.119,
+    "model": 122.268,
+    "act": 206.279
+   }
+  ],
+  "marg_class": [
+   {
+    "marg_class": "CC_CHP",
+    "contrib_usd": -2.251,
+    "load_share": 0.196,
+    "model": 72.146,
+    "act": 83.642
+   },
+   {
+    "marg_class": "CC_REGULAR",
+    "contrib_usd": -0.741,
+    "load_share": 0.101,
+    "model": 47.83,
+    "act": 55.172
+   },
+   {
+    "marg_class": "CT_CHP",
+    "contrib_usd": 0.083,
+    "load_share": 0.036,
+    "model": 36.716,
+    "act": 34.396
+   },
+   {
+    "marg_class": "CT_PEAKER",
+    "contrib_usd": -1.256,
+    "load_share": 0.197,
+    "model": 47.959,
+    "act": 54.327
+   },
+   {
+    "marg_class": "ST_CHP",
+    "contrib_usd": -0.254,
+    "load_share": 0.291,
+    "model": 43.977,
+    "act": 44.848
+   },
+   {
+    "marg_class": "ST_GAS",
+    "contrib_usd": 0.088,
+    "load_share": 0.061,
+    "model": 33.46,
+    "act": 32.019
+   },
+   {
+    "marg_class": "oil",
+    "contrib_usd": -3.701,
+    "load_share": 0.118,
+    "model": 140.733,
+    "act": 172.08
+   }
+  ],
+  "zone_x_band": [
+   {
+    "zone": "Capital_Hudson",
+    "band": "night",
+    "contrib_usd": -0.033,
+    "load_share": 0.032,
+    "model": 53.417,
+    "act": 54.469
+   },
+   {
+    "zone": "Capital_Hudson",
+    "band": "morning",
+    "contrib_usd": -0.167,
+    "load_share": 0.033,
+    "model": 60.604,
+    "act": 65.652
+   },
+   {
+    "zone": "Capital_Hudson",
+    "band": "afternoon",
+    "contrib_usd": -0.298,
+    "load_share": 0.035,
+    "model": 66.711,
+    "act": 75.252
+   },
+   {
+    "zone": "Capital_Hudson",
+    "band": "evening",
+    "contrib_usd": -0.591,
+    "load_share": 0.04,
+    "model": 67.728,
+    "act": 82.663
+   },
+   {
+    "zone": "Long_Island",
+    "band": "night",
+    "contrib_usd": -0.024,
+    "load_share": 0.028,
+    "model": 53.567,
+    "act": 54.442
+   },
+   {
+    "zone": "Long_Island",
+    "band": "morning",
+    "contrib_usd": -0.155,
+    "load_share": 0.031,
+    "model": 60.165,
+    "act": 65.17
+   },
+   {
+    "zone": "Long_Island",
+    "band": "afternoon",
+    "contrib_usd": -1.191,
+    "load_share": 0.035,
+    "model": 68.788,
+    "act": 102.581
+   },
+   {
+    "zone": "Long_Island",
+    "band": "evening",
+    "contrib_usd": -0.902,
+    "load_share": 0.037,
+    "model": 70.232,
+    "act": 94.373
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "night",
+    "contrib_usd": 0.008,
+    "load_share": 0.012,
+    "model": 54.174,
+    "act": 53.534
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "morning",
+    "contrib_usd": -0.037,
+    "load_share": 0.014,
+    "model": 60.703,
+    "act": 63.394
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "afternoon",
+    "contrib_usd": -0.258,
+    "load_share": 0.015,
+    "model": 66.587,
+    "act": 83.591
+   },
+   {
+    "zone": "Lower_Hudson",
+    "band": "evening",
+    "contrib_usd": -0.223,
+    "load_share": 0.016,
+    "model": 69.243,
+    "act": 83.59
+   },
+   {
+    "zone": "NYC",
+    "band": "night",
+    "contrib_usd": 0.023,
+    "load_share": 0.07,
+    "model": 52.951,
+    "act": 52.625
+   },
+   {
+    "zone": "NYC",
+    "band": "morning",
+    "contrib_usd": -0.404,
+    "load_share": 0.083,
+    "model": 59.236,
+    "act": 64.117
+   },
+   {
+    "zone": "NYC",
+    "band": "afternoon",
+    "contrib_usd": -1.782,
+    "load_share": 0.091,
+    "model": 66.085,
+    "act": 85.711
+   },
+   {
+    "zone": "NYC",
+    "band": "evening",
+    "contrib_usd": -1.462,
+    "load_share": 0.087,
+    "model": 68.28,
+    "act": 85.102
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "night",
+    "contrib_usd": 0.175,
+    "load_share": 0.079,
+    "model": 50.124,
+    "act": 47.908
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "morning",
+    "contrib_usd": 0.049,
+    "load_share": 0.084,
+    "model": 56.684,
+    "act": 56.104
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "afternoon",
+    "contrib_usd": -0.133,
+    "load_share": 0.085,
+    "model": 61.881,
+    "act": 63.442
+   },
+   {
+    "zone": "Upstate_West",
+    "band": "evening",
+    "contrib_usd": -0.627,
+    "load_share": 0.093,
+    "model": 63.477,
+    "act": 70.187
+   }
+  ],
+  "zone_x_month": [
+   {
+    "zone": "Capital_Hudson",
+    "month": "1",
+    "contrib_usd": -0.321,
+    "load_share": 0.014,
+    "model": 103.205,
+    "act": 126.682
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "2",
+    "contrib_usd": -0.216,
+    "load_share": 0.012,
+    "model": 92.062,
+    "act": 110.167
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "3",
+    "contrib_usd": -0.017,
+    "load_share": 0.011,
+    "model": 48.481,
+    "act": 50.035
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "4",
+    "contrib_usd": -0.001,
+    "load_share": 0.01,
+    "model": 41.357,
+    "act": 41.432
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "5",
+    "contrib_usd": 0.011,
+    "load_share": 0.01,
+    "model": 35.272,
+    "act": 34.15
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "6",
+    "contrib_usd": -0.35,
+    "load_share": 0.012,
+    "model": 52.401,
+    "act": 82.106
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "7",
+    "contrib_usd": -0.12,
+    "load_share": 0.015,
+    "model": 66.42,
+    "act": 74.575
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "8",
+    "contrib_usd": -0.002,
+    "load_share": 0.012,
+    "model": 45.14,
+    "act": 45.329
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "9",
+    "contrib_usd": -0.01,
+    "load_share": 0.01,
+    "model": 37.5,
+    "act": 38.505
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "10",
+    "contrib_usd": -0.033,
+    "load_share": 0.01,
+    "model": 43.405,
+    "act": 46.635
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "11",
+    "contrib_usd": -0.037,
+    "load_share": 0.011,
+    "model": 52.849,
+    "act": 56.168
+   },
+   {
+    "zone": "Capital_Hudson",
+    "month": "12",
+    "contrib_usd": 0.005,
+    "load_share": 0.014,
+    "model": 102.237,
+    "act": 101.856
+   },
+   {
+    "zone": "Long_Island",
+    "month": "1",
+    "contrib_usd": -0.316,
+    "load_share": 0.012,
+    "model": 108.787,
+    "act": 136.045
+   },
+   {
+    "zone": "Long_Island",
+    "month": "2",
+    "contrib_usd": -0.206,
+    "load_share": 0.01,
+    "model": 95.16,
+    "act": 116.056
+   },
+   {
+    "zone": "Long_Island",
+    "month": "3",
+    "contrib_usd": -0.017,
+    "load_share": 0.009,
+    "model": 48.855,
+    "act": 50.704
+   },
+   {
+    "zone": "Long_Island",
+    "month": "4",
+    "contrib_usd": -0.038,
+    "load_share": 0.009,
+    "model": 42.868,
+    "act": 47.281
+   },
+   {
+    "zone": "Long_Island",
+    "month": "5",
+    "contrib_usd": -0.074,
+    "load_share": 0.009,
+    "model": 37.4,
+    "act": 45.439
+   },
+   {
+    "zone": "Long_Island",
+    "month": "6",
+    "contrib_usd": -0.758,
+    "load_share": 0.013,
+    "model": 58.121,
+    "act": 118.681
+   },
+   {
+    "zone": "Long_Island",
+    "month": "7",
+    "contrib_usd": -0.632,
+    "load_share": 0.016,
+    "model": 70.352,
+    "act": 109.316
+   },
+   {
+    "zone": "Long_Island",
+    "month": "8",
+    "contrib_usd": -0.019,
+    "load_share": 0.013,
+    "model": 46.106,
+    "act": 47.533
+   },
+   {
+    "zone": "Long_Island",
+    "month": "9",
+    "contrib_usd": -0.055,
+    "load_share": 0.011,
+    "model": 38.859,
+    "act": 43.898
+   },
+   {
+    "zone": "Long_Island",
+    "month": "10",
+    "contrib_usd": 0.002,
+    "load_share": 0.009,
+    "model": 44.233,
+    "act": 44.001
+   },
+   {
+    "zone": "Long_Island",
+    "month": "11",
+    "contrib_usd": -0.062,
+    "load_share": 0.009,
+    "model": 54.147,
+    "act": 60.776
+   },
+   {
+    "zone": "Long_Island",
+    "month": "12",
+    "contrib_usd": -0.098,
+    "load_share": 0.012,
+    "model": 106.251,
+    "act": 114.734
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "1",
+    "contrib_usd": -0.104,
+    "load_share": 0.006,
+    "model": 105.682,
+    "act": 124.638
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "2",
+    "contrib_usd": -0.055,
+    "load_share": 0.005,
+    "model": 92.412,
+    "act": 104.182
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "3",
+    "contrib_usd": -0.003,
+    "load_share": 0.004,
+    "model": 48.366,
+    "act": 49.128
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "4",
+    "contrib_usd": 0.002,
+    "load_share": 0.004,
+    "model": 41.683,
+    "act": 41.189
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "5",
+    "contrib_usd": 0.005,
+    "load_share": 0.004,
+    "model": 36.216,
+    "act": 35.039
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "6",
+    "contrib_usd": -0.183,
+    "load_share": 0.005,
+    "model": 55.627,
+    "act": 91.802
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "7",
+    "contrib_usd": -0.143,
+    "load_share": 0.006,
+    "model": 68.532,
+    "act": 91.289
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "8",
+    "contrib_usd": -0.001,
+    "load_share": 0.005,
+    "model": 45.698,
+    "act": 45.908
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "9",
+    "contrib_usd": -0.01,
+    "load_share": 0.004,
+    "model": 38.163,
+    "act": 40.453
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "10",
+    "contrib_usd": -0.012,
+    "load_share": 0.004,
+    "model": 44.142,
+    "act": 47.106
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "11",
+    "contrib_usd": -0.013,
+    "load_share": 0.004,
+    "model": 53.599,
+    "act": 56.576
+   },
+   {
+    "zone": "Lower_Hudson",
+    "month": "12",
+    "contrib_usd": 0.007,
+    "load_share": 0.005,
+    "model": 101.963,
+    "act": 100.545
+   },
+   {
+    "zone": "NYC",
+    "month": "1",
+    "contrib_usd": -0.972,
+    "load_share": 0.029,
+    "model": 106.405,
+    "act": 139.827
+   },
+   {
+    "zone": "NYC",
+    "month": "2",
+    "contrib_usd": -0.582,
+    "load_share": 0.025,
+    "model": 92.144,
+    "act": 115.144
+   },
+   {
+    "zone": "NYC",
+    "month": "3",
+    "contrib_usd": -0.091,
+    "load_share": 0.025,
+    "model": 48.456,
+    "act": 52.117
+   },
+   {
+    "zone": "NYC",
+    "month": "4",
+    "contrib_usd": -0.092,
+    "load_share": 0.023,
+    "model": 42.489,
+    "act": 46.404
+   },
+   {
+    "zone": "NYC",
+    "month": "5",
+    "contrib_usd": 0.03,
+    "load_share": 0.024,
+    "model": 36.943,
+    "act": 35.72
+   },
+   {
+    "zone": "NYC",
+    "month": "6",
+    "contrib_usd": -0.901,
+    "load_share": 0.03,
+    "model": 55.28,
+    "act": 85.114
+   },
+   {
+    "zone": "NYC",
+    "month": "7",
+    "contrib_usd": -0.894,
+    "load_share": 0.037,
+    "model": 68.501,
+    "act": 92.462
+   },
+   {
+    "zone": "NYC",
+    "month": "8",
+    "contrib_usd": 0.012,
+    "load_share": 0.031,
+    "model": 45.464,
+    "act": 45.06
+   },
+   {
+    "zone": "NYC",
+    "month": "9",
+    "contrib_usd": -0.042,
+    "load_share": 0.028,
+    "model": 38.706,
+    "act": 40.237
+   },
+   {
+    "zone": "NYC",
+    "month": "10",
+    "contrib_usd": -0.069,
+    "load_share": 0.025,
+    "model": 44.338,
+    "act": 47.12
+   },
+   {
+    "zone": "NYC",
+    "month": "11",
+    "contrib_usd": -0.075,
+    "load_share": 0.024,
+    "model": 53.932,
+    "act": 57.025
+   },
+   {
+    "zone": "NYC",
+    "month": "12",
+    "contrib_usd": 0.05,
+    "load_share": 0.029,
+    "model": 102.414,
+    "act": 100.651
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "1",
+    "contrib_usd": 0.103,
+    "load_share": 0.034,
+    "model": 94.053,
+    "act": 91.0
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "2",
+    "contrib_usd": -0.127,
+    "load_share": 0.03,
+    "model": 84.281,
+    "act": 88.575
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "3",
+    "contrib_usd": 0.053,
+    "load_share": 0.028,
+    "model": 45.451,
+    "act": 43.543
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "4",
+    "contrib_usd": 0.023,
+    "load_share": 0.025,
+    "model": 39.31,
+    "act": 38.382
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "5",
+    "contrib_usd": 0.07,
+    "load_share": 0.025,
+    "model": 33.3,
+    "act": 30.528
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "6",
+    "contrib_usd": -0.414,
+    "load_share": 0.028,
+    "model": 47.765,
+    "act": 62.698
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "7",
+    "contrib_usd": -0.142,
+    "load_share": 0.033,
+    "model": 63.491,
+    "act": 67.818
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "8",
+    "contrib_usd": -0.013,
+    "load_share": 0.029,
+    "model": 44.185,
+    "act": 44.631
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "9",
+    "contrib_usd": -0.093,
+    "load_share": 0.024,
+    "model": 36.451,
+    "act": 40.274
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "10",
+    "contrib_usd": -0.062,
+    "load_share": 0.025,
+    "model": 42.128,
+    "act": 44.563
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "11",
+    "contrib_usd": -0.054,
+    "load_share": 0.028,
+    "model": 50.339,
+    "act": 52.269
+   },
+   {
+    "zone": "Upstate_West",
+    "month": "12",
+    "contrib_usd": 0.12,
+    "load_share": 0.033,
+    "model": 94.768,
+    "act": 91.119
+   }
+  ]
+ }
+}

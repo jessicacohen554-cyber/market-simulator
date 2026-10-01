@@ -16,7 +16,7 @@ spec fields and :func:`validate_tidy` are datatype-specific and live here.
 
 Intake-only as of caiso-245: no model mechanism consumes it (the
 pre-registered arm's stop rule fired —
-``results/calibration/FINDING-caiso245-firm-import-allocation-split-2026-09-04.md``).
+``docs/records/caiso/FINDING-caiso245-firm-import-allocation-split-2026-09-04.md``).
 """
 
 from __future__ import annotations

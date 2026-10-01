@@ -1987,7 +1987,7 @@ def apply_caiso_local_import_limits(
     links (``SP15_rest -> LA_BASIN``, ``SP15_rest -> SDGE``) at the STATIC 2023
     (tightest-year) ``import_cap = peak_load - requirement`` value as the
     scope-sanctioned MVP; per-year was documented there as the deferred end
-    state (docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md,
+    state (docs/records/caiso/caiso-sp15-split-implementation-scope-2026-07-09.md,
     "Import-cap values"). This is that upgrade: gated on
     ``ScenarioConfig.caiso_per_year_import_caps`` (default off), it replaces
     each link's ``ttc_mw`` with the measured cap for ``year`` from
@@ -2192,7 +2192,7 @@ def _caiso_internal(from_zone: str, to_zone: str) -> bool:
     wrong direction, and ≤39.5 % even at an ``eps`` above any value in any
     committed loss surface. Cell ``caiso_seam_loss_surface`` = ``G``, refused
     ex ante, no solve spent;
-    ``results/calibration/FINDING-caiso167-import-price-basis-2026-08-04.md``
+    ``docs/records/caiso/FINDING-caiso167-import-price-basis-2026-08-04.md``
     §4–§5. Do not re-derive it against a residual (rule 23
     ``[R-FROZEN-DERIVE]``).
     """

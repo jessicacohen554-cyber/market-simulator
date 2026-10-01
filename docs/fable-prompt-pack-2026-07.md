@@ -102,7 +102,7 @@ Your tasks:
 5. Resolve in writing the CLAUDE.md L21 vs rule-13 contradiction: measured CAMPD rates
    used this way are a reproducible physical input, admissible in forecast — update the
    CLAUDE.md wording proposal accordingly.
-Produce docs/handoffs/emissions-co2-rate-plan-2026-07.md: the chosen rate-model design
+Produce docs/records/misc/emissions-co2-rate-plan-2026-07.md: the chosen rate-model design
 with LOYO evidence, data-intake spec, ranked fixes with files/tests/expected impact, plus
 a complete W2-P1 implementation prompt (single fenced block). Commit and push on a feature
 branch. Do not implement the fixes themselves.
@@ -136,7 +136,7 @@ Your tasks:
    load_planned_additions' construction-committed philosophy), the confirmation gate for
    non-fossil placeholder dates, and the rename/doc fix for the "Known retirements" misnomer
    (RC-3). State how each regenerates for a forward year (rule 17-style forward story).
-4. Produce docs/handoffs/confirmed-retirement-plan-2026-07.md + a complete W2-P2
+4. Produce docs/records/misc/confirmed-retirement-plan-2026-07.md + a complete W2-P2
    implementation prompt. Do not implement.
 ```
 
@@ -166,7 +166,7 @@ Your tasks:
 3. Define the regression guard: byte-identity (or tolerance-bounded) re-solve of one keeper
    bundle per ISO before/after each stage, plus the trivial-case tests. The migration must
    be provably dispatch-neutral stage by stage.
-4. Produce docs/handoffs/orchestrator-unification-plan-2026-07.md with the stage sequence
+4. Produce docs/records/misc/orchestrator-unification-plan-2026-07.md with the stage sequence
    sized for separate sessions, + a complete W2-P4 implementation prompt for stage 1.
 IMPORTANT — reconcile with the two EXISTING workstreams instead of duplicating them:
 (a) docs/audit-wiring-iso-gaps/ (gap-inventory + fix-plan + w1-w3 prompt pack, 2026-06-29)
@@ -209,7 +209,7 @@ Your tasks:
    the scored quantity), when statistical-mode runs for the 5 remaining ISOs, what data
    intake unblocks D-6 (docs/out-of-sample §1.1 F1-F6) WITHOUT touching quarantined years,
    and the decision rule for eventually declaring an ISO calibration-complete.
-4. Produce docs/handoffs/forecast-validation-program-2026-07.md + complete implementation
+4. Produce docs/records/forecast/forecast-validation-program-2026-07.md + complete implementation
    prompts for W2-P5 (invariants+hindcast build) and W3-P1 (statmode runs).
 Do not run any solve touching 2022 or 2026. Do not implement.
 ```
@@ -240,7 +240,7 @@ rule 1), the A/B experiment design for foresight (does EWMA vs lookahead materia
 2030-2040 fossil dispatch on ERCOT-high-growth?), and expected emissions direction. Also
 adjudicate CX-6 (nuclear RPS eligibility, uniform WACC, VRE flat-mean entry revenue) as
 fix-now vs document-as-limitation. Produce
-docs/handoffs/capacity-economics-plan-2026-07.md + a complete W2-P3 implementation prompt.
+docs/records/misc/capacity-economics-plan-2026-07.md + a complete W2-P3 implementation prompt.
 Do not implement.
 ```
 
@@ -430,7 +430,7 @@ Run the scope2 test suite green (cd scope2-lce-portfolio && pytest tests/ -q). C
 ### W2-P1 `[OPUS]` — Implement the CO2-rate model + emissions fixes
 
 ```
-Prerequisite: docs/handoffs/emissions-co2-rate-plan-2026-07.md exists (from W0-P1) — read
+Prerequisite: docs/records/misc/emissions-co2-rate-plan-2026-07.md exists (from W0-P1) — read
 it first, then CLAUDE.md and docs/fable-repo-audit-2026-07.md §A. Implement the plan's
 ranked fixes, CO2 first. Expected scope (defer to the plan where it differs): the CAMPD
 2018+ annual unit-level emissions/operations intake (data-intake skill conventions;
@@ -455,7 +455,7 @@ bundles, rule 16) is required downstream.
 ### W2-P2 `[OPUS]` — Implement the confirmed-retirement channel
 
 ```
-Prerequisite: docs/handoffs/confirmed-retirement-plan-2026-07.md (from W0-P2) — read it,
+Prerequisite: docs/records/misc/confirmed-retirement-plan-2026-07.md (from W0-P2) — read it,
 then CLAUDE.md rules 13/14 and audit §B. Implement per the plan: extend
 scripts/data/process_eia860.py (and the schema) to carry the retirement-status/confirmation
 columns; add the forecast-mode confirmed-exit injector gated on confirmation status
@@ -472,7 +472,7 @@ unconfirmed fossil. Run the capacity/fleet test files green. Commit and push.
 ### W2-P3 `[OPUS]` — Implement capacity-economics recalibration
 
 ```
-Prerequisite: docs/handoffs/capacity-economics-plan-2026-07.md (from W0-P5) — read it,
+Prerequisite: docs/records/misc/capacity-economics-plan-2026-07.md (from W0-P5) — read it,
 then CLAUDE.md and audit §C. Implement per the plan: (1) ATB-cited FOM going-forward
 defaults in ScenarioConfig with docs/parameter-citations.md entries, executed together with
 the plan's joint FOM+scarcity sensitivity protocol — run the protocol's probe matrix and
@@ -492,7 +492,7 @@ the net-load duration curve as expected). Commit and push.
 ### W2-P4 `[OPUS]` — Calibration-core lift, stage 1
 
 ```
-Prerequisite: docs/handoffs/orchestrator-unification-plan-2026-07.md (from W0-P3) — read
+Prerequisite: docs/records/misc/orchestrator-unification-plan-2026-07.md (from W0-P3) — read
 it, then CLAUDE.md and audit §E. Execute exactly stage 1 of the plan (expected: lift the
 shared solve core — _calibration_config, run_year, _commitment_pass, offer-curve delta and
 TTC/deliverability helpers — from scripts/run_calibration.py into
@@ -510,7 +510,7 @@ sub-stage 1a and hand off cleanly with a status note in the plan doc.
 ### W2-P5 `[OPUS]` — Forecast invariant suite + capacity hindcast build
 
 ```
-Prerequisite: docs/handoffs/forecast-validation-program-2026-07.md (from W0-P4) — read it,
+Prerequisite: docs/records/forecast/forecast-validation-program-2026-07.md (from W0-P4) — read it,
 then CLAUDE.md rules 16/22 and audit §F/§J-T1. Implement per the plan:
 1. scripts/check_forecast_invariants.py + tests/test_forecast_invariants.py — the plan's
    invariant list (energy balance per year, no-NaN/inf, CO2 monotone under rising carbon
@@ -536,7 +536,7 @@ then CLAUDE.md rules 16/22 and audit §F/§J-T1. Implement per the plan:
 
 ```
 Prerequisite: W2-P1 (emissions fixes) landed, and the W0-P4 plan's statmode prompt — read
-docs/handoffs/forecast-validation-program-2026-07.md first, plus CLAUDE.md rules 15/16/22.
+docs/records/forecast/forecast-validation-program-2026-07.md first, plus CLAUDE.md rules 15/16/22.
 Run the statistical-mode backcast (the D-7 protocol used for ERCOT — see
 scripts/archive/run_statmode_probe.py lineage and apply_statistical_mode in
 run_calibration_full.py) for CAISO, PJM, MISO, NYISO, NEISO: all available years
@@ -630,7 +630,7 @@ statement. Design, do not implement:
    skill from W2-P5) as an additive error term so reported band = parametric spread
    combined with structural error. State the assumptions honestly.
 4. Output surface: how bands are computed, stored (parquet per scenario-year), displayed.
-Produce docs/handoffs/probability-bounds-plan-2026-07.md + a model-assigned implementation
+Produce docs/records/misc/probability-bounds-plan-2026-07.md + a model-assigned implementation
 prompt pack. No solves touching 2022/H1-2026. Commit and push on a feature branch.
 ```
 
@@ -648,7 +648,7 @@ and forecast (endogenous dual or projected price) use ONE structure; zone-to-sta
 membership mapping; banking/borrowing simplification (LP-only — likely no banking,
 document it); cap-trajectory data intake (RGGI/CARB published schedules — forecast-
 reproducible per rule 13); leakage treatment (imports). Vectorized rows only (rule 2).
-Produce docs/handoffs/emissions-mass-cap-plan-2026-07.md + implementation prompt.
+Produce docs/records/misc/emissions-mass-cap-plan-2026-07.md + implementation prompt.
 Do not implement.
 ```
 
@@ -671,7 +671,7 @@ DAM-AS overlay — the flagship gap (audit §J-T6). Design:
 5. Validation protocol: backcast 2023-2025 with co-opt REPLACING the measured overlay,
    scored on the same benchmarks; keeper decision per rule 1 (structure stays even if the
    fit dips — root-cause the dip, never revert the mechanism for the residual).
-Produce docs/handoffs/ercot-as-coopt-plan-2026-07.md + staged implementation prompts.
+Produce docs/records/ercot/ercot-as-coopt-plan-2026-07.md + staged implementation prompts.
 Do not implement.
 ```
 
@@ -691,7 +691,7 @@ Design the remediation program for the ~230 residual-identified scalars:
 3. Design the unbuilt diagnostics: D-3 zero-forcing ablation twin as a standard
    calibration-report step for every keeper (rule 21), and D-10…D-14 per audit §7.
 4. Sequence so every re-derivation cites a source-data change (rule 23), never a residual.
-Produce docs/handoffs/scalar-remediation-plan-2026-07.md + a prompt pack batched by
+Produce docs/records/misc/scalar-remediation-plan-2026-07.md + a prompt pack batched by
 ISO/mechanism with model assignments. Do NOT retune or change any value in this session.
 ```
 
@@ -727,7 +727,7 @@ Read CLAUDE.md rule 16, then docs/multi-iso/ (57 files). Tasks:
    whether 2023-2025 is currently solvable for MISO. Conclude: needs data intake, needs a
    calibration push, or needs a rule-16 amendment — with evidence.
 3. List any multi-iso protocol steps the newer ISOs skipped.
-Deliver docs/handoffs/multi-iso-triage-2026-07.md. Read-only otherwise. Commit and push.
+Deliver docs/records/misc/multi-iso-triage-2026-07.md. Read-only otherwise. Commit and push.
 ```
 
 ### F-7 `[SONNET]` — Holdout-quarantine policy reconciliation memo (owner decision)
@@ -747,7 +747,7 @@ one-page decision memo:
     explicit gate CI blocks) vs amended rule text (intake allowed; solves/scoring still
     forbidden) — each with its CI-enforcement sketch;
 (d) recommend one, but end with the explicit owner decision required.
-Deliver docs/handoffs/holdout-policy-memo-2026-07.md. Do NOT solve or score anything with
+Deliver docs/records/governance/holdout-policy-memo-2026-07.md. Do NOT solve or score anything with
 holdout years. Commit and push.
 ```
 

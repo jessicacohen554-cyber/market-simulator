@@ -1,6 +1,6 @@
 """miso-160: the measured seasonal forced-outage shape replacing SUMMER_WEFOR_SHARE.
 
-PREREG: results/calibration/PREREG-miso160-summer-wefor-measured-share-2026-08-16.md
+PREREG: docs/records/miso/PREREG-miso160-summer-wefor-measured-share-2026-08-16.md
 (commit a96702b, blob 57d2b8b1, byte-verified against the fetched remote ref
 BEFORE this file was written).
 
@@ -93,7 +93,7 @@ S_DERIVE_BAND = (1.00, 1.12)
 V3_NGEN = {2023: 2929, 2024: 2923, 2025: 2923}
 CARRY_ZONES = 6
 
-RECORD = REPO / "results/calibration/_miso160_wefor_shape_instrument.json"
+RECORD = REPO / "results/phase0/miso/_miso160_wefor_shape_instrument.json"
 
 
 def _month_of_hour(year: int) -> np.ndarray:

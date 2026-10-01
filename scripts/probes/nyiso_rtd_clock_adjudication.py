@@ -1,7 +1,7 @@
 """Adjudicate NYISO's P-24A "Time Stamp" convention against NYISO's OWN published data.
 
 The instrument behind the NYISO-RTD-CLOCK addendum to
-``docs/handoffs/d32-f6fix-2026-08-13.md`` (§A.3 / §A.5). It answers one question:
+``docs/records/forecast/d32-f6fix-2026-08-13.md`` (§A.3 / §A.5). It answers one question:
 does the ``Time Stamp`` column of NYISO's 5-minute real-time zonal LBMP export
 label an interval by its **beginning** or by its **ending**?
 

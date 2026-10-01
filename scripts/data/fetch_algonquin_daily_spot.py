@@ -45,7 +45,7 @@ in the 2022 pages either (verified), so the narrative remains the only source.
 A Weekly Update prices a dozen hubs in one paragraph and names Algonquin in
 summary clauses that belong to other hubs' sentences, so a pattern that is not
 scoped harvests *someone else's price*. The neiso-109 repair
-(``docs/FINDING-neiso109-the-agt-series-is-contaminated-2026-09-16.md``) found
+(``docs/records/neiso/FINDING-neiso109-the-agt-series-is-contaminated-2026-09-16.md``) found
 **82 such rows in the committed file** — 69 through an extremum pattern with no
 Algonquin anchor at all and 13 through the main sentence's character-bounded
 window — including the $28.36 "2023-02-02 arctic print" that

@@ -20,7 +20,7 @@ maximum hourly change in wind potential inside the 500 highest-net-load hours
 low-net-load hours cannot tighten a peak hour).
 
 Run: ``python scripts/probes/_spp94_curtail_rows_census.py`` (needs DATA
-PROFILE spp). Writes ``docs/handoffs/spp94/census.json``.
+PROFILE spp). Writes ``docs/records/spp/spp94/census.json``.
 """
 
 from __future__ import annotations
@@ -39,7 +39,7 @@ YEARS = (2019, 2020, 2021, 2022, 2023, 2024, 2025)
 # The two rows this lane transcribed (PRECOMMIT-spp-94 §1). Average-MW basis,
 # identical to the committed 2019 / 2022-2025 rows.
 ARM_ROWS = {2020: 244.0, 2021: 725.0}
-OUT = REPO_ROOT / "docs" / "handoffs" / "spp94" / "census.json"
+OUT = REPO_ROOT / "docs" / "records" / "spp" / "spp94" / "census.json"
 
 
 def _rates_with(extra: dict[int, float]) -> dict[int, float]:

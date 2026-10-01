@@ -15,7 +15,7 @@ an actual on the prevailing clock shifts every hour mid-March→early-November b
 one slot, which shows up as a spurious ~+1h evening-band residual in scoring.
 That was diagnosed as an all-ISO scoring artifact and fixed by re-laying the
 actuals on this chronological calendar; see
-``docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md`` and
+``docs/records/ercot/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md`` and
 the ``2026-07-14`` / ``2026-07-15`` calibration-log entries (ALL-ISO
 scoring-clock fix). The audit counted this calendar re-implemented across ~44
 files; this module is the single home the duplications collapse onto.

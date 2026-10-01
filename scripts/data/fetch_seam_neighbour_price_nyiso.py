@@ -1,7 +1,7 @@
 """Download NYISO day-ahead LBMP at its external proxy buses and internal zones.
 
 WHY THIS EXISTS (NYISO-NEXT-10, 2026-09-28).  The seam-spread test NEXT-7
-(``docs/FINDING-nyiso-next7-star-node-2026-09-27.md`` §3(c)) asks for needs the
+(``docs/records/nyiso/FINDING-nyiso-next7-star-node-2026-09-27.md`` §3(c)) asks for needs the
 NY end of every seam as well as the neighbour's.  The repo holds only the
 NYISO system-mean DA price (``_validation-source/actual_lmp_hourly_NYISO``).
 NYISO's public MIS prices every scheduling point:

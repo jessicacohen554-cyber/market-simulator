@@ -211,7 +211,7 @@ D2_REL_TOL: float = 0.02
 # can never be silent. "capacity" is the basis; "row_count_fallback" means the
 # year's floor rows carry no pmax AND the fleet_only backfill could not supply
 # it, so that year's class denominators are exposed to the tranche-count defect
-# of docs/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md.
+# of docs/records/misc/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md.
 PLANT_CLASS_VOTE_CAPACITY: str = "capacity"
 PLANT_CLASS_VOTE_ROW_COUNT: str = "row_count_fallback"
 _plant_class_vote_basis: dict[int, str] = {}
@@ -229,7 +229,7 @@ _plant_class_vote_basis: dict[int, str] = {}
 # ZERO of them a gating value); re-running WITHOUT it moves 1,416 leaves and
 # 148 gating numerics. The script itself is byte-deterministic — two
 # back-to-back runs are sha256-identical — so what was recorded in
-# docs/RESULT-nyiso240-bench-attribution-promotion-2026-09-19.md §A.6 as a
+# docs/records/nyiso/RESULT-nyiso240-bench-attribution-promotion-2026-09-19.md §A.6 as a
 # "3rd-decimal non-reproducibility" is this substitution, not nondeterminism.
 _dispatch_source_basis: dict[int, str] = {}
 # G-06: tolerance for the --keepers D-2 recompute-vs-committed staleness check,
@@ -801,7 +801,7 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # unit_outage_maxgen_events (M-2 declared-event-window revealed derates)
     # carries NO row here BY CONSTRUCTION, and this note is its rule-12
     # window declaration (the design's "D4_WINDOWS entry for the maxgen
-    # mechanism id" — docs/handoffs/miso-price-formation-design-2026-07.md
+    # mechanism id" — docs/records/miso/miso-price-formation-design-2026-07.md
     # §3/M-2): D-4 scores min_gen FLOOR mechanisms (this registry's keys are
     # floor-mechanism ids from data/floor_mechanisms.py), while the maxgen
     # channel is an AVAILABILITY DERATE that never raises min_gen and so can
@@ -3217,9 +3217,9 @@ def aggregate_floors_by_plant(
     REJECTED for that second reason — arm and control would legitimately label a
     plant differently whenever dispatch moved.) Defect, fragility census and the
     blast-radius analysis:
-    ``docs/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md``;
+    ``docs/records/misc/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md``;
     repair and its pre-registered stop conditions:
-    ``results/calibration/PRECOMMIT-nyiso233-d2-capacity-weighted-vote.md``.
+    ``docs/records/nyiso/PRECOMMIT-nyiso233-d2-capacity-weighted-vote.md``.
     Landed on an explicit owner ruling, since a shared scorer reaches every ISO
     (rule 25 ``[R-ISO-SCOPE]``).
 

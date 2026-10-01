@@ -1,7 +1,7 @@
 """Emit the NWPP-NEXT-6 calibration attestation for an arm-A or arm-AB span bundle.
 
 NWPP-NEXT-6 (PRECOMMIT
-``docs/handoffs/PRECOMMIT-nwppnext6-path76-and-ct-rederive-2019-2025-2026-09-26.md``)
+``docs/records/nwpp/PRECOMMIT-nwppnext6-path76-and-ct-rederive-2019-2025-2026-09-26.md``)
 is keeper #12's recipe (NWPP-NEXT-5) plus ONE gated field,
 ``nwpp_path76_alturas_link`` (arm A). Arm AB adds the rule-23 re-derive of
 ``campd_ct_heat_rates_NWPP.csv`` on the SB-admitted fleet (owner ruling

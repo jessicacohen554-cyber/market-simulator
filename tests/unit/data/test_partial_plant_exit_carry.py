@@ -8,7 +8,7 @@ retirement month through ``cod_ramp.effective_cod``'s per-unit preference;
 ``load_mothballed_but_operating(..., partial_plant_exit_carry=True)``
 widens the snapshot status set {OA} -> {OA, OS, SB} under the same
 vintage-OP oracle. Design:
-``results/calibration/PREREG-miso190-partial-plant-exit-carry-2026-08-30.md``.
+``docs/records/miso/PREREG-miso190-partial-plant-exit-carry-2026-08-30.md``.
 
 Committed-data cases (real MISO channel: Sherco-2 / Dallman-3 /
 Big Cajun 2-1 / Warrick-2), byte-inertness with the flag off, the exit

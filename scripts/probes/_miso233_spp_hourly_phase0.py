@@ -70,7 +70,7 @@ sys.path.insert(0, str(REPO / "scripts" / "probes"))
 
 KEEPER = REPO / "results/calibration/miso232_hourlyseam_K"
 SPP_LMP = REPO / "data/raw/_validation-source/actual_lmp_hourly_zonal_SPP.parquet"
-OUT = REPO / "results/calibration/_miso233_spp_hourly_phase0.json"
+OUT = REPO / "results/phase0/miso/_miso233_spp_hourly_phase0.json"
 YEARS = (2023, 2024, 2025)
 ZONE = "MISO-Indiana"
 BUS = "MISO_external"

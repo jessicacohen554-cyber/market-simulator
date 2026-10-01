@@ -249,7 +249,7 @@ zeroed. The shared detection primitives live in
 > `campd-outages*.csv`, a hard `availability=0` per plant) was **removed
 > 2026-07-17**: summing a plant's units hid single-unit outages, and it folded a
 > daily-cycling combined cycle's overnight-down gaps into phantom summer outages
-> (`results/calibration/FINDING-ercot79-phantom-outage-2026-07.md`). The
+> (`docs/records/ercot/FINDING-ercot79-phantom-outage-2026-07.md`). The
 > per-unit detector — event-based for load-following classes — never had that
 > bug, so it is now the sole CAMPD outage layer for every ISO.
 

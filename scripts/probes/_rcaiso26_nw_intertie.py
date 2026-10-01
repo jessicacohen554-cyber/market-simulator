@@ -9,7 +9,7 @@ Two measured reads, no model artifact needed:
     derates), seasonal TTC, and DAM scheduled net energy. Fetched live; nothing committed.
 
 Usage: ``python3 scripts/probes/_rcaiso26_nw_intertie.py [--no-oasis]``.
-Record: ``docs/handoffs/r-caiso-26/PRECOMMIT-r-caiso-26-nw-import-driver-2026-10-01.md``.
+Record: ``docs/records/caiso/r-caiso-26/PRECOMMIT-r-caiso-26-nw-import-driver-2026-10-01.md``.
 """
 
 from __future__ import annotations

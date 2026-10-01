@@ -1,7 +1,7 @@
 """ercot-188: SCHEME R1, the top-refined econ-curve slicing (``(c2)``).
 
 Pins the construction pre-registered in
-``docs/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md`` §2.2 and
+``docs/records/ercot/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md`` §2.2 and
 the containment §2.5 that keeps a change on the **ISO-agnostic** assembly path
 from re-slicing five other ISOs' fleets (rule 25 ``[R-ISO-SCOPE]``).
 

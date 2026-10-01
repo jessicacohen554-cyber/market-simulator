@@ -1,6 +1,6 @@
 """Tests for the FF-G4 Option-B electrification end-use layers (FR-16).
 
-Design: ``docs/handoffs/ff-g4-load-shape-design-memo-2026-07.md`` §4.2/§5.
+Design: ``docs/records/forecast/ff-g4-load-shape-design-memo-2026-07.md`` §4.2/§5.
 Trivial-first (CLAUDE.md testing pattern): closed-form resolver/profile
 arithmetic, then the fold-in algebra on synthetic zone demand. The axis is
 forecast-only and DEFAULT OFF, so the load-bearing tests are the off-path

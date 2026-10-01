@@ -3,7 +3,7 @@
 Covers :func:`market_sim.data.fleet.apply_ercot_ct_offer_surface` — the
 measured self-withholding offer posted on the CT/peaker ``econ``/``peak``
 tranches above a net-load-percentile hinge (design note
-``docs/handoffs/ercot-g22-offer-surface-2026-07.md``). The contract:
+``docs/records/ercot/ercot-g22-offer-surface-2026-07.md``). The contract:
 
 * flag off / non-ERCOT ⇒ byte-identical (the mechanism must never fire by
   default — rules 14/26);

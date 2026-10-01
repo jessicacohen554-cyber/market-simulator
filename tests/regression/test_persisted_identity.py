@@ -74,7 +74,7 @@ FROZEN_PICKLE_PATHS: dict[str, list[str]] = {
 #     the dict enters the hash and is the dominant contributor to this change.
 #
 # 2026-07-23 gas-offer net-revenue margin mechanism (commit d536e7d,
-# docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md) added two
+# docs/records/misc/gas-offer-net-revenue-margin-design-2026-07.md) added two
 # default-off fields, +gas_offer_net_revenue_margin (=False) and
 # +gas_offer_margin_anchor (=None). Both are now registered in
 # _CACHE_KEY_OPTIONAL_FIELDS (cache-neutral at their defaults), so the default
@@ -105,7 +105,7 @@ FROZEN_PICKLE_PATHS: dict[str, list[str]] = {
 #
 # CAUSE. Two CCS-retrofit fixed-cost defaults are re-identified onto the model's
 # own NREL ATB 2024 (2026$) basis, repairing the defect
-# `docs/handoffs/FINDING-capx-d30-45q-pace-2026-09-02.md` §5 rows 6-7
+# `docs/records/forecast/FINDING-capx-d30-45q-pace-2026-09-02.md` §5 rows 6-7
 # adjudicated:
 #   * `fixed_om_gas_cc_ccs` 25.0 -> 65.0 $/kW-yr — a "host CC + capture island"
 #     figure that had sat BELOW its own host (`fixed_om_gas_cc` 30.0) ever since
@@ -126,7 +126,7 @@ FROZEN_PICKLE_PATHS: dict[str, list[str]] = {
 # pre-2026-09-02 `results/<ISO>/<key>/` bundle at the old key is now unaddressed
 # and the next run re-solves. Behaviour moves ONLY in forecast years >=
 # `ccs_retrofit_available_year` (2028) — which is the repair, measured at screen
-# grain in `docs/handoffs/FINDING-capx-d41-ccs-fixedcost-2026-09-02.md`. The two
+# grain in `docs/records/forecast/FINDING-capx-d41-ccs-fixedcost-2026-09-02.md`. The two
 # fields have exactly two consumers, both inside forecast-mode capacity
 # evolution (`capacity_evolution/ccs.py::apply_ccs_retrofit` and the
 # `_THERMAL_FOM` lookup in `capacity_evolution/retirements.py`, which reaches
@@ -143,7 +143,7 @@ FROZEN_PICKLE_PATHS: dict[str, list[str]] = {
 # False -> True: an owner's filed EIA-860 Schedule-3 fossil retirement date is
 # now honored as an exogenous, vintage-gated step-1 input, with the economic
 # screen running on the residual (undated) fleet. Evidence:
-# `docs/handoffs/FINDING-capx-d42-fossil-dates-ab-2026-09-02.md` (MISO T1-H
+# `docs/records/forecast/FINDING-capx-d42-fossil-dates-ab-2026-09-02.md` (MISO T1-H
 # recall 5/19 -> 16/19, zero screen displacement, per-unit published deferral
 # counters); execution record `FINDING-capx-d44-fossil-dates-arm-2026-09-03.md`.
 #
@@ -183,7 +183,7 @@ FROZEN_PICKLE_PATHS: dict[str, list[str]] = {
 # `new_entry._emerging_lcoe` charges the ATB 2024 gas_cc_ccs increment against
 # — and cogeneration hosts (`plant_group` CC_CHP) leave the retrofit candidate
 # set. Zero DOF: every term is an already-cited constant. Evidence:
-# `docs/handoffs/FINDING-capx-d50-2026-09-04.md` §§1-5 and §8 (four A/B arms;
+# `docs/records/forecast/FINDING-capx-d50-2026-09-04.md` §§1-5 and §8 (four A/B arms;
 # at carbon 0 the repair closes the screen — ERCOT 3.79 GW -> 0, PJM 5.74 -> 0
 # in 2028, MISO 4,631.1 MW -> 0 across the window — and under RGGI it does not,
 # NEISO 12.79 -> 12.38 GW, which is the repair's signature rather than its
@@ -271,7 +271,7 @@ FROZEN_PICKLE_PATHS: dict[str, list[str]] = {
 # No keeper, sidecar, determination or dashboard row moves.
 #
 # Pre-declared BEFORE the solve — every key in this advance — in
-# `docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md` §3; cache-epoch ledger
+# `docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md` §3; cache-epoch ledger
 # entry 2026-09-06c in `src/market_sim/results/cache.py`; execution record
 # `FINDING-capx-d65b-2026-09-06.md`.
 PINNED_DEFAULT_CACHE_KEY = "547053bdfccd4264"
@@ -499,7 +499,7 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 # 2026-09-06 SET AT LANDING (capx D79 phase 1). Every name declared at its live
 # hash, so `moved_rows(iso) == {}` for all six ISOs and no key moved; the no-op
 # probe over every committed run config reads 0 moved
-# (`docs/handoffs/capxd79-solve-surface-no-op-record.json`). 296 surface names,
+# (`docs/records/forecast/capxd79-solve-surface-no-op-record.json`). 296 surface names,
 # 76 of them by-ISO tables.
 #
 # 2026-09-06 ERCOT ADVANCED (ercot-253, the rule-22 validation ladder).
@@ -656,7 +656,7 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   Named here because the digests span every row, and three lanes landed
 #   rows without advancing the pin — the same defect the 2026-09-08 and
 #   2026-09-10 blocks name. Full record:
-#   docs/handoffs/FINDING-y28-cache-key-identity-2026-09-24.md.
+#   docs/records/governance/FINDING-y28-cache-key-identity-2026-09-24.md.
 #
 # 2026-09-25 ALL SIX ADVANCED (COAL-SUB) — THE BARE `COAL` CLASS IS DELETED.
 #   Owner instruction 2026-09-25, verbatim: "we need to completely eliminate
@@ -678,7 +678,7 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   Row counts +2 everywhere (the two added names).
 #   WHAT IT COSTS: a cache miss in every ISO. The zero-LP proof (fleet_only
 #   rebuild of every keeper year before/after, every per-generator array
-#   compared exactly — docs/handoffs/RESULT-coal-sub-2026-09-25.md) shows every
+#   compared exactly — docs/records/misc/RESULT-coal-sub-2026-09-25.md) shows every
 #   coal unit whose subclass already resolved is byte-identical; the only
 #   movers are the plants that previously fell into the generic COAL bucket,
 #   which now read their own subclass's curve and parameters.
@@ -791,7 +791,7 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   sibling was (moves no key). +1 row everywhere.
 #   WHAT IT COSTS: the armed CAISO path changes in 2019-2022 without a key
 #   move; no local results cache crosses a shard container, and the lane
-#   re-solves every CAISO year (docs/handoffs/r-caiso-17/).
+#   re-solves every CAISO year (docs/records/caiso/r-caiso-17/).
 # 2026-09-30 NYISO ADVANCED (NYISO-NEXT-17) — ONE ROW ADDED, NO VALUE MOVED.
 #   NYISO-NEXT-17 added constants.NYISO_TE_NONCE_ENVELOPE_BY_MONTH (the measured
 #   non-CENTRAL-EAST TOTAL EAST envelope, read only under the default-off
@@ -835,6 +835,14 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   ERCOT (soco-96's seven unscoped CAMPD/Part-75 CO2 constants, declared at
 #   their live hash, no value moved — the PJM block above records them for
 #   PJM). The other ISOs' stale pins are their own lanes' (rule 25).
+# 2026-10-01 FIVE ADVANCED (cleanup-D) — NO VALUE MOVED. soco-96 (merged
+#   2026-09-30) declared seven unscoped CAMPD / Part-75 CO2 constants at their
+#   live hash (`--declare-missing`); unscoped names enter EVERY ISO's row set,
+#   so each non-PJM pin grows by 7 rows (PJM's pin already carried them, see
+#   the entry above). `solve_surface_register.py --diff ca84177c HEAD` ->
+#   "1 value(s) moved (ISO_BA_JOINS: PJM), 10 added, 0 removed; per-ISO totals
+#   ERCOT 0, CAISO 0, MISO 0, NYISO 0, NEISO 0". WHAT IT COSTS: nothing
+#   solved; no committed bundle's numbers move.
 # 2026-10-01 ERCOT ADVANCED (R-ERCOT-23) — ONE ROW ADDED, NO VALUE MOVED.
 #   constants.ERCOT_LCAP_WINDOWS_BY_YEAR (the published 2021 LCAP window, read
 #   only under the default-off ercot_swcap_effective_hourly) is declared at its
@@ -843,11 +851,11 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   WHAT IT COSTS: nothing — no existing ERCOT key re-keys at default.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
     "ERCOT": ("4166ef2a4f8fd8ad", 248),
-    "CAISO": ("289c8c383a78f4d9", 213),
-    "MISO": ("52d6fa6795d5e276", 220),
+    "CAISO": ("904a25132212fb94", 220),
+    "MISO": ("652b5a171e3f309f", 227),
     "PJM": ("254a954525afd690", 233),
-    "NYISO": ("a64df99bd6857677", 221),
-    "NEISO": ("e082dd92b5c22723", 206),
+    "NYISO": ("167d0afda461f43c", 228),
+    "NEISO": ("d67f9f101209d62f", 213),
 }
 
 
@@ -1177,7 +1185,7 @@ def _fields_explaining_the_key_move() -> list[str]:
     # if its baseline is byte-identical to the payload ``cache_key`` hashes, and
     # it had drifted from that payload in TWO places -- EITHER of which alone is
     # enough to make it silent. Measured on the pre-repair tree, over the four
-    # combinations (docs/handoffs/FINDING-capx-d91-2026-09-09.md section 3):
+    # combinations (docs/records/forecast/FINDING-capx-d91-2026-09-09.md section 3):
     #
     #     frozen drop  retired re-insert   baseline           culprit found
     #     no           no                  d3a7d2f0f38c1f73   []

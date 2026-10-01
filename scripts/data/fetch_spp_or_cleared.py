@@ -1,6 +1,6 @@
 """Fetch SPP RTBM operating-reserve CLEARED MW, hourly, SPP system-wide, 2019-2025.
 
-Lane SPP-81 (``docs/handoffs/FINDING-spp-81-residual-upper-tercile-2026-09-25.md``).
+Lane SPP-81 (``docs/records/spp/FINDING-spp-81-residual-upper-tercile-2026-09-25.md``).
 ``data/raw/spp-or-mcp`` carries the RTBM reserve *prices* (MCP); SPP-81's ramp-product
 leg also needs the *quantities* each product cleared, to test whether ramp procurement
 (launched 2022-03-01) changed which units set the marginal energy price.

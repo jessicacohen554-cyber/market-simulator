@@ -361,7 +361,7 @@ def inject_reference_price_mc(
             rows on the mc = 0 placeholder from
             :func:`build_reference_price_node` with LIVE bounds — free import
             capacity and free export sinks in the LP (S-123 finding §5,
-            ``docs/handoffs/FINDING-capx-s123-miso-adequacy-2026-08-30.md``).
+            ``docs/records/forecast/FINDING-capx-s123-miso-adequacy-2026-08-30.md``).
             Backcast years covered by the measured seam ladders are unaffected:
             every armed ISO resolves at least one neighbor shape in 2018–2025,
             so this path prices every row there and the ladder displaces them
@@ -473,7 +473,7 @@ def inject_reference_price_mc(
             f"the mc=0 placeholder from build_reference_price_node and LIVE "
             f"bounds ({free_import_mw:,.0f} MW of free import capacity and "
             f"{free_export_mw:,.0f} MW of free export sinks). Refusing to build "
-            f"a free seam (fail closed; S-123 finding §5, docs/handoffs/"
+            f"a free seam (fail closed; S-123 finding §5, docs/records/forecast/"
             f"FINDING-capx-s123-miso-adequacy-2026-08-30.md). A seam prices "
             f"only when its EIA-930 extract (ba_code, else proxy_ba) covers the "
             f"full solve year; at HEAD no extract covers any year >= 2026. To "

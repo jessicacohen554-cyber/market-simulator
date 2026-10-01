@@ -2,7 +2,7 @@
 
 The arm is the incumbent keeper's recipe (``2026-09-26-nyisonext3-tranche-basis-span``)
 plus ``nyiso_li_seam_posted_limit_cap``, solved year-isolated (rule 36). Checks, per
-``docs/PRECOMMIT-nyiso-next5-li-tie-posted-limit-2026-09-27.md`` §6 and its §9 addendum:
+``docs/records/nyiso/PRECOMMIT-nyiso-next5-li-tie-posted-limit-2026-09-27.md`` §6 and its §9 addendum:
 
 * S0 -- every leg solved at the pin (``--pin``);
 * S1 -- the keeper's flags plus ``nyiso_li_seam_posted_limit_cap`` true, and the

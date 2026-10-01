@@ -494,7 +494,7 @@ separate calibration-complete marker is declared for NYISO.
 > keeper because it is the **most structurally faithful** NYISO config to date:
 > physically-correct CC capacity (`nyiso 26`) **and** a CC offer level grounded in
 > the CAMPD CC marginal HR (`nyiso 27`) — the documented CC offer-level frontier
-> (`docs/handoffs/pjm-cc-level-tuning-2026-06.md`) now **DONE**. C6 governance
+> (`docs/records/pjm/pjm-cc-level-tuning-2026-06.md`) now **DONE**. C6 governance
 > **PASS** (attested); determination **NOT-YET** (the residual CC/ST C1 + `C3a`
 > 2024 honest misses at the grounded offer ceiling + the ledgered EIA-930/923 gas
 > basis floor). The RCPF scarcity tail (`C3c`) and NYC-peaker under-run remain
@@ -504,7 +504,7 @@ separate calibration-complete marker is declared for NYISO.
 
 > **ROOT-CAUSE CORRECTION (2026-06-25, analysis):** the `C3c` tail / CT_PEAKER
 > incidence gap is **NOT** import-discipline- or interface-gated. A diagnostic
-> 2024 solve (`docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md`)
+> 2024 solve (`docs/records/nyiso/nyiso-downstate-reserve-incidence-2026-06.md`)
 > shows the in-LP locational reserve families never bind (`reserve_price` >$0 in
 > 9 h vs measured NYC reserve >$0 in 3,082 h), and the downstate interfaces bind
 > ≤7 h/yr (NYC inflow 2,600 mean vs 4,900 ceiling) — so tightening imports /
@@ -539,7 +539,7 @@ separate calibration-complete marker is declared for NYISO.
 > the nameplate capacity + corrected steam HR **stay in**: the wall was masking a
 > too-cheap CC offer; removing it surfaces the real bug, fixed via the real lever
 > (CC `econ_low/econ_high` in `_NYISO_OFFER_CURVE`, grounded in the CAMPD CC
-> marginal-HR fit — the `docs/handoffs/pjm-cc-level-tuning-2026-06.md` direction),
+> marginal-HR fit — the `docs/records/pjm/pjm-cc-level-tuning-2026-06.md` direction),
 > **not** by restoring a capacity haircut. New keeper because it is the **most
 > structurally faithful** NYISO config to date, with the remaining miss now cleanly
 > localized to ONE diagnostic lever (the CC offer level) instead of entangled with

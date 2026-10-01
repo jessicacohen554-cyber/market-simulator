@@ -664,7 +664,7 @@ def _band_categorical(unit_ids: pd.Series) -> pd.Categorical:
     column. Here the column is read as (or factorised to) a categorical,
     ``_tranche_band`` runs over its categories only, and the band codes are
     looked up by the unit codes (wallclock A-3: 12.7 s → 2.2 s on that frame;
-    ``docs/handoffs/wallclock-opportunities-2026-09.md`` §2).
+    ``docs/records/misc/wallclock-opportunities-2026-09.md`` §2).
 
     The categories are the sorted distinct bands PRESENT in the rows — never
     an unused unit category's band — so the result matches the per-row
@@ -889,7 +889,7 @@ def _write_p0_dispatch_sidecar(
     and both against the P0 duals. With this pair a later session replays
     :func:`model.commitment.caiso_ra_mustoffer_min_gen` exactly, offline and
     at zero LP, instead of bounding it analytically
-    (``docs/RESULT-caiso286-cc-start-cost-2026-09-19.md`` section 7).
+    (``docs/records/caiso/RESULT-caiso286-cc-start-cost-2026-09-19.md`` section 7).
 
     Write-only and solve-invariant: at default the flag is off, ``p2_state``
     carries neither key, and this is never called. Returns the paths written
@@ -1005,7 +1005,7 @@ def _unit_hourly_frame(
 
     The committed class sidecar sums dispatch to 14 classes and the storage
     sidecar to 3 techs, so a slim bundle exposes **no per-unit series at all** —
-    which is why ``docs/handoffs/caiso-131-c3c-c3a-ask-2026-07-27.md`` §4 records
+    which is why ``docs/records/caiso/caiso-131-c3c-c3a-ask-2026-07-27.md`` §4 records
     ask A2's D1 (the plant-level ONLINE/synchronized reserve measure PJM already
     uses, ``results.scarcity.reserve_headroom``) as BLOCKED on a data gap. That
     measure needs exactly two per-unit-hour series: the solved ``mw`` and the
@@ -1559,7 +1559,7 @@ def _system_frame(
                 cd = np.asarray(cap_dual, dtype=float)[:, :T]
                 if ercot_ordc_adder_published_anchor:
                     # ercot-213 ANCHORING REPAIR of the cap-additive regime
-                    # (docs/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md
+                    # (docs/records/ercot/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md
                     # §5, the named successor). Two defects of the branch above,
                     # both structural and both visible only once the ercot-212
                     # credit netting makes the regime reachable in more than
@@ -1930,7 +1930,7 @@ def _storage_frame(
     not interpretable. Both are WRITE-ONLY: read after the LP has solved, they
     cannot perturb a solve, and they add no ``ScenarioConfig`` field (rule 24
     ``[R-REGISTRY]`` scopes to tunables that can change a solve).
-    ``docs/FINDING-caiso284-belly-commitment-phase0-2026-09-16.md`` §3.
+    ``docs/records/caiso/FINDING-caiso284-belly-commitment-phase0-2026-09-16.md`` §3.
     """
     if not storage_units or result.storage_discharge is None:
         return None
@@ -2562,7 +2562,7 @@ def _pumped_storage_plant_ids() -> frozenset[int]:
 
     **THIS GUARD WAS A DEAD NO-OP UNTIL 2026-09-12 and is live only from then**
     (gov-hydro-seam-1; the defect is
-    ``docs/FINDING-pjm-h1-hydro-accounting-seam-2026-09-12.md`` §5). The
+    ``docs/records/pjm/FINDING-pjm-h1-hydro-accounting-seam-2026-09-12.md`` §5). The
     docstring above described the intended taxonomy, but ``classify_plant``
     carried a ``fuel == "WAT"`` short-circuit ahead of its prime-mover test and
     every ``WAT``/``PS`` row therefore reached ``hydro``, never ``OTHER`` — so
@@ -2883,7 +2883,7 @@ def _backfill_eia923_missing_months(
     too — not merely from its shape. Measured instance: Bethlehem Energy Center
     (plant 2539, a 750 MW NYISO combined cycle) filed no February and no November
     2022; CAMPD meters 596.0 GWh there, and `CC_REGULAR`'s 2022 benchmark is short
-    by that block (``docs/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md``
+    by that block (``docs/records/nyiso/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md``
     §2). Census over every committed bench part: 67 plant-years across nine BAs.
 
     Rule 14 ``[R-ACCURATE]``: the accurate measurement replaces a silently truncated
@@ -2904,7 +2904,7 @@ def _backfill_eia923_missing_months(
     idle in the missing month.
 
     **Only months inside the plant's operating window are filled** (miso-267,
-    ``docs/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md``).
+    ``docs/records/miso/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md``).
     A NEW plant's months before its first unit's EIA-860 commercial operation date
     are blank in EIA-923 too, but they are not withheld: they are outside the
     reporting boundary, and CEMS records the COMMISSIONING test energy there. That
@@ -3042,7 +3042,7 @@ def _reattribute_dual_fuel_oil(
     ``oil`` class is empty.
 
     **A modelled plant's oil row moves WHATEVER ITS SIGN** (miso-267,
-    ``docs/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md``).
+    ``docs/records/miso/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md``).
     EIA-923 books NET generation, which is negative for an oil unit that drew
     station service in a year it barely ran (an ignition-oil or black-start
     row). This function first moved only ``annual > 0`` rows, so every modelled
@@ -3183,7 +3183,7 @@ def _hydro_benchmark_is_923_only(iso: str, year: int) -> bool:
     another population's meter. Measured on PJM it inflates the hydro actual by
     5.96-7.11 TWh/yr in every year and is the whole of that ISO's apparent
     ~44 % hydro "miss"
-    (``docs/FINDING-pjm-h1-hydro-accounting-seam-2026-09-12.md``). This is the
+    (``docs/records/pjm/FINDING-pjm-h1-hydro-accounting-seam-2026-09-12.md``). This is the
     BENCHMARK end of the repair ``pjm-143`` already landed on the MODEL end:
     ``hydro_level_923_hy`` moved PJM's hydro budget LEVEL off ``NG: WAT`` and
     onto EIA-923 ``HY`` for exactly this reason, leaving the two sides of one
@@ -3217,7 +3217,7 @@ def _hydro_benchmark_is_923_only(iso: str, year: int) -> bool:
     unrepaired; when the final 2025 EIA-923 vintage lands, the census fills, the
     predicate flips and the repair reaches them with **no code change**. The
     rationale, the three candidate scalars that were measured unusable, and the
-    cost are ``docs/ADDENDUM-gov-hydro-seam-1-vintage-fallthrough-2026-09-12.md``.
+    cost are ``docs/records/governance/ADDENDUM-gov-hydro-seam-1-vintage-fallthrough-2026-09-12.md``.
 
     **Zero new parameters, zero new registry, zero new constants** (rules 21 /
     24): two existing predicates, ANDed.
@@ -4687,7 +4687,7 @@ def mirror_solve_year_gas_anchors(
         internally inconsistent: ``gas_hub_basis_overlay: true`` beside anchors
         that only reproduce at ``overlay=False``. Both of nyiso-230's G-CONF and
         G-PRED screen gates failed on that one line and neither measured the
-        mechanism (``docs/RESULT-nyiso231-the-mirror-and-the-2022-rescreen-2026-09-13.md``).
+        mechanism (``docs/records/nyiso/RESULT-nyiso231-the-mirror-and-the-2022-rescreen-2026-09-13.md``).
 
     Fusing the resolution to the ``return`` makes the ordering structural
     instead of positional: a future ``if flag: recorded_cfg = ...`` block lands
@@ -7276,7 +7276,7 @@ def solve_and_persist(
             # LP, which is 38% of the 1.53 GB cross-year floor that makes a
             # multi-year MISO invocation OOM. Found by the release-seam frame
             # telemetry, not by inspection: miso-92, see
-            # results/calibration/FINDING-miso92-solve-memory-attribution-2026-07.md.
+            # docs/records/miso/FINDING-miso92-solve-memory-attribution-2026-07.md.
             # `_sysf` and `campd_year` are deliberately NOT freed here — both
             # are appended to cross-year accumulators and are still live.
             del _dispf
@@ -7999,7 +7999,7 @@ def solve_and_persist(
         # floor reconstruction (run_year(fleet_only=True) from meta.json) applies
         # the SAME drag the solve did. Omitting them silently dropped the drag
         # from D-2/D-4 reconstruction, under-counting CT_PEAKER forced energy for
-        # every drag keeper (docs/FINDING-pjm-burndown-2026-07.md). The
+        # every drag keeper (docs/records/pjm/FINDING-pjm-burndown-2026-07.md). The
         # gas_st_drag_overrides key repeats that finding for the ST_GAS drag:
         # without it a --replay-bundle re-solve of a PJM drag keeper fell back
         # to the ScenarioConfig default hinge and forced ~4x the ST_GAS energy
@@ -8759,7 +8759,7 @@ def _plant_hourly_fit(
                 "campd_gwh": round(float(o.sum()) / 1e3, 1),
                 "campd_op_hours": int((o > 0).sum()),
                 # Simulated operation for the forward CO2-rate estimator's
-                # sim-conditioning (docs/handoffs/emissions-co2-rate-plan-2026-07.md
+                # sim-conditioning (docs/records/misc/emissions-co2-rate-plan-2026-07.md
                 # §4.5). Run-length analysis of the in-memory dispatch, vectorized
                 # (no hour loop); starts use campd._ONLINE_MW (1 MW) off->on.
                 "model_op_hours": int((m > 0.0).sum()),
@@ -11083,7 +11083,7 @@ def main() -> None:
         "registered multipliers at anchor gas and compress toward true MC "
         "off-distribution (the 2022 NEISO holdout rotation). ISOs without a "
         "derived anchor hard-fail; ISOs without phys_* keys are inert. "
-        "Design: docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md. "
+        "Design: docs/records/misc/gas-offer-net-revenue-margin-design-2026-07.md. "
         "Default OFF -> prior keepers byte-identical.",
     )
     parser.add_argument(
@@ -11512,7 +11512,7 @@ def main() -> None:
     # ercot-115 seam lesson): None = keep the ScenarioConfig/prb-resolved
     # value; the --no- form forces it off for ablation arms.
     # ROUTE A "REPLACE" — the COMMITTED band's MEASURED basis (pjm-h6,
-    # chartered by docs/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md
+    # chartered by docs/records/pjm/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md
     # §4/§10a). ONE mechanism, TWO coupled halves, never armed apart (rule 19
     # [R-ONE-MECH]). TRI-STATE (default None, the ercot-115 seam pattern):
     # None = keep the config-resolved value (False for every ISO and every
@@ -12000,7 +12000,7 @@ def main() -> None:
         "the measured 60-Day DAM disclosure registered non-OUT storage HSL "
         "(PWRSTR rows; ESR rows post-RTC+B), replacing the EIA-860 COD-ramped "
         "power basis (~2 GW low in both audited summers — "
-        "docs/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md). EIA-860 "
+        "docs/records/ercot/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md). EIA-860 "
         "stays the zone-split and duration basis; uncovered dates (Oct-2023 "
         "hole) keep EIA-860 (rule 14; the storage analogue of "
         "--ercot-thermal-dam-availability). data/raw/ercot-storage-capability.csv, "
@@ -12139,7 +12139,7 @@ def main() -> None:
         "scripts/data/derive_miso_loss_surface.py). Zonal duals then "
         "separate by the measured delivery-factor ratio — losses consume "
         "MWh, prices stay duals, zero fitted scalars (charter "
-        "docs/handoffs/miso-nc-price-separation-design-2026-07.md §4). "
+        "docs/records/miso/miso-nc-price-separation-design-2026-07.md §4). "
         "MISO-only; default off.",
     )
     parser.add_argument(
@@ -12209,7 +12209,7 @@ def main() -> None:
         help="PJM pooled linear commitment-posture lever — the SAME mechanism "
         "as --miso-commitment-posture, ported not forked (design note "
         "docs/multi-iso/miso-scarcity-posture-design-2026-07.md §A; PJM port "
-        "docs/handoffs/pjm-commitment-posture-port-2026-07.md). Per "
+        "docs/records/pjm/pjm-commitment-posture-port-2026-07.md). Per "
         "non-fast-start pergen pool, an online-capacity variable U with joint "
         "P+R <= U, CEMS-measured min-load coupling P >= mlf*U, an NREL-class "
         "startup charge on dU+, and the pergen reserve cap online-gated "
@@ -13341,7 +13341,7 @@ def main() -> None:
         default=None,
         help="ERCOT gas-CC COMMITMENT BRIDGE (ERCOT-63, the committed-state "
         "mechanism promoted from the ERCOT-62b probe — diagnosis "
-        "docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md §5-6). "
+        "docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md §5-6). "
         "P1-native: before the single scored P1 solve, hold each merchant "
         "gas-CC that the base-cost P0 pattern runs before AND after an idle "
         "gap at min-load across the gap, when the gap is shorter than its "
@@ -13398,7 +13398,7 @@ def main() -> None:
         action=argparse.BooleanOptionalAction,
         default=None,
         help="ERCOT COMMITMENT POSTURE (the commitment-thinness lane, "
-        "docs/handoffs/ercot-commitment-thinness-2026-07.md): the STANDALONE "
+        "docs/records/ercot/ercot-commitment-thinness-2026-07.md): the STANDALONE "
         "energy-only port of the pooled-linear posture lever (design note §A). "
         "Per (zone x gas-class) merchant-gas pool, an online-capacity variable "
         "U with energy headroom (sum P <= U), CEMS-measured min-load coupling "
@@ -13423,7 +13423,7 @@ def main() -> None:
         action=argparse.BooleanOptionalAction,
         default=None,
         help="Mothballed-but-operating re-carry (the Cottonwood lane, "
-        "docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md): re-carry "
+        "docs/records/miso/miso-cc-vintage-undercarry-plan-2026-07.md): re-carry "
         "each OA (mothballed) unit the canonical snapshot's OP filter drops "
         "for backcast solve year Y iff it is OP in the year-matched EIA-860 "
         "vintage_<Y> — EIA's own contemporaneous status, the zero-DOF "
@@ -13929,7 +13929,7 @@ def main() -> None:
         "inconsistent. Zero free parameters; falls back to the incumbent "
         "artifact wherever a companion has not been derived, so the off path is "
         "byte-inert and only NYISO is reachable today. See "
-        "docs/FINDING-nyiso176-input-artifact-reproducibility-2026-09-02.md.",
+        "docs/records/nyiso/FINDING-nyiso176-input-artifact-reproducibility-2026-09-02.md.",
     )
     parser.add_argument(
         "--unit-outage-mixed-gas-routing",
@@ -14000,7 +14000,7 @@ def main() -> None:
         "contractually additive); the declared-event maxgen layer is out of "
         "scope by construction, its rows carrying a measured derate_mw rather "
         "than a unit capacity. See "
-        "results/calibration/PREREG-miso201-st-basis-alignment-2026-09-02.md.",
+        "docs/records/miso/PREREG-miso201-st-basis-alignment-2026-09-02.md.",
     )
     parser.add_argument(
         "--unit-outage-short-windows-gas",
@@ -14094,7 +14094,7 @@ def main() -> None:
         "shares are contractually additive); the declared-event maxgen layer is "
         "out of scope BY MEASUREMENT — its windows are already hour-granular and "
         "carry zero same-unit overlaps over 544 unit-series. See "
-        "results/calibration/PREREG-miso202-boundary-day-double-count-2026-09-03.md.",
+        "docs/records/miso/PREREG-miso202-boundary-day-double-count-2026-09-03.md.",
     )
     parser.add_argument(
         "--cc-winter-capability-basis",
@@ -14433,7 +14433,7 @@ def main() -> None:
         "percentages conditioned on published PAR availability (MIS P-33 "
         "outSched). SUPERSEDES --nyiso-seam-deliverability-envelope rather than "
         "stacking on it (rule 19). Zero free parameters. NYISO-only, default "
-        "off. Pre-registration: results/calibration/"
+        "off. Pre-registration: docs/records/nyiso/"
         "PREREG-nyiso127-addendum2-full-seam-attribution-2026-08-05.md.",
     )
     parser.add_argument(
@@ -14695,7 +14695,7 @@ def main() -> None:
         "ceiling semantics, 2023/24/25). Zero new parameters; envelope values, "
         "percentile, ladder rungs and band grid byte-unchanged. Only bites "
         "with --miso-seam-flow-limit / --miso-seam-export-limit. See "
-        "docs/handoffs/miso-g23-seam-envelope-composition-design-2026-07.md.",
+        "docs/records/miso/miso-g23-seam-envelope-composition-design-2026-07.md.",
     )
     parser.add_argument(
         "--miso-import-sil-measured-envelope",
@@ -14973,7 +14973,7 @@ def main() -> None:
         help="Thread the unified carbon resolver's power-sector mass-cap "
         "ROW (policy.cap_and_trade.resolve_carbon_program) into every "
         "solved year instead of the default measured-price adder (G-29, "
-        "docs/handoffs/emissions-mass-cap-plan-2026-07.md); mirrors "
+        "docs/records/misc/emissions-mass-cap-plan-2026-07.md); mirrors "
         "run_calibration.py's own --mass-cap-enabled. Diagnostic-only "
         "(e.g. the RGGI dual-vs-auction-price validation probe); never a "
         "keeper default. No effect on ISOs with no cap-and-trade program "

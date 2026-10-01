@@ -2,7 +2,7 @@
 
 > **⚠️ SUPERSEDED — historical record only, not the live spec.**
 > This document's 2018→2025 hindcast window and AEO2018 fuel-path design were
-> **replaced 2026-07** by `docs/handoffs/forecast-validation-program-2026-07.md`,
+> **replaced 2026-07** by `docs/records/forecast/forecast-validation-program-2026-07.md`,
 > which is now the live capacity-hindcast design. The live plan initializes
 > from the **EIA-860 2020 vintage**, solves **2021 / 2023 / 2024 / 2025** with a
 > **2022 bridge year** (no solve — the one-pass evolution loop consumes 2021

@@ -2,7 +2,7 @@
 """Fetch the USACE CROHMS hourly project series for the Columbia / lower Snake chain (NWPP-36).
 
 The raw measured input behind the Columbia mainstem hydraulic-coupling mechanism
-(owner ruling N3; ``docs/handoffs/PRECOMMIT-nwpp-36-2026-09-16.md`` §4). The lag
+(owner ruling N3; ``docs/records/nwpp/PRECOMMIT-nwpp-36-2026-09-16.md`` §4). The lag
 ``τ`` per link, the operated pondage band per plant, the water-to-energy ratio per
 plant-month and the monthly side inflow / head spill are all DERIVED from this pull
 by ``scripts/data/build_nwpp_hydro_cascade.py`` — nothing here is modelled, and the

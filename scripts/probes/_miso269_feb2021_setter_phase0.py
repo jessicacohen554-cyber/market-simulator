@@ -33,7 +33,7 @@ from scripts.probes._miso269_transport_static_phase0 import (  # noqa: E402
     INTERNAL, KEEPER, TOL, rebuild,
 )
 
-OUT = REPO / "results/calibration/_miso269_feb2021_setter_phase0.json"
+OUT = REPO / "results/phase0/miso/_miso269_feb2021_setter_phase0.json"
 YEAR = 2021
 
 

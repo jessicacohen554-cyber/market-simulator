@@ -3,7 +3,7 @@
 The arm is the NEXT-16 keeper's recipe replayed at the pin with THREE deltas,
 ``mid_vintage_exit_carry``, ``fleet_zone_vintage_coords`` and
 ``retiree_vintage_status_scope`` all true
-(``docs/PRECOMMIT-nyiso-next18-retiree-carry-2026-09-30.md`` sec. 3 G-1). Per leg:
+(``docs/records/nyiso/PRECOMMIT-nyiso-next18-retiree-carry-2026-09-30.md`` sec. 3 G-1). Per leg:
 
 * S0 -- solved at the pin (``git.basis_sha``);
 * S1 -- ``scenario_config`` equals the keeper bundle's except exactly the

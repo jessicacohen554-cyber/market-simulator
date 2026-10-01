@@ -37,7 +37,7 @@ ENTRY = {
     "NYISO DA zonal-mean LBMP -- unchanged sources, one duplicate row removed.",
     "root_cause": "not a residual closer: a derivation defect (HQ counted twice; corr "
     "0.955-0.993 in every year 2018-2025), corrected under rule 14 and cited under rule "
-    "23. Record: docs/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md.",
+    "23. Record: docs/records/nyiso/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md.",
 }
 
 
@@ -58,7 +58,7 @@ def main() -> None:
         "session NYISO-NEXT-8 (2026-09-27), the incumbent keeper "
         "2026-09-27-nyisonext6-li-cap-span replayed unchanged on the HQ-deduped NYISO "
         "import ladder (a rule-14 derivation correction, no new field). Pre-registration: "
-        f"docs/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md; arm pinned at {a.pin}. "
+        f"docs/records/nyiso/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md; arm pinned at {a.pin}. "
         "Offer curves byte-identical to the keeper (rule 1(c)); no multiplier tuned; "
         "zero free parameters. PRIOR: "
     )

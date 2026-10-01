@@ -496,7 +496,7 @@ jobs:
           # Both failure modes were reproduced on synthetic repos -- a data-only
           # commit AND a data-only PR merge, which is the common shape here since
           # a data-intake PR touches only data/raw. Evidence:
-          # docs/FINDING-rewrite-prep-2026-08-11.md section 3.2-3.3.
+          # docs/records/governance/FINDING-rewrite-prep-2026-08-11.md section 3.2-3.3.
           #
           # Cost of keeping them: emptied commits survive as empty commits. That
           # is commit objects only (a few hundred bytes each) -- the blob savings,

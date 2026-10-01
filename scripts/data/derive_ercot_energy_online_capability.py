@@ -4,7 +4,7 @@ cap (`ScenarioConfig.ercot_energy_online_capability_cap`, ERCOT-159 / queue
 item 9, the ERCOT-155 named successor).
 
 Charter and pre-registered construction:
-``docs/PRECOMMIT-ercot159-energy-online-capability-cap-2026-08-04.md`` §2.
+``docs/records/ercot/PRECOMMIT-ercot159-energy-online-capability-cap-2026-08-04.md`` §2.
 
 The measured fast-tier capability object, per SCED interval, hourly-meaned
 onto the fixed-CST non-leap 8760 clock (the ERCOT-155 census taxonomy and

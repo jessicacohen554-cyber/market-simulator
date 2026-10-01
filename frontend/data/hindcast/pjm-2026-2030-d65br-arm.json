@@ -118,8 +118,8 @@
     "d65br": {
       "lane": "capx D65-B-R — the coupled arming (Act A + Act B) batch",
       "authority": "owner ruling Q47; r#48 §3(a) gates; r#51 §3(b) adjudication",
-      "precommit": "docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md Addendum C (+D/E/F/G)",
-      "finding": "docs/handoffs/FINDING-capx-d65br-2026-09-06.md",
+      "precommit": "docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md Addendum C (+D/E/F/G)",
+      "finding": "docs/records/forecast/FINDING-capx-d65br-2026-09-06.md",
       "solve_key_matches_predeclaration": true,
       "gates": "ALL CLEAR, and G1′ EMPIRICALLY VINDICATES the r#48 §3(a) adjudication: all 6 rows land at 1.2668–1.4886 inside PJM's own D64 band 1.27–1.49, while ERCOT's land inside its own 0.95–1.05 — two ISOs, two bands, each in its own. G5′ 2028 converts 408.2 MW against D64 §2.4's 0.41 GW zero-LP hour-ceiling census, 99.6 % of a prediction computed months earlier from the ceiling arithmetic alone. This leg carries D81 and D67-ARM as live hunks besides the two acts (Addendum D.3 / E.3) — disclosed for the board row, not netted; the gate table is unaffected and G4′ returns changed: none.",
       "retrofits": [

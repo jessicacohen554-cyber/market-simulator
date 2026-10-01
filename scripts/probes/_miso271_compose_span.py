@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """miso-271 copy of _rmiso_compose_span.py (adds the wefor_residual pair to MUST_AGREE,
 so a leg whose --set silently no-opped cannot compose in; seven arm legs 2019-2025,
-docs/PRECOMMIT-miso271-cc-regular-shortfall-wefor-stack-2026-09-25.md §4).
+docs/records/miso/PRECOMMIT-miso271-cc-regular-shortfall-wefor-stack-2026-09-25.md §4).
 
 Inherited header: R-MISO copy of _miso268_compose_span.py (adds the F1 backcast defaults and the two
 outage arms to MUST_AGREE, so a leg on which any silently no-opped cannot compose in;

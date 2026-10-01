@@ -202,7 +202,7 @@ def test_committed_artifact_cod_basis_matches_measured_identification():
     """The committed COD basis reproduces the nyiso-133 measured date swap.
 
     Mean-monthly registered capacity by basis, from
-    ``results/calibration/_nyiso133_commissioning_ramp.json``: the EIA-860
+    ``results/phase0/nyiso/_nyiso133_commissioning_ramp.json``: the EIA-860
     ``Operating Month`` basis moves 2023 UP 1.0 % (Darby and Stillwater are
     EARLIER there) and 2024 DOWN 10.2 % (Morris Ridge +2 months, High River and
     East Point +1), and leaves the flat 2025 fleet untouched. The signed-both-

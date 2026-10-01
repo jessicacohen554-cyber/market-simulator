@@ -35,8 +35,8 @@ ENTRY = {
     "per boiler (31RH/32SH, 51RH/52SH) as separate units, each dividing half the fuel by "
     "the full repeated gross load; the per-hour band kept a biased 264-464 h sample -> "
     "9.449 net vs the merged meter's 11.645. Same defect nyiso-192 repaired in the outage "
-    "panel. Record: docs/FINDING-nyiso-next21-d4-rows-and-astoria-heat-rate-2026-10-01.md, "
-    "docs/PRECOMMIT-nyiso-next21-astoria-heat-rate-2026-10-01.md.",
+    "panel. Record: docs/records/nyiso/FINDING-nyiso-next21-d4-rows-and-astoria-heat-rate-2026-10-01.md, "
+    "docs/records/nyiso/PRECOMMIT-nyiso-next21-astoria-heat-rate-2026-10-01.md.",
 }
 
 
@@ -57,7 +57,7 @@ def main() -> None:
         "session NYISO-NEXT-21 (2026-10-01), the incumbent keeper "
         "2026-09-30-nyisonext18-retiree-carry-span replayed with ZERO recipe deltas on the "
         "re-derived campd_st_heat_rates_NYISO.csv (Astoria 8906 9.449 -> 11.18-12.07). "
-        "Pre-registration: docs/PRECOMMIT-nyiso-next21-astoria-heat-rate-2026-10-01.md; arm "
+        "Pre-registration: docs/records/nyiso/PRECOMMIT-nyiso-next21-astoria-heat-rate-2026-10-01.md; arm "
         f"pinned at {a.pin}. Offer curves byte-identical to the keeper (rule 1(c)); no "
         "multiplier tuned; zero free parameters added. PRIOR: "
     )

@@ -41,7 +41,7 @@ Stages:
                 cascade — see ``cascade_price_stats``. The committed
                 pre-correction record keeps those fields as the frozen record
                 with a dated CORRECTION key;
-                docs/FINDING-xiso-cascade-scan-2026-09-01.md.)
+                docs/records/governance/FINDING-xiso-cascade-scan-2026-09-01.md.)
   5 liveness  — per-region aggregate online-headroom precursor (H_on = rho x
                 online output of reserve-eligible ramp-capable units, from the
                 committed miso169_gated_A unit_hourly — bit-identical to the
@@ -78,7 +78,7 @@ from market_sim.data.reserve_requirements import (  # noqa: E402
 )
 
 BUNDLE = ROOT / "results" / "calibration" / "miso170_layup_B2" / "hourly"
-OUT = ROOT / "results" / "calibration" / "_miso171_reserve_product_decomposition.json"
+OUT = ROOT / "results" / "phase0" / "miso" / "_miso171_reserve_product_decomposition.json"
 YEARS = (2023, 2024, 2025)
 HOURS = 8760
 

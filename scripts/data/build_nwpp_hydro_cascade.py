@@ -3,7 +3,7 @@
 
 Everything the LP row family ``model/lp/hydro_cascade.py`` needs is MEASURED
 here from three committed sources and nothing is assumed (rule 13
-``[R-MEASURED]``; PRECOMMIT ``docs/handoffs/PRECOMMIT-nwpp-36-2026-09-16.md`` §4,
+``[R-MEASURED]``; PRECOMMIT ``docs/records/nwpp/PRECOMMIT-nwpp-36-2026-09-16.md`` §4,
 whose acceptance rules are applied verbatim and whose STOP outcomes are written
 into the artifact as ``coupled = False`` with the reason — never substituted):
 

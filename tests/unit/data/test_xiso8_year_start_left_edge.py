@@ -18,8 +18,8 @@ These guards pin the three things that can silently break:
     cannot move these days without a test saying so.
 
 Figures are from ``scripts/probes/xiso8_left_edge_census.py`` ->
-``results/calibration/_xiso8_left_edge_census.json`` and are reproduced in
-``docs/PRECOMMIT-xiso8-year-start-left-edge-2026-09-20.md`` §2.
+``results/phase0/governance/_xiso8_left_edge_census.json`` and are reproduced in
+``docs/records/governance/PRECOMMIT-xiso8-year-start-left-edge-2026-09-20.md`` §2.
 """
 
 import unittest

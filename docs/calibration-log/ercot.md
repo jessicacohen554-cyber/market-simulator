@@ -10,7 +10,7 @@ per-ISO calibration sessions never conflict (the per-ISO lane convention,
 
 **Task.** The owner authorized the quantity-side successor charter to the closed
 mid-band offer lanes (ERCOT-88 disposition), scope "measurement/charter only".
-Charter: `docs/handoffs/ercot-shoulder-online-envelope-2026-07.md` — quantity-side
+Charter: `docs/records/ercot/ercot-shoulder-online-envelope-2026-07.md` — quantity-side
 diagnosis (the DAM availability overlay is class-DAY, only-OUT-is-out, day-flat:
 no hour-level commitment state), rule-19/26 reconciliation against the REJECTED
 ercot41/43 envelope family (no-cap line: re-price the offline increment, never
@@ -125,7 +125,7 @@ binding blocker on the mid-band and §8.3 named this measurement as its follow-u
 Executed measure-first (no apply, no mechanism, no solve): probe
 `scripts/probes/ercot90_stgas_shoulder_measure.py` → artifact
 `data/raw/_validation-source/ercot90_stgas_shoulder_measurement.json`; charter
-`docs/handoffs/ercot-stgas-shoulder-2026-07.md`. Measured side: CAMPD/CEMS
+`docs/records/ercot/ercot-stgas-shoulder-2026-07.md`. Measured side: CAMPD/CEMS
 unit-level TX hourly gross for the model's own 17-plant ST_GAS fleet (split
 facilities unit-routed per `data.outages`; CT/CC unit types dropped; ×0.95 net).
 Model side: the committed ercot86 keeper hourly sidecars ONLY (no replay).
@@ -254,7 +254,7 @@ definition candidate→keeper). Branch rebased onto main post-#2651.
 data-intake questions: an RT/SCED-basis ST ladder and finer state conditioning.
 Scope: measure-first corpus adjudication (no apply, no mechanism, no solve),
 deliverable = a derivability verdict, plus the frozen artifact if committed data
-suffices. Record: `docs/handoffs/ercot-stgas-shoulder-2026-07.md` §9.
+suffices. Record: `docs/records/ercot/ercot-stgas-shoulder-2026-07.md` §9.
 
 **Adjudication (§9.1).** (a) The on-disk NP3-965 SCED corpus CARRIES steam —
 the §8.3 parenthetical described the derived CC/CT artifact's `CLASS_OF_RESTYPE`
@@ -333,7 +333,7 @@ C3a 2023 −18.4 % / 2024 +2.5 % / 2025 +10.8 %; spurious 28/18/19. Root: the wa
 price ladder is net-load-percentile-bin-conditioned ONLY, so the not-RT-scarce
 winter high-net-load cold snap draws the summer-scarcity-dominated expensive
 high-bin ladder. Machinery MERGED default-OFF (`git apply`
-`docs/handoffs/ercot93-core-mechanism.patch`; 11 steam-RT tests pass), keeper
+`docs/records/ercot/ercot93-core-mechanism.patch`; 11 steam-RT tests pass), keeper
 UNCHANGED (`2026-07-20-ercot91-seasonal-drag-fullspan`). Next number: ercot-94.
 
 *(Correction 2026-07-26, fast-tier triage: the "Machinery MERGED" sentence
@@ -343,7 +343,7 @@ ercot-94 handoff §"applies cleanly" note is obsolete, and the patch has since
 ROTTED (its `src/market_sim/data/fleet.py` target became the `data/fleet/`
 package in wave 3H; the scenarios.py hunk context drifted). The 11 steam-RT
 tests fail on main as orphans. Escalation D3 in
-`docs/handoffs/fast-tier-triage-2026-07-26.md`: owner decision between a hand
+`docs/records/misc/fast-tier-triage-2026-07-26.md`: owner decision between a hand
 port into `data/fleet/offer_surfaces.py` or recording the drop.)*
 
 *(**Resolution 2026-07-26 (owner decision, fast-tier escalation follow-through):
@@ -354,9 +354,9 @@ engine wiring into `data/fleet/offer_surfaces.py` plus regenerating the missing
 no live behaviour. `tests/test_ercot_offer_surface_cleared_share_steam_rt.py`
 is C-DELETED as unlanded-mechanism residue (the test file only ever guarded
 source that main never carried). What SURVIVES as the canonical record of the
-probe: this log entry, `docs/handoffs/ercot93-session-handoff.md` (its §"To
+probe: this log entry, `docs/records/ercot/ercot93-session-handoff.md` (its §"To
 reconstruct" step 1 is now dead — flagged in place), the rotted
-`docs/handoffs/ercot93-core-mechanism.patch` bytes, and the landed derive
+`docs/records/ercot/ercot93-core-mechanism.patch` bytes, and the landed derive
 `scripts/data/derive_ercot_shoulder_online_span_steam.py`. ERCOT-94/95 must
 stop citing the wiring as "recorded machinery on main": the season-conditioned
 offer-wall follow-up starts from the patch text + this entry, not from a
@@ -386,7 +386,7 @@ Price mass: [50,100)=236 h, near-miss **[100,200)=9 h**, [200,1000)=11 h,
 promote it.** Real lane = ORDC/reserve scarcity recalibration on the corrected
 envelope without phantom fleet tightness (rules 1/11) — `src/market_sim/results/
 scarcity.py`; full diagnosis + ERCOT-95 handoff in
-`docs/handoffs/ercot94-scarcity-tail-diagnosis-2026-07.md`.
+`docs/records/ercot/ercot94-scarcity-tail-diagnosis-2026-07.md`.
 
 **Ops.** Full-year offer-wall artifacts re-derived on the clean corpus (all three
 present; the ercot91 keeper should be re-solved on them in the ERCOT-95 lane).
@@ -472,9 +472,9 @@ CALIBRATED-WITH-CAVEATS via `calibration_verdict.determine`) — owner sign-off,
 unilateral.
 
 **Transport (rule 27).** git push 413s in this environment; the 7-file core change shipped
-as ONE atomic verified patch (`docs/handoffs/ercot96-lane-a-core.patch`, blob 8c9331f3 —
+as ONE atomic verified patch (`docs/records/ercot/ercot96-lane-a-core.patch`, blob 8c9331f3 —
 the per-blob verification caught and fixed two real transcription defects this session) +
-manifest (`docs/handoffs/ercot96-thermal-dam-grain-2026-07.md`). The 1.48 MB runs payload +
+manifest (`docs/records/ercot/ercot96-thermal-dam-grain-2026-07.md`). The 1.48 MB runs payload +
 bundle hourly parquets + the 594 KB hourly CSV cannot transit a model response; delivered
 to the owner as a placement tar.gz (sha256-manifested) via the session file channel.
 Keeper UNCHANGED (ercot91); promotion + C3c ledgering are the owner's calls.
@@ -493,7 +493,7 @@ as the alternative close-out). ERCOT-97 baselines on THIS keeper.
 **Charter.** Baselined on `2026-07-22-ercot96-dam-hourly-grain` (owner-promoted keeper),
 three lanes to move the NOT-YET C3c: (A) DAM-site→EIA-plant crosswalk + plant×hour
 availability, (B) measured RUC-conduct commitment state, (C) the ERCOT-95 Finding-4 ORDC
-LOLP swap. Base assembled from `docs/handoffs/ercot96-lane-a-core.patch` (7 files, all 7
+LOLP swap. Base assembled from `docs/records/ercot/ercot96-lane-a-core.patch` (7 files, all 7
 post-apply blob SHAs verified against the manifest) + the committed hourly CSV (blob
 7d93a2eb, verified); `solve_and_persist` carries `ercot_thermal_dam_availability_hourly`
 → True.
@@ -559,7 +559,7 @@ no dashboard registration (2023-only throwaways, rule 16).
 **Transport (rule 26/27).** git push from the blob-filtered partial clone triggers a
 multi-GB promisor backfill that disconnects (each attempt leaves a multi-GB tmp pack);
 worked around by pushing with partial-clone disabled + pre-fetching the boundary blobs
-individually. Full detail + repro in `docs/handoffs/ercot97-results-2026-07.md`.
+individually. Full detail + repro in `docs/records/ercot/ercot97-results-2026-07.md`.
 
 ## 2026-07-22 — ERCOT-97 KEEPER TRACK (owner directive "structurally more accurate = new keeper"): plant-grain DAM availability SOLVED + SCORED full-span 2023-2025. Structurally faithful (C7/C8/D-9/D-10 PASS, zero fitted params); marginal ledgerable price cost (C3a −27.8→−27.9%, C3b 0.539→0.545). Recommend promotion — OWNER SIGN-OFF PENDING.
 
@@ -613,7 +613,7 @@ OWNER-ONLY and still requires the C6 governance attestation + keeper-shard flip 
 **Committed.** Slim bundle (meta/run_config/metrics/legitimacy_diagnostics + hourly
 sidecars) + registry sidecar + runs payload + full-span parquet, all on branch
 `claude/ercot-97-c3c-frontier-rtd17r` (rebased onto main after PR #2791 merged the ERCOT-97
-code). Engineering detail: `docs/handoffs/ercot97-results-2026-07.md`.
+code). Engineering detail: `docs/records/ercot/ercot97-results-2026-07.md`.
 
 **PROMOTED 2026-07-22 (owner directive "promote it as the keeper but I'm not willing to
 call it calibrated yet").** ERCOT keeper flipped to `2026-07-22-ercot97-plant-grain-fullspan`
@@ -630,7 +630,7 @@ NOT ledgered, so the verdict stays NOT-YET (not calibrated). Supersedes
 (`np6/2023/`, NP4-742 wind / NP4-745 solar GEO variants), test the three named suspects for
 the 2023 summer scarcity miss — system-wide RE over-credit, AS/ECRS holdout, West/Panhandle
 deliverability — measured-comparison first, then re-solve the keeper on the accurate input.
-Full forensics: `docs/DIAGNOSIS-ercot-2023-summer-tail-attribution-2026-07.md`; probe
+Full forensics: `docs/records/ercot/DIAGNOSIS-ercot-2023-summer-tail-attribution-2026-07.md`; probe
 `scripts/probes/ercot98_tail_attribution_measure.py` (no-LP, committed inputs only).
 
 **Attribution (keeper ercot97 baseline, 2023).** Actual RT tail 181 h; model 51 (46 caught /
@@ -712,7 +712,7 @@ lane (ERCOT-98 §Successor) now works against this honest baseline.
 
 **Charter (ERCOT-98 successor).** Make the measured offer wall the keeper already carries
 reachable where it was marginal in reality — with measurements, no residual tuning.
-Full forensics: `docs/DIAGNOSIS-ercot-99-offer-formation-high-netload-2026-07.md`; no-LP
+Full forensics: `docs/records/ercot/DIAGNOSIS-ercot-99-offer-formation-high-netload-2026-07.md`; no-LP
 probes `scripts/probes/ercot99_{intrahour_bound,reach_gap,model_offer_curve,reanalyze_offer,real_dam_wall,as_contamination,score_probe}.py`.
 
 **Honest denominator (intra-hour).** Splitting the 2023 missed hours by 15-min HB_HUBAVG
@@ -848,8 +848,8 @@ MARGIN promoted to keeper, BASE registered as the drift-control diagnostic
 off NOT-YET is CALIBRATED-WITH-CAVEATS via attribution + the owner C6 gate, not a
 forced C3c PASS. All lanes no-LP on the committed margin-keeper sidecars +
 committed measured corpora. Forensics:
-`docs/DIAGNOSIS-ercot-101-scarcity-tail-attribution-2026-07.md`; draft attestation
-`docs/handoffs/ercot-101-governance-attestation-draft-2026-07.md`. New probes
+`docs/records/ercot/DIAGNOSIS-ercot-101-scarcity-tail-attribution-2026-07.md`; draft attestation
+`docs/records/ercot/ercot-101-governance-attestation-draft-2026-07.md`. New probes
 `scripts/probes/ercot101_{price_decomp,sced_wall_quantiles}.py`; ERCOT-99 toolkit
 re-baselined on the margin keeper.
 
@@ -909,7 +909,7 @@ whether the 2023–2025 scarcity under-pricing is a structural AS-holdout
 (energy-supply) miss — hold the measured ERCOT AS plan out of the energy stack
 and re-price scarcity. All no-LP on the committed `ercot100` margin-keeper
 sidecars + measured corpora + code. Forensics:
-`docs/DIAGNOSIS-ercot-102-as-holdout-refutation-2026-07.md`. New probes
+`docs/records/ercot/DIAGNOSIS-ercot-102-as-holdout-refutation-2026-07.md`. New probes
 `scripts/probes/ercot102_{reserve_slack,as_holdout_attribution}.py`.
 
 **Lane A (the premise is factually wrong).** The keeper is
@@ -982,7 +982,7 @@ ercot-103.
 **Task.** After ERCOT-102 the owner authorized (2) the rule-26 ORDC-family
 reserve-demand right-sizing round and (3) the West/Panhandle topology split.
 Both pursued to a decisive result. Forensics:
-`docs/DIAGNOSIS-ercot-103-104-reserve-demand-and-wp-split-2026-07.md`. New probe
+`docs/records/ercot/DIAGNOSIS-ercot-103-104-reserve-demand-and-wp-split-2026-07.md`. New probe
 `scripts/probes/ercot104_west_congestion_nodal.py`; registered solve probe
 `2026-07-24-ercot103-realized-adder-rtorpa` (one-year 2023 diagnostic, REJECTED).
 
@@ -1085,7 +1085,7 @@ attempted (rule 1/11); no measured outcome fed back (rule 13). Keeper **UNCHANGE
 candidate, so the charter's rule-26 concern (span-off re-opens the ORDC-family design)
 is moot. Both runs registered PROBE:
 `2026-07-24-ercot107-envelope-pricing-basis`, `2026-07-24-ercot108-envelope-in-lp`.
-Full evidence: `results/calibration/FINDING-ercot107-108-scarcity-tail-bistable-2026-07-24.md`.
+Full evidence: `docs/records/ercot/FINDING-ercot107-108-scarcity-tail-bistable-2026-07-24.md`.
 No `src/` changes (flag-composition replays only).
 
 **Correction required to the C6 attestation draft (blocks signature-as-written).** The
@@ -1110,7 +1110,7 @@ in the draft (updated this session). Branch
 > limit exists, so there is nothing admissible to build (rule 11). Re-verified by
 > `scripts/probes/ercot104_west_congestion_nodal.py`; prior art agrees (Far_West split
 > REVERTED 2026-06, `docs/ercot-far-west-zone-split-2026-06.md`). Where 109–111 actually
-> live: `results/calibration/FINDING-ercot110-coal-dam-availability-2026-07-24.md`,
+> live: `docs/records/ercot/FINDING-ercot110-coal-dam-availability-2026-07-24.md`,
 > `FINDING-ercot111-coal-dispatch-economics-2026-07-24.md`, and the ercot109 scarcity-mix
 > HTML under `results/calibration/`. The frontier moved off the scarcity-tail family onto
 > the **coal** lane 110 → 111 → 112.
@@ -1173,7 +1173,7 @@ toward actual every year. C3a improves every year (-25.2->-24.3, -7.1->-5.8, -5.
 C3c identical every year. 2023 replicates the ERCOT-111 probe exactly.
 
 **Verdict** against criteria fixed and pushed BEFORE any 2024/2025 result was read
-(`results/calibration/PRECOMMIT-ercot112-coal-marginal-hr-fullspan-2026-07-25.md`):
+(`docs/records/ercot/PRECOMMIT-ercot112-coal-marginal-hr-fullspan-2026-07-25.md`):
 P1 direction PASS (all three years), P2a no over-fire PASS, P2b scarcity not degraded
 PASS, P3 leave-one-year-out PASS (3/3 improve, zero degradations).
 
@@ -1184,7 +1184,7 @@ years). Scarcity hours are inert by construction (ERCOT-111: arms byte-identical
 The summer over-run is the live successor lane.
 
 **Task B (wind) prerequisites, both closed clean** —
-`results/calibration/FINDING-ercot112-wind-prereqs-2026-07-25.md`. (a) No double-count:
+`docs/records/ercot/FINDING-ercot112-wind-prereqs-2026-07-25.md`. (a) No double-count:
 all three ERCOT backcast years take the HSL branch, so the LP's wind bound is uncurtailed
 potential, not EIA-930 delivered output; `ercot_wtx_curtailment_driver` is correct as-is.
 (b) No vintage bug: the MW->CF->MW round trip has scale factor 1.000000 in all three years.
@@ -1234,7 +1234,7 @@ LOYO trivially clean. First solve of this arm was discarded and re-run: the
 fresh container lacked the `gtc-limits` clean partition and the recipe
 degraded silently to static TTC (see RESULTS-neiso65-crossiso-reaudit-2026-07
 §2 for the replay-reproduction checklist). Full numbers + cross-ISO context:
-`results/calibration/RESULTS-neiso65-crossiso-reaudit-2026-07.md`.
+`docs/records/neiso/RESULTS-neiso65-crossiso-reaudit-2026-07.md`.
 
 ## 2026-07-26 — ERCOT-115 KEEPER TRACK: `coal_econ_marginal_hr_bound` PROMOTED (ERCOT-scoped)
 
@@ -1344,9 +1344,9 @@ envelope and expect it to pass. Full write-up:
 
 Chartered to build the split as real structure and register a 2023–2025 bundle. **Stopped at the
 charter's own re-verification gate: the lever was already refuted at the commit the charter cites as
-verifying it open.** `results/calibration/FINDING-ercot115-wtx-topology-premise-2026-07-26.md`
+verifying it open.** `docs/records/ercot/FINDING-ercot115-wtx-topology-premise-2026-07-26.md`
 (`b5449c0`) **is an ancestor of `4094bbe`**; the earlier
-`docs/handoffs/ercot-vre-curtailment-topology-scope-2026-07.md` §WP-A (2026-07-07) had already
+`docs/records/ercot/ercot-vre-curtailment-topology-scope-2026-07.md` §WP-A (2026-07-07) had already
 scoped the split, measured its yield as ~zero and recommended defer. Nothing on `main` after
 `4094bbe` touches ERCOT. The charter was written against
 `DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §9, whose frontier block still named the split
@@ -1378,7 +1378,7 @@ the wind variable, inherits §9's caveat that a ceiling-clipped variable is neve
 
 Charter/cross-ISO session — measurement only: no guard change, no extract
 re-derive, no LP solve, **no ERCOT keeper touched**, no dashboard registration.
-Full record: `results/calibration/FINDING-campd-daygrain-crossiso-2026-07-26.md`;
+Full record: `docs/records/governance/FINDING-campd-daygrain-crossiso-2026-07-26.md`;
 cross-ISO entry in `docs/calibration-log/governance.md`.
 
 ERCOT's cell of the 180-cell sweep (`--rcc-pctl {0.50, 0.75, 0.90, 0.99}` × `--horizon {24, 48, 72}` ×
@@ -1527,7 +1527,7 @@ CC_REGULAR 60–80 % CF bulge, model-vs-actual wind/solar, minor-class alignment
 confidence. Phase 1 diagnostic only (committed sidecars + ONE byte-faithful keeper replay for
 unit grain — the sanctioned R-DASHBOARD exception, `_diag_ercot121fleetrepr_keeper_replay`,
 fidelity 0.0000 TWh class diff, NOT registered). Full write-up:
-`docs/DIAGNOSIS-ercot121-fleet-representation-2026-07-27.md`.
+`docs/records/ercot/DIAGNOSIS-ercot121-fleet-representation-2026-07-27.md`.
 
 **The protective-gate fix (shipped, scorer-side, rubric v2.8).** TWO confirmed blind spots:
 C8's materiality lookup resolved the D-2 plant-group vocabulary ("COAL") against the
@@ -1597,7 +1597,7 @@ top (F923 delivered cost / measured top-of-curve) as ONE pre-committed successor
 
 **Lane** ercot122-coal-offer-envelope · keeper **unchanged**
 (`2026-07-26-ercot115-coal-marginal-hr`) · no year solved, no run registered, no
-keeper file touched. Full forensics: `docs/DIAGNOSIS-ercot122-coal-offer-envelope-2026-07-27.md`.
+keeper file touched. Full forensics: `docs/records/ercot/DIAGNOSIS-ercot122-coal-offer-envelope-2026-07-27.md`.
 
 **The charter's Phase-1 gate — settle the $21-vs-2.856 basis reconciliation BEFORE
 designing the mapping — was settled, and it refutes the mapping.** Both numbers are
@@ -1656,7 +1656,7 @@ not another offer-level probe; (5) ERCOT-120 stays a separate un-renumbered lane
 
 **Lane** ercot123-coal-sced-reach · keeper **unchanged**
 (`2026-07-26-ercot115-coal-marginal-hr`) · no year solved, no run registered, no
-keeper file touched. Full forensics: `docs/DIAGNOSIS-ercot123-coal-sced-reach-2026-07-27.md`;
+keeper file touched. Full forensics: `docs/records/ercot/DIAGNOSIS-ercot123-coal-sced-reach-2026-07-27.md`;
 probe `scripts/probes/ercot123_coal_sced_reach.py` (sections A–I, no LP built).
 
 **The charter (ERCOT-122 §4/§5.4) asked what the unoffered 83 % of coal DAM headroom does in
@@ -1816,7 +1816,7 @@ ERCOT-122 offer-level controlled refutation (this session strengthens the recomm
 it a third time: ex-owner-split the model matches over its WHOLE range, not just below $25), the
 committed-band data gap, and whether the Dec-2025 SCED schema revision warrants a re-fetch lane.
 ERCOT-120 and ERCOT-117 §5.3 remain separate, un-renumbered lanes. Full forensics:
-`docs/DIAGNOSIS-ercot124-coal-offer-uppertail-2026-07-27.md`.
+`docs/records/ercot/DIAGNOSIS-ercot124-coal-offer-uppertail-2026-07-27.md`.
 
 ## 2026-07-27 — ERCOT-125: the jointly-owned-unit offer split FAILS the rule-13 forward test and is not expressible on the model's plant grain; no mechanism licensed, and the fallback default-off probe is recommended AGAINST (ercot125-coal-owner-split)
 
@@ -1924,7 +1924,7 @@ committed-band data gap (`Min Gen Cost` exists on 29–31 % of online coal resou
 the RT instrument on 82 probe days, not the DAM committed band — flagged, not fetched); and whether
 the Dec-2025 SCED schema revision warrants a re-fetch intake lane (drop inherited unchanged).
 ERCOT-120 and ERCOT-117 §5.3 remain separate, un-renumbered lanes. Full forensics:
-`docs/DIAGNOSIS-ercot125-coal-owner-split-2026-07-27.md`.
+`docs/records/ercot/DIAGNOSIS-ercot125-coal-owner-split-2026-07-27.md`.
 
 ## 2026-07-27 — ERCOT-126: the coal availability envelope is ACCURATE and REALIZABLE; the residual is a DISPATCH property, not an availability one, and every measured availability instrument is empty, mis-shaped or already live; no mechanism licensed (ercot126-coal-avail-envelope)
 
@@ -2025,7 +2025,7 @@ test_ercot_offer_surface_cleared_share_rt.py` also pass. Pre-existing failures h
 `tests/unit/results/test_export.py`, **4** in `tests/scoring/test_ff_readiness_battery.py`. This
 session's diff is one probe script, three derived artifacts and two documents — no `src/` code,
 config surface or cache key — so no test outcome is attributable to it. Full forensics:
-`docs/DIAGNOSIS-ercot126-coal-availability-envelope-2026-07-27.md`.
+`docs/records/ercot/DIAGNOSIS-ercot126-coal-availability-envelope-2026-07-27.md`.
 
 ## 2026-07-27 — ERCOT-127: the coal dispatch band is a UNIT-COMMITMENT representation gap — the min-load parameter is MEASURED, full-span and forward-admissible but NOT expressible on the model's plant grain; no mechanism licensed (ercot127-coal-band)
 
@@ -2116,7 +2116,7 @@ ercot124/125/126. Pre-existing failures unchanged: **4** in `tests/unit/results/
 **4** in `tests/scoring/test_ff_readiness_battery.py`. This session's diff is one probe script, two
 derived artifacts and two documents — no `src/` code, config surface or cache key — so no test
 outcome is attributable to it. Full forensics:
-`docs/DIAGNOSIS-ercot127-coal-dispatch-band-2026-07-27.md`.
+`docs/records/ercot/DIAGNOSIS-ercot127-coal-dispatch-band-2026-07-27.md`.
 
 ## 2026-07-28 — ERCOT-128: unit-grain commitment IS expressible in pure LP — exactly, for 97.8 % of coal capacity, with no detector and no integrality — and the correctly-grained min-load floor still buys nothing; the one gate that demands a win is unreachable by the ORACLE (ercot128-unit-grain)
 
@@ -2210,14 +2210,14 @@ session's three files are all untracked additions).** `tests/unit/config/test_fl
 FAILURES**, root-caused above and not attributable to this session. Pre-existing failures
 unchanged from the ercot127 baseline: **4** in `tests/unit/results/test_export.py`, **4** in
 `tests/scoring/test_ff_readiness_battery.py`. Full forensics:
-`docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`.
+`docs/records/ercot/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`.
 
 ## 2026-07-28 — ERCOT-128 PHASE 2: the coal minimum-online-configuration floor is BUILT, SOLVED and REGISTERED — passes every absolute gate, and fails its own structural claim because the floor is availability-SCALED where the physics is availability-CONDITIONAL (ercot128-unit-grain)
 
 **Lane** ercot128-unit-grain · keeper **unchanged** (`2026-07-26-ercot115-coal-marginal-hr`) ·
 run **`2026-07-28-ercot128-unit-grain-coal`** (bundle `results/calibration/ercot128_unit_grain`)
 registered as a **rejected probe** · `frontend/data/backcast/keepers/ERCOT.json` **untouched**.
-Pre-commit `docs/PRECOMMIT-ercot128-coal-min-config-2026-07-28.md`, pushed BEFORE the
+Pre-commit `docs/records/ercot/PRECOMMIT-ercot128-coal-min-config-2026-07-28.md`, pushed BEFORE the
 first solve. Single delta `ercot_coal_min_config_floor=true`, three years, one
 invocation, years sequential.
 
@@ -2295,7 +2295,7 @@ and orphaning every on-disk cache). One-line registration, matching the
 `9df6be7` / `c45fed4` precedents; the pinned literal is untouched and
 `tests/regression/test_persisted_identity.py` returns to **11/11**.
 
-Full forensics: `docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`
+Full forensics: `docs/records/ercot/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`
 (§§0–8 Phase 1, §§P1–P5 the Phase 2 addendum).
 
 ## 2026-07-28 — ERCOT-129 KEEPER: the availability-CONDITIONAL coal minimum-online-configuration floor passes all 8 pre-registered gates, cuts physically-impossible plant-hours 86/75/87 %, and costs ZERO new degrees of freedom — PROMOTED (ercot129-conditional)
@@ -2306,7 +2306,7 @@ Full forensics: `docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`
 ("if structural integrity improves but gates regress that may still be a
 keeper") and the standing rule-1 `[R-STRUCT]` "structurally more accurate = new
 keeper" standard. Pre-commit
-`docs/PRECOMMIT-ercot129-coal-minconfig-conditional-2026-07-28.md`, pushed BEFORE
+`docs/records/ercot/PRECOMMIT-ercot129-coal-minconfig-conditional-2026-07-28.md`, pushed BEFORE
 the first solve. **Control** `2026-07-28-ercot128-unit-grain-coal`.
 
 **The single delta.** `ercot_coal_min_config_floor` armed. A coal plant may not
@@ -2391,9 +2391,9 @@ the evidence that the gates alone would have promoted the wrong build.
 Rule 26 `[R-MECH-MATRIX]`: `coal_min_load_floor` ERCOT cell **R → K**, matrix
 header re-stamped.
 
-Full forensics: `docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`
+Full forensics: `docs/records/ercot/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`
 (Phase 1 §§0–8, Phase 2 §§P1–P5) +
-`docs/PRECOMMIT-ercot129-coal-minconfig-conditional-2026-07-28.md`.
+`docs/records/ercot/PRECOMMIT-ercot129-coal-minconfig-conditional-2026-07-28.md`.
 
 ## 2026-07-28 — ERCOT-130 (Phase 1 only, no LP built): the min-config UPPER bound (cap a coal plant OFF when it cannot reach its minimum online configuration) REFUTED — the size and cost gates both PASS, and the mechanism dies on its own physical premise: in 99.8 / 99.0 / 100.0 % of the hours it would zero, CAMPD shows the real plant RUNNING. Residual re-routed to ERCOT-116 (coal availability). Keeper UNCHANGED (ercot129)
 
@@ -2465,11 +2465,11 @@ with the ercot115–129 baseline recorded ("static TTC kept" 3/3). Tests as
 inherited: `test_persisted_identity` 11/11, `test_flag_registry` 12/12,
 `test_coal_min_config_floor` 18/18. Mechanism matrix `coal_min_load_floor`
 ERCOT cell updated with the DO-NOT-REDO condition (rule 26 duty b).
-Full forensics: `docs/DIAGNOSIS-ercot130-minconfig-capoff-2026-07-28.md`.
+Full forensics: `docs/records/ercot/DIAGNOSIS-ercot130-minconfig-capoff-2026-07-28.md`.
 
 ## 2026-07-28 — ERCOT-134: the coal availability PIN documented and made reproducible; the ERCOT-116 A/B re-solved on the CURRENT keeper — the measured envelope un-pins coal (impossible plant-hours −83/−86/−91 %) and the exposed coal-vs-gas merit bias over-runs +6.5/+9.6/+11.4 TWh (ARM rejected as pre-registered); the fresh BASE is PROMOTED keeper (ercot134-coal-pin / ercot116-regate)
 
-**Phase 1 (no LP).** `docs/DIAGNOSIS-ercot134-coal-availability-pin-2026-07-28.md`
+**Phase 1 (no LP).** `docs/records/ercot/DIAGNOSIS-ercot134-coal-availability-pin-2026-07-28.md`
 consolidates the ERCOT-130 §4 / ERCOT-132 leg-B / ERCOT-116 synthesis with every
 number re-verified on current HEAD, and
 `scripts/probes/ercot134_coal_availability_pin.py` makes the previously
@@ -2484,7 +2484,7 @@ Spruce 0.994) and below actual p95 at all six. Consequence stated plainly: no
 merit-order work on ERCOT coal has been validated against anything — ~half its
 dispatch is set by an availability estimate, not by price.
 
-**Phase 2 (pre-committed A/B, `docs/PRECOMMIT-ercot134-coal-avail-regate-2026-07-28.md`
+**Phase 2 (pre-committed A/B, `docs/records/ercot/PRECOMMIT-ercot134-coal-avail-regate-2026-07-28.md`
 pushed before any solve).** BASE = ercot129 recipe unchanged on current HEAD;
 ARM = single delta `ercot_thermal_dam_availability_coal=true`. Sequential
 full-span solves, both registered (rule 15).
@@ -2535,9 +2535,9 @@ merit-order lane on the un-pinned fleet. The entry gate held: ERCOT-116 adoption
 is un-ruled, so this session ran **only** the no-LP measurement phase and stopped
 at the ruling, per the charter.
 
-**Result (`docs/DIAGNOSIS-ercot135-coal-merit-order-2026-07-28.md`; probe
+**Result (`docs/records/ercot/DIAGNOSIS-ercot135-coal-merit-order-2026-07-28.md`; probe
 `scripts/probes/ercot135_coal_merit_order.py`, artifact
-`results/calibration/ercot135_coal_merit_order.json`).** The model's coal supply
+`results/phase0/ercot/ercot135_coal_merit_order.json`).** The model's coal supply
 curve is **bimodal** — p10 and p25 both **$4.50/MWh** (the tranche-1 take-or-pay
 band bidding VOM-only, ~30 % of capacity), p50 $19–22, top $49–56 — while the
 real fleet's **submitted** DAM curve (60-Day DAM, `CLLIG`) is a nearly **flat
@@ -2579,7 +2579,7 @@ second mechanism (rule 19). Successor instrument stays the **SCED TPO** lane
 (`FINDING-ercot117` §E), now with a pre-registered magnitude to hit.
 
 **Phase 2 pre-registered, NOT executed**
-(`docs/PRECOMMIT-ercot135-coal-offer-width-2026-07-28.md`): the coal offer-curve
+(`docs/records/ercot/PRECOMMIT-ercot135-coal-offer-width-2026-07-28.md`): the coal offer-curve
 WIDTH arm, both arms with the ERCOT-116 envelope ARMED (rule 14 — the
 compensator must not be re-tuned around the estimate), per-band predictions and
 a fixed decision rule. **Blocked on the ERCOT-116 owner ruling**; if the ruling
@@ -2598,7 +2598,7 @@ probe now patches the live copy and documents the trap.
 ## 2026-07-29 — ERCOT-137: coal moves to the MEASURED NET-MARGIN offer form on the ACCURATE availability envelope (owner rulings R1–R3); one combined arm solved 2023–2025 and PROMOTED KEEPER on the rule-1 structural standard (`2026-07-29-ercot137-coal-margin-measured`); the pre-registered FIT gates FAIL and the falsifier routes the residual to the GAS side of the ranking
 
 **The build** (precommit pushed before any solve:
-`docs/PRECOMMIT-ercot137-coal-margin-offer-2026-07-29.md`):
+`docs/records/ercot/PRECOMMIT-ercot137-coal-margin-offer-2026-07-29.md`):
 
 1. **Coal net-revenue margin form** — `coal_offer_net_revenue_margin` +
    `coal_offer_margin_anchor` (1.7387 $/MMBtu) + `coal_offer_margin_level`
@@ -2663,7 +2663,7 @@ from gas). Phase 1 asks which side of the ranking is wrong ABOVE min-load:
 CC bands too dear vs theirs.
 
 **Built (no-LP, nothing armed).** `scripts/probes/ercot138_coal_gas_ranking.py`
-→ `results/calibration/ercot138_coal_gas_ranking.json`. ERCOT-123's SCED loader
+→ `results/phase0/ercot/ercot138_coal_gas_ranking.json`. ERCOT-123's SCED loader
 and class map IMPORTED, never re-implemented; the model side captured at
 `run_energy_solve` — i.e. AFTER both `apply_coal_tranches` and
 `apply_gas_offer_margin`, so coal and gas are final and mutually comparable
@@ -2728,7 +2728,7 @@ is why no single level lever serves both.
 **Scope.** No LP built, no year solved, nothing registered, no keeper file
 touched, no `ScenarioConfig` field added or changed, holdout years untouched
 (rule 22). Full write-up
-`docs/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md`. Matrix (rule 26b):
+`docs/records/ercot/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md`. Matrix (rule 26b):
 `gas_offer_net_revenue_margin` ERCOT note + ev (inert on this band, cell stays
 K), `coal_econ_bound` ev (coal bands EXONERATED in the crossing band),
 `coal_offer_net_revenue_margin` ev (routed residual now LOCATED),
@@ -2743,7 +2743,7 @@ checks fields new vs base).
 
 **Task.** Execute the gas-side Phase 2 that ERCOT-138 §6 licensed, deciding its
 §7.3 open mechanism question first. Precommit
-`docs/PRECOMMIT-ercot139-cc-committed-offer-2026-07-30.md`, pushed before any
+`docs/records/ercot/PRECOMMIT-ercot139-cc-committed-offer-2026-07-30.md`, pushed before any
 solve.
 
 **The mechanism question, decided with evidence (precommit §0).** ERCOT-138 left
@@ -2862,7 +2862,7 @@ hygiene pass.
 **Task.** The near-tail / top-of-curve lane ERCOT-139 localised: the coal p90
 that runs $9.6–15.5/MWh UNDER measured in all four SCED subsets (ERCOT-138
 §5.6/§2.1) — the ERCOT-123 §7.2 upper-tail successor, owner-issued as
-ERCOT-140. Precommit `docs/PRECOMMIT-ercot140-coal-peak-offer-2026-07-30.md`,
+ERCOT-140. Precommit `docs/records/ercot/PRECOMMIT-ercot140-coal-peak-offer-2026-07-30.md`,
 pushed (and merged, PR #3134) before any solve.
 
 **The mechanism question, decided with evidence (precommit §0).** Three
@@ -2968,7 +2968,7 @@ warnings ("static TTC kept 3/3").
 **Task (the ERCOT-139 §4.1 hand-back).** Test the named STATE successor to the
 refused price levers: extend the gas bridge's LSL floor beyond bridged gap
 hours. Precommit
-`docs/PRECOMMIT-ercot141-cc-committed-lsl-floor-2026-07-30.md`, pushed before
+`docs/records/ercot/PRECOMMIT-ercot141-cc-committed-lsl-floor-2026-07-30.md`, pushed before
 the solve.
 
 **Built (default off, ERCOT-gated, requires the bridge and fails loud without
@@ -3085,7 +3085,7 @@ warns that re-pinning the test literal instead is the WRONG fix.
 "→ C7 COAL_LIGNITE-2023 + the ±1.5 GW coal seasonal split. Needs a measured
 band identification (CAMPD loading distributions), not a floor. Charter it on
 C7, never as an over-run fix."). Full diagnosis:
-`docs/DIAGNOSIS-ercot142-lignite-shape-2026-07-30.md`; reproduce with
+`docs/records/ercot/DIAGNOSIS-ercot142-lignite-shape-2026-07-30.md`; reproduce with
 `scripts/probes/ercot142_lignite_shape_probe.py`.
 
 **The gate, corrected against the keeper's own artifact.** C7's ERCOT failure is
@@ -3202,11 +3202,11 @@ rule-26(c) matrix gap on `ercot_offer_hrmult_ep_rebasis` / `_bands`.
 
 **Task.** The chartered successor to ERCOT-142 Phase 1 and the last named LIVE
 ERCOT target (`docs/mechanism-testing-matrix.md` §5.1 queue item 3). Phase 2's
-job, fixed in `docs/DIAGNOSIS-ercot142-lignite-shape-2026-07-30.md` §8: re-measure
+job, fixed in `docs/records/ercot/DIAGNOSIS-ercot142-lignite-shape-2026-07-30.md` §8: re-measure
 the lignite offer curve on the CURRENT keeper, identify the mid-band slope from
 `B2_supply_grid` with **zero swept parameters**, and — explicitly — **close the
 lane if no non-fitted identification survives**. Full closure:
-`docs/DIAGNOSIS-ercot143-lignite-offer-slope-2026-07-30.md`; reproduce with
+`docs/records/ercot/DIAGNOSIS-ercot143-lignite-offer-slope-2026-07-30.md`; reproduce with
 `scripts/probes/ercot143_lignite_offer_slope.py`.
 
 **Verdict: the identification does not exist. LANE CLOSED, no arm built, no
@@ -3330,7 +3330,7 @@ future class-composition lane weighs it deliberately.
 
 **Task (the owner-issued ERCOT-144 DOF lane serving C6, chartered by ERCOT-143
 §2's per-plant measurement; session instruction: bring ERCOT to a calibrated
-determination).** Precommit `docs/PRECOMMIT-ercot144-coal-perplant-offer-2026-07-31.md`
+determination).** Precommit `docs/records/ercot/PRECOMMIT-ercot144-coal-perplant-offer-2026-07-31.md`
 pushed BEFORE the solve; probe `scripts/probes/ercot144_coal_perplant_offer.py`;
 derive `scripts/data/derive_coal_perplant_offer.py` (rule-23 frozen; provenance
 `data/raw/_processed-legacy/coal_perplant_offer_curves_ERCOT.json`).
@@ -3438,7 +3438,7 @@ amortization (`tranche_startup_amortization` + measured-run v3) on ERCOT,
 targeting the non-tail component of C3a-2024/25 and C3b. Phase 1 pre-committed
 as no-LP with an explicit no-solve-closure exit (ERCOT-143 pattern). Probe
 `scripts/probes/ercot145_tranche_startup_phase1.py`; diagnosis
-`docs/DIAGNOSIS-ercot145-tranche-startup-2026-07-31.md`. Preconditions
+`docs/records/ercot/DIAGNOSIS-ercot145-tranche-startup-2026-07-31.md`. Preconditions
 verified: default `cache_key` byte-stable (`603c2498bf71d21d`),
 `audit_keepers.py` PASS 0/0.
 
@@ -3509,7 +3509,7 @@ also carrying the 2024/25 shoulder residual measured here).
 ## 2026-07-31 — ERCOT-145b (item-4 execution, same session as the item-5 closure): the five-ISO fuel-stack audit stamps two cells from the record and solves the one live cell — `gas_daily_shape` armed as a single-delta A/B and **PROMOTED KEEPER `2026-07-31-ercot145-gas-daily-shape`** under the owner's in-session standard (structural-integrity improvement outranks gate regression); C3a-2024/25 and C3b-2024 improve UN-TARGETED; two pre-registered guards trip by ±1 threshold-straddling hour each, recorded honestly
 
 **Task (matrix §5.1 item 4, the chartered successor to the item-5 closure).**
-Precommit `docs/PRECOMMIT-ercot145-gas-daily-shape-2026-07-31.md` pushed
+Precommit `docs/records/ercot/PRECOMMIT-ercot145-gas-daily-shape-2026-07-31.md` pushed
 BEFORE the solve; probe `scripts/probes/ercot145_gas_daily_exante.py`.
 
 **The audit (no LP).** Measured from the six keepers' own `run_config.json`:
@@ -3584,7 +3584,7 @@ data-intake first — HSC/Katy daily).
 Phase 1 pre-committed as no-LP with the no-solve closure exit
 (ERCOT-143/145 pattern). Probe
 `scripts/probes/ercot146_ct_heat_rates_phase1.py`; diagnosis
-`docs/DIAGNOSIS-ercot146-measured-ct-heat-rates-2026-07-31.md`. Preconditions
+`docs/records/ercot/DIAGNOSIS-ercot146-measured-ct-heat-rates-2026-07-31.md`. Preconditions
 verified: default `cache_key` byte-stable (`603c2498bf71d21d`),
 `audit_keepers.py` PASS 0/0.
 
@@ -3656,8 +3656,8 @@ physical-HR and run-length artifacts, zero swept parameters).** Phase 0
 pre-committed as no-LP corpus sufficiency with the ex-ante-refusal exit
 (ERCOT-143/145/146 pattern). Probe
 `scripts/probes/ercot147_ct_band_phase0.py` (+ committed record
-`results/calibration/ercot147_ct_band_phase0.json`); diagnosis
-`docs/DIAGNOSIS-ercot147-ct-band-reident-2026-07-31.md`. Preconditions
+`results/phase0/ercot/ercot147_ct_band_phase0.json`); diagnosis
+`docs/records/ercot/DIAGNOSIS-ercot147-ct-band-reident-2026-07-31.md`. Preconditions
 verified: default `cache_key` byte-stable (`603c2498bf71d21d`),
 `audit_keepers.py` PASS 0/0.
 
@@ -3713,12 +3713,12 @@ run).
 **Task (owner directive 2026-07-31: "the keeper runs coal plants through
 months-long CAMPD zero-op windows and the coal over-run must come down";
 Phase 0/1 first, no solve until they adjudicate).** Precommit
-`docs/PRECOMMIT-ercot148-dam-coal-event-cap-2026-07-31.md` pushed BEFORE the
+`docs/records/ercot/PRECOMMIT-ercot148-dam-coal-event-cap-2026-07-31.md` pushed BEFORE the
 solve (merged to main as PR #3224 mid-session); diagnosis
-`docs/DIAGNOSIS-ercot148-coal-outage-windows-2026-07-31.md`; probes
+`docs/records/ercot/DIAGNOSIS-ercot148-coal-outage-windows-2026-07-31.md`; probes
 `scripts/probes/ercot148_coal_outage_phase0.py` +
 `ercot148_availability_capture.py`; committed record
-`results/calibration/ercot148_coal_outage_phase0.json`. Preconditions:
+`results/phase0/ercot/ercot148_coal_outage_phase0.json`. Preconditions:
 `audit_keepers` PASS 0/0; the directive's `cache_key 603c2498bf71d21d`
 drifted benignly (post-ERCOT-147 default-off fields, miso-111 et al.;
 default now `8161b094a391de90`) — name-only drift, recorded.
@@ -3831,11 +3831,11 @@ data-intake (C3b-2023).
 
 **Task (autonomous handoff, the diagnosis-§6.1 successor; Phase 0/1 first, no
 solve until they adjudicate).** Precommit
-`docs/PRECOMMIT-ercot149-dam-gas-event-cap-2026-08-01.md` pushed BEFORE the
-solve; diagnosis `docs/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md`; probe
+`docs/records/ercot/PRECOMMIT-ercot149-dam-gas-event-cap-2026-08-01.md` pushed BEFORE the
+solve; diagnosis `docs/records/ercot/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md`; probe
 `scripts/probes/ercot149_gas_outage_phase0.py` (+ the reused
 `ercot148_availability_capture.py` seam captures); committed record
-`results/calibration/ercot149_gas_outage_phase0.json`. Preconditions:
+`results/phase0/ercot/ercot149_gas_outage_phase0.json`. Preconditions:
 `audit_keepers --iso ERCOT` PASS 0/0; default cache key drifted name-only
 again (`8161b094a391de90` → `0e9fce2fb55b889f`, post-merge default-off
 fields) — the armed-key MECHANISM verified instead (keeper `run_config`
@@ -4104,7 +4104,7 @@ conduct, which ERCOT's 60-day disclosures uniquely license.
 
 **Corpus forensics (why the named unblocker looked closed).** The full-year
 NP3-965 corpus (799 shards, ~3.26 GB, 2023 complete) was owner-uploaded
-2026-07-21 (`docs/handoffs/ercot-sced-fullyear-intake-2026-07.md`), consumed by
+2026-07-21 (`docs/records/ercot/ercot-sced-fullyear-intake-2026-07.md`), consumed by
 the ERCOT-105 wall re-derive (the wall JSON carries 2022–2025 — the committed
 `_provenance.source` string is stale), and PURGED by the
 `cleanup-large-blobs.yml` history rewrite of 2026-07-22 (FF ledger turn 45) —
@@ -4112,7 +4112,7 @@ the reason ERCOT-101 (07-24) first wrote "no 2023 SCED source exists". Free-path
 retention starts ~delivery 2024-01, so 2023 is unreachable without the owner's
 copy.
 
-**Phase 0 (committed record `results/calibration/ercot151_offline_phase0.json`;
+**Phase 0 (committed record `results/phase0/ercot/ercot151_offline_phase0.json`;
 probes `scripts/probes/ercot151_offline_phase0{,b}.py`).** Basis: 2023 actual RT
 >$300 = 144 h; missed = ercot150b load-weighted zonal price <$200 = 91 h (model
 mean $105 / actual $860). Config-collapsed (`_site()` max-across-configs, ON
@@ -4135,7 +4135,7 @@ default-off flag, REPLACE-BY-MASK (rule 19 reconciliation vs the gas bridge /
 P1 amortization / RT wall enumerated in the diagnosis §3), zero fitted
 parameters, precommit with the ERCOT-89 zero-spurious+C3a guards, matched-hour
 C3c anatomy, and LOYO 2023–25 pushed before any solve. Full design:
-`docs/DIAGNOSIS-ercot151-offline-increment-phase0-2026-08-02.md`.
+`docs/records/ercot/DIAGNOSIS-ercot151-offline-increment-phase0-2026-08-02.md`.
 
 **Governance.** No mechanism tested, no solve, no registration (ERCOT-142/143
 no-LP pattern). Matrix rule-28(c) repair: `ercot_faststart_pool_offer` had no
@@ -4149,7 +4149,7 @@ Next shorthand: ercot-152.
 
 **ERCOT-152 (the ercot-151 charter's committed-data leg — REFUSED, cell note
 stamped).** Probe `scripts/probes/ercot152_cc_tier_census.py` → committed
-record `results/calibration/ercot152_cc_tier_census.json`. Two measurements,
+record `results/phase0/ercot/ercot152_cc_tier_census.json`. Two measurements,
 both against the CC tier: (1) CC OFFQS/OFFNS ≈ 0 MW in all four committed
 sample-day extracts — the ERCOT-88 intra-hour-startable pool construction has
 NO measured CC object; the offline-startable pool is CT-only in reality.
@@ -4167,7 +4167,7 @@ the **2023 CT-pool year block**, not a CC tier.
 
 **ERCOT-153 (diurnal-amplitude decomposition — the xiso-1 ERCOT follow-on,
 C3b/correlation lane).** Probe `scripts/probes/ercot153_diurnal_amplitude.py`
-→ `results/calibration/ercot153_amplitude.json`, on the ercot150b keeper's own
+→ `results/phase0/ercot/ercot153_amplitude.json`, on the ercot150b keeper's own
 committed hourly sidecars vs the actual RT/DA parquet. Findings: (a) the
 amplitude deficit is ~80 % PEAK-HALF everywhere (peak-excess gaps dwarf trough
 gaps in 11 of 12 year×season cells); (b) it collapses exactly where the
@@ -4197,10 +4197,10 @@ Next shorthand: ercot-154.
 `ScenarioConfig` field added, keeper UNCHANGED.** Probes
 `scripts/probes/ercot154_storage_offer_surface.py`,
 `ercot154_storage_binding_check.py`, `ercot154_ramp_capability_census.py` →
-committed records `results/calibration/ercot154_storage_offer_surface.json`,
+committed records `results/phase0/ercot/ercot154_storage_offer_surface.json`,
 `ercot154_storage_binding_check.json`,
 `ercot154_ramp_capability_census.json`. Full write-up:
-`docs/DIAGNOSIS-ercot154-storage-offer-surface-2026-08-03.md`. All inputs were
+`docs/records/ercot/DIAGNOSIS-ercot154-storage-offer-surface-2026-08-03.md`. All inputs were
 already committed (the four 60-Day SCED sample-day parquets, the ercot150b
 keeper hourly sidecars, `data/raw/eia-930-hourly/ERCO hourly.parquet`).
 
@@ -4298,8 +4298,8 @@ Next shorthand: ercot-155.
 **Phase 1 only. NO LP built, NO year solved, NO mechanism armed, NO flag added,
 keeper UNCHANGED (`2026-08-02-ercot150b-zonal-anchor`).** Probe
 `scripts/probes/ercot155_dispersion_census.py`; committed record
-`results/calibration/ercot155_dispersion_census.json`; diagnosis
-`docs/DIAGNOSIS-ercot155-evening-dispersion-2026-08-03.md`. Inputs all
+`results/phase0/ercot/ercot155_dispersion_census.json`; diagnosis
+`docs/records/ercot/DIAGNOSIS-ercot155-evening-dispersion-2026-08-03.md`. Inputs all
 already committed: the keeper's `meta.json` + hourly sidecars, the four 60-Day
 SCED extracts, `ercot_<year>_ordc_reserves_hourly.parquet`.
 
@@ -4427,7 +4427,7 @@ quoted forward.
 produced); holdout freeze trivially respected (no year touched). Rule 28(b):
 matrix header + `matrix_gap_census` row + 14 family defs updated this session;
 §5.1 stamped; finding
-`results/calibration/FINDING-ercot156-matrix-column-closure-2026-08-03.md`.
+`docs/records/ercot/FINDING-ercot156-matrix-column-closure-2026-08-03.md`.
 Guards `check_mechanism_matrix.py` + `check_registry_payload_parity.py` PASS
 before push. Next-largest column: CAISO (31) — its own lane.
 
@@ -4554,7 +4554,7 @@ design round (ERCOT-151 §4 ask 2) on the ERCOT-157-completed data: arm the
 EXISTING ERCOT-88 CT pool (`ercot_faststart_pool_offer=true`) — no CC tier
 (ERCOT-152 refusal upheld), no span (ERCOT-89 §9.4 rejection stands) — as a
 full-span single-delta A/B off the ercot150b keeper.
-`docs/PRECOMMIT-ercot158-faststart-pool-arm-2026-08-03.md` (mechanism
+`docs/records/ercot/PRECOMMIT-ercot158-faststart-pool-arm-2026-08-03.md` (mechanism
 statement, the four standing ERCOT-89 analyzer gates, matched-hour C3c
 anatomy, zero-forced check, LOYO statement, K/R/I decision rule) was pushed
 BEFORE any solve, and the A/B scorer + attestation generator were pushed
@@ -4594,7 +4594,7 @@ NRMSE −0.004) where the pool ladder REPLACES a higher wall markup on
 already-walled row-hours — structurally honest, direction DOWN, immaterial.
 
 **Adjudication (pre-declared decision rule): I — INERT.** Committed A/B
-record `results/calibration/_ercot158_pool_ab.json` (+ captured full verdicts
+record `results/phase0/ercot/_ercot158_pool_ab.json` (+ captured full verdicts
 `_ercot158_verdict_{A,B}.json`); matrix cell `ercot_faststart_pool_offer`
 O→I with the ercot-158 citation. Mechanism stays merged default-off; keeper
 UNCHANGED (ercot150b). LOYO: zero fitted parameters, per-year guard table
@@ -4643,7 +4643,7 @@ queue item 9 — the ERCOT-155 named successor, matrix row
 online-capability ceiling, the analogue of the keeper-armed
 `ercot_reserve_supply_cap`. This is a structural LP change, so the round ran
 the full measure-first discipline:
-`docs/PRECOMMIT-ercot159-energy-online-capability-cap-2026-08-04.md` (mechanism
+`docs/records/ercot/PRECOMMIT-ercot159-energy-online-capability-cap-2026-08-04.md` (mechanism
 statement, rule-19 precedence reconciliation, rule-13/20/23 statement, the
 guard family, the K/R/I decision rule, and a DO-NOT-REDO fence against both the
 refused offer-dispersion arm and the closed ercot41/43/106/108 envelope family)
@@ -4652,7 +4652,7 @@ built**.
 
 **Phase 0 (no LP, on the keeper's own committed sidecars).** Probe
 `scripts/probes/ercot159_capability_phase0.py` → committed record
-`results/calibration/_ercot159_capability_phase0.json`. The raw per-hour
+`results/phase0/ercot/_ercot159_capability_phase0.json`. The raw per-hour
 telemetered ceiling — the rule-13-FORBIDDEN form — binds **3,838 hours**
 (3,615 of them at actual < $150): the forbidden form is also the mechanically
 broken one. The chosen conditional envelope binds **667** hours, covering
@@ -4803,7 +4803,7 @@ not — the ask doc carries a single commit (its original upload) and nothing
 has added contract tonnage to `data/raw/`. The receipts-derived construction
 (miso-103, cell `R`) was **not** re-attempted. Precedence fell to ERCOT items
 7/8, data-intake first. Full record:
-`results/calibration/FINDING-ercot160-ct-fullspan-intake-2026-08-04.md`.
+`docs/records/ercot/FINDING-ercot160-ct-fullspan-intake-2026-08-04.md`.
 
 **Item 7 — the stated blocker was never real.** The queue records that a
 station→area crosswalk "does not exist in-repo". ERCOT *publishes* one, free
@@ -4843,7 +4843,7 @@ days, verified live.
 **Item 8(b) — BLOCKED, and it is the ONLY thing still blocking the lever.**
 ERCOT-147 §4 demanded a licensing check before promising this; it was run and
 recorded reproducibly (`scripts/probes/ercot160_texas_hub_daily_screen.py`,
-`results/calibration/ercot160_texas_hub_screen.json`). EIA's free NGWU spot
+`results/phase0/ercot/ercot160_texas_hub_screen.json`). EIA's free NGWU spot
 table: **Waha / Katy / Agua Dulce / Carthage at ZERO mentions** on a real
 archive page, against Chicago 6 and Henry Hub 10 — a daily row cannot exist at
 zero mentions; the lone "Houston Ship"/"Permian" hits are narrative
@@ -4889,7 +4889,7 @@ underrun is diagnosed, and it is an ENERGY-OFFER defect, not a scarcity one.**
 The owner deprioritised the ordinary-hour commitment-level successor named
 above and asked for the 2023 −30 % (summer-concentrated) residual directly. A
 no-LP measurement on committed artifacts
-(`results/calibration/FINDING-ercot-2023-summer-underrun-2026-08-04.md`)
+(`docs/records/ercot/FINDING-ercot-2023-summer-underrun-2026-08-04.md`)
 settles where it is and what causes it:
 
 * **It is ~100 hours.** Load-weighted 2023 model $43.08 vs actual $61.97
@@ -4939,7 +4939,7 @@ Next shorthand: ercot-161.
 ## 2026-08-04 — ercot-161 (the FINDING §6 Phase 0, owner-directed at the 2023 −30 %; NO LP, no solve, keeper UNCHANGED at ercot158): the armed RT wall is EXONERATED on its own population — the ~100-hour λ was formed on the STORAGE fleet's standing $1,500–5,000 discharge offers, a class the model prices at a flat $10; a measured multi-tranche storage RT offer surface is CHARTERED (not built), pending owner authorization
 
 **Session ercot-161** (branch `claude/ercot-afternoon-offer-phase0-oenet8`).
-Full record: `results/calibration/FINDING-ercot161-afternoon-wall-phase0-2026-08-04.md`.
+Full record: `docs/records/ercot/FINDING-ercot161-afternoon-wall-phase0-2026-08-04.md`.
 Probes `scripts/probes/ercot161_afternoon_wall_phase0.py` /
 `ercot161_dispatched_segment_census.py` / `ercot161_price_setter_census.py` /
 `ercot161_pwrstr_conduct_census.py` → committed records
@@ -5021,15 +5021,15 @@ Next shorthand: ercot-162.
 ## 2026-08-04 — ercot-162 (the ercot-161-chartered `ercot_storage_rt_offer_surface`, BUILT and A/B-tested; owner-authorized by the dispatch prompt): the measured multi-tranche battery RT discharge-offer surface is **REFUTED (R)** — it collapses battery discharge ~74 % every year (2025 −76 % vs EIA-930), manufactures spurious mid-band scarcity, and barely lifts the gap hours (+$16); keeper UNCHANGED at ercot158
 
 **Session ercot-162** (branch `claude/ercot-162-storage-rt-surface-6dycz4`).
-Full record: `results/calibration/FINDING-ercot162-storage-rt-surface-refuted-2026-08-04.md`;
-`docs/PRECOMMIT-ercot162-storage-rt-offer-surface-2026-08-04.md` (pushed BEFORE
+Full record: `docs/records/ercot/FINDING-ercot162-storage-rt-surface-refuted-2026-08-04.md`;
+`docs/records/ercot/PRECOMMIT-ercot162-storage-rt-offer-surface-2026-08-04.md` (pushed BEFORE
 any solve). Phase A derive `scripts/data/derive_ercot_storage_rt_offer_surface.py`
 → `data/raw/_validation-source/ercot_storage_rt_offer_condbinned.json`; Phase B
 the LP tranche split (`ScenarioConfig.ercot_storage_rt_offer_surface`, default
 off, + its matrix row same-PR rule 28(c); `model/lp/rows.py::_build_dis_tranche_rows`,
 `model/storage.py::ercot_storage_rt_offer_tranches`; unit tests
 `tests/unit/model/test_storage_rt_offer_tranche.py`). Scorers
-`scripts/probes/_ercot162_storage_ab.py` → `results/calibration/_ercot162_storage_ab.json`
+`scripts/probes/_ercot162_storage_ab.py` → `results/phase0/ercot/_ercot162_storage_ab.json`
 and the standing `_ercot89_span_check.py` → `_ercot162_span_check.txt`. A/B off
 the ercot158 keeper: control `ercot162_control_A` (fresh same-HEAD replay,
 gap-hour mean $441.27 = the committed keeper to the cent), arm
@@ -5095,10 +5095,10 @@ Next shorthand: ercot-163.
 ## 2026-08-04 — ERCOT-163 (Phase 0, no LP, no solve, keeper UNCHANGED at ercot158): the "~8 GW cheap CC offline block" **DOES NOT EXIST** — ERCOT's CC fleet was **96.4 % committed and 98.0 % loaded** at the gap hours with **20 MW** of offline-startable capability; the block was a 60-Day-DAM **day-ahead status** artifact whose **99.2 % was telemetered ONLINE and generating** in real time. **No commitment-state mechanism is chartered** (charter condition not met)
 
 **Session ercot-163** (branch `claude/ercot-163-cc-commitment-owq92i`).
-Full record: `results/calibration/FINDING-ercot163-cc-commitment-state-refuted-2026-08-04.md`.
+Full record: `docs/records/ercot/FINDING-ercot163-cc-commitment-state-refuted-2026-08-04.md`.
 Probes (both no-LP, both on committed data):
 `scripts/probes/ercot163_cc_commitment_state_census.py` →
-`results/calibration/_ercot163_cc_commitment.json` (the RT capability-state
+`results/phase0/ercot/_ercot163_cc_commitment.json` (the RT capability-state
 census of the CC and CT fleets over the delivery-2023 SCED corpus, 315 shards,
 at four hour sets, against the keeper's own reconstructed CC availability /
 dispatch / P1 bid ladder via `reconstruct_bundle_fleet`) and
@@ -5172,7 +5172,7 @@ and any CC re-pricing (ERCOT-152 no-op, upheld ERCOT-158).
 28(b)); the §5.1 queue and the two ERCOT cell notes that carried the refuted
 premise (`ercot_faststart_pool_offer`, `ercot_storage_rt_offer_surface`) are
 corrected in-session, and
-`docs/DIAGNOSIS-ercot151-offline-increment-phase0-2026-08-02.md` carries a
+`docs/records/ercot/DIAGNOSIS-ercot151-offline-increment-phase0-2026-08-02.md` carries a
 correction banner over its §0.2/§0.4. No run produced ⇒ **no dashboard
 registration** (rule 15; the ERCOT-147/152/161 no-LP pattern), keeper
 UNCHANGED. Delivery-2023 only (rule 22, training span). ERCOT-scoped (rule 25).
@@ -5219,9 +5219,9 @@ Next shorthand: ercot-164.
 NOT-YET; open gates C3a 2023-only, C3b 2023-only, C3c, C7 2023-lignite cv-leg) ·
 no year solved, no run registered, no `ScenarioConfig` field added, no matrix
 cell verdict minted. Full write-up:
-`results/calibration/FINDING-ercot164-wpb-nodal-identification-2026-08-04.md`;
+`docs/records/ercot/FINDING-ercot164-wpb-nodal-identification-2026-08-04.md`;
 probe `scripts/probes/ercot164_wpb_nodal_identification.py` →
-`results/calibration/ercot164_wpb_nodal_identification.json`.
+`results/phase0/ercot/ercot164_wpb_nodal_identification.json`.
 
 **Vintage duty discharged (the ERCOT-160 README's binding caveat).** Match
 rates measured on THIS session's per-year binding station populations, never
@@ -5292,9 +5292,9 @@ share-table resolution, sub-zonal by construction).
 kind: C3a 2023-only, C3b 2023-only, C3c, C7 2023-lignite cv-leg) · matrix cell
 `wtx_curtail_unpooled` ERCOT **`K`** · runs
 `2026-08-04-ercot165-unpooled-tie` + `2026-08-04-ercot165-unpooled-share` ·
-PRECOMMIT `docs/PRECOMMIT-ercot165-wpb-v2-unpooled-curtailment-2026-08-04.md`
+PRECOMMIT `docs/records/ercot/PRECOMMIT-ercot165-wpb-v2-unpooled-curtailment-2026-08-04.md`
 (pushed BEFORE either arm solved) · finding
-`results/calibration/FINDING-ercot165-wpb-v2-unpooled-2026-08-04.md`.
+`docs/records/ercot/FINDING-ercot165-wpb-v2-unpooled-2026-08-04.md`.
 
 **What was built.** `ercot_wtx_curtail_unpooled` + `ercot_wtx_panhandle_owner`
 (`"tie"`/`"share"`), both **default-off**, ERCOT-scoped, registry-visible.
@@ -5390,7 +5390,7 @@ Next shorthand: ercot-166.
 
 ## 2026-08-05 — ercot-166 (owner-directed 2023 diagnosis triage; NO LP, no solve, keeper UNCHANGED at ercot165): Oak Grove's Aug–Oct 2023 overnight conduct is SOLVED FROM THE DISCLOSURE CORPORA (a seasonal RT offer repricing to a $60.30 top step — the ERCOT-143 closure's "no 2023 SCED" premise is DISSOLVED by the ercot-157 corpus); the timezone/DST hypothesis for the year-round 17–19 h underrun is CLOSED (no misalignment reaches the LP; three DST-window data defects found and ranked); C3c becomes a LEDGERED ACCEPTED MODEL-CLASS LIMITATION in all three years (rubric v3.0 owner amendment); three successors CHARTERED (§5.1 items 10–12)
 
-Full record: `results/calibration/FINDING-ercot166-2023-diagnosis-triage-2026-08-05.md`. Headlines:
+Full record: `docs/records/ercot/FINDING-ercot166-2023-diagnosis-triage-2026-08-05.md`. Headlines:
 
 - **2023 −30 % decomposed on the keeper sidecars**: Aug −46.7 % (−$11.6 of the −$18.8 annual gap),
   Sep −48.7 % (−$5.0), Jul −21.8 % (−$1.1); non-summer ±16 % and ~$0. Tail catch matrix >$1000:
@@ -5440,8 +5440,8 @@ Full record: `results/calibration/FINDING-ercot166-2023-diagnosis-triage-2026-08
 
 ## 2026-08-05 — ercot-167 (matrix §5.1 item 10 EXECUTED, owner-directed with a separate-2023-first sequencing; mechanism BUILT + 2023-probed + full-span A/B; ARM REJECTED-AS-ARMED on its own pre-registered gates, reopen condition cited; keeper UNCHANGED at ercot165): the measured storage AS SOC reservation hits its chartered quantity object dead-on in 2023 — scarcity-hour battery discharge 666→520 MW against the SCED-measured actual 423 — and the two kills that fired both localize to a KNOWN separate defect plus a $43 threshold graze
 
-Full record: `results/calibration/FINDING-ercot167-storage-soc-reserve-ab-2026-08-05.md`;
-gates pre-registered in `docs/PRECOMMIT-ercot167-storage-as-soc-reserve-2026-08-05.md` BEFORE any
+Full record: `docs/records/ercot/FINDING-ercot167-storage-soc-reserve-ab-2026-08-05.md`;
+gates pre-registered in `docs/records/ercot/PRECOMMIT-ercot167-storage-as-soc-reserve-2026-08-05.md` BEFORE any
 solve (two feasibility amendments recorded mid-probe, no gate touched). Runs registered:
 `2026-08-05-run167a-soc-control` (fresh same-HEAD replay) + `2026-08-05-run167b-soc-reserve`
 (single delta `ercot_storage_as_soc_reserve=true`). Headlines:
@@ -5503,7 +5503,7 @@ year's own rows, zero new DOF. No commodity backing is claimed for the lignite r
 measured fuel series moves at any offer step; F923 receipts exist only for Fayette/JKS/San
 Miguel and none steps at Aug — conduct, not commodity). OPTION B (spread-regime-conditional
 offer top) stays DEFERRED as the forecast-side successor. Gates pre-registered BEFORE any solve
-in `docs/PRECOMMIT-ercot168-coal-perplant-year-curves-2026-08-05.md`; NO amendment was needed
+in `docs/records/ercot/PRECOMMIT-ercot168-coal-perplant-year-curves-2026-08-05.md`; NO amendment was needed
 (the probe was feasible first try). The grain amendment (month-vs-season menu → within-day
 windows at the corpus's own hourly grain under a strict day-majority license) was recorded in
 the precommit §0 BEFORE any solve, decided from the data: at month grain the modal construction
@@ -5526,7 +5526,7 @@ construction. Named-not-chartered successors (FINDING §4): the same dissolved p
 ERCOT-137 (`COAL_OFFER_MARGIN_LEVEL` 15.8807), ERCOT-139 (`CC_COMMITTED_OFFER_LEVEL` 10.354)
 and ERCOT-140 (`COAL_PEAK_OFFER_LEVEL` 35.1989 + GAS_HR 10.41) — margin forms whose
 fuel-invariance claim the 2023 rows can now TEST; each is its own rule-14/23 owner charter.
-Full record `results/calibration/FINDING-ercot168-coal-perplant-year-curves-2026-08-05.md`;
+Full record `docs/records/ercot/FINDING-ercot168-coal-perplant-year-curves-2026-08-05.md`;
 matrix §5.1 item 12 stamped + the `coal_perplant_offer_level` row def/note/ev updated (rule
 28b/c). Retention pruned ercot145/ercot148. DO-NOT-REDO honored: lignite SLOPE (ERCOT-143 as
 adjudicated), coal_min_load_floor both grains, daily unit commitment, seasonal LEVEL split,
@@ -5558,7 +5558,7 @@ are MARGIN forms, so the corpus tests the invariance claim itself:
 `level₂₀₂₃ = measured₂₀₂₃ − HR × (fuel₂₀₂₃ − anchor)` vs the armed constant.
 
 **Discipline.** Decision rule pre-registered and **pushed before the corpus was read**
-(`docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md`): instruments, row filters,
+(`docs/records/ercot/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md`): instruments, row filters,
 CPT→CST clock, the gating matched window (T1 h11–22 CST — three of the four identification
 subsets sample exactly that window, carrying 77.9 % of pooled COAL and 75.0 % of pooled CC
 res-hours) with full-day as a reported non-gating T2, per-limb coverage-licensing thresholds, the
@@ -5609,8 +5609,8 @@ session should add them and carry limb B's verification into that ledger.
 all three mechanism rows re-cited (cells unchanged at `K`); `check_mechanism_matrix.py` exit 0.
 `--year` mode added to all three frozen derives (rule-23 re-run cite: the ercot-157 corpus
 landing); shared harness + probe committed; full record
-`results/calibration/ercot169_margin_fuel_invariance.json` +
-`results/calibration/FINDING-ercot169-margin-fuel-invariance-2026-08-05.md`. **No run registered —
+`results/phase0/ercot/ercot169_margin_fuel_invariance.json` +
+`docs/records/ercot/FINDING-ercot169-margin-fuel-invariance-2026-08-05.md`. **No run registered —
 no solve was run.** DO-NOT-REDO honored: no CT extension (ERCOT-147), lignite SLOPE (ERCOT-143),
 `coal_min_load_floor` both grains, daily unit commitment, seasonal LEVEL split,
 `coal_offer_level_rebasis` R, `tranche_startup_amortization` G, ercot-168 OPTION B still DEFERRED,
@@ -5625,7 +5625,7 @@ minted (rule 28(b), the ercot-163/147/152/161 no-LP precedent), keeper UNCHANGED
 `2026-08-05-run168b-year-curves`.** Charter: the ERCOT-163 close-out, which named a ~2.7 GW CC
 *headroom/capability* object and handed it forward UNCHARTERED pending a per-unit SCED-train ↔
 model-unit crosswalk. Decision rule pre-registered, committed and pushed **before** the corpus was
-read (`docs/PRECOMMIT-ercot170-cc-headroom-crosswalk-2026-08-05.md`).
+read (`docs/records/ercot/PRECOMMIT-ercot170-cc-headroom-crosswalk-2026-08-05.md`).
 
 **The object is CONFIRMED and it needs no crosswalk to establish.** The pre-registered attribution
 identity `U_m − U_r = A(capability) + B(AS reservation) − C(dispatch)` closes **exactly** — error
@@ -5723,8 +5723,8 @@ new function, every ercot-169 function byte-unchanged; it imports
 carries ONE declared row-filter delta from the ercot-123/144 set — no telemetered-status filter on
 the capability denominator, because a denominator that drops OUT/OFF rows measures commitment, not
 capability). Probe `scripts/probes/ercot170_cc_headroom_phase0.py`; record
-`results/calibration/ercot170_cc_headroom_phase0.json`; full write-up
-`results/calibration/FINDING-ercot170-cc-headroom-crosswalk-2026-08-05.md`. **No run registered —
+`results/phase0/ercot/ercot170_cc_headroom_phase0.json`; full write-up
+`docs/records/ercot/FINDING-ercot170-cc-headroom-crosswalk-2026-08-05.md`. **No run registered —
 no solve was run** (rule 15). Rule 22: delivery-2023 only, refused by construction outside
 2023–2025; ERCOT holds no `complete` marker. Rule 25: ERCOT-scoped throughout. All-hours control
 reported and pre-declared non-gating (A 7.503 GW of a 7.246 GW gap), with its caveat that over the
@@ -5746,7 +5746,7 @@ Next shorthand: ercot-171.
 in-session 2026-08-05** on the ercot-169 §6 open decision — *option 2, "charter a licensed
 sub-population instrument for the 2023 COAL rows."* Decision rule pre-registered, committed and
 pushed **before** any derive ran
-(`docs/PRECOMMIT-ercot171-coal-licensed-subpopulation-2026-08-05.md`); no bar, band, floor or window
+(`docs/records/ercot/PRECOMMIT-ercot171-coal-licensed-subpopulation-2026-08-05.md`); no bar, band, floor or window
 moved after measurement.
 
 **The construction.** The coverage shortfall is removed by a **RULE applied identically to every
@@ -5813,8 +5813,8 @@ both mechanism rows' cells re-cited (verdicts unchanged at `K`); `check_mechanis
 **unchanged** — `LIMBS`, `assess_limb`, `fuel_basis_by_year`, `coverage`, `curve_bottom`,
 `inc_bid_quantiles` reused verbatim. Probe
 `scripts/probes/ercot171_coal_licensed_subpop_phase0.py`; record
-`results/calibration/ercot171_coal_licensed_subpop.json`; write-up
-`results/calibration/FINDING-ercot171-coal-licensed-subpopulation-2026-08-05.md`. **No run
+`results/phase0/ercot/ercot171_coal_licensed_subpop.json`; write-up
+`docs/records/ercot/FINDING-ercot171-coal-licensed-subpopulation-2026-08-05.md`. **No run
 registered — no solve was run** (rule 15). Rule 22: delivery-2023 corpus + training-span probe days
 only. Rule 23: no derive re-run, no constant value changed. Rule 25: ERCOT-scoped. Rule 27:
 `constants.py` edited locally and blob-verified after push. DO-NOT-REDO honored in full, and
@@ -5829,7 +5829,7 @@ verdict flipped (both event-cap cells stay `K`), keeper UNCHANGED at
 `2026-08-05-run168b-year-curves`.** Charter: the H4 item-4 object named in
 `FINDING-ercot166` §5/§7, which is also the standing GATE on the ercot-167 SOC-reserve
 re-gate. Decision rule pre-registered, committed and pushed **before** any capture ran
-(`docs/PRECOMMIT-ercot172-maintenance-season-availability-2026-08-06.md`); no bar, band,
+(`docs/records/ercot/PRECOMMIT-ercot172-maintenance-season-availability-2026-08-06.md`); no bar, band,
 floor or window moved after measurement.
 
 **CALENDAR CORRECTION, repo-wide and load-bearing.** The object's days are
@@ -5916,8 +5916,8 @@ place); `check_mechanism_matrix.py` **exit 0** (229 pre-existing anchor warnings
 none introduced here); `node --check` on the matrix JS passes. Probe
 `scripts/probes/ercot172_maintenance_availability_phase0.py` (reproduces every number from
 committed inputs plus two cached no-LP captures); record
-`results/calibration/ercot172_maintenance_availability.json`; write-up
-`results/calibration/FINDING-ercot172-maintenance-season-availability-2026-08-06.md`.
+`results/phase0/ercot/ercot172_maintenance_availability.json`; write-up
+`docs/records/ercot/FINDING-ercot172-maintenance-season-availability-2026-08-06.md`.
 **No run registered — no solve was run** (rule 15). Rule 22: 2024 object; 2023/2025 read only
 as the shed census; ERCOT holds no `complete` marker, so 2022 and all locked-test years stayed
 quarantined and unread. Rule 23: no derive re-run, no constant changed. Rule 25: ERCOT-scoped.
@@ -5928,9 +5928,9 @@ Next shorthand: ercot-173.
 
 ## ercot-173 (2026-08-06) — Phase 0: the 2023 "excess cheap depth" premise REFUTED at the aggregate (FILED-REDIRECTED, X/M p50 −1.21 vs +0.60 bar); the ercot-172-specified C1+C2 event-cap ceiling reconciliation BUILT and solved once — fixes the 2024 object exactly as attributed, REJECTED-AS-ARMED on G-SPAN + G-C3c + G-COAL148; keeper UNCHANGED (run168b)
 
-Full record: `results/calibration/FINDING-ercot173-event-cap-reconciliation-2026-08-06.md`;
+Full record: `docs/records/ercot/FINDING-ercot173-event-cap-reconciliation-2026-08-06.md`;
 decision rules + predictions pre-registered BEFORE measurement in
-`docs/PRECOMMIT-ercot173-2023-depth-and-ceiling-reconciliation-2026-08-06.md` (gates inherited
+`docs/records/ercot/PRECOMMIT-ercot173-2023-depth-and-ceiling-reconciliation-2026-08-06.md` (gates inherited
 verbatim from PRECOMMIT-ercot172 §5; G-BIT declared N/A pre-solve, replaced by G-SPAN). Runs
 registered: `2026-08-06-run173a-reconc-control` + `2026-08-06-run173b-event-cap-reconc`
 (REJECTED-AS-ARMED). Headlines:
@@ -5981,7 +5981,7 @@ extract as "the ONLY admissible route left" to (a) the 2024 event-cap ceiling
 defect (ercot-172 ACTIONABLE) and (b) the ercot-167 SOC re-gate, and granted
 owner adjudication for the derive half. Pre-registration written and pushed
 **before the derive was built**:
-`docs/PRECOMMIT-ercot174-unit-attributed-partial-outage-2026-08-06.md` — the
+`docs/records/ercot/PRECOMMIT-ercot174-unit-attributed-partial-outage-2026-08-06.md` — the
 attribution rule, the composition rule verbatim, the BE/SP proofs, the
 predictions, and two explicit STOP rules. Kill gates: `PRECOMMIT-ercot172` §5
 inherited verbatim.
@@ -6059,7 +6059,7 @@ remaining structural route; (4) the run168b keeper still does not reproduce at
 current main (ercot-173 §5, untouched here — re-key vs re-solve at HEAD is an
 owner question). Keeper **UNCHANGED** at `2026-08-05-run168b-year-curves`;
 determination NOT-YET, fail set {C3a, C3b}.
-`results/calibration/FINDING-ercot174-unit-attributed-partial-outage-2026-08-06.md`.
+`docs/records/ercot/FINDING-ercot174-unit-attributed-partial-outage-2026-08-06.md`.
 
 ## ercot-175 (2026-08-06) — matrix §5.1 item 18: the ercot-173 re-pointing MEASURED — the offered-vs-deliverable wedge at SCED grain is fully licensed, the RIGHT SIZE (0.93 × M at the median) and the WRONG SHAPE for any single admissible mechanism (AS 0.47 / ramp 0.26 / residual 0.13 of M); **FILED-REDIRECTED** on the pre-registered rule; Phase 0, NO LP, nothing built, keeper UNCHANGED (run168b)
 
@@ -6069,7 +6069,7 @@ SCED grain, now that `data/raw/ercot/SCED/` holds the FULL delivery-2023
 NP3-965 corpus (315 shards, 897 MB) with HSL/HASL/HDL/LSL/LASL/LDL, Base
 Point, net output and per-product AS awards at 5-min grain. Precommit pushed
 BEFORE any measurement
-(`docs/PRECOMMIT-ercot175-sced-deliverable-wedge-2026-08-06.md`): hour sets
+(`docs/records/ercot/PRECOMMIT-ercot175-sced-deliverable-wedge-2026-08-06.md`): hour sets
 H123/H61 imported verbatim from the ercot-173 construction, L1/L2/L3 bars,
 the branch rule (0.60 twice, the majority-plus-margin form), the rule-13 line
 (HDL/HASL/BP as measurement evidence ONLY — never model inputs; ramp physics
@@ -6127,7 +6127,7 @@ solve; no run registered — stated explicitly). Owner items carried: the
 148/149 collision (lane frozen), finer-grain-wins, ercot-172 fault 3, the
 run168b non-reproduction at HEAD. Keeper **UNCHANGED** at
 `2026-08-05-run168b-year-curves`; determination NOT-YET, fail set {C3a, C3b}.
-`results/calibration/FINDING-ercot175-sced-deliverable-wedge-2026-08-06.md`.
+`docs/records/ercot/FINDING-ercot175-sced-deliverable-wedge-2026-08-06.md`.
 
 ## 2026-08-07 — ERCOT-176 (the owner-authorized ERCOT-151 §3 design round): the offline-increment SLOW-START tier BUILT, derived and seam-proven — and MEASURED PROVABLY INERT (`pool_frac_CC` 0.0002–0.0007, ~30× below the pre-registered threshold), so no arm was solved; the CONTROL replay reproduces run168b at HEAD and BECOMES THE KEEPER, retiring the non-reproduction item
 
@@ -6137,7 +6137,7 @@ ercot-157 with the delivery-2023 NP3-965 corpus). Object: **C3a-2023** (−29.9 
 lw-hub / −32.2 % scorer), fail set {C3a, C3b}, on keeper
 `2026-08-05-run168b-year-curves`.
 
-**Pre-registration.** `docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md`,
+**Pre-registration.** `docs/records/ercot/PRECOMMIT-ercot176-offline-increment-2026-08-07.md`,
 pushed **before any derive or measurement**, with **three amendments all written
 and pushed PRE-SOLVE**:
 
@@ -6239,9 +6239,9 @@ not re-opened; no ramp mechanism; no storage offer surface; no per-hour or
 aggregate capability cap; no coal offer lane; West/Panhandle stayed closed;
 ercot-172's C3 not attempted; the CC-headroom crosswalk stays FILED-UNLICENSED.
 
-Records: `docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md`,
-`results/calibration/FINDING-ercot176-offline-increment-slowstart-2026-08-07.md`,
-`results/calibration/ercot176_offline_commit_seamproof.json`,
+Records: `docs/records/ercot/PRECOMMIT-ercot176-offline-increment-2026-08-07.md`,
+`docs/records/ercot/FINDING-ercot176-offline-increment-slowstart-2026-08-07.md`,
+`results/phase0/ercot/ercot176_offline_commit_seamproof.json`,
 `scripts/probes/ercot176_offline_commit_seamproof.py`. Next: ercot-177.
 
 ## 2026-08-07 — ercot-177: `temp_dependent_derate` at ERCOT REFUSED EX-ANTE — the matrix cell was STALE at `U` against a dated owner closure and is corrected to `R`; a second, independent rule-19 ground established; the `cc_nameplate_summer_derate` declared cell split DECIDED; NO precommit, NO derive, NO LP, keeper UNCHANGED
@@ -6409,7 +6409,7 @@ coal offer lane; West/Panhandle stayed closed; ercot-172's C3 not attempted; the
 CC-headroom crosswalk stays FILED-UNLICENSED; per-year CT re-identification not
 attempted.
 
-Records: `results/calibration/FINDING-ercot177-temp-derate-refused-2026-08-07.md`,
+Records: `docs/records/ercot/FINDING-ercot177-temp-derate-refused-2026-08-07.md`,
 `scripts/probes/ercot177_waterfill_identity.py`. Next: ercot-178.
 
 ## 2026-08-08 — ercot-178: the CONTINUOUS conditioning grain — arm REJECTED-AS-ARMED on its own gates; the 2023 mechanism evidence is the largest on the record (+$8.18/MWh)
@@ -6417,7 +6417,7 @@ Records: `results/calibration/FINDING-ercot177-temp-derate-refused-2026-08-07.md
 **Charter:** matrix §5.1 item 21 — the ercot-177 diagnosis §4 conditioning-GRAIN
 lever (`ercot_offer_surface_netload_pcts`), form (a) CONTINUOUS elected and
 pre-registered BEFORE any derive or measurement
-(`docs/PRECOMMIT-ercot178-continuous-netload-grain-2026-08-08.md` + pre-solve
+(`docs/records/ercot/PRECOMMIT-ercot178-continuous-netload-grain-2026-08-08.md` + pre-solve
 Amendment 1). Object: C3a-2023 −32.4 % under the owner's standing instruction
 (under 10 % without disturbing 2024/2025 — a HARD gate).
 
@@ -6459,9 +6459,9 @@ core is reusable). If the top-scoped variant still lands short of −10 %, the
 residual is the p97–99 formation — a quantity-position phenomenon (the last
 accepted step's position), not conditioning grain.
 
-Records: `results/calibration/FINDING-ercot178-continuous-grain-2026-08-08.md`,
-`docs/PRECOMMIT-ercot178-continuous-netload-grain-2026-08-08.md`,
-`results/calibration/ercot178_contpct_seamproof.json`,
+Records: `docs/records/ercot/FINDING-ercot178-continuous-grain-2026-08-08.md`,
+`docs/records/ercot/PRECOMMIT-ercot178-continuous-netload-grain-2026-08-08.md`,
+`results/phase0/ercot/ercot178_contpct_seamproof.json`,
 `scripts/probes/ercot178_contpct_seamproof.py`, bundles
 `ercot178_control_A` / `ercot178_grain_B`. Next: ercot-179.
 
@@ -6489,7 +6489,7 @@ rather than an inherited protective clause.
 **Charter:** FINDING-ercot178 §7a's named successor (matrix §5.1 item 22) — finer
 stepped sub-bins above p97 only, edges from submitted-offer conduct structure.
 **Precommit pushed BEFORE any corpus read**
-(`docs/PRECOMMIT-ercot180-top-scoped-grain-2026-08-08.md`): the instrument
+(`docs/records/ercot/PRECOMMIT-ercot180-top-scoped-grain-2026-08-08.md`): the instrument
 (last-3 SCED2 steps of ON merchant gas as delivered-gas HR multipliers,
 MW-weighted two-sample KS below/above candidate rank edges, ≥30 hours of 2023
 per sub-bin, day-block permutation p < 0.01, MAX_EDGES = 2, delivery-2023
@@ -6516,7 +6516,7 @@ derive-and-prove session, not a rebuild. Gate-off control path byte-identical
 at session HEAD (2023 compose sha == the ercot-178 recorded control sha).
 
 **The §8 diagnostic (P-7 CONFIRMED —
-`results/calibration/ercot180_marginal_position.json`):** at the top-100 gap
+`results/phase0/ercot/ercot180_marginal_position.json`):** at the top-100 gap
 hours (mean gap $1,041/MWh) the accepted MW sits at **q_act p50 0.9976** of
 the marginal resource's own submitted curve (CC 92/100) vs the model marginal
 row at **q_mod p50 0.9117** of its class curve; **the actual RT price lies
@@ -6539,10 +6539,10 @@ stays at 15 registered runs. **Data blocker carried:** the 2024/2025 SCED
 RT/pool corpora remain sample-day-only (561/500 nodes vs 2023's 7,917) — above
 p97 they carry 50/42 hours vs 2023's 263 — bounding any future re-derive and
 gating the p = 0.017 re-identification. Records:
-`results/calibration/FINDING-ercot180-topscoped-exhausted-2026-08-08.md`,
-`results/calibration/ercot180_edge_identification.json`,
-`results/calibration/ercot180_marginal_position.json`,
-`docs/PRECOMMIT-ercot180-top-scoped-grain-2026-08-08.md`. Next: ercot-181.
+`docs/records/ercot/FINDING-ercot180-topscoped-exhausted-2026-08-08.md`,
+`results/phase0/ercot/ercot180_edge_identification.json`,
+`results/phase0/ercot/ercot180_marginal_position.json`,
+`docs/records/ercot/PRECOMMIT-ercot180-top-scoped-grain-2026-08-08.md`. Next: ercot-181.
 
 ## 2026-08-09 — ercot-181: the QUANTITY-POSITION lane — the position-tail completion BUILT, PROVEN, and PROMOTED AS KEEPER with the honest verdict INERT-ON-THE-OBJECT; the offer-side mechanism space for C3a-2023 is EXHAUSTED and the reachability question is ESCALATED to an owner sitting
 
@@ -6550,7 +6550,7 @@ gating the p = 0.017 re-identification. Records:
 quantity-position phenomenon: reality's marginal price forms at q_act p50
 0.9976 of the marginal resource's own cliff-shaped submitted curve, inside the
 position band in 94/100 top-gap hours. **Precommit pushed BEFORE any
-measurement** (`docs/PRECOMMIT-ercot181-quantity-position-2026-08-09.md`):
+measurement** (`docs/records/ercot/PRECOMMIT-ercot181-quantity-position-2026-08-09.md`):
 the interior price-at-BP instrument with bars fixed ex ante, form α (the
 position-tail completion) elected over THREE ex-ante refusals (comonotone
 re-aggregation, outcome-position pins, friction re-opens), the build-free
@@ -6616,14 +6616,14 @@ C3a is LOAD-BEARING tier where model-class ledgering is v3.0-refused — the
 sitting must amend the rubric, accept NOT-YET as standing, or authorize a
 model-class change such as sub-hourly/cliff-resolving price formation). Until
 then: NO further offer-side C3a-2023 lever (DO-NOT-REDO items 21–23).
-Records: `results/calibration/FINDING-ercot181-position-tail-2026-08-09.md`
+Records: `docs/records/ercot/FINDING-ercot181-position-tail-2026-08-09.md`
 + the reach/seam/instrument JSONs. Next: ercot-182 (after the sitting).
 
 ## 2026-08-09 — ercot-182: the OWNER SITTING on C3a-2023 reachability — the decision card assembled from committed artifacts; the decisive finding is that NO C3a ledgering option changes ERCOT's determination at all; NO lever, NO precommit, NO derive, NO LP, no run registered, no matrix cell minted, keeper UNCHANGED
 
 **Task.** The terminus pre-registered by PRECOMMIT-ercot181 §5 and escalated by
 FINDING-ercot181 §9. Deliverable:
-`docs/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` — the question,
+`docs/records/ercot/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` — the question,
 the three options §9 names, each priced with the rubric text it would require,
 plus the evidence appendix and the data blocker. Governance sitting, not a
 mechanism test. Keeper `2026-08-09-run181-position-tail`: NOT-YET, fail set
@@ -6653,7 +6653,7 @@ merits.** The fail set is {C3a, C3b} and status aggregates over years. C3a fails
 leaves NOT-YET; carving out the whole 2023 object (C3a+C3b 2023) still leaves
 C3b-2024, whose root is a *different* object — the two 2024 shed hours the model
 over-amplifies to VOLL, FROZEN behind
-`docs/handoffs/DECISION-MEMO-ercot-148149-doublecount-2026-08-07.md`, i.e. an
+`docs/records/ercot/DECISION-MEMO-ercot-148149-doublecount-2026-08-07.md`, i.e. an
 adjudicated mechanism collision awaiting a ruling, not a model-class limit.
 **Option (a) therefore spends a rubric amendment with three ISOs downstream of it
 for ZERO ERCOT gain.** Second, independent objection: ercot-177 §7 establishes
@@ -6743,7 +6743,7 @@ the A/B evidence, and this card only cites it), keeper UNCHANGED at
 edit). Rule 22: ERCOT holds no `complete` and no `final` marker and no
 out-of-training year was solved, scored, read or registered. Rules 23/24: zero
 scalars, zero fields. Rule 25: ERCOT only. Nothing offloaded to CI. Record:
-`docs/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md`. Next: ercot-183.
+`docs/records/ercot/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md`. Next: ercot-183.
 
 ### ercot-182 addendum (2026-08-09) — THE SITTING WAS HELD; ALL FIVE CARDS SIGNED
 
@@ -6807,7 +6807,7 @@ arm passes its gates); no holdout marker was granted or spent (ERCOT still holds
 no `complete` and no `final`, and the D4 intake is data preparation, which rule 22
 places outside the spend gate); and the keeper did NOT move —
 `2026-08-09-run181-position-tail`, NOT-YET {C3a, C3b}, unchanged. Record:
-`docs/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §10.
+`docs/records/ercot/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §10.
 
 ## 2026-08-09 — ERCOT-183 (owner card D4 EXECUTED: the 2024/2025 NP3-965 full-year re-upload; data intake only — no LP, no mechanism, no matrix cell, keeper UNCHANGED at run181-position-tail)
 
@@ -6871,7 +6871,7 @@ spend — no out-of-training year solved/scored/registered; 2026 rows refused at
 fetch, quarantined at rest); rule 25 ERCOT-only; rule 28 NO matrix cell
 (nothing tested); rule 15 N/A (no run produced). Keeper
 `2026-08-09-run181-position-tail` UNCHANGED. Full record:
-`docs/handoffs/ercot-sced-2024-2025-reupload-2026-08.md`.
+`docs/records/ercot/ercot-sced-2024-2025-reupload-2026-08.md`.
 
 Next shorthand: ercot-184.
 
@@ -6880,11 +6880,11 @@ Next shorthand: ercot-184.
 ## ercot-184 (2026-08-09) — D5: THE (c2) CLIFF-RESOLUTION COSTING MEMO — COSTED, MEASURED, AND REFUSED ON REACH. No build, no field, no solve, no registered run, no matrix cell; keeper untouched.
 
 **Authorization:** owner sitting 2026-08-09, cards **D1(c) + D5**, SIGNED
-(`docs/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §5/§10). D1
+(`docs/records/ercot/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §5/§10). D1
 refused the C3a ledger carve-out and authorized the model-class lane to fix the
 2023 object on the merits; D5 scoped its first step to a **costing memo with no
-build authorization**. Record: `docs/MEMO-ercot184-cliff-resolution-costing-2026-08-09.md`;
-measurement `results/calibration/ercot184_cliff_resolution.json`, probe
+build authorization**. Record: `docs/records/ercot/MEMO-ercot184-cliff-resolution-costing-2026-08-09.md`;
+measurement `results/phase0/ercot/ercot184_cliff_resolution.json`, probe
 `scripts/probes/ercot184_cliff_resolution_costing.py`.
 
 **The object.** `offer_curves._econ_curve_steps` slices each plant's economic
@@ -6993,7 +6993,7 @@ Charter: the SIGNED owner ruling of the 2026-08-09 sitting, card D2 option C —
 *"The ceiling lane stays frozen for composition-rule work; a fault-3
 partial-layer construction re-charter is authorized as its successor, with
 G-COAL148 carried live."* Precommit pushed before any measurement or derive
-(`docs/PRECOMMIT-ercot185-fault3-partial-layer-construction-2026-08-09.md`),
+(`docs/records/ercot/PRECOMMIT-ercot185-fault3-partial-layer-construction-2026-08-09.md`),
 plus a pre-measurement amendment A-1 electing the NORMALIZED construction.
 
 **Mechanism** (`ercot_partial_outage_shaped_derate`, default off, zero new
@@ -7043,7 +7043,7 @@ path: `solve_and_persist` had forwarded `cc_winter_capability_basis` to
 every orchestrated solve raised `TypeError` before the LP. Repaired; all 255
 forwarded kwargs audited, no other gaps.
 
-Records: `results/calibration/FINDING-ercot185-fault3-partial-layer-2026-08-09.md`,
+Records: `docs/records/ercot/FINDING-ercot185-fault3-partial-layer-2026-08-09.md`,
 `ercot185_ab.json`, `ercot185_coal148.json`, `ercot185_shaped_seam_proof.json`;
 runs `2026-08-09-ercot185-shaped-control` + `2026-08-09-ercot185-shaped-partial`.
 ERCOT holds no `complete`/`final` marker, so no `calibration-complete.json`
@@ -7053,7 +7053,7 @@ re-key applies.
 
 **Authorization:** owner sitting 2026-08-09, card **D3 option (ii)**, sequenced
 after D2 — which landed as the current keeper. Precommit
-`docs/PRECOMMIT-ercot186-rule18-grain-2026-08-10.md` pushed at `2e8f879e`
+`docs/records/ercot/PRECOMMIT-ercot186-rule18-grain-2026-08-10.md` pushed at `2e8f879e`
 **before any measurement**. Keeper at start and at end:
 `2026-08-09-ercot185-shaped-partial`, **NOT-YET {C3a-2023, C3b-2023}**.
 
@@ -7121,10 +7121,10 @@ revert*, rule 1 `[R-STRUCT]` — now the branch most likely to fire. It should
 also settle whether p6243's 8 h min-down is correct or a CAMPD artifact on a
 CT-classified plant (rule 14 `[R-ACCURATE]`).
 
-Records: `results/calibration/FINDING-ercot186-rule18-grain-2026-08-10.md`,
-`results/calibration/ercot186_grain_seamproof.json`, probe
+Records: `docs/records/ercot/FINDING-ercot186-rule18-grain-2026-08-10.md`,
+`results/phase0/ercot/ercot186_grain_seamproof.json`, probe
 `scripts/probes/ercot186_grain_seamproof.py`, precommit
-`docs/PRECOMMIT-ercot186-rule18-grain-2026-08-10.md`. Matrix: new row
+`docs/records/ercot/PRECOMMIT-ercot186-rule18-grain-2026-08-10.md`. Matrix: new row
 `ercot_faststart_pool_plant_physics` cell `O`; `ercot_faststart_pool_offer`
 stays `K`, its ercot-176 annotation replaced by the measured record; ERCOT
 lever-queue item 25. ERCOT holds no `complete`/`final` marker, so no
@@ -7203,14 +7203,14 @@ fast-tier failures added.**
 `test_soundness::TestPerformance::test_full_ercot_8760_timing` (31.13 s vs a 30 s
 budget on a 4-core box) is a machine-speed artifact, deliberately untouched.
 
-Records: `results/calibration/FINDING-ercot187-golden-hash-attribution-2026-08-10.md`.
+Records: `docs/records/ercot/FINDING-ercot187-golden-hash-attribution-2026-08-10.md`.
 ERCOT holds no `complete`/`final` marker, so no `calibration-complete.json`
 re-key applies.
 
 ## ercot-188 (2026-08-11) — OWNER OPTION (B): THE (c2) CLIFF-RESOLVING OFFER-CURVE REFINEMENT IS BUILT, SEAM-PROVEN AND SOLVED — REJECTED-AS-ARMED on G-C3c, and the measured reach is NEGATIVE. Keeper UNCHANGED.
 
 **Authorization: OWNER DECISION — option (B) BUILD ANYWAY** on the
-`docs/MEMO-ercot184-cliff-resolution-costing-2026-08-09.md` §8 card, taken as a
+`docs/records/ercot/MEMO-ercot184-cliff-resolution-costing-2026-08-09.md` §8 card, taken as a
 **structural-fidelity purchase under rule 1 `[R-STRUCT]`**.
 
 > **THE MEMO'S OWN RECOMMENDATION WAS (A) CLOSE THE LANE, AND IT IS RECORDED
@@ -7224,7 +7224,7 @@ re-key applies.
 > mechanical verdict stood unrewritten and the promotion rested openly on the
 > owner's standing structural standard.
 
-Pre-registration `docs/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md`
+Pre-registration `docs/records/ercot/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md`
 pushed at `b73e383` **BEFORE any measurement, derive, build or solve**, plus a
 **pre-solve Amendment 1**. Preconditions verified at session open: **ercot-186
 HAS LANDED** (PR #3847 — it honoured its own pre-registered STOP, so no A/B and
@@ -7389,8 +7389,8 @@ C3a-2023 IS CLOSED** (items 21–23 closed the level and grain faces; this close
 the width one). Matrix cell `ercot_econ_curve_top_refine` ERCOT `O → R`, §5.1
 item 26; the other five ISOs stay `U` (rule 25).
 
-Records: `results/calibration/FINDING-ercot188-cliff-offer-curve-2026-08-11.md`,
-`docs/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md` (incl.
+Records: `docs/records/ercot/FINDING-ercot188-cliff-offer-curve-2026-08-11.md`,
+`docs/records/ercot/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md` (incl.
 Amendment 1), `ercot188_topfine_seamproof.json`, `ercot188_coal148.json`,
 `ercot188_p0_delta.json`. Runs
 `2026-08-11-run188-ctl-topfine-control` + `2026-08-11-run188-arm-topfine-cliff`
@@ -7423,8 +7423,8 @@ state what it will argue instead. Bookkeeping: matrix ERCOT shard cell
 `ercot_econ_curve_top_refine` `R → K`, keeper + gates stamps re-cut, §5.1 header
 re-stamped (which also restored the matrix's §5.x prose-header check, silently
 absent beforehand); `check_mechanism_matrix.py` exit 0. Record:
-`results/calibration/FINDING-ercot188-cliff-offer-curve-2026-08-11.md` §9 +
-`docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md` RESOLUTIONS.
+`docs/records/ercot/FINDING-ercot188-cliff-offer-curve-2026-08-11.md` §9 +
+`docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md` RESOLUTIONS.
 
 **The other six cards signed the same sitting:** A1 authorize the DAM-deriver
 lane (#9 → #8 → #10, one precommit, one re-derive, one re-gate sweep — the only
@@ -7445,10 +7445,10 @@ facilities, ERCOT-146's nine plants carrying 1,708 MW of CT capacity with no
 ## ercot-189 (2026-08-11) — THE OWNER'S QUESTION ("How have we still seen no improvement?") ANSWERED WITH A MEASUREMENT: C3a-2023 is two-thirds the accepted C3c object by dollars and ~97% of it by distance-to-gate — the decision card on continuing vs stopping after the offer family; ONE read-only counterfactual re-scoring of the run188 keeper, NO lever, NO derive, NO LP, NO run registered, NO matrix cell, keeper UNCHANGED
 
 **Task.** Planning/synthesis sitting (Fable). Deliverable:
-`docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`, with
+`docs/records/ercot/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`, with
 the session's single new measurement in
 `scripts/probes/ercot189_c3a_c3c_overlap.py` →
-`results/calibration/ercot189_c3a_c3c_overlap.json` — a read-only counterfactual
+`results/phase0/ercot/ercot189_c3a_c3c_overlap.json` — a read-only counterfactual
 re-scoring of the keeper `2026-08-11-run188-arm-topfine-cliff` built by
 rebuilding the payload `lmp` aggregates from the committed
 `hourly/system_2023.parquet` (dict-for-dict equal to the committed payload
@@ -7505,7 +7505,7 @@ JSON committed as the evidence artifact (ercot-184 precedent). Next shorthand:
 ## ercot-190 (2026-08-12) — CARD Q SIGNED: (Q-C) THE CHECKPOINT RULE, as recommended — no ERCOT C3a-2023 spend until A1's #9 lands; then the ercot-170 licence re-test decides BY RULE (PASS → per-unit phase-0 authorized without a new sitting; FAIL → STOP automatic and final); the readiness_limits price-tail disclaimer AUTHORIZED as a named doc-only forecast-lane item; NO lever, NO solve, NO run registered, NO matrix cell, keeper UNCHANGED
 
 **Task.** Signing sitting, held with the owner on the ercot-189 card
-(`docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`,
+(`docs/records/ercot/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`,
 merged to main via PR #3873). RESOLUTIONS filled; card body preserved AS PUT;
 status header flipped to RECORD. The standing conditional, verbatim scope:
 licence bars unchanged (L1 ≥ 0.90, L2 ≤ 0.10) on the repaired deriver, run as
@@ -7524,8 +7524,8 @@ here. Next shorthand: **ercot-191**.
 open DAM-deriver rulings in sequence, re-derive the family once, re-gate
 every armed DAM keeper mechanism once; then run the signed ercot-190
 checkpoint. Precommit pushed before any derive/solve:
-`docs/PRECOMMIT-ercot191-a1-dam-deriver-2026-08-12.md`; full record
-`results/calibration/FINDING-ercot191-dam-deriver-lane-2026-08-12.md`.
+`docs/records/ercot/PRECOMMIT-ercot191-a1-dam-deriver-2026-08-12.md`; full record
+`docs/records/ercot/FINDING-ercot191-dam-deriver-lane-2026-08-12.md`.
 
 **The repairs.** #9: `_site()` now keys the PHYSICAL TRAIN (all 310 corpus
 CC names match the train grammar; site sums become the sum of per-train
@@ -7563,7 +7563,7 @@ FILED-UNLICENSED; identity error 0.0000 GW, A_capability 2.5869 GW = 102.6 %
 of the 2.5224 GW gap. **Per the signed rule: (Q-B) — no further ERCOT
 C3a-2023 spend; ERCOT stands at NOT-YET on C3a-2023 as a model-class limit.
 Recorded and stopped.** Item 11 CLOSED
-(`results/calibration/ercot191_cc_headroom_licence_retest.json`). Remaining
+(`results/phase0/ercot/ercot191_cc_headroom_licence_retest.json`). Remaining
 ERCOT-C3a items are doc-grade only: the readiness_limits disclaimer (already
 implemented on the forecast lane at ercot-190) and the owner's
 `complete`-declaration question. Fences honoured: no other C3a-2023 work;
@@ -7572,13 +7572,13 @@ card B untouched; no rubric/ledger/marker/field changes. Next shorthand:
 ## ercot-192 (2026-08-12) — SIGNATURE B1 EXECUTED: item 13's two COAL limbs re-adjudicated under a fresh precommit. Limb C **REFUTED** and replaced by a measured year-keyed 2023 level; limb A NOT-IDENTIFIABLE under the new instrument, ercot-171 untouched. KEEPER → `2026-08-12-run192-arm-coal-peak`
 
 **Task.** Execute owner signature **B1** (card B of
-`docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`): *"re-adjudicate
+`docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`): *"re-adjudicate
 under a fresh precommit before any arm."* Mechanism-correctness lane (rules
 1/23), **NOT C3a-2023 spend** — card Q ruling **Q-B** is final, so every price
 movement below is reported at full magnitude, was never targeted and is not the
 promotion basis. Precommit pushed before any level was measured and before any
-solve: `docs/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md`;
-full record `results/calibration/FINDING-ercot192-coal-limbs-2023-2026-08-12.md`.
+solve: `docs/records/ercot/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md`;
+full record `docs/records/ercot/FINDING-ercot192-coal-limbs-2023-2026-08-12.md`.
 
 **Phase 0a first — and it refused two repairs before any price was read.** A
 structure-only probe (`ercot192_coal_peak_structure.json`, coverage/headroom, no
@@ -7665,7 +7665,7 @@ Next shorthand: **ercot-193**.
 ## rtcb-adapter-1 (2026-08-12) — DATA INTAKE: the RTC+B SCED read adapter is BUILT (card D / D1, execution-order item 4). The 27 quarantined parts now parse into the existing frame contract with HASL/LASL EXPLICITLY ABSENT and a per-row format flag; the delivery-2025-12-04 lane boundary is documented in code at all three glob sites and pinned by test. NO derive re-run, NO solve, NO run registered, NO matrix cell, keeper UNCHANGED.
 
 **Task.** Execute signature **D1** of card D
-(`docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`): *"authorize,
+(`docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`): *"authorize,
 scoped to a READ ADAPTER"*. Read scope only — no mechanism, no re-derive of
 frozen artifacts, no keeper movement. Data-intake session; it does **not**
 consume the ercot-N counter (next shorthand remains **ercot-192**, as
@@ -7759,7 +7759,7 @@ both are constructions and both need their own authorization.
 
 **Session** l-scar-screen-1 `[FABLE]`, branch `claude/l-scar-screen-charter-wm882l`,
 HEAD `9c52ea8`. Planning only, per charter. Deliverable:
-`docs/DECISION-CARD-lscar-screen-revenue-2026-08-13.md` — three signatures (S1
+`docs/records/misc/DECISION-CARD-lscar-screen-revenue-2026-08-13.md` — three signatures (S1
 admissibility of the tightness-conditioned residual scarcity-rent term vs the
 FFR-6A row-4 refusal; S2 option selection incl. an honest do-nothing with its
 measured accepted bias; S3 sequencing: A/B now at the armed stage-B posture,
@@ -7803,7 +7803,7 @@ session ran; the backcast counter is unaffected by this entry).
 ## ercot-194 (2026-08-13) — TWO SITTINGS RECORDED, ALL FOUR SIGNATURES AS RECOMMENDED: L-SCAR-SCREEN-1 S1/S2/S3 (the §2.6 distinction OWNER-SIGNED; L-1 residual scarcity-rent term chartered for the SCREEN; A/B now, promotion behind OVERRIDE-FIX) and ercot-193 card R (R-A: hold NOT-YET, re-charter ERCOT off the 2023 price criteria); NO lever, NO solve, NO run, NO matrix cell, keeper UNCHANGED
 
 **Task.** Signing sitting, held with the owner on the two open cards.
-(1) `docs/DECISION-CARD-lscar-screen-revenue-2026-08-13.md`: S1 ADMISSIBLE AS
+(1) `docs/records/misc/DECISION-CARD-lscar-screen-revenue-2026-08-13.md`: S1 ADMISSIBLE AS
 CHARTERED — the owner signs the §2.6 distinction (measured tightness-
 conditioned residual rent with sunset ≠ FFR-6A row 4's refused scalar
 uplift); S2 = L-1 (L-2 the named structural complement); S3 = A/B against a
@@ -7811,7 +7811,7 @@ HEAD-re-solved control now, PROMOTION held behind OVERRIDE-FIX. The
 implementing session (L-SCAR-SCREEN-2) owns the new default-off
 `ScenarioConfig` field + full matrix row (rule 28c), the §3 pre-registered
 retire/stay 2023–2025 LOYO validation, and the §4 must-nots verbatim.
-(2) `docs/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`:
+(2) `docs/records/ercot/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`:
 **R-A** — NOT-YET stands as the honest public claim now that C3b-2023 is
 measured 96% the same closed model-class object as C3a-2023; no further
 C3b-2023-targeted determination rounds; bandwidth re-points to hygiene, the
@@ -7825,7 +7825,7 @@ and ledger untouched. Next shorthand: **ercot-195**.
 solve; (2) the next lever targeting C3b-2023 under full precommit protocol;
 plus the two ercot-192-filed defects if convenient.
 
-**Task 1 — card R** (`docs/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`,
+**Task 1 — card R** (`docs/records/ercot/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`,
 signed R-A at the ercot-194 sitting). The new measurement
 (`scripts/probes/ercot193_c3b_decomposition.py`, read-only re-scoring of the
 keeper payload with the rubric's own `_wmean`/`_nrmse`): **C3b-2023's squared
@@ -7847,7 +7847,7 @@ mechanism; ERCOT's named amplitude lever WAS item 10, already armed; C3b is
 monthly, and the card-R ceiling caps any non-Aug/Sep lever at ~0.59. (c) the
 outage-season monthly object REFUSED for this round — its named patterns are
 2024/2025, both C3b-PASS. Precommit
-`docs/PRECOMMIT-ercot193-soc-regate-2026-08-13.md` pushed at `5ad4975` BEFORE
+`docs/records/ercot/PRECOMMIT-ercot193-soc-regate-2026-08-13.md` pushed at `5ad4975` BEFORE
 any solve: original ercot-167 G1–G5 verbatim, G-COAL148 carried live (D2
 lineage), DIRECTION-BLIND (the keeper cannot change in-session in any outcome —
 the arm is owner-promoted in the keeper and disarming is owner-only).
@@ -7905,7 +7905,7 @@ flags, so the FINDING-ffr-9c precedence defect does not touch this pair.
 obligation; residuals reported at full magnitude, never gated on direction),
 no C3c ledger change, no rubric amendment, no marker granted or spent, frozen
 composition lane untouched, ercot-188/E2 P0 forfeiture inherited unexpired.
-Records: `results/calibration/FINDING-ercot193-soc-regate-2026-08-13.md`;
+Records: `docs/records/ercot/FINDING-ercot193-soc-regate-2026-08-13.md`;
 matrix ERCOT shard `storage_measured_anchors` cell + end-of-file re-stamp;
 §5.1 item 10 re-stamped. Next shorthand: **ercot-195** (ercot-194 was consumed
 by the signing sitting, recorded above).
@@ -7913,10 +7913,10 @@ by the signing sitting, recorded above).
 ## ercot-195 (2026-08-13) — L-SCAR-SCREEN-2: V0 FAIL, the L-1 rent function is NOT IDENTIFIABLE from measured tightness; lane STOPS at V0. Intake done (anchors 3 → 7 vintages); NO ScenarioConfig field, NO wiring, NO A/B, NO registration, NO promotion; keeper UNCHANGED
 
 **Task.** Implement L-1 per the signed charter
-`docs/DECISION-CARD-lscar-screen-revenue-2026-08-13.md` (S1/S2/S3, owner,
+`docs/records/misc/DECISION-CARD-lscar-screen-revenue-2026-08-13.md` (S1/S2/S3, owner,
 2026-08-13): the tightness-conditioned residual scarcity-rent term
 `term_f(y) = max(0, R_f(τ_model(y)) − S_f(y))` in the ERCOT retirement/entry
-screen. Full record: `docs/FINDING-ercot195-lscar-v0-nonidentifiable-2026-08-13.md`.
+screen. Full record: `docs/records/ercot/FINDING-ercot195-lscar-v0-nonidentifiable-2026-08-13.md`.
 
 **Intake — DONE, and it cleared the floor.** The charter's V0 sets a **≥5
 anchor-vintage floor** and only 2023–2025 were on disk. Fetched and committed
@@ -7991,9 +7991,9 @@ the card is explicit **only the owner can sign**. Next shorthand: **ercot-196**.
 **Task.** The 2024/2025 shape-queue charter candidate card R re-pointed ERCOT
 bandwidth to (R-A consequences; the object PRECOMMIT-ercot193 §0(c) named
 "2024/2025 shape work for a later charter"). Deliverable:
-`docs/DECISION-CARD-ercot196-shape-2024-2025-2026-08-13.md` + the read-only
+`docs/records/ercot/DECISION-CARD-ercot196-shape-2024-2025-2026-08-13.md` + the read-only
 probe `scripts/probes/ercot196_shape_decomposition.py` (output
-`results/calibration/ercot196_shape_decomposition.json`), on the
+`results/phase0/ercot/ercot196_shape_decomposition.json`), on the
 ercot-189/ercot-193 rule-13 footing — actuals enter counterfactual
 re-scoring/attribution of the run192 keeper's registered payload only.
 **Ceiling stated up front, both places:** 2024 C3b 0.135 and 2025 C3b 0.096
@@ -8098,11 +8098,11 @@ ercot-197 shorthand. Next shorthand: **ercot-198**.
 ## ercot-198 (2026-08-14) — T-3b EXECUTED: published-adder overlay-completeness audit — committed overlay INCOMPLETE in 2024 (missing published RTORPA, +0.24 $/MWh dw), near-complete in 2025 (+0.015); NO lever, NO solve, no year scored, NO matrix edit, keeper UNCHANGED
 
 **The signed card-T companion T-3b executed** (T3B-AUDIT lane; card
-`docs/DECISION-CARD-ercot196-shape-2024-2025-2026-08-13.md` §4 T-3b,
+`docs/records/ercot/DECISION-CARD-ercot196-shape-2024-2025-2026-08-13.md` §4 T-3b,
 RESOLUTIONS on main at `fb6d08d`). Probe
 `scripts/probes/ercot198_t3b_adder_overlay_audit.py` →
-`results/calibration/ercot198_t3b_adder_overlay_audit.json`; finding
-`docs/FINDING-ercot198-t3b-adder-overlay-audit-2026-08-14.md`. Question
+`results/phase0/ercot/ercot198_t3b_adder_overlay_audit.json`; finding
+`docs/records/ercot/FINDING-ercot198-t3b-adder-overlay-audit-2026-08-14.md`. Question
 (card §2(d)): bench `rt_lw_mon` is settlement RTSPP = RTLMP + RTORPA +
 RTORDPA (the design's only two energy-settlement adders, retired at RTC+B
 go-live 2025-12-05); scored `pMon` is the energy-only dual; the committed
@@ -8149,7 +8149,7 @@ telemetry only, A/B on the 2021→2025 T1-FF hindcast, forecast-namespace
 registration, no promotion. **Phase 0 STOPPED the lane at its first duty**
 ("confirm the E1 surface as FFR-8A describes it"), under the dispatch's own
 named STOP conditions. Full record:
-`docs/FINDING-ercot201-l2-e1-dispersion-phase0-stop-2026-08-14.md`.
+`docs/records/ercot/FINDING-ercot201-l2-e1-dispersion-phase0-stop-2026-08-14.md`.
 
 **Ground 1 — surface mismatch.** The mechanical surface confirms (the
 conditional-median share tables of `ercot_rtolcap_forward_supply_cap_mw` do
@@ -8216,9 +8216,9 @@ arm the measured Henry Hub monthly shape as an input-correctness A/B against the
 run192 keeper recipe (level-preserving, zero fitted scalars, ercot-145b posture,
 fit gain NOT predicted) — **with (T-3b)** the published-adder
 overlay-completeness audit as its read-only companion. Deliverables:
-`docs/FINDING-ercot202-t1-nonviable-2026-08-14.md`, the read-only probe
+`docs/records/ercot/FINDING-ercot202-t1-nonviable-2026-08-14.md`, the read-only probe
 `scripts/probes/ercot202_t1_viability.py` (output
-`results/calibration/ercot202_t1_viability.json`), and this entry.
+`results/phase0/ercot/ercot202_t1_viability.json`), and this entry.
 
 **THE FINDING — the A/B was disqualified by its own pre-solve viability check.**
 Card T §4(T-1)(b) charters the arm on the premise that the field is *"built and
@@ -8378,12 +8378,12 @@ Resolution performed by the ERCOT-SCAR workstream manager at landing, on owner
 instruction to promote.
 
 **Task.** The **ercot-187 successor**, open since 2026-08-10
-(`results/calibration/FINDING-ercot186-rule18-grain-2026-08-10.md` §5; owner
+(`docs/records/ercot/FINDING-ercot186-rule18-grain-2026-08-10.md` §5; owner
 sitting 2026-08-09 card **D3 option (ii)**) — ercot-187 was diverted to the
 leap-day derive defect and the golden-hash attribution, and ercot-186 stopped at
 its own pre-registered seam-proof rule, so **the A/B had never been run**. Full
-record: `results/calibration/FINDING-ercot202-rule18-grain-successor-2026-08-14.md`.
-Precommit `docs/PRECOMMIT-ercot202-rule18-grain-successor-2026-08-14.md`, pushed
+record: `docs/records/ercot/FINDING-ercot202-rule18-grain-successor-2026-08-14.md`.
+Precommit `docs/records/ercot/PRECOMMIT-ercot202-rule18-grain-successor-2026-08-14.md`, pushed
 at `f73b9a1` **BEFORE** any measurement, derive or solve, with SP-1's premise
 corrected, the dead inertness prior replaced by measured scope, every kill gate
 re-based to run192, and a **DIRECTION-BLIND promotion rule** reading only gates
@@ -8507,10 +8507,10 @@ evaluated any keeper.
 **The gate the ercot-202 (T-3b) audit named as its one open ask is discharged from
 primary sources, and it closes the object rather than opening a lever.** Dispatch:
 the (T-3b) successor prompt (Phase 0 protocol gate → charter-or-close);
-`docs/FINDING-ercot202-t1-nonviable-2026-08-14.md` §3 limit 1 / §4 item 3(a).
-Finding: `docs/FINDING-ercot203-rtoffpa-not-in-rtspp-2026-08-15.md`. Probe:
+`docs/records/ercot/FINDING-ercot202-t1-nonviable-2026-08-14.md` §3 limit 1 / §4 item 3(a).
+Finding: `docs/records/ercot/FINDING-ercot203-rtoffpa-not-in-rtspp-2026-08-15.md`. Probe:
 `scripts/probes/ercot203_rtoffpa_basis.py` →
-`results/calibration/ercot203_rtoffpa_basis.json`.
+`results/phase0/ercot/ercot203_rtoffpa_basis.json`.
 
 **DETERMINATION: RTOFFPA does not enter the Real-Time Settlement Point Price.** ERCOT
 Nodal Protocols §6.5.7.3(12), verbatim: *"The sum of the Real-Time Reliability
@@ -8559,7 +8559,7 @@ endogenous reserve dual was not already active — a rule 19 `[R-ONE-MECH]` doub
 its face, which forecloses the Phase-1 reconciliation independently of the protocol.
 
 **RECORD CORRECTION — T-3b was executed TWICE, and this settles which stands.**
-`docs/FINDING-ercot198-t3b-adder-overlay-audit-2026-08-14.md` §1 had **already excluded**
+`docs/records/ercot/FINDING-ercot198-t3b-adder-overlay-audit-2026-08-14.md` §1 had **already excluded**
 RTOFFPA a day earlier — *"there is no third settled adder; RTOFFPA (published in the same
 report) is not part of energy settlement and is excluded (measured anyway: 0.178 $/MWh dw
 2024, 0.010 2025)"* — on the 2024 SOM. **ercot-198 stands; ercot-202's contrary framing
@@ -8625,8 +8625,8 @@ above is the visible cost of the same tangle.)
 ## ercot-204 (2026-08-15) — CARD-T SUCCESSOR **NON-VIABLE ON PREMISE**: the published-RTORPA overlay is barred by rule 19 and fails rule 13's forward-analogue test (the model's RTORPA counterpart is ARMED); the dispatch-authorized **rule-26 `[R-DELETE]` successor executed instead — SOLVED, ALL GATES PASS, BYTE-IDENTICAL, promotion RECOMMENDED**
 
 **Precommit pushed BEFORE any solve**:
-`docs/PRECOMMIT-ercot204-rtorpa-gate-and-rule26-successor-2026-08-15.md`.
-Finding: `docs/FINDING-ercot204-rtorpa-gate-and-rule26-2026-08-15.md`. Probes:
+`docs/records/ercot/PRECOMMIT-ercot204-rtorpa-gate-and-rule26-successor-2026-08-15.md`.
+Finding: `docs/records/ercot/FINDING-ercot204-rtorpa-gate-and-rule26-2026-08-15.md`. Probes:
 `scripts/probes/ercot204_rtorpa_admissibility.py` → `ercot204_rtorpa_admissibility.json`;
 `scripts/probes/ercot204_repro.py` → `ercot204_repro.json`; plus `ercot204_ab.json`,
 `ercot204_coal148.json`. Keeper at session start **and at session end**:
@@ -8780,7 +8780,7 @@ remain unspent.
 `2026-08-14-ercot202-arm-plantphysics` → **`2026-08-15-ercot204-rule26-delete`**,
 executing FINDING-ercot204 §B.7's PROMOTION RECOMMENDATION under the
 pre-registered **direction-blind rule** of
-`docs/PRECOMMIT-ercot204-rtorpa-gate-and-rule26-successor-2026-08-15.md` §2.6
+`docs/records/ercot/PRECOMMIT-ercot204-rtorpa-gate-and-rule26-successor-2026-08-15.md` §2.6
 (reads only the kill gates and LOYO), **on direct owner instruction given
 in-session** ("promote if a recommended keeper candidate exists; structural
 integrity improving with gates regressing may still be a keeper"). The executing
@@ -8860,11 +8860,11 @@ SHA); the owner merges whichever. The dispatch's "run192 recipe" baseline was
 stale two promotions over; every keeper read here is from the CURRENT keeper's
 committed record (rule 24).
 
-**Full record:** `docs/FINDING-ercot206-frontier-assessment-e3-b0-2026-08-15.md`.
-Precommit `docs/PRECOMMIT-ercot206-e3-reopen-b0-2026-08-15.md`, pushed BEFORE the
+**Full record:** `docs/records/ercot/FINDING-ercot206-frontier-assessment-e3-b0-2026-08-15.md`.
+Precommit `docs/records/ercot/PRECOMMIT-ercot206-e3-reopen-b0-2026-08-15.md`, pushed BEFORE the
 probe ran, with the parameter-set verdict rule pre-registered mechanical and
 direction-blind. Probe `scripts/probes/ercot206_e3_settled_reproduction.py` →
-`results/calibration/ercot206_e3_settled_reproduction.json`.
+`results/phase0/ercot/ercot206_e3_settled_reproduction.json`.
 
 **PHASE A — the three answers.** (1) **The queue is cleared of chartered
 executable work** (pack §A12.4), and the dispatch's two expected residues are
@@ -9011,9 +9011,9 @@ Charter: pick the next ERCOT lever from the §5.1 queue + ERCOT shard `U` cells 
 Phase 0 (read-only, committed artifacts, no LP) on (a) armed state, (b) measured object at
 full magnitude, (c) rule-13 identification, (d) DO-NOT-REDO — **stopping and reporting if
 any condition fails**. It failed at (c) and the session stopped. **No lever was
-substituted.** Full record: `docs/FINDING-ercot208-cc-nameplate-phase0-stop-2026-08-15.md`;
+substituted.** Full record: `docs/records/ercot/FINDING-ercot208-cc-nameplate-phase0-stop-2026-08-15.md`;
 probe `scripts/probes/ercot208_cc_nameplate_phase0.py`; artifact
-`results/calibration/ercot208_cc_nameplate_phase0.json`.
+`results/phase0/ercot/ercot208_cc_nameplate_phase0.json`.
 
 **LEVER: `cc_nameplate_summer_derate`, the CC leg** (cell `U`), picked over seven other
 candidates. Board disposition, measured before selection: `historic_outage_overlay`
@@ -9158,10 +9158,10 @@ on main at `fb6d08d`): assemble the regime-conditioned identification
 decision card — can a screen rent term be conditioned on market DESIGN (ORDC
 vintage / ECRS / SWCAP / RTC+B) rather than tightness, and is that
 rule-13-admissible? Deliverable:
-`docs/DECISION-CARD-ercot200-lscar-regime-conditioning-2026-08-14.md`
+`docs/records/ercot/DECISION-CARD-ercot200-lscar-regime-conditioning-2026-08-14.md`
 (card W; letters U/V skipped for glyph collisions) + read-only probe
 `scripts/probes/ercot200_regime_partition.py` → committed JSON
-`results/calibration/ercot200_regime_partition.json`. The probe reads ONE
+`results/phase0/ercot/ercot200_regime_partition.json`. The probe reads ONE
 committed input (the ercot-195 anchor intake) and **no tightness variable
 anywhere** — V0 stays the DO-NOT-REDO adjudication for that instrument;
 nothing re-fit or re-argued.
@@ -9223,7 +9223,7 @@ set it, unmoved by this append; ercot-199 also remains unclaimed).
 keeper", noting the HTML dashboard still logs `168b` while the lane was thought
 to be well past it, and asked for the route to "a calibrated backcast for 2023
 scarcity". Both halves answered in
-`docs/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md`.
+`docs/records/ercot/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md`.
 
 **Answer 1 — the 168b reconciliation.** The backcast lane IS well past run168b:
 six keeper promotions since 2026-08-05 (run168b → ercot185-shaped-partial →
@@ -9280,7 +9280,7 @@ entry, nothing else. No PR opened (push-and-stop; the owner merges).
 
 **Trigger.** Owner dispatch REPORTING-TEXT-1, which IS the X-2 signature (card X
 item X-2, sitting on ercot-209). Door C of
-`docs/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md` §3 — the
+`docs/records/ercot/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md` §3 — the
 reporting-text variant card R offered and that had never been signed. Both halves
 of the signature were dispatched, so both were executed.
 
@@ -9467,7 +9467,7 @@ already existed on `origin/main` (blob `ca361ed`), so the sitting base was
 already landed and no PR was opened.
 
 **Pre-registered before any delivery-2023 row was read**
-(`docs/PRECOMMIT-ercot210-conduct-transfer-phase0-2026-08-16.md`, pushed and
+(`docs/records/ercot/PRECOMMIT-ercot210-conduct-transfer-phase0-2026-08-16.md`, pushed and
 blob-verified first): conduct-function family (hour × class offer-surface
 responses `p50`/`p90`/`s500` over above-LSL SCED2 segments capped at HASL — the
 ERCOT-154/161 population discipline, ONTEST excluded, absolute $/MWh);
@@ -9597,9 +9597,9 @@ from the refreshed main tip per the merged-branch rule; the A/B pair solved
 on the pre-refresh tree (both members identical basis).
 
 **Phase-0 (read-only; precommit pushed before the probe:
-`docs/PRECOMMIT-ercot212-reserve-basis-phase0-2026-08-16.md`; probe
+`docs/records/ercot/PRECOMMIT-ercot212-reserve-basis-phase0-2026-08-16.md`; probe
 `scripts/probes/ercot212_reserve_basis_phase0.py` →
-`results/calibration/ercot212_reserve_basis_phase0.json`).** The ercot-204 §A
+`results/phase0/ercot/ercot212_reserve_basis_phase0.json`).** The ercot-204 §A
 open object is fully attributed, construction-exact (A0: the family dual ≡
 the LP step price at `held + credits` to ≤ 2.4e-5 $/MWh): (1) curve-top
 saturation — 1,501/1,705, 520/560, 249/253 published-fired hours sit AT the
@@ -9649,7 +9649,7 @@ promoting would enshrine the wrong half). **Successor named, zero scalars:**
 net-credits + (VOLL − λ)-correct single-counterpart additive anchoring (or
 route through the post-solve `ordc_adder()` with its protocol cap + date
 gate) + the published two-basis half-term. Finding §5:
-`docs/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md`.
+`docs/records/ercot/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md`.
 
 **Roster (dispatch duty):** both members registered (rule 15), adjudication
 rejected-wholesale, pair PRUNED in-session (`prune_iso_runs.py --iso ERCOT`);
@@ -9686,8 +9686,8 @@ and this entry.
 **Keeper at session start AND end: `2026-08-15-ercot204-rule26-delete`** —
 untouched and protected throughout (X-3: the keeper cannot change in-session).
 Precommit pushed BEFORE any solve:
-`docs/PRECOMMIT-ercot213-published-anchor-2026-08-16.md`. Full record:
-`docs/FINDING-ercot213-published-anchor-2026-08-16.md`. Runs registered:
+`docs/records/ercot/PRECOMMIT-ercot213-published-anchor-2026-08-16.md`. Full record:
+`docs/records/ercot/FINDING-ercot213-published-anchor-2026-08-16.md`. Runs registered:
 **`2026-08-16-ercot213-ctl-headbase`** / **`2026-08-16-ercot213-arm-pubanchor`**.
 
 **THE DELTA (the successor ercot-212 §5 named).** Keeper recipe + the ercot-212
@@ -9810,8 +9810,8 @@ the owner merges).
 `2026-08-16-ercot213-arm-pubanchor` (NOT-YET, {C3b-2023} alone, C3c-2025 the
 single ledgered caveat) — unchanged throughout. Committed probe:
 `scripts/probes/ercot214_gspur_phase0.py` →
-`results/calibration/ercot214_gspur_phase0.json`. Full record:
-`docs/FINDING-ercot214-gspur-phase0-2026-08-17.md`.
+`results/phase0/ercot/ercot214_gspur_phase0.json`. Full record:
+`docs/records/ercot/FINDING-ercot214-gspur-phase0-2026-08-17.md`.
 
 **The dispatched questions, answered from committed artifacts only.** (a) The
 keeper's 17 spurious 2023 hours split exactly: 8 shared with the control
@@ -9886,7 +9886,7 @@ workflow, no cron, no PR (push-and-stop; the owner merges).
 ## ercot-215 — 2026-08-17 — the counterpart decontamination BUILT, G-EXACT full pass, REJECTED-AS-ARMED on the pre-registered G-C3c kill, PROMOTED ON OWNER INSTRUCTION; the mid-band spill lane CLOSES
 
 **Branch `claude/ercot-215-ordc-decontamination-xsbhwn`. Precommit pushed
-BEFORE any solve** (`docs/PRECOMMIT-ercot215-counterpart-decontamination-2026-08-17.md`),
+BEFORE any solve** (`docs/records/ercot/PRECOMMIT-ercot215-counterpart-decontamination-2026-08-17.md`),
 pre-registering the inherited ercot-213 gates + G-EXACT, the expected G-C3c
 kill, and the owner's advance promotion authorization (the ercot-214 close:
 "If structural integrity improves but gates regress that may still be a
@@ -9955,7 +9955,7 @@ reported at full magnitude, never a basis); ercot-206 B0, ercot-211 Door A,
 V0/ercot-201, 28a all honoured; rule 22 {2023,2024,2025} only, no marker
 sought; rule 25 ERCOT only; rule 27 blob-verified pushes. The G-SPUR
 band-top blindness stays flagged for a future owner gate revision only.
-Full record: `docs/FINDING-ercot215-counterpart-decontamination-2026-08-17.md`.
+Full record: `docs/records/ercot/FINDING-ercot215-counterpart-decontamination-2026-08-17.md`.
 
 **Session consumed the ercot-215 shorthand. Next shorthand: ercot-216**
 (ercot-199 remains unclaimed).
@@ -9971,8 +9971,8 @@ criteria (R-A), on the C3c ledger's own `OPEN RESIDUAL LANE` clause — (a) the
 AS-vs-energy split of storage capability at scarcity, (b) the CC
 headroom/capability identification. Probe
 `scripts/probes/ercot216_c3c_lane_phase0.py` →
-`results/calibration/ercot216_c3c_lane_phase0.json`; full record
-`docs/FINDING-ercot216-c3c-residual-lane-2026-08-17.md`.
+`results/phase0/ercot/ercot216_c3c_lane_phase0.json`; full record
+`docs/records/ercot/FINDING-ercot216-c3c-residual-lane-2026-08-17.md`.
 
 **The clause is STALE in both limbs.** (a) is `ercot_storage_as_soc_reserve` —
 built and A/B-tested at ercot-167, promoted the same day, standing re-gate
@@ -10027,7 +10027,7 @@ built its calendar with `date_range(periods=8760)`, which mis-dates every
 model hour after Feb 28 of a **leap** year by 24 h. Uncorrected 2023 read gas
 −349 / renewables −1,771 MW (corrected −1,412 / +504); uncorrected 2024 read
 renewables −9,216 MW (corrected +744). Both repaired with citations;
-`docs/DIAGNOSIS-ercot-2023-summer-tail-attribution-2026-07.md` §[3] should be
+`docs/records/ercot/DIAGNOSIS-ercot-2023-summer-tail-attribution-2026-07.md` §[3] should be
 read as superseded by this finding's §3.
 
 **Filed for the next keeper-promoting session** (a registered bundle's
@@ -10060,9 +10060,9 @@ FOR THIS LANE ONLY (item 11 stays CLOSED; R-A unchanged), (D-2) a regime-split
 keeper acceptable as ONE bundle resolving the regime internally per weather
 year, (D-3) a negative result equally acceptable at full magnitude.
 
-**Verdict (full record `docs/FINDING-ercot217-2023-regime-split-2026-08-17.md`;
+**Verdict (full record `docs/records/ercot/FINDING-ercot217-2023-regime-split-2026-08-17.md`;
 probe `scripts/probes/ercot217_regime_phase0.py` →
-`results/calibration/ercot217_regime_phase0.json`; no LP, no solve, no year
+`results/phase0/ercot/ercot217_regime_phase0.json`; no LP, no solve, no year
 scored, no run registered, no cell verdict minted — the ercot-163/170/208/214/
 216 no-LP precedent; no precommit because no solve was reached):**
 
@@ -10157,7 +10157,7 @@ its own card and fitted nothing to any residual. Off-queue by the dispatch (the
 resolved fresh at session start AND end: **2026-08-17-ercot215-arm-decontam**
 (NOT-YET, fail set {C3a-2023 −40.1 %, C3b-2023 0.736}, C3c the ledgered CAVEAT
 ×3) — UNCHANGED. Pre-registered in
-`docs/PRECOMMIT-ercot218-direct-driver-phase0-2026-08-17.md`, pushed and
+`docs/records/ercot/PRECOMMIT-ercot218-direct-driver-phase0-2026-08-17.md`, pushed and
 blob-verified BEFORE the instrument read any delivery-2023 row.
 
 **(P0-A) The data premise, measured — and the record-named source fails it.**
@@ -10188,7 +10188,7 @@ not read.
 2024/25 ≥ p90, test 2023 ≥ p98 post-ECRS primary, folds + the 2024→2025
 within-regime control, quantity-only read/refused sets written to the JSON):
 `scripts/probes/ercot218_direct_driver_phase0.py` →
-`results/calibration/ercot218_direct_driver_phase0.json`. Coverage falsifier
+`results/phase0/ercot/ercot218_direct_driver_phase0.json`. Coverage falsifier
 ALL-PASS (2,503/2,432/175 hours — ercot-211's coverage exactly; selected-form
 map 6/6; AS columns non-null 1.000 ×3 years).
 
@@ -10249,7 +10249,7 @@ session's git-push relay fault and its resolution recorded in the finding
 §6). The ercot-216 filed item (C3c OPEN RESIDUAL LANE re-wording) stays with
 the next keeper-promoting session; G-SPUR band-top blindness stays an owner
 gate-revision item. Full record:
-`docs/FINDING-ercot218-direct-driver-phase0-2026-08-17.md` + the precommit +
+`docs/records/ercot/FINDING-ercot218-direct-driver-phase0-2026-08-17.md` + the precommit +
 probe + JSON. No PR (push-and-stop on `claude/ercot-218-direct-driver-5ckiur`).
 
 **Session consumed the ercot-218 shorthand. Next shorthand: ercot-219**
@@ -10260,7 +10260,7 @@ probe + JSON. No PR (push-and-stop on `claude/ercot-218-direct-driver-5ckiur`).
 Owner directive mid-session, verbatim: *"research why ERCOT 2023 prices were so
 high actually."* Executed read-only (no LP, no solve, no criterion scored;
 keeper untouched). Full memo:
-`docs/RESEARCH-ercot218b-why-2023-prices-2026-08-18.md`. The 2023 SOM PDF was
+`docs/records/ercot/RESEARCH-ercot218b-why-2023-prices-2026-08-18.md`. The 2023 SOM PDF was
 re-fetched and sha256-verified byte-exact against the committed manifest.
 
 **The measured answer.** (1) The 181-hour 2023 tail was made by the SCED
@@ -10305,7 +10305,7 @@ cause behind the standing C3a/C3b-2023 + C3c model-class object.
 ### ercot-218 ADDENDUM 2 (same session, 2026-08-18): OPTION B SELECTED BY THE OWNER — the structural artificial-shortage mechanism card is DRAFTED, AWAITING SIGNATURE
 
 On the research memo's three options the owner instructed "Do it — b". Drafted:
-`docs/DECISION-CARD-ercot218b-artificial-shortage-structural-2026-08-18.md` —
+`docs/records/ercot/DECISION-CARD-ercot218b-artificial-shortage-structural-2026-08-18.md` —
 the B-1 signature text (a scoped rule-14 aggregate-capability reconciliation to
 the published NP6-905 telemetered aggregate, applied consistently across all
 backcast years, with the ERCOT-159/163 tension named verbatim for the owner to
@@ -10330,13 +10330,13 @@ rational expectation of the artificial-shortage frequency.
 ## 2026-08-18 — ERCOT-219 (OPTION-B PHASE-1, the ercot-218b structural artificial-shortage mechanism BUILT under B-1 and A/B'd full-span; 2 full-span solves; keeper UNCHANGED at ercot215): **REJECTED-AS-ARMED on four gates at full magnitude** — G-SPUR 9→273 / 11→671 / 1→1239 against a +5/yr bar, G-SHED 0/1/0 → 218/77/221 h of NEW load shed, G-OWNER C3a-2024 +715 % / C3a-2025 +1,278 %, G-BAT-2024 ratio 0.41 — and **the cause is measured and DIMENSIONAL: `RTOLHSL` is an ONLINE aggregate while the model's `pmax × availability` is an AVAILABLE envelope**, so stage 1 deleted the LP's commitment freedom (ERCOT-159/163 restated at aggregate grain, which B-1 cannot waive). **Stages 2–3 are NOT refuted**: G-EXH's own signature is monotone and correct — exhaustion hours **1,557 → 336 → 63** across 2023→2024→2025 from carried inputs alone. Matrix cell `ercot_artificial_shortage_pricing` minted **R**
 
 **Charter.** The owner dispatch of ERCOT-219 executing card §5 of
-`docs/DECISION-CARD-ercot218b-artificial-shortage-structural-2026-08-18.md`,
+`docs/records/ercot/DECISION-CARD-ercot218b-artificial-shortage-structural-2026-08-18.md`,
 whose **B-1 is SIGNED by that dispatch** — appended verbatim at the card's
 foot (commit `ecbad28`) before any build step, per the card's closing clause
 and the X-1/X-2 signature-by-dispatch precedent. Off-queue by the dispatch and
 the signed card (the §5.1 queue holds no live in-model item; FINDING-ercot218
 §0). Pre-registered in
-`docs/PRECOMMIT-ercot219-option-b-phase1-2026-08-18.md` (437 lines, pushed and
+`docs/records/ercot/PRECOMMIT-ercot219-option-b-phase1-2026-08-18.md` (437 lines, pushed and
 blob-verified `fe1596ed` BEFORE any solve), which pinned the card-§7 open
 choices with citations: **stage-1 basis `rtolhsl`** (`rtolcap` REFUSED — a
 ramp-limited reserve headroom, and already the armed reserve-supply-cap input,
@@ -10425,8 +10425,8 @@ and the ERCOT cell verdict is minted **R** this session (28b);
 `check_mechanism_matrix.py` exit 0. Keeper UNCHANGED; **promotion is a
 separate owner decision on this recorded verdict and was NOT taken in
 session.** Full record:
-`docs/FINDING-ercot219-option-b-artificial-shortage-2026-08-18.md` +
-`docs/PRECOMMIT-ercot219-option-b-phase1-2026-08-18.md` +
+`docs/records/ercot/FINDING-ercot219-option-b-artificial-shortage-2026-08-18.md` +
+`docs/records/ercot/PRECOMMIT-ercot219-option-b-phase1-2026-08-18.md` +
 `results/calibration/ercot219_{gates,seamproof,basis_phase0}.json`.
 
 **Session consumed the ercot-219 shorthand. Next shorthand: ercot-220**
@@ -10453,7 +10453,7 @@ have any admissible stage-1 capability object?
 
 **Answer: NO — measured to closure from committed artifacts only** (probe
 `scripts/probes/ercot220_stage1_basis_phase0.py` →
-`results/calibration/ercot220_stage1_basis_phase0.json`; the ercot-219 arm's
+`results/phase0/ercot/ercot220_stage1_basis_phase0.json`; the ercot-219 arm's
 committed exhaustion audit trail READ, never re-run):
 
 - **L1** — the T_tel incidence blowout is **pre-solve and intrinsic**, not
@@ -10490,7 +10490,7 @@ reconciliation (model committed state ↔ T_tel) — the ercot-163/159-refuted
 route — is the only instrument left and is **escalated as a drafted,
 unsigned owner card with a measured ex-ante G-SPUR kill and a DO-NOT-SIGN
 recommendation**:
-`docs/DECISION-CARD-ercot220-commitment-side-reconciliation-2026-08-18.md`
+`docs/records/ercot/DECISION-CARD-ercot220-commitment-side-reconciliation-2026-08-18.md`
 (decision text B-2). **Door D re-confirmed as the floor.** Stages 2–3 stay
 built, default-off, inert — correctly so.
 
@@ -10501,7 +10501,7 @@ A / item 11 / mid-band / regime lanes / ercot-206 B0 all cited, none
 re-litigated); rules 22/25 fenced; rule 28(b) attribution note appended to
 the `ercot_artificial_shortage_pricing` cell, no verdict moved;
 `check_mechanism_matrix.py` exit 0. Full record:
-`docs/FINDING-ercot220-stage1-capability-object-phase0-2026-08-18.md`.
+`docs/records/ercot/FINDING-ercot220-stage1-capability-object-phase0-2026-08-18.md`.
 
 **Session consumed the ercot-220 shorthand. Next shorthand: ercot-221**
 (ercot-199 remains unclaimed).
@@ -10509,7 +10509,7 @@ the `ercot_artificial_shortage_pricing` cell, no verdict moved;
 **ercot-220b addendum (same session, owner-directed):** on declining B-2 the
 owner directed: *"some mechanism has to be able to improve to 40 % miss for
 2023."* Answered by measurement (read-only, committed artifacts):
-`docs/RESEARCH-ercot220b-what-can-still-move-2023-2026-08-18.md`. The miss
+`docs/records/ercot/RESEARCH-ercot220b-what-can-still-move-2023-2026-08-18.md`. The miss
 DECOMPOSES — the model already catches 64 of 181 tail hours at $659 dw vs
 actual $1,999; repricing ONLY those moves probe C3a-2023 −37.8 → −13.4 %
 (two-thirds of the miss, needing NO capability/commitment change), while the
@@ -10529,7 +10529,7 @@ Supporting evidence for the ercot-220b-recommended ercot-221 Phase-0
 (adaptive expectation offer), produced under rule-22 data-not-score (2021/2022
 actuals as identification inputs only; **2019 untouched by every statistic**).
 Three measurements, probe `scripts/probes/ercot221prep_2022_regime_phase0.py`
-→ `results/calibration/ercot221prep_2022_regime.json`:
+→ `results/phase0/ercot/ercot221prep_2022_regime.json`:
 
 * **M-1, the regime axis as a two-point contrast (NP6-323 telemetry):** 2022's
   196-hour tail formed at PRC p50 **3,768 MW** with RTORPA p50/p90 **$34/$493**
@@ -10556,7 +10556,7 @@ Three measurements, probe `scripts/probes/ercot221prep_2022_regime_phase0.py`
   storage offer level is the memory-vs-competition discriminator. 2022
   NP6-323 telemetry and 2018–2026 hourly actuals are held.
 
-Full record: `docs/RESEARCH-ercot221prep-2022-regime-point-2026-08-19.md`.
+Full record: `docs/records/ercot/RESEARCH-ercot221prep-2022-regime-point-2026-08-19.md`.
 Governance: no shorthand consumed; `complete` block verified empty (no
 validation-year spend is authorized for any ISO); Door D and every adjacent
 matrix verdict stand unmoved. **Next shorthand remains ercot-221**
@@ -10660,8 +10660,8 @@ under top-15; RETENTION HOLD honoured: ercot213-ctl-headbase and
 ercot204-rule26-delete retained). Matrix: `ercot_storage_adaptive_expectation`
 ERCOT cell **R** with the full two-session record; `check_mechanism_matrix.py`
 clean. Keeper UNCHANGED. Full record:
-`docs/FINDING-ercot221-adaptive-expectation-ab-2026-08-19.md` +
-`docs/PRECOMMIT-ercot221-adaptive-expectation-2026-08-18.md` (incl.
+`docs/records/ercot/FINDING-ercot221-adaptive-expectation-ab-2026-08-19.md` +
+`docs/records/ercot/PRECOMMIT-ercot221-adaptive-expectation-2026-08-18.md` (incl.
 Amendments 1–4) + `results/calibration/ercot221_{adaptive_phase0,gates}.json`.
 
 **Session consumed the ercot-221 shorthand. Next shorthand: ercot-222**
@@ -10725,7 +10725,7 @@ successors (each needs its own identification, NOT built): a second
 adaptation pass, the cross-year post-Uri memory (Jan-Feb-2023 evening
 cap-parking, measured), a seasonal end-of-season term. The 117 missed-hour
 count half stays with FINDING-ercot220 (B-2 unsigned, Door D the floor).
-Full record: docs/FINDING-ercot221-adaptive-expectation-2026-08-19.md.
+Full record: docs/records/ercot/FINDING-ercot221-adaptive-expectation-2026-08-19.md.
 
 **Session consumed the ercot-221 shorthand. Next shorthand: ercot-222**
 (ercot-199 remains unclaimed).
@@ -10735,7 +10735,7 @@ Full record: docs/FINDING-ercot221-adaptive-expectation-2026-08-19.md.
 ## ercot-222 — 2026-08-19 — THE CROSS-YEAR-SEEDED EXPECTATION VARIANT, Phase-0 (read-only, precommitted): **NEGATIVE ON ALL FIVE GATES** — the M-2 year-scale memory level under-reaches every 2023 cap-parked month while over-flooring both within-regime years and TRIPLING the floor at the May-8-2024 G-SHED kill hour; the adaptive family's one disclosed cross-year member is refuted; Door D stands
 
 **Branch claude/ercot-222-cross-year-seed-44of8n. Precommit
-docs/PRECOMMIT-ercot222-crossyear-seed-2026-08-19.md pushed + blob-verified
+docs/records/ercot/PRECOMMIT-ercot222-crossyear-seed-2026-08-19.md pushed + blob-verified
 BEFORE any evaluation; executed as written. NO LP, no solve, no arming, no
 registration.** Keeper at dispatch: `2026-08-19-ercot221-arm-adaptive` (the
 adaptive mechanism ARMED).
@@ -10774,8 +10774,8 @@ queue (standing: item-8 CME/NYMEX basis-swap screen; G-SPUR band-top
 blindness owner gate revision). Evidence appended to the
 `ercot_storage_adaptive_expectation` cell (no new row). Probe:
 `scripts/probes/ercot222_crossyear_phase0.py` →
-`results/calibration/ercot222_crossyear_phase0.json`. Full record:
-docs/FINDING-ercot222-crossyear-seed-2026-08-19.md.
+`results/phase0/ercot/ercot222_crossyear_phase0.json`. Full record:
+docs/records/ercot/FINDING-ercot222-crossyear-seed-2026-08-19.md.
 
 **Session consumed the ercot-222 shorthand. Next shorthand: ercot-223**
 (ercot-199 remains unclaimed).
@@ -10785,7 +10785,7 @@ docs/FINDING-ercot222-crossyear-seed-2026-08-19.md.
 ## ercot-223 — 2026-08-19/20 — THE KEEPER SHED REPAIR: Phase-0 measures the manufactured May-8-2024 h3066 shed to the identity level (offer-as-cost debases the storage SOC shadow against the co-opt's floor-free reserve-headroom value); the EVENT-REALIZED RELEASE guard (zero new numeric constants) clears it with ALL pre-registered gates PASSING → **PROMOTED, KEEPER `2026-08-20-ercot223-arm-eventrelease`** — the first ERCOT promotion since ercot-188 whose mechanical verdict is itself KEEPER-CANDIDATE
 
 **Branch `claude/ercot-223-keeper-shed-8iztwv`. Precommit
-`docs/PRECOMMIT-ercot223-event-release-guard-2026-08-19.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot223-event-release-guard-2026-08-19.md` pushed +
 blob-verified BEFORE any solve; executed as written.** Keeper at dispatch:
 `2026-08-19-ercot221-arm-adaptive` (owner-promoted over the recorded
 G-SHED REJECTED-AS-ARMED; the shed became a keeper defect this session
@@ -10793,7 +10793,7 @@ repairs).
 
 **Phase-0 (read-only, committed artifacts, no LP —
 `scripts/probes/ercot223_shed_phase0.py` →
-`results/calibration/ercot223_shed_phase0.json`), every identity closing
+`results/phase0/ercot/ercot223_shed_phase0.json`), every identity closing
 to numerical precision:** the shed is a SYSTEM-level 17.887 MW shortage at
 h3066 (zonal prices uniform at VOLL; the South booking is solver
 placement). Candidate discrimination: **(c) co-opt interaction in a precise
@@ -10854,7 +10854,7 @@ evidence appended (guard field on the family row's `def:`, rule 28c);
 keeper + §5.1 header re-stamped. Door D unchanged (the depth ceiling and
 the 117-hour count half are untouched by this repair); ERCOT bandwidth
 returns to the Door-D hold and the R-A re-pointed queue. Full record:
-`docs/FINDING-ercot223-shed-repair-2026-08-19.md`.
+`docs/records/ercot/FINDING-ercot223-shed-repair-2026-08-19.md`.
 
 **Session consumed the ercot-223 shorthand. Next shorthand: ercot-224**
 (ercot-199 remains unclaimed).
@@ -10864,7 +10864,7 @@ returns to the Door-D hold and the R-A re-pointed queue. Full record:
 ## ercot-224 — 2026-08-20 — THE ITEM-8 CME/NYMEX REOPEN SCREEN, Phase-0 (read-only, precommitted, NO LP): **NEGATIVE AT THE EXISTENCE LEG — the sole reopen condition is FACTUALLY FALSE.** CME/NYMEX delisted every Waha and HSC gas contract before the training span (Waha basis NW entirely 2020-12-07, SER-8689; HSC basis NH/NHN 2022-01-10, Chadv 22-008 — both on ZERO open interest; the swing/index families removed from Globex Oct-2017 in the SER-8000 Platts-complex cull). Item 8 STAYS CLOSED, now effectively unconditionally
 
 **Branch `claude/ercot-224-calibration-ye2ivp`. Precommit
-`docs/PRECOMMIT-ercot224-item8-cme-screen-2026-08-20.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot224-item8-cme-screen-2026-08-20.md` pushed +
 blob-verified (blob `df65c0eb`, 151 lines) BEFORE any CME/NYMEX content was
 read; executed as written. NO LP, no solve, no intake, no arming, no
 registration; keeper untouched at `2026-08-20-ercot223-arm-eventrelease`.**
@@ -10915,8 +10915,8 @@ curl to www.cmegroup.com is bot-walled from this environment; the primary
 documents came via the session fetch route and the probe records the
 transport state reproducibly (never load-bearing). Probe:
 `scripts/probes/ercot224_cme_basis_screen.py` →
-`results/calibration/ercot224_cme_basis_screen.json`. Full record:
-`docs/FINDING-ercot224-item8-cme-screen-2026-08-20.md`.
+`results/phase0/ercot/ercot224_cme_basis_screen.json`. Full record:
+`docs/records/ercot/FINDING-ercot224-item8-cme-screen-2026-08-20.md`.
 
 **Session consumed the ercot-224 shorthand. Next shorthand: ercot-225**
 (ercot-199 remains unclaimed).
@@ -10926,7 +10926,7 @@ transport state reproducibly (never load-bearing). Probe:
 ## ercot-225 — 2026-08-21 — THE G-SPUR BAND-TOP BLINDNESS OWNER GATE REVISION, drafted as a DECISION CARD (Phase-0 precommitted, NO LP, no solve, NO GATE CHANGE — awaiting owner sign-off): the lidless re-reading of ALL 11 registered ERCOT runs changes ZERO standing verdicts, EXONERATES the one recorded artifact-leg FAIL (ercot-215's "2025 0→1"), strengthens both recorded FAILs a fortiori, and surfaces h3068-2024 as a band-top-blind hour in EVERY lineage
 
 **Branch `claude/ercot-225-gspur-gate-z1q0f6`. Precommit
-`docs/PRECOMMIT-ercot225-gspur-bandtop-gate-revision-2026-08-21.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot225-gspur-bandtop-gate-revision-2026-08-21.md` pushed +
 blob-verified (blob `9b55eac9`, 199 lines) BEFORE any re-reading was
 computed; executed as written. Keeper UNTOUCHED at
 `2026-08-20-ercot223-arm-eventrelease`.** Queue choice per dispatch: the R-A
@@ -10963,13 +10963,13 @@ don't match the baseline bundle's own banded hours (counts agree; true
 identities in FINDING §2); repair chartered into card §7 step 2.
 
 **Disposition:** the card
-(`results/calibration/DECISION-ercot225-gspur-bandtop-gate-2026-08-21.md`)
+(`docs/records/ercot/DECISION-ercot225-gspur-bandtop-gate-2026-08-21.md`)
 is pushed AWAITING OWNER SIGN-OFF — the owner was not in-session, so the
 gate files are NOT edited. **The R-A re-pointed queue is now EMPTY** (item 8
 closed effectively-unconditional at ercot-224; the band-top item
 card-drafted pending the owner). Door D unchanged. Matrix §5.1 re-stamped
 same-session (rule 28 evidence duty; no cell verdict — no mechanism
-tested). Full record: `docs/FINDING-ercot225-gspur-bandtop-card-2026-08-21.md`.
+tested). Full record: `docs/records/ercot/FINDING-ercot225-gspur-bandtop-card-2026-08-21.md`.
 
 **Session consumed the ercot-225 shorthand. Next shorthand: ercot-226**
 (ercot-199 remains unclaimed).
@@ -10979,7 +10979,7 @@ tested). Full record: `docs/FINDING-ercot225-gspur-bandtop-card-2026-08-21.md`.
 ## ercot-226 — 2026-08-22 — THE OWNER'S 2023 HELD-SEQUESTRATION FACTOR PROGRAM (Door-D floor and lane-rests SET ASIDE by owner waivers W-1..W-5): four of five factors REFUTED-P0 on the measured record, the held-LOCATION carve BUILT and REJECTED-AS-ARMED with a NEGATIVE sign — the quantity side of the 2023 conservatism object is now measured dead in both admissible forms, and the residual re-adjudicates to the conduct/offer object as a MEASUREMENT RESULT
 
 **Branch `claude/ercot-2023-summer-scarcity-9lg3nm`. Precommit
-`docs/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md` (519 ln) pushed +
+`docs/records/ercot/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md` (519 ln) pushed +
 blob-verified BEFORE any measurement; Amendment 1 (G-SHORTFALL subset form —
 the keeper's own rigid families carry 21 designed VOLL-engagement hours)
 landed before any probe was scored. Keeper UNTOUCHED at
@@ -10994,7 +10994,7 @@ namespace-distinct from card-W's vacant W-3 slot; the card-W fence (IMM
 quantification is never identification) held throughout.
 
 **The factor table (full detail: FINDING-ercot226 §1;
-`results/calibration/ercot226_helddepth_phase0.json`):** F1 held-depth and
+`results/phase0/ercot/ercot226_helddepth_phase0.json`):** F1 held-depth and
 F1b NSPIN-depth REFUTED-P0 — the NP3-965 Gen-ONLINE telemetered
 responsibilities sit FAR BELOW the armed ASPLANNP433 plan everywhere (RRS
 ~1,100/2,900; ECRS 600–930/1,450–2,130; NSPIN 520–1,080/2,206–5,051 —
@@ -11075,7 +11075,7 @@ DATA-ABSENT precommitted as an honest terminal verdict if no vintage is
 retrievable.
 
 **Phase A failed on every ERCOT-published surface** (full URL-by-URL
-attempt log: `results/calibration/ercot228_probe_f4.json`): mis.ercot.com
+attempt log: `results/phase0/ercot/ercot228_probe_f4.json`): mis.ercot.com
 GetReports 302s to the SiteMinder market-participant client-cert wall
 (both reportTypeIds 12311/12312); the public
 `www.ercot.com/misapp/servlets/IceDocListJsonWS` doc lists are 7-day
@@ -11105,7 +11105,7 @@ zips into `data/raw/ercot/` — then Phases B–C execute as precommitted,
 under the unchanged ercot-216 §5 prior (reality's own ORDC ≈ $1 at the
 missed hours) and the §1 channel doctrine (adder-carried improvement
 fails adoption). W-2 honored: nothing dashboard-registered; the JSON +
-`docs/FINDING-ercot228-load-forecast-2026-08-22.md` are the record. The
+`docs/records/ercot/FINDING-ercot228-load-forecast-2026-08-22.md` are the record. The
 keeper stands untouched. Env verified at the keeper pins
 (1.15.1/3.0.5/25.0.1/2.4.6/1.17.1) though no solve ran.
 
@@ -11118,10 +11118,10 @@ in the hub; ercot-199 remains unclaimed)
 
 **Charter:** the ercot-226 owner dispatch as EXTENDED 2026-08-22 (*"Proceed with
 all the factors to test not just 1 keep going"*), recorded verbatim in
-`docs/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md` §5.11 (Amendment 3),
+`docs/records/ercot/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md` §5.11 (Amendment 3),
 which converts every Phase-0 kill from **probe-terminating** to
 **probe-informing**. Waivers W-1..W-5 carried forward unchanged.
-**FINDING:** `docs/FINDING-ercot227-factor-sweep-2026-08-22.md`.
+**FINDING:** `docs/records/ercot/FINDING-ercot227-factor-sweep-2026-08-22.md`.
 
 **Four solves on the hub box, all 2023-only, all sequential** (rule 12), all
 A/B'd against the hub's own numeric-identical control `ercot226_ctl2023`:
@@ -11141,7 +11141,7 @@ anyway.** The ercot-226 Phase-0 kill rested on *"no 2023 RUC MW data on disk"*
 RUC-instructed unit-hours. The derived 2023 series carries **2,031 distinct
 ONRUC unit-hours over 96 days**, **6.7×** the ercot97 plant-grain lane's
 2024/25-subset 303 — a standing scale premise now corrected on the record
-(`results/calibration/ercot227_ruc_sizing.json`). But the instruction names
+(`results/phase0/ercot/ercot227_ruc_sizing.json`). But the instruction names
 *specific* units, and barred from the per-unit crosswalk (item 11 / Q-B FINAL)
 the mechanism spreads class MW **pro-rata over every unit in the class**,
 reproducing the class total while placing it on units the record says were
@@ -11281,7 +11281,7 @@ OOM-killed twice at the ~13.9 GB memcg ceiling) and the arm additionally ran
 under `MALLOC_ARENA_MAX=2` — neither run OOM-killed and no run was retried;
 malloc/swap config does not change solver arithmetic. W-2 honored: nothing
 dashboard-registered and no bundle directory committed — the probe JSON
-(`results/calibration/ercot229_probe_f1b.json`, gates JSON folded in) and
+(`results/phase0/ercot/ercot229_probe_f1b.json`, gates JSON folded in) and
 this entry are the record. The keeper stands untouched. Per the Amendment-3
 concurrency convention the mechanism matrix was **not** edited here; the hub
 stamps the shared `ercot_as_held_requirement` cell with the combined F1+F1b
@@ -11316,11 +11316,11 @@ concurrently; ercot-199 remains unclaimed)
 ("must NOT re-enter Door D on its own authority"); the session presented
 three options (conduct lever / non-AS tightness sweep / restore Door-D rest)
 and the owner selected **"2nd adaptation pass"** — recorded verbatim in
-`docs/PRECOMMIT-ercot230-adaptive-fixed-point-2026-08-23.md` §0 (304 lines,
+`docs/records/ercot/PRECOMMIT-ercot230-adaptive-fixed-point-2026-08-23.md` §0 (304 lines,
 blob `3a73cb0d`, pushed + blob-verified BEFORE any build edit and BEFORE any
 solve). The ercot-221 card's *"exactly ONE adaptation pass (no fixed-point
 iteration)"* pin was thereby amended for the adaptive P1 offer pass only.
-**FINDING:** `docs/FINDING-ercot230-adaptive-fixed-point-2026-08-23.md`.
+**FINDING:** `docs/records/ercot/FINDING-ercot230-adaptive-fixed-point-2026-08-23.md`.
 
 **Build (one commit with all registrations, `b92d766`):**
 `ercot_adaptive_fixed_point` (default off, ERCOT-gated inside the armed
@@ -11383,7 +11383,7 @@ the ercot-221 numbers −39.4/0.723 against the ercot-223 keeper's actual
 −39.7/0.729) repaired, ercot-221 story preserved as prior stamp; the ERCOT
 cell of `ercot_storage_adaptive_expectation` stamped with the ercot-230
 evidence (rule 28(b)); probe bundles gitignored per W-2 (committed record =
-`results/calibration/ercot230_probe_fixedpoint.json` + `ercot230_gates.json`
+`results/phase0/ercot/ercot230_probe_fixedpoint.json` + `ercot230_gates.json`
 + the FINDING). Hygiene: solves in-session and sequential (rule 12), years
 {2023} only (rule 22), ERCOT-only edits (rule 25), every pushed ≥300-line
 file blob-verified (rule 27), `check_mechanism_matrix.py` exit 0 on every
@@ -11406,7 +11406,7 @@ the N1a A/B, and died mid-close with four commits stranded unmerged. The
 completion session (branch `claude/2023-ercot-config-assessment-ouhsua`, this
 entry) recovered those commits unrewritten (clean fast-forward), replicated
 the control identity independently, solved the COMBINED 2023 probe, and wrote
-the FINDING: `docs/FINDING-ercot231-nonas-tightness-2026-08-23.md`.
+the FINDING: `docs/records/ercot/FINDING-ercot231-nonas-tightness-2026-08-23.md`.
 
 **The GTC-lineage discovery (FINDING §2).** The keeper lineage
 (ercot-215→221→223) records `ercot_gtc_limits_measured=True` and SOLVED ON
@@ -11520,8 +11520,8 @@ honestly. Both answered on committed artifacts alone: no LP, no solve, no
 mechanism built, no `ScenarioConfig` field (28(c) not engaged), no run
 registered, keeper `2026-08-24-231-tie-zone-measured` untouched. Probe
 `scripts/probes/ercot232_gspur_phase0.py` →
-`results/calibration/ercot232_gspur_phase0.json`; record
-`docs/FINDING-ercot232-gspur-tie-deliverability-2026-08-24.md`.
+`results/phase0/ercot/ercot232_gspur_phase0.json`; record
+`docs/records/ercot/FINDING-ercot232-gspur-tie-deliverability-2026-08-24.md`.
 
 **STEP 0 — the ercot-231 combined promotion VERIFIED COMPLETE** against main:
 keeper shard flipped, registry sidecar + 1.66 MB run payload, `status/ERCOT.js`
@@ -11619,7 +11619,7 @@ splits (ERCOT-117 `G`).
 its own conclusion is that the remaining route is Door D — so the session's
 deliverable is the termination question put to the owner on that evidence,
 carded, not self-adjudicated. Executed exactly that:
-`docs/DECISION-CARD-ercot233-2023-object-closure-2026-08-24.md` (card Y —
+`docs/records/ercot/DECISION-CARD-ercot233-2023-object-closure-2026-08-24.md` (card Y —
 letters A–X consumed or skipped in the ERCOT lane; U/V skipped for glyph
 collisions at card W).
 
@@ -11670,8 +11670,8 @@ signature, this session:** the one named-unmeasured object — the card §2
 `NE_LOB` binding-hour-timing Phase-0 — run under its bounds exactly
 (read-only, zero fitted scalars, precommit pushed + blob-verified BEFORE
 any measurement, borderline escalated, never self-adopted). Record:
-`docs/PRECOMMIT-ercot233-nelob-timing-phase0-2026-08-24.md` →
-`docs/FINDING-ercot233-nelob-timing-phase0-2026-08-24.md` (outcome in the
+`docs/records/ercot/PRECOMMIT-ercot233-nelob-timing-phase0-2026-08-24.md` →
+`docs/records/ercot/FINDING-ercot233-nelob-timing-phase0-2026-08-24.md` (outcome in the
 execution addendum below).
 
 ### ercot-233 EXECUTION ADDENDUM (2026-08-24, same session) — the NE_LOB TIMING object CLOSES AT ZONAL GRAIN, on measurement
@@ -11699,8 +11699,8 @@ without genuinely sub-zonal admissible data.** With the lane's one
 named-unmeasured object closed, the ERCOT 2023 admissible queue is EMPTY
 under the owner's open lane (Y-C): new evidence or Door D. Keeper
 UNCHANGED; nothing armed; no cell edit (28(b) — no mechanism tested).
-Record: `docs/FINDING-ercot233-nelob-timing-phase0-2026-08-24.md` +
-`results/calibration/ercot233_nelob_timing_phase0.json`.
+Record: `docs/records/ercot/FINDING-ercot233-nelob-timing-phase0-2026-08-24.md` +
+`results/phase0/ercot/ercot233_nelob_timing_phase0.json`.
 
 **Hygiene:** years referenced ⊂ {2023, 2024, 2025}, no marker touched (rule
 22); ERCOT-only docs (rule 25); no CI job, no workflow; branch
@@ -11757,10 +11757,10 @@ congestion prices Northeast $24–126 apart. The measured records of
 ercot-231/232/233 stand as measured; Q-B/R-A, the timing closure, the `G`
 cell and the tie placement are all NOT re-opened (FINDING §II.4 walks each
 fence). Record:
-`docs/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md`.
+`docs/records/ercot/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md`.
 
 **Carded, not executed:** card Z
-(`docs/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`) puts the
+(`docs/records/ercot/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`) puts the
 repair to the owner — **Z-A (RECOMMENDED)**: boundary-reconciliation phase 0,
 then the crosswalk repair (NE_LOB out as intra-South; EASTEX in at
 Northeast→North; static rating re-derived per rule 23; zero fitted scalars),
@@ -11796,13 +11796,13 @@ measurement; phase-0 boundary reconciliation with the Z-B fallback live;
 zero fitted scalars; rule-16 3-year re-solve registered whatever it shows;
 C3a/C3b movement side-effect-reported under Q-B/R-A; catastrophic physical
 regressions (new shed) ESCALATE rather than auto-promote. Record:
-`docs/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`
-RESOLUTIONS + `docs/PRECOMMIT-ercot234-eastex-identity-repair-2026-08-25.md`
+`docs/records/ercot/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`
+RESOLUTIONS + `docs/records/ercot/PRECOMMIT-ercot234-eastex-identity-repair-2026-08-25.md`
 (outcome in the execution addendum below).
 
 ### ercot-234 EXECUTION ADDENDUM (2026-08-25, same session window) — Z-A EXECUTED, REGISTERED, AND PROMOTED: keeper `2026-08-25-234-eastex-identity`
 
-**Precommit `docs/PRECOMMIT-ercot234-eastex-identity-repair-2026-08-25.md`
+**Precommit `docs/records/ercot/PRECOMMIT-ercot234-eastex-identity-repair-2026-08-25.md`
 pushed + blob-verified (blob `ddbcde2`) BEFORE any derivation.** Its P-1
 instrument-reproduction leg FIRED on NE_LOB (measured 1,107.3 vs the 1,300
 seed, −14.8 %) and is recorded as **Amendment 1, not quietly applied**: the
@@ -11859,9 +11859,9 @@ re-keyed + status part rebuilt + §5.1 header re-stamped +
 comparison. **REPLAY RULE: this keeper's replays require the gtc-limits
 clean partition AND the repaired crosswalk; ercot-231 replays require the
 pre-repair map — replay each bundle from its own HEAD.** Records:
-`docs/FINDING-ercot234-eastex-identity-repair-2026-08-25.md`,
-`results/calibration/ercot234_gates.json`,
-`results/calibration/ercot234_official_score.json`. Parity-check note: the
+`docs/records/ercot/FINDING-ercot234-eastex-identity-repair-2026-08-25.md`,
+`results/phase0/ercot/ercot234_gates.json`,
+`results/phase0/ercot/ercot234_official_score.json`. Parity-check note: the
 pre-existing tracked `results/calibration/caiso217_crosswalk` orphan (another
 lane's dead solve output, flagged by `check_registry_payload_parity.py`) is
 NOT touched — rule 25 lane isolation; left for the CAISO lane.
@@ -11904,9 +11904,9 @@ can't you just try to solve 2023 for its own conditions and ignore
 ### ercot-235 CAMPAIGN RECORD (same session) — 4 precommitted rounds, 11 kill-gated 2023-only solves; winner `2026-08-25-235-2023-discrete-k24` REGISTERED: the FIRST ERCOT config to PASS C3b-2023 (0.186) and C3c-2023 (180/181), NOT-YET on C3a-2023 ALONE (−13.5 %)
 
 Full table, structure lessons and honest costs:
-`docs/FINDING-ercot235-2023-discrete-offer-sweep-2026-08-25.md`; grid,
+`docs/records/ercot/FINDING-ercot235-2023-discrete-offer-sweep-2026-08-25.md`; grid,
 kills and selection were fixed in
-`docs/PRECOMMIT-ercot235-2023-discrete-offer-sweep-2026-08-25.md` before
+`docs/records/ercot/PRECOMMIT-ercot235-2023-discrete-offer-sweep-2026-08-25.md` before
 each round ran (amendments 1–3 record each round's result before the next
 grid). Headlines: the ercot-234 keeper recipe + ONE residual-identified
 2023 scalar (k_peak 24.0 on the gas peak bands, DOF-ledgered, n_residual
@@ -11956,10 +11956,10 @@ object between this keeper and a clean C3a-2023 PASS (killed R8/R9 measured
 under the owner's standing 2023-DISCRETE-CONFIG order (rule-16 waiver
 INVOKED; Q-B/R-A superseded by the owner — cited from the ercot-235 entry,
 never re-derived). Precommit
-`docs/PRECOMMIT-ercot236-h4097-shed-repair-2026-08-25.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot236-h4097-shed-repair-2026-08-25.md` pushed +
 blob-verified BEFORE any solve; Amendments 1–2 record each round before the
 next ran. Full record:
-`docs/FINDING-ercot236-h4097-swcap-clip-2026-08-25.md`.
+`docs/records/ercot/FINDING-ercot236-h4097-swcap-clip-2026-08-25.md`.
 
 **The diagnosis (1 solve).** D-0: the k=30 grid point re-solved at HEAD
 reproduces R8 to the digit (shed {4097}, 35.948 MWh; −9.3 %/0.119/180 —
@@ -12053,10 +12053,10 @@ into main (`bcb2521`); the Pages deploy on that commit ran green (run
 part read [ERCOT:CALIBRATED]. The blocking step is closed.
 
 **B. Phase-0 band-swap characterization (handoff item C), precommitted
-before any measurement** (`docs/PRECOMMIT-ercot237-bandswap-phase0-2026-08-26.md`,
+before any measurement** (`docs/records/ercot/PRECOMMIT-ercot237-bandswap-phase0-2026-08-26.md`,
 pushed + blob-verified; probe `scripts/probes/ercot237_bandswap_phase0.py`
-→ `results/calibration/ercot237_bandswap_phase0.json`; full record
-`docs/FINDING-ercot237-bandswap-phase0-2026-08-26.md`). **The V-0
+→ `results/phase0/ercot/ercot237_bandswap_phase0.json`; full record
+`docs/records/ercot/FINDING-ercot237-bandswap-phase0-2026-08-26.md`). **The V-0
 identity gate FIRED — and caught a real registered-record defect
 (Amendment 1, recorded before proceeding):** the actual ≥$1,000 band
 count was HARDCODED at 59 in `ercot235_offer2023_sweep.py`, copied into
@@ -12125,7 +12125,7 @@ log carrier; the ercot-235 entry's 180/181 is a different statistic), keeper
 shard, registry sidecar, status part (rebuilt; `--check` confirmed only
 prose + timestamp moved), matrix §5.1, `mechanism-matrix/ERCOT.js` — plus a
 SEVENTH found in the pass and fixed:
-`docs/FINDING-ercot236-h4097-swcap-clip-2026-08-25.md` line 75. The
+`docs/records/ercot/FINDING-ercot236-h4097-swcap-clip-2026-08-25.md` line 75. The
 FINDING/PRECOMMIT-ercot237 docs (which record the defect correctly) and the
 unrelated 59/59/59 ORDC step counts were left untouched. **No scored
 criterion moved; the ercot-236 determination stays CALIBRATED.**
@@ -12151,7 +12151,7 @@ the committed ercot-215 A/B pair reproduces 9/12/1 with G-SPUR PASS.
 Scorer-only — historical gates JSONs stand unrewritten.
 
 **RULING 3 — the TWO-CONFIG KEEPER (structural).** Full record:
-`docs/FINDING-ercot-two-config-keeper-2026-08-26.md`. Owner verbatim: *"The
+`docs/records/ercot/FINDING-ercot-two-config-keeper-2026-08-26.md`. Owner verbatim: *"The
 keeper should be the 2023 config that works plus the 2024-2025 keeper from
 before, so two different configurations with 2024/2025 config being the
 forward keeper for use in the model and 2023 as a carve out designed to
@@ -12208,14 +12208,14 @@ handoff's residual queue; keeper structure (forward
 `2026-08-25-234-eastex-identity` + 2023 carve-out
 `2026-08-25-236-swcap-clip-k33`) UNTOUCHED; no lever armed, no matrix cell
 changed (nothing tested).** Precommit
-`docs/PRECOMMIT-ercot239-missedevents-phase0-2026-08-30.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot239-missedevents-phase0-2026-08-30.md` pushed +
 blob-verified BEFORE any measurement; Amendment 1 (V-0 cross-check re-based:
 the committed ercot-237 JSON never carried the `lt_200|ge_1000` hour list)
 and Amendment 2 (the committed measured ORDC/reserves series added as a
 report-only panel) recorded and pushed before the measurements they cover.
 Probe `scripts/probes/ercot239_missedevents_phase0.py` →
-`results/calibration/ercot239_missedevents_phase0.json`; full record
-`docs/FINDING-ercot239-missedevents-phase0-2026-08-30.md`.
+`results/phase0/ercot/ercot239_missedevents_phase0.json`; full record
+`docs/records/ercot/FINDING-ercot239-missedevents-phase0-2026-08-30.md`.
 
 **What the measurements showed (V-0 exact; all 14 hours reproduced):**
 (1) the real prints are RTLMP-side — measured `system_lambda` reproduces
@@ -12270,14 +12270,14 @@ fresh-base rule, not a transport conclusion).
 ### ercot-239 ROUND-2 ADDENDUM (same session, executed after ercot-240 merged) — THE AUGUST STEEPNESS OBJECT ADJUDICATED BY A/B: the measured graded `peak_ladder` is structurally CLEAN (all five kills PASS; lidless spur COLLAPSES 74 → 11) and CANNOT carry the 2023 fit (C3a −7.3 % → −40.0 %, C3b 0.102 → 0.736, C3c 180 → 70 — the pre-k33 state restored); REGISTERED `2026-08-30-239-graded-ladder` + ESCALATED, keeper untouched
 
 **Handoff priority 2, worked under
-`docs/PRECOMMIT-ercot239-graded-ladder-2026-08-30.md`** (pushed +
+`docs/records/ercot/PRECOMMIT-ercot239-graded-ladder-2026-08-30.md`** (pushed +
 blob-verified 6bdba198 before any measurement; Amendment 1 re-based the
 G-A(iv) proxy to the measured invariant — all 6 non-inert
 conditional-surface cells are TOP-rung cells where the candidate is
 bit-identical by construction — before any solve). Full record:
-`docs/FINDING-ercot239-graded-ladder-2026-08-30.md`; census
-`results/calibration/ercot239_gradedladder_phase0.json`; A/B
-`results/calibration/ercot239_gradedladder_ab.json`.
+`docs/records/ercot/FINDING-ercot239-graded-ladder-2026-08-30.md`; census
+`results/phase0/ercot/ercot239_gradedladder_phase0.json`; A/B
+`results/phase0/ercot/ercot239_gradedladder_ab.json`.
 
 **Design:** candidate = the carve-out recipe with the four measured
 classes' flat k33-scaled `peak_ladder`s regraded to the COMMITTED 60-Day
@@ -12322,11 +12322,11 @@ payload blob a7817ab2 push-verified.
 
 ### ercot-239 ROUND-3 ADDENDUM (same session) — h3068-2024 FULLY ATTRIBUTED (ZERO-SOLVE, precommitted): the standing band-top-blind hour is the EXIT EDGE of a one-hour-late model event on perfectly time-aligned inputs — net-load release lag 0, price lag 1; at h3068 the model still holds reserve steps ($416.67, NonSpin short 298 MW) and prices $798 on the thermal wall with storage at 0 MW (the ercot-223 record's own 938 MWh h3068→h3069 re-timing) where reality had collapsed to $110 (RTORPA $8.95, RTOLCAP recovered)
 
-Precommit `docs/PRECOMMIT-ercot239-h3068-phase0-2026-08-30.md` pushed +
+Precommit `docs/records/ercot/PRECOMMIT-ercot239-h3068-phase0-2026-08-30.md` pushed +
 blob-verified before measurement; V-0 exact (798.20/110.41). Probe
 `scripts/probes/ercot239_h3068_phase0.py` →
-`results/calibration/ercot239_h3068_phase0.json`; full record
-`docs/FINDING-ercot239-h3068-phase0-2026-08-30.md`. Priors: P2/P3
+`results/phase0/ercot/ercot239_h3068_phase0.json`; full record
+`docs/records/ercot/FINDING-ercot239-h3068-phase0-2026-08-30.md`. Priors: P2/P3
 CONFIRMED (reality released at h3068; net-load lag 0 — inputs
 exonerated), P1 REFUTED as declared (the $798 is not the adaptive
 floor's PRICE — the adaptive/release-guard complex acts on the
@@ -12389,15 +12389,15 @@ load-bearing only for a graded top rung).
 
 **Designated branch `claude/ercot-240-demand-gap-xbdwn5`. ZERO-SOLVE.**
 Charter: ercot-239 §6 object 2 ONLY (objects 1/3 untouched). Precommit
-`docs/PRECOMMIT-ercot240-eventhour-demandgap-2026-08-30.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot240-eventhour-demandgap-2026-08-30.md` pushed +
 blob-verified (538c30c6) BEFORE any measurement, declaring the three
 chartered candidates PLUS a pre-registered fourth from design reading —
 (d) the comparison-frame identity: `_load_ercot_hourly`/`load_demand`
 serve `EIA-930 Demand + Total interchange`, and the committed ercot-239
 rows already showed `gap_components.demand + interchange = 0` in all 14.
 Probe `scripts/probes/ercot240_eventhour_demandgap.py` →
-`results/calibration/ercot240_eventhour_demandgap.json`; full record
-`docs/FINDING-ercot240-eventhour-demandgap-2026-08-30.md`. No amendments
+`results/phase0/ercot/ercot240_eventhour_demandgap.json`; full record
+`docs/records/ercot/FINDING-ercot240-eventhour-demandgap-2026-08-30.md`. No amendments
 (one within-convention join-mechanics note, FINDING §1).
 
 **What the measurements showed (V-0 exact; V-1 loader≡sidecar at 0.0 MW):**
@@ -12457,12 +12457,12 @@ per rule 27 (precommit, probe and JSON each blob-verified after push).
 the original ercot-241 session failed after landing only the merged
 precommit, PR #4349). ZERO-SOLVE.** Charter: ercot-239 §6 object 1 ONLY
 (wind pair queued, untouched). Precommit
-`docs/PRECOMMIT-ercot241-offcore-conduct-phase0-2026-08-30.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot241-offcore-conduct-phase0-2026-08-30.md` pushed +
 blob-verified BEFORE any measurement; NO amendments (three
 within-convention notes, FINDING §1). Probe
 `scripts/probes/ercot241_offcore_conduct_phase0.py` →
-`results/calibration/ercot241_offcore_conduct_phase0.json`; full record
-`docs/FINDING-ercot241-offcore-conduct-phase0-2026-08-30.md`.
+`results/phase0/ercot/ercot241_offcore_conduct_phase0.json`; full record
+`docs/records/ercot/FINDING-ercot241-offcore-conduct-phase0-2026-08-30.md`.
 
 **What the measurements showed (V-0 exact; 306/323 shards with 2023 rows;
 corpus grain 4 SCED snapshots/hour):** (1) M-1 census: the family is NOT
@@ -12513,13 +12513,13 @@ branch, rebased fresh on main).
 
 ## ercot-242 — 2026-08-30 — PHASE-1 OF THE SCED ROOM-CONDUCT LANE EXECUTED (the ercot-241 gate's licensed round): the room-axis extension of the armed RT wall BUILT as precommitted (zero fitted scalars, parent ladders byte-identical to the frozen wall) and REJECTED-AS-ARMED on K-SPUR (74 → 75 lidless) with the officials collapsing out of PASS on the OVERSHOOT side (C3a −7.3 % → +7.6 %, C3b 0.102 → 0.256, ≥$1,000 tail 59 → 71 vs 61) and the declared reach NOT achieved — the §1.5 double-counting risk REALIZED and adjudicated STRUCTURAL: the room-conditioned offer surface is the wrong home for a position/participation-carried dependence; matrix cell minted **R**; keeper untouched; ESCALATED
 
-**Precommit `docs/PRECOMMIT-ercot242-room-axis-phase1-2026-08-30.md`**
+**Precommit `docs/records/ercot/PRECOMMIT-ercot242-room-axis-phase1-2026-08-30.md`**
 pushed + blob-verified (4a26a261) BEFORE any derive or solve; **no
 amendments** (two environment installs — openpyxl, tzdata — hit before any
 solve started; the declared drift-contingency control replay was never
 needed). Full record:
-`docs/FINDING-ercot242-room-axis-phase1-2026-08-30.md`; A/B
-`results/calibration/ercot242_room_ab.json`; registered
+`docs/records/ercot/FINDING-ercot242-room-axis-phase1-2026-08-30.md`; A/B
+`results/phase0/ercot/ercot242_room_ab.json`; registered
 `2026-08-30-run242-room-axis` (REJECTED PROBE — escalated; retention
 auto-pruned the superseded ex-keeper 2026-08-16-ercot213-arm-pubanchor).
 
@@ -12598,14 +12598,14 @@ base); no workflows, no CI solves.
 **Branch `claude/ercot-243-release-exit-r7owkv`. ZERO-SOLVE.** Charter:
 the ercot-243 handoff (lane 2, the ercot-223 release-guard exit
 condition; entry edge h3064 out of scope). Precommit
-`docs/PRECOMMIT-ercot243-release-exit-phase0-2026-08-30.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot243-release-exit-phase0-2026-08-30.md` pushed +
 blob-verified (045cd014) BEFORE any measurement; construction ran as
 declared (one implementation repair: finite-mask in the alignment
 correlation — EIA-930 2025 carries NaN Demand hours; lag-0 asserted both
 years, corr 0.9996/0.9998). Probe
 `scripts/probes/ercot243_release_exit_phase0.py` →
-`results/calibration/ercot243_release_exit_phase0.json`; full record
-`docs/FINDING-ercot243-release-exit-phase0-2026-08-30.md`.
+`results/phase0/ercot/ercot243_release_exit_phase0.json`; full record
+`docs/records/ercot/FINDING-ercot243-release-exit-phase0-2026-08-30.md`.
 
 **The census (V-0 exact — 798.20/110.41/floor 523.12, p_hat × VOLL
 identity to $0.01):** signature = actual first-collapse after a real
@@ -12657,7 +12657,7 @@ online-capability ceiling identified from `rtolhsl` — as Phase-0
 zero-solve identification with ONE forward-span A/B licensed only on a
 clean pass. The matrix cell stood at **R** (ercot-159, 2026-08-04: the
 2023-only SCED conditional envelope, rejected in-solve on 4 kills); the
-precommit (`docs/PRECOMMIT-ercot244-online-cap-phase0-2026-08-30.md`,
+precommit (`docs/records/ercot/PRECOMMIT-ercot244-online-cap-phase0-2026-08-30.md`,
 pushed + blob-verified 52ab16e5 BEFORE any measurement) reconciled the
 re-open under `[R-MECH-MATRIX]` duty (a)'s new-evidence clause: the
 forward span was byte-inert in the ercot-159 arm (never tested), the
@@ -12683,7 +12683,7 @@ straddling year's product; the plain-name read would have missed 2025's
 un-split `ECRS`).
 
 **Census (probe `scripts/probes/ercot244_online_cap_phase0.py` →
-`results/calibration/ercot244_online_cap_phase0.json`).** V-0 exact:
+`results/phase0/ercot/ercot244_online_cap_phase0.json`).** V-0 exact:
 model tails 22/1, actual 53/31 to the hour; EIA-930 lag-0 (0.9996+);
 rtolhsl hod-17–21 means 58.873/62.641/67.806 GW = the card's figures to
 the hundredth. 2024: binds 985 — 979 ordinary (actual < $150), 3 of 36
@@ -12698,7 +12698,7 @@ armed credit-netted reserve cap holds p50 ~1.4 GW slack at the binding
 hours with p10 NEGATIVE — part of the would-be margin is already owned.
 
 **The structural finding
-(`docs/FINDING-ercot244-online-cap-phase0-2026-08-30.md`).** At 33/36
+(`docs/records/ercot/FINDING-ercot244-online-cap-phase0-2026-08-30.md`).** At 33/36
 and 28/31 missed hours the model sits UNDER the measured ceiling: a
 C1/C2/C3a-passing model's slow utilization tracks reality's slow
 generation, which respects reality's own online HSL by physics — so a
@@ -12748,7 +12748,7 @@ successor. Phase-0 zero-solve only: a per-class availability-shaped
 reachability bound (CC/ST/COAL/NUC; quick-start never capped, rule 18)
 censused against the FORWARD keeper's committed sidecars, with ONE
 forward-span A/B licensed only on a clean pass. Precommit
-`docs/PRECOMMIT-ercot245-commitment-state-phase0-2026-08-30.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot245-commitment-state-phase0-2026-08-30.md` pushed +
 blob-verified before measurement; Amendment 1 (pushed before the census
 re-ran, per the §7 convention) re-declared V-0(d)'s level leg on the
 STORAGE-EXCLUDED all-restype sum after the stop-and-investigate
@@ -12770,7 +12770,7 @@ CAP/AvailRef over 10 net-load deciles (2023 edges), ĈAP_k,y = c_k(bin) ×
 AvailModel_k,y — no coefficient, margin, trim or grain free.
 
 **Census (probe `scripts/probes/ercot245_commitment_state_phase0.py` →
-`results/calibration/ercot245_commitment_state_phase0.json`).** Every V-0
+`results/phase0/ercot/ercot245_commitment_state_phase0.json`).** Every V-0
 anchor passed: populations exact (22/1, 53/31, 36/31/115); corpus recon
 corr 0.9935, storage-excluded median gap +2,371 MW (raw +4,948; storage
 online mean 2,676 MW, the series-composition record); CC cap_ref
@@ -12795,7 +12795,7 @@ reach: CC 29/36, 29/31 attached to ~40 % base-rate binding. D-V1/D-V2
 identical to primary (a saturated union cannot move).
 
 **The structural findings
-(`docs/FINDING-ercot245-commitment-state-phase0-2026-08-31.md`).** (1)
+(`docs/records/ercot/FINDING-ercot245-commitment-state-phase0-2026-08-31.md`).** (1)
 The per-class grain SEES the event composition skew the aggregate summed
 away: at covered M_2025 hours the model runs ~3 GW more gas-steam and
 ~4 GW less CC than ERCOT's measured online mix (D-V4; h342: model ST
@@ -12957,7 +12957,7 @@ session; ERCOT surfaces only (rule 25); push integrity per rule 27.
 ## 2026-08-31 — OWNER RULING R-D (director REFRESH sitting): the C-1 WIND ENTRY MISS is designated TERMINAL REST AT THIS REPRESENTATION GRAIN, with a DECISION MAP attached — nothing armed, nothing rejected, 91.1 % of the miss published OPEN (records act; zero solve)
 
 **Owner ruling, 2026-08-31 REFRESH sitting**, on
-`docs/FINDING-c1-joint-wind-ab-2026-08-31.md` (the A/B owner ruling R-B
+`docs/records/misc/FINDING-c1-joint-wind-ab-2026-08-31.md` (the A/B owner ruling R-B
 chartered; both kill-gates **PASS**; joint posture **`NON_COMPLEMENTARY`**).
 Recorded by the dispatched audit-program rulings-records lane under the standing
 recorded deviation — the director pushes nothing, records land through the lane,
@@ -12969,7 +12969,7 @@ CLOSED at this grain with a map attached**, never an implicit pause.
 
 **(1) The ruling.** Further pursuit of the ERCOT wind entry miss **at this
 representation grain** is **NOT THE ROUTE**. The map is
-`docs/DECISION-MAP-ercot-wind-entry-2026-08-31.md`.
+`docs/records/ercot/DECISION-MAP-ercot-wind-entry-2026-08-31.md`.
 
 **(2) The measurement it rests on.** The joint arm builds wind **1.442 GW** — to
 the megawatt the committed signal-alone (disarm) arm's number — closing
@@ -13052,7 +13052,7 @@ armed config are the **same key** — purge or re-solve before quoting an armed
 run. Closing that gap is a T1-H re-baseline, the forecast program's charter, not
 a calibration lane's.
 
-**(8) Records and matrix.** New: `docs/DECISION-MAP-ercot-wind-entry-2026-08-31.md`.
+**(8) Records and matrix.** New: `docs/records/ercot/DECISION-MAP-ercot-wind-entry-2026-08-31.md`.
 R-D ruling stamps appended to the **evidence strings only** of the two joint-wind
 cells in `docs/codebase-site/data/mechanism-matrix/ERCOT.js` — **no verdict
 letter changes** (duty (b): R-D adjudicates a disposition, not a verdict); duty
@@ -13150,7 +13150,7 @@ VERBATIM via `--replay-bundle --holdout-authorized --year 2022`. **Neither is a
 keeper or a keeper candidate**; keeper `2026-09-05-ercot248-two-config-keeper`
 is unchanged and the `complete` marker's `keeper` field is untouched (no
 promotion ⇒ no D-5(b) re-key). Locked test (2019 / H1-2026) not touched.
-Full record: `docs/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md`.
+Full record: `docs/records/ercot/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md`.
 
 **(1) The board.** Keeper in-sample (2023–2025) CALIBRATED; both arms on 2022
 NOT-YET on `fuelmix` + `price_shape` + `price_tail`.
@@ -13300,7 +13300,7 @@ the DATA" is the authority.
 
 **Gates at HEAD:** `check_registry_payload_parity` OK, `audit_keepers --iso ERCOT`
 PASS, `build_status.py --check --iso ERCOT` in sync. Full record:
-`docs/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md` §Addendum 1 (2026-09-06).
+`docs/records/ercot/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md` §Addendum 1 (2026-09-06).
 
 **(6) ADDENDUM — the 2022 C1 miss has a SECOND, code-side owner, found this session
 (zero-LP).** §5 above routes the miss to the absent HSL archive, which is right but not the
@@ -13320,7 +13320,7 @@ owner**, because it is byte-identical in every training year and live ONLY on he
 so it can neither be identified on 2023-2025 nor screened where its footprint is largest without
 spending a holdout. A rule-clean test that touches no held-out year is proposed: withhold the
 2023 HSL parquet, solve the no-HSL branch on 2023 both ways, score against 2023's known actuals.
-Full record: `docs/FINDING-ercot251-nohsl-curtailment-gate-2026-09-06.md`. No code changed, no
+Full record: `docs/records/ercot/FINDING-ercot251-nohsl-curtailment-gate-2026-09-06.md`. No code changed, no
 LP solved, no mechanism tested, no matrix cell touched, no keeper changed.
 
 **(7) THE SCREEN WAS RUN, AND IT KILLED THE ARM (2026-09-06, same session).** The (6) repair
@@ -13330,7 +13330,7 @@ repaired predicate, and differencing against the keeper's committed 2023.
 `--no-p1-basis-seed` neutralized the one LIVE G-DRIFT hunk (`bf37a0dc`, the P1 basis seed,
 default-ON in the calibration CLIs and on ERCOT's P1-native-bridge route). Gates were
 pre-registered and committed BEFORE the solve
-(`docs/PRECOMMIT-ercot251-nohsl-ceiling-screen-2026-09-06.md`).
+(`docs/records/ercot/PRECOMMIT-ercot251-nohsl-ceiling-screen-2026-09-06.md`).
 
 | gate | threshold | measured | verdict |
 |---|---|---|---|
@@ -13348,7 +13348,7 @@ FROZEN and were never re-run to make G-5 pass (rule 23 / PRECOMMIT §5). Screen 
 parquet restored byte-identical, predicate change REVERTED, bundle deleted (rule 29(c)).
 The gate's premise is still false and the first-order fix is still the measured 2022 HSL
 archive. Open decision for the owner in
-`docs/RESULT-ercot251-nohsl-ceiling-screen-2026-09-06.md` §6. No keeper, recipe, matrix cell or
+`docs/records/ercot/RESULT-ercot251-nohsl-ceiling-screen-2026-09-06.md` §6. No keeper, recipe, matrix cell or
 determination changed; 2022 untouched.
 
 ## ercot-252 — 2026-09-06 — 2022 C1 / CC_REGULAR: the two IN-MODEL routes (LR RRS credit, RTOLCAP cap) are KILLED at zero-LP rule-29 phase 0 — every route that can move the miss is the renewable bound, and both are the owner's (R1 HSL upload / R2 predicate repair); the measured 2020–2022 load-resource RRS series is BUILT as data intake, consumed by nothing while the from_year gate stands. NO SOLVE, NO REGISTRATION, NOTHING IDENTIFIED ON 2022
@@ -13419,7 +13419,7 @@ two anchor warnings pre-existing); `tests/scoring` 11 failures identical with an
 without this branch's changes (verified by stash: `test_ff_readiness_battery`,
 `test_collate_scenario_campaign_common_set`, `test_forecast_parity`,
 `test_gate_a_provenance`) — none this lane's. Full record:
-`docs/FINDING-ercot252-2022-cc-routes-phase0-2026-09-06.md`.
+`docs/records/ercot/FINDING-ercot252-2022-cc-routes-phase0-2026-09-06.md`.
 
 **Owner asks, in closing order:** (i) the 2022 HSL archive → `data/raw/ercot-hsl/np6/2022/`;
 (ii) admit / refuse the provenance-predicate repair; (iii) `ercot_reserve_supply_cap_from_year`
@@ -13430,7 +13430,7 @@ ercot-212 `net_credits` pairing).
 (same session, 2026-09-06).** Rulings on the clickable decision card, verbatim: R1 *"I can't do
 it now but eventually"* (HSL 2022 stays OPEN); R2 *"Admit as a correctness fix; re-solve 2022"*;
 R4 *"Arm both gates (cap + LR credit) and re-solve 2022"*. Executed as ONE solve under
-`docs/PRECOMMIT-ercot252-2022-repair-resolve-2026-09-06.md` (committed before launch, `8fbcd0e6`):
+`docs/records/ercot/PRECOMMIT-ercot252-2022-repair-resolve-2026-09-06.md` (committed before launch, `8fbcd0e6`):
 the ercot-251 predicate re-applied as an admitted repair (both curtailment gates skip only on
 `delivered_pinned`), plus `ercot_reserve_supply_cap_from_year` and
 `ercot_load_resource_reserve_from_year` 2023 → 2020 as replay-only overrides (new on
@@ -13460,7 +13460,7 @@ moves to 2020 is a follow-on owner call, recorded in RESULT §4. Marker
 `config_2022_designation` and `keepers/ERCOT.json` `site_retention_note` carry dated addenda;
 matrix shard evidence updated on four cells, no verdict changed. Gates at HEAD: audit_keepers
 PASS, parity OK, status in sync, matrix diff gate OK, scoring suite 11 pre-existing failures.
-Full record: `docs/RESULT-ercot252-2022-repair-resolve-2026-09-06.md`.
+Full record: `docs/records/ercot/RESULT-ercot252-2022-repair-resolve-2026-09-06.md`.
 
 ## ercot-253 — 2026-09-06/07
 
@@ -13535,9 +13535,9 @@ adder-**argument** phase-0 FINDING, identified on 2023-2025 only — the model w
 573/191/67 h against the published RTORPA's 1,705/560/253, a strict SUBSET, then writes 3.0×/1.8×
 the dollars, because it prices off cleared-to-REQUIREMENT reserve while ERCOT prices off RTOLCAP
 online CAPABILITY (+5.0/+9.1/+11.9 GW above the model's argument). No matrix cell verdict changed.
-Full record: `docs/RESULT-ercot253-2021-rung-2026-09-06.md`,
-`docs/FINDING-ercot253-c3c-adder-distribution-phase0-2026-09-06.md`,
-`docs/PRECOMMIT-ercot253-2021-rung-2026-09-06.md` + `docs/ADDENDUM-ercot253-as-requirement-2026-09-06.md`.
+Full record: `docs/records/ercot/RESULT-ercot253-2021-rung-2026-09-06.md`,
+`docs/records/ercot/FINDING-ercot253-c3c-adder-distribution-phase0-2026-09-06.md`,
+`docs/records/ercot/PRECOMMIT-ercot253-2021-rung-2026-09-06.md` + `docs/records/ercot/ADDENDUM-ercot253-as-requirement-2026-09-06.md`.
 
 **Next shorthand: ercot-254** (ercot-199 remains unclaimed)
 
@@ -13620,11 +13620,11 @@ firm $3.41), and two provenance defects (`meta.json` records `ercot_zonal_gas_ba
 **Rule 30(c): ERCOT stays CALIBRATED on the train tier**, keeper
 `2026-09-05-ercot248-two-config-keeper` unchanged. All four probe bundles deleted before
 merge (rule 29(c)); nothing registered, no dashboard entry moved, nothing tuned on 2021.
-Record: `docs/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md`,
-`docs/PRECOMMIT-ercot254-monthly-ep-basis-2026-09-07.md`,
-`docs/ADDENDUM-ercot254-g1-scope-correction-2026-09-07.md`,
-`docs/ADDENDUM-ercot254-2021-retest-prediction-2026-09-07.md`,
-`docs/RESULT-ercot254-monthly-ep-basis-2026-09-07.md`.
+Record: `docs/records/ercot/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md`,
+`docs/records/ercot/PRECOMMIT-ercot254-monthly-ep-basis-2026-09-07.md`,
+`docs/records/ercot/ADDENDUM-ercot254-g1-scope-correction-2026-09-07.md`,
+`docs/records/ercot/ADDENDUM-ercot254-2021-retest-prediction-2026-09-07.md`,
+`docs/records/ercot/RESULT-ercot254-monthly-ep-basis-2026-09-07.md`.
 
 ## ercot-255 — 2026-09-07 — THE 2021 C1 DRIVER IS FOUND AND FIXED: the zonal gas SPREAD is referenced to **Henry Hub** while the LEVEL it competes against is the **EP series**, so a statewide fuel event enters the merit order as false **LOCATIONAL** dispersion. The repair is BUILT, screened clean on 2025, and **flips C1 FAIL → PASS on 2021** (CC_REGULAR's −16.02 TWh miss → **−3.95**). **NOT PROMOTED** — blocked by the same two-config `meta.json` provenance defect that stopped ercot-254
 
@@ -13737,9 +13737,9 @@ promotion A/B.
 `2026-09-05-ercot248-two-config-keeper` unchanged. All four bundles deleted before
 merge (rule 29(c)); nothing registered, no dashboard entry moved, nothing tuned on
 2021. Record:
-`docs/PRECOMMIT-ercot255-zonal-spread-ep-reference-2026-09-07.md`,
-`docs/ADDENDUM-ercot255-g1c-correction-2026-09-07.md`,
-`docs/RESULT-ercot255-zonal-spread-ep-reference-2026-09-07.md`.
+`docs/records/ercot/PRECOMMIT-ercot255-zonal-spread-ep-reference-2026-09-07.md`,
+`docs/records/ercot/ADDENDUM-ercot255-g1c-correction-2026-09-07.md`,
+`docs/records/ercot/RESULT-ercot255-zonal-spread-ep-reference-2026-09-07.md`.
 
 ### ercot-255 CODA — PROMOTED on owner instruction, as ONE five-year run
 
@@ -13785,7 +13785,7 @@ bundle dirs), cache-key registration ok, status parts in sync, matrix cell **`K`
 
 ## ercot-256 — 2026-09-07/08 — THE 2021 C8 BREACH IS A TRUE POSITIVE AND THE REPAIR IS PROMOTED: the net-load drag floor was holding two plants at min load through hours their own meters read **0.000 MW**, inside the very windows the model's **own** merit-order guard had already classified as economic lay-up. `netload_drag_layup_window_mask` is BUILT, screened clean on 2025, and **ARMED IN ALL FIVE YEARS** as keeper `2026-09-08-ercot256-drag-layup-mask`. C8 ST_GAS improves in **every** year; the 2021 gate does **NOT** close, exactly as registered before the solve
 
-**Charter:** the 2021 rung's remaining rubric failures; **FAILURE A** (C8 forced-share, ST_GAS 37.6 %) was taken. Records: `docs/PRECOMMIT-ercot256-drag-layup-window-mask-2026-09-07.md` (pushed before any LP) and `docs/RESULT-ercot256-drag-layup-window-mask-2026-09-08.md`.
+**Charter:** the 2021 rung's remaining rubric failures; **FAILURE A** (C8 forced-share, ST_GAS 37.6 %) was taken. Records: `docs/records/ercot/PRECOMMIT-ercot256-drag-layup-window-mask-2026-09-07.md` (pushed before any LP) and `docs/records/ercot/RESULT-ercot256-drag-layup-window-mask-2026-09-08.md`.
 
 **The diagnosis, entirely at zero LP.** Rule 16's escalation splits cleanly: leg (b) **D-1 shape PASSES** (`profile_r` 0.999, `cv_ratio` 1.91), and leg (a) fails **only** through the D-4 per-unit conduct rider, on `st_netload_drag` — the ONLY mechanism forcing ERCOT ST_GAS in any scored year. The convictions are TRUE POSITIVES: **Lake Hubbard (3452) generated exactly ZERO in Jan/Feb/Mar 2021 — through Uri — and ran 1,924 of 8,760 h**; **R W Miller (3628) unit 1 produced 0.0 GWh all year**; the floor holds them 6,026 / 6,423 h. The model had already measured the absence: the merit-order guard reclassified **272.8 unit-days of Lake Hubbard unit 1** as ECONOMIC LAY-UP into `campd-unit-outages-layup.csv`, deliberately outside the availability envelope — so the drag contradicted its own pipeline (rule 17 `[R-FLOOR-WINDOW]`). Root cause: the drag's driver is a **FLEET** overnight CF applied uniformly to **every** tranche's `pmax`, while the 2021 meter shows the fleet is radically heterogeneous (Braunig 8,095 h online vs Lake Hubbard 1,924).
 
@@ -13803,7 +13803,7 @@ bundle dirs), cache-key registration ok, status parts in sync, matrix cell **`K`
 
 ## ercot-258 — 2026-09-08 — THE 2021 CARD'S OWN HYPOTHESIS IS DEAD AND THE "SECOND FACTOR" WAS ALREADY FOUND: `k_peak 33.0` carries **0.091 %** of 2021 dispatch and is **never live below $51.57**, so it cannot touch a defect that lives at p5/p25/p50. The real second factor is ercot-254's **Uri-contaminated annual EP gas basis** (+5.778 $/MMBtu flat on all 8,760 h), corroborated here from the opposite end. **ZERO LP.**
 
-**Charter:** the ercot-256b card's three options (A HSL intake / B the k_peak second-factor hypothesis / C `ercot_ep_gas_basis_monthly`). Record: `docs/handoffs/FINDING-ercot258-2021-second-factor-2026-09-08.md`. Rule 29 `[R-SCREEN]` clause 0 — phase 0 killed the arm, so no screen year was named and **no LP was spent**.
+**Charter:** the ercot-256b card's three options (A HSL intake / B the k_peak second-factor hypothesis / C `ercot_ep_gas_basis_monthly`). Record: `docs/records/ercot/FINDING-ercot258-2021-second-factor-2026-09-08.md`. Rule 29 `[R-SCREEN]` clause 0 — phase 0 killed the arm, so no screen year was named and **no LP was spent**.
 
 **A — BLOCKED, not re-opened.** No 2021/2022 NP6 archives exist on disk or at HEAD (`data/raw/ercot-hsl/np6/` holds 2023/2024/2025 only). `data/raw/ercot-hsl/README.md` already adjudicated the route **ungettable on 2026-07-10** — ERCOT's Data Access Portal is sign-in-gated, the rolling-window API retains no 2018–2022 history, and the UMass fallback is 2023-only by construction. This is an owner upload; DO-NOT-REDO respected.
 
@@ -13825,7 +13825,7 @@ bundle dirs), cache-key registration ok, status parts in sync, matrix cell **`K`
 
 ## ercot-259 — 2026-09-08 — THE C8 SUCCESSOR QUEUE IS ADJUDICATED AND BOTH NAMED CANDIDATES ARE REFUSED; the residual 2021 C8 defect is the drag's **uniform `floor_frac × pmax` allocation**, it reproduces **IN-SAMPLE in 2023**, and the drag **curve is exonerated for 2021**. **ZERO LP.**
 
-**Charter:** the ercot-256b card's option A (C8 / the sub-5-day grain). Record: `docs/handoffs/FINDING-ercot259-c8-allocation-2026-09-08.md`. Rule 29 `[R-SCREEN]` clause 0 — phase 0 refuted the arm, so **no screen year was named and no LP was spent**. The card asked for the lay-up-vs-cycling separation to be stated *before* building; it is stated below, and the answer is that there isn't one.
+**Charter:** the ercot-256b card's option A (C8 / the sub-5-day grain). Record: `docs/records/ercot/FINDING-ercot259-c8-allocation-2026-09-08.md`. Rule 29 `[R-SCREEN]` clause 0 — phase 0 refuted the arm, so **no screen year was named and no LP was spent**. The card asked for the lay-up-vs-cycling separation to be stated *before* building; it is stated below, and the answer is that there isn't one.
 
 **The named successor is REJECTED on identification, not on a residual.** `scripts/data/derive_campd_unit_outages.py --short-windows` already adjudicates this exact question in the opposite branch of the same 2×2 (the repo has three of its four cells: ≥5 d in-merit = outage; ≥5 d out-of-merit = lay-up; <5 d in-merit = short outage; <5 d out-of-merit = the proposed instrument). That mode admits **only `SHORT_BASELOAD_CF ≥ 0.55` units**, verbatim because *"a cycling unit's brief stop can be economic dispatch while a baseload unit's 1-5 day full stop … is a forced event."* Every plant this card needs it for is a **cycler** — 3452 runs 22–63 % of hours, 3491 runs 31–49 % — i.e. precisely the population that guard excludes. The only signal separating a 2-day lay-up from 2-day cycling in a low-duty-cycle unit is the unit's **own metered on/off state**, and consuming that hour-by-hour is rule 13 `[R-MEASURED]` pinning. **Struck from the lever queue.**
 
@@ -13847,7 +13847,7 @@ bundle dirs), cache-key registration ok, status parts in sync, matrix cell **`K`
 
 **AND IT IS NOT RECOMMENDED, on its own evidence.** The objective is **not met**: plant 3452's D-4 conduct conviction **STANDS** (floored 0.2523 → 0.1145 TWh and 2,864 → 1,297 h, both −55 %, but the measured median stays **0.000 MW** and zero-share falls only 0.5964 → 0.5513 — concentrating the mandate into the plant's highest-net-load hours did not concentrate it into hours it was *running*). And the target criterion moves the **wrong way**: C8 ST_GAS forced share **rises 0.1347 → 0.1775** (both PASS, cap 0.30). The mandate is aggregate-neutral but the **realized** forcing is not — flooring a cheap plant at its full committed block is a far higher bar than 15 % of `pmax`, so the floor **binds** where the smear did not. On 2021, where C8 already fails at 33.1 %, that likely pushes a failing gate *further* past the cap. C8 was deliberately **not** a screen gate (rule 1 `[R-STRUCT]`); it is reported instead. Predictions **4/7**, two WRONG (P1 C8-falls and P5 LMP-falls, both backwards for the same reason; LMP rose +$0.1422/MWh), one gate leg mis-specified by me.
 
-**PROMOTION IS BLOCKED, and not by this arm.** Rule 16 `[R-ALLYEARS]` needs a five-year bundle, and the keeper's 2021/2022/2023 **carve-out** (`ercot_offer_swcap_clip` + the ×33.0 `offer_curve_by_group` peak bands) is recorded in **no `meta.json`** and has **no CLI flag**, so `--replay-bundle` silently solves the forward config — **demonstrated here**: the control solved `swcap=False` / CC_REGULAR peak **4.576** against the keeper's `True` / **151.008**, which is why C3a reads **−39.6 %** in BOTH arms. That is `RESULT-ercot256` §10's unfixed open item, and it **blocks any ERCOT full-span re-solve by any lane** — it should be fixed (a per-year recipe map in the composite writer) before the next ERCOT span is attempted. Record: `docs/PRECOMMIT-ercot259-drag-merit-allocation-2026-09-08.md`, `docs/RESULT-ercot259-drag-merit-allocation-2026-09-09.md`. **Keeper unchanged.** Screen bundles gitignored, not deleted (rule 31 `[R-RETAIN]`), on local disk only.
+**PROMOTION IS BLOCKED, and not by this arm.** Rule 16 `[R-ALLYEARS]` needs a five-year bundle, and the keeper's 2021/2022/2023 **carve-out** (`ercot_offer_swcap_clip` + the ×33.0 `offer_curve_by_group` peak bands) is recorded in **no `meta.json`** and has **no CLI flag**, so `--replay-bundle` silently solves the forward config — **demonstrated here**: the control solved `swcap=False` / CC_REGULAR peak **4.576** against the keeper's `True` / **151.008**, which is why C3a reads **−39.6 %** in BOTH arms. That is `RESULT-ercot256` §10's unfixed open item, and it **blocks any ERCOT full-span re-solve by any lane** — it should be fixed (a per-year recipe map in the composite writer) before the next ERCOT span is attempted. Record: `docs/records/ercot/PRECOMMIT-ercot259-drag-merit-allocation-2026-09-08.md`, `docs/records/ercot/RESULT-ercot259-drag-merit-allocation-2026-09-09.md`. **Keeper unchanged.** Screen bundles gitignored, not deleted (rule 31 `[R-RETAIN]`), on local disk only.
 
 **Next shorthand: ercot-260** (ercot-199 and ercot-257 remain unclaimed).
 
@@ -13921,7 +13921,7 @@ with `git rm --cached` (rule 31 — the bundles stay on disk).
 
 ## ercot-260 — 2026-09-09 — THE TWO-CONFIG REPLAY DEFECT IS FIXED: a composite bundle's per-year recipe map is now **DERIVED** from its own committed run_config legs and **CONSUMED** by both replay entry points, and the keeper's 2023 carve-out year replays **BIT-IDENTICALLY**. Plumbing, not a mechanism. **1 LP, purely as proof.**
 
-**Charter:** the ercot-260 card 1 — `RESULT-ercot256` §10's unfixed open item, restated by `RESULT-ercot259` §4 as the thing blocking **any** ERCOT full-span re-solve by any lane. Record: `docs/RESULT-ercot260-two-config-replay-2026-09-09.md`. No PRECOMMIT: no `ScenarioConfig` field, no CLI flag, nothing under `src/market_sim/` — rule 29 `[R-SCREEN]` governs mechanism arms, and this is neither.
+**Charter:** the ercot-260 card 1 — `RESULT-ercot256` §10's unfixed open item, restated by `RESULT-ercot259` §4 as the thing blocking **any** ERCOT full-span re-solve by any lane. Record: `docs/records/ercot/RESULT-ercot260-two-config-replay-2026-09-09.md`. No PRECOMMIT: no `ScenarioConfig` field, no CLI flag, nothing under `src/market_sim/` — rule 29 `[R-SCREEN]` governs mechanism arms, and this is neither.
 
 **The defect.** ERCOT is a two-config keeper (owner ruling 2026-08-26), and `meta.json` can hold only ONE config — the FORWARD one. The carve-out's two distinguishing keys, `ercot_offer_swcap_clip=true` and the ×33.0 `offer_curve_by_group` peak bands (CC_REGULAR `peak` **151.008** vs the forward **4.576**), are `ScenarioConfig` fields and **not** `solve_and_persist` kwargs, so they were in **no** `meta.json` and had **no** CLI flag; they entered the keeper's legs by hand via `--set`. `--replay-bundle` therefore solved the **forward** config on a carve-out year and reported it as the keeper — measured by ercot-259, whose control replayed 2023 at `swcap=False` / `peak=4.576`, **C3a −39.6 %**, against the keeper's own **−7.2 % PASS**.
 
@@ -13939,18 +13939,18 @@ with `git rm --cached` (rule 31 — the bundles stay on disk).
 
 **Keeper unchanged.** The proof bundle is a throwaway diagnostic, written **outside** `results/calibration/` (rule 29 clause c / rule 31 — the parity gate sweeps that dir with `iterdir()`), on local disk only; it will not survive this container.
 
-**CARD 2 — THE 2021 VALIDATION TOUCHPOINT RE-TEST (owner directive 2026-09-09, 1 LP).** Owner: *"If it improves then screen 21 and decide on promotion. We should only be running 2021 now since it's the only miss year."* Reported first, zero-LP: on 2023 the arm does **NOT** improve on what it targets — C8 ST_GAS 0.1340 → 0.1775 (**+4.3 pt worse**) and plant 3452's D-4 conviction stands; the only gains were C3a −39.58 → −39.36 % and C3b 0.7300 → 0.7279, both **sub-point and measured on the DEFECTIVE forward config** (the keeper's true 2023 C3a is −7.2 %), so they carry no weight. Verified zero-LP that the C8 finding **survives** the config defect (keeper committed 2023 C8 = 0.1340 vs ercot-259's control 0.1347 — forced share is a quantity constraint, largely insensitive to the peak bands) while the price findings do not. Registered before the solve: `docs/PRECOMMIT-ercot260-merit-allocation-2021-touchpoint-2026-09-09.md`. Framed as a **rule 22 touchpoint re-test (loop step 4), NOT a rule 29 screen** — the mechanism was already screened on 2023 at its own largest footprint, and 2021 is chosen for being the held-out miss year, which rule 29 would forbid and rule 22 defines. Nothing identified, fitted or tuned on 2021. Control = the keeper's COMMITTED 2021 leg (G-CTRL form 4, **no control solve**), with G-DRIFT **MEASURED not audited** via card 1's bit-identical HEAD replay.
+**CARD 2 — THE 2021 VALIDATION TOUCHPOINT RE-TEST (owner directive 2026-09-09, 1 LP).** Owner: *"If it improves then screen 21 and decide on promotion. We should only be running 2021 now since it's the only miss year."* Reported first, zero-LP: on 2023 the arm does **NOT** improve on what it targets — C8 ST_GAS 0.1340 → 0.1775 (**+4.3 pt worse**) and plant 3452's D-4 conviction stands; the only gains were C3a −39.58 → −39.36 % and C3b 0.7300 → 0.7279, both **sub-point and measured on the DEFECTIVE forward config** (the keeper's true 2023 C3a is −7.2 %), so they carry no weight. Verified zero-LP that the C8 finding **survives** the config defect (keeper committed 2023 C8 = 0.1340 vs ercot-259's control 0.1347 — forced share is a quantity constraint, largely insensitive to the peak bands) while the price findings do not. Registered before the solve: `docs/records/ercot/PRECOMMIT-ercot260-merit-allocation-2021-touchpoint-2026-09-09.md`. Framed as a **rule 22 touchpoint re-test (loop step 4), NOT a rule 29 screen** — the mechanism was already screened on 2023 at its own largest footprint, and 2021 is chosen for being the held-out miss year, which rule 29 would forbid and rule 22 defines. Nothing identified, fitted or tuned on 2021. Control = the keeper's COMMITTED 2021 leg (G-CTRL form 4, **no control solve**), with G-DRIFT **MEASURED not audited** via card 1's bit-identical HEAD replay.
 
 **RESULT: the failing gate moves the RIGHT way and does NOT close — and my own headline prediction was WRONG IN DIRECTION.** 2021 C8 ST_GAS forced share **0.3313 → 0.3204** (−0.0109, ~35 % of the way to the 0.30 cap), still **FAIL**. That is the **middle branch** of the pre-registered decision rule (*"falls but stays ≥ 0.30 ⇒ partial … report and put to the owner, no recommendation either way"*), so **no recommendation is made, by prior commitment**. The objective is still unmet: plant 3452 floored **0.2891 → 0.1133 TWh (−61 %)** and **2,614 → 724 h (−72 %)** with the measured median still **0.000 MW** — **FAIL**, and fleet-wide **D-4 FAIL rows 20 → 20, not one cleared**. The mandate moves exactly as designed, off the least-committed plants (3491 0.6709 → 0.2181; 3628 0.1967 → 0.0275) and onto the workhorses (3612 Braunig 0.2891 → 0.6005; 3460 Cedar Bayou 0.4309 → 0.8219), carrying the same total on fewer larger blocks: D-4 floored energy **25.2599 → 25.0969 TWh (−0.65 %)** while binding plant-hours fall **77,750 → 65,256 (−16.1 %)**. Gates: **G-B PASS** (largest non-target class move 0.0278 TWh vs a 0.15 STOP; **44 of 60 plants byte-identical**). **G-A PASS on the differencing form, and I MIS-SPECIFIED IT**: I wrote an absolute *"slack > 0 ⇒ STOP"*, wrong for the **Uri year** where the keeper itself carries 1,763.96 MWh of real load shed over 5 h — arm-induced delta is exactly **0.0000 MWh**; recorded rather than quietly restated. **G-C NOT MEASURABLE** (the keeper carries no `floors/` sidecar and reconstruction produced no rows) — not substituted for: neutrality stands on 2023's 0.0039 MW and on the plant table. Reported not gated: system LW LMP 187.292 → 187.359 (**+$0.0675/MWh**), C3a +26.39 → +26.43 % (already FAIL, verdict unchanged), ST_GAS class energy −0.0702 TWh. Predictions **4/5**, **P1 wrong on direction** (I extrapolated 2023's +4.3 pt and stated ex ante that 2021 was *expected* to get worse; it improved).
 
-**THE FINDING: 2021 and 2023 move in OPPOSITE directions** — 2023 (train) **+4.3 pt worse**, 2021 (validation) **−1.1 pt better** — and it is consistent with the mechanism's own theory, since the uniform allocation's error is largest where the fleet is least committed (2021 holds Lake Hubbard at 1.22 TWh against 0.36 measured, 3.4× over, while holding Braunig at 1.50 against 3.72). **The promotion tension is genuine and is the owner's**: rule 1 `[R-STRUCT]` says a structurally-correct, zero-DOF, forward-native repair stays in even when the residual worsens; rule 22 `[R-HOLDOUT]` says promoting *because* a validation year improved while a training year degraded is selecting on the held-out year. Record: `docs/RESULT-ercot260-merit-allocation-2021-touchpoint-2026-09-09.md`. **Keeper unchanged; nothing registered.** Both probe bundles sit outside `results/calibration/` under `.git/info/exclude`, on local disk only — they will not survive this container.
+**THE FINDING: 2021 and 2023 move in OPPOSITE directions** — 2023 (train) **+4.3 pt worse**, 2021 (validation) **−1.1 pt better** — and it is consistent with the mechanism's own theory, since the uniform allocation's error is largest where the fleet is least committed (2021 holds Lake Hubbard at 1.22 TWh against 0.36 measured, 3.4× over, while holding Braunig at 1.50 against 3.72). **The promotion tension is genuine and is the owner's**: rule 1 `[R-STRUCT]` says a structurally-correct, zero-DOF, forward-native repair stays in even when the residual worsens; rule 22 `[R-HOLDOUT]` says promoting *because* a validation year improved while a training year degraded is selecting on the held-out year. Record: `docs/records/ercot/RESULT-ercot260-merit-allocation-2021-touchpoint-2026-09-09.md`. **Keeper unchanged; nothing registered.** Both probe bundles sit outside `results/calibration/` under `.git/info/exclude`, on local disk only — they will not survive this container.
 
 ## ercot-263 — 2026-09-09 — the 2021 C3b failure was measured against a deprecated benchmark basis (ZERO LP)
 
 **Scope:** data + benchmark + docs. No LP solved, no `ScenarioConfig` field changed, keeper payload
 byte-identical, no `src/`/`scripts/` edit. Records:
-`docs/handoffs/PRECOMMIT-ercot263-c3b-basis-2026-09-09.md` (`3964ff00`, predictions sealed first),
-`docs/RESULT-ercot263-c3b-basis-2026-09-09.md`.
+`docs/records/ercot/PRECOMMIT-ercot263-c3b-basis-2026-09-09.md` (`3964ff00`, predictions sealed first),
+`docs/records/ercot/RESULT-ercot263-c3b-basis-2026-09-09.md`.
 
 **Phase 0 killed the handoff's own construction before an LP was spent.** The brief named October
 (+140.3%) as the first object. C3b is an **absolute-dollar** monthly NRMSE, not a percentage one:
@@ -14015,7 +14015,7 @@ it makes the target harder and **correctly measured**. Every arm screened agains
 today was screened against a number wrong by 0.32.
 
 **THE FEBRUARY OBJECT WAS THEN TRACED AND KILLED AT PHASE 0 — no LP, no shard fan-out**
-(`docs/handoffs/ADDENDUM-ercot263-february-object-phase0-2026-09-09.md`). The keeper prices Feb-2021
+(`docs/records/ercot/ADDENDUM-ercot263-february-object-phase0-2026-09-09.md`). The keeper prices Feb-2021
 gas as an ORDINARY month: the EIA N3045TX3 raw print is **+54.376 $/MMBtu** of basis and the keeper
 uses **+0.390**, because `ercot_ep_gas_basis_corroborated` (ercot-261) replaces the two 2021 months
 that fail corroboration against EIA-923 Schedule-5 (Feb and Dec) with the corroborated-month mean.
@@ -14050,8 +14050,8 @@ prevent. This branch touches no bundle directory and does not worsen the RED. Ow
 ## ercot-264 — 2026-09-09 — the keeper reproduces EXACTLY at HEAD (5 shards, zero drift)
 
 **Owner instruction:** *"Do a run"* / *"run all years including holdouts"*. Records:
-`docs/handoffs/PRECOMMIT-ercot264-keeper-repro-2026-09-09.md` (`ff148b37`, predictions sealed
-first), `docs/RESULT-ercot264-keeper-repro-2026-09-09.md`.
+`docs/records/ercot/PRECOMMIT-ercot264-keeper-repro-2026-09-09.md` (`ff148b37`, predictions sealed
+first), `docs/records/ercot/RESULT-ercot264-keeper-repro-2026-09-09.md`.
 
 **No mechanism arm was available to solve** — ercot-263's phase 0 closed all three routes to the
 February object, and this session re-confirmed no Waha/HSC/ERCOT daily gas file exists anywhere
@@ -14111,7 +14111,7 @@ Branch `claude/ercot-uri-february-fuel-baynmi`. **Zero LP, no shard launched, no
 nothing registered, nothing deleted.** Keeper `2026-09-09-ercot261-corroborated-gas-level`
 untouched and not re-solved (ercot-264 already certified it reproduces exactly at HEAD). ERCOT
 stays **CALIBRATED** on the train tier (rule 30(c)); the five-year determination stays NOT-YET on
-C3b alone. Record: `docs/RESULT-ercot265-daily-gas-survey-sufficiency-2026-09-09.md`.
+C3b alone. Record: `docs/records/ercot/RESULT-ercot265-daily-gas-survey-sufficiency-2026-09-09.md`.
 
 **Option (A) chosen** over (B) — which needs an owner decision the handoff itself requires and
 which does not exist — and over (C), the handoff's conditional fallback.
@@ -14246,7 +14246,7 @@ owner procurement decision, not a modelling one.**
    `list_events`), and `render_calibration_html.build_payload` reads `system.parquet`,
    `dispatch/<year>_P1.parquet` and the `_shared` store. The working precedent was on `main` the
    whole time — `ercot262_arm_2021` carries both. Recovered by waking the shards; the block is
-   corrected in `docs/handoffs/SHARD-ARTIFACT-HANDOFF-BLOCK.md`.
+   corrected in `docs/records/misc/SHARD-ARTIFACT-HANDOFF-BLOCK.md`.
 3. **TWO SILENT-BLINDNESS NEAR-MISSES, both caught before promotion.** Regenerating
    `legitimacy_diagnostics.json` on the slim composite produced **D1/D2/D4 = 0 rows reading
    `passed: True`** — a false pass by blindness, the exact failure CLAUDE.md names ("C8 would
@@ -14342,7 +14342,7 @@ shift moves one month by −$345 while the other eleven are already +12 % to +23
 reproduction certificate, **"NOT A KEEPER CANDIDATE … registering it would mint a second id for one
 configuration."** Under rule 31 that is a *sentence in the RESULT, never a licence to delete*, which is
 exactly why this session did not act on it and asked instead. Every number either run produced is
-carried by `docs/RESULT-ercot264-keeper-repro-2026-09-09.md` and ercot-262's own PRECOMMIT/FINDING
+carried by `docs/records/ercot/RESULT-ercot264-keeper-repro-2026-09-09.md` and ercot-262's own PRECOMMIT/FINDING
 docs, and git history holds the bytes — the delete-not-archive discipline rule 15 `[R-DASHBOARD]`
 already states.
 
@@ -14469,10 +14469,10 @@ top-level `ercot_ep_gas_basis_receipts_fallback`, which the ercot-265 promotion 
 stamped into `meta.json` as provenance. Without it the ERCOT keeper had been **unreplayable on
 every year since 2026-09-10**; all five first-attempt shards stopped there before any LP.
 
-Records: `docs/handoffs/PRECOMMIT-ercot-mer-keeper-resolve-2026-09-19.md` (+ Amendment 1),
-`docs/handoffs/RESULT-ercot-mer-keeper-resolve-2026-09-19.md`,
-`docs/handoffs/FINDING-ercot-mer-replay-blocked-2026-09-19.md`,
-`docs/handoffs/HANDOFF-ercot-mer-promotion-blocked-2026-09-19.md`.
+Records: `docs/records/ercot/PRECOMMIT-ercot-mer-keeper-resolve-2026-09-19.md` (+ Amendment 1),
+`docs/records/ercot/RESULT-ercot-mer-keeper-resolve-2026-09-19.md`,
+`docs/records/ercot/FINDING-ercot-mer-replay-blocked-2026-09-19.md`,
+`docs/records/ercot/HANDOFF-ercot-mer-promotion-blocked-2026-09-19.md`.
 
 ## ercot-268 — 2026-09-19
 
@@ -14481,7 +14481,7 @@ PR #6123) — "SOCO-15: resolve the COD ramp at the LP unit's own grain". HEAD I
 RE-SOLVE IS OWED.** Zero LP, no shard launched, nothing armed, nothing registered, nothing
 deleted. Keeper `2026-09-19-ercot266-mer-five-year` **untouched** and already on the repaired
 construction (it solved at `5926ca52`), so its published numbers are the correct ones and every
-scored criterion stands. Record: `docs/handoffs/FINDING-ercot268-drift-bisect-2026-09-19.md`.
+scored criterion stands. Record: `docs/records/ercot/FINDING-ercot268-drift-bisect-2026-09-19.md`.
 
 **Method.** Binary search on the `availability` hash over the **157 code-touching first-parent
 commits** in `0ebfc2da0..5926ca52`, seven probes, two new `fleet_only` instruments
@@ -14604,8 +14604,8 @@ differenced against a superseded availability envelope.
   - (b) the 60-Day DAM thermal availability covers 2021–2025 only, so 2019/2020 run on a stack no keeper year has used;
   - (c) Hidalgo's sheet code 55545 ≠ eGRID ORISPL 7762, which leaves 1,126 MW at the class-default heat rate.
 
-Records: `docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md`,
-`docs/handoffs/RESULT-r-ercot-2019-2025-inputs-2026-09-24.md`.
+Records: `docs/records/ercot/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md`,
+`docs/records/ercot/RESULT-r-ercot-2019-2025-inputs-2026-09-24.md`.
 
 **PROMOTED 2026-09-25 — owner instruction, verbatim: *"Yes promote"*** (against this session's hold recommendation).
 - New keeper: `2026-09-24-r-inputs-2019-2025` (bundle `results/calibration/r_ercot_arm_span`, years 2019–2025).
@@ -14644,7 +14644,7 @@ The owner asked for both follow-ups ("Both").
 
 Matrix cell `measured_chp_heat_rates` K → O, pending the owner ruling. **Recommendation: promote the CHP-off run.**
 
-Record: `docs/handoffs/RESULT-r-ercot-2-dam-backyears-chp-test-2026-09-25.md`.
+Record: `docs/records/ercot/RESULT-r-ercot-2-dam-backyears-chp-test-2026-09-25.md`.
 
 ## R-ERCOT-3 — 2026-09-25 — promotion
 
@@ -14676,7 +14676,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - Re-coupling the coal level to fuel is DO-NOT-REDO (`coal_offer_level_rebasis` is R).
 
 **Record:**
-- Finding: `docs/handoffs/FINDING-r-ercot-3-coal-2019-2020-2026-09-25.md`
+- Finding: `docs/records/ercot/FINDING-r-ercot-3-coal-2019-2020-2026-09-25.md`
 - Probe: `scripts/probes/_r_ercot3_coal_census.py`
 - Matrix: census note on `coal_perplant_offer_level`; the cell stays K.
 
@@ -14695,7 +14695,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Proposed, not armed:** a day-grain guard, `shaped(d) ≥ min(1, dmax[d]/ref)`, with zero new scalars. It breaks SP-6 (it is a net lift), needs a PRECOMMIT under rule 23, and moves the train tier. The owner decides; the cost is 7 shards.
 
 **Record:**
-- Finding: `docs/handoffs/FINDING-r-ercot-4-validation-years-2026-09-25.md`
+- Finding: `docs/records/ercot/FINDING-r-ercot-4-validation-years-2026-09-25.md`
 - Probe: `scripts/probes/_r_ercot4_shaped_derate_footprint.py`
 - Matrix: `ercot_partial_outage_shaped_derate` stays K; the open defect is appended to its evidence.
 
@@ -14728,9 +14728,9 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - After the prune: 0/0. The parity gate is clean apart from the local shard-leg dirs.
 - **Matrix:** `ercot_partial_outage_day_guard` → **K**.
 - **Records:**
-  - `docs/handoffs/FINDING-r-ercot-4-validation-years-2026-09-25.md`
-  - `docs/handoffs/PRECOMMIT-r-ercot-4-day-guard-2026-09-25.md`
-  - `docs/handoffs/RESULT-r-ercot-4-day-guard-2026-09-25.md`
+  - `docs/records/ercot/FINDING-r-ercot-4-validation-years-2026-09-25.md`
+  - `docs/records/ercot/PRECOMMIT-r-ercot-4-day-guard-2026-09-25.md`
+  - `docs/records/ercot/RESULT-r-ercot-4-day-guard-2026-09-25.md`
 
 ## R-ERCOT-5 — 2026-09-25/26 — 2019 scarcity forensics; ERCOT CAMPD outage windows at their detected hour grain — PROMOTED
 
@@ -14755,9 +14755,9 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - `stamp_config_partition --check` passes; the partition overrides are byte-equal to the prior keeper's.
 - **Matrix:** `unit_outage_window_hour_grain` U → O → **K** (ERCOT).
 - **Records:**
-  - `docs/handoffs/FINDING-r-ercot-5-2019-scarcity-2026-09-25.md`
-  - `docs/handoffs/PRECOMMIT-r-ercot-5-window-hour-grain-2026-09-25.md`
-  - `docs/handoffs/RESULT-r-ercot-5-hour-grain-2026-09-26.md`
+  - `docs/records/ercot/FINDING-r-ercot-5-2019-scarcity-2026-09-25.md`
+  - `docs/records/ercot/PRECOMMIT-r-ercot-5-window-hour-grain-2026-09-25.md`
+  - `docs/records/ercot/RESULT-r-ercot-5-hour-grain-2026-09-26.md`
 
 ## R-ERCOT-6 — 2026-09-26 — window × partial double count re-tested (owner leave); train-tier under-price decomposed — NOT PROMOTED (owner: "Don't promote")
 
@@ -14771,7 +14771,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - 2022 → NOT-YET (C1 CC_REGULAR −10.04 TWh); 2019/2020 C3a +53.6 / +10.4 %.
   - Coal +0.83…+4.75 TWh; 2025 overshoot +1.23 → +4.08 TWh.
 - **Recommendation:** do not promote. The rule 14 reason is over-restoration at shared plants, not the C3a flip. Successor: a per-unit composition. Owner ruled "Don't promote": the run is pruned, and the cell is back to R.
-- **Records:** `docs/handoffs/FINDING-r-ercot-6-double-count-retest-2026-09-26.md`, `PRECOMMIT-r-ercot-6-unit-scoped-event-cap-2026-09-26.md`, `RESULT-r-ercot-6-unit-scoped-event-cap-2026-09-26.md`.
+- **Records:** `docs/records/ercot/FINDING-r-ercot-6-double-count-retest-2026-09-26.md`, `PRECOMMIT-r-ercot-6-unit-scoped-event-cap-2026-09-26.md`, `RESULT-r-ercot-6-unit-scoped-event-cap-2026-09-26.md`.
 
 ## R-ERCOT-7 — 2026-09-26 — per-unit window × partial composition: FAILED its zero-LP test, recorded R (owner: "Record R, no arm"); Jack Fusco coverage gap found
 
@@ -14786,7 +14786,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - Owner: add it and test it in the next lane.
   - Decker Creek steam is validation-years only. Hidalgo needs a zone move to South. AVR's default is already right.
 - **Step 4:** the non-ERCOT deriver `plant_group` break is already fixed on `main` (miso-273). `_APPLIED_MEASURED_FLAGS` stays inert for ERCOT (0 `eia923_identity` rows).
-- **Records:** `docs/handoffs/FINDING-r-ercot-7-per-unit-composition-2026-09-26.md`.
+- **Records:** `docs/records/ercot/FINDING-r-ercot-7-per-unit-composition-2026-09-26.md`.
 
 ## R-ERCOT-8 — 2026-09-27 — Jack Fusco (55357) added to the fleet; PROMOTED `2026-09-27-r-8-fusco` (owner: "Promote + fix 2023 next"); ISO → NOT-YET
 
@@ -14806,7 +14806,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - gate (a) → fail;
   - `2026-09-25-r-5-hour-grain` pruned.
 - **Next:** root-cause the 2023 scarcity/price formation that the missing plant was masking.
-- **Record:** `docs/handoffs/RESULT-r-ercot-8-fusco-fleet-coverage-2026-09-27.md`.
+- **Record:** `docs/records/ercot/RESULT-r-ercot-8-fusco-fleet-coverage-2026-09-27.md`.
 
 ## R-ERCOT-9 — 2026-09-27 — 2023 gap root-caused to energy-offer price formation (zero LP); zonal actuals repaired to the standard clock; keeper unchanged
 
@@ -14825,7 +14825,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - `derive_ercot_zonal_lmp.py` now applies `_PrevailingShift`. Zonal actuals were one hour late in every DST hour, every year 2018–2026.
   - `actual_lmp.json` ERCOT `rt_lw` changes 2019–2025: 46.90→46.55, 25.50→25.40, 165.53→165.95, 74.44→75.08, 64.32→65.02, 30.99→31.17, 36.29→36.50.
   - These take effect at the next registration. No solve impact, and no determination flips.
-- **Record:** `docs/handoffs/FINDING-r-ercot-9-2023-scarcity-2026-09-27.md`.
+- **Record:** `docs/records/ercot/FINDING-r-ercot-9-2023-scarcity-2026-09-27.md`.
 - **Owner ruling (decision card):** "Hold k=33, work validation (Recommended)". The keeper is unchanged, and the next lane takes the validation-year C1 items.
 
 ## R-ERCOT-10 — 2026-09-28 — W A Parish partial-outage derate fuel-scoped (rule 14); PROMOTED `2026-09-27-r-10-parish-fuelscope` (owner: "Is it an improvement? Then promote"); ISO NOT-YET (2023 carve-out, owner hold k=33)
@@ -14844,7 +14844,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - 2023 C3a −20.6 → −19.9 % (repaired clock).
   - 2024 / 2025 stay CALIBRATED (−8.8 / −9.4 %).
   - 2022 C3a −10.4 % FAIL is a scoring-basis effect (the keeper reads −10.6 % on the same basis).
-- **Record:** `docs/handoffs/RESULT-r-ercot-10-parish-fuel-scope-2026-09-28.md`.
+- **Record:** `docs/records/ercot/RESULT-r-ercot-10-parish-fuel-scope-2026-09-28.md`.
 
 ## R-ERCOT-11 — 2026-09-28 — W A Parish split repaired (EIA-860 capacity boundary + split-child measured ST heat rates, rule 14); PROMOTED `2026-09-28-r-11-parish-split` (owner card: "Promote (Recommended)"); ISO NOT-YET (2023 hold; 2024 now C3a −10.7 %)
 
@@ -14866,7 +14866,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Rulings 2/3:**
   - The 2019–22 SCED is behind ERCOT's API subscription key (401), so the lane stopped.
   - The benchmark-vs-930 gap was diagnosed only: Frontera out-of-footprint 2019–22, hydro, backfill double counts, and a CHP residual.
-- **Record:** `docs/handoffs/RESULT-r-ercot-11-parish-split-2026-09-28.md`.
+- **Record:** `docs/records/ercot/RESULT-r-ercot-11-parish-split-2026-09-28.md`.
 
 ## R-ERCOT-12 — 2026-09-28 — Frontera 55098 dated ERCOT membership (fleet + benchmark, rule 14); PROMOTED `2026-09-28-r-12-frontera-membership` (owner card: "Promote (Recommended)"); ISO NOT-YET
 
@@ -14875,7 +14875,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Solve:** 7 shards at `2af9ab74` (rule 36); G-DRIFT every hunk INERT; partition byte-equal.
 - **Result:** train unchanged (2023 NOT-YET −20.0 %, 2024 NOT-YET −10.7 %, 2025 CALIBRATED). 2022 NOT-YET → CALIBRATED. 2019 C3a +24.8 → +53.6 % and 2020 +7.1 → +11.3 % — Frontera's phantom 529 MW masked a 2019–20 over-scarcity (next object).
 - **Lever 3:** SCED key still declined by the owner; coal offers untouched.
-- Record: `docs/handoffs/RESULT-r-ercot-12-frontera-membership-2026-09-28.md`.
+- Record: `docs/records/ercot/RESULT-r-ercot-12-frontera-membership-2026-09-28.md`.
 
 ## R-ERCOT-13 — 2026-09-28 — 2019 onto the measured reserve inputs (LR RRS credit + RTOLCAP cap, from_year 2020 → 2019); PROMOTED `2026-09-28-r-13-2019-reserve` (owner standing instruction "Is it an improvement? Then promote"); ISO NOT-YET
 
@@ -14884,7 +14884,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Arm:** built `ercot_2019_as_up_mw.parquet` (unchanged builder; mean 698 MW) and set both gates to 2019. Zero DOF. One 2019 shard (A) plus one LR-only attribution shard (B, never promotable). G-DRIFT: every hunk INERT.
 - **Result:** 2019 C3a +53.6 → +41.4 %, C3b 1.228 → 0.874, shed 4,662 → 17 MWh; hours ≥ $1k 48 → 54 (P2 missed — the cap adds ORDC-short hours 394 → 1,329). C1 is unchanged, so the coal/CC object is separate. 2020–2025 are identical (R-ERCOT-12 legs recomposed; they were fetchable by full SHA, so there were zero re-solves).
 - **Routed:** R1, the 2019–21 shed ($5k) vs rigid-reserve ($9k) penalty inversion. R2, the scored price exceeding HCAP. R3+R4, the off-peak coal shortfall (Martin Lake −5.9, Sam Seymour −3.6 TWh in 2020; Oklaunion 127 absent from the 2020 fleet).
-- Record: `docs/handoffs/RESULT-r-ercot-13-2019-reserve-inputs-2026-09-28.md`.
+- Record: `docs/records/ercot/RESULT-r-ercot-13-2019-reserve-inputs-2026-09-28.md`.
 
 ## R-ERCOT-14 — 2026-09-29 — Oklaunion 127 joins ERCOT (rule 14) + `ercot_swcap_vintage` (pre-2022 HCAP $9,000 on offer cap, ORDC and shed); PROMOTED `2026-09-28-r-14-oklaunion-swcap` (owner card: "Promote B (Recommended)"); ISO NOT-YET
 
@@ -14905,7 +14905,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - 2022–2025 identical.
   - SWCAP is inert in 2019/2020 (max λ $2,649); it binds only the 49 Uri shed zone-hours of 2021, now priced at $9,000.
 - **Benchmark:** the 2019/2020 bench now includes Oklaunion's actual; the keeper was re-scored on it for the comparison.
-- Record: `docs/handoffs/RESULT-r-ercot-14-oklaunion-swcap-2026-09-29.md`.
+- Record: `docs/records/ercot/RESULT-r-ercot-14-oklaunion-swcap-2026-09-29.md`.
 
 ## R-ERCOT-15 — 2026-09-29 — phase 0 on 2020 C3b; vintage anchor `R`; Oklaunion measured coal HR + Sandy Creek key landed; arm staged, NOT solved (session-nesting limit); ISO NOT-YET, keeper unchanged
 
@@ -14913,7 +14913,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Vintage anchor `R` at zero LP:** the per-year bias is not linear in the anchor gap (slope +0.11, r² 0.02; 2022 is +4.2 where ≈ −11 is predicted).
 - **Routed:** South 2020 thin-sample F923 basis (+3.53); missing pre-2022 West Waha rows.
 - **Landed:** Sandy Creek 56611 key (byte-inert, measured); curated-sheet coal-HR population with 127 measured (2019 11.77, 2020 11.47). The latter is live for 2019/2020 — the next lane solves the 2019+2020 arm.
-- Record: `docs/handoffs/RESULT-r-ercot-15-phase0-2026-09-29.md`.
+- Record: `docs/records/ercot/RESULT-r-ercot-15-phase0-2026-09-29.md`.
 
 ## R-ERCOT-16 — 2026-09-29 — Oklaunion 127 measured CAMPD coal heat rate (rule 14/23); PROMOTED `2026-09-28-r-16-oklaunion-hr` (standing instruction "Is it an improvement? Then promote"); ISO NOT-YET
 
@@ -14927,7 +14927,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - The West Waha 2020/2021 annual basis is not citable, so nothing was armed. The 2019 basis and the 2019–2021 negative-day counts are citable.
   - The South basis row is three small Sch5 plants. In 2020 it reads +3.53 (South_Central +0.64), and the model's South merchant gas runs 1.32 vs 10.68 TWh actual. That ratio is 0.12, against 0.71–1.53 in every other year.
   - A pooled South-Texas basis would need no threshold but moves the training years, so it goes to the owner as a decision card.
-- Record: `docs/handoffs/RESULT-r-ercot-16-oklaunion-hr-2026-09-29.md`.
+- Record: `docs/records/ercot/RESULT-r-ercot-16-oklaunion-hr-2026-09-29.md`.
 
 ## R-ERCOT-17 — 2026-09-30 — pooled South-Texas gas basis (owner ruling "Pool South Texas (Recommended)"); PROMOTED `2026-09-29-r-17-south-texas` (owner card "Promote; fix 3452 next (Recommended)"); ISO NOT-YET
 
@@ -14940,7 +14940,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Cost (at full magnitude):** 2022 goes CALIBRATED → NOT-YET on C8 alone (ST_GAS forced 28.7 → 30.4 %). The above-cap escape is denied by the pre-existing plant-3452 `st_netload_drag` D-4 unit-conduct FAIL. 2025 holds CALIBRATED at C3a −9.9 %.
 - **Predictions:** price-direction predictions MISSED (2019/2020 LW price fell slightly instead of rising). The South TWh ranges MISSED high (the gap closed fully). The C3b and 2021–2025 C3a predictions HIT. The 2022 C8 flip was not anticipated.
 - **Next lane:** plant 3452 `st_netload_drag` provenance (zero LP first).
-- Record: `docs/handoffs/RESULT-r-ercot-17-south-texas-pool-2026-09-29.md`.
+- Record: `docs/records/ercot/RESULT-r-ercot-17-south-texas-pool-2026-09-29.md`.
 
 ## R-ERCOT-18 — 2026-09-30 — prior-year overnight-commitment allocation of the ST_GAS drag — PROMOTED `2026-09-30-r-18-drag-index`
 
@@ -14957,7 +14957,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - D-4 st_netload_drag FAILs 9 → 8.
   - C8 up 1–3 pp in 2020/2023/2024, all PASS.
 - **Promoted** under the standing instruction. ISO stays NOT-YET (2023 carve-out hold; 2024 C3a −10.7 %).
-- **Records:** `docs/handoffs/r-ercot/PRECOMMIT-r-ercot-18-drag-overnight-index-2026-09-30.md`, `docs/handoffs/r-ercot/RESULT-r-ercot-18-drag-overnight-index-2026-09-30.md`.
+- **Records:** `docs/records/ercot/r-ercot/PRECOMMIT-r-ercot-18-drag-overnight-index-2026-09-30.md`, `docs/records/ercot/r-ercot/RESULT-r-ercot-18-drag-overnight-index-2026-09-30.md`.
 
 ## R-ERCOT-19 — 2026-09-30 — EIA-923 Finals zonal-gas refresh — PROMOTED `2026-09-30-r-19-eia-923`
 
@@ -14965,7 +14965,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Arm A (promoted, owner card "Promote A only (Recommended)"):** 2024/2025 zonal-gas member rows re-derived on the EIA-923 Sch5 Finals (rule 23). Recipe unchanged; no determination moves. 2025 C3a −9.6 → −9.8 %.
 - **Arm B (both commit-profile limbs) and arm C (CC limb only):** probes, not promoted. Both flip 2022 NOT-YET on C1 CC_REGULAR (−8.42 / −8.66). B flips 2024 CALIBRATED at a 0.12 pp margin; C misses by 0.04 pp. B's drag-hour limb left D-4 at 8 → 8. Both limbs stay default-off, and both runs were pruned.
 - ISO stays NOT-YET (2023 carve-out hold; 2024 C3a −10.7 %).
-- Record: `docs/handoffs/r-ercot/RESULT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md`.
+- Record: `docs/records/ercot/r-ercot/RESULT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md`.
 
 ## R-ERCOT-20 — 2026-09-30 — simple-cycle GTs split out of three CC plants — PROMOTED `2026-09-30-r-20-gt-split`
 
@@ -14975,7 +14975,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - Hypotheses (a) and (c) are refuted; (b) is the closed tight-hour object.
   - The econ tranches scale with heat rate like 60-Day DAM offers (corr 0.80 vs 0.80).
   - The real object: 969 MW of co-sited simple-cycle GTs binned inside CC_REGULAR plants. 2024: 11.85 TWh model vs 5.34 EIA-923.
-  - Record: `docs/handoffs/r-ercot/FINDING-r-ercot-20-2024-c3a-and-gt-in-cc-2026-09-30.md`.
+  - Record: `docs/records/ercot/r-ercot/FINDING-r-ercot-20-2024-c3a-and-gt-in-cc-2026-09-30.md`.
 - **Build** (owner card "Build 4-plant split (Recommended)"; scope reduced to 3 plants, Silas Ray routed):
   - CT_PEAKER split children 34693 / 79003 / 563503 at EIA-860 GT nameplate;
   - GT outages routed off the CC parents;
@@ -14989,7 +14989,7 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
   - C8 ST_GAS falls 1.4–2.0 pp every year; CT_PEAKER and COAL_PRB C1 improve every year.
 - **Promoted** on owner card "Promote (Recommended)". ISO stays NOT-YET (2023 hold; 2022; 2019/2020).
 - **D-4 day-grain drag mask:** designed and **held** by owner (`DESIGN-r-ercot-20-d4-day-grain-drag-mask-2026-09-30.md`).
-- **Record:** `docs/handoffs/r-ercot/RESULT-r-ercot-20-gt-split-2026-09-30.md`.
+- **Record:** `docs/records/ercot/r-ercot/RESULT-r-ercot-20-gt-split-2026-09-30.md`.
 
 ## R-ERCOT-21 — 2026-10-01 — Lost Pines 1 non-CHP + EIA-923 identity CC heat rates (rule 14) — PROMOTED `2026-10-01-r-21-lostpines-ccid`; ISO NOT-YET
 
@@ -15028,4 +15028,4 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Solve:** 2019 and 2021 one shard each at `651723e3`; 2020/2022–2025 reuse the r-21 legs (zero binding hours; G-DRIFT empty).
 - **Result:** 2021 C3a +4.2 → +1.0 %, LW 172.88 → 167.58, LCAP-window adder 4.60 → 1.02 (measured 0.47), max $10,771 → $9,000; 2019 C3a +7.5 → +7.0 %, C3b 0.231 → 0.219. C1/C8 unchanged; every determination unchanged.
 - **Carded:** the ORDC curve-parameter vintage (OBD half-hour mean 0.5(μ+Sσ) + ERCOT's published seasonal μ/σ) takes 2020 from 1.43× to 0.85× of measured RTORPA, but moves every year incl. the 2023 hold.
-- **Record:** `docs/handoffs/r-ercot/RESULT-r-ercot-23-swcap-effective-hourly-2026-10-01.md`.
+- **Record:** `docs/records/ercot/r-ercot/RESULT-r-ercot-23-swcap-effective-hourly-2026-10-01.md`.

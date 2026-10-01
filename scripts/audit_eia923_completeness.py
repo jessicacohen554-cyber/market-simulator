@@ -67,7 +67,7 @@ from market_sim.data.eia923 import (  # noqa: E402
 # `biomass` takes), so the per-class actual is repaired rather than merely
 # skipped. If a future `_EIA923_OVERRIDE` pair needs a SKIP as well as a repair,
 # widen SCORED_CLASSES to include it — do not assume renewables are 930-scored.
-# results/calibration/FINDING-nyiso106-solar-benchmark-vintage-2026-07-31.md §A.5
+# docs/records/nyiso/FINDING-nyiso106-solar-benchmark-vintage-2026-07-31.md §A.5
 GAS_CLASSES = ("CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP")
 COAL_CLASSES = (
     "COAL_PRB",

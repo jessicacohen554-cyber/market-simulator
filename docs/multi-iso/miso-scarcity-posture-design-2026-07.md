@@ -11,7 +11,7 @@ measured-cleared intake that landed AFTER this note (the ASM RT cleared series' 
 North+Central leg supplies the measured requirement; see §B below and the 2026-07-17 miso-71
 calibration-log entry). Companion to
 `docs/multi-iso/miso-scarcity-tail-diagnosis.md` (miso-39 gate 4
-CLOSED-NEGATIVE, kept per rule 1) and `results/calibration/FINDING-miso-cc-decomposition-2026-07.md`
+CLOSED-NEGATIVE, kept per rule 1) and `docs/records/miso/FINDING-miso-cc-decomposition-2026-07.md`
 (the CC +44 TWh exemplar). The diagnosis proved that under deterministic perfect-foresight
 hourly dispatch, MISO's published reserve demand curves cannot reach their shortage steps
 through ANY admissible supply-side reserve structure: market-wide deliverable reserve never

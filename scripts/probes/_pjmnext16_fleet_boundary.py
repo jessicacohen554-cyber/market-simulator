@@ -12,7 +12,7 @@ For every year 2019-2025, from committed artifacts only:
    set) does not dispatch, per plant.
 3. ``classFull`` COAL_BIT minus the per-plant bench sum (which follows the dispatch).
 
-Writes ``results/calibration/_pjmnext16_fleet_boundary.json``.
+Writes ``results/phase0/pjm/_pjmnext16_fleet_boundary.json``.
 """
 
 from __future__ import annotations
@@ -31,7 +31,7 @@ for p in (str(REPO), str(REPO / "scripts"), str(REPO / "scripts" / "probes")):
 
 import _pjmnext16_cc_loading as P  # noqa: E402
 
-OUT = REPO / "results/calibration/_pjmnext16_fleet_boundary.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext16_fleet_boundary.json"
 F923 = REPO / "data/raw/eia-923-generation-fuel/eia923_generation_fuel_2019_2025.csv"
 TIES = REPO / "data/raw/iso-specific-transmission"
 FOSSIL = (

@@ -3,13 +3,13 @@
 Derived from scripts/probes/_spp91_node_lmp_fetch.py (same anonymous range-read route); only the
 location filter differs: all SETLOCTYPE == LOAD rows of data/raw/spp-planning/SL_to_Pnode_to_Zone_with_Area.csv.
 Used to build actual model-bubble-average prices (EIA-930 sub-BA load weights) for the seam FINDING
-``docs/handoffs/FINDING-spp-92-seam-2026-09-27.md``. Clock: HE label is GMT hour-ending (SPP-91 §2).
+``docs/records/spp/FINDING-spp-92-seam-2026-09-27.md``. Clock: HE label is GMT hour-ending (SPP-91 §2).
 
 Original SPP-91 docstring follows.
 
 SPP-91 (ZERO LP): fetch SPP RTBM hourly LMP at the keeper's large coal plants' settlement locations.
 
-Record: ``docs/handoffs/FINDING-spp-91-flat-coal-headroom-2026-09-27.md``.
+Record: ``docs/records/spp/FINDING-spp-91-flat-coal-headroom-2026-09-27.md``.
 
 Source: SPP Marketplace portal, product ``rtbm-lmp-by-location`` (anonymous HTTPS, the SPP-14 route,
 ``data/raw/spp-lmp-alt/SOURCES.md``). Each year ``/<yr>/<yr>.zip`` (4-5 GB) holds, beside the 5-min

@@ -1,7 +1,7 @@
 """Conditional dual-fuel exemption in the NEISO cold-snap gas derate.
 
 Guards the rule-19 [R-ONE-MECH] scope correction added by session neiso-110
-(``docs/FINDING-neiso110-winter-oil-driver-2026-09-16.md``): the cold-snap
+(``docs/records/neiso/FINDING-neiso110-winter-oil-driver-2026-09-16.md``): the cold-snap
 derate exempts every EIA-860 dual-fuel unit on the premise that
 ``apply_dual_fuel_pricing`` has switched it to oil, but that switch is
 ``mc = min(gas, oil)`` and therefore fires only where delivered gas has

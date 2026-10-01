@@ -4,7 +4,7 @@ The forecast orchestrator (``runner.run_scenario_iso``) and the backcast
 orchestrator (``scripts/run_calibration_full.py::solve_and_persist``) each emit
 one summary log line per solved year — ``data_prep / solve_p0 / markup /
 solve_p1 / results_write / total`` — introduced with the wall-clock
-instrumentation in PR #2137. ``docs/handoffs/wallclock-baseline-2026-07.md`` (and
+instrumentation in PR #2137. ``docs/records/misc/wallclock-baseline-2026-07.md`` (and
 every before/after wall-clock capture) **parses that exact line**, so its
 format is a frozen wire contract: the two copies must never drift apart.
 
@@ -46,7 +46,7 @@ ERCOT keeper year — two adaptive-expectation passes, a cold-P1 rebuild on the
 floored fleet — 91-94 % of the reported ``markup`` was an earlier pass's solver
 time and an unaccounted matrix build under the wrong name, and ``data_prep``
 (the complement) under-read by the same amount
-(``docs/FINDING-perfb-s2-markup-attribution-2026-09.md`` §1). The wire format
+(``docs/records/governance/FINDING-perfb-s2-markup-attribution-2026-09.md`` §1). The wire format
 is untouched; only what the numbers mean is now what their names say. Builds
 land in ``data_prep`` (the pre-2137 convention, unchanged), and ``markup`` is
 the genuine non-solve, non-build residual.

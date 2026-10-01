@@ -82,7 +82,7 @@ TAIL_THRESHOLD = {
     # stays refused (plan gate G17). The scorer reads PRICE-UNSCORED off
     # exactly this absence (rubric v3.8, lane NWPP-22). Mirrors
     # calibration_verdict, which has no NWPP key either.
-    # Evidence: docs/handoffs/FINDING-nwpp-13-2026-09-13.md sections 0 and 3.
+    # Evidence: docs/records/nwpp/FINDING-nwpp-13-2026-09-13.md sections 0 and 3.
 }
 
 # Rule-22 holdout quarantine, TIER-AWARE (owner decision 2026-07-31). An

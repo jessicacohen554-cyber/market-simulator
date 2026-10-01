@@ -7,7 +7,7 @@ selectors, so any "+/-N%" emissions headline carries no confidence statement.
 This module turns the ensemble's member axis into a *multivariate draw* over the
 input uncertainty, so the ensemble reports a genuine parametric probability band.
 
-Design source: ``docs/handoffs/probability-bounds-plan-2026-07.md`` §2 (the
+Design source: ``docs/records/misc/probability-bounds-plan-2026-07.md`` §2 (the
 parametric band). This module owns §2.1-§2.5:
 
 * **What is sampled** (§2.1): three continuous dims -- gas price *level*

@@ -9,7 +9,7 @@ parsing code.
 
 Landed 2026-09-16 by lane **SOCO-32**
 (``docs/multi-iso/soco-addition-plan-2026-09.md`` §5 row SOCO-32; FINDING
-``docs/handoffs/FINDING-soco-32-2026-09-16.md``). Full provenance, the
+``docs/records/soco/FINDING-soco-32-2026-09-16.md``). Full provenance, the
 route comparison and the caveats: ``data/raw/soco_zonal_gas_hub.SOURCES.md``.
 
 There is no traded index to use, and that is measured, not assumed
@@ -18,7 +18,7 @@ SOCO-12 swept both free EIA routes that feed the other regions' daily series and
 returned a documented NO: the Natural Gas Weekly Update's compact spot table
 carries exactly Henry Hub, New York, Chicago and Cal. Comp. Avg. — no Southeast
 row — and the daily *Select Spot Prices* region map has no Southeast region at
-all (``docs/handoffs/FINDING-soco-12-2026-09-13.md`` §4). The daily index at
+all (``docs/records/soco/FINDING-soco-12-2026-09-13.md`` §4). The daily index at
 SOCO's own basis is a paywalled ICE/NGI product. So the ``hub`` column here
 names the **transport system** the zone sits on, and the VALUE beside it is the
 measured delivered price the zone's own plants paid — never a quote from the

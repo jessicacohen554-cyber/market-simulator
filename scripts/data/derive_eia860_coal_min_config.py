@@ -3,7 +3,7 @@
 
 The unit-grain min-load instrument behind
 ``ScenarioConfig.ercot_coal_min_config_floor`` (lane ercot128-unit-grain;
-`docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`).
+`docs/records/ercot/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`).
 
 What it measures
 ----------------

@@ -1,6 +1,6 @@
 """Tests for the D11-R margin-exhaustion entry volume rule.
 
-The L-1b closure productionized (``docs/FINDING-entry-signal-l1-2026-08.md``
+The L-1b closure productionized (``docs/records/misc/FINDING-entry-signal-l1-2026-08.md``
 §2, gated ``ScenarioConfig.entry_margin_exhaustion``): both entry allocators
 build in repriced tranches until the screen's own margin is exhausted,
 bounded by the same caps. Covered here:
@@ -120,7 +120,7 @@ class TestConfigField(unittest.TestCase):
         This pair was refused until R-B; the walk is delta-only, so armed
         without the reprice the screens keep the raw prior-year zonal duals
         as their level and this rule supplies the capacity response
-        (``docs/PRECOMMIT-c1-joint-wind-2026-08-31.md`` §1.3).
+        (``docs/records/misc/PRECOMMIT-c1-joint-wind-2026-08-31.md`` §1.3).
         """
         cfg = ScenarioConfig(
             entry_margin_exhaustion=True, entry_lookahead_reprice=False

@@ -89,7 +89,7 @@ def main() -> None:
             str(y): shares(run_id, y) for y in (2022, 2023, 2024, 2025)
         }
     print(json.dumps(out, indent=1))
-    dst = REPO / "results" / "calibration" / "_nyiso247_loading_shape.json"
+    dst = REPO / "results" / "phase0" / "nyiso" / "_nyiso247_loading_shape.json"
     dst.write_text(json.dumps(out, indent=1) + "\n")
     print("wrote", dst, file=sys.stderr)
 

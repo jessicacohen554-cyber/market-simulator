@@ -1,7 +1,7 @@
 """SPP-105 (zero LP): the keeper's hourly GAS unavailability by class and component, against SPP's
 own published hourly Natural Gas outage, with the scarce-hour (upper-tercile RT) cut.
 
-Record: ``docs/handoffs/DESIGN-spp-105-gas-family-outage-2026-09-30.md``.
+Record: ``docs/records/spp/DESIGN-spp-105-gas-family-outage-2026-09-30.md``.
 
 Rebuilds the designated keeper ``results/calibration/spp100_arm_span`` ``fleet_only`` per year
 (``scripts.lib.bundle_fleet.reconstruct_bundle_fleet``, no LP) under three DECOMPOSITION variants
@@ -50,7 +50,7 @@ from scripts.probes._spp84_published_outage_rebasis import (  # noqa: E402
     spp_outage_on_model_clock,
 )
 
-DESIGN = "docs/handoffs/DESIGN-spp-105-gas-family-outage-2026-09-30.md"
+DESIGN = "docs/records/spp/DESIGN-spp-105-gas-family-outage-2026-09-30.md"
 BUNDLE = REPO_ROOT / "results/calibration/spp100_arm_span"
 YEARS = tuple(range(2019, 2026))
 GAS = ("gas_cc", "gas_ct", "gas_st")

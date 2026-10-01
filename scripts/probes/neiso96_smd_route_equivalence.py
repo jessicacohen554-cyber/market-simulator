@@ -26,7 +26,7 @@ Sampled days are chosen to cover the cases a splice would break on: both DST
 transitions, a leap day, the winter scarcity events that produce the tail hours
 C3c scores, and an ordinary summer day.
 
-Output: ``results/calibration/_neiso96_smd_route_equivalence.json``.
+Output: ``results/phase0/neiso/_neiso96_smd_route_equivalence.json``.
 
 NO YEAR IS SOLVED, SCORED OR REGISTERED.  This reads committed inputs and a
 published actuals source only.
@@ -54,7 +54,7 @@ sys.path.insert(0, str(REPO))
 from scripts.data import derive_actual_lmp as dal  # noqa: E402
 from scripts.data.fetch_neiso_smd_zonal_lmp import SMD_LOCATIONS  # noqa: E402
 
-OUT = REPO / "results" / "calibration" / "_neiso96_smd_route_equivalence.json"
+OUT = REPO / "results" / "phase0" / "neiso" / "_neiso96_smd_route_equivalence.json"
 
 #: Float64 equality tolerance, in $/MWh. Neither route is bit-exact against the
 #: other in float64, and the cause is storage rather than a price disagreement:

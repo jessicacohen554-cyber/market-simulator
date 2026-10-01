@@ -36,7 +36,7 @@ Two namespaces, deliberately separate from the CI-gated backcast registry
     §2.1b board seed) and ``ff-verdicts.json`` (the FF-2D rubric-verdict snapshot).
 
 **Verdict provenance & the deploy split.** The rubric verdicts
-(``docs/handoffs/ff-t1-gate-verdicts.json``) are NOT in the Pages sparse-checkout,
+(``docs/records/forecast/ff-t1-gate-verdicts.json``) are NOT in the Pages sparse-checkout,
 so a COMMITTED snapshot ``frontend/data/forecast/ff-verdicts.json`` is read instead
 and the FC-1..FC-8 verdicts are BAKED into the generated registry sidecars + run
 payloads. ``--reindex`` (stdlib-only: json/gzip/base64) is therefore ALSO the
@@ -82,7 +82,7 @@ PROGRAM_STATUS_JSON = FORECAST_DIR / "program-status.json"
 PROGRAM_STATUS_JS = FORECAST_DIR / "program-status.js"
 
 # Rubric verdicts (FF-2D). In-session only — never read by --build.
-VERDICTS_PATH = REPO / "docs" / "handoffs" / "ff-t1-gate-verdicts.json"
+VERDICTS_PATH = REPO / "docs" / "records" / "forecast" / "ff-t1-gate-verdicts.json"
 
 # Canonical forecast-invariant names I1..I14 (from check_forecast_invariants;
 # baseline sidecars carry the full set, gate sidecars store only the non-PASS
@@ -569,7 +569,7 @@ VERDICT_MAP = {
     # prior `spp-*` key of any tier existed anywhere in ff-verdicts.json, so the
     # bare per-tier key IS this run (the nyiso-t1x precedent above). Bare
     # harness invocation at HEAD, key e586d7cae19eab13 pre-declared in
-    # docs/handoffs/PRECOMMIT-spp-60-2026-09-07.md §2.1.
+    # docs/records/spp/PRECOMMIT-spp-60-2026-09-07.md §2.1.
     "spp-2021-2025-realized-t1h-spp60": "spp-t1h",
 }
 
@@ -685,7 +685,7 @@ def _load_verdicts() -> dict:
     Prefers the committed snapshot ``frontend/data/forecast/ff-verdicts.json``
     (which IS in the Pages sparse-checkout, so ``--reindex`` bakes verdicts at
     deploy time with no ``docs/handoffs`` access) and falls back to the in-repo
-    ``docs/handoffs/ff-t1-gate-verdicts.json`` source for an in-session refresh.
+    ``docs/records/forecast/ff-t1-gate-verdicts.json`` source for an in-session refresh.
     """
     for path in (FORECAST_DIR / "ff-verdicts.json", VERDICTS_PATH):
         if path.exists():

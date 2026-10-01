@@ -1,6 +1,6 @@
 """Derive the SPP plant -> reserve-zone -> West/East bubble map (SPP-93, PRECOMMIT §1.3).
 
-The rule, fixed in ``docs/handoffs/PRECOMMIT-spp-93-west-east-2026-09-27.md`` §1.3 before any
+The rule, fixed in ``docs/records/spp/PRECOMMIT-spp-93-west-east-2026-09-27.md`` §1.3 before any
 model output existed:
 
 1. **Node.** Each SWPP generator's EIA-860 ``RTO/ISO LMP Node Designation`` (every vintage

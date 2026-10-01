@@ -29,7 +29,7 @@ zonal measured offer; (3) net load is demand minus wind/solar potential
 (pjm-h17's construction), not LP-served net load.
 
 Run: ``python3 scripts/probes/pjm_next5_card1_cc_phase0.py 2019 2020 2021 2022 2023 2024 2025``
-Writes ``results/calibration/_pjm_next5_card1_cc_phase0.json``.
+Writes ``results/phase0/pjm/_pjm_next5_card1_cc_phase0.json``.
 """
 
 from __future__ import annotations
@@ -155,7 +155,7 @@ def main() -> None:
         a = yr["classes"].get("CC_REGULAR", {}).get("all", {})
         b = yr["classes"].get("COAL_BIT", {}).get("all", {})
         print(y, "CC", {k: round(v, 2) for k, v in a.items()}, "\n     COAL", {k: round(v, 2) for k, v in b.items()}, flush=True)
-    dest = REPO / "results/calibration/_pjm_next5_card1_cc_phase0.json"
+    dest = REPO / "results/phase0/pjm/_pjm_next5_card1_cc_phase0.json"
     dest.write_text(json.dumps(out, indent=1))
     print("wrote", dest)
 

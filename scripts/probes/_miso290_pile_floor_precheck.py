@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """miso-290 (ZERO LP): per-yard monthly coal pile + MISO contract take floor.
 
-Pre-registered in ``docs/PRECOMMIT-miso290-pile-take-floor-2026-09-30.md``.
+Pre-registered in ``docs/records/miso/PRECOMMIT-miso290-pile-take-floor-2026-09-30.md``.
 Three modes:
 
 ``--census`` (identification only, no price): per year and coal yard row, the
@@ -59,10 +59,10 @@ from scripts.probes._miso287_p1_residual import (  # noqa: E402
 from scripts.probes._miso288_yard_precheck import bench_coal_monthly  # noqa: E402
 
 OUT = {
-    "census": REPO / "results/calibration/_miso290_pile_floor_census.json",
-    "solver": REPO / "results/calibration/_miso290_pile_floor_solver.json",
-    "precheck": REPO / "results/calibration/_miso290_pile_floor_precheck.json",
-    "diag": REPO / "results/calibration/_miso290_pile_floor_diag.json",
+    "census": REPO / "results/phase0/miso/_miso290_pile_floor_census.json",
+    "solver": REPO / "results/phase0/miso/_miso290_pile_floor_solver.json",
+    "precheck": REPO / "results/phase0/miso/_miso290_pile_floor_precheck.json",
+    "diag": REPO / "results/phase0/miso/_miso290_pile_floor_diag.json",
 }
 SMAX_WINDOW = 3  # pile capacity window [Y-3, Y-1]; declared, never swept
 N_RATE_YEARS = 2  # the budget's own receipts-rate window (build_coal_plant_budget)

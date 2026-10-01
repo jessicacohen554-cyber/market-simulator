@@ -15,7 +15,7 @@ at TWO grains from the same source rows:
       avail(class, day, he) = sum_sites live_HSL(day, he) / sum_sites rating
 
   keeping the hourly ambient-derate shape the day mean discards. The ERCOT-95
-  diagnosis (docs/handoffs/ercot95-scarcity-tail-diagnosis-2026-07.md Finding
+  diagnosis (docs/records/ercot/ercot95-scarcity-tail-diagnosis-2026-07.md Finding
   6) measured the day-flat overlay handing the model a +216 MW mean (+433 p90,
   +578 max) CC+CT phantom on the 181 actual 2023 RT tail hours — real HSL dips
   below the day mean exactly in the hod 13-19 window where the missing tail
@@ -39,7 +39,7 @@ Provenance / admissibility (CLAUDE.md rules 13/14): the 60-Day DAM disclosure
 Gen_Resource HSL + Resource Status is an ERCOT-published, unit-resolved MW
 capability quantity — a physical/market availability measurement, never a
 price. The June/Sep-2023 scarcity-formation forensics
-(docs/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md) measured the
+(docs/records/ercot/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md) measured the
 statistical WEFOR/EFOR stack carrying the gas fleet 13-22 % derated at the
 summer-evening reserve margin while this disclosure shows the same fleet at
 ~97 % of ratings — the phantom reserve-shortfall that over-formed June-2023
@@ -174,7 +174,7 @@ RESTYPE_TO_CLASS: dict[str, str] = {
 # (``GUADG_CC1_*`` + ``GUADG_CC2_*`` -> ``GUADG``) onto one site whose max()
 # collapse made a single-train outage arithmetically invisible — owner ruling
 # #9, repaired 2026-08-12 under signature A1 (ercot-149 §3.1/§6.1;
-# docs/PRECOMMIT-ercot191-a1-dam-deriver-2026-08-12.md §1a). With train-grain
+# docs/records/ercot/PRECOMMIT-ercot191-a1-dam-deriver-2026-08-12.md §1a). With train-grain
 # sites the existing site-summing aggregations become the SUM of per-train
 # maxes the diagnosis names. Verified against all 310 unique CC resource names
 # across both disclosure lanes: every one matches _CC_TRAIN_RE.

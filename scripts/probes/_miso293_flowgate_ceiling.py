@@ -25,7 +25,7 @@ used here only as an upper bound and to localize, never to set a number):
 
 Usage::
 
-    uv run python scripts/probes/_miso293_flowgate_ceiling.py --out results/calibration/_miso293_flowgate_ceiling.json
+    uv run python scripts/probes/_miso293_flowgate_ceiling.py --out results/phase0/miso/_miso293_flowgate_ceiling.json
 """
 
 from __future__ import annotations

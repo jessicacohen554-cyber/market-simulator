@@ -4,7 +4,7 @@ The CAMPD deriver fills a unit's hours absent from the record as dark, so a unit
 that enters the record before its first output carries a window from the start
 of its record year, while the COD ramp already holds the same not-yet-commercial
 capacity offline (rule 19 ``[R-ONE-MECH]``). The gate is the REGISTERED channel
-(rule 24 ``[R-REGISTRY]``). Evidence: ``docs/handoffs/r-soco/FINDING-soco-67-2026-09-25.md``.
+(rule 24 ``[R-REGISTRY]``). Evidence: ``docs/records/soco/r-soco/FINDING-soco-67-2026-09-25.md``.
 """
 
 import pandas as pd

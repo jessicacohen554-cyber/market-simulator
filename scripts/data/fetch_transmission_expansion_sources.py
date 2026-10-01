@@ -7,7 +7,7 @@ Re-downloads the pinned planning documents behind
 converted to page-marked markdown alongside (``--to-markdown``, pdfplumber) so
 every transcribed number can be read back from a committed conversion — the
 capacity-cost-grounding QA protocol
-(``docs/handoffs/capacity-cost-grounding-2026-07.md`` §3).
+(``docs/records/misc/capacity-cost-grounding-2026-07.md`` §3).
 
 Sources that the sandbox proxy bot-walls (or that require a browser) are
 recorded as ``MANUAL DOWNLOAD NEEDED`` rows instead of being guessed — the

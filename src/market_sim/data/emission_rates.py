@@ -5,7 +5,7 @@ multi-year measured CAMPD performance rather than a frozen pooled value or a
 generic heat-rate constant — a rule-13-admissible measured input (it regenerates
 from forward drivers and responds to changed operation). The design and its
 empirical validation are in
-``docs/handoffs/emissions-co2-rate-plan-2026-07.md`` (§2); the free parameters
+``docs/records/misc/emissions-co2-rate-plan-2026-07.md`` (§2); the free parameters
 live in :mod:`market_sim.config.constants` (``CO2_RATE_*``), chosen once from the
 leave-one-year-out harness ``scripts/loyo_co2_rates.py`` and frozen against
 backcast residuals (CLAUDE.md rules 23/24).
@@ -415,7 +415,7 @@ def _weighted_percentile(
 
 # ---------------------------------------------------------------------------
 # Forward emission-control retrofit channel
-# (docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md).
+# (docs/records/misc/emission-control-retrofit-forward-channel-2026-07.md).
 #
 # The trailing-average estimator above only absorbs a control's effect once it
 # appears in the measured history. These two functions add the missing forward

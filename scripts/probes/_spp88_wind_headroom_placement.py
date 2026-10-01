@@ -13,7 +13,7 @@ congestion component (MCC), a locational curtailment signal the hub LMP can hide
 
 Reads: keeper bundle hourly sidecars, data/raw/SWPP_fueltype.parquet,
 data/raw/_validation-source/actual_lmp_{hourly_zonal,components_hourly_zonal}_SPP.parquet.
-Writes: results/calibration/_spp88_wind_headroom_placement.json (gitignored scratch).
+Writes: results/phase0/spp/_spp88_wind_headroom_placement.json (gitignored scratch).
 """
 from __future__ import annotations
 
@@ -120,7 +120,7 @@ def main() -> None:
         print("      " + " ".join(
             f"[{kk}] gas {v['gas_model_minus_930_twh']:+.2f} coal {v['coal_model_minus_930_twh']:+.2f}"
             f" modelP~{v['model_price_median']:.1f}" for kk, v in b.items()))
-    (ROOT / "results/calibration/_spp88_wind_headroom_placement.json").write_text(
+    (ROOT / "results/phase0/spp/_spp88_wind_headroom_placement.json").write_text(
         json.dumps(out, indent=1, default=float))
 
 

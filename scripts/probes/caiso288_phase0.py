@@ -2,7 +2,7 @@
 """caiso-288 phase 0 — WHERE the CAISO 2022 C3a miss lives, and what the
 citygate coverage repair is worth. ZERO LP.
 
-Every number in ``docs/PRECOMMIT-caiso288-citygate-catchup-tables-2026-09-20.md``
+Every number in ``docs/records/caiso/PRECOMMIT-caiso288-citygate-catchup-tables-2026-09-20.md``
 §0, §3 and §4 is produced here, from committed artifacts only:
 
 * the keeper's own hourly sidecars (``caiso287_instr_2022/hourly/``) — price,
@@ -41,7 +41,7 @@ from market_sim.data.fuel.hubs import _caiso_hub_daily_gas_prices  # noqa: E402
 BUNDLE = REPO / "results/calibration/caiso287_instr_2022/hourly"
 ACTUAL = REPO / "data/raw/_validation-source/actual_lmp_hourly_CAISO.parquet"
 BENCH = REPO / "frontend/data/backcast/bench/CAISO/2022.json.gz"
-OUT = REPO / "results/calibration/_caiso288_phase0.json"
+OUT = REPO / "results/phase0/caiso/_caiso288_phase0.json"
 
 #: CAISO CC_REGULAR cap-weighted base heat rate, MMBtu/MWh — the model's own
 #: fleet basis (derive_caiso_offer_surface._fleet_geometry; the 7.44 cited in

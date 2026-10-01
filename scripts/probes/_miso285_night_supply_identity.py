@@ -12,7 +12,7 @@ against measured MISO data:
 * the model's night band composition (must-run / committed / econ / peak);
 * the reserve-family night duals.
 
-Output: ``results/calibration/_miso285_night_supply_identity.json``.
+Output: ``results/phase0/miso/_miso285_night_supply_identity.json``.
 Rule 13: nothing here feeds a solve.
 
 Usage::
@@ -160,7 +160,7 @@ def main() -> int:
         }
         out[str(y)] = yo
         print(y, json.dumps(yo["night_price"]), "lag", best)
-    (REPO / "results/calibration/_miso285_night_supply_identity.json").write_text(
+    (REPO / "results/phase0/miso/_miso285_night_supply_identity.json").write_text(
         json.dumps(out, indent=1, default=str)
     )
     return 0

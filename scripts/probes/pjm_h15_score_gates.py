@@ -12,7 +12,7 @@ not a diagnostics file).
 Usage:
     python3 scripts/probes/pjm_h15_score_gates.py \
         --control-span   results/calibration/pjm_h14_coalmustrun_span/legitimacy_diagnostics.json \
-        --control-touch  results/calibration/_pjm_h15_touchpoint_d4_rederived.json \
+        --control-touch  results/phase0/pjm/_pjm_h15_touchpoint_d4_rederived.json \
         --arm results/calibration/pjm_h15_coalwindow_span/legitimacy_diagnostics.json \
         --arm results/calibration/pjm_h15_coalwindow_touch/legitimacy_diagnostics.json
 """

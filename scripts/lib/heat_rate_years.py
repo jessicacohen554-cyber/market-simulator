@@ -5,7 +5,7 @@ Shared by the five measured-heat-rate derives
 ``scripts/data/derive_chp_power_only_heat_rates.py``), which before F1 pooled
 CAMPD 2023-2025 against the CANONICAL snapshot fleet only — so a plant that
 retired before 2023 was never in the target set and never got a measured rate
-(docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §1 D4).
+(docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §1 D4).
 
 Two things live here:
 

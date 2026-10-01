@@ -100,7 +100,7 @@ Usage
 
 ``--emit`` writes the SELECTED candidate to
 ``data/raw/_processed-legacy/thermal_tranches_oom_level_mw_MISO.csv``.
-Record: ``results/calibration/_miso198_level_selection.json``.
+Record: ``results/phase0/miso/_miso198_level_selection.json``.
 """
 
 from __future__ import annotations
@@ -127,7 +127,7 @@ ISO = "MISO"
 YEARS = (2023, 2024, 2025)
 HOURS = 8760
 GROUP = "ST_GAS"
-OUT = _REPO / "results" / "calibration" / "_miso198_level_selection.json"
+OUT = _REPO / "results" / "phase0" / "miso" / "_miso198_level_selection.json"
 EMIT = (
     _REPO / "data" / "raw" / "_processed-legacy"
     / f"thermal_tranches_oom_level_mw_{ISO}.csv"

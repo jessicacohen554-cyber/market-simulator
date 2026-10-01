@@ -6,7 +6,7 @@ shaped to measured output, and a reduced dispatchable thermal fleet (coal,
 gas-CC, gas-CT) — so the one ISO-agnostic LP co-dispatches CA + West and the
 WECC->CAISO tie flow becomes a pure congestion outcome instead of a static
 priced import capability. Gated by ``ScenarioConfig.caiso_endogenous_wecc_node``
-(default off); see docs/handoffs/caiso-endogenous-wecc-node-design-2026-07-21.md.
+(default off); see docs/records/caiso/caiso-endogenous-wecc-node-design-2026-07-21.md.
 
 Why this shape (all as ``fuel_type="import"`` pseudo-gens):
     The results/scoring pipeline is zone-blind and keys attribution off

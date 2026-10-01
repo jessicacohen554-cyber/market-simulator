@@ -28,7 +28,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 BC = REPO / "data/raw/pjm-binding-constraints"
 DAM = REPO / "data/clean/lmp/PJM/DAM"
-OUT = REPO / "results/calibration/_pjmnext9_congestion_boundary.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext9_congestion_boundary.json"
 N_TOP = 250  # constraints kept in the regression (by sum |mu|); ~>95 % of rent
 # The Peach Bottom / Conastone (PECO+PPL -> BGE) corridor facilities named by the 2023 ranking.
 CORRIDOR = r"NOTTINGH|GRACETON|CONASTON|Yorkana|PEACHBOT|SAFEHARB"

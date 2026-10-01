@@ -22,7 +22,10 @@ Four reads, all on committed artifacts plus ERCOT's own measured ORDC series
    are trimmed to SWCAP - lambda. Energy lambda is held at the keeper's.
 
 Never fitted to RTORPA: every curve parameter is a published value.
-Writes ``docs/handoffs/r-ercot/r_ercot23_phase0.json``.
+Read 4 reads the r-22 keeper bundle ``r_ercot22_span``, pruned at the R-ERCOT-23
+promotion (rule 35); restore it from git history (its last commit on main) to
+re-run that read.
+Writes ``docs/records/ercot/r-ercot/r_ercot23_phase0.json``.
 """
 
 from __future__ import annotations
@@ -45,7 +48,7 @@ from market_sim.results.scarcity import ercot_effective_swcap_series  # noqa: E4
 
 KEEPER = ROOT / "results/calibration/r_ercot22_span/hourly"
 MEAS = ROOT / "data/raw/ercot"
-OUT = ROOT / "docs/handoffs/r-ercot/r_ercot23_phase0.json"
+OUT = ROOT / "docs/records/ercot/r-ercot/r_ercot23_phase0.json"
 SIGMA_FALLBACK, MU_FALLBACK = 1400.0, 0.0  # ScenarioConfig ordc_lolp_* defaults
 
 # ERCOT 2022 Biennial ORDC Report, Figure 3 (seasonal "ORDC Mu" — shift

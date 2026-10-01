@@ -1,6 +1,6 @@
 """One-command regression gate for the orchestrator-unification stages.
 
-Every stage of ``docs/handoffs/orchestrator-unification-plan-2026-07.md`` must
+Every stage of ``docs/records/misc/orchestrator-unification-plan-2026-07.md`` must
 prove it did not move a dispatched number before it merges. This script is that
 proof, run identically by each stage's session:
 

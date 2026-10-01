@@ -6,7 +6,7 @@ Fits the per-class temperature -> excess-forced-outage hinge curves consumed by
 hindcast correlated forced-outage availability derate,
 ``ScenarioConfig.correlated_forced_outage``) and frozen into
 ``market_sim.config.constants.CORRELATED_OUTAGE_CURVE``. Design charter:
-``docs/handoffs/ercot-retirement-composition-2026-07-16.md`` Part D.
+``docs/records/ercot/ercot-retirement-composition-2026-07-16.md`` Part D.
 
 Identification (measured-admissible, CLAUDE.md rule 13)
 -------------------------------------------------------

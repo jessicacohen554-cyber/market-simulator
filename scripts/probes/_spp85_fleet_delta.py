@@ -1,6 +1,6 @@
 """SPP-85 (zero LP): LP-input delta of ``unit_outage_netload_mask_repair`` on the SPP keeper.
 
-Record: ``docs/handoffs/FINDING-spp-85-coal-outage-basis-2026-09-26.md``.
+Record: ``docs/records/spp/FINDING-spp-85-coal-outage-basis-2026-09-26.md``.
 
 Rebuilds the keeper ``results/calibration/rspp_span``'s fleet ``fleet_only`` for one year twice --
 the recipe as committed (control) and the same recipe with ``unit_outage_netload_mask_repair``

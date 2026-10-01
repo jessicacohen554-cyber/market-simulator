@@ -1,7 +1,7 @@
 """Tests for the forward-expectation capacity-screen entry signal.
 
 ENTRY-SIGNAL lane, the rung named by
-``docs/FINDING-entry-signal-disarm-2026-08.md`` §6: the screens' price object
+``docs/records/misc/FINDING-entry-signal-disarm-2026-08.md`` §6: the screens' price object
 becomes the run's own prior-year hourly ZONAL LP dual surface re-leveled hour
 by hour by the lookahead stack instrument's own forward delta —
 ``signal[z,t] = econ_prices[z,t] + (S_entering[t] - S_current[t])``.

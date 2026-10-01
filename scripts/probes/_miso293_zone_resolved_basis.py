@@ -20,7 +20,7 @@ MISO-Plains has no hub; the staging's own declared proxy (MINN+ILLINOIS mean,
 
 Usage::
 
-    uv run python scripts/probes/_miso293_zone_resolved_basis.py --out results/calibration/_miso293_zone_resolved_basis.json
+    uv run python scripts/probes/_miso293_zone_resolved_basis.py --out results/phase0/miso/_miso293_zone_resolved_basis.json
 """
 
 from __future__ import annotations

@@ -2,7 +2,7 @@
 """Reconstruct the three gitignored solve artifacts a SLIM bundle is missing.
 
 miso-257, following the recipe proved in
-``docs/RESULT-pjm-h4-bench-move-landed-2026-09-13.md`` §2. A registered bundle
+``docs/records/pjm/RESULT-pjm-h4-bench-move-landed-2026-09-13.md`` §2. A registered bundle
 committed in the slim form carries only ``hourly/`` sidecars and its JSON;
 ``dispatch/<year>_P1.parquet``, ``system.parquet`` and ``btm.parquet`` are
 gitignored and did not survive the solve container. ``build_payload`` reads all

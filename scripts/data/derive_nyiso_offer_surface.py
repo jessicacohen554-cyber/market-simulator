@@ -41,7 +41,7 @@ Nothing measured here is an outcome: Δ is a **submitted offer**, not a cleared
 price, a realised dispatch, or a residual.
 
 **Rule 23 ``[R-FROZEN-DERIVE]``.** Both bin geometries are frozen in
-``docs/PRECOMMIT-nyiso245-position-shape-offer-surface-2026-09-20.md`` §2, committed
+``docs/records/nyiso/PRECOMMIT-nyiso245-position-shape-offer-surface-2026-09-20.md`` §2, committed
 at ``398f0437`` before any measurement, and are never re-tuned against a residual.
 
 **Estimator.** Capacity-weighted MEDIAN of ``D`` per cell, weights = each step's
@@ -492,7 +492,7 @@ def build(per_year: bool = False) -> dict:
         "_provenance": {
             "session": "nyiso-245",
             "precommit": (
-                "docs/PRECOMMIT-nyiso245-position-shape-offer-surface-2026-09-20.md"
+                "docs/records/nyiso/PRECOMMIT-nyiso245-position-shape-offer-surface-2026-09-20.md"
             ),
             "precommit_sha": "5cbf4fef",
             "precommit_sha_prerebase": "398f0437",

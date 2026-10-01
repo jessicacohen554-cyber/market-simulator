@@ -171,7 +171,7 @@ ACCEPTANCE
 ```
 Read frontend/data/backcast/keepers.json (NEISO keeper + "frontier" note),
 frontend/data/backcast/calibration-complete.json (NEISO marker), and
-docs/handoffs/neiso-calibration-complete-memo-2026-07.md. The file
+docs/records/neiso/neiso-calibration-complete-memo-2026-07.md. The file
 docs/calibration-best-so-far-neiso.md is badly stale: it names keeper
 neiso-49-stgas-netload with a "NOT-YET" determination. Update it to the current
 truth: keeper = 2026-07-09-neiso-56-reserve-coopt, determination
@@ -201,7 +201,7 @@ marker. Quote metrics, don't invent.
 ### 1C — Mark `docs/forecast-validation-plan.md` superseded
 
 ```
-Read docs/handoffs/forecast-validation-program-2026-07.md (the live design).
+Read docs/records/forecast/forecast-validation-program-2026-07.md (the live design).
 docs/forecast-validation-plan.md describes the ORIGINAL superseded plan
 (2018->2025 hindcast, AEO2018 fuel). Add a prominent "SUPERSEDED" banner at the
 top pointing to forecast-validation-program-2026-07.md as the live spec
@@ -214,8 +214,8 @@ the content — mark it historical.
 ```
 Read frontend/data/backcast/calibration-complete.json (NEISO is in "complete",
 declared 2026-07-07). Two memos still assert the marker file is empty:
-docs/handoffs/holdout-policy-memo-2026-07.md (~lines 9-10, "still reads
-complete: {}") and docs/handoffs/forecast-validation-program-2026-07.md
+docs/records/governance/holdout-policy-memo-2026-07.md (~lines 9-10, "still reads
+complete: {}") and docs/records/forecast/forecast-validation-program-2026-07.md
 (~lines 30, 266, "none declared yet"). Correct both to reflect that NEISO has
 been declared complete and its 2019 + H1-2026 locked-test one-shot has been
 scored once and stands. Add a dated note; do not rewrite the surrounding

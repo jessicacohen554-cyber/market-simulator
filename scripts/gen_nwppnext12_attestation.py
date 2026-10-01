@@ -1,7 +1,7 @@
 """Emit the NWPP-NEXT-12 calibration attestation for the Boardman membership-repair span bundle.
 
 NWPP-NEXT-12 (PRECOMMIT
-``docs/handoffs/PRECOMMIT-nwppnext12-boardman-membership-2019-2025-2026-09-29.md``) is
+``docs/records/nwpp/PRECOMMIT-nwppnext12-boardman-membership-2019-2025-2026-09-29.md``) is
 keeper #16's recipe (NWPP-NEXT-10) plus ``unit_outage_membership_repair``: the
 committed NWPP CAMPD outage extract never scanned Boardman 6106, so its measured
 whole-plant stops (2019-2020) were absent and the LP ran it fully available.

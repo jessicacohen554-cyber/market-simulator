@@ -14,7 +14,7 @@ RELOCATES, it neither vanishes nor duplicates):
 Default OFF, and the OFF path must be byte-identical -- the first test class is
 the regression that proves it against FFR-4A §5.2's measured Arm-0 series.
 
-Measured reference: ``docs/handoffs/ffr-4a-entry-ladder-2026-08-04.md`` §5.2,
+Measured reference: ``docs/records/forecast/ffr-4a-entry-ladder-2026-08-04.md`` §5.2,
 reproduced here through the same shipped code path.
 """
 
@@ -239,7 +239,7 @@ class TestPipelineDepressesTheProForma(unittest.TestCase):
     it: the fixture's 900 MW scales to **1307.61 MW** in 2031 -- 7.61 MW past
     the pipeline arm's own 1300 MW stack top -- so both arms landed on the $90
     peaker and each ``assertLess`` compared 90.0 with 90.0
-    (``docs/handoffs/FINDING-y21-flipset-repair-2026-09-06.md`` §8.2).
+    (``docs/records/governance/FINDING-y21-flipset-repair-2026-09-06.md`` §8.2).
 
     The three bounds that define the regime:
 

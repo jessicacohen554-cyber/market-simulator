@@ -244,7 +244,7 @@ the one exception and actually improves.
 > tier/budget re-anchor (`docs/calibration-determination-rubric.md` §9,
 > 2026-07-06). **Separate disclosure (D-2 bucket mis-attribution):** the
 > neiso-49 floor's D-2 forced-energy row was found (PR #1498 tranche review,
-> `docs/handoffs/wave-manager-tranche-review-2026-07-06.md`) to land in the
+> `docs/records/misc/wave-manager-tranche-review-2026-07-06.md`) to land in the
 > `''` (empty-string) class bucket with a nuclear-inclusive denominator (true
 > 2023 share ≈3.7%, still within budget) — a diagnostic-script attribution
 > bug, not a calibration defect, but it means any D-2/C8-style forced-energy

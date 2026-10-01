@@ -1,7 +1,7 @@
 """Data-center load block + electrification adder (CX-4, gap G-34).
 
 Implements the forecast-mode-only data-center (DC) demand block designed in
-``docs/handoffs/cx4-datacenter-load-design-2026-07.md``. The DC boom is today
+``docs/records/misc/cx4-datacenter-load-design-2026-07.md``. The DC boom is today
 implicitly buried in the near-term ``DEMAND_GROWTH_RATES`` scalar, which grows a
 *flat* load type with the system's *peaky* weather-year shape — overstating peak
 growth and understating energy growth per MW of DC (memo §1). This module lifts
@@ -34,7 +34,7 @@ until a scenario explicitly opts in.
 
 **FF-G4 Option-B electrification layers (this module's second half).** The
 CX-4 "electrification adder" successor designed in
-``docs/handoffs/ff-g4-load-shape-design-memo-2026-07.md`` (§4.2/§5, owner box
+``docs/records/forecast/ff-g4-load-shape-design-memo-2026-07.md`` (§4.2/§5, owner box
 D1 = Option B) is implemented here as additive END-USE LAYERS over the same
 seam: per-ISO published annual-energy adoption anchors
 (``constants.ELECTRIFICATION_LAYERS``) x a physical hourly profile per layer

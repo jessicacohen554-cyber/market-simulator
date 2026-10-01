@@ -9,7 +9,7 @@ family, the annual-mean price delta ($/MMBtu) and the implied offer delta
 if they move (they must not). 2025 has no EIA-923 Page 5 file: the flag must
 leave it untouched (and the seam logs that it did).
 
-Expected from ``docs/handoffs/PHASE0-nwppnext15-captive-mine-2026-09-30.md`` §2:
+Expected from ``docs/records/nwpp/PHASE0-nwppnext15-captive-mine-2026-09-30.md`` §2:
 essentially Jim Bridger 8066 (2023 ~ -0.9 $/MMBtu, 2022 ~ +0.13) plus small
 Hunter / Huntington moves.
 

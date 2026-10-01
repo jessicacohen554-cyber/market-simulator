@@ -381,7 +381,7 @@ def derive() -> dict:
     return {
         "_provenance": {
             "session": "miso-151",
-            "prereg": "results/calibration/PREREG-miso151-measured-offer-surface-2026-08-11.md",
+            "prereg": "docs/records/miso/PREREG-miso151-measured-offer-surface-2026-08-11.md",
             "object": "within-unit own-curve price RISE (Delta = price_j - price_1), SHAPE ONLY",
             "source": (
                 "MISO Market Reports masked SUBMITTED offer books "

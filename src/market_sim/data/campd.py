@@ -265,7 +265,7 @@ ISO_MERIT_PANEL_STATES: dict[str, tuple[str, ...]] = {
     # SPP short-gas 2023-2025 moved by 13 windows at 5 ST_GAS/CC plants with
     # no SPP source-data change. Pinning restores the pre-landing scope exactly
     # (rule 23 [R-FROZEN-DERIVE]); the caiso-198 construction verbatim.
-    # docs/handoffs/FINDING-f2-campd-outage-coverage-2026-09-24.md §3.
+    # docs/records/misc/FINDING-f2-campd-outage-coverage-2026-09-24.md §3.
     "SPP": (
         "AR",
         "IA",

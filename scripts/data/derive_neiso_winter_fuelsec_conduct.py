@@ -6,7 +6,7 @@ steam fleet — the coal family and ST_GAS — at minimum-stable over each zone'
 winter cold-day window. neiso-119 phase 0 measured that most of that fleet is
 metered OFFLINE across those very hours (2019: Middletown 562 online 2 %,
 Newington 8002 1 %, West Springfield 1642 1 %, Merrimack 2364 45 %;
-``docs/handoffs/neiso119/phase0_fuelsec_<Y>.json``). This derive writes the
+``docs/records/neiso/neiso119/phase0_fuelsec_<Y>.json``). This derive writes the
 measurement the ``neiso_winter_fuelsec_conduct_roster`` gate reads
 (``winter_fuel_inventory.winter_fuelsec_conduct_roster``, leave-one-year-out).
 

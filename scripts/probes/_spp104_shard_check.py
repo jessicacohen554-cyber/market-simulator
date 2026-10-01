@@ -1,7 +1,7 @@
 """SPP-104 shard self-check: the SPP keeper replayed with the SPP LOLE-EFOR CT outage swap.
 
 Run by each SPP-104 shard AFTER its solve and BEFORE it pushes (rule 32(c)(4) hard stops). Zero
-LP. Pre-registered in ``docs/handoffs/PRECOMMIT-spp-104-ct-lole-efor-2026-09-30.md``.
+LP. Pre-registered in ``docs/records/spp/PRECOMMIT-spp-104-ct-lole-efor-2026-09-30.md``.
 Adapted from ``_spp102_shard_check.py``; the control is the committed keeper ``spp100_arm_span``
 (rule 29(b) form 4).
 
