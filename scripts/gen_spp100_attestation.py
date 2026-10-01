@@ -4,7 +4,7 @@ SPP-100 (``docs/records/spp/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md``)
 ``2026-09-28-spp-99-remap-rederive`` one year per shard (rule 36) with two fields armed:
 ``chp_steam_floor_p25`` (the existing CHP steam-level swap) and ``chp_steam_floor_conduct_scope``
 (the swap withheld from metered hosts metered on in <= half their hours). Adapted from
-``gen_spp99_attestation.py``: the keeper's attestation is inherited, the offer curve is verified
+the SPP-99 generator (deleted; git history): the keeper's attestation is inherited, the offer curve is verified
 byte-identical per year, every other scenario field is verified unmoved, and the two fields are
 recorded under ``governance.mechanism_armed``.
 

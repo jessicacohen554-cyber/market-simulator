@@ -1,6 +1,6 @@
 """SOCO-58: write ``calibration_attestation.json`` for the warm-boiler-exemption arm.
 
-Adapted from :mod:`scripts.gen_soco57_attestation`, which is the SOCO desk's
+Adapted from the SOCO-57 generator (deleted; git history), which is the SOCO desk's
 convention. What differs is the delta being attested, the disclosures, and the
 FORM the by-execution verification has to take.
 
