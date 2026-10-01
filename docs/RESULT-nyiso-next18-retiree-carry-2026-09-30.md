@@ -8,7 +8,10 @@
   - `2026-09-30-nyisonext18-retiree-carry-span` (2022–2025): **CALIBRATED**, with C3c the lone ledgered caveat.
   - `2026-09-30-nyisonext18-retiree-carry-2021`: **CALIBRATED**. The keeper's 2021 run is NOT-YET.
 - **Pre-registered rule: NOT PROMOTABLE AS WRITTEN.** G-6 fails in 2021 on one new D-4 row. Every other gate passes in every year.
-- **Promotion is the owner's decision** (rule 31). NEXT-16 stays keeper until then.
+- **PROMOTED 2026-10-01 by owner override** (card "Promote (override)").
+  - Keeper: `2026-09-30-nyisonext18-retiree-carry-span`, with the 2021 run stamped to it.
+  - NEXT-16's three stores were pruned (rule 35 (a), `--force-uncite`). The year set stays 2021–2025, before and after.
+  - The three matrix cells move U → K.
 
 ## 1. Gates (arm vs the NEXT-16 keeper's committed bundles, form 4)
 
@@ -57,6 +60,6 @@ Record: `results/calibration/_nyisonext18_gates.json`.
   - On `main`: both registered bundles in rule-15 shape (`results/calibration/nyisonext18_{span,2021}`: hourly sidecars, meta, metrics, diagnostics, attestation) and their run payloads.
   - Not on `main`: the per-year `dispatch/` parquets, by the repo-wide ignore. A promotion needs only what is on `main`. Re-deriving a unit-level question would cost a re-solve, about 6 min of LP per year.
 
-## 4. Owner question
+## 4. Owner ruling
 
-Promote `2026-09-30-nyisonext18-retiree-carry-span`, with the 2021 run stamped to it, despite the G-6 row? Or decline it?
+**"Promote (override)".** The G-6 failure was put to the owner before the ruling.

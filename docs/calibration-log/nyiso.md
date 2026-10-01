@@ -15079,3 +15079,17 @@ too.
 - **Matrix:** `nyiso_iroquois_winter_spread` R → K.
 - **Superseded and pruned:** `2026-09-30-nyisonext15-landing-band-span` and its 2021 run.
 - **Record:** `docs/RESULT-nyiso-next16-winter-spread-2026-09-30.md`.
+
+## NYISO-NEXT-18 — 2026-10-01 — Indian Point 3 restored Jan–Apr 2021; keeper promoted by owner override, 2021 CALIBRATED
+
+- **Phase 0 (zero LP):** the 2021 Upstate_West over-pricing is the missing CENTRAL EAST shadow price, not an upstate stack priced too high. In CE-binding hours the model's upstate mix and eastward volume match measured. Every upstate gas MW cheaper than the Upstate_West price already runs. The model's Upstate_West price never falls below ~$20; measured sits below $15 in 29 % of 2021 CE hours. No transport lever proposed.
+- **Found in phase 0:** Indian Point 3 (1,039 MW, zone H, retired 2021-04-30) was absent from the 2021 fleet, because the year-matched EIA-860 vintage drops a plant that retires during that year. Jan–Apr held 88 % of 2021's over-pricing against measured DA.
+- **Lever:** three existing default-off flags, `mid_vintage_exit_carry` + `fleet_zone_vintage_coords` + `retiree_vintage_status_scope`. Zero DOF.
+- **Result:** keeper `2026-09-30-nyisonext18-retiree-carry-span` (2022–2025), plus the stamped `2026-09-30-nyisonext18-retiree-carry-2021`.
+  - Gates: G-1 to G-5 pass in all five years. G-6 fails: one new 2021 D-4 row, bridge × ST_GAS 8906, 1.2 GWh.
+  - **Promoted by owner override** (card "Promote (override)").
+  - 2021 Jan–Apr nuclear −23.5 % → +0.4 % vs the fuel mix. 2021 C3a +11.1 → +9.2 %; C3b 0.178 → 0.147.
+  - **2021 NOT-YET → CALIBRATED.** Span CALIBRATED; its criteria move ≤ 0.2 pts.
+- **Matrix:** `mid_vintage_exit_carry`, `fleet_zone_vintage_coords`, `retiree_vintage_status_scope` U → K.
+- **Superseded and pruned:** `2026-09-30-nyisonext16-winter-spread-span` and its 2021 run.
+- **Record:** `docs/RESULT-nyiso-next18-retiree-carry-2026-09-30.md`.
