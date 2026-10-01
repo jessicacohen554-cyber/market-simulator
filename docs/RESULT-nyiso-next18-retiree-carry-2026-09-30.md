@@ -63,3 +63,20 @@ Record: `results/calibration/_nyisonext18_gates.json`.
 ## 4. Owner ruling
 
 **"Promote (override)".** The G-6 failure was put to the owner before the ruling.
+
+## 5. Solve stack is off the requirements.txt pin (audit E14) — merged as-is by owner ruling
+
+- **What happened:** the five legs installed with `pip install -e .`, which resolved newer packages than `requirements.txt` pins.
+
+  | package | solved on | `requirements.txt` pin |
+  |---|---|---|
+  | highspy | 1.15.1 | 1.14.0 |
+  | pandas | 3.0.6 | 3.0.3 |
+  | pyarrow | 25.0.1 | 24.0.0 |
+  | pydantic | 2.13.5 | 2.13.4 |
+
+- This was a shard-prompt defect in this session.
+- **Effect on CI:** `scripts/audit_keepers.py` E14 warns, and `tests/scoring/test_audit_keepers_solve_pin.py` fails for this keeper. The test already fails on `main` for the PJM keeper.
+- **Owner ruling (2026-10-01): "Merge as-is".** The keeper is re-solved on the pinned stack at the lane's next natural solve.
+- **Not verified:** whether the pinned stack reproduces these numbers exactly.
+- **For later shard prompts:** install with `pip install -r requirements.txt && pip install --no-deps -e .`.
