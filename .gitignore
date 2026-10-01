@@ -82,6 +82,10 @@ data/raw/pjm-energy-offers/*
 # data/raw/caiso-public-bids/README.md).
 data/raw/caiso-public-bids/*
 !data/raw/caiso-public-bids/README.md
+# CAISO OASIS TRNS_USAGE per-window staging (R-CAISO-30). The folded per-year
+# parquets + README + SHA256SUMS next to it ARE committed: OASIS retention
+# rolls (~39 months), so the fold is the only surviving copy of aged-out months.
+data/raw/caiso-trns-usage/windows/
 
 # MISO annual bc_HIST source mirrors (~20-70 MB raw each; validation layer
 # only, rule 13): refetch with scripts/data/fetch_miso_bc_hist.py (see
@@ -153,6 +157,7 @@ data/raw/seam-neighbour-price/pjm/*.csv
 # scripts/build_nyiso_proxy_lmp_neiso.py (docstring has the curl loop).
 data/raw/lmp-data/NYISO/*damlbmp_zone_csv.zip
 data/raw/lmp-data/NYISO/*realtime_zone_csv.zip
+data/raw/lmp-data/NYISO/*DAMLimitingConstraints_csv.zip
 # Transient outer container the derive_actual_lmp NYISO DA reader consumes
 # (assembled locally from the monthly damlbmp zips above; same re-fetchable
 # lineage — the committed actual_lmp_hourly_NYISO.parquet is the durable
@@ -752,10 +757,14 @@ results/calibration/*/floors/
 #     CANNOT be re-solved into byte-identity once main has moved (caiso-155 vertex
 #     dependence), so for such a keeper this layer is PERMANENTLY unrecoverable.
 #
-# So the default stays (these are still the bundle's largest frames and most
-# bundles are never interrogated at unit grain), but a lane that WILL interrogate
-# a bundle commits its layer deliberately with ``git add -f`` — see the
-# unit_network_layer_sidecar matrix row. Opt-in per bundle, not a policy flip.
+# KEEPER per-unit layer (owner instruction 2026-10-01, PJM-NEXT-18: "Moving forward
+# for all ISOs"; owner card "Slim layer"): every KEEPER bundle commits
+# hourly/unit_marginal_<year>.parquet for every year (CLAUDE.md rule 15
+# [R-DASHBOARD]; enforced at promotion by scripts/promote_keeper.py preflight).
+# It is unit_hourly minus the raw red_cost plus an int8 `marginal` flag
+# (scripts/lib/unit_marginal.py), ~10-12 MB/yr for PJM. The FULL unit_hourly stays
+# ignored: PJM measures 69-81 MB/yr, 65 of 77 MB of it red_cost. network_<year>
+# stays opt-in (``git add -f``, see the unit_network_layer_sidecar matrix row).
 results/calibration/*/hourly/unit_hourly_*.parquet
 results/calibration/*/hourly/network_*.parquet
 results/calibration/*/*/hourly/unit_hourly_*.parquet
@@ -3963,8 +3972,14 @@ results/calibration/nwppnext14_20[0-9][0-9]/
 results/calibration/nwppnext14_pr6932_span/
 # NWPP-NEXT-15 per-year legs of THIS lane's arm (transport only; composite nwppnext14vd_span is registered).
 results/calibration/nwppnext14vd_20[0-9][0-9]/
+
+# NWPP-NEXT-16 per-year shard legs (rule 32(d)); provenance SHAs in RESULT-nwppnext16
+results/calibration/nwppnext16[cde]_20[0-9][0-9]/
 results/calibration/_rcaiso24/
 
+# SPP-106 per-year shard legs and the local composite (rule 29(c) / 31: kept out of main until the owner rules)
+results/calibration/spp106EX_20*/
+results/calibration/spp106EX_span/
 # R-ERCOT-22 per-year legs: kept out of main (rule 29(c)/32(d)); the composite is registered
 results/calibration/r_ercot22_arm_*/
 # R-ERCOT-23 per-year legs (rule 29(c)/32(d)); composite r_ercot23_span is registered. Provenance (rule 33(d)): 2019 1bc2fa1db8ddfe4e40513daa244756b71babb5c2, 2021 48e7a6334b8eaf8d7214edf2aced4526664fb240; 2020/2022-2025 are the r-21 legs (keepers/ERCOT.json r_ercot22_extension)
@@ -3972,3 +3987,6 @@ results/calibration/r_ercot23_arm_*/
 # NYISO-NEXT-21 per-year legs (rule 32 (d)); composed into nyisonext21_span. Provenance (rule 33 (d)): 2021 83b4652a03e8eb4e6c3c98d3840933fd724f6cb2, 2022 2578b154db0029de0f4fe0e591a9dc8782e9df57, 2023 4c519e1512ed8e3f0851f65041c22e5e0f4e4563, 2024 80cbd1fd52d74ec1f74456083f8ad1ae41c75748, 2025 61b01f799a9cb9458999ea6faf23212c51d96bc7
 results/calibration/nyisonext21_202[2-5]/
 results/calibration/_rcaiso28/
+
+# PJM-NEXT-18: year-isolated diagnostic keeper replays (never on main; rule 29(c)/32(d)).
+results/calibration/pjmnext18_rp_*/

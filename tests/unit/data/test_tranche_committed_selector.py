@@ -37,12 +37,6 @@ class _Cfg:
         ({"campd_outage_merit_order_guard": True}, (False, False, False)),
         # miso-278: the fuel-split companion rides the same read ...
         ({"campd_unit_fuel_split": True}, (False, False, True)),
-        # ... and under per-unit attribution selects the per-unit family's own
-        # fuel-split companion (NWPP-NEXT-14, campd_fuel_split_selector).
-        (
-            {"campd_unit_fuel_split": True, "campd_per_unit_attribution": True},
-            (True, False, "perunit-fuelsplit"),
-        ),
     ],
 )
 def test_fleet_to_bins_passes_the_selector_pair(monkeypatch, flags, expected):

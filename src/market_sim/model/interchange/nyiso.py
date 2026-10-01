@@ -193,6 +193,7 @@ def apply_nyiso_li_tsl_import_cap(
     year: int,
     hours: int,
     n11_security_basis: bool = False,
+    all_hours: bool = False,
 ) -> np.ndarray:
     """Cap the NYC->Long_Island link at the published Zone-K locality import
     limit during the peak window (issue #1345, ``config.nyiso_li_lcr_tsl``).
@@ -262,6 +263,13 @@ def apply_nyiso_li_tsl_import_cap(
         n11_security_basis: read the published N-1-1 transmission security
             limit (``transfer_security_limit``) instead of the loss-of-source-
             net ``import_limit``. Default ``False`` — byte-identical.
+        all_hours: apply the cap in every hour, not only HB14-21
+            (NYISO-NEXT-26, ``config.nyiso_li_tsl_all_hours``). NYISO's own DAM
+            binds the Zone-K import security constraints (Y50 Dunwoodie-Shore
+            Road for loss of Y49, Y49 Sprain Brook-East Garden City, the
+            ConEd-LIPA interface) in every season, 58-64 % of binding hours
+            outside HB14-21, so the window is narrower than the constraint's
+            own measured driver (rule 17). Default ``False`` — byte-identical.
 
     Returns:
         ``(hours, n_links)`` per-hour TTC matrix with the in-window LI cap
@@ -314,6 +322,8 @@ def apply_nyiso_li_tsl_import_cap(
         ttc_t = ttc_arr.copy()
     hod = np.arange(int(hours)) % 24
     in_window = np.isin(hod, np.asarray(NYISO_SELFSUPPLY_FLOOR_HOURS))
+    if all_hours:
+        in_window = np.ones(int(hours), dtype=bool)
     for i in li_idx:
         ttc_t[in_window, i] = np.minimum(ttc_t[in_window, i], float(tsl))
     return ttc_t

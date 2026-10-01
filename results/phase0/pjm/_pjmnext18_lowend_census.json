@@ -1,0 +1,646 @@
+{
+ "2019": {
+  "all": {
+   "by_class": {
+    "": 0.142,
+    "CC_REGULAR": 0.234,
+    "COAL_BIT": 0.19,
+    "COAL_WC": 0.048,
+    "CT_PEAKER": 0.057,
+    "ST_CHP": 0.069,
+    "ST_GAS": 0.045,
+    "hydro": 0.04
+   },
+   "by_class_kind": {
+    ":other": 0.142,
+    "CC_REGULAR:committed": 0.068,
+    "CC_REGULAR:econ": 0.166,
+    "COAL_BIT:econ": 0.179,
+    "COAL_WC:econ": 0.045,
+    "CT_PEAKER:committed": 0.019,
+    "CT_PEAKER:econ": 0.038,
+    "ST_CHP:committed": 0.068,
+    "ST_GAS:econ": 0.043,
+    "hydro:other": 0.04
+   },
+   "coal_bit_econ_share": 0.179,
+   "fam_renorm_cc_coal_ct": {
+    "CC": 0.437,
+    "CT": 0.105,
+    "coal": 0.459
+   },
+   "gap_offer_minus_rt_over_gas": 0.83,
+   "hours": 8760,
+   "hours_with_marginal_thermal": 0.862,
+   "median_actual_rt_over_gas": 6.98,
+   "median_marginal_offer_over_gas": 7.81,
+   "share_offer_below_6p5_delivered": 0.076
+  },
+  "imm": {
+   "raw": {
+    "coal": 0.2437,
+    "gas_combined_cycle": 0.6213,
+    "gas_simple_cycle": 0.0597,
+    "wind": 0.0381
+   },
+   "renorm_cc_coal_ct": {
+    "CC": 0.672,
+    "CT": 0.065,
+    "coal": 0.264
+   }
+  },
+  "low": {
+   "by_class": {
+    "": 0.079,
+    "CC_REGULAR": 0.351,
+    "COAL_BIT": 0.228,
+    "COAL_PRB": 0.026,
+    "COAL_WC": 0.041,
+    "ST_CHP": 0.052,
+    "ST_GAS": 0.036,
+    "hydro": 0.018
+   },
+   "by_class_kind": {
+    ":other": 0.079,
+    "CC_REGULAR:committed": 0.148,
+    "CC_REGULAR:econ": 0.203,
+    "COAL_BIT:econ": 0.218,
+    "COAL_BIT:peak": 0.007,
+    "COAL_PRB:econ": 0.025,
+    "COAL_WC:econ": 0.039,
+    "ST_CHP:committed": 0.051,
+    "ST_GAS:econ": 0.035,
+    "hydro:other": 0.018
+   },
+   "coal_bit_econ_share": 0.218,
+   "fam_renorm_cc_coal_ct": {
+    "CC": 0.539,
+    "CT": 0.008,
+    "coal": 0.453
+   },
+   "gap_offer_minus_rt_over_gas": 1.56,
+   "hours": 3188,
+   "hours_with_marginal_thermal": 0.837,
+   "median_actual_rt_over_gas": 5.7,
+   "median_marginal_offer_over_gas": 7.26,
+   "share_offer_below_6p5_delivered": 0.086
+  },
+  "repro": {
+   "by_class_delta_twh": {},
+   "max_abs_delta_twh": 0.0
+  },
+  "year": 2019
+ },
+ "2020": {
+  "all": {
+   "by_class": {
+    "": 0.08,
+    "CC_REGULAR": 0.243,
+    "COAL_BIT": 0.19,
+    "COAL_WC": 0.026,
+    "CT_PEAKER": 0.076,
+    "ST_CHP": 0.068,
+    "ST_GAS": 0.066,
+    "hydro": 0.055
+   },
+   "by_class_kind": {
+    ":other": 0.08,
+    "CC_REGULAR:committed": 0.057,
+    "CC_REGULAR:econ": 0.186,
+    "COAL_BIT:econ": 0.178,
+    "COAL_WC:econ": 0.025,
+    "CT_PEAKER:committed": 0.018,
+    "CT_PEAKER:econ": 0.058,
+    "ST_CHP:committed": 0.067,
+    "ST_GAS:econ": 0.06,
+    "hydro:other": 0.055
+   },
+   "coal_bit_econ_share": 0.178,
+   "fam_renorm_cc_coal_ct": {
+    "CC": 0.457,
+    "CT": 0.141,
+    "coal": 0.402
+   },
+   "gap_offer_minus_rt_over_gas": 1.43,
+   "hours": 8760,
+   "hours_with_marginal_thermal": 0.829,
+   "median_actual_rt_over_gas": 6.73,
+   "median_marginal_offer_over_gas": 8.16,
+   "share_offer_below_6p5_delivered": 0.121
+  },
+  "imm": {
+   "raw": {
+    "coal": 0.1753,
+    "gas_combined_cycle": 0.6433,
+    "gas_simple_cycle": 0.0589,
+    "wind": 0.0675
+   },
+   "renorm_cc_coal_ct": {
+    "CC": 0.733,
+    "CT": 0.067,
+    "coal": 0.2
+   }
+  },
+  "low": {
+   "by_class": {
+    "": 0.06,
+    "CC_REGULAR": 0.323,
+    "COAL_BIT": 0.206,
+    "COAL_WC": 0.021,
+    "CT_PEAKER": 0.034,
+    "ST_CHP": 0.081,
+    "ST_GAS": 0.026,
+    "hydro": 0.036
+   },
+   "by_class_kind": {
+    ":other": 0.06,
+    "CC_REGULAR:committed": 0.102,
+    "CC_REGULAR:econ": 0.221,
+    "COAL_BIT:econ": 0.194,
+    "COAL_WC:econ": 0.02,
+    "CT_PEAKER:committed": 0.012,
+    "CT_PEAKER:econ": 0.022,
+    "ST_CHP:committed": 0.081,
+    "ST_GAS:econ": 0.024,
+    "hydro:other": 0.036
+   },
+   "coal_bit_econ_share": 0.194,
+   "fam_renorm_cc_coal_ct": {
+    "CC": 0.549,
+    "CT": 0.06,
+    "coal": 0.391
+   },
+   "gap_offer_minus_rt_over_gas": 2.2,
+   "hours": 3934,
+   "hours_with_marginal_thermal": 0.807,
+   "median_actual_rt_over_gas": 5.45,
+   "median_marginal_offer_over_gas": 7.65,
+   "share_offer_below_6p5_delivered": 0.131
+  },
+  "repro": {
+   "by_class_delta_twh": {},
+   "max_abs_delta_twh": 0.0
+  },
+  "year": 2020
+ },
+ "2021": {
+  "all": {
+   "by_class": {
+    "": 0.066,
+    "CC_CHP": 0.021,
+    "CC_REGULAR": 0.314,
+    "COAL_BIT": 0.139,
+    "CT_PEAKER": 0.075,
+    "ST_CHP": 0.101,
+    "ST_GAS": 0.041,
+    "hydro": 0.048
+   },
+   "by_class_kind": {
+    ":other": 0.066,
+    "CC_CHP:committed": 0.011,
+    "CC_REGULAR:committed": 0.077,
+    "CC_REGULAR:econ": 0.236,
+    "COAL_BIT:econ": 0.125,
+    "CT_PEAKER:committed": 0.022,
+    "CT_PEAKER:econ": 0.052,
+    "ST_CHP:committed": 0.1,
+    "ST_GAS:econ": 0.038,
+    "hydro:other": 0.048
+   },
+   "coal_bit_econ_share": 0.125,
+   "fam_renorm_cc_coal_ct": {
+    "CC": 0.588,
+    "CT": 0.139,
+    "coal": 0.273
+   },
+   "gap_offer_minus_rt_over_gas": 0.99,
+   "hours": 8760,
+   "hours_with_marginal_thermal": 0.825,
+   "median_actual_rt_over_gas": 7.06,
+   "median_marginal_offer_over_gas": 8.05,
+   "share_offer_below_6p5_delivered": 0.115
+  },
+  "imm": {
+   "raw": {
+    "coal": 0.1415,
+    "gas_combined_cycle": 0.5975,
+    "gas_simple_cycle": 0.1006,
+    "wind": 0.1104
+   },
+   "renorm_cc_coal_ct": {
+    "CC": 0.712,
+    "CT": 0.12,
+    "coal": 0.169
+   }
+  },
+  "low": {
+   "by_class": {
+    "": 0.033,
+    "CC_CHP": 0.013,
+    "CC_REGULAR": 0.385,
+    "COAL_BIT": 0.187,
+    "COAL_PRB": 0.012,
+    "ST_CHP": 0.114,
+    "ST_GAS": 0.024,
+    "hydro": 0.026
+   },
+   "by_class_kind": {
+    ":other": 0.033,
+    "CC_CHP:committed": 0.013,
+    "CC_REGULAR:committed": 0.135,
+    "CC_REGULAR:econ": 0.25,
+    "COAL_BIT:econ": 0.167,
+    "COAL_BIT:peak": 0.015,
+    "COAL_PRB:econ": 0.01,
+    "ST_CHP:committed": 0.114,
+    "ST_GAS:econ": 0.023,
+    "hydro:other": 0.026
+   },
+   "coal_bit_econ_share": 0.167,
+   "fam_renorm_cc_coal_ct": {
+    "CC": 0.64,
+    "CT": 0.025,
+    "coal": 0.334
+   },
+   "gap_offer_minus_rt_over_gas": 1.88,
+   "hours": 3470,
+   "hours_with_marginal_thermal": 0.819,
+   "median_actual_rt_over_gas": 5.52,
+   "median_marginal_offer_over_gas": 7.4,
+   "share_offer_below_6p5_delivered": 0.091
+  },
+  "repro": {
+   "by_class_delta_twh": {},
+   "max_abs_delta_twh": 0.0
+  },
+  "year": 2021
+ },
+ "2022": {
+  "all": {
+   "by_class": {
+    "": 0.055,
+    "CC_CHP": 0.022,
+    "CC_REGULAR": 0.292,
+    "COAL_BIT": 0.147,
+    "CT_PEAKER": 0.087,
+    "ST_CHP": 0.085,
+    "ST_GAS": 0.096,
+    "hydro": 0.043
+   },
+   "by_class_kind": {
+    ":other": 0.055,
+    "CC_CHP:committed": 0.016,
+    "CC_REGULAR:committed": 0.068,
+    "CC_REGULAR:econ": 0.225,
+    "COAL_BIT:econ": 0.137,
+    "CT_PEAKER:committed": 0.021,
+    "CT_PEAKER:econ": 0.066,
+    "ST_CHP:committed": 0.084,
+    "ST_GAS:econ": 0.092,
+    "hydro:other": 0.043
+   },
+   "coal_bit_econ_share": 0.137,
+   "fam_renorm_cc_coal_ct": {
+    "CC": 0.547,
+    "CT": 0.158,
+    "coal": 0.294
+   },
+   "gap_offer_minus_rt_over_gas": 0.56,
+   "hours": 8760,
+   "hours_with_marginal_thermal": 0.854,
+   "median_actual_rt_over_gas": 7.95,
+   "median_marginal_offer_over_gas": 8.51,
+   "share_offer_below_6p5_delivered": 0.068
+  },
+  "imm": {
+   "raw": {
+    "coal": 0.1002,
+    "gas_combined_cycle": 0.6166,
+    "gas_simple_cycle": 0.1126,
+    "wind": 0.1112
+   },
+   "renorm_cc_coal_ct": {
+    "CC": 0.743,
+    "CT": 0.136,
+    "coal": 0.121
+   }
+  },
+  "low": {
+   "by_class": {
+    "": 0.046,
+    "CC_CHP": 0.024,
+    "CC_REGULAR": 0.447,
+    "COAL_BIT": 0.096,
+    "COAL_PRB": 0.01,
+    "ST_CHP": 0.105,
+    "ST_GAS": 0.087,
+    "hydro": 0.017
+   },
+   "by_class_kind": {
+    ":other": 0.046,
+    "CC_CHP:committed": 0.021,
+    "CC_REGULAR:committed": 0.168,
+    "CC_REGULAR:econ": 0.279,
+    "COAL_BIT:committed": 0.006,
+    "COAL_BIT:econ": 0.089,
+    "COAL_PRB:econ": 0.01,
+    "ST_CHP:committed": 0.105,
+    "ST_GAS:econ": 0.083,
+    "hydro:other": 0.017
+   },
+   "coal_bit_econ_share": 0.089,
+   "fam_renorm_cc_coal_ct": {
+    "CC": 0.797,
+    "CT": 0.014,
+    "coal": 0.188
+   },
+   "gap_offer_minus_rt_over_gas": 2.13,
+   "hours": 2380,
+   "hours_with_marginal_thermal": 0.845,
+   "median_actual_rt_over_gas": 5.7,
+   "median_marginal_offer_over_gas": 7.83,
+   "share_offer_below_6p5_delivered": 0.046
+  },
+  "repro": {
+   "by_class_delta_twh": {},
+   "max_abs_delta_twh": 0.0
+  },
+  "year": 2022
+ },
+ "2023": {
+  "all": {
+   "by_class": {
+    "": 0.06,
+    "CC_REGULAR": 0.224,
+    "COAL_BIT": 0.095,
+    "COAL_WC": 0.021,
+    "CT_PEAKER": 0.106,
+    "ST_CHP": 0.104,
+    "ST_GAS": 0.132,
+    "hydro": 0.042
+   },
+   "by_class_kind": {
+    ":other": 0.06,
+    "CC_REGULAR:committed": 0.06,
+    "CC_REGULAR:econ": 0.163,
+    "COAL_BIT:econ": 0.085,
+    "COAL_WC:econ": 0.019,
+    "CT_PEAKER:committed": 0.025,
+    "CT_PEAKER:econ": 0.081,
+    "ST_CHP:committed": 0.103,
+    "ST_GAS:econ": 0.123,
+    "hydro:other": 0.042
+   },
+   "coal_bit_econ_share": 0.085,
+   "fam_renorm_cc_coal_ct": {
+    "CC": 0.511,
+    "CT": 0.226,
+    "coal": 0.262
+   },
+   "gap_offer_minus_rt_over_gas": 1.82,
+   "hours": 8760,
+   "hours_with_marginal_thermal": 0.813,
+   "median_actual_rt_over_gas": 7.8,
+   "median_marginal_offer_over_gas": 9.62,
+   "share_offer_below_6p5_delivered": 0.058
+  },
+  "imm": {
+   "raw": {
+    "coal": 0.0914,
+    "gas_combined_cycle": 0.692,
+    "gas_simple_cycle": 0.1101,
+    "wind": 0.0553
+   },
+   "renorm_cc_coal_ct": {
+    "CC": 0.774,
+    "CT": 0.123,
+    "coal": 0.102
+   }
+  },
+  "low": {
+   "by_class": {
+    "": 0.043,
+    "CC_CHP": 0.015,
+    "CC_REGULAR": 0.375,
+    "COAL_BIT": 0.055,
+    "COAL_WC": 0.024,
+    "CT_PEAKER": 0.047,
+    "ST_CHP": 0.081,
+    "ST_GAS": 0.075
+   },
+   "by_class_kind": {
+    ":other": 0.043,
+    "CC_CHP:econ": 0.012,
+    "CC_REGULAR:committed": 0.14,
+    "CC_REGULAR:econ": 0.235,
+    "COAL_BIT:econ": 0.046,
+    "COAL_WC:econ": 0.022,
+    "CT_PEAKER:econ": 0.035,
+    "ST_CHP:committed": 0.08,
+    "ST_GAS:econ": 0.064,
+    "hydro:other": 0.015
+   },
+   "coal_bit_econ_share": 0.046,
+   "fam_renorm_cc_coal_ct": {
+    "CC": 0.743,
+    "CT": 0.092,
+    "coal": 0.166
+   },
+   "gap_offer_minus_rt_over_gas": 3.31,
+   "hours": 2635,
+   "hours_with_marginal_thermal": 0.738,
+   "median_actual_rt_over_gas": 5.36,
+   "median_marginal_offer_over_gas": 8.67,
+   "share_offer_below_6p5_delivered": 0.044
+  },
+  "repro": {
+   "by_class_delta_twh": {},
+   "max_abs_delta_twh": 0.0
+  },
+  "year": 2023
+ },
+ "2024": {
+  "all": {
+   "by_class": {
+    "": 0.038,
+    "CC_CHP": 0.03,
+    "CC_REGULAR": 0.216,
+    "COAL_BIT": 0.114,
+    "CT_PEAKER": 0.141,
+    "ST_CHP": 0.061,
+    "ST_GAS": 0.138,
+    "hydro": 0.042
+   },
+   "by_class_kind": {
+    ":other": 0.038,
+    "CC_REGULAR:committed": 0.032,
+    "CC_REGULAR:econ": 0.184,
+    "COAL_BIT:econ": 0.092,
+    "COAL_WC:econ": 0.028,
+    "CT_PEAKER:committed": 0.032,
+    "CT_PEAKER:econ": 0.108,
+    "ST_CHP:committed": 0.059,
+    "ST_GAS:econ": 0.128,
+    "hydro:other": 0.042
+   },
+   "coal_bit_econ_share": 0.092,
+   "fam_renorm_cc_coal_ct": {
+    "CC": 0.454,
+    "CT": 0.261,
+    "coal": 0.285
+   },
+   "gap_offer_minus_rt_over_gas": 1.59,
+   "hours": 8760,
+   "hours_with_marginal_thermal": 0.82,
+   "median_actual_rt_over_gas": 8.61,
+   "median_marginal_offer_over_gas": 10.2,
+   "share_offer_below_6p5_delivered": 0.057
+  },
+  "imm": {
+   "raw": {
+    "coal": 0.1027,
+    "gas_combined_cycle": 0.6079,
+    "gas_simple_cycle": 0.0968,
+    "wind": 0.1355
+   },
+   "renorm_cc_coal_ct": {
+    "CC": 0.753,
+    "CT": 0.12,
+    "coal": 0.127
+   }
+  },
+  "low": {
+   "by_class": {
+    "": 0.043,
+    "CC_CHP": 0.019,
+    "CC_REGULAR": 0.254,
+    "COAL_BIT": 0.096,
+    "COAL_WC": 0.022,
+    "CT_PEAKER": 0.046,
+    "ST_CHP": 0.134,
+    "ST_GAS": 0.074
+   },
+   "by_class_kind": {
+    ":other": 0.043,
+    "CC_REGULAR:committed": 0.07,
+    "CC_REGULAR:econ": 0.184,
+    "COAL_BIT:committed": 0.034,
+    "COAL_BIT:econ": 0.062,
+    "COAL_WC:econ": 0.021,
+    "CT_PEAKER:committed": 0.021,
+    "CT_PEAKER:econ": 0.025,
+    "ST_CHP:committed": 0.128,
+    "ST_GAS:econ": 0.067
+   },
+   "coal_bit_econ_share": 0.062,
+   "fam_renorm_cc_coal_ct": {
+    "CC": 0.61,
+    "CT": 0.105,
+    "coal": 0.285
+   },
+   "gap_offer_minus_rt_over_gas": 3.68,
+   "hours": 2310,
+   "hours_with_marginal_thermal": 0.713,
+   "median_actual_rt_over_gas": 5.27,
+   "median_marginal_offer_over_gas": 8.95,
+   "share_offer_below_6p5_delivered": 0.042
+  },
+  "repro": {
+   "by_class_delta_twh": {},
+   "max_abs_delta_twh": 0.0
+  },
+  "year": 2024
+ },
+ "2025": {
+  "all": {
+   "by_class": {
+    "": 0.069,
+    "CC_CHP": 0.02,
+    "CC_REGULAR": 0.243,
+    "COAL_BIT": 0.091,
+    "CT_PEAKER": 0.163,
+    "ST_CHP": 0.037,
+    "ST_GAS": 0.131,
+    "hydro": 0.038
+   },
+   "by_class_kind": {
+    ":other": 0.069,
+    "CC_CHP:econ": 0.013,
+    "CC_REGULAR:committed": 0.018,
+    "CC_REGULAR:econ": 0.226,
+    "COAL_BIT:econ": 0.082,
+    "CT_PEAKER:committed": 0.035,
+    "CT_PEAKER:econ": 0.128,
+    "ST_CHP:committed": 0.036,
+    "ST_GAS:econ": 0.115,
+    "hydro:other": 0.038
+   },
+   "coal_bit_econ_share": 0.082,
+   "fam_renorm_cc_coal_ct": {
+    "CC": 0.496,
+    "CT": 0.312,
+    "coal": 0.192
+   },
+   "gap_offer_minus_rt_over_gas": 1.15,
+   "hours": 8760,
+   "hours_with_marginal_thermal": 0.805,
+   "median_actual_rt_over_gas": 8.17,
+   "median_marginal_offer_over_gas": 9.32,
+   "share_offer_below_6p5_delivered": 0.051
+  },
+  "imm": {
+   "raw": {
+    "coal": 0.079,
+    "gas_combined_cycle": 0.6317,
+    "gas_simple_cycle": 0.0991,
+    "wind": 0.1114
+   },
+   "renorm_cc_coal_ct": {
+    "CC": 0.78,
+    "CT": 0.122,
+    "coal": 0.098
+   }
+  },
+  "low": {
+   "by_class": {
+    "": 0.045,
+    "CC_CHP": 0.012,
+    "CC_REGULAR": 0.215,
+    "COAL_BIT": 0.118,
+    "CT_PEAKER": 0.069,
+    "ST_CHP": 0.039,
+    "ST_GAS": 0.166,
+    "hydro": 0.02
+   },
+   "by_class_kind": {
+    ":other": 0.045,
+    "CC_REGULAR:committed": 0.042,
+    "CC_REGULAR:econ": 0.172,
+    "COAL_BIT:econ": 0.112,
+    "CT_PEAKER:committed": 0.023,
+    "CT_PEAKER:econ": 0.046,
+    "ST_CHP:committed": 0.038,
+    "ST_GAS:committed": 0.019,
+    "ST_GAS:econ": 0.145,
+    "hydro:other": 0.02
+   },
+   "coal_bit_econ_share": 0.112,
+   "fam_renorm_cc_coal_ct": {
+    "CC": 0.53,
+    "CT": 0.164,
+    "coal": 0.307
+   },
+   "gap_offer_minus_rt_over_gas": 2.85,
+   "hours": 2380,
+   "hours_with_marginal_thermal": 0.698,
+   "median_actual_rt_over_gas": 5.43,
+   "median_marginal_offer_over_gas": 8.28,
+   "share_offer_below_6p5_delivered": 0.041
+  },
+  "repro": {
+   "by_class_delta_twh": {},
+   "max_abs_delta_twh": 0.0
+  },
+  "year": 2025
+ }
+}

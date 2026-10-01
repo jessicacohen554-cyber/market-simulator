@@ -23,25 +23,9 @@ from market_sim.config.scenarios import ScenarioConfig
 
 
 class TestSectorGateMisoArming(unittest.TestCase):
-    def test_default_stays_off_and_pinned_keys_are_unmoved(self):
+    def test_default_stays_off_and_drops_from_the_key(self):
         self.assertFalse(ScenarioConfig().retirement_sector_gate)
-        # The GLOBAL default forecast key. ADVANCED e5ecd4105ada3e58 ->
-        # 547053bdfccd4264 on 2026-09-06 by capx D65-B (owner ruling Q47): the
-        # COUPLED arming of ccs_retrofit_fixed_cost_co2_scaling (Act A, a declared
-        # (b'-1) default flip) with ccs_retrofit_vom_adder 8.0 -> 2.95 $/MWh 2026$
-        # (Act B, re-identified off the widened ATB extract). Act B is NOT a
-        # _CACHE_KEY_OPTIONAL_FIELDS member, so it has no drop value and re-keys
-        # unconditionally. Pre-declared BEFORE the solve in
-        # docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md §3; cache-epoch ledger
-        # entry 2026-09-06c in src/market_sim/results/cache.py. Nothing about THIS
-        # field moved — the pin advances because the global default did.
-        # REWRITTEN 2026-10-01 (cleanup-D): the two literals pinned here
-        # ("547053bdfccd4264" / "f61891696e671969") moved again under
-        # unrelated default changes merged after 2026-09-06, exactly as the
-        # D65-B note above records happening once before. What this test is
-        # ABOUT is that THIS field's declared-off default leaves the global key
-        # untouched, so that is what is pinned now: an explicit False hashes
-        # identically to a config that never names the field, in both modes.
+        # The declared-off default leaves the global key untouched in both modes.
         for mode in ("forecast", "backcast"):
             self.assertEqual(
                 ScenarioConfig(mode=mode).cache_key(),

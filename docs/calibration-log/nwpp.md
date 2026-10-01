@@ -837,3 +837,14 @@ card "Keep #19; retire dup Clark field":
   `wefor_residual` scoping sits behind the same flag. It does not reach Bridger.
 - **Off-pin libraries** (owner card "Merge now, fix recipe"): `pip install -e .` in shard prompts pulls highspy 1.15.1
   etc. against the pins. Main's #19 and today's NYISO keeper are off-pin too. NEXT-16 installs from `requirements.txt`.
+
+## NWPP-NEXT-16 — 2026-10-01 — combined run promoted (keeper #20); captive-mine and live-capacity WEFOR rejected
+
+- **Solve:** three arms on keeper #19, 2019–2025, 21 year-isolated shards on pin `33014efc` (requirements.txt libraries).
+- **C → keeper #20** `2026-10-01-nwppnext16c-combined-vintage` (owner card "Promote C, prune #19"): `campd_unit_fuel_split` →
+  `campd_per_unit_vintage_denominator`. 0 status changes vs #19; C4 within ±0.008; coal 2023 r 0.669 (still FAIL). Also
+  fixes North Valmy's must-run. The per-unit fuel-split composition is deleted (rule 26). #19, D, E pruned (rule 35).
+- **D (captive-mine price):** C4 coal 2023 0.669 → 0.650; Bridger's extra energy lands in Nov–Dec, not Jun–Oct. R.
+- **E (live-capacity screened-coal WEFOR):** 4 new C4 FAILs (coal 2019/2022/2025, gas 2019). R.
+- **Correction:** #19 was on pin (its run_configs record the pinned libraries); the off-pin note belonged to NEXT-15's run.
+- Record: `docs/records/nwpp/RESULT-nwppnext16-combined-captive-live-2026-10-01.md`. Next: Bridger seasonal offer (NEXT-17).

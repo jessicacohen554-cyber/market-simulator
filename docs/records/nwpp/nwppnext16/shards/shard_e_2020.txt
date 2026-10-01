@@ -1,0 +1,87 @@
+SHARD NWPP-NEXT-16 / arm E (C + live-capacity coal WEFOR relief) / year 2020 — one backcast solve, then push the bundle. You are a SHARD, not an orchestrator.
+DATA PROFILE: nwpp
+MODEL: Opus or Fable. CLAUDE.md is binding (rules 12, 27, 31, 32, 34, 36).
+
+"A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE."
+
+PIN: {PIN}. The PRECOMMIT is docs/records/nwpp/PRECOMMIT-nwppnext16-combined-captive-live-2019-2025-2026-10-01.md — read §1, §4, §5 first.
+
+STEP 0 — setup
+- `git rev-parse HEAD` MUST equal the PIN. If not: `git fetch --depth=50 origin {PIN} && git checkout --detach {PIN}`. If it still does not match, STOP.
+- NEVER rebase, pull, merge or "sync". Never switch to another commit after this.
+- `pip install --ignore-installed pyyaml==6.0.3 && pip install -r requirements.txt && pip install -e . --no-deps` (EXACTLY this — never a bare `pip install -e .`; the first step avoids the Debian PyYAML uninstall error).
+- `python3 scripts/hydrate_data.py --profile nwpp`.
+- `git checkout -b claude/nwppnext16e-2020` (your own branch, from the pin).
+
+STEP 1 — hard-stop pre-checks (any miss = STOP, report, no push)
+python3 -c "import highspy,pandas,pyarrow,pydantic,importlib.metadata as m;print(m.version('highspy'),pandas.__version__,pyarrow.__version__,pydantic.__version__)"
+  -> MUST print: 1.14.0 3.0.3 24.0.0 2.13.4  (the requirements.txt pins). Anything else = STOP.
+sha256sum data/raw/_processed-legacy/campd_ct_heat_rates_NWPP.csv  -> 29baa2f1ecfa10d9734c7e44cc306a88d527adb28968ea260f3409de37d7ff92
+sha256sum data/raw/campd-unit-outages-perunit-NWPP.csv             -> ff5b0644553095e6600691673f3442877e287b42623a772bda052b4df734e5f3
+sha256sum data/raw/_processed-legacy/thermal_tranches-perunit-vintage-NWPP.csv -> 6fe20358860f826f8051ccf8989c46a34bb5347e0ff2e8adf5d60b9bbbe65ab9
+sha256sum data/raw/_processed-legacy/eia923_cc_family_heat_rates_NWPP.csv -> cc9ac299d93ad256e7315c86b24cd9abed2535625561e496cf1dae32dada9d38
+
+STEP 2 — the solve (run the runner UNMODIFIED; never pass --no-container-preflight)
+mkdir -p /tmp/n49 && git fetch --depth=1 origin 909cdd30bfdd8a398b10a4255b1340d0d9ef1943 \
+  && git archive 909cdd30bfdd8a398b10a4255b1340d0d9ef1943 results/calibration/nwpp49_ror_span | tar -x -C /tmp/n49
+python3 scripts/data/curate_hydro_plant_modes.py --iso NWPP
+python3 scripts/data/curate_coal_receipts.py && python3 scripts/data/curate_coal_stocks.py
+nohup python3 scripts/replay_keeper.py /tmp/n49/results/calibration/nwpp49_ror_span \
+  --out-dir results/calibration/nwppnext16e_2020 --years 2020 \
+  --set eia860_vintage_tracks_solve_year=true \
+  --set measured_ct_heat_rates=true --set measured_coal_heat_rates=true \
+  --set measured_st_heat_rates=true --set measured_cc_heat_rates=true --set measured_chp_heat_rates=true \
+  --set unit_outage_short_windows=true --set unit_partial_outage_windows=true \
+  --set mid_vintage_exit_carry=true --set partial_plant_exit_carry=true \
+  --set nwpp_demand_plant_basis=true \
+  --set coal_committed_nested_on_mustrun=true \
+  --set admit_standby_units=true \
+  --set nwpp_path76_alturas_link=true \
+  --set coal_fuel_inventory_plant_grain=true --set coal_fuel_inventory_take_floor=true \
+  --set coal_takeorpay_from_data=false --set coal_committed_takeorpay_regulated=false \
+  --set coal_fuel_inventory_monthly_pile=true \
+  --set unit_outage_exit_ym_from_eia860=true \
+  --set unit_outage_membership_repair=true \
+  --set campd_per_unit_attribution=true \
+  --set eia923_cc_family_heat_rates=true --set campd_unit_fuel_split=false \
+  --set campd_per_unit_vintage_denominator=true \
+  --set unit_outage_dispatched_bin_denominator=true \
+  --set unit_outage_dispatched_bin_live_denominator=true \
+  --set wefor_residual_short_screened_coal=true \
+  --set wefor_residual=0.0 \
+  --set 'wefor_residual_groups=["COAL_BIT","COAL_LIGNITE","COAL_PRB","COAL_WC"]' \
+  --set hydro_backfill_year=null \
+  --note "NWPP-NEXT-16 arm E: keeper #19 recipe, fuel split -> vintage denominator + live-capacity screened-coal WEFOR" \
+  > /tmp/solve_2020.log 2>&1 &
+BUDGET: 150 minutes of solve. NEVER end your turn while the solve runs — poll IN-TURN with bounded wait loops
+(e.g. `timeout 540 bash -c 'while kill -0 <pid> 2>/dev/null; do sleep 30; done'`, repeated) until it exits. If it passes
+the budget with no bundle, STOP and report (never push a half-written bundle).
+
+STEP 3 — hard stops on the result (any miss = STOP, report, no push)
+a) run_config diff vs keeper #19 (it is on main at the pin):
+   python3 -c "import json;a=json.load(open('results/calibration/nwppnext16e_2020/run_config.json'));b=json.load(open('results/calibration/nwppnext14_span/run_config_2020.json'));A=a.get('scenario_config',a);B=b.get('scenario_config',b);print(sorted((k,B.get(k),A.get(k)) for k in set(A)|set(B) if A.get(k)!=B.get(k)))"
+   Allowed differences: exactly campd_unit_fuel_split (False), campd_per_unit_vintage_denominator (True), unit_outage_dispatched_bin_denominator (True), unit_outage_dispatched_bin_live_denominator (True), wefor_residual_short_screened_coal (True), wefor_residual (0.0), wefor_residual_groups (the four coal classes), plus keys absent in the keeper whose arm value is False/None/default. Anything else = STOP.
+b) resolved inputs (meta.json or run_config.json `resolved_inputs`): thermal_tranches path = data/raw/_processed-legacy/thermal_tranches-perunit-vintage-NWPP.csv.
+   E: the solve did not raise `wefor_residual_short_screened_coal requires`. Report any log line mentioning `screened` or `live` denominator.
+c) meta.json hydro_backfill_year = null.
+d) P1 summed demand = 292.940 TWh ± 0.05.
+e) Log lines present: `coal per-yard budget`; `coal take floor`; `coal monthly pile`; `NWPP Path 76 (Alturas)`.
+f) Bundle contains dispatch/2020_P1.parquet, hourly/class_hourly_2020.parquet, hourly/system_2020.parquet, hourly/hydro_cascade_2020.parquet.
+g) Solve not infeasible / Unknown (if so: STOP, report the log tail, no retry).
+
+STEP 4 — push the FULL bundle to YOUR branch (rule 34(a)); a PLAIN git add, NEVER `git add -f`, NEVER `git add -A` / `git add .`
+printf '\n!results/calibration/nwppnext16e_2020/\n!results/calibration/nwppnext16e_2020/**\n!results/calibration/nwppnext16e_2020/dispatch/**\n' >> .gitignore
+git add .gitignore && git add results/calibration/nwppnext16e_2020
+git status --short   # MUST show nothing outside .gitignore and results/calibration/nwppnext16e_2020/
+git commit -m "NWPP-NEXT-16 shard E 2020"
+git push -u origin claude/nwppnext16e-2020   (on HTTP 408/500: git config http.version HTTP/1.1 and retry)
+Verify: `git ls-tree -r --name-only HEAD -- results/calibration/nwppnext16e_2020 | grep dispatch/2020_P1.parquet` (must print it).
+
+FORBIDDEN, by name: git add -A / git add . / git add -f; dashboard_add_run.py, build_manifest.py, build_status.py,
+prune_iso_runs.py, anything under frontend/data/backcast/**; ANY edit under src/ or scripts/; opening a PR; rebasing;
+deleting any result (rule 31).
+
+FINAL MESSAGE — report in numbers: pushed commit SHA (full 40 chars); solve wall time; the `container preflight:` and
+`memory peak:` log lines; the library versions; each hard stop a)–g) with its value; P1 class energy TWh (CC_REGULAR,
+CT_PEAKER, COAL_PRB, COAL_BIT, COAL_WC, ST_GAS, CC_CHP); and Jim Bridger (plant_code 8066) and North Valmy (8224) coal
+energy TWh from dispatch/2020_P1.parquet.
