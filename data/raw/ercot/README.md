@@ -15,6 +15,8 @@ real-time price-adder data. Filename families (year suffix stripped):
 | `DRUCASDCNP4214_*.parquet`, `DRUCASDFNP5527_*.parquet`, `HRUCASDFNP5528_*.parquet` | day-ahead/hour-ahead reliability-unit-commitment AS disclosure |
 | `RTSCEDPRICEADDERNP6323_*.parquet` | NP6-323 Real-Time SCED price adders (ORDC/reliability-deployment) |
 | `ercot_<year>_dam_as_mcpc_hourly.parquet`, `ercot_<year>_ordc_reserves_hourly.parquet` | derived (see below) |
+| `ordc-biennial/{2022,2024}-biennial-ordc-report.pdf`, `ordc-biennial/fig3-{2022,2024}-biennial.png` | ERCOT Biennial Reports on the ORDC (2022-10-31, 2024-10-31) and their Figure 3 images (`pdfimages -png`) |
+| `ercot_ordc_mu_sigma_seasonal.csv` | derived: ERCOT's seasonal ORDC mu_s / sigma (NP6-576-ER seasons) read from those figures (see below) |
 
 **Source:** ERCOT MIS (`ercot.com`), public/redistributable per ERCOT's
 raw-data terms — see `docs/data-licensing.md` §3.
@@ -27,6 +29,10 @@ raw-data terms — see `docs/data-licensing.md` §3.
   (ERCOT MIS report NP6-905-CD "Historical Real-Time Price Adders by SCED
   Interval", reportTypeId 13231 — public, no API key).
 - `scripts/build_ercot_dam_as_mcpc.py` → `ercot_<year>_dam_as_mcpc_hourly.parquet`.
+- `scripts/data/derive_ercot_ordc_mu_sigma.py` → `ercot_ordc_mu_sigma_seasonal.csv`
+  (R-ERCOT-24): Figure 3 of the 2022 / 2024 Biennial ORDC Reports, digitized
+  (±15 MW). The NP6-576-ER tables themselves (MIS report 13233) are
+  retention-expired on the free path.
 - `scripts/fetch_ercot_60day_gen_resource.py` →
   `60_DAY_DAM_DISCLOSURE_60d_DAM_{Gen_Resource_Data,ESR_Data}_<pubwindow>.parquet`
   (NP3-966-ER daily bundles via the free MIS API; used for the 2026_Jan-Mar

@@ -1,0 +1,548 @@
+{
+ "2020": {
+  "config": {
+   "miso_gas_marginal_commodity_pricing": false,
+   "miso_gas_variable_transport": false
+  },
+  "coal_econ_bands": {
+   "COAL_PRB": {
+    "econ_low": 1.1,
+    "econ_high": 1.309
+   },
+   "COAL_BIT": {
+    "econ_low": 1.1,
+    "econ_high": 1.21
+   },
+   "COAL_LIGNITE": {
+    "econ_low": 1.254,
+    "econ_high": 1.265
+   },
+   "COAL_WC": {
+    "econ_low": 1.1,
+    "econ_high": 1.122
+   }
+  },
+  "imm_coal": 0.4,
+  "k3": {
+   "bid_all": {
+    "gas": 0.539,
+    "coal": 0.254,
+    "seam": 0.207
+   },
+   "p0_all": {
+    "gas": 0.583,
+    "coal": 0.209,
+    "seam": 0.207
+   },
+   "bid_q": {
+    "q1": {
+     "gas": 0.642,
+     "seam": 0.283,
+     "coal": 0.075
+    },
+    "q2": {
+     "gas": 0.611,
+     "seam": 0.262,
+     "coal": 0.127
+    },
+    "q3": {
+     "gas": 0.575,
+     "coal": 0.218,
+     "seam": 0.207
+    },
+    "q4": {
+     "gas": 0.455,
+     "coal": 0.374,
+     "seam": 0.171
+    },
+    "q5": {
+     "coal": 0.476,
+     "gas": 0.411,
+     "seam": 0.113
+    }
+   },
+   "bid_vs_p1_median_q12": {
+    "bid": 19.88,
+    "p1": 20.4
+   }
+  },
+  "k4": {
+   "lw_err_q12": 4.089,
+   "lw_err_q1": 4.503,
+   "lw_err_q2": 3.72,
+   "lw_err_q5": -1.035,
+   "lw_err_all": 2.542,
+   "model_lw": 24.511,
+   "actual_lw": 21.969,
+   "coverage_hours": 8760
+  }
+ },
+ "2019": {
+  "config": {
+   "miso_gas_marginal_commodity_pricing": false,
+   "miso_gas_variable_transport": false
+  },
+  "coal_econ_bands": {
+   "COAL_PRB": {
+    "econ_low": 1.1,
+    "econ_high": 1.309
+   },
+   "COAL_BIT": {
+    "econ_low": 1.1,
+    "econ_high": 1.21
+   },
+   "COAL_LIGNITE": {
+    "econ_low": 1.254,
+    "econ_high": 1.265
+   },
+   "COAL_WC": {
+    "econ_low": 1.1,
+    "econ_high": 1.122
+   }
+  },
+  "imm_coal": 0.47,
+  "k3": {
+   "bid_all": {
+    "coal": 0.432,
+    "gas": 0.381,
+    "seam": 0.188
+   },
+   "p0_all": {
+    "gas": 0.412,
+    "coal": 0.398,
+    "seam": 0.19
+   },
+   "bid_q": {
+    "q1": {
+     "gas": 0.57,
+     "seam": 0.272,
+     "coal": 0.158
+    },
+    "q2": {
+     "gas": 0.448,
+     "coal": 0.33,
+     "seam": 0.222
+    },
+    "q3": {
+     "coal": 0.491,
+     "gas": 0.334,
+     "seam": 0.176
+    },
+    "q4": {
+     "coal": 0.553,
+     "gas": 0.288,
+     "seam": 0.159
+    },
+    "q5": {
+     "coal": 0.627,
+     "gas": 0.263,
+     "seam": 0.11
+    }
+   },
+   "bid_vs_p1_median_q12": {
+    "bid": 23.8,
+    "p1": 24.977
+   }
+  },
+  "k4": {
+   "lw_err_q12": 3.812,
+   "lw_err_q1": 3.961,
+   "lw_err_q2": 3.677,
+   "lw_err_q5": -1.769,
+   "lw_err_all": 2.243,
+   "model_lw": 27.914,
+   "actual_lw": 25.67,
+   "coverage_hours": 8759
+  }
+ },
+ "2021": {
+  "config": {
+   "miso_gas_marginal_commodity_pricing": false,
+   "miso_gas_variable_transport": false
+  },
+  "coal_econ_bands": {
+   "COAL_PRB": {
+    "econ_low": 1.1,
+    "econ_high": 1.309
+   },
+   "COAL_BIT": {
+    "econ_low": 1.1,
+    "econ_high": 1.21
+   },
+   "COAL_LIGNITE": {
+    "econ_low": 1.254,
+    "econ_high": 1.265
+   },
+   "COAL_WC": {
+    "econ_low": 1.1,
+    "econ_high": 1.122
+   }
+  },
+  "imm_coal": 0.35,
+  "k3": {
+   "bid_all": {
+    "gas": 0.521,
+    "coal": 0.371,
+    "seam": 0.108
+   },
+   "p0_all": {
+    "gas": 0.529,
+    "coal": 0.369,
+    "seam": 0.102
+   },
+   "bid_q": {
+    "q1": {
+     "gas": 0.497,
+     "coal": 0.382,
+     "seam": 0.121
+    },
+    "q2": {
+     "gas": 0.493,
+     "coal": 0.406,
+     "seam": 0.1
+    },
+    "q3": {
+     "gas": 0.515,
+     "coal": 0.405,
+     "seam": 0.08
+    },
+    "q4": {
+     "gas": 0.511,
+     "coal": 0.376,
+     "seam": 0.113
+    },
+    "q5": {
+     "gas": 0.588,
+     "coal": 0.285,
+     "seam": 0.127
+    }
+   },
+   "bid_vs_p1_median_q12": {
+    "bid": 28.855,
+    "p1": 30.522
+   }
+  },
+  "k4": {
+   "lw_err_q12": 1.078,
+   "lw_err_q1": 1.576,
+   "lw_err_q2": 0.631,
+   "lw_err_q5": -9.066,
+   "lw_err_all": -2.196,
+   "model_lw": 37.031,
+   "actual_lw": 39.227,
+   "coverage_hours": 8759
+  }
+ },
+ "2022": {
+  "config": {
+   "miso_gas_marginal_commodity_pricing": false,
+   "miso_gas_variable_transport": false
+  },
+  "coal_econ_bands": {
+   "COAL_PRB": {
+    "econ_low": 1.1,
+    "econ_high": 1.309
+   },
+   "COAL_BIT": {
+    "econ_low": 1.1,
+    "econ_high": 1.21
+   },
+   "COAL_LIGNITE": {
+    "econ_low": 1.254,
+    "econ_high": 1.265
+   },
+   "COAL_WC": {
+    "econ_low": 1.1,
+    "econ_high": 1.122
+   }
+  },
+  "imm_coal": 0.24,
+  "k3": {
+   "bid_all": {
+    "gas": 0.636,
+    "seam": 0.187,
+    "coal": 0.177
+   },
+   "p0_all": {
+    "gas": 0.66,
+    "coal": 0.175,
+    "seam": 0.165
+   },
+   "bid_q": {
+    "q1": {
+     "gas": 0.516,
+     "coal": 0.32,
+     "seam": 0.164
+    },
+    "q2": {
+     "gas": 0.595,
+     "seam": 0.203,
+     "coal": 0.202
+    },
+    "q3": {
+     "gas": 0.647,
+     "seam": 0.193,
+     "coal": 0.16
+    },
+    "q4": {
+     "gas": 0.668,
+     "seam": 0.184,
+     "coal": 0.148
+    },
+    "q5": {
+     "gas": 0.755,
+     "seam": 0.191,
+     "coal": 0.055
+    }
+   },
+   "bid_vs_p1_median_q12": {
+    "bid": 42.73,
+    "p1": 49.209
+   }
+  },
+  "k4": {
+   "lw_err_q12": 4.338,
+   "lw_err_q1": 7.232,
+   "lw_err_q2": 1.646,
+   "lw_err_q5": -19.447,
+   "lw_err_all": -3.808,
+   "model_lw": 59.475,
+   "actual_lw": 63.282,
+   "coverage_hours": 7560
+  }
+ },
+ "2023": {
+  "config": {
+   "miso_gas_marginal_commodity_pricing": false,
+   "miso_gas_variable_transport": false
+  },
+  "coal_econ_bands": {
+   "COAL_PRB": {
+    "econ_low": 1.1,
+    "econ_high": 1.309
+   },
+   "COAL_BIT": {
+    "econ_low": 1.1,
+    "econ_high": 1.21
+   },
+   "COAL_LIGNITE": {
+    "econ_low": 1.254,
+    "econ_high": 1.265
+   },
+   "COAL_WC": {
+    "econ_low": 1.1,
+    "econ_high": 1.122
+   }
+  },
+  "imm_coal": 0.36,
+  "k3": {
+   "bid_all": {
+    "gas": 0.534,
+    "seam": 0.25,
+    "coal": 0.215
+   },
+   "p0_all": {
+    "gas": 0.581,
+    "seam": 0.229,
+    "coal": 0.19
+   },
+   "bid_q": {
+    "q1": {
+     "gas": 0.638,
+     "seam": 0.253,
+     "coal": 0.109
+    },
+    "q2": {
+     "gas": 0.558,
+     "seam": 0.266,
+     "coal": 0.175
+    },
+    "q3": {
+     "gas": 0.518,
+     "seam": 0.267,
+     "coal": 0.215
+    },
+    "q4": {
+     "gas": 0.457,
+     "coal": 0.284,
+     "seam": 0.259
+    },
+    "q5": {
+     "gas": 0.501,
+     "coal": 0.292,
+     "seam": 0.207
+    }
+   },
+   "bid_vs_p1_median_q12": {
+    "bid": 27.07,
+    "p1": 27.767
+   }
+  },
+  "k4": {
+   "lw_err_q12": 5.62,
+   "lw_err_q1": 6.163,
+   "lw_err_q2": 5.13,
+   "lw_err_q5": -3.325,
+   "lw_err_all": 2.544,
+   "model_lw": 32.737,
+   "actual_lw": 30.193,
+   "coverage_hours": 8760
+  }
+ },
+ "2024": {
+  "config": {
+   "miso_gas_marginal_commodity_pricing": false,
+   "miso_gas_variable_transport": false
+  },
+  "coal_econ_bands": {
+   "COAL_PRB": {
+    "econ_low": 1.1,
+    "econ_high": 1.309
+   },
+   "COAL_BIT": {
+    "econ_low": 1.1,
+    "econ_high": 1.21
+   },
+   "COAL_LIGNITE": {
+    "econ_low": 1.254,
+    "econ_high": 1.265
+   },
+   "COAL_WC": {
+    "econ_low": 1.1,
+    "econ_high": 1.122
+   }
+  },
+  "imm_coal": 0.36,
+  "k3": {
+   "bid_all": {
+    "gas": 0.585,
+    "seam": 0.218,
+    "coal": 0.197
+   },
+   "p0_all": {
+    "gas": 0.627,
+    "seam": 0.208,
+    "coal": 0.164
+   },
+   "bid_q": {
+    "q1": {
+     "gas": 0.678,
+     "seam": 0.251,
+     "coal": 0.072
+    },
+    "q2": {
+     "gas": 0.648,
+     "seam": 0.22,
+     "coal": 0.132
+    },
+    "q3": {
+     "gas": 0.612,
+     "seam": 0.209,
+     "coal": 0.179
+    },
+    "q4": {
+     "gas": 0.521,
+     "coal": 0.261,
+     "seam": 0.219
+    },
+    "q5": {
+     "gas": 0.467,
+     "coal": 0.34,
+     "seam": 0.193
+    }
+   },
+   "bid_vs_p1_median_q12": {
+    "bid": 23.009,
+    "p1": 23.482
+   }
+  },
+  "k4": {
+   "lw_err_q12": 4.102,
+   "lw_err_q1": 4.544,
+   "lw_err_q2": 3.701,
+   "lw_err_q5": -2.534,
+   "lw_err_all": 1.497,
+   "model_lw": 30.781,
+   "actual_lw": 29.285,
+   "coverage_hours": 8760
+  }
+ },
+ "2025": {
+  "config": {
+   "miso_gas_marginal_commodity_pricing": false,
+   "miso_gas_variable_transport": false
+  },
+  "coal_econ_bands": {
+   "COAL_PRB": {
+    "econ_low": 1.1,
+    "econ_high": 1.309
+   },
+   "COAL_BIT": {
+    "econ_low": 1.1,
+    "econ_high": 1.21
+   },
+   "COAL_LIGNITE": {
+    "econ_low": 1.254,
+    "econ_high": 1.265
+   },
+   "COAL_WC": {
+    "econ_low": 1.1,
+    "econ_high": 1.122
+   }
+  },
+  "imm_coal": null,
+  "k3": {
+   "bid_all": {
+    "gas": 0.531,
+    "coal": 0.277,
+    "seam": 0.192
+   },
+   "p0_all": {
+    "gas": 0.543,
+    "coal": 0.276,
+    "seam": 0.181
+   },
+   "bid_q": {
+    "q1": {
+     "gas": 0.607,
+     "coal": 0.221,
+     "seam": 0.171
+    },
+    "q2": {
+     "gas": 0.502,
+     "coal": 0.319,
+     "seam": 0.179
+    },
+    "q3": {
+     "gas": 0.455,
+     "coal": 0.337,
+     "seam": 0.208
+    },
+    "q4": {
+     "gas": 0.456,
+     "coal": 0.334,
+     "seam": 0.211
+    },
+    "q5": {
+     "gas": 0.635,
+     "seam": 0.191,
+     "coal": 0.174
+    }
+   },
+   "bid_vs_p1_median_q12": {
+    "bid": 32.264,
+    "p1": 33.609
+   }
+  },
+  "k4": {
+   "lw_err_q12": 4.566,
+   "lw_err_q1": 6.584,
+   "lw_err_q2": 2.75,
+   "lw_err_q5": -12.054,
+   "lw_err_all": -0.455,
+   "model_lw": 41.666,
+   "actual_lw": 42.121,
+   "coverage_hours": 8759
+  }
+ }
+}

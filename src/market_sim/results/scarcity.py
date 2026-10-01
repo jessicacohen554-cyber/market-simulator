@@ -398,6 +398,14 @@ def lolp(
     return np.where(r <= mcl_mw, 1.0, out)
 
 
+def _lolp_half(r, mu, sigma, mcl_mw, shift_sigma, obd_half_shift):
+    """First-half (spinning-only) LOLP term; see :func:`ordc_adder`."""
+    if obd_half_shift:
+        mu_s = np.asarray(mu, dtype=float) + shift_sigma * np.asarray(sigma, dtype=float)
+        return lolp(r, 0.5 * mu_s, np.asarray(sigma, dtype=float) / np.sqrt(2.0), mcl_mw)
+    return lolp(r, np.asarray(mu, dtype=float) / 2.0, np.asarray(sigma, dtype=float) / np.sqrt(2.0), mcl_mw, shift_sigma)
+
+
 def ordc_adder(
     reserves_mw: np.ndarray,
     system_lambda: np.ndarray,
@@ -410,6 +418,7 @@ def ordc_adder(
     multistep_floor: bool = True,
     floor_active: np.ndarray | bool = True,
     reserves_online_mw: np.ndarray | None = None,
+    obd_half_shift: bool = False,
 ) -> np.ndarray:
     """Hourly ORDC price adder ($/MWh) for a reserve and price series.
 
@@ -438,6 +447,10 @@ def ordc_adder(
             effect 2023-11-01; pass a mask for 2023 backcasts).
         reserves_online_mw: Hourly online (spinning) reserves in MW; defaults
             to ``reserves_mw``.
+        obd_half_shift: First-half curve in the ORDC OBD's form (§2.3, every
+            vintage 2019-2024): ``1 - CDF(0.5 * mu_s, 0.707 * sigma)`` with
+            ``mu_s = mu + S * sigma`` — the shift halves with the mean. Off,
+            the legacy ``mu/2 + S * sigma/sqrt(2)``. Identical when S = 0.
 
     Returns:
         ``(T,)`` adder array in $/MWh, >= 0.
@@ -454,7 +467,7 @@ def ordc_adder(
     mu = np.asarray(mu_mw, dtype=float)
     sigma = np.asarray(sigma_mw, dtype=float)
     lolp_full = lolp(r_full, mu, sigma, mcl_mw, shift_sigma)
-    lolp_half = lolp(r_online, mu / 2.0, sigma / np.sqrt(2.0), mcl_mw, shift_sigma)
+    lolp_half = _lolp_half(r_online, mu, sigma, mcl_mw, shift_sigma, obd_half_shift)
     adder = 0.5 * headroom_to_cap * (lolp_full + lolp_half)
 
     if multistep_floor:
@@ -620,10 +633,74 @@ def reserve_headroom(
     return r_online, r_offline
 
 
+_ERCOT_ORDC_MU_SIGMA_SEASONAL = RAW_DATA_DIR / "ercot" / "ercot_ordc_mu_sigma_seasonal.csv"
+
+
+def ercot_ordc_published_curve_active(config) -> bool:
+    """True when the published ERCOT ORDC curve (R-ERCOT-24) is armed.
+
+    ERCOT-gated (rule 25 [R-ISO-SCOPE]): the seasonal mu / sigma and the OBD
+    half-hour form are ERCOT market design.
+    """
+    return bool(getattr(config, "ercot_ordc_published_curve", False)) and (
+        str(getattr(config, "iso", "")) == "ERCOT"
+    )
+
+
+def ercot_published_mu_sigma_hourly(
+    year: int, hours: int
+) -> tuple[np.ndarray, np.ndarray]:
+    """ERCOT's published seasonal ORDC (mu_s, sigma) for each hour of ``year``.
+
+    Reads ``data/raw/ercot/ercot_ordc_mu_sigma_seasonal.csv`` (derived from
+    Figure 3 of ERCOT's 2022 / 2024 Biennial ORDC Reports by
+    ``scripts/data/derive_ercot_ordc_mu_sigma.py``; NP6-576-ER seasons Dec /
+    Mar / Jun / Sep). ``mu_s`` is the OBD's shifted mean ``mu + S * sigma``
+    (the plotted "ORDC Mu" carries the PUCT 48551 shift). Each season's value
+    holds from its effective date (00:00 on the non-leap model clock, the
+    convention of ``constants.ERCOT_LCAP_WINDOWS_BY_YEAR``) until the next;
+    after the table's last season the last published value carries forward
+    (declared: the 2025 seasons are not on the free public path).
+
+    Raises:
+        ValueError: if an hour of ``year`` precedes the table's first season.
+    """
+    import pandas as pd
+
+    t = pd.read_csv(_ERCOT_ORDC_MU_SIGMA_SEASONAL).sort_values("effective_date")
+    dates = pd.to_datetime(t["effective_date"])
+    # Hour index of each season start on ``year``'s non-leap clock; seasons
+    # in earlier years sit at negative indices, later years beyond the end.
+    ref = pd.Timestamp(f"{int(year)}-01-01")
+
+    def _hour(d: pd.Timestamp) -> int:
+        doy = pd.Timestamp(2019, d.month, d.day).dayofyear - 1  # non-leap
+        return (int(d.year) - int(year)) * 8760 + doy * 24
+
+    starts = np.array([_hour(d) for d in dates], dtype=np.int64)
+    if starts[0] > 0 or dates.iloc[0] > ref:
+        raise ValueError(
+            f"ercot_published_mu_sigma_hourly: {year} begins before the first "
+            f"published season ({dates.iloc[0].date()})"
+        )
+    pos = np.searchsorted(starts, np.arange(int(hours)), side="right") - 1
+    mu_s = t["mu_shifted_mw"].to_numpy(dtype=float)[pos]
+    sigma = t["sigma_mw"].to_numpy(dtype=float)[pos]
+    return mu_s, sigma
+
+
 def resolve_lolp_params(
-    config, hours: int
+    config, hours: int, *, year: int | None = None
 ) -> tuple[np.ndarray | float, np.ndarray | float]:
     """Return (mu, sigma) for the config: seasonal CSV when set, else flat.
+
+    Under ``ercot_ordc_published_curve`` (R-ERCOT-24) the hourly published
+    seasonal values for ``year`` are returned, with mu UNSHIFTED
+    (``mu_s - S * sigma``, S = ``config.ordc_lolp_shift_sigma``) so every
+    consumer's ``lolp(..., shift_sigma=S)`` lands on the published ``mu_s``.
+    It is backcast-only (the values are ERCOT's historical postings) and
+    needs ``year``; it refuses ``ordc_lolp_params_path`` (one mu / sigma
+    source, rule 19).
 
     ``correlated_outage_sigma_scale`` (FF-1B charter D.6, GATED with
     ``correlated_forced_outage`` by ``ScenarioConfig.__post_init__``) rescales
@@ -635,7 +712,22 @@ def resolve_lolp_params(
     double count by construction.
     """
     scale = float(getattr(config, "correlated_outage_sigma_scale", 1.0))
-    if getattr(config, "ordc_lolp_params_path", None):
+    if ercot_ordc_published_curve_active(config):
+        if str(getattr(config, "mode", "forecast")) != "backcast":
+            raise ValueError(
+                "ercot_ordc_published_curve is backcast-only: ERCOT's seasonal "
+                "ORDC mu/sigma are historical postings"
+            )
+        if getattr(config, "ordc_lolp_params_path", None):
+            raise ValueError(
+                "ercot_ordc_published_curve and ordc_lolp_params_path are two "
+                "mu/sigma sources for one curve (rule 19); arm one"
+            )
+        if year is None:
+            raise ValueError("ercot_ordc_published_curve needs the solve year")
+        mu_s, sigma = ercot_published_mu_sigma_hourly(int(year), int(hours))
+        mu = mu_s - float(config.ordc_lolp_shift_sigma) * sigma
+    elif getattr(config, "ordc_lolp_params_path", None):
         mu, sigma = load_lolp_params(config.ordc_lolp_params_path, hours)
     else:
         mu, sigma = config.ordc_lolp_mu_mw, config.ordc_lolp_sigma_mw
@@ -896,12 +988,13 @@ def ercot_ordc_demand_steps(
     *,
     voll: float,
     mcl_mw: float,
-    mu_mw: float,
-    sigma_mw: float,
+    mu_mw: float | np.ndarray,
+    sigma_mw: float | np.ndarray,
     shift_sigma: float,
     n_steps: int = 40,
     sigma_span: float = 5.0,
     multistep_floor: bool = True,
+    obd_half_shift: bool = False,
 ) -> tuple[float, np.ndarray, np.ndarray]:
     """Discretize the VOLL-anchored ORDC reserve demand curve into LP shortfall steps.
 
@@ -931,12 +1024,24 @@ def ercot_ordc_demand_steps(
     :func:`pjm_ordc_shortfall_steps` produces and ``model.dispatch`` consumes:
     the reserve-balance RHS and the per-step penalty ($/MWh) and width (MW)
     arrays, ordered cheapest band (highest reserve) first.
+
+    **Hourly curve** (R-ERCOT-24 ``ercot_ordc_published_curve``): when
+    ``mu_mw`` / ``sigma_mw`` are ``(T,)`` arrays (ERCOT's seasonal postings)
+    the reserve grid is ONE grid for the year, topped at the largest hourly
+    ``mcl + mu_eff + sigma_span * sigma`` (so the widths and requirement stay
+    static), and each hour's curve is evaluated on it: ``penalties`` is then
+    ``(n_steps, T)`` — the hourly-widths precedent
+    (``nyiso_ordc_measured_step_span``) on the cost side. ``obd_half_shift``
+    selects the OBD's first-half form (see :func:`ordc_adder`).
     """
-    mu_eff = mu_mw + shift_sigma * sigma_mw
+    hourly = np.ndim(mu_mw) > 0 or np.ndim(sigma_mw) > 0
+    mu_a = np.asarray(mu_mw, dtype=float)
+    sig_a = np.asarray(sigma_mw, dtype=float)
+    mu_eff = mu_a + shift_sigma * sig_a
     # Reserve level above which the ORDC value is negligible — the top of the
     # demand curve and the reserve-balance requirement. Past mcl + mu_eff +
     # sigma_span*sigma the LOLP (hence the price) is ~0, so demand stops there.
-    req_total = float(mcl_mw + mu_eff + sigma_span * sigma_mw)
+    req_total = float(np.max(mcl_mw + mu_eff + sigma_span * sig_a))
     # Descending reserve grid req_total -> 0; band j spans (grid[j+1], grid[j]]
     # of reserve, priced at the ORDC value at its lower reserve edge (the level
     # at which that band starts clearing), so penalties ascend as reserves fall
@@ -944,8 +1049,14 @@ def ercot_ordc_demand_steps(
     grid = np.linspace(req_total, 0.0, int(n_steps) + 1)
     widths = grid[:-1] - grid[1:]  # (n_steps,), positive
     r_edge = grid[1:]  # lower reserve edge of each band
-    lolp_full = lolp(r_edge, mu_mw, sigma_mw, mcl_mw, shift_sigma)
-    lolp_half = lolp(r_edge, mu_mw / 2.0, sigma_mw / np.sqrt(2.0), mcl_mw, shift_sigma)
+    if hourly:
+        # (n_steps, T): band j's lower edge under hour t's curve.
+        T = int(np.broadcast(mu_a, sig_a).size)
+        r_edge = np.repeat(grid[1:, None], T, axis=1)
+        mu_a = np.broadcast_to(mu_a, (T,))[None, :]
+        sig_a = np.broadcast_to(sig_a, (T,))[None, :]
+    lolp_full = lolp(r_edge, mu_a, sig_a, mcl_mw, shift_sigma)
+    lolp_half = _lolp_half(r_edge, mu_a, sig_a, mcl_mw, shift_sigma, obd_half_shift)
     penalties = 0.5 * float(voll) * (lolp_full + lolp_half)
     if multistep_floor:
         # OBDRR048 RTORPA floor (>= $20 at reserves <= 6,500 MW, >= $10 at

@@ -15111,3 +15111,23 @@ too.
 - C3a 2021 +2.9 % (PASS), 2022 −2.4, 2023 +1.2, 2024 −4.0, **2025 −11.6 % (FAIL)**. Span NOT-YET; 2021 CALIBRATED;
   ISO NOT-YET. Residual is spatial (Upstate_West high, Long Island low) plus the 2025 downstate top decile.
 - Record: `docs/records/nyiso/RESULT-nyiso-next22-zone-resolved-basis-2026-10-01.md`.
+
+## NYISO-NEXT-28 — 2026-10-01 — Ravenswood 2023 phase 0 (zero LP, keeper unchanged)
+
+Ravenswood 2500 steam 2023, model 4.00 TWh against CAMPD 0.88:
+- **Not floors:** 3.35 TWh is inframarginal and 0.14 TWh is at floors.
+- **Not heat rate:** the measured year-specific HR is applied.
+- **Not fuel:** the LDC leg is armed, and arm B leaves Ravenswood unchanged.
+- **Not price:** model Zone J tracks DA J within −4/+2 $/MWh by month.
+
+The cause is the merit-order guard's knife edge on unit 30 (1,030 MW):
+- Its SRMC sits within ±$2.5 of the NY+NJ p90 RCC in every year.
+- In 2023 alone its dark windows read 1.000 out of merit and are booked as layup, so the capacity is returned. Ravenswood ST availability is 1,112 MW in 2023 against 200–393 MW in the other years.
+- In 2022/24/25 the same windows read 0.0–0.86 and stay outages.
+- The handback bounds 2.69 of the 3.16 TWh excess.
+
+The pure LP loads the returned capacity at thin spreads: p50 840 MW when on, against 203 MW measured. Measured conduct is price-responsive but needs sustained spreads, i.e. a commitment hurdle. Every commitment lever is closed, so no PRECOMMIT was written. `campd_outage_merit_order_guard` is annotated and stays K.
+
+Records: `docs/records/nyiso/FINDING-nyiso-next28-ravenswood-2023-phase0-2026-10-01.md`, `results/phase0/nyiso/_nyisonext28_ravenswood_phase0.json`, `scripts/probes/nyisonext28_ravenswood_2023_phase0.py`.
+
+Owner cards #6992 / #6987 / #6984 / NEXT-24 are unchanged; no ruling was found.
