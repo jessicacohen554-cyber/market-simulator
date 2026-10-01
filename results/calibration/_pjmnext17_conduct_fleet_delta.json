@@ -1,0 +1,19 @@
+{
+ "2023": {
+  "rows_moved": 69,
+  "cc_floor_rows": 69,
+  "non_cc_rows_moved": [],
+  "cc_floor_hours_off_on": [
+   413873,
+   422702
+  ],
+  "cc_floor_mwh_off_on": [
+   189.26,
+   192.555
+  ],
+  "floor_twh_in_metered_offline_hours_off_on": [
+   2.815,
+   3.094
+  ]
+ }
+}
