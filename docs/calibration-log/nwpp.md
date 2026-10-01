@@ -860,3 +860,15 @@ card "Keep #19; retire dup Clark field":
 - Owner card: **"Redirect to hydro"**. A Bridger offer change would be fitted to a price error (rules 1, 13). Next: NWPP hydro
   within-month freedom, phase-0 design (NEXT-18). Record:
   `docs/records/nwpp/FINDING-nwppnext17-bridger-price-formation-phase0-2026-10-01.md`.
+
+## NWPP-NEXT-18 — 2026-10-01 — phase 0 only: hydro has no excess within-month freedom (hydro-period lever closed for NWPP)
+
+- **Zero LP** on keeper #20's 2022–2025 legs. The water value sits on the Columbia/Snake chain (99 % of interior hydro
+  hour-MW, led by Grand Coulee), not on small reservoirs.
+- Against CROHMS: the model moves **less** energy between days than measured (ratio 0.75–0.90; Grand Coulee 0.71–0.83).
+  `hydro_budget_period_by_instrument` would move NWPP further from data. Not armed, no registry entries (rule 13).
+- Within the day the model over-shapes (0.98–1.41×; Grand Coulee 1.44–1.72×). That is an hourly object, not a lever on its own.
+- The flat price is a flat monthly gas stack (+$1–5 when the envelope binds) plus a fixed interface. Measured NW prices
+  track CAISO/the West (between-day r 0.72–0.90).
+- Owner card: **"Both, one census"**. NEXT-19 runs a zero-LP split of measured price variance into gas-daily and
+  interface parts, then picks the lever. Record: `docs/records/nwpp/FINDING-nwppnext18-hydro-within-month-phase0-2026-10-01.md`.
