@@ -1711,6 +1711,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
     # discipline).
     "nyiso_hub_gap_month_level",
+    # NYISO-NEXT-23 Transco Z6 NY flow-date placement, default off: dropped
+    # from the hash at its False default so every pre-existing key (the NYISO
+    # keeper's included) stays valid; ON it moves the NYISO delivered-gas array
+    # and hashes distinctly. Registered IN THE SAME COMMIT as the field.
+    "nyiso_gas_flow_date",
     # nyiso-224 NYISO TOTAL EAST cutset transfer envelope, default off: dropped
     # from the hash at its False default so every pre-existing NYISO key (the
     # designated keeper's included) stays valid, and ON it selects a different
@@ -2953,6 +2958,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by nyiso-223 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "nyiso_hub_gap_month_level": "False",
+    # Added by NYISO-NEXT-23 WITH the field, same commit.
+    "nyiso_gas_flow_date": "False",
     # Added by nyiso-224 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "nyiso_total_east_cutset_ttc": "False",
@@ -19808,6 +19815,28 @@ class ScenarioConfig:
     # market_sim.data.fuel.hubs._nyiso_hub_daily_gas_prices.
     nyiso_hub_gap_month_level: bool = False
 
+    # Tier 3 (calibration) — NYISO-NEXT-23. FLOW-DATE the measured Transco Z6 NY
+    # daily prints NYISO's daily gas reads. The EIA daily is a NEXT-DAY delivery
+    # index: a print keyed to trade day T prices gas that FLOWS on T+1, and
+    # Friday's trade prices the whole Sat-Mon (holiday-extended) package — the
+    # convention ``hubs._flow_date_staircase`` already encodes for CAISO
+    # (``caiso_citygate_flow_date``) and MISO. Off, NYISO places each print on
+    # its TRADE day and linearly interpolates across the weekend, so the
+    # 2025-01-17 $97.90 MLK-weekend print prices Fri 1/17 (NYC DA $117) and
+    # decays across the four days it actually priced (DA $106-302). Armed, BOTH
+    # NYISO Z6 consumers take the flow-date staircase: the hub daily shape
+    # (``_nyiso_hub_daily_gas_prices``, still exactly mean-preserving per month)
+    # and the downstate CT delivered index (``apply_nyiso_downstate_ct_gas_daily``,
+    # whose LDC transport adder is unchanged). Rule 14 [R-ACCURATE] on the source
+    # convention is the whole case (rule 1: the direction of any residual is
+    # evidence for nothing); rule 13: the identical construction regenerates
+    # from forward prints; ZERO free parameters. Refuses to stack with
+    # ``nyiso_hub_gap_month_level`` (rule 19: both define the unpriced days).
+    # The year-start left edge follows ``gas_flow_date_year_start_package``
+    # exactly as the CAISO / MISO callers do. Off by default so every other ISO,
+    # every registered keeper and every forecast is byte-identical.
+    nyiso_gas_flow_date: bool = False
+
     # Tier 3 (calibration) — nyiso-224. The model's ONE
     # ``Upstate_West -> Capital_Hudson`` link is the A-E -> F+ cutset, whose
     # NYISO name is TOTAL EAST; ``NYISO_INTERFACE_TTC_BY_MONTH`` caps it at the
@@ -25061,6 +25090,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_ep_gas_basis_corroborated": 3,
     "ercot_ep_gas_basis_receipts_fallback": 3,
     "nyiso_hub_gap_month_level": 3,
+    "nyiso_gas_flow_date": 3,
     "nyiso_total_east_cutset_ttc": 3,
     "nyiso_fg_split": 3,
     "mustrun_chp_btm_holdout": 3,
