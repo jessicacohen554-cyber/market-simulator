@@ -260,6 +260,16 @@ records that these were calibrated, not assumed: *"This calibration benchmarked
 modeled energy with actual, eight-year average, non-PPA market transactions into
 and out of the Southern Company region."*
 
+**Rule-14 reconciliation against EIA-930 (soco-97, 2026-10-01, zero LP).** These
+are *import-direction economy* capabilities per *simulation region*, not
+symmetric tie ratings. Matched to import and summed per corridor (Carolinas =
+Duke + SCEG + Santee Cooper; Florida = FPL + FPLNW + Progress FL + TAL), they
+leave 0.94–3.66 TWh/yr of metered flow refused, all of it TVA. TVA remains an
+open limit-type misalignment (economy capability vs metered firm + loop flow).
+FPLNW is an interchange seam only from the Gulf Power BA exit on 2022-07-13. No
+export capability is published. Record:
+`docs/handoffs/r-soco/FINDING-soco-97-interchange-rule14-phase0-2026-10-01.md`.
+
 ## 5. Alabama Power and Mississippi Power — **NO PUBLIC IRP EXISTS FOR ALABAMA**
 
 Card S6 and the lane charter both name *"the most recent Alabama Power and
