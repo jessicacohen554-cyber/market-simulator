@@ -6906,3 +6906,12 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - **Records:**
   - `docs/records/pjm/RESULT-pjm-next-18-2026-10-01.md`
   - `docs/records/pjm/PRECOMMIT-pjm-next-18-2026-10-01.md`
+
+## PJM-NEXT-19 — 2026-10-01 — real offer stack not year-discriminating; coal over-run is inframarginal; CC 2023 is a zonal offset plus benchmark drift (zero LP)
+
+- **Solves and keeper:** zero LP, zero shards. Keeper unchanged (`2026-09-30-pjm-next16-ovec`); 10 failing cells, NOT-YET.
+- **Card 1 (offers, Jan/Apr/Jul/Oct sample of 2019–21, 2023–25):** the real stack offers a larger share of thermal MW below the model's coal offer than the model in every year, by +0.02 to +0.09, and as much in fit year 2024 (+0.036) as in 2019–21. Not the COAL_BIT lever.
+- **Card 1b:** the 2019–21 coal over-run is mostly in hours where coal is inframarginal (+11.9 / +8.0 / +14.4 TWh), and CC also over-runs in coal-set hours, so it is not CC↔coal displacement.
+- **Card 2:** CC_REGULAR 2023 +8.5 = Dominion −12.7 vs EMAAC +9.0 / Central PA +5.1 / ComEd +5.6. Dominion's EIA-923 gas is +1.63 over IMM eastern spot in 2023 (offer $42 vs EMAAC $27). This is the NEXT-8/9/13 ground; nothing new there to re-test. The 2023→24 benchmark grows 6.8 TWh more than the model can (U_a −7.6).
+- Card 3 not reached. **OPEN, not limits.**
+- **Record:** `docs/records/pjm/RESULT-pjm-next-19-2026-10-01.md`.

@@ -1,0 +1,642 @@
+{
+ "gas_basis": {
+  "2019": {
+   "bench_plants_923_gas": 302.8,
+   "bench_plants_campd_gas": 285.2,
+   "classFull_gas": 300.0,
+   "classFull_minus_e930": 6.2,
+   "e930_gas": 293.9
+  },
+  "2020": {
+   "bench_plants_923_gas": 323.7,
+   "bench_plants_campd_gas": 309.4,
+   "classFull_gas": 319.6,
+   "classFull_minus_e930": 9.4,
+   "e930_gas": 310.2
+  },
+  "2021": {
+   "bench_plants_923_gas": 316.0,
+   "bench_plants_campd_gas": 302.2,
+   "classFull_gas": 313.4,
+   "classFull_minus_e930": 1.7,
+   "e930_gas": 311.7
+  },
+  "2022": {
+   "bench_plants_923_gas": 337.5,
+   "bench_plants_campd_gas": 323.5,
+   "classFull_gas": 332.5,
+   "classFull_minus_e930": 0.2,
+   "e930_gas": 332.3
+  },
+  "2023": {
+   "bench_plants_923_gas": 371.3,
+   "bench_plants_campd_gas": 358.5,
+   "classFull_gas": 366.6,
+   "classFull_minus_e930": 5.8,
+   "e930_gas": 360.7
+  },
+  "2024": {
+   "bench_plants_923_gas": 389.7,
+   "bench_plants_campd_gas": 375.6,
+   "classFull_gas": 384.3,
+   "classFull_minus_e930": 16.0,
+   "e930_gas": 368.3
+  },
+  "2025": {
+   "bench_plants_923_gas": 386.7,
+   "bench_plants_campd_gas": 375.5,
+   "classFull_gas": 379.4,
+   "classFull_minus_e930": 12.7,
+   "e930_gas": 366.6
+  }
+ },
+ "gas_operand": {
+  "2019": {
+   "henry_hub": 2.57,
+   "imm_east_gas": 2.52,
+   "imm_production_gas": 2.08,
+   "imm_west_gas": 2.32,
+   "own_923_by_zone": {
+    "PJM_AEP_Ohio": {
+     "plants": 1,
+     "price": 2.44
+    },
+    "PJM_ATSI": {
+     "plants": 1,
+     "price": 2.58
+    },
+    "PJM_Dominion": {
+     "plants": 7,
+     "price": 3.41
+    },
+    "PJM_SWMAAC": {
+     "plants": 1,
+     "price": 3.54
+    }
+   }
+  },
+  "2020": {
+   "henry_hub": 2.03,
+   "imm_east_gas": 1.74,
+   "imm_production_gas": 1.36,
+   "imm_west_gas": 1.74,
+   "own_923_by_zone": {
+    "PJM_AEP_Ohio": {
+     "plants": 1,
+     "price": 1.6
+    },
+    "PJM_ATSI": {
+     "plants": 1,
+     "price": 2.01
+    },
+    "PJM_Dominion": {
+     "plants": 7,
+     "price": 2.68
+    },
+    "PJM_SWMAAC": {
+     "plants": 1,
+     "price": 2.5
+    }
+   }
+  },
+  "2021": {
+   "henry_hub": 3.91,
+   "imm_east_gas": 3.58,
+   "imm_production_gas": 2.98,
+   "imm_west_gas": 4.24,
+   "own_923_by_zone": {
+    "PJM_AEP_Ohio": {
+     "plants": 1,
+     "price": 3.17
+    },
+    "PJM_ATSI": {
+     "plants": 1,
+     "price": 3.98
+    },
+    "PJM_Dominion": {
+     "plants": 7,
+     "price": 4.07
+    },
+    "PJM_SWMAAC": {
+     "plants": 1,
+     "price": 4.52
+    }
+   }
+  },
+  "2022": {
+   "henry_hub": 6.42,
+   "imm_east_gas": 7.28,
+   "imm_production_gas": 5.51,
+   "imm_west_gas": 5.88,
+   "own_923_by_zone": {
+    "PJM_AEP_Ohio": {
+     "plants": 1,
+     "price": 5.85
+    },
+    "PJM_ATSI": {
+     "plants": 1,
+     "price": 6.57
+    },
+    "PJM_Dominion": {
+     "plants": 7,
+     "price": 7.31
+    },
+    "PJM_SWMAAC": {
+     "plants": 1,
+     "price": 7.79
+    }
+   }
+  },
+  "2023": {
+   "henry_hub": 2.54,
+   "imm_east_gas": 2.13,
+   "imm_production_gas": 1.62,
+   "imm_west_gas": 2.05,
+   "own_923_by_zone": {
+    "PJM_AEP_Ohio": {
+     "plants": 2,
+     "price": 2.45
+    },
+    "PJM_ATSI": {
+     "plants": 1,
+     "price": 2.55
+    },
+    "PJM_Dominion": {
+     "plants": 7,
+     "price": 3.76
+    },
+    "PJM_SWMAAC": {
+     "plants": 1,
+     "price": 2.45
+    }
+   }
+  },
+  "2024": {
+   "henry_hub": 2.19,
+   "imm_east_gas": 2.25,
+   "imm_production_gas": 1.67,
+   "imm_west_gas": 1.98,
+   "own_923_by_zone": {
+    "PJM_AEP_Ohio": {
+     "plants": 2,
+     "price": 2.33
+    },
+    "PJM_ATSI": {
+     "plants": 1,
+     "price": 2.26
+    },
+    "PJM_Dominion": {
+     "plants": 7,
+     "price": 3.11
+    },
+    "PJM_SWMAAC": {
+     "plants": 1,
+     "price": 2.83
+    }
+   }
+  },
+  "2025": {
+   "henry_hub": 3.53,
+   "imm_east_gas": 3.99,
+   "imm_production_gas": 2.81,
+   "imm_west_gas": 3.11,
+   "own_923_by_zone": {
+    "PJM_AEP_Ohio": {
+     "plants": 2,
+     "price": 3.34
+    },
+    "PJM_ATSI": {
+     "plants": 1,
+     "price": 3.44
+    },
+    "PJM_Dominion": {
+     "plants": 7,
+     "price": 4.16
+    },
+    "PJM_SWMAAC": {
+     "plants": 1,
+     "price": 4.97
+    }
+   }
+  }
+ },
+ "identity": {
+  "2019": {
+   "U_a": 21.77,
+   "classFull": 810.11,
+   "d_export": -12.63,
+   "d_gen": 12.77,
+   "losses_model": 3.69,
+   "model_gen": 822.88
+  },
+  "2020": {
+   "U_a": 19.25,
+   "classFull": 791.08,
+   "d_export": -13.59,
+   "d_gen": 8.32,
+   "losses_model": 3.47,
+   "model_gen": 799.4
+  },
+  "2021": {
+   "U_a": 18.25,
+   "classFull": 815.72,
+   "d_export": -13.22,
+   "d_gen": 9.07,
+   "losses_model": 4.02,
+   "model_gen": 824.8
+  },
+  "2022": {
+   "U_a": 21.76,
+   "classFull": 820.28,
+   "d_export": -9.6,
+   "d_gen": 16.24,
+   "losses_model": 4.16,
+   "model_gen": 836.52
+  },
+  "2023": {
+   "U_a": 15.13,
+   "classFull": 809.78,
+   "d_export": -11.87,
+   "d_gen": 6.74,
+   "losses_model": 3.59,
+   "model_gen": 816.52
+  },
+  "2024": {
+   "U_a": 7.55,
+   "classFull": 838.23,
+   "d_export": -11.82,
+   "d_gen": -0.1,
+   "losses_model": 4.31,
+   "model_gen": 838.13
+  },
+  "2025": {
+   "U_a": 12.34,
+   "classFull": 863.78,
+   "d_export": -9.95,
+   "d_gen": 7.39,
+   "losses_model": 5.0,
+   "model_gen": 871.17
+  },
+  "delta_2023_2024": {
+   "U_a": -7.58,
+   "classFull": 28.45,
+   "d_export": 0.05,
+   "d_gen": -6.84,
+   "losses_model": 0.72,
+   "model_gen": 21.61
+  }
+ },
+ "what": "PJM-NEXT-19 card 2: CC_REGULAR 2023 -> 2024 tracking. ZERO LP.",
+ "zonal_split": {
+  "2019": {
+   "PJM_AEP_Ohio": {
+    "actual_twh": 54.9,
+    "cf": 0.897,
+    "mc_capw": 27.22,
+    "model_twh": 56.71
+   },
+   "PJM_ATSI": {
+    "actual_twh": 14.93,
+    "cf": 0.902,
+    "mc_capw": 30.12,
+    "model_twh": 15.79
+   },
+   "PJM_Central_PA": {
+    "actual_twh": 61.26,
+    "cf": 0.918,
+    "mc_capw": 23.74,
+    "model_twh": 68.42
+   },
+   "PJM_ComEd": {
+    "actual_twh": 12.3,
+    "cf": 0.885,
+    "mc_capw": 24.92,
+    "model_twh": 13.42
+   },
+   "PJM_Dominion": {
+    "actual_twh": 51.62,
+    "cf": 0.684,
+    "mc_capw": 33.02,
+    "model_twh": 41.89
+   },
+   "PJM_EMAAC": {
+    "actual_twh": 46.65,
+    "cf": 0.876,
+    "mc_capw": 24.84,
+    "model_twh": 57.03
+   },
+   "PJM_SWMAAC": {
+    "actual_twh": 12.21,
+    "cf": 0.45,
+    "mc_capw": 38.4,
+    "model_twh": 7.95
+   },
+   "PJM_West_APS": {
+    "actual_twh": 14.62,
+    "cf": 0.862,
+    "mc_capw": 27.03,
+    "model_twh": 13.9
+   }
+  },
+  "2020": {
+   "PJM_AEP_Ohio": {
+    "actual_twh": 54.82,
+    "cf": 0.919,
+    "mc_capw": 22.05,
+    "model_twh": 58.93
+   },
+   "PJM_ATSI": {
+    "actual_twh": 15.28,
+    "cf": 0.881,
+    "mc_capw": 26.89,
+    "model_twh": 15.71
+   },
+   "PJM_Central_PA": {
+    "actual_twh": 75.5,
+    "cf": 0.924,
+    "mc_capw": 19.97,
+    "model_twh": 82.14
+   },
+   "PJM_ComEd": {
+    "actual_twh": 13.09,
+    "cf": 0.898,
+    "mc_capw": 22.23,
+    "model_twh": 15.05
+   },
+   "PJM_Dominion": {
+    "actual_twh": 54.94,
+    "cf": 0.759,
+    "mc_capw": 26.72,
+    "model_twh": 49.11
+   },
+   "PJM_EMAAC": {
+    "actual_twh": 38.25,
+    "cf": 0.763,
+    "mc_capw": 22.88,
+    "model_twh": 43.74
+   },
+   "PJM_SWMAAC": {
+    "actual_twh": 11.77,
+    "cf": 0.465,
+    "mc_capw": 33.04,
+    "model_twh": 7.82
+   },
+   "PJM_West_APS": {
+    "actual_twh": 19.65,
+    "cf": 0.934,
+    "mc_capw": 19.91,
+    "model_twh": 20.86
+   }
+  },
+  "2021": {
+   "PJM_AEP_Ohio": {
+    "actual_twh": 54.44,
+    "cf": 0.847,
+    "mc_capw": 38.21,
+    "model_twh": 55.62
+   },
+   "PJM_ATSI": {
+    "actual_twh": 15.6,
+    "cf": 0.85,
+    "mc_capw": 40.67,
+    "model_twh": 16.56
+   },
+   "PJM_Central_PA": {
+    "actual_twh": 78.89,
+    "cf": 0.902,
+    "mc_capw": 32.95,
+    "model_twh": 82.83
+   },
+   "PJM_ComEd": {
+    "actual_twh": 10.43,
+    "cf": 0.873,
+    "mc_capw": 34.99,
+    "model_twh": 12.95
+   },
+   "PJM_Dominion": {
+    "actual_twh": 48.12,
+    "cf": 0.654,
+    "mc_capw": 42.69,
+    "model_twh": 39.72
+   },
+   "PJM_EMAAC": {
+    "actual_twh": 35.54,
+    "cf": 0.718,
+    "mc_capw": 37.73,
+    "model_twh": 39.92
+   },
+   "PJM_SWMAAC": {
+    "actual_twh": 12.19,
+    "cf": 0.471,
+    "mc_capw": 49.76,
+    "model_twh": 8.34
+   },
+   "PJM_West_APS": {
+    "actual_twh": 23.96,
+    "cf": 0.9,
+    "mc_capw": 34.14,
+    "model_twh": 24.6
+   }
+  },
+  "2022": {
+   "PJM_AEP_Ohio": {
+    "actual_twh": 69.77,
+    "cf": 0.885,
+    "mc_capw": 55.88,
+    "model_twh": 70.83
+   },
+   "PJM_ATSI": {
+    "actual_twh": 16.0,
+    "cf": 0.892,
+    "mc_capw": 59.79,
+    "model_twh": 17.29
+   },
+   "PJM_Central_PA": {
+    "actual_twh": 76.06,
+    "cf": 0.923,
+    "mc_capw": 51.01,
+    "model_twh": 83.2
+   },
+   "PJM_ComEd": {
+    "actual_twh": 13.33,
+    "cf": 0.901,
+    "mc_capw": 54.16,
+    "model_twh": 17.55
+   },
+   "PJM_Dominion": {
+    "actual_twh": 44.01,
+    "cf": 0.728,
+    "mc_capw": 69.23,
+    "model_twh": 41.22
+   },
+   "PJM_EMAAC": {
+    "actual_twh": 39.4,
+    "cf": 0.694,
+    "mc_capw": 65.05,
+    "model_twh": 42.06
+   },
+   "PJM_SWMAAC": {
+    "actual_twh": 12.29,
+    "cf": 0.588,
+    "mc_capw": 76.76,
+    "model_twh": 10.43
+   },
+   "PJM_West_APS": {
+    "actual_twh": 26.73,
+    "cf": 0.866,
+    "mc_capw": 56.41,
+    "model_twh": 26.32
+   }
+  },
+  "2023": {
+   "PJM_AEP_Ohio": {
+    "actual_twh": 82.79,
+    "cf": 0.914,
+    "mc_capw": 25.34,
+    "model_twh": 83.99
+   },
+   "PJM_ATSI": {
+    "actual_twh": 16.08,
+    "cf": 0.896,
+    "mc_capw": 31.55,
+    "model_twh": 16.42
+   },
+   "PJM_Central_PA": {
+    "actual_twh": 81.39,
+    "cf": 0.941,
+    "mc_capw": 22.1,
+    "model_twh": 86.53
+   },
+   "PJM_ComEd": {
+    "actual_twh": 20.06,
+    "cf": 0.918,
+    "mc_capw": 27.22,
+    "model_twh": 25.61
+   },
+   "PJM_Dominion": {
+    "actual_twh": 46.06,
+    "cf": 0.59,
+    "mc_capw": 41.97,
+    "model_twh": 33.33
+   },
+   "PJM_EMAAC": {
+    "actual_twh": 39.51,
+    "cf": 0.834,
+    "mc_capw": 27.31,
+    "model_twh": 48.52
+   },
+   "PJM_SWMAAC": {
+    "actual_twh": 12.79,
+    "cf": 0.707,
+    "mc_capw": 35.25,
+    "model_twh": 13.28
+   },
+   "PJM_West_APS": {
+    "actual_twh": 27.22,
+    "cf": 0.889,
+    "mc_capw": 29.75,
+    "model_twh": 26.52
+   }
+  },
+  "2024": {
+   "PJM_AEP_Ohio": {
+    "actual_twh": 85.72,
+    "cf": 0.894,
+    "mc_capw": 25.74,
+    "model_twh": 84.21
+   },
+   "PJM_ATSI": {
+    "actual_twh": 16.92,
+    "cf": 0.891,
+    "mc_capw": 30.12,
+    "model_twh": 17.22
+   },
+   "PJM_Central_PA": {
+    "actual_twh": 81.83,
+    "cf": 0.928,
+    "mc_capw": 22.41,
+    "model_twh": 86.28
+   },
+   "PJM_ComEd": {
+    "actual_twh": 22.6,
+    "cf": 0.903,
+    "mc_capw": 23.8,
+    "model_twh": 27.64
+   },
+   "PJM_Dominion": {
+    "actual_twh": 53.94,
+    "cf": 0.804,
+    "mc_capw": 31.86,
+    "model_twh": 49.86
+   },
+   "PJM_EMAAC": {
+    "actual_twh": 35.7,
+    "cf": 0.595,
+    "mc_capw": 32.86,
+    "model_twh": 34.34
+   },
+   "PJM_SWMAAC": {
+    "actual_twh": 11.51,
+    "cf": 0.393,
+    "mc_capw": 43.43,
+    "model_twh": 7.22
+   },
+   "PJM_West_APS": {
+    "actual_twh": 27.18,
+    "cf": 0.921,
+    "mc_capw": 24.85,
+    "model_twh": 28.04
+   }
+  },
+  "2025": {
+   "PJM_AEP_Ohio": {
+    "actual_twh": 80.86,
+    "cf": 0.888,
+    "mc_capw": 34.45,
+    "model_twh": 79.67
+   },
+   "PJM_ATSI": {
+    "actual_twh": 16.17,
+    "cf": 0.886,
+    "mc_capw": 38.58,
+    "model_twh": 16.21
+   },
+   "PJM_Central_PA": {
+    "actual_twh": 80.95,
+    "cf": 0.913,
+    "mc_capw": 32.23,
+    "model_twh": 83.19
+   },
+   "PJM_ComEd": {
+    "actual_twh": 23.7,
+    "cf": 0.882,
+    "mc_capw": 34.76,
+    "model_twh": 29.4
+   },
+   "PJM_Dominion": {
+    "actual_twh": 53.7,
+    "cf": 0.847,
+    "mc_capw": 40.17,
+    "model_twh": 52.15
+   },
+   "PJM_EMAAC": {
+    "actual_twh": 36.68,
+    "cf": 0.474,
+    "mc_capw": 50.77,
+    "model_twh": 27.28
+   },
+   "PJM_SWMAAC": {
+    "actual_twh": 12.42,
+    "cf": 0.413,
+    "mc_capw": 63.75,
+    "model_twh": 8.16
+   },
+   "PJM_West_APS": {
+    "actual_twh": 26.22,
+    "cf": 0.911,
+    "mc_capw": 34.47,
+    "model_twh": 26.77
+   }
+  }
+ }
+}
