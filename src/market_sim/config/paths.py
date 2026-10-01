@@ -292,6 +292,11 @@ GAS_PRICES_DIR: Path = RAW_DATA_DIR / "gas-prices"
 # stays the monthly EIA-923 receipt (data.fuel.oil_daily_shape_factors).
 OIL_PRICES_DIR: Path = RAW_DATA_DIR / "oil-prices"
 COAL_PRICES_DIR: Path = RAW_DATA_DIR / "coal-prices"
+# EIA-923 Page 5 coal receipts, verbatim coal subset
+# (scripts/data/fetch_eia923_coal_receipts.py). The clean `coal-receipts`
+# datatype aggregates away the mine state and mine type, so the captive-mine
+# classifier (data.fuel.captive_coal, NWPP-NEXT-15) reads the raw lots here.
+COAL_RECEIPTS_RAW_DIR: Path = RAW_DATA_DIR / "coal-receipts"
 ERCOT_HSL_DIR: Path = RAW_DATA_DIR / "ercot-hsl"
 CAISO_HSL_DIR: Path = RAW_DATA_DIR / "caiso-hsl"
 # CAISO Production-and-Curtailments workbooks (5-minute), the source for the
@@ -312,6 +317,14 @@ SPP_HSL_DIR: Path = RAW_DATA_DIR / "spp-hsl"
 # under ScenarioConfig.spp_gas_crow_residual_outage (SPP-105).
 SPP_GEN_OUTAGE_DIR: Path = RAW_DATA_DIR / "spp-gen-outage"
 SPP_GEN_OUTAGE_CSV: Path = SPP_GEN_OUTAGE_DIR / "spp_capacity_gen_outage_hourly.csv"
+# SPP MMU "Unavailable Generation Capacity in SPP Markets" (Dec 2025) annual
+# offer-side / unreported-derate MW, 2020-2024, digitized (README). Read by
+# market_sim.data.spp_mmu_unavailability under
+# ScenarioConfig.spp_mmu_offer_unavailability (SPP-106).
+SPP_MMU_UNAVAILABLE_DIR: Path = RAW_DATA_DIR / "spp-mmu-unavailable-capacity"
+SPP_MMU_UNAVAILABLE_CSV: Path = (
+    SPP_MMU_UNAVAILABLE_DIR / "spp_mmu_unavailable_capacity.csv"
+)
 # Per-zone wind SHAPE (NASA POWER MERRA-2 reanalysis → power curve), one parquet
 # per backcast year. Built by scripts/data/build_miso_wind_shape.py; read by
 # market_sim.data.renewables to give MISO's three regions distinct wind diurnal/

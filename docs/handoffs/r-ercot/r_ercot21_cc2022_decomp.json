@@ -1,0 +1,797 @@
+{
+ "year": 2022,
+ "klass": "CC_REGULAR",
+ "leg": "/tmp/claude-0/-home-user-market-simulator/e5a6ed4c-3afd-50eb-a8a6-d48cc7f789a9/scratchpad/leg22/results/calibration/r_ercot20_arm_2022",
+ "class_table": {
+  "CC_CHP": {
+   "model": 26.739999771118164,
+   "actual": 25.645,
+   "delta": 1.094
+  },
+  "CC_REGULAR": {
+   "model": 123.76100158691406,
+   "actual": 132.589,
+   "delta": -8.828
+  },
+  "COAL_LIGNITE": {
+   "model": 17.701000213623047,
+   "actual": 17.074,
+   "delta": 0.627
+  },
+  "COAL_PRB": {
+   "model": 60.16899871826172,
+   "actual": 54.181,
+   "delta": 5.988
+  },
+  "CT_CHP": {
+   "model": 6.0,
+   "actual": 5.835,
+   "delta": 0.165
+  },
+  "CT_PEAKER": {
+   "model": 5.000999927520752,
+   "actual": 5.953,
+   "delta": -0.951
+  },
+  "OTHER": {
+   "model": 2.427000045776367,
+   "actual": 2.427,
+   "delta": 0.0
+  },
+  "OTHER_FOSSIL": {
+   "model": 0.9089999794960022,
+   "actual": 0.364,
+   "delta": 0.545
+  },
+  "ST_CHP": {
+   "model": 0.06800000369548798,
+   "actual": 0.211,
+   "delta": -0.143
+  },
+  "ST_GAS": {
+   "model": 11.916999816894531,
+   "actual": 12.589,
+   "delta": -0.672
+  },
+  "biomass": {
+   "model": 0.5839999914169312,
+   "actual": 0.584,
+   "delta": 0.0
+  },
+  "hydro": {
+   "model": 0.35100001096725464,
+   "actual": 0.351,
+   "delta": -0.0
+  },
+  "nuclear": {
+   "model": 41.08399963378906,
+   "actual": 41.607,
+   "delta": -0.523
+  },
+  "oil": {
+   "model": 0.027000000700354576,
+   "actual": 0.004,
+   "delta": 0.023
+  },
+  "solar": {
+   "model": 24.329999923706055,
+   "actual": 22.22,
+   "delta": 2.11
+  },
+  "wind": {
+   "model": 108.06400299072266,
+   "actual": 104.751,
+   "delta": 3.313
+  }
+ },
+ "class_btm_twh": {
+  "CC_CHP": 22.307,
+  "CC_REGULAR": 1.885,
+  "CT_CHP": 7.383,
+  "CT_PEAKER": 0.462,
+  "ST_CHP": 0.3
+ },
+ "by_plant": [
+  {
+   "klass": "COAL_PRB",
+   "plant": 6179,
+   "model_twh": 6.918000221252441,
+   "e923_twh": 9.759,
+   "avail_twh": 11.88700008392334,
+   "delta": -2.84
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55154,
+   "model_twh": 1.093999981880188,
+   "e923_twh": 3.141,
+   "avail_twh": 1.819000005722046,
+   "delta": -2.048
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55226,
+   "model_twh": 4.5229997634887695,
+   "e923_twh": 6.387,
+   "avail_twh": 6.7210001945495605,
+   "delta": -1.864
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55153,
+   "model_twh": 4.765999794006348,
+   "e923_twh": 6.315,
+   "avail_twh": 7.678999900817871,
+   "delta": -1.55
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 58001,
+   "model_twh": 5.5279998779296875,
+   "e923_twh": 7.03,
+   "avail_twh": 9.401000022888184,
+   "delta": -1.502
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55172,
+   "model_twh": 3.259999990463257,
+   "e923_twh": 4.651,
+   "avail_twh": 5.644000053405762,
+   "delta": -1.391
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55480,
+   "model_twh": 8.069000244140625,
+   "e923_twh": 9.317,
+   "avail_twh": 12.793999671936035,
+   "delta": -1.247
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55137,
+   "model_twh": 3.3529999256134033,
+   "e923_twh": 4.53,
+   "avail_twh": 5.241000175476074,
+   "delta": -1.177
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 60122,
+   "model_twh": 5.291999816894531,
+   "e923_twh": 6.437,
+   "avail_twh": 7.379000186920166,
+   "delta": -1.145
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55215,
+   "model_twh": 4.804999828338623,
+   "e923_twh": 5.84,
+   "avail_twh": 8.142999649047852,
+   "delta": -1.036
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55132,
+   "model_twh": 3.240999937057495,
+   "e923_twh": 3.95,
+   "avail_twh": 5.5960001945495605,
+   "delta": -0.709
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 59812,
+   "model_twh": 5.321000099182129,
+   "e923_twh": 6.029,
+   "avail_twh": 7.791999816894531,
+   "delta": -0.708
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55097,
+   "model_twh": 4.936999797821045,
+   "e923_twh": 5.478,
+   "avail_twh": 7.828999996185303,
+   "delta": -0.541
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 4937,
+   "model_twh": 2.628000020980835,
+   "e923_twh": 3.144,
+   "avail_twh": 3.88700008392334,
+   "delta": -0.516
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55230,
+   "model_twh": 4.9770002365112305,
+   "e923_twh": 5.486,
+   "avail_twh": 7.861000061035156,
+   "delta": -0.509
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 7512,
+   "model_twh": 2.2790000438690186,
+   "e923_twh": 2.659,
+   "avail_twh": 3.257999897003174,
+   "delta": -0.38
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 56233,
+   "model_twh": 0.5490000247955322,
+   "e923_twh": 0.818,
+   "avail_twh": 1.194000005722046,
+   "delta": -0.268
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55357,
+   "model_twh": 3.1489999294281006,
+   "e923_twh": 3.393,
+   "avail_twh": 4.803999900817871,
+   "delta": -0.244
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55168,
+   "model_twh": 2.6659998893737793,
+   "e923_twh": 2.873,
+   "avail_twh": 4.209000110626221,
+   "delta": -0.207
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55123,
+   "model_twh": 2.259000062942505,
+   "e923_twh": 2.423,
+   "avail_twh": 4.053999900817871,
+   "delta": -0.164
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 54817,
+   "model_twh": 0.9350000023841858,
+   "e923_twh": 1.081,
+   "avail_twh": 1.6169999837875366,
+   "delta": -0.146
+  },
+  {
+   "klass": "COAL_LIGNITE",
+   "plant": 6183,
+   "model_twh": 1.9550000429153442,
+   "e923_twh": 2.099,
+   "avail_twh": 2.321000099182129,
+   "delta": -0.144
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55062,
+   "model_twh": 4.171000003814697,
+   "e923_twh": 4.313,
+   "avail_twh": 5.919000148773193,
+   "delta": -0.142
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 58005,
+   "model_twh": 3.187000036239624,
+   "e923_twh": 3.22,
+   "avail_twh": 5.10099983215332,
+   "delta": -0.033
+  },
+  {
+   "klass": "COAL_PRB",
+   "plant": 127,
+   "model_twh": 0.0,
+   "e923_twh": 0.0,
+   "avail_twh": 0.0,
+   "delta": 0.0
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55098,
+   "model_twh": 0.0,
+   "e923_twh": 0.0,
+   "avail_twh": 0.0,
+   "delta": 0.0
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 50127,
+   "model_twh": 0.029999999329447746,
+   "e923_twh": 0.005,
+   "avail_twh": 0.6019999980926514,
+   "delta": 0.025
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55545,
+   "model_twh": 2.563999891281128,
+   "e923_twh": 2.535,
+   "avail_twh": 3.7869999408721924,
+   "delta": 0.028
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 50109,
+   "model_twh": 0.7039999961853027,
+   "e923_twh": 0.666,
+   "avail_twh": 1.6440000534057617,
+   "delta": 0.038
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55501,
+   "model_twh": 4.922999858856201,
+   "e923_twh": 4.843,
+   "avail_twh": 9.73900032043457,
+   "delta": 0.079
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55320,
+   "model_twh": 3.0329999923706055,
+   "e923_twh": 2.903,
+   "avail_twh": 5.2829999923706055,
+   "delta": 0.131
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 3443,
+   "model_twh": 1.121999979019165,
+   "e923_twh": 0.975,
+   "avail_twh": 1.8849999904632568,
+   "delta": 0.148
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 7900,
+   "model_twh": 1.406999945640564,
+   "e923_twh": 1.231,
+   "avail_twh": 2.6670000553131104,
+   "delta": 0.175
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 3469,
+   "model_twh": 1.4429999589920044,
+   "e923_twh": 1.231,
+   "avail_twh": 4.8429999351501465,
+   "delta": 0.212
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 3631,
+   "model_twh": 0.609000027179718,
+   "e923_twh": 0.384,
+   "avail_twh": 1.3279999494552612,
+   "delta": 0.225
+  },
+  {
+   "klass": "COAL_LIGNITE",
+   "plant": 7030,
+   "model_twh": 2.677000045776367,
+   "e923_twh": 2.437,
+   "avail_twh": 2.805999994277954,
+   "delta": 0.24
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55144,
+   "model_twh": 3.7219998836517334,
+   "e923_twh": 3.479,
+   "avail_twh": 6.060999870300293,
+   "delta": 0.243
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55223,
+   "model_twh": 1.7170000076293945,
+   "e923_twh": 1.413,
+   "avail_twh": 2.697000026702881,
+   "delta": 0.304
+  },
+  {
+   "klass": "COAL_PRB",
+   "plant": 7097,
+   "model_twh": 7.077000141143799,
+   "e923_twh": 6.764,
+   "avail_twh": 7.4679999351501465,
+   "delta": 0.313
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 56349,
+   "model_twh": 1.7369999885559082,
+   "e923_twh": 1.356,
+   "avail_twh": 3.3889999389648438,
+   "delta": 0.381
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55139,
+   "model_twh": 2.8489999771118164,
+   "e923_twh": 2.438,
+   "avail_twh": 4.453000068664551,
+   "delta": 0.411
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 56350,
+   "model_twh": 2.115999937057495,
+   "e923_twh": 1.674,
+   "avail_twh": 3.2720000743865967,
+   "delta": 0.442
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 56806,
+   "model_twh": 2.9110000133514404,
+   "e923_twh": 2.453,
+   "avail_twh": 4.1539998054504395,
+   "delta": 0.458
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55086,
+   "model_twh": 1.1820000410079956,
+   "e923_twh": 0.699,
+   "avail_twh": 3.634999990463257,
+   "delta": 0.483
+  },
+  {
+   "klass": "COAL_LIGNITE",
+   "plant": 6180,
+   "model_twh": 13.069000244140625,
+   "e923_twh": 12.537,
+   "avail_twh": 13.694000244140625,
+   "delta": 0.531
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 4939,
+   "model_twh": 1.8860000371932983,
+   "e923_twh": 1.242,
+   "avail_twh": 4.011000156402588,
+   "delta": 0.644
+  },
+  {
+   "klass": "COAL_PRB",
+   "plant": 56611,
+   "model_twh": 4.650000095367432,
+   "e923_twh": 3.907,
+   "avail_twh": 5.715000152587891,
+   "delta": 0.743
+  },
+  {
+   "klass": "COAL_PRB",
+   "plant": 298,
+   "model_twh": 8.03600025177002,
+   "e923_twh": 7.224,
+   "avail_twh": 8.432000160217285,
+   "delta": 0.812
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 3441,
+   "model_twh": 2.5199999809265137,
+   "e923_twh": 1.544,
+   "avail_twh": 5.173999786376953,
+   "delta": 0.975
+  },
+  {
+   "klass": "COAL_PRB",
+   "plant": 3470,
+   "model_twh": 12.413000106811523,
+   "e923_twh": 11.332,
+   "avail_twh": 13.270000457763672,
+   "delta": 1.081
+  },
+  {
+   "klass": "CC_REGULAR",
+   "plant": 55091,
+   "model_twh": 6.297999858856201,
+   "e923_twh": 4.885,
+   "avail_twh": 11.574999809265137,
+   "delta": 1.414
+  },
+  {
+   "klass": "COAL_PRB",
+   "plant": 6178,
+   "model_twh": 4.322000026702881,
+   "e923_twh": 2.603,
+   "avail_twh": 4.545000076293945,
+   "delta": 1.719
+  },
+  {
+   "klass": "COAL_PRB",
+   "plant": 6146,
+   "model_twh": 16.753000259399414,
+   "e923_twh": 12.592,
+   "avail_twh": 18.222000122070312,
+   "delta": 4.16
+  }
+ ],
+ "by_month": {
+  "CC_REGULAR": {
+   "model_gwh": [
+    9374.0,
+    8086.0,
+    5992.0,
+    6606.0,
+    10599.0,
+    12238.0,
+    14418.0,
+    15309.0,
+    12736.0,
+    9607.0,
+    8452.0,
+    10620.0
+   ],
+   "e923_gwh": [
+    9719.0,
+    8679.0,
+    5828.0,
+    6330.0,
+    11092.0,
+    14212.0,
+    16126.0,
+    17229.0,
+    14856.0,
+    10563.0,
+    8686.0,
+    11153.0
+   ],
+   "delta_gwh": [
+    -345.0,
+    -593.0,
+    165.0,
+    276.0,
+    -493.0,
+    -1975.0,
+    -1708.0,
+    -1920.0,
+    -2120.0,
+    -956.0,
+    -234.0,
+    -533.0
+   ]
+  },
+  "COAL_PRB": {
+   "model_gwh": [
+    5442.0,
+    5210.0,
+    4350.0,
+    4031.0,
+    3494.0,
+    6444.0,
+    6550.0,
+    5844.0,
+    5591.0,
+    4665.0,
+    4191.0,
+    4356.0
+   ],
+   "e923_gwh": [
+    5053.0,
+    4653.0,
+    4338.0,
+    4238.0,
+    3424.0,
+    5092.0,
+    5546.0,
+    5156.0,
+    4683.0,
+    4103.0,
+    3963.0,
+    3932.0
+   ],
+   "delta_gwh": [
+    389.0,
+    556.0,
+    12.0,
+    -207.0,
+    70.0,
+    1352.0,
+    1004.0,
+    688.0,
+    908.0,
+    562.0,
+    228.0,
+    424.0
+   ]
+  },
+  "COAL_LIGNITE": {
+   "model_gwh": [
+    1551.0,
+    1460.0,
+    629.0,
+    773.0,
+    1764.0,
+    1605.0,
+    1648.0,
+    1751.0,
+    1682.0,
+    1590.0,
+    1581.0,
+    1669.0
+   ],
+   "e923_gwh": [
+    1496.0,
+    1327.0,
+    812.0,
+    835.0,
+    1672.0,
+    1556.0,
+    1527.0,
+    1647.0,
+    1625.0,
+    1503.0,
+    1546.0,
+    1528.0
+   ],
+   "delta_gwh": [
+    55.0,
+    133.0,
+    -184.0,
+    -62.0,
+    92.0,
+    48.0,
+    121.0,
+    103.0,
+    56.0,
+    87.0,
+    35.0,
+    141.0
+   ]
+  }
+ },
+ "by_hour_class": {
+  "season_tod": [
+   {
+    "season": "shoulder",
+    "tod": "off",
+    "hours": 1224,
+    "cc_model": 10.29699993133545,
+    "cc_act": 11.375,
+    "coal_model": 8.5600004196167,
+    "coal_act": 7.982,
+    "cc_head_inmerit": 0.527999997138977,
+    "cc_head_outmerit": 14.097999572753906,
+    "model_price": 38.835,
+    "cc_delta": -1.078,
+    "coal_delta": 0.578
+   },
+   {
+    "season": "shoulder",
+    "tod": "on",
+    "hours": 2448,
+    "cc_model": 30.959999084472656,
+    "cc_act": 32.508,
+    "coal_model": 18.506999969482422,
+    "coal_act": 18.438,
+    "cc_head_inmerit": 1.0640000104904175,
+    "cc_head_outmerit": 17.863000869750977,
+    "model_price": 55.581,
+    "cc_delta": -1.547,
+    "coal_delta": 0.069
+   },
+   {
+    "season": "summer",
+    "tod": "off",
+    "hours": 976,
+    "cc_model": 13.960000038146973,
+    "cc_act": 15.804,
+    "coal_model": 9.621999740600586,
+    "coal_act": 7.71,
+    "cc_head_inmerit": 0.5680000185966492,
+    "cc_head_outmerit": 11.930000305175781,
+    "model_price": 56.014,
+    "cc_delta": -1.844,
+    "coal_delta": 1.912
+   },
+   {
+    "season": "summer",
+    "tod": "on",
+    "hours": 1952,
+    "cc_model": 40.7400016784668,
+    "cc_act": 44.792,
+    "coal_model": 21.492000579833984,
+    "coal_act": 19.392,
+    "cc_head_inmerit": 0.531000018119812,
+    "cc_head_outmerit": 11.628999710083008,
+    "model_price": 107.069,
+    "cc_delta": -4.052,
+    "coal_delta": 2.1
+   },
+   {
+    "season": "winter",
+    "tod": "off",
+    "hours": 720,
+    "cc_model": 8.701000213623047,
+    "cc_act": 9.301,
+    "coal_model": 6.296999931335449,
+    "coal_act": 5.611,
+    "cc_head_inmerit": 0.39800000190734863,
+    "cc_head_outmerit": 9.256999969482422,
+    "model_price": 40.112,
+    "cc_delta": -0.599,
+    "coal_delta": 0.686
+   },
+   {
+    "season": "winter",
+    "tod": "on",
+    "hours": 1440,
+    "cc_model": 19.378999710083008,
+    "cc_act": 20.694,
+    "coal_model": 13.392000198364258,
+    "coal_act": 12.122,
+    "cc_head_inmerit": 0.9110000133514404,
+    "cc_head_outmerit": 16.382999420166016,
+    "model_price": 45.947,
+    "cc_delta": -1.316,
+    "coal_delta": 1.27
+   }
+  ],
+  "loadq": [
+   {
+    "loadq": "L1 low",
+    "hours": 2190,
+    "cc_model": 17.39900016784668,
+    "cc_act": 20.147,
+    "coal_model": 16.517000198364258,
+    "coal_act": 14.66,
+    "cc_head_inmerit": 1.0169999599456787,
+    "cc_head_outmerit": 28.322999954223633,
+    "model_price": 35.435,
+    "cc_delta": -2.747,
+    "coal_delta": 1.857
+   },
+   {
+    "loadq": "L2",
+    "hours": 2190,
+    "cc_model": 25.37299919128418,
+    "cc_act": 27.939,
+    "coal_model": 18.4950008392334,
+    "coal_act": 16.644,
+    "cc_head_inmerit": 1.218999981880188,
+    "cc_head_outmerit": 23.73699951171875,
+    "model_price": 44.408,
+    "cc_delta": -2.567,
+    "coal_delta": 1.851
+   },
+   {
+    "loadq": "L3",
+    "hours": 2190,
+    "cc_model": 34.119998931884766,
+    "cc_act": 36.086,
+    "coal_model": 19.718000411987305,
+    "coal_act": 18.129,
+    "cc_head_inmerit": 1.1829999685287476,
+    "cc_head_outmerit": 18.356000900268555,
+    "model_price": 54.928,
+    "cc_delta": -1.965,
+    "coal_delta": 1.59
+   },
+   {
+    "loadq": "L4 high",
+    "hours": 2190,
+    "cc_model": 47.14500045776367,
+    "cc_act": 50.302,
+    "coal_model": 23.138999938964844,
+    "coal_act": 21.821,
+    "cc_head_inmerit": 0.5799999833106995,
+    "cc_head_outmerit": 10.746000289916992,
+    "model_price": 112.859,
+    "cc_delta": -3.157,
+    "coal_delta": 1.318
+   }
+  ]
+ },
+ "notes": "per-plant / monthly / hourly actuals are EIA-923 GROSS of BTM (the bench subtracts the class BTM in class_btm_twh); hourly actual = per-plant CEMS shape rescaled to its EIA-923 annual (flat where no CEMS); headroom = cap_mw - mw per CC unit-hour; in-merit = mc <= own-zone price + 0.5"
+}

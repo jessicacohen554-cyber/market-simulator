@@ -1,0 +1,170 @@
+{
+ "2022": {
+  "n_rows": 722,
+  "pmax_avail_identical": true,
+  "hr_rows_moved": 4,
+  "mc_rows_moved": 4,
+  "moved_plants": [
+   8906
+  ],
+  "moved_groups": [
+   "ST_GAS"
+  ],
+  "detail": [
+   {
+    "name": "Astoria Generating Station committed",
+    "hr_ctl": 9.9218,
+    "hr_arm": 12.1478,
+    "mc_ctl": 82.22,
+    "mc_arm": 97.93
+   },
+   {
+    "name": "Astoria Generating Station econlo",
+    "hr_ctl": 9.4493,
+    "hr_arm": 11.5693,
+    "mc_ctl": 78.88,
+    "mc_arm": 93.85
+   },
+   {
+    "name": "Astoria Generating Station econhi",
+    "hr_ctl": 9.4493,
+    "hr_arm": 11.5693,
+    "mc_ctl": 78.88,
+    "mc_arm": 93.85
+   },
+   {
+    "name": "Astoria Generating Station peak",
+    "hr_ctl": 39.6871,
+    "hr_arm": 48.5911,
+    "mc_ctl": 292.39,
+    "mc_arm": 355.26
+   }
+  ]
+ },
+ "2023": {
+  "n_rows": 704,
+  "pmax_avail_identical": true,
+  "hr_rows_moved": 4,
+  "mc_rows_moved": 4,
+  "moved_plants": [
+   8906
+  ],
+  "moved_groups": [
+   "ST_GAS"
+  ],
+  "detail": [
+   {
+    "name": "Astoria Generating Station committed",
+    "hr_ctl": 9.9218,
+    "hr_arm": 12.1399,
+    "mc_ctl": 33.78,
+    "mc_arm": 38.55
+   },
+   {
+    "name": "Astoria Generating Station econlo",
+    "hr_ctl": 9.4493,
+    "hr_arm": 11.5618,
+    "mc_ctl": 32.76,
+    "mc_arm": 37.31
+   },
+   {
+    "name": "Astoria Generating Station econhi",
+    "hr_ctl": 9.4493,
+    "hr_arm": 11.5618,
+    "mc_ctl": 32.76,
+    "mc_arm": 37.31
+   },
+   {
+    "name": "Astoria Generating Station peak",
+    "hr_ctl": 39.6871,
+    "hr_arm": 48.5596,
+    "mc_ctl": 97.83,
+    "mc_arm": 116.93
+   }
+  ]
+ },
+ "2024": {
+  "n_rows": 695,
+  "pmax_avail_identical": true,
+  "hr_rows_moved": 4,
+  "mc_rows_moved": 4,
+  "moved_plants": [
+   8906
+  ],
+  "moved_groups": [
+   "ST_GAS"
+  ],
+  "detail": [
+   {
+    "name": "Astoria Generating Station committed",
+    "hr_ctl": 9.9218,
+    "hr_arm": 12.0123,
+    "mc_ctl": 39.2,
+    "mc_arm": 44.02
+   },
+   {
+    "name": "Astoria Generating Station econlo",
+    "hr_ctl": 9.4493,
+    "hr_arm": 11.4403,
+    "mc_ctl": 38.11,
+    "mc_arm": 42.7
+   },
+   {
+    "name": "Astoria Generating Station econhi",
+    "hr_ctl": 9.4493,
+    "hr_arm": 11.4403,
+    "mc_ctl": 38.11,
+    "mc_arm": 42.7
+   },
+   {
+    "name": "Astoria Generating Station peak",
+    "hr_ctl": 39.6871,
+    "hr_arm": 48.0493,
+    "mc_ctl": 107.9,
+    "mc_arm": 127.2
+   }
+  ]
+ },
+ "2025": {
+  "n_rows": 713,
+  "pmax_avail_identical": true,
+  "hr_rows_moved": 4,
+  "mc_rows_moved": 4,
+  "moved_plants": [
+   8906
+  ],
+  "moved_groups": [
+   "ST_GAS"
+  ],
+  "detail": [
+   {
+    "name": "Astoria Generating Station committed",
+    "hr_ctl": 9.9218,
+    "hr_arm": 11.7437,
+    "mc_ctl": 55.32,
+    "mc_arm": 62.39
+   },
+   {
+    "name": "Astoria Generating Station econlo",
+    "hr_ctl": 9.4493,
+    "hr_arm": 11.1845,
+    "mc_ctl": 53.48,
+    "mc_arm": 60.22
+   },
+   {
+    "name": "Astoria Generating Station econhi",
+    "hr_ctl": 9.4493,
+    "hr_arm": 11.1845,
+    "mc_ctl": 53.48,
+    "mc_arm": 60.22
+   },
+   {
+    "name": "Astoria Generating Station peak",
+    "hr_ctl": 39.6871,
+    "hr_arm": 46.9749,
+    "mc_ctl": 170.95,
+    "mc_arm": 199.26
+   }
+  ]
+ }
+}

@@ -3934,6 +3934,8 @@ results/calibration/_rcaiso21/
 
 results/calibration/_rcaiso22/
 
+# R-ERCOT-21 shard legs: kept out of main (rule 32(d)); provenance SHAs in RESULT doc
+results/calibration/r_ercot21_arm_*/
 # PJM-NEXT-16 per-year shard legs: composed in the parent, never committed (rule 32(d)).
 # A legs pinned 6d4c7749 (branches claude/pjmnext16-a-<y>); B legs pinned 42e87bcd
 # (claude/pjmnext16-b2-<y>); the 5b813f34 B legs are invalid (PRECOMMIT §7).
@@ -3944,3 +3946,18 @@ results/calibration/_rcaiso23/
 results/calibration/soco96_20*/
 # soco-96 zero-LP probe outputs (G-DRIFT identity); numbers live in PRECOMMIT-soco-96 section 3
 results/calibration/_soco96/
+
+# NWPP-NEXT-15: PR #6932's per-year legs (competing NEXT-14 arm, eia923_cc_family_heat_rates + per-unit fuel-split) and its
+# composite — scored as a COMPARISON only, never registered, never main (owner card "Score, then close"; rules 31/32(d)).
+# Provenance (rule 33(d)): 2019 cd4ceba8 2020 d3498dec 2021 cb9d7e61 2022 7e75c269 2023 ab503a60 2024 36e0ea7c 2025 f589faf2
+results/calibration/nwppnext14_20[0-9][0-9]/
+results/calibration/nwppnext14_pr6932_span/
+# NWPP-NEXT-15 per-year legs of THIS lane's arm (transport only; composite nwppnext14vd_span is registered).
+results/calibration/nwppnext14vd_20[0-9][0-9]/
+results/calibration/_rcaiso24/
+
+# R-ERCOT-22 per-year legs: kept out of main (rule 29(c)/32(d)); the composite is registered
+results/calibration/r_ercot22_arm_*/
+# NYISO-NEXT-21 per-year legs (rule 32 (d)); composed into nyisonext21_span. Provenance (rule 33 (d)): 2021 83b4652a03e8eb4e6c3c98d3840933fd724f6cb2, 2022 2578b154db0029de0f4fe0e591a9dc8782e9df57, 2023 4c519e1512ed8e3f0851f65041c22e5e0f4e4563, 2024 80cbd1fd52d74ec1f74456083f8ad1ae41c75748, 2025 61b01f799a9cb9458999ea6faf23212c51d96bc7
+results/calibration/nyisonext21_202[2-5]/
+results/calibration/_rcaiso28/

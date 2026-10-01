@@ -524,6 +524,20 @@ def apply_plant_monthly_fuel_prices(
     (``hindcast_fuel_variant``, scenarios.py), so it keeps the overlay —
     see the gate comment below.
 
+    **Captive-mine marginal coal price (NWPP-NEXT-15, default off).** Under
+    ``config.coal_captive_marginal_fuel_price`` (and coal monthly pricing on),
+    after the coal pass above the ECON / PEAKING tranches of every
+    MIXED-source coal plant (``0 < captive MMBtu share < 1`` on that year's
+    EIA-923 Page 5 receipts, no minimum share) have the cells this seam wrote
+    REPLACED by the plant's Page-5 non-captive delivered price -- plant-monthly
+    where the month has non-captive lots with a cost, else the year's -- while
+    must-run / committed tranches keep the blend. The blend is the legacy
+    parquet and the replacement is Page 5, so the econ-vs-committed spread at
+    those plants mixes the captive gap with any source difference (PHASE0 §3;
+    the full-seam Page-5 migration is a separate rule-14 repair). A year with
+    no Page 5 file leaves every row untouched and logs that it did. See
+    :mod:`market_sim.data.fuel.captive_coal`.
+
     A missing parquet or a year outside the F923 window is likewise a
     no-op: every generator keeps the per-fuel default. The same is true
     for plants outside the F923 sample when the fallback is off, per the
@@ -537,7 +551,8 @@ def apply_plant_monthly_fuel_prices(
         fleet: Vectorized fleet attributes carrying ``plant_code``,
             ``fuel_type_idx`` and (for the fallback) ``state`` / ``zone_idx``.
         config: Scenario configuration supplying ``hours``,
-            ``coal_plant_monthly_pricing`` and the nearby-fallback knobs.
+            ``coal_plant_monthly_pricing``, ``coal_captive_marginal_fuel_price``
+            and the nearby-fallback knobs.
         year: Calendar year keying the F923 monthly lookup.
         monthly_costs_path: Optional override for the F923 parquet path.
         state_gas_reference_path: Optional override for the EIA N3045 state
@@ -720,6 +735,49 @@ def apply_plant_monthly_fuel_prices(
             n_overwrites,
             n_nearby,
         )
+    # NWPP-NEXT-15 captive-mine marginal coal price (GATED default-off; owner
+    # ruling 2026-09-30 "Build, no threshold"). At a MIXED-source coal plant
+    # the ECON / PEAKING tranches take the Page-5 non-captive delivered price
+    # INSTEAD of the blend written above (rule 19 [R-ONE-MECH]: it REPLACES
+    # this seam's value on exactly those cells, stacks on nothing); must-run /
+    # committed keep the blend. Inherits this seam's mode gate (the early
+    # returns above) and requires coal monthly pricing to be on, since it
+    # replaces what that pricing wrote. See data/fuel/captive_coal.py.
+    if bool(getattr(config, "coal_captive_marginal_fuel_price", False)) and bool(
+        getattr(config, "coal_plant_monthly_pricing", True)
+    ):
+        from .captive_coal import apply_captive_marginal_coal_price
+
+        coal_idx = FUEL_TYPE_MAP["coal"]
+        report = apply_captive_marginal_coal_price(
+            fuel_prices,
+            written,
+            list(fleet.unit_ids),
+            np.asarray(fleet.plant_code),
+            np.asarray(fleet.fuel_type_idx) == coal_idx,
+            month_idx,
+            year,
+        )
+        if report["status"] == "no_receipts":
+            logger.info(
+                "coal_captive_marginal_fuel_price (%s %d): no EIA-923 Page 5 "
+                "coal-receipts file for the year -- every coal tranche left "
+                "on the host seam's price (untouched)",
+                config.iso,
+                year,
+            )
+        else:
+            logger.info(
+                "coal_captive_marginal_fuel_price (%s %d): %d mixed-source "
+                "plant(s) repriced on econ/peak tranches %s; %d mixed plant(s) "
+                "untouched (non-captive cost withheld) %s",
+                config.iso,
+                year,
+                len(report["plants"]),
+                report["plants"],
+                len(report["skipped_withheld"]),
+                report["skipped_withheld"],
+            )
     return written
 
 

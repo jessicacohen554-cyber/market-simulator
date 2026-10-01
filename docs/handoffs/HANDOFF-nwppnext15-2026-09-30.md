@@ -1,5 +1,10 @@
 # HANDOFF — NWPP-NEXT-15: NWPP calibration after keeper #19
 
+> **SUPERSEDED IN PART (NWPP-NEXT-15, session 01VviGf2, 2026-10-01).** A NEXT-15 session ran from the OTHER lane's
+> handoff. It solved the vintage-denominator arm (not promoted; it tied #19), built lever 1 (`coal_captive_marginal_fuel_price`)
+> and lever 2 (`unit_outage_dispatched_bin_live_denominator`). The current prompt is `HANDOFF-nwppnext16-2026-10-01.md`.
+
+
 ```
 SESSION NWPP-NEXT-15 — NWPP calibration, keeper #19 (2026-09-30-nwppnext14-clark-hr-bridger)
 DATA PROFILE: nwpp

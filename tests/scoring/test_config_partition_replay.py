@@ -147,11 +147,19 @@ class TestWriterDerivation(unittest.TestCase):
     def test_an_identical_leg_derives_an_empty_overlay(self):
         self.assertEqual(derive_overlay({"a": 1}, {"a": 1}), {})
 
-    def test_the_exclusion_set_is_the_documented_four(self):
+    def test_the_exclusion_set_is_the_documented_five(self):
+        # R-ERCOT-22 added ordc_lolp_shift_sigma, the third published ORDC
+        # order value in ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR.
         self.assertEqual(
             YEAR_DRIVEN_FIELDS,
             frozenset(
-                {"weather_year", "gas_price_override", "ordc_voll", "ordc_mcl_mw"}
+                {
+                    "weather_year",
+                    "gas_price_override",
+                    "ordc_voll",
+                    "ordc_mcl_mw",
+                    "ordc_lolp_shift_sigma",
+                }
             ),
         )
 

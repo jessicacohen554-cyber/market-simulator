@@ -44,6 +44,11 @@ on both sides of the comparison):
   LZ_LCRA), West/Panhandle→LZ_WEST) — the scorer's formula mirrored on the
   actual. ERCOT 2025 has no committed zonal DA series, so `da_lw` is absent
   for that year (RT gates; nothing lost).
+* **MISO (zone-resolved, since 2026-10-01 — owner ruling, miso-294):**
+  `actual_lmp_hourly_zonal_MISO.parquet` trading hubs per model zone
+  (MISO-South = mean of its four hubs; MISO-Plains = MINN+ILLINOIS mean
+  proxy) × measured zonal demand, zone-demand-weighted; registry
+  `ZONAL_LW_SOURCES`. Record: `docs/RESULT-miso294-zone-resolved-basis-2026-10-01.md`.
 * **Other ISOs (system-level):** the committed hourly system series
   (`actual_lmp_hourly_<ISO>.parquet`) × measured system load. The residual
   zonal-weighting wedge (hub vs load-zone premium) is second-order (ERCOT
