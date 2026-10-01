@@ -1716,6 +1716,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # keeper's included) stays valid; ON it moves the NYISO delivered-gas array
     # and hashes distinctly. Registered IN THE SAME COMMIT as the field.
     "nyiso_gas_flow_date",
+    # NYISO-NEXT-25 print-level daily gas, default off: dropped from the hash at
+    # its False default so every pre-existing key (the NYISO keeper's included)
+    # stays valid; ON it moves the NYISO delivered-gas array and hashes
+    # distinctly. Registered IN THE SAME COMMIT as the field.
+    "nyiso_gas_daily_print_level",
     # nyiso-224 NYISO TOTAL EAST cutset transfer envelope, default off: dropped
     # from the hash at its False default so every pre-existing NYISO key (the
     # designated keeper's included) stays valid, and ON it selects a different
@@ -2960,6 +2965,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_hub_gap_month_level": "False",
     # Added by NYISO-NEXT-23 WITH the field, same commit.
     "nyiso_gas_flow_date": "False",
+    # Added by NYISO-NEXT-25 WITH the field, same commit.
+    "nyiso_gas_daily_print_level": "False",
     # Added by nyiso-224 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "nyiso_total_east_cutset_ttc": "False",
@@ -19837,6 +19844,32 @@ class ScenarioConfig:
     # every registered keeper and every forecast is byte-identical.
     nyiso_gas_flow_date: bool = False
 
+    # Tier 3 (calibration) — NYISO-NEXT-25. Price each day of NYISO's daily gas at
+    # its OWN measured Transco Z6 NY print (times the zone-month hub ratio), not at
+    # the print rescaled so the month's CALENDAR-day mean equals the monthly hub
+    # level. The monthly level is a TRADE-day statistic (the EIA mean of daily
+    # quotes, one per trading day), while the day series it is renormalised over is
+    # a CALENDAR-day series in which a Friday / holiday print covers 3-4 flow days.
+    # In a month whose spike sits on such a package the calendar mean exceeds the
+    # trade-day mean and the renormalisation scales EVERY ordinary day down by
+    # trade_mean / calendar_mean (Jan-2025: 0.78 trade-dated, 0.65 flow-dated, the
+    # $97.90 MLK package) — and the spike days it pays for are clipped by the
+    # dual-fuel oil cap anyway, so the month's mean is not even preserved after the
+    # cap. The downstate CT peakers in the same zones are already SET to the raw
+    # print plus LDC transport (``apply_nyiso_downstate_ct_gas_daily``), so off,
+    # one commodity carries two levels in one zone. Armed, both
+    # ``_nyiso_hub_daily_gas_prices`` branches (trade-date interpolation and the
+    # ``nyiso_gas_flow_date`` staircase) divide by the month's trade-day print
+    # mean only: a priced day is ``hub_level * print / trade_mean``, i.e. for NYC
+    # the Z6 print itself on that day. Rule 14 [R-ACCURATE] (the measured print is
+    # the day's price) and rule 19 (one level for one commodity); rule 13: the
+    # identical construction regenerates from forward prints; ZERO free
+    # parameters. NOT mean-preserving by design: a spike month's level rises to
+    # the calendar average of its prints. Off by default so every other ISO, every
+    # registered keeper and every forecast is byte-identical. Evidence:
+    # docs/records/nyiso/FINDING-nyiso-next25-offcap-winter-gap-phase0-2026-10-01.md.
+    nyiso_gas_daily_print_level: bool = False
+
     # Tier 3 (calibration) — nyiso-224. The model's ONE
     # ``Upstate_West -> Capital_Hudson`` link is the A-E -> F+ cutset, whose
     # NYISO name is TOTAL EAST; ``NYISO_INTERFACE_TTC_BY_MONTH`` caps it at the
@@ -25091,6 +25124,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_ep_gas_basis_receipts_fallback": 3,
     "nyiso_hub_gap_month_level": 3,
     "nyiso_gas_flow_date": 3,
+    "nyiso_gas_daily_print_level": 3,
     "nyiso_total_east_cutset_ttc": 3,
     "nyiso_fg_split": 3,
     "mustrun_chp_btm_holdout": 3,

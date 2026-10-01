@@ -1,0 +1,1071 @@
+[
+ {
+  "year": 2021,
+  "winter_days": 90,
+  "cap_binding_winter_days": 1,
+  "offcap_days": 89,
+  "nyc_offcap": {
+   "da_mean": 48.51,
+   "keeper_mean": 48.63,
+   "keeper_gap_sum_usd_day": 10.0,
+   "keeper_gap_mean": 0.12,
+   "arm_mean": 49.26,
+   "arm_gap_sum_usd_day": 67.0,
+   "arm_gap_mean": 0.75
+  },
+  "nyc_by_hour_band": {
+   "00-06": {
+    "da": 41.67,
+    "keeper": 44.0,
+    "gap": 2.33
+   },
+   "07-10": {
+    "da": 51.68,
+    "keeper": 50.22,
+    "gap": -1.46
+   },
+   "11-16": {
+    "da": 48.9,
+    "keeper": 49.58,
+    "gap": 0.68
+   },
+   "17-21": {
+    "da": 57.0,
+    "keeper": 52.85,
+    "gap": -4.16
+   },
+   "22-23": {
+    "da": 43.67,
+    "keeper": 48.18,
+    "gap": 4.51
+   }
+  },
+  "zone_gap_offcap": {
+   "NYC": {
+    "da": 48.51,
+    "keeper": 48.63,
+    "gap": 0.12
+   },
+   "Capital_Hudson": {
+    "da": 51.87,
+    "keeper": 47.75,
+    "gap": -4.12
+   },
+   "Upstate_West": {
+    "da": 30.59,
+    "keeper": 44.36,
+    "gap": 13.77
+   },
+   "Long_Island": {
+    "da": 65.81,
+    "keeper": 56.44,
+    "gap": -9.37
+   },
+   "Lower_Hudson": {
+    "da": 47.13,
+    "keeper": 48.2,
+    "gap": 1.07
+   }
+  },
+  "spread_nyc_minus_Capital_Hudson": {
+   "da": -3.36,
+   "keeper": 0.87
+  },
+  "spread_nyc_minus_Upstate_West": {
+   "da": 17.91,
+   "keeper": 4.26
+  },
+  "gas_offcap": {
+   "z6_ny_daily_mean": 3.718,
+   "model_nyc_gas_mw_wtd": 3.935,
+   "model_minus_z6_mean": 0.217,
+   "corr_model_gas_vs_z6": 0.872,
+   "by_class": {
+    "CC_CHP": 3.814,
+    "CC_REGULAR": 4.022,
+    "CT_CHP": 3.814,
+    "CT_PEAKER": 3.815,
+    "ST_CHP": 3.814,
+    "ST_GAS": 4.024
+   },
+   "corr_da_vs_z6": 0.546,
+   "corr_keeper_vs_model_gas": 0.935
+  },
+  "implied_heat_rate_offcap": {
+   "da_over_z6_median": 12.36,
+   "keeper_over_model_gas_median": 12.97,
+   "keeper_over_z6_median": 13.91,
+   "gap_split_mean": {
+    "fuel_level_part": 3.08,
+    "heat_rate_part": -2.97,
+    "total": 0.12
+   },
+   "nyc_gas_mw_wtd_hr": 12.933
+  },
+  "nearest_class_keeper": {
+   "CC_CHP": 0.441,
+   "CC_REGULAR": 0.016,
+   "CT_CHP": 0.067,
+   "CT_PEAKER": 0.24,
+   "ST_CHP": 0.034,
+   "ST_GAS": 0.199,
+   "none_within_3": 0.003
+  },
+  "nearest_class_da": {
+   "CC_CHP": 0.321,
+   "CC_REGULAR": 0.171,
+   "CT_CHP": 0.131,
+   "CT_PEAKER": 0.249,
+   "ST_CHP": 0.017,
+   "ST_GAS": 0.051,
+   "none_within_3": 0.06
+  },
+  "da_implied_gas_at_model_ihr_offcap": {
+   "mean": 3.852,
+   "minus_model_gas": -0.083,
+   "minus_z6": 0.134
+  },
+  "nyc_gap_attribution_offcap": {
+   "upstate_west_level": 13.77,
+   "capital_minus_upstate_spread_deficit": -17.89,
+   "nyc_minus_capital_spread_deficit": 4.23,
+   "total": 0.12
+  },
+  "da_F_minus_E_offcap": {
+   "lbmp": 19.07,
+   "loss": 1.18,
+   "congestion_sign_as_published": -17.89,
+   "share_hours_congestion_gt_5": 0.718
+  },
+  "class_gas_by_month_offcap": {
+   "NYC": {
+    "1": {
+     "z6_daily": 2.97,
+     "iroquois_z2_monthly": 3.94,
+     "CC_REGULAR": 3.28,
+     "CC_CHP": 3.07,
+     "ST_GAS": 3.28,
+     "CT_PEAKER": 3.07
+    },
+    "2": {
+     "z6_daily": 4.89,
+     "iroquois_z2_monthly": 6.15,
+     "CC_REGULAR": 5.19,
+     "CC_CHP": 4.98,
+     "ST_GAS": 5.2,
+     "CT_PEAKER": 4.99
+    },
+    "12": {
+     "z6_daily": 3.45,
+     "iroquois_z2_monthly": 4.41,
+     "CC_REGULAR": 3.75,
+     "CC_CHP": 3.54,
+     "ST_GAS": 3.75,
+     "CT_PEAKER": 3.54
+    }
+   },
+   "Capital_Hudson": {
+    "1": {
+     "z6_daily": 2.97,
+     "iroquois_z2_monthly": 3.94,
+     "CC_REGULAR": 4.97,
+     "CC_CHP": 4.97,
+     "ST_GAS": 4.97,
+     "CT_PEAKER": 4.97
+    },
+    "2": {
+     "z6_daily": 4.89,
+     "iroquois_z2_monthly": 6.15,
+     "CC_REGULAR": 7.66,
+     "CC_CHP": 7.24,
+     "ST_GAS": 7.24,
+     "CT_PEAKER": 7.24
+    },
+    "12": {
+     "z6_daily": 3.45,
+     "iroquois_z2_monthly": 4.41,
+     "CC_REGULAR": 7.76,
+     "CC_CHP": 7.76,
+     "ST_GAS": 7.76,
+     "CT_PEAKER": 7.76
+    }
+   }
+  },
+  "by_month": {
+   "1": {
+    "n": 31,
+    "gap": 4.24,
+    "model_gas": 3.193,
+    "z6": 2.968
+   },
+   "2": {
+    "n": 27,
+    "gap": -6.59,
+    "model_gas": 5.104,
+    "z6": 4.89
+   },
+   "12": {
+    "n": 31,
+    "gap": 1.83,
+    "model_gas": 3.657,
+    "z6": 3.446
+   }
+  }
+ },
+ {
+  "year": 2022,
+  "winter_days": 90,
+  "cap_binding_winter_days": 10,
+  "offcap_days": 80,
+  "nyc_offcap": {
+   "da_mean": 103.62,
+   "keeper_mean": 95.18,
+   "keeper_gap_sum_usd_day": -676.0,
+   "keeper_gap_mean": -8.45,
+   "arm_mean": 92.3,
+   "arm_gap_sum_usd_day": -906.0,
+   "arm_gap_mean": -11.33
+  },
+  "nyc_by_hour_band": {
+   "00-06": {
+    "da": 90.18,
+    "keeper": 86.62,
+    "gap": -3.56
+   },
+   "07-10": {
+    "da": 114.15,
+    "keeper": 97.23,
+    "gap": -16.91
+   },
+   "11-16": {
+    "da": 100.23,
+    "keeper": 97.02,
+    "gap": -3.21
+   },
+   "17-21": {
+    "da": 122.32,
+    "keeper": 103.25,
+    "gap": -19.06
+   },
+   "22-23": {
+    "da": 93.08,
+    "keeper": 95.28,
+    "gap": 2.2
+   }
+  },
+  "zone_gap_offcap": {
+   "NYC": {
+    "da": 103.62,
+    "keeper": 95.18,
+    "gap": -8.45
+   },
+   "Capital_Hudson": {
+    "da": 116.78,
+    "keeper": 93.29,
+    "gap": -23.49
+   },
+   "Upstate_West": {
+    "da": 68.36,
+    "keeper": 85.94,
+    "gap": 17.58
+   },
+   "Long_Island": {
+    "da": 114.14,
+    "keeper": 99.83,
+    "gap": -14.31
+   },
+   "Lower_Hudson": {
+    "da": 101.5,
+    "keeper": 94.33,
+    "gap": -7.18
+   }
+  },
+  "spread_nyc_minus_Capital_Hudson": {
+   "da": -13.16,
+   "keeper": 1.89
+  },
+  "spread_nyc_minus_Upstate_West": {
+   "da": 35.26,
+   "keeper": 9.23
+  },
+  "gas_offcap": {
+   "z6_ny_daily_mean": 8.22,
+   "model_nyc_gas_mw_wtd": 8.377,
+   "model_minus_z6_mean": 0.156,
+   "corr_model_gas_vs_z6": 0.945,
+   "by_class": {
+    "CC_CHP": 7.795,
+    "CC_REGULAR": 8.012,
+    "CT_CHP": 7.798,
+    "CT_PEAKER": 9.741,
+    "ST_CHP": 7.795,
+    "ST_GAS": 8.036
+   },
+   "corr_da_vs_z6": 0.388,
+   "corr_keeper_vs_model_gas": 0.887
+  },
+  "implied_heat_rate_offcap": {
+   "da_over_z6_median": 12.75,
+   "keeper_over_model_gas_median": 12.22,
+   "keeper_over_z6_median": 13.08,
+   "gap_split_mean": {
+    "fuel_level_part": 4.32,
+    "heat_rate_part": -12.77,
+    "total": -8.45
+   },
+   "nyc_gas_mw_wtd_hr": 12.751
+  },
+  "nearest_class_keeper": {
+   "CC_CHP": 0.252,
+   "CC_REGULAR": 0.071,
+   "CT_CHP": 0.079,
+   "CT_PEAKER": 0.268,
+   "ST_CHP": 0.047,
+   "ST_GAS": 0.26,
+   "none_within_3": 0.024
+  },
+  "nearest_class_da": {
+   "CC_CHP": 0.183,
+   "CC_REGULAR": 0.144,
+   "CT_CHP": 0.103,
+   "CT_PEAKER": 0.251,
+   "ST_CHP": 0.034,
+   "ST_GAS": 0.061,
+   "below_nyc_gas": 0.059,
+   "none_within_3": 0.166
+  },
+  "da_implied_gas_at_model_ihr_offcap": {
+   "mean": 8.726,
+   "minus_model_gas": 0.349,
+   "minus_z6": 0.505
+  },
+  "nyc_gap_attribution_offcap": {
+   "upstate_west_level": 17.58,
+   "capital_minus_upstate_spread_deficit": -41.08,
+   "nyc_minus_capital_spread_deficit": 15.05,
+   "total": -8.45
+  },
+  "da_F_minus_E_offcap": {
+   "lbmp": 43.27,
+   "loss": 2.33,
+   "congestion_sign_as_published": -40.95,
+   "share_hours_congestion_gt_5": 0.745
+  },
+  "class_gas_by_month_offcap": {
+   "NYC": {
+    "1": {
+     "z6_daily": 10.75,
+     "iroquois_z2_monthly": 12.74,
+     "CC_REGULAR": 11.09,
+     "CC_CHP": 10.87,
+     "ST_GAS": 11.1,
+     "CT_PEAKER": 12.02
+    },
+    "2": {
+     "z6_daily": 6.1,
+     "iroquois_z2_monthly": 7.35,
+     "CC_REGULAR": 5.79,
+     "CC_CHP": 5.57,
+     "ST_GAS": 5.79,
+     "CT_PEAKER": 7.35
+    },
+    "12": {
+     "z6_daily": 7.98,
+     "iroquois_z2_monthly": 11.07,
+     "CC_REGULAR": 7.33,
+     "CC_CHP": 7.12,
+     "ST_GAS": 7.38,
+     "CT_PEAKER": 10.03
+    }
+   },
+   "Capital_Hudson": {
+    "1": {
+     "z6_daily": 10.75,
+     "iroquois_z2_monthly": 12.74,
+     "CC_REGULAR": 18.3,
+     "CC_CHP": 16.21,
+     "ST_GAS": 17.04,
+     "CT_PEAKER": 16.21
+    },
+    "2": {
+     "z6_daily": 6.1,
+     "iroquois_z2_monthly": 7.35,
+     "CC_REGULAR": 11.23,
+     "CC_CHP": 10.96,
+     "ST_GAS": 11.07,
+     "CT_PEAKER": 10.96
+    },
+    "12": {
+     "z6_daily": 7.98,
+     "iroquois_z2_monthly": 11.07,
+     "CC_REGULAR": 10.57,
+     "CC_CHP": 10.15,
+     "ST_GAS": 10.32,
+     "CT_PEAKER": 10.15
+    }
+   }
+  },
+  "by_month": {
+   "1": {
+    "n": 26,
+    "gap": -3.07,
+    "model_gas": 11.265,
+    "z6": 10.749
+   },
+   "2": {
+    "n": 28,
+    "gap": -16.43,
+    "model_gas": 6.108,
+    "z6": 6.099
+   },
+   "12": {
+    "n": 26,
+    "gap": -5.23,
+    "model_gas": 7.932,
+    "z6": 7.977
+   }
+  }
+ },
+ {
+  "year": 2023,
+  "winter_days": 90,
+  "cap_binding_winter_days": 1,
+  "offcap_days": 89,
+  "nyc_offcap": {
+   "da_mean": 40.87,
+   "keeper_mean": 40.52,
+   "keeper_gap_sum_usd_day": -31.0,
+   "keeper_gap_mean": -0.34,
+   "arm_mean": 40.1,
+   "arm_gap_sum_usd_day": -68.0,
+   "arm_gap_mean": -0.77
+  },
+  "nyc_by_hour_band": {
+   "00-06": {
+    "da": 34.93,
+    "keeper": 36.72,
+    "gap": 1.8
+   },
+   "07-10": {
+    "da": 44.59,
+    "keeper": 42.02,
+    "gap": -2.57
+   },
+   "11-16": {
+    "da": 39.86,
+    "keeper": 40.82,
+    "gap": 0.95
+   },
+   "17-21": {
+    "da": 49.0,
+    "keeper": 44.56,
+    "gap": -4.44
+   },
+   "22-23": {
+    "da": 36.89,
+    "keeper": 39.85,
+    "gap": 2.97
+   }
+  },
+  "zone_gap_offcap": {
+   "NYC": {
+    "da": 40.87,
+    "keeper": 40.52,
+    "gap": -0.34
+   },
+   "Capital_Hudson": {
+    "da": 45.79,
+    "keeper": 39.76,
+    "gap": -6.03
+   },
+   "Upstate_West": {
+    "da": 30.85,
+    "keeper": 37.42,
+    "gap": 6.57
+   },
+   "Long_Island": {
+    "da": 50.59,
+    "keeper": 41.24,
+    "gap": -9.35
+   },
+   "Lower_Hudson": {
+    "da": 40.58,
+    "keeper": 40.24,
+    "gap": -0.34
+   }
+  },
+  "spread_nyc_minus_Capital_Hudson": {
+   "da": -4.92,
+   "keeper": 0.76
+  },
+  "spread_nyc_minus_Upstate_West": {
+   "da": 10.02,
+   "keeper": 3.1
+  },
+  "gas_offcap": {
+   "z6_ny_daily_mean": 2.886,
+   "model_nyc_gas_mw_wtd": 3.534,
+   "model_minus_z6_mean": 0.649,
+   "corr_model_gas_vs_z6": 0.988,
+   "by_class": {
+    "CC_CHP": 2.837,
+    "CC_REGULAR": 3.04,
+    "CT_CHP": 2.844,
+    "CT_PEAKER": 5.294,
+    "ST_CHP": 2.837,
+    "ST_GAS": 3.089
+   },
+   "corr_da_vs_z6": 0.261,
+   "corr_keeper_vs_model_gas": 0.922
+  },
+  "implied_heat_rate_offcap": {
+   "da_over_z6_median": 14.62,
+   "keeper_over_model_gas_median": 11.85,
+   "keeper_over_z6_median": 15.91,
+   "gap_split_mean": {
+    "fuel_level_part": 11.54,
+    "heat_rate_part": -11.88,
+    "total": -0.34
+   },
+   "nyc_gas_mw_wtd_hr": 12.821
+  },
+  "nearest_class_keeper": {
+   "CC_CHP": 0.449,
+   "CC_REGULAR": 0.03,
+   "CT_CHP": 0.076,
+   "CT_PEAKER": 0.062,
+   "ST_CHP": 0.094,
+   "ST_GAS": 0.29
+  },
+  "nearest_class_da": {
+   "CC_CHP": 0.409,
+   "CC_REGULAR": 0.193,
+   "CT_CHP": 0.1,
+   "CT_PEAKER": 0.128,
+   "ST_CHP": 0.039,
+   "ST_GAS": 0.106,
+   "below_nyc_gas": 0.01,
+   "none_within_3": 0.015
+  },
+  "da_implied_gas_at_model_ihr_offcap": {
+   "mean": 3.487,
+   "minus_model_gas": -0.047,
+   "minus_z6": 0.602
+  },
+  "nyc_gap_attribution_offcap": {
+   "upstate_west_level": 6.57,
+   "capital_minus_upstate_spread_deficit": -12.59,
+   "nyc_minus_capital_spread_deficit": 5.68,
+   "total": -0.34
+  },
+  "da_F_minus_E_offcap": {
+   "lbmp": 12.71,
+   "loss": 0.55,
+   "congestion_sign_as_published": -12.16,
+   "share_hours_congestion_gt_5": 0.463
+  },
+  "class_gas_by_month_offcap": {
+   "NYC": {
+    "1": {
+     "z6_daily": 3.26,
+     "iroquois_z2_monthly": 4.58,
+     "CC_REGULAR": 3.45,
+     "CC_CHP": 3.24,
+     "ST_GAS": 3.45,
+     "CT_PEAKER": 5.71
+    },
+    "2": {
+     "z6_daily": 3.34,
+     "iroquois_z2_monthly": 5.1,
+     "CC_REGULAR": 3.32,
+     "CC_CHP": 3.12,
+     "ST_GAS": 3.48,
+     "CT_PEAKER": 5.43
+    },
+    "12": {
+     "z6_daily": 2.11,
+     "iroquois_z2_monthly": 3.53,
+     "CC_REGULAR": 2.39,
+     "CC_CHP": 2.19,
+     "ST_GAS": 2.39,
+     "CT_PEAKER": 4.75
+    }
+   },
+   "Capital_Hudson": {
+    "1": {
+     "z6_daily": 3.26,
+     "iroquois_z2_monthly": 4.58,
+     "CC_REGULAR": 4.73,
+     "CC_CHP": 4.73,
+     "ST_GAS": 4.73,
+     "CT_PEAKER": 4.73
+    },
+    "2": {
+     "z6_daily": 3.34,
+     "iroquois_z2_monthly": 5.1,
+     "CC_REGULAR": 7.67,
+     "CC_CHP": 6.09,
+     "ST_GAS": 6.44,
+     "CT_PEAKER": 6.09
+    },
+    "12": {
+     "z6_daily": 2.11,
+     "iroquois_z2_monthly": 3.53,
+     "CC_REGULAR": 3.53,
+     "CC_CHP": 3.53,
+     "ST_GAS": 3.53,
+     "CT_PEAKER": 3.53
+    }
+   }
+  },
+  "by_month": {
+   "1": {
+    "n": 31,
+    "gap": -0.89,
+    "model_gas": 3.925,
+    "z6": 3.261
+   },
+   "2": {
+    "n": 27,
+    "gap": -1.6,
+    "model_gas": 3.823,
+    "z6": 3.343
+   },
+   "12": {
+    "n": 31,
+    "gap": 1.3,
+    "model_gas": 2.892,
+    "z6": 2.112
+   }
+  }
+ },
+ {
+  "year": 2024,
+  "winter_days": 90,
+  "cap_binding_winter_days": 5,
+  "offcap_days": 85,
+  "nyc_offcap": {
+   "da_mean": 54.93,
+   "keeper_mean": 49.9,
+   "keeper_gap_sum_usd_day": -427.0,
+   "keeper_gap_mean": -5.03,
+   "arm_mean": 50.32,
+   "arm_gap_sum_usd_day": -392.0,
+   "arm_gap_mean": -4.61
+  },
+  "nyc_by_hour_band": {
+   "00-06": {
+    "da": 45.85,
+    "keeper": 44.98,
+    "gap": -0.87
+   },
+   "07-10": {
+    "da": 58.96,
+    "keeper": 51.46,
+    "gap": -7.5
+   },
+   "11-16": {
+    "da": 55.89,
+    "keeper": 50.39,
+    "gap": -5.5
+   },
+   "17-21": {
+    "da": 65.38,
+    "keeper": 55.19,
+    "gap": -10.18
+   },
+   "22-23": {
+    "da": 49.6,
+    "keeper": 49.29,
+    "gap": -0.32
+   }
+  },
+  "zone_gap_offcap": {
+   "NYC": {
+    "da": 54.93,
+    "keeper": 49.9,
+    "gap": -5.03
+   },
+   "Capital_Hudson": {
+    "da": 52.95,
+    "keeper": 48.39,
+    "gap": -4.55
+   },
+   "Upstate_West": {
+    "da": 43.63,
+    "keeper": 45.31,
+    "gap": 1.68
+   },
+   "Long_Island": {
+    "da": 59.16,
+    "keeper": 51.34,
+    "gap": -7.82
+   },
+   "Lower_Hudson": {
+    "da": 52.16,
+    "keeper": 49.28,
+    "gap": -2.88
+   }
+  },
+  "spread_nyc_minus_Capital_Hudson": {
+   "da": 1.98,
+   "keeper": 1.51
+  },
+  "spread_nyc_minus_Upstate_West": {
+   "da": 11.3,
+   "keeper": 4.59
+  },
+  "gas_offcap": {
+   "z6_ny_daily_mean": 3.325,
+   "model_nyc_gas_mw_wtd": 3.572,
+   "model_minus_z6_mean": 0.246,
+   "corr_model_gas_vs_z6": 0.941,
+   "by_class": {
+    "CC_CHP": 2.881,
+    "CC_REGULAR": 3.086,
+    "CT_CHP": 2.881,
+    "CT_PEAKER": 5.866,
+    "ST_CHP": 2.881,
+    "ST_GAS": 3.087
+   },
+   "corr_da_vs_z6": 0.608,
+   "corr_keeper_vs_model_gas": 0.89
+  },
+  "implied_heat_rate_offcap": {
+   "da_over_z6_median": 17.73,
+   "keeper_over_model_gas_median": 14.6,
+   "keeper_over_z6_median": 18.64,
+   "gap_split_mean": {
+    "fuel_level_part": 7.12,
+    "heat_rate_part": -12.15,
+    "total": -5.03
+   },
+   "nyc_gas_mw_wtd_hr": 12.69
+  },
+  "nearest_class_keeper": {
+   "CC_CHP": 0.31,
+   "CC_REGULAR": 0.115,
+   "CT_CHP": 0.067,
+   "CT_PEAKER": 0.131,
+   "ST_CHP": 0.052,
+   "ST_GAS": 0.314,
+   "below_nyc_gas": 0.003,
+   "none_within_3": 0.007
+  },
+  "nearest_class_da": {
+   "CC_CHP": 0.328,
+   "CC_REGULAR": 0.185,
+   "CT_CHP": 0.086,
+   "CT_PEAKER": 0.2,
+   "ST_CHP": 0.022,
+   "ST_GAS": 0.096,
+   "below_nyc_gas": 0.017,
+   "none_within_3": 0.066
+  },
+  "da_implied_gas_at_model_ihr_offcap": {
+   "mean": 3.796,
+   "minus_model_gas": 0.224,
+   "minus_z6": 0.471
+  },
+  "nyc_gap_attribution_offcap": {
+   "upstate_west_level": 1.68,
+   "capital_minus_upstate_spread_deficit": -6.23,
+   "nyc_minus_capital_spread_deficit": -0.47,
+   "total": -5.03
+  },
+  "da_F_minus_E_offcap": {
+   "lbmp": 6.35,
+   "loss": 0.39,
+   "congestion_sign_as_published": -5.96,
+   "share_hours_congestion_gt_5": 0.173
+  },
+  "class_gas_by_month_offcap": {
+   "NYC": {
+    "1": {
+     "z6_daily": 4.53,
+     "iroquois_z2_monthly": 6.06,
+     "CC_REGULAR": 3.64,
+     "CC_CHP": 3.43,
+     "ST_GAS": 3.64,
+     "CT_PEAKER": 6.74
+    },
+    "2": {
+     "z6_daily": 1.69,
+     "iroquois_z2_monthly": 2.41,
+     "CC_REGULAR": 1.89,
+     "CC_CHP": 1.69,
+     "ST_GAS": 1.89,
+     "CT_PEAKER": 4.34
+    },
+    "12": {
+     "z6_daily": 3.86,
+     "iroquois_z2_monthly": 4.29,
+     "CC_REGULAR": 3.76,
+     "CC_CHP": 3.55,
+     "ST_GAS": 3.76,
+     "CT_PEAKER": 6.58
+    }
+   },
+   "Capital_Hudson": {
+    "1": {
+     "z6_daily": 4.53,
+     "iroquois_z2_monthly": 6.06,
+     "CC_REGULAR": 4.89,
+     "CC_CHP": 4.85,
+     "ST_GAS": 4.86,
+     "CT_PEAKER": 4.85
+    },
+    "2": {
+     "z6_daily": 1.69,
+     "iroquois_z2_monthly": 2.41,
+     "CC_REGULAR": 2.91,
+     "CC_CHP": 2.91,
+     "ST_GAS": 2.91,
+     "CT_PEAKER": 2.91
+    },
+    "12": {
+     "z6_daily": 3.86,
+     "iroquois_z2_monthly": 4.29,
+     "CC_REGULAR": 7.66,
+     "CC_CHP": 7.61,
+     "ST_GAS": 7.63,
+     "CT_PEAKER": 7.61
+    }
+   }
+  },
+  "by_month": {
+   "1": {
+    "n": 26,
+    "gap": -7.62,
+    "model_gas": 4.186,
+    "z6": 4.533
+   },
+   "2": {
+    "n": 29,
+    "gap": 2.16,
+    "model_gas": 2.315,
+    "z6": 1.692
+   },
+   "12": {
+    "n": 30,
+    "gap": -9.73,
+    "model_gas": 4.253,
+    "z6": 3.857
+   }
+  }
+ },
+ {
+  "year": 2025,
+  "winter_days": 90,
+  "cap_binding_winter_days": 11,
+  "offcap_days": 79,
+  "nyc_offcap": {
+   "da_mean": 103.16,
+   "keeper_mean": 89.95,
+   "keeper_gap_sum_usd_day": -1044.0,
+   "keeper_gap_mean": -13.21,
+   "arm_mean": 84.68,
+   "arm_gap_sum_usd_day": -1460.0,
+   "arm_gap_mean": -18.48
+  },
+  "nyc_by_hour_band": {
+   "00-06": {
+    "da": 87.87,
+    "keeper": 82.35,
+    "gap": -5.51
+   },
+   "07-10": {
+    "da": 111.24,
+    "keeper": 91.65,
+    "gap": -19.59
+   },
+   "11-16": {
+    "da": 100.49,
+    "keeper": 89.61,
+    "gap": -10.88
+   },
+   "17-21": {
+    "da": 124.7,
+    "keeper": 99.31,
+    "gap": -25.39
+   },
+   "22-23": {
+    "da": 94.7,
+    "keeper": 90.72,
+    "gap": -3.98
+   }
+  },
+  "zone_gap_offcap": {
+   "NYC": {
+    "da": 103.16,
+    "keeper": 89.95,
+    "gap": -13.21
+   },
+   "Capital_Hudson": {
+    "da": 108.38,
+    "keeper": 88.72,
+    "gap": -19.65
+   },
+   "Upstate_West": {
+    "da": 82.78,
+    "keeper": 82.23,
+    "gap": -0.55
+   },
+   "Long_Island": {
+    "da": 114.01,
+    "keeper": 92.41,
+    "gap": -21.6
+   },
+   "Lower_Hudson": {
+    "da": 99.66,
+    "keeper": 89.19,
+    "gap": -10.47
+   }
+  },
+  "spread_nyc_minus_Capital_Hudson": {
+   "da": -5.22,
+   "keeper": 1.22
+  },
+  "spread_nyc_minus_Upstate_West": {
+   "da": 20.38,
+   "keeper": 7.72
+  },
+  "gas_offcap": {
+   "z6_ny_daily_mean": 7.346,
+   "model_nyc_gas_mw_wtd": 7.011,
+   "model_minus_z6_mean": -0.334,
+   "corr_model_gas_vs_z6": 0.862,
+   "by_class": {
+    "CC_CHP": 5.889,
+    "CC_REGULAR": 6.102,
+    "CT_CHP": 5.917,
+    "CT_PEAKER": 10.148,
+    "ST_CHP": 5.889,
+    "ST_GAS": 6.287
+   },
+   "corr_da_vs_z6": 0.177,
+   "corr_keeper_vs_model_gas": 0.863
+  },
+  "implied_heat_rate_offcap": {
+   "da_over_z6_median": 15.98,
+   "keeper_over_model_gas_median": 14.14,
+   "keeper_over_z6_median": 15.14,
+   "gap_split_mean": {
+    "fuel_level_part": 7.98,
+    "heat_rate_part": -21.2,
+    "total": -13.21
+   },
+   "nyc_gas_mw_wtd_hr": 12.694
+  },
+  "nearest_class_keeper": {
+   "CC_CHP": 0.237,
+   "CC_REGULAR": 0.104,
+   "CT_CHP": 0.089,
+   "CT_PEAKER": 0.374,
+   "ST_CHP": 0.025,
+   "ST_GAS": 0.149,
+   "none_within_3": 0.021
+  },
+  "nearest_class_da": {
+   "CC_CHP": 0.247,
+   "CC_REGULAR": 0.104,
+   "CT_CHP": 0.074,
+   "CT_PEAKER": 0.306,
+   "ST_CHP": 0.021,
+   "ST_GAS": 0.064,
+   "below_nyc_gas": 0.009,
+   "none_within_3": 0.175
+  },
+  "da_implied_gas_at_model_ihr_offcap": {
+   "mean": 7.657,
+   "minus_model_gas": 0.645,
+   "minus_z6": 0.311
+  },
+  "nyc_gap_attribution_offcap": {
+   "upstate_west_level": -0.55,
+   "capital_minus_upstate_spread_deficit": -19.11,
+   "nyc_minus_capital_spread_deficit": 6.44,
+   "total": -13.21
+  },
+  "da_F_minus_E_offcap": {
+   "lbmp": 18.29,
+   "loss": 1.34,
+   "congestion_sign_as_published": -16.95,
+   "share_hours_congestion_gt_5": 0.405
+  },
+  "class_gas_by_month_offcap": {
+   "NYC": {
+    "1": {
+     "z6_daily": 10.13,
+     "iroquois_z2_monthly": 14.09,
+     "CC_REGULAR": 5.98,
+     "CC_CHP": 5.78,
+     "ST_GAS": 6.58,
+     "CT_PEAKER": 11.47
+    },
+    "2": {
+     "z6_daily": 6.08,
+     "iroquois_z2_monthly": 7.4,
+     "CC_REGULAR": 6.0,
+     "CC_CHP": 5.78,
+     "ST_GAS": 6.0,
+     "CT_PEAKER": 9.3
+    },
+    "12": {
+     "z6_daily": 6.18,
+     "iroquois_z2_monthly": 8.09,
+     "CC_REGULAR": 6.3,
+     "CC_CHP": 6.09,
+     "ST_GAS": 6.31,
+     "CT_PEAKER": 9.84
+    }
+   },
+   "Capital_Hudson": {
+    "1": {
+     "z6_daily": 10.13,
+     "iroquois_z2_monthly": 14.09,
+     "CC_REGULAR": 9.3,
+     "CC_CHP": 8.09,
+     "ST_GAS": 8.0,
+     "CT_PEAKER": 7.55
+    },
+    "2": {
+     "z6_daily": 6.08,
+     "iroquois_z2_monthly": 7.4,
+     "CC_REGULAR": 10.19,
+     "CC_CHP": 9.91,
+     "ST_GAS": 9.89,
+     "CT_PEAKER": 9.79
+    },
+    "12": {
+     "z6_daily": 6.18,
+     "iroquois_z2_monthly": 8.09,
+     "CC_REGULAR": 10.44,
+     "CC_CHP": 10.21,
+     "ST_GAS": 10.19,
+     "CT_PEAKER": 10.1
+    }
+   }
+  },
+  "by_month": {
+   "1": {
+    "n": 24,
+    "gap": -25.6,
+    "model_gas": 7.362,
+    "z6": 10.127
+   },
+   "2": {
+    "n": 27,
+    "gap": -11.85,
+    "model_gas": 6.673,
+    "z6": 6.084
+   },
+   "12": {
+    "n": 28,
+    "gap": -3.9,
+    "model_gas": 7.037,
+    "z6": 6.179
+   }
+  }
+ }
+]
