@@ -5,8 +5,8 @@
     "no_fit_to_price_residuals": true,
     "no_pinning_to_actuals": true,
     "outage_filter_exogenous_net_load": true,
-    "attested_by": "PJM-NEXT-8 orchestrator (2026-09-28). The PJM-NEXT-7 keeper recipe 2026-09-28-pjm-next-7-virtual (results/calibration/pjmnext7_vs_span) replayed at pinned e9fc1a5eaf7f0255d1b43bad53851e1aa9500131 via scripts/replay_keeper.py --set unit_outage_exit_cohort_repair=true, ONE YEAR PER SHARD CONTAINER 2019-2025 (rule 36), ZERO LP IN THE PARENT (rule 32(a)), composed at zero LP by scripts/probes/_pjmnext8_xf_compose_span.py (recipe check: keeper year plus exactly the arm flag, offers equal to the keeper's, pinned SHA, one solve-surface fingerprint). CONTROL: the committed keeper bundle for every year (rule 29(b) form 4), validated by a hunk-by-hunk G-DRIFT audit recorded before any solve (docs/PRECOMMIT-pjm-next-8-exitfix-2026-09-28.md \u00a74).",
-    "note": "ONE MEASURED-INPUT REPAIR (rule 14, docs/FINDING-pjm-next-7-coal-phase0-2026-09-28.md \u00a73): the CAMPD unit-outage layer sizes each unit from the solve year's own EIA-860 vintage, keys dated exit bins over their own capacity, and windows exit-cohort units dark all year. The companion's control reproduces the keeper's file byte-for-byte. Zero free parameters added; no multiplier value changed."
+    "attested_by": "PJM-NEXT-16 orchestrator (2026-09-30), arm A. The PJM-NEXT-8 keeper recipe 2026-09-28-pjm-next8-exitfix (results/calibration/pjmnext8_xf_span) replayed at pinned 6d4c77491e469e06f3a9c0e3d4f2b7c37b15fba3 via scripts/replay_keeper.py, ONE YEAR PER SHARD CONTAINER 2019-2025 (rule 36), ZERO LP IN THE PARENT (rule 32(a)), composed at zero LP by scripts/probes/_pjmnext16_compose_span.py. CONTROL: the committed keeper bundle (rule 29(b) form 4), validated by a hunk-by-hunk G-DRIFT audit recorded before any solve (docs/PRECOMMIT-pjm-next-16-2026-09-30.md \u00a74).",
+    "note": "Rule 14 fleet-boundary repair (docs/FINDING-pjm-next-16-cc-loading-and-the-ovec-boundary-2026-09-30.md): OVEC's 2.39 GW, counted by the C1 benchmark and inside PJM's EIA-930 demand, now dispatches in 2019/2020. Zero free parameters."
   },
   "exceptions": [],
   "free_parameters": {
@@ -293,23 +293,22 @@
     ]
   },
   "delta_vs_incumbent": {
-    "keeper": "2026-09-28-pjm-next-7-virtual (results/calibration/pjmnext7_vs_span)",
-    "config_deltas": [
-      "unit_outage_exit_cohort_repair: False -> True"
-    ],
-    "n_config_deltas": 1,
+    "keeper": "2026-09-28-pjm-next8-exitfix (results/calibration/pjmnext8_xf_span)",
+    "config_deltas": [],
+    "n_config_deltas": 0,
     "data_deltas": [
-      "data/raw/campd-unit-outages-rederive-peakerkeep-exitfix-unitfuel-PJM.csv (sha256 02d565cd)"
+      "data/raw/eia-860/vintage_2019/eia860_generators.parquet (+11 OVEC rows)",
+      "data/raw/eia-860/vintage_2020/eia860_generators.parquet (+11 OVEC rows)"
     ],
     "code_deltas": [
-      "ScenarioConfig.unit_outage_exit_cohort_repair; outages.unit_outage_csv_for_iso / _unit_outage_factors_from_events dated-bin keys; fleet.arrays dated exit-bin shares; derive_campd_unit_outages.py --exit-cohort-repair"
+      "ISO_BA_JOINS['PJM'] = {'OVEC': (2019, 1)} (Clifty Creek 983, Kyger Creek 2876; EIA-860 vintages 2018-2020 code them OVEC although they sit inside PJM's BA); vintages 2019/2020 rescoped (+11 rows each, strictly additive); outage apportionment admits joining-BA plants (outages._joining_ba_generators)"
     ],
     "years_added": [],
     "free_parameters_added": 0,
     "dof_ledger": {
       "n_entries": 20,
       "n_residual": 6,
-      "carried": "VERBATIM from the PJM-NEXT-7 keeper; zero entries added."
+      "carried": "VERBATIM from the PJM-NEXT-8 keeper; zero entries added."
     },
     "authorized_price_tuning": {
       "used": false,

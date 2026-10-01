@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-28T05:52:10",
+  "timestamp": "2026-09-30T19:02:12",
   "iso": "PJM",
   "years": [
     2019,
@@ -400,9 +400,9 @@
   "nyiso_local_selfsupply": null,
   "nyiso_scr_edrp": null,
   "nyiso_scr_edrp_strike": null,
-  "nyiso_firm_imports": null,
   "nyiso_import_reconciliation": null,
   "nyiso_import_hub_prices": null,
+  "nyiso_ne_ac_node": null,
   "nyiso_iroquois_winter_spread": null,
   "nyiso_synchronised_reserve": null,
   "nyiso_li_locational_reserve": null,
@@ -411,8 +411,10 @@
   "reliability_floor_overrides": null,
   "nyiso_gas_commitment_bridge": null,
   "spp_gas_commitment_bridge": null,
+  "pjm_gas_commitment_bridge": null,
   "soco_gas_st_campaign_commitment": null,
   "miso_coal_night_floor": null,
+  "miso_gas_ecomin_online_floor": null,
   "nyiso_gas_bridge_cc_min_load_frac": null,
   "nyiso_gas_bridge_st_min_load_frac": null,
   "nyiso_gas_bridge_startup": null,
@@ -486,12 +488,12 @@
     "capacity_deliverability": "../_shared/PJM/capacity_deliverability-7b81c5eca3cf.parquet",
     "hydro_plant_modes": "../_shared/PJM/hydro_plant_modes-c4608ba3229e.parquet"
   },
-  "git_sha": "e9fc1a5e",
-  "basis_sha": "e9fc1a5eaf7f0255d1b43bad53851e1aa9500131",
+  "git_sha": "6d4c7749",
+  "basis_sha": "6d4c77491e469e06f3a9c0e3d4f2b7c37b15fba3",
   "highspy_version": "1.15.1",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v50-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.15.1",
       "numpy": "2.4.6",
@@ -509,25 +511,25 @@
     "market_sim_data_root": ""
   },
   "composed_from": {
-    "pjmnext8_xf_2019": [
+    "pjmnext16_A_2019": [
       2019
     ],
-    "pjmnext8_xf_2020": [
+    "pjmnext16_A_2020": [
       2020
     ],
-    "pjmnext8_xf_2021": [
+    "pjmnext16_A_2021": [
       2021
     ],
-    "pjmnext8_xf_2022": [
+    "pjmnext16_A_2022": [
       2022
     ],
-    "pjmnext8_xf_2023": [
+    "pjmnext16_A_2023": [
       2023
     ],
-    "pjmnext8_xf_2024": [
+    "pjmnext16_A_2024": [
       2024
     ],
-    "pjmnext8_xf_2025": [
+    "pjmnext16_A_2025": [
       2025
     ]
   }
