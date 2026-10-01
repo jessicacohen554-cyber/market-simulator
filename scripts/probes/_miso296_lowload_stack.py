@@ -200,8 +200,8 @@ def main() -> int:
         lw_a = (pa * w).sum(0) / w.sum(0)
         err = lw_m - lw_a
         tot_w = wt.sum()
-        ann_m = float((lw_m * wt).sum() / tot_w)
-        ann_a = float((lw_a * wt).sum() / tot_w)
+        ann_m = float((lw_m[ok] * wt[ok]).sum() / tot_w)
+        ann_a = float((lw_a[ok] * wt[ok]).sum() / tot_w)
         load = w.sum(axis=0)
         q5 = pd.qcut(load, 5, labels=False)
 
@@ -251,7 +251,7 @@ def main() -> int:
                 for k in (0, 5, 10, 15, 20)
             },
             "zone_err_lw": {
-                zn: _r(((pm[i] - pa[i]) * w[i] * ok).sum() / (w[i] * ok).sum())
+                zn: _r(((pm[i] - pa[i])[ok] * w[i][ok]).sum() / w[i][ok].sum())
                 for i, zn in enumerate(INTERNAL)
             },
             "quintile_load_edges_gw": [
