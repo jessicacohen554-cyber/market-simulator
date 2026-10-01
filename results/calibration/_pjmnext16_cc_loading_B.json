@@ -1,0 +1,1468 @@
+{
+ "what": "PJM-NEXT-16 card 1 - CC loading decomposition. ZERO LP.",
+ "years": {
+  "2019": {
+   "lag_h": 0,
+   "annual_twh": {
+    "LOAD": 11.11,
+    "ON": 8.12,
+    "OFF": -23.69,
+    "dGAS": -7.99,
+    "dCOAL": 14.01,
+    "dEXPORT": -12.49,
+    "dDEMAND": -0.07
+   },
+   "by_decile": {
+    "0": {
+     "LOAD": 2.54,
+     "ON": 1.67,
+     "OFF": -2.96,
+     "dGAS": 0.49,
+     "dCOAL": 0.15,
+     "dEXPORT": -0.9,
+     "dDEMAND": 0.0
+    },
+    "1": {
+     "LOAD": 2.0,
+     "ON": 1.14,
+     "OFF": -2.96,
+     "dGAS": -0.48,
+     "dCOAL": 0.66,
+     "dEXPORT": -0.98,
+     "dDEMAND": -0.0
+    },
+    "2": {
+     "LOAD": 1.54,
+     "ON": 0.9,
+     "OFF": -2.65,
+     "dGAS": -0.93,
+     "dCOAL": 1.24,
+     "dEXPORT": -1.1,
+     "dDEMAND": 0.0
+    },
+    "3": {
+     "LOAD": 1.15,
+     "ON": 0.71,
+     "OFF": -2.32,
+     "dGAS": -1.53,
+     "dCOAL": 1.24,
+     "dEXPORT": -1.19,
+     "dDEMAND": 0.0
+    },
+    "4": {
+     "LOAD": 1.12,
+     "ON": 0.75,
+     "OFF": -2.79,
+     "dGAS": -1.64,
+     "dCOAL": 1.81,
+     "dEXPORT": -1.26,
+     "dDEMAND": 0.0
+    },
+    "5": {
+     "LOAD": 1.08,
+     "ON": 0.79,
+     "OFF": -2.75,
+     "dGAS": -1.39,
+     "dCOAL": 2.17,
+     "dEXPORT": -1.34,
+     "dDEMAND": 0.0
+    },
+    "6": {
+     "LOAD": 0.87,
+     "ON": 0.83,
+     "OFF": -2.75,
+     "dGAS": -0.99,
+     "dCOAL": 2.42,
+     "dEXPORT": -1.38,
+     "dDEMAND": 0.0
+    },
+    "7": {
+     "LOAD": 0.47,
+     "ON": 0.62,
+     "OFF": -2.35,
+     "dGAS": -0.63,
+     "dCOAL": 1.81,
+     "dEXPORT": -1.43,
+     "dDEMAND": 0.0
+    },
+    "8": {
+     "LOAD": 0.08,
+     "ON": 0.39,
+     "OFF": -1.71,
+     "dGAS": -0.26,
+     "dCOAL": 1.38,
+     "dEXPORT": -1.55,
+     "dDEMAND": -0.02
+    },
+    "9": {
+     "LOAD": 0.27,
+     "ON": 0.33,
+     "OFF": -0.45,
+     "dGAS": -0.63,
+     "dCOAL": 1.12,
+     "dEXPORT": -1.36,
+     "dDEMAND": -0.05
+    }
+   },
+   "by_daynight": {
+    "day": {
+     "LOAD": 4.18,
+     "ON": 4.21,
+     "OFF": -13.79,
+     "dGAS": -7.52,
+     "dCOAL": 8.56,
+     "dEXPORT": -9.09,
+     "dDEMAND": -0.06
+    },
+    "night": {
+     "LOAD": 6.94,
+     "ON": 3.91,
+     "OFF": -9.9,
+     "dGAS": -0.47,
+     "dCOAL": 5.45,
+     "dEXPORT": -3.4,
+     "dDEMAND": -0.0
+    }
+   },
+   "by_zone_load": {
+    "AEP_Ohio": 2.3,
+    "ATSI": 0.48,
+    "Central_PA": 5.9,
+    "ComEd": 0.65,
+    "Dominion": -5.86,
+    "EMAAC": 9.09,
+    "SWMAAC": -1.13,
+    "West_APS": -0.32
+   },
+   "by_zone_load_daynight": {
+    "AEP_Ohio": {
+     "day": {
+      "LOAD": 1.2
+     },
+     "night": {
+      "LOAD": 1.1
+     }
+    },
+    "ATSI": {
+     "day": {
+      "LOAD": 0.1
+     },
+     "night": {
+      "LOAD": 0.38
+     }
+    },
+    "Central_PA": {
+     "day": {
+      "LOAD": 2.94
+     },
+     "night": {
+      "LOAD": 2.97
+     }
+    },
+    "ComEd": {
+     "day": {
+      "LOAD": 0.3
+     },
+     "night": {
+      "LOAD": 0.36
+     }
+    },
+    "Dominion": {
+     "day": {
+      "LOAD": -4.07
+     },
+     "night": {
+      "LOAD": -1.79
+     }
+    },
+    "EMAAC": {
+     "day": {
+      "LOAD": 4.79
+     },
+     "night": {
+      "LOAD": 4.3
+     }
+    },
+    "SWMAAC": {
+     "day": {
+      "LOAD": -0.93
+     },
+     "night": {
+      "LOAD": -0.2
+     }
+    },
+    "West_APS": {
+     "day": {
+      "LOAD": -0.13
+     },
+     "night": {
+      "LOAD": -0.18
+     }
+    }
+   },
+   "hourly_corr_LOAD_with": {
+    "dGAS": 0.308,
+    "dCOAL": 0.034,
+    "dEXPORT": 0.162,
+    "dDEMAND": 0.006,
+    "lw_price": -0.259
+   },
+   "gas_share_of_thermal_overrun_hours": 0.325,
+   "lw_price_mean": 28.51
+  },
+  "2020": {
+   "lag_h": 0,
+   "annual_twh": {
+    "LOAD": 12.12,
+    "ON": 9.72,
+    "OFF": -18.92,
+    "dGAS": 4.12,
+    "dCOAL": 12.18,
+    "dEXPORT": -13.59,
+    "dDEMAND": -0.82
+   },
+   "by_decile": {
+    "0": {
+     "LOAD": 2.2,
+     "ON": 1.31,
+     "OFF": -2.09,
+     "dGAS": 1.81,
+     "dCOAL": -0.06,
+     "dEXPORT": -1.12,
+     "dDEMAND": 1.68
+    },
+    "1": {
+     "LOAD": 1.71,
+     "ON": 1.19,
+     "OFF": -1.89,
+     "dGAS": 1.0,
+     "dCOAL": -0.04,
+     "dEXPORT": -1.26,
+     "dDEMAND": 0.92
+    },
+    "2": {
+     "LOAD": 1.36,
+     "ON": 1.08,
+     "OFF": -1.84,
+     "dGAS": 0.57,
+     "dCOAL": 0.36,
+     "dEXPORT": -1.45,
+     "dDEMAND": 0.78
+    },
+    "3": {
+     "LOAD": 1.38,
+     "ON": 1.1,
+     "OFF": -1.83,
+     "dGAS": 0.39,
+     "dCOAL": 0.83,
+     "dEXPORT": -1.36,
+     "dDEMAND": 0.13
+    },
+    "4": {
+     "LOAD": 1.47,
+     "ON": 1.07,
+     "OFF": -1.94,
+     "dGAS": 0.26,
+     "dCOAL": 0.97,
+     "dEXPORT": -1.29,
+     "dDEMAND": -0.16
+    },
+    "5": {
+     "LOAD": 1.21,
+     "ON": 1.08,
+     "OFF": -2.06,
+     "dGAS": 0.23,
+     "dCOAL": 1.39,
+     "dEXPORT": -1.39,
+     "dDEMAND": -0.24
+    },
+    "6": {
+     "LOAD": 1.16,
+     "ON": 1.01,
+     "OFF": -2.45,
+     "dGAS": 0.19,
+     "dCOAL": 2.37,
+     "dEXPORT": -1.32,
+     "dDEMAND": -0.64
+    },
+    "7": {
+     "LOAD": 0.74,
+     "ON": 0.85,
+     "OFF": -2.46,
+     "dGAS": 0.51,
+     "dCOAL": 3.16,
+     "dEXPORT": -1.3,
+     "dDEMAND": -0.63
+    },
+    "8": {
+     "LOAD": 0.39,
+     "ON": 0.71,
+     "OFF": -1.84,
+     "dGAS": 0.87,
+     "dCOAL": 2.4,
+     "dEXPORT": -1.45,
+     "dDEMAND": -0.66
+    },
+    "9": {
+     "LOAD": 0.49,
+     "ON": 0.32,
+     "OFF": -0.52,
+     "dGAS": -1.71,
+     "dCOAL": 0.78,
+     "dEXPORT": -1.65,
+     "dDEMAND": -2.01
+    }
+   },
+   "by_daynight": {
+    "day": {
+     "LOAD": 5.04,
+     "ON": 5.44,
+     "OFF": -11.54,
+     "dGAS": 0.28,
+     "dCOAL": 8.27,
+     "dEXPORT": -9.69,
+     "dDEMAND": -0.84
+    },
+    "night": {
+     "LOAD": 7.08,
+     "ON": 4.28,
+     "OFF": -7.38,
+     "dGAS": 3.85,
+     "dCOAL": 3.9,
+     "dEXPORT": -3.9,
+     "dDEMAND": 0.02
+    }
+   },
+   "by_zone_load": {
+    "AEP_Ohio": 3.96,
+    "ATSI": -0.0,
+    "Central_PA": 6.21,
+    "ComEd": 1.51,
+    "Dominion": -2.99,
+    "EMAAC": 3.71,
+    "SWMAAC": -1.48,
+    "West_APS": 1.21
+   },
+   "by_zone_load_daynight": {
+    "AEP_Ohio": {
+     "day": {
+      "LOAD": 1.82
+     },
+     "night": {
+      "LOAD": 2.14
+     }
+    },
+    "ATSI": {
+     "day": {
+      "LOAD": -0.25
+     },
+     "night": {
+      "LOAD": 0.25
+     }
+    },
+    "Central_PA": {
+     "day": {
+      "LOAD": 3.55
+     },
+     "night": {
+      "LOAD": 2.67
+     }
+    },
+    "ComEd": {
+     "day": {
+      "LOAD": 0.83
+     },
+     "night": {
+      "LOAD": 0.69
+     }
+    },
+    "Dominion": {
+     "day": {
+      "LOAD": -2.05
+     },
+     "night": {
+      "LOAD": -0.94
+     }
+    },
+    "EMAAC": {
+     "day": {
+      "LOAD": 1.75
+     },
+     "night": {
+      "LOAD": 1.96
+     }
+    },
+    "SWMAAC": {
+     "day": {
+      "LOAD": -1.26
+     },
+     "night": {
+      "LOAD": -0.23
+     }
+    },
+    "West_APS": {
+     "day": {
+      "LOAD": 0.66
+     },
+     "night": {
+      "LOAD": 0.55
+     }
+    }
+   },
+   "hourly_corr_LOAD_with": {
+    "dGAS": 0.165,
+    "dCOAL": -0.23,
+    "dEXPORT": 0.132,
+    "dDEMAND": -0.092,
+    "lw_price": -0.332
+   },
+   "gas_share_of_thermal_overrun_hours": 0.472,
+   "lw_price_mean": 23.84
+  },
+  "2021": {
+   "lag_h": 0,
+   "annual_twh": {
+    "LOAD": 3.02,
+    "ON": 10.3,
+    "OFF": -20.81,
+    "dGAS": -16.09,
+    "dCOAL": 15.32,
+    "dEXPORT": -14.03,
+    "dDEMAND": 0.01
+   },
+   "by_decile": {
+    "0": {
+     "LOAD": 0.73,
+     "ON": 1.61,
+     "OFF": -3.16,
+     "dGAS": -1.07,
+     "dCOAL": 0.99,
+     "dEXPORT": -0.78,
+     "dDEMAND": 0.01
+    },
+    "1": {
+     "LOAD": 0.58,
+     "ON": 1.84,
+     "OFF": -2.81,
+     "dGAS": -1.0,
+     "dCOAL": 1.18,
+     "dEXPORT": -1.03,
+     "dDEMAND": 0.0
+    },
+    "2": {
+     "LOAD": 0.26,
+     "ON": 1.33,
+     "OFF": -2.51,
+     "dGAS": -1.79,
+     "dCOAL": 1.25,
+     "dEXPORT": -1.15,
+     "dDEMAND": 0.0
+    },
+    "3": {
+     "LOAD": 0.26,
+     "ON": 1.14,
+     "OFF": -2.22,
+     "dGAS": -2.11,
+     "dCOAL": 1.37,
+     "dEXPORT": -1.24,
+     "dDEMAND": 0.0
+    },
+    "4": {
+     "LOAD": 0.4,
+     "ON": 1.09,
+     "OFF": -2.07,
+     "dGAS": -1.73,
+     "dCOAL": 1.73,
+     "dEXPORT": -1.32,
+     "dDEMAND": -0.0
+    },
+    "5": {
+     "LOAD": 0.37,
+     "ON": 0.94,
+     "OFF": -1.95,
+     "dGAS": -1.61,
+     "dCOAL": 1.97,
+     "dEXPORT": -1.29,
+     "dDEMAND": -0.0
+    },
+    "6": {
+     "LOAD": 0.32,
+     "ON": 0.87,
+     "OFF": -1.79,
+     "dGAS": -1.59,
+     "dCOAL": 1.71,
+     "dEXPORT": -1.52,
+     "dDEMAND": -0.0
+    },
+    "7": {
+     "LOAD": 0.28,
+     "ON": 0.7,
+     "OFF": -1.86,
+     "dGAS": -1.31,
+     "dCOAL": 1.77,
+     "dEXPORT": -1.58,
+     "dDEMAND": 0.0
+    },
+    "8": {
+     "LOAD": -0.33,
+     "ON": 0.58,
+     "OFF": -1.82,
+     "dGAS": -1.37,
+     "dCOAL": 1.57,
+     "dEXPORT": -1.98,
+     "dDEMAND": -0.0
+    },
+    "9": {
+     "LOAD": 0.15,
+     "ON": 0.2,
+     "OFF": -0.61,
+     "dGAS": -2.5,
+     "dCOAL": 1.79,
+     "dEXPORT": -2.14,
+     "dDEMAND": -0.0
+    }
+   },
+   "by_daynight": {
+    "day": {
+     "LOAD": 0.35,
+     "ON": 5.18,
+     "OFF": -12.41,
+     "dGAS": -13.21,
+     "dCOAL": 10.03,
+     "dEXPORT": -10.5,
+     "dDEMAND": 0.01
+    },
+    "night": {
+     "LOAD": 2.67,
+     "ON": 5.12,
+     "OFF": -8.4,
+     "dGAS": -2.89,
+     "dCOAL": 5.29,
+     "dEXPORT": -3.53,
+     "dDEMAND": 0.0
+    }
+   },
+   "by_zone_load": {
+    "AEP_Ohio": 0.7,
+    "ATSI": 0.26,
+    "Central_PA": 3.51,
+    "ComEd": 1.57,
+    "Dominion": -6.4,
+    "EMAAC": 4.09,
+    "SWMAAC": -1.67,
+    "West_APS": 0.96
+   },
+   "by_zone_load_daynight": {
+    "AEP_Ohio": {
+     "day": {
+      "LOAD": 0.05
+     },
+     "night": {
+      "LOAD": 0.65
+     }
+    },
+    "ATSI": {
+     "day": {
+      "LOAD": 0.05
+     },
+     "night": {
+      "LOAD": 0.2
+     }
+    },
+    "Central_PA": {
+     "day": {
+      "LOAD": 2.19
+     },
+     "night": {
+      "LOAD": 1.32
+     }
+    },
+    "ComEd": {
+     "day": {
+      "LOAD": 0.92
+     },
+     "night": {
+      "LOAD": 0.65
+     }
+    },
+    "Dominion": {
+     "day": {
+      "LOAD": -4.43
+     },
+     "night": {
+      "LOAD": -1.97
+     }
+    },
+    "EMAAC": {
+     "day": {
+      "LOAD": 2.31
+     },
+     "night": {
+      "LOAD": 1.78
+     }
+    },
+    "SWMAAC": {
+     "day": {
+      "LOAD": -1.25
+     },
+     "night": {
+      "LOAD": -0.42
+     }
+    },
+    "West_APS": {
+     "day": {
+      "LOAD": 0.49
+     },
+     "night": {
+      "LOAD": 0.46
+     }
+    }
+   },
+   "hourly_corr_LOAD_with": {
+    "dGAS": 0.335,
+    "dCOAL": -0.104,
+    "dEXPORT": 0.226,
+    "dDEMAND": -0.007,
+    "lw_price": -0.106
+   },
+   "gas_share_of_thermal_overrun_hours": 0.2,
+   "lw_price_mean": 39.62
+  },
+  "2022": {
+   "lag_h": 0,
+   "annual_twh": {
+    "LOAD": 10.67,
+    "ON": 9.91,
+    "OFF": -17.06,
+    "dGAS": 0.65,
+    "dCOAL": 2.08,
+    "dEXPORT": -10.65,
+    "dDEMAND": -0.07
+   },
+   "by_decile": {
+    "0": {
+     "LOAD": 1.83,
+     "ON": 1.92,
+     "OFF": -2.5,
+     "dGAS": 0.89,
+     "dCOAL": -1.35,
+     "dEXPORT": -0.58,
+     "dDEMAND": 0.01
+    },
+    "1": {
+     "LOAD": 1.59,
+     "ON": 1.57,
+     "OFF": -1.83,
+     "dGAS": 0.87,
+     "dCOAL": -1.06,
+     "dEXPORT": -0.56,
+     "dDEMAND": 0.0
+    },
+    "2": {
+     "LOAD": 1.35,
+     "ON": 1.14,
+     "OFF": -1.57,
+     "dGAS": 0.38,
+     "dCOAL": -0.99,
+     "dEXPORT": -0.95,
+     "dDEMAND": 0.06
+    },
+    "3": {
+     "LOAD": 1.14,
+     "ON": 0.94,
+     "OFF": -1.49,
+     "dGAS": -0.05,
+     "dCOAL": -0.51,
+     "dEXPORT": -0.94,
+     "dDEMAND": 0.01
+    },
+    "4": {
+     "LOAD": 1.27,
+     "ON": 0.88,
+     "OFF": -1.6,
+     "dGAS": 0.1,
+     "dCOAL": -0.14,
+     "dEXPORT": -1.07,
+     "dDEMAND": 0.01
+    },
+    "5": {
+     "LOAD": 1.09,
+     "ON": 0.85,
+     "OFF": -1.97,
+     "dGAS": -0.49,
+     "dCOAL": 0.65,
+     "dEXPORT": -1.28,
+     "dDEMAND": 0.0
+    },
+    "6": {
+     "LOAD": 0.94,
+     "ON": 0.78,
+     "OFF": -2.08,
+     "dGAS": -0.55,
+     "dCOAL": 1.21,
+     "dEXPORT": -1.13,
+     "dDEMAND": -0.0
+    },
+    "7": {
+     "LOAD": 0.57,
+     "ON": 0.77,
+     "OFF": -2.02,
+     "dGAS": -0.63,
+     "dCOAL": 1.64,
+     "dEXPORT": -1.17,
+     "dDEMAND": -0.08
+    },
+    "8": {
+     "LOAD": 0.26,
+     "ON": 0.76,
+     "OFF": -1.34,
+     "dGAS": 0.18,
+     "dCOAL": 1.46,
+     "dEXPORT": -1.24,
+     "dDEMAND": -0.08
+    },
+    "9": {
+     "LOAD": 0.62,
+     "ON": 0.3,
+     "OFF": -0.65,
+     "dGAS": -0.06,
+     "dCOAL": 1.18,
+     "dEXPORT": -1.73,
+     "dDEMAND": 0.0
+    }
+   },
+   "by_daynight": {
+    "day": {
+     "LOAD": 5.11,
+     "ON": 4.97,
+     "OFF": -10.11,
+     "dGAS": -1.0,
+     "dCOAL": 2.12,
+     "dEXPORT": -8.42,
+     "dDEMAND": -0.15
+    },
+    "night": {
+     "LOAD": 5.56,
+     "ON": 4.94,
+     "OFF": -6.95,
+     "dGAS": 1.65,
+     "dCOAL": -0.04,
+     "dEXPORT": -2.23,
+     "dDEMAND": 0.08
+    }
+   },
+   "by_zone_load": {
+    "AEP_Ohio": 1.0,
+    "ATSI": 0.81,
+    "Central_PA": 6.02,
+    "ComEd": 2.47,
+    "Dominion": -2.62,
+    "EMAAC": 3.17,
+    "SWMAAC": -0.14,
+    "West_APS": -0.05
+   },
+   "by_zone_load_daynight": {
+    "AEP_Ohio": {
+     "day": {
+      "LOAD": 0.26
+     },
+     "night": {
+      "LOAD": 0.74
+     }
+    },
+    "ATSI": {
+     "day": {
+      "LOAD": 0.42
+     },
+     "night": {
+      "LOAD": 0.39
+     }
+    },
+    "Central_PA": {
+     "day": {
+      "LOAD": 3.39
+     },
+     "night": {
+      "LOAD": 2.63
+     }
+    },
+    "ComEd": {
+     "day": {
+      "LOAD": 1.52
+     },
+     "night": {
+      "LOAD": 0.95
+     }
+    },
+    "Dominion": {
+     "day": {
+      "LOAD": -2.0
+     },
+     "night": {
+      "LOAD": -0.62
+     }
+    },
+    "EMAAC": {
+     "day": {
+      "LOAD": 2.06
+     },
+     "night": {
+      "LOAD": 1.1
+     }
+    },
+    "SWMAAC": {
+     "day": {
+      "LOAD": -0.36
+     },
+     "night": {
+      "LOAD": 0.23
+     }
+    },
+    "West_APS": {
+     "day": {
+      "LOAD": -0.19
+     },
+     "night": {
+      "LOAD": 0.14
+     }
+    }
+   },
+   "hourly_corr_LOAD_with": {
+    "dGAS": 0.362,
+    "dCOAL": -0.261,
+    "dEXPORT": 0.216,
+    "dDEMAND": 0.008,
+    "lw_price": -0.09
+   },
+   "gas_share_of_thermal_overrun_hours": 0.618,
+   "lw_price_mean": 65.29
+  },
+  "2023": {
+   "lag_h": 0,
+   "annual_twh": {
+    "LOAD": 10.83,
+    "ON": 10.38,
+    "OFF": -29.94,
+    "dGAS": 3.69,
+    "dCOAL": -2.42,
+    "dEXPORT": -13.75,
+    "dDEMAND": -0.11
+   },
+   "by_decile": {
+    "0": {
+     "LOAD": 2.96,
+     "ON": 1.74,
+     "OFF": -2.86,
+     "dGAS": 2.43,
+     "dCOAL": -0.68,
+     "dEXPORT": -0.27,
+     "dDEMAND": -0.0
+    },
+    "1": {
+     "LOAD": 2.21,
+     "ON": 1.59,
+     "OFF": -3.25,
+     "dGAS": 1.03,
+     "dCOAL": -0.43,
+     "dEXPORT": -0.94,
+     "dDEMAND": -0.04
+    },
+    "2": {
+     "LOAD": 1.89,
+     "ON": 1.39,
+     "OFF": -3.23,
+     "dGAS": 0.71,
+     "dCOAL": -0.37,
+     "dEXPORT": -1.17,
+     "dDEMAND": -0.04
+    },
+    "3": {
+     "LOAD": 1.51,
+     "ON": 1.21,
+     "OFF": -3.26,
+     "dGAS": 0.43,
+     "dCOAL": -0.29,
+     "dEXPORT": -1.17,
+     "dDEMAND": -0.02
+    },
+    "4": {
+     "LOAD": 1.35,
+     "ON": 1.11,
+     "OFF": -3.57,
+     "dGAS": -0.14,
+     "dCOAL": -0.09,
+     "dEXPORT": -1.39,
+     "dDEMAND": -0.01
+    },
+    "5": {
+     "LOAD": 0.98,
+     "ON": 1.05,
+     "OFF": -3.94,
+     "dGAS": -0.76,
+     "dCOAL": 0.22,
+     "dEXPORT": -1.74,
+     "dDEMAND": -0.0
+    },
+    "6": {
+     "LOAD": 0.68,
+     "ON": 0.88,
+     "OFF": -3.75,
+     "dGAS": -0.77,
+     "dCOAL": 0.25,
+     "dEXPORT": -1.71,
+     "dDEMAND": -0.0
+    },
+    "7": {
+     "LOAD": -0.04,
+     "ON": 0.7,
+     "OFF": -3.2,
+     "dGAS": -0.68,
+     "dCOAL": 0.28,
+     "dEXPORT": -1.59,
+     "dDEMAND": -0.0
+    },
+    "8": {
+     "LOAD": -0.48,
+     "ON": 0.49,
+     "OFF": -2.16,
+     "dGAS": 0.1,
+     "dCOAL": -0.1,
+     "dEXPORT": -1.66,
+     "dDEMAND": 0.0
+    },
+    "9": {
+     "LOAD": -0.24,
+     "ON": 0.22,
+     "OFF": -0.71,
+     "dGAS": 1.33,
+     "dCOAL": -1.21,
+     "dEXPORT": -2.13,
+     "dDEMAND": -0.0
+    }
+   },
+   "by_daynight": {
+    "day": {
+     "LOAD": 3.19,
+     "ON": 5.39,
+     "OFF": -18.08,
+     "dGAS": 1.06,
+     "dCOAL": -1.63,
+     "dEXPORT": -10.46,
+     "dDEMAND": -0.09
+    },
+    "night": {
+     "LOAD": 7.64,
+     "ON": 4.99,
+     "OFF": -11.87,
+     "dGAS": 2.64,
+     "dCOAL": -0.79,
+     "dEXPORT": -3.29,
+     "dDEMAND": -0.02
+    }
+   },
+   "by_zone_load": {
+    "AEP_Ohio": 1.83,
+    "ATSI": 0.31,
+    "Central_PA": 5.15,
+    "ComEd": 3.34,
+    "Dominion": -8.55,
+    "EMAAC": 7.42,
+    "SWMAAC": 0.83,
+    "West_APS": 0.5
+   },
+   "by_zone_load_daynight": {
+    "AEP_Ohio": {
+     "day": {
+      "LOAD": 0.86
+     },
+     "night": {
+      "LOAD": 0.97
+     }
+    },
+    "ATSI": {
+     "day": {
+      "LOAD": 0.07
+     },
+     "night": {
+      "LOAD": 0.23
+     }
+    },
+    "Central_PA": {
+     "day": {
+      "LOAD": 2.94
+     },
+     "night": {
+      "LOAD": 2.21
+     }
+    },
+    "ComEd": {
+     "day": {
+      "LOAD": 1.76
+     },
+     "night": {
+      "LOAD": 1.57
+     }
+    },
+    "Dominion": {
+     "day": {
+      "LOAD": -7.01
+     },
+     "night": {
+      "LOAD": -1.54
+     }
+    },
+    "EMAAC": {
+     "day": {
+      "LOAD": 4.16
+     },
+     "night": {
+      "LOAD": 3.26
+     }
+    },
+    "SWMAAC": {
+     "day": {
+      "LOAD": 0.16
+     },
+     "night": {
+      "LOAD": 0.67
+     }
+    },
+    "West_APS": {
+     "day": {
+      "LOAD": 0.24
+     },
+     "night": {
+      "LOAD": 0.27
+     }
+    }
+   },
+   "hourly_corr_LOAD_with": {
+    "dGAS": 0.262,
+    "dCOAL": -0.073,
+    "dEXPORT": 0.126,
+    "dDEMAND": 0.015,
+    "lw_price": -0.388
+   },
+   "gas_share_of_thermal_overrun_hours": 1.06,
+   "lw_price_mean": 32.52
+  },
+  "2024": {
+   "lag_h": 0,
+   "annual_twh": {
+    "LOAD": -1.91,
+    "ON": 7.0,
+    "OFF": -11.76,
+    "dGAS": 12.09,
+    "dCOAL": -4.18,
+    "dEXPORT": -12.27,
+    "dDEMAND": -0.13
+   },
+   "by_decile": {
+    "0": {
+     "LOAD": 0.4,
+     "ON": 1.08,
+     "OFF": -1.49,
+     "dGAS": 2.53,
+     "dCOAL": 0.06,
+     "dEXPORT": -0.75,
+     "dDEMAND": 1.75
+    },
+    "1": {
+     "LOAD": 0.22,
+     "ON": 0.9,
+     "OFF": -1.48,
+     "dGAS": 1.9,
+     "dCOAL": 0.06,
+     "dEXPORT": -1.11,
+     "dDEMAND": 1.47
+    },
+    "2": {
+     "LOAD": -0.01,
+     "ON": 0.76,
+     "OFF": -1.34,
+     "dGAS": 1.08,
+     "dCOAL": -0.04,
+     "dEXPORT": -1.04,
+     "dDEMAND": 0.34
+    },
+    "3": {
+     "LOAD": -0.13,
+     "ON": 0.82,
+     "OFF": -1.35,
+     "dGAS": 0.56,
+     "dCOAL": -0.05,
+     "dEXPORT": -1.03,
+     "dDEMAND": -0.03
+    },
+    "4": {
+     "LOAD": -0.28,
+     "ON": 0.75,
+     "OFF": -1.34,
+     "dGAS": 0.41,
+     "dCOAL": -0.03,
+     "dEXPORT": -1.06,
+     "dDEMAND": -0.18
+    },
+    "5": {
+     "LOAD": -0.55,
+     "ON": 0.65,
+     "OFF": -1.26,
+     "dGAS": 0.22,
+     "dCOAL": -0.1,
+     "dEXPORT": -1.31,
+     "dDEMAND": -0.31
+    },
+    "6": {
+     "LOAD": -0.53,
+     "ON": 0.62,
+     "OFF": -1.25,
+     "dGAS": 0.8,
+     "dCOAL": -0.21,
+     "dEXPORT": -1.66,
+     "dDEMAND": 0.22
+    },
+    "7": {
+     "LOAD": -0.53,
+     "ON": 0.62,
+     "OFF": -1.17,
+     "dGAS": 0.76,
+     "dCOAL": -0.87,
+     "dEXPORT": -1.37,
+     "dDEMAND": -0.92
+    },
+    "8": {
+     "LOAD": -0.46,
+     "ON": 0.48,
+     "OFF": -0.77,
+     "dGAS": 1.48,
+     "dCOAL": -1.23,
+     "dEXPORT": -1.42,
+     "dDEMAND": -0.81
+    },
+    "9": {
+     "LOAD": -0.05,
+     "ON": 0.32,
+     "OFF": -0.31,
+     "dGAS": 2.37,
+     "dCOAL": -1.77,
+     "dEXPORT": -1.52,
+     "dDEMAND": -1.65
+    }
+   },
+   "by_daynight": {
+    "day": {
+     "LOAD": -2.98,
+     "ON": 4.07,
+     "OFF": -7.17,
+     "dGAS": 8.94,
+     "dCOAL": -2.74,
+     "dEXPORT": -8.47,
+     "dDEMAND": -0.1
+    },
+    "night": {
+     "LOAD": 1.07,
+     "ON": 2.93,
+     "OFF": -4.59,
+     "dGAS": 3.15,
+     "dCOAL": -1.44,
+     "dEXPORT": -3.8,
+     "dDEMAND": -0.03
+    }
+   },
+   "by_zone_load": {
+    "AEP_Ohio": -1.36,
+    "ATSI": 0.0,
+    "Central_PA": 4.13,
+    "ComEd": 2.81,
+    "Dominion": -4.32,
+    "EMAAC": -2.03,
+    "SWMAAC": -1.87,
+    "West_APS": 0.72
+   },
+   "by_zone_load_daynight": {
+    "AEP_Ohio": {
+     "day": {
+      "LOAD": -1.04
+     },
+     "night": {
+      "LOAD": -0.32
+     }
+    },
+    "ATSI": {
+     "day": {
+      "LOAD": -0.11
+     },
+     "night": {
+      "LOAD": 0.11
+     }
+    },
+    "Central_PA": {
+     "day": {
+      "LOAD": 2.33
+     },
+     "night": {
+      "LOAD": 1.81
+     }
+    },
+    "ComEd": {
+     "day": {
+      "LOAD": 1.53
+     },
+     "night": {
+      "LOAD": 1.27
+     }
+    },
+    "Dominion": {
+     "day": {
+      "LOAD": -2.98
+     },
+     "night": {
+      "LOAD": -1.34
+     }
+    },
+    "EMAAC": {
+     "day": {
+      "LOAD": -1.56
+     },
+     "night": {
+      "LOAD": -0.47
+     }
+    },
+    "SWMAAC": {
+     "day": {
+      "LOAD": -1.51
+     },
+     "night": {
+      "LOAD": -0.36
+     }
+    },
+    "West_APS": {
+     "day": {
+      "LOAD": 0.36
+     },
+     "night": {
+      "LOAD": 0.36
+     }
+    }
+   },
+   "hourly_corr_LOAD_with": {
+    "dGAS": 0.133,
+    "dCOAL": -0.224,
+    "dEXPORT": 0.08,
+    "dDEMAND": -0.075,
+    "lw_price": -0.049
+   },
+   "gas_share_of_thermal_overrun_hours": 0.923,
+   "lw_price_mean": 30.99
+  },
+  "2025": {
+   "lag_h": 0,
+   "annual_twh": {
+    "LOAD": -1.72,
+    "ON": 5.77,
+    "OFF": -17.41,
+    "dGAS": 11.07,
+    "dCOAL": 5.73,
+    "dEXPORT": 4.43,
+    "dDEMAND": -0.01
+   },
+   "by_decile": {
+    "0": {
+     "LOAD": 0.85,
+     "ON": 1.13,
+     "OFF": -2.4,
+     "dGAS": 1.31,
+     "dCOAL": 0.74,
+     "dEXPORT": 1.26,
+     "dDEMAND": -0.01
+    },
+    "1": {
+     "LOAD": 0.43,
+     "ON": 0.91,
+     "OFF": -2.14,
+     "dGAS": 1.45,
+     "dCOAL": 0.57,
+     "dEXPORT": 0.81,
+     "dDEMAND": 0.0
+    },
+    "2": {
+     "LOAD": 0.47,
+     "ON": 0.79,
+     "OFF": -2.0,
+     "dGAS": 1.37,
+     "dCOAL": 0.49,
+     "dEXPORT": 0.54,
+     "dDEMAND": -0.0
+    },
+    "3": {
+     "LOAD": 0.07,
+     "ON": 0.66,
+     "OFF": -1.92,
+     "dGAS": 1.0,
+     "dCOAL": 0.61,
+     "dEXPORT": 0.5,
+     "dDEMAND": 0.0
+    },
+    "4": {
+     "LOAD": -0.14,
+     "ON": 0.55,
+     "OFF": -1.57,
+     "dGAS": 1.15,
+     "dCOAL": 0.7,
+     "dEXPORT": 0.41,
+     "dDEMAND": 0.0
+    },
+    "5": {
+     "LOAD": -0.32,
+     "ON": 0.52,
+     "OFF": -1.71,
+     "dGAS": 0.78,
+     "dCOAL": 0.79,
+     "dEXPORT": 0.44,
+     "dDEMAND": 0.0
+    },
+    "6": {
+     "LOAD": -0.69,
+     "ON": 0.45,
+     "OFF": -1.75,
+     "dGAS": 0.6,
+     "dCOAL": 0.85,
+     "dEXPORT": 0.17,
+     "dDEMAND": -0.0
+    },
+    "7": {
+     "LOAD": -0.96,
+     "ON": 0.31,
+     "OFF": -1.7,
+     "dGAS": 0.7,
+     "dCOAL": 0.69,
+     "dEXPORT": 0.09,
+     "dDEMAND": -0.0
+    },
+    "8": {
+     "LOAD": -1.01,
+     "ON": 0.28,
+     "OFF": -1.51,
+     "dGAS": 1.14,
+     "dCOAL": 0.17,
+     "dEXPORT": -0.16,
+     "dDEMAND": 0.0
+    },
+    "9": {
+     "LOAD": -0.41,
+     "ON": 0.16,
+     "OFF": -0.72,
+     "dGAS": 1.58,
+     "dCOAL": 0.14,
+     "dEXPORT": 0.37,
+     "dDEMAND": 0.0
+    }
+   },
+   "by_daynight": {
+    "day": {
+     "LOAD": -1.69,
+     "ON": 3.29,
+     "OFF": -11.31,
+     "dGAS": 7.31,
+     "dCOAL": 3.09,
+     "dEXPORT": 2.41,
+     "dDEMAND": 0.0
+    },
+    "night": {
+     "LOAD": -0.02,
+     "ON": 2.48,
+     "OFF": -6.1,
+     "dGAS": 3.76,
+     "dCOAL": 2.64,
+     "dEXPORT": 2.02,
+     "dDEMAND": -0.01
+    }
+   },
+   "by_zone_load": {
+    "AEP_Ohio": -1.16,
+    "ATSI": -0.1,
+    "Central_PA": 1.97,
+    "ComEd": 3.59,
+    "Dominion": -1.1,
+    "EMAAC": -3.52,
+    "SWMAAC": -1.97,
+    "West_APS": 0.59
+   },
+   "by_zone_load_daynight": {
+    "AEP_Ohio": {
+     "day": {
+      "LOAD": -0.68
+     },
+     "night": {
+      "LOAD": -0.48
+     }
+    },
+    "ATSI": {
+     "day": {
+      "LOAD": -0.09
+     },
+     "night": {
+      "LOAD": -0.01
+     }
+    },
+    "Central_PA": {
+     "day": {
+      "LOAD": 1.15
+     },
+     "night": {
+      "LOAD": 0.82
+     }
+    },
+    "ComEd": {
+     "day": {
+      "LOAD": 2.14
+     },
+     "night": {
+      "LOAD": 1.45
+     }
+    },
+    "Dominion": {
+     "day": {
+      "LOAD": -0.6
+     },
+     "night": {
+      "LOAD": -0.51
+     }
+    },
+    "EMAAC": {
+     "day": {
+      "LOAD": -2.62
+     },
+     "night": {
+      "LOAD": -0.9
+     }
+    },
+    "SWMAAC": {
+     "day": {
+      "LOAD": -1.37
+     },
+     "night": {
+      "LOAD": -0.6
+     }
+    },
+    "West_APS": {
+     "day": {
+      "LOAD": 0.38
+     },
+     "night": {
+      "LOAD": 0.2
+     }
+    }
+   },
+   "hourly_corr_LOAD_with": {
+    "dGAS": 0.328,
+    "dCOAL": 0.012,
+    "dEXPORT": 0.157,
+    "dDEMAND": 0.01,
+    "lw_price": -0.1
+   },
+   "gas_share_of_thermal_overrun_hours": 0.702,
+   "lw_price_mean": 43.95
+  }
+ }
+}

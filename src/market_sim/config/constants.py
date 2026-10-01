@@ -444,6 +444,24 @@ RA_BRIDGE_ECON_MIN_DOWN_HOURS: float = 4.0
 SPP_GAS_BRIDGE_MIN_LOAD_FRAC: dict[str, float] = {"gas_cc": 0.209, "gas_st": 0.090}
 SPP_GAS_BRIDGE_MIN_RUN_HOURS: dict[str, float] = {"gas_cc": 15.0, "gas_st": 5.0}
 
+# PJM gas commitment bridge (ScenarioConfig.pjm_gas_commitment_bridge, lane
+# PJM-NEXT-16, owner ruling 2026-09-30 "Charter + solve with OVEC"): the two
+# MEASURED statistics the PJM leg's floor reads, keyed by LP fuel type, from the
+# SAME construction as SPP's (scripts/data/derive_campd_gas_commitment_params.py
+# --iso PJM --plant-basis, CAMPD 2023-2025, the script's default pool ->
+# data/raw/_processed-legacy/campd_gas_commitment_params_plant_PJM.csv):
+#   min_load_frac = HSL-weighted p50 of plant lsl_frac: CC_REGULAR 0.436
+#                   (p25 0.293 / p75 0.535, 69 plants, 59,464 MW);
+#   min_run_hours = capacity-weighted p25 of the plant-basis run lengths:
+#                   CC_REGULAR 11 h (7,143 runs).
+# CC only: the owner's charter is the CC min-load block (PJM-NEXT-15 card 2);
+# ST_GAS is measured in the same artifact (0.128 / 11 h) and NOT read.
+# Rules 5/13/21/23: measured unit conduct, re-derived only when CAMPD updates;
+# rule 25: PJM's own plants, nothing inherited from SPP/NYISO. Read only when
+# the PJM bridge gate is on.
+PJM_GAS_BRIDGE_MIN_LOAD_FRAC: dict[str, float] = {"gas_cc": 0.436}
+PJM_GAS_BRIDGE_MIN_RUN_HOURS: dict[str, float] = {"gas_cc": 11.0}
+
 # MISO merchant-CC EcoMin online floor (ScenarioConfig.miso_gas_ecomin_online_
 # floor, lane miso-286, CHARTER-miso285-ecomin-price-taker-2026-09-29 §2): the
 # MEASURED plant-basis minimum stable load of MISO's CC_REGULAR fleet, from the
@@ -1915,6 +1933,57 @@ FUEL_CO2_FACTOR_PER_MMBTU: dict[str, float] = {
 }
 
 # ---------------------------------------------------------------------------
+# CAMPD CO2-per-heat-input fuel signatures (soco-96 measured oil burn,
+# ScenarioConfig.dual_fuel_measured_oil_burn;
+# scripts/data/derive_measured_oil_burn_days.py).
+#
+# A gas-primary CEMS unit that burns a gas/oil blend in an hour reports
+#   co2Mass / heatInput = f x R_OIL + (1 - f) x R_GAS
+# so the hour's oil share of heat input is f = (r - R_GAS) / (R_OIL - R_GAS)
+# (the two-fuel mixing identity; zero free parameters). The two signatures MUST
+# be the factors CAMPD itself used to book co2Mass, or every pure-gas hour reads
+# a spurious oil share. For Appendix-D (fuel-flow) gas/oil units that is
+# 40 CFR Part 75 Appendix G Eq. G-4,
+#   W_CO2 [short tons/h] = Fc x H x U_f x MW_CO2 / 2000,
+# with the Appendix F Table 1 carbon-based F-factors Fc (natural gas 1,040;
+# oil 1,420 scf CO2 per MMBtu), U_f = 1/385 scf CO2 per lb-mole (14.7 psia,
+# 68 F) and MW_CO2 = 44.0 lb/lb-mole. CAMPD co2Mass is in SHORT TONS and
+# heatInput in MMBtu. Measured check (GA 2022, gas-primary units, heatInput >
+# 100 MMBtu): the modal ratio is 0.05943 t/MMBtu (= 1,040 x 44.0 / 385 / 2000)
+# and oil-burning units sit at 0.08114-0.08115 (= 1,420 x 44.0 / 385 / 2000).
+# RECONCILIATION (rule 14 [R-ACCURATE] misalignment exception): the EPA Part 98
+# Subpart C Table C-1 factors (natural gas 53.06, distillate No.2 73.96
+# kg CO2/MMBtu = 0.05849 / 0.08153 short t/MMBtu) are a DIFFERENT accounting
+# basis from the one CAMPD books co2Mass on; used literally they place the
+# pure-gas mode at f = 0.041 (a 4 % phantom oil share on every gas hour).
+# ---------------------------------------------------------------------------
+
+#: Part 75 App. F Table 1 carbon F-factor, natural gas (scf CO2 / MMBtu).
+PART75_FC_NATURAL_GAS_SCF_PER_MMBTU: float = 1040.0
+#: Part 75 App. F Table 1 carbon F-factor, oil (scf CO2 / MMBtu).
+PART75_FC_OIL_SCF_PER_MMBTU: float = 1420.0
+#: Part 75 App. G Eq. G-4 U_f: 1/385 lb-mole per scf CO2 (14.7 psia, 68 F).
+PART75_UF_LBMOL_PER_SCF: float = 1.0 / 385.0
+#: Part 75 App. G Eq. G-4 molecular weight of CO2 (lb / lb-mole).
+PART75_MW_CO2_LB_PER_LBMOL: float = 44.0
+#: Pounds per short ton (the Eq. G-4 divisor; CAMPD co2Mass is short tons).
+LB_PER_SHORT_TON: float = 2000.0
+#: CAMPD CO2 signature of natural gas: short tons CO2 per MMBtu (0.059429).
+CAMPD_CO2_SHORT_TONS_PER_MMBTU_GAS: float = (
+    PART75_FC_NATURAL_GAS_SCF_PER_MMBTU
+    * PART75_UF_LBMOL_PER_SCF
+    * PART75_MW_CO2_LB_PER_LBMOL
+    / LB_PER_SHORT_TON
+)
+#: CAMPD CO2 signature of fuel oil: short tons CO2 per MMBtu (0.081143).
+CAMPD_CO2_SHORT_TONS_PER_MMBTU_OIL: float = (
+    PART75_FC_OIL_SCF_PER_MMBTU
+    * PART75_UF_LBMOL_PER_SCF
+    * PART75_MW_CO2_LB_PER_LBMOL
+    / LB_PER_SHORT_TON
+)
+
+# ---------------------------------------------------------------------------
 # Forward per-plant CO2-rate estimator (market_sim.data.emission_rates).
 # The forecast-year CO2 rate for an existing unit is derived from its multi-year
 # measured CAMPD history (rule-13-admissible measured input; see
@@ -2567,7 +2636,29 @@ ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE: dict[str, bool] = {"SOCO": True}
 # Springhill 56522 LFG (4.8 MW) — are appended to that vintage's processed
 # table by ``scripts/data/process_eia860.py --rescope-from-parquet
 # data/raw/eia-860/vintage_2021 --admit-ba AEC``.
-ISO_BA_JOINS: dict[str, dict[str, tuple[int, int]]] = {"SOCO": {"AEC": (2021, 9)}}
+#
+# PJM (lane PJM-NEXT-16, 2026-09-30, owner ruling "Build + solve"): the Ohio
+# Valley Electric Corporation (EIA BA code ``OVEC``) — Clifty Creek 983 and
+# Kyger Creek 2876, 2.2 GW of coal — is inside the PJM balancing authority in
+# every hour of the backcast corpus, but EIA-860 vintages 2018-2020 still code
+# both plants ``OVEC`` (vintages 2021+ code them ``PJM``), so the modelled-BA
+# filter dropped them from the 2019/2020 LP fleet while PJM's EIA-930 demand
+# and the EIA-923 benchmark (``build_zone_lookup``) both carry them (11.24 /
+# 9.03 TWh). Measured: ``eia-930-interchange/PJM interchange hourly.parquet``
+# has NO ``OVEC`` directly-interconnected-BA leg in any hour from 2019-01-01,
+# the EIA-930 BALANCE files carry no ``OVEC`` BA in 2019-2021, and PJM's
+# tie-line meter lists no OVEC tie in any year
+# (docs/FINDING-pjm-next-16-cc-loading-and-the-ovec-boundary-2026-09-30.md).
+# The integration date PRECEDES the corpus, so the registered month is the
+# corpus bound 2019-01: every date <= 2019-01 is solve-identical (no backcast
+# year precedes 2019, and a forecast reads a vintage that codes them PJM).
+# Vintages 2019/2020 are rescoped by ``scripts/data/process_eia860.py
+# --rescope-from-parquet data/raw/eia-860/vintage_2019
+# data/raw/eia-860/vintage_2020 --admit-ba OVEC``.
+ISO_BA_JOINS: dict[str, dict[str, tuple[int, int]]] = {
+    "SOCO": {"AEC": (2021, 9)},
+    "PJM": {"OVEC": (2019, 1)},
+}
 
 # --- Balancing authorities that plants/load LEFT a modelled region to ---------
 # ``{iso: {destination_ba: first_hour_outside}}`` — the twin of

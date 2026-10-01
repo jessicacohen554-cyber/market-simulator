@@ -131,6 +131,13 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
+# The repo root too: ``load_demand`` builds measured hourly zonal shares via
+# ``scripts.data.curate_zonal_shares`` when ``data/clean`` is absent, and
+# silently drops to the STATIC per-zone ``load_share`` if ``scripts`` is not
+# importable — which it is not when this file runs as a CLI (sys.path[0] is
+# scripts/data). The *_lw weights must be the measured zonal demand the LP
+# dispatches (rubric v2.4), so the root must resolve (miso-294).
+sys.path.insert(0, str(REPO))
 from market_sim.config import paths  # noqa: E402  (resolves the data root)
 
 # Paths resolve through config/paths.py (CLAUDE.md: never hardcode the legacy
@@ -1364,9 +1371,10 @@ def build(years, isos=None) -> tuple[dict, dict]:
 # hourly actual series weighted by the MEASURED hourly load the model itself
 # dispatches in a backcast (``eia_loader.load_demand`` — same series, so the
 # two sides of C3a finally share weights). Where a committed ZONAL hourly
-# archive exists (ERCOT), the construction mirrors the scorer zone-by-zone;
-# elsewhere it weights the system hub series by system load. The legacy
-# equal-hour fields stay untouched (display continuity + fallback basis).
+# archive is registered in ``ZONAL_LW_SOURCES`` (ERCOT; MISO since miso-294),
+# the construction mirrors the scorer zone-by-zone; elsewhere it weights the
+# system hub series by system load. The legacy equal-hour fields stay
+# untouched (display continuity + fallback basis).
 
 # Model zone -> ERCOT settlement load zone(s). A model zone spanning several
 # LZs takes their simple mean (South_Central = Austin Energy + CPS Energy +
@@ -1383,6 +1391,57 @@ ERCOT_MODEL_ZONE_TO_LZ: dict[str, tuple[str, ...]] = {
     "Panhandle": ("LZ_WEST",),
 }
 ERCOT_ZONAL_PARQUET = "actual_lmp_zonal_ERCOT.parquet"
+
+# MISO-Plains has no trading hub; the declared MINN.HUB + ILLINOIS.HUB mean
+# proxy of scripts/data/derive_miso_hub_lmp.py (scope decision D6) and
+# scripts/report_miso_zonal_gates.py stands in. Every other MISO model zone
+# takes the hubs the zonal archive itself assigns it (``zone`` column), a
+# multi-hub zone (MISO-South) their simple mean.
+MISO_ZONAL_PARQUET = "actual_lmp_hourly_zonal_MISO.parquet"
+MISO_PLAINS_PROXY_HUBS: tuple[str, ...] = ("MINN.HUB", "ILLINOIS.HUB")
+
+
+def _miso_zone_to_hubs(z: pd.DataFrame) -> dict[str, tuple[str, ...]]:
+    """Model zone -> hub(s) from the MISO zonal archive, plus the Plains proxy."""
+    out = {
+        str(zone): tuple(sorted(g["hub"].astype(str).unique()))
+        for zone, g in z.groupby("zone")
+    }
+    out["MISO-Plains"] = MISO_PLAINS_PROXY_HUBS
+    return out
+
+
+#: Per-ISO committed zonal hourly archives that upgrade the ``*_lw`` actual
+#: to the zone-resolved construction (rubric v2.4: "zone-resolved where a
+#: zonal archive exists"). ``key`` names the series column; ``zone_map``
+#: maps the year's archive slice to ``{model zone: series keys}``. MISO was
+#: adopted by owner ruling 2026-10-01 (docs/DESIGN-miso293-flowgate-stage1-
+#: 2026-10-01.md §8) for MISO ONLY — the cross-ISO question is unruled, so
+#: no other ISO is added here without its own ruling.
+ZONAL_LW_SOURCES: dict[str, dict] = {
+    "ERCOT": {
+        "parquet": ERCOT_ZONAL_PARQUET,
+        "key": "settlement_point",
+        "zone_map": lambda z: ERCOT_MODEL_ZONE_TO_LZ,
+        "src_lw": (
+            "zonal LZ settlement prices (RTM 15-min / DAM hourly) "
+            "load-weighted by measured zonal demand (eia_loader.load_demand), "
+            "model-zone crosswalk ERCOT_MODEL_ZONE_TO_LZ"
+        ),
+    },
+    "MISO": {
+        "parquet": MISO_ZONAL_PARQUET,
+        "key": "hub",
+        "zone_map": _miso_zone_to_hubs,
+        "src_lw": (
+            "zone-resolved: per model zone its trading-hub hourly series "
+            "(actual_lmp_hourly_zonal_MISO.parquet; multi-hub zones averaged; "
+            "MISO-Plains = MINN.HUB+ILLINOIS.HUB mean proxy) load-weighted by "
+            "measured zonal demand (eia_loader.load_demand), zone-demand-"
+            "weighted across zones (owner ruling 2026-10-01, miso-294)"
+        ),
+    },
+}
 
 
 def _lw_stats(prices: np.ndarray, weights: np.ndarray) -> tuple[float, list]:
@@ -1419,10 +1478,11 @@ def _measured_zone_demand(iso: str, year: int) -> np.ndarray | None:
 def _lw_fields(iso: str, year: int) -> dict | None:
     """Return the ``*_lw`` record fields for one ISO-year, or ``None``.
 
-    ERCOT: zone-resolved — the scorer's exact formula mirrored on the actual
-    (per-model-zone LZ hourly series weighted by that zone's measured demand,
-    then zone-demand-weighted across zones). Other ISOs: the committed system
-    hub series weighted by measured system load.
+    ISOs in :data:`ZONAL_LW_SOURCES` (ERCOT, MISO): zone-resolved — the
+    scorer's exact formula mirrored on the actual (per-model-zone hourly
+    series, multi-series zones averaged, weighted by that zone's measured
+    demand, then zone-demand-weighted across zones). Other ISOs: the
+    committed system hub series weighted by measured system load.
     """
     from market_sim.config.iso_configs import get_iso_config
 
@@ -1430,14 +1490,16 @@ def _lw_fields(iso: str, year: int) -> dict | None:
     if demand is None:
         return None
     out: dict = {}
-    if iso == "ERCOT":
-        zp = HOURLY_OUT / ERCOT_ZONAL_PARQUET
+    spec = ZONAL_LW_SOURCES.get(iso)
+    if spec is not None:
+        zp = HOURLY_OUT / spec["parquet"]
         if not zp.exists():
             return None
         z = pd.read_parquet(zp)
         z = z[z["year"] == int(year)]
+        zone_map = spec["zone_map"](z)
         series: dict[str, dict[str, np.ndarray]] = {}
-        for sp, g in z.groupby("settlement_point"):
+        for sp, g in z.groupby(spec["key"]):
             g = g.sort_values("hour")
             for kind in ("rt", "da"):
                 dense = np.full(_HOURS_PER_YEAR, np.nan)
@@ -1449,7 +1511,7 @@ def _lw_fields(iso: str, year: int) -> dict | None:
         for kind in ("rt", "da"):
             pairs: list[tuple[float, list, float]] = []  # (annual, mon, weight)
             for zi, zone in enumerate(zone_names):
-                lzs = ERCOT_MODEL_ZONE_TO_LZ.get(zone)
+                lzs = zone_map.get(zone)
                 w = demand[zi]
                 if not lzs or float(w.sum()) <= 0.0:
                     continue
@@ -1482,11 +1544,7 @@ def _lw_fields(iso: str, year: int) -> dict | None:
                 for i in range(12)
             ]
         if out:
-            out["src_lw"] = (
-                "zonal LZ settlement prices (RTM 15-min / DAM hourly) "
-                "load-weighted by measured zonal demand (eia_loader.load_demand), "
-                "model-zone crosswalk ERCOT_MODEL_ZONE_TO_LZ"
-            )
+            out["src_lw"] = spec["src_lw"]
     else:
         hp = HOURLY_OUT / f"actual_lmp_hourly_{iso}.parquet"
         if not hp.exists():

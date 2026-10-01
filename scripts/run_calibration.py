@@ -98,6 +98,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_caiso_zonal_gas_basis,
     apply_coal_supply_pricing,
     apply_dual_fuel_pricing,
+    apply_measured_oil_burn_pricing,
     apply_ercot_west_netload_gas_shape,
     apply_ercot_zonal_gas_basis,
     apply_hub_basis_overlay,
@@ -143,6 +144,7 @@ from market_sim.pipeline import (  # noqa: E402
     build_nyiso_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
     build_soco_gas_st_campaign_p1_prep,
+    build_pjm_gas_bridge_p1_prep,
     build_spp_gas_bridge_p1_prep,
     reset_pass_timing_log,
     run_commitment_pass,
@@ -567,6 +569,7 @@ def _reliability_floor_layup_shares(
 
     from market_sim.data.outages import (
         BINS_CSV_DEFAULT,
+        dispatched_bin_live_year,
         lp_bin_capacity_index,
         unit_layup_removed_fractions,
     )
@@ -579,12 +582,21 @@ def _reliability_floor_layup_shares(
         getattr(config, "unit_outage_dispatched_bin_denominator", False)
         and iso_u != "ERCOT"
     ):
+        # NWPP-NEXT-15: unit_id rides along so the live sub-gate can read each
+        # row's exit-cohort tag; ignored (byte-inert) while the sub-gate is off.
         lp_bins = lp_bin_capacity_index(
             [
-                SimpleNamespace(plant_code=int(c), plant_group=str(g))
-                for c, g in zip(fleet_arrays.plant_code, fleet_arrays.plant_group)
+                SimpleNamespace(plant_code=int(c), plant_group=str(g), unit_id=str(u))
+                for c, g, u in zip(
+                    fleet_arrays.plant_code,
+                    fleet_arrays.plant_group,
+                    fleet_arrays.unit_ids,
+                )
             ],
             np.asarray(fleet_arrays.pmax, dtype=float),
+            live_year=dispatched_bin_live_year(
+                config, getattr(config, "weather_year", None) or year
+            ),
         )
     shares = unit_layup_removed_fractions(
         int(getattr(config, "weather_year", 0) or year),
@@ -986,6 +998,7 @@ def run_year(
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
     unit_outage_dispatched_bin_denominator: bool | None = None,
+    unit_outage_dispatched_bin_live_denominator: bool | None = None,
     unit_outage_short_windows_gas: bool | None = None,
     unit_outage_window_hour_grain: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
@@ -1016,6 +1029,7 @@ def run_year(
     nyiso_east_reserve_families: bool | None = None,
     nyiso_gas_commitment_bridge: bool | None = None,
     spp_gas_commitment_bridge: bool | None = None,
+    pjm_gas_commitment_bridge: bool | None = None,
     soco_gas_st_campaign_commitment: bool | None = None,
     miso_coal_night_floor: bool | None = None,
     miso_gas_ecomin_online_floor: bool | None = None,
@@ -1957,6 +1971,13 @@ def run_year(
         config = config.with_overrides(
             unit_outage_dispatched_bin_denominator=unit_outage_dispatched_bin_denominator
         )
+    if unit_outage_dispatched_bin_live_denominator is not None:
+        # NWPP-NEXT-15: the LIVE sub-gate of the dispatched-bin denominator.
+        # SOLVE path for the flag, for the same miso-265 reason as its parent
+        # above (rule 24 [R-REGISTRY]).
+        config = config.with_overrides(
+            unit_outage_dispatched_bin_live_denominator=unit_outage_dispatched_bin_live_denominator
+        )
     if unit_outage_window_hour_grain is not None:
         # nyiso-229: the DETECTED-HOUR outage window grain. THIS is the SOLVE
         # path for the flag (run_calibration_full's _recorded_config only
@@ -2115,6 +2136,10 @@ def run_year(
     if spp_gas_commitment_bridge is not None:
         config = config.with_overrides(
             spp_gas_commitment_bridge=spp_gas_commitment_bridge
+        )
+    if pjm_gas_commitment_bridge is not None:
+        config = config.with_overrides(
+            pjm_gas_commitment_bridge=pjm_gas_commitment_bridge
         )
     if miso_coal_night_floor is not None:
         config = config.with_overrides(miso_coal_night_floor=miso_coal_night_floor)
@@ -5241,7 +5266,20 @@ def run_year(
     # Dual-fuel switching last, so the oil-parity min sees the final delivered
     # gas price — the AGT-hub winter spot, so the gas->oil switch trips on cold
     # days (NEISO) — not the per-plant monthly cost alone (PJM).
-    apply_dual_fuel_pricing(fuel_prices, fleet_arrays, config, year)
+    # soco-96 measured oil burn (backcast-only, default off) first: the
+    # plant-day MEASURED gas/oil mix on the final delivered gas price; its
+    # written mask is the switch's skip_cells, so on a covered plant-day the
+    # measured mix REPLACES min(gas, oil) (rule 19). None when inert, which
+    # keeps the dual-fuel call byte-identical. Mirrors resolve_fuel_prices.
+    oil_burn_cells = apply_measured_oil_burn_pricing(
+        fuel_prices, fleet_arrays, config, year
+    )
+    if oil_burn_cells is None:
+        apply_dual_fuel_pricing(fuel_prices, fleet_arrays, config, year)
+    else:
+        apply_dual_fuel_pricing(
+            fuel_prices, fleet_arrays, config, year, skip_cells=oil_burn_cells
+        )
     # PJM DA virtual-bid layer: the pseudo-units' hourly bid prices are their
     # fuel_prices rows (heat_rate 1.0, vom 0) — written LAST among the
     # fuel-price appliers so no gas/coal overlay can touch them.
@@ -7185,6 +7223,12 @@ def run_year(
     spp_bridge_prep = build_spp_gas_bridge_p1_prep(
         config, iso, fleet, fleet_arrays, mc_base
     )
+    # P1-native PJM gas commitment bridge (PJM-NEXT-16): the PJM leg of the
+    # same family; replaces cc_mustrun_per_plant (rule 19). None for every
+    # non-PJM / gate-off run (byte-identical).
+    pjm_bridge_prep = build_pjm_gas_bridge_p1_prep(
+        config, iso, fleet, fleet_arrays, mc_base
+    )
     # P1-native SOCO gas-steam CAMPAIGN commitment floor (SOCO-53d): the SOCO
     # leg of the same family, and the only one whose object is a multi-WEEK
     # campaign rather than an overnight or midday gap. Measured minimum-run
@@ -7356,6 +7400,7 @@ def run_year(
             or ercot_bridge_prep
             or nyiso_bridge_prep
             or spp_bridge_prep
+            or pjm_bridge_prep
             or soco_campaign_prep
             or miso_night_floor_prep
             or miso_ecomin_prep

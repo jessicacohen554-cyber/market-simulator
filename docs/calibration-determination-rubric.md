@@ -515,7 +515,12 @@ way FAILs C6 regardless.
     the SAME measured demand the model dispatches
     (`eia_loader.load_demand`) — zone-resolved where a committed zonal archive
     exists (ERCOT: LZ settlement prices × measured zonal load, model-zone
-    crosswalked), the system hub series × system load elsewhere
+    crosswalked; MISO since 2026-10-01, owner ruling on
+    `DESIGN-miso293-flowgate-stage1-2026-10-01.md` §8: trading-hub series per
+    model zone, multi-hub zones averaged, MISO-Plains on the MINN+ILLINOIS
+    proxy, × measured zonal load — `ZONAL_LW_SOURCES` in
+    `derive_actual_lmp.py`; no other ISO was ruled on), the system hub series ×
+    system load elsewhere
     (`derive_actual_lmp.py --lw-retrofit`, `src_lw` provenance per ISO-year).
     Rationale: the legacy basis compared a demand-weighted model mean against
     an equal-hour actual — a wedge that grows with tail realism; a

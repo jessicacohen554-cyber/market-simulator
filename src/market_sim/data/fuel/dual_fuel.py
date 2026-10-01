@@ -1,5 +1,10 @@
 """Dual-fuel (oil/gas switch-capable) pricing: oil parity cap and switch mask.
 
+Also holds the soco-96 MEASURED oil-burn overlay
+(:func:`apply_measured_oil_burn_pricing`): a backcast-only plant-day gas/oil
+fuel mix derived from CAMPD CO2 / heat input, which replaces the parity switch
+on the plant-days it covers (rule 19).
+
 Split out of ``data/fuel.py`` (W-D3; refactor-consolidation plan §5 item 3) as
 pure code motion. ``dual_fuel_plant_groups`` and ``iso_monthly_oil_prices``
 are resolved through the package namespace at call time
@@ -13,8 +18,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from market_sim.config.constants import OIL_PRICE_PER_MMBTU
-from market_sim.config.paths import OIL_PRICES_DIR
+from market_sim.config.constants import (
+    CAMPD_CO2_SHORT_TONS_PER_MMBTU_GAS,
+    CAMPD_CO2_SHORT_TONS_PER_MMBTU_OIL,
+    OIL_PRICE_PER_MMBTU,
+)
+from market_sim.config.paths import OIL_PRICES_DIR, measured_oil_burn_days_path
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FleetArrays
 
@@ -161,6 +170,7 @@ def apply_dual_fuel_pricing(
     config: ScenarioConfig,
     year: int,
     monthly_costs_path: Path | None = None,
+    skip_cells: np.ndarray | None = None,
 ) -> None:
     """Cap dual-fuel gas units' fuel price at the delivered oil price.
 
@@ -194,6 +204,12 @@ def apply_dual_fuel_pricing(
             ``iso`` and ``hours``.
         year: Calendar year keying the measured oil-price lookup.
         monthly_costs_path: Optional override for the F923 parquet path.
+        skip_cells: Optional ``(n_gen, T)`` bool mask of generator-hours the
+            min() must leave untouched — the cells
+            :func:`apply_measured_oil_burn_pricing` wrote. Rule 19
+            [R-ONE-MECH]: on a plant-day whose fuel mix is MEASURED, the
+            measured mix REPLACES the price-parity switch rather than being
+            capped by it. ``None`` (the default) is the pre-existing behaviour.
     """
     if not getattr(config, "dual_fuel_switching", False):
         return
@@ -211,7 +227,14 @@ def apply_dual_fuel_pricing(
     for g in np.nonzero(is_gas)[0]:
         if (int(fleet.plant_code[g]), str(groups[g])) not in capable:
             continue
-        np.minimum(fuel_prices[g], oil_hourly, out=fuel_prices[g])
+        if skip_cells is None:
+            np.minimum(fuel_prices[g], oil_hourly, out=fuel_prices[g])
+        else:
+            np.copyto(
+                fuel_prices[g],
+                np.minimum(fuel_prices[g], oil_hourly),
+                where=~skip_cells[g],
+            )
         n_capped += 1
         mw_capped += float(fleet.pmax[g])
     if n_capped:
@@ -264,3 +287,191 @@ def dual_fuel_switch_mask(
             continue
         mask[g] = fuel_prices[g] > oil_hourly
     return mask
+
+
+def oil_heat_share_from_co2(
+    co2_short_tons: np.ndarray, heat_input_mmbtu: np.ndarray
+) -> np.ndarray:
+    """Return the per-row oil share of heat input from CAMPD CO2 / heat input.
+
+    The continuous two-fuel mixing identity (soco-96, zero free parameters): a
+    gas-primary unit burning a gas/oil blend in an hour reports
+    ``r = co2Mass / heatInput = f * R_OIL + (1 - f) * R_GAS`` short tons per
+    MMBtu, so ``f = clip((r - R_GAS) / (R_OIL - R_GAS), 0, 1)``. ``R_GAS`` /
+    ``R_OIL`` are the Part 75 App. G Eq. G-4 signatures CAMPD books ``co2Mass``
+    on (:data:`~market_sim.config.constants.CAMPD_CO2_SHORT_TONS_PER_MMBTU_GAS`
+    / ``_OIL``). Rows with non-positive or missing heat input, or missing CO2,
+    return NaN so a caller's heat-input-weighted aggregate drops them from both
+    numerator and denominator.
+
+    Args:
+        co2_short_tons: CAMPD ``co2Mass`` (short tons) per unit-hour.
+        heat_input_mmbtu: CAMPD ``heatInput`` (MMBtu) per unit-hour.
+
+    Returns:
+        Array of oil shares in ``[0, 1]`` (NaN where undefined).
+    """
+    co2 = np.asarray(co2_short_tons, dtype=float)
+    hi = np.asarray(heat_input_mmbtu, dtype=float)
+    valid = np.isfinite(co2) & np.isfinite(hi) & (hi > 0)
+    ratio = np.divide(co2, hi, out=np.full(co2.shape, np.nan), where=valid)
+    span = CAMPD_CO2_SHORT_TONS_PER_MMBTU_OIL - CAMPD_CO2_SHORT_TONS_PER_MMBTU_GAS
+    share = np.clip((ratio - CAMPD_CO2_SHORT_TONS_PER_MMBTU_GAS) / span, 0.0, 1.0)
+    return np.where(valid, share, np.nan)
+
+
+_OIL_BURN_DAYS_CACHE: dict[Path, pd.DataFrame] = {}
+
+
+def load_measured_oil_burn_days(
+    iso: str, year: int, path: Path | None = None
+) -> dict[int, np.ndarray]:
+    """Return ``{plant_code: (365,) daily oil heat share}`` for one ISO-year.
+
+    Reads the per-ISO derived artifact
+    (:func:`~market_sim.config.paths.measured_oil_burn_days_path`, written by
+    ``scripts/data/derive_measured_oil_burn_days.py``). Each row is one
+    plant-day with a positive measured oil share; days absent from the file are
+    0 (pure gas). Days are placed on the model's NON-LEAP 365-day clock: in a
+    leap year Feb 29 is dropped and later days shift back one, the same
+    convention every dense 8760 series in the repo uses. A missing file or an
+    ISO-year with no rows returns ``{}`` (the consumer is then inert).
+
+    Args:
+        iso: ISO name (matched against the artifact's ``iso`` column).
+        year: Solve year.
+        path: Optional artifact override (tests); defaults to the ISO's path.
+
+    Returns:
+        Mapping of EIA plant code to its daily oil-share vector.
+    """
+    resolved = Path(path) if path else measured_oil_burn_days_path(iso)
+    if resolved not in _OIL_BURN_DAYS_CACHE:
+        if not resolved.exists():
+            return {}
+        _OIL_BURN_DAYS_CACHE[resolved] = pd.read_csv(
+            resolved,
+            usecols=["iso", "year", "plant_code", "date", "oil_heat_share"],
+            parse_dates=["date"],
+        )
+    frame = _OIL_BURN_DAYS_CACHE[resolved]
+    rows = frame[(frame["iso"] == iso.upper()) & (frame["year"] == int(year))]
+    if rows.empty:
+        return {}
+    dates = rows["date"]
+    doy = dates.dt.dayofyear.to_numpy() - 1
+    leap = bool(pd.Timestamp(year=int(year), month=12, day=31).dayofyear == 366)
+    keep = np.ones(len(rows), dtype=bool)
+    if leap:
+        month = dates.dt.month.to_numpy()
+        keep = ~((month == 2) & (dates.dt.day.to_numpy() == 29))
+        doy = np.where(month > 2, doy - 1, doy)
+    days_per_year = sum(_DAYS_IN_MONTH)
+    keep &= (doy >= 0) & (doy < days_per_year)
+    out: dict[int, np.ndarray] = {}
+    codes = rows["plant_code"].to_numpy(dtype=int)[keep]
+    shares = rows["oil_heat_share"].to_numpy(dtype=float)[keep]
+    for code in np.unique(codes):
+        daily = np.zeros(days_per_year, dtype=float)
+        sel = codes == code
+        daily[doy[keep][sel]] = shares[sel]
+        out[int(code)] = daily
+    return out
+
+
+def apply_measured_oil_burn_pricing(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+    monthly_costs_path: Path | None = None,
+    path: Path | None = None,
+) -> np.ndarray | None:
+    """Price gas units at their plant's MEASURED daily gas/oil fuel mix.
+
+    soco-96 (owner ruling 2026-09-30, "Oil price at measured burn";
+    ``ScenarioConfig.dual_fuel_measured_oil_burn``). For every gas generator
+    whose EIA plant code carries a row in the derived artifact for the solve
+    year, each hour of a covered calendar day is priced at::
+
+        price = f * oil + (1 - f) * gas
+
+    where ``f`` is the plant-day's measured oil share of gas-unit heat input
+    (:func:`oil_heat_share_from_co2` applied once to the plant-day's summed
+    CO2 and heat input over its eligible gas-primary, non-coal-capable CEMS
+    units), ``oil`` is the delivered oil series the
+    dual-fuel switch uses (:func:`dual_fuel_oil_price_series`), and ``gas`` is
+    the cell's price as it arrives — i.e. AFTER the F923 plant-monthly, hub and
+    zonal overlays, so it is the plant's own delivered gas. Zero free
+    parameters: no threshold, no scaling. Objective-only, like
+    :func:`apply_dual_fuel_pricing`: the heat rate and emissions stay on the
+    gas characterization.
+
+    Rule 19 [R-ONE-MECH]: the returned mask is handed to
+    :func:`apply_dual_fuel_pricing` as ``skip_cells``, so on a covered
+    plant-day the measured mix REPLACES the ``min(gas, oil)`` parity switch
+    instead of being capped by it; uncovered cells keep the switch unchanged.
+
+    Rule 13 [R-MEASURED]: backcast-only. The trigger is the unit's measured
+    fuel conduct in that year, admitted as a backcast measured physical input
+    (like CAMPD outage windows); its forward substitute is
+    ``dual_fuel_switching``'s price-parity switch. The field is listed in the
+    backcast-only overlay family (a forecast config arming it raises at
+    construction), and this function is additionally inert outside
+    ``mode == "backcast"``.
+
+    Vectorized over hours; loops only over covered gas generators.
+
+    Args:
+        fuel_prices: ``(n_gen, T)`` delivered fuel prices, updated in place.
+        fleet: Vectorized fleet attributes (``fuel_type_idx``, ``plant_code``).
+        config: Scenario configuration (``dual_fuel_measured_oil_burn``,
+            ``mode``, ``iso``, ``hours``).
+        year: Solve year.
+        monthly_costs_path: Optional F923 parquet override for the oil series.
+        path: Optional artifact override (tests).
+
+    Returns:
+        The ``(n_gen, T)`` bool mask of cells written (``f > 0``), or ``None``
+        when the mechanism is inert (flag off, not a backcast, no rows).
+    """
+    if not getattr(config, "dual_fuel_measured_oil_burn", False):
+        return None
+    if config.mode != "backcast":
+        return None
+    daily_by_plant = load_measured_oil_burn_days(config.iso, year, path)
+    if not daily_by_plant:
+        return None
+    n_gen, n_hours = fuel_prices.shape
+    # hour -> model day on the non-leap clock (t = hour index)
+    day_of_hour = np.minimum(np.arange(n_hours) // 24, sum(_DAYS_IN_MONTH) - 1)
+    oil_hourly = dual_fuel_oil_price_series(config, year, monthly_costs_path)[:n_hours]
+    is_gas = np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX)
+    written = np.zeros((n_gen, n_hours), dtype=bool)
+    n_units = 0
+    mw_units = 0.0
+    for g in np.nonzero(is_gas)[0]:
+        daily = daily_by_plant.get(int(fleet.plant_code[g]))
+        if daily is None:
+            continue
+        share = daily[day_of_hour]
+        cells = share > 0.0
+        if not cells.any():
+            continue
+        mixed = share * oil_hourly + (1.0 - share) * fuel_prices[g]
+        np.copyto(fuel_prices[g], mixed, where=cells)
+        written[g] = cells
+        n_units += 1
+        mw_units += float(fleet.pmax[g])
+    if not n_units:
+        return None
+    logger.info(
+        "measured oil burn (%s %d): %d gas tranches (%.0f MW) priced at the "
+        "plant-day measured gas/oil mix in %d generator-hours",
+        config.iso,
+        year,
+        n_units,
+        mw_units,
+        int(written.sum()),
+    )
+    return written

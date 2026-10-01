@@ -3,7 +3,7 @@ offer and loading, and where does the model-minus-lambda gap sit?
 
 Owner ruling 2026-09-29 (soco-90 card): "Zero-LP intra-day census". Rule 32
 ``[R-SHARD]`` (a): this never solves. Per year it does one ``fleet_only`` rebuild of
-the keeper recipe (``results/calibration/soco93_span``, the soco-89/90 construction)
+the keeper recipe (``results/calibration/soco96_span``, the soco-89/90 construction)
 for each unit's ``mc_base[g,t]``, ``pmax``, ``availability``, ``min_gen`` and its D-2
 ``min_gen_mechanism``, then reads the keeper's committed hourly sidecars
 (``system`` / ``class_band_hourly`` / ``class_hourly`` / ``storage``), Southern's
@@ -45,7 +45,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "scripts"), str(ROOT / "src"), str(ROOT)]
 
 SPAN = (
-    ROOT / "results/calibration/soco93_span"
+    ROOT / "results/calibration/soco96_span"
 )  # repointed soco-93 (rule 35 prune of soco92_span)
 YEARS = tuple(range(2019, 2026))
 T = 8760

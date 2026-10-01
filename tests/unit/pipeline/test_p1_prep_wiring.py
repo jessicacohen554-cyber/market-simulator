@@ -48,6 +48,7 @@ _BRIDGE_BUILDERS: dict[str, str] = {
     # SPP-44: the SPP leg of the gas commitment bridge family, registered on
     # the roster in the same PR that wires it (the miso-113 lesson).
     "build_spp_gas_bridge_p1_prep": "spp_bridge_prep",
+    "build_pjm_gas_bridge_p1_prep": "pjm_bridge_prep",
     # SOCO-53d: the SOCO gas-steam campaign commitment floor, registered on
     # the roster in the same PR that wires it (the miso-113 lesson). This test
     # caught it missing from two of the three orchestrators before the arm was

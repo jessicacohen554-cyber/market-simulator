@@ -2,7 +2,7 @@
 (NRMSE 0.275 vs <= 0.20) while the six other years pass?
 
 Rule 32 ``[R-SHARD]`` (a): this never solves. It reads the keeper's committed hourly
-sidecars (``results/calibration/soco93_span``), the bench's ``rt_lw_mon`` (the scorer's
+sidecars (``results/calibration/soco96_span``), the bench's ``rt_lw_mon`` (the scorer's
 own C3b actual) and Southern's FERC-714 lambda on the bench's dense CST 8760, and reuses
 the soco-94 ``fleet_only`` rebuild + setter rule (``_soco94_year_pattern``) for the
 setter attribution and the measured plant-month fuel counterfactual.

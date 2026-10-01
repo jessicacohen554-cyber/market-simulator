@@ -284,6 +284,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # key; an armed run carries a different fleet cost and so gets a distinct
     # key.
     "egrid_family_heat_rates",
+    # NWPP-NEXT-15 captive-mine marginal coal price (GATED default-off;
+    # data/fuel/captive_coal.py inside the coal_plant_monthly_pricing seam, so
+    # the off path is byte-inert). Registered IN THE SAME COMMIT as the field.
+    "coal_captive_marginal_fuel_price",
     # eGRID steam-collapse identity heat rates (nyiso-189, default off):
     # dropped from the hash at its default so every pre-existing cached run
     # keeps its key; an armed run carries a different fleet cost and so gets
@@ -445,6 +449,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # byte-inert). Registered IN THE SAME COMMIT as the field (the nyiso-119 /
     # caiso-186 discipline), so the pinned default key never moves.
     "unit_outage_dispatched_bin_denominator",
+    # NWPP-NEXT-15 LIVE sub-gate of the dispatched-bin denominator (GATED
+    # default-off; every consumer reads it through
+    # ``outages.dispatched_bin_live_year`` or
+    # ``getattr(config, "unit_outage_dispatched_bin_live_denominator", False)``
+    # in data/fleet/arrays.py, so the off path is byte-inert). Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline), so the
+    # pinned default key never moves.
+    "unit_outage_dispatched_bin_live_denominator",
     # nyiso-229 unit-outage window at its DETECTED HOUR grain (GATED
     # default-off; selects the ``-perunitmerithour-`` extract, so the off path
     # is byte-inert -- it reads the same committed file it always did).
@@ -988,6 +1000,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # four measured constants live in constants.py (no sub-fields).
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "spp_gas_commitment_bridge",
+    # PJM gas commitment bridge (PJM-NEXT-16): the ONE PJM gate flag, inert at
+    # its default (off — the P1 prep hook returns None), dropped from the hash
+    # at its declared False so every pre-existing key is byte-stable; an armed
+    # run keys distinctly. Its two measured constants live in constants.py.
+    # Registered IN THE SAME COMMIT as the field.
+    "pjm_gas_commitment_bridge",
     # SOCO gas-steam campaign commitment floor (SOCO-53d): the ONE SOCO gate
     # flag, inert at its default (off — the P1 prep hook returns None), so it
     # is dropped from the hash at its declared False and every pre-existing key
@@ -2337,11 +2355,26 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # data/raw/spp-gen-outage CSV; no sub-fields. Registered IN THE SAME COMMIT
     # as the field (the nyiso-119 discipline).
     "spp_gas_crow_residual_outage",
+    # SPP-106 MMU offer-side bands (default off): dropped from the hash at its
+    # default so every pre-existing run keeps its key. Byte-identical off by
+    # construction (_spp_mmu_armed is False, so no derate is skipped and no
+    # band is removed). Its one input is the committed
+    # data/raw/spp-mmu-unavailable-capacity CSV; no sub-fields. Registered IN
+    # THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "spp_mmu_offer_unavailability",
     # EIA-923 CC-family heat rates (NWPP-NEXT-14, default off): dropped from
     # the hash at its default so every pre-existing run -- every ISO's keepers
     # included -- keeps its key. Byte-identical off by construction (the seam
     # is skipped). Registered IN THE SAME COMMIT as the field.
     "eia923_cc_family_heat_rates",
+    # soco-96 measured oil burn (default off): dropped from the hash at its
+    # default so every pre-existing run -- every ISO's keepers included --
+    # keeps its key. Byte-identical off by construction (the applier returns
+    # None before reading anything, and the dual-fuel call is the unchanged
+    # pre-existing one). Its one input is the per-ISO derived CSV
+    # paths.measured_oil_burn_days_path; no sub-fields. Registered IN THE SAME
+    # COMMIT as the field (the nyiso-119 discipline).
+    "dual_fuel_measured_oil_burn",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2426,6 +2459,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "measured_chp_heat_rates": "False",
     "egrid_identity_heat_rates": "False",
     "egrid_family_heat_rates": "False",
+    # Added by NWPP-NEXT-15 WITH the field, same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry.
+    "coal_captive_marginal_fuel_price": "False",
     "egrid_steam_collapse_heat_rates": "False",
     "cc_steam_part_capacity": "False",
     "cc_steam_part_reclass": "False",
@@ -2490,6 +2526,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-266 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_dispatched_bin_denominator": "False",
+    # Added by NWPP-NEXT-15 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_dispatched_bin_live_denominator": "False",
     # Added by nyiso-229 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_window_hour_grain": "False",
@@ -2726,6 +2765,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # SPP-44: the SPP gas commitment bridge gate, registered IN THE SAME
     # COMMIT as the field at its shipping default (off).
     "spp_gas_commitment_bridge": "False",
+    # PJM-NEXT-16: the PJM gas commitment bridge gate, registered IN THE SAME
+    # COMMIT as the field at its shipping default (off).
+    "pjm_gas_commitment_bridge": "False",
     # SOCO-53d: the SOCO gas-steam campaign commitment gate, registered IN THE
     # SAME COMMIT as the field at its shipping default (off).
     "soco_gas_st_campaign_commitment": "False",
@@ -3189,8 +3231,12 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "spp_ct_lole_efor": "False",
     # Added by SPP-105 WITH the field (the nyiso-119 discipline).
     "spp_gas_crow_residual_outage": "False",
+    # Added by SPP-106 WITH the field (the nyiso-119 discipline).
+    "spp_mmu_offer_unavailability": "False",
     # Added by NWPP-NEXT-14 WITH the field (the nyiso-119 discipline).
     "eia923_cc_family_heat_rates": "False",
+    # Added by soco-96 WITH the field (the nyiso-119 discipline).
+    "dual_fuel_measured_oil_burn": "False",
 }
 
 
@@ -3781,6 +3827,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "caiso_citygate_spot_coverage": "own-print month coverage of that measured series",
     "caiso_citygate_blackout_bridge": "measured Henry Hub daily spot + the two bracketing measured citygate prints, across EIA's publication blackouts",
     "dual_fuel_oil_daily_parity": "measured daily oil prints for the parity cap",
+    "dual_fuel_measured_oil_burn": "measured CAMPD plant-day oil burn (soco-96)",
     # --- measured availability / outage records ---
     "caiso_dam_outages": "CAISO's published DAM outage record for the year",
     "miso_native_outage_source": "MISO's published outage record for the year",
@@ -9222,6 +9269,38 @@ class ScenarioConfig:
     # physics; window = self-windowing on the model's own run pattern (no
     # clock hour); forward story = regenerates from any year's own P0.
     spp_gas_commitment_bridge: bool = False
+    # PJM GAS COMMITMENT BRIDGE (default off, PJM-gated — lane PJM-NEXT-16,
+    # owner ruling 2026-09-30 "Charter + solve with OVEC"): the PJM leg of the
+    # same P1-native committed-state bridge family, on PJM's merchant CCs.
+    #
+    # THE OBJECT (PJM-NEXT-15 card 2 + PJM-NEXT-16 card 1): the keeper places
+    # the CC committed floor by cc_mustrun_per_plant's window — each plant's
+    # committed tranche in its top-online_frac SYSTEM-load hours — which puts
+    # 20-28 TWh/yr of committed MW in hours the real plant was OFF, while outside
+    # the window the committed rung is LP-dispatchable and was the price-setter
+    # in 11 % of 2020 low-end hours (NEXT-14). In PJM a unit at ecomin is
+    # must-take while committed and does not set LMP. This leg makes min-load
+    # must-take in the hours the model's OWN base-cost P0 commits the plant.
+    #
+    # RULE 19 [R-ONE-MECH]: it REPLACES cc_mustrun_per_plant (the same CC
+    # committed floor, placed by system load); __post_init__ refuses both armed.
+    # It also shares the single p1_fleet_prep slot with the PJM commitment-
+    # scoped reserve hook, and refuses that combination too.
+    #
+    # Mechanism, legs and eligibility are the SPP leg's (see its comment above):
+    # the ISO-neutral detector model.commitment.caiso_ra_mustoffer_min_gen via
+    # pipeline.commitment.build_pjm_gas_bridge_p1_prep, fed the model's own P0
+    # run pattern and duals; restart bar, economic restart within one DA day,
+    # measured minimum-run extension, commitment-real run screen; class scope by
+    # unit physics (rule 18), gas_cc only, *_CHP excluded. LEVEL / MIN-RUN are
+    # the MEASURED plant-basis CAMPD 2023-2025 statistics
+    # constants.PJM_GAS_BRIDGE_MIN_LOAD_FRAC (0.436) / _MIN_RUN_HOURS (11 h),
+    # PJM's own (rule 25). D-2 id MECH_PJM_GAS_COMMITMENT_BRIDGE (27); D-4
+    # window (0, 24) by driver. Rule 17: driver = commitment physics; window =
+    # self-windowing on the model's own run pattern; forward story = regenerates
+    # from any year's own P0. Its VOLUME SIGN WAS NOT PREDICTABLE AT ZERO LP and
+    # the owner chartered it with that stated.
+    pjm_gas_commitment_bridge: bool = False
     # SPP COMMITMENT POSTURE (default off, SPP-gated — lane SPP-102, owner
     # decision card "Build relaxed-UC engine", 2026-09-29;
     # docs/handoffs/DESIGN-spp-102-cc-commitment-state-2026-09-29.md). The SAME
@@ -16966,6 +17045,44 @@ class ScenarioConfig:
     # retract it. Byte-inert while off.
     unit_outage_dispatched_bin_denominator: bool = False
 
+    # LIVE-CAPACITY SUB-GATE OF THE DISPATCHED-BIN DENOMINATOR (NWPP-NEXT-15,
+    # GATED default-off; REQUIRES unit_outage_dispatched_bin_denominator — the
+    # point-of-use accessor outages.dispatched_bin_live_year raises if armed
+    # alone). The parent reads the roster "off the year's own fleet", but a
+    # DATED EXIT COHORT (fleet/assembly.py's ``_p{plant}_r{yyyy}{mm}`` bin,
+    # miso-191) whose retirement year precedes the solve year is still CARRIED
+    # by the LP under the plant's (plant_code, plant_group) key, at zero
+    # availability every hour (cod_ramp.monthly_online_mask), so its pmax
+    # dilutes the divide. Measured on NWPP (FINDING-nwppnext13 §1.3, zero LP):
+    # Centralia 3845's dead _r202012 BW21 and Colstrip 6076's dead _r202001
+    # units 1-2 put the coal bin at 1,340 / 2,094 MW against the live 670 /
+    # 1,480 MW, and Centralia BW22's measured full outages (2021-04-03 ->
+    # 06-26, 2022-04-24 -> 07-10) leave 250-280 MW falsely available. Armed, the
+    # roster drops every dated exit-cohort row retired before the solve year (a
+    # cohort retiring IN the year is live through its month and stays) — at
+    # every consumer the parent reaches (outage/short/partial/maxgen layers,
+    # the lay-up loaders, and the miso-273 screened-coal share, which divides
+    # by the same roster).
+    #
+    # SECOND LIMB, same flag (rule 19 [R-ONE-MECH] — one relief mechanism
+    # re-ordered, not a new one): with wefor_residual_short_screened_coal armed,
+    # a COAL row takes the wefor_residual relief on its measured screened share
+    # ONLY, ahead of the covered-class full cap; wefor_residual_groups then
+    # decides the full cap for non-coal classes alone. So wefor_residual_groups
+    # naming just the coal classes scopes wefor_residual to screened coal
+    # (FINDING-nwppnext13 §1.3.3: NWPP's None groups otherwise zero WEFOR on all
+    # coal AND all CC/ST gas, and the screened branch never fires). MISO's
+    # keeper names no coal class in its groups, so the limb would be inert there
+    # even if armed.
+    #
+    # ZERO free parameters (rule 21 [R-DOF]): the exit month is the cohort's own
+    # stamped EIA-860 retirement; no per-plant list, no constant. Rule 13
+    # forward-regenerable exactly as the parent is. Chosen on construction
+    # (rule 14 [R-ACCURATE]: the denominator must be the capacity the multiplier
+    # is applied to in hours the unit can run), never on a residual.
+    # Byte-inert while off.
+    unit_outage_dispatched_bin_live_denominator: bool = False
+
     # UNIT-OUTAGE WINDOW AT ITS DETECTED HOUR GRAIN (nyiso-229, GATED
     # default-off). The CAMPD unit-outage detector has always worked in HOURS
     # (``start = clock[s]``, ``last = clock[e - 1]`` in
@@ -18677,6 +18794,27 @@ class ScenarioConfig:
     # docs/handoffs/DESIGN-spp-105-gas-family-outage-2026-09-30.md.
     spp_gas_crow_residual_outage: bool = False
 
+    # SPP offer-side unavailability from the SPP MMU's own measured classes
+    # (SPP-106, 2026-10-01; owner card "Build EX anyway", carrier EX).
+    # ISO-exclusive: raises if armed for any ISO but SPP (rule 25).
+    #
+    # WHEN TRUE, on every SPP fossil row (gas, coal, oil) the flat GADS
+    # performance derate and the flat summer class derate are dropped, and after
+    # the outage overlays three MMU bands are removed as shares of pmax: the
+    # "above emergency maximum" share and the "between economic and emergency
+    # maximum" share (MMU MW / MMU rated conventional MW), all year, plus the
+    # MMU's unreported ambient derate MW-days spread over Jun-Sep as a share of
+    # fossil pmax. Rule 19: a REPLACEMENT of the flat derates, never a stack.
+    # Rule 21: zero free parameters (every value is read from the table). Rule
+    # 13: years outside 2020-2024 hold the nearest published MMU year, which is
+    # also the forward story. Declared at the gate: the inputs are annual MW
+    # digitized from a one-off white paper, and the zero-LP prediction is
+    # +$0.4-0.7/MWh in the 2023-25 upper tercile against an $11-15 gap
+    # (DESIGN s4-s5). Data: data/raw/spp-mmu-unavailable-capacity
+    # (market_sim.data.spp_mmu_unavailability). Default off; byte-identical off.
+    # docs/handoffs/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md.
+    spp_mmu_offer_unavailability: bool = False
+
     # Measured ERCOT GTC transfer limits (backcast/calibration overlay). When
     # True in backcast mode, the export-direction capability of the transfer
     # links that carry ERCOT's published Generic Transmission Constraints
@@ -19142,6 +19280,29 @@ class ScenarioConfig:
     # supply classes (lignite mine-mouth vs railed PRB) are physically distinct
     # costs, so per-plant coal pricing stays on by default.
     coal_plant_monthly_pricing: bool = True
+
+    # NWPP-NEXT-15 captive-mine MARGINAL coal price (GATED default-off; owner
+    # ruling 2026-09-30 "Build, no threshold"; design
+    # docs/handoffs/DESIGN-nwppnext14-captive-mine-marginal-fuel-2026-09-30.md,
+    # rule + census + rule-19 map
+    # docs/handoffs/PHASE0-nwppnext15-captive-mine-2026-09-30.md). At a coal
+    # plant whose EIA-923 Page 5 receipts in the solve year are MIXED-source
+    # (0 < captive MMBtu share < 1; captive = TC/TR mine-mouth mode, mine state
+    # == plant state, not spot; NO minimum share), the ECON and PEAKING
+    # tranches take the MMBtu-weighted NON-CAPTIVE delivered price (plant-
+    # monthly, else the year's) instead of the blended cost the
+    # coal_plant_monthly_pricing seam writes; must-run / committed keep the
+    # blend. Lives INSIDE that seam and REPLACES its value on those cells
+    # (rule 19 [R-ONE-MECH]); requires coal_plant_monthly_pricing. Zero free
+    # parameters (rule 21): every input is a filed Page 5 field. Inherits the
+    # seam's mode gate (a no-op in forecast mode; rule 13 -- Page 5 regenerates
+    # for any backcast year from that year's filing). Like its host seam and
+    # the nearby-fallback refinements of it, deliberately NOT in
+    # _BACKCAST_ONLY_OVERLAY_FIELDS (the host seam is consumed by the capacity
+    # hindcast by owner-approved design; this refines what it writes). Any ISO
+    # may arm it; nothing is transferred (rule 25). A year with no Page 5 file
+    # (2025 at this writing) is left untouched and logged.
+    coal_captive_marginal_fuel_price: bool = False
 
     # Per-plant monthly gas pricing. OFF by default: every gas generator pays
     # the same Henry Hub trajectory + ISO basis (optionally seasonally shaped),
@@ -20664,6 +20825,52 @@ class ScenarioConfig:
     # level x daily shape is exactly the forecast construction. Requires
     # dual_fuel_switching; inert without it. Default off, byte-identical when
     # off (and when the daily series is absent, which resolves to all-ones).
+
+    # Tier 1 (structural, backcast-only) — dual-fuel pricing on MEASURED oil
+    # burn (soco-96, 2026-09-30). OWNER RULING, decision card answer verbatim:
+    # "Oil price at measured burn". ISO-generic code; the derived artifact
+    # exists only for SOCO, so it is inert everywhere else.
+    #
+    # WHEN TRUE, in a backcast, every GAS generator whose EIA plant code has a
+    # row for the solve year in paths.measured_oil_burn_days_path(iso) is
+    # priced, on each covered calendar day, at the plant's OWN measured
+    # heat-input-weighted fuel mix: price = f*oil + (1-f)*gas, where f is the
+    # plant-day oil share of gas-unit heat input, oil is the delivered oil
+    # series the dual-fuel switch uses (data.fuel.dual_fuel_oil_price_series:
+    # EIA-923 monthly delivered petroleum, hourly), and gas is the cell's final
+    # delivered gas (after the F923 plant-monthly and hub/zonal overlays).
+    # data.fuel.apply_measured_oil_burn_pricing; wired in resolve_fuel_prices
+    # and scripts/run_calibration.py at the dual-fuel seam.
+    #
+    # DRIVER / DERIVATION (zero free parameters, rule 21): f per plant-day is
+    # the two-fuel mixing identity applied ONCE to the plant-day aggregate
+    # ratio r = sum co2Mass / sum heatInput (so hourly rounding noise does not
+    # bias it upward), clip((r - R_GAS)/(R_OIL - R_GAS), 0, 1), with R_GAS /
+    # R_OIL the 40 CFR Part 75 App. G Eq. G-4 signatures CAMPD books co2Mass
+    # on (constants.CAMPD_CO2_SHORT_TONS_PER_MMBTU_GAS/_OIL). Eligible units:
+    # gas-primary CEMS units at the plant that are NOT coal-capable (no coal
+    # code in any EIA-860 Energy Source 1..6 of a generator they map to, via
+    # the EPA CAMD-EIA crosswalk, at the solve year's vintage) — the identity
+    # is two-fuel, so coal co-firing would read as oil. No threshold, no
+    # scaling. scripts/data/derive_measured_oil_burn_days.py.
+    #
+    # RULE 19 [R-ONE-MECH]: if dual_fuel_switching is also on, the measured mix
+    # REPLACES min(gas, oil) on the plant-days it covers (the applier's written
+    # mask is the switch's skip_cells); uncovered cells keep the switch.
+    # Objective-only: heat rate and emissions stay on the gas characterization
+    # (the simplification apply_dual_fuel_pricing documents).
+    #
+    # RULE 13 [R-MEASURED] ADMISSIBILITY NOTE: the TRIGGER is the unit's
+    # measured fuel conduct in that year. It is admitted here as a
+    # backcast-only measured physical input, analogous to CAMPD outage
+    # windows; it has no forward edition, so it is in
+    # _BACKCAST_ONLY_OVERLAY_FIELDS (a forecast config arming it raises) and
+    # the applier is inert outside mode == "backcast". Its FORWARD SUBSTITUTE
+    # is dual_fuel_switching's price-parity switch. Phase-0 reach bound
+    # (soco-96, zero LP): C3a 2022 +0.07 to +0.14 $/MWh.
+    #
+    # Default off; byte-identical off.
+    dual_fuel_measured_oil_burn: bool = False
 
     # Tier 3 (calibration) — thermal availability source. "statistical"
     # (default) builds coal/CC availability from the seasonal WEFOR/POF model;
@@ -23269,6 +23476,26 @@ class ScenarioConfig:
                     "mutually exclusive (rule 19: one mechanism for SPP gas "
                     "commitment state)."
                 )
+        if self.pjm_gas_commitment_bridge:
+            if str(self.iso) != "PJM":
+                raise ValueError(
+                    "pjm_gas_commitment_bridge is PJM-only (PJM-NEXT-16: PJM's "
+                    "own measured min-load / min-run, rule 25)."
+                )
+            if self.cc_mustrun_per_plant:
+                raise ValueError(
+                    "pjm_gas_commitment_bridge REPLACES cc_mustrun_per_plant "
+                    "(rule 19: one CC committed floor); disarm "
+                    "cc_mustrun_per_plant."
+                )
+            if self.pjm_commitment_posture or (
+                self.energy_reserve_coopt and self.pjm_reserve_commitment_scoped
+            ):
+                raise ValueError(
+                    "pjm_gas_commitment_bridge shares the P1 fleet-prep slot with "
+                    "pjm_commitment_posture / the commitment-scoped reserve hook; "
+                    "arm exactly one (rule 19)."
+                )
         if self.spp_ct_lole_efor and str(self.iso) != "SPP":
             raise ValueError(
                 "spp_ct_lole_efor is SPP-only (SPP-104: SPP's own LOLE-study "
@@ -23278,6 +23505,11 @@ class ScenarioConfig:
             raise ValueError(
                 "spp_gas_crow_residual_outage is SPP-only (SPP-105: SPP's own "
                 "published gas outage, rule 25)."
+            )
+        if self.spp_mmu_offer_unavailability and str(self.iso) != "SPP":
+            raise ValueError(
+                "spp_mmu_offer_unavailability is SPP-only (SPP-106: the SPP MMU's "
+                "own measured unavailability classes, rule 25)."
             )
         if self.spp_gas_crow_residual_outage and self.spp_ct_lole_efor:
             raise ValueError(
@@ -24384,6 +24616,9 @@ TIER_TAGS: dict[str, int] = {
     # SPP-44: the SPP leg of the gas commitment bridge — a structural gate
     # flag (its measured constants are constants.py entries, not fields).
     "spp_gas_commitment_bridge": 1,
+    # PJM-NEXT-16: the PJM leg of the gas commitment bridge — a structural gate
+    # flag (its measured constants are constants.py entries, not fields).
+    "pjm_gas_commitment_bridge": 1,
     # SOCO-53d: the SOCO gas-steam campaign commitment floor — a structural
     # gate flag (its level/horizon are measured artifact rows, not fields).
     "soco_gas_st_campaign_commitment": 1,
@@ -24702,6 +24937,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_wtx_panhandle_owner": 3,
     "coal_supply_repricing": 3,
     "coal_plant_monthly_pricing": 3,
+    "coal_captive_marginal_fuel_price": 3,
     "nearby_fuel_price_fallback": 3,
     "nearby_fuel_price_min_state_plants": 3,
     "nearby_fuel_price_zone_donor_guard": 3,
@@ -24787,6 +25023,14 @@ TIER_TAGS: dict[str, int] = {
     # own published hourly gas outage residual; allocation key is the incumbent
     # class rates; no free number of its own (rule 21).
     "spp_gas_crow_residual_outage": 1,
+    # Structural gate (1): replaces the flat fossil performance / summer class
+    # derates with the SPP MMU's measured offer-side and unreported-derate
+    # bands; no free number of its own (rule 21).
+    "spp_mmu_offer_unavailability": 1,
+    # Structural gate (1): the plant-day measured gas/oil mix (CAMPD CO2 /
+    # heat-input identity on Part 75 factors); no free number of its own
+    # (rule 21). Backcast-only (rule 13).
+    "dual_fuel_measured_oil_burn": 1,
 }
 
 # SweepDefinition (the sweep / named-case-matrix expansion engine) moved

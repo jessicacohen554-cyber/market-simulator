@@ -15485,3 +15485,63 @@ chain"*. `internal_congestion_split` G → O. Kill condition 3 waived; condition
 non-tuned sources; full DOF ledger; no fit to hub MCC). Next: miso-293, Stage 1 design at zero LP. Charter §9.
 
 No frontier.
+
+## miso-293 — 2026-10-01 — flowgate program Stage 1 (zero LP): recommend KILL; the 2022 pair is a comparator-geography question
+
+Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/DESIGN-miso293-flowgate-stage1-2026-10-01.md`.
+
+- **A network cannot raise the scored price through congestion.** Zone-demand-weighted hub MCC+MLC: −1.64 (2022),
+  −0.31 / −0.73 / −0.90 (2023–25), against INDIANA.HUB +8.72 / +2.35 / +2.28 / +2.44. A perfect zonal network moves
+  C3a 2022 to about −20.7 %. Redispatch effects on the system energy price are unbounded by public data.
+- **Representation:** only PTDF flowgates on the existing six zones can express the West–East spread. On public data
+  (HIFLD: no reactance, no rating, no transformers, 65 % inferred, one 2023 vintage) every electrical value is a
+  convention (≥ 17 DOF), and the convention decides what binds. Kill conditions 1–2 hold in substance.
+- **Basis:** rubric v2.4 says the actual is zone-resolved where a zonal archive exists; code does this for ERCOT only.
+  Zone-resolved MISO actual (in-memory re-score): C3a 2022 −5.1 % PASS, C3b 2022 0.122 PASS, **C3a 2020 +11.6 % FAIL**,
+  C3b 2021 0.201 FAIL. Full span still NOT-YET. Put to the owner as a cross-ISO governance question.
+- `internal_congestion_split` stays **O** pending the go/kill ruling. Probes: `scripts/probes/_miso293_*`.
+
+No frontier.
+
+**Owner rulings (same day):** flowgate program **killed** (`internal_congestion_split` O → G; reopens on RO-1 only);
+zone-resolved C3a/C3b basis **adopted for MISO** (implementation: miso-294); next lane **C3b 2021** (miso-294).
+
+## miso-294 — 2026-10-01 — zone-resolved C3 basis implemented (zero LP); C3b 2021 is the fall coal-for-gas swap
+
+Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/RESULT-miso294-zone-resolved-basis-2026-10-01.md`
+(PRECOMMIT `46d299f1`).
+
+- **Part A.** `derive_actual_lmp._lw_fields` now reads a per-ISO registry `ZONAL_LW_SOURCES` (ERCOT, MISO). MISO
+  2019–2025 `*_lw` retrofitted, bench parts surgically patched (0 STALE). Every precommit field and verdict row reproduced
+  exactly. C3a 2020 +11.6 % **FAIL** (new), C3a 2022 −5.1 % PASS, C3b 2022 0.122 PASS, C3b 2021 0.201 FAIL.
+- **Defect fixed:** run as a CLI the derive script lacked the repo root on `sys.path`, so `load_demand` silently used
+  STATIC zone shares (system totals unchanged; zone split wrong — MISO 2019 25.52 vs 25.67). With the fix the CLI also
+  reproduces ERCOT's committed values exactly.
+- **Part B (phase 0).** C3b 2021 = Feb Uri (24 % of SSE, routed) + Sep–Nov (60 %): North-wide level miss (Oct model $38
+  vs $53–60 actual), model burns coal the real fleet held back (coal +2.8/+4.5/+4.0 TWh, gas −5.2/−7.3/−6.8 TWh vs
+  EIA-930). Coal budget-grain object; line CLOSED (miso-290). C3a 2020 = the all-years low-end overshoot net of a small
+  tail (miso-285–287 object).
+
+Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
+
+**Owner ruling (same day):** next lane = *"Do a coal study on all years not just 2021"* — zero-LP, data-first study (miso-288 method) of how the real MISO fleet expressed coal conservation / seasonal pile management in every year 2019–2025, against the model's monthly coal-vs-EIA-930 signature (2021/2022 summer-under / fall-over; flat +6 to +13 TWh annual offset elsewhere). miso-295.
+
+## miso-295 — 2026-10-01 — all-years coal study (zero LP): flat offset is EIA-930 reporting; 2021–22 conservation is not admissibly carriable
+
+Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/FINDING-miso295-all-years-coal-study-2026-10-01.md`;
+probe `scripts/probes/_miso295_coal_study.py`.
+
+- **Flat offset settled first:** EIA-930 MISO coal sits 7.1–15.6 TWh/yr below EIA-923 net generation of the model-fleet coal
+  plants, in all 84 months. Plant-matched keeper coal: −2.1 / +0.7 / +5.3 / +10.3 / −3.4 / −3.3 / −1.6 TWh (2019–2025). No
+  overburn outside 2021–22. C1 already scores on the plant basis; nothing moves.
+- **Real conservation happened in 2021–22 only** (IMM SOM 2021–2024; pile min 57.6 days Sep 2021 and 61.1 days Aug 2022, both after
+  a summer draw; glut years 88–138 days, no conservation). In 2021: Jun–Aug burn ran 10.3 Mt over receipts, then the fleet held the
+  pile (Sep–Nov net −0.4 Mt vs the usual 3–6 Mt rebuild) by taking units offline (online GW Aug→Nov −18.5, vs −8 to −13 in other
+  years). Loading and derates were normal, and fall receipts were at the prior-years rate.
+- **Not carriable:** the keeper's flat `B/12` limb binds in summer, when the real fleet did not conserve. A fall-only row needs
+  the year's own stock path (rule 13). The cumulative pile is the killed perfect-foresight bank. The fleet also held ~11.5 days
+  above the admissible prior-years floor (precautionary). No R/I/G cell re-tested; coal line stays CLOSED.
+- **C3a 2020 is not coal inventory:** a glut year, with the budget dual ≤ $0.94 of the night residual. The object is the low-load offer stack.
+- Side check: the 2022 RT archive ends at 2022-11-11 (documented). The scorer masks C3 to the covered months, so there is no defect.
+
+Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
