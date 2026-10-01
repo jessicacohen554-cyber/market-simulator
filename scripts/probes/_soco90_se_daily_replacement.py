@@ -62,7 +62,7 @@ sys.path[:0] = [str(ROOT / "scripts"), str(ROOT / "src"), str(ROOT)]
 
 KEEPER = "2026-09-30-soco93-pondage-bound"
 SPAN = (
-    ROOT / "results/calibration/soco93_span"
+    ROOT / "results/calibration/soco96_span"
 )  # repointed soco-93 (rule 35 prune of soco92_span)
 YEARS = tuple(range(2019, 2026))
 T = 8760

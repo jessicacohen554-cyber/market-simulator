@@ -118,3 +118,15 @@ so the audit extends over `e7fd8931 → aeea53ac` on the rule-29(b) path set:
 All rows are INERT, so the committed keeper remains the control. After the merge,
 `check_cache_key_registration --base origin/main` is ok ("1 new field(s), all registered"), the matrix guard
 with `--base origin/main` reports "1 new field(s) all registered", and `tests/iso/spp` passes (72 tests).
+
+## Addendum B (2026-10-01, before any solve): second merge of `main`
+
+`origin/main` moved to `c17c91f1` (soco-96 promotion). It was merged in; every conflict was an adjacent
+addition (cache-key lists, TIER_TAGS, a matrix row and a cell line per shard), and both sides were kept.
+Audit `aeea53ac → c17c91f1` on the rule-29(b) path set:
+
+| commit(s) | files | verdict | reason |
+|---|---|---|---|
+| soco-96 `91a525f3` … `c17c91f1` | `scenarios.py`, `constants.py`, `paths.py`, `solve_surface_declared.py`, `fuel/__init__.py`, `fuel/dual_fuel.py`, `fuel/resolve.py`, `run_calibration.py` | INERT | `dual_fuel_measured_oil_burn`: default False, absent from SPP's recipe. `apply_measured_oil_burn_pricing` returns None when its flag is off, and `apply_dual_fuel_pricing` then runs with `skip_cells=None`, exactly as before. The new constants are declared solve-surface names, which are dropped at their frozen declaration |
+
+All rows are INERT, so the committed keeper remains the control.

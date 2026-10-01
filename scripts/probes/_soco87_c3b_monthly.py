@@ -2,7 +2,7 @@
 (``gas_hh_monthly_shape``) repair SOCO's flat monthly price profile?
 
 Rule 32 ``[R-SHARD]`` (a): never solves. Per year, two ``fleet_only`` rebuilds of the
-incumbent keeper's own recipe (``results/calibration/soco93_span`` through
+incumbent keeper's own recipe (``results/calibration/soco96_span`` through
 ``replay_keeper.run_year_kwargs``): the keeper as recorded (generic climatological
 ``GAS_MONTHLY_SEASONALITY``) and the keeper + ``gas_hh_monthly_shape=True`` (measured HH
 monthly shape, same annual level). Counterfactual = SAME-MARGINAL-UNIT re-pricing of the
@@ -38,7 +38,7 @@ _ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(_ROOT / "scripts"), str(_ROOT / "src"), str(_ROOT)]
 
 SPAN = (
-    _ROOT / "results/calibration/soco93_span"
+    _ROOT / "results/calibration/soco96_span"
 )  # repointed soco-93 (rule 35 prune of soco92_span)
 RUN_ID = "2026-09-28-soco85-gas-daily-shape"
 T = 8760

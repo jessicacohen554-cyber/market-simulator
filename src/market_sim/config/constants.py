@@ -1915,6 +1915,57 @@ FUEL_CO2_FACTOR_PER_MMBTU: dict[str, float] = {
 }
 
 # ---------------------------------------------------------------------------
+# CAMPD CO2-per-heat-input fuel signatures (soco-96 measured oil burn,
+# ScenarioConfig.dual_fuel_measured_oil_burn;
+# scripts/data/derive_measured_oil_burn_days.py).
+#
+# A gas-primary CEMS unit that burns a gas/oil blend in an hour reports
+#   co2Mass / heatInput = f x R_OIL + (1 - f) x R_GAS
+# so the hour's oil share of heat input is f = (r - R_GAS) / (R_OIL - R_GAS)
+# (the two-fuel mixing identity; zero free parameters). The two signatures MUST
+# be the factors CAMPD itself used to book co2Mass, or every pure-gas hour reads
+# a spurious oil share. For Appendix-D (fuel-flow) gas/oil units that is
+# 40 CFR Part 75 Appendix G Eq. G-4,
+#   W_CO2 [short tons/h] = Fc x H x U_f x MW_CO2 / 2000,
+# with the Appendix F Table 1 carbon-based F-factors Fc (natural gas 1,040;
+# oil 1,420 scf CO2 per MMBtu), U_f = 1/385 scf CO2 per lb-mole (14.7 psia,
+# 68 F) and MW_CO2 = 44.0 lb/lb-mole. CAMPD co2Mass is in SHORT TONS and
+# heatInput in MMBtu. Measured check (GA 2022, gas-primary units, heatInput >
+# 100 MMBtu): the modal ratio is 0.05943 t/MMBtu (= 1,040 x 44.0 / 385 / 2000)
+# and oil-burning units sit at 0.08114-0.08115 (= 1,420 x 44.0 / 385 / 2000).
+# RECONCILIATION (rule 14 [R-ACCURATE] misalignment exception): the EPA Part 98
+# Subpart C Table C-1 factors (natural gas 53.06, distillate No.2 73.96
+# kg CO2/MMBtu = 0.05849 / 0.08153 short t/MMBtu) are a DIFFERENT accounting
+# basis from the one CAMPD books co2Mass on; used literally they place the
+# pure-gas mode at f = 0.041 (a 4 % phantom oil share on every gas hour).
+# ---------------------------------------------------------------------------
+
+#: Part 75 App. F Table 1 carbon F-factor, natural gas (scf CO2 / MMBtu).
+PART75_FC_NATURAL_GAS_SCF_PER_MMBTU: float = 1040.0
+#: Part 75 App. F Table 1 carbon F-factor, oil (scf CO2 / MMBtu).
+PART75_FC_OIL_SCF_PER_MMBTU: float = 1420.0
+#: Part 75 App. G Eq. G-4 U_f: 1/385 lb-mole per scf CO2 (14.7 psia, 68 F).
+PART75_UF_LBMOL_PER_SCF: float = 1.0 / 385.0
+#: Part 75 App. G Eq. G-4 molecular weight of CO2 (lb / lb-mole).
+PART75_MW_CO2_LB_PER_LBMOL: float = 44.0
+#: Pounds per short ton (the Eq. G-4 divisor; CAMPD co2Mass is short tons).
+LB_PER_SHORT_TON: float = 2000.0
+#: CAMPD CO2 signature of natural gas: short tons CO2 per MMBtu (0.059429).
+CAMPD_CO2_SHORT_TONS_PER_MMBTU_GAS: float = (
+    PART75_FC_NATURAL_GAS_SCF_PER_MMBTU
+    * PART75_UF_LBMOL_PER_SCF
+    * PART75_MW_CO2_LB_PER_LBMOL
+    / LB_PER_SHORT_TON
+)
+#: CAMPD CO2 signature of fuel oil: short tons CO2 per MMBtu (0.081143).
+CAMPD_CO2_SHORT_TONS_PER_MMBTU_OIL: float = (
+    PART75_FC_OIL_SCF_PER_MMBTU
+    * PART75_UF_LBMOL_PER_SCF
+    * PART75_MW_CO2_LB_PER_LBMOL
+    / LB_PER_SHORT_TON
+)
+
+# ---------------------------------------------------------------------------
 # Forward per-plant CO2-rate estimator (market_sim.data.emission_rates).
 # The forecast-year CO2 rate for an existing unit is derived from its multi-year
 # measured CAMPD history (rule-13-admissible measured input; see
