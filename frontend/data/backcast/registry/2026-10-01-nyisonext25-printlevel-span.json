@@ -1,0 +1,16 @@
+{
+  "id": "2026-10-01-nyisonext25-printlevel-span",
+  "label": "nyisonext25 printlevel span",
+  "date": "2026-10-01",
+  "shorthand": "nyisonext25-printlevel-span",
+  "definition": "NYISO-NEXT-25 arm A: nyiso_gas_daily_print_level",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-10-01-nyisonext25-printlevel-span.js",
+  "bundle": "results/calibration/nyisonext25_span"
+}

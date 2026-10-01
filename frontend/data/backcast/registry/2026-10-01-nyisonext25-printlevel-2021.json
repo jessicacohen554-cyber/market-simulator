@@ -1,0 +1,13 @@
+{
+  "id": "2026-10-01-nyisonext25-printlevel-2021",
+  "label": "nyisonext25 printlevel 2021",
+  "date": "2026-10-01",
+  "shorthand": "nyisonext25-printlevel-2021",
+  "definition": "NYISO-NEXT-25 arm A: nyiso_gas_daily_print_level",
+  "years": [
+    2021
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-10-01-nyisonext25-printlevel-2021.js",
+  "bundle": "results/calibration/nyisonext25_2021"
+}

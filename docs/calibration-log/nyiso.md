@@ -15111,3 +15111,10 @@ too.
 - C3a 2021 +2.9 % (PASS), 2022 −2.4, 2023 +1.2, 2024 −4.0, **2025 −11.6 % (FAIL)**. Span NOT-YET; 2021 CALIBRATED;
   ISO NOT-YET. Residual is spatial (Upstate_West high, Long Island low) plus the 2025 downstate top decile.
 - Record: `docs/records/nyiso/RESULT-nyiso-next22-zone-resolved-basis-2026-10-01.md`.
+
+## NYISO-NEXT-25 — 2026-10-01 — daily gas at each day's own Z6 print; arm A passes its promotion rule (owner card)
+
+- Phase 0 (zero LP): the 2025 off-cap winter NYC gap sits east of Central East (Upstate_West right; DA F−E spread is 93–96 % congestion, ledgered). Separately, `_nyiso_hub_daily_gas_prices` renormalised calendar-day factors to a trade-day monthly level: ordinary days in package-spike months are scaled by trade/calendar mean (Jan-2025 0.78 trade-dated, 0.65 flow-dated; corr with the NYC monthly gap 0.65 / 0.84).
+- New flag `nyiso_gas_daily_print_level` (default off, zero DOF, rules 14/19), PRECOMMIT #6986. Ten year-isolated shards at `f43f609b`.
+- Arm A: G-1..G-5 PASS; C3a 2025 −11.6 → −9.6 %; span and ISO NOT-YET → CALIBRATED (C3c lone, rule 22). Arm B (+ flow-date): 2025 −10.3 %, NOT-YET.
+- Four runs registered; owner card open (promote A recommended; decline #6984 standalone). Record: `docs/records/nyiso/RESULT-nyiso-next25-print-level-2026-10-01.md`.

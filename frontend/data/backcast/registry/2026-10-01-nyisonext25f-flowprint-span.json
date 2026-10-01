@@ -1,0 +1,16 @@
+{
+  "id": "2026-10-01-nyisonext25f-flowprint-span",
+  "label": "nyisonext25f flowprint span",
+  "date": "2026-10-01",
+  "shorthand": "nyisonext25f-flowprint-span",
+  "definition": "NYISO-NEXT-25 arm B: nyiso_gas_flow_date + nyiso_gas_daily_print_level",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-10-01-nyisonext25f-flowprint-span.js",
+  "bundle": "results/calibration/nyisonext25f_span"
+}

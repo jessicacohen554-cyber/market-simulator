@@ -3975,3 +3975,7 @@ results/calibration/r_ercot23_arm_*/
 # NYISO-NEXT-21 per-year legs (rule 32 (d)); composed into nyisonext21_span. Provenance (rule 33 (d)): 2021 83b4652a03e8eb4e6c3c98d3840933fd724f6cb2, 2022 2578b154db0029de0f4fe0e591a9dc8782e9df57, 2023 4c519e1512ed8e3f0851f65041c22e5e0f4e4563, 2024 80cbd1fd52d74ec1f74456083f8ad1ae41c75748, 2025 61b01f799a9cb9458999ea6faf23212c51d96bc7
 results/calibration/nyisonext21_202[2-5]/
 results/calibration/_rcaiso28/
+
+# NYISO-NEXT-25 per-year legs (rule 32 (d)); composed into nyisonext25_span (arm A) and nyisonext25f_span (arm B). Provenance (rule 33 (d)): A 2021 c200049a5c154c62bdaeca1e969b81e94021f81a, 2022 c3bba2d340c928a7784476274d0b491eefd47d7d, 2023 ae4799b93547c885e03fa6b5b493dc59938c10f3, 2024 6938b9d5bb8c7f76a59c9be27679bbd4ec66bc45, 2025 68f14abfa375b84abfc7492d9eae545528fb77a6; B 2021 7f236ceec5f438b63b1c28c241a07a230fc8996a, 2022 ff3303ef957a7bc303ee57d3c44ad7308945f7e2, 2023 9457009552d9424fe340dcecb27274018427c7a6, 2024 93e3453ea9ddd8c5d1eec5d82dbf25db3a83f682, 2025 b93e329ec15ea0fe4928ad6a70a560a6abc6116e
+results/calibration/nyisonext25_202[2-5]/
+results/calibration/nyisonext25f_202[2-5]/
