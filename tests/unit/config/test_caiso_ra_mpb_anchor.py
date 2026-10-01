@@ -124,19 +124,8 @@ def test_gate_reaches_the_thermal_screens_on_the_shared_seam() -> None:
         )
 
 
-def test_armed_run_keys_distinctly_and_default_key_is_unmoved() -> None:
-    """Registered at False: the pinned default key holds; armed hashes apart."""
+def test_armed_run_keys_distinctly() -> None:
+    """An armed run hashes apart from the default."""
     default = ScenarioConfig()
     armed = ScenarioConfig(caiso_ra_mpb_capacity_anchor=True)
-    # The GLOBAL default forecast key. ADVANCED e5ecd4105ada3e58 ->
-    # 547053bdfccd4264 on 2026-09-06 by capx D65-B (owner ruling Q47): the
-    # COUPLED arming of ccs_retrofit_fixed_cost_co2_scaling (Act A, a declared
-    # (b'-1) default flip) with ccs_retrofit_vom_adder 8.0 -> 2.95 $/MWh 2026$
-    # (Act B, re-identified off the widened ATB extract). Act B is NOT a
-    # _CACHE_KEY_OPTIONAL_FIELDS member, so it has no drop value and re-keys
-    # unconditionally. Pre-declared BEFORE the solve in
-    # docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md §3; cache-epoch ledger
-    # entry 2026-09-06c in src/market_sim/results/cache.py. Nothing about THIS
-    # field moved — the pin advances because the global default did.
-    assert default.cache_key() == "547053bdfccd4264"
     assert armed.cache_key() != default.cache_key()

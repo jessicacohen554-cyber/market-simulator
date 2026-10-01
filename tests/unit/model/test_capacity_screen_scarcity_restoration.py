@@ -42,20 +42,6 @@ from market_sim.results.scarcity import (
 )
 from market_sim.runner import _lookahead_reprice_signal
 
-# The pinned default-config cache key (tests/regression/test_persisted_identity
-# .PINNED_DEFAULT_CACHE_KEY) — asserted here too so this mechanism's own suite
-# fails loudly if its field ever enters the default hash.
-# ADVANCED 2026-09-06, e5ecd4105ada3e58 -> 547053bdfccd4264 — capx D65-B's
-# COUPLED ccs_retrofit_fixed_cost_co2_scaling (Act A, a declared (b'-1)
-# default flip) + ccs_retrofit_vom_adder 8.0 -> 2.95 $/MWh 2026$ (Act B, a
-# plain value field with no drop value, so it re-keys unconditionally).
-# Nothing about THIS file's mechanism moved — the pin advances because the
-# global default did. Rationale and provenance live on the pin in
-# tests/regression/test_persisted_identity.py; pre-declared BEFORE the solve
-# in docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
-# capx D65-B-R, completing the partial re-key fb93b76e left behind.
-_PINNED_DEFAULT_KEY = "547053bdfccd4264"
-
 
 def _three_unit_fixture(T=4):
     """The test_price_signal.py stack: mc [10, 20, 50], 5 GW each, avail 1."""
@@ -82,9 +68,6 @@ class TestGate(unittest.TestCase):
         self.assertIn(
             "capacity_screen_scarcity_restoration", _CACHE_KEY_OPTIONAL_FIELDS
         )
-
-    def test_default_cache_key_is_unmoved(self):
-        self.assertEqual(ScenarioConfig().cache_key(), _PINNED_DEFAULT_KEY)
 
     def test_armed_run_gets_a_distinct_cache_key(self):
         armed = ScenarioConfig(

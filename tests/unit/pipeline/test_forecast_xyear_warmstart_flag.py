@@ -36,27 +36,6 @@ from market_sim.pipeline.solve import run_energy_solve
 
 from tests.unit.pipeline.test_pipeline_solve import _Cfg, _trivial_inputs
 
-# The default cache_key literal pinned by tests/regression/test_persisted_identity.py. A new
-# default-off field must not move it. (2026-07-27: advanced edbc1b103207170a ->
-# 603c2498bf71d21d by the owner-authorized path-portability cache-epoch bump;
-# 2026-09-02: advanced again 603c2498bf71d21d -> cedadc285f8603b9 by the
-# owner-authorized capx D41 CCS-retrofit fixed-cost re-identification;
-# 2026-09-03: advanced again cedadc285f8603b9 -> 4c6b03ae098b6e3e by capx D44,
-# the owner-ruling-Q30 fossil_announced_exits_enabled DEFAULT FLIP — a declared
-# flip of a REGISTERED field, which under capx D24-R (b'-1) is supposed to move
-# the key (the frozen drop value stays False, so the armed default enters the
-# hash) — rationale and provenance live on the pin in test_persisted_identity.py.)
-# ADVANCED 2026-09-06, e5ecd4105ada3e58 -> 547053bdfccd4264 — capx D65-B's
-# COUPLED ccs_retrofit_fixed_cost_co2_scaling (Act A, a declared (b'-1)
-# default flip) + ccs_retrofit_vom_adder 8.0 -> 2.95 $/MWh 2026$ (Act B, a
-# plain value field with no drop value, so it re-keys unconditionally).
-# Nothing about THIS file's mechanism moved — the pin advances because the
-# global default did. Rationale and provenance live on the pin in
-# tests/regression/test_persisted_identity.py; pre-declared BEFORE the solve
-# in docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
-# capx D65-B-R, completing the partial re-key fb93b76e left behind.
-_PINNED_DEFAULT_CACHE_KEY = "547053bdfccd4264"
-
 
 class TestFieldRegistration:
     """The field is default-ON (post-D-9 flip) and cache-neutral at its default."""
@@ -68,14 +47,10 @@ class TestFieldRegistration:
     def test_registered_cache_key_optional(self):
         assert "forecast_xyear_warmstart" in _CACHE_KEY_OPTIONAL_FIELDS
 
-    def test_default_cache_key_unmoved(self):
-        """The pin survives the flip: the field drops at whatever the default is."""
-        assert ScenarioConfig().cache_key() == _PINNED_DEFAULT_CACHE_KEY
-
     def test_opt_out_run_gets_a_distinct_cache_key(self):
         """A strictly-cold forecast is a distinct scenario, not a cache collision."""
         cold = ScenarioConfig(forecast_xyear_warmstart=False)
-        assert cold.cache_key() != _PINNED_DEFAULT_CACHE_KEY
+        assert cold.cache_key() != ScenarioConfig().cache_key()
 
 
 class TestSolveCoreGate:
