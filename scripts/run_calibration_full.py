@@ -4964,6 +4964,7 @@ def solve_and_persist(
     reliability_floor_overrides: dict | None = None,
     nyiso_gas_commitment_bridge: bool | None = None,
     spp_gas_commitment_bridge: bool | None = None,
+    pjm_gas_commitment_bridge: bool | None = None,
     soco_gas_st_campaign_commitment: bool | None = None,
     miso_coal_night_floor: bool | None = None,
     miso_gas_ecomin_online_floor: bool | None = None,
@@ -6039,6 +6040,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 spp_gas_commitment_bridge=spp_gas_commitment_bridge
             )
+        if pjm_gas_commitment_bridge is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                pjm_gas_commitment_bridge=pjm_gas_commitment_bridge
+            )
         if soco_gas_st_campaign_commitment is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 soco_gas_st_campaign_commitment=soco_gas_st_campaign_commitment
@@ -7021,6 +7026,7 @@ def solve_and_persist(
             nyiso_spin_reserve_online=nyiso_spin_reserve_online,
             nyiso_gas_commitment_bridge=nyiso_gas_commitment_bridge,
             spp_gas_commitment_bridge=spp_gas_commitment_bridge,
+            pjm_gas_commitment_bridge=pjm_gas_commitment_bridge,
             soco_gas_st_campaign_commitment=soco_gas_st_campaign_commitment,
             miso_coal_night_floor=miso_coal_night_floor,
             miso_gas_ecomin_online_floor=miso_gas_ecomin_online_floor,
@@ -8014,6 +8020,7 @@ def solve_and_persist(
         "reliability_floor_overrides": reliability_floor_overrides,
         "nyiso_gas_commitment_bridge": nyiso_gas_commitment_bridge,
         "spp_gas_commitment_bridge": spp_gas_commitment_bridge,
+        "pjm_gas_commitment_bridge": pjm_gas_commitment_bridge,
         "soco_gas_st_campaign_commitment": soco_gas_st_campaign_commitment,
         "miso_coal_night_floor": miso_coal_night_floor,
         "miso_gas_ecomin_online_floor": miso_gas_ecomin_online_floor,
@@ -14976,6 +14983,18 @@ def main() -> None:
         "stacked or replaced. Default off (byte-identical).",
     )
     parser.add_argument(
+        "--pjm-gas-commitment-bridge",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="PJM P1-native gas commitment bridge (PJM-NEXT-16): hold PJM's "
+        "merchant CCs (gas_cc by unit physics, CHP excluded) at their MEASURED "
+        "plant-basis minimum stable load (constants.PJM_GAS_BRIDGE_MIN_LOAD_FRAC "
+        "0.436, CAMPD 2023-2025) while the model's own P0 commits them, with the "
+        "restart legs, the measured 11 h minimum-run extension and the "
+        "commitment-real run screen. REPLACES cc_mustrun_per_plant (rule 19; "
+        "refused with it armed). Default off (byte-identical).",
+    )
+    parser.add_argument(
         "--soco-gas-st-campaign-commitment",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -16022,6 +16041,7 @@ def main() -> None:
         nyiso_spin_reserve_online=args.nyiso_spin_reserve_online,
         nyiso_gas_commitment_bridge=args.nyiso_gas_commitment_bridge,
         spp_gas_commitment_bridge=args.spp_gas_commitment_bridge,
+        pjm_gas_commitment_bridge=args.pjm_gas_commitment_bridge,
         soco_gas_st_campaign_commitment=args.soco_gas_st_campaign_commitment,
         miso_coal_night_floor=args.miso_coal_night_floor,
         miso_gas_ecomin_online_floor=args.miso_gas_ecomin_online_floor,

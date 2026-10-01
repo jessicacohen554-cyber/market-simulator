@@ -3933,6 +3933,11 @@ results/calibration/rcaiso20_A_20*/
 results/calibration/_rcaiso21/
 
 results/calibration/_rcaiso22/
+
+# PJM-NEXT-16 per-year shard legs: composed in the parent, never committed (rule 32(d)).
+# A legs pinned 6d4c7749 (branches claude/pjmnext16-a-<y>); B legs pinned 42e87bcd
+# (claude/pjmnext16-b2-<y>); the 5b813f34 B legs are invalid (PRECOMMIT §7).
+results/calibration/pjmnext16_[AB]_20[0-9][0-9]/
 results/calibration/_rcaiso23/
 # soco-96 per-year shard legs (rule 32(d): kept out of main; the composite soco96_span is registered).
 # Leg SHAs are provenance only (rule 33(d)): RESULT-soco-96-2026-09-30.md.

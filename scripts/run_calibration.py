@@ -144,6 +144,7 @@ from market_sim.pipeline import (  # noqa: E402
     build_nyiso_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
     build_soco_gas_st_campaign_p1_prep,
+    build_pjm_gas_bridge_p1_prep,
     build_spp_gas_bridge_p1_prep,
     reset_pass_timing_log,
     run_commitment_pass,
@@ -1017,6 +1018,7 @@ def run_year(
     nyiso_east_reserve_families: bool | None = None,
     nyiso_gas_commitment_bridge: bool | None = None,
     spp_gas_commitment_bridge: bool | None = None,
+    pjm_gas_commitment_bridge: bool | None = None,
     soco_gas_st_campaign_commitment: bool | None = None,
     miso_coal_night_floor: bool | None = None,
     miso_gas_ecomin_online_floor: bool | None = None,
@@ -2116,6 +2118,10 @@ def run_year(
     if spp_gas_commitment_bridge is not None:
         config = config.with_overrides(
             spp_gas_commitment_bridge=spp_gas_commitment_bridge
+        )
+    if pjm_gas_commitment_bridge is not None:
+        config = config.with_overrides(
+            pjm_gas_commitment_bridge=pjm_gas_commitment_bridge
         )
     if miso_coal_night_floor is not None:
         config = config.with_overrides(miso_coal_night_floor=miso_coal_night_floor)
@@ -7199,6 +7205,12 @@ def run_year(
     spp_bridge_prep = build_spp_gas_bridge_p1_prep(
         config, iso, fleet, fleet_arrays, mc_base
     )
+    # P1-native PJM gas commitment bridge (PJM-NEXT-16): the PJM leg of the
+    # same family; replaces cc_mustrun_per_plant (rule 19). None for every
+    # non-PJM / gate-off run (byte-identical).
+    pjm_bridge_prep = build_pjm_gas_bridge_p1_prep(
+        config, iso, fleet, fleet_arrays, mc_base
+    )
     # P1-native SOCO gas-steam CAMPAIGN commitment floor (SOCO-53d): the SOCO
     # leg of the same family, and the only one whose object is a multi-WEEK
     # campaign rather than an overnight or midday gap. Measured minimum-run
@@ -7370,6 +7382,7 @@ def run_year(
             or ercot_bridge_prep
             or nyiso_bridge_prep
             or spp_bridge_prep
+            or pjm_bridge_prep
             or soco_campaign_prep
             or miso_night_floor_prep
             or miso_ecomin_prep

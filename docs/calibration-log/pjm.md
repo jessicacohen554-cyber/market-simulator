@@ -6851,3 +6851,26 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - Card 3 not reached: no admissible, year-discriminating design.
 - OPEN, not limits. Next: the loading term by zone/hour against the coal econ bid and net interchange (zero LP). Owner call: whether to charter a P0-pattern CC min-load bridge replacing the system-load window.
 - Records: `docs/FINDING-pjm-next-15-cc-cheap-block-and-commitment-2026-09-30.md`, `docs/RESULT-pjm-next-15-2026-09-30.md`.
+
+## PJM-NEXT-16 — 2026-09-30 — OVEC fleet boundary PROMOTED; P0-pattern CC bridge REJECTED on placement (14 shards)
+
+- **Keeper:** `2026-09-28-pjm-next8-exitfix` → `2026-09-30-pjm-next16-ovec` (owner card "Promote A"). Run-level failing cells 11 → 10; training span and ISO NOT-YET.
+- **Card 1 (zero LP):**
+  - The CC loading error is a night/low-load shape error; exports are not the driver.
+  - It exposed OVEC (Clifty + Kyger, 2.39 GW) missing from the 2019/2020 LP fleet but inside the benchmark and the EIA-930 demand.
+- **Arm A (OVEC):** every mechanism prediction held.
+  - OVEC gen 12.67 / 11.86 TWh.
+  - CC_REGULAR 2019 +6.27 PASS.
+  - COAL_BIT 2019 +18.71; 2020 +11.92, a new FAIL.
+  - 2021–2025 byte-identical.
+  - C3a fell more than predicted: 2019 +5.8 % PASS.
+- **Arm B (`pjm_gas_commitment_bridge` replacing `cc_mustrun_per_plant`):** REJECTED on B1.
+  - Model-on/real-off CC energy unchanged (8.5 → 8.1 TWh in 2019).
+  - Real-on/model-off tripled (−5.5 → −23.7).
+  - 51 plant-years fail the conduct rider.
+  - 12 failing cells.
+- **OPEN, not limits:** COAL_BIT 2019–2021; CC_REGULAR 2020/2022/2023; CT_PEAKER 2021; C3a 2020/2022; C3b 2022.
+- **Records:**
+  - `docs/RESULT-pjm-next-16-2026-09-30.md`
+  - `docs/PRECOMMIT-pjm-next-16-2026-09-30.md`
+  - `docs/FINDING-pjm-next-16-cc-loading-and-the-ovec-boundary-2026-09-30.md`

@@ -988,6 +988,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # four measured constants live in constants.py (no sub-fields).
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "spp_gas_commitment_bridge",
+    # PJM gas commitment bridge (PJM-NEXT-16): the ONE PJM gate flag, inert at
+    # its default (off — the P1 prep hook returns None), dropped from the hash
+    # at its declared False so every pre-existing key is byte-stable; an armed
+    # run keys distinctly. Its two measured constants live in constants.py.
+    # Registered IN THE SAME COMMIT as the field.
+    "pjm_gas_commitment_bridge",
     # SOCO gas-steam campaign commitment floor (SOCO-53d): the ONE SOCO gate
     # flag, inert at its default (off — the P1 prep hook returns None), so it
     # is dropped from the hash at its declared False and every pre-existing key
@@ -2734,6 +2740,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # SPP-44: the SPP gas commitment bridge gate, registered IN THE SAME
     # COMMIT as the field at its shipping default (off).
     "spp_gas_commitment_bridge": "False",
+    # PJM-NEXT-16: the PJM gas commitment bridge gate, registered IN THE SAME
+    # COMMIT as the field at its shipping default (off).
+    "pjm_gas_commitment_bridge": "False",
     # SOCO-53d: the SOCO gas-steam campaign commitment gate, registered IN THE
     # SAME COMMIT as the field at its shipping default (off).
     "soco_gas_st_campaign_commitment": "False",
@@ -9233,6 +9242,38 @@ class ScenarioConfig:
     # physics; window = self-windowing on the model's own run pattern (no
     # clock hour); forward story = regenerates from any year's own P0.
     spp_gas_commitment_bridge: bool = False
+    # PJM GAS COMMITMENT BRIDGE (default off, PJM-gated — lane PJM-NEXT-16,
+    # owner ruling 2026-09-30 "Charter + solve with OVEC"): the PJM leg of the
+    # same P1-native committed-state bridge family, on PJM's merchant CCs.
+    #
+    # THE OBJECT (PJM-NEXT-15 card 2 + PJM-NEXT-16 card 1): the keeper places
+    # the CC committed floor by cc_mustrun_per_plant's window — each plant's
+    # committed tranche in its top-online_frac SYSTEM-load hours — which puts
+    # 20-28 TWh/yr of committed MW in hours the real plant was OFF, while outside
+    # the window the committed rung is LP-dispatchable and was the price-setter
+    # in 11 % of 2020 low-end hours (NEXT-14). In PJM a unit at ecomin is
+    # must-take while committed and does not set LMP. This leg makes min-load
+    # must-take in the hours the model's OWN base-cost P0 commits the plant.
+    #
+    # RULE 19 [R-ONE-MECH]: it REPLACES cc_mustrun_per_plant (the same CC
+    # committed floor, placed by system load); __post_init__ refuses both armed.
+    # It also shares the single p1_fleet_prep slot with the PJM commitment-
+    # scoped reserve hook, and refuses that combination too.
+    #
+    # Mechanism, legs and eligibility are the SPP leg's (see its comment above):
+    # the ISO-neutral detector model.commitment.caiso_ra_mustoffer_min_gen via
+    # pipeline.commitment.build_pjm_gas_bridge_p1_prep, fed the model's own P0
+    # run pattern and duals; restart bar, economic restart within one DA day,
+    # measured minimum-run extension, commitment-real run screen; class scope by
+    # unit physics (rule 18), gas_cc only, *_CHP excluded. LEVEL / MIN-RUN are
+    # the MEASURED plant-basis CAMPD 2023-2025 statistics
+    # constants.PJM_GAS_BRIDGE_MIN_LOAD_FRAC (0.436) / _MIN_RUN_HOURS (11 h),
+    # PJM's own (rule 25). D-2 id MECH_PJM_GAS_COMMITMENT_BRIDGE (27); D-4
+    # window (0, 24) by driver. Rule 17: driver = commitment physics; window =
+    # self-windowing on the model's own run pattern; forward story = regenerates
+    # from any year's own P0. Its VOLUME SIGN WAS NOT PREDICTABLE AT ZERO LP and
+    # the owner chartered it with that stated.
+    pjm_gas_commitment_bridge: bool = False
     # SPP COMMITMENT POSTURE (default off, SPP-gated — lane SPP-102, owner
     # decision card "Build relaxed-UC engine", 2026-09-29;
     # docs/handoffs/DESIGN-spp-102-cc-commitment-state-2026-09-29.md). The SAME
@@ -23326,6 +23367,26 @@ class ScenarioConfig:
                     "mutually exclusive (rule 19: one mechanism for SPP gas "
                     "commitment state)."
                 )
+        if self.pjm_gas_commitment_bridge:
+            if str(self.iso) != "PJM":
+                raise ValueError(
+                    "pjm_gas_commitment_bridge is PJM-only (PJM-NEXT-16: PJM's "
+                    "own measured min-load / min-run, rule 25)."
+                )
+            if self.cc_mustrun_per_plant:
+                raise ValueError(
+                    "pjm_gas_commitment_bridge REPLACES cc_mustrun_per_plant "
+                    "(rule 19: one CC committed floor); disarm "
+                    "cc_mustrun_per_plant."
+                )
+            if self.pjm_commitment_posture or (
+                self.energy_reserve_coopt and self.pjm_reserve_commitment_scoped
+            ):
+                raise ValueError(
+                    "pjm_gas_commitment_bridge shares the P1 fleet-prep slot with "
+                    "pjm_commitment_posture / the commitment-scoped reserve hook; "
+                    "arm exactly one (rule 19)."
+                )
         if self.spp_ct_lole_efor and str(self.iso) != "SPP":
             raise ValueError(
                 "spp_ct_lole_efor is SPP-only (SPP-104: SPP's own LOLE-study "
@@ -24441,6 +24502,9 @@ TIER_TAGS: dict[str, int] = {
     # SPP-44: the SPP leg of the gas commitment bridge — a structural gate
     # flag (its measured constants are constants.py entries, not fields).
     "spp_gas_commitment_bridge": 1,
+    # PJM-NEXT-16: the PJM leg of the gas commitment bridge — a structural gate
+    # flag (its measured constants are constants.py entries, not fields).
+    "pjm_gas_commitment_bridge": 1,
     # SOCO-53d: the SOCO gas-steam campaign commitment floor — a structural
     # gate flag (its level/horizon are measured artifact rows, not fields).
     "soco_gas_st_campaign_commitment": 1,
