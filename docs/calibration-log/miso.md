@@ -15525,3 +15525,23 @@ Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/RESULT
 Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
 
 **Owner ruling (same day):** next lane = *"Do a coal study on all years not just 2021"* — zero-LP, data-first study (miso-288 method) of how the real MISO fleet expressed coal conservation / seasonal pile management in every year 2019–2025, against the model's monthly coal-vs-EIA-930 signature (2021/2022 summer-under / fall-over; flat +6 to +13 TWh annual offset elsewhere). miso-295.
+
+## miso-295 — 2026-10-01 — all-years coal study (zero LP): flat offset is EIA-930 reporting; 2021–22 conservation is not admissibly carriable
+
+Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/FINDING-miso295-all-years-coal-study-2026-10-01.md`;
+probe `scripts/probes/_miso295_coal_study.py`.
+
+- **Flat offset settled first:** EIA-930 MISO coal sits 7.1–15.6 TWh/yr below EIA-923 net generation of the model-fleet coal
+  plants, in all 84 months. Plant-matched keeper coal: −2.1 / +0.7 / +5.3 / +10.3 / −3.4 / −3.3 / −1.6 TWh (2019–2025). No
+  overburn outside 2021–22. C1 already scores on the plant basis; nothing moves.
+- **Real conservation happened in 2021–22 only** (IMM SOM 2021–2024; pile min 57.6 days Sep 2021 and 61.1 days Aug 2022, both after
+  a summer draw; glut years 88–138 days, no conservation). In 2021: Jun–Aug burn ran 10.3 Mt over receipts, then the fleet held the
+  pile (Sep–Nov net −0.4 Mt vs the usual 3–6 Mt rebuild) by taking units offline (online GW Aug→Nov −18.5, vs −8 to −13 in other
+  years). Loading and derates were normal, and fall receipts were at the prior-years rate.
+- **Not carriable:** the keeper's flat `B/12` limb binds in summer, when the real fleet did not conserve. A fall-only row needs
+  the year's own stock path (rule 13). The cumulative pile is the killed perfect-foresight bank. The fleet also held ~11.5 days
+  above the admissible prior-years floor (precautionary). No R/I/G cell re-tested; coal line stays CLOSED.
+- **C3a 2020 is not coal inventory:** a glut year, with the budget dual ≤ $0.94 of the night residual. The object is the low-load offer stack.
+- Side check: the 2022 RT archive ends at 2022-11-11 (documented). The scorer masks C3 to the covered months, so there is no defect.
+
+Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
