@@ -121,3 +121,27 @@ PASS line for C3a 2022 because the missing part is 2022's facility outages and d
 C3b 2022 stay routed misses. `internal_congestion_split` stays **G**, with this charter added as its RO-2
 record. The only way forward is Stage 0 by the owner (CEII access), which is offered as an option, not
 recommended.
+
+## 9. Owner ruling (2026-10-01, miso-292 continuation)
+
+Cards put to the owner on this charter. The owner picked **"Generic network anyway"** over the
+recommended no-go and over CEII intake, and **"Continue chain"**.
+
+What this changes, and what it leaves alone:
+
+- **Kill condition 3 is waived by the owner.** The owner accepts that 2022's outage and derate state is
+  missing and that the expected 2022 result is still a FAIL (≈ −10 %). Reaching the 2023–25 congestion
+  level is now the program's stated objective. Clearing C3a 2022 is not.
+- **Kill conditions 1–2 still bind, reread for public data.** Every MW limit and distribution factor
+  needs a documented, non-tuned source: a published rating, a voltage-class rating convention, or a
+  network reduction from a public topology. Each value is entered in the DOF ledger at full count
+  (rule 20). Fitting a limit, PTDF or derate to the hub MCC is still forbidden (rules 1, 13), and the
+  owner ruling does not authorize it.
+- **The representation question comes first, at zero LP.** miso-79 found 88–99.7 % of MISO internal
+  congestion inside single BAs, and an optimal six-zone split captured only 1.9–3.8 %. Indiana-hub
+  congestion is therefore mostly intra-zone. Stage 1 must show on paper which reduced representation
+  can carry INDIANA.HUB MCC at all (a hub-bus split of the Indiana zone, flowgates on new sub-zones,
+  or other), or kill the program there.
+- `internal_congestion_split`: **G → O** (open). The owner charter is the RO-2 reopen condition.
+
+Next: miso-293, Stage 1 design (zero LP).
