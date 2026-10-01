@@ -14966,3 +14966,27 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Arm B (both commit-profile limbs) and arm C (CC limb only):** probes, not promoted. Both flip 2022 NOT-YET on C1 CC_REGULAR (−8.42 / −8.66). B flips 2024 CALIBRATED at a 0.12 pp margin; C misses by 0.04 pp. B's drag-hour limb left D-4 at 8 → 8. Both limbs stay default-off, and both runs were pruned.
 - ISO stays NOT-YET (2023 carve-out hold; 2024 C3a −10.7 %).
 - Record: `docs/handoffs/r-ercot/RESULT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md`.
+
+## R-ERCOT-20 — 2026-09-30 — simple-cycle GTs split out of three CC plants — PROMOTED `2026-09-30-r-20-gt-split`
+
+- **Phase 0 (zero LP):**
+  - The 2024 C3a deficit (−$3.35/MWh) is 100 % system-level; the zonal spread contributes exactly 0.
+  - It is the R-ERCOT-12 compressed distribution: hours ≤ $25 +$3.22, hours > $40 −$6.63 (> $100: −$4.80).
+  - Hypotheses (a) and (c) are refuted; (b) is the closed tight-hour object.
+  - The econ tranches scale with heat rate like 60-Day DAM offers (corr 0.80 vs 0.80).
+  - The real object: 969 MW of co-sited simple-cycle GTs binned inside CC_REGULAR plants. 2024: 11.85 TWh model vs 5.34 EIA-923.
+  - Record: `docs/handoffs/r-ercot/FINDING-r-ercot-20-2024-c3a-and-gt-in-cc-2026-09-30.md`.
+- **Build** (owner card "Build 4-plant split (Recommended)"; scope reduced to 3 plants, Silas Ray routed):
+  - CT_PEAKER split children 34693 / 79003 / 563503 at EIA-860 GT nameplate;
+  - GT outages routed off the CC parents;
+  - CC committed % re-based MW-preserving.
+  - Zero DOF; recipe byte-equal.
+- **Solve:** 7 shards at `bf7c1228`; G-DRIFT all inert.
+- **Result:**
+  - 2024 NOT-YET → **CALIBRATED** (C3a −9.9 %).
+  - 2025 C3a −9.8 → −8.2 %; 2023 C3a −19.8 → −18.5 %.
+  - 2022 CALIBRATED → **NOT-YET** on C1 CC_REGULAR −8.83 (predicted, carded).
+  - C8 ST_GAS falls 1.4–2.0 pp every year; CT_PEAKER and COAL_PRB C1 improve every year.
+- **Promoted** on owner card "Promote (Recommended)". ISO stays NOT-YET (2023 hold; 2022; 2019/2020).
+- **D-4 day-grain drag mask:** designed and **held** by owner (`DESIGN-r-ercot-20-d4-day-grain-drag-mask-2026-09-30.md`).
+- **Record:** `docs/handoffs/r-ercot/RESULT-r-ercot-20-gt-split-2026-09-30.md`.

@@ -37,10 +37,11 @@ class _Cfg:
         ({"campd_outage_merit_order_guard": True}, (False, False, False)),
         # miso-278: the fuel-split companion rides the same read ...
         ({"campd_unit_fuel_split": True}, (False, False, True)),
-        # ... and is ignored under per-unit attribution (campd_fuel_split_selector).
+        # ... and under per-unit attribution selects the per-unit family's own
+        # fuel-split companion (NWPP-NEXT-14, campd_fuel_split_selector).
         (
             {"campd_unit_fuel_split": True, "campd_per_unit_attribution": True},
-            (True, False, False),
+            (True, False, "perunit-fuelsplit"),
         ),
     ],
 )

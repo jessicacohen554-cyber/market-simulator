@@ -15474,3 +15474,14 @@ Zero LP, keeper unchanged (`2026-09-28-miso-280-splitremap`).
   `docs/CHARTER-miso292-flowgate-program-2026-09-30.md`.
 
 No frontier: full span NOT-YET on C1 ST_GAS 2019, C3a 2022, C3b 2021, C3b 2022.
+
+## miso-292 continuation — 2026-10-01
+
+Zero LP, keeper unchanged (`2026-09-28-miso-280-splitremap`). Re-verified on rubric v3.13: NOT-YET on C1 ST_GAS
+2019, C3a 2022 (−18.5 %), C3b 2021 (0.252), C3b 2022 (0.224).
+
+Owner rulings on the flowgate charter: *"Generic network anyway"* (over the recommended no-go) and *"Continue
+chain"*. `internal_congestion_split` G → O. Kill condition 3 waived; conditions 1–2 still bind (documented,
+non-tuned sources; full DOF ledger; no fit to hub MCC). Next: miso-293, Stage 1 design at zero LP. Charter §9.
+
+No frontier.

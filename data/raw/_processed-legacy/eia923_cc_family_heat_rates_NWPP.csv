@@ -1,0 +1,239 @@
+plant_id,plant_name,year,cc_prime_movers,cc_elec_fuel_mmbtu,cc_net_generation_mwh,heat_rate_mmbtu_mwh,flag,iso,source
+2322,Clark (NVE),2019,CA+CT,4186519.0,446527.0,9.3757,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+2322,Clark (NVE),2020,CA+CT,5199219.0,560741.0,9.2721,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+2322,Clark (NVE),2021,CA+CT,6299422.0,699620.0,9.0041,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+2322,Clark (NVE),2022,CA+CT,7155930.0,769510.0,9.2993,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+2322,Clark (NVE),2023,CA+CT,4100891.0,432784.0,9.4756,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+2322,Clark (NVE),2024,CA+CT,7786884.0,861558.0,9.0381,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+2322,Clark (NVE),2025,CA+CT,6371814.0,664254.0,9.5924,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+2336,Tracy,2019,CA+CT,29156709.0,3760919.0,7.7525,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+2336,Tracy,2020,CA+CT,31916019.0,4169451.0,7.6547,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+2336,Tracy,2021,CA+CT,30742865.0,3972960.0,7.738,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+2336,Tracy,2022,CA+CT,25552407.0,3251972.0,7.8575,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+2336,Tracy,2023,CA+CT,29051550.0,3729533.0,7.7896,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+2336,Tracy,2024,CA+CT,30196101.0,3894827.0,7.7529,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+2336,Tracy,2025,CA+CT,29580342.0,3914094.0,7.5574,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7082,Harry Allen,2019,CA+CT,23230165.0,3271071.0,7.1017,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7082,Harry Allen,2020,CA+CT,23571528.0,3286158.0,7.173,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7082,Harry Allen,2021,CA+CT,21529282.0,2954566.0,7.2868,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7082,Harry Allen,2022,CA+CT,20407144.0,2760289.0,7.3931,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7082,Harry Allen,2023,CA+CT,13868253.0,1890746.0,7.3348,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7082,Harry Allen,2024,CA+CT,20760630.0,2847471.0,7.2909,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7082,Harry Allen,2025,CA+CT,22292864.0,3030418.0,7.3564,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7350,Coyote Springs,2019,CA+CT,12103974.0,1769340.0,6.841,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7350,Coyote Springs,2020,CA+CT,10888966.0,1601148.0,6.8007,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7350,Coyote Springs,2021,CA+CT,11813299.0,1728811.0,6.8332,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7350,Coyote Springs,2022,CA+CT,9377922.0,1372972.0,6.8304,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7350,Coyote Springs,2023,CA+CT,13052713.0,1914656.0,6.8173,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7350,Coyote Springs,2024,CA+CT,13906660.0,2041693.0,6.8113,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7350,Coyote Springs,2025,CA+CT,13648628.0,2011907.0,6.7839,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7605,River Road Gen Plant,2019,CS,12829285.0,1746286.0,7.3466,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7605,River Road Gen Plant,2020,CS,11681467.0,1617133.0,7.2236,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7605,River Road Gen Plant,2021,CS,14115924.0,1942569.0,7.2666,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7605,River Road Gen Plant,2022,CS,12496217.0,1695598.0,7.3698,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7605,River Road Gen Plant,2023,CS,13364574.0,1828599.0,7.3086,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7605,River Road Gen Plant,2024,CS,11541997.0,1561558.0,7.3913,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7605,River Road Gen Plant,2025,CS,9746461.0,1317428.0,7.3981,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7870,Encogen,2019,CA+CT,3704847.0,401290.0,9.2323,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7870,Encogen,2020,CA+CT,3448266.0,370143.0,9.316,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7870,Encogen,2021,CA+CT,4979988.0,530479.0,9.3877,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7870,Encogen,2022,CA+CT,3959471.0,426767.0,9.2778,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7870,Encogen,2023,CA+CT,8254884.0,903027.0,9.1413,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7870,Encogen,2024,CA+CT,7039899.0,753950.0,9.3374,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7870,Encogen,2025,CA+CT,3314329.0,354059.0,9.361,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7931,Coyote Springs II,2019,CA+CT,13014728.0,1890016.0,6.886,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7931,Coyote Springs II,2020,CA+CT,12135469.0,1767332.0,6.8665,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7931,Coyote Springs II,2021,CA+CT,10544313.0,1533635.0,6.8754,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7931,Coyote Springs II,2022,CA+CT,12833774.0,1844243.0,6.9588,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7931,Coyote Springs II,2023,CA+CT,15602257.0,2263061.0,6.8943,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7931,Coyote Springs II,2024,CA+CT,16092153.0,2325857.0,6.9188,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7931,Coyote Springs II,2025,CA+CT,15043500.0,2159888.0,6.9649,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7999,Grays Harbor Energy Facility,2019,CA+CT,26624729.0,3407096.0,7.8145,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7999,Grays Harbor Energy Facility,2020,CA+CT,19383913.0,2360675.0,8.2112,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7999,Grays Harbor Energy Facility,2021,CA+CT,27423906.0,3540862.0,7.745,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7999,Grays Harbor Energy Facility,2022,CA+CT,24227762.0,3163202.0,7.6593,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7999,Grays Harbor Energy Facility,2023,CA+CT,27573857.0,3618169.0,7.6209,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7999,Grays Harbor Energy Facility,2024,CA+CT,21376931.0,2779650.0,7.6905,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+7999,Grays Harbor Energy Facility,2025,CA+CT,28547807.0,3649445.0,7.8225,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+8073,Beaver,2019,CA+CT,5136034.0,497430.0,10.3251,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+8073,Beaver,2020,CA+CT,3857077.0,373688.0,10.3217,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+8073,Beaver,2021,CA+CT,8473014.0,835618.0,10.1398,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+8073,Beaver,2022,CA+CT,8860877.0,869420.0,10.1917,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+8073,Beaver,2023,CA+CT,17182845.0,1687131.0,10.1847,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+8073,Beaver,2024,CA+CT,17614238.0,1708354.0,10.3106,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+8073,Beaver,2025,CA+CT,18077848.0,1864329.0,9.6967,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+10761,Las Vegas Generating Station,2019,CA+CT,1754216.0,196104.0,8.9453,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+10761,Las Vegas Generating Station,2020,CA+CT,2785520.0,315516.0,8.8285,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+10761,Las Vegas Generating Station,2021,CA+CT,2894003.0,327973.0,8.8239,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+10761,Las Vegas Generating Station,2022,CA+CT,2534628.0,284611.0,8.9056,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+10761,Las Vegas Generating Station,2023,CA+CT,3043241.0,339696.0,8.9587,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+10761,Las Vegas Generating Station,2024,CA+CT,4045398.0,448509.0,9.0197,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+10761,Las Vegas Generating Station,2025,CA+CT,5627265.0,644599.0,8.7299,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54271,Saguaro Power,2019,CA+CT,5163558.0,756676.0,6.824,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54271,Saguaro Power,2020,CA+CT,5114282.0,749455.0,6.824,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54271,Saguaro Power,2021,CA+CT,5079581.0,744370.0,6.824,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54271,Saguaro Power,2022,CA+CT,3791670.0,555638.0,6.824,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54271,Saguaro Power,2023,CA+CT,1426788.0,209084.0,6.824,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54271,Saguaro Power,2024,CA+CT,1451130.0,212651.0,6.824,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54271,Saguaro Power,2025,CA+CT,1806900.0,264486.0,6.8317,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54349,Nevada Cogen Associates 2 Black Mountain,2019,CA+CT,5230960.0,706855.0,7.4003,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54349,Nevada Cogen Associates 2 Black Mountain,2020,CA+CT,4842368.0,655615.0,7.386,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54349,Nevada Cogen Associates 2 Black Mountain,2021,CA+CT,5343091.0,723457.0,7.3855,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54349,Nevada Cogen Associates 2 Black Mountain,2022,CA+CT,5135568.0,695280.0,7.3863,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54349,Nevada Cogen Associates 2 Black Mountain,2023,CA+CT,3739407.0,506052.0,7.3894,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54349,Nevada Cogen Associates 2 Black Mountain,2024,CA+CT,3270612.0,442506.0,7.3911,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54349,Nevada Cogen Associates 2 Black Mountain,2025,CA+CT,2070033.0,280014.0,7.3926,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54350,Nevada Cogen Assoc#1 GarnetVly,2019,CA+CT,5397347.0,709630.0,7.6059,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54350,Nevada Cogen Assoc#1 GarnetVly,2020,CA+CT,5512962.0,724375.0,7.6106,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54350,Nevada Cogen Assoc#1 GarnetVly,2021,CA+CT,5453489.0,716086.0,7.6157,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54350,Nevada Cogen Assoc#1 GarnetVly,2022,CA+CT,5438796.0,713983.0,7.6175,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54350,Nevada Cogen Assoc#1 GarnetVly,2023,CA+CT,3497205.0,459349.0,7.6134,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54350,Nevada Cogen Assoc#1 GarnetVly,2024,CA+CT,3274867.0,429522.0,7.6244,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54350,Nevada Cogen Assoc#1 GarnetVly,2025,CA+CT,2320316.0,305193.0,7.6028,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54476,Sumas Power Plant,2019,CA+CT,4042487.0,483617.0,8.3589,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54476,Sumas Power Plant,2020,CA+CT,4055245.0,477349.0,8.4953,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54476,Sumas Power Plant,2021,CA+CT,4391583.0,517542.0,8.4855,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54476,Sumas Power Plant,2022,CA+CT,3886726.0,458958.0,8.4686,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54476,Sumas Power Plant,2023,CA+CT,7059797.0,834873.0,8.4561,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54476,Sumas Power Plant,2024,CA+CT,5719643.0,675821.0,8.4633,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54476,Sumas Power Plant,2025,CA+CT,3373646.0,398443.0,8.4671,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54537,Ferndale Generating Station,2019,CA+CT,7910817.0,1047804.0,7.5499,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54537,Ferndale Generating Station,2020,CA+CT,8313835.0,1100534.0,7.5544,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54537,Ferndale Generating Station,2021,CA+CT,10253299.0,1361002.0,7.5336,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54537,Ferndale Generating Station,2022,CA+CT,7396111.0,981634.0,7.5345,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54537,Ferndale Generating Station,2023,CA+CT,11487217.0,1529327.0,7.5113,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54537,Ferndale Generating Station,2024,CA+CT,12765097.0,1695735.0,7.5278,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54537,Ferndale Generating Station,2025,CA+CT,10005876.0,1323977.0,7.5574,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54761,Hermiston Generating Plant,2019,CA+CT,21189765.0,2862630.0,7.4022,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54761,Hermiston Generating Plant,2020,CA+CT,17446994.0,2343926.0,7.4435,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54761,Hermiston Generating Plant,2021,CA+CT,20910532.0,2823007.0,7.4072,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54761,Hermiston Generating Plant,2022,CA+CT,18520736.0,2472054.0,7.492,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54761,Hermiston Generating Plant,2023,CA+CT,22469741.0,2989539.0,7.5161,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54761,Hermiston Generating Plant,2024,CA+CT,25277791.0,3345664.0,7.5554,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+54761,Hermiston Generating Plant,2025,CA+CT,22653941.0,2997886.0,7.5566,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55103,Klamath Cogeneration Plant,2019,CA+CT,23939782.0,3311657.6,7.2289,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55103,Klamath Cogeneration Plant,2020,CA+CT,19774336.0,2710228.5,7.2962,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55103,Klamath Cogeneration Plant,2021,CA+CT,22168371.0,3055409.8,7.2554,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55103,Klamath Cogeneration Plant,2022,CA+CT,17584668.0,2424356.9,7.2533,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55103,Klamath Cogeneration Plant,2023,CA+CT,20638417.0,2881065.9,7.1635,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55103,Klamath Cogeneration Plant,2024,CA+CT,26227186.0,3664854.0,7.1564,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55103,Klamath Cogeneration Plant,2025,CA+CT,22299676.0,3104177.5,7.1838,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55179,Rathdrum Power LLC,2019,CA+CT,12747209.0,1801369.0,7.0764,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55179,Rathdrum Power LLC,2020,CA+CT,11957792.0,1688842.0,7.0805,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55179,Rathdrum Power LLC,2021,CA+CT,12834878.0,1822638.0,7.0419,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55179,Rathdrum Power LLC,2022,CA+CT,11751043.0,1656480.0,7.094,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55179,Rathdrum Power LLC,2023,CA+CT,12811041.0,1809544.0,7.0797,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55179,Rathdrum Power LLC,2024,CA+CT,9728083.0,1373012.0,7.0852,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55179,Rathdrum Power LLC,2025,CA+CT,12133366.0,1715114.0,7.0744,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55322,Chuck Lenzie Generating Station,2019,CA+CT,48323675.0,6578979.0,7.3452,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55322,Chuck Lenzie Generating Station,2020,CA+CT,45715670.0,6124268.0,7.4647,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55322,Chuck Lenzie Generating Station,2021,CA+CT,45283347.0,6101231.0,7.422,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55322,Chuck Lenzie Generating Station,2022,CA+CT,39951072.0,5446769.0,7.3348,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55322,Chuck Lenzie Generating Station,2023,CA+CT,49250833.0,6886174.0,7.1521,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55322,Chuck Lenzie Generating Station,2024,CA+CT,39632050.0,5508876.0,7.1942,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55322,Chuck Lenzie Generating Station,2025,CA+CT,44668298.0,6157764.0,7.254,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55328,Hermiston Power Partnership,2019,CA+CT,31077787.0,4298264.0,7.2303,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55328,Hermiston Power Partnership,2020,CA+CT,28425811.0,3956218.0,7.1851,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55328,Hermiston Power Partnership,2021,CA+CT,31174312.0,4341072.0,7.1812,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55328,Hermiston Power Partnership,2022,CA+CT,27935116.0,3859811.0,7.2374,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55328,Hermiston Power Partnership,2023,CA+CT,28132452.0,3918106.2,7.1801,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55328,Hermiston Power Partnership,2024,CA+CT,31091148.0,4283080.0,7.2591,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55328,Hermiston Power Partnership,2025,CA+CT,21662180.0,2988998.0,7.2473,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55482,Goldendale Generating Station,2019,CA+CT,13286246.0,1905173.0,6.9738,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55482,Goldendale Generating Station,2020,CA+CT,13523989.0,1978601.0,6.8351,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55482,Goldendale Generating Station,2021,CA+CT,13659518.0,1997686.0,6.8377,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55482,Goldendale Generating Station,2022,CA+CT,9840984.0,1564498.0,6.2902,out_of_window,NWPP,eia923_generation_fuel_2019_2025.csv
+55482,Goldendale Generating Station,2023,CA+CT,13379331.0,2172002.0,6.1599,out_of_window,NWPP,eia923_generation_fuel_2019_2025.csv
+55482,Goldendale Generating Station,2024,CA+CT,14153520.0,2099552.0,6.7412,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55482,Goldendale Generating Station,2025,CA+CT,11581092.0,1603707.0,7.2215,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55514,Apex Generating Station,2019,CA+CT,15067705.0,2109062.0,7.1443,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55514,Apex Generating Station,2020,CA+CT,20124550.0,2822691.0,7.1296,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55514,Apex Generating Station,2021,CA+CT,20068232.0,2796245.0,7.1769,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55514,Apex Generating Station,2022,CA+CT,19555223.0,2695780.0,7.254,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55514,Apex Generating Station,2023,CA+CT,16925044.0,2298718.0,7.3628,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55514,Apex Generating Station,2024,CA+CT,14869610.0,2021687.0,7.3551,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55514,Apex Generating Station,2025,CA+CT,10811303.0,1465234.0,7.3786,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55662,Chehalis Generating Facility,2019,CA+CT,17947578.0,2431536.0,7.3812,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55662,Chehalis Generating Facility,2020,CA+CT,17905128.0,2407317.0,7.4378,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55662,Chehalis Generating Facility,2021,CA+CT,16857933.0,2248237.0,7.4983,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55662,Chehalis Generating Facility,2022,CA+CT,16108156.0,2171994.0,7.4163,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55662,Chehalis Generating Facility,2023,CA+CT,16848981.0,2239007.0,7.5252,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55662,Chehalis Generating Facility,2024,CA+CT,19778855.0,2651878.0,7.4584,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55662,Chehalis Generating Facility,2025,CA+CT,17752433.0,2337422.0,7.5949,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55687,Higgins Generating Station,2019,CA+CT,17362887.0,2240346.0,7.7501,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55687,Higgins Generating Station,2020,CA+CT,13721956.0,1770778.0,7.7491,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55687,Higgins Generating Station,2021,CA+CT,21581188.0,2842790.0,7.5916,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55687,Higgins Generating Station,2022,CA+CT,20369933.0,2695274.0,7.5576,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55687,Higgins Generating Station,2023,CA+CT,16369942.0,2141761.0,7.6432,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55687,Higgins Generating Station,2024,CA+CT,22055843.0,2984338.0,7.3905,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55687,Higgins Generating Station,2025,CA+CT,16143867.0,2084583.0,7.7444,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55700,Mint Farm Generating Station,2019,CA+CT,13835159.0,1864732.0,7.4194,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55700,Mint Farm Generating Station,2020,CA+CT,13030415.0,1729580.0,7.5339,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55700,Mint Farm Generating Station,2021,CA+CT,13170883.0,1796461.0,7.3316,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55700,Mint Farm Generating Station,2022,CA+CT,11973806.0,1605363.0,7.4586,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55700,Mint Farm Generating Station,2023,CA+CT,14530640.0,1989583.0,7.3034,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55700,Mint Farm Generating Station,2024,CA+CT,16766202.0,2306414.0,7.2694,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55700,Mint Farm Generating Station,2025,CA+CT,16793903.0,2220009.0,7.5648,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55818,Frederickson Power LP,2019,CA+CT,9410429.0,1343534.0,7.0042,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55818,Frederickson Power LP,2020,CA+CT,6841290.0,959864.0,7.1274,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55818,Frederickson Power LP,2021,CA+CT,9155535.0,1289676.0,7.0991,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55818,Frederickson Power LP,2022,CA+CT,9041040.0,1259039.0,7.1809,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55818,Frederickson Power LP,2023,CA+CT,13084085.0,1824053.0,7.1731,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55818,Frederickson Power LP,2024,CA+CT,12402876.0,1717651.0,7.2208,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55818,Frederickson Power LP,2025,CA+CT,11441994.0,1583717.0,7.2248,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55841,Silverhawk,2019,CA+CT,13818988.0,1795018.0,7.6985,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55841,Silverhawk,2020,CA+CT,19830926.0,2546077.0,7.7888,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55841,Silverhawk,2021,CA+CT,12798399.0,1628992.0,7.8566,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55841,Silverhawk,2022,CA+CT,14322522.0,1801968.0,7.9483,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55841,Silverhawk,2023,CA+CT,18632763.0,2570246.0,7.2494,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55841,Silverhawk,2024,CA+CT,20375684.0,2693013.0,7.5661,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+55841,Silverhawk,2025,CA+CT,18423593.0,2390507.0,7.707,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56102,Currant Creek,2019,CA+CT,21574477.0,2917516.0,7.3948,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56102,Currant Creek,2020,CA+CT,17483693.0,2335426.0,7.4863,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56102,Currant Creek,2021,CA+CT,20450809.0,2746290.0,7.4467,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56102,Currant Creek,2022,CA+CT,20982836.0,2805979.0,7.4779,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56102,Currant Creek,2023,CA+CT,21318010.0,2879945.0,7.4022,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56102,Currant Creek,2024,CA+CT,21063441.0,2861379.0,7.3613,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56102,Currant Creek,2025,CA+CT,20988841.0,2803076.0,7.4878,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56177,Nebo Power Station,2019,CA+CT,3585815.0,419394.0,8.55,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56177,Nebo Power Station,2020,CA+CT,4027542.0,466711.0,8.6296,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56177,Nebo Power Station,2021,CA+CT,4673481.0,543609.0,8.5971,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56177,Nebo Power Station,2022,CA+CT,3443614.0,389231.0,8.8472,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56177,Nebo Power Station,2023,CA+CT,7042512.0,825412.0,8.5321,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56177,Nebo Power Station,2024,CA+CT,6900381.0,809115.0,8.5283,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56177,Nebo Power Station,2025,CA+CT,7048458.0,768547.0,9.1711,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56227,Port Westward,2019,CA+CT,19053227.0,2737946.0,6.9589,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56227,Port Westward,2020,CA+CT,18350141.0,2643242.0,6.9423,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56227,Port Westward,2021,CA+CT,20388654.0,2918641.0,6.9857,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56227,Port Westward,2022,CA+CT,16272536.0,2323897.0,7.0023,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56227,Port Westward,2023,CA+CT,21162193.0,3067547.0,6.8987,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56227,Port Westward,2024,CA+CT,19187031.0,2753357.0,6.9686,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56227,Port Westward,2025,CA+CT,22799645.0,3264822.0,6.9834,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56237,Lake Side Power Plant,2019,CA+CT,38483754.0,5063902.0,7.5996,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56237,Lake Side Power Plant,2020,CA+CT,40464327.0,5560112.0,7.2776,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56237,Lake Side Power Plant,2021,CA+CT,46350434.0,6389355.0,7.2543,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56237,Lake Side Power Plant,2022,CA+CT,47726443.0,6578673.0,7.2547,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56237,Lake Side Power Plant,2023,CA+CT,46840210.0,6454629.0,7.2568,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56237,Lake Side Power Plant,2024,CA+CT,45133093.0,6106345.0,7.3912,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+56237,Lake Side Power Plant,2025,CA+CT,43726489.0,6049458.0,7.2282,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+57028,Langley Gulch Power Plant,2019,CA+CT,10570489.0,1501424.0,7.0403,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+57028,Langley Gulch Power Plant,2020,CA+CT,10699519.0,1521451.0,7.0324,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+57028,Langley Gulch Power Plant,2021,CA+CT,13625694.0,1927107.0,7.0705,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+57028,Langley Gulch Power Plant,2022,CA+CT,10705102.0,1548091.0,6.915,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+57028,Langley Gulch Power Plant,2023,CA+CT,11380089.0,1628533.0,6.9879,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+57028,Langley Gulch Power Plant,2024,CA+CT,12792028.0,1826940.0,7.0019,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+57028,Langley Gulch Power Plant,2025,CA+CT,13108534.0,1755150.0,7.4686,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+57653,Oregon State University Energy Center,2019,CA+CT,181813.0,43702.0,4.1603,out_of_window,NWPP,eia923_generation_fuel_2019_2025.csv
+57653,Oregon State University Energy Center,2020,CA+CT,181431.0,43611.0,4.1602,out_of_window,NWPP,eia923_generation_fuel_2019_2025.csv
+57653,Oregon State University Energy Center,2021,CA+CT,178869.0,42995.0,4.1602,out_of_window,NWPP,eia923_generation_fuel_2019_2025.csv
+57653,Oregon State University Energy Center,2022,CA+CT,166040.0,40226.0,4.1277,out_of_window,NWPP,eia923_generation_fuel_2019_2025.csv
+57653,Oregon State University Energy Center,2023,CA+CT,142281.0,35445.0,4.0141,out_of_window,NWPP,eia923_generation_fuel_2019_2025.csv
+57653,Oregon State University Energy Center,2024,CA+CT,184396.0,45937.0,4.0141,out_of_window,NWPP,eia923_generation_fuel_2019_2025.csv
+57653,Oregon State University Energy Center,2025,CT,146048.0,33285.0,4.3878,out_of_window,NWPP,eia923_generation_fuel_2019_2025.csv
+58503,Carty Generating Station,2019,CA+CT,20839160.0,2989615.0,6.9705,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+58503,Carty Generating Station,2020,CA+CT,20818641.0,2988945.0,6.9652,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+58503,Carty Generating Station,2021,CA+CT,20926085.0,3027317.0,6.9124,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+58503,Carty Generating Station,2022,CA+CT,21104538.0,3017937.0,6.993,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+58503,Carty Generating Station,2023,CA+CT,22142766.0,3118192.0,7.1012,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+58503,Carty Generating Station,2024,CA+CT,23829008.0,3316571.0,7.1848,ok,NWPP,eia923_generation_fuel_2019_2025.csv
+58503,Carty Generating Station,2025,CA+CT,23038108.0,3159216.0,7.2923,ok,NWPP,eia923_generation_fuel_2019_2025.csv
