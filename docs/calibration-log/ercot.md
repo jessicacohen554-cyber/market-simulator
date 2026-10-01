@@ -14990,3 +14990,22 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Promoted** on owner card "Promote (Recommended)". ISO stays NOT-YET (2023 hold; 2022; 2019/2020).
 - **D-4 day-grain drag mask:** designed and **held** by owner (`DESIGN-r-ercot-20-d4-day-grain-drag-mask-2026-09-30.md`).
 - **Record:** `docs/handoffs/r-ercot/RESULT-r-ercot-20-gt-split-2026-09-30.md`.
+
+## R-ERCOT-21 — 2026-10-01 — Lost Pines 1 non-CHP + EIA-923 identity CC heat rates (rule 14) — PROMOTED `2026-10-01-r-21-lostpines-ccid`; ISO NOT-YET
+
+- **Phase 0 (zero LP), 2022 CC_REGULAR −8.83:** the mirror of coal over-dispatch (COAL +6.6 TWh; Martin Lake +4.2, Coleto +1.7), June–September. Martin Lake actually cycled about 1 GW off overnight while the model runs it flat. Coal offer conduct is fenced, so there is no admissible 2022 arm. CC is priced out, not short (4.0 TWh of in-merit headroom against 81 TWh out of merit). `FINDING-r-ercot-21-2022-cc-and-wharton-hr-2026-10-01.md`.
+- **Found:**
+  - Lost Pines 1 (55154) carried a CHP tuple. EIA-860 says utility, FERC cogen N, so 365 MW was held out of the LP.
+  - The ERCOT CC heat-rate artifact was stale against its deriver (pre R-CAISO-2/3).
+  - The HEAD derive drops Fusco (55357).
+- **Built** (owner card *"Build A+B, one arm"*): the Lost Pines row fix; the CC derive's EIA-923 identity extended to `steam_not_metered`, plus `ercot_solve_fleet_supplement`; the artifact regenerated (61 rows change). Recipe byte-equal, zero DOF.
+- **Solve:** 7 shards at `bc5069cd`. G-DRIFT: all hunks INERT.
+- **Result:**
+  - 2024 CAL → NOT-YET (C3a −9.9 → −11.1 %).
+  - 2023 C3a −18.5 → −24.2 %, C3b 0.270 → 0.380.
+  - 2022 C1 CC_REGULAR −8.83 → −9.87 (the bench +1.88 TWh exceeds the model's +0.83).
+  - 2019 C3a +25.7 → +19.4 %, C3b 0.566 → 0.446.
+  - 2021/2025 stay CAL.
+  - 80–85 % of the 2019/2023 ΔLW is in hours above $200, i.e. the scarcity tail.
+- **Promotion:** on owner card *"Promote (Recommended)"* (rule 14). r-20 pruned; year union {2019–2025}.
+- **Record:** `docs/handoffs/r-ercot/RESULT-r-ercot-21-lostpines-cc-identity-2026-10-01.md`.
