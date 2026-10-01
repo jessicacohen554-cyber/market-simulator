@@ -75,4 +75,41 @@
 
 ## 3. Dispatch-vs-offer audit (owner card *"Dispatch-vs-offer audit"*)
 
-See §3 addendum below (filled from `_pjmnext17_coal_offer_audit.py`).
+**Question.** Do real PJM coal-like units under-dispatch their **own** offers at the actual price, while the model dispatches at its offers?
+
+**Method.**
+- Source: the PJM DataMiner2 offers corpus, 84 of 84 month-files for 2019–2025, re-fetched.
+- Units: the LONG_RUN segment, using NEXT-11's physics segmentation.
+- D = offer-implied MW at the actual DA LMP; Dm = the same at the keeper's own price.
+- Comparison: CAMPD COAL_BIT against the model's COAL_BIT, through the ratio RoR = (actual/D) ÷ (model/Dm).
+- Over-run split: price-level term = (Dm − D) × actual/D; conduct term = (model/Dm − actual/D) × Dm.
+
+| TWh | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|---|
+| D / Dm | 176 / 208 | 162 / 217 | 200 / 231 | 184 / 190 | 129 / 153 | 136 / 154 | 178 / 196 |
+| RoR | 1.07 | 1.24 | 1.05 | 0.97 | 1.18 | 1.12 | 1.00 |
+| RoR, units floored at EcoMin | 0.97 | 1.04 | 0.97 | 0.95 | 1.05 | 1.03 | 0.94 |
+| over-run | +18.2 | +11.7 | +16.0 | +9.0 | +0.5 | +1.2 | +13.3 |
+| price-level term | +31.0 | +47.2 | +24.6 | +5.0 | +19.4 | +14.2 | +13.1 |
+| conduct term | −12.7 | −35.5 | −8.7 | +4.0 | −18.9 | −13.0 | +0.2 |
+
+**Caveats, stated:**
+- LONG_RUN (40–52 GW EcoMax) is not COAL_BIT (33–48 GW nameplate). It includes 4–12 GW of gas-tracking units, and 23 GW in 2022, where the split is unreliable.
+- D is a step reading that ignores commitment, congestion and offline units.
+- Hours are aligned at lag 0.
+
+**Readings.**
+1. **Falsified as a year-discriminating lever.**
+   - Real units do not under-run their own offers relative to the model more in the over-run years. RoR is 1.00–1.24 in over-run years against 1.12–1.18 in 2023/2024.
+   - The EcoMin-floored variant (0.94–0.97 vs 1.03–1.05) breaks in 2020 and sits inside the population and alignment noise.
+2. **Above $35, real units run 10–20 % further below their offers than the model does,** sitting 0.3–0.7 of the way from EcoMin to D. 2023 shows the same gap, so it does not order the years.
+3. **On PJM's own offers, the model's price level is the largest term.**
+   - The keeper's higher price, mostly in hours under $25, would add +13 to +47 TWh of coal. The model's own conduct offsets part of it.
+   - This is the NEXT-11 audit (b) object: the model's price floor is too high in every year (implied heat rate at p10 of 6.9–8.4 vs 4.8–5.5).
+   - It is large in 2023/2024 too, so it is not year-discriminating on its own. It is the common root shared with the C3a 2019/2020 bulk-level error.
+
+**Verdict, card 3:** not reached. Neither card 1, card 2 nor the audit yields an admissible, year-discriminating, zero-DOF mechanism. All three objects stay **OPEN**, and none is called a model-class limit.
+
+**Next measurement implied:**
+- The low-price-hour price floor: why the model rarely prices below gas-CC cost when real PJM does in 26–45 % of hours.
+- Joined with the NEXT-14 marginal-unit census, now across all seven years rather than 2020 only.
