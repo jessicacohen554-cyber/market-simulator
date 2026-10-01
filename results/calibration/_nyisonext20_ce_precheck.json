@@ -1,0 +1,460 @@
+{
+ "gates": {
+  "P1_max_share": 0.1,
+  "P1_tol": 0.05,
+  "P2_min_lift": 2.0,
+  "P3_band": 0.1,
+  "P3_min_months": 10,
+  "P3_min_intervals": 12
+ },
+ "active_rule": "F-E congestion > $5.0/MWh",
+ "r_vintage": {
+  "V1": 0.6867,
+  "V2": 0.7669
+ },
+ "r_vintage_intervals": {
+  "V1": 108063,
+  "V2": 9909
+ },
+ "k_F_fit": {
+  "V1": {
+   "active_hours": 9853,
+   "k_F": 0.6504,
+   "r2_uncentered": 0.9694,
+   "resid_sd_mw": 281.7
+  },
+  "V2": {
+   "active_hours": 1019,
+   "k_F": 0.6752,
+   "r2_uncentered": 0.989,
+   "resid_sd_mw": 279.0
+  }
+ },
+ "alpha_DF_analog": {
+  "V1": 0.4864,
+  "V2": 0.5638
+ },
+ "f_plants_eia860": 164,
+ "per_year": {
+  "2021": {
+   "hours": 8590,
+   "active_hours": 3600,
+   "mean_FE_congestion": 12.97,
+   "P1_share": 0.0912,
+   "P1_pass": true,
+   "P1_share_gilboa_full_bound": 0.0051,
+   "P1_share_DF_alpha_TE": 0.1698,
+   "P1_share_measured_CE": 0.0014,
+   "P2_lift": 1.637,
+   "P2_pass": false,
+   "P3_months_within": 10,
+   "P3_pass": true,
+   "P3_months": {
+    "1": {
+     "n": 4111,
+     "median_r": 0.698,
+     "within": true
+    },
+    "2": {
+     "n": 4246,
+     "median_r": 0.7,
+     "within": true
+    },
+    "3": {
+     "n": 5200,
+     "median_r": 0.684,
+     "within": true
+    },
+    "4": {
+     "n": 6171,
+     "median_r": 0.682,
+     "within": true
+    },
+    "5": {
+     "n": 3972,
+     "median_r": 0.69,
+     "within": true
+    },
+    "6": {
+     "n": 2593,
+     "median_r": 0.703,
+     "within": true
+    },
+    "7": {
+     "n": 2278,
+     "median_r": 0.788,
+     "within": false
+    },
+    "8": {
+     "n": 914,
+     "median_r": 0.878,
+     "within": false
+    },
+    "9": {
+     "n": 3139,
+     "median_r": 0.786,
+     "within": true
+    },
+    "10": {
+     "n": 3034,
+     "median_r": 0.659,
+     "within": true
+    },
+    "11": {
+     "n": 2868,
+     "median_r": 0.695,
+     "within": true
+    },
+    "12": {
+     "n": 2256,
+     "median_r": 0.701,
+     "within": true
+    }
+   },
+   "mean_wf_mw": 569.4,
+   "sd_wf_mw": 795.1,
+   "f_generation": {
+    "campd_facilities": 7,
+    "campd_mean_mw": 1122.3,
+    "noncampd_flat_mw": 259.2,
+    "gilboa_net_mwh": -148232.0
+   }
+  },
+  "2022": {
+   "hours": 8758,
+   "active_hours": 4319,
+   "mean_FE_congestion": 34.43,
+   "P1_share": 0.1156,
+   "P1_pass": false,
+   "P1_share_gilboa_full_bound": 0.016,
+   "P1_share_DF_alpha_TE": 0.182,
+   "P1_share_measured_CE": 0.0002,
+   "P2_lift": 1.278,
+   "P2_pass": false,
+   "P3_months_within": 10,
+   "P3_pass": true,
+   "P3_months": {
+    "1": {
+     "n": 3771,
+     "median_r": 0.672,
+     "within": true
+    },
+    "2": {
+     "n": 3033,
+     "median_r": 0.657,
+     "within": true
+    },
+    "3": {
+     "n": 3974,
+     "median_r": 0.667,
+     "within": true
+    },
+    "4": {
+     "n": 5900,
+     "median_r": 0.707,
+     "within": true
+    },
+    "5": {
+     "n": 6473,
+     "median_r": 0.68,
+     "within": true
+    },
+    "6": {
+     "n": 2962,
+     "median_r": 0.723,
+     "within": true
+    },
+    "7": {
+     "n": 2433,
+     "median_r": 0.656,
+     "within": true
+    },
+    "8": {
+     "n": 1565,
+     "median_r": 0.394,
+     "within": false
+    },
+    "9": {
+     "n": 2596,
+     "median_r": 0.674,
+     "within": true
+    },
+    "10": {
+     "n": 2790,
+     "median_r": 0.712,
+     "within": true
+    },
+    "11": {
+     "n": 6835,
+     "median_r": 0.548,
+     "within": false
+    },
+    "12": {
+     "n": 3550,
+     "median_r": 0.666,
+     "within": true
+    }
+   },
+   "mean_wf_mw": 104.3,
+   "sd_wf_mw": 1022.7,
+   "f_generation": {
+    "campd_facilities": 7,
+    "campd_mean_mw": 1431.8,
+    "noncampd_flat_mw": 226.8,
+    "gilboa_net_mwh": -212150.0
+   }
+  },
+  "2023": {
+   "hours": 8758,
+   "active_hours": 1945,
+   "mean_FE_congestion": 7.21,
+   "P1_share": 0.1666,
+   "P1_pass": false,
+   "P1_share_gilboa_full_bound": 0.0674,
+   "P1_share_DF_alpha_TE": 0.1562,
+   "P1_share_measured_CE": 0.0005,
+   "P2_lift": 2.812,
+   "P2_pass": true,
+   "P3_months_within": 9,
+   "P3_pass": false,
+   "P3_months": {
+    "1": {
+     "n": 2538,
+     "median_r": 0.651,
+     "within": true
+    },
+    "2": {
+     "n": 4345,
+     "median_r": 0.686,
+     "within": true
+    },
+    "3": {
+     "n": 4562,
+     "median_r": 0.685,
+     "within": true
+    },
+    "4": {
+     "n": 2826,
+     "median_r": 0.659,
+     "within": true
+    },
+    "5": {
+     "n": 2287,
+     "median_r": 0.743,
+     "within": true
+    },
+    "6": {
+     "n": 249,
+     "median_r": 0.319,
+     "within": false
+    },
+    "7": {
+     "n": 359,
+     "median_r": 1.484,
+     "within": false
+    },
+    "8": {
+     "n": 954,
+     "median_r": 0.77,
+     "within": true
+    },
+    "9": {
+     "n": 799,
+     "median_r": 0.77,
+     "within": true
+    },
+    "10": {
+     "n": 611,
+     "median_r": 0.755,
+     "within": true
+    },
+    "11": {
+     "n": 1869,
+     "median_r": 0.751,
+     "within": true
+    },
+    "12": {
+     "n": 88,
+     "median_r": 1.19,
+     "within": false
+    }
+   },
+   "mean_wf_mw": 333.6,
+   "sd_wf_mw": 805.9,
+   "f_generation": {
+    "campd_facilities": 7,
+    "campd_mean_mw": 1140.4,
+    "noncampd_flat_mw": 303.4,
+    "gilboa_net_mwh": -145950.0
+   }
+  },
+  "2024": {
+   "hours": 8782,
+   "active_hours": 384,
+   "mean_FE_congestion": 1.5,
+   "P1_share": 0.0035,
+   "P1_pass": true,
+   "P1_share_gilboa_full_bound": 0.0,
+   "P1_share_DF_alpha_TE": 0.0058,
+   "P1_share_measured_CE": 0.0,
+   "P2_lift": 5.546,
+   "P2_pass": true,
+   "P3_months_within": 4,
+   "P3_pass": false,
+   "P3_months": {
+    "1": {
+     "n": 1197,
+     "median_r": 0.844,
+     "within": true
+    },
+    "2": {
+     "n": 57,
+     "median_r": 0.799,
+     "within": true
+    },
+    "3": {
+     "n": 2,
+     "median_r": 0.062,
+     "within": false
+    },
+    "4": {
+     "n": 6,
+     "median_r": 0.79,
+     "within": false
+    },
+    "5": {
+     "n": 6,
+     "median_r": 2.654,
+     "within": false
+    },
+    "6": {
+     "n": 315,
+     "median_r": 1.09,
+     "within": false
+    },
+    "7": {
+     "n": 666,
+     "median_r": 1.0,
+     "within": false
+    },
+    "8": {
+     "n": 113,
+     "median_r": 1.404,
+     "within": false
+    },
+    "9": {
+     "n": 41,
+     "median_r": 0.761,
+     "within": true
+    },
+    "10": {
+     "n": 3,
+     "median_r": 0.091,
+     "within": false
+    },
+    "11": {
+     "n": 374,
+     "median_r": 0.97,
+     "within": false
+    },
+    "12": {
+     "n": 1000,
+     "median_r": 0.784,
+     "within": true
+    }
+   },
+   "mean_wf_mw": 165.7,
+   "sd_wf_mw": 896.8,
+   "f_generation": {
+    "campd_facilities": 7,
+    "campd_mean_mw": 1505.6,
+    "noncampd_flat_mw": 294.5,
+    "gilboa_net_mwh": -171223.0
+   }
+  },
+  "2025": {
+   "hours": 8758,
+   "active_hours": 624,
+   "mean_FE_congestion": 3.95,
+   "P1_share": 0.0107,
+   "P1_pass": true,
+   "P1_share_gilboa_full_bound": 0.0007,
+   "P1_share_DF_alpha_TE": 0.012,
+   "P1_share_measured_CE": 0.0,
+   "P2_lift": 4.646,
+   "P2_pass": true,
+   "P3_months_within": 4,
+   "P3_pass": false,
+   "P3_months": {
+    "1": {
+     "n": 2337,
+     "median_r": 0.739,
+     "within": true
+    },
+    "2": {
+     "n": 1604,
+     "median_r": 0.189,
+     "within": false
+    },
+    "3": {
+     "n": 518,
+     "median_r": 0.76,
+     "within": true
+    },
+    "4": {
+     "n": 132,
+     "median_r": 0.781,
+     "within": true
+    },
+    "5": {
+     "n": 452,
+     "median_r": 0.906,
+     "within": false
+    },
+    "6": {
+     "n": 144,
+     "median_r": 1.0,
+     "within": false
+    },
+    "7": {
+     "n": 222,
+     "median_r": 0.399,
+     "within": false
+    },
+    "8": {
+     "n": 49,
+     "median_r": 2.582,
+     "within": false
+    },
+    "9": {
+     "n": 53,
+     "median_r": 0.1,
+     "within": false
+    },
+    "10": {
+     "n": 50,
+     "median_r": 1.554,
+     "within": false
+    },
+    "11": {
+     "n": 129,
+     "median_r": 0.767,
+     "within": true
+    },
+    "12": {
+     "n": 351,
+     "median_r": 0.095,
+     "within": false
+    }
+   },
+   "mean_wf_mw": 280.0,
+   "sd_wf_mw": 1123.9,
+   "f_generation": {
+    "campd_facilities": 7,
+    "campd_mean_mw": 1465.2,
+    "noncampd_flat_mw": 234.9,
+    "gilboa_net_mwh": -245328.0
+   }
+  }
+ }
+}
