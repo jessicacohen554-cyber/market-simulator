@@ -8064,7 +8064,7 @@ Session consumed the ercot-196 shorthand. Next shorthand: **ercot-202**.
 
 **The sitting** (held 2026-08-14 in the ERCOT-SCAR workstream manager
 session, owner selections interactive; primary record:
-`docs/records/ercot/ercot-scar-workstream-pack-2026-08.md` §0 cycle-9 board +
+`docs/handoffs/ercot-scar-workstream-pack-2026-08.md` §0 cycle-9 board +
 addendum A9; this session appends the durable card records only). **Card T
 signed as recommended — T-1 + T-3b**: the `gas_hh_monthly_shape`
 input-correctness A/B chartered with the ercot-145b posture verbatim (armed
@@ -14990,3 +14990,33 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Promoted** on owner card "Promote (Recommended)". ISO stays NOT-YET (2023 hold; 2022; 2019/2020).
 - **D-4 day-grain drag mask:** designed and **held** by owner (`DESIGN-r-ercot-20-d4-day-grain-drag-mask-2026-09-30.md`).
 - **Record:** `docs/records/ercot/r-ercot/RESULT-r-ercot-20-gt-split-2026-09-30.md`.
+
+## R-ERCOT-21 — 2026-10-01 — Lost Pines 1 non-CHP + EIA-923 identity CC heat rates (rule 14) — PROMOTED `2026-10-01-r-21-lostpines-ccid`; ISO NOT-YET
+
+- **Phase 0 (zero LP), 2022 CC_REGULAR −8.83:** the mirror of coal over-dispatch (COAL +6.6 TWh; Martin Lake +4.2, Coleto +1.7), June–September. Martin Lake actually cycled about 1 GW off overnight while the model runs it flat. Coal offer conduct is fenced, so there is no admissible 2022 arm. CC is priced out, not short (4.0 TWh of in-merit headroom against 81 TWh out of merit). `FINDING-r-ercot-21-2022-cc-and-wharton-hr-2026-10-01.md`.
+- **Found:**
+  - Lost Pines 1 (55154) carried a CHP tuple. EIA-860 says utility, FERC cogen N, so 365 MW was held out of the LP.
+  - The ERCOT CC heat-rate artifact was stale against its deriver (pre R-CAISO-2/3).
+  - The HEAD derive drops Fusco (55357).
+- **Built** (owner card *"Build A+B, one arm"*): the Lost Pines row fix; the CC derive's EIA-923 identity extended to `steam_not_metered`, plus `ercot_solve_fleet_supplement`; the artifact regenerated (61 rows change). Recipe byte-equal, zero DOF.
+- **Solve:** 7 shards at `bc5069cd`. G-DRIFT: all hunks INERT.
+- **Result:**
+  - 2024 CAL → NOT-YET (C3a −9.9 → −11.1 %).
+  - 2023 C3a −18.5 → −24.2 %, C3b 0.270 → 0.380.
+  - 2022 C1 CC_REGULAR −8.83 → −9.87 (the bench +1.88 TWh exceeds the model's +0.83).
+  - 2019 C3a +25.7 → +19.4 %, C3b 0.566 → 0.446.
+  - 2021/2025 stay CAL.
+  - 80–85 % of the 2019/2023 ΔLW is in hours above $200, i.e. the scarcity tail.
+- **Promotion:** on owner card *"Promote (Recommended)"* (rule 14). r-20 pruned; year union {2019–2025}.
+- **Record:** `docs/handoffs/r-ercot/RESULT-r-ercot-21-lostpines-cc-identity-2026-10-01.md`.
+
+## R-ERCOT-22 — 2026-10-01 — PUCT 48551 ORDC LOLP shift vintaged (2019 = 0.25σ, rule 14) — PROMOTED `2026-10-01-r-22-ordc-shift` (standing instruction "Is it an improvement? Then promote"); ISO NOT-YET
+
+- **Phase 0 (zero LP), Task 1:** the R-ERCOT-21 tail move was the ENERGY dual, not the ORDC. In the r-20 > $200 hours, every reserve family's dual, held and shortfall is identical r-20 vs r-21, because reserve supply is capped at measured RTOLCAP. 2019: ΔLW −2.38 = energy −2.76 + adder +0.38. The 365 MW moved the margin down the measured top-of-stack offer surface. 2024 C3a −11.1 % is all energy λ in ERCOT's 192 hours above $100 (the closed compressed-distribution object, not re-opened); the 2024 adder matches RTORPA.
+- **Found:** the model's ORDC adder exceeds RTORPA in 2019 (+5.5 $/MWh LW). On measured RTOLCAP/RTOFFCAP/λ the published formula reads 1.64× of 2019 RTORPA with the shipped 0.5σ and 1.04× (r 0.997) with the 0.25σ in force (PUCT 48551 steps 2019-03-01 / 2020-03-01).
+- **Built:** `ordc_lolp_shift_sigma` joins `ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR` (2019 = 0.25; 2020+ = 0.5); it is year-driven in `stamp_config_partition`; the ERCOT solve-surface pin is advanced. Zero DOF.
+- **Solve:** one shard (2019) at `f4d29d72`; G-DRIFT ALL INERT, so 2020–2025 reuse the r-21 legs.
+- **Result:** 2019 C3a +19.4 → +7.5 % (PASS), C3b 0.446 → 0.231, C3c 121 → 100 h (106 actual), h > $1k 39 → 30, C1 unchanged. Every other year is byte-identical.
+- **Promotion:** r-21 pruned; year union {2019–2025}.
+- **Next:** the 2020/2021 adder (1.45× / 1.59×) needs ERCOT's per-year NP6-576 μ/σ tables (data intake).
+- **Record:** `docs/handoffs/r-ercot/RESULT-r-ercot-22-ordc-shift-vintage-2026-10-01.md`.

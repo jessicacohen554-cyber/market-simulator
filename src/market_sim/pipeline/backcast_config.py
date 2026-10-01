@@ -1345,7 +1345,10 @@ def backcast_config(
     # BYTE-IDENTICAL for 2022-2025 and for every ISO but ERCOT — the table
     # lists those years at exactly the `ScenarioConfig` defaults, and a year
     # absent from it falls through to those defaults (the correct posture for
-    # every forecast year, which no order has yet moved).
+    # every forecast year, which no order has yet moved). R-ERCOT-22 added the
+    # third order value, the PUCT 48551 LOLP curve shift
+    # (`ordc_lolp_shift_sigma`), through this same seam (rule 19 [R-ONE-MECH]);
+    # only 2019 moves (0.25 instead of the shipped 0.5).
     _ordc_order = (
         ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR.get(int(year), {})
         if iso.upper() == "ERCOT"

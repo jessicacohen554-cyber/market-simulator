@@ -2984,15 +2984,29 @@ NUCLEAR_DORMANT_UNTIL: dict[int, int] = {
 # value and so is correct for every forecast year. 2022-2025 are listed at
 # exactly those defaults, which is what makes every training-year and 2022-rung
 # solve BYTE-IDENTICAL under this table.
+# THE LOLP CURVE SHIFT (R-ERCOT-22, rule 14 [R-ACCURATE]). PUCT Project 48551
+# moved the ORDC's LOLP curve right in two 0.25-sigma steps: the first effective
+# 2019-03-01, the second 2020-03-01 (``ScenarioConfig.ordc_lolp_shift_sigma``'s
+# own comment). The shipped 0.5 is therefore the post-2020-03-01 value, and a
+# 2019 solve priced its scarcity on a curve the market did not adopt until the
+# following March. Measured (zero LP, ``scripts/probes/_r_ercot22_ordc_shift_id.py``):
+# the published RTORPA formula on ERCOT's own measured RTOLCAP / RTOFFCAP /
+# system lambda reproduces 2019's published RTORPA sum at +3.9 % (r = 0.997)
+# with 0.25 and at +63.5 % (r = 0.989) with 0.5. YEAR GRAIN, a declared rule-14
+# time-aggregation reconciliation: the in-LP ORDC demand curve is one curve per
+# solve year, so each year carries the step that governs its scarcity hours —
+# 2019's Jan-Feb (still 0.0) holds 0.04 % of that year's RTORPA, 2020's Jan-Feb
+# (still 0.25) 0.94 %. 2020-2025 are listed at the shipped 0.5, so ONLY 2019
+# moves. Zero DOF: order values, fixed before any solve.
 # Tier: 1 (published market design)
 ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR: dict[int, dict[str, float]] = {
-    2019: {"ordc_voll": 9000.0, "ordc_mcl_mw": 2000.0},
-    2020: {"ordc_voll": 9000.0, "ordc_mcl_mw": 2000.0},
-    2021: {"ordc_voll": 9000.0, "ordc_mcl_mw": 2000.0},
-    2022: {"ordc_voll": 5000.0, "ordc_mcl_mw": 3000.0},
-    2023: {"ordc_voll": 5000.0, "ordc_mcl_mw": 3000.0},
-    2024: {"ordc_voll": 5000.0, "ordc_mcl_mw": 3000.0},
-    2025: {"ordc_voll": 5000.0, "ordc_mcl_mw": 3000.0},
+    2019: {"ordc_voll": 9000.0, "ordc_mcl_mw": 2000.0, "ordc_lolp_shift_sigma": 0.25},
+    2020: {"ordc_voll": 9000.0, "ordc_mcl_mw": 2000.0, "ordc_lolp_shift_sigma": 0.5},
+    2021: {"ordc_voll": 9000.0, "ordc_mcl_mw": 2000.0, "ordc_lolp_shift_sigma": 0.5},
+    2022: {"ordc_voll": 5000.0, "ordc_mcl_mw": 3000.0, "ordc_lolp_shift_sigma": 0.5},
+    2023: {"ordc_voll": 5000.0, "ordc_mcl_mw": 3000.0, "ordc_lolp_shift_sigma": 0.5},
+    2024: {"ordc_voll": 5000.0, "ordc_mcl_mw": 3000.0, "ordc_lolp_shift_sigma": 0.5},
+    2025: {"ordc_voll": 5000.0, "ordc_mcl_mw": 3000.0, "ordc_lolp_shift_sigma": 0.5},
 }
 
 # Per-year nuclear monthly capacity factor derived from EIA-923 net generation

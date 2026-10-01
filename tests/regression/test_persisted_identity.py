@@ -823,8 +823,20 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   Merged soco-96, whose seven unscoped CAMPD/Part-75 CO2 constants were
 #   declared at their live hash without advancing any pin (no value moved):
 #   PJM's pin carries them, 226 -> 233; the other ISOs' pins are that lane's.
+# 2026-10-01 ERCOT ADVANCED (R-ERCOT-22) — ONE ROW MOVED, LEFT UNDECLARED SO
+#   IT ENTERS ERCOT'S KEY. constants.ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR
+#   gains `ordc_lolp_shift_sigma` per year: 2019 = 0.25 (the first PUCT 48551
+#   step, effective 2019-03-01), 2020-2025 = the shipped 0.5. `solve_surface_
+#   register.py --diff origin/main` -> "1 value(s) moved: ERCOT_ORDC_PUBLISHED_
+#   ORDER_PARAMS_BY_YEAR: ERCOT". The name carries the ERCOT token, so ERCOT
+#   alone re-keys. WHAT IT COSTS: an ERCOT cache miss; only the 2019 solve
+#   changes (every other year resolves to the shipped shift).
+#   THE PIN ALSO ABSORBS 240 -> 247 ROWS that landed on main unpinned for
+#   ERCOT (soco-96's seven unscoped CAMPD/Part-75 CO2 constants, declared at
+#   their live hash, no value moved — the PJM block above records them for
+#   PJM). The other ISOs' stale pins are their own lanes' (rule 25).
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("bdfc68c278f7eff8", 240),
+    "ERCOT": ("4e4acc5b60f2bd20", 247),
     "CAISO": ("289c8c383a78f4d9", 213),
     "MISO": ("52d6fa6795d5e276", 220),
     "PJM": ("254a954525afd690", 233),
@@ -884,6 +896,9 @@ def test_solve_surface_fingerprint_is_pinned(iso: str) -> None:
 #: registry value that changed while every reader still believes the pin.
 LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
     "ERCOT": {
+        "ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR": (
+            "R-ERCOT-22 2026-10-01: the PUCT 48551 LOLP curve shift vintaged (2019 = 0.25 sigma, 2020-2025 = 0.5), left undeclared so ERCOT re-keys — see the 2026-10-01 R-ERCOT-22 cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
         "ISO_PLANT_EXITS": (
             "R-ERCOT-14 2026-09-28: Oklaunion 127 dated ERCOT exit (2020-10-01 06:00 UTC), declared at the pre-arm hash so ERCOT re-keys — see the 2026-09-28 R-ERCOT-14 cause block on PINNED_SURFACE_ROWS_BY_ISO"
         ),
