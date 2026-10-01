@@ -34,8 +34,9 @@ Consumers:
   the stamp through ``condensed_sidecar`` into ``ff-verdicts.json``).
 * ``scripts/register_forecast_run.py`` stamps each generated registry sidecar,
   run payload and the manifest meta.
-* ``scripts/check_forecast_staleness.py`` reads the stamps back and WARNs when
-  solve-affecting paths have moved N commits past the newest ``scored_at_sha``.
+* The stamps are read back by whoever asks whether solve-affecting paths have
+  moved past the newest ``scored_at_sha`` (the CI reader
+  ``check_forecast_staleness.py`` was removed 2026-10-01).
 
 Stdlib-only (``json``/``subprocess``/``datetime``/``pathlib``) so it runs on the
 bare ``python3`` the Pages deploy and the stdlib CI checks use. Every helper is
