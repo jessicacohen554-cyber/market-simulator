@@ -1,0 +1,34 @@
+{
+ "year": 2023,
+ "flags": [
+  "mid_vintage_exit_carry",
+  "fleet_zone_vintage_coords",
+  "retiree_vintage_status_scope"
+ ],
+ "added": {
+  "CT_PEAKER_NYC_p55243_r202305_econlo": [
+   "55243",
+   "NYC",
+   "CT_PEAKER",
+   203.3,
+   638.1
+  ],
+  "CT_PEAKER_NYC_p55243_r202305_econhi": [
+   "55243",
+   "NYC",
+   "CT_PEAKER",
+   183.2,
+   575.0
+  ],
+  "CT_PEAKER_NYC_p55243_r202305_peak": [
+   "55243",
+   "NYC",
+   "CT_PEAKER",
+   29.1,
+   91.3
+  ]
+ },
+ "removed": {},
+ "changed": {},
+ "demand_identical": true
+}

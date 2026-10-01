@@ -15724,3 +15724,35 @@ Record: `docs/handoffs/r-caiso-17/`.
 - Promoted on the pre-registered structure rule: keeper `2026-09-30-caiso-r18-dswgas` (+ `-touchpoints`). r17 was pruned.
 
 Record: `docs/handoffs/r-caiso-18/`.
+
+## R-CAISO-19 — 2026-09-30: fold DSW residual = the absent clean rungs, zero LP, nothing built
+
+- The fold's DSW gap (−13.3 / −20.6 / −11.0 TWh vs EIA-930) matches what the four clean rungs carry in 2021–25 (12.5–20.6 TWh). They carry 0 MW in 2019–20 because their arming needs a raw OASIS print.
+- The gas-tranche stack (hub + $4 wheel + border carbon) is identical to 2022–25, and the formula hub carries neither term, so nothing is counted twice.
+- No measured instrument can arm the rungs in 2019–20, and none exists in the repo.
+- Owner card 2026-09-30 selected all four next links:
+  1. arm the overnight rung before 2021 on the formula hub — an **owner ruling**, not a measured admission;
+  2. ledger the residual left after it;
+  3. evening under-price;
+  4. C3c 2024.
+- R-CAISO-20 takes (1), then ledgers (2).
+
+Record: `docs/handoffs/r-caiso-19/`.
+
+## R-CAISO-20 — 2026-09-30: overnight clean rung armed in unprinted years (OWNER RULING), PROMOTED; fold residual ledgered
+
+- Owner card 2026-09-30, "Arm overnight rung pre-2021". This is an owner ruling, not a measured admission.
+- Build: `caiso_dsw_overnight_clean_unprinted_arm` (PR #6937). The hod 0–5 DSW clean rung also arms in the hours the R-CAISO-18 loader prices on the measured-gas formula (2019–20, Jan–Apr 2021).
+  - Depth is the rung's own p95: 6,566 / 7,166 MW (2021 static 6,187).
+  - The 2023 Jan–Feb gap never arms.
+- 7 shards at `cd589798`. 2022–25 byte-reproduce the incumbent. The span stays CALIBRATED (single ledgered C3c 2024).
+- Fold:
+  - DSW import 31.4 / 21.3 / 29.9 → 35.4 / 26.8 / 30.7 TWh (EIA-930 44.7 / 41.9 / 40.9);
+  - hod 0–5 error −3.8 / −7.4 / −2.1 → +0.3 / −1.9 / −1.3;
+  - C1 CC_REGULAR 50.6 / 65.5 / 59.9 → 46.8 / 60.7 / 59.3 TWh;
+  - C4 gas NRMSE 0.454 / 0.470 / 0.369 → 0.390 / 0.413 / 0.360.
+  - It stays NOT-YET, and the backstop was not triggered.
+- **Ledgered:** the remaining fold DSW residual (−9.3 / −15.2 / −10.2 TWh, daytime and evening) is DATA-AVAILABILITY LIMITED. OASIS has no Palo Verde print before 2021-04-27, so the surplus, daytime and late-evening rungs have no admissible trigger.
+- Promoted on the pre-registered structure rule: keeper `2026-09-30-caiso-r20-overnight` (+ `-touchpoints`). r18 was pruned.
+
+Record: `docs/handoffs/r-caiso-20/`.

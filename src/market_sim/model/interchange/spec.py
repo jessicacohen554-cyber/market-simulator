@@ -243,7 +243,17 @@ CAISO_DSW_OVERNIGHT_CLEAN_NAME: str = "DSW_overnight_clean"
 # DEFAULT run reproduces 5,870 / 6,205 / 6,487, the gates (CV 0.041, LOYO worst
 # 8.1%) and this block byte-for-byte. 2022's 6,309 MW sits INSIDE the
 # 2023-2025 range, which is why nothing here is re-adjudicated.
+# 2019 / 2020 ADDED 2026-09-30 (R-CAISO-20) — read ONLY under the owner-ruling
+# arm caiso_dsw_overnight_clean_unprinted_arm (no raw Palo Verde print exists in
+# either year, so without it the injector never arms and these rows are inert).
+# Producer: derive_caiso_overnight_clean_depth.py --extra-years 2019 2020, the
+# same p95-over-all-overnight-hours statistic, percentile NOT re-sized (rule 1);
+# pre-registered in docs/handoffs/r-caiso-20/PRECOMMIT-r-caiso-20-2026-09-30.md.
+# 2021 deliberately stays on the static entry: its printed May-Dec hours already
+# arm at 6,187 in the keeper fold, and one year carries one depth.
 CAISO_DSW_OVERNIGHT_CLEAN_DEPTH_BY_YEAR: dict[int, float] = {
+    2019: 6566.0,
+    2020: 7166.0,
     2022: 6309.0,
     2023: 5870.0,
     2024: 6205.0,
