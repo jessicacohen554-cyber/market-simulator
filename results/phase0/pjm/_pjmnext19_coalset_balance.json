@@ -1,0 +1,850 @@
+{
+ "what": "PJM-NEXT-19 card 1b: coal-set-hour class balance. ZERO LP.",
+ "2019": {
+  "coal_set_hours": 2678,
+  "coal_set": {
+   "COAL": {
+    "model": 58.95,
+    "actual": 54.22,
+    "gap": 4.73
+   },
+   "CC_REGULAR": {
+    "model": 84.72,
+    "actual": 82.36,
+    "gap": 2.36
+   },
+   "CC_CHP": {
+    "model": 1.71,
+    "actual": 2.34,
+    "gap": -0.63
+   },
+   "CT_PEAKER": {
+    "model": 1.23,
+    "actual": 2.77,
+    "gap": -1.54
+   },
+   "ST_GAS": {
+    "model": 0.41,
+    "actual": 1.35,
+    "gap": -0.94
+   },
+   "ST_CHP": {
+    "model": 0.23,
+    "actual": 0.07,
+    "gap": 0.16
+   },
+   "CT_CHP": {
+    "model": 0.37,
+    "actual": 0.62,
+    "gap": -0.25
+   },
+   "nuclear": {
+    "model": 84.72
+   },
+   "wind": {
+    "model": 7.46
+   },
+   "solar": {
+    "model": 0.72
+   },
+   "hydro": {
+    "model": 2.7
+   },
+   "import": {
+    "model": -6.33
+   },
+   "OTHER": {
+    "model": 2.24
+   },
+   "biomass": {
+    "model": 2.16
+   },
+   "fossil_gap": 3.89
+  },
+  "other": {
+   "COAL": {
+    "model": 141.25,
+    "actual": 129.34,
+    "gap": 11.91
+   },
+   "CC_REGULAR": {
+    "model": 190.4,
+    "actual": 186.13,
+    "gap": 4.26
+   },
+   "CC_CHP": {
+    "model": 4.13,
+    "actual": 5.22,
+    "gap": -1.09
+   },
+   "CT_PEAKER": {
+    "model": 8.0,
+    "actual": 12.52,
+    "gap": -4.52
+   },
+   "ST_GAS": {
+    "model": 1.93,
+    "actual": 3.86,
+    "gap": -1.93
+   },
+   "ST_CHP": {
+    "model": 0.51,
+    "actual": 0.17,
+    "gap": 0.34
+   },
+   "CT_CHP": {
+    "model": 1.0,
+    "actual": 1.36,
+    "gap": -0.36
+   },
+   "nuclear": {
+    "model": 192.27
+   },
+   "wind": {
+    "model": 16.25
+   },
+   "solar": {
+    "model": 1.68
+   },
+   "hydro": {
+    "model": 8.18
+   },
+   "import": {
+    "model": -12.98
+   },
+   "OTHER": {
+    "model": 5.02
+   },
+   "biomass": {
+    "model": 4.88
+   },
+   "fossil_gap": 8.61
+  }
+ },
+ "2020": {
+  "coal_set_hours": 2273,
+  "coal_set": {
+   "COAL": {
+    "model": 40.44,
+    "actual": 38.32,
+    "gap": 2.12
+   },
+   "CC_REGULAR": {
+    "model": 76.11,
+    "actual": 73.37,
+    "gap": 2.74
+   },
+   "CC_CHP": {
+    "model": 1.45,
+    "actual": 2.18,
+    "gap": -0.72
+   },
+   "CT_PEAKER": {
+    "model": 2.38,
+    "actual": 3.64,
+    "gap": -1.26
+   },
+   "ST_GAS": {
+    "model": 0.92,
+    "actual": 1.49,
+    "gap": -0.58
+   },
+   "ST_CHP": {
+    "model": 0.26,
+    "actual": 0.08,
+    "gap": 0.19
+   },
+   "CT_CHP": {
+    "model": 0.39,
+    "actual": 0.51,
+    "gap": -0.12
+   },
+   "nuclear": {
+    "model": 70.51
+   },
+   "wind": {
+    "model": 6.22
+   },
+   "solar": {
+    "model": 0.88
+   },
+   "hydro": {
+    "model": 2.41
+   },
+   "import": {
+    "model": -7.34
+   },
+   "OTHER": {
+    "model": 1.98
+   },
+   "biomass": {
+    "model": 1.66
+   },
+   "fossil_gap": 2.37
+  },
+  "other": {
+   "COAL": {
+    "model": 118.17,
+    "actual": 110.17,
+    "gap": 8.0
+   },
+   "CC_REGULAR": {
+    "model": 217.24,
+    "actual": 209.92,
+    "gap": 7.32
+   },
+   "CC_CHP": {
+    "model": 4.37,
+    "actual": 6.34,
+    "gap": -1.98
+   },
+   "CT_PEAKER": {
+    "model": 10.47,
+    "actual": 14.94,
+    "gap": -4.47
+   },
+   "ST_GAS": {
+    "model": 3.92,
+    "actual": 5.29,
+    "gap": -1.37
+   },
+   "ST_CHP": {
+    "model": 0.75,
+    "actual": 0.22,
+    "gap": 0.53
+   },
+   "CT_CHP": {
+    "model": 1.15,
+    "actual": 1.56,
+    "gap": -0.42
+   },
+   "nuclear": {
+    "model": 201.54
+   },
+   "wind": {
+    "model": 16.18
+   },
+   "solar": {
+    "model": 2.24
+   },
+   "hydro": {
+    "model": 7.63
+   },
+   "import": {
+    "model": -20.98
+   },
+   "OTHER": {
+    "model": 5.62
+   },
+   "biomass": {
+    "model": 4.74
+   },
+   "fossil_gap": 7.61
+  }
+ },
+ "2021": {
+  "coal_set_hours": 1536,
+  "coal_set": {
+   "COAL": {
+    "model": 35.42,
+    "actual": 32.78,
+    "gap": 2.64
+   },
+   "CC_REGULAR": {
+    "model": 48.68,
+    "actual": 48.22,
+    "gap": 0.47
+   },
+   "CC_CHP": {
+    "model": 0.98,
+    "actual": 1.26,
+    "gap": -0.28
+   },
+   "CT_PEAKER": {
+    "model": 0.75,
+    "actual": 1.57,
+    "gap": -0.82
+   },
+   "ST_GAS": {
+    "model": 0.17,
+    "actual": 0.29,
+    "gap": -0.12
+   },
+   "ST_CHP": {
+    "model": 0.18,
+    "actual": 0.04,
+    "gap": 0.14
+   },
+   "CT_CHP": {
+    "model": 0.21,
+    "actual": 0.36,
+    "gap": -0.15
+   },
+   "nuclear": {
+    "model": 47.82
+   },
+   "wind": {
+    "model": 5.03
+   },
+   "solar": {
+    "model": 1.03
+   },
+   "hydro": {
+    "model": 1.49
+   },
+   "import": {
+    "model": -4.66
+   },
+   "OTHER": {
+    "model": 1.31
+   },
+   "biomass": {
+    "model": 1.11
+   },
+   "fossil_gap": 1.88
+  },
+  "other": {
+   "COAL": {
+    "model": 157.49,
+    "actual": 143.08,
+    "gap": 14.41
+   },
+   "CC_REGULAR": {
+    "model": 231.86,
+    "actual": 230.95,
+    "gap": 0.91
+   },
+   "CC_CHP": {
+    "model": 5.04,
+    "actual": 6.7,
+    "gap": -1.66
+   },
+   "CT_PEAKER": {
+    "model": 10.43,
+    "actual": 18.56,
+    "gap": -8.13
+   },
+   "ST_GAS": {
+    "model": 1.7,
+    "actual": 2.71,
+    "gap": -1.0
+   },
+   "ST_CHP": {
+    "model": 0.85,
+    "actual": 0.2,
+    "gap": 0.66
+   },
+   "CT_CHP": {
+    "model": 1.19,
+    "actual": 1.53,
+    "gap": -0.34
+   },
+   "nuclear": {
+    "model": 224.08
+   },
+   "wind": {
+    "model": 22.85
+   },
+   "solar": {
+    "model": 4.87
+   },
+   "hydro": {
+    "model": 8.89
+   },
+   "import": {
+    "model": -19.93
+   },
+   "OTHER": {
+    "model": 6.23
+   },
+   "biomass": {
+    "model": 5.13
+   },
+   "fossil_gap": 4.85
+  }
+ },
+ "2022": {
+  "coal_set_hours": 1664,
+  "coal_set": {
+   "COAL": {
+    "model": 33.34,
+    "actual": 30.79,
+    "gap": 2.55
+   },
+   "CC_REGULAR": {
+    "model": 59.25,
+    "actual": 57.39,
+    "gap": 1.86
+   },
+   "CC_CHP": {
+    "model": 1.19,
+    "actual": 1.64,
+    "gap": -0.44
+   },
+   "CT_PEAKER": {
+    "model": 1.7,
+    "actual": 2.95,
+    "gap": -1.25
+   },
+   "ST_GAS": {
+    "model": 1.74,
+    "actual": 1.29,
+    "gap": 0.45
+   },
+   "ST_CHP": {
+    "model": 0.2,
+    "actual": 0.05,
+    "gap": 0.15
+   },
+   "CT_CHP": {
+    "model": 0.27,
+    "actual": 0.35,
+    "gap": -0.08
+   },
+   "nuclear": {
+    "model": 51.59
+   },
+   "wind": {
+    "model": 6.45
+   },
+   "solar": {
+    "model": 1.48
+   },
+   "hydro": {
+    "model": 1.77
+   },
+   "import": {
+    "model": -4.57
+   },
+   "OTHER": {
+    "model": 1.33
+   },
+   "biomass": {
+    "model": 1.15
+   },
+   "fossil_gap": 3.24
+  },
+  "other": {
+   "COAL": {
+    "model": 131.63,
+    "actual": 124.21,
+    "gap": 7.43
+   },
+   "CC_REGULAR": {
+    "model": 249.65,
+    "actual": 240.2,
+    "gap": 9.45
+   },
+   "CC_CHP": {
+    "model": 5.36,
+    "actual": 7.16,
+    "gap": -1.8
+   },
+   "CT_PEAKER": {
+    "model": 10.0,
+    "actual": 15.26,
+    "gap": -5.26
+   },
+   "ST_GAS": {
+    "model": 6.98,
+    "actual": 5.81,
+    "gap": 1.17
+   },
+   "ST_CHP": {
+    "model": 0.9,
+    "actual": 0.22,
+    "gap": 0.68
+   },
+   "CT_CHP": {
+    "model": 1.1,
+    "actual": 1.7,
+    "gap": -0.6
+   },
+   "nuclear": {
+    "model": 220.31
+   },
+   "wind": {
+    "model": 25.76
+   },
+   "solar": {
+    "model": 5.67
+   },
+   "hydro": {
+    "model": 7.19
+   },
+   "import": {
+    "model": -17.6
+   },
+   "OTHER": {
+    "model": 5.67
+   },
+   "biomass": {
+    "model": 4.81
+   },
+   "fossil_gap": 11.07
+  }
+ },
+ "2023": {
+  "coal_set_hours": 1187,
+  "coal_set": {
+   "COAL": {
+    "model": 16.02,
+    "actual": 15.95,
+    "gap": 0.07
+   },
+   "CC_REGULAR": {
+    "model": 45.23,
+    "actual": 44.44,
+    "gap": 0.79
+   },
+   "CC_CHP": {
+    "model": 0.98,
+    "actual": 1.35,
+    "gap": -0.37
+   },
+   "CT_PEAKER": {
+    "model": 2.6,
+    "actual": 2.99,
+    "gap": -0.4
+   },
+   "ST_GAS": {
+    "model": 1.33,
+    "actual": 1.19,
+    "gap": 0.14
+   },
+   "ST_CHP": {
+    "model": 0.14,
+    "actual": 0.04,
+    "gap": 0.1
+   },
+   "CT_CHP": {
+    "model": 0.24,
+    "actual": 0.26,
+    "gap": -0.02
+   },
+   "nuclear": {
+    "model": 36.69
+   },
+   "wind": {
+    "model": 4.42
+   },
+   "solar": {
+    "model": 1.37
+   },
+   "hydro": {
+    "model": 1.28
+   },
+   "import": {
+    "model": -3.37
+   },
+   "OTHER": {
+    "model": 0.97
+   },
+   "biomass": {
+    "model": 0.73
+   },
+   "fossil_gap": 0.31
+  },
+  "other": {
+   "COAL": {
+    "model": 96.03,
+    "actual": 97.18,
+    "gap": -1.14
+   },
+   "CC_REGULAR": {
+    "model": 288.97,
+    "actual": 281.47,
+    "gap": 7.51
+   },
+   "CC_CHP": {
+    "model": 6.25,
+    "actual": 8.41,
+    "gap": -2.15
+   },
+   "CT_PEAKER": {
+    "model": 16.07,
+    "actual": 17.98,
+    "gap": -1.91
+   },
+   "ST_GAS": {
+    "model": 8.16,
+    "actual": 7.67,
+    "gap": 0.49
+   },
+   "ST_CHP": {
+    "model": 0.9,
+    "actual": 0.26,
+    "gap": 0.64
+   },
+   "CT_CHP": {
+    "model": 1.53,
+    "actual": 1.77,
+    "gap": -0.25
+   },
+   "nuclear": {
+    "model": 235.35
+   },
+   "wind": {
+    "model": 25.21
+   },
+   "solar": {
+    "model": 7.61
+   },
+   "hydro": {
+    "model": 7.63
+   },
+   "import": {
+    "model": -24.73
+   },
+   "OTHER": {
+    "model": 6.26
+   },
+   "biomass": {
+    "model": 4.57
+   },
+   "fossil_gap": 3.19
+  }
+ },
+ "2024": {
+  "coal_set_hours": 1536,
+  "coal_set": {
+   "COAL": {
+    "model": 21.31,
+    "actual": 21.46,
+    "gap": -0.15
+   },
+   "CC_REGULAR": {
+    "model": 59.23,
+    "actual": 59.54,
+    "gap": -0.31
+   },
+   "CC_CHP": {
+    "model": 1.35,
+    "actual": 2.02,
+    "gap": -0.68
+   },
+   "CT_PEAKER": {
+    "model": 4.23,
+    "actual": 3.91,
+    "gap": 0.32
+   },
+   "ST_GAS": {
+    "model": 2.42,
+    "actual": 2.3,
+    "gap": 0.12
+   },
+   "ST_CHP": {
+    "model": 0.21,
+    "actual": 0.05,
+    "gap": 0.15
+   },
+   "CT_CHP": {
+    "model": 0.3,
+    "actual": 0.3,
+    "gap": -0.0
+   },
+   "nuclear": {
+    "model": 47.71
+   },
+   "wind": {
+    "model": 5.55
+   },
+   "solar": {
+    "model": 2.75
+   },
+   "hydro": {
+    "model": 1.67
+   },
+   "import": {
+    "model": -3.52
+   },
+   "OTHER": {
+    "model": 1.29
+   },
+   "biomass": {
+    "model": 0.93
+   },
+   "fossil_gap": -0.55
+  },
+  "other": {
+   "COAL": {
+    "model": 94.25,
+    "actual": 94.34,
+    "gap": -0.09
+   },
+   "CC_REGULAR": {
+    "model": 275.59,
+    "actual": 275.86,
+    "gap": -0.27
+   },
+   "CC_CHP": {
+    "model": 6.31,
+    "actual": 9.62,
+    "gap": -3.31
+   },
+   "CT_PEAKER": {
+    "model": 20.23,
+    "actual": 19.72,
+    "gap": 0.51
+   },
+   "ST_GAS": {
+    "model": 11.52,
+    "actual": 10.98,
+    "gap": 0.54
+   },
+   "ST_CHP": {
+    "model": 0.96,
+    "actual": 0.26,
+    "gap": 0.7
+   },
+   "CT_CHP": {
+    "model": 1.39,
+    "actual": 1.48,
+    "gap": -0.09
+   },
+   "nuclear": {
+    "model": 222.86
+   },
+   "wind": {
+    "model": 25.4
+   },
+   "solar": {
+    "model": 13.1
+   },
+   "hydro": {
+    "model": 7.19
+   },
+   "import": {
+    "model": -17.53
+   },
+   "OTHER": {
+    "model": 6.03
+   },
+   "biomass": {
+    "model": 4.33
+   },
+   "fossil_gap": -2.01
+  }
+ },
+ "2025": {
+  "coal_set_hours": 1034,
+  "coal_set": {
+   "COAL": {
+    "model": 16.82,
+    "actual": 15.12,
+    "gap": 1.7
+   },
+   "CC_REGULAR": {
+    "model": 37.13,
+    "actual": 38.04,
+    "gap": -0.91
+   },
+   "CC_CHP": {
+    "model": 0.8,
+    "actual": 1.18,
+    "gap": -0.37
+   },
+   "CT_PEAKER": {
+    "model": 2.06,
+    "actual": 1.63,
+    "gap": 0.43
+   },
+   "ST_GAS": {
+    "model": 1.9,
+    "actual": 1.6,
+    "gap": 0.3
+   },
+   "ST_CHP": {
+    "model": 0.11,
+    "actual": 0.0,
+    "gap": 0.11
+   },
+   "CT_CHP": {
+    "model": 0.15,
+    "actual": 0.21,
+    "gap": -0.06
+   },
+   "nuclear": {
+    "model": 31.8
+   },
+   "wind": {
+    "model": 4.02
+   },
+   "solar": {
+    "model": 2.95
+   },
+   "hydro": {
+    "model": 0.8
+   },
+   "import": {
+    "model": -3.0
+   },
+   "OTHER": {
+    "model": 0.56
+   },
+   "biomass": {
+    "model": 0.26
+   },
+   "fossil_gap": 1.2
+  },
+  "other": {
+   "COAL": {
+    "model": 132.97,
+    "actual": 120.52,
+    "gap": 12.45
+   },
+   "CC_REGULAR": {
+    "model": 285.71,
+    "actual": 292.7,
+    "gap": -6.99
+   },
+   "CC_CHP": {
+    "model": 6.4,
+    "actual": 9.32,
+    "gap": -2.92
+   },
+   "CT_PEAKER": {
+    "model": 26.07,
+    "actual": 22.63,
+    "gap": 3.43
+   },
+   "ST_GAS": {
+    "model": 17.44,
+    "actual": 14.99,
+    "gap": 2.44
+   },
+   "ST_CHP": {
+    "model": 0.84,
+    "actual": 0.0,
+    "gap": 0.84
+   },
+   "CT_CHP": {
+    "model": 1.26,
+    "actual": 1.55,
+    "gap": -0.29
+   },
+   "nuclear": {
+    "model": 237.53
+   },
+   "wind": {
+    "model": 28.1
+   },
+   "solar": {
+    "model": 21.68
+   },
+   "hydro": {
+    "model": 7.66
+   },
+   "import": {
+    "model": -19.98
+   },
+   "OTHER": {
+    "model": 4.21
+   },
+   "biomass": {
+    "model": 1.91
+   },
+   "fossil_gap": 8.96
+  }
+ }
+}

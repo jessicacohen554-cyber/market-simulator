@@ -1,0 +1,342 @@
+{
+ "2019": {
+  "coal_set_hours_scored": 941,
+  "median_actual_rt": 21.98,
+  "median_coal_offer": 24.79,
+  "median_gas": 3.21,
+  "model": {
+   "below_coal_gw": {
+    "coal": 22.32,
+    "gas_cc": 27.83,
+    "gas_ct": 0.23,
+    "gas_st": 0.11,
+    "nuclear": 31.43,
+    "oil": 0.0
+   },
+   "below_rt_gw": {
+    "coal": 17.5,
+    "gas_cc": 18.5,
+    "gas_ct": 0.69,
+    "gas_st": 0.13,
+    "nuclear": 31.43,
+    "oil": 0.0
+   },
+   "cap_gw": {
+    "coal": 29.23,
+    "gas_cc": 37.94,
+    "gas_ct": 21.63,
+    "gas_st": 1.7,
+    "nuclear": 31.43,
+    "oil": 5.23
+   },
+   "gas_cc_ihr_ladder": {
+    "-inf..0": 0.0,
+    "0..5": 0.033,
+    "10..12": 0.053,
+    "12..inf": 0.062,
+    "5..6": 0.242,
+    "6..6.5": 0.18,
+    "6.5..7": 0.126,
+    "7..7.5": 0.122,
+    "7.5..8": 0.071,
+    "8..9": 0.074,
+    "9..10": 0.036
+   },
+   "gen_gw": {
+    "coal": 22.81,
+    "gas_cc": 30.82,
+    "gas_ct": 0.7,
+    "gas_st": 0.27,
+    "nuclear": 31.43,
+    "oil": 0.0
+   }
+  },
+  "months": [
+   1,
+   4,
+   7,
+   10
+  ],
+  "real": {
+   "gas_tracking_0.5": {
+    "below_coal_gw": {
+     "CC_LIKE": 13.77,
+     "CT_FAST": 1.21,
+     "GAS_TRK": 50.38,
+     "LONG_RUN": 14.08,
+     "NUCLEAR": 18.02,
+     "OTHER": 0.51,
+     "ZERO": 16.23
+    },
+    "below_rt_gw": {
+     "CC_LIKE": 10.98,
+     "CT_FAST": 0.89,
+     "GAS_TRK": 42.67,
+     "LONG_RUN": 10.8,
+     "NUCLEAR": 18.01,
+     "OTHER": 0.4,
+     "ZERO": 16.23
+    },
+    "cap_gw": {
+     "CC_LIKE": 23.42,
+     "CT_FAST": 13.46,
+     "GAS_TRK": 73.58,
+     "LONG_RUN": 22.45,
+     "NUCLEAR": 18.02,
+     "OTHER": 2.19,
+     "ZERO": 16.25
+    }
+   },
+   "gas_tracking_0.6": {
+    "below_coal_gw": {
+     "CC_LIKE": 25.57,
+     "CT_FAST": 1.92,
+     "GAS_TRK": 36.93,
+     "LONG_RUN": 15.02,
+     "NUCLEAR": 18.02,
+     "OTHER": 0.51,
+     "ZERO": 16.23
+    },
+    "below_rt_gw": {
+     "CC_LIKE": 20.62,
+     "CT_FAST": 1.31,
+     "GAS_TRK": 32.01,
+     "LONG_RUN": 11.41,
+     "NUCLEAR": 18.01,
+     "OTHER": 0.4,
+     "ZERO": 16.23
+    },
+    "cap_gw": {
+     "CC_LIKE": 39.46,
+     "CT_FAST": 14.65,
+     "GAS_TRK": 53.74,
+     "LONG_RUN": 25.06,
+     "NUCLEAR": 18.02,
+     "OTHER": 2.19,
+     "ZERO": 16.25
+    }
+   },
+   "gas_tracking_0.7": {
+    "below_coal_gw": {
+     "CC_LIKE": 31.46,
+     "CT_FAST": 2.77,
+     "GAS_TRK": 26.15,
+     "LONG_RUN": 17.9,
+     "NUCLEAR": 19.17,
+     "OTHER": 0.51,
+     "ZERO": 16.23
+    },
+    "below_rt_gw": {
+     "CC_LIKE": 25.42,
+     "CT_FAST": 1.86,
+     "GAS_TRK": 23.31,
+     "LONG_RUN": 13.6,
+     "NUCLEAR": 19.16,
+     "OTHER": 0.4,
+     "ZERO": 16.23
+    },
+    "cap_gw": {
+     "CC_LIKE": 47.64,
+     "CT_FAST": 17.26,
+     "GAS_TRK": 36.79,
+     "LONG_RUN": 30.03,
+     "NUCLEAR": 19.17,
+     "OTHER": 2.22,
+     "ZERO": 16.25
+    }
+   },
+   "gas_tracking_ihr_ladder": {
+    "-inf..0": 0.009,
+    "0..5": 0.378,
+    "10..12": 0.054,
+    "12..inf": 0.137,
+    "5..6": 0.133,
+    "6..6.5": 0.055,
+    "6.5..7": 0.048,
+    "7..7.5": 0.045,
+    "7.5..8": 0.042,
+    "8..9": 0.055,
+    "9..10": 0.044
+   },
+   "gas_tracking_units": 268,
+   "segment_units": {
+    "CC_LIKE": 260,
+    "CT_FAST": 483,
+    "LONG_RUN": 88,
+    "NUCLEAR": 23,
+    "OTHER": 156,
+    "ZERO": 259
+   }
+  }
+ },
+ "2020": {
+  "coal_set_hours_scored": 694,
+  "median_actual_rt": 17.59,
+  "median_coal_offer": 21.52,
+  "median_gas": 2.48,
+  "model": {
+   "below_coal_gw": {
+    "coal": 16.46,
+    "gas_cc": 32.32,
+    "gas_ct": 1.4,
+    "gas_st": 0.52,
+    "nuclear": 30.71,
+    "oil": 0.0
+   },
+   "below_rt_gw": {
+    "coal": 12.62,
+    "gas_cc": 20.92,
+    "gas_ct": 1.53,
+    "gas_st": 0.43,
+    "nuclear": 30.71,
+    "oil": 0.0
+   },
+   "cap_gw": {
+    "coal": 22.67,
+    "gas_cc": 40.16,
+    "gas_ct": 21.48,
+    "gas_st": 2.92,
+    "nuclear": 30.71,
+    "oil": 3.77
+   },
+   "gas_cc_ihr_ladder": {
+    "-inf..0": 0.0,
+    "0..5": 0.094,
+    "10..12": 0.051,
+    "12..inf": 0.064,
+    "5..6": 0.202,
+    "6..6.5": 0.161,
+    "6.5..7": 0.126,
+    "7..7.5": 0.095,
+    "7.5..8": 0.068,
+    "8..9": 0.088,
+    "9..10": 0.05
+   },
+   "gen_gw": {
+    "coal": 16.83,
+    "gas_cc": 33.86,
+    "gas_ct": 1.52,
+    "gas_st": 0.65,
+    "nuclear": 30.71,
+    "oil": 0.0
+   }
+  },
+  "months": [
+   1,
+   4,
+   7,
+   10
+  ],
+  "real": {
+   "gas_tracking_0.5": {
+    "below_coal_gw": {
+     "CC_LIKE": 34.1,
+     "CT_FAST": 2.73,
+     "GAS_TRK": 19.92,
+     "LONG_RUN": 20.91,
+     "NUCLEAR": 21.59,
+     "OTHER": 0.96,
+     "ZERO": 17.24
+    },
+    "below_rt_gw": {
+     "CC_LIKE": 27.85,
+     "CT_FAST": 1.87,
+     "GAS_TRK": 15.18,
+     "LONG_RUN": 15.2,
+     "NUCLEAR": 21.59,
+     "OTHER": 0.58,
+     "ZERO": 17.24
+    },
+    "cap_gw": {
+     "CC_LIKE": 44.86,
+     "CT_FAST": 15.74,
+     "GAS_TRK": 31.23,
+     "LONG_RUN": 35.33,
+     "NUCLEAR": 21.59,
+     "OTHER": 3.81,
+     "ZERO": 17.24
+    }
+   },
+   "gas_tracking_0.6": {
+    "below_coal_gw": {
+     "CC_LIKE": 37.22,
+     "CT_FAST": 2.89,
+     "GAS_TRK": 15.83,
+     "LONG_RUN": 21.71,
+     "NUCLEAR": 21.59,
+     "OTHER": 0.96,
+     "ZERO": 17.24
+    },
+    "below_rt_gw": {
+     "CC_LIKE": 30.09,
+     "CT_FAST": 1.95,
+     "GAS_TRK": 12.41,
+     "LONG_RUN": 15.65,
+     "NUCLEAR": 21.59,
+     "OTHER": 0.58,
+     "ZERO": 17.24
+    },
+    "cap_gw": {
+     "CC_LIKE": 49.08,
+     "CT_FAST": 16.2,
+     "GAS_TRK": 23.67,
+     "LONG_RUN": 38.22,
+     "NUCLEAR": 21.59,
+     "OTHER": 3.81,
+     "ZERO": 17.24
+    }
+   },
+   "gas_tracking_0.7": {
+    "below_coal_gw": {
+     "CC_LIKE": 38.17,
+     "CT_FAST": 3.2,
+     "GAS_TRK": 13.57,
+     "LONG_RUN": 22.71,
+     "NUCLEAR": 21.59,
+     "OTHER": 0.96,
+     "ZERO": 17.24
+    },
+    "below_rt_gw": {
+     "CC_LIKE": 30.91,
+     "CT_FAST": 2.17,
+     "GAS_TRK": 10.81,
+     "LONG_RUN": 16.22,
+     "NUCLEAR": 21.59,
+     "OTHER": 0.58,
+     "ZERO": 17.24
+    },
+    "cap_gw": {
+     "CC_LIKE": 50.82,
+     "CT_FAST": 17.4,
+     "GAS_TRK": 19.56,
+     "LONG_RUN": 39.39,
+     "NUCLEAR": 21.59,
+     "OTHER": 3.81,
+     "ZERO": 17.24
+    }
+   },
+   "gas_tracking_ihr_ladder": {
+    "-inf..0": 0.0,
+    "0..5": 0.328,
+    "10..12": 0.073,
+    "12..inf": 0.145,
+    "5..6": 0.098,
+    "6..6.5": 0.051,
+    "6.5..7": 0.058,
+    "7..7.5": 0.056,
+    "7.5..8": 0.048,
+    "8..9": 0.076,
+    "9..10": 0.067
+   },
+   "gas_tracking_units": 144,
+   "segment_units": {
+    "CC_LIKE": 230,
+    "CT_FAST": 475,
+    "LONG_RUN": 88,
+    "NUCLEAR": 22,
+    "OTHER": 114,
+    "ZERO": 319
+   }
+  }
+ }
+}
