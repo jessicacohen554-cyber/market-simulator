@@ -49,7 +49,9 @@ def test_selector_is_a_sub_gate_of_the_fuel_split():
     )
     armed = ScenarioConfig(campd_unit_fuel_split=True, campd_st_gas_span_coverage=True)
     assert cb.campd_fuel_split_selector(armed) == cb.ST_GAS_SPAN_COVERAGE_TAG
-    assert (
+    # Under per-unit attribution no '-perunit-fuelsplit-stcov-' companion
+    # exists, so the combination is refused (NWPP-NEXT-14), never silently read.
+    with pytest.raises(ValueError):
         cb.campd_fuel_split_selector(
             ScenarioConfig(
                 campd_unit_fuel_split=True,
@@ -57,8 +59,6 @@ def test_selector_is_a_sub_gate_of_the_fuel_split():
                 campd_per_unit_attribution=True,
             )
         )
-        is False
-    )
 
 
 def test_companion_path_names():
