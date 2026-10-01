@@ -1492,7 +1492,6 @@ def spp_commitment_posture_spec(
 # ---- ERCOT single-product -------------------------------------------------
 
 
-
 def _ercot_ordc_curve(
     config, hours, year, resolve_lolp_params, ercot_ordc_demand_steps, published_active
 ):
@@ -1504,10 +1503,10 @@ def _ercot_ordc_curve(
     — ``(n_steps, T)`` penalties, static widths and requirement.
     """
     published = published_active(config)
-    mu, sigma = resolve_lolp_params(
-        config, hours, year=int(year) if published else None
-    )
-    if not published:
+    if published:
+        mu, sigma = resolve_lolp_params(config, hours, year=int(year))
+    else:
+        mu, sigma = resolve_lolp_params(config, hours)
         mu, sigma = float(np.mean(mu)), float(np.mean(sigma))
     return ercot_ordc_demand_steps(
         voll=config.ordc_voll,
@@ -1518,6 +1517,7 @@ def _ercot_ordc_curve(
         multistep_floor=config.ordc_multistep_floor,
         obd_half_shift=published,
     )
+
 
 def _ercot_design(
     config,

@@ -159,7 +159,9 @@ def digitize(img: np.ndarray) -> pd.DataFrame:
                 rr = np.where(m[:, x])[0]
                 runs = np.split(rr, np.where(np.diff(rr) > 1)[0] + 1) if len(rr) else []
                 cand = [
-                    r.mean() for r in runs if len(r) <= max_run and lo < to_mw(r.mean()) < hi
+                    r.mean()
+                    for r in runs
+                    if len(r) <= max_run and lo < to_mw(r.mean()) < hi
                 ]
                 if len(cand) == 1:
                     ys.append(cand[0])
