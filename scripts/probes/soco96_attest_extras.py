@@ -3,7 +3,7 @@
 Runs LAST in the attestation chain, where ``soco93_attest_extras.py`` ran (after
 ``build_dof_ledger.py``, ``gen_soco60b_attestation.py``, ``gen_rsoco_attestation.py`` and
 ``gen_rsocob_attestation.py``). Carries soco-83's hand-added entries verbatim from the
-incumbent keeper (soco93_span). ``dual_fuel_measured_oil_burn`` adds NO free parameter (the
+incumbent keeper (soco93_span when first run; soco96_span after the soco-96 promotion). ``dual_fuel_measured_oil_burn`` adds NO free parameter (the
 two CO2 signatures are 40 CFR Part 75 App. G Eq. G-4 constants, no threshold, no scaling),
 so ``n_entries`` and ``n_residual`` are unchanged; it is recorded as a disclosure only, with
 its rule-13 standing stated, beside the carried soco-85/87/92/93 disclosures.
@@ -21,7 +21,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 # The incumbent keeper at soco-96.
-KEEPER = ROOT / "results/calibration/soco93_span/calibration_attestation.json"
+KEEPER = ROOT / "results/calibration/soco96_span/calibration_attestation.json"
 
 #: Keeper-only entries, carried by NAME PREFIX (soco83_attest_extras.CARRY + its ENTRY).
 CARRY = (

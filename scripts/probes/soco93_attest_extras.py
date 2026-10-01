@@ -11,7 +11,7 @@ soco-85/87/92 disclosures.
 
 Usage::
 
-    python3 scripts/probes/soco93_attest_extras.py --bundle results/calibration/soco93_span
+    python3 scripts/probes/soco93_attest_extras.py --bundle results/calibration/soco96_span
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 # The incumbent keeper at soco-93.
-KEEPER = ROOT / "results/calibration/soco93_span/calibration_attestation.json"
+KEEPER = ROOT / "results/calibration/soco96_span/calibration_attestation.json"
 
 #: Keeper-only entries, carried by NAME PREFIX (soco83_attest_extras.CARRY + its ENTRY).
 CARRY = (
