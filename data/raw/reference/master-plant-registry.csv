@@ -832,3 +832,6 @@ plantid,nameplate_capacity_mw,fuel_type,prime_mover,technology,year_built,plant_
 34702,1565.0,NG,ST,Natural Gas Steam Turbine,1958,W A Parish [ST],ERCO,,,10.76,,0.0,NG,True,ST_GAS,,,,,,,,
 49392,352.0,NG,ST,Natural Gas Steam Turbine,1974,Barney M Davis [ST],ERCO,,,10.7,,0.0,NG,True,ST_GAS,,,,,,,,
 55501,1370.2,NG,CA,Natural Gas Fired Combined Cycle,2003,Kiamichi Energy Facility,ERCO,,0.02845,8.118674,0.442391,0.0,NG,False,CC_REGULAR,inefficient,438.16341,0.068652,0.002056,6409.8389,20.3591,0.0324,26.33
+34693,526.3,NG,GT,Natural Gas Fired Combustion Turbine,1975,T H Wharton [CT],ERCO,,,16.49,,0.0,NG,True,CT_PEAKER,,,,,,,,
+79003,308.4,NG,GT,Natural Gas Fired Combustion Turbine,2001,Sand Hill [CT],ERCO,,,10.04,,0.0,NG,True,CT_PEAKER,,,,,,,,
+563503,74.0,NG,GT,Natural Gas Fired Combustion Turbine,2023,Colorado Bend Energy Center [CT],ERCO,,,14.19,,0.0,NG,True,CT_PEAKER,,,,,,,,

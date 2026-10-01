@@ -103,3 +103,18 @@ sidecars copied, recipe edited, a placeholder `dispatch/2021_P1.parquet`):
 | keeper recipe (field not armed), price +0.5 | FAIL | **FAIL** (RECIPE) |
 
 Prompt: `docs/handoffs/spp106/shard_prompt_template.txt`.
+
+## Addendum A (2026-10-01, before any solve): G-DRIFT over the `main` merged into this PR
+
+`origin/main` moved to `aeea53ac` while this PR was open, so it was merged in. The only conflicts were the
+two adjacent cache-key list additions, and both sides were kept. The shards pin the resulting merge SHA,
+so the audit extends over `e7fd8931 → aeea53ac` on the rule-29(b) path set:
+
+| commit(s) | files | verdict | reason |
+|---|---|---|---|
+| NWPP-NEXT-14 `0b4d3b3f`, `54edd9e3`, `58c7b3fd` | `scenarios.py`, `constants.py`, `run_calibration.py`, `fleet/assembly.py`, `fleet/eia860.py`, `fleet/campd_bins.py` | INERT | `eia923_cc_family_heat_rates`: default False, absent from SPP's recipe. The retired `cc_subfloor_eia923_heat_rates` was absent too. The new per-unit fuel-split companion is reached only under `campd_per_unit_attribution`, which is False in SPP's recipe |
+| R-ERCOT-20 `bf7c1228` | `outages.py`, `reference/custom-bin-assignments.csv`, `reference/master-plant-registry.csv` | INERT | every changed row and every `_CC_SITE_SIMPLE_CYCLE_UNITS` key is an ERCOT plant (3469 T H Wharton, 7900 Sand Hill, 56350 Colorado Bend) |
+
+All rows are INERT, so the committed keeper remains the control. After the merge,
+`check_cache_key_registration --base origin/main` is ok ("1 new field(s), all registered"), the matrix guard
+with `--base origin/main` reports "1 new field(s) all registered", and `tests/iso/spp` passes (72 tests).

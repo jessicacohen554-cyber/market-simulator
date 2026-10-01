@@ -1,0 +1,548 @@
+{
+ "2019": [
+  {
+   "det": "NOT-YET",
+   "C3a": "+23.9%",
+   "LW": 57.67,
+   "C3b": 0.538,
+   "C3c": [
+    "PASS",
+    121.0,
+    106.0
+   ],
+   "C1 CC_REGULAR": [
+    9.7,
+    "FAIL"
+   ],
+   "C1 ST_GAS": [
+    3.06,
+    "PASS"
+   ],
+   "C1 COAL_PRB": [
+    -9.48,
+    "FAIL"
+   ],
+   "C1 COAL_LIGNITE": [
+    -0.27,
+    "PASS"
+   ],
+   "C1 CT_PEAKER": [
+    -4.34,
+    "PASS"
+   ],
+   "C8 ST_GAS": [
+    "18.1% ",
+    "PASS"
+   ],
+   "fails": [
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape"
+   ]
+  },
+  {
+   "det": "NOT-YET",
+   "C3a": "+25.7%",
+   "LW": 58.51,
+   "C3b": 0.566,
+   "C3c": [
+    "PASS",
+    123.0,
+    106.0
+   ],
+   "C1 CC_REGULAR": [
+    8.03,
+    "FAIL"
+   ],
+   "C1 ST_GAS": [
+    3.67,
+    "PASS"
+   ],
+   "C1 COAL_PRB": [
+    -9.05,
+    "FAIL"
+   ],
+   "C1 COAL_LIGNITE": [
+    -0.25,
+    "PASS"
+   ],
+   "C1 CT_PEAKER": [
+    -3.88,
+    "PASS"
+   ],
+   "C8 ST_GAS": [
+    "16.7% ",
+    "PASS"
+   ],
+   "fails": [
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape"
+   ]
+  }
+ ],
+ "2020": [
+  {
+   "det": "NOT-YET",
+   "C3a": "+5.6%",
+   "LW": 26.83,
+   "C3b": 0.229,
+   "C3c": [
+    "PASS",
+    39.0,
+    56.0
+   ],
+   "C1 CC_REGULAR": [
+    12.39,
+    "FAIL"
+   ],
+   "C1 ST_GAS": [
+    2.62,
+    "PASS"
+   ],
+   "C1 COAL_PRB": [
+    -11.6,
+    "FAIL"
+   ],
+   "C1 COAL_LIGNITE": [
+    -1.11,
+    "PASS"
+   ],
+   "C1 CT_PEAKER": [
+    -3.32,
+    "PASS"
+   ],
+   "C8 ST_GAS": [
+    "24.5% ",
+    "PASS"
+   ],
+   "fails": [
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_shape"
+   ]
+  },
+  {
+   "det": "NOT-YET",
+   "C3a": "+7.1%",
+   "LW": 27.2,
+   "C3b": 0.236,
+   "C3c": [
+    "PASS",
+    39.0,
+    56.0
+   ],
+   "C1 CC_REGULAR": [
+    10.81,
+    "FAIL"
+   ],
+   "C1 ST_GAS": [
+    3.19,
+    "PASS"
+   ],
+   "C1 COAL_PRB": [
+    -11.04,
+    "FAIL"
+   ],
+   "C1 COAL_LIGNITE": [
+    -1.07,
+    "PASS"
+   ],
+   "C1 CT_PEAKER": [
+    -3.04,
+    "PASS"
+   ],
+   "C8 ST_GAS": [
+    "22.5% ",
+    "PASS"
+   ],
+   "fails": [
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_shape"
+   ]
+  }
+ ],
+ "2021": [
+  {
+   "det": "CALIBRATED",
+   "C3a": "+4.6%",
+   "LW": 173.56,
+   "C3b": 0.067,
+   "C3c": [
+    "CAVEAT",
+    667.0,
+    258.0
+   ],
+   "C1 CC_REGULAR": [
+    -0.54,
+    "PASS"
+   ],
+   "C1 ST_GAS": [
+    -0.22,
+    "PASS"
+   ],
+   "C1 COAL_PRB": [
+    -1.51,
+    "PASS"
+   ],
+   "C1 COAL_LIGNITE": [
+    0.5,
+    "PASS"
+   ],
+   "C1 CT_PEAKER": [
+    -0.73,
+    "PASS"
+   ],
+   "C8 ST_GAS": [
+    "22.7% ",
+    "PASS"
+   ],
+   "fails": [
+    "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+   ]
+  },
+  {
+   "det": "CALIBRATED",
+   "C3a": "+5.1%",
+   "LW": 174.46,
+   "C3b": 0.073,
+   "C3c": [
+    "CAVEAT",
+    668.0,
+    258.0
+   ],
+   "C1 CC_REGULAR": [
+    -1.78,
+    "PASS"
+   ],
+   "C1 ST_GAS": [
+    0.27,
+    "PASS"
+   ],
+   "C1 COAL_PRB": [
+    -1.41,
+    "PASS"
+   ],
+   "C1 COAL_LIGNITE": [
+    0.51,
+    "PASS"
+   ],
+   "C1 CT_PEAKER": [
+    -0.19,
+    "PASS"
+   ],
+   "C8 ST_GAS": [
+    "20.9% ",
+    "PASS"
+   ],
+   "fails": [
+    "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+   ]
+  }
+ ],
+ "2022": [
+  {
+   "det": "CALIBRATED",
+   "C3a": "-8.7%",
+   "LW": 68.54,
+   "C3b": 0.167,
+   "C3c": [
+    "CAVEAT",
+    97.0,
+    196.0
+   ],
+   "C1 CC_REGULAR": [
+    -7.69,
+    "PASS"
+   ],
+   "C1 ST_GAS": [
+    -1.08,
+    "PASS"
+   ],
+   "C1 COAL_PRB": [
+    5.93,
+    "PASS"
+   ],
+   "C1 COAL_LIGNITE": [
+    0.62,
+    "PASS"
+   ],
+   "C1 CT_PEAKER": [
+    -1.57,
+    "PASS"
+   ],
+   "C8 ST_GAS": [
+    "30.1% ",
+    "PASS"
+   ],
+   "fails": [
+    "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+   ]
+  },
+  {
+   "det": "NOT-YET",
+   "C3a": "-7.7%",
+   "LW": 69.28,
+   "C3b": 0.16,
+   "C3c": [
+    "PASS",
+    101.0,
+    196.0
+   ],
+   "C1 CC_REGULAR": [
+    -8.83,
+    "FAIL"
+   ],
+   "C1 ST_GAS": [
+    -0.67,
+    "PASS"
+   ],
+   "C1 COAL_PRB": [
+    5.99,
+    "PASS"
+   ],
+   "C1 COAL_LIGNITE": [
+    0.63,
+    "PASS"
+   ],
+   "C1 CT_PEAKER": [
+    -0.95,
+    "PASS"
+   ],
+   "C8 ST_GAS": [
+    "28.3% ",
+    "PASS"
+   ],
+   "fails": [
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix"
+   ]
+  }
+ ],
+ "2023": [
+  {
+   "det": "NOT-YET",
+   "C3a": "-19.8%",
+   "LW": 52.11,
+   "C3b": 0.289,
+   "C3c": [
+    "PASS",
+    155.0,
+    181.0
+   ],
+   "C1 CC_REGULAR": [
+    3.72,
+    "PASS"
+   ],
+   "C1 ST_GAS": [
+    -1.14,
+    "PASS"
+   ],
+   "C1 COAL_PRB": [
+    -2.18,
+    "PASS"
+   ],
+   "C1 COAL_LIGNITE": [
+    1.41,
+    "PASS"
+   ],
+   "C1 CT_PEAKER": [
+    -1.36,
+    "PASS"
+   ],
+   "C8 ST_GAS": [
+    "19.6% ",
+    "PASS"
+   ],
+   "fails": [
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape"
+   ]
+  },
+  {
+   "det": "NOT-YET",
+   "C3a": "-18.5%",
+   "LW": 53.01,
+   "C3b": 0.27,
+   "C3c": [
+    "PASS",
+    160.0,
+    181.0
+   ],
+   "C1 CC_REGULAR": [
+    1.53,
+    "PASS"
+   ],
+   "C1 ST_GAS": [
+    -0.49,
+    "PASS"
+   ],
+   "C1 COAL_PRB": [
+    -1.72,
+    "PASS"
+   ],
+   "C1 COAL_LIGNITE": [
+    1.41,
+    "PASS"
+   ],
+   "C1 CT_PEAKER": [
+    -0.39,
+    "PASS"
+   ],
+   "C8 ST_GAS": [
+    "18.1% ",
+    "PASS"
+   ],
+   "fails": [
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape"
+   ]
+  }
+ ],
+ "2024": [
+  {
+   "det": "NOT-YET",
+   "C3a": "-10.7%",
+   "LW": 27.84,
+   "C3b": 0.19,
+   "C3c": [
+    "CAVEAT",
+    13.0,
+    53.0
+   ],
+   "C1 CC_REGULAR": [
+    -1.37,
+    "PASS"
+   ],
+   "C1 ST_GAS": [
+    -1.59,
+    "PASS"
+   ],
+   "C1 COAL_PRB": [
+    -1.21,
+    "PASS"
+   ],
+   "C1 COAL_LIGNITE": [
+    1.26,
+    "PASS"
+   ],
+   "C1 CT_PEAKER": [
+    -0.98,
+    "PASS"
+   ],
+   "C8 ST_GAS": [
+    "16.4% ",
+    "PASS"
+   ],
+   "fails": [
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean"
+   ]
+  },
+  {
+   "det": "CALIBRATED",
+   "C3a": "-9.9%",
+   "LW": 28.1,
+   "C3b": 0.188,
+   "C3c": [
+    "CAVEAT",
+    14.0,
+    53.0
+   ],
+   "C1 CC_REGULAR": [
+    -3.79,
+    "PASS"
+   ],
+   "C1 ST_GAS": [
+    -0.87,
+    "PASS"
+   ],
+   "C1 COAL_PRB": [
+    -0.56,
+    "PASS"
+   ],
+   "C1 COAL_LIGNITE": [
+    1.27,
+    "PASS"
+   ],
+   "C1 CT_PEAKER": [
+    -0.09,
+    "PASS"
+   ],
+   "C8 ST_GAS": [
+    "14.9% ",
+    "PASS"
+   ],
+   "fails": [
+    "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+   ]
+  }
+ ],
+ "2025": [
+  {
+   "det": "CALIBRATED",
+   "C3a": "-9.8%",
+   "LW": 32.92,
+   "C3b": 0.13,
+   "C3c": [
+    "CAVEAT",
+    0.0,
+    31.0
+   ],
+   "C1 CC_REGULAR": [
+    -0.7,
+    "SKIPPED"
+   ],
+   "C1 ST_GAS": [
+    -3.02,
+    "SKIPPED"
+   ],
+   "C1 COAL_PRB": [
+    3.65,
+    "PASS"
+   ],
+   "C1 COAL_LIGNITE": [
+    0.71,
+    "PASS"
+   ],
+   "C1 CT_PEAKER": [
+    -1.84,
+    "SKIPPED"
+   ],
+   "C8 ST_GAS": [
+    "22.2% ",
+    "PASS"
+   ],
+   "fails": [
+    "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+   ]
+  },
+  {
+   "det": "CALIBRATED",
+   "C3a": "-8.2%",
+   "LW": 33.51,
+   "C3b": 0.119,
+   "C3c": [
+    "CAVEAT",
+    0.0,
+    31.0
+   ],
+   "C1 CC_REGULAR": [
+    -2.67,
+    "SKIPPED"
+   ],
+   "C1 ST_GAS": [
+    -2.36,
+    "SKIPPED"
+   ],
+   "C1 COAL_PRB": [
+    3.81,
+    "PASS"
+   ],
+   "C1 COAL_LIGNITE": [
+    0.72,
+    "PASS"
+   ],
+   "C1 CT_PEAKER": [
+    -0.85,
+    "SKIPPED"
+   ],
+   "C8 ST_GAS": [
+    "20.0% ",
+    "PASS"
+   ],
+   "fails": [
+    "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+   ]
+  }
+ ]
+}

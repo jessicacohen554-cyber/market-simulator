@@ -284,11 +284,6 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # key; an armed run carries a different fleet cost and so gets a distinct
     # key.
     "egrid_family_heat_rates",
-    # NWPP-NEXT-14 combined-cycle physical floor on the eGRID plant rate
-    # (GATED default-off; data/fleet/eia860.py::_apply_cc_subfloor_eia923_hr at
-    # the eGRID seam, so the off path is byte-inert). Registered IN THE SAME
-    # COMMIT as the field.
-    "cc_subfloor_eia923_heat_rates",
     # eGRID steam-collapse identity heat rates (nyiso-189, default off):
     # dropped from the hash at its default so every pre-existing cached run
     # keeps its key; an armed run carries a different fleet cost and so gets
@@ -2349,6 +2344,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # data/raw/spp-mmu-unavailable-capacity CSV; no sub-fields. Registered IN
     # THE SAME COMMIT as the field (the nyiso-119 discipline).
     "spp_mmu_offer_unavailability",
+    # EIA-923 CC-family heat rates (NWPP-NEXT-14, default off): dropped from
+    # the hash at its default so every pre-existing run -- every ISO's keepers
+    # included -- keeps its key. Byte-identical off by construction (the seam
+    # is skipped). Registered IN THE SAME COMMIT as the field.
+    "eia923_cc_family_heat_rates",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2433,9 +2433,6 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "measured_chp_heat_rates": "False",
     "egrid_identity_heat_rates": "False",
     "egrid_family_heat_rates": "False",
-    # Added by NWPP-NEXT-14 WITH the field, same commit as its
-    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
-    "cc_subfloor_eia923_heat_rates": "False",
     "egrid_steam_collapse_heat_rates": "False",
     "cc_steam_part_capacity": "False",
     "cc_steam_part_reclass": "False",
@@ -3201,6 +3198,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "spp_gas_crow_residual_outage": "False",
     # Added by SPP-106 WITH the field (the nyiso-119 discipline).
     "spp_mmu_offer_unavailability": "False",
+    # Added by NWPP-NEXT-14 WITH the field (the nyiso-119 discipline).
+    "eia923_cc_family_heat_rates": "False",
 }
 
 
@@ -6157,30 +6156,6 @@ class ScenarioConfig:
     # with none. See PREREG-nyiso184-stgas-heat-rate-basis.md §1, §3 R1.
     egrid_family_heat_rates: bool = False
 
-    # COMBINED-CYCLE PHYSICAL FLOOR on the eGRID plant heat rate, repaired from
-    # the plant's own EIA-923 CC fuel filing (NWPP-NEXT-14, GATED default off,
-    # byte-identical off; rule 14 [R-ACCURATE]). The CC mirror of the SPP-49
-    # simple-cycle floor (data/fleet/eia860.py::_apply_simple_cycle_hr_floor).
-    # A combined-cycle part (EIA-860 prime mover CT / CA / CS / CC) whose
-    # plant-grain eGRID PLHTRT sits below HEAT_RATE_BINS["gas_cc"]["h_class"]
-    # (EGRID_CC_HR_PHYSICAL_FLOOR, EIA Table 8) is on mismatched boundaries:
-    # Clark 2322 (NWPP) reads 3.007 MMBtu/MWh because eGRID's heat input covers
-    # only its CEMS GT peakers while its net covers the non-CEMS combined cycle
-    # too, so its 462 MW CC block offered at ~1/3 of its fuel cost and ran
-    # 70-75 % CF in every hour of keeper #18 (3.69 TWh/yr against 0.43-0.86
-    # EIA-923). Armed, such a row takes the plant's own EIA-923 CC prime-mover
-    # rate (sum elec fuel / sum net over CT+CA+CS+CC; the solve year's own where
-    # reported, else pooled), and the floor itself only where that measured
-    # rate is absent or outside [floor, EGRID_CC_HR_PHYSICAL_CEILING]. CHP
-    # plants are out of scope (the CHP chain owns steam-credited rates, as for
-    # SPP-49). Applied at the eGRID seam, so measured_cc_heat_rates (CAMPD) and
-    # the CHP measured rates keep their precedence. ZERO free parameters (two
-    # aliases of cited constants and a measured filing); rule 13: the owner's
-    # annual fuel filing regenerates for any year; rule 23: the trigger is the
-    # physical impossibility, never a residual. See
-    # docs/handoffs/FINDING-nwppnext14-bridger-c4-decomposition-2026-09-30.md §5.
-    cc_subfloor_eia923_heat_rates: bool = False
-
     # eGRID STEAM-COLLAPSE identity heat rates (nyiso-189; owner ruling
     # 2026-09-05, form B2; default OFF, byte-identical off). eGRID's plant
     # rate PLHTRT = PLHTIAN / PLNGENAN, and PLNGENAN is the SUM of the
@@ -6217,6 +6192,31 @@ class ScenarioConfig:
     # X 54131 (9.807 -> 6.996). See
     # results/calibration/PREREG-nyiso189-steam-collapse-identity-ab.md.
     egrid_steam_collapse_heat_rates: bool = False
+
+    # EIA-923 CC-FAMILY heat rates (NWPP-NEXT-14; owner card "EIA-923
+    # CC-family HR", 2026-09-30; default OFF, byte-identical off). The fleet's
+    # heat rate is eGRID's plant-grain PLHTRT = PLHTIAN / PLNGENAN; where CEMS
+    # meters only SOME of a plant's machines, PLHTIAN covers those while
+    # PLNGENAN covers the whole plant, and the rate falls below anything a
+    # combined cycle can do. Clark 2322 (NV Energy): CAMPD meters its 24 GT
+    # peakers, not its combined cycle, and eGRID reads 3.007 MMBtu/MWh while
+    # EIA-923 measures the CC block (CT fuel / CT + CA net) at 9.04-9.59 in
+    # 2019-2025 -- an $11/MWh offer the LP runs flat out, +2.8-3.3 TWh/yr over
+    # EIA-923 once campd_per_unit_attribution made the block available. The
+    # eGRID family construction cannot reach it (no unit heat input to split).
+    # When True, a NON-CHP plant's CC-prime-mover rows (CT/CA/CS/CC) whose
+    # loaded rate is below fleet/eia860.py::EGRID_CC_HR_PHYSICAL_FLOOR take the
+    # plant's own EIA-923 CC-family rate from the committed per-ISO artifact
+    # (data/raw/_processed-legacy/eia923_cc_family_heat_rates_<ISO>.csv,
+    # scripts/data/derive_eia923_cc_family_heat_rates.py) for the eGRID
+    # vintage the join reads, accepted only inside [floor, ceiling]. A
+    # POPULATION rule (rule 24, never a carve); skips plants the family
+    # construction covered (rule 19); every class-scoped measured mechanism
+    # keeps its precedence. Rule 14 misalignment exception; rule 13 (EIA-923
+    # regenerates for any year); rule 21: zero free parameters; rule 25:
+    # per-ISO artifact, a no-op for an ISO with none. See
+    # docs/handoffs/FINDING-nwppnext14-bridger-and-clark-phase0-2026-09-30.md.
+    eia923_cc_family_heat_rates: bool = False
 
     # Combined-cycle STEAM-part capacity repair (miso-126; default OFF,
     # byte-identical off). EIA-860's ``Energy Source 1`` on a ``CA``

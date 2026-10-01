@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-30-nwppnext14-clark-hr-bridger",
+  "label": "nwppnext14 clark hr bridger",
+  "date": "2026-09-30",
+  "shorthand": "nwppnext14-clark-hr-bridger",
+  "definition": "NWPP-NEXT-14: keeper #18 recipe + eia923_cc_family_heat_rates + campd_unit_fuel_split",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-09-30-nwppnext14-clark-hr-bridger.js",
+  "bundle": "results/calibration/nwppnext14_span"
+}

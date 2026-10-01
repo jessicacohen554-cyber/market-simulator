@@ -784,3 +784,37 @@ Zero-LP record: `docs/handoffs/FINDING-nwppnext14-bridger-c4-decomposition-2026-
   (`docs/handoffs/PRECOMMIT-nwppnext14-vintage-denominator-2019-2025-2026-09-30.md`,
   `docs/handoffs/nwppnext14/shards/`). Pin: `b4e567fb1de9a53146730e0e75f95cb8db505c66`. G-DRIFT: all inert.
   Keeper #18 stands: NOT-YET on {dispatch_corr} under rubric v3.13.
+## NWPP-NEXT-14 (solve lane, session 01VuR49n) — 2026-09-30 — Clark CC heat rate + Bridger vintage tranche row (keeper #19)
+
+Zero-LP record: `docs/handoffs/FINDING-nwppnext14-bridger-and-clark-phase0-2026-09-30.md`.
+
+- **C4 coal 2023 is Jim Bridger, and at #18 the decisive window is Jun–Oct.** Swapping Bridger to CEMS for Jun–Oct
+  alone lifts fleet r 0.662 → 0.821. The Feb–May conservation window alone reaches only 0.697.
+  - #18's measured must-run (351.8 MW) left Bridger price-marginal at a delivered-cost offer of $38–51/MWh.
+  - Its 2023 burn equals its soft take floor exactly (93.9 TBtu vs CEMS 100.4), and the LP spends that take in
+    dear-gas Q1.
+  - The measured WEIM prices sit below the offer too.
+- **The vintage-static tranche row is real but not the cause.** Its 2023-only form reads a 113.8 % median CF;
+  corrected, the must-run moves only 351.8 → 343.3 MW.
+- **Clark 2322 CC loaded eGRID 3.007 MMBtu/MWh** (CEMS meters only its GT peakers), so it ran at full availability,
+  +2.8–3.3 TWh/yr over EIA-923.
+- **Owner cards:** "EIA-923 CC-family HR", "Both" (vintage fix now, captive-mine research next), and
+  "New sub-gate, default off" (lever 3 live-capacity denominator).
+- **Built:**
+  - `eia923_cc_family_heat_rates` (new, default off; population rule, zero DOF);
+  - `campd_unit_fuel_split` composed with per-unit attribution (`-perunit-fuelsplit-` companion).
+- **Solve:** seven year-isolated shards at `54edd9e3`, all hard stops PASS. Clark CC 3.69 → 0.41–1.21 TWh/yr
+  (EIA-923 0.43–0.86). 75 of 161 records move, 0 change status. C4 coal 2023 0.662 → 0.670.
+- **Regressions (reported):** C1 CC_REGULAR 2021–23 under-dispatch grows (−1.87 → −2.15, −3.89 → −4.06,
+  −1.37 → −1.84 TWh), CT_PEAKER 2025 +2.48 → +2.81, COAL_BIT 2023 +5.04 → +5.20.
+
+**Owner card: "Promote + prune #18".** Keeper #19 `2026-09-30-nwppnext14-clark-hr-bridger`. #18 pruned (rule 35);
+`audit_keepers` PASS; promotion completeness OK. Determination unchanged: NOT-YET on {dispatch_corr}, C4 coal 2023
+r 0.670. Records: `docs/handoffs/{FINDING,PRECOMMIT,RESULT}-nwppnext14-*.md`.
+
+**Reconciliation with the parallel NEXT-14 lane (above; PR #6935).** Two sessions ran the same handoff. The other built
+`cc_subfloor_eia923_heat_rates` and `campd_per_unit_vintage_denominator` but could not solve (nesting limit). Owner
+card "Keep #19; retire dup Clark field":
+- `cc_subfloor_eia923_heat_rates` is DELETED (rules 19 / 26); it duplicated the solved `eia923_cc_family_heat_rates`.
+- `campd_per_unit_vintage_denominator` stays default-off as NEXT-15's replacement candidate for the fuel-split
+  composition, because it also repairs North Valmy.

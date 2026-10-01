@@ -1202,6 +1202,7 @@ def unit_fuel_split_rows(
     iso: str,
     years: list[int],
     incumbent: pd.DataFrame,
+    per_unit: bool = False,
 ) -> dict[str, object]:
     """Re-derive the tranche rows of every MIXED-FUEL plant with per-unit fuel routing.
 
@@ -1255,6 +1256,10 @@ def unit_fuel_split_rows(
     ``[R-FROZEN-DERIVE]``: triggered by the attribution defect, never by a
     residual; the estimator is imported, not restated.
 
+    ``per_unit`` (NWPP-NEXT-14) derives against the ``-perunit-`` incumbent
+    and its per-unit-routed outage extract instead of the ``-unitroute-``
+    basis, for :func:`write_unit_fuel_split_companions` ``per_unit=True``.
+
     Returns:
         ``{"plants": sorted mixed-fuel plant codes, "tranche": [row dicts],
         "by_year": [online_frac_by_year row dicts], "p25": [p25-level row
@@ -1305,7 +1310,12 @@ def unit_fuel_split_rows(
         set_eia860_vintage(None)
 
     res = _routed_family_rows(
-        iso, years, per_year, mixed, lambda code, _group: code in mixed
+        iso,
+        years,
+        per_year,
+        mixed,
+        lambda code, _group: code in mixed,
+        per_unit_derate=per_unit,
     )
     return {"plants": sorted(mixed), **res}
 
@@ -1317,6 +1327,7 @@ def _routed_family_rows(
     route_plants: set[int],
     keep: Callable[[int, str], bool],
     split_remap: bool = False,
+    per_unit_derate: bool = False,
 ) -> dict[str, object]:
     """Derive tranche-family rows for ``keep``-selected ``(plant, group)`` bins, unit-routed.
 
@@ -1392,8 +1403,15 @@ def _routed_family_rows(
             return seated if seated in gas_groups else None
 
         net = campd.plant_group_hourly_net(df, factors, year, group_of)
-        derate = unit_outage_derate_factors(
-            year, iso=iso, mixed_gas_routing=True, split_remap=split_remap
+        # NWPP-NEXT-14: the per-unit fuel-split companion derates against the
+        # per-unit-routed outage extract its incumbent was derived on (the
+        # nyiso-176 coupling, rule 19), never the '-unitroute-' basis.
+        derate = (
+            unit_outage_derate_factors(year, iso=iso, per_unit_crosswalk=True)
+            if per_unit_derate
+            else unit_outage_derate_factors(
+                year, iso=iso, mixed_gas_routing=True, split_remap=split_remap
+            )
         )
         fac_df = campd.load_campd_hourly(list(states), [year])
         fac_net = campd.plant_hourly_net(fac_df, factors, year)
@@ -1623,7 +1641,9 @@ def fuel_split_companion_path(path: Path) -> Path:
     return path.with_name(f"{stem}-fuelsplit-{iso}{path.suffix}")
 
 
-def write_unit_fuel_split_companions(iso: str, years: list[int]) -> dict[str, object]:
+def write_unit_fuel_split_companions(
+    iso: str, years: list[int], per_unit: bool = False
+) -> dict[str, object]:
     """Derive the four ``-fuelsplit-`` companions of an ISO's tranche family.
 
     The pooled tranche artifact, its per-year ``online_frac`` grain, and the two
@@ -1637,6 +1657,8 @@ def write_unit_fuel_split_companions(iso: str, years: list[int]) -> dict[str, ob
     from market_sim.config.paths import PROCESSED_DIR
 
     iso = iso.upper()
+    if per_unit:
+        return _write_per_unit_fuel_split_companion(iso, years)
     tranche = PROCESSED_DIR / f"thermal_tranches_{iso}.csv"
     incumbent = pd.read_csv(tranche)
     res = unit_fuel_split_rows(iso, years, incumbent)
@@ -1679,6 +1701,79 @@ def write_unit_fuel_split_companions(iso: str, years: list[int]) -> dict[str, ob
         ),
     )
     return {"plants": res["plants"], "written": written, "audit": res["audit"]}
+
+
+def per_unit_fuel_split_companion_path(iso: str) -> Path:
+    """``thermal_tranches-perunit-fuelsplit-<ISO>.csv`` beside the per-unit artifact."""
+    from market_sim.config.paths import PROCESSED_DIR
+
+    return PROCESSED_DIR / f"thermal_tranches-perunit-fuelsplit-{iso.upper()}.csv"
+
+
+def _write_per_unit_fuel_split_companion(
+    iso: str, years: list[int]
+) -> dict[str, object]:
+    """Derive the ``-perunit-fuelsplit-`` companion of an ISO's per-unit tranche artifact.
+
+    NWPP-NEXT-14 (owner card "Both", 2026-09-30). The per-unit artifact
+    (``--per-unit-attribution``) divides each bin's pooled CAMPD conduct by ONE
+    nameplate, the head-vintage fleet's (:func:`_fleet_nameplate_and_group`),
+    in every window year. At a plant whose coal bin shrank inside the window
+    that is a rule-14 defect: Jim Bridger 8066's four units burned coal in 2023
+    and two did in 2024-25, so its 2023 coal conduct is divided by the 2025
+    1,049 MW bin (2023-only median CF 113.8 %). :func:`unit_fuel_split_rows`
+    (miso-278) already computes the mixed-fuel plants' rows on each window
+    year's OWN EIA-860 vintage bin with per-unit fuel routing; this writes
+    those rows over the per-unit artifact's lines for the mixed-fuel plants,
+    derated against the per-unit outage extract (``per_unit=True``), and copies
+    every other line verbatim. Only the pooled artifact is written: the
+    per-unit family carries no per-year / p25 / oom level artifacts, so the
+    three level readers keep reading what they read under per-unit alone.
+    Read under ``campd_per_unit_attribution`` + ``campd_unit_fuel_split``
+    (:func:`market_sim.data.fleet.campd_bins.campd_fuel_split_selector`).
+    Zero free parameters; rule 23: triggered by the denominator defect, never a
+    residual.
+    """
+    from market_sim.config.paths import PROCESSED_DIR
+
+    src = PROCESSED_DIR / f"thermal_tranches-perunit-{iso}.csv"
+    if not src.exists():
+        raise SystemExit(f"{src.name} is absent: derive --per-unit-attribution first")
+    incumbent = pd.read_csv(src)
+    res = unit_fuel_split_rows(iso, years, incumbent, per_unit=True)
+    dst = per_unit_fuel_split_companion_path(iso)
+    removed = _replace_plant_rows(
+        src, dst, set(res["plants"]), res["tranche"], _CHP_GROUPS
+    )
+    write_tranche_sidecar(
+        dst,
+        provenance="derived",
+        groups_in_force={
+            "online_frac_groups": sorted(_ONLINE_FRAC_GROUPS),
+            "chp_groups": sorted(_CHP_GROUPS),
+            "peaking_groups": sorted(_PEAKING_GROUPS),
+            "thermal_groups": sorted(_THERMAL_GROUPS),
+        },
+        derive_invocation={
+            "iso": iso,
+            "years": [int(y) for y in years],
+            "unit_fuel_split": True,
+            "per_unit_attribution": True,
+            "mixed_fuel_plants": res["plants"],
+            "derate_basis": "unit_outage_derate_factors(per_unit_crosswalk=True)",
+        },
+        note=(
+            "PER-UNIT FUEL-SPLIT COMPANION (NWPP-NEXT-14): lines of plants "
+            "outside derive_invocation.mixed_fuel_plants are byte-identical to "
+            "thermal_tranches-perunit-<ISO>.csv; the mixed-fuel plants' non-CHP "
+            "rows are re-derived by unit_fuel_split_rows(per_unit=True) on each "
+            "window year's own EIA-860 vintage bin."
+        ),
+    )
+    return {
+        dst.name: {"from": src.name, "removed": removed, "added": len(res["tranche"])},
+        "audit": res.get("audit"),
+    }
 
 
 def st_gas_span_coverage_companion_path(path: Path) -> Path:
@@ -2101,7 +2196,11 @@ def main() -> None:
     if args.unit_fuel_split:
         import json as _json
 
-        res = write_unit_fuel_split_companions(iso, [int(y) for y in args.years])
+        res = write_unit_fuel_split_companions(
+            iso,
+            [int(y) for y in args.years],
+            per_unit=bool(getattr(args, "per_unit_attribution", False)),
+        )
         print(_json.dumps(res, indent=1, sort_keys=True))
         return
 
