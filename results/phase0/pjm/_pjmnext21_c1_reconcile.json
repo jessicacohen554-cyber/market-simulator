@@ -1,0 +1,2205 @@
+{
+ "what": "PJM-NEXT-21 card 1: C1 against a benchmark re-bounded to PJM fuel-mix telemetry (EIA-930). ZERO LP. Scoring what-if only.",
+ "run_id": "2026-09-30-pjm-next16-ovec",
+ "held_plants": {
+  "3148": "Martins Creek",
+  "3149": "Montour",
+  "10633": "Hopewell Cogeneration"
+ },
+ "variants": {
+  "base": {
+   "rebound": {},
+   "c1": {
+    "2019": {
+     "CC_REGULAR": {
+      "status": "PASS",
+      "d_twh": 6.28,
+      "share_pp": 0.24,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 0.69,
+      "share_pp": 0.07,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": -6.64,
+      "share_pp": -0.84,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": -3.65,
+      "share_pp": -0.46,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.62,
+      "share_pp": -0.2,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": -1.06,
+      "share_pp": -0.14,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "FAIL",
+      "d_twh": 18.71,
+      "share_pp": 1.94,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": 0.23,
+      "share_pp": 0.02,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2020": {
+     "CC_REGULAR": {
+      "status": "FAIL",
+      "d_twh": 9.84,
+      "share_pp": 0.85,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 0.04,
+      "share_pp": -0.0,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": -5.96,
+      "share_pp": -0.77,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": -2.44,
+      "share_pp": -0.31,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.5,
+      "share_pp": -0.19,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": 0.04,
+      "share_pp": 0.0,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_LIGNITE": {
+      "status": "PASS",
+      "d_twh": 0.0,
+      "share_pp": 0.0,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "FAIL",
+      "d_twh": 11.92,
+      "share_pp": 1.3,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -1.03,
+      "share_pp": -0.14,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2021": {
+     "CC_REGULAR": {
+      "status": "PASS",
+      "d_twh": 1.11,
+      "share_pp": -0.24,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 0.63,
+      "share_pp": 0.07,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "FAIL",
+      "d_twh": -9.59,
+      "share_pp": -1.19,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": -1.99,
+      "share_pp": -0.25,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.38,
+      "share_pp": -0.17,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": 1.09,
+      "share_pp": 0.12,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "FAIL",
+      "d_twh": 17.14,
+      "share_pp": 1.86,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": 0.47,
+      "share_pp": 0.05,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2022": {
+     "CC_REGULAR": {
+      "status": "FAIL",
+      "d_twh": 10.94,
+      "share_pp": 0.6,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 1.05,
+      "share_pp": 0.11,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": -7.32,
+      "share_pp": -0.92,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": 2.87,
+      "share_pp": 0.33,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.16,
+      "share_pp": -0.14,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": 0.58,
+      "share_pp": 0.05,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "PASS",
+      "d_twh": 6.79,
+      "share_pp": 0.48,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -0.28,
+      "share_pp": -0.05,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2023": {
+     "CC_REGULAR": {
+      "status": "FAIL",
+      "d_twh": 8.48,
+      "share_pp": 0.71,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 1.11,
+      "share_pp": 0.13,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": -3.07,
+      "share_pp": -0.4,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": 0.59,
+      "share_pp": 0.06,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.23,
+      "share_pp": -0.15,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": -0.0,
+      "share_pp": -0.0,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "PASS",
+      "d_twh": 0.27,
+      "share_pp": -0.07,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -1.05,
+      "share_pp": -0.13,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2024": {
+     "CC_REGULAR": {
+      "status": "PASS",
+      "d_twh": -0.81,
+      "share_pp": -0.09,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 0.37,
+      "share_pp": 0.04,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": 0.3,
+      "share_pp": 0.04,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": 0.79,
+      "share_pp": 0.1,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.27,
+      "share_pp": -0.15,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": -0.17,
+      "share_pp": -0.02,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "PASS",
+      "d_twh": 0.88,
+      "share_pp": 0.11,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -0.7,
+      "share_pp": -0.08,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2025": {
+     "CC_REGULAR": {
+      "status": "SKIPPED",
+      "d_twh": -7.87,
+      "share_pp": -1.23,
+      "tol": null
+     },
+     "CC_CHP": {
+      "status": "SKIPPED",
+      "d_twh": 0.7,
+      "share_pp": 0.07,
+      "tol": null
+     },
+     "CT_PEAKER": {
+      "status": "SKIPPED",
+      "d_twh": 4.05,
+      "share_pp": 0.44,
+      "tol": null
+     },
+     "ST_GAS": {
+      "status": "SKIPPED",
+      "d_twh": 4.47,
+      "share_pp": 0.5,
+      "tol": null
+     },
+     "ST_CHP": {
+      "status": "SKIPPED",
+      "d_twh": -0.95,
+      "share_pp": -0.11,
+      "tol": null
+     },
+     "COAL_PRB": {
+      "status": "SKIPPED",
+      "d_twh": 0.9,
+      "share_pp": 0.1,
+      "tol": null
+     },
+     "COAL_BIT": {
+      "status": "SKIPPED",
+      "d_twh": 11.29,
+      "share_pp": 1.17,
+      "tol": null
+     },
+     "COAL_WC": {
+      "status": "SKIPPED",
+      "d_twh": 0.23,
+      "share_pp": 0.02,
+      "tol": null
+     }
+    }
+   },
+   "fails_by_criterion": {
+    "fuelmix": [
+     "2019:COAL_BIT",
+     "2020:CC_REGULAR",
+     "2020:COAL_BIT",
+     "2021:COAL_BIT",
+     "2021:CT_PEAKER",
+     "2022:CC_REGULAR",
+     "2023:CC_REGULAR"
+    ],
+    "price_mean": [
+     "2020:None",
+     "2022:None"
+    ],
+    "price_shape": [
+     "2022:None"
+    ]
+   },
+   "determination_run": "NOT-YET",
+   "determination_2023_2025": "NOT-YET"
+  },
+  "gas": {
+   "rebound": {
+    "2019": {
+     "class_delta_twh": {
+      "CT_PEAKER": 0.06,
+      "ST_GAS": 0.08,
+      "CC_REGULAR": -1.17,
+      "CC_CHP": -0.0,
+      "CT_CHP": -0.0,
+      "ST_CHP": -0.0
+     },
+     "k_month": {
+      "gas": [
+       0.805,
+       0.973,
+       0.997,
+       1.003,
+       1.006,
+       1.007,
+       1.044,
+       1.03,
+       1.027,
+       1.028,
+       1.02,
+       0.989
+      ]
+     }
+    },
+    "2020": {
+     "class_delta_twh": {
+      "CT_PEAKER": -0.09,
+      "ST_GAS": 0.06,
+      "CC_REGULAR": -4.37,
+      "CC_CHP": -0.06,
+      "CT_CHP": -0.02,
+      "ST_CHP": -0.01
+     },
+     "k_month": {
+      "gas": [
+       0.754,
+       0.982,
+       0.997,
+       0.991,
+       0.998,
+       1.02,
+       1.052,
+       1.023,
+       1.015,
+       1.01,
+       1.007,
+       0.974
+      ]
+     }
+    },
+    "2021": {
+     "class_delta_twh": {
+      "CT_PEAKER": 0.25,
+      "ST_GAS": 0.03,
+      "CC_REGULAR": 3.11,
+      "CC_CHP": 0.05,
+      "CT_CHP": 0.01,
+      "ST_CHP": 0.01
+     },
+     "k_month": {
+      "gas": [
+       1.004,
+       0.994,
+       1.008,
+       1.016,
+       1.012,
+       1.014,
+       1.013,
+       1.014,
+       1.02,
+       1.01,
+       1.013,
+       1.014
+      ]
+     }
+    },
+    "2022": {
+     "class_delta_twh": {
+      "CT_PEAKER": 0.16,
+      "ST_GAS": 0.02,
+      "CC_REGULAR": 2.67,
+      "CC_CHP": 0.05,
+      "CT_CHP": 0.01,
+      "ST_CHP": 0.01
+     },
+     "k_month": {
+      "gas": [
+       0.981,
+       0.989,
+       1.021,
+       1.03,
+       1.016,
+       1.027,
+       1.015,
+       1.014,
+       1.023,
+       1.005,
+       1.005,
+       0.98
+      ]
+     }
+    },
+    "2023": {
+     "class_delta_twh": {
+      "CT_PEAKER": -0.12,
+      "ST_GAS": -0.05,
+      "CC_REGULAR": -1.11,
+      "CC_CHP": -0.02,
+      "CT_CHP": -0.0,
+      "ST_CHP": -0.0
+     },
+     "k_month": {
+      "gas": [
+       1.011,
+       1.013,
+       1.016,
+       1.022,
+       1.006,
+       0.986,
+       0.989,
+       0.987,
+       0.99,
+       0.995,
+       0.98,
+       0.978
+      ]
+     }
+    },
+    "2024": {
+     "class_delta_twh": {
+      "CT_PEAKER": -0.36,
+      "ST_GAS": -0.12,
+      "CC_REGULAR": -5.63,
+      "CC_CHP": -0.09,
+      "CT_CHP": -0.02,
+      "ST_CHP": -0.01
+     },
+     "k_month": {
+      "gas": [
+       0.975,
+       0.983,
+       0.99,
+       0.981,
+       0.985,
+       0.994,
+       0.992,
+       0.991,
+       0.978,
+       0.983,
+       0.992,
+       0.954
+      ]
+     }
+    },
+    "2025": {
+     "class_delta_twh": {
+      "CT_PEAKER": -0.24,
+      "ST_GAS": -0.12,
+      "CC_REGULAR": -3.98,
+      "CC_CHP": -0.07,
+      "CT_CHP": -0.01,
+      "ST_CHP": -0.01
+     },
+     "k_month": {
+      "gas": [
+       0.978,
+       0.971,
+       0.995,
+       1.008,
+       1.012,
+       0.991,
+       0.996,
+       0.995,
+       0.987,
+       1.0,
+       0.98,
+       0.955
+      ]
+     }
+    }
+   },
+   "c1": {
+    "2019": {
+     "CC_REGULAR": {
+      "status": "PASS",
+      "d_twh": 7.44,
+      "share_pp": 0.34,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 0.69,
+      "share_pp": 0.07,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": -6.7,
+      "share_pp": -0.85,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": -3.73,
+      "share_pp": -0.47,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.62,
+      "share_pp": -0.2,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": -1.06,
+      "share_pp": -0.14,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "FAIL",
+      "d_twh": 18.71,
+      "share_pp": 1.92,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": 0.23,
+      "share_pp": 0.02,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2020": {
+     "CC_REGULAR": {
+      "status": "FAIL",
+      "d_twh": 14.2,
+      "share_pp": 1.2,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 0.09,
+      "share_pp": 0.0,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": -5.87,
+      "share_pp": -0.77,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": -2.5,
+      "share_pp": -0.33,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.49,
+      "share_pp": -0.19,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": 0.04,
+      "share_pp": -0.0,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_LIGNITE": {
+      "status": "PASS",
+      "d_twh": 0.0,
+      "share_pp": 0.0,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "FAIL",
+      "d_twh": 11.92,
+      "share_pp": 1.2,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -1.03,
+      "share_pp": -0.14,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2021": {
+     "CC_REGULAR": {
+      "status": "PASS",
+      "d_twh": -2.01,
+      "share_pp": -0.48,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 0.58,
+      "share_pp": 0.07,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "FAIL",
+      "d_twh": -9.84,
+      "share_pp": -1.21,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": -2.03,
+      "share_pp": -0.25,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.39,
+      "share_pp": -0.17,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": 1.09,
+      "share_pp": 0.12,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "FAIL",
+      "d_twh": 17.14,
+      "share_pp": 1.95,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": 0.47,
+      "share_pp": 0.05,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2022": {
+     "CC_REGULAR": {
+      "status": "FAIL",
+      "d_twh": 8.27,
+      "share_pp": 0.41,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 1.0,
+      "share_pp": 0.11,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": -7.49,
+      "share_pp": -0.93,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": 2.84,
+      "share_pp": 0.33,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.17,
+      "share_pp": -0.14,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": 0.58,
+      "share_pp": 0.05,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "PASS",
+      "d_twh": 6.79,
+      "share_pp": 0.54,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -0.28,
+      "share_pp": -0.05,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2023": {
+     "CC_REGULAR": {
+      "status": "FAIL",
+      "d_twh": 9.59,
+      "share_pp": 0.78,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 1.13,
+      "share_pp": 0.13,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": -2.96,
+      "share_pp": -0.39,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": 0.64,
+      "share_pp": 0.07,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.23,
+      "share_pp": -0.15,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": -0.0,
+      "share_pp": -0.0,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "PASS",
+      "d_twh": 0.27,
+      "share_pp": -0.09,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -1.05,
+      "share_pp": -0.14,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2024": {
+     "CC_REGULAR": {
+      "status": "PASS",
+      "d_twh": 4.82,
+      "share_pp": 0.28,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 0.46,
+      "share_pp": 0.05,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": 0.66,
+      "share_pp": 0.06,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": 0.92,
+      "share_pp": 0.1,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.26,
+      "share_pp": -0.15,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": -0.17,
+      "share_pp": -0.02,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "PASS",
+      "d_twh": 0.88,
+      "share_pp": 0.01,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -0.7,
+      "share_pp": -0.09,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2025": {
+     "CC_REGULAR": {
+      "status": "SKIPPED",
+      "d_twh": -3.89,
+      "share_pp": -0.96,
+      "tol": null
+     },
+     "CC_CHP": {
+      "status": "SKIPPED",
+      "d_twh": 0.77,
+      "share_pp": 0.08,
+      "tol": null
+     },
+     "CT_PEAKER": {
+      "status": "SKIPPED",
+      "d_twh": 4.28,
+      "share_pp": 0.45,
+      "tol": null
+     },
+     "ST_GAS": {
+      "status": "SKIPPED",
+      "d_twh": 4.59,
+      "share_pp": 0.5,
+      "tol": null
+     },
+     "ST_CHP": {
+      "status": "SKIPPED",
+      "d_twh": -0.95,
+      "share_pp": -0.11,
+      "tol": null
+     },
+     "COAL_PRB": {
+      "status": "SKIPPED",
+      "d_twh": 0.9,
+      "share_pp": 0.09,
+      "tol": null
+     },
+     "COAL_BIT": {
+      "status": "SKIPPED",
+      "d_twh": 11.29,
+      "share_pp": 1.1,
+      "tol": null
+     },
+     "COAL_WC": {
+      "status": "SKIPPED",
+      "d_twh": 0.23,
+      "share_pp": 0.02,
+      "tol": null
+     }
+    }
+   },
+   "fails_by_criterion": {
+    "fuelmix": [
+     "2019:COAL_BIT",
+     "2020:CC_REGULAR",
+     "2020:COAL_BIT",
+     "2021:COAL_BIT",
+     "2021:CT_PEAKER",
+     "2022:CC_REGULAR",
+     "2023:CC_REGULAR"
+    ],
+    "price_mean": [
+     "2020:None",
+     "2022:None"
+    ],
+    "price_shape": [
+     "2022:None"
+    ]
+   },
+   "determination_run": "NOT-YET",
+   "determination_2023_2025": "NOT-YET"
+  },
+  "gas_all": {
+   "rebound": {
+    "2019": {
+     "class_delta_twh": {
+      "CT_PEAKER": -0.03,
+      "ST_GAS": 0.05,
+      "CC_REGULAR": -2.44,
+      "CC_CHP": -0.01,
+      "CT_CHP": -0.01,
+      "ST_CHP": -0.0
+     },
+     "k_month": {
+      "gas": [
+       0.805,
+       0.974,
+       0.992,
+       0.998,
+       1.004,
+       1.002,
+       1.036,
+       1.024,
+       1.02,
+       1.021,
+       1.012,
+       0.987
+      ]
+     }
+    },
+    "2020": {
+     "class_delta_twh": {
+      "CT_PEAKER": -0.2,
+      "ST_GAS": 0.02,
+      "CC_REGULAR": -5.81,
+      "CC_CHP": -0.08,
+      "CT_CHP": -0.02,
+      "ST_CHP": -0.01
+     },
+     "k_month": {
+      "gas": [
+       0.753,
+       0.981,
+       0.994,
+       0.987,
+       0.991,
+       1.013,
+       1.041,
+       1.017,
+       1.009,
+       1.003,
+       1.001,
+       0.971
+      ]
+     }
+    },
+    "2021": {
+     "class_delta_twh": {
+      "CT_PEAKER": 0.16,
+      "ST_GAS": 0.03,
+      "CC_REGULAR": 2.24,
+      "CC_CHP": 0.04,
+      "CT_CHP": 0.01,
+      "ST_CHP": 0.01
+     },
+     "k_month": {
+      "gas": [
+       1.004,
+       0.994,
+       1.008,
+       1.012,
+       1.009,
+       1.008,
+       1.009,
+       1.009,
+       1.018,
+       1.005,
+       1.006,
+       1.014
+      ]
+     }
+    },
+    "2022": {
+     "class_delta_twh": {
+      "CT_PEAKER": 0.12,
+      "ST_GAS": 0.01,
+      "CC_REGULAR": 2.08,
+      "CC_CHP": 0.04,
+      "CT_CHP": 0.01,
+      "ST_CHP": 0.0
+     },
+     "k_month": {
+      "gas": [
+       0.981,
+       0.989,
+       1.021,
+       1.028,
+       1.013,
+       1.024,
+       1.012,
+       1.009,
+       1.021,
+       1.004,
+       1.003,
+       0.979
+      ]
+     }
+    },
+    "2023": {
+     "class_delta_twh": {
+      "CT_PEAKER": -0.22,
+      "ST_GAS": -0.11,
+      "CC_REGULAR": -2.33,
+      "CC_CHP": -0.04,
+      "CT_CHP": -0.01,
+      "ST_CHP": -0.0
+     },
+     "k_month": {
+      "gas": [
+       1.011,
+       1.012,
+       1.016,
+       1.018,
+       1.003,
+       0.983,
+       0.98,
+       0.982,
+       0.983,
+       0.982,
+       0.978,
+       0.978
+      ]
+     }
+    },
+    "2024": {
+     "class_delta_twh": {
+      "CT_PEAKER": -0.81,
+      "ST_GAS": -0.48,
+      "CC_REGULAR": -11.09,
+      "CC_CHP": -0.24,
+      "CT_CHP": -0.04,
+      "ST_CHP": -0.03
+     },
+     "k_month": {
+      "gas": [
+       0.974,
+       0.981,
+       0.987,
+       0.971,
+       0.974,
+       0.972,
+       0.959,
+       0.965,
+       0.964,
+       0.947,
+       0.964,
+       0.946
+      ]
+     }
+    },
+    "2025": {
+     "class_delta_twh": {
+      "CT_PEAKER": -0.81,
+      "ST_GAS": -0.57,
+      "CC_REGULAR": -10.89,
+      "CC_CHP": -0.21,
+      "CT_CHP": -0.04,
+      "ST_CHP": -0.01
+     },
+     "k_month": {
+      "gas": [
+       0.961,
+       0.962,
+       0.99,
+       0.978,
+       0.986,
+       0.967,
+       0.964,
+       0.972,
+       0.973,
+       0.948,
+       0.962,
+       0.948
+      ]
+     }
+    }
+   },
+   "c1": {
+    "2019": {
+     "CC_REGULAR": {
+      "status": "FAIL",
+      "d_twh": 8.71,
+      "share_pp": 0.44,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 0.7,
+      "share_pp": 0.07,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": -6.62,
+      "share_pp": -0.84,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": -3.71,
+      "share_pp": -0.46,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.62,
+      "share_pp": -0.2,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": -1.06,
+      "share_pp": -0.15,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "FAIL",
+      "d_twh": 18.71,
+      "share_pp": 1.88,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": 0.23,
+      "share_pp": 0.02,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2020": {
+     "CC_REGULAR": {
+      "status": "FAIL",
+      "d_twh": 15.65,
+      "share_pp": 1.31,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 0.12,
+      "share_pp": 0.0,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": -5.76,
+      "share_pp": -0.76,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": -2.46,
+      "share_pp": -0.32,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.49,
+      "share_pp": -0.19,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": 0.04,
+      "share_pp": -0.0,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_LIGNITE": {
+      "status": "PASS",
+      "d_twh": 0.0,
+      "share_pp": 0.0,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "FAIL",
+      "d_twh": 11.92,
+      "share_pp": 1.16,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -1.03,
+      "share_pp": -0.14,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2021": {
+     "CC_REGULAR": {
+      "status": "PASS",
+      "d_twh": -1.13,
+      "share_pp": -0.41,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 0.59,
+      "share_pp": 0.07,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "FAIL",
+      "d_twh": -9.76,
+      "share_pp": -1.2,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": -2.02,
+      "share_pp": -0.25,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.39,
+      "share_pp": -0.17,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": 1.09,
+      "share_pp": 0.12,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "FAIL",
+      "d_twh": 17.14,
+      "share_pp": 1.92,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": 0.47,
+      "share_pp": 0.05,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2022": {
+     "CC_REGULAR": {
+      "status": "FAIL",
+      "d_twh": 8.86,
+      "share_pp": 0.45,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 1.01,
+      "share_pp": 0.11,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": -7.45,
+      "share_pp": -0.93,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": 2.85,
+      "share_pp": 0.33,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.16,
+      "share_pp": -0.14,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": 0.58,
+      "share_pp": 0.05,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "PASS",
+      "d_twh": 6.79,
+      "share_pp": 0.53,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -0.28,
+      "share_pp": -0.05,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2023": {
+     "CC_REGULAR": {
+      "status": "FAIL",
+      "d_twh": 10.82,
+      "share_pp": 0.86,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 1.15,
+      "share_pp": 0.13,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": -2.85,
+      "share_pp": -0.38,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": 0.7,
+      "share_pp": 0.07,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.22,
+      "share_pp": -0.15,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": -0.0,
+      "share_pp": -0.01,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "PASS",
+      "d_twh": 0.27,
+      "share_pp": -0.11,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -1.05,
+      "share_pp": -0.14,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2024": {
+     "CC_REGULAR": {
+      "status": "FAIL",
+      "d_twh": 10.28,
+      "share_pp": 0.64,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 0.6,
+      "share_pp": 0.06,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": 1.11,
+      "share_pp": 0.09,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": 1.27,
+      "share_pp": 0.13,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.25,
+      "share_pp": -0.15,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": -0.17,
+      "share_pp": -0.03,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "PASS",
+      "d_twh": 0.88,
+      "share_pp": -0.09,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -0.7,
+      "share_pp": -0.09,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2025": {
+     "CC_REGULAR": {
+      "status": "SKIPPED",
+      "d_twh": 3.03,
+      "share_pp": -0.51,
+      "tol": null
+     },
+     "CC_CHP": {
+      "status": "SKIPPED",
+      "d_twh": 0.91,
+      "share_pp": 0.09,
+      "tol": null
+     },
+     "CT_PEAKER": {
+      "status": "SKIPPED",
+      "d_twh": 4.86,
+      "share_pp": 0.5,
+      "tol": null
+     },
+     "ST_GAS": {
+      "status": "SKIPPED",
+      "d_twh": 5.04,
+      "share_pp": 0.54,
+      "tol": null
+     },
+     "ST_CHP": {
+      "status": "SKIPPED",
+      "d_twh": -0.94,
+      "share_pp": -0.11,
+      "tol": null
+     },
+     "COAL_PRB": {
+      "status": "SKIPPED",
+      "d_twh": 0.9,
+      "share_pp": 0.09,
+      "tol": null
+     },
+     "COAL_BIT": {
+      "status": "SKIPPED",
+      "d_twh": 11.29,
+      "share_pp": 0.96,
+      "tol": null
+     },
+     "COAL_WC": {
+      "status": "SKIPPED",
+      "d_twh": 0.23,
+      "share_pp": 0.01,
+      "tol": null
+     }
+    }
+   },
+   "fails_by_criterion": {
+    "fuelmix": [
+     "2019:CC_REGULAR",
+     "2019:COAL_BIT",
+     "2020:CC_REGULAR",
+     "2020:COAL_BIT",
+     "2021:COAL_BIT",
+     "2021:CT_PEAKER",
+     "2022:CC_REGULAR",
+     "2023:CC_REGULAR",
+     "2024:CC_REGULAR"
+    ],
+    "price_mean": [
+     "2020:None",
+     "2022:None"
+    ],
+    "price_shape": [
+     "2022:None"
+    ]
+   },
+   "determination_run": "NOT-YET",
+   "determination_2023_2025": "NOT-YET"
+  },
+  "gas_coal": {
+   "rebound": {
+    "2019": {
+     "class_delta_twh": {
+      "CT_PEAKER": 0.06,
+      "ST_GAS": 0.08,
+      "CC_REGULAR": -1.17,
+      "CC_CHP": -0.0,
+      "CT_CHP": -0.0,
+      "ST_CHP": -0.0,
+      "COAL_BIT": 9.83,
+      "COAL_PRB": 0.37,
+      "COAL_WC": 0.35
+     },
+     "k_month": {
+      "gas": [
+       0.805,
+       0.973,
+       0.997,
+       1.003,
+       1.006,
+       1.007,
+       1.044,
+       1.03,
+       1.027,
+       1.028,
+       1.02,
+       0.989
+      ],
+      "coal": [
+       0.996,
+       1.037,
+       1.053,
+       1.085,
+       1.067,
+       1.079,
+       1.077,
+       1.07,
+       1.05,
+       1.096,
+       1.064,
+       1.053
+      ]
+     }
+    },
+    "2020": {
+     "class_delta_twh": {
+      "CT_PEAKER": -0.09,
+      "ST_GAS": 0.06,
+      "CC_REGULAR": -4.37,
+      "CC_CHP": -0.06,
+      "CT_CHP": -0.02,
+      "ST_CHP": -0.01,
+      "COAL_BIT": 1.32,
+      "COAL_PRB": 0.05,
+      "COAL_WC": 0.02
+     },
+     "k_month": {
+      "gas": [
+       0.754,
+       0.982,
+       0.997,
+       0.991,
+       0.998,
+       1.02,
+       1.052,
+       1.023,
+       1.015,
+       1.01,
+       1.007,
+       0.974
+      ],
+      "coal": [
+       0.77,
+       0.965,
+       1.042,
+       1.067,
+       1.054,
+       1.051,
+       1.032,
+       1.029,
+       1.039,
+       1.024,
+       1.045,
+       1.021
+      ]
+     }
+    },
+    "2021": {
+     "class_delta_twh": {
+      "CT_PEAKER": 0.25,
+      "ST_GAS": 0.03,
+      "CC_REGULAR": 3.11,
+      "CC_CHP": 0.05,
+      "CT_CHP": 0.01,
+      "ST_CHP": 0.01,
+      "COAL_BIT": 6.86,
+      "COAL_PRB": 0.41,
+      "COAL_WC": 0.27
+     },
+     "k_month": {
+      "gas": [
+       1.004,
+       0.994,
+       1.008,
+       1.016,
+       1.012,
+       1.014,
+       1.013,
+       1.014,
+       1.02,
+       1.01,
+       1.013,
+       1.014
+      ],
+      "coal": [
+       1.043,
+       1.044,
+       1.029,
+       1.045,
+       1.056,
+       1.04,
+       1.042,
+       1.042,
+       1.029,
+       1.064,
+       1.047,
+       1.044
+      ]
+     }
+    },
+    "2022": {
+     "class_delta_twh": {
+      "CT_PEAKER": 0.16,
+      "ST_GAS": 0.02,
+      "CC_REGULAR": 2.67,
+      "CC_CHP": 0.05,
+      "CT_CHP": 0.01,
+      "ST_CHP": 0.01,
+      "COAL_BIT": 11.21,
+      "COAL_PRB": 0.72,
+      "COAL_WC": 0.56
+     },
+     "k_month": {
+      "gas": [
+       0.981,
+       0.989,
+       1.021,
+       1.03,
+       1.016,
+       1.027,
+       1.015,
+       1.014,
+       1.023,
+       1.005,
+       1.005,
+       0.98
+      ],
+      "coal": [
+       1.113,
+       1.119,
+       1.089,
+       1.098,
+       1.082,
+       1.036,
+       1.076,
+       1.047,
+       1.051,
+       1.043,
+       1.05,
+       1.123
+      ]
+     }
+    },
+    "2023": {
+     "class_delta_twh": {
+      "CT_PEAKER": -0.12,
+      "ST_GAS": -0.05,
+      "CC_REGULAR": -1.11,
+      "CC_CHP": -0.02,
+      "CT_CHP": -0.0,
+      "ST_CHP": -0.0,
+      "COAL_BIT": 6.38,
+      "COAL_PRB": 0.2,
+      "COAL_WC": 0.4
+     },
+     "k_month": {
+      "gas": [
+       1.011,
+       1.013,
+       1.016,
+       1.022,
+       1.006,
+       0.986,
+       0.989,
+       0.987,
+       0.99,
+       0.995,
+       0.98,
+       0.978
+      ],
+      "coal": [
+       1.068,
+       1.087,
+       1.074,
+       1.083,
+       1.078,
+       1.059,
+       1.058,
+       1.039,
+       1.041,
+       1.054,
+       1.06,
+       1.052
+      ]
+     }
+    },
+    "2024": {
+     "class_delta_twh": {
+      "CT_PEAKER": -0.36,
+      "ST_GAS": -0.12,
+      "CC_REGULAR": -5.63,
+      "CC_CHP": -0.09,
+      "CT_CHP": -0.02,
+      "ST_CHP": -0.01,
+      "COAL_BIT": 5.05,
+      "COAL_PRB": 0.18,
+      "COAL_WC": 0.32
+     },
+     "k_month": {
+      "gas": [
+       0.975,
+       0.983,
+       0.99,
+       0.981,
+       0.985,
+       0.994,
+       0.992,
+       0.991,
+       0.978,
+       0.983,
+       0.992,
+       0.954
+      ],
+      "coal": [
+       1.061,
+       1.07,
+       1.075,
+       1.068,
+       1.059,
+       1.04,
+       1.038,
+       1.041,
+       1.065,
+       1.06,
+       1.027,
+       1.004
+      ]
+     }
+    },
+    "2025": {
+     "class_delta_twh": {
+      "CT_PEAKER": -0.24,
+      "ST_GAS": -0.12,
+      "CC_REGULAR": -3.98,
+      "CC_CHP": -0.07,
+      "CT_CHP": -0.01,
+      "ST_CHP": -0.01,
+      "COAL_BIT": 8.27,
+      "COAL_PRB": 0.38,
+      "COAL_WC": 0.39
+     },
+     "k_month": {
+      "gas": [
+       0.978,
+       0.971,
+       0.995,
+       1.008,
+       1.012,
+       0.991,
+       0.996,
+       0.995,
+       0.987,
+       1.0,
+       0.98,
+       0.955
+      ],
+      "coal": [
+       1.081,
+       1.105,
+       1.092,
+       1.095,
+       1.068,
+       1.042,
+       1.035,
+       1.057,
+       1.051,
+       1.054,
+       1.056,
+       1.071
+      ]
+     }
+    }
+   },
+   "c1": {
+    "2019": {
+     "CC_REGULAR": {
+      "status": "PASS",
+      "d_twh": 7.44,
+      "share_pp": 0.76,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 0.69,
+      "share_pp": 0.08,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": -6.7,
+      "share_pp": -0.82,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": -3.73,
+      "share_pp": -0.46,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.62,
+      "share_pp": -0.2,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": -1.42,
+      "share_pp": -0.18,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "FAIL",
+      "d_twh": 8.88,
+      "share_pp": 0.99,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -0.12,
+      "share_pp": -0.02,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2020": {
+     "CC_REGULAR": {
+      "status": "FAIL",
+      "d_twh": 14.2,
+      "share_pp": 1.26,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 0.09,
+      "share_pp": 0.0,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": -5.87,
+      "share_pp": -0.77,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": -2.5,
+      "share_pp": -0.33,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.49,
+      "share_pp": -0.19,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": -0.0,
+      "share_pp": -0.01,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_LIGNITE": {
+      "status": "PASS",
+      "d_twh": 0.0,
+      "share_pp": 0.0,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "FAIL",
+      "d_twh": 10.59,
+      "share_pp": 1.06,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -1.05,
+      "share_pp": -0.14,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2021": {
+     "CC_REGULAR": {
+      "status": "PASS",
+      "d_twh": -2.01,
+      "share_pp": -0.16,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 0.58,
+      "share_pp": 0.07,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "FAIL",
+      "d_twh": -9.84,
+      "share_pp": -1.19,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": -2.03,
+      "share_pp": -0.24,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.39,
+      "share_pp": -0.17,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": 0.68,
+      "share_pp": 0.09,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "FAIL",
+      "d_twh": 10.28,
+      "share_pp": 1.29,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": 0.2,
+      "share_pp": 0.03,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2022": {
+     "CC_REGULAR": {
+      "status": "FAIL",
+      "d_twh": 8.27,
+      "share_pp": 0.95,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 1.0,
+      "share_pp": 0.12,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": -7.49,
+      "share_pp": -0.9,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": 2.84,
+      "share_pp": 0.34,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.17,
+      "share_pp": -0.14,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": -0.14,
+      "share_pp": -0.02,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "PASS",
+      "d_twh": -4.42,
+      "share_pp": -0.55,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -0.83,
+      "share_pp": -0.1,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2023": {
+     "CC_REGULAR": {
+      "status": "FAIL",
+      "d_twh": 9.59,
+      "share_pp": 1.12,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 1.13,
+      "share_pp": 0.14,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": -2.96,
+      "share_pp": -0.37,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": 0.64,
+      "share_pp": 0.08,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.23,
+      "share_pp": -0.15,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": -0.2,
+      "share_pp": -0.03,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "PASS",
+      "d_twh": -6.1,
+      "share_pp": -0.76,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -1.44,
+      "share_pp": -0.18,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2024": {
+     "CC_REGULAR": {
+      "status": "PASS",
+      "d_twh": 4.82,
+      "share_pp": 0.55,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CC_CHP": {
+      "status": "PASS",
+      "d_twh": 0.46,
+      "share_pp": 0.05,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "CT_PEAKER": {
+      "status": "PASS",
+      "d_twh": 0.66,
+      "share_pp": 0.08,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_GAS": {
+      "status": "PASS",
+      "d_twh": 0.92,
+      "share_pp": 0.11,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "ST_CHP": {
+      "status": "PASS",
+      "d_twh": -1.26,
+      "share_pp": -0.15,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_PRB": {
+      "status": "PASS",
+      "d_twh": -0.36,
+      "share_pp": -0.04,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_BIT": {
+      "status": "PASS",
+      "d_twh": -4.17,
+      "share_pp": -0.51,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     },
+     "COAL_WC": {
+      "status": "PASS",
+      "d_twh": -1.03,
+      "share_pp": -0.12,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share"
+     }
+    },
+    "2025": {
+     "CC_REGULAR": {
+      "status": "SKIPPED",
+      "d_twh": -3.89,
+      "share_pp": -0.57,
+      "tol": null
+     },
+     "CC_CHP": {
+      "status": "SKIPPED",
+      "d_twh": 0.77,
+      "share_pp": 0.09,
+      "tol": null
+     },
+     "CT_PEAKER": {
+      "status": "SKIPPED",
+      "d_twh": 4.28,
+      "share_pp": 0.48,
+      "tol": null
+     },
+     "ST_GAS": {
+      "status": "SKIPPED",
+      "d_twh": 4.59,
+      "share_pp": 0.52,
+      "tol": null
+     },
+     "ST_CHP": {
+      "status": "SKIPPED",
+      "d_twh": -0.95,
+      "share_pp": -0.11,
+      "tol": null
+     },
+     "COAL_PRB": {
+      "status": "SKIPPED",
+      "d_twh": 0.52,
+      "share_pp": 0.06,
+      "tol": null
+     },
+     "COAL_BIT": {
+      "status": "SKIPPED",
+      "d_twh": 3.02,
+      "share_pp": 0.3,
+      "tol": null
+     },
+     "COAL_WC": {
+      "status": "SKIPPED",
+      "d_twh": -0.16,
+      "share_pp": -0.02,
+      "tol": null
+     }
+    }
+   },
+   "fails_by_criterion": {
+    "fuelmix": [
+     "2019:COAL_BIT",
+     "2020:CC_REGULAR",
+     "2020:COAL_BIT",
+     "2021:COAL_BIT",
+     "2021:CT_PEAKER",
+     "2022:CC_REGULAR",
+     "2023:CC_REGULAR"
+    ],
+    "price_mean": [
+     "2020:None",
+     "2022:None"
+    ],
+    "price_shape": [
+     "2022:None"
+    ]
+   },
+   "determination_run": "NOT-YET",
+   "determination_2023_2025": "NOT-YET"
+  }
+ }
+}
