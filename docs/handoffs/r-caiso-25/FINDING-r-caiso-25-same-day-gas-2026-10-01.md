@@ -67,7 +67,19 @@ for that ask, not a C3c lever, and it is not tested here.
 
 ### 4.1 2024 full year
 
-PLACEHOLDER_2024
+`PRC_FUEL` minus model delivered gas, $/MMBtu. 245 days over 8 months of 2024 (Jan–Apr, Jun, Sep,
+Nov, Dec; the other months' OASIS pulls came back empty and were not retried).
+
+| Region | r with model | Median | IQR | Min |
+|---|--:|--:|--:|--:|
+| FRPGE2 (PG&E) | 0.964 | **+4.09** | 3.94–4.48 | +1.60 |
+| FRSCE2 (SCE) | 0.971 | **+2.92** | 2.81–3.15 | −2.24 (MLK) |
+| FRSDG2 (SDG&E) | 0.970 | **+2.89** | 2.78–3.12 | −2.31 (MLK) |
+
+The gap is a stable year-round level offset, not a winter-event effect. Its components (CAISO's
+intrastate transport and fuel-reimbursement terms vs the model's flat $0.46) were not decomposed here.
+**Caution:** the keeper's offer-band multipliers were set against the model's own delivered series, so
+this offset cannot be read as a price error in either direction without that decomposition.
 
 ## 5. Decision
 
@@ -79,7 +91,15 @@ PLACEHOLDER_2024
 
 ## 6. Owner ruling
 
-PLACEHOLDER_RULING
+Decision card, 2026-10-01. Two of three options were selected:
+
+1. **Close link 7, go to link 8.** No public same-day series exists, and the 2024 event is an
+   import-parity object. C3c 2024 stays a lone ledgered caveat. R-CAISO-26 (NW-stress import driver) is next.
+2. **Queue PRC_FUEL transport scoping** as a new link (link 11, R-CAISO-29), after links 8–10. Scoping only,
+   no build: decompose CAISO's fuel-region gas price against the model's delivered gas (§4) as evidence for
+   the open `CAISO_CITYGATE_TRANSPORT_ADDER` methodology ask (rule 14). Not a C3c lever.
+
+Not selected: pricing a licensed same-day series.
 
 ## Sources
 
