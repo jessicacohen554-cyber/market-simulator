@@ -5,7 +5,7 @@
 negative keep-running floor (−renewable_keep_running_value) as CAISO net load
 drops into its annual belly, so the marginal midday import bids sub-$0 in the
 regional solar/hydro glut — restoring the CAISO negative midday tail. See
-``results/calibration/RESULTS-caiso-negative-tail-solar-shape-2026-06-21.md``.
+``docs/records/caiso/RESULTS-caiso-negative-tail-solar-shape-2026-06-21.md``.
 """
 
 from __future__ import annotations

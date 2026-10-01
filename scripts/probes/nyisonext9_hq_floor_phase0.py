@@ -12,7 +12,7 @@ loaders the ladder derivation uses, HQ duplicate removed), and the ladder in
 2. the measured total net import and the measured HQ seam in the same hours;
 3. the measured hours below the floor (the driver-data test rule 17 asks).
 
-Output: ``results/calibration/_nyisonext9_phase0.json``.
+Output: ``results/phase0/nyiso/_nyisonext9_phase0.json``.
 """
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ from market_sim.model.interchange.spec import IMPORT_TRANCHES_BY_YEAR  # noqa: E
 NYISO_FIRM_IMPORT_FLOOR_FRAC = {"HQ_hydro": 1.0, "IESO_Ontario": 0.0}
 
 CAL = REPO / "results" / "calibration"
-OUT = CAL / "_nyisonext9_phase0.json"
+OUT = CAL.parent / "phase0" / "nyiso" / "_nyisonext9_phase0.json"
 YEARS = (2021, 2022, 2023, 2024, 2025)
 TOL_MW = 0.5  # numerical tolerance for "at the floor" (solver output is float32)
 

@@ -358,7 +358,7 @@ def p0_commitment_pattern(
     markup is READ rather than reconstructed. That closes the P0-proxy error
     (18-22 pp on MISO's CT) which no committed bundle could bound, because
     ``hourly/`` sidecars carry ``pass == "P1"`` only
-    (``results/calibration/FINDING-miso154-ct-commitment-instrument-2026-08-12.md``
+    (``docs/records/miso/FINDING-miso154-ct-commitment-instrument-2026-08-12.md``
     section 4; the repair is pre-registered in
     ``PREREG-miso155-p0-exact-commitment-instrument-2026-08-13.md``).
 
@@ -390,7 +390,7 @@ def _aggregate_pass_timing(final: "EnergySolveResult") -> "dict":
     whole matrix build and both HiGHS runs were booked as ``markup``, and so was
     the P0 model's build whenever P1 cold-rebuilt: 91-94 % of an ERCOT year's
     ``markup`` was solver and build time under the wrong name
-    (``docs/FINDING-perfb-s2-markup-attribution-2026-09.md`` §1, §4.1).
+    (``docs/records/governance/FINDING-perfb-s2-markup-attribution-2026-09.md`` §1, §4.1).
 
     This drains the per-pass log ``pipeline.solve.run_energy_solve`` writes and
     returns the SUMS — ``build_s`` (every ``DispatchModel`` build of every
@@ -498,9 +498,9 @@ def _p1_storage_cost_identical(
 def _renewable_bound_is_delivered_pinned(iso: str, year: int) -> bool:
     """Is the year's renewable CF bound the raw delivered outcome?
 
-    Screened on 2023 by ercot-251 (docs/RESULT-ercot251-nohsl-ceiling-screen-2026-09-06.md)
+    Screened on 2023 by ercot-251 (docs/records/ercot/RESULT-ercot251-nohsl-ceiling-screen-2026-09-06.md)
     and ADMITTED as a correctness fix by owner ruling 2026-09-06 (ercot-252,
-    docs/PRECOMMIT-ercot252-2022-repair-resolve-2026-09-06.md); byte-identical wherever an
+    docs/records/ercot/PRECOMMIT-ercot252-2022-repair-resolve-2026-09-06.md); byte-identical wherever an
     HSL parquet exists (every ERCOT training year), live only on no-HSL years.
     The curtailment gates below skip their ceiling when the bound already embeds the
     historical curtailment, because capping an already-curtailed series double-curtails it.
@@ -631,11 +631,11 @@ def _reliability_floor_layup_shares(
 # (coal_fuel_inventory_plant_grain). Rule 25 [R-ISO-SCOPE]: the construction is
 # generic (every sizing quantity is the yard's own EIA-923 Page 2/5 record), but
 # a new ISO enters only on its own measured case — MISO: miso-268; NEISO:
-# neiso-117 (owner ruling 2026-09-26 on docs/handoffs/neiso116/PRECOMMIT-neiso116-
+# neiso-117 (owner ruling 2026-09-26 on docs/records/neiso/neiso116/PRECOMMIT-neiso116-
 # 2026-09-26.md §5.1(a): arm the annual yard rows WITHOUT the pooled monthly
 # limb, which spreads Merrimack's winter burn flat and binds in 2023/2024).
 # NWPP: NWPP-NEXT-7 (owner ruling Q1, 2026-09-27, on NWPP's own contract census
-# docs/handoffs/FINDING-nwppnext5-coal-take-obligation-design-2026-09-26.md).
+# docs/records/nwpp/FINDING-nwppnext5-coal-take-obligation-design-2026-09-26.md).
 COAL_PLANT_GRAIN_ISOS: tuple[str, ...] = ("MISO", "NEISO", "NWPP")
 
 # ISOs whose own evidence armed the per-yard coal TAKE floor
@@ -1146,7 +1146,7 @@ def run_year(
             curve.
         mass_cap_enabled: When True, thread the unified carbon resolver's
             power-sector mass-cap ROW into this calibration year (G-29,
-            docs/handoffs/emissions-mass-cap-plan-2026-07.md) instead of the
+            docs/records/misc/emissions-mass-cap-plan-2026-07.md) instead of the
             default adder path. Default False leaves the calibration harness
             byte-identical (the row was previously unreachable here at all).
             A diagnostic/validation lever only — never a keeper default.
@@ -2012,8 +2012,8 @@ def run_year(
         # entry points were dead (run_calibration_full.main and
         # replay_keeper.main). Found by SPP-36 shard 1, which stopped and
         # reported instead of patching; see
-        # docs/handoffs/SHARDREPORT-spp36-2023.md and
-        # docs/handoffs/FINDING-spp-36-runyear-kwarg-2026-09-12.md.
+        # docs/records/spp/SHARDREPORT-spp36-2023.md and
+        # docs/records/spp/FINDING-spp-36-runyear-kwarg-2026-09-12.md.
         config = config.with_overrides(
             unit_outage_window_hour_grain=unit_outage_window_hour_grain
         )
@@ -3308,7 +3308,7 @@ def run_year(
     # wecc-west-supply frame — instead of the static import tranches. It
     # SUPERSEDES the tranche fleet, the per-hub topology split, and the CAISO
     # import injectors (firm/clean/spot) — one mechanism per phenomenon (rule 18;
-    # docs/handoffs/caiso-endogenous-wecc-node-design-2026-07-21.md). The base
+    # docs/records/caiso/caiso-endogenous-wecc-node-design-2026-07-21.md). The base
     # _caiso_config already carries the single WECC_import zone, its two corridor
     # ties, and the 7,500 MW simultaneous cap, so no apply_interchange_topology
     # runs (no split); the tie flow carries the West's endogenous net export.
@@ -4235,7 +4235,7 @@ def run_year(
     # the availability oracle). Joins retired_units at both injection sites
     # below so the carried units are binned/dispatched exactly like the rest
     # of the fleet. See fleet.load_mothballed_but_operating and
-    # docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md.
+    # docs/records/miso/miso-cc-vintage-undercarry-plan-2026-07.md.
     if config.mode == "backcast" and config.carry_operating_mothballs:
         retired_units = retired_units + load_mothballed_but_operating(
             iso,
@@ -4739,7 +4739,7 @@ def run_year(
         # Rule 19: when a net-load drag owns a class's commitment (CT_PEAKER via
         # ct_netload_drag), drop that class's reliability-floor limbs so the two
         # do not stack into an all-day floor binding overnight (the D-4
-        # off-window failure; docs/FINDING-pjm-burndown-2026-07.md). No-op when
+        # off-window failure; docs/records/pjm/FINDING-pjm-burndown-2026-07.md). No-op when
         # no drag is active, so non-drag ISOs/runs are byte-identical.
         _n_before = len(_floor_specs)
         _floor_specs = drop_drag_owned_reliability_specs(_floor_specs, config)
@@ -7014,7 +7014,7 @@ def run_year(
     # the declared region's zones reprice the load slack from the ISO bid cap
     # to min(voll, tier floor) — $500 Tier 1 (Warning/Step 1), $1,000 Tier 2
     # (Step 2+), SOM-footnoted (config.reserve_config citations; frozen
-    # design docs/handoffs/miso-f5-scarcity-depth-design-2026-07.md).
+    # design docs/records/miso/miso-f5-scarcity-depth-design-2026-07.md).
     # Backcast-only overlay (D-5): this orchestrator is the backcast path;
     # the forecast runner never arms it. None (flag off / no Warning+ window
     # overlapping the year) leaves the key unset — identical LP.
@@ -7032,7 +7032,7 @@ def run_year(
     # mass_cap_enabled was never reachable here at all (`get_active_policy_
     # constraints` had no caller in either run_calibration.py or
     # run_calibration_full.py). Default off -> {} -> no dispatch_kwargs
-    # change, identical LP. See docs/handoffs/emissions-mass-cap-plan-2026-07.md.
+    # change, identical LP. See docs/records/misc/emissions-mass-cap-plan-2026-07.md.
     dispatch_kwargs.update(
         build_mass_cap_dispatch_kwargs(config, year, zone_names, fleet_arrays)
     )
@@ -7158,7 +7158,7 @@ def run_year(
         sim_year=year,
     )
     # ERCOT standalone energy-only commitment-posture (ercot_commitment_posture,
-    # docs/handoffs/ercot-commitment-thinness-2026-07.md): reserve-decoupled, so
+    # docs/records/ercot/ercot-commitment-thinness-2026-07.md): reserve-decoupled, so
     # merged as its own dispatch kwargs after the reserve seam. No-op / byte-
     # identical for every non-ERCOT run and default-off ERCOT.
     apply_ercot_commitment_posture(dispatch_kwargs, config, fleet_arrays)
@@ -7540,7 +7540,7 @@ def run_year(
         # pass 1's EnergySolveResult IS what pass 2 would have produced, and
         # the pass is skipped. In the ERCOT 2025 keeper year that pass was
         # 926 s (half the year) for a bit-identical answer
-        # (docs/FINDING-perfb-s2-markup-attribution-2026-09.md §4.4); in 2023
+        # (docs/records/governance/FINDING-perfb-s2-markup-attribution-2026-09.md §4.4); in 2023
         # / 2024 the floor rises above VOM in hundreds of window hours and the
         # guard stays down. The adaptive sidecar (s_model / p_hat / floor_t)
         # is recorded either way — it describes the floor construction, which
@@ -8421,7 +8421,7 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Thread the unified carbon resolver's power-sector mass-cap "
         "ROW (policy.cap_and_trade.resolve_carbon_program) into this "
         "calibration year instead of the default measured-price adder "
-        "(G-29, docs/handoffs/emissions-mass-cap-plan-2026-07.md). "
+        "(G-29, docs/records/misc/emissions-mass-cap-plan-2026-07.md). "
         "Diagnostic-only (e.g. the RGGI dual-vs-auction-price validation "
         "probe); never a keeper default. No effect on ISOs with no "
         "cap-and-trade program (ERCOT/MISO) or no published budget for "
@@ -8488,7 +8488,7 @@ def resolve_p1_basis_seed_default(disable: bool) -> bool:
 
     The sibling of :func:`resolve_xyear_warmstart_default` for
     ``MARKET_SIM_P1_BASIS_SEED`` (wallclock desk item B; owner memo
-    ``docs/handoffs/p1-basis-seed-decision-memo-2026-09.md``, signed (A) FLIP
+    ``docs/records/misc/p1-basis-seed-decision-memo-2026-09.md``, signed (A) FLIP
     2026-09-06). The seed hands the cold-rebuilt P1 model — the route every
     P1-native floor bridge takes — the same year's P0 optimal basis before its
     first solve. Validated warm-start-class neutral (objective and total
@@ -8504,7 +8504,7 @@ def resolve_p1_basis_seed_default(disable: bool) -> bool:
     still diverge from a pinned-cold replay by 0.0048 and 0.1440 TWh, which is
     small but is not the "identical" the memo claims. On later years it
     compounds with the cross-year basis into 7.16-24.18 TWh. Evidence:
-    ``docs/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md``
+    ``docs/records/miso/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md``
     §3.
 
     Same precedence as the cross-year resolver, highest first:
@@ -8518,7 +8518,7 @@ def resolve_p1_basis_seed_default(disable: bool) -> bool:
     the resolved boolean.
 
     **THE SEED IS NO LONGER NESTED INSIDE THE CROSS-YEAR GATE** (PERF-C S1,
-    2026-09-20, ``docs/handoffs/FINDING-perfc-s1-p1-seed-2026-09-20.md``). This
+    2026-09-20, ``docs/records/governance/FINDING-perfc-s1-p1-seed-2026-09-20.md``). This
     paragraph used to read "the resolved value is necessary, not sufficient:
     the solve core arms the seed only INSIDE the cross-year gate", and that
     coupling is what took the same-year seed down with rule 36's cross-year
@@ -8541,7 +8541,7 @@ def resolve_p1_basis_seed_default(disable: bool) -> bool:
     **The default stays OFF and flipping it is the owner's call.** PERF-C S1
     removed the coupling ONLY; it produced no new timing evidence and ran no
     solve to measure speed. The standing numbers are desk-log item B
-    (``docs/handoffs/wallclock-desk-log-2026-09.md``).
+    (``docs/records/misc/wallclock-desk-log-2026-09.md``).
     """
     if disable:
         os.environ["MARKET_SIM_P1_BASIS_SEED"] = "0"
@@ -8574,7 +8574,7 @@ def resolve_xyear_warmstart_default(disable: bool) -> bool:
     (median ``mc`` $54.52/MWh) onto coal ($31.93/MWh) to serve identical
     demand, of order $500 M of objective, so the warm-started solve was not at
     the optimum. Record:
-    ``docs/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md``.
+    ``docs/records/miso/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md``.
 
     **A BACKCAST HAS NO REASON TO WANT THIS.** Its years are independent by
     construction — every input is that year's own EIA-860/923 vintage, and the

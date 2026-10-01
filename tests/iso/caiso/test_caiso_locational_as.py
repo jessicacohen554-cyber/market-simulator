@@ -7,7 +7,7 @@ family builder (``reserve_config._caiso_locational_as_families``) behind
 
 The mechanism is EX-ANTE INERT on the current split topology (the SP26 minimum
 is ~15x smaller than SoCal's own un-postured reserve supply — see
-``results/calibration/FINDING-caiso71-locational-as-inert-2026-07-10.md``);
+``docs/records/caiso/FINDING-caiso71-locational-as-inert-2026-07-10.md``);
 these tests assert it is wired correctly and default-off, not that it binds.
 """
 

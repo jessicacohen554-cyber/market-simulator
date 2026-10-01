@@ -6,7 +6,7 @@ the CEMS gross load of re-keyed units whose EIA plant OR CAMD facility is in the
 (fleet plant codes from the committed bench + model payload), grouped by (CAMD facility -> EIA plant).
 
 Usage: uv run python scripts/probes/_spp98_crosswalk_census.py <payload.json>
-Writes docs/handoffs/spp98/crosswalk_census.json
+Writes docs/records/spp/spp98/crosswalk_census.json
 """
 
 import gzip
@@ -66,7 +66,7 @@ def main():
                 tot[f"{cp}->{ep}"] = round(g.grossLoad.sum() / 1e6, 3)
         out["gross_twh"][y] = tot
         print(y, tot, "total", round(sum(tot.values()), 3))
-    p = REPO / "docs/handoffs/spp98"
+    p = REPO / "docs/records/spp/spp98"
     p.mkdir(parents=True, exist_ok=True)
     (p / "crosswalk_census.json").write_text(json.dumps(out, indent=1, default=str))
 

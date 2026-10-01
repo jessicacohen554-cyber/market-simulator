@@ -3,7 +3,7 @@
 **SUPERSEDED AND DELETED 2026-09-16 (caiso-283).** The 34 quarter aggregates (`<q>/agg/` and
 `<q>/agg_dam/`, 174 MB) were written by the defective rung convention described below and were
 removed from `main` once the exact per-market-year reductions under `results/rtm-intake/caiso283/`
-had reproduced the committed surface to 0.000 (`docs/RESULT-caiso283-rtm-flat-2026-09-16.md`).
+had reproduced the committed surface to 0.000 (`docs/records/caiso/RESULT-caiso283-rtm-flat-2026-09-16.md`).
 Git history is the record. What stays here: this README, the shard `manifest.json` files, the
 verbatim sample CSVs (a test fixture for `tests/curation/test_caiso_bid_reducers.py`), and the
 caiso-282 probe outputs whose numbers the caiso-282 RESULT cites.
@@ -22,7 +22,7 @@ no longer exist on any reachable disk. Per quarter: `agg/` (RTM) and `agg_dam/` 
 `segment_mw` as the MW at which a price *starts* to apply, so
 `derive_caiso_offer_surface._price_at_frac` reads the last breakpoint at or *below*. Confirmed on
 resource 514544 / 2023-02-15 (the ladder printed verbatim in
-`docs/FINDING-caiso281-rtm-2023q1-2026-09-13.md` §3): `p080` here is $300 where the derive reads
+`docs/records/caiso/FINDING-caiso281-rtm-2023q1-2026-09-13.md` §3): `p080` here is $300 where the derive reads
 $27.18; 7 of 20 grid points differ. Consequence, measured: the pooled DAM aggregates fail the
 charter's G-REPRO on every CC band by +0.10 to +0.14 (`docs/RESULT-caiso282-rtm-pool-g-repro-
 failed-2026-09-16.md` §1). **These ladders are not derive-equivalent and must not be used to

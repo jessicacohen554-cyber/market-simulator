@@ -2,9 +2,9 @@
 """Tier-2 capacity-market equilibrium tests (T2.1-T2.5, P-3B).
 
 Plan §2 Tier 2 of
-``docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md``,
+``docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md``,
 rescoped 2026-07-12: ``capacity_market_clearing`` is OFF by default (the P-2A
-recommendation, ``docs/handoffs/capacity-price-validation-2026-07-12.md`` §7 --
+recommendation, ``docs/records/misc/capacity-price-validation-2026-07-12.md`` §7 --
 the CR-1 sloped curve is validated as an *instrument* but not a trustworthy
 *position*, so it stays gated off). These tests therefore target the ACTIVE
 capacity-value mechanism -- the flat ``net_cone_per_kw_yr x (1 - EFORd)`` price

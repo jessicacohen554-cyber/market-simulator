@@ -60,7 +60,7 @@ from scripts.lib.bundle_fleet import reconstruct_bundle_fleet  # noqa: E402
 
 BUNDLE = REPO / "results/calibration/caiso269_lateevening_2022"
 ACTUAL = REPO / "data/raw/_validation-source/actual_lmp_hourly_CAISO.parquet"
-OUT = REPO / "results/calibration/_caiso272_marginal_band.json"
+OUT = REPO / "results/phase0/caiso/_caiso272_marginal_band.json"
 YEAR = 2022
 
 #: Price-match tolerance, $/MWh. FIXED before the first number and never swept:

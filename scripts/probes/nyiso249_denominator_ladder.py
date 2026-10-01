@@ -84,7 +84,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 CACHE = REPO / "results" / "calibration" / "_nyiso245_cache"
 ART = REPO / "data" / "raw" / "_validation-source" / "nyiso_offer_level_dispersion.json"
-OUT = REPO / "results" / "calibration" / "_nyiso249_denominator_ladder.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso249_denominator_ladder.json"
 REPORT_AT = (0.10, 0.25, 0.50, 0.75, 0.90, 0.99)
 
 #: p90 bar below which the tail is declared COLLAPSED. Fixed ex ante (docstring).

@@ -13,8 +13,8 @@
   "n_citations": 4,
   "files": [
    "docs/codebase-site/data/mechanism-matrix/MISO.js:208",
-   "docs/handoffs/ffr-3a4-miso-t1x-instrument-debt-2026-08-04.md:39",
-   "docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md:289"
+   "docs/records/forecast/ffr-3a4-miso-t1x-instrument-debt-2026-08-04.md:39",
+   "docs/records/forecast/ffr-3t-warmstart-off-2026-08-04.md:289"
   ],
   "n_files": 3
  },
@@ -32,8 +32,8 @@
   "n_citations": 3,
   "files": [
    "docs/calibration-log/pjm.md:993",
-   "docs/handoffs/pjm-130-retune-charter-2026-07.md:91",
-   "docs/handoffs/pjm-frontier-path-2026-07.md:383"
+   "docs/records/pjm/pjm-130-retune-charter-2026-07.md:91",
+   "docs/records/pjm/pjm-frontier-path-2026-07.md:383"
   ],
   "n_files": 3
  },
@@ -50,13 +50,13 @@
   "subject": "D-7(ii): weather-conditional label; and record the RESOLVED curve arm in T1-F",
   "n_citations": 7,
   "files": [
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:172",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:182",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:201",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:203",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:210",
-   "docs/handoffs/ffr-t1-regate-2026-08-02.md:130",
-   "docs/handoffs/ffr-t1-regate-2026-08-02.md:33"
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:172",
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:182",
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:201",
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:203",
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:210",
+   "docs/records/forecast/ffr-t1-regate-2026-08-02.md:130",
+   "docs/records/forecast/ffr-t1-regate-2026-08-02.md:33"
   ],
   "n_files": 7
  },
@@ -110,7 +110,7 @@
   "n_citations": 2,
   "files": [
    "docs/governance/rule-history.md:235",
-   "docs/handoffs/fast-tier-triage-2026-07-26.md:8"
+   "docs/records/misc/fast-tier-triage-2026-07-26.md:8"
   ],
   "n_files": 2
  },
@@ -161,12 +161,12 @@
   "subject": "Merge pull request #3878 from jessicacohen554-cyber/claude/ercot-c3a-2023-analysis-6xqc5r",
   "n_citations": 6,
   "files": [
-   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:11",
-   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:18",
-   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:19",
-   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:22",
-   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:23",
-   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:4"
+   "docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md:11",
+   "docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md:18",
+   "docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md:19",
+   "docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md:22",
+   "docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md:23",
+   "docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md:4"
   ],
   "n_files": 6
  },
@@ -277,9 +277,9 @@
   "n_citations": 6,
   "files": [
    "docs/forecast-readiness-prompt-pack-2026-07.md:206",
-   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:107",
-   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:29",
-   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:55"
+   "docs/records/forecast/ffr-w1x-wave1-close-2026-08-02.md:107",
+   "docs/records/forecast/ffr-w1x-wave1-close-2026-08-02.md:29",
+   "docs/records/forecast/ffr-w1x-wave1-close-2026-08-02.md:55"
   ],
   "n_files": 4
  },
@@ -317,12 +317,12 @@
    "docs/calibration-log/pjm.md:2639",
    "docs/codebase-site/data/mechanism-matrix.js:1317",
    "docs/codebase-site/data/mechanism-matrix.js:1856",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:350",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:959",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:960",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:961",
-   "docs/handoffs/ffr-t1-regate-2026-08-02.md:29",
-   "docs/handoffs/ffr-t1-regate-2026-08-02.md:318"
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:350",
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:959",
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:960",
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:961",
+   "docs/records/forecast/ffr-t1-regate-2026-08-02.md:29",
+   "docs/records/forecast/ffr-t1-regate-2026-08-02.md:318"
   ],
   "n_files": 10
  },
@@ -359,11 +359,11 @@
   "files": [
    "docs/forecast-readiness-prompt-pack-2026-07.md:162",
    "docs/forecast-readiness-prompt-pack-2026-07.md:206",
-   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:104",
-   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:119",
-   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:123",
-   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:29",
-   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:53"
+   "docs/records/forecast/ffr-w1x-wave1-close-2026-08-02.md:104",
+   "docs/records/forecast/ffr-w1x-wave1-close-2026-08-02.md:119",
+   "docs/records/forecast/ffr-w1x-wave1-close-2026-08-02.md:123",
+   "docs/records/forecast/ffr-w1x-wave1-close-2026-08-02.md:29",
+   "docs/records/forecast/ffr-w1x-wave1-close-2026-08-02.md:53"
   ],
   "n_files": 7
  },
@@ -400,8 +400,8 @@
    "docs/calibration-log/miso.md:830",
    "docs/calibration-log/miso.md:922",
    "docs/calibration-log/miso.md:924",
-   "docs/handoffs/miso-89-session-findings-2026-07.md:134",
-   "docs/handoffs/miso-89-session-findings-2026-07.md:139"
+   "docs/records/miso/miso-89-session-findings-2026-07.md:134",
+   "docs/records/miso/miso-89-session-findings-2026-07.md:139"
   ],
   "n_files": 5
  },
@@ -418,11 +418,11 @@
   "subject": "Merge pull request #3877 from jessicacohen554-cyber/claude/caiso-vintage-2021-intake-hdbyvi",
   "n_citations": 5,
   "files": [
-   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:10",
-   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:18",
-   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:19",
-   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:24",
-   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:33"
+   "docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md:10",
+   "docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md:18",
+   "docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md:19",
+   "docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md:24",
+   "docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md:33"
   ],
   "n_files": 5
  },
@@ -444,14 +444,14 @@
    "docs/codebase-site/data/mechanism-matrix/MISO.js:208",
    "docs/codebase-site/data/mechanism-matrix/NYISO.js:208",
    "docs/codebase-site/data/mechanism-matrix/PJM.js:208",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:26",
-   "docs/handoffs/ffr-3a3-battery-close-2026-08-04.md:204",
-   "docs/handoffs/ffr-3a3-battery-close-2026-08-04.md:30",
-   "docs/handoffs/ffr-3a3-battery-close-2026-08-04.md:62",
-   "docs/handoffs/ffr-3a4-miso-t1x-instrument-debt-2026-08-04.md:69",
-   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:17",
-   "docs/handoffs/ffr-3l-ercot-t1x-attribution-2026-08-04.md:187",
-   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:904"
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:26",
+   "docs/records/forecast/ffr-3a3-battery-close-2026-08-04.md:204",
+   "docs/records/forecast/ffr-3a3-battery-close-2026-08-04.md:30",
+   "docs/records/forecast/ffr-3a3-battery-close-2026-08-04.md:62",
+   "docs/records/forecast/ffr-3a4-miso-t1x-instrument-debt-2026-08-04.md:69",
+   "docs/records/forecast/ffr-3f-exit-throughput-2026-08-03.md:17",
+   "docs/records/forecast/ffr-3l-ercot-t1x-attribution-2026-08-04.md:187",
+   "docs/records/forecast/ffr-owner-sitting-2026-08-02.md:904"
   ],
   "n_files": 20
  },
@@ -527,14 +527,14 @@
   "files": [
    "docs/forecast-readiness-prompt-pack-2026-07.md:353",
    "docs/forecast-readiness-prompt-pack-2026-07.md:359",
-   "docs/handoffs/ff-t1-gate-2026-07.md:194",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:336",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:353",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:354",
-   "docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md:20",
-   "docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md:37",
-   "docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md:70",
-   "docs/handoffs/ffr-3l-ercot-t1x-attribution-2026-08-04.md:182"
+   "docs/records/forecast/ff-t1-gate-2026-07.md:194",
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:336",
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:353",
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:354",
+   "docs/records/forecast/ffr-3d-instrument-repair-2026-08-03.md:20",
+   "docs/records/forecast/ffr-3d-instrument-repair-2026-08-03.md:37",
+   "docs/records/forecast/ffr-3d-instrument-repair-2026-08-03.md:70",
+   "docs/records/forecast/ffr-3l-ercot-t1x-attribution-2026-08-04.md:182"
   ],
   "n_files": 10
  },
@@ -552,18 +552,18 @@
   "subject": "Merge pull request #3860 from jessicacohen554-cyber/claude/miso-calibration-151-a5djd6",
   "n_citations": 19,
   "files": [
-   "docs/FINDING-f6-lmp-backend-parity-2026-08-11.md:3",
-   "docs/PREREG-f6-lmp-backend-parity-2026-08-11.md:4",
-   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:183",
-   "docs/handoffs/caiso-vintage-2021-intake-2026-08-11.md:241",
-   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:4180",
-   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:4187",
-   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:4193",
-   "docs/handoffs/fh-5-phase-b-2026-08-11.md:104",
-   "docs/handoffs/fh-5-phase-b-2026-08-11.md:105",
-   "docs/handoffs/fh-5-phase-b-2026-08-11.md:357",
-   "docs/handoffs/fh-5-phase-b-2026-08-11.md:362",
-   "docs/handoffs/fh-5-phase-b-2026-08-11.md:379"
+   "docs/records/misc/FINDING-f6-lmp-backend-parity-2026-08-11.md:3",
+   "docs/records/misc/PREREG-f6-lmp-backend-parity-2026-08-11.md:4",
+   "docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md:183",
+   "docs/records/caiso/caiso-vintage-2021-intake-2026-08-11.md:241",
+   "docs/records/forecast/ffr-owner-sitting-2026-08-02.md:4180",
+   "docs/records/forecast/ffr-owner-sitting-2026-08-02.md:4187",
+   "docs/records/forecast/ffr-owner-sitting-2026-08-02.md:4193",
+   "docs/records/forecast/fh-5-phase-b-2026-08-11.md:104",
+   "docs/records/forecast/fh-5-phase-b-2026-08-11.md:105",
+   "docs/records/forecast/fh-5-phase-b-2026-08-11.md:357",
+   "docs/records/forecast/fh-5-phase-b-2026-08-11.md:362",
+   "docs/records/forecast/fh-5-phase-b-2026-08-11.md:379"
   ],
   "n_files": 18
  },
@@ -583,9 +583,9 @@
    "docs/calibration-log/miso.md:1275",
    "docs/calibration-log/miso.md:1283",
    "docs/calibration-log/miso.md:1354",
-   "docs/handoffs/miso-89-session-findings-2026-07.md:134",
-   "docs/handoffs/miso-93-keeper-reaudit-charter-2026-07.md:45",
-   "docs/handoffs/miso-93-keeper-reaudit-charter-2026-07.md:56"
+   "docs/records/miso/miso-89-session-findings-2026-07.md:134",
+   "docs/records/miso/miso-93-keeper-reaudit-charter-2026-07.md:45",
+   "docs/records/miso/miso-93-keeper-reaudit-charter-2026-07.md:56"
   ],
   "n_files": 6
  },
@@ -606,14 +606,14 @@
    "docs/calibration-log/pjm.md:2640",
    "docs/codebase-site/data/mechanism-matrix.js:1317",
    "docs/codebase-site/data/mechanism-matrix.js:1856",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:351",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:352",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:959",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:960",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:961",
-   "docs/handoffs/ffr-t1-regate-2026-08-02.md:105",
-   "docs/handoffs/ffr-t1-regate-2026-08-02.md:30",
-   "docs/handoffs/ffr-t1-regate-2026-08-02.md:319"
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:351",
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:352",
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:959",
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:960",
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:961",
+   "docs/records/forecast/ffr-t1-regate-2026-08-02.md:105",
+   "docs/records/forecast/ffr-t1-regate-2026-08-02.md:30",
+   "docs/records/forecast/ffr-t1-regate-2026-08-02.md:319"
   ],
   "n_files": 12
  },
@@ -631,12 +631,12 @@
   "subject": "Merge pull request #2982 from jessicacohen554-cyber/claude/caiso-126-ror-split-scryws",
   "n_citations": 6,
   "files": [
-   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:184",
-   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:186",
-   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:188",
-   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:192",
-   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:94",
-   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:96"
+   "docs/records/misc/bare-sibling-imports-vintage-leak-2026-07-27.md:184",
+   "docs/records/misc/bare-sibling-imports-vintage-leak-2026-07-27.md:186",
+   "docs/records/misc/bare-sibling-imports-vintage-leak-2026-07-27.md:188",
+   "docs/records/misc/bare-sibling-imports-vintage-leak-2026-07-27.md:192",
+   "docs/records/misc/bare-sibling-imports-vintage-leak-2026-07-27.md:94",
+   "docs/records/misc/bare-sibling-imports-vintage-leak-2026-07-27.md:96"
   ],
   "n_files": 6
  },
@@ -653,18 +653,18 @@
   "subject": "Merge pull request #3235 from jessicacohen554-cyber/claude/nyiso-108-hydro-input-ijd76p",
   "n_citations": 14,
   "files": [
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:11",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:113",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:135",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:137",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:210",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:213",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:226",
-   "docs/handoffs/ffr-1b-solve-year-availability-2026-08-01.md:121",
-   "docs/handoffs/ffr-1b-solve-year-availability-2026-08-01.md:198",
-   "docs/handoffs/ffr-1b-solve-year-availability-2026-08-01.md:203",
-   "docs/handoffs/ffr-1b-solve-year-availability-2026-08-01.md:6",
-   "docs/handoffs/ffr-1d-enforcement-wave-2026-07-31.md:11"
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:11",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:113",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:135",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:137",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:210",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:213",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:226",
+   "docs/records/forecast/ffr-1b-solve-year-availability-2026-08-01.md:121",
+   "docs/records/forecast/ffr-1b-solve-year-availability-2026-08-01.md:198",
+   "docs/records/forecast/ffr-1b-solve-year-availability-2026-08-01.md:203",
+   "docs/records/forecast/ffr-1b-solve-year-availability-2026-08-01.md:6",
+   "docs/records/forecast/ffr-1d-enforcement-wave-2026-07-31.md:11"
   ],
   "n_files": 14
  },
@@ -787,7 +787,7 @@
   "subject": "Stamp the C.4(c) commit sha into the T1-H legacy-evidence marker",
   "n_citations": 1,
   "files": [
-   "docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md:20"
+   "docs/records/forecast/ffr-3d-instrument-repair-2026-08-03.md:20"
   ],
   "n_files": 1
  },
@@ -804,13 +804,13 @@
   "subject": "ffr-1a arm 2 fix: cap effective-year removal at the plant's binned MW",
   "n_citations": 10,
   "files": [
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:107",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:159",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:212",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:215",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:217",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:9",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:96",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:107",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:159",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:212",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:215",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:217",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:9",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:96",
    "frontend/data/hindcast/ercot-2026-2028-ffr1a-t0-arm2.json:83",
    "frontend/data/hindcast/neiso-2026-2030-ffr1a-arm2.json:119",
    "frontend/data/hindcast/pjm-2026-2030-ffr1a-arm2.json:119"
@@ -831,9 +831,9 @@
   "n_citations": 5,
   "files": [
    "docs/codebase-site/data/mechanism-matrix.js:2261",
-   "docs/handoffs/ffr-5d-price-object-2026-08-05.md:5",
-   "docs/handoffs/ffr-5e-vre-procurement-channel-2026-08-05.md:139",
-   "docs/handoffs/ffr-5e-vre-procurement-channel-2026-08-05.md:8"
+   "docs/records/forecast/ffr-5d-price-object-2026-08-05.md:5",
+   "docs/records/forecast/ffr-5e-vre-procurement-channel-2026-08-05.md:139",
+   "docs/records/forecast/ffr-5e-vre-procurement-channel-2026-08-05.md:8"
   ],
   "n_files": 4
  },
@@ -894,15 +894,15 @@
    "docs/codebase-site/data/mechanism-matrix.js:2257",
    "docs/codebase-site/data/mechanism-matrix.js:2269",
    "docs/codebase-site/data/mechanism-matrix.js:2314",
-   "docs/handoffs/ffr-3q3-gate-reprobe-2026-08-04.md:8",
-   "docs/handoffs/ffr-4a-entry-ladder-2026-08-04.md:8",
-   "docs/handoffs/ffr-4b-miso-solar-revenue-2026-08-04.md:208",
-   "docs/handoffs/ffr-4b-miso-solar-revenue-2026-08-04.md:447",
-   "docs/handoffs/ffr-4b-miso-solar-revenue-2026-08-04.md:69",
-   "docs/handoffs/ffr-4b-miso-solar-revenue-2026-08-04.md:95",
-   "docs/handoffs/ffr-4c-wind-ptc-window-2026-08-04.md:114",
-   "docs/handoffs/ffr-4c-wind-ptc-window-2026-08-04.md:5",
-   "docs/handoffs/ffr-4c-wind-ptc-window-2026-08-04.md:83"
+   "docs/records/forecast/ffr-3q3-gate-reprobe-2026-08-04.md:8",
+   "docs/records/forecast/ffr-4a-entry-ladder-2026-08-04.md:8",
+   "docs/records/forecast/ffr-4b-miso-solar-revenue-2026-08-04.md:208",
+   "docs/records/forecast/ffr-4b-miso-solar-revenue-2026-08-04.md:447",
+   "docs/records/forecast/ffr-4b-miso-solar-revenue-2026-08-04.md:69",
+   "docs/records/forecast/ffr-4b-miso-solar-revenue-2026-08-04.md:95",
+   "docs/records/forecast/ffr-4c-wind-ptc-window-2026-08-04.md:114",
+   "docs/records/forecast/ffr-4c-wind-ptc-window-2026-08-04.md:5",
+   "docs/records/forecast/ffr-4c-wind-ptc-window-2026-08-04.md:83"
   ],
   "n_files": 15
  },
@@ -919,7 +919,7 @@
   "subject": "Merge pull request #3169 from jessicacohen554-cyber/claude/nyiso-monthly-ttc-neiso-status-jlo4zh",
   "n_citations": 1,
   "files": [
-   "docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md:203"
+   "docs/records/forecast/ffr-w1x-wave1-close-2026-08-02.md:203"
   ],
   "n_files": 1
  },
@@ -956,11 +956,11 @@
   "subject": "Merge pull request #3859 from jessicacohen554-cyber/claude/ffr-fh-workstream-mgr-5av0rj",
   "n_citations": 5,
   "files": [
-   "docs/handoffs/fh-5-phase-b-2026-08-11.md:106",
-   "docs/handoffs/fh-5-phase-b-2026-08-11.md:4",
-   "docs/handoffs/fh-5-phase-b-2026-08-11.md:91",
-   "docs/handoffs/fh-5-phase-b-2026-08-11.md:98",
-   "docs/handoffs/fh-5-phase-b-2026-08-11.md:99"
+   "docs/records/forecast/fh-5-phase-b-2026-08-11.md:106",
+   "docs/records/forecast/fh-5-phase-b-2026-08-11.md:4",
+   "docs/records/forecast/fh-5-phase-b-2026-08-11.md:91",
+   "docs/records/forecast/fh-5-phase-b-2026-08-11.md:98",
+   "docs/records/forecast/fh-5-phase-b-2026-08-11.md:99"
   ],
   "n_files": 5
  },
@@ -997,12 +997,12 @@
   "files": [
    "docs/calibration-log/caiso.md:7868",
    "docs/forecast-readiness-prompt-pack-2026-07.md:6879",
-   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:4099",
-   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:4151",
-   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:4180",
-   "docs/handoffs/fh-5-phase-b-2026-08-11.md:357",
-   "docs/handoffs/fh-5-phase-b-2026-08-11.md:363",
-   "docs/handoffs/fh-5-phase-b-2026-08-11.md:380"
+   "docs/records/forecast/ffr-owner-sitting-2026-08-02.md:4099",
+   "docs/records/forecast/ffr-owner-sitting-2026-08-02.md:4151",
+   "docs/records/forecast/ffr-owner-sitting-2026-08-02.md:4180",
+   "docs/records/forecast/fh-5-phase-b-2026-08-11.md:357",
+   "docs/records/forecast/fh-5-phase-b-2026-08-11.md:363",
+   "docs/records/forecast/fh-5-phase-b-2026-08-11.md:380"
   ],
   "n_files": 8
  },
@@ -1021,7 +1021,7 @@
   "subject": "neiso-65: adopt guard-corrected CAMPD extracts, all six ISOs + layup companions",
   "n_citations": 14,
   "files": [
-   "docs/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md:41",
+   "docs/records/ercot/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md:41",
    "docs/calibration-log/caiso.md:1443",
    "docs/calibration-log/caiso.md:7010",
    "docs/calibration-log/ercot.md:7169",
@@ -1164,10 +1164,10 @@
   "n_citations": 6,
   "files": [
    "docs/codebase-site/data/mechanism-matrix/ERCOT.js:220",
-   "docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md:650",
-   "docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md:785",
-   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:3315",
-   "docs/handoffs/house-1-lint-ci-2026-08-08.md:237"
+   "docs/records/forecast/ffr-8a-scarcity-restoration-2026-08-08.md:650",
+   "docs/records/forecast/ffr-8a-scarcity-restoration-2026-08-08.md:785",
+   "docs/records/forecast/ffr-owner-sitting-2026-08-02.md:3315",
+   "docs/records/misc/house-1-lint-ci-2026-08-08.md:237"
   ],
   "n_files": 5
  },
@@ -1203,11 +1203,11 @@
   "subject": "Merge pull request #3743 from jessicacohen554-cyber/claude/miso-idle-block-attribution-xw5g4c",
   "n_citations": 5,
   "files": [
-   "docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md:568",
-   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:3318",
-   "docs/handoffs/house-1-lint-ci-2026-08-08.md:11",
-   "docs/handoffs/house-1-lint-ci-2026-08-08.md:216",
-   "docs/handoffs/house-1-lint-ci-2026-08-08.md:323"
+   "docs/records/forecast/ffr-8a-scarcity-restoration-2026-08-08.md:568",
+   "docs/records/forecast/ffr-owner-sitting-2026-08-02.md:3318",
+   "docs/records/misc/house-1-lint-ci-2026-08-08.md:11",
+   "docs/records/misc/house-1-lint-ci-2026-08-08.md:216",
+   "docs/records/misc/house-1-lint-ci-2026-08-08.md:323"
   ],
   "n_files": 5
  },
@@ -1226,7 +1226,7 @@
   "files": [
    "docs/forecast-readiness-prompt-pack-2026-07.md:3868",
    "docs/forecast-readiness-prompt-pack-2026-07.md:3889",
-   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:2781",
+   "docs/records/forecast/ffr-owner-sitting-2026-08-02.md:2781",
    "frontend/data/backcast/registry/2026-08-06-run173a-reconc-control.json:6"
   ],
   "n_files": 4
@@ -1244,11 +1244,11 @@
   "subject": "Merge pull request #2973 from jessicacohen554-cyber/claude/caiso-overnight-hydro-m94d33",
   "n_citations": 5,
   "files": [
-   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:158",
-   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:186",
-   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:6",
-   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:84",
-   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:94"
+   "docs/records/misc/bare-sibling-imports-vintage-leak-2026-07-27.md:158",
+   "docs/records/misc/bare-sibling-imports-vintage-leak-2026-07-27.md:186",
+   "docs/records/misc/bare-sibling-imports-vintage-leak-2026-07-27.md:6",
+   "docs/records/misc/bare-sibling-imports-vintage-leak-2026-07-27.md:84",
+   "docs/records/misc/bare-sibling-imports-vintage-leak-2026-07-27.md:94"
   ],
   "n_files": 5
  },
@@ -1265,9 +1265,9 @@
   "subject": "Merge pull request #3404 from jessicacohen554-cyber/claude/ffr-workstream-manager-to3voa",
   "n_citations": 3,
   "files": [
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:20",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:83",
-   "docs/handoffs/ffr-3a3-battery-close-2026-08-04.md:62"
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:20",
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:83",
+   "docs/records/forecast/ffr-3a3-battery-close-2026-08-04.md:62"
   ],
   "n_files": 3
  },
@@ -1303,10 +1303,10 @@
   "subject": "Clear the FFR-2C epoch debt: new cache-epoch ledger entry 2026-08-03",
   "n_citations": 4,
   "files": [
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:172",
-   "docs/handoffs/ffr-t1-regate-2026-08-02.md:32",
-   "docs/handoffs/ffr-t1-regate-2026-08-02.md:443",
-   "docs/handoffs/ffr-t1-regate-2026-08-02.md:82"
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:172",
+   "docs/records/forecast/ffr-t1-regate-2026-08-02.md:32",
+   "docs/records/forecast/ffr-t1-regate-2026-08-02.md:443",
+   "docs/records/forecast/ffr-t1-regate-2026-08-02.md:82"
   ],
   "n_files": 4
  },
@@ -1324,7 +1324,7 @@
   "n_citations": 2,
   "files": [
    "docs/calibration-log/pjm.md:1090",
-   "docs/handoffs/pjm-frontier-path-2026-07.md:420"
+   "docs/records/pjm/pjm-frontier-path-2026-07.md:420"
   ],
   "n_files": 2
  },
@@ -1346,9 +1346,9 @@
    "docs/codebase-site/data/mechanism-matrix/MISO.js:208",
    "docs/codebase-site/data/mechanism-matrix/NEISO.js:208",
    "docs/codebase-site/data/mechanism-matrix/PJM.js:208",
-   "docs/handoffs/ffr-3a3-battery-close-2026-08-04.md:415",
-   "docs/handoffs/ffr-3a3-battery-close-2026-08-04.md:62",
-   "docs/handoffs/ffr-3a4-miso-t1x-instrument-debt-2026-08-04.md:118",
+   "docs/records/forecast/ffr-3a3-battery-close-2026-08-04.md:415",
+   "docs/records/forecast/ffr-3a3-battery-close-2026-08-04.md:62",
+   "docs/records/forecast/ffr-3a4-miso-t1x-instrument-debt-2026-08-04.md:118",
    "frontend/data/forecast/ff-verdicts.json:1914",
    "frontend/data/forecast/ff-verdicts.json:2443",
    "frontend/data/forecast/ff-verdicts.json:2979",
@@ -1371,8 +1371,8 @@
   "n_citations": 5,
   "files": [
    "docs/fable-repo-audit-2026-07.md:131",
-   "docs/handoffs/co2-keeper-regate-2026-07-05.md:5",
-   "docs/handoffs/forecast-validation-program-2026-07.md:40",
+   "docs/records/misc/co2-keeper-regate-2026-07-05.md:5",
+   "docs/records/forecast/forecast-validation-program-2026-07.md:40",
    "docs/probabilistic-emissions-methodology.md:199",
    "docs/probabilistic-emissions-methodology.md:214"
   ],
@@ -1410,8 +1410,8 @@
   "subject": "fix: register coal_committed_takeorpay_sunk_fixed as cache-key-optional",
   "n_citations": 4,
   "files": [
-   "docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md:432",
-   "docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md:437",
+   "docs/records/ercot/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md:432",
+   "docs/records/ercot/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md:437",
    "docs/calibration-log/ercot.md:2203",
    "docs/calibration-log/ercot.md:2295"
   ],
@@ -1485,15 +1485,15 @@
   "subject": "ffr-1a arm 1: ledger confirmed-exit derates, split exogenous reasons, close I4 with derates",
   "n_citations": 12,
   "files": [
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:113",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:136",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:138",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:159",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:211",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:214",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:216",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:54",
-   "docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md:8",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:113",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:136",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:138",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:159",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:211",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:214",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:216",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:54",
+   "docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md:8",
    "frontend/data/hindcast/ercot-2026-2028-ffr1a-t0-arm1.json:83",
    "frontend/data/hindcast/neiso-2026-2030-ffr1a-arm1.json:119",
    "frontend/data/hindcast/pjm-2026-2030-ffr1a-arm1.json:119"
@@ -1535,11 +1535,11 @@
   "subject": "Merge pull request #3640 from jessicacohen554-cyber/claude/miso-135-calibration-zya3y5",
   "n_citations": 7,
   "files": [
-   "docs/handoffs/ffr-7b-rps-clean-tier-repair-2026-08-06.md:104",
-   "docs/handoffs/ffr-7b-rps-clean-tier-repair-2026-08-06.md:156",
-   "docs/handoffs/ffr-7b-rps-clean-tier-repair-2026-08-06.md:171",
-   "docs/handoffs/ffr-7b-rps-clean-tier-repair-2026-08-06.md:28",
-   "docs/handoffs/ffr-7b-rps-clean-tier-repair-2026-08-06.md:5",
+   "docs/records/forecast/ffr-7b-rps-clean-tier-repair-2026-08-06.md:104",
+   "docs/records/forecast/ffr-7b-rps-clean-tier-repair-2026-08-06.md:156",
+   "docs/records/forecast/ffr-7b-rps-clean-tier-repair-2026-08-06.md:171",
+   "docs/records/forecast/ffr-7b-rps-clean-tier-repair-2026-08-06.md:28",
+   "docs/records/forecast/ffr-7b-rps-clean-tier-repair-2026-08-06.md:5",
    "frontend/data/backcast/registry/2026-08-06-caiso-177-ffr7b-arm1.json:6",
    "frontend/data/backcast/registry/2026-08-06-nyiso-129-ffr7b-arm1.json:6"
   ],
@@ -1558,16 +1558,16 @@
   "subject": "Merge pull request #3825 from jessicacohen554-cyber/claude/caiso-188-import-tranches-dof-asefu4",
   "n_citations": 10,
   "files": [
-   "docs/handoffs/ffr-9c-vre-entry-repair-2026-08-10.md:6",
-   "docs/handoffs/fh-4-caiso-leg-2026-08-10.md:101",
-   "docs/handoffs/fh-4-caiso-leg-2026-08-10.md:4",
-   "docs/handoffs/fh-4-miso-leg-2026-08-10.md:4",
-   "docs/handoffs/fh-4-miso-leg-2026-08-10.md:455",
-   "docs/handoffs/fh-4-neiso-leg-2026-08-10.md:5",
-   "docs/handoffs/fh-4-nyiso-leg-2026-08-10.md:13",
-   "docs/handoffs/fh-4-nyiso-leg-2026-08-10.md:6",
-   "docs/handoffs/fh-4-pjm-leg-2026-08-10.md:110",
-   "docs/handoffs/fh-4-pjm-leg-2026-08-10.md:4"
+   "docs/records/forecast/ffr-9c-vre-entry-repair-2026-08-10.md:6",
+   "docs/records/forecast/fh-4-caiso-leg-2026-08-10.md:101",
+   "docs/records/forecast/fh-4-caiso-leg-2026-08-10.md:4",
+   "docs/records/forecast/fh-4-miso-leg-2026-08-10.md:4",
+   "docs/records/forecast/fh-4-miso-leg-2026-08-10.md:455",
+   "docs/records/forecast/fh-4-neiso-leg-2026-08-10.md:5",
+   "docs/records/forecast/fh-4-nyiso-leg-2026-08-10.md:13",
+   "docs/records/forecast/fh-4-nyiso-leg-2026-08-10.md:6",
+   "docs/records/forecast/fh-4-pjm-leg-2026-08-10.md:110",
+   "docs/records/forecast/fh-4-pjm-leg-2026-08-10.md:4"
   ],
   "n_files": 10
  },
@@ -1603,8 +1603,8 @@
   "subject": "Repair degenerate EIA-930 solar distribution rows from an adjacent BA",
   "n_citations": 4,
   "files": [
-   "docs/FINDING-nyiso-ordc-span-reliability-floor-2026-07-26.md:146",
-   "docs/FINDING-nyiso-ordc-span-reliability-floor-2026-07-26.md:21",
+   "docs/records/nyiso/FINDING-nyiso-ordc-span-reliability-floor-2026-07-26.md:146",
+   "docs/records/nyiso/FINDING-nyiso-ordc-span-reliability-floor-2026-07-26.md:21",
    "docs/calibration-log/nyiso.md:817",
    "docs/calibration-log/nyiso.md:831"
   ],
@@ -1651,8 +1651,8 @@
   "subject": "Register measured_ct_heat_rates in _CACHE_KEY_OPTIONAL_FIELDS",
   "n_citations": 4,
   "files": [
-   "docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md:432",
-   "docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md:438",
+   "docs/records/ercot/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md:432",
+   "docs/records/ercot/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md:438",
    "docs/calibration-log/ercot.md:2204",
    "docs/calibration-log/ercot.md:2295"
   ],
@@ -1678,9 +1678,9 @@
    "docs/forecast-readiness-prompt-pack-2026-07.md:6500",
    "docs/forecast-readiness-prompt-pack-2026-07.md:6833",
    "docs/forecast-readiness-prompt-pack-2026-07.md:6948",
-   "docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md:214",
-   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:3758",
-   "docs/handoffs/house-3-matrix-shard-2026-08-11.md:36"
+   "docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md:214",
+   "docs/records/forecast/ffr-owner-sitting-2026-08-02.md:3758",
+   "docs/records/governance/house-3-matrix-shard-2026-08-11.md:36"
   ],
   "n_files": 10
  },
@@ -1700,7 +1700,7 @@
   "files": [
    "docs/codebase-site/data/mechanism-matrix.js:2209",
    "docs/codebase-site/data/mechanism-matrix.js:2210",
-   "docs/handoffs/ffr-5a-soft-latch-2026-08-05.md:5",
+   "docs/records/forecast/ffr-5a-soft-latch-2026-08-05.md:5",
    "frontend/data/hindcast/ercot-2021-2025-t1ff-armr-ffr5a-pipeline.json:975"
   ],
   "n_files": 4
@@ -1720,11 +1720,11 @@
   "n_citations": 10,
   "files": [
    "docs/calibration-log/neiso.md:1881",
-   "docs/handoffs/arm-miso-rps-regions-2026-08-07.md:120",
-   "docs/handoffs/arm-miso-rps-regions-2026-08-07.md:138",
-   "docs/handoffs/arm-miso-rps-regions-2026-08-07.md:9",
-   "docs/handoffs/taxonomy-gas-st-2026-08-07.md:23",
-   "docs/handoffs/taxonomy-gas-st-2026-08-07.md:4",
+   "docs/records/miso/arm-miso-rps-regions-2026-08-07.md:120",
+   "docs/records/miso/arm-miso-rps-regions-2026-08-07.md:138",
+   "docs/records/miso/arm-miso-rps-regions-2026-08-07.md:9",
+   "docs/records/misc/taxonomy-gas-st-2026-08-07.md:23",
+   "docs/records/misc/taxonomy-gas-st-2026-08-07.md:4",
    "docs/mechanism-testing-matrix.md:8468",
    "frontend/data/backcast/keepers/NEISO.json:11",
    "frontend/data/backcast/registry/2026-08-07-miso-133-taxgs-control.json:6",
@@ -1764,8 +1764,8 @@
   "subject": "Add the measured exit-throughput cap (default-off) under owner decision D-8",
   "n_citations": 2,
   "files": [
-   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:22",
-   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:909"
+   "docs/records/forecast/ffr-3f-exit-throughput-2026-08-03.md:22",
+   "docs/records/forecast/ffr-owner-sitting-2026-08-02.md:909"
   ],
   "n_files": 2
  },
@@ -1799,7 +1799,7 @@
   "subject": "FF-1F: pin DC=off in runner tests that assume the legacy default",
   "n_citations": 1,
   "files": [
-   "docs/handoffs/fast-tier-triage-2026-07-26.md:399"
+   "docs/records/misc/fast-tier-triage-2026-07-26.md:399"
   ],
   "n_files": 1
  },
@@ -1833,18 +1833,18 @@
   "subject": "Merge pull request #1504 from jessicacohen554-cyber/claude/rubric-recalibration-fitness-vu7i24",
   "n_citations": 18,
   "files": [
-   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1005",
-   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1011",
-   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1016",
-   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1017",
-   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1050",
-   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1064",
-   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1068",
-   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1075",
-   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1081",
-   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1160",
-   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1168",
-   "docs/handoffs/orchestrator-unification-plan-2026-07.md:1170"
+   "docs/records/misc/orchestrator-unification-plan-2026-07.md:1005",
+   "docs/records/misc/orchestrator-unification-plan-2026-07.md:1011",
+   "docs/records/misc/orchestrator-unification-plan-2026-07.md:1016",
+   "docs/records/misc/orchestrator-unification-plan-2026-07.md:1017",
+   "docs/records/misc/orchestrator-unification-plan-2026-07.md:1050",
+   "docs/records/misc/orchestrator-unification-plan-2026-07.md:1064",
+   "docs/records/misc/orchestrator-unification-plan-2026-07.md:1068",
+   "docs/records/misc/orchestrator-unification-plan-2026-07.md:1075",
+   "docs/records/misc/orchestrator-unification-plan-2026-07.md:1081",
+   "docs/records/misc/orchestrator-unification-plan-2026-07.md:1160",
+   "docs/records/misc/orchestrator-unification-plan-2026-07.md:1168",
+   "docs/records/misc/orchestrator-unification-plan-2026-07.md:1170"
   ],
   "n_files": 18
  },
@@ -1864,9 +1864,9 @@
    "docs/calibration-log/pjm.md:2640",
    "docs/codebase-site/data/mechanism-matrix.js:1856",
    "docs/forecast-readiness-prompt-pack-2026-07.md:354",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:217",
-   "docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md:123",
-   "docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md:22"
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:217",
+   "docs/records/forecast/ffr-3d-instrument-repair-2026-08-03.md:123",
+   "docs/records/forecast/ffr-3d-instrument-repair-2026-08-03.md:22"
   ],
   "n_files": 6
  },
@@ -1924,17 +1924,17 @@
   "n_citations": 17,
   "files": [
    "docs/codebase-site/data/mechanism-matrix.js:2209",
-   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:284",
-   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:288",
-   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:291",
-   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:294",
-   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:327",
-   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:333",
-   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:346",
-   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:383",
-   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:6",
-   "docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md:7",
-   "docs/handoffs/ffr-sc-transmission-ab-2026-08-03.md:336"
+   "docs/records/forecast/ffr-3f-exit-throughput-2026-08-03.md:284",
+   "docs/records/forecast/ffr-3f-exit-throughput-2026-08-03.md:288",
+   "docs/records/forecast/ffr-3f-exit-throughput-2026-08-03.md:291",
+   "docs/records/forecast/ffr-3f-exit-throughput-2026-08-03.md:294",
+   "docs/records/forecast/ffr-3f-exit-throughput-2026-08-03.md:327",
+   "docs/records/forecast/ffr-3f-exit-throughput-2026-08-03.md:333",
+   "docs/records/forecast/ffr-3f-exit-throughput-2026-08-03.md:346",
+   "docs/records/forecast/ffr-3f-exit-throughput-2026-08-03.md:383",
+   "docs/records/forecast/ffr-3f-exit-throughput-2026-08-03.md:6",
+   "docs/records/forecast/ffr-3f-exit-throughput-2026-08-03.md:7",
+   "docs/records/forecast/ffr-sc-transmission-ab-2026-08-03.md:336"
   ],
   "n_files": 14
  },
@@ -1969,11 +1969,11 @@
   "subject": "D-1/D-2 propagation: the T1 runners must INHERIT the shipped defaults",
   "n_citations": 5,
   "files": [
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:172",
-   "docs/handoffs/ffr-3a2-battery-close-2026-08-03.md:181",
-   "docs/handoffs/ffr-t1-regate-2026-08-02.md:115",
-   "docs/handoffs/ffr-t1-regate-2026-08-02.md:31",
-   "docs/handoffs/ffr-t1-regate-2026-08-02.md:319"
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:172",
+   "docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md:181",
+   "docs/records/forecast/ffr-t1-regate-2026-08-02.md:115",
+   "docs/records/forecast/ffr-t1-regate-2026-08-02.md:31",
+   "docs/records/forecast/ffr-t1-regate-2026-08-02.md:319"
   ],
   "n_files": 5
  },
@@ -2086,14 +2086,14 @@
   "subject": "nyiso-83: in-city J/K commitment obligation + published Zone-K reserve ladder",
   "n_citations": 8,
   "files": [
-   "docs/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md:88",
+   "docs/records/nyiso/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md:88",
    "docs/calibration-log/nyiso.md:1106",
    "docs/calibration-log/nyiso.md:984",
-   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:163",
-   "docs/handoffs/bare-sibling-imports-vintage-leak-2026-07-27.md:85",
-   "docs/handoffs/fast-tier-triage-2026-07-26.md:607",
-   "docs/handoffs/nyiso-incity-instrument-survey-2026-07.md:49",
-   "docs/handoffs/nyiso-incity-mustrun-charter-2026-07.md:48"
+   "docs/records/misc/bare-sibling-imports-vintage-leak-2026-07-27.md:163",
+   "docs/records/misc/bare-sibling-imports-vintage-leak-2026-07-27.md:85",
+   "docs/records/misc/fast-tier-triage-2026-07-26.md:607",
+   "docs/records/nyiso/nyiso-incity-instrument-survey-2026-07.md:49",
+   "docs/records/nyiso/nyiso-incity-mustrun-charter-2026-07.md:48"
   ],
   "n_files": 8
  },
@@ -2134,9 +2134,9 @@
   "subject": "Merge pull request #1409 from jessicacohen554-cyber/claude/co2-emissions-plan-2026-wave2",
   "n_citations": 3,
   "files": [
-   "docs/handoffs/orchestrator-unification-plan-2026-07.md:687",
-   "docs/handoffs/orchestrator-unification-plan-2026-07.md:692",
-   "docs/handoffs/orchestrator-unification-plan-2026-07.md:721"
+   "docs/records/misc/orchestrator-unification-plan-2026-07.md:687",
+   "docs/records/misc/orchestrator-unification-plan-2026-07.md:692",
+   "docs/records/misc/orchestrator-unification-plan-2026-07.md:721"
   ],
   "n_files": 3
  },
@@ -2153,8 +2153,8 @@
   "subject": "Make the default cache key path-invariant (cache-epoch bump edbc1b1 -> 603c249)",
   "n_citations": 2,
   "files": [
-   "docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md:431",
-   "docs/handoffs/fast-tier-triage-2026-07-26.md:704"
+   "docs/records/ercot/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md:431",
+   "docs/records/misc/fast-tier-triage-2026-07-26.md:704"
   ],
   "n_files": 2
  },
@@ -2171,14 +2171,14 @@
   "subject": "Merge pull request #3839 from jessicacohen554-cyber/claude/fh-4-miso-leg-cmacdy",
   "n_citations": 8,
   "files": [
-   "docs/PRECOMMIT-ercot186-rule18-grain-2026-08-10.md:8",
+   "docs/records/ercot/PRECOMMIT-ercot186-rule18-grain-2026-08-10.md:8",
    "docs/calibration-log/ercot.md:7110",
    "docs/forecast-readiness-prompt-pack-2026-07.md:6116",
    "docs/forecast-readiness-prompt-pack-2026-07.md:6315",
    "docs/forecast-readiness-prompt-pack-2026-07.md:6352",
    "docs/forecast-readiness-prompt-pack-2026-07.md:6482",
-   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:3728",
-   "docs/handoffs/ffr-owner-sitting-2026-08-02.md:3799"
+   "docs/records/forecast/ffr-owner-sitting-2026-08-02.md:3728",
+   "docs/records/forecast/ffr-owner-sitting-2026-08-02.md:3799"
   ],
   "n_files": 8
  }

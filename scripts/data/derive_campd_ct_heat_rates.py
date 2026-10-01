@@ -345,7 +345,7 @@ def plant_table(
 def main(argv: list[str] | None = None) -> int:
     """Derive and write the measured CT loaded-heat-rate artifact.
 
-    F1 D4 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md
+    F1 D4 (docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md
     §5.1 item 3): the target population is the UNION of the ISO's backcast
     fleets over every year in ``--years`` (default 2019-2025, the program span)
     — the year-matched EIA-860 vintage plus the retiree channel, as the

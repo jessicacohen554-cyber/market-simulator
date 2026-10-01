@@ -1,6 +1,6 @@
 """SPP-105 candidate gas-family carriers for the zero-LP re-clear (``_spp105_gas_outage_hourly_phase0``).
 
-Record: ``docs/handoffs/DESIGN-spp-105-gas-family-outage-2026-09-30.md`` s4. Each carrier is a
+Record: ``docs/records/spp/DESIGN-spp-105-gas-family-outage-2026-09-30.md`` s4. Each carrier is a
 deterministic function of the keeper's own rebuilt arrays and SPP's published hourly Natural Gas
 outage; none has a tunable. They are INSTRUMENTS for the design card, never configs.
 

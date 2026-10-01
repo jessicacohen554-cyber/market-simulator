@@ -40,7 +40,7 @@ ATTESTED_BY = (
     "reproduced the committed keeper, 0 of 78,840 price cells moved) and "
     "pjm-h13's re-audit, so the incumbent keeper's committed bundle IS the "
     "control. Gates G1-G5 and the reported/gating asymmetry were fixed ex ante "
-    "in docs/handoffs/PRECOMMIT-pjm-h14-2026-09-20.md, committed and pushed at "
+    "in docs/records/pjm/PRECOMMIT-pjm-h14-2026-09-20.md, committed and pushed at "
     "3b44a752 BEFORE any arm result existed, and NEITHER was amended after a "
     "number landed. TWO of the five gates FAIL and both failures are disclosed "
     "rather than argued away (RESULT sec.5)."

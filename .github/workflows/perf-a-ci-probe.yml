@@ -1,7 +1,7 @@
 # PERF-A CI-infrastructure probe — NOT-FOR-MERGE (branch-only test rig).
 #
 # Chartered by docs/model-audit-release-plan-2026-08.md §3/WS3 item 5 + the
-# DEBUG-A CI-health handoff (docs/handoffs/debug-sweep-2026-08.md §CI health):
+# DEBUG-A CI-health handoff (docs/records/misc/debug-sweep-2026-08.md §CI health):
 # the Fast test tier cannot complete on a GitHub runner (dies inside
 # actions/checkout; the tier hard-requires data/raw, 8.7 GiB at tip, against a
 # ~14 GB runner disk), which evidence-blocks gates G2/G3. This workflow exists
@@ -70,7 +70,7 @@ jobs:
           # --filter=blob:none automatically when sparse-checkout is set, so
           # transfer/disk is bounded by the materialized set, not the 8.7 GiB
           # tip. Full measurement record:
-          # docs/handoffs/perf-recheck-2026-08.md.
+          # docs/records/governance/perf-recheck-2026-08.md.
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             /*

@@ -1,6 +1,6 @@
 """Emit the SPP-85 calibration attestation for the composed 2019-2025 arm bundle ``spp85_arm_span``.
 
-SPP-85 (``docs/handoffs/PRECOMMIT-spp-85-netload-mask-repair-2026-09-26.md``) replays SPP's keeper
+SPP-85 (``docs/records/spp/PRECOMMIT-spp-85-netload-mask-repair-2026-09-26.md``) replays SPP's keeper
 ``rspp_span`` recipe one year per shard (rule 36) with exactly one registered ``ScenarioConfig`` boolean
 added, ``unit_outage_netload_mask_repair``. ``replay_keeper --out-dir`` does not propagate
 ``calibration_attestation.json``, so without this the composite scores C6 ``UNATTESTED`` for a plumbing
@@ -22,9 +22,9 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 CAL = REPO / "results" / "calibration"
-PRECOMMIT = "docs/handoffs/PRECOMMIT-spp-85-netload-mask-repair-2026-09-26.md"
-FINDING = "docs/handoffs/FINDING-spp-85-coal-outage-basis-2026-09-26.md"
-RESULT = "docs/handoffs/RESULT-spp-85-netload-mask-repair-2026-09-26.md"
+PRECOMMIT = "docs/records/spp/PRECOMMIT-spp-85-netload-mask-repair-2026-09-26.md"
+FINDING = "docs/records/spp/FINDING-spp-85-coal-outage-basis-2026-09-26.md"
+RESULT = "docs/records/spp/RESULT-spp-85-netload-mask-repair-2026-09-26.md"
 PINNED = "0ff620d11d91797313f5f565b5e94ff3b123330b"
 COMPOSITE = "spp85_arm_span"
 KEEPER = "rspp_span"

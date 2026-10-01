@@ -1,6 +1,6 @@
 """Score nyiso-231's five pre-registered screen gates on the repaired 2022 arm.
 
-The gates are fixed in ``results/calibration/PRECOMMIT-nyiso231-mirror-repair-rescreen.md``
+The gates are fixed in ``docs/records/nyiso/PRECOMMIT-nyiso231-mirror-repair-rescreen.md``
 §6 and this scorer is committed BEFORE the arm's numbers exist, so it cannot be
 shaped by them. All five are STRUCTURAL and STOP-ONLY (rule 29 ``[R-SCREEN]``):
 none reads C1, C3a, C3b or C3c, and clearing them promotes nothing.

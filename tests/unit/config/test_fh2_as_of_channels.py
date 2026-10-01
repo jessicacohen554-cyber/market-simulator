@@ -1,6 +1,6 @@
 """FH-2 — as-of addressability of the demand-growth, capacity-price and policy channels.
 
-Contract suite for ``docs/handoffs/fh-2-as-of-driver-plumbing-2026-08.md``
+Contract suite for ``docs/records/forecast/fh-2-as-of-driver-plumbing-2026-08.md``
 (hindcast-forward plan §4 rows 6/13/14). Four groups, trivial-first:
 
 1. **Demand-growth vintage** (:data:`constants.DEMAND_GROWTH_RATES_VINTAGES` +
@@ -81,7 +81,7 @@ class TestDemandGrowthVintageMechanism(unittest.TestCase):
     def test_registry_populated_by_fh3(self):
         # Was test_registry_ships_empty_at_fh2, per its own instruction: "if
         # this ever fails, the values landed". FH-3 landed them 2026-08-02
-        # (docs/handoffs/fh-3-asknown-driver-vintages-2026-08.md). The
+        # (docs/records/forecast/fh-3-asknown-driver-vintages-2026-08.md). The
         # fail-closed contract below is unchanged and still enforced.
         self.assertEqual(sorted(DEMAND_GROWTH_RATES_VINTAGES), [2021, 2023])
         for as_of, table in DEMAND_GROWTH_RATES_VINTAGES.items():
@@ -257,7 +257,7 @@ class TestDemandGrowthVintageMechanism(unittest.TestCase):
         # (Act B, re-identified off the widened ATB extract). Act B is NOT a
         # _CACHE_KEY_OPTIONAL_FIELDS member, so it has no drop value and re-keys
         # unconditionally. Pre-declared BEFORE the solve in
-        # docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3; cache-epoch ledger
+        # docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md §3; cache-epoch ledger
         # entry 2026-09-06c in src/market_sim/results/cache.py. Nothing about THIS
         # field moved — the pin advances because the global default did.
         self.assertEqual(ScenarioConfig().cache_key(), "547053bdfccd4264")

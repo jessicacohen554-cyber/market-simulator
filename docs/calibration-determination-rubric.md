@@ -259,7 +259,7 @@ attribution mis-splits vs CEMS by 7–21 TWh/yr, so it is used for the fossil
    per-family reconcile scaled gas and coal each to their own unreliable EIA-930
    cell, manufacturing PJM's phantom "+21 TWh CC_REGULAR over-run" from a ~+3 TWh
    real miss. Log: 2026-07-11 "SCORER FIX (all ISOs)" + 2026-07-12 pjm-98
-   promotion; `docs/handoffs/pjm-cc-overrun-benchmark-basis-g21-2026-07.md`.
+   promotion; `docs/records/pjm/pjm-cc-overrun-benchmark-basis-g21-2026-07.md`.
 2. **#2049 unit-class CAMPD backfill bucketing** (`run_calibration_full._backfill_eia923_with_campd`
    × `_plant_class_shares`). A genuinely mixed non-ERCOT plant's CAMPD net is
    split across the classes physically at it by its measured EIA-923 prime-mover
@@ -285,7 +285,7 @@ was corrected is a fixed defect, not a regression, and nothing may be tuned to
 un-flip it (rules 1/13/23). Existing keepers re-score in place; frontier keepers
 whose committed `classFull` predates fixes 1+2 are re-rendered on a controlled
 re-solve by the owner (staleness inventory:
-`docs/handoffs/benchmark-basis-inventory-2026-07.md`).
+`docs/records/misc/benchmark-basis-inventory-2026-07.md`).
 
 ---
 
@@ -1289,7 +1289,7 @@ down to.
 > fail), the thresholds are unchanged at `profile_r ≥ 0.8` / `cv_ratio ≥ 0.5`,
 > and the failures it exposed are real — MISO COAL_PRB was independently
 > confirmed and root-caused by A/B in miso-96
-> (`results/calibration/FINDING-miso96-coal-prb-offpeak-2026-07.md`). The
+> (`docs/records/miso/FINDING-miso96-coal-prb-offpeak-2026-07.md`). The
 > ERCOT COAL_LIGNITE 2023 exposure (r 0.745, cv_ratio 0.294) is NOT yet
 > diagnosed and is an open item for that lane.
 >
@@ -1301,7 +1301,7 @@ down to.
 ## 9. Version history
 
 - **v3.9 (2026-09-25, owner ruling C8-SUBCLASS — "Yes" to the open question of
-  `docs/handoffs/RESULT-coal-sub-2026-09-25.md` §6, "Keep family-level C8, or
+  `docs/records/misc/RESULT-coal-sub-2026-09-25.md` §6, "Keep family-level C8, or
   move C8 to per-subclass?")** — **C8 scores each coal subclass as its own
   class** (`COAL_BIT` / `COAL_PRB` / `COAL_LIGNITE` / `COAL_WC`): own D-2 forced
   share and denominator, own ≥ 2 %-of-load materiality on max(model, actual)
@@ -1321,11 +1321,11 @@ down to.
   non-coal rows byte-identical; per-year family cross-check recorded under
   `coal_subclass_resplit`). **Effect: no C8 status and no determination
   changes on any registered run**; per-subclass shares, the SPP un-blinding
-  and the cross-check are in `docs/handoffs/RESULT-c8-coal-subclass-2026-09-25.md`.
+  and the cross-check are in `docs/records/misc/RESULT-c8-coal-subclass-2026-09-25.md`.
 
 - **v3.5 (2026-08-25, owner decision — session xiso-amplitude-rubric-card;
   the owner selected option (B) of
-  `docs/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md`)** — adds
+  `docs/records/governance/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md`)** — adds
   **D-A, the BAND-FREE REPORTED-ONLY diurnal price-amplitude measurement**
   (`calibration_verdict.score_diurnal_amplitude`, §5a below). **No criterion is
   added to `CRITERIA`; `LEDGERABLE_CRITERIA` (`{price_tail}`) and
@@ -1345,7 +1345,7 @@ down to.
 
   **Why REPORTED-ONLY and BAND-FREE rather than a gate.** The xiso-6 sweep
   (`scripts/probes/_xiso6_amplitude_criterion_band_probe.py`, transcript
-  `results/calibration/PROBE-xiso6-amplitude-criterion-bands-2026-08-25.txt`)
+  `results/phase0/governance/PROBE-xiso6-amplitude-criterion-bands-2026-08-25.txt`)
   measured what a *gating* criterion would do at ten candidate bands × six ISOs
   × three candidate tiers, offline over the committed records. It is **vacuous**
   below a 25 % amplitude floor — every keeper passes, including one at 20.8 % —

@@ -46,7 +46,7 @@ ATTESTED_BY = (
     "window f083eb32 -> ebc020cf at the rebase, where measured_cc_heat_rates and "
     "hydro_pondage_bound are likewise default-off and absent from both recipes. "
     "Gates G1-G5 and the reported/gating asymmetry were fixed ex ante in "
-    "docs/handoffs/PRECOMMIT-pjm-h15-2026-09-20.md, committed and pushed at "
+    "docs/records/pjm/PRECOMMIT-pjm-h15-2026-09-20.md, committed and pushed at "
     "6de36475 BEFORE any arm result existed, and NEITHER was amended after a number "
     "landed. TWO of the five gates FAIL (G2, G4); both failures are this lane's own "
     "and are disclosed rather than argued away (RESULT sec.5)."

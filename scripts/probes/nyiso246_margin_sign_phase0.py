@@ -88,7 +88,7 @@ def main() -> None:
             }
         out["years"][str(year)] = rec
 
-    dest = REPO / "results" / "calibration" / "_nyiso246_margin_sign_phase0.json"
+    dest = REPO / "results" / "phase0" / "nyiso" / "_nyiso246_margin_sign_phase0.json"
     dest.write_text(json.dumps(out, indent=2, sort_keys=True) + "\n")
     print(json.dumps(out["years"], indent=1))
     print("wrote", dest)

@@ -132,7 +132,7 @@
      "COAL": 0.648
     },
     "n_scalars": 5,
-    "source": "committed-tranche multiplier(s) below the audit sec.2 0.85 physical-floor flag with no written rationale in the config -- pulled out of the R6 bulk offer-curve population per plan sec.2.1 (docs/handoffs/scalar-remediation-plan-2026-07.md)",
+    "source": "committed-tranche multiplier(s) below the audit sec.2 0.85 physical-floor flag with no written rationale in the config -- pulled out of the R6 bulk offer-curve population per plan sec.2.1 (docs/records/misc/scalar-remediation-plan-2026-07.md)",
     "root_cause": "open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1302 (per-ISO evening-merit-style diagnosis before any value is touched -- rules #1/#18/#19/#26 apply, no blanket fix)"
    },
    {
@@ -231,7 +231,7 @@
     "lineage_solves": ">=76 solves (audit sec.5.1 + pjm-76)",
     "n_scalars": 0,
     "source": "per-unit EPA CAMPD hourly gross generation (scripts/data/derive_campd_unit_outages.py --short-windows); identification guards: coal-only detector + unit annual CF >= 0.55 (the partial-outage detector's baseload constant) + the revealed-availability in-merit filter (outage_detect.filter_revealed_outages; the full-stop override cannot engage below the 5-day cap)",
-    "note": "the >= 5-day duration floor makes event-coincident short forced outages invisible (MISO Jul 28-29 2025: ~2.8 GW coal offline at the peak block beyond the overlay; docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md); CT/CC event unavailability stays unmodeled pending a max-gen-event registry intake (no identification without it)"
+    "note": "the >= 5-day duration floor makes event-coincident short forced outages invisible (MISO Jul 28-29 2025: ~2.8 GW coal offline at the peak block beyond the overlay; docs/records/miso/DIAGNOSIS-miso-july2025-lmp-2026-07.md); CT/CC event unavailability stays unmodeled pending a max-gen-event registry intake (no identification without it)"
    },
    {
     "name": "hydro_budget_nameplate_aware",
@@ -296,8 +296,8 @@
   ]
  },
  "inputclock_verification": {
-  "finding": "docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md",
-  "charter": "docs/handoffs/debug-b-pjm-input-clock-charter-2026-08.md",
+  "finding": "docs/records/pjm/FINDING-debug-b-pjm-input-clock-2026-08-15.md",
+  "charter": "docs/records/pjm/debug-b-pjm-input-clock-charter-2026-08.md",
   "byte_verification": "finding \u00a72a: 74,470 rows x 16 cols \u2014 region family + time columns identical everywhere; NG:* outside the two blocks identical (56,927 rows); every in-block cell == pristine value at UTC T-1h (17,543 rows); NaN count 49,305 unchanged",
   "recipe_diff_vs_incumbent": {
    "keeper_only_schema_deletions": [

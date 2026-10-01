@@ -9,7 +9,7 @@ and band family. The difference is the MW the model's stack carries inside the
 overshoot. Also the stack slope ($/GW) at the model's clearing point and the
 offer decomposition (fuel x HR, VOM, rest) of the tranches inside the gap.
 
-Output: ``results/calibration/_miso285_night_stack.json``. Rule 13: nothing here feeds a solve.
+Output: ``results/phase0/miso/_miso285_night_stack.json``. Rule 13: nothing here feeds a solve.
 
 miso-286 (``--cf4``): the PRE-REGISTERED zero-LP pre-check of the chartered
 ``miso_gas_ecomin_online_floor`` (charter §3). CF4 floors ONLY the rows the
@@ -57,7 +57,7 @@ def main() -> int:
     from scripts.run_calibration_full import _henry_hub_actual  # type: ignore
 
     dec.KEEPER = KEEPER
-    path = REPO / "results/calibration/_miso285_night_stack.json"
+    path = REPO / "results/phase0/miso/_miso285_night_stack.json"
     out = json.loads(path.read_text()) if path.exists() else {}
     for y in args.years:
         hh = _henry_hub_actual(_load_reference(), y)

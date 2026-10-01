@@ -1,7 +1,7 @@
 """nyiso-155 A/B scorer — the hydro truncation repair RE-ARM against the nyiso-152 keeper.
 
 Scores the PRE-REGISTERED gates of
-``results/calibration/PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md``
+``docs/records/nyiso/PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md``
 from the two solved bundles. **No solve here, and no gate that is not in the
 prereg.** Template: ``_nyiso108_hydro_input_repair_ab.py`` (the first arm of
 the same pair, 2026-07-31), extended with the prereg's G5 SHAPE leg — the only
@@ -53,7 +53,7 @@ ARM_A = REPO / "results/calibration/nyiso155_hydro_control"
 ARM_B = REPO / "results/calibration/nyiso155_hydro_repair"
 KEEPER = REPO / "results/calibration/nyiso152_armSE"
 FUELMIX = REPO / "data/raw/NYISO/fuel-mix"
-OUT_PATH = REPO / "results/calibration/_nyiso155_hydro_repair_ab.json"
+OUT_PATH = REPO / "results/phase0/nyiso/_nyiso155_hydro_repair_ab.json"
 _TWH = 1e6
 
 #: The two keys under test (prereg §2) — solve_and_persist kwargs.
@@ -411,7 +411,7 @@ def main() -> int:
     res = {
         "probe": "nyiso-155 hydro truncation repair RE-ARM A/B",
         "prereg": (
-            "results/calibration/PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md"
+            "docs/records/nyiso/PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md"
         ),
         "arms": {"A_control": ARM_A.name, "B_repair": ARM_B.name, "keeper": KEEPER.name},
         "gates": {

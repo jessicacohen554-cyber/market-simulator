@@ -22,7 +22,7 @@ These tests pin the two properties a reader depends on:
 2. the tech-aggregate sidecar SUMS both, so ``Σ cap − Σ soc`` is the tech's real
    absorption headroom — the quantity the screen's premise is about.
 
-``docs/FINDING-caiso284-belly-commitment-phase0-2026-09-16.md`` §3.
+``docs/records/caiso/FINDING-caiso284-belly-commitment-phase0-2026-09-16.md`` §3.
 """
 
 import importlib.util

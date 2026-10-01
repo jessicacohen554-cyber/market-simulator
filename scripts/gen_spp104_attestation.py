@@ -1,6 +1,6 @@
 """Emit the SPP-104 calibration attestation for the composed 2019-2025 bundle ``spp104_arm_span``.
 
-SPP-104 (``docs/handoffs/PRECOMMIT-spp-104-ct-lole-efor-2026-09-30.md``) replays SPP's keeper
+SPP-104 (``docs/records/spp/PRECOMMIT-spp-104-ct-lole-efor-2026-09-30.md``) replays SPP's keeper
 ``2026-09-28-spp-100-chp-scope`` one year per shard (rule 36) with one field armed:
 ``spp_ct_lole_efor`` (SPP's own LOLE-study EFOR replaces the CT_PEAKER WEFOR). Adapted
 from ``gen_spp102_attestation.py``: the keeper's attestation is inherited, the offer curve is
@@ -24,8 +24,8 @@ sys.path.insert(0, str(REPO / "src"))
 from market_sim.config.scenarios import _CACHE_KEY_RETIRED_FIELDS  # noqa: E402
 
 CAL = REPO / "results" / "calibration"
-PRECOMMIT = "docs/handoffs/PRECOMMIT-spp-104-ct-lole-efor-2026-09-30.md"
-RESULT = "docs/handoffs/RESULT-spp-104-ct-lole-efor-2026-09-30.md"
+PRECOMMIT = "docs/records/spp/PRECOMMIT-spp-104-ct-lole-efor-2026-09-30.md"
+RESULT = "docs/records/spp/RESULT-spp-104-ct-lole-efor-2026-09-30.md"
 PINNED = "264dbb2af75fdd73f3ff5450bef110bce37ebff8"
 COMPOSITE = "spp104_arm_span"
 KEEPER = "spp100_arm_span"

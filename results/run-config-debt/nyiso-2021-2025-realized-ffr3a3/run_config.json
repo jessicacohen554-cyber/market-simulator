@@ -2,13 +2,13 @@
  "provenance": "reconstruction",
  "reconstruction": {
   "status": "RECONSTRUCTED \u2014 NOT ORIGINAL",
-  "reconstructed_by": "capx-D8, 2026-08-30 \u2014 docs/handoffs/FINDING-capx-d8-dof-ledger-2026-08-30.md \u00a74 (method, evidence chain, verification)",
+  "reconstructed_by": "capx-D8, 2026-08-30 \u2014 docs/records/forecast/FINDING-capx-d8-dof-ledger-2026-08-30.md \u00a74 (method, evidence chain, verification)",
   "solve_sha_recorded": "941f4983 (pre-rewrite; dead since the 2026-08-16 history rewrite)",
   "solve_sha_mapped": "7ac1ba884809a831978f9c8e8b9c0f88d2ddd70d via docs/governance/citation-commit-map.txt",
   "method": "run_capacity_hindcast.build_config imported at the mapped solve sha in a sparse worktree and called with the documented invocation (all solve-affecting flags omitted, window/vintage = the harness mode defaults at that sha); the resolved ScenarioConfig asdict() is this file's scenario_config. No solve was run.",
   "invocation": "python scripts/run_capacity_hindcast.py --iso NYISO --start-year 2021 --end-year 2025 --out-dir <lane out-dir>",
-  "invocation_source": "docs/handoffs/ffr-3a3-battery-close-2026-08-04.md \u00a71.1/\u00a71.3 (leg list, flags-omitted posture); window/vintage are the harness mode defaults at the solve sha (main() lines 1105-1116)",
-  "verification": "resolved posture reproduces the six documented solve-affecting flags exactly (docs/handoffs/ffr-3a3-battery-close-2026-08-04.md \u00a71.3): retirement_rule=pipeline, entry_rate_limits=True, correlated_forced_outage=True, entry_commissioning_lag=True, entry_lookahead_reprice=True, exit_rate_limits=False",
+  "invocation_source": "docs/records/forecast/ffr-3a3-battery-close-2026-08-04.md \u00a71.1/\u00a71.3 (leg list, flags-omitted posture); window/vintage are the harness mode defaults at the solve sha (main() lines 1105-1116)",
+  "verification": "resolved posture reproduces the six documented solve-affecting flags exactly (docs/records/forecast/ffr-3a3-battery-close-2026-08-04.md \u00a71.3): retirement_rule=pipeline, entry_rate_limits=True, correlated_forced_outage=True, entry_commissioning_lag=True, entry_lookahead_reprice=True, exit_rate_limits=False",
   "known_unverified": [
    "cache_key_reconstructed has no committed comparator (the FFR-3A-3 handoff records no per-leg cache keys)",
    "vintage (t1h: 2020, t1x: 2023) is the harness mode default at the solve sha, not independently documented per leg"

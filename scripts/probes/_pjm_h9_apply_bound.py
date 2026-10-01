@@ -1,6 +1,6 @@
 """pjm-h9 — apply the M1 mixture bound to PJM coal's min-load rows. ZERO LP.
 
-Pre-registration: ``docs/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md`` §4.
+Pre-registration: ``docs/records/pjm/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md`` §4.
 Reads the quantile artifact written by ``_pjm_h9_longrun_mixture_bound.py`` (whose G-REPRO
 hard stop must have passed) and answers the pre-registered question:
 
@@ -54,8 +54,8 @@ from scripts.probes._pjm_h8_offer_ladder import (  # noqa: E402
     build,
 )
 
-QUANT = REPO / "results/calibration/_pjm_h9_longrun_mixture_bound.json"
-OUT = REPO / "results/calibration/_pjm_h9_bound_applied.json"
+QUANT = REPO / "results/phase0/pjm/_pjm_h9_longrun_mixture_bound.json"
+OUT = REPO / "results/phase0/pjm/_pjm_h9_bound_applied.json"
 
 
 def _out_path(ref: str) -> Path:
@@ -135,7 +135,7 @@ def main(argv: list[str] | None = None) -> int:
             "one-sided gas-steam admixture of capacity weight w, and the share of "
             "pjm-h8's own correction it could account for"
         ),
-        "precommit": "docs/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md",
+        "precommit": "docs/records/pjm/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md",
         "w_hat": W_HAT,
         "PROVISIONAL": provisional,
         "provisional_note": (

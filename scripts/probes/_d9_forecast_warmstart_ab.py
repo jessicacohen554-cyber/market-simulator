@@ -17,7 +17,7 @@ multi-threaded dual simplex breaks marginal ties nondeterministically, so at the
 default thread setting even a cold-vs-cold control drifts and the trajectory
 comparison would measure the solver, not the warm start
 (``docs/cross-year-warmstart.md``). The single-thread penalty on ERCOT cold P0 is
-~5 % (``docs/handoffs/wallclock-baseline-2026-07.md`` Exp 3), so the wall-clock
+~5 % (``docs/records/misc/wallclock-baseline-2026-07.md`` Exp 3), so the wall-clock
 comparison is unaffected — both arms pay it.
 
 The config is ``run_full_horizon.reference_config`` — every ScenarioConfig field

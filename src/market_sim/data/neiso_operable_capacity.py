@@ -17,7 +17,7 @@ day, which the fleet builder imposes on the covered dispatchable-thermal classes
 together (:func:`market_sim.data.fleet.generators_to_fleet_arrays`, gated by
 ``ScenarioConfig.neiso_operable_capacity_availability``). This module (the data +
 loader) is committed directly; the gate + the fleet application ship as
-``docs/handoffs/patches/neiso-operable-capacity-wiring.patch`` -- the repo's
+``docs/records/misc/patches/neiso-operable-capacity-wiring.patch`` -- the repo's
 transport for edits to core files too large for the API-only push path -- and
 apply after this branch merges.
 

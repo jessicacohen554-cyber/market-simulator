@@ -180,7 +180,7 @@ def iso_for_split_child(name: str, isos: dict) -> str | None:
     tried first and the token match only backs it up.
 
     Why the extra limb exists (lane SPP-34, 2026-09-07; routed item R-4 of
-    ``docs/handoffs/FINDING-spp-20-2026-09-06.md`` §5). SPP's tokens are
+    ``docs/records/spp/FINDING-spp-20-2026-09-06.md`` §5). SPP's tokens are
     deliberately delimiter-bounded — ``swpp``, ``spp-``, ``_spp.``, ``-spp.``,
     ``/spp/`` — because a bare ``spp`` token would also claim ERCOT's
     settlement-point zips ``DAMLZHBSPP_<year>.zip`` (plan §7 gate G3). But a

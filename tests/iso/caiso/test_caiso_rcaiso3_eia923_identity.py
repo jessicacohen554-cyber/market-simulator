@@ -1,6 +1,6 @@
 """R-CAISO-3 lever C: refused gross-net CC rows fall back to EIA-923 fuel / net.
 
-Trivial cases first. Record: ``docs/handoffs/r-caiso-3/``.
+Trivial cases first. Record: ``docs/records/caiso/r-caiso-3/``.
 """
 
 from __future__ import annotations

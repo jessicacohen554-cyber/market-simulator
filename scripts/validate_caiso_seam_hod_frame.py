@@ -1,7 +1,7 @@
 """Validate the hour-of-day frame of the CAISO seam's measured flow sources.
 
 Guard for the 2026-07-07 seam-clock forensics
-(``results/calibration/FINDING-caiso-seam-tz-correction-2026-07-07.md``). Two
+(``docs/records/caiso/FINDING-caiso-seam-tz-correction-2026-07-07.md``). Two
 distinct clock defects were found and are pinned here:
 
 1. The 07-07 seam FINDING's "measured actual" hod table was bucketed on the

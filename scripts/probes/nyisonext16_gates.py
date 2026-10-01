@@ -1,6 +1,6 @@
 """NYISO-NEXT-16 G-2 / G-3 / G-4 / G-6 / G-7 and reported diagnostics (ZERO LP), per arm leg.
 
-``docs/PRECOMMIT-nyiso-next16-winter-spread-2026-09-30.md`` sec. 4:
+``docs/records/nyiso/PRECOMMIT-nyiso-next16-winter-spread-2026-09-30.md`` sec. 4:
 
 G-2: (a) each zone's annual mean of the flag's monthly construction equals its
      measured SOM annual within $0.005/MMBtu (recomputed from the pinned code);
@@ -13,7 +13,7 @@ G-7: no D-4 failure row keyed (year, mechanism x class, plant) in the arm
      that is absent from the keeper (read from the COMPOSED bundles, as the keeper's are).
 Reported: NEXT-14's reported block (lift, spread, hydro, zonal LW price vs the
 keeper) and the DJF downstate - Upstate_West spread, arm / keeper / measured DA.
-Record: ``results/calibration/_nyisonext16_gates.json``.
+Record: ``results/phase0/nyiso/_nyisonext16_gates.json``.
 """
 
 from __future__ import annotations
@@ -45,7 +45,7 @@ from market_sim.data.fuel.basis import nyiso as nb  # noqa: E402
 CAL = REPO / "results" / "calibration"
 KEEP = {2021: "nyisonext15_2021", **{y: "nyisonext15_span" for y in range(2022, 2026)}}
 G2_TOL, G2_LIVE, G6_GWH = 0.005, 1.0, 1.0
-OUT = CAL / "_nyisonext16_gates.json"
+OUT = CAL.parent / "phase0" / "nyiso" / "_nyisonext16_gates.json"
 DOWN = ("Capital_Hudson", "Lower_Hudson", "NYC", "Long_Island")
 
 _spec = importlib.util.spec_from_file_location(

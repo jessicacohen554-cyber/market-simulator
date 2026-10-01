@@ -15,7 +15,7 @@ NO LP IS SOLVED. Every number is read from committed artifacts:
   than the keeper solved).
 
 The pre-registered question, the correction, the six kills and the decision rule
-are in ``results/calibration/PREREG-miso122-hybrid-cogen-scope-gate-2026-08-03.md``,
+are in ``docs/records/miso/PREREG-miso122-hybrid-cogen-scope-gate-2026-08-03.md``,
 written and committed BEFORE this file was written.
 
 What it measures, in the pre-registration's order:

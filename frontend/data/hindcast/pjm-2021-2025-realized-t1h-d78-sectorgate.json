@@ -620,7 +620,7 @@
         "solar": 4.882
       },
       "commissioned_in_window_decided_before_window_gw": {},
-      "note": "Scored on the DECISION basis (D-9(ii)). Additions verdicts on this basis are NOT comparable to any additions verdict committed before 2026-08-04, which were scored on the COD basis \u2014 the metric means something different. Retirements-side comparability is unaffected. See docs/handoffs/ffr-3s-cod-shifted-scoring-2026-08-04.md.",
+      "note": "Scored on the DECISION basis (D-9(ii)). Additions verdicts on this basis are NOT comparable to any additions verdict committed before 2026-08-04, which were scored on the COD basis \u2014 the metric means something different. Retirements-side comparability is unaffected. See docs/records/forecast/ffr-3s-cod-shifted-scoring-2026-08-04.md.",
       "entry_commissioning_lag": true
     },
     "co2": {

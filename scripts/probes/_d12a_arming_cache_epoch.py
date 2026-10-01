@@ -2,13 +2,13 @@
 """D12-A — declare and measure the ERCOT forecast lane's entry-pair cache epoch.
 
 Per-run probe / calibration record for owner ruling **Q15** (r#18 sitting,
-2026-08-30, ``docs/handoffs/capx-director-ledger-2026-08.md`` §3): arming
+2026-08-30, ``docs/records/forecast/capx-director-ledger-2026-08.md`` §3): arming
 ``entry_margin_exhaustion`` + ``entry_forward_reserve_leg`` as the ERCOT
 forecast default via ``ISOConfig.default_scenario_overrides`` — the Q10
 confirm-then-arm protocol's execution on a D12-C record the owner judged
 confirming-in-substance per that finding's own §4.3 clause
-(``docs/handoffs/FINDING-capx-d12c-confirm-pair-2026-08-30.md``; lane record
-``docs/handoffs/FINDING-capx-d12a-arming-2026-08-30.md``).
+(``docs/records/forecast/FINDING-capx-d12c-confirm-pair-2026-08-30.md``; lane record
+``docs/records/forecast/FINDING-capx-d12a-arming-2026-08-30.md``).
 ``scripts/probes/_ffr9c_stageb_cache_epoch.py`` is this probe's model.
 
 It computes cache keys off the LIVE config and solves nothing. Four reads:

@@ -7,7 +7,7 @@ and model price band, by zone, and into a body (both sides capped at $200 /
 $1,000) and a tail. Keeper bundle ``r_ercot5_hourgrain_span``.
 
 Usage: ``python3 scripts/probes/_r_ercot6_c3a_zonal.py 2023 2024 2025``.
-Record: ``docs/handoffs/FINDING-r-ercot-6-double-count-retest-2026-09-26.md``.
+Record: ``docs/records/ercot/FINDING-r-ercot-6-double-count-retest-2026-09-26.md``.
 """
 
 import sys

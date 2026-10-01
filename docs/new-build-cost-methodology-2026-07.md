@@ -246,7 +246,7 @@ gets *wider* (honest published uncertainty). No backcast run can change (§7).
   — missing gitignored `data/clean/confirmed-retirements`, identical on the
   base tree).
 - Backcast byte-identity + forecast smoke: recorded in the session log /
-  handoff (`docs/handoffs/capacity-cost-grounding-2026-07.md`).
+  handoff (`docs/records/misc/capacity-cost-grounding-2026-07.md`).
 
 ## 8. Maintenance rules
 

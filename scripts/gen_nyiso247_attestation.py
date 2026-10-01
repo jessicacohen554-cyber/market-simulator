@@ -30,11 +30,11 @@ KEEPER = REPO / "results" / "calibration" / "nyiso241_ctcommitted_span"
 
 ATTESTED_BY = (
     "session nyiso-247 (2026-09-20), THE ARM. Pre-registration: "
-    "docs/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md, pushed at "
+    "docs/records/nyiso/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md, pushed at "
     "40316764d1977e48e44566ec71a09ed562be73f1 BEFORE any gated number existed, "
     "carrying the FORM, every bar and every kill; phase 0 at "
     "42d750537532c95d335286b63bca881e8a01c76b "
-    "(docs/ADDENDUM-nyiso247-phase0-gates-and-two-falsified-claims-2026-09-20.md). "
+    "(docs/records/nyiso/ADDENDUM-nyiso247-phase0-gates-and-two-falsified-claims-2026-09-20.md). "
     "Matrix cell: gas_offer_net_revenue_margin. "
     "THE SINGLE DELTA: gas_offer_net_revenue_margin is DISARMED for NYISO, with "
     "its two sub-gates (gas_offer_margin_zonal_anchor{,_vintage}), which resolve "

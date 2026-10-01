@@ -21,7 +21,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 KEEPER = REPO / "results" / "calibration" / "pjmnext7_vs_span"
 PINNED = "e9fc1a5eaf7f0255d1b43bad53851e1aa9500131"
-PRECOMMIT = "docs/PRECOMMIT-pjm-next-8-exitfix-2026-09-28.md"
+PRECOMMIT = "docs/records/pjm/PRECOMMIT-pjm-next-8-exitfix-2026-09-28.md"
 
 
 def build() -> dict:
@@ -39,7 +39,7 @@ def build() -> dict:
         f"recorded before any solve ({PRECOMMIT} §4)."
     )
     g["note"] = (
-        "ONE MEASURED-INPUT REPAIR (rule 14, docs/FINDING-pjm-next-7-coal-phase0-2026-09-28.md §3): the "
+        "ONE MEASURED-INPUT REPAIR (rule 14, docs/records/pjm/FINDING-pjm-next-7-coal-phase0-2026-09-28.md §3): the "
         "CAMPD unit-outage layer sizes each unit from the solve year's own EIA-860 vintage, keys dated "
         "exit bins over their own capacity, and windows exit-cohort units dark all year. The companion's "
         "control reproduces the keeper's file byte-for-byte. Zero free parameters added; no multiplier "

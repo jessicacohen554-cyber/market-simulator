@@ -2,7 +2,7 @@
 
 The Northwest Power Pool is a pool of seventeen balancing authorities, not an
 ISO, and issues no Gold Book / CELT / LTLF / ITP equivalent. Lane NWPP-12
-(``docs/handoffs/FINDING-nwpp-12-2026-09-13.md`` §0.1, gate G12) therefore
+(``docs/records/nwpp/FINDING-nwpp-12-2026-09-13.md`` §0.1, gate G12) therefore
 ASSEMBLED ``data/raw/load-forecast/nwpp/nwpp.csv`` (83 rows) from the
 participants' own filed plans, and documented the assembly rule, its coverage
 and every publisher that supplies no row in that directory's ``SOURCES.md``:

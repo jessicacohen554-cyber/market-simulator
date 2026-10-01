@@ -62,9 +62,9 @@ This is the whole schedulable program today. Phase A is DONE when, per ISO:
    the **scarcity-tail price-formation** entry — the C3c model-class limitation, up to
    −$14/MWh (−22% of level) in a 2023-like scarcity-concentration year, ~2% of hours —
    was added by ercot-190 2026-08-12 under the
-   `docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md` §5
+   `docs/records/ercot/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md` §5
    RESOLUTIONS addendum, evidence
-   `results/calibration/ercot189_c3a_c3c_overlap.json`.)*
+   `results/phase0/ercot/ercot189_c3a_c3c_overlap.json`.)*
 
 **Phase B — DEFERRED: the golden solves (opens ONLY through §2.1b, per ISO).** The
 original deliverable, unchanged in content but unscheduled: a **golden 2026–2050 BAU
@@ -109,7 +109,7 @@ config freezes, never inside this program's iterations (§2.3).
    but is absorbed on the staged/threshold-3 full fleet, and Uri-2021 stays $0 because
    hindcast demand is shed-suppressed served load (a demand-input gap, not availability).
    Residual to SOM: ≈ 56 $/kW-yr event-year / ≈ 66 event-free (co-opt off) → still
-   G-20/G-22's. See `docs/handoffs/ff-1b-correlated-availability-2026-07-17.md`.
+   G-20/G-22's. See `docs/records/forecast/ff-1b-correlated-availability-2026-07-17.md`.
 3. **Entry stack — FF-2A LANDED (gated, 2026-07-18); ERCOT solar residual open.** Was: BLK-8
    solar (PJM price channel alone insufficient; owner's state-RPS attribute fix unmeasured at
    bands), BLK-7 VRE capacity revenue = 0, queue chunking / entry sizing (I13 cobweb), BLK-10
@@ -118,7 +118,7 @@ config freezes, never inside this program's iterations (§2.3).
    backstop 2.5 → 1.103 GW at the measured ladder, PJM solar +84 % → +48 %; ERCOT solar zero
    measured as a pure term-(a) price-signal residual (−9.7k best-year margin) — G-20/G-22
    lane. Integrated as real source + reproduced (`*-ff2a-r2` legs, score-identical) —
-   `docs/handoffs/ff-entry-stack-completion-2026-07.md` §8.
+   `docs/records/forecast/ff-entry-stack-completion-2026-07.md` §8.
 4. **Non-equilibrium two-phase trajectory** (full-horizon P-3A): de-firm to ~2035 then
    cap-market over-build (RM→30–67%) / ERCOT chronic shortage + #2064 non-monotone
    scarcity. Cure = responsive capacity price (flips) + entry dynamics; re-measured at
@@ -135,7 +135,7 @@ config freezes, never inside this program's iterations (§2.3).
    DMM 2024) and NYISO's requirement basis was already correct (FF-3D ratio). The
    hydro-in-ledger fix is routed to FF-1C (its charter, this row §1.2-6); CAISO also
    carries peak-currency (FF-1C) + VRE/storage ELCC (CR-3.1). Not tuned to force
-   closure (rule 1/11). See `docs/handoffs/ff-2b-adequacy-basis-2026-07.md`.
+   closure (rule 1/11). See `docs/records/forecast/ff-2b-adequacy-basis-2026-07.md`.
    → FF-1C (hydro-in-ledger), CR-3.1 (VRE/storage ELCC).
 6. **Inputs currency**: DC zone shares empty; growth/ATB/fuel/policy vintages unaudited
    at HEAD; `NEW_ENTRY_COSTS` hardcoded (ATB-cited) rather than reading the curated ATB
@@ -175,7 +175,7 @@ config freezes, never inside this program's iterations (§2.3).
 > - **Row 1 (retirement-rule inversion).** FF-0C's redesign and FF-1A's
 >   implementation both landed: `retirement_rule="pipeline"` exists and is
 >   cache-key-registered. The owner **SIGNED D-1 = FLIP** (`legacy` → `pipeline`)
->   on 2026-08-02 (`docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum C.1),
+>   on 2026-08-02 (`docs/records/forecast/ffr-owner-sitting-2026-08-02.md` Addendum C.1),
 >   on FFR-2B's evidence (`ffr-2b-retirement-entry-evidence-2026-08-02.md`).
 >   **The default has NOT moved yet — FFR-3A step 0 executes it** (rule 24). Note
 >   the row's own figures now UNDERSTATE the legacy rule's harm: Wave 1 worsened
@@ -188,7 +188,7 @@ config freezes, never inside this program's iterations (§2.3).
 >   `entry_vre_capacity_revenue` is **D-2′ HOLD** — separable, unprobed. Again:
 >   defaults unmoved here; FFR-3A step 0 arms them.
 > - **Row 5 (base-year adequacy / hydro).** **CLOSED as routed:** FFR-1C landed
->   2026-07-31 (`docs/handoffs/ffr-1c-hydro-accreditation-2026-07-31.md`) — hydro
+>   2026-07-31 (`docs/records/forecast/ffr-1c-hydro-accreditation-2026-07-31.md`) — hydro
 >   now enters `accredited_firm_capacity_mw` at each ISO's published class factor.
 >   **The row's gap magnitudes are superseded**: CAISO 3.6 / NYISO 3.3 GW were
 >   measured when the hydro vintage resolved to the 2025 EIA-923 *early release*;
@@ -212,12 +212,12 @@ config freezes, never inside this program's iterations (§2.3).
 
 | Lane (old id) | Detailed spec (still citable) | Done | Remaining (now chartered here) |
 |---|---|---|---|
-| Retirement / flip-gate (RC-*) | `docs/handoffs/forecast-retirement-calibration-plan-2026-07.md` (§2.1 gate, §3 T-R bands), flip memo 2026-07-16, D1 findings | RC-0A…RC-2B incl. D1 re-probe; per-ISO gate; vintages; seasonal MISO; R5b; coal threshold identified | Decision-rule redesign (FF-0C/1A), flips (FF-2C), NYISO R5a (FF-3D), NEISO first pair (FF-2B), BLK-10 re-measure (FF-1A/2A) |
-| National CES (W*) | `docs/handoffs/national-ces-eac-premium-plan-2026-07.md` | Waves 1–2 fully merged (#2375–#2399): resolver, wiring, W2-C retrofit, reporting harness, W2-D, W2-E | W3-R readiness gate + T1-scale CES POC (FF-3B); W4 campaign + W5 DEFERRED behind §2.1b (2026-07-19; CES plan §7 R1–R4 map onto this program's gates) |
+| Retirement / flip-gate (RC-*) | `docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md` (§2.1 gate, §3 T-R bands), flip memo 2026-07-16, D1 findings | RC-0A…RC-2B incl. D1 re-probe; per-ISO gate; vintages; seasonal MISO; R5b; coal threshold identified | Decision-rule redesign (FF-0C/1A), flips (FF-2C), NYISO R5a (FF-3D), NEISO first pair (FF-2B), BLK-10 re-measure (FF-1A/2A) |
+| National CES (W*) | `docs/records/forecast/national-ces-eac-premium-plan-2026-07.md` | Waves 1–2 fully merged (#2375–#2399): resolver, wiring, W2-C retrofit, reporting harness, W2-D, W2-E | W3-R readiness gate + T1-scale CES POC (FF-3B); W4 campaign + W5 DEFERRED behind §2.1b (2026-07-19; CES plan §7 R1–R4 map onto this program's gates) |
 | PJM forecast workstream (owner) | commits on `claude/forecast-workstream-pjm-*` | state-RPS entry floor, W2-D adequacy, AS-revenue scaffolding, MISO storage registry, I12 floor | Multi-ISO adequacy basis (FF-2B), state-RPS pattern for other ISOs where cited (FF-2A), effect measurement (FF-0B/1A) |
-| Capacity economics (CX-*) | `docs/handoffs/capacity-economics-plan-2026-07.md`, `cx4-datacenter-load-design-2026-07.md` | Floor accreditation redesign, joint FOM/scarcity protocol, DC-block mechanism | DC trajectories/siting currency + BAU posture (FF-1C); FOM default flip stays gated on screen-revenue work (tracked under FF-1B/2A) |
-| Forecast validation (W0-P4) | `docs/handoffs/forecast-validation-program-2026-07.md` | Invariants, ledger, hindcast harness, goldens, dashboard page | Rubric + crossover instrument + tier gating (FF-0A/0E, §2–§3) |
-| Probability bounds (PB-*) | `docs/handoffs/probability-bounds-plan-2026-07.md` | PB-0…PB-4 machinery | PB-5 production band — DEFERRED with Wave 4 behind §2.1b (was FF-4C; owner call) |
+| Capacity economics (CX-*) | `docs/records/misc/capacity-economics-plan-2026-07.md`, `cx4-datacenter-load-design-2026-07.md` | Floor accreditation redesign, joint FOM/scarcity protocol, DC-block mechanism | DC trajectories/siting currency + BAU posture (FF-1C); FOM default flip stays gated on screen-revenue work (tracked under FF-1B/2A) |
+| Forecast validation (W0-P4) | `docs/records/forecast/forecast-validation-program-2026-07.md` | Invariants, ledger, hindcast harness, goldens, dashboard page | Rubric + crossover instrument + tier gating (FF-0A/0E, §2–§3) |
+| Probability bounds (PB-*) | `docs/records/misc/probability-bounds-plan-2026-07.md` | PB-0…PB-4 machinery | PB-5 production band — DEFERRED with Wave 4 behind §2.1b (was FF-4C; owner call) |
 
 ---
 
@@ -259,14 +259,14 @@ decisions carried by later, owner-gated lanes.
 | b | NYISO R5a reserve-requirement construction | **Option B** (NYCA-wide static proxy — not the lagged model-derived factor of Option A) | **FF-3D** (owner-gated) implements it and runs the first curve-ON probe. |
 | c | `datacenter_load_path` default | **`mid`** (was `off`) — model the published DC boom as a flat, energy-invariant block (FF-1C §7) | **FF-1F** (`scenarios.py`). Forecast-only axis; `__post_init__` coerces it to `off` in backcast/hindcast, so keepers stay byte-identical. |
 | d | `correlated_forced_outage` default | **ON** (was `False`) — the measured Uri/Elliott/Heather cold-event derate (FF-1B §3 recommendation) | **FF-1F** (`scenarios.py`). ERCOT-only curve; hard no-op in backcast (keepers byte-identical); hindcast legs inherit it on re-solve (a validation-lane consequence, not a keeper change). |
-| e | `entry_lookahead_reprice` default | **ON** (was `False`), owner-approved **2026-07-18** — the zero-DOF, G-30-validated entry-screen lookahead reprice (re-price the entering year's known net load against the current fleet with the published ORDC curve; every input an existing model quantity, rule-13 admissible). Cite `docs/handoffs/ff-entry-stack-completion-2026-07.md` §4.1 + `docs/hindcast-reports/ercot-g30-entry-lookahead-2026-07-08.md`. | **FF-2A-posture** (`scenarios.py`). Forecast/screen-only: the runner read site gates on `mode=="forecast"` (a backcast runs no capacity evolution), `__post_init__` coerces it `False` in a plain backcast (belt-and-braces, the FF-1F `datacenter_load_path` pattern), and the hindcast harness passes it explicitly (own `False` default) — so backcast keepers **and** existing hindcast legs stay byte-identical. Re-opens **nothing** (zero-DOF). |
+| e | `entry_lookahead_reprice` default | **ON** (was `False`), owner-approved **2026-07-18** — the zero-DOF, G-30-validated entry-screen lookahead reprice (re-price the entering year's known net load against the current fleet with the published ORDC curve; every input an existing model quantity, rule-13 admissible). Cite `docs/records/forecast/ff-entry-stack-completion-2026-07.md` §4.1 + `docs/hindcast-reports/ercot-g30-entry-lookahead-2026-07-08.md`. | **FF-2A-posture** (`scenarios.py`). Forecast/screen-only: the runner read site gates on `mode=="forecast"` (a backcast runs no capacity evolution), `__post_init__` coerces it `False` in a plain backcast (belt-and-braces, the FF-1F `datacenter_load_path` pattern), and the hindcast harness passes it explicitly (own `False` default) — so backcast keepers **and** existing hindcast legs stay byte-identical. Re-opens **nothing** (zero-DOF). |
 
 **FF-1F byte-identity attestation (c, d).** Backcast `cache_key` is **unchanged**
 by the flip (DC coerces to `off`, and `backcast_config` pins
 `correlated_forced_outage=False` so the derate flag keeps its old value); the
 derate is additionally a mechanism-level no-op in backcast. The forecast default
 `cache_key` shifts **as intended** — the golden posture is now a distinct
-scenario. T0 evidence + citations: `docs/handoffs/ff-1f-posture-defaults-2026-07-18.md`.
+scenario. T0 evidence + citations: `docs/records/forecast/ff-1f-posture-defaults-2026-07-18.md`.
 
 **FF-2A-posture byte-identity attestation (e).** `entry_lookahead_reprice`
 default `False → True`, owner-approved 2026-07-18 (FF-2A §4.1). The field is
@@ -282,9 +282,9 @@ probe leg that armed it already ran `True`. The forecast default `cache_key`
 shifts **as intended** (`cdf095573872a069` → `1d4a8acfa187a505`) — the golden
 posture is now a distinct scenario. Zero-DOF — every input is an existing model
 quantity (rule 13), re-opening nothing. T0 evidence + citations:
-`docs/handoffs/ff-entry-stack-completion-2026-07.md` §4.1 (default-ON
+`docs/records/forecast/ff-entry-stack-completion-2026-07.md` §4.1 (default-ON
 recommendation) + `docs/hindcast-reports/ercot-g30-entry-lookahead-2026-07-08.md`
-(G-30 single-term isolation) + `docs/handoffs/ff-2a-posture-entry-lookahead-2026-07-18.md`
+(G-30 single-term isolation) + `docs/records/forecast/ff-2a-posture-entry-lookahead-2026-07-18.md`
 (this session's findings note).
 
 ### 2.1b Full-solve authorization gate — owner amendment 2026-07-19 (the "10-hour rule")
@@ -314,7 +314,7 @@ wave manager:
      reality where reality is known.
 
      *Gate (a) status under this text (owner decision D-5(a), signed 2026-08-02,
-     `docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum C.1): it reads as **met by three
+     `docs/records/forecast/ffr-owner-sitting-2026-08-02.md` Addendum C.1): it reads as **met by three
      ISOs — NEISO, NYISO, PJM** — the current membership of the `complete` block. Conditions
      (b)–(d) still gate every full solve independently, and the holdout spend freeze still
      gates every holdout spend.*
@@ -408,7 +408,7 @@ Runs register on the forecast-validation namespace (`frontend/data/hindcast/`) w
 > single largest cause of red tests on a fresh checkout: **15 of the 19 test
 > failures FFR-3D triaged were this and nothing else** (`test_soundness`,
 > `test_export`, the `ff_readiness_battery` integration walks,
-> `test_consume_phase3d`) — see `docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md`
+> `test_consume_phase3d`) — see `docs/records/forecast/ffr-3d-instrument-repair-2026-08-03.md`
 > §6. Build `data/clean` before concluding the suite is broken.
 >
 > *(Documented by FFR-3D, closing FFR-3A blocker 1: the prerequisite was
@@ -484,8 +484,8 @@ research step against the references below (WebSearch/WebFetch where the proxy a
 otherwise the on-disk corpus + a MANUAL-DOWNLOADS row), and its memo must state which
 practice was adopted/adapted/rejected and why. Numbers entering the model carry citations
 into `docs/parameter-citations.md` (rule 5). In-repo anchors first:
-`docs/handoffs/cross-model-corridor-2026-07-13.md` (external-outlook corridor),
-`docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md` §1 (the
+`docs/records/misc/cross-model-corridor-2026-07-13.md` (external-outlook corridor),
+`docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md` §1 (the
 commercial-practice scorecard that framed this program).
 
 | Problem | Consult | What to take |
@@ -576,10 +576,10 @@ WAVE 5 (last active wave; does NOT wait on the deferred Wave 4):
 
 Read CLAUDE.md, docs/forecast-development-plan-2026-07.md §2-§4 (spec; §7 binds),
 docs/calibration-determination-rubric.md (the backcast precedent to mirror),
-docs/handoffs/forecast-validation-program-2026-07.md §1.4/§2.2 (hindcast bands +
-invariants), docs/handoffs/forecast-retirement-calibration-plan-2026-07.md §3 (T-R
-battery), docs/handoffs/cross-model-corridor-2026-07-13.md (external corridor + the
-divergence-explanation discipline), docs/handoffs/driver-battery-2026-07-12.md, and
+docs/records/forecast/forecast-validation-program-2026-07.md §1.4/§2.2 (hindcast bands +
+invariants), docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md §3 (T-R
+battery), docs/records/misc/cross-model-corridor-2026-07-13.md (external corridor + the
+divergence-explanation discipline), docs/records/misc/driver-battery-2026-07-12.md, and
 scripts/check_forecast_invariants.py. Research step per plan §4: survey how commercial
 practice judges capacity-expansion output (EPA IPM documentation, ReEDS Standard
 Scenarios validation sections, CEMs literature on backtesting expansion models) and
@@ -607,7 +607,7 @@ deriving them from design targets and external practice, then measuring.
 [OPUS] FF-0B — Baseline the T1-F short forecast: all six ISOs, 2026-2030, HEAD defaults
 
 Read CLAUDE.md, docs/forecast-development-plan-2026-07.md §2 (§7 binds),
-docs/handoffs/full-horizon-findings-2026-07-12.md (the 25-yr baseline + known issues),
+docs/records/misc/full-horizon-findings-2026-07-12.md (the 25-yr baseline + known issues),
 docs/forecast-invariant-findings.md.
 
 1. Run scripts/run_full_horizon.py --start-year 2026 --end-year 2030 per ISO, HEAD
@@ -618,7 +618,7 @@ docs/forecast-invariant-findings.md.
    registry gaps (cited values, fail-loud pattern) — anything structural is a finding.
 2. Score each: check_forecast_invariants.py + collate_full_horizon.py; capture
    wall/RSS per year (plan §2.4 ledger).
-3. Deliverable docs/handoffs/ff-t1f-baseline-2026-07.md: per-ISO invariant matrix,
+3. Deliverable docs/records/forecast/ff-t1f-baseline-2026-07.md: per-ISO invariant matrix,
    evolution-ledger summary (retire/build/backstop by year), top anomalies each with a
    mechanism hypothesis naming the module, and a ranked triage list mapped to plan §1.2
    rows (new items get new rows). Findings only — no tuning, no default changes.
@@ -634,7 +634,7 @@ docs/forecast-invariant-findings.md.
 the per-fuel threshold inversion
 
 Read CLAUDE.md (rules 1/13/14/21/23), docs/forecast-development-plan-2026-07.md §1.2-1
-and §4 (§7 binds), docs/handoffs/position-calibration-d1-findings-2026-07-16.md
+and §4 (§7 binds), docs/records/misc/position-calibration-d1-findings-2026-07-16.md
 (§6/§7 — the blocker you are solving), docs/handoffs/retirement-dof-identification-
 2026-07-15.md (the lag identification that must survive), docs/handoffs/
 capacity-clearing-flip-memo-2026-07-16.md, and model/capacity.py::
@@ -643,7 +643,7 @@ formulation (NPV going-forward vs revenue over a horizon), ReEDS economic retire
 GenX endogenous retirement, PLEXOS LT/Aurora integer NPV decisions — record
 adopted/rejected per practice.
 
-Memo docs/handoffs/ff-retirement-rule-redesign-2026-07.md:
+Memo docs/records/forecast/ff-retirement-rule-redesign-2026-07.md:
 (a) Diagnose why consecutive-loss counters with per-fuel thresholds structurally race
     fuels (the D1=3 gas_st inversion) — state the mechanism precisely.
 (b) Candidate rules, each graded vs rules 13/21/23 (forward story, identification
@@ -666,7 +666,7 @@ No code, no solve, no tuning. This memo gates FF-1A.
 [OPUS] FF-0D — Audit every forward input for currency and wiring (no defaults moved)
 
 Read CLAUDE.md (rules 5/13/14/23), docs/forecast-development-plan-2026-07.md §1.2-6
-(§7 binds), docs/handoffs/cx4-datacenter-load-design-2026-07.md (the DC spec — the
+(§7 binds), docs/records/misc/cx4-datacenter-load-design-2026-07.md (the DC spec — the
 mechanism has since LANDED: scenarios.py datacenter_load_path + constants
 DATACENTER_ADDITIONS_MW; DATACENTER_ZONE_SHARE is empty), and docs/handoffs/
 nyiso-forecast-2035-2026-07-13.md (the hydro fleet-drop finding).
@@ -687,7 +687,7 @@ Audit, with per-item verdict CURRENT / STALE / UNWIRED and the citation trail:
    bug (data/hydro.py exact-year filter → charter the hold-last-vintage fix for FF-1C).
 6. FC-5 benchmark-table gaps from FF-0A's inventory (if its list is merged; else leave
    a placeholder section).
-Deliverable docs/handoffs/ff-inputs-currency-audit-2026-07.md + a prioritized fix/
+Deliverable docs/records/forecast/ff-inputs-currency-audit-2026-07.md + a prioritized fix/
 intake list feeding FF-1C/FF-1E. Fetch public documents where the proxy allows; log
 MANUAL DOWNLOADS NEEDED rows otherwise — never guess values. Audit only: no source
 default changes in this session.
@@ -763,9 +763,9 @@ calibration-plan-2026-07.md §2.1/§3 (gate + T-R bands — never restated loose
 reserve-value signal (BLK-6's structural half)
 
 Read CLAUDE.md (rules 13/19 hard), docs/forecast-development-plan-2026-07.md §1.2-2
-(§7 binds), docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D (the
+(§7 binds), docs/records/ercot/ercot-retirement-composition-2026-07-16.md Part D (the
 availability design charter — stages; implement, don't re-design from scratch),
-docs/handoffs/cross-model-corridor-2026-07-13.md §2 (SOM anchors), data/outages.py,
+docs/records/misc/cross-model-corridor-2026-07-13.md §2 (SOM anchors), data/outages.py,
 and the screen-revenue seam in model/capacity.py (screen_reserve_value_enabled).
 HARD BOUNDARY: the backcast AS co-opt mechanism (G-20/G-22 lane) is consumed as-is
 from main — never extended here. Rule 19: one mechanism per phenomenon — enumerate
@@ -823,7 +823,7 @@ plan-2026-07.md §2.2-§2.3 (§7 binds), and the FF-0E harness docs.
    keeper backcast error, per metric per year), capacity events vs actuals, 2026-2027
    invariants + plausibility notes vs the announced pipeline and ISO forecasts
    (context only). Confirm by construction no bench/actuals read for ≥2026.
-3. Deliverable docs/handoffs/ff-crossover-gap-2026-07.md: the measured input gap per
+3. Deliverable docs/records/forecast/ff-crossover-gap-2026-07.md: the measured input gap per
    ISO with a decomposition hypothesis per large gap (which forward driver, not which
    tuned overlay, explains it — route real driver defects to L-INP as new plan §1.2
    rows). Register runs on the forecast-validation dashboard.
@@ -904,8 +904,8 @@ requirement citation, first NEISO hindcast pair
 Starts after FF-2A merges (capacity.py hand-off). Read CLAUDE.md, docs/
 forecast-development-plan-2026-07.md §1.2-5/-7 (§7 binds), docs/handoffs/
 full-horizon-findings-2026-07-12.md §4 (the I7 base-year table; PJM passes — your
-A/B), docs/handoffs/ces-w1b-bau-smoke-2026-07.md (how W2-D closed PJM's gap),
-docs/handoffs/capacity-clearing-flip-memo-2026-07-16.md §1.4/R-7, and the
+A/B), docs/records/forecast/ces-w1b-bau-smoke-2026-07.md (how W2-D closed PJM's gap),
+docs/records/misc/capacity-clearing-flip-memo-2026-07-16.md §1.4/R-7, and the
 accreditation-basis memo.
 
 1. Per ISO (CAISO/NEISO/NYISO): reconcile the base-year accredited-supply ledger vs
@@ -931,7 +931,7 @@ accreditation-basis memo.
 DO NOT START without: FF-1A + FF-2A findings in hand, and the owner's explicit per-ISO
 sign-off on the flip decision (the RC-2B decision framework re-graded on FF-1A/FF-2A
 measurements). Read CLAUDE.md, docs/forecast-development-plan-2026-07.md (§7 binds),
-docs/handoffs/forecast-retirement-calibration-plan-2026-07.md §2.1/§2.3 F-9, the
+docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md §2.1/§2.3 F-9, the
 accreditation-basis memo §4.3-R4, and the FF-1A/FF-2A findings docs.
 
 1. One dedicated commit per approved ISO: per-ISO gate ON with the memo citation; the
@@ -989,7 +989,7 @@ carried moves to FF-3E's projection until real T2 data exists. Do not schedule a
 [OPUS] FF-3B — CES W3-R readiness verification + T1-scale CES POC; the W4 campaign
 is DEFERRED behind §2.1b — do NOT launch it
 
-Read CLAUDE.md, docs/handoffs/national-ces-eac-premium-plan-2026-07.md §7-§8 (the
+Read CLAUDE.md, docs/records/forecast/national-ces-eac-premium-plan-2026-07.md §7-§8 (the
 lane spec — its §7 W3-R readiness criteria remain binding; its W4 prompts are
 deferred), and docs/forecast-development-plan-2026-07.md §2/§2.1b (§7 binds; this
 program's FF-2A headline metric IS the CES R1 criterion).
@@ -1018,8 +1018,8 @@ of the §2.4 budget at any scheduled tier, or I9/I10 FAILs persisting at T1; the
 references below apply when that tier is eventually authorized — §2.1b)
 
 Read CLAUDE.md (rule 2, rule 9), docs/forecast-development-plan-2026-07.md §1.2-8/-9
-and §2.4 (§7 binds), docs/handoffs/full-horizon-findings-2026-07-12.md §2 (feasibility
-data), docs/handoffs/wallclock-efficiency-plan-2026-07.md (what is already optimal —
+and §2.4 (§7 binds), docs/records/misc/full-horizon-findings-2026-07-12.md §2 (feasibility
+data), docs/records/misc/wallclock-efficiency-plan-2026-07.md (what is already optimal —
 do not re-litigate its explicit skips), and the latest wall/RSS ledgers (FF-2D battery
 + FF-3E projection; FF-3A is deferred).
 
@@ -1124,11 +1124,11 @@ the FF-G1 session (2026-07-19); the owner dispatches each in its own session.
 
 | ID | Model | Scope | Lane | Status |
 |---|---|---|---|---|
-| **FF-G1** | FABLE | transmission-expansion registry + forward TTC channel | L-INP | **DATA HALF LANDED 2026-07-19; ENGINE HALF 2026-07-26.** The gate + coercion + cache-key entry and the runner per-year seam shipped as `docs/handoffs/patches/ff-g1-core-wiring.patch` and were never applied — everything data-side was inert until the fast-tier escalation D2 apply (`docs/handoffs/fast-tier-triage-2026-07-26.md` §4-D2). Gate default-off; `cache_key(ScenarioConfig())` re-verified at `edbc1b103207170a`; T1-F A/B still pending before any flip. |
-| **FF-G2** | OPUS | fuel forward trajectories: AEO2026 re-derive + STEO/strip triangulation + methodology doc (executes audit §7.2-P1) | L-INP | **LANDED 2026-07-20** — `docs/handoffs/ff-g2-fuel-forward-2026-07.md`; standing deliverable `docs/fuel-forward-methodology-2026-07.md`. Its near-term-blend owner box was decided **2026-08-02 as D-4 = OPTION A (status quo, pure AEO)** — sitting Addendum C.1. |
-| **FF-G3** | OPUS | forward net-CONE vintages + beyond-published evolution methodology (CR-2 follow-up; NO flip execution — FF-2C owns flips) | L-CAP | **LANDED 2026-07-20** — `docs/handoffs/ff-g3-net-cone-forward-2026-07.md`; standing deliverable `docs/capacity-price-forward-methodology-2026-07.md`. Its owner box became **D-3**: (b) forward real escalation **0.0 REAL CENTRAL** and (c) vintage intake **AUTHORIZED**, both signed 2026-08-02; **(a) the forward-evolution mode remains DEFERRED** — its FFR-2E defer condition is discharged but it was not re-put to the owner. Currency follow-up: `docs/handoffs/ffr-2c-net-cone-currency-2026-08-02.md`. |
-| **FF-G4** | FABLE/OPUS | load-shape evolution design memo (FF-0C memo pattern, NO code; reuses audit M3–M7/M11–M13) | L-INP | **LANDED 2026-07-20, MEMO ONLY — `docs/handoffs/ff-g4-load-shape-design-memo-2026-07.md`.** By charter it moved no code and no default. **IMPLEMENTED 2026-08-03 (FFR-SA, default-off — `docs/handoffs/ffr-sa-load-shape-implementation-2026-08.md`)**: Option B per §8-D1, `electrification_path` axis + `add_load_layers` unified fold-in (DC = layer #1, bit-identical DC-only path), NEISO heat_pump layer sourced from the 2026 CELT HEF; ev ships `{}` everywhere pending a citable charging profile (D4-1/D4-7); backcast/hindcast coerced off, keepers byte-identical. Arming posture = owner box (§8-D2), NOT flipped. |
-| **FF-G5** | OPUS | nuclear license/uprate/restart registry + forward-channel design memo (coordinates BLK-9 / R-NEW; rule 19 — no second exit mechanism) | L-INP | **LANDED 2026-07-20** — `docs/handoffs/ff-g5-nuclear-registry-2026-07.md`; new datatype `nuclear-license-status` + `docs/nuclear-fleet-forward-methodology-2026-07.md`. Registry + design memo only: **no mechanism code, no ScenarioConfig field**. Consuming it is FR-18/BLK-9, open at audit §4 Phase 5. |
+| **FF-G1** | FABLE | transmission-expansion registry + forward TTC channel | L-INP | **DATA HALF LANDED 2026-07-19; ENGINE HALF 2026-07-26.** The gate + coercion + cache-key entry and the runner per-year seam shipped as `docs/records/misc/patches/ff-g1-core-wiring.patch` and were never applied — everything data-side was inert until the fast-tier escalation D2 apply (`docs/records/misc/fast-tier-triage-2026-07-26.md` §4-D2). Gate default-off; `cache_key(ScenarioConfig())` re-verified at `edbc1b103207170a`; T1-F A/B still pending before any flip. |
+| **FF-G2** | OPUS | fuel forward trajectories: AEO2026 re-derive + STEO/strip triangulation + methodology doc (executes audit §7.2-P1) | L-INP | **LANDED 2026-07-20** — `docs/records/forecast/ff-g2-fuel-forward-2026-07.md`; standing deliverable `docs/fuel-forward-methodology-2026-07.md`. Its near-term-blend owner box was decided **2026-08-02 as D-4 = OPTION A (status quo, pure AEO)** — sitting Addendum C.1. |
+| **FF-G3** | OPUS | forward net-CONE vintages + beyond-published evolution methodology (CR-2 follow-up; NO flip execution — FF-2C owns flips) | L-CAP | **LANDED 2026-07-20** — `docs/records/forecast/ff-g3-net-cone-forward-2026-07.md`; standing deliverable `docs/capacity-price-forward-methodology-2026-07.md`. Its owner box became **D-3**: (b) forward real escalation **0.0 REAL CENTRAL** and (c) vintage intake **AUTHORIZED**, both signed 2026-08-02; **(a) the forward-evolution mode remains DEFERRED** — its FFR-2E defer condition is discharged but it was not re-put to the owner. Currency follow-up: `docs/records/forecast/ffr-2c-net-cone-currency-2026-08-02.md`. |
+| **FF-G4** | FABLE/OPUS | load-shape evolution design memo (FF-0C memo pattern, NO code; reuses audit M3–M7/M11–M13) | L-INP | **LANDED 2026-07-20, MEMO ONLY — `docs/records/forecast/ff-g4-load-shape-design-memo-2026-07.md`.** By charter it moved no code and no default. **IMPLEMENTED 2026-08-03 (FFR-SA, default-off — `docs/records/forecast/ffr-sa-load-shape-implementation-2026-08.md`)**: Option B per §8-D1, `electrification_path` axis + `add_load_layers` unified fold-in (DC = layer #1, bit-identical DC-only path), NEISO heat_pump layer sourced from the 2026 CELT HEF; ev ships `{}` everywhere pending a citable charging profile (D4-1/D4-7); backcast/hindcast coerced off, keepers byte-identical. Arming posture = owner box (§8-D2), NOT flipped. |
+| **FF-G5** | OPUS | nuclear license/uprate/restart registry + forward-channel design memo (coordinates BLK-9 / R-NEW; rule 19 — no second exit mechanism) | L-INP | **LANDED 2026-07-20** — `docs/records/forecast/ff-g5-nuclear-registry-2026-07.md`; new datatype `nuclear-license-status` + `docs/nuclear-fleet-forward-methodology-2026-07.md`. Registry + design memo only: **no mechanism code, no ScenarioConfig field**. Consuming it is FR-18/BLK-9, open at audit §4 Phase 5. |
 
 *(Status rows corrected 2026-08-02 by FFR-3B — audit FR-21 bookkeeping desync:
 all four read "prompt issued" for thirteen days after they landed. Each row now
@@ -1153,7 +1153,7 @@ memo/registry-only so a landed row is not misread as a landed mechanism.)*
    `mcp__github__push_files` ONLY (never `git push`)", which CLAUDE.md superseded
    on 2026-07-25 after PR #2878 pushed a 434,784-byte single-blob payload over
    `git push` with no 413. Following the old text would strand run payloads
-   sidecar-only — `docs/handoffs/dashboard-payload-push-gap-2026-07.md`.)*
+   sidecar-only — `docs/records/misc/dashboard-payload-push-gap-2026-07.md`.)*
    After any push touching a file ≥300 lines, verify the blob
    (fetch-back compare, or `git fetch origin <branch>` + empty `git diff`) before the
    next commit; no placeholder/partial versions of existing files, ever.
@@ -1230,7 +1230,7 @@ fully derivable from the committed hindcast sidecars + the verdict snapshot, so 
 deploy regenerates them (same treatment the gitignore already gives the generated
 backcast codebase-site data). `ff-data.js` reuses the proven `bc-data.js` loader
 mechanics (inflate/format/hash helpers). The `ff-verdicts.json` snapshot is committed
-because the verdict doc `docs/handoffs/ff-t1-gate-verdicts.json` is NOT in the Pages
+because the verdict doc `docs/records/forecast/ff-t1-gate-verdicts.json` is NOT in the Pages
 sparse-checkout, so the deploy's `--reindex` bakes verdicts from the snapshot with no
 `docs/handoffs` access. `deploy-pages.yml` runs
 `register_forecast_run.py --reindex --site-dir _site` (replacing the retired
@@ -1249,20 +1249,20 @@ evidence base and stay as-is.
 
 | Doc | Disposition |
 |---|---|
-| `docs/handoffs/forecast-retirement-calibration-plan-2026-07.md` ⚑ | Coordination → this plan (L-CAP); remains the lane's technical spec (§2.1 gate, §3 T-R bands, §5 data needs). Its §4 prompts are superseded by §6 here. |
-| `docs/handoffs/national-ces-eac-premium-plan-2026-07.md` ⚑ | Coordination → this plan (FF-3B); W1+W2 merged; §7 W3-R readiness criteria remain binding (FF-3B). Its W4/W5 execution is DEFERRED behind §2.1b (2026-07-19) — do not launch from its §8. |
-| `docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md` ⚑ | ARCHIVED — waves executed; scorecard/battery definitions remain citable; successor lanes live here. |
-| `docs/handoffs/forecast-validation-program-2026-07.md` ⚑ | ARCHIVED — machinery delivered (invariants, ledger, hindcast, goldens); hindcast band tables remain citable (FC-3). |
-| `docs/handoffs/capacity-economics-plan-2026-07.md` ⚑ | ARCHIVED — stages executed; open remainders (FOM default flip, foresight posture) tracked as plan-§1.2/FF-1B/FF-2A items. |
-| `docs/handoffs/cx4-datacenter-load-design-2026-07.md` ⚑ | Mechanism LANDED since authoring; remaining trajectory/siting/posture items = FF-1C. Spec stays citable. |
-| `docs/handoffs/probability-bounds-plan-2026-07.md` ⚑ | Machinery landed; PB-5 DEFERRED with Wave 4 behind §2.1b (was FF-4C, owner-gated; 2026-07-19). Spec stays current for the eventual run. |
-| `docs/handoffs/probability-bounds-prompts-2026-07.md` | Companion prompts — superseded for scheduling (PB-5 deferred behind §2.1b, was FF-4C); content current (ledger-marked only). |
+| `docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md` ⚑ | Coordination → this plan (L-CAP); remains the lane's technical spec (§2.1 gate, §3 T-R bands, §5 data needs). Its §4 prompts are superseded by §6 here. |
+| `docs/records/forecast/national-ces-eac-premium-plan-2026-07.md` ⚑ | Coordination → this plan (FF-3B); W1+W2 merged; §7 W3-R readiness criteria remain binding (FF-3B). Its W4/W5 execution is DEFERRED behind §2.1b (2026-07-19) — do not launch from its §8. |
+| `docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md` ⚑ | ARCHIVED — waves executed; scorecard/battery definitions remain citable; successor lanes live here. |
+| `docs/records/forecast/forecast-validation-program-2026-07.md` ⚑ | ARCHIVED — machinery delivered (invariants, ledger, hindcast, goldens); hindcast band tables remain citable (FC-3). |
+| `docs/records/misc/capacity-economics-plan-2026-07.md` ⚑ | ARCHIVED — stages executed; open remainders (FOM default flip, foresight posture) tracked as plan-§1.2/FF-1B/FF-2A items. |
+| `docs/records/misc/cx4-datacenter-load-design-2026-07.md` ⚑ | Mechanism LANDED since authoring; remaining trajectory/siting/posture items = FF-1C. Spec stays citable. |
+| `docs/records/misc/probability-bounds-plan-2026-07.md` ⚑ | Machinery landed; PB-5 DEFERRED with Wave 4 behind §2.1b (was FF-4C, owner-gated; 2026-07-19). Spec stays current for the eventual run. |
+| `docs/records/misc/probability-bounds-prompts-2026-07.md` | Companion prompts — superseded for scheduling (PB-5 deferred behind §2.1b, was FF-4C); content current (ledger-marked only). |
 | `docs/forecast-validation-plan.md` | Already SUPERSEDED-bannered (historical). |
 | `docs/forecast-methodology-gaps-2026-06.md` | Already supersession-noticed → gap-register. Historical. |
 | `docs/forecast-methodology-gaps-prompts-2026-06.md` ⚑ | STALE — do not execute; banner added. |
 | `docs/multi-iso/neiso-forecast-prep-prompts.md` ⚑ | STALE — overtaken by NEISO forecast runs; banner added. |
-| `docs/handoffs/confirmed-retirement-plan-2026-07.md` | EXECUTED design record (self-status'd; default ON since 2026-07-05). |
-| `docs/handoffs/emissions-co2-rate-plan-2026-07.md`, `emissions-mass-cap-plan-2026-07.md`, `emission-control-retrofit-forward-channel-2026-07.md` | EXECUTED design records (self-status'd); retrofit channel stays gated-inert pending the E2 NOx/SO2 forward wave (tracked as an L-INP backlog item, chartered on FF-0D evidence). |
+| `docs/records/misc/confirmed-retirement-plan-2026-07.md` | EXECUTED design record (self-status'd; default ON since 2026-07-05). |
+| `docs/records/misc/emissions-co2-rate-plan-2026-07.md`, `emissions-mass-cap-plan-2026-07.md`, `emission-control-retrofit-forward-channel-2026-07.md` | EXECUTED design records (self-status'd); retrofit channel stays gated-inert pending the E2 NOx/SO2 forward wave (tracked as an L-INP backlog item, chartered on FF-0D evidence). |
 | `docs/forecasting-entry-exit-assessment.md` | LIVE verdict — updated by FF-2C/FF-4B. |
 | `docs/forecast-invariant-findings.md`, `docs/gap-register-2026-07.md`, hindcast reports, `position-calibration*`, `capacity-clearing-flip-memo*`, `retirement-dof-identification*`, `blk8-*`, `full-horizon-findings*`, `cross-model-corridor*`, `driver-battery*`, `equilibrium-battery*`, `elcc-curves*`, `ces-w1b-*`, `ces-ci-*` | RECORDS — untouched, cited throughout. |
 

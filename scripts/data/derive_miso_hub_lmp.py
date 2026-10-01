@@ -21,7 +21,7 @@ the year's rows) — so the scoring reference must be chronological too, NOT
 prevailing-indexed. (Until 2026-07-15 this script converted EST -> Central
 *prevailing* and indexed the wall label, pairing every CST-month comparison
 one real hour off — the all-ISO scoring-clock artifact,
-docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md §1.)
+docs/records/ercot/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md §1.)
 The market reports are hour-ending 1-24 Eastern Standard Time **year-round**
 (each daily file's header says so), i.e. UTC-5 fixed, so each hour-ending
 maps to a unique CST slot by a constant -1 h — no fall-back averaging, no

@@ -2,11 +2,11 @@
 
 **Established:** 2026-08-12 (REWRITE-PREP lane) · **Status:** convention defined,
 tag set computed and committed, **publication blocked** on credentials (§5).
-**Evidence:** `docs/FINDING-rewrite-prep-2026-08-11.md`.
+**Evidence:** `docs/records/governance/FINDING-rewrite-prep-2026-08-11.md`.
 
 > **2026-08-16: the rewrite this doc prepared for HAPPENED — with zero tags
 > published** (owner decision superseding Addendum AQ; run 31955205445;
-> `docs/FINDING-history-rewrite-2026-08-16.md`). The manifest leg (§4) carried
+> `docs/records/governance/FINDING-history-rewrite-2026-08-16.md`). The manifest leg (§4) carried
 > the protection: all 104 load-bearing commits survived, 95 under NEW shas.
 > **The old→new translator is `docs/governance/citation-commit-map.txt`** —
 > see §8. Every `oid` in `citation-tags.json` is a PRE-rewrite sha; translate
@@ -28,7 +28,7 @@ unusable.
 A **tag name** survives where a raw SHA does not: filter-repo rewrites refs,
 tags included, onto the rewritten commits. The name is stable across the
 rewrite; the SHA it resolves to changes underneath it. Verified empirically —
-not assumed — in `docs/FINDING-rewrite-prep-2026-08-11.md` §3.
+not assumed — in `docs/records/governance/FINDING-rewrite-prep-2026-08-11.md` §3.
 
 ## 2. The namespace
 
@@ -148,7 +148,7 @@ survives a `data/raw` strip unconditionally. Prefer it for byte-identity claims.
 ## 8. The 2026-08-16 rewrite — pre→post sha translation
 
 The 2026-08-16 history rewrite (run 31955205445; full record and honest-cost
-measurement: `docs/FINDING-history-rewrite-2026-08-16.md`) assigned new shas to
+measurement: `docs/records/governance/FINDING-history-rewrite-2026-08-16.md`) assigned new shas to
 essentially every commit after 2026-05-16. **`docs/governance/citation-commit-map.txt`
 is the committed translator for the 104 load-bearing commits** of this
 manifest: one `old_sha new_sha` pair per line (the final 9 self-map — they are

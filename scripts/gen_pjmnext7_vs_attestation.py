@@ -22,7 +22,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 KEEPER = REPO / "results" / "calibration" / "pjmnext6_sp_span"
 PINNED = "f2850356a29c3b22c1c1ccd2a0365190e2adb0ca"
-PRECOMMIT = "docs/PRECOMMIT-pjm-next-7-virtual-settle-2026-09-28.md"
+PRECOMMIT = "docs/records/pjm/PRECOMMIT-pjm-next-7-virtual-settle-2026-09-28.md"
 
 
 def build() -> dict:
@@ -41,7 +41,7 @@ def build() -> dict:
     )
     g["note"] = (
         "ONE STRUCTURAL CORRECTION (rule 1, owner ruling 2026-09-28 'settle financially', design A' "
-        "docs/DESIGN-pjm-next-7-virtual-settlement-2026-09-28.md): a cleared PJM INC/DEC is liquidated in "
+        "docs/records/pjm/DESIGN-pjm-next-7-virtual-settlement-2026-09-28.md): a cleared PJM INC/DEC is liquidated in "
         "RT, so the scored RT-gated P1 clears without the virtual position (bounds zeroed) while P0, the "
         "DA commitment stage, keeps it. Zero free parameters added; no multiplier value changed."
     )

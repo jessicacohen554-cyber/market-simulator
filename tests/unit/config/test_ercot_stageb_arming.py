@@ -2,7 +2,7 @@
 
 Owner decision **D-30** (sitting Addendum AK.8, signed 2026-08-11; lane
 FFR-9C-PROMOTE, pre-registration
-``docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md``) promotes stage B
+``docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md``) promotes stage B
 (R-a ``entry_pipeline_aware_signal``, R-b ``smr_available_year``,
 R-d ``vre_procurement_additions_enabled``) **as one coherent unit with the two
 capacity-screen control-recipe flags** it was measured on top of
@@ -30,7 +30,7 @@ FORMER LIVE EXPOSURE — **CLOSED 2026-08-13**, and deliberately never pinned
 here: ``apply_iso_scenario_defaults`` used to treat a caller value equal to the
 field default as "unset" and re-arm it, so an ERCOT control arm for any of the
 five flags was inexpressible through the config path
-(``docs/handoffs/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md``). The
+(``docs/records/forecast/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md``). The
 OVERRIDE-FIX lane landed FINDING §4 remedy 2 (the caller's explicitly-set-field
 record, ``scenarios.explicitly_set_fields``); the fixed seam is pinned by
 ``tests/unit/config/test_iso_override_precedence.py``. Because this module never
@@ -39,7 +39,7 @@ it pins only the behaviour both sides must preserve, which is exactly why it
 still passes unchanged.
 
 **D12-A (owner ruling Q15, r#18 sitting, 2026-08-30;
-``docs/handoffs/FINDING-capx-d12a-arming-2026-08-30.md``)** armed a SECOND
+``docs/records/forecast/FINDING-capx-d12a-arming-2026-08-30.md``)** armed a SECOND
 pair on the same seam — ``entry_margin_exhaustion`` +
 ``entry_forward_reserve_leg``, the D12-C confirm-pair's single logical delta,
 judged confirming-in-substance per that finding's §4.3 clause — declaring a
@@ -111,7 +111,7 @@ Still nothing to do with ERCOT's armings. Advances: D12-A armed
 ``b5ab30d0fae9f8a3`` -> ``95d789d6dfb98831``, Stage-B armed ``2c3496db2252da1d``
 -> ``a8fe46584c6ce29b``, pre-Stage-B ``2286402c91a65cf5`` -> ``a99e2cc0bb9707e3``,
 global pin ``e5ecd4105ada3e58`` -> ``547053bdfccd4264``. Pre-declared BEFORE the
-solve in ``docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md`` §3; cache-epoch
+solve in ``docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md`` §3; cache-epoch
 ledger entry 2026-09-06c in ``src/market_sim/results/cache.py``.
 """
 

@@ -45,7 +45,7 @@ KEEPER = CAL / "spp67_yearown_span" / "calibration_attestation.json"
 _GATE = "coal_sync_ensemble_level"
 _DEPTH = "coal_sync_srmc_tranche"
 OFFER_SHA = "090abd793b5fa5a7"
-PRECOMMIT = "docs/handoffs/PRECOMMIT-spp-71-ensemble-sync-floor-2026-09-22.md"
+PRECOMMIT = "docs/records/spp/PRECOMMIT-spp-71-ensemble-sync-floor-2026-09-22.md"
 PINNED = "6edc996d1051296b6fb62185df7b304adbc7f3d1"
 
 _ATTESTED = (

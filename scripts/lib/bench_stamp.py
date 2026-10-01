@@ -8,7 +8,7 @@ because the parts are byte-deterministic and therefore show no git diff until
 something regenerates them. NYISO's part went un-refreshed from 2026-08-17;
 regenerating it moved CC_REGULAR-2024's metered actual by ~4 TWh and flipped
 EVERY registered NYISO run to NOT-YET, the keeper included
-(``results/calibration/FINDING-nyiso148-bench-regeneration-instability-2026-08-21.md``).
+(``docs/records/nyiso/FINDING-nyiso148-bench-regeneration-instability-2026-08-21.md``).
 
 THE STAMP. Each part carries ``meta.builderFingerprint`` — a short hash over
 the SOURCE of the scripts that compute and write it. A part whose fingerprint
@@ -25,7 +25,7 @@ keeps it: same code + same data ⇒ same bytes.
 
 WHY THE HASH IS OVER THE **AST**, NOT THE RAW BYTES (owner ruling **R-AS**,
 2026-09-05, adopting Proposal A of
-``docs/handoffs/FINDING-y10-bench-stamp-instrument-2026-09-05.md``). The stamp
+``docs/records/governance/FINDING-y10-bench-stamp-instrument-2026-09-05.md``). The stamp
 was hashing whole file bytes, so **any** edit to any byte moved it — and 53 %
 of the hashed surface is comments and docstrings, which cannot change a bench
 payload under any circumstances. Measured over the three fingerprint moves of
@@ -46,7 +46,7 @@ promise. Counterfactual, computed rather than argued (finding §3):
 
 TWO FINGERPRINTS, AND WHICH ONE DECIDES (Y-17, 2026-09-06, director's option
 (a) on the recommendation of
-``docs/handoffs/FINDING-y15-flipset-sweep-2026-09-06.md`` §3.5; this lane's
+``docs/records/governance/FINDING-y15-flipset-sweep-2026-09-06.md`` §3.5; this lane's
 record is ``FINDING-y17-bench-payload-fingerprint-2026-09-06.md``). This module
 is a member of its own ``BUILDER_SOURCES``, so Y-12's edit to it (``3d0fd19d``)
 moved the aggregate for **every** bench part in existence. That self-inclusion
@@ -96,7 +96,7 @@ REPO = Path(__file__).resolve().parents[2]
 #: THIS MODULE IS EXCLUDED BY CONSTRUCTION. ``bench_stamp.py`` computes the
 #: stamp and contributes not one number to a part's ``bench`` block, so it can
 #: never change a payload — see :data:`PAYLOAD_FINGERPRINT_BY_BUILDER` and
-#: ``docs/handoffs/FINDING-y17-bench-payload-fingerprint-2026-09-06.md`` for
+#: ``docs/records/governance/FINDING-y17-bench-payload-fingerprint-2026-09-06.md`` for
 #: the defect that exclusion closes.
 PAYLOAD_SOURCES: tuple[str, ...] = (
     "scripts/render_calibration_html.py",
@@ -239,8 +239,8 @@ PAYLOAD_FINGERPRINT_BY_BUILDER: dict[str, str] = {
     # the part's payload is what the builder at HEAD would produce; only
     # `bench_stamp.py` (e379717 → edb7d50) differs. This is the case that
     # exposed the defect — see
-    # `docs/handoffs/FINDING-y15-flipset-sweep-2026-09-06.md` §3.5 and
-    # `docs/handoffs/FINDING-y17-bench-payload-fingerprint-2026-09-06.md`.
+    # `docs/records/governance/FINDING-y15-flipset-sweep-2026-09-06.md` §3.5 and
+    # `docs/records/governance/FINDING-y17-bench-payload-fingerprint-2026-09-06.md`.
     "b2f21b9a00d3": "643eac24b565",
 }
 

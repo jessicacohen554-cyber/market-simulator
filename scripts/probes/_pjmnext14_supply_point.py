@@ -27,7 +27,7 @@ is inferred from a price.
 Then, per year, from the ``fleet_only`` dump of the keeper (``_pjmnext13_fleet_dump.py``):
 the capacity-weighted keeper fuel price of CC_REGULAR plants by tier against the IMM's
 Platts production / east / west annual spot. Writes
-``results/calibration/_pjmnext14_supply_point.json``.
+``results/phase0/pjm/_pjmnext14_supply_point.json``.
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-OUT = REPO / "results/calibration/_pjmnext14_supply_point.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext14_supply_point.json"
 EIA860 = REPO / "data/raw/eia-860"
 SOM = REPO / "data/raw/som-competitive-conduct/som_competitive_conduct.csv"
 APPALACHIA = {"PA", "OH", "WV"}

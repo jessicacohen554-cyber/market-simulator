@@ -1,6 +1,6 @@
 """Emit the neiso-118 calibration attestation for the composite ``neiso118_span``.
 
-neiso-118 (``docs/handoffs/neiso118/PRECOMMIT-neiso118-2026-09-26.md``) replays
+neiso-118 (``docs/records/neiso/neiso118/PRECOMMIT-neiso118-2026-09-26.md``) replays
 the NEISO keeper ``2026-09-26-neiso-117-coal-yard`` (``neiso117_span``) with NO
 config delta: the arm is a data re-derive — the NEISO measured-CT heat-rate
 artifact regenerated after the class-preserving ``union_fleet`` repair, which
@@ -28,8 +28,8 @@ CAL = REPO / "results" / "calibration"
 COMPOSITE = "neiso118_span"
 KEEPER = "neiso117_span"
 KEEPER_ID = "2026-09-26-neiso-117-coal-yard"
-PRECOMMIT = "docs/handoffs/neiso118/PRECOMMIT-neiso118-2026-09-26.md"
-RESULT = "docs/handoffs/neiso118/RESULT-neiso118-2026-09-26.md"
+PRECOMMIT = "docs/records/neiso/neiso118/PRECOMMIT-neiso118-2026-09-26.md"
+RESULT = "docs/records/neiso/neiso118/RESULT-neiso118-2026-09-26.md"
 PINNED = "faa5bd591040e58e31a33e3c3369c1de7d4f31ea"
 CT_ARTIFACT = "data/raw/_processed-legacy/campd_ct_heat_rates_NEISO.csv"
 CT_SHA256 = "f57df14e6e506dc1e06b7174510c98b6fb64aec0d0b5737baf5666cdb06dd9f9"
@@ -81,7 +81,7 @@ def main() -> int:
         "scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), on the re-derived NEISO "
         f"measured-CT heat-rate artifact ({CT_ARTIFACT}, sha256 {CT_SHA256[:12]}; +Canal 3 "
         "rows only, owner ruling 2026-09-26 'CT only'). Every leg verified by "
-        "docs/handoffs/neiso118/shard_check.py at composition. Zero LP in the parent. "
+        "docs/records/neiso/neiso118/shard_check.py at composition. Zero LP in the parent. "
         f"Pre-registered in {PRECOMMIT} (pinned {PINNED[:8]}) before any shard launched; "
         f"record {RESULT}."
     )

@@ -16,7 +16,7 @@ proration).
 Usage::
 
     python scripts/probes/bench_multiclass_collapse.py [--iso NYISO ...] \
-        [--out results/calibration/bench_multiclass_collapse.json]
+        [--out results/phase0/misc/bench_multiclass_collapse.json]
 """
 
 from __future__ import annotations
@@ -180,7 +180,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--iso", nargs="*", default=sorted(KEEPER_BUNDLES))
     ap.add_argument(
-        "--out", default="results/calibration/bench_multiclass_collapse.json"
+        "--out", default="results/phase0/misc/bench_multiclass_collapse.json"
     )
     ap.add_argument("--cache-dir", default=None)
     args = ap.parse_args(argv)

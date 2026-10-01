@@ -34,7 +34,7 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-OUT = REPO / "results" / "calibration" / "_nyiso249_deficit_coordinates.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso249_deficit_coordinates.json"
 
 
 def main() -> None:

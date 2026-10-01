@@ -5,7 +5,7 @@ CT_PEAKER committed tranche on as a min-gen floor within the plant's measured
 committed window — its top ``online_frac`` fraction of hours ranked by system
 load (thermal_tranches_<ISO>.csv gas ``online_frac``, CEMS synchronization
 fraction). G-20 eastern CC/CT under-run follow-up; see
-docs/handoffs/pjm-eastern-ccct-underrun-g20-2026-07.md §5 and the
+docs/records/pjm/pjm-eastern-ccct-underrun-g20-2026-07.md §5 and the
 ScenarioConfig field docstring for the rule-12/13 grounding.
 
 ``ScenarioConfig.st_gas_mustrun_per_plant`` is the ST_GAS leg of the same

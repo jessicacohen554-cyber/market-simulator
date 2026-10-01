@@ -7,7 +7,7 @@ measurement ``NG - TI`` does. ``ScenarioConfig.demand_balance_screen`` gates
 it (default off). This file pins (1) the synthetic logic, trivial case first,
 (2) the default path is byte-identical, and (3) on the hydrated PJM extract
 the screen flags exactly the four pjm-h18 hours over 2020-2025
-(``docs/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md`` §3).
+(``docs/records/pjm/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md`` §3).
 """
 
 from __future__ import annotations

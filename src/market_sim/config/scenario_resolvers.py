@@ -8,7 +8,7 @@ re-exports every name here, so both import paths stay live; the historical
 financing option, not a PB-1 lever) stays defined in ``config.scenarios``.
 
 Pure, config-build-time resolvers for the probability-bounds levers
-(docs/handoffs/probability-bounds-plan-2026-07.md). Each pairs a discrete
+(docs/records/misc/probability-bounds-plan-2026-07.md). Each pairs a discrete
 "_path" field (the §1 deterministic scenario-matrix axis) with a
 continuous "_percentile" field (the §2 multivariate sampler axis, 0.0=low,
 0.5=mid, 1.0=high). At every field's neutral default the resolved value is
@@ -253,7 +253,7 @@ _POLICY_BUNDLES: dict[str, dict] = {
         # RFF mid carbon path; IRA horizons extended +5yr (plan §1.2).
         #
         # SEMANTICS OF THE CARBON LEG, since owner ruling S2 (2026-09-06, card
-        # D-1; desk ledger docs/handoffs/scenario-desk-ledger-2026-09.md §2):
+        # D-1; desk ledger docs/records/misc/scenario-desk-ledger-2026-09.md §2):
         # a named path is a FLOOR under the ISO's state carbon program, not a
         # replacement for it -- policy.carbon.resolved_base_trajectory_price
         # resolves max(program trajectory, RFF path). NO FIELD VALUE CHANGES

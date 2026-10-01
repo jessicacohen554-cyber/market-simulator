@@ -1,7 +1,7 @@
 """Derive the supply-consistent CAISO backcast demand series (no LP solve).
 
 Owner-signed caiso-80 Option A
-(``results/calibration/FINDING-caiso80-demand-basis-wedge-2026-07-13.md`` §6):
+(``docs/records/caiso/FINDING-caiso80-demand-basis-wedge-2026-07-13.md`` §6):
 the CISO EIA-930 ``Demand`` cell carries the same fabricated solar-shaped
 block as the corrupt ``NG: NG`` cell by the ``Demand = NetGen + TI`` identity
 (onset 2024-05), plus a ~6 TWh/yr flat CHP host-accounting wedge and the
@@ -98,7 +98,7 @@ _ANNUAL_GUARD = {
     2025: (203.8, 206.8),
 }
 # G-DEMAND ON THE MEASURED 930 BASIS (R-CAISO-4, owner ruling 2026-09-26,
-# option (a) of docs/handoffs/i-caiso/INTAKE-i-caiso-2019-2021-2026-09-24.md
+# option (a) of docs/records/caiso/i-caiso/INTAKE-i-caiso-2019-2021-2026-09-24.md
 # section 1). Replaces G-DEMAND-2022 for every year with no FINDING section-6
 # level (2019-2022). The old band measured
 #     wedge = [930 NetGen - TI] - derived = NG_cell - CEMS - cogen - foldin,

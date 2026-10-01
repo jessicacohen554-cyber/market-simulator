@@ -33,7 +33,7 @@
  },
  "anchor_source": {
   "table": "results/ff-corridor/benchmark-corridor-anchors.json",
-  "intake": "docs/handoffs/FINDING-capx-d22-fc5-corridor-2026-08-31.md",
+  "intake": "docs/records/forecast/FINDING-capx-d22-fc5-corridor-2026-08-31.md",
   "missing_sources": [
    "CAISO_IEPR_2025",
    "ISONE_CELT_2026",
@@ -45,7 +45,7 @@
  },
  "standing_caveats": [
   "AEO EMM regions approximate ISO footprints (each anchor row's own note); region rows were summed to ISO totals with the loader's extensive-quantity rule.",
-  "D14 measured the shared economic exit screen at recall 2/6 with a gas-concentration bias on the NEISO crossover window (docs/handoffs/FINDING-capx-d14-neiso-t1x-2026-08-30.md §2); the same screen composes every bundle's exits, so every model-side fleet-composition value here carries that measured skill caveat (golden finding §4(ii)).",
+  "D14 measured the shared economic exit screen at recall 2/6 with a gas-concentration bias on the NEISO crossover window (docs/records/forecast/FINDING-capx-d14-neiso-t1x-2026-08-30.md §2); the same screen composes every bundle's exits, so every model-side fleet-composition value here carries that measured skill caveat (golden finding §4(ii)).",
   "AEO2025 reference froze law as of Dec 2024 (pre-OBBBA, CAA §111 in force), so its coal exit path is regulatory-assumption-heavy and its offshore-wind pipeline predates the 2025 federal cancellations — a source-vintage caveat cutting both directions (corridor memo D4 precedent).",
   "The committed summaries carry NO generation-by-fuel, so the 252 AEO energy-mix (generation) anchors are NOT dispositioned — they remain context; extending the trajectory reporting grain is routed to the director (a reporting gap, not a divergence).",
   "The trajectory's capacity_by_fuel_mw excludes LP storage resources (batteries and pumped storage) — run_full_horizon._capacity_by_fuel iterates generator fuels only — so the storage rows below quote the model's storage fleet from its registry base (STORAGE_BASE_FLEET_MW, EIA-860 2025 ER, src/market_sim/config/capacity_market.py:487) plus the window's builds_storage_mw ledger (zero in every bundle). AEO pumped-storage anchors are left as context (both sides hold PS roughly flat)."
@@ -71,8 +71,8 @@
    "verdict": "EXPLAINED DIVERGENCE",
    "explanation": "Native fleet 42.82 GW vs AEO 54.912031 GW: the deficit is exactly this table's named component gaps — storage −6.3 GW, offshore wind −4.4 GW, solar −3.3 GW, CT −1.6 GW — each dispositioned on its own row (their mechanisms: zero storage entry at the pre-R-A posture; no OSW procurement channel; entry-screen solar economics), partly offset by the gas_cc row's +2.3 GW. Sum of named parts; no unexplained residual.",
    "refs": [
-    "docs/handoffs/FINDING-capx-d2-nyiso-extcap-2026-08-25.md",
-    "docs/handoffs/FINDING-capx-t3-neiso-golden-2026-08-30.md §6.3.1"
+    "docs/records/forecast/FINDING-capx-d2-nyiso-extcap-2026-08-25.md",
+    "docs/records/forecast/FINDING-capx-t3-neiso-golden-2026-08-30.md §6.3.1"
    ]
   },
   {
@@ -102,10 +102,10 @@
    "unit": "GW",
    "divergence_pct": 23.4,
    "verdict": "EXPLAINED DIVERGENCE",
-   "explanation": "Ours: 12.2 GW = the measured EIA-860 registry base (11.2 GW operable NYCA CC in the committed 2026 fleet) plus 1.0 GW of ECONOMIC CC entry the D2-extcap lane measured ('2027/2029 entry is economic — gas-CC/wind/solar via the entry screen; no backstop build'). Theirs: AEO's 9.88 GW sits BELOW today's measured operable fleet, so the AEO-side deficit is its own EMM plant-assignment and/or its NY state-policy (CLCPA/CES) fossil-attrition handling — the model deliberately carries no CLCPA phase-out instrument (policy-not-hard-coded, corridor memo D4 precedent). Ours-vs-theirs fully split: +1.0 GW measured model entry, ≈−1.3 GW AEO-side vs the measured registry. The NYISO Gold Book (missing source 5) is the named arbiter for the AEO-side leg. Composition note (not the verdict): 9.0 GW of the model's 12.2 GW combined-cycle fleet is CCS-retrofitted by this year — the spec §5.6 retrofit screen converting at its 3 GW/yr/ISO cap from ccs_retrofit_available_year=2028 (ira_ccus_45q_last_year=2032); the resolved carbon signal is NOT zero: the scenario carbon_price field is 0.0, which resolves to the armed state carbon program's projected RGGI trajectory (state_carbon_pricing=True; for NEISO $26.05/t in 2026 escalating at the published 7 %/yr CCR rate to $132.16/t by 2050 — docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md §2), stacked with the 45Q window. AEO2025's regional CC rows carry no comparable CCS conversion. The capacity aggregate matches; the emissions consequence is dispositioned on the co2 row. D21 measured this screen's paired-arm behavior; D23 attributed the P1 FAIL to the arm construction (a nonzero carbon_price override REPLACES the resolved signal, so the $25 arm CUT it) — the screen's carbon-price response is sign-correct (docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md).",
+   "explanation": "Ours: 12.2 GW = the measured EIA-860 registry base (11.2 GW operable NYCA CC in the committed 2026 fleet) plus 1.0 GW of ECONOMIC CC entry the D2-extcap lane measured ('2027/2029 entry is economic — gas-CC/wind/solar via the entry screen; no backstop build'). Theirs: AEO's 9.88 GW sits BELOW today's measured operable fleet, so the AEO-side deficit is its own EMM plant-assignment and/or its NY state-policy (CLCPA/CES) fossil-attrition handling — the model deliberately carries no CLCPA phase-out instrument (policy-not-hard-coded, corridor memo D4 precedent). Ours-vs-theirs fully split: +1.0 GW measured model entry, ≈−1.3 GW AEO-side vs the measured registry. The NYISO Gold Book (missing source 5) is the named arbiter for the AEO-side leg. Composition note (not the verdict): 9.0 GW of the model's 12.2 GW combined-cycle fleet is CCS-retrofitted by this year — the spec §5.6 retrofit screen converting at its 3 GW/yr/ISO cap from ccs_retrofit_available_year=2028 (ira_ccus_45q_last_year=2032); the resolved carbon signal is NOT zero: the scenario carbon_price field is 0.0, which resolves to the armed state carbon program's projected RGGI trajectory (state_carbon_pricing=True; for NEISO $26.05/t in 2026 escalating at the published 7 %/yr CCR rate to $132.16/t by 2050 — docs/records/forecast/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md §2), stacked with the 45Q window. AEO2025's regional CC rows carry no comparable CCS conversion. The capacity aggregate matches; the emissions consequence is dispositioned on the co2 row. D21 measured this screen's paired-arm behavior; D23 attributed the P1 FAIL to the arm construction (a nonzero carbon_price override REPLACES the resolved signal, so the $25 arm CUT it) — the screen's carbon-price response is sign-correct (docs/records/forecast/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md).",
    "refs": [
-    "docs/handoffs/FINDING-capx-d2-nyiso-extcap-2026-08-25.md",
-    "docs/handoffs/cross-model-corridor-2026-07-13.md D4"
+    "docs/records/forecast/FINDING-capx-d2-nyiso-extcap-2026-08-25.md",
+    "docs/records/misc/cross-model-corridor-2026-07-13.md D4"
    ]
   },
   {
@@ -167,8 +167,8 @@
    "verdict": "EXPLAINED DIVERGENCE",
    "explanation": "Ours: 3.34 GW (+1.8 GW window additions — the D2-extcap-measured economic/planned entry mix). The NY RPS-analogue constraint sits at its $40 ACP ceiling every committed year (rps_dual), pressing for more clean energy than the entry machinery delivers. Theirs: AEO builds 6.6 GW by 2030 — its regional module executes the NY CES/70x30 procurement program the model represents only as the capped RPS price signal, with no procurement force-build channel. Same instrument divergence as the wind row: contracted procurement (theirs) vs merchant screen + capped constraint (ours).",
    "refs": [
-    "docs/handoffs/FINDING-capx-d2-nyiso-extcap-2026-08-25.md",
-    "docs/handoffs/cross-model-corridor-2026-07-13.md D4"
+    "docs/records/forecast/FINDING-capx-d2-nyiso-extcap-2026-08-25.md",
+    "docs/records/misc/cross-model-corridor-2026-07-13.md D4"
    ]
   },
   {
@@ -185,7 +185,7 @@
    "verdict": "EXPLAINED DIVERGENCE",
    "explanation": "Ours: 3.4 GW of generic (onshore-modelled) wind — additions come from the committed EIA-860 pipeline and the RPS-driven entry channel; offshore wind exists as an entry technology (offshore_wind_available_year=2030) but has NEVER been selected by the merchant CONE/net-revenue entry screen in any committed bundle (no 'offshore_wind' key in any capacity_by_fuel_mw through 2050), and the model has NO state-procurement (OREC/PPA) build channel. Theirs: AEO2025 carries 3.7 GW onshore + 4.41 GW OFFSHORE by 2030 — the contracted state OSW pipeline at its Dec-2024 law freeze. The divergence is which instrument builds clean capacity: state procurement (theirs, not represented) vs merchant screen + RPS constraint (ours, which never clears OSW's cost). AEO's 4.4 GW NY OSW by 2030 is the Empire/Sunrise-class contract pipeline at its Dec-2024 law freeze.",
    "refs": [
-    "docs/handoffs/cross-model-corridor-2026-07-13.md D4"
+    "docs/records/misc/cross-model-corridor-2026-07-13.md D4"
    ]
   },
   {
@@ -200,9 +200,9 @@
    "unit": "GW",
    "divergence_pct": -96.2,
    "verdict": "EXPLAINED DIVERGENCE",
-   "explanation": "Ours: 0.25 GW — the EIA-860 2025 ER base fleet (STORAGE_BASE_FLEET_MW['NYISO'] mid) plus ZERO storage entry in the window (builds_storage_mw = 0 in every committed year; for the NEISO golden, zero entry in all 25 years — docs/handoffs/FINDING-capx-t3-neiso-golden-2026-08-30.md §6.3.1: under curve-ON the arbitrage+RA value stack never clears for storage in any year). Mechanism: the storage entry stack (spec §5.5) at this bundle's solved posture — run_config records storage_entry_availability_gate=false and storage_entry_cost_normalized_rank=false, the pre-R-A shipped defaults; owner ruling R-A (2026-08-31) armed both AFTER these solves and the golden finding §5.1(b)/§8.1 routes the re-solve question. Theirs: AEO2025 builds 6.52 GW of diurnal storage by 2030 on its own capacity-expansion economics plus the state storage-mandate programs its regional module carries. The −96 % here is the largest storage gap in the corridor — AEO's NY row reflects the state 6-GW storage roadmap.",
+   "explanation": "Ours: 0.25 GW — the EIA-860 2025 ER base fleet (STORAGE_BASE_FLEET_MW['NYISO'] mid) plus ZERO storage entry in the window (builds_storage_mw = 0 in every committed year; for the NEISO golden, zero entry in all 25 years — docs/records/forecast/FINDING-capx-t3-neiso-golden-2026-08-30.md §6.3.1: under curve-ON the arbitrage+RA value stack never clears for storage in any year). Mechanism: the storage entry stack (spec §5.5) at this bundle's solved posture — run_config records storage_entry_availability_gate=false and storage_entry_cost_normalized_rank=false, the pre-R-A shipped defaults; owner ruling R-A (2026-08-31) armed both AFTER these solves and the golden finding §5.1(b)/§8.1 routes the re-solve question. Theirs: AEO2025 builds 6.52 GW of diurnal storage by 2030 on its own capacity-expansion economics plus the state storage-mandate programs its regional module carries. The −96 % here is the largest storage gap in the corridor — AEO's NY row reflects the state 6-GW storage roadmap.",
    "refs": [
-    "docs/handoffs/FINDING-capx-t3-neiso-golden-2026-08-30.md §6.3.1, §5.1(b)"
+    "docs/records/forecast/FINDING-capx-t3-neiso-golden-2026-08-30.md §6.3.1, §5.1(b)"
    ]
   },
   {
@@ -217,7 +217,7 @@
    "unit": "GW",
    "divergence_pct": 72.7,
    "verdict": "EXPLAINED DIVERGENCE",
-   "explanation": "Ours: 0.38 GW — the EIA-860/eGRID grid-registry biomass+waste fleet, which includes IPP/CHP wood and municipal-waste units that serve the grid. Theirs: AEO's 'Electric Power Sector' capacity excludes end-use/CHP-sector capacity, so its wood+MSW rows (0.22 GW summed) sit structurally below a grid-registry count. Sector-boundary basis mismatch on a class under ~1–2 % of the fleet; documented rather than silently mixed (rule 11 pattern, the D22 CDR-basis precedent, docs/handoffs/FINDING-capx-d22-fc5-corridor-2026-08-31.md §5.3).",
+   "explanation": "Ours: 0.38 GW — the EIA-860/eGRID grid-registry biomass+waste fleet, which includes IPP/CHP wood and municipal-waste units that serve the grid. Theirs: AEO's 'Electric Power Sector' capacity excludes end-use/CHP-sector capacity, so its wood+MSW rows (0.22 GW summed) sit structurally below a grid-registry count. Sector-boundary basis mismatch on a class under ~1–2 % of the fleet; documented rather than silently mixed (rule 11 pattern, the D22 CDR-basis precedent, docs/records/forecast/FINDING-capx-d22-fc5-corridor-2026-08-31.md §5.3).",
    "refs": []
   },
   {

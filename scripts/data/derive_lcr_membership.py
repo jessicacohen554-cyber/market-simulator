@@ -10,7 +10,7 @@ Valley**. Phase 2 (caiso-79 STEP-0) adds **Greater Bay** — county rule for
 the five core Bay counties plus the LCT §3.3.5.1 substation-rule overrides
 (Moss Landing bus in; Lambie SW Sta in) — to ground the local-commitment
 driver's unit list (the GB import cap itself was measured non-binding:
-results/calibration/FINDING-caiso79-step0-greaterbay-bind-2026-07-12.md).
+docs/records/caiso/FINDING-caiso79-step0-greaterbay-bind-2026-07-12.md).
 
 Assignment logic, most-authoritative first:
 

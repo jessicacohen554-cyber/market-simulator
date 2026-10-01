@@ -26,7 +26,7 @@ the keeper's committed ``hourly/class_hourly_<Y>.parquet`` dispatch. It reports:
 Usage::
 
     uv run python scripts/probes/_miso274_cc_phase0.py --years 2021 2022 2023 \
-        --out results/calibration/_miso274_cc_phase0.json
+        --out results/phase0/miso/_miso274_cc_phase0.json
 """
 
 from __future__ import annotations

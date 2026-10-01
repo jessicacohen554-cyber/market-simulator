@@ -1,7 +1,7 @@
 """The system-scope delta is computed on the COMMON ISO set (lane SCN-FIX1).
 
 The defect these tests pin, routed by SCN-WS5A-LOAD
-(``docs/handoffs/STATUS-scn-ws5a-load-2026-09-06.md``, "Routed defect"):
+(``docs/records/forecast/STATUS-scn-ws5a-load-2026-09-06.md``, "Routed defect"):
 ``collate_scenario_campaign.build_delta_table`` computed the
 ``six-ISO modeled system`` delta as *(sum over the case's ISOs)* minus *(sum
 over the reference case's ISOs)* with nothing restricting the two to the same
@@ -269,7 +269,7 @@ STATUS_ISOS = ("ERCOT", "NEISO", "NYISO")
 # it (CAISO and MISO ORGANIC legs landed after the STATUS doc, moving the
 # whole-tree common-set delta 18.830 -> 101.967). Restoring the summaries or
 # re-rolling ``_rollup`` is the SCN desk's call, not a test repair
-# (docs/handoffs/FINDING-spp-38-2026-09-07.md §4).
+# (docs/records/spp/FINDING-spp-38-2026-09-07.md §4).
 _SUMMARIES = (
     sorted(CAMPAIGN.rglob("full_horizon_summary.json")) if CAMPAIGN.is_dir() else []
 )

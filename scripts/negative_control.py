@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """D-14 negative-control probes for a calibration keeper (scalar-remediation
-program batch B-DIAG-2; see docs/handoffs/scalar-remediation-plan-2026-07.md
+program batch B-DIAG-2; see docs/records/misc/scalar-remediation-plan-2026-07.md
 §4.5 and docs/model-legitimacy-audit-2026-07.md §7 D-14).
 
 Clones a keeper's config, corrupts exactly ONE physical input, re-solves ONE

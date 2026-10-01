@@ -38,7 +38,7 @@ def test_golden_fixture_present_and_well_formed():
         pytest.fail(
             f"{G.GOLDEN_PATH} is missing -- seed it with "
             "`python scripts/golden_forecast_bands.py seed --reason ...` "
-            "(see docs/handoffs/forecast-validation-program-2026-07.md §2.3)."
+            "(see docs/records/forecast/forecast-validation-program-2026-07.md §2.3)."
         )
     payload = json.loads(G.GOLDEN_PATH.read_text())
     for key in ("scenario", "provenance", "bands", "golden"):

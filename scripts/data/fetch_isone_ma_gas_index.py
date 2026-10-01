@@ -3,7 +3,7 @@
 rebuild NEISO's rows in ``data/raw/gas_basis_by_iso_month.csv`` from it.
 
 WHY THIS EXISTS (neiso-86; diagnosis in
-``results/calibration/FINDING-neiso85-2022-seasonal-inversion-2026-08-05.md``).
+``docs/records/neiso/FINDING-neiso85-2022-seasonal-inversion-2026-08-05.md``).
 NEISO's hub-basis rows were sourced from the EIA ``N3050MA3`` city-gate series for
 2015-2022 and 2026, and from the measured ISO-NE MA gas index only for 2023-2025.
 ``N3050MA3`` is an LDC city-gate **purchase-portfolio AVERAGE**: New England LDC

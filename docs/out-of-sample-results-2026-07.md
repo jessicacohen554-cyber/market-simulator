@@ -392,7 +392,7 @@ NO solve, NO scoring, NO marker change.** The measured ISO-NE DAM-equivalent of
 what ERCOT uses for outages/availability — the Morning Report **Section 3
 Operable Capacity Analysis** (published daily generation-outage / operable-
 capacity MW) — for the NEISO backcast to use IN PLACE OF the CAMPD-derived
-unit-outage fallback. Full detail: `docs/handoffs/neiso-operable-capacity-intake-2026-07.md`.
+unit-outage fallback. Full detail: `docs/records/neiso/neiso-operable-capacity-intake-2026-07.md`.
 
 | Datatype | Years | NEISO | Provenance |
 |---|---|---|---|
@@ -405,7 +405,7 @@ fraction `1 − outages/(CSO+EcoMax-above-CSO)`, gated
 `ScenarioConfig.neiso_operable_capacity_availability` (**default OFF**;
 byte-identical NEISO runs until opted in), backcast-only. Data + loader committed
 directly; the gate + fleet block ship as
-`docs/handoffs/patches/neiso-operable-capacity-wiring.patch` (oversized-core-file
+`docs/records/misc/patches/neiso-operable-capacity-wiring.patch` (oversized-core-file
 transport). Any *solve* of an out-of-training year remains separately
 quarantined per rule 22.
 

@@ -623,7 +623,7 @@ reserve_supply_cap kwargs-override case: implement ONLY if it is row-RHS-only
 duals/dispatch via scripts/diff_warmstart_bundles.py on a CAISO 3-year bundle
 (marginal-tie-only reshuffles per the existing warm-start neutrality standard); RSS
 peak not above the sequential-build baseline on one big co-opt ISO; record timings in
-docs/handoffs/wallclock-baseline-2026-07.md. Do not touch feasibility tolerances; do
+docs/records/misc/wallclock-baseline-2026-07.md. Do not touch feasibility tolerances; do
 not re-run the recorded negative benches.
 ```
 

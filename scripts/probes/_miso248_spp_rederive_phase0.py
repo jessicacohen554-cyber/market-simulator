@@ -43,7 +43,7 @@ ATOL = 0.005
 KEEPER = REPO / "results" / "calibration" / "miso247_fullspan_K"
 KEEPER_BASIS_SHA = "f29b7ab022d399f40904379d86eb2324f08535e6"
 SPP_ZONAL_REL = "data/raw/_validation-source/actual_lmp_hourly_zonal_SPP.parquet"
-OUT = REPO / "results" / "calibration" / "_miso248_spp_rederive_phase0.json"
+OUT = REPO / "results" / "phase0" / "miso" / "_miso248_spp_rederive_phase0.json"
 
 
 def _sh(*args: str) -> str:

@@ -34,7 +34,7 @@ Usage::
     PYTHONPATH=.:src:scripts python3 scripts/probes/_r_ercot5_availability_census.py \
         --years 2019 --out <json> [--hours-file <npy of scarcity hour indices>]
 
-Record: ``docs/handoffs/FINDING-r-ercot-5-2019-scarcity-2026-09-25.md``.
+Record: ``docs/records/ercot/FINDING-r-ercot-5-2019-scarcity-2026-09-25.md``.
 """
 
 from __future__ import annotations

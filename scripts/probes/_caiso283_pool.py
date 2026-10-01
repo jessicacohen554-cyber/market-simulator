@@ -4,9 +4,9 @@ ZERO LP. Reads only ``results/rtm-intake/caiso283/<year>_<MKT>/{resource_year,bo
 (written by ``scripts/data/reduce_caiso_bid_year.py`` in the fetch shards) plus the repo's gas
 staircase and fleet geometry, all through the derive's own functions and constants.
 
-Charter: ``docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`` §4 (G-REPRO,
+Charter: ``docs/records/caiso/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`` §4 (G-REPRO,
 G-OVERLAP, verdict thresholds). Method fixed before any number:
-``docs/PRECOMMIT-caiso283-rtm-exact-rederive-2026-09-16.md`` §3.
+``docs/records/caiso/PRECOMMIT-caiso283-rtm-exact-rederive-2026-09-16.md`` §3.
 
 Usage:
     .venv/bin/python scripts/probes/_caiso283_pool.py [--hr-cut 8.5] [--out results.json]

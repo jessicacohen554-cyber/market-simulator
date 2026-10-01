@@ -4,7 +4,7 @@
 Copy of ``_miso279_shard_check.py`` re-pointed at the current MISO keeper
 (``results/calibration/miso279_span``, 2026-09-27-miso-279-stcov, every year
 2019-2025). The arm's delta is ONE new field, ``campd_split_remap_companions``
-False -> True (docs/PRECOMMIT-miso280-split-remap-2026-09-28.md). HARD 1b now
+False -> True (docs/records/miso/PRECOMMIT-miso280-split-remap-2026-09-28.md). HARD 1b now
 requires the solve to have READ all seven '-splitremap-' companions (std /
 short-gas / maxgen outage extracts, CC heat rates, four tranche files) at their
 pinned shas.
@@ -43,7 +43,7 @@ YEAR_DRIVEN = {
     "ordc_voll",
 }
 INPUT_SHA: dict[str, str] = {
-    # Pinned at the PRECOMMIT (docs/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md §3).
+    # Pinned at the PRECOMMIT (docs/records/miso/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md §3).
     "data/raw/campd-unit-outages-unitroute-MISO.csv": "a91706662b335e34984c567029843bb46e0a8889f02a20792d987b698206873b",
     # miso-273 arm inputs (PRECOMMIT §4): regenerated extract + the screened set.
     "data/raw/campd-unit-outages-short-MISO.csv": "0a02ad1d3a77fd66c00557c738ea952eac38f01df126c2ce801f791617f61161",

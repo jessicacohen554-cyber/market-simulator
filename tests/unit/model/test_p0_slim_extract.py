@@ -1,6 +1,6 @@
 """``DispatchModel.solve(full_extract=False)`` — the P0 slim extraction.
 
-PERF-C S2 (``docs/handoffs/FINDING-perfc-s2-p0-slim-2026-09-20.md``). The P0
+PERF-C S2 (``docs/records/governance/FINDING-perfc-s2-p0-slim-2026-09-20.md``). The P0
 pass is a commitment-discovery solve whose result is read for the primal
 blocks, ``prices``, ``objective_value``, ``status`` and the two timings and for
 nothing else, so it asks the model for exactly those and skips the diagnostic

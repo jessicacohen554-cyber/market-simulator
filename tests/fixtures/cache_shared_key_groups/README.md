@@ -22,7 +22,7 @@ shared-key groups (`>1` member at one key) went **20 → 7**. One of the two tru
 positives lost a member, so its key stopped being a group at all:
 `f061b2646bfaac8b`'s `-d12c-armed` side was deleted by `9fd5e5b3`, leaving only
 `-d4m`. The test's floor (`>= 14` groups) and its exact refused-key set both went
-red — see `docs/handoffs/FINDING-y23-cache-agreement-fixture-2026-09-06.md`.
+red — see `docs/records/governance/FINDING-y23-cache-agreement-fixture-2026-09-06.md`.
 
 A census over `results/` is a **retention hazard**: rule 15 requires the corpus
 to shrink, so an invariant that reads it can only survive by accident. This

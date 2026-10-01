@@ -29,7 +29,7 @@ Usage::
         --keeper results/calibration/nyiso235_gasrepair_span \\
         [--arm-bundle <dir of the nyiso-236 2022 leg>] [--year 2022]
 
-Record: docs/RESULT-nyiso237-hydro-negative-price-phase0-2026-09-16.md.
+Record: docs/records/nyiso/RESULT-nyiso237-hydro-negative-price-phase0-2026-09-16.md.
 """
 from __future__ import annotations
 

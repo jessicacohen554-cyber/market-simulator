@@ -59,7 +59,7 @@ class TestSection45UCredit(unittest.TestCase):
 class TestSection45UStatutoryOrdering(unittest.TestCase):
     """§45U(d)(1)'s 5x multiplies the subsection-(a) NET, not the 0.3c rate.
 
-    Finding F-1 of docs/handoffs/d28-45u-composition-memo-2026-08-08.md.
+    Finding F-1 of docs/records/forecast/d28-45u-composition-memo-2026-08-08.md.
     §45U(a) is already `0.3c x kWh - reduction amount`, and §45U(d)(1)
     multiplies "the amount of the credit determined under subsection (a)"
     by 5. Folding the 5x into the rate and then subtracting an unmultiplied

@@ -28,7 +28,7 @@ Reads only committed artifacts (the nyiso-240 MER legs). No LP is solved; nothin
 Usage:
     python3 scripts/probes/nyiso241_reachability_bound.py \
         --legs results/calibration/nyiso_mer_2026-09-19_{2022,2023,2024,2025} \
-        --out results/calibration/_nyiso241_reachability_bound.json
+        --out results/phase0/nyiso/_nyiso241_reachability_bound.json
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ from pathlib import Path
 import pandas as pd
 
 # CT_PEAKER energy actually metered, from the committed benchmark the keeper is scored on
-# (docs/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md §7). Quoted as the TARGET the
+# (docs/records/nyiso/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md §7). Quoted as the TARGET the
 # bound is read against; no value from it enters any config.
 ACTUAL_TWH = {2022: 2.829, 2023: 2.114, 2024: 1.911, 2025: 2.812}
 

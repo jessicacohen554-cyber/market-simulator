@@ -57,7 +57,7 @@ def main() -> None:
         "session NYISO-NEXT-6 (2026-09-27), ONE-FLAG ARM of the incumbent keeper "
         "2026-09-26-nyisonext3-tranche-basis-span: + nyiso_li_seam_posted_limit_cap (a clip "
         "inside the armed seam envelope, rule 19). Pre-registration: "
-        "docs/PRECOMMIT-nyiso-next5-li-tie-posted-limit-2026-09-27.md sec. 6-7 and its sec. 9 "
+        "docs/records/nyiso/PRECOMMIT-nyiso-next5-li-tie-posted-limit-2026-09-27.md sec. 6-7 and its sec. 9 "
         f"addendum; arm pinned at {a.pin}. Offer curves byte-identical to the keeper "
         "(rule 1(c)); no multiplier tuned; zero free parameters. PRIOR: "
     )

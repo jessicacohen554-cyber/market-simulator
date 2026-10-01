@@ -38,7 +38,7 @@ RUNS: tuple[tuple[str, tuple[int, ...]], ...] = (
     ("2026-09-10-caiso-269-lateevening-2022", (2022,)),
     ("2026-09-10-caiso-269-lateevening-clean", (2023, 2024, 2025)),
 )
-OUT = REPO / "results/calibration/_caiso272_c3b_da_companion.json"
+OUT = REPO / "results/phase0/caiso/_caiso272_c3b_da_companion.json"
 
 
 def model_monthly(ypay: dict) -> list:

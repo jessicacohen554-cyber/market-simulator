@@ -1,7 +1,7 @@
 """Tests for the NYISO Zone-J/K in-city locational reserve mechanisms.
 
 Covers the two config-gated levers added by the in-city must-run lane
-(``docs/handoffs/nyiso-incity-mustrun-charter-2026-07.md`` §3, armed by the
+(``docs/records/nyiso/nyiso-incity-mustrun-charter-2026-07.md`` §3, armed by the
 owner's 2026-07-26 adjudication reopening the closed C3a "reserve" lever as a
 COMMITMENT-OBLIGATION driver):
 

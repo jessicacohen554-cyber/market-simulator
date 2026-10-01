@@ -29,7 +29,7 @@ the tranche capacities and offer levels, and two bounds on the energy the change
   arm minus control, split into its positive and negative parts. It is a first-order
   re-dispatch estimate at a fixed price, not a bound in the strict sense: the price moves.
 
-Writes ``results/calibration/_nyisonext3_tranche_basis_phase0.json``.
+Writes ``results/phase0/nyiso/_nyisonext3_tranche_basis_phase0.json``.
 """
 
 from __future__ import annotations
@@ -283,7 +283,7 @@ def main() -> None:
     ap.add_argument(
         "--out",
         type=Path,
-        default=REPO / "results/calibration/_nyisonext3_tranche_basis_phase0.json",
+        default=REPO / "results/phase0/nyiso/_nyisonext3_tranche_basis_phase0.json",
     )
     a = ap.parse_args()
     res = {str(y): measure(y, a.arm_dir, a.with_selector) for y in a.years}

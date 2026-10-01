@@ -5,7 +5,7 @@ more than 25 % unprinted (2021: 5,976 of 8,760 h) instead of dropping it: the
 printed hours are priced at the measured hub, the unprinted hours keep the
 static ladder (and, under ``caiso_import_gas_coupling_ladder_only``, the gas
 coupling). Default off and byte-identical off. Record:
-``docs/handoffs/r-caiso-8/PRECOMMIT-r-caiso-8-2026-09-27.md``.
+``docs/records/caiso/r-caiso-8/PRECOMMIT-r-caiso-8-2026-09-27.md``.
 """
 
 from __future__ import annotations

@@ -50,7 +50,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 KEEPER = REPO / "results/calibration/miso279_span"
-OUT_JSON = REPO / "results/calibration/_miso280_riverside_remap_footprint.json"
+OUT_JSON = REPO / "results/phase0/miso/_miso280_riverside_remap_footprint.json"
 YEARS = list(range(2019, 2026))
 OLD, NEW, UNITS = 55641, 64020, ("CT-03", "CT-04")
 PLANTS = (OLD, NEW)

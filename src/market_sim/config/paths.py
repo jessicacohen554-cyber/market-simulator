@@ -468,7 +468,7 @@ CAISO_HUB_MEMBERSHIP_CSV: Path = REFERENCE_DIR / "caiso-plant-hub-membership.csv
 
 # Measured CAISO plant->sub-zone membership for the FSNO sub-zonal partition
 # (caiso-223 §B recut of the caiso-217 crosswalk — the committed
-# results/calibration/_caiso223_membership_recut.csv rows with subzone in
+# results/phase0/caiso/_caiso223_membership_recut.csv rows with subzone in
 # {FSNO, NP15, ZP26}; SP15-side rows are hub-unchanged by construction).
 # Read by data.zone_assignment ONLY when ScenarioConfig
 # caiso_fsno_subzonal_topology is armed (config.topology_variant)

@@ -146,7 +146,7 @@ def dual_fuel_oil_price_series(
     NYISO dual-fuel capacity at one constant price on exactly the cold days
     the daily gas price spikes, truncating the winter peak (120 of 744
     Jan-2025 hours cleared on that flat cap). Default off, byte-identical when
-    off. See docs/handoffs/nyiso-overrun-underrun-2026-07.md §2/§6.
+    off. See docs/records/nyiso/nyiso-overrun-underrun-2026-07.md §2/§6.
     """
     fallback = (
         resolve_annual_oil_price(config, year)

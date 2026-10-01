@@ -1,6 +1,6 @@
 """Emit the SPP-99 calibration attestation for the composed 2019-2025 bundle ``spp99_remap_span``.
 
-SPP-99 (``docs/handoffs/PRECOMMIT-spp-99-remap-rederive-2026-09-28.md``) replays SPP's keeper
+SPP-99 (``docs/records/spp/PRECOMMIT-spp-99-remap-rederive-2026-09-28.md``) replays SPP's keeper
 ``spp98_remap_span`` recipe one year per shard (rule 36) with ONE field armed:
 ``campd_split_remap_companions`` (miso-280's mechanism, extended to SPP's plain tranche family). The
 keeper reads four SPP CAMPD-derived artifacts that were derived before SPP-98's CEMS->EIA remap rows
@@ -29,8 +29,8 @@ sys.path.insert(0, str(REPO / "src"))
 from market_sim.config.scenarios import _CACHE_KEY_RETIRED_FIELDS  # noqa: E402
 
 CAL = REPO / "results" / "calibration"
-PRECOMMIT = "docs/handoffs/PRECOMMIT-spp-99-remap-rederive-2026-09-28.md"
-RESULT = "docs/handoffs/RESULT-spp-99-remap-rederive-2026-09-28.md"
+PRECOMMIT = "docs/records/spp/PRECOMMIT-spp-99-remap-rederive-2026-09-28.md"
+RESULT = "docs/records/spp/RESULT-spp-99-remap-rederive-2026-09-28.md"
 PINNED = "289d4baf7b0819e7d0b5279cb6ac71930e12ec09"
 COMPOSITE = "spp99_remap_span"
 KEEPER = "spp98_remap_span"

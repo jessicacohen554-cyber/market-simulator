@@ -32,7 +32,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 CAL = REPO / "results/calibration"
 LMPDIR = REPO / "data/raw/lmp-data/NYISO"
-OUT = CAL / "_nyisonext22_c3a_phase0.json"
+OUT = REPO / "results/phase0/nyiso/_nyisonext22_c3a_phase0.json"
 ZMAP = {  # iso_configs._nyiso: A-E, F-G, H-I, J, K
     "WEST": "Upstate_West",
     "GENESE": "Upstate_West",

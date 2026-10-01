@@ -12,7 +12,7 @@ Reads the paired ``fleet_only`` dumps (``_pjmnext13_fleet_dump.py`` without and 
   zone-hour takes the mean move of the matched hours in its zone-month. No
   re-dispatch: a first-order prediction for the PRECOMMIT, not a result.
 
-Writes ``results/calibration/_pjmnext13_arm_delta.json``. Run with the dump dir as argv[1].
+Writes ``results/phase0/pjm/_pjmnext13_arm_delta.json``. Run with the dump dir as argv[1].
 """
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 BUNDLE = REPO / "results/calibration/pjmnext8_xf_span"
-OUT = REPO / "results/calibration/_pjmnext13_arm_delta.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext13_arm_delta.json"
 ZONES = (
     "PJM_ComEd",
     "PJM_AEP_Ohio",

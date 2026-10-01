@@ -8,7 +8,7 @@ up to ±1.4 GW *within* a month (the May-2024 forensics type case: STP-2 was
 physically OUT 2024-03-23 -> 2024-05-19 — spanning the Apr-16, Apr-28 and
 May-8 scarcity events — and back for the May-24..27 record-heat days, while
 the 0.78 May smear spread that outage over the whole month; see
-``docs/DIAGNOSIS-ercot-may2024-outage-forensics-2026-07.md`` §2.1).
+``docs/records/ercot/DIAGNOSIS-ercot-may2024-outage-forensics-2026-07.md`` §2.1).
 
 This script reconciles the two measured sources at their native grain:
 

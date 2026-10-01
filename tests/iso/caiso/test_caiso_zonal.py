@@ -2,7 +2,7 @@
 
 Exercises the *configured* CAISO network — the NP15 / ZP26 / LA_BASIN / SDGE /
 SP15_rest trading zones (SP15 was split into its LCT local-capacity pockets,
-docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md) plus the
+docs/records/caiso/caiso-sp15-split-implementation-scope-2026-07-09.md) plus the
 ``WECC_import`` node, with their real Path 15 / Path 26 / Path 66 / Path 46
 transfer capabilities — end to end through
 :func:`~market_sim.model.dispatch.solve_dispatch`, rather than the synthetic

@@ -14,7 +14,7 @@ This probe prints both sides per year, and it is what found the defect: the
 identity holds to ``-0.0000`` on MISO CC_CHP in 2020 / 2021 / 2022 / 2024 and is
 violated by +17.70 TWh in 2023 and +20.18 TWh in 2025, because the miso-255
 registration wrote those two parts without the subtrahend
-(``docs/RESULT-miso257-c1-2023-was-a-broken-bench-part-2026-09-13.md`` §2.1).
+(``docs/records/miso/RESULT-miso257-c1-2023-was-a-broken-bench-part-2026-09-13.md`` §2.1).
 
 Run ``scripts/probes/_miso257_bench_rebuild.py <bundle>`` first: ``btm.parquet``
 is gitignored and a SLIM committed bundle does not carry it.

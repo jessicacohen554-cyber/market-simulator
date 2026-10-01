@@ -9,7 +9,7 @@ commodity price behind it, and MISO's ``gas_mid``/``gas_slope`` were literal
 byte-copies of ERCOT's (issue #1347 / gap G-26; rule-24 wart — a fit must not
 cross ISO boundaries). The #1803 intake added the region f.o.b. + PPI series
 that a real re-derivation needs (data/raw/coal-prices/,
-docs/handoffs/coal-price-data-intake-2026-07.md). A source-data update is the
+docs/records/misc/coal-price-data-intake-2026-07.md). A source-data update is the
 ONLY admissible re-derivation trigger, so this re-derive is keyed to that
 intake, not to any moved residual (CLAUDE.md rules 10/11/23).
 

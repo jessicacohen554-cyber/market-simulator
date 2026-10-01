@@ -9,7 +9,7 @@ and a row in ``docs/parameter-citations.md`` (rule 5); none is ever
 residual-tuned (rule 23 ``[R-FROZEN-DERIVE]``).
 
 **Why this module exists.** Owner decision D-8 (2026-08-03,
-``docs/handoffs/ffr-owner-sitting-2026-08-02.md`` Addendum F.1) ruled that
+``docs/records/forecast/ffr-owner-sitting-2026-08-02.md`` Addendum F.1) ruled that
 queue **latency** and queue **throughput** are TWO mechanisms for rule 19
 ``[R-ONE-MECH]`` purposes. The R-NEW retirement pipeline models the latency
 (``retirement_execution_lag_*`` — how long after the decision a unit leaves)

@@ -1152,7 +1152,7 @@ class PerYearGovernanceScopeTests(unittest.TestCase):
     reached ``score_governance``, so a legitimate ``years_held``
     ``[2023, 2024, 2025]`` was compared against ``[2023]`` and FAILED — which
     rendered NOT-YET on every year of NEISO's and MISO's CALIBRATED keepers
-    (``results/calibration/FINDING-neiso106-per-year-ladder-governance-defect-2026-09-06.md``).
+    (``docs/records/neiso/FINDING-neiso106-per-year-ladder-governance-defect-2026-09-06.md``).
 
     These tests pin BOTH halves: the span filter no longer breaks a run-level
     declaration, AND a genuinely per-year declaration still FAILs — the failure
@@ -2187,7 +2187,7 @@ class DiurnalAmplitudeReportedOnlyTests(unittest.TestCase):
 
     The load-bearing property is the LAST test: this measurement must be
     incapable of gating. It is reported-only by owner decision 2026-08-25
-    (option B of docs/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md),
+    (option B of docs/records/governance/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md),
     because the xiso-6 band sweep found a gating criterion is vacuous below a
     25 % amplitude floor and universal above 45 %, with no external comparable
     to anchor a band.

@@ -1,6 +1,6 @@
 """NYISO-NEXT-21 gates G-2 / G-3 / G-5 and the reported block (ZERO LP).
 
-``docs/PRECOMMIT-nyiso-next21-astoria-heat-rate-2026-10-01.md`` sec. 3, every value
+``docs/records/nyiso/PRECOMMIT-nyiso-next21-astoria-heat-rate-2026-10-01.md`` sec. 3, every value
 anchored to the keeper (``nyisonext18_2021`` / ``nyisonext18_span``) or to CAMPD:
 
 G-2: Astoria 8906 ST_GAS P1 energy LOWER than the keeper's, every year.
@@ -18,7 +18,7 @@ is not on ``main`` (repo-wide ignore), so the payload is the only common basis.
 Usage::
 
     python3 scripts/probes/nyisonext21_gates.py --arm-span <run id> --arm-2021 <run id> \\
-        --out results/calibration/_nyisonext21_gates.json
+        --out results/phase0/nyiso/_nyisonext21_gates.json
 """
 
 from __future__ import annotations

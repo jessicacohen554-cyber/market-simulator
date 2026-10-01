@@ -210,7 +210,7 @@ class Generator(BaseModel):
     # measured host rate and the capture TOGETHER -- one mechanism at one
     # composition point (rule 19 [R-ONE-MECH]) -- instead of the two writes
     # racing. Measured defect and repair:
-    # docs/handoffs/FINDING-capx-d77-2026-09-06.md.
+    # docs/records/forecast/FINDING-capx-d77-2026-09-06.md.
     ccs_capture_fraction: float = 0.0
     nox_rate: float = 0.0
     so2_rate: float = 0.0
@@ -639,6 +639,7 @@ from market_sim.data.fleet.campd_bins import (  # noqa: F401
     thermal_tranche_online_frac,
     thermal_tranche_oom_level,
     thermal_tranche_online_frac_by_year,
+    cc_conduct_profile,
     thermal_tranche_overrides,
     thermal_tranche_p25_level,
     thermal_tranche_p25_measured_level,

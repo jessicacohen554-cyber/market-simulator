@@ -18,7 +18,7 @@ floor forces more price-insensitive import than CAISO's ENTIRE measured
 price-insensitive intertie position in 23.9/47.2/48.9 % of hours (2023/24/25),
 0.969/4.634/5.705 TWh, concentrated overnight, and growing with the DMM RA
 level. Evidence:
-``results/calibration/FINDING-caiso150-firm-import-elasticity-2026-07-31.md``.
+``docs/records/caiso/FINDING-caiso150-firm-import-elasticity-2026-07-31.md``.
 
 THE QUANTITY (deliberately ONE-SIDED — see the wall below)::
 

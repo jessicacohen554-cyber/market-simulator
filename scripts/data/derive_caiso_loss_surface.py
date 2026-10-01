@@ -5,10 +5,10 @@ re-derives ONLY when its source data updates), **re-derived at caiso-166
 because its SOURCE DATA UPDATED**: caiso-165 intook CAISO's four
 ``DLAP_*-APND`` load aggregation points into
 ``data/raw/lmp-data/CAISO/CAISO_dam_hourly_<year>.csv`` (charters
-``results/calibration/PRECHECK-caiso164-zonal-loss-surface-2026-08-04.md`` and
-``results/calibration/PRECHECK-caiso165-dlap-intake-intra-sp15-2026-08-04.md``
+``docs/records/caiso/PRECHECK-caiso164-zonal-loss-surface-2026-08-04.md`` and
+``docs/records/caiso/PRECHECK-caiso165-dlap-intake-intra-sp15-2026-08-04.md``
 §5.1; the re-derive itself is chartered by
-``results/calibration/PRECHECK-caiso166-measured-loss-zones-2026-08-04.md``).
+``docs/records/caiso/PRECHECK-caiso166-measured-loss-zones-2026-08-04.md``).
 The estimator, the schema and every threshold are UNCHANGED — this commit cites
 a data change, exactly as rule 23 requires, and consults no residual.
 

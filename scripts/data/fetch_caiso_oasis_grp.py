@@ -12,7 +12,7 @@ archive reproduces the byte-pinned file in ``data/raw/lmp-data/CAISO/
 SHA256SUMS.txt`` **sha256-identical** (``6523fedd...``). That makes GroupZip the
 primary-publisher route to the 2022 hub / DLAP / intertie prices the 2022
 validation touchpoint needs (rule 22; charter
-``docs/handoffs/caiso-2022-price-archive-intake-charter-2026-09.md``), with
+``docs/records/caiso/caiso-2022-price-archive-intake-charter-2026-09.md``), with
 rule-14 alignment exact: same reports, nodes, components and downstream chain as
 2023-2025.
 
@@ -40,7 +40,7 @@ responses are not a throttle. ~3.5 months of reach were lost in 3 calendar
 days; the rate is reported as measured, not explained. Both readings above are
 now HISTORICAL — do exactly what this docstring says and re-measure before
 planning a crawl. Record:
-``docs/FINDING-caiso274-2020-2021-intake-census-2026-09-10.md`` section 6.
+``docs/records/caiso/FINDING-caiso274-2020-2021-intake-census-2026-09-10.md`` section 6.
 
 What still reaches 2020 is the
 non-LMP OASIS reports, which carry no such window: ``AS_REQ``, ``AS_RESULTS``,

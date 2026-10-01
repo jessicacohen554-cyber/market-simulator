@@ -5,7 +5,7 @@ Lane NWPP-38 (desk r#7 charter, 2026-09-16). **Zero LP** (rule 32 `[R-SHARD]`).
 This is a MEASUREMENT, not a mechanism: nothing here is tuned, no residual is
 consulted, and no `ScenarioConfig` field is read or written (rules 1, 13, 23).
 
-Context. `docs/handoffs/FINDING-nwpp-32-2026-09-14.md` §4 established that the PNCA
+Context. `docs/records/nwpp/FINDING-nwpp-32-2026-09-14.md` §4 established that the PNCA
 -- the instrument that defines *"Period means a calendar month"*, i.e. the accounting
 period the repo's hydro budget already uses -- **terminated 2024-09-15, inside the
 2023-2025 scored window, with no successor text found**. There is no successor
@@ -68,7 +68,7 @@ MIXED = ["IPCO", "SCL", "AVA", "NWMT"]
 ALL_BAS = TREATED + CONTROL + MIXED
 
 #: The instrument date. 1997 Pacific Northwest Coordination Agreement section 1(a),
-#: read in NWPP-32 (`docs/handoffs/FINDING-nwpp-32-2026-09-14.md` §4).
+#: read in NWPP-32 (`docs/records/nwpp/FINDING-nwpp-32-2026-09-14.md` §4).
 PNCA_TERMINATION = pd.Timestamp("2024-09-15")
 
 #: EIA-930 legacy taxonomy (through 2024 H1) and the mid-2024 revamp. Pumped storage

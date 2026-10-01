@@ -18,7 +18,7 @@ no hub height): **zero free parameters** (rules 21 ``[R-DOF]`` / 24
 
 Landed 2026-09-14 by lane **NWPP-33**
 (``docs/multi-iso/nwpp-addition-plan-2026-09.md`` §5 row NWPP-33; FINDING
-``docs/handoffs/FINDING-nwpp-33-2026-09-14.md``).
+``docs/records/nwpp/FINDING-nwpp-33-2026-09-14.md``).
 
 What it writes
 --------------

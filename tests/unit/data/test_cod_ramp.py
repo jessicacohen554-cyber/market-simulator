@@ -817,7 +817,7 @@ def _ref_reduce_cod_groups(work):
 
     Frozen copy of the ``for code, grp in work.groupby("pc")`` loop that
     :func:`market_sim.data.cod_ramp._reduce_cod_groups` replaced (wall-clock
-    item A-1, ``docs/handoffs/wallclock-opportunities-2026-09.md`` §2 A-1).
+    item A-1, ``docs/records/misc/wallclock-opportunities-2026-09.md`` §2 A-1).
     The vectorized reducer is BYTE-IDENTICAL, so this stays as the oracle —
     do not "modernize" it to match the new code; if the two ever diverge, the
     new code is what changed.

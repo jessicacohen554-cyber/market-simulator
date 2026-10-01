@@ -30,7 +30,7 @@ KEEPER = REPO / "results" / "calibration" / "hydro3_nyiso_ror_span"
 ATTESTED_BY = (
     "session R-NYISO (2026-09-24), INPUT CORRECTION of the incumbent keeper "
     "2026-09-22-nyiso-hydro3-ror-split. Pre-registration: "
-    "docs/PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md, pushed at "
+    "docs/records/nyiso/PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md, pushed at "
     "e95436d5024fc14096eed558d6dd15a65128e524 before any solve, on the owner "
     "instruction of 2026-09-24 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-"
     "outage-2026-09-24.md sec. 5.3.6). THE ONLY CHANGE IS THE F1 INPUT FOUNDATION: "

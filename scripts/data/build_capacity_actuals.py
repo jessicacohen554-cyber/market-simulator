@@ -11,7 +11,7 @@ cessation dates), the admissible scoring target for
 
 **Retirements are dated at PHYSICAL cessation, not at the paper date**
 (FFR-7A, owner decision D-21(b); evidence FFR-6A
-``docs/handoffs/ffr-6a-margin-gap-decomposition-2026-08-05.md`` §3.3, verdict
+``docs/records/forecast/ffr-6a-margin-gap-decomposition-2026-08-05.md`` §3.3, verdict
 rows 5a/5b). Two defects made the old "current retired sheet, ``Retirement
 Year`` verbatim" target un-gradeable:
 

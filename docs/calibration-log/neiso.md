@@ -25,12 +25,12 @@ the consumption API; a **default-OFF** gate
 apply the measured fleet thermal availability (`1 − outages/(CSO+EcoMax-above-
 CSO)`) by the ERCOT-style bidirectional water-fill, superseding the CAMPD
 unit-outage fallback for the covered thermal classes when enabled. The gate +
-fleet block ship as `docs/handoffs/patches/neiso-operable-capacity-wiring.patch`
+fleet block ship as `docs/records/misc/patches/neiso-operable-capacity-wiring.patch`
 (scenarios.py/fleet.py are ~0.5 MB each — too large for the API push), verified
 to apply cleanly onto pristine main and inert when off. Fleet grain only
 (ISO-NE publishes no public per-unit outage series). Rule-22 authorization +
 registry: `docs/out-of-sample-results-2026-07.md §1.5`; design + admissibility:
-`docs/handoffs/neiso-operable-capacity-intake-2026-07.md`. Turning the gate on /
+`docs/records/neiso/neiso-operable-capacity-intake-2026-07.md`. Turning the gate on /
 promoting is a future NEISO-lane decision — this session delivers data + opt-in
 wiring, verified inert when off.
 
@@ -52,7 +52,7 @@ gas`), unidentified inside the homogeneous 2023–25 training gas window
 (delivered year-means 2.94/3.03/6.26 $/MMBtu) and ballooning at 2022's ~2.9×
 delivered gas — the 40–80 bulk over-priced +57.7 $/MWh over 4,546 h while the
 fixed scarcity wall never forms the tail. Design FROZEN before the build
-(`docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md`); model Fable.
+(`docs/records/misc/gas-offer-net-revenue-margin-design-2026-07.md`); model Fable.
 
 **Mechanism (`gas_offer_net_revenue_margin` + `gas_offer_margin_anchor`,
 ScenarioConfig, default OFF — zero fitted scalars).** Each registered gas band
@@ -127,7 +127,7 @@ exposed it, so no run could arm it or record it in `run_config.json`
 (rule 24). Threaded through `solve_and_persist` → `run_year` →
 `ScenarioConfig` exactly like `neiso_winter_fuel_mustrun` (tri-state
 `bool | None`), plus the `--neiso-operable-capacity-availability` flag and the
-`meta.json` entry. Ships as `docs/handoffs/patches/neiso-operable-capacity-cli-flag.patch`
+`meta.json` entry. Ships as `docs/records/misc/patches/neiso-operable-capacity-cli-flag.patch`
 (both files are in the size class the push API cannot carry inline —
 `run_calibration_full.py` 464 KB, `run_calibration.py` 233 KB — and rule 27
 forbids a regenerated full-file push); verified to apply onto pristine
@@ -220,7 +220,7 @@ ISO-NE operable-capacity A/B showed the model deleting ~4,458 MW annual /
 ~5,779 MW winter of thermal capacity that ISO-NE's own accounting says is
 operable, with LMP moving −7 to −9 % when relieved — the rule-11 condition. No
 solve, no keeper change, no parameter touched. Model Opus. Full evidence:
-`results/calibration/FINDING-neiso63-campd-economic-layup-2026-07.md`.
+`docs/records/neiso/FINDING-neiso63-campd-economic-layup-2026-07.md`.
 
 **Verdict: the detector books sustained economic layup as mechanical outage.**
 Four independent signatures, all from committed artifacts, no LP:
@@ -277,7 +277,7 @@ not be trusted. Locked test untouched. Next shorthand: neiso-64.
 
 ## 2026-07-25 — neiso-64: CAMPD merit-order guard — built, validated cross-ISO, keeper re-audited (fix-in-place)
 
-STEPS 1–4 of `docs/handoffs/campd-economic-layup-fix-charter-2026-07.md`.
+STEPS 1–4 of `docs/records/misc/campd-economic-layup-fix-charter-2026-07.md`.
 Model Opus. Keeper **unchanged** (`2026-07-23-neiso-61-netrev-margin`).
 
 **Design frozen first (charter §3a, owner sign-off).** The out-of-merit test is
@@ -298,11 +298,11 @@ fail-safe (Henry Hub never substitutes for a missing ISO basis).
 2018–2026 re-derive with `--merit-order-guard` absent reproduces **every**
 committed extract blob exactly (NEISO `a95c0928`, CAISO `3dc01fae`, NYISO
 `181fefb9`, ERCOT `b4b48f5a`, PJM `5283f5c6`, MISO `f2b3ec8e`). Ships as
-`docs/handoffs/patches/campd-merit-order-guard-{lib,deriver}.patch` (rule 27 —
+`docs/records/misc/patches/campd-merit-order-guard-{lib,deriver}.patch` (rule 27 —
 both files clear the 300-line bar); apply lib first.
 
 **Validated against the published instruments, no solve** (full tables:
-`results/calibration/RESULTS-neiso64-merit-order-guard-2026-07.md`). Graded on a
+`docs/records/neiso/RESULTS-neiso64-merit-order-guard-2026-07.md`). Graded on a
 same-GW-days placebo, so a guard that merely subtracts capacity cannot pass:
 ERCOT **3/3**, NEISO 2/3 (2025 exactly at p95), MISO 2/3, PJM 1/3 (its baseline
 r is already +0.90 — no room), CAISO **0/3**, NYISO no instrument. NEISO level
@@ -361,7 +361,7 @@ guard-corrected extracts + layup companions committed (NEISO: 444 windows /
 its dashboard payload landed (sidecar byte-identical, all scored criteria
 reproduce). NEISO verdict stays FIX-IN-PLACE (neiso-64); keeper unchanged
 (neiso-61). Cross-ISO re-audits + the CAISO crosswalk:
-`results/calibration/RESULTS-neiso65-crossiso-reaudit-2026-07.md`. The
+`docs/records/neiso/RESULTS-neiso65-crossiso-reaudit-2026-07.md`. The
 neiso-63 residual over-count stays open — now corroborated per-resource at
 CAISO (1.5–2.3× on the crosswalked active-plant scope).
 
@@ -387,7 +387,7 @@ intraday forced outages). Confirmed directly against ISO-NE's own published
 CAISO-only defect was corrected on the way (the CNOG `tail(1)` collapse
 inflated every published-side ratio ~1.3×; NEISO's daily instrument is
 unaffected, so its 1.29–1.36× levels stand).
-`results/calibration/FINDING-neiso66-overcount-rootcause-2026-07-26.md`.
+`docs/records/neiso/FINDING-neiso66-overcount-rootcause-2026-07-26.md`.
 
 **neiso-67 — STEP 2, and it is a NEGATIVE result.** The one remaining
 mechanism the finding left untested was commitment economics: does the observed
@@ -417,7 +417,7 @@ best contiguous ≥ min-run block in a day-ahead horizon:
   18 of 18 cells.
 
 Probe: `scripts/probes/_neiso67_startcost_recovery.py` (re-runnable, no solve).
-Finding: `results/calibration/FINDING-neiso67-commitment-test-2026-07-26.md`.
+Finding: `docs/records/neiso/FINDING-neiso67-commitment-test-2026-07-26.md`.
 
 **Open / next.** (1) **STEP 3 disposition is the owner's decision.** The
 recommendation is (b) carry the seam explicitly — option (a), a
@@ -470,7 +470,7 @@ definitionally impure but **operationally load-bearing** — the only mechanism
 in the system producing the observed non-operation. An LP-side closure would be
 a new *decline* mechanism (the existing bridges force capacity ON) with no
 identified driver, which rules 1/12/19 forbid reaching for.
-Finding: `results/calibration/FINDING-neiso68-lp-seam-screen-2026-07-26.md`.
+Finding: `docs/records/neiso/FINDING-neiso68-lp-seam-screen-2026-07-26.md`.
 
 **Open / next.** (1) **STEP 3 disposition remains the owner's decision**, now
 with both halves measured: recommendation unchanged and strengthened —
@@ -485,7 +485,7 @@ session. Next shorthand: neiso-69.
 
 Charter/cross-ISO session — measurement only: no guard change, no extract
 re-derive, no LP solve, **no NEISO keeper touched**, no dashboard registration.
-Full record: `results/calibration/FINDING-campd-daygrain-crossiso-2026-07-26.md`;
+Full record: `docs/records/governance/FINDING-campd-daygrain-crossiso-2026-07-26.md`;
 cross-ISO entry in `docs/calibration-log/governance.md`.
 
 NEISO's cell of the 180-cell sweep (`--rcc-pctl {0.50, 0.75, 0.90, 0.99}` × `--horizon {24, 48, 72}` ×
@@ -602,7 +602,7 @@ every arm (model 0 h vs RT 15/8/20 h). The frontier declaration stands; neither
 
 **New keeper: `2026-07-31-neiso-70-ctheatrate`** (bundle
 `neiso70_ctheatrate_B`), replacing `2026-07-23-neiso-61-netrev-margin`.
-Full record: `results/calibration/FINDING-neiso70-heat-rate-provenance-2026-07-31.md`;
+Full record: `docs/records/neiso/FINDING-neiso70-heat-rate-provenance-2026-07-31.md`;
 pre-registration `PREREG-neiso70-heat-rate-provenance-2026-07-31.md`, committed
 and pushed at `20ce479` **before either arm solved**.
 
@@ -722,8 +722,8 @@ replacing `2026-07-31-neiso-70-ctheatrate`. Determination unchanged:
 **CALIBRATED-WITH-CAVEATS, 0 FAILs, 1 ledgered C3c caveat, C1 all 12/12 · free
 8/8, DOF `n_residual` unchanged at 5.** Pre-registered at `464817e` and pushed
 before either arm solved
-(`results/calibration/PREREG-neiso71-nuclear-availability-2026-07-31.md`);
-evidence `results/calibration/FINDING-neiso71-chp-floor-nuclear-2026-07-31.md`.
+(`docs/records/neiso/PREREG-neiso71-nuclear-availability-2026-07-31.md`);
+evidence `docs/records/neiso/FINDING-neiso71-chp-floor-nuclear-2026-07-31.md`.
 Both bundles solved at the **identical frozen HEAD `464817e`**, `dirty: False`,
 on the requirements-pinned stack — **no environment drift this session**
 (contrast neiso-70).
@@ -885,7 +885,7 @@ gross load (278/299/283 MW median, max 321) and the EIA-860 CC_CHP basis
 attribution artifact?
 
 **Verdict — ARTIFACT** (`scripts/probes/_neiso73_kendall_capacity_screen.py`;
-`results/calibration/FINDING-neiso73-kendall-capacity-basis-2026-07-31.md`).
+`docs/records/neiso/FINDING-neiso73-kendall-capacity-basis-2026-07-31.md`).
 CAMPD `grossLoad` on this CHP unit is not gross electrical MW. Five
 independent blocks: (E1) max gross 317–323 MW every year 2018–2025 exceeds
 the **294.9 MW summed nameplate of every generator ever installed** at 1595
@@ -997,7 +997,7 @@ is pre-existing CAISO keeper-stamp drift, another lane's).
 
 **DO-NOT-REDO.** No storage-side PS lever at NEISO — dispatch adder, RTE,
 duration, or AS value — until the diurnal amplitude defect closes. Evidence:
-`results/calibration/FINDING-neiso74-ps-cycling-price-shape-2026-08-01.md`;
+`docs/records/neiso/FINDING-neiso74-ps-cycling-price-shape-2026-08-01.md`;
 probe `scripts/probes/_neiso74_ps_cycling_screen.py`.
 
 **Open / next.** (1) **The diurnal price-amplitude lane** — now NEISO's sized,
@@ -1025,7 +1025,7 @@ levers stands unchanged**, and the rubric question in neiso-74 (c) is re-filed
 as a cross-ISO owner call — no criterion sees hour-of-day amplitude at *any*
 ISO, and PJM's keeper is fully `CALIBRATED` at ~34 %. **§5.6 item 1 still needs
 its own owner charter; this audit grants none.**
-`results/calibration/FINDING-xiso1-diurnal-price-amplitude-is-systemic-2026-08-01.md`;
+`docs/records/governance/FINDING-xiso1-diurnal-price-amplitude-is-systemic-2026-08-01.md`;
 full entry in `docs/calibration-log/governance.md` (2026-08-01).
 
 Next shorthand: **neiso-75** (unchanged).
@@ -1033,7 +1033,7 @@ Next shorthand: **neiso-75** (unchanged).
 ## 2026-08-02 — cross-ISO audit touching NEISO (caiso-154): the caiso-153 OLS-attenuation defect is NOT LIVE in NEISO — but its signature is DATA-REAL counterfactually, and one NEW tail-sensitivity exposure on the Limb-B surface is FILED (unarmed; charter-gated)
 
 No-LP input-standing audit, logged in full in `docs/calibration-log/caiso.md`
-(caiso-154) and `results/calibration/FINDING-caiso154-xiso-ols-attenuation-not-live-2026-08-02.md`.
+(caiso-154) and `docs/records/caiso/FINDING-caiso154-xiso-ols-attenuation-not-live-2026-08-02.md`.
 NEISO outcomes: (1) `derive_neiso_offer_surface.py` contains no regression —
 the caiso-153 family is structurally absent, and
 `neiso_offer_surface_conditional` is off in the keeper (neiso-58 dormancy
@@ -1070,7 +1070,7 @@ Next shorthand: **neiso-75** (unchanged).
 **Session type:** charter (matrix §5.6 frontier discipline — "charter required
 before any lever"). **No solve, no bundle, no registration.** Keeper unchanged
 at `2026-07-31-neiso-72-hy-window`. Deliverable:
-`results/calibration/CHARTER-neiso75-c3c-frontier-2026-08-02.md`; decomposition
+`docs/records/neiso/CHARTER-neiso75-c3c-frontier-2026-08-02.md`; decomposition
 probe `scripts/probes/_neiso75_c3c_decomposition.py` (imports the xiso-1
 loaders — same construction, new statistic) with record
 `PROBE-neiso75-c3c-decomposition-2026-08-02.txt`.
@@ -1160,7 +1160,7 @@ Next shorthand: **neiso-76.**
 **Session type:** the neiso-75 charter's Phase-0 (§4), measurement only. **No
 solve, no bundle, no registration, no `ScenarioConfig` change.** Keeper
 unchanged at `2026-07-31-neiso-72-hy-window`. Deliverable:
-`results/calibration/FINDING-neiso76-dabid-phase0-2026-08-02.md`; probes
+`docs/records/neiso/FINDING-neiso76-dabid-phase0-2026-08-02.md`; probes
 `scripts/probes/_neiso76_dabid_phase0.py`, `_neiso76_demand_limb.py`,
 `_neiso76_reserve_content.py` with records `PROBE-neiso76-dabid-phase0-`,
 `-demand-limb-`, `-reserve-content-2026-08-02.txt`.
@@ -1340,7 +1340,7 @@ holdout spend freeze is ACTIVE and unspent; 2023-2025 only (rule 16).
 Zero free parameters (DOF ledger unchanged at 12 entries / 5 residual, asserted
 by the generator rather than trusted). Promoted on rule 14 [R-ACCURATE], not on
 a fit claim — the scorecard did not move in either direction.
-Evidence: `results/calibration/FINDING-caiso159-ct-heat-rate-promotion-2026-08-03.md`.
+Evidence: `docs/records/caiso/FINDING-caiso159-ct-heat-rate-promotion-2026-08-03.md`.
 
 Next shorthand: **neiso-78.**
 
@@ -1352,7 +1352,7 @@ Next shorthand: **neiso-78.**
 dashboard registration, no `ScenarioConfig` change, no default altered, no
 derive re-run.** Keeper unchanged at `2026-08-03-neiso-caiso156-meter-screen`.
 Deliverable:
-`results/calibration/FINDING-neiso78-matrix-census-close-2026-08-03.md`; probe
+`docs/records/neiso/FINDING-neiso78-matrix-census-close-2026-08-03.md`; probe
 `scripts/probes/_neiso78_oil_budget_reachability.py` with records
 `PROBE-neiso78-matrix-gap-census-` and
 `PROBE-neiso78-oil-budget-reachability-2026-08-03.txt`.
@@ -1454,7 +1454,7 @@ licenses nothing.**
 **NO LP, no solve, no bundle, no dashboard registration, no `ScenarioConfig`
 change, no default altered, no derive re-run, no cell verdict stamped.**
 Keeper unchanged at `2026-08-03-neiso-caiso156-meter-screen`. Deliverables:
-`results/calibration/PREREG-neiso79-crossing-quantity-2026-08-03.md` (committed
+`docs/records/neiso/PREREG-neiso79-crossing-quantity-2026-08-03.md` (committed
 BEFORE any statistic was computed),
 `FINDING-neiso79-crossing-quantity-2026-08-03.md`, probe
 `scripts/probes/_neiso79_crossing_quantity.py`, record
@@ -1589,10 +1589,10 @@ explicitly rather than left implied). **Keeper UNCHANGED** at
 were adjudicated from committed EIA-860 / eGRID / CAMPD artifacts plus one
 fleet-loader diff.
 
-Prereg `results/calibration/PREREG-neiso80-chp-scope-gate-and-steam-part-2026-08-04.md`
+Prereg `docs/records/neiso/PREREG-neiso80-chp-scope-gate-and-steam-part-2026-08-04.md`
 (commit `e89d08b5`, pushed **before** any arm and before any adjudicating
 statistic); finding
-`results/calibration/FINDING-neiso80-chp-scope-gate-and-steam-part-2026-08-04.md`;
+`docs/records/neiso/FINDING-neiso80-chp-scope-gate-and-steam-part-2026-08-04.md`;
 probe `scripts/probes/_neiso80_stonybrook_presence.py`; record
 `_neiso80_stonybrook_presence.json`.
 
@@ -1780,7 +1780,7 @@ file was edited, and **extended beyond neiso-87's search to the full git history
 | NEISO registry sidecars declaring a 2019 or H1-2026 solve year | **none** — all 27 NEISO sidecars *ever committed* (including retention-pruned ones, recovered from their pre-deletion blobs) declare years drawn only from {2022, 2023, 2024, 2025} |
 | `frontend/data/backcast/bench/NEISO/` | 2022–2025 only |
 | `actual_tail.json` NEISO | 2022–2025 — **no 2019 row exists to score against** |
-| the memo cited as the authorization (`docs/handoffs/neiso-calibration-complete-memo-2026-07.md`) | **zero mentions of 2019**; its 2026-07-07 owner decision authorized a one-shot on **2022** (pre-dating the 2026-07-31 tier split, when "one-shot" still meant the validation year), and execution was **HELD the same day** pending the G-19 register |
+| the memo cited as the authorization (`docs/records/neiso/neiso-calibration-complete-memo-2026-07.md`) | **zero mentions of 2019**; its 2026-07-07 owner decision authorized a one-shot on **2022** (pre-dating the 2026-07-31 tier split, when "one-shot" still meant the validation year), and execution was **HELD the same day** pending the G-19 register |
 | what `locked_test_scored_on` actually named | `2026-07-07-neiso53-winter-fuelsec-coldsnap` — a **TRAIN-tier 2023–2025 config id**, not a 2019 run |
 
 Independently corroborated by the third-party peer review
@@ -1831,13 +1831,13 @@ deliberately NOT rewritten**): `frontend/data/backcast/calibration-complete.json
 `frontend/data/backcast/keepers/NEISO.json` (+ regenerated `status/NEISO.js`),
 `frontend/data/backcast/registry/2026-08-05-neiso-2022-touchpoint.json`,
 `docs/mechanism-testing-matrix.md`, `docs/calibration-best-so-far-neiso.md`,
-`docs/FINDING-nyiso104-c3c-frontier-and-tiered-holdout-2026-07-31.md`,
+`docs/records/nyiso/FINDING-nyiso104-c3c-frontier-and-tiered-holdout-2026-07-31.md`,
 `docs/forecast-readiness-prompt-pack-2026-07.md`, and correction addenda in
 `docs/calibration-log/{neiso,nyiso,pjm}.md`. Full record:
-`docs/handoffs/neiso-record-correction-2026-08-06.md`.
+`docs/records/neiso/neiso-record-correction-2026-08-06.md`.
 
 **Authorization / citation chain.**
-`results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+`docs/records/neiso/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
 `docs/third-party-peer-review-2026-07.md` §6.3 item 1 → **owner decision D-23, SIGNED
 at the 2026-08-06 sitting Addendum X.6** (session-logged authorization for this
 correction). `scripts/audit_keepers.py --iso NEISO` PASSES (0 failures, 0 warnings)
@@ -1849,7 +1849,7 @@ Prerequisite/diagnosis session. **No mechanism tested, no cell verdict moved (ru
 `ScenarioConfig` field (rule 28c not engaged), keeper UNCHANGED
 (`2026-08-05-neiso-83-ca1-reclass`), nothing registered, and no out-of-training year solved,
 scored or registered.** Every solve is in-sample and a rule-16 throwaway diagnostic probe.
-Full record: `results/calibration/ASSESSMENT-neiso89-final-prereqs-2026-08-07.md`. Tasks 1a/1b/3 merged as PR #3693; this entry is the remainder, rebased onto main. **Item 5 below ran concurrently with neiso-90 (PR #3700, merged first) and is superseded in its detail by it — where they differ, neiso-90 governs.** The bisect (item 3) is unique to this session.
+Full record: `docs/records/neiso/ASSESSMENT-neiso89-final-prereqs-2026-08-07.md`. Tasks 1a/1b/3 merged as PR #3693; this entry is the remainder, rebased onto main. **Item 5 below ran concurrently with neiso-90 (PR #3700, merged first) and is superseded in its detail by it — where they differ, neiso-90 governs.** The bisect (item 3) is unique to this session.
 
 **1. Data prep (rule 22 as rewritten — unrestricted, not a spend).** NEISO **2019 and 2020**
 now carry `calibration_reference.json` blocks and `NEISO_<y>_renewable_capacity.csv`, on the
@@ -2104,7 +2104,7 @@ entry labelled `validation holdout` and its provenance banner naming the source 
 **NO LP. NO SOLVE. NO SCORE. NO REGISTRATION.** Phase-1 data-readiness proof only — rule 22 channel 1,
 which the holdout spend freeze does not cover. The freeze was verified **ACTIVE** at HEAD `cfb8127`
 and was **not lifted and not modified**. 2019, H1-2026 and the `final` block were not touched.
-Full record: `results/calibration/ASSESSMENT-neiso92-2021-readiness-2026-08-13.md`.
+Full record: `docs/records/neiso/ASSESSMENT-neiso92-2021-readiness-2026-08-13.md`.
 
 **Session shorthand corrected.** The prompt opened as "neiso-89"; that ordinal is taken
 (`ASSESSMENT-neiso89-final-prereqs-2026-08-07.md`, plus neiso-90 and neiso-91 are on the record), so
@@ -2282,7 +2282,7 @@ and the 923-vs-930 gap collapses to 0.003–0.005 from **June onward, exactly wh
 
 **2021 IS STILL NOT SOLVED, AND THAT IS CORRECT.** This session made it solvable; spending it needs
 its own owner lift. Evidence:
-`results/calibration/FINDING-neiso93-envelope-repair-2026-08-14.md`.
+`docs/records/neiso/FINDING-neiso93-envelope-repair-2026-08-14.md`.
 
 **Next shorthand: `neiso-94`.**
 
@@ -2295,8 +2295,8 @@ Freeze **VERIFIED ACTIVE at HEAD** and never engaged. **NO year was solved, scor
 or out of sample**; no LP was constructed. `holdout-freeze.json`, `calibration-complete.json` and the
 `final` block are untouched. NEISO's locked test remains **NEVER GRANTED and NEVER SPENT** (D-23).
 
-Full record: `results/calibration/ASSESSMENT-neiso94-final-readiness-2026-08-15.md`.
-Charter opened: `docs/handoffs/fleet-vintage-retiree-window-charter-2026-08.md`.
+Full record: `docs/records/neiso/ASSESSMENT-neiso94-final-readiness-2026-08-15.md`.
+Charter opened: `docs/records/misc/fleet-vintage-retiree-window-charter-2026-08.md`.
 
 ### The Pilgrim adjudication — answered on measurement, not restated
 
@@ -2414,7 +2414,7 @@ assigned as its own cross-ISO session.
 
 **Session `neiso-95`** (the shorthand neiso-94 named). **Keeper unchanged:
 `2026-08-14-neiso-93-envelope`** — no promotion, no re-key of `keeper`, **NO RUN PRODUCED**.
-Full record: `results/calibration/ASSESSMENT-neiso95-declaration-recheck-2026-08-15.md`.
+Full record: `docs/records/neiso/ASSESSMENT-neiso95-declaration-recheck-2026-08-15.md`.
 
 **Freeze VERIFIED ACTIVE at HEAD** (`active: true`, re-armed 2026-08-06, scope `isos: ALL`, tiers
 `[validation, locked_test]`) and never engaged. **No year of any tier was solved, scored or
@@ -2531,7 +2531,7 @@ its own cross-ISO session.
 
 **Session `neiso-96`** (the shorthand neiso-95 named; verified, no divergence). **Keeper unchanged:
 `2026-08-14-neiso-93-envelope`** — no promotion, no re-key, **NO RUN PRODUCED**. Full record:
-`results/calibration/ASSESSMENT-neiso96-h12026-intake-2026-08-15.md`.
+`docs/records/neiso/ASSESSMENT-neiso96-h12026-intake-2026-08-15.md`.
 
 **Freeze VERIFIED ACTIVE at HEAD** (`active: true`, re-armed 2026-08-06, scope `isos: ALL`, tiers
 `[validation, locked_test]`) — checked twice, at session start and again after the rebase onto
@@ -2667,7 +2667,7 @@ re-solve), the **fleet-vintage/Pilgrim charter**, and the reported-and-unowned
 **Branch** `claude/neiso-smd-dst-naive-repair-8b2eez` · **Charter** `docs/audit/third-party-audit-2026-08.md`
 §8 row O8, served as an in-session owner card (the debug-sweep §A.2 two-card pattern) and **SIGNED:
 option A (repair + full-span re-solve), promotion PRE-SIGNED on not-worse**. Full record:
-`docs/FINDING-debug-b-neiso-smd-clock-2026-08-17.md`.
+`docs/records/neiso/FINDING-debug-b-neiso-smd-clock-2026-08-17.md`.
 
 ### The defect, measured from committed bytes before the card was served
 
@@ -2737,7 +2737,7 @@ SMD DST defect is **CLOSED** (this session).
 **Session `neiso-98`** (the shorthand neiso-97 named). **Keeper UNCHANGED:
 `2026-08-17-neiso-97-dstrepair`** — no promotion, no re-key, **NO LP, NO RUN PRODUCED, NOTHING
 REGISTERED**. Full record:
-`results/calibration/ASSESSMENT-neiso98-frontier-verification-2026-08-17.md`.
+`docs/records/neiso/ASSESSMENT-neiso98-frontier-verification-2026-08-17.md`.
 
 **Freeze VERIFIED ACTIVE at HEAD** and **never engaged**. No year of any tier was solved, scored or
 registered. `holdout-freeze.json` and `calibration-complete.json` are **unedited**. The only
@@ -2879,8 +2879,8 @@ the fleet-vintage/Pilgrim charter (cross-ISO), the `_dual_fuel_plant_groups` vin
 **New keeper `2026-08-17-neiso-99-joint-p1`**, superseding `2026-08-17-neiso-97-dstrepair`
 (superseded-not-retracted). Two arms registered (rule 15), both `--year 2023 2024 2025` in ONE
 invocation (rule 16), years sequential (rule 12), both at the same HEAD. Prereg
-`results/calibration/PREREG-neiso99-p2basis-routing-2026-08-17.md`, pushed **before either arm
-solved**. Full record: `results/calibration/ASSESSMENT-neiso99-p2basis-routing-2026-08-17.md`.
+`docs/records/neiso/PREREG-neiso99-p2basis-routing-2026-08-17.md`, pushed **before either arm
+solved**. Full record: `docs/records/neiso/ASSESSMENT-neiso99-p2basis-routing-2026-08-17.md`.
 
 **The two defects, settled together so they could not be confounded** (exactly as neiso-98 §4
 recommended):
@@ -2970,7 +2970,7 @@ declaration re-assessment and the 2019 input-preparedness audit — and neither 
 
 **Two defects, one live and one latent. Nothing solved, scored, registered or promoted; no mechanism
 tested; no matrix cell verdict moved.** Full record:
-`results/calibration/FINDING-neiso102-holdout-records-integrity-2026-09-06.md`.
+`docs/records/neiso/FINDING-neiso102-holdout-records-integrity-2026-09-06.md`.
 
 ### A — the contradiction on the live card
 
@@ -3045,7 +3045,7 @@ the NEISO matrix shard. The 2020 `NOT-YET` rung is **reported, not chased** (rul
 
 **Phase 0 only. Nothing solved, scored, registered or promoted; no mechanism tested; no matrix cell
 verdict moved; keeper shard untouched.** Full record:
-`docs/handoffs/FINDING-neiso103-2020-input-readiness-2026-09-06.md`.
+`docs/records/neiso/FINDING-neiso103-2020-input-readiness-2026-09-06.md`.
 
 The lane question (opened, not answered, by neiso-102): is NEISO's 2020 input set as prepared as
 2021's and 2022's? **It is — on all 24 keeper-consumed input families, at parity or better.** The
@@ -3136,7 +3136,7 @@ where rule 22 step 3 requires the fitting to happen. This session opens nothing.
 
 **One full-span LP invocation (2023 · 2024 · 2025) plus the 2020/2021/2022 touchpoints. No screen,
 no control solve.** Full record:
-`results/calibration/FINDING-neiso106-offer-level-rederived-2026-09-06.md`; pre-registration
+`docs/records/neiso/FINDING-neiso106-offer-level-rederived-2026-09-06.md`; pre-registration
 `PREREG-neiso106-offer-level-rederived-2026-09-06.md` (committed `773411e5`, **before the solve**);
 governance addendum `ADDENDUM-neiso106-prereg-collision-2026-09-06.md`.
 
@@ -3250,7 +3250,7 @@ row. It is **pre-existing** (identical at the neiso-105 promotion on `main`), it
 run-level determination correct, and its fix lands in the shared scorer and would change MISO's
 published page — which a NEISO lane must not do (rule 25 `[R-ISO-SCOPE]`). Escalated with a
 measured blast radius and a proposed one-line fix in
-`results/calibration/FINDING-neiso106-per-year-ladder-governance-defect-2026-09-06.md`.
+`docs/records/neiso/FINDING-neiso106-per-year-ladder-governance-defect-2026-09-06.md`.
 
 **Next shorthand: `neiso-107`.** No NEISO lever is open, and **the offer-level lane is CLOSED by its
 own pre-committed stop rule** — do not re-size this scalar. The live objects are unchanged: C3c
@@ -3269,7 +3269,7 @@ widening (`RETIREMENT_WINDOW_START` 2023 → 2019, commit `7934e92c`) that reach
 re-swept, and the offer-level lane stays closed by its own stop rule.
 
 **THE SESSION'S HEADLINE IS A ZERO-LP RESULT, NOT THE PROMOTION.**
-`docs/FINDING-neiso-index-vs-delivered-gas-2026-09-09.md` closes the one cross-ISO discrepancy the
+`docs/records/neiso/FINDING-neiso-index-vs-delivered-gas-2026-09-09.md` closes the one cross-ISO discrepancy the
 fuel-vintage program had not resolved. NEISO's 3.24× January-2023 gap between the ISO-NE published
 Algonquin index ($4.73/MMBtu) and the EIA `N3045` MA/CT/RI/ME/NH blend ($15.35) is a
 **measurement-basis gap** — an average delivered cost including transportation and
@@ -3356,8 +3356,8 @@ is adjudicated, with a physical falsification behind it.**
 
 **Two deliverables: the gas index-vs-delivered gap SETTLED (zero LP), and the 2019-2022 retiree
 window solved across the training span and the validation ladder.** Docs:
-`docs/FINDING-neiso-gas-index-vs-delivered-2026-09-09.md` (the fuel investigation, read first) and
-`docs/RESULT-neiso-fuelvintage-1-2026-09-09.md` (everything else).
+`docs/records/neiso/FINDING-neiso-gas-index-vs-delivered-2026-09-09.md` (the fuel investigation, read first) and
+`docs/records/neiso/RESULT-neiso-fuelvintage-1-2026-09-09.md` (everything else).
 
 ### A — the index is right, and NEISO has no gas level gap
 
@@ -3534,7 +3534,7 @@ GiB against the 13.34 GiB ceiling; no shard neared the 20-minute stop or needed 
 All six archived after their bytes were fetched, checked out and verified (rule 33
 (a)/(e)); their branches are kept as the durable copy of the per-year legs, with full
 recovery SHAs in `.gitignore` and in
-`docs/RESULT-neiso112-mer-year-isolated-2026-09-19.md` §5.
+`docs/records/neiso/RESULT-neiso112-mer-year-isolated-2026-09-19.md` §5.
 
 **OPEN GATES CARRIED, UNCHANGED:** C3c (ledgered; frontier), the neiso-109 winter-oil
 root-cause issue, and the neiso-111 reserve-supply scoping finding. **Next shorthand:
@@ -3545,7 +3545,7 @@ root-cause issue, and the neiso-111 reserve-supply scoping finding. **Next short
 G-DRIFT `fda9ece3..40f4ed7a`: every solve-path hunk INERT for NEISO; the only live change
 is benchmark-side (`ad42fe43`, EIA-923 dual-fuel oil re-attribution). NEISO bench parts
 regenerated (6 STALE → 0), keeper re-scored: **CALIBRATED unchanged, 0 status flips**,
-largest move C1 2022 ST_GAS actual 0.302 → 0.212 TWh. `docs/RESULT-neiso113-bench-refresh-2026-09-24.md`.
+largest move C1 2022 ST_GAS actual 0.302 → 0.212 TWh. `docs/records/neiso/RESULT-neiso113-bench-refresh-2026-09-24.md`.
 **Next shorthand: `neiso-114`.**
 
 ## R-NEISO — 2026-09-25 — PROMOTED `2026-09-24-r-neiso-inputs-2019` (owner: "yes promote")
@@ -3556,11 +3556,11 @@ mid-vintage and partial-plant exit carries. Offer curves byte-identical, zero fr
 Train tier 2023–2025 **CALIBRATED** (C3c ledgered); full span **NOT-YET** on C1 CC_REGULAR
 2019/2021/2022 (−4.66/−3.17/−3.12 TWh) — restored coal and ST_GAS over-dispatch, open successors.
 Outgoing keeper `2026-09-22-hydro-5-neiso-ror` pruned (rule 35); year set 2020–2025 → 2019–2025.
-Record: `docs/handoffs/r-neiso/RESULT-r-neiso-2026-09-24.md`.
+Record: `docs/records/neiso/r-neiso/RESULT-r-neiso-2026-09-24.md`.
 
 ## neiso-114 — 2026-09-25
 
-KEEPER → `2026-09-25-neiso114-coal-mustrun-measured` (arm A; R-NEISO recipe + `coal_mustrun_requires_measured_row`, zero DOF), 2019–2025, one shard per year at pinned `9db30b45`. C1 CC_REGULAR 2019 −4.66 → −3.54, 2021 −3.17 → −2.88 (FAIL → PASS), 2022 −3.12 unchanged; all other criteria PASS; train tier CALIBRATED. Root cause: NEISO CAMPD artifacts derived on the canonical 2025ER fleet, so restored coal plants took the unmeasured 45 % must-run default. Successors: Merrimack delivered coal price (2022), ST_GAS bands on the corrected class (arm B, unsolved), tranche re-derive. Outgoing keeper prune pending (classifier-denied). Record: `docs/handoffs/neiso114/RESULT-neiso114-2026-09-25.md`.
+KEEPER → `2026-09-25-neiso114-coal-mustrun-measured` (arm A; R-NEISO recipe + `coal_mustrun_requires_measured_row`, zero DOF), 2019–2025, one shard per year at pinned `9db30b45`. C1 CC_REGULAR 2019 −4.66 → −3.54, 2021 −3.17 → −2.88 (FAIL → PASS), 2022 −3.12 unchanged; all other criteria PASS; train tier CALIBRATED. Root cause: NEISO CAMPD artifacts derived on the canonical 2025ER fleet, so restored coal plants took the unmeasured 45 % must-run default. Successors: Merrimack delivered coal price (2022), ST_GAS bands on the corrected class (arm B, unsolved), tranche re-derive. Outgoing keeper prune pending (classifier-denied). Record: `docs/records/neiso/neiso114/RESULT-neiso114-2026-09-25.md`.
 
 ## neiso-115 — 2026-09-25 — PROMOTED `2026-09-25-neiso114-arm-b-stgas` (standing ruling)
 
@@ -3569,7 +3569,7 @@ neiso-114 arm B completed (seven single-year legs, rule 36), composed at zero LP
 changes status in any year; CC_REGULAR 2019 −3.54 → −2.87, 2021 −2.88 → −1.98, 2022 −3.12 → −3.03, 2023 −1.25 → −0.59;
 ST_GAS over-dispatch roughly halved; mean-LMP bias +0.1–0.9 pp (all PASS). Train tier CALIBRATED; full span NOT-YET
 (C1 CC_REGULAR 2019/2022). Arm A and `2026-09-24-r-neiso-inputs-2019` pruned (rule 35). Record:
-`docs/handoffs/neiso114/RESULT-neiso114-2026-09-25.md` §6. **Next shorthand: `neiso-116`.**
+`docs/records/neiso/neiso114/RESULT-neiso114-2026-09-25.md` §6. **Next shorthand: `neiso-116`.**
 
 ## neiso-116 — 2026-09-26 — bench refresh + phase 0 on the C1 CC_REGULAR misses (zero LP)
 
@@ -3581,7 +3581,7 @@ delivered cost is published 2019–20 (≈ 3.13 $/MMBtu); a price correction mov
 EIA-923 yard budget (`coal_fuel_inventory` plant grain, NEISO U) cuts 2.21 TWh there. Tranche deriver drops coal
 rows at HEAD (COAL-SUB) and cannot see the restored ST_GAS plants; the committed-basis mechanism is
 non-selective and its NEISO artifact predates the fleet correction. Owner rulings requested; no solve.
-Record: `docs/handoffs/neiso116/PRECOMMIT-neiso116-2026-09-26.md`. **Next shorthand: `neiso-117`.**
+Record: `docs/records/neiso/neiso116/PRECOMMIT-neiso116-2026-09-26.md`. **Next shorthand: `neiso-117`.**
 
 ## neiso-117 — 2026-09-26 — PROMOTED `2026-09-26-neiso-117-coal-yard` (owner ruling)
 
@@ -3592,7 +3592,7 @@ coal price kept, tranche/committed-basis deferred. Seven single-year shards; the
 yard's own budget; inert 2019–2024) and 2025 re-solved. Result: no criterion changes status; C1 CC_REGULAR 2022
 −3.03 → PASS, 2019 −2.87/−4.0 pp → −2.35/−3.5 pp (share still FAIL); CO2 2022 CAVEAT → PASS. Train tier CALIBRATED;
 full span NOT-YET on 2019 share only. `neiso114-arm-b-stgas` pruned (rule 35). Record:
-`docs/handoffs/neiso117/RESULT-neiso117-2026-09-26.md`. **Next shorthand: `neiso-118`.**
+`docs/records/neiso/neiso117/RESULT-neiso117-2026-09-26.md`. **Next shorthand: `neiso-118`.**
 
 ## neiso-118 — 2026-09-26 — PROMOTED `2026-09-26-neiso-118-canal-ct` (Canal 3 heat rate)
 
@@ -3602,7 +3602,7 @@ Canal 3 is oil in 2023–2025. Owner ruling "CT only": class-preserving `union_f
 re-derived (+Canal 3 rows only, pooled 10.76). Seven single-year shards (first launch cloned `main`; relaunched with an
 explicit SHA checkout). Result: C1 CC_REGULAR 2019 −3.46 pp FAIL → −2.3 pp PASS; C3a price_mean 2019 +9.3 % → +10.03 %
 PASS → FAIL ($0.01 over). Full span NOT-YET on that one line; train tier CALIBRATED. `neiso-117-coal-yard` pruned
-(rule 35). Record: `docs/handoffs/neiso118/RESULT-neiso118-2026-09-26.md`. **Next shorthand: `neiso-119`.**
+(rule 35). Record: `docs/records/neiso/neiso118/RESULT-neiso118-2026-09-26.md`. **Next shorthand: `neiso-119`.**
 
 ## neiso-119 — 2026-09-26 — PROMOTED `2026-09-26-neiso-119-anchor-fuelsec` (full span CALIBRATED)
 
@@ -3613,4 +3613,4 @@ units CEMS shows offline over its own window (rule 17). Owner rulings: arm `gas_
 `neiso_winter_fuelsec_conduct_roster` (leave-one-year-out, ≥ 50 % online; roster = Schiller 2367). Seven single-year
 shards, one launch. Result: C3a 2019 +10.03 % → +7.9 % FAIL → PASS; no status regresses; **full span NOT-YET →
 CALIBRATED** (C3c ledgered); train tier CALIBRATED. `neiso-118-canal-ct` pruned (rule 35). Record:
-`docs/handoffs/neiso119/RESULT-neiso119-2026-09-26.md`. **Next shorthand: `neiso-120`.**
+`docs/records/neiso/neiso119/RESULT-neiso119-2026-09-26.md`. **Next shorthand: `neiso-120`.**

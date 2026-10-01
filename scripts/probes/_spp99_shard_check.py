@@ -1,7 +1,7 @@
 """SPP-99 shard self-check: the SPP keeper replayed with ``campd_split_remap_companions`` armed.
 
 Run by each SPP-99 shard AFTER its solve and BEFORE it pushes (rule 32(c)(4) hard stops). Zero LP.
-Pre-registered in ``docs/handoffs/PRECOMMIT-spp-99-remap-rederive-2026-09-28.md``. Adapted from
+Pre-registered in ``docs/records/spp/PRECOMMIT-spp-99-remap-rederive-2026-09-28.md``. Adapted from
 ``_spp98_shard_check.py``; the control is the committed keeper ``spp98_remap_span`` (rule 29(b)
 form 4).
 

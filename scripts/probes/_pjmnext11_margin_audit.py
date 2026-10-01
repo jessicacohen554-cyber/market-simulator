@@ -15,7 +15,7 @@ splits exactly:
                        + sum_b L_a(b) [H_m(b) - H_a(b)]     # price: model hours sit in dearer bins
 
 A bin the actual side never visits takes the nearest populated bin's ``L_a``.
-Writes ``results/calibration/_pjmnext11_margin_audit.json``.
+Writes ``results/phase0/pjm/_pjmnext11_margin_audit.json``.
 """
 
 from __future__ import annotations
@@ -31,7 +31,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts/probes"))
 import _pjmnext10_coal_phase0 as P10  # noqa: E402
 
-OUT = REPO / "results/calibration/_pjmnext11_margin_audit.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext11_margin_audit.json"
 EDGES = np.array([-1e9, 0, 10, 15, 20, 25, 30, 35, 40, 50, 60, 80, 100, 150, 1e9])
 UTC_TO_EPT_H = (
     5  # EST offset; DST ignored (one-hour shifts do not move a $5 bin materially)

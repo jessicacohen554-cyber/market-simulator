@@ -239,7 +239,7 @@ HEAT_RATE_BINS: dict[str, dict[str, float]] = {
 }
 
 # eGRID plant-heat-rate boundary reconciliation (see
-# docs/handoffs/miso-88-egrid-hr-boundary-plan-2026-07.md).
+# docs/records/miso/miso-88-egrid-hr-boundary-plan-2026-07.md).
 #
 # eGRID keys its plant sheet on ORISPL, but CEMS reports co-located plants that
 # share a stack/facility under ONE facilityId. Where that happens the plant row's
@@ -298,7 +298,7 @@ EGRID_CT_HR_PHYSICAL_FLOOR: float = HEAT_RATE_BINS["gas_ct"]["aero"]
 # data's own gap structure and NEVER swept against a criterion (rule 1
 # [R-STRUCT]); it selects which MEASURED month is admissible and the measurement
 # it admits carries zero DOF.
-# (docs/PRECOMMIT-ercot261-gas-level-retirements-2026-09-09.md SS1c, SS6.)
+# (docs/records/ercot/PRECOMMIT-ercot261-gas-level-retirements-2026-09-09.md SS1c, SS6.)
 ERCOT_GAS_CORROBORATION_TOL_USD_MMBTU: float = 1.00
 
 # EIA-923 own-month gas-price plausibility band (SPP-46 R-1; owner ruling P19,
@@ -483,7 +483,7 @@ MISO_GAS_ECOMIN_MIN_LOAD_FRAC: float = 0.323767
 # 3-10): gas min-down 8 h, published by fuel (gas unsplit) — recorded as the
 # admissible commitment-time source in FINDING-spp-83 §2. Cross-check, not the
 # identification: SPP's own CEMS CC off-spells have a p25 of 6-8 h in every
-# year 2019-2025 (docs/handoffs/spp102/trough_physics.json). Rules 5/13/21/23:
+# year 2019-2025 (docs/records/spp/spp102/trough_physics.json). Rules 5/13/21/23:
 # published physics, frozen against residuals; rule 25: SPP's own market.
 SPP_POSTURE_MIN_DOWN_HOURS: float = 8.0
 
@@ -495,7 +495,7 @@ SPP_POSTURE_MIN_DOWN_HOURS: float = 8.0
 # the gate; every CC (4-8 h) and gas-steam (8-12 h) row fails it. Rule 17's
 # own fast-start line (min-down <= 2 h); eligibility by unit physics, never
 # a class-name tuple (rule 12 / charter §9.2,
-# docs/handoffs/ercot-residual-midband-formation-lane-2026-07.md).
+# docs/records/ercot/ercot-residual-midband-formation-lane-2026-07.md).
 FASTSTART_POOL_MIN_DOWN_HOURS: float = 2.0
 
 # SLOW-START eligibility band (h) for the ERCOT offline-increment re-pricing
@@ -524,7 +524,7 @@ FASTSTART_POOL_MIN_DOWN_HOURS: float = 2.0
 # guards. Without the min-run bound this tier would silently re-test that
 # closed cell.
 # Source: NREL/SR-5500-55433 (Kumar et al. 2012) via the *_COMMITMENT_PARAMS
-# tables above; docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md §1.
+# tables above; docs/records/ercot/PRECOMMIT-ercot176-offline-increment-2026-08-07.md §1.
 OFFLINE_COMMIT_MIN_DOWN_HOURS_MIN: float = 4.0
 OFFLINE_COMMIT_MIN_DOWN_HOURS_MAX: float = 8.0
 OFFLINE_COMMIT_MIN_RUN_HOURS_MAX: float = 12.0
@@ -617,13 +617,13 @@ MIN_STABLE_PCT_PHYSICAL: dict[str, float] = {
 # value. Residual-identified, forecast-risk (open item for the DOF ledger,
 # S5; G-26/issue #1335): replace when an independent merchant-CHP host-load
 # source is found. R6 DOCUMENT-AND-KEEP disposition per
-# docs/handoffs/scalar-remediation-plan-2026-07.md C-4 — deletion is not an
+# docs/records/misc/scalar-remediation-plan-2026-07.md C-4 — deletion is not an
 # improvement (0% would be an equally unsourced assumption) and the
 # candidate fix (extending the EIA-923 intake to Schedule 8, filtered to the
 # ~15-40 merchant-tagged plant codes, mirroring the industrial/commercial
 # derivation above) is a data-intake project, not a hygiene edit; full
 # survey of candidate sources and the recommended path in
-# docs/handoffs/merchant-chp-host-load-memo-2026-07.md.
+# docs/records/misc/merchant-chp-host-load-memo-2026-07.md.
 CHP_BTM_PCT_BY_SECTOR: dict[str, float] = {
     "merchant": 35.0,  # residual-identified, forecast-risk — no independent source yet
     "industrial": 70.0,  # EIA-923 Schedule-8: ~70% of CHP fuel to useful thermal output
@@ -640,7 +640,7 @@ CHP_ST_BTM_PCT: float = 90.0  # ST_CHP group (tiny chemical host-steam): near-fu
 # output == 0), applied ex ante to the tranche artifact's pooled multi-year
 # on-frequency (steam_level_cf / median_cf) instead of ex post to a solved year.
 # An all-hours floor is admissible only where the plant is metered on in more
-# than half of its hours. docs/handoffs/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md.
+# than half of its hours. docs/records/spp/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md.
 CHP_STEAM_ALLHOURS_MIN_ON_FRAC: float = 0.5
 
 # SPP's own seasonal Equivalent Forced Outage Rate for NATURAL-GAS thermal
@@ -661,7 +661,7 @@ CHP_STEAM_ALLHOURS_MIN_ON_FRAC: float = 0.5
 # parameters (rule 21); SPP's own fleet (rule 25). Rule-14 misalignment,
 # declared: the table is by FUEL x size, so a CT takes the natural-gas rate of
 # its size bin, which in the 51-200 MW bins also averages gas steam units.
-# docs/handoffs/DESIGN-spp-104-ct-outage-2026-09-29.md.
+# docs/records/spp/DESIGN-spp-104-ct-outage-2026-09-29.md.
 SPP_LOLE_GAS_EFOR_BY_SIZE: tuple[tuple[float, float, float], ...] = (
     (50.0, 0.17, 0.23),  # 0-50 MW — Tables 9/10
     (100.0, 0.23, 0.28),  # 51-100 MW
@@ -726,7 +726,7 @@ CT_STARTUP_PARAMS: list[tuple[float, float]] = [
 # mirrored were themselves DELETED 2026-08-12 (ercot-188 G#3 owner ruling)
 # along with their sole consumer offer_curves.split_coal_tranches — dead in
 # build_dispatch_fleet's else limb for every registered bundle (proof:
-# results/calibration/ercot188_g3_unreachability_proof.json).
+# results/phase0/ercot/ercot188_g3_unreachability_proof.json).
 
 # Legacy per-class heat-rate-override band defaults (econ/peak multipliers on the
 # plant's base heat rate) for the CC / gas-steam / CT_CHP supply-curve override
@@ -789,7 +789,7 @@ GAS_TRANCHE_SHARES_BY_GROUP: dict[str, tuple[float, float, float]] = {
 # ``scripts/data/derive_gas_offer_margin_anchor.py``.
 # Each value is the derive script's output 2026-07-23 (each ISO's keeper gas
 # overlay; TRAIN_WINDOW_HH Henry Hub 2.54 / 2.19 / 3.52), design doc
-# docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md:
+# docs/records/misc/gas-offer-net-revenue-margin-design-2026-07.md:
 #   ERCOT: 2.2494 = mean(2.0394, 1.6895, 3.0192) — annual-HH + seasonality
 #     delivered series (ercot99: no monthly actuals / hub overlay; Waha-ish
 #     discount to HH).
@@ -809,7 +809,7 @@ GAS_TRANCHE_SHARES_BY_GROUP: dict[str, tuple[float, float, float]] = {
 #     The per-plant EIA-923 print (gas_plant_monthly_fuel_pricing) applies on the
 #     (n_gen, T) array AFTER this series and is invisible to the derive, so the
 #     ANCHOR and the FLEET's delivered price are identified on different bases:
-#     `results/calibration/_miso215_intermediate_phys.json` M3a, and
+#     `results/phase0/miso/_miso215_intermediate_phys.json` M3a, and
 #     `FINDING-miso215-intermediate-phys-coverage-2026-09-05.md` §4. Whether the
 #     identification point should stay the ISO series is an OWNER question this
 #     lane routed; nothing here changes the value or any solve.)*
@@ -1020,7 +1020,7 @@ ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO: dict[str, float] = {
 # data/raw/ercot_zonal_gas_hub.csv; EP series
 # data/raw/ercot_electric_power_gas_price.csv; per-year capw means removed
 # +0.18 / +0.04 / +0.02 $/MMBtu (full record with the West decomposition in
-# results/calibration/_ercot150_zonal_anchor_derivation.json):
+# results/phase0/ercot/_ercot150_zonal_anchor_derivation.json):
 #   South         3.2778 = mean(3.5721, 2.6518, 3.6094) — South TX/Agua Dulce.
 #   South_Central 2.7578 = mean(2.9021, 2.4718, 2.8994) — South TX hubs.
 #   North         2.7178 = mean(2.4721, 2.2318, 3.4494) — North/East-TX complex.
@@ -1104,7 +1104,7 @@ GAS_OFFER_MARGIN_ANCHOR_BY_ZONE: dict[str, dict[str, float]] = {
 # where published (Fayette / J K Spruce / San Miguel, the only ERCOT
 # reporters; ercot135 §3), the measured coal supply trajectories elsewhere —
 # read from the COMMITTED seam capture
-# ``results/calibration/ercot135_coal_merit_order.json`` (A_model_offer
+# ``results/phase0/ercot/ercot135_coal_merit_order.json`` (A_model_offer
 # per_plant ``fuel_price_mmbtu`` × ``pmax_mw``; year means
 # 1.8169 / 1.7556 / 1.6436). An identification constant, not a tunable: it
 # re-derives ONLY when the underlying coal price sources change (rule 23),
@@ -1122,7 +1122,7 @@ COAL_OFFER_MARGIN_ANCHOR_BY_ISO: dict[str, float] = {
 # p50 at 98.8–100 % coverage, pooled res-hours-weighted across the four
 # 2024–2025 disclosure subsets (16.86 / 16.37 / 15.00 / 15.00 →
 # 15.8807; committed artifact
-# ``results/calibration/ercot136_coal_headroom_conduct.json``
+# ``results/phase0/ercot/ercot136_coal_headroom_conduct.json``
 # B1_curve_bottom, the ERCOT-136 §3 decisive measurement). The min-load
 # block's own declared price corroborates it independently (Min Gen Cost p25
 # $18.00, 28–31 % coverage — corroboration only, never the anchor). At
@@ -1131,8 +1131,8 @@ COAL_OFFER_MARGIN_ANCHOR_BY_ISO: dict[str, float] = {
 # ERCOT-137 precommit. Its ORIGINAL premise ("no 2023 SCED disclosure exists")
 # was dissolved by the ercot-157 delivery-2023 corpus re-upload and TESTED at
 # ercot-169 (matrix §5.1 item 13, Phase 0, no LP; decision rule pre-registered
-# in docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md; full record
-# results/calibration/ercot169_margin_fuel_invariance.json +
+# in docs/records/ercot/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md; full record
+# results/phase0/ercot/ercot169_margin_fuel_invariance.json +
 # FINDING-ercot169-margin-fuel-invariance-2026-08-05.md). **The test could not
 # be completed: NOT-IDENTIFIABLE-2023.** The instrument's own licensing test
 # (ERCOT-138 §3.4 curve coverage) fails on the delivery-2023 COAL rows —
@@ -1172,8 +1172,8 @@ COAL_OFFER_MARGIN_ANCHOR_BY_ISO: dict[str, float] = {
 # so selects the scarcity season, which lifts a curve-BOTTOM statistic in exactly
 # the direction observed; the pre-registered gate is S1 and S1 passes, but the
 # two routes disagree and that should be read alongside the verdict, not behind
-# it. Record: docs/PRECOMMIT-ercot171-coal-licensed-subpopulation-2026-08-05.md,
-# results/calibration/ercot171_coal_licensed_subpop.json +
+# it. Record: docs/records/ercot/PRECOMMIT-ercot171-coal-licensed-subpopulation-2026-08-05.md,
+# results/phase0/ercot/ercot171_coal_licensed_subpop.json +
 # FINDING-ercot171-coal-licensed-subpopulation-2026-08-05.md.
 # Re-derives only with its source disclosure (rule 23), via the same derive
 # script (``--year`` runs the ercot-169 test); per-ISO, never transferred
@@ -1189,7 +1189,7 @@ COAL_OFFER_MARGIN_LEVEL_BY_ISO: dict[str, float] = {
 # real CC fleet's RT supply-curve bottom expressed at the delivered-gas anchor:
 # 60-Day SCED ``Submitted TPO-Price1`` capacity-weighted p50, pooled
 # res-hours-weighted across the four 2024–2025 disclosure subsets (committed
-# artifact ``results/calibration/ercot136_coal_headroom_conduct.json``
+# artifact ``results/phase0/ercot/ercot136_coal_headroom_conduct.json``
 # B1_curve_bottom, CC rows — the same measurement, instrument, construction and
 # loader that supplied coal's level, read off its COAL twin). Curve coverage on
 # those rows is 95.1–98.0 % of RT-dispatchable headroom, so CC passes the same
@@ -1234,9 +1234,9 @@ COAL_OFFER_MARGIN_LEVEL_BY_ISO: dict[str, float] = {
 # sits 0.00003 BELOW it, so this limb passes its coverage licence essentially at
 # the boundary. The confirmation is real under the pre-registered rule and is
 # the tightest of the three limbs on value; it is not a wide-margin result.
-# Record: docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md,
-# results/calibration/ercot169_margin_fuel_invariance.json,
-# results/calibration/FINDING-ercot169-margin-fuel-invariance-2026-08-05.md.
+# Record: docs/records/ercot/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md,
+# results/phase0/ercot/ercot169_margin_fuel_invariance.json,
+# docs/records/ercot/FINDING-ercot169-margin-fuel-invariance-2026-08-05.md.
 # Re-derives only with its source disclosure (rule 23), via
 # ``scripts/data/derive_cc_committed_offer_margin.py`` (``--year`` runs the
 # ercot-169 test). ISOs absent from the registry hard-fail when the flag is
@@ -1249,12 +1249,12 @@ CC_COMMITTED_OFFER_LEVEL_BY_ISO: dict[str, float] = {
 # Measured coal `_peak`-tranche offer LEVEL ($/MWh) and GAS slope (MMBtu/MWh)
 # — the identification constants of the ``coal_peak_offer_margin`` mechanism
 # (ERCOT-140, the coal offer-curve UPPER-TAIL successor ERCOT-123 §7.2
-# chartered; ``docs/PRECOMMIT-ercot140-coal-peak-offer-2026-07-30.md``;
+# chartered; ``docs/records/ercot/PRECOMMIT-ercot140-coal-peak-offer-2026-07-30.md``;
 # applied in :func:`market_sim.data.fleet.legacy_bins.apply_coal_tranches`).
 # The real coal fleet's top-decile boundary price: 60-Day SCED ``Submitted
 # TPO-Price1`` capacity-weighted p90 of above-min-load capability, from the
 # committed ERCOT-138 artifact
-# ``results/calibration/ercot138_coal_gas_ranking.json`` (``E_bid_detail``
+# ``results/phase0/ercot/ercot138_coal_gas_ranking.json`` (``E_bid_detail``
 # COAL p90 rows: 34.82 / 34.82 / 43.00 / 48.01 across the four 2024–2025
 # disclosure subsets, vs the model's 24.61–32.52 — the §5.6 finding).
 #
@@ -1277,7 +1277,7 @@ CC_COMMITTED_OFFER_LEVEL_BY_ISO: dict[str, float] = {
 # declared identification risk (§2.2). Its ORIGINAL premise ("no 2023 SCED
 # disclosure exists") was dissolved by the ercot-157 delivery-2023 corpus and
 # TESTED at ercot-169 (matrix §5.1 item 13, Phase 0, no LP; pre-registered rule
-# in docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md).
+# in docs/records/ercot/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md).
 # **The test could not be completed: NOT-IDENTIFIABLE-2023** — this limb shares
 # the COAL class's licensing failure (curve_share 0.9702 vs the 0.9876 floor;
 # the Martin Lake March-June no-curve block — see COAL_OFFER_MARGIN_LEVEL_BY_ISO
@@ -1315,8 +1315,8 @@ CC_COMMITTED_OFFER_LEVEL_BY_ISO: dict[str, float] = {
 # ERCOT-169 §6 option 1 holds by default: this note stands, **no candidate arm is
 # named, and none may be built on this record** (rule 13). A different instrument
 # — one that does not select on the tail — would need its own charter.
-# Record: docs/PRECOMMIT-ercot171-coal-licensed-subpopulation-2026-08-05.md,
-# results/calibration/ercot171_coal_licensed_subpop.json +
+# Record: docs/records/ercot/PRECOMMIT-ercot171-coal-licensed-subpopulation-2026-08-05.md,
+# results/phase0/ercot/ercot171_coal_licensed_subpop.json +
 # FINDING-ercot171-coal-licensed-subpopulation-2026-08-05.md.
 # Re-derives only with its source
 # disclosure (rule 23), via ``scripts/data/derive_coal_peak_offer_margin.py``
@@ -1333,7 +1333,7 @@ COAL_PEAK_OFFER_GAS_HR_BY_ISO: dict[str, float] = {
 # PER-YEAR measured coal `_peak`-tranche offer LEVEL ($/MWh) — the year-keyed
 # refinement of ``COAL_PEAK_OFFER_LEVEL_BY_ISO`` above (ercot-192, matrix §5.1
 # item 13; owner signature **B1** on
-# ``docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`` card B,
+# ``docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`` card B,
 # 2026-08-11: *"re-adjudicate under a fresh precommit before any arm"*).
 # Consumed under ``coal_peak_offer_yearly_level`` (requires
 # ``coal_peak_offer_margin``): for a solve year PRESENT here the `_peak` bid is
@@ -1409,10 +1409,10 @@ COAL_PEAK_OFFER_GAS_HR_BY_ISO: dict[str, float] = {
 # registry fall through to the static constant, and an ARMED ISO with no year
 # table is a hard error (rule 24 — never a silent fallback); ERCOT-identified
 # from ERCOT conduct and never transferred (rule 25 [R-ISO-SCOPE]).
-# Record: docs/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md,
-# results/calibration/ercot192_coal_limbs_bound.json,
-# results/calibration/ercot192_coal_peak_structure.json,
-# results/calibration/FINDING-ercot192-coal-limbs-2023-2026-08-12.md.
+# Record: docs/records/ercot/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md,
+# results/phase0/ercot/ercot192_coal_limbs_bound.json,
+# results/phase0/ercot/ercot192_coal_peak_structure.json,
+# docs/records/ercot/FINDING-ercot192-coal-limbs-2023-2026-08-12.md.
 COAL_PEAK_OFFER_LEVEL_YEARLY_BY_ISO: dict[str, dict[int, float]] = {
     "ERCOT": {2023: 71.3378},
 }
@@ -1425,7 +1425,7 @@ COAL_PEAK_OFFER_LEVEL_YEARLY_BY_ISO: dict[str, dict[int, float]] = {
 # Measured PER RESOURCE, every ERCOT coal plant submits a near-flat 60-Day
 # SCED ``Submitted TPO`` curve at a plant-specific level — the fleet's smooth
 # supply curve is CROSS-PLANT LEVEL DISPERSION, not within-plant slope
-# (``docs/DIAGNOSIS-ercot143-lignite-offer-slope-2026-07-30.md`` §2). Each
+# (``docs/records/ercot/DIAGNOSIS-ercot143-lignite-offer-slope-2026-07-30.md`` §2). Each
 # entry is the plant's MERGED price-sorted step supply curve of its resources'
 # **modal** submitted TPO curves, pooled over the four on-disk 2024–2025
 # disclosure subsets, as ``(cumulative_MW, price)`` breakpoints — verbatim
@@ -1987,7 +1987,7 @@ CAMPD_CO2_SHORT_TONS_PER_MMBTU_OIL: float = (
 # Forward per-plant CO2-rate estimator (market_sim.data.emission_rates).
 # The forecast-year CO2 rate for an existing unit is derived from its multi-year
 # measured CAMPD history (rule-13-admissible measured input; see
-# docs/handoffs/emissions-co2-rate-plan-2026-07.md). These tunables are the
+# docs/records/misc/emissions-co2-rate-plan-2026-07.md). These tunables are the
 # estimator's free parameters — CHOSEN ONCE from the committed leave-one-year-out
 # harness (scripts/loyo_co2_rates.py) and frozen against backcast residuals
 # (CLAUDE.md rules 23/24): they re-derive only when the CAMPD source data update.
@@ -2038,7 +2038,7 @@ CO2_RATE_CONDITIONING_ENABLED: bool = False
 
 # ---------------------------------------------------------------------------
 # Forward emission-control retrofit channel
-# (docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md).
+# (docs/records/misc/emission-control-retrofit-forward-channel-2026-07.md).
 #
 # The trailing-window CO2/NOx/SO2 estimator only picks up REALIZED emission-rate
 # drift once a control shows in the measured history. It has no forward channel
@@ -2201,7 +2201,7 @@ PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO: dict[str, float] = {}
 #     out" — its parameters stay incumbent; the plant still splits out so
 #     G-AGG conservation and per-plant zone/citation accounting stay whole).
 # Full citation chain + reconciliation arithmetic:
-# results/calibration/_caiso197_ps_citations.json and
+# results/phase0/caiso/_caiso197_ps_citations.json and
 # PRECHECK-caiso197-ps-physical-2026-08-16.md.
 CAISO_PS_PLANT_PARAMS: dict[int, dict[str, float | str | None]] = {
     6100: {"name": "Helms", "pump_mw": 930.0, "energy_mwh": 200_424.0},
@@ -2490,7 +2490,7 @@ EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC: dict[str, tuple[tuple[str, str], .
 # relative lag (Demand late Jan-Oct 2023, "aligned" after, when both were
 # late); this registry supersedes it. Probe:
 # scripts/probes/_rcaiso13_storage_timing.py;
-# docs/handoffs/r-caiso-13/RESULT-r-caiso-13-2026-09-28.md.
+# docs/records/caiso/r-caiso-13/RESULT-r-caiso-13-2026-09-28.md.
 EIA930_CISO_CLOCK_LATE_WINDOWS_UTC: dict[str, tuple[str, str]] = {
     "generation": ("2023-11-01 08:00", "2025-12-02 22:00"),
     "demand": ("2022-06-16 08:00", "2025-12-02 22:00"),
@@ -2522,7 +2522,7 @@ EIA930_CISO_CLOCK_LATE_WINDOWS_UTC: dict[str, tuple[str, str]] = {
 # 2022-06-14/15 are mixed and not asserted, exactly as the demand late window
 # (which the same publisher shift opened). Probes:
 # scripts/probes/_rcaiso17_pre2022_clock_scan.py, _rcaiso17_subhour_offset.py;
-# docs/handoffs/r-caiso-17/PRECOMMIT-r-caiso-17-2026-09-30.md.
+# docs/records/caiso/r-caiso-17/PRECOMMIT-r-caiso-17-2026-09-30.md.
 EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC: dict[str, tuple[str, str]] = {
     "generation": ("2019-01-01 08:00", "2022-06-14 07:00"),
 }
@@ -2543,7 +2543,7 @@ EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC: dict[str, tuple[str, str]] = {
 # [R-ACCURATE] source repair.
 #
 # PSEI ``NG: COL`` -> NWMT (lane NWPP-NEXT-2, 2026-09-25;
-# ``docs/handoffs/FINDING-nwppnext2-psei-basis-2026-09-25.md``). Puget Sound
+# ``docs/records/nwpp/FINDING-nwppnext2-psei-basis-2026-09-25.md``). Puget Sound
 # Energy owns shares of Colstrip 1-4 (CAMPD ORIS 6076, Montana, NWMT BA). NWMT
 # books ALL of Colstrip: NWMT ``NG: COL`` 14.167 TWh in 2019 against CAMPD
 # Colstrip gross 14.777 TWh. PSEI books 4.475 / 2.163 / 0.003 / 0.000 TWh of
@@ -2648,7 +2648,7 @@ ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE: dict[str, bool] = {"SOCO": True}
 # has NO ``OVEC`` directly-interconnected-BA leg in any hour from 2019-01-01,
 # the EIA-930 BALANCE files carry no ``OVEC`` BA in 2019-2021, and PJM's
 # tie-line meter lists no OVEC tie in any year
-# (docs/FINDING-pjm-next-16-cc-loading-and-the-ovec-boundary-2026-09-30.md).
+# (docs/records/pjm/FINDING-pjm-next-16-cc-loading-and-the-ovec-boundary-2026-09-30.md).
 # The integration date PRECEDES the corpus, so the registered month is the
 # corpus bound 2019-01: every date <= 2019-01 is solve-identical (no backcast
 # year precedes 2019, and a forecast reads a vintage that codes them PJM).
@@ -2681,7 +2681,7 @@ ISO_BA_JOINS: dict[str, dict[str, tuple[int, int]]] = {
 # Standby 50310, Santa Rosa 55242, Perdido 57502, and three solar plants) and
 # Gulf's load left the Southern Company BA for FPL's at hour-ending UTC
 # 2022-07-13 12:00. Measured three independent ways
-# (docs/handoffs/r-soco/FINDING-r-soco-b2-boundary-2026-09-25.md, reproduced by
+# (docs/records/soco/r-soco/FINDING-r-soco-b2-boundary-2026-09-25.md, reproduced by
 # scripts/probes/_rsocob2_gulf_exit.py): (1) SOCO 930 demand minus the five
 # SOCO-footprint FERC-714 respondents steps down ~1,700 MW (= Gulf Power's own
 # FERC-714 load) on 2022-07-13 while FPL's 930 demand steps up; (2) Gulf Power
@@ -2716,7 +2716,7 @@ ISO_BA_EXITS: dict[str, dict[str, str]] = {"SOCO": {"FPL": "2022-07-13 12:00"}}
 # row at all, vintage 2023+ codes it ERCO; (3) EIA-923 has no 55098 rows
 # 2019-2022 and none for Jan-May 2023. Operating day 2023-04-13 HE01 CDT is
 # hour-ending UTC 2023-04-13 06:00.
-# (docs/handoffs/FINDING-r-ercot-11-benchmark-vs-930-2026-09-28.md.)
+# (docs/records/ercot/FINDING-r-ercot-11-benchmark-vs-930-2026-09-28.md.)
 ISO_PLANT_ENTRIES: dict[str, dict[int, str]] = {"ERCOT": {55098: "2023-04-13 06:00"}}
 
 # --- PLANTS that LEFT a modelled region mid-backcast (plant grain) -----------
@@ -2778,8 +2778,8 @@ HYDRO_ENVELOPE_PERCENTILE: float = 95.0
 HYDRO_MIN_FLOW_PERCENTILE: float = 100.0 - HYDRO_ENVELOPE_PERCENTILE
 
 # --- Hydro budget period, from the project's own governing instrument --------
-# (nyiso-220; charter docs/CHARTER-nyiso219-hydro-budget-period-2026-09-07.md;
-#  evidence docs/FINDING-nyiso220-hydro-instrument-and-operating-ranges-2026-09-08.md)
+# (nyiso-220; charter docs/records/nyiso/CHARTER-nyiso219-hydro-budget-period-2026-09-07.md;
+#  evidence docs/records/nyiso/FINDING-nyiso220-hydro-instrument-and-operating-ranges-2026-09-08.md)
 #
 # The LP's hydro row conserves energy over a PERIOD, and that period defaults to
 # the calendar month — so a plant may bank energy across ~730 hours at zero cost.
@@ -3357,7 +3357,7 @@ EFORD: dict[str, float] = {
 
 # Correlated cold-event excess forced-outage curves by ISO, winterization era
 # and plant group (FF-1B Stage 1; design charter
-# docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by
+# docs/records/ercot/ercot-retirement-composition-2026-07-16.md Part D). Consumed by
 # data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on
 # ScenarioConfig.correlated_forced_outage): per class,
 #   excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap)
@@ -3511,7 +3511,7 @@ CORRELATED_OUTAGE_CURVE: dict[str, dict[str, dict[str, dict[str, float]]]] = {
 # is REPORTED, never used. (The former table mixed bases -- ERCOT/CAISO/PJM/MISO
 # peak, NYISO energy, NEISO a blend of the two -- which is why several rows move
 # materially; the movement is reported at full magnitude in
-# docs/handoffs/FINDING-scn-load-2026-09-06.md section 4, never reconciled away,
+# docs/records/forecast/FINDING-scn-load-2026-09-06.md section 4, never reconciled away,
 # rule 14 [R-ACCURATE].)
 #
 # KNOWN, DISCLOSED, AND ROUTED: every edition's base year is 1-2 years AHEAD of
@@ -3807,7 +3807,7 @@ DEMAND_GROWTH_TRANSITION_YEAR: int = 2030
 # base year, each cited to its edition and table (rule 5 [R-NO-MAGIC]). FH-3
 # landed 11 of 12 (ISO, vintage) cells and left CAISO 2021 as a MANUAL DOWNLOAD,
 # which is what blocked FH-5's CAISO Arm K; the CEDU 2020 intake (2026-08-11,
-# docs/handoffs/caiso-vintage-2021-intake-2026-08-11.md) closes it, so both
+# docs/records/caiso/caiso-vintage-2021-intake-2026-08-11.md) closes it, so both
 # vintages now cover all six registered ISOs — 12/12, no cell outstanding.
 #
 #   * ``ScenarioConfig.demand_growth_vintage = None`` (the default) resolves
@@ -3826,7 +3826,7 @@ DEMAND_GROWTH_TRANSITION_YEAR: int = 2030
 #
 # CONSTRUCTION RULE (uniform across every cell; no cell is interpolated, per
 # the FH-3 brief — an edition that could not be reached is a MANUAL DOWNLOAD
-# row in docs/handoffs/fh-3-asknown-driver-vintages-2026-08.md §4, never a
+# row in docs/records/forecast/fh-3-asknown-driver-vintages-2026-08.md §4, never a
 # guessed rate):
 #   * METRIC = the edition's own published central ANNUAL ENERGY forecast for
 #     the ISO/planning footprint. Energy, not peak, because ``_scale_demand``
@@ -3856,7 +3856,7 @@ DEMAND_GROWTH_TRANSITION_YEAR: int = 2030
 #     cells carry ``mid`` only. Transporting the live table's band width onto a
 #     vintage central would be inventing a growth rate no edition published.
 # Per-cell arithmetic (source values, ratios, CAGRs) is tabulated in
-# docs/handoffs/fh-3-asknown-driver-vintages-2026-08.md §3.
+# docs/records/forecast/fh-3-asknown-driver-vintages-2026-08.md §3.
 DEMAND_GROWTH_RATES_VINTAGES: dict[int, dict[str, dict[str, dict[str, float]]]] = {
     # ===== as-of 2021 (Phase B base; plan §3.1) =====
     2021: {
@@ -3989,7 +3989,7 @@ DEMAND_GROWTH_RATES_VINTAGES: dict[int, dict[str, dict[str, dict[str, float]]]] 
 # default path "off" => unused, byte-identical to today). Piecewise-linear
 # between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES
 # derived from the published headline figures in the design memo
-# docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to
+# docs/records/misc/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to
 # its primary ISO forecast / interconnection-queue source with the arithmetic
 # shown); they are the low/mid/high support the PB sampler interpolates, refined
 # on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6).
@@ -4276,7 +4276,7 @@ DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
 #     within-region ordering is the load_share default, not a published per-LRZ DC
 #     table — MISO's driver-level per-LRZ forecast data would refine all six
 #     anchors (it is behind the 403-walled www.misoenergy.org host; see
-#     docs/handoffs/FINDING-scn-ws4a-2026-09-05.md §4 for the D-4 gap list).
+#     docs/records/forecast/FINDING-scn-ws4a-2026-09-05.md §4 for the D-4 gap list).
 #     Source: MISO 2026 Long-Term Load Forecast Results Summary (LTLF Workshop
 #     2026-04-13, "20260413 LTLF Workshop 2026 Long Term Load Forecast
 #     Summary_UPDATED", cdn.misoenergy.org) slides 21 and 26; MISO December-2024
@@ -4337,7 +4337,7 @@ DATACENTER_ZONE_SHARE: dict[str, dict[str, float]] = {
 }
 
 # --- FF-G4 Option-B electrification end-use layers (additive load layers) ---
-# docs/handoffs/ff-g4-load-shape-design-memo-2026-07.md §4.2/§5 (the DECIDED
+# docs/records/forecast/ff-g4-load-shape-design-memo-2026-07.md §4.2/§5 (the DECIDED
 # design; owner box D1 = Option B). Per-ISO, per-layer ANNUAL-ENERGY adoption
 # anchors, {iso: {layer: {path: {year: GWh}}}} — the same {year: value} anchor
 # grammar + low/mid/high path axis as DATACENTER_ADDITIONS_MW directly above,
@@ -4594,7 +4594,7 @@ HEAT_PUMP_BALANCE_POINT_C: float = 18.3
 # consistency.py asserts these constants equal that derivation (CLAUDE.md
 # rule 23 source-consistency); refresh for a new ATB edition by re-running
 # scripts/data/fetch_nrel_atb.py then the derive script and pasting its output.
-# (FF-1E — docs/handoffs/ff-inputs-currency-audit-2026-07.md §3.2 "STALE +
+# (FF-1E — docs/records/forecast/ff-inputs-currency-audit-2026-07.md §3.2 "STALE +
 # UNWIRED": replaces the pre-FF-1E hand-transcribed values that carried an
 # "NREL ATB 2024" label but matched no single ATB projection year — wind ≈
 # ATB-2037, solar ≈ 2032, gas_cc ≈ 2049, nuclear_smr ≈ 2039 in the Moderate
@@ -4754,7 +4754,7 @@ PPA_COST_RECOVERY_YR: int = 20
 
 # Per-tech capex + learning-rate multipliers for the PB-1 tech-cost
 # uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile,
-# docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to
+# docs/records/misc/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to
 # NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. "mid" is 1.0 by
 # construction (the pinned ATB 2024 Moderate case is NEW_ENTRY_COSTS' base
 # snapshot, so the neutral default is an exact no-op — default runs are
@@ -5176,7 +5176,7 @@ RENEWABLE_AVG_CF: dict[str, dict[str, float]] = {
     # an identity). Rule 13 [R-MEASURED] admissible: regenerates from each Gold
     # Book vintage and responds to fleet change. Rule 25 [R-ISO-SCOPE]: NEISO's
     # 0.15 below is NOT covered and keeps its Tier-3 needs-citation.
-    # Identification: results/calibration/PREREG-nyiso132-solar-cf-level-2026-08-07.md
+    # Identification: docs/records/nyiso/PREREG-nyiso132-solar-cf-level-2026-08-07.md
     "MISO": {"wind": 0.34, "solar": 0.22},
     "NYISO": {"wind": 0.26, "solar": 0.1955},
     "NEISO": {"wind": 0.30, "solar": 0.15},
@@ -5252,7 +5252,7 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
     # flatters a residual. Backcast mode is UNAFFECTED: data.renewables already
     # resolves a backcast year's installed capacity from that year's EIA-860
     # month-end total and reads this registry only in forecast mode.
-    # See docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md sections 3-4.
+    # See docs/records/forecast/ffr-4d-caiso-fleet-vintage-2026-08-04.md sections 3-4.
     "CAISO": {
         "wind": 6330.0,  # EIA-860 2025 ER wind schedule, CISO OP = 6,326.3 MW.
         "solar": 24920.0,  # EIA-860 2025 ER solar schedule, CISO OP = 24,919.2 MW.
@@ -5335,7 +5335,7 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
 # regenerates for a forward year from published forward bytes and responds to
 # changed conditions (Kern/Fresno vs Bay-Area load growth moves it).
 # SCE-TAC spans the LA_BASIN/SP15_rest split (SP15 was split into
-# LA_BASIN/SDGE/SP15_rest — docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md
+# LA_BASIN/SDGE/SP15_rest — docs/records/caiso/caiso-sp15-split-implementation-scope-2026-07-09.md
 # FOUNDATION DECISIONS). w=0.835 is the LCT LA_Basin/(LA_Basin+SP15_rest)
 # peak-load ratio: LA_BASIN 0.374 / (LA_BASIN 0.374 + SP15_rest 0.0735) of full
 # ISO load (same LCT `peak_load` table used for the zones' static load_share,
@@ -5378,7 +5378,7 @@ CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = {
 # (caiso-223 §C: the caiso-172 ATL_LDF construction generalized 3-way over
 # DLAP_PGAE, day-weighted 2023-2025, gates 13/13 PASS, two-way control exact
 # vs the committed caiso-172 artifact; source
-# results/calibration/_caiso223_subzonal_scope.json). Consumed by
+# results/phase0/caiso/_caiso223_subzonal_scope.json). Consumed by
 # data.eia930.zonal_shares ONLY when ScenarioConfig
 # caiso_fsno_subzonal_topology is armed (caiso-224): the hourly PG&E TAC
 # share is re-split by exact scalar rescale — NP15/FSNO/ZP26 are three
@@ -5439,7 +5439,7 @@ CAISO_TAC_ZONE_WEIGHTS_FSNO: dict[str, float] = {
 # nyiso_local_selfsupply forced 1.84/2.87/1.86 TWh of CT_PEAKER, 43/65/42% of the
 # class in nyiso-48; C7 off-peak diurnal FAIL) where measured LI CT_PEAKER CF is
 # ~0.06 flat and LI net import runs well below its cable ceiling
-# (docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md Finding 4). The
+# (docs/records/nyiso/nyiso-downstate-reserve-incidence-2026-06.md Finding 4). The
 # 0.45 LEVEL is unchanged — only the hours it had no driver for are removed. NYC (zone J) is
 # deliberately ABSENT: the diagnostic shows NYC OVER-generates by +11 TWh (it
 # cannot import enough, so it self-supplies) — its idle peakers are a
@@ -5634,7 +5634,7 @@ PJM_INTERFACE_LINK_MAP: dict[tuple[str, str], tuple[str, ...]] = {
 # EXACTLY, so the new years rest on the identical construction.
 #
 # WHY THE GAP MATTERED (defect D-2,
-# results/calibration/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md): both
+# docs/records/nyiso/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md): both
 # appliers in market_sim.pipeline.ttc used to return unchanged for a year with
 # no entry, so an out-of-training solve silently fell back to the STATIC
 # topology value — 2,850 MW, the POST-upgrade limit. 2022 is a PRE-upgrade year
@@ -6143,7 +6143,7 @@ NYISO_TE_NONCE_ENVELOPE_BY_MONTH: dict[int, dict[tuple[str, str], list[float]]] 
 # sits inside the model's South zone. Until 2026-08 the name was misread as
 # "Northeast lobe" and its series crosswalked to Northeast->North — the
 # rule-14 mis-attribution repaired under signed card Z-A (ercot-234;
-# docs/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md).
+# docs/records/ercot/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md).
 # Source: ERCOT NP6-86-CD archives via scripts/data/derive_ttc_limits.py;
 # ERCOT GTC Workshop "Current Generic Transmission Constraint Definitions"
 # (2020-02-24) for the GTC identities.
@@ -6202,7 +6202,7 @@ NYISO_SEAM_FLOW_PERCENTILE: float = 90.0
 
 # PJM measured-offer-surface family: the season a calendar month belongs to,
 # for the within-SEASON tightness conditioning authorized by the owner
-# 2026-07-27 (docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md §3,
+# 2026-07-27 (docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md §3,
 # executed by pjm-132). A DEFINITIONAL choice, fixed in advance and never
 # tuned against a result (rules 20 / 23): summer is PJM's Jun-Sep peak-load
 # season (the 5CP window), winter is the Dec-Mar cold season carrying its own
@@ -6301,7 +6301,7 @@ MISO_SOUTH_EXTERNAL_ZONE: str = "MISO_external_South"
 # constructions — the last 199-grid rank at which the model's affected-stack
 # mc_base quantile sits at or above the eligible book's, identified ONCE by
 # the pre-registered rule (PREREG-miso180-anchored-spread-2026-08-23.md §2;
-# record results/calibration/_miso180_anchored_spread_precheck.json:
+# record results/phase0/miso/_miso180_anchored_spread_precheck.json:
 # single crossing, model $56.55 vs book $55.54 at the anchor, guards clear).
 # Identified from INPUTS only (frozen demand-side H*, input offer surface,
 # measured book) — zero LMP/residual in the path (rule 13); re-identifies
@@ -6541,7 +6541,7 @@ DIURNAL_TMAX_HOUR: int = 15  # local-standard-time hour of the daily maximum
 # The published emissions band convolves the parametric input band (PB-2) with a
 # prior over the model's own dispatch-skill error, fit from the committed D-7
 # statistical-mode probes (docs/statistical-mode-results-2026-07.md;
-# docs/handoffs/probability-bounds-plan-2026-07.md §3). Statistical mode strips
+# docs/records/misc/probability-bounds-plan-2026-07.md §3). Statistical mode strips
 # every measured backcast overlay but keeps realized annual gas/load/weather, so
 # its emissions error is *model error given true inputs* -- exactly the term that
 # convolves with the input uncertainty without double-counting. These are
@@ -6598,7 +6598,7 @@ STATMODE_PROBE_RUNS: dict[str, str] = {
 # order ONLY where carbon price > 0 -- so the 2026-07-03 statmode probes above
 # are solve-stale for these three ISOs (the W3-P1 re-solves own the fix), while
 # the carbon-zero ISOs (ERCOT/PJM/MISO) need only a no-solve re-score of the
-# committed numbers. Source: docs/handoffs/forecast-validation-program-2026-07.md
+# committed numbers. Source: docs/records/forecast/forecast-validation-program-2026-07.md
 # §0/§3.2 (W0-P4 design).
 STRUCTURAL_PRIOR_CARBON_PRICED_ISOS: tuple[str, ...] = ("CAISO", "NEISO", "NYISO")
 

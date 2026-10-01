@@ -42,7 +42,7 @@ sys.path.insert(0, str(REPO / "src"))
 
 CITYGATE = REPO / "data/raw/gas-prices/caiso_citygate_daily.csv"
 HH_DAILY = REPO / "data/raw/gas-prices/henry_hub_daily.csv"
-OUT = REPO / "results/calibration/_caiso288_blackout_scoreboard.json"
+OUT = REPO / "results/phase0/caiso/_caiso288_blackout_scoreboard.json"
 
 #: CAISO CC_REGULAR cap-weighted base heat rate, MMBtu/MWh — converts a
 #: $/MMBtu fuel error into the $/MWh marginal-cost error it causes. Nothing is

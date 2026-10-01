@@ -8,7 +8,7 @@ for every LP unit:
 - the wind and solar potential by N/S zone (the C-3 control side).
 
 Stage 2 (``_spp93_census.py``) relabels units West/East by ``data/raw/reference/spp_plant_reserve_zone.csv``.
-Record: docs/handoffs/PRECOMMIT-spp-93-west-east-2026-09-27.md §3-§4.
+Record: docs/records/spp/PRECOMMIT-spp-93-west-east-2026-09-27.md §3-§4.
 
 Usage: ``python scripts/probes/_spp93_census_dump.py --year 2022 --out-dir <dir> [--west-east]``
 """

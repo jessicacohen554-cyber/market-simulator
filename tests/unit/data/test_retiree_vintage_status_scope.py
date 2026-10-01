@@ -5,7 +5,7 @@ within-window retiree unit for backcast solve year Y iff its status in the
 latest committed EIA-860 vintage <= Y whose operable sheet lists it is
 non-OP — EIA's own contemporaneous judgment that the unit was deactivated
 before its formal retirement date. Unlisted units fail OPEN (kept). Design:
-``results/calibration/PREREG-miso188-retiree-vintage-status-scope-2026-08-30.md``.
+``docs/records/miso/PREREG-miso188-retiree-vintage-status-scope-2026-08-30.md``.
 
 Trivial synthetic cases first (tmp-dir retiree parquet + vintages), then the
 real committed-data case (Grand Tower 862 dark / Rush Island 6155 running).

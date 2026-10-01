@@ -4,7 +4,7 @@
 from the measured DAM prints of the sibling gap-fill artifact before any formula
 fill; ``cc_eia923_identity_emission_basis`` re-bases an EIA-923-identity CC's
 CO2 onto that same fuel basis. Both default off and byte-identical off. Record:
-``docs/handoffs/r-caiso-4/PRECOMMIT-r-caiso-4-2026-09-26.md``.
+``docs/records/caiso/r-caiso-4/PRECOMMIT-r-caiso-4-2026-09-26.md``.
 """
 
 from __future__ import annotations

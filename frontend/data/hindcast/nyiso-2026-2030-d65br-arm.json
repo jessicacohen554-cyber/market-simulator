@@ -118,8 +118,8 @@
     "d65br": {
       "lane": "capx D65-B-R — the coupled arming (Act A + Act B) batch",
       "authority": "owner ruling Q47; r#48 §3(a) gates; r#51 §3(b) adjudication",
-      "precommit": "docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md Addendum C (+D/E/F/G)",
-      "finding": "docs/handoffs/FINDING-capx-d65br-2026-09-06.md",
+      "precommit": "docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md Addendum C (+D/E/F/G)",
+      "finding": "docs/records/forecast/FINDING-capx-d65br-2026-09-06.md",
       "solve_key_matches_predeclaration": true,
       "gates": "G5′ FIRED TWICE (2029 at 75.7 %, 2030 at 33.3 % of the cap) and was VOIDED as a STOP by the ruling below; every other gate PASS, 0 FAIL / 0 WARN on all 14 invariants. G1′ NOT GATED (no published NYISO band); reported er/phys 0.8419–1.4801 over 33 rows. NEISO's signature repeats at a different carbon price on a different fleet.",
       "retrofits": [

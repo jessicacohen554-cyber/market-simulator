@@ -1,6 +1,6 @@
 """``build_constraints`` bound-vector assembly — the collect-once rewrite.
 
-PERF-C S2 (``docs/handoffs/FINDING-perfc-s2-p0-slim-2026-09-20.md`` §3). The
+PERF-C S2 (``docs/records/governance/FINDING-perfc-s2-p0-slim-2026-09-20.md`` §3). The
 ``row_lower`` / ``row_upper`` vectors used to grow by ~20 successive
 ``np.concatenate([row_lower, block_lower])`` calls, each re-copying the whole
 accumulated vector; they are now collected as per-block pieces and joined once

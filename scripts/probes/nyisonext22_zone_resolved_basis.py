@@ -39,7 +39,7 @@ RUNS = {
     "span": ("2026-10-01-nyisonext21-astoria-hr-span", (2022, 2023, 2024, 2025)),
     "2021": ("2026-10-01-nyisonext21-astoria-hr-2021", (2021,)),
 }
-OUT = REPO / "results/calibration/_nyisonext22_zone_resolved_basis.json"
+OUT = REPO / "results/phase0/nyiso/_nyisonext22_zone_resolved_basis.json"
 
 
 def zone_lw(year: int) -> dict:

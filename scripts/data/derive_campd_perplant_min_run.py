@@ -5,7 +5,7 @@ extension (``ScenarioConfig.nyiso_gas_bridge_plant_min_run``), replacing the
 two per-class scalars (``nyiso_gas_bridge_cc_min_run_hours`` /
 ``..._st_min_run_hours``) for every plant the meter can identify. nyiso-146
 phase 0 (``scripts/probes/_nyiso146_perplant_minrun_phase0.py``, record
-``results/calibration/_nyiso146_perplant_minrun_phase0.json``) measured that
+``results/phase0/nyiso/_nyiso146_perplant_minrun_phase0.json``) measured that
 the CC_REGULAR class is NOT one run-length population: per-plant p25 spans
 7 h (Carr Street, a true cycler) to 646 h (Caithness, near-baseload) — a 92x
 spread that no class scalar can describe. Bethlehem Energy Center (2539), the
@@ -26,7 +26,7 @@ per-unit basis conflates rotation with cycling — Bethlehem's per-unit p25 is
 
 STATISTIC — p25 of the plant's own within-year run-length distribution,
 pre-registered at phase 0 BEFORE any solve
-(``results/calibration/PREREG-nyiso146-perplant-min-run-2026-08-19.md``):
+(``docs/records/nyiso/PREREG-nyiso146-perplant-min-run-2026-08-19.md``):
 
 * An OBSERVED run length is an upper-ish bound on a minimum-run CONSTRAINT
   (a unit that ran 21 h because it was economic does not prove a 21 h floor),
@@ -38,7 +38,7 @@ pre-registered at phase 0 BEFORE any solve
   every run spanning a year boundary splits into two spurious short ones and
   p10 absorbs that truncation artifact. Same reasoning, same choice, as the
   pre-registered CT leg (``nyiso_gas_bridge_ct_min_run_hours`` = p25,
-  docs/handoffs/nyiso90-preregistration.md §2).
+  docs/records/nyiso/nyiso90-preregistration.md §2).
 
 EXCLUSION — the Astoria campus facility-ID collision. CAMPD reports Astoria
 Energy (EIA 55375) and Astoria Energy II (EIA 57664) under ONE facilityId

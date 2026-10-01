@@ -1,6 +1,6 @@
 """Emit the R-NWPP calibration attestation for ``results/calibration/rnwpp_span``.
 
-R-NWPP (audit ``docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md``
+R-NWPP (audit ``docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md``
 §5.3.5) re-solves NWPP on CORRECTED BACKCAST INPUTS: the NWPP-49 keeper's recipe
 with the F1 input flags pinned on (year-matched EIA-860, measured CT / coal / ST /
 CC / CHP heat rates), the F2 short-coal and unit-partial CAMPD outage families,
@@ -15,7 +15,7 @@ backfill would inject plants not yet built) and the keeper's ``2024`` for
 2023-2025. It is a solve kwarg, not a ``ScenarioConfig`` field, so a replay of a
 pre-2023 year passes ``--set hydro_backfill_year=null``.
 
-Pre-registration: ``docs/handoffs/PRECOMMIT-r-nwpp-2019-2025-inputs-2026-09-24.md``.
+Pre-registration: ``docs/records/nwpp/PRECOMMIT-r-nwpp-2019-2025-inputs-2026-09-24.md``.
 """
 
 from __future__ import annotations

@@ -25,7 +25,7 @@ D. CAMPD hourly, coal units at those plants: monthly mean online capacity
 E. Keeper P1 vs zone-resolved actual night (h0-5) and all-hours monthly mean
    price, system load-weighted (the miso-294 basis).
 
-Output: ``results/calibration/_miso295_coal_study.json``.
+Output: ``results/phase0/miso/_miso295_coal_study.json``.
 
 Usage::
 
@@ -46,7 +46,7 @@ REPO = Path(__file__).resolve().parents[2]
 RAW = REPO / "data/raw"
 HOURLY = REPO / "results/calibration/miso280_span/hourly"
 BENCH = REPO / "frontend/data/backcast/bench/MISO"
-OUT = REPO / "results/calibration/_miso295_coal_study.json"
+OUT = REPO / "results/phase0/miso/_miso295_coal_study.json"
 YEARS = tuple(range(2019, 2026))
 STOCK_YEARS = tuple(range(2019, 2025))
 MONTHS = [

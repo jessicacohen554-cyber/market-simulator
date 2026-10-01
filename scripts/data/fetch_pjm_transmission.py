@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Fetch PJM DataMiner2 transmission/interchange/hub-LMP feeds for holdout years.
 
-Rule-22 holdout intake (docs/handoffs/holdout-policy-memo-2026-07.md): extends
+Rule-22 holdout intake (docs/records/governance/holdout-policy-memo-2026-07.md): extends
 the existing 2023-2025 raw drops in ``data/raw/iso-specific-transmission/`` and
 ``data/raw/lmp-data/`` to 2018-2022 and H1-2026, using PJM's public DataMiner2
 REST API (subscription key is public — embedded in the DataMiner2 Angular

@@ -250,7 +250,7 @@ def main() -> None:
             "outage_filter_exogenous_net_load": True,
             "attested_by": (
                 "session nyiso-232 (2026-09-13), on the OWNER'S RULING 'Arm it'. Pre-registration: "
-                "results/calibration/PRECOMMIT-nyiso232-st-gas-deleak.md + Addendum A (the ruling, "
+                "docs/records/nyiso/PRECOMMIT-nyiso232-st-gas-deleak.md + Addendum A (the ruling, "
                 "the arming route, the span plan and the expected outcomes), pushed before the "
                 "span solved. ONE registered field moves, nyiso_st_gas_econ_bands_deleaked False "
                 "-> True. WHAT IT REMOVES: _NYISO_OFFER_CURVE's ST_GAS econ bands state their own "
@@ -298,7 +298,7 @@ def main() -> None:
                 "doc: D-2's plant class is decided by a ROW-COUNT vote over LP tranches, which "
                 "this mechanism's declared smoothing-ladder collapse (ST_GAS 88 -> 44 rows) flips "
                 "for two mixed plants, one of them on an 8-7 margin "
-                "(docs/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md). That is a "
+                "(docs/records/misc/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md). That is a "
                 "shared-scorer defect this lane REPORTS and does not fix (rule 25), and any C8 "
                 "result it produces is carried at full magnitude rather than re-scored here."
             ),

@@ -9,7 +9,7 @@ certificate market endogenously. The premium joins the legacy per-tech
 :mod:`market_sim.policy.eac`).
 
 Two owner-specified crediting modes (``ScenarioConfig.federal_ces_crediting``,
-plan §1 of ``docs/handoffs/national-ces-eac-premium-plan-2026-07.md``):
+plan §1 of ``docs/records/forecast/national-ces-eac-premium-plan-2026-07.md``):
 
 * ``"clean_capture"`` (DEFAULT) — eligible zero-carbon fuels credit at
   1.0; abated gas (``gas_cc_ccs``, retrofit or new-build) credits at the

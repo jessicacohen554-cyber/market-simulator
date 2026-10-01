@@ -24,7 +24,7 @@ Rule 13: nothing here feeds a solve.
 
 Usage::
 
-    uv run python scripts/probes/_miso291_c3a2022_decomp.py --out results/calibration/_miso291_c3a2022_decomp.json
+    uv run python scripts/probes/_miso291_c3a2022_decomp.py --out results/phase0/miso/_miso291_c3a2022_decomp.json
 """
 
 from __future__ import annotations

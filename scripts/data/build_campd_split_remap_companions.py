@@ -5,7 +5,7 @@ filed under a legacy facility to the EIA plant it belongs to. miso-280 added
 West Riverside Energy Center's CTs (EIA 64020, generators CTG3 / CTG4), which
 CEMS files under the legacy Riverside facility 55641 as ``CT-03`` / ``CT-04``
 (CAMPD CT-03 + CT-04 gross tracks EIA-923 64020 net within 2 % every year
-2020-2025; ``docs/FINDING-miso280-phase0-riverside-vlr-southgas-2026-09-28.md``
+2020-2025; ``docs/records/miso/FINDING-miso280-phase0-riverside-vlr-southgas-2026-09-28.md``
 section 1). No live solve path reads raw CAMPD, so the entry reaches a solve only
 through the DERIVED artifacts -- and every one the MISO keeper reads was derived
 before the entry existed. This builder writes their re-derived companions,

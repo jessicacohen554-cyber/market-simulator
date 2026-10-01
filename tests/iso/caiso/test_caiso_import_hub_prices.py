@@ -3,7 +3,7 @@
 The static priced-import ladder (IMPORT_TRANCHES["CAISO"]) was re-fit against the
 model's own solved price; ``caiso_import_hub_prices`` replaces it with the
 measured WECC neighbor-hub LMP each tranche proxies (Mid-C / Palo Verde). See
-``results/calibration/DIAGNOSIS-caiso-import-ladder-2026-06-19.md``.
+``docs/records/caiso/DIAGNOSIS-caiso-import-ladder-2026-06-19.md``.
 """
 
 from __future__ import annotations

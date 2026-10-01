@@ -133,7 +133,7 @@ def load_unit_outages() -> pd.DataFrame:
     and the ``-maxgen-`` derate file (different regimes). At HEAD the glob drew
     24 files / 58,744 rows where 6 files / 39,755 rows were intended, a +47.8 %
     row inflation. Record:
-    ``results/calibration/FINDING-xiso2-outage-artifact-provenance-census-2026-08-02.md``.
+    ``docs/records/governance/FINDING-xiso2-outage-artifact-provenance-census-2026-08-02.md``.
     """
     paths = [RAW_DATA_DIR / name for name in _STANDARD_EXTRACTS]
     frames = []

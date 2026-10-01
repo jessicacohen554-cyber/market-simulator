@@ -20,7 +20,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 BUNDLE = Path("results/calibration/spp100_arm_span")
-OUT = Path("results/calibration/_spp101_prb_proxy_phase0.json")
+OUT = Path("results/phase0/spp/_spp101_prb_proxy_phase0.json")
 
 
 def build(year: int, arm: bool):

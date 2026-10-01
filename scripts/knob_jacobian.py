@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """D-11 knob-perturbation Jacobian for one calibration keeper (scalar-remediation
-program batch B-DIAG-2; see docs/handoffs/scalar-remediation-plan-2026-07.md §4.3
+program batch B-DIAG-2; see docs/records/misc/scalar-remediation-plan-2026-07.md §4.3
 and docs/model-legitimacy-audit-2026-07.md §7 D-11).
 
 For a keeper bundle, reads the DOF ledger's ``free_parameters`` (built by

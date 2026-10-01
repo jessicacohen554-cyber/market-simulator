@@ -36,7 +36,7 @@ forecast year and respond to changed conditions; the normalization by ``G(h)``
 makes ``delta`` an implied-heat-rate object that regenerates forward.
 
 **Rule 23 [R-FROZEN-DERIVE].** The state geometry is
-``docs/PRECOMMIT-nyiso246-conditional-level-dispersion-2026-09-20.md`` section
+``docs/records/nyiso/PRECOMMIT-nyiso246-conditional-level-dispersion-2026-09-20.md`` section
 1.1, committed at ``947de8cd`` before any measurement, and is never re-tuned
 against a residual.
 
@@ -300,7 +300,7 @@ def build(
         "schema": "nyiso_offer_level_dispersion/1",
         "session": "nyiso-246",
         "precommit": (
-            "docs/PRECOMMIT-nyiso246-conditional-level-dispersion-2026-09-20.md"
+            "docs/records/nyiso/PRECOMMIT-nyiso246-conditional-level-dispersion-2026-09-20.md"
         ),
         "units": "MMBtu/MWh (implied offer heat rate, bottom-of-curve)",
         "corpus": "NYISO MIS P-27 genbids, DAM, 2022-2025, pooled",

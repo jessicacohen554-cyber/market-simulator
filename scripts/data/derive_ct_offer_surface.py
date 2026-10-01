@@ -1,8 +1,8 @@
 """Derive the MEASURED condition-responsive CT/peaker offer surface (ERCOT G-22).
 
 The gated, measured successor direction filed as structural conclusion #1 of
-``docs/FINDING-ercot-priceshape-2026-07.md`` §6 and specified in
-``docs/handoffs/ercot-g22-offer-surface-2026-07.md``. Where the model prices
+``docs/records/ercot/FINDING-ercot-priceshape-2026-07.md`` §6 and specified in
+``docs/records/ercot/ercot-g22-offer-surface-2026-07.md``. Where the model prices
 every online CT/peaker MW at its flat marginal cost ``heat_rate x gas + VOM``
 (~$50-150/MWh), the real fleet's peakers self-withhold to the ERCOT offer-cap
 band (~$1,500/MWh) in the high-net-load hours where they are marginal -- the

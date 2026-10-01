@@ -6,7 +6,7 @@ year Y, every plant's net CO2 intensity is predicted from the *other* years'
 measured CAMPD history and scored against Y's actual intensity, gen-weighted.
 This is the harness that chose the estimator's frozen constants
 (``CO2_RATE_*`` in constants.py) and the design in
-``docs/handoffs/emissions-co2-rate-plan-2026-07.md`` (§3).
+``docs/records/misc/emissions-co2-rate-plan-2026-07.md`` (§3).
 
 Estimators compared (all leave-one-year-out except ``frozen``):
 

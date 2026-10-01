@@ -2,7 +2,7 @@
 """nyiso-240 phase 0: is the C1 `CC_REGULAR` Feb/Nov over-run the MODEL or the RULER?
 
 Zero LP. Every number in
-``docs/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md`` regenerates from
+``docs/records/nyiso/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md`` regenerates from
 committed artifacts (bench parts, run payloads, keeper hourlies) plus the immutable
 ``data/raw`` EIA-923 and NYISO fuel-mix extracts.
 

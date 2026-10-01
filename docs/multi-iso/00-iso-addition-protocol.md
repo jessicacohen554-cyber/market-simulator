@@ -17,7 +17,7 @@
 
 Status: **topology landed for all SEVEN registered ISOs; calibration pending.**
 **SPP IS registered** since 2026-09-06 (lane SPP-20,
-`docs/handoffs/FINDING-spp-20-2026-09-06.md`) — this doc's earlier "SPP is not
+`docs/records/spp/FINDING-spp-20-2026-09-06.md`) — this doc's earlier "SPP is not
 registered" correction is now itself stale and is repaired here. The **seven**
 ISOs in `config/iso_configs._ISO_BUILDERS` (ERCOT, CAISO, PJM, MISO, NYISO,
 NEISO, SPP) each
@@ -264,7 +264,7 @@ STAGE H — Docs
 > `docs/multi-iso/nwpp-addition-plan-2026-09.md` +
 > `docs/multi-iso/nwpp-data-audit.md`.
 > **Item 6, SPP, IS built and registered** as of 2026-09-06 (lane SPP-20,
-> `docs/handoffs/FINDING-spp-20-2026-09-06.md`): `_spp_config()`, the
+> `docs/records/spp/FINDING-spp-20-2026-09-06.md`): `_spp_config()`, the
 > `_ISO_BUILDERS` and `_ISO_TO_BA_CODE` entries and the
 > `_SPP_STATE_ZONES` splitter all exist. *(This paragraph previously said the
 > opposite — that correction was written by lane SPP-10 before the registration

@@ -240,7 +240,7 @@ def main() -> None:
             flush=True,
         )
 
-    dest = REPO / "results/calibration/_pjm_h7_joint_phase0.json"
+    dest = REPO / "results/phase0/pjm/_pjm_h7_joint_phase0.json"
     dest.parent.mkdir(parents=True, exist_ok=True)
     # MERGE, never clobber. Reported by the pjm-h7 screen shard: a single-year
     # invocation used to overwrite a full six-year artifact at this fixed path,

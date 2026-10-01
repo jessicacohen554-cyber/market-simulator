@@ -20,7 +20,7 @@ snapshot by default. ``--census-vintage`` UNIONs in each solved year's own
 ``vintage_<year>/`` release, so a plant that burned coal in a solved year but
 had been re-fuelled by the snapshot's vintage still gets a rank instead of
 falling through to a bare ``COAL`` class the EIA-923 benchmark has no row for
-(lane SPP-62; ``docs/handoffs/FINDING-spp-62-2026-09-10.md``). The census is a
+(lane SPP-62; ``docs/records/spp/FINDING-spp-62-2026-09-10.md``). The census is a
 membership filter only, so widening it can add rows but never re-rank an
 incumbent one.
 

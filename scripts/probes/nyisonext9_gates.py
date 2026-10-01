@@ -5,7 +5,7 @@ G-2 (b): |annual import TWh (arm - keeper)| <= 4 % of the keeper's, every year
      (two +-2 % monthly-band half-widths; PRECOMMIT sec. 6).
 G-4 (reported): per-zone and system load-weighted P1 price move; class TWh moves;
      import-hour min/max.
-Record: results/calibration/_nyisonext9_gates.json.
+Record: results/phase0/nyiso/_nyisonext9_gates.json.
 """
 
 from __future__ import annotations
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     ys = [int(x) for x in sys.argv[1:]] or [2021, 2022, 2023, 2024, 2025]
     res = {y: year(y, f"nyisonext9_{y}") for y in ys}
     print("G-2 (a) floor gone:", any(v["hours_below_floor"]["arm"] > 0 for v in res.values()))
-    p = REPO / "results/calibration/_nyisonext9_gates.json"
+    p = REPO / "results/phase0/nyiso/_nyisonext9_gates.json"
     old = json.loads(p.read_text()) if p.exists() else {}
     old.update({str(y): v for y, v in res.items()})
     p.write_text(json.dumps(old, indent=1))

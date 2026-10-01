@@ -53,7 +53,7 @@ def main(path: str, year: int = 2024) -> None:
     print(g.drop(columns="contrib").sort_values("contrib_usd").to_string())
     rec = {"tol": TOL, "mix_by_band": json.loads(mix.to_json(orient="index")),
            "contrib_by_setter": json.loads(g.drop(columns="contrib").to_json(orient="index"))}
-    with open("docs/handoffs/r-ercot/r_ercot20_marginal_setter.json", "w") as f:
+    with open("docs/records/ercot/r-ercot/r_ercot20_marginal_setter.json", "w") as f:
         json.dump(rec, f, indent=1)
 
 

@@ -1,7 +1,7 @@
 """Emit the NWPP-NEXT-8 calibration attestation for the monthly coal-pile span bundle.
 
 NWPP-NEXT-8 (PRECOMMIT
-``docs/handoffs/PRECOMMIT-nwppnext8-coal-monthly-pile-2019-2025-2026-09-28.md``) is
+``docs/records/nwpp/PRECOMMIT-nwppnext8-coal-monthly-pile-2019-2025-2026-09-28.md``) is
 keeper #14's recipe (NWPP-NEXT-7) plus ``coal_fuel_inventory_monthly_pile``: the
 per-coal-yard pile identity at month-end grain, ruled by the owner on decision
 cards 2026-09-28 (monthly pile balance; flat ratable receipts; floor and ceiling).

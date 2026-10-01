@@ -52,7 +52,7 @@ import numpy as np
 REPO = Path(__file__).resolve().parents[2]
 CACHE = REPO / "results" / "calibration" / "_nyiso245_cache"
 TRANSCO = REPO / "data" / "raw" / "gas-prices" / "transco_z6_ny_daily.csv"
-OUT = REPO / "results" / "calibration" / "_nyiso248_shape_attenuation.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso248_shape_attenuation.json"
 YEARS = (2022, 2023, 2024, 2025)
 DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 GAS_CLASS_TOKENS = ("CC", "CT", "ST_GAS")

@@ -1,7 +1,7 @@
 {
  "what": "xiso stack-climb attribution \u2014 44 ISO-year measurement appendix",
- "precommit": "docs/PRECOMMIT-xiso-stack-climb-attribution-2026-09-22.md",
- "result": "docs/RESULT-xiso-stack-climb-attribution-2026-09-22.md",
+ "precommit": "docs/records/governance/PRECOMMIT-xiso-stack-climb-attribution-2026-09-22.md",
+ "result": "docs/records/governance/RESULT-xiso-stack-climb-attribution-2026-09-22.md",
  "probes": [
   "scripts/probes/_xiso_stack_climb_phase0.py",
   "scripts/probes/_xiso_stack_climb_verdict.py",

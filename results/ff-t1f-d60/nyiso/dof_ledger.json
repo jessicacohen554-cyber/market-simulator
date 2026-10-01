@@ -25,8 +25,8 @@
       "group": "other",
       "identification": "design-decision",
       "status": "IDENTIFIED",
-      "source": "Owner decision D-10 (signed 2026-08-04, docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum K.3): forecast bundles run cross-year LP warm start OFF so a killed-and-resumed forecast reproduces from its own cache",
-      "evidence": "market_sim.config.scenarios.FORECAST_BUNDLE_XYEAR_WARMSTART (the one registry carrier) read through scripts/lib/forecast_posture.py::shipped_forecast_xyear_warmstart; measurement docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md",
+      "source": "Owner decision D-10 (signed 2026-08-04, docs/records/forecast/ffr-owner-sitting-2026-08-02.md Addendum K.3): forecast bundles run cross-year LP warm start OFF so a killed-and-resumed forecast reproduces from its own cache",
+      "evidence": "market_sim.config.scenarios.FORECAST_BUNDLE_XYEAR_WARMSTART (the one registry carrier) read through scripts/lib/forecast_posture.py::shipped_forecast_xyear_warmstart; measurement docs/records/forecast/ffr-3t-warmstart-off-2026-08-04.md",
       "value": false,
       "provenance": "runner-posture"
     },
@@ -37,7 +37,7 @@
       "identification": "design-decision",
       "status": "IDENTIFIED",
       "source": "Prices the NYCA requirement on the NYSRC ICAP-market FORECAST PEAK of the capability year (IRM Study Appendices Table D.2 col. 1) instead of the model's own peak. A capability year outside the published table returns the model's peak UNCHANGED, so the forward horizon keeps a forecast peak and never a held-last MW. A published market-design input, not a magnitude",
-      "evidence": "src/market_sim/config/iso_configs.py::_nyiso_config default_scenario_overrides cite block (owner ruling Q41); docs/handoffs/FINDING-capx-d52-2026-09-04.md section 8(1); the digitized rows in data/raw/demand-curve/nyiso/nyiso.csv, reconciled to source by test",
+      "evidence": "src/market_sim/config/iso_configs.py::_nyiso_config default_scenario_overrides cite block (owner ruling Q41); docs/records/forecast/FINDING-capx-d52-2026-09-04.md section 8(1); the digitized rows in data/raw/demand-curve/nyiso/nyiso.csv, reconciled to source by test",
       "provenance": "iso-registry",
       "value": true
     },
@@ -48,7 +48,7 @@
       "identification": "design-decision",
       "status": "IDENTIFIED",
       "source": "Prices the requirement FACTOR at that capability year's EC-adopted IRM x (1 - NYCA derate) (Table D.2 cols. 2-3) instead of the single mixed vintage 1.244 x (1 - 0.1321); beyond the last published pair it HOLDS that pair's ratio, 1.244 x 0.870 = 1.0823. In-table, the requirement IS Table D.2's published NYCA UCAP requirement to under 1 MW. Every factor is a published adopted value",
-      "evidence": "src/market_sim/config/iso_configs.py::_nyiso_config default_scenario_overrides cite block (owner ruling Q41); docs/handoffs/FINDING-capx-d52-2026-09-04.md section 8(1) (LOYO 3/3 with an identical fleet; FC-3 byte-identical at the shipped default)",
+      "evidence": "src/market_sim/config/iso_configs.py::_nyiso_config default_scenario_overrides cite block (owner ruling Q41); docs/records/forecast/FINDING-capx-d52-2026-09-04.md section 8(1) (LOYO 3/3 with an identical fleet; FC-3 byte-identical at the shipped default)",
       "provenance": "iso-registry",
       "value": true
     }

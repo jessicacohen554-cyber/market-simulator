@@ -1,6 +1,6 @@
 """NYISO-NEXT-13 G-2 (a)(b)(c) and reported diagnostics (ZERO LP), per arm leg.
 
-``docs/PRECOMMIT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md`` sec. 5:
+``docs/records/nyiso/PRECOMMIT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md`` sec. 5:
 
 G-2 (a): the NE AC node's P1 net flow is within one band step of the flow its own
      bands imply at its own LMP in >= 95 % of hours (keeper 33.5-63.2 %).
@@ -9,7 +9,7 @@ G-2 (b): the pooled node's monthly net import lies inside the detached band
      in every month.
 G-2 (c): the node exports in >= 1 h and imports in >= 1 h.
 Reported: node / pooled TWh vs measured, hours at the posted bounds, load-weighted
-P1 price delta vs the keeper by zone. Record: ``results/calibration/_nyisonext13_gates.json``.
+P1 price delta vs the keeper by zone. Record: ``results/phase0/nyiso/_nyisonext13_gates.json``.
 """
 
 from __future__ import annotations
@@ -129,7 +129,7 @@ def year(y: int, leg: str) -> dict:
 if __name__ == "__main__":
     ys = [int(x) for x in sys.argv[1:]] or [2021, 2022, 2023, 2024, 2025]
     res = {str(y): year(y, f"nyisonext13_{y}") for y in ys}
-    p = CAL / "_nyisonext13_gates.json"
+    p = CAL.parent / "phase0" / "nyiso" / "_nyisonext13_gates.json"
     old = json.loads(p.read_text()) if p.exists() else {}
     old.update(res)
     p.write_text(json.dumps(old, indent=1) + "\n")

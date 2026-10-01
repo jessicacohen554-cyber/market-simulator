@@ -1,6 +1,6 @@
 """NYISO-NEXT-17 gates G-2 / G-3 / G-4 / G-6 / G-7 and the reported block (ZERO LP).
 
-``docs/PRECOMMIT-nyiso-next17-fg-split-2026-09-30.md`` sec. 3, every value anchored
+``docs/records/nyiso/PRECOMMIT-nyiso-next17-fg-split-2026-09-30.md`` sec. 3, every value anchored
 to the keeper (``nyisonext16_2021`` / ``nyisonext16_span``):
 
 G-2: total NYCA P1 demand equal within 0.1 GWh; Capital_Hudson + Lower_Hudson

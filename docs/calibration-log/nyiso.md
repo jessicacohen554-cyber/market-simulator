@@ -119,7 +119,7 @@ unit-level generator outages **confidential**, its DAM bid/award data is
 **masked** (no unit identities), and the only public generator-outage product is
 a non-archived system-aggregate forecast (MIS P-15). CAMPD/CEMS + NERC GADS + EIA
 + NRC remains the correct and only public stack. Recorded in
-`docs/handoffs/nyiso-outage-source-determination-2026-07.md`.
+`docs/records/nyiso/nyiso-outage-source-determination-2026-07.md`.
 
 **Confirmed the nyiso-68 baseline.** nyiso-68 already runs
 `nyiso_dynamic_reserve_requirements=True` + SCR/EDRP + corrected outages (the
@@ -244,7 +244,7 @@ fleet for East-10min reserve.
 
 Picked up the nyiso-70 handoff (close 2023 C3a +15.9%). **No keeper change** —
 this is a diagnostic-only session that conclusively re-scopes the residual. Full
-write-up: `results/calibration/FINDING-nyiso-2023-c3a-offpeak-diagnosis-2026-07-23.md`.
+write-up: `docs/records/nyiso/FINDING-nyiso-2023-c3a-offpeak-diagnosis-2026-07-23.md`.
 
 **The residual is OFF-PEAK, not broadband.** Shoulder off-peak (hod 0–6) actual RT
 $19.62 vs keeper $30.02 (+53%); on-peak +24%; the +15.9% C3a is the overnight
@@ -348,7 +348,7 @@ Next number: nyiso-73.
 Picked up the `claude/nyiso-backcast-c3a-2023` handoff (close the dominant open
 miss, the 2023 C3a OFF-PEAK trough +58.7% on nyiso-72, model floors overnight
 LBMP at ~$31 where reality troughs ~$19.6). **No keeper change** — diagnostic-only.
-Full write-up: `results/calibration/FINDING-nyiso-2023-c3a-gas-bridge-2026-07-24.md`.
+Full write-up: `docs/records/nyiso/FINDING-nyiso-2023-c3a-gas-bridge-2026-07-24.md`.
 
 **Independently re-verified the miss on nyiso-72** (committed hourlies vs actuals,
 shoulder load-weighted): off-peak (hod 0–6) +58.7%, on-peak +27.8%, full-year
@@ -361,7 +361,7 @@ handoff-named levers are refuted *structurally*, not just empirically.
 **Resolved the prior findings' open lever.** They named a below-SRMC overnight
 commitment mechanism as the sole honest forward lever but called it an *unbuilt*
 cross-ISO methodology change. It EXISTS: `ercot_gas_commitment_bridge` (ERCOT-63,
-`docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §7) — the ISO-neutral
+`docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §7) — the ISO-neutral
 CAISO RA bridge internals (`caiso_ra_mustoffer_min_gen`, P0-pattern + startup
 economics, physics-gated rule 18) scoped to merchant gas-CC. Routed onto NYISO
 2023 as a rule-16 throwaway (`scripts/probes/_nyiso73_gas_bridge_probe.py`,
@@ -416,7 +416,7 @@ Next number: nyiso-74.
 
 **No solves run.** Everything below is measured from the nyiso-72 keeper's
 committed `hourly/` sidecars and raw source data. Full write-up:
-`docs/FINDING-nyiso-import-hour-assignment-and-nuclear-benchmark-2026-07-24.md`.
+`docs/records/nyiso/FINDING-nyiso-import-hour-assignment-and-nuclear-benchmark-2026-07-24.md`.
 Next number still **nyiso-74** (none consumed).
 
 **1. `interchange_shaping` — rule-13 FORBIDDEN as a keeper mechanism.**
@@ -506,7 +506,7 @@ reconcile, never stack). Pinned reliability floor NOT touched.
 
 ## 2026-07-25 — the overnight price-setter identified: the hydro monthly-budget dual (nyiso-74)
 
-Full write-up: `docs/FINDING-nyiso-overnight-marginal-is-hydro-water-value-2026-07-25.md`.
+Full write-up: `docs/records/nyiso/FINDING-nyiso-overnight-marginal-is-hydro-water-value-2026-07-25.md`.
 **Keeper unchanged — nyiso-72.** Nothing registered on the dashboard (scoping
 probe). Next number: **nyiso-75**.
 
@@ -621,7 +621,7 @@ that entry governs and this one defers.
 **1. The instrument is complete and verified in a real browser.** The 2026-07-24
 session truncated `scripts/render_calibration_html.py` on main (1,911 → 1 lines,
 PR #2866) and never pushed the frontend half at all. Restored the renderer from
-the committed patch (`docs/handoffs/restore-render-calibration-html-nonfossilhr.patch`
+the committed patch (`docs/records/misc/restore-render-calibration-html-nonfossilhr.patch`
 → blob `cc5d9ea`, 2,251 lines, exact match) and rebuilt the lost frontend — which
 now lives in `docs/codebase-site/js/backcast-runs.js` after the Wave-5C inline-JS
 extraction (`c17bad3`); all 13 hunks ported with zero fuzz. Added: a
@@ -642,7 +642,7 @@ non-fossil optgroup**. Payloads regenerated for `nyiso-72` (2023-2025 only,
 rule 22) and `ercot-110` — deterministic and idempotent (re-run, hash-compared).
 
 **2. The delta-shape finding's NUCLEAR row is WITHDRAWN — same defect the
-nyiso-74 session repaired in the bench.** `docs/FINDING-nyiso-class-delta-shape-2026-07-24.md`
+nyiso-74 session repaired in the bench.** `docs/records/nyiso/FINDING-nyiso-class-delta-shape-2026-07-24.md`
 ranked nuclear #4 at Σ|Δ| 7.46 TWh / **+5.02 TWh net**, citing a 2023 "actual
 **Mar 13 + 50 d**" refuel outage the model missed. That window is the
 **1,179-hour zero-coded `NG: NUC` filing gap**; the fix (`d13a3f2`) landed 27
@@ -708,7 +708,7 @@ anti-correlation (r = −0.15) and oil day-placement.
 
 ## 2026-07-26 — nyiso-75: shaped solar fallback (STRUCTURAL FIX, rule 1) — flat NYISO solar repaired from the NEISO donor; all-six-ISO sweep done
 
-Closes rank 4 of `docs/FINDING-nyiso-class-delta-shape-2026-07-24.md` — the last
+Closes rank 4 of `docs/records/nyiso/FINDING-nyiso-class-delta-shape-2026-07-24.md` — the last
 open, unowned item of that finding. Dashboard:
 `2026-07-26-nyiso-75-solar-shape`; bundle `results/calibration/nyiso75_solar_shape`.
 
@@ -807,7 +807,7 @@ lane against the corrected envelope before any further NYISO structural work.
 Standing caveat: NYISO has no published outage instrument, so the corrected
 extract itself remains UNVERIFIED — this arm measures keeper sensitivity, not
 extract correctness. Full numbers:
-`results/calibration/RESULTS-neiso65-crossiso-reaudit-2026-07.md`.
+`docs/records/neiso/RESULTS-neiso65-crossiso-reaudit-2026-07.md`.
 
 ## 2026-07-26 — nyiso-75 is a PRE-ADOPTION keeper: the §3c RE-TUNE verdict stands against it
 
@@ -1037,7 +1037,7 @@ not a min-gen floor, so **D-2 does not stamp it**. C8 forced-share falls (the
 floor limbs are gone) while real forcing continues un-attributed. Defensible —
 co-optimized reserve is not a floor — but it must not be read as a forcing
 reduction. Evidence:
-`docs/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md` §§4, 4a.
+`docs/records/nyiso/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md` §§4, 4a.
 
 **Third arm — the published LI ladder ALONE is provably inert, and that is the
 proof of the mechanism.** With `nyiso_li_locational_reserve=true` and the
@@ -1061,7 +1061,7 @@ nyiso-83 handoff's redirect of the C3c lane at the NYCA/East tier (model tail
 3/0/9 h >$300 vs RT actual 10/12/42). Registered runs (all three years, one
 bundle each, vs a same-HEAD zero-delta control):
 `2026-07-27-nyiso-84-{control,east-ladder,spin-gate,east-gate}`. Full write-up:
-`docs/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md` §6.
+`docs/records/nyiso/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md` §6.
 
 **The pin came first and flipped the premise.** The handoff assumed the two
 missing East families (spin_10 330 MW, total_30 1,200 MW — LRR posting rows the
@@ -1116,7 +1116,7 @@ solve since silently skipped derived-input provenance capture; import added.
 Scoring-side characterisation of committed actuals + the keeper's committed
 hourlies (rule 14), reproducible via `scripts/probes/nyiso85_{tail_anatomy,
 zonal_tail_basis,model_vs_tail}.py`. Full write-up:
-`docs/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md` §7.
+`docs/records/nyiso/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md` §7.
 
 **The framing nyiso-84 handed forward is REFUTED.** All 64 actual tail hours
 decomposed at native 5-minute resolution (raw NYISO zonal RTD LBMP; the rebuilt
@@ -1180,7 +1180,7 @@ ungated-but-wrong / by-construction, and state what a calibration-complete
 determination actually requires. Scoring-side only (committed sidecars, bench
 parts, EIA-930/pal/923 actuals, one `run_year(fleet_only=True)` fleet rebuild
 for a heat-rate audit). Full write-up:
-`docs/FINDING-nyiso-calibration-reconciliation-2026-07-27.md`.
+`docs/records/nyiso/FINDING-nyiso-calibration-reconciliation-2026-07-27.md`.
 
 **C1 2023 CC_REGULAR −4.11 TWh is NOT a vintage artifact and mostly NOT a
 dispatch defect.** The model serves the EIA-930 NYIS Demand basis — verified
@@ -1348,7 +1348,7 @@ regenerate the dispatch a control/arm pair needs; it completed 2023 and was
 **OOM-killed during 2024's persist** on this 15 GB container. Every result below
 is no-LP, from committed artifacts and measured sources (rule 14), reproducible
 via `scripts/probes/nyiso88_{peaker_price_coupling,peaker_economics}.py`. Full
-write-up: `docs/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md`.
+write-up: `docs/records/nyiso/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md`.
 
 **(c) is refuted — and C3c cannot be this class's lever.** Stretching the
 keeper's own diurnal price profile to the measured NYISO DA swing (granted free,
@@ -1418,7 +1418,7 @@ plant-average, and registered ONE arm against a same-HEAD zero-delta control
 across 2023–2025 (rules 16 + 12). Keeper **unchanged**
 (`2026-07-27-nyiso-87-cmeas-measured`); both new runs are PROBES, UNATTESTED on
 C6, determination NOT-YET. Write-up:
-`docs/FINDING-nyiso89-ct-heat-rate-2026-07-27.md`.
+`docs/records/nyiso/FINDING-nyiso89-ct-heat-rate-2026-07-27.md`.
 
 Registered: `2026-07-27-nyiso-89-control-zerodelta`
 (`results/calibration/nyiso89_ctrl_zerodelta`) and
@@ -1532,8 +1532,8 @@ minimum-energy screen is the named follow-up, deliberately NOT added post-hoc
 **Keeper: `2026-07-27-nyiso-89-ctmeas-hrloaded`, UNCHANGED.** Registered runs
 (all three years, one bundle each, same HEAD, one ScenarioConfig field apart):
 `2026-07-27-nyiso-90-{control-zerodelta,ctblock-minrun}`. Full write-up:
-`docs/FINDING-nyiso90-ct-block-commitment-2026-07-27.md`. Parameter choice
-pre-registered before derivation: `docs/handoffs/nyiso90-preregistration.md`.
+`docs/records/nyiso/FINDING-nyiso90-ct-block-commitment-2026-07-27.md`. Parameter choice
+pre-registered before derivation: `docs/records/nyiso/nyiso90-preregistration.md`.
 
 **The charter's premise does not survive the characterization.** The brief
 expected "the model's starts are single-hour-ish" and asked that block
@@ -1606,7 +1606,7 @@ merit-order LP structurally cannot produce, and it is about the size of the gap.
 **Keeper: `2026-07-27-nyiso-89-ctmeas-hrloaded`, UNCHANGED.** Registered run:
 `2026-07-27-nyiso-91-ctstart-control` (PROBE, `results/calibration/nyiso91_ctrl_zerodelta`,
 `--year 2023 2024 2025`, one bundle, sequential). Full write-up:
-`docs/FINDING-nyiso91-ct-start-frequency-2026-07-27.md`. The control reproduces
+`docs/records/nyiso/FINDING-nyiso91-ct-start-frequency-2026-07-27.md`. The control reproduces
 nyiso-90's control **exactly** (2023 CC_REGULAR 32.513 TWh, CT_PEAKER
 0.443/0.394/1.407, gas-bridge legs 16,698 / 3,242 unit-hours), so it is a
 faithful same-HEAD zero-delta baseline.
@@ -1696,7 +1696,7 @@ limitation of the five-zone representation**, not an open tuning target.
 in-session; replaces `2026-07-27-nyiso-89-ctmeas-hrloaded`).** Registered runs
 (all three years, one bundle each, same HEAD, one mechanism-family apart):
 `2026-07-28-nyiso-92-{control,hydro-envelope}`. Full write-up:
-`docs/FINDING-nyiso92-hydro-capability-envelope-2026-07-28.md`. Probe:
+`docs/records/nyiso/FINDING-nyiso92-hydro-capability-envelope-2026-07-28.md`. Probe:
 `scripts/probes/nyiso92_hourly_r_decomposition.py`.
 
 **The charter was dispatch matching ("hourly r for each asset class is pretty
@@ -1825,7 +1825,7 @@ without remembering that.
 
 **Matrix:** `unit_outage_short_windows` N `U`→`I` with citation; §5.5 queue
 item 5 struck through as closed. Evidence:
-`docs/FINDING-nyiso93-unit-availability-windows-inert-2026-07-28.md`; probe
+`docs/records/nyiso/FINDING-nyiso93-unit-availability-windows-inert-2026-07-28.md`; probe
 `scripts/probes/nyiso93_unit_window_census.py` reproduces every number.
 
 **Rebase addendum (same session, after `origin/main` advanced 28 commits):**
@@ -1923,7 +1923,7 @@ new evidence — it is the fitted scalar this finding refused.
 
 **Matrix:** `da_virtual_bids` N `U`→`G` with citation; §5.5 queue item 1 struck
 through as closed and a new item 1b (TSA) added as the recommended head.
-Evidence: `docs/FINDING-nyiso94-da-virtual-not-identifiable-2026-07-28.md`;
+Evidence: `docs/records/nyiso/FINDING-nyiso94-da-virtual-not-identifiable-2026-07-28.md`;
 probe `scripts/probes/nyiso94_da_virtual_identifiability.py` reproduces every
 number.
 
@@ -2063,7 +2063,7 @@ LBMP, observed flow, DA–RT spread, or the C3c residual.
 **Matrix:** new row `tsa_transfer_derate` (cat `network`) N `G` with citation;
 header re-stamped; §5.5 queue item 1b struck through as closed and the queue
 head advanced to item 2. Evidence:
-`docs/FINDING-nyiso95-tsa-derate-not-identifiable-2026-07-28.md`.
+`docs/records/nyiso/FINDING-nyiso95-tsa-derate-not-identifiable-2026-07-28.md`.
 
 ---
 
@@ -2072,9 +2072,9 @@ head advanced to item 2. Evidence:
 **Keeper: `2026-07-28-nyiso-92-hydro-envelope`, UNCHANGED.** Registered runs
 (all three years, one bundle each, same HEAD, one mechanism-family apart):
 `2026-07-29-nyiso-96-{control-zerodelta,ctamort}`. Full write-up:
-`docs/FINDING-nyiso96-ct-start-frequency-2026-07-29.md`. Parameter choice and
+`docs/records/nyiso/FINDING-nyiso96-ct-start-frequency-2026-07-29.md`. Parameter choice and
 predictions pre-registered before the solve:
-`docs/handoffs/nyiso96-preregistration.md`.
+`docs/records/nyiso/nyiso96-preregistration.md`.
 
 **STEP-1 characterisation, no LP spent** (`nyiso96_ct_start_characterization.py`,
 `nyiso96_ct_offer_reveal.py`, both on the keeper's committed sidecars). The two
@@ -2214,16 +2214,16 @@ authorization, no build, no topology change, no data intake. Matrix: new row
 `scuc_load_pocket_commitment` → NYISO `G` ex-ante; §5.5 C3c queue now EMPTY
 (remaining live work: dispatch-matching items 7–10, hygiene item 6). Re-open
 conditions and evidence:
-`docs/FINDING-nyiso97-load-pocket-identification-2026-07-29.md`.
+`docs/records/nyiso/FINDING-nyiso97-load-pocket-identification-2026-07-29.md`.
 
 ## 2026-07-29 — nyiso-98 `nuclear_unit_availability`: the queue's defect was a benchmark artifact; the real one closes, all gates PASS
 
 Dispatch-matching lane, matrix §5.5 item 7 (queue head). Registered A/B:
 `2026-07-29-nyiso-98-control-zerodelta` + `2026-07-29-nyiso-98-nucavail`,
 2023+2024+2025 in one invocation. Pre-registration
-`docs/PREREG-nyiso98-nuclear-availability-2026-07-29.md` committed and pushed
+`docs/records/nyiso/PREREG-nyiso98-nuclear-availability-2026-07-29.md` committed and pushed
 **before** the extract was derived and before any solve; finding
-`docs/FINDING-nyiso98-nuclear-availability-2026-07-29.md`.
+`docs/records/nyiso/FINDING-nyiso98-nuclear-availability-2026-07-29.md`.
 
 **PREMISE CORRECTION — the queue entry was wrong, and it inverts.** "Nuclear
 r_day drops 0.84 → 0.50/0.51 in 2024–25" reproduces exactly on the keeper
@@ -2323,9 +2323,9 @@ NYISO `NG: OIL` (r_day 0.07) is the obvious next suspect.
 
 **Lane:** dispatch-matching, matrix §5.5 **item 9**. **Keeper unchanged at entry
 and at exit of the adjudication** (`2026-07-29-nyiso-98-nucavail`).
-**Pre-registration:** `docs/PREREG-nyiso99-import-audit-demand-dropout-2026-07-29.md`
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso99-import-audit-demand-dropout-2026-07-29.md`
 (committed AND pushed before any solve). **Full write-up:**
-`docs/FINDING-nyiso99-import-shape-attributed-to-c3c-2026-07-29.md`.
+`docs/records/nyiso/FINDING-nyiso99-import-shape-attributed-to-c3c-2026-07-29.md`.
 **Instruments:** `scripts/probes/nyiso99_import_benchmark_provenance.py`
 (census / falsify / baseline / attribute), `scripts/probes/nyiso99_ab_compare.py`.
 
@@ -2594,8 +2594,8 @@ as support for the arm:
   recipe metas, zero-dispatch-delta cleanup); the cross-ISO EIA-930 `NG:*` zero-block
   audit (only `Demand` was swept cross-ISO).
 
-Evidence: `docs/FINDING-nyiso100-simultaneous-import-misattribution-2026-07-30.md`,
-`docs/PREREG-nyiso100-simultaneous-import-retire-2026-07-30.md`, probes
+Evidence: `docs/records/nyiso/FINDING-nyiso100-simultaneous-import-misattribution-2026-07-30.md`,
+`docs/records/nyiso/PREREG-nyiso100-simultaneous-import-retire-2026-07-30.md`, probes
 `nyiso100_simultaneous_import_identification.py` / `nyiso100_ab_compare.py`,
 attestation `scripts/gen_nyiso100_attestation.py`.
 
@@ -2684,7 +2684,7 @@ DETERMINATION NOT-YET — all unchanged.
   join, local for the HB14-21 window (a local-clock definition) — since 2024 posts
   8,784 P-32 hours against the model's 8,760.
 
-Evidence: `docs/FINDING-nyiso101-gj-locality-boundary-2026-07-30.md`, probe
+Evidence: `docs/records/nyiso/FINDING-nyiso101-gj-locality-boundary-2026-07-30.md`, probe
 `scripts/probes/nyiso101_gj_locality_boundary.py` (no LP; sections `provenance`,
 `cutset`, `legs`, `split`, `falsify`, `reconcile`).
 
@@ -2832,7 +2832,7 @@ would have been a no-op A/B against itself — **drop it from the NYISO lever qu
 - **C3c** untouched and unaimed-at: diagnosed structural limitation of the five-zone
   representation, empty lever queue (nyiso-94/95/96/97).
 
-Evidence: `docs/FINDING-nyiso102-d5-parity-wiring-2026-07-30.md`;
+Evidence: `docs/records/nyiso/FINDING-nyiso102-d5-parity-wiring-2026-07-30.md`;
 `tests/scoring/test_legitimacy_diagnostics.py::TestD5NyisoDownstateParity`.
 
 ---
@@ -3044,7 +3044,7 @@ would import one historical year's outage schedule into every forecast year.
   differently from the annual mean needs an LP replay (the `hourly/` sidecars
   carry no link flows). The classification does not turn on it.
 
-Evidence: `docs/FINDING-nyiso104-central-east-ttc-classification-2026-07-30.md`,
+Evidence: `docs/records/nyiso/FINDING-nyiso104-central-east-ttc-classification-2026-07-30.md`,
 probe `scripts/probes/nyiso104_central_east_ttc_classification.py`.
 
 ---
@@ -3118,13 +3118,13 @@ of the marker check. NYISO's 2022 touchpoint opens only when the **owner** lifts
   tier-specific message rather than the superseded one.
 - `check_mechanism_matrix.py --base origin/main`: integrity OK; matrix header re-stamped.
 
-Evidence: `docs/FINDING-nyiso104-c3c-frontier-and-tiered-holdout-2026-07-31.md`.
+Evidence: `docs/records/nyiso/FINDING-nyiso104-c3c-frontier-and-tiered-holdout-2026-07-31.md`.
 
 ## nyiso-105 — three no-solve closures, and `measured_chp_heat_rates` becomes the KEEPER (2026-07-31)
 
 **Keeper `2026-07-30-nyiso-100-silretire` → `2026-07-31-nyiso105-chp-heat-rates`**
 (bundle `results/calibration/nyiso105_chpheatrate_B`). Frozen HEAD `0852d5b`.
-Pre-registration `results/calibration/PREREG-nyiso105-chp-heat-rates-2026-07-31.md`,
+Pre-registration `docs/records/nyiso/PREREG-nyiso105-chp-heat-rates-2026-07-31.md`,
 committed **and pushed before either arm solved**. Scorer
 `scripts/probes/_nyiso105_chpheatrate_ab.py`; no-LP probe
 `scripts/probes/_nyiso105_seam_recipe_stgas.py`.
@@ -3217,8 +3217,8 @@ and the CT_CHP must-run treatment — **not** the heat rate. Mean λ rises
 **C3c is not targeted, not claimed and not moved.** The closed C3c queue stays
 closed and the nyiso-104b frontier declaration stands.
 
-Evidence: `results/calibration/FINDING-nyiso105-stgas-inert-seam-live-2026-07-31.md`;
-`results/calibration/_nyiso105_chpheatrate_ab.json`.
+Evidence: `docs/records/nyiso/FINDING-nyiso105-stgas-inert-seam-live-2026-07-31.md`;
+`results/phase0/nyiso/_nyiso105_chpheatrate_ab.json`.
 Runs registered: `2026-07-31-nyiso105-control`, `2026-07-31-nyiso105-chp-heat-rates`
 (top-15 retention pruned nyiso-87-cmeas and nyiso-89-control-zerodelta).
 
@@ -3229,7 +3229,7 @@ Runs registered: `2026-07-31-nyiso105-control`, `2026-07-31-nyiso105-chp-heat-ra
 the nyiso-93/94/95/97/99/101/105 pattern. No pre-registration was needed because no
 arm was solved and no mechanism was tested. Probe:
 `scripts/probes/_nyiso106_solar_benchmark_audit.py`; evidence
-`results/calibration/_nyiso106_solar_benchmark_audit.json`.
+`results/phase0/nyiso/_nyiso106_solar_benchmark_audit.json`.
 
 ### 1. Item A — `solar` 2025 +437.2 % is a SURVEY-COVERAGE ARTIFACT, falsified
 
@@ -3345,8 +3345,8 @@ parameters**. C3c untouched — not targeted, not claimed, not moved; the closed
 queue stays closed and the nyiso-104b frontier declaration stands. No run
 registered on the dashboard, because no bundle was produced.
 
-Evidence: `results/calibration/FINDING-nyiso106-solar-benchmark-vintage-2026-07-31.md`;
-`results/calibration/_nyiso106_solar_benchmark_audit.json`.
+Evidence: `docs/records/nyiso/FINDING-nyiso106-solar-benchmark-vintage-2026-07-31.md`;
+`results/phase0/nyiso/_nyiso106_solar_benchmark_audit.json`.
 
 Next shorthand: nyiso-107.
 
@@ -3362,8 +3362,8 @@ correctly, so the new guard sees no additional drift.)
 **Zero solves.** Scope Item B closed on measurement alone — the
 nyiso-93/94/95/97/99/101/105/106 pattern. No pre-registration was needed because
 no arm was solved. Probe: `scripts/probes/_nyiso107_hydro_basis_audit.py`;
-evidence `results/calibration/_nyiso107_hydro_basis_audit.json`; finding
-`results/calibration/FINDING-nyiso107-hydro-input-truncation-2026-07-31.md`.
+evidence `results/phase0/nyiso/_nyiso107_hydro_basis_audit.json`; finding
+`docs/records/nyiso/FINDING-nyiso107-hydro-input-truncation-2026-07-31.md`.
 
 The pending nyiso-106 header commit needed no action: `988dd47` had already
 merged as PR #3222, so the NYISO stamp was correct on arrival. The ERCOT and
@@ -3572,7 +3572,7 @@ not reproduce the scorer's tail basis. The authoritative C3c comes from
 `calibration_verdict.py`. Environment: a fresh container also needs a full
 `scripts/regenerate_clean.py` (48 datatypes) beyond the two documented commands.
 
-`results/calibration/FINDING-nyiso108-hydro-input-repair-2026-07-31.md`.
+`docs/records/nyiso/FINDING-nyiso108-hydro-input-repair-2026-07-31.md`.
 
 Next shorthand: nyiso-109.
 
@@ -3716,7 +3716,7 @@ cache-key failures were checked rather than assumed**, because this session adds
 registered and the tests fail against a literal that was already stale on main. **11 new
 tests** land with the mechanism, all passing.
 
-`results/calibration/FINDING-nyiso109-zonal-margin-anchor-2026-08-01.md`.
+`docs/records/nyiso/FINDING-nyiso109-zonal-margin-anchor-2026-08-01.md`.
 
 Next shorthand: nyiso-110.
 
@@ -3729,9 +3729,9 @@ Next shorthand: nyiso-110.
 DIAGNOSIS + PREREG lane, solve only behind its own pre-registration. Probe:
 `scripts/probes/_nyiso110_peak_half_decomposition.py` (A–D committed artifacts
 only, seconds; E replays the keeper fleet per year, no LP). Machine output:
-`results/calibration/_nyiso110_peak_half_decomposition.json`. Finding:
-`results/calibration/FINDING-nyiso110-peak-half-decomposition-2026-08-02.md`.
-Prereg: `results/calibration/PREREG-nyiso110-spin-online-peak-formation-2026-08-02.md`
+`results/phase0/nyiso/_nyiso110_peak_half_decomposition.json`. Finding:
+`docs/records/nyiso/FINDING-nyiso110-peak-half-decomposition-2026-08-02.md`.
+Prereg: `docs/records/nyiso/PREREG-nyiso110-spin-online-peak-formation-2026-08-02.md`
 (committed and pushed BEFORE either arm solved).
 
 ### 1. The decomposition (task a)
@@ -3805,7 +3805,7 @@ registered: `2026-08-01-nyiso110-control-zerodelta` /
 `2026-08-02-nyiso110-spin-online-inert` (retention pruned nyiso-92-control +
 nyiso-92-hydro-envelope). Gate scorer
 `scripts/probes/_nyiso110_spin_online_ab.py` →
-`results/calibration/_nyiso110_spin_online_ab.json`. **K1/K4 pass** (exactly
+`results/phase0/nyiso/_nyiso110_spin_online_ab.json`. **K1/K4 pass** (exactly
 one config delta, flag recorded); **K2 = 0.0 MW** max class-hour delta (the
 control byte-reproduces the keeper — main's ercot-150 commits NYISO-inert, as
 pre-registered); **K3 FAILS → INERT**: reserve-dual hours identical to control
@@ -3862,7 +3862,7 @@ of this defect; non-thermal, never gated).
 pre-registrations' own verdicts (`PREREG-nyiso111-ramp-envelopes-2026-08-02.md`,
 `PREREG-nyiso112-nysdec-peaker-rule-2026-08-02.md`, both committed and pushed
 before any arm solved). Finding:
-`results/calibration/FINDING-nyiso111-ramp-envelopes-2026-08-02.md`.
+`docs/records/nyiso/FINDING-nyiso111-ramp-envelopes-2026-08-02.md`.
 
 ### 1. Why the transfer candidates
 
@@ -3929,7 +3929,7 @@ Next shorthand: nyiso-113.
 **Keeper `2026-08-02-nyiso112-ramp-plus-peaker` → `2026-08-02-nyiso-113-li-locational`, CALIBRATED-WITH-CAVEATS.** Pre-registration
 `PREREG-nyiso113-li-locational-reserve-2026-08-02.md` (committed and pushed
 before either arm solved). Finding:
-`results/calibration/FINDING-nyiso113-matrix-gap-sweep-2026-08-02.md`.
+`docs/records/nyiso/FINDING-nyiso113-matrix-gap-sweep-2026-08-02.md`.
 Registered: `2026-08-02-nyiso-113-control-zerodelta` +
 `2026-08-02-nyiso-113-li-locational` (both non-keeper; retention pruned
 nyiso-98-nucavail + nyiso-99-demandfix).
@@ -4030,7 +4030,7 @@ the array already exists.
 
 Keeper **UNCHANGED** at `2026-08-02-nyiso-113-li-locational`. This session
 promotes nothing, demotes nothing and re-keys nothing.
-`results/calibration/FINDING-nyiso114-reserve-family-sidecar-2026-08-03.md`;
+`docs/records/nyiso/FINDING-nyiso114-reserve-family-sidecar-2026-08-03.md`;
 `PREREG-nyiso114-reserve-family-sidecar-2026-08-03.md` pushed before any solve.
 
 ### 1. The instrument (item 1 of the brief) — §6's standing gap, closed
@@ -4157,7 +4157,7 @@ Next shorthand: nyiso-115.
 demoted or re-keyed. **No lever proposed and no parameter introduced, changed or
 fitted** (pre-registered kill K-C held). Pre-registration
 `PREREG-nyiso116-c3c-unit-layer-2026-08-03.md` pushed before the solve; full
-write-up `results/calibration/FINDING-nyiso116-c3c-unit-layer-2026-08-03.md`;
+write-up `docs/records/nyiso/FINDING-nyiso116-c3c-unit-layer-2026-08-03.md`;
 every number read from the committed `_nyiso116_c3c_unit_layer_gates.json`.
 
 ### 1. The settlement basis is INERT for C3c — and this is the first session that could test it
@@ -4320,7 +4320,7 @@ matches, so the marker transfers a determination onto a run scored against it.
 `locked_test_scored_on` untouched, NYISO stays absent from `final`, holdout spend
 freeze ACTIVE. `audit_keepers --iso NYISO --check`: PASS, 0 failures, 0 warnings.
 
-Evidence: `results/calibration/FINDING-caiso160-nyiso-ct-heat-rate-rebase-2026-08-03.md`,
+Evidence: `docs/records/caiso/FINDING-caiso160-nyiso-ct-heat-rate-rebase-2026-08-03.md`,
 `PREREG-caiso160-nyiso-ct-heat-rate-rebase-2026-08-03.md`.
 
 Next shorthand: nyiso-117.
@@ -4444,7 +4444,7 @@ by magnitude — NYISO lithium-ion moves 200.5 → 252.7 MW across the whole win
 and pumped storage is flat at 1,220 MW, so mis-placing the entire increment by
 half a year mis-allocates at most 0.057 TWh against ~150 TWh of load.
 
-Evidence: `results/calibration/FINDING-nyiso115-nyc-rcpf-step-curve-2026-08-03.md`,
+Evidence: `docs/records/nyiso/FINDING-nyiso115-nyc-rcpf-step-curve-2026-08-03.md`,
 `PREREG-nyiso115-nyc-rcpf-step-curve-2026-08-03.md`,
 `nyiso115_nyc_rcpf_curve_screen.json`, `_nyiso115_stepcurve_gates.json`,
 `nyiso115_transfer_queue_adjudication.json`.
@@ -4532,7 +4532,7 @@ backlogs are their lanes' work (rule 25 / 28(d)).
 Rule 22: the holdout spend freeze is ACTIVE and untouched — no year outside
 2023–2025 solved, scored or read. `complete.NYISO` re-keyed with a determination
 re-verification on committed artifacts only (D-5(b)); identical, not worse.
-Evidence: `results/calibration/FINDING-nyiso117-stepcurve-compose-2026-08-03.md`,
+Evidence: `docs/records/nyiso/FINDING-nyiso117-stepcurve-compose-2026-08-03.md`,
 `_nyiso117_stepcurve_gates.json`, `nyiso117_seny_rcpf_curve_screen.json`.
 
 ## 2026-08-03 — nyiso-119: the published SENY $40 increment tier — **KEEPER**; and a price gate that failed on its own boundary
@@ -4622,7 +4622,7 @@ Rule 22: the holdout spend freeze is ACTIVE and untouched — no year outside
 re-verification on committed artifacts only (D-5(b)): identical to the superseded
 keeper on all 18 fields, all 9 criterion verdicts and the grade summary — nothing
 worse, so the promotion proceeded. Evidence:
-`results/calibration/FINDING-nyiso119-seny-increment-2026-08-03.md`,
+`docs/records/nyiso/FINDING-nyiso119-seny-increment-2026-08-03.md`,
 `PREREG-nyiso119-seny-increment-2026-08-03.md`, `nyiso119_gate_scores.json`,
 `nyiso119_seny_increment_construction_probe.json`.
 
@@ -4852,7 +4852,7 @@ markers are unchanged. Rule 23: nothing re-derived — the construction probe on
 *evaluates* a shipped function at two flag settings. Rule 25: **NYISO only**; no
 other ISO's cell stamped. Rule 28(a)/(b): item 4 taken from the queue and its cell
 stamped this session. Evidence:
-`results/calibration/FINDING-nyiso122-c3a-2025-is-two-objects-2026-08-04.md`,
+`docs/records/nyiso/FINDING-nyiso122-c3a-2025-is-two-objects-2026-08-04.md`,
 `PREREG-nyiso122-iroquois-winter-spread-2026-08-04.md`,
 `_nyiso122_c3a_2025_decomp.json`, `_nyiso122_iroquois_construction.json`,
 `_nyiso122_winter_zonal_spread.json`.
@@ -4978,7 +4978,7 @@ counterfactual is an **upper bound** on the lift (it holds upstate fixed), so th
 **Object A** the `Capital_Hudson` → Zone-F/Zone-G topology split, **Object B** the
 upstate over-pricing (the "mask" nyiso-122 named as trough over-pricing, now
 located exactly), promoted **only jointly**. Precommit written:
-`docs/handoffs/nyiso-downstate-topology-split-charter-2026-08.md` — **nothing built,
+`docs/records/nyiso/nyiso-downstate-topology-split-charter-2026-08.md` — **nothing built,
 armed, registered or solved**, with gates **G0 identifiability** and **G1 Object-B
 diagnosis** both **no-LP and gating every solve**, and §6 pre-stating the three ways
 the charter closes **without** a promotion. Second ruling: item 4
@@ -4997,9 +4997,9 @@ pair**, and it must be worked **under the charter's pre-registered gates** — s
 with **G0** and **G1**, both no-LP, both gating any solve. A chartered topology
 change is **not** a queue item and must never be entered as one.
 
-Evidence: `docs/handoffs/nyiso-123-downstate-boundary-2026-08-04.md`,
-`docs/handoffs/nyiso-downstate-topology-split-charter-2026-08.md`,
-`results/calibration/PREREG-nyiso123-downstate-boundary-2026-08-04.md`,
+Evidence: `docs/records/nyiso/nyiso-123-downstate-boundary-2026-08-04.md`,
+`docs/records/nyiso/nyiso-downstate-topology-split-charter-2026-08.md`,
+`docs/records/nyiso/PREREG-nyiso123-downstate-boundary-2026-08-04.md`,
 `_nyiso123_month_band_allyears.json`, `_nyiso123_zonal_identity_allyears.json`,
 probes `scripts/probes/_nyiso123_month_band_allyears.py`,
 `_nyiso123_zonal_identity_allyears.py`.
@@ -5115,9 +5115,9 @@ route and is therefore an **owner disposition**, not a session edit.
 open blocker — which is an instrumentation/scoping question to put to the owner,
 not a lever to enter as a queue item.
 
-Evidence: `docs/handoffs/nyiso-124-charter-g0-g1-2026-08-04.md`, probe
+Evidence: `docs/records/nyiso/nyiso-124-charter-g0-g1-2026-08-04.md`, probe
 `scripts/probes/_nyiso124_charter_g0_g1.py`, record
-`results/calibration/_nyiso124_charter_g0_g1.json`.
+`results/phase0/nyiso/_nyiso124_charter_g0_g1.json`.
 
 * Next number: **nyiso-125**.
 
@@ -5181,8 +5181,8 @@ explicit authorisation, and do not re-derive the nyiso-125 refusal — it is
 discharged on identification.
 
 Evidence:
-`results/calibration/FINDING-nyiso126-seam-identification-and-c3a-decomposition-2026-08-04.md`,
-`results/calibration/PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md`,
+`docs/records/nyiso/FINDING-nyiso126-seam-identification-and-c3a-decomposition-2026-08-04.md`,
+`docs/records/nyiso/PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md`,
 probes `scripts/probes/_nyiso126_par_identification.py`,
 `scripts/probes/_nyiso126_c3a_decomposition.py`.
 
@@ -5219,7 +5219,7 @@ within 5 % of the annual max only 0.5/0.9/**4.5** %). Claimed narrowly: the
 envelope is materially wrong in a known direction, so a 2022 miss would be
 uninterpretable and a 2022 pass misleading. **No lever proposed; the queue stays
 EMPTY.** Instrument `scripts/probes/_nyiso127_cc_outage_envelope.py`, record
-`results/calibration/_nyiso127_cc_outage_envelope.json`.
+`results/phase0/nyiso/_nyiso127_cc_outage_envelope.json`.
 
 **(2) Q5 — READINESS VERDICT: NOT READY**, on §(1) alone and independent of
 everything else. Secondary reasons: the load-bearing C3a-2025 FAIL is unledgered
@@ -5273,9 +5273,9 @@ reverted by the next generator run.
 re-derive the nyiso-125 refusal (discharged on identification at nyiso-126).
 
 Evidence:
-`results/calibration/FINDING-nyiso127-holdout-readiness-and-frontier-review-2026-08-05.md`,
+`docs/records/nyiso/FINDING-nyiso127-holdout-readiness-and-frontier-review-2026-08-05.md`,
 probe `scripts/probes/_nyiso127_cc_outage_envelope.py`,
-record `results/calibration/_nyiso127_cc_outage_envelope.json`.
+record `results/phase0/nyiso/_nyiso127_cc_outage_envelope.json`.
 
 * Next number: **nyiso-128**.
 
@@ -5339,7 +5339,7 @@ channel. `scripts/probes/_nyiso128_solve_ab.py` drives from the keeper's own
 recorded provenance block and verifies fidelity on a 24-hour solve.
 
 Evidence:
-`results/calibration/FINDING-nyiso128-market-solar-basis-2026-08-06.md`,
+`docs/records/nyiso/FINDING-nyiso128-market-solar-basis-2026-08-06.md`,
 `PREREG-nyiso128-market-solar-basis-2026-08-05.md`,
 `_nyiso128_ab_gates.json`, probes `_nyiso128_solve_ab.py`, `_nyiso128_ab_gates.py`.
 
@@ -5406,7 +5406,7 @@ Re-identifying the fleet CF from EIA-860 tracking mix + latitude is forward-nati
 and rule-13 clean, and is a **separate object** (rule 19) needing its own prereg.
 
 Evidence:
-`results/calibration/FINDING-nyiso128-market-solar-basis-2026-08-06.md`,
+`docs/records/nyiso/FINDING-nyiso128-market-solar-basis-2026-08-06.md`,
 `PREREG-nyiso128-market-solar-basis-2026-08-05.md`, `_nyiso128_ab_gates.json`,
 `scripts/gen_nyiso128_attestation.py`.
 
@@ -5510,7 +5510,7 @@ entry `GAS_AVAILABILITY_FACTOR[NYISO] = 0.866`, ledgered as living in
 untouched**.
 
 Evidence:
-`results/calibration/FINDING-nyiso129-solar-basis-promotion-and-cf-successor-2026-08-06.md`,
+`docs/records/nyiso/FINDING-nyiso129-solar-basis-promotion-and-cf-successor-2026-08-06.md`,
 `_nyiso129_cf_identification.json`, probe
 `scripts/probes/_nyiso129_cf_identification.py`,
 `FINDING-nyiso128-market-solar-basis-2026-08-06.md`,
@@ -5625,7 +5625,7 @@ immediately, restored from git, and every tracked blob verified byte-identical t
 **committed** bundle — pass `--out-dir` always.
 
 Evidence:
-`results/calibration/FINDING-nyiso130-li-transfer-security-limit-2026-08-06.md`,
+`docs/records/nyiso/FINDING-nyiso130-li-transfer-security-limit-2026-08-06.md`,
 `PREREG-nyiso130-li-transfer-security-limit-2026-08-06.md`,
 `PREREG-nyiso130-solar-cf-level-2026-08-06.md`,
 `_nyiso130_ab_gates.json`, `_nyiso130_li_tsl_identification.json`,
@@ -5657,10 +5657,10 @@ is absent from `final`, and `holdout_policy.authorized(NYISO, locked_test)` is s
 rather than ISO-specific: **no ISO is currently in the "spent" state at all**, so every
 blank today means "never authorized".
 
-Citation chain: `results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+Citation chain: `docs/records/neiso/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
 `docs/third-party-peer-review-2026-07.md` §6.3 item 1 → **owner decision D-23, SIGNED
 at the 2026-08-06 sitting Addendum X.6**. Full record:
-`docs/handoffs/neiso-record-correction-2026-08-06.md`.
+`docs/records/neiso/neiso-record-correction-2026-08-06.md`.
 
 ## 2026-08-07 — nyiso-131: KEEPER → `2026-08-07-nyiso-131-taxgs-arm` (owner decision D-27, gas_st taxonomy)
 
@@ -5755,14 +5755,14 @@ rate lets the cogen bin run more, displacing merchant CC and the ST_GAS class.
 `frontend/data/backcast/calibration-complete.json` (D-5(b) re-key + `rekey_history`),
 `docs/codebase-site/data/mechanism-matrix.js` (keeper stamp, header, NYISO gates clause),
 `docs/mechanism-testing-matrix.md` (§5.5 prose header), this log, and
-`docs/handoffs/nyiso-taxgs-promotion-2026-08-07.md`.
+`docs/records/nyiso/nyiso-taxgs-promotion-2026-08-07.md`.
 
 Gates run: `scripts/audit_keepers.py --iso NYISO` **PASS 0 failures / 0 warnings** (M1),
 `scripts/check_mechanism_matrix.py` clean on all four checks.
 
-Evidence: `docs/handoffs/taxonomy-gas-st-2026-08-07.md` §4.1,
-`docs/handoffs/ffr-owner-sitting-2026-08-02.md` §§AA.3–AA.4,
-`docs/handoffs/nyiso-taxgs-promotion-2026-08-07.md`.
+Evidence: `docs/records/misc/taxonomy-gas-st-2026-08-07.md` §4.1,
+`docs/records/forecast/ffr-owner-sitting-2026-08-02.md` §§AA.3–AA.4,
+`docs/records/nyiso/nyiso-taxgs-promotion-2026-08-07.md`.
 
 * **Session numbering:** `nyiso-131` is consumed by this promotion (the run id
   `2026-08-07-nyiso-131-taxgs-arm` already carries it). Next number: **nyiso-132**.
@@ -6048,7 +6048,7 @@ Phase-1-only session. Task: test the frozen keeper on the 2022 validation
 touchpoint, **gated on first proving in writing** that every measured input 2022
 needs is at the same standard as 2023-2025. The proof **failed**, so the solve
 was never attempted. Full assessment:
-`results/calibration/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md`.
+`docs/records/nyiso/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md`.
 
 **Gate state.** The holdout spend freeze is **ACTIVE** at HEAD
 (`holdout-freeze.json` `"active": true`, re-armed 2026-08-06; no lift in
@@ -6508,9 +6508,9 @@ not cleared, and this session **opened** an object while retiring another.
 Holdout posture unchanged; the ACTIVE freeze was re-confirmed **HELD** by the
 owner in this session and 2022 was not solved, scored or registered.
 
-**Evidence.** `results/calibration/FINDING-nyiso136-fleet-cf-composition-refuted-2026-08-15.md`,
+**Evidence.** `docs/records/nyiso/FINDING-nyiso136-fleet-cf-composition-refuted-2026-08-15.md`,
 probe `scripts/probes/_nyiso136_fleet_cf_composition.py`, record
-`results/calibration/_nyiso136_fleet_cf_composition.json`.
+`results/phase0/nyiso/_nyiso136_fleet_cf_composition.json`.
 
 **Lever queue.** (1) the chartered **JOINT Zone-K transfer-bound + downstate
 ST_GAS `min_gen` reconciliation** (rule 19) — still open, still needs its own
@@ -6532,7 +6532,7 @@ the matrix shard — so a session reading the NYISO lane would not have seen it.
 Second, **this session superseded the only keeper it named.**
 
 **The defect** (adjudicated 2026-08-15, session nyiso-rtd-clock; ADDENDUM to
-`docs/handoffs/d32-f6fix-2026-08-13.md` §§A.1–A.7). NYISO's P-24A `Time Stamp` is
+`docs/records/forecast/d32-f6fix-2026-08-13.md` §§A.1–A.7). NYISO's P-24A `Time Stamp` is
 interval-**ENDING**. `scripts/data/derive_actual_lmp.py::_nyiso_wide` bins it as
 interval-**BEGINNING** (plain `.floor("h")`), and it is the producer of the
 committed `data/raw/_validation-source/actual_lmp_hourly_NYISO.parquet`. The
@@ -6653,7 +6653,7 @@ absolute difference. **Direction is not claimed** — the staged tail moves net
 downward, which would preserve both verdicts, but n = 3 is not a rate (rule 21).
 
 **Disposition.** Charter **requested, not granted**, at
-`docs/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md`, with three decisions
+`docs/records/nyiso/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md`, with three decisions
 for the owner (grant/refuse; the C3c reporting condition; whether the clock
 repair goes first) and a session recommendation of *charter now, repair later,
 with the condition attached*. The condition: an **arm-vs-control** C3c delta is
@@ -6666,10 +6666,10 @@ CALIBRATED-WITH-CAVEATS, C3c the lone ledgered caveat 1 of 1. Frontier stays
 CLEARED and is not re-asserted.
 
 Evidence:
-`results/calibration/FINDING-nyiso137-rtd-clock-graded-against-zone-k-gates-2026-08-16.md`,
-`docs/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md`, probe
+`docs/records/nyiso/FINDING-nyiso137-rtd-clock-graded-against-zone-k-gates-2026-08-16.md`,
+`docs/records/nyiso/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md`, probe
 `scripts/probes/_nyiso137_rtd_clock_c3c_grading.py`, record
-`results/calibration/_nyiso137_rtd_clock_c3c_grading.json`. Next number:
+`results/phase0/nyiso/_nyiso137_rtd_clock_c3c_grading.json`. Next number:
 **nyiso-138**.
 
 **Inherited defect found while gating, flagged not fixed — the designated keeper
@@ -6692,7 +6692,7 @@ re-insert the name and move the pinned key.
 ## 2026-08-16 — nyiso-139: owner answers the charter card (D1 GRANT / D2 adopt / D3 **(b)**), and the ordered FIRST step lands — the NYISO RTD interval-convention repair, on a fully re-staged archive. Keeper determination UNCHANGED.
 
 **Owner rulings** (`AskUserQuestion`, on
-`docs/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md`): **D1 GRANTED**
+`docs/records/nyiso/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md`): **D1 GRANTED**
 ("write, prereg, solve"); **D2 ADOPTED as requested**; **D3 = option (b)**,
 *"re-stage the NYISO RT archive, repair first, then charter"* — **not** the
 session-recommended (a). D4 stays withdrawn (nyiso-138). The card is now fully
@@ -6764,7 +6764,7 @@ a clock now known wrong, while 2023-2025 use the right one, is the
 inconsistency that amendment forbids. No out-of-training year was solved,
 scored against model output, or registered.
 
-**Discharged:** disclosure `docs/handoffs/d32-f6fix-2026-08-13.md` §A.6 items
+**Discharged:** disclosure `docs/records/forecast/d32-f6fix-2026-08-13.md` §A.6 items
 1-3 in full; D2's conditionality **prospectively** (the C3c denominator is now
 measured on the adjudicated-correct clock, so absolute band membership is
 reliable for work that follows the repair — which is precisely what D3(b)
@@ -6776,7 +6776,7 @@ and **the chartered joint Zone-K lever (D1) is still to be written** — D3(b)
 put the repair first.
 
 Evidence:
-`results/calibration/FINDING-nyiso139-rtd-clock-repair-landed-2026-08-16.md`.
+`docs/records/nyiso/FINDING-nyiso139-rtd-clock-repair-landed-2026-08-16.md`.
 
 ## 2026-08-16 — nyiso-139b: the chartered Zone-K joint lever is RE-SCOPED before writing — the floor limb the card pairs with the transfer bound is ALREADY DISABLED on the keeper, and K6 cannot adjudicate an import-relief lever
 
@@ -6840,7 +6840,7 @@ C3c the lone ledgered caveat against the corrected actual tail **10 / 13 / 42**;
 `complete` (validation only), ABSENT from `final`; frontier CLEARED 2026-08-06;
 holdout spend freeze ACTIVE; NYISO cross-ISO queue CLOSED since nyiso-122.
 Evidence:
-`results/calibration/FINDING-nyiso139b-zone-k-joint-lever-rescoped-2026-08-16.md`.
+`docs/records/nyiso/FINDING-nyiso139b-zone-k-joint-lever-rescoped-2026-08-16.md`.
 Next number: **nyiso-140**.
 
 ## nyiso-140 — the LI ST_GAS floor has the right WINDOW and the wrong MEMBERSHIP (2026-08-16)
@@ -6924,7 +6924,7 @@ failures, 0 warnings, no repairs. Matrix cell
 prose header updated (NYISO shard only). `complete` (validation
 only), ABSENT from `final`; frontier CLEARED 2026-08-06; holdout spend freeze
 ACTIVE and untouched (2023–2025 only). Evidence:
-`results/calibration/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md`,
+`docs/records/nyiso/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md`,
 `PREREG-nyiso140-li-st-floor-membership-2026-08-16.md`; probe
 `scripts/probes/_nyiso140_li_st_floor_membership.py`.
 Next number: **nyiso-141**.
@@ -6997,7 +6997,7 @@ Keeper `2026-08-16-nyiso-140-layup-exclusion` UNTOUCHED and still designated.
 spend freeze ACTIVE and untouched. Rule 25: the scan covered state **NY only**
 and the table carries **one** facility; whether another ISO's fleet contains a
 stack pair is that lane's measurement and is deliberately not adjudicated.
-Evidence: `results/calibration/FINDING-nyiso141-astoria-stack-duplication-2026-08-17.md`,
+Evidence: `docs/records/nyiso/FINDING-nyiso141-astoria-stack-duplication-2026-08-17.md`,
 `PREREG-nyiso141-astoria-stack-duplication-2026-08-17.md`; probe
 `scripts/probes/_nyiso141_astoria_stack_duplication.py`.
 Next number: **nyiso-142**.
@@ -7440,7 +7440,7 @@ price moves only +$0.63/+$0.79/+$1.50 and **the 2025 −12.2 % survives removing
 the entire CHP phantom**. The 2025 dear-gas level is therefore an **OFFER-LEVEL**
 object, not a capacity or membership one: $1.50 of the $8.07 gap is recoverable
 here, **$6.57 is a different object** (owner card
-`docs/DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md`). Do not scope
+`docs/records/nyiso/DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md`). Do not scope
 CHP membership work against the 2025 level. (2) **One band cannot make a graded
 response**: the cohort goes bang-bang — essentially OFF in 2023/2024 (Selkirk
 2.01×/6.78× → 0.03×/0.04× of its own meter) and STILL OVER in the dear year
@@ -7772,7 +7772,7 @@ every lane.
 
 **OWNER DECISION, 2026-08-23, in session with the program director: "Ratify
 NYISO."** The act ratifies the §3 recommendation of
-`results/calibration/ASSESSMENT-nyiso154-frontier-2026-08-22.md` ("AT FRONTIER
+`docs/records/nyiso/ASSESSMENT-nyiso154-frontier-2026-08-22.md` ("AT FRONTIER
 ON THE MERITS … This assessment RECOMMENDS ratification and is written to be
 citable as its basis"), which deliberately edited no `frontier` field because
 the declaration is an owner act. **This session records the act and nothing
@@ -7871,8 +7871,8 @@ OWNER** under the prereg's pre-committed rule. Prereg pushed + blob-verified
 BEFORE any measurement (`PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md`).
 Registered (rule 15): `2026-08-25-nyiso-155-hydro-control` (**CALIBRATED**),
 `2026-08-25-nyiso-155-hydro-repair` (**NOT-YET**). Full write-up:
-`docs/FINDING-nyiso-hydro-truncation-repair-2026-08.md`; gates record
-`results/calibration/_nyiso155_hydro_repair_ab.json`.
+`docs/records/nyiso/FINDING-nyiso-hydro-truncation-repair-2026-08.md`; gates record
+`results/phase0/nyiso/_nyiso155_hydro_repair_ab.json`.
 
 ### (1) Discovered before measurement: nyiso-108's arm was SILENTLY DE-ARMED
 
@@ -7949,7 +7949,7 @@ the owner; record preserved. **Named successor: the 2025 offer-level object**
 (`DECISION-CARD-nyiso148-2025-level-remainder`, Q1 pending) — now measured
 ~$1.79/MWh larger than the truncated baseline showed; the hydro input is
 correct and stays (rule 14). Freeze ACTIVE, untouched; no locked-test grant of
-any kind. `docs/FINDING-nyiso-hydro-truncation-repair-2026-08.md` §7.
+any kind. `docs/records/nyiso/FINDING-nyiso-hydro-truncation-repair-2026-08.md` §7.
 
 Next shorthand: nyiso-156.
 
@@ -7983,7 +7983,7 @@ whole gap; 2023 +6.8 → −5.2; 2024 +4.9 → −6.8, whose eqh hub gap is −$
 ~$3.9; closing EITHER alone puts 2025 at ≈ −5.3 % — IN BAND — whereupon C3c
 reverts to the lone failure and its ledgered CAVEAT, i.e. the determination
 returns CALIBRATED through structure. **Card filed:**
-`docs/DECISION-CARD-nyiso156-2025-offer-level-2026-08-25.md` — supersedes
+`docs/records/nyiso/DECISION-CARD-nyiso156-2025-offer-level-2026-08-25.md` — supersedes
 the nyiso-148 card's numbers; Q2 (the −2.2 % cancellation annotation)
 DISSOLVED (its subject no longer exists); Q1 restated as **authorize the
 BLOCKER-B winter identification intake (recommended) vs leave the keeper
@@ -8007,7 +8007,7 @@ Next shorthand: nyiso-157.
 on the §5 options as presented: **"A: Authorize winter intake"** (option text
 named both sources — the MyNYISO as-enforced AORR access AND "a source
 splitting the Capital_Hudson seam leg"). Executed as
-`docs/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md`, two legs:
+`docs/records/nyiso/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md`, two legs:
 
 * **Leg 1 (SESSION-EXECUTABLE — the nyiso-126 owner gate is LIFTED):** the
   eastern-seam PAR attribution under the STANDING
@@ -8140,7 +8140,7 @@ Next shorthand: nyiso-158.
 
 **NO SOLVE.** Committed-artifacts-only diagnosis of the three rubric failures
 on the nyiso-157 keeper (`2026-08-30-nyiso-157-par-attribution`, NOT-YET).
-Records: `results/calibration/FINDING-nyiso158-winter-binding-depth-phase0-2026-08-30.md`
+Records: `docs/records/nyiso/FINDING-nyiso158-winter-binding-depth-phase0-2026-08-30.md`
 + `_nyiso158_winter_phase0.json`. Zero fitted scalars; freeze ACTIVE; nothing
 armed, disarmed, rescaled or scoped; no cell verdict moves (nothing tested —
 one evidence append on the standing iroquois R, below).
@@ -8231,7 +8231,7 @@ verdict) · (c) fail · (d) none** — the lead position is dissolved.
 CALIBRATED — the live route is this lane's own successor, **winter intake Leg 2**
 (`INTAKE-SPEC-nyiso156-winter-locational-2026-08-30`, owner-executable AORR
 access; intake needs no marker and is unaffected). `audit_keepers` clean. Full
-record: `docs/FINDING-q5w-nyiso-marker-withdrawal-2026-08-30.md`; cross-ISO
+record: `docs/records/nyiso/FINDING-q5w-nyiso-marker-withdrawal-2026-08-30.md`; cross-ISO
 entry: `governance.md` 2026-08-30.
 
 Next shorthand: nyiso-159 (unchanged from the nyiso-158 entry above — Q5-W
@@ -8310,7 +8310,7 @@ Next shorthand: nyiso-160.
 
 Executes the Leg-2 charter (`INTAKE-SPEC-nyiso156-winter-locational-2026-08-30`
 §2) to its Step-1 gate and stops there, exactly as the handoff pre-committed.
-Records: `results/calibration/FINDING-nyiso160-leg2-stop-and-tpaudit-2026-08-30.md`;
+Records: `docs/records/nyiso/FINDING-nyiso160-leg2-stop-and-tpaudit-2026-08-30.md`;
 `scripts/probes/_nyiso160_tpaudit.py` → `_nyiso160_tpaudit.json`;
 run `2026-08-30-nyiso-160-tpaudit-replay` (bundle `nyiso160_tpaudit_replay`);
 `scripts/gen_nyiso160_attestation.py`. Freeze ACTIVE (2023–2025 only, no
@@ -8367,7 +8367,7 @@ Executes owner ruling **R-C** (2026-08-31 director sitting: *re-verify the
 parked leg2 candidate against the LIVE keeper before any promote-or-archive is
 served; nothing promotes on a stale comparison*). Zero-solve, committed
 artifacts only (the Card-3 standing-rule pattern). Record:
-`docs/FINDING-nyiso-leg2-reverify-2026-08-31.md`. **Keeper, shard, marker,
+`docs/records/nyiso/FINDING-nyiso-leg2-reverify-2026-08-31.md`. **Keeper, shard, marker,
 determination and matrix all UNTOUCHED; this lane rules nothing.**
 
 **(1) There is no candidate.** The named session is **nyiso-160** (branch
@@ -8442,7 +8442,7 @@ Next shorthand: nyiso-163.
 
 Access-retry + harness lane. Zero solve, committed artifacts and public
 documents only. Record:
-`docs/FINDING-nyiso163-aorr-access-and-gate-2026-08-31.md`. **Keeper, shard,
+`docs/records/nyiso/FINDING-nyiso163-aorr-access-and-gate-2026-08-31.md`. **Keeper, shard,
 marker, frontier, determination and matrix all UNTOUCHED; this session rules
 nothing and promotes nothing.** State re-verified in-session, not taken on
 trust: `calibration_verdict --run-id 2026-08-30-nyiso-159-loss-surface` →
@@ -8487,7 +8487,7 @@ hard-fails conduct / BPCG / make-whole / LBMP / residual / inference **by name**
 transcription error is never misread as an adjudication).
 
 **(3) Validation — three legs, all required, all passing** (`--self-test`
-exit 0; `results/calibration/_nyiso163_gate_acceptance_negcontrol.json`).
+exit 0; `results/phase0/nyiso/_nyiso163_gate_acceptance_negcontrol.json`).
 **Leg 1 negative control:** the public 2008 Appendix B → **FAIL**, and row by
 row for nyiso-97's own reasons, not one blanket cause: LRR 1 {T0,T2,T3,T4,T5},
 LRR 2 {T0,T2,T4,T5}, **LRR 3 {T0 ONLY}**, ARR 37 {T0,T2,T3,T4,T5}, ARR 66
@@ -8513,7 +8513,7 @@ prints is 404; live successor
 §2 checked NYSRC for an **AORR** posting and correctly found none — the **LRR**
 half lives there, in a different document. Rows fetched, transcribed
 (`scripts/probes/_nyiso163_aorr_current_public_2026.json`) and run
-(`results/calibration/_nyiso163_gate_current_public.json`) from **NYSRC RRC
+(`results/phase0/nyiso/_nyiso163_gate_current_public.json`) from **NYSRC RRC
 Manual V48 (final, 7-17-2026) Section G**. **Vintage established from the
 source's own Version History** — exactly what INTAKE-SPEC §2 item (c) demands of
 a current snapshot: v46 (2022-06-10) in force at span start; v47 (2024-06-14)
@@ -8627,7 +8627,7 @@ on {C3a-2025 −11.5 %, C3c} by default**, and the card remains filed and
 undecided.
 
 **(3) OWNER RULING — "Open c3c scarcity question."** Scoped and costed, zero
-solve, in `docs/CHARTER-c3c-scarcity-program-2026-08-31.md`. The cross-ISO
+solve, in `docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md`. The cross-ISO
 measurement **falsifies the blanket framing** several ledgers carry ("an hourly
 LP with $0 reserve offers cannot form the RT scarcity tail"): **PJM PASSES C3c
 at 0.67/0.56/0.54× in the same LP, same solver, same code path**, while
@@ -8637,7 +8637,7 @@ CAISO and NEISO form 0.00× in every year. That spread is not one phenomenon.
 its own evidence does not support.** New measurement from the keeper's committed
 `reserve_family_<year>.parquet` sidecars against
 `actual_lmp_hourly_NYISO.parquet` (artifact
-`results/calibration/_nyiso163b_c3c_reserve_timing.json`): **in 2025 the model
+`results/phase0/nyiso/_nyiso163b_c3c_reserve_timing.json`): **in 2025 the model
 goes reserve-short in 24 hours and 20 of them (83 %) are hours reality priced
 above $300**, covering 48 % of reality's 42-hour tail; 2023 is 5/20 overlapping
 50 % of the actual tail; 2024 is 0/7. The overlapping hours are **June–July 2025
@@ -8690,8 +8690,8 @@ Next shorthand: nyiso-164.
 
 **Kill gate FIRES on BOTH pre-registered clauses. Determination unchanged; no
 keeper, marker, shard or matrix cell moves.** Records:
-`docs/FINDING-nyiso164-c3c-product-level-2026-09-01.md`, artifact
-`results/calibration/_nyiso164_nyca_shortage_check.json`, probe
+`docs/records/nyiso/FINDING-nyiso164-c3c-product-level-2026-09-01.md`, artifact
+`results/phase0/nyiso/_nyiso164_nyca_shortage_check.json`, probe
 `scripts/probes/nyiso164_nyca_shortage_check.py`.
 
 **(0) State verified at open and close** (committed artifacts, no solve):
@@ -8842,11 +8842,11 @@ ALREADY SATISFIED.** The dispatch that produced this record described the C3c
 Q1/Q2 report as pending. At `d44446e0` **both questions have already reported**,
 and Q1 returned **REAL**, not PHANTOM:
 
-* **Q1 = REAL** (pjm-164, #4456, `docs/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`,
+* **Q1 = REAL** (pjm-164, #4456, `docs/records/pjm/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`,
   zero solve) — PJM's reserve-dual channel is **not** the ercot-214 phantom, so
   the determination-integrity branch does not open and no PJM card is owed.
 * **Q2 = CONFIRM** (nyiso-164, #4459,
-  `docs/FINDING-nyiso164-c3c-product-level-2026-09-01.md`, zero solve) — the
+  `docs/records/nyiso/FINDING-nyiso164-c3c-product-level-2026-09-01.md`, zero solve) — the
   pre-registered kill gate fires on **both** clauses and **NYISO's C3c ledger is
   CONFIRMED on NYISO's own evidence** rather than by inheritance from
   CAISO/MISO/ERCOT.
@@ -8875,7 +8875,7 @@ any access-blocked caveat class.
 ---
 
 **RULING R-G — nyiso-160 / leg2: CLOSED BY ARCHIVE.** On
-`docs/FINDING-nyiso-leg2-reverify-2026-08-31.md` (nyiso-162, #4431, executing
+`docs/records/nyiso/FINDING-nyiso-leg2-reverify-2026-08-31.md` (nyiso-162, #4431, executing
 owner ruling R-C zero-solve on committed artifacts only), the owner ruled
 **archive**.
 
@@ -8917,7 +8917,7 @@ been a **formal no-op** — same config, same dispatch, same determination — t
 `2026-08-30-nyiso-159-loss-control`, with its prereg, gates JSON and promotion
 note) with an audit replay that has **no control and tests no mechanism**: nothing
 gained, promotion basis weakened. **Archiving costs nothing evidentially** — the
-touchpoint-prep verdict is durable in `results/calibration/_nyiso160_tpaudit.json`,
+touchpoint-prep verdict is durable in `results/phase0/nyiso/_nyiso160_tpaudit.json`,
 the nyiso-160 finding, the nyiso-162 finding and the log entries, none of which
 depend on the run staying registered.
 
@@ -8943,11 +8943,11 @@ determination/matrix movement in this ISO.**
 
 ## 2026-08-31 — nyiso-165: charter Q2 re-executed in parallel, reached the OPPOSITE answer, and is WRONG — nyiso-164's CONFIRM reproduced exactly; two live defects found in a committed calibration reference (zero solve)
 
-Executes Q2 of `docs/CHARTER-c3c-scarcity-program-2026-08-31.md` §5 under owner
+Executes Q2 of `docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md` §5 under owner
 ruling R-E. **Zero solve; committed artifacts and in-repo published data only; no
 holdout year touched (2023–2025).** Keeper re-verified at open and close:
 `2026-08-30-nyiso-159-loss-surface`, NOT-YET on {C3a-2025 −11.5 %, C3c}. Record:
-`docs/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md`.
+`docs/records/nyiso/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md`.
 
 **CONCESSION, up front. `nyiso-164` had already executed this question at HEAD and
 returned CONFIRMED. This lane ran in parallel, reached the OPPOSITE answer
@@ -9001,7 +9001,7 @@ misled is scope creep. Filed for a data lane / owner grant (rule 14).
 
 **(4) The probe is kept, marked.** `scripts/probes/c3c_q2_nyiso_nyca_shortage.py`
 ships with a SUPERSEDED/DEFECTIVE docstring, prints a warning, and stamps a
-`SUPERSEDED` key into `results/calibration/_c3c_q2_nyiso_nyca_shortage.json`. Cite
+`SUPERSEDED` key into `results/phase0/nyiso/_c3c_q2_nyiso_nyca_shortage.json`. Cite
 `scripts/probes/nyiso164_nyca_shortage_check.py` for the correct measurement.
 
 **(5) nyiso-161 waiver card — stated, not ruled** (R-F: parked on this report, the
@@ -9027,7 +9027,7 @@ Next shorthand: nyiso-166.
 raw only. No holdout spend, no mechanism, no prereg, no scalar, no `ScenarioConfig`
 field, no keeper/shard/marker/frontier/determination change, no RCPF value touched.
 The nyiso-161 winter-face waiver card stays **FILED AND UNRULED**; `governance.md`
-untouched. Full record: `docs/FINDING-nyiso166-as-reference-repair-2026-08-31.md`.
+untouched. Full record: `docs/records/nyiso/FINDING-nyiso166-as-reference-repair-2026-08-31.md`.
 
 **(0) State verified first, and re-verified after.** Keeper
 `2026-08-30-nyiso-159-loss-surface` → **NOT-YET** on exactly {C3a-2025 −11.5 %,
@@ -9128,9 +9128,9 @@ Next shorthand: nyiso-167.
 **No solve, no LP, no `ScenarioConfig` field, no cell verdict, no keeper, no
 shard verdict, no marker, no determination.** Rule 22: every year read is
 2023/2024/2025; no marker requested; freeze untouched. Record:
-`docs/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md`, probe
+`docs/records/nyiso/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md`, probe
 `scripts/probes/nyiso167_price_gain_attribution.py` →
-`results/calibration/_nyiso167_price_gain_attribution.json`.
+`results/phase0/nyiso/_nyiso167_price_gain_attribution.json`.
 
 **(1) The attribution.** The keeper's price response over all 36 training months
 is ONE stable affine law, read off the same `pMon`/`dMon` fields the scorer
@@ -9228,7 +9228,7 @@ one clean-tree fleet read. Keeper, shard determination, marker, freeze and every
 matrix verdict but one UNTOUCHED. Rule 22: every year read is 2023–2025; no
 marker requested. nyiso-167's probe was re-run first and **reproduces
 bit-identically**, so the same object is measured.
-Full record: `docs/FINDING-nyiso168-supply-curve-slope-anatomy-2026-09-01.md`.
+Full record: `docs/records/nyiso/FINDING-nyiso168-supply-curve-slope-anatomy-2026-09-01.md`.
 
 **(1) THE OBJECT IS THE ORDINARY BAND, NOT THE TAIL.** On the DA basis, 2025's
 −$4.91/MWh decomposes by load percentile as **0–50 +$1.75 (contrib +0.87)**,
@@ -9318,7 +9318,7 @@ built. Honest read: every admissible NYISO-measured lever for the gain is now
 adjudicated or blocked on an intake the owner has closed, and the standing
 $27.8–$56.0/MWh C3a pass window should be planned around rather than solved away.
 
-**Evidence:** `docs/FINDING-nyiso168-supply-curve-slope-anatomy-2026-09-01.md`;
+**Evidence:** `docs/records/nyiso/FINDING-nyiso168-supply-curve-slope-anatomy-2026-09-01.md`;
 `scripts/probes/nyiso168_gap_anatomy.py` → `_nyiso168_gap_anatomy.json`;
 `scripts/probes/nyiso168_reserve_supply_slack.py` →
 `_nyiso168_reserve_supply_slack.json`;
@@ -9334,7 +9334,7 @@ three years, say so and stop."* **It does not, and this stops.** Keeper
 `2026-08-30-nyiso-159-loss-surface` untouched; determination still **NOT-YET on
 {C3a-2025 −11.5 %, C3c}**. No LP ran, so rule 15 registers nothing — by design,
 not omission. Full record:
-`docs/FINDING-nyiso169-congestion-gradient-anatomy-2026-09-01.md`.
+`docs/records/nyiso/FINDING-nyiso169-congestion-gradient-anatomy-2026-09-01.md`.
 
 **Predecessor probes re-run first.** `nyiso167_price_gain_attribution` and
 `nyiso168_gap_anatomy` reproduce **bit-identically**;
@@ -9411,7 +9411,7 @@ months of NYISO MIS RT and DA zonal LBMP **component** archives re-fetched with
 the frozen `scripts/data/fetch_nyiso_zonal_lmp.py`; the repo tracks only 21 RT
 months, the rest being gitignored/regenerable. Probe:
 `scripts/probes/nyiso169_congestion_gradient_anatomy.py` → 
-`results/calibration/_nyiso169_congestion_gradient_anatomy.json`, **committed at
+`results/phase0/nyiso/_nyiso169_congestion_gradient_anatomy.json`, **committed at
 `bccf58f4` before it was run** so its decision rule is verifiably
 pre-registered.
 
@@ -9423,7 +9423,7 @@ high capacity factor. **FALSIFIED, unanimously across 2023–2025.** Keeper
 `2026-08-30-nyiso-159-loss-surface` and its NOT-YET determination unchanged; no
 LP ran, so rule 15 registers nothing. Probe:
 `scripts/probes/nyiso169b_gas_class_dispatch_anatomy.py` →
-`results/calibration/_nyiso169b_gas_class_dispatch_anatomy.json`.
+`results/phase0/nyiso/_nyiso169b_gas_class_dispatch_anatomy.json`.
 
 **The test.** A too-cheap peak band can bid a class in only where that band is
 marginal — the **top** of its own duration curve. The over-run is monotonically
@@ -9481,7 +9481,7 @@ gas steam (11.95 / 11.15–11.99). **The brief's stop condition is met and the l
 stops WITHOUT touching a parameter.** Keeper `2026-08-30-nyiso-159-loss-surface`
 and its NOT-YET determination on {C3a-2025 −11.5 %, C3c} unchanged; no LP ran, so
 rule 15 registers nothing. Full record:
-`docs/FINDING-nyiso170-merit-order-displacement-2026-09-01.md`.
+`docs/records/nyiso/FINDING-nyiso170-merit-order-displacement-2026-09-01.md`.
 
 **THE KILL.** On the four classes CAMPD can identify, the over-run
 {CC_CHP, CC_REGULAR} and the under-run {CT_PEAKER, ST_GAS} are **not the same
@@ -9551,10 +9551,10 @@ never spends off). Keeper `2026-08-30-nyiso-159-loss-surface` and its NOT-YET
 determination on {C3a-2025 −11.5 %, C3c} **unchanged**; no LP ran, so rule 15
 registers nothing. Probe
 `scripts/probes/nyiso171_chp_floor_identification.py` →
-`results/calibration/_nyiso171_chp_floor_identification.json`, committed with
+`results/phase0/nyiso/_nyiso171_chp_floor_identification.json`, committed with
 `PREREG-nyiso171-chp-floor-identification.md` at `138fe2ea` **before** either
 was run. Full record:
-`docs/FINDING-nyiso171-chp-floor-portfolio-artifact-2026-09-01.md`.
+`docs/records/nyiso/FINDING-nyiso171-chp-floor-portfolio-artifact-2026-09-01.md`.
 
 **THE STOP CONDITION IS MET.** A fleet floor is a mechanism only if it is a
 per-plant property; the discriminator `Σ_p min_t(gen_p,t)` vs
@@ -9630,10 +9630,10 @@ nyiso-170 §4's "third thing" (a composition error that is not an hour-local
 swap). Keeper `2026-08-30-nyiso-159-loss-surface` and its NOT-YET determination
 on {C3a-2025 −11.5 %, C3c} **unchanged**; no LP ran, so rule 15 registers
 nothing. Probe `scripts/probes/nyiso172_st_gas_level_deficit.py` →
-`results/calibration/_nyiso172_st_gas_level_deficit.json`, committed with
+`results/phase0/nyiso/_nyiso172_st_gas_level_deficit.json`, committed with
 `PREREG-nyiso172-st-gas-level-deficit.md` at `8c3e9b6c` **before** either was
 run. Full record:
-`docs/FINDING-nyiso172-st-gas-response-deficit-2026-09-01.md`.
+`docs/records/nyiso/FINDING-nyiso172-st-gas-response-deficit-2026-09-01.md`.
 
 **THE STOP CONDITION FIRES, BY SIGN REVERSAL.** S2 asked whether the deficit is
 price-conditional — whether the model's ST_GAS turn-on threshold sits right of
@@ -9740,8 +9740,8 @@ requested**.
 **Zero solves. No parameter touched, no band swept, no run registered.** Keeper
 unchanged: `2026-08-30-nyiso-159-loss-surface`, determination **NOT-YET** on
 {C3a-2025 −11.5 %, C3c}. Full record:
-`docs/FINDING-nyiso173-cc-availability-envelope-not-binding-2026-09-02.md`;
-gates `results/calibration/PREREG-nyiso173-cc-availability-anatomy.md`, committed
+`docs/records/nyiso/FINDING-nyiso173-cc-availability-envelope-not-binding-2026-09-02.md`;
+gates `docs/records/nyiso/PREREG-nyiso173-cc-availability-anatomy.md`, committed
 with the probe **before either ran** (`278ddf37`).
 
 **The object.** nyiso-172 §3.4's one-sided-provable CC availability
@@ -9846,9 +9846,9 @@ requested**.
 **Keeper unchanged:** `2026-08-30-nyiso-159-loss-surface`, determination
 **NOT-YET** on {C3a-2025 −11.5 %, C3c}. **No parameter touched, no band swept,
 no arm pre-registered, no run registered.** Finding:
-`docs/FINDING-nyiso174-east-river-class-crosswalk-2026-09-02.md`; probe
+`docs/records/nyiso/FINDING-nyiso174-east-river-class-crosswalk-2026-09-02.md`; probe
 `scripts/probes/nyiso174_class_crosswalk_audit.py` →
-`results/calibration/_nyiso174_class_crosswalk_audit.json`.
+`results/phase0/nyiso/_nyiso174_class_crosswalk_audit.json`.
 
 **(a) WHICH SIDE IS WRONG — the CAMPD `unitType` construction, on three
 independent primary records that agree.** EIA-860 codes East River (2493)
@@ -9989,10 +9989,10 @@ spend the `CT_CHP` instrument nyiso-174 unlocked. Both done; **no arm was
 pre-registered and no LP ran**, so rule 15 registers nothing — by design, not
 omission. Keeper `2026-08-30-nyiso-159-loss-surface` and its **NOT-YET**
 determination on {C3a-2025 −11.5 %, C3c} **unchanged**. Prereg
-`results/calibration/PREREG-nyiso175-ct-conduct-and-d2-basis.md` + probe
+`docs/records/nyiso/PREREG-nyiso175-ct-conduct-and-d2-basis.md` + probe
 `scripts/probes/nyiso175_ct_conduct_and_d2_basis.py` committed at `6c3f0cf7`
 **before either was run**. Full record:
-`docs/FINDING-nyiso175-ct-deficit-two-objects-2026-09-02.md`.
+`docs/records/nyiso/FINDING-nyiso175-ct-deficit-two-objects-2026-09-02.md`.
 
 **Predecessor probes re-run first — all fifteen.** Fourteen reproduce
 **bit-identically**; `nyiso168_reserve_supply_slack` to a max relative delta of
@@ -10124,10 +10124,10 @@ outage-extract routing defect), with the three-year re-solve those needed.
 neither brief knew about.** Keeper `2026-08-30-nyiso-159-loss-surface` and its
 **NOT-YET** determination on {C3a-2025 −11.5 %, C3c} **unchanged**; no LP ran,
 so rule 15 registers nothing — correct, not an omission. Prereg
-`results/calibration/PREREG-nyiso175b-tranche-attribution-repair.md` committed
+`docs/records/nyiso/PREREG-nyiso175b-tranche-attribution-repair.md` committed
 at `22bfe37a` **before** the probe or any derivation was run (the seventh
 consecutive session to honour this). Full record:
-`docs/FINDING-nyiso175b-tranche-attribution-repair-2026-09-02.md`.
+`docs/records/nyiso/FINDING-nyiso175b-tranche-attribution-repair-2026-09-02.md`.
 
 **ALL FOUR PRE-SOLVE GATES PASS — and K2 earned its keep.** **K1**: the
 corrected per-unit attribution re-seats **13.7577 TWh** of NYISO CAMPD energy
@@ -10253,11 +10253,11 @@ re-baseline. **Both done, and the attribution changes what the object is.**
 Keeper `2026-08-30-nyiso-159-loss-surface` and its **NOT-YET** determination on
 {C3a-2025 −11.5 %, C3c} **untouched**; no parameter, band, floor or offer value
 changed; **no C3c lever opened**. Prereg
-`results/calibration/PREREG-nyiso176-input-artifact-reproducibility.md` +
+`docs/records/nyiso/PREREG-nyiso176-input-artifact-reproducibility.md` +
 probe `scripts/probes/nyiso176_input_artifact_reproducibility.py` committed at
 `60653b59` **before either was run** (the ninth consecutive session to honour
 this). Full record:
-`docs/FINDING-nyiso176-input-artifact-reproducibility-2026-09-02.md`.
+`docs/records/nyiso/FINDING-nyiso176-input-artifact-reproducibility-2026-09-02.md`.
 
 **THE HEADLINE IS A CORRECTION TO THE COMMITTED RECORD.** nyiso-175b §4.1
 reported `campd-unit-outages-NYISO.csv` drifting **"4,423 → 2,632 windows,
@@ -10451,8 +10451,8 @@ an ISO boundary).
 **Two solves, both registered, NEITHER PROMOTED.** Keeper unchanged:
 `2026-08-30-nyiso-159-loss-surface`, determination **NOT-YET** on
 {C3a-2025 −11.5 %, C3c}. Full record:
-`docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md`; gates
-`results/calibration/PREREG-nyiso177-degradation-root-cause.md`, committed
+`docs/records/nyiso/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md`; gates
+`docs/records/nyiso/PREREG-nyiso177-degradation-root-cause.md`, committed
 (`966da189`) **before any measurement** and amended (`499430f4`) **before any
 solve**, with no score of any kind consulted in the amendment.
 
@@ -10651,11 +10651,11 @@ over-booking is the lane's next lever and it is an **OFFER-side** object.
 determination **NOT-YET**, target grade 5, fails 3 {C1-2023 `ST_GAS`,
 C3a-2025 −11.2 %, C3c}. **No parameter touched, no band swept, no arm built, no
 run registered — by the pre-registration's own stop condition S3, which fired.**
-Full record: `docs/FINDING-nyiso178-offer-side-idling-2026-09-02.md`; gates
-`results/calibration/PREREG-nyiso178-offer-side-idling.md`, committed with the
+Full record: `docs/records/nyiso/FINDING-nyiso178-offer-side-idling-2026-09-02.md`; gates
+`docs/records/nyiso/PREREG-nyiso178-offer-side-idling.md`, committed with the
 probe (`31180c9b`) **before either ran**; probe
 `scripts/probes/nyiso178_offer_side_idling.py` →
-`results/calibration/_nyiso178_offer_side_idling.json`.
+`results/phase0/nyiso/_nyiso178_offer_side_idling.json`.
 
 **THE OBJECT, AND WHY THE TYPE WAS TESTED RATHER THAN INHERITED.** nyiso-177 §7.1
 sized an over-booked `ST_GAS` outage envelope (0.50–0.56 of the bin-capacity-year
@@ -10799,10 +10799,10 @@ header is preserved beneath, unedited.
 **NOT-YET**, target grade 5, fails 3 {C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}.
 No parameter touched, no band swept, no arm built, no run registered — by the
 pre-registration's own stop conditions **S1, S2 and S3, all three of which
-fired**. Gates: `results/calibration/PREREG-nyiso179-st-gas-offer-position.md`,
+fired**. Gates: `docs/records/nyiso/PREREG-nyiso179-st-gas-offer-position.md`,
 committed with the probe at `15f2d3e8` **before either ran**; §8 amendment at
 `5264cff2` **before the corrected run**. Evidence:
-`docs/FINDING-nyiso179-st-gas-offer-position-2026-09-03.md`, machine records
+`docs/records/nyiso/FINDING-nyiso179-st-gas-offer-position-2026-09-03.md`, machine records
 `_nyiso179_st_gas_offer_position.json` + `_nyiso179_g1_robustness.json`.
 
 **THE INSTRUMENT.** The **exact LP marginal-cost array**, rebuilt by calling the
@@ -11023,7 +11023,7 @@ untouched.
 **Chartered object:** nyiso-180 §12.3's re-posed question — *what carries a
 sustained ~1,000 MW LEVEL gap in 59–90 % of hours* — with LP degeneracy at a
 price plateau ranked first. **Pre-registration**
-(`results/calibration/PREREG-nyiso181-itm-degeneracy.md`) committed with its
+(`docs/records/nyiso/PREREG-nyiso181-itm-degeneracy.md`) committed with its
 probes before either ran, disclosing nine prior reads in §0.
 
 **The reconciliation, and it was itself a result.** The parallel nyiso-180 lane
@@ -11137,11 +11137,11 @@ probe was run unmodified. **Rule 28 (b):** two NYISO cells annotated —
 `scripts/check_mechanism_matrix.py` both clean (exit 0). The §5.5 lever queue is
 rewritten with the retired statistic and the four handed-forward items.
 
-**Evidence:** `docs/FINDING-nyiso181-itm-degeneracy-2026-09-03.md`,
-`results/calibration/PREREG-nyiso181-itm-degeneracy.md`,
+**Evidence:** `docs/records/nyiso/FINDING-nyiso181-itm-degeneracy-2026-09-03.md`,
+`docs/records/nyiso/PREREG-nyiso181-itm-degeneracy.md`,
 `scripts/probes/nyiso181_itm_degeneracy.py` + `nyiso181_replay_identity.py` +
 `nyiso181_offer_reconstruction_repair.py` →
-`results/calibration/_nyiso181_itm_degeneracy.json` +
+`results/phase0/nyiso/_nyiso181_itm_degeneracy.json` +
 `_nyiso181_replay_identity.json` + `_nyiso181_offer_reconstruction_repair.json` +
 `_nyiso181_unit_dispatch_nyiso180gates.json`.
 
@@ -11240,10 +11240,10 @@ needed `capacity-deliverability` and `nyiso-interface-flows` curated from
 `data/raw` first. `data/clean` is derived, disposable and gitignored by design;
 I1 proves the resulting solve is the keeper.
 
-**Evidence:** `docs/FINDING-nyiso182-offer-repair-rederivation-2026-09-03.md`,
-`results/calibration/PREREG-nyiso182-offer-repair-rederivation.md`,
+**Evidence:** `docs/records/nyiso/FINDING-nyiso182-offer-repair-rederivation-2026-09-03.md`,
+`docs/records/nyiso/PREREG-nyiso182-offer-repair-rederivation.md`,
 `scripts/probes/nyiso182_offer_repair_rederivation.py` →
-`results/calibration/_nyiso182_offer_repair_rederivation.json` +
+`results/phase0/nyiso/_nyiso182_offer_repair_rederivation.json` +
 `_nyiso182_replay_identity.json`.
 
 ## 2026-09-03 — nyiso-181 (`stgas-floor` lane): the C1-2023 `ST_GAS` over-generation is ONE PLANT, it is ECONOMIC not forced, and the class aggregate that hid it also hides a ~1 TWh/yr under-count in the committed D-2 row
@@ -11252,7 +11252,7 @@ I1 proves the resulting solve is the keeper.
 target grade 5, {C1-2023 `ST_GAS` +3.86 TWh, C3a-2025 −11.2 %, C3c}. UNCHANGED.
 Solves run: ZERO. NO LEVER OPENED — PREREG §4 S2 fired on its own pre-declared
 terms.** Pre-registration
-`results/calibration/PREREG-nyiso181-stgas-floor-overgeneration.md`, pushed to
+`docs/records/nyiso/PREREG-nyiso181-stgas-floor-overgeneration.md`, pushed to
 origin at `a1f717b5` **before the first measurement**, with §0 disclosing all
 eight reads held at writing time.
 
@@ -11361,10 +11361,10 @@ the probe is a new file. **Rule 28 (b):** four NYISO cells annotated —
 no verdict moves**; `scripts/check_mechanism_matrix.py` clean. The §5.5 lever
 queue is rewritten, with the prior lane's queue preserved verbatim beneath it.
 
-**Evidence:** `docs/FINDING-nyiso181b-stgas-floor-overgeneration-2026-09-03.md`,
-`results/calibration/PREREG-nyiso181-stgas-floor-overgeneration.md`,
+**Evidence:** `docs/records/nyiso/FINDING-nyiso181b-stgas-floor-overgeneration-2026-09-03.md`,
+`docs/records/nyiso/PREREG-nyiso181-stgas-floor-overgeneration.md`,
 `scripts/probes/nyiso181b_stgas_floor_overgeneration.py` →
-`results/calibration/_nyiso181b_stgas_floor_overgeneration.json`.
+`results/phase0/nyiso/_nyiso181b_stgas_floor_overgeneration.json`.
 
 ## nyiso-183 — the availability hypothesis is REFUTED on its own gate; the C1-2023 carrier is the OFFER, and it is ONE TERM (2026-09-03)
 
@@ -11475,11 +11475,11 @@ regenerated for `capacity-deliverability`, `nyiso-interface-flows` and
 them and they were absent in this container, the third to discharge the test
 question above. No raw input was written.
 
-**Evidence:** `docs/FINDING-nyiso183-ravenswood-availability-2026-09-03.md`,
-`results/calibration/PREREG-nyiso183-ravenswood-availability.md`,
+**Evidence:** `docs/records/nyiso/FINDING-nyiso183-ravenswood-availability-2026-09-03.md`,
+`docs/records/nyiso/PREREG-nyiso183-ravenswood-availability.md`,
 probes `scripts/probes/nyiso183_ravenswood_availability.py`,
 `nyiso183_g4c_offer_position.py`, `nyiso183_g4d_offer_anatomy.py` →
-`results/calibration/_nyiso183_ravenswood_availability.json`,
+`results/phase0/nyiso/_nyiso183_ravenswood_availability.json`,
 `_nyiso183_g4c_offer_position.json`, `_nyiso183_g4d_offer_anatomy.json`.
 
 ## nyiso-184 — the 9.50 is a HAND NUMBER in a per-plant dict lifting a PLANT-GRAIN eGRID blend; Astoria is a measured-side artifact; the zero-parameter repair is built default-off and NOT proposed (2026-09-04)
@@ -11487,7 +11487,7 @@ probes `scripts/probes/nyiso183_ravenswood_availability.py`,
 **Branch:** `claude/nyiso-184-stgas-heat-rate-90z3qr`. **Solves: ZERO.**
 **Keeper unchanged:** `2026-09-02-nyiso-177-vintage-matched`, NOT-YET on
 {C1-2023 `ST_GAS` +3.86 TWh, C3a-2025 −11.2 %, C3c}. **Pre-registration**
-`results/calibration/PREREG-nyiso184-stgas-heat-rate-basis.md` pushed at
+`docs/records/nyiso/PREREG-nyiso184-stgas-heat-rate-basis.md` pushed at
 `19d809d9` before the first gate measurement.
 
 **What was proved (G0/G1, identities not assertions).** Ravenswood's
@@ -11540,8 +11540,8 @@ FAILED (preserved as `_nyiso184_heat_rate_basis_prefix_g1unit.json`); the first
 G0 CC base used the `ST_GAS` multiplier. The brief's "Astoria has zero extract
 rows" was an id-column grep on a name-first CSV.
 
-**Evidence:** `docs/FINDING-nyiso184-stgas-heat-rate-basis-2026-09-04.md`,
-`results/calibration/PREREG-nyiso184-stgas-heat-rate-basis.md`,
+**Evidence:** `docs/records/nyiso/FINDING-nyiso184-stgas-heat-rate-basis-2026-09-04.md`,
+`docs/records/nyiso/PREREG-nyiso184-stgas-heat-rate-basis.md`,
 `_nyiso184_heat_rate_basis.json`, probe
 `scripts/probes/nyiso184_heat_rate_basis.py`, derive
 `scripts/data/derive_egrid_family_heat_rates.py`, artifact
@@ -11591,8 +11591,8 @@ recommendation: promote (rules 14 + 1). Not promoted here.
 16 / 12: one invocation each, years sequential, two concurrent solves.
 27: on-disk bytes pushed, ≥300-line blobs verified.
 
-**Evidence:** `docs/FINDING-nyiso185-stgas-family-hr-ab-2026-09-04.md`,
-`results/calibration/PREREG-nyiso185-stgas-family-hr-ab.md`,
+**Evidence:** `docs/records/nyiso/FINDING-nyiso185-stgas-family-hr-ab-2026-09-04.md`,
+`docs/records/nyiso/PREREG-nyiso185-stgas-family-hr-ab.md`,
 `_nyiso185_grounding.json`, `scripts/probes/nyiso185_grounding.py`,
 `scripts/gen_nyiso185_attestation.py`, the arm bundle's
 `calibration_attestation.json` / `metrics.json` / `legitimacy_diagnostics.json`.
@@ -11644,8 +11644,8 @@ pruned `2026-08-22-nyiso-153-incity-obligation`.
 Capital-Hudson (top of queue); the Astoria availability half (outage-derive
 lane); `cc_capacity_reconcile` (U, Zeltmann H-B1 in 2023 / 2025); Bethlehem's
 eGRID vintage artifact. Evidence:
-`docs/FINDING-nyiso186-cc-regular-2024-class-2026-09-04.md`,
-`results/calibration/PREREG-nyiso186-cc-regular-2024-class.md`.
+`docs/records/nyiso/FINDING-nyiso186-cc-regular-2024-class-2026-09-04.md`,
+`docs/records/nyiso/PREREG-nyiso186-cc-regular-2024-class.md`.
 
 ## 2026-09-04 — nyiso-187 (`ct-steam-merit` lane): the CT / steam-vs-CC merit position decomposed (owner = out-of-market commitment); the Astoria routing A/B-solved and PROMOTED
 
@@ -11686,8 +11686,8 @@ RULING** (standing formula): keeper shard + `status/NYISO.js`, `audit_keepers
 **Handed forward:** the 2024 cell as an owner disposition; the ramp-envelope
 and emission-rate footprints of the routing (own A/B); `cc_capacity_reconcile`
 (U); Bethlehem's vintage artifact; the merit-panel defect. Evidence:
-`docs/FINDING-nyiso187-ct-steam-merit-position-2026-09-04.md`,
-`results/calibration/PREREG-nyiso187-ct-steam-merit-position.md`.
+`docs/records/nyiso/FINDING-nyiso187-ct-steam-merit-position-2026-09-04.md`,
+`docs/records/nyiso/PREREG-nyiso187-ct-steam-merit-position.md`.
 
 ## 2026-09-04 — nyiso-188 (`backcast-calibration` lane): the Astoria routing's remaining footprint carried, `cc_capacity_reconcile` tested and PROMOTED, Bethlehem attributed — the first NYISO keeper to read CALIBRATED
 
@@ -11747,8 +11747,8 @@ nor `final`; freeze active; the `complete` question is the owner's).
 nyiso-187's disposition at +2.05 TWh; C3a-2025 −6.9 % (Q1); Zeltmann's 2024
 cold-weather record vs the pooled cap; the v2 artifact's frozen 2018 / 2022 /
 2026 rows (forecast lane); NYISO parasitic factors absent. Evidence:
-`docs/FINDING-nyiso188-astoria-footprint-cc-reconcile-bethlehem-2026-09-04.md`,
-`results/calibration/PREREG-nyiso188-astoria-footprint-cc-reconcile-bethlehem.md`.
+`docs/records/nyiso/FINDING-nyiso188-astoria-footprint-cc-reconcile-bethlehem-2026-09-04.md`,
+`docs/records/nyiso/PREREG-nyiso188-astoria-footprint-cc-reconcile-bethlehem.md`.
 
 ## 2026-09-04 — nyiso-189 (`backcast-calibration` lane): the steam-generator collapse census (Step 0 of the Bethlehem object) — ZERO SOLVE, owner decision card
 
@@ -11761,7 +11761,7 @@ Bethlehem 2539 (2024 only), World Generation X 54131 (2023 only; applied
 Lederle 10521. Bethlehem's APPLIED 2023 vintage (ST/CT 0.065 against its own
 0.49–0.52) is not reached by the zero test; where filings are intact the
 CT-heat identity reproduces eGRID's `PLHTRT` within 0.1 (its validation).
-**Decision card** (`docs/DECISION-CARD-nyiso189-bethlehem-vintage-form-2026-09-04.md`):
+**Decision card** (`docs/records/nyiso/DECISION-CARD-nyiso189-bethlehem-vintage-form-2026-09-04.md`):
 A (pooled-vintage basis, fleet-wide, 2539 → 7.85) vs B1 (identity, T1-admitted,
 misses Bethlehem 2023) vs B2 (identity admitted by the plant's own T1-clean
 steam-share minimum; 2539 → 6.89, 54131 → 7.00); recommendation B2 with the
@@ -11776,7 +11776,7 @@ annotated, §5.5 top bullet updated. Evidence:
 **Owner ruling (this sitting, `AskUserQuestion` on the decision card's three
 questions):** form B2, the plant's own T1-clean median steam share, the
 plant-history bound authorized. **Pre-registration**
-`results/calibration/PREREG-nyiso189-steam-collapse-identity-ab.md` pushed
+`docs/records/nyiso/PREREG-nyiso189-steam-collapse-identity-ab.md` pushed
 BEFORE the build and before any solve; it fixes the operational bound (the
 literal "below the plant's own minimum" fires at 35 of 38 plants — the
 mechanism reads the record's minimum minus the record's own range) and the
@@ -11800,8 +11800,8 @@ NYISO`, gate-(a) stamp re-keyed (R-T), NYISO matrix shard (cell
 header + queue. No marker requested; D56 (NYISO `complete`) is issued and
 not landed — if it lands before this PR merges the merging session re-keys
 `complete.NYISO` (D-5(b)). Evidence:
-`docs/FINDING-nyiso189-steam-collapse-identity-2026-09-05.md`,
-`results/calibration/_nyiso189_ab_report.json`,
+`docs/records/nyiso/FINDING-nyiso189-steam-collapse-identity-2026-09-05.md`,
+`results/phase0/nyiso/_nyiso189_ab_report.json`,
 `scripts/gen_nyiso189_attestation.py`, `scripts/probes/nyiso189_ab_report.py`.
 
 ### 2026-09-05 — nyiso-190 (`backcast-calibration`): the nyiso-189 promotion's one unmeasured justifying clause is measured on pre-registered bars and **REFUTED** — ZERO SOLVES, keeper unchanged
@@ -11810,7 +11810,7 @@ not landed — if it lands before this PR merges the merging session re-keys
 / +2.8 pp, 0.2 pp inside its band) and a fail — FINDING-nyiso189 §3.1's *"the
 NYC steam it displaces is what the market committed anyway"*. **Solves: ZERO.**
 Bars pushed to `origin` before the first number
-(`results/calibration/PREREG-nyiso190-cc2024-displacement-provenance.md`).
+(`docs/records/nyiso/PREREG-nyiso190-cc2024-displacement-provenance.md`).
 **Instrument:** the registered arm payload against `2026-09-04-nyiso-188-combined`
 (the nyiso-189 sitting established its same-HEAD control BIT-IDENTICAL to it,
 0 of 52,560 prices differing in every year) and the bench's per-plant CAMPD /
@@ -11854,7 +11854,7 @@ each plant's own CAMPD demonstrated peak, **is scoped to `CC_REGULAR` by
 construction**; its committed 15-row NYISO table contains no `CC_CHP` plant.
 **Neither built nor proposed here** (stops S1/S3): its direction on C1-2024 is
 UNKNOWN and could go either way, so it is put to the owner as one question in
-`docs/DECISION-CARD-nyiso190-cc2024-cell-disposition-2026-09-05.md` §4.
+`docs/records/nyiso/DECISION-CARD-nyiso190-cc2024-cell-disposition-2026-09-05.md` §4.
 
 **Governance.** Keeper `2026-09-05-nyiso-189-steam-identity` unchanged — no
 promotion, demotion, re-score or registration; no run was produced, so rule 15
@@ -11865,8 +11865,8 @@ no other ISO's shard is touched. **No marker requested** — D56 has NOT landed
 (NYISO still in `calibration-complete.json`'s `withdrawn` block at `c9f1d26e`),
 so no rule-22 D-5(b) re-key applies. C3a-2025 untouched
 (`DECISION-CARD-nyiso148` Q1 confirmed still pending). Evidence:
-`docs/FINDING-nyiso190-cc2024-displacement-provenance-2026-09-05.md`,
-`results/calibration/_nyiso190_displacement_provenance.json`,
+`docs/records/nyiso/FINDING-nyiso190-cc2024-displacement-provenance-2026-09-05.md`,
+`results/phase0/nyiso/_nyiso190_displacement_provenance.json`,
 `_nyiso190_plant_grain_posthoc.json`, probes
 `scripts/probes/nyiso190_displacement_provenance.py` /
 `nyiso190_plant_grain_posthoc.py`.
@@ -11918,7 +11918,7 @@ marker:** `test_marker_state_reflects_committed_markers` (NYISO withdrawn →
 complete). **Pre-existing, not this lane's:**
 `test_walk_inputs_trivial_single_year` (integration-marked) fails identically
 at HEAD. **Spent: NOTHING. Solved: NOTHING.** Record:
-`docs/handoffs/FINDING-capx-d56r-nyiso-redeclaration-2026-09-05.md`.
+`docs/records/forecast/FINDING-capx-d56r-nyiso-redeclaration-2026-09-05.md`.
 
 ### 2026-09-05 — nyiso-191 (`backcast-calibration`): the `CC_CHP` scope extension of `cc_capacity_reconcile` is TESTED and **REJECTED on rule 19** — keeper unchanged, artifact reverted
 
@@ -11933,7 +11933,7 @@ only.
 2023/2024/2025) and the arm `nyiso191_ccchp_scope` (registered
 `2026-09-05-nyiso-191-ccchp-capacity`, **a REJECTED PROBE**). Bars pushed before
 the derive was edited and before any solve
-(`results/calibration/PREREG-nyiso191-ccchp-capacity-scope.md`).
+(`docs/records/nyiso/PREREG-nyiso191-ccchp-capacity-scope.md`).
 
 **Phase 0 refuted the session's own premise before the build.** The frozen
 population rule reaches none of the three over-runners nyiso-190 named: **Sithe
@@ -11987,8 +11987,8 @@ CT-only test is pooled** and was diluted by World Generation X's zero 2025
 EIA-923 row — the bench's per-year test flags it at 1.378× — affecting exactly
 the one row that bound; a cross-ISO rule-23 repair.
 
-Evidence: `docs/FINDING-nyiso191-ccchp-capacity-scope-2026-09-05.md`,
-`results/calibration/PREREG-nyiso191-ccchp-capacity-scope.md`,
+Evidence: `docs/records/nyiso/FINDING-nyiso191-ccchp-capacity-scope-2026-09-05.md`,
+`docs/records/nyiso/PREREG-nyiso191-ccchp-capacity-scope.md`,
 `_nyiso191_ccchp_scope_phase0.json`, `_nyiso191_stgas_placement.json`,
 `scripts/gen_nyiso191_attestation.py`, probes
 `scripts/probes/nyiso191_ccchp_scope_phase0.py` / `nyiso191_stgas_placement.py`,
@@ -12028,7 +12028,7 @@ recorded on the frontier leg alone is closed by the owner's choice; stated for
 the audit desk (Z-4), whose board this lane does not edit. **Frontier is NOT
 `final`:** `final` still empty, the freeze untouched (locked tier frozen for
 every ISO), 2019 / H1-2026 never granted. **Spent: NOTHING. Solved: NOTHING.**
-Record: `docs/handoffs/FINDING-capx-d56r2-nyiso-frontier-2026-09-05.md`.
+Record: `docs/records/forecast/FINDING-capx-d56r2-nyiso-frontier-2026-09-05.md`.
 ### 2026-09-05 — nyiso-192 (`backcast-calibration`, frontier adjudication for card C-10 / Q39): the two nyiso-191 hand-forwards decomposed with NO LP, a dashboard-payload defect found and repaired, the Astoria merit-panel repair A/B-solved — keeper unchanged, frontier NOT declared
 
 **Result.** Keeper `2026-09-05-nyiso-189-steam-identity` unchanged (CALIBRATED,
@@ -12066,10 +12066,10 @@ instrument-dependent (scorer lane, cross-ISO; nyiso-181 §6's escalation now
 measured).
 
 **Frontier:** mechanism set EXHAUSTED at the current representation (YES — every object since nyiso-154 dispositioned); a declaration NOT recommended until the owner rules the C8 grain and the Astoria arm (card C-10 / Q39, options A/B/C; nyiso192-Q1). Records:
-`results/calibration/ASSESSMENT-nyiso192-frontier-2026-09-05.md`,
-`docs/DECISION-CARD-nyiso192-frontier-2026-09-05.md`,
-`docs/FINDING-nyiso192-frontier-adjudication-2026-09-05.md`,
-`results/calibration/PREREG-nyiso192-frontier-adjudication.md` (+ Amendment 1),
+`docs/records/nyiso/ASSESSMENT-nyiso192-frontier-2026-09-05.md`,
+`docs/records/nyiso/DECISION-CARD-nyiso192-frontier-2026-09-05.md`,
+`docs/records/nyiso/FINDING-nyiso192-frontier-adjudication-2026-09-05.md`,
+`docs/records/nyiso/PREREG-nyiso192-frontier-adjudication.md` (+ Amendment 1),
 `_nyiso192_*.json`, probes `scripts/probes/nyiso192_*.py`,
 `scripts/gen_nyiso192_attestation.py`, bundle `nyiso192_astoria_panel`.
 
@@ -12082,8 +12082,8 @@ the Astoria-panel arm) now conditions on the declared frontier's durability. The
 is re-labelled **nyiso192-Q1** (the ledger's Q40 is MISO's C-11) and is UNRULED — the arm is
 not promoted (rule 22 D-5(b): a promotion that worsens a `complete` ISO's determination stops
 and escalates). The fourteen-payload records item is MOOT after the r#38 keeper-only site
-prune. Filed: `docs/INTAKE-SPEC-nyiso193-nyc-steam-delivered-gas-2026-09-05.md` and
-`docs/DECISION-CARD-nyiso193-d2-unit-grain-2026-09-05.md`.
+prune. Filed: `docs/records/nyiso/INTAKE-SPEC-nyiso193-nyc-steam-delivered-gas-2026-09-05.md` and
+`docs/records/nyiso/DECISION-CARD-nyiso193-d2-unit-grain-2026-09-05.md`.
 ### 2026-09-05 — nyiso-193 (`backcast-calibration`, PROMOTION, zero new solve): the nyiso-192 Astoria merit-panel arm PROMOTED by owner ruling (nyiso192-Q1 (i)); NOT-YET — `complete` + `frontier` WITHDRAWN under the Q5 uniform rule; next lever ruled
 **Keeper → `2026-09-05-nyiso-192-astoria-panel`** (bundle `nyiso192_astoria_panel`), superseding
 `2026-09-05-nyiso-189-steam-identity`. Owner ruling in session, verbatim: *"Ok promote it ugh how does this keep happening with NYISO? Promote it and then tune the cc regular offer curve up for the duct burner peaking tranche because it's merit order is wrong it runs more often at lower CF and is running hot over 80% CF in all years"*
@@ -12134,8 +12134,8 @@ peak energy 1,253 → 680 GWh, 90–100 % share 19.8 → 17.2 %, `CC_REGULAR` �
 C1-2024 in band by the wrong shape — rule 1). **What both locate:** the econ ramp's marginal slice
 is the parking point; NYISO's registered `phys_econ_low 0.784 → phys_econ_high 0.925` slopes the
 other way from the registered 0.95 → 1.0. **Next (top of §5.5 queue, U, needs its own PREREG):**
-the econ block at its measured marginal basis. Records: `docs/FINDING-nyiso194-cc-peak-tranche-screens-2026-09-05.md`,
-`results/calibration/PREREG-nyiso194-cc-peak-tranche-screen.md`, `_nyiso194_*.json`,
+the econ block at its measured marginal basis. Records: `docs/records/nyiso/FINDING-nyiso194-cc-peak-tranche-screens-2026-09-05.md`,
+`docs/records/nyiso/PREREG-nyiso194-cc-peak-tranche-screen.md`, `_nyiso194_*.json`,
 `scripts/probes/nyiso194_*.py`; matrix cells `cc_duct_peaking` (cap R) / `offer_curve_by_group`
 (upward-peak direction R) updated. Screen bundles local, never registered.
 
@@ -12163,8 +12163,8 @@ the owner's question answered: a pure price cut on an over-running class cannot 
 Direction R (matrix `offer_curve_by_group`, `gas_offer_net_revenue_margin` annotated; cells K).
 **Next (top of §5.5, U):** the AVAILABILITY side of the wall — the partial-derate / outage series
 at the pile-up CC plants vs CAMPD's hours above 90 % — a rule-14 data question, phase 0 first.
-Records: `docs/FINDING-nyiso195-cc-econ-basis-screen-2026-09-05.md`,
-`results/calibration/PREREG-nyiso195-cc-econ-basis-screen.md`, `_nyiso195_*.json`,
+Records: `docs/records/nyiso/FINDING-nyiso195-cc-econ-basis-screen-2026-09-05.md`,
+`docs/records/nyiso/PREREG-nyiso195-cc-econ-basis-screen.md`, `_nyiso195_*.json`,
 `scripts/probes/nyiso195_*.py`. Screen bundle `results/calibration/nyiso195_screen_2024` local, never registered.
 
 ### 2026-09-05/06 — nyiso-196 (`backcast-calibration`, decomposition + ONE rule-29 2024 screen + ONE 2023–2025 bundle, NO control solve): the C1-2024 `CC_REGULAR` over-run is an AVAILABILITY object at Cricket Valley — an EIA-860 id collision halves its unit-outage derate; repaired with the zero-DOF `unit_outage_extract_basis_share`, screen CLEARED, full span CALIBRATED, PROMOTED
@@ -12200,7 +12200,7 @@ exactly the flag, same extract sha `58799099…`, DOF 13/6 verbatim); `audit_kee
 governance citations). Regressions at full magnitude: Linden 50006 `CC_CHP` 6.2 → 5.2 TWh vs a 7.3 meter
 every year (availability up); Cricket Valley now 0.53 TWh UNDER in 2024; C3a-2024 +1.5 pt. `complete`
 NOT re-declared — owner court (withdrawn-block re-entry clause). Records:
-`docs/FINDING-nyiso196-cc-outage-share-basis-2026-09-05.md`, `PREREG-nyiso196-cc-outage-share-basis-screen.md`,
+`docs/records/nyiso/FINDING-nyiso196-cc-outage-share-basis-2026-09-05.md`, `PREREG-nyiso196-cc-outage-share-basis-screen.md`,
 `_nyiso196_*.json`, `scripts/probes/nyiso196_*.py`.
 
 ## 2026-09-06 — nyiso-197: the Linden 50006 regression is VOID (a CHP add-back basis mismatch); the real object has the opposite sign; ZERO solves, keeper unchanged
@@ -12259,8 +12259,8 @@ part-load bucket (b−) is untouched and is now the queue's live plant-grain ite
 `docs/mechanism-testing-matrix.md` §5.5 (new nyiso-197 queue block; the nyiso-196 top-of-queue item
 struck); `docs/codebase-site/data/mechanism-matrix/NYISO.js` (the `gates` stamp and the
 `unit_outage_extract_basis_share` evidence — **cell stays K, no verdict moves, no field touched**).
-Records: `docs/FINDING-nyiso197-linden-addback-basis-2026-09-06.md`,
-`results/calibration/_nyiso197_linden_phase0.json`, `_nyiso197_linden_rebuild_{2023,2024}.json`,
+Records: `docs/records/nyiso/FINDING-nyiso197-linden-addback-basis-2026-09-06.md`,
+`results/phase0/nyiso/_nyiso197_linden_phase0.json`, `_nyiso197_linden_rebuild_{2023,2024}.json`,
 `scripts/probes/nyiso197_linden_phase0.py`, `scripts/probes/nyiso197_linden_rebuild.py`.
 
 ## 2026-09-06 — nyiso-198: Cricket Valley's (b−) is a duct-BAND-MEMBERSHIP object; the 2024 screen's own S-4 gate STOPPED the arm; keeper unchanged
@@ -12269,8 +12269,8 @@ Records: `docs/FINDING-nyiso197-linden-addback-basis-2026-09-06.md`,
 C3c the lone ledgered caveat). **Nothing registered, nothing promoted.** ONE solve — the rule-29
 2024 screen, deleted before merge (29(c)). No control solve (form 4; G-DRIFT `5b5af5ab..982ba9aa`
 all INERT, re-checked after rebasing onto `821c11c5`: the 31 new commits touch zero solve-path
-files). Full record: `docs/FINDING-nyiso198-duct-peaking-row-scope-2026-09-06.md`; PREREG
-`results/calibration/PREREG-nyiso198-duct-peaking-row-scope-screen.md` (+ Addendum A), both pushed
+files). Full record: `docs/records/nyiso/FINDING-nyiso198-duct-peaking-row-scope-2026-09-06.md`; PREREG
+`docs/records/nyiso/PREREG-nyiso198-duct-peaking-row-scope-screen.md` (+ Addendum A), both pushed
 before the work they govern.
 
 **Phase 0 closed the queue item.** Cricket Valley 57185's part-load bucket (b−), 906.1 GWh in 2024,
@@ -12422,8 +12422,8 @@ measured conduct in the window (the D-4 statistic the diagnostic already compute
 three-way pairing with `cc_duct_peaking_row_scoped` (also **R**, also awaiting a merit partner, and
 pushing the opposite way) on 2023 + 2025 with the gates already written.
 
-Records: `docs/FINDING-nyiso199-ct-peaker-band-basis-2026-09-06.md` (§1–§8),
-`results/calibration/PREREG-nyiso199-ct-peaker-measured-bands-screen.md` (+ Addendum A),
+Records: `docs/records/nyiso/FINDING-nyiso199-ct-peaker-band-basis-2026-09-06.md` (§1–§8),
+`docs/records/nyiso/PREREG-nyiso199-ct-peaker-measured-bands-screen.md` (+ Addendum A),
 `_nyiso199_{meritorder,zone_offer_census,ct_band_basis}_phase0.json`,
 `_nyiso199_screen_gates_{2023,2025}.json`, `scripts/probes/nyiso199_*.py`.
 
@@ -12466,8 +12466,8 @@ A3-2025 (the exposed year) not spent; the pairing's 2025 price exposure is UNMEA
 like-for-like, not a row count; named-plant STOP on dropped-run anchors, not on any floor); the
 reliability floor's own membership question at Astoria 8906 (the floor under the floor, rule 19);
 the run screen alone as a keeper-change candidate. Records:
-`docs/FINDING-nyiso200-bridge-run-screen-2026-09-06.md`,
-`results/calibration/PREREG-nyiso200-bridge-run-screen.md` (+ Addendum A),
+`docs/records/nyiso/FINDING-nyiso200-bridge-run-screen-2026-09-06.md`,
+`docs/records/nyiso/PREREG-nyiso200-bridge-run-screen.md` (+ Addendum A),
 `_nyiso200_bridge_phase0.json`, `_nyiso200_screen_gates_{a1,a3}_2023.json`,
 `scripts/probes/nyiso200_*.py`.
 
@@ -12535,8 +12535,8 @@ cells re-stamped this session: `gas_commitment_bridge`, `nyiso_ct_peaker_bands_m
 `cc_duct_peaking_row_scoped`); 15 (zero registrations because zero span runs — by design). The one
 code change is diagnostics-only (a per-unit/per-plant run census; the floor arithmetic never reads
 it, guarded byte-identical). Records:
-`docs/FINDING-nyiso201-threeway-2025-screen-2026-09-06.md`,
-`results/calibration/PREREG-nyiso201-threeway-2025-screen.md` (+ Addendum A),
+`docs/records/nyiso/FINDING-nyiso201-threeway-2025-screen-2026-09-06.md`,
+`docs/records/nyiso/PREREG-nyiso201-threeway-2025-screen.md` (+ Addendum A),
 `_nyiso201_screen_gates_a3_2025.json`, `scripts/probes/nyiso201_screen_gates.py`.
 
 ## nyiso-202 — 2026-09-06
@@ -12592,8 +12592,8 @@ per-plant list).
 no D-5(b) re-key is owed and no holdout year was touched (2023–2025 only). Registered, status page
 and matrix shard + §5.5 prose header re-stamped, `audit_keepers --iso NYISO` PASS, parity OK, the
 superseded `nyiso-198` run pruned under keeper-only retention. Records:
-`docs/FINDING-nyiso202-bridge-startup-aware-2026-09-06.md`,
-`results/calibration/PREREG-nyiso202-bridge-startup-aware-2025-screen.md` (pushed with zero solves,
+`docs/records/nyiso/FINDING-nyiso202-bridge-startup-aware-2026-09-06.md`,
+`docs/records/nyiso/PREREG-nyiso202-bridge-startup-aware-2025-screen.md` (pushed with zero solves,
 + Addendum A), `_nyiso202_screen_gates_a1_2025.json`, `scripts/probes/nyiso202_screen_gates.py`,
 `scripts/gen_nyiso202_attestation.py`.
 
@@ -12642,8 +12642,8 @@ NYISO matrix shard's stale *"the adopted D-4 per-unit rider is NOT yet implement
 the rider has since landed (`legitimacy_diagnostics.py` `check="unit-conduct"`, scored over
 each plant's own binding hours) and is the very check that convicts 8906. G-DRIFT
 re-validated empirically: `_nyiso198_rebuild_checks_2024.json` regenerates byte-identically at
-this HEAD. Records: `docs/FINDING-nyiso203-nyc-persistent-base-basis-2026-09-06.md`,
-`results/calibration/_nyiso203_nyc_base_phase0.json`,
+this HEAD. Records: `docs/records/nyiso/FINDING-nyiso203-nyc-persistent-base-basis-2026-09-06.md`,
+`results/phase0/nyiso/_nyiso203_nyc_base_phase0.json`,
 `scripts/probes/_nyiso203_nyc_persistent_base_basis.py`.
 
 ## nyiso-203b — 2026-09-06
@@ -12703,9 +12703,9 @@ already reads *"an OWNER ACT, not a calibration task"*; the `frontier` mechanism
 never retracted. Card **C-19 / Q51** is PARKED at owner direction (capx refresh #46) with its
 re-serve condition (*"nyiso-197 lands AND the keeper is CALIBRATED"*) **met**. No marker was
 edited by this lane. Records:
-`docs/FINDING-nyiso203b-unit-grain-and-duct-lever-2026-09-06.md`,
-`docs/DECISION-CARD-nyiso193-d2-unit-grain-2026-09-05.md` §5 addendum,
-`results/calibration/_nyiso203_c8_unit_grain.json`,
+`docs/records/nyiso/FINDING-nyiso203b-unit-grain-and-duct-lever-2026-09-06.md`,
+`docs/records/nyiso/DECISION-CARD-nyiso193-d2-unit-grain-2026-09-05.md` §5 addendum,
+`results/phase0/nyiso/_nyiso203_c8_unit_grain.json`,
 `_nyiso203_duct_lever_disposition.json`, `_nyiso203_d4_layup_census.json`,
 `scripts/probes/_nyiso203_duct_lever_disposition.py`, `_nyiso203_d4_layup_census.py`.
 
@@ -12727,8 +12727,8 @@ repairs) REFUTED — the HEAD roster carries three CC codes with no CEMS hours u
 did. Reported, not acted on: (O1) no DOF-ledger entry for this artifact while
 `campd_ct_run_lengths_NYISO.csv` is ledgered; (O2) Ravenswood, the largest ST_GAS plant, is
 excluded from the ST_GAS statistic by the script's declared ambiguity rule (bears on pending rulings
-(i)/(ii); not ruled). Records: `docs/FINDING-nyiso209-gas-bridge-params-reproduce-2026-09-06.md`,
-`results/calibration/PREREG-nyiso209-gas-bridge-params-reproduce.md`,
+(i)/(ii); not ruled). Records: `docs/records/nyiso/FINDING-nyiso209-gas-bridge-params-reproduce-2026-09-06.md`,
+`docs/records/nyiso/PREREG-nyiso209-gas-bridge-params-reproduce.md`,
 `_nyiso209_gas_bridge_params_reproduce.json`, `scripts/probes/_nyiso209_gas_bridge_params_reproduce.py`;
 NYISO matrix shard `gas_commitment_bridge` cell evidence appended (K unchanged).
 
@@ -12757,7 +12757,7 @@ scaled by the 2022 fuel regime; the named objects are nyiso-201 §5.3 / `DECISIO
 §5/§5.1 and `INTAKE-SPEC-nyiso156` Leg 2. 2020 / 2021 NOT spent; `final` untouched; freeze
 untouched; nothing identified against 2022. Reported, not fixed: CAISO's gate-(a) stamp is stale
 (cites `caiso-257` while the shard names `caiso-260`), another lane's. Record:
-`docs/FINDING-nyiso209-redeclaration-and-2022-touchpoint-2026-09-06.md`.
+`docs/records/nyiso/FINDING-nyiso209-redeclaration-and-2022-touchpoint-2026-09-06.md`.
 
 ## nyiso-210 — 2026-09-06
 
@@ -12766,7 +12766,7 @@ reading REPLACED. ZERO LP. Keeper `2026-09-06-nyiso-202-startup-aware` UNCHANGED
 parameter, offer curve, cell verdict or determination moved.**
 
 Pre-registered at `f520bd1f` before the probe was written
-(`results/calibration/PREREG-nyiso210-cc-regular-2022-overrun-attribution.md`), with one
+(`docs/records/nyiso/PREREG-nyiso210-cc-regular-2022-overrun-attribution.md`), with one
 construction addendum at `c30612c5` (`ADDENDUM-nyiso210-band-vocabulary-2026-09-06.md`: the
 committed sidecar emits CC_REGULAR's economic region as six `econc*` tranches, not the registry's
 `econ_low`/`econ_high` pair, so the partition was reassembled three-way — no threshold moved and no
@@ -12815,8 +12815,8 @@ forcing is an order of magnitude too small to move a ~1 TWh zonal gap), so no DO
 re-tested and the five owner cards stay unruled. Reported, not fixed (rule 25): MISO's stale gate-(a)
 stamp fails `test_gate_a_provenance::test_live_board_passes`, and the six charter files read 36
 failed / 69 passed at HEAD. Record:
-`docs/FINDING-nyiso210-cc-regular-2022-zonal-cancellation-2026-09-06.md`,
-`results/calibration/_nyiso210_cc_overrun_attribution.json`,
+`docs/records/nyiso/FINDING-nyiso210-cc-regular-2022-zonal-cancellation-2026-09-06.md`,
+`results/phase0/nyiso/_nyiso210_cc_overrun_attribution.json`,
 `scripts/probes/nyiso210_cc_overrun_attribution.py`; NYISO matrix shard `gates` stamp (rule 28(d)),
 no cell verdict letter moved, key set verified identical to `main` (306).
 
@@ -12892,16 +12892,16 @@ holdout-render guard.
 and not spent**, 2020 and 2021 **unspent** (a separate owner spend). **The five pending owner rulings
 are untouched and no new card is opened.**
 
-Record: `docs/FINDING-nyiso213-summer-seam-rescreen-2026-09-07.md`,
-`results/calibration/PREREG-nyiso213-summer-seam-rescreen.md`,
-`results/calibration/_nyiso213_screen_gates_2025.json`,
+Record: `docs/records/nyiso/FINDING-nyiso213-summer-seam-rescreen-2026-09-07.md`,
+`docs/records/nyiso/PREREG-nyiso213-summer-seam-rescreen.md`,
+`results/phase0/nyiso/_nyiso213_screen_gates_2025.json`,
 `scripts/probes/nyiso213_screen_gates.py`.
 ## nyiso-214 — 2026-09-07
 
 **ZERO LP. No solve, no bundle, no year spent. Keeper unchanged
 (`2026-09-07-nyiso-213-summer-seam`, CALIBRATED, grade 7/8, fails 0, C3c the lone ledgered
 caveat). There are NO in-sample rubric failures.** PREREG
-(`results/calibration/PREREG-nyiso214-duct-gap-double-reading.md`) pushed before P1–P4 were read;
+(`docs/records/nyiso/PREREG-nyiso214-duct-gap-double-reading.md`) pushed before P1–P4 were read;
 **all four fire**, including the limb declared to hurt and the reproduction bar that would have
 voided the census.
 
@@ -12948,8 +12948,8 @@ untouched. **Re-measured, not inherited (rule 25):** the named test set
 (`test_gate_a_provenance.py`, `test_cc_summer_derate_reconciled_basis.py`,
 `test_holdout_render_parity.py`, `test_campd_bins.py`) reads **75 passed / 0 failed**, and
 `ruff format --check .` / `ruff check` pass. Record:
-`docs/FINDING-nyiso214-duct-gap-double-reading-2026-09-07.md`,
-`results/calibration/_nyiso214_duct_gap_census.json`,
+`docs/records/nyiso/FINDING-nyiso214-duct-gap-double-reading-2026-09-07.md`,
+`results/phase0/nyiso/_nyiso214_duct_gap_census.json`,
 `scripts/probes/nyiso214_duct_gap_census.py`; NYISO matrix shard `gates` stamp plus the
 `cc_duct_peaking` and `cc_nameplate_summer_derate` cells annotated (rule 28(b)), **no cell verdict
 letter moved**.
@@ -13012,9 +13012,9 @@ hunk-by-hunk in the PREREG before measurement: 10 INERT, 1 LIVE-but-out-of-scope
 Tests named rather than inherited: `test_gate_a_provenance`,
 `test_cc_summer_derate_reconciled_basis`, `test_holdout_render_parity`, `test_campd_bins` —
 **75 passed, 0 failed**; `ruff format --check .` 1,405 files formatted, `ruff check` passes.
-Record: `docs/FINDING-nyiso215-reserve-duty-band-erodes-2026-09-07.md`,
-`results/calibration/PREREG-nyiso215-reserve-duty-single-peak.md` (pushed before any number was
-read), `results/calibration/_nyiso215_reserve_duty_census.json`,
+Record: `docs/records/nyiso/FINDING-nyiso215-reserve-duty-band-erodes-2026-09-07.md`,
+`docs/records/nyiso/PREREG-nyiso215-reserve-duty-single-peak.md` (pushed before any number was
+read), `results/phase0/nyiso/_nyiso215_reserve_duty_census.json`,
 `_nyiso215_band_energy_bound.json`, `scripts/probes/nyiso215_reserve_duty_census.py`,
 `nyiso215_band_energy_bound.py`; NYISO matrix shard `offer_curve_by_group` cell annotated
 (rule 28(b)), **no cell verdict letter moved**.
@@ -13026,10 +13026,10 @@ C3c the lone ledgered caveat). Nothing built, armed, screened, sized, recommende
 no marker moved; `final` never granted, locked test frozen, 2020/2021 unspent. The seven pending
 owner rulings are untouched and none is prejudged — and NO eighth card is opened.**
 
-**Finding:** `docs/FINDING-nyiso216-duty-role-protection-scales-with-zonal-gas-basis-2026-09-07.md`.
-**PREREG:** `results/calibration/PREREG-nyiso216-rensselaer-counterexample.md`, pushed at
+**Finding:** `docs/records/nyiso/FINDING-nyiso216-duty-role-protection-scales-with-zonal-gas-basis-2026-09-07.md`.
+**PREREG:** `docs/records/nyiso/PREREG-nyiso216-rensselaer-counterexample.md`, pushed at
 `1b3795e5` before any gated number was read. **Machine record:**
-`results/calibration/_nyiso216_rensselaer_counterexample.json`. **Instrument:**
+`results/phase0/nyiso/_nyiso216_rensselaer_counterexample.json`. **Instrument:**
 `scripts/probes/nyiso216_rensselaer_counterexample.py`.
 
 **Object:** nyiso-215 §4's named-not-pursued intra-cohort counter-example — 54034 Rensselaer Cogen
@@ -13115,10 +13115,10 @@ defect P4 measured.
 **The C1/C4 benchmark debt on `_screen_fuel_spike_columns` is PAID and CLOSED. A clean negative,
 measured rather than argued.** Keeper unchanged (`2026-09-07-nyiso-213-summer-seam`); nothing
 promoted, armed, screened, registered or regenerated; no marker moved. **ZERO LP.** Finding:
-`docs/FINDING-nyiso217-eia930-fuel-spike-screen-bench-debt-2026-09-07.md`. PREREG:
-`results/calibration/PREREG-nyiso217-eia930-fuel-spike-screen-bench-debt.md` (`d27b3705`, pushed
+`docs/records/nyiso/FINDING-nyiso217-eia930-fuel-spike-screen-bench-debt-2026-09-07.md`. PREREG:
+`docs/records/nyiso/PREREG-nyiso217-eia930-fuel-spike-screen-bench-debt.md` (`d27b3705`, pushed
 before the first number was read). Machine record:
-`results/calibration/_nyiso217_screen_bench_debt.json`. Instrument:
+`results/phase0/nyiso/_nyiso217_screen_bench_debt.json`. Instrument:
 `scripts/probes/nyiso217_screen_bench_debt.py`. **No in-sample rubric failure exists or is targeted.**
 
 nyiso-215 §7 flagged the SPP-41 seam and was out of scope; nyiso-216 §1 discharged its **fleet** half
@@ -13219,9 +13219,9 @@ of the owner's Q1 that NID could not serve (`CHARTER-nyiso219-hydro-budget-perio
 §10a), and the blocker behind Q2's phase-0 overlap arithmetic. **ZERO LP.** Keeper
 `2026-09-07-nyiso-213-summer-seam` untouched; nothing armed, screened, solved or registered; no
 `ScenarioConfig` field; no `src/market_sim/` change; no marker moved; no matrix cell letter changed;
-**no held-out year spent.** PRECOMMIT `results/calibration/PRECOMMIT-nyiso220-hydro-operating-ranges.md`
+**no held-out year spent.** PRECOMMIT `docs/records/nyiso/PRECOMMIT-nyiso220-hydro-operating-ranges.md`
 committed and pushed **before any substantive document was read**. Full result:
-`docs/FINDING-nyiso220-hydro-instrument-and-operating-ranges-2026-09-08.md`; instrument
+`docs/records/nyiso/FINDING-nyiso220-hydro-instrument-and-operating-ranges-2026-09-08.md`; instrument
 `scripts/probes/nyiso220_hydro_instrument_index.py` → `_nyiso220_hydro_instrument_index.json`
 (deterministic, byte-identical on re-run).
 
@@ -13313,9 +13313,9 @@ at this HEAD**, repaired by the ERCOT lane; nothing was inherited or "fixed" her
 ## 2026-09-09 — nyiso-fuelvintage-1: the retiree window is provably in-sample-inert, the EP-level fuel seam is provably inert outright, and BOTH verdicts cost zero LP
 
 Session `nyiso-fuelvintage-1` (PROMPT 3 of
-`docs/handoffs/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md` + ADDENDUM A1–A4).
-Pre-registration: `results/calibration/PRECOMMIT-nyiso-fuelvintage-1.md` (`7f211902`, written
-before every number below). Full record: `docs/FINDING-nyiso-fuelvintage-1-2026-09-09.md`.
+`docs/records/governance/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md` + ADDENDUM A1–A4).
+Pre-registration: `docs/records/nyiso/PRECOMMIT-nyiso-fuelvintage-1.md` (`7f211902`, written
+before every number below). Full record: `docs/records/nyiso/FINDING-nyiso-fuelvintage-1-2026-09-09.md`.
 
 **G-DRIFT, and a method a later NYISO lane will need.** The keeper's recorded `git_sha`
 `51f2fc2d` is **permanently unreachable** — its branch `claude/nyiso-backcast-calibration-b6er34`
@@ -13460,10 +13460,10 @@ gitignored and absent in a fresh container (a NYISO solve hard-fails without it;
 `regenerate_clean.py` takes 30+ minutes), and an untracked `results/_shared/` makes the tree dirty,
 which **refuses `--reuse-solved`** on the next shard — now gitignored.
 
-Record: `docs/RESULT-nyiso-fuelvintage-1-2026-09-09.md`,
-`docs/FINDING-nyiso-fuelvintage-1-2026-09-09.md`,
-`docs/FINDING-nyiso-2020-touchpoint-data-blocked-2026-09-09.md`,
-`docs/ADDENDUM-nyiso-fuelvintage-1-promotion-2026-09-09.md`.
+Record: `docs/records/nyiso/RESULT-nyiso-fuelvintage-1-2026-09-09.md`,
+`docs/records/nyiso/FINDING-nyiso-fuelvintage-1-2026-09-09.md`,
+`docs/records/nyiso/FINDING-nyiso-2020-touchpoint-data-blocked-2026-09-09.md`,
+`docs/records/nyiso/ADDENDUM-nyiso-fuelvintage-1-promotion-2026-09-09.md`.
 
 ## nyiso-225 — 2026-09-10 — the topology split is CLOSED AT PHASE 0, the nyiso-224 arm is REJECTED by owner ruling, and the queue it sent this lane to is STALE
 
@@ -13472,8 +13472,8 @@ Record: `docs/RESULT-nyiso-fuelvintage-1-2026-09-09.md`,
 registered (rule 15 registers runs). Control = the committed keeper bundles `nyiso_fuelvintage_A` /
 `nyiso_fuelvintage_H2` plus the preserved nyiso-224 arm bundle on `claude/nyiso224-cutset-2022` —
 rule 29(b) **form 4** throughout, **no control solve spent**. Records:
-`docs/FINDING-nyiso225-topology-split-closed-2026-09-10.md`,
-`scripts/probes/_nyiso225_topology_phase0.py`, `results/calibration/_nyiso225_topology_phase0.json`.
+`docs/records/nyiso/FINDING-nyiso225-topology-split-closed-2026-09-10.md`,
+`scripts/probes/_nyiso225_topology_phase0.py`, `results/phase0/nyiso/_nyiso225_topology_phase0.json`.
 
 **OWNER RULING 2026-09-10, two questions put with their costs and both answered:** *accept the
 phase-0 kill and go to the queue* (over *charter the seam* / *charter F|G anyway*), and *reject the
@@ -13559,9 +13559,9 @@ shard, so none was launched).
 
 **Three shards, three containers, ~5 solve-years of LP. The parent ran ZERO LP (rule 32
 `[R-SHARD]`). Keeper `2026-09-09-nyiso-221-fuelvintage-span` UNCHANGED; nothing promoted.**
-Records: `docs/PRECOMMIT-nyiso228-amplitude-2026-09-12.md` (pushed at `55cd0a6c` before the first
-LP), `docs/ADDENDUM-nyiso228-the-2022-tail-is-MISTIMED-not-absent-2026-09-12.md`,
-`docs/RESULT-nyiso228-2026-09-12.md`. Bundles `nyiso228_control_span`, `nyiso228_tail_span`,
+Records: `docs/records/nyiso/PRECOMMIT-nyiso228-amplitude-2026-09-12.md` (pushed at `55cd0a6c` before the first
+LP), `docs/records/nyiso/ADDENDUM-nyiso228-the-2022-tail-is-MISTIMED-not-absent-2026-09-12.md`,
+`docs/records/nyiso/RESULT-nyiso228-2026-09-12.md`. Bundles `nyiso228_control_span`, `nyiso228_tail_span`,
 `nyiso228_seamr_span`.
 
 **THE DIAGNOSIS, measured off committed artifacts at phase 0.** 2022's price miss is a **WINTER**
@@ -13731,14 +13731,14 @@ exactly 1 of 842 fields, and that one is nyiso-229's), the re-based row is live 
 missed rule-28 promoting-session duty: the NYISO matrix shard and §5.5 header re-stamped to
 the current keeper (nyiso-178 precedent, no verdict moved).
 
-**Records:** `docs/FINDING-nyiso230-phase0-the-anchor-slope-2026-09-12.md`,
+**Records:** `docs/records/nyiso/FINDING-nyiso230-phase0-the-anchor-slope-2026-09-12.md`,
 `results/calibration/PRECOMMIT-nyiso230-zonal-anchor-vintage.md`,
 `src/market_sim/data/fuel/zonal_anchor.py`,
 `tests/unit/data/test_gas_offer_zonal_anchor_vintage.py`.
 
 **ADDENDUM (2026-09-13) — THE 2022 SCREEN STOPS, AND THE DEFECT IS IN THIS SESSION'S OWN
-MIRROR, NOT IN THE MECHANISM.** Record: `docs/RESULT-nyiso230-the-2022-screen-2026-09-13.md`;
-gates `results/calibration/_nyiso230_screen_gates_2022.json`. Two shard containers, one arm.
+MIRROR, NOT IN THE MECHANISM.** Record: `docs/records/nyiso/RESULT-nyiso230-the-2022-screen-2026-09-13.md`;
+gates `results/phase0/nyiso/_nyiso230_screen_gates_2022.json`. Two shard containers, one arm.
 
 | gate | measured | verdict |
 |---|---|---|
@@ -13845,12 +13845,12 @@ comment says *"an override missing here would solve the control twice"*, so the 
 the good outcome); one interrupted for the same bug; one blocked on `capacity-deliverability`
 being absent from `data/clean` (which nyiso-228 had recorded as **inert** — it is not).
 
-**Records:** `docs/FINDING-nyiso229-phase0-the-outage-window-grain-2026-09-12.md`,
-`docs/RESULT-nyiso229-the-2022-screen-2026-09-12.md`,
-`results/calibration/PRECOMMIT-nyiso229-outage-window-hour-grain.md` + three addenda,
-`results/calibration/_nyiso229_screen_gates_2022.json`,
+**Records:** `docs/records/nyiso/FINDING-nyiso229-phase0-the-outage-window-grain-2026-09-12.md`,
+`docs/records/nyiso/RESULT-nyiso229-the-2022-screen-2026-09-12.md`,
+`docs/records/nyiso/PRECOMMIT-nyiso229-outage-window-hour-grain.md` + three addenda,
+`results/phase0/nyiso/_nyiso229_screen_gates_2022.json`,
 `scripts/gen_nyiso229_attestation.py`,
-`docs/handoffs/FINDING-nyiso229-arm-y2024-blocked-2026-09-12.md`.
+`docs/records/nyiso/FINDING-nyiso229-arm-y2024-blocked-2026-09-12.md`.
 **New rule this session:** 33 `[R-SHARD-ARCHIVE]` (owner instruction).
 
 ## nyiso-231 — 2026-09-13
@@ -14093,9 +14093,9 @@ bundle is **pushed and retrievable** — `git checkout 451fa7f32ffacacbc85083aa3
 results/calibration/nyiso232_arm_y2022` — so a "yes" costs **zero** re-solves for 2022 and ~25 min
 for the remaining three years.
 
-Records: `docs/RESULT-nyiso232-st-gas-deleak-screen-2026-09-13.md`,
-`docs/FINDING-nyiso232-c3a-is-two-objects-2026-09-13.md`,
-`results/calibration/PRECOMMIT-nyiso232-st-gas-deleak.md`,
+Records: `docs/records/nyiso/RESULT-nyiso232-st-gas-deleak-screen-2026-09-13.md`,
+`docs/records/nyiso/FINDING-nyiso232-c3a-is-two-objects-2026-09-13.md`,
+`docs/records/nyiso/PRECOMMIT-nyiso232-st-gas-deleak.md`,
 `scripts/probes/_nyiso232_{st_gas_phase0,screen_gates,c3a_two_objects}.py`.
 One shard (5m23s solve), archived after fetch + checkout + signature verification; its branch is
 **kept** because it carries a bundle a promotion would register (rule 33(f)(3)).
@@ -14133,7 +14133,7 @@ downgrade is **C8 alone**, and C8 failing is *also* what strips C3c of lone-fail
 rule 22 guard (a), reverting it from a ledgered caveat to a FAIL. Remove C8 and **both** resolve.
 
 **C8's failure is a SHARED-SCORER ARTIFACT, proved not asserted**
-(`docs/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md`): D-2 labels a plant by its most
+(`docs/records/misc/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md`): D-2 labels a plant by its most
 common unit group counted in **LP ROWS**, so this mechanism's declared smoothing-ladder collapse
 (ST_GAS 88 → 44 rows) flips **Ravenswood (2500) on an 8–7 margin** and 2511 on a 4–4 tie. The
 numerator moves within ±2 %; the denominator collapses 33–52 %; every dispatch-side measure of
@@ -14153,8 +14153,8 @@ years** (well inside band); C1-2022 CC_REGULAR still fails (+5.20 → +5.07 TWh)
 not on NYISO's headline moving to NOT-YET on a scorer defect. Either leave it documented, or
 authorise the D-2 capacity-weighted vote as a **cross-ISO** change measured on SPP/SOCO/CAISO first.
 
-Records: `docs/RESULT-nyiso232-st-gas-deleak-screen-2026-09-13.md` §11,
-`results/calibration/PRECOMMIT-nyiso232-st-gas-deleak.md` Addendum A,
+Records: `docs/records/nyiso/RESULT-nyiso232-st-gas-deleak-screen-2026-09-13.md` §11,
+`docs/records/nyiso/PRECOMMIT-nyiso232-st-gas-deleak.md` Addendum A,
 `scripts/gen_nyiso232_attestation.py` (six computed checks, aborts on a false premise).
 Span shard archived after fetch + checkout + signature verification; bundle retrievable at
 `git checkout fc545728636b40d402f5fcba4cae4f6edc42c19e -- results/calibration/nyiso232_deleak_span`.
@@ -14258,9 +14258,9 @@ removal (r vs gas −0.92 to −0.99); 2022's C1/C3a/C3b; and CT_PEAKER's consis
 actual in all four years, whose matrix partner `nyiso_gas_bridge_startup_aware` is now armed on the
 keeper, so `ct_peaker_bands_measured`'s re-test condition is closer than its `R` cell reads.
 
-Records: `docs/FINDING-nyiso233-d2-capacity-weighted-vote-2026-09-13.md`,
-`docs/FINDING-nyiso233-tail-is-an-availability-object-2026-09-13.md`,
-`results/calibration/PRECOMMIT-nyiso233-d2-capacity-weighted-vote.md`,
+Records: `docs/records/nyiso/FINDING-nyiso233-d2-capacity-weighted-vote-2026-09-13.md`,
+`docs/records/nyiso/FINDING-nyiso233-tail-is-an-availability-object-2026-09-13.md`,
+`docs/records/nyiso/PRECOMMIT-nyiso233-d2-capacity-weighted-vote.md`,
 `scripts/probes/_nyiso233_{d2_capacity_vote_measure,tail_mechanism_census}.py`.
 **ZERO LP this session** (rule 32 `[R-SHARD]` (a)): no shard was launched and none was needed.
 
@@ -14268,8 +14268,8 @@ Records: `docs/FINDING-nyiso233-d2-capacity-weighted-vote-2026-09-13.md`,
 
 **ZERO LP. Nothing armed, no cell promoted, keeper UNCHANGED at
 `2026-09-13-nyiso-232-st-gas`. No shard launched — there is nothing to solve until an
-intake lands.** Records: `docs/FINDING-nyiso234-tail-gas-is-unobserved-2026-09-14.md`,
-`docs/DECISION-CARD-nyiso234-tail-gas-coverage-2026-09-14.md`. Probes
+intake lands.** Records: `docs/records/nyiso/FINDING-nyiso234-tail-gas-is-unobserved-2026-09-14.md`,
+`docs/records/nyiso/DECISION-CARD-nyiso234-tail-gas-coverage-2026-09-14.md`. Probes
 `scripts/probes/_nyiso234_tail_season_reach.py` and `_nyiso234_gas_coverage_tail.py`
 (argument = tail depth %).
 
@@ -14376,9 +14376,9 @@ not touched). `audit_keepers --iso NYISO` passes **0 failures**. The audit test 
 
 **THE RULE-29 `[R-SCREEN]` SCREEN OF THE REPAIRED DELIVERED-GAS SERIES CLEARS (G-1…G-5), AND THE
 FULL SPAN IS SOLVED. KEEPER UNCHANGED — PROMOTION IS THE OWNER'S CALL AND IS OPEN.**
-Full record: `docs/RESULT-nyiso235-gas-repair-screen-2026-09-14.md`. Pre-registration:
-`docs/PRECOMMIT-nyiso234-gas-repair-screen-2026-09-14.md` +
-`docs/PRECOMMIT-nyiso235-gas-repair-screen-ADDENDUM-2026-09-14.md`, both pushed before any solve.
+Full record: `docs/records/nyiso/RESULT-nyiso235-gas-repair-screen-2026-09-14.md`. Pre-registration:
+`docs/records/nyiso/PRECOMMIT-nyiso234-gas-repair-screen-2026-09-14.md` +
+`docs/records/nyiso/PRECOMMIT-nyiso235-gas-repair-screen-ADDENDUM-2026-09-14.md`, both pushed before any solve.
 
 **What was tested: an INPUT, not a mechanism.** Zero `ScenarioConfig` fields moved, no flag armed,
 DOF ledger untouched, `authorized_price_tuning` NONE. The arm is the keeper's frozen recipe replayed
@@ -14523,7 +14523,7 @@ promotion state was re-verified after it.
 **ZERO LP.** Orchestrator-only (rule 32 `[R-SHARD]` (a)). The keeper
 `2026-09-14-nyiso-235-gas-repair` is **unchanged**; no `ScenarioConfig` field moved, so no mechanism
 cell moves (rule 28 `[R-MECH-MATRIX]` (b)) and no run was registered. Record:
-`docs/FINDING-nyiso236-the-anchor-grain-and-the-gas-slope-2026-09-16.md`; probes
+`docs/records/nyiso/FINDING-nyiso236-the-anchor-grain-and-the-gas-slope-2026-09-16.md`; probes
 `scripts/probes/nyiso236_anchor_grain_phase0.py` and `nyiso236_gas_slope_phase0.py`.
 
 **G-DRIFT re-run at this head** (`edd40943` vs the keeper's solve sha `2ebc58df`): `moved_rows("NYISO")`
@@ -14553,7 +14553,7 @@ zone — so it cannot identify a per-class markup's fuel-elasticity. "NYISO publ
 equivalent" also stands as written: what NYISO withholds is the *unit identity*, not the offer data,
 which is why the nyiso-87 gas-bridge CAMPD reconstruction is untouched. The cell that DOES re-open on
 this corpus is `measured_offer_surface` (`G` -> `U`), which needs a distribution rather than a unit:
-`docs/RESULT-nyiso243-the-tail-is-not-an-availability-object-2026-09-20.md`.)*
+`docs/records/nyiso/RESULT-nyiso243-the-tail-is-not-an-availability-object-2026-09-20.md`.)*
 
 **Object B — RE-MEASURED CORRECTLY FOR THE FIRST TIME.** nyiso-235's dead end was a wrong-file problem:
 the actual hourly RT LMP series is committed at
@@ -14583,7 +14583,7 @@ gas-family energy 3.91 / 0.41 / 0.45 / 1.08 % at $8.66 / $3.34 / $2.82 / $5.46 g
 
 **ZERO LP.** Orchestrator-only (rule 32 `[R-SHARD]` (a)); no shard launched, no bundle written, no run
 registered. Keeper `2026-09-14-nyiso-235-gas-repair` **unchanged**. Record:
-`docs/RESULT-nyiso237-hydro-negative-price-phase0-2026-09-16.md`; probe
+`docs/records/nyiso/RESULT-nyiso237-hydro-negative-price-phase0-2026-09-16.md`; probe
 `scripts/probes/nyiso237_hydro_negprice_phase0.py`.
 
 **G-DRIFT at `a3df8337`**: `moved_rows("NYISO") == {}`, fingerprint `bd2b4657f9b5df7e` reproduces —
@@ -14621,9 +14621,9 @@ stay at their pinned SHAs. Rule 33: no shards to archive.
 **ZERO LP. Keeper UNCHANGED** (`2026-09-17-nyiso239-bench-oil-basis`, years {2022,2023,2024,2025},
 `CALIBRATED`, grade 7, fails 0, C3c the lone ledgered caveat). Nothing armed, screened, solved,
 promoted or registered; no mechanism-matrix cell moves. Record:
-`docs/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md`; probe
+`docs/records/nyiso/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md`; probe
 `scripts/probes/nyiso240_c1_margin_bench_phase0.py` →
-`results/calibration/_nyiso240_c1_margin_bench_phase0.json`.
+`results/phase0/nyiso/_nyiso240_c1_margin_bench_phase0.json`.
 
 **The handoff's winter/deliverability lead is WITHDRAWN on evidence.** Against NYISO's own published
 hourly fuel mix the model's total fossil is **+2.0 % in February and +0.8 % in November** 2022
@@ -14660,7 +14660,7 @@ retain or delete. Rule 33: no shards launched.
 all four registered years 2022-2025, superseding `2026-09-17-nyiso239-bench-oil-basis` (pruned this
 session, rule 35 `[R-PROMOTE]` (a)). Owner ruling, verbatim: *"Is this a recommended keeper candidate?
 If so plz promote. If structural integrity improves but gates regress that may still be a keeper.."*
-Record: `docs/RESULT-nyiso240-bench-attribution-promotion-2026-09-19.md`.
+Record: `docs/records/nyiso/RESULT-nyiso240-bench-attribution-promotion-2026-09-19.md`.
 
 **ZERO LP, and the dispatch is bit-for-bit the superseded keeper's.** nyiso-239's four per-year shard
 bundles were re-fetched by full SHA (`5802986a` / `0f03dd49` / `ce299f37` / `9859790c` — all still
@@ -14700,7 +14700,7 @@ Rule 31: the four retrieved nyiso-239 legs stay on disk, gitignored, never `rm`'
 (`1fdcc69c`), **`dispatch/<yr>_P1.parquet` is byte-identical by sha256 in all four years**, as is
 `unit_hourly`; `class_hourly` deviates by **0.000e+00** on every class and every hour; `system`
 prices are identical. The only differences anywhere are ADDED COLUMNS. Record:
-`docs/RESULT-nyiso240-bench-attribution-promotion-2026-09-19.md` **Addendum A**.
+`docs/records/nyiso/RESULT-nyiso240-bench-attribution-promotion-2026-09-19.md` **Addendum A**.
 
 **Why a control was owed despite the arm being promoted**: the promotion was zero-LP, so the keeper's
 bundle is nyiso-239's 2026-09-17 dispatch and predates the emissions dual (`2ec09663`, 2026-09-18).
@@ -14734,9 +14734,9 @@ the composed span are gitignored, not removed. Rule 33: all five shards archived
 
 **ZERO LP, ZERO SHARDS, keeper `2026-09-19-nyiso241-ct-committed-measured` UNCHANGED, nothing
 armed or registered.** Executes the `RESULT-nyiso243` §6 design pass on `measured_offer_surface`.
-Gates fixed in `docs/PRECOMMIT-nyiso244-measured-offer-surface-design-2026-09-20.md` at
+Gates fixed in `docs/records/nyiso/PRECOMMIT-nyiso244-measured-offer-surface-design-2026-09-20.md` at
 `2e5097a5` **before any conditioned number**. Record:
-`docs/RESULT-nyiso244-the-object-is-in-the-body-not-the-top-2026-09-20.md`.
+`docs/records/nyiso/RESULT-nyiso244-the-object-is-in-the-body-not-the-top-2026-09-20.md`.
 
 **REFUSED AT THE GATE, and the refusal is the useful part.** The shared conditional-surface
 kernel prices **peak rungs only**. In the 70 missed winter hours of 2022 the idle sub-$300
@@ -14777,9 +14777,9 @@ no solve-path code and adds zero.
 
 **ORCHESTRATOR, zero LP in the parent** (rule 32 `[R-SHARD]` (a)). Base `origin/main` `5c0bec8b`,
 **rebased mid-session onto `e8b80102`** at the owner's instruction. PRECOMMIT
-`docs/PRECOMMIT-nyiso245-position-shape-offer-surface-2026-09-20.md` committed at **`398f0437`**
+`docs/records/nyiso/PRECOMMIT-nyiso245-position-shape-offer-surface-2026-09-20.md` committed at **`398f0437`**
 (`5cbf4fef` post-rebase, content unchanged) before any gated number. RESULT
-`docs/RESULT-nyiso245-the-object-is-level-dispersion-not-shape-2026-09-20.md`.
+`docs/records/nyiso/RESULT-nyiso245-the-object-is-level-dispersion-not-shape-2026-09-20.md`.
 **Keeper UNCHANGED** (`2026-09-19-nyiso241-ct-committed-measured`); NYISO still **CALIBRATED** on
 its ISO tier with C3c the lone ledgered caveat. Nothing registered, nothing promoted.
 
@@ -14851,8 +14851,8 @@ vintage, plant-specific heat rates and granular CAMPD outages. **Owner ruling** 
   - `eia_generation_profiles` starts at 2021, and I-NYISO (#6587) could not rebuild it.
   - The NYISO reserve requirements before 2022 are landed by #6587. **2021 becomes solvable once
     #6587 merges.**
-- **Records:** `docs/PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md` and
-  `docs/RESULT-r-nyiso-backcast-inputs-2026-09-24.md`.
+- **Records:** `docs/records/nyiso/PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md` and
+  `docs/records/nyiso/RESULT-r-nyiso-backcast-inputs-2026-09-24.md`.
 
 ## Y-31 — 2026-09-25 — owner ruling R-BC: the `complete` marker WITHDRAWN (Q5, fourth time); keeper UNTOUCHED
 
@@ -14895,7 +14895,7 @@ too.
   - C3a improves every year.
   - C8 ST_GAS forced share up (2023 12.2 → 15.2 %), PASS.
 - **Superseded and pruned:** `2026-09-24-nyiso-r-inputs-860vintage`.
-- **Record:** `docs/RESULT-nyiso-stgas-2023-ldc-leg-2026-09-25.md`.
+- **Record:** `docs/records/nyiso/RESULT-nyiso-stgas-2023-ldc-leg-2026-09-25.md`.
 - **Owner-held:** reinstating the withdrawn `complete` marker on the now-CALIBRATED keeper.
 
 ## NYISO-NEXT — 2026-09-26 — the NYC persistent-base floor stops forcing laid-up steam; keeper promoted
@@ -14912,7 +14912,7 @@ too.
   - D-4 FAIL set 11 → 7 (Astoria 8906 2023, Ravenswood 2500 2021 cleared).
   - Held-out 2021 NOT-YET on C1 CC_REGULAR +3.81 TWh (reported, rule 30(c)).
 - **Superseded and pruned:** `2026-09-25-nyiso-stgas-ldc-leg` + its 2021 run.
-- **Record:** `docs/RESULT-nyiso-next-floor-layup-2026-09-26.md`.
+- **Record:** `docs/records/nyiso/RESULT-nyiso-next-floor-layup-2026-09-26.md`.
 
 ## NYISO-NEXT-2 — 2026-09-26 — the Astoria stack-duplicate boiler pair in the outage extract; keeper promoted
 
@@ -14928,7 +14928,7 @@ too.
   - Astoria gains +1.0 to +1.8 TWh a year, so NYC steam moves further over EIA-923 (pre-registered).
   - One new gas-bridge D-4 row, 8906 in 2024 (0.005 TWh).
 - **Superseded and pruned:** `2026-09-26-nyisonext-floor-layup-span` and its 2021 run.
-- **Record:** `docs/RESULT-nyiso-next2-astoria-pair-2026-09-26.md`.
+- **Record:** `docs/records/nyiso/RESULT-nyiso-next2-astoria-pair-2026-09-26.md`.
 
 ## NYISO-NEXT-3 — 2026-09-26 — the committed tranche share on the solve's own availability basis; keeper promoted
 
@@ -14946,7 +14946,7 @@ too.
 - **Finding for the next lane:** NYC steam over-dispatch is NOT a tranche-share object. Every non-peak
   band sits at ~$32–36 against a ~$34 NYC price, and the plants really run at minimum load.
 - **Superseded and pruned:** `2026-09-26-nyisonext2-astoria-pair-span` and its 2021 run.
-- **Record:** `docs/RESULT-nyiso-next3-tranche-basis-2026-09-26.md`.
+- **Record:** `docs/records/nyiso/RESULT-nyiso-next3-tranche-basis-2026-09-26.md`.
 
 ## NYISO-NEXT-6 — 2026-09-27 — Long Island seam posted-limit sub-clip; keeper promoted
 
@@ -14962,7 +14962,7 @@ too.
 - **G-4 finding:** C3a 2022 −10.8 → −11.5 %. Upstate_West −2.02 $/MWh because the single
   `NYISO_external` star node re-sells LI's unusable import to Zone A.
 - **Superseded and pruned:** `2026-09-26-nyisonext3-tranche-basis-span` and its 2021 run.
-- **Record:** `docs/RESULT-nyiso-next6-li-posted-limit-2026-09-27.md`.
+- **Record:** `docs/records/nyiso/RESULT-nyiso-next6-li-posted-limit-2026-09-27.md`.
 
 ## NYISO-NEXT-7 — 2026-09-27 — external star node: phase 0, lever refused on identification
 
@@ -14980,7 +14980,7 @@ too.
   - `seam_neighbour_anchored_ladder` U → G. No solve, no shard, keeper unchanged.
 - **Side defect:** the aggregate ladder derivation double-counts `SCH - HQ_IMPORT_EXPORT`. Routed to
   the next lane.
-- **Record:** `docs/FINDING-nyiso-next7-star-node-2026-09-27.md`.
+- **Record:** `docs/records/nyiso/FINDING-nyiso-next7-star-node-2026-09-27.md`.
 
 ## NYISO-NEXT-8 — 2026-09-27 — HQ double count removed from the import ladder; keeper promoted
 
@@ -14996,7 +14996,7 @@ too.
   - Span NOT-YET (C3a 2022 −11.5 → −11.3 %, 2025 −10.9 → −11.2 %); 2021 CALIBRATED.
 - **Routed:** the 900 MW HQ_hydro always-on floor sits above measured total net import in 0.5–6.5 % of hours every year (rule-17 question). The HQ seam is a net export in 2024–2025.
 - **Superseded and pruned:** `2026-09-27-nyisonext6-li-cap-span` and its 2021 run.
-- **Record:** `docs/RESULT-nyiso-next8-hq-dedupe-2026-09-27.md`.
+- **Record:** `docs/records/nyiso/RESULT-nyiso-next8-hq-dedupe-2026-09-27.md`.
 
 ## NYISO-NEXT-9 — 2026-09-28 — always-on 900 MW HQ_hydro import floor removed; keeper promoted
 
@@ -15013,7 +15013,7 @@ too.
   - Span NOT-YET (C3a 2022 −11.3 %, 2025 −11.2 → −11.4 %); 2021 CALIBRATED.
 - **Matrix:** `nyiso_firm_imports` K → R.
 - **Superseded and pruned:** `2026-09-27-nyisonext8-hq-dedupe-span` and its 2021 run.
-- **Record:** `docs/RESULT-nyiso-next9-hq-floor-2026-09-28.md`.
+- **Record:** `docs/records/nyiso/RESULT-nyiso-next9-hq-floor-2026-09-28.md`.
 
 ## NYISO-NEXT-12 — 2026-09-29 — the NE AC tie on its own two-way node; keeper promoted on structure
 
@@ -15027,7 +15027,7 @@ too.
   - Span NOT-YET; 2021 CALIBRATED.
 - **Matrix:** `nyiso_ne_ac_node` U → K.
 - **Superseded and pruned:** `2026-09-28-nyisonext9-hq-floor-span` and its 2021 run.
-- **Record:** `docs/RESULT-nyiso-next12-ne-ac-node-2026-09-28.md`.
+- **Record:** `docs/records/nyiso/RESULT-nyiso-next12-ne-ac-node-2026-09-28.md`.
 
 ## NYISO-NEXT-13 — 2026-09-29 — the NE AC node out of the monthly net-interchange band; keeper promoted on structure
 
@@ -15040,11 +15040,11 @@ too.
 - **Cause of the regression:** the band now pins the static pooled ladder to its measured monthly volume (+4.1 / +2.2 TWh in 2021 / 2022).
 - **Matrix:** `nyiso_ne_ac_recon_detach` U → K.
 - **Superseded and pruned:** `2026-09-29-nyisonext12-neac-node-span` and its 2021 run.
-- **Record:** `docs/RESULT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md`.
+- **Record:** `docs/records/nyiso/RESULT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md`.
 
 ## NYISO-NEXT-14 — 2026-09-30 — the Total-East cutset re-tested on five years; keeper promoted, span CALIBRATED
 
-- **Phase 0 (zero LP):** the 2021–2023 C3a miss is entirely the Upstate_West collapse (with Upstate_West exact, C3a would be +4.6 / −1.2 / +0.4 %). The one upstate→east link was capped at CENTRAL EAST, which the measured TOTAL EAST flow exceeds in 60–99 % of hours. Queue item 1 (the pooled ladder) is this object seen from the import side. Record: `docs/FINDING-nyiso-next14-upstate-evacuation-phase0-2026-09-29.md`.
+- **Phase 0 (zero LP):** the 2021–2023 C3a miss is entirely the Upstate_West collapse (with Upstate_West exact, C3a would be +4.6 / −1.2 / +0.4 %). The one upstate→east link was capped at CENTRAL EAST, which the measured TOTAL EAST flow exceeds in 60–99 % of hours. Queue item 1 (the pooled ladder) is this object seen from the import side. Record: `docs/records/nyiso/FINDING-nyiso-next14-upstate-evacuation-phase0-2026-09-29.md`.
 - **Lever:** `nyiso_total_east_cutset_ttc` (existing flag, cell R since nyiso-224). The owner re-opened it by decision card ("Re-test all 5 years").
 - **Result:** keeper `2026-09-30-nyisonext14-total-east-span` (2022–2025), plus the stamped `2026-09-30-nyisonext14-total-east-2021`. Promoted per the pre-registered structural rule.
   - G-1 exact. G-2: the link binds in 7.3 / 17.2 / 7.1 / 3.0 / 5.5 % of hours. G-3: 0 upstate hours at ≤ $0 every year. G-4: C6 / C8 PASS.
@@ -15053,11 +15053,11 @@ too.
 - **Open:** Upstate_West overshoots measured in 2021–2023. The link binds in the wrong hours (nyiso-225's caveat, reported).
 - **Matrix:** `nyiso_total_east_cutset_ttc` R → K.
 - **Superseded and pruned:** `2026-09-29-nyisonext13-recon-detach-span` and its 2021 run.
-- **Record:** `docs/RESULT-nyiso-next14-total-east-cutset-2026-09-30.md`.
+- **Record:** `docs/records/nyiso/RESULT-nyiso-next14-total-east-cutset-2026-09-30.md`.
 
 ## NYISO-NEXT-15 — 2026-09-30 — per-landing import band; keeper promoted on structure, span NOT-YET on C3b 2022
 
-- **Phase 0 (zero LP):** the market's CENTRAL EAST binds when TOTAL EAST flow is high; in those hours the model's link carries 0.5–1.6 GW too little. Part of the cause is the pooled import node: downstate links sit at their p90 envelopes (+400–560 MW over measured), and Upstate_West runs 264–375 MW short. Record: `docs/FINDING-nyiso-next15-landing-allocation-phase0-2026-09-30.md`.
+- **Phase 0 (zero LP):** the market's CENTRAL EAST binds when TOTAL EAST flow is high; in those hours the model's link carries 0.5–1.6 GW too little. Part of the cause is the pooled import node: downstate links sit at their p90 envelopes (+400–560 MW over measured), and Upstate_West runs 264–375 MW short. Record: `docs/records/nyiso/FINDING-nyiso-next15-landing-allocation-phase0-2026-09-30.md`.
 - **Lever:** new flag `nyiso_import_landing_band`. Each pooled border link is banded monthly on its own P-32 attributed schedule, replacing the pooled EIA-930 band. Owner cards: "Build + test 5 yrs", then "P-32 per link" (the EIA-930-share split was infeasible on Long_Island).
 - **Result:** keeper `2026-09-30-nyisonext15-landing-band-span` (2022–2025), plus the stamped `2026-09-30-nyisonext15-landing-band-2021`. G-1 to G-6 pass all five years; promoted per the pre-registered rule (owner card "Promote per rule").
   - C3a: 2021 +11.4 %, 2022 +3.2 %, 2023 +5.6 %, 2024 −1.6 %, 2025 −9.2 %.
@@ -15065,11 +15065,11 @@ too.
   - Zonal prices move ≤ $0.8/MWh. Binding-hour lift and spread do not improve: the overshoot is not an import-allocation effect.
 - **Matrix:** `nyiso_import_landing_band` U → K.
 - **Superseded and pruned:** `2026-09-30-nyisonext14-total-east-span` and its 2021 run.
-- **Record:** `docs/RESULT-nyiso-next15-landing-band-2026-09-30.md`.
+- **Record:** `docs/records/nyiso/RESULT-nyiso-next15-landing-band-2026-09-30.md`.
 
 ## NYISO-NEXT-16 — 2026-09-30 — zonal gas on each zone's own hub; keeper promoted by owner override, span CALIBRATED
 
-- **Phase 0 (zero LP):** C3b 2022 splits into winter downstate under-pricing (48 % of the squared error) and Upstate_West shoulder over-pricing, which is the CENTRAL EAST object (41 %). A CE distribution-factor cap on the single link fails ex ante: measured TOTAL EAST exceeds it in 30–33 % of 2021–22 hours. Record: `docs/FINDING-nyiso-next16-c3b-2022-phase0-2026-09-30.md`.
+- **Phase 0 (zero LP):** C3b 2022 splits into winter downstate under-pricing (48 % of the squared error) and Upstate_West shoulder over-pricing, which is the CENTRAL EAST object (41 %). A CE distribution-factor cap on the single link fails ex ante: measured TOTAL EAST exceeds it in 30–33 % of 2021–22 hours. Record: `docs/records/nyiso/FINDING-nyiso-next16-c3b-2022-phase0-2026-09-30.md`.
 - **Lever:** `nyiso_iroquois_winter_spread`, re-opened from R by owner card "Re-test, 5 yrs". NEXT-14's cutset link removed nyiso-150's coupled-block premise.
 - **Result:** keeper `2026-09-30-nyisonext16-winter-spread-span` (2022–2025), plus the stamped `2026-09-30-nyisonext16-winter-spread-2021`.
   - Gates: G-1/3/4/5/6 pass. G-2(a) fails as drafted: its anchor was wrong, and the east-zone annual gas equals the keeper's to 4 dp. G-7 fails: new D-4 bridge rows for plant 54574 (2024) and plant 55405 (2025).
@@ -15078,7 +15078,7 @@ too.
   - **Span NOT-YET → CALIBRATED.** 2021 NOT-YET (C3a +11.1 %).
 - **Matrix:** `nyiso_iroquois_winter_spread` R → K.
 - **Superseded and pruned:** `2026-09-30-nyisonext15-landing-band-span` and its 2021 run.
-- **Record:** `docs/RESULT-nyiso-next16-winter-spread-2026-09-30.md`.
+- **Record:** `docs/records/nyiso/RESULT-nyiso-next16-winter-spread-2026-09-30.md`.
 
 ## NYISO-NEXT-18 — 2026-10-01 — Indian Point 3 restored Jan–Apr 2021; keeper promoted by owner override, 2021 CALIBRATED
 
@@ -15092,7 +15092,7 @@ too.
   - **2021 NOT-YET → CALIBRATED.** Span CALIBRATED; its criteria move ≤ 0.2 pts.
 - **Matrix:** `mid_vintage_exit_carry`, `fleet_zone_vintage_coords`, `retiree_vintage_status_scope` U → K.
 - **Superseded and pruned:** `2026-09-30-nyisonext16-winter-spread-span` and its 2021 run.
-- **Record:** `docs/RESULT-nyiso-next18-retiree-carry-2026-09-30.md`.
+- **Record:** `docs/records/nyiso/RESULT-nyiso-next18-retiree-carry-2026-09-30.md`.
 
 ## NYISO-NEXT-21 — 2026-10-01 — Astoria on its merged CEMS meter; keeper promoted by owner override, 2021 NOT-YET
 
@@ -15100,7 +15100,7 @@ too.
 - Repair: `derive_campd_gas_st_heat_rates.merge_stack_duplicates`; Astoria 11.645 (eGRID 11.75); every other plant byte-identical; zero config change.
 - Five year-isolated shards (pin `fdc41f36`). G-1..G-5 pass in all years. Astoria TWh 2.08/3.05/2.88/2.40/2.92 -> 0.50/1.48/1.36/1.43/1.83 (CAMPD 0.72/0.89/0.77/0.92/1.35); D-4 rows 11 -> 9.
 - Span CALIBRATED; 2021 C3a +9.2 -> +10.4 % -> NOT-YET. Owner card: 'Promote (override)'. ISO now NOT-YET (rule 30(c)).
-- Pruned the NEXT-18 runs (rule 35). Record: `docs/RESULT-nyiso-next21-astoria-heat-rate-2026-10-01.md`.
+- Pruned the NEXT-18 runs (rule 35). Record: `docs/records/nyiso/RESULT-nyiso-next21-astoria-heat-rate-2026-10-01.md`.
 
 ## NYISO-NEXT-22 — 2026-10-01 — C3a/C3b actual made zone-resolved (owner ruling); ISO still NOT-YET
 
@@ -15110,4 +15110,4 @@ too.
   `actual_lmp_hourly_zonal_NYISO.parquet`, 2018–2025 retrofitted, bench surgically patched (0 STALE).
 - C3a 2021 +2.9 % (PASS), 2022 −2.4, 2023 +1.2, 2024 −4.0, **2025 −11.6 % (FAIL)**. Span NOT-YET; 2021 CALIBRATED;
   ISO NOT-YET. Residual is spatial (Upstate_West high, Long Island low) plus the 2025 downstate top decile.
-- Record: `docs/RESULT-nyiso-next22-zone-resolved-basis-2026-10-01.md`.
+- Record: `docs/records/nyiso/RESULT-nyiso-next22-zone-resolved-basis-2026-10-01.md`.

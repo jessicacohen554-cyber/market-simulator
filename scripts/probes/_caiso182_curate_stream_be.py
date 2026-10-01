@@ -44,7 +44,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
-OUT = REPO / "results/calibration/_caiso182_curate_stream_be.json"
+OUT = REPO / "results/phase0/caiso/_caiso182_curate_stream_be.json"
 
 #: Metadata keys that are stamped at write time and therefore can never match
 #: between two runs of the same writer, let alone two writers.

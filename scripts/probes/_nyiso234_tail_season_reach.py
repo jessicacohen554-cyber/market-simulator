@@ -1,7 +1,7 @@
 """OBJECT A, SEASONAL REACH: can the `temp_dependent_derate` cell reach the tail? (nyiso-234, ZERO LP)
 
 nyiso-233 measured WHAT KIND of object NYISO's price tail is
-(``docs/FINDING-nyiso233-tail-is-an-availability-object-2026-09-13.md``): in the
+(``docs/records/nyiso/FINDING-nyiso233-tail-is-an-availability-object-2026-09-13.md``): in the
 top 1 % of hours by ACTUAL RT price the model carries 3.4-6.2 GW of idle thermal,
 zero slack and near-zero reserve shortfall, so the object is AVAILABILITY, not
 price formation. It then recorded — correctly, per rule 28(a) — that

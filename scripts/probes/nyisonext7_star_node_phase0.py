@@ -268,9 +268,17 @@ def main() -> None:
     """Run the phase-0 measurement and write the JSON record."""
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--ctrl-dir", type=Path, required=True)
-    ap.add_argument("--out", type=Path, default=CALIB / "_nyisonext7_phase0.json")
+    ap.add_argument(
+        "--out",
+        type=Path,
+        default=CALIB.parent / "phase0" / "nyiso" / "_nyisonext7_phase0.json",
+    )
     args = ap.parse_args()
-    cut = json.loads((CALIB / "_nyisonext6_g1_footprint.json").read_text())
+    cut = json.loads(
+        (
+            CALIB.parent / "phase0" / "nyiso" / "_nyisonext6_g1_footprint.json"
+        ).read_text()
+    )
     rec = {
         str(y): {
             "measured": measured_block(y),

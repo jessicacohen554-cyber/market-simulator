@@ -93,7 +93,7 @@ Docs to reconcile once the approach is settled:
 
 NYISO's locality rows (NYC / Long Island LCR `requirement` MW, `import_limit` = the TSL)
 are consumed by the D59 mechanism, `ScenarioConfig.locality_capacity_curves` (GATED,
-default off; design `docs/handoffs/DESIGN-capx-d59-nyiso-locality-2026-09-05.md`), NOT
+default off; design `docs/records/forecast/DESIGN-capx-d59-nyiso-locality-2026-09-05.md`), NOT
 by Part B. Two reasons, both structural: (i) NYISO's spot market clears a price PER
 LOCALITY on the locality's own published demand curve, capped below by the NYCA price
 (ICAP Manual §5.15.2) — a sloped locational price, not a binary long-zone collapse;

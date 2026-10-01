@@ -1,7 +1,7 @@
 """Solve one slice of a PB-5 sampler ensemble's members, strictly sequentially.
 
 The production probability-band batch (PB-5,
-``docs/handoffs/probability-bounds-plan-2026-07.md`` §5) runs ensemble members
+``docs/records/misc/probability-bounds-plan-2026-07.md`` §5) runs ensemble members
 as SEPARATE sequential invocations, at most two concurrent (CLAUDE.md rule 12;
 gap-register G-35's operational note: the concurrent ``ProcessPoolExecutor``
 member path in ``ensemble.py`` is not the production route). This driver is

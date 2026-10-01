@@ -40,7 +40,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 BUNDLE = REPO / "results" / "calibration" / "nyiso241_ctcommitted_span"
 GENBIDS = REPO / "data" / "raw" / "nyiso-bid-data" / "genbids"
-OUT = REPO / "results" / "calibration" / "_nyiso244_system_offer_curve.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso244_system_offer_curve.json"
 
 HOURS = 8760
 #: The price grid the two curves are evaluated on. Deliberately a GRID, not a

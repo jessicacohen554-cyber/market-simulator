@@ -3,7 +3,7 @@
 
 Two defects this gate exists to stop, both observed live on
 ``results/regression-goldens/perfb-stage0/manifest.json`` and recorded in
-``docs/FINDING-stage0-provenance-repair-2026-09.md``:
+``docs/records/misc/FINDING-stage0-provenance-repair-2026-09.md``:
 
 **A. Wrong-tree provenance.** Schema v1 carried ONE top-level ``git_sha`` for
 however many captures the manifest held. ``capture_keeper_goldens.write_manifest``
@@ -35,7 +35,7 @@ owner ruling 2026-08-26. Both key forms go through :func:`live_keeper`, so a
 partition golden reports CURRENT/STALE against the config it was actually
 captured against instead of the perpetual ``STALE (live keeper: None)`` that a
 bare-ISO-only lookup would produce
-(``docs/FINDING-stage0-capture-neiso-ercot-2026-09.md`` §2 blocker 4). Partition
+(``docs/records/neiso/FINDING-stage0-capture-neiso-ercot-2026-09.md`` §2 blocker 4). Partition
 entries are ordinary schema-v2 entries in every other respect and are validated
 identically — the representation is additive, so nothing here special-cases
 them beyond the key split.
@@ -84,7 +84,7 @@ still held to every v2 invariant but is reported as a historical capture record
 instead of being compared to the live shard — a manifest ``keeper_id`` records
 which run's outputs were actually captured, so retiring the key never rewrites
 the entries written under it. Record:
-``docs/handoffs/FINDING-y14-ercot-golden-forward-2026-09-05.md``.
+``docs/records/governance/FINDING-y14-ercot-golden-forward-2026-09-05.md``.
 
 Exit codes:
     0 — every manifest conforms (pruned sidecars and stale keepers are reported,
@@ -186,7 +186,7 @@ RETIRED_CAPTURE_KEYS: dict[str, str] = {
         '"ERCOT key"): "The golden config should be the 2024:2025 one not '
         '2023" — the ERCOT stage-0 golden is the FORWARD config on its '
         "designated span {2024, 2025} under the bare ERCOT key; "
-        "docs/handoffs/FINDING-y14-ercot-golden-forward-2026-09-05.md"
+        "docs/records/governance/FINDING-y14-ercot-golden-forward-2026-09-05.md"
     ),
 }
 
@@ -201,7 +201,7 @@ RETIRED_CAPTURE_KEYS: dict[str, str] = {
 # manifests have a pruned provenance run and no keeper_snapshot — the perfb-stage0
 # five-wide condition is repo-wide at 96 %. Migrating them needs the same
 # per-manifest historical recovery perfb-stage0 got and is a separate, owner-
-# scoped job; see docs/FINDING-stage0-provenance-repair-2026-09.md §6.
+# scoped job; see docs/records/misc/FINDING-stage0-provenance-repair-2026-09.md §6.
 LEGACY_V1_MANIFESTS = frozenset(
     {
         "3e-after",
@@ -299,7 +299,7 @@ def live_keeper(key: str) -> str | None:
       ``config_partition.configs[]`` entry whose ``role`` matches the half
       after the separator. This is the lookup that makes a partition golden
       report its true state instead of ``STALE (live keeper: None)`` forever
-      (``docs/FINDING-stage0-capture-neiso-ercot-2026-09.md`` §2 blocker 4).
+      (``docs/records/neiso/FINDING-stage0-capture-neiso-ercot-2026-09.md`` §2 blocker 4).
 
     Returns None when the shard is missing/unreadable, or when the named role is
     not (or is no longer) designated — which the caller reports as STALE, the

@@ -1,7 +1,7 @@
 """NYISO-NEXT-9 G-1 leg acceptance + span composition (zero LP).
 
 The arm is the NEXT-8 keeper's recipe replayed at the pin with ONE delta,
-``nyiso_firm_imports: false`` (``docs/PRECOMMIT-nyiso-next9-hq-floor-2026-09-28.md``
+``nyiso_firm_imports: false`` (``docs/records/nyiso/PRECOMMIT-nyiso-next9-hq-floor-2026-09-28.md``
 sec. 6). Per leg:
 
 * S0 -- solved at the pin (``git.basis_sha``);

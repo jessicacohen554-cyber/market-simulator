@@ -1,6 +1,6 @@
 """SPP-73 M4 (continued): the worst-case ceiling of SPP's P0->P1 start-up channel. Zero LP.
 
-Pre-registered context: ``docs/handoffs/PRECOMMIT-spp-73-commitment-reach-2026-09-22.md`` §5.
+Pre-registered context: ``docs/records/spp/PRECOMMIT-spp-73-commitment-reach-2026-09-22.md`` §5.
 The P1 markup is ``startup_cost_per_mw / mean P0 run length`` (``commitment.compute_monthly_markup``),
 so its largest possible value on any row is ``startup_cost_per_mw`` (a one-hour run). Per rung
 year, rebuild the fleet (``fleet_only``) and report, in the RT top-88 hours, the highest P1 bid

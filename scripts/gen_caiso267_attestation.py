@@ -36,7 +36,7 @@ YEARS = (2023, 2024, 2025)
 #: Actual RT hours > $200/MWh (C3c basis; caiso-204 finding §C / keeper ledger).
 ACTUAL_TAIL = {2023: 47, 2024: 35, 2025: 8}
 KEEPER = REPO / "results/calibration/caiso260_demand_vintage"
-CURVE = REPO / "results/calibration/_caiso267_fossil92_offer_curve.json"
+CURVE = REPO / "results/phase0/caiso/_caiso267_fossil92_offer_curve.json"
 SCALE = 0.92
 
 _ATTEST = (
@@ -141,7 +141,7 @@ def _tuning_declaration(years: list[int]) -> dict:
                 "resolved curve has no entry for it, so adding one would be a "
                 "new parameter rather than a cut of an existing one."
             ),
-            "file": "results/calibration/_caiso267_fossil92_offer_curve.json",
+            "file": "results/phase0/caiso/_caiso267_fossil92_offer_curve.json",
         },
         # Rule 1 (b) is tested by EXACT SET EQUALITY against the RUN's own scored
         # years (calibration_verdict._authorized_tuning_finding), so this must be
@@ -164,7 +164,7 @@ def _tuning_declaration(years: list[int]) -> dict:
             "scorecard says."
         ),
         "prereg": (
-            "results/calibration/ADDENDUM-caiso267-fossil-offer-8pct-2026-09-09.md "
+            "docs/records/caiso/ADDENDUM-caiso267-fossil-offer-8pct-2026-09-09.md "
             "(pushed BEFORE the first LP), on "
             "PRECOMMIT-caiso267-belly-conduct-measured-2026-09-09.md"
         ),

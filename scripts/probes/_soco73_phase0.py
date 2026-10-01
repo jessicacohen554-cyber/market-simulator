@@ -861,7 +861,7 @@ def main_greedy_gas(years: list[int]) -> None:
 
 CENSUS_OUT: dict = {}
 #: committed census record the soco-72 composer checks the legs against (§7(2)).
-CENSUS_PATH = _ROOT / "docs/handoffs/r-soco/soco73_census.json"
+CENSUS_PATH = _ROOT / "docs/records/soco/r-soco/soco73_census.json"
 
 
 def main_fleet_gas(years: list[int]) -> None:

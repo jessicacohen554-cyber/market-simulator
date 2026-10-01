@@ -20,7 +20,7 @@ from market_sim.data import outages
 
 YEARS = (2023, 2024, 2025)
 ISO = "NYISO"
-OUT = Path("results/calibration/_nyiso177_root_cause_phase0.json")
+OUT = Path("results/phase0/nyiso/_nyiso177_root_cause_phase0.json")
 
 
 def _legs() -> dict[str, dict[int, dict]]:

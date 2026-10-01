@@ -158,7 +158,7 @@ class TestCcCommittedOfferMargin(unittest.TestCase):
 
     def test_other_classes_are_out_of_scope(self):
         """CT/ST/coal committed rows keep their own mechanisms."""
-        for group in ("CT_PEAKER", "ST_GAS", "COAL", "CT_CHP"):
+        for group in ("CT_PEAKER", "ST_GAS", "COAL_BIT", "CT_CHP"):
             with self.subTest(group=group):
                 mc = _mc([_cc(group=group)], _armed(), ANCHOR)
                 self.assertAlmostEqual(float(mc[0, 0]), HR * ANCHOR + VOM, places=9)
@@ -199,7 +199,7 @@ class TestCcCommittedOfferMargin(unittest.TestCase):
         # Nothing about THIS file's mechanism moved — the pin advances because the
         # global default did. Rationale and provenance live on the pin in
         # tests/regression/test_persisted_identity.py; pre-declared BEFORE the solve
-        # in docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
+        # in docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
         # capx D65-B-R, completing the partial re-key fb93b76e left behind.
         self.assertEqual(ScenarioConfig().cache_key(), "547053bdfccd4264")
 

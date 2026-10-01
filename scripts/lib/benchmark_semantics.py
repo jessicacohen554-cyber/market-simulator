@@ -68,7 +68,7 @@ COAL_GROUPS: tuple[str, ...] = COAL_CLASSES
 # propagate one fuel over: its docstring declines to force EIA-930's coal/gas
 # attribution onto the 923 split because that attribution is unreliable against
 # CAMPD. Evidence, four independent arbiters and the cross-ISO census:
-# docs/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md.
+# docs/records/nyiso/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md.
 OIL_GROUPS: tuple[str, ...] = ("oil",)
 
 
@@ -137,7 +137,7 @@ EIA930_GAS_FOLD_REFUTED: frozenset[str] = frozenset({"SOCO"})
 # years keep 930.
 #
 # CAISO 2024 -> 2023 (owner ruling 2026-07-26, caiso-121; evidence
-# results/calibration/FINDING-caiso115-c4-freshlook-and-separability-2026-07-23.md
+# docs/records/caiso/FINDING-caiso115-c4-freshlook-and-separability-2026-07-23.md
 # §"2023 fail is a BENCHMARK-BASIS artifact" + the caiso-121 three-source level
 # test). The original 2024 onset kept 2023 on the 930 cell "for continuity — the
 # two agree pre-onset"; they do not. On the SAME two independent measured

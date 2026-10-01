@@ -114,7 +114,7 @@ def test_gas_daily_shape_factors_mean_preserving(monkeypatch):
     grid does not preserve the mean in a convex gas-spike month; the explicit
     per-month renormalization in ``gas_daily_shape_factors`` restores it.
     Regression for the Jan-2024 +2% (+$0.10/MMBtu delivered) overshoot — the
-    G-A1 finding (docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md). Multiplying a
+    G-A1 finding (docs/records/pjm/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md). Multiplying a
     flat monthly gas level by these factors must leave the monthly mean unchanged,
     or the daily shaping silently shifts the fuel-cost level (and the annual
     burn / generation mix with it — CLAUDE.md rule 13).

@@ -44,8 +44,8 @@ and was measured to be inert: the model's joint AC-seam net import
 (1,818 / 1,706 / 1,243 MW p50). It is therefore not built.
 
 Evidence: ``scripts/probes/_nyiso125_seam_envelope.py`` /
-``results/calibration/_nyiso125_seam_envelope.json`` /
-``results/calibration/PREREG-nyiso125-seam-envelope-2026-08-04.md``.
+``results/phase0/nyiso/_nyiso125_seam_envelope.json`` /
+``docs/records/nyiso/PREREG-nyiso125-seam-envelope-2026-08-04.md``.
 
 Admissibility (rule 13 ``[R-MEASURED]``)
 ----------------------------------------

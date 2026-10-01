@@ -210,7 +210,7 @@ def build_gmmodel(res: DispatchResult, ctx, iso: str) -> dict[str, float]:
     fleet was invisible to :func:`model_co2_mt_fullplant` (which iterates
     the bench's intensity keys) and read 0.0 in every C1 coal-rank row — the
     FC-4 co2 defect traced in
-    ``docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md``. A plant
+    ``docs/records/forecast/FINDING-capx-d5-crossover-co2-2026-08-30.md``. A plant
     the chain cannot resolve stays generic ``COAL`` — the keeper's own
     residual bucket, so the two lanes remain on one basis.
     """

@@ -1,6 +1,6 @@
 """R-SPP phase-0 zero-LP census: the incumbent SPP keeper recipe vs the R-SPP recipe, per year.
 
-Executes ``docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md`` §5.3.9 step 0.
+Executes ``docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md`` §5.3.9 step 0.
 No LP is built or solved: every number is a ``run_year(..., fleet_only=True)`` rebuild from the
 sanctioned ``bundle_fleet.full_run_year_kwargs`` (the same reconstruction ``replay_keeper.py``
 uses), plus direct reads of the committed CAMPD outage extracts.

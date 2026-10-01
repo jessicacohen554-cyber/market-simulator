@@ -1,7 +1,7 @@
 """SPP MMU offer-side and unreported-derate unavailability shares (SPP-106).
 
 Armed by ``ScenarioConfig.spp_mmu_offer_unavailability`` (default off, SPP-only). Record:
-``docs/handoffs/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md`` §5 (carrier EX). The owner card
+``docs/records/spp/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md`` §5 (carrier EX). The owner card
 "Build EX anyway" was ruled on 2026-10-01.
 
 Source: SPP MMU, *Unavailable Generation Capacity in SPP Markets: Causes and Impacts* (2025-12-19),
