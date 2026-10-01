@@ -2061,3 +2061,15 @@ measured inert). Registered `2026-09-30-soco93-pondage-bound` (soco93_span), PRE
 23–41 MW and low-40 % rises 1–17 MW. C3a moves ≤ 0.1 pp, with zero status flips; D-2/D-4 are unchanged. NOT-YET
 7/4/0/1/2. Owner **"Promote"**: KEEPER → `2026-09-30-soco93-pondage-bound`, and soco92 pruned (rule 35). Owner next lane:
 **soco-94 zero-LP C3a year-pattern diagnosis**. Records: docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-93-2026-09-30.md.
+
+**soco-96 (2026-09-30).** Part A (governance, zero LP): rubric v3.13 makes every registered year gate the ISO
+determination (owner "Shouldn't be considered calibrated if holdout years miss."); SOCO's headline is unchanged at
+NOT-YET (its one 2019–2025 bundle already gated every year). Part B: phase 0 found none of four candidates can
+admissibly close a ledgered row (Elliott 2022 is a ~8 GW quantity gap). Owner **"Oil price at measured burn"**: new
+default-off `dual_fuel_measured_oil_burn` (plant-day CAMPD CO2/heat-input gas/oil mix, Part 75 factors, coal-capable
+units excluded, zero DOF), seven year-isolated shards at `d9d382a0` (G-DRIFT measured inert). Registered
+`2026-09-30-soco96-measured-oil-burn` (soco96_span); PRECOMMIT §7 holds on all five, zero status flips, NOT-YET
+7/4/0/3/0 unchanged; C3a 2022 −12.4 % → −12.0 %, C3b 2022 0.275 → 0.266. Owner **"Promote, admit as backcast
+input"** (also the rule-13 ruling: measured oil-burn days are an admissible backcast-only physical input): KEEPER →
+`2026-09-30-soco96-measured-oil-burn`, soco93 pruned (rule 35). Records: docs/handoffs/r-soco/{PRECOMMIT,RESULT}-soco-96-2026-09-30.md,
+RESULT-soco-96-holdout-years-gate-2026-09-30.md.
