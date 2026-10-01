@@ -6932,3 +6932,12 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - **Card 2 (offer slope, Jan/Apr/Jul/Oct 2019–25):** PJM's coal-like offers are steeper than the keeper's econ ladder in every year (IQR $0.7–2.2 vs $2.8–11.3). Keeper − PJM at +$5 is +0.01 to +0.03 in 2019–21 and −0.03 to −0.10 in 2022–25; 2025 reads like 2024. Refuted. **OPEN, not a limit.**
 - Card 3 not reached.
 - **Record:** `docs/records/pjm/RESULT-pjm-next-21-2026-10-01.md`.
+
+## PJM-NEXT-22 — 2026-10-01 — 2025 coal is a deep-in-money year, not a special one; the 2023/24 coal fit is a cancellation (zero LP)
+
+- **Solves and keeper:** zero LP, zero shards. Keeper unchanged (`2026-09-30-pjm-next16-ovec`); 10 failing cells, NOT-YET.
+- **Card 1 (2025 coal):** 2025 − 2024 = +14.5 TWh. Continuing western plants carry it (AEP-Ohio +7.6, West-APS +5.8; top 15 plants = 97 %). Each one's actual-RT margin rose by more than $5 (RT +$13). Deep-margin coal capacity doubles (38 → 74 TWh-cap); there the model loads coal to 0.97 and real coal to 0.88, the same as in 2021. The keeper's coal loading-vs-margin response is steeper than real coal's in **every** year. In 2023/24 an out-of-money under-run (−3.9 / −3.4) cancels the in-money over-run (+4.1 / +4.3).
+- **Refuted for 2025:** fleet change; LP coal capacity on a gross basis (the keeper max is already 0.97–0.98 × EIA-860 net summer); west congestion (the keeper reproduces the 2025 west discount within $1.1, and PJM actual RT zonal LMPs 2019–2025 were fetched for this); margin re-based on zonal RT.
+- **Card 2:** CT_PEAKER = (i) a persistent per-plant under-run (Tait, Doswell, Madison, Louisa, …) plus (ii) a ComEd/West-APS over-run stepping up at 2022/23 (CT committed band 4.4 → 8.6 TWh). 2021 fails because (i) is at its widest and (ii) has not started. The reserve vintage (+0.35–0.5 GW) does not explain (ii). `ct_peaker_committed_measured` is year-invariant with the wrong 2024/25 sign. The 2022 cluster has nothing new.
+- Card 3 not reached. **OPEN, not limits.**
+- **Record:** `docs/records/pjm/RESULT-pjm-next-22-2026-10-01.md`.

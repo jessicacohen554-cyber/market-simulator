@@ -1,0 +1,868 @@
+{
+ "what": "PJM-NEXT-22 card 1: per-plant coal over-run, 2025 vs 2024. ZERO LP.",
+ "summary": {
+  "2019": {
+   "plants": 74,
+   "model_twh": 200.21,
+   "bench_twh": 185.35,
+   "over_twh": 14.85,
+   "cap_gw": 27.79,
+   "cf_model": 0.822,
+   "cf_real": 0.761,
+   "rt_mean": 25.44,
+   "offer_capw": 18.19
+  },
+  "2020": {
+   "plants": 62,
+   "model_twh": 158.61,
+   "bench_twh": 149.82,
+   "over_twh": 8.78,
+   "cap_gw": 23.82,
+   "cf_model": 0.76,
+   "cf_real": 0.718,
+   "rt_mean": 20.24,
+   "offer_capw": 16.72
+  },
+  "2021": {
+   "plants": 59,
+   "model_twh": 192.91,
+   "bench_twh": 177.26,
+   "over_twh": 15.65,
+   "cap_gw": 25.29,
+   "cf_model": 0.871,
+   "cf_real": 0.8,
+   "rt_mean": 37.14,
+   "offer_capw": 22.9
+  },
+  "2022": {
+   "plants": 55,
+   "model_twh": 164.97,
+   "bench_twh": 156.26,
+   "over_twh": 8.71,
+   "cap_gw": 23.66,
+   "cf_model": 0.796,
+   "cf_real": 0.754,
+   "rt_mean": 68.79,
+   "offer_capw": 38.88
+  },
+  "2023": {
+   "plants": 47,
+   "model_twh": 112.05,
+   "bench_twh": 114.29,
+   "over_twh": -2.24,
+   "cap_gw": 18.16,
+   "cf_model": 0.704,
+   "cf_real": 0.718,
+   "rt_mean": 28.44,
+   "offer_capw": 23.31
+  },
+  "2024": {
+   "plants": 46,
+   "model_twh": 115.56,
+   "bench_twh": 117.12,
+   "over_twh": -1.56,
+   "cap_gw": 18.73,
+   "cf_model": 0.704,
+   "cf_real": 0.714,
+   "rt_mean": 29.53,
+   "offer_capw": 23.81
+  },
+  "2025": {
+   "plants": 65,
+   "model_twh": 149.79,
+   "bench_twh": 136.85,
+   "over_twh": 12.94,
+   "cap_gw": 19.6,
+   "cf_model": 0.872,
+   "cf_real": 0.797,
+   "rt_mean": 42.89,
+   "offer_capw": 24.78
+  }
+ },
+ "by_margin": {
+  "2019": {
+   "m-inf_0": {
+    "over": 3.16,
+    "cf_model": 0.584,
+    "cf_real": 0.526,
+    "cap_twh": 54.6
+   },
+   "m0_5": {
+    "over": 8.1,
+    "cf_model": 0.802,
+    "cf_real": 0.672,
+    "cap_twh": 62.3
+   },
+   "m5_15": {
+    "over": 5.36,
+    "cf_model": 0.921,
+    "cf_real": 0.863,
+    "cap_twh": 92.4
+   },
+   "m15_inf": {
+    "over": 1.92,
+    "cf_model": 0.974,
+    "cf_real": 0.918,
+    "cap_twh": 34.1
+   }
+  },
+  "2020": {
+   "m-inf_0": {
+    "over": -0.9,
+    "cf_model": 0.555,
+    "cf_real": 0.567,
+    "cap_twh": 74.5
+   },
+   "m0_5": {
+    "over": 7.2,
+    "cf_model": 0.813,
+    "cf_real": 0.697,
+    "cap_twh": 61.9
+   },
+   "m5_15": {
+    "over": 4.16,
+    "cf_model": 0.924,
+    "cf_real": 0.846,
+    "cap_twh": 53.0
+   },
+   "m15_inf": {
+    "over": 0.92,
+    "cf_model": 0.933,
+    "cf_real": 0.885,
+    "cap_twh": 19.2
+   }
+  },
+  "2021": {
+   "m-inf_0": {
+    "over": 1.35,
+    "cf_model": 0.615,
+    "cf_real": 0.582,
+    "cap_twh": 40.8
+   },
+   "m0_5": {
+    "over": 4.64,
+    "cf_model": 0.844,
+    "cf_real": 0.725,
+    "cap_twh": 39.0
+   },
+   "m5_15": {
+    "over": 6.14,
+    "cf_model": 0.928,
+    "cf_real": 0.84,
+    "cap_twh": 69.5
+   },
+   "m15_inf": {
+    "over": 6.54,
+    "cf_model": 0.974,
+    "cf_real": 0.884,
+    "cap_twh": 72.2
+   }
+  },
+  "2022": {
+   "m-inf_0": {
+    "over": 0.93,
+    "cf_model": 0.586,
+    "cf_real": 0.558,
+    "cap_twh": 32.6
+   },
+   "m0_5": {
+    "over": 1.11,
+    "cf_model": 0.712,
+    "cf_real": 0.648,
+    "cap_twh": 17.5
+   },
+   "m5_15": {
+    "over": 1.96,
+    "cf_model": 0.772,
+    "cf_real": 0.723,
+    "cap_twh": 40.0
+   },
+   "m15_inf": {
+    "over": 6.97,
+    "cf_model": 0.875,
+    "cf_real": 0.815,
+    "cap_twh": 117.2
+   }
+  },
+  "2023": {
+   "m-inf_0": {
+    "over": -3.92,
+    "cf_model": 0.521,
+    "cf_real": 0.588,
+    "cap_twh": 58.5
+   },
+   "m0_5": {
+    "over": 1.11,
+    "cf_model": 0.74,
+    "cf_real": 0.701,
+    "cap_twh": 28.6
+   },
+   "m5_15": {
+    "over": 2.01,
+    "cf_model": 0.814,
+    "cf_real": 0.764,
+    "cap_twh": 40.3
+   },
+   "m15_inf": {
+    "over": 1.02,
+    "cf_model": 0.871,
+    "cf_real": 0.838,
+    "cap_twh": 31.7
+   }
+  },
+  "2024": {
+   "m-inf_0": {
+    "over": -3.35,
+    "cf_model": 0.518,
+    "cf_real": 0.569,
+    "cap_twh": 65.7
+   },
+   "m0_5": {
+    "over": 1.07,
+    "cf_model": 0.756,
+    "cf_real": 0.713,
+    "cap_twh": 25.0
+   },
+   "m5_15": {
+    "over": 1.72,
+    "cf_model": 0.823,
+    "cf_real": 0.775,
+    "cap_twh": 35.4
+   },
+   "m15_inf": {
+    "over": 1.46,
+    "cf_model": 0.881,
+    "cf_real": 0.843,
+    "cap_twh": 38.0
+   }
+  },
+  "2025": {
+   "m-inf_0": {
+    "over": 0.83,
+    "cf_model": 0.638,
+    "cf_real": 0.613,
+    "cap_twh": 33.0
+   },
+   "m0_5": {
+    "over": 2.42,
+    "cf_model": 0.832,
+    "cf_real": 0.718,
+    "cap_twh": 21.3
+   },
+   "m5_15": {
+    "over": 5.15,
+    "cf_model": 0.911,
+    "cf_real": 0.792,
+    "cap_twh": 43.3
+   },
+   "m15_inf": {
+    "over": 6.55,
+    "cf_model": 0.966,
+    "cf_real": 0.878,
+    "cap_twh": 74.0
+   }
+  }
+ },
+ "attribution_2025_vs_2024": {
+  "delta_over_total": 14.5,
+  "both": {
+   "n": 44,
+   "delta_over": 15.46,
+   "delta_model": 35.76,
+   "delta_bench": 20.3,
+   "delta_cap_gw": 1.26
+  },
+  "only_2024": {
+   "n": 2,
+   "names": [
+    "Indian River Generating Station",
+    "TalenEnergy Montour"
+   ],
+   "model": 1.53,
+   "bench": 0.57,
+   "over": 0.96
+  },
+  "only_2025": {
+   "n": 21,
+   "names": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+   ],
+   "model": 0.0,
+   "bench": 0.0,
+   "over": 0.0
+  },
+  "by_zone": {
+   "PJM_Dominion": {
+    "d_over": -0.16,
+    "over24": -1.53,
+    "over25": -1.69
+   },
+   "PJM_ATSI": {
+    "d_over": 0.0,
+    "over24": 0.0,
+    "over25": 0.0
+   },
+   "PJM_Central_PA": {
+    "d_over": 0.5,
+    "over24": -0.62,
+    "over25": -0.12
+   },
+   "PJM_SWMAAC": {
+    "d_over": 0.68,
+    "over24": -1.47,
+    "over25": -0.79
+   },
+   "PJM_ComEd": {
+    "d_over": 1.08,
+    "over24": -0.2,
+    "over25": 0.88
+   },
+   "PJM_West_APS": {
+    "d_over": 5.79,
+    "over24": -0.52,
+    "over25": 5.27
+   },
+   "PJM_AEP_Ohio": {
+    "d_over": 7.56,
+    "over24": 1.81,
+    "over25": 9.37
+   }
+  },
+  "by_margin_change": {
+   "margin_up_gt5": 15.51,
+   "margin_up_0_5": 0.0,
+   "margin_down": 0.0
+  },
+  "top_plants": [
+   {
+    "plant_code": 6166,
+    "name": "Rockport",
+    "zone": "PJM_AEP_Ohio",
+    "group": "COAL_BIT",
+    "cap24": 966.61,
+    "cap25": 1454.98,
+    "over24": -1.86,
+    "over25": 0.83,
+    "model24": 3.2,
+    "model25": 10.47,
+    "bench24": 5.06,
+    "bench25": 9.64,
+    "offer24": 36.29,
+    "offer25": 27.47,
+    "margin24": -4.11,
+    "margin25": 15.92,
+    "d_over": 2.69,
+    "d_margin": 20.03
+   },
+   {
+    "plant_code": 8102,
+    "name": "Gavin Power, LLC",
+    "zone": "PJM_AEP_Ohio",
+    "group": "COAL_BIT",
+    "cap24": 1534.43,
+    "cap25": 1850.86,
+    "over24": -0.8,
+    "over25": 1.78,
+    "model24": 9.53,
+    "model25": 14.67,
+    "bench24": 10.33,
+    "bench25": 12.88,
+    "offer24": 21.68,
+    "offer25": 22.44,
+    "margin24": 7.85,
+    "margin25": 20.44,
+    "d_over": 2.58,
+    "d_margin": 12.59
+   },
+   {
+    "plant_code": 3944,
+    "name": "FirstEnergy Harrison Power Station",
+    "zone": "PJM_West_APS",
+    "group": "COAL_BIT",
+    "cap24": 1336.71,
+    "cap25": 1447.43,
+    "over24": -0.86,
+    "over25": 1.23,
+    "model24": 9.76,
+    "model25": 11.98,
+    "bench24": 10.62,
+    "bench25": 10.76,
+    "offer24": 16.06,
+    "offer25": 18.67,
+    "margin24": 13.47,
+    "margin25": 24.22,
+    "d_over": 2.08,
+    "d_margin": 10.75
+   },
+   {
+    "plant_code": 3943,
+    "name": "FirstEnergy Fort Martin Power Station",
+    "zone": "PJM_West_APS",
+    "group": "COAL_BIT",
+    "cap24": 532.26,
+    "cap25": 898.36,
+    "over24": -0.06,
+    "over25": 1.17,
+    "model24": 3.8,
+    "model25": 7.3,
+    "bench24": 3.86,
+    "bench25": 6.13,
+    "offer24": 18.67,
+    "offer25": 21.98,
+    "margin24": 11.71,
+    "margin25": 21.17,
+    "d_over": 1.23,
+    "d_margin": 9.45
+   },
+   {
+    "plant_code": 983,
+    "name": "Clifty Creek",
+    "zone": "PJM_AEP_Ohio",
+    "group": "COAL_BIT",
+    "cap24": 759.75,
+    "cap25": 848.89,
+    "over24": -0.38,
+    "over25": 0.52,
+    "model24": 4.8,
+    "model25": 6.3,
+    "bench24": 5.17,
+    "bench25": 5.78,
+    "offer24": 21.44,
+    "offer25": 24.92,
+    "margin24": 8.09,
+    "margin25": 17.97,
+    "d_over": 0.89,
+    "d_margin": 9.88
+   },
+   {
+    "plant_code": 3948,
+    "name": "Mitchell (WV)",
+    "zone": "PJM_West_APS",
+    "group": "COAL_BIT",
+    "cap24": 972.86,
+    "cap25": 732.19,
+    "over24": 0.93,
+    "over25": 1.8,
+    "model24": 5.02,
+    "model25": 5.75,
+    "bench24": 4.09,
+    "bench25": 3.95,
+    "offer24": 26.41,
+    "offer25": 27.2,
+    "margin24": 3.17,
+    "margin25": 19.96,
+    "d_over": 0.87,
+    "d_margin": 16.8
+   },
+   {
+    "plant_code": 3118,
+    "name": "Conemaugh",
+    "zone": "PJM_West_APS",
+    "group": "COAL_BIT",
+    "cap24": 530.76,
+    "cap25": 592.13,
+    "over24": 0.18,
+    "over25": 0.97,
+    "model24": 3.76,
+    "model25": 4.88,
+    "bench24": 3.59,
+    "bench25": 3.91,
+    "offer24": 20.5,
+    "offer25": 23.33,
+    "margin24": 11.61,
+    "margin25": 27.16,
+    "d_over": 0.79,
+    "d_margin": 15.55
+   },
+   {
+    "plant_code": 602,
+    "name": "Brandon Shores",
+    "zone": "PJM_SWMAAC",
+    "group": "COAL_BIT",
+    "cap24": 510.39,
+    "cap25": 492.86,
+    "over24": -1.47,
+    "over25": -0.79,
+    "model24": 0.7,
+    "model25": 1.54,
+    "bench24": 2.17,
+    "bench25": 2.33,
+    "offer24": 49.68,
+    "offer25": 52.05,
+    "margin24": -17.21,
+    "margin25": -4.16,
+    "d_over": 0.68,
+    "d_margin": 13.05
+   },
+   {
+    "plant_code": 879,
+    "name": "Powerton",
+    "zone": "PJM_ComEd",
+    "group": "COAL_PRB",
+    "cap24": 385.23,
+    "cap25": 523.34,
+    "over24": -0.41,
+    "over25": 0.19,
+    "model24": 1.81,
+    "model25": 3.64,
+    "bench24": 2.22,
+    "bench25": 3.45,
+    "offer24": 27.98,
+    "offer25": 31.16,
+    "margin24": 6.96,
+    "margin25": 17.7,
+    "d_over": 0.61,
+    "d_margin": 10.74
+   },
+   {
+    "plant_code": 2828,
+    "name": "Cardinal",
+    "zone": "PJM_AEP_Ohio",
+    "group": "COAL_BIT",
+    "cap24": 1290.87,
+    "cap25": 1367.76,
+    "over24": -0.14,
+    "over25": 0.37,
+    "model24": 9.36,
+    "model25": 11.19,
+    "bench24": 9.5,
+    "bench25": 10.82,
+    "offer24": 18.06,
+    "offer25": 19.54,
+    "margin24": 11.53,
+    "margin25": 23.34,
+    "d_over": 0.51,
+    "d_margin": 11.81
+   },
+   {
+    "plant_code": 3130,
+    "name": "Seward (PA)",
+    "zone": "PJM_West_APS",
+    "group": "COAL_WC",
+    "cap24": 266.9,
+    "cap25": 394.67,
+    "over24": -0.39,
+    "over25": 0.1,
+    "model24": 1.7,
+    "model25": 3.19,
+    "bench24": 2.09,
+    "bench25": 3.1,
+    "offer24": 27.38,
+    "offer25": 29.23,
+    "margin24": 2.37,
+    "margin25": 13.78,
+    "d_over": 0.48,
+    "d_margin": 11.41
+   },
+   {
+    "plant_code": 876,
+    "name": "Kincaid Generation LLC",
+    "zone": "PJM_ComEd",
+    "group": "COAL_PRB",
+    "cap24": 424.38,
+    "cap25": 420.8,
+    "over24": 0.22,
+    "over25": 0.69,
+    "model24": 2.43,
+    "model25": 3.38,
+    "bench24": 2.21,
+    "bench25": 2.69,
+    "offer24": 24.72,
+    "offer25": 25.83,
+    "margin24": 8.6,
+    "margin25": 21.89,
+    "d_over": 0.47,
+    "d_margin": 13.29
+   },
+   {
+    "plant_code": 3935,
+    "name": "John E Amos",
+    "zone": "PJM_AEP_Ohio",
+    "group": "COAL_BIT",
+    "cap24": 2075.37,
+    "cap25": 1527.55,
+    "over24": 2.17,
+    "over25": 2.59,
+    "model24": 11.78,
+    "model25": 11.66,
+    "bench24": 9.61,
+    "bench25": 9.07,
+    "offer24": 24.79,
+    "offer25": 27.83,
+    "margin24": 4.74,
+    "margin25": 16.34,
+    "d_over": 0.42,
+    "d_margin": 11.6
+   },
+   {
+    "plant_code": 6264,
+    "name": "Mountaineer",
+    "zone": "PJM_AEP_Ohio",
+    "group": "COAL_BIT",
+    "cap24": 830.21,
+    "cap25": 1059.32,
+    "over24": 1.56,
+    "over25": 1.89,
+    "model24": 6.28,
+    "model25": 8.76,
+    "bench24": 4.73,
+    "bench25": 6.87,
+    "offer24": 15.62,
+    "offer25": 16.75,
+    "margin24": 13.26,
+    "margin25": 27.34,
+    "d_over": 0.33,
+    "d_margin": 14.08
+   },
+   {
+    "plant_code": 10678,
+    "name": "",
+    "zone": "PJM_West_APS",
+    "group": "COAL_BIT",
+    "cap24": 37.04,
+    "cap25": 0.0,
+    "over24": -0.32,
+    "over25": 0.0,
+    "model24": 0.01,
+    "model25": 0.0,
+    "bench24": 0.33,
+    "bench25": 0.0,
+    "offer24": 62.85,
+    "offer25": NaN,
+    "margin24": -34.52,
+    "margin25": NaN,
+    "d_over": 0.32,
+    "d_margin": NaN
+   }
+  ],
+  "bottom_plants": [
+   {
+    "plant_code": 6018,
+    "name": "East Bend",
+    "zone": "PJM_AEP_Ohio",
+    "group": "COAL_BIT",
+    "cap24": 396.99,
+    "cap25": 417.8,
+    "over24": 1.12,
+    "over25": 1.02,
+    "model24": 3.38,
+    "model25": 3.61,
+    "bench24": 2.26,
+    "bench25": 2.59,
+    "offer24": 13.42,
+    "offer25": 14.12,
+    "margin24": 16.36,
+    "margin25": 30.68,
+    "d_over": -0.1,
+    "d_margin": 14.33
+   },
+   {
+    "plant_code": 10143,
+    "name": "Colver Green Energy",
+    "zone": "PJM_Central_PA",
+    "group": "COAL_WC",
+    "cap24": 102.62,
+    "cap25": 98.16,
+    "over24": 0.16,
+    "over25": 0.03,
+    "model24": 0.88,
+    "model25": 0.85,
+    "bench24": 0.72,
+    "bench25": 0.82,
+    "offer24": 10.52,
+    "offer25": 10.54,
+    "margin24": 19.32,
+    "margin25": 32.35,
+    "d_over": -0.13,
+    "d_margin": 13.03
+   },
+   {
+    "plant_code": 2876,
+    "name": "Kyger Creek",
+    "zone": "PJM_AEP_Ohio",
+    "group": "COAL_BIT",
+    "cap24": 717.43,
+    "cap25": 682.84,
+    "over24": 0.44,
+    "over25": 0.13,
+    "model24": 5.23,
+    "model25": 5.51,
+    "bench24": 4.78,
+    "bench25": 5.38,
+    "offer24": 18.13,
+    "offer25": 21.09,
+    "margin24": 11.64,
+    "margin25": 22.46,
+    "d_over": -0.31,
+    "d_margin": 10.82
+   },
+   {
+    "plant_code": 56808,
+    "name": "Virginia City Hybrid Energy Center",
+    "zone": "PJM_Dominion",
+    "group": "COAL_BIT",
+    "cap24": 175.08,
+    "cap25": 305.64,
+    "over24": -0.25,
+    "over25": -0.62,
+    "model24": 0.82,
+    "model25": 1.41,
+    "bench24": 1.07,
+    "bench25": 2.03,
+    "offer24": 34.63,
+    "offer25": 44.41,
+    "margin24": -0.31,
+    "margin25": 5.24,
+    "d_over": -0.36,
+    "d_margin": 5.55
+   },
+   {
+    "plant_code": 3122,
+    "name": "",
+    "zone": "PJM_West_APS",
+    "group": "COAL_BIT",
+    "cap24": 196.58,
+    "cap25": 0.0,
+    "over24": 1.0,
+    "over25": 0.0,
+    "model24": 1.0,
+    "model25": 0.0,
+    "bench24": 0.0,
+    "bench25": 0.0,
+    "offer24": 30.62,
+    "offer25": NaN,
+    "margin24": -3.68,
+    "margin25": NaN,
+    "d_over": -1.0,
+    "d_margin": NaN
+   }
+  ],
+  "concentration": {
+   "top5_share_of_delta": 0.613,
+   "top15_share_of_delta": 0.968,
+   "plants_with_d_over_gt_0.2": 21
+  },
+  "top10_over_by_year": {
+   "6166": {
+    "name": "Rockport",
+    "2019": 1.54,
+    "2020": 0.75,
+    "2021": 1.97,
+    "2022": 2.72,
+    "2023": -0.92,
+    "2024": -1.86,
+    "2025": 0.83
+   },
+   "8102": {
+    "name": "Gavin Power, LLC",
+    "2019": 1.81,
+    "2020": 2.06,
+    "2021": 1.68,
+    "2022": -0.26,
+    "2023": -0.72,
+    "2024": -0.8,
+    "2025": 1.78
+   },
+   "3944": {
+    "name": "FirstEnergy Harrison Power Station",
+    "2019": -0.52,
+    "2020": -0.17,
+    "2021": 0.12,
+    "2022": -1.63,
+    "2023": -1.22,
+    "2024": -0.86,
+    "2025": 1.23
+   },
+   "3943": {
+    "name": "FirstEnergy Fort Martin Power Station",
+    "2019": 0.63,
+    "2020": 0.81,
+    "2021": 1.28,
+    "2022": 0.97,
+    "2023": 0.52,
+    "2024": -0.06,
+    "2025": 1.17
+   },
+   "983": {
+    "name": "Clifty Creek",
+    "2019": 1.22,
+    "2020": 1.83,
+    "2021": 1.11,
+    "2022": -0.64,
+    "2023": 0.98,
+    "2024": -0.38,
+    "2025": 0.52
+   },
+   "3948": {
+    "name": "Mitchell (WV)",
+    "2019": 0.78,
+    "2020": 0.96,
+    "2021": 0.78,
+    "2022": 0.63,
+    "2023": -0.4,
+    "2024": 0.93,
+    "2025": 1.8
+   },
+   "3118": {
+    "name": "Conemaugh",
+    "2019": -0.62,
+    "2020": 0.5,
+    "2021": 1.13,
+    "2022": -0.22,
+    "2023": 0.17,
+    "2024": 0.18,
+    "2025": 0.97
+   },
+   "602": {
+    "name": "Brandon Shores",
+    "2019": 0.37,
+    "2020": -0.02,
+    "2021": 0.68,
+    "2022": 1.11,
+    "2023": -0.54,
+    "2024": -1.47,
+    "2025": -0.79
+   },
+   "879": {
+    "name": "Powerton",
+    "2019": -0.85,
+    "2020": -0.17,
+    "2021": -0.4,
+    "2022": 0.23,
+    "2023": -0.27,
+    "2024": -0.41,
+    "2025": 0.19
+   },
+   "2828": {
+    "name": "Cardinal",
+    "2019": 0.17,
+    "2020": -0.21,
+    "2021": -0.39,
+    "2022": -1.37,
+    "2023": -0.33,
+    "2024": -0.14,
+    "2025": 0.37
+   }
+  }
+ }
+}

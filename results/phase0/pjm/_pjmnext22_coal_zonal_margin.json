@@ -1,0 +1,1121 @@
+{
+ "what": "PJM-NEXT-22 card 1b: coal margin on actual zonal RT. ZERO LP.",
+ "2019": {
+  "rto_vs_sys_rt_mean": 0.57,
+  "coalw_model_minus_actual_zonal": -0.41,
+  "coalw_actual_zonal_minus_rto": 0.46,
+  "coalw_model_minus_rto": 0.04,
+  "by_zone": {
+   "PJM_AEP_Ohio": {
+    "model_twh": 96.11,
+    "over_twh": 9.09,
+    "model_minus_actual_zonal": -0.43,
+    "actual_zonal_minus_rto": 0.74
+   },
+   "PJM_ATSI": {
+    "model_twh": 0.45,
+    "over_twh": 0.0,
+    "model_minus_actual_zonal": -7.56,
+    "actual_zonal_minus_rto": 0.93
+   },
+   "PJM_Central_PA": {
+    "model_twh": 5.72,
+    "over_twh": 0.11,
+    "model_minus_actual_zonal": 0.8,
+    "actual_zonal_minus_rto": -0.88
+   },
+   "PJM_ComEd": {
+    "model_twh": 6.33,
+    "over_twh": -1.09,
+    "model_minus_actual_zonal": 1.37,
+    "actual_zonal_minus_rto": -4.14
+   },
+   "PJM_Dominion": {
+    "model_twh": 4.7,
+    "over_twh": 1.26,
+    "model_minus_actual_zonal": -1.67,
+    "actual_zonal_minus_rto": 1.27
+   },
+   "PJM_EMAAC": {
+    "model_twh": 3.06,
+    "over_twh": 1.89,
+    "model_minus_actual_zonal": 4.78,
+    "actual_zonal_minus_rto": -1.69
+   },
+   "PJM_SWMAAC": {
+    "model_twh": 5.42,
+    "over_twh": 0.8,
+    "model_minus_actual_zonal": -4.95,
+    "actual_zonal_minus_rto": 3.42
+   },
+   "PJM_West_APS": {
+    "model_twh": 76.17,
+    "over_twh": 2.34,
+    "model_minus_actual_zonal": -0.41,
+    "actual_zonal_minus_rto": 0.41
+   }
+  },
+  "west": {
+   "sys_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.62,
+     "cf_real": 0.583,
+     "over_twh": 1.28,
+     "cap_twh": 34.4
+    },
+    "0..5": {
+     "cf_model": 0.797,
+     "cf_real": 0.689,
+     "over_twh": 5.76,
+     "cap_twh": 53.1
+    },
+    "5..15": {
+     "cf_model": 0.921,
+     "cf_real": 0.875,
+     "over_twh": 3.88,
+     "cap_twh": 85.8
+    },
+    "15..1e+09": {
+     "cf_model": 0.978,
+     "cf_real": 0.942,
+     "over_twh": 1.11,
+     "cap_twh": 30.4
+    }
+   },
+   "zonal_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.599,
+     "cf_real": 0.574,
+     "over_twh": 0.71,
+     "cap_twh": 28.5
+    },
+    "0..5": {
+     "cf_model": 0.782,
+     "cf_real": 0.67,
+     "over_twh": 5.59,
+     "cap_twh": 49.7
+    },
+    "5..15": {
+     "cf_model": 0.911,
+     "cf_real": 0.861,
+     "over_twh": 4.53,
+     "cap_twh": 91.3
+    },
+    "15..1e+09": {
+     "cf_model": 0.974,
+     "cf_real": 0.939,
+     "over_twh": 1.2,
+     "cap_twh": 34.1
+    }
+   }
+  },
+  "rest": {
+   "sys_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.521,
+     "cf_real": 0.479,
+     "over_twh": 0.77,
+     "cap_twh": 18.2
+    },
+    "0..5": {
+     "cf_model": 0.826,
+     "cf_real": 0.625,
+     "over_twh": 1.73,
+     "cap_twh": 8.6
+    },
+    "5..15": {
+     "cf_model": 0.92,
+     "cf_real": 0.737,
+     "over_twh": 1.15,
+     "cap_twh": 6.3
+    },
+    "15..1e+09": {
+     "cf_model": 0.941,
+     "cf_real": 0.764,
+     "over_twh": 0.62,
+     "cap_twh": 3.5
+    }
+   },
+   "zonal_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.531,
+     "cf_real": 0.49,
+     "over_twh": 0.73,
+     "cap_twh": 18.0
+    },
+    "0..5": {
+     "cf_model": 0.802,
+     "cf_real": 0.614,
+     "over_twh": 1.58,
+     "cap_twh": 8.4
+    },
+    "5..15": {
+     "cf_model": 0.91,
+     "cf_real": 0.719,
+     "over_twh": 1.27,
+     "cap_twh": 6.6
+    },
+    "15..1e+09": {
+     "cf_model": 0.933,
+     "cf_real": 0.743,
+     "over_twh": 0.69,
+     "cap_twh": 3.6
+    }
+   }
+  }
+ },
+ "2020": {
+  "rto_vs_sys_rt_mean": 0.42,
+  "coalw_model_minus_actual_zonal": 1.36,
+  "coalw_actual_zonal_minus_rto": 0.54,
+  "coalw_model_minus_rto": 1.9,
+  "by_zone": {
+   "PJM_AEP_Ohio": {
+    "model_twh": 86.61,
+    "over_twh": 7.79,
+    "model_minus_actual_zonal": 1.53,
+    "actual_zonal_minus_rto": 0.5
+   },
+   "PJM_ATSI": {
+    "model_twh": 0.26,
+    "over_twh": 0.03,
+    "model_minus_actual_zonal": -6.72,
+    "actual_zonal_minus_rto": 2.99
+   },
+   "PJM_Central_PA": {
+    "model_twh": 1.83,
+    "over_twh": -0.75,
+    "model_minus_actual_zonal": 3.17,
+    "actual_zonal_minus_rto": -0.77
+   },
+   "PJM_ComEd": {
+    "model_twh": 3.34,
+    "over_twh": -0.16,
+    "model_minus_actual_zonal": 1.8,
+    "actual_zonal_minus_rto": -2.73
+   },
+   "PJM_Dominion": {
+    "model_twh": 5.04,
+    "over_twh": 1.21,
+    "model_minus_actual_zonal": 0.97,
+    "actual_zonal_minus_rto": 0.52
+   },
+   "PJM_EMAAC": {
+    "model_twh": 1.27,
+    "over_twh": 0.24,
+    "model_minus_actual_zonal": 2.89,
+    "actual_zonal_minus_rto": -1.55
+   },
+   "PJM_SWMAAC": {
+    "model_twh": 1.91,
+    "over_twh": -0.35,
+    "model_minus_actual_zonal": -4.36,
+    "actual_zonal_minus_rto": 3.48
+   },
+   "PJM_West_APS": {
+    "model_twh": 57.97,
+    "over_twh": 1.72,
+    "model_minus_actual_zonal": 1.23,
+    "actual_zonal_minus_rto": 0.77
+   }
+  },
+  "west": {
+   "sys_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.603,
+     "cf_real": 0.612,
+     "over_twh": -0.52,
+     "cap_twh": 57.2
+    },
+    "0..5": {
+     "cf_model": 0.814,
+     "cf_real": 0.702,
+     "over_twh": 6.47,
+     "cap_twh": 58.1
+    },
+    "5..15": {
+     "cf_model": 0.928,
+     "cf_real": 0.854,
+     "over_twh": 3.68,
+     "cap_twh": 50.1
+    },
+    "15..1e+09": {
+     "cf_model": 0.942,
+     "cf_real": 0.91,
+     "over_twh": 0.56,
+     "cap_twh": 17.3
+    }
+   },
+   "zonal_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.586,
+     "cf_real": 0.606,
+     "over_twh": -0.96,
+     "cap_twh": 49.8
+    },
+    "0..5": {
+     "cf_model": 0.798,
+     "cf_real": 0.689,
+     "over_twh": 6.39,
+     "cap_twh": 58.5
+    },
+    "5..15": {
+     "cf_model": 0.918,
+     "cf_real": 0.844,
+     "over_twh": 4.14,
+     "cap_twh": 56.1
+    },
+    "15..1e+09": {
+     "cf_model": 0.936,
+     "cf_real": 0.902,
+     "over_twh": 0.62,
+     "cap_twh": 18.3
+    }
+   }
+  },
+  "rest": {
+   "sys_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.403,
+     "cf_real": 0.44,
+     "over_twh": -0.6,
+     "cap_twh": 16.4
+    },
+    "0..5": {
+     "cf_model": 0.809,
+     "cf_real": 0.632,
+     "over_twh": 0.66,
+     "cap_twh": 3.7
+    },
+    "5..15": {
+     "cf_model": 0.866,
+     "cf_real": 0.714,
+     "over_twh": 0.43,
+     "cap_twh": 2.8
+    },
+    "15..1e+09": {
+     "cf_model": 0.849,
+     "cf_real": 0.677,
+     "over_twh": 0.32,
+     "cap_twh": 1.9
+    }
+   },
+   "zonal_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.401,
+     "cf_real": 0.439,
+     "over_twh": -0.62,
+     "cap_twh": 16.2
+    },
+    "0..5": {
+     "cf_model": 0.801,
+     "cf_real": 0.625,
+     "over_twh": 0.69,
+     "cap_twh": 3.9
+    },
+    "5..15": {
+     "cf_model": 0.867,
+     "cf_real": 0.718,
+     "over_twh": 0.41,
+     "cap_twh": 2.7
+    },
+    "15..1e+09": {
+     "cf_model": 0.843,
+     "cf_real": 0.672,
+     "over_twh": 0.33,
+     "cap_twh": 2.0
+    }
+   }
+  }
+ },
+ "2021": {
+  "rto_vs_sys_rt_mean": 1.03,
+  "coalw_model_minus_actual_zonal": -0.41,
+  "coalw_actual_zonal_minus_rto": 0.31,
+  "coalw_model_minus_rto": -0.1,
+  "by_zone": {
+   "PJM_AEP_Ohio": {
+    "model_twh": 92.38,
+    "over_twh": 7.01,
+    "model_minus_actual_zonal": -0.73,
+    "actual_zonal_minus_rto": 0.9
+   },
+   "PJM_ATSI": {
+    "model_twh": 0.82,
+    "over_twh": -0.01,
+    "model_minus_actual_zonal": 0.34,
+    "actual_zonal_minus_rto": -1.59
+   },
+   "PJM_Central_PA": {
+    "model_twh": 7.08,
+    "over_twh": 0.82,
+    "model_minus_actual_zonal": 0.89,
+    "actual_zonal_minus_rto": -1.26
+   },
+   "PJM_ComEd": {
+    "model_twh": 10.47,
+    "over_twh": 1.05,
+    "model_minus_actual_zonal": 0.59,
+    "actual_zonal_minus_rto": -2.39
+   },
+   "PJM_Dominion": {
+    "model_twh": 2.42,
+    "over_twh": -0.61,
+    "model_minus_actual_zonal": -5.41,
+    "actual_zonal_minus_rto": 4.67
+   },
+   "PJM_EMAAC": {
+    "model_twh": 2.29,
+    "over_twh": 0.96,
+    "model_minus_actual_zonal": 3.26,
+    "actual_zonal_minus_rto": -6.12
+   },
+   "PJM_SWMAAC": {
+    "model_twh": 4.96,
+    "over_twh": 0.98,
+    "model_minus_actual_zonal": -4.22,
+    "actual_zonal_minus_rto": 4.69
+   },
+   "PJM_West_APS": {
+    "model_twh": 71.91,
+    "over_twh": 6.25,
+    "model_minus_actual_zonal": 0.03,
+    "actual_zonal_minus_rto": -0.13
+   }
+  },
+  "west": {
+   "sys_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.704,
+     "cf_real": 0.684,
+     "over_twh": 0.44,
+     "cap_twh": 22.6
+    },
+    "0..5": {
+     "cf_model": 0.848,
+     "cf_real": 0.736,
+     "over_twh": 3.74,
+     "cap_twh": 33.5
+    },
+    "5..15": {
+     "cf_model": 0.93,
+     "cf_real": 0.853,
+     "over_twh": 4.81,
+     "cap_twh": 62.0
+    },
+    "15..1e+09": {
+     "cf_model": 0.978,
+     "cf_real": 0.899,
+     "over_twh": 5.05,
+     "cap_twh": 63.7
+    }
+   },
+   "zonal_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.691,
+     "cf_real": 0.683,
+     "over_twh": 0.17,
+     "cap_twh": 20.5
+    },
+    "0..5": {
+     "cf_model": 0.841,
+     "cf_real": 0.729,
+     "over_twh": 3.55,
+     "cap_twh": 31.9
+    },
+    "5..15": {
+     "cf_model": 0.928,
+     "cf_real": 0.849,
+     "over_twh": 5.06,
+     "cap_twh": 63.4
+    },
+    "15..1e+09": {
+     "cf_model": 0.977,
+     "cf_real": 0.897,
+     "over_twh": 5.27,
+     "cap_twh": 66.0
+    }
+   }
+  },
+  "rest": {
+   "sys_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.511,
+     "cf_real": 0.473,
+     "over_twh": 0.67,
+     "cap_twh": 17.6
+    },
+    "0..5": {
+     "cf_model": 0.817,
+     "cf_real": 0.669,
+     "over_twh": 0.8,
+     "cap_twh": 5.4
+    },
+    "5..15": {
+     "cf_model": 0.91,
+     "cf_real": 0.745,
+     "over_twh": 1.2,
+     "cap_twh": 7.3
+    },
+    "15..1e+09": {
+     "cf_model": 0.947,
+     "cf_real": 0.785,
+     "over_twh": 1.36,
+     "cap_twh": 8.4
+    }
+   },
+   "zonal_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.524,
+     "cf_real": 0.475,
+     "over_twh": 0.9,
+     "cap_twh": 18.2
+    },
+    "0..5": {
+     "cf_model": 0.82,
+     "cf_real": 0.667,
+     "over_twh": 0.8,
+     "cap_twh": 5.2
+    },
+    "5..15": {
+     "cf_model": 0.909,
+     "cf_real": 0.756,
+     "over_twh": 1.1,
+     "cap_twh": 7.1
+    },
+    "15..1e+09": {
+     "cf_model": 0.942,
+     "cf_real": 0.789,
+     "over_twh": 1.25,
+     "cap_twh": 8.2
+    }
+   }
+  }
+ },
+ "2022": {
+  "rto_vs_sys_rt_mean": 4.73,
+  "coalw_model_minus_actual_zonal": -14.75,
+  "coalw_actual_zonal_minus_rto": -2.82,
+  "coalw_model_minus_rto": -17.57,
+  "by_zone": {
+   "PJM_AEP_Ohio": {
+    "model_twh": 81.94,
+    "over_twh": 4.8,
+    "model_minus_actual_zonal": -12.96,
+    "actual_zonal_minus_rto": -2.89
+   },
+   "PJM_ATSI": {
+    "model_twh": 0.61,
+    "over_twh": 0.12,
+    "model_minus_actual_zonal": 2.08,
+    "actual_zonal_minus_rto": -9.66
+   },
+   "PJM_Central_PA": {
+    "model_twh": 4.94,
+    "over_twh": 0.06,
+    "model_minus_actual_zonal": -15.54,
+    "actual_zonal_minus_rto": -0.71
+   },
+   "PJM_ComEd": {
+    "model_twh": 10.81,
+    "over_twh": 1.78,
+    "model_minus_actual_zonal": -5.03,
+    "actual_zonal_minus_rto": -15.95
+   },
+   "PJM_Dominion": {
+    "model_twh": 3.65,
+    "over_twh": 0.28,
+    "model_minus_actual_zonal": -71.62,
+    "actual_zonal_minus_rto": 27.35
+   },
+   "PJM_EMAAC": {
+    "model_twh": 2.24,
+    "over_twh": 1.63,
+    "model_minus_actual_zonal": -3.46,
+    "actual_zonal_minus_rto": -4.16
+   },
+   "PJM_SWMAAC": {
+    "model_twh": 4.07,
+    "over_twh": 1.87,
+    "model_minus_actual_zonal": -48.93,
+    "actual_zonal_minus_rto": 17.14
+   },
+   "PJM_West_APS": {
+    "model_twh": 56.2,
+    "over_twh": -1.09,
+    "model_minus_actual_zonal": -13.62,
+    "actual_zonal_minus_rto": -3.66
+   }
+  },
+  "west": {
+   "sys_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.6,
+     "cf_real": 0.64,
+     "over_twh": -0.86,
+     "cap_twh": 21.6
+    },
+    "0..5": {
+     "cf_model": 0.703,
+     "cf_real": 0.674,
+     "over_twh": 0.4,
+     "cap_twh": 13.9
+    },
+    "5..15": {
+     "cf_model": 0.766,
+     "cf_real": 0.741,
+     "over_twh": 0.87,
+     "cap_twh": 34.3
+    },
+    "15..1e+09": {
+     "cf_model": 0.871,
+     "cf_real": 0.834,
+     "over_twh": 3.82,
+     "cap_twh": 102.3
+    }
+   },
+   "zonal_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.582,
+     "cf_real": 0.629,
+     "over_twh": -0.82,
+     "cap_twh": 17.6
+    },
+    "0..5": {
+     "cf_model": 0.691,
+     "cf_real": 0.661,
+     "over_twh": 0.36,
+     "cap_twh": 12.2
+    },
+    "5..15": {
+     "cf_model": 0.758,
+     "cf_real": 0.729,
+     "over_twh": 0.99,
+     "cap_twh": 33.8
+    },
+    "15..1e+09": {
+     "cf_model": 0.865,
+     "cf_real": 0.831,
+     "over_twh": 3.7,
+     "cap_twh": 108.5
+    }
+   }
+  },
+  "rest": {
+   "sys_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.572,
+     "cf_real": 0.419,
+     "over_twh": 1.58,
+     "cap_twh": 10.3
+    },
+    "0..5": {
+     "cf_model": 0.745,
+     "cf_real": 0.557,
+     "over_twh": 0.67,
+     "cap_twh": 3.5
+    },
+    "5..15": {
+     "cf_model": 0.809,
+     "cf_real": 0.628,
+     "over_twh": 1.02,
+     "cap_twh": 5.6
+    },
+    "15..1e+09": {
+     "cf_model": 0.9,
+     "cf_real": 0.7,
+     "over_twh": 2.95,
+     "cap_twh": 14.7
+    }
+   },
+   "zonal_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.604,
+     "cf_real": 0.424,
+     "over_twh": 2.02,
+     "cap_twh": 11.2
+    },
+    "0..5": {
+     "cf_model": 0.751,
+     "cf_real": 0.573,
+     "over_twh": 0.6,
+     "cap_twh": 3.4
+    },
+    "5..15": {
+     "cf_model": 0.803,
+     "cf_real": 0.634,
+     "over_twh": 0.84,
+     "cap_twh": 5.0
+    },
+    "15..1e+09": {
+     "cf_model": 0.89,
+     "cf_real": 0.701,
+     "over_twh": 2.76,
+     "cap_twh": 14.7
+    }
+   }
+  }
+ },
+ "2023": {
+  "rto_vs_sys_rt_mean": 1.23,
+  "coalw_model_minus_actual_zonal": -0.55,
+  "coalw_actual_zonal_minus_rto": 0.42,
+  "coalw_model_minus_rto": -0.13,
+  "by_zone": {
+   "PJM_AEP_Ohio": {
+    "model_twh": 66.69,
+    "over_twh": 4.07,
+    "model_minus_actual_zonal": -0.41,
+    "actual_zonal_minus_rto": 0.48
+   },
+   "PJM_Central_PA": {
+    "model_twh": 3.07,
+    "over_twh": -0.72,
+    "model_minus_actual_zonal": 1.85,
+    "actual_zonal_minus_rto": -2.02
+   },
+   "PJM_ComEd": {
+    "model_twh": 3.55,
+    "over_twh": -0.02,
+    "model_minus_actual_zonal": -1.27,
+    "actual_zonal_minus_rto": -2.83
+   },
+   "PJM_Dominion": {
+    "model_twh": 0.11,
+    "over_twh": -0.89,
+    "model_minus_actual_zonal": -6.2,
+    "actual_zonal_minus_rto": 6.2
+   },
+   "PJM_SWMAAC": {
+    "model_twh": 0.5,
+    "over_twh": -0.54,
+    "model_minus_actual_zonal": -13.05,
+    "actual_zonal_minus_rto": 8.22
+   },
+   "PJM_West_APS": {
+    "model_twh": 37.94,
+    "over_twh": -3.18,
+    "model_minus_actual_zonal": -0.76,
+    "actual_zonal_minus_rto": 0.69
+   }
+  },
+  "west": {
+   "sys_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.56,
+     "cf_real": 0.603,
+     "over_twh": -2.13,
+     "cap_twh": 49.9
+    },
+    "0..5": {
+     "cf_model": 0.746,
+     "cf_real": 0.706,
+     "over_twh": 1.07,
+     "cap_twh": 26.8
+    },
+    "5..15": {
+     "cf_model": 0.817,
+     "cf_real": 0.766,
+     "over_twh": 1.95,
+     "cap_twh": 38.0
+    },
+    "15..1e+09": {
+     "cf_model": 0.877,
+     "cf_real": 0.844,
+     "over_twh": 0.96,
+     "cap_twh": 29.3
+    }
+   },
+   "zonal_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.536,
+     "cf_real": 0.593,
+     "over_twh": -2.48,
+     "cap_twh": 43.5
+    },
+    "0..5": {
+     "cf_model": 0.732,
+     "cf_real": 0.69,
+     "over_twh": 1.08,
+     "cap_twh": 25.8
+    },
+    "5..15": {
+     "cf_model": 0.807,
+     "cf_real": 0.755,
+     "over_twh": 2.08,
+     "cap_twh": 40.5
+    },
+    "15..1e+09": {
+     "cf_model": 0.871,
+     "cf_real": 0.837,
+     "over_twh": 1.17,
+     "cap_twh": 34.1
+    }
+   }
+  },
+  "rest": {
+   "sys_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.311,
+     "cf_real": 0.554,
+     "over_twh": -1.88,
+     "cap_twh": 7.7
+    },
+    "0..5": {
+     "cf_model": 0.664,
+     "cf_real": 0.659,
+     "over_twh": 0.01,
+     "cap_twh": 1.8
+    },
+    "5..15": {
+     "cf_model": 0.767,
+     "cf_real": 0.759,
+     "over_twh": 0.02,
+     "cap_twh": 2.3
+    },
+    "15..1e+09": {
+     "cf_model": 0.803,
+     "cf_real": 0.793,
+     "over_twh": 0.03,
+     "cap_twh": 2.3
+    }
+   },
+   "zonal_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.339,
+     "cf_real": 0.561,
+     "over_twh": -1.68,
+     "cap_twh": 7.6
+    },
+    "0..5": {
+     "cf_model": 0.656,
+     "cf_real": 0.661,
+     "over_twh": -0.01,
+     "cap_twh": 1.8
+    },
+    "5..15": {
+     "cf_model": 0.739,
+     "cf_real": 0.751,
+     "over_twh": -0.03,
+     "cap_twh": 2.3
+    },
+    "15..1e+09": {
+     "cf_model": 0.722,
+     "cf_real": 0.766,
+     "over_twh": -0.11,
+     "cap_twh": 2.4
+    }
+   }
+  }
+ },
+ "2024": {
+  "rto_vs_sys_rt_mean": 1.77,
+  "coalw_model_minus_actual_zonal": -2.69,
+  "coalw_actual_zonal_minus_rto": -0.65,
+  "coalw_model_minus_rto": -3.33,
+  "by_zone": {
+   "PJM_AEP_Ohio": {
+    "model_twh": 67.24,
+    "over_twh": 2.16,
+    "model_minus_actual_zonal": -2.29,
+    "actual_zonal_minus_rto": -0.54
+   },
+   "PJM_Central_PA": {
+    "model_twh": 4.32,
+    "over_twh": 0.43,
+    "model_minus_actual_zonal": -2.34,
+    "actual_zonal_minus_rto": -3.12
+   },
+   "PJM_ComEd": {
+    "model_twh": 4.24,
+    "over_twh": -0.2,
+    "model_minus_actual_zonal": -1.02,
+    "actual_zonal_minus_rto": -8.49
+   },
+   "PJM_Dominion": {
+    "model_twh": 1.17,
+    "over_twh": -0.81,
+    "model_minus_actual_zonal": -11.08,
+    "actual_zonal_minus_rto": 8.18
+   },
+   "PJM_EMAAC": {
+    "model_twh": 0.08,
+    "over_twh": -0.07,
+    "model_minus_actual_zonal": 99.16,
+    "actual_zonal_minus_rto": 7.3
+   },
+   "PJM_SWMAAC": {
+    "model_twh": 0.7,
+    "over_twh": -1.47,
+    "model_minus_actual_zonal": -20.19,
+    "actual_zonal_minus_rto": 15.79
+   },
+   "PJM_West_APS": {
+    "model_twh": 36.59,
+    "over_twh": -1.52,
+    "model_minus_actual_zonal": -3.28,
+    "actual_zonal_minus_rto": -0.25
+   }
+  },
+  "west": {
+   "sys_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.58,
+     "cf_real": 0.618,
+     "over_twh": -1.94,
+     "cap_twh": 51.0
+    },
+    "0..5": {
+     "cf_model": 0.767,
+     "cf_real": 0.732,
+     "over_twh": 0.79,
+     "cap_twh": 22.6
+    },
+    "5..15": {
+     "cf_model": 0.833,
+     "cf_real": 0.791,
+     "over_twh": 1.37,
+     "cap_twh": 32.2
+    },
+    "15..1e+09": {
+     "cf_model": 0.895,
+     "cf_real": 0.866,
+     "over_twh": 0.97,
+     "cap_twh": 33.6
+    }
+   },
+   "zonal_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.563,
+     "cf_real": 0.61,
+     "over_twh": -2.14,
+     "cap_twh": 45.5
+    },
+    "0..5": {
+     "cf_model": 0.75,
+     "cf_real": 0.719,
+     "over_twh": 0.7,
+     "cap_twh": 22.7
+    },
+    "5..15": {
+     "cf_model": 0.823,
+     "cf_real": 0.782,
+     "over_twh": 1.4,
+     "cap_twh": 33.8
+    },
+    "15..1e+09": {
+     "cf_model": 0.892,
+     "cf_real": 0.859,
+     "over_twh": 1.24,
+     "cap_twh": 37.4
+    }
+   }
+  },
+  "rest": {
+   "sys_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.298,
+     "cf_real": 0.459,
+     "over_twh": -2.06,
+     "cap_twh": 12.8
+    },
+    "0..5": {
+     "cf_model": 0.646,
+     "cf_real": 0.601,
+     "over_twh": 0.09,
+     "cap_twh": 2.1
+    },
+    "5..15": {
+     "cf_model": 0.723,
+     "cf_real": 0.674,
+     "over_twh": 0.14,
+     "cap_twh": 3.0
+    },
+    "15..1e+09": {
+     "cf_model": 0.78,
+     "cf_real": 0.708,
+     "over_twh": 0.29,
+     "cap_twh": 4.1
+    }
+   },
+   "zonal_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.319,
+     "cf_real": 0.453,
+     "over_twh": -1.7,
+     "cap_twh": 12.8
+    },
+    "0..5": {
+     "cf_model": 0.658,
+     "cf_real": 0.61,
+     "over_twh": 0.1,
+     "cap_twh": 2.0
+    },
+    "5..15": {
+     "cf_model": 0.722,
+     "cf_real": 0.673,
+     "over_twh": 0.14,
+     "cap_twh": 2.9
+    },
+    "15..1e+09": {
+     "cf_model": 0.705,
+     "cf_real": 0.719,
+     "over_twh": -0.06,
+     "cap_twh": 4.3
+    }
+   }
+  }
+ },
+ "2025": {
+  "rto_vs_sys_rt_mean": 4.01,
+  "coalw_model_minus_actual_zonal": -4.91,
+  "coalw_actual_zonal_minus_rto": -2.99,
+  "coalw_model_minus_rto": -7.9,
+  "by_zone": {
+   "PJM_AEP_Ohio": {
+    "model_twh": 88.75,
+    "over_twh": 9.62,
+    "model_minus_actual_zonal": -3.49,
+    "actual_zonal_minus_rto": -3.73
+   },
+   "PJM_Central_PA": {
+    "model_twh": 2.45,
+    "over_twh": -0.11,
+    "model_minus_actual_zonal": -2.33,
+    "actual_zonal_minus_rto": -3.03
+   },
+   "PJM_ComEd": {
+    "model_twh": 7.03,
+    "over_twh": 0.88,
+    "model_minus_actual_zonal": -1.54,
+    "actual_zonal_minus_rto": -12.11
+   },
+   "PJM_Dominion": {
+    "model_twh": 2.69,
+    "over_twh": -0.99,
+    "model_minus_actual_zonal": -37.43,
+    "actual_zonal_minus_rto": 21.25
+   },
+   "PJM_SWMAAC": {
+    "model_twh": 1.54,
+    "over_twh": -0.79,
+    "model_minus_actual_zonal": -30.02,
+    "actual_zonal_minus_rto": 18.41
+   },
+   "PJM_West_APS": {
+    "model_twh": 47.08,
+    "over_twh": 5.27,
+    "model_minus_actual_zonal": -5.54,
+    "actual_zonal_minus_rto": -2.31
+   }
+  },
+  "west": {
+   "sys_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.729,
+     "cf_real": 0.652,
+     "over_twh": 1.82,
+     "cap_twh": 23.6
+    },
+    "0..5": {
+     "cf_model": 0.842,
+     "cf_real": 0.721,
+     "over_twh": 2.33,
+     "cap_twh": 19.4
+    },
+    "5..15": {
+     "cf_model": 0.918,
+     "cf_real": 0.794,
+     "over_twh": 4.99,
+     "cap_twh": 40.0
+    },
+    "15..1e+09": {
+     "cf_model": 0.975,
+     "cf_real": 0.881,
+     "over_twh": 6.31,
+     "cap_twh": 67.3
+    }
+   },
+   "zonal_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.716,
+     "cf_real": 0.646,
+     "over_twh": 1.39,
+     "cap_twh": 19.9
+    },
+    "0..5": {
+     "cf_model": 0.829,
+     "cf_real": 0.71,
+     "over_twh": 2.15,
+     "cap_twh": 18.1
+    },
+    "5..15": {
+     "cf_model": 0.909,
+     "cf_real": 0.783,
+     "over_twh": 5.07,
+     "cap_twh": 40.3
+    },
+    "15..1e+09": {
+     "cf_model": 0.972,
+     "cf_real": 0.877,
+     "over_twh": 6.85,
+     "cap_twh": 72.0
+    }
+   }
+  },
+  "rest": {
+   "sys_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.423,
+     "cf_real": 0.539,
+     "over_twh": -1.06,
+     "cap_twh": 9.1
+    },
+    "0..5": {
+     "cf_model": 0.725,
+     "cf_real": 0.699,
+     "over_twh": 0.05,
+     "cap_twh": 1.9
+    },
+    "5..15": {
+     "cf_model": 0.817,
+     "cf_real": 0.786,
+     "over_twh": 0.1,
+     "cap_twh": 3.2
+    },
+    "15..1e+09": {
+     "cf_model": 0.879,
+     "cf_real": 0.857,
+     "over_twh": 0.15,
+     "cap_twh": 6.7
+    }
+   },
+   "zonal_rt": {
+    "-1e+09..0": {
+     "cf_model": 0.466,
+     "cf_real": 0.539,
+     "over_twh": -0.67,
+     "cap_twh": 9.1
+    },
+    "0..5": {
+     "cf_model": 0.717,
+     "cf_real": 0.707,
+     "over_twh": 0.02,
+     "cap_twh": 1.8
+    },
+    "5..15": {
+     "cf_model": 0.798,
+     "cf_real": 0.794,
+     "over_twh": 0.01,
+     "cap_twh": 2.9
+    },
+    "15..1e+09": {
+     "cf_model": 0.829,
+     "cf_real": 0.847,
+     "over_twh": -0.13,
+     "cap_twh": 7.1
+    }
+   }
+  }
+ }
+}
