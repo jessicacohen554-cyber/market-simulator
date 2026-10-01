@@ -592,10 +592,7 @@ DECLARED: dict[str, str | dict[str, str]] = {
     "REGIONAL_RENEWABLE_CF": "2f3d60ae0f2c3b34",
     "ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE": {"SOCO": "38d36ce273c7be1c"},
     "EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC": {"SOCO": "2a5c44ea15cb1c79"},
-    # PJM-NEXT-16: the PJM row is declared at the PRE-ARM (empty-table) hash,
-    # as SOCO's and ERCOT's membership rows were, so the OVEC join re-keys
-    # PJM's bundles rather than silently re-using pre-fix ones.
-    "ISO_BA_JOINS": {"SOCO": "a4d0fee78b233797", "PJM": "a4d0fee78b233797"},
+    "ISO_BA_JOINS": {"SOCO": "a4d0fee78b233797"},
     "COAL_ARTIFACT_FAMILY": "e1fc364feeda8ad8",
     "COAL_CLASSES": "debae8c77579f94d",
     "ISO_BA_EXITS": {"SOCO": "a4d0fee78b233797"},

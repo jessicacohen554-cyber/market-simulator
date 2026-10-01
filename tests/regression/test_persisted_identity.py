@@ -801,13 +801,14 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   WHAT IT COSTS: nothing solved — no registry value moved, so no committed
 #   bundle's numbers change; the digest moves only because the row set grew.
 # 2026-09-30 PJM ADVANCED (PJM-NEXT-16, owner ruling "Build + solve") — ONE
-#   ROW MOVED, DECLARED AT ITS PRE-ARM HASH SO IT MOVES PJM'S KEY.
+#   ROW MOVED, LEFT UNDECLARED SO IT ENTERS PJM'S KEY.
 #   constants.ISO_BA_JOINS gains {"PJM": {"OVEC": (2019, 1)}}: Clifty Creek 983
 #   and Kyger Creek 2876 are inside PJM's BA in every corpus hour but EIA-860
 #   vintages 2018-2020 code them OVEC, so the 2019/2020 fleet had dropped them.
 #   `solve_surface_register.py --diff origin/main` -> "1 value(s) moved:
-#   ISO_BA_JOINS: PJM". Declared at the empty-table hash (as SOCO's and
-#   ERCOT's membership rows were): 223 -> 224 rows, PJM only.
+#   ISO_BA_JOINS: PJM". The frozen ISO_BA_JOINS line stays SOCO-only (the
+#   ledger is append-only, check_cache_key_registration [1]), so the live PJM
+#   value enters the key: 223 -> 224 rows, PJM only.
 #   WHAT IT COSTS: a PJM cache miss. 2019/2020 fleets gain 2.39 GW of coal;
 #   2021-2025 fleets are unchanged (those vintages already code them PJM).
 #   SAME LANE, SAME DAY — TWO ROWS ADDED, NO VALUE MOVED:
@@ -982,9 +983,6 @@ LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
         ),
     },
     "PJM": {
-        "ISO_BA_JOINS": (
-            "PJM-NEXT-16 2026-09-30 (owner ruling 'Build + solve'): OVEC (Clifty Creek 983, Kyger Creek 2876) admitted to PJM from the corpus bound 2019-01, declared at the pre-arm hash so PJM re-keys — see the 2026-09-30 PJM-NEXT-16 cause block on PINNED_SURFACE_ROWS_BY_ISO"
-        ),
         "GENERIC_BASE_OFFER_CURVE": (
             "COAL-SUB 2026-09-25 (owner instruction: eliminate the bare COAL class): the COAL row deleted and, where it carried a value, that value carried to every coal subclass byte-identically — see the 2026-09-25 COAL-SUB cause block on PINNED_SURFACE_ROWS_BY_ISO"
         ),
