@@ -62,7 +62,7 @@ for the market split.
 | confirmed-retirements | — | — | — | — | — | — | — | — |
 | nuclear-license-status | — | — | — | — | — | — | — | — |
 | gtc-limits | — | — | — | — | — | — | — | — |
-| transfer-interface-limits | — | — | — | — | — | — | — | — |
+| transfer-interface-limits | — | 2023–2025 | — | — | — | — | — | — |
 | transmission-expansion | — | — | — | — | — | — | — | — |
 | ramp-capability | — | — | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — | — | — |
@@ -955,12 +955,12 @@ Schema:
 
 | column | dtype | unit | nullable | description |
 |---|---|---|---|---|
-| `iso` | `string` | `none` | no | ISO/RTO code (currently PJM). |
+| `iso` | `string` | `none` | no | ISO/RTO code (PJM, CAISO). |
 | `interface` | `string` | `none` | no | Interface / transfer-limit-area name exactly as published by the source (e.g. "AP-South Post-Contingency", "AEP/DOM Post-Contingency", "Average Western"). The model-side link crosswalk (market_sim.data.transfer_interface_limits) maps the representable ones onto model links. |
 | `hour` | `int64` | `hour_index` | no | Index 0-8759 on the fixed non-leap 8760-hour ISO-local clock (Feb 29 dropped) — the model's dispatch clock. |
 | `interval_start_local` | `datetime64[ns]` | `local_timestamp` | yes | Wall-clock local start of the hour (naive, ISO-local). |
 | `limit_mw` | `float64` | `mw` | no | Enforced transfer limit (MW) for the interface over the local clock hour (mean of the source rows merged into the hour — one normally, two at the DST fall-back). Kept faithful to the source, including the rare zero/negative published values; the model-side consumer documents how those are reconciled onto link bounds. |
-| `transfer_mw` | `float64` | `mw` | yes | Measured actual transfer (MW) across the interface over the hour (mean of merged source rows); null on the filled spring-forward hour. Diagnostic column for crosswalk sanity checks only — never a model input or target. |
+| `transfer_mw` | `float64` | `mw` | yes | Measured actual transfer (MW) across the interface over the hour (mean of merged source rows); null on the filled spring-forward hour. Diagnostic column for crosswalk sanity checks only — never a model input or target. CAISO: the DAM scheduled net energy on the ITC (OASIS ENE_IMPORT_MW, positive = net import), not a metered flow. |
 | `n_source_rows` | `int64` | `count` | no | Source rows merged into the clock hour: 1 normally, 2 at the DST fall-back repeat, 0 for the spring-forward hour that never occurs locally (limit_mw filled from the neighbouring hours). |
 
 ## transmission-expansion
