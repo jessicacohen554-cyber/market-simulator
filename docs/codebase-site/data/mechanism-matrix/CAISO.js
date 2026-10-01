@@ -371,6 +371,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     import_shape_lever: { cell: "." },
     nyiso_import_sil_retire: { cell: "." },
     nyiso_li_tsl_n11_security: { cell: "." },
+    nyiso_li_tsl_all_hours: { cell: ".", ev: "NYISO-only seam (apply_nyiso_li_tsl_import_cap returns ttc unchanged for every other ISO). Rule 25 [R-ISO-SCOPE]: nothing transfers." },
     nyiso_central_east_measured_ttc: { cell: ".", fc: "." },
     nyiso_gj_locality_tsl: { cell: "." },
     caiso_firm_envelope_clip: { cell: "K", ev: "caiso-138 (FINDING-caiso138, probe _caiso138_pnw_firm_dump.py, PREREG-caiso138); shape-BASIS defect measured at caiso-150 — see caiso_firm_selfsched_floor; R-CAISO-6 (2026-09-27): the per-corridor SHAPE alternative (each hub block shaped by its own corridor's EIA-930 profile instead of the two-corridor total) was censused at ZERO LP and NOT armed — total h8-16 firm floor moves -68/+98/+128/-10 MW (2022-25) against the +1.5-2.3 GW C4 midday excess, and the clip strips 0.1-1.4 TWh of PNW capability; the clip stays the reconciliation (docs/records/caiso/r-caiso-6/PRECOMMIT-r-caiso-6-2026-09-27.md §1)" },

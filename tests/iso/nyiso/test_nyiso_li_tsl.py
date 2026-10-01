@@ -229,3 +229,41 @@ class TestFloorExclusion:
         frac = NYISO_LOCAL_SELFSUPPLY_FRAC["Long_Island"]
         on = NYISO_SELFSUPPLY_FLOOR_HOURS[0]
         assert fa_a.min_gen[1, on] + fa_a.min_gen[2, on] == pytest.approx(frac * 400.0)
+
+
+class TestAllHoursWindow:
+    """NYISO-NEXT-26 ``all_hours``: the same published cap in every hour."""
+
+    def test_all_hours_caps_every_hour(self):
+        iso_config = _nyiso_cfg()
+        ttc = np.array([ln.ttc_mw for ln in iso_config.links], dtype=float)
+        li = _li_link_idx(iso_config)
+        out = apply_nyiso_li_tsl_import_cap(
+            ttc, iso_config, "NYISO", 2023, T, n11_security_basis=True, all_hours=True
+        )
+        np.testing.assert_allclose(out[:, li], 940.0)
+
+    def test_all_hours_off_is_byte_identical(self):
+        iso_config = _nyiso_cfg()
+        ttc = np.array([ln.ttc_mw for ln in iso_config.links], dtype=float)
+        base = apply_nyiso_li_tsl_import_cap(
+            ttc, iso_config, "NYISO", 2023, T, n11_security_basis=True
+        )
+        off = apply_nyiso_li_tsl_import_cap(
+            ttc, iso_config, "NYISO", 2023, T, n11_security_basis=True, all_hours=False
+        )
+        np.testing.assert_array_equal(base, off)
+
+    def test_all_hours_never_loosens_and_leaves_other_links(self):
+        iso_config = _nyiso_cfg()
+        ttc = np.array([ln.ttc_mw for ln in iso_config.links], dtype=float)
+        li = _li_link_idx(iso_config)
+        low = ttc.copy()
+        low[li] = 500.0  # a tighter incoming rating stays binding
+        out = apply_nyiso_li_tsl_import_cap(
+            low, iso_config, "NYISO", 2023, T, n11_security_basis=True, all_hours=True
+        )
+        np.testing.assert_allclose(out[:, li], 500.0)
+        for i in range(len(iso_config.links)):
+            if i != li:
+                np.testing.assert_allclose(out[:, i], low[i])
