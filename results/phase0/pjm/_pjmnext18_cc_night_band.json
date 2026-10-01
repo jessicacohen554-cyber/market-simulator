@@ -1,0 +1,185 @@
+{
+ "what": "PJM-NEXT-18 card 2: CC_REGULAR night load by band. ZERO LP.",
+ "2019": {
+  "night": {
+   "model_twh": 83.56,
+   "actual_twh": 79.39,
+   "gap_twh": 4.17,
+   "model_by_band_twh": {
+    "econ": 30.65,
+    "floor": 52.91,
+    "peak": 0.0
+   },
+   "median_price_model_lw": 23.36,
+   "median_price_actual_rt": 18.88
+  },
+  "day": {
+   "model_twh": 191.56,
+   "actual_twh": 189.11,
+   "gap_twh": 2.45,
+   "model_by_band_twh": {
+    "econ": 77.52,
+    "floor": 114.04,
+    "peak": 0.0
+   },
+   "median_price_model_lw": 27.52,
+   "median_price_actual_rt": 24.12
+  }
+ },
+ "2020": {
+  "night": {
+   "model_twh": 90.33,
+   "actual_twh": 84.3,
+   "gap_twh": 6.03,
+   "model_by_band_twh": {
+    "econ": 31.04,
+    "floor": 59.28,
+    "peak": 0.0
+   },
+   "median_price_model_lw": 20.0,
+   "median_price_actual_rt": 14.96
+  },
+  "day": {
+   "model_twh": 203.03,
+   "actual_twh": 198.99,
+   "gap_twh": 4.04,
+   "model_by_band_twh": {
+    "econ": 78.97,
+    "floor": 124.06,
+    "peak": 0.0
+   },
+   "median_price_model_lw": 23.42,
+   "median_price_actual_rt": 19.64
+  }
+ },
+ "2021": {
+  "night": {
+   "model_twh": 83.98,
+   "actual_twh": 81.9,
+   "gap_twh": 2.07,
+   "model_by_band_twh": {
+    "econ": 25.07,
+    "floor": 58.91,
+    "peak": 0.0
+   },
+   "median_price_model_lw": 31.53,
+   "median_price_actual_rt": 25.02
+  },
+  "day": {
+   "model_twh": 196.57,
+   "actual_twh": 197.26,
+   "gap_twh": -0.69,
+   "model_by_band_twh": {
+    "econ": 70.09,
+    "floor": 126.48,
+    "peak": 0.0
+   },
+   "median_price_model_lw": 37.34,
+   "median_price_actual_rt": 33.72
+  }
+ },
+ "2022": {
+  "night": {
+   "model_twh": 94.91,
+   "actual_twh": 89.15,
+   "gap_twh": 5.77,
+   "model_by_band_twh": {
+    "econ": 32.02,
+    "floor": 62.89,
+    "peak": 0.0
+   },
+   "median_price_model_lw": 56.88,
+   "median_price_actual_rt": 47.51
+  },
+  "day": {
+   "model_twh": 213.99,
+   "actual_twh": 208.45,
+   "gap_twh": 5.55,
+   "model_by_band_twh": {
+    "econ": 80.87,
+    "floor": 133.13,
+    "peak": 0.0
+   },
+   "median_price_model_lw": 63.68,
+   "median_price_actual_rt": 60.76
+  }
+ },
+ "2023": {
+  "night": {
+   "model_twh": 105.3,
+   "actual_twh": 100.23,
+   "gap_twh": 5.07,
+   "model_by_band_twh": {
+    "econ": 38.99,
+    "floor": 66.31,
+    "peak": 0.0
+   },
+   "median_price_model_lw": 27.08,
+   "median_price_actual_rt": 19.65
+  },
+  "day": {
+   "model_twh": 228.91,
+   "actual_twh": 225.68,
+   "gap_twh": 3.23,
+   "model_by_band_twh": {
+    "econ": 88.85,
+    "floor": 140.06,
+    "peak": 0.0
+   },
+   "median_price_model_lw": 31.13,
+   "median_price_actual_rt": 28.13
+  }
+ },
+ "2024": {
+  "night": {
+   "model_twh": 105.47,
+   "actual_twh": 104.58,
+   "gap_twh": 0.89,
+   "model_by_band_twh": {
+    "econ": 36.12,
+    "floor": 69.35,
+    "peak": 0.0
+   },
+   "median_price_model_lw": 25.16,
+   "median_price_actual_rt": 18.76
+  },
+  "day": {
+   "model_twh": 229.34,
+   "actual_twh": 230.81,
+   "gap_twh": -1.47,
+   "model_by_band_twh": {
+    "econ": 85.33,
+    "floor": 144.01,
+    "peak": 0.0
+   },
+   "median_price_model_lw": 28.73,
+   "median_price_actual_rt": 27.67
+  }
+ },
+ "2025": {
+  "night": {
+   "model_twh": 102.82,
+   "actual_twh": 105.13,
+   "gap_twh": -2.31,
+   "model_by_band_twh": {
+    "econ": 34.55,
+    "floor": 68.26,
+    "peak": 0.0
+   },
+   "median_price_model_lw": 35.03,
+   "median_price_actual_rt": 28.58
+  },
+  "day": {
+   "model_twh": 220.02,
+   "actual_twh": 225.61,
+   "gap_twh": -5.59,
+   "model_by_band_twh": {
+    "econ": 79.88,
+    "floor": 140.14,
+    "peak": 0.0
+   },
+   "median_price_model_lw": 39.87,
+   "median_price_actual_rt": 37.61
+  }
+ }
+}

@@ -6891,3 +6891,27 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
   - `docs/records/pjm/RESULT-pjm-next-17-2026-10-01.md`
   - `docs/records/pjm/FINDING-pjm-next-17-coal-response-and-cc-conduct-window-2026-10-01.md`
   - `docs/records/pjm/PRECOMMIT-pjm-next-17-2026-10-01.md`
+
+## PJM-NEXT-18 — 2026-10-01 — low-end census 2019–2025; model coal sets price ~2× the IMM rate; keeper per-unit layer lands
+
+- **Solves and keeper:** seven one-year diagnostic keeper replays (rule 36), reproducing the keeper exactly (Δ = 0.000 TWh, every class, every year). Never registered. Keeper unchanged (`2026-09-30-pjm-next16-ovec`); 10 failing cells, NOT-YET.
+- **Owner instruction, all ISOs:** keeper bundles commit `hourly/unit_marginal_<y>.parquet`. This is `unit_hourly` minus `red_cost` plus an int8 `marginal` flag (owner card "Slim layer"), because the full PJM layer is 69–81 MB/yr. Every solve writes it. Rule 15 now requires it, and `promote_keeper.py` preflight enforces it. Attached to the PJM keeper, 76 MB for 2019–2025.
+- **Card 1 (low end):**
+  - The low-end price-floor gap is **larger in the fit years** (3.3–3.7 × gas in 2023/24 vs 1.6–2.2 in 2019–21), so it is not the year lever.
+  - Model coal sets the price ×1.7–2.6 more often than the IMM's marginal-fuel shares, in every year.
+  - In model-coal-set hours, the actual RT price ÷ an efficient CC's fuel cost is **1.03 / 1.07 / 0.98 in 2019–21** vs 1.18–1.39 in 2022–25. Real PJM cleared those hours on efficient CCs below the model's coal.
+  - No mechanism yet; card 3 not reached.
+- **Card 2 (CC 2023):** model CC output is flat 2023 → 2024 (+0.2 / +0.4 TWh night / day) while actual rises (+4.4 / +5.1). The excess is diffuse over about 70 plants. No lever.
+- **OPEN, not limits:** COAL_BIT 2019–2021; CC_REGULAR 2020/2022/2023; CT_PEAKER 2021; C3a 2020/2022; C3b 2022.
+- **Records:**
+  - `docs/records/pjm/RESULT-pjm-next-18-2026-10-01.md`
+  - `docs/records/pjm/PRECOMMIT-pjm-next-18-2026-10-01.md`
+
+## PJM-NEXT-19 — 2026-10-01 — real offer stack not year-discriminating; coal over-run is inframarginal; CC 2023 is a zonal offset plus benchmark drift (zero LP)
+
+- **Solves and keeper:** zero LP, zero shards. Keeper unchanged (`2026-09-30-pjm-next16-ovec`); 10 failing cells, NOT-YET.
+- **Card 1 (offers, Jan/Apr/Jul/Oct sample of 2019–21, 2023–25):** the real stack offers a larger share of thermal MW below the model's coal offer than the model in every year, by +0.02 to +0.09, and as much in fit year 2024 (+0.036) as in 2019–21. Not the COAL_BIT lever.
+- **Card 1b:** the 2019–21 coal over-run is mostly in hours where coal is inframarginal (+11.9 / +8.0 / +14.4 TWh), and CC also over-runs in coal-set hours, so it is not CC↔coal displacement.
+- **Card 2:** CC_REGULAR 2023 +8.5 = Dominion −12.7 vs EMAAC +9.0 / Central PA +5.1 / ComEd +5.6. Dominion's EIA-923 gas is +1.63 over IMM eastern spot in 2023 (offer $42 vs EMAAC $27). This is the NEXT-8/9/13 ground; nothing new there to re-test. The 2023→24 benchmark grows 6.8 TWh more than the model can (U_a −7.6).
+- Card 3 not reached. **OPEN, not limits.**
+- **Record:** `docs/records/pjm/RESULT-pjm-next-19-2026-10-01.md`.

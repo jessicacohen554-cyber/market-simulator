@@ -1732,13 +1732,11 @@ def campd_fuel_split_selector(config: object) -> bool | str:
     ``ScenarioConfig.campd_unit_fuel_split`` (miso-278, GATED default False).
     ONE accessor for every tranche-family reader, so a call site cannot read the
     fuel-split pooled artifact beside an incumbent level artifact (rule 19
-    ``[R-ONE-MECH]``). Under ``campd_per_unit_attribution`` it returns
-    :data:`PER_UNIT_FUEL_SPLIT_TAG` (NWPP-NEXT-14), selecting the per-unit
-    family's OWN ``-perunit-fuelsplit-`` companion (the mixed-fuel plants' rows
-    on each window year's own EIA-860 vintage bin, derated on the per-unit
-    outage extract), never the plain family's ``-fuelsplit-`` files; it raises
-    beside the merit guard, the ST_GAS span coverage or the split remap, for
-    none of which a per-unit fuel-split companion exists.
+    ``[R-ONE-MECH]``). Under ``campd_per_unit_attribution`` it RAISES: the
+    per-unit fuel-split composition (NWPP-NEXT-14) was DELETED at NWPP-NEXT-16
+    (rule 26 ``[R-DELETE]``; owner card 2026-10-01 "Promote C, prune #19") in
+    favour of ``campd_per_unit_vintage_denominator``, which repairs the same
+    per-unit head-vintage denominator and also North Valmy's must-run.
 
     ``ScenarioConfig.campd_st_gas_span_coverage`` (miso-279, GATED default
     False) is a SUB-GATE of the fuel split, exactly as ``merit_guard`` is of
@@ -1763,27 +1761,14 @@ def campd_fuel_split_selector(config: object) -> bool | str:
     per_unit, merit_guard = campd_attribution_selectors(config)
     split_remap = _campd.split_remap_armed(config)
     if per_unit and bool(getattr(config, "campd_unit_fuel_split", False)):
-        if bool(getattr(config, "campd_per_unit_vintage_denominator", False)):
-            # Rule 19 [R-ONE-MECH]: both repair the per-unit artifact's
-            # head-vintage denominator; NWPP-NEXT-14 reconciliation (owner
-            # card "Keep #19; retire dup Clark field") keeps them exclusive.
-            raise ValueError(
-                "campd_unit_fuel_split and campd_per_unit_vintage_denominator are "
-                "two repairs of one defect (the per-unit tranche artifact's "
-                "head-vintage denominator); arm one, never both"
-            )
-        if (
-            merit_guard
-            or split_remap
-            or bool(getattr(config, "campd_st_gas_span_coverage", False))
-        ):
-            raise ValueError(
-                "campd_unit_fuel_split under campd_per_unit_attribution composes "
-                "only with the plain '-perunit-' family: no per-unit fuel-split "
-                "companion exists for campd_outage_merit_order_guard, "
-                "campd_st_gas_span_coverage or campd_split_remap_companions"
-            )
-        return PER_UNIT_FUEL_SPLIT_TAG
+        # NWPP-NEXT-16 (rule 26 [R-DELETE]): the per-unit fuel-split
+        # composition is deleted; campd_per_unit_vintage_denominator is the
+        # one repair of the per-unit head-vintage denominator (rule 19).
+        raise ValueError(
+            "campd_unit_fuel_split does not compose with "
+            "campd_per_unit_attribution: the per-unit fuel-split companion was "
+            "deleted (NWPP-NEXT-16); arm campd_per_unit_vintage_denominator"
+        )
     if per_unit or not bool(getattr(config, "campd_unit_fuel_split", False)):
         if split_remap:
             if per_unit:
@@ -1832,13 +1817,6 @@ PER_UNIT_VINTAGE_TAG: str = "perunit-vintage"
 #: (:func:`market_sim.data.campd.split_remap_companion`, raising when absent).
 PLAIN_SPLIT_REMAP_TAG: str = f"plain-{_campd.SPLIT_REMAP_TAG}"
 
-#: Selector value for ``campd_unit_fuel_split`` under
-#: ``campd_per_unit_attribution`` (NWPP-NEXT-14): each reader resolves its
-#: per-unit artifact's ``-perunit-fuelsplit-`` companion, falling back to what
-#: it reads under per-unit alone where none was derived (only the pooled
-#: artifact is derived: the per-unit family has no level artifacts).
-PER_UNIT_FUEL_SPLIT_TAG: str = "perunit-fuelsplit"
-
 
 def _fuel_split_companion(base: Path, fuel_split: bool | str = True) -> Path:
     """``thermal_tranches_X_<ISO>.csv`` -> ``thermal_tranches_X-fuelsplit-<ISO>.csv``.
@@ -1855,9 +1833,6 @@ def _fuel_split_companion(base: Path, fuel_split: bool | str = True) -> Path:
         # SPP-99: the plain artifact's own split-remap companion, no fuel split.
         return _campd.split_remap_companion(base)
     stem, iso = base.stem.rsplit("_", 1)
-    if fuel_split == PER_UNIT_FUEL_SPLIT_TAG:
-        # NWPP-NEXT-14: the per-unit family's fuel-split companion.
-        return base.with_name(f"{stem}-{PER_UNIT_FUEL_SPLIT_TAG}-{iso}{base.suffix}")
     plain = base.with_name(f"{stem}-fuelsplit-{iso}{base.suffix}")
     # miso-280: a trailing split-remap tag selects the '-splitremap-' companion
     # of the family the rest of the tag selects, raising when it is absent
@@ -1943,10 +1918,6 @@ def thermal_tranche_csv_for_iso(
         if alt.exists():
             return alt
     if per_unit:
-        if fuel_split == PER_UNIT_FUEL_SPLIT_TAG:
-            alt = _fuel_split_companion(base, fuel_split)
-            if alt.exists():
-                return alt
         if merit_guard:
             alt = base.with_name(f"thermal_tranches-perunitmerit-{iso.upper()}.csv")
             if alt.exists():

@@ -1,5 +1,5 @@
 {
  "iso": "NWPP",
- "keeper": "2026-09-30-nwppnext14-clark-hr-bridger",
- "note": "NWPP keeper #19 (NWPP-NEXT-14): keeper #18 + eia923_cc_family_heat_rates (Clark 2322's CC rows loaded an impossible eGRID 3.007 MMBtu/MWh; the plant's own EIA-923 CC-family rate 9.0-9.6 takes Clark CC from 3.69 to 0.41-1.21 TWh/yr against EIA-923 0.43-0.86) + campd_unit_fuel_split composed with per-unit attribution (Jim Bridger's coal row on each year's own EIA-860 vintage bin); owner decision card 2026-09-30 'Promote + prune #18', on structural integrity (rule 14), 0 of 161 records change status, C4 coal 2023 0.662 -> 0.670 still FAIL, every regression reported in RESULT-nwppnext14"
+ "keeper": "2026-10-01-nwppnext16c-combined-vintage",
+ "note": "NWPP keeper #20 (NWPP-NEXT-16 arm C): keeper #19's recipe with campd_unit_fuel_split -> campd_per_unit_vintage_denominator (rule 19: both repair the per-unit tranche artifact's head-vintage denominator; the vintage denominator also repairs North Valmy 8224's must-run 212.45 -> 127.89 MW). Owner decision card 2026-10-01 'Promote C, prune #19', on structure (rules 14/19): 0 status changes vs #19, every C4 record within +/-0.008, C4 coal 2023 0.670 -> 0.669 still FAIL; C1 closer in 22 records, farther in 13 (largest: COAL_BIT 2024 +0.48 TWh error). Arms D (captive-mine price) and E (live-capacity coal WEFOR) rejected; RESULT-nwppnext16."
 }

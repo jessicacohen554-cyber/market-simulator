@@ -1395,6 +1395,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # (the off path never builds the series). Registered IN THE SAME COMMIT as
     # the field.
     "ercot_swcap_effective_hourly",
+    # R-ERCOT-24 published ORDC curve (GATED default off): dropped from the
+    # hash at its default so every pre-existing cache key stays byte-stable
+    # (the off path never reads the seasonal table). Registered IN THE SAME
+    # COMMIT as the field.
+    "ercot_ordc_published_curve",
     # ercot-242 room-axis extension of the RT/SCED wall (GATED default off) +
     # its path: dropped from the hash at their defaults so every pre-existing
     # cache key stays byte-stable (the off path never loads the room artifact
@@ -2872,6 +2877,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_swcap_vintage": "False",
     # Added by R-ERCOT-23 WITH the field (the nyiso-119 discipline).
     "ercot_swcap_effective_hourly": "False",
+    # Added by R-ERCOT-24 WITH the field (the nyiso-119 discipline).
+    "ercot_ordc_published_curve": "False",
     # Added by ercot-242 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "ercot_offer_surface_cleared_share_rt_room": "False",
@@ -14523,6 +14530,29 @@ class ScenarioConfig:
     # ercot_swcap_vintage so the LP's voll is that same number.
     ercot_swcap_effective_hourly: bool = False
 
+    # ERCOT PUBLISHED ORDC CURVE (R-ERCOT-24, default off, ERCOT-gated,
+    # backcast-only; rules 1 [R-STRUCT] / 14 [R-ACCURATE]). Two zero-DOF
+    # corrections to the ORDC demand curve, one mechanism (rule 19): (a) the
+    # ORDC OBD's first-half (spinning-only) curve, §2.3 in every vintage
+    # 2019-2024: 1 - CDF(0.5 * mu_s, 0.707 * sigma) with mu_s = mu + S * sigma
+    # (the shift halves with the mean; the legacy form applies
+    # mu/2 + S * sigma/sqrt(2)); (b) ERCOT's own seasonal mu / sigma (NP6-576-
+    # ER, re-derived each Dec / Mar / Jun / Sep) in place of the flat
+    # ordc_lolp_mu_mw / ordc_lolp_sigma_mw fallback, read from
+    # data/raw/ercot/ercot_ordc_mu_sigma_seasonal.csv (Figure 3 of ERCOT's
+    # 2022 / 2024 Biennial ORDC Reports; scripts/data/
+    # derive_ercot_ordc_mu_sigma.py; +/-15 MW digitization, a declared rule-14
+    # reconciliation; the last published season carries forward into 2025).
+    # Armed, results.scarcity.resolve_lolp_params returns the hourly published
+    # values and both ERCOT co-opt ORDC families price an hourly curve on one
+    # reserve grid ((n_steps, T) penalties). Identified on ERCOT's measured
+    # RTOLCAP / RTOFFCAP / lambda (scripts/probes/_r_ercot24_ordc_vintage_id.py):
+    # formula / measured RTORPA 2019-2024 0.94 / 0.84 / 1.06 / 0.86 / 0.85 /
+    # 0.81 (keeper curve 1.04 / 1.45 / 1.14 / 1.08 / 1.09 / 0.90) - below 1
+    # because the convex curve is evaluated on hourly-mean reserves. ZERO free
+    # parameters (rules 21/24): published formula, published values.
+    ercot_ordc_published_curve: bool = False
+
     # ERCOT gas-CC COMMITMENT BRIDGE (default off, ERCOT-gated): the committed-
     # STATE half of the trough-price-formation circle, promoted from the
     # ERCOT-62b probe (docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md
@@ -24911,6 +24941,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_offer_swcap_clip": 1,
     "ercot_swcap_vintage": 1,
     "ercot_swcap_effective_hourly": 1,
+    "ercot_ordc_published_curve": 1,
     "caiso_storage_adaptive_expectation": 1,
     "caiso_adaptive_half_life_days": 2,
     "caiso_adaptive_beta": 2,

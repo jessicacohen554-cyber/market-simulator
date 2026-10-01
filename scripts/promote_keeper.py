@@ -12,7 +12,11 @@ Order (CLAUDE.md rule 35 ``[R-PROMOTE]``: enumerate, promote, verify, THEN
 delete):
 
   0. preflight    — bundle has ``meta.json`` + ``dispatch/<year>_P1.parquet``
-                    for every solved year (registration needs them)
+                    for every solved year (registration needs them), and the
+                    committed per-unit layer ``hourly/unit_marginal_<year>``
+                    for every year (rule 15, owner 2026-10-01): derived here
+                    from ``unit_hourly`` when absent; a NEW keeper with
+                    neither is refused
   1. enumerate    — the ISO's registered year set BEFORE anything is deleted;
                     refuse a promotion that would shrink it (rule 35 (b)/(c))
   2. register     — ``dashboard_add_run.py --no-prune`` for the keeper bundle
@@ -60,6 +64,7 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
 from scripts.lib import keeper_store  # noqa: E402
+from scripts.lib.unit_marginal import write_unit_marginal  # noqa: E402
 
 DATA = REPO / "frontend" / "data" / "backcast"
 REGISTRY = DATA / "registry"
@@ -133,7 +138,46 @@ def preflight(bundle: Path) -> list[int]:
             "registration raises without it (rule 34 (a)); the shard did not "
             "push its full bundle"
         )
+    ensure_unit_marginal(bundle, years, new=existing_run_id(bundle) is None)
     return years
+
+
+def ensure_unit_marginal(bundle: Path, years: list[int], *, new: bool) -> list[int]:
+    """Step 0b: the keeper's committed per-unit layer, every year (rule 15).
+
+    Owner instruction 2026-10-01 ("Moving forward for all ISOs"; card "Slim
+    layer"): a keeper bundle commits ``hourly/unit_marginal_<year>.parquet``
+    for every year it carries. A year missing it is derived here from the
+    bundle's own ``unit_hourly_<year>.parquet`` (``scripts/lib/unit_marginal``).
+    A NEW keeper with a year that has neither is refused; a re-designated,
+    already-registered keeper only warns (the rule is prospective).
+
+    Returns:
+        The years still missing the layer after derivation.
+    """
+    hourly = bundle / "hourly"
+    missing: list[int] = []
+    for y in years:
+        out = hourly / f"unit_marginal_{y}.parquet"
+        if out.exists():
+            continue
+        if write_unit_marginal(hourly / f"unit_hourly_{y}.parquet", out) is None:
+            missing.append(y)
+        else:
+            print(f"    derived {out} — commit it with the bundle")
+    if missing and new:
+        raise SystemExit(
+            f"{bundle}: hourly/unit_marginal_<year>.parquet missing for {missing} "
+            "and no unit_hourly to derive it from — a keeper bundle commits the "
+            "per-unit layer for every year (CLAUDE.md rule 15); the shard did not "
+            "push its full bundle"
+        )
+    if missing:
+        print(
+            f"    WARNING: {bundle.name} lacks unit_marginal for {missing} "
+            "(pre-2026-10-01 keeper; gains it at its next re-solve)"
+        )
+    return missing
 
 
 def registered_years(iso: str) -> tuple[set[int], list[str]]:

@@ -89,6 +89,8 @@ def build_cost_vector(
             overgeneration-dump guard below (``dump_cost_full_offer_domain``).
             ``None`` keeps the guard on the renewable/storage-credit set alone
             — byte-identical, and the historical behaviour.
+        ordc_penalties: ``(n_ordc_steps,)`` static step prices, or
+            ``(n_ordc_steps, T)`` when a family prices an hourly curve.
         ordc_penalty_hour_scale: Optional ``(T,)`` multiplier on every ORDC
             shortfall-step penalty in hour ``t`` (ERCOT
             ``ercot_swcap_effective_hourly``: the VOLL-anchored reserve demand
@@ -227,12 +229,19 @@ def build_cost_vector(
                 "build_cost_vector: n_ordc_steps > 0 requires ordc_penalties"
             )
         pen = np.asarray(ordc_penalties, dtype=float)
-        if pen.shape != (layout.n_ordc_steps,):
+        # (n_ordc_steps,) static, or (n_ordc_steps, T) when a family prices an
+        # hourly curve (ERCOT ercot_ordc_published_curve) -> (T, n) block.
+        if pen.shape == (layout.n_ordc_steps, layout.T):
+            pen_t = pen.T
+        elif pen.shape == (layout.n_ordc_steps,):
+            pen_t = pen[np.newaxis, :]
+        else:
             raise ValueError(
-                f"ordc_penalties shape {pen.shape} != ({layout.n_ordc_steps},)"
+                f"ordc_penalties shape {pen.shape} != ({layout.n_ordc_steps},) "
+                f"or ({layout.n_ordc_steps}, {layout.T})"
             )
         if ordc_penalty_hour_scale is None:
-            block[:, layout._ordc_off : layout._ordc_off + layout.n_ordc_steps] = pen
+            block[:, layout._ordc_off : layout._ordc_off + layout.n_ordc_steps] = pen_t
         else:
             scale = np.asarray(ordc_penalty_hour_scale, dtype=float)
             if scale.shape != (layout.T,):
@@ -240,7 +249,7 @@ def build_cost_vector(
                     f"ordc_penalty_hour_scale shape {scale.shape} != ({layout.T},)"
                 )
             block[:, layout._ordc_off : layout._ordc_off + layout.n_ordc_steps] = (
-                scale[:, np.newaxis] * pen[np.newaxis, :]
+                scale[:, np.newaxis] * pen_t
             )
 
     # Storage-reserve columns RS[c,z,t] (duration gate): NO direct cost, exactly

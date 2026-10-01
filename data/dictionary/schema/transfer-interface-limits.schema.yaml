@@ -12,6 +12,15 @@
 # Pre- and post-contingency limits are DISTINCT series and stay distinct rows
 # here — consumers choose which security posture to enforce.
 #
+# Source (CAISO, R-CAISO-30): OASIS `TRNS_USAGE` (DAM), fetched by
+# scripts/data/fetch_caiso_trns_usage.py into the committed
+# data/raw/caiso-trns-usage/caiso_trns_usage_dam_<year>.parquet (retained
+# history starts 2023-06-19). Four series per intertie ITC x direction, named
+# "<ti_id>|<I|E>|<OTC|TTC|TRM|MTC>" (hourly TTC, seasonal TTC, total TRM,
+# market transfer capability). For CAISO, transfer_mw is the DAM SCHEDULED
+# net import on the ITC (ENE_IMPORT_MW), not a metered flow, and 99999 is
+# OASIS's "unlimited" sentinel, kept verbatim.
+#
 # Curation (scripts/data/curate_transfer_interface_limits.py, per-ISO specs in
 # scripts/lib/transfer_interface_limits/) maps the UTC-keyed source rows onto
 # the fixed non-leap 8760-hour ISO-local clock (Feb 29 dropped, the DST
@@ -19,7 +28,10 @@
 # with gtc-limits and the ercot-hsl/ORDC raw series). The frame is DENSE: the
 # single spring-forward wall-clock hour that never occurs locally is filled
 # from the neighbouring hours and flagged with n_source_rows = 0, so every
-# (interface, hour) pair 0-8759 carries a row.
+# (interface, hour) pair 0-8759 carries a row. EXCEPTION: an ISO spec with
+# max_fill_hours set (CAISO: 1) fills only interior gaps up to that length;
+# hours before a series' first / after its last observation, and longer gaps,
+# are ABSENT rather than invented (CAISO 2023 starts 2023-06-19).
 #
 # Rule #13/#14 admissibility: an interface transfer limit is the RTO's
 # published operating-security transfer capability — a reproducible
@@ -46,7 +58,7 @@ columns:
     dtype: string
     unit: none
     nullable: false
-    description: ISO/RTO code (currently PJM).
+    description: ISO/RTO code (PJM, CAISO).
   - name: interface
     dtype: string
     unit: none
@@ -87,7 +99,8 @@ columns:
       Measured actual transfer (MW) across the interface over the hour (mean
       of merged source rows); null on the filled spring-forward hour.
       Diagnostic column for crosswalk sanity checks only — never a model
-      input or target.
+      input or target. CAISO: the DAM scheduled net energy on the ITC
+      (OASIS ENE_IMPORT_MW, positive = net import), not a metered flow.
   - name: n_source_rows
     dtype: int64
     unit: count

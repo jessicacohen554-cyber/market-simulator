@@ -15579,3 +15579,35 @@ low-load stack (Recommended)"*.
   Put to the owner as cards. No cell moves; evidence notes on the two O cells and `seam_neighbour_hourly_ladder` (K).
 
 Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
+
+## miso-297 — 2026-10-01 — joint arm (ruled gas form + coal econ multiplier): the IMM census identifies no single multiplier; no shard launched
+
+Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Records: `docs/records/miso/FINDING-miso297-census-identification-2026-10-01.md`,
+`docs/records/miso/PRECOMMIT-miso297-joint-gas-coal-2026-10-01.md` (NOT LAUNCHED; rules pinned at 025012a7 before the pooled curve),
+`docs/records/miso/GDRIFT-miso297-keeper-8f765fef-2026-10-01.md`; probes `scripts/probes/_miso297_*.py` → `results/phase0/miso/_miso297_*.json`.
+
+**Owner rulings that opened this lane (2026-10-01, miso-296 decision cards; miso-296 could not log them), verbatim:**
+- Card *"What should miso-297 do?"*: **"PRECOMMIT the joint arm (Recommended)"** — gas at hub + variable transport (owner-ruled
+  form, O cells) PLUS a coal econ band multiplier through the authorized channel, one value all years, set ex ante with kill
+  rules; then 7 shards (one per year).
+- Card *"Multiplier ID"*: **"IMM marginal-share census (Recommended)"** — zero LP: the value at which the rebuilt stack's coal
+  price-setting share matches the IMM SOM Table 1 coal SMP share (2019–2024, pooled). A structural statistic, not a gate.
+
+- **Identification (rules fixed before the curve):** pooled 2019–2024 equal-year mean of the IMM coal SMP share = 0.363; grid
+  m ∈ {1.00…0.30}; m* = first crossing descending from 1.00 on the joint leg's P1 bid-stack census at the keeper's own thermal
+  quantity. **Result: no crossing.** Joint pooled share 0.285 (m 1.00) → max **0.305 at m 0.80** → 0.116 (m 0.30); coal-only
+  max 0.298. 2020 reaches the IMM 0.40 at m 0.70 and 2023/2024 top out at 0.26 (IMM 0.36), while 2019/2021/2022 fall
+  (0.46 → 0.15, 0.38 → 0.13, 0.16 → 0.09) as the coal econ ramp drops below gas and becomes fully infra-marginal. One value
+  across years (rule 1 (b)) cannot serve both regimes; the share gained at m 0.80 is at quintile 5 (0.55–0.57), not off-peak.
+- **The ruled gas form by year (zero LP):** own-plant variable transport $0.24–0.36/MMBtu on CC_REGULAR (86–91 % of CC capacity
+  on the own-plant rung, 68–74 % of all gas) exceeds the print-over-hub wedge in 2019–2022, so CC fuel RISES +$0.07–0.14 there
+  and falls −$0.05 to −$0.25 in 2023–2025; static q1–q2 error +0.3 to +1.2 (2019–2022), −0.8/−0.4/0.0 (2023–2025). It does not
+  take coal's margin statically (pooled share +0.010).
+- **G-DRIFT 8f765fef..pin:** 190 files, 0 LIVE hunks; `solve_surface_register --diff`: MISO moved rows 0 (ERCOT 1, PJM 1).
+- **Cells:** `gas_marginal_commodity_pricing` O, `gas_variable_transport` O (evidence added, not re-tested, no solve);
+  `offer_curve_by_group` K (note: coal econ bands not identifiable from the pooled IMM share under the one-value rule). No
+  R/I/G cell re-tested. Shard check, compose and arm-table probes are ready and unused.
+- **Owner card:** (A) record and move on; (B) re-identify at the census maximum m = 0.80 and solve the joint arm (K-1 at risk
+  in 2019: COAL_PRB +6.40 TWh); (C) solve the ruled gas form alone over the full span; (D) other.
+
+Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.

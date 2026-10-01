@@ -82,6 +82,10 @@ data/raw/pjm-energy-offers/*
 # data/raw/caiso-public-bids/README.md).
 data/raw/caiso-public-bids/*
 !data/raw/caiso-public-bids/README.md
+# CAISO OASIS TRNS_USAGE per-window staging (R-CAISO-30). The folded per-year
+# parquets + README + SHA256SUMS next to it ARE committed: OASIS retention
+# rolls (~39 months), so the fold is the only surviving copy of aged-out months.
+data/raw/caiso-trns-usage/windows/
 
 # MISO annual bc_HIST source mirrors (~20-70 MB raw each; validation layer
 # only, rule 13): refetch with scripts/data/fetch_miso_bc_hist.py (see
@@ -753,10 +757,14 @@ results/calibration/*/floors/
 #     CANNOT be re-solved into byte-identity once main has moved (caiso-155 vertex
 #     dependence), so for such a keeper this layer is PERMANENTLY unrecoverable.
 #
-# So the default stays (these are still the bundle's largest frames and most
-# bundles are never interrogated at unit grain), but a lane that WILL interrogate
-# a bundle commits its layer deliberately with ``git add -f`` — see the
-# unit_network_layer_sidecar matrix row. Opt-in per bundle, not a policy flip.
+# KEEPER per-unit layer (owner instruction 2026-10-01, PJM-NEXT-18: "Moving forward
+# for all ISOs"; owner card "Slim layer"): every KEEPER bundle commits
+# hourly/unit_marginal_<year>.parquet for every year (CLAUDE.md rule 15
+# [R-DASHBOARD]; enforced at promotion by scripts/promote_keeper.py preflight).
+# It is unit_hourly minus the raw red_cost plus an int8 `marginal` flag
+# (scripts/lib/unit_marginal.py), ~10-12 MB/yr for PJM. The FULL unit_hourly stays
+# ignored: PJM measures 69-81 MB/yr, 65 of 77 MB of it red_cost. network_<year>
+# stays opt-in (``git add -f``, see the unit_network_layer_sidecar matrix row).
 results/calibration/*/hourly/unit_hourly_*.parquet
 results/calibration/*/hourly/network_*.parquet
 results/calibration/*/*/hourly/unit_hourly_*.parquet
@@ -3964,6 +3972,9 @@ results/calibration/nwppnext14_20[0-9][0-9]/
 results/calibration/nwppnext14_pr6932_span/
 # NWPP-NEXT-15 per-year legs of THIS lane's arm (transport only; composite nwppnext14vd_span is registered).
 results/calibration/nwppnext14vd_20[0-9][0-9]/
+
+# NWPP-NEXT-16 per-year shard legs (rule 32(d)); provenance SHAs in RESULT-nwppnext16
+results/calibration/nwppnext16[cde]_20[0-9][0-9]/
 results/calibration/_rcaiso24/
 
 # SPP-106 per-year shard legs and the local composite (rule 29(c) / 31: kept out of main until the owner rules)
@@ -3980,3 +3991,5 @@ results/calibration/_rcaiso28/
 # NYISO-NEXT-26 per-year legs (rule 32 (d)); composed into nyisonext26_span (arm A) and nyisonext26p_span (arm B). Provenance (rule 33 (d)): A 2021 324c2278ebfecf59752499437af9d3ebeef9a3f9, 2022 fb5da11c7158273f200ca0a76c068135fb4bc252, 2023 398739dc77ecd7559187ec75e5755282787ddd82, 2024 5b42c21f79caf84518cda5bd4cc7d6f7978975f6, 2025 148c72168cf1a410849b278517068d954bf19ad7; B 2021 dd0b50c58c6047a960da4d762cb10a127e2f64f9, 2022 e556dcb80227ede5700fd6487a6abf012a42bbd1, 2023 d80a65c222741121211797b72adff34d3183bc30, 2024 1c75146fa9d36427c20dbb11a8cc5183788a80c2, 2025 bec68d76f2f192b381a728c84d3e45bb03db1266
 results/calibration/nyisonext26_202[2-5]/
 results/calibration/nyisonext26p_202[2-5]/
+# PJM-NEXT-18: year-isolated diagnostic keeper replays (never on main; rule 29(c)/32(d)).
+results/calibration/pjmnext18_rp_*/
