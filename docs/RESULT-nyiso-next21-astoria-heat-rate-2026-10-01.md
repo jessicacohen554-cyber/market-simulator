@@ -53,7 +53,13 @@ Under rule 30 (c), promoting both runs would make the **ISO** NOT-YET.
 
 ## 4. Promotion
 
-**Pre-registered rule:** promote iff G-1 to G-5 hold — they do. **But** the PRECOMMIT also says a determination downgrade in any year goes to the owner first. **Owner decision pending.**
+**Pre-registered rule:** promote iff G-1 to G-5 hold — they do. **But** the PRECOMMIT also says a determination downgrade in any year goes to the owner first. **Owner ruling (decision card, 2026-10-01): "Promote (override)".** Executed in this session:
+
+- keeper shard re-keyed and the 2021 run stamped to it;
+- status rebuilt (ISO **NOT-YET**);
+- `audit_keepers.py` PASS before and after the prune;
+- the NEXT-18 stores pruned (rule 35, `--force-uncite`);
+- year set 2021–2025 unchanged.
 
 **Retrievability (rules 31 / 34(e)):**
 - The two registered bundles, sidecars and payloads are committed to `main` with this lane's PR.

@@ -15093,3 +15093,11 @@ too.
 - **Matrix:** `mid_vintage_exit_carry`, `fleet_zone_vintage_coords`, `retiree_vintage_status_scope` U → K.
 - **Superseded and pruned:** `2026-09-30-nyisonext16-winter-spread-span` and its 2021 run.
 - **Record:** `docs/RESULT-nyiso-next18-retiree-carry-2026-09-30.md`.
+
+## NYISO-NEXT-21 — 2026-10-01 — Astoria on its merged CEMS meter; keeper promoted by owner override, 2021 NOT-YET
+
+- Phase 0 (zero LP): the keeper's D-4 conduct rows sit inside measured multi-day outages, so they are commitment symptoms. Astoria 8906's measured ST_GAS heat rate (9.449) was a CEMS stack-duplicate artifact.
+- Repair: `derive_campd_gas_st_heat_rates.merge_stack_duplicates`; Astoria 11.645 (eGRID 11.75); every other plant byte-identical; zero config change.
+- Five year-isolated shards (pin `fdc41f36`). G-1..G-5 pass in all years. Astoria TWh 2.08/3.05/2.88/2.40/2.92 -> 0.50/1.48/1.36/1.43/1.83 (CAMPD 0.72/0.89/0.77/0.92/1.35); D-4 rows 11 -> 9.
+- Span CALIBRATED; 2021 C3a +9.2 -> +10.4 % -> NOT-YET. Owner card: 'Promote (override)'. ISO now NOT-YET (rule 30(c)).
+- Pruned the NEXT-18 runs (rule 35). Record: `docs/RESULT-nyiso-next21-astoria-heat-rate-2026-10-01.md`.
