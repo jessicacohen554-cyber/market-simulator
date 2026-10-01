@@ -6874,3 +6874,20 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
   - `docs/records/pjm/RESULT-pjm-next-16-2026-09-30.md`
   - `docs/records/pjm/PRECOMMIT-pjm-next-16-2026-09-30.md`
   - `docs/records/pjm/FINDING-pjm-next-16-cc-loading-and-the-ovec-boundary-2026-09-30.md`
+
+## PJM-NEXT-17 — 2026-10-01 — COAL_BIT located; own-offer audit falsified; CC conduct window built and refused at zero LP
+
+- **Solves and keeper:** zero LP, zero shards. Keeper unchanged (`2026-09-30-pjm-next16-ovec`); 10 failing cells, NOT-YET.
+- **Card 1 (COAL_BIT):** the over-run is loading when on, in the econ bands, and diffuse across about 30 plants, every month and every demand tercile. Two-thirds of it is daytime.
+- **Own-offer audit (offers corpus, 84/84 month-files):** real units do not under-run their own offers more in the over-run years. The dominant term is the model's price level in hours under $25. Falsified as a lever.
+- **Card 2 (`cc_mustrun_conduct_window`, built, default off):**
+  - The census ceiling promised a 1–12 % cut.
+  - The real `fleet_only` check shows the offline-hour floor **rising** 8–19 %, because outage windows already zero most real off-hours.
+  - Refused before solve (owner card "Refuse; keep built, off"); matrix cell **R**.
+- **Rule-17 window question:** sized at 2.8–4.5 TWh/yr of non-outage off-run floor.
+- **OPEN, not limits:** COAL_BIT 2019–2021, CC_REGULAR 2020/2022/2023, CT_PEAKER 2021, C3a 2020/2022, C3b 2022.
+- **Next:** the 7-year low-price-floor marginal-unit census, then CC 2023.
+- **Records:**
+  - `docs/records/pjm/RESULT-pjm-next-17-2026-10-01.md`
+  - `docs/records/pjm/FINDING-pjm-next-17-coal-response-and-cc-conduct-window-2026-10-01.md`
+  - `docs/records/pjm/PRECOMMIT-pjm-next-17-2026-10-01.md`

@@ -2375,6 +2375,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # paths.measured_oil_burn_days_path; no sub-fields. Registered IN THE SAME
     # COMMIT as the field (the nyiso-119 discipline).
     "dual_fuel_measured_oil_burn",
+    # PJM-NEXT-17: plant-conduct placement of the cc_mustrun_per_plant window
+    # (default off). Dropped from the hash at its default so every pre-existing
+    # run -- every ISO's keepers included -- keeps its key; an armed run places
+    # the same-sized window on different hours and so earns a distinct key.
+    # SHARED field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 discipline).
+    "cc_mustrun_conduct_window",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -3237,6 +3244,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "eia923_cc_family_heat_rates": "False",
     # Added by soco-96 WITH the field (the nyiso-119 discipline).
     "dual_fuel_measured_oil_burn": "False",
+    # Added by PJM-NEXT-17 WITH the field (the nyiso-119 discipline).
+    "cc_mustrun_conduct_window": "False",
 }
 
 
@@ -16212,6 +16221,42 @@ class ScenarioConfig:
     # Off by default: every existing keeper is byte-identical.
     mustrun_window_commitment_grain: bool = False
 
+    # PLANT-CONDUCT placement of the cc_mustrun_per_plant window (PJM-NEXT-17,
+    # owner card "Design + build" / "Build + solve anyway"). The SIZE of the
+    # window (``online_frac`` x hours, pooled or per-year), its LEVEL (the
+    # committed tranche), its MEMBERSHIP and the pmax*availability clip are all
+    # UNCHANGED; only the hour SELECTION moves. The incumbent ranks hours by
+    # SYSTEM load, so a plant is floored at the system peak whatever its own
+    # conduct; armed, each CC_REGULAR plant's hours are ranked by its OWN
+    # measured CAMPD online probability in the hour's month x hour-of-day cell
+    # (``data/raw/_processed-legacy/cc_conduct_profile_<ISO>.csv``,
+    # ``scripts/data/derive_cc_conduct_profile.py`` -- the frozen
+    # ``derive_thermal_tranches`` per-unit routing, net and 1 %-of-nameplate
+    # sync test), ties broken by system load.
+    # Rule 17 [R-FLOOR-WINDOW]: driver = the plant's own measured commitment
+    # conduct; window = the cells that conduct says it is on; forward story =
+    # the profile re-derives from CAMPD history like ``online_frac``.
+    # Rule 13 [R-MEASURED]: in a BACKCAST the solved year's own meter is
+    # EXCLUDED (leave-one-year-out over the artifact years), so no same-year
+    # outcome enters the placement; a forecast pools every artifact year.
+    # Rule 21 [R-DOF]: zero free parameters. The month x hour-of-day grain was
+    # chosen ex ante by held-out CONDUCT log-loss (it beats month x day-type x
+    # hour in all seven PJM years, scripts/probes/_pjmnext17_cc_conduct_window.py),
+    # never by a price or volume residual.
+    # Rule 19 [R-ONE-MECH]: the window is REPLACED, never stacked; it is
+    # refused together with ``mustrun_window_commitment_grain`` (the other
+    # placement of the same window) and reaches only the CC_REGULAR leg -- the
+    # ST_GAS leg and the coal synchronization seam keep their own placement.
+    # A plant with no profile row (or a year with no other artifact year) keeps
+    # the incumbent hour ranking. REFUSED FOR PJM at zero LP (owner card
+    # "Refuse; keep built, off", 2026-10-01): on the real fleet the floor in
+    # metered-offline hours ROSE 8-19 % (2019/2021/2023/2025) -- outage windows
+    # already zero most real off-hours, and conduct ranking moves the window into
+    # short non-outage off-runs (§2 of
+    # docs/records/pjm/FINDING-pjm-next-17-coal-response-and-cc-conduct-window-2026-10-01.md).
+    # Off by default: every existing keeper is byte-identical.
+    cc_mustrun_conduct_window: bool = False
+
     # LEVEL-BASIS correction for the st_gas_mustrun_p25_level floor — miso-172.
     # ``p25_cf`` is a percentile of ``net_MW / (nameplate x avail_mult)``, i.e. a
     # fraction of AVAILABLE capacity, and ``thermal_tranche_p25_level``
@@ -23476,6 +23521,12 @@ class ScenarioConfig:
                     "mutually exclusive (rule 19: one mechanism for SPP gas "
                     "commitment state)."
                 )
+        if self.cc_mustrun_conduct_window and self.mustrun_window_commitment_grain:
+            raise ValueError(
+                "cc_mustrun_conduct_window and mustrun_window_commitment_grain "
+                "are two placements of the same cc_mustrun_per_plant window "
+                "(rule 19: one mechanism); arm at most one."
+            )
         if self.pjm_gas_commitment_bridge:
             if str(self.iso) != "PJM":
                 raise ValueError(

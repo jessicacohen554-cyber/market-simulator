@@ -1464,6 +1464,15 @@ data/raw/fleet-egrid/*.parquet
 # anchor source and rebuilt automatically whenever either source's bytes
 # change. Disposable, machine-local, never committed.
 data/raw/fleet-egrid/*.json
+# cleanup-E (2026-10-01): both families are ALLOW-LISTED, the way the EIA-923
+# extracts above are. They are deterministic (content-addressed, so a stale one
+# is simply never read) and small — the full 2018-2024 set a fleet build writes
+# measured 30 files / 5.8 MB — while every fresh solve container otherwise
+# rebuilds them cold (~28 s of openpyxl + the per-vintage repair scan).
+# Allow-listing only makes them `git add`-able; committing them is a separate,
+# owner-decided step (docs/clean-data-profiles.md).
+!data/raw/fleet-egrid/*.????????????????.*.parquet
+!data/raw/fleet-egrid/*.????????????????.*.json
 
 # --- SCN-LOAD: the load-forecast datatype's one oversized payload -----------
 # ERCOT's 2025 Adjusted Long-Term Load Forecast workbook is a 48.4 MB hourly
