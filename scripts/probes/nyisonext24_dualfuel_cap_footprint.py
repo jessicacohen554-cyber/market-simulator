@@ -35,7 +35,9 @@ ZONAL = REPO / "data/raw/_validation-source/actual_lmp_hourly_zonal_NYISO.parque
 def year_state(year: int) -> dict:
     """Fleet-only rebuild with the flow-date arm on and the parity cap off."""
     os.environ["NYISO_KEEPER_BUNDLE"] = str(
-        REPO / "results/calibration" / ("nyisonext21_2021" if year == 2021 else "nyisonext21_span")
+        REPO
+        / "results/calibration"
+        / ("nyisonext21_2021" if year == 2021 else "nyisonext21_span")
     )
     import importlib
 
@@ -51,7 +53,9 @@ def year_state(year: int) -> dict:
     prb = dict(kw.get("prb_overrides") or {})
     prb.update({"nyiso_gas_flow_date": True, "dual_fuel_switching": False})
     kw["prb_overrides"] = prb
-    return run_year(year, meta["iso"], 8760, meta.get("gas_price"), {}, fleet_only=True, **kw)
+    return run_year(
+        year, meta["iso"], 8760, meta.get("gas_price"), {}, fleet_only=True, **kw
+    )
 
 
 def footprint(year: int, burn: pd.DataFrame) -> dict:
@@ -68,7 +72,8 @@ def footprint(year: int, burn: pd.DataFrame) -> dict:
     capable = dual_fuel_plant_groups()
     is_gas = np.isin(fa.fuel_type_idx, _GAS_FUEL_IDX)
     sel = [
-        g for g in np.nonzero(is_gas)[0]
+        g
+        for g in np.nonzero(is_gas)[0]
         if (int(fa.plant_code[g]), str(fa.plant_group[g])) in capable
     ]
     gas_d = gas[sel].reshape(len(sel), 365, 24).mean(2)
@@ -93,7 +98,9 @@ def footprint(year: int, burn: pd.DataFrame) -> dict:
                     "zone": zones[int(fa.zone_idx[g])],
                     "mw": float(fa.pmax[g]),
                     "hr": float(fa.heat_rate[g]),
-                    "vom": float(np.asarray(fa.vom)[g]) if getattr(fa, "vom", None) is not None else 0.0,
+                    "vom": float(np.asarray(fa.vom)[g])
+                    if getattr(fa, "vom", None) is not None
+                    else 0.0,
                     "day": int(d),
                     "gas": float(gas_d[i, d]),
                     "oil": float(oil_d[d]),
@@ -101,7 +108,11 @@ def footprint(year: int, burn: pd.DataFrame) -> dict:
                 }
             )
     r = pd.DataFrame(rows)
-    out = {"year": year, "capable_tranches": len(sel), "capable_mw": float(fa.pmax[sel].sum())}
+    out = {
+        "year": year,
+        "capable_tranches": len(sel),
+        "capable_mw": float(fa.pmax[sel].sum()),
+    }
     if r.empty:
         out["binding_gen_days"] = 0
         return out
@@ -113,8 +124,12 @@ def footprint(year: int, burn: pd.DataFrame) -> dict:
             "mw_days": round(float(g.mw.sum()), 0),
             "mw_wtd_oil_share": round(float(np.average(g.f, weights=g.mw)), 3),
             "share_mw_below_1pct": round(float(g.mw[g.f < 0.01].sum() / g.mw.sum()), 3),
-            "share_mw_above_50pct": round(float(g.mw[g.f >= 0.5].sum() / g.mw.sum()), 3),
-            "relief_wtd_oil_share": round(float(np.average(g.f, weights=g.mw * (g.gas - g.oil))), 3),
+            "share_mw_above_50pct": round(
+                float(g.mw[g.f >= 0.5].sum() / g.mw.sum()), 3
+            ),
+            "relief_wtd_oil_share": round(
+                float(np.average(g.f, weights=g.mw * (g.gas - g.oil))), 3
+            ),
         }
         for z, g in r.groupby("zone")
     }
@@ -123,9 +138,15 @@ def footprint(year: int, burn: pd.DataFrame) -> dict:
     out["all"] = {
         "mw_wtd_oil_share": round(float(np.average(r.f, weights=r.mw)), 3),
         "relief_wtd_oil_share": round(float(np.average(r.f, weights=r.relief)), 3),
-        "share_mw_days_near_parity_lt_1usd": round(float(r.mw[near].sum() / r.mw.sum()), 3),
+        "share_mw_days_near_parity_lt_1usd": round(
+            float(r.mw[near].sum() / r.mw.sum()), 3
+        ),
         "share_mw_below_1pct_when_relief_ge_5usd": round(
-            float(r.mw[(r.f < 0.01) & ~((r.gas - r.oil) < 5.0)].sum() / max(r.mw[~((r.gas - r.oil) < 5.0)].sum(), 1e-9)), 3
+            float(
+                r.mw[(r.f < 0.01) & ~((r.gas - r.oil) < 5.0)].sum()
+                / max(r.mw[~((r.gas - r.oil) < 5.0)].sum(), 1e-9)
+            ),
+            3,
         ),
         "share_mw_below_1pct": round(float(r.mw[r.f < 0.01].sum() / r.mw.sum()), 3),
     }
@@ -141,14 +162,21 @@ def footprint(year: int, burn: pd.DataFrame) -> dict:
         vom = float(np.average(g.vom, weights=w))
         days.append(
             {
-                "date": str((pd.Timestamp(year=year, month=1, day=1) + pd.Timedelta(days=int(d))).date()),
+                "date": str(
+                    (
+                        pd.Timestamp(year=year, month=1, day=1)
+                        + pd.Timedelta(days=int(d))
+                    ).date()
+                ),
                 "nyc_da": round(float(da[d]), 1),
                 "hr": round(hr, 2),
                 "implied_fuel": round((float(da[d]) - vom) / hr, 2),
                 "gas": round(float(np.average(g.gas, weights=w)), 2),
                 "oil": round(float(g.oil.iloc[0]), 2),
                 "meas_f": round(float(np.average(g.f, weights=w)), 3),
-                "meas_mix_price": round(float(np.average(g.f * g.oil + (1 - g.f) * g.gas, weights=w)), 2),
+                "meas_mix_price": round(
+                    float(np.average(g.f * g.oil + (1 - g.f) * g.gas, weights=w)), 2
+                ),
             }
         )
     dd = pd.DataFrame(days)
@@ -156,20 +184,41 @@ def footprint(year: int, burn: pd.DataFrame) -> dict:
         out["nyc_days"] = int(len(dd))
         out["nyc_median"] = {
             k: round(float(dd[k].median()), 2)
-            for k in ("nyc_da", "implied_fuel", "gas", "oil", "meas_mix_price", "meas_f")
+            for k in (
+                "nyc_da",
+                "implied_fuel",
+                "gas",
+                "oil",
+                "meas_mix_price",
+                "meas_f",
+            )
         }
         # which price is closer to the DA-implied fuel, day by day
         cap = np.minimum(dd.gas, dd.oil)
         out["nyc_closest"] = {
-            "cap_min_gas_oil": int(((cap - dd.implied_fuel).abs() <= (dd.meas_mix_price - dd.implied_fuel).abs()).sum()),
-            "measured_mix": int(((cap - dd.implied_fuel).abs() > (dd.meas_mix_price - dd.implied_fuel).abs()).sum()),
+            "cap_min_gas_oil": int(
+                (
+                    (cap - dd.implied_fuel).abs()
+                    <= (dd.meas_mix_price - dd.implied_fuel).abs()
+                ).sum()
+            ),
+            "measured_mix": int(
+                (
+                    (cap - dd.implied_fuel).abs()
+                    > (dd.meas_mix_price - dd.implied_fuel).abs()
+                ).sum()
+            ),
         }
         out["nyc_mae"] = {
             "cap": round(float((cap - dd.implied_fuel).abs().mean()), 2),
-            "measured_mix": round(float((dd.meas_mix_price - dd.implied_fuel).abs().mean()), 2),
+            "measured_mix": round(
+                float((dd.meas_mix_price - dd.implied_fuel).abs().mean()), 2
+            ),
             "gas_uncapped": round(float((dd.gas - dd.implied_fuel).abs().mean()), 2),
         }
-        out["nyc_top10"] = dd.sort_values("gas", ascending=False).head(10).to_dict("records")
+        out["nyc_top10"] = (
+            dd.sort_values("gas", ascending=False).head(10).to_dict("records")
+        )
         out["nyc_days_table"] = dd.to_dict("records")
     return out
 
@@ -179,7 +228,9 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--oil-burn", required=True)
     ap.add_argument("--out", required=True)
-    ap.add_argument("--years", nargs="+", type=int, default=[2021, 2022, 2023, 2024, 2025])
+    ap.add_argument(
+        "--years", nargs="+", type=int, default=[2021, 2022, 2023, 2024, 2025]
+    )
     a = ap.parse_args()
     burn = pd.read_csv(a.oil_burn)
     res = [footprint(y, burn) for y in a.years]
