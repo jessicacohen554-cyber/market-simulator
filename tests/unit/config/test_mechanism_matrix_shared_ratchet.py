@@ -179,7 +179,7 @@ class TestRatchetActuallyBites:
 class TestAbsentSharedRatchetClosesThePostMergeHole:
     """The y20 leg: a shared field with no row is red AFTER its PR merged.
 
-    The hole (docs/handoffs/FINDING-scn-mxr-2026-09-06.md §1.1): the only check
+    The hole (docs/records/forecast/FINDING-scn-mxr-2026-09-06.md §1.1): the only check
     that ever inspected a NEW field's registration was the ``--base`` diff gate,
     so once a field reached ``main`` no leg could see it again — the diff of
     every later PR already contains it. PR #4870 merged two such fields five

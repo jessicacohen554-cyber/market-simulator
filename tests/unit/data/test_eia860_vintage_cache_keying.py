@@ -6,7 +6,7 @@ Twelve ``lru_cache``d loaders read that global while omitting it from their cach
 key, so year 1 of a span pinned its vintage's value for every later year — the
 outage-derate DENOMINATOR and the CC duct-peaking PEAK OFFER BAND among them, both
 direct LP inputs. Measured, with the mechanism and magnitudes, in
-``docs/handoffs/FINDING-spp-37-order-sensitivity-2026-09-12.md``; repaired by
+``docs/records/spp/FINDING-spp-37-order-sensitivity-2026-09-12.md``; repaired by
 SPP-38 by keying each cache on the active directory.
 
 Two legs, both required:

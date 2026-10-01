@@ -8,7 +8,7 @@ CT_PEAKER energy collapse that survived the nyiso-240 benchmark repairs:
     actual                2.829 / 2.114 / 1.911 / 2.812
 
 with model CT capacity intact (~2,000 MW peak every year), so the cause is merit order,
-not availability (docs/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md §7).
+not availability (docs/records/nyiso/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md §7).
 
 This probe reads only COMMITTED artifacts — the four nyiso-240 MER legs, whose
 ``dispatch/<yr>_P1.parquet`` are sha256-identical to the keeper's — and answers:
@@ -28,7 +28,7 @@ This probe reads only COMMITTED artifacts — the four nyiso-240 MER legs, whose
 Usage:
     python3 scripts/probes/nyiso241_ct_merit_phase0.py \
         --legs results/calibration/nyiso_mer_2026-09-19_{2022,2023,2024,2025} \
-        --out results/calibration/_nyiso241_ct_merit_phase0.json
+        --out results/phase0/nyiso/_nyiso241_ct_merit_phase0.json
 """
 
 from __future__ import annotations

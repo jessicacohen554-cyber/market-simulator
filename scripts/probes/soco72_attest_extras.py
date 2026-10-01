@@ -50,7 +50,7 @@ ENTRY = {
         "n_residual unchanged. Declared misalignment: the current plant file excludes "
         "the former Gulf plants the 2019-2022 runs carry; the run-fleet and vintage-BA "
         "variants agree in sign and to <= $0.07. "
-        "docs/handoffs/r-soco/PRECOMMIT-soco-72-2026-09-26.md §2."
+        "docs/records/soco/r-soco/PRECOMMIT-soco-72-2026-09-26.md §2."
     ),
 }
 

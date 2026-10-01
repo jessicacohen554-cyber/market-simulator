@@ -1,6 +1,6 @@
 """Rubric v3.9 — C8 scores each coal SUBCLASS as its own class (C8-SUBCLASS).
 
-Owner ruling 2026-09-25 ("Yes" to docs/handoffs/RESULT-coal-sub-2026-09-25.md
+Owner ruling 2026-09-25 ("Yes" to docs/records/misc/RESULT-coal-sub-2026-09-25.md
 §6): the D-2 forced-energy share, its class denominator, the rule-20 2 %
 materiality line, the 30 % merchant cap and the grounded-above-budget
 escalation apply to COAL_BIT / COAL_PRB / COAL_LIGNITE / COAL_WC separately,

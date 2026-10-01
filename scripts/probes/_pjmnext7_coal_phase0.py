@@ -19,7 +19,7 @@ For each COAL_BIT bench plant and year it splits model - CAMPD energy into:
 * ``unmeasurable`` -- plants whose CEMS rows carry no gross load (cogens).
 
 Usage: ``python3 scripts/probes/_pjmnext7_coal_phase0.py [--years 2019 2021 2023]``
-Record: ``docs/FINDING-pjm-next-7-coal-phase0-2026-09-28.md``.
+Record: ``docs/records/pjm/FINDING-pjm-next-7-coal-phase0-2026-09-28.md``.
 """
 
 from __future__ import annotations

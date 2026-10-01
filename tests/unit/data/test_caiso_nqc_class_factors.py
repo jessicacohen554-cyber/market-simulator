@@ -72,7 +72,7 @@ class TestCaisoNqcGateOffPath(unittest.TestCase):
         # Nothing about THIS file's mechanism moved — the pin advances because the
         # global default did. Rationale and provenance live on the pin in
         # tests/regression/test_persisted_identity.py; pre-declared BEFORE the solve
-        # in docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
+        # in docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
         # capx D65-B-R, completing the partial re-key fb93b76e left behind.
         self.assertEqual(ScenarioConfig().cache_key(), "547053bdfccd4264")
 

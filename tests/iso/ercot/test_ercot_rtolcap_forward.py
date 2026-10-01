@@ -1,6 +1,6 @@
 """Tests for the ERCOT forward RTOLCAP/RTOFFCAP reserve-supply cap (WS-A).
 
-Covers the four required behaviours (docs/handoffs/ercot-rtolcap-forward-2026-07.md):
+Covers the four required behaviours (docs/records/ercot/ercot-rtolcap-forward-2026-07.md):
 trivial case first, formula responds to the net-load driver, backcast is
 byte-identical with the flag off, and the coverage-ratio gate. The formula is a
 pure function of forecast net-load + fleet capacity — it never reads the LP's own

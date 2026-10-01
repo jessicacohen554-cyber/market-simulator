@@ -28,7 +28,7 @@ online, model / actual / gap):
 
 The 2025 evening gap is under the design doc's ~0.5 GW build threshold and
 the 2025 belly has FLIPPED to model-over (−0.8 GW). Per
-`docs/handoffs/caiso-evening-cc-commitment-design-2026-07.md` §0 the
+`docs/records/caiso/caiso-evening-cc-commitment-design-2026-07.md` §0 the
 mechanism is not built this session: a floor that ADDS evening CC energy
 cannot address a C2 gate that is an annual-volume EXCESS, and 2023/24's
 remaining evening gap must be re-measured on the caiso-76 line first (the

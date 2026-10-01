@@ -52,7 +52,7 @@ OUTAGES = (
     "data/raw/campd-unit-outages-rederive-peakerkeep-exitfix-unitfuel-PJM.csv",
     "data/raw/campd-unit-outages-short-rederive-PJM.csv",
 )
-OUT = REPO / "results/calibration/_pjmnext10_coal_phase0.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext10_coal_phase0.json"
 YEARS = tuple(range(2019, 2026))
 KLASS = "COAL_BIT"
 #: Model zone -> the PJM DA hub read as that zone's actual price (nearest published hub).

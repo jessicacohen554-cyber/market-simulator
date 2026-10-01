@@ -18,7 +18,7 @@ record replacing that re-derivation.
 
 In the caiso-51 **backcast keeper** binding path the fitted 7,500 MW scalar is
 no longer the operative WECC import limit. Three measured/published mechanisms
-supersede it (confirmed in `results/calibration/caiso51_firm_base_solve.log`):
+supersede it (confirmed in `results/phase0/caiso/caiso51_firm_base_solve.log`):
 
 1. **`capacity_deliverability_limits` (Part A)** — the system seam import cap is
    set to the **published branch-group MIC sum**: `16055 / 16452 / 16148 MW` for

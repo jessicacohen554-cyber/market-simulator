@@ -56,7 +56,7 @@ keep them separate.
   CALIBRATED-WITH-CAVEATS; ERCOT/CAISO/MISO NOT-YET (audit §4).
 - **Solver & performance:** HiGHS via `highspy`, direct sparse matrices,
   presolve off, dual simplex + warm starts; measured ~183–339 s per ISO-year
-  at ~13.2M columns plant-level (`docs/handoffs/wallclock-baseline-2026-07.md`).
+  at ~13.2M columns plant-level (`docs/records/misc/wallclock-baseline-2026-07.md`).
 - **Data ecosystem:** bundled six-ISO US pipeline — EIA-860/923/930, EPA
   CAMPD/CEMS, eGRID, ISO disclosures — behind a schema-validated raw→clean
   contract with a generated data dictionary (`data/dictionary/`).

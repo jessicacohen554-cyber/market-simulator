@@ -8,7 +8,7 @@ and writes it through the clean-data contract (``wecc-west-supply`` schema,
 one file per year, iso=CAISO).
 
 This is the DATA foundation for the endogenous WECC_import zone (design:
-docs/handoffs/caiso-endogenous-wecc-node-design-2026-07-21.md). The LP wiring
+docs/records/caiso/caiso-endogenous-wecc-node-design-2026-07-21.md). The LP wiring
 (caiso-110, Option A) consumes the demand + solar/wind/hydro columns as the
 neighbor zone's load and renewable availability and the gas/coal columns for its
 thermal fleet, aligning UTC -> model clock via the corridor loaders' map;

@@ -52,6 +52,16 @@ Run the fast lane under `-n auto` (xdist) for the parallel speedup; the full
 lane runs serial because the data-backed and LP tests each hold several GB and
 must not run concurrently (CLAUDE.md rule 12).
 
+## One rule for new tests
+
+A test asserts **behaviour**, never a stored digest, version string or
+registered number reproduced from a frozen derive. Pin-ledger tests (a
+literal cache key, a solve-surface fingerprint, requirements-vs-lock
+equality) go red on every unrelated data or default change and teach lanes
+to ignore CI; where an invariant matters, assert the *property* (an explicit
+default hashes like an absent one; a derived table equals its derive on the
+same inputs) rather than the literal.
+
 ## Marker taxonomy
 
 Registered in `pyproject.toml` (`[tool.pytest.ini_options].markers`):
@@ -129,3 +139,11 @@ Regenerate it from `data/raw` with `python scripts/regenerate_clean.py`
 (`--list` shows the datatypes; pass names to rebuild a slice). Curation tests
 never touch the real tree — they redirect `CLEAN_DIR` via `CleanDirTestCase` /
 `tmp_clean_dir`.
+
+A **solve container** needs only a slice: `python scripts/regenerate_clean.py
+--solve-profile <ISO>` (or `all`; `--with-forecast` adds capacity-evolution
+inputs) builds just the datatypes the backcast solve reads from `data/clean`
+with no raw fallback — ~45 s instead of the 39–95 min full rebuild. It is
+incremental: a datatype whose `.manifest.json` key is unchanged is kept unless
+`--force`. Registry, manifest key and timings: `docs/clean-data-profiles.md`;
+tests: `tests/curation/test_clean_profiles.py`.

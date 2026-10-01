@@ -1,7 +1,7 @@
 """OBJECT A: what is the model DOING in NYISO's extreme-price hours? (nyiso-233, ZERO LP)
 
 nyiso-232 established that NYISO's C3a residual is TWO objects
-(``docs/FINDING-nyiso232-c3a-is-two-objects-2026-09-13.md``): remove each year's
+(``docs/records/nyiso/FINDING-nyiso232-c3a-is-two-objects-2026-09-13.md``): remove each year's
 top actual-price hours and the model is OVER-priced by +4.1 to +14.2 % in all
 four years, so the headline C3a is a DIFFERENCE OF TWO LARGE ERRORS OF OPPOSITE
 SIGN. Any mechanism that lifts ordinary-hour prices to close C3a makes the tail

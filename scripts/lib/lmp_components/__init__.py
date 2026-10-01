@@ -7,7 +7,7 @@ daily ex-post market reports, staged per scope decision D6 (see
 ``data/raw/lmp-components/README.md``). Primary consumer: the miso-76
 marginal delivery-factor (loss) surface derive
 (``scripts/data/derive_miso_loss_surface.py``; charter
-``docs/handoffs/miso-nc-price-separation-design-2026-07.md`` §4).
+``docs/records/miso/miso-nc-price-separation-design-2026-07.md`` §4).
 
 The per-ISO logic lives in sibling modules (``miso.py``, ...), each of
 which registers an :class:`IsoSpec` via :func:`register`. Shared code never

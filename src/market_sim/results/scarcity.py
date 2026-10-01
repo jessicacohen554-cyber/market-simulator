@@ -149,7 +149,7 @@ QUICK_START_FUEL_TYPES: frozenset[str] = frozenset({"gas_ct", "oil"})
 # A measured market-design constant, NOT fitted to any price residual
 # (CLAUDE.md rule #12). Applied to the NYC 10-min total (500 MW) -> 250 MW NYC
 # spin. Used by the path-B commitment-gated synchronised-reserve route
-# (docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md).
+# (docs/records/nyiso/nyiso-downstate-reserve-incidence-2026-06.md).
 NYISO_SPIN_FRACTION: float = 0.5
 
 # Zones whose quick-start fleet may supply the NYC locational synchronised-reserve
@@ -298,7 +298,7 @@ ERCOT_ADAPTIVE_MAX_PASSES: int = 8
 # --------------------------------------------------------------------------- #
 # caiso-205 adaptive-expectation storage offer — the CAISO leg of the same
 # family, constants FROZEN at the caiso-204 Phase-0 identification
-# (results/calibration/caiso204_adaptive_phase0.json; owner order caiso-205
+# (results/phase0/caiso/caiso204_adaptive_phase0.json; owner order caiso-205
 # branch 1). Rule 25 [R-ISO-SCOPE]: CAISO's own conventions, never ERCOT's.
 # --------------------------------------------------------------------------- #
 # Daily spike-event threshold ($/MWh) on the model's OWN daily max
@@ -646,7 +646,7 @@ def ercot_rtordpa_overlay_series(year: int, hours: int, config=None) -> np.ndarr
     never fit to LMP**.
 
     **Basis completeness — ADJUDICATED, do not re-open (ercot-203, 2026-08-15;
-    docs/FINDING-ercot203-rtoffpa-not-in-rtspp-2026-08-15.md).** ERCOT publishes
+    docs/records/ercot/FINDING-ercot203-rtoffpa-not-in-rtspp-2026-08-15.md).** ERCOT publishes
     THREE real-time adders in NP6-905-CD (``rtorpa``, ``rtoffpa``, ``rtordpa``),
     and this overlay reads one of them — which is the complete and correct set
     for the price we score against. Nodal Protocols §6.5.7.3(12) / §6.6.1(1) /
@@ -1069,7 +1069,7 @@ def ercot_storage_as_deployment_mw(
     """ERCOT measured-award storage AS→energy co-participation MW, ``(hours,)``.
 
     The storage-cycling-lane mechanism (``ercot_storage_as_deployment``,
-    docs/DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md). ``storage_as_commitment``
+    docs/records/ercot/DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md). ``storage_as_commitment``
     reserves the full measured up-AS award (:func:`ercot_storage_as_reserve_mw`)
     out of the battery discharge cap in every hour and never returns it to energy —
     but the real fleet visibly moves capacity from AS to energy at the net-load
@@ -1596,7 +1596,7 @@ def ercot_online_cap_extreme_bin(net_load: np.ndarray) -> np.ndarray:
     """Extreme-peak-resolved net-load percentile bin (0..13) per hour, vectorized.
 
     The G-22 extreme-peak refinement of :func:`_ercot_rtolcap_fwd_decile`
-    (``docs/handoffs/ercot-online-capacity-envelope-2026-07.md`` §5): bins 0–8
+    (``docs/records/ercot/ercot-online-capacity-envelope-2026-07.md`` §5): bins 0–8
     are the bottom nine deciles unchanged; the TOP decile is resolved into five
     equal-count 2-percentile sub-bins (bins 9–13 = ranks [90,92) … [98,100)), so
     the on-line-capacity share/deliverability can carry the measured commitment
@@ -1652,7 +1652,7 @@ def ercot_rtolcap_forward_supply_cap_mw(
 
     The WS-A forward analogue of the measured
     :func:`ercot_rtolcap_supply_cap_mw` — the last AS-path lever with no forward
-    analogue (``docs/handoffs/ercot-rtolcap-forward-2026-07.md``). Rebuilt entirely
+    analogue (``docs/records/ercot/ercot-rtolcap-forward-2026-07.md``). Rebuilt entirely
     from the model's own forecast net-load, the derived per-class on-line
     headroom-realization shares and the fleet's evolving reserve-eligible
     capacity, so the cap regenerates for a forecast year and responds to changed
@@ -2079,7 +2079,7 @@ def ercot_online_capacity_envelope_mw(
     """ERCOT's committed on-line-CAPACITY envelope, ``(n_hr, hours)`` MW.
 
     The G-22 commitment-thinness structure (``config.ercot_online_capacity_envelope``;
-    ``docs/FINDING-ercot-priceshape-2026-07.md`` §3, structural conclusion #2). The
+    ``docs/records/ercot/FINDING-ercot-priceshape-2026-07.md`` §3, structural conclusion #2). The
     multi-product co-opt's shared-headroom rows bound
     ``Σ_{elig thermal} P + Σ_prod R ≤ cap(full fleet)`` — the RHS is every
     reserve-eligible thermal unit's *full availability-derated* capacity, so a
@@ -2240,7 +2240,7 @@ def ercot_energy_online_capability_cap_mw(
     """ERCOT's measured online-capability ceiling on the FAST tier, ``(2, hours)`` MW.
 
     ERCOT-159 / queue item 9, the ERCOT-155 named successor
-    (``docs/PRECOMMIT-ercot159-energy-online-capability-cap-2026-08-04.md``;
+    (``docs/records/ercot/PRECOMMIT-ercot159-energy-online-capability-cap-2026-08-04.md``;
     matrix row ``energy_online_capability_cap``). The energy-side analogue of
     :func:`ercot_rtolcap_supply_cap_mw`: the reserve supply cap re-scopes
     reserve SUPPLY to the measured online capability, but nothing constrains

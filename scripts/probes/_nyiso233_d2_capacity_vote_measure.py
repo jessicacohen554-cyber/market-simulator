@@ -1,14 +1,14 @@
 """Cross-ISO measurement of the D-2 capacity-weighted plant-class vote (nyiso-233, ZERO LP).
 
-The evidence behind ``docs/FINDING-nyiso233-d2-capacity-weighted-vote-2026-09-13.md``
+The evidence behind ``docs/records/nyiso/FINDING-nyiso233-d2-capacity-weighted-vote-2026-09-13.md``
 and the landing recorded in
-``results/calibration/PRECOMMIT-nyiso233-d2-capacity-weighted-vote.md``.
+``docs/records/nyiso/PRECOMMIT-nyiso233-d2-capacity-weighted-vote.md``.
 
 ``scripts/legitimacy_diagnostics.py::aggregate_floors_by_plant`` labelled each
 plant by its most common non-empty unit group counted in LP ROWS until
 2026-09-13. Row count is a property of the offer curve's band structure, not of
 the plant, so a ladder collapse could move a site's whole dispatch between class
-denominators and flip C8 (``docs/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md``).
+denominators and flip C8 (``docs/records/misc/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md``).
 The repair weights the vote by ``pmax``. This probe measures what that does, on
 every bundle in the repository carrying a committed ``floors/<year>_P1.npz``.
 

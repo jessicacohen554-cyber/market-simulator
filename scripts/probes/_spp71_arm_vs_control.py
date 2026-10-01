@@ -10,7 +10,7 @@ Both legs were solved in ONE shard container at ONE pinned HEAD
 differencing is exact by construction and rule 29(b) form 4 is not relied on.
 
 The pre-registered predictions and the five kill limbs are
-``docs/handoffs/PRECOMMIT-spp-71-ensemble-sync-floor-2026-09-22.md`` §5-§6.
+``docs/records/spp/PRECOMMIT-spp-71-ensemble-sync-floor-2026-09-22.md`` §5-§6.
 """
 
 from __future__ import annotations

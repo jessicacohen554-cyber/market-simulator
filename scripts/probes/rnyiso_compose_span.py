@@ -7,7 +7,7 @@ the legs compose without a re-solve.
 **REUSE, NOT A FORK.** The composition is
 :mod:`scripts.probes.nyiso238_compose_span`, NYISO's own recipe (also used by
 nyiso-247 and hydro-3). This module adds the lane's leg-acceptance checks from
-``docs/PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md`` §6, read from the
+``docs/records/nyiso/PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md`` §6, read from the
 RESOLVED ``scenario_config`` (never the ``prb_overrides`` bag the CLI routed the
 flags through), before any file is copied:
 
@@ -51,7 +51,7 @@ from scripts.probes.nyiso238_compose_span import compose as _compose  # noqa: E4
 #: 2026-09-25 promotion, so R-NYISO-2021 checks against the promoted keeper, whose
 #: offer block is byte-identical to hydro3's (R-NYISO S1).
 KEEPER = _REPO / "results" / "calibration" / "rnyiso_span"
-#: R-NYISO-2021 PRECOMMIT (docs/PRECOMMIT-r-nyiso-2021-2026-09-25.md) commit SHA.
+#: R-NYISO-2021 PRECOMMIT (docs/records/nyiso/PRECOMMIT-r-nyiso-2021-2026-09-25.md) commit SHA.
 PIN = "24cf43280f3b07f3755e82d42dd33138a5a00e9e"
 #: (resolved scenario_config field, required value) -- PRECOMMIT §6 S1.
 EXPECTED = (

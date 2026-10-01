@@ -1,6 +1,6 @@
 """nwpp-50 phase 0: can the NWPP-36 side-inflow gate be repaired from measurement? ZERO LP.
 
-Reproduces every number in ``docs/handoffs/FINDING-nwpp-50-2026-09-24.md`` from
+Reproduces every number in ``docs/records/nwpp/FINDING-nwpp-50-2026-09-24.md`` from
 committed artifacts only:
 
 * ``data/raw/nwpp-hydro/crohms/nwpp_crohms_hourly.parquet`` (NWPP-36's CROHMS pull),
@@ -46,7 +46,7 @@ HYDRO = Path("data/raw/nwpp-hydro")
 USGS = HYDRO / "usgs" / "nwpp_usgs_daily_discharge.csv"
 KEEPER = Path("results/calibration/nwpp49_ror_span")
 YEARS = (2023, 2024, 2025)
-OUT = Path("results/calibration/_nwpp50_sideinflow_phase0.json")
+OUT = Path("results/phase0/nwpp/_nwpp50_sideinflow_phase0.json")
 # A month counts as "no spill" when the downstream project's monthly-mean metered
 # spill is below 1 kcfs. That is under 1 % of every lower-river project's mean
 # outflow (38.7-144.1 kcfs), i.e. spill is below the gate's own 2 % resolution.

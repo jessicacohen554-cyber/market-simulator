@@ -1,6 +1,6 @@
 """SPP-75: which gas units run when SPP RT < 0, and why? (zero LP)
 
-Pre-registered in ``docs/handoffs/PRECOMMIT-spp-75-gas-low-side-2026-09-23.md`` (pushed at
+Pre-registered in ``docs/records/spp/PRECOMMIT-spp-75-gas-low-side-2026-09-23.md`` (pushed at
 ``ecfbda5a`` before any number below was read). Attributes the SPP-74 §3a gas deficit
 (EIA-930 NG − model gas in measured RT<=0 hours) to CAMPD SWPP-BA gas units tagged by EIA-860
 CHP flag / sector / prime mover, against the rung's class_hourly and a fleet_only membership

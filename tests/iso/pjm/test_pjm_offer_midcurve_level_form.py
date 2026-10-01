@@ -5,7 +5,7 @@ Covers the ``ScenarioConfig.pjm_offer_midcurve_level_segments`` branch of
 default-off construction that SETS a targeted row's bid to the measured
 capacity-share offer level (signed markup) instead of flooring it there
 (``max(0, .)``). Refuted as the C3a-2025 dispersion lever
-(docs/FINDING-pjm121-ccbelt-c3a-close-2026-07.md §5) but kept as the correct
+(docs/records/pjm/FINDING-pjm121-ccbelt-c3a-close-2026-07.md §5) but kept as the correct
 construction for a fleet whose fitted bands sit BELOW measured. Contract:
 
 * the floor form never lowers a bid (markup >= 0 by construction);

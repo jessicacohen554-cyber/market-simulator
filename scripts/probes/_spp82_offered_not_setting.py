@@ -1,6 +1,6 @@
 """SPP-82 (zero LP): split SPP-81b's +7.5 GW of offered-below-MEC capacity that does not set price.
 
-Record: ``docs/handoffs/FINDING-spp-82-offered-not-setting-2026-09-25.md``. Companion of
+Record: ``docs/records/spp/FINDING-spp-82-offered-not-setting-2026-09-25.md``. Companion of
 ``_spp81b_offer_stack_position.py``, whose sample it reproduces exactly (same hour set, same
 ``--days`` days per month, same offer snapshot, same ``[--lo, 500)`` stack).
 

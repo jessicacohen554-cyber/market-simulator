@@ -391,7 +391,7 @@ class TestUnifiedOfferCurve(unittest.TestCase):
         # A measured ``peak_ladder`` replaces the single flat peak tranche
         # with equal-capacity rungs at the ladder multipliers; total peak
         # capacity is conserved and each rung prices base_hr x its multiplier
-        # (docs/FINDING-ercot-priceshape-2026-07.md §4).
+        # (docs/records/ercot/FINDING-ercot-priceshape-2026-07.md §4).
         ladder = [[0.2, 1.6], [0.2, 2.6], [0.2, 4.3], [0.2, 43.9], [0.2, 144.2]]
         offer = {
             "committed": 0.9,

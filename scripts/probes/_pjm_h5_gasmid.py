@@ -97,7 +97,7 @@ def main() -> None:
         "toward `ceil` in years the model's own fuel prices say it should still be\n"
         "near `floor`. Worth the column spread above, per year, on 12.55 GW."
     )
-    out_p = REPO / "results/calibration/_pjm_h5_gasmid.json"
+    out_p = REPO / "results/phase0/pjm/_pjm_h5_gasmid.json"
     out_p.write_text(json.dumps(rows, indent=2))
     print(f"\nwrote {out_p}")
 

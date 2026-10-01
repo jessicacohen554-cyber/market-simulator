@@ -1,6 +1,6 @@
 """nyiso-225 phase 0 (ZERO LP): does the topology split have an object to hold?
 
-Regenerates every number in ``docs/FINDING-nyiso225-topology-split-closed-2026-09-10.md``
+Regenerates every number in ``docs/records/nyiso/FINDING-nyiso225-topology-split-closed-2026-09-10.md``
 from committed inputs only:
 
 * ``data/raw/NYISO/interface-flows/`` — MIS P-32 hourly flows + posted limits
@@ -18,7 +18,7 @@ Four measurements, each of which independently bears on the successor:
    Central-East binding hours?  They are anti-correlated.
 4. **seam incidence** — where the model's external border links sit against their bounds.
 
-Writes ``results/calibration/_nyiso225_topology_phase0.json``.  Runs no solve.
+Writes ``results/phase0/nyiso/_nyiso225_topology_phase0.json``.  Runs no solve.
 
 Usage::
 
@@ -42,7 +42,7 @@ import numpy as np
 REPO = Path(__file__).resolve().parents[2]
 FLOW_DIR = REPO / "data" / "raw" / "NYISO" / "interface-flows"
 LMP_DIR = REPO / "data" / "raw" / "lmp-data" / "NYISO"
-OUT = REPO / "results" / "calibration" / "_nyiso225_topology_phase0.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso225_topology_phase0.json"
 
 YEARS = (2022, 2023, 2024, 2025)
 INTERNAL = [

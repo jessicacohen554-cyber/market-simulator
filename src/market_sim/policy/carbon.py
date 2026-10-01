@@ -77,7 +77,7 @@ def resolve_carbon_price(config: ScenarioConfig, year: int) -> float:
     precedence (1) alone, a "high-carbon" arm on a program ISO silently
     REPLACED an escalating program trajectory with a flat value, i.e. a cut
     (the D23 premise inversion,
-    ``docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md``). The
+    ``docs/records/forecast/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md``). The
     default 0.0 is an exact no-op on every path; the field is forecast-only
     (``ScenarioConfig.__post_init__`` rule-13 guard) and never armed in a
     keeper or golden posture. The precedence semantics above are unchanged
@@ -120,7 +120,7 @@ def resolved_base_trajectory_price(config: ScenarioConfig, year: int) -> float:
     :func:`carbon_price_below_base_warning` compares an override against.
 
     **The floor (owner ruling S2, 2026-09-06, card D-1; desk ledger
-    ``docs/handoffs/scenario-desk-ledger-2026-09.md`` §2):**
+    ``docs/records/misc/scenario-desk-ledger-2026-09.md`` §2):**
     ``effective = max(RFF path(year), program trajectory(year))`` on a program
     ISO, and the path alone elsewhere — which the same ``max`` expresses,
     because a non-program ISO's adder is ``0.0`` and no registered path is ever
@@ -265,7 +265,7 @@ def carbon_price_below_base_warning(config: ScenarioConfig) -> str | None:
     documented replace semantics — precedence (1) of
     :func:`resolve_carbon_price` — and gains this loud validation warning
     instead. The trap it closes is the D23 premise inversion
-    (``docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md`` §2): the
+    (``docs/records/forecast/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md`` §2): the
     ``carbon25`` arm set ``carbon_price=25`` on NEISO, whose base already
     carries the projected RGGI trajectory ($26.05/t in 2026 escalating at the
     published 7 %/yr CCR rate to $132.16/t by 2050), so a "carbon price

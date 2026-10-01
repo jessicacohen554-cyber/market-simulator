@@ -4,7 +4,7 @@ Reads only committed artifacts: ``scripts/calibration_verdict.py --json`` record
 runs, the two run payloads (per-plant model TWh, ``lmpDeltaHr``), and the NYISO bench parts
 (EIA-923 per plant). Reports per year: C1 (key classes), C3a, C3b, C3c, C4, C8; ST_GAS TWh vs
 EIA-923 by zone and by plant; hourly price bias / MAE vs RT (ISO simple mean). Writes
-``results/calibration/_nyisonext_compare.json``.
+``results/phase0/nyiso/_nyisonext_compare.json``.
 
 Usage::
 
@@ -90,7 +90,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--pair", nargs=2, required=True, metavar=("KEEPER", "ARM"))
     ap.add_argument(
-        "--out", default=str(REPO / "results/calibration/_nyisonext_compare.json")
+        "--out", default=str(REPO / "results/phase0/nyiso/_nyisonext_compare.json")
     )
     a = ap.parse_args()
     runs = {}

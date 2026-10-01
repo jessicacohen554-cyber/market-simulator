@@ -261,7 +261,7 @@ above — the combined-cycle fleet parked at a **~75 % of nameplate** wall (the
 whose LP capacity was pinned at the net-summer rating. Diagnosed and structurally
 fixed this session; the fix is correct and **exposes a separate, larger CC
 offer-level miss** that is the real open item (see the handoff
-`docs/handoffs/pjm-cc-level-tuning-2026-06.md`).
+`docs/records/pjm/pjm-cc-level-tuning-2026-06.md`).
 
 ### Root cause: three stacked summer derates on a net-summer-capped fleet
 
@@ -332,7 +332,7 @@ low hid the over-running; restoring real capacity surfaces it. The fix must *not
 be a new wall — it must re-level the offer / add the real cycling structure. The
 tuning direction (offer level vs commitment vs in-LP reserve co-optimization,
 grounded in ERCOT's richer curve and PJM's published market design) is worked
-through in `docs/handoffs/pjm-cc-level-tuning-2026-06.md`.
+through in `docs/records/pjm/pjm-cc-level-tuning-2026-06.md`.
 
 ### NYISO confirmation (2026-06-25, `nyiso 26 cc-nameplate` keeper)
 

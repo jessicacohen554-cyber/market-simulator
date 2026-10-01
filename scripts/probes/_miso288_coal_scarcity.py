@@ -18,7 +18,7 @@ D. ILLINOIS.HUB DA LMP night vs day medians by month; keeper P1 price in the
 
 The question each block answers: did the real fleet ration by pulling coal
 off NIGHTS (the LP's uniform-dual signature), or by something else (derates,
-dark units, deferred burn)? Output: ``results/calibration/_miso288_coal_scarcity.json``.
+dark units, deferred burn)? Output: ``results/phase0/miso/_miso288_coal_scarcity.json``.
 Rule 13: nothing here feeds a solve.
 """
 
@@ -34,7 +34,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 RAW = REPO / "data/raw"
 KEEPER = REPO / "results/calibration/miso280_span"
-OUT = REPO / "results/calibration/_miso288_coal_scarcity.json"
+OUT = REPO / "results/phase0/miso/_miso288_coal_scarcity.json"
 YEARS = (2019, 2020, 2021, 2022, 2023, 2024)
 MONTHS = [
     "January",

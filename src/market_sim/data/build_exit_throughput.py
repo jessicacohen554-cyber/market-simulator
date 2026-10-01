@@ -9,7 +9,7 @@ run's vintage, the externally identified seed of
 (``config.retirement_config.EXIT_THROUGHPUT_LIMIT_MULTIPLE`` x prior-max).
 
 Identification source, named by owner decision D-8 verbatim
-(``docs/handoffs/ffr-owner-sitting-2026-08-02.md`` Addendum F.1, from the
+(``docs/records/forecast/ffr-owner-sitting-2026-08-02.md`` Addendum F.1, from the
 FF-1A redesign memo §3.3): *"max observed single-year per-ISO thermal
 deactivation from the EIA-860 retired sheet — measurable"*. Rule 13
 ``[R-MEASURED]`` admissible: it is a physical/market throughput input that

@@ -157,7 +157,7 @@ plain `venv` + `pip install -e .` on first run and open a local web UI at
   registry sidecar → bundle dir, and **degrades to "no baseline"** if any link
   is missing (e.g. a clone without that bundle hydrated). It no longer hardcodes
   a bundle path.
-  <!-- tools/launcher.py:_resolve_baseline() — the run10_peak85 hardcode was removed by DEBUG-A, docs/handoffs/debug-sweep-2026-08.md triage row 3 -->
+  <!-- tools/launcher.py:_resolve_baseline() — the run10_peak85 hardcode was removed by DEBUG-A, docs/records/misc/debug-sweep-2026-08.md triage row 3 -->
 - It shells out to the same solver as everything else, so every constraint in
   [§7](#7-operational-constraints--read-before-your-first-solve) applies
   unchanged.
@@ -225,7 +225,7 @@ converted corpus keeps the same tracked artifacts: `README.md`,
 > **unrecoverable from this repository at all** — the CAISO OASIS GRP dailies
 > and pre-slim SCED columns past MIS retention among them. Read the corpus
 > README before concluding data is missing.
-> <!-- CLAUDE.md "Cloning & session data"; docs/FINDING-history-rewrite-2026-08-16.md -->
+> <!-- CLAUDE.md "Cloning & session data"; docs/records/governance/FINDING-history-rewrite-2026-08-16.md -->
 
 | Corpus | Why untracked |
 |---|---|
@@ -259,7 +259,7 @@ cd data/raw/<corpus> && sha256sum -c SHA256SUMS.txt
 > proxied egress it returns intermittent **502 Bad Gateway** mid-pagination. The
 > script backs off and resumes on its own and the files land intact, but budget
 > wall-clock for it and do not treat the run as reproducible.
-> <!-- docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md §8 item 2 -->
+> <!-- docs/records/pjm/FINDING-debug-b-pjm-input-clock-2026-08-15.md §8 item 2 -->
 
 ### 3.3 Rebuild `data/clean` — required, and slow
 
@@ -277,7 +277,7 @@ python scripts/regenerate_clean.py lmp load    # a subset
 **Budget ~2 hours** for a full rebuild across all ISOs. Curation scripts are
 independent — a failure in one is reported and the rest continue — and the only
 expected skips are genuinely absent non-local sources.
-<!-- docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md §8 item 1: ~2 h wall-clock measured over the then-50 datatypes -->
+<!-- docs/records/pjm/FINDING-debug-b-pjm-input-clock-2026-08-15.md §8 item 1: ~2 h wall-clock measured over the then-50 datatypes -->
 
 > **Plan a fresh-clone replay accordingly.** A PJM keeper replay from a clean
 > container needs the ~2 h `regenerate_clean.py` rebuild **plus** the live
@@ -748,7 +748,7 @@ Verified measurements, not folklore:
 | PJM zone-aggregate reserve co-optimization, single year | ~13.9 GB |
 | PJM zone-aggregate co-opt, tightest year of a 3-year run | ~14.5 GB |
 | Two concurrent ERCOT per-plant solves on a 15 GB box | **OOM** |
-<!-- docs/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md §RSS; docs/multi-iso/pjm-reserve-ordc.md Phase-2 EMPIRICAL re-gate -->
+<!-- docs/records/ercot/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md §RSS; docs/multi-iso/pjm-reserve-ordc.md Phase-2 EMPIRICAL re-gate -->
 
 Years release memory between them, so the **per-year peak** is what matters, not
 a multi-year sum.
@@ -854,7 +854,7 @@ finding. Byte-identity keeper goldens: capture before with
 Seeded from the 2026-08 debug sweep's triage table and the DEBUG-B replay
 finding — these are the failures that actually happened, with their measured
 root causes.
-<!-- docs/handoffs/debug-sweep-2026-08.md; docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md §8 -->
+<!-- docs/records/misc/debug-sweep-2026-08.md; docs/records/pjm/FINDING-debug-b-pjm-input-clock-2026-08-15.md §8 -->
 
 ### 9.1 `REFUSING market-sim run: 2026-2050 is 25 solve-years, over the §2.1b cap of 5`
 
@@ -900,7 +900,7 @@ fixed on main; recognise all three so you do not chase them.
 | `Fast test tier` dies **inside `actions/checkout`**, pytest never invoked | **FIXED** (on main) | The tier hard-requires `data/raw`, and a full checkout of the tip (≈8.7 GiB pack + ≈9.0 GiB worktree) no longer fits a runner's 15 GB disk. PERF-A replaced it with a **measured sparse checkout** — `actions/checkout` adds `--filter=blob:none` automatically once `sparse-checkout` is set, so the job materializes only the subset the tier opens. First complete fast-tier run in the repo's history: checkout 80 s, pytest 9m03s, all green. |
 | `golden-data-tier.yml` killed at `curate_emissions.py` with **exit code 143** | **FIXED** (on main) | Runner-VM SIGTERM from a ~10 GiB RSS peak, not a code fault. `curate_year()` was rewritten Arrow-side/streaming (per-file conversion, row-group-chunked writes): peak RSS **10.05 → 5.17 GiB** (2023) and **9.91 → 4.71 GiB** (2024), output verified byte-identical in the data region. The tier then ran **green** — run `31913648051`, 11m33s, loud-failure guard PASS, zero data-missing skips. |
 | `ci.yml` runs show as `cancelled` | **Still true** | `ci.yml` is `pull_request`-triggered with no concurrency group; PRs merge and delete their branches before the ~7–15 min run finishes, cancelling it. Nothing is wrong with the workflow. |
-<!-- ci.yml fast-tests sparse block on main @ ce779f9 (PERF-A 2026-08-15); docs/handoffs/perf-recheck-2026-08.md §1.2/§1.3/§1.5; scripts/data/curate_emissions.py streaming rewrite + plan §8 GOLDEN-TIER-FIX entry (run 31913648051); ci.yml trigger re-verified `on: pull_request` only -->
+<!-- ci.yml fast-tests sparse block on main @ ce779f9 (PERF-A 2026-08-15); docs/records/governance/perf-recheck-2026-08.md §1.2/§1.3/§1.5; scripts/data/curate_emissions.py streaming rewrite + plan §8 GOLDEN-TIER-FIX entry (run 31913648051); ci.yml trigger re-verified `on: pull_request` only -->
 
 Two further jobs (`FR-22 parity`, `Forecast-invariant artifact audit`) are red
 **by design** as other lanes' live signals.
@@ -952,7 +952,7 @@ scaling, HiGHS parallel/PAMI, presolve-on — are all **benched and rejected on
 record**. Do not re-run them. Confirm instead that cross-year warm-start is on
 (it is the default on the calibration path; `--no-xyear-warmstart` turns it off)
 and that you are not accidentally running more than ~2 concurrent solves.
-<!-- docs/handoffs/wallclock-baseline-2026-07.md via docs/model-audit-release-plan-2026-08.md §1 -->
+<!-- docs/records/misc/wallclock-baseline-2026-07.md via docs/model-audit-release-plan-2026-08.md §1 -->
 
 ---
 
@@ -994,7 +994,7 @@ gap-register row D5.
 <!-- re-derived 2026-09-05: find tests -name "test_*.py" | wc -l == 524; find tests -name "*.py" | wc -l == 531 -->
 
 **`model-methodology-spec.md`:** **RESOLVED.** Audited by DOCS-A
-([`handoffs/methodology-finalization-audit-2026-08.md`](handoffs/methodology-finalization-audit-2026-08.md))
+([`records/governance/methodology-finalization-audit-2026-08.md`](records/governance/methodology-finalization-audit-2026-08.md))
 and finalized by DOCS-B on 2026-09-05 — the Phase-0 build-agent content and the
 never-met performance targets are gone, §5.2 is restructured around
 `retirement_rule`, and every rule citation carries a stable `[R-*]` ID.

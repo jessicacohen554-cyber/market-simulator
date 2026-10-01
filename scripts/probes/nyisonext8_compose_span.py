@@ -2,7 +2,7 @@
 
 The arm is the incumbent keeper's recipe (``2026-09-27-nyisonext6-li-cap-span``)
 replayed unchanged at the pin, where the only LIVE change is the HQ-deduped NYISO
-import ladder (``docs/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md``). Checks:
+import ladder (``docs/records/nyiso/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md``). Checks:
 
 * S0 -- every leg solved at the pin (``--pin``);
 * S1 -- the keeper's flags (NEXT-6's expected set) and its offer-curve block;

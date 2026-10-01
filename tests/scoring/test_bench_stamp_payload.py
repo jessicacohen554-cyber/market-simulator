@@ -8,7 +8,7 @@ aggregate degenerate as the payload-REPRODUCIBILITY test, which is the question
 a re-stamp turns on: the aggregate could never read "equal" for a part built
 before such an edit, so no such part was ever re-stampable, while ``404f1908``
 re-stamped 20 parts across exactly that boundary. Recorded in
-``docs/handoffs/FINDING-y15-flipset-sweep-2026-09-06.md`` §3.5; repaired by
+``docs/records/governance/FINDING-y15-flipset-sweep-2026-09-06.md`` §3.5; repaired by
 Y-17 (``FINDING-y17-bench-payload-fingerprint-2026-09-06.md``).
 
 These tests pin the resulting contract:

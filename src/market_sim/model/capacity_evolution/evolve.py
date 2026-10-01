@@ -612,7 +612,7 @@ def evolve_fleet(
     # electric utility, is EXOGENOUS to the step-3 economic screen: its exit
     # decision is an IRP / rate-case outcome carried by step 0's instruments
     # and step 1 / 1b's owner-filed dates, never a merchant net-revenue test
-    # (D32 §4.3; design docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md
+    # (D32 §4.3; design docs/records/forecast/DESIGN-capx-d53-sector-gate-2026-09-05.md
     # §1.2). Sectors 2–7 face the screen as before; a plant absent from the
     # vintage table fails OPEN to the screen. Rule 19 [R-ONE-MECH]: neither
     # declaration (dated plant, sector 1) produces an exit, so no unit's exit

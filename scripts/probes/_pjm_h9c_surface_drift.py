@@ -1,6 +1,6 @@
 """pjm-h9c — what does re-deriving the PJM offer surface over 2020-2025 do to 2023-2025?
 
-ZERO LP. Pre-registration: ``docs/PRECOMMIT-pjm-h9c-offer-surface-own-year-2026-09-16.md`` §3.
+ZERO LP. Pre-registration: ``docs/records/pjm/PRECOMMIT-pjm-h9c-offer-surface-own-year-2026-09-16.md`` §3.
 
 THE RISK THIS MEASURES. ``derive_pjm_offer_midcurve`` computes each unit's physics medians over
 **every month file it is given** and segments on those medians, so adding 2020-2022 to the corpus
@@ -34,7 +34,7 @@ from pathlib import Path
 import numpy as np
 
 REPO = Path(__file__).resolve().parents[2]
-OUT = REPO / "results/calibration/_pjm_h9c_surface_drift.json"
+OUT = REPO / "results/phase0/pjm/_pjm_h9c_surface_drift.json"
 
 #: The frozen three-year segment census (committed artifact provenance).
 FROZEN_SEGMENTS = {"CC_LIKE": 883, "CT_FAST": 1064, "LONG_RUN": 216}
@@ -55,7 +55,7 @@ def main(argv: list[str] | None = None) -> int:
     fz = json.loads((REPO / args.frozen).read_text())
     cd = json.loads(Path(args.candidate).read_text())
     out: dict = {
-        "precommit": "docs/PRECOMMIT-pjm-h9c-offer-surface-own-year-2026-09-16.md",
+        "precommit": "docs/records/pjm/PRECOMMIT-pjm-h9c-offer-surface-own-year-2026-09-16.md",
         "frozen": args.frozen,
         "candidate": str(args.candidate),
     }

@@ -3,7 +3,7 @@
 Builds each year's NYISO topology under the keeper's own ScenarioConfig, applies
 the armed PAR-attributed seam envelope, then ``nyiso_li_posted_limit_cap``, and
 records hours cut / TWh removed on NYISO_external>Long_Island and the largest
-move on any other link. Record: results/calibration/_nyisonext6_g1_footprint.json.
+move on any other link. Record: results/phase0/nyiso/_nyisonext6_g1_footprint.json.
 """
 
 import json
@@ -42,4 +42,6 @@ for y in (2021, 2022, 2023, 2024, 2025):
         other_links_max_abs_delta=float(np.abs(other).max()),
     )
     print(y, out[y])
-json.dump(out, open("results/calibration/_nyisonext6_g1_footprint.json", "w"), indent=1)
+json.dump(
+    out, open("results/phase0/nyiso/_nyisonext6_g1_footprint.json", "w"), indent=1
+)

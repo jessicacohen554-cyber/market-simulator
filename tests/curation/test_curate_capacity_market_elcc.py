@@ -212,7 +212,7 @@ class TestPjmThermalElccIntake(unittest.TestCase):
     def test_dec2021_tranche_has_no_thermal_rows(self) -> None:
         # The Dec-2021 report predates the reform that extended ELCC class
         # ratings to thermal at all — a real methodology gap, not a retrieval
-        # miss (docs/handoffs/pjm-thermal-elcc-intake-2026-07-14.md).
+        # miss (docs/records/pjm/pjm-thermal-elcc-intake-2026-07-14.md).
         df = self._curate_pjm()
         dec2021 = df[df["study_vintage"].str.contains("Dec 2021 ELCC Report")]
         self.assertFalse(dec2021.empty)

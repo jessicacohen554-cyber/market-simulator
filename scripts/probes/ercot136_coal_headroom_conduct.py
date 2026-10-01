@@ -3,7 +3,7 @@
 does the real fleet attach to the block the model bids at $4.50?
 
 Phase 1 of the lane the ERCOT-135 charter routed here
-(``docs/DIAGNOSIS-ercot135-coal-merit-order-2026-07-28.md`` §6): ERCOT-135
+(``docs/records/ercot/DIAGNOSIS-ercot135-coal-merit-order-2026-07-28.md`` §6): ERCOT-135
 measured that only 27.8/38.7/39.1 % of committed coal resource-hours submit ANY
 **DAM** incremental energy curve, and refused to build a mechanism because the
 unoffered remainder might be **self-scheduled** (in which case the model's
@@ -44,7 +44,7 @@ what this probe resolves:
   ERCOT-123 §7.4(b) recorded as present-but-unused. Its units are proved here
   rather than assumed.
 * **D** — the model side, read from the **committed** ERCOT-135 artifact
-  ``results/calibration/ercot135_coal_merit_order.json`` (no re-solve, no LP).
+  ``results/phase0/ercot/ercot135_coal_merit_order.json`` (no re-solve, no LP).
 * **E** — **the price-responsiveness conduct test.** Does SCED's ``Base Point``
   track the ``Output Schedule`` (price-taking) or the submitted curve evaluated
   at the clearing price (economic)? This is the operational meaning of
@@ -135,9 +135,13 @@ def attach_min_gen_cost(df: pd.DataFrame, tag: str) -> pd.DataFrame:
 
 #: The committed ERCOT-135 model-side capture. Read, never regenerated — the
 #: model's coal bid array at the LP seam, after ``apply_coal_tranches``.
-ERCOT135_ARTIFACT = _REPO / "results" / "calibration" / "ercot135_coal_merit_order.json"
+ERCOT135_ARTIFACT = (
+    _REPO / "results" / "phase0" / "ercot" / "ercot135_coal_merit_order.json"
+)
 
-OUT_JSON = _REPO / "results" / "calibration" / "ercot136_coal_headroom_conduct.json"
+OUT_JSON = (
+    _REPO / "results" / "phase0" / "ercot" / "ercot136_coal_headroom_conduct.json"
+)
 
 #: The model's tranche-1 take-or-pay bid, ``coal_tranche_1_fuel_passthrough =
 #: 0.00`` => VOM only. ERCOT-135 §1 measured it at p10 AND p25 in all 3 years.

@@ -5,7 +5,7 @@ The armed ERCOT drag curve (``gas_st_drag_slope_per_gw`` / ``_intercept`` /
 ``_cap`` = 0.00906 / −0.1376 / 0.34, ``docs/ercot-st-gas-netload-drag-2026-06.md``)
 is a season-POOLED fit of the CAMPD overnight (23–05h low-price) ST_GAS
 capacity factor on contemporaneous system net-load, 2023–2025. The ERCOT-90
-direct CEMS measurement (`docs/handoffs/ercot-stgas-shoulder-2026-07.md` §3.3,
+direct CEMS measurement (`docs/records/ercot/ercot-stgas-shoulder-2026-07.md` §3.3,
 artifact ``ercot90_stgas_shoulder_measurement.json``) found a season-axis grain
 limit of that same source evidence: at the same net-load, measured 2024–25
 DJF steam commitment sits FAR below the pooled curve (model 1.6–1.9 GW vs
@@ -262,7 +262,7 @@ def main() -> None:
                 "0.00906/-0.1376/0.34)"
             ),
             "trigger": (
-                "docs/handoffs/ercot-stgas-shoulder-2026-07.md §3.3 — DJF "
+                "docs/records/ercot/ercot-stgas-shoulder-2026-07.md §3.3 — DJF "
                 "sub-$150 control hours: model 1.6-1.9 GW vs measured 0.6-1.1 "
                 "GW at the same net-load (a source-grain limit, not a level "
                 "error; overnight curve still tracks, rho 0.69/0.75)"

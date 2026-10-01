@@ -22,7 +22,7 @@ everywhere rather than pretending otherwise, because the distinction is exactly 
 **N1** (what the region even *is*) and **N5** (a zone cannot split a BA) load-bearing.
 
 Director: the **NWPP ADDITION DESK** (lane id `NWPP-DESK`) — handoff prompt
-`docs/handoffs/nwpp-desk-handoff-2026-09-13.md`, ledger `docs/handoffs/nwpp-desk-ledger-2026-09.md`.
+`docs/records/nwpp/nwpp-desk-handoff-2026-09-13.md`, ledger `docs/records/nwpp/nwpp-desk-ledger-2026-09.md`.
 **The ledger wins where this plan and the ledger diverge on live state.** This plan owns the charters
 (§8) and the decisions (§3); the ledger owns who is running what.
 
@@ -919,7 +919,7 @@ rubric's genealogy — v3.7 at this pin — and it records how every previous st
 introduced, guarded and measured); _apply_c3c_standing_rule (~line 1210) as the worked pattern;
 CRITERIA (~832); _actual_lmp_coverage (~1082); docs/multi-iso/nwpp-addition-plan-2026-09.md §2.6,
 §3 cards N2 and N11, §5 row NWPP-22, §7 gate G25; and
-docs/handoffs/FINDING-nwpp-13-2026-09-13.md §0 and §3 — WHY this lane exists.
+docs/records/nwpp/FINDING-nwpp-13-2026-09-13.md §0 and §3 — WHY this lane exists.
 
 WHY THIS LANE EXISTS, MEASURED RATHER THAN ASSUMED. Owner card N2 was ruled 2026-09-13, both limbs,
 limb (b) verbatim: "a failed gate yields a determination naming its own basis, never a bare
@@ -1256,7 +1256,7 @@ fallback list, the class summaries, and the coverage arithmetic. Report coverage
 You are lane NWPP-31. MODEL: Opus claude-opus-5 — frozen derives against a committed recipe.
 DATA PROFILE: nwpp.  Branch stem: claude/nwpp-31-benchmarks-<4 chars>.
 Read CLAUDE.md freshly and in full; docs/multi-iso/nwpp-addition-plan-2026-09.md §5 row NWPP-31, §2.6
-IN FULL, §3 card N2 (RULED, both limbs), §7 gates G6, G9, G17; docs/handoffs/FINDING-nwpp-13-2026-09-13.md
+IN FULL, §3 card N2 (RULED, both limbs), §7 gates G6, G9, G17; docs/records/nwpp/FINDING-nwpp-13-2026-09-13.md
 §0 and §3; scripts/data/build_reference.py and derive_actual_tail.py / derive_actual_amplitude.py
 docstrings; docs/multi-iso/05-backcast-playbook.md §2.
 
@@ -1351,7 +1351,7 @@ You are lane NWPP-33. MODEL: Opus claude-opus-5 — frozen derives against the d
 DATA PROFILE: nwpp.  Branch stem: claude/nwpp-33-zonal-shares-<4 chars>.
 Read CLAUDE.md freshly and in full; docs/multi-iso/nwpp-addition-plan-2026-09.md §2.5 IN FULL, §5 row
 NWPP-33, §3 cards N5 and N6 (N5 RULED, N6 resolved by measurement), §7 gates G18, G19, G20; the
-data-intake skill's schema/clean_io contract; docs/handoffs/FINDING-nwpp-10-2026-09-13.md §1.3 and §1.4
+data-intake skill's schema/clean_io contract; docs/records/nwpp/FINDING-nwpp-10-2026-09-13.md §1.3 and §1.4
 and FINDING-nwpp-12-2026-09-13.md §0.3 and its fuel section.
 
 PRECONDITIONS (STOP if unmet): NWPP-20 LANDED (the five zones are registered and _NWPP_BA_ZONES is
@@ -1389,7 +1389,7 @@ You are lane NWPP-34. MODEL: Opus claude-opus-5 — a derive, not a design.
 DATA PROFILE: nwpp.  Branch stem: claude/nwpp-34-seam-<4 chars>.
 Read CLAUDE.md freshly and in full — rule 25 [R-ISO-SCOPE] is the whole of your boundary;
 docs/multi-iso/nwpp-addition-plan-2026-09.md §5 row NWPP-34, §3 card N4 (RULED); the ledger's routed
-item R-a; docs/handoffs/FINDING-nwpp-11-2026-09-13.md (the DIBA duration curves) and
+item R-a; docs/records/nwpp/FINDING-nwpp-11-2026-09-13.md (the DIBA duration curves) and
 FINDING-nwpp-10-2026-09-13.md §3.1 (the BPAT identity finding — read it before you write any code).
 
 PRECONDITIONS (STOP if unmet): NWPP-20 LANDED (INTERFACE_NEIGHBORS["NWPP"] = CAISO / WECC_SW /
@@ -1457,7 +1457,7 @@ first keeper, AGAINST the desk's recommendation, because the owner ruled that th
 must mean more than a test of monthly hydro budgets. W4 does not start without you.
 DATA PROFILE: nwpp.  Branch stem: claude/nwpp-36-cascade-coupling-<4 chars>.
 Read CLAUDE.md freshly and in full — rules 1 [R-STRUCT], 2 [R-VECTOR], 13 [R-MEASURED], 19
-[R-ONE-MECH], 24 [R-REGISTRY], 28 [R-MECH-MATRIX]; docs/handoffs/FINDING-nwpp-32-2026-09-14.md
+[R-ONE-MECH], 24 [R-REGISTRY], 28 [R-MECH-MATRIX]; docs/records/nwpp/FINDING-nwpp-32-2026-09-14.md
 **IN FULL — §5(a)-(d) and §6 ARE YOUR SPECIFICATION AND YOU MAY NOT RE-DERIVE THEM**;
 docs/multi-iso/nwpp-addition-plan-2026-09.md §2.7, §5 row NWPP-36, §7 gate G8 AS AMENDED, §3 card N3;
 src/market_sim/config/scenarios.py around `_CACHE_KEY_OPTIONAL_FIELDS` (line ~149) and
@@ -1586,7 +1586,7 @@ Read CLAUDE.md freshly and in full — rules 13 [R-MEASURED], 14 [R-ACCURATE], 1
 src/market_sim/data/eia930/actuals.py::_screen_fuel_spike_columns IN FULL (its docstring is your
 specification AND carries the defect — see below); src/market_sim/data/eia930/envelopes.py;
 src/market_sim/data/eia930/frames.py::_eia_hourly_frame_filled;
-docs/handoffs/FINDING-nwpp-32-2026-09-14.md §3.2 and §7 item 1.
+docs/records/nwpp/FINDING-nwpp-32-2026-09-14.md §3.2 and §7 item 1.
 
 *** THE DEFECT, LOCATED BY THE DESK AT r#7 — VERIFY IT AT YOUR OWN BASE SHA BEFORE FIXING IT. ***
 `_screen_fuel_spike_columns` (actuals.py:219) is a correct two-statistic screen: an hour is repaired
@@ -1674,7 +1674,7 @@ You are lane NWPP-38. MODEL: Opus claude-opus-5 — a zero-LP MEASUREMENT. You w
 config and no src/ code, and that is deliberate: see below.
 DATA PROFILE: nwpp.  Branch stem: claude/nwpp-38-pnca-discontinuity-<4 chars>.
 Read CLAUDE.md freshly and in full — rule 1 [R-STRUCT] is the whole reason this lane is a measurement
-and not a build; docs/handoffs/FINDING-nwpp-32-2026-09-14.md §4, §5(a), §5(b) and §7 item 5;
+and not a build; docs/records/nwpp/FINDING-nwpp-32-2026-09-14.md §4, §5(a), §5(b) and §7 item 5;
 docs/multi-iso/nwpp-addition-plan-2026-09.md §2.7.
 
 *** WHY THIS IS NOT A "FIX" LANE, STATED SO YOU DO NOT TRY TO MAKE IT ONE. ***
@@ -1761,7 +1761,7 @@ NINE registered regions now read through ONE seam (NWPP-37 moved it to the frame
 licence is narrow and the exit is a byte-identity proof.
 DATA PROFILE: nwpp.  Branch stem: claude/nwpp-39-zero-baseline-<4 chars>.
 Read CLAUDE.md freshly and in full — rule 14 [R-ACCURATE] is the whole of your charter, plus 13
-[R-MEASURED], 19 [R-ONE-MECH], 24, 27; docs/handoffs/FINDING-nwpp-37-2026-09-16.md **§6 IN FULL** (it
+[R-MEASURED], 19 [R-ONE-MECH], 24, 27; docs/records/nwpp/FINDING-nwpp-37-2026-09-16.md **§6 IN FULL** (it
 is your specification and its measurement is not to be re-derived) and §5 (the pool-dilution item,
 which is NOT yours — see below); src/market_sim/data/eia930/frames.py and actuals.py::
 _screen_fuel_spike_columns IN FULL, as NWPP-37 left them.
@@ -2007,10 +2007,10 @@ The desk issues these against the SPP program's own W3/W4 charters, which are co
 
 | Lane | FINDING | Landed |
 |---|---|---|
-| charter | this plan + `docs/handoffs/nwpp-desk-handoff-2026-09-13.md` + `nwpp-desk-ledger-2026-09.md` | 2026-09-13 |
-| NWPP-33 | `docs/handoffs/FINDING-nwpp-33-2026-09-14.md` — zonal shares (exact regroup, sum 1.0), MEASURED per-zone VRE shape, per-zone gas basis | 2026-09-14 |
+| charter | this plan + `docs/records/nwpp/nwpp-desk-handoff-2026-09-13.md` + `nwpp-desk-ledger-2026-09.md` | 2026-09-13 |
+| NWPP-33 | `docs/records/nwpp/FINDING-nwpp-33-2026-09-14.md` — zonal shares (exact regroup, sum 1.0), MEASURED per-zone VRE shape, per-zone gas basis | 2026-09-14 |
 
 ## 10. Ledger
 
-`docs/handoffs/nwpp-desk-ledger-2026-09.md` — live state, scoreboard, rulings, routed items,
+`docs/records/nwpp/nwpp-desk-ledger-2026-09.md` — live state, scoreboard, rulings, routed items,
 collision register, issuance record, errors against interest.

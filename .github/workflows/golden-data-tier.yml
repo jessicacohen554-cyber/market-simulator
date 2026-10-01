@@ -3,7 +3,7 @@
 # OWNER SIGN-OFF (the explicit cron authorization CLAUDE.md's GitHub-Actions
 # rule requires on this private, billed-minutes repo): decision card F,
 # signature **F1 — "schedule the data-provisioned tier"**, signed 2026-08-11,
-# docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md. This is
+# docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md. This is
 # durable CI infrastructure, not a per-task workflow.
 #
 # WHY THIS EXISTS. The ERCOT fleet-arrays golden went red on 2026-07-26 and was
@@ -44,7 +44,7 @@
 #      mode) is a red run, not silence.
 #
 # TRIGGER: workflow_dispatch ONLY — THE WEEKLY CRON WAS REMOVED 2026-09-03
-# (owner ruling R-Y, 2026-09-02; docs/FINDING-golden-tier-repair-2026-09.md).
+# (owner ruling R-Y, 2026-09-02; docs/records/misc/FINDING-golden-tier-repair-2026-09.md).
 # The schedule signed under card F / F1 fired three times (runs #5 08-17,
 # #6 08-24, #7 08-31) and every firing was RED with nobody watching, each on
 # a defect that had merged since the previous run (a curate_lmp dtype crash,

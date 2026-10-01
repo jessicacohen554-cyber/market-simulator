@@ -1,7 +1,7 @@
 """Emit the NWPP-NEXT-9 calibration attestation for the measured-receipts span bundle.
 
 NWPP-NEXT-9 (PRECOMMIT
-``docs/handoffs/PRECOMMIT-nwppnext9-coal-measured-receipts-2019-2025-2026-09-28.md``) is
+``docs/records/nwpp/PRECOMMIT-nwppnext9-coal-measured-receipts-2019-2025-2026-09-28.md``) is
 keeper #15's recipe (NWPP-NEXT-8) plus ``coal_monthly_pile_measured_receipts``: the
 monthly pile's inflow read from the year's own EIA-923 Page 5 receipts instead of
 the ratable prior-years proxy, ruled by the owner on a decision card 2026-09-28

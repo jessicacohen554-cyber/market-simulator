@@ -16,7 +16,7 @@ inputs, plus a ``fleet_only`` rebuild of the keeper recipe (the pattern of
 5. EMAAC gas — model EMAAC CC delivered fuel vs Henry Hub + the zonal hub basis.
 
 Run: ``uv run python scripts/probes/_pjmnext8_emaac_price_phase0.py 2023 2024``
-Writes ``results/calibration/_pjmnext8_emaac_price_phase0.json``.
+Writes ``results/phase0/pjm/_pjmnext8_emaac_price_phase0.json``.
 """
 
 from __future__ import annotations
@@ -331,7 +331,7 @@ def main() -> None:
         R["monthly_model_emaac_minus_nj"] = [round(float(v), 1) for v in mon]
         out["years"][str(y)] = R
         print(json.dumps({y: R}, indent=1, default=str))
-    dest = REPO / "results/calibration/_pjmnext8_emaac_price_phase0.json"
+    dest = REPO / "results/phase0/pjm/_pjmnext8_emaac_price_phase0.json"
     dest.write_text(json.dumps(out, indent=1, default=str))
     print("wrote", dest)
 

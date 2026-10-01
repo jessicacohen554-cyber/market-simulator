@@ -24,7 +24,7 @@ a verdict on its own — a `U` cell is the most a census can mint (rule 25).
 
 Usage:
     PYTHONPATH=.:src python scripts/probes/_nyiso113_matrix_gap_sweep.py
-Writes: results/calibration/_nyiso113_matrix_gap_sweep.json
+Writes: results/phase0/nyiso/_nyiso113_matrix_gap_sweep.json
 """
 
 from __future__ import annotations
@@ -38,7 +38,7 @@ MATRIX = REPO / "docs/codebase-site/data/mechanism-matrix.js"
 KEEPER_SHARD = REPO / "frontend/data/backcast/keepers/NYISO.json"
 CALIB_DIR = REPO / "results/calibration"
 REGISTRY = REPO / "frontend/data/backcast/registry"
-OUT = CALIB_DIR / "_nyiso113_matrix_gap_sweep.json"
+OUT = CALIB_DIR.parent / "phase0" / "nyiso" / "_nyiso113_matrix_gap_sweep.json"
 
 ISO_INDEX = {"E": 0, "C": 1, "P": 2, "M": 3, "N": 4, "Q": 5}
 

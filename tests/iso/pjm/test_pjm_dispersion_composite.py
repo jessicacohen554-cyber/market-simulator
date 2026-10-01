@@ -1,6 +1,6 @@
 """Regression contract of the pjm-123 dispersion-composite legs 2 and 3.
 
-The composite (docs/FINDING-pjm122-marginal-ownership-2026-07.md §4) re-owns
+The composite (docs/records/pjm/FINDING-pjm122-marginal-ownership-2026-07.md §4) re-owns
 the $40-150 region the measured corpus assigns to the CC top belt and fast-start
 CT. Leg 1 needs no code (the already-landed
 ``pjm_offer_midcurve_level_segments``); this file is the contract for the two

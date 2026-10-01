@@ -248,7 +248,7 @@ CAISO_DSW_OVERNIGHT_CLEAN_NAME: str = "DSW_overnight_clean"
 # either year, so without it the injector never arms and these rows are inert).
 # Producer: derive_caiso_overnight_clean_depth.py --extra-years 2019 2020, the
 # same p95-over-all-overnight-hours statistic, percentile NOT re-sized (rule 1);
-# pre-registered in docs/handoffs/r-caiso-20/PRECOMMIT-r-caiso-20-2026-09-30.md.
+# pre-registered in docs/records/caiso/r-caiso-20/PRECOMMIT-r-caiso-20-2026-09-30.md.
 # 2021 deliberately stays on the static entry: its printed May-Dec hours already
 # arm at 6,187 in the keeper fold, and one year carries one depth.
 CAISO_DSW_OVERNIGHT_CLEAN_DEPTH_BY_YEAR: dict[int, float] = {
@@ -573,7 +573,7 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     # 249/224/204/252/297/215/220/211 MW). Disclosed: re-running the
     # unfixed producer today differs from the prior committed rungs by at most
     # $0.19 (2022 HQ_hydro, a must-flow rung), all other rungs <= $0.01.
-    # Record: docs/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md,
+    # Record: docs/records/nyiso/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md,
     # scripts/probes/nyisonext8_hq_dedupe_phase0.py.
     "NYISO": [
         ("HQ_hydro", 900.0, 15.77),
@@ -940,12 +940,12 @@ IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = 
 # The NY-New England AC tie (P-32 SCH - NE - NY: New Scotland / Pleasant
 # Valley, NYISO zone F-G = Capital_Hudson) leaves the pooled NYISO_external
 # star node for its own TWO-WAY node (owner ruling Q-a, 2026-09-28;
-# docs/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md). The pooled node cannot
+# docs/records/nyiso/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md). The pooled node cannot
 # hold NE's measured net EXPORT (3.5-5.9 TWh/yr, 2021-2025) and HQ/IESO's
 # import at once, so Capital_Hudson imported at cap where NYISO's own schedule
-# exports (docs/FINDING-nyiso-next7-star-node-2026-09-27.md §2). The tie is the
+# exports (docs/records/nyiso/FINDING-nyiso-next7-star-node-2026-09-27.md §2). The tie is the
 # one seam whose hourly flow follows its OWN spread (CAPITL DA - ISO-NE Roseton
-# DA) in every year (docs/FINDING-nyiso-next10-seam-spread-2026-09-28.md §2).
+# DA) in every year (docs/records/nyiso/FINDING-nyiso-next10-seam-spread-2026-09-28.md §2).
 
 #: The NE AC tie's own external zone (zero load, one link to its landing zone).
 NYISO_NE_AC_ZONE: str = "NYISO_NE_AC"
@@ -1512,7 +1512,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             # blocked on data (eia-930-interchange covers 2023-2025 only) and a
             # frozen-band-shape substitute was REFUSED on measurement (import
             # curves move CV 0.32-0.49 across the three years). Full trace:
-            # docs/FINDING-miso252-seam-fallback-and-the-923-block-2026-09-10.md
+            # docs/records/miso/FINDING-miso252-seam-fallback-and-the-923-block-2026-09-10.md
             # The accurate re-point
             # (ba_code="TVA" + an EIA-930 TVA hourly extract intake) is routed,
             # not shipped — it would change no reachable behaviour today.
@@ -1564,7 +1564,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
     # ------------------------------------------------------------------
     # SPP — registered 2026-09-06 by lane SPP-20 under owner rulings P2 (MISO
     # + AECI seams) and P3 (ERCOT DC ties), SPP desk sitting r#2
-    # (docs/handoffs/spp-desk-ledger-2026-09.md §2). ALL THREE ARE
+    # (docs/records/spp/spp-desk-ledger-2026-09.md §2). ALL THREE ARE
     # DEFAULT-OFF: ``reference_price_interface`` is off for SPP
     # (REFERENCE_PRICE_DEFAULT_ISOS is untouched), so the first keeper serves
     # the measured EIA-930 ``Total interchange`` schedule
@@ -1875,6 +1875,33 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
     # MW range. An armed seam at these limits would refuse flows the meter
     # recorded in most hours; SOCO-56 reconciles the two before arming
     # (the SPP-51 ERCOT-tie precedent), and until then the blocks are off.
+    #
+    # RECONCILED, zero LP, by soco-97 (owner card option d, 2026-10-01;
+    # docs/records/soco/r-soco/FINDING-soco-97-interchange-rule14-phase0-2026-10-01.md
+    # §2). The values below are UNCHANGED (still inert); what the reconciliation
+    # establishes, for whoever arms these blocks:
+    #   * DIRECTION — Avg TC is an INTO-SOCO (import) economy capability; the
+    #     study publishes NO export capability. Applied as the symmetric
+    #     bound this field is today, it refuses 7.9-14.2 TWh/yr of metered
+    #     flow (2019-2025); matched to import only, 3.2-5.4 TWh/yr.
+    #   * BOUNDARY — the study's regions are SERVM transport areas, not ties:
+    #     sum per CORRIDOR (Carolinas = DUK+SCEG+SC 1,066; Florida =
+    #     FPL+FPC+TAL 1,387; TVA 478; MISO 2,374). Import-only per corridor
+    #     leaves 0.94-3.66 TWh/yr refused, ALL of it TVA. Zero free parameters.
+    #   * FPL-NORTHWEST (1,164 of SOCO_FPL's 1,317) exists as an interchange
+    #     seam only from the Gulf Power BA exit, 2022-07-13 (ISO_BA_EXITS);
+    #     before it SOCO_FPL is the 153 MW FPL region alone. This single
+    #     un-dated field cannot carry that; arming needs a dated limit.
+    #   * EXPORT SIDE — unpublished. A measured directed-flow envelope (the
+    #     miso_seam_flow_percentile precedent) costs one DOF (rule 21).
+    #   * TVA — OPEN limit-type misalignment (rule 14): Avg TC is economy
+    #     capability net of firm reservations and CBM, EIA-930 is metered flow
+    #     incl. firm PPAs / JOU schedules / loop flow (imports to 3,150 MW).
+    #     No public TTC reachable (SOCO OASIS fails TLS via the proxy).
+    #   * STRUCTURE — phase 0 measured that SOCO's flows do not follow lambda
+    #     spreads (r -0.44..+0.40 on every seam and year; SOCO exports 4-13
+    #     TWh/yr while its lambda sits above TVA's/DEC's): a contract-dominated
+    #     book. Recommendation recorded: do NOT arm as a calibration lever.
     #
     # ``marginal_heat_rate`` anchors are TIER-3, labelled, default-off:
     #   * SOCO_MISO — MISO-South zonal RT mean over HH + MISO's own basis, the
@@ -2687,7 +2714,7 @@ MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_POOLED: dict[str, dict[str, tuple[float, ...]]
 # -- so every solve after 86e45462 carries the repaired anchor whether or not it
 # carries repaired offsets.  Between the repair and this re-derive the applied
 # price was a MIXTURE: repaired-clock anchor, pre-repair-clock offsets.  Measured
-# at zero LP (results/calibration/_miso248_spp_rederive_phase0.json, P-2): the
+# at zero LP (results/phase0/miso/_miso248_spp_rederive_phase0.json, P-2): the
 # anchor moved in 8,758 / 8,757 / 8,758 of 8,760 hours in 2023 / 2024 / 2025.
 #
 # WHAT IS **NOT** IN SCOPE, measured rather than assumed (P-1): the incumbent
@@ -2865,7 +2892,7 @@ MISO_SEAM_LADDER_NEIGHBOUR_POOLED: dict[str, dict[str, tuple[float, ...]]] = {
 # Offline P9 reproduction of the added years: every seam's measured volume
 # within ±0.02 TWh, duration RMSE 40-280 MW, import-hour shares within a few
 # points — the same quality as 2023-2025.
-# Evidence: results/calibration/ASSESSMENT-pjm160-final-declaration-2026-08-06.md §11.
+# Evidence: docs/records/pjm/ASSESSMENT-pjm160-final-declaration-2026-08-06.md §11.
 PJM_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
     2019: {
         "MISO": {
@@ -3080,7 +3107,7 @@ PJM_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
 # curve — so the coupling is only as good as the model's ability to reproduce
 # that curve, and the bands leave merit exactly when the model's price is
 # wrong. Measured on the committed pjm-169 2022/2021 touchpoint, zero LP
-# (results/calibration/FINDING-pjm174-seam-ladder-anchoring-2026-09-08.md §2):
+# (docs/records/pjm/FINDING-pjm174-seam-ladder-anchoring-2026-09-08.md §2):
 # the incumbent ladder reproduces its OWN basis to -0.046 TWh (2022) and
 # -0.011 TWh (2021) — the band prices are RIGHT — but fed the model's own
 # price it loses -5.735 TWh (2022) and -12.699 TWh (2021) of net export, 57 %
@@ -3307,7 +3334,7 @@ MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR: dict[int, float] = {
 # conventions, inert under miso_seam_measured_ladder (the ladder prices every
 # band directly). No firm_import_floor_by_year — a firm import floor would force
 # imports in the winter export hours the measured seam net-exports over. See
-# docs/handoffs/miso-manitoba-seam-design-2026-07.md.
+# docs/records/miso/miso-manitoba-seam-design-2026-07.md.
 MISO_MANITOBA_SEAM_SPEC: NeighborInterface = NeighborInterface(
     name="Manitoba",
     ba_code="MHEB",

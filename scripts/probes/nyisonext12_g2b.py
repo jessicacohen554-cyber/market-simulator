@@ -1,6 +1,6 @@
 """NYISO-NEXT-12 G-2 (b) "counted once" (ZERO LP): reconstruction at the pin.
 
-``docs/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md`` sec. 6, G-2 (b), per year
+``docs/records/nyiso/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md`` sec. 6, G-2 (b), per year
 2021-2025:
 
 * B1 -- the pooled ladder the armed spec serves equals
@@ -13,7 +13,7 @@
   attribution of the P-32 frame with the NE row removed, and differs from the
   attribution that includes it (the NE row is out of the pooled envelope).
 
-Record: ``results/calibration/_nyisonext12_g2b.json``.
+Record: ``results/phase0/nyiso/_nyisonext12_g2b.json``.
 """
 
 from __future__ import annotations
@@ -110,7 +110,7 @@ def year_block(y: int) -> dict:
 if __name__ == "__main__":
     ys = [int(x) for x in sys.argv[1:]] or [2021, 2022, 2023, 2024, 2025]
     res = {str(y): year_block(y) for y in ys}
-    (REPO / "results/calibration/_nyisonext12_g2b.json").write_text(
+    (REPO / "results/phase0/nyiso/_nyisonext12_g2b.json").write_text(
         json.dumps(res, indent=1)
     )
     print(json.dumps(res, indent=1))

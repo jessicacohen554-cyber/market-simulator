@@ -24,7 +24,7 @@ and ``pmin`` is identically zero: on NYISO's keeper only 4 of 851/849/705 LP
 rows carry ``pmin > 0`` (the nuclear block, none quick-start eligible), so the
 value that decided the mechanism was the literal ``1.0`` fallback in every
 year and in BOTH gated branches. Record:
-``results/calibration/FINDING-nyiso143-online-rho-unidentified-2026-08-18.md``.
+``docs/records/nyiso/FINDING-nyiso143-online-rho-unidentified-2026-08-18.md``.
 
 WHICH MEASURED VALUE IS USED, and why (rule 14 ``[R-ACCURATE]``). The artifact
 carries the headline plus two sensitivities:
@@ -69,7 +69,7 @@ logger = logging.getLogger(__name__)
 #
 # OWNER RULING 2026-08-22 (session nyiso-151, rule 22 D-5(b)): the 0.5 FLOOR
 # IS DELETED — option A of
-# docs/DECISION-CARD-nyiso145-rho-clip-band-2026-08-19.md, taken on the
+# docs/records/nyiso/DECISION-CARD-nyiso145-rho-clip-band-2026-08-19.md, taken on the
 # card's own recommendation. The floor had no primary citation and no
 # physical basis (the true lower bound on 10-minute headroom per MW online
 # is zero — a fleet at full load carries none); it was inherited across a

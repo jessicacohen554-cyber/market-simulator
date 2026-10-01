@@ -32,13 +32,22 @@ class TestSectorGateMisoArming(unittest.TestCase):
         # (Act B, re-identified off the widened ATB extract). Act B is NOT a
         # _CACHE_KEY_OPTIONAL_FIELDS member, so it has no drop value and re-keys
         # unconditionally. Pre-declared BEFORE the solve in
-        # docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3; cache-epoch ledger
+        # docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md §3; cache-epoch ledger
         # entry 2026-09-06c in src/market_sim/results/cache.py. Nothing about THIS
         # field moved — the pin advances because the global default did.
-        self.assertEqual(ScenarioConfig().cache_key(), "547053bdfccd4264")
-        self.assertEqual(
-            ScenarioConfig(mode="backcast").cache_key(), "f61891696e671969"
-        )
+        # REWRITTEN 2026-10-01 (cleanup-D): the two literals pinned here
+        # ("547053bdfccd4264" / "f61891696e671969") moved again under
+        # unrelated default changes merged after 2026-09-06, exactly as the
+        # D65-B note above records happening once before. What this test is
+        # ABOUT is that THIS field's declared-off default leaves the global key
+        # untouched, so that is what is pinned now: an explicit False hashes
+        # identically to a config that never names the field, in both modes.
+        for mode in ("forecast", "backcast"):
+            self.assertEqual(
+                ScenarioConfig(mode=mode).cache_key(),
+                ScenarioConfig(mode=mode, retirement_sector_gate=False).cache_key(),
+                mode,
+            )
 
     def test_miso_forecast_resolves_the_gate_on(self):
         cfg = apply_iso_scenario_defaults(

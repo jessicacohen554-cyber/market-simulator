@@ -1,6 +1,6 @@
 """SPP-73 M4: can SPP's P0->P1 run-length pricing bite? Zero LP.
 
-Pre-registered in ``docs/handoffs/PRECOMMIT-spp-73-commitment-reach-2026-09-22.md`` §5.
+Pre-registered in ``docs/records/spp/PRECOMMIT-spp-73-commitment-reach-2026-09-22.md`` §5.
 Rebuilds the rung bundle's fleet for one year (``fleet_only``, no LP) and counts the
 thermal rows carrying any commitment parameter, then evaluates the P1 startup markup
 ``compute_monthly_markup`` would add on an arbitrary dispatch (all rows on at pmax): if

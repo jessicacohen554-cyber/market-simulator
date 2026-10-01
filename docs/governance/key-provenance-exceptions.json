@@ -35,7 +35,7 @@
   },
   "entries": [
     {
-      "run_config": "docs/handoffs/scn-ws5b-neiso/REF/run_config.json",
+      "run_config": "docs/records/forecast/scn-ws5b-neiso/REF/run_config.json",
       "iso": "NEISO",
       "recorded_cache_key": "1b452c457ca786a6",
       "solved_at": "2026-09-09T01:57:16Z",
@@ -47,7 +47,7 @@
         ]
       },
       "why": "Registration lag, and the ONLY record capx D91's repair orphans -- counted and disclosed in that lane's PRECOMMIT BEFORE the edit, not discovered after it. `pjm_seam_neighbour_hourly_ladder` landed in f2a834de (pjm-174) WITHOUT its `_CACHE_KEY_OPTIONAL_FIELDS` entry and was registered 2026-09-09 by capx D91 under owner ruling Q64. This is the one committed payload solved inside that ~33-hour window (2026-09-08T16:21Z -> 2026-09-09T01:57Z), so the solving code HASHED the field at False; today's rule DROPS it at False. Un-dropping that one field reproduces the literal exactly. It is the identical species as the `caiso_offer_surface_measured_ungrounded` lag rows -- same defect, same cure, same class -- and it is not a keeper, not a dashboard-registered run, and not a key-named bundle directory: two JSON files addressed by path. The inverse cost of NOT registering the field was 199 of 200 committed records unable to reconstruct their own key.",
-      "citation": "docs/handoffs/FINDING-capx-d91-2026-09-09.md \u00a76 (orphan census) and \u00a75 (the registration); owner ruling Q64, capx ledger \u00a70bh.3(a)"
+      "citation": "docs/records/forecast/FINDING-capx-d91-2026-09-09.md \u00a76 (orphan census) and \u00a75 (the registration); owner ruling Q64, capx ledger \u00a70bh.3(a)"
     },
     {
       "run_config": "results/ff-t1f-s123/verify/run_config.json",
@@ -63,7 +63,7 @@
         ]
       },
       "why": "Pre-ledger default flip: owner ruling R-A (PR #4442, merged 2026-08-31T02:37:44Z) flipped `storage_entry_availability_gate` and `storage_entry_cost_normalized_rank` False->True under the PRE-(b'-1) rule, which dropped a registered field at the LIVE default of the day. This bundle recorded the pair at False, so it was dropped then and is hashed now (the 2026-09-01 re-baseline froze every field at its post-R-A default). Dropping the pair reproduces the literal.",
-      "citation": "docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.2 (table \u00a72)"
+      "citation": "docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.2 (table \u00a72)"
     },
     {
       "run_config": "results/ff-t1f-s6-pjm/ledger/run_config.json",
@@ -79,7 +79,7 @@
         ]
       },
       "why": "Pre-ledger default flip: owner ruling R-A (PR #4442, merged 2026-08-31T02:37:44Z) flipped `storage_entry_availability_gate` and `storage_entry_cost_normalized_rank` False->True under the PRE-(b'-1) rule, which dropped a registered field at the LIVE default of the day. This bundle recorded the pair at False, so it was dropped then and is hashed now (the 2026-09-01 re-baseline froze every field at its post-R-A default). Dropping the pair reproduces the literal.",
-      "citation": "docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.2 (table \u00a72)"
+      "citation": "docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.2 (table \u00a72)"
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms/base/run_config.json",
@@ -105,7 +105,7 @@
         ]
       },
       "why": "The pre-ledger flip above, COMPOUNDED with a relocated data root: this fc6 arm solved in repo worktree /home/user/msim-vintage with MARKET_SIM_DATA_ROOT=/home/user/market-simulator, so `_cache_key_path_roots()` returned both roots and the six path-valued fields folded to <data_root>/... instead of <repo>/.... Re-folding under those roots, with the R-A pair dropped, reproduces the literal. D85-R repair 2 records the fold roots going forward so a future split-root key is derivable from run_config.json alone.",
-      "citation": "docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.2 + \u00a73.3 (table \u00a72)"
+      "citation": "docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.2 + \u00a73.3 (table \u00a72)"
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms/carbon25/run_config.json",
@@ -131,7 +131,7 @@
         ]
       },
       "why": "The pre-ledger flip above, COMPOUNDED with a relocated data root: this fc6 arm solved in repo worktree /home/user/msim-vintage with MARKET_SIM_DATA_ROOT=/home/user/market-simulator, so `_cache_key_path_roots()` returned both roots and the six path-valued fields folded to <data_root>/... instead of <repo>/.... Re-folding under those roots, with the R-A pair dropped, reproduces the literal. D85-R repair 2 records the fold roots going forward so a future split-root key is derivable from run_config.json alone.",
-      "citation": "docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.2 + \u00a73.3 (table \u00a72)"
+      "citation": "docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.2 + \u00a73.3 (table \u00a72)"
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms/carbon_plus25/run_config.json",
@@ -157,7 +157,7 @@
         ]
       },
       "why": "The pre-ledger flip above, COMPOUNDED with a relocated data root: this fc6 arm solved in repo worktree /home/user/msim-vintage with MARKET_SIM_DATA_ROOT=/home/user/market-simulator, so `_cache_key_path_roots()` returned both roots and the six path-valued fields folded to <data_root>/... instead of <repo>/.... Re-folding under those roots, with the R-A pair dropped, reproduces the literal. D85-R repair 2 records the fold roots going forward so a future split-root key is derivable from run_config.json alone.",
-      "citation": "docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.2 + \u00a73.3 (table \u00a72)"
+      "citation": "docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.2 + \u00a73.3 (table \u00a72)"
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms/gaspm5/run_config.json",
@@ -183,7 +183,7 @@
         ]
       },
       "why": "The pre-ledger flip above, COMPOUNDED with a relocated data root: this fc6 arm solved in repo worktree /home/user/msim-vintage with MARKET_SIM_DATA_ROOT=/home/user/market-simulator, so `_cache_key_path_roots()` returned both roots and the six path-valued fields folded to <data_root>/... instead of <repo>/.... Re-folding under those roots, with the R-A pair dropped, reproduces the literal. D85-R repair 2 records the fold roots going forward so a future split-root key is derivable from run_config.json alone.",
-      "citation": "docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.2 + \u00a73.3 (table \u00a72)"
+      "citation": "docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.2 + \u00a73.3 (table \u00a72)"
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms/gasup150/run_config.json",
@@ -209,7 +209,7 @@
         ]
       },
       "why": "The pre-ledger flip above, COMPOUNDED with a relocated data root: this fc6 arm solved in repo worktree /home/user/msim-vintage with MARKET_SIM_DATA_ROOT=/home/user/market-simulator, so `_cache_key_path_roots()` returned both roots and the six path-valued fields folded to <data_root>/... instead of <repo>/.... Re-folding under those roots, with the R-A pair dropped, reproduces the literal. D85-R repair 2 records the fold roots going forward so a future split-root key is derivable from run_config.json alone.",
-      "citation": "docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.2 + \u00a73.3 (table \u00a72)"
+      "citation": "docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.2 + \u00a73.3 (table \u00a72)"
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/run_config.json",
@@ -225,7 +225,7 @@
         ]
       },
       "why": "Pre-ledger default flip: owner ruling R-A (PR #4442, merged 2026-08-31T02:37:44Z) flipped `storage_entry_availability_gate` and `storage_entry_cost_normalized_rank` False->True under the PRE-(b'-1) rule, which dropped a registered field at the LIVE default of the day. This bundle recorded the pair at False, so it was dropped then and is hashed now (the 2026-09-01 re-baseline froze every field at its post-R-A default). Dropping the pair reproduces the literal.",
-      "citation": "docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.2 (table \u00a72)"
+      "citation": "docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.2 (table \u00a72)"
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau/fc6/arms/base/run_config.json",
@@ -240,7 +240,7 @@
         ]
       },
       "why": "Registration lag: `caiso_offer_surface_measured_ungrounded` landed in aebeb60e (caiso-231) WITHOUT its `_CACHE_KEY_OPTIONAL_FIELDS` entry and was registered 2026-09-02 by the CI-red repair lane. This bundle solved before that, on a tree where the field existed unregistered, so the solving code HASHED it at False; today's rule DROPS it at False. Un-dropping that one field reproduces the literal.",
-      "citation": "docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.1 (table \u00a72)"
+      "citation": "docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.1 (table \u00a72)"
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau/fc6/arms/carbon_plus25/run_config.json",
@@ -255,7 +255,7 @@
         ]
       },
       "why": "Registration lag: `caiso_offer_surface_measured_ungrounded` landed in aebeb60e (caiso-231) WITHOUT its `_CACHE_KEY_OPTIONAL_FIELDS` entry and was registered 2026-09-02 by the CI-red repair lane. This bundle solved before that, on a tree where the field existed unregistered, so the solving code HASHED it at False; today's rule DROPS it at False. Un-dropping that one field reproduces the literal.",
-      "citation": "docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.1 (table \u00a72)"
+      "citation": "docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.1 (table \u00a72)"
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau/fc6/arms/gaspm5/run_config.json",
@@ -270,7 +270,7 @@
         ]
       },
       "why": "Registration lag: `caiso_offer_surface_measured_ungrounded` landed in aebeb60e (caiso-231) WITHOUT its `_CACHE_KEY_OPTIONAL_FIELDS` entry and was registered 2026-09-02 by the CI-red repair lane. This bundle solved before that, on a tree where the field existed unregistered, so the solving code HASHED it at False; today's rule DROPS it at False. Un-dropping that one field reproduces the literal.",
-      "citation": "docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.1 (table \u00a72)"
+      "citation": "docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.1 (table \u00a72)"
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau/fc6/arms/gasup150/run_config.json",
@@ -285,7 +285,7 @@
         ]
       },
       "why": "Registration lag: `caiso_offer_surface_measured_ungrounded` landed in aebeb60e (caiso-231) WITHOUT its `_CACHE_KEY_OPTIONAL_FIELDS` entry and was registered 2026-09-02 by the CI-red repair lane. This bundle solved before that, on a tree where the field existed unregistered, so the solving code HASHED it at False; today's rule DROPS it at False. Un-dropping that one field reproduces the literal.",
-      "citation": "docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.1 (table \u00a72)"
+      "citation": "docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.1 (table \u00a72)"
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau/run_config.json",
@@ -300,7 +300,7 @@
         ]
       },
       "why": "Registration lag: `caiso_offer_surface_measured_ungrounded` landed in aebeb60e (caiso-231) WITHOUT its `_CACHE_KEY_OPTIONAL_FIELDS` entry and was registered 2026-09-02 by the CI-red repair lane. This bundle solved before that, on a tree where the field existed unregistered, so the solving code HASHED it at False; today's rule DROPS it at False. Un-dropping that one field reproduces the literal.",
-      "citation": "docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.1 (table \u00a72)"
+      "citation": "docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.1 (table \u00a72)"
     },
     {
       "run_config": "results/hindcast/miso-2021-2025-realized-t1h-d27/run_config.json",
@@ -315,7 +315,7 @@
         ]
       },
       "why": "Registration lag: `caiso_offer_surface_measured_ungrounded` landed in aebeb60e (caiso-231) WITHOUT its `_CACHE_KEY_OPTIONAL_FIELDS` entry and was registered 2026-09-02 by the CI-red repair lane. This bundle solved before that, on a tree where the field existed unregistered, so the solving code HASHED it at False; today's rule DROPS it at False. Un-dropping that one field reproduces the literal.",
-      "citation": "docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.1 (table \u00a72)"
+      "citation": "docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.1 (table \u00a72)"
     },
     {
       "run_config": "tests/golden/ercot_2026_2040.run_config.json",
@@ -329,7 +329,7 @@
         "resolve_iso_overrides": true
       },
       "why": "Request, not resolution: `scripts/golden_forecast_bands.py` at the seed commit built `ScenarioConfig(**REFERENCE_SCENARIO_KWARGS)` and serialized `dataclasses.asdict(config)` -- the REQUEST -- while `run_scenario_iso` applied ERCOT's `default_scenario_overrides = {'scarcity_price_overlay': True}` and hashed the RESOLUTION. Re-applying that one override and hashing under the vintage's rules reproduces the literal. D85-R repair 3 fixes the writer so a future reseed records the resolution; the fixture itself is untouched (reseeding is owner-gated D-7).",
-      "citation": "docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.4 (table \u00a72)"
+      "citation": "docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md \u00a73.4 (table \u00a72)"
     }
   ]
 }

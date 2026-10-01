@@ -10,7 +10,7 @@ a new year circular for any derive that needs its bench part BEFORE the year can
 be solved — CAISO's supply-consistent demand artifact
 (``derive_caiso_supply_consistent_demand.py``) is exactly that, and caiso-262
 broke the circle for 2022 with an LP "bench scaffold solve"
-(``results/calibration/ADDENDUM-caiso262-inputs-2026-09-07.md`` §5).
+(``docs/records/caiso/ADDENDUM-caiso262-inputs-2026-09-07.md`` §5).
 
 The LP is not needed. The bench part depends on the run in ONE place only: the
 dispatch frame's per-plant ``(plant_code, klass, zone)`` membership, which

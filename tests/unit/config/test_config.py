@@ -364,7 +364,7 @@ class TestScenarioMatrixYaml(unittest.TestCase):
 class TestProbabilityBoundsLevers(unittest.TestCase):
     """Tests for the PB-1 uncertainty-lever plumbing (fields + resolvers).
 
-    docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1/§2.5 item 4.
+    docs/records/misc/probability-bounds-plan-2026-07.md §1.1/§2.1/§2.5 item 4.
     """
 
     # -- Neutral defaults reproduce today's resolved config exactly --------

@@ -8,12 +8,12 @@ version = "0.0.0"
 description = "Electricity market dispatch and policy simulator"
 requires-python = ">=3.11"
 dependencies = [
-    "highspy>=1.7",
-    "numpy>=1.26",
-    "scipy>=1.12",
-    "pandas>=2.1",
-    "pyarrow>=14.0",
-    "pydantic>=2.5",
+    "highspy==1.14.0",
+    "numpy==2.4.6",
+    "scipy==1.17.1",
+    "pandas==3.0.3",
+    "pyarrow==24.0.0",
+    "pydantic==2.13.4",
     "pyyaml>=6.0",
     "openpyxl>=3.1",
     "requests>=2.31.0",
@@ -80,16 +80,16 @@ extend-exclude = [
     # never edited to satisfy the linter (rule 27 [R-PUSH] would forbid
     # rewriting them anyway). Lint scope for handoff .md/.json is unaffected —
     # ruff only ever read the .py files here.
-    "docs/handoffs",
+    "docs/records",
     # HOUSE-1 charter 2026-08-08 (incident: sitting Addendum T.1,
-    # docs/handoffs/ffr-owner-sitting-2026-08-02.md): ruff format must never
+    # docs/records/forecast/ffr-owner-sitting-2026-08-02.md): ruff format must never
     # reflow this ~4,100-line hand-formatted core file. On 2026-08-05 the
     # ruff-autofix hook's whole-tree format reflowed it 3,960 → 9,508 lines on
     # an unrelated .py edit — rule 27 [R-PUSH]'s forbidden full-file rewrite
     # even when AST-identical, trapped manually by every session since. At the
     # charter's HEAD (a445fce) the file happens to PASS `ruff format --check`
     # (the charter's "other core files failing --check" enumeration came back
-    # EMPTY — evidence in docs/handoffs/house-1-lint-ci-2026-08-08.md), so this
+    # EMPTY — evidence in docs/records/misc/house-1-lint-ci-2026-08-08.md), so this
     # entry is prophylactic: it pins the protection against ruff version drift
     # and future hand edits instead of leaving it to per-session vigilance.
     # Do NOT "fix" by reformatting the file; the exclusion is the fix. Note

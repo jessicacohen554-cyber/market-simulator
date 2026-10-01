@@ -11,7 +11,7 @@ into gzip source mirrors under ``data/raw/miso-m2m-flowgates/``
 (``M2M_Settlement_srw_YYYY.csv.gz`` — verbatim bytes, gzipped at rest). Same
 no-auth channel as the miso-76 bc_HIST intake; fetchability, coverage and
 the seam-class scoping were established by
-``docs/handoffs/miso-77-m4-afc-feasibility-2026-07.md`` §2a and the intake
+``docs/records/miso/miso-77-m4-afc-feasibility-2026-07.md`` §2a and the intake
 was chartered by the miso-176 session (miso-174 §7 item 3).
 
 RULE 13 (CLAUDE.md): the shadow-price / market-flow / credit columns are the

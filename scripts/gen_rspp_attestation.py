@@ -1,6 +1,6 @@
 """Emit the R-SPP calibration attestation for the composed 2019-2025 SPP bundle.
 
-R-SPP (``docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md`` §5.3.9) re-solves SPP's
+R-SPP (``docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md`` §5.3.9) re-solves SPP's
 incumbent keeper recipe on the F1 / F2 corrected backcast inputs, one year per shard (rule 36), composed
 at zero LP into ``rspp_span`` (2019-2025). Same reason as ``gen_hydro5_attestation.py``:
 ``replay_keeper --out-dir`` does not propagate ``calibration_attestation.json``, so without this the
@@ -25,8 +25,8 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 CAL = REPO / "results" / "calibration"
-PRECOMMIT = "docs/handoffs/PRECOMMIT-r-spp-2019-2025-inputs-2026-09-24.md"
-RESULT = "docs/handoffs/RESULT-r-spp-2019-2025-inputs-2026-09-24.md"
+PRECOMMIT = "docs/records/spp/PRECOMMIT-r-spp-2019-2025-inputs-2026-09-24.md"
+RESULT = "docs/records/spp/RESULT-r-spp-2019-2025-inputs-2026-09-24.md"
 PINNED = "ec13e5c2ad35c4f817cc496ff2363affb3fed2f9"
 COMPOSITE = "rspp_span"
 INCUMBENT_SPAN = "hydro5_spp_floor_span"

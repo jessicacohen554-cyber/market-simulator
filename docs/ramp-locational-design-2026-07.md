@@ -3,7 +3,7 @@
 **Status: DESIGN — awaiting owner sign-off. No implementation in this doc's commit.**
 
 **Thread:** closes the structural gap disclosed by
-`results/calibration/FINDING-caiso-evening-merit-2026-07-04.md`: evening CT dispatch in
+`docs/records/caiso/FINDING-caiso-evening-merit-2026-07-04.md`: evening CT dispatch in
 reality is driven by ramp-rate limits and load-pocket locational need, neither representable
 in the current energy-only, ramp-free zonal LP. The caiso-51 CT floor (`ct_netload_drag`) was
 compensating for exactly this absence; after the caiso-52 scrub it is the **sole surviving CT

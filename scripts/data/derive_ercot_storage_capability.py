@@ -24,7 +24,7 @@ EIA-860 monthly COD power ramp AND the (absent) storage outage model in
 backcast mode. The summer-availability audit measured the EIA-860 basis ~2 GW
 below this registry in both summers (5.8 vs 7.7 GW Aug-2024; 10.6 vs 12.5 GW
 Jul-2025) — the phantom-evening margin defect
-(docs/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md §1c).
+(docs/records/ercot/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md §1c).
 
 What this does NOT replace: EIA-860 stays the ZONE-assignment and DURATION
 (MWh) basis — the disclosure is resource-name-keyed with no plant crosswalk,

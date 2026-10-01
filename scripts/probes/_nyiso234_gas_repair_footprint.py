@@ -1,7 +1,7 @@
 """THE REPAIRED GAS SERIES: what it changes, and WHERE it is largest (nyiso-234, ZERO LP).
 
 Phase 0 for the rule 29 ``[R-SCREEN]`` screen of the nyiso-234b input repair
-(``docs/FINDING-nyiso234b-the-gas-series-was-published-2026-09-14.md``): the EIA
+(``docs/records/nyiso/FINDING-nyiso234b-the-gas-series-was-published-2026-09-14.md``): the EIA
 NGWU catch-up tables the fetcher dropped, plus the one-day header misalignment.
 
 Rule 29 (1) requires the screen year to be **named in the PRECOMMIT before the
@@ -42,7 +42,7 @@ def _with_csv(csv_path: Path, basis_path: Path | None = None) -> dict[int, np.nd
     The construction is mean-preserving against the MONTHLY hub level, so the
     repair moves the delivered series through two doors: the daily shape and the
     monthly anchor recomputed from it
-    (``docs/FINDING-nyiso234b-the-gas-series-was-published-2026-09-14.md`` §5).
+    (``docs/records/nyiso/FINDING-nyiso234b-the-gas-series-was-published-2026-09-14.md`` §5).
 
     **The monthly level enters through ``basis_path``, NOT through
     ``basis.nyiso.TRANSCO_IROQUOIS_MONTHLY_PATH``.** Repointing that constant was

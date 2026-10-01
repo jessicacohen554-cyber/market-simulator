@@ -1,7 +1,7 @@
 ### 2026-07-13 — CAISO — caiso-81 (local-commitment driver adjudication): the approved response curve is REFUTED at the estimation stage — its own §4 LOYO gate fails before any LP (held-out 2025 overpredicted +375 % to +3,600 % by every candidate driver); no solve, no registration; the CT_PEAKER deficit stays OPEN pending a measured regime source
 
 Lane C of the caiso-80 handoff (the owner-approved
-`docs/handoffs/caiso-local-commitment-driver-design-2026-07.md`, sized against
+`docs/records/caiso/caiso-local-commitment-driver-design-2026-07.md`, sized against
 the caiso-80 payload's GROWN CT deficit — model 0.71/0.56/0.27 vs actual
 4.13/4.33/2.37 TWh). The design's §4 pre-commits the fitted response curve
 `share_committed(ramp decile, season)` to LOYO within 2023-2025; that gate is
@@ -9,7 +9,7 @@ checkable at the ESTIMATION stage, before any solve — the NYISO ST_GAS
 netload-drag precedent (2026-07-09, rejected on its own honesty gates from
 the derive script). It fails decisively
 (`scripts/data/derive_caiso_local_commitment.py`, committed + reproducible;
-`results/calibration/FINDING-caiso81-local-commitment-driver-refuted-2026-07-13.md`):
+`docs/records/caiso/FINDING-caiso81-local-commitment-driver-refuted-2026-07-13.md`):
 
 - **Panel:** per-(pocket, day) measured committed MW (CAMPD CT_PEAKER via the
   canonical 923 dominant-class routing, HE15-23 mean) vs the filed driver

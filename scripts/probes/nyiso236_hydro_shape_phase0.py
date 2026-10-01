@@ -1,6 +1,6 @@
 """nyiso-236 PHASE 0 (ZERO-LP): the hydro SHAPE gap, and how price-responsive the LP makes hydro.
 
-Record: ``docs/PRECOMMIT-nyiso236-hydro-budget-period-screen-2026-09-16.md`` §1.
+Record: ``docs/records/nyiso/PRECOMMIT-nyiso236-hydro-budget-period-screen-2026-09-16.md`` §1.
 
 Hydro is ~26 TWh/yr in NYISO -- more than wind and solar combined -- and it appears
 in neither ``fuelRows`` nor ``nonfossil`` in the run payload, so **C1 never scores

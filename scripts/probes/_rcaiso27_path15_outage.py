@@ -11,7 +11,7 @@ internal element appears only as the CAUSE of an intertie curtailment, which is 
 series for that element.
 
 Usage: ``python3 scripts/probes/_rcaiso27_path15_outage.py``.
-Record: ``docs/handoffs/r-caiso-27/FINDING-r-caiso-27-path15-outage-data-2026-10-01.md``.
+Record: ``docs/records/caiso/r-caiso-27/FINDING-r-caiso-27-path15-outage-data-2026-10-01.md``.
 """
 
 from __future__ import annotations

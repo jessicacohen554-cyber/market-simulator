@@ -689,8 +689,8 @@
         "evidence": {
           "target": "data/raw/_validation-source/capacity_actuals_neiso.csv",
           "confirmed_registry": "data/raw/confirmed-retirements/neiso.csv",
-          "exit_decode": "docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json",
-          "exit_decode_citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
+          "exit_decode": "docs/records/neiso/neiso-rc-r/exit-decode-2026-08-31.json",
+          "exit_decode_citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/records/neiso/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
         },
         "applicability": {
           "use_campd_bins": true,
@@ -717,7 +717,7 @@
             "reason": "not_in_fleet_basis",
             "why": "ABSENT from every EIA-860 operable vintage >= 2021 (physically ceased 2021; present OP in vintage 2020 only) \u2014 no screen can retire capacity the run's fleet never carried",
             "gated": true,
-            "citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
+            "citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/records/neiso/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
           },
           {
             "unit_id": "568_3",
@@ -729,7 +729,7 @@
             "reason": "not_in_fleet_basis",
             "why": "ABSENT from every EIA-860 operable vintage >= 2021 (physically ceased 2021; present OP in vintage 2020 only) \u2014 no screen can retire capacity the run's fleet never carried",
             "gated": true,
-            "citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
+            "citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/records/neiso/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
           },
           {
             "unit_id": "55031_CT03",
@@ -741,7 +741,7 @@
             "reason": "not_in_fleet_basis",
             "why": "ABSENT from the OP-filtered fleet basis of vintages >= 2023 (status OS in the 2023 and 2024 operable sheets; OP through vintage 2022) \u2014 no screen can retire capacity the run's fleet never carried",
             "gated": false,
-            "citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
+            "citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/records/neiso/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
           },
           {
             "unit_id": "55031_CT02",
@@ -753,7 +753,7 @@
             "reason": "not_in_fleet_basis",
             "why": "ABSENT from the OP-filtered fleet basis of vintages >= 2023 (status OS in the 2023 and 2024 operable sheets; OP through vintage 2022) \u2014 no screen can retire capacity the run's fleet never carried",
             "gated": false,
-            "citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
+            "citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/records/neiso/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
           },
           {
             "unit_id": "55031_CT01",
@@ -765,7 +765,7 @@
             "reason": "not_in_fleet_basis",
             "why": "ABSENT from the OP-filtered fleet basis of vintages >= 2023 (status OS in the 2023 and 2024 operable sheets; OP through vintage 2022) \u2014 no screen can retire capacity the run's fleet never carried",
             "gated": false,
-            "citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
+            "citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/records/neiso/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
           }
         ],
         "n_target_large": 6,
@@ -841,8 +841,8 @@
         "evidence": {
           "target": "data/raw/_validation-source/capacity_actuals_neiso.csv",
           "confirmed_registry": "data/raw/confirmed-retirements/neiso.csv",
-          "exit_decode": "docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json",
-          "exit_decode_citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
+          "exit_decode": "docs/records/neiso/neiso-rc-r/exit-decode-2026-08-31.json",
+          "exit_decode_citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/records/neiso/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
         },
         "applicability": {
           "use_campd_bins": true,
@@ -1057,7 +1057,7 @@
         "gas_cc": 1.0
       },
       "commissioned_in_window_decided_before_window_gw": {},
-      "note": "Scored on the DECISION basis (D-9(ii)). Additions verdicts on this basis are NOT comparable to any additions verdict committed before 2026-08-04, which were scored on the COD basis \u2014 the metric means something different. Retirements-side comparability is unaffected. See docs/handoffs/ffr-3s-cod-shifted-scoring-2026-08-04.md.",
+      "note": "Scored on the DECISION basis (D-9(ii)). Additions verdicts on this basis are NOT comparable to any additions verdict committed before 2026-08-04, which were scored on the COD basis \u2014 the metric means something different. Retirements-side comparability is unaffected. See docs/records/forecast/ffr-3s-cod-shifted-scoring-2026-08-04.md.",
       "entry_commissioning_lag": true
     },
     "co2": {

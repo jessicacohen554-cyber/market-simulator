@@ -77,7 +77,7 @@ RUNS_DIR = ba.RUNS
 # green was a maintenance state, not a property, and its own docstring's
 # warning that a stale entry is "a re-armable hole" was on the way to coming
 # true (`nyiso147_control` was named here after its dir was already gone).
-# `results/calibration/FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md` §5
+# `docs/records/nyiso/FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md` §5
 # recommended replacing the enumeration with a structural test; this is it.
 #
 # WHAT IS ADMITTED — both conjuncts required, in both classes:

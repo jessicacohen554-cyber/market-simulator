@@ -41,7 +41,7 @@ _ROOT = Path(__file__).resolve().parents[2]
 for _p in (_ROOT, _ROOT / "src", _ROOT / "scripts", _ROOT / "scripts" / "probes"):
     sys.path.insert(0, str(_p))
 
-OUT = _ROOT / "docs/handoffs/r-soco"
+OUT = _ROOT / "docs/records/soco/r-soco"
 PROC = _ROOT / "data/raw/_processed-legacy"
 T = 8760
 

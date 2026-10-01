@@ -265,7 +265,7 @@ def extend_ba(
 
 # ---------------------------------------------------------------------------
 # PJM fueltype input-clock repair (DEBUG-B, 2026-08;
-# docs/handoffs/debug-b-pjm-input-clock-charter-2026-08.md §1/§3, chartered
+# docs/records/pjm/debug-b-pjm-input-clock-charter-2026-08.md §1/§3, chartered
 # under owner decision D-5).  The ``NG:`` fuel-type family of the committed
 # ``PJM hourly.parquet`` ran one hour EARLY at the EIA-930 source (fixed
 # upstream ~Feb-2025), so the 2023 and 2024 blocks sit one slot ahead of the
@@ -391,7 +391,7 @@ def rebuild_pjm_input_clock(force: bool, apply_years: list[int]) -> Path:
     every block is the committed extract itself, so re-applying an
     already-applied entry double-shifts that block (see the table's
     module-level notes).  DEBUG-B applied 2023+2024 (charter
-    ``docs/handoffs/debug-b-pjm-input-clock-charter-2026-08.md`` §3); the
+    ``docs/records/pjm/debug-b-pjm-input-clock-charter-2026-08.md`` §3); the
     owner-signed 2026-08-16 extension applied 2018-2022.
     """
     unknown = [

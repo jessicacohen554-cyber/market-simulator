@@ -252,7 +252,7 @@ def _load_caiso_supply_consistent_demand(year: int) -> np.ndarray:
     Reads the derived measured artifact written by
     ``scripts/data/derive_caiso_supply_consistent_demand.py`` (caiso-80,
     owner-signed Option A —
-    ``results/calibration/FINDING-caiso80-demand-basis-wedge-2026-07-13.md``):
+    ``docs/records/caiso/FINDING-caiso80-demand-basis-wedge-2026-07-13.md``):
     ``demand(t) = 930 NetGen(t) − NG_cell(t) + CEMS bench-gas grid(t) +
     cogen grid flat + geo/biomass fold-in flat − TI(t)`` — the honest
     CEMS-anchored basis the backcast is scored against, replacing the raw

@@ -8,7 +8,7 @@ measured mature-year CF) and opened a named successor:
     plant fully from its in-service month, so one CF cannot track a fleet whose
     realized CF runs 0.1468-0.1955."
 
-(``results/calibration/FINDING-nyiso132-solar-cf-level-2026-08-07.md`` section 5.)
+(``docs/records/nyiso/FINDING-nyiso132-solar-cf-level-2026-08-07.md`` section 5.)
 
 This probe tests that attribution BEFORE any mechanism is built or any solve is
 spent, on committed data only, and reports THREE measurements:
@@ -49,7 +49,7 @@ how big it is) or a diagnostic ratio, never a model outcome fed back in. Rule 25
 ``[R-ISO-SCOPE]``: (A) is a national physical measurement and is reported as
 such; (B) and (C) are NYISO's own registry against NYISO's own published output.
 
-Writes ``results/calibration/_nyiso133_commissioning_ramp.json``.
+Writes ``results/phase0/nyiso/_nyiso133_commissioning_ramp.json``.
 """
 
 from __future__ import annotations
@@ -68,7 +68,7 @@ from data.derive_nyiso_market_solar import build_registry  # noqa: E402
 
 E923 = REPO / "data" / "raw" / "_processed-legacy" / "eia923_monthly_generation.parquet"
 E860 = REPO / "data" / "raw" / "eia-860" / "eia860_generator_operable.parquet"
-OUT = REPO / "results" / "calibration" / "_nyiso133_commissioning_ramp.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso133_commissioning_ramp.json"
 
 MONTH_NAMES = [
     "january", "february", "march", "april", "may", "june",

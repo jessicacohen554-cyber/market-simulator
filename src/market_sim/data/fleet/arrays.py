@@ -167,7 +167,7 @@ CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR: float = 6.3
 # in. PJM added 2026-07-07: its CHP reports cap-weighted HRs of CC_CHP ~4.95 /
 # CT_CHP ~6.14 MMBtu/MWh (both physically impossible power-only), which let
 # steam-credited CHP clear as the cheapest thermal and over-deliver grid energy
-# +52-67% vs EIA-923 net-to-grid (docs/FINDING-pjm-burndown-2026-07.md). Other
+# +52-67% vs EIA-923 net-to-grid (docs/records/pjm/FINDING-pjm-burndown-2026-07.md). Other
 # ISOs join as their CHP HR distributions are audited in the all-ISO sweep.
 #
 # MISO was AUDITED 2026-07-08 and deliberately NOT added: although its reported
@@ -1461,7 +1461,7 @@ def _apply_outage_overlays(
     # removed 2026-07-17 because summing a plant's
     # units hid single-unit outages and folded daily-cycling combined cycles
     # into phantom summer outages
-    # (results/calibration/FINDING-ercot79-phantom-outage-2026-07.md).
+    # (docs/records/ercot/FINDING-ercot79-phantom-outage-2026-07.md).
     if (
         config is not None
         and getattr(config, "outage_source", "statistical") == "historic"
@@ -2159,7 +2159,7 @@ def _apply_outage_overlays(
     # measured level. Tranches cap at 1.0; a 3-pass water-fill redistributes
     # the clipped mass so the class-day total still lands on the measured
     # fraction where feasible. Provenance + June/Sep-2023 forensics:
-    # docs/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md.
+    # docs/records/ercot/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md.
     if (
         config is not None
         and _iso == "ERCOT"
@@ -2426,7 +2426,7 @@ def _apply_outage_overlays(
         # (config-collapse train-aliasing, partial site acceptance) plus true
         # OFF-at-HSL filings through certified dead stops — see the
         # ScenarioConfig field comment and
-        # docs/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md. CT_PEAKER is
+        # docs/records/ercot/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md. CT_PEAKER is
         # in scope on principle and provably inert (peakers carry no windows
         # by the detector's design). Coal-only arms stay byte-identical: for
         # a coal generator the (plant_code, artifact_class(plant_group)) layer
@@ -2856,7 +2856,7 @@ def _apply_outage_overlays(
         )
 
         # FLEET grain, not class grain, and the ex-ante measurement is why
-        # (results/calibration/_pjm161_removeonly_exante.json). PJM publishes
+        # (results/phase0/pjm/_pjm161_removeonly_exante.json). PJM publishes
         # ONE fleet number; `pjm_dam_availability_series` spreads it into a
         # single availability FRACTION handed to every covered class, which as
         # a remove-only cap degenerates into "every class ceilinged at the
@@ -3018,6 +3018,14 @@ def _apply_outage_overlays(
                 "CC_REGULAR outage derate reallocated top-of-stack for %d plant(s)",
                 realloc_plants,
             )
+
+
+# Month x hour-of-day conduct cell of each hour of the model's 8760 clock (Feb 29
+# dropped, as the CAMPD hour index is) -- the grain of
+# ``cc_conduct_profile`` (config.cc_mustrun_conduct_window, PJM-NEXT-17).
+_CONDUCT_CELL: np.ndarray = np.repeat(
+    np.arange(12), [744, 672, 744, 720, 744, 720, 744, 744, 720, 744, 720, 744]
+) * 24 + np.tile(np.arange(24), 365)
 
 
 def _commitment_day_order(sys_load: np.ndarray | None, hours: int) -> np.ndarray | None:
@@ -3324,6 +3332,28 @@ def _compose_min_gen_floors(
         config is not None
         and getattr(config, "coal_sync_window_commitment_grain", False)
     )
+    # PLANT-CONDUCT placement of the CC_REGULAR leg of the per-plant must-run
+    # window (config.cc_mustrun_conduct_window, PJM-NEXT-17; see the field). Same
+    # SIZE, level, membership and clip; the hours are ranked by the plant's own
+    # measured CAMPD online probability in the hour's month x hour-of-day cell,
+    # ties by system load. A backcast excludes its own solve year's meter
+    # (rule 13); a forecast pools every artifact year. Empty => the incumbent
+    # system-load ranking stands for every plant (byte-identical when off).
+    _cc_conduct: dict[int, np.ndarray] = {}
+    if config is not None and getattr(config, "cc_mustrun_conduct_window", False):
+        _excl = (
+            int(_yr)
+            if _yr is not None and getattr(config, "mode", "forecast") == "backcast"
+            else None
+        )
+        _cc_conduct = _pkg_ns().cc_conduct_profile(_iso or "ERCOT", _excl)
+        logger.info(
+            "cc_mustrun_conduct_window ARMED (%s, excluded year %s): %d plant "
+            "conduct profile(s)",
+            _iso or "ERCOT",
+            _excl,
+            len(_cc_conduct),
+        )
     # MEASURED LAY-UP WINDOW MASK for both per-plant must-run seams
     # (config.mustrun_layup_window_mask, miso-173). The merit-order guard's
     # economic-lay-up companion extract records, per unit and dated window, the
@@ -3834,6 +3864,10 @@ def _compose_min_gen_floors(
             # (config.mustrun_window_commitment_grain, spp-27) — see the gate
             # block above. ``None`` when unarmed, so the hour grain stands.
             day_order = _commitment_day_order(sys_load, hours) if _day_grain else None
+            _load_pos = None
+            if _cc_conduct and load_rank is not None:
+                _load_pos = np.empty(hours, dtype=np.int64)
+                _load_pos[load_rank] = np.arange(hours)
             for g_idx, gen in enumerate(generators):
                 pmin_mw = getattr(gen, "cc_mustrun_pmin_mw", 0.0)
                 if pmin_mw <= 0.0:
@@ -3894,7 +3928,18 @@ def _compose_min_gen_floors(
                     k = int(round(frac * hours))
                     if k <= 0:
                         continue
-                    hrs = _mustrun_window_hours(load_rank, day_order, k, _day_grain)
+                    _prof = (
+                        _cc_conduct.get(int(getattr(gen, "plant_code", 0) or 0))
+                        if mech_id == MECH_CC_MUSTRUN_PER_PLANT
+                        and _load_pos is not None
+                        and hours == _CONDUCT_CELL.size
+                        else None
+                    )
+                    if _prof is not None:
+                        # Conduct rank first, system-load rank as the tiebreak.
+                        hrs = np.lexsort((_load_pos, -_prof[_CONDUCT_CELL]))[:k]
+                    else:
+                        hrs = _mustrun_window_hours(load_rank, day_order, k, _day_grain)
                     if _lu is not None:
                         vals = np.minimum(
                             pmin_mw,
@@ -4330,8 +4375,8 @@ def generators_to_fleet_arrays(
     # every crossover year -- proved by an on-recipe ``fleet_only`` rebuild of all
     # seven backcast keepers and the T1-F/T1-H recipes before this landed.
     # Costs one set build per call; changes no decision.
-    # docs/handoffs/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §2.1/§2.4
-    # docs/handoffs/FINDING-capx-d88-2026-09-08.md
+    # docs/records/forecast/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §2.1/§2.4
+    # docs/records/forecast/FINDING-capx-d88-2026-09-08.md
     _unit_ids = [g.unit_id for g in generators]
     if len(set(_unit_ids)) != len(_unit_ids):
         _counts = Counter(_unit_ids)

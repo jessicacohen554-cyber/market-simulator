@@ -125,7 +125,7 @@ def main() -> None:
             f"{r['tight_hours_upper_bound_lift_capwtd']:>9.1f}"
             f"{100 * r['share_of_ct_mwh_where_measured_exceeds_mc_base']:>10.0f}%"
         )
-    dest = REPO / "results/calibration/_pjm_h17_ct_shelf.json"
+    dest = REPO / "results/phase0/pjm/_pjm_h17_ct_shelf.json"
     dest.write_text(json.dumps(out, indent=1))
     print(f"wrote {dest}")
 

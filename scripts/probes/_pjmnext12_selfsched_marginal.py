@@ -4,7 +4,7 @@ Measured side = the PJM IMM (Monitoring Analytics) State of the Market rows cura
 ``som-competitive-conduct`` (``iso == PJM``): the share of DA offered coal MW that is must-run
 (self-scheduled), coal's share of RT marginal resources, and the coal / gas fuel shares of the
 IMM's RT LMP decomposition. Over-run side = PJM-NEXT-11's
-audit (a) (``results/calibration/_pjmnext11_margin_audit.json``): the COAL_BIT energy gap and its
+audit (a) (``results/phase0/pjm/_pjmnext11_margin_audit.json``): the COAL_BIT energy gap and its
 RESPONSE part. Price side = the keeper's committed P1 price vs PJM RT, both divided by the same
 daily delivered gas series (as in ``_pjmnext11_bulk_price.py``): the share of hours priced below
 an efficient gas CC's fuel cost is the share in which something cheaper than gas must be setting
@@ -12,7 +12,7 @@ price. The HR thresholds are REPORTING lines only (a sensitivity trio), never a 
 
 The model's zone-hour marginal emission rate blends units across binding constraints and is NOT
 a class label; its coal-band share is printed only to show that caveat in numbers.
-Writes ``results/calibration/_pjmnext12_selfsched_marginal.json``.
+Writes ``results/phase0/pjm/_pjmnext12_selfsched_marginal.json``.
 """
 
 from __future__ import annotations
@@ -32,8 +32,8 @@ from scripts.lib import clean_io  # noqa: E402
 
 BUNDLE = REPO / "results/calibration/pjmnext8_xf_span"
 ACTUAL = REPO / "data/raw/_validation-source/actual_lmp_hourly_PJM.parquet"
-AUDIT = REPO / "results/calibration/_pjmnext11_margin_audit.json"
-OUT = REPO / "results/calibration/_pjmnext12_selfsched_marginal.json"
+AUDIT = REPO / "results/phase0/pjm/_pjmnext11_margin_audit.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext12_selfsched_marginal.json"
 # Reporting lines (MMBtu/MWh): an efficient F/H-class CC's full-load heat rate sits ~6.3-6.6;
 # the trio brackets it so no conclusion hangs on one line.
 HR_LINES = (6.0, 6.5, 7.0)

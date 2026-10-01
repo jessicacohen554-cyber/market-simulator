@@ -1,6 +1,6 @@
 """SPP-86 (zero LP): coal outage share on the extract's OWN basis vs the keeper's construction.
 
-Record: ``docs/handoffs/FINDING-spp-86-coal-floor-conduct-2026-09-26.md``.
+Record: ``docs/records/spp/FINDING-spp-86-coal-floor-conduct-2026-09-26.md``.
 
 The keeper divides each coal row's ``unit_capacity_mw`` (the extract's per-unit basis: EIA
 nameplate digits or a CEMS proxy) by the fleet bin capacity (EIA-860 per-plant, the same MW the

@@ -16,7 +16,7 @@ Usage::
     uv run python scripts/probes/_miso280_splitremap_footprint.py
     uv run python scripts/probes/_miso280_splitremap_footprint.py --years 2023
 
-Writes ``results/calibration/_miso280_splitremap_footprint.json``.
+Writes ``results/phase0/miso/_miso280_splitremap_footprint.json``.
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ for p in (str(REPO), str(REPO / "src")):
         sys.path.insert(0, p)
 
 KEEPER = REPO / "results/calibration/miso279_span"
-OUT_JSON = REPO / "results/calibration/_miso280_splitremap_footprint.json"
+OUT_JSON = REPO / "results/phase0/miso/_miso280_splitremap_footprint.json"
 YEARS = list(range(2019, 2026))
 DELTA = {"campd_split_remap_companions": True}
 PLANTS = (55641, 64020)

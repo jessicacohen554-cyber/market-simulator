@@ -9,7 +9,7 @@ keys — ``ercot_offer_swcap_clip=true`` and the x33.0 ``offer_curve_by_group``
 peak bands — appeared in no ``meta.json`` at all and had no CLI flag. A
 ``--replay-bundle`` of that keeper therefore solved the FORWARD config on a
 carve-out year and reported the result as the keeper's
-(``docs/RESULT-ercot259-drag-merit-allocation-2026-09-09.md`` §4: the control
+(``docs/records/ercot/RESULT-ercot259-drag-merit-allocation-2026-09-09.md`` §4: the control
 replayed 2023 and solved ``swcap=False`` / CC_REGULAR ``peak=4.576``, C3a
 -39.6 %, against the keeper's own ``peak=151.008`` and C3a -7.3 %). That is
 the defect ``RESULT-ercot256`` §10 named and left open, and it blocked any
@@ -74,12 +74,16 @@ from scripts.replay_keeper import (  # noqa: E402
 #:   2021). ``RESULT-ercot256`` §8a measured this directly: neither is present
 #:   in any ``meta.json``, and the ``run_config`` difference that "looked like
 #:   config drift" is the published year parameter, not a recipe choice.
+#: * ``ordc_lolp_shift_sigma`` — the PUCT 48551 LOLP curve shift by year
+#:   (0.25 sigma in 2019, 0.5 from 2020), the third published order value in
+#:   ``constants.ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR`` (R-ERCOT-22).
 YEAR_DRIVEN_FIELDS = frozenset(
     {
         "weather_year",
         "gas_price_override",
         "ordc_voll",
         "ordc_mcl_mw",
+        "ordc_lolp_shift_sigma",
     }
 )
 

@@ -35,7 +35,7 @@ degrading to the static ratings (pjm-119): the clean tree is gitignored and
 disposable, so a fresh container starts without it, and the previous silent
 fallback let the pjm-118 PJM keeper solve with these overlays off while its
 recorded config and attestation still claimed them — see
-``docs/FINDING-pjm119-silent-overlay-degradation-2026-07.md``. An individual
+``docs/records/pjm/FINDING-pjm119-silent-overlay-degradation-2026-07.md``. An individual
 series absent from a PRESENT partition still rides that link's static rating.
 Forecast years never call this: the static seeds (2024 means of the same feed)
 are the forward story.
@@ -212,7 +212,7 @@ def pjm_eastern_interface_hourly(
     summer-scarcity structural miss. Guarding here rather than at the call site
     protects every present and future caller — the guard must not depend on the
     analyst remembering. Same posture as ``pjm_da_virtual_bids``. See
-    ``docs/FINDING-pjm119-silent-overlay-degradation-2026-07.md``.
+    ``docs/records/pjm/FINDING-pjm119-silent-overlay-degradation-2026-07.md``.
 
     ``admissibility_gate`` (GATED default-off,
     ``ScenarioConfig.pjm_interface_feed_admissibility_gate``; pjm-167): judge
@@ -384,7 +384,7 @@ def pjm_interface_ttc_hourly(
             keeping the static TTC would leave the run claiming a measured
             input it never read (pjm-119 — see
             :func:`pjm_eastern_interface_hourly` and
-            ``docs/FINDING-pjm119-silent-overlay-degradation-2026-07.md``).
+            ``docs/records/pjm/FINDING-pjm119-silent-overlay-degradation-2026-07.md``).
     """
     frame = load_interface_hourly("PJM", year)
     if frame is None or frame.empty:

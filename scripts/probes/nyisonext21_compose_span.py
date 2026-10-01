@@ -2,7 +2,7 @@
 
 The arm is the NEXT-18 keeper's recipe replayed at the pin with ZERO
 ``ScenarioConfig`` deltas, on the re-derived ``campd_st_heat_rates_NYISO.csv``
-(``docs/PRECOMMIT-nyiso-next21-astoria-heat-rate-2026-10-01.md`` sec. 3 G-1). Per leg:
+(``docs/records/nyiso/PRECOMMIT-nyiso-next21-astoria-heat-rate-2026-10-01.md`` sec. 3 G-1). Per leg:
 
 * S0 -- solved at the pin (``git.basis_sha``);
 * S1 -- ``scenario_config`` equals the keeper bundle's (keys born since the

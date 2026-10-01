@@ -6,7 +6,7 @@ summary — NO LP solve, no committed-artifact files — covering the t2-only FC
 rows (row2 terminal drift, row6 scarcity gate), the clean SKIPPED degradation of
 the §2.1b-gated instruments (FC-3/FC-4/FC-5/FC-6, FC-2 row5 position), the
 upstream delivery of the rubric §3 I12 stability escalation, and the t3
-UNATTESTED path. See docs/handoffs/ff-t2-scorer-shakeout-2026-07.md.
+UNATTESTED path. See docs/records/forecast/ff-t2-scorer-shakeout-2026-07.md.
 
 This lives in a sibling file (not appended to tests/scoring/test_forecast_verdict.py) so
 the 866-line base test file is not rewritten wholesale over the push API

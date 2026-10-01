@@ -9,7 +9,7 @@ parsing code.
 
 Landed 2026-09-14 by lane **NWPP-33**
 (``docs/multi-iso/nwpp-addition-plan-2026-09.md`` §5 row NWPP-33; FINDING
-``docs/handoffs/FINDING-nwpp-33-2026-09-14.md``). Full provenance, the hub
+``docs/records/nwpp/FINDING-nwpp-33-2026-09-14.md``). Full provenance, the hub
 attribution evidence and the caveats: ``data/raw/nwpp_zonal_gas_hub.SOURCES.md``.
 
 Why this footprint gets a per-zone table at all

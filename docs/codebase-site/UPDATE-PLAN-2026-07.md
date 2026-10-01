@@ -47,7 +47,7 @@ Verified against source during the 2026-07 research pass:
 | Site (all pages) | **No mention** of ablation twins, the DOF ledger, the three-tier holdout program, or "frontier achieved" in any *narrative* prose | All four exist in code + on the two dashboard pages, but are never *explained* |
 | `docs/calibration-best-so-far-neiso.md` | Keeper = `neiso-49-stgas-netload`, determination **"NOT-YET"** | Keeper = `2026-07-09-neiso-56-reserve-coopt`, **CALIBRATED-WITH-CAVEATS**, calibration-complete + **frontier achieved** |
 | `docs/forecast-validation-plan.md` | 2018→2025 hindcast, AEO2018 fuel | Superseded — live design is `forecast-validation-program-2026-07.md`: 2020-vintage → 2021–2025, AEO2021, 2022 bridge |
-| `docs/handoffs/holdout-policy-memo-2026-07.md:9-10`; `forecast-validation-program-2026-07.md:30,266` | `complete: {}` / "none declared yet" | **NEISO declared complete 2026-07-07**; locked-test one-shot already scored |
+| `docs/records/governance/holdout-policy-memo-2026-07.md:9-10`; `forecast-validation-program-2026-07.md:30,266` | `complete: {}` / "none declared yet" | **NEISO declared complete 2026-07-07**; locked-test one-shot already scored |
 | `model-methodology-spec.md` | — | Contains **no** section on the calibration rubric, holdout tiers, ablation twins, or frontier — a genuine gap in the primary spec |
 
 There is **no authoritative prose definition** of the rubric-as-scored, the
@@ -323,7 +323,7 @@ are **different runs** — don't assume they align.
 | D2 | `docs/calibration-best-so-far-neiso.md` | Fix: keeper `neiso-56-reserve-coopt`, CALIBRATED-WITH-CAVEATS, calibration-complete + frontier note. Reconcile the three divergent keeper pointers (§2.5). |
 | D3 | `docs/calibration-best-so-far-nyiso.md` | Add the formal frontier-achieved note; disambiguate from older informal "frontier" phrasing. |
 | D4 | `docs/forecast-validation-plan.md` | Mark **superseded** by `forecast-validation-program-2026-07.md` (2020→2025 / AEO2021 / 2022-bridge). |
-| D5 | `docs/handoffs/holdout-policy-memo-2026-07.md`, `docs/handoffs/forecast-validation-program-2026-07.md` | Correct the stale `complete: {}` / "none declared" claims (NEISO complete since 2026-07-07). |
+| D5 | `docs/records/governance/holdout-policy-memo-2026-07.md`, `docs/records/forecast/forecast-validation-program-2026-07.md` | Correct the stale `complete: {}` / "none declared" claims (NEISO complete since 2026-07-07). |
 | D6 | `model-methodology-spec.md` | Add a short cross-reference section pointing to D1 (the spec has no calibration/validation methodology today); note P2 archived where the three-solve section still implies it is live. |
 | D7 | `CHANGELOG` + `/sync-docs` pass | Run `/sync-docs` at the end to catch any remaining drift and log the doc changes. |
 

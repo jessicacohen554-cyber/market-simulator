@@ -22,7 +22,7 @@ Reported per year:
   * ``ratio_to_frozen`` — must equal ``1 - 0.16629.../0.1750`` on every touched cell, which
     is the identity a pro_rata coefficient change asserts.
 
-Writes ``results/calibration/_nyiso226_nyc_base_phase0.json``.
+Writes ``results/phase0/nyiso/_nyiso226_nyc_base_phase0.json``.
 Reproduce with ``PYTHONPATH=.:src uv run python scripts/probes/_nyiso226_nyc_base_screen_phase0.py``.
 """
 
@@ -42,11 +42,11 @@ BUNDLE = REPO_ROOT / "results" / "calibration" / "nyiso_fuelvintage_A"
 YEARS = (2023, 2024, 2025)
 ISO = "NYISO"
 FROZEN = 0.175
-# nyiso-203 results/calibration/_nyiso203_nyc_base_phase0.json applied_basis.fleet_hourly_p25
+# nyiso-203 results/phase0/nyiso/_nyiso203_nyc_base_phase0.json applied_basis.fleet_hourly_p25
 REBASED = 0.16629202320362052
 ZONE, PLANT_CLASS, DRIVER, THRESHOLD = "NYC", "ST_GAS", "tmax", "-50.0"
 COEFFS = REFERENCE_DIR / f"reliability_floor_coeffs_{ISO}.csv"
-OUT = REPO_ROOT / "results" / "calibration" / "_nyiso226_nyc_base_phase0.json"
+OUT = REPO_ROOT / "results" / "phase0" / "nyiso" / "_nyiso226_nyc_base_phase0.json"
 
 
 def rewrite_coefficient(value: float) -> None:

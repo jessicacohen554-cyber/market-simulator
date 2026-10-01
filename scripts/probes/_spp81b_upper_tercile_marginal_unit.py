@@ -1,6 +1,6 @@
 """SPP-81b (zero LP): who is marginal in SPP's 2023-24 upper tercile, real vs keeper?
 
-Charter: the SPP-81 handoff (``docs/handoffs/FINDING-spp-81-upper-tercile-residual-2026-09-25.md``).
+Charter: the SPP-81 handoff (``docs/records/spp/FINDING-spp-81-upper-tercile-residual-2026-09-25.md``).
 Parents: SPP-80 / SPP-81 (``FINDING-spp-80-upper-tercile-premium``,
 ``FINDING-spp-81-residual-upper-tercile``). Hour set: SPP-80's exactly (RT p67-p99, Feb
 excluded, interval-level scarcity hours dropped), via ``_spp81_residual_upper_tercile``.

@@ -3,7 +3,7 @@
 Trivial fixture first (one ISO, two rows) with a redirected ``CLEAN_DIR``,
 then the committed transcription itself: schema validation plus a
 provenance-freeze check on the MISO SOM values the coal offer redesign is
-grounded on (docs/handoffs/miso-coal-offer-som-redesign-2026-07.md) — the
+grounded on (docs/records/miso/miso-coal-offer-som-redesign-2026-07.md) — the
 2023/2024 price-cost mark-up and the coal must-run (self-commitment) start
 shares. Those numbers re-derive only when their source data (a new SOM)
 updates (CLAUDE.md rule 23), so a silent edit fails here.

@@ -8,7 +8,7 @@ implied heat rate ``price / gas`` compares the two price levels with gas taken o
 
 The model's marginal emission rate (t/MWh) in its own bulk hours is banded into the fuel class it
 implies: >= 0.85 coal, 0.45-0.85 gas steam/CT, 0.30-0.45 gas CC, < 0.30 other.
-Writes ``results/calibration/_pjmnext11_bulk_price.json``.
+Writes ``results/phase0/pjm/_pjmnext11_bulk_price.json``.
 """
 
 from __future__ import annotations
@@ -27,7 +27,7 @@ from scripts.data.derive_pjm_offer_surface import _pjm_fuel_daily  # noqa: E402
 
 BUNDLE = REPO / "results/calibration/pjmnext8_xf_span"
 ACTUAL = REPO / "data/raw/_validation-source/actual_lmp_hourly_PJM.parquet"
-OUT = REPO / "results/calibration/_pjmnext11_bulk_price.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext11_bulk_price.json"
 QS = (0.10, 0.25, 0.50, 0.75, 0.90)
 MER_BANDS = {"coal": (0.85, 9.0), "gas_st_ct": (0.45, 0.85), "gas_cc": (0.30, 0.45)}
 

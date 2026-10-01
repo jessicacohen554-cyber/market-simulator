@@ -2,7 +2,7 @@
 
 Owner ruling on FINDING-nwpp-45 §8 = framing 1: resolve the GRID / generation-
 only-BA attribution from plant-level evidence and rebuild the subtrahend.
-Reproduces every table in ``docs/handoffs/FINDING-nwpp-47-2026-09-22.md``:
+Reproduces every table in ``docs/records/nwpp/FINDING-nwpp-47-2026-09-22.md``:
 
   A. GRID's four export legs against GRID's own EIA-930 fuel book and CAMPD
      hourly plant output: PNM == GRID NG: WND (hour by hour), BPAT == Centralia

@@ -155,7 +155,7 @@ def inject_nyiso_import_hub_prices(
 # the LCR locality requirements are defined at (NYISO Locality Bulk-Power
 # Transmission Capability reports, design cooling day) — and is inactive
 # overnight, where measured LI net import runs well below its cable ceiling
-# (docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md Finding 4: LI inflow
+# (docs/records/nyiso/nyiso-downstate-reserve-incidence-2026-06.md Finding 4: LI inflow
 # max 2,480 MW vs ~2,850 MW ceiling, 0 h > 90%) and measured LI CT_PEAKER CF is
 # ~0.06 flat. Applied all-hours the floor force-committed in-pocket LM6000 baseload
 # overnight (D-2: nyiso_local_selfsupply forced 1.84/2.87/1.86 TWh of CT_PEAKER,
@@ -733,7 +733,7 @@ def apply_nyiso_zonal_loss_links(iso_config):
 
     The nyiso-159 topology transform (gated on
     ``ScenarioConfig.nyiso_zonal_loss_surface``; charter
-    ``results/calibration/PREREG-nyiso159-zonal-loss-surface-2026-08-30.md``
+    ``docs/records/nyiso/PREREG-nyiso159-zonal-loss-surface-2026-08-30.md``
     §1): each of the four bidirectional internal chain links (UW↔CH, CH↔LH,
     LH↔NYC, NYC↔LI) becomes TWO one-way links (``is_bidirectional=False``,
     same TTC each way), each charged the
@@ -1220,7 +1220,7 @@ def build_nyiso_import_landing_band(
     ``Long_Island``) at their p90 envelopes in 96-99 % of hours, together
     +400-560 MW over their measured attributed schedules, and ``Upstate_West``
     264-375 MW short, every year 2021-2025 — a phantom import east of the
-    Central-East cutset (``docs/FINDING-nyiso-next15-landing-allocation-phase0-2026-09-30.md``).
+    Central-East cutset (``docs/records/nyiso/FINDING-nyiso-next15-landing-allocation-phase0-2026-09-30.md``).
 
     This builds one monthly band per pooled border link on the link's OWN
     measured attributed net schedule — the P-32 rows placed by

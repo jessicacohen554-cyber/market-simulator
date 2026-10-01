@@ -137,7 +137,7 @@ def measure(year: int, arm_name: str) -> dict:
     # The startup markup each band carries in the keeper, so the RELAXED bookend can borrow the
     # econ level for the committed rows rather than invent one.
     anat = json.loads(
-        Path("results/calibration/_nyiso241_ct_offer_anatomy.json").read_text()
+        Path("results/phase0/nyiso/_nyiso241_ct_offer_anatomy.json").read_text()
     )
     bands = (
         anat.get(str(year), {}).get("anatomy", {}).get("CT_PEAKER", {}).get("bands", {})
@@ -229,7 +229,7 @@ def main() -> None:
                     f"({b['share_of_actual'] * 100:>6.1f} % of actual)"
                 )
 
-    dest = Path("results/calibration/_nyiso241_lever_vs_bound.json")
+    dest = Path("results/phase0/nyiso/_nyiso241_lever_vs_bound.json")
     dest.write_text(json.dumps(out, indent=1))
     print(f"\nwrote {dest}")
 

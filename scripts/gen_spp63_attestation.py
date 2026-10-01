@@ -14,8 +14,8 @@ model's wind exceeds actual by +10.708 / +11.407 / +11.586 TWh while the LP
 takes only 2.71 / 2.30 / 1.80 % of the 11.01 / 11.68 / 11.80 TWh of curtailment
 the measured record implies.  The wind POTENTIAL is right (114.0552 / 120.9925 /
 122.2552 TWh); the CURTAILMENT is missing.  Record:
-``docs/handoffs/FINDING-spp-63-2026-09-10.md`` and
-``docs/handoffs/PRECOMMIT-spp-63-curtailment-ceiling-2026-09-10.md``.
+``docs/records/spp/FINDING-spp-63-2026-09-10.md`` and
+``docs/records/spp/PRECOMMIT-spp-63-curtailment-ceiling-2026-09-10.md``.
 
 This is NOT the ``replay_keeper --out-dir`` attestation gap being papered over:
 that driver does not propagate ``calibration_attestation.json`` into an

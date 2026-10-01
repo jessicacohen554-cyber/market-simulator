@@ -17,7 +17,7 @@ the Valley family, plus TRDWEL) are intra-zone pockets the zonal aggregation
 cannot represent; they are reported for context but do not map to an
 inter-zone link. (NE_LOB was mapped to Northeast->North until 2026-08 under
 a name misreading — repaired at ercot-234, see
-docs/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md.)
+docs/records/ercot/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md.)
 
 Archives are read from ``data/raw/iso-specific-transmission`` (the full
 2023-2024 monthly set) and, for backward compatibility, ``data/reference``.

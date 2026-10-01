@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Compose R-SPP's seven per-year legs (2019-2025) into ONE SPP bundle.
 
-R-SPP (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5.3.9;
-PRECOMMIT docs/handoffs/PRECOMMIT-r-spp-2019-2025-inputs-2026-09-24.md). ADAPTED FROM
+R-SPP (docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5.3.9;
+PRECOMMIT docs/records/spp/PRECOMMIT-r-spp-2019-2025-inputs-2026-09-24.md). ADAPTED FROM
 ``_spp78_compose_span.py`` (its docstring follows): the signature is now all five
 ``measured_*_heat_rates`` + ``unit_partial_outage_windows`` + ``mid_vintage_exit_carry``
 + ``eia860_vintage_tracks_solve_year`` True on EVERY leg, which is what lets the rung and

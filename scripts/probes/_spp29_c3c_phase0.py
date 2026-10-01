@@ -1,6 +1,6 @@
 """SPP-29 phase 0 — is SPP's absent C3c price tail reachable by any hourly mechanism?
 
-ZERO LP. Every number in ``docs/handoffs/FINDING-spp-29-c3c-price-tail-2026-09-11.md``
+ZERO LP. Every number in ``docs/records/spp/FINDING-spp-29-c3c-price-tail-2026-09-11.md``
 is produced by this script from committed artifacts only:
 
 - the keeper bundle ``results/calibration/spp27_span`` (``hourly/system_<year>.parquet``

@@ -70,7 +70,7 @@ for _p in (REPO, REPO / "src"):
 KEEPERS = REPO / "frontend/data/backcast/keepers"
 REGISTRY = REPO / "frontend/data/backcast/registry"
 BENCH = REPO / "frontend/data/backcast/bench"
-OUT = REPO / "results/calibration/_caiso277_crossiso_hr.json"
+OUT = REPO / "results/phase0/caiso/_caiso277_crossiso_hr.json"
 T = 8760
 #: Non-leap month-start hour edges — the same ``_CUM`` construction
 #: ``render_calibration_html`` uses for ``pMon``, so the monthly split here is

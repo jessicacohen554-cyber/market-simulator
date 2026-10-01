@@ -1,9 +1,9 @@
 """pjm-h9 phase 0 — is PJM's LONG_RUN offer comparator biased by its gas-steam admixture?
 
 ZERO LP. Rule 29 ``[R-SCREEN]`` clause 0, rule 32 ``[R-SHARD]`` (a): the parent runs no LP.
-Pre-registration: ``docs/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md``.
+Pre-registration: ``docs/records/pjm/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md``.
 
-THE QUESTION (``docs/RESULT-pjm-h8-minload-measured-offer-screen-2026-09-16.md`` §5, route b).
+THE QUESTION (``docs/records/pjm/RESULT-pjm-h8-minload-measured-offer-screen-2026-09-16.md`` §5, route b).
 h8 priced PJM coal's min-load rungs at PJM's OWN published offers and the model's coal fell to
 **12.70 TWh below** what PJM's coal actually generated. One of the two surviving readings is
 that the comparator is not exact: the measured ``LONG_RUN`` segment is coal **plus** gas-steam
@@ -84,7 +84,7 @@ from scripts.data.derive_pjm_offer_surface import (  # noqa: E402
 )
 
 FROZEN = CALIBRATION_DIR / "pjm_offer_midcurve_condbinned.json"
-OUT = REPO / "results/calibration/_pjm_h9_longrun_mixture_bound.json"
+OUT = REPO / "results/phase0/pjm/_pjm_h9_longrun_mixture_bound.json"
 
 #: Quantile grid the bound is read on. Dense enough that w is resolved to ~0.002
 #: without interpolating between stored quantiles.
@@ -308,7 +308,7 @@ def main(argv: list[str] | None = None) -> int:
             "derive's ladder is the p=0.5 column. MULTIPLIERS ONLY (PJM DataMiner2 "
             "redistribution restriction)."
         ),
-        "precommit": "docs/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md",
+        "precommit": "docs/records/pjm/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md",
         "g_repro": {
             "pass": not mismatches,
             "cells_checked": checked,

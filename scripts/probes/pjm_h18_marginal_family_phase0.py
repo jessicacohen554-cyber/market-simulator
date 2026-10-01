@@ -8,7 +8,7 @@ class-band in an hour is the partially-loaded band (2 % < utilisation < 98 %,
 load-weighted system price. Each hour's error is then attributed to that band's
 fuel family. STATED LIMIT: no measured marginal-fuel series is on disk, so the
 split says where the MODEL's error sits, not how the model's marginal mix
-compares with PJM's. Record: ``docs/FINDING-pjm-h18-price-object-localised-2026-09-23.md``.
+compares with PJM's. Record: ``docs/records/pjm/FINDING-pjm-h18-price-object-localised-2026-09-23.md``.
 
 Run: ``python3 scripts/probes/pjm_h18_marginal_family_phase0.py 2020 2021 2022 2023 2024 2025``
 """
@@ -65,4 +65,4 @@ for y in [int(a) for a in sys.argv[1:]]:
     res['offer_levels']=lv
     out[y]=res
     print(y,json.dumps({k:v for k,v in res.items() if k!='offer_levels'},indent=None)[:1500]); print(' offers',lv,flush=True)
-Path('results/calibration/_pjm_h18_marginal_family.json').write_text(json.dumps(out,indent=1))
+Path('results/phase0/pjm/_pjm_h18_marginal_family.json').write_text(json.dumps(out,indent=1))

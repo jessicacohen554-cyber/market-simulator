@@ -50,7 +50,7 @@ Only the reader lives here. The clean tree is derived/gitignored, so a wholly
 missing partition RAISES rather than degrading (pjm-119 — the caller is already
 gated on the flag, so silence would leave a run claiming a measured input it
 never read; see :func:`load_measured_ramp_capability` and
-``docs/FINDING-pjm119-silent-overlay-degradation-2026-07.md``). Individual plants
+``docs/records/pjm/FINDING-pjm119-silent-overlay-degradation-2026-07.md``). Individual plants
 absent from a PRESENT partition still fall back to the class fraction.
 """
 
@@ -94,7 +94,7 @@ def load_measured_ramp_capability(iso: str) -> dict[int, PlantRampCapability]:
     the run's recorded config still claimed the measured input; because these
     rows feed the reserve co-opt's deliverable ramp, that moves reserve prices.
     It is one of the three overlays that degraded under the pjm-118 PJM keeper —
-    see ``docs/FINDING-pjm119-silent-overlay-degradation-2026-07.md``.
+    see ``docs/records/pjm/FINDING-pjm119-silent-overlay-degradation-2026-07.md``.
 
     Individual plants absent from a PRESENT partition still fall back to the
     class ramp fraction: that is the documented per-plant behaviour, and only

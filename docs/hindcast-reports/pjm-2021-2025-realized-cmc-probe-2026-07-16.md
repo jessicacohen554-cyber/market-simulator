@@ -4,7 +4,7 @@ _Generated 2026-07-16 · W2-P5 · plan §1.4 · bundle `results/hindcast/pjm-202
 
 Forecast machinery run from the **EIA-860 2020 vintage**, evolved 2021→2025. 2021 seeds the price signal (not scored); **2022 is the quarantine bridge — evolved, never solved (rule 22)**; 2023-2025 scored. A missed band is a root-cause investigation (rules 1/11/14), never widened, and nothing here is tuned.
 
-> **RC-1A A/B — curve-ON PROBE leg (`--capacity-market-clearing`, capacity_market_clearing_by_iso={'PJM': True}; defaults untouched).** The position-calibration measurement (plan §2.2): all three capacity screens price adequacy on PJM's own published VRR curve, evaluated per delivery-year vintage (2021/22–2025/26 published shapes, RC-1A intake) at the model's own accredited reserve position. First fossil economic exits in any capacity-market hindcast (9.9 GW coal; recall 0%→76%). Full A/B analysis: docs/handoffs/position-calibration-findings-2026-07-16.md. Counterpart control: `pjm-2021-2025-realized-cmc-before`.
+> **RC-1A A/B — curve-ON PROBE leg (`--capacity-market-clearing`, capacity_market_clearing_by_iso={'PJM': True}; defaults untouched).** The position-calibration measurement (plan §2.2): all three capacity screens price adequacy on PJM's own published VRR curve, evaluated per delivery-year vintage (2021/22–2025/26 published shapes, RC-1A intake) at the model's own accredited reserve position. First fossil economic exits in any capacity-market hindcast (9.9 GW coal; recall 0%→76%). Full A/B analysis: docs/records/misc/position-calibration-findings-2026-07-16.md. Counterpart control: `pjm-2021-2025-realized-cmc-before`.
 
 
 ## Retirements (thermal, cumulative 2021→2025)

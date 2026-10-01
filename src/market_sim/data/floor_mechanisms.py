@@ -73,7 +73,7 @@ MECH_CC_MUSTRUN_PER_PLANT: int = 15
 MECH_ST_GAS_MUSTRUN_PER_PLANT: int = 16
 # ERCOT gas-CC commitment bridge (ScenarioConfig.ercot_gas_commitment_bridge):
 # the P1-native committed-state floor promoted from the ERCOT-62b probe
-# (docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md §5-6). The same
+# (docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md §5-6). The same
 # ISO-neutral internals as the CAISO RA must-offer bridge
 # (model.commitment.caiso_ra_mustoffer_min_gen — min-down physics + the
 # startup-restart inequality on the model's OWN P0 run pattern and duals),

@@ -4,7 +4,7 @@ Fleet-only rebuild of the keeper recipe (``replay_keeper.run_year_kwargs`` ->
 ``run_calibration.run_year(fleet_only=True)``) per year, flag off and on. Reports every
 generator row whose assembled fuel price or ``mc_base`` differs (plant, class, MW, mean
 $/MMBtu and $/MWh deltas) and asserts nothing else in the fleet arrays moves.
-Writes ``results/calibration/_nyiso_stgas2023_ldc_footprint.json``.
+Writes ``results/phase0/nyiso/_nyiso_stgas2023_ldc_footprint.json``.
 
 2021 inputs (``results/calibration/rnyiso_2021``, run payload ``2026-09-25-nyiso-r-inputs-2021``
 and ``bench/NYISO/2021.json.gz``) come from R-NYISO-2021's branch head
@@ -102,7 +102,7 @@ def main() -> None:
     )
     ap.add_argument(
         "--out",
-        default=str(REPO / "results/calibration/_nyiso_stgas2023_ldc_footprint.json"),
+        default=str(REPO / "results/phase0/nyiso/_nyiso_stgas2023_ldc_footprint.json"),
     )
     a = ap.parse_args()
     logging.basicConfig(level=logging.WARNING)

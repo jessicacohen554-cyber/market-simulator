@@ -63,7 +63,7 @@ credentialed archive on ``data.ercot.com`` / ``api.ercot.com``
 ``apiexplorer.ercot.com`` account + OAuth bearer token + subscription key.
 That route is already investigated and **permanently declined by the repo
 owner** in this exact codebase:
-``docs/handoffs/ercot-as-coopt-plan-2026-07.md`` §WS-E and
+``docs/records/ercot/ercot-as-coopt-plan-2026-07.md`` §WS-E and
 ``docs/ercot-hsl-2024-25-intake-attempt-2026-07.md`` (re-verified live this
 session: ``api.ercot.com/api/public-reports/...`` still returns
 ``401 {"message":"Access denied due to missing subscription key..."}``, and
@@ -236,7 +236,7 @@ def fetch_report_years(
                 f"edge always tracks 'now'), not a transient gap -- see module "
                 f"docstring. Reaching {year} requires ERCOT's credentialed "
                 f"data.ercot.com/api.ercot.com archive, which this repo's owner has "
-                f"declined to procure (docs/handoffs/ercot-as-coopt-plan-2026-07.md "
+                f"declined to procure (docs/records/ercot/ercot-as-coopt-plan-2026-07.md "
                 f"§WS-E). Skipping."
             )
             any_out_of_window = True

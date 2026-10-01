@@ -1,7 +1,7 @@
 """SPP-106 (zero LP): the keeper's upper-tercile fossil headroom against the SPP MMU's offer-side
 unavailability classes, and SPP-84 re-clear predictions for each class as a candidate carrier.
 
-Record: ``docs/handoffs/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md``.
+Record: ``docs/records/spp/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md``.
 
 Source: SPP MMU, "Unavailable Generation Capacity in SPP Markets: Causes and Impacts" (published
 2025-12-19), https://spp.org/documents/75563/unavailable%20generation%20capacity%20in%20spp%20markets%20causes%20and%20impacts.pdf
@@ -60,7 +60,7 @@ from scripts.probes._spp105_gas_outage_hourly_phase0 import (  # noqa: E402
     rebuild_rated,
 )
 
-DESIGN = "docs/handoffs/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md"
+DESIGN = "docs/records/spp/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md"
 YEARS = tuple(range(2019, 2026))
 GAS = ("gas_cc", "gas_ct", "gas_st")
 FOSSIL = (*GAS, "coal", "oil")

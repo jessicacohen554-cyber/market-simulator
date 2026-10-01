@@ -119,7 +119,7 @@ OASIS = (
 _OASIS_SLEEP_S = 7.0
 
 #: ACCEPTANCE GATES — pre-registered in
-#: results/calibration/PRECHECK-caiso172-path15-load-split-2026-08-04.md §4.
+#: docs/records/caiso/PRECHECK-caiso172-path15-load-split-2026-08-04.md §4.
 #: These are DATA gates on the measured input. They read no model output.
 MIN_LDF_SUM = 99.99  # DLAP_PGAE factors must partition the LAP
 MAX_UNASSIGNED_PTS = 5.0  # residue reaching neither assignment tier

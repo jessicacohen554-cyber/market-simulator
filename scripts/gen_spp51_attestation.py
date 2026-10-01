@@ -60,7 +60,7 @@ _ATTESTED = (
     "to the object SPP-51c had already root-caused ('the binding limb is R-2, the "
     "thermal-commitment floor') and armed it through two EXISTING measured gates. "
     "PRECOMMIT + window ADDENDUM pushed BEFORE any solve (f80de3e1 / 0a7f5c06); "
-    "record docs/handoffs/RESULT-spp-51-coal-sync-floor-2026-09-20.md."
+    "record docs/records/spp/RESULT-spp-51-coal-sync-floor-2026-09-20.md."
 )
 
 

@@ -1,6 +1,6 @@
 """SPP-96 phase 0 (zero LP): is SPP reserve co-optimisation (queue item SPP-56, M2) non-inert?
 
-PRECOMMIT: docs/handoffs/PRECOMMIT-spp-96-reserve-coopt-2026-09-28.md (tests T1/T2, rule §4).
+PRECOMMIT: docs/records/spp/PRECOMMIT-spp-96-reserve-coopt-2026-09-28.md (tests T1/T2, rule §4).
 
 T1 — market side: hourly RTBM reserve MCPs (zone-mean of the 5-minute posts) against the
      actual RT LMP benchmark the scorer reads.
@@ -10,7 +10,7 @@ T2 — model side: the keeper's reserve-eligible headroom (sum pmax x availabili
      cleared up-reserve MW (regup + spin + supp + rampup + uncup where posted).
 
 Usage: uv run python scripts/probes/_spp96_reserve_coopt_phase0.py
-Writes docs/handoffs/spp96/phase0.json and docs/handoffs/spp96/headroom_<year>.parquet.
+Writes docs/records/spp/spp96/phase0.json and docs/records/spp/spp96/headroom_<year>.parquet.
 """
 
 import json
@@ -29,10 +29,10 @@ from scripts.run_calibration import run_year  # noqa: E402
 from market_sim.model.reserves.spec import _reserve_eligible  # noqa: E402
 
 BUNDLE = REPO / "results/calibration/spp94_arm_span"
-OUT = REPO / "docs/handoffs/spp96"
+OUT = REPO / "docs/records/spp/spp96"
 YEARS = (2019, 2020, 2021, 2022, 2023, 2024, 2025)
 # class_hourly classes whose members are RESERVE_FUEL_TYPES — the set _reserve_eligible
-# admits (same list as docs/handoffs/spp55/headroom.py).
+# admits (same list as docs/records/spp/spp55/headroom.py).
 ELIGIBLE_CLASSES = (
     "CC_CHP", "CC_REGULAR", "COAL_LIGNITE", "COAL_PRB", "CT_CHP",
     "CT_PEAKER", "ST_GAS", "ST_CHP", "nuclear", "oil",

@@ -72,7 +72,7 @@ Total **−2,714 MW phantom CC_REGULAR capacity**; upper-bound direct energy
 shave 14.7 / 13.2 / 12.2 TWh (2023/24/25) at the keeper's per-plant
 utilizations. Six of seven plants are MISO-South — matching the keeper's
 zonal signature (~73% of the CC overrun in South,
-`results/calibration/FINDING-miso-cc-decomposition-2026-07.md` §2).
+`docs/records/miso/FINDING-miso-cc-decomposition-2026-07.md` §2).
 
 Conservative skips, logged: Perryville (55620, CT/CC mixed site), Nine Mile
 Point LA (1403, CC unit at an ST_GAS plant), Edwardsport (1004, coal-IGCC

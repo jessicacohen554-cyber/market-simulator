@@ -9,7 +9,7 @@ silently re-used. That is the SCN-LOAD incident (`DEMAND_GROWTH_RATES` /
 moved, zero keys moved), and it is the surface this module closes.
 
 **What it is** (owner ruling Q54, capx D79 phase 1; full design, measurements
-and blast radius: `docs/handoffs/DESIGN-capx-d79-2026-09-06.md`). A per-name,
+and blast radius: `docs/records/forecast/DESIGN-capx-d79-2026-09-06.md`). A per-name,
 per-ISO-projected VALUE fingerprint of the seven registry modules in
 :data:`SURFACE_MODULES`, each name dropped at its FROZEN registration-time hash
 in :mod:`market_sim.config.solve_surface_declared` — the capx D24-R option
@@ -23,7 +23,7 @@ unprojected whole to 2-7 per ISO with zero spurious fires; and **dropping at the
 frozen registration hash** means a name enters the key ONLY when its live hash
 differs from its declaration, so adding a table moves no key and a revert
 restores the pre-change key because it is the same model. **Landing moves zero
-keys** — merge gate `docs/handoffs/capxd79-solve-surface-no-op-record.json`.
+keys** — merge gate `docs/records/forecast/capxd79-solve-surface-no-op-record.json`.
 
 **Rule 24 [R-REGISTRY]: DERIVED, never settable** — no env var, no CLI flag, no
 ``ScenarioConfig`` field; a knob here would be an off-registry tuning channel

@@ -5,7 +5,7 @@ Wave 1 of this lane produced a bundle that looked entirely plausible — a clean
 actual to 0.01 TWh — and was nonetheless worthless, because the shard CLI had
 omitted ``--hydro-backfill-year 2024`` and 255 of NWPP's 280 hydro plants
 carried no energy budget. See
-``docs/handoffs/ADDENDUM-nwpp-44-hydro-backfill-2026-09-20.md``.
+``docs/records/nwpp/ADDENDUM-nwpp-44-hydro-backfill-2026-09-20.md``.
 
 The lesson that generalises: **a keeper's recipe is not fully described by its
 ``ScenarioConfig``.** Loader-level kwargs live only in ``meta.json``, so a diff

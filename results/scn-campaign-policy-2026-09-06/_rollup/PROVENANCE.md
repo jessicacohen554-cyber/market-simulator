@@ -5,7 +5,7 @@
 **Reference case** `REF`. **Campaign** `scn-campaign-policy-2026-09-06`.
 **THE PIN of every leg summarised here** `bdfb3095e9fa0cd2bec3f4e843f320b42588c72b`.
 
-Read the headline in `docs/handoffs/FINDING-scenario-campaign-2026-09-07.md`.
+Read the headline in `docs/records/misc/FINDING-scenario-campaign-2026-09-07.md`.
 
 ---
 
@@ -64,7 +64,7 @@ title cannot be read as "the policy root alone".
 against a pre-r2 bundle. That matters: SCN-WS5A-RESOLVE measured the campaign's CO2 levels
 overstated by up to **57 %** before the D77 repair, and the error does **not** cancel out of
 a delta, because the two arms re-screen the retrofit fleet differently
-(`docs/handoffs/FINDING-scn-ws5a-resolve-2026-09-06.md`).
+(`docs/records/forecast/FINDING-scn-ws5a-resolve-2026-09-06.md`).
 
 **Every reference leg is at THE PIN on the solve path, and this was verified rather than
 assumed.** Four `git.basis_sha` values appear across the twelve r2 reference legs — the pin

@@ -19,7 +19,7 @@ to fix in passing.
 
 At migration time the committed shard files were verified equal to
 ``split_monolith(fixture)`` output (recorded in
-``docs/handoffs/house-3-matrix-shard-2026-08-11.md``); the LIVE store is not
+``docs/records/governance/house-3-matrix-shard-2026-08-11.md``); the LIVE store is not
 compared against the fixture here because future lanes legitimately edit
 verdicts — the live store's integrity is ``check_mechanism_matrix.py``'s job,
 exercised by ``test_live_store_parses_and_covers_every_mechanism`` below.

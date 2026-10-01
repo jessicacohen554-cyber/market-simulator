@@ -1,6 +1,6 @@
 """SPP-91 (ZERO LP): fetch SPP RTBM hourly LMP at the keeper's large coal plants' settlement locations.
 
-Record: ``docs/handoffs/FINDING-spp-91-flat-coal-headroom-2026-09-27.md``.
+Record: ``docs/records/spp/FINDING-spp-91-flat-coal-headroom-2026-09-27.md``.
 
 Source: SPP Marketplace portal, product ``rtbm-lmp-by-location`` (anonymous HTTPS, the SPP-14 route,
 ``data/raw/spp-lmp-alt/SOURCES.md``). Each year ``/<yr>/<yr>.zip`` (4-5 GB) holds, beside the 5-min

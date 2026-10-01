@@ -3,7 +3,7 @@
 The third window shape of the measured unit-availability family (M-2 of the
 MISO price-formation lane, ``docs/handoffs/miso-price-formation-design-
 2026-07.md`` §3, guards frozen there; registry adjudications in
-``docs/handoffs/miso-maxgen-registry-findings-2026-07.md``): per-unit MW
+``docs/records/miso/miso-maxgen-registry-findings-2026-07.md``): per-unit MW
 reductions revealed by each unit's own CAMPD trace inside the ISO's
 *declared* capacity-emergency windows (the ``maxgen-events`` registry,
 ``data/raw/maxgen-events/<iso>/``). Emits

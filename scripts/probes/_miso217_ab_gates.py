@@ -1,7 +1,7 @@
 """miso-217 A/B gates — the `phys_*` coverage-gap arm, scored on the PREREG's own rule.
 
 **COMMITTED BEFORE THE SOLVE.** Every band, bar and named face below is frozen from
-``results/calibration/PREREG-miso217-intermediate-phys-arm-2026-09-05.md`` (pushed
+``docs/records/miso/PREREG-miso217-intermediate-phys-arm-2026-09-05.md`` (pushed
 BLIND at ``76c2574c``) and from the CONTROL's own committed verdict, which is the
 keeper and is never re-solved.
 
@@ -21,7 +21,7 @@ Usage::
 
     PYTHONPATH=src .venv/bin/python scripts/probes/_miso217_ab_gates.py
 
-Record: ``results/calibration/_miso217_ab_gates.json``.
+Record: ``results/phase0/miso/_miso217_ab_gates.json``.
 """
 
 from __future__ import annotations
@@ -38,7 +38,7 @@ sys.path.insert(0, str(REPO))
 KEEPER = REPO / "results" / "calibration" / "miso213_layering_B"
 CONTROL = KEEPER  # the charter: the keeper IS the control, never re-solved
 ARM = REPO / "results" / "calibration" / "miso217_intermphys_B"
-OUT = REPO / "results" / "calibration" / "_miso217_ab_gates.json"
+OUT = REPO / "results" / "phase0" / "miso" / "_miso217_ab_gates.json"
 YEARS = (2023, 2024, 2025)
 FIELD = "miso_intermediate_gas_offer_margin"
 
@@ -167,7 +167,7 @@ def main() -> dict:
 
     rep: dict = {
         "charter": "miso-217 A/B — the phys_* coverage-gap arm; scorer COMMITTED BEFORE THE SOLVE.",
-        "prereg": "results/calibration/PREREG-miso217-intermediate-phys-arm-2026-09-05.md @ 76c2574c",
+        "prereg": "docs/records/miso/PREREG-miso217-intermediate-phys-arm-2026-09-05.md @ 76c2574c",
         "control": str(CONTROL.relative_to(REPO)),
         "arm": str(ARM.relative_to(REPO)),
         "field": FIELD,
@@ -217,7 +217,7 @@ def main() -> dict:
     }
 
     # ---------------- S-2 liveness (from the arm's own phase-0 record) ----
-    p0 = REPO / "results" / "calibration" / "_miso217_liveness.json"
+    p0 = REPO / "results" / "phase0" / "miso" / "_miso217_liveness.json"
     live = json.loads(p0.read_text()) if p0.exists() else {}
     n_live = live.get("n_tranches_marked_up_new")
     rep["S2"] = {

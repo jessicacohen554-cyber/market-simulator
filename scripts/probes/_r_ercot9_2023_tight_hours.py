@@ -5,7 +5,7 @@ Compares the keeper ``r_ercot8_fusco_span`` (Fusco in) with the superseded
 committed actual LZ RT settlement series, hour by hour.
 
 Usage: ``python3 scripts/probes/_r_ercot9_2023_tight_hours.py <old_hourly_dir>``.
-Record: ``docs/handoffs/FINDING-r-ercot-9-2023-scarcity-2026-09-27.md``.
+Record: ``docs/records/ercot/FINDING-r-ercot-9-2023-scarcity-2026-09-27.md``.
 """
 
 import sys

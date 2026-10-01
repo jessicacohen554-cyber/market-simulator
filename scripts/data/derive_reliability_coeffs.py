@@ -81,7 +81,7 @@ HOURS_PER_DAY = 24  # CF denominator: nameplate x 24 hours
 # 2023-24 train fit and the 2025 holdout (D-8 §2B, docs/out-of-sample-results-
 # 2026-07.md: PJM ComEd/CC_REGULAR tmax ρ +0.35→−0.19; CAISO SP15/ST_GAS tmax
 # ρ +0.41→−0.16; CAISO SP15/CC_REGULAR tmax ρ +0.69→−0.10). Under decision rule R1
-# (docs/handoffs/scalar-remediation-plan-2026-07.md §1 R1, §2.3) and CLAUDE.md
+# (docs/records/misc/scalar-remediation-plan-2026-07.md §1 R1, §2.3) and CLAUDE.md
 # rule 17, a floor whose driver relationship reverses out-of-training is
 # scaffolding fitted to noise: it may NOT be re-derived back on. This set FORCES
 # ``enabled=False`` and stamps ``r1_disabled=True`` regardless of the pooled

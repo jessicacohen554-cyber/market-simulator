@@ -162,7 +162,7 @@ def write(bundle: Path) -> None:
         "basis": "rule 14 [R-ACCURATE]",
         "free_parameters_added": 0,
         "prereg": (
-            "docs/handoffs/PRECOMMIT-spp-67-year-own-rate-2026-09-20.md, pushed at "
+            "docs/records/spp/PRECOMMIT-spp-67-year-own-rate-2026-09-20.md, pushed at "
             "40eeb43adf013114fccc23a90518a3683d5bf377 BEFORE any shard was launched"
         ),
         "control": (

@@ -57,8 +57,8 @@ from scripts.probes.soco72_compose_span import assert_basis_table  # noqa: E402
 
 ARTIFACT = ROOT / "data/raw/_processed-legacy/egrid_identity_heat_rates_SOCO.csv"
 ARTIFACT_SHA = "32c46c93a1552a4a48e077dffac75dd817530fb50872eac31887d34c8390985f"
-CENSUS76 = ROOT / "docs/handoffs/r-soco/soco76_identity_fleet_census.json"
-CENSUS72 = ROOT / "docs/handoffs/r-soco/soco72_gas_census.json"
+CENSUS76 = ROOT / "docs/records/soco/r-soco/soco76_identity_fleet_census.json"
+CENSUS72 = ROOT / "docs/records/soco/r-soco/soco72_gas_census.json"
 CONTROL = ROOT / "results/calibration/soco72_{y}"
 TOL = 0.01
 

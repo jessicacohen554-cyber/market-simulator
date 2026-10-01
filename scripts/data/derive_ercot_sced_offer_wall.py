@@ -161,7 +161,7 @@ _PUB_SHARD_RE = re.compile(r"(\d{4})-(\d{2})\.part\d+\.parquet$")
 # and publications 2026-02/03 fall inside delivery-2025's selection window — the
 # subdirectory is the only thing holding the line. RTC+B parts are readable only
 # through ``scripts.lib.sced_rtcb_adapter`` (owner card D / signature D1,
-# ``docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``).
+# ``docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``).
 _CORPUS_DIRS: tuple[Path, ...] = (SCED_DIR, SCED_DIR / "SCED")
 
 # A publication-month corpus supersedes the legacy sample-day extracts for a
@@ -829,7 +829,7 @@ def _main_position_tail(args) -> None:
     prov = result.setdefault("_provenance", {})
     prov["conditioning"] = POSITIONTAIL_TAG
     prov["positiontail"] = {
-        "precommit": "docs/PRECOMMIT-ercot181-quantity-position-2026-08-09.md",
+        "precommit": "docs/records/ercot/PRECOMMIT-ercot181-quantity-position-2026-08-09.md",
         "statistic": (
             "per (class, year, bin): the MW-weighted empirical quantile "
             "function of the SAME spare-segment multiplier population the "
@@ -1167,7 +1167,7 @@ def _main_topscoped(args) -> None:
             "conditioning": TOPSCOPED_TAG,
             "netload_pct_edges": list(edges_ext),
             "new_edges": list(new_edges),
-            "edge_identification": "results/calibration/"
+            "edge_identification": "results/phase0/ercot/"
             "ercot180_edge_identification.json",
             "ladder_quantiles": list(LADDER_QUANTILES),
             "hcap_usd_mwh": HCAP_USD_MWH,

@@ -5,7 +5,7 @@ a per-plant ``chp_sector`` for the ISO plus the in-LP capacity delta that
 populating it implies.
 
 THE DEFECT (measured by ``scripts/probes/_caiso128_heat_rate_source_audit.py``
-and reported in ``results/calibration/FINDING-caiso128-heat-rate-provenance-2026-07-27.md``):
+and reported in ``docs/records/caiso/FINDING-caiso128-heat-rate-provenance-2026-07-27.md``):
 MISO is the only ISO whose ``thermal_tranches_<ISO>.csv`` carries an EMPTY
 ``chp_sector`` column, and 0 of its CHP plants appear in the hardcoded
 ``fleet.CHP_SECTOR_CLASS_BY_PLANT`` (44 plants, 41 of them ERCOT's). So

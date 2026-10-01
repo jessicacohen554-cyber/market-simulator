@@ -35,7 +35,7 @@ import json
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-OUT = REPO / "results" / "calibration" / "_nyiso249_gdrift_mechanical.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso249_gdrift_mechanical.json"
 
 
 def main() -> None:

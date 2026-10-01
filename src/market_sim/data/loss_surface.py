@@ -5,10 +5,10 @@ builder plain per-zone monthly deviation arrays (struct-of-arrays, rule #6):
 
 * ``data/raw/iso-specific-transmission/MISO_loss_surface.csv`` — the frozen
   ``scripts/data/derive_miso_loss_surface.py`` (miso-76 charter
-  ``docs/handoffs/miso-nc-price-separation-design-2026-07.md`` §4);
+  ``docs/records/miso/miso-nc-price-separation-design-2026-07.md`` §4);
 * ``data/raw/iso-specific-transmission/PJM_loss_surface.csv`` — the frozen
   ``scripts/data/derive_pjm_loss_surface.py`` (pjm-136 charter
-  ``results/calibration/FINDING-pjm136-zonal-dual-structure-2026-07-28.md``).
+  ``docs/records/pjm/FINDING-pjm136-zonal-dual-structure-2026-07-28.md``).
 
 **One file per ISO, never one shared file** (rule 25 ``[R-ISO-SCOPE]``): each
 surface is derived from that ISO's own published LMP component record and its

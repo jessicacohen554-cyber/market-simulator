@@ -9,7 +9,7 @@ position while a cheaper class runs BELOW it is the signature of a constraint
 the copperplate clear omits (network, seam envelope, energy budget); the
 per-class offer at the P1 price says which rows P1 must be pricing.
 
-Output: ``results/calibration/_miso287_class_gap.json``. Rule 13: nothing here
+Output: ``results/phase0/miso/_miso287_class_gap.json``. Rule 13: nothing here
 feeds a solve.
 """
 
@@ -84,7 +84,7 @@ def main() -> int:
     from scripts.run_calibration_full import _henry_hub_actual  # type: ignore
 
     dec.KEEPER = KEEPER
-    path = REPO / "results/calibration/_miso287_class_gap.json"
+    path = REPO / "results/phase0/miso/_miso287_class_gap.json"
     out = json.loads(path.read_text()) if path.exists() else {}
     for y in args.years:
         mc, cap, mg, grp, fam, zone = load_stack(

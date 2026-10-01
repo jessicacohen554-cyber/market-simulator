@@ -1,7 +1,7 @@
 """SPP-100 shard self-check: the SPP keeper replayed with the scoped CHP steam-level swap.
 
 Run by each SPP-100 shard AFTER its solve and BEFORE it pushes (rule 32(c)(4) hard stops). Zero
-LP. Pre-registered in ``docs/handoffs/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md``.
+LP. Pre-registered in ``docs/records/spp/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md``.
 Adapted from ``_spp99_shard_check.py``; the control is the committed keeper ``spp99_remap_span``
 (rule 29(b) form 4).
 

@@ -41,7 +41,7 @@ ENTRY = {
     "Iroquois/New England winter shape (Jan 2022 9.67 vs 3.71 $/MMBtu on its own hub; 2025 "
     "summer 0.24-0.80 vs ~2.4). nyiso-150 refused it under rule 14's misalignment exception "
     "because the mainland priced as one coupled block; the NEXT-14 cutset link removed that "
-    "premise. Record: docs/PRECOMMIT-nyiso-next16-winter-spread-2026-09-30.md.",
+    "premise. Record: docs/records/nyiso/PRECOMMIT-nyiso-next16-winter-spread-2026-09-30.md.",
 }
 
 
@@ -63,7 +63,7 @@ def main() -> None:
         "2026-09-30-nyisonext15-landing-band-span replayed with ONE recipe delta, "
         "nyiso_iroquois_winter_spread true (each zone's delivered gas on its own measured "
         "hub-month level; owner card 'Re-test, 5 yrs'). "
-        "Pre-registration: docs/PRECOMMIT-nyiso-next16-winter-spread-2026-09-30.md; arm "
+        "Pre-registration: docs/records/nyiso/PRECOMMIT-nyiso-next16-winter-spread-2026-09-30.md; arm "
         f"pinned at {a.pin}. Offer curves byte-identical to the keeper (rule 1(c)); no "
         "multiplier tuned; zero free parameters added. PRIOR: "
     )

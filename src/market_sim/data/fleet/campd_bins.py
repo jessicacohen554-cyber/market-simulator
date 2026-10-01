@@ -268,7 +268,7 @@ _APPLIED_MEASURED_FLAGS: frozenset[str] = frozenset({"ok", "eia923_identity"})
 def _measured_rate_map(path: Path, year: int | None, class_keyed: bool = False) -> dict:
     """Read one measured-heat-rate artifact into ``{key: rate}`` for a solve year.
 
-    F1 D4 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md
+    F1 D4 (docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md
     §5.1 item 3). Every measured artifact now carries a ``year`` column:
     ``year == 0`` is the plant's POOLED rate over the whole 2019-2025 window and
     ``year == Y`` its rate from year ``Y``'s hours alone, written only where
@@ -913,7 +913,7 @@ def _apply_forward_control_retrofits(
     """Step measured ``(co2, nox, so2)`` rates for announced EIA-860 controls.
 
     The forward control-retrofit channel
-    (``docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md``):
+    (``docs/records/misc/emission-control-retrofit-forward-channel-2026-07.md``):
     splits the triple map into per-pollutant float maps, applies
     :func:`market_sim.data.emission_rates.apply_control_retrofits` to each with
     the forecast-year announced-control schedule (a control online by ``year``
@@ -1008,7 +1008,7 @@ def apply_plant_emission_rates_v2(
     persistent fleet, leaving the unit dispatching, pricing its carbon adder and
     accounting at its uncaptured intensity. NOx/SO2 are NOT scaled — the model
     carries no capture co-benefit parameter for them.
-    docs/handoffs/FINDING-capx-d77-2026-09-06.md
+    docs/records/forecast/FINDING-capx-d77-2026-09-06.md
 
     When ``config.control_retrofit_forward`` is set and this is a **forecast**
     year, each pollutant's measured map is stepped by any announced EIA-860
@@ -1017,7 +1017,7 @@ def apply_plant_emission_rates_v2(
     is owned by the CCS retrofit screen, rule 15), via
     :func:`_apply_forward_control_retrofits`. OFF or backcast leaves the maps
     byte-identical.
-    docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md
+    docs/records/misc/emission-control-retrofit-forward-channel-2026-07.md
     """
     from market_sim.data.emission_rates import fuel_class
 
@@ -2167,7 +2167,7 @@ def assert_thermal_tranche_coverage(iso: str, config: ScenarioConfig) -> None:
     engages on NOTHING and reads as inert on the merits — a false negative the
     matrix would then mint as a DO-NOT-REDO ``I`` verdict (rule 26
     [R-MECH-MATRIX]). That is the trap
-    ``results/calibration/FINDING-xiso5-thermal-tranche-coverage-2026-08-04.md``
+    ``docs/records/governance/FINDING-xiso5-thermal-tranche-coverage-2026-08-04.md``
     §4.3 documents (166 ``status="ok"`` rows blank in groups a HEAD
     re-derivation would populate, across CAISO/PJM/NYISO/NEISO).
 
@@ -2374,6 +2374,45 @@ def thermal_tranche_online_frac_by_year(
     return out
 
 
+@lru_cache(maxsize=16)
+def cc_conduct_profile(
+    iso: str, exclude_year: int | None = None
+) -> dict[int, np.ndarray]:
+    """Return ``{plant_code: (288,) online probability}`` per month x hour-of-day cell.
+
+    The CC_REGULAR conduct profile consumed by ``config.cc_mustrun_conduct_window``
+    (PJM-NEXT-17): each plant's measured CAMPD online-hour count over hour count in
+    every (month, hour-of-day) cell, pooled over the artifact years, with
+    *exclude_year* left out (a backcast passes its solve year, so no same-year
+    outcome enters -- rule 13). Read from
+    ``data/raw/_processed-legacy/cc_conduct_profile_<ISO>.csv``
+    (``scripts/data/derive_cc_conduct_profile.py``). Cell index is
+    ``month * 24 + hour_of_day`` with month 0-based. Empty when the ISO has no
+    artifact; a plant whose only rows are the excluded year is absent.
+    """
+    path = PROCESSED_DIR / f"cc_conduct_profile_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if exclude_year is not None:
+        df = df[df["year"] != int(exclude_year)]
+    if df.empty:
+        return {}
+    df = df.assign(cell=df["month"].astype(int) * 24 + df["hod"].astype(int))
+    agg = df.groupby(["plant_code", "cell"])[["sync_hours", "hours"]].sum()
+    out: dict[int, np.ndarray] = {}
+    for code, sub in agg.groupby(level=0):
+        on = np.zeros(288)
+        n = np.zeros(288)
+        cells = sub.index.get_level_values(1).to_numpy()
+        on[cells] = sub["sync_hours"].to_numpy(dtype=float)
+        n[cells] = sub["hours"].to_numpy(dtype=float)
+        if n.sum() <= 0:
+            continue
+        out[int(code)] = np.divide(on, n, out=np.zeros(288), where=n > 0)
+    return out
+
+
 @lru_cache(maxsize=8)
 def thermal_tranche_p25_measured_level(
     iso: str, fuel_split: bool | str = False
@@ -2522,7 +2561,7 @@ def thermal_tranche_chp_steam_level(
     The measured multi-year steam-host operating LEVEL (percent of nameplate)
     from ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv``
     (``steam_level_cf``, WP-3 rule-23 re-derivation, owner-ruled 2026-07-19 —
-    `docs/handoffs/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md`). Two lenses
+    `docs/records/caiso/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md`). Two lenses
     emit the one statistic family:
 
     - ``status == "ok"`` (CAMPD-visible): the loading-when-on construction —
@@ -2675,7 +2714,7 @@ def cc_duct_peaking_pct(row_scoped: bool = False) -> dict[int, float]:
     ``eia860_vintage_tracks_solve_year`` a span run re-points
     :data:`~market_sim.config.paths._ACTIVE_EIA_860_DIR` every year, and a
     vintage-blind key served year 1's bands to years 2+ (rule 14
-    ``[R-ACCURATE]``; ``docs/handoffs/FINDING-spp-37-order-sensitivity-2026-09-12.md``,
+    ``[R-ACCURATE]``; ``docs/records/spp/FINDING-spp-37-order-sensitivity-2026-09-12.md``,
     repaired by SPP-38).
     """
     return _cc_duct_peaking_pct_cached(str(active_eia860_dir()), row_scoped)

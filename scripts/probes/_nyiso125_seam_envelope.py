@@ -35,7 +35,7 @@ Run::
     uv run python scripts/probes/_nyiso125_seam_envelope.py
     uv run python scripts/probes/_nyiso125_seam_envelope.py --sections envelope
 
-Record: ``results/calibration/_nyiso125_seam_envelope.json``.
+Record: ``results/phase0/nyiso/_nyiso125_seam_envelope.json``.
 """
 
 from __future__ import annotations
@@ -464,7 +464,7 @@ def main() -> int:
             raise SystemExit(f"unknown section {name!r}; pick from {list(SECTIONS)}")
         record["sections"][name] = SECTIONS[name]()
         print()
-    dest = REPO / "results/calibration/_nyiso125_seam_envelope.json"
+    dest = REPO / "results/phase0/nyiso/_nyiso125_seam_envelope.json"
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(json.dumps(record, indent=1) + "\n")
     print(f"wrote {dest.relative_to(REPO)}")

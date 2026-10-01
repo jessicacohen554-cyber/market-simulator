@@ -443,7 +443,7 @@ def _henry_hub_daily_dated(
     spreading the month's quote list evenly across calendar days (which
     mislocated the Winter Storm Heather Friday 2024-01-12 spike onto Jan-13 —
     the miso-72 §3.7 all-ISO correctness finding,
-    ``docs/handoffs/miso-winter-fuel-security-design-2026-07.md``). Same
+    ``docs/records/miso/miso-winter-fuel-security-design-2026-07.md``). Same
     clean-tree opt-in as the list view; cached per path.
     """
     if path is None and _use_clean_data():
@@ -714,7 +714,7 @@ def gas_daily_shape_factors(
     representative daily shape), so it is not backcast-only.
 
     True-date placement is REQUIRED, not cosmetic (the miso-72 §3.7 all-ISO
-    correctness fix, ``docs/handoffs/miso-winter-fuel-security-design-2026-07.md``):
+    correctness fix, ``docs/records/miso/miso-winter-fuel-security-design-2026-07.md``):
     the previous even-spread ``np.interp`` resampling of the month's quote LIST
     onto the calendar grid mislocated any spike bracketed by a trading gap —
     the Winter Storm Heather Friday 2024-01-12 Henry Hub print priced Jan-13 in
@@ -726,7 +726,7 @@ def gas_daily_shape_factors(
     post-hoc renormalization: the divisor is the same staircase's own
     calendar-day mean, so the factors average to exactly 1.0 in every full
     month (this subsumes the earlier G-A1 explicit-renormalization fix,
-    docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md, which corrected the
+    docs/records/pjm/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md, which corrected the
     non-mean-preserving bare-``np.interp`` resampling). What the staircase
     changes about the mean's WEIGHTING is honest and documented: a quote
     bracketing a weekend/holiday gap now enters the month mean once per
@@ -962,15 +962,15 @@ def _nyiso_hub_daily_gas_prices(
 # RESTATED 2026-09-20 by caiso-289 (rule 23 [R-FROZEN-DERIVE] re-derivation,
 # cited to a SOURCE-DATA change and never to a residual): caiso-288 recovered 85
 # published prints the fetcher had been discarding (1,806 -> 1,891 rows;
-# docs/RESULT-caiso288-the-prints-were-published-2026-09-20.md), so the
+# docs/records/caiso/RESULT-caiso288-the-prints-were-published-2026-09-20.md), so the
 # histogram above is NOT the one this threshold was first read off. The VERDICT
 # is unchanged - 6 still sits in an empty region and still cannot be selected
 # against any result - but 14 of the 35 blackouts turned out to be measurements
 # all along and are now prints, leaving 21. NINETEEN of those 21 are 2018-2020;
 # the only two in any scored CAISO year are the Thanksgiving weeks of 2024 and
 # 2025, which the caiso-288 G-DUP guard deliberately refuses. Audit:
-# results/calibration/_caiso289_postrepair_audit.json,
-# docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md.
+# results/phase0/caiso/_caiso289_postrepair_audit.json,
+# docs/records/caiso/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md.
 _GAS_BLACKOUT_MIN_GAP_DAYS = 6
 
 
@@ -1093,7 +1093,7 @@ def _year_start_package_seed(
     $3.38 at the next measurement. Constant-extending that across New Year would
     be a far worse construction than the back-fill it replaces. Per-ISO,
     per-year census: ``scripts/probes/xiso8_left_edge_census.py`` ->
-    ``results/calibration/_xiso8_left_edge_census.json``.
+    ``results/phase0/governance/_xiso8_left_edge_census.json``.
 
     No new threshold is introduced: ``_GAS_BLACKOUT_MIN_GAP_DAYS`` is reused at
     the value caiso-289 §2 identified (the gap histogram is empty at 6 and 7, so
@@ -1189,7 +1189,7 @@ def _flow_date_staircase(
     cross-ISO, solve-affecting change that moves two ISOs' keepers. The owner
     ruled 2026-09-20 that it is opened as **its own cross-ISO object**, not
     taken by a CAISO lane in passing. See
-    ``docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md``.
+    ``docs/records/caiso/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md``.
     """
     stamps = {
         pd.Timestamp(year=year, month=m, day=d) + pd.Timedelta(days=1): v
@@ -1236,7 +1236,7 @@ def _flow_date_staircase(
         # unbridged branch builds it. The left-edge defect itself is real and
         # is being repaired as its own cross-ISO object (the function is shared
         # with MISO) — see
-        # docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md.
+        # docs/records/caiso/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md.
         interior: list[pd.Timestamp] = []
         measured = flow_all.dropna().index
         for left, right in zip(measured, measured[1:]):

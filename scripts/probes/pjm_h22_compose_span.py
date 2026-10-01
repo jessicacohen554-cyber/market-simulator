@@ -3,7 +3,7 @@
 
 ``pjm_h20_compose_span.py`` reused verbatim except for the field separating arm
 from control: ``pjm_rggi_allowance_pricing=true``
-(docs/PRECOMMIT-pjm-h22-card-e-rggi-six-years-2026-09-24.md §1). The Card C
+(docs/records/pjm/PRECOMMIT-pjm-h22-card-e-rggi-six-years-2026-09-24.md §1). The Card C
 pair is asserted OFF, since pjm-h20 was not promoted.
 
 Usage::

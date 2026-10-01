@@ -5,7 +5,7 @@ Rebuilds the delivery-2024/2025 windows of the ERCOT **60-Day SCED Disclosure
 Gen Resource Data** (NP3-965-ER, ``reportTypeId=13052``) full-year corpus under
 ``data/raw/ercot/SCED/`` in the EXISTING shard convention established by the
 2026-07-21 owner upload and the 2026-08-03 delivery-2023 re-upload
-(``docs/handoffs/ercot-sced-fullyear-intake-2026-07.md``):
+(``docs/records/ercot/ercot-sced-fullyear-intake-2026-07.md``):
 
 * ``YYYY-MM.partNNNN.parquet`` keyed by the MIS **publication month** (delivery
   = publication − 60 days ≈ filename − 2 months);

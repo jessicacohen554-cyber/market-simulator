@@ -7,7 +7,7 @@ marginal-cost array and each row's DELIVERED fuel price are read rather than inf
 
 WHY. The object handed to this lane is CT_PEAKER's merit collapse from 2023: 2.43 -> 0.25 / 0.30 /
 0.77 TWh against a flat ~2.1-2.8 TWh actual, capacity intact
-(docs/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md §7). The recommended lever is
+(docs/records/nyiso/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md §7). The recommended lever is
 ``ct_peaker_committed_measured`` — grounding ``_NYISO_OFFER_CURVE["CT_PEAKER"]["committed"]`` on
 NYISO's OWN measured ``phys_committed`` 0.843 in place of the transferred 1.35.
 
@@ -313,7 +313,7 @@ def main() -> None:
 
     # Merge rather than overwrite: the probe is routinely run a couple of years at a time, and a
     # plain write silently drops the years a previous invocation measured.
-    dest = Path("results/calibration/_nyiso241_ct_offer_anatomy.json")
+    dest = Path("results/phase0/nyiso/_nyiso241_ct_offer_anatomy.json")
     merged = json.loads(dest.read_text()) if dest.exists() else {}
     merged.update(out)
     dest.write_text(json.dumps(merged, indent=1))

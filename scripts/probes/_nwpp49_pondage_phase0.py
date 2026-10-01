@@ -1,7 +1,7 @@
 """nwpp-49 phase 0: can ``hydro_pondage_bound`` touch NWPP's hydro swing? ZERO LP.
 
 Reproduces every number in
-``docs/handoffs/FINDING-nwpp-49-pondage-design-2026-09-23.md`` from committed
+``docs/records/nwpp/FINDING-nwpp-49-pondage-design-2026-09-23.md`` from committed
 artifacts only:
 
 * the keeper's committed ``hourly/class_hourly_<y>.parquet``
@@ -51,7 +51,7 @@ CASCADE_UP_ONLY = (6163, 3883, 3895, 3927)  # GCL RRH TDA LMN: P enters a downst
 # 24*c*(1-c) nameplate-hours of storage, maximised at c = 0.5 -> 6 h. A plant
 # holding >= 6 nameplate-hours cannot be constrained WITHIN a day. Pure algebra.
 DIURNAL_MAX_H = 6.0
-OUT = Path("results/calibration/_nwpp49_pondage_phase0.json")
+OUT = Path("results/phase0/nwpp/_nwpp49_pondage_phase0.json")
 
 
 def _r(a: np.ndarray, b: np.ndarray) -> float:

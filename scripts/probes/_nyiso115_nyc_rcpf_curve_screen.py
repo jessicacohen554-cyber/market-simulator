@@ -256,7 +256,7 @@ def main() -> None:
         "model": screen_model(),
     }
     out_path = (
-        REPO_ROOT / "results" / "calibration" / "nyiso115_nyc_rcpf_curve_screen.json"
+        REPO_ROOT / "results" / "phase0" / "nyiso" / "nyiso115_nyc_rcpf_curve_screen.json"
     )
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(result, indent=2))

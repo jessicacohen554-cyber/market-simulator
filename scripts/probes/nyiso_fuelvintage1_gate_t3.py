@@ -342,7 +342,7 @@ def main() -> int:
 
     report["gate_T3_PASS"] = ok
     out = Path(args.out) if args.out else (
-        REPO / "results/calibration/_nyiso_fuelvintage1_gate_t3.json")
+        REPO / "results/phase0/nyiso/_nyiso_fuelvintage1_gate_t3.json")
     out.write_text(json.dumps(report, indent=1))
     print(f"\nGATE T3 {'PASS' if ok else 'FAIL'} — wrote {out}")
     return 0 if ok else 1

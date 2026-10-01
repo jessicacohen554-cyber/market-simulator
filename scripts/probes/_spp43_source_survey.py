@@ -147,7 +147,7 @@ def main() -> None:
     print()
 
     (REPO / "results" / "calibration").mkdir(parents=True, exist_ok=True)
-    dest = REPO / "results" / "calibration" / "_spp43_source_survey.json"
+    dest = REPO / "results" / "phase0" / "spp" / "_spp43_source_survey.json"
     dest.write_text(json.dumps(out, indent=2, sort_keys=True))
     print(f"wrote {dest.relative_to(REPO)}")
 

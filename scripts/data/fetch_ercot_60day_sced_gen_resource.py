@@ -39,7 +39,7 @@ P − 60 days (same lag as NP3-966, verified live 2026-07-16: the doc published
 doc list reaches back ~2.3 years (earliest listed publication 2024-03-24 on
 2026-07-16 → earliest reachable delivery ~2024-01-24); earlier deliveries are
 permanently unreachable on the free path (the credentialed data.ercot.com
-archive is owner-declined — ``docs/handoffs/ercot-as-coopt-plan-2026-07.md``
+archive is owner-declined — ``docs/records/ercot/ercot-as-coopt-plan-2026-07.md``
 §WS-E). The script reports, never fabricates, out-of-window days.
 
 Holdout hygiene (CLAUDE.md rule 22): ``--max-delivery-date`` (default

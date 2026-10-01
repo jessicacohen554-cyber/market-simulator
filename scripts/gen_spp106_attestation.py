@@ -1,6 +1,6 @@
 """Emit the SPP-106 calibration attestation for the composed 2019-2025 arm bundle ``spp106EX_span``.
 
-SPP-106 (``docs/handoffs/PRECOMMIT-spp-106-offer-side-unavailability-2026-10-01.md``) replays SPP's
+SPP-106 (``docs/records/spp/PRECOMMIT-spp-106-offer-side-unavailability-2026-10-01.md``) replays SPP's
 keeper ``2026-09-28-spp-100-chp-scope`` one year per shard (rule 36) with ONE field armed:
 ``spp_mmu_offer_unavailability`` (arm EX). Adapted from ``gen_spp105_attestation.py``: the keeper's
 attestation is inherited, the offer curve is verified byte-identical per year, every other scenario
@@ -24,8 +24,8 @@ sys.path.insert(0, str(REPO / "src"))
 from market_sim.config.scenarios import _CACHE_KEY_RETIRED_FIELDS  # noqa: E402
 
 CAL = REPO / "results" / "calibration"
-PRECOMMIT = "docs/handoffs/PRECOMMIT-spp-106-offer-side-unavailability-2026-10-01.md"
-RESULT = "docs/handoffs/RESULT-spp-106-offer-side-unavailability-2026-10-01.md"
+PRECOMMIT = "docs/records/spp/PRECOMMIT-spp-106-offer-side-unavailability-2026-10-01.md"
+RESULT = "docs/records/spp/RESULT-spp-106-offer-side-unavailability-2026-10-01.md"
 PINNED = "392633a12d3df81c3bab2cf80a74ee5e2feffeea"
 KEEPER = "spp100_arm_span"
 KEEPER_ID = "2026-09-28-spp-100-chp-scope"

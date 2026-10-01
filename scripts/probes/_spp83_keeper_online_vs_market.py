@@ -1,6 +1,6 @@
 """SPP-83 (zero LP): does the keeper clear on capacity SPP kept offline? (FINDING-spp-82 §7.1).
 
-Record: ``docs/handoffs/FINDING-spp-83-keeper-clears-on-offline-capacity-2026-09-26.md``.
+Record: ``docs/records/spp/FINDING-spp-83-keeper-clears-on-offline-capacity-2026-09-26.md``.
 
 On SPP-82's exact sample hours (``_spp82_offered_not_setting.sample_days``: SPP-80's non-scarcity
 RT upper tercile, ex-Feb, the ``--days`` days per month with most tercile hours) this measures the
@@ -44,7 +44,9 @@ from scripts.probes._spp82_offered_not_setting import (
     sample_days,
 )  # noqa: E402
 
-FINDING = "docs/handoffs/FINDING-spp-83-keeper-clears-on-offline-capacity-2026-09-26.md"
+FINDING = (
+    "docs/records/spp/FINDING-spp-83-keeper-clears-on-offline-capacity-2026-09-26.md"
+)
 PRICE_CAP = 500.0  # SPP-81b / SPP-82 stack ceiling, identical filter
 GAS = ("gas_cc", "gas_ct", "gas_st")
 VER_CLASSES = (

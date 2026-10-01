@@ -1,7 +1,7 @@
 """ercot-268 DRIFT BISECT (ZERO LP): where did the ERCOT keeper's re-solve move?
 
 The ercot-mer session re-solved the ERCOT keeper's own recipe at HEAD and did
-not reproduce it (``docs/handoffs/RESULT-ercot-mer-keeper-resolve-2026-09-19.md``):
+not reproduce it (``docs/records/ercot/RESULT-ercot-mer-keeper-resolve-2026-09-19.md``):
 2025 byte-exact, 2021/2022/2024 broad and small, **2023 +6.0 %** on the
 load-weighted P1 price. The write-up read the class-energy swaps
 (``CC_CHP`` <-> ``CC_REGULAR``, ``CT_CHP`` -> everything) as a plant->class

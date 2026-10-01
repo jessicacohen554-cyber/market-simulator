@@ -46,7 +46,7 @@ ENTRY = {
     "NE's measured net export and HQ/IESO's import at once; the seam is placed "
     "where it physically lands (rules 14/19). Owner ruling Q-a 2026-09-28: promote "
     "on structure only, never on C3a. Record: "
-    "docs/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md.",
+    "docs/records/nyiso/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md.",
 }
 
 
@@ -68,7 +68,7 @@ def main() -> None:
         "2026-09-28-nyisonext9-hq-floor-span replayed with ONE recipe delta, "
         "nyiso_ne_ac_node true (the NE AC tie on its own two-way node). "
         "Pre-registration: "
-        f"docs/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md; arm pinned at {a.pin}. "
+        f"docs/records/nyiso/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md; arm pinned at {a.pin}. "
         "Offer curves byte-identical to the keeper (rule 1(c)); no multiplier tuned; "
         "zero free parameters added. PRIOR: "
     )

@@ -10,7 +10,7 @@ the FC-6 driver battery.
 Forecast-family legs are registered to `frontend/data/forecast/` via
 `scripts/register_forecast_run.py`, never as tracked bundles here (CLAUDE.md
 rule 15). The committed record is the sidecar under `frontend/data/hindcast/`
-plus the readout in `docs/handoffs/ffr-3a2-battery-close-2026-08-03.md`.
+plus the readout in `docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md`.
 
 Layout (FFR-3C blocker 10 — read this before looking for a ledger):
 

@@ -1,6 +1,6 @@
 """SPP-76 — does swapping in CAMPD-measured heat rates move the coal/gas crossover? (zero LP)
 
-Pre-registered in ``docs/handoffs/PRECOMMIT-spp-76-crossover-heat-rates-2026-09-24.md``
+Pre-registered in ``docs/records/spp/PRECOMMIT-spp-76-crossover-heat-rates-2026-09-24.md``
 (pushed at ``27874eb7`` before any number below was read).
 
 Per year, rebuilds the bundle's fleet with no LP (``reconstruct_bundle_fleet``, one

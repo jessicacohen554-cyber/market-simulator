@@ -258,7 +258,7 @@ def ercot_zonal_gas_basis_source_group(
     where Winter Storm Uri therefore enters the merit order as false locational
     dispersion. This function is what lets
     ``config.ercot_zonal_spread_ep_referenced`` put the two groups back on one
-    footing (``docs/PRECOMMIT-ercot255-zonal-spread-ep-reference-2026-09-07.md``).
+    footing (``docs/records/ercot/PRECOMMIT-ercot255-zonal-spread-ep-reference-2026-09-07.md``).
 
     Args:
         year: The solve year.
@@ -417,7 +417,7 @@ def ercot_electric_power_gas_basis_monthly(
     mean is a measurement of February, applied flat to all 8,760 hours. It
     lifts every ordinary hour of 2021 by ~+$5.3/MMBtu and, by the same
     arithmetic, removes that cost from February itself
-    (``docs/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md`` SS1-SS3).
+    (``docs/records/ercot/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md`` SS1-SS3).
 
     **The repair moves no annual level.** The mean over months of
     ``EP[m] - HH[m]`` is identically ``mean(EP) - mean(HH)`` — the mean is

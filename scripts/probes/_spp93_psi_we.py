@@ -24,8 +24,8 @@ import numpy as np
 import pandas as pd
 
 ROOT = "/home/user/market-simulator"
-D53 = f"{ROOT}/docs/handoffs/spp53"
-D57 = f"{ROOT}/docs/handoffs/spp57"
+D53 = f"{ROOT}/docs/records/spp/spp53"
+D57 = f"{ROOT}/docs/records/spp/spp57"
 _spec = importlib.util.spec_from_file_location("r92", f"{ROOT}/scripts/probes/_spp92_psi_repair.py")
 r92 = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(r92)

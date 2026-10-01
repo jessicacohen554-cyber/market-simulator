@@ -2,7 +2,7 @@
 
 Rule 29(b) form 4 — the control is keeper 14's own committed bundle, never a
 control solve. The G-DRIFT audit validating form 4 for this lane is
-``docs/handoffs/PRECOMMIT-spp-68-curtailment-ceiling-retest-2026-09-20.md`` §6.
+``docs/records/spp/PRECOMMIT-spp-68-curtailment-ceiling-retest-2026-09-20.md`` §6.
 
 Scores every limb of the PRE-REGISTERED prediction and kill condition in that
 document (§4, §5) against what actually solved, and says plainly which

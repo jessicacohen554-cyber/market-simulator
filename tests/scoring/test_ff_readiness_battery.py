@@ -273,7 +273,7 @@ def test_marker_state_reflects_committed_markers():
     # (`complete.NYISO.prior_withdrawal_2026_08_30`), so `withdrawn` now holds
     # CAISO alone. Same desync class as every move above; the assertion moves
     # with the marker in the same commit this time
-    # (docs/handoffs/FINDING-capx-d56r-nyiso-redeclaration-2026-09-05.md).
+    # (docs/records/forecast/FINDING-capx-d56r-nyiso-redeclaration-2026-09-05.md).
     #
     # NYISO WITHDRAWN AGAIN 2026-09-05, later the same day: the owner ruled
     # the nyiso-192 Astoria merit-panel arm promoted (nyiso192-Q1 option (i),
@@ -293,7 +293,7 @@ def test_marker_state_reflects_committed_markers():
     # record is nested WHOLE beneath the new entry
     # (`complete.CAISO.withdrawal_history_2026_08_06`). Assertion moved in the
     # same commit as the marker
-    # (results/calibration/ASSESSMENT-caiso261-complete-declaration-2026-09-06.md).
+    # (docs/records/caiso/ASSESSMENT-caiso261-complete-declaration-2026-09-06.md).
     #
     # NYISO RE-DECLARED `complete` 2026-09-06 (owner in-session ruling, session
     # nyiso-209, verbatim 'Ok declare it and run 22') on the keeper lineage that
@@ -303,7 +303,7 @@ def test_marker_state_reflects_committed_markers():
     # (`complete.NYISO.prior_withdrawal_2026_09_05`). With CAISO re-declared
     # the same day, `withdrawn` is EMPTY for the first time. Assertion moved
     # in the same commit as the marker
-    # (docs/FINDING-nyiso209-redeclaration-and-2022-touchpoint-2026-09-06.md).
+    # (docs/records/nyiso/FINDING-nyiso209-redeclaration-and-2022-touchpoint-2026-09-06.md).
     #
     # NYISO RE-KEYED 2026-09-07 (session nyiso-213, rule 22 D-5(b)): the
     # `complete` marker's `keeper` field tracks NYISO's CURRENT designated
@@ -317,7 +317,7 @@ def test_marker_state_reflects_committed_markers():
     # only the one string moves. The assertion did NOT move in that lane's
     # commit -- the same bookkeeping-desync class every comment above records --
     # and is corrected here by SPP-38
-    # (docs/handoffs/FINDING-spp-38-2026-09-07.md §3, row 12; NOT an SPP
+    # (docs/records/spp/FINDING-spp-38-2026-09-07.md §3, row 12; NOT an SPP
     # failure).
     #
     # NYISO RE-KEYED AGAIN 2026-09-09 (session nyiso-fuelvintage-1, rule 22
@@ -341,7 +341,7 @@ def test_marker_state_reflects_committed_markers():
     #
     # KEEPER IDS ARE READ FROM THE SHARDS, NOT PINNED AS LITERALS (owner ruling
     # R-BE, director board v43, 2026-09-25; proposal
-    # docs/handoffs/FINDING-y29-promotion-provenance-2026-09-24.md §4; audit
+    # docs/records/governance/FINDING-y29-promotion-provenance-2026-09-24.md §4; audit
     # lane Y-31). Every re-key above was a promotion that had to edit this
     # test, and several promoters skipped it. For every `complete` ISO the
     # marker's `keeper` must equal keepers/<ISO>.json `keeper`: a promotion
@@ -422,7 +422,7 @@ def test_build_registration_scorecard_no_iso_gate_open():
     # same marker move test_marker_state_reflects_committed_markers pins above.
     # That lane moved its own copy of the assertion but not this
     # integration-marked one, so this test stayed red on the string; corrected
-    # by SPP-38 (docs/handoffs/FINDING-spp-38-2026-09-07.md §3, row 13; NOT an
+    # by SPP-38 (docs/records/spp/FINDING-spp-38-2026-09-07.md §3, row 13; NOT an
     # SPP failure). `withdrawn` is EMPTY at HEAD. THE PINNED INVARIANT IS
     # UNCHANGED and is the point of this test: gate B (FF-2D T1-F) still reads
     # HOLD for every ISO, so a backcast marker -- complete or withdrawn -- never

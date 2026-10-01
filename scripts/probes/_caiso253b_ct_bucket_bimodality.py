@@ -1,6 +1,6 @@
 """caiso-253b: G-BIMODAL — is the measured offer surface's CT bucket contaminated?
 
-Registered in ``results/calibration/PRECOMMIT-caiso253b-offer-surface-contamination-2026-09-06.md``
+Registered in ``docs/records/caiso/PRECOMMIT-caiso253b-offer-surface-contamination-2026-09-06.md``
 (pushed before any bid data was fetched and before any statistic was computed).
 
 The derive discloses that its CT bucket "may include the 2.9 GW OTC/RMR ST_GAS
@@ -50,7 +50,7 @@ precedent), applying the derive's three row filters as it goes; only that
 already-slim store is loaded whole. Pass 1 is resumable: re-running skips days
 already reduced, so it can be run against a fetch still in flight.
 
-Output: ``results/calibration/_caiso253b_ct_bucket_bimodality.json``.
+Output: ``results/phase0/caiso/_caiso253b_ct_bucket_bimodality.json``.
 
 Usage::
 
@@ -78,7 +78,7 @@ from scripts.lib.dam_public_bids.caiso import parse_day  # noqa: E402
 
 ZIPS = REPO / "data/raw/caiso-public-bids/zips"
 STORE = REPO / "data/raw/caiso-public-bids/_caiso253b_reduced"  # gitignored dir
-OUT = REPO / "results/calibration/_caiso253b_ct_bucket_bimodality.json"
+OUT = REPO / "results/phase0/caiso/_caiso253b_ct_bucket_bimodality.json"
 YEARS = (2023, 2024, 2025)
 
 # --- the derive's OWN frozen constants, imported by value, NOT retuned -------

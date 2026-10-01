@@ -1,7 +1,7 @@
 """nyiso-232 (ZERO LP): does NYISO's C3a year-to-year tilt survive removing the tail?
 
 The decomposition test behind
-``docs/FINDING-nyiso232-c3a-is-two-objects-2026-09-13.md``. Progressively removes
+``docs/records/nyiso/FINDING-nyiso232-c3a-is-two-objects-2026-09-13.md``. Progressively removes
 each year's highest-ACTUAL-price hours from the designated keeper's committed
 ``hourly/system_<year>.parquet`` and re-measures both the load-weighted C3a
 residual and its correlation with the solve year's own gas anchor.

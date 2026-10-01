@@ -1,6 +1,6 @@
 """Read adapter for ERCOT's RTC+B-era NP3-965 SCED Gen Resource disclosure.
 
-**Authority.** ``docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``
+**Authority.** ``docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``
 card **D**, signature **D1** (owner, 2026-08-11): *"authorize, scoped to a READ
 ADAPTER"* — map the RTC+B member onto the existing schema; **no mechanism, no
 re-derive of frozen artifacts, no keeper movement**. Nothing in this module

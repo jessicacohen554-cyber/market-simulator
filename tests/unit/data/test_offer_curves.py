@@ -1,7 +1,7 @@
 """Tests for the gas-offer net-revenue margin (markup compression) mechanism.
 
 Covers the two halves of ``gas_offer_net_revenue_margin`` (design doc
-``docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md``):
+``docs/records/misc/gas-offer-net-revenue-margin-design-2026-07.md``):
 
 * the tranche-side markup decomposition (``gas_offer_margin_markup_mult`` +
   the ``offer_markup_hr`` computed in ``bins_to_fleet``), and

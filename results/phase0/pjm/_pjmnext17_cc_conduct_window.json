@@ -1,0 +1,208 @@
+{
+ "what": "PJM-NEXT-17 card 2 - CC conduct window. ZERO LP.",
+ "years": {
+  "2019": {
+   "loglik": {
+    "mh": -0.4363,
+    "mdh": -0.4394
+   },
+   "windows": {
+    "keeper": {
+     "plants": 61,
+     "floored_h": 408568,
+     "off_h": 63757,
+     "off_share": 0.156,
+     "off_floor_twh": 23.33
+    },
+    "mh": {
+     "plants": 61,
+     "floored_h": 408568,
+     "off_h": 59186,
+     "off_share": 0.1449,
+     "off_floor_twh": 21.88
+    },
+    "mdh": {
+     "plants": 61,
+     "floored_h": 408568,
+     "off_h": 58478,
+     "off_share": 0.1431,
+     "off_floor_twh": 21.64
+    }
+   }
+  },
+  "2020": {
+   "loglik": {
+    "mh": -0.3743,
+    "mdh": -0.3826
+   },
+   "windows": {
+    "keeper": {
+     "plants": 61,
+     "floored_h": 415497,
+     "off_h": 56422,
+     "off_share": 0.1358,
+     "off_floor_twh": 18.47
+    },
+    "mh": {
+     "plants": 61,
+     "floored_h": 415497,
+     "off_h": 52083,
+     "off_share": 0.1254,
+     "off_floor_twh": 16.88
+    },
+    "mdh": {
+     "plants": 61,
+     "floored_h": 415497,
+     "off_h": 52266,
+     "off_share": 0.1258,
+     "off_floor_twh": 16.97
+    }
+   }
+  },
+  "2021": {
+   "loglik": {
+    "mh": -0.4855,
+    "mdh": -0.4905
+   },
+   "windows": {
+    "keeper": {
+     "plants": 65,
+     "floored_h": 439229,
+     "off_h": 74501,
+     "off_share": 0.1696,
+     "off_floor_twh": 25.54
+    },
+    "mh": {
+     "plants": 65,
+     "floored_h": 439229,
+     "off_h": 74616,
+     "off_share": 0.1699,
+     "off_floor_twh": 25.35
+    },
+    "mdh": {
+     "plants": 65,
+     "floored_h": 439229,
+     "off_h": 73760,
+     "off_share": 0.1679,
+     "off_floor_twh": 25.21
+    }
+   }
+  },
+  "2022": {
+   "loglik": {
+    "mh": -0.397,
+    "mdh": -0.3984
+   },
+   "windows": {
+    "keeper": {
+     "plants": 67,
+     "floored_h": 453534,
+     "off_h": 67253,
+     "off_share": 0.1483,
+     "off_floor_twh": 24.07
+    },
+    "mh": {
+     "plants": 67,
+     "floored_h": 453534,
+     "off_h": 63158,
+     "off_share": 0.1393,
+     "off_floor_twh": 22.66
+    },
+    "mdh": {
+     "plants": 67,
+     "floored_h": 453534,
+     "off_h": 62691,
+     "off_share": 0.1382,
+     "off_floor_twh": 22.55
+    }
+   }
+  },
+  "2023": {
+   "loglik": {
+    "mh": -0.4025,
+    "mdh": -0.4045
+   },
+   "windows": {
+    "keeper": {
+     "plants": 69,
+     "floored_h": 467725,
+     "off_h": 63979,
+     "off_share": 0.1368,
+     "off_floor_twh": 22.58
+    },
+    "mh": {
+     "plants": 69,
+     "floored_h": 467725,
+     "off_h": 57174,
+     "off_share": 0.1222,
+     "off_floor_twh": 19.96
+    },
+    "mdh": {
+     "plants": 69,
+     "floored_h": 467725,
+     "off_h": 56523,
+     "off_share": 0.1208,
+     "off_floor_twh": 19.78
+    }
+   }
+  },
+  "2024": {
+   "loglik": {
+    "mh": -0.3623,
+    "mdh": -0.3654
+   },
+   "windows": {
+    "keeper": {
+     "plants": 69,
+     "floored_h": 467725,
+     "off_h": 54492,
+     "off_share": 0.1165,
+     "off_floor_twh": 18.12
+    },
+    "mh": {
+     "plants": 69,
+     "floored_h": 467725,
+     "off_h": 49879,
+     "off_share": 0.1066,
+     "off_floor_twh": 16.12
+    },
+    "mdh": {
+     "plants": 69,
+     "floored_h": 467725,
+     "off_h": 50169,
+     "off_share": 0.1073,
+     "off_floor_twh": 16.33
+    }
+   }
+  },
+  "2025": {
+   "loglik": {
+    "mh": -0.4048,
+    "mdh": -0.4073
+   },
+   "windows": {
+    "keeper": {
+     "plants": 69,
+     "floored_h": 467725,
+     "off_h": 62673,
+     "off_share": 0.134,
+     "off_floor_twh": 21.82
+    },
+    "mh": {
+     "plants": 69,
+     "floored_h": 467725,
+     "off_h": 56671,
+     "off_share": 0.1212,
+     "off_floor_twh": 19.42
+    },
+    "mdh": {
+     "plants": 69,
+     "floored_h": 467725,
+     "off_h": 56209,
+     "off_share": 0.1202,
+     "off_floor_twh": 19.29
+    }
+   }
+  }
+ }
+}
