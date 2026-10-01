@@ -112,7 +112,7 @@ SYSTEM_LAMBDA_COLUMNS: tuple[str, ...] = (
 # ---------------------------------------------------------------------------
 #
 # Owner ruling soco-97 option (d), data step 1 of
-# ``docs/handoffs/r-soco/FINDING-soco-97-interchange-rule14-phase0-2026-10-01.md``
+# ``docs/records/soco/r-soco/FINDING-soco-97-interchange-rule14-phase0-2026-10-01.md``
 # §5: intake the hourly system lambdas of the balancing authorities that border
 # SOCO, REPORTED-ONLY. A neighbour's lambda is a measured *outcome*; rule 13
 # [R-MEASURED] admits it later only as a per-year ``hr_by_year`` anchor in the
