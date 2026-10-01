@@ -6924,3 +6924,11 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - Card 3 not reached.
 - **Record:** `docs/records/pjm/RESULT-pjm-next-20-2026-10-01.md`.
 
+
+## PJM-NEXT-21 — 2026-10-01 — C1 stays on EIA-923 (owner ruling); PJM's own coal offers are steeper than the keeper's ladder (zero LP)
+
+- **Solves and keeper:** zero LP, zero shards. Keeper unchanged (`2026-09-30-pjm-next16-ovec`); 10 failing cells, NOT-YET.
+- **Card 1 (rule-14 sizing):** C1 re-scored against `classFull` re-bounded monthly to EIA-930 by fuel fixes no failing cell. Gas re-bounding worsens CC_REGULAR (2023 +8.5 → +9.6, 2020 +9.8 → +14.2). Coal re-bounding (930 coal sits +3.4 to +12.5 TWh above 923, k ≈ 1.04–1.09, cause not established) shrinks COAL_BIT misses but fixes no cell. **Owner ruling: keep EIA-923.**
+- **Card 2 (offer slope, Jan/Apr/Jul/Oct 2019–25):** PJM's coal-like offers are steeper than the keeper's econ ladder in every year (IQR $0.7–2.2 vs $2.8–11.3). Keeper − PJM at +$5 is +0.01 to +0.03 in 2019–21 and −0.03 to −0.10 in 2022–25; 2025 reads like 2024. Refuted. **OPEN, not a limit.**
+- Card 3 not reached.
+- **Record:** `docs/records/pjm/RESULT-pjm-next-21-2026-10-01.md`.
