@@ -800,11 +800,34 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   name carries the NYISO token, so only NYISO's row set grows: 220 -> 221.
 #   WHAT IT COSTS: nothing solved — no registry value moved, so no committed
 #   bundle's numbers change; the digest moves only because the row set grew.
+# 2026-09-30 PJM ADVANCED (PJM-NEXT-16, owner ruling "Build + solve") — ONE
+#   ROW MOVED, LEFT UNDECLARED SO IT ENTERS PJM'S KEY.
+#   constants.ISO_BA_JOINS gains {"PJM": {"OVEC": (2019, 1)}}: Clifty Creek 983
+#   and Kyger Creek 2876 are inside PJM's BA in every corpus hour but EIA-860
+#   vintages 2018-2020 code them OVEC, so the 2019/2020 fleet had dropped them.
+#   `solve_surface_register.py --diff origin/main` -> "1 value(s) moved:
+#   ISO_BA_JOINS: PJM". The frozen ISO_BA_JOINS line stays SOCO-only (the
+#   ledger is append-only, check_cache_key_registration [1]), so the live PJM
+#   value enters the key: 223 -> 224 rows, PJM only.
+#   WHAT IT COSTS: a PJM cache miss. 2019/2020 fleets gain 2.39 GW of coal;
+#   2021-2025 fleets are unchanged (those vintages already code them PJM).
+#   SAME LANE, SAME DAY — TWO ROWS ADDED, NO VALUE MOVED:
+#   constants.PJM_GAS_BRIDGE_MIN_LOAD_FRAC / PJM_GAS_BRIDGE_MIN_RUN_HOURS (the
+#   measured plant-basis CC statistics, read only under the default-off
+#   pjm_gas_commitment_bridge). Declared at their live hash
+#   (`--declare-missing`, moves no key); the names carry the PJM token, so only
+#   PJM's row set grows: 224 -> 226. Rebased onto R-CAISO-20, whose unscoped
+#   EGRID_CC_HR_PHYSICAL_FLOOR (+1 row everywhere, declared at its live hash)
+#   landed without advancing any pin: PJM's pin carried it, 226 -> 227. Main
+#   then removed that row (no value moved), so PJM returns to 226 rows.
+#   Merged soco-96, whose seven unscoped CAMPD/Part-75 CO2 constants were
+#   declared at their live hash without advancing any pin (no value moved):
+#   PJM's pin carries them, 226 -> 233; the other ISOs' pins are that lane's.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
     "ERCOT": ("bdfc68c278f7eff8", 240),
     "CAISO": ("289c8c383a78f4d9", 213),
     "MISO": ("52d6fa6795d5e276", 220),
-    "PJM": ("2bff80b5fa602668", 223),
+    "PJM": ("254a954525afd690", 233),
     "NYISO": ("a64df99bd6857677", 221),
     "NEISO": ("e082dd92b5c22723", 206),
 }

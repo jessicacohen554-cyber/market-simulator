@@ -4937,6 +4937,7 @@ def solve_and_persist(
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
     unit_outage_dispatched_bin_denominator: bool | None = None,
+    unit_outage_dispatched_bin_live_denominator: bool | None = None,
     unit_outage_short_windows_gas: bool | None = None,
     unit_outage_window_hour_grain: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
@@ -4964,6 +4965,7 @@ def solve_and_persist(
     reliability_floor_overrides: dict | None = None,
     nyiso_gas_commitment_bridge: bool | None = None,
     spp_gas_commitment_bridge: bool | None = None,
+    pjm_gas_commitment_bridge: bool | None = None,
     soco_gas_st_campaign_commitment: bool | None = None,
     miso_coal_night_floor: bool | None = None,
     miso_gas_ecomin_online_floor: bool | None = None,
@@ -6039,6 +6041,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 spp_gas_commitment_bridge=spp_gas_commitment_bridge
             )
+        if pjm_gas_commitment_bridge is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                pjm_gas_commitment_bridge=pjm_gas_commitment_bridge
+            )
         if soco_gas_st_campaign_commitment is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 soco_gas_st_campaign_commitment=soco_gas_st_campaign_commitment
@@ -6447,6 +6453,10 @@ def solve_and_persist(
         if unit_outage_dispatched_bin_denominator is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 unit_outage_dispatched_bin_denominator=unit_outage_dispatched_bin_denominator
+            )
+        if unit_outage_dispatched_bin_live_denominator is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                unit_outage_dispatched_bin_live_denominator=unit_outage_dispatched_bin_live_denominator
             )
         if unit_outage_short_windows_gas is not None:
             recorded_cfg = recorded_cfg.with_overrides(
@@ -6993,6 +7003,7 @@ def solve_and_persist(
             unit_outage_st_capacity_basis=unit_outage_st_capacity_basis,
             unit_outage_per_unit_clip=unit_outage_per_unit_clip,
             unit_outage_dispatched_bin_denominator=unit_outage_dispatched_bin_denominator,
+            unit_outage_dispatched_bin_live_denominator=unit_outage_dispatched_bin_live_denominator,
             unit_outage_short_windows_gas=unit_outage_short_windows_gas,
             unit_outage_window_hour_grain=unit_outage_window_hour_grain,
             campd_per_unit_attribution=campd_per_unit_attribution,
@@ -7021,6 +7032,7 @@ def solve_and_persist(
             nyiso_spin_reserve_online=nyiso_spin_reserve_online,
             nyiso_gas_commitment_bridge=nyiso_gas_commitment_bridge,
             spp_gas_commitment_bridge=spp_gas_commitment_bridge,
+            pjm_gas_commitment_bridge=pjm_gas_commitment_bridge,
             soco_gas_st_campaign_commitment=soco_gas_st_campaign_commitment,
             miso_coal_night_floor=miso_coal_night_floor,
             miso_gas_ecomin_online_floor=miso_gas_ecomin_online_floor,
@@ -7987,6 +7999,7 @@ def solve_and_persist(
         "unit_outage_st_capacity_basis": unit_outage_st_capacity_basis,
         "unit_outage_per_unit_clip": unit_outage_per_unit_clip,
         "unit_outage_dispatched_bin_denominator": unit_outage_dispatched_bin_denominator,
+        "unit_outage_dispatched_bin_live_denominator": unit_outage_dispatched_bin_live_denominator,
         "unit_outage_short_windows_gas": unit_outage_short_windows_gas,
         "unit_outage_window_hour_grain": unit_outage_window_hour_grain,
         "campd_per_unit_attribution": campd_per_unit_attribution,
@@ -8014,6 +8027,7 @@ def solve_and_persist(
         "reliability_floor_overrides": reliability_floor_overrides,
         "nyiso_gas_commitment_bridge": nyiso_gas_commitment_bridge,
         "spp_gas_commitment_bridge": spp_gas_commitment_bridge,
+        "pjm_gas_commitment_bridge": pjm_gas_commitment_bridge,
         "soco_gas_st_campaign_commitment": soco_gas_st_campaign_commitment,
         "miso_coal_night_floor": miso_coal_night_floor,
         "miso_gas_ecomin_online_floor": miso_gas_ecomin_online_floor,
@@ -10356,6 +10370,7 @@ def run_replay_bundle(
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
     unit_outage_dispatched_bin_denominator: bool | None = None,
+    unit_outage_dispatched_bin_live_denominator: bool | None = None,
     unit_outage_short_windows_gas: bool | None = None,
     unit_outage_window_hour_grain: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
@@ -10557,6 +10572,12 @@ def run_replay_bundle(
         # recipe and the delta is provably the single flag.
         kwargs["unit_outage_dispatched_bin_denominator"] = (
             unit_outage_dispatched_bin_denominator
+        )
+    if unit_outage_dispatched_bin_live_denominator is not None:
+        # NWPP-NEXT-15: arm/disarm the LIVE sub-gate over a committed keeper's
+        # recipe, so an A/B solves both legs from one recipe.
+        kwargs["unit_outage_dispatched_bin_live_denominator"] = (
+            unit_outage_dispatched_bin_live_denominator
         )
     if unit_outage_short_windows_gas is not None:
         # pjm-d4-4: arm/disarm the GAS-side sub-5-day outage scope over a
@@ -13987,6 +14008,23 @@ def main() -> None:
         "(rule 19 [R-ONE-MECH]). Zero free parameters; byte-inert while off.",
     )
     parser.add_argument(
+        "--unit-outage-dispatched-bin-live-denominator",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="LIVE-capacity sub-gate of --unit-outage-dispatched-bin-denominator "
+        "(ScenarioConfig.unit_outage_dispatched_bin_live_denominator, "
+        "NWPP-NEXT-15; REQUIRES the parent, raises alone). The dispatched-bin "
+        "roster drops every dated exit-cohort row (the _p{plant}_r{yyyy}{mm} "
+        "bin) retired before the solve year — carried by the LP at zero "
+        "availability all year, so its pmax diluted the divide (NWPP Centralia "
+        "3845 1,340 vs live 670 MW; Colstrip 6076 2,094 vs 1,480; "
+        "FINDING-nwppnext13 §1.3). Second limb: with "
+        "wefor_residual_short_screened_coal armed, coal takes the WEFOR residual "
+        "on its screened share only, so wefor_residual_groups naming the coal "
+        "classes scopes the relief to screened coal. Zero free parameters; "
+        "byte-inert while off.",
+    )
+    parser.add_argument(
         "--unit-outage-per-unit-clip",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -14976,6 +15014,18 @@ def main() -> None:
         "stacked or replaced. Default off (byte-identical).",
     )
     parser.add_argument(
+        "--pjm-gas-commitment-bridge",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="PJM P1-native gas commitment bridge (PJM-NEXT-16): hold PJM's "
+        "merchant CCs (gas_cc by unit physics, CHP excluded) at their MEASURED "
+        "plant-basis minimum stable load (constants.PJM_GAS_BRIDGE_MIN_LOAD_FRAC "
+        "0.436, CAMPD 2023-2025) while the model's own P0 commits them, with the "
+        "restart legs, the measured 11 h minimum-run extension and the "
+        "commitment-real run screen. REPLACES cc_mustrun_per_plant (rule 19; "
+        "refused with it armed). Default off (byte-identical).",
+    )
+    parser.add_argument(
         "--soco-gas-st-campaign-commitment",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -15537,6 +15587,12 @@ def main() -> None:
                 or "--no-unit-outage-dispatched-bin-denominator" in sys.argv
                 else None
             ),
+            unit_outage_dispatched_bin_live_denominator=(
+                args.unit_outage_dispatched_bin_live_denominator
+                if "--unit-outage-dispatched-bin-live-denominator" in sys.argv
+                or "--no-unit-outage-dispatched-bin-live-denominator" in sys.argv
+                else None
+            ),
             unit_outage_short_windows_gas=(
                 args.unit_outage_short_windows_gas
                 if "--unit-outage-short-windows-gas" in sys.argv
@@ -15990,6 +16046,7 @@ def main() -> None:
         unit_outage_st_capacity_basis=args.unit_outage_st_capacity_basis,
         unit_outage_per_unit_clip=args.unit_outage_per_unit_clip,
         unit_outage_dispatched_bin_denominator=args.unit_outage_dispatched_bin_denominator,
+        unit_outage_dispatched_bin_live_denominator=args.unit_outage_dispatched_bin_live_denominator,
         unit_outage_short_windows_gas=args.unit_outage_short_windows_gas,
         unit_outage_window_hour_grain=args.unit_outage_window_hour_grain,
         campd_per_unit_attribution=args.campd_per_unit_attribution,
@@ -16022,6 +16079,7 @@ def main() -> None:
         nyiso_spin_reserve_online=args.nyiso_spin_reserve_online,
         nyiso_gas_commitment_bridge=args.nyiso_gas_commitment_bridge,
         spp_gas_commitment_bridge=args.spp_gas_commitment_bridge,
+        pjm_gas_commitment_bridge=args.pjm_gas_commitment_bridge,
         soco_gas_st_campaign_commitment=args.soco_gas_st_campaign_commitment,
         miso_coal_night_floor=args.miso_coal_night_floor,
         miso_gas_ecomin_online_floor=args.miso_gas_ecomin_online_floor,

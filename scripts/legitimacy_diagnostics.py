@@ -108,6 +108,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_NYISO_GAS_COMMITMENT_BRIDGE,
     MECH_SOCO_GAS_ST_CAMPAIGN,
     MECH_SPP_GAS_COMMITMENT_BRIDGE,
+    MECH_PJM_GAS_COMMITMENT_BRIDGE,
     MECH_HYDRO_MIN_FLOW,
     MECH_HYDRO_ROR_FLAT,
     MECH_NAMES,
@@ -630,6 +631,21 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     #   CAMPD vintage change (rules 13/23).
     (MECH_SPP_GAS_COMMITMENT_BRIDGE, "CC_REGULAR"): (0, 24),
     (MECH_SPP_GAS_COMMITMENT_BRIDGE, "ST_GAS"): (0, 24),
+    # pjm_gas_commitment_bridge (PJM-NEXT-16, MECH_PJM_GAS_COMMITMENT_BRIDGE —
+    # pipeline.commitment.build_pjm_gas_bridge_p1_prep): the PJM leg of the same
+    # family on PJM's merchant CCs. Rule-17 declaration (the SPP leg's, on PJM's
+    # own measured constants):
+    # * DRIVER — commitment physics: a committed CC's min-load block is
+    #   must-take (PJM does not let a unit at ecomin set LMP), and a gap it
+    #   cannot cycle through is bridged by its own min-down / restart economics.
+    # * WINDOW — self-windowing on the model's own P0 run pattern, ALL 24 hours
+    #   by driver (no clock hour); it REPLACES cc_mustrun_per_plant's
+    #   system-load window (rule 19).
+    # * FORWARD STORY — regenerates from any year's own P0 plus two measured
+    #   constants (constants.PJM_GAS_BRIDGE_MIN_LOAD_FRAC 0.436 /
+    #   PJM_GAS_BRIDGE_MIN_RUN_HOURS 11 h) that re-derive only on a CAMPD
+    #   vintage change (rules 13/23).
+    (MECH_PJM_GAS_COMMITMENT_BRIDGE, "CC_REGULAR"): (0, 24),
     # soco_gas_st_campaign_commitment (SOCO-53d, MECH_SOCO_GAS_ST_CAMPAIGN —
     # pipeline.commitment.build_soco_gas_st_campaign_p1_prep): the SOCO leg of
     # the same P1-native committed-state family, on SOCO's gas-STEAM fleet
@@ -964,6 +980,7 @@ BRIDGE_MECHS: tuple[int, ...] = (
     MECH_MISO_COAL_NIGHT_FLOOR,
     MECH_SPP_GAS_COMMITMENT_BRIDGE,
     MECH_MISO_GAS_ECOMIN_ONLINE,
+    MECH_PJM_GAS_COMMITMENT_BRIDGE,
 )
 
 # D-6 holdout quarantine (CLAUDE.md rule 22, amended 2026-07-04; TIER-AWARE

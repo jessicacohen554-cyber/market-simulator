@@ -53,6 +53,7 @@ from market_sim.pipeline.commitment import (
     build_nyiso_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
     build_soco_gas_st_campaign_p1_prep,
+    build_pjm_gas_bridge_p1_prep,
     build_spp_gas_bridge_p1_prep,
 )
 from market_sim.pipeline.kwargs import (
@@ -357,6 +358,13 @@ def run_year_solve(
     spp_bridge_prep = build_spp_gas_bridge_p1_prep(
         config, iso, fleet, fleet_arrays, mc_base
     )
+    # P1-native PJM gas commitment bridge (PJM-NEXT-16): the PJM leg of the same
+    # family on PJM's merchant CCs at their measured plant-basis minimum stable
+    # load; replaces cc_mustrun_per_plant's system-load window (rule 19). None
+    # for every non-PJM / gate-off run (byte-identical).
+    pjm_bridge_prep = build_pjm_gas_bridge_p1_prep(
+        config, iso, fleet, fleet_arrays, mc_base
+    )
     # P1-native SOCO gas-steam CAMPAIGN commitment floor (SOCO-53d): the SOCO
     # leg of the same family, and the only one whose object is a multi-WEEK
     # campaign rather than an overnight or midday gap. SOCO's gas boilers
@@ -413,6 +421,7 @@ def run_year_solve(
             or ercot_bridge_prep
             or nyiso_bridge_prep
             or spp_bridge_prep
+            or pjm_bridge_prep
             or soco_campaign_prep
             or miso_night_floor_prep
             or miso_ecomin_prep
