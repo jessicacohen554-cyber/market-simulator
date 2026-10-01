@@ -17,7 +17,7 @@ CC_CHP,South,2,S_CHP2,10554,Formosa Utility Venture Ltd,933.4,5.65,2x1,F-class (
 CC_CHP,South,3,S_CHP3,55206,Corpus Christi Energy Center,593.3,5.62,1x1,E/F-class (CHP),60.0,0.0,30.0,10.0,24.0,4.0,1.05,,1.0,1.45
 CC_CHP,South_Central,1,SC_CHP1,50118,Hal C Weaver Power Plant,138.9,5.06,1x1,F-class (CHP),60.0,0.0,30.0,10.0,24.0,4.0,1.05,,1.0,1.45
 CC_CHP,South_Central,2,SC_CHP2,58151,Central Utility Plant - Texas A&M,45.1,5.58,1x1,F-class (CHP),60.0,0.0,30.0,10.0,24.0,4.0,1.05,,1.0,1.45
-CC_REGULAR,South_Central,3,SC_CHP3,55154,Lost Pines 1 Power Project,609.0,10.83,1x1,E-class (CHP),60.0,0.0,35.0,5.0,24.0,4.0,1.05,,1.0,1.45
+CC_REGULAR,South_Central,3,SC_CHP3,55154,Lost Pines 1 Power Project,609.0,10.83,2x1,F-class,0.0,25.0,60.0,15.0,16.0,6.0,,1.08,1.0,1.55
 CC_CHP,West,1,W_CHP1,52176,C R Wing Cogen Plant,230.0,12.38,1x1,E-class (CHP),60.0,0.0,35.0,5.0,24.0,4.0,1.05,,1.0,1.45
 CC_REGULAR,Houston,1,H_CC1,60122,Colorado Bend II,1230.3,6.57,2x1,F-class (late),0.0,20.0,65.0,15.0,16.0,6.0,,1.08,1.0,1.55
 CC_REGULAR,Houston,2,H_CC2,55062,Tenaska Frontier Generation Station,939.7,7.15,2x1,F-class,0.0,25.0,60.0,15.0,16.0,6.0,,1.08,1.0,1.55

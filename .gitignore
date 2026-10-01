@@ -3934,6 +3934,8 @@ results/calibration/_rcaiso21/
 
 results/calibration/_rcaiso22/
 
+# R-ERCOT-21 shard legs: kept out of main (rule 32(d)); provenance SHAs in RESULT doc
+results/calibration/r_ercot21_arm_*/
 # PJM-NEXT-16 per-year shard legs: composed in the parent, never committed (rule 32(d)).
 # A legs pinned 6d4c7749 (branches claude/pjmnext16-a-<y>); B legs pinned 42e87bcd
 # (claude/pjmnext16-b2-<y>); the 5b813f34 B legs are invalid (PRECOMMIT §7).
