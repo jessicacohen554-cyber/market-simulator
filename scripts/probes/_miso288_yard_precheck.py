@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """miso-288 pre-check (ZERO LP): coal budget at yard grain only vs the incumbent.
 
-Pre-registered in ``docs/PRECOMMIT-miso288-yard-only-precheck-2026-09-30.md``
+Pre-registered in ``docs/records/miso/PRECOMMIT-miso288-yard-only-precheck-2026-09-30.md``
 (pushed at c4ffbefa before this probe was written; thresholds there, not here).
 
 Each binding coal energy row acts in the LP as a $/MMBtu adder ``lam`` times the
@@ -14,7 +14,7 @@ The ``lam`` vector is found by projected subgradient on row violations.
 * INC  (incumbent): pooled monthly ``B/12`` rows + per-yard annual rows.
 * YARD (candidate): per-yard annual rows only (``coal_fuel_inventory=False``).
 
-Output: ``results/calibration/_miso288_yard_precheck.json``. Rule 13: nothing
+Output: ``results/phase0/miso/_miso288_yard_precheck.json``. Rule 13: nothing
 here feeds a solve.
 """
 
@@ -48,7 +48,7 @@ from scripts.probes._miso287_p1_residual import (  # noqa: E402
 )
 
 PAYLOAD = REPO / "frontend/data/backcast/runs/2026-09-28-miso-280-splitremap.js"
-OUT = REPO / "results/calibration/_miso288_yard_precheck.json"
+OUT = REPO / "results/phase0/miso/_miso288_yard_precheck.json"
 MAX_IT = 200
 T0 = time.time()
 TOL = 0.01

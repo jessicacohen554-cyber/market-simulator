@@ -2,7 +2,7 @@
 """ERCOT-123 — what the unoffered 83 % of coal DAM headroom does in real time.
 
 Phase 1 of the lane chartered by
-``docs/DIAGNOSIS-ercot122-coal-offer-envelope-2026-07-27.md`` §4/§5.4. That
+``docs/records/ercot/DIAGNOSIS-ercot122-coal-offer-envelope-2026-07-27.md`` §4/§5.4. That
 session measured, from the 60-Day **DAM** disclosure, that only 0.161-0.184 of
 online coal operating headroom carries any submitted incremental DAM energy
 offer (CC control 0.594-0.677), and deliberately built no mechanism because

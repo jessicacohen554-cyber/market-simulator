@@ -121,7 +121,7 @@ def main() -> None:
     ap.add_argument("--year", type=int, default=2022)
     ap.add_argument(
         "--out",
-        default=str(REPO / "results" / "calibration" / "_nyiso242_tail_zonal.json"),
+        default=str(REPO / "results" / "phase0" / "nyiso" / "_nyiso242_tail_zonal.json"),
     )
     args = ap.parse_args()
     year = args.year

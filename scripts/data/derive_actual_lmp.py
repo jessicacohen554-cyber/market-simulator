@@ -96,7 +96,7 @@ produced for the price-duration-curve overlay (J3a):
     parquet was indexed on the prevailing clock directly, which paired every
     hourly comparison one real hour off for the ~5,600 DST hours/year — the
     scoring-clock artifact in
-    docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md §1.)
+    docs/records/ercot/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md §1.)
 
 Run after refreshing ``data/raw/lmp-data/``; commit the JSON and the
 hourly parquet. Missing source files for an ISO/year are skipped, so a
@@ -1366,7 +1366,7 @@ def build(years, isos=None) -> tuple[dict, dict]:
 # but the legacy ``rt``/``da`` fields above are EQUAL-HOUR means of a hub
 # series — a mixed basis whose wedge grows with tail realism (a byte-perfect
 # ERCOT 2023 model scores +33.5% against its own actual; see
-# docs/handoffs/ercot-ordc-capdual-adder-2026-07.md §4). The ``*_lw`` fields
+# docs/records/ercot/ercot-ordc-capdual-adder-2026-07.md §4). The ``*_lw`` fields
 # below put the ACTUAL on the same basis as the model: each ISO's committed
 # hourly actual series weighted by the MEASURED hourly load the model itself
 # dispatches in a backcast (``eia_loader.load_demand`` — same series, so the

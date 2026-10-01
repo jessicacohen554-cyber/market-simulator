@@ -331,7 +331,7 @@ def main() -> None:
         print(
             f"{r['year']:<6}{r['pt']:>10.4f}{r['eff_reg']:>16.4f}{r['eff_arm']:>17.4f}{r['eff_arm'] - 0.916:>+13.4f}"
         )
-    out = REPO / "results/calibration/_pjm_h5_committed_delta.json"
+    out = REPO / "results/phase0/pjm/_pjm_h5_committed_delta.json"
     out.write_text(json.dumps({"delta": summary, "sigmoid": sig_rows}, indent=2))
     print(f"\nwrote {out}")
 

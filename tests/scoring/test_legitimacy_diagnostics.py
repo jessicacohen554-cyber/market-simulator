@@ -1117,7 +1117,7 @@ class TestMechanismThreading:
         rows. The superseded ROW-COUNT vote labelled an 87 %-steam site
         ``CC_REGULAR``, moving its whole dispatch into the wrong class
         denominator and flipping C8
-        (``docs/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md``).
+        (``docs/records/misc/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md``).
         """
         h = HOURS
         pmax = [431.2] * 4 + [38.36] * 7

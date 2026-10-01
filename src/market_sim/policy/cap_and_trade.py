@@ -3,7 +3,7 @@
 Every carbon path routes through the same two fleet quantities —
 ``emission_rate`` (tCO2/MWh) and a per-generator membership weight ``m[g]`` —
 so backcast and forecast share one structure
-(``docs/handoffs/emissions-mass-cap-plan-2026-07.md`` §3). The effective
+(``docs/records/misc/emissions-mass-cap-plan-2026-07.md`` §3). The effective
 carbon cost on a member generator is always ``emission_rate[g] * m[g] *
 p_allowance``; only the *source* of ``p_allowance`` differs:
 
@@ -303,7 +303,7 @@ def resolve_carbon_program(
         # It USED TO null the price whenever an explicit non-default
         # ``carbon_price_path`` was set, so a named federal RFF path REPLACED
         # the state program. Owner ruling S2 (2026-09-06, card D-1, desk ledger
-        # docs/handoffs/scenario-desk-ledger-2026-09.md §2) rules that
+        # docs/records/misc/scenario-desk-ledger-2026-09.md §2) rules that
         # composition to be a FLOOR instead:
         # ``effective = max(RFF path(year), program trajectory(year))`` on a
         # program ISO, the path alone elsewhere. The ``max`` lives in exactly

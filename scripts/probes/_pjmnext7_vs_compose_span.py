@@ -8,7 +8,7 @@ unchanged. The recipe check is this lane's: every leg must equal the PJM-NEXT-6
 keeper's own year (``pjmnext6_sp_span/run_config_<y>.json``) EXACTLY apart from
 the arm flag ``pjm_da_virtual_settle_financial`` (design A') — and every leg must
 be solved at the pinned PRECOMMIT commit
-(docs/PRECOMMIT-pjm-next-7-virtual-settle-2026-09-28.md), with the
+(docs/records/pjm/PRECOMMIT-pjm-next-7-virtual-settle-2026-09-28.md), with the
 COAL-SUB bare-``COAL`` offer-curve fold still tolerated.
 Anything else differing aborts, so a control leg or a wrong-recipe leg can
 never compose in.

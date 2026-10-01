@@ -18,7 +18,7 @@ Usage::
 
     PYTHONPATH=.:src:scripts python3 scripts/probes/_r_ercot5_window_edge_census.py <out.json>
 
-Record: ``docs/handoffs/FINDING-r-ercot-5-2019-scarcity-2026-09-25.md``.
+Record: ``docs/records/ercot/FINDING-r-ercot-5-2019-scarcity-2026-09-25.md``.
 """
 
 import json

@@ -3,7 +3,7 @@
 WRITTEN AND COMMITTED BEFORE ANY LEG EXISTS, and before the owner has ruled
 on whether any leg will be solved: a kill condition coded after the numbers
 are in hand can be written to fit them. Every threshold below is transcribed
-from ``docs/handoffs/FINDING-nwpp-49-pondage-design-2026-09-23.md`` §5 and
+from ``docs/records/nwpp/FINDING-nwpp-49-pondage-design-2026-09-23.md`` §5 and
 nothing else. Two arms are pre-registered, selected by ``--arm``:
 
 * ``ror_chain_exempt`` (DEFAULT; owner ruling 2026-09-24, "RoR split, chain

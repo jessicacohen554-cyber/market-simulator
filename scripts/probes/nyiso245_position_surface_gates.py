@@ -4,7 +4,7 @@ ZERO LP (rule 32 ``[R-SHARD]`` (a)). Reads the ``_nyiso245_cache`` fleet dump an
 the keeper's committed ``class_hourly`` sidecar; enters no LP and rebuilds no fleet.
 
 Every threshold is fixed in
-``docs/PRECOMMIT-nyiso245-position-shape-offer-surface-2026-09-20.md`` §3, committed
+``docs/records/nyiso/PRECOMMIT-nyiso245-position-shape-offer-surface-2026-09-20.md`` §3, committed
 at ``398f0437`` before any number here was computed (rule 1 ``[R-STRUCT]``).
 
 * **G1 — REACH.** The idle sub-$300 capacity in the 70 missed winter hours of 2022 that
@@ -32,7 +32,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 BUNDLE = REPO / "results" / "calibration" / "nyiso241_ctcommitted_span"
 CACHE = REPO / "results" / "calibration" / "_nyiso245_cache"
-OUT = REPO / "results" / "calibration" / "_nyiso245_gates_g1g2.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso245_gates_g1g2.json"
 
 HOURS = 8760
 THRESHOLD = 300.0

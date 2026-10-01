@@ -6,7 +6,7 @@ remote fuel column from its net generation and demand (interchange untouched);
 member's generation (interchange missing, ``D == NG``) into a missing reading
 for the pool's gap guard; ``frames._pool_member_demand`` is the single
 construction the pool total and the NWPP zonal regroup both read. Record:
-``docs/handoffs/FINDING-nwppnext2-psei-basis-2026-09-25.md``.
+``docs/records/nwpp/FINDING-nwppnext2-psei-basis-2026-09-25.md``.
 """
 
 from __future__ import annotations

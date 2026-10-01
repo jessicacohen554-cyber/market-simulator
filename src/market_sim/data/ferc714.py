@@ -71,7 +71,7 @@ def load_ferc714_hourly_demand(ba_code: str) -> pd.Series | None:
 #
 # REPORTED-ONLY (owner ruling 2026-09-27, "Intake, reported-only"; intake lane
 # soco-83, source verified by soco-82,
-# ``docs/handoffs/r-soco/FINDING-soco-82-2026-09-27.md`` §2). The series feeds
+# ``docs/records/soco/r-soco/FINDING-soco-82-2026-09-27.md`` §2). The series feeds
 # NO gate, NO scorer and NO LP: it is a balancing authority's own reported
 # marginal cost, read by diagnostics only. It is a measured *outcome*, so
 # rule 13 [R-MEASURED] forbids pinning it into a solve.

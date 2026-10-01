@@ -6,7 +6,7 @@ re-fetch route named in ``data/raw/ferc-714/README.md``). The series is
 REPORTED-ONLY (owner ruling 2026-09-27, "Intake, reported-only"; lane soco-83):
 it feeds no gate, no scorer and no LP.
 
-Source (verified by lane soco-82, ``docs/handoffs/r-soco/FINDING-soco-82-2026-09-27.md`` §2):
+Source (verified by lane soco-82, ``docs/records/soco/r-soco/FINDING-soco-82-2026-09-27.md`` §2):
 Catalyst Cooperative's PUDL raw FERC-714 archive, Zenodo record 21738524
 (v32.0.0). ``www.ferc.gov`` returns 403 from this environment, so the Zenodo
 copy of the same filings is the reachable route.

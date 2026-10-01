@@ -1,6 +1,6 @@
 """R-SOCO phase 0 (ZERO LP): per-year fleet-only census on the incumbent SOCO keeper recipe.
 
-Audit `docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.8.
+Audit `docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.8.
 Two sides per year, ONE side per process (loaders are lru_cached):
 
 * ``ctl`` -- the keeper recipe at HEAD with the F1 default flips forced back OFF

@@ -224,7 +224,7 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
     # data/raw/eia-aeo/eia_aeo2021_fuel_prices.csv and
     # data/raw/eia-aeo/eia_aeo2023_fuel_prices.csv
     # (scripts/data/fetch_eia_aeo.py --aeo-year 2021|2023). Arithmetic and the
-    # full ledger: docs/handoffs/fh-3-asknown-driver-vintages-2026-08.md §2.
+    # full ledger: docs/records/forecast/fh-3-asknown-driver-vintages-2026-08.md §2.
     #
     # "hindcast_asknown_aeo2021": AEO2021 Reference (``ref2021``), published
     # 2021-02-03, real 2020$; deflator base 2020 = 1.133393. The
@@ -486,7 +486,7 @@ GAS_BASIS_DIFFERENTIAL: dict[str, float] = {
 # fleet gives +0.2774 / +0.3164 / +0.3028 / +1.2622, the per-year EIA-860
 # vintage BA gives +0.2834 / +0.3218 / +0.3187 / +1.2650 — the committed
 # construction is kept because it is the one that reproduces 2023-2025.
-# Record: docs/handoffs/r-soco/PRECOMMIT-soco-72-2026-09-26.md.
+# Record: docs/records/soco/r-soco/PRECOMMIT-soco-72-2026-09-26.md.
 #
 # Rule 25 [R-ISO-SCOPE]: SOCO's derivation is SOCO's. No other ISO has a row
 # here, and a peer lane that wants one derives it from its OWN receipts.
@@ -761,7 +761,7 @@ PRB_COMMODITY_FLAT_THROUGH: int = 2030
 # re-derive the per-(ISO, supply) gas-keyed coal passthrough sigmoid
 # (``COAL_SIGMOID_DEFAULTS`` in scenarios.py) from the EIA Annual Coal Report
 # region f.o.b.-mine price + BLS PPI coal-mining series intaked in #1803
-# (data/raw/coal-prices/, docs/handoffs/coal-price-data-intake-2026-07.md).
+# (data/raw/coal-prices/, docs/records/misc/coal-price-data-intake-2026-07.md).
 # These are grounded commodity/heat/transport facts — NOT tuned to any ISO's
 # price/volume residual (CLAUDE.md rules 10/11/23). See the derive script's
 # module docstring for how each feeds the floor/ceil/gas_mid/gas_slope fit.
@@ -1132,7 +1132,7 @@ THERMAL_AVAILABILITY: dict[str, tuple[float, ...]] = {
 # C3b caveat, so a hand-set value here would be an answer key for an
 # already-ledgered miss. It may be REPLACED ONLY by a measured seasonal
 # forced-outage shape clearing the acceptance test in
-# docs/handoffs/miso-outage-grain-data-ask-2026-07.md, and per rule 23
+# docs/records/miso/miso-outage-grain-data-ask-2026-07.md, and per rule 23
 # [R-FROZEN-DERIVE] that commit must cite the data change, never a residual.
 #
 # THE MEASURED REPLACEMENT EXISTS (miso-160, 2026-08-16), per the owner's
@@ -1486,7 +1486,7 @@ CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
 # warning. For NYISO 2022 that is $6.13/MWh on the fleet 0.4558 tCO2/MWh-net
 # (8.2 % of the 2022 RT mean) and MERIT-ORDER distorting, since the CC-to-steam
 # rate spread is 2.9x. Diagnosis: defect D-1 of
-# results/calibration/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md.
+# docs/records/nyiso/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md.
 #
 # CAISO is deliberately NOT extended here: CARB rows come from a different
 # source that blocks automated fetches (see the carbon-auction-results raw
@@ -1543,7 +1543,7 @@ STATE_CARBON_PRICE_BY_ISO: dict[str, dict[int, float]] = {
 # semantics change. Folding this into STATE_CARBON_PRICE_BY_ISO (+
 # price_key="PJM") and retiring the gate is the named promotion path, an owner
 # decision on the pjm-146 A/B numbers
-# (results/calibration/PREREG-pjm146-rggi-allowance-2026-08-02.md §2.2).
+# (docs/records/pjm/PREREG-pjm146-rggi-allowance-2026-08-02.md §2.2).
 # Membership is NOT priced here: the per-generator member mask (NJ/MD/DE all
 # years, VA 2023 only, exact per-plant EIA-860 state test with the committed
 # PJM_RGGI_ZONE_SHARE fallback) is applied at the mc seam via

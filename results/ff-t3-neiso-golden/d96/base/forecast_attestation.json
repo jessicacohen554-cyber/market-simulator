@@ -3,7 +3,7 @@
  "bundle": "results/ff-t3-neiso-golden/d96/base",
  "run_id": "neiso-2026-2050-t3-golden3-d96-base",
  "attested_by": "capx D96, 2026-09-25 (owner ruling Q69) \u2014 THE PRODUCING SESSION (rubric \u00a75's default author): this lane solved the bundle it attests, as leg `base` of the four-leg post-F1 re-solve, through a pinned shard. Assertions are read from committed bytes, not judged at authoring time; an assertion that reads FALSE is recorded FALSE and FC-7 fails on it at full magnitude rather than the attestation being re-scoped to fit.",
- "predeclaration": "docs/handoffs/PRECOMMIT-capx-d96-2026-09-25.md (+ Addendum A), pushed at 5a48f43787c3ec0d29ae451680ab62a5e53b5156 before any LP",
+ "predeclaration": "docs/records/forecast/PRECOMMIT-capx-d96-2026-09-25.md (+ Addendum A), pushed at 5a48f43787c3ec0d29ae451680ab62a5e53b5156 before any LP",
  "assertions": {
   "dof_ledger_complete": {
    "value": false,
@@ -17,7 +17,7 @@
   },
   "honest_unfit_referenced": {
    "value": true,
-   "read_from": "full_horizon_summary.json invariants + docs/handoffs/FINDING-capx-d96-2026-09-25.md",
+   "read_from": "full_horizon_summary.json invariants + docs/records/forecast/FINDING-capx-d96-2026-09-25.md",
    "evidence": "14 invariants carried into the verdict; every failing FC row reported at full magnitude; every pre-registered prediction graded in the FINDING with each miss named (the three arm-level cumulative-CO2 and terminal-margin directions, the FC-6 P1 margin bracket), and the summary-grain FC-6 P2 row's missing objective sub-check is disclosed on the row and cross-checked at cache grain in the FINDING."
   },
   "quarantine_attested": {

@@ -195,7 +195,7 @@ _RULE26_DELETED_UNCONDITIONAL: dict[str, tuple[str, object]] = {
     # eia860_vintage_tracks_solve_year the in-run retiree set is empty
     # 2019-2024, and in 2025 a flag-off rebuild moves 0 rows (the COD ramp
     # already zeroes those retirees) —
-    # docs/FINDING-pjm-next-5-phase0-cards-1-2-3b-2026-09-27.md §3(b). A
+    # docs/records/pjm/FINDING-pjm-next-5-phase0-cards-1-2-3b-2026-09-27.md §3(b). A
     # pre-F1 PJM bundle recording True WITHOUT the vintage flag did carry live
     # caps, so its replay at HEAD is not byte-faithful; those bundles are
     # historical records superseded by F1.
@@ -205,7 +205,7 @@ _RULE26_DELETED_UNCONDITIONAL: dict[str, tuple[str, object]] = {
     # inject_nyiso_firm_imports / NYISO_FIRM_IMPORT_FLOOR_FRAC) under rule 26
     # [R-DELETE]; registered in scenarios._CACHE_KEY_RETIRED_FIELDS. Only NYISO
     # ever armed it, and NYISO-NEXT-9 un-armed it from the keeper
-    # (docs/RESULT-nyiso-next9-hq-floor-2026-09-28.md), so the designated
+    # (docs/records/nyiso/RESULT-nyiso-next9-hq-floor-2026-09-28.md), so the designated
     # keeper and every other ISO's meta record False or None (the tri-state
     # "flag never set", default False) — both inert. A NYISO bundle recording
     # True floored the rung and still hard-errors as historical-record-only.
@@ -284,7 +284,7 @@ def build_kwargs(meta: dict) -> dict:
     silent drop. This is the closure of the miso-50..53 regression class
     (recipes reconstructed from a lossy channel silently dropped the whole
     keeper structure; see the CLAUDE.md critical lesson and
-    results/calibration/FINDING-miso-august-scarcity-2026-07.md §1): the
+    docs/records/miso/FINDING-miso-august-scarcity-2026-07.md §1): the
     meta.json replay is the ONLY sanctioned recipe reconstruction, and it
     refuses to lose structure quietly.
     """
@@ -341,7 +341,7 @@ def build_kwargs(meta: dict) -> dict:
             # made the ERCOT keeper UNREPLAYABLE ON EVERY YEAR — the key sits in
             # the base recipe and ``build_kwargs`` runs once, before the year
             # loop — and all five ERCOT MER shards stopped here on 2026-09-19
-            # (docs/handoffs/FINDING-ercot-mer-replay-blocked-2026-09-19.md).
+            # (docs/records/ercot/FINDING-ercot-mer-replay-blocked-2026-09-19.md).
             #
             # Routed PER-KEY and deliberately NOT as a blanket "any
             # ScenarioConfig field falls through to prb_overrides": the unmapped
@@ -895,7 +895,7 @@ def pin_determinism_env() -> None:
     :func:`build_kwargs`) would otherwise inherit it silently. It is the same
     import-time pattern that poisoned the pytest process through
     ``capture_keeper_goldens.py``
-    (``docs/FINDING-fast-tier-repair-2026-09.md`` §4b, routed for this script
+    (``docs/records/misc/FINDING-fast-tier-repair-2026-09.md`` §4b, routed for this script
     at §7.6); here the pinned value equals ``pipeline/solve.py``'s own default,
     so no CLI behaviour changes either way.
     """

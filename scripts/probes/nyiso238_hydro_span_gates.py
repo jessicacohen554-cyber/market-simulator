@@ -2,8 +2,8 @@
 ``hydro_budget_period_by_instrument`` arm bundle against the keeper.
 
 Every gate is the one written in
-``docs/PRECOMMIT-nyiso236-hydro-budget-period-screen-2026-09-16.md`` and re-stated
-verbatim in ``docs/PRECOMMIT-nyiso238-hydro-budget-span-2026-09-16.md`` section 3:
+``docs/records/nyiso/PRECOMMIT-nyiso236-hydro-budget-period-screen-2026-09-16.md`` and re-stated
+verbatim in ``docs/records/nyiso/PRECOMMIT-nyiso238-hydro-budget-span-2026-09-16.md`` section 3:
 
 * **G1 FEASIBILITY** - LP optimal; slack / dump as the keeper.
 * **G2 IDENTITY** (KILL) - annual hydro within 0.1 %, every month within 0.5 %.

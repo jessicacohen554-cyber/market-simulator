@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Score the nyiso-229 2022 screen gates from two bundles' committed hourlies.
 
-Pre-registration: ``results/calibration/PRECOMMIT-nyiso229-outage-window-hour-grain.md``
-§4, plus ``docs/ADDENDUM-nyiso229-gdrift-and-the-control-is-solved-in-shard-2026-09-12.md``
+Pre-registration: ``docs/records/nyiso/PRECOMMIT-nyiso229-outage-window-hour-grain.md``
+§4, plus ``docs/records/nyiso/ADDENDUM-nyiso229-gdrift-and-the-control-is-solved-in-shard-2026-09-12.md``
 (G-CTRL moved to a control solved in the same shard).
 
 The gates are STRUCTURAL and STOP-ONLY (rule 29 ``[R-SCREEN]``): they ask whether the

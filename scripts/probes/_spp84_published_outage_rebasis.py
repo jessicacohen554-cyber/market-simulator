@@ -1,6 +1,6 @@
 """SPP-84 (zero LP): the keeper's thermal OUTAGE level against SPP's own published outage by fuel.
 
-Record: ``docs/handoffs/FINDING-spp-84-published-outage-vs-keeper-2026-09-26.md``.
+Record: ``docs/records/spp/FINDING-spp-84-published-outage-vs-keeper-2026-09-26.md``.
 
 SPP-83 found the keeper treats ~8 GW as available that SPP's market had offline, ~6 GW of it gas,
 and asked for a MEASURED, forward-reproducible availability input (rule 13) that could own it.
@@ -44,7 +44,7 @@ sys.path.insert(0, str(REPO_ROOT))
 from scripts.probes._spp72_demand_tightness import CST_OFFSET_H, model_clock_index  # noqa: E402
 from scripts.probes._spp81b_upper_tercile_marginal_unit import BUNDLE, rebuild  # noqa: E402
 
-FINDING = "docs/handoffs/FINDING-spp-84-published-outage-vs-keeper-2026-09-26.md"
+FINDING = "docs/records/spp/FINDING-spp-84-published-outage-vs-keeper-2026-09-26.md"
 GAS = ("gas_cc", "gas_ct", "gas_st")
 VER = ("WIND", "SOLAR", "STORAGE", "BATTERY")
 SPP_COL = {"coal": "Coal MW", "gas": "Natural Gas MW"}
@@ -273,7 +273,7 @@ def main() -> None:
     ap.add_argument(
         "--out",
         type=Path,
-        default=REPO_ROOT / "results/calibration/_spp84_published_outage_phase0.json",
+        default=REPO_ROOT / "results/phase0/spp/_spp84_published_outage_phase0.json",
     )
     a = ap.parse_args()
     o = load_outage_zips(a.outage) if a.outage.is_dir() else pd.read_parquet(a.outage)

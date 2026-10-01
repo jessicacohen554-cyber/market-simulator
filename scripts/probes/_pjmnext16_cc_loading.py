@@ -20,7 +20,7 @@ and day (HE 08-23 EPT) / night. The model hour index is aligned to EIA-930 local
 the lag that maximises the demand correlation (reported).
 
 System ledger per hour: dGAS (model gas family - EIA-930 gas), dCOAL, dEXPORT (model net
-export - actual net export), dDEMAND. Writes ``results/calibration/_pjmnext16_cc_loading.json``.
+export - actual net export), dDEMAND. Writes ``results/phase0/pjm/_pjmnext16_cc_loading.json``.
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ BENCH = REPO / "frontend/data/backcast/bench/PJM"
 RUN = REPO / "frontend/data/backcast/runs/2026-09-28-pjm-next8-exitfix.js"
 HOURLY = REPO / "results/calibration/pjmnext8_xf_span/hourly"
 E930 = REPO / "data/raw/eia-930"
-OUT = REPO / "results/calibration/_pjmnext16_cc_loading.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext16_cc_loading.json"
 YEARS = (2019, 2020, 2021, 2022, 2023, 2024, 2025)
 FAIL = (2019, 2020, 2022, 2023)
 KLASS = "CC_REGULAR"

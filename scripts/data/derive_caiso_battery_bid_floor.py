@@ -28,7 +28,7 @@ H1b). No new assumption is imported to do it.
 PRE-REGISTRATION
 ----------------
 Every classifier stage, gate and threshold below is fixed in
-``results/calibration/PRECHECK-caiso178-public-bids-2026-08-06.md``, which was
+``docs/records/caiso/PRECHECK-caiso178-public-bids-2026-08-06.md``, which was
 committed and pushed BEFORE any bid price was read. This module implements
 that document; it does not extend it.
 
@@ -82,9 +82,9 @@ Usage::
     uv run python scripts/data/derive_caiso_battery_bid_floor.py --years 2024
 
 Writes (all committed — the zips are gitignored, the derivation is not):
-    results/calibration/_caiso178_public_bid_floor.json      gate record
-    results/calibration/_caiso178_bid_floor_resources.csv    per resource-year
-    results/calibration/_caiso178_bid_floor_hist.csv         $0.25-grid histogram
+    results/phase0/caiso/_caiso178_public_bid_floor.json      gate record
+    results/phase0/caiso/_caiso178_bid_floor_resources.csv    per resource-year
+    results/phase0/caiso/_caiso178_bid_floor_hist.csv         $0.25-grid histogram
 """
 
 from __future__ import annotations
@@ -108,11 +108,13 @@ sys.path.insert(0, str(REPO))
 from scripts.lib.dam_public_bids.caiso import parse_day  # noqa: E402
 
 ZIPS = REPO / "data" / "raw" / "caiso-public-bids" / "zips"
-OUT_JSON = REPO / "results" / "calibration" / "_caiso178_public_bid_floor.json"
-OUT_RES = REPO / "results" / "calibration" / "_caiso178_bid_floor_resources.csv"
-OUT_HIST = REPO / "results" / "calibration" / "_caiso178_bid_floor_hist.csv"
+OUT_JSON = REPO / "results" / "phase0" / "caiso" / "_caiso178_public_bid_floor.json"
+OUT_RES = REPO / "results" / "phase0" / "caiso" / "_caiso178_bid_floor_resources.csv"
+OUT_HIST = REPO / "results" / "phase0" / "caiso" / "_caiso178_bid_floor_hist.csv"
 #: caiso-176's committed bucket vocabulary — read, never re-declared here.
-BIDSTACK_JSON = REPO / "results" / "calibration" / "_caiso176_bidstack_reservation.json"
+BIDSTACK_JSON = (
+    REPO / "results" / "phase0" / "caiso" / "_caiso176_bidstack_reservation.json"
+)
 
 YEARS = (2023, 2024, 2025)
 
@@ -497,7 +499,7 @@ def main(argv: list[str] | None = None) -> int:
 
     out: dict = {
         "probe": "caiso-178 PUB_DAM_GRP battery discharge bid floor",
-        "prereg": "results/calibration/PRECHECK-caiso178-public-bids-2026-08-06.md",
+        "prereg": "docs/records/caiso/PRECHECK-caiso178-public-bids-2026-08-06.md",
         "source": "data/raw/caiso-public-bids/zips/*_PUB_BID_DAM_v3_csv.zip (OASIS PUB_DAM_GRP)",
         "incumbent_adder": 5.0,
         "caiso176_bound": CAISO_BOUND,

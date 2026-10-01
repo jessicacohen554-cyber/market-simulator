@@ -12,7 +12,7 @@ every hash before archiving the shards). Per directory:
 * `body_daily.parquet` — per (resource, local day): median body price at 35 % of capacity, the
   Theil–Sen classifier's daily table.
 
-**These reproduce the committed DAM surface exactly** (`docs/RESULT-caiso283-rtm-flat-2026-09-16.md`
+**These reproduce the committed DAM surface exactly** (`docs/records/caiso/RESULT-caiso283-rtm-flat-2026-09-16.md`
 §1: deviation 0.000 on every band and the same bucket populations), which is what makes the
 RTM-vs-DAM comparison in `_caiso283_pool_*.json` trustworthy. Pooling instrument:
 `scripts/probes/_caiso283_pool.py`. Verdict: RTM-FLAT (CC econ bands within 0.03 across markets).

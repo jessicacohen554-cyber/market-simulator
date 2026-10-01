@@ -5,7 +5,7 @@ entirely a description of NYISO MIS **P-27** masked bid curves.
 
 **This is NOT a gated test and nothing is selected on it.** The session's gate
 is the kill test of
-``docs/PRECOMMIT-nyiso243-outage-intake-kill-test-2026-09-20.md`` §3, which the
+``docs/records/nyiso/PRECOMMIT-nyiso243-outage-intake-kill-test-2026-09-20.md`` §3, which the
 availability reading FAILED. This probe characterises the corpus's *other*
 field — the submitted 12-block economic offer curve — because the kill test's
 own result points at it: the fleet offered **more** capacity in the extreme
@@ -50,7 +50,7 @@ from scripts.probes.nyiso243_offered_availability import (
 )
 
 REPO = Path(__file__).resolve().parents[2]
-OUT = REPO / "results" / "calibration" / "_nyiso243_measured_offer_stack.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso243_measured_offer_stack.json"
 
 PRICE_POINTS = (100.0, 300.0, 500.0, 1000.0)
 _MW_COLS = [f"Dispatch MW{i}" for i in range(1, 13)]

@@ -37,7 +37,7 @@
     "COAL_PRB",
     "COAL_WC"
    ],
-   "prereg": "docs/handoffs/PRECOMMIT-spp-52a-2026-09-09.md, pushed at c1393878 BEFORE the solve was launched",
+   "prereg": "docs/records/spp/PRECOMMIT-spp-52a-2026-09-09.md, pushed at c1393878 BEFORE the solve was launched",
    "structural_shares_touched": false,
    "phys_fields_touched": false,
    "set_ex_ante_evidence": "The PRECOMMIT declaring 0.93 was committed and pushed before run_calibration_full.py was invoked; the commit precedes the bundle's own timestamps.",
@@ -45,7 +45,7 @@
    "years_held_basis": "SPP-100 (2026-09-28): this run's own solved years [2019, 2020, 2021, 2022, 2023, 2024, 2025]. offer_curve_by_group SHA-256 4172b22a9cd371fb is byte-identical to the keeper's on every year; the lane's two --set fields arms two CHP steam-floor structural gates (not price channels). No band, class or value moved and nothing was swept (rule 1 condition (c)). ONE config across every scored year (condition (b))."
   },
   "authorized_price_tuning_declared": "DECLARED AND IN USE. This run tunes SPP's fossil offer curve DOWN 7 % on the price level through the rule 1 [R-STRUCT] / rule 13 [R-MEASURED] authorized channel (owner amendment 2026-09-05), on the owner's explicit instruction: 'first just tune the offer curve down by 7% across all fossil and launch an LP that runs that.' Every condition of the carve-out is met and each is checkable against this run's own run_config.json: (a) the four offer_curve_by_group bands ONLY -- committed/econ_low/econ_high/peak all 0.93 on the ten registered fossil classes SPP dispatches, with NO phys_* field, NO econ_low_share, NO pct_peaking and no adder/offset/haircut/proxy touched (verified: CT_PEAKER keeps econ_low_share 0.526 / pct_peaking 7.0, COAL_PRB 0.55, ST_GAS 0.5 / 15.0, and the three *_INTERMEDIATE curves keep their peak 2.25 / 3.0 / 2.2); (b) ONE config across EVERY scored year -- a single scalar 0.93, no per-year value; (c) set EX ANTE and declared in the PRECOMMIT before the solve, and NEVER swept -- no other multiplier was solved, scored or compared, and the declared value was not revised after its result was seen; (d) merit-order movement across classes is an intended effect; (e) declared here and carried as a ledgered free parameter, identification 'residual' sourced to the ruling. ST_CHP is excluded because it has no registered base curve in SPP's resolved offer_curve_by_group and including it fails the launch with KeyError: 'econ_low_share'.",
-  "attested_by": "SPP-100 (2026-09-28) -- keeper 2026-09-28-spp-99-remap-rederive's recipe replayed via scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), with TWO fields armed: chp_steam_floor_p25 (the existing CHP steam-level swap: the tranche artifact's measured steam_level_cf supersedes the p2 floor) and chp_steam_floor_conduct_scope (new, default off: a metered CHP host takes the swap only if its pooled on-frequency steam_level_cf / median_cf exceeds constants.CHP_STEAM_ALLHOURS_MIN_ON_FRAC = 0.5, D-4's own conduct bar applied ex ante). The re-open route the owner named for SPP's chp_steam_following R cell (2026-09-24). Rule 17 / rule 14, never the residual. Every leg verified by scripts/probes/_spp100_shard_check.py (in the shard and again in the parent) and by scripts/probes/_rspp_compose.py --require before composition. NO control solve: rule 29(b) form 4, the committed keeper is the control (G-DRIFT all INERT). Zero LP in the parent. Pre-registered in docs/handoffs/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md (round-2 pin 11b72265, Addendum A) before any shard launched; record docs/handoffs/RESULT-spp-100-chp-conduct-scope-2026-09-28.md.",
+  "attested_by": "SPP-100 (2026-09-28) -- keeper 2026-09-28-spp-99-remap-rederive's recipe replayed via scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), with TWO fields armed: chp_steam_floor_p25 (the existing CHP steam-level swap: the tranche artifact's measured steam_level_cf supersedes the p2 floor) and chp_steam_floor_conduct_scope (new, default off: a metered CHP host takes the swap only if its pooled on-frequency steam_level_cf / median_cf exceeds constants.CHP_STEAM_ALLHOURS_MIN_ON_FRAC = 0.5, D-4's own conduct bar applied ex ante). The re-open route the owner named for SPP's chp_steam_following R cell (2026-09-24). Rule 17 / rule 14, never the residual. Every leg verified by scripts/probes/_spp100_shard_check.py (in the shard and again in the parent) and by scripts/probes/_rspp_compose.py --require before composition. NO control solve: rule 29(b) form 4, the committed keeper is the control (G-DRIFT all INERT). Zero LP in the parent. Pre-registered in docs/records/spp/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md (round-2 pin 11b72265, Addendum A) before any shard launched; record docs/records/spp/RESULT-spp-100-chp-conduct-scope-2026-09-28.md.",
   "measured_input_switches": {
    "eia860_vintage_tracks_solve_year": {
     "value": true,
@@ -162,22 +162,22 @@
      "level": "all measured: CAMPD unit-level heat rates per (plant, class) -- the solve year's own ok row, else the plant's pooled 2019-2025 ok row, else eGRID-<Y> (F1); CAMPD unit-grain partial-derate plateaus with the plant-level detector's frozen constants (F2 extract data/raw/campd-partial-outages-SPP.csv); EIA-860 vintage_<Y> with the year-matched eGRID join (F1)",
      "basis": "Owner instruction 2026-09-24 (audit \u00a75): every backcast year on the year-correct EIA-860 vintage, plant-specific heat rates, granular CAMPD outage data. Rule 14 [R-ACCURATE]: measured inputs replace the HEAT_RATE_BINS class table (100 % of SPP thermal MW in the 2019-22 rung, audit D1) and eGRID-2023-for-every-year (D2). Never the residual.",
      "one_mechanism": "rule 19 [R-ONE-MECH]: every heat-rate field REPLACES the base rate of the rows it covers (no stack); the partial family is the unit-grain second window shape of the armed unit-outage family, coal-scoped, and adds no floor",
-     "control": "the committed incumbent hydro5_spp_floor_span + hydro5_spp_floor_rung (rule 29(b) form 4); G-DRIFT docs/handoffs/PRECOMMIT-r-spp-2019-2025-inputs-2026-09-24.md section 4: F1/F2 hunks LIVE by design, every other hunk INERT",
-     "prereg": "docs/handoffs/PRECOMMIT-r-spp-2019-2025-inputs-2026-09-24.md, pushed at ec13e5c2ad35c4f817cc496ff2363affb3fed2f9 BEFORE any shard was launched"
+     "control": "the committed incumbent hydro5_spp_floor_span + hydro5_spp_floor_rung (rule 29(b) form 4); G-DRIFT docs/records/spp/PRECOMMIT-r-spp-2019-2025-inputs-2026-09-24.md section 4: F1/F2 hunks LIVE by design, every other hunk INERT",
+     "prereg": "docs/records/spp/PRECOMMIT-r-spp-2019-2025-inputs-2026-09-24.md, pushed at ec13e5c2ad35c4f817cc496ff2363affb3fed2f9 BEFORE any shard was launched"
     },
     "level": "measured: the SAME CAMPD unit-outage extracts, re-derived at their committed invocations (min_inmerit_hours 24 standard/partial, 6 short; high_load_pctl 0.85; 30-day window; full-stop override 5 d / CF 0.02) with the EIA-930 SWPP net-load mask live; each '-netloadmask-' companion is a strict full-row subset of its incumbent",
     "basis": "rule 14 [R-ACCURATE] / rule 23 [R-FROZEN-DERIVE]: a code-scope repair (missing BA key), no frozen setting changed; measured-source basis = SPP's published hourly coal outage (portal capacity-of-generation-on-outage), never a price residual",
     "one_mechanism": "rule 19 [R-ONE-MECH]: the field REPLACES each outage layer with its re-derivation; no window is added and no floor is created (the incumbent coal must-run floor re-applies in restored hours)",
-    "control": "per-year control solves of the keeper recipe at the same pinned SHA (G-DRIFT LIVE, docs/handoffs/PRECOMMIT-spp-85-netload-mask-repair-2026-09-26.md section 3)",
-    "prereg": "docs/handoffs/PRECOMMIT-spp-85-netload-mask-repair-2026-09-26.md, pushed at 0ff620d11d91797313f5f565b5e94ff3b123330b BEFORE any shard was launched"
+    "control": "per-year control solves of the keeper recipe at the same pinned SHA (G-DRIFT LIVE, docs/records/spp/PRECOMMIT-spp-85-netload-mask-repair-2026-09-26.md section 3)",
+    "prereg": "docs/records/spp/PRECOMMIT-spp-85-netload-mask-repair-2026-09-26.md, pushed at 0ff620d11d91797313f5f565b5e94ff3b123330b BEFORE any shard was launched"
    },
    "level": "measured: the SAME CAMPD unit-outage extracts (sha256 pinned), each coal row's removed share = unit_capacity_mw / the extract's own basis (the row's plant_capacity_mw at a single-group facility = the published unit_pct_of_plant; else the coal group's distinct-unit sum)",
    "basis": "rule 14 [R-ACCURATE]: one construction for numerator and denominator of one share; direction checked against SPP's published hourly coal outage (the keeper's excess over it falls 0.19-0.32 GW), never a price residual; no frozen setting changed (rule 23)",
    "one_mechanism": "rule 19 [R-ONE-MECH]: a scope widening of the existing extract-basis construction, not a new share; CC and coal scopes disjoint; no window added, no floor created (the incumbent coal must-run floor follows availability)",
-   "control": "the committed keeper bundle (rule 29(b) form 4; G-DRIFT all-INERT, docs/handoffs/PRECOMMIT-spp-86-coal-extract-basis-2026-09-26.md section 3)",
-   "prereg": "docs/handoffs/PRECOMMIT-spp-86-coal-extract-basis-2026-09-26.md, pushed at d72e5f107a6fe7ca59f94307f37b239e1a48c14f BEFORE any shard was launched"
+   "control": "the committed keeper bundle (rule 29(b) form 4; G-DRIFT all-INERT, docs/records/spp/PRECOMMIT-spp-86-coal-extract-basis-2026-09-26.md section 3)",
+   "prereg": "docs/records/spp/PRECOMMIT-spp-86-coal-extract-basis-2026-09-26.md, pushed at d72e5f107a6fe7ca59f94307f37b239e1a48c14f BEFORE any shard was launched"
   },
-  "attested_by_inherited": "SPP-99 (2026-09-28) -- keeper 2026-09-28-spp-98-cems-remap's recipe replayed via scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), with ONE field armed: campd_split_remap_companions (miso-280's split-remap mechanism, extended to SPP's plain tranche family on the owner decision card 'Extend miso-280 (Rec.)'; rule 19, no new field). It selects four -splitremap- companions of SPP CAMPD-derived artifacts (std net-load-masked and base outage extracts, measured CC heat rates, plain tranches), each the incumbent with only the SPP-98 remap plants' lines swapped for the same deriver's lines under the remap; splice control PASS on all four (derivers with the SPP rows stripped reproduce every incumbent byte-for-byte). Rule 23: the trigger is the attribution change, never a residual. Every leg verified by scripts/probes/_spp99_shard_check.py (in the shard and again in the parent) and by scripts/probes/_rspp_compose.py --require before composition. NO control solve: rule 29(b) form 4, the committed keeper is the control (G-DRIFT all INERT). Zero LP in the parent. Pre-registered in docs/handoffs/PRECOMMIT-spp-99-remap-rederive-2026-09-28.md (pinned 289d4baf) before any shard launched; record docs/handoffs/RESULT-spp-99-remap-rederive-2026-09-28.md.",
+  "attested_by_inherited": "SPP-99 (2026-09-28) -- keeper 2026-09-28-spp-98-cems-remap's recipe replayed via scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), with ONE field armed: campd_split_remap_companions (miso-280's split-remap mechanism, extended to SPP's plain tranche family on the owner decision card 'Extend miso-280 (Rec.)'; rule 19, no new field). It selects four -splitremap- companions of SPP CAMPD-derived artifacts (std net-load-masked and base outage extracts, measured CC heat rates, plain tranches), each the incumbent with only the SPP-98 remap plants' lines swapped for the same deriver's lines under the remap; splice control PASS on all four (derivers with the SPP rows stripped reproduce every incumbent byte-for-byte). Rule 23: the trigger is the attribution change, never a residual. Every leg verified by scripts/probes/_spp99_shard_check.py (in the shard and again in the parent) and by scripts/probes/_rspp_compose.py --require before composition. NO control solve: rule 29(b) form 4, the committed keeper is the control (G-DRIFT all INERT). Zero LP in the parent. Pre-registered in docs/records/spp/PRECOMMIT-spp-99-remap-rederive-2026-09-28.md (pinned 289d4baf) before any shard launched; record docs/records/spp/RESULT-spp-99-remap-rederive-2026-09-28.md.",
   "data_corrections": [
    {
     "path": "data/raw/spp-hsl/spp_wind_curtailment_annual.csv",
@@ -187,7 +187,7 @@
     },
     "free_parameters_added": 0,
     "basis": "rule 14 [R-ACCURATE]: SPP's own published measurement replaces the 2023-25 mean estimate; same average-hourly-MW wind basis as every committed row; never a residual",
-    "prereg": "docs/handoffs/PRECOMMIT-spp-94-curtail-rows-2026-09-27.md, pushed at 020bb1c5cb38b73da686dc4e83d1620c415b1437 BEFORE any shard was launched"
+    "prereg": "docs/records/spp/PRECOMMIT-spp-94-curtail-rows-2026-09-27.md, pushed at 020bb1c5cb38b73da686dc4e83d1620c415b1437 BEFORE any shard was launched"
    },
    {
     "path": "src/market_sim/data/campd.py::CAMPD_UNIT_PLANT_REMAP",
@@ -202,7 +202,7 @@
     },
     "free_parameters_added": 0,
     "basis": "rule 14 [R-ACCURATE]: the EPA CAMD-EIA Power Sector Data Crosswalk maps these CEMS units to a different EIA plant than the CEMS facility; benchmark attribution only, dispatch byte-identical (X4); never a residual",
-    "prereg": "docs/handoffs/PRECOMMIT-spp-98-cems-eia-remap-2026-09-28.md, merged at ed8cec3fd0811ebf835cfec42184493683c2625a BEFORE any shard was launched"
+    "prereg": "docs/records/spp/PRECOMMIT-spp-98-cems-eia-remap-2026-09-28.md, merged at ed8cec3fd0811ebf835cfec42184493683c2625a BEFORE any shard was launched"
    },
    {
     "path": "campd_split_remap_companions -> data/raw/campd-unit-outages-netloadmask-splitremap-SPP.csv, data/raw/campd-unit-outages-splitremap-SPP.csv, data/raw/_processed-legacy/campd_cc_heat_rates-splitremap-SPP.csv, data/raw/_processed-legacy/thermal_tranches-splitremap-SPP.csv",
@@ -214,7 +214,7 @@
     },
     "free_parameters_added": 0,
     "basis": "rule 14 [R-ACCURATE] / rule 23 [R-FROZEN-DERIVE]: SPP-98's CAMPD_UNIT_PLANT_REMAP rows reach the solve only through re-derived artifacts; each companion is a plant-scoped splice (scripts/data/build_campd_split_remap_companions.py, families stdbase / stdmask / cc / tranches) with a byte-for-byte splice control; never a residual",
-    "prereg": "docs/handoffs/PRECOMMIT-spp-99-remap-rederive-2026-09-28.md, merged at 289d4baf7b0819e7d0b5279cb6ac71930e12ec09 BEFORE any shard was launched"
+    "prereg": "docs/records/spp/PRECOMMIT-spp-99-remap-rederive-2026-09-28.md, merged at 289d4baf7b0819e7d0b5279cb6ac71930e12ec09 BEFORE any shard was launched"
    }
   ],
   "mechanism_changes_spp100": {
@@ -225,7 +225,7 @@
    "free_parameters_added": 0,
    "bar": "constants.CHP_STEAM_ALLHOURS_MIN_ON_FRAC = 0.5 (D-4 per-unit conduct rider's median test applied ex ante; SPP partition identical for any bar in (0.25, 0.98))",
    "basis": "rule 17 [R-FLOOR-WINDOW] / rule 14 [R-ACCURATE]: Eastman 55176 and Black Hawk 55064 run flat on their CAMPD meters (on 92-100 % of hours) and are floored at their measured steam level; Lake Road 2098 (metered on 5.5-27.7 %) keeps its p2 floor, removing SPP-75's D-4 FAIL",
-   "prereg": "docs/handoffs/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md, merged BEFORE any shard was launched; round-2 pin 11b72265e362a07912b2c2364a5708805697e58e"
+   "prereg": "docs/records/spp/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md, merged BEFORE any shard was launched; round-2 pin 11b72265e362a07912b2c2364a5708805697e58e"
   }
  },
  "disclosures": {
@@ -375,7 +375,7 @@
     "lineage_solves": "unknown",
     "n_scalars": 0,
     "source": "per-unit EPA CAMPD hourly gross generation (scripts/data/derive_campd_unit_outages.py --short-windows); identification guards: coal-only detector + unit annual CF >= 0.55 (the partial-outage detector's baseload constant) + the revealed-availability in-merit filter (outage_detect.filter_revealed_outages; the full-stop override cannot engage below the 5-day cap)",
-    "note": "the >= 5-day duration floor makes event-coincident short forced outages invisible (MISO Jul 28-29 2025: ~2.8 GW coal offline at the peak block beyond the overlay; docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md); CT/CC event unavailability stays unmodeled pending a max-gen-event registry intake (no identification without it)"
+    "note": "the >= 5-day duration floor makes event-coincident short forced outages invisible (MISO Jul 28-29 2025: ~2.8 GW coal offline at the peak block beyond the overlay; docs/records/miso/DIAGNOSIS-miso-july2025-lmp-2026-07.md); CT/CC event unavailability stays unmodeled pending a max-gen-event registry intake (no identification without it)"
    },
    {
     "name": "st_gas_mustrun_per_plant (ST_GAS local-reliability commitment floor, measured committed window)",
@@ -389,7 +389,7 @@
   ]
  },
  "r_spp": {
-  "result": "docs/handoffs/RESULT-r-spp-2019-2025-inputs-2026-09-24.md",
+  "result": "docs/records/spp/RESULT-r-spp-2019-2025-inputs-2026-09-24.md",
   "composed_from_years": [
    2019,
    2020,
@@ -401,7 +401,7 @@
   ]
  },
  "spp85": {
-  "result": "docs/handoffs/RESULT-spp-85-netload-mask-repair-2026-09-26.md",
+  "result": "docs/records/spp/RESULT-spp-85-netload-mask-repair-2026-09-26.md",
   "composed_from_years": [
    2019,
    2020,
@@ -413,7 +413,7 @@
   ]
  },
  "spp86": {
-  "result": "docs/handoffs/RESULT-spp-86-coal-extract-basis-2026-09-26.md",
+  "result": "docs/records/spp/RESULT-spp-86-coal-extract-basis-2026-09-26.md",
   "composed_from_years": [
    2019,
    2020,
@@ -425,7 +425,7 @@
   ]
  },
  "spp94": {
-  "result": "docs/handoffs/RESULT-spp-95-curtail-rows-2026-09-28.md",
+  "result": "docs/records/spp/RESULT-spp-95-curtail-rows-2026-09-28.md",
   "composed_from_years": [
    2019,
    2020,
@@ -437,7 +437,7 @@
   ]
  },
  "spp98": {
-  "result": "docs/handoffs/RESULT-spp-98-cems-eia-remap-2026-09-28.md",
+  "result": "docs/records/spp/RESULT-spp-98-cems-eia-remap-2026-09-28.md",
   "composed_from_years": [
    2019,
    2020,
@@ -449,7 +449,7 @@
   ]
  },
  "spp99": {
-  "result": "docs/handoffs/RESULT-spp-99-remap-rederive-2026-09-28.md",
+  "result": "docs/records/spp/RESULT-spp-99-remap-rederive-2026-09-28.md",
   "composed_from_years": [
    2019,
    2020,
@@ -464,7 +464,7 @@
   }
  },
  "spp100": {
-  "result": "docs/handoffs/RESULT-spp-100-chp-conduct-scope-2026-09-28.md",
+  "result": "docs/records/spp/RESULT-spp-100-chp-conduct-scope-2026-09-28.md",
   "composed_from_years": [
    2019,
    2020,

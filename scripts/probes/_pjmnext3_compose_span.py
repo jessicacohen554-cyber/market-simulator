@@ -7,7 +7,7 @@ is the parent's zero-LP job (rule 32 (d)). The mechanics are
 unchanged. The recipe check is this lane's: every leg must equal the PJM-NEXT-2
 keeper's own year (``pjmnext2_joint_span/run_config_<y>.json``) plus EXACTLY
 ``unit_outage_unit_fuel_routing``
-(docs/PRECOMMIT-pjm-next-3-card2-unit-fuel-routing-2026-09-26.md), with the
+(docs/records/pjm/PRECOMMIT-pjm-next-3-card2-unit-fuel-routing-2026-09-26.md), with the
 COAL-SUB bare-``COAL`` offer-curve fold still tolerated.
 Anything else differing aborts, so a control leg or a wrong-recipe leg can
 never compose in.

@@ -3,7 +3,7 @@
 The model's *consumption seam* for an ISO's PUBLISHED default going-forward
 bar — PJM's Manual 18 §5.4.8.4(B) "Default Gross Avoidable Cost Rate" table
 and the reactive component its own capacity demand curve nets against that bar
-(capx D62, building ``docs/handoffs/FINDING-capx-d61-2026-09-05.md`` §4). The
+(capx D62, building ``docs/records/forecast/FINDING-capx-d61-2026-09-05.md`` §4). The
 intake pipeline (``scripts/lib/capacity_market_avoidable_cost_rate`` →
 ``data/clean/capacity-market-avoidable-cost-rate``) reconciles both onto one
 tidy frame; everything here returns **plain floats** keyed by the model's own
@@ -32,7 +32,7 @@ bar must change the published table, with its source page, in
 See :data:`_PJM_VINTAGE_SWITCH_DELIVERY_YEAR` and :func:`_vintage_column_for`.
 Selecting a column, an escalation or a UCAP/nameplate convention by looking at
 a result is the failure mode D61 §3 names; the rule below was written into
-``docs/handoffs/PRECOMMIT-capx-d62-pjm-acr-bar-2026-09-06.md`` §1.1 before any
+``docs/records/forecast/PRECOMMIT-capx-d62-pjm-acr-bar-2026-09-06.md`` §1.1 before any
 solve and is not revisited.
 
 The clean tree is derived and gitignored. Unlike

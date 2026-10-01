@@ -59,7 +59,7 @@ from _miso134_ct_night_order_screen import (  # noqa: E402
     keeper_prices,
 )
 
-OUT = REPO / "results/calibration/_miso152_fillorder.json"
+OUT = REPO / "results/phase0/miso/_miso152_fillorder.json"
 YEARS = (2023, 2024, 2025)  # rule 22: the ONLY years touched anywhere below
 
 # Output-position order of the tranche bands, cheapest-physical-position first.

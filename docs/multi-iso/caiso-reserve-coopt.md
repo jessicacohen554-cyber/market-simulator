@@ -107,7 +107,7 @@ optimum of the armed LP carries zero shortfall and zero reserve duals. In the
 actual RT >$200 hours the pool is slack by 1.6–10.5 GW — the in-LP co-opt
 cannot close C3c at any completion level. Matrix: `energy_reserve_coopt` /
 `reserve_pergen` CAISO → `I`.
-(`results/calibration/FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md`.)
+(`docs/records/caiso/FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md`.)
 
 ## Measured ramp capability (data intake, #1500 pattern)
 
@@ -148,7 +148,7 @@ missing-reserve-scarcity-pricing phenomenon: adding the published CAISO reserve
 co-optimization leaves it at 483 h (+16 zone-hours, 0 net system-hours, C3c
 unchanged). C3a moves only +$0.47 in 2023 and $0.00 in 2024/2025. The over-tail
 is owned by the existing evening-merit / RA-commitment-uplift gap
-(`results/calibration/FINDING-caiso-evening-merit-2026-07-04.md`), not by absent
+(`docs/records/caiso/FINDING-caiso-evening-merit-2026-07-04.md`), not by absent
 reserve co-optimization.
 
 **Kept anyway (rule 1).** This is a structurally-correct market mechanism — the

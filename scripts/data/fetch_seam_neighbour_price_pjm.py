@@ -1,7 +1,7 @@
 """Download PJM DA / RT hourly LMP at the NY-facing interface pricing nodes.
 
 WHY THIS EXISTS (NYISO-NEXT-10, 2026-09-28).  NEXT-7
-(``docs/FINDING-nyiso-next7-star-node-2026-09-27.md`` §3(c)) found the repo held
+(``docs/records/nyiso/FINDING-nyiso-next7-star-node-2026-09-27.md`` §3(c)) found the repo held
 no PJM price at the seams with New York: ``pjm-zonal-lmp`` carries zones only.
 PJM prices each external interface at an ``INTERFACE`` aggregate pnode; four face
 New York (ids from the DataMiner2 ``pnode`` feed, ``pnode_subtype=INTERFACE``,

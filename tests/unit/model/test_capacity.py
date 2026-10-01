@@ -1545,7 +1545,7 @@ class TestFomThresholdFlip(unittest.TestCase):
     """The retirement decision flips at the going-forward FOM bar.
 
     Behavioural acceptance for the capacity-economics recalibration Stage 1
-    (``docs/handoffs/capacity-economics-plan-2026-07.md`` §1, §8): a gas-CT
+    (``docs/records/misc/capacity-economics-plan-2026-07.md`` §1, §8): a gas-CT
     earning a fixed net revenue between the legacy bar (``fixed_om_gas_ct=8``
     $/kW-yr) and the NREL-ATB-2024 bar (``fixed_om_gas_ct=21`` $/kW-yr) is
     retained under the legacy FOM and retired under the ATB FOM — the same unit,
@@ -6423,7 +6423,7 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
 
     def test_i5_known_answer_committed_ledgers(self):
         # The pre-declaration instrument's 2022 -> DY 2022/23 row on the D48
-        # basis (PREDECL-capx-d54 §2.1; docs/handoffs/d54/clearing-predecl-
+        # basis (PREDECL-capx-d54 §2.1; docs/records/forecast/d54/clearing-predecl-
         # 2026-09-05.json): price 82.81 $/MW-day, cleared position 1.0445, set
         # by a marginal gas_cc offer — reproduced by the code's own clearing
         # function and the registry's own vintage curve, to ±$1 / ±0.1 pt.
@@ -6441,9 +6441,12 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
             )
         )
         pos_path = (
-            REPO_ROOT / "docs/handoffs/d48/devintage-positions-d45r-2026-09-04.json"
+            REPO_ROOT
+            / "docs/records/forecast/d48/devintage-positions-d45r-2026-09-04.json"
         )
-        ref_path = REPO_ROOT / "docs/handoffs/d54/clearing-predecl-2026-09-05.json"
+        ref_path = (
+            REPO_ROOT / "docs/records/forecast/d54/clearing-predecl-2026-09-05.json"
+        )
         if not (ledger and pos_path.exists() and ref_path.exists()):
             self.skipTest("committed D45-R / D48 / D54 artifacts absent")
         rows = [
@@ -7190,7 +7193,7 @@ class TestRetirementSectorGate(unittest.TestCase):
     (rule 19; capx D78/D81 — and since capx D78-R2 that is the screen's only
     exemption seam),
     while sectors 2-7 and unknown-sector plants face the screen as before
-    (design docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md).
+    (design docs/records/forecast/DESIGN-capx-d53-sector-gate-2026-09-05.md).
     """
 
     SECTORS = {300: 1, 200: 1, 400: 2, 500: 7}
@@ -7911,7 +7914,7 @@ class TestNyisoLocalityCapacityCurves(unittest.TestCase):
     Locational Minimum ICAP Requirement, settled by the ICAP Manual §5.15.2
     max(NYCA, locality) rule. ONE gated default-OFF field
     (``locality_capacity_curves``); every unarmed path is byte-identical.
-    Design: docs/handoffs/DESIGN-capx-d59-nyiso-locality-2026-09-05.md."""
+    Design: docs/records/forecast/DESIGN-capx-d59-nyiso-locality-2026-09-05.md."""
 
     @staticmethod
     def _csv_rows():

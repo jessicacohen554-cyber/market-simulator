@@ -4,7 +4,7 @@ Declared capacity-emergency event windows — one row per (ISO, declaration,
 region) at or above the lowest capacity-ladder rung (for MISO the pre-2026
 ladder Capacity Advisory -> Maximum Generation Alert -> Warning -> Event
 Steps 1-5). The M-1 datatype of the MISO price-formation lane
-(``docs/handoffs/miso-price-formation-design-2026-07.md`` §3/M-1): a rule-13
+(``docs/records/miso/miso-price-formation-design-2026-07.md`` §3/M-1): a rule-13
 availability-event registry in the same admissibility family as the CAMPD
 outage windows (backcast/calibration overlay by construction; a forecast year
 carries the class outage-rate machinery instead).

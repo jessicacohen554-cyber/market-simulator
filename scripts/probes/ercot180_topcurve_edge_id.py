@@ -24,7 +24,7 @@ Instrument (all constants fixed in the precommit, never swept):
   multiplier distribution (GRID_N points) — a deterministic implementation of
   the same statistic, disclosed here.
 
-Output: results/calibration/ercot180_edge_identification.json (KS profiles,
+Output: results/phase0/ercot/ercot180_edge_identification.json (KS profiles,
 chosen edges + p-values, per-sub-bin 2023 hour/interval/MW counts, 2024/2025
 coverage disclosure, source inventories).
 
@@ -65,7 +65,7 @@ from derive_ercot_sced_offer_wall import (  # noqa: E402
     _sced_source_files,
 )
 
-OUT_PATH = REPO / "results" / "calibration" / "ercot180_edge_identification.json"
+OUT_PATH = REPO / "results" / "phase0" / "ercot" / "ercot180_edge_identification.json"
 
 # ---- precommit §2 instrument constants (FIXED, never swept) ----
 TOP_FLOOR = 0.97  # the existing family top edge; identification is above it
@@ -346,7 +346,7 @@ def main() -> int:
 
     record = {
         "probe": "ercot180_topcurve_edge_id",
-        "precommit": "docs/PRECOMMIT-ercot180-top-scoped-grain-2026-08-08.md §2",
+        "precommit": "docs/records/ercot/PRECOMMIT-ercot180-top-scoped-grain-2026-08-08.md §2",
         "constants": {
             "TOP_FLOOR": TOP_FLOOR,
             "LAST_K": LAST_K,

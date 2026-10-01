@@ -64,7 +64,7 @@ cv = _load("cv_basis", "calibration_verdict.py")
 _CITE = (
     "owner default directive 2026-07-12 (benchmark basis is the go-forward "
     "default for ALL ISOs); docs/calibration-log.md 2026-07-11 'SCORER FIX "
-    "(all ISOs)' + 2026-07-12 pjm-98; docs/handoffs/"
+    "(all ISOs)' + 2026-07-12 pjm-98; docs/records/pjm/"
     "pjm-cc-overrun-benchmark-basis-g21-2026-07.md"
 )
 

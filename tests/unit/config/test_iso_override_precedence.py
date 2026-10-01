@@ -1,7 +1,7 @@
 """The OVERRIDE-FIX seam: an ISO default fills only a field the caller did NOT pass.
 
 **The defect this pins closed**
-(``docs/handoffs/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md``).
+(``docs/records/forecast/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md``).
 ``iso_configs.apply_iso_scenario_defaults`` used to decide "the caller left this
 field unset" by comparing the caller's value against the ``ScenarioConfig``
 field default. Every promotable flag defaults ``False``/``None``, so *the OFF
@@ -27,7 +27,7 @@ What these tests hold, in both directions:
   posture (ERCOT's five stage-B flags plus the D12-A entry pair armed at
   ``68a207068509f2b0`` — the pole was ``8d9ef77edb3e44cb`` until the Q15
   arming of 2026-08-30 moved it, see
-  ``docs/handoffs/FINDING-capx-d12a-arming-2026-08-30.md`` — the global
+  ``docs/records/forecast/FINDING-capx-d12a-arming-2026-08-30.md`` — the global
   pin unmoved BY THE FIX: ``cedadc285f8603b9`` when this was written,
   ``4c6b03ae098b6e3e`` since capx D44's 2026-09-03 flip of an unrelated
   field), and a non-default explicit value still wins as it always did. The
@@ -103,7 +103,7 @@ STAGE_B = {
 # has no frozen declaration to drop at and re-keys unconditionally — which is
 # why this advance also moves keys the three earlier flips left alone.
 # The D12-A arming and the 'pole unmoved by the fix' property are untouched.
-# Pre-declared before the solve: docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md
+# Pre-declared before the solve: docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md
 # §3; cache-epoch ledger entry 2026-09-06c in src/market_sim/results/cache.py.
 ERCOT_ARMED_KEY = "95d789d6dfb98831"
 GLOBAL_PINNED_KEY = "547053bdfccd4264"

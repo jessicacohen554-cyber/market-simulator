@@ -13,7 +13,7 @@ offset, not the DST-prevailing ``interval_start_local``) and its **hub
 definition** (per-ISO node set and weights). It is the only instrument in the
 repo that can detect either drifting — a one-hour clock shift shows up here as a
 several-hundred-$/MWh disagreement, which is exactly how F6 was found
-(docs/FINDING-f6-lmp-backend-parity-2026-08-11.md).
+(docs/records/misc/FINDING-f6-lmp-backend-parity-2026-08-11.md).
 
 Marked slow/integration: it reads full-year data products rather than a
 synthetic fixture, and is skipped when either backend's inputs are absent (the

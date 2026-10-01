@@ -13,7 +13,7 @@ Measures, for every year the ladder carries (2018-2025):
 4. the always-on 900 MW ``HQ_hydro`` firm floor against the measured net import
    (share of hours below 900 MW, p1/p5, min) and against the HQ seam alone.
 
-Writes ``results/calibration/_nyisonext8_phase0.json``. Reads only committed
+Writes ``results/phase0/nyiso/_nyisonext8_phase0.json``. Reads only committed
 measured inputs; no solve, no bundle.
 """
 
@@ -39,7 +39,7 @@ from market_sim.model.interchange.spec import (  # noqa: E402
 
 YEARS = tuple(range(2018, 2026))
 HQ_ROW = "SCH - HQ - NY"
-OUT = REPO / "results" / "calibration" / "_nyisonext8_phase0.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyisonext8_phase0.json"
 
 
 def _pivot(year: int) -> pd.DataFrame:

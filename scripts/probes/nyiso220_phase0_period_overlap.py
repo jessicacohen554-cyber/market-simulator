@@ -69,7 +69,7 @@ sys.path.insert(0, str(REPO / "src"))
 #: the CURRENT keeper before a screen is required, not optional -- the gates in
 #: PRECOMMIT-nyiso220-screen.md are stated against "the keeper's 2025 value".
 KEEPER = REPO / "results" / "calibration" / "nyiso235_gasrepair_span"
-OUT_JSON = REPO / "results" / "calibration" / "_nyiso220_phase0_period_overlap.json"
+OUT_JSON = REPO / "results" / "phase0" / "nyiso" / "_nyiso220_phase0_period_overlap.json"
 YEARS = (2023, 2024, 2025)
 
 # Hours are the model's standard 8760-hour calendar, so a day is a fixed 24-hour

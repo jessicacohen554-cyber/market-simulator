@@ -1,8 +1,8 @@
 """pjm-132: the within-season tightness vintage of the PJM offer-surface family.
 
 Owner-authorized 2026-07-27 with an amendment
-(``docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md`` decision banner;
-charter ``docs/handoffs/pjm-132-midcurve-reconditioning-charter-2026-07.md``):
+(``docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md`` decision banner;
+charter ``docs/records/pjm/pjm-132-midcurve-reconditioning-charter-2026-07.md``):
 the within-YEAR surfaces stay live and keep their filenames, the within-season
 vintage lives in separate artifacts, and one default-OFF ScenarioConfig gate
 switches the JSON vintage and the solve-time binning **together**.

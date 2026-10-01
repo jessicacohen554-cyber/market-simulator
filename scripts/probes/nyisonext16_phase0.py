@@ -153,7 +153,7 @@ def main(argv: list[str] | None = None) -> int:
     """CLI entry point."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument(
-        "--out", default=str(REPO / "results/calibration/_nyisonext16_phase0.json")
+        "--out", default=str(REPO / "results/phase0/nyiso/_nyisonext16_phase0.json")
     )
     a = ap.parse_args(argv)
     rec = {

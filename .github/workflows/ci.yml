@@ -38,7 +38,7 @@ name: CI
 # pytest never invoked). Its block lists exactly what the tier opens; do NOT
 # swap it for the nine jobs' `!/data/raw/` exclusion, and extend it (never
 # let a skip stand) when a test grows a new data dependency — see the job's
-# own comment and docs/handoffs/perf-recheck-2026-08.md §1.3.
+# own comment and docs/records/governance/perf-recheck-2026-08.md §1.3.
 #
 # Non-cone mode is required — cone mode has no negation. The pattern set is the
 # same base pair scripts/hydrate_data.py applies (`/*` + `!/data/raw/`), so the
@@ -92,7 +92,7 @@ on:
       #
       # Deliberately NOT `docs/**`: running the suite on every docs PR is the
       # runner-minute cost the repo CI policy exists to avoid.
-      - "docs/handoffs/audit-program-director-board-2026-08.md"
+      - "docs/records/governance/audit-program-director-board-2026-08.md"
       - "docs/model-audit-release-plan-2026-08.md"
       - "docs/FINDING-*.md"
       # Y-26 (2026-09-06): THE GLOB ABOVE DOES NOT REACH THE PATH THE PROGRAM
@@ -100,7 +100,7 @@ on:
       # `/`, so `docs/FINDING-*.md` matches docs/FINDING-*.md (191 files at
       # bed0a064) and NOT docs/handoffs/FINDING-*.md (147 files, growing) — and
       # only ONE docs/handoffs path was enrolled, by exact filename. Raised by
-      # docs/handoffs/FINDING-y9-branch-protection-2026-09-05.md §5, which is
+      # docs/records/governance/FINDING-y9-branch-protection-2026-09-05.md §5, which is
       # itself a file in the unenrolled path.
       #
       # Census over the last 60 merged PRs at bed0a064 (and re-run over all 195
@@ -136,9 +136,10 @@ on:
       # that is ~260 PRs/week × 21 min ≈ 5,500 runner-min/week. That is
       # material; the alternatives (and why a lane must not choose one
       # unilaterally) are in
-      # docs/handoffs/FINDING-y26-ci-path-filter-2026-09-06.md §5.
-      - "docs/handoffs/**"
+      # docs/records/governance/FINDING-y26-ci-path-filter-2026-09-06.md §5.
+      - "docs/records/**"
       - "results/calibration/**"
+      - "results/phase0/**"
       - "docs/calibration-log/**"
 
 permissions:
@@ -197,7 +198,7 @@ jobs:
       # and it is the leg that was missing when top-15 retention orphaned five
       # of six stage-0 captures with every gate green. Reads committed
       # artifacts only; no solve. See
-      # docs/FINDING-stage0-provenance-repair-2026-09.md.
+      # docs/records/misc/FINDING-stage0-provenance-repair-2026-09.md.
       - name: check_golden_manifest
         run: uv run python scripts/check_golden_manifest.py
 
@@ -343,7 +344,7 @@ jobs:
       - name: Fetch PR base
         run: git fetch --no-tags --depth=1 origin ${{ github.event.pull_request.base.sha }}
       # Owner ruling R-BF (director board v43, 2026-09-25; proposal
-      # docs/handoffs/FINDING-y29-promotion-provenance-2026-09-24.md §6). The
+      # docs/records/governance/FINDING-y29-promotion-provenance-2026-09-24.md §6). The
       # whole-tree guards (gate-(a) provenance, FR-22 parity, audit_keepers
       # E13) all run above, yet promotion debt piled up. Each promoter left a
       # stale gate-(a) row, a stale marker or an unpruned predecessor, and the
@@ -520,7 +521,7 @@ jobs:
           # dependency extends this list, never silently skips the input —
           # a missing corpus surfaces as FileNotFoundError or a skip-count
           # rise over the 31-skip baseline. Measurement record + rerun recipe:
-          # docs/handoffs/perf-recheck-2026-08.md §1.3.
+          # docs/records/governance/perf-recheck-2026-08.md §1.3.
           #
           # y21 (2026-09-06) added /data/raw/load-forecast/ under that contract.
           # SCN-LOAD (d14a7ed0, PR #4970) armed the electrification layers off
@@ -653,7 +654,7 @@ jobs:
       # BLOCKING since 2026-07-27. Ran advisory from the workflow's restoration
       # through two held flips; the full history — the 141-failure triage, the
       # perf-budget measurement, and the path-dependent cache-key pin that held
-      # the last one — is in docs/handoffs/fast-tier-triage-2026-07-26.md
+      # the last one — is in docs/records/misc/fast-tier-triage-2026-07-26.md
       # §9-§9.3. Do not re-add `continue-on-error` to silence a red: fix the
       # red, or escalate it there.
       - name: Fast pytest tier

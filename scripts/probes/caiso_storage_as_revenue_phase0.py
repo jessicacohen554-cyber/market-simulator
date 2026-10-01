@@ -1,7 +1,7 @@
 """Phase-0 measurement: what CAISO storage actually earns from ancillary services.
 
-The CAISO value-stack lane (D-9, `docs/FINDING-entry-screen-t1h-2026-08.md` §6;
-charter `docs/FINDING-entry-signal-disarm-2026-08.md` §5.4/§6): the model's
+The CAISO value-stack lane (D-9, `docs/records/misc/FINDING-entry-screen-t1h-2026-08.md` §6;
+charter `docs/records/misc/FINDING-entry-signal-disarm-2026-08.md` §5.4/§6): the model's
 forecast-lane storage entry screen credits CAISO storage **$0** of AS revenue
 (`as_revenue_enabled=False` and `AS_REVENUE_PER_KW_YR_BY_ISO` carries no CAISO
 row — an honest, ERCOT-only registry). This probe measures the honest CAISO
@@ -67,7 +67,7 @@ No LP, no solve, no ScenarioConfig change; reads committed/curated data only.
 Run:
 
     PYTHONPATH=. uv run python scripts/probes/caiso_storage_as_revenue_phase0.py \
-        --out results/calibration/caiso_storage_as_revenue_phase0.json
+        --out results/phase0/caiso/caiso_storage_as_revenue_phase0.json
 """
 
 from __future__ import annotations
@@ -243,7 +243,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument(
         "--out",
-        default=str(REPO / "results/calibration/caiso_storage_as_revenue_phase0.json"),
+        default=str(REPO / "results/phase0/caiso/caiso_storage_as_revenue_phase0.json"),
     )
     ap.add_argument(
         "--years", nargs="+", type=int, default=list(YEARS), help="years to measure"

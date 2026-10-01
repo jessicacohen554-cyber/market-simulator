@@ -1,7 +1,7 @@
 """SPP-86 shard self-check: the arm leg == the committed keeper + EXACTLY ``unit_outage_coal_extract_basis_share``.
 
 Run by each SPP-86 shard AFTER its solve and BEFORE it pushes (rule 32(c)(4) hard stops). Zero LP.
-Pre-registered in ``docs/handoffs/PRECOMMIT-spp-86-coal-extract-basis-2026-09-26.md``. Adapted
+Pre-registered in ``docs/records/spp/PRECOMMIT-spp-86-coal-extract-basis-2026-09-26.md``. Adapted
 from ``_spp85_shard_check.py``.
 
 NO CONTROL SOLVE (rule 29(b) form 4): the G-DRIFT audit ``0ff620d1`` -> the pinned SHA classifies

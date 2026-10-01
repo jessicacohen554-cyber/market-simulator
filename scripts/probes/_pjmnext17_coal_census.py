@@ -13,7 +13,7 @@ Adds, per plant and year:
   (same partition), and the class-band composition of model COAL_BIT energy (mustrun /
   committed / sync / econ / peak) from ``hourly/class_band_hourly_<y>.parquet``.
 
-Writes ``results/calibration/_pjmnext17_coal_census.json``.
+Writes ``results/phase0/pjm/_pjmnext17_coal_census.json``.
 """
 
 from __future__ import annotations
@@ -33,7 +33,7 @@ REPO = Path(__file__).resolve().parents[2]
 BENCH = REPO / "frontend/data/backcast/bench/PJM"
 RUN = REPO / "frontend/data/backcast/runs/2026-09-30-pjm-next16-ovec.js"
 HOURLY = REPO / "results/calibration/pjmnext16_A_span/hourly"
-OUT = REPO / "results/calibration/_pjmnext17_coal_census.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext17_coal_census.json"
 YEARS = (2019, 2020, 2021, 2022, 2023, 2024, 2025)
 ON_FRAC = 0.05  # same on/off threshold as the NEXT-16 CC census
 FULL_FRAC = 0.9

@@ -10,7 +10,7 @@ byte-identical output for every existing caller.
 The env-var ERCOT gas knobs (``ERCOT_ZONAL_GAS``, ``ERCOT_GAS_FLOOR``, etc.)
 are a known, tracked rule-24 exception (default-off diagnostic probes no
 keeper enables) — out of this stage's scope; see
-``docs/handoffs/orchestrator-unification-plan-2026-07.md`` §4.
+``docs/records/misc/orchestrator-unification-plan-2026-07.md`` §4.
 """
 
 from __future__ import annotations
@@ -178,7 +178,7 @@ def _neutralize_generic_gas_bands(
 # structural ``econ_low_share`` held at the value the SPP plants read from
 # the generic COAL entry before the crosswalk (a plant's dispatch class label
 # moves; nothing it offers does — the zero-LP census in
-# docs/handoffs/FINDING-spp-42-2026-09-07.md §1 pins mc_base byte-identical).
+# docs/records/spp/FINDING-spp-42-2026-09-07.md §1 pins mc_base byte-identical).
 _SPP_COAL_IDENTITY_BANDS: dict[str, float] = {
     "committed": 1.0,
     "econ_low": 1.0,
@@ -238,7 +238,7 @@ _SOCO_OFFER_CURVE: dict[str, dict[str, float]] = {
 # over-generation miss #1), econ_high 1.50 (steepen upper ramp for miss #2,
 # the 95-100% CF pile). CT_PEAKER: committed 1.25, econ_low 1.05 (pjm-59/61
 # dispatch fix so CTs price as peakers not baseload; missing from pjm-58
-# keeper). See docs/handoffs/pjm-cc-overgen-recommendation-2026-06.md.
+# keeper). See docs/records/pjm/pjm-cc-overgen-recommendation-2026-06.md.
 _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
     "CC_REGULAR": {
         "committed": 0.87,  # raised from 0.6624: Manual 15 min-load SRMC floor
@@ -963,7 +963,7 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     # MISO COAL bands, grounded in the MISO IMM's measured conduct statistics
     # (Potomac Economics SOM; datatype som-competitive-conduct, freeze test
     # tests/test_curate_som_competitive_conduct.py; adjudication record
-    # docs/handoffs/miso-coal-offer-som-redesign-2026-07.md). Until now MISO
+    # docs/records/miso/miso-coal-offer-som-redesign-2026-07.md). Until now MISO
     # coal inherited the generic ERCOT-lineage entries (COAL_PRB econ_low
     # 0.77, committed 0.90-0.95, COAL_WC 0.85 — residual-fitted on ERCOT,
     # the same rule-25 cross-ISO leak the sigmoid byte-copy was, G-26/#1347).
@@ -1747,7 +1747,7 @@ def backcast_config(
         #   negative midday tail. Byte-identical when not binding (current floor
         #   frac reaches $0, not yet negative; bites with export shaping / a
         #   higher floor). See policy.eac.apply_negative_renewable_offer_floor
-        #   and results/calibration/NEGRENEW-caiso-findings.md.
+        #   and docs/records/caiso/NEGRENEW-caiso-findings.md.
         caiso_solar_deliverability=(iso.upper() == "CAISO"),  # CAISO Lever-D
         #   default-ON: re-curtail the uncurtailed HSL solar potential for the
         #   local / sub-area congestion the reduced 3-zone topology can't see
@@ -2561,7 +2561,7 @@ def backcast_config(
     # (armed on the NYISO keeper), and the `econ*` limb closes the OPEN ROOT
     # CAUSE `_NYISO_OFFER_CURVE`'s own CT_PEAKER comment declares by name.
     # Owner ruling 2026-09-06; pre-registration
-    # results/calibration/PREREG-nyiso199-ct-peaker-measured-bands-screen.md
+    # docs/records/nyiso/PREREG-nyiso199-ct-peaker-measured-bands-screen.md
     # (Addendum A carries the ruling verbatim, pushed before this field existed).
     if nyiso_ct_peaker_bands_measured:
         if iso.upper() != "NYISO":
@@ -2667,7 +2667,7 @@ def backcast_config(
     # markup -- the de-leak declared CC's own markup un-identified, so nothing
     # can be transferred from it; the identification stays an OPEN ROOT CAUSE
     # against NYISO scarcity/reserve (RCPF/AS) price formation, issue #1344.
-    # Pre-registration: results/calibration/PRECOMMIT-nyiso232-st-gas-deleak.md.
+    # Pre-registration: docs/records/nyiso/PRECOMMIT-nyiso232-st-gas-deleak.md.
     # Gate on kwarg-OR-FIELD. `replay_keeper.py --set` writes the ScenarioConfig
     # FIELD and never the solve kwarg, so a kwarg-only gate would let a --set
     # A/B solve the CONTROL while recording an armed config — the exact seam

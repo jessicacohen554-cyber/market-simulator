@@ -1,6 +1,6 @@
 """nyiso-247 phase 0 — the ZERO-LP gates of the fuel-invariance-limb disarm.
 
-Evaluates, against ``docs/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md``
+Evaluates, against ``docs/records/nyiso/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md``
 §3 and nothing else:
 
 * **G-A** — the identity: the arm's ``mc`` differs from the keeper's by exactly
@@ -173,7 +173,7 @@ def main() -> None:
             "arm": round(float(np.abs(qa - book)[~up].mean()), 4),
         },
     }
-    dst = REPO / "results" / "calibration" / "_nyiso247_fuelinv_phase0.json"
+    dst = REPO / "results" / "phase0" / "nyiso" / "_nyiso247_fuelinv_phase0.json"
     dst.write_text(json.dumps(out, indent=1) + "\n")
     print(json.dumps(out["GB"], indent=1))
     for y, r in out["years"].items():

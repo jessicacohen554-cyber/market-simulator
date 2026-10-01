@@ -98,7 +98,7 @@ caiso-100 adder), margin-re-pricing (the hour-grain charge stops bidding the
 belly up; the LP keeps pricing only the 16-24 % the real RT margin
 re-times). M2 (window-share bands) documented as weaker fallback; M3
 (AS-obligation SOC term) measured-DEFERRED on the fleet-scaling evidence.
-Ask: `docs/handoffs/caiso-103-belly-allocation-ask-2026-07-19.md` — PENDING.
+Ask: `docs/records/caiso/caiso-103-belly-allocation-ask-2026-07-19.md` — PENDING.
 
 **Arc 2 — evening Q1 margin decomposition (priority 2).** New committed
 instrument `scripts/probes/_caiso103_evening_margin.py` on the repro: in the
@@ -120,7 +120,7 @@ the mechanism's own driver. The λ under-price and the aligned-clock evening
 under-import (−0.5/−0.3/−1.4 TWh) are ONE defect. Fix candidate M-EVE-1
 (price-taking −ε/$0 bids on the existing caiso-73 shaped availability;
 DELETES two fitted scalars from the price path) — NOT built; ask:
-`docs/handoffs/caiso-103-evening-firm-import-ask-2026-07-19.md` — PENDING.
+`docs/records/caiso/caiso-103-evening-firm-import-ask-2026-07-19.md` — PENDING.
 NOT a CT floor (caiso-91b untouched), NOT an import throttle (flow rises
 toward measured).
 
@@ -155,7 +155,7 @@ delete + re-gate as a dedicated follow-up). Keeper stays
 `2026-07-19-caiso-102-hourfix` (NOT-YET; ladder unchanged: belly
 +6.0/+6.6/+4.3, evening −5.8/−4.9/−1.1, overnight +0.8/−0.0/+1.4 — the
 fresh same-machine `caiso102_repro_A` reproduces it digit-for-digit). Full
-record: `results/calibration/FINDING-caiso104-m1-meve1-execution-2026-07-20.md`.
+record: `docs/records/caiso/FINDING-caiso104-m1-meve1-execution-2026-07-20.md`.
 
 **Arc 1 — M-EVE-1 (evening): adjudicated INERT, no leg.** The pre-measurement
 (`_caiso104_firm_negative_hub.py`, a-priori rule) fixed the bid constant at
@@ -227,7 +227,7 @@ Next number: caiso-105.
 no mechanism armed, no B-leg, nothing registered.** Fresh same-machine
 `caiso102_repro_A` reproduces the keeper ladder digit-for-digit (belly
 +6.0/+6.6/+4.3, evening −5.8/−4.9/−1.1, overnight +0.8/−0.0/+1.4). Full
-record: `results/calibration/FINDING-caiso105-basis-pin-decomp-2026-07-20.md`.
+record: `docs/records/caiso/FINDING-caiso105-basis-pin-decomp-2026-07-20.md`.
 
 **Arc 1 — belly price-basis wedge (caiso-104 §3b re-charter): MEASURED and
 CLOSED.** `_caiso105_da_rt_basis.py`: the charge-weighted DA−RT belly wedge
@@ -301,7 +301,7 @@ PASSES (CV 0.02-0.20); the year-relative tightest-quintile p95 ceiling
 under-price (−5.8/−4.9/−1.1): the model fills the evening margin with elastic
 hub-equalized import (caiso-105 §2: CA λ = a WECC node in 76/100/97 %, 10-12 $
 below CT entry) instead of climbing the domestic rung. Drafted owner ask
-`docs/handoffs/caiso-106-evening-intertie-exhaustion-ask-2026-07-20.md`
+`docs/records/caiso/caiso-106-evening-intertie-exhaustion-ask-2026-07-20.md`
 (M-EVE-EXH-1: a measured net-load-conditioned evening net-import CEILING) with
 pre-registered estimation + A/B + LOYO gates and explicit kill conditions —
 then **WITHDRAWN by its own binding check** (Arc 3): the ceiling is inert for
@@ -342,7 +342,7 @@ depth). Derive-first holds: measure each before any ask.
 lane ran — not duplicated here. #2546 delete+re-gate remains a dedicated-session
 item.
 
-Full record: `results/calibration/FINDING-caiso106-intertie-elasticity-2026-07-20.md`.
+Full record: `docs/records/caiso/FINDING-caiso106-intertie-elasticity-2026-07-20.md`.
 Next number: caiso-107.
 
 ## 2026-07-20 — CAISO-107: both re-chartered intertie lanes NOT READY on any CAISO-observable state — evening premium wrong-signed + unstable, belly depth NOT stabilized by hub level; lane re-charters onto import supply-curve pricing; keeper UNCHANGED
@@ -393,7 +393,7 @@ EVENING exhaustion-premium lane CLOSED; BELLY volume-ceiling remains right-signe
 but has no admissible identification (held pending a west-wide surplus-QUANTITY
 observable or a belly-tranche re-pricing). Neither filed.
 
-Full record: `results/calibration/FINDING-caiso107-intertie-recharter-2026-07-20.md`.
+Full record: `docs/records/caiso/FINDING-caiso107-intertie-recharter-2026-07-20.md`.
 Next number: caiso-108.
 
 ---
@@ -442,7 +442,7 @@ under-dispatch economic (import offer stack underprices gas) or physical (gas
 fleet clips its ceiling)? DO-NOT-REDO adds: the evening firm-rung PRICE reprice
 gated on the evening residual — targets a passing gate, cannot move C5a.
 
-Full record: `results/calibration/FINDING-caiso108-gate-attribution-2026-07-20.md`.
+Full record: `docs/records/caiso/FINDING-caiso108-gate-attribution-2026-07-20.md`.
 Next number: caiso-109.
 
 ## caiso-109 (2026-07-21) — P0 ECONOMIC-VS-PHYSICAL: gas under-dispatch is ECONOMIC (physical closed), but the chartered firm-rung lever is REFUTED — the over-import is the BELLY/daytime clean-import DEPTH; owner-ask raised, keeper UNCHANGED
@@ -531,11 +531,11 @@ Redirect re-raised to owner: (1) endogenous WECC import node (structural, the
 right fix, a MAJOR multi-session charter — EIA-930 BALANCE data shown on disk);
 (2) midday gas commitment/min-load (P0 §6 B, one-session, risks C8); (3) file +
 re-charter as caiso-110. No form armed pending grant. Full record:
-`results/calibration/FINDING-caiso109-westwide-surplus-derive-2026-07-21.md`.
+`docs/records/caiso/FINDING-caiso109-westwide-surplus-derive-2026-07-21.md`.
 
 **Owner GRANTED (2) build the endogenous WECC node — foundation delivered this
 session (LP wiring + A/B = caiso-110).** Design/handoff:
-`docs/handoffs/caiso-endogenous-wecc-node-design-2026-07-21.md` — replace the
+`docs/records/caiso/caiso-endogenous-wecc-node-design-2026-07-21.md` — replace the
 static clean-depth tranches at the existing `WECC_import` node (already carries
 the COI/Path-46 ties) with a real neighbor that clears endogenously against
 CAISO, so the belly transfer co-evolves with both fleets (the only forward-stable
@@ -549,7 +549,7 @@ renewables never exceed its ~55 GW demand, so the export is a price/congestion
 outcome, not a surplus threshold ⇒ the full co-optimized zone (Option A) is the
 build. No core LP touched (rule 26/27; the wiring is caiso-110). Keeper UNCHANGED.
 
-Full record: `results/calibration/FINDING-caiso109-gas-underdispatch-economic-2026-07-21.md`.
+Full record: `docs/records/caiso/FINDING-caiso109-gas-underdispatch-economic-2026-07-21.md`.
 Next number: caiso-110.
 
 ## caiso-111 (2026-07-21) — FRESH-LOOK SCOPING: the belly over-import has TWO structural drivers (NEW export-floor asymmetry + import-depth pricing), BTM/demand-netting is clean, solar is Lever-D under-curtailment, granularity is not the lever; field survey shows every CAISO model uses a bidirectional/endogenous West and none publishes error bars as tight as our C-gates; endogenous WECC node (caiso-110) REINFORCED; keeper UNCHANGED
@@ -560,7 +560,7 @@ scoping charter (derive-first). Instrument (committed):
 `scripts/probes/_caiso111_belly_attribution.py` — full belly energy-balance
 attribution from committed artifacts + raw EIA-930/HSL (keeper-proxy
 `caiso104_m1_B` hourly + the caiso-109 CEMS-basis gas reconstruction). Full
-record: `results/calibration/FINDING-caiso111-belly-drivers-and-field-survey-2026-07-21.md`.
+record: `docs/records/caiso/FINDING-caiso111-belly-drivers-and-field-survey-2026-07-21.md`.
 
 **R1 — BTM/solar/demand.** (a) Demand basis CLEAN: the keeper's
 supply-consistent series is EIA-930 metered demand (already net of ~15+ GW BTM
@@ -653,7 +653,7 @@ imports back out, so net link flow never reverses, the corridor export ENVELOPE
 never binds, and the legs over-export ~16 TWh gross vs the measured ~1.5 → 2024 gas
 +7.6 % (trips the +7 % guard) and mean λ 29.9→38.7. Chartered L1a′ (bound the leg
 dispatch at the measured p95 net-export envelope) as the single-delta successor.
-Full record: `docs/handoffs/caiso-112-export-floor-handoff-2026-07-21.md`.
+Full record: `docs/records/caiso/caiso-112-export-floor-handoff-2026-07-21.md`.
 
 Next number: caiso-113.
 
@@ -716,7 +716,7 @@ Next number: caiso-114.
 ## caiso-114 (2026-07-23) — L1b endogenous WECC-West node (Option A), West gas priced at the MEASURED intertie hub (hub-alone): fixes C5a + C3c and the tie clears INTERIOR (caiso-110 flood/degeneracy resolved), but BREAKS the C3a guard via an EVENING over-price → REJECTED probe; keeper 2026-07-19-caiso-102-hourfix UNCHANGED
 
 *(Housekeeping 2026-07-26: merged from
-`docs/handoffs/caiso114-calibration-log-entry.md`.)*
+`docs/records/caiso/caiso114-calibration-log-entry.md`.)*
 
 **The build.** Wired caiso-110 Option A: `WECC_import` becomes a real co-optimized
 WECC-West neighbor zone (own measured demand + a reduced import-priced fleet from
@@ -778,7 +778,7 @@ before any promotion.
 ## caiso-115 (2026-07-23) — FRESH-LOOK DIAGNOSIS: C4 is NOT the intractable frontier — decomposed, it is ~75 % sub-ceiling day-to-day scatter (a mild reduced-network limit) + ~25 % fixable diurnal structure that is the SAME belly-import (C5a) + evening-displacement (C3c) defect; the keeper already PASSES C4 in 2/3 years on the clean CEMS basis and its sole fail (2023) is a benchmark-basis artifact; C5a-fix and C3a-guard ARE separable; keeper UNCHANGED
 
 *(Housekeeping 2026-07-26: merged from
-`docs/handoffs/caiso115-calibration-log-entry.md`. NUMBER COLLISION: two
+`docs/records/caiso/caiso115-calibration-log-entry.md`. NUMBER COLLISION: two
 parallel 2026-07-23 sessions both took caiso-115 — this fresh-look diagnosis
 and the netrev-margin keeper promotion further below. Both entries kept
 verbatim; ordinals are never renumbered.)*
@@ -790,7 +790,7 @@ coexist, and (B) what is C4, with measurement not another tweak. All from
 committed artifacts + raw EIA-930 via `scripts/probes/_caiso115_c4_freshlook.py`
 (no LP; keeper-proxy `caiso104_m1_B` for the model hourly, reproduces the keeper
 C4 gas digit-for-digit). Full record:
-`results/calibration/FINDING-caiso115-c4-freshlook-and-separability-2026-07-23.md`.
+`docs/records/caiso/FINDING-caiso115-c4-freshlook-and-separability-2026-07-23.md`.
 
 **Inv 1a — cross-ISO C4 benchmark: the gate is NOT mis-specified, CAISO is a
 marginal-NRMSE outlier, not a broken one.** Scoring every ISO keeper's gas
@@ -870,7 +870,7 @@ Next number: caiso-116.
 ## caiso-116 (2026-07-23) — EXECUTE-THE-BELLY-LANE, DERIVE-GATED: candidate (a) (the endogenous WECC-West node) CANNOT be evening-scoped to keep C3a while fixing C5a — the modeled West (EIA-930 NW+SW) net-exports only ~19 TWh/yr but CAISO imports 29-36, and L1b matched CA's import VOLUME only by over-generating that ~9-17 TWh/yr gap as gas exported at the intertie hub (the marginal unit that breaks C3a); C5a-fix and C3a-guard are COUPLED through that proxy over-export, so BOTH scopings fail by derivation; the fleet-bound delta was built + tested then reverted (over-corrects C5a + infeasible); keeper UNCHANGED
 
 *(Housekeeping 2026-07-26: merged from
-`docs/handoffs/caiso116-calibration-log-entry.md`.)*
+`docs/records/caiso/caiso116-calibration-log-entry.md`.)*
 
 **Derive-first gate, mechanism built-then-refuted, NO SOLVE, nothing registered.**
 Keeper `2026-07-19-caiso-102-hourfix` UNCHANGED (NOT-YET, fail {C3c, C4, C5a}).
@@ -879,7 +879,7 @@ building one pre-registered single delta — candidate (a), the caiso-114
 endogenous WECC-West node, evening-scoped so the West does not set CA's evening
 LMP. A derive-first pass (rule #1, before committing a mechanism) uncovered a
 DATA-SCOPE gap the caiso-114/115 handoffs did not anticipate. Full record +
-reproduction: `results/calibration/FINDING-caiso116-endogenous-datascope-2026-07-23.md`
+reproduction: `docs/records/caiso/FINDING-caiso116-endogenous-datascope-2026-07-23.md`
 / `scripts/probes/_caiso116_endogenous_datascope_derive.py` (no LP).
 
 **Inv 1 — the data-scope gap (load-bearing).** Modeled West net-export capability
@@ -1007,7 +1007,7 @@ CALIBRATED promotion). Bundle `caiso_netrev_margin`.
 ## caiso-117 (2026-07-24) — belly-hour West-physical import cap BUILT + 3-yr A/B: fixes the belly VOLUME (import → toward measured, gas +1.9/+2.9/+2.3 TWh, C5a improves, evening untouched by construction) but BREAKS C3a in 2025 (+8.6 % → +13.2 %) by worsening the pre-existing belly PRICE over-pricing — belly-volume and belly-PRICE lanes are COUPLED; mechanism stays built default-OFF; keeper UNCHANGED
 
 *(Housekeeping 2026-07-26: compact entry added from
-`results/calibration/FINDING-caiso117-belly-cap-c3a-coupling-2026-07-24.md` —
+`docs/records/caiso/FINDING-caiso117-belly-cap-c3a-coupling-2026-07-24.md` —
 this session's entry was never appended to the log.)*
 
 *(Correction 2026-07-26, fast-tier triage: "mechanism stays built default-OFF"
@@ -1017,7 +1017,7 @@ unit tests + FINDING, PRs #2828/#2835); the mechanism source
 `build_caiso_belly_import_cap_group`, `measured_west_belly_export_cap`) was
 never pushed and the session branch is deleted, so it is unrecoverable from
 git. `tests/test_caiso_belly_import_cap.py` fails collection on main as an
-orphan. Escalation D1 in `docs/handoffs/fast-tier-triage-2026-07-26.md`:
+orphan. Escalation D1 in `docs/records/misc/fast-tier-triage-2026-07-26.md`:
 rebuild from the FINDING's Inv-2 spec when the joint belly delta goes live, or
 explicitly drop the tests as rejected-probe residue.)*
 
@@ -1055,7 +1055,7 @@ observable, rule 13).
 ## 2026-07-24 — caiso-118 BELLY PRICE-FORMATION derive: both suspects REFUTED; the belly over-price + over-import are ONE defect (the model UNDER-COMMITS belly gas). NO SOLVE, nothing registered. Keeper `2026-07-19-caiso-102-hourfix` UNCHANGED (NOT-YET, fail {C3c, C4, C5a})
 
 *(Housekeeping 2026-07-26: merged from
-`docs/handoffs/caiso-118-belly-price-log-entry.md`. NOTE: this entry's
+`docs/records/caiso/caiso-118-belly-price-log-entry.md`. NOTE: this entry's
 "actual belly gas 8.5/9.6/10.5 GW" headline and the ~8-10 GW floor charter it
 redirects to were REFUTED the same day by caiso-119 R1 — the "actual" was the
 corrupted EIA-930 `NG: NG` cell caiso-109 had condemned; the honest hole is
@@ -1063,7 +1063,7 @@ corrupted EIA-930 `NG: NG` cell caiso-109 had condemned; the honest hole is
 Kept verbatim as the historical record; see the caiso-119 entry below.)*
 
 **Derive-first (rule #1), measurement-only, register nothing** (the caiso-115/116/117
-precedent). Full finding: `results/calibration/FINDING-caiso118-belly-price-undercommit-2026-07-24.md`.
+precedent). Full finding: `docs/records/caiso/FINDING-caiso118-belly-price-undercommit-2026-07-24.md`.
 Reproduction: `scripts/probes/_caiso118_belly_price_derive.py` (no LP; keeper-proxy
 `caiso104_m1_B` hourlies + raw EIA-930 CISO + `load_renewable_profiles` +
 `measured_import_hub_prices` + `measured_corridor_flow_envelope`).
@@ -1128,9 +1128,9 @@ corridor-capped; pulls volume, worse C5a).
 
 **Keeper `2026-07-23-caiso-netrev-margin-keeper` UNCHANGED** (NOT-YET, fail
 {C3c, C4, C5a}). One three-year single-delta A/B solved; nothing promoted.
-Records: `results/calibration/FINDING-caiso119-gas-basis-adjudication-2026-07-24.md`
+Records: `docs/records/caiso/FINDING-caiso119-gas-basis-adjudication-2026-07-24.md`
 and `FINDING-caiso119-minload-ab-result-2026-07-24.md`. Gates pre-registered
-before either arm finished: `results/calibration/caiso119_ab_pregistered_gates.md`.
+before either arm finished: `docs/records/caiso/caiso119_ab_pregistered_gates.md`.
 
 **R1 — the caiso-118/118b chain is void on magnitude.** Its entire redirect
 (floor the belly-committed fleet toward reality's ~8-10 GW) rested on one
@@ -1243,7 +1243,7 @@ already correct). Instrument (committed):
 `scripts/probes/_caiso120_price_regime.py` — keeper hourly sidecars + measured
 RT LMP + measured MALIN/PALOVRDE hub + raw EIA-930 CISO; no gitignored input.
 Full record:
-`results/calibration/FINDING-caiso120-belly-regime-split-2026-07-26.md`.
+`docs/records/caiso/FINDING-caiso120-belly-regime-split-2026-07-26.md`.
 
 **The new fact — split belly hours (hod 10-15) by the ACTUAL price regime.**
 In the SURPLUS half (measured RT ≤ $20; n = 810/1116/1077): actual RT
@@ -1305,7 +1305,7 @@ Two 3-year solves this session: `caiso121_repro_A` (control replay, keeper
 recipe exactly — gitignored, NOT registered, FINDING-caiso92b protocol) and
 `caiso121_minload_keeper_B` (single delta, registered as
 `2026-07-26-caiso-121-minload-keeper`). Full record:
-`results/calibration/FINDING-caiso121-surplus-marginal-attribution-2026-07-26.md`.
+`docs/records/caiso/FINDING-caiso121-surplus-marginal-attribution-2026-07-26.md`.
 Instrument (committed): `scripts/probes/_caiso121_surplus_marginal.py`.
 
 **(1) C4-2023 benchmark basis — ESCALATED AND GRANTED (owner ruling, this
@@ -1456,7 +1456,7 @@ blocks (Ormond 1,194 MW, Alamitos steam 927 MW published means) are
 mothball/RMR states the model owns via fleet status, not the outage overlay —
 excluded from the active-plant scope by construction. Placebo stays inside p95
 (shape null); the substance is the level axis. Full numbers:
-`results/calibration/RESULTS-neiso65-crossiso-reaudit-2026-07.md` §4.
+`docs/records/neiso/RESULTS-neiso65-crossiso-reaudit-2026-07.md` §4.
 
 ## caiso-122 (2026-07-26) — the C3a-2025 HEAD regression is **NOT attributed**: `src/market_sim/` is EXHAUSTED and **every state of the CAISO outage extract is REFUTED by solve** (absent / pre-layup / HEAD); the keeper's recorded provenance is **unusable as a bisect anchor** (`git_sha` unreachable, `timestamp` keeps only the original DATE across a replay); STEP 2's measured min-load 0.570 arm scored against a same-HEAD control — **registered, NOT promoted**; keeper UNCHANGED, lane STILL BLOCKED
 
@@ -1555,7 +1555,7 @@ note); five LP solves ran strictly sequentially.
 
 ## caiso-123 (2026-07-26) — C3a-2025 BASIS DRIFT ATTRIBUTED (derive-first, two probe solves): it IS the CAISO outage extract, in the states caiso-122 never tested — the extract was **derived-not-committed until 07-24**, the keeper solved on a session-local **partial** derivation no full derivation regenerates, and the 07-24 backfill committed a heavier full derivation (CC_REGULAR +618/+688 MW avg removed 2024/25) that every later solve reads; same-HEAD extract A/B isolates **+1.24 % λ / CC_REGULAR −0.49 TWh / import +0.42 TWh**; the caiso-120 "guard-corrected extract" re-tune trigger is **WITHDRAWN-AS-STATED** (guard's own isolated effect −0.18 %, favourable) and re-derived onto the extract-content change; `basis_sha` governance fix landed; keeper UNCHANGED, nothing registered
 
-**Full record: `results/calibration/FINDING-caiso123-c3a-drift-attribution-2026-07-26.md`.**
+**Full record: `docs/records/caiso/FINDING-caiso123-c3a-drift-attribution-2026-07-26.md`.**
 Instrument (committed): `scripts/probes/_caiso123_extract_repro.py`. Two
 single-year throwaway probe solves (rule-16 diagnostic clause, gitignored
 `results/probes/`, NOT registered — FINDING-caiso92b protocol): arm K = keeper
@@ -1659,8 +1659,8 @@ Next number: caiso-124.
 
 ## caiso-124 (2026-07-26) — HYDRO MIN-FLOW FLOOR lane BUILT (owner-flagged) and A/B'd against gates pre-registered before the solve: the mechanism eliminates the parks-at-zero pathology outright (h<10 MW 270/692/604 → 0), closes 83–91 % of the belly hydro deficit, halves the diurnal MAE and corrects the amplitude error (cv_model/cv_meas 1.44 → 0.98) — and is **KILLED AS WRITTEN by its own K3 shape gate in 2025** (profile r 0.985 → 0.977) plus a P1-2025 miss (172 h < 100 MW vs < 150). Registered as a rejected probe; keeper UNCHANGED. TASK 2: the caiso-123 §5 residual's `src/market_sim/` window is now CLOSED BY MEASUREMENT — only container/partition state and vertex wander survive
 
-**Full record: `results/calibration/FINDING-caiso124-hydro-min-flow-floor-2026-07-26.md`;
-gates: `results/calibration/PREREG-caiso124-hydro-min-flow-floor-2026-07-26.md`
+**Full record: `docs/records/caiso/FINDING-caiso124-hydro-min-flow-floor-2026-07-26.md`;
+gates: `docs/records/caiso/PREREG-caiso124-hydro-min-flow-floor-2026-07-26.md`
 (committed BEFORE arm B solved, commit `353d88e`).**
 **Runs:** `2026-07-26-caiso-124-hydro-minflow` (arm B) registered — a REJECTED
 probe, registered per rule 15. Arm A `caiso124_control_A` (same-HEAD control,
@@ -1796,7 +1796,7 @@ Next number: caiso-125.
 
 Charter/cross-ISO session — measurement only: no guard change, no extract
 re-derive, no LP solve, **no CAISO keeper touched**, no dashboard registration.
-Full record: `results/calibration/FINDING-campd-daygrain-crossiso-2026-07-26.md`;
+Full record: `docs/records/governance/FINDING-campd-daygrain-crossiso-2026-07-26.md`;
 cross-ISO entry in `docs/calibration-log/governance.md`.
 
 CAISO's cell of the 180-cell sweep (`--rcc-pctl {0.50, 0.75, 0.90, 0.99}` × `--horizon {24, 48, 72}` ×
@@ -1828,7 +1828,7 @@ re-tune-vs-freeze sequencing) are untouched. Next number unchanged: **caiso-125*
 ## caiso-125 (2026-07-26) — OVERNIGHT HYDRO OVER-SUPPLY attributed by measurement, charter premise INVERTED (the p95 ceiling BINDS overnight, 83–85 % of hours — the overnight level IS the envelope level); every chartered lever REFUTED derive-first; the honest driver = fleet SHAPEABILITY HETEROGENEITY (RoR split — greedy proxy fixes overnight AND belly AND evening at once, ARMING IS AN OWNER ASK) + the evening–overnight spread compression; diagnostic probe: the overnight excess displaces GAS (C5a-aligned); keeper UNCHANGED, nothing armed, nothing registered. Plus: derived solve inputs (outage extracts + capacity-deliverability partition) now content-pinned into shared_inputs (caiso-123 §5 closed)
 
 **Full record:
-`results/calibration/FINDING-caiso125-overnight-hydro-attribution-2026-07-26.md`.
+`docs/records/caiso/FINDING-caiso125-overnight-hydro-attribution-2026-07-26.md`.
 Instruments (committed): `scripts/probes/_caiso125_overnight_attribution.py`
 (sections A–I on the two committed caiso-124 bundles + raw EIA-930/923 — no
 solve), `scripts/probes/_caiso125_nightcap_probe.py` (rule-16 diagnostic
@@ -1927,8 +1927,8 @@ Next number: caiso-126.
 
 ## caiso-126 (2026-07-27) — RoR-SPLIT LANE EXECUTED (the caiso-125 §4c owner ask): external classifier intaken (EHA+HILARRI, energy-weighted RoR share is ~10-12 %, NOT the premise's ~half — that was plant-count), the floor-reconciled family BUILT (zero DOF, default off, byte-inert proven digit-for-digit) and A/B'd against gates pre-registered before the solve: every window moves toward measured — overnight 2-3× beyond the fixed-λ prediction (the reservoir-pool water-value feedback is REAL), belly −583/−611/−549 → −92/−58/−83 MW, parks-at-zero → 0, amplitude error −80…−87 % — and the family is KILLED as armed by pre-registered K1 EVENING STARVATION (2024 −376 MW; the caiso-125 §4b spread compression paying the belly from the evening peak) + the formal K4 nameplate-clip clause. Keeper UNCHANGED; B registered as a rejected probe
 
-**Full record: `results/calibration/FINDING-caiso126-ror-split-2026-07-27.md`;
-gates: `results/calibration/PREREG-caiso126-ror-split-2026-07-27.md` (committed
+**Full record: `docs/records/caiso/FINDING-caiso126-ror-split-2026-07-27.md`;
+gates: `docs/records/caiso/PREREG-caiso126-ror-split-2026-07-27.md` (committed
 `08d8113`, BEFORE arm B solved). Runs: `2026-07-27-caiso-126-ror-split` (arm B,
 PROBE/REJECTED, rule 15; retention pruned caiso-97-evening-trim). Arm A
 `caiso126_control_A` NOT registered (FINDING-caiso92b protocol) — it reproduces
@@ -2033,8 +2033,8 @@ no such grant exists in this session; the ask is filed instead.
 
 Instrument (committed): `scripts/probes/_caiso127_evening_formation.py`
 (sections A–E + B2). Full record:
-`results/calibration/FINDING-caiso127-evening-formation-2026-07-27.md`.
-Owner ask: `docs/handoffs/caiso-127-storage-arbitrage-ask-2026-07-27.md`.
+`docs/records/caiso/FINDING-caiso127-evening-formation-2026-07-27.md`.
+Owner ask: `docs/records/caiso/caiso-127-storage-arbitrage-ask-2026-07-27.md`.
 
 ### §A — the ladder re-based on the promoted keeper, and the framing that breaks
 
@@ -2140,7 +2140,7 @@ level LAST).
 
 ### §Ask (TASK 2) — filed, not built
 
-`docs/handoffs/caiso-127-storage-arbitrage-ask-2026-07-27.md`. Surviving
+`docs/records/caiso/caiso-127-storage-arbitrage-ask-2026-07-27.md`. Surviving
 candidate: the **DA/RT allocation on the DISCHARGE side** — the two-sided
 rule-19 reconciliation of M1 (`caiso_charge_allocation_schedule`), same source,
 same Fourier-Motzkin per-day construction, volume left endogenous, zero new free
@@ -2193,7 +2193,7 @@ Next number: caiso-128.
 ### ADDENDUM (same session, later) — OWNER GRANT on the caiso-127 ask
 
 The owner granted the §Ask in-session. Terms, recorded verbatim in
-`docs/handoffs/caiso-127-storage-arbitrage-ask-2026-07-27.md` §Status:
+`docs/records/caiso/caiso-127-storage-arbitrage-ask-2026-07-27.md` §Status:
 
 1. **S1 (DA/RT allocation on the DISCHARGE side) GRANTED** as the next single
    delta, conditional on derive gates D1–D3. **D3 is a hard kill-before-solve**
@@ -2215,7 +2215,7 @@ Keeper remains `2026-07-27-caiso-126-ror-split`. Next number: caiso-128.
 
 **Keeper `2026-07-27-caiso-126-ror-split` UNCHANGED. Derive/measurement session
 — no mechanism armed, no A/B, nothing registered.** Full evidence:
-`results/calibration/FINDING-caiso128-heat-rate-provenance-2026-07-27.md`.
+`docs/records/caiso/FINDING-caiso128-heat-rate-provenance-2026-07-27.md`.
 Instrument (committed): `scripts/probes/_caiso128_heat_rate_source_audit.py`.
 
 ### The lead, and why it does not survive measurement
@@ -2314,7 +2314,7 @@ built, nothing registered.** This is the owner grant executing as written: D3
 was granted as a **hard kill-before-solve** gate and it fired (the caiso-74
 lesson held — the arithmetic refuted the mechanism before any LP was built).
 Full evidence:
-`results/calibration/FINDING-caiso129-s1-discharge-allocation-gates-2026-07-27.md`.
+`docs/records/caiso/FINDING-caiso129-s1-discharge-allocation-gates-2026-07-27.md`.
 Instrument (committed): `scripts/probes/_caiso129_s1_gates.py`. The live
 rule-23 derive `scripts/data/derive_caiso_charge_allocation.py` is UNTOUCHED
 and no artifact was regenerated.
@@ -2396,7 +2396,7 @@ Next number: caiso-130.
 **Keeper `2026-07-27-caiso-126-ror-split` UNCHANGED.** Arm B registered as a
 REJECTED probe (`2026-07-27-caiso-130-nameplate-aware`), arm A as its control
 (`2026-07-27-caiso-130-control`); both on the dashboard (rule 15). Full
-evidence: `results/calibration/FINDING-caiso130-hydro-budget-nameplate-aware-2026-07-27.md`.
+evidence: `docs/records/caiso/FINDING-caiso130-hydro-budget-nameplate-aware-2026-07-27.md`.
 Gates frozen pre-solve at `26259a2`
 (`PREREG-caiso130-hydro-budget-nameplate-aware-2026-07-27.md`). Scorer
 `scripts/probes/_caiso130_nameplate_ab.py`; no-LP derives
@@ -2545,9 +2545,9 @@ candidate now on the table, so the deliverable is the FINDING plus the ask —
 the caiso-127/129 discipline.
 
 Full record:
-`results/calibration/FINDING-caiso131-tail-and-c3a-decomposition-2026-07-27.md`.
+`docs/records/caiso/FINDING-caiso131-tail-and-c3a-decomposition-2026-07-27.md`.
 Owner ask with derive-first gates:
-`docs/handoffs/caiso-131-c3c-c3a-ask-2026-07-27.md`.
+`docs/records/caiso/caiso-131-c3c-c3a-ask-2026-07-27.md`.
 Instrument (committed):
 `scripts/probes/_caiso131_tail_and_level_decomp.py` (sections A–E; committed
 sidecars + committed bench/tail parts + a no-LP `run_year(fleet_only=True)`
@@ -2686,7 +2686,7 @@ per the charter's step 1 ("ANY of D1–D3 failing KILLS A1 for the cost of a
 derive — that outcome is a complete, publishable session"). Steps 2–3 (prereg,
 A/B) are **not reached**: no solve was authorized and none was run, so there is
 no bundle and no dashboard registration (the caiso-131 precedent). Full record:
-`results/calibration/FINDING-caiso132-corridor-export-gates-2026-07-28.md`.
+`docs/records/caiso/FINDING-caiso132-corridor-export-gates-2026-07-28.md`.
 Instrument (committed): `scripts/probes/_caiso132_corridor_export_gates.py`
 (sections D0/D1/D2/D3/E). Mechanism matrix updated in-session (rule 26): new row
 `caiso_corridor_export_path` = **R** for CAISO, and the `import_hub_pricing`
@@ -2785,7 +2785,7 @@ Next number: caiso-133.
 mechanism, no flag, no new `ScenarioConfig` field. The one solve was a no-delta
 keeper replay whose only purpose was the byte-identity proof; registered as the
 control arm `2026-07-28-caiso-133-sidecar-control` (rule 15). Full evidence:
-`results/calibration/FINDING-caiso133-binding-limit-separation-2026-07-28.md`.
+`docs/records/caiso/FINDING-caiso133-binding-limit-separation-2026-07-28.md`.
 Instruments: `scripts/probes/_caiso133_binding_limit_separation.py` (A/B/C/D),
 `scripts/probes/_caiso133_sidecar_invariance.py`.
 
@@ -2889,7 +2889,7 @@ Next number: caiso-134.
 **Derive-first, NO SOLVE, nothing armed, nothing registered.** Keeper
 `2026-07-27-caiso-130-nameplate-aware` UNCHANGED (NOT-YET, fail {C3a-2025, C3c}).
 Full evidence:
-`results/calibration/FINDING-caiso134-import-demand-source-2026-07-28.md`.
+`docs/records/caiso/FINDING-caiso134-import-demand-source-2026-07-28.md`.
 Instrument: `scripts/probes/_caiso134_import_demand_source.py` (§A–§E), run
 entirely off the keeper's committed `hourly/` sidecars (the caiso-133 dividend)
 plus `run_year(fleet_only=True)` — no LP built, no solver called.
@@ -3002,7 +3002,7 @@ Next number: caiso-135.
 
 ## caiso-135 (2026-07-28) — the committed-gas charter is **REFUSED on measured bytes, before any solve**: the RA floor is multiplied by **PLANT** capacity, but the standing `caiso_ra_min_load_frac = 0.570` is a per-**TURBINE** turndown; on the consuming basis CAISO measures **0.289–0.304**, so the keeper's **0.26 is already inside the band** and caiso-118b's "fitted below physical" premise is refuted. The quantity gate is a **verified NO-OP**. And the lane's premise falls: on the same 28 matched plants the model has **1.01–1.13× reality's online CC plant count** at **0.74–0.80× its MW** — a LOADING defect on already-committed plants, not an under-commitment. Keeper UNCHANGED, **nothing armed, no solve**
 
-Full record: `results/calibration/FINDING-caiso135-committed-gas-charter-2026-07-28.md`.
+Full record: `docs/records/caiso/FINDING-caiso135-committed-gas-charter-2026-07-28.md`.
 Instrument: `scripts/probes/_caiso135_committed_gas_charter.py` (§A/B/C/D/E/R,
 no LP built, no solver called).
 
@@ -3101,7 +3101,7 @@ Next number: caiso-136.
 
 ## caiso-136 (2026-07-28) — the measured unit-availability window family (`unit_outage_short_windows` + `unit_partial_outage_windows`) is **STRUCTURALLY UNDERIVABLE for CAISO**, adjudicated **INERT**: the detector is COAL-ONLY and CAISO's entire coal fleet is **2 units / 50.0 MW** (0.16 % of capacity, 0.04–0.07 % of keeper energy) at **one facility absent from CAMPD entirely** — the CA extract carries 108–109 facilities with **ZERO coal-fuelled rows**. Both derives return **0 windows**. STOPPED at the lane task's own Step-1 branch point — no A/B, no solve, keeper UNCHANGED
 
-Full record: `results/calibration/FINDING-caiso136-unit-availability-windows-2026-07-28.md`.
+Full record: `docs/records/caiso/FINDING-caiso136-unit-availability-windows-2026-07-28.md`.
 
 **Step 1, run as specified.** `derive_campd_unit_outages.py --iso CAISO
 --short-windows` and `--partial-windows`, years 2023 2024 2025 → **0 windows, 0
@@ -3153,7 +3153,7 @@ Next number: caiso-137.
 **Keeper `2026-07-27-caiso-130-nameplate-aware` UNCHANGED** (NOT-YET, fail set
 {C3a-2025, C3c}). **No LP was built, no solver called, nothing armed**, no
 `ScenarioConfig` field added. Derive-first, as the brief required.
-Evidence: `results/calibration/FINDING-caiso137-a2-lolp-reserve-measure-2026-07-28.md`.
+Evidence: `docs/records/caiso/FINDING-caiso137-a2-lolp-reserve-measure-2026-07-28.md`.
 Instrument: `scripts/probes/_caiso137_lolp_reserve_measure.py` (§A–§F).
 
 **STEP 1 — A2 as written is CLOSED (option d).** `FINDING-caiso133` §7 had
@@ -3247,7 +3247,7 @@ Next number: caiso-138.
 ### CORRECTION (caiso-137b, 2026-07-29) — two secondary caiso-137 claims WITHDRAWN; the primary result stands
 
 Filed the next session-day, before any further work. Evidence:
-`results/calibration/FINDING-caiso137b-overlay-reachability-2026-07-29.md`.
+`docs/records/caiso/FINDING-caiso137b-overlay-reachability-2026-07-29.md`.
 Instrument: `scripts/probes/_caiso137b_overlay_reachability.py`.
 
 **STANDS: ask A2 closes as a no-defect** (the caiso-137 entry's §1). The
@@ -3319,7 +3319,7 @@ Next number: caiso-138.
 ## caiso-138 (2026-07-29) — the WECC_PNW firm-hydro dump is CHARTERED, FIXED and the fix PROMOTED: the caiso-77 must-flow floor (corridor-split DMM level × TOTAL-system shape) collides with the corridor's own correct envelope and the residual — **1.09/1.71/0.97 TWh/yr, 98.6–100 % of the PNW dump** — had no outlet because the design's export sink is **deleted in every scored P1 pass** by the bridge seam's zeros-floor max-composition. Reconciliation = `caiso_firm_import_envelope_clip` (pointwise min of the two measured series, **zero new DOF**); A/B vs a **byte-identical** control passes every pre-registered gate (E1/E2 = **+0.0000**, rubric unchanged) and the node reprices **−26.00 → +40.79/+37.46/+41.83** vs measured MALIN same-hours **+52.67/+41.22/+41.77**. NEW KEEPER: `2026-07-29-caiso138-envelope-clip`
 
 Diagnose-first per the charter; all D-gates passed on committed bytes before any
-solve. Full record: `results/calibration/FINDING-caiso138-pnw-firm-dump-2026-07-29.md`
+solve. Full record: `docs/records/caiso/FINDING-caiso138-pnw-firm-dump-2026-07-29.md`
 (§A–§G); instrument `scripts/probes/_caiso138_pnw_firm_dump.py` (no LP, no
 solver); pre-registration `PREREG-caiso138-firm-envelope-clip-2026-07-29.md`
 (committed and pushed before arm B solved). Arms registered:
@@ -3470,7 +3470,7 @@ Instruments (committed, no LP, no solver):
 `scripts/probes/_caiso140_belly_supply_state.py` (D1 month×hod residual map +
 D2 exact ledger + drill-down) and `scripts/probes/_caiso140_d3_walkdown.py`
 (counterfactual λ(S) from the sidecars + the fleet-only offer reconstruction).
-Full record: `results/calibration/FINDING-caiso140-belly-supply-state-2026-07-30.md`.
+Full record: `docs/records/caiso/FINDING-caiso140-belly-supply-state-2026-07-30.md`.
 
 1. **D1 corrects the "belly" shorthand.** Sep–Dec carries +2.35 of the +2.90
    (caiso-131 reproduced), but the belly band 10–15 is only **+0.75 (26 %)**;
@@ -3538,7 +3538,7 @@ if it lands) run the joint A1+A2 D-gates for C3a-2025. It does not land.
 Keeper `2026-07-29-caiso139-dump-guard-offer` UNCHANGED (NOT-YET, fail
 {C3a-2025, C3c}); the joint D-gates were NOT run and the A1 rule-13 grant
 question was NOT posed (both were conditioned on the split being measured).
-Full record: `results/calibration/FINDING-caiso141-water-intake-walled-2026-07-30.md`;
+Full record: `docs/records/caiso/FINDING-caiso141-water-intake-walled-2026-07-30.md`;
 instrument: `scripts/probes/_caiso141_water_source_survey.py` (a NETWORK
 probe — re-runs every check against the live endpoints and prints
 unchanged-WALL / CHANGED per source).
@@ -3593,7 +3593,7 @@ walled A2 — restore the P1 export outlet the RA-bridge seam deletes
 plateau. Keeper `2026-07-29-caiso139-dump-guard-offer` UNCHANGED (NOT-YET,
 fail {C3a-2025, C3c}); no LP built, no solver called, no bundle, no dashboard
 registration due. Full record:
-`results/calibration/FINDING-caiso142-export-sink-seam-2026-07-30.md`;
+`docs/records/caiso/FINDING-caiso142-export-sink-seam-2026-07-30.md`;
 instrument: `scripts/probes/_caiso142_export_sink_basis.py` (§A exercises the
 real bridge functions on the reconstructed 2025 keeper fleet; §B–§F read
 committed bytes only).
@@ -4043,7 +4043,7 @@ slot remains.
 **Keeper `2026-07-29-caiso139-dump-guard-offer` → `2026-07-31-caiso146-ct-heat-rates`**
 (CALIBRATED-WITH-CAVEATS both sides; 0 FAILs; the **same** two owner-adopted
 caveats carried forward unchanged in substance — no new caveat, no new slot).
-Records: `results/calibration/FINDING-caiso146-measured-ct-heat-rates-2026-07-31.md`,
+Records: `docs/records/caiso/FINDING-caiso146-measured-ct-heat-rates-2026-07-31.md`,
 `PREREG-caiso146-ct-heat-rates-2026-07-31.md` (committed+pushed **before either
 arm solved**, `abaa952`). Arms: `2026-07-31-caiso146-control` /
 `2026-07-31-caiso146-ct-heat-rates`. Lever queue §5.2 item 6, cell `U` → `K`.
@@ -4160,7 +4160,7 @@ Next number: caiso-147.
 Lever: mechanism-matrix §5.2 CAISO queue **item 7**, `measured_chp_heat_rates`
 (cell `U` → `K`). Prereg `PREREG-caiso147-chp-heat-rates-2026-07-31.md`,
 committed and pushed at `b1b5e5f` **before either arm solved**. Full evidence:
-`results/calibration/FINDING-caiso147-measured-chp-heat-rates-2026-07-31.md`.
+`docs/records/caiso/FINDING-caiso147-measured-chp-heat-rates-2026-07-31.md`.
 
 ### What the lever is, and why CAISO's version differs from MISO's
 
@@ -4375,7 +4375,7 @@ session to read the two standing adjudications first — NYISO `R` (nyiso-96, ru
 state what makes CAISO different from both before arming anything. Phase 0 was
 run as no-LP with an explicit no-solve-closure exit. It closes: **the A/B is not
 licensed.** Full record:
-`results/calibration/FINDING-caiso149-tranche-startup-2026-07-31.md`; probe
+`docs/records/caiso/FINDING-caiso149-tranche-startup-2026-07-31.md`; probe
 `scripts/probes/caiso149_tranche_startup_phase0.py`.
 
 **Ground 1 — rule 1 `[R-STRUCT]`, dispositive alone: the pricing rule does not
@@ -4499,7 +4499,7 @@ is now items **2 and 3** only.
 **Keeper CHANGES: `2026-07-31-caiso148-nuclear-availability` -> `2026-07-31-caiso-151-firm-selfsched`**
 (CALIBRATED-WITH-CAVEATS, 0 FAILs, C1 12/12 · free 8/8, same 2 of 3 ledgered
 slots, protective 0/1). Full evidence:
-`results/calibration/FINDING-caiso151-firm-selfsched-clip-2026-07-31.md`;
+`docs/records/caiso/FINDING-caiso151-firm-selfsched-clip-2026-07-31.md`;
 prereg `PREREG-caiso151-firm-selfsched-clip-2026-07-31.md` (committed+pushed
 before either arm solved).
 
@@ -4591,7 +4591,7 @@ Next number: caiso-152.
 **Keeper `2026-07-31-caiso148-nuclear-availability` UNCHANGED**
 (CALIBRATED-WITH-CAVEATS, 0 FAILs). Nothing registered — the
 caiso-136/143/144/149 pattern. Full evidence:
-`results/calibration/FINDING-caiso150-firm-import-elasticity-2026-07-31.md`;
+`docs/records/caiso/FINDING-caiso150-firm-import-elasticity-2026-07-31.md`;
 instrument `scripts/probes/_caiso150_firm_import_elasticity.py` (§A–§C, no LP
 beyond one `run_year(fleet_only=True)` reconstruction).
 
@@ -4717,7 +4717,7 @@ Next number: caiso-151.
 ## caiso-152 (2026-08-01) — the OASIS **RLE parse defect** (caiso-150 §E1, unowned since) is REAL, is FIXED ISO-generically, and its effect on the keeper's measured offer surface is **MATERIAL** — the CT_PEAKER ladder moves **+19–21 % in every net-load bin**, ~2× the deriver's own tolerance. But the corrected input **CANNOT BE SHIPPED**: the derive fails its **own G1** on BOTH arms, and the OLD (committed) code path on the deriver's OWN default corpus **does not reproduce the committed keeper artifact at all**. **NO SOLVE, no arm, no new field, keeper unchanged**
 
 Full evidence:
-`results/calibration/FINDING-caiso152-dam-bid-rle-parse-2026-08-01.md`; prereg
+`docs/records/caiso/FINDING-caiso152-dam-bid-rle-parse-2026-08-01.md`; prereg
 `PREREG-caiso152-dam-bid-rle-parse-2026-08-01.md` + the corpus addendum
 `PREREG-caiso152-ADDENDUM-corpus-2026-08-01.md`, both committed and pushed
 before the values they govern existed. Probe
@@ -4838,7 +4838,7 @@ non-protective slots, protective 0/1). Keeper
 `2026-07-31-caiso-151-firm-selfsched` → `2026-07-31-caiso153-reid-b`.
 Prereg `PREREG-caiso153-offer-classifier-reid-2026-08-01.md`, committed and
 pushed **before any classifier value on this session's corpus existed**.
-Evidence `results/calibration/FINDING-caiso153-offer-classifier-reid-2026-08-02.md`.
+Evidence `docs/records/caiso/FINDING-caiso153-offer-classifier-reid-2026-08-02.md`.
 
 **Lever:** mechanism-matrix §5.2 **item 9**, opened NEW/BLOCKING/unowned at
 caiso-152. Now **CLOSED**; item 3 (S2 DA/RT two-settlement) is CAISO's only
@@ -4950,7 +4950,7 @@ holdout spend freeze is ACTIVE. Instrument:
 core — `_fit`/`_score_resources` — parameterized by ISO, not forked).
 
 **The verdict, in four measured layers** (full write-up:
-`results/calibration/FINDING-caiso154-xiso-ols-attenuation-not-live-2026-08-02.md`):
+`docs/records/caiso/FINDING-caiso154-xiso-ols-attenuation-not-live-2026-08-02.md`):
 
 1. **L1 structural (disclosed ex ante in the PREREG): FALSE in both ISOs.**
    No PJM/NEISO offer-surface derive contains ANY regression estimator — all
@@ -5016,7 +5016,7 @@ AUDIT/SCORER session, not a mechanism lever (rule 28a): no cell re-tested, no
 mechanism armed, no ScenarioConfig field, ZERO LP registered, no marker, no
 dashboard registration (the caiso-136/143/144/149/150/152/154 no-solve
 disposition — one aborted, discarded replay year notwithstanding). Record:
-`results/calibration/FINDING-caiso155-diagnostics-plant-set-2026-08-02.md`;
+`docs/records/caiso/FINDING-caiso155-diagnostics-plant-set-2026-08-02.md`;
 probe `scripts/probes/_caiso155_plant_set_census.py`; pre-registration + two
 addenda, each committed before the numbers they govern. Matrix audit row
 `diagnostics_plant_set` (cells `IIOIII`) + §5.7 entry, in-session (rule 28b).
@@ -5183,7 +5183,7 @@ DO-NOT-REDO: do not re-open whether the band belongs at hour grain (caiso-158);
 do not read "zero criterion flips" as inert (thousands of hours move); do not
 hand-resolve a rename/rename conflict in bundle JSON — restore whole blobs.
 Holdout untouched (2023-2025 only, no LP ran, spend freeze unspent).
-Evidence: `results/calibration/FINDING-caiso159-ct-heat-rate-promotion-2026-08-03.md`.
+Evidence: `docs/records/caiso/FINDING-caiso159-ct-heat-rate-promotion-2026-08-03.md`.
 
 Next number: caiso-160.
 
@@ -5283,14 +5283,14 @@ gone stale at `2026-07-31-caiso148-nuclear-availability` (the
 drift is invisible to CI — the nyiso-116 class of staleness).
 
 DO-NOT-REDO: do not re-run the CAISO census expecting new gaps (closed — the
-per-ISO JSON is `results/calibration/_matrix_gap_sweep_CAISO.json`); do not read
+per-ISO JSON is `results/phase0/governance/_matrix_gap_sweep_CAISO.json`); do not read
 a non-default `caiso_*` entry in a `run_config.json` as evidence a mechanism is
 armed without checking its gate; do not close the 5 shared-stem fields in a
 CAISO lane. No `R`/`I`/`G` cell was re-tested (`energy_reserve_coopt` `I` with
 its caiso-144 DO-NOT-SOLVE, `cc_mustrun_per_plant` `R`, `wecc_endogenous_node`
 `R`, `caiso_corridor_export_path` `R`, `caiso_p1_export_sink_seam` `R`,
 `netload_drag_floors` `R` all untouched).
-Evidence: `results/calibration/FINDING-caiso161-matrix-column-closure-2026-08-03.md`.
+Evidence: `docs/records/caiso/FINDING-caiso161-matrix-column-closure-2026-08-03.md`.
 
 ## caiso-162 — per-year LCT pocket import caps: a WIRING DEFECT, then a small real lever (2026-08-03)
 
@@ -5359,7 +5359,7 @@ construction (2023 a no-op, 2024 and 2025 both improve).
 for C3a-2025 (ceiling ~11% of the gap). `caiso_asymmetric_path_ratings` remains
 the untested caiso-161 queue item and gets its own arm.
 
-Evidence: `results/calibration/FINDING-caiso162-per-year-import-caps-2026-08-03.md`,
+Evidence: `docs/records/caiso/FINDING-caiso162-per-year-import-caps-2026-08-03.md`,
 `PRECHECK-caiso162-per-year-import-caps-2026-08-03.md`,
 `PRECHECK-caiso162-ADDENDUM-A-samehead-control-2026-08-03.md`.
 
@@ -5459,7 +5459,7 @@ measured 0.034 % / 0 % / 0.011 % rather than against zero.
 **DO-NOT-REDO:** do not re-test `caiso_asymmetric_path_ratings` (keeper). The
 caiso-161 lever queue is now **empty of never-adjudicated items**.
 
-Evidence: `results/calibration/FINDING-caiso163-asymmetric-path-ratings-2026-08-03.md`,
+Evidence: `docs/records/caiso/FINDING-caiso163-asymmetric-path-ratings-2026-08-03.md`,
 `PRECHECK-caiso163-asymmetric-path-ratings-2026-08-03.md`.
 
 ---
@@ -5566,9 +5566,9 @@ haircut or residual-tuned value** (rules 1/13). Joins C3a-2025 and C3c-2023/24.
 armed). Do **not** charter an N-S topology lever against the congestion
 residual — §0 measured that topology is not where the recoverable component was.
 
-Evidence: `results/calibration/FINDING-caiso164-zonal-loss-surface-2026-08-04.md`,
+Evidence: `docs/records/caiso/FINDING-caiso164-zonal-loss-surface-2026-08-04.md`,
 `PRECHECK-caiso164-zonal-loss-surface-2026-08-04.md`,
-`results/calibration/_caiso164_ab_gates.json`.
+`results/phase0/caiso/_caiso164_ab_gates.json`.
 
 ---
 
@@ -5576,9 +5576,9 @@ Evidence: `results/calibration/FINDING-caiso164-zonal-loss-surface-2026-08-04.md
 
 **Keeper unchanged** at `2026-08-04-caiso164-zonal-loss-surface`. No run
 produced, so none registered (the caiso-161 / nyiso-121 no-LP precedent). Prereg
-`results/calibration/PRECHECK-caiso165-dlap-intake-intra-sp15-2026-08-04.md`
+`docs/records/caiso/PRECHECK-caiso165-dlap-intake-intra-sp15-2026-08-04.md`
 pushed **before the probe ran on intaken data**; record
-`results/calibration/FINDING-caiso165-dlap-intake-intra-sp15-2026-08-04.md`.
+`docs/records/caiso/FINDING-caiso165-dlap-intake-intra-sp15-2026-08-04.md`.
 
 **caiso-164 §6's attribution is CONFIRMED.** It was an *inference* from prices
 and energy balances; it is now measured on CAISO's own published
@@ -5664,9 +5664,9 @@ not re-run the intra-SP15 measurement expecting a different verdict without new
 data. Do **not** charter an N-S topology lever (unchanged); the corridor measured
 here is **INTRA-SP15**, a different object. Do not arm Arm B from the residual.
 
-Evidence: `results/calibration/FINDING-caiso165-dlap-intake-intra-sp15-2026-08-04.md`,
+Evidence: `docs/records/caiso/FINDING-caiso165-dlap-intake-intra-sp15-2026-08-04.md`,
 `PRECHECK-caiso165-dlap-intake-intra-sp15-2026-08-04.md`,
-`results/calibration/_caiso165_intra_sp15.json`,
+`results/phase0/caiso/_caiso165_intra_sp15.json`,
 `scripts/probes/caiso165_intra_sp15_decomp.py`.
 
 Next number: caiso-166 (caiso-160 unclaimed, see above).
@@ -5685,7 +5685,7 @@ corridor/export-path congestion family — its one live half after caiso-142/143
 **Phase 0, committed artifacts only** (keeper P1 sidecars + measured intertie
 LMP + CAISO's DA component record; probe
 `scripts/probes/caiso167_import_basis_phase0.py`, artifact
-`results/calibration/_caiso167_import_basis_phase0.json`).
+`results/phase0/caiso/_caiso167_import_basis_phase0.json`).
 
 **(1) THE SIGN IS INVERTED, and caiso-121's comparator was the wrong one.**
 caiso-121 measured the model's belly wedge against the *hub level*
@@ -5762,8 +5762,8 @@ limit chosen to reproduce the measured basis is an **outcome pin and stays
 forbidden** (rule 13, rules 5/21/24). (4) Quote the defect as
 **+8.24/+13.39/+8.93**, not caiso-121's +4.39/+13.53/+8.00.
 
-Evidence: `results/calibration/FINDING-caiso167-import-price-basis-2026-08-04.md`,
-`results/calibration/_caiso167_import_basis_phase0.json`,
+Evidence: `docs/records/caiso/FINDING-caiso167-import-price-basis-2026-08-04.md`,
+`results/phase0/caiso/_caiso167_import_basis_phase0.json`,
 `scripts/probes/caiso167_import_basis_phase0.py`.
 
 ---
@@ -5852,7 +5852,7 @@ re-cut the S3 ceiling retroactively. Do not arm Arm B from the residual; no
 published intra-SP15 limit is in `data/raw` and the prohibition binds harder now
 that the target numbers are known. Do not charter an N–S topology lever.
 
-Evidence: `results/calibration/FINDING-caiso166-measured-loss-zones-2026-08-04.md`,
+Evidence: `docs/records/caiso/FINDING-caiso166-measured-loss-zones-2026-08-04.md`,
 `PRECHECK-caiso166-measured-loss-zones-2026-08-04.md`,
 `scripts/gen_caiso166_attestation.py`,
 `results/calibration/caiso166_measured_loss_zones/calibration_attestation.json`.
@@ -5952,9 +5952,9 @@ Matrix: `storage_daily_cycling` CAISO `.` → **`G`**; ERCOT's `K` undisturbed
 (rule 25). CAISO still holds **no** rule-22 `complete` marker; 2023–2025 only,
 hard-filtered fail-closed.
 
-Evidence: `results/calibration/FINDING-caiso169-storage-foresight-horizon-2026-08-04.md`,
+Evidence: `docs/records/caiso/FINDING-caiso169-storage-foresight-horizon-2026-08-04.md`,
 probe `scripts/probes/caiso169_storage_foresight_phase0.py`,
-artifact `results/calibration/_caiso169_storage_foresight_phase0.json`.
+artifact `results/phase0/caiso/_caiso169_storage_foresight_phase0.json`.
 
 Next number: caiso-170.
 ## 2026-08-04 — CAISO — caiso-170: S2's REAL CHARTER has ~2 pp of rent to buy — with the concurrent caiso-170's substitute refusal this CLOSES lever-queue item 3 and the CAISO in-model lever queue is EMPTY. The real battery fleet already captures 90.7–92.2 % of the perfect-foresight ceiling. No LP, no solve, keeper unchanged — the real battery fleet already captures 90.7–92.2 % of the perfect-foresight ceiling; item 9 was STALE and is corrected; the CAISO in-model lever queue is now EMPTY. Prompt PRECONDITION did not reproduce — NO promotion made. No LP, no solve, keeper unchanged
@@ -5978,11 +5978,11 @@ its determination from committed artifacts (CALIBRATED-WITH-CAVEATS, C3a
 2024/2025 both ledgered, 0 FAILs, `audit_keepers --iso CAISO` PASS) and re-ran
 the probe against it.
 
-**Prereg** `results/calibration/PRECHECK-caiso170-s2-foresight-phase0-2026-08-04.md`,
+**Prereg** `docs/records/caiso/PRECHECK-caiso170-s2-foresight-phase0-2026-08-04.md`,
 pushed before any value in it existed. **Record**
-`results/calibration/FINDING-caiso170-s2-foresight-phase0-2026-08-04.md`.
+`docs/records/caiso/FINDING-caiso170-s2-foresight-phase0-2026-08-04.md`.
 **Probe** `scripts/probes/caiso170_s2_foresight_phase0.py`. **Artifact**
-`results/calibration/_caiso170_s2_foresight_phase0.json`.
+`results/phase0/caiso/_caiso170_s2_foresight_phase0.json`.
 
 **The dispatching prompt's PRECONDITION was AHEAD OF THE REPOSITORY, not wrong
 — and it resolved mid-session.** At open, none of it was on `main`: the keeper
@@ -6108,9 +6108,9 @@ disclosures.
 **No LP, no solve, no derive, no `ScenarioConfig` field, keeper UNCHANGED, nothing
 registered, `calibration-complete.json` UNTOUCHED.** One network call — the caiso-141
 wall probe, which is a network probe by design. No cell verdict moves: no mechanism was
-tested. Full record `results/calibration/ASSESSMENT-caiso171-frontier-2026-08-04.md`;
+tested. Full record `docs/records/caiso/ASSESSMENT-caiso171-frontier-2026-08-04.md`;
 instrument `scripts/probes/caiso171_frontier_assessment.py` (committed artifacts only);
-record `results/calibration/_caiso171_frontier_assessment.json`.
+record `results/phase0/caiso/_caiso171_frontier_assessment.json`.
 
 **Preconditions re-verified from committed artifacts before anything else**, per the
 caiso-170 lesson that a prompt can be ahead of the repo. `calibration_verdict.py --run-id
@@ -6340,7 +6340,7 @@ owner acts, and this session does not make the `complete` recommendation.**
 Matrix: **new row `path15_load_split`, CAISO `K`** (minted with no `ScenarioConfig`
 field, on the `demand_dropout_screen` precedent; other five cells `.` by structure —
 CAISO's is the only fractional load-area split in the zonal-shares layer). Evidence:
-`results/calibration/FINDING-caiso172-path15-load-split-2026-08-04.md`,
+`docs/records/caiso/FINDING-caiso172-path15-load-split-2026-08-04.md`,
 `PRECHECK-caiso172-path15-load-split-2026-08-04.md`.
 
 ## 2026-08-05 — CAISO — caiso-173: frontier RE-ASSESSED on the post-caiso-172 ledger — every limb intact, but the keeper is PRE-EPOCH and `complete` is **NOT YET**
@@ -6410,9 +6410,9 @@ census **19 of 19** resolved.
 
 Matrix: **NO cell verdict moves — no mechanism was tested**; §5.2 header re-stamped
 (rule 28 duty b). Evidence:
-`results/calibration/ASSESSMENT-caiso173-frontier-2026-08-04.md`, instrument
+`docs/records/caiso/ASSESSMENT-caiso173-frontier-2026-08-04.md`, instrument
 `scripts/probes/caiso173_frontier_recheck.py`, record
-`results/calibration/_caiso173_frontier_recheck.json`.
+`results/phase0/caiso/_caiso173_frontier_recheck.json`.
 
 ## 2026-08-05 — CAISO — caiso-174: the FFR-4D epoch re-solve — `storage_measured_base_fleet` is a MEASURED NULL, the keeper is POST-EPOCH, and `complete` is recommended **YES**
 
@@ -6485,7 +6485,7 @@ of this re-solve so the one delta stayed attributable.
 
 Matrix: **`storage_measured_base_fleet` CAISO `O` → `I`** (adjudicated by solve — the
 one cell only a CAISO backcast could settle); §5.2 header re-stamped. Evidence:
-`results/calibration/FINDING-caiso174-epoch-resolve-2026-08-05.md`,
+`docs/records/caiso/FINDING-caiso174-epoch-resolve-2026-08-05.md`,
 `PRECHECK-caiso174-epoch-resolve-2026-08-05.md`, probes `_caiso174_fleet_gate.py` /
 `_caiso174_ab_compare.py`, generator `scripts/gen_caiso174_attestation.py`.
 
@@ -6494,7 +6494,7 @@ one cell only a CAISO backcast could settle); §5.2 header re-stamped. Evidence:
 CAISO's `complete` entry now exists in `frontend/data/backcast/calibration-complete.json`,
 keyed to `2026-08-05-caiso-174-measured-fleet` (`keeper` = `keeper_at_declaration`), on the
 owner's **GRANT** signed 2026-08-05 via the option card at
-`docs/handoffs/ffr-owner-sitting-2026-08-02.md` **Addendum S.4/S.5** — the session-logged
+`docs/records/forecast/ffr-owner-sitting-2026-08-02.md` **Addendum S.4/S.5** — the session-logged
 authorization rule 22 requires. Citation chain: caiso-171 (assessment reversed to YES,
 criterion restated at P.6) → caiso-172 (its one gating item, the PGE-TAC weight, closed
 MEASURED) → caiso-174 (PR #3578, FFR-4D epoch re-solved, keeper on the measured fleet,
@@ -6510,7 +6510,7 @@ the marker** — the solve entry point still refuses `--iso CAISO --year 2022
 entry itself: C7/C8 are **unscored-protective** on caiso-174 because its bundle carries no
 `legitimacy_diagnostics.json` (the superseded caiso-172 does, and scores both PASS) — a
 scorer-only gap under rule 21, deliberately not repaired in this committed-artifacts-only lane.
-Full record: `docs/handoffs/caiso-complete-grant-2026-08-05.md`.
+Full record: `docs/records/caiso/caiso-complete-grant-2026-08-05.md`.
 
 ## 2026-08-06 — CAISO — caiso-175: the TAC load-series intake — MWD-TAC closed, the 2023 series was covering **744 of 8,760 hours**, and C7/C8 are scored for the first time
 
@@ -6616,10 +6616,10 @@ the highest-value follow-on this session opens.
 Matrix: **new row `tac_load_coverage`, CAISO `K`**; §5.2 header re-stamped and the
 `keepers.CAISO` stamp corrected (it had been stale at caiso-172, skipping the
 caiso-174 promotion). No existing cell verdict moves. Evidence:
-`results/calibration/FINDING-caiso175-tac-load-intake-2026-08-06.md`,
+`docs/records/caiso/FINDING-caiso175-tac-load-intake-2026-08-06.md`,
 `PRECHECK-caiso175-tac-load-intake-2026-08-05.md`, probe
 `scripts/probes/_caiso175_ab_compare.py`, record
-`results/calibration/_caiso175_ab_compare.json`, attestation generator
+`results/phase0/caiso/_caiso175_ab_compare.json`, attestation generator
 `scripts/gen_caiso175_attestation.py`.
 
 ## 2026-08-06 — CAISO — caiso-176: frontier RE-ASSESSED on the caiso-175 keeper (holds, MWD-TAC gap closed on data, ISO-specific DOF 4→3); `battery_dispatch_adder` WALLED not closed — CAISO's own bid stack bounds it at ≤ $15/MWh and REFUTES the ledger's named ATB replacement model-free; `final` RECOMMENDED **NO** on executability
@@ -6629,12 +6629,12 @@ pre-registered Branch II fired, and Branch II's whole content is that no arm
 exists to solve. Keeper UNCHANGED at `2026-08-06-caiso-175-tac-intake`; DOF
 ledger UNCHANGED at `n_entries` 11 / `n_residual` 8; `holdout-freeze.json` and
 `calibration-complete.json` UNTOUCHED. Pre-registration
-`results/calibration/PRECHECK-caiso176-frontier-dof-2026-08-06.md` (pushed
+`docs/records/caiso/PRECHECK-caiso176-frontier-dof-2026-08-06.md` (pushed
 before any verdict was written). Records:
 `ASSESSMENT-caiso176-frontier-2026-08-06.md`,
 `FINDING-caiso176-battery-adder-wall-2026-08-06.md`. Instrument
 `scripts/probes/_caiso176_bidstack_reservation.py`, record
-`results/calibration/_caiso176_bidstack_reservation.json`.
+`results/phase0/caiso/_caiso176_bidstack_reservation.json`.
 
 ### Arc 1 — the frontier re-assessment (caiso-173 was two promotions stale)
 
@@ -6872,7 +6872,7 @@ nothing registered — because nothing was run.** DOF ledger unchanged at `n_ent
 is not gated, and under the 2026-08-06 owner clarification data intake is not
 window-gated at all.
 
-Pre-registration `results/calibration/PRECHECK-caiso178-public-bids-2026-08-06.md`
+Pre-registration `docs/records/caiso/PRECHECK-caiso178-public-bids-2026-08-06.md`
 (pushed **before any bid price was read**); record
 `FINDING-caiso178-public-bid-floor-2026-08-06.md`; instrument
 `scripts/data/derive_caiso_battery_bid_floor.py`; artifacts
@@ -7137,7 +7137,7 @@ changed** — rule 23 `[R-FROZEN-DERIVE]` **not** engaged. `calibration-complete
 `holdout-freeze.json` **UNTOUCHED** (owner acts). 2023 + 2024 + 2025 only; the holdout spend
 freeze respected.
 
-**Pre-registration.** `results/calibration/PRECHECK-caiso181-envelope-depth-2026-08-07.md`,
+**Pre-registration.** `docs/records/caiso/PRECHECK-caiso181-envelope-depth-2026-08-07.md`,
 pushed and **blob-verified** (sha256 `1c8e91f8…`, 482 lines, byte-identical both sides)
 **before any metric was read**. It fixed both readings, the bars (B-1 interior contract
 violation > 0.5 %; B-2 impossible MW-h ≥ 5 % of committed depth), the H-EDGE hypothesis
@@ -7235,13 +7235,13 @@ named contributors: the walled hourly pumped-storage water state (FINDING-caiso1
 data) and, now **confirmed rather than suspected**, the offer curves. `battery_dispatch_adder`
 remains a **PERMANENT DECLARED-RESIDUAL DOF**, untouched. Freeze **ACTIVE**, `complete` **not
 held**, both owner acts. Record:
-`results/calibration/FINDING-caiso181-envelope-depth-2026-08-07.md`,
+`docs/records/caiso/FINDING-caiso181-envelope-depth-2026-08-07.md`,
 `scripts/probes/_caiso181_cems_confrontation.py`,
-`results/calibration/_caiso181_cems_confrontation.json`.
+`results/phase0/caiso/_caiso181_cems_confrontation.json`.
 
 ## 2026-08-08 — CAISO — caiso-182: the measured offer surface **CANNOT** be extended to the three uncovered classes — both pre-registered identification tests FAIL and **ARM A IS REFUSED**; no LP spent
 
-*[backfilled 2026-08-11 by caiso-189 from `results/calibration/FINDING-caiso182-offer-coverage-2026-08-08.md`
+*[backfilled 2026-08-11 by caiso-189 from `docs/records/caiso/FINDING-caiso182-offer-coverage-2026-08-08.md`
 and `PRECHECK-caiso182-offer-coverage-2026-08-08.md`; the session wrote no log entry.]*
 
 **Runs:** NONE. Zero LP spent, nothing registered, keeper **UNCHANGED** at
@@ -7271,7 +7271,7 @@ and stands. Record: `FINDING-caiso182-offer-coverage-2026-08-08.md`,
 
 ## 2026-08-08 — CAISO — caiso-183: the H-EDGE grain repair — in-window CEMS contradiction to **ZERO**, TWO pre-registered gates FAIL, and the arm is **PROMOTED on the owner's ruling** (keeper `2026-08-08-caiso-183-b1-hour`)
 
-*[backfilled 2026-08-11 by caiso-189 from `results/calibration/FINDING-caiso183-hedge-grain-2026-08-08.md`
+*[backfilled 2026-08-11 by caiso-189 from `docs/records/caiso/FINDING-caiso183-hedge-grain-2026-08-08.md`
 (including its own promotion addendum) and `PRECHECK-caiso183-hedge-grain-2026-08-08.md`;
 the session wrote no log entry.]*
 
@@ -7310,7 +7310,7 @@ C3c returns to its inherited **ledgered CAVEAT**. Record:
 
 ## 2026-08-09 — CAISO — caiso-184: the chartered object is **REFUTED** (caiso-181's `f_CEMS > 1` term is 96–97 % a diagnostic-basis artifact); the outage-derate **DENOMINATOR** defect it found instead is repaired at zero DOF and **PROMOTED with EVERY gate PASSING** (keeper `2026-08-09-caiso-184-c1-lpbasis`)
 
-*[backfilled 2026-08-11 by caiso-189 from `results/calibration/FINDING-caiso184-capacity-basis-2026-08-09.md`
+*[backfilled 2026-08-11 by caiso-189 from `docs/records/caiso/FINDING-caiso184-capacity-basis-2026-08-09.md`
 and `PRECHECK-caiso184-capacity-basis-2026-08-08.md`; the session wrote no log entry.]*
 
 **KEEPER PROMOTED** to `2026-08-09-caiso-184-c1-lpbasis` (was `2026-08-08-caiso-183-b1-hour`),
@@ -7353,7 +7353,7 @@ gate fired and no bar was moved**. Record:
 
 ## 2026-08-09 — CAISO — caiso-185: the CC demonstrated-capability reconcile is **REJECTED EX ANTE** on a measured basis defect — **KILL-BEFORE-SOLVE, zero LP spent**; the in-model lever queue is now EMPTY WITH EVERY CELL ADJUDICATED
 
-*[backfilled 2026-08-11 by caiso-189 from `results/calibration/FINDING-caiso185-cc-reconcile-2026-08-09.md`
+*[backfilled 2026-08-11 by caiso-189 from `docs/records/caiso/FINDING-caiso185-cc-reconcile-2026-08-09.md`
 and `PRECHECK-caiso185-cc-reconcile-2026-08-09.md`; the session wrote no log entry.]*
 
 **Runs:** NONE. Zero LP spent, nothing registered, keeper **UNCHANGED** at
@@ -7451,15 +7451,15 @@ keeper, the gate on re-testing this basis, and — unlike (a) — **not data-blo
 Matrix: new `cc_winter_capability_basis` row, **CAISO = `R`** from this session's own evidence,
 every other ISO `U` with **no verdict transferred**; PJM/NYISO/NEISO flagged as carrying the same
 unmeasured exposure since they arm the parent. Record:
-`results/calibration/FINDING-caiso186-seasonal-capability-2026-08-09.md`,
+`docs/records/caiso/FINDING-caiso186-seasonal-capability-2026-08-09.md`,
 `scripts/probes/_caiso186_seasonal_capability.py`, `_caiso186_be_proof.py`,
-`results/calibration/_caiso186_seasonal_capability.json`, `_caiso186_be_proof.json`.
+`results/phase0/caiso/_caiso186_seasonal_capability.json`, `_caiso186_be_proof.json`.
 
 ---
 
 ## 2026-08-09 — CAISO — caiso-187: the WEFOR-vs-overlay charter's premise is **INVERTED BY MEASUREMENT** — there is no CC double count to relieve, because the overlay removes 24–35 % of CC capacity-hours against a ~10 % published expectation. **BRANCH C fires: no LP, escalate to the owner**
 
-*[backfilled 2026-08-11 by caiso-189 from `results/calibration/FINDING-caiso187-wefor-overlay-2026-08-09.md`
+*[backfilled 2026-08-11 by caiso-189 from `docs/records/caiso/FINDING-caiso187-wefor-overlay-2026-08-09.md`
 and `PRECHECK-caiso187-wefor-overlay-2026-08-09.md`; the session wrote no log entry.]*
 
 **Runs:** NONE. Zero LP spent, nothing registered, keeper **UNCHANGED** at
@@ -7498,7 +7498,7 @@ solving was never reached. Record:
 > the record of what happened.** It states the position as of the moment the entry was
 > written; **the owner then promoted `2026-08-09-caiso-188-d1-micseam` to CAISO keeper in
 > the SAME session**, superseding `2026-08-09-caiso-184-c1-lpbasis`. The promotion is
-> recorded in `docs/handoffs/caiso-186-owner-sitting-2026-08-09.md`
+> recorded in `docs/records/caiso/caiso-186-owner-sitting-2026-08-09.md`
 > ("**KEEPER PROMOTED, OWNER-DIRECTED IN THE SAME SESSION**"), in
 > `frontend/data/backcast/keepers/CAISO.json`, and in the mechanism matrix §5.2 header.
 > The rest of this entry — the census, the seam forensics, the A/B and every gate — is
@@ -7507,7 +7507,7 @@ solving was never reached. Record:
 > re-keying does not fire. **Because no generator was written for the promotion, the
 > promoted bundle shipped with no C6 governance attestation and an empty exceptions
 > ledger; caiso-189 (2026-08-11) repaired that post-hoc** —
-> `results/calibration/FINDING-caiso189-c6-attestation-2026-08-11.md`,
+> `docs/records/caiso/FINDING-caiso189-c6-attestation-2026-08-11.md`,
 > `scripts/gen_caiso189_attestation.py`. The same addendum is appended to
 > `FINDING-caiso188-import-tranche-dof-2026-08-09.md` §8.
 
@@ -7559,7 +7559,7 @@ pinned hours the arm takes +586/+333/+422 MW more, widening model-over-measured 
 unresolved-Part-A branch WARNs naming the fitted fallback. **Still owed:** the
 forecast orchestrator has no guard call; nothing committed records which seam cap
 a bundle solved against; the dormant `hydro_ror_split` is its own A/B. Record:
-`results/calibration/FINDING-caiso188-import-tranche-dof-2026-08-09.md`,
+`docs/records/caiso/FINDING-caiso188-import-tranche-dof-2026-08-09.md`,
 `PRECHECK-caiso188-mic-seam-2026-08-09.md`,
 `scripts/probes/_caiso188_import_tranche_census.py`, `_caiso188_seam_cap_forensics.py`.
 
@@ -7635,8 +7635,8 @@ stale one. (3) The memo's "7" is **not stale at all**: it is a cross-row total
 (1 + 2 + 4) whose own table sums to 7, a different scope from the ledger's row-level
 `n_scalars: 6`. Renumbering it would have falsified a correct record, so it was
 **annotated**; this also corrects `FINDING-caiso188` §1's mis-attribution. Record:
-`results/calibration/FINDING-caiso189-c6-attestation-2026-08-11.md`,
-`results/calibration/FINDING-caiso188-import-tranche-dof-2026-08-09.md` §8 addendum,
+`docs/records/caiso/FINDING-caiso189-c6-attestation-2026-08-11.md`,
+`docs/records/caiso/FINDING-caiso188-import-tranche-dof-2026-08-09.md` §8 addendum,
 `scripts/gen_caiso189_attestation.py`,
 `tests/scoring/test_audit_keepers_attestation_shape.py`.
 
@@ -7648,7 +7648,7 @@ governance keystone: it records the owner's 2026-08-11 rulings and authors every
 lane's acceptance gates before any lane measures, so no downstream session shapes its
 own gates.
 
-**Rulings recorded (7/7)** — `results/calibration/caiso191-owner-rulings-2026-08-11.md`:
+**Rulings recorded (7/7)** — `docs/records/caiso/caiso191-owner-rulings-2026-08-11.md`:
 caiso-187 option 1 (overlay identification) GRANTED; option 2 (narrow arm
 `wefor_residual=0.0` scoped {CC_REGULAR, CC_CHP}, `wefor_multiplier`→1.0) GRANTED,
 independent; `caiso_storage_nqc_accreditation` DEFERRED (gate-off, inert, out of
@@ -7711,7 +7711,7 @@ verdict effect — left to the matrix lane); the keeper bundle's `metrics.json` 
 pre-caiso-189 scorer snapshot (still "C6 UNATTESTED"); caiso-190's `resolved_inputs`
 is not on origin/main (lane-4 engagement binds on its fallback proof); the C3b 2025
 watch margin (0.164/0.20) is an orchestrating-session figure the lane-4 session must
-re-derive. Record: `results/calibration/FINDING-caiso191-campaign-adjudication-2026-08-11.md`.
+re-derive. Record: `docs/records/caiso/FINDING-caiso191-campaign-adjudication-2026-08-11.md`.
 
 ## 2026-08-11 — CAISO — caiso-190: the silent-partition no-op class is closed on **BOTH** solve paths, and `run_config.json` now records **which seam cap the LP actually solved against**. ORCHESTRATION/PROVENANCE ONLY: no LP change, no solve, no calibration edit, keeper untouched
 
@@ -7792,7 +7792,7 @@ stays diagnosable only via `hourly/` pins); the **forecast** run-record writer
 (`scripts/lib/run_record.py`) does not carry the block; `pipeline/year.py::run_year_solve`
 remains dead code (re-verified: no production caller) with a live guard call, documented
 rather than deleted because the façade-shim regression guard asserts its re-export.
-Record: `results/calibration/FINDING-caiso190-solvepath-integrity-2026-08-11.md`.
+Record: `docs/records/caiso/FINDING-caiso190-solvepath-integrity-2026-08-11.md`.
 
 ## 2026-08-11 — caiso-192 (close-out campaign LANE 1): the outage-overlay mechanical-vs-economic split is ALREADY MADE — killed before solve, keeper unchanged
 
@@ -7858,7 +7858,7 @@ capacity-deliverability partition; `hydro_ror_split` False) were never exercised
 the next solving lane. Environment: this container's working tree arrived broken (empty git
 index, checkout aborted partway through `data/`, stale `index.lock`) and was restored from
 `HEAD` before any measurement. Record:
-`results/calibration/FINDING-caiso192-overlay-identification-2026-08-11.md`.
+`docs/records/caiso/FINDING-caiso192-overlay-identification-2026-08-11.md`.
 
 ## 2026-08-11 — caiso-194 (close-out campaign LANE 4): the `hydro_ror_split` classification is **REFUSED at G-SHARE** (−10.9665 pp vs ±10 pp) — killed before LP, keeper untouched. But the mechanism is **proven to ENGAGE**, closing caiso-188's open question in the other direction
 
@@ -7934,7 +7934,7 @@ pack, `promisor=true`), then `git sparse-checkout`. **The recipe's `data/` cone 
 too narrow** — beyond the documented `_processed-legacy` gap, `data/raw/fleet-egrid/`
 is required or `build_zone_lookup` throws, every hydro unit is dropped for a blank zone,
 and the fleet builds **0 units** while still printing a healthy-looking budget line.
-Record: `results/calibration/FINDING-caiso194-hydro-ror-split-2026-08-11.md`.
+Record: `docs/records/caiso/FINDING-caiso194-hydro-ror-split-2026-08-11.md`.
 
 ## 2026-08-15 — caiso-193 (close-out campaign LANE 2): `wefor_residual` is **REFUSED AT G-COV** — both granted classes fail the 95 % observability bar; killed before solve. The CC_REGULAR miss is TWO named instrument defects, not non-observation — and the larger one (El Segundo, 537 MW) is repaired the same day by caiso-196
 
@@ -7973,7 +7973,7 @@ re-anchoring to the owner. Escalations packaged in
 
 Matrix duty (b): `wefor_residual` CAISO cell **O → R** (provenance/coverage
 refusal, not a dispatch refutation — caiso-194 precedent). Record:
-`results/calibration/FINDING-caiso193-wefor-residual-2026-08-15.md`.
+`docs/records/caiso/FINDING-caiso193-wefor-residual-2026-08-15.md`.
 
 
 ## 2026-08-15 — caiso-196: the El Segundo remap repair A/B — control reproduces the keeper **BIT-ZERO**, the repaired extract removes a 3.2 TWh/yr phantom workhorse, ONE pre-registered flip (C1-2023 CC_REGULAR) adjudicated **ACCEPT-WITH-FLIP**, keeper decision escalated
@@ -8292,7 +8292,7 @@ ruling 4; the 8,800 MW declared residual, caiso-191 §4) plus the §3b panel opt
 Holdout: 2023–2025 only; no `complete`, no `final`, spend freeze untouched; the
 2018–2026 derive span is data preparation (rule 22, spend-only enforcement).
 Runs `2026-08-16-caiso-199-g0-control`, `2026-08-16-caiso-199-g1-meritpin`;
-full record `results/calibration/FINDING-caiso199-merit-panel-scope-2026-08-16.md`.
+full record `docs/records/caiso/FINDING-caiso199-merit-panel-scope-2026-08-16.md`.
 
 ## 2026-08-17 — CAISO — caiso-200: the §3b FLEET-MEMBER PANEL SCOPE lands byte-identically to the pre-flip run-Y pins and is PROMOTED KEEPER on the owner's structural-integrity instruction — keeper → `2026-08-17-caiso-200-h1-memberpanel`; the C1-2023 return watch answers NO (+3 GWh), proving the deficit structural; the in-model queue EXHAUSTED BY MEASUREMENT
 
@@ -8385,7 +8385,7 @@ against `origin/main` @ `6cc332e`: keeper shard, outage instrument sha `cf156483
 `ASSESSMENT-caiso200-frontier-2026-08-17.md` all present; `audit_keepers --iso CAISO` PASS
 before and after the session's edits.
 
-**THE RULING** (`results/calibration/caiso201-owner-ruling-2026-08-17.md`), answering the
+**THE RULING** (`docs/records/caiso/caiso201-owner-ruling-2026-08-17.md`), answering the
 ASSESSMENT-caiso200 §5 sitting:
 
 * **Q1 — ACCEPT THE RESTING STATE: GRANTED.** The CAISO backcast **holds at `NOT-YET`**, and
@@ -8437,7 +8437,7 @@ TRANSFERS** (rule 25) — the panel fleet-blindness closure is CAISO's verdict f
 NYISO (NY+NJ), PJM and MISO each measure their own. Cross-lane repair still owed by MISO (not
 this session): the two `2026-08-16-miso-160-*` sidecars have no run payloads.
 
-**Records:** `results/calibration/caiso201-owner-ruling-2026-08-17.md` (the ruling),
+**Records:** `docs/records/caiso/caiso201-owner-ruling-2026-08-17.md` (the ruling),
 `ASSESSMENT-caiso200-frontier-2026-08-17.md` §5.1 (the sitting, re-stamped with the outcomes),
 `docs/governance/rule-history.md` §4 (genealogy), `docs/mechanism-testing-matrix.md` §5.2 +
 `docs/codebase-site/data/mechanism-matrix/CAISO.js` (lane-rest stamp; no cell verdict moved).
@@ -8453,7 +8453,7 @@ Q2 of caiso-201 was NOT re-opened (neither object funded); the lane RETURNS to i
 state at this entry's close.
 
 **Finding (the deliverable):**
-`results/calibration/FINDING-caiso202-c3a-overrun-decomposition-2026-08-18.md`, from committed
+`docs/records/caiso/FINDING-caiso202-c3a-overrun-decomposition-2026-08-18.md`, from committed
 bytes only, probes `scripts/probes/_caiso202_c3a_decomp.py` +
 `scripts/probes/_caiso202_marginal_rung.py`. Headlines:
 
@@ -8505,7 +8505,7 @@ note); §5.2 caiso-202 block added. **Filed, not fixed:** the DOF ledger's
 **Keeper stays `2026-08-17-caiso-200-h1-memberpanel`** (NOT-YET, C3a the sole
 load-bearing FAIL under rubric v3.4, C3c the single ledgered caveat —
 untouched). Full evidence:
-`results/calibration/FINDING-caiso203-selfsched-charter-duplicate-2026-08-19.md`.
+`docs/records/caiso/FINDING-caiso203-selfsched-charter-duplicate-2026-08-19.md`.
 
 **The charter as received.** The owner-issued caiso-203 charter (second
 re-opening of the caiso-201 rested lane, after caiso-202) ordered the
@@ -8579,7 +8579,7 @@ Next number: caiso-204.
 
 ## caiso-203b (2026-08-19, same session, post-finding) — **two owner rulings recorded: C3a is judged against ACTUAL (RT) LMP (basis question CLOSED, ruling 5 re-affirmed) and NO data intake is funded (both caiso-201 Q2 objects stay unfunded; the proposed caiso-204 sitting SUPERSEDED). NO SOLVE, NO CELL MOVED, KEEPER UNCHANGED.**
 
-Verbatim and interpretation: `results/calibration/caiso203-owner-rulings-2026-08-19.md`.
+Verbatim and interpretation: `docs/records/caiso/caiso203-owner-rulings-2026-08-19.md`.
 Effects: the caiso-202 model-vs-DA +1.6 % stays context only, never a scoring
 basis; `caiso_da_rt_two_settlement` stays R with a governance close on top; the
 PS water-state intake stays DECLINED and the import spot-capacity derivation is
@@ -8705,7 +8705,7 @@ at a time.
 full-magnitude record; new evidence = a keeper whose own scored path
 spikes. All caiso-202/203/204 lists carry forward.
 
-**Records:** `results/calibration/FINDING-caiso205-adaptive-ab-2026-08-19.md`,
+**Records:** `docs/records/caiso/FINDING-caiso205-adaptive-ab-2026-08-19.md`,
 `PRECOMMIT-caiso205-adaptive-ab-2026-08-19.md`, `caiso205_gates.json`,
 matrix CAISO shard cell + caiso-205 block, this entry. Lane RETURNS TO REST
 (caiso-201 Q1); markers, holdout freeze untouched.
@@ -8761,7 +8761,7 @@ caiso-202/203/204/205 lists all carry forward. New evidence means one thing —
 a keeper whose own scored path spikes.
 
 **Records:**
-`results/calibration/ASSESSMENT-caiso206-rest-confirmation-2026-08-20.md`,
+`docs/records/caiso/ASSESSMENT-caiso206-rest-confirmation-2026-08-20.md`,
 matrix §5.2 caiso-206 block, this entry. Keeper, markers, holdout freeze,
 every matrix cell verdict: UNCHANGED.
 
@@ -8843,7 +8843,7 @@ including the shared `mechanism-matrix.js` base row for this anchor. Fixing only
 CAISO's would make the shared file inconsistent; fixing all is off-lane.
 
 **Records:**
-`results/calibration/ASSESSMENT-caiso207-anchor-completion-2026-08-20.md`,
+`docs/records/caiso/ASSESSMENT-caiso207-anchor-completion-2026-08-20.md`,
 matrix §5.2 caiso-207 block, this entry. Keeper, markers, holdout freeze, every
 matrix cell verdict, and every source file: UNCHANGED.
 
@@ -8934,7 +8934,7 @@ retained v3.3 promotion-time blocks as live. New evidence still means exactly on
 thing — a keeper whose own scored path spikes.
 
 **Records:**
-`results/calibration/ASSESSMENT-caiso208-rest-continuation-2026-08-20.md`,
+`docs/records/caiso/ASSESSMENT-caiso208-rest-continuation-2026-08-20.md`,
 matrix §5.2 caiso-208 block, the two repaired gate-posture surfaces, this entry.
 Keeper, markers, holdout freeze, DOF ledger, every matrix cell verdict, and every
 source file: UNCHANGED.
@@ -9052,7 +9052,7 @@ miso-173. New evidence still means exactly one thing: a keeper whose own scored
 path spikes.
 
 **Records:**
-`results/calibration/ASSESSMENT-caiso209-rest-continuation-2026-08-21.md`,
+`docs/records/caiso/ASSESSMENT-caiso209-rest-continuation-2026-08-21.md`,
 matrix §5.2 caiso-209 block, the §5.2 header + shard `gates` C3b baseline stamp,
 the caiso-200 assessment row annotation, this entry. Keeper, markers, holdout
 freeze, DOF ledger, every matrix cell verdict, and every source file: UNCHANGED.
@@ -9197,7 +9197,7 @@ evidence of anything** for a stale part. New evidence still means exactly one
 thing: a keeper whose own scored path spikes.
 
 **Records:**
-`results/calibration/ASSESSMENT-caiso210-rest-continuation-2026-08-21.md`,
+`docs/records/caiso/ASSESSMENT-caiso210-rest-continuation-2026-08-21.md`,
 matrix §5.2 caiso-210 block, the CAISO shard `gates` stamp refresh, this entry.
 Keeper, markers, holdout freeze, DOF ledger, every matrix cell verdict, **every
 bench part**, and every source file: UNCHANGED.
@@ -9282,7 +9282,7 @@ no new adjudication was made, so there is nothing new to freeze. New evidence
 still means exactly one thing: a keeper whose own scored path spikes.
 
 **Records:**
-`results/calibration/ASSESSMENT-caiso211-rest-continuation-2026-08-22.md`,
+`docs/records/caiso/ASSESSMENT-caiso211-rest-continuation-2026-08-22.md`,
 matrix §5.2 caiso-211 block, this entry. Keeper, markers, holdout freeze, DOF
 ledger, every matrix cell verdict, the shard `gates` stamp, the §5.2 header,
 every bench part, and every source file: UNCHANGED.
@@ -9395,7 +9395,7 @@ measured movement in the named builder set past `c55da9c`, exactly as this
 charter's own unfreeze clause worked.
 
 **Records:**
-`results/calibration/ASSESSMENT-caiso212-rest-continuation-2026-08-22.md`,
+`docs/records/caiso/ASSESSMENT-caiso212-rest-continuation-2026-08-22.md`,
 matrix §5.2 caiso-212 block, the CAISO shard `gates` stamp refresh, this
 entry. Keeper, markers, holdout freeze, DOF ledger, every matrix cell verdict,
 the §5.2 header, every bench part, and every source file: UNCHANGED.
@@ -9495,7 +9495,7 @@ spot-capacity derivation (direct λ share < 5 %). Absent either, the lane rests:
 owner ruling 5 stands, C3a must genuinely pass, **NOT-YET is the honest
 fallback**, and reaching the number through a §F-killed lever is a rule-13 act.
 
-Evidence: `results/calibration/ASSESSMENT-caiso213-rest-continuation-2026-08-22.md`.
+Evidence: `docs/records/caiso/ASSESSMENT-caiso213-rest-continuation-2026-08-22.md`.
 **Next number: caiso-214.**
 
 ---
@@ -9540,7 +9540,7 @@ caiso-203 charter-duplicate handling. Branch
 **Instruments (committed):** `scripts/probes/_caiso215_c3a_zonal_decomp.py`
 (imports the committed caiso-202 probe for the CA-wide machinery; adds the
 per-hub actual loader over `data/raw/lmp-data/CAISO/CAISO_{rtm,dam}_hourly_*.csv`
-with MCC/MCE/MCL components) + `results/calibration/_caiso215_c3a_zonal_decomp.json`.
+with MCC/MCE/MCL components) + `results/phase0/caiso/_caiso215_c3a_zonal_decomp.json`.
 Controls both hold: the unmodified caiso-202 probe reproduces FINDING-caiso202
 §A/§B exactly, and the per-hub series collapsed with the deriver's stale hub
 weights (0.3969/0.0646/0.5385) reproduce the committed scalar actual to
@@ -9612,7 +9612,7 @@ honest state absent funding.** Gate table for any funded arm: C3b vs
 **0.098/0.179/0.182** (2025 margin 0.018, composition watch), C8, C6, DOF
 10/7 + new rows, LOYO 2023–2025, C3a-2023 in band.
 
-**Records:** `results/calibration/FINDING-caiso215-c3a-zonal-decomposition-2026-08-23.md`
+**Records:** `docs/records/caiso/FINDING-caiso215-c3a-zonal-decomposition-2026-08-23.md`
 (full tables §A–§E, adjudication §F, packet §G, DO-NOT-REDO §I); probe + JSON
 committed; matrix §5.2 caiso-215 block; shard `gates` stamp + `updated` bump
 + evidence appends on `zonal_loss_surface` / `import_hub_pricing` /
@@ -9645,7 +9645,7 @@ the keeper's own `meta.json` — B0 control: reconstructed per-zone demand ==
 sidecar demand to 0.0 MW, 7 zones × 3 years, after mapping the meta override
 dict `coal_prb_sigmoid_overrides → prb_overrides` a naive kwargs filter
 drops; imports the committed caiso-215 probe for hub actuals + clock) +
-`results/calibration/_caiso216_belly_surplus.json`. New evidence read:
+`results/phase0/caiso/_caiso216_belly_surplus.json`. New evidence read:
 CAISO's production-and-curtailments workbooks (5-min MW-per-interval,
 Local/System reason — units established against the published 2024 total:
 sum/12 = 3.423 TWh), `ATL_PNODE_MAP.csv` generator-hub membership, EIA-930
@@ -9732,7 +9732,7 @@ is NOT a determination flip. Ask 3 — nothing else. If the owner funds
 nothing, NOT-YET stands and the residual attribution tightens to "south
 surplus mis-allocated by an estimate CAISO's own data can replace."
 
-**Records:** `results/calibration/FINDING-caiso216-belly-lever-plan-2026-08-23.md`
+**Records:** `docs/records/caiso/FINDING-caiso216-belly-lever-plan-2026-08-23.md`
 (the packet; §I DO-NOT-REDO adds the south3-branch, lat-re-tune, H2-misread
 and premature-caiso-142 fences); probe + JSON committed; matrix §5.2
 caiso-216 block; shard `gates` stamp + `updated` bump + evidence appends on
@@ -9822,7 +9822,7 @@ Keeper, markers, freeze, DOF ledger, every cell verdict: UNCHANGED.
   (outcome pin); (3) the static single-link limit lever CLASS is measured
   insufficient — future limit-side proposals must be year-varying +
   element-grounded, or sub-zonal (§F.3a).
-- **Records:** `results/calibration/FINDING-caiso218-path-limit-survey-2026-08-24.md`;
+- **Records:** `docs/records/caiso/FINDING-caiso218-path-limit-survey-2026-08-24.md`;
   probe + JSON committed; caiso-217 FINDING §D–§F gap addendum; matrix §5.2
   caiso-218 block; CAISO shard `gates` stamp + `measured_interface_limits`
   evidence append (no verdict moves). Filed items: committed census SEVEN
@@ -9892,9 +9892,9 @@ Keeper, markers, freeze, DOF ledger, every cell verdict: UNCHANGED.
   out of flow ÷ Overload %; (3) never propose the §F.3a pocket at
   Tehachapi/SP15 on the caiso-216 wording alone — derive it from
   `_caiso219_deliverability_census.json`.
-- **Records:** `results/calibration/FINDING-caiso219-gen-pocket-limit-survey-2026-08-24.md`;
+- **Records:** `docs/records/caiso/FINDING-caiso219-gen-pocket-limit-survey-2026-08-24.md`;
   `scripts/probes/_caiso219_deliverability_census.py` +
-  `results/calibration/_caiso219_deliverability_census.json`; matrix §5.2
+  `results/phase0/caiso/_caiso219_deliverability_census.json`; matrix §5.2
   caiso-219 block; CAISO shard evidence append (no verdict moves). Filed
   items **NINE** (caiso-218's eight — incl. the now owner-declined caiso-217
   registration debt — **+ item 9: both C3a successor levers blocked on the
@@ -9912,7 +9912,7 @@ Keeper, markers, freeze, DOF ledger, every cell verdict: UNCHANGED.
   CEII-blocked (caiso-218/219); the one funded-admissible solve object was
   the caiso-217 registration debt (filed item 8).
 - **Pre-registration BEFORE the solve**:
-  `docs/PRECOMMIT-caiso220-c1-crosswalk-replay-2026-08-26.md` — the
+  `docs/records/caiso/PRECOMMIT-caiso220-c1-crosswalk-replay-2026-08-26.md` — the
   committed caiso-216 §G gate table adopted verbatim; expected
   sign/magnitude from committed bytes (the caiso-217 secondary claim inside
   the window); STOP rules; the keeper proposal pre-registered.
@@ -9936,7 +9936,7 @@ Keeper, markers, freeze, DOF ledger, every cell verdict: UNCHANGED.
   phase flags identical). The caiso-217 secondary numbers reproduced
   EXACTLY — they are now committed measurement.
 - **Split witness** (`scripts/probes/_caiso220_zonal_decomp.py` +
-  `results/calibration/_caiso220_zonal_decomp.json`): model NP15−SP15 >
+  `results/phase0/caiso/_caiso220_zonal_decomp.json`): model NP15−SP15 >
   $15 hours **0 → 50/40/17** vs reality 1,310/1,691/1,347; per-zone C3a
   moves the right way in every zone but ZP26 (2024 NP15 −6.6→−3.5 %,
   LA_BASIN +27.1→+23.6 %, SDGE +22.1→+18.8 %, SP15_rest +23.8→+20.4 %;
@@ -9970,7 +9970,7 @@ Keeper, markers, freeze, DOF ledger, every cell verdict: UNCHANGED.
   SOLVE, nothing armed, nothing registered; queue EMPTY, session off-queue
   under the owner charter.
 - **Instrument**: `scripts/probes/_caiso221_surplus_design.py` +
-  `results/calibration/_caiso221_surplus_design.json` (committed;
+  `results/phase0/caiso/_caiso221_surplus_design.json` (committed;
   deterministic). The licensed caiso-105/131 fleet-only assembly rebuilt
   from the caiso-220 keeper's own `meta.json`; hub actuals / workbook /
   EIA-930 via the committed caiso-215/216 probes. Controls: demand
@@ -10017,7 +10017,7 @@ Keeper, markers, freeze, DOF ledger, every cell verdict: UNCHANGED.
   (iii) 2025's ≈+0.7 lw in positive-price hours (caiso-202 §B). Re-opening
   requires a CAISO publication change, CEII access, or an owner-chartered
   sub-zonal topology program.
-- **Records**: `results/calibration/FINDING-caiso221-surplus-pricing-design-2026-08-30.md`;
+- **Records**: `docs/records/caiso/FINDING-caiso221-surplus-pricing-design-2026-08-30.md`;
   probe + JSON; matrix §5.2 caiso-221 block; CAISO shard gates stamp.
   **Filed item 6 DISCHARGED** — `zonal_gas_basis` K→R (caiso-203-style
   bookkeeping re-adjudication: the K was unsupported by any committed
@@ -10045,9 +10045,9 @@ Keeper, markers, freeze, DOF ledger, every cell verdict: UNCHANGED.
 +4.0 PASS/+12.5/+15.5; C3c the single ledgered caveat; DOF 11/7). Freeze
 ACTIVE, no marker, 2023–2025 only — every Q1 number is a training-window
 number. Packet:
-`results/calibration/ASSESSMENT-caiso222-owner-sitting-2026-08-30.md`;
+`docs/records/caiso/ASSESSMENT-caiso222-owner-sitting-2026-08-30.md`;
 instrument `scripts/probes/_caiso222_c3a_disposition.py` →
-`results/calibration/_caiso222_c3a_disposition.json` (the verdict scorer at
+`results/phase0/caiso/_caiso222_c3a_disposition.json` (the verdict scorer at
 HEAD over every designated config + the disposition-variant arithmetic
 computed mechanically from the scored tables; no scorer constant modified).
 
@@ -10117,7 +10117,7 @@ computed mechanically from the scored tables; no scorer constant modified).
 ## 2026-08-30 — caiso-222 OWNER RULINGS (PM sitting): Q1 = TERMINAL REST + MAP (packet §1(c) option 3) — the C3a residual is designated ATTRIBUTED AND CLOSED at this representation grain; Q2 = routes (i) AND (iii) ARMED/CHARTERED, route (ii) CEII access DECLINED — W-1/W-2/W-3 armed as standing watch items with their cheap tests, caiso-223 dispatched as the route-(iii) opening round. NO SOLVE, no rubric motion, no scorer change; determination text, keeper and markers all UNCHANGED
 
 **Owner rulings, 2026-08-30 PM sitting, on
-`results/calibration/ASSESSMENT-caiso222-owner-sitting-2026-08-30.md` (both
+`docs/records/caiso/ASSESSMENT-caiso222-owner-sitting-2026-08-30.md` (both
 ON-MENU: Q1 option 3 of §1(c); Q2 over the §E route census).** Recorded by
 the dispatched audit-rulings records lane (`claude/audit-rulings-0830pm`)
 under the standing recorded deviation: the director pushes nothing; records
@@ -10271,7 +10271,7 @@ freeze ACTIVE. Method + gates fixed ex ante and pushed first
   sidecars; `_caiso224_split_witness.json` the F1/F2 measurements) and ran
   out of context before registration → the FINISHER session adjudicated,
   registered and recorded, ZERO solves. Full adjudication:
-  `results/calibration/FINDING-caiso224-fsno-arm-2026-08-30.md`.
+  `docs/records/caiso/FINDING-caiso224-fsno-arm-2026-08-30.md`.
 - **Registered** (rule 15): `2026-08-30-caiso-224-a0-control` (PROBE —
   bit-zero control) and `2026-08-30-caiso-224-b1-fsno` (PROBE — R). The
   payloads were rendered from the committed slim artifacts (container
@@ -10324,7 +10324,7 @@ freeze ACTIVE. Method + gates fixed ex ante and pushed first
   markers and freeze untouched; reads stayed publication-side (rule 22 — no
   model year, no actuals).
 - **The sweep** (all measured outputs committed in
-  `results/calibration/_caiso225_watch_results.json`; adjudication in
+  `results/phase0/caiso/_caiso225_watch_results.json`; adjudication in
   `ASSESSMENT-caiso225-watch-sweep-2026-08-30.md`): W-1 ERR-1000 signature
   byte-identical to caiso-218 on both BGs, the 2025-06-02 census reproduces
   caiso-218's 56 exactly (zero dropped), and the 56 → 58 delta at 2026-08-25
@@ -10447,7 +10447,7 @@ ISO's files, and the mechanism matrix (no mechanism was tested).
 - **NUMBERING NOTE (charter-directed):** `PRECOMMIT-caiso227-ofo-arm-2026-08-31.md`
   is caiso-226's FILED, UNEXECUTED design whose "227" label is historical.
   THIS session is caiso-227; the OFO arm executes later under its own number.
-- Record: `results/calibration/FINDING-caiso227-c3a-rootcause-ps-intake-2026-08-31.md`
+- Record: `docs/records/caiso/FINDING-caiso227-c3a-rootcause-ps-intake-2026-08-31.md`
   + probe `scripts/probes/_caiso227_da2025_rootcause.py` →
   `_caiso227_da2025_rootcause.json` (§A–§H, committed bytes + the licensed
   fleet-only recon reused unchanged from `_caiso202_marginal_rung.py`).
@@ -10512,7 +10512,7 @@ on C3a alone (+4.0 PASS / +12.5 / +15.5), C3c the single ledgered caveat
 `holdout-freeze.json` untouched; all reads 2023–2025.
 
 **Numbering.** This session executes
-`results/calibration/PRECOMMIT-caiso227-ofo-arm-2026-08-31.md`, whose "227"
+`docs/records/caiso/PRECOMMIT-caiso227-ofo-arm-2026-08-31.md`, whose "227"
 label is historical (caiso-227 was the C3a root-cause / PS-intake round). The
 owner funded the arm by dispatching its prompt — it was filed item 11,
 "pre-registered and unfunded, an owner call".
@@ -10564,9 +10564,9 @@ UNCONSUMED — what is closed is the C3c backcast derate, not the data. Nothing
 here was ever a gate need: a lone ledgered C3c reads `CALIBRATED` under rubric
 v3.3, so this was root-cause work and its result is a closed question.
 
-Evidence: `results/calibration/FINDING-caiso228-ofo-arm-2026-08-31.md`,
-`results/calibration/_caiso228_d0_coverage.json`,
-`results/calibration/_caiso228_d1_derate.json`,
+Evidence: `docs/records/caiso/FINDING-caiso228-ofo-arm-2026-08-31.md`,
+`results/phase0/caiso/_caiso228_d0_coverage.json`,
+`results/phase0/caiso/_caiso228_d1_derate.json`,
 `scripts/probes/caiso228_ofo_d0_coverage.py`,
 `scripts/probes/caiso228_ofo_d1_derate.py`.
 
@@ -10588,7 +10588,7 @@ inside 2023–2025.
 the caiso-227 §G below-stack wedge to a NAMED MECHANISM CANDIDATE or kill
 it."* Instrument
 `scripts/probes/_caiso229_belowstack_decomposition.py` →
-`results/calibration/_caiso229_belowstack_decomposition.json`.
+`results/phase0/caiso/_caiso229_belowstack_decomposition.json`.
 
 **The frame** (§A): `λ − DA ≡ (λ − cc_min) + (cc_min − DA)`, load-weighted,
 `cc_min` = the model's cheapest AVAILABLE CC offer. The `DA < cc_min` shares
@@ -10647,8 +10647,8 @@ over-propagates fuel; never propose re-pricing the firm import tranches as a
 C3a lever; never quote "no scarcity overlay" as a statement about the flag.
 
 Evidence:
-`results/calibration/FINDING-caiso229-belowstack-decomposition-2026-08-31.md`,
-`results/calibration/_caiso229_belowstack_decomposition.json`,
+`docs/records/caiso/FINDING-caiso229-belowstack-decomposition-2026-08-31.md`,
+`results/phase0/caiso/_caiso229_belowstack_decomposition.json`,
 `scripts/probes/_caiso229_belowstack_decomposition.py`.
 
 **Next number: caiso-230.**
@@ -10751,8 +10751,8 @@ bands as a C3a lever; never re-attribute the above-floor term to the peaking
 family; never quote the above-floor term as the 2025 driver.
 
 **NOT-YET stands** (owner ruling 5: C3a must genuinely pass). Evidence:
-`results/calibration/FINDING-caiso230-abovefloor-decomposition-2026-09-01.md`,
-`results/calibration/_caiso230_abovefloor_decomposition.json`,
+`docs/records/caiso/FINDING-caiso230-abovefloor-decomposition-2026-09-01.md`,
+`results/phase0/caiso/_caiso230_abovefloor_decomposition.json`,
 `scripts/probes/_caiso230_abovefloor_decomposition.py`.
 
 **Next number: caiso-231.**
@@ -10845,8 +10845,8 @@ the NEW keeper; never quote the DOF ledger's `offer_curve_by_group` count as a
 measure of fitted content; **no control arms**.
 
 Evidence:
-`results/calibration/FINDING-caiso231-ungrounded-offer-regrounding-2026-09-01.md`,
-`results/calibration/PRECOMMIT-caiso231-ungrounded-offer-regrounding-2026-09-01.md`,
+`docs/records/caiso/FINDING-caiso231-ungrounded-offer-regrounding-2026-09-01.md`,
+`docs/records/caiso/PRECOMMIT-caiso231-ungrounded-offer-regrounding-2026-09-01.md`,
 `scripts/gen_caiso231_attestation.py`, runs
 `2026-09-01-caiso-231-a0-control` / `2026-09-01-caiso-231-b1-ungrounded`.
 
@@ -10925,8 +10925,8 @@ evidence about the defect, not about that mechanism (rule 28(a)). December: the
 standing unfunded import-tranche object.
 
 **Instruments.** `scripts/probes/_caiso232_solar_ramp_december_decomp.py` →
-`results/calibration/_caiso232_solar_ramp_december_decomp.json`;
-`results/calibration/FINDING-caiso232-solar-ramp-december-decomp-2026-09-01.md`;
+`results/phase0/caiso/_caiso232_solar_ramp_december_decomp.json`;
+`docs/records/caiso/FINDING-caiso232-solar-ramp-december-decomp-2026-09-01.md`;
 charts (8 figures, both themes, table views) at
 <https://claude.ai/code/artifact/24d8650d-fd6d-47ca-8967-9a6b91ace598>.
 
@@ -11080,7 +11080,7 @@ primary source)`; DOF ledger `spot_capacity` stays **OPEN**.
 **Deliverables:** `PRECOMMIT-caiso234-import-total-envelope-2026-09-02.md`,
 `FINDING-caiso234-import-total-envelope-2026-09-02.md`,
 `scripts/data/derive_caiso_import_total_envelope.py`,
-`results/calibration/_caiso234_import_total_envelope.json`, and an evidence append
+`results/phase0/caiso/_caiso234_import_total_envelope.json`, and an evidence append
 (no verdict move) on the CAISO shard's `import_hub_pricing` cell.
 
 ## caiso-235 (2026-09-02) — the caiso-234 estimator on 2019–2025: **BOTH gates FAIL**, and the obstacle is a **REGIME BREAK**, not sample length. The DOF is **CLOSED as not identifiable**. NO SOLVE
@@ -11162,7 +11162,7 @@ sizing economic (non-RA) import availability directly, on the MIC/DMM annual cad
 **Deliverables:** `PRECOMMIT-caiso235-import-depth-widesample-2026-09-02.md`,
 `FINDING-caiso235-import-depth-widesample-2026-09-02.md`,
 `scripts/data/derive_caiso_import_depth_widesample.py`,
-`results/calibration/_caiso235_import_depth_widesample.json`, a default-preserving
+`results/phase0/caiso/_caiso235_import_depth_widesample.json`, a default-preserving
 `years` argument on `derive_caiso_import_tranches.corridor_net_import` (all fifteen
 existing callers byte-unaffected), and an evidence append (no verdict move) on the
 CAISO shard's `import_hub_pricing` cell.
@@ -11630,9 +11630,9 @@ scope) is a rule-19 `[R-ONE-MECH]` coupling whose stated warrant, the
 `gas_st_*_hr_override` scope, is `None` on this keeper.
 
 Evidence:
-`results/calibration/FINDING-caiso239-st-gas-committed-relocation-2026-09-02.md`,
-`results/calibration/PRECOMMIT-caiso239-st-gas-committed-relocation-2026-09-02.md`,
-`results/calibration/_caiso239_st_gas_committed_footprint.json`,
+`docs/records/caiso/FINDING-caiso239-st-gas-committed-relocation-2026-09-02.md`,
+`docs/records/caiso/PRECOMMIT-caiso239-st-gas-committed-relocation-2026-09-02.md`,
+`results/phase0/caiso/_caiso239_st_gas_committed_footprint.json`,
 `scripts/probes/_caiso239_st_gas_committed_footprint.py`,
 `scripts/gen_caiso239_attestation.py`, run `2026-09-02-caiso-239-b1-stgas`.
 
@@ -11786,7 +11786,7 @@ class priced materially above its measured physical basis.
 `ASSESSMENT-caiso240-default-hr-mult-census-2026-09-03.md`,
 `FINDING-caiso240-default-hr-mult-census-2026-09-03.md`,
 `FINDING-caiso240-gas-vs-eia930-2026-09-03.md`,
-`results/calibration/_caiso240_default_hr_mult_census.json`,
+`results/phase0/caiso/_caiso240_default_hr_mult_census.json`,
 `_caiso240_cell_bound.json`, `_caiso240_gstruct_presolve.json`,
 `scripts/probes/_caiso240_{default_hr_mult_census,cell_bound,gstruct_presolve}.py`,
 `scripts/gen_caiso240_attestation.py`, run
@@ -12887,7 +12887,7 @@ are OFF on this keeper.
 **Deliverables:** `PRECOMMIT-caiso250-lambda-carrier-2026-09-05.md`,
 `FINDING-caiso250-lambda-carrier-2026-09-05.md`,
 `scripts/probes/_caiso250_lambda_carrier_anatomy.py`,
-`results/calibration/_caiso250_lambda_carrier_anatomy.json`, this entry, an
+`results/phase0/caiso/_caiso250_lambda_carrier_anatomy.json`, this entry, an
 evidence-only CAISO matrix append. No cell verdict moved; no run registered;
 keeper unchanged.
 
@@ -13473,7 +13473,7 @@ STORAGE", IS REFUTED ON BASIS. ZERO LP, NOTHING ARMED, KEEPER UNCHANGED** at
 `PRECOMMIT-caiso256-storage-cycling-basis-2026-09-06.md` (`885c405e`) pushed
 before the probe ran; `FINDING-caiso256-storage-cycling-basis-2026-09-06.md`;
 probe `scripts/probes/_caiso256_storage_cycling_basis.py`; artifact
-`results/calibration/_caiso256_storage_cycling_basis.json`.
+`results/phase0/caiso/_caiso256_storage_cycling_basis.json`.
 
 **THE BASIS.** caiso-255b's 35.4 / 42.1 GWh/d (2025) is the keeper's
 `storage_<year>.parquet` summed over BOTH techs — `li_ion` **and**
@@ -13710,7 +13710,7 @@ ZERO LP, NOTHING ARMED, KEEPER UNCHANGED** at `2026-09-06-caiso-257-b1-ctonly`
 **before any cell of the object was computed**;
 `FINDING-caiso258-hod2223-closure-2026-09-06.md`; probe
 `scripts/probes/_caiso258_hod2223_closure.py`; artifact
-`results/calibration/_caiso258_hod2223_closure.json`.
+`results/phase0/caiso/_caiso258_hod2223_closure.json`.
 
 **THE OBJECT** (handoff rank 1): the CC_REGULAR over-run of +1,536 / +1,546 MW
 at hod 22 / 23 in 2025, with import REFUSED as a carrier on admissibility
@@ -14066,7 +14066,7 @@ Four more owner decisions, each executed or chartered here:
    alignment exact, no reconciliation**; third-party archives rejected. Load
    sized: DAM 365 requests / ≈ 4.4 GB / ≈ 1 h (buys H-3 + the DA diagnostic);
    RTM 8,760 requests / ≈ 65 GB / ≈ 24 h (buys the scored RT price). **Not
-   loaded**; charter `docs/handoffs/caiso-2022-price-archive-intake-charter-2026-09.md`;
+   loaded**; charter `docs/records/caiso/caiso-2022-price-archive-intake-charter-2026-09.md`;
    the DAM-only vs DAM+RTM and now-vs-later decision goes back to the owner.
 2. **Panoche — "Run the instrument search."** **NOT FOUND**: no RMR, no CPM
    designation, no resource-named exceptional dispatch (the FERC ED tables
@@ -14077,13 +14077,13 @@ Four more owner decisions, each executed or chartered here:
    `ASSESSMENT-caiso261-panoche-instrument-search-2026-09-06.md`; close vs
    carry is the owner's next card.
 3. **S2 — "Fund S2."** CHARTERED, no code:
-   `docs/handoffs/caiso-s2-two-settlement-charter-2026-09.md` — the
+   `docs/records/caiso/caiso-s2-two-settlement-charter-2026-09.md` — the
    caiso-169 §5 specification (a DA LP on CAISO's published DA forecasts +
    an RT re-dispatch on actuals; the scored λ decision; gated default-off,
    ISO-agnostic, screened on one year), with G-IDENT / G-STRUCT / the
    caiso-127 PRIMARY fixed ex ante and C3a / C4 excluded.
 4. **Sidecar — "Charter the sidecar."** CHARTERED, no code:
-   `docs/handoffs/hourly-sidecar-zone-class-charter-2026-09.md` — per-zone ×
+   `docs/records/misc/hourly-sidecar-zone-class-charter-2026-09.md` — per-zone ×
    class, per-storage-unit and per-link hourly sidecars plus a write-time
    per-zone identity check (≤ 1 MW), at the `_write_class_hourly_sidecar`
    seam of `run_calibration_full.py`; keepers regenerate `hourly/` on their
@@ -14381,7 +14381,7 @@ value **$0.005** from the pre-solve prediction.
    decimal. The fuelvintage promotion **armed** two real mechanisms but **moved** no scored
    criterion, so caiso-268 is a **replication**, not an independent re-test. The PRECOMMIT §2 claim
    that caiso-260's C3a *FAILED* in 2024/2025 is also wrong — caiso-267's own scorecard reads PASS
-   and the band is ±10 % — and is corrected in `docs/RESULT-caiso268-span-2026-09-09.md` §3.
+   and the band is ±10 % — and is corrected in `docs/records/caiso/RESULT-caiso268-span-2026-09-09.md` §3.
 
 **OWNER RULED 2026-09-09: DO NOT PROMOTE.** Keeper stays `2026-09-09-caiso-fuelvintage-860-gas`, CAISO stays CALIBRATED, the arm stays registered as evidence (rule 15). The recommendation put to the owner was the same, on §5b rather than on the scorecard — the arm buys
 a better price by making the dispatch worse in the year the dispatch was right. The factor was
@@ -14403,7 +14403,7 @@ is armed and live on the keeper; the ×0.92 arm is a registered rejection. Next:
 **Keeper UNCHANGED** at `2026-09-10-caiso-269-lateevening-clean` (CALIBRATED, single ledgered
 C3c). **No solve, no shard, no arm, no `ScenarioConfig` field, no run registered, no promotion,
 no cell verdict moved.** Branch `claude/caiso-272-marginal-hr-cfsk95` off `main` `49b60041`.
-Full record: `docs/FINDING-caiso272-marginal-band-identification-2026-09-10.md`.
+Full record: `docs/records/caiso/FINDING-caiso272-marginal-band-identification-2026-09-10.md`.
 
 **Card 0(a) G-DRIFT vs the keeper's `git_sha` `8d627e64`:** 8 files, purely additive on `src/`,
 **every hunk INERT** for a CAISO backcast — the NYISO TOTAL EAST cutset TTC sits behind
@@ -14464,9 +14464,9 @@ structural integrity improves but gates regress that may still be a keeper.."* �
 **and** the scorecard both improve. Prior keeper `2026-09-10-caiso-271-egrid-family` is
 **deliberately NOT pruned** (rule 31 `[R-RETAIN]`): it is the G-CTRL form-4 control, so reversing
 this promotion costs one line and zero LP. Charter
-`docs/PRECOMMIT-caiso275-belly-and-winter-basis-2026-09-12.md` (pushed, SHA `b8ddf8bc` pinned,
+`docs/records/caiso/PRECOMMIT-caiso275-belly-and-winter-basis-2026-09-12.md` (pushed, SHA `b8ddf8bc` pinned,
 before the first LP of any shard); record
-`docs/RESULT-caiso275-belly-and-winter-basis-2026-09-12.md`.
+`docs/records/caiso/RESULT-caiso275-belly-and-winter-basis-2026-09-12.md`.
 
 **THE DIAGNOSIS (new instrument).** A net-load-decile decomposition of the price gap — no prior
 CAISO session ran one. In the lowest decile the real CAISO is a **net exporter running 7–9 GW of its
@@ -14555,7 +14555,7 @@ promotions). **Pre-existing parity RED not mine:** `results/calibration/nyiso227
 `ScenarioConfig` FIELD, NO RUN REGISTERED. KEEPER UNCHANGED at
 `2026-09-12-caiso-275-gascoupling`** (CALIBRATED on 2023–2025, the single ledgered C3c caveat), so
 no keeper shard, no `calibration-complete.json` re-key and no forecast gate-(a) re-key were owed.
-Full record: `docs/FINDING-caiso276-c3a-2022-no-admissible-lever-2026-09-12.md`.
+Full record: `docs/records/caiso/FINDING-caiso276-c3a-2022-no-admissible-lever-2026-09-12.md`.
 
 **The gate is reproduced exactly** — model **94.069** against the committed bench `rt_lw` **84.49**
 = **+11.337 %** against the ±10 % band, i.e. **−1.130 $/MWh** needed; `slack` and `dump` are
@@ -14668,7 +14668,7 @@ premise is FALSIFIED by its own first measurement, and caiso-276's cross-ISO suc
 recommendation is WITHDRAWN. ZERO LP, ZERO fleet rebuilds, no arm, no `ScenarioConfig` field, no
 run registered, NO KEEPER CHANGED IN ANY ISO.** Rule 25 `[R-ISO-SCOPE]`: seven ISOs measured, zero
 verdicts transferred, no other ISO's keeper/log/shard touched. Full record:
-`docs/FINDING-caiso277-the-bias-is-caiso-specific-2026-09-12.md`.
+`docs/records/caiso/FINDING-caiso277-the-bias-is-caiso-specific-2026-09-12.md`.
 
 **G-REPRO PASSES:** the instrument returns CAISO-2022 model **94.069** against the committed bench
 `rt_lw` **84.49** — caiso-276's published pair, exactly.
@@ -14760,8 +14760,8 @@ seven keepers' solved output. The only shard edit is the §4a prose correction t
 FULL LP, EIGHTEEN SESSIONS AGO. ZERO LP SPENT, ZERO SHARDS LAUNCHED, no arm, no bundle, no
 `ScenarioConfig` field, no run registered, NO KEEPER CHANGED IN ANY ISO, no cell verdict moved.**
 Rule 25 `[R-ISO-SCOPE]`: CAISO only. Full record:
-`docs/FINDING-caiso278-the-ablation-was-already-solved-2026-09-12.md`; the inherited charter
-`docs/PRECOMMIT-caiso278-chp-offer-ablation-2026-09-12.md` is **VOIDED in its own banner, not
+`docs/records/caiso/FINDING-caiso278-the-ablation-was-already-solved-2026-09-12.md`; the inherited charter
+`docs/records/caiso/PRECOMMIT-caiso278-chp-offer-ablation-2026-09-12.md` is **VOIDED in its own banner, not
 rewritten**.
 
 **WHAT THE DECISION TURNED ON.** The charter staged an ablation of
@@ -14877,7 +14877,7 @@ pre-existing line-anchor drift in the shared base file and another lane's SPP pr
 FAILS C4-2025.** Plus a NEW zero-LP measurement: the "running over in every year" bias is
 **RT-basis-specific**, and after the basis reading **2025 is the whole object**. ZERO LP, ZERO
 SHARDS, no arm, no keeper change, no cell verdict moved. Rule 25: CAISO only. Record:
-`docs/ADDENDUM-caiso278-the-8pct-cut-and-the-basis-reading-2026-09-12.md`.
+`docs/records/caiso/ADDENDUM-caiso278-the-8pct-cut-and-the-basis-reading-2026-09-12.md`.
 
 **The premise is CORRECT.** Fossil bands × 0.92 via the rule-1 authorized channel ran at caiso-267
 and caiso-268 (live keeper, registered as a rejection `2026-09-09-caiso-268-fossil92-span`), the two
@@ -14959,8 +14959,8 @@ ENVELOPE that binds 92–95 % of the hours carrying the 2022 miss at a shadow pr
 −$285/MWh, while the physical interties sit at 24–60 % utilisation. THE CAISO OVERSHOOT IS
 QUANTITY-CONSTRAINED, NOT PRICE-CONSTRAINED.** Two shards, one LP each; parent spent zero LP.
 **KEEPER UNCHANGED, NOTHING PROMOTED, no cell verdict moved.** Rule 25: CAISO only. Full record:
-`docs/RESULT-caiso279-the-binding-object-is-the-import-envelope-2026-09-12.md`; charter
-`docs/PRECOMMIT-caiso279-dsw-import-gas-regional-basis-2026-09-12.md` (pushed `0901c503` before
+`docs/records/caiso/RESULT-caiso279-the-binding-object-is-the-import-envelope-2026-09-12.md`; charter
+`docs/records/caiso/PRECOMMIT-caiso279-dsw-import-gas-regional-basis-2026-09-12.md` (pushed `0901c503` before
 either solve).
 
 **THE ARM FAILED ITS OWN PRE-REGISTERED GATE, IN THE WRONG DIRECTION.** Ablating
@@ -15118,16 +15118,16 @@ over-corrects to −9.39 % and 2025 is not explained by basis at all; mean |gap|
 caiso-272 measured 70.2 % of the 2022 dollar miss as the DA–RT premium the rubric's
 OUT-OF-REPRESENTATION row says "the test must not demand". **A rubric ruling, not a solve.**
 
-Record: `docs/RESULT-caiso280-the-envelope-binds-above-the-actuals-2026-09-13.md`.
+Record: `docs/records/caiso/RESULT-caiso280-the-envelope-binds-above-the-actuals-2026-09-13.md`.
 
 ## caiso-281 — 2026-09-13
 
 **ZERO LP. Keeper unchanged (`2026-09-12-caiso-275-gascoupling`). Nothing promoted, nothing
 registered, no mechanism cell moved, no `ScenarioConfig` field touched.** Records:
-`docs/PRECOMMIT-caiso281-is-the-marginal-hr-bias-a-measured-input-defect-2026-09-13.md`,
-`docs/ADDENDUM-caiso281-the-diurnal-coincidence-leg-2026-09-13.md` (Gate D),
-`docs/ADDENDUM-caiso281-gate-E-the-DA-basis-leg-2026-09-13.md` (Gate E),
-`docs/RESULT-caiso281-two-objects-not-one-and-the-bias-is-a-basis-artifact-2026-09-13.md`.
+`docs/records/caiso/PRECOMMIT-caiso281-is-the-marginal-hr-bias-a-measured-input-defect-2026-09-13.md`,
+`docs/records/caiso/ADDENDUM-caiso281-the-diurnal-coincidence-leg-2026-09-13.md` (Gate D),
+`docs/records/caiso/ADDENDUM-caiso281-gate-E-the-DA-basis-leg-2026-09-13.md` (Gate E),
+`docs/records/caiso/RESULT-caiso281-two-objects-not-one-and-the-bias-is-a-basis-artifact-2026-09-13.md`.
 Instrument `scripts/probes/_caiso281_two_objects.py`. **Every gate was fixed in a pushed doc
 before its own number existed**, the caiso-280 discipline.
 
@@ -15242,8 +15242,8 @@ possibility; and the DAM corpus cost 422 MB / 1,095 trade dates at 6 s spacing w
 
 **ZERO LP. Keeper unchanged (`2026-09-12-caiso-275-gascoupling`). Nothing promoted, nothing
 registered, no mechanism cell moved, no threshold moved.** Records:
-`docs/PRECOMMIT-caiso282-rtm-pool-and-gates-2026-09-16.md` (pushed at `b2101553` before any
-pooled number), `docs/RESULT-caiso282-rtm-pool-g-repro-failed-2026-09-16.md`. Instrument
+`docs/records/caiso/PRECOMMIT-caiso282-rtm-pool-and-gates-2026-09-16.md` (pushed at `b2101553` before any
+pooled number), `docs/records/caiso/RESULT-caiso282-rtm-pool-g-repro-failed-2026-09-16.md`. Instrument
 `scripts/probes/_caiso282_rtm_pool.py`; outputs `results/rtm-intake/caiso281/_caiso282_pool_*.json`.
 
 **G-REPRO FAILED — THE RTM/DAM LADDER COMPARISON IS ABANDONED, NOT ADJUSTED (caiso-281 charter
@@ -15298,8 +15298,8 @@ launched, nothing to archive).
 **ZERO LP. Keeper unchanged (`2026-09-12-caiso-275-gascoupling`). Nothing promoted, nothing
 registered, no mechanism cell moved, no threshold moved, no artifact re-derived.** Owner
 instruction on RESULT caiso-282 §6: *"Just do the successor."* Records:
-`docs/PRECOMMIT-caiso283-rtm-exact-rederive-2026-09-16.md` (pushed at `f7534746` before any shard
-launched), `docs/RESULT-caiso283-rtm-flat-2026-09-16.md`. Instrument:
+`docs/records/caiso/PRECOMMIT-caiso283-rtm-exact-rederive-2026-09-16.md` (pushed at `f7534746` before any shard
+launched), `docs/records/caiso/RESULT-caiso283-rtm-flat-2026-09-16.md`. Instrument:
 `scripts/data/reduce_caiso_bid_year.py` (shard side) + `scripts/probes/_caiso283_pool.py` (parent);
 data `results/rtm-intake/caiso283/` (4.7 MB, eight market-years, every parquet sha256-verified).
 
@@ -15344,9 +15344,9 @@ every shard by `prepare_solve_container.py`.
 `[R-SHARD]` (a) — the parent never solved). Nothing armed, no `ScenarioConfig` field, no derive
 re-run, **nothing registered** (a 2024-only replay of a 2023–2025 keeper is not registrable under
 rule 16 `[R-ALLYEARS]`). Pre-registered at
-`docs/PRECOMMIT-caiso285-instrumented-probe-2026-09-17.md`, pushed
+`docs/records/caiso/PRECOMMIT-caiso285-instrumented-probe-2026-09-17.md`, pushed
 `b48448cbacc3eabebf57a051039797847ff9cf14` **before** the shard launched. Full write-up:
-`docs/RESULT-caiso285-bridge-candidacy-2026-09-17.md`.
+`docs/records/caiso/RESULT-caiso285-bridge-candidacy-2026-09-17.md`.
 
 **The probe.** The instrumented replay caiso-284 was blocked on:
 `replay_keeper.py --years 2024 --persist-p0-commitment` against the keeper bundle, giving the
@@ -15426,10 +15426,10 @@ Shard branch left in place — branch deletion returns HTTP 403 for this credent
 **The measured CC start cost lands BELOW the bar, and caiso-285's exoneration of the decommit screen
 does not survive a per-gap evaluation.** Keeper **UNCHANGED** (`2026-09-12-caiso-275-gascoupling`).
 **ZERO LP** — no shard launched, no span, nothing armed, nothing registered, nothing deleted.
-PRECOMMIT `docs/PRECOMMIT-caiso286-cc-start-cost-2026-09-19.md` pushed at
+PRECOMMIT `docs/records/caiso/PRECOMMIT-caiso286-cc-start-cost-2026-09-19.md` pushed at
 `7562f345d25eb96c7785f82b201c230f00f7402f` **before** the arithmetic was written; RESULT
-`docs/RESULT-caiso286-cc-start-cost-2026-09-19.md`; artifact
-`results/calibration/_caiso286_start_cost_coverage.json`.
+`docs/records/caiso/RESULT-caiso286-cc-start-cost-2026-09-19.md`; artifact
+`results/phase0/caiso/_caiso286_start_cost_coverage.json`.
 
 **Instrument survey, adjudicated by measurement.** (a) CAISO's own public bid corpus is **dead** as a
 start-cost instrument — one live OASIS `PUB_DAM_GRP` trade date carries 26 columns and 10 products
@@ -15497,7 +15497,7 @@ short gas outages at hour grain, with offer curves unchanged. The CC derive now 
 −5.36 TWh vs ±5.27 (incumbent −4.40); everything else holds. The incumbent, re-scored on the same benchmark,
 stays CALIBRATED. The cause is the standing CC-under-dispatch / over-import residual, which the new inputs
 expose. 2019–2021 are blocked on data intakes. Promotion open to the owner.
-`docs/handoffs/r-caiso/RESULT-r-caiso-2026-09-24.md`.
+`docs/records/caiso/r-caiso/RESULT-r-caiso-2026-09-24.md`.
 
 ## R-CAISO promotion — 2026-09-25
 
@@ -15532,7 +15532,7 @@ arm (rule 36), and the parent spent zero LP.
 - Pastoria 2022/2023: 3.39 / 3.58 TWh (keeper 1.84 / 1.81; actual 3.29 / 4.34).
 
 **Pruned (rule 35):** `2026-09-25-caiso-r2-cc-gross` and the A-only probe. Record:
-`docs/handoffs/r-caiso-3/`.
+`docs/records/caiso/r-caiso-3/`.
 
 ## R-CAISO-4 — 2026-09-26 — PROMOTED `2026-09-26-caiso-r4-intertie-dam`
 
@@ -15556,7 +15556,7 @@ EIA-923 fuel: 0.446 → 0.379 t/MWh, and Pastoria 2024/25 goes 2.37/2.14 → 3.6
 It read NOT-YET on C4 2025 (0.301 vs 0.30), and promoting it would have withdrawn the `complete` marker.
 
 **Pruned (rule 35):** the outgoing `2026-09-25-caiso-r3-abc-import` and the D+E candidate. Record:
-`docs/handoffs/r-caiso-4/`.
+`docs/records/caiso/r-caiso-4/`.
 
 ## R-CAISO-5 — 2026-09-27 — PROMOTED `2026-09-26-caiso-r5-pastoria-co2`
 
@@ -15584,7 +15584,7 @@ one per year per arm (rule 36): X 2022–25, XE 2022–25 and XE 2019–21. The 
 +2.3 GW over EIA-930 at h8–16 in every month of 2022–25.
 
 **Pruned (rule 35):** the outgoing `2026-09-26-caiso-r4-intertie-dam`, its fold `2026-09-26-caiso-r4-keeper-2019`,
-and the X-only candidate `2026-09-26-caiso-r5-cc-outage`. Record: `docs/handoffs/r-caiso-5/`.
+and the X-only candidate `2026-09-26-caiso-r5-cc-outage`. Record: `docs/records/caiso/r-caiso-5/`.
 
 ## R-CAISO-6 — 2026-09-27 — 2019–21 fold re-solved on corrected import inputs; keeper unchanged
 
@@ -15605,7 +15605,7 @@ and the X-only candidate `2026-09-26-caiso-r5-cc-outage`. Record: `docs/handoffs
   per-corridor firm-shape repair was censused at zero LP: ±130 MW. Not armed.
 - **C3c 2024:** characterised, still ledgered.
 
-Record: `docs/handoffs/r-caiso-6/`.
+Record: `docs/records/caiso/r-caiso-6/`.
 
 ## R-CAISO-7 — 2026-09-27 — 2019–21 CC excess traced to a missing DSW import; keeper unchanged (zero LP)
 
@@ -15620,7 +15620,7 @@ Record: `docs/handoffs/r-caiso-6/`.
   mean price and 420 GWh unserved.
 - **Object 3:** C4 2025 unchanged, 0.2987.
 
-Record: `docs/handoffs/r-caiso-7/`.
+Record: `docs/records/caiso/r-caiso-7/`.
 
 ## R-CAISO-8 — 2026-09-27 — PROMOTED `2026-09-27-caiso-r8-partial-year`
 
@@ -15635,7 +15635,7 @@ Record: `docs/handoffs/r-caiso-7/`.
 - **Object 2:** no public per-year operating SD import limit. Measured night imports exceed the LCT cap in 95 % of
   2019 night hours. Owner decision on the construction.
 
-Record: `docs/handoffs/r-caiso-8/`.
+Record: `docs/records/caiso/r-caiso-8/`.
 
 ## R-CAISO-12 — 2026-09-28 — the "h15–17 import surplus" was two benchmark artifacts; keeper unchanged (zero LP)
 
@@ -15651,7 +15651,7 @@ Record: `docs/handoffs/r-caiso-8/`.
   - The ICE daily index fails as a 2019–20 hub print: +7 to +18 $/MWh drifting bias at Palo Verde, on-peak
     days only. The STOP stands.
 
-Record: `docs/handoffs/r-caiso-12/`.
+Record: `docs/records/caiso/r-caiso-12/`.
 
 ## R-CAISO-13 — 2026-09-28 — battery "1 h late" is an EIA-930 CISO clock defect; arm built, solve handed on (zero LP)
 
@@ -15664,7 +15664,7 @@ Record: `docs/handoffs/r-caiso-12/`.
 - **Not solved:** the session was at the nesting limit. The 7 shards go to R-CAISO-14 (owner card "Solve + promote only").
 - **The evening ramp-peak gap is not the clock** (2023 has no defect). Storage sets the plateau: price spread across interior-discharge hours has a median of $1.8–11. No admissible lever.
 
-Record: `docs/handoffs/r-caiso-13/`.
+Record: `docs/records/caiso/r-caiso-13/`.
 
 ## R-CAISO-14 — 2026-09-29: `caiso_eia930_clock_repair` solved, NOT promoted
 
@@ -15673,7 +15673,7 @@ Record: `docs/handoffs/r-caiso-13/`.
 - P1–P3 FAIL, P4 PASS. C4 gas NRMSE 2024 0.254 → 0.262, 2025 0.294 → 0.300.
 - Owner card: "Complete repair, re-solve". R-CAISO-15 extends the arm to the HSL generation term and re-solves. Keeper unchanged.
 
-Record: `docs/handoffs/r-caiso-14/`.
+Record: `docs/records/caiso/r-caiso-14/`.
 
 ## R-CAISO-15 — 2026-09-29/30: clock repair completed, PROMOTED
 
@@ -15682,7 +15682,7 @@ Record: `docs/handoffs/r-caiso-14/`.
 - P2 PASS (battery lag +1 → 0). P1 narrow miss (4 of 24 months at 12.02–12.09 h, from the curtailment term). P3 mixed.
 - Owner card "Promote": keeper `2026-09-29-caiso-r15-clockfull` (+ `-touchpoints`); r11 pruned. Open: per-DIBA interchange lag.
 
-Record: `docs/handoffs/r-caiso-15/`.
+Record: `docs/records/caiso/r-caiso-15/`.
 
 ## R-CAISO-16 — 2026-09-30: interchange lag closed; TI kept on its true clock, PROMOTED
 
@@ -15693,7 +15693,7 @@ Record: `docs/handoffs/r-caiso-15/`.
 - C4 gas NRMSE 2023–25 0.248/0.249/0.290 → 0.247/0.247/0.288. C3b 2024 0.116 → 0.112.
 - Promoted on the pre-registered structure rule: keeper `2026-09-30-caiso-r16-tiontime` (+ `-touchpoints`); r15 pruned.
 
-Record: `docs/handoffs/r-caiso-16/`.
+Record: `docs/records/caiso/r-caiso-16/`.
 
 ## R-CAISO-17 — 2026-09-30: pre-2022 generation cells published EARLY, PROMOTED
 
@@ -15707,7 +15707,7 @@ Record: `docs/handoffs/r-caiso-16/`.
 - The fold stays NOT-YET. Its dispatch_corr r improves every year: 0.882 / 0.879 / 0.816 → 0.892 / 0.902 / 0.853.
 - Promoted on the pre-registered structure rule: keeper `2026-09-30-caiso-r17-earlyclock` (+ `-touchpoints`). r16 was pruned.
 
-Record: `docs/handoffs/r-caiso-17/`.
+Record: `docs/records/caiso/r-caiso-17/`.
 
 ## R-CAISO-18 — 2026-09-30: unprinted intertie-hub years priced on measured gas, PROMOTED
 
@@ -15723,7 +15723,7 @@ Record: `docs/handoffs/r-caiso-17/`.
   - It stays NOT-YET.
 - Promoted on the pre-registered structure rule: keeper `2026-09-30-caiso-r18-dswgas` (+ `-touchpoints`). r17 was pruned.
 
-Record: `docs/handoffs/r-caiso-18/`.
+Record: `docs/records/caiso/r-caiso-18/`.
 
 ## R-CAISO-19 — 2026-09-30: fold DSW residual = the absent clean rungs, zero LP, nothing built
 
@@ -15737,7 +15737,7 @@ Record: `docs/handoffs/r-caiso-18/`.
   4. C3c 2024.
 - R-CAISO-20 takes (1), then ledgers (2).
 
-Record: `docs/handoffs/r-caiso-19/`.
+Record: `docs/records/caiso/r-caiso-19/`.
 
 ## R-CAISO-20 — 2026-09-30: overnight clean rung armed in unprinted years (OWNER RULING), PROMOTED; fold residual ledgered
 
@@ -15755,4 +15755,4 @@ Record: `docs/handoffs/r-caiso-19/`.
 - **Ledgered:** the remaining fold DSW residual (−9.3 / −15.2 / −10.2 TWh, daytime and evening) is DATA-AVAILABILITY LIMITED. OASIS has no Palo Verde print before 2021-04-27, so the surplus, daytime and late-evening rungs have no admissible trigger.
 - Promoted on the pre-registered structure rule: keeper `2026-09-30-caiso-r20-overnight` (+ `-touchpoints`). r18 was pruned.
 
-Record: `docs/handoffs/r-caiso-20/`.
+Record: `docs/records/caiso/r-caiso-20/`.

@@ -55,7 +55,7 @@ Usage::
 
     uv run python scripts/probes/_caiso188_import_tranche_census.py
 
-Writes ``results/calibration/_caiso188_import_tranche_census.json``.
+Writes ``results/phase0/caiso/_caiso188_import_tranche_census.json``.
 """
 
 from __future__ import annotations
@@ -75,7 +75,7 @@ sys.path.insert(0, str(REPO))
 
 CAL = REPO / "results" / "calibration"
 KEEPER = CAL / "caiso184_c1_lpbasis"
-OUT = CAL / "_caiso188_import_tranche_census.json"
+OUT = CAL.parent / "phase0" / "caiso" / "_caiso188_import_tranche_census.json"
 HOURS = 8760
 YEARS = (2023, 2024, 2025)
 

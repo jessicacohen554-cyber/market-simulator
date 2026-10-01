@@ -69,7 +69,7 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-OUT = REPO / "results/calibration/_pjm_h9_coal_cycling.json"
+OUT = REPO / "results/phase0/pjm/_pjm_h9_coal_cycling.json"
 
 #: The LONG_RUN model classes (offer_surfaces._PJM_MIDCURVE_SEGMENT_OF), i.e. exactly
 #: the fleet whose measured segment is defined by median min_runtime > 16 h.

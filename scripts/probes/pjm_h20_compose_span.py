@@ -6,7 +6,7 @@ asserts: the pjm-h19 arm (``demand_balance_screen``) is now the KEEPER's own
 recipe and joins the incumbent posture, and the TWO fields separating arm from
 control are the Card C pair, ``pjm_offer_midcurve_level_segments=["CC_LIKE"]``
 and ``pjm_ct_measured_max_reprice=true``
-(docs/PRECOMMIT-pjm-h20-card-c-cc-level-ct-max-2026-09-24.md §1).
+(docs/records/pjm/PRECOMMIT-pjm-h20-card-c-cc-level-ct-max-2026-09-24.md §1).
 
 Usage::
 

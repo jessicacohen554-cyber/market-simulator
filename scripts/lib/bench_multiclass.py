@@ -2,7 +2,7 @@
 
 Single home for the machinery that assigns a *multi-class* plant's measured
 series to its model classes — the fix for the bench collapse defect
-(`docs/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md` §5): the benchmark
+(`docs/records/nyiso/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md` §5): the benchmark
 builder keyed its per-plant dicts by ``plant_code`` while iterating
 ``(plant_code, klass)`` groups, so a plant spanning two model classes had its
 WHOLE measured CAMPD/EIA-923 series attributed to whichever class came last

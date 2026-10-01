@@ -1,6 +1,6 @@
 """SPP-85 (zero LP): unit-level attribution of the keeper's CAMPD coal outage windows.
 
-Record: ``docs/handoffs/FINDING-spp-85-coal-outage-basis-2026-09-26.md``.
+Record: ``docs/records/spp/FINDING-spp-85-coal-outage-basis-2026-09-26.md``.
 
 SPP-84 found the keeper ``results/calibration/rspp_span`` carries +1.2-3.4 GW MORE coal outage
 than SPP publishes (portal ``capacity-of-generation-on-outage``) in every year 2019-2024. This
@@ -57,7 +57,7 @@ from scripts.probes._spp84_published_outage_rebasis import (  # noqa: E402
     spp_outage_on_model_clock,
 )
 
-FINDING = "docs/handoffs/FINDING-spp-85-coal-outage-basis-2026-09-26.md"
+FINDING = "docs/records/spp/FINDING-spp-85-coal-outage-basis-2026-09-26.md"
 T = 8760
 STATES = ("AR", "CO", "IA", "KS", "LA", "MN", "MO", "MT", "ND", "NE", "NM", "OK", "SD", "TX")
 NLM = {
@@ -228,7 +228,7 @@ def main() -> None:
     ap.add_argument("--cache", type=Path, required=True)
     ap.add_argument("--outage", type=Path, required=True)
     ap.add_argument("--years", type=int, nargs="+", default=list(range(2019, 2025)))
-    ap.add_argument("--out", type=Path, default=REPO_ROOT / "results/calibration/_spp85_coal_window_attribution.json")
+    ap.add_argument("--out", type=Path, default=REPO_ROOT / "results/phase0/spp/_spp85_coal_window_attribution.json")
     ap.add_argument("--windows-out", type=Path)
     a = ap.parse_args()
     o = load_outage_zips(a.outage)

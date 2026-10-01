@@ -1,7 +1,7 @@
 """Derive the MISO per-zone monthly marginal delivery-factor (loss) surface.
 
 The miso-76 M3 derive (frozen, CLAUDE.md rule 23 — re-derives ONLY on source
-data updates; charter ``docs/handoffs/miso-nc-price-separation-design-2026-07.md``
+data updates; charter ``docs/records/miso/miso-nc-price-separation-design-2026-07.md``
 §4). Reads the ``lmp-components`` clean partitions (MISO hub LMP/MCC/MLC,
 2023-2025 train window) and emits the dimensionless per-zone (month)
 marginal delivery-factor deviation surface consumed by the gated

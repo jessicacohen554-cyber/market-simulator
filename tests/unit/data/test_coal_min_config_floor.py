@@ -22,7 +22,7 @@ The pins here are the ones the arm's own pre-registration promises:
 * **zero free parameters** (rule 21 ``[R-DOF]``) — every level in the artifact
   is an EIA-860 registration value, never a fitted one.
 
-See ``docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`` and the
+See ``docs/records/ercot/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md`` and the
 ``ScenarioConfig`` field docstring.
 """
 

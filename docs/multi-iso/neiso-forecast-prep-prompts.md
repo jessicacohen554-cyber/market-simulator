@@ -6,7 +6,7 @@
 > planning now lives in `docs/forecast-development-plan-2026-07.md`.
 
 Two self-contained prompts for fresh sessions, written off the backcast
-sign-off in `results/calibration/DIAGNOSIS-neiso-ccsteam-2026-06-19.md`. NEISO is
+sign-off in `docs/records/neiso/DIAGNOSIS-neiso-ccsteam-2026-06-19.md`. NEISO is
 **backcast-calibrated**; these are the only two items between it and a forecast
 run. **F1 is mandatory** (a forecast has no measured interchange schedule to
 serve); **F2 is polish** and is blocked on the U4 daily-AGT upload.

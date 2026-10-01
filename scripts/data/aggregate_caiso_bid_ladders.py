@@ -41,7 +41,7 @@ rather than assuming it. The 20-point grid is dense enough that a modest
 rescale is a within-grid interpolation, not an extrapolation.
 
 This approximation is what ``G-REPRO`` in
-``docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`` exists to
+``docs/records/caiso/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`` exists to
 catch: the same aggregator run over DAM zips must reproduce the committed
 surface's ``CC_REGULAR base_hr`` 7.442 and bands 1.066 / 1.072 / 1.386 to
 +/-0.02 / +/-0.01. **If it does not, the comparison is abandoned, not tuned.**

@@ -200,7 +200,7 @@ co-run).
 **This is the discharge of the §0b-2 gate.** §0b records the merged Wave-1 state as the
 §W1-X session found it; §0c reports what that session did and what every downstream wave
 must now carry. Where the two disagree, §0c wins. Full record:
-`docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md`.
+`docs/records/forecast/ffr-w1x-wave1-close-2026-08-02.md`.
 
 **1. All seven Wave-1 lanes are MERGED** — merge shas, for the per-merge audits below:
 FFR-1A `1eeef40` (#3248) · 1B `255c015` (#3239) · 1C `50c5193` (#3243) · 1D `24665ee`
@@ -289,7 +289,7 @@ the four sub-2026 leaks closed (planned additions, emission-rate window, hydro c
 silent gas back-hold), the rule-22 carve-outs moved into `scripts/lib/holdout_policy.py` with
 the harness fail-closed against the freeze file, the scorer's symmetric `< 2023` refusal, 28
 contract tests and the rule-28c matrix row. Findings doc:
-`docs/handoffs/fh-1-full-forward-harness-2026-08.md`. Arm K at base 2023 **hard-errors** by
+`docs/records/forecast/fh-1-full-forward-harness-2026-08.md`. Arm K at base 2023 **hard-errors** by
 design until FH-3 lands `hindcast_asknown_aeo2023` — it refuses to substitute a different
 vintage, which would be the §4-row-7 trap in another costume.
 
@@ -338,14 +338,14 @@ HEAD — this program's state has moved ~200 commits inside a single manager ses
 
 **1. Correction: the FFR-3A T1-F half is COMPLETE for ALL SIX ISOs.** Manager notes carried
 forward a "PJM and MISO were still solving at write-up" claim. The committed record disagrees:
-`docs/handoffs/ffr-t1-regate-2026-08-02.md` §6.5 tables NEISO, NYISO, PJM, MISO, ERCOT and CAISO
+`docs/records/forecast/ffr-t1-regate-2026-08-02.md` §6.5 tables NEISO, NYISO, PJM, MISO, ERCOT and CAISO
 all at **5/5 solve-years**, plus the ERCOT pre-decision control. PJM and MISO landed before the
 doc was committed. **All six determinations are HOLD; nothing is promoted; nothing is
 registered.** FFR-3C has since added the **MISO control arm** that §6.5b named as the single
 highest-value next measurement, so that item is closed too.
 
 **2. Correction: FFR-3D REPAIRED four of FFR-3A's blockers — it was not triage-only.**
-`docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md`: blocker 5 (dishonest zero-year console
+`docs/records/forecast/ffr-3d-instrument-repair-2026-08-03.md`: blocker 5 (dishonest zero-year console
 line), **blocker 7** (`run_full_horizon` never wrote `run_config.json`, so **FC-7 failed on every
 T1-F leg by construction**) and **blocker 8** (FC-2 row 4 SKIPPED everywhere; BLK-10 now scorable)
 are all fixed at `34c2f25`; blocker 4 (optional-field cache-key hazard) is repaired structurally
@@ -401,7 +401,7 @@ needs `pip install tzdata` or `ercot-wtx-congestion` fails with `ZoneInfoNotFoun
 
 | Wave | Sessions (model) | Parallel? | Solves? | Gate to next wave |
 |---|---|---|---|---|
-| **W1 fix** ✅ **CLOSED 2026-08-02** | 1A (F), 1B (F), 1C (O), 1D (O), 1E (O) **+ PA (O, promoted from WP — 2026-08-22 deadline)** | yes — file-disjoint; 1D's `ci.yml` hunk precedes 1C's (flag §W1) | T0 probes + ≤2-ISO T1-F acceptance probes only | **MET.** All seven lanes merged; **§W1-X discharged 2026-08-02** — attestations confirmed (no keeper moved), **cache epoch bumped ONCE** (FR-1/2/7/8; invalidates every pre-Wave-1 **forecast-mode** cache at ANY solve year, backcast/keepers untouched), regression audit 3/3 PASS, FFR-1E's parity job in CI. Record: `docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md`; scope + purge: §0c-3 |
+| **W1 fix** ✅ **CLOSED 2026-08-02** | 1A (F), 1B (F), 1C (O), 1D (O), 1E (O) **+ PA (O, promoted from WP — 2026-08-22 deadline)** | yes — file-disjoint; 1D's `ci.yml` hunk precedes 1C's (flag §W1) | T0 probes + ≤2-ISO T1-F acceptance probes only | **MET.** All seven lanes merged; **§W1-X discharged 2026-08-02** — attestations confirmed (no keeper moved), **cache epoch bumped ONCE** (FR-1/2/7/8; invalidates every pre-Wave-1 **forecast-mode** cache at ANY solve year, backcast/keepers untouched), regression audit 3/3 PASS, FFR-1E's parity job in CI. Record: `docs/records/forecast/ffr-w1x-wave1-close-2026-08-02.md`; scope + purge: §0c-3 |
 | **W2 evidence** | 2A (O), 2B (O), 2C (O), 2D (F), 2E (O) | yes — ≤2 concurrent solve invocations (rule 12) | T1-X ×3, T1-H probe legs, T0/T1 probes, capacity-hindcast re-runs (no-LP-heavy) | evidence docs committed → **OWNER SITTING** |
 | **⛔ OWNER** | decision batch D-1..D-7 (audit §4 Phase 2) | one sitting | none | signed decisions |
 | **W3 re-baseline** | 3A (O), 3B (O) | 3B first or parallel (3B lands schema, 3A populates) | the ONE consolidated battery: T1-F ×6 + T1-X folds + T1-H re-scores + FC-6 | boards regenerated & current |
@@ -455,7 +455,7 @@ ghost (FR-2), and the latent additions-baseline gap (FR-13)
 Read (beyond the implicit set): audit §3.1 FR-1/FR-2 + §3.2 FR-13 + FR-23;
 src/market_sim/model/capacity_evolution/{evolve.py,retirements.py};
 results/evolution_ledger.py; scripts/check_forecast_invariants.py (I4);
-docs/handoffs/confirmed-retirement-plan-2026-07.md (registry semantics).
+docs/records/misc/confirmed-retirement-plan-2026-07.md (registry semantics).
 
 Two arms, two commits, strictly in this order:
 
@@ -541,7 +541,7 @@ attestation + the T0 aging probe.
 [OPUS] FFR-1C — Accredit hydro in accredited_firm_capacity_mw at its published
 per-ISO credit (FR-3)
 
-Read: audit §3.1 FR-3; docs/handoffs/ff-2b-adequacy-basis-2026-07.md §"hydro"
+Read: audit §3.1 FR-3; docs/records/forecast/ff-2b-adequacy-basis-2026-07.md §"hydro"
 (the spec: CAISO 3,601 MW / NYISO 3,343 MW / NEISO 30 MW dispatched-but-
 unaccredited); src/market_sim/model/capacity_evolution/adequacy.py:131-198;
 data/hydro.py (capacity source); docs/parameter-citations.md.
@@ -617,7 +617,7 @@ Deliver: findings doc listing every guard added + every field deleted; CI green.
 [OPUS] FFR-1E — A standing no-solve parity check between keeper postures and the
 forecast orchestrator (FR-22)
 
-Read: audit §3.5 FR-22; docs/FINDING-nyiso102-d5-parity-wiring-2026-07-30.md
+Read: audit §3.5 FR-22; docs/records/nyiso/FINDING-nyiso102-d5-parity-wiring-2026-07-30.md
 (the incident: three NYISO downstate mechanisms existed only on the backcast
 path); frontend/data/backcast/keepers/<ISO>.json (keeper flag surfaces);
 runner.py (forecast orchestrator seams).
@@ -639,7 +639,7 @@ its own session — this session builds the detector).
 Deliver: parity report for all six ISOs + the registry + findings doc.
 ```
 
-### §W1-X — Wave-1 close checklist ✅ **DISCHARGED 2026-08-02** — `docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md`
+### §W1-X — Wave-1 close checklist ✅ **DISCHARGED 2026-08-02** — `docs/records/forecast/ffr-w1x-wave1-close-2026-08-02.md`
 
 1. All five merged; keeper byte-identity attestations from 1A-arm-1/1B/1D present.
    → **PASS ×3.** All seven lanes merged. Attestations re-confirmed against the *merged*
@@ -674,7 +674,7 @@ MISO crossover, re-run T1-X on the fixed availability envelope
 Read: audit §3.2 FR-9 + §3.5 FR-21 (comparator staleness); runner.py:1352;
 data/neighbor_price.py:206,481; scripts/run_capacity_hindcast.py (crossover
 mode); scripts/score_crossover.py + scripts/_ff2d_crossover_adapter.py;
-docs/handoffs/ff-t1-gate-2026-07.md §4.2-4.3.
+docs/records/forecast/ff-t1-gate-2026-07.md §4.2-4.3.
 
 1. FR-9: neighbor seam honors crossover_forward_gas_path for forward years and
    uses _hold_flat_extrapolate instead of raw dict indexing; extend
@@ -704,8 +704,8 @@ post-W1 HEAD; deliver the owner's D-1/D-2 evidence (FR-4, FR-5)
 
 Read: audit §3.1 FR-4/FR-5 + §3.3; docs/handoffs/ff-retirement-rule-
 implementation-2026-07.md (the implemented rule + its probe arms);
-docs/handoffs/forecast-retirement-calibration-plan-2026-07.md §2.1/§3 (T-R
-bands — never restated looser); docs/handoffs/ff-entry-stack-completion-2026-07.md.
+docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md §2.1/§3 (T-R
+bands — never restated looser); docs/records/forecast/ff-entry-stack-completion-2026-07.md.
 
 1. Probe arms at post-W1 HEAD, reusing every committed BEFORE leg that is
    invariant (never re-solve unchanged legs): PJM + MISO curve-ON T1-H legs
@@ -731,7 +731,7 @@ Deliver: findings doc + registered probe runs + the decision box.
 [OPUS] FFR-2C — Re-anchor stale net-CONE vintages from PUBLISHED results; prepare
 the FF-G3 escalation decision (FR-19)
 
-Read: audit §3.4 FR-19; docs/handoffs/ff-g3-net-cone-forward-2026-07.md (design
+Read: audit §3.4 FR-19; docs/records/forecast/ff-g3-net-cone-forward-2026-07.md (design
 landed, inert; D1-D5 open); config/capacity_market.py:1231-1418.
 
 1. Rule-23 data-change re-derivations, one commit per ISO, each citing the
@@ -879,7 +879,7 @@ cites where the truth now lives.
 battery at the post-fix HEAD and regenerate every board
 
 Requires: Wave 1 + 2 merged, owner sitting done, FFR-3B schema landed.
-Read: audit §4 Phase 3; docs/handoffs/ff-t1-gate-2026-07.md (the battery recipe
+Read: audit §4 Phase 3; docs/records/forecast/ff-t1-gate-2026-07.md (the battery recipe
 to mirror); docs/forecast-determination-rubric.md; the signed packet.
 
 0. One dedicated commit per SIGNED decision, each citing the sign-off (FF-2C
@@ -924,7 +924,7 @@ golden reseed, if authorized, is its own separately-authorized invocation).
 [FABLE] FFR-SA — Implement the FF-G4 Option-B load-shape mechanism (additive EV +
 heat-pump end-use layers), DEFAULT OFF (FR-16)
 
-Read: docs/handoffs/ff-g4-load-shape-design-memo-2026-07.md (the decided design
+Read: docs/records/forecast/ff-g4-load-shape-design-memo-2026-07.md (the decided design
 — implement, don't re-design); audit §3.4 FR-16; runner.py:274-289
 (_scale_demand); data/datacenter.py:312 (electrification_shape stub).
 
@@ -946,7 +946,7 @@ one mechanism per phenomenon, additive layers must not double-count DC MW.
 [FABLE] FFR-SB — Design how the FF-G5 nuclear license/SLR registry enters the
 exit path WITHOUT a second exit mechanism (FR-18/BLK-9; memo only)
 
-Read: docs/handoffs/ff-g5-nuclear-registry-2026-07.md (registry + loader, 59
+Read: docs/records/forecast/ff-g5-nuclear-registry-2026-07.md (registry + loader, 59
 units, consumed by nothing); audit §3.3/§3.4; model/capacity_evolution/
 retirements.py (the ONE exit path); confirmed-retirement-plan (instrument bar).
 Research step (FF §4): how IPM/ReEDS treat license horizons vs economic exit.
@@ -965,7 +965,7 @@ compose with the existing screen/registry. No code, no solve.
 [OPUS] FFR-SC — Run the owed FF-G1 T1-F A/B (transmission expansion gate);
 execute surviving small input refreshes
 
-Read: docs/handoffs/transmission-expansion-grounding-2026-07.md + the fast-tier
+Read: docs/records/misc/transmission-expansion-grounding-2026-07.md + the fast-tier
 D2 apply note (engine landed 2026-07-26, default off, A/B never run); audit
 §3.3/§3.4 FR-20.
 
@@ -989,7 +989,7 @@ Rule 12; ≤5 solve-years; registration + matrix duties standard.
 Eddystone §202(c) expiry (FR-18) — DATA ONLY
 
 Read: data/raw/confirmed-retirements/ (+README, vintage 2026-07-05); audit
-§3.4 FR-18; docs/handoffs/confirmed-retirement-plan-2026-07.md (instrument bar).
+§3.4 FR-18; docs/records/misc/confirmed-retirement-plan-2026-07.md (instrument bar).
 
 1. Re-query every ISO's rows: the PJM Eddystone DOE §202(c) order expires
    2026-08-22 — record the successor state (renewed / lapsed / superseded)
@@ -1059,8 +1059,8 @@ decision cards. The dispatch ledger below is the authoritative record of which r
 
 | Lane | Purpose | State at 2026-08-04 `a7966013` |
 |---|---|---|
-| FFR-3A-2 / 3A-3 | Close the T1 battery; boards | **RAN.** `docs/handoffs/ffr-3a2-battery-close-2026-08-03.md`; 18 hindcast sidecars + `ff-verdicts.json` registered |
-| FFR-3H | CAISO 65.5 % backstop diagnosis | **RAN.** `docs/handoffs/ffr-3h-caiso-backstop-2026-08-04.md` |
+| FFR-3A-2 / 3A-3 | Close the T1 battery; boards | **RAN.** `docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md`; 18 hindcast sidecars + `ff-verdicts.json` registered |
+| FFR-3H | CAISO 65.5 % backstop diagnosis | **RAN.** `docs/records/forecast/ffr-3h-caiso-backstop-2026-08-04.md` |
 | FFR-SC-2 | FF-G1 CAISO transmission A/B | **RAN.** Gate INERT in CAISO and PJM; independently replicated |
 | FFR-SA-close | PJM load-shape smoke | **RAN.** Off-leg 2026–2028, invariants PASS |
 | FFR-3J | Kill-resume discriminator | **PARTIAL** — instrumentation landed (`ef5695b0`); the drill was never re-run. Superseded by FFR-3M below |
@@ -1177,7 +1177,7 @@ scorecard entry for part c.
 Do not widen the drill's tolerance or make it compare aggregates instead of hashes — the
 aggregates ALREADY match, and that is the entire finding. Do not disable the drill.
 
-Deliverable: docs/handoffs/ffr-3m-kill-resume-verdict-<date>.md. Small lane.
+Deliverable: docs/records/forecast/ffr-3m-kill-resume-verdict-<date>.md. Small lane.
 ```
 
 ### FFR-3R [OPUS] — Make the record-provenance defect class structurally impossible
@@ -1261,7 +1261,7 @@ runner or writer you did NOT audit.
 ## §0f — Wave-3 ledger CORRECTION and the four lanes dispatched 2026-08-04 @ `145e4c5f`
 
 Read this **after** the Wave-3 ledger above; it supersedes that ledger's status column.
-Decision citations: sitting **Addendum K** (`docs/handoffs/ffr-owner-sitting-2026-08-02.md`).
+Decision citations: sitting **Addendum K** (`docs/records/forecast/ffr-owner-sitting-2026-08-02.md`).
 
 **Ledger correction (Addendum K.4).** FFR-3M **LANDED** (`4c403dd9`) and FFR-3R **LANDED**
 (`0f788c29`); do not re-dispatch either. **FFR-3K is still undispatched and its defect is live
@@ -1312,7 +1312,7 @@ invocations, <=5 solve-years per invocation, PJM and MISO never co-run. Rule 27:
 only for src/ and scripts/run_*; never a full-file rewrite from response content.
 
 === WHAT IS ALREADY DONE — DO NOT REDO IT ===
-Read docs/handoffs/ffr-3q-window-recut-2026-08-04.md in full first.
+Read docs/records/forecast/ffr-3q-window-recut-2026-08-04.md in full first.
 - Task 0 (rule-22 legality of a base-2021 T1-FF window) is VERIFIED BY EXECUTION. The
   existing carve-out covers it: HINDCAST_SOLVE_YEARS = {2021,2023,2024,2025} (four solve-
   years, under the <=5 cap), 2022 BRIDGED (evolved across, never solved, data never read),
@@ -1380,7 +1380,7 @@ A REQUEST-side cache_key() is NOT the key a run is recorded under (FFR-3A-2 §1.
 === DELIVERABLE ===
 Register both arms to frontend/data/hindcast/ with meta.kind="full_forward" (NEVER the backcast
 registry). Fill FFR-3Q's §0 headline, §2.2 Result and §4 by APPENDING an addendum to
-docs/handoffs/ffr-3q-window-recut-2026-08-04.md — do not rewrite that file. Rule 28: stamp the
+docs/records/forecast/ffr-3q-window-recut-2026-08-04.md — do not rewrite that file. Rule 28: stamp the
 mechanism-matrix cell + citation in THIS session, rejections included. State explicitly that
 the FH-4/FH-5 lift is the manager's call and that you are not making it.
 ```
@@ -1479,7 +1479,7 @@ scripts/regenerate_clean.py (~63-65 min) if you solve anything. Rule 12 is PER P
 MISO never co-run. Rule 27: Opus/Fable only for src/market_sim/ and scripts/run_*.
 
 === THE DECISION AND ITS EVIDENCE — READ FIRST, DO NOT RE-ADJUDICATE ===
-docs/handoffs/ffr-3m-kill-resume-verdict-2026-08-04.md. FF-3E part c = MECHANISM 2, ALTERNATE
+docs/records/forecast/ffr-3m-kill-resume-verdict-2026-08-04.md. FF-3E part c = MECHANISM 2, ALTERNATE
 OPTIMA, cause confirmed causally by its cell C: the flag warm-starts each year from the prior
 year's in-process basis; a resumed run has no basis to inherit, solves that year cold, and
 lands on a different vertex of a degenerate optimal face. Cell A's cached years are BIT-
@@ -1531,7 +1531,7 @@ full-file rewrite rule 27 forbids); scenarios.py is ~9,800 lines, so edit locall
 The documented cache-purge command deletes TRACKED files; `git status --short` after. Shell cwd
 persists between Bash calls.
 
-Deliverable: docs/handoffs/ffr-3t-warmstart-off-<date>.md — the scope-1 justification, the
+Deliverable: docs/records/forecast/ffr-3t-warmstart-off-<date>.md — the scope-1 justification, the
 before/after key measurements on BOTH paths, the declared cache epoch, the drill result, and
 the measured horizon-scale solve-time cost.
 ```
@@ -1655,8 +1655,8 @@ need a smoke leg. Rule 12 is PER PROMPT (Addendum F.2). Rule 27: src/market_sim/
 scripts/run_* are Opus/Fable only, and never a full-file rewrite from response content.
 
 === READ FIRST ===
-docs/handoffs/ffr-3q-window-recut-2026-08-04.md §2.2, §2.2.1 (root cause), §2.2.4 (successor
-items), and sitting Addendum L (docs/handoffs/ffr-owner-sitting-2026-08-02.md). Do not
+docs/records/forecast/ffr-3q-window-recut-2026-08-04.md §2.2, §2.2.1 (root cause), §2.2.4 (successor
+items), and sitting Addendum L (docs/records/forecast/ffr-owner-sitting-2026-08-02.md). Do not
 re-derive the diagnosis; it is measured and correct. YOUR JOB IS THE FIX, THE TEST, THE PURGE
 AND THE AUDIT — not the re-probe, which is a later lane on your output.
 
@@ -1782,7 +1782,7 @@ concurrent invocations, <=5 solve-years each, and MISO is ~8.6 GB per solve — 
 with PJM in one session. Rule 27: Opus/Fable only for src/market_sim/ and scripts/run_*.
 
 === THE FINDING YOU ARE INHERITING (measured; do not re-derive) ===
-docs/handoffs/ffr-3s-cod-shifted-scoring-2026-08-04.md §6. MISO's registered T1-H leg
+docs/records/forecast/ffr-3s-cod-shifted-scoring-2026-08-04.md §6. MISO's registered T1-H leg
 `miso-2021-2025-realized-ffr3a3` (entry_commissioning_lag: true) fails FC-3 additions on ALL
 FIVE techs; solar is model 0.0 GW vs actual 18.649 GW (-100%). It is also the ONLY registered
 T1-H leg of any ISO with an EMPTY retirement-FAIL set — its retirement half passes cleanly.
@@ -2013,7 +2013,7 @@ a data problem and is NOT one), THEN scripts/regenerate_clean.py (~63-65 min) on
 Rule 12 is PER PROMPT (Addendum F.2). Rule 27: Opus/Fable only for src/market_sim/.
 
 === THE FINDING YOU ARE INHERITING (measured; do not re-derive) ===
-docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §5. The ladder lets year Y build K x the
+docs/records/forecast/ffr-3v-miso-entry-screen-2026-08-04.md §5. The ladder lets year Y build K x the
 prior year's decisions, then nets off decisions already pending. With a COD lag of L years, (L-1)
 cohorts are always pending when the screen runs, so remaining = (K - L + 1) x D_prev. At the
 shipped K = 2.0 and L = 2 that is exactly 1 x D_prev: the doubling and the netting CANCEL
@@ -2096,7 +2096,7 @@ concurrent invocations, <=5 solve-years each; MISO is ~8.6 GB per solve — NEVE
 in one session. Rule 27: Opus/Fable only for src/market_sim/.
 
 === THE EVIDENCE (measured; do not re-derive) ===
-docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §§4, 7. MISO solar is a MARGIN finding, not
+docs/records/forecast/ffr-3v-miso-entry-screen-2026-08-04.md §§4, 7. MISO solar is a MARGIN finding, not
 a candidate-set or damper finding — solar reaches the screen every decision year and is rejected
 on economics before any cap is consulted. The internal control: WIND BUILT 4.0 GW in the same
 window through the same code path, the same zonal-CF mechanism and the same caps.
@@ -2236,7 +2236,7 @@ it makes regenerate_clean.py report "50/50 datatype(s) failed", which is NOT a d
 THEN scripts/regenerate_clean.py (~63-65 min). Rule 12 PER PROMPT. Rule 27: Opus/Fable only.
 
 === THE EVIDENCE (measured; do not re-derive) ===
-docs/handoffs/ffr-3w-caiso-entry-screen-2026-08-04.md and ffr-3p-caiso-accreditation-*.md.
+docs/records/forecast/ffr-3w-caiso-entry-screen-2026-08-04.md and ffr-3p-caiso-accreditation-*.md.
 FC-2 row 4's driver is a base-year CAISO fleet 11,711 MW SHORT of the real CAISO on accredited
 capacity (FFR-3P Table 1.1) — 1.78x the 6,577 MW deficit that drives the entire 14,043.6 MW
 build. Correcting the fleet alone moves the reserve position 0.8852 -> 1.0896 (11.5% short ->
@@ -2313,8 +2313,8 @@ a data problem and is NOT one), THEN scripts/regenerate_clean.py (~63-65 min, 50
 Rule 27: Opus/Fable only for src/ and scripts/run_*.
 
 === WHAT CHANGED SINCE THE FAILED ATTEMPT — READ BOTH ===
-docs/handoffs/ffr-3q-window-recut-2026-08-04.md (the pre-registration in §2.1 SURVIVES VERBATIM;
-§2.2 is the STOP-THE-LINE record) and docs/handoffs/ffr-3u-bridge-seam-2026-08-04.md (the fix).
+docs/records/forecast/ffr-3q-window-recut-2026-08-04.md (the pre-registration in §2.1 SURVIVES VERBATIM;
+§2.2 is the STOP-THE-LINE record) and docs/records/forecast/ffr-3u-bridge-seam-2026-08-04.md (the fix).
 FFR-3U scoped the un-bridging clause to genuine T1-X crossover forward years, so at base 2021 the
 runner AGAIN BRIDGES 2022 (validation tier) and 2026 (locked test). _validate_window now
 policy-checks the set the RUNNER will actually solve, through the runner's own predicate. The
@@ -2371,7 +2371,7 @@ persists between Bash calls.
 
 === DELIVERABLE ===
 Register both arms to frontend/data/hindcast/ with meta.kind="full_forward" — NEVER the backcast
-registry. Report by APPENDING an addendum to docs/handoffs/ffr-3q-window-recut-2026-08-04.md
+registry. Report by APPENDING an addendum to docs/records/forecast/ffr-3q-window-recut-2026-08-04.md
 (do not rewrite that file) or a new ffr-3q3-<date>.md that it links. Rule 28: matrix cell +
 citation in THIS session. State explicitly that the FH-4/FH-5 lift is the manager's call and that
 you are not making it.
@@ -2396,7 +2396,7 @@ bites where the payment is non-zero.
 
 ```
 === THE EVIDENCE (measured; corrected 2026-08-04, sitting Addendum P — do not re-derive) ===
-docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §§3.1, 3.3, 4.6b, 7. MISO solar is a MARGIN
+docs/records/forecast/ffr-3v-miso-entry-screen-2026-08-04.md §§3.1, 3.3, 4.6b, 7. MISO solar is a MARGIN
 finding — solar reaches the screen every decision year and is rejected on economics before any
 cap is consulted. Internal control: WIND BUILT 4.0 GW through the same code path and caps.
 Solar is `binding_cap: "unprofitable"` in ALL FOUR decision years, margins
@@ -2463,7 +2463,7 @@ a data problem and is NOT one), THEN scripts/regenerate_clean.py (~63-65 min). R
 PROMPT; MISO is ~8.6 GB per solve — never co-run with PJM in one session. Rule 27: Opus/Fable.
 
 === THE FINDING YOU ARE INHERITING (measured; do not re-derive) ===
-docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §3.2 and §0. In the 2024 decision year the
+docs/records/forecast/ffr-3v-miso-entry-screen-2026-08-04.md §3.2 and §0. In the 2024 decision year the
 entry price signal's MAXIMUM HOURLY PRICE is $39/MWh against solar's $43.18/MWh break-even MEAN.
 The margin is not close — it is UNREACHABLE. Cause named: `scarcity_price_overlay: False` leaves
 the lookahead stack with NO ORDC TAIL AT ALL. It also zeroes the peaker outright: gas_ct variable
@@ -2563,7 +2563,7 @@ concurrent invocations; <=5 solve-years per invocation. Rule 27: FABLE/OPUS only
 FABLE — src/ instrumentation is in scope).
 
 === THE FINDING YOU ARE INHERITING (measured, FFR-3Q-3; do not re-derive the record) ===
-docs/handoffs/ffr-3q3-gate-reprobe-2026-08-04.md §§3.1-3.5, §7. At the five-year re-cut (ERCOT
+docs/records/forecast/ffr-3q3-gate-reprobe-2026-08-04.md §§3.1-3.5, §7. At the five-year re-cut (ERCOT
 T1-FF, Arm R, base 2021 / vintage 2020, window 2021-2025 with 2022 bridged, shipped defaults =
 D-1 pipeline rule + D-2 dampers armed):
 - The 2021 loss-year screen decides a 29-unit / 8,218 MW ALL-COAL cohort (execute_year 2024).
@@ -2634,7 +2634,7 @@ False/"tie"; ERCOT's ISOConfig untouched) — measured in Addendum R.1; do not r
    upstream in the margin), or the margin computation overstates viability (the latch's INPUT is
    the defect). Check the design record for what "restores viability" was intended to mean —
    the RC-0B / retirement-calibration lane docs under docs/handoffs/ (see
-   docs/handoffs/forecast-retirement-calibration-plan-2026-07.md and its lineage).
+   docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md and its lineage).
 4. CLASSIFY THE FIX — ESCALATE, DO NOT LAND: (a) computation defect in the bar (wrong year's
    prices, wrong reserve source, wrong availability/basis) => defect, escalate with the exact
    line; (b) the latch needs memory/hysteresis => NEW mechanism, owner card, design nothing;
@@ -2703,7 +2703,7 @@ Python for data inspection, `uv sync` first (~2 min — the container ships NO P
 environment). scripts/regenerate_clean.py is NOT needed (no solve). Rule 27: OPUS/FABLE.
 
 === THE GAP (measured; do not re-derive) ===
-FFR-3V (docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §3.1, §7 proposal 1) + sitting
+FFR-3V (docs/records/forecast/ffr-3v-miso-entry-screen-2026-08-04.md §3.1, §7 proposal 1) + sitting
 Addendum P.3(a) + card D-16 (end of Addendum P): MISO built 18.649 GW of solar 2021-2025 while
 BOTH revenue levers the entry screen can see are correctly ~zero (PRA cleared ~$1,825/MW-yr; the
 11% RPS is slack at 16.9% modelled VRE share). The build happened on utility IRP/RFP procurement
@@ -2733,7 +2733,7 @@ in order:
    announced-procurement INPUT (admissible — the confirmed-exits analogue) and a
    measured-outcome PIN (forbidden) explicitly, including the hindcast information gate
    (instrument_date <= the vintage cutoff; precedent
-   docs/handoffs/confirmed-retirement-plan-2026-07.md).
+   docs/records/misc/confirmed-retirement-plan-2026-07.md).
 4. SCOPE per rule 25 [R-ISO-SCOPE]: MISO evidence charters MISO. State per-ISO data availability
    for the channel without arming anywhere; every other ISO enters as its own later decision.
 5. VERDICT: a rule-13 admissibility argument for the recommended design — or a finding that NO
@@ -2792,7 +2792,7 @@ OPUS/FABLE; new_entry.py and runner.py are core src/ — edit locally, push exac
 verify the blob after any push touching a >=300-line file.
 
 === THE DEFECT (measured, FFR-4A; do not re-derive) ===
-docs/handoffs/ffr-4a-entry-ladder-2026-08-04.md. The pending-pipeline STOCK (`_pending_by_tech`,
+docs/records/forecast/ffr-4a-entry-ladder-2026-08-04.md. The pending-pipeline STOCK (`_pending_by_tech`,
 MW, no time denominator) is netted from two annual-FLOW caps (new_entry.py:1131-1148): the
 endogenous ladder `K × prior_max` and the static per-tech queue cap C. Consequences, derived
 (§3) and MEASURED through the shipped code path (§5): long-run average decisions capped at C/L;
@@ -2919,7 +2919,7 @@ each. Rule 27: FABLE (runner.py is core).
    trust them.
 
 === THE EVIDENCE YOU ARE IMPLEMENTING AGAINST (measured, FFR-5A; do not re-derive) ===
-docs/handoffs/ffr-5a-soft-latch-2026-08-05.md. The decide screen for any base-year cohort in a
+docs/records/forecast/ffr-5a-soft-latch-2026-08-05.md. The decide screen for any base-year cohort in a
 bridged window consumes raw duals + overlay (bridge guard suppresses the lookahead when the
 entering year is the bridge); every re-screen consumes the lookahead. Measured on the 29-unit /
 8,218 MW coal cohort: decide $22.4/kW-yr vs $58.5 bar (raw object, p_mean $29.38); reverse
@@ -2989,7 +2989,7 @@ load_ledgers_for_run returns {} on a wrong path; decided_year is on the event ro
 ledger year. Stop-hook on merged history: rev-list count 0 => nothing to amend.
 
 Deliverable: the PR (field + unification + repairs + tests + matrix row) and
-docs/handoffs/ffr-5d-price-object-<date>.md — the byte-identity proof, the paired-arm
+docs/records/forecast/ffr-5d-price-object-<date>.md — the byte-identity proof, the paired-arm
 pre-registered reads with the bar decompositions, what the armed object does to the cohort AND
 to real-exit resolution, which repairs landed vs escalated, and what you did NOT separate.
 ```
@@ -3000,7 +3000,7 @@ to real-exit resolution, which repairs landed vs escalated, and what you did NOT
 [OPUS] FFR-5E — Implement the near-term VRE procurement channel (owner decision D-18(a),
 sitting Addendum S.2/S.5, signed 2026-08-05). IMPLEMENTATION lane (Wave 5) for FFR-5B's
 recommended design — the design doc IS the spec; implement it, do not redesign it:
-docs/handoffs/ffr-5b-procurement-channel-design-2026-08-05.md §§2-3 (mechanical seam,
+docs/records/forecast/ffr-5b-procurement-channel-design-2026-08-05.md §§2-3 (mechanical seam,
 composition, gates) with §5.1 the admissibility contract. Default OFF; arming anywhere,
 including MISO, is a SEPARATE owner decision (rule 25).
 
@@ -3133,7 +3133,7 @@ acceptable for it, but the one-commit git push path is preferred since audit out
 nothing else. Shell cwd persists. Stop-hook on merged history: rev-list count 0 => nothing to
 amend.
 
-Deliverable: the merged commit + a SHORT note docs/handoffs/caiso-complete-grant-2026-08-05.md
+Deliverable: the merged commit + a SHORT note docs/records/caiso/caiso-complete-grant-2026-08-05.md
 recording the verified determination, the M1 pass, and the citation chain
 (caiso-171 → caiso-172 → caiso-174 → Addendum S.4/S.5).
 ```
@@ -3180,7 +3180,7 @@ Re-verification results backing the note (all read at `70acd78c`, 2026-08-05):
 The predecessor manager session (Addenda R/S) ends here. The block below is the continuation
 prompt for the NEXT manager session — re-issue it verbatim. It supersedes the pre-R manager
 handoff as the current manager brief; the decision record itself remains
-`docs/handoffs/ffr-owner-sitting-2026-08-02.md`.
+`docs/records/forecast/ffr-owner-sitting-2026-08-02.md`.
 
 ```
 [FABLE] FFR/FH WORKSTREAM MANAGER — continuation session
@@ -3194,7 +3194,7 @@ yourself.
 === READ FIRST, IN THIS ORDER ===
 1. CLAUDE.md — the 28 non-negotiable rules. Rules 1, 11, 12, 13, 14, 15, 19, 22, 23, 24, 25,
    27, 28 bind every prompt you write.
-2. docs/handoffs/ffr-owner-sitting-2026-08-02.md — THE DECISION RECORD. READ ADDENDA C THROUGH
+2. docs/records/forecast/ffr-owner-sitting-2026-08-02.md — THE DECISION RECORD. READ ADDENDA C THROUGH
    S BEFORE THE PACKET BODY; they supersede it. ~45 decisions are signed across them. J.1, L.3
    and P.1 are MANAGER ERROR CORRECTIONS, and R.1 + S.1 are the measure-don't-inherit standard
    applied to a predecessor's own handoff — read all five as worked examples of the standard
@@ -3231,7 +3231,7 @@ promoting session; verified in S). `final` = EMPTY; NEISO's locked test has **NE
 GRANTED** (*corrected 2026-08-06, owner decision D-23 — this read "is SPENT, never
 re-grantable"; the artifact record carries no NEISO 2019/H1-2026 solve of any kind. `final`
 stays EMPTY and the correction grants nothing; citation chain
-`results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+`docs/records/neiso/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
 `docs/third-party-peer-review-2026-07.md` §6.3 item 1 → D-23 / sitting Addendum X.6*).
 HOLDOUT FREEZE ACTIVE — it blocks out-of-training BACKCAST solve/score/
 registration only; forecast-mode 2026+, the T1 windows, and in-sample 2023-2025 are unaffected.
@@ -3469,7 +3469,7 @@ PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min), THEN scripts/regenerate_clean.
 (~63-65 min, 50 datatypes — budget for it). Rule 27: FABLE/OPUS; this lane writes docs +
 frontend/data/hindcast/ + probe outputs only.
 
-=== WHAT YOU RUN (pre-registered in docs/handoffs/ffr-5d-price-object-2026-08-05.md §2 —
+=== WHAT YOU RUN (pre-registered in docs/records/forecast/ffr-5d-price-object-2026-08-05.md §2 —
 run VERBATIM, no flag added or dropped) ===
 uv run python scripts/run_capacity_hindcast.py \
   --iso ERCOT --vintage 2020 --start-year 2021 --end-year 2025 \
@@ -3547,7 +3547,7 @@ Wave 6 opens with the two prompts below.
 [FABLE] FFR-6A — Decompose the repaired-level retirement margin gap against the measured
 Potomac-SOM net-revenue benchmark (owner decision D-20(a), sitting Addendum U.4/U.5, signed
 2026-08-05). MEASUREMENT lane, Wave 6. THE MEASURED FACT YOU START FROM (FFR-5D-M, handoff
-docs/handoffs/ffr-5d-price-object-2026-08-05.md §3, probe JSON docs/handoffs/ffr-5d/
+docs/records/forecast/ffr-5d-price-object-2026-08-05.md §3, probe JSON docs/records/forecast/ffr-5d/
 paired-arm-probe-2026-08-05.json, registered arms ercot-2021-2025-t1ff-armr-ffr5d-{shipped,
 unified}): under the unified+repaired price object the retirement screen fails essentially
 the whole ERCOT merchant fleet (entry_capped 554-564 units / 63.0-66.1 GW in 2024/2025), the
@@ -3616,7 +3616,7 @@ prune stale refs. Never push_files a >=300-line file. Evolution ledgers at
 real null. results/ dies with the container — commit findings early and often. Shell cwd
 persists. Stop-hook on merged history: rev-list 0 => nothing to amend.
 
-Deliverable: docs/handoffs/ffr-6a-margin-gap-decomposition-<date>.md — the per-fuel gap
+Deliverable: docs/records/forecast/ffr-6a-margin-gap-decomposition-<date>.md — the per-fuel gap
 table (SOM vs shipped vs repaired vs bar), the three pre-registered answers (a)-(c), the
 admissibility verdict per candidate fix, and a recommendation card for the owner. NO lift
 recommendation — U.2's determination is the manager's.
@@ -3627,7 +3627,7 @@ recommendation — U.2's determination is the manager's.
 ```
 [OPUS] FFR-6B — Scope the RPS row's spatial grain (E-1) and the clean/carbon-free tiers
 (E-2) TOGETHER (owner signature at sitting Addendum U.5, 2026-08-05; the escalation record
-is FFR-5B docs/handoffs/ffr-5b-procurement-channel-design-2026-08-05.md §5.3). DESIGN-ONLY
+is FFR-5B docs/records/forecast/ffr-5b-procurement-channel-design-2026-08-05.md §5.3). DESIGN-ONLY
 lane on the FFR-5B pattern: NO code, NO ScenarioConfig field, NO schema, NO solve, NO
 matrix cell, NO dashboard contact. The deliverable is a design doc + an implementation card
 the owner can sign, exactly as FFR-5B produced for D-18. RIDER (second, bounded
@@ -3727,7 +3727,7 @@ D-21(b) hygiene-only, 5c REFUSED; D-22(a) one-lane-three-arms. Wave 7 = FFR-7A +
 ```
 [OPUS] FFR-7A — Fix the retirement scoring target so it measures what a margin screen can
 legitimately see (owner decision D-21(b), sitting Addendum V.5/V.6, signed 2026-08-06;
-evidence base FFR-6A docs/handoffs/ffr-6a-margin-gap-decomposition-2026-08-05.md §3.3 and
+evidence base FFR-6A docs/records/forecast/ffr-6a-margin-gap-decomposition-2026-08-05.md §3.3 and
 verdict rows 5a/5b). DATA/SCORER lane: no model mechanism, no ScenarioConfig field, no
 arming, no keeper contact. 5c (honoring announced fossil planned-retirement dates in
 hindcast arms) is REFUSED by the owner — do not implement it, do not re-propose it.
@@ -3776,7 +3776,7 @@ push_files a >=300-line file. Shell cwd persists. Stop-hook on merged history: r
 => nothing to amend. results/ dies with the container — commit early.
 
 Deliverable: the PR (builder fix + tests + regenerated target) and
-docs/handoffs/ffr-7a-scoring-target-hygiene-<date>.md — the per-ISO delta table with per-row
+docs/records/forecast/ffr-7a-scoring-target-hygiene-<date>.md — the per-ISO delta table with per-row
 sources, the ffr5d re-score table, the 5c refusal restated, and what you did NOT change.
 ```
 
@@ -3785,7 +3785,7 @@ sources, the ffr5d re-score table, the 5c refusal restated, and what you did NOT
 ```
 [FABLE] FFR-7B — The RPS/clean-tier repair: one lane, three arms, IN ORDER (owner decision
 D-22(a), sitting Addendum V.5/V.6, signed 2026-08-06; the design and every level/citation:
-FFR-6B docs/handoffs/ffr-6b-rps-grain-clean-tiers-2026-08-05.md — it IS the spec; implement,
+FFR-6B docs/records/forecast/ffr-6b-rps-grain-clean-tiers-2026-08-05.md — it IS the spec; implement,
 do not redesign). If budget runs short: LAND ARM 1 COMPLETE AND MEASURED, hand off the rest
 — never land a partial arm. E-1 NEVER ACQUIRES A BUILD LIMB (the row's only output is a
 price). The §45U-vs-clean-dual composition for nuclear is OPEN and blocks ARM 3's ARMING
@@ -3896,8 +3896,8 @@ out-of-training). FFR-7B may land mid-session — it does not touch your inputs.
 PREREQUISITES: `uv sync` (~2 min) only.
 
 === WHAT YOU DO ===
-1. INPUTS, all committed: FFR-7A's corrected target + docs/handoffs/ffr-7a/target-delta.csv
-   (334 rows, per-row sourced); FFR-6A's replica method + artifacts (docs/handoffs/ffr-6a/,
+1. INPUTS, all committed: FFR-7A's corrected target + docs/records/forecast/ffr-7a/target-delta.csv
+   (334 rows, per-row sourced); FFR-6A's replica method + artifacts (docs/records/forecast/ffr-6a/,
    the measured-price replica and SOM benchmark, 2023-2025); the committed fleet/CAMPD data
    for unit characteristics (heat rate, VOM, fuel) of each newly-visible exit unit.
 2. For EVERY corrected-target ERCOT in-window thermal exit ≥ 100 MW (Sandy Creek, Braunig,
@@ -3928,7 +3928,7 @@ push_files a >=300-line file. Shell cwd persists. Stop-hook on merged history: r
 => nothing to amend. The gas_st↔gas_ct taxonomy seam (FFR-7A §4.1) is KNOWN and OUT OF
 SCOPE — note where it touches your rows, change nothing.
 
-Deliverable: docs/handoffs/ffr-7c-exit-decode-corrected-target-<date>.md — the
+Deliverable: docs/records/forecast/ffr-7c-exit-decode-corrected-target-<date>.md — the
 pre-registered unit list + decision rule, the per-unit margin table with evidence, the
 restated bound, which FFR-6A conclusions survive, the D-21(a) implication (reported, not
 recommended), and the §9.3 OP-only table.
@@ -3944,7 +3944,7 @@ hold; Arms 2–3 handed off → FFR-7B-2 below. neiso-87: the NEISO locked-test 
 FALSE (incl. CLAUDE.md) → card D-23. **EXECUTED 2026-08-06** by the NEISO-RECORD governance
 session: the record now reads **NEVER GRANTED**; 20 live files corrected (neiso-87 estimated
 13 — the reconciliation, and the ~22 `results/calibration/` session records deliberately left
-as history, are in `docs/handoffs/neiso-record-correction-2026-08-06.md`). Nothing granted;
+as history, are in `docs/records/neiso/neiso-record-correction-2026-08-06.md`). Nothing granted;
 `final` still EMPTY, freeze still ACTIVE. Full record: Addendum X.
 
 ### FFR-7B-2 [FABLE] — Arms 2–3 of the RPS/clean-tier repair (D-22(a) continuation)
@@ -3953,7 +3953,7 @@ as history, are in `docs/handoffs/neiso-record-correction-2026-08-06.md`). Nothi
 [FABLE] FFR-7B-2 — Implement Arms 2 and 3 of the RPS/clean-tier repair (owner decision
 D-22(a), sitting Addendum V.6; continuation chartered at Addendum X.2/X.3). THE SPEC IS
 TWO DOCUMENTS, IN ORDER: FFR-7B's §6 design-to-implementation notes
-(docs/handoffs/ffr-7b-rps-clean-tier-repair-2026-08-06.md — code-verified pointers: LP
+(docs/records/forecast/ffr-7b-rps-clean-tier-repair-2026-08-06.md — code-verified pointers: LP
 layout/costs/rows/model touch points, the per-zone dual companion, the MISO state-row table
 with citations, the test list) and FFR-6B (docs/handoffs/ffr-6b-rps-grain-clean-tiers-
 2026-08-05.md §§3, 6) where §6 defers. Implement, do not redesign. ARM 2 LANDS COMPLETE
@@ -4064,7 +4064,7 @@ write no Python except possibly a grep helper; `git status --short` before stagi
 ```
 [OPUS] SCORE-GATE — Redefine the >=300 MW retirement recall gate against the REACHABLE set
 (owner decision D-24, SIGNED at sitting Addendum X.6, 2026-08-06; evidence FFR-7C
-docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md §5 + Addendum X.1).
+docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md §5 + Addendum X.1).
 SCORER-ONLY lane: no model mechanism, no ScenarioConfig field, no solve, no keeper contact.
 
 THE CHANGE: in score_capacity_hindcast's recall metric, a target exit counts as a gate
@@ -4076,7 +4076,7 @@ listed in a NON-GATED diagnostic line (unit, MW, driver, why unreachable: post-v
 instrument / no instrument / not in fleet) so the blind spot stays visible on every report.
 Empty member set => the gate reports n/a, never 0/N. Reachability classification uses
 committed artifacts only: the corrected target, data/raw/confirmed-retirements/,
-FFR-7C's per-unit decode (docs/handoffs/ffr-7c/exit-decode-2026-08-06.json) for the
+FFR-7C's per-unit decode (docs/records/forecast/ffr-7c/exit-decode-2026-08-06.json) for the
 economic exclusion evidence — cite per unit, no speculation; a unit with no evidence either
 way stays IN the member set (fail-closed: the gate only excludes on positive evidence).
 
@@ -4158,7 +4158,7 @@ every Python write; restore exact HEAD bytes; never stage the reflow. Push 413: 
 results/ dies with the container — commit the delta tables and handoff before tail work.
 Cache keys from the runtime line. Evolution-ledger path trap stands.
 
-Deliverable: the PR(s) + docs/handoffs/taxonomy-gas-st-<date>.md — the blast-radius table,
+Deliverable: the PR(s) + docs/records/misc/taxonomy-gas-st-<date>.md — the blast-radius table,
 the fix with citations, per-ISO before/after deltas, the paired-control results with
 HOLD-PROMOTION posture if anything moved, the re-emitted scorecard/diagnostic deltas, and
 what you did NOT separate.
@@ -4217,7 +4217,7 @@ independent parallel lanes from the Y.2 queue, dispatchable at will.
 ```
 [OPUS] TAXONOMY-M — Finish D-25's paired-control measurement (continuation; charter
 Addendum Z.2, the FFR-5D-M pattern). STEP 0, HARD STOP: read
-docs/handoffs/taxonomy-gas-st-2026-08-07.md §4 at YOUR head — if
+docs/records/misc/taxonomy-gas-st-2026-08-07.md §4 at YOUR head — if
 RESULTS_PLACEHOLDER_PAIRED_CONTROLS is GONE, the original session finished; report that
 and END. Also STOP if a branch claude/fuel-taxonomy-gas-st-* exists with commits newer
 than the handoff. Otherwise: the fix is ON MAIN (PR #3691), the harness is committed in §4
@@ -4397,12 +4397,12 @@ FABLE (runner/model core).
 
 === THE EVIDENCE CHAIN (read in this order; do not re-derive) ===
 FFR-5A §2a (the three level gaps, now repaired by FFR-5D) -> FFR-5D/5D-M handoff
-(docs/handoffs/ffr-5d-price-object-2026-08-05.md, registered arms
+(docs/records/forecast/ffr-5d-price-object-2026-08-05.md, registered arms
 ercot-2021-2025-t1ff-armr-ffr5d-{shipped,unified}, runtime key 49eac64f146b3460) ->
-FFR-6A (docs/handoffs/ffr-6a-margin-gap-decomposition-2026-08-05.md: the gap table, the
+FFR-6A (docs/records/forecast/ffr-6a-margin-gap-decomposition-2026-08-05.md: the gap table, the
 identity split — 96-100% energy price-level/tail; verdict row 1 = your charter; row 2 =
 the ADMISSIBLE ECRS/AS-quantity input, in scope if your diagnosis shows the 2023 term
-needs it) -> FFR-7C (docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md §5:
+needs it) -> FFR-7C (docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md §5:
 THE VALIDATION INSTRUMENT IS PRICE-SIDE — this window can only FALSIFY a screen via exits;
 a correct object must produce ~0 economic exits AND approach the measured scarcity-hour
 content).
@@ -4468,7 +4468,7 @@ before believing a zero; decided_year is on event rows. Cache keys from the runt
 prereg, then results, then handoff, in that order, as they exist.
 
 Deliverable: the PR(s) (diagnosis probes + repair + tests + matrix) and
-docs/handoffs/ffr-8a-scarcity-restoration-<date>.md — the Phase-1 decomposition with
+docs/records/forecast/ffr-8a-scarcity-restoration-<date>.md — the Phase-1 decomposition with
 per-term contributions, the repair with every parameter cited, the pre-registered
 price-side and exit-side reads with results, which elements landed vs escalated, and what
 you did NOT separate.
@@ -4484,10 +4484,10 @@ further prompt:
 existing-nuclear PTC in the retirement screen's revenue (owner decision D-28, sitting
 Addendum AC.4, 2026-08-07: memo BEFORE any composition is adopted). DESIGN-ONLY: no code,
 no ScenarioConfig field, no solve, no matrix cell. The open question is FFR-6B §6.4 row 3
-(docs/handoffs/ffr-6b-rps-grain-clean-tiers-2026-08-05.md); the consumer would be Arm 3
+(docs/records/forecast/ffr-6b-rps-grain-clean-tiers-2026-08-05.md); the consumer would be Arm 3
 (miso_clean_tier_rows, landed default-OFF by FFR-7B-2, arming blocked on THIS question).
 
-WHAT YOU DELIVER (docs/handoffs/d28-45u-composition-memo-<date>.md):
+WHAT YOU DELIVER (docs/records/forecast/d28-45u-composition-memo-<date>.md):
 1. THE STATUTE, worked: §45U(b)(2)'s gross-receipts phase-down arithmetic, verbatim-cited
    (credit rate, the reduction formula, what counts as gross receipts — SPECIFICALLY
    whether state attribute/ZEC-style revenue is inside the phase-down's gross-receipts
@@ -4515,7 +4515,7 @@ git status --short before staging. Push 413: fetch main + rebase first. No push_
 
 The Addenda T–AC manager session ends here. The block below is the continuation prompt for
 the NEXT manager session — re-issue it verbatim. It supersedes §0m as the current manager
-brief; the decision record itself remains `docs/handoffs/ffr-owner-sitting-2026-08-02.md`.
+brief; the decision record itself remains `docs/records/forecast/ffr-owner-sitting-2026-08-02.md`.
 
 ```
 [FABLE] FFR/FH WORKSTREAM MANAGER — continuation session
@@ -4531,7 +4531,7 @@ owner-decision record honest. You do NOT execute lane work yourself.
    commit 06c5971f): the holdout is on the SCORE, never the data or architecture; intake
    needs no per-window authorization; 2020-2022 are ITERATIVE touchpoints; 2019 is the
    one-touch year. Never quote the old intake-authorization regime.
-2. docs/handoffs/ffr-owner-sitting-2026-08-02.md — THE DECISION RECORD. Read Addenda C
+2. docs/records/forecast/ffr-owner-sitting-2026-08-02.md — THE DECISION RECORD. Read Addenda C
    through AC BEFORE the packet body; they supersede it. ~60 decisions signed. The T–AC
    run is the predecessor manager's cycle: T (Wave-5 close prep), U (FFR-5D-M + Wave-5
    close + the FIRST FH lift HOLD), V (Wave 6 + lift conditions RESTATED α/β/γ), W–X
@@ -4737,7 +4737,7 @@ scarcity repair, fill the FFR-8A record, and measure. NO tuning, NO arming, NO l
 Repo /home/user/market-simulator. Model FABLE (rule 27: runner/model core adjacent).
 Branch: claude/ffr-8a-phase3-<suffix> off fresh origin/main. This is the CONTINUATION of
 FFR-8A (PR #3722, merged 2026-08-08): Phases 1-2 landed and are adjudicated CLEAN — the
-prereg is COMMITTED and BINDING (docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md
+prereg is COMMITTED and BINDING (docs/records/forecast/ffr-8a-scarcity-restoration-2026-08-08.md
 §1; nothing in §1 may change). Your job is Phase 3 exactly as pre-registered, plus the
 record-keeping the mid-charter stop left open. Sitting record: Addendum AD.1.
 
@@ -4746,7 +4746,7 @@ git fetch origin main. If ANY of these already exist at origin/main, the origina
 (or a parallel paste) got there first: STOP, adjudicate what exists against the prereg
 reads instead of re-solving, and report — do NOT double-run a two-invocation lane:
 - frontend/data/hindcast/ercot-2021-2025-t1ff-armr-ffr8a-unified.json or -scarcity.json
-- a non-placeholder §2/§3/§4 in docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md
+- a non-placeholder §2/§3/§4 in docs/records/forecast/ffr-8a-scarcity-restoration-2026-08-08.md
 - a live claude/forward-price-scarcity-repair-* or claude/ffr-8a-* remote branch
 
 === PREREQUISITES, IN ORDER (cold container; results/ is gitignored — COLD solves) ===
@@ -4755,7 +4755,7 @@ reads instead of re-solving, and report — do NOT double-run a two-invocation l
 
 === THE WORK, IN ORDER ===
 1. WRITE §2 (Phase-1 narrative) from the COMMITTED part-a json
-   (docs/handoffs/ffr-8a/part-a-measured-2026-08-08.json) — narrative of what was measured,
+   (docs/records/forecast/ffr-8a/part-a-measured-2026-08-08.json) — narrative of what was measured,
    no new measurement. RECORD E3's DISPOSITION EXPLICITLY in §3: the landed tail carries
    E1/E2/E4 only; the §1.1(b) reproduction test is mixed across years (2025: NP6-576-ER
    table exact on h>$1 15/15, fallback 4/15; 2024: table overshoots deep tail h>$100 11 vs
@@ -4789,7 +4789,7 @@ reads instead of re-solving, and report — do NOT double-run a two-invocation l
 5. ABLATION CHAIN (scripts/probes/ffr8a_ablation_chain.py) on the control arm's dumped
    stack: the A1-A5 cumulative table at the 2024 and 2025 screens (A1 must reproduce the
    recorded zero). Commit the resulting table as
-   docs/handoffs/ffr-8a/part-b-ablation-2026-08-<dd>.json + its §-narrative.
+   docs/records/forecast/ffr-8a/part-b-ablation-2026-08-<dd>.json + its §-narrative.
 6. REGISTER both arms in the HINDCAST namespace ONLY (scripts/register_hindcast.py,
    meta.kind="full_forward", ids ercot-2021-2025-t1ff-armr-ffr8a-{unified,scarcity}) —
    NEVER the backcast registry (plan §7.5); the backcast CI gates stay blind to this
@@ -4857,7 +4857,7 @@ after. Do NOT touch the retirements.py composition seam in this lane.
 
 Repo /home/user/market-simulator. Rule 27: OPUS ok (policy/ module). Branch
 claude/f1-45u-ordering-<suffix> off fresh origin/main. Authority:
-docs/handoffs/d28-45u-composition-memo-2026-08-08.md — §1 (the statute, worked), §2.3
+docs/records/forecast/d28-45u-composition-memo-2026-08-08.md — §1 (the statute, worked), §2.3
 (the table your tests pin), §4 (F-1/F-3), §5 (the signed card).
 
 === THE FIX (F-1) ===
@@ -4909,7 +4909,7 @@ never stage the reflow. Push: fetch+rebase fresh origin/main first; never push_f
 >=300-line file; no new GitHub Actions workflows. uv sync before tests;
 regenerate_clean.py (~63-65 min) ONLY if stage 2 solves.
 
-Deliverable: the PR + docs/handoffs/f1-45u-ordering-<date>.md (the statutory read, the
+Deliverable: the PR + docs/records/misc/f1-45u-ordering-<date>.md (the statutory read, the
 before/after credit curve, the stage-1 table, stage-2 run-or-skip with evidence, F-3's
 primary-source amounts or its escalation).
 ```
@@ -4949,8 +4949,8 @@ is step 3 and is NOT yours.
 
 Repo /home/user/market-simulator. Rule 27: OPUS ok (capacity_evolution module). Branch
 claude/f2-45u-composition-<suffix> off fresh origin/main. Authority:
-docs/handoffs/d28-45u-composition-memo-2026-08-08.md §3 (the interaction audit; §3.2's
-(c) row IS the design), §5 (the signed card); docs/handoffs/f1-45u-ordering-2026-08-08.md.
+docs/records/forecast/d28-45u-composition-memo-2026-08-08.md §3 (the interaction audit; §3.2's
+(c) row IS the design), §5 (the signed card); docs/records/misc/f1-45u-ordering-2026-08-08.md.
 
 === THE SEAM (memo §5, the signed composition) ===
   attribute = max(eac_price_nuclear, federal_ces_premium x fraction, rps_dual, clean_dual)
@@ -5045,8 +5045,8 @@ re-base IS the next lift evidence — Addendum AF.2).
 Repo /home/user/market-simulator. Model FABLE (rule 27: runner/model core). Branch
 claude/ffr-8b-rebase-dispersion-<suffix> off fresh origin/main. Authority: owner-re-opened
 D-21(a) (Addendum AC.1) via Addendum AF.4; the record you extend:
-docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md (§4 the superseded measurement,
-§5 findings (a)-(d)); docs/handoffs/ffr-3v-fix-2026-08-08.md §6.1 (the epoch: ERCOT
+docs/records/forecast/ffr-8a-scarcity-restoration-2026-08-08.md (§4 the superseded measurement,
+§5 findings (a)-(d)); docs/records/forecast/ffr-3v-fix-2026-08-08.md §6.1 (the epoch: ERCOT
 hindcast wind pool 42,000 -> 27,541 MW, solar 38,000 -> 4,864 MW at vintage 2020; the
 FFR-5D-M reproduction numbers are STALE BY DESIGN for any run at your head).
 
@@ -5125,7 +5125,7 @@ clone: check content, not ancestry. Budget honesty: prereqs ~65 min + one (possi
 cold 4-LP-year invocations + offline diagnosis. If the container cannot finish Phase 3,
 land Phases 0-1 + the Phase-2 design and hand off explicitly.
 
-Deliverable: the PR(s) + docs/handoffs/ffr-8b-rebase-dispersion-<date>.md (the re-based
+Deliverable: the PR(s) + docs/records/forecast/ffr-8b-rebase-dispersion-<date>.md (the re-based
 baseline table vs the pre-epoch §4 record, the dispersion decomposition, the repair or
 its escalation, the paired read if run) + the registered sidecars + matrix updates.
 ```
@@ -5141,9 +5141,9 @@ registry touch.
 
 Repo /home/user/market-simulator. Rule 27: OPUS ok. Branch
 claude/ffr-5e-hindcast-arm-<suffix> off fresh origin/main. Authority + design record:
-docs/handoffs/ffr-5e-vre-procurement-channel-2026-08-05.md (the channel as landed),
-docs/handoffs/ffr-5b-procurement-channel-design-2026-08-05.md (the design),
-docs/handoffs/ffr-3v-fix-2026-08-08.md §6 (the unblock, and the TWO CONDITIONS you carry).
+docs/records/forecast/ffr-5e-vre-procurement-channel-2026-08-05.md (the channel as landed),
+docs/records/forecast/ffr-5b-procurement-channel-design-2026-08-05.md (the design),
+docs/records/forecast/ffr-3v-fix-2026-08-08.md §6 (the unblock, and the TWO CONDITIONS you carry).
 
 === PREREQUISITES (cold container) ===
 uv sync FIRST, then scripts/regenerate_clean.py (~63-65 min). Cold solves.
@@ -5204,9 +5204,9 @@ card's evidence table, delivered to the manager.
 
 Repo /home/user/market-simulator. Rule 27: OPUS ok. Branch
 claude/arm3-clean-row-horizon-<suffix> off fresh origin/main. Authority + record:
-docs/handoffs/d28-45u-composition-memo-2026-08-08.md §2.1 (the fleet the rows pay; the MN
+docs/records/forecast/d28-45u-composition-memo-2026-08-08.md §2.1 (the fleet the rows pay; the MN
 row's five-zone eligibility mask — a WI/IL/MO reactor earns Minnesota's dual: flag it),
-docs/handoffs/f2-45u-composition-2026-08-09.md (the landed seam: the clean dual now joins
+docs/records/misc/f2-45u-composition-2026-08-09.md (the landed seam: the clean dual now joins
 §45U's gross-receipts base per branch (i)), docs/handoffs/ffr-7b2-rps-krow-clean-rows-
 2026-08-06.md (the rows as landed, default-OFF), config/capacity_market.py
 MISO_CLEAN_TIER_REGIONS + STATE_RPS_ACP["MISO"] ($30 ceiling).
@@ -5276,7 +5276,7 @@ no row-4 improvement via that route may be claimed.
 
 Repo /home/user/market-simulator. Rule 27: OPUS ok. Branch
 claude/ffr-4e-caiso-storage-elcc-<suffix> off fresh origin/main. Authority + evidence
-(cite, do not re-derive): docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md — §0
+(cite, do not re-derive): docs/records/forecast/ffr-4d-caiso-fleet-vintage-2026-08-04.md — §0
 finding 2 (row 4 does NOT clear on the fleet fix; 1.8 % short remains), §6.1 (the
 reconciliation warning), §7 (D-1: CAISO absent from STORAGE_ELCC_BY_DURATION_BY_ISO,
 published 13,365/14,131 = 0.9458, +3,990.6 MW the largest remaining term; D-4: CAISO
@@ -5337,7 +5337,7 @@ tier on main, which is what lets the branch-protection ladder extend past cache-
 
 Repo /home/user/market-simulator. Rule 27: OPUS ok. Branch
 claude/house-2-baseline-wave-<suffix> off fresh origin/main. Authority:
-docs/handoffs/house-1-lint-ci-2026-08-08.md §4 (THE baseline table — a fast-tier red
+docs/records/misc/house-1-lint-ci-2026-08-08.md §4 (THE baseline table — a fast-tier red
 whose failures are a subset is baseline; anything outside is the PR's own), §3.5;
 sitting record T.2 (the assign_zone_by_coords finding: incomplete PJM/MISO zone rules,
 every PJM row falls back to PJM_AEP_Ohio — pre-existing, measured not introduced).
@@ -5412,7 +5412,7 @@ measurement arm, NO keeper contact, NO backcast-registry touch.
 Repo /home/user/market-simulator. Model FABLE (rule 27: capacity-evolution core). Branch
 claude/ffr-9a-storage-vintage-seed-<suffix> off fresh origin/main. Authority: manager
 dispatch Addendum AG.2 rider 2, under the owner-re-opened D-21(a) completion mandate.
-Evidence (cite, never re-derive): docs/handoffs/ffr-8b-rebase-dispersion-2026-08-09.md
+Evidence (cite, never re-derive): docs/records/forecast/ffr-8b-rebase-dispersion-2026-08-09.md
 §2.3 (additions METRIC passes at -5.0% — the BASE seeding is the error), §3 (the B~->B
 storage-term step), §4 (the de-prioritization evidence); docs/handoffs/ffr-3v-fix-
 2026-08-08.md (the pattern to mirror); docs/handoffs/ffr-4d-caiso-fleet-vintage-
@@ -5473,7 +5473,7 @@ push_files a >=300-line file; no new workflows. Budget: prereqs ~65 min + two co
 4-LP-year ERCOT invocations — a full session; if only one arm fits, land control +
 prereg and hand off the treated arm.
 
-Deliverable: the PR + docs/handoffs/ffr-9a-storage-vintage-seed-<date>.md (the seed gap
+Deliverable: the PR + docs/records/forecast/ffr-9a-storage-vintage-seed-<date>.md (the seed gap
 table by vintage, the fix + gating choice, R1-R5 at full magnitude, the epoch statement)
 + registered sidecars + matrix updates.
 ```
@@ -5491,12 +5491,12 @@ the gate verdict; NO arming beyond what this prompt names; NO keeper contact.
 
 Repo /home/user/market-simulator. Model FABLE (rule 27: runner/model core). Branch
 claude/fh-4-ercot-leg-<suffix> off fresh origin/main. Authority + record:
-docs/handoffs/fh-1-full-forward-harness-2026-08.md (§3.3 THE GATE — read its numeric
+docs/records/forecast/fh-1-full-forward-harness-2026-08.md (§3.3 THE GATE — read its numeric
 criterion and probe recipe from the handoff itself and apply them AS WRITTEN; §9 what
 FH-4 inherits: arm NOTHING beyond the two arms), fh-2/fh-3 handoffs (the as-of driver
 plumbing and as-known vintages — Arm K at base 2023 requires FH-3's
 hindcast_asknown_aeo2023), pack §0d-§0e (the block genealogy),
-docs/handoffs/ffr-8b-rebase-dispersion-2026-08-09.md §2 (the re-based baseline).
+docs/records/forecast/ffr-8b-rebase-dispersion-2026-08-09.md §2 (the re-based baseline).
 
 === PREREQUISITES (cold container) ===
 uv sync FIRST, then scripts/regenerate_clean.py (~63-65 min). Cold. Holdout freeze read
@@ -5575,7 +5575,7 @@ backcast-registry touch; the card is the manager's to put and the owner's to sig
 
 Repo /home/user/market-simulator. Model FABLE (rule 27: LP core). Branch
 claude/arm3-fix-zone-mask-<suffix> off fresh origin/main. Authority + evidence:
-docs/handoffs/arm3-clean-row-horizon-2026-08-09.md (THE FINDING: model/lp/rows.py::
+docs/records/misc/arm3-clean-row-horizon-2026-08-09.md (THE FINDING: model/lp/rows.py::
 _build_rps_region_rows zone-masks a region's WIND/SOLAR columns but appends its
 region_gen_idx columns with no zone filter — _resolve_clean_region_gen_idx resolves by
 FUEL ALONE across the whole fleet, so MI's East-only row is satisfied by MISO-South
@@ -5635,7 +5635,7 @@ on your decomposition.
 Repo /home/user/market-simulator. Model FABLE (rule 27-adjacent; capacity-evolution
 reading). Branch claude/ffr-9b-vre-entry-diagnosis-<suffix> off fresh origin/main.
 Authority: manager dispatch Addendum AH.4 under the D-21(a) completion mandate.
-Evidence: docs/handoffs/ffr-9a-storage-vintage-seed-2026-08-09.md §3.4-§3.5 (the
+Evidence: docs/records/forecast/ffr-9a-storage-vintage-seed-2026-08-09.md §3.4-§3.5 (the
 overshoot + the per-tech shortfall), ffr-8b-rebase-dispersion-2026-08-09.md §2.3,
 model-methodology-spec.md §5.4 (economic new entry) + §5.5 (storage entry), the
 entry-screen code (model/capacity_evolution/), and the ffr9a registered arms.
@@ -5664,7 +5664,7 @@ interconnection queue dynamics, load-growth expectations), THAT is the finding; 
 it with the rule-13 admissibility pre-assessment of each candidate repair input.
 
 === DELIVERABLE ===
-The PR + docs/handoffs/ffr-9b-vre-entry-diagnosis-<date>.md: the per-tech-per-year
+The PR + docs/records/forecast/ffr-9b-vre-entry-diagnosis-<date>.md: the per-tech-per-year
 binding-constraint table (megawatts attributed), the gas_cc over-entry attribution, the
 named repair candidate(s) each with its rule-13 test sketch (reproducible forward?
 responds to conditions?), and an explicit NO-REPAIR-PERFORMED statement. Matrix: no
@@ -5690,10 +5690,10 @@ anchor and the anchor is mis-specified ON ITS OWN TERMS.
 
 Repo /home/user/market-simulator. Rule 27: OPUS ok. Branch
 claude/ffr-4f-caiso-anchor-merits-<suffix> off fresh origin/main. Authority + evidence:
-docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md (the license, verbatim, and the
+docs/records/forecast/ffr-4d-caiso-fleet-vintage-2026-08-04.md (the license, verbatim, and the
 measured mis-specification: >=94% of a $40k/MW-yr gap — a 550 MW COMBINED-CYCLE
 retention cost used as the entry price for a new COMBUSTION TURBINE);
-docs/handoffs/ffr-4e-caiso-storage-elcc-2026-08-09.md (row 4 STILL FAIL at 41.68% with
+docs/records/forecast/ffr-4e-caiso-storage-elcc-2026-08-09.md (row 4 STILL FAIL at 41.68% with
 fleet + accreditation right; residual = entry economics); docs/handoffs/ffr-3w-caiso-
 entry-screen-2026-08-04.md (the original measurement).
 
@@ -5731,7 +5731,7 @@ The Addenda AD–AH manager session ends here (archived with all work merged: PR
 #3739, #3750, #3760, #3775, #3776, #3791, #3800, #3814). The block below is the
 continuation prompt for the NEXT manager session — re-issue it verbatim. It supersedes
 §0y as the current manager brief; the decision record itself remains
-`docs/handoffs/ffr-owner-sitting-2026-08-02.md`.
+`docs/records/forecast/ffr-owner-sitting-2026-08-02.md`.
 
 ```
 [FABLE] FFR/FH WORKSTREAM MANAGER — continuation session
@@ -5746,7 +5746,7 @@ cards, and keep the owner-decision record honest. You do NOT execute lane work y
 1. CLAUDE.md — the 28 rules. Rule 22 holds the 2026-08-06 rewrite (holdout is on the
    SCORE never the data/architecture) AND the 2026-08-09 v3.2 C3c clause (the standing
    rule fires in EVERY year — owner-amended, commit aac1f86).
-2. docs/handoffs/ffr-owner-sitting-2026-08-02.md — THE DECISION RECORD. Read Addenda C
+2. docs/records/forecast/ffr-owner-sitting-2026-08-02.md — THE DECISION RECORD. Read Addenda C
    through AH BEFORE the packet body. The AD–AH run is the outgoing manager's cycle:
    AD (FFR-8A half-landed; D-28 signed OPTION A with F-1-first sequencing), AE (F1-45U
    clean; the HOUSE-1 X.2 finding — merges don't wait for checks; enforcement is an
@@ -5888,7 +5888,7 @@ the repair menu. FFR-4F landed (adjudication next cycle); ARM3-FIX's legs still 
 
 SHARED PROTOCOL FOR THE FIVE SIBLING LEGS (each block below is self-contained; this
 paragraph is the design authority they cite): the executed FH-4-ERCOT protocol —
-docs/handoffs/fh-4-ercot-leg-2026-08-09.md — is the PROTOCOL OF RECORD: Arms R
+docs/records/forecast/fh-4-ercot-leg-2026-08-09.md — is the PROTOCOL OF RECORD: Arms R
 (realized drivers) and K (as-known drivers, base 2023, hindcast_asknown_aeo2023 +
 demand_growth_vintage per FH-2 §7), window 2023-2025 (3 solve-years/arm), T1-FF
 --forward-from-base surface, SHIPPED DEFAULTS (the ERCOT-only scarcity restoration
@@ -5970,7 +5970,7 @@ Deliverable: the PR + docs/handoffs/fh-4-miso-leg-<date>.md + registered sidecar
 ```
 [FABLE] FH-4-CAISO — The CAISO leg of the FH-4 forward-skill battery (lift
 UNCONDITIONAL per Addendum AI.1). Execute the PROTOCOL OF RECORD
-(docs/handoffs/fh-4-ercot-leg-2026-08-09.md) for CAISO, SHIPPED DEFAULTS. NO keeper
+(docs/records/forecast/fh-4-ercot-leg-2026-08-09.md) for CAISO, SHIPPED DEFAULTS. NO keeper
 contact, NO arming, NO tuning. NOTE: the CAISO keeper recipe arms
 unit_outage_lp_capacity_basis and the hour-grain outage envelope as KEEPER-RECIPE
 flags — your T1-FF arms run SHIPPED DEFAULTS, not the keeper recipe; the keeper is
@@ -5998,7 +5998,7 @@ Deliverable: the PR + docs/handoffs/fh-4-caiso-leg-<date>.md + registered sideca
 ```
 [FABLE] FH-4-NYISO — The NYISO leg of the FH-4 forward-skill battery (lift
 UNCONDITIONAL per Addendum AI.1). Execute the PROTOCOL OF RECORD
-(docs/handoffs/fh-4-ercot-leg-2026-08-09.md) for NYISO, SHIPPED DEFAULTS. NO keeper
+(docs/records/forecast/fh-4-ercot-leg-2026-08-09.md) for NYISO, SHIPPED DEFAULTS. NO keeper
 contact, NO arming, NO tuning.
 
 Repo /home/user/market-simulator. Branch claude/fh-4-nyiso-leg-<suffix> off fresh
@@ -6023,7 +6023,7 @@ Deliverable: the PR + docs/handoffs/fh-4-nyiso-leg-<date>.md + registered sideca
 ```
 [FABLE] FH-4-NEISO — The NEISO leg of the FH-4 forward-skill battery (lift
 UNCONDITIONAL per Addendum AI.1). Execute the PROTOCOL OF RECORD
-(docs/handoffs/fh-4-ercot-leg-2026-08-09.md) for NEISO, SHIPPED DEFAULTS. NO keeper
+(docs/records/forecast/fh-4-ercot-leg-2026-08-09.md) for NEISO, SHIPPED DEFAULTS. NO keeper
 contact, NO arming, NO tuning. NOTE the standing NEISO gas-basis facts (neiso-86):
 nothing here re-opens the 2018-era basis — the window is 2023-2025.
 
@@ -6055,7 +6055,7 @@ owner act on this lane's evidence. NO tuning toward 55.4 GW or any actual.
 
 Repo /home/user/market-simulator. Model FABLE (rule 27: capacity-evolution core).
 Branch claude/ffr-9c-vre-entry-repair-<suffix> off fresh origin/main. Authority +
-evidence: docs/handoffs/ffr-9b-vre-entry-diagnosis-2026-08-09.md §3 (the binding
+evidence: docs/records/forecast/ffr-9b-vre-entry-diagnosis-2026-08-09.md §3 (the binding
 table), §4 (the candidates + rule-13 pre-assessments — THE MENU, verbatim); the
 ffr9a-storageseed recipe is the control posture of record.
 
@@ -6108,7 +6108,7 @@ cache_key= line; the D-13 hazard; fetch+rebase before push; no push_files >=300 
 no new workflows. Budget: prereqs + three cold 4-LP-year invocations — a LONG session
 (possibly phased; if so land control+stage A complete and hand off stage B explicitly).
 
-Deliverable: the PR(s) + docs/handoffs/ffr-9c-vre-entry-repair-<date>.md (per-stage
+Deliverable: the PR(s) + docs/records/forecast/ffr-9c-vre-entry-repair-<date>.md (per-stage
 R1-R5 vs control, the leave-one-year-out table, the R-c case if written, the promotion
 recommendation LEFT TO THE MANAGER) + registered sidecars + matrix updates.
 ```
@@ -6256,7 +6256,7 @@ off fresh origin/main. THE CHARTER IS WRITTEN -- read and execute it verbatim:
 docs/hindcast-forward-plan-2026-07.md, the "FH-5 [OPUS] -- Phase B: base-2021 horizon
 extension" block (§3.1, §4 rows 4/11 are its cited reads). The protocol of record for
 arm construction, registration and the three-way read is
-docs/handoffs/fh-4-ercot-leg-2026-08-09.md plus the five sibling leg handoffs
+docs/records/forecast/fh-4-ercot-leg-2026-08-09.md plus the five sibling leg handoffs
 (fh-4-{pjm,miso,caiso,nyiso,neiso}-leg-*.md) -- Phase B differs from Phase A ONLY in
 base year (2021 vs 2023) and window (2021-2025 vs 2023-2025).
 
@@ -6316,7 +6316,7 @@ recommendation) + registered sidecars + matrix citations.
 
 §0af was written before the gate pass, the battery completion and the collision
 diagnosis, and is now stale — **this is the current manager brief.** Re-issue the block
-below verbatim. The decision record remains `docs/handoffs/ffr-owner-sitting-2026-08-02.md`.
+below verbatim. The decision record remains `docs/records/forecast/ffr-owner-sitting-2026-08-02.md`.
 
 ```
 [FABLE or OPUS] FFR/FH WORKSTREAM MANAGER — continuation session
@@ -6331,7 +6331,7 @@ and keep the owner-decision record honest. You do NOT execute lane work yourself
 1. CLAUDE.md — the 28 rules. Rule 22 carries the 2026-08-06 rewrite (the holdout is on
    the SCORE, never the data or architecture) and the 2026-08-09 rubric-v3.2 C3c clause
    (the standing rule fires in EVERY year — owner-amended).
-2. docs/handoffs/ffr-owner-sitting-2026-08-02.md — THE DECISION RECORD. Read Addenda C
+2. docs/records/forecast/ffr-owner-sitting-2026-08-02.md — THE DECISION RECORD. Read Addenda C
    through AJ BEFORE the packet body; they supersede it. The AD–AJ run is the outgoing
    manager's cycle: AD (FFR-8A half-landed; D-28 signed option A), AE (F1-45U clean; the
    HOUSE-1 X.2 finding — merges don't wait for checks), AF (lift REFUSED, hold #6, on the
@@ -6477,7 +6477,7 @@ inert change is stop-the-line; a charter whose premise is refuted is the system 
 
 ## §0aj — state re-verified; audits CLEAN; FFR-4F accepted; F6-DIAG dispatched; cards D-29/D-30 (2026-08-11 @ `d542a28`)
 
-Sitting record: **Addendum AK** of `docs/handoffs/ffr-owner-sitting-2026-08-02.md`.
+Sitting record: **Addendum AK** of `docs/records/forecast/ffr-owner-sitting-2026-08-02.md`.
 
 **What changed since §0ai.** `origin/main` `fe9fa97f` → **`d542a28`** (15 commits, no keeper
 move: ercot-186, ercot-187, miso-151). All six keepers unmoved. `complete` =
@@ -6574,7 +6574,7 @@ R5. WHY IT WAS INVISIBLE. Confirm the skip-guard mechanism and state how long th
     has been effectively unrunnable in CI (check whether CI builds data/clean at all).
 
 === DELIVERABLE ===
-`docs/FINDING-f6-lmp-backend-parity-2026-08-11.md`: the five reads at full magnitude, the
+`docs/records/misc/FINDING-f6-lmp-backend-parity-2026-08-11.md`: the five reads at full magnitude, the
 named verdict from R2, and a CARD-READY recommendation with options and their real costs
 (e.g. "fix the clean curation" vs "fix the raw product" vs "re-size the tolerance and
 correct the docstring" vs "make CI build clean so this can never hide again"). Recommend
@@ -6598,7 +6598,7 @@ one and say what the wrong choice costs. Do NOT implement it.
 ### §0aj-2 — CARD D-29: arm Arm-3 (`miso_clean_tier_rows`)?
 
 Evidence complete and **verified at the artifact this sitting** (not inherited):
-`docs/handoffs/arm3-fix-zone-mask-2026-08-09.md` §4 — on the FIXED rows **MI-2035 flips
+`docs/records/misc/arm3-fix-zone-mask-2026-08-09.md` §4 — on the FIXED rows **MI-2035 flips
 SLACK → BINDS, pinned at the $30 ACP ceiling** (in-mask supply 57.351 TWh vs 95.771
 required, −38.420 TWh short ⇒ ~$1.15 bn of ACP), MN stays slack through 2035, and the
 **D-26 armed MISO forecast default's RPS duals are bit-stable at [0, 30, 0, 30, 0] in
@@ -6608,7 +6608,7 @@ arm-or-don't-arm call on measured evidence, with no sequencing dependency left.
 
 ### §0aj-3 — CARD D-30: promote FFR-9C's stages — and WHEN
 
-`docs/handoffs/ffr-9c-vre-entry-repair-2026-08-10.md` §4.3, read in full. Zero fitted
+`docs/records/forecast/ffr-9c-vre-entry-repair-2026-08-10.md` §4.3, read in full. Zero fitted
 parameters in any stage; LOYO shows no single-year concentration; **no promotion performed
 — the recommendation is left to the manager by charter.**
 
@@ -6672,7 +6672,7 @@ holdout freeze ACTIVE. Rubric v3.2. NOTE: MISO's keeper scores NOT-YET at HEAD w
 set {C3a 2025 −15.6 %, C3b 2025 NRMSE 0.212} — that is the promotion's own declared
 result, NOT drift (AK.4). You are in FORECAST mode and do not touch it.
 
-=== THE DECISION AND ITS EVIDENCE (docs/handoffs/arm3-fix-zone-mask-2026-08-09.md §4) ===
+=== THE DECISION AND ITS EVIDENCE (docs/records/misc/arm3-fix-zone-mask-2026-08-09.md §4) ===
 The shipped 5-zone mask lets OUT-OF-MASK nuclear satisfy an IN-MASK clean row, defeating
 its own cited statutory basis. On the fixed rows: MI clean obligation is exactly 0.0000 in
 2031–2034 (RHS-0 arithmetic certainty) and 0.4560 in 2035, where MI's dual flips
@@ -6746,7 +6746,7 @@ D4. Scope: is this ERCOT-solar-specific, or does the same construction mis-size 
     (ISO, tech) caps? Report what you SEE, transfer NOTHING between ISOs (rule 25).
 
 === DELIVERABLE ===
-`docs/FINDING-rc-ercot-solar-queue-cap-2026-08-11.md` with the four reads and a card-ready
+`docs/records/ercot/FINDING-rc-ercot-solar-queue-cap-2026-08-11.md` with the four reads and a card-ready
 recommendation. NO constant is edited, NO solve is run, NO matrix cell changes (no
 mechanism is added). If your derivation lands ON 5.0, say so — that refutes the case and
 is a fully successful outcome.
@@ -7071,7 +7071,7 @@ exists to clear (AR.5). Paste status at reconstruction: NO EVIDENCE YET on all t
 
 ### §0ar-1 — OVERRIDE-FIX [OPUS] — remedy 2 at the ISO-override seam: make armed flags turn-off-able (LIVE exposure, MISO + ERCOT)
 
-Object: `docs/handoffs/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md` remedy 2 —
+Object: `docs/records/forecast/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md` remedy 2 —
 track explicitly-set fields at `ScenarioConfig` construction and have
 `apply_iso_scenario_defaults` consult that record instead of comparing values. The exposure
 is LIVE in two ISOs: MISO (`miso_clean_tier_rows`, D-29) and ERCOT (the five stage-B rows,
@@ -7120,7 +7120,7 @@ is the key of record (D-13 — verify the ledger path before believing a zero).
 
 ### §0ar-3 — RAW-UNTRACK [OPUS] — execute the GO half of REWRITE-PREP's verdict
 
-Object: `docs/FINDING-rewrite-prep-2026-08-11.md` §8 GO half — untrack `data/raw` going
+Object: `docs/records/governance/FINDING-rewrite-prep-2026-08-11.md` §8 GO half — untrack `data/raw` going
 forward (stop adding its blobs to the live tree; HISTORY IS KEPT AS-IS, no rewrite — the
 NO-GO on rewriting for size stands and is not re-opened) plus the partial-clone recipe as
 documented standard practice. Mechanics: `git rm -r --cached data/raw` + `.gitignore`
@@ -7197,7 +7197,7 @@ No solve. WAIT for the cache-key-pin CI verdict on the PR before merging.
 
 DATA PROFILE: all (justification: re-measuring the §A parity effect spans the
 PJM/CAISO/NEISO/NYISO lmp partitions; hydrate then `regenerate_clean.py`)
-Object: `docs/FINDING-f6-lmp-backend-parity-2026-08-11.md` §A VERBATIM — in
+Object: `docs/records/misc/FINDING-f6-lmp-backend-parity-2026-08-11.md` §A VERBATIM — in
 `src/market_sim/data/neighbor_price.py`, `_neighbor_lmp_clean` indexes
 `interval_start_utc` converted to the ISO's FIXED STANDARD offset (a standard-clock
 variant of `_hour_of_year`) plus a small per-ISO hub-definition table; fold in the
@@ -7220,7 +7220,7 @@ prompts per §0am.*
 
 *Full adjudication: sitting Addendum AU.*
 
-* **§0at-2 D-32-F6FIX — LANDED, ACCEPTED** (#3949, `docs/handoffs/d32-f6fix-2026-08-13.md`).
+* **§0at-2 D-32-F6FIX — LANDED, ACCEPTED** (#3949, `docs/records/forecast/d32-f6fix-2026-08-13.md`).
   All five acceptance rows met: PJM 16/16 bit-exact, CAISO 7/8 (the miss is the raw
   product's own OASIS NaN gap, as the finding predicted), NEISO 2–45 h/yr, `_TOL`
   unchanged and the test un-skipped, raw byte-untouched by hash. NYISO stated OPEN at
@@ -7234,7 +7234,7 @@ prompts per §0am.*
 ### §0au-1 — D-33-NYISO-CONVENTION [OPUS] — adjudicate NYISO's RTD interval convention (prompt PARKED, owner routes it)
 
 DATA PROFILE: nyiso
-Object: `docs/handoffs/d32-f6fix-2026-08-13.md` §4 + §7 item 1. Two committed products
+Object: `docs/records/forecast/d32-f6fix-2026-08-13.md` §4 + §7 item 1. Two committed products
 adopt OPPOSITE conventions for NYISO RTD "Time Stamp" — `derive_actual_lmp._nyiso_wide`
 bins interval-BEGINNING, `curate_lmp.parse_nyiso_zip` interval-ENDING
 (`(ts_end − 1s).floor("h")`). Each matches its own product exactly and the other not at
@@ -7275,7 +7275,7 @@ three triggers below, and the prompt below is the re-entry.
 re-opens it for ONE named object and closes it again)
 
 Repo /home/user/market-simulator. DATA PROFILE: code (widen only if your trigger solves).
-You are re-opening a CLOSED desk. Read docs/handoffs/ffr-owner-sitting-2026-08-02.md
+You are re-opening a CLOSED desk. Read docs/records/forecast/ffr-owner-sitting-2026-08-02.md
 Addendum AV FIRST — it is the closing entry and tells you what was discharged, what
 survives, and who holds it. Then read AR–AU backwards for the last cycle's adjudications.
 Do NOT re-litigate anything AV lists as closed, and do NOT invent a queue: if your trigger

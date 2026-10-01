@@ -1,6 +1,6 @@
 """SPP-78 zero-LP arm check: do the three measured heat-rate fields reprice exactly the covered rows?
 
-Pre-registered in ``docs/handoffs/PRECOMMIT-spp-78-measured-heat-rates-2026-09-24.md`` §6(a).
+Pre-registered in ``docs/records/spp/PRECOMMIT-spp-78-measured-heat-rates-2026-09-24.md`` §6(a).
 
 Rebuilds one year's fleet with no LP (``run_year(..., fleet_only=True)`` from the sanctioned
 ``bundle_fleet.full_run_year_kwargs``) twice, in two interpreters (``--variant ctl`` / ``--variant arm``),

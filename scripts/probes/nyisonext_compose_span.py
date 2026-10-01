@@ -4,7 +4,7 @@ Reuses :mod:`scripts.probes.rnyiso_compose_span` (its S0-S2 checks and the NYISO
 ``nyiso238_compose_span`` composition) and re-points them at this lane:
 
 * S0 -- every leg solved at the PRECOMMIT pin
-  (``docs/PRECOMMIT-nyiso-next-floor-layup-2026-09-25.md``), passed as ``--pin``
+  (``docs/records/nyiso/PRECOMMIT-nyiso-next-floor-layup-2026-09-25.md``), passed as ``--pin``
   because the pin is the commit that carries this file;
 * S1 -- the keeper's posture (``nyiso_ldc_generator_delivered_gas`` and
   ``nyiso_dynamic_reserve_requirements`` true) PLUS

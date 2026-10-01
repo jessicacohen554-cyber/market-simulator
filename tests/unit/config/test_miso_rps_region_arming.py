@@ -100,7 +100,7 @@ class TestD26Arming:
         the generator-column zone-mask defect by ARM3-FIX — and D-29 (sitting
         Addendum AK.8) arms the family through the SAME seam D-26 used for
         Arm 2. Measured basis: ARM3-FIX §4,
-        ``docs/handoffs/arm3-fix-zone-mask-2026-08-09.md``.
+        ``docs/records/misc/arm3-fix-zone-mask-2026-08-09.md``.
         """
         overrides = get_iso_config("MISO").default_scenario_overrides
         assert overrides.get("miso_clean_tier_rows") is True

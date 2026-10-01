@@ -1,6 +1,6 @@
 """PRE-REGISTERED ZERO-LP GATES G-1..G-4 for caiso-293's CHP steam duty window.
 
-Declared ex ante in ``docs/PRECOMMIT-caiso293-chp-steam-duty-window-2026-09-20.md``
+Declared ex ante in ``docs/records/caiso/PRECOMMIT-caiso293-chp-steam-duty-window-2026-09-20.md``
 §4, before any code change and before any solve. G-1..G-4 are hard STOPs: a
 breach means no shard is launched.
 
@@ -138,7 +138,7 @@ def forced_by_plant(gens, arrays) -> dict[int, float]:
 
 
 def main() -> None:
-    report: dict = {"precommit": "docs/PRECOMMIT-caiso293-chp-steam-duty-window-2026-09-20.md"}
+    report: dict = {"precommit": "docs/records/caiso/PRECOMMIT-caiso293-chp-steam-duty-window-2026-09-20.md"}
 
     ok1, detail1 = gate_1()
     report["G1"] = {"pass": ok1, "tol": G1_TOL, "artifacts": detail1}

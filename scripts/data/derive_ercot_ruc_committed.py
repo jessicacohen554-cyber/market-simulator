@@ -15,7 +15,7 @@ model crosswalk (class grain; Q-B stays closed). Source: the NP3-965 60-Day
 SCED Gen Resource Data corpus through the committed shard selection
 (``derive_ercot_sced_offer_wall``). Clock: CPT→Etc/GMT+6 non-leap 8760
 (the derive_ercot_as_responsibility discipline). Sizing record:
-``results/calibration/ercot227_ruc_sizing.json`` (2,031 unit-hours,
+``results/phase0/ercot/ercot227_ruc_sizing.json`` (2,031 unit-hours,
 ST_GAS-dominated). Rule 23: re-derive only on corpus change.
 
 Run:  python3 scripts/data/derive_ercot_ruc_committed.py --year 2023

@@ -15,7 +15,7 @@ which was the whole of that year's C1 band breach — and **+0.08 %** with oil o
 both sides, the tightest agreement of any complete NYISO vintage. The full
 evidence (NYISO's own published fuel mix, the 923 liquid-fuel routing, the flat
 930 ``NG: OIL`` block, CEMS on a fixed plant set, and the hourly shape test) is
-``docs/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md``.
+``docs/records/nyiso/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md``.
 
 These tests pin the four things that make the repair safe:
   1. the live NYISO 2022 numbers — oil-inclusive, the reconcile does NOT fire;

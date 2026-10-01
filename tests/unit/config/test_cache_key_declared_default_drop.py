@@ -5,7 +5,7 @@
 name)`` — the LIVE default, recomputed on every call. Flip that default and a
 post-flip config at the NEW default hashes exactly as the pre-flip config at the
 OLD default did: one key, two postures, and the post-flip run silently reads the
-pre-flip bundle. ``docs/handoffs/FINDING-capx-d24-cache-key-defect-2026-09-01.md``
+pre-flip bundle. ``docs/records/forecast/FINDING-capx-d24-cache-key-defect-2026-09-01.md``
 measured it twice among the committed runs (§4.1 ERCOT, §4.2 NEISO).
 
 **The repair (owner ruling Q20).** The drop compares against the FROZEN

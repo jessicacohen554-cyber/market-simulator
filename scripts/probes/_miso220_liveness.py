@@ -22,7 +22,7 @@ three properties the PREREG freezes BEFORE the solve:
   reordering rather than treating it as a defect: how many (class, band) pairs
   change rank against ST_GAS, and the resulting offer gap.
 
-Record: ``results/calibration/_miso220_liveness.json``. Rule 22 — 2023/2024/2025
+Record: ``results/phase0/miso/_miso220_liveness.json``. Rule 22 — 2023/2024/2025
 only. No LP is solved.
 """
 
@@ -51,7 +51,7 @@ from _miso134_ct_night_order_screen import build_year, keeper_config  # noqa: E4
 from _miso214_ct_peaker_conduct_phase0 import _band, _r  # noqa: E402
 from _miso220_offer_table import ARM_TABLE, BASELINE_TABLE, HELD_CLASSES, LIFT  # noqa: E402
 
-OUT = REPO / "results/calibration/_miso220_liveness.json"
+OUT = REPO / "results/phase0/miso/_miso220_liveness.json"
 YEARS = tuple(int(v) for v in os.environ.get("MISO220_YEARS", "2023,2024,2025").split(","))
 assert set(YEARS) <= {2023, 2024, 2025}, "rule 22: MISO holds no holdout marker"
 HOURS = 8760

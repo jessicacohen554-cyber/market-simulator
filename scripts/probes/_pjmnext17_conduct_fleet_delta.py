@@ -27,7 +27,7 @@ import _pjmnext16_fleet_delta as FD  # noqa: E402
 
 FD.BUNDLE = REPO / "results/calibration/pjmnext16_A_span"
 BENCH = REPO / "frontend/data/backcast/bench/PJM"
-OUT = REPO / "results/calibration/_pjmnext17_conduct_fleet_delta.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext17_conduct_fleet_delta.json"
 MECH_CC = None
 
 

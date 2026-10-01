@@ -353,7 +353,7 @@ def main() -> None:
             f"{s['coal_committed_d']:>+13.4f}{s['prereg']:>+10.4f}"
             f"{s['coal_committed_d'] - s['prereg']:>+9.4f}{s['fleet_d']:>+10.4f}"
         )
-    out = REPO / "results/calibration/_pjm_h6_replace_gates.json"
+    out = REPO / "results/phase0/pjm/_pjm_h6_replace_gates.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(summary, indent=2))
     print(f"\nwrote {out}")

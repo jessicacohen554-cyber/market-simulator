@@ -552,7 +552,7 @@ def caiso_eia930_clock_repair_active() -> bool:
 # (OASIS TAC regression, NG +1 h / TI 0 h: 2024 R^2 0.979 vs 0.701 with TI
 # shifted; the BPAT / PACW / NEVP counterparty legs match CISO's at lag 0
 # across both window edges). R-CAISO-13's d(NetGen - TI) test saw the NG half.
-# docs/handoffs/r-caiso-16/PRECOMMIT-r-caiso-16-2026-09-30.md.
+# docs/records/caiso/r-caiso-16/PRECOMMIT-r-caiso-16-2026-09-30.md.
 _CISO_CLOCK_FAMILY_COLUMNS: dict[str, Callable[[str], bool]] = {
     "generation": lambda c: c.startswith("NG: ") or c.startswith("Net generation"),
     "demand": lambda c: c in ("Demand", "Demand (Adjusted)"),

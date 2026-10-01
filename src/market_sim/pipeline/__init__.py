@@ -1,7 +1,7 @@
 """Shared solve-core package for the forecast and backcast orchestrators.
 
 This package is the destination of the orchestrator-unification plan
-(``docs/handoffs/orchestrator-unification-plan-2026-07.md``): the per-year
+(``docs/records/misc/orchestrator-unification-plan-2026-07.md``): the per-year
 LP solve — today duplicated near-verbatim in ``runner.py`` (forecast) and
 ``scripts/run_calibration.py`` (backcast) — migrates here stage by stage so
 both orchestrators call one shared core.

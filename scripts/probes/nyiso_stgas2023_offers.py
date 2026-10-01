@@ -6,7 +6,7 @@ ST_GAS plant it records the MW-weighted offer (``mc_base``, the assembled P0 obj
 LP solved on) per tranche, availability, min-gen floor MW by mechanism, and compares the
 plant's offer against the keeper's committed hourly zonal price (``hourly/system_<y>``) and
 the measured NYISO RT zonal price (clean ``lmp``). Writes
-``results/calibration/_nyiso_stgas2023_offers.json``.
+``results/phase0/nyiso/_nyiso_stgas2023_offers.json``.
 
 2021 inputs (``results/calibration/rnyiso_2021``, run payload ``2026-09-25-nyiso-r-inputs-2021``
 and ``bench/NYISO/2021.json.gz``) come from R-NYISO-2021's branch head
@@ -170,7 +170,7 @@ def main() -> None:
         "--years", nargs="+", type=int, default=[2021, 2022, 2023, 2024, 2025]
     )
     ap.add_argument(
-        "--out", default=str(REPO / "results/calibration/_nyiso_stgas2023_offers.json")
+        "--out", default=str(REPO / "results/phase0/nyiso/_nyiso_stgas2023_offers.json")
     )
     ap.add_argument(
         "--arm", action="store_true", help="arm nyiso_ldc_generator_delivered_gas"

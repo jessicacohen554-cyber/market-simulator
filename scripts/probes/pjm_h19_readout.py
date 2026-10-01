@@ -2,7 +2,7 @@
 
 G0: class TWh and load-weighted mean price per year, arm vs control.
 G1: served demand, slack and price at the repaired hours (2020 h5003/5031/5383, 2024 h7787).
-Gates declared in docs/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md §6.
+Gates declared in docs/records/pjm/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md §6.
 
 Usage: python3 scripts/probes/pjm_h19_readout.py 2020 2023 ...
 """

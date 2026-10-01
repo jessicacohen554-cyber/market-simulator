@@ -127,7 +127,7 @@
       "keeper_snapshot": {
         "bundle": "results/calibration/ercot248_two_config_keeper",
         "date": "2026-09-05",
-        "definition": "ercot-248 THE ERCOT KEEPER AS ONE RUN (owner instruction 2026-09-05, zero-solve consolidation): the two designated configs of the 2026-08-26 two-config partition ruling registered together, each year carried by the config designated for it. 2023 = the CARVE-OUT config (from 2026-08-25-236-swcap-clip-k33: the ercot-235 recipe + ercot_offer_swcap_clip armed [SWCAP $5,000 = VOLL offer cap, structural] + k_peak 33.0 \u2014 the ECRS-era regime, under the owner's 2026-08-25 rule-16 waiver): C3a -7.3% / C3b 0.102 / C3c 180 of 181, every criterion PASS, zero caveats. 2024/2025 = the FORWARD config (from 2026-08-25-234-eastex-identity: zero fitted scalars, repaired EASTEX crosswalk \u2014 the config the model uses going forward, forecast lane included): 2024 -0.2% / 0.131 / C3c 22 of 53, 2025 -7.9% / 0.101 / C3c 1 of 31; C3c the lone ledgered caveat x2 (ACCEPTED MODEL-CLASS LIMITATION, non-downgrading under rubric v3.3). DETERMINATION CALIBRATED. Coverage invariant: every year 2023-2025 covered by exactly one designated config. The carve-out's two 2023 deltas do NOT leak into forward runs. Provenance: composite_provenance.json in the bundle; records docs/FINDING-ercot-two-config-keeper-2026-08-26.md, docs/FINDING-ercot236-h4097-swcap-clip-2026-08-25.md.",
+        "definition": "ercot-248 THE ERCOT KEEPER AS ONE RUN (owner instruction 2026-09-05, zero-solve consolidation): the two designated configs of the 2026-08-26 two-config partition ruling registered together, each year carried by the config designated for it. 2023 = the CARVE-OUT config (from 2026-08-25-236-swcap-clip-k33: the ercot-235 recipe + ercot_offer_swcap_clip armed [SWCAP $5,000 = VOLL offer cap, structural] + k_peak 33.0 \u2014 the ECRS-era regime, under the owner's 2026-08-25 rule-16 waiver): C3a -7.3% / C3b 0.102 / C3c 180 of 181, every criterion PASS, zero caveats. 2024/2025 = the FORWARD config (from 2026-08-25-234-eastex-identity: zero fitted scalars, repaired EASTEX crosswalk \u2014 the config the model uses going forward, forecast lane included): 2024 -0.2% / 0.131 / C3c 22 of 53, 2025 -7.9% / 0.101 / C3c 1 of 31; C3c the lone ledgered caveat x2 (ACCEPTED MODEL-CLASS LIMITATION, non-downgrading under rubric v3.3). DETERMINATION CALIBRATED. Coverage invariant: every year 2023-2025 covered by exactly one designated config. The carve-out's two 2023 deltas do NOT leak into forward runs. Provenance: composite_provenance.json in the bundle; records docs/records/ercot/FINDING-ercot-two-config-keeper-2026-08-26.md, docs/records/ercot/FINDING-ercot236-h4097-swcap-clip-2026-08-25.md.",
         "id": "2026-09-05-ercot248-two-config-keeper",
         "iso": "ERCOT",
         "label": "248 two-config keeper",
@@ -152,7 +152,7 @@
         "iso": "ERCOT",
         "label": "FORWARD KEEPER (2024-2025) - the config the model uses going forward, forecast lane included",
         "role": "forward",
-        "ruling_source": "Owner, program-director sitting 2026-08-26 (verbatim). Executed by the governance-records session the same day; record: docs/FINDING-ercot-two-config-keeper-2026-08-26.md."
+        "ruling_source": "Owner, program-director sitting 2026-08-26 (verbatim). Executed by the governance-records session the same day; record: docs/records/ercot/FINDING-ercot-two-config-keeper-2026-08-26.md."
       },
       "provenance": {
         "basis_sha": "7e930d139b7946125b64fab1fc396b3548c74827",

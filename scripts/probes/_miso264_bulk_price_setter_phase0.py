@@ -83,7 +83,7 @@ for _p in (REPO, REPO / "src"):
         sys.path.insert(0, str(_p))
 
 BUNDLE = REPO / "results/calibration/miso263_coalcap_span"
-OUT = REPO / "results/calibration/_miso264_bulk_price_setter.json"
+OUT = REPO / "results/phase0/miso/_miso264_bulk_price_setter.json"
 YEARS = (2020, 2021, 2022, 2023, 2024, 2025)
 INTERNAL = (
     "MISO-West",

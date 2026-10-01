@@ -4,7 +4,7 @@ Downloads the monthly 5-minute "Interface Limits and Flows" zip archives from
 the NYISO MIS public site and writes one hourly-aggregated CSV.GZ per year to
 ``data/raw/NYISO/interface-flows/NYISO_interface_flows_hourly_<year>.csv.gz``.
 
-This is Ask D1 of `docs/handoffs/nyiso-data-asks-2026-07.md`: measured gross
+This is Ask D1 of `docs/records/nyiso/nyiso-data-asks-2026-07.md`: measured gross
 per-interface flows and their posted limits for the internal NYISO interfaces
 (CENTRAL EAST - VC, TOTAL EAST, UPNY CONED, MOSES SOUTH, DYSINGER EAST, WEST
 CENTRAL, SPR/DUN-SOUTH) and every external tie (SCH - HQ/NE/OH/PJ plus the

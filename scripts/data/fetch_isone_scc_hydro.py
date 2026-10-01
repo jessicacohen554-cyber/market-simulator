@@ -25,7 +25,7 @@ The class factor consumed by
 ``config/capacity_market.py::HYDRO_ACCREDITATION_CREDIT_BY_ISO["NEISO"]`` is
 the printed ``sum(summer SCC)`` over the model's own accreditation basis
 ``model.capacity_evolution.adequacy.modelled_hydro_nameplate_mw("NEISO")``
-(capx-S4, docs/handoffs/FINDING-capx-s4-neiso-hydro-2026-08-30.md). Re-derive
+(capx-S4, docs/records/forecast/FINDING-capx-s4-neiso-hydro-2026-08-30.md). Re-derive
 on a newer SCC vintage or EIA census (rule 23) — never on a residual.
 
 Usage::

@@ -28,7 +28,7 @@ KEEPER = REPO / "results" / "calibration" / "nyiso247_fuelinv_span"
 
 ATTESTED_BY = (
     "session hydro-3 (2026-09-22), THE ARM. Pre-registration: "
-    "docs/PRECOMMIT-hydro-3-nyiso-ror-split-span-2026-09-22.md, pushed at "
+    "docs/records/nyiso/PRECOMMIT-hydro-3-nyiso-ror-split-span-2026-09-22.md, pushed at "
     "57e3c77fcc00164da5c869e732783fbd695bcdc9 before any solve; owner ruling "
     "'1' (promote hydro_ror_split, 2022 G2 miss reported and attributed to the "
     "Central-East seam) on docs/FINDING-hydro-3-nyiso-2022-g2-is-seam-spill-"

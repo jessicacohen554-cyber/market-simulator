@@ -60,7 +60,7 @@ numbers incomparable to the ercot-163 record they must bridge.
 
 It carries ONE declared row-filter delta from the ercot-123/144 set the
 instruments above use, pre-registered in
-``docs/PRECOMMIT-ercot170-cc-headroom-crosswalk-2026-08-05.md`` §1a: the
+``docs/records/ercot/PRECOMMIT-ercot170-cc-headroom-crosswalk-2026-08-05.md`` §1a: the
 capability census applies **no telemetered-status filter**. A capability
 denominator that drops ``OUT``/``OFF`` rows is biased toward committed capacity
 and would measure commitment — the object ercot-163 already closed — instead of
@@ -92,7 +92,7 @@ for _p in (str(REPO / "src"), str(REPO)):
 #: recursive or point this constant at the subdirectory — RTC+B deliveries are
 #: calendar-2025, so the ``ts.dt.year == year`` filter would keep them. They are
 #: readable only through ``scripts.lib.sced_rtcb_adapter`` (owner card D /
-#: signature D1, ``docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``).
+#: signature D1, ``docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``).
 SCED_CORPUS_DIR = REPO / "data" / "raw" / "ercot" / "SCED"
 
 #: Training window (rule 22 [R-HOLDOUT]). No other year may be loaded.
@@ -394,7 +394,7 @@ def monthly_inc_p90(df: pd.DataFrame, cls: str, hours=MATCHED_HOURS) -> list[dic
 #: dispersion expressed in $/MWh on the derives' half-range construction
 #: ``100 × (max − min) / (2 × level)``; ``licence`` is the class minimum of
 #: ``curve_share`` over the four subsets the constant was licensed on. Both are
-#: pre-registered in ``docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md``
+#: pre-registered in ``docs/records/ercot/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md``
 #: §§1b/2 and may not be moved after measurement.
 LIMBS: dict[str, dict] = {
     "coal_mustrun": {

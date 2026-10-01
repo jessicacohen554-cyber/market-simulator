@@ -1,6 +1,6 @@
 """Emit the SPP-98 calibration attestation for the composed 2019-2025 bundle ``spp98_remap_span``.
 
-SPP-98 (``docs/handoffs/PRECOMMIT-spp-98-cems-eia-remap-2026-09-28.md``) replays SPP's keeper
+SPP-98 (``docs/records/spp/PRECOMMIT-spp-98-cems-eia-remap-2026-09-28.md``) replays SPP's keeper
 ``spp94_arm_span`` recipe one year per shard (rule 36) with NO flag changed; every leg reproduced the
 keeper's dispatch and prices exactly (X4). The only delta is to the BENCHMARK: ten rows in
 ``campd.CAMPD_UNIT_PLANT_REMAP`` (EPA CAMD-EIA crosswalk) re-attribute J Lamar Stall's CEMS turbines
@@ -29,9 +29,9 @@ sys.path.insert(0, str(REPO / "src"))
 from market_sim.config.scenarios import _CACHE_KEY_RETIRED_FIELDS  # noqa: E402
 
 CAL = REPO / "results" / "calibration"
-PRECOMMIT = "docs/handoffs/PRECOMMIT-spp-98-cems-eia-remap-2026-09-28.md"
-FINDING = "docs/handoffs/PRECOMMIT-spp-98-cems-eia-remap-2026-09-28.md"
-RESULT = "docs/handoffs/RESULT-spp-98-cems-eia-remap-2026-09-28.md"
+PRECOMMIT = "docs/records/spp/PRECOMMIT-spp-98-cems-eia-remap-2026-09-28.md"
+FINDING = "docs/records/spp/PRECOMMIT-spp-98-cems-eia-remap-2026-09-28.md"
+RESULT = "docs/records/spp/RESULT-spp-98-cems-eia-remap-2026-09-28.md"
 PINNED = "ed8cec3fd0811ebf835cfec42184493683c2625a"
 COMPOSITE = "spp98_remap_span"
 KEEPER = "spp94_arm_span"

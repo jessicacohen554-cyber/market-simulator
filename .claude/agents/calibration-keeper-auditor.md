@@ -83,7 +83,7 @@ Three keeper-text surfaces, in descending trust:
    - **M1a stale marker keeper / M1b determination mismatch** → this ISO holds a
      `complete` entry in `frontend/data/backcast/calibration-complete.json` and a
      promotion has moved past it. **Owner decision D-5(b), signed 2026-08-02**
-     (`docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum C.1, OPTION B):
+     (`docs/records/forecast/ffr-owner-sitting-2026-08-02.md` Addendum C.1, OPTION B):
      re-key on promotion **with a determination re-verification**, so the marker
      never asserts a determination that was never scored against the run it names.
      Do this in TWO steps, in this order — never the field update alone:

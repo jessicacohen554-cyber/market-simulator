@@ -16,7 +16,7 @@ re-derived by the AEO bump (its EIA-UMAR source is unchanged) and stays in
 WHY THIS SCRIPT EXISTS: ``HENRY_HUB_TRAJECTORIES`` (constants.py) carried a
 standing "TODO: verify against AEO Table 13" since it was hand-typed from
 "published AEO2025 charts and text" rather than the AEO data tables (D2,
-docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md). P-0C
+docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md). P-0C
 landed the real API-fetched AEO2025 series
 (data/raw/eia-aeo/eia_aeo2025_fuel_prices.part*.csv) plus the EIA Uranium
 Marketing Annual Report front-end fuel-cycle prices

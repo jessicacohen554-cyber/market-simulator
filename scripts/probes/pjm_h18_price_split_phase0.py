@@ -9,7 +9,7 @@ reports the monthly load-weighted C3b NRMSE with and without the two localised
 objects (Winter Storm Elliott 2022-12-23..26; the 2020 demand-spike hours).
 
 Nothing is swept and no parameter is constructed (rules 1 ``[R-STRUCT]`` /
-21 ``[R-DOF]``). Record: ``docs/FINDING-pjm-h18-price-object-localised-2026-09-23.md``.
+21 ``[R-DOF]``). Record: ``docs/records/pjm/FINDING-pjm-h18-price-object-localised-2026-09-23.md``.
 
 Run: ``python3 scripts/probes/pjm_h18_price_split_phase0.py``
 """
@@ -65,7 +65,7 @@ def pct(g: pd.DataFrame) -> float:
 
 
 def main() -> None:
-    """Write ``results/calibration/_pjm_h18_price_split.json`` and print the table."""
+    """Write ``results/phase0/pjm/_pjm_h18_price_split.json`` and print the table."""
     act = pd.read_parquet(REPO / "data/raw/_validation-source/actual_lmp_hourly_PJM.parquet")
     z = pd.read_csv(REPO / "data/raw/gas-prices/transco_z6_ny_daily.csv", parse_dates=["date"]).dropna()
     ym = z.date.dt.to_period("M")
@@ -110,7 +110,7 @@ def main() -> None:
             f"p50-95 {r['p50_p95']:+5.2f} top5 {r['top5']:+6.2f} | spike-days {r['gas_spike_days_ge2x']['contrib']:+5.2f} "
             f"| C3b {r['c3b_nrmse']:.3f}"
         )
-    dest = REPO / "results/calibration/_pjm_h18_price_split.json"
+    dest = REPO / "results/phase0/pjm/_pjm_h18_price_split.json"
     dest.write_text(json.dumps(out, indent=1))
     print(f"wrote {dest}")
 

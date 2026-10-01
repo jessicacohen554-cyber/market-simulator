@@ -32,7 +32,7 @@ Per-fuel retired GW:
 
 ## Additions (cumulative 2021→2025) — **decision basis**
 
-_Attribution basis: **decision** (owner decision D-9(ii), signed 2026-08-04 (sitting Addendum K.2)). Scored on the DECISION basis (D-9(ii)). Additions verdicts on this basis are NOT comparable to any additions verdict committed before 2026-08-04, which were scored on the COD basis — the metric means something different. Retirements-side comparability is unaffected. See docs/handoffs/ffr-3s-cod-shifted-scoring-2026-08-04.md._
+_Attribution basis: **decision** (owner decision D-9(ii), signed 2026-08-04 (sitting Addendum K.2)). Scored on the DECISION basis (D-9(ii)). Additions verdicts on this basis are NOT comparable to any additions verdict committed before 2026-08-04, which were scored on the COD basis — the metric means something different. Retirements-side comparability is unaffected. See docs/records/forecast/ffr-3s-cod-shifted-scoring-2026-08-04.md._
 
 Basis effect — decided in-window with COD **after** the window (invisible under the COD basis): `{'wind': 4.0, 'solar': 2.472, 'gas_cc': 3.0, 'gas_ct': 2.0}`; commissioned in-window from a **pre-window** decision (dropped under the decision basis): `none` (GW).
 

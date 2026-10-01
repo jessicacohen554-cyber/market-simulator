@@ -154,8 +154,8 @@ ATTESTED_BY = (
     "and the forward story is the pooled multi-year ladder the derive script prints "
     "(forecast years keep the gas-elastic formula, the same two-track design as "
     "hr_by_year). RULE 25 [R-ISO-SCOPE]: MISO's own measured series only. "
-    "Records: docs/RESULT-miso260-seam-ladder-screen-2026-09-16.md, "
-    "docs/PRECOMMIT-miso260-seam-ladder-2020-2021-2026-09-16.md, probes "
+    "Records: docs/records/miso/RESULT-miso260-seam-ladder-screen-2026-09-16.md, "
+    "docs/records/miso/PRECOMMIT-miso260-seam-ladder-2020-2021-2026-09-16.md, probes "
     "scripts/probes/_miso260_seam_phase0.py and _miso260_compose_span.py."
 )
 

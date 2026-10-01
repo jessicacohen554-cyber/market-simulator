@@ -26,7 +26,7 @@ the plan §8 close-out. **Branch:** `claude/bloat-b6-closeout-g5zi4q`.
 > tier has never reached its own tests; `curate_emissions.py` OOM located
 > to `curate_year()` — independently corroborated the same day by PERF-A,
 > which measured a 10.04 GiB stock peak and prototyped a 6.45 GiB low-mem
-> curation, `docs/handoffs/perf-recheck-2026-08.md` — G3 needs the fix AND
+> curation, `docs/records/governance/perf-recheck-2026-08.md` — G3 needs the fix AND
 > a recorded pre-prune green first); **§5**, the drift notes (the PM
 > refresh already carries §5.2's re-derive-at-execution instruction for
 > PR-3); **§7**, the D-3/D-4/D-8 closures and the D-5 correction (now
@@ -97,7 +97,7 @@ bloat-matching PRs, the most recent being **#3938 (BLOAT-A, merged
 ## 2. `cleanup-large-blobs.yml` dry run — the standing owner option, quantified
 
 Dispatched **dry-run only**, per the standing NO-GO on history rewrite (owner
-decision AQ 2026-08-13; `docs/FINDING-rewrite-prep-2026-08-11.md` §8). The
+decision AQ 2026-08-13; `docs/records/governance/FINDING-rewrite-prep-2026-08-11.md` §8). The
 confirm phrase `REWRITE-HISTORY` was **not supplied** — the dispatch passed
 `dry_run=true` with `confirm=DRY-RUN-ONLY-NOT-A-REWRITE`, and the run's own step
 record confirms the guard held: **`Validate confirmation` → skipped,

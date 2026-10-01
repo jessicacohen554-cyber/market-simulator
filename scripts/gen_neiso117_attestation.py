@@ -1,6 +1,6 @@
 """Emit the neiso-117 calibration attestation for the composite ``neiso117_span``.
 
-neiso-117 (``docs/handoffs/neiso117/PRECOMMIT-neiso117-2026-09-26.md``) replays
+neiso-117 (``docs/records/neiso/neiso117/PRECOMMIT-neiso117-2026-09-26.md``) replays
 the NEISO keeper ``2026-09-25-neiso114-arm-b-stgas`` (``neiso114b_span``) with ONE
 registered delta, ``coal_fuel_inventory_plant_grain=true`` — the per-coal-yard
 ANNUAL fuel budget rows (Dec(Y-1) EIA-923 stock + mean Y-2..Y-1 receipts per
@@ -29,8 +29,8 @@ CAL = REPO / "results" / "calibration"
 COMPOSITE = "neiso117_span"
 KEEPER = "neiso114b_span"
 KEEPER_ID = "2026-09-25-neiso114-arm-b-stgas"
-PRECOMMIT = "docs/handoffs/neiso117/PRECOMMIT-neiso117-2026-09-26.md"
-RESULT = "docs/handoffs/neiso117/RESULT-neiso117-2026-09-26.md"
+PRECOMMIT = "docs/records/neiso/neiso117/PRECOMMIT-neiso117-2026-09-26.md"
+RESULT = "docs/records/neiso/neiso117/RESULT-neiso117-2026-09-26.md"
 PINNED = "17402f351e5dc3d45126100b7839531cd21c1ca3"
 FLIPS = ("coal_fuel_inventory_plant_grain",)
 UNARMED = ("coal_fuel_inventory",)
@@ -72,7 +72,7 @@ def main() -> int:
         "scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), with one registered zero-DOF "
         f"delta: {', '.join(FLIPS)} (per-coal-yard annual budget rows; the pooled monthly limb "
         "coal_fuel_inventory stays off, owner ruling 2026-09-26). Every leg verified by "
-        "docs/handoffs/neiso117/shard_check.py at composition. Zero LP in the parent. "
+        "docs/records/neiso/neiso117/shard_check.py at composition. Zero LP in the parent. "
         f"Pre-registered in {PRECOMMIT} (pinned {PINNED[:8]}) before any shard launched; "
         f"record {RESULT}."
     )

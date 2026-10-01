@@ -3,7 +3,7 @@
 Written and PUSHED BEFORE the screen bundle exists, so the bars cannot be
 adjusted to the result (the miso-226 blind-scorer discipline). Every bar is a
 verbatim transcription of
-``results/calibration/PRECOMMIT-miso230-ct-netload-drag-2026-09-06.md`` §7:
+``docs/records/miso/PRECOMMIT-miso230-ct-netload-drag-2026-09-06.md`` §7:
 
   G-1 response    CT_PEAKER-2023 model energy rises by +1.8 .. +5.5 TWh
                   (0.5x-1.5x the zero-LP class lower bound of +3.6544)
@@ -32,7 +32,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 ARM = REPO / "results/calibration/miso230_ctdrag_S"
 KEEPER = REPO / "results/calibration/miso220_nonsteamlift_B"
-OUT = REPO / "results/calibration/_miso230_screen_gates.json"
+OUT = REPO / "results/phase0/miso/_miso230_screen_gates.json"
 YEAR = 2023
 
 # PRECOMMIT §6 zero-LP prediction and §7 bars — transcribed, never recomputed.

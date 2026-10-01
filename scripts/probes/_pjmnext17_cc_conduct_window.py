@@ -13,7 +13,7 @@ Per year it reports, keeper window vs conduct window: floored plant-hours and co
 MWh where the plant's CAMPD meter reads offline (< 1 % nameplate, the deriver's
 ``_SYNC_MW_NAMEPLATE_FRAC``), i.e. the rule-17 conduct rider. Sources: committed
 ``thermal_tranches_PJM.csv`` (online_frac, committed_pct), bench CAMPD hourly, keeper
-``hourly/system_<y>.parquet`` load. Writes ``results/calibration/_pjmnext17_cc_conduct_window.json``.
+``hourly/system_<y>.parquet`` load. Writes ``results/phase0/pjm/_pjmnext17_cc_conduct_window.json``.
 """
 
 from __future__ import annotations
@@ -30,7 +30,7 @@ REPO = Path(__file__).resolve().parents[2]
 BENCH = REPO / "frontend/data/backcast/bench/PJM"
 HOURLY = REPO / "results/calibration/pjmnext16_A_span/hourly"
 TRANCHES = REPO / "data/raw/_processed-legacy/thermal_tranches_PJM.csv"
-OUT = REPO / "results/calibration/_pjmnext17_cc_conduct_window.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext17_cc_conduct_window.json"
 YEARS = tuple(range(2019, 2026))
 SYNC = 0.01  # derive_thermal_tranches._SYNC_MW_NAMEPLATE_FRAC
 T = 8760

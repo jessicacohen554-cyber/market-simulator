@@ -1496,7 +1496,7 @@ class TestCleanTierRegionRows(unittest.TestCase):
 
     # ----------------------------------------------------------------- #
     # ARM3-FIX — the generator-column zone mask
-    # (docs/handoffs/arm3-clean-row-horizon-2026-08-09.md §3: fuel-only
+    # (docs/records/misc/arm3-clean-row-horizon-2026-08-09.md §3: fuel-only
     # resolution let MISO-South nuclear satisfy MI's East-only row).
     # ----------------------------------------------------------------- #
 

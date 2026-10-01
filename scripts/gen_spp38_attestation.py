@@ -16,7 +16,7 @@ key, so under ``eia860_vintage_tracks_solve_year`` year 1 of a span pinned its
 vintage's value for every later year. Two are direct LP inputs on SPP's keeper
 path — ``outages._iso_plant_capacity`` (the denominator of BOTH outage overlays)
 and ``campd_bins.cc_duct_peaking_pct`` (the CC peak offer band). Measured at zero
-LP in ``docs/handoffs/FINDING-spp-37-order-sensitivity-2026-09-12.md``; repaired
+LP in ``docs/records/spp/FINDING-spp-37-order-sensitivity-2026-09-12.md``; repaired
 by keying each cache on the active directory (rule 14 ``[R-ACCURATE]``).
 
 **ZERO free parameters are added and none is re-cut.** A cache key is not a

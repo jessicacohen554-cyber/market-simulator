@@ -26,7 +26,7 @@ daily PJM delivered gas price (within-year Pearson r < ``GAS_R_MAX``): a declare
 not a fuel identity. Hours: the offers' EPT hour-of-year (the ``_pjmnext11`` convention) is
 taken as the axis of the actual LMP, CAMPD and model series (lag 0); the best-correlation lag
 of each series is reported, not applied. Months whose offer file is absent are excluded from
-EVERY series (hour mask). Writes ``results/calibration/_pjmnext17_coal_offer_audit.json``.
+EVERY series (hour mask). Writes ``results/phase0/pjm/_pjmnext17_coal_offer_audit.json``.
 """
 
 from __future__ import annotations
@@ -58,7 +58,7 @@ T = 8760
 ACTUAL = REPO / "data/raw/_validation-source/actual_lmp_hourly_PJM.parquet"
 BENCH = REPO / "frontend/data/backcast/bench/PJM"
 HOURLY = REPO / "results/calibration/pjmnext16_A_span/hourly"
-OUT = REPO / "results/calibration/_pjmnext17_coal_offer_audit.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext17_coal_offer_audit.json"
 COAL = ("COAL_BIT", "COAL_PRB", "COAL_WC")
 BINS = (0.0, 15.0, 25.0, 35.0, 50.0, 75.0)
 BIN_LABELS = ("0-15", "15-25", "25-35", "35-50", "50-75", ">75")

@@ -2,7 +2,7 @@
   "what_this_is": "The shrink-only ratchet for gate G6_UNREGISTERED_SCHEMA_DRIFT (scripts/lib/key_provenance.py::unregistered_schema_drift). Each name is a ScenarioConfig field that is ABSENT from at least one committed run_config payload and is NOT registered in scenarios.py::_CACHE_KEY_OPTIONAL_FIELDS, so it enters the cache_key digest of every config newer than the record that lacks it. This is the HISTORICAL set as of capx D91; the list may only SHRINK. A name that is not here is a NEW unregistered field and fails G6.",
   "what_this_is_not": "NOT a waiver list for new fields. The remedy for a G6 failure is to REGISTER the field in _CACHE_KEY_OPTIONAL_FIELDS + _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS in the commit that adds it (rule 24 [R-REGISTRY], the nyiso-119 discipline) -- never to append it here. Adding a name to this file is a ratchet REGRESSION and the gate is written so that doing so is a visible, reviewable diff.",
   "established": "2026-09-09",
-  "established_by": "capx D91 (owner ruling Q64) \u2014 docs/handoffs/FINDING-capx-d91-2026-09-09.md",
+  "established_by": "capx D91 (owner ruling Q64) \u2014 docs/records/forecast/FINDING-capx-d91-2026-09-09.md",
   "exposed_by_records": [
     "tests/golden/ercot_2026_2040.run_config.json"
   ],

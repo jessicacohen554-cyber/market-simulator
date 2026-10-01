@@ -24,7 +24,7 @@ month where they disagree is not (rule 14 ``[R-ACCURATE]``).
 Measured over 2019-01..2025-12 the two series agree within **$0.85/MMBtu in
 82 of 84 months** and disagree in exactly two -- 2021-02 ($13.77) and
 2021-12 ($3.47) -- with no month in the factor-4.1 gap between them
-(``docs/PRECOMMIT-ercot261-gas-level-retirements-2026-09-09.md`` SS1c).
+(``docs/records/ercot/PRECOMMIT-ercot261-gas-level-retirements-2026-09-09.md`` SS1c).
 
 **Rule 23 ``[R-FROZEN-DERIVE]``**: this is a measured-behaviour derivation.
 Re-run it only when the EIA-923 source data updates, and cite the data change

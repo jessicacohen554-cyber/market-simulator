@@ -37,7 +37,7 @@ At ``fc927c2f`` that gap let this script report EXIT 0, *"15 known, ZERO
 unknown"*, while 199 of 200 committed records could not be reconstructed to
 their own recorded key because ``pjm_seam_neighbour_hourly_ladder`` landed
 without a registration entry (capx D91, owner ruling Q64,
-``docs/handoffs/FINDING-capx-d91-2026-09-09.md``). **G6 is the leg that would
+``docs/records/forecast/FINDING-capx-d91-2026-09-09.md``). **G6 is the leg that would
 have been red the day that field landed.** Read the "ok:" line below as the
 scope it states and nothing wider.
 

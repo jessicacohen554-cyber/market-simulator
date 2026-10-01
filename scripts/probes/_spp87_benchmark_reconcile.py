@@ -9,7 +9,7 @@ Reads only committed / on-disk inputs, never solves:
 * ``data/raw/campd-unit-level/<ST>_<Y>.parquet`` (CEMS gross, coal units of the scorer's coal plants);
 * ``data/raw/SWPP_fueltype.parquet`` (EIA-930) and ``data/raw/spp-genmix/GenMix_<Y>.csv`` (SPP portal).
 
-Writes ``results/calibration/_spp87_benchmark_reconcile.json``:
+Writes ``results/phase0/spp/_spp87_benchmark_reconcile.json``:
 
 * ``coal_gap`` — per year, EIA-930 coal minus the scorer's ``classFull`` coal, split into
   station service (CEMS gross − EIA-923 net, same plants), the combined-fossil reconcile scale,
@@ -40,7 +40,7 @@ import calibration_verdict as cv  # noqa: E402
 
 RUN_ID = "2026-09-26-spp-86-coal-extract"
 FRAME = REPO / "results/calibration/_shared/SPP/eia923-d4ff957f221a.parquet"
-OUT = REPO / "results/calibration/_spp87_benchmark_reconcile.json"
+OUT = REPO / "results/phase0/spp/_spp87_benchmark_reconcile.json"
 YEARS = range(2019, 2026)
 COAL_FUELS = {"BIT", "SUB", "LIG", "RC", "WC"}
 COAL = ("COAL_PRB", "COAL_LIGNITE", "COAL_BIT")

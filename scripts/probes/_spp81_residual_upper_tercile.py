@@ -1,6 +1,6 @@
 """SPP-81 (zero LP): what carries SPP's residual upper-tercile cost object?
 
-SPP-80 (``docs/handoffs/FINDING-spp-80-upper-tercile-premium-2026-09-25.md``) left, after
+SPP-80 (``docs/records/spp/FINDING-spp-80-upper-tercile-premium-2026-09-25.md``) left, after
 congestion, scarcity and delivered-gas basis, a residual in the real SPP hub's RT upper
 tercile (p67-p99, February excluded): MEC ex-scarcity divided by the ANNUAL delivered
 KS/OK/NE gas price sits +3.19 / +3.43 heat-rate units above 2019-21 in 2023 / 2024. This
@@ -20,7 +20,7 @@ probe measures three candidate carriers on SPP-80's exact hour set:
      against MEC at matched net load, and the residual split at 2022-03-01 / 2023-07-06.
 
 Solves nothing and writes nothing. Record:
-``docs/handoffs/FINDING-spp-81-residual-upper-tercile-2026-09-25.md``.
+``docs/records/spp/FINDING-spp-81-residual-upper-tercile-2026-09-25.md``.
 """
 
 from __future__ import annotations

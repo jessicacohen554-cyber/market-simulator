@@ -3,7 +3,7 @@
 
 **What this checks, and why it is the merge gate.** Owner ruling Q20 licensed
 option **(b′-1)** of
-``docs/handoffs/FINDING-capx-d24-cache-key-defect-2026-09-01.md`` §7: freeze
+``docs/records/forecast/FINDING-capx-d24-cache-key-defect-2026-09-01.md`` §7: freeze
 ``cache_key``'s drop comparison against the DECLARED default in
 ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS`` instead of the live one, re-baselined at
 **today's** declarations. Re-baselined that way the change is a measured no-op —
@@ -44,7 +44,7 @@ the comparison stays exact.
 Usage::
 
     uv run python scripts/probes/capxd24r_cache_key_no_op_check.py \
-        --out docs/handoffs/capxd24r-cache-key-no-op-record.json
+        --out docs/records/forecast/capxd24r-cache-key-no-op-record.json
 
 Exit code 0 iff every committed config hashes identically under both rules.
 """

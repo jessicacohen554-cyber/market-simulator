@@ -1,6 +1,6 @@
 """NYISO-NEXT-10 phase 0 (ZERO LP): does each seam's flow follow its OWN spread?
 
-Implements ``docs/PRECOMMIT-nyiso-next10-seam-spread-phase0-2026-09-28.md``
+Implements ``docs/records/nyiso/PRECOMMIT-nyiso-next10-seam-spread-phase0-2026-09-28.md``
 (committed before any statistic here was computed).  For every NYISO seam group
 it aligns, on ``interval_start_utc``:
 
@@ -13,7 +13,7 @@ it aligns, on ``interval_start_utc``:
 and reports Spearman rho of flow vs spread (landing and proxy) and vs the NY
 price, then applies the PRECOMMIT's S1-S3 rule.  Reads raw inputs only.
 
-Output: ``results/calibration/_nyisonext10_phase0.json``.
+Output: ``results/phase0/nyiso/_nyisonext10_phase0.json``.
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ YEARS = (2021, 2022, 2023, 2024, 2025)
 RAW = REPO / "data" / "raw"
 SNP = RAW / "seam-neighbour-price"
 FLOW_DIR = RAW / "NYISO" / "interface-flows"
-OUT = REPO / "results" / "calibration" / "_nyisonext10_phase0.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyisonext10_phase0.json"
 
 #: PRECOMMIT §2 table: group -> (SCH rows, NY landing zone, NY proxy, neighbour key)
 GROUPS: dict[str, tuple[tuple[str, ...], str | None, str, str]] = {

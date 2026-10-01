@@ -18,7 +18,7 @@ re-send the entire updated artifact in one block, not a diff or an addendum.
 
 LP-based electricity market dispatch simulator. Forecasting model (2026–2050) with a historical-backcast mode for calibration. Multi-region: nine regions registered in `config/iso_configs.py` — ERCOT (7 zones, 6 carry load; the calibrated reference), CAISO (5 zones + WECC import node), PJM (8 zones), MISO (6 zones), NYISO (5 zones), NEISO (4 zones + HQ import node), SPP (2 zones), NWPP (5 whole-BA zones; a pool of 17 WECC balancing authorities, not an ISO) and SOCO (3 zones; the Southern Company balancing authority, no LMP market) — sharing one ISO-agnostic LP. "ISO" below means any registered region. Hourly 8760 dispatch, parameterized scenario system.
 
-**Forecast vs backcast:** the model forecasts by default; the switch is the explicit `ScenarioConfig.mode` field (`"forecast"`/`"backcast"`), never inferred from other parameters. Historic overlays — CAMPD outage windows, F923 delivered fuel prices, **same-year plant-specific CEMS emission rates**, weather-year pinning — are **backcast/calibration only**; never treat them as the forecast methodology. (Forecast-year emission rates for existing units are *derived from* multi-year CAMPD history conditioned on model-simulated operation — a rule-13-admissible measured input, not an overlay; see `docs/handoffs/emissions-co2-rate-plan-2026-07.md`.)
+**Forecast vs backcast:** the model forecasts by default; the switch is the explicit `ScenarioConfig.mode` field (`"forecast"`/`"backcast"`), never inferred from other parameters. Historic overlays — CAMPD outage windows, F923 delivered fuel prices, **same-year plant-specific CEMS emission rates**, weather-year pinning — are **backcast/calibration only**; never treat them as the forecast methodology. (Forecast-year emission rates for existing units are *derived from* multi-year CAMPD history conditioned on model-simulated operation — a rule-13-admissible measured input, not an overlay; see `docs/records/misc/emissions-co2-rate-plan-2026-07.md`.)
 
 ## Stack
 
@@ -215,7 +215,7 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       `model-methodology-spec.md`, or `.github/workflows/` — are assigned to **Opus or Fable,
       never Sonnet**. Sonnet remains eligible only for purely additive data-intake/docs sessions
       (new files under `data/raw/` + handoff docs). For the retirement-calibration lane
-      specifically (`docs/handoffs/forecast-retirement-calibration-plan-2026-07.md`), **ALL
+      specifically (`docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md`), **ALL
       remaining sessions are Opus/Fable regardless of scope** (owner order, this rule's
       incident).
 1. `[R-MECH-MATRIX]` **The cross-ISO mechanism matrix is the single test ledger — check it before
@@ -314,7 +314,7 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     ruled on promotion.** A screen bundle, and any control bundle a screen earns under
     (b)'s LIVE-hunk case, must not be committed or merged *(owner
     ruling R-AV, audit-program director sitting 2026-09-05, verbatim: "Delete before merge";
-    executed by Y-13, `docs/handoffs/FINDING-y13-ci-plumbing-2026-09-05.md`)*. The PRECOMMIT /
+    executed by Y-13, `docs/records/governance/FINDING-y13-ci-plumbing-2026-09-05.md`)*. The PRECOMMIT /
     FINDING doc carries **every number the session will ever cite** from such a bundle — the
     gate table with its values, the control differencing, the verdict — so the record is the
     doc, never the parquet, and git history is the record for the bytes exactly as rule 15
@@ -682,7 +682,7 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       ~651 ignores `results/calibration/*/dispatch/` repo-wide on the stated belief that
       "~80 MB would trip the remote's 413 push limit" — a belief FALSIFIED the same day:
       102,367,743 bytes pushed as a single-blob pack over plain `git push` with no 413.
-      Full chain: `docs/FINDING-miso255-why-the-dispatch-pushes-failed-2026-09-12.md`.)*
+      Full chain: `docs/records/miso/FINDING-miso255-why-the-dispatch-pushes-failed-2026-09-12.md`.)*
       **The bundle MUST include `dispatch/<year>_P1.parquet`** — `render_calibration_html.
       build_payload` reads it per year and registration raises `FileNotFoundError` without
       it. Committed precedent: `caiso275_B_gascoupling_{2022,2023,2024,2025}` (45-49 MB
@@ -797,7 +797,7 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     moves 24 TWh off CC_REGULAR at a $54.52/MWh median `mc` onto coal at $31.93 to serve
     identical demand, ~$500 M of objective, so the warm-started solve was not at the
     optimum. Record:
-    `docs/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md`.)*
+    `docs/records/miso/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md`.)*
     - **(a) THE RULE.** Every year of a backcast span is solved in its OWN shard, its own
       container, its own `--out-dir`, from ONE `--years <single year>` invocation. The
       parent composes the per-year bundles afterwards — a zero-LP file operation
@@ -875,9 +875,9 @@ dump_cost = max(ε, -min(wind_mc, solar_mc) + ε) — prevents gaming of negativ
 
 Mechanism detail is the spec's job (§5.2–§5.9) and the code's; what CLAUDE.md pins is which gate owns which step:
 
-- **Step 0, confirmed exits** — `data.confirmed_retirements.load_confirmed_exits` over `data/raw/confirmed-retirements`, GATED `confirmed_exits_enabled` (default on), forecast-mode only. A row needs an enforceable public instrument (RTO deactivation acceptance, consent decree, statute, regulatory order, RMR end); this is the **instrument-bound** exogenous fossil exit channel and it **bypasses the reliability floor**. *(It was the ONLY one until owner ruling Q30, 2026-09-02, armed the owner-filed-date limb at step 1b below — which is a different admissibility class: an owner's filed plan, not a binding instrument, and it rides this step's machinery.)* Hindcast information gate: a row applies only when `instrument_date` ≤ the vintage cutoff. (Spec §5.1–§5.2; `docs/handoffs/confirmed-retirement-plan-2026-07.md`.)
-- **Step 1, announced retirements** — `apply_announced_retirements`, `load_announced_reversal_plants`, `EIA860_OPERABLE_VINTAGE + NONFOSSIL_ANNOUNCED_HORIZON_YEARS` (default 5) bounds honored non-fossil dates. **For FOSSIL the owner's own filed EIA-860 Schedule-3 date is honored as an exogenous step-1 input** — limb 1b, `fossil_announced_exits_enabled` **default ON since 2026-09-02** (owner ruling Q30 on the capx D42 A/B, executed by D44) — **vintage-gated** (a date is admissible in year Y only because it was on file at the run's information cutoff, the same gate step 0 applies to `instrument_date`, and the identical construction regenerates for a forecast year from the then-current 860), with the **reversal registry armed** (a plant countered by a later public instrument is dropped; under `hindcast_verified_announced_exits` a re-filed or withdrawn date is honored per unit as the later vintage's information — it may defer or cancel a vintage exit, never inject or advance one). The rows ride step 0's own matcher/derate machinery, so they bypass the reliability floor like every exogenous exit. Rule 19 `[R-ONE-MECH]`: a plant carrying a pending filed date is **exempt from the economic screen**, which therefore decides only the **residual UNDATED fleet** — no unit's exit is decided twice, and `forecast_fossil_retirement_economic` (default True) now governs only what the date channel does not reach. Evidence: MISO T1-H unit recall 5/19 → 16/19, every non-coal exit class opened, `false_retire` 0.0, **zero** economic exits displaced (`docs/handoffs/FINDING-capx-d42-fossil-dates-ab-2026-09-02.md`). What it does not close, stated at the gate: the undated cohort, the December-dated majority-of-year roll into the next year, and genuine deferrals. (Spec §5.1.)
-- **Step 2, CCS retrofit** — `ccs_retrofit_available_year`, `eac_price_gas_cc_ccs`, `ira_ccus_45q_last_year`, `ira_45q_credit_window_years`; ≥15 yr remaining life, 3 GW/yr/ISO cap, valued as the **incremental uplift over the best unabated state**, screened jointly with retirement. `ccs_retrofit_capex_co2_scaling` (capx D50, **default ON since 2026-09-05** — owner ruling Q42 on the D50/D50-R A/B, executed by capx D60): sizes the capture island to the host's captured CO2 against the ATB reference host (0.323 t/MWh — the same host the new-build CCS LCOE charges the ATB increment against, zero DOF) and excludes CC_CHP hosts — the D49 §1.5 construction repair of the flat-per-kW seam, under which the retrofit margin had risen with host emissions. A **posture, not a transfer** (rule 25 `[R-ISO-SCOPE]` intact: no ISO's fitted number is carried), landed as a (b′-1) declared default flip with the frozen cache-key drop value left at `False`, so an explicit `False` still selects the pre-flip construction and keeps its key. Inert below `ccs_retrofit_available_year` (2028) by construction, so every backcast, hindcast and crossover horizon is byte-identical. Evidence: at carbon 0 the repair closes the screen (ERCOT 3.79 GW → 0; PJM 5.74 → 0 in 2028; MISO 4,631.1 MW → 0 across the window) and under RGGI it does not (NEISO 12.79 → 12.38 GW) — the asymmetry, not the level, is its signature (`docs/handoffs/FINDING-capx-d50-2026-09-04.md`). (Spec §5.6.)
+- **Step 0, confirmed exits** — `data.confirmed_retirements.load_confirmed_exits` over `data/raw/confirmed-retirements`, GATED `confirmed_exits_enabled` (default on), forecast-mode only. A row needs an enforceable public instrument (RTO deactivation acceptance, consent decree, statute, regulatory order, RMR end); this is the **instrument-bound** exogenous fossil exit channel and it **bypasses the reliability floor**. *(It was the ONLY one until owner ruling Q30, 2026-09-02, armed the owner-filed-date limb at step 1b below — which is a different admissibility class: an owner's filed plan, not a binding instrument, and it rides this step's machinery.)* Hindcast information gate: a row applies only when `instrument_date` ≤ the vintage cutoff. (Spec §5.1–§5.2; `docs/records/misc/confirmed-retirement-plan-2026-07.md`.)
+- **Step 1, announced retirements** — `apply_announced_retirements`, `load_announced_reversal_plants`, `EIA860_OPERABLE_VINTAGE + NONFOSSIL_ANNOUNCED_HORIZON_YEARS` (default 5) bounds honored non-fossil dates. **For FOSSIL the owner's own filed EIA-860 Schedule-3 date is honored as an exogenous step-1 input** — limb 1b, `fossil_announced_exits_enabled` **default ON since 2026-09-02** (owner ruling Q30 on the capx D42 A/B, executed by D44) — **vintage-gated** (a date is admissible in year Y only because it was on file at the run's information cutoff, the same gate step 0 applies to `instrument_date`, and the identical construction regenerates for a forecast year from the then-current 860), with the **reversal registry armed** (a plant countered by a later public instrument is dropped; under `hindcast_verified_announced_exits` a re-filed or withdrawn date is honored per unit as the later vintage's information — it may defer or cancel a vintage exit, never inject or advance one). The rows ride step 0's own matcher/derate machinery, so they bypass the reliability floor like every exogenous exit. Rule 19 `[R-ONE-MECH]`: a plant carrying a pending filed date is **exempt from the economic screen**, which therefore decides only the **residual UNDATED fleet** — no unit's exit is decided twice, and `forecast_fossil_retirement_economic` (default True) now governs only what the date channel does not reach. Evidence: MISO T1-H unit recall 5/19 → 16/19, every non-coal exit class opened, `false_retire` 0.0, **zero** economic exits displaced (`docs/records/forecast/FINDING-capx-d42-fossil-dates-ab-2026-09-02.md`). What it does not close, stated at the gate: the undated cohort, the December-dated majority-of-year roll into the next year, and genuine deferrals. (Spec §5.1.)
+- **Step 2, CCS retrofit** — `ccs_retrofit_available_year`, `eac_price_gas_cc_ccs`, `ira_ccus_45q_last_year`, `ira_45q_credit_window_years`; ≥15 yr remaining life, 3 GW/yr/ISO cap, valued as the **incremental uplift over the best unabated state**, screened jointly with retirement. `ccs_retrofit_capex_co2_scaling` (capx D50, **default ON since 2026-09-05** — owner ruling Q42 on the D50/D50-R A/B, executed by capx D60): sizes the capture island to the host's captured CO2 against the ATB reference host (0.323 t/MWh — the same host the new-build CCS LCOE charges the ATB increment against, zero DOF) and excludes CC_CHP hosts — the D49 §1.5 construction repair of the flat-per-kW seam, under which the retrofit margin had risen with host emissions. A **posture, not a transfer** (rule 25 `[R-ISO-SCOPE]` intact: no ISO's fitted number is carried), landed as a (b′-1) declared default flip with the frozen cache-key drop value left at `False`, so an explicit `False` still selects the pre-flip construction and keeps its key. Inert below `ccs_retrofit_available_year` (2028) by construction, so every backcast, hindcast and crossover horizon is byte-identical. Evidence: at carbon 0 the repair closes the screen (ERCOT 3.79 GW → 0; PJM 5.74 → 0 in 2028; MISO 4,631.1 MW → 0 across the window) and under RGGI it does not (NEISO 12.79 → 12.38 GW) — the asymmetry, not the level, is its signature (`docs/records/forecast/FINDING-capx-d50-2026-09-04.md`). (Spec §5.6.)
 - **Step 3, economic retirement** — screens the **attainable (pro-forma) inframarginal margin**, `Σ_t max(0, price − full variable cost, reserve price) × pmax × availability` (Potomac-SOM net revenue, `mc_cost` via `prior_results`): **never gross revenue, never realized dispatch**. Against FOM-only going-forward cost. Per-fuel thresholds are `ScenarioConfig` fields, not hardcoded, and apply to the **legacy** rule only (`retirement_rule="legacy"`; under the pipeline rule the decision is uniform and the per-fuel physics lives in `retirement_execution_lag_*`): coal=3yr, gas_ct=2yr, gas_cc=3yr; coal FOM multiplier 1.3×. *(Corrected 2026-08-02 by FFR-3B: this read "coal=1yr", but `scenarios.py` ships `retirement_years_coal: int = 3`, identified under rule 23 to the EIA-860 announced-to-deactivation capacity-weighted/≥300 MW median of 3 yr. Code is the source of truth.)* `screen_reserve_value_enabled` (default on) — the co-opt's own reserve duals under `ercot_thermal_as_endogenous`, else the ORDC scarcity adder; when present it is the **SOLE** thermal AS pricing (rule 19 `[R-ONE-MECH]`). Floor: `accredited_firm_capacity_mw` vs `peak × (1 + PLANNING_RESERVE_MARGIN_BY_ISO)`, one requirement shared with the build backstop, `floor_retention_log` attribution. (Spec §5.2.)
 - **Steps 4–5, additions and entry** — `load_planned_additions` (EIA-860 proposed pipeline, construction-committed statuses, forecast mode only). **RPS is not a force-build step** — it is an annual LP constraint whose dual is the REC price. (Spec §5.3–§5.4, §1.4.)
 - **Storage entry** — an economics-based **value stack, not compound growth**: arbitrage net of cycling degradation **plus** RA capacity value, paid only where the per-ISO `MARKET_DESIGN` registry has a capacity market (energy-only ERCOT pays none). `STORAGE_TECH_BUILD_SHARE_CAP`, base-year fleet `storage_deployment` with all later growth endogenous; toggles `storage_capacity_value`, `storage_degradation`. (Spec §5.5.)
@@ -902,13 +902,13 @@ Mechanism detail is the spec's job (§5.2–§5.9) and the code's; what CLAUDE.m
 
 Mechanism detail: spec §1.6. Per-limb floor overrides accept an optional fourth key segment selecting one `ramp_group` (`"<ZONE>:<CLASS>:<driver>:<ramp_group>"`, `_none` for the ungrouped step limbs) — needed wherever one (zone, class, driver) mixes an always-on base with a windowed ramp family.
 
-The ERCOT offer-surface and negative-price variants (`ercot_offer_surface_lowcurve`, `ercot_offer_surface_lowcurve_floorscoped`, `wind_ptc_vintage_offers`, `negative_renewable_offers`) all stay **default-off** — probe-refuted, probe-adjudicated provably inert, or rule-25 `[R-ISO-SCOPE]`-refused. Adjudications, the trough/spread lane's frontier status, and the reasoning that **CLOSED the West/Panhandle topology split** (do not re-open it as a topology change) are in `docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§7–10.
+The ERCOT offer-surface and negative-price variants (`ercot_offer_surface_lowcurve`, `ercot_offer_surface_lowcurve_floorscoped`, `wind_ptc_vintage_offers`, `negative_renewable_offers`) all stay **default-off** — probe-refuted, probe-adjudicated provably inert, or rule-25 `[R-ISO-SCOPE]`-refused. Adjudications, the trough/spread lane's frontier status, and the reasoning that **CLOSED the West/Panhandle topology split** (do not re-open it as a topology change) are in `docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§7–10.
 
 ## Fleet Representation
 
 ERCOT default is **CAMPD per-plant binning** (`use_campd_bins=True`): one LP unit per plant, each split into must-run / committed / economic / peaking tranches forming a rising offer curve (coal take-or-pay + PRB sigmoid passthrough). See `docs/binning-methodology.md`. Other ISOs / `use_campd_bins=False` use legacy equal-width heat-rate bins.
 
-**Coal always carries its subclass; there is no `COAL` class** (owner instruction 2026-09-25, verbatim: *"we need to completely eliminate the class Coal From the model altogether all coal should be sorted into its subclass"*). Every coal generator's `plant_group` is `COAL_LIGNITE` / `COAL_PRB` / `COAL_BIT` / `COAL_WC` (`plant_taxonomy.COAL_CLASSES`), resolved at load by `data.coal.coal_subclass` through the `coal_supply_class` chain: curated ERCOT map → EIA-923 receipts → EIA-860 retiree rank → partial-exit registry → the unit's own EIA-860 energy-source code (the benchmark's own fuel-code map). A unit none of these reaches raises; a subclass is never invented. `"COAL"` survives only as the committed artifacts' coal-family token (`plant_taxonomy.COAL_ARTIFACT_FAMILY`), matched through `artifact_class` by the artifact joins and the across-coal aggregates (reliability-floor limbs, ERCOT class availability, online-capacity envelopes, winter fuel security). No generator ever carries that token, and a config naming it is refused (`BareCoalClassError`); `replay_keeper` translates older keeper recipes. Record: `docs/handoffs/RESULT-coal-sub-2026-09-25.md`.
+**Coal always carries its subclass; there is no `COAL` class** (owner instruction 2026-09-25, verbatim: *"we need to completely eliminate the class Coal From the model altogether all coal should be sorted into its subclass"*). Every coal generator's `plant_group` is `COAL_LIGNITE` / `COAL_PRB` / `COAL_BIT` / `COAL_WC` (`plant_taxonomy.COAL_CLASSES`), resolved at load by `data.coal.coal_subclass` through the `coal_supply_class` chain: curated ERCOT map → EIA-923 receipts → EIA-860 retiree rank → partial-exit registry → the unit's own EIA-860 energy-source code (the benchmark's own fuel-code map). A unit none of these reaches raises; a subclass is never invented. `"COAL"` survives only as the committed artifacts' coal-family token (`plant_taxonomy.COAL_ARTIFACT_FAMILY`), matched through `artifact_class` by the artifact joins and the across-coal aggregates (reliability-floor limbs, ERCOT class availability, online-capacity envelopes, winter fuel security). No generator ever carries that token, and a config naming it is refused (`BareCoalClassError`); `replay_keeper` translates older keeper recipes. Record: `docs/records/misc/RESULT-coal-sub-2026-09-25.md`.
 
 ## Naming Conventions
 
@@ -955,7 +955,7 @@ GitHub: `refs/pull/*` still pins the pre-rewrite objects, ~20 GiB.)
   **The 2026-08-16 history rewrite stripped the untracked payloads from history
   too — "the bytes stay recoverable forever" is FALSE as of that date, and the
   README pin shas / `git restore --source=<pin>` commands are dead** (repaired
-  in place; `docs/FINDING-history-rewrite-2026-08-16.md`). What each corpus
+  in place; `docs/records/governance/FINDING-history-rewrite-2026-08-16.md`). What each corpus
   README now carries: the verified source-URL table, the re-fetch command (the
   primary recovery route), the honest retention status — some payloads are
   **unrecoverable from this repository** (the CAISO OASIS GRP dailies; pre-slim
@@ -970,17 +970,17 @@ GitHub: `refs/pull/*` still pins the pre-rewrite objects, ~20 GiB.)
   `eia-930` per-BA long files + 2018 BALANCE halves, the `campd-unit-level`
   2018 vintage, and the two `iso-specific-transmission` PJM-2018 drops
   (−444.5 MiB at tip; per-corpus verdicts incl. what deliberately STAYS
-  tracked: `docs/FINDING-bloat-s2-evidence-passes-2026-08-17.md`).
+  tracked: `docs/records/governance/FINDING-bloat-s2-evidence-passes-2026-08-17.md`).
 
 `.github/workflows/cleanup-large-blobs.yml` **was executed for real on
 2026-08-16** (run 31955205445 — an explicit owner decision superseding the
-former standing NO-GO of `docs/FINDING-rewrite-prep-2026-08-11.md` §8 /
+former standing NO-GO of `docs/records/governance/FINDING-rewrite-prep-2026-08-11.md` §8 /
 Addendum AQ; that NO-GO is annotated as superseded, not deleted). It stripped
 7,254 superseded blobs / 7,373.4 MiB and force-pushed the rewritten history —
 which is why every pre-2026-08-16 commit-sha citation outside
 `docs/governance/citation-commit-map.txt` is now a dead (or, for short
 prefixes, possibly WRONG) reference. Full record and the post-rewrite
-recovery rules: `docs/FINDING-history-rewrite-2026-08-16.md`. Any FUTURE
+recovery rules: `docs/records/governance/FINDING-history-rewrite-2026-08-16.md`. Any FUTURE
 rewrite remains owner-gated and must archive its commit-map artifacts first
 (finding §7 open item 2).
 
@@ -1014,7 +1014,7 @@ byte-identical to local. Both transports are live:
   reason it cannot carry a run payload — which is exactly when to use
   `git push` instead. A sidecar pushed without its payload is silently
   invisible in the Run Explorer; that cap is what stranded runs sidecar-only
-  (see `docs/handoffs/dashboard-payload-push-gap-2026-07.md`).
+  (see `docs/records/misc/dashboard-payload-push-gap-2026-07.md`).
 
 Workflow:
 

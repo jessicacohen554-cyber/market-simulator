@@ -3069,7 +3069,7 @@ def load_renewable_profiles(
     # [R-ACCURATE]: measured beats the constant). ``None`` for a plain forecast
     # and for a hindcast carrying no vintage — both keep the constant, so the
     # production forecast path is untouched. See
-    # docs/handoffs/ffr-3v-fix-2026-08-08.md.
+    # docs/records/forecast/ffr-3v-fix-2026-08-08.md.
     hindcast_vintage: int | None = None
     if (
         config.mode != "backcast"

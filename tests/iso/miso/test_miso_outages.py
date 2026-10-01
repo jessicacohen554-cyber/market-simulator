@@ -6,7 +6,7 @@ interface. No network, no real MISO files.
 
 (The `ScenarioConfig.miso_native_outage_source` gate + the `fleet.py` seam that
 select this overlay in a solve are a paste-ready follow-up in
-``docs/handoffs/miso-native-outage-wiring-2026-07.md`` — not applied to the
+``docs/records/miso/miso-native-outage-wiring-2026-07.md`` — not applied to the
 solve path in the intake commit — so the gate/cache-key assertions live there,
 not here.)
 """

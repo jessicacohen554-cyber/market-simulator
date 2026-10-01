@@ -10,7 +10,7 @@ alternate vintage is a temp directory of symlinks.
 
 The gate (charter §5 task 3): **max |class-hour delta| = 0.000000 MW**. The
 known risk is the redistribution defect
-``docs/FINDING-pjm-retiree-window-redistribution-2026-09-09.md`` names, whose
+``docs/records/pjm/FINDING-pjm-retiree-window-redistribution-2026-09-09.md`` names, whose
 NEISO exposure is Mystic Generating Station (521.5 MW).
 
 Usage::

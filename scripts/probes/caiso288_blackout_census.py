@@ -23,7 +23,7 @@ caiso-289 — WHY THIS HARNESS HAD TO BE RE-RUN. Both gates above were originall
 measured on the UNREPAIRED series. caiso-288 then recovered **85 published
 prints** that ``fetch_caiso_citygate_daily.parse_spot_table`` had been throwing
 away (1,806 -> 1,891 rows;
-``docs/RESULT-caiso288-the-prints-were-published-2026-09-20.md``), which changes
+``docs/records/caiso/RESULT-caiso288-the-prints-were-published-2026-09-20.md``), which changes
 the very histogram G-CENSUS identifies the threshold on and adds 3,382 days to
 G-FILL's holdout. Re-running them is a rule 23 [R-FROZEN-DERIVE] re-derivation
 cited to a SOURCE-DATA change, never to a residual. Both verdicts survive; the
@@ -35,7 +35,7 @@ G-FOOT289 is the new gate, and it is the decision-relevant one: it measures what
 REPAIRED series, per year, and decomposes that into the two separate channels
 the single flag carries — the blackout interiors (the mechanism) and the
 year-start left edge (an undeclared convention change that is not the
-mechanism). See ``docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md``.
+mechanism). See ``docs/records/caiso/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md``.
 """
 import json
 import sys, collections, numpy as np, pandas as pd
@@ -48,7 +48,7 @@ from market_sim.data.fuel.hubs import (
     _GAS_BLACKOUT_MIN_GAP_DAYS,
 )
 
-OUT = Path("results/calibration/_caiso289_postrepair_audit.json")
+OUT = Path("results/phase0/caiso/_caiso289_postrepair_audit.json")
 
 #: CAISO CC_REGULAR cap-weighted base heat rate, MMBtu/MWh — converts a
 #: $/MMBtu fuel error into the $/MWh marginal-cost error it causes. Identical to

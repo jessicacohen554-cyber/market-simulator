@@ -1,7 +1,7 @@
 """SPP-78 shard self-check: control == bundle recipe, arm == control + the three measured-HR fields.
 
 Run by each SPP-78 shard AFTER both solves and BEFORE it pushes (rule 32(c)(4) hard stops).
-Zero LP. Pre-registered in ``docs/handoffs/PRECOMMIT-spp-78-measured-heat-rates-2026-09-24.md`` §4
+Zero LP. Pre-registered in ``docs/records/spp/PRECOMMIT-spp-78-measured-heat-rates-2026-09-24.md`` §4
 and its ADDENDUM. Adapted from ``_spp75_shard_check.py`` (same recipe diff, same readout frame).
 
 1. **recipe** — the control's ``scenario_config`` equals the keeper/rung bundle's for the year

@@ -5,7 +5,7 @@ value stamped s with the mean of CAISO Outlook 5-minute samples over the hour
 window ending at s + tau (Outlook wall clock converted to UTC independently).
 tau = 0 is the true clock; tau = +60 is a clean one-hour-early stamp.
 Measured: NG: SUN / NG: NG / NG: WND peak at tau = +45 min; -Total interchange
-peaks at tau = 0 (docs/handoffs/r-caiso-17/PRECOMMIT-r-caiso-17-2026-09-30.md).
+peaks at tau = 0 (docs/records/caiso/r-caiso-17/PRECOMMIT-r-caiso-17-2026-09-30.md).
 """
 
 import sys

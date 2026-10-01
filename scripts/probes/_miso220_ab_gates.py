@@ -3,7 +3,7 @@
 Scores the non-steam fossil ×1.10 offer lift (arm) against the designated keeper
 (control, rule 29(b) form 4 — the keeper's committed bundle, never re-solved) on the
 kills and predictions frozen in
-``results/calibration/PREREG-miso220-nonsteam-offer-lift-2026-09-05.md``.
+``docs/records/miso/PREREG-miso220-nonsteam-offer-lift-2026-09-05.md``.
 
 Every band and threshold below is transcribed from that PREREG. The control's C1 /
 C3a / C8 numbers are frozen as literals from its own ``calibration_verdict --json``
@@ -22,7 +22,7 @@ Kills (PREREG §6):
 PROMOTION RULE (frozen): promote iff K-1, K-2, K-4 and K-5 are ALL silent AND
 C3a-2025 lands inside +/-10 %.
 
-Record: ``results/calibration/_miso220_ab_gates.json``. Exit 0 always — the verdict
+Record: ``results/phase0/miso/_miso220_ab_gates.json``. Exit 0 always — the verdict
 is the record, not the exit code.
 """
 
@@ -36,7 +36,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 CONTROL = REPO / "results/calibration/miso217_intermphys_B"
 ARM = REPO / "results/calibration/miso220_nonsteamlift_B"
-OUT = REPO / "results/calibration/_miso220_ab_gates.json"
+OUT = REPO / "results/phase0/miso/_miso220_ab_gates.json"
 
 C1_BAND_TWH = 8.00
 C3A_BAND_PCT = 10.0
@@ -227,7 +227,7 @@ def main() -> int:
     promote = (not k1) and (not k2) and (not k4) and (not k5) and abs(a3a.get(2025, 99)) <= C3A_BAND_PCT
     rep = {
         "probe": "miso-220 A/B gates - non-steam fossil x1.10 offer lift",
-        "prereg": "results/calibration/PREREG-miso220-nonsteam-offer-lift-2026-09-05.md",
+        "prereg": "docs/records/miso/PREREG-miso220-nonsteam-offer-lift-2026-09-05.md",
         "control": str(CONTROL.relative_to(REPO)),
         "arm": str(ARM.relative_to(REPO)),
         "kills": {

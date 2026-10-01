@@ -1,6 +1,6 @@
 """SPP-91 stage 1 (ZERO LP): hourly per-plant series of SPP-90's FLAT on-line coal shortfall.
 
-Record: ``docs/handoffs/FINDING-spp-91-flat-coal-headroom-2026-09-27.md``.
+Record: ``docs/records/spp/FINDING-spp-91-flat-coal-headroom-2026-09-27.md``.
 
 Reproduces, per keeper coal plant and hour, SPP-90's ``below_weekcap_flat`` component
 (``_spp90_coal_inmoney_conduct.py``, identical definitions): units ON line, output flat

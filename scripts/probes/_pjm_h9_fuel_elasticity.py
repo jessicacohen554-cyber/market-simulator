@@ -1,7 +1,7 @@
 """pjm-h9 phase 0 (M2) — split PJM's masked LONG_RUN fleet by MEASURED fuel-cost passthrough.
 
 ZERO LP. Rule 29 ``[R-SCREEN]`` clause 0, rule 32 ``[R-SHARD]`` (a).
-Pre-registration: ``docs/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md`` §6.
+Pre-registration: ``docs/records/pjm/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md`` §6.
 **CORROBORATIVE ONLY** — M1 (``_pjm_h9_longrun_mixture_bound.py``) is the load-bearing
 measurement and the PRECOMMIT's decision rule reads M1 alone. A point estimate cannot
 overturn a bound; it can only locate the coal-only value inside one.
@@ -83,7 +83,7 @@ from scripts.data.derive_pjm_offer_surface import (  # noqa: E402
 )
 from scripts.probes._pjm_h9_longrun_mixture_bound import quantile  # noqa: E402
 
-OUT = REPO / "results/calibration/_pjm_h9_fuel_elasticity.json"
+OUT = REPO / "results/phase0/pjm/_pjm_h9_fuel_elasticity.json"
 
 #: Share the elasticity is estimated at (PRECOMMIT §6), plus the reported robustness set.
 BETA_SHARE = 0.55
@@ -200,7 +200,7 @@ def main(argv: list[str] | None = None) -> int:
             "per-unit log-log elasticity of the offer on the delivered-gas day price "
             "(calendar-month fixed effects); beta~1 = gas-fired, beta~0 = coal-fired"
         ),
-        "precommit": "docs/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md",
+        "precommit": "docs/records/pjm/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md",
         "role": "CORROBORATIVE ONLY -- M1's bound is the load-bearing measurement",
         "beta_share": BETA_SHARE,
         "gas_threshold": GAS_THRESHOLD,

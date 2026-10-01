@@ -52,7 +52,7 @@ over out-of-merit hours was admissible; the p50 variants recover ~4 TWh/yr more
 but assert ~2 TWh/yr in hours the plants' own meters say they did not operate
 (1.7-2.1 x the incumbent's over-assertion share), which rule 17
 ``[R-FLOOR-WINDOW]`` makes a bug by definition. Record:
-``results/calibration/_miso198_level_selection.json``.
+``results/phase0/miso/_miso198_level_selection.json``.
 
 **Second conditioning set, ``--condition lambda`` (lane soco-83, owner rulings
 2026-09-28 on the soco-83 decision cards: "Build ST out-of-merit floor" and

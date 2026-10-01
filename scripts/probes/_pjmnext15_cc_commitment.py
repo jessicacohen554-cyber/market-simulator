@@ -13,7 +13,7 @@ The model's extra on-hours (model on, actual off) are bucketed by the length of 
 off-run that contains them: < 24 h (cycled off overnight/weekend), 1-7 d, >= 7 d.
 
 Aggregated per year by actual-CF third (plant-weighted by nameplate, ranked by actual CF
-within the year) and by zone. Writes ``results/calibration/_pjmnext15_cc_commitment.json``.
+within the year) and by zone. Writes ``results/phase0/pjm/_pjmnext15_cc_commitment.json``.
 
 Stated limits: plant level, not unit level (a 2x1 CC running one CT is "on"); CAMPD bytes
 are 1 % CF, so ``ON_FRAC`` is re-run at 2 % and 10 %.
@@ -32,7 +32,7 @@ import numpy as np
 REPO = Path(__file__).resolve().parents[2]
 BENCH = REPO / "frontend/data/backcast/bench/PJM"
 RUN = REPO / "frontend/data/backcast/runs/2026-09-28-pjm-next8-exitfix.js"
-OUT = REPO / "results/calibration/_pjmnext15_cc_commitment.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext15_cc_commitment.json"
 YEARS = (2019, 2020, 2021, 2022, 2023, 2024, 2025)
 KLASS = "CC_REGULAR"
 ON_FRACS = (0.02, 0.05, 0.10)

@@ -48,7 +48,7 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 CACHE = REPO / "results" / "calibration" / "_nyiso245_cache"
-OUT = REPO / "results" / "calibration" / "_nyiso248_conditioner_swap.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso248_conditioner_swap.json"
 YEARS = (2022, 2023, 2024, 2025)
 HOURS = 8760
 NETLOAD_PCTS = (0.80, 0.90, 0.97)

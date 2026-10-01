@@ -156,7 +156,7 @@ def main() -> None:
             "committed": committed,
         }
 
-    out = REPO / "results" / "calibration" / "_neiso93_nuclear_crossval.json"
+    out = REPO / "results" / "phase0" / "neiso" / "_neiso93_nuclear_crossval.json"
     out.write_text(json.dumps(report, indent=2))
     print(f"\nwrote {out}")
 

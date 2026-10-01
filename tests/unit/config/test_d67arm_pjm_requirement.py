@@ -53,7 +53,7 @@ FIELD = "capacity_adequacy_requirement_published_by_iso"
 #: RE-MEASURED 2026-09-07 for capx D78-ARM: owner ruling Q56 arms
 #: ``retirement_sector_gate`` on ``_pjm_config`` — the next arm this note
 #: anticipated — moving bare ``b518f5fe7d02f961`` -> ``fb16fda2ddb0a94a``
-#: (``docs/handoffs/d78arm/keys_measured.json``, the PRECOMMIT §2 literal).
+#: (``docs/records/forecast/d78arm/keys_measured.json``, the PRECOMMIT §2 literal).
 #:
 #: RE-MEASURED 2026-09-07 for capx D76-ARM-B: owner ruling Q58 arms
 #: ``capacity_screen_peak_measured_hindcast`` as the SHARED ``ScenarioConfig``
@@ -61,7 +61,7 @@ FIELD = "capacity_adequacy_requirement_published_by_iso"
 #: ``_pjm_config``, so the note above ("a future PJM arm must re-measure it")
 #: understated the trigger: a shared default flip that a hindcast recipe
 #: resolves moves it too. Bare ``fb16fda2ddb0a94a`` -> ``f736025631d0d27e``
-#: (``docs/handoffs/d76armb/key-census-variant-b-postflip.json``, the
+#: (``docs/records/forecast/d76armb/key-census-variant-b-postflip.json``, the
 #: PRECOMMIT-capx-d76-arm-b §2.6 literal, and the value the inverse test below
 #: is anchored against).
 #:

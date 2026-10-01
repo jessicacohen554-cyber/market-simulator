@@ -132,7 +132,7 @@ SUMMARY_RECORD_SPEC = RecordSpec(
         # flag-sourced clearing gate: a sidecar must REPORT the posture it
         # solved, not assert one. Declared here so a paired arm/control
         # registration is self-describing on the dashboard (ARM3-MEASURE,
-        # docs/handoffs/arm3-clean-row-horizon-2026-08-09.md).
+        # docs/records/misc/arm3-clean-row-horizon-2026-08-09.md).
         "miso_rps_compliance_regions": Derived(
             lambda cfg, ctx: bool(
                 apply_iso_scenario_defaults(cfg, ctx["iso"]).miso_rps_compliance_regions

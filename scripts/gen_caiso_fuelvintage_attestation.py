@@ -7,7 +7,7 @@ standing rule.
 No control is solved (rule 29 clause (b)). The keeper's own ``git_sha`` (``e162147b``) does
 not resolve in this repository, so the ``git diff`` form of G-DRIFT cannot be executed at
 all; it was replaced by G-DRIFT-M, a measured detector pre-registered in
-``docs/PRECOMMIT-caiso-fuelvintage-2026-09-09.md`` §1 and decided by years the lane solved
+``docs/records/caiso/PRECOMMIT-caiso-fuelvintage-2026-09-09.md`` §1 and decided by years the lane solved
 anyway. G-DRIFT-M **falsified** G-CTRL form 4: 2024 and 2025 move against the committed
 keeper although both of this lane's changes are measured exactly zero there. The cause is
 named at zero LP cost by the capx D79 solve-surface fingerprint — CAISO's surface went
@@ -46,10 +46,10 @@ KEEPER = REPO / "results/calibration/caiso260_demand_vintage"
 _SHARED = (
     "caiso-fuelvintage-1 session (2026-09-09): TWO MEASURED-INPUT CHANGES, promoted "
     "together on the owner's ruling of 2026-09-09 (handoff "
-    "docs/handoffs/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md SSA7, verbatim: "
+    "docs/records/governance/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md SSA7, verbatim: "
     "'these should be promoted as keepers on both 860 and gas shape counts regardless of "
-    "inertness'). Pre-registered in docs/PRECOMMIT-caiso-fuelvintage-2026-09-09.md, "
-    "pushed before the first LP; measured in docs/RESULT-caiso-fuelvintage-2026-09-09.md. "
+    "inertness'). Pre-registered in docs/records/caiso/PRECOMMIT-caiso-fuelvintage-2026-09-09.md, "
+    "pushed before the first LP; measured in docs/records/caiso/RESULT-caiso-fuelvintage-2026-09-09.md. "
     "ZERO new ScenarioConfig fields for CAISO, ZERO free parameters, no derive re-run, no "
     "authorized_price_tuning block, DOF ledger unchanged. "
     "(A) THE EIA-860 RETIREE WINDOW (commit 7934e92c, RETIREMENT_WINDOW_START 2023 -> "
@@ -64,7 +64,7 @@ _SHARED = (
     "split, so its capacity is redistributed onto gens 5/6/8, which survive to 2023-12. "
     "+480.0000 MW exactly across eight tranche rows (144 + 6x44 + 72); +3,367,624.32 "
     "effective MW-h, +0.8478 pct of CAISO 2023. This INDEPENDENTLY CORROBORATES the PJM "
-    "lane's cross-ISO finding (docs/FINDING-pjm-retiree-window-redistribution-2026-09-09.md, "
+    "lane's cross-ISO finding (docs/records/pjm/FINDING-pjm-retiree-window-redistribution-2026-09-09.md, "
     "W H Sammis, +0.0615 pct) at ~14x PJM's relative size and in a different mechanism "
     "class (gas-ST, not coal). REPORTED AT FULL MAGNITUDE AND NOT REPAIRED HERE: the fix "
     "is in the shared plant-binning path, moves every ISO's fleet in every year, and is an "

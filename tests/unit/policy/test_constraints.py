@@ -1,7 +1,7 @@
 """Tests for policy/constraints.py: the LP constraint-row extension point.
 
 Covers build_mass_cap_dispatch_kwargs (G-29,
-docs/handoffs/emissions-mass-cap-plan-2026-07.md "Non-blocking follow-ons"):
+docs/records/misc/emissions-mass-cap-plan-2026-07.md "Non-blocking follow-ons"):
 the wire-through that lets the backcast calibration harness
 (scripts/run_calibration.py::run_year) exercise the mass-cap row, which it
 previously never reached at all.

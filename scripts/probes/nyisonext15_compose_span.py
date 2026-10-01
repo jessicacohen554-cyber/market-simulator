@@ -1,7 +1,7 @@
 """NYISO-NEXT-15 G-1 leg acceptance + span composition (zero LP).
 
 The arm is the NEXT-14 keeper's recipe replayed at the pin with ONE delta,
-``nyiso_import_landing_band: true`` (``docs/PRECOMMIT-nyiso-next15-landing-band-2026-09-30.md``
+``nyiso_import_landing_band: true`` (``docs/records/nyiso/PRECOMMIT-nyiso-next15-landing-band-2026-09-30.md``
 sec. 4 G-1). Per leg:
 
 * S0 -- solved at the pin (``git.basis_sha``);

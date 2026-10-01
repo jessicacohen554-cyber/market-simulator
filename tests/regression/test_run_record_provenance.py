@@ -38,7 +38,7 @@ separately in that bundle's ``run_config.json`` ``scenario_config`` block by
 therefore solved-sourced by construction. Its own fidelity surface is covered
 by ``tests/regression/test_recorded_cfg_fidelity.py`` and
 ``market_sim.pipeline.flags``. See
-``docs/handoffs/ffr-3r-record-provenance-2026-08-04.md`` for the full census.
+``docs/records/forecast/ffr-3r-record-provenance-2026-08-04.md`` for the full census.
 """
 
 from __future__ import annotations

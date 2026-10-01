@@ -196,7 +196,7 @@ class TestBoundaryIdentityGuard(unittest.TestCase):
     #: recompose to 15.717 against a published 5.613 (ratio 2.800), and its two
     #: applied rows (ST 3.412 / GT 16.201) sit in the CAISO keeper
     #: ``2026-09-12-caiso-275-gascoupling``. Routed to the CAISO desk by
-    #: ``docs/handoffs/FINDING-soco-53c-2026-09-19.md``. The set is asserted
+    #: ``docs/records/soco/FINDING-soco-53c-2026-09-19.md``. The set is asserted
     #: TIGHT below, so re-deriving CAISO fails this test until the entry is
     #: deleted — it cannot rot into a permanent carve-out.
     KNOWN_UNGUARDED_APPLIED: dict[str, set[int]] = {

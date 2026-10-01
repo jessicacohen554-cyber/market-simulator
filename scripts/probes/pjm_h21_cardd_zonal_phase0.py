@@ -10,12 +10,12 @@ Three reads, all from existing artifacts:
    only ever reported at class level.
 3. HEAT RATE: ``scripts/data/derive_campd_cc_heat_rates.py --iso PJM --years
    2020..2025`` (run to a scratch path, copied to
-   ``results/calibration/_pjm_h21_cc_heat_rate_census.csv``; it is NOT placed at the
+   ``results/phase0/pjm/_pjm_h21_cc_heat_rate_census.csv``; it is NOT placed at the
    ``measured_cc_heat_rates`` input path, so nothing is armed), joined to the
    plants' actual-CF terciles.
 
 Run: ``python scripts/probes/pjm_h21_cardd_zonal_phase0.py <legs dir> <pjm146 payload dir>``
-Writes ``results/calibration/_pjm_h21_cardd_zonal_phase0.json``.
+Writes ``results/phase0/pjm/_pjm_h21_cardd_zonal_phase0.json``.
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ sys.path.insert(0, str(REPO / "scripts/probes"))
 import pjm_h21_cardd_phase0 as P  # noqa: E402
 
 BENCH = REPO / "frontend/data/backcast/bench/PJM"
-HR = REPO / "results/calibration/_pjm_h21_cc_heat_rate_census.csv"
+HR = REPO / "results/phase0/pjm/_pjm_h21_cc_heat_rate_census.csv"
 
 
 def _bench_cc(y: int) -> list[tuple[str, int, dict]]:
@@ -116,7 +116,7 @@ def main(legs: Path, p146: Path) -> None:
             )
             for k, g in ok.groupby("terc")
         }
-    dst = REPO / "results/calibration/_pjm_h21_cardd_zonal_phase0.json"
+    dst = REPO / "results/phase0/pjm/_pjm_h21_cardd_zonal_phase0.json"
     dst.write_text(json.dumps(out, indent=1))
     print(json.dumps(out["hr_terciles"], indent=1))
     print("wrote", dst)

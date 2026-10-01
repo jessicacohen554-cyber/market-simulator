@@ -7,7 +7,7 @@ is the reconstruction attempt of session I-NYISO (2026-09-24), written to
 answer one question before any 2019/2020 row is emitted: **can the committed
 2021-2025 rows be reproduced byte-identically from committed EIA-930
 sources?** It never writes the artifact; it only reports the diff
-(``docs/handoffs/FINDING-i-nyiso-2019-2021-intake-2026-09-24.md``).
+(``docs/records/nyiso/FINDING-i-nyiso-2019-2021-intake-2026-09-24.md``).
 
 The table is two constructions stacked, recovered from the committed rows
 (every clause measured against them, none chosen for fit). Both read the

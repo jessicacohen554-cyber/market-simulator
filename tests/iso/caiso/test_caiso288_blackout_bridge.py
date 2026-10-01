@@ -17,7 +17,7 @@ admissibility rests on:
 
 caiso-289 (2026-09-20) added three more, after caiso-288 recovered the 85
 published prints the fetcher had been discarding
-(``docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md``):
+(``docs/records/caiso/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md``):
 
   5. The Dec-2022 blackout that MOTIVATED the mechanism is measured now, so the
      bridge cannot touch it. This REPLACES the old
@@ -172,7 +172,7 @@ def test_december_2022_is_measured_not_bridged() -> None:
     were measured on the UNREPAIRED series and both are now 0.0 by construction:
     the days are measurements. Restoring that assertion would be re-pinning the
     bridge to a footprint it does not have (see
-    docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md).
+    docs/records/caiso/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md).
     """
     dated = _caiso_citygate_daily_dated(None)
     if 2022 not in dated:
@@ -205,7 +205,7 @@ def test_the_flag_moves_blackout_interiors_and_nothing_else() -> None:
     year. A failure here means the two channels have been re-merged — which is
     a regression in this function, not a finding about the bridge. (The
     left-edge defect is real and is repaired as its own cross-ISO object; see
-    docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md.)
+    docs/records/caiso/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md.)
     """
     dated = _caiso_citygate_daily_dated(None)
     hh = _committed_hh()

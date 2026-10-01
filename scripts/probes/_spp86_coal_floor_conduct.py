@@ -1,6 +1,6 @@
 """SPP-86 (zero LP): where the keeper's coal must-run floor sits while the plant's meter is dark.
 
-Record: ``docs/handoffs/FINDING-spp-86-coal-floor-conduct-2026-09-26.md``.
+Record: ``docs/records/spp/FINDING-spp-86-coal-floor-conduct-2026-09-26.md``.
 
 Rebuilds the keeper ``results/calibration/spp85_arm_span`` fleet ``fleet_only`` for each year and,
 per coal plant and hour, reads (a) the ``coal_mustrun`` floor (``min_gen`` on rows whose

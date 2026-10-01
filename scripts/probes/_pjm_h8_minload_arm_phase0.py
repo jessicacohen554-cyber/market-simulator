@@ -9,7 +9,7 @@ take-or-pay/passthrough construction on those rows instead of stacking a floor o
 exactly one mechanism sets each row's bid (rule 19 ``[R-ONE-MECH]``).
 
 Chartered by the OWNER RULING 2026-09-16 re-opening the pjm-142 frontier on the strength of
-``docs/FINDING-pjm-h8-coal-minload-is-the-undisciplined-offer-surface-2026-09-16.md``, which
+``docs/records/pjm/FINDING-pjm-h8-coal-minload-is-the-undisciplined-offer-surface-2026-09-16.md``, which
 measured that PJM coal's min-load block is the only part of its own offer stack that no
 measured artifact governs.
 
@@ -203,7 +203,7 @@ def main() -> None:
             f"vs h6 arm {g3['h6_arm_footprint_usd_mw']:,.0f}"
         )
 
-    dest = REPO / "results/calibration/_pjm_h8_minload_arm_phase0.json"
+    dest = REPO / "results/phase0/pjm/_pjm_h8_minload_arm_phase0.json"
     if dest.exists():
         try:
             prior = json.loads(dest.read_text())

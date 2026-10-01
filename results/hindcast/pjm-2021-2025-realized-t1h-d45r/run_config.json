@@ -7,7 +7,7 @@
     "dirty": true,
     "changed_files": [
       "cripts/register_forecast_run.py",
-      "docs/handoffs/d45/nyiso-reconciliation-2026-09-04.py"
+      "docs/records/forecast/d45/nyiso-reconciliation-2026-09-04.py"
     ],
     "diffstat": "scripts/register_forecast_run.py | 36 +++++++++++++++++++++++++++++++-----\n 1 file changed, 31 insertions(+), 5 deletions(-)"
   },

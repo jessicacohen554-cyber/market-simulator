@@ -1,6 +1,6 @@
 """Tests for the shared per-year phase-timing line (``pipeline/timing.py``).
 
-The line is a **parsed wire format**: ``docs/handoffs/wallclock-baseline-2026-07.md``
+The line is a **parsed wire format**: ``docs/records/misc/wallclock-baseline-2026-07.md``
 and every before/after wall-clock capture read
 ``data_prep / solve_p0 / markup / solve_p1 / results_write / total`` out of it.
 Both orchestrators (``runner.run_scenario_iso`` and

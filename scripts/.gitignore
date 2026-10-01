@@ -6,7 +6,7 @@
 # many web-UI/API commits). That is *transport scaffolding*, never a repo
 # artifact — it was removed from tracking on 2026-07-22. These patterns stop any
 # future session from re-committing it. See
-# docs/handoffs/repo-clone-bloat-audit-2026-07.md for the full clone-bloat audit.
+# docs/records/governance/repo-clone-bloat-audit-2026-07.md for the full clone-bloat audit.
 _rule27_push_staging/
 *.tar.gz.b64.part*.txt
 rule27-bigfiles.tar.gz

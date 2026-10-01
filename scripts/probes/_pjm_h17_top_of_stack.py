@@ -246,7 +246,7 @@ def main() -> None:
         out["years"][str(y)] = yr
         print(f"[{y}] built in {yr['build_s']}s", flush=True)
 
-    dest = REPO / "results/calibration/_pjm_h17_top_of_stack.json"
+    dest = REPO / "results/phase0/pjm/_pjm_h17_top_of_stack.json"
     dest.write_text(json.dumps(out, indent=1))
     print(f"wrote {dest}")
 

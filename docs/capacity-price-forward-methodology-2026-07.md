@@ -7,8 +7,8 @@ drives every capacity-market ISO's retirement / entry / storage economics.
 Companion to the historical-vintage machinery in
 `config/constants.py` (`MARKET_DESIGN`, `MARKET_DESIGN_VINTAGES`,
 `resolve_demand_curve_vintage`) and the CR-1/CR-2 validation work
-(`docs/handoffs/capacity-price-validation-2026-07-12.md`). Session handoff +
-owner-decision box: `docs/handoffs/ff-g3-net-cone-forward-2026-07.md`.
+(`docs/records/misc/capacity-price-validation-2026-07-12.md`). Session handoff +
+owner-decision box: `docs/records/forecast/ff-g3-net-cone-forward-2026-07.md`.
 
 Everything here is **forecast-only surface**: capacity evolution and the
 capacity-price seam run only in `mode="forecast"` (`runner.py`), so backcast
@@ -28,8 +28,8 @@ sharply — PJM's just-cleared 2028/2029 BRA net-CONE is **+34 %** over the
 2030s+ retirement and entry economics in every capacity-market ISO.
 
 This was named "CR-2 follow-up: per-forecast-year net-CONE" in
-`docs/handoffs/capacity-price-validation-2026-07-12.md` §6/§7 and routed to the
-curve-eligibility lane by `docs/handoffs/ff-2b-adequacy-basis-2026-07.md`, but
+`docs/records/misc/capacity-price-validation-2026-07-12.md` §6/§7 and routed to the
+curve-eligibility lane by `docs/records/forecast/ff-2b-adequacy-basis-2026-07.md`, but
 never chartered until FF-G3. This is that charter.
 
 Two distinct sub-problems, kept separate throughout:

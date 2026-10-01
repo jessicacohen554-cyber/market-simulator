@@ -1,7 +1,7 @@
 """SPP-74 (the body): where does the rung's ordinary-hour / whole-month price error live?
 
 Zero-LP measurement, pre-registered in
-``docs/handoffs/PRECOMMIT-spp-74-price-body-2026-09-23.md`` (pushed at ``84833817`` before
+``docs/records/spp/PRECOMMIT-spp-74-price-body-2026-09-23.md`` (pushed at ``84833817`` before
 any number below was read). Part A — committed hourly sidecars and measured series only:
 
 * the scorer's month error ``e_m`` split exactly into a basis term and per-hour-type terms

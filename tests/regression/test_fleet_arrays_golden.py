@@ -19,7 +19,7 @@ reason recorded in the commit.
 REGENERATED ONCE, at ERCOT-187 (2026-08-10), for exactly one such change:
 ``6a8f285c`` "neiso-65: adopt guard-corrected CAMPD extracts, all six ISOs"
 (2026-07-26), the merge of the merit-order guard the owner ADOPTED in
-``docs/handoffs/campd-economic-layup-fix-charter-2026-07.md`` §8 — whose verdict
+``docs/records/misc/campd-economic-layup-fix-charter-2026-07.md`` §8 — whose verdict
 states that "the availability envelope every keeper reads now excludes the
 reclassified economic-layup windows" (ERCOT: 1,352 windows / 3,986 GW-days).
 It moved ``availability`` and ``min_gen`` and nothing else, and the golden was
@@ -30,7 +30,7 @@ model code is provably inert across the whole drift and this single authorized
 data correction owns 100 % of it. Nothing about ERCOT-185's day-shaped partial
 plateau is involved — both fields are byte-identical either side of it (the
 mechanism is default-off, and this fixture never reads the shaped extract).
-Evidence: ``results/calibration/FINDING-ercot187-golden-hash-attribution-2026-08-10.md``.
+Evidence: ``docs/records/ercot/FINDING-ercot187-golden-hash-attribution-2026-08-10.md``.
 
 The fixture parameters below are FROZEN (they define the golden's identity):
 the 2023 ERCOT backcast config from ``pipeline.backcast_config.backcast_config``

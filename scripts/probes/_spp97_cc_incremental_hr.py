@@ -17,7 +17,7 @@ min-load, what a committed block actually costs per MWh). Years 2019-2025 pooled
 the applied CC heat rates use.
 
 Usage: uv run python scripts/probes/_spp97_cc_incremental_hr.py
-Writes docs/handoffs/spp97/cc_incremental_hr.json
+Writes docs/records/spp/spp97/cc_incremental_hr.json
 """
 
 import json
@@ -28,7 +28,7 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-OUT = REPO / "docs/handoffs/spp97"
+OUT = REPO / "docs/records/spp/spp97"
 LEG = REPO / "data/raw/_processed-legacy"
 YEARS = range(2019, 2026)
 BIN = 0.02

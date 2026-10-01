@@ -1,7 +1,7 @@
 """PJM CC parasitic-load seasonality + actuals-basis reconciliation.
 
 Owner questions #2/#3 of the 2026-07-14 July-gas diagnosis
-(``docs/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md``): does the gross->net
+(``docs/records/pjm/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md``): does the gross->net
 parasitic-load haircut between plant-monthly EIA-923 net and plant-monthly
 CAMPD gross vary over the year (aux cooling rising with temperature), and what
 does the model-vs-actual CC comparison look like on a NET basis?

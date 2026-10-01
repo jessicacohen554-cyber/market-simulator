@@ -23,7 +23,7 @@ from dataclasses import dataclass
 # dispatch as an *exogenous allowance-price adder* — measured in backcast,
 # projected forward — not as an endogenous power-only cap, because their real
 # clearing price is set by a banked multi-sector market this power model does
-# not contain (docs/handoffs/emissions-mass-cap-plan-2026-07.md §2). The
+# not contain (docs/records/misc/emissions-mass-cap-plan-2026-07.md §2). The
 # optional endogenous mass-cap *row* (dual = allowance price) faithfully
 # represents a power-sector-specific budget (EPA 111(d)/CSAPR or a user
 # scenario), NOT the RGGI/CARB market price. Both route carbon through the same
@@ -515,12 +515,12 @@ STORAGE_TECHS: dict[str, dict[str, float]] = {
 # under ScenarioConfig.storage_entry_availability_gate (GATED default OFF) —
 # the storage analogue of the thermal path's _EMERGING_AVAILABLE_YEAR gate
 # (capacity_evolution/new_entry.py). Repairs defect D-2 of
-# docs/FINDING-entry-screen-t1h-2026-08.md (the T1-H lane decided 3 GW of
+# docs/records/misc/FINDING-entry-screen-t1h-2026-08.md (the T1-H lane decided 3 GW of
 # 100-hour iron-air + 2 GW of vanadium flow in a 2023 ERCOT decision year);
-# charter docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md Phase-1 Leg A.
+# charter docs/records/misc/PRECOMMIT-t1h-capacity-entry-2026-08-30.md Phase-1 Leg A.
 #
 # DERIVATION (measured, never invented — rule 5 [R-NO-MAGIC]; the Phase-0
-# census, docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md §2.2, is the
+# census, docs/records/misc/FINDING-t1h-capacity-entry-phase0-2026-08-30.md §2.2, is the
 # committed record): each year is the FIRST YEAR WITH NONZERO NATIONAL
 # OPERATING CAPACITY of the technology class in the EIA-860 2025 Early
 # Release energy-storage schedule
@@ -601,7 +601,7 @@ STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
     # rows above), NOT a residual. ERCOT's row is the other hand-entered entry
     # (17,000 vs 13,709.3 by this construction) and is deliberately UNTOUCHED
     # -- rule 25 [R-ISO-SCOPE]; it is routed, not fixed, in the FFR-4D handoff.
-    # See docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md sections 3-4.
+    # See docs/records/forecast/ffr-4d-caiso-fleet-vintage-2026-08-04.md sections 3-4.
     "CAISO": {
         "low": 11_590.0,
         "mid": 15_450.0,
@@ -650,7 +650,7 @@ STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
     #   mid  = operable Status="OP" battery nameplate = 2,321.0 -> 2_320
     #   high = mid + proposed Status in {U,V,TS} = 2,321.0 + 2,147.0 -> 4_470
     #   low  = rounded mid x 0.75 = 1,740
-    # (docs/handoffs/PRECOMMIT-nwpp-20-2026-09-14.md §3.7). Zero DOF; rule
+    # (docs/records/nwpp/PRECOMMIT-nwpp-20-2026-09-14.md §3.7). Zero DOF; rule
     # 13-admissible. NEVP holds 1,135 MW of the operable 2,321 (audit §2.4).
     "NWPP": {
         "low": 1_740.0,
@@ -703,7 +703,7 @@ STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
 # the shipped scalar is within a few MW of the measured fleet anyway (the four
 # were derived from it), so the correction there is immaterial. ERCOT is the one
 # other ISO with a material gap (17,000 shipped vs 13,709.3 measured) and is
-# routed, not fixed, in docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md.
+# routed, not fixed, in docs/records/forecast/ffr-4d-caiso-fleet-vintage-2026-08-04.md.
 STORAGE_MEASURED_BASE_FLEET_ISOS: frozenset[str] = frozenset({"CAISO"})
 
 # Ceiling on total deployed storage power (MW) per ISO, capping cumulative
@@ -1304,12 +1304,12 @@ class ClearedCapacityPrice:
 # capacity_market_clearing is on. Eligibility is a GOVERNANCE gate layered on
 # top of the clearing gate: an ISO is curve-eligible only once its
 # accreditation-pairing basis (the flip-gate's item 1,
-# docs/handoffs/forecast-retirement-calibration-plan-2026-07.md §2.1) is
+# docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md §2.1) is
 # owner-signed. Every registry ISO is now eligible: PJM (R1-R4 landed), NEISO
 # (R5b landed), MISO (EFORd pairing ~consistent, keep-and-verify), and NYISO —
 # whose ICAP->UCAP translation-factor pairing (R5a) landed 2026-07-18 as the
 # owner-selected Option B (NYCA-wide static proxy;
-# docs/handoffs/nyiso-neiso-capacity-pairing-adjudication-2026-07-15.md §3,
+# docs/records/nyiso/nyiso-neiso-capacity-pairing-adjudication-2026-07-15.md §3,
 # PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["NYISO"]), so a curve-ON
 # NYISO position is now measured on the correct basis. The global default
 # clearing gate is off, so eligibility only bites under an explicit per-ISO
@@ -1398,7 +1398,7 @@ _NYISO_ICAP_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
 )
 # ISO-NE FCA/MRI curve, modeled ANNUALLY. Re-derived 2026-08-31 (NEISO-RC-R
 # R2 — the CR-3 refinement the previous comment promised; charter
-# docs/handoffs/capx-director-prompt-pack-2026-08.md §NEISO-RC-R) from
+# docs/records/forecast/capx-director-prompt-pack-2026-08.md §NEISO-RC-R) from
 # PUBLISHED auction evidence only:
 #
 #   * Cap = starting price / net-CONE = 14.525/9.078 = 1.600 (FCA 18,
@@ -1734,7 +1734,7 @@ _MISO_VERTICAL_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
 # FFR-4F (2026-08-09) — CAISO's RA capacity-price anchor, on its own rule 14
 # [R-ACCURATE] merits. GATED default-OFF behind
 # ``ScenarioConfig.caiso_ra_mpb_capacity_anchor``; see
-# docs/handoffs/ffr-4f-caiso-anchor-merits-2026-08-09.md.
+# docs/records/forecast/ffr-4f-caiso-anchor-merits-2026-08-09.md.
 #
 # THIS IS NOT A ROW-4 FIX. FC-2 row 4's movement is a reported side effect of
 # this correction, never its objective and never its success metric. The owner
@@ -2765,7 +2765,7 @@ RENEWABLE_CAPACITY_CREDIT: dict[str, float] = {
 #          the floor decision matters).
 # Source: ERCOT, "Report on the Capacity, Demand and Reserves (CDR) in the
 # ERCOT Region", December 2025 (Seasonal Summary + ELCC tabs); ERCOT Fact
-# Sheet, July 2026. See docs/handoffs/ercot-accreditation-audit-2026-07-06.md.
+# Sheet, July 2026. See docs/records/ercot/ercot-accreditation-audit-2026-07-06.md.
 # (ERCOT deliberately stays HERE, not in RENEWABLE_ELCC_CURVES_BY_ISO below:
 # the CDR seasonal-rating accreditation basis stays per the CR-3 plan §3.4.1
 # and the P-2B adopted basis — "ERCOT/CAISO untouched".)
@@ -2851,9 +2851,9 @@ def evaluate_renewable_elcc_curve(
 
 
 # Penetration-indexed ELCC accreditation curves per ISO (CR-3.1, plan
-# docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md §3.4.1;
+# docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md §3.4.1;
 # adopted basis = P-2B Option A per-ISO published-basis consistency,
-# docs/handoffs/accreditation-basis-memo-2026-07-12.md §4.1). Replaces the
+# docs/records/misc/accreditation-basis-memo-2026-07-12.md §4.1). Replaces the
 # flat generic wind 0.16 / solar 0.18 for exactly the ISOs with a published
 # ELCC study on disk (data/raw/capacity-market/elcc/<iso>/<iso>.csv, the
 # P-0B/N6 intake); every point below is digitized from those committed rows
@@ -3789,7 +3789,7 @@ ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO: dict[str, float] = {
 #   vertical PY2024 vintage the whole $113.6 → $0/kW-yr cliff for the fleet
 #   at once — so the undated cohort returns BELOW the bar into the
 #   floor-capped regime; exits do not get easier. Pre-declared
-#   docs/handoffs/PREDECL-capx-d51-2026-09-04.md; measured on the suffixed
+#   docs/records/forecast/PREDECL-capx-d51-2026-09-04.md; measured on the suffixed
 #   A/B `miso-t1h-d51-ratio` (FINDING-capx-d51-2026-09-04.md). The owner arms
 #   or declines; nothing here changes an unarmed solve.
 ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_DATED_NET_BY_ISO: dict[str, float] = {
@@ -4000,7 +4000,7 @@ ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
 # population :func:`market_sim.data.hydro.build_hydro_fleet` puts in the LP) —
 # hydro is an energy-budget resource that never enters the persistent ``fleet``,
 # so before FFR-1C it contributed 0 MW to the accredited ledger for EVERY ISO
-# while being fully dispatched (docs/handoffs/ff-2b-adequacy-basis-2026-07.md
+# while being fully dispatched (docs/records/forecast/ff-2b-adequacy-basis-2026-07.md
 # §2.2/§2.3/§4).
 #
 # **Every value below is an ISO-published accreditation factor, never a value
@@ -4092,7 +4092,7 @@ ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
 #   hydrology changes; re-derive on a newer vintage (rule 23), never a residual.
 #   Population bound: SCC assets below the ~1 MW EIA census threshold total
 #   16.7 MW (0.9% of the numerator) — the only overstatement channel, documented
-#   in docs/handoffs/FINDING-capx-s4-neiso-hydro-2026-08-30.md.
+#   in docs/records/forecast/FINDING-capx-s4-neiso-hydro-2026-08-30.md.
 #   Source: https://www.iso-ne.com/static-assets/documents/100038/scc_august_2026.xlsx
 #   (per-asset extract + provenance: data/raw/capacity-market/scc/neiso/).
 # * ERCOT — ABSENT, so it falls back to the generic published class derate
@@ -4547,7 +4547,7 @@ ERCOT_AS_SATURATION_EXPONENT: float = 2.5
 # --------------------------------------------------------------------------- #
 # NYISO LOCALITY capacity demand curves (capx D59, 2026-09-05 — executing
 # FINDING-capx-d52-2026-09-04.md §8(2) route 1 / D45 §5.2.4 item 3; design
-# docs/handoffs/DESIGN-capx-d59-nyiso-locality-2026-09-05.md). GATED by the
+# docs/records/forecast/DESIGN-capx-d59-nyiso-locality-2026-09-05.md). GATED by the
 # default-OFF ``ScenarioConfig.locality_capacity_curves``; NYISO-only in DATA
 # (rule 25 [R-ISO-SCOPE]: every registry below holds one ISO, and the gate
 # predicate ``retirements.locality_capacity_curves_armed`` requires an entry).
@@ -4811,8 +4811,8 @@ AS_REVENUE_PER_KW_YR_BY_ISO: dict[str, dict[str, float]] = {
     # only (no mileage, no RT increment), so conservatively low.
     # Identification precommit-staged before its entry-screen effect was
     # computed; the measured effect flips no storage tech's entry sign.
-    # Source: docs/FINDING-caiso-value-stack-d9-2026-08.md +
-    # results/calibration/caiso_storage_as_revenue_phase0.json (probe
+    # Source: docs/records/caiso/FINDING-caiso-value-stack-d9-2026-08.md +
+    # results/phase0/caiso/caiso_storage_as_revenue_phase0.json (probe
     # scripts/probes/caiso_storage_as_revenue_phase0.py).
     "CAISO": {"storage": 14.82},
     # "PJM": {...}, "NYISO": {...}, "NEISO": {...}, "MISO": {...}
@@ -4832,7 +4832,7 @@ AS_SATURATION_REF_GW_BY_ISO: dict[str, float] = {
     # 2024→25 — requirement growth offsets fleet growth), so 2.5 UNDER-credits
     # AS past the reference — conservative, and a CAISO-fitted exponent would
     # be 2 DOF on 3 observations (owner-ratified 2026-08-25; see
-    # docs/FINDING-caiso-value-stack-d9-2026-08.md §2.4).
+    # docs/records/caiso/FINDING-caiso-value-stack-d9-2026-08.md §2.4).
     "CAISO": 5.517,
 }
 
@@ -5115,7 +5115,7 @@ STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO: dict[str, float] = {
 # never a backcast) and is chartered there, not taken by a CAISO backcast
 # session. Derivation + gates: results/calibration/FINDING-caiso179-degradation-
 # split-2026-08-07.md, instrument scripts/probes/_caiso179_degradation_split.py,
-# record results/calibration/_caiso179_degradation_split.json.
+# record results/phase0/caiso/_caiso179_degradation_split.json.
 STORAGE_DEGRADATION_REPLACEMENT_FRACTION: float = 0.25
 
 # State renewable-portfolio-standard floors (RENEWABLE-tier fraction) by ISO
@@ -5670,7 +5670,7 @@ MISO_CLEAN_TIER_REGIONS: dict[str, dict] = {
 # peak annual COD (a measured throughput). Where a cap sits materially ABOVE
 # demonstrated throughput it is a forward-ceiling *estimate* (driver: queue
 # reform clearing backlog / offshore-wind pipeline bursts) and is LABELLED
-# as such -- see docs/handoffs/queue-cap-citation-2026-07.md (rule 11
+# as such -- see docs/records/misc/queue-cap-citation-2026-07.md (rule 11
 # follow-up; NYISO/NEISO strike-a-real-throughput-number is open there).
 QUEUE_CAP_GW: dict[str, float] = {
     # ERCOT: CDR interconnection throughput; recent COD ~5-10 GW/yr (mostly
@@ -5774,10 +5774,10 @@ QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
         #   it; it went stale when 2024-2025 throughput roughly doubled.
         #   Rule 13: unchanged in kind -- still a published throughput ceiling
         #   that regenerates for any forward year, now at a current value.
-        #   Source: docs/FINDING-rc-ercot-solar-queue-cap-2026-08-11.md
+        #   Source: docs/records/ercot/FINDING-rc-ercot-solar-queue-cap-2026-08-11.md
         #   (pre-registration d938f29, measurement 6e6e50b).
         #   ADOPTED by owner decision D-31, signed 2026-08-13 (owner sitting
-        #   Addendum AT.1); adoption docs/handoffs/d31-adopt-2026-08-13.md.
+        #   Addendum AT.1); adoption docs/records/forecast/d31-adopt-2026-08-13.md.
         "solar": 8.0,
         "gas_cc": 3.0,
         "gas_ct": 3.0,
@@ -5801,7 +5801,7 @@ QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
     # wind 14% of planned US additions; LBNL "Queued Up" 2024 queue mix; each
     # ISO's planning report). Not a per-tech measured throughput -- the split is
     # a judgment; the binding ISO-total is the cited quantity. Same rule-11
-    # follow-up as QUEUE_CAP_GW (docs/handoffs/queue-cap-citation-2026-07.md).
+    # follow-up as QUEUE_CAP_GW (docs/records/misc/queue-cap-citation-2026-07.md).
     "PJM": {
         "wind": 1.5,
         "solar": 6.0,

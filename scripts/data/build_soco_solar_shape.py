@@ -25,7 +25,7 @@ solar plant's own coordinates, transposed onto each generator's own plane by
 the same three tracking-class geometries the repo already uses, and
 capacity-weighted into the three model zones. Landed 2026-09-16 by lane
 **SOCO-32** (``docs/multi-iso/soco-addition-plan-2026-09.md`` §5 row SOCO-32;
-FINDING ``docs/handoffs/FINDING-soco-32-2026-09-16.md``).
+FINDING ``docs/records/soco/FINDING-soco-32-2026-09-16.md``).
 
 **SOLAR, not wind, and that is not an omission.** SOCO's EIA-860 operable fleet
 carries **zero** wind generators and EIA-930's ``SOCO`` extract reports ``NG:

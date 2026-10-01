@@ -65,7 +65,7 @@ LOCKED_TEST_YEARS: frozenset[int] = frozenset({2019, 2026})
 # /updates/ URLs 301 to the homepage, no Wayback capture). Those four rows
 # remain proxy-sourced, and June-2018 (+6.2124) is one of the inverted summer
 # values -- so a 2018 solve would fire the summer inversion in the worst month.
-# See results/calibration/FINDING-neiso86-gas-basis-intake-2026-08-06.md 5.1.
+# See docs/records/neiso/FINDING-neiso86-gas-basis-intake-2026-08-06.md 5.1.
 VALIDATION_YEARS: frozenset[int] = frozenset({2020, 2021, 2022})
 
 # ---------------------------------------------------------------------------

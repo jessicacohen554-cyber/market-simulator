@@ -1,7 +1,7 @@
 """Content-addressed cache of a cold LP solve, exact by construction (PERF-C S6).
 
 80-96 % of a calibration year is inside HiGHS ``run()``
-(``docs/handoffs/PRECOMMIT-perfc-orchestration-2026-09-20.md`` §0), and the
+(``docs/records/governance/PRECOMMIT-perfc-orchestration-2026-09-20.md`` §0), and the
 **P0** pass — 80 s on NEISO, 300-640 s on ERCOT / CAISO / MISO / PJM — is
 re-solved from cold on every replay, every re-gate, every held-out-year
 touchpoint and every knob iteration whose knob only enters **P1** (the startup
@@ -42,7 +42,7 @@ not rescue it: the P0 *result* is already exact — what moves is P1's path, whi
 no stored P0 output can restore.
 
 Full measurement, and what a successor would need:
-``docs/handoffs/FINDING-perfc-s6-p0-cache-2026-09-22.md``.
+``docs/records/governance/FINDING-perfc-s6-p0-cache-2026-09-22.md``.
 
 This is rule 7 ``[R-PARQUET]``'s check-before-run caching discipline applied one
 level down, at the solve rather than at the bundle.
@@ -303,7 +303,7 @@ class CachedSolve:
     years. The difference the byte gate DID find is in the state the NEXT pass
     starts from, which is not an output and which no stored vector could restore
     — so the vectors would have bought nothing and are not stored
-    (``docs/handoffs/FINDING-perfc-s6-p0-cache-2026-09-22.md`` §3).
+    (``docs/records/governance/FINDING-perfc-s6-p0-cache-2026-09-22.md`` §3).
 
     Attributes:
         col_status: Column basis statuses (int8, ``HighsBasisStatus`` ordinals).

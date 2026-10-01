@@ -10,7 +10,7 @@ lane: forecast legs are registered to `frontend/data/forecast/` via
 **Nothing in this directory is a registered result, and nothing here is promotable.** Every
 leg is HOLD, by the owner's standing instruction — this lane was commissioned to produce
 *attribution*, not a promotion candidate. The findings live in
-`docs/handoffs/ffr-3c-collapse-attribution-2026-08-03.md`.
+`docs/records/forecast/ffr-3c-collapse-attribution-2026-08-03.md`.
 
 ## The two arms
 

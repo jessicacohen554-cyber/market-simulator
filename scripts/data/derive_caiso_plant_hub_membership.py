@@ -1,6 +1,6 @@
 """Derive the MEASURED CAISO generator->trading-hub membership crosswalk.
 
-Chartered by ``results/calibration/FINDING-caiso216-belly-lever-plan-2026-08-23.md``
+Chartered by ``docs/records/caiso/FINDING-caiso216-belly-lever-plan-2026-08-23.md``
 §F.1g (candidate C1, funded caiso-217): replace the lat-cut/county-lift zone
 ESTIMATE (``data/zone_assignment.py::_caiso_zone``) with CAISO's own published
 generator-hub membership — the SAME ``ATL_PNODE_MAP`` authority the caiso-172
@@ -857,7 +857,7 @@ def main() -> int:
         "derived_by": "scripts/data/derive_caiso_plant_hub_membership.py",
         "session": "caiso-217",
         "charter": (
-            "results/calibration/FINDING-caiso216-belly-lever-plan-2026-08-23.md §F.1g"
+            "docs/records/caiso/FINDING-caiso216-belly-lever-plan-2026-08-23.md §F.1g"
         ),
         "sources": [
             "data/raw/caiso-atlas/ATL_PNODE_MAP.csv (OASIS ATL_PNODE_MAP, TH_*_GEN membership)",

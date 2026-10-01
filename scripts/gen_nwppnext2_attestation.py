@@ -1,8 +1,8 @@
 """Emit the NWPP-NEXT-2 calibration attestation for ``results/calibration/nwppnext2_span``.
 
-NWPP-NEXT-2 (PRECOMMIT ``docs/handoffs/PRECOMMIT-nwppnext2-psei-colstrip-2019-2025-2026-09-25.md``)
+NWPP-NEXT-2 (PRECOMMIT ``docs/records/nwpp/PRECOMMIT-nwppnext2-psei-colstrip-2019-2025-2026-09-25.md``)
 is the NWPP-NEXT keeper recipe unchanged, plus one data-construction repair
-(``docs/handoffs/FINDING-nwppnext2-psei-basis-2026-09-25.md``):
+(``docs/records/nwpp/FINDING-nwppnext2-psei-basis-2026-09-25.md``):
 
 * PSEI's Colstrip share, which NWMT already books in full, is removed from
   PSEI's EIA-930 net generation and demand

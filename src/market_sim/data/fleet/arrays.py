@@ -167,7 +167,7 @@ CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR: float = 6.3
 # in. PJM added 2026-07-07: its CHP reports cap-weighted HRs of CC_CHP ~4.95 /
 # CT_CHP ~6.14 MMBtu/MWh (both physically impossible power-only), which let
 # steam-credited CHP clear as the cheapest thermal and over-deliver grid energy
-# +52-67% vs EIA-923 net-to-grid (docs/FINDING-pjm-burndown-2026-07.md). Other
+# +52-67% vs EIA-923 net-to-grid (docs/records/pjm/FINDING-pjm-burndown-2026-07.md). Other
 # ISOs join as their CHP HR distributions are audited in the all-ISO sweep.
 #
 # MISO was AUDITED 2026-07-08 and deliberately NOT added: although its reported
@@ -1461,7 +1461,7 @@ def _apply_outage_overlays(
     # removed 2026-07-17 because summing a plant's
     # units hid single-unit outages and folded daily-cycling combined cycles
     # into phantom summer outages
-    # (results/calibration/FINDING-ercot79-phantom-outage-2026-07.md).
+    # (docs/records/ercot/FINDING-ercot79-phantom-outage-2026-07.md).
     if (
         config is not None
         and getattr(config, "outage_source", "statistical") == "historic"
@@ -2159,7 +2159,7 @@ def _apply_outage_overlays(
     # measured level. Tranches cap at 1.0; a 3-pass water-fill redistributes
     # the clipped mass so the class-day total still lands on the measured
     # fraction where feasible. Provenance + June/Sep-2023 forensics:
-    # docs/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md.
+    # docs/records/ercot/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md.
     if (
         config is not None
         and _iso == "ERCOT"
@@ -2426,7 +2426,7 @@ def _apply_outage_overlays(
         # (config-collapse train-aliasing, partial site acceptance) plus true
         # OFF-at-HSL filings through certified dead stops — see the
         # ScenarioConfig field comment and
-        # docs/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md. CT_PEAKER is
+        # docs/records/ercot/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md. CT_PEAKER is
         # in scope on principle and provably inert (peakers carry no windows
         # by the detector's design). Coal-only arms stay byte-identical: for
         # a coal generator the (plant_code, artifact_class(plant_group)) layer
@@ -2856,7 +2856,7 @@ def _apply_outage_overlays(
         )
 
         # FLEET grain, not class grain, and the ex-ante measurement is why
-        # (results/calibration/_pjm161_removeonly_exante.json). PJM publishes
+        # (results/phase0/pjm/_pjm161_removeonly_exante.json). PJM publishes
         # ONE fleet number; `pjm_dam_availability_series` spreads it into a
         # single availability FRACTION handed to every covered class, which as
         # a remove-only cap degenerates into "every class ceilinged at the
@@ -4375,8 +4375,8 @@ def generators_to_fleet_arrays(
     # every crossover year -- proved by an on-recipe ``fleet_only`` rebuild of all
     # seven backcast keepers and the T1-F/T1-H recipes before this landed.
     # Costs one set build per call; changes no decision.
-    # docs/handoffs/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §2.1/§2.4
-    # docs/handoffs/FINDING-capx-d88-2026-09-08.md
+    # docs/records/forecast/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §2.1/§2.4
+    # docs/records/forecast/FINDING-capx-d88-2026-09-08.md
     _unit_ids = [g.unit_id for g in generators]
     if len(set(_unit_ids)) != len(_unit_ids):
         _counts = Counter(_unit_ids)

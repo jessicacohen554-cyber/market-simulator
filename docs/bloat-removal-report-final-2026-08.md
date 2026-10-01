@@ -223,7 +223,7 @@ executed the rewrite — run 31955205445 (run #18), SUCCESS, force-push landed
 warning about exactly that trade; it stands as written — the archive it
 describes is now burned, the affected corpus READMEs carry honest
 unrecoverability statements, and the durable record is
-`docs/FINDING-history-rewrite-2026-08-16.md`. The run-#16 abort recorded
+`docs/records/governance/FINDING-history-rewrite-2026-08-16.md`. The run-#16 abort recorded
 further below was diagnosed correctly: its 9 failing commits were
 refs/pull-only, the workflow was patched to classify them, and all 9 survive
 untouched.]*

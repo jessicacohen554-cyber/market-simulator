@@ -1,20 +1,20 @@
 # Is this model fit to forecast retirements and new entry? — 2026-07 verdict
 
 > **Rewritten 2026-07-13 (P-3C,
-> `docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md` §2 T3.3/T3.2).**
+> `docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md` §2 T3.3/T3.2).**
 > Supersedes the 2026-06-15 ERCOT-only verdict (git history preserves it). Scope is
 > now **all six ISOs**, and the verdict is graded against *measured* program
 > evidence, not code inspection: the Tier-1 driver battery (P-1A,
-> `docs/handoffs/driver-battery-2026-07-12.md`), the CR-1 curve validation (P-2A,
-> `docs/handoffs/capacity-price-validation-2026-07-12.md`), the accreditation-basis
-> adjudication (P-2B, `docs/handoffs/accreditation-basis-memo-2026-07-12.md`), the
-> CR-3.1 ELCC curves (P-2C, `docs/handoffs/elcc-curves-p2c-2026-07.md`), the first
-> full-horizon 2026–2050 runs (P-3A, `docs/handoffs/full-horizon-findings-2026-07-12.md`),
+> `docs/records/misc/driver-battery-2026-07-12.md`), the CR-1 curve validation (P-2A,
+> `docs/records/misc/capacity-price-validation-2026-07-12.md`), the accreditation-basis
+> adjudication (P-2B, `docs/records/misc/accreditation-basis-memo-2026-07-12.md`), the
+> CR-3.1 ELCC curves (P-2C, `docs/records/misc/elcc-curves-p2c-2026-07.md`), the first
+> full-horizon 2026–2050 runs (P-3A, `docs/records/misc/full-horizon-findings-2026-07-12.md`),
 > the capacity-market equilibrium battery (P-3B,
-> `docs/handoffs/equilibrium-battery-2026-07-12.md`), the HEAD capacity hindcasts
+> `docs/records/misc/equilibrium-battery-2026-07-12.md`), the HEAD capacity hindcasts
 > (`docs/hindcast-reports/{ercot,pjm}-2021-2025-realized-p2c*-2026-07-12.md`), and
 > the cross-model corridor + SOM benchmark report (this session,
-> `docs/handoffs/cross-model-corridor-2026-07-13.md`). All evidence is in-train
+> `docs/records/misc/cross-model-corridor-2026-07-13.md`). All evidence is in-train
 > (2021–2025 hindcasts, 2026+ forecast probes); no holdout year was solved or
 > scored (rule 22).
 
@@ -73,9 +73,9 @@ ISO, and MISO cannot produce a forecast at all.
 > Sources, each claim traceable: FF-2C flip set and NYISO exclusion —
 > `docs/forecast-development-plan-2026-07.md` §6 / `ff-wave-manager-ledger-2026-07.md`
 > FF-2C row; zero-revenue and PJM-floor measurements —
-> `docs/handoffs/ffr-2e-shipped-capacity-posture-2026-08-02.md` §§3–5 and
-> `docs/handoffs/ffr-2c-net-cone-currency-2026-08-02.md`; signatures —
-> `docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum C.1/C.3. **No number in
+> `docs/records/forecast/ffr-2e-shipped-capacity-posture-2026-08-02.md` §§3–5 and
+> `docs/records/forecast/ffr-2c-net-cone-currency-2026-08-02.md`; signatures —
+> `docs/records/forecast/ffr-owner-sitting-2026-08-02.md` Addendum C.1/C.3. **No number in
 > the body below was re-measured by this re-grade** — the body remains the
 > 2026-07-13 measurement record.
 
@@ -108,7 +108,7 @@ P-3B found NEISO retires **exactly 0 thermal MW over all 25 forecast years**
 even at a 67.5 % reserve margin, and hypothesized the flat capacity payment
 alone covers going-forward cost. The no-LP ratio check its §8.3 requested has
 now been run and confirms it
-(`docs/handoffs/capacity-revenue-fom-ratio-2026-07-13.md`, PR #2160; this
+(`docs/records/misc/capacity-revenue-fom-ratio-2026-07-13.md`, PR #2160; this
 session's independent re-derivation agrees to rounding) — the registry
 arithmetic the screens actually use, `net_cone_per_kw_yr × (1 − EFORd)`
 (`MARKET_DESIGN`, `constants.py:2558`; `EFORD`, `constants.py:760`) against
@@ -230,7 +230,7 @@ flip does not by itself make the *forecasts* right — but the binding blocker h
 Measured re-runs on the flipped defaults (fresh T1.7 rig-limitation finding;
 per-plant hindcast/equilibrium/tornado re-runs launched, continuation in the
 FF-2C findings doc §4) —
-`docs/handoffs/ff-2c-capacity-clearing-flip-execution-2026-07.md`.
+`docs/records/forecast/ff-2c-capacity-clearing-flip-execution-2026-07.md`.
 
 Rows 1–4 are the honest extent of "fit to forecast" today. The program's own
 framing stands confirmed end-to-end: *an entry/retirement loop driven by a
@@ -245,7 +245,7 @@ blockers below clear.
 | **BLK-1** | `STORAGE_BASE_FLEET_MW` omits MISO → `build_default_storage` raises; **1/6 ISOs has no runnable forecast path** | P-3A ranked issue #1 (`full-horizon-findings-2026-07-12.md` §3); needs a cited EIA-860 base fleet (rules 5/24) | verdict rows — all of MISO |
 | **BLK-2** | ERCOT scarcity non-monotone in load/one-pass evolution (slack hours [34,0,58] across the T1.4 ladder; [0,…,11,0,39,107] over 2026–2040) | GitHub **#2064** | row 11 (adequacy timing); any scarcity-driven exit call |
 | **BLK-3** | ICAP/UCAP/FPR accreditation basis: PJM position ~18 pp too long from basis alone; anchor −22 %; payment CT/CC distortion. P-2B adopted Option A. **The anchor half is CLOSED: R1 (curve anchor 60.4→77.43 UCAP) and R4 (fixed anchor re-derived to the published basis for all four flipped ISOs) landed by FF-2C 2026-07-20 (commit `dbbae9c`) — the uniform −22 % anchor error is gone.** The requirement/position half (FPR requirement, ELCC-class supply, R2/R3/R5/R6) continues under the accreditation-basis lane. | **#1532** / P-2B memo §4; FF-2C (R4) | rows 7–12; P-2A flip prerequisite 1 (satisfied) |
-| ~~BLK-4~~ | ~~`capacity_market_clearing` default-off and unflippable~~ — **RESOLVED for PJM/MISO/CAISO/NEISO (FF-2C, 2026-07-20, commit `dbbae9c`).** Flipped ON by default via `capacity_market_clearing_by_iso` (owner sign-off 2026-07-19, RC-2B flip memo §4, unblocked by the §5 D1=3 re-probe); R4 re-derived each fixed anchor to its published basis (PJM 100→77.431, MISO 80→79.8, NEISO 95→108.94, CAISO 90→88.08). NYISO remains the one exception (curve-ineligible until R5a). | P-2A §7 → **FF-2C done**; `docs/handoffs/ff-2c-capacity-clearing-flip-execution-2026-07.md` | rows 7–12 (now testable — see the row notes) |
+| ~~BLK-4~~ | ~~`capacity_market_clearing` default-off and unflippable~~ — **RESOLVED for PJM/MISO/CAISO/NEISO (FF-2C, 2026-07-20, commit `dbbae9c`).** Flipped ON by default via `capacity_market_clearing_by_iso` (owner sign-off 2026-07-19, RC-2B flip memo §4, unblocked by the §5 D1=3 re-probe); R4 re-derived each fixed anchor to its published basis (PJM 100→77.431, MISO 80→79.8, NEISO 95→108.94, CAISO 90→88.08). NYISO remains the one exception (curve-ineligible until R5a). | P-2A §7 → **FF-2C done**; `docs/records/forecast/ff-2c-capacity-clearing-flip-execution-2026-07.md` | rows 7–12 (now testable — see the row notes) |
 | **BLK-5** | Retirement-screen level miscalibration, ERCOT direction (22.8 vs 1.5 GW; false-retire 96 %) | G-30/G-31 hindcast lane | rows 4–6 |
 | **BLK-6** | ERCOT scarcity/AS revenue level: screens capture ~25 % of the SOM CT net-revenue anchor (17.2 vs ≈68 $/kW-yr); `as_revenue_enabled` default off | G-20/G-22 AS co-opt lane; corridor report §2 (T3.2) | rows 3, 5, 6 |
 | **BLK-7** | VRE new-entry screens earn no capacity revenue anywhere (even in ISOs that pay it), and PJM wind ELCC has no published declining axis yet | audit D7; P-2C follow-ups #1/#4 | rows 6, 10 |
@@ -280,7 +280,7 @@ blockers below clear.
    lanes, NOT tuned. PJM's *quantitative* curve effect is still gated on the
    BLK-3 requirement/position half (its curve pays $0 past the zero-cross).
    NYISO stays unflipped (R5a). See
-   `docs/handoffs/ff-2c-capacity-clearing-flip-execution-2026-07.md`.
+   `docs/records/forecast/ff-2c-capacity-clearing-flip-execution-2026-07.md`.
 5. **ERCOT scarcity level** stays with G-20/G-22 (structural co-opt, never a
    fitted rent) — gates rows 5–6.
 
@@ -296,7 +296,7 @@ Program reports listed in the header; `src/market_sim/model/capacity.py`
 `_NEW_ENTRY_TECHS`, `resolve_reserve_margin_build_enabled`),
 `src/market_sim/config/constants.py` (`MARKET_DESIGN`, `EFORD`),
 `src/market_sim/config/scenarios.py` (FOM defaults, gates);
-`docs/handoffs/cross-model-corridor-2026-07-13.md` (T3.3 corridor + T3.2 SOM
+`docs/records/misc/cross-model-corridor-2026-07-13.md` (T3.3 corridor + T3.2 SOM
 tables, incl. external citations); ERCOT Potomac SOM PNM anchors as cited
 there. Historical (2026-06-15) ERCOT net-revenue reconciliation: git history
 of this file.

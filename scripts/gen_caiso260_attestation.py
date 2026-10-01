@@ -4,7 +4,7 @@ unattested C6 makes C3c FAIL instead of reclassifying to a ledgered CAVEAT.
 No control is solved (rule 29 clause b; G-CTRL form 4): ``_caiso255_gdrift_identity.py``
 rebuilt the keeper's LP inputs at ``c78f6d94`` and at HEAD with the demand
 artifact committed and found every array bit-identical in all three years
-(``results/calibration/_caiso260_gdrift_at_solve.json``), so the caiso-257
+(``results/phase0/caiso/_caiso260_gdrift_at_solve.json``), so the caiso-257
 keeper IS the control and the re-derived demand artifact is the only live hunk.
 Pattern unchanged (E10: generated AT the promotion, never typed): the caiso-257
 keeper's committed attestation is carried, ``attested_by`` re-stamped with the

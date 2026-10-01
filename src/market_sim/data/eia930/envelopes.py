@@ -60,7 +60,7 @@ def _pjm_utc_hoy(utc_col: pd.Series, year: int) -> np.ndarray:
     ``_ept`` placement outside DST, exactly one hour earlier inside it. Feb 29
     (standard-time, EST==EPT) is dropped; a row whose EST instant falls outside
     ``year`` maps to ``-1`` for the caller to drop. See
-    ``docs/handoffs/debug-b-pjm-input-clock-charter-2026-08.md`` §3.
+    ``docs/records/pjm/debug-b-pjm-input-clock-charter-2026-08.md`` §3.
     """
     est = (
         pd.to_datetime(utc_col, format="mixed", errors="coerce")
@@ -990,7 +990,7 @@ def measured_miso_spp_hub_prices(
 # lag scan in scripts/validate_caiso_seam_hod_frame.py, which fails loudly if
 # the parquet is ever re-fetched with honest stamps (best lag moves to 0) so
 # this correction cannot silently double-shift. Full forensics:
-# results/calibration/FINDING-caiso-seam-tz-correction-2026-07-07.md.
+# docs/records/caiso/FINDING-caiso-seam-tz-correction-2026-07-07.md.
 _CAISO_INTERCHANGE_LAG_STD_H: int = 1
 _CAISO_INTERCHANGE_LAG_DST_H: int = 2
 
@@ -2237,7 +2237,7 @@ def nwpp_net_interchange(
     The served measured-interchange schedule of owner ruling N4 (NWPP desk
     sitting #4, 2026-09-14: "served measured interchange, priced links
     default-off"). Its construction was fixed in
-    ``docs/handoffs/PRECOMMIT-nwpp-20-2026-09-14.md`` §3.4 before any code was
+    ``docs/records/nwpp/PRECOMMIT-nwpp-20-2026-09-14.md`` §3.4 before any code was
     written, from three measured facts:
 
     1. **Σ ``Total interchange`` over the seventeen members is defective.**
@@ -2264,7 +2264,7 @@ def nwpp_net_interchange(
     +21.2 TWh) inherits BPAT's per-leg over-report.
 
     The BPAT/GRID source conflict this construction routes around was
-    ADJUDICATED by lane NWPP-34 (``docs/handoffs/FINDING-nwpp-34-2026-09-14.md``),
+    ADJUDICATED by lane NWPP-34 (``docs/records/nwpp/FINDING-nwpp-34-2026-09-14.md``),
     which confirms fact 1 and adds the evidence it rested on. BPAT's TI steps
     onto the repaired convention in ONE hour — hour-ending 2025-06-01 00:00
     Pacific, where TI falls 4,828 MW (its single largest hourly move of 2025)
@@ -2279,7 +2279,7 @@ def nwpp_net_interchange(
     mirrors CISO's own book to −0.001 / +0.057 / +0.022 TWh. Pinned by
     ``tests/unit/data/test_nwpp_served_interchange_trap.py``.
     ``grid_carried_wind_served`` (``ScenarioConfig.nwpp_grid_carried_wind_served``,
-    GATED default off; lane NWPP-47, ``docs/handoffs/FINDING-nwpp-47-2026-09-22.md``):
+    GATED default off; lane NWPP-47, ``docs/records/nwpp/FINDING-nwpp-47-2026-09-22.md``):
     the subtraction above removes fact 3's Southwest legs on the premise that
     they carry resources the fleet does not own. Plant-level evidence splits
     them: the SRP / WALC legs carry Desert-Southwest gas (not in the fleet,

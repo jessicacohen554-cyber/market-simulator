@@ -29,7 +29,7 @@ What changes (mechanics only — every transform is order-equivalent):
   ``write_clean``'s.
 
 Verification protocol (run by PERF-A, results in
-``docs/handoffs/perf-recheck-2026-08.md``): read back both parquets and
+``docs/records/governance/perf-recheck-2026-08.md``): read back both parquets and
 compare with ``pandas.testing.assert_frame_equal(check_exact=True)`` plus
 dtype equality; peak RSS via VmHWM both ways.
 

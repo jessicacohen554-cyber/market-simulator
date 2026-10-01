@@ -4,11 +4,11 @@ Reads only committed artifacts — no LP, no fleet build:
   - keeper #13's run payload  frontend/data/backcast/runs/<KEEPER>.js   (per-plant model TWh, zone x month)
   - the NWPP per-plant benchmark frontend/data/backcast/bench/NWPP/<Y>.json.gz (EIA-923 per plant)
   - keeper #13's scored C1 records (calibration_verdict.py --json, run in-process)
-  - the NWPP-NEXT-5 coal contract census  results/calibration/_nwppnext5_coal_contract_census.json
+  - the NWPP-NEXT-5 coal contract census  results/phase0/nwpp/_nwppnext5_coal_contract_census.json
   - EIA-923 generation-fuel, for PGE Beaver (8073), which has no CEMS and so no benchmark plant row
 
-Writes results/calibration/_nwppnext7_cc_long_census.json. Record:
-docs/handoffs/FINDING-nwppnext7-cc-long-is-coal-short-2026-09-26.md.
+Writes results/phase0/nwpp/_nwppnext7_cc_long_census.json. Record:
+docs/records/nwpp/FINDING-nwppnext7-cc-long-is-coal-short-2026-09-26.md.
 """
 
 from __future__ import annotations
@@ -55,7 +55,7 @@ def main() -> None:
     """Run the census and write the JSON record."""
     pay = load_payload()
     c1 = load_c1()
-    census = json.loads((REPO_ROOT / "results/calibration/_nwppnext5_coal_contract_census.json").read_text())["per_year"]
+    census = json.loads((REPO_ROOT / "results/phase0/nwpp/_nwppnext5_coal_contract_census.json").read_text())["per_year"]
     beaver_act = defaultdict(float)
     with open(REPO_ROOT / "data/raw/eia-923-generation-fuel/eia923_generation_fuel_2019_2025.csv") as f:
         for r in csv.DictReader(f):
@@ -109,7 +109,7 @@ def main() -> None:
     num = sum((a - mc) * (b - mo) for a, b in zip(cc, co))
     den = (sum((a - mc) ** 2 for a in cc) * sum((b - mo) ** 2 for b in co)) ** 0.5
     rec["r_ccdelta_vs_coaldelta"] = num / den
-    out = REPO_ROOT / "results/calibration/_nwppnext7_cc_long_census.json"
+    out = REPO_ROOT / "results/phase0/nwpp/_nwppnext7_cc_long_census.json"
     out.write_text(json.dumps(rec, indent=1))
     print(f"r(CC delta, coal delta) = {rec['r_ccdelta_vs_coaldelta']:.3f}")
     print("year  CCd   coald  hydrod  fossild | bind A  B | CC after A  B | Beaver m/a")

@@ -59,7 +59,7 @@ def main() -> None:
         "2026-09-26-nyisonext2-astoria-pair-span: ZERO scenario_config changes; the bin "
         "builder's committed share read on the full CAMPD artifact selector pair and the "
         "'-perunitmerit-' tranche artifact re-derived on the current outage basis (rules 19, 23). "
-        f"Pre-registration: docs/PRECOMMIT-nyiso-next3-tranche-basis-2026-09-26.md, pushed at "
+        f"Pre-registration: docs/records/nyiso/PRECOMMIT-nyiso-next3-tranche-basis-2026-09-26.md, pushed at "
         f"{a.pin} before any solve. Offer curves byte-identical to the keeper (rule 1(c)); no "
         "multiplier tuned; zero free parameters. PRIOR: "
     )

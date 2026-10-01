@@ -930,7 +930,7 @@ def build_config(
         # COMMITTED before this commit was scored with both forced OFF, so
         # those verdicts are LEGACY EVIDENCE on a superseded posture. They are
         # not reinterpreted and not deleted; an FC-3 citation resting on them
-        # says so. See docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md §2.
+        # says so. See docs/records/forecast/ffr-3d-instrument-repair-2026-08-03.md §2.
         **{
             k: v
             for k, v in {
@@ -1980,7 +1980,7 @@ def main(argv: list[str] | None = None) -> int:
             "and step 1/1b's owner-filed dates; sectors 2-7 (IPP / commercial / "
             "industrial, CHP and non-CHP) face the screen as before, an unknown "
             "sector fails open to it (D32 C5/R3; design "
-            "docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md). ISO-"
+            "docs/records/forecast/DESIGN-capx-d53-sector-gate-2026-09-05.md). ISO-"
             "agnostic by construction; ARMED per ISO by owner ruling through "
             "iso_configs (MISO: D53, 2026-09-05; PJM: Q56 / capx D78-ARM, "
             "2026-09-06, beside the D48 / D57 / D67 / Q55 gates), so OMIT to "
@@ -2120,7 +2120,7 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help=(
             "ENTRY-SIGNAL forward-expectation MEASUREMENT arm (the rung "
-            "named by docs/FINDING-entry-signal-disarm-2026-08.md §6): the "
+            "named by docs/records/misc/FINDING-entry-signal-disarm-2026-08.md §6): the "
             "capacity screens' price object becomes the run's own prior-year "
             "hourly ZONAL LP dual surface re-leveled hour-by-hour against "
             "the ENTERING year's stack (the same lookahead instrument "
@@ -2163,7 +2163,7 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help=(
             "D11-R margin-exhaustion entry volume rule MEASUREMENT arm "
-            "(docs/FINDING-entry-signal-l1-2026-08.md §2, the L-1b closure "
+            "(docs/records/misc/FINDING-entry-signal-l1-2026-08.md §2, the L-1b closure "
             "productionized): BOTH entry allocators (thermal/VRE and "
             "storage) build in repriced tranches until the screen's own "
             "margin is exhausted, bounded by the SAME caps, replacing the "
@@ -2172,7 +2172,7 @@ def main(argv: list[str] | None = None) -> int:
             "--no-entry-lookahead-reprice the screens keep the raw "
             "prior-year zonal duals as their level and this rule supplies "
             "the capacity response — the C-1 joint posture "
-            "(docs/PRECOMMIT-c1-joint-wind-2026-08-31.md). OMIT to inherit the shipped "
+            "(docs/records/misc/PRECOMMIT-c1-joint-wind-2026-08-31.md). OMIT to inherit the shipped "
             "ScenarioConfig default (GATED OFF — this is a measurement, not "
             "an arming); --entry-margin-exhaustion arms the treatment and "
             "--no-entry-margin-exhaustion forces the control explicitly."
@@ -2184,7 +2184,7 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help=(
             "D12 scarcity-consistent entry reserve leg MEASUREMENT arm "
-            "(docs/handoffs/FINDING-capx-d12-scarcity-basis-2026-08-30.md): "
+            "(docs/records/forecast/FINDING-capx-d12-scarcity-basis-2026-08-30.md): "
             "the thermal entry screens' hourly reserve legs read the "
             "entering year's OWN expected-ORDC adder — the same instrument "
             "invocation that priced the energy leg — instead of the prior "
@@ -2203,7 +2203,7 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help=(
             "T1-H capacity-entry D-2 storage availability-year gate "
-            "MEASUREMENT arm (docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md "
+            "MEASUREMENT arm (docs/records/misc/PRECOMMIT-t1h-capacity-entry-2026-08-30.md "
             "Phase-1 Leg A): the storage entry screen admits a technology "
             "only at/after its measured first-US-operating year "
             "(constants.STORAGE_TECH_AVAILABLE_YEAR, derived from the "

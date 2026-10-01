@@ -3,13 +3,13 @@
 ``run_config.json`` whose recorded ``cache_key`` the current rules cannot
 reproduce, and check the result against the committed exception record.
 
-**Standing tooling.** Seeded as the one-off ``docs/handoffs/d85/
+**Standing tooling.** Seeded as the one-off ``docs/records/forecast/d85/
 key_provenance_census.py`` by capx D85 (owner ruling Q59, capx ledger
 §0bb.3(a), r#57) and promoted here by capx **D85-R**, which executes D85 §5's
 recommended repairs (ii) + (v). The CLI is ``scripts/check_key_provenance.py``;
 this module is the library it and ``tests/regression/
 test_key_provenance_exceptions.py`` share. D85's own measurement record stays
-at ``docs/handoffs/d85/key-provenance-census.json``.
+at ``docs/records/forecast/d85/key-provenance-census.json``.
 
 **What it measures.** The same census ``capxd76arm_default_flip_key_census``
 runs (hash each committed ``scenario_config`` payload under the LIVE drop
@@ -95,7 +95,7 @@ ISOs' keepers among them, because ``pjm_seam_neighbour_hourly_ladder`` landed at
 ``f2a834de`` with no registration entry. :func:`unregistered_schema_drift` closes
 that hole as gate ``G6``; the census summary also REPORTS the dataclass
 construction so the "ok:" verdict stops implying coverage it does not have.
-Full diagnosis: ``docs/handoffs/FINDING-capx-d91-2026-09-09.md``.
+Full diagnosis: ``docs/records/forecast/FINDING-capx-d91-2026-09-09.md``.
 
 **The exception record.** ``docs/governance/key-provenance-exceptions.json``
 lists every known non-reproducing record with its class, its executable recipe
@@ -663,7 +663,7 @@ def unregistered_schema_drift(record: dict, baseline: set[str] | None = None) ->
 #: rule 32 ``[R-SHARD]`` (c)(1) pins shards to a SHA and forbids a rebase, so
 #: pre-registration code keeps minting such records for hours after the merge.
 #: Owner ruling Q66 ("Class rule.") replaces N hand-listed records with one row
-#: per registration. Full statement: ``docs/handoffs/PRECOMMIT-capx-d93-2026-09-24.md`` §2.
+#: per registration. Full statement: ``docs/records/forecast/PRECOMMIT-capx-d93-2026-09-24.md`` §2.
 LAG_REGISTRATIONS_PATH = (
     _REPO / "docs" / "governance" / "key-provenance-lag-registrations.json"
 )

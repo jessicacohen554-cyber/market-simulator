@@ -2,7 +2,7 @@
 
 Adapted from ``scripts/probes/xiso8_compose_span.py`` (same ISO, same composition
 rules). What differs: the ARM is the R-CAISO input-correction posture
-(docs/handoffs/r-caiso/PRECOMMIT-r-caiso-2026-09-24.md §1), asserted field by field
+(docs/records/caiso/r-caiso/PRECOMMIT-r-caiso-2026-09-24.md §1), asserted field by field
 on every leg, and ``eia860_vintage_year`` is allowed to differ per leg (the
 year-matched vintage is per-year by construction).
 

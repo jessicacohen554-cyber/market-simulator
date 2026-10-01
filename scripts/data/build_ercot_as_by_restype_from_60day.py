@@ -236,7 +236,7 @@ def surgical_storage_fix(big: pd.DataFrame, year: int) -> None:
         "storage column rebuilt 2026-07-07 from the in-repo 60d Gen Resource "
         "Data PWRSTR awards with the Central-Prevailing sequential-HE labels "
         "converted CPT->CST before placement (the HSL-round placement-defect "
-        "class, docs/handoffs/ercot-g22-demand-side-design-2026-07.md §7); "
+        "class, docs/records/ercot/ercot-g22-demand-side-design-2026-07.md §7); "
         "all other columns are the original Gen+Load build (Load awards "
         "source not in repo) and keep its clock."
     )

@@ -28,7 +28,7 @@ the corpus has hit before:
    expected gap is deliveries **2024-01-10..23** (publications 2024-03-10..23),
    which aged out of the free MIS list before any fetch reached them; the
    credentialed data.ercot.com archive is owner-declined
-   (``docs/handoffs/ercot-as-coopt-plan-2026-07.md`` §WS-E).
+   (``docs/records/ercot/ercot-as-coopt-plan-2026-07.md`` §WS-E).
 3. **Locked-test leakage** (CLAUDE.md rule 22): no delivery day may exceed
    ``--max-delivery-date`` (default 2025-12-31). H1-2026 is the locked-test
    tier and the holdout freeze is scoped to it; the fetchers refuse those days

@@ -48,7 +48,7 @@ from scripts.replay_keeper import derived_run_year_inputs, run_year_kwargs  # no
 from scripts.run_calibration import run_year  # noqa: E402
 
 KEEPER = REPO / "results/calibration/miso268_yard_span"
-OUT = REPO / "results/calibration/_miso269_feb2021_gas_phase0.json"
+OUT = REPO / "results/phase0/miso/_miso269_feb2021_gas_phase0.json"
 YEAR = 2021
 
 

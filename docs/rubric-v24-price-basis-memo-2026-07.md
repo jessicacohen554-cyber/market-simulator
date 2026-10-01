@@ -7,7 +7,7 @@ equal-hour hub mean. Scorer `scripts/calibration_verdict.py`
 `scripts/data/derive_actual_lmp.py --lw-retrofit`, committed-part retrofit
 `scripts/archive/retrofit_lw_price_bench.py`, probe scorer
 `scripts/probes/_score_probe.py`. Discovery + proof:
-`docs/handoffs/ercot-ordc-capdual-adder-2026-07.md` §4 and the 2026-07-09
+`docs/records/ercot/ercot-ordc-capdual-adder-2026-07.md` §4 and the 2026-07-09
 calibration-log entries.
 
 ## 1. The defect (why the old basis was not measuring price skill)
@@ -48,7 +48,7 @@ on both sides of the comparison):
   `actual_lmp_hourly_zonal_MISO.parquet` trading hubs per model zone
   (MISO-South = mean of its four hubs; MISO-Plains = MINN+ILLINOIS mean
   proxy) × measured zonal demand, zone-demand-weighted; registry
-  `ZONAL_LW_SOURCES`. Record: `docs/RESULT-miso294-zone-resolved-basis-2026-10-01.md`.
+  `ZONAL_LW_SOURCES`. Record: `docs/records/miso/RESULT-miso294-zone-resolved-basis-2026-10-01.md`.
 * **Other ISOs (system-level):** the committed hourly system series
   (`actual_lmp_hourly_<ISO>.parquet`) × measured system load. The residual
   zonal-weighting wedge (hub vs load-zone premium) is second-order (ERCOT

@@ -41,8 +41,8 @@ ENTRY = {
     "A-K hourly load actuals; county -> load-zone assignment; NYISO Gold Book tie landings.",
     "root_cause": "not a residual closer: the five-zone model carried zone G's load and plants "
     "in a zone priced and scored as F (CAPITL), and carried the E->F CENTRAL EAST constraint "
-    "only as a TOTAL EAST envelope. Record: docs/DESIGN-nyiso-next17-fg-split-2026-09-30.md, "
-    "docs/PRECOMMIT-nyiso-next17-fg-split-2026-09-30.md.",
+    "only as a TOTAL EAST envelope. Record: docs/records/nyiso/DESIGN-nyiso-next17-fg-split-2026-09-30.md, "
+    "docs/records/nyiso/PRECOMMIT-nyiso-next17-fg-split-2026-09-30.md.",
 }
 
 
@@ -64,7 +64,7 @@ def main() -> None:
         "2026-09-30-nyisonext16-winter-spread-span replayed with ONE recipe delta, "
         "nyiso_fg_split true (zone G to Lower_Hudson; TOTAL EAST as its two measured legs; "
         "owner card 'Build design A anyway'). "
-        "Pre-registration: docs/PRECOMMIT-nyiso-next17-fg-split-2026-09-30.md; arm "
+        "Pre-registration: docs/records/nyiso/PRECOMMIT-nyiso-next17-fg-split-2026-09-30.md; arm "
         f"pinned at {a.pin}. Offer curves byte-identical to the keeper (rule 1(c)); no "
         "multiplier tuned; zero free parameters added. PRIOR: "
     )

@@ -1,7 +1,7 @@
 """Download IESO (Ontario) hourly prices and the Bank of Canada USD/CAD rate.
 
 WHY THIS EXISTS (NYISO-NEXT-10, 2026-09-28).  NEXT-7
-(``docs/FINDING-nyiso-next7-star-node-2026-09-27.md`` §3(c)) found the repo held
+(``docs/records/nyiso/FINDING-nyiso-next7-star-node-2026-09-27.md`` §3(c)) found the repo held
 no Ontario price, so the NYISO-IESO seam could not be tested against its own
 spread.  Two IESO public reports carry it, pre-Market-Renewal:
 

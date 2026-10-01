@@ -3,7 +3,7 @@
  "bundle": "results/ff-t3-neiso-golden/bau-d60",
  "run_id": "neiso-2026-2050-t3-golden3-d60",
  "attested_by": "capx D60-R3, 2026-09-06 \u2014 THE PRODUCING SESSION, which is rubric \u00a75's default author. Unlike D47 (which had to attest another session's bundle and disclosed that deviation), this lane solved the bundle it attests, so it can author in the ordinary way. The six assertions below were FIXED IN ADVANCE in PREDECL-capx-d60-2026-09-05.md Addendum B, pushed to main before this bundle existed and before any of its FC rows had been read; Addendum B states in terms that an assertion which turns out false is recorded FALSE and FC-7 fails on it at full magnitude, and that the attestation is not re-scoped to fit. Each value below is read from committed bytes, not judged at authoring time.",
- "predeclaration": "docs/handoffs/PREDECL-capx-d60-2026-09-05.md Addendum B (pushed before the solve)",
+ "predeclaration": "docs/records/forecast/PREDECL-capx-d60-2026-09-05.md Addendum B (pushed before the solve)",
  "assertions": {
   "dof_ledger_complete": {
    "value": true,

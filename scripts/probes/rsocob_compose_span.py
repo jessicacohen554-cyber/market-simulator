@@ -1,6 +1,6 @@
 """R-SOCO-B (ZERO LP): verify the seven per-year legs and compose them into one span bundle.
 
-PRECOMMIT: ``docs/handoffs/r-soco/PRECOMMIT-r-soco-b-2026-09-25.md`` §6. Each leg is
+PRECOMMIT: ``docs/records/soco/r-soco/PRECOMMIT-r-soco-b-2026-09-25.md`` §6. Each leg is
 the promoted SOCO keeper's recipe replayed on the repaired SOCO boundary, one shard per
 year (rule 36). Three layers of checks run BEFORE anything is written:
 

@@ -17,7 +17,7 @@ NOT-YET on 2019–2022 rows only (CC overshoot 2019/2020/2022, coal 2019/2021/20
 re-derive (`unit_outage_full_rederive`, + unit-scoped peaker-skip deriver fix) solved: NOT promoted (ST_GAS 2023/24
 +8 TWh from listed peakers losing dead-period windows; CC 2024 −12.06) — owner decision. `retiree_cems_cap` deleted
 (measured inert every year). Prior keeper `2026-09-26-pjm-next-4-midcurve2019` pruned. Record:
-`docs/RESULT-pjm-next-5-2026-09-27.md`.
+`docs/records/pjm/RESULT-pjm-next-5-2026-09-27.md`.
 
 ## PJM-NEXT card 1 — 2026-09-25
 
@@ -45,7 +45,7 @@ G-DRIFT LIVE hunk was isolated by 4 control solves.
 
 TMI dispatches 0 MWh in 2019 despite the carry, which is a nuclear-path successor.
 
-Record: `docs/RESULT-pjm-next-c1-year-correct-membership-2026-09-25.md`.
+Record: `docs/records/pjm/RESULT-pjm-next-c1-year-correct-membership-2026-09-25.md`.
 
 ## 2026-07-19 — PJM DAM outage/availability data intake (no solve)
 
@@ -63,7 +63,7 @@ statistical fallback until they exist. Schema `pjm-outages`. Committed the loade
 `market_sim.data.pjm_outages.pjm_dam_availability_series` (a **default-off,
 backcast-only** seam); the `ScenarioConfig.pjm_dam_availability` flag + the
 `data.fleet` water-fill application (shared with the ERCOT overlay) are the
-ready-to-apply patch in `docs/handoffs/pjm-dam-availability-wiring-2026-07.md`,
+ready-to-apply patch in `docs/records/pjm/pjm-dam-availability-wiring-2026-07.md`,
 deferred because they touch two 8k–10k-line core files the API-only push path
 can't re-emit safely (rule 27). PJM publishes no per-fuel-class outage split, so
 the transform is a fleet-wide uniform derate (forced + maintenance) against the
@@ -83,7 +83,7 @@ canonical intake ledger `docs/out-of-sample-results-2026-07.md` §1 (as §1.5);
 currently sits unregistered alongside the pre-existing `dam-public-bids` /
 `lmp-components`, which are in the same state). Flagged for the PJM calibration
 owner: applying the wiring
-(`docs/handoffs/pjm-dam-availability-wiring-2026-07.md`), turning the overlay on,
+(`docs/records/pjm/pjm-dam-availability-wiring-2026-07.md`), turning the overlay on,
 and choosing its final allocation/denominator is a keeper session subject to the
 holdout tiers.
 
@@ -215,7 +215,7 @@ Next number: pjm-119.
 band, the single NOT-YET criterion on keeper `2026-07-24-pjm-119-overlay-restore`
 (9/10 scored PASS). **Outcome: diagnosis + two refutations, no lever promoted,
 keeper unchanged.** Full write-up:
-`docs/FINDING-pjm120-c3a-extreme-tail-depth-2026-07.md`.
+`docs/records/pjm/FINDING-pjm120-c3a-extreme-tail-depth-2026-07.md`.
 
 **1. The handoff's leading lead is REFUTED on sign.** It proposed that 2025 fails
 because gas ($3.52 HH) exceeds the `gas_offer_margin_anchor` ($3.3483), so
@@ -288,7 +288,7 @@ Next number: pjm-121.
 `2026-07-25-pjm-121-cc-belt` (bundle `results/calibration/pjm121_ccbelt`) scores
 CALIBRATED, 10/10 criteria PASS** — PJM's first all-pass determination.
 `keepers.json` is owner-only and untouched; the promotion is flagged, not made.
-Full write-up: `docs/FINDING-pjm121-ccbelt-c3a-close-2026-07.md`.
+Full write-up: `docs/records/pjm/FINDING-pjm121-ccbelt-c3a-close-2026-07.md`.
 
 **1. The lever — one rule-19 scope flag, zero new free parameters.**
 `pjm_offer_midcurve_segments: ("LONG_RUN",) → ("LONG_RUN", "CC_LIKE")`, handing
@@ -314,7 +314,7 @@ dispersion fix (rule 1).
 
 **3. Level-form arm REFUTED without spending a solve.** The measured-ladder
 LEVEL form (bid SET to the measured level, signed markup — the
-`docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §A.1 step-3 construction) is
+`docs/records/pjm/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §A.1 step-3 construction) is
 implemented default-off behind `ScenarioConfig.pjm_offer_midcurve_level_segments`
 (six regression tests, `tests/test_pjm_offer_midcurve_level_form.py`).
 `scripts/probes/pjm121_level_form_precheck.py` ran the real builder on the real
@@ -376,7 +376,7 @@ content), so text files of any composition push safely with fetch-back
 verification.
 
 **Task 2 — the lane.** Full write-up:
-`docs/FINDING-pjm122-marginal-ownership-2026-07.md`. The decomp reproduces on
+`docs/records/pjm/FINDING-pjm122-marginal-ownership-2026-07.md`. The decomp reproduces on
 the CALIBRATED bundle (COAL sets 79/76/55/49/44% of the price by stratum;
 CC_REGULAR 0–1%). NEW measurement: in the four tight strata the model dual
 exceeds the **measured coal ceiling** (LONG_RUN ladder top 8.62× that hour's
@@ -398,7 +398,7 @@ offers can plausibly reach the 50-100/100-200 strata (−$3.66/−$2.49 of the
 **No solve was spent. The CALIBRATED keeper `2026-07-25-pjm-121-cc-belt` is
 untouched** — no config change, no re-solve, no dashboard change (nothing to
 register: rule 14 covers completed solves, and none was run). Full write-up:
-`docs/FINDING-pjm123-composite-precheck-2026-07.md`.
+`docs/records/pjm/FINDING-pjm123-composite-precheck-2026-07.md`.
 
 **The pre-check.** `scripts/probes/pjm123_composite_precheck.py` builds all
 three pjm-122 §4 legs on the real fleet and offer arrays (fleet reconstruction
@@ -473,7 +473,7 @@ future replay). Replay
 needs a ≥24 GB environment; clean partition prerequisites
 (`transfer-interface-limits`, `ramp-capability`, gitignored
 `pjm-da-virtuals` re-fetch) in
-`results/calibration/RESULTS-neiso65-crossiso-reaudit-2026-07.md` §2/§3e.
+`docs/records/neiso/RESULTS-neiso65-crossiso-reaudit-2026-07.md` §2/§3e.
 Mid-session the parallel lane promoted `2026-07-25-pjm-121-cc-belt` (keeper)
 and pruned the pjm-116…119 lineage incl. the attempted bundle, so the future
 re-audit replays `results/calibration/pjm121_ccbelt` instead — solved
@@ -484,7 +484,7 @@ taken by the artifacts-landing session above.)
 
 ## 2026-07-26 — pjm-124: `ramp10` deliverability scoping (frontier Lane 1, framing 2) — REFUTED on a no-LP pre-check, NO SOLVE SPENT
 
-Full adjudication: `docs/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`.
+Full adjudication: `docs/records/pjm/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`.
 Probe: `scripts/probes/pjm124_ramp10_scope_precheck.py`, kill criteria K1/K2/K3
 committed to git (`84288c3`) **before** the probe was run; per-year JSON in
 `results/calibration/pjm124_precheck_{2023,2024,2025}.json`.
@@ -597,7 +597,7 @@ Next number: pjm-125.
 
 ## 2026-07-26 — pjm-125: constrained commitment (frontier Lane 1, framing 1) — PARTIAL on a no-LP pre-check, NO SOLVE SPENT; **Lane 1 is now COMPLETE**
 
-Full adjudication: `docs/FINDING-pjm125-commitment-constraint-precheck-2026-07.md`.
+Full adjudication: `docs/records/pjm/FINDING-pjm125-commitment-constraint-precheck-2026-07.md`.
 Probe: `scripts/probes/pjm125_commitment_constraint_precheck.py`, criteria
 committed (`4860cf7`) **before** the run; JSON in
 `results/calibration/pjm125_precheck_{2023,2024,2025}.json`. Run in the same
@@ -669,10 +669,10 @@ Next number: pjm-126.
 
 ## 2026-07-26 — pjm-126: the mid-curve surface's tightest-bin inversion is a CONDITIONING ARTIFACT (frontier Lane 2) — Lane 2 STAYS OPEN, frontier NOT ready
 
-Full adjudication: `docs/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md`.
+Full adjudication: `docs/records/pjm/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md`.
 Probe: `scripts/probes/pjm126_midcurve_conditioning_precheck.py`, criteria
 committed (`9409f7f`) **before** the run; JSON in
-`results/calibration/pjm126_conditioning_precheck_2025.json`. No LP, no surface
+`results/phase0/pjm/pjm126_conditioning_precheck_2025.json`. No LP, no surface
 written, no derive re-run.
 
 **The inversion does not survive re-conditioning.** Inversion gap =
@@ -738,8 +738,8 @@ Next number: pjm-127.
 pjm-126 §5 owed, (b) the owner admissibility memo for the season-conditioned
 re-derive. Both no-LP; **no solve spent, keeper unchanged, no dashboard
 registration (no bundle exists).** Full write-up:
-`docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`; the decision memo:
-`docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md`.
+`docs/records/pjm/FINDING-pjm127-conditioning-multiyear-2026-07.md`; the decision memo:
+`docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md`.
 
 **1. pjm-127a — ARTIFACT in every year, and pooled.** The identical pjm-126
 probe (one NA-safety fix for the 2023 fall-back day's NaT row — mechanical,
@@ -784,7 +784,7 @@ Next number: pjm-128.
 
 Charter/cross-ISO session — measurement only: no guard change, no extract
 re-derive, no LP solve, **no PJM keeper touched**, no dashboard registration.
-Full record: `results/calibration/FINDING-campd-daygrain-crossiso-2026-07-26.md`;
+Full record: `docs/records/governance/FINDING-campd-daygrain-crossiso-2026-07-26.md`;
 cross-ISO entry in `docs/calibration-log/governance.md`.
 
 PJM's cell of the 180-cell sweep (`--rcc-pctl {0.50, 0.75, 0.90, 0.99}` × `--horizon {24, 48, 72}` ×
@@ -809,16 +809,16 @@ Lane B needed no solve and is unaffected by it. Next number unchanged: **pjm-128
 
 ## 2026-07-26 — pjm-128: the commitment-status half of Lane 2 is BLOCKED ON NON-PUBLIC DATA — no public unit-level DA award feed exists
 
-Full write-up: `docs/FINDING-pjm128-da-award-feed-scope-2026-07.md`. Census:
+Full write-up: `docs/records/pjm/FINDING-pjm128-da-award-feed-scope-2026-07.md`. Census:
 `scripts/probes/pjm128_da_award_feed_scope.py` (admissibility test committed
 `d52740b` **before** the census ran); result JSON
-`results/calibration/pjm128_da_award_feed_scope.json`. **No LP, no solve, no
+`results/phase0/pjm/pjm128_da_award_feed_scope.json`. **No LP, no solve, no
 surface written, no derive re-run, keeper unchanged, no dashboard registration
 (no bundle exists).** No bulk intake — every request is a sample.
 
 **0. The owner memo is still undecided, so nothing was re-derived.** The
 session checked for a decision on
-`docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md` first, found none,
+`docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md` first, found none,
 and fell through to pjm-128 per the charter — no nudge, no re-derive. Rule 20
 leaves the season-conditioned surface inadmissible until the owner decides.
 
@@ -878,10 +878,10 @@ Next number: pjm-129.
 ## 2026-07-26 — pjm-129: the keeper does NOT hold on the guard-corrected CAMPD envelope — RE-TUNE REQUIRED (3 gates), and the "needs ≥24 GB" block was never real
 
 **Lane:** the last PJM cell of
-`docs/handoffs/campd-economic-layup-fix-charter-2026-07.md` §5/§8. Charter,
+`docs/records/misc/campd-economic-layup-fix-charter-2026-07.md` §5/§8. Charter,
 pre-registered and committed **before any result was read**:
-`docs/handoffs/pjm-129-keeper-reaudit-charter-2026-07.md`. Full evidence:
-`results/calibration/FINDING-pjm129-keeper-reaudit-meritguard-2026-07.md`.
+`docs/records/pjm/pjm-129-keeper-reaudit-charter-2026-07.md`. Full evidence:
+`docs/records/pjm/FINDING-pjm129-keeper-reaudit-meritguard-2026-07.md`.
 (Opened as pjm-128; renumbered when the concurrent DA-award-feed census, PR
 #2965, took that number mid-session.)
 
@@ -1004,8 +1004,8 @@ discriminate a 15 GB peak from a 1.1 GB floor.
 
 ## pjm-130 — the re-tune opens: gate 1 is displacement with a real lever, gates 2/3 blocked, and a negative metered volume fixed (2026-07-27)
 
-**No LP solved.** Charter: `docs/handoffs/pjm-130-retune-charter-2026-07.md`.
-Finding: `results/calibration/FINDING-pjm130-gate1-and-bench-symmetry-2026-07.md`.
+**No LP solved.** Charter: `docs/records/pjm/pjm-130-retune-charter-2026-07.md`.
+Finding: `docs/records/pjm/FINDING-pjm130-gate1-and-bench-symmetry-2026-07.md`.
 Both probes were committed before they were run (`0aa1b88`, `b93c305`).
 
 **Gate 1 (C1-2023 CC_REGULAR, −8.10 TWh vs 8.00 band) — DIAGNOSED, not closed.**
@@ -1067,9 +1067,9 @@ results/calibration/pjm121_ccbelt --year 2025` → model_lw **41.53** / actual
 
 ## pjm-131 (2026-07-27) — gate 1 has no admissible arm: its CC_CHP half is an economic merit miss, its ST_GAS half is grounded, and the measured host-share artifact is globally degenerate
 
-**No LP solved.** Charter: `docs/handoffs/pjm-131-gate1-arm-charter-2026-07.md`
+**No LP solved.** Charter: `docs/records/pjm/pjm-131-gate1-arm-charter-2026-07.md`
 (committed as `e454b87` **before** the probe ran). Finding:
-`results/calibration/FINDING-pjm131-gate1-no-admissible-arm-2026-07.md`.
+`docs/records/pjm/FINDING-pjm131-gate1-no-admissible-arm-2026-07.md`.
 
 **Priority 1 — the re-conditioning memo is STILL UNDECIDED.** Verified: last
 commit `f1070d4`, live banner "awaits the owner's decision", no authorization
@@ -1159,8 +1159,8 @@ results/calibration/pjm121_ccbelt --year 2025` → model_lw **41.53** / actual
 **Two solves registered** (rule 15, win or lose): `2026-07-27-pjm-132-control`
 and `2026-07-27-pjm-132-withinseason`, both 2023+2024+2025 in one bundle
 (rule 16), both **rejected probes**. `keepers.json` untouched.
-Charter: `docs/handoffs/pjm-132-midcurve-reconditioning-charter-2026-07.md`.
-Finding: `results/calibration/FINDING-pjm132-withinseason-refuted-2026-07.md`.
+Charter: `docs/records/pjm/pjm-132-midcurve-reconditioning-charter-2026-07.md`.
+Finding: `docs/records/pjm/FINDING-pjm132-withinseason-refuted-2026-07.md`.
 
 **The memo was AUTHORIZED** (owner, 2026-07-27) with a *"keep the current config
 as default unless seasonal is new keeper"* amendment, which superseded memo §2's
@@ -1274,7 +1274,7 @@ own single-delta A/B. Registered: `2026-07-27-pjm-133-nameplate` (arm B) and
 `2026-07-27-pjm-133-control` (arm A), both 2023+2024+2025, one bundle each
 (rules 15/16). Prereg `PREREG-pjm133-...-2026-07-27.md` committed at `e1bb3d1`
 and merged to main **before either arm solved**. Full write-up:
-`results/calibration/FINDING-pjm133-hydro-budget-nameplate-aware-2026-07-27.md`.
+`docs/records/pjm/FINDING-pjm133-hydro-budget-nameplate-aware-2026-07-27.md`.
 
 **The pre-solve prediction was exact.** The prereg stated the nameplate clip
 explains **98.0 / 94.0 / 99.9 %** of PJM's entire hydro volume deficit and
@@ -2226,12 +2226,12 @@ by $0.013/$0.007 in 2023/24 (holds 2025) — recorded, not re-written.
 L1 = 0.000 GWh exactly; under the pin it shuffled 1,703/1,147/2,085 GWh — its
 entire apparent signal was the defect). Keeper note 11 CLOSED. Rule 22: only
 2023–2025 touched; 2022 deliberately not spent. Full write-up:
-`results/calibration/FINDING-pjm143-hydro-level-923hy-2026-07-31.md`.
+`docs/records/pjm/FINDING-pjm143-hydro-level-923hy-2026-07-31.md`.
 
 ## 2026-08-02 — cross-ISO audit touching PJM (caiso-154): the caiso-153 OLS-attenuation defect is NOT LIVE in PJM; the ARMED midcurve artifact re-derives BYTE-IDENTICALLY
 
 No-LP input-standing audit, logged in full in `docs/calibration-log/caiso.md`
-(caiso-154) and `results/calibration/FINDING-caiso154-xiso-ols-attenuation-not-live-2026-08-02.md`.
+(caiso-154) and `docs/records/caiso/FINDING-caiso154-xiso-ols-attenuation-not-live-2026-08-02.md`.
 PJM outcomes: (1) neither PJM offer-surface derive contains a regression
 estimator — the caiso-153 family is structurally absent, and
 `pjm_offer_surface_conditional` is off in the keeper anyway; (2) the ARMED
@@ -2413,7 +2413,7 @@ session regenerated two derived `data/clean` partitions the rebuild needed
 
 **Phase 1 (no LP): the matrix-column triage.** All 21 open PJM cells classified —
 4 live candidates, 9 data-/instrument-blocked, 7 forecast-lane, 1
-precedence-superseded (`docs/handoffs/pjm-matrix-column-triage-2026-08.md`).
+precedence-superseded (`docs/records/pjm/pjm-matrix-column-triage-2026-08.md`).
 `state_carbon_pricing` confirmed rank 1; `measured_chp_heat_rates` rank 2 and the
 named successor for the next PJM session.
 
@@ -2464,9 +2464,9 @@ untestable) and a full bundle resolves mechanisms the gitignored-slim committed
 tree cannot. Score **both** arms on the committed file set; same class as the
 caiso-155 `diagnostics_plant_set` charter.
 
-`results/calibration/FINDING-pjm146-rggi-allowance-2026-08-02.md`;
+`docs/records/pjm/FINDING-pjm146-rggi-allowance-2026-08-02.md`;
 `PREREG-pjm146-rggi-allowance-2026-08-02.md`;
-`results/calibration/_pjm146_rggi_ab.json`.
+`results/phase0/pjm/_pjm146_rggi_ab.json`.
 
 ---
 
@@ -2549,9 +2549,9 @@ failure — cost was time, not correctness; both arms record `git.dirty=false`
 with zero `src/`/`data/raw/` commits between them. **Do not commit to
 `scripts/` mid-chain.**
 
-`results/calibration/FINDING-pjm147-measured-chp-heat-rates-2026-08-03.md`;
+`docs/records/pjm/FINDING-pjm147-measured-chp-heat-rates-2026-08-03.md`;
 `PREREG-pjm147-measured-chp-heat-rates-2026-08-03.md`;
-`results/calibration/_pjm147_chp_ab.json`, `_pjm147_k2_drift.json`,
+`results/phase0/pjm/_pjm147_chp_ab.json`, `_pjm147_k2_drift.json`,
 `_pjm147_flag_fidelity.json`.
 
 Next shorthand: pjm-148.
@@ -2560,7 +2560,7 @@ Next shorthand: pjm-148.
 
 **Verdict: REFUSE.** No solve, no bundle, no registration; keeper
 `2026-08-03-pjm-147b-chp-heat` untouched. Pre-registration
-`results/calibration/PREREG-pjm148-chp-host-steam-holdout-2026-08-03.md`
+`docs/records/pjm/PREREG-pjm148-chp-host-steam-holdout-2026-08-03.md`
 committed at `6f14dbc` **before any measurement that decides a verdict** (its
 push failed transiently and landed later in-session; the content was never
 edited after). Rule 25 `[R-ISO-SCOPE]`: reached independently of nyiso-105, on
@@ -2636,9 +2636,9 @@ neiso-71 precedent). Rule 22 `[R-HOLDOUT]`: 2023–2025 only, `holdout-freeze.js
 untouched. Matrix: `chp_steam_following` PJM stays `K`, cell re-stamped with the
 refusal + DO-NOT-REDO + the path-dependence (rule 28b).
 
-`results/calibration/FINDING-pjm148-chp-host-steam-refused-2026-08-03.md`;
+`docs/records/pjm/FINDING-pjm148-chp-host-steam-refused-2026-08-03.md`;
 `PREREG-pjm148-chp-host-steam-holdout-2026-08-03.md`;
-`results/calibration/_pjm148_screen.json`, `_pjm148_floor_binding.json`;
+`results/phase0/pjm/_pjm148_screen.json`, `_pjm148_floor_binding.json`;
 `scripts/probes/_pjm148_floor_binding.py`.
 
 ## 2026-08-03 — pjm-150: the CT meter screen was ALREADY promoted; the re-gate proves the keeper still reproduces BIT-IDENTICALLY
@@ -2744,9 +2744,9 @@ Matrix: `measured_ct_heat_rates` PJM stays `K`, note/evidence extended (rule 28b
 `d338ba6` had already spent that ordinal on the D-2 floor-attribution session
 (filed in `governance.md`, which is why this log's counter never advanced).
 
-`results/calibration/FINDING-pjm150-ct-heat-rate-regate-2026-08-03.md`;
+`docs/records/pjm/FINDING-pjm150-ct-heat-rate-regate-2026-08-03.md`;
 `PREREG-pjm150-ct-heat-rate-regate-2026-08-03.md`;
-`results/calibration/_pjm150_regate_gates.json`;
+`results/phase0/pjm/_pjm150_regate_gates.json`;
 `scripts/probes/pjm150_ct_regate_arm.py`, `scripts/probes/pjm150_regate_gates.py`.
 
 ## pjm-151 — the seam envelopes were built on the wrong grain (KEEPER)
@@ -2830,10 +2830,10 @@ Rule 22: 2023-2025 only; `complete` re-keyed **with** a determination re-verific
 cell verdict + evidence updated, keeper stamp and PJM gates re-stamped; off-queue entry
 declared explicitly under 28(a) as a NEW measured identification.
 
-`results/calibration/FINDING-pjm151-seam-envelope-attribution-2026-08-03.md`;
+`docs/records/pjm/FINDING-pjm151-seam-envelope-attribution-2026-08-03.md`;
 `PREREG-pjm151-seam-envelope-attribution-2026-08-03.md`;
-`results/calibration/_pjm151_seam_gates.json`;
-`results/calibration/_pjm151_seam_envelope_attribution.json`;
+`results/phase0/pjm/_pjm151_seam_gates.json`;
+`results/phase0/pjm/_pjm151_seam_envelope_attribution.json`;
 `scripts/probes/pjm151_seam_arm.py`, `scripts/probes/pjm151_seam_envelope_attribution.py`,
 `scripts/probes/pjm151_seam_gates.py`, `scripts/gen_pjm151_attestation.py`.
 
@@ -2910,9 +2910,9 @@ false.
 The keeper-note duplicate ordinal **(15)** is disambiguated to **(15a)/(15b)**
 without renumbering either, so existing references to "item 15" still resolve.
 
-`results/calibration/FINDING-pjm153-queue-clear-2026-08-04.md`;
-`results/calibration/MEMO-pjm153-g20b-within-window-tight-hour-2026-08-04.md`;
-`results/calibration/_pjm153_item15_attribution.json`,
+`docs/records/pjm/FINDING-pjm153-queue-clear-2026-08-04.md`;
+`docs/records/pjm/MEMO-pjm153-g20b-within-window-tight-hour-2026-08-04.md`;
+`results/phase0/pjm/_pjm153_item15_attribution.json`,
 `_pjm153_supply_cap_reachability.json`, `_pjm153_queue_screens.json`;
 `scripts/probes/pjm153_item15_ladder_attribution.py`,
 `scripts/probes/pjm153_reserve_supply_cap_reachability.py`,
@@ -3029,7 +3029,7 @@ into PJM, no other ISO's cell written. Rule 27 — no source file ≥300 lines
 touched; documentation only. Rule 28(b) — **no mechanism tested, so no cell
 verdict moves**; the §5.3 parked block is stamped in this same session.
 
-**Evidence:** `results/calibration/FINDING-pjm155-lane-parked-2026-08-04.md`.
+**Evidence:** `docs/records/pjm/FINDING-pjm155-lane-parked-2026-08-04.md`.
 
 Next shorthand: pjm-156.
 
@@ -3125,7 +3125,7 @@ Every number is read from committed artifacts: the `pjm2022_touchpoint` and
 `pjm152_collapse_A` P1 hourly sidecars, the two dashboard run payloads, the
 per-year `bench/PJM/*.json.gz`, `data/raw/eia-930/`, and the EIA-923 monthly
 delivered-cost parquet. Full write-up:
-`results/calibration/FINDING-pjm157-cc-object-does-not-survive-phase0-2026-08-05.md`.
+`docs/records/pjm/FINDING-pjm157-cc-object-does-not-survive-phase0-2026-08-05.md`.
 Probes: `_pjm157_energy_balance.py`, `_pjm157_virtual_channel.py`,
 `_pjm157_switching_elasticity.py`, `_pjm157_fuel_and_vintage.py`.
 
@@ -3254,10 +3254,10 @@ Availability parity not re-litigated, as instructed.
 
 ## pjm-158 — the DA virtual layer's admissibility invariant is defined at a price this LP does not produce; the rung compression is **exact**; question C is **CLOSED** (2026-08-06)
 
-**Pre-registration:** `results/calibration/PREREG-pjm158-da-virtual-clearing-2026-08-05.md`,
+**Pre-registration:** `docs/records/pjm/PREREG-pjm158-da-virtual-clearing-2026-08-05.md`,
 committed and pushed at `6a3dab7a` **before either arm solved** (the pjm-143
 precedent). Full write-up:
-`results/calibration/FINDING-pjm158-da-virtual-clearing-2026-08-06.md`.
+`docs/records/pjm/FINDING-pjm158-da-virtual-clearing-2026-08-06.md`.
 Probes: `_pjm158_coal_basis.py`, `_pjm158_virtual_gain.py`,
 `_pjm158_virtual_basis.py`, `_pjm158_virtual_shape.py`.
 **Holdout freeze (rule 22): intact.** 2022 was not solved, scored or registered;
@@ -3434,7 +3434,7 @@ Next shorthand: **pjm-159.**
 
 ## pjm-159 — FINAL-declaration assessment: **HOLD**. Two new blockers found; the locked tier is not spendable, and would not run the keeper's model if it were (2026-08-06)
 
-**Full assessment:** `results/calibration/ASSESSMENT-pjm159-final-declaration-2026-08-06.md`.
+**Full assessment:** `docs/records/pjm/ASSESSMENT-pjm159-final-declaration-2026-08-06.md`.
 **No LP.** No solve, no score of any out-of-training year, no registration, no
 mechanism tested, no keeper touched, no marker edited, no freeze touched. Every
 number is a read of a committed artifact, a re-run of the committed-artifacts-only
@@ -3611,7 +3611,7 @@ stays **EMPTY** — the declaration is the owner's.
 **Owner-authorized** 2026-08-06 ("Do task B and c") -- the explicit authorization
 the pjm-158 escalation required. The pjm-142 frontier was opened for **this
 question only** and **closes again** with the finding.
-**PREREG:** `results/calibration/PREREG-pjm159-da-rt-architecture-2026-08-06.md`,
+**PREREG:** `docs/records/pjm/PREREG-pjm159-da-rt-architecture-2026-08-06.md`,
 committed at `d4310783` **before any probe ran**. **FINDING:**
 `FINDING-pjm159-da-rt-architecture-closed-2026-08-06.md`. Probes
 `_pjm159_dart_predictability.py`, `_pjm159_lambda0_attractor.py`; committed JSON
@@ -3778,7 +3778,7 @@ Next shorthand: **pjm-160.**
 
 ### pjm-160 task 1 — the bench-regen blast radius: **3 of 26 D-1 rows move, all improving, NO gate flips** (2026-08-06)
 
-`results/calibration/FINDING-pjm160-bench-nameplate-blast-radius-2026-08-06.md`.
+`docs/records/pjm/FINDING-pjm160-bench-nameplate-blast-radius-2026-08-06.md`.
 No LP solve; committed artifacts in, committed artifacts out. Keeper **UNCHANGED**
 at `2026-08-04-pjm-152-collapse`, which **re-verifies CALIBRATED, zero fails, zero
 caveats**.
@@ -3855,7 +3855,7 @@ carry the defect; `--iso` is required so one lane cannot move another's gates
 
 ### pjm-160 task 2 — the F3 gap was **`load_demand_META`, not `load_demand`**: B1 and B3 CLOSED for PJM 2019 (2026-08-06)
 
-`results/calibration/FINDING-pjm160-f3-demand-profile-closure-2026-08-06.md`.
+`docs/records/pjm/FINDING-pjm160-f3-demand-profile-closure-2026-08-06.md`.
 Channel-1 data intake, zero LP solves, freeze ACTIVE and untouched, `final` still
 EMPTY.
 
@@ -3934,7 +3934,7 @@ a real obstacle. **This session adds no other ISO's years.**
 
 ### pjm-160 addendum — owner decisions, a B2 correction, and the new sequencing (2026-08-06)
 
-`results/calibration/ASSESSMENT-pjm160-final-declaration-2026-08-06.md` §10.
+`docs/records/pjm/ASSESSMENT-pjm160-final-declaration-2026-08-06.md` §10.
 
 **The four answers.** B2 → **derive the ladder** (as recommended). B4 → **wait for the price
 lane** (against recommendation, recorded as decided). B5 → **refresh `rt_lw` cross-ISO
@@ -4028,11 +4028,11 @@ NEISO is not an example of a spent one-shot, and it is not an example of a forec
 one. Its own `final` answer is **NOT YET** on independent merits (2019 unsolvable at
 HEAD; C3c non-discriminating in 2019).
 
-Citation chain: `results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+Citation chain: `docs/records/neiso/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
 `docs/third-party-peer-review-2026-07.md` §6.3 item 1 → **owner decision D-23, SIGNED
 at the 2026-08-06 sitting Addendum X.6**. Full record:
-`docs/handoffs/neiso-record-correction-2026-08-06.md`. *(The same false premise appears
-in `results/calibration/ASSESSMENT-pjm159-final-declaration-2026-08-06.md` §8 and its
+`docs/records/neiso/neiso-record-correction-2026-08-06.md`. *(The same false premise appears
+in `docs/records/pjm/ASSESSMENT-pjm159-final-declaration-2026-08-06.md` §8 and its
 §1 summary. That file is an immutable per-run session record and was deliberately NOT
 rewritten; this entry is the live correction for the PJM lane.)*
 
@@ -4367,7 +4367,7 @@ by the DEBUG-B lane and collides numerically with this log's pjm-162 outage-enve
 run keeps its registered id.)*
 
 **O2 resolved first** (audit gap register row; one-paragraph note in
-`docs/handoffs/debug-sweep-2026-08.md` Addendum §A.1): the DEBUG-B finding table's "incumbent
+`docs/records/misc/debug-sweep-2026-08.md` Addendum §A.1): the DEBUG-B finding table's "incumbent
 C6 UNATTESTED / NOT-YET" was the **registration-time rubric-2.9 snapshot** (pjm-152 shipped
 without an attestation; pjm-153 retro-generated it with computed premises), not scorer drift.
 Definitive `calibration_verdict.py --run-id` re-score at `8a118e7`: **pjm-152 = CALIBRATED /
@@ -4425,15 +4425,15 @@ Next shorthand: **pjm-164.**
 
 ## pjm-164 — 2026-09-01 — C3c program Q1: the reserve-dual channel is REAL, not the ercot-214 phantom (zero solve; keeper untouched)
 
-**Charter:** `docs/CHARTER-c3c-scarcity-program-2026-08-31.md` Q1 — audit whether the PJM
+**Charter:** `docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md` Q1 — audit whether the PJM
 keeper's C3c PASS (the program's only existence proof that this LP class can form a scarcity
 tail) rides an ercot-214-shaped phantom channel. **Zero solve — committed artifacts + in-repo
 published data only.** State re-verified first: `2026-08-15-pjm-162-inputclock` CALIBRATED,
 every criterion PASS, `audit_keepers --iso PJM` clean.
 
 **Verdict: REAL — charter Q2 proceeds.** Full record:
-`docs/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`; per-year counts/shares/hour lists:
-`results/calibration/_pjm164_c3c_overlap.json`.
+`docs/records/pjm/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`; per-year counts/shares/hour lists:
+`results/phase0/pjm/_pjm164_c3c_overlap.json`.
 
 - **Construction** (caiso-144 §D overlap, replicated to the gated basis): the PJM payload has
   no `overlay` key, so C3c scores the energy-only fallback — hours where the max-across-zones
@@ -4464,14 +4464,14 @@ Next shorthand: **pjm-165.**
 
 ## pjm-165 — 2026-08-31 — C3c program Q1 INDEPENDENTLY REPLICATED: REAL, by a different construction (zero solve; keeper untouched)
 
-**Charter:** `docs/CHARTER-c3c-scarcity-program-2026-08-31.md` Q1, under owner ruling R-E
+**Charter:** `docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md` Q1, under owner ruling R-E
 (which chartered Q1+Q2 in one grant). **Zero solve — committed artifacts + in-repo published
 data only.** Keeper re-verified at open and close: `2026-08-15-pjm-162-inputclock`,
-CALIBRATED. Record: `docs/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md`; probe
-`scripts/probes/c3c_q1_pjm_phantom_audit.py` → `results/calibration/_c3c_q1_pjm_phantom_audit.json`.
+CALIBRATED. Record: `docs/records/pjm/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md`; probe
+`scripts/probes/c3c_q1_pjm_phantom_audit.py` → `results/phase0/pjm/_c3c_q1_pjm_phantom_audit.json`.
 
 **PRIOR ART — this is a REPLICATION, not a first execution.** Q1 was already executed by
-**pjm-164** (`docs/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`), which returned REAL.
+**pjm-164** (`docs/records/pjm/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`), which returned REAL.
 This lane ran in parallel and did not see that record until after its own measurement. **The
 verdict is pjm-164's first.** This entry records an independent construction reaching the same
 answer, plus four legs their record does not carry.
@@ -4527,7 +4527,7 @@ and close the open HEAD-drift limit the touchpoint assessment named
 (`ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05` §4 i / §5 item 2).
 **Keeper UNCHANGED** at `2026-08-15-pjm-162-inputclock`; no mechanism armed, swept or tuned;
 no `ScenarioConfig` field touched; no cell verdict moved; no held-out year solved, scored or
-registered. Record: `results/calibration/FINDING-pjm166-c1-object-phase0-2026-09-06.md` +
+registered. Record: `docs/records/pjm/FINDING-pjm166-c1-object-phase0-2026-09-06.md` +
 `PRECOMMIT-pjm166-c1-object-2026-09-06.md`.
 *(Session renumbered off the SPENT `pjm-164` and `pjm-165` labels — both consumed by the
 C3c-program Q1 sessions of 2026-08-31/09-01; the log's own "Next shorthand" was already
@@ -4642,7 +4642,7 @@ cross-lane MISO edit from a PJM session would be unjustified.
 ## pjm-167 — 2026-09-06 — the chartered 2022 touchpoint re-run was ALREADY SPENT (zero LP); the stale keeper-shard `holdout_touchpoint` REPAIRED; PJM's G-DRIFT baseline is UNRECOVERABLE
 
 **Branch:** `claude/pjm-2022-touchpoint-rerun-0j2ng2` · **Base:** `origin/main` @ `dbf8796b`
-**Finding:** `docs/FINDING-pjm167-touchpoint-rerun-already-spent-2026-09-06.md`
+**Finding:** `docs/records/pjm/FINDING-pjm167-touchpoint-rerun-already-spent-2026-09-06.md`
 **Keeper UNCHANGED** (`2026-08-15-pjm-162-inputclock`) · **no solve, no score, no registration,
 no marker change, no matrix verdict moved** · **ZERO LP minutes.**
 
@@ -4738,7 +4738,7 @@ deleted before merge per rule 29 c). Do not re-raise or re-spend it. Everything 
 
 
 **Log-gap note:** the 2026-09-05 touchpoint session registered its run and wrote
-`results/calibration/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md`, but left **no
+`docs/records/neiso/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md`, but left **no
 entry in this log**. This entry records its result so the log is not silent on it; the assessment
 remains that session's own record.
 
@@ -4752,7 +4752,7 @@ Next shorthand: **pjm-168.**
 a shortfall of effort.** Keeper UNCHANGED `2026-08-15-pjm-162-inputclock`; nothing promoted,
 nothing registered; PJM headline UNCHANGED **CALIBRATED** (rule 30(c)). **ZERO LP SOLVED** —
 rule 29 `[R-SCREEN]` phase 0 killed the candidate before a screen. Full record:
-`results/calibration/FINDING-pjm171-2021-c3a-is-the-flat-stack-without-its-offset-2026-09-07.md`.
+`docs/records/pjm/FINDING-pjm171-2021-c3a-is-the-flat-stack-without-its-offset-2026-09-07.md`.
 
 **The decomposition.** Splitting each year's C3a gap ($/MWh) into a TROUGH leg (load deciles
 1–8) and a PEAK leg (d9–10), with the counterfactual C3a if either leg alone were closed:
@@ -4815,7 +4815,7 @@ Next shorthand: **pjm-172.**
 
 **Owner question:** *"Are imports being repriced each year? If not they should be."*
 **Answer: not before 2023 — and it binds on both the keeper and the registered touchpoint.**
-Record: `results/calibration/ADDENDUM-pjm171-seam-fuel-basis-freeze-2026-09-07.md`.
+Record: `docs/records/pjm/ADDENDUM-pjm171-seam-fuel-basis-freeze-2026-09-07.md`.
 
 **Two stacking freezes.** (F-A) `constants.HENRY_HUB_TRAJECTORIES` (`low`/`mid`/`high`) has its
 **first knot at 2023**, so `_hold_flat_extrapolate` hands the seam the 2023 knot ($2.54) for every
@@ -4885,7 +4885,7 @@ Next shorthand: **pjm-172.**
 **Owner observation:** *"too much available capacity for cc regular … Bergen is +4 twh … they
 indicate CEMS is missing data but there's no reason our model should be 2x the 923 data."*
 **Confirmed, and the CEMS objection is answered.** Record:
-`results/calibration/ADDENDUM-pjm171-emaac-availability-census-2026-09-07.md`.
+`docs/records/pjm/ADDENDUM-pjm171-emaac-availability-census-2026-09-07.md`.
 
 **26.85 TWh** of PJM 2021 gas-fleet model energy is produced in hours the plant's own CEMS record
 reads zero; **9.79 TWh in EMAAC** (Central PA 4.69, SWMAAC 3.87, Dominion 3.25, AEP Ohio 1.63,
@@ -4932,7 +4932,7 @@ now read from the committed payloads.
 
 ## pjm-172 PRECOMMIT — 2026-09-07 — seam-local measured backcast gas (F-A), written before any build
 
-`docs/handoffs/PRECOMMIT-pjm172-seam-measured-gas-2026-09-07.md`. Owner decision 2026-09-07: the
+`docs/records/pjm/PRECOMMIT-pjm172-seam-measured-gas-2026-09-07.md`. Owner decision 2026-09-07: the
 repair shape is **seam-local**, not an edit to the shared `HENRY_HUB_TRAJECTORIES`. ONE declared
 delta (the gas level); **F-B (the missing 2021/2022 `hr_by_year` entries) is explicitly NOT
 bundled** (rule 19). Zero free parameters — measured EIA HH annual means already on disk (2021
@@ -4952,8 +4952,8 @@ Next shorthand: **pjm-172.**
 
 ## 2026-09-07 — pjm-172: F-A (seam-local MEASURED backcast gas) BUILT and KILLED at its own pre-solve gates S1/S3 — ZERO LP, nothing promoted
 
-**Card** `docs/handoffs/PRECOMMIT-pjm172-seam-measured-gas-2026-09-07.md` (binding, not rewritten).
-**Result** `results/calibration/FINDING-pjm172-seam-measured-gas-2026-09-07.md`.
+**Card** `docs/records/pjm/PRECOMMIT-pjm172-seam-measured-gas-2026-09-07.md` (binding, not rewritten).
+**Result** `docs/records/pjm/FINDING-pjm172-seam-measured-gas-2026-09-07.md`.
 **Keeper** `2026-08-15-pjm-162-inputclock` — unchanged. **PJM headline: CALIBRATED** (rule 30(c)).
 **LP spent: none.** No screen bundle exists; PJM's `complete` marker is unspent and
 `--holdout-authorized` was never passed.
@@ -5099,8 +5099,8 @@ first attempt with swap armed (338–347 MB spilled). pjm-169 also documented wh
 misattributed to mount namespaces. Three lanes (167, 172, 173) re-derived this ceiling from scratch;
 the recipe belongs somewhere a lane reads *before* launching a PJM solve.
 
-Artifacts: `results/calibration/FINDING-pjm173-seam-measured-gas-regate-2026-09-08.md`,
-`docs/handoffs/PRECOMMIT-pjm173-seam-measured-gas-regate-2026-09-08.md`. Arm bundle
+Artifacts: `docs/records/pjm/FINDING-pjm173-seam-measured-gas-regate-2026-09-08.md`,
+`docs/records/pjm/PRECOMMIT-pjm173-seam-measured-gas-regate-2026-09-08.md`. Arm bundle
 `pjm173_fa_arm_2022` is gitignored (`2482cc81`, rule 31 `[R-RETAIN]`) and **retained on local disk**,
 not deleted.
 
@@ -5206,8 +5206,8 @@ passed**.
 **Rule 28 duty discharged**: PJM's shard alone re-stamped, `netload_drag_floors` cell **stays K** with
 both sub-gates now adjudicated **R for PJM**.
 
-Artifacts: `docs/RESULT-pjm-d4-1-stgas-merit-order-2026-09-09.md`,
-`docs/PRECOMMIT-pjm-d4-1-stgas-merit-order-2026-09-09.md`. **No bundle was written** — no LP ran — so
+Artifacts: `docs/records/pjm/RESULT-pjm-d4-1-stgas-merit-order-2026-09-09.md`,
+`docs/records/pjm/PRECOMMIT-pjm-d4-1-stgas-merit-order-2026-09-09.md`. **No bundle was written** — no LP ran — so
 rule 31 `[R-RETAIN]` has nothing on disk to preserve; the open promotion question is instead whether
 pjm-177's `netload_drag_min_run_persistence` should now be answered **NO** on this evidence.
 
@@ -5254,7 +5254,7 @@ at 0.8–1.1 % of load). Rule 30(c): a held-out year never downgrades PJM.
 
 **Runs** `2026-09-10-pjm-d4-2-stgas` (2023–2025, CALIBRATED) + `2026-09-10-pjm-d4-2-touchpoint`
 (2020–2022, folded under rule 30(a)). **Keeper promotion is the OWNER's call (rule 31 `[R-RETAIN]`)
-and is put explicitly** in `docs/RESULT-pjm-d4-2-stgas-membership-2026-09-10.md` §9. Nothing was
+and is put explicitly** in `docs/records/pjm/RESULT-pjm-d4-2-stgas-membership-2026-09-10.md` §9. Nothing was
 deleted; the six shard bundles are gitignored on local disk.
 
 **Routed follow-up:** `ST_GAS_PEAKER_PLANTS` is solve-affecting but invisible to `cache_key()` (not
@@ -5267,8 +5267,8 @@ stdlib-only surface, leaving a `SolveEpoch` as the route.
 **The holdout-year card: object measured, arm already adjudicated, keeper UNCHANGED.** Nothing was
 promoted, nothing registered, no matrix verdict moved. PJM's training span re-scores **CALIBRATED**,
 0 caveats, determination basis *"all criteria pass, governance attested"* (rule 30(c) confirmed).
-Full record: `docs/RESULT-pjm-d4-3-da-virtual-net-2026-09-10.md`; PRECOMMIT
-`docs/PRECOMMIT-pjm-d4-3-da-virtual-net-2026-09-10.md`, pushed at `6eb223b5` before any solve.
+Full record: `docs/records/pjm/RESULT-pjm-d4-3-da-virtual-net-2026-09-10.md`; PRECOMMIT
+`docs/records/pjm/PRECOMMIT-pjm-d4-3-da-virtual-net-2026-09-10.md`, pushed at `6eb223b5` before any solve.
 
 **Phase 0 (zero LP) answered both handoff questions.** The CC_REGULAR holdout surplus decomposes
 (model-vs-CAMPD per plant-hour, identity closing to ≤4.5 GWh/yr) into a **chronic online-hours leg**
@@ -5330,9 +5330,9 @@ Session `pjm-d4-4`, branch `claude/pjm-forced-outage-gap-o0kzlz`. **Keeper UNCHA
 `2026-09-10-pjm-d4-2-stgas` (+ `-touchpoint`, folded); rule 30(c) untouched, `audit_keepers --iso
 PJM` and `build_status --check --iso PJM` both pass. **Nothing promoted, nothing armed by default,
 nothing registered on the dashboard.** Full record:
-`docs/RESULT-pjm-d4-4-forced-outage-composition-2026-09-10.md`; pre-registration
-`docs/PRECOMMIT-pjm-d4-4-forced-outage-composition-2026-09-10.md` (the kill bar, committed BEFORE
-the measurement) and `docs/PRECOMMIT-pjm-d4-4-screen-addendum-2026-09-10.md` (the screen gates,
+`docs/records/pjm/RESULT-pjm-d4-4-forced-outage-composition-2026-09-10.md`; pre-registration
+`docs/records/pjm/PRECOMMIT-pjm-d4-4-forced-outage-composition-2026-09-10.md` (the kill bar, committed BEFORE
+the measurement) and `docs/records/pjm/PRECOMMIT-pjm-d4-4-screen-addendum-2026-09-10.md` (the screen gates,
 committed BEFORE the shard).
 
 **THE DEFECT.** `outages.UNIT_OUTAGE_MIN_DAYS = 5` discards every shorter outage window, and the
@@ -5417,7 +5417,7 @@ open; `.gitignore` line 1757 already keeps the bundle family out of `main`.
 **S-1, S-2 and S-4 PASS; S-3 FAILS by 3.4×. The arm is NOT carried to the full span on this card's
 rationale, and its tail-repair claim is REFUTED.** One shard, 2022, pinned to `57c3557e`; 24 min 13 s,
 peak RSS 13.94 GB — **4 minutes over the rule-32(b) budget**, worth knowing before six of them are
-launched. Every number: `docs/SHARD-REPORT-pjm-d4-4-screen-2022.md`.
+launched. Every number: `docs/records/pjm/SHARD-REPORT-pjm-d4-4-screen-2022.md`.
 
 | gate | measured | bar | verdict |
 |---|---|---|---|
@@ -5454,7 +5454,7 @@ locational — which no measurement in this lane had reached. `ordc_scarcity_ove
 stack on a mechanism that *does* bind is worse, not better.
 
 **Also corrected:** the **+9.7 GW** control tail gap quoted above and in the PRECOMMIT is an
-arithmetic slip inherited from `docs/ADDENDUM-pjm-d4-3-lmp-gap-next-lp-2026-09-10.md` §3, whose own
+arithmetic slip inherited from `docs/records/pjm/ADDENDUM-pjm-d4-3-lmp-gap-next-lp-2026-09-10.md` §3, whose own
 operands (89.9 and 80.1) differ by **9.83**. G-KILL-1's bar moves 2,425 → 2,458 MW and the measured
 4,570 clears both, so **no verdict changes**.
 
@@ -5554,8 +5554,8 @@ gas unit; (b) the **locational reserve family** just measured binding; (c) parti
 **CALIBRATED, 8/8, 0 caveats, 0 fails**, basis verbatim *"all criteria pass, governance
 attested."* Holdout `2026-09-11-pjm-holdout-gasoutage-touchpoint` unchanged at NOT-YET.
 **ZERO LP. Nothing solved, nothing registered, nothing armed, no cell verdict moved, and no
-shared code changed.** Records: `docs/FINDING-pjm-h1-hydro-accounting-seam-2026-09-12.md`,
-`docs/FINDING-pjm-h1-cc-cf-does-not-track-2026-09-12.md`.
+shared code changed.** Records: `docs/records/pjm/FINDING-pjm-h1-hydro-accounting-seam-2026-09-12.md`,
+`docs/records/pjm/FINDING-pjm-h1-cc-cf-does-not-track-2026-09-12.md`.
 
 **(1) THE HYDRO CARD'S PREMISE IS REFUTED AND THE SEAM IS BIGGER.** The commissioning card said
 `classify_plant`'s `fuel == "WAT"` short-circuit puts ~5-6 TWh/yr of PS *gross* generation into
@@ -5630,7 +5630,7 @@ nothing registered, no shared code changed, no `ScenarioConfig` field added, **n
 verdict moved** (no mechanism tested). **Keeper `2026-09-11-pjm-d4-4-gasoutage` UNCHANGED and
 re-scored before AND after: CALIBRATED, 8/8, zero caveats, zero fails.** Touchpoint
 `2026-09-11-pjm-holdout-gasoutage-touchpoint` NOT-YET, 4/8, before and after.
-Record: `docs/FINDING-pjm-h2-holdout-basis-2026-09-12.md`.
+Record: `docs/records/pjm/FINDING-pjm-h2-holdout-basis-2026-09-12.md`.
 
 **Step 1 — the basis split, quantified.** `FINDING-pjm-holdout-phase0` §4's "live lead" is
 **REFUTED on arithmetic**: `reconcile_vintage_classes` fires in **no** PJM year 2020-2025. §4
@@ -5688,7 +5688,7 @@ forbids reaching for `rm` on another lane's solved bundles.
 
 **ZERO LP.** Parent never solved, no shard launched. Nothing armed, nothing registered, no
 verdict moved. **Keeper `2026-09-11-pjm-d4-4-gasoutage` UNCHANGED, CALIBRATED 8/8, re-scored after
-the matrix edit.** Record: `docs/FINDING-pjm-h2b-coal-cc-object-2026-09-12.md`.
+the matrix edit.** Record: `docs/records/pjm/FINDING-pjm-h2b-coal-cc-object-2026-09-12.md`.
 
 **Coal sigmoid — NO, measured three ways.** PJM BIT passthrough by year on the keeper's own gas
 series: **0.674 / 1.011 / 1.315 / 0.757 / 0.753 / 0.965** (2020-2025). (a) **2022 sits at maximum
@@ -5737,9 +5737,9 @@ owner-declared-closed pjm-142 frontier. Re-opening it is an owner act.
 
 **Arm** `pjm_reserve_pergen_sync` (Manual 11 §4.2/§4.3.3), armed on the owner-RE-OPENED pjm-142
 price-formation frontier (`docs/calibration-log/governance.md`, "2026-09-13 — OWNER RULING").
-Pre-registration `docs/PRECOMMIT-pjm-h3-reserve-sync-2026-09-13.md`, pushed at
+Pre-registration `docs/records/pjm/PRECOMMIT-pjm-h3-reserve-sync-2026-09-13.md`, pushed at
 `ed6bb099…` **before any solve**; gates fixed there and not re-read.
-Result: `docs/RESULT-pjm-h3-reserve-sync-screen-2026-09-13.md`.
+Result: `docs/records/pjm/RESULT-pjm-h3-reserve-sync-screen-2026-09-13.md`.
 **Keeper `2026-09-11-pjm-d4-4-gasoutage` re-scored BEFORE and AFTER: CALIBRATED, 8/8, zero
 caveats — UNCHANGED. Nothing armed; the field stays default-off.**
 
@@ -5781,7 +5781,7 @@ solve. The question is put explicitly to the owner in RESULT §11.5.
 
 ## pjm-h3b — 2026-09-13 — the PJM 2022 miss is the Elliott scarcity tail, not a stack defect
 
-**ZERO LP.** Finding: `docs/FINDING-pjm-h3b-2022-miss-is-the-elliott-tail-2026-09-13.md`.
+**ZERO LP.** Finding: `docs/records/pjm/FINDING-pjm-h3b-2022-miss-is-the-elliott-tail-2026-09-13.md`.
 Keeper `2026-09-11-pjm-d4-4-gasoutage` UNCHANGED (CALIBRATED, 8/8, zero caveats).
 
 **C3a-2022, C3b-2022 and the ledgered C3c-2022 caveat are ONE defect.** Of the $4.717/MWh annual
@@ -5808,8 +5808,8 @@ proposing anything.
 ## pjm-h10 — 2026-09-19 — the ENERGY IDENTITY reconciles; the 923↔930 "gap" does not exist; the live defect is the SEAM, and PJM's 2020 runs no measured seam at all
 
 **Branch:** `claude/pjm-energy-identity-s4l8ow` · **Base:** `origin/main` @ `4583e70b`
-**Finding:** `docs/FINDING-pjm-h10-the-energy-identity-2026-09-19.md`
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-pjm-h10-2026-09-19.md`
+**Finding:** `docs/records/pjm/FINDING-pjm-h10-the-energy-identity-2026-09-19.md`
+**PRECOMMIT:** `docs/records/pjm/PRECOMMIT-pjm-h10-2026-09-19.md`
 **Keeper UNCHANGED** (`2026-09-11-pjm-d4-4-gasoutage`) · **no run registered, no mechanism armed,
 no matrix cell moved, no determination changed** · **ZERO LP minutes in this session** (rule 32
 `[R-SHARD]` (a); two control replays were sharded).
@@ -5878,7 +5878,7 @@ and ST_CHP −2.1…−2.4 (together −4.4…−5.0/yr)**, **`oil` = 0.000 TWh 
 measured, **solar −2.9…−5.3**, and **COAL_PRB −2.7…−6.1 while COAL_BIT is over in 4 of 5** — a
 within-coal merit-order misallocation invisible to C2, which scores the family.
 
-**Q3 WAS ALREADY ADJUDICATED — by pjm-d4-3, not here** (`docs/RESULT-pjm-d4-3-da-virtual-net-2026-09-10.md`
+**Q3 WAS ALREADY ADJUDICATED — by pjm-d4-3, not here** (`docs/records/pjm/RESULT-pjm-d4-3-da-virtual-net-2026-09-10.md`
 §4, carried on the matrix cell `da_virtual_bids`; rule 28(a) DO-NOT-REDO). It measured `net @ actual DA`
 on all six years — **+16.537 / +16.812 / +12.248 TWh** of net virtual demand in 2020–22 against
 −0.755 / −1.620 / +0.204 in 2023–25 — and established that the layer's ≈0 admissibility anchor is a
@@ -5947,8 +5947,8 @@ and neither may re-register or overwrite the keeper.
 
 **Six shards across three generations produced no MER bundle.** All are archived (rule 33
 `[R-SHARD-ARCHIVE]` (e)); none was left alive. Record:
-`docs/ADDENDUM-pjm-h10-the-shard-setup-chain-2026-09-19.md` and the shard's own
-`docs/FINDING-pjm-h10-shard-mer-tp-oom-2026-09-19.md` (rescued onto the lane branch from the
+`docs/records/pjm/ADDENDUM-pjm-h10-the-shard-setup-chain-2026-09-19.md` and the shard's own
+`docs/records/pjm/FINDING-pjm-h10-shard-mer-tp-oom-2026-09-19.md` (rescued onto the lane branch from the
 **immutable SHA `0bcb1a3c6265cdb253e5447b08288e4aa030bdf7`**, rule 33(d)).
 
 **Generation 2's TP shard was a SUCCESS by the rule's own definition** — it cleared every setup
@@ -6000,7 +6000,7 @@ verdict. Cost to reproduce: one shard per span on a container whose **binding cg
 **Orchestrator session. ZERO LP MINUTES** (rule 32 `[R-SHARD]` (a)). Every number below is a
 zero-LP phase 0: a frozen-formula re-derivation, an offer-array delta, a committed-sidecar
 reconstruction and a code-level drift audit. Keeper UNCHANGED at write time
-(`2026-09-11-pjm-d4-4-gasoutage`). **PRECOMMIT:** `docs/handoffs/PRECOMMIT-pjm-h11-2026-09-19.md`.
+(`2026-09-11-pjm-d4-4-gasoutage`). **PRECOMMIT:** `docs/records/pjm/PRECOMMIT-pjm-h11-2026-09-19.md`.
 
 **C-1 ARMED: 2020 added to `PJM_SEAM_LADDER_BY_YEAR`** (`spec.py`, commit `3b719484`). Closes the
 stale invariant pjm-h10 found — the table covered {2019, 2021–2025} and `firm_export_floor_by_year`
@@ -6148,17 +6148,17 @@ The twelve `pjm_h11_{arm,ctl}_<year>` legs also flag **locally only**: they are 
 (which checks out only what is committed) stays green — the rule 31 `[R-RETAIN]` clause corrected by
 pjm-h8 on 2026-09-16.
 
-**Docs:** `docs/RESULT-pjm-h11-c1-seam-ladder-2026-09-20.md`,
-`docs/ADDENDUM-pjm-h11-the-2020-readout-2026-09-19.md`,
-`docs/handoffs/PRECOMMIT-pjm-h11-2026-09-19.md`,
-`docs/FINDING-pjm-h11-the-pjm-oom-is-a-disk-ordering-bug-2026-09-19.md`.
+**Docs:** `docs/records/pjm/RESULT-pjm-h11-c1-seam-ladder-2026-09-20.md`,
+`docs/records/pjm/ADDENDUM-pjm-h11-the-2020-readout-2026-09-19.md`,
+`docs/records/pjm/PRECOMMIT-pjm-h11-2026-09-19.md`,
+`docs/records/pjm/FINDING-pjm-h11-the-pjm-oom-is-a-disk-ordering-bug-2026-09-19.md`.
 
 ## pjm-h12 — 2026-09-20
 
 **ZERO LP, ZERO SHARDS.** Card D-1 (root-cause the offer-midcurve rebuild) is answered entirely from
 git and the keeper's committed sidecars — which is the outcome the charter predicted for the branch
 it landed on. Keeper `2026-09-19-pjm-h11-c1seam-span` untouched; nothing registered, nothing pruned.
-**Doc:** `docs/FINDING-pjm-h12-the-midcurve-rebuild-is-a-clean-rederivation-2026-09-20.md`.
+**Doc:** `docs/records/pjm/FINDING-pjm-h12-the-midcurve-rebuild-is-a-clean-rederivation-2026-09-20.md`.
 
 **D-1a → branch (i): the rebuild is a LEGITIMATE, cited rule 23 `[R-FROZEN-DERIVE]` re-derivation,
 and the table STAYS.** Verified three ways rather than taken from the commit message: (V1) the
@@ -6227,7 +6227,7 @@ ungated), the proposed rule 32(c)(8) addendum. **Pre-existing RED not this lane'
 
 ### pjm-h12 card D-2 — the export seam gap is ONE defect, and the chartered successor is dead at zero LP
 
-**Doc:** `docs/ADDENDUM-pjm-h12-the-seam-is-a-variance-compression-2026-09-20.md` · **Probe:**
+**Doc:** `docs/records/pjm/ADDENDUM-pjm-h12-the-seam-is-a-variance-compression-2026-09-20.md` · **Probe:**
 `scripts/probes/pjm_h12_seam_qq_phase0.py`. Still ZERO LP, ZERO shards — every number is from the
 keeper pair's committed `hourly/system_<year>.parquet` sidecars plus
 `_validation-source/actual_lmp_hourly_PJM.parquet` and `eia-930-interchange/`.
@@ -6289,7 +6289,7 @@ decides what it would be gated on.
 
 ### pjm-h12 card D-3 — the commitment-feasibility clip is REJECTED for PJM (cell U -> R)
 
-**Doc:** `docs/RESULT-pjm-h12-d3-the-clip-is-not-the-rule17-repair-2026-09-20.md`. 12 solves across
+**Doc:** `docs/records/pjm/RESULT-pjm-h12-d3-the-clip-is-not-the-rule17-repair-2026-09-20.md`. 12 solves across
 6 shards (one year each, rule 36 `[R-YEAR-ISOLATION]`, ARM+CONTROL at pinned SHA `65ab6205`);
 **ZERO LP in the parent** (rule 32(a)). **NOT PROMOTED** — keeper
 `2026-09-19-pjm-h11-c1seam-span` untouched, nothing registered, nothing pruned.
@@ -6341,8 +6341,8 @@ untouched.
 
 ## pjm-h13 — 2026-09-20 — the ST_GAS net-load drag is an ALLOCATION defect; the merit swap takes D-4 drag failures 12 → 5 and the determination holds at CALIBRATED
 
-**Record:** `docs/RESULT-pjm-h13-the-drag-is-an-allocation-defect-2026-09-20.md`.
-**Charter:** `docs/handoffs/PRECOMMIT-pjm-h13-2026-09-20.md` + `ADDENDUM-pjm-h13-presolve` +
+**Record:** `docs/records/pjm/RESULT-pjm-h13-the-drag-is-an-allocation-defect-2026-09-20.md`.
+**Charter:** `docs/records/pjm/PRECOMMIT-pjm-h13-2026-09-20.md` + `ADDENDUM-pjm-h13-presolve` +
 `ADDENDUM2-pjm-h13-g2-disambiguation`, all pushed **before any arm result existed**.
 **Method:** six shards, **one year each** (rule 36 `[R-YEAR-ISOLATION]`), ARM-ONLY at pinned SHA
 `ed3f5efd`, **zero LP in the parent** (rule 32(a)); composed at zero LP by
@@ -6412,7 +6412,7 @@ merges, so any leg not on `main` costs a re-solve, not a checkout.
 ## pjm-h18 — 2026-09-23 — Lever B LOCALISED at zero LP: two events on one compression, no level knob
 
 **Zero LP, zero shards.** Keeper `2026-09-22-pjm-hydro2-ror-span` (the handoff's h16 keeper was
-superseded by hydro-2 the same day). Record: `docs/FINDING-pjm-h18-price-object-localised-2026-09-23.md`.
+superseded by hydro-2 the same day). Record: `docs/records/pjm/FINDING-pjm-h18-price-object-localised-2026-09-23.md`.
 
 - **Every year** runs too high in the bottom half of hours (+$2.6–4.8/MWh) and too low in the top
   5 %; 2023–2025 pass C3a by **cancellation**. The sign flip lives in the **CT/ST-marginal hours**
@@ -6502,8 +6502,8 @@ shard bundle is not self-contained). **New:** two concurrent `legitimacy_diagnos
 bundle will race on `--json-out`; and a `fleet_only` A/B probe running beside two diagnostics jobs
 will OOM this container (cgroup ceiling **14.35 GB** — read the nested cgroup, never `free`).
 
-Record: `docs/RESULT-pjm-h16-2026-09-22.md`, charter
-`docs/handoffs/PRECOMMIT-pjm-h16-2026-09-22.md`.
+Record: `docs/records/pjm/RESULT-pjm-h16-2026-09-22.md`, charter
+`docs/records/pjm/PRECOMMIT-pjm-h16-2026-09-22.md`.
 
 ## pjm-h15 — 2026-09-21
 
@@ -6555,8 +6555,8 @@ composed bundle does not inherit `calibration_attestation.json` either, so C6 re
 shard bundle is not self-contained (`_shared/<ISO>/` is untracked for PJM); and **19 `cache_key` pin
 tests already fail at `origin/main`**, failure set byte-identical with and without this change.
 
-Record: `docs/RESULT-pjm-h15-2026-09-21.md`, charter
-`docs/handoffs/PRECOMMIT-pjm-h15-2026-09-20.md`.
+Record: `docs/records/pjm/RESULT-pjm-h15-2026-09-21.md`, charter
+`docs/records/pjm/PRECOMMIT-pjm-h15-2026-09-20.md`.
 
 ## pjm-h14 — 2026-09-20
 
@@ -6599,8 +6599,8 @@ arm removes a floor, not a cheap band.
 or a promotion deletes its own touchpoint); `_slug` caps run ids at 4 words, so two labels sharing a
 prefix silently overwrite each other.
 
-Record: `docs/RESULT-pjm-h14-2026-09-20.md`, charter
-`docs/handoffs/PRECOMMIT-pjm-h14-2026-09-20.md`.
+Record: `docs/records/pjm/RESULT-pjm-h14-2026-09-20.md`, charter
+`docs/records/pjm/PRECOMMIT-pjm-h14-2026-09-20.md`.
 
 ## hydro-2 — 2026-09-22/23 — `hydro_ror_split` PROMOTED
 
@@ -6612,7 +6612,7 @@ status changes in either span (span CALIBRATED 8/8, touchpoint NOT-YET on the pr
 FAILs). G1 MW limb fails on a nameplate-sized bar (disclosed, not amended). Six per-year shards at
 `152c546a`; 2023's former blocker (gitignored `pjm-da-virtuals` corpus) closed by per-shard re-fetch
 with `pjm_da_virtual_bids` left true. Owner ruling 2026-09-23: "Promote it". Record:
-`docs/RESULT-hydro-2-pjm-2026-09-22.md`.
+`docs/records/pjm/RESULT-hydro-2-pjm-2026-09-22.md`.
 
 ## pjm-h19 — 2026-09-23 — `demand_balance_screen`: the 2020 phantom-load repair, every prediction held; promotion UNRULED
 
@@ -6627,8 +6627,8 @@ benchmark rebuilt, registered `2026-09-23-pjm-h19-dbs-span` (CALIBRATED 8/8) + `
 VOLL shed 41,679 MWh → 0; 2021/22/23/25 bit-identical (G0).** Zero status changes, D-fail sets
 unchanged. Against: 2020 C3c tail count 2 → 0 vs 2 actual. Benchmark rebuild adopted `ad42fe43`
 (keeper actuals ≤ 0.2 TWh, vestigial `COAL` row gone, zero status changes). Off-PJM finding routed:
-CAISO 2025 h5076 (11.8 vs 29.9 GW). Record: `docs/RESULT-pjm-h19-demand-balance-screen-2026-09-23.md`,
-charter `docs/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md`.
+CAISO 2025 h5076 (11.8 vs 29.9 GW). Record: `docs/records/pjm/RESULT-pjm-h19-demand-balance-screen-2026-09-23.md`,
+charter `docs/records/pjm/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md`.
 
 **PROMOTED 2026-09-24** (owner: *"Promote"*). Keeper `2026-09-22-pjm-hydro2-ror-span` →
 **`2026-09-23-pjm-h19-dbs-span`** (+ touchpoint `2026-09-23-pjm-h19-dbs-touchpoint`). Rule-35 order;
@@ -6651,7 +6651,7 @@ every scored year), and CT D-2 forced share rises to 0.42–0.59.
 did, so the fitted `econ_high` was hiding a CC volume defect (cf. pjm-h2b CC online +7.7 pp). Next card:
 locate that defect at zero LP (CC online hours/CF vs CEMS by plant) before any CC offer change. Do not
 re-arm the CT max-seam until pjm-123's tight-bin ranking is resolved.
-Record: `docs/RESULT-pjm-h20-card-c-2026-09-24.md`.
+Record: `docs/records/pjm/RESULT-pjm-h20-card-c-2026-09-24.md`.
 
 ## pjm-h22 — 2026-09-24 — Card E: RGGI on the keeper, all six years — PROMOTED (gates regress)
 
@@ -6667,7 +6667,7 @@ C3a FAIL → PASS; 2020 C3a +14.5 → +17.3 %, COAL_BIT 2020/21 +25.5/+19.2 → 
 **PROMOTED** on the owner ruling (*"If so plz promote. If structural integrity improves but gates regress that
 may still be a keeper"*). Rule-35 order: re-key, `audit_keepers` E1 pass, prune h19 pair
 (`--keep 2026-09-24-pjm-h22-rggi-touchpoint --force-uncite`), audit 0/0. **PJM headline CALIBRATED → NOT-YET.**
-Record: `docs/RESULT-pjm-h22-card-e-rggi-six-years-2026-09-24.md`.
+Record: `docs/records/pjm/RESULT-pjm-h22-card-e-rggi-six-years-2026-09-24.md`.
 
 ## pjm-h21 — 2026-09-24 — owner ruling on pjm-h20: NOT PROMOTED
 
@@ -6677,7 +6677,7 @@ Owner confirmed the pjm-h20 recommendation. `prune_iso_runs.py --iso PJM --keep 
 
 ### pjm-h21 Card D phase 0 — the CC volume defect is locational (zero LP, no solve)
 
-`docs/FINDING-pjm-h21-card-d-cc-volume-is-locational-2026-09-24.md`. The keeper's CC class total nets
+`docs/records/pjm/FINDING-pjm-h21-card-d-cc-volume-is-locational-2026-09-24.md`. The keeper's CC class total nets
 two zonal errors: EMAAC CC +3.8..+14.3 TWh over, Dominion −1.7..−13.7 under. The level form collapses
 every CC econ rung to one curve (Henry Hub + one PJM basis), erasing plant gas/heat-rate differences,
 so EMAAC roughly doubles (2020 +12.9 → +25.2). Killed at zero LP: heat rate (0.99–1.01 per CF third),
@@ -6694,7 +6694,7 @@ incumbent re-scored on the same rebuilt benchmark); 2019–22 NOT-YET. 2021 coal
 still runs to its rail (all-coal +23.7 TWh, COAL_BIT +21.89 vs +19.23, CC_REGULAR C1 PASS → FAIL −11.65) —
 the pjm-168 offer-ordering finding re-earned on clean inputs. Partial-derate not armed (0 windows at HEAD);
 F2 std/short-coal re-derive measured, not installed (owner decision). Promotion question OPEN.
-Record: `docs/RESULT-r-pjm-corrected-inputs-2019-2025-2026-09-24.md`.
+Record: `docs/records/pjm/RESULT-r-pjm-corrected-inputs-2019-2025-2026-09-24.md`.
 
 ## R-PJM-2 — 2026-09-25 — PROMOTED: the RGGI keeper on corrected inputs, 2019–2025
 
@@ -6703,7 +6703,7 @@ year-matched EIA-860 and measured coal/ST/CC heat rates, 2019 added (2019 RGGI r
 Determination unchanged year-for-year vs h22 on the same benchmark: 2023–25 NOT-YET on C1 alone (CC_REGULAR
 2024 −14.36 TWh vs −13.61). 2021 coal over-run persists (+25.70 TWh COAL_BIT), CC −17.42 newly FAIL; 2020 improves
 (+29.23 → +21.45). Pruned h22 span/touchpoint and r-pjm-corrected (rule 35). Record:
-`docs/RESULT-r-pjm-2-rggi-keeper-corrected-inputs-2026-09-25.md`.
+`docs/records/pjm/RESULT-r-pjm-2-rggi-keeper-corrected-inputs-2026-09-25.md`.
 
 ## PJM-NEXT-2 — 2026-09-25 — coal over-dispatch, CC_REGULAR 2024, TMI 2019 (NOT promoted)
 
@@ -6714,7 +6714,7 @@ deriver's COAL-SUB token fix), `pjm_zonal_gas_basis_skip_923_priced` (basis no l
 `nuclear_dormancy_defers_to_vintage_exit` (TMI-1 2019). Both runs NOT-YET. COAL_BIT 2019–22 +28.4/+19.4/+32.6/+10.3 →
 +12.9/+10.5/+20.7/+8.1; CC_REGULAR 2024 −14.68 → −10.07 (still FAIL); nuclear 2019 −5.9 → −0.9. Costs: C3a 2019
 PASS → FAIL (+10.7 %), C3b 2020 PASS → FAIL, CC_REGULAR 2022 +10.9 → +14.9. Registered `--no-prune`; **PROMOTED 2026-09-26** (owner: "If structural integrity improves but gates regress that may still be a keeper"), `2026-09-25-pjm-next-c1` pruned. Promotion was
-the owner's call. Record: `docs/RESULT-pjm-next-2-2026-09-25.md`.
+the owner's call. Record: `docs/records/pjm/RESULT-pjm-next-2-2026-09-25.md`.
 
 ## PJM-NEXT-3 — 2026-09-26 — per-unit fuel routing of outage windows (PROMOTED)
 
@@ -6724,7 +6724,7 @@ zero LP; control = keeper `2026-09-25-pjm-next-2-joint` committed bundle, G-DRIF
 generator's fuel slice (66 re-tags in a companion extract). Zero criterion flips. CC_REGULAR 2024 −10.07 → −9.33 (still
 FAIL), COAL_BIT 2024 +3.62 → +0.93, ST_GAS 2023 +5.22 → +2.63, COAL_BIT 2019 +12.91 → +13.98 (predicted). **PROMOTED**
 on the owner's structural-integrity ruling; `2026-09-25-pjm-next-2-joint` pruned. Cards 1/3/4 ended at phase 0.
-Records: `docs/RESULT-pjm-next-3-2026-09-26.md`, `docs/FINDING-pjm-next-3-phase0-cards-1-3-4-2026-09-26.md`.
+Records: `docs/records/pjm/RESULT-pjm-next-3-2026-09-26.md`, `docs/records/pjm/FINDING-pjm-next-3-phase0-cards-1-3-4-2026-09-26.md`.
 
 ## PJM-NEXT-4 — 2026-09-26 — the measured 2019 mid-curve table (PROMOTED 2026-09-27)
 
@@ -6734,7 +6734,7 @@ the mid-curve surface gains a 2019 table from PJM's own 2019 offers (merge-only;
 Handoff premise corrected: 2020–2022 already read year-own tables. 2023–2025 byte-identical → still NOT-YET on
 CC_REGULAR 2024 −9.33. 2019: COAL_BIT +13.98 → +25.84 (pre-registered against interest, 5× the predicted size),
 CC_REGULAR −0.58 PASS → −8.54 FAIL, C3a +10.7 % FAIL → +7.6 % PASS, C3b 0.125 → 0.099. The pre-2023 coal over-run is
-not a mid-curve-table defect. Card 2 (MD/VA hub gas) data-blocked. **PROMOTED** on the owner's structural-integrity ruling; `2026-09-26-pjm-next-3-unitfuel` pruned. Record: `docs/RESULT-pjm-next-4-2026-09-26.md`.
+not a mid-curve-table defect. Card 2 (MD/VA hub gas) data-blocked. **PROMOTED** on the owner's structural-integrity ruling; `2026-09-26-pjm-next-3-unitfuel` pruned. Record: `docs/records/pjm/RESULT-pjm-next-4-2026-09-26.md`.
 
 ## PJM-NEXT-6 — 2026-09-28 — F2 outage re-derive "Split" (PROMOTED); pre-2023 surplus = DA virtual layer
 
@@ -6746,8 +6746,8 @@ CALIBRATED; run-level failures 8 → 7: CC_REGULAR 2019 +11.10 → +6.11 (clears
 +11.25; COAL_BIT 2019 +13.83 → +17.29; C3a 2020 +15.1 → +18.0 %; C3b 2022 0.236 → 0.229; F2's ST_GAS defect does not
 recur. **PROMOTED**; `2026-09-27-pjm-next-5-shape` pruned. Card 2 (zero LP): the pre-2023 joint CC+coal surplus is the
 DA virtual layer — measured 2019–22 bids net to virtual demand +5.5/+15.1/+14.8/+6.8 TWh at actual DA prices, served by
-physical thermal in the LP; open structural question for the owner. Records: `docs/RESULT-pjm-next-6-2026-09-28.md`,
-`docs/FINDING-pjm-next-6-card2-energy-balance-2026-09-28.md`.
+physical thermal in the LP; open structural question for the owner. Records: `docs/records/pjm/RESULT-pjm-next-6-2026-09-28.md`,
+`docs/records/pjm/FINDING-pjm-next-6-card2-energy-balance-2026-09-28.md`.
 
 ## PJM-NEXT-7 — 2026-09-28 — DA virtual position settled financially (PROMOTED on structure)
 
@@ -6758,14 +6758,14 @@ zero DOF). Training span CALIBRATED → NOT-YET (C1 CC_REGULAR 2023 +8.40 vs ±8
 COAL_BIT 2022; new CT_PEAKER 2021 −9.57, CC_REGULAR 2023, C3a 2022 −11.5 %). Zero-LP envelope predicted each within
 ~1 TWh. **PROMOTED on structure** (owner card); `2026-09-28-pjm-next-6-f2` pruned. Card 3 phase 0 (zero LP): 2019 coal
 over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phantom, Chalk Point / Mansfield / Sammis);
-2021 has no measured operand. Records: `docs/RESULT-pjm-next-7-2026-09-28.md`,
-`docs/FINDING-pjm-next-7-coal-phase0-2026-09-28.md`.
+2021 has no measured operand. Records: `docs/records/pjm/RESULT-pjm-next-7-2026-09-28.md`,
+`docs/records/pjm/FINDING-pjm-next-7-coal-phase0-2026-09-28.md`.
 
 ## PJM-NEXT-8 — 2026-09-28
 
 - **Promoted** `2026-09-28-pjm-next8-exitfix` (bundle `pjmnext8_xf_span`) on structure: `unit_outage_exit_cohort_repair`, the exit-cohort repair of the CAMPD outage layer (measured input, zero DOF). COAL_BIT 2019 +17.81 → +10.61 exactly as pre-registered; 2024–25 byte-identical; training span NOT-YET unchanged (CC_REGULAR 2023 +8.48); run-level 12 → 14 failing rows (2019 CC_REGULAR +10.86 and C3a +11.8 % unmasked). Prior keeper `2026-09-28-pjm-next-7-virtual` pruned.
 - **Card 1 (zero LP):** CC_REGULAR 2023 is a zonal price-formation defect — missing east-to-south congestion boundary; no measured operand in the repo.
-- Records: `docs/RESULT-pjm-next-8-2026-09-28.md`, `docs/PRECOMMIT-pjm-next-8-exitfix-2026-09-28.md`, `docs/FINDING-pjm-next-8-cc2023-phase0-2026-09-28.md`.
+- Records: `docs/records/pjm/RESULT-pjm-next-8-2026-09-28.md`, `docs/records/pjm/PRECOMMIT-pjm-next-8-exitfix-2026-09-28.md`, `docs/records/pjm/FINDING-pjm-next-8-cc2023-phase0-2026-09-28.md`.
 
 ## PJM-NEXT-9 — 2026-09-29 — east→south boundary identified, recorded as model-class limit (zero LP)
 
@@ -6773,7 +6773,7 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - **Card 1:** PJM DA binding constraints 2019–2025 regressed on hub congestion. The missing boundary is the Peach Bottom/Conastone corridor (Nottingham 230 kV), 35–91 % of NJ–Western congestion every year. It explains CC_REGULAR 2019/20/22/23. No published limit exists, so the owner card was *"Record as limit"*; `internal_congestion_split` PJM → `G`.
 - **Card 2:** 2019 CC is the same zonal signature.
 - **Card 3 phase 0:** the COAL_BIT over-run is a flat monthly level offset; handed to PJM-NEXT-10.
-- Records: `docs/RESULT-pjm-next-9-2026-09-29.md`, `docs/FINDING-pjm-next-9-east-south-boundary-2026-09-28.md`.
+- Records: `docs/records/pjm/RESULT-pjm-next-9-2026-09-29.md`, `docs/records/pjm/FINDING-pjm-next-9-east-south-boundary-2026-09-28.md`.
 
 ## PJM-NEXT-10 — 2026-09-29 — COAL_BIT loading and cards 2–3: no admissible lever found yet, OPEN (zero LP)
 
@@ -6783,7 +6783,7 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
   - Offer-band channel refused (no ex-ante value).
   - Owner card *"Record as limit"*, superseded the same day by *"Relabel as open and queue the test"*: **OPEN**.
 - **Cards 2–3:** CT_PEAKER 2021 is the same coal-displaces-gas swap. The model exports 10–14 TWh *less* than actual, so interchange can't explain the fossil surplus. C3a 2020/2022 and C3b 2022 are price-distribution compression. Owner card *"Record, no successor"*, superseded: **OPEN**, successor PJM-NEXT-11 fetches the PJM offers corpus to test LONG_RUN offered EcoMax by year.
-- Records: `docs/RESULT-pjm-next-10-2026-09-29.md`, `docs/FINDING-pjm-next-10-coal-loading-2026-09-29.md`.
+- Records: `docs/records/pjm/RESULT-pjm-next-10-2026-09-29.md`, `docs/records/pjm/FINDING-pjm-next-10-coal-loading-2026-09-29.md`.
 
 ## PJM-NEXT-11 — 2026-09-29 — offered EcoMax falsified as the COAL_BIT lever; C3a 2019/2020 relabelled a bulk price-level error (zero LP)
 
@@ -6794,7 +6794,7 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - **Audit (a), owner card *"Do both audits here"*:** the over-run is **response, not price**. At the same local price the model loads more coal: response +17.87 / +11.78 / +15.13 TWh of the +18.76 / +15.66 / +13.71 gap (2019 / 2021 / 2025). The price part matters only in 2020 (+5.59). Real coal is much flatter in price (0.36–0.50 of p99 across $15–60 in 2020–25; 2019 rises to 0.66); model coal is steep (0.3 → 0.9).
 - **Audit (b):** the model's price floor is too high in every year. Implied heat rate at p10 is 6.9–8.4 (model) vs 4.8–5.5 (actual), so real PJM often prices below any gas unit's cost and the model does not. Plausibly the same object as (a).
 - COAL_BIT / CT_PEAKER 2021 / C3a 2019–20 remain **OPEN**. Next test: intake PJM's measured DA self-scheduled MW by fuel and year, plus marginal-fuel shares (IMM State of the Market). The offers corpus has no self-schedule flag.
-- Records: `docs/FINDING-pjm-next-11-offered-ecomax-2026-09-29.md`, `docs/RESULT-pjm-next-11-2026-09-29.md`.
+- Records: `docs/records/pjm/FINDING-pjm-next-11-offered-ecomax-2026-09-29.md`, `docs/records/pjm/RESULT-pjm-next-11-2026-09-29.md`.
 
 ## PJM-NEXT-12 — 2026-09-29 — coal self-scheduling falsified; coal was the price-setter behind C3a 2019/2020 (zero LP)
 
@@ -6803,7 +6803,7 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - **Card 1:** coal must-run share of DA offered MW is 24.5 / 19.2 / 18.7 / 25.5 / 27.6 / 29.6 % (2019–24; definitions differ by vintage, 2025 not published). It is lowest in the over-run year 2021 and highest in the fit years. A must-run block is a floor, not a cap. **Falsified**, no design card.
 - **Card 2:** the coal-fuel share of RT LMP is 26 / 24 / 10 / 7 / 14 / 12 / 8 %, which discriminates C3a 2019/2020 but not the COAL_BIT over-run. Actual prices sit below 6.5 × gas in 26–45 % of hours; the model's in 0–3 %, every year.
 - OPEN: COAL_BIT, CT_PEAKER 2021, C3a 2019/2020. Next tests: coal availability vs CAMPD monthly max; production-area gas vs delivered; the model's coal-set LMP share.
-- Records: `docs/FINDING-pjm-next-12-selfsched-marginal-2026-09-29.md`, `docs/RESULT-pjm-next-12-2026-09-29.md`.
+- Records: `docs/records/pjm/FINDING-pjm-next-12-selfsched-marginal-2026-09-29.md`, `docs/records/pjm/RESULT-pjm-next-12-2026-09-29.md`.
 
 ## PJM-NEXT-13 — 2026-09-30 — availability falsified; replacement-cost fuel built and refuted at zero LP (owner: "Don't solve; record")
 
@@ -6819,7 +6819,7 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
   - Owner ruling: *"Don't solve; record."* Matrix cell **R**.
 - **Card 3 (coal-set share):** model coal is marginal in 35 / 33 / 28 / 22 / 14 / 19 / 15 % of load-weighted zone-hours (upper bound) against the IMM's 24 / 18 / 14 / 10 / 9 / 10 / 8 %. The year ordering matches, so coal is not under-represented as a price-setter.
 - OPEN: COAL_BIT 2019/2021, CT_PEAKER 2021, C3a 2019/2020 and the all-year floor. Next: the plant-level supply point of the CCs that set the low-end price (production- vs market-area gas), and the keeper's own marginal units in low-price hours.
-- Records: `docs/FINDING-pjm-next-13-availability-gas-coalmarginal-2026-09-29.md`, `docs/RESULT-pjm-next-13-2026-09-30.md`.
+- Records: `docs/records/pjm/FINDING-pjm-next-13-availability-gas-coalmarginal-2026-09-29.md`, `docs/records/pjm/RESULT-pjm-next-13-2026-09-30.md`.
 
 ## PJM-NEXT-14 — 2026-09-30 — low-end price-setters named; supply point, normalizer and median aggregation refuted (owner: "Record, hand off")
 
@@ -6836,7 +6836,7 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
   - Rank-matching the median **raises** bids (COAL_BIT +2.3 / +9.6 $/MWh in 2020 / 2023; marginal CC +2.7).
   - PJM's price-taking CC block (p25 ≤ 3.5 × delivered gas at mid-curve) is present in 2020 and 2023 alike.
 - OPEN, not limits: C3a 2019/2020 and the floor; COAL_BIT 2019/2021; CT_PEAKER 2021. Next: PJM's price-taking CC block, all seven years, jointly with the CC volume over-run (pjm-h20/h21).
-- Records: `docs/FINDING-pjm-next-14-lowend-units-supply-point-midcurve-2026-09-30.md`, `docs/RESULT-pjm-next-14-2026-09-30.md`, `docs/PRECOMMIT-pjm-next-14-lowend-replay-2026-09-30.md`.
+- Records: `docs/records/pjm/FINDING-pjm-next-14-lowend-units-supply-point-midcurve-2026-09-30.md`, `docs/records/pjm/RESULT-pjm-next-14-2026-09-30.md`, `docs/records/pjm/PRECOMMIT-pjm-next-14-lowend-replay-2026-09-30.md`.
 
 ## PJM-NEXT-15 — 2026-09-30 — the cheap CC block is the min-load block and inverts by year; the CC over-run's year signal is loading, not commitment (zero LP)
 
@@ -6850,7 +6850,7 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
   - The `cc_mustrun_per_plant` window puts 20–28 TWh/yr of committed MW in real off-hours, flat across years (rule-17 structural question, not a C1 lever).
 - Card 3 not reached: no admissible, year-discriminating design.
 - OPEN, not limits. Next: the loading term by zone/hour against the coal econ bid and net interchange (zero LP). Owner call: whether to charter a P0-pattern CC min-load bridge replacing the system-load window.
-- Records: `docs/FINDING-pjm-next-15-cc-cheap-block-and-commitment-2026-09-30.md`, `docs/RESULT-pjm-next-15-2026-09-30.md`.
+- Records: `docs/records/pjm/FINDING-pjm-next-15-cc-cheap-block-and-commitment-2026-09-30.md`, `docs/records/pjm/RESULT-pjm-next-15-2026-09-30.md`.
 
 ## PJM-NEXT-16 — 2026-09-30 — OVEC fleet boundary PROMOTED; P0-pattern CC bridge REJECTED on placement (14 shards)
 
@@ -6871,9 +6871,9 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
   - 12 failing cells.
 - **OPEN, not limits:** COAL_BIT 2019–2021; CC_REGULAR 2020/2022/2023; CT_PEAKER 2021; C3a 2020/2022; C3b 2022.
 - **Records:**
-  - `docs/RESULT-pjm-next-16-2026-09-30.md`
-  - `docs/PRECOMMIT-pjm-next-16-2026-09-30.md`
-  - `docs/FINDING-pjm-next-16-cc-loading-and-the-ovec-boundary-2026-09-30.md`
+  - `docs/records/pjm/RESULT-pjm-next-16-2026-09-30.md`
+  - `docs/records/pjm/PRECOMMIT-pjm-next-16-2026-09-30.md`
+  - `docs/records/pjm/FINDING-pjm-next-16-cc-loading-and-the-ovec-boundary-2026-09-30.md`
 
 ## PJM-NEXT-17 — 2026-10-01 — COAL_BIT located; own-offer audit falsified; CC conduct window built and refused at zero LP
 
@@ -6888,6 +6888,6 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - **OPEN, not limits:** COAL_BIT 2019–2021, CC_REGULAR 2020/2022/2023, CT_PEAKER 2021, C3a 2020/2022, C3b 2022.
 - **Next:** the 7-year low-price-floor marginal-unit census, then CC 2023.
 - **Records:**
-  - `docs/RESULT-pjm-next-17-2026-10-01.md`
-  - `docs/FINDING-pjm-next-17-coal-response-and-cc-conduct-window-2026-10-01.md`
-  - `docs/PRECOMMIT-pjm-next-17-2026-10-01.md`
+  - `docs/records/pjm/RESULT-pjm-next-17-2026-10-01.md`
+  - `docs/records/pjm/FINDING-pjm-next-17-coal-response-and-cc-conduct-window-2026-10-01.md`
+  - `docs/records/pjm/PRECOMMIT-pjm-next-17-2026-10-01.md`
