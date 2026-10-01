@@ -279,6 +279,20 @@ UNIT_OUTAGE_MIN_DAYS: int = 5
 _WAP_COAL_UNITS: frozenset[str] = frozenset({"WAP5", "WAP6", "WAP7", "WAP8"})
 
 
+# R-ERCOT-20 (rule 14): simple-cycle combustion turbines co-sited with a
+# combined cycle. CAMPD types these units "Combustion turbine" but the outage
+# extracts tag every unit at the facility CC_REGULAR, which would derate the CC
+# bin with GT outages. The GTs are their own CT_PEAKER split children
+# (34693 / 79003 / 563503, ``tag_mixed_plants`` digit 3), so, like every other
+# CT, their windows are dropped at routing. Unit ids: CAMPD unitType ==
+# "Combustion turbine" at each facility, 2019-2025 (EIA-860 prime mover GT).
+_CC_SITE_SIMPLE_CYCLE_UNITS: dict[int, frozenset[str]] = {
+    3469: frozenset({"THW51", "THW52", "THW53", "THW54", "THW55", "THW56"}),
+    7900: frozenset({"SH1", "SH2", "SH3", "SH4", "SH6", "SH7"}),
+    56350: frozenset({"CT-4A", "CT-4B"}),
+}
+
+
 def _unit_outage_target(
     facility_id: int, unit_id: object, group: object
 ) -> tuple[int, str] | None:
@@ -296,6 +310,8 @@ def _unit_outage_target(
     )
     if g in ("CT_PEAKER", "CT_CHP"):
         return None
+    if str(unit_id) in _CC_SITE_SIMPLE_CYCLE_UNITS.get(facility_id, ()):
+        return None  # R-ERCOT-20: a simple-cycle GT at a CC site (CT split child)
     if facility_id == 3470:  # W A Parish: coal units vs gas-steam (code 34702)
         return (
             (3470, COAL_ARTIFACT_FAMILY)

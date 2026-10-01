@@ -21,9 +21,9 @@ CC_REGULAR,South_Central,3,SC_CHP3,55154,Lost Pines 1 Power Project,609.0,10.83,
 CC_CHP,West,1,W_CHP1,52176,C R Wing Cogen Plant,230.0,12.38,1x1,E-class (CHP),60.0,0.0,35.0,5.0,24.0,4.0,1.05,,1.0,1.45
 CC_REGULAR,Houston,1,H_CC1,60122,Colorado Bend II,1230.3,6.57,2x1,F-class (late),0.0,20.0,65.0,15.0,16.0,6.0,,1.08,1.0,1.55
 CC_REGULAR,Houston,2,H_CC2,55062,Tenaska Frontier Generation Station,939.7,7.15,2x1,F-class,0.0,25.0,60.0,15.0,16.0,6.0,,1.08,1.0,1.55
-CC_REGULAR,Houston,3,H_CC3,56350,Colorado Bend Energy Center,654.1,8.02,1x1,F-class,0.0,45.0,40.0,15.0,8.0,4.0,,1.1,1.0,1.45
+CC_REGULAR,Houston,3,H_CC3,56350,Colorado Bend Energy Center [CC],580.1,8.02,1x1,F-class,0.0,45.0,40.0,15.0,8.0,4.0,,1.1,1.0,1.45
 CC_REGULAR,Houston,4,H_CC4,56806,Cedar Bayou 4,535.5,9.94,1x1,E-class,0.0,55.0,35.0,10.0,6.0,4.0,,1.12,1.0,1.35
-CC_REGULAR,Houston,5,H_CC5,3469,T H Wharton,1189.9,12.99,Multi-Unit,E-class,0.0,55.0,30.0,15.0,4.0,4.0,,1.12,1.0,1.35
+CC_REGULAR,Houston,5,H_CC5,3469,T H Wharton [CC],663.6,12.99,Multi-Unit,E-class,0.0,55.0,30.0,15.0,4.0,4.0,,1.12,1.0,1.35
 CC_REGULAR,Houston,6,H_CC6,55357,Jack Fusco Energy Center,675.6,7.34,2x1,F-class,0.0,25.0,60.0,15.0,16.0,6.0,,1.08,1.0,1.55
 CC_REGULAR,North,1,N_CC1 (6.60-6.82),55226,Freestone Energy Center,1036.0,6.79,2x1,F-class,0.0,25.0,60.0,15.0,16.0,6.0,,1.08,1.0,1.55
 CC_REGULAR,North,1,N_CC1 (6.60-6.82),55320,Wise County Power LLC,821.7,6.72,2x1,F-class,0.0,25.0,60.0,15.0,16.0,6.0,,1.08,1.0,1.55
@@ -49,7 +49,7 @@ CC_REGULAR,South,5,S_CC5,55086,Gregory Power Plant,469.8,11.68,1x1,E-class,0.0,5
 CC_REGULAR,South_Central,1,S_CC1,55137,Rio Nogales Power Project,940.2,6.52,2x1,F-class,0.0,25.0,60.0,15.0,16.0,6.0,,1.08,1.0,1.55
 CC_REGULAR,South_Central,2,S_CC2,55168,Bastrop Energy Center,618.7,6.94,1x1,F-class,0.0,45.0,40.0,15.0,16.0,6.0,,1.1,1.0,1.45
 CC_REGULAR,South_Central,3,S_CC3,55144,Hays Energy Project,989.0,7.3,2x1,F-class,0.0,25.0,60.0,15.0,16.0,6.0,,1.08,1.0,1.55
-CC_REGULAR,South_Central,4,S_CC4,7900,Sand Hill,696.4,7.37,1x1,F-class,0.0,45.0,40.0,15.0,8.0,4.0,,1.1,1.0,1.45
+CC_REGULAR,South_Central,4,S_CC4,7900,Sand Hill [CC],388.0,7.37,1x1,F-class,0.0,45.0,40.0,15.0,8.0,4.0,,1.1,1.0,1.45
 CC_REGULAR,South_Central,5,S_CC5,55153,Guadalupe Generating Station,1088.2,7.39,2x1,F-class,0.0,25.0,60.0,15.0,8.0,4.0,,1.08,1.0,1.55
 CC_REGULAR,South_Central,6,S_CC6,4937,Thomas C Ferguson,574.6,10.12,1x1,E-class,0.0,55.0,35.0,10.0,6.0,4.0,,1.12,1.0,1.35
 CC_REGULAR,Unknown,1,U_CC1,55098,Frontera Energy Center,529.0,6.87,1x1,F-class,0.0,45.0,40.0,15.0,16.0,6.0,,1.1,1.0,1.45
@@ -305,3 +305,6 @@ ST_GAS,South_Central,4,SC_STGAS4,3628,R W Miller,537.6,13.02,,,0.0,30.0,65.0,5.0
 ST_GAS,South_Central,5,SC_STGAS5,56708,CFB Power Plant,310.0,15.83,,,0.0,30.0,65.0,5.0,8.0,8.0,,1.12,1.0,1.06
 ST_GAS,South_Central,6,SC_STGAS6,6243,Dansby,203.2,9.96,,,0.0,30.0,65.0,5.0,8.0,8.0,,1.12,1.0,1.06
 CC_REGULAR,North,7,N_CC7 (8.30-8.75),55501,Kiamichi Energy Facility,1370.2,8.12,2x1,F-class,0.0,20.0,65.0,15.0,8.0,4.0,,1.08,1.06,1.55
+CT_PEAKER,Houston,9,CT9 (15-18),34693,T H Wharton [CT],526.3,16.49,,,0.0,45.0,47.0,8.0,1.0,1.0,,1.15,1.0,1.08
+CT_PEAKER,South_Central,4,CT4 (10-10),79003,Sand Hill [CT],308.4,10.04,,,0.0,45.0,47.0,8.0,1.0,1.0,,1.15,1.0,1.08
+CT_PEAKER,Houston,8,CT8 (13-15),563503,Colorado Bend Energy Center [CT],74.0,14.19,,,0.0,30.0,25.0,45.0,1.0,1.0,,1.18,1.0,1.1

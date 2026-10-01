@@ -4507,14 +4507,19 @@ PETRA_NOVA_MIN_CF: float = 0.92
 # config.cc_committed_per_plant is set; the economic tranche absorbs the
 # difference so each plant's tranche split still sums to 100%. Plants without
 # CAMPD coverage (7512, 50127, 55545, 56233) keep the CSV value.
+# R-ERCOT-20 (rule 14): at the three CC sites whose co-sited simple-cycle GTs
+# are now their own CT_PEAKER split children, the percentage is rescaled so the
+# committed block keeps the SAME MW on the CC-only nameplate (pct x whole-plant
+# sheet MW / CC-only MW). No re-derive (rule 23): the measured MW is unchanged,
+# only the capacity it is expressed against.
 CC_REGULAR_COMMITTED_PCT_BY_PLANT: dict[int, float] = {
     3441: 11.5,  # Nueces Bay (online 0.41)
     3443: 44.7,  # Victoria (online 0.28)
-    3469: 8.4,  # T H Wharton (online 0.22)
+    3469: 15.06,  # T H Wharton (online 0.22) [R-ERCOT-20: 8.4 x 1189.9/663.6 MW, CC-only basis]
     3631: 8.1,  # Sam Rayburn (online 0.39)
     4937: 33.3,  # Thomas C Ferguson (online 0.89)
     4939: 7.7,  # Barney M Davis [CC] (online 0.46)
-    7900: 17.9,  # Sand Hill (online 0.87)
+    7900: 32.13,  # Sand Hill (online 0.87) [R-ERCOT-20: 17.9 x 696.4/388.0 MW, CC-only basis]
     50109: 28.8,  # Paris Energy Center (online 0.47)
     54817: 36.7,  # Johnson County (online 0.54)
     55062: 25.7,  # Tenaska Frontier (online 0.86)
@@ -4537,7 +4542,7 @@ CC_REGULAR_COMMITTED_PCT_BY_PLANT: dict[int, float] = {
     55320: 25.3,  # Wise County Power LLC (online 0.61)
     55480: 30.2,  # Forney Energy Center (online 0.85)
     56349: 22.7,  # Quail Run Energy Center (online 0.64)
-    56350: 27.3,  # Colorado Bend Energy Center (online 0.75)
+    56350: 30.78,  # Colorado Bend Energy Center (online 0.75) [R-ERCOT-20: 27.3 x 654.1/580.1 MW, CC-only basis]
     56806: 20.9,  # Cedar Bayou 4 (online 0.63)
     58001: 30.5,  # Temple Power Station (online 0.96)
     58005: 36.2,  # Rayburn Energy Station LLC (online 0.62)

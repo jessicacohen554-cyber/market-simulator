@@ -1,0 +1,98 @@
+{
+ "tol": 0.5,
+ "mix_by_band": {
+  "trough<=15": {
+   "CC_CHP:econc": 0.11,
+   "CC_REGULAR:econc": 0.39,
+   "COAL_PRB:econ": 0.064,
+   "CT_PEAKER:committed": 0.014,
+   "ST_GAS:committed": 0.019,
+   "ST_GAS:econ": 0.003,
+   "ST_GAS:econc": 0.014,
+   "non-thermal": 0.168,
+   "other": 0.218
+  },
+  "15-25": {
+   "CC_CHP:econc": 0.096,
+   "CC_REGULAR:econc": 0.327,
+   "COAL_PRB:econ": 0.156,
+   "CT_PEAKER:committed": 0.053,
+   "ST_GAS:committed": 0.063,
+   "ST_GAS:econ": 0.046,
+   "ST_GAS:econc": 0.108,
+   "non-thermal": 0.053,
+   "other": 0.099
+  },
+  "25-40": {
+   "CC_CHP:econc": 0.052,
+   "CC_REGULAR:econc": 0.245,
+   "COAL_PRB:econ": 0.058,
+   "CT_PEAKER:committed": 0.095,
+   "ST_GAS:committed": 0.076,
+   "ST_GAS:econ": 0.081,
+   "ST_GAS:econc": 0.228,
+   "non-thermal": 0.059,
+   "other": 0.105
+  },
+  "40-100": {
+   "CC_CHP:econc": 0.018,
+   "CC_REGULAR:econc": 0.191,
+   "COAL_PRB:econ": 0.023,
+   "CT_PEAKER:committed": 0.064,
+   "ST_GAS:committed": 0.069,
+   "ST_GAS:econ": 0.048,
+   "ST_GAS:econc": 0.287,
+   "non-thermal": 0.139,
+   "other": 0.16
+  },
+  "tight>100": {
+   "CC_CHP:econc": 0.0,
+   "CC_REGULAR:econc": 0.089,
+   "COAL_PRB:econ": 0.042,
+   "CT_PEAKER:committed": 0.042,
+   "ST_GAS:committed": 0.068,
+   "ST_GAS:econ": 0.016,
+   "ST_GAS:econc": 0.161,
+   "non-thermal": 0.474,
+   "other": 0.109
+  }
+ },
+ "contrib_by_setter": {
+  "CC_CHP:econc": {
+   "hours": 693,
+   "contrib_usd": 0.195
+  },
+  "CC_REGULAR:econc": {
+   "hours": 2673,
+   "contrib_usd": 0.41
+  },
+  "COAL_PRB:econ": {
+   "hours": 823,
+   "contrib_usd": 0.083
+  },
+  "CT_PEAKER:committed": {
+   "hours": 467,
+   "contrib_usd": -0.107
+  },
+  "ST_GAS:committed": {
+   "hours": 486,
+   "contrib_usd": -0.122
+  },
+  "ST_GAS:econ": {
+   "hours": 370,
+   "contrib_usd": -0.06
+  },
+  "ST_GAS:econc": {
+   "hours": 1148,
+   "contrib_usd": -0.815
+  },
+  "non-thermal": {
+   "hours": 895,
+   "contrib_usd": -2.891
+  },
+  "other": {
+   "hours": 1205,
+   "contrib_usd": -0.041
+  }
+ }
+}
