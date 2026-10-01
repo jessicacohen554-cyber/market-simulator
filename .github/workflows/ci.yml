@@ -107,6 +107,7 @@ jobs:
             /data/raw/eia-930/eia_generation_profiles.parquet
             /data/raw/eia-930-hourly/
             /data/raw/ercot/2_DAY_AS_DISCLOSURE_2d_Cleared_DAM_AS_*.parquet
+            /data/raw/ercot/ercot_ordc_mu_sigma_seasonal.csv
             /data/raw/ercot-AS/*60d_dam_as_only_awards*json.zip
             /data/raw/ercot-AS/ercot_*_as_up_mw.parquet
             /data/raw/ercot-hsl/ercot_*_hsl_hourly.parquet
