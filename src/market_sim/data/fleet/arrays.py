@@ -211,6 +211,72 @@ _POF_DROP_GROUPS: frozenset[str] = frozenset(
     {"CC_REGULAR", "CC_CHP", "ST_GAS", "ST_CHP"}
 )
 
+# Fossil fuel types the SPP-106 MMU offer-side carrier covers (the MMU's
+# "conventional" thermal capacity less nuclear / hydro, which the keeper models
+# outside THERMAL_AVAILABILITY). Coal rows also match by class.
+_MMU_FOSSIL_FUELS: frozenset[str] = frozenset(
+    {"gas_cc", "gas_ct", "gas_st", "coal", "oil"}
+)
+
+
+def _spp_mmu_armed(config: "ScenarioConfig | None", iso: str | None) -> bool:
+    """True when ScenarioConfig.spp_mmu_offer_unavailability is armed for SPP."""
+    return (
+        config is not None
+        and bool(getattr(config, "spp_mmu_offer_unavailability", False))
+        and iso == "SPP"
+    )
+
+
+def _mmu_fossil(gen: "Generator") -> bool:
+    """True for a row the SPP-106 MMU carrier covers (gas, coal, oil)."""
+    return gen.fuel_type in _MMU_FOSSIL_FUELS or is_coal_class(gen.plant_group)
+
+
+def _apply_spp_mmu_bands(
+    generators: list["Generator"],
+    availability: np.ndarray,
+    pmax: np.ndarray,
+    hours: int,
+    year: int,
+) -> None:
+    """Remove the SPP MMU offer-side bands from every fossil row, in place (SPP-106).
+
+    ScenarioConfig.spp_mmu_offer_unavailability; DESIGN-spp-106 s5 (carrier EX).
+    Every fossil row loses the "above emergency max" and "economic to emergency
+    max" shares all year, plus the ambient MW-days spread over Jun-Sep as a
+    share of fossil pmax. Clipped at 0, so a row on full outage stays at 0.
+    The caller runs it after the outage overlays and before the COD ramp. The
+    flat derates it replaces are skipped in ``_availability_matrix`` (rule 19).
+    """
+    from market_sim.data.spp_mmu_unavailability import mmu_shares
+
+    idx = np.array([i for i, g in enumerate(generators) if _mmu_fossil(g)], dtype=int)
+    if not idx.size:
+        return
+    sh = mmu_shares(year)
+    fos_mw = float(np.asarray(pmax, dtype=float)[idx].sum())
+    amb = sh.ambient_mw / fos_mw if fos_mw > 0.0 else 0.0
+    cut = np.full(hours, sh.above_emer + sh.eco_to_emer)
+    cut[np.isin(_hour_to_month_index(hours), (5, 6, 7, 8))] += amb  # Jun-Sep
+    availability[idx, :hours] = np.maximum(
+        0.0, availability[idx, :hours] - cut[None, :]
+    )
+    logger.info(
+        "SPP MMU offer-side bands (SPP %d, MMU year %d): %d fossil rows; flat "
+        "perf + summer class derate replaced; above-emer %.4f + eco-to-emer "
+        "%.4f all year, ambient %.4f Jun-Sep (%.0f MW of %.0f MW fossil pmax)",
+        year,
+        sh.year_used,
+        idx.size,
+        sh.above_emer,
+        sh.eco_to_emer,
+        amb,
+        sh.ambient_mw,
+        fos_mw,
+    )
+
+
 # Per-plant coal sustained-output ceilings now live in
 # constants.COAL_MAX_CF_BY_PLANT (re-derived from CAMPD outage-adjusted
 # availability physics, not observed output — see
@@ -873,6 +939,11 @@ def _availability_matrix(
                 len({int(g.plant_code) for g in _ct_rows} - _miss),
                 len(_miss),
             )
+        # SPP-106 (ScenarioConfig.spp_mmu_offer_unavailability): the MMU's
+        # measured bands REPLACE the flat GADS performance derate and the flat
+        # summer class derate on fossil rows (rule 19); the bands themselves are
+        # removed after the outage overlays in generators_to_fleet_arrays.
+        _mmu_on = _spp_mmu_armed(config, _iso)
         for g_idx, gen in enumerate(generators):
             if gen.plant_group not in THERMAL_AVAILABILITY:
                 continue
@@ -880,6 +951,9 @@ def _availability_matrix(
             pof, wefor, derate = _thermal_outage(
                 gen.plant_group, fleet_year - gen.online_year
             )
+            _mmu_row = _mmu_on and _mmu_fossil(gen)
+            if _mmu_row:
+                derate = 0.0
             # ISO-gated gas-steam forced-outage base override. The global ST_GAS
             # WEFOR base (0.21) is fitted to ERCOT's once-through steamers and is
             # >2x every other thermal class — an implicit availability crush that
@@ -1084,7 +1158,11 @@ def _availability_matrix(
                             availability[g_idx, ~summer] *= _wr
                 else:
                     summer_derate = _SUMMER_CLASS_DERATE.get(gen.plant_group)
-                    if summer_derate and not _basis_aware_suppresses(gen):
+                    if (
+                        summer_derate
+                        and not _basis_aware_suppresses(gen)
+                        and not _mmu_row
+                    ):
                         availability[g_idx, summer] *= 1.0 - summer_derate
             # Per-plant coal max-CF ceilings: cap availability so the unit
             # cannot dispatch above its sustained operating limit.
@@ -4383,6 +4461,9 @@ def generators_to_fleet_arrays(
     _apply_outage_overlays(
         generators, availability, pmax, heat_rate, hours, config, _iso, _yr
     )
+
+    if _spp_mmu_armed(config, _iso) and _yr is not None:
+        _apply_spp_mmu_bands(generators, availability, pmax, hours, int(_yr))
 
     if _crow_rate is not None and _crow_idx.size:
         from market_sim.data.spp_gas_outage import (

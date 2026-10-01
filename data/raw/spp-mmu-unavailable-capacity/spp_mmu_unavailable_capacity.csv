@@ -1,0 +1,6 @@
+year,rated_conventional_mw,eco_to_emer_max_mw,above_emer_max_mw,reliability_status_all_mw,reliability_status_gas_mw,ambient_derate_mw_on_days,ambient_derate_days
+2020,67300,1750,2500,1650,1050,338,115
+2021,65900,1650,1500,2550,1220,185,122
+2022,66000,1800,1700,2700,1240,367,134
+2023,63400,1800,1950,2650,1300,422,116
+2024,64800,1750,1700,2900,1920,340,112
