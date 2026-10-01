@@ -68,6 +68,14 @@ class IsoSpec:
     parse:
         Hook ``(path) -> DataFrame`` returning the tidy parsed columns
         (:data:`PARSED_COLUMNS`) for one raw file.
+    max_fill_hours:
+        ``None`` (the default, PJM) densifies every series to all 8760 hours.
+        An integer keeps only missing runs of at most that many consecutive
+        hours *inside* a series' observed span (filled and flagged
+        ``n_source_rows = 0``); longer gaps and the hours before a series'
+        first / after its last observation are left ABSENT rather than
+        invented. CAISO sets 1 (the spring-forward hour only) because its
+        retained OASIS history starts mid-year and its ITC set changes.
     """
 
     iso: str
@@ -75,12 +83,13 @@ class IsoSpec:
     raw_subdir: str
     raw_glob: str
     parse: Callable[[Path], pd.DataFrame]
+    max_fill_hours: int | None = None
 
 
 REGISTRY: dict[str, IsoSpec] = {}
 
 # Sibling modules auto-imported by load_specs(); each registers its spec.
-_ISO_MODULES: tuple[str, ...] = ("pjm",)
+_ISO_MODULES: tuple[str, ...] = ("pjm", "caiso")
 
 
 def register(spec: IsoSpec) -> IsoSpec:
@@ -152,12 +161,24 @@ def to_model_clock(parsed: pd.DataFrame, spec: IsoSpec, year: int) -> pd.DataFra
         .reset_index()
         .sort_values(["interface", "hour"], ignore_index=True)
     )
+    missing = dense["n_source_rows"].isna()
     dense["n_source_rows"] = dense["n_source_rows"].fillna(0).astype("int64")
-    dense["limit_mw"] = (
-        dense.groupby("interface")["limit_mw"]
-        .transform(lambda s: s.interpolate(limit_direction="both"))
-        .astype("float64")
-    )
+    if spec.max_fill_hours is None:
+        dense["limit_mw"] = (
+            dense.groupby("interface")["limit_mw"]
+            .transform(lambda s: s.interpolate(limit_direction="both"))
+            .astype("float64")
+        )
+    else:
+        # Fill only short interior gaps; drop long gaps and the edges.
+        run_id = (missing != missing.shift()).cumsum()
+        run_len = missing.groupby([dense["interface"], run_id]).transform("size")
+        interior = dense.groupby("interface")["limit_mw"].transform(
+            lambda s: s.interpolate(limit_area="inside")
+        )
+        keep = ~missing | ((run_len <= spec.max_fill_hours) & interior.notna())
+        dense["limit_mw"] = interior.astype("float64")
+        dense = dense[keep].reset_index(drop=True)
 
     dense["iso"] = spec.iso.upper()
     hr = dense["hour"].to_numpy()
