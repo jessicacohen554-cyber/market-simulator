@@ -1,7 +1,7 @@
 """ercot-188 seam proof for the (c2) top-refined econ-curve slicing (SCHEME R1).
 
 Adjudicates the assertions pre-registered in
-``docs/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md`` §2.6, on
+``docs/records/ercot/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md`` §2.6, on
 real reconstructed keeper fleets with **no LP built**:
 
 * **SP-1** gate-off inertness (ERCOT): with ``ercot_econ_curve_top_refine`` at
@@ -62,7 +62,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
-OUT = REPO / "results/calibration/ercot188_topfine_seamproof.json"
+OUT = REPO / "results/phase0/ercot/ercot188_topfine_seamproof.json"
 
 #: The field this lane adds (default off, ERCOT-gated).
 FIELD = "ercot_econ_curve_top_refine"

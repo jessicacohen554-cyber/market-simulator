@@ -11,7 +11,7 @@ The question it answers before any solve (rule 29 ``[R-SCREEN]`` clause 0,
 which survives as the practice): landing
 ``data/raw/_processed-legacy/coal_supply_NWPP.csv`` moves the model's REPORTING
 class from the bare ``COAL`` to ``COAL_PRB`` / ``COAL_BIT`` / ``COAL_WC`` (the
-C1 taxonomy seam of ``docs/handoffs/FINDING-nwpp-40-2026-09-16.md`` §7.1) — but
+C1 taxonomy seam of ``docs/records/nwpp/FINDING-nwpp-40-2026-09-16.md`` §7.1) — but
 does it also move the LP's INPUTS?  Two live channels could:
 
 * the offer-curve router (``data.offer_curves``) keys the coal curve on the

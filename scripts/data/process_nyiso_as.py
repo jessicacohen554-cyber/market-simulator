@@ -211,7 +211,7 @@ def process(market: str, year: int) -> Path | None:
 # 100.0000 % of rows in every zone and every year 2018-2026, and all three are
 # exactly equal in 82-84 % of them. The reserve price a MW actually earns is
 # therefore the cascade MAX (== ``spin_10``), never the sum.
-# [R-ACCURATE] nyiso-166; docs/FINDING-nyiso166-as-reference-repair-2026-08-31.md sec 2.
+# [R-ACCURATE] nyiso-166; docs/records/nyiso/FINDING-nyiso166-as-reference-repair-2026-08-31.md sec 2.
 _CASCADE_PRODUCTS = ("spin_10", "nonsync_10", "op_30")
 
 # NYISO zones whose cleared reserve price tracks each model series: WEST

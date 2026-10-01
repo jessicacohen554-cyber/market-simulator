@@ -17,7 +17,7 @@ precedent and it is the one most worth stating plainly, because a band multiplie
 `[R-STRUCT]` carve-out channel in general: the carve-out governs a band identified by the PRICE
 RESIDUAL, and 0.843 / 0.661 / 0.658 are identified by NYISO's own CAMPD conduct. The pre-registered
 expectation and the decision rule were pushed BEFORE either solve, in
-``docs/PRECOMMIT-nyiso241-ct-peaker-merit-2026-09-19.md``.
+``docs/records/nyiso/PRECOMMIT-nyiso241-ct-peaker-merit-2026-09-19.md``.
 
 Every governance claim that can be checked against the committed artifacts IS checked here and
 written into ``governance.computed_checks``; the script ABORTS on a failed premise rather than
@@ -279,7 +279,7 @@ def main() -> None:
 
     attested = (
         f"session nyiso-241 (2026-09-19), ARM {which.upper()}. Pre-registration: "
-        "docs/PRECOMMIT-nyiso241-ct-peaker-merit-2026-09-19.md, pushed at "
+        "docs/records/nyiso/PRECOMMIT-nyiso241-ct-peaker-merit-2026-09-19.md, pushed at "
         "5356fb712f8ff3ad2b785421d34ed9b4cae71f4c BEFORE either LP, carrying the phase-0 "
         "measurements, the gates and the DECISION RULE between the two arms. "
         f"Matrix cell(s): {spec['matrix_cell']}. "
@@ -293,7 +293,7 @@ def main() -> None:
         "carries tranche_startup_amortization, so the CT_PEAKER _committed rows ALREADY pay a "
         "measured start recovery of $11.97 / $16.48 / $15.78 / $13.22 per MWh in 2022-2025 "
         "(model/commitment.compute_monthly_markup, per LP row from that row's own P0 run length; "
-        "measured at zero LP in results/calibration/_nyiso241_ct_offer_anatomy.json). A 1.35 "
+        "measured at zero LP in results/phase0/nyiso/_nyiso241_ct_offer_anatomy.json). A 1.35 "
         "multiplicative 'start hurdle' on top of that charges the same phenomenon twice, and the "
         "substitution removes the duplicate rather than discounting the real one. "
         "SIZED BEFORE IT WAS PROPOSED, AND REPORTED AGAINST ITSELF (PRECOMMIT §2.3): against the "

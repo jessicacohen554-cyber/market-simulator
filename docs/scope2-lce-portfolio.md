@@ -3,7 +3,7 @@
 > **REMOVED 2026-09-18.** The owner deleted the `scope2-lce-portfolio/` directory
 > (`8f0d41df`), and on 2026-09-25 approved removing the market_sim-side
 > vendored-parity test (`TestVendoredParityScope2`) that had outlived it
-> (audit desk Y-30, `docs/handoffs/FINDING-y30-mechanical-reds-2026-09-24.md` §2.3).
+> (audit desk Y-30, `docs/records/governance/FINDING-y30-mechanical-reds-2026-09-24.md` §2.3).
 > The text below is historical; its links no longer resolve.
 
 > This is a **pointer doc**. The tool itself is a **separate, self-contained

@@ -55,7 +55,7 @@ has been superseded (the run improved, the run's sidecar is gone, or a desk
 finally declared it) into an audit problem, so closing a backlog row also prunes
 its baseline line instead of leaving dead weight behind.
 
-Genealogy: ``docs/handoffs/FINDING-y24-invariant-declaration-ratchet-2026-09-06.md``.
+Genealogy: ``docs/records/governance/FINDING-y24-invariant-declaration-ratchet-2026-09-06.md``.
 """
 
 from __future__ import annotations

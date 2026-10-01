@@ -2,7 +2,7 @@
 
 neiso-74 measured NEISO's keeper reproducing only **24-30 %** of the measured
 diurnal price amplitude while its *level* and its *phase* are both right
-(`results/calibration/FINDING-neiso74-ps-cycling-price-shape-2026-08-01.md`).
+(`docs/records/neiso/FINDING-neiso74-ps-cycling-price-shape-2026-08-01.md`).
 Two other ISOs already carry a same-shaped finding reached by different routes —
 miso-89 ("the model reproduces 29-47 % of the observed diurnal spread, every
 season, every year") and pjm-139/140/141 ("31 / 33 / 32 % of the measured

@@ -4,7 +4,7 @@
 measured hub series has repriced; ``caiso_intertie_gap_fill_measured_gas`` fills
 the intertie hub's bulk retention gap on the host state's measured monthly gas.
 Both default off and byte-identical off. Record:
-``docs/handoffs/r-caiso-3/PRECOMMIT-r-caiso-3-2026-09-25.md``.
+``docs/records/caiso/r-caiso-3/PRECOMMIT-r-caiso-3-2026-09-25.md``.
 """
 
 from __future__ import annotations

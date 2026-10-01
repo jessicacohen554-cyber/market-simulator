@@ -51,7 +51,7 @@ parsed as a fallback) it verifies:
       blocks are exactly the ones it does not look at.
   E11 keeper-lineage recipe fidelity over the FULL ``solve_and_persist`` kwarg
       surface. The nyiso-108→155 silent-de-arm class
-      (``docs/FINDING-nyiso-hydro-truncation-repair-2026-08.md`` §2): the hydro
+      (``docs/records/nyiso/FINDING-nyiso-hydro-truncation-repair-2026-08.md`` §2): the hydro
       repair pair are solve kwargs, NOT ``ScenarioConfig`` fields, so
       "all scenario_config fields identical" lineage checks were structurally
       blind to them and an armed keeper mechanism left the lineage with no
@@ -111,7 +111,7 @@ parsed as a fallback) it verifies:
       since a different HiGHS is a different LP solver. Nothing else in this
       audit looks at the environment at all, which is how the nyiso-231
       off-pin keeper reached the dashboard unremarked
-      (``docs/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md``).
+      (``docs/records/nyiso/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md``).
       Severity is **WARN, not FAIL**, deliberately: an off-pin keeper is a
       provenance fact to surface, not grounds to retroactively invalidate a
       committed result whose numbers are on the site — and a drifting pin is
@@ -196,7 +196,7 @@ def marker_currency_failures(
     """Return M1 findings: `complete`-block markers vs the designated keepers.
 
     D-5(b) (owner decision, signed 2026-08-02 —
-    ``docs/handoffs/ffr-owner-sitting-2026-08-02.md`` Addendum C.1, OPTION B) made
+    ``docs/records/forecast/ffr-owner-sitting-2026-08-02.md`` Addendum C.1, OPTION B) made
     the marker's ``keeper`` field **track the ISO's current designated dashboard
     keeper** instead of freezing the declaration-time snapshot, and required the
     ``determination`` to be RE-VERIFIED against the newly named run on every
@@ -814,7 +814,7 @@ def solve_pin_findings(
     different HiGHS is a different LP solver.
 
     This is the check whose absence let the nyiso-231 off-pin keeper reach the
-    dashboard unremarked (``docs/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md``)
+    dashboard unremarked (``docs/records/nyiso/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md``)
     — nothing else in this audit reads the environment block at all.
 
     Severity is WARN at the call site, never FAIL: an off-pin keeper is a

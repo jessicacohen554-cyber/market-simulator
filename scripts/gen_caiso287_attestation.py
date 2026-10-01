@@ -117,7 +117,7 @@ carrying the new marginal_emission_rate column; the governance booleans and \
 the DOF ledger are carried forward from the outgoing keeper 2026-09-12-caiso-\
 275-gascoupling because the scenario_config is identical by checked \
 construction, and the exceptions ledger is re-measured from this bundle's own \
-scorer output. See docs/RESULT-caiso287-startup-decommit-split-2026-09-19.md \
+scorer output. See docs/records/caiso/RESULT-caiso287-startup-decommit-split-2026-09-19.md \
 for the session's substantive findings, none of which arm or disarm anything."""
 
 

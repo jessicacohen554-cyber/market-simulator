@@ -11,7 +11,7 @@ constants table carries (audit §7 row 10: annual CF 0.802 / 0.948 / 0.737 for
 2023 / 2024 / 2025, deep outages May–Jun 2023 and Apr–Jun 2025, none in 2024).
 
 Nothing in the solve path consumes this registry yet, for any ISO (the
-forward-channel design is ``docs/handoffs/ff-g5-nuclear-registry-2026-07.md``).
+forward-channel design is ``docs/records/forecast/ff-g5-nuclear-registry-2026-07.md``).
 
 Registered 2026-09-14 by lane NWPP-20.
 """

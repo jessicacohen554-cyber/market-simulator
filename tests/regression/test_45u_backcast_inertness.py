@@ -1,6 +1,6 @@
 """Pins that the IRA §45U credit is structurally unreachable in a backcast.
 
-The F1-45U charter (docs/handoffs/f1-45u-ordering-2026-08-08.md) changes the
+The F1-45U charter (docs/records/misc/f1-45u-ordering-2026-08-08.md) changes the
 §45U credit curve, and the claim that no backcast keeper metric can move
 rests on a reachability argument, not on a measured re-solve:
 

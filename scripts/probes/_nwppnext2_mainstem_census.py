@@ -1,7 +1,7 @@
 """nwppnext2 phase 0: footprint census of the UNCOUPLED Columbia/Snake mainstem. ZERO LP.
 
 Reproduces every number in
-``docs/handoffs/FINDING-nwppnext2-mainstem-census-2026-09-25.md`` from:
+``docs/records/nwpp/FINDING-nwppnext2-mainstem-census-2026-09-25.md`` from:
 
 * the keeper's committed ``hourly/`` sidecars
   (``results/calibration/nwppnext_span``, keeper ``2026-09-25-nwpp-next-ferc714-partial``);

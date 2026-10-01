@@ -43,7 +43,7 @@ GAS = ("CC_REGULAR", "CT_PEAKER", "ST_GAS", "CC_CHP", "CT_CHP", "ST_CHP")
 PL = _ROOT / "data/raw/_processed-legacy"
 HR_ART = {"CC_REGULAR": "campd_cc_heat_rates_SOCO.csv", "CT_PEAKER": "campd_ct_heat_rates_SOCO.csv",
           "ST_GAS": "campd_st_heat_rates_SOCO.csv"}
-OUT = _ROOT / "docs/handoffs/r-soco/soco76_gas_census.json"
+OUT = _ROOT / "docs/records/soco/r-soco/soco76_gas_census.json"
 
 
 def leg() -> pd.DataFrame:

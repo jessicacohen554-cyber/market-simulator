@@ -21,7 +21,7 @@ Per year it reports, per class:
 Usage::
 
     uv run python scripts/probes/_miso276_stack_phase0.py --years 2022 2019 \
-        --out results/calibration/_miso276_stack_phase0.json
+        --out results/phase0/miso/_miso276_stack_phase0.json
 """
 
 from __future__ import annotations

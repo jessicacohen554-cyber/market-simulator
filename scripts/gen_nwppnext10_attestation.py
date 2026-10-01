@@ -1,7 +1,7 @@
 """Emit the NWPP-NEXT-10 calibration attestation for the exit-month-routing span bundle.
 
 NWPP-NEXT-10 (PRECOMMIT
-``docs/handoffs/PRECOMMIT-nwppnext10-exit-ym-routing-2019-2025-2026-09-29.md``) is
+``docs/records/nwpp/PRECOMMIT-nwppnext10-exit-ym-routing-2019-2025-2026-09-29.md``) is
 keeper #15's recipe (NWPP-NEXT-8) plus ``unit_outage_exit_ym_from_eia860``: a
 retired unit's CAMPD post-exit darkness derates its own dated exit bin instead of
 its surviving siblings (Colstrip 6076 units 1-2, 2020).

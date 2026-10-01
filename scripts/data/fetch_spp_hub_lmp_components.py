@@ -1,6 +1,6 @@
 """Fetch SPP hub LMP *components* (energy / congestion / loss), hourly, 2019-2025.
 
-Lane SPP-80 (``docs/handoffs/CHARTER-spp-80-upper-tercile-premium-intake-2026-09-25.md``).
+Lane SPP-80 (``docs/records/spp/CHARTER-spp-80-upper-tercile-premium-intake-2026-09-25.md``).
 The committed hub sidecars (``actual_lmp_hourly{,_zonal}_SPP.parquet``) keep only
 ``Price Type == LMP``. SPP's monthly wide settlement-location files carry two more
 price types for every hub, ``MCC`` (marginal congestion component) and ``MLC``

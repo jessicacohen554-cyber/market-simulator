@@ -32,10 +32,10 @@ We curate the reserve-supply / price-adder subset the ERCOT scarcity model needs
     system_lambda  SCED system lambda ($/MWh).
 
 **Settlement role of the three adders — which of them RTSPP actually carries**
-(ercot-203, 2026-08-15; ``docs/FINDING-ercot203-rtoffpa-not-in-rtspp-2026-08-15.md``
+(ercot-203, 2026-08-15; ``docs/records/ercot/FINDING-ercot203-rtoffpa-not-in-rtspp-2026-08-15.md``
 carries the verbatim citation). This note exists because this header's earlier
 silence on ``rtoffpa`` was itself read as an open question about overlay
-completeness (``docs/FINDING-ercot202-t1-nonviable-2026-08-14.md`` §3 limit 1):
+completeness (``docs/records/ercot/FINDING-ercot202-t1-nonviable-2026-08-14.md`` §3 limit 1):
 
     RTSPP = RTLMP + RTORPA + RTORDPA          (Nodal Protocols §6.5.7.3(12),
                                                §6.6.1(1), §6.6.1.1(1), §6.6.1.2(1))
@@ -63,7 +63,7 @@ demand clock. (The pre-2026-07-07 build placed the CPT labels unconverted, so
 the whole mid-Mar–early-Nov series ran one hour late — Jan best lag 0 / Jul
 best lag +1 vs EIA-930 across all three years, the same placement defect class
 as the NP4-732/737 HSL intake; see
-``docs/handoffs/ercot-g22-demand-side-design-2026-07.md`` §7.)
+``docs/records/ercot/ercot-g22-demand-side-design-2026-07.md`` §7.)
 
 Physically impossible interval values (an MW capability outside
 ``[0, _MW_PLAUSIBLE_MAX]``, e.g. the corrupt 2024 PRC interval that dragged an

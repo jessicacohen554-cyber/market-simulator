@@ -8,7 +8,7 @@ unchanged. The recipe check is this lane's: every leg must equal the PJM-NEXT-4
 keeper's own year (``pjmnext5_sh_span/run_config_<y>.json``) EXACTLY apart from
 the arm flags ``unit_outage_full_rederive`` + ``unit_outage_rederive_peaker_windows`` (the F2 split) — and every leg must
 be solved at the pinned PRECOMMIT commit
-(docs/PRECOMMIT-pjm-next-6-card1-f2-split-2026-09-27.md), with the
+(docs/records/pjm/PRECOMMIT-pjm-next-6-card1-f2-split-2026-09-27.md), with the
 COAL-SUB bare-``COAL`` offer-curve fold still tolerated.
 Anything else differing aborts, so a control leg or a wrong-recipe leg can
 never compose in.

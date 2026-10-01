@@ -12,7 +12,7 @@ the problem that produced it. Concretely —
   tolerance (``np.array_equal``);
 * the switch **defaults OFF** — the shipped posture, because a hit moves the
   NEXT pass's simplex path on the live-model P1 route (module docstring;
-  ``docs/handoffs/FINDING-perfc-s6-p0-cache-2026-09-22.md``) — and both an
+  ``docs/records/governance/FINDING-perfc-s6-p0-cache-2026-09-22.md``) — and both an
   unarmed switch and a missing determinism pin
   (``MARKET_SIM_HIGHS_THREADS`` != 1) make it wholly inert;
 * eviction holds the per-structure entry budget.
@@ -60,7 +60,7 @@ def _cache_env(tmp_path, monkeypatch):
     process-global scheduler on the first ``run()`` and then refuses every later
     LP whose ``threads`` option differs from it, reporting ``model status 'Not
     Set'`` — the latent, ordering-dependent CI red recorded in
-    ``docs/FINDING-fast-tier-repair-2026-09.md`` §4b/§7.6 and guarded at source
+    ``docs/records/misc/FINDING-fast-tier-repair-2026-09.md`` §4b/§7.6 and guarded at source
     by ``capture_keeper_goldens.pin_determinism_env``. Reproduced here while
     writing these tests: with the variable set in the fixture, every solving test
     passed alone and failed the moment any other model test ran first. The pin

@@ -2,9 +2,9 @@
 
 Reads the NEXT-14 keeper legs' committed P1 network + system sidecars (fetched
 from the leg shard commits into ``--legs``; provenance SHAs in
-``docs/RESULT-nyiso-next14-total-east-cutset-2026-09-30.md`` §3) and the
+``docs/records/nyiso/RESULT-nyiso-next14-total-east-cutset-2026-09-30.md`` §3) and the
 ``nyiso-interface-flows`` clean partition (MIS P-32). Writes
-``results/calibration/_nyisonext15_phase0.json``.
+``results/phase0/nyiso/_nyisonext15_phase0.json``.
 
 Blocks, per year 2021-2025:
 
@@ -36,7 +36,7 @@ from market_sim.data.fleet import _hour_to_month_index  # noqa: E402
 from market_sim.data.nyiso_par_attribution import attributed_zone_net  # noqa: E402
 from scripts.lib.clean_io import read_clean  # noqa: E402
 
-OUT = REPO / "results" / "calibration" / "_nyisonext15_phase0.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyisonext15_phase0.json"
 LINK = "Upstate_West>Capital_Hudson"
 ZONES = ["Capital_Hudson", "Long_Island", "NYC", "Upstate_West"]
 NE_ROW = "SCH - NE - NY"

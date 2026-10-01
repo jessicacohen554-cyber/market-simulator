@@ -1,6 +1,6 @@
 """Audit: the ERCOT forward AS path reads ZERO measured AS series.
 
-Stage 5 of ``docs/handoffs/ercot-as-coopt-prompts-2026-07.md`` — the CLAUDE.md
+Stage 5 of ``docs/records/ercot/ercot-as-coopt-prompts-2026-07.md`` — the CLAUDE.md
 #10 admissibility proof that every ancillary-service quantity on the *forecast*
 path regenerates from forward drivers and is never a measured overlay/series read
 from disk. This is the guard that keeps the forward path clean as the code evolves

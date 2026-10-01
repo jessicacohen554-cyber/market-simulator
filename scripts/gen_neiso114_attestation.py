@@ -1,6 +1,6 @@
 """Emit the neiso-114 arm A calibration attestation for the composite.
 
-neiso-114 (``docs/handoffs/neiso114/PRECOMMIT-neiso114-2026-09-25.md``) replays
+neiso-114 (``docs/records/neiso/neiso114/PRECOMMIT-neiso114-2026-09-25.md``) replays
 the NEISO keeper ``2026-09-24-r-neiso-inputs-2019`` (``rneiso_span``) with ONE
 registered delta, ``coal_mustrun_requires_measured_row=true`` (zero free
 parameters: it withdraws the unmeasured 45 %-of-nameplate coal must-run default
@@ -39,8 +39,8 @@ CAL = REPO / "results" / "calibration"
 COMPOSITE = "neiso114a_span"
 KEEPER = "rneiso_span"
 KEEPER_ID = "2026-09-24-r-neiso-inputs-2019"
-PRECOMMIT = "docs/handoffs/neiso114/PRECOMMIT-neiso114-2026-09-25.md"
-RESULT = "docs/handoffs/neiso114/RESULT-neiso114-2026-09-25.md"
+PRECOMMIT = "docs/records/neiso/neiso114/PRECOMMIT-neiso114-2026-09-25.md"
+RESULT = "docs/records/neiso/neiso114/RESULT-neiso114-2026-09-25.md"
 PINNED = "9db30b45a55bf4bbd9cdbc3b2a7f51aa37dc7466"
 FLIPS = ("coal_mustrun_requires_measured_row",)
 
@@ -67,7 +67,7 @@ def main_b() -> int:
     if _offer_sha(bundle, skip) != _offer_sha(kb, skip):
         raise SystemExit("offer_curve_by_group moved outside ST_GAS")
     want = json.loads(
-        (REPO / "docs/handoffs/neiso114/arm_b_offer_curve.json").read_text()
+        (REPO / "docs/records/neiso/neiso114/arm_b_offer_curve.json").read_text()
     )
     for y in years:
         rc = json.loads((bundle / f"run_config_{y}.json").read_text())
@@ -80,7 +80,7 @@ def main_b() -> int:
     gov["attested_by"] = (
         "neiso-114 (2026-09-25) arm B -- the promoted arm-A keeper recipe replayed one year per "
         "shard (rule 36) with NEISO's ST_GAS offer bands re-derived on the corrected class "
-        "(docs/handoffs/neiso114/arm_b_offer_curve.json). Pre-registered in "
+        "(docs/records/neiso/neiso114/arm_b_offer_curve.json). Pre-registered in "
         f"{PRECOMMIT} §3 (pinned {PINNED[:8]}) before any solve; the value was never swept."
     )
     apt = gov.get("authorized_price_tuning")
@@ -162,7 +162,7 @@ def main() -> int:
     gov["attested_by"] = (
         f"neiso-114 (2026-09-25) arm A -- keeper {KEEPER_ID}'s recipe replayed via "
         "scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), with one registered zero-DOF "
-        f"delta: {', '.join(FLIPS)}. Every leg verified by docs/handoffs/neiso114/shard_check.py "
+        f"delta: {', '.join(FLIPS)}. Every leg verified by docs/records/neiso/neiso114/shard_check.py "
         f"at composition. Zero LP in the parent. Pre-registered in {PRECOMMIT} (pinned "
         f"{PINNED[:8]}) before any shard launched; record {RESULT}."
     )

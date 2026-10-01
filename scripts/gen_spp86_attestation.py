@@ -1,6 +1,6 @@
 """Emit the SPP-86 calibration attestation for the composed 2019-2025 arm bundle ``spp86_arm_span``.
 
-SPP-86 (``docs/handoffs/PRECOMMIT-spp-86-coal-extract-basis-2026-09-26.md``) replays SPP's keeper
+SPP-86 (``docs/records/spp/PRECOMMIT-spp-86-coal-extract-basis-2026-09-26.md``) replays SPP's keeper
 ``spp85_arm_span`` recipe one year per shard (rule 36) with exactly one registered ``ScenarioConfig``
 boolean added, ``unit_outage_coal_extract_basis_share``. ``replay_keeper --out-dir`` does not propagate
 ``calibration_attestation.json``, so without this the composite scores C6 ``UNATTESTED`` for a plumbing
@@ -22,9 +22,9 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 CAL = REPO / "results" / "calibration"
-PRECOMMIT = "docs/handoffs/PRECOMMIT-spp-86-coal-extract-basis-2026-09-26.md"
-FINDING = "docs/handoffs/FINDING-spp-86-coal-floor-conduct-2026-09-26.md"
-RESULT = "docs/handoffs/RESULT-spp-86-coal-extract-basis-2026-09-26.md"
+PRECOMMIT = "docs/records/spp/PRECOMMIT-spp-86-coal-extract-basis-2026-09-26.md"
+FINDING = "docs/records/spp/FINDING-spp-86-coal-floor-conduct-2026-09-26.md"
+RESULT = "docs/records/spp/RESULT-spp-86-coal-extract-basis-2026-09-26.md"
 PINNED = "d72e5f107a6fe7ca59f94307f37b239e1a48c14f"
 COMPOSITE = "spp86_arm_span"
 KEEPER = "spp85_arm_span"

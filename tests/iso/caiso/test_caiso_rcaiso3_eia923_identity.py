@@ -1,6 +1,6 @@
 """R-CAISO-3 lever C: refused gross-net CC rows fall back to EIA-923 fuel / net.
 
-Trivial cases first. Record: ``docs/handoffs/r-caiso-3/``.
+Trivial cases first. Record: ``docs/records/caiso/r-caiso-3/``.
 """
 
 from __future__ import annotations
@@ -64,20 +64,28 @@ class TestApply(unittest.TestCase):
     def test_only_refused_rows_swap(self):
         t = pd.DataFrame(
             {
-                "plant_code": [1, 2, 3],
-                "year": [2023, 2023, 2023],
-                "heat_rate": [8.5, 7.2, 9.0],
-                "model_heat_rate_egrid": [7.7, 7.3, 9.1],
-                "model_over_measured": [0.9, 1.0, 1.0],
-                "flag": ["gross_below_net", "ok", "steam_not_metered"],
+                "plant_code": [1, 2, 3, 4],
+                "year": [2023, 2023, 2023, 2023],
+                "heat_rate": [8.5, 7.2, 9.0, 13.6],
+                "model_heat_rate_egrid": [7.7, 7.3, 9.1, 10.4],
+                "model_over_measured": [0.9, 1.0, 1.0, 0.8],
+                "flag": [
+                    "gross_below_net",
+                    "ok",
+                    "boundary_above_band",
+                    "steam_not_metered",
+                ],
             }
         )
-        rates = {2023: {1: 7.04, 2: 7.5, 3: 7.0}}
+        rates = {2023: {1: 7.04, 2: 7.5, 3: 7.0, 4: 9.55}}
         out = derive.apply_eia923_identity(t, rates)
+        # R-ERCOT-21: steam_not_metered is a refusal the identity now prices
+        # (its CEMS gross holds the CTs only); boundary_above_band is not.
         self.assertEqual(
-            list(out["flag"]), ["eia923_identity", "ok", "steam_not_metered"]
+            list(out["flag"]),
+            ["eia923_identity", "ok", "boundary_above_band", "eia923_identity"],
         )
-        self.assertEqual(list(out["heat_rate"]), [7.04, 7.2, 9.0])
+        self.assertEqual(list(out["heat_rate"]), [7.04, 7.2, 9.0, 9.55])
         self.assertTrue(np.isfinite(out["heat_rate_eia923_identity"]).all())
 
     def test_out_of_band_identity_stays_refused(self):

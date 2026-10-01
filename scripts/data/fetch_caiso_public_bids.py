@@ -2,8 +2,8 @@
 
 The measured OFFER surface for the CAISO C1 CC-over/CT-under charter (the
 Panoche bid wedge and the CT_PEAKER econ rungs — see
-``docs/DIAGNOSIS-caiso-evening-merit-c1-c3c-2026-07.md`` §3-4 and
-``results/calibration/FINDING-caiso91b-ct-committed-conduct-refuted-2026-07-16.md``):
+``docs/records/caiso/DIAGNOSIS-caiso-evening-merit-c1-c3c-2026-07.md`` §3-4 and
+``docs/records/caiso/FINDING-caiso91b-ct-committed-conduct-refuted-2026-07-16.md``):
 CAISO publishes, per trade date and masked resource, every DAM bid — the
 full piecewise energy bid curve (MW/price breakpoints), self-schedule MW,
 and AS product bids — with a 90-day publication lag. Source: CAISO OASIS
@@ -45,7 +45,7 @@ day-ahead bids that embed a DART risk premium the LP has no mechanism to
 produce. Which side of that mismatch is wrong is a MEASUREMENT, and the
 README's standing ``DATA NEEDED: RTM public bids (PUB_RTM_GRP) are not
 fetched`` is what this closes. Owner-funded 2026-09-13; charter
-``docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md``.
+``docs/records/caiso/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md``.
 
 Rules: the RTM ladder is a measured market input on the same footing as the
 DAM one (rule 13 ``[R-MEASURED]`` — it regenerates for a forward year from

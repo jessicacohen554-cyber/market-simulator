@@ -10,7 +10,7 @@ RT >= p67), with SPP-79's construction. Reads the keeper's committed hourlies
 
 The demand weight is the model's zonal demand, so the level differs from the
 registered C3a by a few points (SPP-79's note); the bucket split is the
-object. Record: docs/handoffs/DESIGN-spp-103-pair-posture-price-fix-2026-09-29.md.
+object. Record: docs/records/spp/DESIGN-spp-103-pair-posture-price-fix-2026-09-29.md.
 """
 
 from __future__ import annotations

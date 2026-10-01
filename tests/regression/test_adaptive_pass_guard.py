@@ -1,6 +1,6 @@
 """Tests for the PERF-B session 3 adaptive-pass guards in ``run_calibration``.
 
-Charter C-1a (``docs/handoffs/perfb-session2-markup-charter-2026-09.md`` §2):
+Charter C-1a (``docs/records/governance/perfb-session2-markup-charter-2026-09.md`` §2):
 the ercot-221 adaptive-expectation pass is skipped when its P1 storage
 discharge cost is ELEMENTWISE IDENTICAL to the one pass 1 solved with — an
 exact equality, never a tolerance, because the claim is identity of the LP.

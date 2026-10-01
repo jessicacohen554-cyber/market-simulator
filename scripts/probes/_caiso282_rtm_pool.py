@@ -6,9 +6,9 @@ fleet-geometry / carbon inputs. Every parameter and estimator is IMPORTED from
 ``scripts/data/derive_caiso_offer_surface.py`` so the classifier and band
 construction are the derive's, not a re-typed copy.
 
-Charter: ``docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`` §4,
-``docs/ADDENDUM-caiso281-rtm-classification-is-independent-2026-09-13.md`` §3.
-Method fixed before any number: ``docs/PRECOMMIT-caiso282-rtm-pool-and-gates-2026-09-16.md``.
+Charter: ``docs/records/caiso/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`` §4,
+``docs/records/caiso/ADDENDUM-caiso281-rtm-classification-is-independent-2026-09-13.md`` §3.
+Method fixed before any number: ``docs/records/caiso/PRECOMMIT-caiso282-rtm-pool-and-gates-2026-09-16.md``.
 
 Usage:
     .venv/bin/python scripts/probes/_caiso282_rtm_pool.py [--hr-cut 8.5] [--out results.json]

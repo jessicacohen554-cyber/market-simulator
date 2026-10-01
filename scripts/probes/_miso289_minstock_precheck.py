@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """miso-289 (ZERO LP): per-yard monthly coal pile with a prior-years minimum stock.
 
-Pre-registered in ``docs/PRECOMMIT-miso289-minstock-pile-2026-09-30.md``. Two
+Pre-registered in ``docs/records/miso/PRECOMMIT-miso289-minstock-pile-2026-09-30.md``. Two
 modes:
 
 ``--census`` (identification only, no price): per year, per coal yard row of the
@@ -60,8 +60,8 @@ from scripts.probes._miso287_p1_residual import (  # noqa: E402
 )
 from scripts.probes._miso288_yard_precheck import bench_coal_monthly  # noqa: E402
 
-OUT_C = REPO / "results/calibration/_miso289_minstock_census.json"
-OUT_P = REPO / "results/calibration/_miso289_minstock_precheck.json"
+OUT_C = REPO / "results/phase0/miso/_miso289_minstock_census.json"
+OUT_P = REPO / "results/phase0/miso/_miso289_minstock_precheck.json"
 WINDOW = 3
 MAX_IT = 200
 TOL = 0.01

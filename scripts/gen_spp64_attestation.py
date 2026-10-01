@@ -15,14 +15,14 @@ each plant's own CAMPD record read from the rule-23-frozen
 No scalar is introduced, none is tuned, and nothing was swept against any gate.
 So ``n_entries`` stays 3 and ``n_residual`` stays 2.
 
-WHY IT EXISTS AT ALL is the object ``docs/handoffs/FINDING-spp-46-2026-09-07.md``
+WHY IT EXISTS AT ALL is the object ``docs/records/spp/FINDING-spp-46-2026-09-07.md``
 §0.2 named and left open — "the vertically-integrated steam cohort at plausible
 inputs, whose admissible construction is a market-design (self-commitment)
 object". Its items (1) and (2) landed (the EIA-923 gas-price plausibility screen
 and the simple-cycle heat-rate floor, both armed in keeper 7) and (3) was carried
 by SPP-62's census. Item (4) is this arm. Record:
-``docs/handoffs/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md`` and
-``docs/handoffs/FINDING-spp-64-2026-09-10.md``.
+``docs/records/spp/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md`` and
+``docs/records/spp/FINDING-spp-64-2026-09-10.md``.
 
 This is NOT the ``replay_keeper --out-dir`` attestation gap being papered over:
 that driver does not propagate ``calibration_attestation.json`` into an

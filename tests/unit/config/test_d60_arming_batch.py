@@ -185,7 +185,7 @@ class TestQ42CcsCapexDefaultFlip(unittest.TestCase):
         # ADVANCED 2026-09-06 by capx D65-B / owner ruling Q47, NOT by Q42:
         # e5ecd4105ada3e58 -> 547053bdfccd4264 and 6a2845e50951394e ->
         # f61891696e671969. Cause block: tests/regression/test_persisted_identity.py;
-        # pre-declared in docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3;
+        # pre-declared in docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md §3;
         # cache-epoch ledger entry 2026-09-06c.
         self.assertEqual(ScenarioConfig().cache_key(), "547053bdfccd4264")
         self.assertEqual(

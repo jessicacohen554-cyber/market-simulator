@@ -20,7 +20,7 @@ SILENTLY — the map still renders, it just lies:
      max) produces a beautiful, meaningless map.
   4. **Clock alignment** — a one-hour pairing error manufactures a fake diurnal
      band, which is exactly what happened to the LMP delta map (see
-     docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md).
+     docs/records/ercot/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md).
 
 Trivial cases first (1 class, 24 hours), then the real committed keeper payload.
 """
@@ -379,7 +379,7 @@ class TestAgainstCommittedKeeper(unittest.TestCase):
 
         Not a tuning target — a canary: if the keeper bundle or the 930 extract
         is ever swapped underneath, these move and the finding doc's numbers
-        (docs/FINDING-nyiso-class-delta-shape-2026-07-24.md) go stale silently.
+        (docs/records/nyiso/FINDING-nyiso-class-delta-shape-2026-07-24.md) go stale silently.
 
         The nuclear pins were REPAIRED on 2026-07-25 and the canary is the reason
         they were caught. They were first written against a pre-fix EIA-930
@@ -390,7 +390,7 @@ class TestAgainstCommittedKeeper(unittest.TestCase):
         written, bridging those zeros and moving the 2023 benchmark
         24.00 -> 27.46 TWh. Post-fix the model is within 0.03 TWh of the actual,
         so nuclear is NOT a refuel-calendar defect — see
-        docs/FINDING-nyiso-import-hour-assignment-and-nuclear-benchmark-2026-07-24.md
+        docs/records/nyiso/FINDING-nyiso-import-hour-assignment-and-nuclear-benchmark-2026-07-24.md
         §4. r stays modest (0.715) only because interpolation across a
         1,179-hour block recovers the energy but not the shape.
         """

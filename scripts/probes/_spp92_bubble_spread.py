@@ -5,7 +5,7 @@ Bubble = the keeper's own load partition (``iso_configs._spp_config`` docstring;
 North = {EDE, INDN, KACY, KCPL, LES, MPS, NPPD, OPPD, SECI, SPRM, WAUE, WR}; South = {CSWS, GRDA, OKGE, SPS, WFEC}.
 Area price = mean over that area's LOAD settlement locations; bubble price = area prices weighted by the area's
 annual EIA-930 sub-BA energy (data/raw/zone-specific-demand/SPP). Clock: GMT HE - 7 h = model clock (SPP-91 §2),
-verified here against the committed hub series. Record: docs/handoffs/FINDING-spp-92-seam-2026-09-27.md.
+verified here against the committed hub series. Record: docs/records/spp/FINDING-spp-92-seam-2026-09-27.md.
 """
 import glob, json, sys
 import numpy as np, pandas as pd
@@ -72,7 +72,7 @@ def main():
           "area_mean_lmp": area_mean,
         }
         d.to_parquet(f"{ROOT}/results/calibration/_spp92_seam_hourly_bubble_{y}.parquet")
-    json.dump(out, open(f"{ROOT}/docs/handoffs/spp92/_spp92_bubble_spread.json", "w"), indent=1)
+    json.dump(out, open(f"{ROOT}/docs/records/spp/spp92/_spp92_bubble_spread.json", "w"), indent=1)
     print(pd.DataFrame({y: {k: v for k, v in r.items() if k != "area_mean_lmp"} for y, r in out.items()}).to_string())
     print(pd.DataFrame({y: r["area_mean_lmp"] for y, r in out.items()}).to_string())
 

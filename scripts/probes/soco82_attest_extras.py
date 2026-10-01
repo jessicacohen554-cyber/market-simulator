@@ -41,7 +41,7 @@ DISCLOSURE = (
     "eia860_generator_retired_within_window.parquet 37 min after F2 5ff0cb9cb derived the file). "
     "+44 coal windows (Wansley 6052: 37; Gorgas 8: 4; Hammond 708: 3 -- the latter two in no SOCO "
     "LP fleet); Wansley availability 0.914 -> 0.233 / 0.020 / 0.118 in 2019 / 2020 / 2021, nothing "
-    "else moves. Zero scalars. docs/handoffs/r-soco/PRECOMMIT-soco-82-2026-09-27.md."
+    "else moves. Zero scalars. docs/records/soco/r-soco/PRECOMMIT-soco-82-2026-09-27.md."
 )
 
 

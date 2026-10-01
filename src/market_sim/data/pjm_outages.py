@@ -16,7 +16,7 @@ committed-CSV / local-parquet split: ``data/raw/pjm-outages/README.md`` and
 ``data/dictionary/schema/pjm-outages.schema.yaml``.
 
 Gated by ``ScenarioConfig.pjm_dam_availability`` (default off, backcast only) —
-see the wiring in ``docs/handoffs/pjm-dam-availability-wiring-2026-07.md`` (the
+see the wiring in ``docs/records/pjm/pjm-dam-availability-wiring-2026-07.md`` (the
 flag + the ``data.fleet`` application share the ERCOT water-fill).
 
 FROZEN AGAINST RESIDUALS (rule 23): the covered classes, outage-type default, and

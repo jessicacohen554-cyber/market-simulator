@@ -4,7 +4,7 @@ Tests whether one zonal shift-factor row,
 
     CE(t) = k_F * (r * TE(t) + (1 - r) * W_F(t))  <=  posted CE limit(t)
 
-(``docs/DESIGN-nyiso-next19-ce-flowgate-2026-10-01.md`` section 3, with
+(``docs/records/nyiso/DESIGN-nyiso-next19-ce-flowgate-2026-10-01.md`` section 3, with
 ``W_GK = TE - W_F``), could carry CENTRAL EAST in the 5-zone model. Gates
 P-1 / P-2 / P-3 were fixed in that card before this probe was written. The
 method choices below were fixed before the probe ran (NYISO-NEXT-20,
@@ -54,7 +54,7 @@ Fixed method choices:
 Usage::
 
     python3 scripts/probes/nyisonext20_ce_precheck.py \
-        --out results/calibration/_nyisonext20_ce_precheck.json
+        --out results/phase0/nyiso/_nyisonext20_ce_precheck.json
 """
 
 from __future__ import annotations
@@ -152,7 +152,7 @@ def f_generation(year: int, f_plants: set[int]) -> tuple[pd.Series, dict]:
 def main(argv: list[str] | None = None) -> int:
     """Run the pre-check and write the JSON record."""
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--out", type=Path, default=REPO / "results/calibration/_nyisonext20_ce_precheck.json")
+    ap.add_argument("--out", type=Path, default=REPO / "results/phase0/nyiso/_nyisonext20_ce_precheck.json")
     a = ap.parse_args(argv)
 
     p = pd.read_parquet(RAW / "eia-860/eia860_plant.parquet")

@@ -4,7 +4,7 @@ G-2: annual import-class TWh (arm - keeper) <= +0.01 in 2021 and 2022, the years
      where all three keeper-live static rungs rise (PRECOMMIT sec. 6).
 G-4 (reported): per-zone and system load-weighted P1 price move; class TWh moves;
      import-hour min/max.
-Record: results/calibration/_nyisonext8_gates.json.
+Record: results/phase0/nyiso/_nyisonext8_gates.json.
 """
 
 from __future__ import annotations
@@ -73,7 +73,7 @@ def year(y: int, arm_bundle: str) -> dict:
 if __name__ == "__main__":
     ys = [int(x) for x in sys.argv[1:]] or [2021, 2022, 2023, 2024, 2025]
     res = {y: year(y, f"nyisonext8_{y}") for y in ys}
-    p = REPO / "results/calibration/_nyisonext8_gates.json"
+    p = REPO / "results/phase0/nyiso/_nyisonext8_gates.json"
     old = json.loads(p.read_text()) if p.exists() else {}
     old.update({str(y): v for y, v in res.items()})
     p.write_text(json.dumps(old, indent=1))

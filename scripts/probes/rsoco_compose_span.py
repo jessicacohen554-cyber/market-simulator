@@ -1,7 +1,7 @@
 """R-SOCO (ZERO LP): compose the per-year corrected-input legs into one span bundle.
 
 The keeper ``2026-09-24-soco61-dark-unit`` replayed per year (rule 36) with the F1/F2
-backcast-input corrections (``docs/handoffs/r-soco/PRECOMMIT-r-soco-2026-09-24.md`` §5).
+backcast-input corrections (``docs/records/soco/r-soco/PRECOMMIT-r-soco-2026-09-24.md`` §5).
 Every inherited posture, the band identity, the dispatch parquet and the MER column are
 asserted by :func:`soco55_compose_span.compose` (reused, not forked). This module adds
 the lane's own posture, read from each leg's RESOLVED ``scenario_config`` and its

@@ -9,7 +9,7 @@ per statute: MN's carbon-free definition includes hydrogen and biomass,
 MI's clean definition admits qualified CCS gas), generated in its
 statute's eligible zones, with its own ACP-style feasibility escape.
 
-Since SCN-WS2a (``docs/handoffs/forecast-scenario-readiness-plan-2026-09.md``
+Since SCN-WS2a (``docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md``
 §3 WS-2) the family is also the carrier of the **federal CES target row**
 (``policy.federal_ces.build_federal_ces_region``): one region spanning every
 load zone whose qualifying spec is a per-generator credit-fraction VECTOR

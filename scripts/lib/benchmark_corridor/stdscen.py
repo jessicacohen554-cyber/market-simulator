@@ -2,7 +2,7 @@
 
 NREL Standard Scenarios 2024 Mid-case regional capacity/generation projections
 (2030/2035) — the ReEDS-based projection the corridor memo places next to AEO as
-context (``docs/handoffs/cross-model-corridor-2026-07-13.md``). **Manual
+context (``docs/records/misc/cross-model-corridor-2026-07-13.md``). **Manual
 download:** the Scenario Viewer data API (``scenarioviewer.nrel.gov``) is
 proxy-blocked (502 tunnel) and the OEDI ReEDS S3 mirror does not expose the
 Standard Scenarios 2024 regional CSV at a stable path, so the value tables

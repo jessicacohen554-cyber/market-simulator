@@ -176,7 +176,7 @@ _SINGLE_ZONE: dict[str, str] = {}
 # Path 26 and Path 46/WOR both feed, so it's where unlocated West-of-River /
 # Palo Verde imports physically land before flowing on into the LA_BASIN/
 # SDGE pockets over the import-limited internal links (see
-# docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md). PJM
+# docs/records/caiso/caiso-sp15-split-implementation-scope-2026-07-09.md). PJM
 # falls back to PJM_West: the western
 # AEP/ComEd belt is the largest-load-share zone (0.504) and is where the
 # unlocated MISO/PJM-seam plants geographically sit. NYISO falls back to
@@ -290,7 +290,7 @@ CAISO_FSNO_COUNTIES: frozenset[int] = frozenset(
 # LA-basin / SDG&E LCR-pocket county FIPS codes (state 6 = California),
 # matching the county names in local_capacity.COUNTY_AREA_CAISO — the same
 # LCT membership geography that parameterizes the SP15 sub-zone split
-# (docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md).
+# (docs/records/caiso/caiso-sp15-split-implementation-scope-2026-07-09.md).
 CAISO_LA_BASIN_COUNTIES: frozenset[int] = frozenset(
     {
         37,  # Los Angeles
@@ -804,7 +804,7 @@ def _caiso_zone(
     split: NP15 (north of Path 15), ZP26 (between Path 15 and Path 26),
     LA_BASIN / SDGE (the two LCR pockets south of Path 26), and SP15_rest
     (the remaining south gateway that feeds them — see
-    docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md).
+    docs/records/caiso/caiso-sp15-split-implementation-scope-2026-07-09.md).
     Out-of-state CISO resources are routed first — Arizona (Palo Verde /
     West-of-River) and Nevada south of the NP15 cutoff land in SP15_rest,
     the zone Path 46/WOR and the WECC_DSW corridor now terminate on; Nevada

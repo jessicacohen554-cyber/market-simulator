@@ -250,7 +250,7 @@ def test_caiso_out_of_state_arizona():
     """Arizona CISO resources (Palo Verde / West-of-River) land in SP15_rest.
 
     Path 46/WOR and the WECC_DSW corridor terminate on SP15_rest post-split
-    (docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md).
+    (docs/records/caiso/caiso-sp15-split-implementation-scope-2026-07-09.md).
     """
     assert assign_zone_by_fips("4", "27", "CAISO") == "SP15_rest"
 

@@ -127,9 +127,9 @@ class TestT16Repoint(unittest.TestCase):
     """T1.6's lever and T1.6b's metric, as re-pointed by owner ruling Q72.
 
     History: owner ruling Q27 (capx-T16-A,
-    ``docs/handoffs/FINDING-capx-t16a-ladder-repoint-2026-09-02.md``) pointed
+    ``docs/records/forecast/FINDING-capx-t16a-ladder-repoint-2026-09-02.md``) pointed
     the ladder at ``entry_rate_limits``; owner ruling Q72 (capx D99,
-    ``docs/handoffs/DESIGN-capx-d97-t16-repoint-2026-09-25.md`` §6 (a) + (a-2))
+    ``docs/records/forecast/DESIGN-capx-d97-t16-repoint-2026-09-25.md`` §6 (a) + (a-2))
     re-pointed it to ``entry_pipeline_aware_signal`` and moved T1.6b onto the
     2041–2050 horizon mean. Pins: the ladder is IN SERVICE, both rungs perturb
     ``entry_pipeline_aware_signal`` and nothing else, the rung ORDER runs

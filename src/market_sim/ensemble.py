@@ -5,7 +5,7 @@ runs the *same* forecast scenario once per historical weather year, varying only
 ``ScenarioConfig.weather_year`` over the ISO's verified pool
 (:func:`market_sim.config.constants.weather_year_pool`), to expose the
 weather risk a single pinned shape hides. The **multivariate uncertainty
-sampler** (PB-2, ``docs/handoffs/probability-bounds-plan-2026-07.md`` §2)
+sampler** (PB-2, ``docs/records/misc/probability-bounds-plan-2026-07.md`` §2)
 generalises that member axis: each member is a correlated draw over gas price,
 load growth, tech cost, weather year, hydro year and policy bundle
 (:mod:`market_sim.uncertainty`), so the ensemble reports a genuine *parametric

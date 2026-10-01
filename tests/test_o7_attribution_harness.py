@@ -7,7 +7,7 @@ functions on hand-built fleets, then the REAL ``run_energy_solve`` seam on a
 
 * merging the Δmc component into ``mc_bid_adjust`` leaves the P0 solution
   bitwise identical (the HP-1 mechanism of
-  ``docs/PRECOMMIT-o7-attribution-harness-2026-08-30.md``), and
+  ``docs/records/misc/PRECOMMIT-o7-attribution-harness-2026-08-30.md``), and
 * the de-laddered P1 clears the coarse top-block price on the refined
   geometry (the finding-§5 construction), visible directly in the toy duals.
 

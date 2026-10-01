@@ -17,7 +17,7 @@ keeper ``2026-09-23-soco60-boundary-span`` and rewrites the governance text:
   hour of 2024 with zero ``opTime``, positive gross in 2023 and 2025, and its
   peers CT1/CT2 ran in 2024.
 
-Pre-registration: ``docs/handoffs/PRECOMMIT-soco-61-2026-09-24.md``. Usage::
+Pre-registration: ``docs/records/soco/PRECOMMIT-soco-61-2026-09-24.md``. Usage::
 
     python3 scripts/build_dof_ledger.py --iso SOCO results/calibration/soco61_dark_unit_span
     python3 scripts/gen_soco60b_attestation.py --bundle results/calibration/soco61_dark_unit_span
@@ -150,7 +150,9 @@ def main() -> None:
         "INHERITED, re-verified on this bundle by gen_soco60b_attestation.py: "
         + inherited
     )
-    att["disclosures"]["precommit"] = "docs/handoffs/PRECOMMIT-soco-61-2026-09-24.md"
+    att["disclosures"]["precommit"] = (
+        "docs/records/soco/PRECOMMIT-soco-61-2026-09-24.md"
+    )
     att["disclosures"]["soco61_scope"] = (
         "Outage-extract half only: no tranche companion is derived for the dark-unit "
         "windows. SOCO's other dark unit-years (Walton Discover 2B, Baconton CT1, four "

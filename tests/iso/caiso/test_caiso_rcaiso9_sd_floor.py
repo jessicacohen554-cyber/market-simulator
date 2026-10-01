@@ -3,7 +3,7 @@
 ``caiso_import_cap_floor_static`` (owner ruling 2026-09-27, "Floor at static
 1,436") makes the per-year ``SP15_rest -> SDGE`` cap ``max(LCT cap, static)``;
 LA Basin is untouched (owner card). Trivial cases first (mocked LCT rows), then
-the landed LCT rows. Record: ``docs/handoffs/r-caiso-9/``.
+the landed LCT rows. Record: ``docs/records/caiso/r-caiso-9/``.
 """
 
 from __future__ import annotations

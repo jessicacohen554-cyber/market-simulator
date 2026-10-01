@@ -1,6 +1,6 @@
 """Emit the NWPP-NEXT-3 calibration attestation for ``results/calibration/nwppnext3_span``.
 
-NWPP-NEXT-3 (PRECOMMIT ``docs/handoffs/PRECOMMIT-nwppnext3-plant-basis-2019-2025-2026-09-25.md``)
+NWPP-NEXT-3 (PRECOMMIT ``docs/records/nwpp/PRECOMMIT-nwppnext3-plant-basis-2019-2025-2026-09-25.md``)
 is keeper #9's recipe (NWPP-NEXT-2 + the 2019-2022 hydro cascade) plus ONE
 gated field, ``nwpp_demand_plant_basis``: the owner's framing-2 ruling on
 ``FINDING-nwpp-45`` §8 — anchor the served requirement to the plant basis C1

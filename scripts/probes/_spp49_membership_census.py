@@ -256,7 +256,7 @@ def main() -> None:
         if which in (name, "all"):
             print(f"\n{'=' * 72}\n{name.upper()}\n{'=' * 72}")
             result[name] = fn()
-    out = REPO / "results/calibration/_spp49_membership_census.json"
+    out = REPO / "results/phase0/spp/_spp49_membership_census.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(result, indent=1, default=str))
     print(f"\nwrote {out}")

@@ -23,7 +23,7 @@ branch, in every year and in both the path-A and obligation branches. A
 mechanism that is provably inert at ``rho >= 3.16`` and binds in 90 % of hours
 at ``rho = 1.0``, on a coefficient that is never measured, has a free parameter
 in disguise (CLAUDE.md rule 21 [R-DOF], rule 5 [R-NO-MAGIC]). Full record:
-``results/calibration/FINDING-nyiso143-online-rho-unidentified-2026-08-18.md``.
+``docs/records/nyiso/FINDING-nyiso143-online-rho-unidentified-2026-08-18.md``.
 
 WHAT IS MEASURED HERE. The same quantity, on the meter instead of on an array
 the binned representation zeroes out. Over the pooled CAMPD vintages, for every

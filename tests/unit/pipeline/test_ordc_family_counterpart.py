@@ -24,8 +24,8 @@ without the cap-dual branch, (4) the family-column selection (LAST column =
 the total family), and (5) the loud-error contract when the family duals are
 absent (rule 5 — no silent fallback to the contaminated sum).
 
-See docs/FINDING-ercot214-gspur-phase0-2026-08-17.md and
-docs/PRECOMMIT-ercot215-counterpart-decontamination-2026-08-17.md.
+See docs/records/ercot/FINDING-ercot214-gspur-phase0-2026-08-17.md and
+docs/records/ercot/PRECOMMIT-ercot215-counterpart-decontamination-2026-08-17.md.
 """
 
 from __future__ import annotations

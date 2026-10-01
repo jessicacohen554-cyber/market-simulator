@@ -1,6 +1,6 @@
 """Emit the NWPP-NEXT-5 calibration attestation for ``results/calibration/nwppnext5_span``.
 
-NWPP-NEXT-5 (PRECOMMIT ``docs/handoffs/PRECOMMIT-nwppnext5-standby-admission-2019-2025-2026-09-26.md``)
+NWPP-NEXT-5 (PRECOMMIT ``docs/records/nwpp/PRECOMMIT-nwppnext5-standby-admission-2019-2025-2026-09-26.md``)
 is keeper #11's recipe (NWPP-NEXT-4) plus ONE gated field, ``admit_standby_units``:
 EIA-860 standby (``SB``) generators enter the fleet by status alone.
 

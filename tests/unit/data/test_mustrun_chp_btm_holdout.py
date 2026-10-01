@@ -16,7 +16,7 @@ properties the mechanism's admissibility rests on:
 * **bench and injection move in lockstep** — both read the same seam, so the
   partition can never manufacture a benchmark miss (which is also why biomass
   stays self-scored; see the module docstring of
-  ``docs/FINDING-miso252-biomass-selfscored-and-the-lp-memory-ceiling-2026-09-10.md``
+  ``docs/records/miso/FINDING-miso252-biomass-selfscored-and-the-lp-memory-ceiling-2026-09-10.md``
   §2, a gap this flag deliberately does not close).
 """
 

@@ -8,7 +8,7 @@
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "PJM-NEXT-16 arm A 2023 (docs/PRECOMMIT-pjm-next-16-2026-09-30.md)",
+  "model_changes_note": "PJM-NEXT-16 arm A 2023 (docs/records/pjm/PRECOMMIT-pjm-next-16-2026-09-30.md)",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "PJM",

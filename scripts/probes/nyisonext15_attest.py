@@ -40,7 +40,7 @@ ENTRY = {
     "their p90 envelopes (+400-560 MW over their measured schedules) and Upstate_West "
     "264-375 MW short, every year -- a phantom import east of the Central-East cutset. "
     "Rule 14 alignment: pooled total EIA-930 -> P-32 sum (-2..+1 %). Record: "
-    "docs/PRECOMMIT-nyiso-next15-landing-band-2026-09-30.md.",
+    "docs/records/nyiso/PRECOMMIT-nyiso-next15-landing-band-2026-09-30.md.",
 }
 
 
@@ -62,7 +62,7 @@ def main() -> None:
         "2026-09-30-nyisonext14-total-east-span replayed with ONE recipe delta, "
         "nyiso_import_landing_band true (each pooled border link banded monthly on its "
         "own measured P-32 schedule; owner cards 'Build + test 5 yrs', 'P-32 per link'). "
-        "Pre-registration: docs/PRECOMMIT-nyiso-next15-landing-band-2026-09-30.md; arm "
+        "Pre-registration: docs/records/nyiso/PRECOMMIT-nyiso-next15-landing-band-2026-09-30.md; arm "
         f"pinned at {a.pin}. Offer curves byte-identical to the keeper (rule 1(c)); no "
         "multiplier tuned; zero free parameters added. PRIOR: "
     )

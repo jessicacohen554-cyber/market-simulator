@@ -23,7 +23,7 @@ reliability-floor rows), and the basis-matched coefficient disclosure: the limb'
 statistic (cool-day p25 of fleet CAMPD gross / fleet floor basis, hourly grain, pooled
 over the identification span 2023-2025) on the unmasked and the masked basis.
 
-Writes ``results/calibration/_nyiso_next_floor_layup_phase0.json``.
+Writes ``results/phase0/nyiso/_nyiso_next_floor_layup_phase0.json``.
 """
 
 from __future__ import annotations
@@ -288,7 +288,7 @@ def main() -> None:
     ap.add_argument("--no-coef", action="store_true")
     ap.add_argument(
         "--out",
-        default=str(REPO / "results/calibration/_nyiso_next_floor_layup_phase0.json"),
+        default=str(REPO / "results/phase0/nyiso/_nyiso_next_floor_layup_phase0.json"),
     )
     a = ap.parse_args()
     logging.basicConfig(level=logging.WARNING)

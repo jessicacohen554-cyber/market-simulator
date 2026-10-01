@@ -47,7 +47,7 @@ ENTRY = {
         "SOCO's whole CAMPD-less fossil population (AL/FL/GA/MS; one ISO_SCOPE row), finds exactly "
         "these two plants at 7/7 eGRID vintages (PLNGENAN == EIA-923 netgen <0.5 MWh); rate = pooled "
         "eGRID PLHTIAN/PLNGENAN (LOYO 12.61-12.64 / 12.26-12.65). Two measured values, zero fitted: "
-        "n_residual unchanged. docs/handoffs/r-soco/PRECOMMIT-soco-76-2026-09-27.md §2a."
+        "n_residual unchanged. docs/records/soco/r-soco/PRECOMMIT-soco-76-2026-09-27.md §2a."
     ),
 }
 

@@ -1,6 +1,6 @@
 """The RTC+B SCED read adapter and the delivery-2025-12-04 lane boundary.
 
-Authority: ``docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``
+Authority: ``docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``
 card D, signature D1 — a READ adapter, nothing more.
 
 **Fixtures are real part excerpts, not synthetic frames.** Three excerpts under

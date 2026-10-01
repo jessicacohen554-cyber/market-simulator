@@ -14,7 +14,7 @@ energy — the measured series contributes only the shape (rule 13: EIA-930 net
 flows cannot size a gross firm block). Driver:
 `FINDING-caiso72-hydro-envelope-2026-07-10.md` live lead #1 /
 `FINDING-caiso72-step0-evening-displacement-2026-07-10.md` channel #2 /
-`docs/handoffs/caiso-transmission-ttc-diagnosis-2026-07-09.md` §4 (Tier-2).
+`docs/records/caiso/caiso-transmission-ttc-diagnosis-2026-07-09.md` §4 (Tier-2).
 Scripts: `scripts/probes/_caiso73_firm_shape_ab.py`. Scored on rubric v2.4.
 Registered per rule 15; NOT proposed for promotion.
 
@@ -100,4 +100,4 @@ displacement is floor-borne, not import-borne.
   (rule 1). Note C3a improved in 2024/25 purely from structure.
 - **The missing 2024/25 LOCAL tail (C3c)** needs finer local topology (Bay
   Area pockets copperplated into NP15) — scope like the SP15 split
-  (`docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md`).
+  (`docs/records/caiso/caiso-sp15-split-implementation-scope-2026-07-09.md`).

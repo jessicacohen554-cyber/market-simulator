@@ -1,6 +1,6 @@
 """Tests for the SPP CT_PEAKER LOLE-study EFOR replacement (SPP-104).
 
-``spp_ct_lole_efor`` (``docs/handoffs/DESIGN-spp-104-ct-outage-2026-09-29.md``)
+``spp_ct_lole_efor`` (``docs/records/spp/DESIGN-spp-104-ct-outage-2026-09-29.md``)
 replaces the statistical CT_PEAKER WEFOR with SPP's own seasonal natural-gas EFOR
 by unit size. Trivial cases first per the repo testing pattern: one or two
 generators, a full-year hour index (the seasons are month-keyed).

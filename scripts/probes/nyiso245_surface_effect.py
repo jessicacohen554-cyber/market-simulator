@@ -6,7 +6,7 @@ the reprice in numpy — no wiring, no solve, so a gate can still refuse before 
 ``ScenarioConfig`` field is written.
 
 Every threshold is fixed in
-``docs/PRECOMMIT-nyiso245-position-shape-offer-surface-2026-09-20.md`` §3, committed
+``docs/records/nyiso/PRECOMMIT-nyiso245-position-shape-offer-surface-2026-09-20.md`` §3, committed
 at ``398f0437`` (``5cbf4fef`` post-rebase, content unchanged) before any number here
 was computed (rule 1 ``[R-STRUCT]``).
 
@@ -40,7 +40,7 @@ REPO = Path(__file__).resolve().parents[2]
 BUNDLE = REPO / "results" / "calibration" / "nyiso241_ctcommitted_span"
 CACHE = REPO / "results" / "calibration" / "_nyiso245_cache"
 ART = REPO / "data" / "raw" / "_validation-source" / "nyiso_offer_surface_positional.json"
-OUT = REPO / "results" / "calibration" / "_nyiso245_surface_effect.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso245_surface_effect.json"
 
 HOURS = 8760
 # --- PRECOMMIT §3 bars, fixed before any number here. ------------------------

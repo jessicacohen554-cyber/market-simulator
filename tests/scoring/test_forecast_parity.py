@@ -2,7 +2,7 @@
 
 Trivial cases first per the repo testing pattern: a synthetic ``ScenarioConfig``
 source and a synthetic one-field keeper posture, then the real seven-keeper sweep
-and the nyiso-102 regression (``docs/FINDING-nyiso102-d5-parity-wiring-2026-07-30.md``).
+and the nyiso-102 regression (``docs/records/nyiso/FINDING-nyiso102-d5-parity-wiring-2026-07-30.md``).
 
 No LP anywhere — the checker is pure ``ast`` + ``json``.
 """
@@ -246,7 +246,7 @@ def keeper_sweep():
 
 
 # FR-22 CLOSED 2026-09-06 (session Y-18,
-# docs/handoffs/FINDING-y18-fr22-parity-2026-09-06.md). The two long-open
+# docs/records/governance/FINDING-y18-fr22-parity-2026-09-06.md). The two long-open
 # unaccounted fields were adjudicated on their own merits against rule 13
 # ``[R-MEASURED]`` and landed on OPPOSITE dispositions, which is why the pin
 # below is now empty rather than merely shorter:
@@ -286,7 +286,7 @@ def test_all_nine_keepers_resolve(keeper_sweep):
     # and the strong zero-unaccounted form below applies to it unchanged. Rule
     # 26 [R-DELETE]: the six-ISO set and the function's own "six" name are
     # replaced, not hedged with an SPP special case.
-    # (docs/handoffs/FINDING-spp-38-2026-09-07.md §3, row 5.)
+    # (docs/records/spp/FINDING-spp-38-2026-09-07.md §3, row 5.)
     reports, registry_failures = keeper_sweep
     assert registry_failures == []
     assert {r.iso for r in reports} == {

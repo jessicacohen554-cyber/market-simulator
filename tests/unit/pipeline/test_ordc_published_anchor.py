@@ -11,7 +11,7 @@ while the published additive formula the channel is emulating is
 (:func:`market_sim.results.scarcity.ordc_adder`). Writing the VOLL-anchored
 dual verbatim, summed over BOTH headroom tiers, can therefore emit up to
 2 x VOLL — a price the market design cannot produce, which is what killed the
-ercot-212 arm (docs/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md §5).
+ercot-212 arm (docs/records/ercot/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md §5).
 
 ``ercot_ordc_adder_published_anchor`` repairs both halves: a SINGLE counterpart
 (the all-tier / total-reserve cap row) rescaled onto the ``(VOLL - lambda)``

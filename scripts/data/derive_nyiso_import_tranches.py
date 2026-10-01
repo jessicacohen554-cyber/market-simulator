@@ -116,7 +116,7 @@ YEARS = (2023, 2024, 2025)
 # (``ACCOUNTING_DUPLICATE``), and imported here so the derivation and the seam
 # attribution cannot drift apart again (rule 19); the assert below refuses any
 # future edit that re-lists it. Record:
-# docs/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md.
+# docs/records/nyiso/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md.
 EXTERNAL_SEAMS: dict[str, list[str]] = {
     "HQ": ["SCH - HQ - NY", "SCH - HQ_CEDARS"],
     "IESO": ["SCH - OH - NY"],

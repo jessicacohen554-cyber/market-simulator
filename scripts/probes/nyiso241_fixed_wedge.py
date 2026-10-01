@@ -25,7 +25,7 @@ sha256-identical to the keeper's). No LP is solved.
 Usage:
     python3 scripts/probes/nyiso241_fixed_wedge.py \
         --legs results/calibration/nyiso_mer_2026-09-19_{2022,2023,2024,2025} \
-        --out results/calibration/_nyiso241_fixed_wedge.json
+        --out results/phase0/nyiso/_nyiso241_fixed_wedge.json
 """
 
 from __future__ import annotations

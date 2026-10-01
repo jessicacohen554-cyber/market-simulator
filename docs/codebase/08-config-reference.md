@@ -51,7 +51,7 @@ forecast with a pinned gas price is still a forecast.
 
 `renewable_buildout_pace` was listed here until 2026-09-01. It was consumed by
 no model code and was DELETED under rule 26 `[R-DELETE]` (capx-T16;
-`docs/handoffs/FINDING-capx-t16-driver-2026-09-01.md`). VRE buildout pace is
+`docs/records/forecast/FINDING-capx-t16-driver-2026-09-01.md`). VRE buildout pace is
 set by the FF-2A entry growth ladder — `entry_rate_limits`, the ReEDS
 200 %-of-prior-max bound over a measured EIA-860 throughput seed that covers
 wind and solar — not by a scenario ladder.
@@ -217,7 +217,7 @@ DC ties of ruling P3 at the measured 835 MW clip) are registered
 no `IMPORT_ZONE` / `IMPORT_NODE_LINKS` entry, so `--priced-interchange` builds
 no seam for SPP at HEAD; lane SPP-51 (2026-09-07) killed the spread-clearing
 arm at rule-29 phase 0 on the measured record and routed the two-bus topology
-any LP test needs (`docs/handoffs/FINDING-spp-51-2026-09-07.md`).
+any LP test needs (`docs/records/spp/FINDING-spp-51-2026-09-07.md`).
 
 **SOCO** is served the same way — `_SCALAR_INTERCHANGE_ISOS["SOCO"] =
 soco_net_interchange` (owner card S4, on the SPP precedent), and like SPP it has

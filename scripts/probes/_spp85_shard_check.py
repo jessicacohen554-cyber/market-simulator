@@ -1,7 +1,7 @@
 """SPP-85 shard self-check: the arm leg == its control + EXACTLY ``unit_outage_netload_mask_repair``.
 
 Run by each SPP-85 shard AFTER its solve and BEFORE it pushes (rule 32(c)(4) hard stops). Zero LP.
-Pre-registered in ``docs/handoffs/PRECOMMIT-spp-85-netload-mask-repair-2026-09-26.md``. Adapted
+Pre-registered in ``docs/records/spp/PRECOMMIT-spp-85-netload-mask-repair-2026-09-26.md``. Adapted
 from ``_rspp_shard_check.py``.
 
 1. **recipe** -- the arm leg's ``scenario_config`` differs from its OWN CONTROL leg (the keeper

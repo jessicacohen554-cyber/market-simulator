@@ -49,7 +49,7 @@ No LP, no shard, no arm, no ``ScenarioConfig`` field, nothing registered, no kee
 changed, no mechanism cell moved (rule 28 duty (b) is keyed to testing a mechanism,
 and none is tested here). Rule 25 ``[R-ISO-SCOPE]``: CAISO only.
 
-Result: ``docs/RESULT-caiso281-two-objects-not-one-and-the-bias-is-a-basis-artifact-2026-09-13.md``
+Result: ``docs/records/caiso/RESULT-caiso281-two-objects-not-one-and-the-bias-is-a-basis-artifact-2026-09-13.md``
 """
 
 from __future__ import annotations

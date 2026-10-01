@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """miso-267 STEP 1: attribute MISO's bench-part move to its builder causes, ZERO LP.
 
-``docs/FINDING-miso266-bench-regeneration-hazard-2026-09-23.md`` measured what
+``docs/records/miso/FINDING-miso266-bench-regeneration-hazard-2026-09-23.md`` measured what
 re-registering a MISO run would do to the committed
 ``frontend/data/backcast/bench/MISO/<year>.json.gz`` parts and could not say WHY:
 its gate failed on two plants (1393, 1743) and the table mixed their contribution

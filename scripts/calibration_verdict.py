@@ -92,7 +92,7 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 # model mean with an equal-hour actual, a wedge that grows with tail
 # realism — a byte-perfect ERCOT 2023 model scores +33.5% against its own
 # actual on the old basis (docs/rubric-v24-price-basis-memo-2026-07.md,
-# docs/handoffs/ercot-ordc-capdual-adder-2026-07.md §4). ISO-years without
+# docs/records/ercot/ercot-ordc-capdual-adder-2026-07.md §4). ISO-years without
 # lw fields fall back to the legacy basis with an explicit label);
 # v2.5 = the 2026-07-13 owner amendment: C2 gates ONLY fully-reported
 # EIA-923 families — EIA-923 is the C2 source of truth, and a
@@ -349,7 +349,7 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       ISO changes status, and no determination label changes anywhere.
 #       NO SOLVE RAN — scorer-side only; every keeper re-scores in place.
 # v3.5 (2026-08-25, owner decision — option B of
-#       docs/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md): adds the
+#       docs/records/governance/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md): adds the
 #       BAND-FREE REPORTED-ONLY diurnal price-amplitude measurement (D-A,
 #       score_diurnal_amplitude) and surfaces the reported-only block that had
 #       been computed and silently dropped since v2.9. NO CRITERION IS ADDED to
@@ -504,7 +504,7 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       ISO. NO SOLVE RAN — scorer-side only. PRECOMMIT/FINDING:
 #       docs/handoffs/{PRECOMMIT,FINDING}-soco-22-2026-09-13.md.
 # v3.9 — 2026-09-25 owner ruling C8-SUBCLASS ("Yes" to the open question of
-#       docs/handoffs/RESULT-coal-sub-2026-09-25.md §6, PR #6619 — "Keep
+#       docs/records/misc/RESULT-coal-sub-2026-09-25.md §6, PR #6619 — "Keep
 #       family-level C8, or move C8 to per-subclass?"), completing the owner's
 #       COAL-SUB instruction "we need to completely eliminate the class Coal
 #       From the model altogether all coal should be sorted into its subclass".
@@ -532,11 +532,11 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       LP: committed run payload + fleet_only floors; non-coal rows
 #       byte-identical; per-year family cross-check recorded under
 #       coal_subclass_resplit). Effect at amendment, all registered runs:
-#       docs/handoffs/RESULT-c8-coal-subclass-2026-09-25.md.
+#       docs/records/misc/RESULT-c8-coal-subclass-2026-09-25.md.
 # v3.10 — 2026-09-27 owner ruling, soco-82 decision card on 2019 COAL_BIT,
 #       verbatim: "Ledger as limitation"; implementation re-authorized by the
 #       owner in session soco-83 (2026-09-28). Record:
-#       docs/handoffs/r-soco/RESULT-soco-83-2026-09-28.md.
+#       docs/records/soco/r-soco/RESULT-soco-83-2026-09-28.md.
 #       ONE SCOPED LEDGER ENTRY PAST THE v3.1 C3c-ONLY GUARD, keyed EXACTLY:
 #       (iso SOCO, year 2019, criterion fuelmix, key COAL_BIT) —
 #       :data:`SCOPED_LEDGER_ENTRIES`, applied by :func:`_apply_scoped_ledger`.
@@ -567,7 +567,7 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       docs/governance/rule-history.md §23.
 # v3.11 — 2026-09-30 owner ruling, soco-94 decision cards (verbatim): "Rubric:
 #       ledger C3a vs λ"; scope "Exact rows, direction-bound"; budget "Spend the
-#       slot, downgrade". Record: docs/handoffs/r-soco/FINDING-soco-94-2026-09-30.md.
+#       slot, downgrade". Record: docs/records/soco/r-soco/FINDING-soco-94-2026-09-30.md.
 #       THREE MORE SCOPED ROWS, on the v3.10 table and machinery unchanged:
 #       (SOCO, 2019, price_mean) OVER, (SOCO, 2020, price_mean) OVER,
 #       (SOCO, 2022, price_mean) UNDER. THE EVIDENCE (FINDING-soco-94 §2-§7):
@@ -590,7 +590,7 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       docs/governance/rule-history.md §24.
 # v3.12 — 2026-09-30 owner ruling, soco-95 decision cards (verbatim): C3b 2022
 #       "Scoped ledger row"; budget "Keep budget at 1". Record:
-#       docs/handoffs/r-soco/FINDING-soco-95-2026-09-30.md.
+#       docs/records/soco/r-soco/FINDING-soco-95-2026-09-30.md.
 #       ONE MORE SCOPED ROW: (SOCO, 2022, price_shape) with the new direction
 #       "above_band". THE EVIDENCE (FINDING-soco-95 §1-§3): the whole C3b 2022
 #       miss sits in λ's top-20 % hours (model = λ there reads 0.055), i.e. it
@@ -796,7 +796,7 @@ VINTAGE_RECONCILE_FRAC = (
 # ISOs whose EIA-930 "Natural Gas" cell is demonstrably corrupted against two
 # independent measured sources, with the CEMS-anchored replacement committed in
 # the bench part by render_calibration_html (owner-signed rework 2026-07-12;
-# results/calibration/FINDING-caiso-c2c4-bench-basis-930ng-2026-07-12.md §5).
+# docs/records/caiso/FINDING-caiso-c2c4-bench-basis-930ng-2026-07-12.md §5).
 # CAISO: from ~2024-05 the CISO NG cell carries a growing noon-peaked,
 # solar-shaped block no gas fleet produced (+4.2/+7.9 TWh unexplained in
 # 2024/25 vs CEMS + cogens + fold-in). Effects here:
@@ -1207,7 +1207,7 @@ CRITERIA = {
 REPORTED_ONLY = {
     "co2": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 — see the CRITERIA note)",
     # v3.5 (owner decision 2026-08-25, option B of
-    # docs/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md). xiso-1
+    # docs/records/governance/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md). xiso-1
     # measured diurnal price-amplitude compression in 36/36 ISO x year x
     # benchmark cells — daily MAX under-priced and daily MIN over-priced
     # everywhere, amplitude a mean ~45 % of measured vs RT — while the annual
@@ -2988,7 +2988,7 @@ def score_diurnal_amplitude(year: int, ypay: dict, iso: str) -> dict:
     threshold and no verdict**, is not a member of ``CRITERIA``, and therefore
     **cannot contribute a status to any determination or consume any caveat
     budget** (owner decision 2026-08-25, option B of
-    ``docs/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md``).
+    ``docs/records/governance/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md``).
 
     **Why band-free.** The xiso-6 sweep measured what a gating criterion would
     do at ten candidate bands: it is VACUOUS below a 25 % amplitude floor (every
@@ -3412,7 +3412,7 @@ def _no_price_reason(
     ``data/raw/_validation-source/actual_lmp.json`` simply has no MISO record
     below 2022, because MISO publishes no LMP report before 2023-01-01 and the
     one substitute route is credential-gated (miso-254's exhaustive route audit,
-    ``docs/FINDING-miso254-lmp-2020-2021-route-audit-2026-09-12.md``).
+    ``docs/records/miso/FINDING-miso254-lmp-2020-2021-route-audit-2026-09-12.md``).
 
     An absent reference is NOT a passing criterion, and the distinction is
     load-bearing on the status card: an unscoreable year can otherwise read as
@@ -3959,7 +3959,7 @@ def determine_from_artifacts(
     # 30 (b) per-year ladder; ``audit_keepers`` / ``build_status`` partition
     # spans) compared {2023,2024,2025} against {2023} and returned FAIL, which
     # rendered NOT-YET on EVERY year of two ISOs' CALIBRATED keepers
-    # (``results/calibration/FINDING-neiso106-per-year-ladder-governance-defect-2026-09-06.md``).
+    # (``docs/records/neiso/FINDING-neiso106-per-year-ladder-governance-defect-2026-09-06.md``).
     # The equality in :func:`_authorized_tuning_finding` is CORRECT and is
     # deliberately NOT relaxed to a subset test: a subset test would let a
     # genuinely per-year ``years_held`` pass rule 1 (b), which is the exact

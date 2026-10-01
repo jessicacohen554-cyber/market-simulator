@@ -2,7 +2,7 @@
 
 ``ercot_commitment_posture`` (design note
 ``docs/multi-iso/miso-scarcity-posture-design-2026-07.md`` §A; ERCOT port
-``docs/handoffs/ercot-commitment-thinness-2026-07.md``): ERCOT runs a fleet-wide
+``docs/records/ercot/ercot-commitment-thinness-2026-07.md``): ERCOT runs a fleet-wide
 ORDC co-opt with no pergen substrate, so the posture is built reserve-decoupled —
 only the energy-side rows on the U/SU columns (headroom ``Σ P ≤ U``, CEMS-measured
 min-load ``Σ P ≥ mlf·U``, cyclic startup charge on ``ΔU⁺``), leaving the reserve

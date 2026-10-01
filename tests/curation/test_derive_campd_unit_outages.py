@@ -7,7 +7,7 @@ windows — not on raw annual hours. A unit with a documented multi-month outage
 plus a short event-coincident stop is baseload by its running capability and
 must pass the guard; the same unit cycling economically (low CF throughout, no
 documented outage) must fail. This is the identification correction of
-docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §7, cited to that measurement, not
+docs/records/pjm/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §7, cited to that measurement, not
 to any price residual. Trivial synthetic cases only (no on-disk CEMS read).
 """
 

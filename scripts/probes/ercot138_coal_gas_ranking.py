@@ -3,7 +3,7 @@
 coal min-load: the coal committed/econ bands, or the gas CC bands?
 
 The lane the ERCOT-137 falsifier routed here
-(``docs/PRECOMMIT-ercot137-coal-margin-offer-2026-07-29.md`` §3, OUTCOME
+(``docs/records/ercot/PRECOMMIT-ercot137-coal-margin-offer-2026-07-29.md`` §3, OUTCOME
 header). With the coal min-load PRICE measured-correct (the net-margin form,
 keeper ``2026-07-29-ercot137-coal-margin-measured``) and the fleet on the
 MEASURED availability envelope, coal still over-loads actual in EVERY RT price
@@ -139,10 +139,10 @@ KEEPER_BUNDLE = _REPO / "results" / "calibration" / "ercot137_margin_arm"
 
 #: The committed ERCOT-136 artifact, read for the §A footing check only.
 ERCOT136_ARTIFACT = (
-    _REPO / "results" / "calibration" / "ercot136_coal_headroom_conduct.json"
+    _REPO / "results" / "phase0" / "ercot" / "ercot136_coal_headroom_conduct.json"
 )
 
-OUT_JSON = _REPO / "results" / "calibration" / "ercot138_coal_gas_ranking.json"
+OUT_JSON = _REPO / "results" / "phase0" / "ercot" / "ercot138_coal_gas_ranking.json"
 
 #: Scratch run dir for the abort-early replay (never written — the capture
 #: raises before ``run_energy_solve`` builds its first matrix).

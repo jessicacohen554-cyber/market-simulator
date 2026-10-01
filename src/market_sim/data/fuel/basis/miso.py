@@ -205,7 +205,7 @@ def apply_miso_winter_citygate_daily(
     """Reprice MISO Chicago-hub gas units at the measured Chicago winter daily shape.
 
     The miso-72 winter fuel-security overlay (design
-    ``docs/handoffs/miso-winter-fuel-security-design-2026-07.md``). In the winter
+    ``docs/records/miso/miso-winter-fuel-security-design-2026-07.md``). In the winter
     months (:data:`_MISO_WINTER_MONTHS`, Dec/Jan/Feb) only, for the MISO gas units
     in the Chicago-hub zones only (:func:`_miso_chicago_hub_zones`), it **replaces
     the national Henry-Hub ``gas_daily_shape`` within-month daily shape with the

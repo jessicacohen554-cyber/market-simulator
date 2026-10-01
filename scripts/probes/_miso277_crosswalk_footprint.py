@@ -3,7 +3,7 @@
 
 ZERO LP. Nothing is solved, nothing is re-derived, no committed artifact is
 touched. This probe answers one question for the owner's "Wait for crosswalk"
-ruling (``docs/FINDING-miso276-next-levers-phase0-2026-09-26.md`` §2 / §4):
+ruling (``docs/records/miso/FINDING-miso276-next-levers-phase0-2026-09-26.md`` §2 / §4):
 **if the frozen thermal-tranche artifact attributed CAMPD conduct by UNIT
 through the crosswalk instead of by FACILITY, how much gas-fired steam energy
 would move into ST_GAS, and which coal energy would leave it?**
@@ -66,7 +66,7 @@ SYNC_YEARS = [2019, 2020, 2021, 2022]
 FOCUS = [6190, 6055, 2050, 1400, 1702, 1104, 55641, 64020]
 XWALK = RAW_DATA_DIR / "reference" / "camd-eia-crosswalk" / "epa_eia_crosswalk.csv"
 ARTIFACT = RAW_DATA_DIR / "_processed-legacy" / "thermal_tranches_MISO.csv"
-OUT = REPO / "results" / "calibration" / "_miso277_crosswalk_footprint.json"
+OUT = REPO / "results" / "phase0" / "miso" / "_miso277_crosswalk_footprint.json"
 
 # EIA-860 energy-source codes (EIA-860 instructions, Table 28). Gas family is the
 # set the model's gas classes carry; coal family includes petroleum coke (PC),

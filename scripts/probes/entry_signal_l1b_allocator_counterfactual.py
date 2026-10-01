@@ -1,6 +1,6 @@
 """ENTRY SIGNAL L-1b: bang-bang vs margin-exhaustion entry volumes (ERCOT).
 
-Finding `docs/FINDING-entry-screen-t1h-2026-08.md` §7 L-1b: separate the
+Finding `docs/records/misc/FINDING-entry-screen-t1h-2026-08.md` §7 L-1b: separate the
 energy-only cobweb (B-2, real market dynamics) from the bang-bang allocator
 amplitude (D-1, `new_entry.py:1441` / `storage.py:1897`). Off the committed
 T1-H dumps, recompute each decision year's build under a volume rule whose
@@ -51,7 +51,7 @@ cc 3000 + ct 3000, 2025: none}, storage {2023: iron_air 3000 + flow_battery
 2000}. Basis: the committed hindcast report's window totals (gas_cc 9.0 /
 gas_ct 7.571 / storage 5.0 GW, decision basis), the ladder arithmetic
 (gas_ct seed 0.7855 GW x 2 = 1.571 first-decision cap, committed in
-docs/handoffs/ffr-9b/entry-screen-replay.json ``ladder_seed_gw``), the
+docs/records/forecast/ffr-9b/entry-screen-replay.json ``ladder_seed_gw``), the
 finding §2 storage replay, and the sign pattern of this lane's own margin
 replay (entry_signal_l1_dual_replay: 2022/2023 positive, 2025 negative under
 both reserve-leg bounds; 2024 carried by the prior solve's post-solve ORDC
@@ -60,7 +60,7 @@ reserve leg, runner.py:3536-3564, which is not persisted offline).
 Usage::
 
     uv run python scripts/probes/entry_signal_l1b_allocator_counterfactual.py \
-        --out results/calibration/entry_signal_l1b_allocator_ercot.json
+        --out results/phase0/ercot/entry_signal_l1b_allocator_ercot.json
 """
 
 from __future__ import annotations
@@ -143,7 +143,7 @@ SHIPPED_THERMAL = {
 SHIPPED_STORAGE = {2023: {"iron_air": 3000.0, "flow_battery": 2000.0}}
 # Ladder seed (GW): the measured EIA-860 prior-max at the 2020 vintage —
 # deterministic from the same data/vintage as the run; committed record:
-# docs/handoffs/ffr-9b/entry-screen-replay.json "ladder_seed_gw".
+# docs/records/forecast/ffr-9b/entry-screen-replay.json "ladder_seed_gw".
 LADDER_SEED_GW = {"gas_cc": 2.5698, "gas_ct": 0.7855}
 # Storage base fleet entering the window (FFR-9A R1 measured base, li-ion).
 STORAGE_BASE_MW = 223.1
@@ -431,7 +431,7 @@ def main() -> None:
     )
     result: dict = {
         "probe": "entry_signal_l1b_allocator_counterfactual",
-        "finding": "docs/FINDING-entry-screen-t1h-2026-08.md §7 L-1b",
+        "finding": "docs/records/misc/FINDING-entry-screen-t1h-2026-08.md §7 L-1b",
         "iso": ISO,
         "bundle": BUNDLE,
         "cache_key": config.cache_key(),

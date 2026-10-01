@@ -2,7 +2,7 @@
 
 **DETERMINISTIC SCENARIO RANGE -- NOT A PROBABILITY BAND**
 
-13 named AEO/IPM-style cases (docs/handoffs/probability-bounds-plan-2026-07.md §1.2), not a factorial sweep and not a sampled distribution. No likelihood attaches to any case or to the envelope between them.
+13 named AEO/IPM-style cases (docs/records/misc/probability-bounds-plan-2026-07.md §1.2), not a factorial sweep and not a sampled distribution. No likelihood attaches to any case or to the envelope between them.
 
 ## Cases run
 

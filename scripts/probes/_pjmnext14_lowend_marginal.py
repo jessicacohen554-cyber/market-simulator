@@ -22,7 +22,7 @@ Reported per year, load-weighted over zone-hours, low-end hours vs all hours:
 class x tranche-kind share of the nearest candidate (``econ_floored`` = econ row whose
 mid-curve markup raises it at that hour, ``econ_own`` = econ row at its own cost),
 the share with no candidate, the median model price and the median nearest bid.
-Writes ``results/calibration/_pjmnext14_lowend_marginal.json``.
+Writes ``results/phase0/pjm/_pjmnext14_lowend_marginal.json``.
 """
 
 from __future__ import annotations
@@ -42,7 +42,7 @@ from _pjmnext13_cards import ZONES  # noqa: E402
 sys.path.insert(0, str(REPO))
 from scripts.data.derive_pjm_offer_surface import _pjm_fuel_daily  # noqa: E402
 
-OUT = REPO / "results/calibration/_pjmnext14_lowend_marginal.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext14_lowend_marginal.json"
 BUNDLE = P10.BUNDLE
 ACTUAL = REPO / "data/raw/_validation-source/actual_lmp_hourly_PJM.parquet"
 SOM = REPO / "data/raw/som-competitive-conduct/som_competitive_conduct.csv"

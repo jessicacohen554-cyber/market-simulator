@@ -38,7 +38,7 @@ import numpy as np
 
 REPO = Path(__file__).resolve().parents[2]
 CACHE = REPO / "results" / "calibration" / "_nyiso245_cache"
-OUT = REPO / "results" / "calibration" / "_nyiso248_series_invariant.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso248_series_invariant.json"
 YEARS = (2022, 2023, 2024, 2025)
 HOURS = 8760
 

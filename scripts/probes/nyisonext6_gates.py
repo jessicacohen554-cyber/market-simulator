@@ -4,7 +4,7 @@ G-2: Long Island load-weighted P1 price (arm - keeper) >= 0 every year.
 G-3: no C1 class-year moves > 0.35 TWh; |d total energy| <= 0.05 TWh (plus the
      determination check, done separately with calibration_verdict).
 G-4 (reported): system load-weighted P1 price move.
-Record: results/calibration/_nyisonext6_gates.json.
+Record: results/phase0/nyiso/_nyisonext6_gates.json.
 """
 
 from __future__ import annotations
@@ -71,7 +71,7 @@ def year(y: int) -> dict:
 if __name__ == "__main__":
     ys = [int(x) for x in sys.argv[1:]] or [2021, 2022, 2023, 2024, 2025]
     res = {y: year(y) for y in ys}
-    p = REPO / "results/calibration/_nyisonext6_gates.json"
+    p = REPO / "results/phase0/nyiso/_nyisonext6_gates.json"
     old = json.loads(p.read_text()) if p.exists() else {}
     old.update({str(y): v for y, v in res.items()})
     p.write_text(json.dumps(old, indent=1))

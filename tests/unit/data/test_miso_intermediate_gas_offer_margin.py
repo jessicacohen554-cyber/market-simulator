@@ -227,7 +227,7 @@ def test_cache_key_is_registered_dropped_at_default() -> None:
     # Nothing about THIS file's mechanism moved — the pin advances because the
     # global default did. Rationale and provenance live on the pin in
     # tests/regression/test_persisted_identity.py; pre-declared BEFORE the solve
-    # in docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
+    # in docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
     # capx D65-B-R, completing the partial re-key fb93b76e left behind.
     assert ScenarioConfig().cache_key() == "547053bdfccd4264"
     assert (

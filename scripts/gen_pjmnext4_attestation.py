@@ -21,7 +21,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 KEEPER = REPO / "results" / "calibration" / "pjmnext3_c2_span"
 PINNED = "7394a2795e0e191dcd341f03863aa1bb82ff7377"
-PRECOMMIT = "docs/PRECOMMIT-pjm-next-4-card1-midcurve-2019-2026-09-26.md"
+PRECOMMIT = "docs/records/pjm/PRECOMMIT-pjm-next-4-card1-midcurve-2019-2026-09-26.md"
 
 
 def build() -> dict:

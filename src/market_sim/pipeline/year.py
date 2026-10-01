@@ -193,7 +193,7 @@ def run_year_solve(
 
     # Emissions mass-cap rows (policy constraint path, gated; G-29): shared
     # seam for both orchestrators. Default off -> {} -> no dispatch_kwargs
-    # change, identical LP. See docs/handoffs/emissions-mass-cap-plan-2026-07.md.
+    # change, identical LP. See docs/records/misc/emissions-mass-cap-plan-2026-07.md.
     dispatch_kwargs.update(
         build_mass_cap_dispatch_kwargs(config, year, zone_names, fleet_arrays)
     )
@@ -309,7 +309,7 @@ def run_year_solve(
         sim_year=year,
     )
     # ERCOT standalone energy-only commitment-posture (reserve-decoupled;
-    # docs/handoffs/ercot-commitment-thinness-2026-07.md). No-op /
+    # docs/records/ercot/ercot-commitment-thinness-2026-07.md). No-op /
     # byte-identical for every non-ERCOT run and default-off ERCOT.
     apply_ercot_commitment_posture(dispatch_kwargs, config, fleet_arrays)
     # SPP standalone commitment posture with min-up/min-down (SPP-102).

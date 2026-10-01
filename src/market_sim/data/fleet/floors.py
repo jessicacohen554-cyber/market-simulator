@@ -278,7 +278,7 @@ def apply_netload_reliability_floor(
     reason a class-level LP constraint was refused instead (it would carry no
     per-row mech id, so ST_GAS forced share would report ~0 % and C8 would pass
     because the diagnostic went blind, not because the forcing stopped).
-    See ``docs/handoffs/FINDING-ercot259-c8-allocation-2026-09-08.md``.
+    See ``docs/records/ercot/FINDING-ercot259-c8-allocation-2026-09-08.md``.
 
     ``persist_params`` (``config.netload_drag_min_run_persistence``, pjm-177)
     replaces the HOUR-ELIGIBILITY of the same mandate, and nothing else — same

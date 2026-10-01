@@ -39,7 +39,7 @@ Solve-path wiring — the ``ScenarioConfig.miso_native_outage_source`` gate that
 selects this overlay over the CAMPD unit-outage derate, plus the one-branch
 seam in :func:`market_sim.data.fleet.generators_to_fleet_arrays` — is a
 paste-ready follow-up in
-``docs/handoffs/miso-native-outage-wiring-2026-07.md`` (default off; a
+``docs/records/miso/miso-native-outage-wiring-2026-07.md`` (default off; a
 solve-affecting change deferred to the calibration session that validates it).
 This module is usable standalone today.
 """
@@ -70,7 +70,7 @@ CAUSE_TYPES: tuple[str, ...] = ("Derated", "Forced", "Planned", "Unplanned")
 REGIONS: tuple[str, ...] = ("North", "Central", "South", "MISO")
 
 # Cause types the AVAILABILITY DERATE sums (miso-85 composition decision; the
-# open question left by docs/handoffs/miso-native-outage-wiring-2026-07.md
+# open question left by docs/records/miso/miso-native-outage-wiring-2026-07.md
 # "Composition to settle in calibration"). The UNPLANNED components only —
 # "Planned" is excluded, exactly as the sibling PJM instrument excludes its
 # "planned" bucket (data.pjm_outages.PJM_OUTAGE_DEFAULT_TYPES = forced +
@@ -101,7 +101,7 @@ REGIONS: tuple[str, ...] = ("North", "Central", "South", "MISO")
 # the independent CAMPD per-unit measured derate it replaces (0.763 / 0.768 /
 # 0.782), so the swap is level-neutral and changes the availability *shape*, not
 # its magnitude — the point of the overlay (the CAMPD detector reads economic
-# idleness as outage; see results/calibration/FINDING-ercot79-phantom-outage-2026-07.md).
+# idleness as outage; see docs/records/ercot/FINDING-ercot79-phantom-outage-2026-07.md).
 UNPLANNED_CAUSE_TYPES: tuple[str, ...] = ("Derated", "Forced", "Unplanned")
 
 # Committed in-repo form: compact wide CSV, one file per calendar year
@@ -290,7 +290,7 @@ def miso_native_outage_derate_factors(
     the uniform split removes a proportional slice from every thermal bin rather
     than the units that were actually out. Intended to be selected by the
     ``ScenarioConfig.miso_native_outage_source`` gate (default off; wiring in
-    ``docs/handoffs/miso-native-outage-wiring-2026-07.md``); the composition is a
+    ``docs/records/miso/miso-native-outage-wiring-2026-07.md``); the composition is a
     calibration decision. Returns ``{}`` when the record or the fleet capacity is
     unavailable (a clean no-op).
     """

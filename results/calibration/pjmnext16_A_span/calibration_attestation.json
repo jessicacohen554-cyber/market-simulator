@@ -5,8 +5,8 @@
     "no_fit_to_price_residuals": true,
     "no_pinning_to_actuals": true,
     "outage_filter_exogenous_net_load": true,
-    "attested_by": "PJM-NEXT-16 orchestrator (2026-09-30), arm A. The PJM-NEXT-8 keeper recipe 2026-09-28-pjm-next8-exitfix (results/calibration/pjmnext8_xf_span) replayed at pinned 6d4c77491e469e06f3a9c0e3d4f2b7c37b15fba3 via scripts/replay_keeper.py, ONE YEAR PER SHARD CONTAINER 2019-2025 (rule 36), ZERO LP IN THE PARENT (rule 32(a)), composed at zero LP by scripts/probes/_pjmnext16_compose_span.py. CONTROL: the committed keeper bundle (rule 29(b) form 4), validated by a hunk-by-hunk G-DRIFT audit recorded before any solve (docs/PRECOMMIT-pjm-next-16-2026-09-30.md \u00a74).",
-    "note": "Rule 14 fleet-boundary repair (docs/FINDING-pjm-next-16-cc-loading-and-the-ovec-boundary-2026-09-30.md): OVEC's 2.39 GW, counted by the C1 benchmark and inside PJM's EIA-930 demand, now dispatches in 2019/2020. Zero free parameters."
+    "attested_by": "PJM-NEXT-16 orchestrator (2026-09-30), arm A. The PJM-NEXT-8 keeper recipe 2026-09-28-pjm-next8-exitfix (results/calibration/pjmnext8_xf_span) replayed at pinned 6d4c77491e469e06f3a9c0e3d4f2b7c37b15fba3 via scripts/replay_keeper.py, ONE YEAR PER SHARD CONTAINER 2019-2025 (rule 36), ZERO LP IN THE PARENT (rule 32(a)), composed at zero LP by scripts/probes/_pjmnext16_compose_span.py. CONTROL: the committed keeper bundle (rule 29(b) form 4), validated by a hunk-by-hunk G-DRIFT audit recorded before any solve (docs/records/pjm/PRECOMMIT-pjm-next-16-2026-09-30.md \u00a74).",
+    "note": "Rule 14 fleet-boundary repair (docs/records/pjm/FINDING-pjm-next-16-cc-loading-and-the-ovec-boundary-2026-09-30.md): OVEC's 2.39 GW, counted by the C1 benchmark and inside PJM's EIA-930 demand, now dispatches in 2019/2020. Zero free parameters."
   },
   "exceptions": [],
   "free_parameters": {
@@ -121,7 +121,7 @@
           "COAL": 0.648
         },
         "n_scalars": 5,
-        "source": "committed-tranche multiplier(s) below the audit sec.2 0.85 physical-floor flag with no written rationale in the config -- pulled out of the R6 bulk offer-curve population per plan sec.2.1 (docs/handoffs/scalar-remediation-plan-2026-07.md)",
+        "source": "committed-tranche multiplier(s) below the audit sec.2 0.85 physical-floor flag with no written rationale in the config -- pulled out of the R6 bulk offer-curve population per plan sec.2.1 (docs/records/misc/scalar-remediation-plan-2026-07.md)",
         "root_cause": "open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1302 (per-ISO evening-merit-style diagnosis before any value is touched -- rules #1/#18/#19/#26 apply, no blanket fix)"
       },
       {
@@ -220,7 +220,7 @@
         "lineage_solves": ">=76 solves (audit sec.5.1 + pjm-76)",
         "n_scalars": 0,
         "source": "per-unit EPA CAMPD hourly gross generation (scripts/data/derive_campd_unit_outages.py --short-windows); identification guards: coal-only detector + unit annual CF >= 0.55 (the partial-outage detector's baseload constant) + the revealed-availability in-merit filter (outage_detect.filter_revealed_outages; the full-stop override cannot engage below the 5-day cap)",
-        "note": "the >= 5-day duration floor makes event-coincident short forced outages invisible (MISO Jul 28-29 2025: ~2.8 GW coal offline at the peak block beyond the overlay; docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md); CT/CC event unavailability stays unmodeled pending a max-gen-event registry intake (no identification without it)"
+        "note": "the >= 5-day duration floor makes event-coincident short forced outages invisible (MISO Jul 28-29 2025: ~2.8 GW coal offline at the peak block beyond the overlay; docs/records/miso/DIAGNOSIS-miso-july2025-lmp-2026-07.md); CT/CC event unavailability stays unmodeled pending a max-gen-event registry intake (no identification without it)"
       },
       {
         "name": "hydro_budget_nameplate_aware",

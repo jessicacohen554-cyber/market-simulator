@@ -22,7 +22,7 @@ human-in-the-loop by design; the provenance columns (``source_url``,
 This datatype is a **DATA registry only**. Nothing in the solve path consumes it
 yet — the forward-channel design (how a license expiry / SLR / restart / uprate
 should enter the forecast) is
-``docs/handoffs/ff-g5-nuclear-registry-2026-07.md``. A read-only loader stub lives
+``docs/records/forecast/ff-g5-nuclear-registry-2026-07.md``. A read-only loader stub lives
 at ``src/market_sim/data/nuclear_license.py`` for tests / future wiring.
 """
 

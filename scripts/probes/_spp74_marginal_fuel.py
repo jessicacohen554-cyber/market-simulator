@@ -1,6 +1,6 @@
 """SPP-74 part B — marginal fuel (b) and the model's own monthly gas price (c).
 
-Pre-registered in ``docs/handoffs/PRECOMMIT-spp-74-price-body-2026-09-23.md`` §3(b)/(c).
+Pre-registered in ``docs/records/spp/PRECOMMIT-spp-74-price-body-2026-09-23.md`` §3(b)/(c).
 Reuses SPP-70's validated merit-order reconstruction (``_spp70_meritorder_counterfactual.clear``
 over ``reconstruct_bundle_fleet``), re-pointed at the hydro-5 rung. ONE interpreter per year
 (trap (b)): run once per ``--year``.

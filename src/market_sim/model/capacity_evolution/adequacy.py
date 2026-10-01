@@ -254,7 +254,7 @@ def _hydro_firm_mw(
     gap-register R5c: hydro was dispatched but contributed 0 MW to
     :func:`accredited_firm_capacity_mw` for every ISO, which FF-2B measured as
     the dominant cause of the NYISO base-year I7 FAIL and a major CAISO
-    contributor (docs/handoffs/ff-2b-adequacy-basis-2026-07.md §4).
+    contributor (docs/records/forecast/ff-2b-adequacy-basis-2026-07.md §4).
 
     **No double-count** (the ``_firm_import_mw`` discipline): the persistent
     ``fleet`` is not supposed to carry hydro at all, but should any ISO/path
@@ -828,7 +828,7 @@ def resolve_reserve_margin_build_enabled(config: ScenarioConfig, iso: str) -> bo
     **WHERE THE DISABLED BACKSTOP SURFACES — read this before treating an
     ERCOT I3 breach as a dispatch defect** (audit finding FR-6,
     ``docs/forecast-readiness-audit-2026-07.md``; measured by lane D4-I3,
-    ``docs/handoffs/FINDING-capx-d4i3-ercot-slack-2026-08-31.md``). Returning
+    ``docs/records/forecast/FINDING-capx-d4i3-ercot-slack-2026-08-31.md``). Returning
     ``False`` here is a deliberate market-design choice, not an omission, and
     it has a deliberate consequence: energy-only ERCOT has no corrective for a
     year the entry screen under-builds. Capacity evolution is one-pass by rule

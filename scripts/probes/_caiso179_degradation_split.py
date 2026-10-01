@@ -1,6 +1,6 @@
 """caiso-179 — is the CELL-vs-SYSTEM cost split behind ``STORAGE_DEGRADATION_REPLACEMENT_FRACTION`` IDENTIFIABLE?
 
-Pre-registration: ``results/calibration/PRECHECK-caiso179-degradation-split-2026-08-07.md``
+Pre-registration: ``docs/records/caiso/PRECHECK-caiso179-degradation-split-2026-08-07.md``
 (pushed BEFORE any source value was read).
 
 THE QUESTION. ``config/capacity_market.STORAGE_DEGRADATION_REPLACEMENT_FRACTION = 0.25``
@@ -42,7 +42,7 @@ SOURCES, ranked in the pre-registration before any value was read:
                     its EOL definition -- the ONLY ranked source carrying a complete pair.
 
 Run:  uv run python scripts/probes/_caiso179_degradation_split.py
-Writes: results/calibration/_caiso179_degradation_split.json
+Writes: results/phase0/caiso/_caiso179_degradation_split.json
 
 Rule 13 ``[R-MEASURED]``: no price residual, model output or keeper metric enters any line
 of this file. Rule 5 ``[R-NO-MAGIC]``: every off-disk number below carries its citation.
@@ -328,7 +328,7 @@ def main() -> None:
 
     record = {
         "session": "caiso-179",
-        "prereg": "results/calibration/PRECHECK-caiso179-degradation-split-2026-08-07.md",
+        "prereg": "docs/records/caiso/PRECHECK-caiso179-degradation-split-2026-08-07.md",
         "committed_under_test": {
             "STORAGE_DEGRADATION_REPLACEMENT_FRACTION": STORAGE_DEGRADATION_REPLACEMENT_FRACTION,
             "capex_per_kwh": capex_per_kwh,
@@ -372,7 +372,7 @@ def main() -> None:
         },
     }
 
-    out = REPO_ROOT / "results" / "calibration" / "_caiso179_degradation_split.json"
+    out = REPO_ROOT / "results" / "phase0" / "caiso" / "_caiso179_degradation_split.json"
     out.write_text(json.dumps(record, indent=2) + "\n")
 
     print(f"G1 linearity  : max rel residual {g1['families'][sorted(g1['families'])[0]]['max_rel_residual']:.3e}  PASS={g1['linearity_pass']}")

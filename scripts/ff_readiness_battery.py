@@ -1157,7 +1157,7 @@ def kill_resume_drill(
 # Registration — the forecast-validation-namespace §2.1b scorecard
 # --------------------------------------------------------------------------- #
 _MARKER_PATH = _ROOT / "frontend/data/backcast/calibration-complete.json"
-_FF2D_VERDICTS = _ROOT / "docs/handoffs/ff-t1-gate-verdicts.json"
+_FF2D_VERDICTS = _ROOT / "docs/records/forecast/ff-t1-gate-verdicts.json"
 
 
 def _marker_state(iso: str) -> dict:

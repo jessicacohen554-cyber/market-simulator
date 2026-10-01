@@ -5,7 +5,7 @@ chronically-binding **nodal** transmission (dozens of internal 138/345 kV lines
 in the Permian / CREZ, below zonal resolution) into one wide West->North pipe
 that almost never binds, so the LP dispatches West/Panhandle wind and solar well
 above what ERCOT's real grid delivered (the C2 / [3e] under-curtailment gap;
-docs/handoffs/ercot-vre-curtailment-topology-scope-2026-07.md, WP-B).
+docs/records/ercot/ercot-vre-curtailment-topology-scope-2026-07.md, WP-B).
 
 This module supplies the reduced-form stand-in for that missing sub-zonal
 structure: a curtailment ceiling on the West and Panhandle zones' wind (and
@@ -32,7 +32,7 @@ applied as a multiplier on the CF upper bound. Two pieces, derived separately:
   wind`` / ``_solar``. Empirically a stable structural constant of the West Texas
   network (~0.097 for wind across 2023-2025, LOYO-validated); centred on the
   measured curtailment MW quantity like the RTOLCAP-forward ``deliv`` coefficient
-  (docs/handoffs/ercot-as-coopt-plan-2026-07.md). ``depth = 0`` is the
+  (docs/records/ercot/ercot-as-coopt-plan-2026-07.md). ``depth = 0`` is the
   zero-forcing ablation (driver inert).
 
 Consumed by the orchestrator (gated on

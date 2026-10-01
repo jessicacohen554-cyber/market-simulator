@@ -102,7 +102,7 @@ ATTESTED_BY = (
     "inside the caiso_citygate_blackout_bridge branch, a flag absent from "
     "both PJM bundles - so the incumbent keeper's committed bundle IS the "
     "control. Gates G1-G5 and the reported/gating asymmetry were fixed ex "
-    "ante in docs/handoffs/PRECOMMIT-pjm-h13-2026-09-20.md and its two "
+    "ante in docs/records/pjm/PRECOMMIT-pjm-h13-2026-09-20.md and its two "
     "addenda, both committed before any arm result existed."
 )
 

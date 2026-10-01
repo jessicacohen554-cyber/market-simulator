@@ -33,7 +33,7 @@ def build() -> dict:
         "scripts/probes/_pjmnext3_compose_span.py (recipe check: keeper year + exactly the one flag, offers "
         "equal to the keeper's, one solve-surface fingerprint). CONTROL: the committed keeper bundle for every "
         "year (rule 29(b) form 4), validated by a hunk-by-hunk G-DRIFT audit recorded before any solve "
-        "(docs/PRECOMMIT-pjm-next-3-card2-unit-fuel-routing-2026-09-26.md §4)."
+        "(docs/records/pjm/PRECOMMIT-pjm-next-3-card2-unit-fuel-routing-2026-09-26.md §4)."
     )
     g["note"] = (
         "ONE STRUCTURAL REPAIR OF A MEASURED INPUT (rule 14 / rule 19 basis, never the residual), "

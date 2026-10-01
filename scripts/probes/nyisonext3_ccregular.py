@@ -2,7 +2,7 @@
 
 Reads the two runs' payloads -- from the working tree, else from ``git show <ref>:<path>`` so a
 keeper pruned in the promoting session still resolves -- and the committed NYISO bench parts.
-Writes ``results/calibration/_nyisonext3_ccregular.json``.
+Writes ``results/phase0/nyiso/_nyisonext3_ccregular.json``.
 
 Usage::
 
@@ -50,7 +50,7 @@ def main() -> None:
     ap.add_argument("--pair", nargs=2, action="append", required=True)
     ap.add_argument("--ref", default="origin/main")
     ap.add_argument(
-        "--out", default=str(REPO / "results/calibration/_nyisonext3_ccregular.json")
+        "--out", default=str(REPO / "results/phase0/nyiso/_nyisonext3_ccregular.json")
     )
     a = ap.parse_args()
     res: dict = {}

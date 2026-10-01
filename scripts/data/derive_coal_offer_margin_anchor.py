@@ -4,14 +4,14 @@ The identification constants of the ``coal_offer_net_revenue_margin``
 mechanism (ERCOT-137, the gas net-revenue margin's coal analogue —
 ``constants.COAL_OFFER_MARGIN_ANCHOR_BY_ISO`` /
 ``COAL_OFFER_MARGIN_LEVEL_BY_ISO``; gas design doc
-``docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md``). Two
+``docs/records/misc/gas-offer-net-revenue-margin-design-2026-07.md``). Two
 constants, both read from COMMITTED measured artifacts — nothing is re-run,
 nothing touches a residual:
 
 * **ANCHOR ($/MMBtu)** — the training-window (2023–2025) capacity-weighted
   mean of the model's own delivered coal price at the LP seam, from the
   committed ERCOT-135 seam capture
-  ``results/calibration/ercot135_coal_merit_order.json``
+  ``results/phase0/ercot/ercot135_coal_merit_order.json``
   (``A_model_offer.<year>.per_plant``: ``fuel_price_mmbtu`` × ``pmax_mw``).
   That series is per-plant EIA-923 receipts where published (Fayette /
   J K Spruce / San Miguel — the only ERCOT reporters, ercot135 §3) and the
@@ -23,7 +23,7 @@ nothing touches a residual:
   ``Submitted TPO-Price1`` capacity-weighted p50 at 98.8–100 % coverage,
   pooled res-hours-weighted across the four 2024–2025 disclosure subsets,
   from the committed ERCOT-136 artifact
-  ``results/calibration/ercot136_coal_headroom_conduct.json``
+  ``results/phase0/ercot/ercot136_coal_headroom_conduct.json``
   (``B1_curve_bottom``, COAL rows — the ERCOT-136 §3 decisive measurement).
   ``Min Gen Cost`` (28–31 % coverage, coal p25 $18.00 every subset) is
   printed as corroboration only — that coverage regime is what invalidated
@@ -66,8 +66,8 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
 # Committed measured artifacts (the ONLY inputs — rule 23):
-ERCOT135_SEAM_CAPTURE = REPO / "results/calibration/ercot135_coal_merit_order.json"
-ERCOT136_CONDUCT = REPO / "results/calibration/ercot136_coal_headroom_conduct.json"
+ERCOT135_SEAM_CAPTURE = REPO / "results/phase0/ercot/ercot135_coal_merit_order.json"
+ERCOT136_CONDUCT = REPO / "results/phase0/ercot/ercot136_coal_headroom_conduct.json"
 
 # Training window (CLAUDE.md rule 22: 2023–2025 is the ONLY tuned-against span).
 TRAIN_YEARS = ("2023", "2024", "2025")
@@ -126,7 +126,7 @@ def _verify_year_mode(year: int, limb_key: str, constant_name: str) -> int:
     ``level_year = measured_instrument_year - HR x (fuel_year - anchor)`` is
     compared against the armed constant inside the identification's OWN cited
     cross-subset dispersion band. Decision rule pre-registered in
-    ``docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md``; this mode
+    ``docs/records/ercot/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md``; this mode
     applies it, it does not choose it. Nothing is written and no residual is
     consulted — a REFUTED or NOT-IDENTIFIABLE outcome is reported, never repaired
     here (rules 13/23).

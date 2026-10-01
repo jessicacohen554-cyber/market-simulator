@@ -47,7 +47,7 @@ ENTRY = {
         "coal_econ_marginal_hr_two_sided only above a measured min-load floor (_committed/_econ*, a unit "
         "parameter), replacing the 1.0 band there; cyclers keep the average (SOCO-63 §5). 5 plants x 7 "
         "years x 2 points = 70 measured values, zero fitted: n_residual unchanged. "
-        "docs/handoffs/r-soco/PRECOMMIT-soco-81-2026-09-27.md §1-§3."
+        "docs/records/soco/r-soco/PRECOMMIT-soco-81-2026-09-27.md §1-§3."
     ),
 }
 

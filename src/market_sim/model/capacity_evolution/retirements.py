@@ -209,7 +209,7 @@ def _apply_exit_throughput_cap(
 
     The exit half of the deactivation queue (``ScenarioConfig.exit_rate_limits``;
     owner decision D-8, 2026-08-03 —
-    ``docs/handoffs/ffr-owner-sitting-2026-08-02.md`` Addendum F.1). The
+    ``docs/records/forecast/ffr-owner-sitting-2026-08-02.md`` Addendum F.1). The
     execution lag models the queue's LATENCY; this models its THROUGHPUT. D-8
     ruled them two mechanisms for rule 19 ``[R-ONE-MECH]`` purposes, on
     FFR-3C §1.2's measurement that a per-fuel constant lag is a rigid
@@ -787,7 +787,7 @@ def sector_gated_unit_ids(
     """Unit ids EXOGENOUS to the economic screen because their plant's owner
     is a regulated electric utility (capx D53, the retirement-screen SECTOR
     GATE — ``ScenarioConfig.retirement_sector_gate``; design
-    ``docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md``).
+    ``docs/records/forecast/DESIGN-capx-d53-sector-gate-2026-09-05.md``).
 
     The twin of :func:`dated_plant_unit_ids`, joining on the same key
     (``Generator.plant_code``) at PLANT grain — EIA-860 assigns one ``Sector``
@@ -1104,7 +1104,7 @@ class LocalityPosition:
     """One representable locality's ICAP census, requirement, position and prices.
 
     capx D59 (``ScenarioConfig.locality_capacity_curves``, GATED default-OFF;
-    design ``docs/handoffs/DESIGN-capx-d59-nyiso-locality-2026-09-05.md``).
+    design ``docs/records/forecast/DESIGN-capx-d59-nyiso-locality-2026-09-05.md``).
     Plain attributes (no LP consumer): ``locality`` (the demand-curve label,
     "NYC" / "LI"), ``area`` (the capacity-deliverability area label), ``zones``
     (the model zones the locality is the union of), the ICAP census terms in
@@ -1493,7 +1493,7 @@ def resolve_forecast_pool_requirement(iso: str, year: int | None) -> float | Non
 
     **HOLD-LAST-FPR — the declared convention beyond the published table**
     (owner signature card C-A, 2026-08-25,
-    ``docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md`` §3.3/§5.1;
+    ``docs/records/forecast/DECISION-CARD-capx-director-open-rulings-2026-08-25.md`` §3.3/§5.1;
     implemented by capx lane S-5): a delivery year STRICTLY AFTER the ISO's
     last published FPR returns that last published value, never the stale
     fallback composite. Precedent: :func:`config.capacity_market.
@@ -1501,7 +1501,7 @@ def resolve_forecast_pool_requirement(iso: str, year: int | None) -> float | Non
     exactly this forward-carry for the demand curve's own forward values
     ("year after the latest vintage HOLDS-LAST to it — the forward-carry a
     forecast uses"). Rationale, measured in
-    ``docs/handoffs/FINDING-capx-d2b-i7-ledger-2026-08-25.md`` §5.2: the
+    ``docs/records/forecast/FINDING-capx-d2b-i7-ledger-2026-08-25.md`` §5.2: the
     fallback composite's IRM half is two vintages stale against PJM's own
     rising series (2027/28 IRM 20.0 %; FPR 0.9170 → 0.9260 → 0.9401), so
     falling through to it dropped the requirement discontinuously by 3.18 %
@@ -2499,7 +2499,7 @@ def resolve_going_forward_bar_per_kw_yr(
     """Return ``(bar $/kW-yr nameplate, basis)`` for one fuel class.
 
     **THE ONE going-forward-cost operand of the retirement screen** (capx D62,
-    executing ``docs/handoffs/FINDING-capx-d61-2026-09-05.md`` §4). Every site
+    executing ``docs/records/forecast/FINDING-capx-d61-2026-09-05.md`` §4). Every site
     that needs "what does keeping this class online cost per nameplate kW-year"
     resolves it here, so the exit bar, the D57 sell-offer cap (which reads the
     SAME ``going_forward_cost``) and the reliability floor's retention order
@@ -2575,7 +2575,7 @@ def _floor_retention_merit(
     (plan §3.2).
 
     **Key 1 is computed WITHOUT ``pmax`` (capx D55, 2026-09-05; the defect
-    is D32 §3.2, ``docs/handoffs/FINDING-capx-d32-floor-retention-2026-09-02.md``).**
+    is D32 §3.2, ``docs/records/forecast/FINDING-capx-d32-floor-retention-2026-09-02.md``).**
     It was formerly the per-unit quotient ``(FOM × pmax × 1000) /
     (pmax × fraction)``, which is the same number in exact arithmetic but
     NOT in IEEE-754: rounding put same-fuel units on 4–5 distinct floats at
@@ -2738,7 +2738,7 @@ def _apply_pipeline_retirements(
     """R-NEW decision/execution retirement pipeline (``retirement_rule="pipeline"``).
 
     The FF-0C §3.6 composite rule (owner D1 = Option B, 2026-07-17;
-    ``docs/handoffs/ff-retirement-rule-redesign-2026-07.md``), replacing the
+    ``docs/records/forecast/ff-retirement-rule-redesign-2026-07.md``), replacing the
     legacy per-fuel consecutive-loss counters whose threshold inversion
     RC-1A-D1 measured. Six components, zero newly tuned parameters:
 
@@ -3626,7 +3626,7 @@ def apply_economic_retirements(
         # higher. Fuel- AND zone-resolved (a gas_cc_ccs unit in MISO-West
         # earns nothing from MN's row, whose carbon-free definition
         # excludes CCS gas). §45U COMPOSITION IS SETTLED (owner decision
-        # D-28 option A, docs/handoffs/d28-45u-composition-memo-2026-08-08.md
+        # D-28 option A, docs/records/forecast/d28-45u-composition-memo-2026-08-08.md
         # §5): §45U left this max() and now composes with its winner below,
         # so the clean dual's §45U arming blocker is CLOSED. FFR-6B §6.4
         # row 3 is discharged; arming miso_clean_tier_rows is a separate

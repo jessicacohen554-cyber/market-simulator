@@ -2,7 +2,7 @@
 
 Rule 29 ``[R-SCREEN]`` clause 0, rule 32 ``[R-SHARD]`` (a): the parent runs no LP.
 Pre-registration (every definition, and the verdict threshold, fixed before any
-number was computed): ``docs/PRECOMMIT-xiso-stack-climb-attribution-2026-09-22.md``.
+number was computed): ``docs/records/governance/PRECOMMIT-xiso-stack-climb-attribution-2026-09-22.md``.
 
 THE HYPOTHESIS. ``price_tail`` (C3c) is a ledgered caveat in five ISOs and a FAIL
 in a sixth, and has never been attributed. Two lanes measured the same candidate

@@ -521,7 +521,7 @@ def validate_clean(path: str | Path) -> Schema:
     # every curation script's LAST parquet read, so it is the trigger that
     # fired non-deterministically on ancillary-services (caiso160 §5.1),
     # ira-credit-parameters (ffr-3p) and confirmed-retirements (golden tier
-    # run #8, 2026-09-03; docs/FINDING-golden-tier-repair-2026-09.md §7).
+    # run #8, 2026-09-03; docs/records/misc/FINDING-golden-tier-repair-2026-09.md §7).
     # Upstream: apache/arrow #34314 / #36980 (unfixed; ``use_threads=False``
     # is the documented mitigation). The frame is byte-identical, dtypes
     # included (asserted 2026-09-03 on 27M-row emissions: +0.8 s), so the

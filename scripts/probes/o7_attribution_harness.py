@@ -1,7 +1,7 @@
 """O7 attribution harness — the finding-§5 decomposition probe (owner ruling 2026-08-30).
 
-**Charter:** ``docs/FINDING-o7-p0-seam-restoration-2026-08-26.md`` §5 (build
-exactly what it assesses) + ``docs/PRECOMMIT-o7-attribution-harness-2026-08-30.md``
+**Charter:** ``docs/records/misc/FINDING-o7-p0-seam-restoration-2026-08-26.md`` §5 (build
+exactly what it assesses) + ``docs/records/misc/PRECOMMIT-o7-attribution-harness-2026-08-30.md``
 (the construction, fixed ex ante — read it before editing this file; its HP-1
 falsifier is a STOP-REPORT condition, never a widened seam).
 
@@ -47,7 +47,7 @@ Rule 22: years are restricted to {2023, 2024, 2025}. Legs run sequentially
 (rule 12; each is a full per-plant ERCOT solve) as subprocesses of this parent,
 so every leg gets a fresh deterministic heap. Solve directories are temporary;
 the committed artifact is the decomposition JSON (pattern:
-``results/calibration/ercot188_p0_delta.json``).
+``results/phase0/ercot/ercot188_p0_delta.json``).
 """
 
 from __future__ import annotations
@@ -770,9 +770,9 @@ def compose_report(year: int, bundle: Path, capture_dir: Path) -> dict:
     delad_call1 = legs["delad"]["calls"][0]
     report = {
         "probe": "o7_attribution_harness",
-        "charter": "docs/FINDING-o7-p0-seam-restoration-2026-08-26.md §5 "
+        "charter": "docs/records/misc/FINDING-o7-p0-seam-restoration-2026-08-26.md §5 "
         "(owner ruling 2026-08-30, Door 2)",
-        "precommit": "docs/PRECOMMIT-o7-attribution-harness-2026-08-30.md",
+        "precommit": "docs/records/misc/PRECOMMIT-o7-attribution-harness-2026-08-30.md",
         "what_this_is": (
             "A decomposition INSTRUMENT: leg L replays the keeper recipe with "
             "the refined ladder de-priced from the P1 objective only, so "
@@ -917,7 +917,7 @@ def main() -> None:
         raise SystemExit(
             "STOP-REPORT: HP-1 falsified — P0 is NOT bit-identical across the "
             "keeper/delad pair. Per the precommit, file a stop-report against "
-            "docs/PRECOMMIT-o7-attribution-harness-2026-08-30.md; do not "
+            "docs/records/misc/PRECOMMIT-o7-attribution-harness-2026-08-30.md; do not "
             "widen the seam."
         )
 

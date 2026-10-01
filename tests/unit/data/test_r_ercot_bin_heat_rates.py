@@ -184,3 +184,49 @@ def test_gt_split_outage_routing_drops_site_gts():
     assert _unit_outage_target(3469, "THW31", "CC_REGULAR") == (3469, "CC_REGULAR")
     assert _unit_outage_target(7900, "SH5", "CC_REGULAR") == (7900, "CC_REGULAR")
     assert _unit_outage_target(56350, "CT1A", "CC_REGULAR") == (56350, "CC_REGULAR")
+
+
+def test_lost_pines_is_not_a_chp_bin():
+    """R-ERCOT-21 (rule 14): Lost Pines 1 (55154) has no steam host.
+
+    EIA-860 2022: Sector 1 (Electric Utility), FERC Cogeneration Status N,
+    2 x 202.5 MW CT + 204 MW CA. A non-coal must-run share is removed from the
+    LP as host steam (``assembly``), so the row must carry none; parent
+    nameplate equals the EIA-860 plant total.
+    """
+    sheet = pd.read_csv(CAMPD_BINS_CSV)
+    row = sheet[sheet["Plant_Code"] == 55154].iloc[0]
+    assert row["Plant_Group"] == "CC_REGULAR"
+    assert float(row["Pct_Must_Run"]) == 0.0
+    assert row["Config"] == "2x1"
+    assert "CHP" not in str(row["Turbine_Class"])
+    assert float(row["Nameplate_MW"]) == pytest.approx(202.5 + 202.5 + 204.0)
+    total = sum(
+        float(row[c])
+        for c in ("Pct_Must_Run", "Pct_Committed", "Pct_Economic", "Pct_Peaking")
+    )
+    assert total == pytest.approx(100.0)
+
+
+def test_cc_derive_supplements_ercot_solve_fleet(tmp_path):
+    """R-ERCOT-21: a sheet CC_REGULAR plant the EIA-860 union misses is added."""
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location(
+        "derive_cc",
+        Path(__file__).resolve().parents[3]
+        / "scripts/data/derive_campd_cc_heat_rates.py",
+    )
+    derive = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(derive)
+    p = tmp_path / "bins.csv"
+    pd.DataFrame(
+        {
+            "Plant_Group": ["CC_REGULAR", "CC_REGULAR", "CT_PEAKER"],
+            "Plant_Code": [1, 55357, 9],
+            "Nameplate_MW": [500.0, 675.6, 50.0],
+        }
+    ).to_csv(p, index=False)
+    out = derive.ercot_solve_fleet_supplement({1: 480.0}, path=p)
+    assert out == {1: 480.0, 55357: 675.6}

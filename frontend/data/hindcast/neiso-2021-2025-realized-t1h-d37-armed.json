@@ -139,8 +139,8 @@
         "evidence": {
           "target": "data/raw/_validation-source/capacity_actuals_neiso.csv",
           "confirmed_registry": "data/raw/confirmed-retirements/neiso.csv",
-          "exit_decode": "docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json",
-          "exit_decode_citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
+          "exit_decode": "docs/records/neiso/neiso-rc-r/exit-decode-2026-08-31.json",
+          "exit_decode_citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/records/neiso/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
         },
         "applicability": {
           "use_campd_bins": true,
@@ -232,8 +232,8 @@
         "evidence": {
           "target": "data/raw/_validation-source/capacity_actuals_neiso.csv",
           "confirmed_registry": "data/raw/confirmed-retirements/neiso.csv",
-          "exit_decode": "docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json",
-          "exit_decode_citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
+          "exit_decode": "docs/records/neiso/neiso-rc-r/exit-decode-2026-08-31.json",
+          "exit_decode_citation": "NEISO-RC-R R3(i) per-vintage fleet-basis measurement \u2014 docs/records/neiso/neiso-rc-r/exit-decode-2026-08-31.json (method header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md \u00a76"
         },
         "applicability": {
           "use_campd_bins": true,
@@ -417,7 +417,7 @@
         "solar": 1.028
       },
       "commissioned_in_window_decided_before_window_gw": {},
-      "note": "Scored on the DECISION basis (D-9(ii)). Additions verdicts on this basis are NOT comparable to any additions verdict committed before 2026-08-04, which were scored on the COD basis \u2014 the metric means something different. Retirements-side comparability is unaffected. See docs/handoffs/ffr-3s-cod-shifted-scoring-2026-08-04.md.",
+      "note": "Scored on the DECISION basis (D-9(ii)). Additions verdicts on this basis are NOT comparable to any additions verdict committed before 2026-08-04, which were scored on the COD basis \u2014 the metric means something different. Retirements-side comparability is unaffected. See docs/records/forecast/ffr-3s-cod-shifted-scoring-2026-08-04.md.",
       "entry_commissioning_lag": true
     },
     "co2": {

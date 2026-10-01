@@ -9,7 +9,7 @@ the convention the miso-282 probes use). Hub -> zone mapping is
 ``scripts/data/derive_miso_hub_lmp.py`` scope §7; MISO-South is compared against
 each South hub and their simple mean. Only hub-covered hours are compared.
 
-Output: ``results/calibration/_miso283_premium_localize.json`` with, per year,
+Output: ``results/phase0/miso/_miso283_premium_localize.json`` with, per year,
 zone x market annual mean model-hub, hour-of-day and month profiles for South,
 and the South premium split by model-price quantile.
 
@@ -125,7 +125,7 @@ def main() -> int:
                 for k, v in rt.items()
             },
         )
-    p = REPO / "results/calibration/_miso283_premium_localize.json"
+    p = REPO / "results/phase0/miso/_miso283_premium_localize.json"
     p.write_text(json.dumps(out, indent=1))
     return 0
 

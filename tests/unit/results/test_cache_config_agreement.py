@@ -2,7 +2,7 @@
 
 **The hazard.** ``cache_key`` drops every registered field sitting at its
 default, so a run's key omits 115–215 of them
-(``docs/handoffs/FINDING-capx-d24-cache-key-defect-2026-09-01.md`` §3) and a
+(``docs/records/forecast/FINDING-capx-d24-cache-key-defect-2026-09-01.md`` §3) and a
 bundle on disk at a key is NOT proof it was solved under the config asking for
 it. D24 demonstrated two committed pairs at one key with different postures, in
 two distinct forms — §4.1 a differing COMMON field, §4.2 a field ABSENT from one
@@ -31,7 +31,7 @@ accident. The invariant therefore lives in
 before the prune), and :class:`CommittedSharedKeyGroupsTest` keeps the live
 replay as a second, skip-when-sparse, prune-monotone pass. Cause, census and
 the sweep for other tests of this shape:
-``docs/handoffs/FINDING-y23-cache-agreement-fixture-2026-09-06.md``.
+``docs/records/governance/FINDING-y23-cache-agreement-fixture-2026-09-06.md``.
 """
 
 from __future__ import annotations
@@ -228,7 +228,7 @@ class FixtureSharedKeyGroupsTest(unittest.TestCase):
     and cannot be load-bearing: rule 15 [R-DASHBOARD] requires the committed
     ``results/`` corpus to shrink, so any invariant read out of it survives only
     by accident (see
-    ``docs/handoffs/FINDING-y23-cache-agreement-fixture-2026-09-06.md``).
+    ``docs/records/governance/FINDING-y23-cache-agreement-fixture-2026-09-06.md``).
     """
 
     @classmethod
@@ -315,7 +315,7 @@ class CommittedSharedKeyGroupsTest(unittest.TestCase):
     ``run_config.json`` in PR #4808 (193 -> 72 files, 20 -> 7 shared-key groups)
     and took one true positive's partner with them. The invariant they were
     reaching for now lives in the fixture above; the census is recorded in
-    ``docs/handoffs/FINDING-y23-cache-agreement-fixture-2026-09-06.md``.
+    ``docs/records/governance/FINDING-y23-cache-agreement-fixture-2026-09-06.md``.
     """
 
     @classmethod

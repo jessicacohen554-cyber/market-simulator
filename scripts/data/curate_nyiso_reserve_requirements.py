@@ -1,7 +1,7 @@
 """Curate the ``nyiso-reserve-requirements`` and ``nyiso-operating-events`` datatypes.
 
 Both flow from ``data/raw/NYISO-AS/requirements/`` (Ask B of
-``docs/handoffs/nyiso-data-asks-2026-07.md`` — the measured inputs for the
+``docs/records/nyiso/nyiso-data-asks-2026-07.md`` — the measured inputs for the
 issue-#1344 condition-varying downstate reserve requirement reconstruction):
 
 * ``nyiso-reserve-requirements`` — the hand-transcribed published locational

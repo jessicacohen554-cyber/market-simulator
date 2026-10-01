@@ -24,7 +24,7 @@ Reads only committed artifacts (the nyiso-240 MER legs). No LP is solved; nothin
 Usage:
     python3 scripts/probes/nyiso241_fuel_basis_ratio.py \
         --legs results/calibration/nyiso_mer_2026-09-19_{2022,2023,2024,2025} \
-        --out results/calibration/_nyiso241_fuel_basis_ratio.json
+        --out results/phase0/nyiso/_nyiso241_fuel_basis_ratio.json
 """
 
 from __future__ import annotations

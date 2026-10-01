@@ -1,7 +1,7 @@
 """D-2's plant class is a ROW-COUNT vote over LP tranches (nyiso-232, ZERO LP).
 
 The evidence behind
-``docs/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md``.
+``docs/records/misc/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md``.
 
 ``scripts/legitimacy_diagnostics.py::aggregate_floors_by_plant`` labels each plant
 with the "most common non-empty unit group" among its LP rows. How many rows a

@@ -175,7 +175,7 @@ def _reduce_cod_groups(work: "pd.DataFrame") -> dict[int, CodEntry]:
     ``na_position="last"``). Wall-clock only, byte-identical by construction and
     gated on dict equality against the shipped loop in
     ``tests/unit/data/test_cod_ramp.py`` (wall-clock item A-1,
-    ``docs/handoffs/wallclock-opportunities-2026-09.md`` §2 A-1).
+    ``docs/records/misc/wallclock-opportunities-2026-09.md`` §2 A-1).
 
     ``work`` must already carry the reducer's short columns (``pc``/``oy``/
     ``om``/``cap``/``ry``/``rm``) plus the ``w`` weight column, with ``pc`` and

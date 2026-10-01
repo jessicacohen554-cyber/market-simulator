@@ -3,7 +3,7 @@
 Trivial-first (CLAUDE.md testing pattern): the curve math is exercised on
 hand-computed synthetic curves and 1-unit fleets before any ISO curve is
 touched. Covers the plan's acceptance list
-(docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md §3, test
+(docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md §3, test
 line 4): price-at-requirement = net-CONE, zero-cross, cap, monotonicity, ERCOT
 zero in both modes, default-off byte-identity, the T2.1 arithmetic-identity, and
 the reconciliation of every encoded curve against the P-0B

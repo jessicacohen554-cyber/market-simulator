@@ -4,7 +4,7 @@ ZERO LP (rule 32 ``[R-SHARD]`` (a)). The only model-side call is a fleet-only
 rebuild of the keeper's own recipe, which enters no LP.
 
 The charter
-(``docs/RESULT-nyiso242-cc-winter-refused-and-the-intake-charter-2026-09-20.md``
+(``docs/records/nyiso/RESULT-nyiso242-cc-winter-refused-and-the-intake-charter-2026-09-20.md``
 §2.5) refused the CAMPD cold-hour census because CAMPD meters what **ran**:
 the fleet sat at a flat ~50 % of its own ceiling in *every* price condition,
 which is a coincidence factor, not an availability signal. The charter's
@@ -14,7 +14,7 @@ and its binding gate is that the derived derate must **deepen with price**.
 This probe runs that gate against NYISO MIS **P-27** masked generator bid data,
 whose ``Upper Oper Limit`` (UOL) is the resource's own statement of what it
 could produce in that hour. Gate thresholds are fixed in
-``docs/PRECOMMIT-nyiso243-outage-intake-kill-test-2026-09-20.md`` §3, written
+``docs/records/nyiso/PRECOMMIT-nyiso243-outage-intake-kill-test-2026-09-20.md`` §3, written
 and committed before any price-conditioned number here was computed.
 
 Three legs:
@@ -54,7 +54,7 @@ REPO = Path(__file__).resolve().parents[2]
 BUNDLE = REPO / "results" / "calibration" / "nyiso241_ctcommitted_span"
 HUB = REPO / "data" / "raw" / "_validation-source" / "actual_lmp_hourly_NYISO.parquet"
 GENBIDS = REPO / "data" / "raw" / "nyiso-bid-data" / "genbids"
-OUT = REPO / "results" / "calibration" / "_nyiso243_offered_availability.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso243_offered_availability.json"
 
 THRESHOLD = 300.0
 HOURS = 8760
@@ -367,7 +367,7 @@ def main() -> None:
     args = ap.parse_args()
 
     result: dict = {
-        "precommit": "docs/PRECOMMIT-nyiso243-outage-intake-kill-test-2026-09-20.md",
+        "precommit": "docs/records/nyiso/PRECOMMIT-nyiso243-outage-intake-kill-test-2026-09-20.md",
         "source": "NYISO MIS P-27 masked generator bid data (Upper Oper Limit)",
         "gate_mw": DEFICIT_GATE_MW,
         "object_mw": OBJECT_MW,

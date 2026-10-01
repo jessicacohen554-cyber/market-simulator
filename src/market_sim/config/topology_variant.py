@@ -86,7 +86,7 @@ def set_nyiso_fg_split(active: bool) -> None:
     a NYISO solve and ``False`` for any other ISO. Armed, NYISO load zone G
     (Hudson Valley) leaves ``Capital_Hudson`` for ``Lower_Hudson``, so
     ``Capital_Hudson`` is zone F alone and the CENTRAL EAST interface (E -> F)
-    is its own link (``docs/DESIGN-nyiso-next17-fg-split-2026-09-30.md``).
+    is its own link (``docs/records/nyiso/DESIGN-nyiso-next17-fg-split-2026-09-30.md``).
     """
     global _nyiso_fg_split
     _nyiso_fg_split = bool(active)

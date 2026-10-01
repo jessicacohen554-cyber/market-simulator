@@ -32,7 +32,7 @@ class TestSectorGateMisoArming(unittest.TestCase):
         # (Act B, re-identified off the widened ATB extract). Act B is NOT a
         # _CACHE_KEY_OPTIONAL_FIELDS member, so it has no drop value and re-keys
         # unconditionally. Pre-declared BEFORE the solve in
-        # docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3; cache-epoch ledger
+        # docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md §3; cache-epoch ledger
         # entry 2026-09-06c in src/market_sim/results/cache.py. Nothing about THIS
         # field moved — the pin advances because the global default did.
         # REWRITTEN 2026-10-01 (cleanup-D): the two literals pinned here

@@ -1,6 +1,6 @@
 """Backcast→forecast parity registry (FR-22, the generalized D-5 gap).
 
-**The failure this prevents.** ``docs/FINDING-nyiso102-d5-parity-wiring-2026-07-30.md``
+**The failure this prevents.** ``docs/records/nyiso/FINDING-nyiso102-d5-parity-wiring-2026-07-30.md``
 records three NYISO downstate mechanisms (``inject_nyiso_local_selfsupply``,
 ``apply_nyiso_li_tsl_import_cap``, ``apply_nyiso_nyc_tsl_import_cap``) that were
 called only from the BACKCAST orchestrator (``scripts/run_calibration.py``) — the
@@ -356,7 +356,7 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "drops; a forecast must not carry them",
         evidence=(
             _BACKCAST_ORCH,
-            "docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md",
+            "docs/records/miso/miso-cc-vintage-undercarry-plan-2026-07.md",
         ),
     ),
     ParityDeclaration(
@@ -367,7 +367,7 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "'Backcast-only overlay (D-5): the forecast runner never arms it'",
         evidence=(
             _BACKCAST_ORCH,
-            "docs/handoffs/miso-f5-scarcity-depth-design-2026-07.md",
+            "docs/records/miso/miso-f5-scarcity-depth-design-2026-07.md",
         ),
     ),
     ParityDeclaration(
@@ -559,7 +559,7 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "directive 2026-07-27); the forecast orchestrator never reads the "
         "override dict, so a forecast on the keeper config re-arms the very "
         "floors the directive removed",
-        finding="docs/handoffs/ffr-1e-forecast-parity-check-2026-07-31.md",
+        finding="docs/records/forecast/ffr-1e-forecast-parity-check-2026-07-31.md",
         evidence=(_BACKCAST_ORCH, "src/market_sim/data/floor_mechanisms.py"),
     ),
     ParityDeclaration(
@@ -569,7 +569,7 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "run-length bands × the hour's net-load percentile) — a forward-"
         "reproducible offer-surface mechanism armed in the MISO and PJM "
         "keepers with no forecast-side call site",
-        finding="docs/handoffs/ffr-1e-forecast-parity-check-2026-07-31.md",
+        finding="docs/records/forecast/ffr-1e-forecast-parity-check-2026-07-31.md",
         evidence=(_BACKCAST_ORCH,),
     ),
     ParityDeclaration(
@@ -578,7 +578,7 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         why="measured p95 hour-of-day charge/discharge capability envelope per "
         "MW of fleet — a capability input (rule 13-admissible, regenerates "
         "forward) armed in the CAISO keeper with no forecast-side call site",
-        finding="docs/handoffs/ffr-1e-forecast-parity-check-2026-07-31.md",
+        finding="docs/records/forecast/ffr-1e-forecast-parity-check-2026-07-31.md",
         evidence=(_BACKCAST_ORCH, "src/market_sim/model/storage.py"),
     ),
     ParityDeclaration(
@@ -587,7 +587,7 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         why="CAISO measured offer surface, armed in the CAISO keeper but "
         "consumed only in pipeline/backcast_config.py — the backcast config "
         "builder, not a shared builder the forecast path calls",
-        finding="docs/handoffs/ffr-1e-forecast-parity-check-2026-07-31.md",
+        finding="docs/records/forecast/ffr-1e-forecast-parity-check-2026-07-31.md",
         evidence=("src/market_sim/pipeline/backcast_config.py",),
     ),
     ParityDeclaration(
@@ -601,7 +601,7 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "orchestrator's apply_gas_offer_margin reads the frozen "
         "config.gas_offer_margin_anchor, so a forecast on the keeper config "
         "prices the margin at the window anchor in every year",
-        finding="docs/FINDING-miso268-coal-yard-grain-and-the-open-objects-2026-09-24.md",
+        finding="docs/records/miso/FINDING-miso268-coal-yard-grain-and-the-open-objects-2026-09-24.md",
         evidence=(_BACKCAST_ORCH, "src/market_sim/runner.py"),
     ),
     ParityDeclaration(
@@ -610,7 +610,7 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         why="its own call site calls it the 'forward-derivable capacity/"
         "logistics budget' (tank fill + re-supply) and the keeper path — yet "
         "the forecast orchestrator never builds the oil-budget rows",
-        finding="docs/handoffs/ffr-1e-forecast-parity-check-2026-07-31.md",
+        finding="docs/records/forecast/ffr-1e-forecast-parity-check-2026-07-31.md",
         evidence=(_BACKCAST_ORCH,),
     ),
     ParityDeclaration(
@@ -620,7 +620,7 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "shaping, both armed in the ERCOT keeper; the admissible twin "
         "storage_as_commitment IS shared, so these two forking to the "
         "backcast orchestrator alone is an asymmetry, not a design",
-        finding="docs/handoffs/ffr-1e-forecast-parity-check-2026-07-31.md",
+        finding="docs/records/forecast/ffr-1e-forecast-parity-check-2026-07-31.md",
         evidence=(_BACKCAST_ORCH,),
     ),
     # ercot_capability_reconciliation (ercot-219 stage 1) carries NO row here
@@ -648,13 +648,13 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
     ),
     # -- FILED GAPS, owner ruling R-X (2026-09-02) ---------------------------
     # The ercot-221 / ercot-223 backcast->forecast fork
-    # (docs/FINDING-fast-tier-repair-2026-09.md §3.8 + §7.1). The owner ruled
+    # (docs/records/misc/FINDING-fast-tier-repair-2026-09.md §3.8 + §7.1). The owner ruled
     # FILE GAP DECLARATIONS — the FFR-1E route the two storage-envelope fields
     # above took: the fork is KNOWN and TRACKED, not silenced. Whether to wire
     # it forward (the runner.py / pipeline/solve.py seam,
     # p1_storage_discharge_cost) or to declare it BACKCAST_ONLY is the
     # capx/forecast desk's adjudication and is deliberately NOT decided here.
-    # Filing record: docs/FINDING-fr22-gap-leg2-2026-09.md.
+    # Filing record: docs/records/misc/FINDING-fr22-gap-leg2-2026-09.md.
     ParityDeclaration(
         fields=("ercot_storage_adaptive_expectation", "ercot_adaptive_event_release"),
         disposition=GAP,
@@ -665,7 +665,7 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "orchestrator's two-pass block, so a forecast on the keeper config "
         "silently drops the floor. Wire-forward vs BACKCAST_ONLY is the "
         "forecast desk's call (owner ruling R-X), not this row's",
-        finding="docs/FINDING-fr22-gap-leg2-2026-09.md",
+        finding="docs/records/misc/FINDING-fr22-gap-leg2-2026-09.md",
         evidence=(_BACKCAST_ORCH,),
     ),
     # Same fork class, surfaced by the same test on the same run, armed in the
@@ -684,7 +684,7 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "forecast desk's call — its superseded sibling "
         "nyiso_seam_deliverability_envelope stays pinned open in "
         "tests/scoring/test_forecast_parity.py on the same question",
-        finding="docs/FINDING-fr22-gap-leg2-2026-09.md",
+        finding="docs/records/misc/FINDING-fr22-gap-leg2-2026-09.md",
         evidence=(_BACKCAST_ORCH, "src/market_sim/data/nyiso_par_attribution.py"),
     ),
     # The superseded HALF of that same NYISO pair (Y-18, 2026-09-06). It is the
@@ -728,7 +728,7 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "(nyiso_seam_par_attribution) is itself an open GAP under owner ruling "
         "R-X, so wiring this limb forward alone would widen the fork rather "
         "than close it. Both halves are the forecast desk's single call",
-        finding="docs/handoffs/FINDING-y18-fr22-parity-2026-09-06.md",
+        finding="docs/records/governance/FINDING-y18-fr22-parity-2026-09-06.md",
         evidence=(_BACKCAST_ORCH, "src/market_sim/data/nyiso_seam_envelope.py"),
     ),
     # NYISO-NEXT-6 (2026-09-27) armed this clip in the keeper without the FR-22
@@ -798,7 +798,7 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "on the keeper config records the flag armed and still prices the "
         "min-load block at 1.35. Wire-forward vs an evidenced BACKCAST_ONLY "
         "is the forecast desk's call (owner ruling R-X), not this row's",
-        finding="docs/FINDING-caiso-ct-peaker-committed-measured-parity-2026-09.md",
+        finding="docs/records/caiso/FINDING-caiso-ct-peaker-committed-measured-parity-2026-09.md",
         evidence=("src/market_sim/pipeline/backcast_config.py",),
     ),
     # Three more promoter misses, filed by audit lane Y-29 (board v42 §4/§5,
@@ -827,10 +827,10 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "a forecast on the keeper config still prices the min-load block at "
         "1.35. Wire-forward vs an evidenced BACKCAST_ONLY is the forecast "
         "desk's call with the NYISO desk (owner ruling R-X)",
-        finding="docs/handoffs/FINDING-y29-promotion-provenance-2026-09-24.md",
+        finding="docs/records/governance/FINDING-y29-promotion-provenance-2026-09-24.md",
         evidence=(
             "src/market_sim/pipeline/backcast_config.py",
-            "docs/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md",
+            "docs/records/nyiso/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md",
         ),
     ),
     ParityDeclaration(
@@ -844,10 +844,10 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "still prices ST_GAS on the leaked CC-derived bands. Wire-forward vs "
         "an evidenced BACKCAST_ONLY is the forecast desk's call with the "
         "NYISO desk (owner ruling R-X)",
-        finding="docs/handoffs/FINDING-y29-promotion-provenance-2026-09-24.md",
+        finding="docs/records/governance/FINDING-y29-promotion-provenance-2026-09-24.md",
         evidence=(
             "src/market_sim/pipeline/backcast_config.py",
-            "docs/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md",
+            "docs/records/nyiso/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md",
         ),
     ),
     # The MISO row is NOT PARAMETER_OF its parent coal_fuel_inventory, though
@@ -871,10 +871,10 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "the parent outside mode='backcast' and the forecast orchestrator "
         "never builds the budget rows. Building the carry is the MISO desk's "
         "and the forecast desk's call (owner ruling R-X)",
-        finding="docs/handoffs/FINDING-y29-promotion-provenance-2026-09-24.md",
+        finding="docs/records/governance/FINDING-y29-promotion-provenance-2026-09-24.md",
         evidence=(
             _BACKCAST_ORCH,
-            "docs/PRECOMMIT-miso268-coal-yard-grain-2026-09-24.md",
+            "docs/records/miso/PRECOMMIT-miso268-coal-yard-grain-2026-09-24.md",
         ),
     ),
     # NWPP-NEXT-7 / NEXT-8 (2026-09-27/28): the take floor and its monthly pile
@@ -897,7 +897,7 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "builds; inert unless those rows are armed",
         evidence=(
             _BACKCAST_ORCH,
-            "docs/handoffs/PRECOMMIT-nwppnext8-coal-monthly-pile-2019-2025-2026-09-28.md",
+            "docs/records/nwpp/PRECOMMIT-nwppnext8-coal-monthly-pile-2019-2025-2026-09-28.md",
         ),
     ),
     # PJM-NEXT card 1 (2026-09-25) armed spp-49's benchmark membership union
@@ -915,7 +915,7 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "design",
         evidence=(
             "scripts/run_calibration_full.py",
-            "docs/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md",
+            "docs/records/pjm/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md",
         ),
     ),
     # NYISO-NEXT (2026-09-26): armed in the NYISO keeper. It masks the pro_rata
@@ -931,7 +931,7 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "consumer is backcast-gated and a forecast keeps the unmasked floor",
         evidence=(
             _BACKCAST_ORCH,
-            "docs/PRECOMMIT-nyiso-next-floor-layup-2026-09-25.md",
+            "docs/records/nyiso/PRECOMMIT-nyiso-next-floor-layup-2026-09-25.md",
         ),
     ),
 )

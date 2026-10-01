@@ -31,7 +31,7 @@ superseded. The lineage since declaration:
 
 - **neiso-53** (`2026-07-07-neiso53-winter-fuelsec-coldsnap`) — the config
   actually adjudicated in
-  `docs/handoffs/neiso-calibration-complete-memo-2026-07.md` and the config
+  `docs/records/neiso/neiso-calibration-complete-memo-2026-07.md` and the config
   the locked-test one-shot is (and forever will be) scored against
   (`locked_test_scored_on`).
 - **neiso-54** (`2026-07-08-neiso-54-steamgas-ct`, "CT_PEAKER evening-ramp
@@ -66,7 +66,7 @@ Per `frontend/data/backcast/calibration-complete.json` `.complete.NEISO`:
 
 - **Declared:** 2026-07-07, by owner (session `neiso-calibration-complete-w1c`,
   `AskUserQuestion`: "Declare + run one-shot"; memo
-  `docs/handoffs/neiso-calibration-complete-memo-2026-07.md`).
+  `docs/records/neiso/neiso-calibration-complete-memo-2026-07.md`).
 - **Locked test: NEVER GRANTED, NEVER SPENT.** *(Corrected 2026-08-06, owner decision
   D-23.)* This bullet previously read: "**Locked-test scored on:**
   `2026-07-07-neiso53-winter-fuelsec-coldsnap`. The 2019 + H1-2026 locked-test one-shot
@@ -74,7 +74,7 @@ Per `frontend/data/backcast/calibration-complete.json` `.complete.NEISO`:
   re-scored for neiso-54 (or for neiso-55/56 since)." **That was false.** No NEISO 2019
   or H1-2026 year has ever been solved, scored or registered, and the id named above is a
   TRAIN-tier 2023–2025 config, not a 2019 run. Citation chain:
-  `results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+  `docs/records/neiso/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
   `docs/third-party-peer-review-2026-07.md` §6.3 item 1 → D-23 / sitting Addendum X.6.
 - **Train-tier keeper promoted:** 2026-07-08 (session
   `neiso-steamgas-ct-drag`), i.e. neiso-54 superseding neiso-53 as the
@@ -99,7 +99,7 @@ Per `frontend/data/backcast/calibration-complete.json` `.complete.NEISO`:
 > while the model still carries cheaper non-fast-start headroom). Further C3c
 > work needs a NEW measured identification (oil-parity/import/DA-bid offer
 > formation), its own charter; C2 waits on the final 2025 EIA-923 vintage.
-> 2026-07-11 calibration-log entry; docs/handoffs/neiso-limb-b-offer-surface-2026-07.md §5."
+> 2026-07-11 calibration-log entry; docs/records/neiso/neiso-limb-b-offer-surface-2026-07.md §5."
 
 Practically: do not open a new C3c/C5b structural mechanism session against
 these backcast years without a genuinely new measured identification per the
@@ -109,7 +109,7 @@ note above — the admissible-mechanism inventory for this family is exhausted.
 
 The last full scoring on record in the specified sources is the neiso-53
 adjudication in the memo (§2 of
-`docs/handoffs/neiso-calibration-complete-memo-2026-07.md`), which reproduces
+`docs/records/neiso/neiso-calibration-complete-memo-2026-07.md`), which reproduces
 at HEAD as **CALIBRATED-WITH-CAVEATS, zero criterion FAILs**:
 
 - **Caveat budget (rubric v2.2 at the time):** ledgered 2/3 (C3c price tail /
@@ -152,7 +152,7 @@ with LOYO trivially satisfied because the deltas are ≈0.
   2019 is unsolvable at HEAD (no NEISO demand rows before 2021) and could not discriminate
   on C3c even if it were (zero actual RT hours > $300 in 2019). The touch-once discipline
   itself is unchanged and still governs whenever a grant is made. Citation chain:
-  `results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+  `docs/records/neiso/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
   `docs/third-party-peer-review-2026-07.md` §6.3 item 1 → D-23 / sitting Addendum X.6.
 - **2022 (validation, iterable):** intake done, one-shot execution HELD
   pending the cross-ISO data-equivalency gate (G-19) per memo §4/§6 — not yet

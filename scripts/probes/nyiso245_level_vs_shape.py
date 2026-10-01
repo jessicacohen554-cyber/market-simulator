@@ -60,7 +60,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 BUNDLE = REPO / "results" / "calibration" / "nyiso241_ctcommitted_span"
 CACHE = REPO / "results" / "calibration" / "_nyiso245_cache"
-OUT = REPO / "results" / "calibration" / "_nyiso245_level_vs_shape.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso245_level_vs_shape.json"
 
 HOURS = 8760
 _MW_COLS = [f"Dispatch MW{i}" for i in range(1, 13)]

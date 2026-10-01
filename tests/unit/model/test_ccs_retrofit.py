@@ -115,7 +115,7 @@ def _gas_cc(
 # beats-staying-unabated gate — never the cost LEVEL, which is asserted against
 # its source in ``tests/unit/config/test_ccs_retrofit_fixed_cost_basis.py`` and
 # measured for consequence in
-# ``docs/handoffs/FINDING-capx-d41-ccs-fixedcost-2026-09-02.md``.
+# ``docs/records/forecast/FINDING-capx-d41-ccs-fixedcost-2026-09-02.md``.
 _FIXTURE_RETROFIT_CAPEX_KW = 300.0
 
 
@@ -1739,7 +1739,7 @@ class TestUnitIdUniquenessAtConversion(unittest.TestCase):
     build in the same zone gets the SAME id re-minted for it. Measured
     in-horizon on all nine NEISO T3 golden variants and ERCOT ``ff-t1f-d65br``.
 
-    docs/handoffs/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §2
+    docs/records/forecast/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §2
     """
 
     def _legacy_rep(self, zone="Z0", ebin="h_class", online_year=2015):

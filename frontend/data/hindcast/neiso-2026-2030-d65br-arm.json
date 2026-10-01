@@ -118,8 +118,8 @@
     "d65br": {
       "lane": "capx D65-B-R — the coupled arming (Act A + Act B) batch",
       "authority": "owner ruling Q47; r#48 §3(a) gates; r#51 §3(b) adjudication",
-      "precommit": "docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md Addendum C (+D/E/F/G)",
-      "finding": "docs/handoffs/FINDING-capx-d65br-2026-09-06.md",
+      "precommit": "docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md Addendum C (+D/E/F/G)",
+      "finding": "docs/records/forecast/FINDING-capx-d65br-2026-09-06.md",
       "solve_key_matches_predeclaration": true,
       "gates": "G5′ FIRED (2030 converts 1,786.1 MW = 59.5 % of the 3 GW/yr cap) and was VOIDED as a STOP by the ruling below; every other gate PASS, 0 FAIL / 0 WARN on all 14 invariants — the cleanest leg on the board. G1′ NOT GATED (D64 §2.4 publishes no NEISO band); reported er/phys 0.8074–1.4964 over 28 rows.",
       "retrofits": [

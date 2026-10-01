@@ -1,7 +1,7 @@
 """Measured overlays must HARD FAIL, never silently degrade (pjm-119).
 
 Guards the fix for the defect in
-``docs/FINDING-pjm119-silent-overlay-degradation-2026-07.md``: three of the PJM
+``docs/records/pjm/FINDING-pjm119-silent-overlay-degradation-2026-07.md``: three of the PJM
 keeper's measured inputs read the CURATED ``data/clean`` tree, which is
 gitignored and disposable, and each previously warned-and-fell-back when its
 partition was absent. A fresh container therefore solved with those mechanisms

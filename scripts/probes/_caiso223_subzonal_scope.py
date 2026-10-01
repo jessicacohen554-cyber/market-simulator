@@ -3,7 +3,7 @@
 Chartered by the owner's 2026-08-30 PM ruling arming caiso-222 Q2 route (iii)
 as a REPRESENTATION-GRAIN PROGRAM OPENING ROUND — scope + membership + LDF
 derivation, ZERO-SOLVE. Method and acceptance gates pre-registered in
-``results/calibration/PRECOMMIT-caiso223-subzonal-scope-2026-08-30.md``; the
+``docs/records/caiso/PRECOMMIT-caiso223-subzonal-scope-2026-08-30.md``; the
 adjudication record is ``FINDING-caiso223-subzonal-scope-2026-08-30.md``.
 
 NO LP, NO SOLVE, NOTHING ARMED. Reads committed bytes only (plus one
@@ -34,9 +34,9 @@ C. The sub-zonal LDF load split: the caiso-172 construction generalized to
 
 Outputs (deterministic: sorted keys, rounded floats, no timestamps)
 -------------------------------------------------------------------
-* ``results/calibration/_caiso223_subzonal_scope.json`` — every number.
-* ``results/calibration/_caiso223_membership_recut.csv`` — the plant re-cut.
-* ``results/calibration/_caiso223_pnode_subzone_map.csv`` — pnode → sub-zone
+* ``results/phase0/caiso/_caiso223_subzonal_scope.json`` — every number.
+* ``results/phase0/caiso/_caiso223_membership_recut.csv`` — the plant re-cut.
+* ``results/phase0/caiso/_caiso223_pnode_subzone_map.csv`` — pnode → sub-zone
   (atlas gen universe + DLAP_PGAE load universe).
 
 Run: ``PYTHONPATH=.:src python3 scripts/probes/_caiso223_subzonal_scope.py``
@@ -58,10 +58,10 @@ import derive_caiso_path15_load_split as c172  # noqa: E402  (frozen derive — 
 
 from market_sim.config.paths import RAW_DIR  # noqa: E402
 
-OUT_JSON = REPO / "results" / "calibration" / "_caiso223_subzonal_scope.json"
-OUT_RECUT = REPO / "results" / "calibration" / "_caiso223_membership_recut.csv"
-OUT_PNODE = REPO / "results" / "calibration" / "_caiso223_pnode_subzone_map.csv"
-CENSUS_JSON = REPO / "results" / "calibration" / "_caiso219_deliverability_census.json"
+OUT_JSON = REPO / "results" / "phase0" / "caiso" / "_caiso223_subzonal_scope.json"
+OUT_RECUT = REPO / "results" / "phase0" / "caiso" / "_caiso223_membership_recut.csv"
+OUT_PNODE = REPO / "results" / "phase0" / "caiso" / "_caiso223_pnode_subzone_map.csv"
+CENSUS_JSON = REPO / "results" / "phase0" / "caiso" / "_caiso219_deliverability_census.json"
 SPLIT_JSON = RAW_DIR / "zone-specific-demand" / "CAISO" / "CAISO_path15_load_split.json"
 CROSSWALK_CSV = RAW_DIR / "reference" / "caiso-plant-hub-membership.csv"
 EGRID_XLSX = RAW_DIR / "fleet-egrid" / "egrid2023_data_rev2.xlsx"
@@ -610,9 +610,9 @@ def main() -> int:
 
     result = {
         "probe": "caiso-223 sub-zonal scope (zero-solve; precommit-registered)",
-        "precommit": "results/calibration/PRECOMMIT-caiso223-subzonal-scope-2026-08-30.md",
+        "precommit": "docs/records/caiso/PRECOMMIT-caiso223-subzonal-scope-2026-08-30.md",
         "sources": {
-            "census": "results/calibration/_caiso219_deliverability_census.json",
+            "census": "results/phase0/caiso/_caiso219_deliverability_census.json",
             "atlas": "data/raw/caiso-atlas/{ATL_LDF,ATL_PNODE_MAP}.csv (caiso-172 snapshots)",
             "crosswalk": "data/raw/reference/caiso-plant-hub-membership.csv (caiso-217)",
             "committed_split": str(SPLIT_JSON.relative_to(REPO)),

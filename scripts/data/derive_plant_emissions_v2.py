@@ -3,7 +3,7 @@
 The v2 artifact (``data/raw/_processed-legacy/plant_emission_rates_v2.parquet``)
 is keyed ``(iso, plant_id, unit_id, year)`` with **per-year rows only** — no
 baked pooled ``year == 0`` row (the forward estimator pools at consumption time;
-see ``docs/handoffs/emissions-co2-rate-plan-2026-07.md`` §2/§4) and **no
+see ``docs/records/misc/emissions-co2-rate-plan-2026-07.md`` §2/§4) and **no
 quarantined 2022/H1-2026 rows** (CLAUDE.md rule 22). Unit grain is the whole
 point: it dissolves the old mixed coal/gas facility exclusion — a plant that
 retires a unit (or a Parish-style coal+gas facility) gets a forward rate from the

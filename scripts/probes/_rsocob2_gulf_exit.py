@@ -1,8 +1,8 @@
 """R-SOCO-B2 probe: when did the former Gulf Power plants and load leave SOCO's EIA-930 BA?
 
 Zero LP. Reproduces every number in
-``docs/handoffs/r-soco/FINDING-r-soco-b2-boundary-2026-09-25.md`` and writes them to
-``docs/handoffs/r-soco/rsocob2_boundary/probe.json``.
+``docs/records/soco/r-soco/FINDING-r-soco-b2-boundary-2026-09-25.md`` and writes them to
+``docs/records/soco/r-soco/rsocob2_boundary/probe.json``.
 
 Four instruments, each the publisher's own record:
 
@@ -48,7 +48,7 @@ SOCO_RESP = [2, 183, 184, 107, 210]
 #: The measured exit instant (hour-beginning UTC) — the first hour Gulf 185 stops
 #: filing, the first hour of the FPL 930 step (section 2 of the FINDING).
 EXIT_UTC = pd.Timestamp("2022-07-13 11:00")
-OUT = ROOT / "docs/handoffs/r-soco/rsocob2_boundary/probe.json"
+OUT = ROOT / "docs/records/soco/r-soco/rsocob2_boundary/probe.json"
 
 
 def _num(s: pd.Series) -> pd.Series:

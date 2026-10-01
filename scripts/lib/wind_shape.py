@@ -41,7 +41,7 @@ resource, and newer hence taller-hubbed) that is identified by nothing measured
 ``[R-DOF]`` / 24 ``[R-REGISTRY]``). Its sharpest symptom is that it is not
 partition-consistent: ``top-6(A) ∪ top-6(B) ≠ top-6(A ∪ B)``, so re-cutting one
 zone's boundary moved every *other* zone's weight at an identical system total
-(measured: ``docs/handoffs/FINDING-spp-54-2026-09-07.md`` §4.2 C-4 — SPP-North
+(measured: ``docs/records/spp/FINDING-spp-54-2026-09-07.md`` §4.2 C-4 — SPP-North
 +1.38 / +1.47 / +1.91 TWh from a boundary change that touched only the south).
 
 R-LEVEL removes that parameter rather than re-identifying it, and it is

@@ -40,7 +40,7 @@ from scripts.probes._miso264_bulk_price_setter_phase0 import (  # noqa: E402
 )
 
 YEAR = 2020
-OUT = REPO / "results/calibration/_miso264_marginal_hr_2020.json"
+OUT = REPO / "results/phase0/miso/_miso264_marginal_hr_2020.json"
 
 
 def main() -> None:

@@ -1,6 +1,6 @@
 """Emit the SPP-105 calibration attestation for a composed 2019-2025 arm bundle ``spp105<A|B>_span``.
 
-SPP-105 (``docs/handoffs/PRECOMMIT-spp-105-gas-family-outage-2026-09-30.md``) replays SPP's keeper
+SPP-105 (``docs/records/spp/PRECOMMIT-spp-105-gas-family-outage-2026-09-30.md``) replays SPP's keeper
 ``2026-09-28-spp-100-chp-scope`` one year per shard (rule 36) with ONE gas-family outage carrier:
 arm A = ``wefor_residual 0.0`` + ``wefor_residual_groups`` CC/ST (existing fields); arm B =
 ``spp_gas_crow_residual_outage``. Adapted from ``gen_spp104_attestation.py``: the keeper's
@@ -25,8 +25,8 @@ sys.path.insert(0, str(REPO / "src"))
 from market_sim.config.scenarios import _CACHE_KEY_RETIRED_FIELDS  # noqa: E402
 
 CAL = REPO / "results" / "calibration"
-PRECOMMIT = "docs/handoffs/PRECOMMIT-spp-105-gas-family-outage-2026-09-30.md"
-RESULT = "docs/handoffs/RESULT-spp-105-gas-family-outage-2026-09-30.md"
+PRECOMMIT = "docs/records/spp/PRECOMMIT-spp-105-gas-family-outage-2026-09-30.md"
+RESULT = "docs/records/spp/RESULT-spp-105-gas-family-outage-2026-09-30.md"
 PINNED = "5e0599c86c5e12c7f75c86588e1a561ddd551080"
 KEEPER = "spp100_arm_span"
 KEEPER_ID = "2026-09-28-spp-100-chp-scope"

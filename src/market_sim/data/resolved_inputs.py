@@ -5,7 +5,7 @@ The companion to :mod:`market_sim.data.input_completeness`. That module answers
 not; this one answers the question the committed artifacts could never answer
 afterwards: **which value did the LP actually solve against?**
 
-caiso-188 (`results/calibration/FINDING-caiso188-import-tranche-dof-2026-08-09.md`
+caiso-188 (`docs/records/caiso/FINDING-caiso188-import-tranche-dof-2026-08-09.md`
 §4/§6) measured why that second question matters. ``capacity_deliverability_
 limits: true`` resolves the published CAISO MIC through
 ``data/clean/capacity-deliverability/`` — derived, disposable, gitignored, and

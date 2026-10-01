@@ -1,7 +1,7 @@
 """Emit the NWPP-NEXT-7 calibration attestation for the coal take-floor span bundle.
 
 NWPP-NEXT-7 (PRECOMMIT
-``docs/handoffs/PRECOMMIT-nwppnext7-coal-take-floor-2019-2025-2026-09-27.md``) is
+``docs/records/nwpp/PRECOMMIT-nwppnext7-coal-take-floor-2019-2025-2026-09-27.md``) is
 keeper #13's recipe (NWPP-NEXT-6 arm AB) plus the per-coal-yard annual coal TAKE
 floor, ruled by the owner on 2026-09-27 (Q1-Q5):
 ``coal_fuel_inventory_plant_grain`` and ``coal_fuel_inventory_take_floor`` armed,

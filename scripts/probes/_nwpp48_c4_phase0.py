@@ -1,7 +1,7 @@
 """nwpp-48 phase 0: where NWPP's C4 coal-correlation miss lives. ZERO LP.
 
 Reproduces every number in
-``docs/handoffs/FINDING-nwpp-48-c4-phase0-2026-09-23.md`` from committed or
+``docs/records/nwpp/FINDING-nwpp-48-c4-phase0-2026-09-23.md`` from committed or
 recoverable artifacts only:
 
 * the keeper's committed ``hourly/`` sidecars

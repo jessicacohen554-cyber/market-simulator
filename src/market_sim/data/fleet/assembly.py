@@ -114,7 +114,7 @@ def _top_refine_ok(curve_cap: float, n: int, enabled: bool) -> bool:
     """Return whether SCHEME R1 can be applied to a ramp of ``curve_cap`` MW.
 
     ercot-188 Amendment 1, a **feasibility precondition, not a scheme variant**
-    (``docs/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md``
+    (``docs/records/ercot/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md``
     Amendment 1). ``_econ_curve_steps(top_refine=True)`` cuts the ramp's top
     block into ``n`` sub-slices of ``curve_cap / n**2`` each. Where that lands
     at or below :data:`MIN_TRANCHE_CAPACITY_MW` the assembly's own tranche
@@ -1388,7 +1388,7 @@ def bins_to_fleet(
         # distribution — representing the measured across-resource dispersion
         # (the upper rungs are the real market's always-posted scarcity wall)
         # instead of collapsing it to the class median
-        # (docs/FINDING-ercot-priceshape-2026-07.md §4). Suffixes beyond the
+        # (docs/records/ercot/FINDING-ercot-priceshape-2026-07.md §4). Suffixes beyond the
         # first are ``peak2..peakN`` — every consumer that scopes by tranche
         # matches the ``peak`` prefix, not the exact suffix.
         # The per-plant tranche sheet (``ov``) wins over the class ladder, as it
@@ -2144,7 +2144,7 @@ def build_dispatch_fleet(
         # scalars) was DELETED 2026-08-12 (rule 26 [R-DELETE], ercot-188 G#3
         # owner ruling) — every registered bundle of all six ISOs takes the
         # CAMPD limb above, so this limb produced no registered result
-        # (proof: results/calibration/ercot188_g3_unreachability_proof.json).
+        # (proof: results/phase0/ercot/ercot188_g3_unreachability_proof.json).
         dispatch_fleet = fleet + inline_imports
         fuel_fracs = [1.0] * len(dispatch_fleet)
         if getattr(config, "gas_offer_curve", False):

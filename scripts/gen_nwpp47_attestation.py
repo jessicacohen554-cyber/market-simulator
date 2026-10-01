@@ -13,8 +13,8 @@ energy is no longer removed from the requirement while still supplied.
 pool frame, no magnitude, nothing swept. Nothing is transferred from another ISO
 (rule 25). Three year-isolated shards (rule 36) through ``replay_keeper.py
 --set`` against the keeper's own ``meta.json``, composed by the parent at zero
-LP. Evidence: ``docs/handoffs/FINDING-nwpp-47-2026-09-22.md``; pre-registration
-``docs/handoffs/PRECOMMIT-nwpp-47-2026-09-22.md``; evaluator
+LP. Evidence: ``docs/records/nwpp/FINDING-nwpp-47-2026-09-22.md``; pre-registration
+``docs/records/nwpp/PRECOMMIT-nwpp-47-2026-09-22.md``; evaluator
 ``scripts/probes/_nwpp47_gates.py`` (committed before any leg landed).
 """
 

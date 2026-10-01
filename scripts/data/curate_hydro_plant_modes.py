@@ -93,7 +93,7 @@ DATATYPE = "hydro-plant-modes"
 # hydro-1 (2026-09-20) alongside the HYBRID-LABEL REPAIR below.
 #
 # SPP, NEISO and MISO added by hydro-5 (2026-09-22), each reviewed on its OWN
-# BA's labelled subset (rule 25; docs/PRECOMMIT-hydro-5-2026-09-22.md §2):
+# BA's labelled subset (rule 25; docs/records/misc/PRECOMMIT-hydro-5-2026-09-22.md §2):
 #   SPP   (SWPP) 12/16 plants, 92.3 % of labelled MW.
 #   NEISO (ISNE) 77/125 plants, 66.1 % of labelled MW.
 #   MISO  (MISO) 65/135 plants, 62.5 % of labelled MW.
@@ -140,7 +140,7 @@ DEFAULT_ISOS: tuple[str, ...] = (
 #   combined within-day sd of 414 / 421 / 372 MW (2023/24/25; John Day alone
 #   160-169 MW). Their hydraulics belong to the cascade formulation
 #   (ScenarioConfig.hydro_cascade_coupling), never to a flat pin (rule 19).
-#   Evidence: docs/handoffs/FINDING-nwpp-49-pondage-design-2026-09-23.md.
+#   Evidence: docs/records/nwpp/FINDING-nwpp-49-pondage-design-2026-09-23.md.
 #   DOF: zero — membership in a committed registry, no threshold.
 CHAIN_REGISTRY = "{tag}-hydro/{tag}_hydro_chain.csv"
 
@@ -155,7 +155,7 @@ HILARRI_CSV = "hilarri/HILARRI_v4.csv"
 # "Reregulating" -- to NOT shapeable, on the argument that "EHA lists the
 # plant's own hydraulic mode first". nyiso-111 FALSIFIED that argument by
 # measurement on NYISO, ex ante and without a solve
-# (results/calibration/_nyiso111_hydro_ror_split_screen.json): under the
+# (results/phase0/nyiso/_nyiso111_hydro_ror_split_screen.json): under the
 # committed rule NYISO's shapeable set is 1,261.6 MW, while NYISO's OWN
 # measured fleet swings 1,195.0 / 1,291.6 / 1,593.1 MW on the mean diurnal
 # profile in 2023/24/25 and 1,496 / 1,495 / 1,929 MW on the MEDIAN day. A fleet

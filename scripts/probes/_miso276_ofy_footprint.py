@@ -16,7 +16,7 @@ CC_REGULAR, and the per-plant ST_GAS floor move.
 Usage::
 
     uv run python scripts/probes/_miso276_ofy_footprint.py --artifact <extended csv> \
-        --years 2019 2020 2021 2022 2023 --out results/calibration/_miso276_ofy_footprint.json
+        --years 2019 2020 2021 2022 2023 --out results/phase0/miso/_miso276_ofy_footprint.json
 """
 
 from __future__ import annotations

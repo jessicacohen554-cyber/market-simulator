@@ -83,7 +83,7 @@ NOT reuse ERCOT's 0.00703/−0.1427/0.47 or CAISO's 0.00901/−0.1124/0.36).
 
 ## 2. CC demonstrated-peak cap (`cc_capacity_reconcile`, mode="cap")
 
-`docs/handoffs/pjm-cc-overgen-recommendation-2026-06.md` Rank 4, targeting
+`docs/records/pjm/pjm-cc-overgen-recommendation-2026-06.md` Rank 4, targeting
 Miss #2 (the 95–100% CF pile): CC plants whose **model** nameplate exceeds
 anything they ever sustained in the CEMS record over-run the top CF bands on
 phantom capacity. `scripts/data/derive_cc_capacity_reconcile.py --iso PJM --mode

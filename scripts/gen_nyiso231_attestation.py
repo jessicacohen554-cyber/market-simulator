@@ -210,7 +210,7 @@ def main() -> None:
             "EXACTLY ZERO — all 52,560 hourly zonal prices and all 6,648,840 unit-hours (mw, mc, "
             "cap_mw) identical to 1e-9 between an on-pin and an off-pin solve of the same 2022 "
             "recipe (results/calibration/nyiso231_ctl_y2022; "
-            "docs/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md)."
+            "docs/records/nyiso/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md)."
         ),
     }
 
@@ -233,7 +233,7 @@ def main() -> None:
             "outage_filter_exogenous_net_load": True,
             "attested_by": (
                 "session nyiso-231 (2026-09-13). Pre-registration: "
-                "results/calibration/PRECOMMIT-nyiso231-mirror-repair-rescreen.md (+ Addendum A, "
+                "docs/records/nyiso/PRECOMMIT-nyiso231-mirror-repair-rescreen.md (+ Addendum A, "
                 "the per-year anchors and per-tranche offer shifts), pushed before any LP. "
                 "ONE registered field moves, gas_offer_margin_zonal_anchor_vintage False -> True: "
                 "gas_offer_net_revenue_margin's identification point is resolved on (ZONE, SOLVE "

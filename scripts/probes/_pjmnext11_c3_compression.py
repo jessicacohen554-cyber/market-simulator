@@ -5,7 +5,7 @@ zones per hour. Actual = ``data/raw/_validation-source/actual_lmp_hourly_PJM.par
 C3a/C3b bench kind for PJM). Sorted-quantile decomposition: the annual mean error equals the mean
 of (sorted model - sorted actual), so its share in each quantile band says whether the miss is a
 level shift (spread across bands) or a tail/compression object (concentrated at the ends).
-Writes ``results/calibration/_pjmnext11_c3_compression.json``.
+Writes ``results/phase0/pjm/_pjmnext11_c3_compression.json``.
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 BUNDLE = REPO / "results/calibration/pjmnext8_xf_span"
 ACTUAL = REPO / "data/raw/_validation-source/actual_lmp_hourly_PJM.parquet"
-OUT = REPO / "results/calibration/_pjmnext11_c3_compression.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext11_c3_compression.json"
 BANDS = ((0.0, 0.10), (0.10, 0.50), (0.50, 0.90), (0.90, 0.99), (0.99, 1.0))
 
 

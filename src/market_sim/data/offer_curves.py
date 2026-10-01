@@ -60,12 +60,12 @@ def _hr_override(value: float | None, default: float) -> float:
 
 # ---------------------------------------------------------------------------
 # DELETED 2026-08-12 (rule 26 [R-DELETE], ercot-188 G#3 owner ruling,
-# docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md §G.3):
+# docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md §G.3):
 # split_coal_tranches (the legacy non-CAMPD coal take-or-pay split) and its
 # six ScenarioConfig scalars coal_tranche_{1,2,3}_{frac,fuel_passthrough}.
 # build_dispatch_fleet branches on `campd_bins is not None`; every registered
 # bundle of all six ISOs carries use_campd_bins=True (proof:
-# results/calibration/ercot188_g3_unreachability_proof.json), so the function
+# results/phase0/ercot/ercot188_g3_unreachability_proof.json), so the function
 # lived only in a dead limb and the scalars reached nothing (miso-128 §4
 # proved inertness dynamically). The non-CAMPD fallback now passes coal
 # through unsplit at full fuel cost; the live coal offer machinery is the
@@ -294,7 +294,7 @@ def apply_committed_band_measured_basis(
 
     Half (a) of the Route A REPLACE mechanism
     (``ScenarioConfig.committed_band_measured_basis``; chartered by
-    ``docs/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md`` §4/§10a).
+    ``docs/records/pjm/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md`` §4/§10a).
     Half (b) -- dropping the coal supply passthrough sigmoid from the same band
     (:func:`market_sim.data.fleet.campd_tranche_fuel_frac`) -- is not separable
     from this one: without it the effective basis becomes ``measured x
@@ -507,7 +507,7 @@ def _econ_curve_steps(
     ``offer_curve_smoothing_n``, so the shape follows ``n`` rather than
     carrying a free value of its own. Structural grounding, from measurements
     that predate the build and never from a residual
-    (``docs/MEMO-ercot184-cliff-resolution-costing-2026-08-09.md`` §4.2/§4.3):
+    (``docs/records/ercot/MEMO-ercot184-cliff-resolution-costing-2026-08-09.md`` §4.2/§4.3):
     the top block is the marginal one in 14 of the 33 econ-marginal object
     hours, more than any other slice, and is the ONLY block reaching the
     measured ladders' top decile — the econ ramp spans a median 61.8 % of its
@@ -520,7 +520,7 @@ def _econ_curve_steps(
     ``mc_bid_adjust`` seam and forfeits its bit-identity proof. That cost was
     costed (memo §3.3) and accepted by the owner as the price of the
     structural fidelity; see
-    ``docs/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md`` §3.
+    ``docs/records/ercot/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md`` §3.
     """
     slice_cap = curve_cap / n
     # Slice geometry as (capacity, ramp-position midpoint) pairs. The default
@@ -561,7 +561,7 @@ def gas_offer_margin_markup_mult(
     """Return one tranche's markup multiplier above its physical basis.
 
     The ``gas_offer_net_revenue_margin`` decomposition (design doc
-    ``docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md``): the
+    ``docs/records/misc/gas-offer-net-revenue-margin-design-2026-07.md``): the
     tranche's offer multiplier ``tranche_mult`` (its heat rate over the
     plant's base HR) splits into the band's MEASURED physical basis — the
     ``phys_*`` keys carried on the resolved offer-curve band dict — plus a
@@ -902,7 +902,7 @@ def apply_cc_committed_offer_margin(
     analogue of the coal min-load form
     (:func:`market_sim.data.fleet.legacy_bins.apply_coal_tranches`'s ERCOT-137
     branch), chartered by
-    ``docs/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md`` §6.
+    ``docs/records/ercot/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md`` §6.
 
     ERCOT-138 measured the defect against ERCOT's own SCED TPO conduct: the
     model's CC committed/econ bands bid **+$2.8–6.6/MWh too DEAR** through the
@@ -1500,7 +1500,7 @@ def apply_miso_offer_surface(
 
     The miso-151 mechanism (``config.miso_offer_surface_measured``), chartered
     by the owner as queue item 9 and pre-registered in
-    ``results/calibration/PREREG-miso151-measured-offer-surface-2026-08-11.md``.
+    ``docs/records/miso/PREREG-miso151-measured-offer-surface-2026-08-11.md``.
 
     **SUBSUMES, never stacks** (rule 19 ``[R-ONE-MECH]``).  The rows it touches
     are exactly the rows :func:`apply_gas_offer_margin` gives a margin to —
@@ -1765,7 +1765,7 @@ def apply_miso_offer_spread_anchored(
     The miso-180 mechanism (``config.miso_offer_spread_anchored``), the
     owner-chartered D-1b successor of the miso-179 REFUTED level-replacement
     form, pre-registered in
-    ``results/calibration/PREREG-miso180-anchored-spread-2026-08-23.md``.
+    ``docs/records/miso/PREREG-miso180-anchored-spread-2026-08-23.md``.
 
     **SPREAD only, never LEVEL.** miso-179 measured the model +$15/MWh OVER
     the eligible book at the median rank and UNDER only in the top decile

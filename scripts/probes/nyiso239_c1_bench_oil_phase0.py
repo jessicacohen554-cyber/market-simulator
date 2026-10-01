@@ -2,7 +2,7 @@
 gas/oil attribution artifact, not model over-dispatch.
 
 Reproduces every number in
-``docs/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md`` from
+``docs/records/nyiso/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md`` from
 COMMITTED artifacts plus the immutable ``data/raw`` extracts. No LP, no solve,
 no bundle regeneration (rule 32 ``[R-SHARD]`` (a): the orchestrator never
 solves).

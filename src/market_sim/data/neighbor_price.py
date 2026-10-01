@@ -287,7 +287,7 @@ def neighbor_gas_price(
     2023 knot ($2.54) while the ISO's own units burn the measured year price —
     a **-32 % error in 2021 and -61 % in 2022**, binding wherever
     ``reference_price_interface`` is armed on a pre-2023 year
-    (``results/calibration/ADDENDUM-pjm171-seam-fuel-basis-freeze-2026-09-07.md``).
+    (``docs/records/pjm/ADDENDUM-pjm171-seam-fuel-basis-freeze-2026-09-07.md``).
     A year below the first knot therefore resolves its Henry Hub level from the
     measured annual series (:func:`_measured_henry_hub_annual`) instead. The
     neighbour's own ``gas_basis`` is applied unchanged, so the seam keeps its
@@ -827,8 +827,8 @@ def seam_flow_direction(
 # PJM 2024 RTM for 28 days while the parity test that would have caught it sat
 # behind a CI marker exclusion and a skip-if-absent guard. Diagnosis, the
 # per-ISO measurements and the rejected alternatives:
-# docs/FINDING-f6-lmp-backend-parity-2026-08-11.md (owner decision D-32,
-# option A; resolution docs/handoffs/d32-f6fix-2026-08-13.md).
+# docs/records/misc/FINDING-f6-lmp-backend-parity-2026-08-11.md (owner decision D-32,
+# option A; resolution docs/records/forecast/d32-f6fix-2026-08-13.md).
 
 # Environment flag gating the clean-backed read path (default OFF).
 USE_CLEAN_ENV: str = "MARKET_SIM_USE_CLEAN"

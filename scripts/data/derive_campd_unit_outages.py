@@ -7,7 +7,7 @@ outage at a multi-unit plant — and, critically, a *coal*-unit outage at a mixe
 coal/gas facility (W A Parish, Barney M Davis) — was masked by the units that
 keep running and never detected, and a daily-cycling combined cycle's
 overnight-down gaps folded into phantom summer outages
-(``results/calibration/FINDING-ercot79-phantom-outage-2026-07.md``). This script
+(``docs/records/ercot/FINDING-ercot79-phantom-outage-2026-07.md``). This script
 reads the per-unit CAMPD extracts in
 ``data/raw/campd-unit-level/{STATE}_{YEAR}.parquet`` (one row per
 ``unit``-hour, carrying ``unitId``) and detects an outage for each *unit*
@@ -68,7 +68,7 @@ outage hour. Detection has always been hourly while the extract stored dates, so
 ``market_sim.data.outages`` had to re-expand every window to 00:00-23:00 and
 asserted up to 23 h per edge the detector never detected — precisely where the
 event-based contract guarantees the neighbouring hour was *running*
-(``results/calibration/FINDING-caiso181-envelope-depth-2026-08-07.md`` section 2
+(``docs/records/caiso/FINDING-caiso181-envelope-depth-2026-08-07.md`` section 2
 measured this at 100 % of unit-grain CEMS contradictions). The two columns are
 OPTIONAL and per-ISO adoptable: the loader consumes them when present and falls
 back to the day-granular reconstruction when absent, and the flag-absent extract
@@ -134,7 +134,7 @@ from scripts.lib.outage_detect import (  # noqa: E402
 # the plant sum, so PJM's cycling fleet (whose plant sum over-fires the
 # plant-grain detector by ~43 TWh/yr — the plant-grain path stays ERCOT-scoped
 # in fleet.py) is read at the grain the phenomenon actually lives at. See
-# docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §7 (leg B).
+# docs/records/pjm/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §7 (leg B).
 from scripts.lib.outage_detect import (  # noqa: E402
     _detect as _detect_partial_plateaus,
 )
@@ -202,7 +202,7 @@ SHORT_BASELOAD_CF: float = 0.55
 # measured against interest: it removes 10.8 % of the recovered PJM 2022 annual
 # mean and 5.1 % of its tail-hour family, i.e. it selects the SMALLER family,
 # and both scopes clear the pre-registered gate either way
-# (docs/RESULT-pjm-d4-4-forced-outage-composition-2026-09-10.md section 4).
+# (docs/records/pjm/RESULT-pjm-d4-4-forced-outage-composition-2026-09-10.md section 4).
 SHORT_WINDOW_GAS_GROUPS: frozenset[str] = frozenset(
     {"CC_REGULAR", "CC_CHP", "ST_GAS", "ST_CHP"}
 )
@@ -959,7 +959,7 @@ def _resolve_unit_group(
     The discriminator is ``primaryFuelInfo`` and not ``unitType`` alone because
     ``unitType`` does NOT separate the two populations: measured across all six
     ISOs' committed extracts (``scripts/probes/neiso99_routing_blast_radius.py``
-    → ``results/calibration/_neiso99_routing_blast_radius.json``), 35 CAMPD units
+    → ``results/phase0/neiso/_neiso99_routing_blast_radius.json``), 35 CAMPD units
     filed as "Combustion turbine" sit in a non-CT bin, and 27 of them are
     GAS-fired members of a genuine block that must keep inheriting it (ERCOT Sand
     Hill SH1-SH7, Colorado Bend CT-4A/4B, CAISO Glenarm GT3/GT4, MISO Zeeland
@@ -1315,7 +1315,7 @@ def derive_eia923_noncampd_fallback(
 # guarantees the neighbouring hour was RUNNING. caiso-181 confirmed that seam at
 # 100 % of unit-grain CEMS contradictions (max distance from a window boundary
 # 22 h < 24, every year) and filed the repair as its own charter:
-# results/calibration/FINDING-caiso181-envelope-depth-2026-08-07.md section 5
+# docs/records/caiso/FINDING-caiso181-envelope-depth-2026-08-07.md section 5
 # item 1, pre-registered here as PRECHECK-caiso183-hedge-grain-2026-08-08.md.
 #
 # These two columns carry the DETECTED hour-of-day through the schema so the
@@ -1698,7 +1698,7 @@ def main() -> None:
         "companion campd-unit-outages-layup[-{ISO}].csv, which no loader reads "
         "by default. Fixes the detector booking 23-46%% of every ISO's CC "
         "capacity-year as outage against a real EFOR+planned norm of ~10-15%% "
-        "(docs/handoffs/campd-economic-layup-fix-charter-2026-07.md). The "
+        "(docs/records/misc/campd-economic-layup-fix-charter-2026-07.md). The "
         "standard extract is byte-identical when this flag is absent.",
     )
     ap.add_argument(

@@ -3,7 +3,7 @@
 
 Closes the FF-0D audit's ``NEW_ENTRY_COSTS`` "STALE + UNWIRED" and
 ``TECH_COST_MULTIPLIERS`` "self-flagged" findings
-(``docs/handoffs/ff-inputs-currency-audit-2026-07.md`` §3.2/§3.3, routed to
+(``docs/records/forecast/ff-inputs-currency-audit-2026-07.md`` §3.2/§3.3, routed to
 FF-1E in §7.2). Before FF-1E those two dicts were hand-transcribed round
 numbers labelled "NREL ATB 2024" that matched no single ATB projection year
 (wind ≈ ATB-2037, solar ≈ 2032, gas_cc ≈ 2049, nuclear_smr ≈ 2039 in the

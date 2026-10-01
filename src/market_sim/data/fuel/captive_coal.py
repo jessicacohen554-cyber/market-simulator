@@ -2,9 +2,9 @@
 
 ``ScenarioConfig.coal_captive_marginal_fuel_price`` (NWPP-NEXT-15, owner ruling
 2026-09-30 "Build, no threshold"; design
-``docs/handoffs/DESIGN-nwppnext14-captive-mine-marginal-fuel-2026-09-30.md``,
+``docs/records/nwpp/DESIGN-nwppnext14-captive-mine-marginal-fuel-2026-09-30.md``,
 identification rule and census
-``docs/handoffs/PHASE0-nwppnext15-captive-mine-2026-09-30.md`` §1-§3).
+``docs/records/nwpp/PHASE0-nwppnext15-captive-mine-2026-09-30.md`` §1-§3).
 
 **The phenomenon.** A coal plant fed partly by a DEDICATED mine (mine-mouth,
 cost-of-service) and partly by third-party contract / spot coal books a

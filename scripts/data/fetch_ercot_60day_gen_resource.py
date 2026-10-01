@@ -23,7 +23,7 @@ for the rolling-retention-window caveat: the doc list reaches back only ~2.3
 years from "today", so e.g. the missing Dec-2023 publication — deliveries
 2023-10-02..2023-11-01 — is permanently unreachable on the free path; the
 credentialed data.ercot.com archive was declined by the repo owner,
-docs/handoffs/ercot-as-coopt-plan-2026-07.md §WS-E).
+docs/records/ercot/ercot-as-coopt-plan-2026-07.md §WS-E).
 
 Publication→delivery mapping (verified against every committed parquet):
 publication day D carries exactly the delivery day D − 60 days, so a

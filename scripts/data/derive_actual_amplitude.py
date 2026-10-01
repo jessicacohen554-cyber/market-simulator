@@ -84,7 +84,7 @@ OUT = REPO / "frontend" / "data" / "backcast" / "amplitude" / "actual_amplitude.
 # exists to profile. A neighbouring hub -- SP15, NP15, Palo Verde, all one
 # column away in the same ICE workbook -- stays refused (rule 13
 # [R-MEASURED]; plan gate G17). Evidence:
-# docs/handoffs/FINDING-nwpp-13-2026-09-13.md sections 0 and 3.
+# docs/records/nwpp/FINDING-nwpp-13-2026-09-13.md sections 0 and 3.
 ISOS = ("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "PJM", "SPP")
 DAYS, HOURS_PER_DAY = 365, 24
 
@@ -152,7 +152,7 @@ def derive() -> dict:
             "Measured hour-of-day mean price profiles per ISO-year, the actual "
             "side of the REPORTED-ONLY diurnal price-amplitude measurement "
             "(rubric v3.5, owner decision 2026-08-25 — option B of "
-            "docs/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md). "
+            "docs/records/governance/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md). "
             "rt_hod is the primary basis (the same RT benchmark C3a gates the "
             "price level on); da_hod is the reported companion. Profiles are "
             "means over COMPLETE days only — a day with any missing hour is "

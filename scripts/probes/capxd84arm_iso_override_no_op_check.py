@@ -43,11 +43,11 @@ Usage::
 
     # ex ante, before the edit
     python3 scripts/probes/capxd84arm_iso_override_no_op_check.py \
-        --simulate-arm --out docs/handoffs/d84arm/no-op-expectation.json
+        --simulate-arm --out docs/records/forecast/d84arm/no-op-expectation.json
 
     # ex post, after the edit
     python3 scripts/probes/capxd84arm_iso_override_no_op_check.py \
-        --out docs/handoffs/d84arm/no-op-measured.json
+        --out docs/records/forecast/d84arm/no-op-measured.json
 
 Exit code 0 iff the pattern holds: zero non-PJM moves, zero backcast moves.
 """

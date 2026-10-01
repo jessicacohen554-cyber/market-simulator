@@ -53,7 +53,7 @@ from scripts.lib.bundle_fleet import reconstruct_bundle_fleet  # noqa: E402
 BUNDLE = REPO / "results/calibration/caiso275_B_gascoupling_2022"
 ACTUAL = REPO / "data/raw/_validation-source/actual_lmp_hourly_CAISO.parquet"
 BENCH = REPO / "frontend/data/backcast/bench/CAISO/2022.json.gz"
-OUT = REPO / "results/calibration/_caiso276_implied_hr.json"
+OUT = REPO / "results/phase0/caiso/_caiso276_implied_hr.json"
 YEAR = 2022
 T = 8760
 CA_ZONES = ("LA_BASIN", "NP15", "SDGE", "SP15_rest", "ZP26")

@@ -116,7 +116,7 @@ def _egrid_path(vintage: int) -> Path:
 # Plant heat rates by eGRID vintage — the ONE resolver (rule 19 [R-ONE-MECH])
 # ---------------------------------------------------------------------------
 #
-# F1 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md
+# F1 (docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md
 # §1 D1/D2). Before it, the EIA-860 build joined eGRID 2023's ``PLHTRT`` into
 # every generator table it wrote — the canonical snapshot, the within-window
 # retiree parquet — and the year-matched ``vintage_<Y>/`` tables it had

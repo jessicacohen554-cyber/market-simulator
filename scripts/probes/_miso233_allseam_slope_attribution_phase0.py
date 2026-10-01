@@ -43,7 +43,7 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts" / "probes"))
 
 KEEPER = REPO / "results/calibration/miso232_hourlyseam_K"
-OUT = REPO / "results/calibration/_miso233_allseam_slope_attribution_phase0.json"
+OUT = REPO / "results/phase0/miso/_miso233_allseam_slope_attribution_phase0.json"
 YEARS = (2023, 2024, 2025)
 ZONE = "MISO-Indiana"
 HOURS = 8760

@@ -131,7 +131,7 @@ def main() -> None:
             profiles.setdefault((leg, y), []).append((hsl, prof))
 
     df = pd.DataFrame(rows)
-    out = REPO / "results/calibration/miso111_prb_conduct.csv"
+    out = REPO / "results/phase0/miso/miso111_prb_conduct.csv"
     df.to_csv(out, index=False)
     print(f"wrote {out} ({len(df)} plant-years)\n")
 

@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "source": "Three-tier holdout program per CLAUDE.md rule 22 and docs/handoffs/holdout-policy-memo-2026-07.md, as enforced by scripts/run_calibration_full.py (enforce_holdout_year_gate) and the CI quarantine-gates job. Tier assignments are the program's real design; 'scored' flags are program-level illustration (only NEISO has a calibration-complete marker and a scored one-shot as of 2026-07-11), NOT a per-ISO status feed.",
+    "source": "Three-tier holdout program per CLAUDE.md rule 22 and docs/records/governance/holdout-policy-memo-2026-07.md, as enforced by scripts/run_calibration_full.py (enforce_holdout_year_gate) and the CI quarantine-gates job. Tier assignments are the program's real design; 'scored' flags are program-level illustration (only NEISO has a calibration-complete marker and a scored one-shot as of 2026-07-11), NOT a per-ISO status feed.",
     "description": "Year-by-year tier timeline (2018-2030) for the model-validity narrative page. tier: data (intaken, never solved) | train (2023-2025, the only tuned years) | validation (2022, iterable) | locked (2019 + H1-2026, touch-once) | forecast (2026+ forward horizon, extends to END_YEAR 2050). flags carry secondary roles: 2024-2025 carry 'crossover-overlap-roadmap' - the dual-mode backcast/forecast crossover scoring is a labelled ROADMAP target, not implemented code (forecast START_YEAR is 2026; no dual-mode scorer exists).",
     "date": "2026-07-11",
     "illustrative": true

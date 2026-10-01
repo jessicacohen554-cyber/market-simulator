@@ -154,7 +154,7 @@ disk), **and** a rule-22 tier decision. That is a separate chartered program, no
 
 T1-X's vintage-2023 crossover carries a known harness defect — its own forward-year
 over-retirement (FC-1 I6: 25.6 % thermal retired by 2025), described in
-`docs/handoffs/ff-t1-gate-2026-07.md` as *"a legacy-bin crossover-harness property, not the T1-F
+`docs/records/forecast/ff-t1-gate-2026-07.md` as *"a legacy-bin crossover-harness property, not the T1-F
 config."* That defect would follow T1-FF to any base year. **FH-1 must reproduce or refute it at
 the T1-FF posture before Phase A results are read as skill** — an over-retiring harness would
 make every downstream metric uninterpretable. This is an explicit acceptance gate, not a footnote.
@@ -167,7 +167,7 @@ make every downstream metric uninterpretable. This is an explicit acceptance gat
 > not the input stack. The probe's dispatch-skill numbers are **gate context only** and must
 > never be quoted as T1-FF skill. The block lifts only when a retirement-lane fix (FF-1A R-NEW /
 > G-31 grain / the FFR retirement-calibration lane) lands **and** a re-probe passes. Evidence:
-> `docs/handoffs/fh-1-full-forward-harness-2026-08.md` §7.
+> `docs/records/forecast/fh-1-full-forward-harness-2026-08.md` §7.
 
 ---
 
@@ -186,7 +186,7 @@ Audited family by family at HEAD. **BLOCKER** = must be fixed before a T1-FF run
 | 5 | **Demand — base profile** | PARTIAL | Pool-bounded (`WEATHER_YEAR_POOL_BY_ISO`): ERCOT/NEISO/CAISO/MISO `(2019,2020,2021,2023,2024,2025)`; NYISO/PJM `(2021,2023,2024,2025)`. Fine for both phases; 2018 unavailable. | — |
 | 6 | **Demand — growth path** | **CLOSED — mechanism (FH-2) + values (FH-3)** | `DEMAND_GROWTH_RATES` is a two-era scalar table (`constants.py:1604`) derived from **2025/26** LTLF/Gold Book/CELT/IEPR editions, with `DEMAND_GROWTH_TRANSITION_YEAR = 2030` so every historic year takes the `near` rate. ERCOT mid is **8.5 %/yr** — applied 2021→2023 that is **+17.7 %** against roughly +2 % actual. There are no vintage variants. Compounding defect: `_scale_demand` loops `range(weather_year, year)`, so for `year < weather_year` the factor is silently **1.0** (no de-growth, no error). **FH-3 landed the VALUES 2026-08-02**: `DEMAND_GROWTH_RATES_VINTAGES` in `constants.py`, 11 of 12 ISO-vintage cells cited to the editions published at the time (as-of-2021 ERCOT near is **2.0 %/yr**, not 8.5 %). Missing cell: CAISO as-of-2021 (manual download, Phase B only). FH-2's `demand_growth_vintage` field + `resolve_demand_growth_table` resolver landed in PR #3278; FH-3 additionally extended the resolver's refusal to a missing CASE, since most vintage cells carry `mid` alone. | ~~**FH-2** (mechanism)~~ + ~~**FH-3** (values)~~ |
 | 7 | **Fuel — gas** | PARTIAL | `hindcast_asknown_aeo2021` (AEO2021 Reference) covers 2021/2023/2024/2025 — the only genuine as-known path, and it is flagged NEEDS CITATION in `docs/parameter-citations.md`. ~~**No AEO2023 equivalent exists**, so Arm K at base 2023 is blocked on intake.~~ **RESOLVED 2026-08-02 (FH-3):** `hindcast_asknown_aeo2023` landed (AEO2023 Reference Table 13, nominal-converted by the edition's own GDP price index) — **Arm K at base 2023 is unblocked**; and `hindcast_asknown_aeo2021` was **corrected** (its old values matched no basis of the AEO2021 series) and cited. Trap: `low/mid/high` start at 2023, and `_hold_flat_extrapolate` holds at the *earliest* knot when no earlier one exists — a pre-2023 year on `mid` silently returns the 2023 value ($2.54 vs 2021 actual $3.91, ~35 % wrong) with no warning. | **FH-3** (values), **FH-1** (guard) |
-| 8 | **Fuel — coal / oil** | DISCLOSE | Both trajectory families start **2025**, so `growth_ratio` degenerates to 1.0 and every year ≤2025 resolves to flat `COAL_PRICE_BASE[iso]` / `OIL_PRICE_PER_MMBTU`. Resolves; carries zero historic signal. **FH-3 2026-08-02: the AEO2021/AEO2023 coal + oil series ARE landed** (same raw CSVs as the gas pull, cited) — but the degeneracy is a *mechanism* gap, not a data gap: adding pre-2025 knots to `COAL_PRICE_TRAJECTORIES` would move `anchor_year` and rescale every forecast year 2026-2050 (a default change FH-3 may not make). Needs a `hindcast_asknown_*` coal/oil path + selector, mirroring gas. **DISCLOSE line and the landed series: `docs/handoffs/fh-3-asknown-driver-vintages-2026-08.md` §6.** | ~~FH-3~~ → FH-2 (mechanism) |
+| 8 | **Fuel — coal / oil** | DISCLOSE | Both trajectory families start **2025**, so `growth_ratio` degenerates to 1.0 and every year ≤2025 resolves to flat `COAL_PRICE_BASE[iso]` / `OIL_PRICE_PER_MMBTU`. Resolves; carries zero historic signal. **FH-3 2026-08-02: the AEO2021/AEO2023 coal + oil series ARE landed** (same raw CSVs as the gas pull, cited) — but the degeneracy is a *mechanism* gap, not a data gap: adding pre-2025 knots to `COAL_PRICE_TRAJECTORIES` would move `anchor_year` and rescale every forecast year 2026-2050 (a default change FH-3 may not make). Needs a `hindcast_asknown_*` coal/oil path + selector, mirroring gas. **DISCLOSE line and the landed series: `docs/records/forecast/fh-3-asknown-driver-vintages-2026-08.md` §6.** | ~~FH-3~~ → FH-2 (mechanism) |
 | 9 | **Fuel — nuclear / basis** | RESOLVES | Nuclear historical series covers 2006–2024. `GAS_BASIS_DIFFERENTIAL` is a year-invariant per-ISO scalar — resolves for any year, but was derived from 2023–2025 receipts, so applying it to 2021 is an as-of violation in spirit. Disclose. | — |
 | 10 | **Renewable CF** | PARTIAL | Pinned to `weather_year` (`runner.py:531`), same pool bound as #5. `vintage_capacity_ramp` scales to EIA-860 COD dates and honours the active vintage. | — |
 | 11 | **Hydro** | **LEAK** | `forecast_monthly_hydro` is the correct forward analogue (climatology, not measured level) but `HYDRO_CLIMATOLOGY_YEARS = (2021,…,2025)` is fixed — a 2021-base run builds its climatology from four *future* years, and the window **includes quarantined 2022**. The fix is caller-side: `climatology_years` is already a parameter (`data/hydro.py:214-217`). | **FH-1** |
@@ -201,7 +201,7 @@ short disclose list (#8 coal/oil flat, #9 basis vintage, #14 policy edge-hold). 
 architecturally missing — which is why this program is tractable.
 
 > **FH-2 UPDATE 2026-08-02 — rows 6 / 13 / 14.** Evidence:
-> `docs/handoffs/fh-2-as-of-driver-plumbing-2026-08.md`.
+> `docs/records/forecast/fh-2-as-of-driver-plumbing-2026-08.md`.
 >
 > * **Row 6 — mechanism CLOSED, values pending.** `DEMAND_GROWTH_RATES_VINTAGES`
 >   (`{as_of_year: {iso: {low|mid|high: {near, long}}}}`) + `ScenarioConfig.demand_growth_vintage`
@@ -289,7 +289,7 @@ Read (beyond the implicit set): docs/hindcast-forward-plan-2026-07.md §1.2, §2
 build_config, assert_forward_drivers, assert_pipeline_from_vintage);
 src/market_sim/config/scenarios.py::is_crossover_forward_year (the seam — read
 its docstring, it already specifies this behaviour); scripts/lib/holdout_policy.py;
-docs/handoffs/ff-t1-gate-2026-07.md §4.2-4.3 (the I6 over-retirement property).
+docs/records/forecast/ff-t1-gate-2026-07.md §4.2-4.3 (the I6 over-retirement property).
 
 1. HARNESS MODE. Add --forward-from-base to run_capacity_hindcast.py: sets
    crossover_forward_year = start_year so EVERY solve year runs the forward
@@ -427,7 +427,7 @@ stop.
 STATUS 2026-08-02: DO NOT DISPATCH. FH-1 merged and the §W1-X bump is applied,
 but the §3.3 gate FAILED — the I6 over-retirement REPRODUCES at the T1-FF
 posture (26.8 % of prior thermal in 2025; I6/I7 FAIL, I12 WARN). See §3.3's
-gate-result block and docs/handoffs/fh-1-full-forward-harness-2026-08.md §7.
+gate-result block and docs/records/forecast/fh-1-full-forward-harness-2026-08.md §7.
 The block lifts only when a retirement-lane fix lands AND a re-probe passes.
 
 Read (beyond the implicit set): docs/hindcast-forward-plan-2026-07.md §2, §3.1,

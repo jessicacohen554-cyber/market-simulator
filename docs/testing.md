@@ -139,3 +139,11 @@ Regenerate it from `data/raw` with `python scripts/regenerate_clean.py`
 (`--list` shows the datatypes; pass names to rebuild a slice). Curation tests
 never touch the real tree — they redirect `CLEAN_DIR` via `CleanDirTestCase` /
 `tmp_clean_dir`.
+
+A **solve container** needs only a slice: `python scripts/regenerate_clean.py
+--solve-profile <ISO>` (or `all`; `--with-forecast` adds capacity-evolution
+inputs) builds just the datatypes the backcast solve reads from `data/clean`
+with no raw fallback — ~45 s instead of the 39–95 min full rebuild. It is
+incremental: a datatype whose `.manifest.json` key is unchanged is kept unless
+`--force`. Registry, manifest key and timings: `docs/clean-data-profiles.md`;
+tests: `tests/curation/test_clean_profiles.py`.

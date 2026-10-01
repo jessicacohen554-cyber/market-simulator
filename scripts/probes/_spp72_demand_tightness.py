@@ -1,7 +1,7 @@
 """SPP-72 (card R-bf): is the model's own demand tight in the hours the market priced highest?
 
 Zero-LP measurement, pre-registered in
-``docs/handoffs/PRECOMMIT-spp-72-demand-tightness-2026-09-22.md`` (pushed before any number was
+``docs/records/spp/PRECOMMIT-spp-72-demand-tightness-2026-09-22.md`` (pushed before any number was
 read). For each year: take the top-1 % hours by MEASURED RT price (the C3c benchmark), and
 compare the percentile-within-own-year of the LP's dispatch demand (committed
 ``hourly/system_<year>.parquet``, summed over zones) with that of measured EIA-930 SWPP load

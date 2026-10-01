@@ -1,7 +1,7 @@
 """Tests for the voluntary clean-energy demand row (SCN-WS3b).
 
 Readiness plan 2026-09 §3 WS-3 item 2 / §7 "WS-3b"; the design memo
-``docs/handoffs/voluntary-clean-demand-design-memo-2026-09-05.md`` §2.1, §3,
+``docs/records/misc/voluntary-clean-demand-design-memo-2026-09-05.md`` §2.1, §3,
 §5. One annual volumetric clean-attribute row per ISO-year on the clean-tier
 family (its second consumer after SCN-WS2a's federal CES target row), with an
 all-zone mask, a DC-linked volume read from the run's own demand, and an
@@ -281,7 +281,7 @@ class TestVoluntaryLevels(unittest.TestCase):
         self.assertEqual(VOLUNTARY_COMMITTED_DC_FRACTION["mid"][2026], mid)
 
     def test_wtp_ceiling_endpoints_are_the_cited_rec_range(self):
-        # docs/handoffs/ces-ci-crediting-audit-2026-07.md §5.2: national
+        # docs/records/forecast/ces-ci-crediting-audit-2026-07.md §5.2: national
         # voluntary RECs $2-7/MWh.
         self.assertEqual(VOLUNTARY_WTP_CEILING_USD_PER_MWH["low"], 2.0)
         self.assertEqual(VOLUNTARY_WTP_CEILING_USD_PER_MWH["high"], 7.0)

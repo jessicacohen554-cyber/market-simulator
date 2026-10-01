@@ -5,9 +5,9 @@ Reads only committed artifacts:
     sign gives direction: S dearer => N->S at bound),
   * data/raw/_validation-source/actual_lmp_hourly_zonal_SPP.parquet (RT hubs, model clock),
   * data/raw/spp-binding-constraints RTBM BC files (BINDING/BREACHED rows), grouped with SPP-14's rules
-    (docs/handoffs/spp14/groups.py, copied verbatim via spp53/parse_2325.py) and mapped to the model clock
+    (docs/records/spp/spp14/groups.py, copied verbatim via spp53/parse_2325.py) and mapped to the model clock
     from GMTIntervalEnd (model clock = CST hour-beginning, non-leap 8760; SPP-91 §2 clock note).
-Writes docs/handoffs/spp92/_spp92_seam_probe.json (gitignored-style scratch record) and prints the tables.
+Writes docs/records/spp/spp92/_spp92_seam_probe.json (gitignored-style scratch record) and prints the tables.
 """
 import glob, json, re, sys, zipfile
 import numpy as np, pandas as pd
@@ -18,7 +18,7 @@ R = f"{ROOT}/data/raw/spp-binding-constraints"
 YEARS = range(2019, 2026)
 TOL = 0.01  # $/MWh: dual difference below this = link not at bound (LP degeneracy noise)
 
-# ---- SPP-14 group rules, verbatim (docs/handoffs/spp14/groups.py) --------------------------
+# ---- SPP-14 group rules, verbatim (docs/records/spp/spp14/groups.py) --------------------------
 KANSAS={"WR","SECI","KCPL","MPS","KACY"}; OKLA={"OKGE","WFEC","GRDA"}; OKLA_PLUS=OKLA|{"CSWS"}
 WEST={"WACM","WAUW","PSCO","BHBA","PRPA","BEPM","TSGT","CRCG","WAPA","BLKH","MPC"}
 sl=pd.read_csv(f"{ROOT}/data/raw/spp-planning/SL_to_Pnode_to_Zone_with_Area.csv",dtype=str,usecols=["NODE_AREA"])
@@ -127,7 +127,7 @@ def main():
             })
         res[y] = r
         d.to_parquet(f"{ROOT}/results/calibration/_spp92_seam_hourly_{y}.parquet")
-    json.dump(res, open(f"{ROOT}/docs/handoffs/spp92/_spp92_seam_probe.json", "w"), indent=1)
+    json.dump(res, open(f"{ROOT}/docs/records/spp/spp92/_spp92_seam_probe.json", "w"), indent=1)
     print(pd.DataFrame(res).to_string())
 
 if __name__ == "__main__":

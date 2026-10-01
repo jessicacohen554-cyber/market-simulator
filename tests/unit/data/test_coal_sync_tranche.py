@@ -193,7 +193,7 @@ class TestCommittedTakeorpayRegulated(unittest.TestCase):
     """coal_committed_takeorpay_regulated: the committed-band sunk-contract
     discount scoped by EIA-860 Regulatory Status (RE set) instead of coal
     rank — SOM Table 7's regulated/merchant conduct split
-    (docs/handoffs/miso-coal-conduct-design-2026-07.md)."""
+    (docs/records/miso/miso-coal-conduct-design-2026-07.md)."""
 
     def _committed(self, pc=2832, supply="prb"):
         return Generator(

@@ -1,7 +1,7 @@
 """NWPP-NEXT-2 item 3: does the extended cascade artifact materialize in 2019-2022? ZERO LP.
 
 Reproduces the numbers in
-``docs/handoffs/FINDING-nwppnext2-hydro-cascade-2019-2022-2026-09-25.md``:
+``docs/records/nwpp/FINDING-nwppnext2-hydro-cascade-2019-2022-2026-09-25.md``:
 
 1. **Artifact layer** -- per year, ``load_hydro_cascade("NWPP", y, codes)`` on the
    year's own ``load_hydro_budget`` plant set: does a spec come back, with which

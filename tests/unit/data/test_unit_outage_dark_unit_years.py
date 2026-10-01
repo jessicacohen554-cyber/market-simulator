@@ -4,7 +4,7 @@ The per-unit CAMPD detector skips a unit that never produced in a year, and
 the ``eia923_netzero`` hook works at PLANT grain, so a unit dark all year at a
 running plant was modelled fully available (SOCO: Lindsay Hill CT3, 2024).
 The gate is the REGISTERED channel that selects the ``-perunitdark-`` extract
-(rule 24 ``[R-REGISTRY]``). Evidence: ``docs/handoffs/FINDING-soco-61-2026-09-24.md``.
+(rule 24 ``[R-REGISTRY]``). Evidence: ``docs/records/soco/FINDING-soco-61-2026-09-24.md``.
 """
 
 import importlib.util

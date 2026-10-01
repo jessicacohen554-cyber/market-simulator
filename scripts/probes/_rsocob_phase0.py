@@ -1,6 +1,6 @@
 """R-SOCO-B phase 0 (ZERO LP): per-year census of the three SOCO boundary repairs.
 
-PRECOMMIT: ``docs/handoffs/r-soco/PRECOMMIT-r-soco-b-2026-09-25.md``. One
+PRECOMMIT: ``docs/records/soco/r-soco/PRECOMMIT-r-soco-b-2026-09-25.md``. One
 (year, side) per process, because the loaders are ``lru_cache``d:
 
 * ``post`` — this branch as committed: R1 (2019 ``Total interchange`` sign

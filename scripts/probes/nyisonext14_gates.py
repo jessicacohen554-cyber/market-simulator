@@ -1,6 +1,6 @@
 """NYISO-NEXT-14 G-2 / G-3 and reported diagnostics (ZERO LP), per arm leg.
 
-``docs/PRECOMMIT-nyiso-next14-total-east-cutset-2026-09-30.md`` sec. 5 / 7:
+``docs/records/nyiso/PRECOMMIT-nyiso-next14-total-east-cutset-2026-09-30.md`` sec. 5 / 7:
 
 G-2: in P1 the ``Upstate_West>Capital_Hudson`` link sits at its forward bound
      (flow >= limit_up - 1 MW) in >= 1 % and <= 50 % of hours.
@@ -9,7 +9,7 @@ Reported: the link's binding-hour coincidence with the market's CENTRAL EAST
 binding hours (flow >= 95 % of the posted limit; lift, precision, recall), the
 Capital_Hudson - Upstate_West spread in the link's binding hours vs the measured
 (F,G) - (A-E) DA basis in the market's; hydro vs EIA-923; load-weighted P1 price
-delta vs the keeper by zone. Record: ``results/calibration/_nyisonext14_gates.json``.
+delta vs the keeper by zone. Record: ``results/phase0/nyiso/_nyisonext14_gates.json``.
 """
 
 from __future__ import annotations
@@ -36,7 +36,7 @@ G2_LO, G2_HI, G3_MAX = 0.01, 0.50, 100
 CE_BIND_FRAC = 0.95
 A_E = ["WEST", "GENESE", "CENTRL", "NORTH", "MHK VL"]
 F_G = ["CAPITL", "HUD VL"]
-OUT = CAL / "_nyisonext14_gates.json"
+OUT = CAL.parent / "phase0" / "nyiso" / "_nyisonext14_gates.json"
 
 _spec = importlib.util.spec_from_file_location(
     "p13", REPO / "scripts" / "probes" / "nyisonext13_ch_pricing_phase0.py"

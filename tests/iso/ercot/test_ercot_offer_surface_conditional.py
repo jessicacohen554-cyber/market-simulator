@@ -3,7 +3,7 @@
 Covers :func:`market_sim.data.fleet.build_ercot_offer_surface_conditional_markup`
 — the P1-only additive markup that reprices the gas peak-band UPPER rungs to the
 measured net-load-binned wall in anticipated-tight hours (design:
-``docs/FINDING-ercot-priceshape-2026-07.md`` §5.1 / conclusion #1). Contract:
+``docs/records/ercot/FINDING-ercot-priceshape-2026-07.md`` §5.1 / conclusion #1). Contract:
 
 * flag off / non-ERCOT ⇒ ``None`` (byte-identical P1 — rules 14/26);
 * only gas peak-rung rows (``peak``/``peakN``) move, never other tranches/classes;

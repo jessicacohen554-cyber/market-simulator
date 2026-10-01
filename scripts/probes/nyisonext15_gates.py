@@ -1,6 +1,6 @@
 """NYISO-NEXT-15 G-2 / G-3 / G-4 / G-6 and reported diagnostics (ZERO LP), per arm leg.
 
-``docs/PRECOMMIT-nyiso-next15-landing-band-2026-09-30.md`` sec. 4 / 6:
+``docs/records/nyiso/PRECOMMIT-nyiso-next15-landing-band-2026-09-30.md`` sec. 4 / 6:
 
 G-2: each pooled border link's P1 annual mean flow is within max(3 % of
      |measured|, 25 MW) of its measured P-32 attributed mean.
@@ -12,7 +12,7 @@ Reported: NEXT-14's reported block (coincidence lift, spread, hydro, zonal
 load-weighted price vs the keeper) plus the link's mean flow in the market's
 CE-binding hours vs measured TOTAL EAST. The keeper's network sidecars are read
 from ``--keeper-legs`` (the NEXT-14 leg commits). Record:
-``results/calibration/_nyisonext15_gates.json``.
+``results/phase0/nyiso/_nyisonext15_gates.json``.
 """
 
 from __future__ import annotations
@@ -36,7 +36,7 @@ CAL = REPO / "results" / "calibration"
 KEEP = {2021: "nyisonext14_2021", **{y: "nyisonext14_span" for y in range(2022, 2026)}}
 ZONES = ["Capital_Hudson", "Long_Island", "NYC", "Upstate_West"]
 G2_FRAC, G2_MW, G6_GWH = 0.03, 25.0, 1.0
-OUT = CAL / "_nyisonext15_gates.json"
+OUT = CAL.parent / "phase0" / "nyiso" / "_nyisonext15_gates.json"
 
 _spec = importlib.util.spec_from_file_location(
     "g14", REPO / "scripts" / "probes" / "nyisonext14_gates.py"
