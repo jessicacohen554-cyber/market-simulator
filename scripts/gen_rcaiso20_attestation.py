@@ -1,6 +1,6 @@
 """R-CAISO-20: generate the calibration attestation for the overnight-arm re-solve.
 
-Same logic as ``scripts/gen_rcaiso18_attestation.py`` (carried governance and DOF
+Same logic as the R-CAISO-18 generator (deleted; git history) (carried governance and DOF
 ledger, verified unchanged; C3c exceptions re-measured on the bundle); only the
 attestation text differs, and it DECLARES the owner ruling the arm rests on. Used
 for both R-CAISO-20 composites: the 2022-2025 span (source: the keeper

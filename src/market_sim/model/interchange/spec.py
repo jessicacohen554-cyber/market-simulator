@@ -1876,6 +1876,33 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
     # recorded in most hours; SOCO-56 reconciles the two before arming
     # (the SPP-51 ERCOT-tie precedent), and until then the blocks are off.
     #
+    # RECONCILED, zero LP, by soco-97 (owner card option d, 2026-10-01;
+    # docs/records/soco/r-soco/FINDING-soco-97-interchange-rule14-phase0-2026-10-01.md
+    # §2). The values below are UNCHANGED (still inert); what the reconciliation
+    # establishes, for whoever arms these blocks:
+    #   * DIRECTION — Avg TC is an INTO-SOCO (import) economy capability; the
+    #     study publishes NO export capability. Applied as the symmetric
+    #     bound this field is today, it refuses 7.9-14.2 TWh/yr of metered
+    #     flow (2019-2025); matched to import only, 3.2-5.4 TWh/yr.
+    #   * BOUNDARY — the study's regions are SERVM transport areas, not ties:
+    #     sum per CORRIDOR (Carolinas = DUK+SCEG+SC 1,066; Florida =
+    #     FPL+FPC+TAL 1,387; TVA 478; MISO 2,374). Import-only per corridor
+    #     leaves 0.94-3.66 TWh/yr refused, ALL of it TVA. Zero free parameters.
+    #   * FPL-NORTHWEST (1,164 of SOCO_FPL's 1,317) exists as an interchange
+    #     seam only from the Gulf Power BA exit, 2022-07-13 (ISO_BA_EXITS);
+    #     before it SOCO_FPL is the 153 MW FPL region alone. This single
+    #     un-dated field cannot carry that; arming needs a dated limit.
+    #   * EXPORT SIDE — unpublished. A measured directed-flow envelope (the
+    #     miso_seam_flow_percentile precedent) costs one DOF (rule 21).
+    #   * TVA — OPEN limit-type misalignment (rule 14): Avg TC is economy
+    #     capability net of firm reservations and CBM, EIA-930 is metered flow
+    #     incl. firm PPAs / JOU schedules / loop flow (imports to 3,150 MW).
+    #     No public TTC reachable (SOCO OASIS fails TLS via the proxy).
+    #   * STRUCTURE — phase 0 measured that SOCO's flows do not follow lambda
+    #     spreads (r -0.44..+0.40 on every seam and year; SOCO exports 4-13
+    #     TWh/yr while its lambda sits above TVA's/DEC's): a contract-dominated
+    #     book. Recommendation recorded: do NOT arm as a calibration lever.
+    #
     # ``marginal_heat_rate`` anchors are TIER-3, labelled, default-off:
     #   * SOCO_MISO — MISO-South zonal RT mean over HH + MISO's own basis, the
     #     construction SPP-51 used for the same MISO zone: 27.0420 / 25.1159 /

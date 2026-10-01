@@ -15545,3 +15545,37 @@ probe `scripts/probes/_miso295_coal_study.py`.
 - Side check: the 2022 RT archive ends at 2022-11-11 (documented). The scorer masks C3 to the covered months, so there is no defect.
 
 Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
+
+## miso-296 — 2026-10-01 — C3a 2020 low-load stack (zero LP): the model's low-load margin is gas CC + the seam, the real market's is coal; the gap is the offer level at the margin
+
+Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/records/miso/FINDING-miso296-lowload-stack-2026-10-01.md`;
+probe `scripts/probes/_miso296_lowload_stack.py` → `results/phase0/miso/_miso296_lowload_stack.json`.
+
+**Owner ruling that opened this lane (2026-10-01, miso-295 decision card; miso-295 could not log it):** *"C3a 2020
+low-load stack (Recommended)"*.
+
+- **Where the +11.6 % (+$2.54) lives:** a level shift over load quintiles 1–4 (+$0.67 to +$0.73 each; quintile 5
+  −$0.26); night +$1.09, day +$1.45; hours with actual < $10 only +$0.25. Present every year (quintile 1 +$1.6 to
+  +$7.2); 2020 reads worst because its top-quintile tail deficit is only −$1.0 (2021/22/25: −$9/−$19/−$12).
+- **Who is marginal (IMM SOM Table 1 vs the rebuilt stacks at the keeper's own quantity):** the IMM has coal setting the
+  SMP 47/40/35/24/36/36 % of intervals (2019–2024), "generally in off-peak hours"; the model's all-hours coal share is
+  42/25/37/19/21/20/28 % and its low-load (quintile 1) coal share 14/7/38/35/10/8/22 % — gas CC 50–67 % and the seam
+  ladders 12–28 % hold the low-load margin, and coal's model share rises with load.
+- **What the marginal offer is:** at the CC_REGULAR econ margin the EIA-923 fuel print sits $0.27–0.39/MMBtu (2019–21)
+  and $0.64–0.84 (2023–25) over the Chicago Citygate flow-day hub = $2.0–6.0/MWh of a $3.5–5.8 bid-minus-actual gap
+  (2020: $2.57 of $3.66). Startup markup at the low-load margin is zero every year.
+- **Why coal is not marginal:** the keeper's coal offer curve is mustrun ~$5 + committed ~$9 (take-or-pay discount) then
+  econ at ~$30–37 (HR 12.6–13.0 × delivered + $4.50 + the ×1.10 lift), with nothing in between; coal is 94–96 %
+  mustrun+committed at low load in 2019/20/23/24 and its cheapest undispatched econ MW sits $0.02–0.16 above the
+  price. CAMPD coal at those hours is within ±1 GW of the model; CC_REGULAR within ±0.75 GW (2025 +1.3). No dump, no
+  wind curtailment in any hour. Quantity is not the object.
+- **West/Plains congestion (G):** zone error 2020 West +$5.87 / Plains +$4.04 vs East +$0.04; with West+Plains at the
+  rest-of-footprint error C3a 2020 reads +7.2 % (PASS) — ~4.4 of the 11.6 points are the `internal_congestion_split`
+  object (killed 2026-10-01), the other 7.2 the margin level in every zone.
+- **Levers (rules 1/13/14):** the owner-ruled gas form (hub + $0.21 variable transport; `gas_marginal_commodity_pricing`
+  + `gas_variable_transport`, O) removes ~$1.0 (2020) to $4.6 (2024) at the CC margin but alone collapses coal
+  (miso-224 G-3/G-4); the coal econ band multipliers are the authorized price channel (rule 1 (a)–(e)). The sized,
+  admissible candidate is the JOINT arm; no value proposed here (a value chosen from these residuals would be swept).
+  Put to the owner as cards. No cell moves; evidence notes on the two O cells and `seam_neighbour_hourly_ladder` (K).
+
+Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.

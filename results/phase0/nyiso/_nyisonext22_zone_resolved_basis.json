@@ -1,0 +1,257 @@
+{
+ "span": {
+  "run": "2026-10-01-nyisonext21-astoria-hr-span",
+  "fields": {
+   "2022": {
+    "rt_lw": 86.28,
+    "_rt_zone_annual": {
+     "Upstate_West": 60.76,
+     "Capital_Hudson": 106.38,
+     "Lower_Hudson": 94.31,
+     "NYC": 94.2,
+     "Long_Island": 109.16
+    },
+    "da_lw": 82.59,
+    "_da_zone_annual": {
+     "Upstate_West": 58.69,
+     "Capital_Hudson": 101.75,
+     "Lower_Hudson": 89.22,
+     "NYC": 89.68,
+     "Long_Island": 104.86
+    },
+    "hub_rt_lw": 81.12
+   },
+   "2023": {
+    "rt_lw": 33.92,
+    "_rt_zone_annual": {
+     "Upstate_West": 26.77,
+     "Capital_Hudson": 36.8,
+     "Lower_Hudson": 34.76,
+     "NYC": 35.45,
+     "Long_Island": 45.57
+    },
+    "da_lw": 34.4,
+    "_da_zone_annual": {
+     "Upstate_West": 27.48,
+     "Capital_Hudson": 38.73,
+     "Lower_Hudson": 35.72,
+     "NYC": 35.59,
+     "Long_Island": 44.61
+    },
+    "hub_rt_lw": 32.25
+   },
+   "2024": {
+    "rt_lw": 39.57,
+    "_rt_zone_annual": {
+     "Upstate_West": 34.69,
+     "Capital_Hudson": 40.0,
+     "Lower_Hudson": 40.08,
+     "NYC": 41.62,
+     "Long_Island": 46.63
+    },
+    "da_lw": 39.99,
+    "_da_zone_annual": {
+     "Upstate_West": 35.15,
+     "Capital_Hudson": 41.32,
+     "Lower_Hudson": 40.84,
+     "NYC": 41.32,
+     "Long_Island": 47.69
+    },
+    "hub_rt_lw": 38.12
+   },
+   "2025": {
+    "rt_lw": 69.23,
+    "_rt_zone_annual": {
+     "Upstate_West": 59.84,
+     "Capital_Hudson": 70.97,
+     "Lower_Hudson": 71.36,
+     "NYC": 73.11,
+     "Long_Island": 81.15
+    },
+    "da_lw": 67.26,
+    "_da_zone_annual": {
+     "Upstate_West": 59.78,
+     "Capital_Hudson": 72.11,
+     "Lower_Hudson": 69.2,
+     "NYC": 69.34,
+     "Long_Island": 75.47
+    },
+    "hub_rt_lw": 66.43
+   }
+  },
+  "base": {
+   "determination": "CALIBRATED",
+   "reasons": [
+    "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+   ],
+   "rows": {
+    "price_mean 2022": [
+     "PASS",
+     "+3.8%",
+     84.22,
+     81.12
+    ],
+    "price_mean 2023": [
+     "PASS",
+     "+6.5%",
+     34.33,
+     32.25
+    ],
+    "price_mean 2024": [
+     "PASS",
+     "-0.3%",
+     38.0,
+     38.12
+    ],
+    "price_mean 2025": [
+     "PASS",
+     "-7.9%",
+     61.18,
+     66.43
+    ],
+    "price_shape 2022": [
+     "PASS",
+     "NRMSE 0.161",
+     0.161,
+     null
+    ],
+    "price_shape 2023": [
+     "PASS",
+     "NRMSE 0.138",
+     0.138,
+     null
+    ],
+    "price_shape 2024": [
+     "PASS",
+     "NRMSE 0.118",
+     0.118,
+     null
+    ],
+    "price_shape 2025": [
+     "PASS",
+     "NRMSE 0.143",
+     0.143,
+     null
+    ]
+   }
+  },
+  "zone_resolved": {
+   "determination": "NOT-YET",
+   "reasons": [
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_tail"
+   ],
+   "rows": {
+    "price_mean 2022": [
+     "PASS",
+     "-2.4%",
+     84.22,
+     86.28
+    ],
+    "price_mean 2023": [
+     "PASS",
+     "+1.2%",
+     34.33,
+     33.92
+    ],
+    "price_mean 2024": [
+     "PASS",
+     "-4.0%",
+     38.0,
+     39.57
+    ],
+    "price_mean 2025": [
+     "FAIL",
+     "-11.6%",
+     61.18,
+     69.23
+    ],
+    "price_shape 2022": [
+     "PASS",
+     "NRMSE 0.155",
+     0.155,
+     null
+    ],
+    "price_shape 2023": [
+     "PASS",
+     "NRMSE 0.122",
+     0.122,
+     null
+    ],
+    "price_shape 2024": [
+     "PASS",
+     "NRMSE 0.113",
+     0.113,
+     null
+    ],
+    "price_shape 2025": [
+     "PASS",
+     "NRMSE 0.181",
+     0.181,
+     null
+    ]
+   }
+  }
+ },
+ "2021": {
+  "run": "2026-10-01-nyisonext21-astoria-hr-2021",
+  "fields": {
+   "2021": {
+    "rt_lw": 42.15,
+    "_rt_zone_annual": {
+     "Upstate_West": 29.94,
+     "Capital_Hudson": 46.15,
+     "Lower_Hudson": 43.62,
+     "NYC": 44.87,
+     "Long_Island": 62.86
+    },
+    "da_lw": 41.56,
+    "_da_zone_annual": {
+     "Upstate_West": 29.93,
+     "Capital_Hudson": 46.27,
+     "Lower_Hudson": 43.39,
+     "NYC": 44.39,
+     "Long_Island": 59.59
+    },
+    "hub_rt_lw": 39.26
+   }
+  },
+  "base": {
+   "determination": "NOT-YET",
+   "reasons": [
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean"
+   ],
+   "rows": {
+    "price_mean 2021": [
+     "FAIL",
+     "+10.4%",
+     43.36,
+     39.26
+    ],
+    "price_shape 2021": [
+     "PASS",
+     "NRMSE 0.155",
+     0.155,
+     null
+    ]
+   }
+  },
+  "zone_resolved": {
+   "determination": "CALIBRATED",
+   "reasons": [],
+   "rows": {
+    "price_mean 2021": [
+     "PASS",
+     "+2.9%",
+     43.36,
+     42.15
+    ],
+    "price_shape 2021": [
+     "PASS",
+     "NRMSE 0.108",
+     0.108,
+     null
+    ]
+   }
+  }
+ }
+}
