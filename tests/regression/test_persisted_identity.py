@@ -820,11 +820,14 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   EGRID_CC_HR_PHYSICAL_FLOOR (+1 row everywhere, declared at its live hash)
 #   landed without advancing any pin: PJM's pin carried it, 226 -> 227. Main
 #   then removed that row (no value moved), so PJM returns to 226 rows.
+#   Merged soco-96, whose seven unscoped CAMPD/Part-75 CO2 constants were
+#   declared at their live hash without advancing any pin (no value moved):
+#   PJM's pin carries them, 226 -> 233; the other ISOs' pins are that lane's.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
     "ERCOT": ("bdfc68c278f7eff8", 240),
     "CAISO": ("289c8c383a78f4d9", 213),
     "MISO": ("52d6fa6795d5e276", 220),
-    "PJM": ("7f0e7318aac915b0", 226),
+    "PJM": ("254a954525afd690", 233),
     "NYISO": ("a64df99bd6857677", 221),
     "NEISO": ("e082dd92b5c22723", 206),
 }
