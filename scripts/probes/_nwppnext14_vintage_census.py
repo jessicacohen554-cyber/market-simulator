@@ -46,8 +46,9 @@ for p in (str(REPO), str(REPO / "src")):
 BUNDLE = REPO / "results/calibration/nwppnext13pu_span"
 GEN = REPO / "data/raw/eia-923-generation-fuel/eia923_generation_fuel_2019_2025.csv"
 VARIANTS = {"B": {}, "PU": {"campd_per_unit_vintage_denominator": True}}
-# --flags overrides the armed set (NWPP-NEXT-14 also censuses
-# cc_subfloor_eia923_heat_rates, alone and with the vintage denominator).
+# --flags overrides the armed set. (It also censused cc_subfloor_eia923_heat_rates,
+# a field DELETED at the NWPP-NEXT-14 reconciliation in favour of the solved
+# eia923_cc_family_heat_rates, rules 19 / 26; that --flags value no longer parses.)
 
 
 def _frame(st: dict) -> pd.DataFrame:

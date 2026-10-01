@@ -1,5 +1,5 @@
 {
  "iso": "NWPP",
- "keeper": "2026-09-30-nwppnext13-per-unit-attribution",
- "note": "NWPP keeper #18 (NWPP-NEXT-13): keeper #17 + CAMPD per-unit attribution (campd_per_unit_attribution; Clark 2322 / Silverhawk 55841 GT-peaker windows no longer derate CC_REGULAR, whose available energy sat below its own EIA-923 generation; per-unit tranche rows give Jim Bridger a measured coal row; owner decision card 2026-09-30 'Promote + prune #17', on structural integrity with the C4 coal 2023 regression 0.695 -> 0.662 reported)"
+ "keeper": "2026-09-30-nwppnext14-clark-hr-bridger",
+ "note": "NWPP keeper #19 (NWPP-NEXT-14): keeper #18 + eia923_cc_family_heat_rates (Clark 2322's CC rows loaded an impossible eGRID 3.007 MMBtu/MWh; the plant's own EIA-923 CC-family rate 9.0-9.6 takes Clark CC from 3.69 to 0.41-1.21 TWh/yr against EIA-923 0.43-0.86) + campd_unit_fuel_split composed with per-unit attribution (Jim Bridger's coal row on each year's own EIA-860 vintage bin); owner decision card 2026-09-30 'Promote + prune #18', on structural integrity (rule 14), 0 of 161 records change status, C4 coal 2023 0.662 -> 0.670 still FAIL, every regression reported in RESULT-nwppnext14"
 }
