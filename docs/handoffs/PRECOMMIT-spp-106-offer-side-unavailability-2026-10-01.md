@@ -130,3 +130,24 @@ Audit `aeea53ac → c17c91f1` on the rule-29(b) path set:
 | soco-96 `91a525f3` … `c17c91f1` | `scenarios.py`, `constants.py`, `paths.py`, `solve_surface_declared.py`, `fuel/__init__.py`, `fuel/dual_fuel.py`, `fuel/resolve.py`, `run_calibration.py` | INERT | `dual_fuel_measured_oil_burn`: default False, absent from SPP's recipe. `apply_measured_oil_burn_pricing` returns None when its flag is off, and `apply_dual_fuel_pricing` then runs with `skip_cells=None`, exactly as before. The new constants are declared solve-surface names, which are dropped at their frozen declaration |
 
 All rows are INERT, so the committed keeper remains the control.
+
+## Addendum C (2026-10-01, written before any leg returned): the pin, and G-DRIFT to it
+
+PR #6954 merged as **`392633a12d3df81c3bab2cf80a74ee5e2feffeea`**, and all seven shards are pinned to it.
+Before the merge, `main` advanced over `c17c91f1 → 392633a1^1`. Audit on the rule-29(b) path set:
+
+| commit(s) | files | verdict | reason |
+|---|---|---|---|
+| PJM-NEXT-16 (`3a7d8006` … `4acd4641`) | `constants.py` (`ISO_BA_JOINS` PJM OVEC, `PJM_GAS_BRIDGE_*`), `scenarios.py`, `pipeline/commitment.py`, `pipeline/year.py`, `runner.py`, `run_calibration*.py`, `solve_surface_declared.py` | INERT | `pjm_gas_commitment_bridge`: default False, and `build_pjm_gas_bridge_p1_prep` returns None unless `iso == "PJM"`. The OVEC join is keyed `"PJM"` |
+| NWPP-NEXT-15 (`c361efe0`, `10b20574`, …) | `fuel/captive_coal.py`, `fuel/plant_prices.py`, `outages.py`, `fleet/arrays.py`, `fleet/floors.py`, `floor_mechanisms.py`, `scenarios.py`, `paths.py`, `run_calibration*.py` | INERT | `coal_captive_marginal_fuel_price` and `unit_outage_dispatched_bin_live_denominator`: both default False, absent from SPP's recipe. `dispatched_bin_live_year` returns None when off, so `lp_bin_capacity_index(..., live_year=None)` is unchanged. The re-ordered `wefor_residual` test is `and not (False and …)` when off |
+| miso-294 / miso-295 / nyiso-next19–21 / R-CAISO-24–26 | `_validation-source/actual_lmp.json` (35 paths, all `/MISO/...`) and docs | INERT | no SPP key changed; no solve-path code |
+
+All rows are INERT, so the committed keeper remains the control. At the pin, the shard check was re-run on
+the four synthetic legs with the same outcomes as §8, and the pinned input SHAs match (`92ed67de`,
+`37ce73e9`).
+
+Shard sessions (launched 2026-10-01T02:29Z, one message):
+
+| year | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|---|
+| session | `01FGKEoE…` | `01DPV2NG…` | `01BF1aJk…` | `01EwGCZz…` | `01PQs9ez…` | `01H1r4Eg…` | `01TvjsKJ…` |
