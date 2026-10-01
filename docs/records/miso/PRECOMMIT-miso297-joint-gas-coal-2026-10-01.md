@@ -135,7 +135,25 @@ own-plant rung. No re-derive (rule 23: no source-data update).
 
 ## 4. G-DRIFT — keeper legs `8f765fef` vs this SHA (rule 29(b))
 
-{{GDRIFT_TABLE}}
+Full hunk table: `docs/records/miso/GDRIFT-miso297-keeper-8f765fef-2026-10-01.md` (190 files in scope, +94,930 / −1,466;
+81,217 of the additions are one ERCOT CSV). **Every hunk is INERT for a `replay_keeper.py` replay of the MISO 2019–2025
+recipe; 0 LIVE.** Form 4 holds: the committed keeper is the control.
+
+| hunk group | class | reason |
+|---|---|---|
+| `ScenarioConfig`: 37 new fields, all `False`, absent from the recipe; 0 changed defaults; `nyiso_firm_imports` removed (MISO meta records `None`, rule-26 inert list) | INERT | AST diff of the class, keeper vs HEAD |
+| `constants.py` +505/−88: new names; `ISO_BA_JOINS` gains a PJM key; `ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR` | INERT | per-ISO dicts with no MISO row / ERCOT-tokened; `solve_surface_register.py --diff 8f765fef HEAD`: 19 names added (declared, move no key), MISO moved rows **0** |
+| `lp/rows.py` coal-yard cumulative rows; `fleet/floors.py` net-load drag targets; dispatched-bin rosters; outage accumulator; `_bridge_floored_fleet`; `campd_fuel_split_selector`; `import_node_links("MISO")`; `_joining_ba_generators`; `apply_dual_fuel_pricing(skip_cells=None)`; `shed_penalty_voll`; `apply_cc_committed_offer_margin`; the four `p1_fleet_prep` chains | INERT | each traced to a byte-identical default branch under the keeper recipe (`n_cp_months == 1`, `k_plant={}`, `live_year=None`, `dated_bin_shares=None`, bool path, unchanged tail, same list, `[]`, early return, `miso_gas_ecomin_online_floor` off) |
+| SPP-102/104/105/106, PJM-NEXT-7/8/16/17, NYISO-NEXT-11/15/17/23/25, R-CAISO-11/13/17/18/20, R-ERCOT-12/14/18/19/20/22/23, soco-96 | INERT | gated `iso == "<other>"` |
+| forecast-only (capacity evolution, ensemble, uncertainty, structural prior), exports, argparse/tooling, ≈90 citation-only files (`docs/handoffs/…` → `docs/records/…`) | INERT | not on the backcast solve path / zero non-comment lines |
+| `scripts/lib` (42 files, 10 new modules) | INERT | none imported by the three solve scripts (`run_calibration_full.py` imports only `bundle_io` and `solve_container`, both unchanged) |
+| `data/raw/reference` (9 files): ERCOT custom bins / registry / DAM crosswalk, SOCO state weights, NWPP plant basis, NYISO solar split, PJM coal replacement + gas transport | INERT | each reader keyed on its own ISO |
+| `data/raw/_validation-source/actual_lmp.json` MISO `rt_lw*` / `da_lw*` / `src_lw` (miso-294 zone-resolved basis) | INERT for the solve | read by the scorer, never by the replay; `actual_lmp_hourly_MISO.parquet` unchanged |
+| **This arm's own fields and data**: `apply_miso_gas_marginal_commodity`, `_miso_gas_variable_transport_vector`, both field declarations, the transport table + pool, the zone→hub map, both daily hub series | byte-identical | AST-sliced sha256 equal; `git diff --stat` empty |
+
+Record-only differences a HEAD replay shows (not solve-affecting): `solve_surface.fingerprint`/`rows` (shared names added to
+the projected set; the key's `moved` set is the keeper's seven), `meta.json` gains four `None` kwargs and loses
+`nyiso_firm_imports`, `scenario_config` gains the 37 `False` fields.
 
 ## 5. Predictions and kill rules (fixed now; directions only, never a value selected on them)
 
