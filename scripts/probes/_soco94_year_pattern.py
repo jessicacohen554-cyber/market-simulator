@@ -3,7 +3,7 @@ the gas year (over at HH $2.0-2.6 in 2019/2020, under at $6.45 in 2022)?
 
 Owner ruling 2026-09-30 (soco-93 card "Next lane"): "C3a year-pattern diagnosis".
 Rule 32 ``[R-SHARD]`` (a): this never solves. Per year it does one ``fleet_only``
-rebuild of the keeper recipe (``results/calibration/soco93_span``, the soco-89/91
+rebuild of the keeper recipe (``results/calibration/soco96_span``, the soco-89/91
 construction) and reads the keeper's committed hourly sidecars and Southern's FERC-714
 lambda on the bench's dense CST 8760.
 

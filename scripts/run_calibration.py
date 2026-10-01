@@ -98,6 +98,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_caiso_zonal_gas_basis,
     apply_coal_supply_pricing,
     apply_dual_fuel_pricing,
+    apply_measured_oil_burn_pricing,
     apply_ercot_west_netload_gas_shape,
     apply_ercot_zonal_gas_basis,
     apply_hub_basis_overlay,
@@ -5247,7 +5248,20 @@ def run_year(
     # Dual-fuel switching last, so the oil-parity min sees the final delivered
     # gas price — the AGT-hub winter spot, so the gas->oil switch trips on cold
     # days (NEISO) — not the per-plant monthly cost alone (PJM).
-    apply_dual_fuel_pricing(fuel_prices, fleet_arrays, config, year)
+    # soco-96 measured oil burn (backcast-only, default off) first: the
+    # plant-day MEASURED gas/oil mix on the final delivered gas price; its
+    # written mask is the switch's skip_cells, so on a covered plant-day the
+    # measured mix REPLACES min(gas, oil) (rule 19). None when inert, which
+    # keeps the dual-fuel call byte-identical. Mirrors resolve_fuel_prices.
+    oil_burn_cells = apply_measured_oil_burn_pricing(
+        fuel_prices, fleet_arrays, config, year
+    )
+    if oil_burn_cells is None:
+        apply_dual_fuel_pricing(fuel_prices, fleet_arrays, config, year)
+    else:
+        apply_dual_fuel_pricing(
+            fuel_prices, fleet_arrays, config, year, skip_cells=oil_burn_cells
+        )
     # PJM DA virtual-bid layer: the pseudo-units' hourly bid prices are their
     # fuel_prices rows (heat_rate 1.0, vom 0) — written LAST among the
     # fuel-price appliers so no gas/coal overlay can touch them.

@@ -51,7 +51,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 BUNDLE = (
-    REPO / "results/calibration/soco93_span"
+    REPO / "results/calibration/soco96_span"
 )  # repointed soco-93 (rule 35 prune of soco92_span)
 DEFAULT_OUT = REPO / "results/calibration/_soco92/gdrift_input_identity.json"
 YEARS = (2019, 2020, 2021, 2022, 2023, 2024, 2025)

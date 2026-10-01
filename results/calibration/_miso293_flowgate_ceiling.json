@@ -1,0 +1,134 @@
+{
+ "2022": {
+  "hours": 7296,
+  "indiana_wedge_mcc_mlc": 8.72,
+  "indiana_mcc": 5.97,
+  "zone_ceiling_mcc_mlc": -1.64,
+  "zone_ceiling_mcc": -1.42,
+  "hub_mcc_mlc_lw": {
+   "MINN.HUB": -18.29,
+   "ILLINOIS.HUB": 1.15,
+   "INDIANA.HUB": 8.72,
+   "MICHIGAN.HUB": 4.22,
+   "ARKANSAS.HUB": -3.81,
+   "LOUISIANA.HUB": -0.4,
+   "MS.HUB": -1.83,
+   "TEXAS.HUB": -1.15
+  },
+  "model_scored_price_lw": 59.98,
+  "actual_rt_lw": 73.45,
+  "mcc_rank1_share": 0.524,
+  "mcc_rank2_cum": 0.794,
+  "mcc_v1_loadings": {
+   "MINN.HUB": -0.084,
+   "ILLINOIS.HUB": 0.059,
+   "INDIANA.HUB": 0.068,
+   "MICHIGAN.HUB": 0.047,
+   "ARKANSAS.HUB": -0.483,
+   "LOUISIANA.HUB": -0.488,
+   "MS.HUB": -0.483,
+   "TEXAS.HUB": -0.528
+  },
+  "spread_indiana_minus_minn_mcc": 19.45,
+  "spread_indiana_minus_illinois_mcc": 4.59
+ },
+ "2023": {
+  "hours": 8760,
+  "indiana_wedge_mcc_mlc": 2.35,
+  "indiana_mcc": 1.65,
+  "zone_ceiling_mcc_mlc": -0.31,
+  "zone_ceiling_mcc": -0.22,
+  "hub_mcc_mlc_lw": {
+   "MINN.HUB": -0.16,
+   "ILLINOIS.HUB": -1.21,
+   "INDIANA.HUB": 2.35,
+   "MICHIGAN.HUB": 0.48,
+   "ARKANSAS.HUB": -3.69,
+   "LOUISIANA.HUB": -1.73,
+   "MS.HUB": -3.23,
+   "TEXAS.HUB": -1.08
+  },
+  "model_scored_price_lw": 32.74,
+  "actual_rt_lw": 32.85,
+  "mcc_rank1_share": 0.596,
+  "mcc_rank2_cum": 0.794,
+  "mcc_v1_loadings": {
+   "MINN.HUB": -0.165,
+   "ILLINOIS.HUB": 0.024,
+   "INDIANA.HUB": 0.025,
+   "MICHIGAN.HUB": 0.035,
+   "ARKANSAS.HUB": 0.444,
+   "LOUISIANA.HUB": 0.534,
+   "MS.HUB": 0.448,
+   "TEXAS.HUB": 0.536
+  },
+  "spread_indiana_minus_minn_mcc": 1.11,
+  "spread_indiana_minus_illinois_mcc": 2.28
+ },
+ "2024": {
+  "hours": 8760,
+  "indiana_wedge_mcc_mlc": 2.28,
+  "indiana_mcc": 1.5,
+  "zone_ceiling_mcc_mlc": -0.73,
+  "zone_ceiling_mcc": -0.61,
+  "hub_mcc_mlc_lw": {
+   "MINN.HUB": -1.03,
+   "ILLINOIS.HUB": -1.99,
+   "INDIANA.HUB": 2.28,
+   "MICHIGAN.HUB": 1.23,
+   "ARKANSAS.HUB": -4.98,
+   "LOUISIANA.HUB": -2.75,
+   "MS.HUB": -4.54,
+   "TEXAS.HUB": -2.86
+  },
+  "model_scored_price_lw": 30.78,
+  "actual_rt_lw": 32.3,
+  "mcc_rank1_share": 0.696,
+  "mcc_rank2_cum": 0.814,
+  "mcc_v1_loadings": {
+   "MINN.HUB": -0.07,
+   "ILLINOIS.HUB": 0.007,
+   "INDIANA.HUB": 0.004,
+   "MICHIGAN.HUB": -0.041,
+   "ARKANSAS.HUB": 0.46,
+   "LOUISIANA.HUB": 0.504,
+   "MS.HUB": 0.446,
+   "TEXAS.HUB": 0.573
+  },
+  "spread_indiana_minus_minn_mcc": 1.63,
+  "spread_indiana_minus_illinois_mcc": 2.85
+ },
+ "2025": {
+  "hours": 8760,
+  "indiana_wedge_mcc_mlc": 2.44,
+  "indiana_mcc": 1.54,
+  "zone_ceiling_mcc_mlc": -0.9,
+  "zone_ceiling_mcc": -0.83,
+  "hub_mcc_mlc_lw": {
+   "MINN.HUB": 0.18,
+   "ILLINOIS.HUB": -2.98,
+   "INDIANA.HUB": 2.44,
+   "MICHIGAN.HUB": 2.51,
+   "ARKANSAS.HUB": -9.17,
+   "LOUISIANA.HUB": -1.64,
+   "MS.HUB": -8.21,
+   "TEXAS.HUB": -5.63
+  },
+  "model_scored_price_lw": 41.67,
+  "actual_rt_lw": 45.46,
+  "mcc_rank1_share": 0.595,
+  "mcc_rank2_cum": 0.894,
+  "mcc_v1_loadings": {
+   "MINN.HUB": 0.125,
+   "ILLINOIS.HUB": 0.136,
+   "INDIANA.HUB": 0.14,
+   "MICHIGAN.HUB": 0.144,
+   "ARKANSAS.HUB": -0.005,
+   "LOUISIANA.HUB": -0.947,
+   "MS.HUB": 0.131,
+   "TEXAS.HUB": -0.106
+  },
+  "spread_indiana_minus_minn_mcc": 1.0,
+  "spread_indiana_minus_illinois_mcc": 3.32
+ }
+}
