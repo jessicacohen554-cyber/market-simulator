@@ -29,6 +29,7 @@ import base64
 import gzip
 import json
 import re
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -111,7 +112,14 @@ def _bucket(gap: dict, cls: np.ndarray, labels) -> dict:
 
 
 def main() -> None:
-    """Census every year; write the JSON artifact."""
+    """Census every year; write the JSON artifact.
+
+    Optional argv ``<run.js> <hourly dir> <out.json>`` points the census at another
+    registered run (PJM-NEXT-16 arm B's B1 measurement); default is the keeper.
+    """
+    global RUN, HOURLY, OUT
+    if len(sys.argv) == 4:
+        RUN, HOURLY, OUT = (Path(a) for a in sys.argv[1:])
     pay = {int(y): rec["plants"] for y, rec in _payload(RUN)["years"].items()}
     res = {
         "what": "PJM-NEXT-16 card 1 - CC loading decomposition. ZERO LP.",

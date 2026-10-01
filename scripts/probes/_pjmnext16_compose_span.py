@@ -100,6 +100,10 @@ def check_recipes(legs: dict[str, list[int]]) -> None:
         # measured inert on this keeper in every year; the keeper records True.
         if k.get("retiree_cems_cap") is True and "retiree_cems_cap" not in a:
             diff.discard("retiree_cems_cap")
+        # nyiso_firm_imports was RETIRED from ScenarioConfig after the keeper's
+        # solve (a NYISO-only field; replay_keeper drops it, PRECOMMIT §4).
+        if "nyiso_firm_imports" not in a:
+            diff.discard("nyiso_firm_imports")
         # Fields added to ScenarioConfig after the keeper was solved are absent
         # from its record; a leg holding the dataclass DEFAULT for them is the
         # same recipe (rule 24: a new field is default-off and key-dropped).

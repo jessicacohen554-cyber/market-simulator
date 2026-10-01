@@ -21,7 +21,10 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 KEEPER = REPO / "results" / "calibration" / "pjmnext8_xf_span"
-PINNED = "6d4c77491e469e06f3a9c0e3d4f2b7c37b15fba3"
+PINNED_BY_ARM = {
+    "A": "6d4c77491e469e06f3a9c0e3d4f2b7c37b15fba3",
+    "B": "42e87bcde2621cdd171b94b8076dac6108fa2771",
+}
 PRECOMMIT = "docs/PRECOMMIT-pjm-next-16-2026-09-30.md"
 OVEC = (
     "ISO_BA_JOINS['PJM'] = {'OVEC': (2019, 1)} (Clifty Creek 983, Kyger Creek 2876; "
@@ -48,7 +51,7 @@ def build(arm: str) -> dict:
     g["attested_by"] = (
         f"PJM-NEXT-16 orchestrator (2026-09-30), arm {arm}. The PJM-NEXT-8 keeper recipe "
         "2026-09-28-pjm-next8-exitfix (results/calibration/pjmnext8_xf_span) replayed at "
-        f"pinned {PINNED} via scripts/replay_keeper.py{sets}, ONE YEAR PER SHARD "
+        f"pinned {PINNED_BY_ARM[arm]} via scripts/replay_keeper.py{sets}, ONE YEAR PER SHARD "
         "CONTAINER 2019-2025 (rule 36), ZERO LP IN THE PARENT (rule 32(a)), composed at "
         "zero LP by scripts/probes/_pjmnext16_compose_span.py. CONTROL: the committed "
         "keeper bundle (rule 29(b) form 4), validated by a hunk-by-hunk G-DRIFT audit "
