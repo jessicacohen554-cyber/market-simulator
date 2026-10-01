@@ -823,13 +823,21 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   Merged soco-96, whose seven unscoped CAMPD/Part-75 CO2 constants were
 #   declared at their live hash without advancing any pin (no value moved):
 #   PJM's pin carries them, 226 -> 233; the other ISOs' pins are that lane's.
+# 2026-10-01 FIVE ADVANCED (cleanup-D) — NO VALUE MOVED. soco-96 (merged
+#   2026-09-30) declared seven unscoped CAMPD / Part-75 CO2 constants at their
+#   live hash (`--declare-missing`); unscoped names enter EVERY ISO's row set,
+#   so each non-PJM pin grows by 7 rows (PJM's pin already carried them, see
+#   the entry above). `solve_surface_register.py --diff ca84177c HEAD` ->
+#   "1 value(s) moved (ISO_BA_JOINS: PJM), 10 added, 0 removed; per-ISO totals
+#   ERCOT 0, CAISO 0, MISO 0, NYISO 0, NEISO 0". WHAT IT COSTS: nothing
+#   solved; no committed bundle's numbers move.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("bdfc68c278f7eff8", 240),
-    "CAISO": ("289c8c383a78f4d9", 213),
-    "MISO": ("52d6fa6795d5e276", 220),
+    "ERCOT": ("db9e657a21daf536", 247),
+    "CAISO": ("904a25132212fb94", 220),
+    "MISO": ("652b5a171e3f309f", 227),
     "PJM": ("254a954525afd690", 233),
-    "NYISO": ("a64df99bd6857677", 221),
-    "NEISO": ("e082dd92b5c22723", 206),
+    "NYISO": ("167d0afda461f43c", 228),
+    "NEISO": ("d67f9f101209d62f", 213),
 }
 
 

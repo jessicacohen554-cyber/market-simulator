@@ -329,6 +329,24 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "runner wires instead",
         evidence=(_BACKCAST_ORCH,),
     ),
+    ParityDeclaration(
+        fields=("caiso_tac_shares_standard_time",),
+        disposition=BACKCAST_ONLY,
+        why="clock convention for the measured OASIS SLD TAC-area demand "
+        "shares the backcast zonal split reads (R-CAISO-11); its field "
+        "comment states the forecast runner's load_demand sites do not read "
+        "it, and a forecast year has no SLD actuals to share by",
+        evidence=(_BACKCAST_ORCH, "src/market_sim/config/scenarios.py"),
+    ),
+    ParityDeclaration(
+        fields=("caiso_eia930_clock_repair",),
+        disposition=BACKCAST_ONLY,
+        why="repairs the published hour stamps of the EIA-930 CISO extract at "
+        "the frame seam (R-CAISO-13/17; constants.EIA930_CISO_CLOCK_*_WINDOWS_"
+        "UTC) — a measured-data timestamp repair on a historical extract; a "
+        "forecast year reads no EIA-930 extract, so there is nothing to repair",
+        evidence=(_BACKCAST_ORCH, "src/market_sim/data/eia930/frames.py"),
+    ),
     # -- (b) explicitly mode-gated / declared backcast-only ------------------
     ParityDeclaration(
         fields=("carry_operating_mothballs",),

@@ -158,7 +158,7 @@ class TestCcCommittedOfferMargin(unittest.TestCase):
 
     def test_other_classes_are_out_of_scope(self):
         """CT/ST/coal committed rows keep their own mechanisms."""
-        for group in ("CT_PEAKER", "ST_GAS", "COAL", "CT_CHP"):
+        for group in ("CT_PEAKER", "ST_GAS", "COAL_BIT", "CT_CHP"):
             with self.subTest(group=group):
                 mc = _mc([_cc(group=group)], _armed(), ANCHOR)
                 self.assertAlmostEqual(float(mc[0, 0]), HR * ANCHOR + VOM, places=9)
