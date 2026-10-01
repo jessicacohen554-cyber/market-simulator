@@ -188,7 +188,7 @@ sha256 is in `SHA256SUMS.txt`.
 
 Lane **soco-97** added this file on 2026-10-01, under owner ruling soco-97
 option (d), data step 1 of
-`docs/handoffs/r-soco/FINDING-soco-97-interchange-rule14-phase0-2026-10-01.md` §5.
+`docs/records/soco/r-soco/FINDING-soco-97-interchange-rule14-phase0-2026-10-01.md` §5.
 
 **Status: REPORTED-ONLY.** The series feeds **no gate, no scorer and no LP**. A
 neighbour's lambda is a measured *outcome*, so rule 13 `[R-MEASURED]` forbids
