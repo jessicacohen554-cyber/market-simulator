@@ -336,3 +336,67 @@ class PjmEastInterfaceCutTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CurateCaisoTrnsUsageTest(unittest.TestCase):
+    """CAISO spec: OASIS TRNS_USAGE folded parquet -> four series per ITC/dir."""
+
+    def setUp(self):
+        self._tmp = TemporaryDirectory()
+        root = Path(self._tmp.name)
+        self.raw_root = root / "raw"
+        (self.raw_root / "caiso-trns-usage").mkdir(parents=True)
+        self._orig_clean = clean_io.paths.CLEAN_DIR
+        clean_io.paths.CLEAN_DIR = root / "clean"
+
+    def tearDown(self):
+        clean_io.paths.CLEAN_DIR = self._orig_clean
+        self._tmp.cleanup()
+
+    def _write(self, start: str, end: str) -> None:
+        """One ITC, import direction, hourly over the Pacific-local [start, end)."""
+        from scripts.data.fetch_caiso_trns_usage import ITEMS
+
+        hours = pd.date_range(
+            pd.Timestamp(start, tz="America/Los_Angeles"),
+            pd.Timestamp(end, tz="America/Los_Angeles"),
+            freq="h",
+            inclusive="left",
+        ).tz_convert("UTC")
+        w = pd.DataFrame(
+            {
+                "interval_start_utc": hours,
+                "ti_id": "MALIN500_ISL",
+                "ti_constraint_id": "MALIN500_ISL",
+                "direction": "I",
+            }
+        )
+        for item in ITEMS:
+            w[item] = 0.0
+        w["OTC_MW"] = 2667.0
+        w["TTC_MW"] = 3400.0
+        w["MKT_XFER_CAP_MW"] = 2667.0
+        w["ENE_IMPORT_MW"] = 1133.0
+        w.to_parquet(
+            self.raw_root / "caiso-trns-usage" / "caiso_trns_usage_dam_2024.parquet"
+        )
+
+    def test_partial_year_not_invented_spring_forward_filled(self):
+        """Hours before the first observation are ABSENT; only the SF hour is filled."""
+        self._write("2024-03-01", "2025-01-01")
+        written = cur.curate(raw_root=self.raw_root, isos=["CAISO"])
+        self.assertEqual(len(written), 1)
+        validate_clean(written[0])
+        df = pd.read_parquet(written[0])
+        self.assertEqual(
+            sorted(df["interface"].unique()),
+            [f"MALIN500_ISL|I|{t}" for t in ("MTC", "OTC", "TRM", "TTC")],
+        )
+        otc = df[df["interface"] == "MALIN500_ISL|I|OTC"].set_index("hour")
+        # Mar 1 00:00 is hour 1416 on the non-leap clock; nothing before it.
+        self.assertEqual(int(otc.index.min()), 1416)
+        self.assertEqual(len(otc), 8760 - 1416)
+        self.assertTrue(np.allclose(otc["limit_mw"], 2667.0))
+        # Spring-forward (Mar 10 2024 02:00 PT) is the only filled row.
+        self.assertEqual(int((otc["n_source_rows"] == 0).sum()), 1)
+        self.assertTrue(np.allclose(otc["transfer_mw"].dropna(), 1133.0))

@@ -82,6 +82,10 @@ data/raw/pjm-energy-offers/*
 # data/raw/caiso-public-bids/README.md).
 data/raw/caiso-public-bids/*
 !data/raw/caiso-public-bids/README.md
+# CAISO OASIS TRNS_USAGE per-window staging (R-CAISO-30). The folded per-year
+# parquets + README + SHA256SUMS next to it ARE committed: OASIS retention
+# rolls (~39 months), so the fold is the only surviving copy of aged-out months.
+data/raw/caiso-trns-usage/windows/
 
 # MISO annual bc_HIST source mirrors (~20-70 MB raw each; validation layer
 # only, rule 13): refetch with scripts/data/fetch_miso_bc_hist.py (see
