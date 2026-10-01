@@ -15505,3 +15505,21 @@ No frontier.
 
 **Owner rulings (same day):** flowgate program **killed** (`internal_congestion_split` O → G; reopens on RO-1 only);
 zone-resolved C3a/C3b basis **adopted for MISO** (implementation: miso-294); next lane **C3b 2021** (miso-294).
+
+## miso-294 — 2026-10-01 — zone-resolved C3 basis implemented (zero LP); C3b 2021 is the fall coal-for-gas swap
+
+Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/RESULT-miso294-zone-resolved-basis-2026-10-01.md`
+(PRECOMMIT `46d299f1`).
+
+- **Part A.** `derive_actual_lmp._lw_fields` now reads a per-ISO registry `ZONAL_LW_SOURCES` (ERCOT, MISO). MISO
+  2019–2025 `*_lw` retrofitted, bench parts surgically patched (0 STALE). Every precommit field and verdict row reproduced
+  exactly. C3a 2020 +11.6 % **FAIL** (new), C3a 2022 −5.1 % PASS, C3b 2022 0.122 PASS, C3b 2021 0.201 FAIL.
+- **Defect fixed:** run as a CLI the derive script lacked the repo root on `sys.path`, so `load_demand` silently used
+  STATIC zone shares (system totals unchanged; zone split wrong — MISO 2019 25.52 vs 25.67). With the fix the CLI also
+  reproduces ERCOT's committed values exactly.
+- **Part B (phase 0).** C3b 2021 = Feb Uri (24 % of SSE, routed) + Sep–Nov (60 %): North-wide level miss (Oct model $38
+  vs $53–60 actual), model burns coal the real fleet held back (coal +2.8/+4.5/+4.0 TWh, gas −5.2/−7.3/−6.8 TWh vs
+  EIA-930). Coal budget-grain object; line CLOSED (miso-290). C3a 2020 = the all-years low-end overshoot net of a small
+  tail (miso-285–287 object).
+
+Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
