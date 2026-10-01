@@ -15523,3 +15523,5 @@ Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/RESULT
   tail (miso-285–287 object).
 
 Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
+
+**Owner ruling (same day):** next lane = *"Do a coal study on all years not just 2021"* — zero-LP, data-first study (miso-288 method) of how the real MISO fleet expressed coal conservation / seasonal pile management in every year 2019–2025, against the model's monthly coal-vs-EIA-930 signature (2021/2022 summer-under / fall-over; flat +6 to +13 TWh annual offset elsewhere). miso-295.
