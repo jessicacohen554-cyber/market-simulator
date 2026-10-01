@@ -18,7 +18,8 @@ a substitute, the pool is refused rather than interpolated. The loader is
 |---|---:|---|
 | `psei_hourly_planning_area_demand_2018_2024.csv` | 61,344 | Puget Sound Energy, Inc. (respondent_id 129 / csv 240 / XBRL C000171 / EIA utility 15500). Report years 2018–2024. Columns: `report_year, datetime_utc, demand_reported_mwh, respondent ids`. **Zero** NaN `demand_reported_mwh`. |
 | `soco_hourly_system_lambda_2019_2025.csv` | 61,368 | Southern Company Part II Schedule 6 hourly **system lambda**, report years 2019–2025. REPORTED-ONLY. See [the section below](#soco-hourly-system-lambda-part-ii-schedule-6). |
-| `SHA256SUMS.txt` | — | Identity record for both CSVs. |
+| `soco_neighbor_hourly_system_lambda_2019_2025.csv` | 552,286 | Part II Schedule 6 hourly **system lambda** of SOCO's nine neighbours (TVA, DUK, CPLE, FPC, FPL, SC, TAL, JEA, MISO), long form, report years 2019–2025. REPORTED-ONLY. See [the neighbours section](#soco-neighbour-hourly-system-lambdas-part-ii-schedule-6). |
+| `SHA256SUMS.txt` | — | Identity record for all three CSVs. |
 
 ## Source and how to re-fetch
 
@@ -180,3 +181,187 @@ The script downloads the six zips from Zenodo into `--cache-dir` if they are
 absent and verifies each sha256 against the table above. It then rebuilds the
 CSV. `--check` rebuilds the table and compares it with the committed one; it returned `IDENTICAL` on 2026-09-28. The CSV's own
 sha256 is in `SHA256SUMS.txt`.
+
+---
+
+## SOCO neighbour hourly system lambdas (Part II Schedule 6)
+
+Lane **soco-97** added this file on 2026-10-01, under owner ruling soco-97
+option (d), data step 1 of
+`docs/handoffs/r-soco/FINDING-soco-97-interchange-rule14-phase0-2026-10-01.md` §5.
+
+**Status: REPORTED-ONLY.** The series feeds **no gate, no scorer and no LP**. A
+neighbour's lambda is a measured *outcome*, so rule 13 `[R-MEASURED]` forbids
+pinning any solve to it. Its one admissible later use is as a per-year
+`hr_by_year` anchor, which is a forecast-lane input. That use would need its own
+ruling. The loader is `market_sim.data.ferc714.load_ferc714_system_lambda(respondent_id=…)`.
+The respondent registry is `SOCO_NEIGHBOR_LAMBDA_RESPONDENTS` in the same module.
+
+### File
+
+`soco_neighbor_hourly_system_lambda_2019_2025.csv` has 552,286 rows and is
+sorted by `ba_code`, then `datetime_utc`. Its columns are `ba_code` (the EIA-930
+BA code) followed by the Southern file's six columns, which have the same
+meanings: `datetime_utc` is naive UTC, **hour-beginning**, and the value is
+exactly as filed. A row exists only where the filer reported a value. Hours
+the filer did not report are absent, never filled.
+
+| `ba_code` | Respondent | FERC id | EIA id | XBRL CID | Rows | NaN | Zero | Mean $/MWh | Max $/MWh | Elliott mean | Elliott max |
+|---|---|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|
+| TVA | Tennessee Valley Authority | 263 | 18642 | C004480 | 61,361 | 0 | 1 | 30.55 | 3,300.00 | 529.43 | 3,300.00 |
+| DUK | Duke Energy Carolinas | 157 | 5416 | C000290 | 61,363 | 0 | 0 | 34.58 | 990.48 | 387.87 | 990.48 |
+| CPLE | Duke Energy Progress (CSV: "Progress Energy (Carolina Power & Light)") | 233 | 3046 | C000135 | 61,363 | 0 | 0 | 31.53 | 623.66 | 271.03 | 623.66 |
+| FPC | Duke Energy Florida (CSV: "Progress Energy (Florida Power Corp.)") | 234 | 6455 | C000136 | 61,361 | 0 | 0 | 29.08 | 292.70 | 53.48 | 104.30 |
+| FPL | Florida Power & Light | 171 | 6452 | C001030 | 61,367 | 0 | 0 | 19.62 | 127.00 | 38.72 | 50.00 |
+| SC | Santee Cooper (South Carolina Public Service Authority) | 251 | 17543 | C011420 | 61,368 | 0 | 0 | 38.87 | 6,219.37 | 350.04 | 909.95 |
+| TAL | City of Tallahassee | 140 | 18445 | C011474 | 61,368 | 0 | 79 | 22.21 | 86.60 | 53.12 | 64.25 |
+| JEA | JEA | 186 | 9617 | C011421 | 61,368 | 0 | 0 | 30.42 | 246.24 | 70.42 | 141.19 |
+| MISO | MISO | 321 | 56669 | C001344 | 61,367 | 0 | 1 | 34.66 | 2,167.66 | 236.26 | 2,167.66 |
+
+Notes on the table:
+
+- **Elliott** is the 96 UTC hours from 2022-12-23 00:00 through 2022-12-26 23:00.
+  Every respondent reports all 96.
+- **Rows.** A full 2019–2025 span is 61,368 hours. A respondent read as
+  prevailing in a year is one hour short in that year (see the clock section).
+  MISO 2023 also omits HE04 on 2023-08-17.
+- **Zeros are kept as filed.** Tallahassee's 79 zeros are scattered
+  filing gaps, some of them multi-hour, in every year. TVA's one zero is on
+  2022-10-09, and MISO's is on 2020-06-02 (MISO also files 23 negative hours).
+- **Santee Cooper's maximum** is $6,219.37 on 2022-05-12 19:00 UTC. It is
+  the first of three hours above $5,900. The value is as filed and has not
+  been checked against another source.
+
+Per-year means reproduce the soco-97 phase-0 probe to within $0.02.
+
+### Flags
+
+- **Dominion Energy South Carolina (SCEG; FERC id 250, CID C000241) is NOT
+  shipped.** Its Sch. 6 is **0.00 in every hour of every year it filed**:
+  - the CSV era 2020 (366 days, blank timezone code);
+  - every XBRL year 2021–2025.
+
+  It filed no Sch. 6 for 2019. This is the largest SOCO export seam, and it
+  has no usable lambda.
+- **FPL's lambda runs about 40 % below SOCO's**, for example $17.31 against
+  $25.72 in 2019. FPL files it in whole dollars from 2021. **The basis is
+  unresolved.** Do not read FPL's level as comparable to the others until
+  that is explained.
+- **Fall-back-day sums.** Duke Carolinas and Duke Progress (2023–2025) and
+  Duke Florida (every XBRL year) file the repeated 01:00–02:00 hour on the
+  fall-back day as about **twice** its neighbours. That is the two
+  occurrences summed into one slot. The value is kept as filed (see clock
+  handling, point 4).
+- **MISO CSV era.** The CSV archive holds MISO (FERC id 321) Sch. 6 rows for
+  every report year 2009–2020, coded `EST`. They are **not** XBRL-only, so
+  2019–2020 come from the CSV like the others.
+- **Resubmissions.** The latest filing (largest epoch) is used. Earlier
+  filings whose values differ are FPL 2022, Santee Cooper 2022 and JEA 2023.
+  All other earlier filings are identical. The build prints which is which.
+
+### Clock handling (per respondent-year, explicit)
+
+Southern's fixed UTC−6 reading was proven for Southern only, so it is **not
+transferred**. Instead, `classify_clock` classifies each respondent-year from
+its **own** filing pattern. The test is the one Southern's reading rests on:
+on the spring-forward day, a prevailing clock has 23 hours and a fixed clock
+has 24.
+
+| Pattern on the spring-forward day | Verdict | Conversion |
+|---|---|---|
+| 24 real (non-zero, non-blank) values | **fixed** | `utc = local − standard offset` (EST −5, CST −6). |
+| 23 real values: the HE02 or HE03 instant is omitted, or present as a 0/blank placeholder | **prevailing** | The placeholder is **dropped**, never published as a lambda. Each hour-ending instant is localized in the respondent's IANA zone. On the spring-forward day, the non-existent 02:00 shifts forward to 03:00. On the fall-back day, the ambiguous 01:00 is read as daylight time. |
+| Anything else | **REFUSE** | The build exits. |
+
+The build also refuses if any of these hold:
+
+- `hour25` is populated;
+- a day carries more than 24 values;
+- the fall-back day does not carry exactly 24 values;
+- a timezone code falls outside the respondent's registered set.
+
+**No filer ever uses `hour25`.** A prevailing filer reports 24 values on the
+fall-back day, so one UTC hour, the first 01:00–02:00, is unreported in each
+prevailing year. The filed value lands on the second occurrence.
+
+| `ba_code` | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 | Codes filed |
+|---|---|---|---|---|---|---|---|---|
+| TVA | P | P | P | P | P | P | P | CST/CDT per day (2021: `CST` every day) |
+| DUK | P | P | **F** | **F** | P | P | P | 2019 EST/EDT; 2020–22 `EPT`; 2023–25 EST/EDT |
+| CPLE | P | P | **F** | **F** | P | P | P | 2019–22 `EPT`; 2023–25 EST/EDT |
+| FPC | P | P | P | P | P | P | P | EST/EDT per day (transition days `EST/EDT`, `EDT/EST`) |
+| FPL | F | F | F | **P** | F | F | F | `EST` (2020: EST/EDT per day) |
+| SC | F | F | F | F | F | F | F | 2019–20 EST/EDT per day; 2021–25 `EST` |
+| TAL | F | F | F | F | F | F | F | EST/EDT per day; 2021 `UTC`; 2022 `EST` |
+| JEA | F | F | F | F | F | F | F | `EST` (2021: `EDT` every day) |
+| MISO | F | F | F | F | F | F | F | `EST` |
+
+P = prevailing, F = fixed standard time.
+
+**Prevailing evidence** (the slot that was empty on the spring-forward day):
+
+- TVA: HE03 zero in 2019–20, HE03 omitted in 2021, HE02 omitted in 2022–25.
+- Duke Carolinas and Duke Progress: HE03 zero in 2019 and 2023–25, HE02 zero in 2020.
+- Duke Florida: HE03 zero in 2019–20; omitted instant in every XBRL year.
+- FPL 2022: HE03 zero.
+
+**Where the codes disagree with the pattern, the pattern decides.** This is
+the same rule Southern's CPT-coded years follow. A per-day EST/EDT code with
+24 values on every day is impossible on a literal reading: a 24-hour
+EST-coded spring day followed by an EDT-coded day overlaps one UTC hour.
+
+**Residual uncertainties.** Each of these is a possible ±1 h on DST-season
+hours. Winter hours, and Elliott, are unaffected.
+
+- **Duke Carolinas and Duke Progress 2021–22** read fixed by the pattern. Their
+  other five years are prevailing. Their spring-forward HE03 repeats an
+  adjacent hour's value (DUK 2021 12.96 = HE02; CPLE 2022 73.14 = HE04), which
+  may be a filled placeholder. Repeated adjacent values are common on
+  ordinary nights, though, so this is not decisive.
+- **FPL 2022** reads prevailing because HE03 is 0.00, its only zero in seven
+  years. Every other FPL year reads fixed.
+- **JEA** reads fixed in every year. However, it files an off-level value in
+  **both** HE02 and HE03 on every spring-forward day (8.09 in 2019, 15.00 in
+  2020–22, 10.00 in 2023–25, against 20–40 on either side). That is a
+  DST-aware artifact the count test cannot resolve. JEA 2021's `EDT` code is
+  read as EST, the same as its other six years.
+- **Tallahassee 2021's `UTC` code is measured not literal.** Its Jun–Aug
+  hour-of-day lambda profile matches its own `EST`-coded 2022 at lag 0
+  (r 0.978). A literal UTC clock would need a 5-hour shift, and r there is
+  ≤ 0.29.
+- **The diurnal-profile cross-check is otherwise inconclusive.** Year-to-year
+  summer-profile lags wander 0–2 h even for Southern's proven-fixed series,
+  because solar growth moves the evening peak. Like Southern's demand
+  correlation, it is not the basis for any verdict.
+
+### Source and extraction
+
+The source is the same six Zenodo record 21738524 archive files as the Southern
+section, verified against the same sha256 table.
+
+- **CSV era (2019–2020).** `ferc714.zip`, member `Part 2 Schedule 6 - Balancing
+  Authority Hourly System Lambda.csv`, filtered on the FERC id. `spplmnt_num` is
+  0 throughout, and there are no duplicate days.
+- **XBRL era (2021–2025).** The instance document whose filename starts with
+  the registered prefix (e.g. `Duke_Energy_Carolinas,_LLC_form714`) and whose
+  entity CID matches. Every `SystemLambda` fact is read.
+- **Hour-24 spellings.** Filers spell the day's 24th hour three ways, and all
+  three are parsed as midnight ending the day:
+  - `<next day>T00:00` (Southern);
+  - `<day>T24:00` (JEA, TAL, MISO);
+  - a date-only `<day>` (TVA, Duke, FPL, Santee Cooper). An XBRL date-only
+    instant is the end of that day.
+
+  The year must span local `Jan-01T01:00`..`next Jan-01T00:00`.
+
+### Re-fetch
+
+```bash
+python scripts/data/fetch_ferc714_system_lambda.py --cache-dir /tmp/ferc714 --set neighbors          # rebuild
+python scripts/data/fetch_ferc714_system_lambda.py --cache-dir /tmp/ferc714 --set neighbors --check  # prove it regenerates
+```
+
+`--check` returned `IDENTICAL` on 2026-10-01. On the same day, the Southern
+`--check` (default `--set soco`) still returned `IDENTICAL` after the script
+was extended. The prints include the per-respondent-year clock table above.
+The CSV's sha256 is in `SHA256SUMS.txt`.
