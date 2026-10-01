@@ -141,3 +141,6 @@ some capacity in non-scarcity hours, so it will give back part of the train-tier
 measured**. This is a design for SPP-107, not a solve.
 
 **Matrix:** SPP cell `spp_mmu_offer_unavailability` stays **O** (solved, held, repair identified).
+
+**SPP-107 card (2026-10-01): "Repair EX (Rec.)".** The next lane designs both repairs as a sub-gate. Handoff:
+`docs/handoffs/spp106/SPP-107-handoff.md`.

@@ -1,5 +1,5 @@
 ```
-SESSION SPP-107: SPP — REPAIR THE MMU OFFER-SIDE CARRIER (design + solve). Chartered by the owner's SPP-106 card "Hold, investigate shortfall" (2026-10-01).
+SESSION SPP-107: SPP — REPAIR THE MMU OFFER-SIDE CARRIER (design + solve). Chartered by the owner's SPP-106 cards "Hold, investigate shortfall" and "Repair EX" (2026-10-01).
 DATA PROFILE: spp
 MODEL: Opus or Fable (rule 27). CLAUDE.md is binding; rules 1, 13, 14, 17, 19, 21, 25, 28, 29(b), 31–36 matter most.
 
