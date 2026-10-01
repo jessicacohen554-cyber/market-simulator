@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Roll a scenario campaign up across the modeled ISOs (SCN-WS0 deliverable 3).
 
-Closes G-E2 (``docs/handoffs/forecast-scenario-readiness-plan-2026-09.md``
+Closes G-E2 (``docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md``
 §2.5): ``collate_full_horizon.py`` writes one row per ISO and never sums, so
 "what does this case do to system-wide emissions" had no artifact.
 
@@ -307,7 +307,7 @@ def _system_delta_rows(
     """The system-scope rows of the delta table, on the COMMON ISO set.
 
     The defect this exists to prevent (routed by SCN-WS5A-LOAD,
-    ``docs/handoffs/STATUS-scn-ws5a-load-2026-09-06.md`` "Routed defect"): the
+    ``docs/records/forecast/STATUS-scn-ws5a-load-2026-09-06.md`` "Routed defect"): the
     system-scope delta used to be *(sum over the case's ISOs)* minus *(sum over
     the reference case's ISOs)* with nothing restricting the two to the same
     system, so a case with a legitimately degenerate arm differenced against a

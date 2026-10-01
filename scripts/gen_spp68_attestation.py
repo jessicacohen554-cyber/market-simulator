@@ -45,7 +45,7 @@ KEEPER = CAL / "spp67_yearown_span" / "calibration_attestation.json"
 _GATE = "spp_curtailment_ceiling"
 _DEPTH = "spp_curtail_depth_wind"
 OFFER_SHA = "090abd793b5fa5a7"
-PRECOMMIT = "docs/handoffs/PRECOMMIT-spp-68-curtailment-ceiling-retest-2026-09-20.md"
+PRECOMMIT = "docs/records/spp/PRECOMMIT-spp-68-curtailment-ceiling-retest-2026-09-20.md"
 PINNED = "05b2231da6e2e70bf9a122cece864a7673e2b2f7"
 
 _ATTESTED = (

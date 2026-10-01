@@ -10,7 +10,7 @@ NO warning — it simply keeps scoring every run of that ISO against numbers the
 current builder would not reproduce. NYISO's part went un-refreshed from
 2026-08-17; regenerating it moved CC_REGULAR-2024's metered actual by ~4 TWh
 and flipped EVERY registered NYISO run to NOT-YET, the keeper included
-(``results/calibration/FINDING-nyiso148-bench-regeneration-instability-2026-08-21.md``).
+(``docs/records/nyiso/FINDING-nyiso148-bench-regeneration-instability-2026-08-21.md``).
 
 WHAT THIS CHECKS, in two tiers:
 
@@ -46,7 +46,7 @@ WHAT THIS CHECKS, in two tiers:
 
   **The SOFT leg's arithmetic was WRONG until 2026-09-01** (audit board
   checklist item 12; repair recorded in
-  ``docs/FINDING-audit-gate-repairs-2026-09.md``). It compared the part's
+  ``docs/records/governance/FINDING-audit-gate-repairs-2026-09.md``). It compared the part's
   **author** date, truncated to a calendar day, against a ``--since`` filter
   that git applies to the **committer** date — a date-kind mismatch layered on
   day granularity, evaluated in the runner's local timezone. On the record the

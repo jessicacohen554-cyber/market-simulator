@@ -1,7 +1,7 @@
 """F-A: the priced-interchange seam's MEASURED backcast gas level (pjm-172).
 
-Card: ``docs/handoffs/PRECOMMIT-pjm172-seam-measured-gas-2026-09-07.md``.
-Defect: ``docs/handoffs/../../results/calibration/ADDENDUM-pjm171-seam-fuel-basis-freeze-2026-09-07.md``.
+Card: ``docs/records/pjm/PRECOMMIT-pjm172-seam-measured-gas-2026-09-07.md``.
+Defect: ``docs/records/pjm/ADDENDUM-pjm171-seam-fuel-basis-freeze-2026-09-07.md``.
 
 ``neighbor_gas_price``'s contract is that *"a neighbor and its bordering ISO see
 the same Henry Hub level"*. Below the trajectory's FIRST knot that broke:

@@ -188,7 +188,7 @@ def _ercot_config() -> ISOConfig:
     # misreading — NE_LOB is the Valley's North Edinburg-Lobo corridor —
     # repaired at ercot-234 under signed card Z-A; the zone itself stands on
     # the EASTEX physics + the ERCOT-76 measured import evidence. See
-    # docs/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md.)
+    # docs/records/ercot/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md.)
     zones = [
         Zone(name="West", iso="ERCOT", load_share=0.1494),
         Zone(name="Panhandle", iso="ERCOT", load_share=0.0),
@@ -293,13 +293,13 @@ def _ercot_config() -> ISOConfig:
         #
         # FFR-9C STAGE B — ARMED FOR ERCOT by owner decision D-30 (sitting
         # Addendum AK.8, signed 2026-08-11; lane FFR-9C-PROMOTE, pre-registration
-        # docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md). The five rows
+        # docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md). The five rows
         # below move as ONE unit and must not be separated:
         #
         #   * capacity_screen_unified_lookahead + capacity_screen_scarcity_restoration
         #     are the CONTROL RECIPE stage B was measured on top of. Addendum AG.1
         #     parked their promotion on "FH-4's own skill evidence"; FH-5 supplied it
-        #     (AO.2, docs/handoffs/fh-5-phase-b-2026-08-11.md §4 — 11 of 12 arms, the
+        #     (AO.2, docs/records/forecast/fh-5-phase-b-2026-08-11.md §4 — 11 of 12 arms, the
         #     I6 rider PASSING on every one). They are also a pair by construction:
         #     ScenarioConfig.__post_init__ REFUSES the restoration flag without the
         #     lookahead.
@@ -349,9 +349,9 @@ def _ercot_config() -> ISOConfig:
         #
         # D12-A ARMING — entry_margin_exhaustion + entry_forward_reserve_leg
         # ARMED AS THE ERCOT FORECAST DEFAULT by owner ruling Q15 (r#18
-        # sitting, 2026-08-30, docs/handoffs/capx-director-ledger-2026-08.md
+        # sitting, 2026-08-30, docs/records/forecast/capx-director-ledger-2026-08.md
         # §3), executing Q10's confirm-then-arm protocol; lane record
-        # docs/handoffs/FINDING-capx-d12a-arming-2026-08-30.md. The two rows
+        # docs/records/forecast/FINDING-capx-d12a-arming-2026-08-30.md. The two rows
         # move as ONE unit — the D12-C pair's single logical delta; a posture
         # shipping one without the other was never solved (rule 13
         # [R-MEASURED]).
@@ -484,7 +484,7 @@ def _caiso_config() -> ISOConfig:
     congestion-revenue-rights trading hubs, the Path 15 / Path 26 interties, and
     the LCT-study local capacity areas that set SP15's LA-basin/SDG&E congestion
     premium (which a single copperplate SP15 zone cannot form; see
-    docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md).
+    docs/records/caiso/caiso-sp15-split-implementation-scope-2026-07-09.md).
 
     Load shares apportion CAISO TAC-area demand onto the hubs. NP15 ≈ PG&E
     north of Path 15; ZP26 ≈ the PG&E central San Joaquin Valley between Path 15
@@ -644,7 +644,7 @@ def _caiso_config() -> ISOConfig:
     # [R-MEASURED, R-ACCURATE], zero free parameters:
     #   load: PG&E TAC 0.4615 × the caiso-223 §C measured 3-way ATL_LDF
     #     split {NP15 0.752614, FSNO 0.132592, ZP26 0.114794}
-    #     (results/calibration/_caiso223_subzonal_scope.json, gates 13/13);
+    #     (results/phase0/caiso/_caiso223_subzonal_scope.json, gates 13/13);
     #   links: DMM 2023-annual published element average binding limits
     #     (CAISO DMM 2023 Annual Report on Market Issues & Performance) —
     #     NP15<->FSNO = Tesla-Los Banos #1 500 kV 1,600 + Moss Landing-Las
@@ -929,7 +929,7 @@ def _miso_config() -> ISOConfig:
         #
         # entry_vre_capacity_revenue — ARMED FOR MISO by owner decision D-2'
         # (sitting Addendum O, signed 2026-08-04; lane FFR-4B, evidence
-        # docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §3.3/§7 1a).
+        # docs/records/forecast/ffr-3v-miso-entry-screen-2026-08-04.md §3.3/§7 1a).
         # MISO's Planning Resource Auction accredits and PAYS wind and solar
         # like any other Planning Resource, so a MISO forecast that denies VRE
         # entry the RA payment is not modelling MISO's market. Before this,
@@ -967,7 +967,7 @@ def _miso_config() -> ISOConfig:
         # miso_rps_compliance_regions — ARMED FOR MISO by owner decision D-26
         # (sitting Addendum Y.4, signed 2026-08-06; lane ARM-MISO, measured
         # basis FFR-7B-2 §3.1,
-        # docs/handoffs/ffr-7b2-rps-krow-clean-rows-2026-08-06.md). The single
+        # docs/records/forecast/ffr-7b2-rps-krow-clean-rows-2026-08-06.md). The single
         # MISO-wide RPS row silently asserts FREE INTRA-ISO REC TRADE, which is
         # FALSE in MISO (MCL 460.1029 restricts Michigan credits to in-state
         # systems; CEJA's centralized IPA procurement; MN's delivered-to-retail
@@ -1007,7 +1007,7 @@ def _miso_config() -> ISOConfig:
         #
         # miso_clean_tier_rows — ARMED FOR MISO by owner decision D-29 (sitting
         # Addendum AK.8, signed 2026-08-11; lane ARM-3-ARM, measured basis
-        # ARM3-FIX §4, docs/handoffs/arm3-fix-zone-mask-2026-08-09.md). Arm 3
+        # ARM3-FIX §4, docs/records/misc/arm3-fix-zone-mask-2026-08-09.md). Arm 3
         # rides the Arm-2 K-row machinery above (the dependency is strict and
         # one-directional, FFR-6B §6.2 — runner.py refuses the clean family
         # without the compliance-region grain), and adds a SECOND independent
@@ -1066,7 +1066,7 @@ def _miso_config() -> ISOConfig:
         # bundle (key cd2403cc031515db), not a re-solve.
         #
         # entry_vre_zone_selection — ARMED FOR MISO by capx D33
-        # (docs/handoffs/FINDING-capx-d33-miso-additions-repair-2026-09-02.md
+        # (docs/records/forecast/FINDING-capx-d33-miso-additions-repair-2026-09-02.md
         # §2). MISO is the ISO where the single-bucket VRE siting is not merely
         # coarse but WRONG in kind: RENEWABLE_ZONE_ALLOCATION sends every
         # economically-entered solar MW to MISO-South, the one model zone
@@ -1225,7 +1225,7 @@ def _pjm_config() -> ISOConfig:
         voll=2000.0,
         # THE PJM CAPACITY-MARKET CLEARING CONFIGURATION — ARMED FOR PJM by
         # OWNER RULING 2026-09-05 (in-session, on the capx D57 A/B:
-        # docs/handoffs/FINDING-capx-d57-2026-09-05.md §8, "if structural
+        # docs/records/forecast/FINDING-capx-d57-2026-09-05.md §8, "if structural
         # integrity improves but gates regress that may still be a keeper"),
         # executing D48 §8's JOINT condition — the accreditation-design
         # devintage and DR-as-supply are never armed alone, and the clearing
@@ -1424,7 +1424,7 @@ def _pjm_config() -> ISOConfig:
             # POSTURE: this ISO override, never a (b'-1) shared-default flip.
             # Measured at the arm over every committed run config
             # (scripts/probes/capxd84arm_iso_override_no_op_check.py, records
-            # docs/handoffs/d84arm/): 33 of 227 move, ALL PJM/forecast; zero
+            # docs/records/forecast/d84arm/): 33 of 227 move, ALL PJM/forecast; zero
             # non-PJM and zero backcast, so every other ISO and every
             # backcast keeper is byte-identical. Bare pjm-t1h
             # f736025631d0d27e -> b9fa47dedb6c3319;
@@ -1568,7 +1568,7 @@ def _nyiso_config() -> ISOConfig:
     # data/raw/zone-specific-demand/NYISO). The Upstate_West -> Lower_Hudson
     # static is the 2024-2025 mean of the measured non-CE envelope
     # (constants.NYISO_TE_NONCE_ENVELOPE_BY_MONTH).
-    # docs/DESIGN-nyiso-next17-fg-split-2026-09-30.md.
+    # docs/records/nyiso/DESIGN-nyiso-next17-fg-split-2026-09-30.md.
     from market_sim.config.topology_variant import nyiso_fg_split_active
 
     if nyiso_fg_split_active():
@@ -1812,7 +1812,7 @@ def _spp_config() -> ISOConfig:
     **Two zones**, drawn along the North–South seam the SPP MMU itself names
     as the footprint's structural price divide (owner ruling P1, SPP desk
     sitting r#2, 2026-09-06 — "2 zones now; two ranked levers";
-    ``docs/handoffs/spp-desk-ledger-2026-09.md`` §2):
+    ``docs/records/spp/spp-desk-ledger-2026-09.md`` §2):
 
     - **SPP-North** — ND, SD, NE, MN, MT, IA, KS, MO plus the 19.5 MW of
       Colorado solar: the coal / nuclear / wind tier (both nuclear units,
@@ -1904,7 +1904,7 @@ def _spp_config() -> ISOConfig:
     # corridor's limiting flowgate reaches its own effective limit (the
     # FCITC reading), derived by lane SPP-53 from SPP's OWN published limits
     # under a construction fixed BEFORE any limit was read
-    # (docs/handoffs/PRECOMMIT-spp-53-2026-09-07.md §2.1; result and every
+    # (docs/records/spp/PRECOMMIT-spp-53-2026-09-07.md §2.1; result and every
     # per-constituent number: FINDING-spp-53-2026-09-07.md §3-§5). Two
     # measured legs, no free parameter:
     #   L_f  = per-constituent limit-at-bind, the median `Real Time Effective
@@ -1957,7 +1957,7 @@ def _spp_config() -> ISOConfig:
     # "west_east", default "north_south"; armed process-wide via
     # config.topology_variant). It REPLACES the zones and the N<->S link above
     # (rule 19 [R-ONE-MECH]: one seam, never two). Construction fixed in
-    # docs/handoffs/PRECOMMIT-spp-93-west-east-2026-09-27.md before any model
+    # docs/records/spp/PRECOMMIT-spp-93-west-east-2026-09-27.md before any model
     # output existed; every number in FINDING/RESULT-spp-93.
     #   Zones: SPP's own reserve zones (SL_to_Pnode_to_Zone_with_Area.csv
     #     RESZONE) -- West = RZ {1,2,3,5}, East = RZ 4. Load: sub-BA -> the
@@ -1973,7 +1973,7 @@ def _spp_config() -> ISOConfig:
     #     binding-hours-weighted median 3,967 -> 4,000 (p25 2,275 / p75 8,044).
     #     R2/R3 residual-blind bounds: West non-gas capability - West 2023
     #     minimum load = 20,889 MW; total - minimum = 33,293 MW.
-    #     docs/handoffs/spp93/{psi_we.json,tstar_we.csv}.
+    #     docs/records/spp/spp93/{psi_we.json,tstar_we.csv}.
     #   Rule 14 [R-ACCURATE] MISALIGNMENT, stated: 2026 limits on 2019-2025;
     #     an element-under-contingency rating is not a corridor capability;
     #     psi identified on 2023-25 and applied to 2019-22; the group superset
@@ -2470,7 +2470,7 @@ _ISO_BUILDERS = {
     "NYISO": _nyiso_config,
     "NEISO": _neiso_config,
     # SPP registered 2026-09-06 by lane SPP-20 (owner rulings P1-P11,
-    # docs/handoffs/spp-desk-ledger-2026-09.md §2). Appended LAST so the
+    # docs/records/spp/spp-desk-ledger-2026-09.md §2). Appended LAST so the
     # registration order of the six earlier ISOs — and every artifact that
     # iterates SUPPORTED_ISOS in order — is unchanged.
     "SPP": _spp_config,
@@ -2691,7 +2691,7 @@ RELIABILITY_FLOOR_REGISTRY: dict[str, list[ReliabilityFloorSpec]] = (
 # day — including overnight, where measured CAMPD CT CF is ~0.016 (h0-6) vs
 # ~0.38 at the afternoon cooling peak. Stacking it on the drag double-floors the
 # class and pins it overnight where the fleet is physically offline: the D-4
-# off-window binding failure (docs/FINDING-pjm-burndown-2026-07.md; a floor
+# off-window binding failure (docs/records/pjm/FINDING-pjm-burndown-2026-07.md; a floor
 # binding in hours its own driver evidence says the class is offline is a bug,
 # CLAUDE.md rule 17). Dropping these limbs when the drag is active reconciles
 # the two onto the grounded, forward-native mechanism rather than stacking them.
@@ -2712,7 +2712,7 @@ def drop_drag_owned_reliability_specs(
     temperature reliability floor's limbs for that class are removed so the two
     do not stack into an all-day floor that binds overnight where the class is
     offline (:data:`_DRAG_OWNED_RELIABILITY_CLASS`; the D-4 off-window failure,
-    ``docs/FINDING-pjm-burndown-2026-07.md``). No-op (returns *specs* unchanged)
+    ``docs/records/pjm/FINDING-pjm-burndown-2026-07.md``). No-op (returns *specs* unchanged)
     when no drag is active, so any ISO/run without the drag is byte-identical.
     """
     drop = {
@@ -2730,7 +2730,7 @@ def drop_drag_owned_reliability_specs(
 # online-gated in-pocket class, making the published requirement the commitment
 # driver for downstate steam — the same phenomenon the p25-derived NYC/LI
 # ST_GAS reliability-floor limbs currently scaffold. The in-city must-run lane
-# charter (docs/handoffs/nyiso-incity-mustrun-charter-2026-07.md §2) makes
+# charter (docs/records/nyiso/nyiso-incity-mustrun-charter-2026-07.md §2) makes
 # substitution a REQUIREMENT, not an option: "Any mechanism this lane produces
 # MUST REPLACE OR RECONCILE WITH the NYC/LI ST_GAS limbs of reliability_floor.
 # Stacking a second floor on the unexplained residual of the first is

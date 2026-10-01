@@ -195,7 +195,7 @@ reduces exactly to the multiplier form; bands/ISOs without `phys_*` keys
 are byte-identical. Tranche `heat_rate` fields are unchanged — the bid-HR
 convention above still describes the flag-off form. Design + NEISO
 identification table:
-`docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md`.
+`docs/records/misc/gas-offer-net-revenue-margin-design-2026-07.md`.
 
 *Per-ISO grounding (2026-07-23 rollout).* The `phys_*` keys are registered
 for all six ISOs from each ISO's own

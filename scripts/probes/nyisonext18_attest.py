@@ -39,8 +39,8 @@ ENTRY = {
     "2021-04-30 and so sat in neither sheet the retiree channel reads under "
     "eia860_vintage_tracks_solve_year; the keeper was ~1,058 MW short of measured NYCA "
     "nuclear in Jan-Apr 2021. Record: "
-    "docs/FINDING-nyiso-next18-upstate-price-phase0-2026-09-30.md, "
-    "docs/PRECOMMIT-nyiso-next18-retiree-carry-2026-09-30.md.",
+    "docs/records/nyiso/FINDING-nyiso-next18-upstate-price-phase0-2026-09-30.md, "
+    "docs/records/nyiso/PRECOMMIT-nyiso-next18-retiree-carry-2026-09-30.md.",
 }
 
 
@@ -62,7 +62,7 @@ def main() -> None:
         "2026-09-30-nyisonext16-winter-spread-span replayed with THREE recipe deltas, "
         "mid_vintage_exit_carry, fleet_zone_vintage_coords and retiree_vintage_status_scope "
         "true (Indian Point 3 restored Jan-Apr 2021 in Lower_Hudson). "
-        "Pre-registration: docs/PRECOMMIT-nyiso-next18-retiree-carry-2026-09-30.md; arm "
+        "Pre-registration: docs/records/nyiso/PRECOMMIT-nyiso-next18-retiree-carry-2026-09-30.md; arm "
         f"pinned at {a.pin}. Offer curves byte-identical to the keeper (rule 1(c)); no "
         "multiplier tuned; zero free parameters added. PRIOR: "
     )

@@ -1,6 +1,6 @@
 """Emit the NWPP-NEXT calibration attestation for ``results/calibration/nwppnext_span``.
 
-NWPP-NEXT (PRECOMMIT ``docs/handoffs/PRECOMMIT-nwpp-next-ferc714-partialcarry-2019-2025-2026-09-25.md``)
+NWPP-NEXT (PRECOMMIT ``docs/records/nwpp/PRECOMMIT-nwpp-next-ferc714-partialcarry-2019-2025-2026-09-25.md``)
 is the R-NWPP keeper recipe unchanged, plus two measured-input repairs:
 
 * the pool member gap guard with PSEI's FERC 714 planning-area load as the

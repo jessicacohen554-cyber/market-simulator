@@ -1,6 +1,6 @@
 """Emit the SPP-94 calibration attestation for the composed 2019-2025 arm bundle ``spp94_arm_span``.
 
-SPP-94/95 (``docs/handoffs/PRECOMMIT-spp-94-curtail-rows-2026-09-27.md``) replays SPP's keeper
+SPP-94/95 (``docs/records/spp/PRECOMMIT-spp-94-curtail-rows-2026-09-27.md``) replays SPP's keeper
 ``spp86_arm_span`` recipe one year per shard (rule 36) with NO flag changed. The only delta is a DATA
 change: SPP's own published 2020 (244 MW, ASOM 2022 p. 53) and 2021 (725 MW, ASOM 2021 p. 60) average
 hourly wind curtailment rows in ``data/raw/spp-hsl/spp_wind_curtailment_annual.csv`` (sha256 dd6c2898...),
@@ -29,9 +29,9 @@ sys.path.insert(0, str(REPO / "src"))
 from market_sim.config.scenarios import _CACHE_KEY_RETIRED_FIELDS  # noqa: E402
 
 CAL = REPO / "results" / "calibration"
-PRECOMMIT = "docs/handoffs/PRECOMMIT-spp-94-curtail-rows-2026-09-27.md"
-FINDING = "docs/handoffs/FINDING-spp-94-curtail-rows-2026-09-28.md"
-RESULT = "docs/handoffs/RESULT-spp-95-curtail-rows-2026-09-28.md"
+PRECOMMIT = "docs/records/spp/PRECOMMIT-spp-94-curtail-rows-2026-09-27.md"
+FINDING = "docs/records/spp/FINDING-spp-94-curtail-rows-2026-09-28.md"
+RESULT = "docs/records/spp/RESULT-spp-95-curtail-rows-2026-09-28.md"
 PINNED = "020bb1c5cb38b73da686dc4e83d1620c415b1437"
 COMPOSITE = "spp94_arm_span"
 KEEPER = "spp86_arm_span"

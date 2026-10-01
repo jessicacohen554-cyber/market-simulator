@@ -24,7 +24,7 @@ recipe needing a blob a ``blob:none`` clone may not hold; these tests run with
 ``scripts/check_key_provenance.py`` (network-capable) verifies it for real.
 
 **Why the seven census-backed tests carry ``@pytest.mark.slow`` (Y-27,
-2026-09-07, docs/handoffs/FINDING-y27-fast-tier-timeout-2026-09-07.md).**
+2026-09-07, docs/records/governance/FINDING-y27-fast-tier-timeout-2026-09-07.md).**
 ``K.census()`` costs ~5 s in the checkout a run was SOLVED in and ~570 s
 anywhere else, and the difference is not incidental: ``cache_key()`` folds
 checkout-absolute paths to ``<repo>`` / ``<data_root>`` sentinels using the
@@ -279,7 +279,7 @@ def test_g6_is_green_and_fails_on_a_new_unregistered_field(record):
     the fields a record STORED, and a field added after a bundle solved is never
     in that bundle's payload — which is how ``pjm_seam_neighbour_hourly_ladder``
     entered every config's digest at ``f2a834de`` while this suite stayed green
-    (``docs/handoffs/FINDING-capx-d91-2026-09-09.md`` §3).
+    (``docs/records/forecast/FINDING-capx-d91-2026-09-09.md`` §3).
 
     Both directions are proved, because a gate that has only ever been seen
     green is indistinguishable from one that cannot fail.

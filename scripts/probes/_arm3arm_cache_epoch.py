@@ -51,7 +51,7 @@ from scripts.run_full_horizon import reference_config  # noqa: E402
 
 # The pinned default-config cache key (tests/regression/test_persisted_identity).
 PINNED_DEFAULT_KEY = "603c2498bf71d21d"
-# The signed ARM3-FIX pair (docs/handoffs/arm3-fix-zone-mask-2026-08-09.md §4/§5).
+# The signed ARM3-FIX pair (docs/records/misc/arm3-fix-zone-mask-2026-08-09.md §4/§5).
 ARM3FIX_CTRL_KEY = "cd2403cc031515db"
 ARM3FIX_ARMED_KEY = "9337e00504e1e72a"
 # That pair's window and posture.

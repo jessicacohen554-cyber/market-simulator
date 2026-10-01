@@ -130,7 +130,7 @@ CLOSED (NO-BUILD charter frozen, PR #2555).
 **Lane.** The miso-76 loss lane's named successor ("direction-symmetric loss
 structure (re-opens the negative-price disposal problem)"), chartered per the
 miso-78 precedent — adjudicated at the design layer before any build:
-`docs/handoffs/miso-80-direction-symmetric-loss-charter-2026-07.md`.
+`docs/records/miso/miso-80-direction-symmetric-loss-charter-2026-07.md`.
 
 **Diagnosis (charter §1–§2, from the committed surface + the miso-76
 adjudication — no new solve).** An LP loss link prices separation only through
@@ -463,7 +463,7 @@ Forced + Unplanned) — the same call the sibling PJM instrument made independen
 (`PJM_OUTAGE_DEFAULT_TYPES`). `Derated` peaks in **July–August** (10.5 vs 6.0 GW
 in March): an ambient capability derate, what GADS EFORd counts, so it stays in.
 Evidence: `scripts/probes/_miso85_outage_composition.py`; doc updated at
-`docs/handoffs/miso-native-outage-wiring-2026-07.md` §Composition.
+`docs/records/miso/miso-native-outage-wiring-2026-07.md` §Composition.
 
 **Determination NOT-YET — a further downgrade from miso-81's
 CALIBRATED-WITH-CAVEATS.** C6/C7/C8 PASS (attestation + regenerated
@@ -569,7 +569,7 @@ CT 0.000, so the uniform envelope returns ~5 GW of out-of-service coal to the
 merit order (C1 COAL_PRB +28.3 TWh / CC_REGULAR −22.7 TWh in 2023) and strips
 ~4–5 GW off 22.4 GW of peakers nothing says were out (C3a-2025 +43.5 %, 138 model
 tail hours vs 38 actual). Full write-up:
-`results/calibration/FINDING-miso85-published-outage-grain-2026-07.md`.
+`docs/records/miso/FINDING-miso85-published-outage-grain-2026-07.md`.
 
 **What survives from miso-85** (nothing is un-done that was measured): the
 `miso_native_outage_source` gate stays wired and **default-off**; its cause-set
@@ -654,7 +654,7 @@ source this session could not locate; that source is where both errors
 originate. Auditing it, re-deriving the table citing the source-data correction
 (rule 23), adding the two symmetric guards, and a full 2023–2025 re-solve is the
 next session's work. Finding:
-`results/calibration/FINDING-miso87-c1-per-plant-input-defects-2026-07.md`;
+`docs/records/miso/FINDING-miso87-c1-per-plant-input-defects-2026-07.md`;
 probe `scripts/probes/_miso87_c1_plant_defects.py`.
 
 **C3b 2025 NRMSE 0.204 — a monthly LEVEL miss, and the ledger covers only part
@@ -679,7 +679,7 @@ above (they push the same months further down). **Do not close this by widening
 the C3c ledger, with a summer multiplier, or with an offer adder** (rules 1/10).
 Needs its own charter on 2025 summer body price formation, LOO-scored within
 2023–2025. Finding:
-`results/calibration/FINDING-miso87-c3b-summer-2025-body-2026-07.md`.
+`docs/records/miso/FINDING-miso87-c3b-summer-2025-body-2026-07.md`.
 
 **Cross-fuel outage attribution (the miso-85/86 open lever) — REFUTED AT
 CHARTER, before any solve.** Two independent grounds
@@ -711,7 +711,7 @@ refuted on physical feasibility (miso-85). What remains genuinely open and is
 (CT_PEAKER 22.4 + CT_CHP 2.6) carrying CAMPD unavailability of exactly 0.000,
 modelled today only by the statistical WEFOR/POF layer. Own charter, own
 evidence. Finding:
-`results/calibration/FINDING-miso87-cross-fuel-attribution-refuted-2026-07.md`.
+`docs/records/miso/FINDING-miso87-cross-fuel-attribution-refuted-2026-07.md`.
 
 **Rule-22 posture.** Holdouts untouched — MISO carries no calibration-complete
 marker; only 2023/2024/2025 were solved, scored or read this session, and in fact
@@ -723,7 +723,7 @@ no solve was run at all. Next number: miso-88.
 (bundle `results/calibration/miso88_egrid_hr`), superseding
 `2026-07-24-miso-86-netrev-margin`. **Determination: NOT-YET**, on ONE
 load-bearing FAIL instead of two. Charter (written before the solve):
-`docs/handoffs/miso-88-egrid-hr-boundary-plan-2026-07.md`.
+`docs/records/miso/miso-88-egrid-hr-boundary-plan-2026-07.md`.
 
 ### The charter revised the handoff on three points before any code changed
 
@@ -916,7 +916,7 @@ quarantine stays fully in force.
 
 ### Data ask opened (option 2)
 
-`docs/handoffs/miso-outage-grain-data-ask-2026-07.md` — a standing, blocking ask
+`docs/records/miso/miso-outage-grain-data-ask-2026-07.md` — a standing, blocking ask
 for MISO outage data at unit or fuel grain. Its acceptance test has four parts,
 and the **first is the one that matters**: the source must declare **capability**,
 not output. That single criterion rejects CAMPD, EIA-923 and every derivative of
@@ -924,7 +924,7 @@ either, which is why the ask is genuinely blocking rather than merely unattempte
 
 ### LANE B' — the CT "coverage hole" is an IDENTIFICATION exclusion, not a data gap
 
-`results/calibration/FINDING-miso90-ct-availability-identification-2026-07.md`.
+`docs/records/miso/FINDING-miso90-ct-availability-identification-2026-07.md`.
 Taken on its own merits (rule 11), **NO-BUILD**. The 0 % CT measured-derate
 coverage is deliberate and documented: *"a CT down-window cannot be certified a
 forced outage vs out-of-merit-at-peak"* (`data/outages.py`, enforced at
@@ -947,7 +947,7 @@ ledgered miss). It should be DOF-declared and named as a target of the data ask.
 
 ### LANE C' — the memory lever is refuted by measurement
 
-`results/calibration/FINDING-miso90-solve-memory-attribution-2026-07.md`. The
+`docs/records/miso/FINDING-miso90-solve-memory-attribution-2026-07.md`. The
 handoff's lead lever — the ~26 unbounded module `lru_cache`s — holds **0.019 GB**
 on the MISO path, and a *second* year adds **0.000 GB**, so they cannot be the
 mechanism by which the floor rises. The second lever (release fleet objects) is
@@ -994,7 +994,7 @@ truncation, with the documented `((: 0\n0: syntax error`).
 **Keeper UNCHANGED — `2026-07-25-miso-88-egrid-hr`.** No solve was run; no value
 changed anywhere. **Determination UNCHANGED: CALIBRATED-WITH-CAVEATS**, 3/3
 ledgered caveats, keeper-auditor **PASS / 0**. Charter (written before any edit):
-`docs/handoffs/miso-91-summer-wefor-dof-charter-2026-07.md`.
+`docs/records/miso/miso-91-summer-wefor-dof-charter-2026-07.md`.
 
 ### The defect had one root cause, not three
 
@@ -1162,7 +1162,7 @@ recipe (per-asset reserve columns, 2,550 members) was OOM-killed at 15.9 GB
 RSS / 31 GB VM in this session's 15 GB container — twice, including running
 alone. Not skipped: the replay needs a ≥24 GB environment; command and clean
 partition prerequisites are recorded in
-`results/calibration/RESULTS-neiso65-crossiso-reaudit-2026-07.md` §3e. The
+`docs/records/neiso/RESULTS-neiso65-crossiso-reaudit-2026-07.md` §3e. The
 corrected extract (755 windows / 3,630 GW-days reclassified 2023–25) is
 committed and IS the envelope MISO now solves against, so until this re-audit
 runs, the miso-88 keeper's registered numbers describe the pre-adoption
@@ -1175,8 +1175,8 @@ a fourth story — TAKE THE MEASUREMENT"*).
 **Keeper UNCHANGED — `2026-07-25-miso-88-egrid-hr`. Determination UNCHANGED:
 CALIBRATED-WITH-CAVEATS**, 3/3 ledgered caveats. No scoring criterion moved, so
 no ledger slot was consumed or freed. Charter, written before any telemetry line
-existed to read: `docs/handoffs/miso-92-memory-attribution-charter-2026-07.md`.
-Full evidence: `results/calibration/FINDING-miso92-solve-memory-attribution-2026-07.md`.
+existed to read: `docs/records/miso/miso-92-memory-attribution-charter-2026-07.md`.
+Full evidence: `docs/records/miso/FINDING-miso92-solve-memory-attribution-2026-07.md`.
 
 ### The answer
 
@@ -1294,8 +1294,8 @@ CAMPD change is a sufficient, already-documented explanation.
 `campd-economic-layup-fix-charter-2026-07.md` §5/§8 blast radius for MISO.
 miso-89 attempted this and was RAM-blocked; miso-92's 35 % floor reduction is
 what made the staged recipe fit. Charter, pre-registered before any result was
-read: `docs/handoffs/miso-93-keeper-reaudit-charter-2026-07.md`. Full evidence:
-`results/calibration/FINDING-miso93-keeper-reaudit-meritguard-2026-07.md`.
+read: `docs/records/miso/miso-93-keeper-reaudit-charter-2026-07.md`. Full evidence:
+`docs/records/miso/FINDING-miso93-keeper-reaudit-meritguard-2026-07.md`.
 
 **Registered arm:** `2026-07-26-miso-93-meritguard-a1` (MISO 2023/2024/2025,
 one bundle, rule 16; rule 15 — registered whatever the verdict).
@@ -1401,7 +1401,7 @@ outside. Recorded rather than narrated afterwards as predicted.
 
 Charter/cross-ISO session — measurement only: no guard change, no extract
 re-derive, no LP solve, **no MISO keeper touched**, no dashboard registration.
-Full record: `results/calibration/FINDING-campd-daygrain-crossiso-2026-07-26.md`;
+Full record: `docs/records/governance/FINDING-campd-daygrain-crossiso-2026-07-26.md`;
 cross-ISO entry in `docs/calibration-log/governance.md`.
 
 MISO's cell of the 180-cell sweep (`--rcc-pctl {0.50, 0.75, 0.90, 0.99}` × `--horizon {24, 48, 72}` ×
@@ -1429,8 +1429,8 @@ proposed. The 3/3 solve budget is untouched (no solve was run). Next number unch
 
 **Lane:** A of the miso-93 handoff (the MISO re-tune), executed through its own
 first question. Charter, pre-registered before any solve (magnitude included):
-`docs/handoffs/miso-94-outage-family-consistency-charter-2026-07.md`. Full
-evidence: `results/calibration/FINDING-miso94-outage-family-consistency-2026-07.md`.
+`docs/records/miso/miso-94-outage-family-consistency-charter-2026-07.md`. Full
+evidence: `docs/records/miso/FINDING-miso94-outage-family-consistency-2026-07.md`.
 
 **Registered arm:** `2026-07-26-miso-94-outage-family` (MISO 2023/2024/2025, one
 bundle, rule 16; rule 15 — registered whatever the verdict).
@@ -1514,7 +1514,7 @@ root-cause issue — reported, not tuned.**
 
 **Determination `PROVENANCE-BLOCKED`. No solve, no bundle, no registration.**
 Keeper unchanged (`2026-07-25-miso-88-egrid-hr`). Evidence:
-`results/calibration/FINDING-miso95-thermal-tranches-provenance-2026-07.md`.
+`docs/records/miso/FINDING-miso95-thermal-tranches-provenance-2026-07.md`.
 
 The miso-94 handoff pre-registered the rule: if the control does not reproduce,
 report and stop (rule 24 `[R-DOF]`). It does not reproduce, so STAGE 2 (the
@@ -1600,7 +1600,7 @@ Next number: **miso-96.**
 **Keeper UNCHANGED — `2026-07-25-miso-88-egrid-hr`.** Registered arm:
 `2026-07-27-miso-96-sunkfixed-takeorpay` (MISO 2023/2024/2025, ONE bundle,
 rule 16), **determination NOT-YET, REJECTED — not promoted.** Full evidence:
-`results/calibration/FINDING-miso96-coal-prb-offpeak-2026-07.md`.
+`docs/records/miso/FINDING-miso96-coal-prb-offpeak-2026-07.md`.
 
 ### The handoff's hypothesis is refuted, and the real mechanism is dated
 
@@ -1709,7 +1709,7 @@ text already says NOT-YET so CI does not fail on it.
 unrun. **Keeper → `2026-07-27-miso-98b-sectormeasured`** (bundle
 `results/calibration/miso98_chp_sector_B`), superseding
 `2026-07-25-miso-88-egrid-hr`. Evidence:
-`results/calibration/FINDING-miso98-chp-sector-ab-2026-07.md`.
+`docs/records/miso/FINDING-miso98-chp-sector-ab-2026-07.md`.
 
 Six year-solves, two registered arms, single delta: the `chp_sector` column of
 `thermal_tranches_MISO.csv`, absent (A, `2026-07-27-miso-98a-sectorabsent-control`)
@@ -1820,7 +1820,7 @@ under the design's own gates: CT_CHP coverage is **10.4 %, not 38 %**; ST_CHP is
 determination and the same criterion profile as the keeper it replaces, decided
 by the same C7 COAL_PRB diurnal-shape issue (miso-96) that this delta does not
 touch. Full evidence:
-`results/calibration/FINDING-miso99-chp-heat-rate-2026-07-28.md`.
+`docs/records/miso/FINDING-miso99-chp-heat-rate-2026-07-28.md`.
 
 **The blocker, and why the answer was to delete the gross basis rather than
 estimate it.** caiso-128 §6(a) made the plant's own measured gross→net ratio
@@ -1929,7 +1929,7 @@ session.** *(The miso-99 promotion merged concurrently; the finding carries
 over to the new keeper unchanged — `miso99_chp_hr_B`'s own diagnostics read
 ST_CHP `profile_r` −0.797/−0.762/−0.771, ST_CHP being out of the miso-99
 delta's scope by design.)* Evidence:
-`results/calibration/FINDING-miso100-stchp-diurnal-2026-07.md`.
+`docs/records/miso/FINDING-miso100-stchp-diurnal-2026-07.md`.
 
 * **The D-1 ST_CHP row is a one-refinery test**: 3 of 9 benched plants carry
   CEMS hourly; the paired actual (0.85–0.93 TWh, ~a fifth of the class's
@@ -1976,7 +1976,7 @@ act; the arm itself adds **zero free parameters**.
 Runs: `2026-07-28-miso-101a-control` (control) +
 `2026-07-28-miso-101b-tempgrain` (arm), both 2023–2025 in one bundle
 (rule 16). Pre-registration committed BEFORE either solve (`4a4cfcf`);
-evidence: `results/calibration/FINDING-miso101-stchp-temp-grain-2026-07-28.md`.
+evidence: `docs/records/miso/FINDING-miso101-stchp-temp-grain-2026-07-28.md`.
 Matrix `temp_dependent_derate` MISO **`U` → `K`** (duty (b)).
 
 * **The grain did not exist and now does.** `iso_zone_tmax` broadcasts daily
@@ -2030,7 +2030,7 @@ Matrix `temp_dependent_derate` MISO **`U` → `K`** (duty (b)).
 `2026-07-28-miso-102a-control` (`miso102_control_A`) +
 `2026-07-29-miso-102b-sunkfixed` (`miso102_sunkfixed_B`), both 2023–2025 in one
 bundle (rule 16). Pre-registration committed BEFORE either solve (`5200d16`);
-evidence `results/calibration/FINDING-miso102-coalprb-c7-shape-2026-07-28.md`;
+evidence `docs/records/miso/FINDING-miso102-coalprb-c7-shape-2026-07-28.md`;
 reproduction `scripts/probes/miso102_c7_coalprb_diagnosis.py`.
 Matrix `coal_takeorpay_committed` MISO cell updated (duty b).
 
@@ -2095,7 +2095,7 @@ Matrix `coal_takeorpay_committed` MISO cell updated (duty b).
 **Keeper UNCHANGED: `2026-07-28-miso-101b-tempgrain`.** No run produced, no
 bundle, no dashboard registration (nothing to register — ERCOT-127/-130
 ex-ante-refusal precedent). Finding:
-`results/calibration/FINDING-miso103-coal-mintake-tonnage-2026-07-29.md`.
+`docs/records/miso/FINDING-miso103-coal-mintake-tonnage-2026-07-29.md`.
 Reproduction: `scripts/probes/miso103_mintake_pin_strength.py` (~2 min,
 committed artifacts only).
 
@@ -2150,7 +2150,7 @@ committed artifacts only).
 **Keeper UNCHANGED: `2026-07-28-miso-101b-tempgrain`.** No solve, no run, no
 bundle, no dashboard registration, no intake — a sourcing session. Deliverable:
 the standing ask
-`docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md` (the second MISO
+`docs/records/miso/miso-coal-contract-tonnage-data-ask-2026-07.md` (the second MISO
 data ask, beside outage grain). Reproduction of the coverage ledger:
 `scripts/probes/miso104_contract_source_coverage.py` (no LP, no network).
 
@@ -2238,7 +2238,7 @@ data ask, beside outage grain). Reproduction of the coverage ledger:
 **Keeper UNCHANGED: `2026-07-28-miso-101b-tempgrain`.** No solve, no run, no
 bundle, no dashboard registration, no intake. Matrix cell `da_virtual_bids`
 × MISO: **U → G**. Evidence:
-`results/calibration/FINDING-miso105-da-virtual-attractor-2026-07-29.md`.
+`docs/records/miso/FINDING-miso105-da-virtual-attractor-2026-07-29.md`.
 Probe: `scripts/probes/miso105_da_virtual_identifiability.py`.
 
 * **The source exists — this is new for the repo.** MISO publishes the
@@ -2460,7 +2460,7 @@ Rule 13 `[R-MEASURED]`'s admissibility test passes on every term.
   `fleet/models.py`; a dangling `derive_parasitic_factors.py` reference in
   `campd_bins.py`; a stale `status/NEISO.js`).
 * Evidence:
-  `results/calibration/FINDING-miso107-reliability-floor-provenance-2026-07-30.md`.
+  `docs/records/miso/FINDING-miso107-reliability-floor-provenance-2026-07-30.md`.
 * Next number: **miso-108.**
 
 
@@ -2561,7 +2561,7 @@ negative `WAT` hours show pumping *is* netted; NYISO's 923 `HY` *exceeds*
   with class-hour holes in exactly the years it reused. Fixed with tests and
   verified end-to-end on both arms.
 * Evidence:
-  `results/calibration/FINDING-miso109-hydro-level-923hy-2026-07-30.md`;
+  `docs/records/miso/FINDING-miso109-hydro-level-923hy-2026-07-30.md`;
   probe: `scripts/probes/_miso109_hydro_level_audit.py`.
 * Next number: **miso-110.**
 
@@ -2602,7 +2602,7 @@ negative `WAT` hours show pumping *is* netted; NYISO's 923 `HY` *exceeds*
   target retired — C3b passes on the live scorer); status/MISO.js verified
   current on 109b (the reported 101b staleness was deploy lag).
 * Runs: `2026-07-31-miso-111a-control`, `2026-07-31-miso-111b-prb-dispatch`.
-  Evidence: `results/calibration/FINDING-miso111-prb-committed-dispatch-2026-07-31.md`;
+  Evidence: `docs/records/miso/FINDING-miso111-prb-committed-dispatch-2026-07-31.md`;
   probes `scripts/probes/_miso111_prb_conduct.py`, `_miso111_chain.sh`.
 * Next number: **miso-112.**
 
@@ -2624,8 +2624,8 @@ committed; nothing regenerated, verdict unchanged.
 register (rule 15 — the miso-103/104/105/107/108 discipline of refusing on
 measurement rather than spending a solve). Probe
 `scripts/probes/_miso114_seam_hod_shape.py`, transcript
-`results/calibration/PROBE-miso114-seam-hod-shape-2026-08-02.txt`, finding
-`results/calibration/FINDING-miso114-seam-hod-shape-2026-08-02.md`.
+`results/phase0/miso/PROBE-miso114-seam-hod-shape-2026-08-02.txt`, finding
+`docs/records/miso/FINDING-miso114-seam-hod-shape-2026-08-02.md`.
 
 ### Why this is new evidence against a `G` cell
 
@@ -2735,7 +2735,7 @@ miso-114 named one successor and called it decisive: measure MISO's
 CAMPD-observed `CT_PEAKER` + `ST_GAS` at h1–h3 against the model's
 1,907 / 2,415 / 2,350 MW. It is measured, and **the hypothesis is refuted.**
 
-Pre-registration (`results/calibration/PREREG-miso115-trough-marginal-unit-2026-08-02.md`)
+Pre-registration (`docs/records/miso/PREREG-miso115-trough-marginal-unit-2026-08-02.md`)
 was written and committed **before** the probe ran, fixing the quantity, the
 decision rule and five kills. Probe
 `scripts/probes/_miso115_trough_marginal_unit.py`; transcript
@@ -2853,11 +2853,11 @@ cheap* that still under-runs is being held down by a floor, not by economics.
 * Next number: **miso-116.**
 
 ## 2026-08-02 — miso-116: the `CC_CHP` overnight deficit is a **reporting-basis artifact** and its heat-rate half a **probe-flag artifact** — both miso-115 CHP results WITHDRAWN, the floor deriver audits CLEAN, NO SOLVE SPENT, keeper UNCHANGED
-Pre-registration (`results/calibration/PREREG-miso116-chp-floor-deriver-2026-08-02.md`)
+Pre-registration (`docs/records/miso/PREREG-miso116-chp-floor-deriver-2026-08-02.md`)
 written and committed **before** any number was computed; probe
 `scripts/probes/_miso116_chp_floor_deriver_audit.py` (re-runnable, ~8 min, zero LP),
-transcript `results/calibration/PROBE-miso116-chp-floor-deriver-2026-08-02.txt`,
-finding `results/calibration/FINDING-miso116-chp-floor-deriver-2026-08-02.md`.
+transcript `results/phase0/miso/PROBE-miso116-chp-floor-deriver-2026-08-02.txt`,
+finding `docs/records/miso/FINDING-miso116-chp-floor-deriver-2026-08-02.md`.
 
 ### The verdict: BASIS-ARTIFACT
 
@@ -2974,7 +2974,7 @@ carries a docstring note pointing here, with its numbers left exactly as run.
 
 ## 2026-08-03 — miso-117: `measured_ct_heat_rates` armed, **KEEPER** — and the prereg's headline prediction is REFUTED: a class-average-cheaper re-price makes the class run **less**
 
-Pre-registration (`results/calibration/PREREG-miso117-ct-heat-rates-2026-08-03.md`)
+Pre-registration (`docs/records/miso/PREREG-miso117-ct-heat-rates-2026-08-03.md`)
 written, committed **and pushed** before either arm solved. Finding
 `FINDING-miso117-measured-ct-heat-rates-2026-08-03.md`; probes
 `scripts/probes/_miso117_flag_fidelity.py` (Phase 0, no LP) and
@@ -4176,7 +4176,7 @@ default and no run was produced. Rule 22 `[R-HOLDOUT]`: 2023–2025 only — MIS
 holds no `complete` marker, so no out-of-training year was solved, scored **or
 read**.
 
-**Prereg** `results/calibration/PREREG-miso128-c7-2025-diurnal-organization-2026-08-04.md`
+**Prereg** `docs/records/miso/PREREG-miso128-c7-2025-diurnal-organization-2026-08-04.md`
 (pushed at `010e22ba`, **before** any adjudicating statistic, with §0 disclosing
 in full every number already measured in exploration). **Finding**
 `FINDING-miso128-c7-2025-diurnal-organization-2026-08-04.md`. **Probe**
@@ -4344,10 +4344,10 @@ Rule 22 `[R-HOLDOUT]`: 2023–2025 only; MISO holds no `calibration-complete`
 marker, so no out-of-training year was solved, scored or read. **MISO's lever
 queue is UNCHANGED and still has no named, un-adjudicated, non-data-blocked
 item.**
-PREREG `results/calibration/PREREG-miso129-coal-within-band-incremental-slope-2026-08-05.md`;
-FINDING `results/calibration/FINDING-miso129-coal-within-band-slope-premise-false-2026-08-05.md`;
+PREREG `docs/records/miso/PREREG-miso129-coal-within-band-incremental-slope-2026-08-05.md`;
+FINDING `docs/records/miso/FINDING-miso129-coal-within-band-slope-premise-false-2026-08-05.md`;
 probe `scripts/probes/_miso129_coal_within_band_slope.py`;
-record `results/calibration/_miso129_coal_within_band_slope.json`.
+record `results/phase0/miso/_miso129_coal_within_band_slope.json`.
 
 ## 2026-08-05 — miso-130: C7 COAL_PRB is a SUMMER-NIGHT price-regime defect — the model's July night floor prices 55 % of the PRB econ ladder out of the wave in 2025; the wave-compression doing it is the same object as the July price miss. NO LP, keeper UNCHANGED
 
@@ -4445,9 +4445,9 @@ CI: **successor A/Bs need a larger container or an owner-run invocation.**
 Rule 28(b): `gas_commitment_bridge` MISO ev annotated (pool census,
 descriptive, cell stays U); `diurnal_price_amplitude` MISO ev annotated (the
 two-sided wave + regime attribution). NO cell status changes. FINDING
-`results/calibration/FINDING-miso130-c7-night-regime-2026-08-05.md`; probe
+`docs/records/miso/FINDING-miso130-c7-night-regime-2026-08-05.md`; probe
 `scripts/probes/_miso130_c7_night_regime.py`; record
-`results/calibration/_miso130_c7_night_regime.json`. Next number: miso-131.
+`results/phase0/miso/_miso130_c7_night_regime.json`. Next number: miso-131.
 
 ## 2026-08-05 — miso-131: the granularity lane is DEAD AT PREREQUISITE 1, verdict-grade, zero solves — infinite granularity moves the gated statistic by ±0.001, and a PLANT-grain signature is not a CLASS-grain defect. NO LP, keeper UNCHANGED
 
@@ -4513,10 +4513,10 @@ solve host), (2) CC_REGULAR committed-band measured re-grounding (1.20 vs its
 own measured avg_committed_p50 1.005; bounded). Neither is licensed by this
 finding; each needs its own prereg.
 
-FINDING `results/calibration/FINDING-miso131-granularity-inert-at-class-grain-2026-08-05.md`;
-PREREG `results/calibration/PREREG-miso131-granularity-infinite-bound-2026-08-05.md`;
+FINDING `docs/records/miso/FINDING-miso131-granularity-inert-at-class-grain-2026-08-05.md`;
+PREREG `docs/records/miso/PREREG-miso131-granularity-infinite-bound-2026-08-05.md`;
 probe `scripts/probes/_miso131_granularity_infinite_bound.py`;
-record `results/calibration/_miso131_granularity_infinite_bound.json`.
+record `results/phase0/miso/_miso131_granularity_infinite_bound.json`.
 Next number: **miso-132**.
 
 ## 2026-08-05 — miso-132(a): SUCCESSOR 1 IS IDENTIFIED BUT INERT — synchronized-reserve online-gating REFUTED ex ante on its own pre-registered bar. NO LP, NO field added, NO run, keeper UNCHANGED
@@ -4528,7 +4528,7 @@ FAIL C7 `COAL_PRB` 2025 `cv_ratio` 0.347 vs 0.50, ledgered caveats 2/3
 {C3a, C3c}). Rule 22: MISO holds no marker — 2023–2025 only; 2022/2019/2026
 neither solved, scored nor read.
 
-**PREREG** `results/calibration/PREREG-miso132-synchronized-reserve-online-gating-2026-08-05.md`,
+**PREREG** `docs/records/miso/PREREG-miso132-synchronized-reserve-online-gating-2026-08-05.md`,
 pushed at **`9a0033bb` BEFORE the probe ran**, with the two-sided prior naming
 S-2 as the live kill risk and §0 disclosing every previously-measured number.
 
@@ -4593,10 +4593,10 @@ the evidence citation and the §5.4 queue stamp landed in this session.
 **DO NOT re-open online-gating at MISO without evidence that the overnight
 ONLINE capability is SCARCE**; the pre-check to beat is the finding's §3 table.
 
-FINDING `results/calibration/FINDING-miso132-online-gating-slack-at-miso-2026-08-05.md`;
-PREREG `results/calibration/PREREG-miso132-synchronized-reserve-online-gating-2026-08-05.md`;
+FINDING `docs/records/miso/FINDING-miso132-online-gating-slack-at-miso-2026-08-05.md`;
+PREREG `docs/records/miso/PREREG-miso132-synchronized-reserve-online-gating-2026-08-05.md`;
 probe `scripts/probes/_miso132_online_gating_sizing.py`;
-record `results/calibration/_miso132_online_gating_sizing.json`.
+record `results/phase0/miso/_miso132_online_gating_sizing.json`.
 **The queue's only remaining named item is successor 2 (the CC committed-band
 re-grounding, miso-130 stamp (c)) — opened in this same session under its own
 pre-registration; see the miso-132(b) entry.**
@@ -4678,7 +4678,7 @@ no re-derive. Rule 25: MISO's own CAMPD value; no other ISO touched.
 **Queue after this session: §5.4 is EMPTY.** Successor 1 refuted ex ante
 (miso-132(a)); successor 2 executed and promoted here. The C7-2025 continuation
 is **data-blocked**: the admissible lever family needs ex-ante coal contract
-tonnage (`docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md`;
+tonnage (`docs/records/miso/miso-coal-contract-tonnage-data-ask-2026-07.md`;
 bounded next experiment = the 2024 Form 580 1:1 contract-plant count, plus the
 one unchecked Michigan PSCR state lead), and the July-2025 price half is
 instrument-blocked on the miso-89/90 ~10 GW Jun/Jul-2025 under-derate. Any new
@@ -4687,7 +4687,7 @@ granularity, online-gating, take-or-pay/budget forms, within-band slope, seam
 classes, trough volume, self-commitment forcing — all adjudicated).
 
 FINDING: this entry (the A/B record is the finding artifact);
-PREREG `results/calibration/PREREG-miso132b-cc-committed-band-regrounding-2026-08-05.md`;
+PREREG `docs/records/miso/PREREG-miso132b-cc-committed-band-regrounding-2026-08-05.md`;
 records `_miso132b_cc_committed_precheck.json`, `_miso132b_cc_committed_ab.json`,
 `_miso132b_run_ids.json`. Next number: **miso-133**.
 
@@ -4782,10 +4782,10 @@ from it. Rules 19/21/24/25: nothing sized on any Δ, no parameter derived, no
 tuning channel created, no other ISO's cell touched (the transform is not
 MISO-specific, but each ISO must measure its own roster).
 
-FINDING `results/calibration/FINDING-miso133-overnight-identity-basis-2026-08-05.md`;
-PREREG `results/calibration/PREREG-miso133-overnight-supply-identity-basis-2026-08-05.md`;
+FINDING `docs/records/miso/FINDING-miso133-overnight-identity-basis-2026-08-05.md`;
+PREREG `docs/records/miso/PREREG-miso133-overnight-supply-identity-basis-2026-08-05.md`;
 probe `scripts/probes/_miso133_overnight_identity_basis.py`;
-record `results/calibration/_miso133_overnight_identity_basis.json`.
+record `results/phase0/miso/_miso133_overnight_identity_basis.json`.
 Next number: **miso-134**.
 
 ## 2026-08-05 — miso-134: the CT_PEAKER night deficit IS an ORDER object and the constraint BINDS — and the only zero-DOF lever is REFUSED anyway, because the swap is a CATEGORY ERROR and the class is already at annual parity. NO LP, NO field added, NO arm, NO run, keeper UNCHANGED
@@ -4930,10 +4930,10 @@ stamped this session; no other cell moves and S-4 mints none. Rules 19/21/24/25:
 nothing sized on any Δ, no parameter derived, no artifact re-derived, no tuning
 channel created, no other ISO's cell touched.
 
-FINDING `results/calibration/FINDING-miso134-ct-night-order-binding-not-licensing-2026-08-05.md`;
-PREREG `results/calibration/PREREG-miso134-ct-peaker-night-order-screen-2026-08-05.md`;
+FINDING `docs/records/miso/FINDING-miso134-ct-night-order-binding-not-licensing-2026-08-05.md`;
+PREREG `docs/records/miso/PREREG-miso134-ct-peaker-night-order-screen-2026-08-05.md`;
 probe `scripts/probes/_miso134_ct_night_order_screen.py`;
-record `results/calibration/_miso134_ct_night_order_screen.json`.
+record `results/phase0/miso/_miso134_ct_night_order_screen.json`.
 Next number: **miso-135**.
 
 ## 2026-08-06 — miso-135: the Michigan PSCR lead is SPENT — the datum is real, public and genuinely EX-ANTE, and is STILL inadmissible because it is published at CONTRACT grain. NO LP, NO field, NO arm, NO run, NO cell verdict, keeper UNCHANGED
@@ -5047,17 +5047,17 @@ grounds `coal_passthrough_sigmoids` (`ev.M`), while `measured_offer_surface`'s o
 **Rules 13/19/21/24/25**: nothing sized on any residual, no parameter derived, no
 artifact re-derived, no tuning channel created, no other ISO's cell touched.
 
-FINDING `results/calibration/FINDING-miso135-michigan-pscr-contract-grain-2026-08-06.md`;
-PREREG `results/calibration/PREREG-miso135-michigan-pscr-tonnage-lead-2026-08-06.md`;
+FINDING `docs/records/miso/FINDING-miso135-michigan-pscr-contract-grain-2026-08-06.md`;
+PREREG `docs/records/miso/PREREG-miso135-michigan-pscr-tonnage-lead-2026-08-06.md`;
 probe `scripts/probes/_miso135_michigan_pscr_tonnage_lead.py`;
-record `results/calibration/_miso135_michigan_pscr_tonnage_lead.json`.
+record `results/phase0/miso/_miso135_michigan_pscr_tonnage_lead.json`.
 Next number: **miso-136**.
 
 ## 2026-08-06 — miso-136: the miso-134 "no submitted-curve corpus" absence assertion is FALSE — MISO publishes a daily masked SUBMITTED-offer book at unit-hour grain — and the verdict is the pre-declared CONDITIONAL: corpus-exists / bridge-unproven. NO LP, NO field, NO arm, NO run, NO cell verdict, keeper UNCHANGED
 
 Charter lane (a): the miso-134 named successor's data prerequisite — an
 identification for within-day MISO CT offer conduct that is NOT the C7
-residual. PREREG (`results/calibration/PREREG-miso136-ct-offer-conduct-survey-2026-08-06.md`)
+residual. PREREG (`docs/records/miso/PREREG-miso136-ct-offer-conduct-survey-2026-08-06.md`)
 pushed at `ebca8364` BEFORE any MISO/IMM/FERC source was opened, with the
 model-memory prior disclosed as a prior and G-2 (the class bridge) declared
 the likely failure point in advance.
@@ -5127,10 +5127,10 @@ nothing under `data/raw/` (assessment, not intake). **Rules 13/19/21/24/25**:
 nothing sized on any residual, no parameter derived, no tuning channel
 created, no other ISO's verdict transferred.
 
-FINDING `results/calibration/FINDING-miso136-ct-offer-conduct-corpus-exists-2026-08-06.md`;
-PREREG `results/calibration/PREREG-miso136-ct-offer-conduct-survey-2026-08-06.md`;
+FINDING `docs/records/miso/FINDING-miso136-ct-offer-conduct-corpus-exists-2026-08-06.md`;
+PREREG `docs/records/miso/PREREG-miso136-ct-offer-conduct-survey-2026-08-06.md`;
 probe `scripts/probes/_miso136_ct_offer_conduct_survey.py`;
-record `results/calibration/_miso136_ct_offer_conduct_survey.json`.
+record `results/phase0/miso/_miso136_ct_offer_conduct_survey.json`.
 Next number: **miso-137**.
 ## 2026-08-06 — MISO blocker moves C7 → C3a under rubric v3.1 (owner amendment — no solve, label unchanged)
 
@@ -5290,10 +5290,10 @@ directive). **Rule 22**: 2023–2025 only. **Rules 13/19/21/24/25**: nothing siz
 on any residual, no parameter derived, no artifact re-derived, no tuning channel
 created, nothing written under `data/raw/`, no other ISO's cell touched.
 
-FINDING `results/calibration/FINDING-miso137-gap-is-a-monotone-continuum-2026-08-06.md`;
-PREREG `results/calibration/PREREG-miso137-c3a-gap-decomposition-2026-08-06.md`;
+FINDING `docs/records/miso/FINDING-miso137-gap-is-a-monotone-continuum-2026-08-06.md`;
+PREREG `docs/records/miso/PREREG-miso137-c3a-gap-decomposition-2026-08-06.md`;
 probe `scripts/probes/_miso137_c3a_gap_decomposition.py`;
-record `results/calibration/_miso137_c3a_gap_decomposition.json`.
+record `results/phase0/miso/_miso137_c3a_gap_decomposition.json`.
 
 
 ## 2026-08-06 — miso-138: the offer-side-only class bridge for the `da_co` corpus is REFUTED on the pre-committed rule — the corpus IS the MISO fleet and its declarations DO carry class information, but coal and CC are not separable in this feature family, and that ceiling was measurable on GROUND TRUTH before a single masked unit was classified. NO LP, NO field, NO arm, NO run, NO cell verdict, keeper UNCHANGED
@@ -5308,7 +5308,7 @@ marginal-unit pricing SPENT miso-134; level levers disqualified by miso-137's
 sign reversal). The `da_co` corpus is the only MISO source of offer-curve
 shape at class grain, so **its bridge GATES lane (a)**.
 
-**PREREG** `results/calibration/PREREG-miso138-da-co-class-bridge-2026-08-06.md`,
+**PREREG** `docs/records/miso/PREREG-miso138-da-co-class-bridge-2026-08-06.md`,
 pushed at **`848d387a`** before any adjudicating statistic — two-sided prior,
 most-likely failure mode named in advance, look-alike trap named with a
 pre-committed size-preserving permutation null that **outranks** the aggregate
@@ -5393,11 +5393,11 @@ committed. Rules 13/19/21/24/25 throughout. Owner directive: no C7 work.
 data — and no amount of distributional agreement downstream will tell you so,
 because aggregates survive a scramble.*
 
-FINDING `results/calibration/FINDING-miso138-da-co-class-bridge-refuted-2026-08-06.md`;
-PREREG `results/calibration/PREREG-miso138-da-co-class-bridge-2026-08-06.md`;
+FINDING `docs/records/miso/FINDING-miso138-da-co-class-bridge-refuted-2026-08-06.md`;
+PREREG `docs/records/miso/PREREG-miso138-da-co-class-bridge-2026-08-06.md`;
 probes `scripts/probes/_miso138_fetch_da_co.py`,
 `_miso138_da_co_class_bridge.py`, `_miso138_bridge_diagnostics.py`;
-records `results/calibration/_miso138_da_co_class_bridge.json`,
+records `results/phase0/miso/_miso138_da_co_class_bridge.json`,
 `_miso138_bridge_diagnostics.json`.
 Next number: **miso-139**. *(superseded — see the miso-139 entry below.)*
 
@@ -5407,7 +5407,7 @@ Next number: **miso-139**. *(superseded — see the miso-139 entry below.)*
 
 Keeper unchanged at `2026-08-05-miso-132b-cc-committed` (bundle
 `results/calibration/miso132_ccmin_B`). PREREG
-`results/calibration/PREREG-miso139-ambient-derate-class-scope-2026-08-06.md`
+`docs/records/miso/PREREG-miso139-ambient-derate-class-scope-2026-08-06.md`
 pushed at **`6263f43d`** before any adjudicating statistic, carrying a two-sided
 prior with **four falsifiable numeric predictions**, the convention decision rule
 fixed on basis consistency in advance, and four look-alike traps with
@@ -5535,11 +5535,11 @@ re-scope inherits a convention that may be structurally incapable of the target,
 and the parameter argument that looks like the session's work can be moot before
 it starts.*
 
-FINDING `results/calibration/FINDING-miso139-ambient-derate-refused-at-anchor-2026-08-06.md`;
-PREREG `results/calibration/PREREG-miso139-ambient-derate-class-scope-2026-08-06.md`;
+FINDING `docs/records/miso/FINDING-miso139-ambient-derate-refused-at-anchor-2026-08-06.md`;
+PREREG `docs/records/miso/PREREG-miso139-ambient-derate-class-scope-2026-08-06.md`;
 probes `scripts/probes/_miso139_derate_gates.py`, `_miso139_g2_binding.py`,
 `_miso139_successor_bound.py`;
-records `results/calibration/_miso139_derate_gates.json`,
+records `results/phase0/miso/_miso139_derate_gates.json`,
 `_miso139_g2_binding.json`, `_miso139_successor_bound.json`.
 Next number: **miso-140**. *(superseded — see the miso-140 entry below.)*
 
@@ -5583,12 +5583,12 @@ which is exactly why miso-101 armed the hour-grain leg
 ## 2026-08-07 — miso-140: the MISO comparator refresh REPRODUCES EXACTLY and is CONFINED to `*_lw`; every C3a re-verified; the determination does NOT change. NO LP, NO field, NO arm, NO run, NO cell verdict, keeper UNCHANGED
 
 **Queue item 1 (§5.4) DISCHARGED.** PREREG
-`results/calibration/PREREG-miso140-bench-lw-refresh-2026-08-07.md` pushed at
+`docs/records/miso/PREREG-miso140-bench-lw-refresh-2026-08-07.md` pushed at
 `483091b3` before any adjudicating statistic. FINDING
-`results/calibration/FINDING-miso140-bench-lw-refresh-verified-2026-08-07.md`;
-handoff `docs/handoffs/miso-140-bench-refresh-2026-08-07.md`; probe
+`docs/records/miso/FINDING-miso140-bench-lw-refresh-verified-2026-08-07.md`;
+handoff `docs/records/miso/miso-140-bench-refresh-2026-08-07.md`; probe
 `scripts/probes/_miso140_bench_lw_verify.py`; record
-`results/calibration/_miso140_bench_lw_verify.json`.
+`results/phase0/miso/_miso140_bench_lw_verify.json`.
 
 **The refresh had already been performed before the session opened**, by a
 cross-ISO lane: pjm-160 B5 re-derived `*_lw` in
@@ -5694,9 +5694,9 @@ A **second miso-140 session ran concurrently** on the same §5.4 queue item 1 an
 landed after the entry above. Its numbers are recorded here **as an independent
 replication, not a second discharge** — the item is discharged by the canonical
 entry. PREREG
-`results/calibration/PREREG-miso140-bench-refresh-verification-2026-08-07.md`
+`docs/records/miso/PREREG-miso140-bench-refresh-verification-2026-08-07.md`
 pushed at `78e2cec4` before any adjudicating statistic; FINDING
-`results/calibration/FINDING-miso140b-model-side-vintage-and-scope-2026-08-07.md`;
+`docs/records/miso/FINDING-miso140b-model-side-vintage-and-scope-2026-08-07.md`;
 probe `scripts/probes/_miso140_bench_refresh_gates.py`; records
 `_miso140_bench_refresh_gates.json`, `_miso140_c3a_reverification.json`.
 
@@ -5799,7 +5799,7 @@ may attach in either direction, and none is made here.
 registered, no `ScenarioConfig` field, no parameter set, nothing written under
 `data/raw/`. Keeper unchanged at **`2026-08-05-miso-132b-cc-committed`**
 (bundle `miso132_ccmin_B`). PREREG
-`results/calibration/PREREG-miso141-summer-derate-basis-2026-08-07.md` pushed at
+`docs/records/miso/PREREG-miso141-summer-derate-basis-2026-08-07.md` pushed at
 `15de62ea` **before any adjudicating statistic**, carrying seven falsifiable
 numeric predictions, five traps each with a pre-committed counter-measurement,
 and the decisive gate specified so it does **not depend on provenance at all**.
@@ -5910,7 +5910,7 @@ anchor-convention successor. The miso-137 object — the **price** compression �
 remains unaddressed by both.
 
 Evidence:
-`results/calibration/FINDING-miso141-summer-derate-double-count-confirmed-2026-08-07.md`,
+`docs/records/miso/FINDING-miso141-summer-derate-double-count-confirmed-2026-08-07.md`,
 `PREREG-miso141-summer-derate-basis-2026-08-07.md`,
 `_miso141_summer_derate_basis.json`, `_miso141_cc_rows_and_cushion.json`,
 probes `scripts/probes/_miso141_summer_derate_basis.py`,
@@ -5942,7 +5942,7 @@ coal-vs-CT merit-order defect).
 registered, no `ScenarioConfig` field, no parameter, nothing written under
 `data/raw/`. Keeper unchanged at **`2026-08-05-miso-132b-cc-committed`** (bundle
 `miso132_ccmin_B`). PREREG
-`results/calibration/PREREG-miso142-summer-supply-stack-2026-08-08.md` pushed at
+`docs/records/miso/PREREG-miso142-summer-supply-stack-2026-08-08.md` pushed at
 `771cf19c` (blob `f2315248`, verified against the remote) **before any
 adjudicating statistic**, carrying ten falsifiable numeric predictions, four
 pre-committed verdict branches, a stop rule, kill-gate bars fixed before their
@@ -6110,12 +6110,12 @@ Next number: **miso-143**.
 
 **Lane.** §5.4 queue **item 4 (NEW)** — miso-142's named successor candidate
 **(A)**, the coal-vs-gas merit order in the 2025 high-gas regime. PREREG
-`results/calibration/PREREG-miso143-coal-gas-merit-order-2026-08-08.md`, pushed
+`docs/records/miso/PREREG-miso143-coal-gas-merit-order-2026-08-08.md`, pushed
 at `1f79a700` (blob `a7979fd8`, verified against the remote) **before any
 adjudicating statistic**: ten falsifiable predictions, four pre-committed
 verdict branches, seven kill-gate bars fixed in advance, six traps each with a
 counter-measurement. Finding
-`results/calibration/FINDING-miso143-merit-order-gain-is-material-but-unowned-2026-08-08.md`.
+`docs/records/miso/FINDING-miso143-merit-order-gain-is-material-but-unowned-2026-08-08.md`.
 
 **Posture.** **NO LP SOLVED.** No `ScenarioConfig` field, no parameter, no
 mechanism armed, no run registered, **no cell verdict minted**. Keeper
@@ -6208,13 +6208,13 @@ verdict (rule 25). **Next number: miso-144.**
 
 **Lane.** §5.4 queue **item 5 (NEW)** — miso-143's named successor, the
 in-merit idle block, diagnosis-first. PREREG
-`results/calibration/PREREG-miso144-inmerit-idle-attribution-2026-08-08.md`,
+`docs/records/miso/PREREG-miso144-inmerit-idle-attribution-2026-08-08.md`,
 pushed at `017f6bee` (blob `5599ba80`, verified against the remote) **before
 any adjudicating statistic**: 13 falsifiable predictions, four pre-committed
 branches with priors, two construction-error stops, seven kill-gate bars fixed
 in advance, 11 traps each with a counter-measurement, and a full disclosure of
 every committed artifact read before registration. Finding
-`results/calibration/FINDING-miso144-idle-block-is-universe-artifact-2026-08-08.md`.
+`docs/records/miso/FINDING-miso144-idle-block-is-universe-artifact-2026-08-08.md`.
 
 **Posture.** **NO LP SOLVED.** No `ScenarioConfig` field, no parameter, no
 mechanism armed, no run registered, **no cell verdict minted**
@@ -6320,7 +6320,7 @@ C3b PASS, C3c CAVEAT ledgered ×3, C1/C2/C4/C6/C8 PASS with ST_GAS grounded
 above budget 31.9/33.1/45.1 %. The bundle `metrics.json` still carries the
 stale `price_mean: CAVEAT`; the scorer is authoritative.
 
-**PREREG** `results/calibration/PREREG-miso145-summer-offer-conduct-2026-08-09.md`,
+**PREREG** `docs/records/miso/PREREG-miso145-summer-offer-conduct-2026-08-09.md`,
 pushed at **`083222bf`** before any adjudicating statistic — two-sided prior,
 six falsifiable predictions, an exact LEVEL/POSITION identity, pre-committed
 branches, kill-gate bars, all seven traps with counter-measurements, and full
@@ -6436,7 +6436,7 @@ SPENT; C1/C2/C3b/C4/C6/C8 PASS, C8 ST_GAS grounded above budget at
 all eight classes and C2 both families in 2025 on the preliminary EIA-923
 vintage.
 
-**PREREG** `results/calibration/PREREG-miso146-intermittent-screen-2026-08-09.md`,
+**PREREG** `docs/records/miso/PREREG-miso146-intermittent-screen-2026-08-09.md`,
 pushed at **`fc162d54`** before any adjudicating statistic — two-sided prior,
 five numerically falsifiable predictions with **gating status and
 interpretation fixed, with reasons, before measurement**, five pre-committed
@@ -6573,7 +6573,7 @@ blocker year's fuel mix UNGATED; scored descriptively vs EIA-930 throughout).
 Bundle `metrics.json` stale (rubric 3.0) — scorer authoritative, per charter.
 
 **PREREG**
-`results/calibration/PREREG-miso147-highprice-dispatch-composition-2026-08-09.md`,
+`docs/records/miso/PREREG-miso147-highprice-dispatch-composition-2026-08-09.md`,
 pushed at `13ece35` (blob `7089dbd8`, verified against the remote; merged as PR
 #3785) BEFORE any adjudicating statistic: four strata fixed from the actual RT
 series only (S0 May-2025 reversal control / S1 top-decile-≤$200 PRIMARY / S2
@@ -6705,10 +6705,10 @@ precedent), never rebasing past the pushed PREREG.**
 ## 2026-08-09 — miso-148: the CC capability-and-availability lane — a NEW class-agnostic basis-aware mechanism REPAIRS the summer flat-derate double count, CLOSES the summer availability hole, makes the price gates WORSE, and is NOT PROMOTED — ESCALATED to the owner
 
 **Lane.** Item 11, the miso-147 successor (owner charter 2026-08-09). PREREG
-`results/calibration/PREREG-miso148-cc-availability-summer-basis-2026-08-09.md`
+`docs/records/miso/PREREG-miso148-cc-availability-summer-basis-2026-08-09.md`
 pushed at `456b376` (blob `bd0a0a97`, 420 lines, verified against the FETCHED
 remote ref) BEFORE any adjudicating statistic. FINDING
-`results/calibration/FINDING-miso148-summer-basis-repair-2026-08-09.md`.
+`docs/records/miso/FINDING-miso148-summer-basis-repair-2026-08-09.md`.
 **Keeper at entry and at exit: `2026-08-05-miso-132b-cc-committed` — UNCHANGED.**
 Rule 22: 2023–2025 only, both arms, one invocation each. Concurrent-session
 check at open and close: zero open PRs, zero other remote MISO branches.
@@ -6816,10 +6816,10 @@ twelve months and its non-summer half is that object.
 `calibration-complete.json`). Keeper **UNCHANGED** at
 `2026-08-09-miso-148-basis-aware`; fail set **UNCHANGED** `{C3a, C3b}`;
 determination **UNCHANGED** `NOT-YET`. PREREG
-`results/calibration/PREREG-miso149-overlay-contradiction-2026-08-10.md` pushed at
+`docs/records/miso/PREREG-miso149-overlay-contradiction-2026-08-10.md` pushed at
 `318c0542` (blob verified against the FETCHED remote ref) before any adjudicating
 statistic; FINDING
-`results/calibration/FINDING-miso149-the-object-is-the-price-level-2026-08-10.md`.
+`docs/records/miso/FINDING-miso149-the-object-is-the-price-level-2026-08-10.md`.
 One cell minted: **`wefor_residual` MISO `U → I`**.
 
 **G-F footing: 1,680 fields, ZERO diffs — and byte-identical** to the committed
@@ -6943,7 +6943,7 @@ hard-wired to the **miso-132** bundle and would have screened the wrong keeper;
 Rule 22 `[R-HOLDOUT]`: 2023/2024/2025 only, MISO holds no marker, no holdout
 spend. `FINDING-miso152-the-inversion-is-real-and-immaterial-2026-08-11.md`;
 `PREREG-miso152-tranche-fill-order-2026-08-11.md`;
-`results/calibration/_miso152_fillorder.json`.
+`results/phase0/miso/_miso152_fillorder.json`.
 
 ## miso-153 (2026-08-12) — the summer peak price-setter is `CT_PEAKER`; the chartered dispersion object is CLOSED by measurement
 
@@ -7215,7 +7215,7 @@ committed hashes. Next number: **miso-160**.
 **Provenance (rule 28(a)).** The miso-159 queue named one lever:
 `SUMMER_WEFOR_SHARE = 0.30`, gated on the owner's data-provenance decision
 (miso-157 §11 item 2). **The owner took it this session**
-(`docs/handoffs/miso-outage-grain-data-ask-2026-07.md` §9): MISO's published
+(`docs/records/miso/miso-outage-grain-data-ask-2026-07.md` §9): MISO's published
 ticket-based MOM record adjudicates the forced-outage seasonal shape; CAMPD is
 inadmissible for outage measurement (output-derived — the standing ask's own
 §2A ground; phantom-outage bias; **zero** CT_PEAKER windows); and the ask's
@@ -7318,7 +7318,7 @@ a model-class limit (the ERCOT C3a-2023 (Q-B) precedent). **Until the owner
 rules, MISO has no chartered next solve** — anything else re-tests an
 adjudicated cell without new evidence or tunes the residual.
 
-Evidence: `results/calibration/FINDING-miso161-c3a-residue-exhaustion-2026-08-17.md`;
+Evidence: `docs/records/miso/FINDING-miso161-c3a-residue-exhaustion-2026-08-17.md`;
 probes `_miso161_c3a_decomposition.py` / `_miso161_summer_cushion.py` /
 `_miso161_peakday_outage_shape.py`; records `_miso161_*.json`. Rule 22:
 2023–2025 only; freeze untouched; no marker touched. Next number: **miso-162.**
@@ -7378,7 +7378,7 @@ provably inert** (~2 of 88 hours). The two facts compound: (i) removes the
 excuse for not building it, (ii) removes the reason to.
 
 **THE OWNER RULED SHAPE 2 — CLOSE THE LANE**, on the **ERCOT C3a-2023 (Q-B)
-precedent** (`docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`:
+precedent** (`docs/records/ercot/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`:
 *“STOP — ERCOT stands at NOT-YET on C3a-2023 as a model-class limit, and the
 program stops spending on it”* — explicitly **a budget decision, not a rubric
 decision**). Recorded with its provenance at `docs/governance/rule-history.md`
@@ -7403,7 +7403,7 @@ log, the MISO matrix shard (`updated`/`gates` + the `ordc_scarcity_overlay`
 evidence citation; **cell unchanged at `G`** — a re-affirmation, not a new
 verdict), and `docs/governance/rule-history.md` §7/§8.
 `scripts/audit_keepers.py --iso MISO` green before and after.
-Evidence: `results/calibration/FINDING-miso163-c3a-lane-closure-2026-08-17.md`.
+Evidence: `docs/records/miso/FINDING-miso163-c3a-lane-closure-2026-08-17.md`.
 Next number: **miso-164** — but note there is **no chartered MISO lane** for it
 to pick up.
 
@@ -7468,10 +7468,10 @@ decision, not a rubric decision"* — both untouched, and candidate 4 is itself
 still an open untested object. Determination unchanged: **NOT-YET on C3a-2025
 alone (−12.5 %)** at full magnitude, C3c the single ledgered caveat.
 
-Evidence: `results/calibration/FINDING-miso164-gads-candidate1-resolved-2026-08-17.md`
+Evidence: `docs/records/miso/FINDING-miso164-gads-candidate1-resolved-2026-08-17.md`
 (with the sha256 identity record for the two brochures inspected; deliberately
 not committed, per the no-intake closure). Surfaces stamped:
-`docs/handoffs/miso-outage-grain-data-ask-2026-07.md` (status header, candidate 1,
+`docs/records/miso/miso-outage-grain-data-ask-2026-07.md` (status header, candidate 1,
 §8 Net). Next number: **miso-165.**
 
 ## miso-167 (2026-08-18) — LANE RE-OPENED BY OWNER RE-CHARTER; the C3a-2025 object RE-IDENTIFIED as a reserve-SUPPLY defect, and the prize bounded at ~34 % of the summer gap
@@ -7536,7 +7536,7 @@ deterministic co-optimized LP with foresight) also priced them up: **DA-foreseen
 MODEL-CLASS LIMIT — miso-163 was right about this half.** Ceiling on any structural fix
 ≈ **+3.3 pp on C3a-2025** against the 2.5 pp needed to clear ±10 %. No successor may quote more.
 
-**DELIVERABLES.** `results/calibration/FINDING-miso167-summer-scarcity-anatomy-2026-08-18.md`;
+**DELIVERABLES.** `docs/records/miso/FINDING-miso167-summer-scarcity-anatomy-2026-08-18.md`;
 `PREREG-miso167-online-gated-reserve-supply-2026-08-18.md` (mechanism
 `miso_reserve_online_gated`, zero DOF, no-LP pre-check with fixed kill thresholds K-PRE-A/B, a
 decision rule whose K-1 guard FAILS the lever if it pushes C3a-2023 out of band, and K-5 which
@@ -7850,7 +7850,7 @@ Rule 22: 2023–2025 only; freeze untouched; no marker touched. Next number: **m
 
 **NO LP. Keeper UNCHANGED at `2026-08-19-miso-170-sitegrain`; nothing armed, no
 `ScenarioConfig` field, no registration** (rule 15 not engaged). Records:
-`results/calibration/FINDING-miso171-reserve-requirement-decomposition-2026-08-20.md`,
+`docs/records/miso/FINDING-miso171-reserve-requirement-decomposition-2026-08-20.md`,
 instrument `scripts/probes/_miso171_reserve_product_decomposition.py` +
 `_miso171_reserve_product_decomposition.json`. Executes the miso-171 charter's
 PREREQUISITE (FINDING-miso170 §5) — decompose before deciding whether the
@@ -8221,7 +8221,7 @@ the `MECH_ERCOT_RUC_COMMITMENT` import drop and the matrix category defect
 no `ScenarioConfig` field, no cell verdict minted, no registration (the no-LP
 precedent; rule 15 not engaged). This is the measurement + planning deliverable the
 2026-08-18 owner re-charter requires. Records:
-`results/calibration/FINDING-miso178-c3a2025-anatomy-and-lever-plan-2026-08-23.md`;
+`docs/records/miso/FINDING-miso178-c3a2025-anatomy-and-lever-plan-2026-08-23.md`;
 instruments `scripts/probes/_miso178_c3a2025_anatomy.py` (footing/zonal/buckets/
 seasonal/foreseen/ceilings + the FULL miso-167 re-run at this bundle + the miso-171
 scarce-set bit-identity) and `scripts/probes/_miso178_c3a_decomposition.py` (the
@@ -9054,7 +9054,7 @@ measured generation from units in neither the operable snapshot nor the
 whole-plant retiree channel (Sherco-2, South Oak Creek 5+6, A B Brown, Dan
 E Karn, Petersburg-ST2, Teche-3, Dallman-3; Big Cajun 2-1 OS); needs
 unit-grain exit timing in the plant-keyed COD mechanism. Records:
-`results/calibration/FINDING-miso188-retiree-vintage-status-scope-2026-08-30.md`,
+`docs/records/miso/FINDING-miso188-retiree-vintage-status-scope-2026-08-30.md`,
 `PREREG-miso188-retiree-vintage-status-scope-2026-08-30.md`,
 `_miso188_ab_gates.json`; probe `scripts/probes/_miso188_ab_gates.py`;
 attestation `scripts/gen_miso188_attestation.py`.
@@ -9705,7 +9705,7 @@ committed year/market, max-not-sum synthetically, and the CORRECTION keys.
 Prose corrected in place (dated): FINDING-miso167 §3, FINDING-miso171 §5,
 FINDING-miso178 §3, PREREG-miso167 §1, the mechanism-matrix MISO narrative,
 and the two quotes above. Full record:
-`docs/FINDING-xiso-cascade-scan-2026-09-01.md`. Keeper
+`docs/records/governance/FINDING-xiso-cascade-scan-2026-09-01.md`. Keeper
 `2026-08-30-miso-191-bexit` untouched; no marker, no shard cell, no holdout
 year, zero solve.
 
@@ -11464,7 +11464,7 @@ evidence appended and its genealogy corrected (gate 2, not miso-119).
 `ScenarioConfig` field, no matrix row, no run registered.** PREREG
 `PREREG-miso214-ct-peaker-conduct-2026-09-05.md` pushed BLIND at `067a305a` before any
 adjudicating statistic; probe `scripts/probes/_miso214_ct_peaker_conduct_phase0.py` →
-`results/calibration/_miso214_ct_peaker_conduct.json`; record
+`results/phase0/miso/_miso214_ct_peaker_conduct.json`; record
 `FINDING-miso214-ct-peaker-conduct-2026-09-05.md`. Rule 22: 2023–2025 only.
 
 **The discriminator, and it inverts the prior.** Over every missed plant-hour — a model
@@ -11974,7 +11974,7 @@ Records: `FINDING-miso220-nonsteam-offer-lift-2026-09-05.md`;
 `miso220_nonsteamlift_B`), determination CALIBRATED, C3c the single ledgered caveat.
 **No solve, no screen, no bundle, no dashboard registration** — rule 15 `[R-DASHBOARD]`
 registers completed runs and this session produced none. Rule 22: 2023–2025 only.
-Record `results/calibration/FINDING-miso221-peak-band-reshape-2026-09-06.md`; instrument
+Record `docs/records/miso/FINDING-miso221-peak-band-reshape-2026-09-06.md`; instrument
 `scripts/probes/_miso221_peak_shape_phase0.py` → `_miso221_peak_shape.json`.
 
 **A governance correction that scoped the whole session.** The charter named the shape
@@ -12072,7 +12072,7 @@ completes.
 **Keeper UNCHANGED: `2026-09-05-miso-220-nonsteam-lift`** (bundle
 `miso220_nonsteamlift_B`), CALIBRATED, C3c the single ledgered caveat. **No solve, no
 screen, no bundle, no dashboard registration, zero LP minutes.** Rule 22: 2023–2025 only.
-Record `results/calibration/FINDING-miso222-elmp-emergency-supply-2026-09-06.md`;
+Record `docs/records/miso/FINDING-miso222-elmp-emergency-supply-2026-09-06.md`;
 instruments `scripts/probes/_miso222_removal_sizing_phase0.py` →
 `_miso222_removal_sizing.json` and `scripts/probes/_miso222_emergency_range_phase0.py` →
 `_miso222_emergency_range.json`.
@@ -12654,7 +12654,7 @@ and `miso_south_export_ladder_rt_tail` **R** (miso-184) these numbers **corrobor
 independent instrument and never re-test (rule 28(a)). C3c is untouched and stays the designated
 frontier (2026-07-20).
 
-Records: `results/calibration/PREREG-miso235-manitoba-seam-and-the-sigma-question-2026-09-07.md`,
+Records: `docs/records/miso/PREREG-miso235-manitoba-seam-and-the-sigma-question-2026-09-07.md`,
 `ADDENDUM-miso235-residual-character-2026-09-07.md`,
 `FINDING-miso235-the-fourth-seam-and-the-variance-split-2026-09-07.md`,
 `_miso235_seam_variance_decomposition_phase0.json`, `_miso235_residual_character_addendum.json`;
@@ -12716,7 +12716,7 @@ model reproduces none of it — an **unused** input, not a missing one.
 and pinned to their derives by test (rule 23); the sizing number is never a tuning target
 (rules 1 / 13); C3c is untouched and stays the designated frontier.
 
-Records: `results/calibration/PREREG-miso236-neighbour-state-and-the-idiosyncratic-residual-2026-09-07.md`,
+Records: `docs/records/miso/PREREG-miso236-neighbour-state-and-the-idiosyncratic-residual-2026-09-07.md`,
 `ADDENDUM-miso236-sizing-and-the-spp-limb-2026-09-07.md`,
 `FINDING-miso236-an-admissible-driver-exists-on-spp-and-nowhere-else-2026-09-07.md`;
 probe `scripts/probes/_miso236_neighbour_state_residual_phase0.py` with
@@ -12991,7 +12991,7 @@ successor owes all four at zero LP before any solve, plus its own PREREG with a 
 this session's column. A DOF-free construction is the bar; **if none exists, saying so and
 stopping is a complete session result.** Handoff items 2–6 are not taken and stay where filed.
 
-**Records:** `results/calibration/PREREG-miso239-which-property-of-g-2026-09-07.md`,
+**Records:** `docs/records/miso/PREREG-miso239-which-property-of-g-2026-09-07.md`,
 `ADDENDUM-miso239-the-predecessor-record-landed-mid-session-2026-09-07.md`,
 `FINDING-miso239-the-pre-registered-ladder-reads-mixed-and-the-object-is-the-spread-2026-09-07.md`;
 probe `scripts/probes/_miso239_merit_ladder_property_attribution_phase0.py` with
@@ -13087,7 +13087,7 @@ re-spacing of `δ_k`, an envelope change or an interface-limit change** (rules 2
 **un-targetable**; miso-236's 328.6 / 341.7 / 207.5 MW sizing stays un-targetable. No promotion,
 no decertification; C3c untouched and still the designated frontier.
 
-**Records:** `results/calibration/PREREG-miso240-charter-or-refuse-the-external-bus-price-2026-09-07.md`,
+**Records:** `docs/records/miso/PREREG-miso240-charter-or-refuse-the-external-bus-price-2026-09-07.md`,
 `ADDENDUM-miso240-two-decision-rules-fixed-before-the-numbers-2026-09-07.md`,
 `ADDENDUM-miso240-gate-repair-the-support-predicate-2026-09-07.md`,
 `FINDING-miso240-the-external-bus-is-the-midwest-price-and-item-1-closes-2026-09-07.md`; probe
@@ -13388,7 +13388,7 @@ before either ran); `ADDENDUM-miso246-my-own-gate-G-PARSE-failed-because-main-mo
 ## miso-249 — 2026-09-09 — **THE MEASURED MONTHLY GAS LEVEL IS PROVABLY INERT ON MISO'S KEEPER (100.000 % of gas cap-hours are print-derived; `mc_base` BYTE-IDENTICAL), AND `FINDING-xiso` §1a's PREMISE IS WRONG FOR MISO — the fleet already pays a measured monthly level.** ZERO LP
 
 Session `miso-fuelvintage-1`, PROMPT 2 of
-`docs/handoffs/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md`. **No solve was spent, no run was
+`docs/records/governance/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md`. **No solve was spent, no run was
 registered, no keeper moved, every committed MISO bundle byte-identical.** The rule 29 `[R-SCREEN]`
 clause-(0) gate the launch prompt's ADDITION 1 named fired and killed the arm before an LP.
 
@@ -13437,7 +13437,7 @@ marker — MISO is the only ISO in this program that cannot touch 2020–2022, s
 defect is unreachable by construction. **Stated, not acted on:** no `--holdout-authorized`, no
 out-of-training solve, no marker file touched.
 
-Artifacts: `docs/FINDING-miso249-ep-gas-level-inert-2026-09-09.md`.
+Artifacts: `docs/records/miso/FINDING-miso249-ep-gas-level-inert-2026-09-09.md`.
 
 ## miso-250 — 2026-09-09 — **KEEPER → `2026-09-09-miso-250-ep-gas`, CALIBRATED. THE MEASURED MONTHLY GAS LEVEL IS ARMED ON THE OWNER'S RULING AND IS MEASURED INERT — and the promotion turned up a cross-ISO finding: "zero MW" is not "zero effect".**
 
@@ -13535,8 +13535,8 @@ there is little for it to do in 2023-2025.
 **Rule 22:** 2023-2025 ONLY. MISO holds **no** `complete` marker; `--holdout-authorized` was never
 passed, no out-of-training year was solved or scored, and no marker file was touched.
 
-Artifacts: `docs/RESULT-miso-fuelvintage-ep-level-2026-09-09.md`,
-`docs/PRECOMMIT-miso-fuelvintage-ep-level-2026-09-09.md`,
+Artifacts: `docs/records/miso/RESULT-miso-fuelvintage-ep-level-2026-09-09.md`,
+`docs/records/miso/PRECOMMIT-miso-fuelvintage-ep-level-2026-09-09.md`,
 `scripts/gen_miso250_attestation.py`.
 
 ## miso-251 — 2026-09-10 — **THE HOLDOUT LADDER IS COMPLETE (2020/2021/2022) AND THE KEEPER'S RANGE LIMIT IS NOW A MEASURED NUMBER: it fails out of REGIME, not out of sample.** Keeper unchanged, `2026-09-09-miso-250-ep-gas`, **CALIBRATED**
@@ -13557,7 +13557,7 @@ Rubric v3.3 already makes a ledgered C3c non-downgrading and MISO already reads 
 is `unscored criteria: fuelmix, sysvol` — all 8 of 8 C1 classes SKIPPED on the *preliminary 2025
 EIA-923 vintage*. CAISO, NEISO and NYISO show the identical row for the identical reason. The
 unscored-criteria route is one v3.3 explicitly preserved as downgrading, so **no scorer change was
-made for it**. Full evidence: `docs/FINDING-miso251-c3c-and-the-partial-month-bench-2026-09-10.md`.
+made for it**. Full evidence: `docs/records/miso/FINDING-miso251-c3c-and-the-partial-month-bench-2026-09-10.md`.
 
 ### 2. THE LADDER — three rungs, all folded into the keeper (rule 30(a)), ISO determination untouched
 
@@ -13640,7 +13640,7 @@ offer curves are byte-identical to the keeper's in all three.
 **No LP was spent — no shard, no solve, no bundle, nothing registered.** Rule 29 `[R-SCREEN]`
 step 0 says a zero-LP gate that kills an arm is the session's result and the remaining spend is
 never made. It killed four. Full trace, with every number:
-`docs/FINDING-miso252-seam-fallback-and-the-923-block-2026-09-10.md`.
+`docs/records/miso/FINDING-miso252-seam-fallback-and-the-923-block-2026-09-10.md`.
 
 ### 1. THE SEAM — root cause found, and it is structural
 
@@ -13740,7 +13740,7 @@ construction**. A single MISO year (8 zones x 8760 h, ~3,025 members) does not f
 is not a lever (it byte-copies whole years). Every shard stopped and reported rather than pushing a
 partial bundle. **The 2021 envelope screen and the 2022 ladder arm are both specified, committed and
 unrun** — the next session needs a larger environment before any MISO arm can be evaluated.
-Evidence: `docs/FINDING-miso252-biomass-selfscored-and-the-lp-memory-ceiling-2026-09-10.md`.
+Evidence: `docs/records/miso/FINDING-miso252-biomass-selfscored-and-the-lp-memory-ceiling-2026-09-10.md`.
 
 * Next number: **miso-254**.
 
@@ -13841,8 +13841,8 @@ telemetry LABELS grid-connected units, which was the hypothesis's actual mechani
 **The binding constraint is now the solve environment, twice running**: miso-252 lost six
 shards to OOM, miso-253 lost two to containers that never started. The arm is **one 2023
 shard from an answer**. Evidence:
-`docs/RESULT-miso253-mustrun-chp-btm-2026-09-10.md`,
-`docs/PRECOMMIT-miso253-mustrun-chp-btm-2026-09-10.md` (+ addenda A/B/C, all pushed BEFORE
+`docs/records/miso/RESULT-miso253-mustrun-chp-btm-2026-09-10.md`,
+`docs/records/miso/PRECOMMIT-miso253-mustrun-chp-btm-2026-09-10.md` (+ addenda A/B/C, all pushed BEFORE
 any solve was attempted).
 
 
@@ -13869,7 +13869,7 @@ mechanically but trips the sandbox containment refusal on the follow-on workload
 LP**, which is a rule-1 modelling decision, not a knob. HiGHS IPM/PDLP/Devex would cut the
 per-column working set but can move the **duals**, and prices *are* duals (rule 4) — owner sign-off
 only, deliberately not taken. The arm stays **UNADJUDICATED**, cell `O`, one successful solve from
-an answer. Evidence: `docs/FINDING-miso253-the-miso-lp-does-not-fit-2026-09-12.md`,
+an answer. Evidence: `docs/records/miso/FINDING-miso253-the-miso-lp-does-not-fit-2026-09-12.md`,
 `docs/SHARD-miso253-arm{A,B,C}.md`.
 
 * Next number: **miso-254**.
@@ -13903,7 +13903,7 @@ every invocation. Called automatically at the top of `run_calibration_full.solve
 (hence `replay_keeper.py`) and `run_calibration.main`; opt-out `--no-container-preflight`.
 `prepare_solve_container.py` is now a thin CLI over it. 11 unit tests. CLAUDE.md rule 32(c)
 item 8 records the probe and forbids `free`. Evidence:
-`docs/FINDING-miso254-oom-is-the-missing-swap-not-the-model-2026-09-12.md`.
+`docs/records/miso/FINDING-miso254-oom-is-the-missing-swap-not-the-model-2026-09-12.md`.
 
 **SHARD TEST (pre-registered in the FINDING §5 before launch; results §5.1):** both shards
 pinned to `0101b4ce`, both replaying the committed keeper on 2023.
@@ -13912,10 +13912,10 @@ pinned to `0101b4ce`, both replaying the committed keeper on 2023.
   cap. **P1 prices reproduce the keeper's committed 2023 sidecar exactly — 0 of 490,560 cells
   differ.** The honest peak, measured for the first time: `cgroup_peak_rss_plus_swap_gib=18.91`
   (RSS pinned at 13.34, up to 5.08 GiB in swap) — **a MISO year needs ~18.9 GiB, ~5.6 GiB over
-  the bash cgroup.** `docs/SHARD-misooom-A-2023.md`.
+  the bash cgroup.** `docs/records/miso/SHARD-misooom-A-2023.md`.
 - **Shard B (preflight OFF, negative control) OOM-KILLED** ~85 s in, `CONSTRAINT_MEMCG`,
   `failcnt` 20,725, anon-rss 13.28 GiB, no `container preflight:` line — the miso-252/253
-  incident reproduced on the same SHA. `docs/SHARD-misooom-B-2023.md`.
+  incident reproduced on the same SHA. `docs/records/miso/SHARD-misooom-B-2023.md`.
 Neither bundle is registered or committed (rule 29 / 31; both stay on the shards' local disks).
 
 ## miso-255 — 2026-09-12 — **NO: MISO's CC_REGULAR is NOT the defect PJM measured — its capacity factor TRACKS the meter at r = +0.817. The 2021 miss is downstream of a railed seam: the model's net interchange sits on the ±8,700 MW Capacity Import Limit in 8,650 of 8,760 hours, against 0–3 in every training year.** Keeper unchanged, `2026-09-09-miso-250-ep-gas`, **CALIBRATED**
@@ -14005,7 +14005,7 @@ tail / scarcity (RT hourly)"]`, protective `[]`** — and `audit_keepers --iso M
 Matrix duty (b): no mechanism tested, no verdict moves; evidence annotated on MISO's shard at
 `measured_ct_heat_rates` (K), `ercot_partial_outage_shaped_derate` (·) and `seam_flow_envelopes`
 (K). Rule 30(c): the held-out years are reported and MISO's headline is untouched. Evidence:
-`docs/FINDING-miso255-cc-cf-tracks-the-object-is-the-seam-2026-09-12.md`; instruments
+`docs/records/miso/FINDING-miso255-cc-cf-tracks-the-object-is-the-seam-2026-09-12.md`; instruments
 `scripts/probes/_miso255_{cc_cf_tracking,c4_gas_localisation,cc_heat_rate,import_envelope}.py`.
 
 **2026-09-12, LATER — THE MEASURED-SIL ARM WAS BUILT, SHARDED FIVE WAYS AND SOLVED. IT FIRES, MOVES THE IMPORT BALANCE TOWARD THE METER IN ALL FIVE YEARS, AND FAILS ITS OWN DECISIVE GATE ON 2021.** Keeper still `2026-09-09-miso-250-ep-gas`, **CALIBRATED** — not flipped.
@@ -14065,8 +14065,8 @@ own swapfile as `min(deficit, free − 6)` and needs ~13 GiB, and miso-254 shard
 on ~17 GiB free. (D) All five solved, 639-911 s, peak 16.4-18.9 GiB rss+swap. **The pre-registered
 liveness gate earned its place — no wrong number reached any artifact in any generation.**
 
-Records: `docs/RESULT-miso255-measured-sil-2026-09-12.md`,
-`docs/PRECOMMIT-miso255-measured-sil-2026-09-12.md` + `ADDENDUM-miso255-{pin-moves,wrong-path,full-span}-2026-09-12.md`,
+Records: `docs/records/miso/RESULT-miso255-measured-sil-2026-09-12.md`,
+`docs/records/miso/PRECOMMIT-miso255-measured-sil-2026-09-12.md` + `ADDENDUM-miso255-{pin-moves,wrong-path,full-span}-2026-09-12.md`,
 shard reports on `claude/miso255-sil-{2021,2022,2023,2024,2025}d`. Matrix cell
 `miso_import_sil_measured_envelope` **O → R** (rejected as a resolution of the 2021/2022 object; the
 provenance repair is not refuted).
@@ -14090,7 +14090,7 @@ registration** (`3cd1021b`): 2023 CC_CHP `21.3113 → 39.0080`, 2025 `17.7504 �
 **exactly** and 2025 to +0.029 TWh.
 
 **THE REPAIR.** All six parts regenerated at zero LP on the pjm-h4 recipe
-(`docs/RESULT-pjm-h4-bench-move-landed-2026-09-13.md` §2) — the SLIM bundle's
+(`docs/records/pjm/RESULT-pjm-h4-bench-move-landed-2026-09-13.md` §2) — the SLIM bundle's
 `dispatch/`, `system.parquet` and `btm.parquet` reconstructed from committed sources
 (`scripts/probes/_miso257_bench_rebuild.py`), then gated on the plant key set plus
 every dispatch-scoped field coming back byte-identical in all six years
@@ -14126,7 +14126,7 @@ ISO determination is the train-tier verdict; the mechanism that implements it is
 ERCOT's `carveout-validation-2021-2022` config does. That is a governance declaration
 carrying an owner-ruling citation, so this session did **not** make it unilaterally.
 
-Records: `docs/RESULT-miso257-c1-2023-was-a-broken-bench-part-2026-09-13.md`,
+Records: `docs/records/miso/RESULT-miso257-c1-2023-was-a-broken-bench-part-2026-09-13.md`,
 probes `scripts/probes/_miso257_bench_rebuild.py`, `_miso257_bench_gate.py`,
 `_miso257_btm_identity.py`.
 
@@ -14137,7 +14137,7 @@ probes `scripts/probes/_miso257_bench_rebuild.py`, `_miso257_bench_gate.py`,
 ## miso-260 — 2026-09-16 — **THE SEAM LADDER IS DERIVABLE FOR 2020/2021 (miso-252's blocker was stale by three days) — AND THE 2020 SCREEN KILLED THE ARM ON ITS OWN G-NOFLIP GATE.** Keeper unchanged, `2026-09-16-miso-259-coal-fuel`
 
 *(Log gap noted, not filled: miso-258 and miso-259 left no entry here. miso-259's
-record is `docs/RESULT-miso259-coal-inventory-screen-2026-09-16.md` and its promotion
+record is `docs/records/miso/RESULT-miso259-coal-inventory-screen-2026-09-16.md` and its promotion
 note is on the MISO keeper shard.)*
 
 **PHASE 0, ZERO LP, killed three levers before any solve.** (1) The charter's coal
@@ -14193,8 +14193,8 @@ and `miso_reserve_online_gated` are False in 2020–2022 and True in 2023–2025
 `load_miso_reserve_requirements` **hard-errors** before 2023 — so the partition is forced
 by data, and a single `--years 2020..2025` invocation is **impossible** for MISO.
 
-Records: `docs/RESULT-miso260-seam-ladder-screen-2026-09-16.md`,
-`docs/PRECOMMIT-miso260-seam-ladder-2020-2021-2026-09-16.md`, probes
+Records: `docs/records/miso/RESULT-miso260-seam-ladder-screen-2026-09-16.md`,
+`docs/records/miso/PRECOMMIT-miso260-seam-ladder-2020-2021-2026-09-16.md`, probes
 `scripts/probes/_miso260_seam_phase0.py`, `_miso260_compose_span.py`.
 
 * Next number: **miso-261**.
@@ -14238,9 +14238,9 @@ data-forced two-config partition — which the incumbent never carried.
 `audit_keepers --iso MISO` now **PASSES, 0 failures**. Gate-(a) provenance re-keyed by the
 promoting session; miso-259 had not touched it.
 
-Records: `docs/RESULT-miso260-seam-ladder-screen-2026-09-16.md` (+ Addenda A, B, C),
-`docs/PRECOMMIT-miso260-seam-ladder-2020-2021-2026-09-16.md`,
-`docs/handoffs/HANDOFF-miso261-2026-09-16.md`.
+Records: `docs/records/miso/RESULT-miso260-seam-ladder-screen-2026-09-16.md` (+ Addenda A, B, C),
+`docs/records/miso/PRECOMMIT-miso260-seam-ladder-2020-2021-2026-09-16.md`,
+`docs/records/miso/HANDOFF-miso261-2026-09-16.md`.
 
 * Next number: **miso-261**.
 
@@ -14357,9 +14357,9 @@ container **and** on their shard branches at the full SHAs above; a promotion fr
 undeleted** under rule 33(f)(3) — they hold the only copies of the per-year legs outside this
 ephemeral container, and this session launched no shards of its own.
 
-Evidence: `docs/RESULT-miso261-promotion-and-attribution-2026-09-17.md`,
-`docs/FINDING-miso261-bench-fuel-attribution-2026-09-17.md`,
-`docs/RESULT-miso260-seam-ladder-screen-2026-09-16.md` (+ addenda A/B).
+Evidence: `docs/records/miso/RESULT-miso261-promotion-and-attribution-2026-09-17.md`,
+`docs/records/miso/FINDING-miso261-bench-fuel-attribution-2026-09-17.md`,
+`docs/records/miso/RESULT-miso260-seam-ladder-screen-2026-09-16.md` (+ addenda A/B).
 
 * Next number: **miso-262**.
 
@@ -14457,7 +14457,7 @@ took them anyway.
 `seam_neighbour_hourly_ladder` (stays **K**) and `import_shape_lever` (stays **G**) in
 MISO's own shard, this session.
 
-Records: `docs/FINDING-miso262-the-seam-is-a-price-transducer-2026-09-19.md`, probe
+Records: `docs/records/miso/FINDING-miso262-the-seam-is-a-price-transducer-2026-09-19.md`, probe
 `scripts/probes/_miso262_seam_price_transducer.py` (sections A-F reproduce every number).
 
 * Next number: **miso-263**.
@@ -14527,7 +14527,7 @@ swapfile provisioning is load-bearing and bounded by free disk). Containers also
 full 40-char SHA; branches kept until the owner rules (rule 33(f)(3)). NOTHING
 REGISTERED: no dashboard id, keeper bundle untouched, no re-registration.
 
-Record: `docs/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md`.
+Record: `docs/records/miso/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md`.
 
 * Next number: **miso-263**.
 
@@ -14595,7 +14595,7 @@ keeper BEFORE any prune was attempted, and the year-set union {2020–2025} was 
 first. The E3 warning (composite `calibration_flags` years read `[2020]`, the first leg's)
 is the same provenance defect class this session documented in the predecessor.
 
-Records: `docs/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md`.
+Records: `docs/records/miso/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md`.
 
 * Next number: **miso-264**.
 
@@ -14672,8 +14672,8 @@ superseded first-wave branches could NOT be deleted (HTTP 403, rule 33(f)(5)) an
 plainly. Every leg is retrievable at a full SHA in `.gitignore` — a promotion costs ZERO
 re-solves.
 
-Records: `docs/RESULT-miso263-the-coal-ceiling-was-declared-but-never-enforced-2026-09-19.md`,
-`docs/PRECOMMIT-miso263-coal-ceiling-not-enforced-2026-09-19.md`, two ADDENDA, probe
+Records: `docs/records/miso/RESULT-miso263-the-coal-ceiling-was-declared-but-never-enforced-2026-09-19.md`,
+`docs/records/miso/PRECOMMIT-miso263-coal-ceiling-not-enforced-2026-09-19.md`, two ADDENDA, probe
 `scripts/probes/_miso263_coal_ceiling_phase0.py`.
 
 * Next number: **miso-264**.
@@ -14768,8 +14768,8 @@ promotion costs ZERO re-solves**. Nothing deleted (rule 31).
 evidence above — O because neither K nor R follows from a result that trades one C1 failure
 for another; a promotion makes it K, a decline makes it R.
 
-Records: `docs/RESULT-miso264-the-anchor-was-frozen-and-2020-is-not-an-offer-object-2026-09-20.md`,
-`docs/PRECOMMIT-miso264-gas-offer-margin-anchor-vintage-2026-09-20.md`, probes
+Records: `docs/records/miso/RESULT-miso264-the-anchor-was-frozen-and-2020-is-not-an-offer-object-2026-09-20.md`,
+`docs/records/miso/PRECOMMIT-miso264-gas-offer-margin-anchor-vintage-2026-09-20.md`, probes
 `scripts/probes/_miso264_bulk_price_setter_phase0.py`, `scripts/probes/_miso264_marginal_hr_2020.py`.
 
 ## miso-265 — 2026-09-21 — **MISO'S COAL AVAILABILITY ENVELOPE IS INFEASIBLE AGAINST ITS OWN METER, in every year of the span, by 20-32 TWh — and FOUR candidate repairs are refuted at ZERO LP.** Keeper `2026-09-20-miso-264-anchor-vintage` UNCHANGED; no solve, no registration
@@ -14853,7 +14853,7 @@ zero fixed** (measured, not inherited).
 no LP was spent and it is not inert in general — with the zero-LP evidence, the
 withdrawn economic-idleness reading and the newly derived extracts recorded.
 
-Records: `docs/FINDING-miso265-the-coal-availability-envelope-contradicts-the-meter-2026-09-21.md`;
+Records: `docs/records/miso/FINDING-miso265-the-coal-availability-envelope-contradicts-the-meter-2026-09-21.md`;
 probes `scripts/probes/_miso265_{coal_bit_2020_phase0,coal_availability_ceiling,ceiling_vs_meter_hourly,ceiling_selfcheck,hard_zero_hours,derate_variant_sizing,zero_discriminator}.py`.
 
 * Next number: **miso-267**.
@@ -15014,8 +15014,8 @@ archived after their bytes were verified (rule 33 `[R-SHARD-ARCHIVE]` (a)).
 local disk at a superseded SHA; a registerable keeper needs the §5 frame question
 resolved plus a re-solve at merged `main` (~1 h across parallel shards).
 
-Records: `docs/RESULT-miso266-dispatched-bin-denominator-2026-09-22.md`,
-`docs/PRECOMMIT-miso266-dispatched-bin-denominator-2026-09-22.md`;
+Records: `docs/records/miso/RESULT-miso266-dispatched-bin-denominator-2026-09-22.md`,
+`docs/records/miso/PRECOMMIT-miso266-dispatched-bin-denominator-2026-09-22.md`;
 probes `scripts/probes/_miso266_{excess_decomposition,denominator_vs_lp,repair_ceiling_ab,compose_span}.py`;
 test `tests/unit/data/test_unit_outage_dispatched_bin_denominator.py`.
 
@@ -15047,7 +15047,7 @@ measured actual cannot be negative, so all six parts were restored byte-for-byte
 and sha256-verified. hydro-5 reached the same call the same day (*"MISO's
 regenerated parts moved content (miso266 builder drift) and were NOT committed"*).
 44 committed parts across all nine ISOs are stamp-stale. Routed:
-`docs/FINDING-miso266-bench-regeneration-hazard-2026-09-23.md` → **miso-267 STEP 1**.
+`docs/records/miso/FINDING-miso266-bench-regeneration-hazard-2026-09-23.md` → **miso-267 STEP 1**.
 
 **A correction to this lane's own §5.** `--rebuild-benchmark` does NOT touch the
 committed bench parts; it writes the gitignored shared store and re-points one
@@ -15068,8 +15068,8 @@ composite. `eia930`/`eia923`/`campd` are **per-year** (6 distinct hashes); the s
 and `audit_keepers` E3 warns on the years mismatch — which `miso264_anchor_span`
 and `hydro5_miso_ror_span` both carry.
 
-Records: `docs/RESULT-miso266-dispatched-bin-denominator-2026-09-22.md` §8,
-`docs/FINDING-miso266-bench-regeneration-hazard-2026-09-23.md`.
+Records: `docs/records/miso/RESULT-miso266-dispatched-bin-denominator-2026-09-22.md` §8,
+`docs/records/miso/FINDING-miso266-bench-regeneration-hazard-2026-09-23.md`.
 
 ## miso-267 — 2026-09-23 — **THE BENCH DRIFT WAS TWO nyiso-240 REPAIRS, ONE OF THEM ONE-SIDED. Builder repaired; MISO's parts regenerated ONCE, 0 status flips. Then the dispatched-bin arm, re-solved on the hydro-5 keeper.** Keeper `2026-09-22-hydro-5-miso-ror` UNCHANGED pending the owner
 
@@ -15092,7 +15092,7 @@ determination moves; PJM C8 COAL SKIPPED → PASS (PJM's refresh). No other ISO'
 parts touched. Four EIA-923 respondent errors (kWh booked as MWh) ROUTED, incl.
 MISO 2022 plant 7977 (−107,000 MWh), which keeps 2022 `oil` at −0.048 — carried as
 a strict xfail in the new sign test. Record:
-`docs/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md`.
+`docs/records/miso/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md`.
 
 **STEP 2 (zero LP).** The 2020 coal shortfall and the 2020 price bias are TWO
 objects: hour-grain correlation 0.10 (BIT) / 0.14 (coal); the price error is a
@@ -15102,7 +15102,7 @@ Lever chosen on structure: `unit_outage_dispatched_bin_denominator` (identity
 `denom == cap_LP`, zero DOF, already owner-ruled promote on the miso-264 base and
 withdrawn only for the hydro-5 collision). Six single-year arm shards on the
 hydro-5 keeper; control = the committed keeper (G-DRIFT all INERT). Predictions
-and decision rule: `docs/PRECOMMIT-miso267-dispatched-bin-on-hydro5-2026-09-23.md`.
+and decision rule: `docs/records/miso/PRECOMMIT-miso267-dispatched-bin-on-hydro5-2026-09-23.md`.
 
 Also: the composer defect in `_miso266_compose_span.py` is repaired (per-year
 `shared_inputs` rebuilt over the span, `calibration_flags.years` widened); MISO's
@@ -15127,7 +15127,7 @@ LP (overlay identical to the keeper's), registered with **0 of 44 bench parts mo
 Every move was pre-registered. Mechanism: coal +20.3 TWh over the span, gas and imports
 down every year, price −0.29 to −0.82 $/MWh; CT_PEAKER / ST_GAS forced shares +1–3 pp.
 Promotion costs zero re-solves; E13 reads FAIL until the owner rules. Record:
-`docs/RESULT-miso267-dispatched-bin-on-hydro5-2026-09-23.md`.
+`docs/records/miso/RESULT-miso267-dispatched-bin-on-hydro5-2026-09-23.md`.
 
 ## miso-267 (promotion) — 2026-09-23 — **KEEPER → `2026-09-23-miso-267-dispatched-bin`**, on the owner's ruling
 
@@ -15143,12 +15143,12 @@ removed `2026-09-22-hydro-5-miso-ror`. After: `audit_keepers` 0/0. Record: RESUL
 Keeper → `2026-09-24-miso-268-coal-yard` (owner ruling). Single delta `coal_fuel_inventory_plant_grain=true`
 (per-coal-yard annual fuel rows). C1 passes every year (2022 PRB +10.04 → −0.24, CC_REGULAR −8.99 → −3.66 TWh);
 C3a 2022 −8.4 % PASS. Open: C3a 2020 +13.4 %, C3b 2021 0.309. Train tier CALIBRATED unchanged.
-Record: `docs/RESULT-miso268-coal-yard-grain-2026-09-24.md`.
+Record: `docs/records/miso/RESULT-miso268-coal-yard-grain-2026-09-24.md`.
 
 ## miso-269 (2026-09-24) — the two held-out failures measured at zero LP; no admissible lever, no solve
 
 Keeper `2026-09-24-miso-268-coal-yard` unchanged. Nothing solved, registered or promoted. Record
-`docs/FINDING-miso269-held-out-objects-no-admissible-lever-2026-09-24.md`; probes
+`docs/records/miso/FINDING-miso269-held-out-objects-no-admissible-lever-2026-09-24.md`; probes
 `scripts/probes/_miso269_{feb2021_gas,transport_static,feb2021_setter}_phase0.py`.
 
 * **C3b 2021 (0.309):** keeper Feb-2021 gas is $0.73–1.01/MMBtu in the Chicago zones on non-storm
@@ -15166,7 +15166,7 @@ Keeper `2026-09-24-miso-268-coal-yard` unchanged. Nothing solved, registered or 
 ## miso-270 (2026-09-24) — Oct–Nov 2021 localized at zero LP; no ruling, no solve
 
 Keeper `2026-09-24-miso-268-coal-yard` unchanged. No owner ruling on miso-269 D1/D2 → Task C only.
-Record `docs/FINDING-miso270-octnov2021-localized-2026-09-24.md`; probe
+Record `docs/records/miso/FINDING-miso270-octnov2021-localized-2026-09-24.md`; probe
 `scripts/probes/_miso270_octnov2021_phase0.py`. F2 (`cf7e068a`) is outage data and leaves miso-269
 §1/§2 unchanged.
 
@@ -15188,7 +15188,7 @@ Runs `2026-09-24-rmiso-corrected-inputs` (A: keeper + F1 defaults + short-gas + 
 Multipliers unchanged. Both runs are NOT-YET on the full span (8/4/1/3), and the train tier leaves CALIBRATED (2023 C1 CC_REGULAR −10.38 TWh,
 C3a +10.0 %). B fixes 2019 C1 COAL_BIT (−13.17 TWh FAIL → PASS) by carrying the mid-year retirees the vintage
 default drops (3.1/1.0/1.5/2.8 GW in 2019–2022). S-2 fails: new slack sits inside the declared 2023/2024 Max Gen events.
-Escalated to the owner. Record: `docs/RESULT-rmiso-corrected-inputs-2019-2025-2026-09-24.md`.
+Escalated to the owner. Record: `docs/records/miso/RESULT-rmiso-corrected-inputs-2019-2025-2026-09-24.md`.
 
 **PROMOTED 2026-09-25** on the owner's ruling (*"Rebase for merge And promote"*): MISO keeper → `2026-09-24-rmiso-arm-b-mid` (2019–2025); `miso-268` and arm A pruned (rule 35). MISO headline CALIBRATED → **NOT-YET** (train 8/5/1/2). Forecast gate-(a) row in `program-status.json` not re-keyed (permission-blocked).
 
@@ -15200,11 +15200,11 @@ E13). The owner ruled **"Prune it"**: `2026-09-26-miso-276-winter-daily` removed
 `audit_keepers --iso MISO` PASS. Git history is the record for the bytes (rule 15); the MISO matrix citations are retained.
 ## miso-277 — 2026-09-26/27
 
-Phase 0 (`docs/FINDING-miso277-phase0-congestion-crosswalk-stormprint-2026-09-26.md`): C3a 2022 is real West→East
+Phase 0 (`docs/records/miso/FINDING-miso277-phase0-congestion-crosswalk-stormprint-2026-09-26.md`): C3a 2022 is real West→East
 congestion with no admissible 2022 limit (owner: routed miss); EPA CAMD–EIA crosswalk intaken and the ST_GAS
-unit-attribution re-derive chartered (`docs/handoffs/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md`); the
+unit-attribution re-derive chartered (`docs/records/miso/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md`); the
 declined miso-276 D1 arm was found mis-built (South on the Chicago print, 2019–2021) and fixed. Re-solved as ruled
-(7 shards, `docs/RESULT-miso277-d1-as-ruled-2026-09-26.md`): C3b 2021 0.290 → 0.254, zero status flips.
+(7 shards, `docs/records/miso/RESULT-miso277-d1-as-ruled-2026-09-26.md`): C3b 2021 0.290 → 0.254, zero status flips.
 
 **PROMOTED 2026-09-27** on the owner's ruling (*"Promote"*): MISO keeper → `2026-09-26-miso-277-d1-as` (2019–2025);
 `miso-275` and `miso-276` pruned (rule 35). Headline unchanged: train CALIBRATED; full span NOT-YET on C1 ST_GAS 2019,
@@ -15212,10 +15212,10 @@ C3a 2022, C3b 2021.
 
 ## miso-278 — 2026-09-27
 
-Owner-chartered ST_GAS unit-fuel attribution re-derive (`docs/handoffs/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md`).
+Owner-chartered ST_GAS unit-fuel attribution re-derive (`docs/records/miso/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md`).
 New field `campd_unit_fuel_split` selects four `-fuelsplit-` tranche companions in which mixed coal/gas plants' rows
 are re-derived with each CAMPD unit routed on its own fuel (9 rows → 14; every other line byte-identical). 7 shards
-at `257d3c6f` (`docs/PRECOMMIT-miso278-unit-fuel-split-2026-09-27.md`, `docs/RESULT-miso278-unit-fuel-split-2026-09-27.md`):
+at `257d3c6f` (`docs/records/miso/PRECOMMIT-miso278-unit-fuel-split-2026-09-27.md`, `docs/records/miso/RESULT-miso278-unit-fuel-split-2026-09-27.md`):
 zero status flips, C1 ST_GAS 2019 −8.56 → −8.20 TWh (FAIL), legitimacy 12 → 11.
 
 **PROMOTED 2026-09-27** on the owner's standing instruction: MISO keeper → `2026-09-27-miso-278-fuelsplit`
@@ -15227,7 +15227,7 @@ C3a 2022, C3b 2021. Riverside remap (55641 CT-03/04 → 64020) held out as not s
 Lever A (owner pick): new field `campd_st_gas_span_coverage` (sub-gate of `campd_unit_fuel_split`) selects four
 `-fuelsplit-stcov-` tranche companions — the fuel-split bytes plus ST_GAS rows for 8 gas-steam bins the pooled
 2023–2025 window never measured, derived 2019–2025 from each plant's own CEMS. 7 shards at `47d3f872`
-(`docs/PRECOMMIT-miso279-stgas-span-coverage-2026-09-27.md`, `docs/RESULT-miso279-stgas-span-coverage-2026-09-27.md`):
+(`docs/records/miso/PRECOMMIT-miso279-stgas-span-coverage-2026-09-27.md`, `docs/records/miso/RESULT-miso279-stgas-span-coverage-2026-09-27.md`):
 zero status flips, C1 ST_GAS 2019 −8.203 → −8.003 TWh (FAIL vs 8.00 band), legitimacy FAIL rows unchanged.
 
 **PROMOTED 2026-09-28** on the owner's ruling: MISO keeper → `2026-09-27-miso-279-stcov` (2019–2025); `miso-278`
@@ -15236,12 +15236,12 @@ Riverside remap (55641 CT-03/04 → 64020) still held out.
 
 ## miso-280 — 2026-09-28
 
-Phase 0 (zero LP, `docs/FINDING-miso280-phase0-riverside-vlr-southgas-2026-09-28.md`): G-DRIFT 47d3f872..6ca311d4 all
+Phase 0 (zero LP, `docs/records/miso/FINDING-miso280-phase0-riverside-vlr-southgas-2026-09-28.md`): G-DRIFT 47d3f872..6ca311d4 all
 INERT for MISO; VLR data search found no public commitment MW/hours (routed, RO-2 class); C3b 2021 South storm gas has no
 admissible daily Gulf print (owner: "Leave as routed miss"). Lever C (owner: "Build it"): new field
 `campd_split_remap_companions` + `CAMPD_UNIT_PLANT_REMAP` (55641 CT-03/CT-04 → 64020) and seven `-splitremap-`
-companions. 7 shards at `8f765fef` (`docs/PRECOMMIT-miso280-split-remap-2026-09-28.md`,
-`docs/RESULT-miso280-split-remap-2026-09-28.md`): zero status flips, legitimacy rows unchanged, C3a 2022 −15.8 → −15.5 %,
+companions. 7 shards at `8f765fef` (`docs/records/miso/PRECOMMIT-miso280-split-remap-2026-09-28.md`,
+`docs/records/miso/RESULT-miso280-split-remap-2026-09-28.md`): zero status flips, legitimacy rows unchanged, C3a 2022 −15.8 → −15.5 %,
 C3b 2021 0.254 → 0.252.
 
 **PROMOTED 2026-09-28** on the owner's ruling: MISO keeper → `2026-09-28-miso-280-splitremap` (2019–2025); `miso-279`
@@ -15255,7 +15255,7 @@ Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 
 plant's own measured cost. The model's offers match measured cost, and its South price ($28.26) is above the
 measured hubs ($23–27). The gap is out-of-merit (load-pocket / VLR) commitment above the pooled 2023–25 floors:
 ~7.6 TWh in 2019 and 6.8 TWh in 2020. It explains little in 2021–22.
-`docs/FINDING-miso281-south-steam-2019-out-of-merit-2026-09-28.md`.
+`docs/records/miso/FINDING-miso281-south-steam-2019-out-of-merit-2026-09-28.md`.
 
 Owner rulings: C1 ST_GAS 2019 is a **routed miss**, and **no frontier** is declared, because the rubric does not
 clear every year. MISO stays NOT-YET on the full span and CALIBRATED on the 2023–2025 train span. Next: the
@@ -15276,7 +15276,7 @@ Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 
 
 `admit_standby_units` was sized and its cell stays U. It adds only +0.38 / +0.08 TWh of ST_GAS, and it would bring
 ~1 TWh/yr of phantom coal from idled Taconite Harbor unless an outage companion is re-derived.
-`docs/FINDING-miso282-2021-22-stgas-gap-2026-09-28.md`.
+`docs/records/miso/FINDING-miso282-2021-22-stgas-gap-2026-09-28.md`.
 
 Owner ruling: next lane is the MISO-South price premium probe (zero LP). No frontier.
 
@@ -15298,7 +15298,7 @@ Ruled out:
 committed offers by $18–29/MWh (a take-or-pay collision).
 
 What remains South-specific points at out-of-merit South commitment (routed RO-2). No frontier.
-`docs/FINDING-miso283-south-price-premium-2026-09-28.md`.
+`docs/records/miso/FINDING-miso283-south-price-premium-2026-09-28.md`.
 
 Owner ruling: "Do standby units and un route ro2 before going after night overshoot". Order: admit_standby_units + outage companion, then RO-2 (un-routed) South load-pocket commitment, then the night overshoot.
 
@@ -15322,13 +15322,13 @@ an adjacent year. Midland ST2 (380 MW) is unobservable at unit grain. The flag a
 cannot reach a failing criterion.
 
 Owner ruling: "Park, go to RO-2 (Recommended)". The cell stays U. Next lane: RO-2 `scuc_load_pocket_commitment`.
-No frontier. `docs/FINDING-miso284-standby-census-2026-09-28.md`.
+No frontier. `docs/records/miso/FINDING-miso284-standby-census-2026-09-28.md`.
 
 RO-2 (same session, zero LP): about 76 % of the South out-of-merit steam sits on the MTEP15 VLR-eligible plants
 (Ninemile, Sabine, Lewis Creek, Little Gypsy, Waterford), and it falls as in-pocket CCs enter (2019–21). The pocket
 MW requirement and import limit are unpublished: only outcome reports, interface names and capability deltas are
 public. Owner ruling: "Mark blocked, go to night (Recommended)". `scuc_load_pocket_commitment` moves · → G. Next:
-the system night overshoot. `docs/FINDING-miso284-ro2-identification-2026-09-29.md`.
+the system night overshoot. `docs/records/miso/FINDING-miso284-ro2-identification-2026-09-29.md`.
 
 ## miso-285 — 2026-09-29
 
@@ -15348,9 +15348,9 @@ Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 
 Both miso-130 successors are already in the keeper (`miso_reserve_online_gated`; CC committed 1.005 = phys).
 
 Owner ruling: "Charter EcoMin price-taker build". `diurnal_price_amplitude` G → O. Charter:
-`docs/handoffs/CHARTER-miso285-ecomin-price-taker-2026-09-29.md` (merchant CC only, measured LSL, P0 online
+`docs/records/miso/CHARTER-miso285-ecomin-price-taker-2026-09-29.md` (merchant CC only, measured LSL, P0 online
 hours, zero-LP pre-check with a kill rule before any shard). No frontier.
-`docs/FINDING-miso285-night-overshoot-phase0-2026-09-29.md`.
+`docs/records/miso/FINDING-miso285-night-overshoot-phase0-2026-09-29.md`.
 
 ## miso-286 — 2026-09-29
 
@@ -15366,7 +15366,7 @@ floor (`miso_gas_ecomin_online_floor`, default off; measured plant-basis min-loa
 - **Cells:** new row MISO = I; `diurnal_price_amplitude` O → G.
 
 No frontier: the full span is NOT-YET on the three routed misses.
-`docs/FINDING-miso286-ecomin-precheck-killed-2026-09-29.md`.
+`docs/records/miso/FINDING-miso286-ecomin-precheck-killed-2026-09-29.md`.
 
 Owner ruling: "P1 vs P0 residual (Recommended)". Next: miso-287, zero-LP phase 0 on the 2022/2025 P1-over-P0 night residual.
 
@@ -15385,7 +15385,7 @@ Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 
 - **Cells:** `diurnal_price_amplitude` stays G; `coal_fuel_inventory` stays K (successor killed).
 
 No frontier: the full span is NOT-YET on the three routed misses.
-`docs/FINDING-miso287-p1-night-residual-2026-09-29.md`.
+`docs/records/miso/FINDING-miso287-p1-night-residual-2026-09-29.md`.
 
 Owner ruling: "2022 coal-scarcity study". Next: miso-288, zero-LP data-first study of how the real 2022 fleet expressed its coal shortage.
 
@@ -15404,7 +15404,7 @@ fleet expressed its coal shortage.
 - **Cells:** `coal_fuel_inventory` and `_plant_grain` stay K (notes added).
 
 No frontier: the full span is NOT-YET on the three routed misses.
-`docs/FINDING-miso288-coal-scarcity-study-2026-09-30.md`.
+`docs/records/miso/FINDING-miso288-coal-scarcity-study-2026-09-30.md`.
 
 Owner ruling: "Min-stock target design (Recommended)". Next: miso-289, zero-LP design of a per-yard monthly pile + prior-years minimum-stock target, pre-check with a kill rule first.
 
@@ -15422,7 +15422,7 @@ coal pile with a prior-years minimum-stock floor.
 - **Cells:** `coal_fuel_inventory_monthly_pile` MISO U → R.
 
 No frontier: the full span is NOT-YET on the three routed misses.
-`docs/FINDING-miso289-minstock-pile-killed-2026-09-30.md`.
+`docs/records/miso/FINDING-miso289-minstock-pile-killed-2026-09-30.md`.
 
 Owner ruling: *"Pile + take floor (Recommended)"*. Next: miso-290, zero-LP pre-check of the pile + a MISO-derived contract take floor and pile capacity.
 
@@ -15439,7 +15439,7 @@ coal pile + a contract take floor from MISO's own EIA-923 Page 5 census.
 - **Cells:** `coal_fuel_inventory_take_floor` MISO U → R; `_monthly_pile` stays R.
 
 No frontier: the full span is NOT-YET on the three routed misses.
-`docs/FINDING-miso290-pile-take-floor-killed-2026-09-30.md`.
+`docs/records/miso/FINDING-miso290-pile-take-floor-killed-2026-09-30.md`.
 
 Owner ruling: *"Close coal line; C3a 2022 (Recommended)"*. Coal budget-grain line closed. Next: miso-291, zero-LP phase 0 on C3a 2022.
 
@@ -15457,7 +15457,7 @@ Zero LP, no solve, keeper unchanged (`2026-09-28-miso-280-splitremap`). Phase 0 
   −19.5 %, 2019 +2.8 %. No status flips. Not fixed (bench regeneration hazard, miso-266); put to owner.
 
 No frontier: the full span is NOT-YET on the three routed misses.
-`docs/FINDING-miso291-c3a2022-phase0-2026-09-30.md`.
+`docs/records/miso/FINDING-miso291-c3a2022-phase0-2026-09-30.md`.
 
 Owner ruling: *"Repair basis (Recommended)"* + *"Charter flowgate program"*. Next: miso-292, lw basis repair for 2019/2022, then zero-LP charter of a flowgate program.
 
@@ -15469,9 +15469,9 @@ Zero LP, keeper unchanged (`2026-09-28-miso-280-splitremap`).
   `avgLMP.*_lw*` keys copied into the two bench parts by a surgical edit (no regeneration; every other field
   byte-identical; freshness 0 STALE). C3a 2019 +5.7 → **+2.8 %**, C3a 2022 −15.5 → **−18.5 %**, C3b 2019
   0.089 → 0.080, **C3b 2022 0.190 → 0.224 (PASS → FAIL, new)**. Determination NOT-YET unchanged.
-  `docs/RESULT-miso292-c3a-lw-basis-2026-09-30.md`.
+  `docs/records/miso/RESULT-miso292-c3a-lw-basis-2026-09-30.md`.
 - **Part 2, flowgate charter (owner ruling "Charter flowgate program").**
-  `docs/CHARTER-miso292-flowgate-program-2026-09-30.md`.
+  `docs/records/miso/CHARTER-miso292-flowgate-program-2026-09-30.md`.
 
 No frontier: full span NOT-YET on C1 ST_GAS 2019, C3a 2022, C3b 2021, C3b 2022.
 
@@ -15488,7 +15488,7 @@ No frontier.
 
 ## miso-293 — 2026-10-01 — flowgate program Stage 1 (zero LP): recommend KILL; the 2022 pair is a comparator-geography question
 
-Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/DESIGN-miso293-flowgate-stage1-2026-10-01.md`.
+Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/records/miso/DESIGN-miso293-flowgate-stage1-2026-10-01.md`.
 
 - **A network cannot raise the scored price through congestion.** Zone-demand-weighted hub MCC+MLC: −1.64 (2022),
   −0.31 / −0.73 / −0.90 (2023–25), against INDIANA.HUB +8.72 / +2.35 / +2.28 / +2.44. A perfect zonal network moves
@@ -15508,7 +15508,7 @@ zone-resolved C3a/C3b basis **adopted for MISO** (implementation: miso-294); nex
 
 ## miso-294 — 2026-10-01 — zone-resolved C3 basis implemented (zero LP); C3b 2021 is the fall coal-for-gas swap
 
-Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/RESULT-miso294-zone-resolved-basis-2026-10-01.md`
+Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/records/miso/RESULT-miso294-zone-resolved-basis-2026-10-01.md`
 (PRECOMMIT `46d299f1`).
 
 - **Part A.** `derive_actual_lmp._lw_fields` now reads a per-ISO registry `ZONAL_LW_SOURCES` (ERCOT, MISO). MISO
@@ -15528,7 +15528,7 @@ Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIB
 
 ## miso-295 — 2026-10-01 — all-years coal study (zero LP): flat offset is EIA-930 reporting; 2021–22 conservation is not admissibly carriable
 
-Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/FINDING-miso295-all-years-coal-study-2026-10-01.md`;
+Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/records/miso/FINDING-miso295-all-years-coal-study-2026-10-01.md`;
 probe `scripts/probes/_miso295_coal_study.py`.
 
 - **Flat offset settled first:** EIA-930 MISO coal sits 7.1–15.6 TWh/yr below EIA-923 net generation of the model-fleet coal
@@ -15548,8 +15548,8 @@ Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIB
 
 ## miso-296 — 2026-10-01 — C3a 2020 low-load stack (zero LP): the model's low-load margin is gas CC + the seam, the real market's is coal; the gap is the offer level at the margin
 
-Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/FINDING-miso296-lowload-stack-2026-10-01.md`;
-probe `scripts/probes/_miso296_lowload_stack.py` → `results/calibration/_miso296_lowload_stack.json`.
+Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/records/miso/FINDING-miso296-lowload-stack-2026-10-01.md`;
+probe `scripts/probes/_miso296_lowload_stack.py` → `results/phase0/miso/_miso296_lowload_stack.json`.
 
 **Owner ruling that opened this lane (2026-10-01, miso-295 decision card; miso-295 could not log it):** *"C3a 2020
 low-load stack (Recommended)"*.

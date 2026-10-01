@@ -14,7 +14,7 @@ per month** (rule 19 ``[R-ONE-MECH]``): the monthly cap stays the sole
 energy-quantity mechanism, no generation column is added, and every row here
 is feasible at zero generation (spill is unbounded above), so the family can
 never force a plant's monthly total off its budget. Specification:
-``docs/handoffs/PRECOMMIT-nwpp-36-2026-09-16.md`` §3.
+``docs/records/nwpp/PRECOMMIT-nwpp-36-2026-09-16.md`` §3.
 
 Units: water in kcfs (flow) and kcfs·h (volume), the CROHMS native unit; the
 existing generation columns enter through a measured, month-varying

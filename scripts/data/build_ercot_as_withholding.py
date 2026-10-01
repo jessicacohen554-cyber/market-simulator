@@ -34,7 +34,7 @@ placement (:func:`prevailing_he_to_cst`, reusing
 gapless through both transitions. (The pre-2026-07-07 build placed the labels
 unconverted — the naive ``date + (HE-1)``, leaving the whole mid-Mar–early-Nov
 series one hour late, the same placement defect class as the NP4-732/737 HSL
-intake; ``docs/handoffs/ercot-g22-demand-side-design-2026-07.md`` §7.) Feb 29
+intake; ``docs/records/ercot/ercot-g22-demand-side-design-2026-07.md`` §7.) Feb 29
 of a leap year is dropped. A service with no coverage in a year (e.g. NSPNM
 before Dec 2025) contributes zeros rather than fabricated data.
 

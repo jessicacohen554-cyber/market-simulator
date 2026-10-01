@@ -40,5 +40,5 @@ are recovered.
 **not** a checkout — it is a re-solve of the affected years at ~11-15 min each (measured D-generation
 wall times: 911.4 / 738.3 / 639.6 / 687.4 / 741.1 s), on pin
 `d0fec486fa2218afc55dbd2eb377bc2570e61699`, with `--set miso_import_sil_measured_envelope=true`
-against the controls named in `docs/RESULT-miso255-measured-sil-2026-09-12.md`. Rule 33(f)(4): this
+against the controls named in `docs/records/miso/RESULT-miso255-measured-sil-2026-09-12.md`. Rule 33(f)(4): this
 line is stated honestly rather than keeping a `git checkout` command that would fail.

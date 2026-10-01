@@ -2,10 +2,10 @@
 
 nyiso-233 measured that NYISO's price tail is an AVAILABILITY object rather than a
 price-formation one — the model is not short in the hours the real market priced
-highest (``docs/FINDING-nyiso233-tail-is-an-availability-object-2026-09-13.md``).
+highest (``docs/records/nyiso/FINDING-nyiso233-tail-is-an-availability-object-2026-09-13.md``).
 nyiso-227 had already measured the only availability instrument NYISO owns for
 sub-5-day events and found it ~20x too small to bind
-(``docs/FINDING-nyiso227-shortgas-outage-inert-2026-09-11.md``).
+(``docs/records/nyiso/FINDING-nyiso227-shortgas-outage-inert-2026-09-11.md``).
 
 Both are consistent with a third reading neither tested, and which nyiso-233 §6
 explicitly left open: **reality may not have been short either.** If the real

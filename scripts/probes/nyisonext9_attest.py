@@ -39,7 +39,7 @@ ENTRY = {
     "an outcome percentile of measured net import (rule 13) with no window (rule 17).",
     "root_cause": "not a residual closer: an unledgered, windowless, outcome-level floor "
     "removed on structure (rules 13/17/19). Record: "
-    "docs/PRECOMMIT-nyiso-next9-hq-floor-2026-09-28.md.",
+    "docs/records/nyiso/PRECOMMIT-nyiso-next9-hq-floor-2026-09-28.md.",
 }
 
 
@@ -61,7 +61,7 @@ def main() -> None:
         "2026-09-27-nyisonext8-hq-dedupe-span replayed with ONE recipe delta, "
         "nyiso_firm_imports false (the 900 MW HQ_hydro always-on floor removed). "
         "Pre-registration: "
-        f"docs/PRECOMMIT-nyiso-next9-hq-floor-2026-09-28.md; arm pinned at {a.pin}. "
+        f"docs/records/nyiso/PRECOMMIT-nyiso-next9-hq-floor-2026-09-28.md; arm pinned at {a.pin}. "
         "Offer curves byte-identical to the keeper (rule 1(c)); no multiplier tuned; "
         "zero free parameters added, one outcome-level floor removed. PRIOR: "
     )

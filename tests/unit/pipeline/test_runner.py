@@ -1026,7 +1026,7 @@ class TestJointSignalVolumePosture(RunnerTestBase):
     """The C-1 joint posture: dual-based level + margin-exhaustion walk.
 
     Owner ruling R-B (2026-08-31), charter
-    ``docs/PRECOMMIT-c1-joint-wind-2026-08-31.md`` §1.3. The lookahead seam's
+    ``docs/records/misc/PRECOMMIT-c1-joint-wind-2026-08-31.md`` §1.3. The lookahead seam's
     AVAILABILITY arms on ``entry_lookahead_reprice or
     entry_margin_exhaustion``, while every CONSUMPTION of its level stays
     gated on ``entry_lookahead_reprice`` alone -- so with the reprice

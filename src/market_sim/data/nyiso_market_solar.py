@@ -68,7 +68,7 @@ as the A/B's historical baseline. The Gold Book ``In-Service Date`` is a registr
 interconnection-service date and **leads** the plant's metered commercial start;
 EIA-860's ``Operating Month`` matches it. Measured on this very registry against
 EIA-923 metered monthly output (``scripts/probes/_nyiso133_commissioning_ramp.py``,
-record ``results/calibration/_nyiso133_commissioning_ramp.json``), EIA-860's
+record ``results/phase0/nyiso/_nyiso133_commissioning_ramp.json``), EIA-860's
 month equals the first metered-output month in **11 of the 12 uncensored
 plants**, while the Gold Book date leads by **+2 months on Morris Ridge
 (179 MW, 31 % of the 2025 fleet)**, +1 on High River (90 MW) and East Point

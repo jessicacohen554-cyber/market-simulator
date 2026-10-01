@@ -39,7 +39,7 @@ decided by measurement before any build
   (rule-13 construction, regenerates forward), D4_WINDOWS entry in the same
   PR, LOYO-scored, `ra_mustoffer_bridge` non-stacking — design filed for
   owner review BEFORE implementation:
-  `docs/handoffs/caiso-local-commitment-driver-design-2026-07.md`.
+  `docs/records/caiso/caiso-local-commitment-driver-design-2026-07.md`.
   Sequencing: the honest-bench C3a/CC re-tune (plan §4) lands first; the
   driver sizes against whatever CT deficit survives it. Full evidence:
-  `results/calibration/FINDING-caiso79-step0-greaterbay-bind-2026-07-12.md`.
+  `docs/records/caiso/FINDING-caiso79-step0-greaterbay-bind-2026-07-12.md`.

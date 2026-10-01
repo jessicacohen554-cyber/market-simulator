@@ -109,8 +109,8 @@ ATTESTED_BY = (
     "the per-plant F923 print is a fourth and more-local measured level that "
     "supersedes the state-average monthly, an omission in the seam module's declared "
     "ordering that is REPORTED and recommended for repair, not patched here. "
-    "Record: docs/RESULT-miso-fuelvintage-ep-level-2026-09-09.md, "
-    "docs/PRECOMMIT-miso-fuelvintage-ep-level-2026-09-09.md."
+    "Record: docs/records/miso/RESULT-miso-fuelvintage-ep-level-2026-09-09.md, "
+    "docs/records/miso/PRECOMMIT-miso-fuelvintage-ep-level-2026-09-09.md."
 )
 
 DISCLOSURES = {

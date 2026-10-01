@@ -118,8 +118,8 @@
     "d65br": {
       "lane": "capx D65-B-R — the coupled arming (Act A + Act B) batch",
       "authority": "owner ruling Q47; r#48 §3(a) gates; r#51 §3(b) adjudication",
-      "precommit": "docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md Addendum C (+D/E/F/G)",
-      "finding": "docs/handoffs/FINDING-capx-d65br-2026-09-06.md",
+      "precommit": "docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md Addendum C (+D/E/F/G)",
+      "finding": "docs/records/forecast/FINDING-capx-d65br-2026-09-06.md",
       "solve_key_matches_predeclaration": true,
       "gates": "The retrofit gates CLEAR — G1′ 1.2898–1.3930 inside MISO's own D64 band 1.26–1.39, G5′ under every ceiling, G2′ exact. G4′ FIRED (I3 unserved/dump PASS → FAIL, I14 PASS → WARN), reported as fired and NOT declared passed — but provably not the two acts': I3 fails starting in 2026 and apply_ccs_retrofit returns at year < ccs_retrofit_available_year (2028) before reading either field, with G0′ independently measuring 0 retrofit rows in 2026 and 2027. The cause is the demand vintage, pre-registered as a confound before the batch ran (D65-B §5 consequence 2 names 2ef4326e (miso) as one of four pre-hunk ISOs).",
       "retrofits": [

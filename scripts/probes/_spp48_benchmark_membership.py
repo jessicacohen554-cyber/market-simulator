@@ -116,7 +116,7 @@ def main() -> None:
     print("   ACTUAL even in the years it demonstrably ran. This is a DIFFERENT")
     print("   defect from the fleet gap and mid_vintage_exit_carry does not fix it.")
 
-    out = REPO / "results/calibration/_spp48_benchmark_membership.json"
+    out = REPO / "results/phase0/spp/_spp48_benchmark_membership.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(
         {"rows": rows, "membership_invariant": invariant, "oklaunion_never_present": never},

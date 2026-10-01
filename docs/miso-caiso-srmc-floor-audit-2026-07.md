@@ -2,7 +2,7 @@
 
 **Scope:** design + audit only. No solves, no numeric offer value changed, no
 keeper touched. This generalizes the PJM Manual-15 SRMC re-grounding
-(`pjm-83-srmc-reground` → `pjm-90-cchp-srmc`, `docs/FINDING-pjm-burndown-2026-07.md`
+(`pjm-83-srmc-reground` → `pjm-90-cchp-srmc`, `docs/records/pjm/FINDING-pjm-burndown-2026-07.md`
 §2, `docs/calibration-log.md`) to MISO and CAISO's committed/must-run offer
 bands, per gap-register G-21 / issue #1302. NYISO and NEISO are out of scope
 per owner directive. Each ISO's actual re-grounding + re-solve is its own lane

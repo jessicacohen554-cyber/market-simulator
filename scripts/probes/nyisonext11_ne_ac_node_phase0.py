@@ -30,7 +30,7 @@ Per year 2021-2025 it computes:
    (``derive_nyiso_import_tranches.derive``) on net import WITHOUT the NE AC
    row, vs the committed rungs.
 
-Output: ``results/calibration/_nyisonext11_phase0.json``. Reads raw inputs and
+Output: ``results/phase0/nyiso/_nyisonext11_phase0.json``. Reads raw inputs and
 the keeper's committed hourlies only.
 """
 
@@ -58,7 +58,7 @@ from market_sim.model.interchange.spec import IMPORT_TRANCHES_BY_YEAR  # noqa: E
 
 YEARS = dne.YEARS
 CAL = REPO / "results" / "calibration"
-OUT = CAL / "_nyisonext11_phase0.json"
+OUT = CAL.parent / "phase0" / "nyiso" / "_nyisonext11_phase0.json"
 NE_ROW = dne.NE_ROW
 H = dne.H
 PCT = 90.0  # constants.NYISO_SEAM_FLOW_PERCENTILE (the keeper's envelope)

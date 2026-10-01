@@ -96,7 +96,7 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
 KEEPER = REPO / "results/calibration/miso230_ctdrag_seam_K"
-OUT = REPO / "results/calibration/_miso231_hourly_seam_phase0.json"
+OUT = REPO / "results/phase0/miso/_miso231_hourly_seam_phase0.json"
 YEARS = (2023, 2024, 2025)
 SCREEN_HINT_YEAR = 2023  # miso-226's frozen comparator year
 ZONE = "MISO-Indiana"  # the C1/G-2 reference hub

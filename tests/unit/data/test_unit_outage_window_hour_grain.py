@@ -9,7 +9,7 @@ extract carrying it, so the grain appears in ``run_config.json`` and in
 ``cache_key()`` instead of being silently data-triggered (rule 24
 ``[R-REGISTRY]``).
 
-Evidence: ``docs/FINDING-nyiso229-phase0-the-outage-window-grain-2026-09-12.md``.
+Evidence: ``docs/records/nyiso/FINDING-nyiso229-phase0-the-outage-window-grain-2026-09-12.md``.
 """
 
 import pandas as pd
@@ -223,7 +223,7 @@ class TestErcotFamily:
     flag, so the ``-perunitmerithour-`` branch never reaches it. For ERCOT the
     gate selects the ``-hourgrain`` companions of its three window families
     (standard, short coal, short gas); every other ISO's paths are unchanged.
-    Evidence: ``docs/handoffs/FINDING-r-ercot-5-2019-scarcity-2026-09-25.md``.
+    Evidence: ``docs/records/ercot/FINDING-r-ercot-5-2019-scarcity-2026-09-25.md``.
     """
 
     NAMES = (

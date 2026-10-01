@@ -25,8 +25,8 @@
       "group": "other",
       "identification": "design-decision",
       "status": "IDENTIFIED",
-      "source": "Owner decision D-10 (signed 2026-08-04, docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum K.3): forecast bundles run cross-year LP warm start OFF so a killed-and-resumed forecast reproduces from its own cache",
-      "evidence": "market_sim.config.scenarios.FORECAST_BUNDLE_XYEAR_WARMSTART (the one registry carrier) read through scripts/lib/forecast_posture.py::shipped_forecast_xyear_warmstart; measurement docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md",
+      "source": "Owner decision D-10 (signed 2026-08-04, docs/records/forecast/ffr-owner-sitting-2026-08-02.md Addendum K.3): forecast bundles run cross-year LP warm start OFF so a killed-and-resumed forecast reproduces from its own cache",
+      "evidence": "market_sim.config.scenarios.FORECAST_BUNDLE_XYEAR_WARMSTART (the one registry carrier) read through scripts/lib/forecast_posture.py::shipped_forecast_xyear_warmstart; measurement docs/records/forecast/ffr-3t-warmstart-off-2026-08-04.md",
       "value": false,
       "provenance": "runner-posture"
     },
@@ -37,7 +37,7 @@
       "identification": "design-decision",
       "status": "IDENTIFIED",
       "source": "Reads the accreditation design OF THE DELIVERY YEAR BEING SCREENED: UCAP + the published pre-CIFP FPR before DY 2025/26, ELCC class + post-CIFP FPR from it. A published design vintage applied by date; a forward delivery year takes the design in force for it and nothing is fitted to a residual",
-      "evidence": "src/market_sim/config/iso_configs.py::_pjm_config default_scenario_overrides cite block (owner ruling Q44, in-session on the capx D57 A/B); docs/handoffs/FINDING-capx-d48-*; docs/handoffs/DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md; docs/handoffs/FINDING-capx-d57-2026-09-05.md section 8.1",
+      "evidence": "src/market_sim/config/iso_configs.py::_pjm_config default_scenario_overrides cite block (owner ruling Q44, in-session on the capx D57 A/B); docs/handoffs/FINDING-capx-d48-*; docs/records/forecast/DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md; docs/records/forecast/FINDING-capx-d57-2026-09-05.md section 8.1",
       "provenance": "iso-registry",
       "value": true
     },

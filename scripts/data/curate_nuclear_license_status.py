@@ -19,7 +19,7 @@ writes one partition ``data/clean/nuclear-license-status/<ISO>/…parquet``
 
 This datatype is a **DATA registry only** — nothing in the solve path consumes it
 yet; the forward-channel design memo is
-``docs/handoffs/ff-g5-nuclear-registry-2026-07.md``.
+``docs/records/forecast/ff-g5-nuclear-registry-2026-07.md``.
 """
 
 from __future__ import annotations

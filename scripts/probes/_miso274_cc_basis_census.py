@@ -26,7 +26,7 @@ It needs the keeper fleet frames written by ``_miso271_cc_decomp.py``
 Usage::
 
     uv run python scripts/probes/_miso274_cc_basis_census.py --frames <dir> \
-        --out results/calibration/_miso274_cc_basis_census.json
+        --out results/phase0/miso/_miso274_cc_basis_census.json
 """
 
 from __future__ import annotations

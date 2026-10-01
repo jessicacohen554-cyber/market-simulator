@@ -1,7 +1,7 @@
 """ERCOT-90 measure-first probe: CAMPD hourly ST_GAS vs the keeper's ST_GAS
 class dispatch in the shoulder mid-band residual hours.
 
-The ERCOT-89 charter (`docs/handoffs/ercot-shoulder-online-envelope-2026-07.md`
+The ERCOT-89 charter (`docs/records/ercot/ercot-shoulder-online-envelope-2026-07.md`
 §8.3) named this measurement as its follow-up: in the residual $150-500 band
 hours the keeper rides ST_GAS ~4.1 -> 6.1 GW (control -> residual) while the
 *inferred* real non-CHP steam-gas contribution is ~1-2 GW — but that inference
@@ -550,9 +550,9 @@ def main() -> None:
     result: dict = {
         "_provenance": {
             "probe": "ercot90_stgas_shoulder_measure",
-            "charter": "docs/handoffs/ercot-stgas-shoulder-2026-07.md",
+            "charter": "docs/records/ercot/ercot-stgas-shoulder-2026-07.md",
             "named_by": (
-                "docs/handoffs/ercot-shoulder-online-envelope-2026-07.md §8.3 "
+                "docs/records/ercot/ercot-shoulder-online-envelope-2026-07.md §8.3 "
                 "(the CAMPD-based ST_GAS hourly check)"
             ),
             "role": (

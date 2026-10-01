@@ -25,7 +25,7 @@ The neutrality claim itself — that warm start changes only how fast the LP
 converges, never what it converges to — is the retirement screen's
 basis-independence, pinned by ``tests/regression/test_forecast_warmstart_tie_invariance.py``
 and measured end-to-end by the D-9 full-horizon A/B recorded in
-``docs/handoffs/wallclock-baseline-2026-07.md``.
+``docs/records/misc/wallclock-baseline-2026-07.md``.
 """
 
 from __future__ import annotations
@@ -53,7 +53,7 @@ from tests.unit.pipeline.test_pipeline_solve import _Cfg, _trivial_inputs
 # Nothing about THIS file's mechanism moved — the pin advances because the
 # global default did. Rationale and provenance live on the pin in
 # tests/regression/test_persisted_identity.py; pre-declared BEFORE the solve
-# in docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
+# in docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
 # capx D65-B-R, completing the partial re-key fb93b76e left behind.
 _PINNED_DEFAULT_CACHE_KEY = "547053bdfccd4264"
 

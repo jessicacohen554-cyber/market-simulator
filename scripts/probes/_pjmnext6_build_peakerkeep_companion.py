@@ -102,7 +102,7 @@ def main() -> None:
         "post_step": "scripts/data/build_outage_unit_fuel_routing.build_companion",
         "selected_by": "ScenarioConfig.unit_outage_rederive_peaker_windows "
         "(with unit_outage_full_rederive + membership_repair + unit_fuel_routing)",
-        "record": "docs/PRECOMMIT-pjm-next-6-card1-f2-split-2026-09-27.md",
+        "record": "docs/records/pjm/PRECOMMIT-pjm-next-6-card1-f2-split-2026-09-27.md",
     }
     OUT.with_suffix(".meta.json").write_text(
         json.dumps(meta, indent=2, sort_keys=True) + "\n"

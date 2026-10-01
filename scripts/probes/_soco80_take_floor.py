@@ -42,7 +42,7 @@ from market_sim.data.coal_stocks import load_coal_stocks  # noqa: E402
 KEEPER = "2026-09-27-soco76-egrid-identity-hr"
 YEARS = (2019, 2020, 2021, 2022, 2023, 2024, 2025)
 HR = _ROOT / "data/raw/_processed-legacy/campd_coal_heat_rates_SOCO.csv"
-OUT = _ROOT / "docs/handoffs/r-soco/soco80_take_floor.csv"
+OUT = _ROOT / "docs/records/soco/r-soco/soco80_take_floor.csv"
 
 
 def main() -> None:
@@ -238,7 +238,9 @@ def greedy(d: pd.DataFrame) -> pd.DataFrame:
             )
         )
     g = pd.DataFrame(out)
-    g.to_csv(_ROOT / "docs/handoffs/r-soco/soco80_take_floor_greedy.csv", index=False)
+    g.to_csv(
+        _ROOT / "docs/records/soco/r-soco/soco80_take_floor_greedy.csv", index=False
+    )
     print(g.to_string(index=False))
     return g
 

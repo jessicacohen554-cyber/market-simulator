@@ -3,7 +3,7 @@
 WRITTEN AND COMMITTED BEFORE ANY LEG LANDED, deliberately: a kill condition
 that is coded after the numbers are in hand is a kill condition that can be
 written to fit them. Every threshold below is transcribed from
-``docs/handoffs/PRECOMMIT-nwpp-46-2026-09-22.md`` §7 and nothing else.
+``docs/records/nwpp/PRECOMMIT-nwpp-46-2026-09-22.md`` §7 and nothing else.
 
 THE CONDITION (PRECOMMIT §7, verbatim in substance):
 

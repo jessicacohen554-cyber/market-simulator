@@ -4,7 +4,7 @@ Runs LAST, after ``build_dof_ledger.py``, ``gen_soco60b_attestation.py`` and
 ``gen_rsoco_attestation.py`` have written and re-verified the inherited claims on
 the composed 2019-2025 bundle. This module then verifies the lane's own delta against
 the keeper ``2026-09-24-r-soco-corrected-inputs``
-(``docs/handoffs/r-soco/PRECOMMIT-r-soco-b-2026-09-25.md``), by execution:
+(``docs/records/soco/r-soco/PRECOMMIT-r-soco-b-2026-09-25.md``), by execution:
 
 * the three registries hold exactly the measured values — R1
   ``EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC``, R2
@@ -161,8 +161,8 @@ def main() -> None:
         + att["governance"]["attested_by"]
     )
     att["disclosures"]["precommit"] = (
-        "docs/handoffs/r-soco/PRECOMMIT-r-soco-b-2026-09-25.md; "
-        "docs/handoffs/r-soco/PRECOMMIT-r-soco-b2-2026-09-25.md"
+        "docs/records/soco/r-soco/PRECOMMIT-r-soco-b-2026-09-25.md; "
+        "docs/records/soco/r-soco/PRECOMMIT-r-soco-b2-2026-09-25.md"
     )
     att["disclosures"]["rsoco_scope"] = (
         "2019-2025, one year-isolated shard per year (rule 36). The 2019-2022 inputs "

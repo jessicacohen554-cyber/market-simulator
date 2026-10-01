@@ -11,7 +11,7 @@ byte-identical.
 Usage::
 
     uv run python scripts/probes/_miso276_winter_gas_footprint.py --years 2019 2020 2021 2022 2023 2024 2025 \
-        --out results/calibration/_miso276_winter_gas_footprint.json
+        --out results/phase0/miso/_miso276_winter_gas_footprint.json
 """
 
 from __future__ import annotations

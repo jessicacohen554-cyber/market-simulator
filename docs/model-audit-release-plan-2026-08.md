@@ -43,7 +43,7 @@ solves per year (cold P0 base-cost + P1 bid-cost warm-started via `changeColsCos
 Prices are LP duals. Six ISOs; ERCOT is the calibrated reference. Capacity evolution
 is one-pass (no equilibrium iteration) by rule.
 
-**Wallclock ground truth** (`docs/handoffs/wallclock-baseline-2026-07.md`): ERCOT
+**Wallclock ground truth** (`docs/records/misc/wallclock-baseline-2026-07.md`): ERCOT
 ~183–272 s/yr, MISO ~292–339 s/yr; the cold P0 solve is **74–83%** of a year and a
 prior bench program already **rejected** IPM+crossover, thread scaling, HiGHS
 parallel/PAMI, and presolve-on (all documented; do not re-run). Warm-start levers
@@ -73,13 +73,13 @@ expects rebases.
 
 **Refresh (2026-08-13 late sitting, main @ `dbde0c2` after the #3904–#3924 burst;
 source: `ffr-owner-sitting-2026-08-02.md` Addendum AS):** OVERRIDE-FIX **LANDED and
-ACCEPTED** (#3915, `docs/handoffs/override-fix-2026-08-13.md`) — its surface is now
+ACCEPTED** (#3915, `docs/records/misc/override-fix-2026-08-13.md`) — its surface is now
 settled, not off-limits; **L-1's promotion gate cleared** (AS.1), so the ERCOT keeper
 may still move before G2; miso-155 merged (#3907/#3910) and the miso branch is gone;
 **Wave FH is complete** and the FFR/FH desk explicitly does not dispatch into this
 program's scope (AS.4) — cross-program facts land by addendum there and citation here.
 The ERCOT-SCAR workstream runs under its own manager
-(`docs/handoffs/ercot-scar-workstream-pack-2026-08.md`) and owns ERCOT
+(`docs/records/ercot/ercot-scar-workstream-pack-2026-08.md`) and owns ERCOT
 scarcity-formation work. Push transport note for every lane: `git push` HTTP 408/500
 is HTTP/2 negotiation, not pack size — `git config http.version HTTP/1.1` fixes it
 (now in CLAUDE.md Git & Pushing).
@@ -266,7 +266,7 @@ registration per [R-ALLYEARS]/[R-DASHBOARD]) and queued behind G1. Do **not** to
 the OVERRIDE-FIX surface (`iso_configs` override precedence) — that lane is already
 dispatched and owns it. Never fix a golden failure by regenerating the golden.
 
-**Deliverables.** Fix PRs + `docs/handoffs/debug-sweep-2026-08.md` (triage table:
+**Deliverables.** Fix PRs + `docs/records/misc/debug-sweep-2026-08.md` (triage table:
 finding → disposition → evidence), the D-5 recommendation, the branch-protection memo.
 
 **DoD.** Every seed-list row dispositioned; fast-tests green on a clean clone with the
@@ -306,7 +306,7 @@ identity (`market_sim.model.dispatch`), facade re-exports, `config/constants.py`
 ruff-format-excluded by charter (never reformat), dashboard wire formats, the frozen
 phase-timing log line. No Numba/Pyomo/PuLP/scipy.optimize. Solves in-session only.
 
-**Deliverables.** `docs/handoffs/perf-recheck-2026-08.md` (measurements + verdicts in
+**Deliverables.** `docs/records/governance/perf-recheck-2026-08.md` (measurements + verdicts in
 the wallclock-baseline format), the owner memo, then PERF-B PRs.
 
 **DoD (B).** Byte-identity green; measured wallclock delta reported per change against
@@ -393,7 +393,7 @@ single-lane §0ar-3 RAW-UNTRACK prompt and handed the scope to this workstream
 (`ffr-owner-sitting-2026-08-02.md` AS.5; `forecast-readiness-prompt-pack-2026-07.md`
 §0as — "do NOT re-dispatch from this pack"), precisely so two uncoordinated actors
 never edit `.gitignore`/CLAUDE.md/repo-size state. BLOAT inherits and must reconcile:
-`docs/FINDING-rewrite-prep-2026-08-11.md` §8 (**GO**: untrack `data/raw` going
+`docs/records/governance/FINDING-rewrite-prep-2026-08-11.md` §8 (**GO**: untrack `data/raw` going
 forward — `git rm -r --cached` + gitignore, metadata-only commit, HISTORY KEPT AS-IS;
 the NO-GO on rewriting stands), `docs/fast-clone.md` (#3909 — partial clone +
 `hydrate_data.py` per-session data profiles, the recovery story untracking depends
@@ -488,7 +488,7 @@ main before dispatch.
    (program-director sitting, card 10, after twenty-one director cycles
    outstanding): the decision was made at K.3 — D-9 flipped the default, D-10
    disarmed the forecast lane, no flip ships — per the PERF-A memo
-   (`docs/handoffs/perf-a-warmstart-decision-memo-2026-08.md`), whose §3
+   (`docs/records/governance/perf-a-warmstart-decision-memo-2026-08.md`), whose §3
    option (A) the G1 declaration recorded on 2026-08-16 with "owner ack
    requested". The ack is now on record; the item leaves the queue. Records
    line only — no code, no config, no determination.
@@ -611,11 +611,11 @@ enable-after-G2, so the memo is executed at gate G2, not now.
 Hard rules: solve-neutral only — any fix that changes solve output gets chartered,
 not landed (rule 16 [R-ALLYEARS]: full-span re-solve; rule 15 [R-DASHBOARD]:
 same-session registration). iso_configs override-precedence: the OVERRIDE-FIX lane
-LANDED and was accepted (#3915, docs/handoffs/override-fix-2026-08-13.md) — treat
+LANDED and was accepted (#3915, docs/records/misc/override-fix-2026-08-13.md) — treat
 that surface as SETTLED: do not rework it; any residual defect you find there is a
 report-only finding routed to the owner. Core files: never bulk-rewrite a ≥300-line file
 ([R-PUSH]); run scripts/ci_refactor_guards.py --script-refs after any script move.
-Deliverables: fix commits on your branch + docs/handoffs/debug-sweep-2026-08.md
+Deliverables: fix commits on your branch + docs/records/misc/debug-sweep-2026-08.md
 (triage table: finding → disposition → evidence → follow-up charter if any) + the
 D-5 recommendation + the branch-protection memo. Report your branch when done.
 ```
@@ -627,7 +627,7 @@ D-5 recommendation + the branch-protection memo. Report your branch when done.
 Repo: jessicacohen554-cyber/market-simulator. Branch: claude/perf-recheck-2026-08
 (create off freshly-fetched origin/main). Read docs/model-audit-release-plan-2026-08.md
 (branch claude/model-audit-release-plan-e94vpx if not yet on main) §3/WS3, then the
-two governing docs: docs/handoffs/wallclock-baseline-2026-07.md (per-phase ground
+two governing docs: docs/records/misc/wallclock-baseline-2026-07.md (per-phase ground
 truth) and docs/wallclock-efficiency-plan-2026-07.md (its "already optimal — do not
 touch" list), plus docs/refactor-consolidation-plan-2026-07.md §1 (binding
 constraints) — you are extending workstream H of that plan, not forking it.
@@ -664,7 +664,7 @@ forbidden. Frozen surfaces: cache_key byte-stability, pickle identity
 (ruff-format-excluded by charter — never reformat), the phase-timing log-line format.
 Solves in-session only, years sequential, ≤2 workers (rule 12). Respect the §2.1b
 solve-window cap enforced by every CLI.
-Deliverables: docs/handoffs/perf-recheck-2026-08.md in the wallclock-baseline table
+Deliverables: docs/records/governance/perf-recheck-2026-08.md in the wallclock-baseline table
 format (measurement → verdict per candidate), the owner memo, prototype diffs on
 your branch clearly marked NOT-FOR-MERGE. PERF-B (the merge pass) is chartered
 separately after gate G1. Report your branch when done.
@@ -694,7 +694,7 @@ code that implements it; cite file:line in HTML comments where useful. STATUS: A
 banner. Add the doc to docs/README.md's L2 table and the /sync-docs code→doc map.
 
 Part 2 — spec gap audit (do NOT edit the spec yet): read model-methodology-spec.md
-(1,251 lines) end-to-end and write docs/handoffs/methodology-finalization-audit-2026-08.md:
+(1,251 lines) end-to-end and write docs/records/governance/methodology-finalization-audit-2026-08.md:
 a §-by-§ checklist of what "finalized" requires — Phase-0 build-agent content to
 retire (§2.3, §7), as-built notes to reconcile, stale line-number/module citations
 (the lp/ split postdates some), claims to re-verify against code, and what stays
@@ -727,7 +727,7 @@ may be planned as a DRY RUN to quantify, never executed.
 INHERITED CHARTER (2026-08-13, read FIRST): the FFR desk WITHDREW its RAW-UNTRACK
 lane into this workstream (ffr-owner-sitting-2026-08-02.md AS.5; pack §0as — never
 re-dispatch it). You inherit three inputs and must reconcile them with the per-corpus
-candidates below: (1) docs/FINDING-rewrite-prep-2026-08-11.md §8 — the GO half:
+candidates below: (1) docs/records/governance/FINDING-rewrite-prep-2026-08-11.md §8 — the GO half:
 untrack data/raw GOING FORWARD (git rm -r --cached data/raw + .gitignore,
 metadata-only commit, history kept as-is; NO-GO on rewriting stands); (2)
 docs/fast-clone.md (#3909) — partial clone + scripts/hydrate_data.py per-session
@@ -914,7 +914,7 @@ your branch when done.
   GOLDEN-TIER-FIX.
 - 2026-08-15 — **PM refresh at main `c447199`. Program state corrected; three
   Wave-1 lanes are still unrun.**
-  * **DELIVERED:** DEBUG-A (`docs/handoffs/debug-sweep-2026-08.md`, PR #3937) —
+  * **DELIVERED:** DEBUG-A (`docs/records/misc/debug-sweep-2026-08.md`, PR #3937) —
     all 6 real ambient reds fixed (the README's "known-failing" list was stale in
     *both* directions), D-5 CLOSED (defect confirmed live in mutated form → patch
     archived, `debug-b-pjm-input-clock-charter-2026-08.md` written), branch-
@@ -1015,10 +1015,10 @@ your branch when done.
 - 2026-08-15 — **Director session assumed program coordination; Wave-1
   completion dispatch** (branch `claude/model-audit-workstreams-wc0npu`).
   State verified at `origin/main` @ `870c4c8`: **PERF-A DELIVERED and
-  merged** (`docs/handoffs/perf-recheck-2026-08.md` + warm-start memo, via
+  merged** (`docs/records/governance/perf-recheck-2026-08.md` + warm-start memo, via
   the CI-infrastructure-blocker session — the memo recommends closing §6
   decision 1 as overtaken by events; owner ack pending), **DEBUG-B
-  DELIVERED and merged** (`docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md`;
+  DELIVERED and merged** (`docs/records/pjm/FINDING-debug-b-pjm-input-clock-2026-08-15.md`;
   run pjm-162 registered, keeper CANDIDATE — owner promotion pending; its
   bundle held from the B-3 prune so promotion needs no re-solve),
   **BLOAT-B PR-3 fully landed** (#3982 data + #3983 records). Wave-1 gap
@@ -1034,7 +1034,7 @@ your branch when done.
   clock-extension card, clean-main re-verify, sibling-import residue).
   Held at gates: PERF-B (G1), DOCS-B (G2), BLOAT-B-6R/B-7 close-out
   (golden-tier green), SITE-A (G3), AUDIT-B (G3). Live rollup:
-  `docs/handoffs/audit-program-director-board-2026-08.md`.
+  `docs/records/governance/audit-program-director-board-2026-08.md`.
 - 2026-08-15 — **AUDIT-A DELIVERED AND MERGED (#3991):**
   `docs/audit/third-party-audit-2026-08.md` + `model-positioning-matrix-2026-08.md`,
   including the §8 gap register (2 PERF ▸already-chartered, 2 DEBUG, 5 DOCS,
@@ -1091,7 +1091,7 @@ your branch when done.
   `0ad8d42`). Criteria met: all five Wave-1 handoffs merged — AUDIT-A
   (#3991), DEBUG-A (#3937), PERF-A (perf-recheck + warm-start memo), DOCS-A
   (#3999 + follow-up #4005: `docs/user-manual.md`,
-  `docs/handoffs/methodology-finalization-audit-2026-08.md`, gap rows
+  `docs/records/governance/methodology-finalization-audit-2026-08.md`, gap rows
   D1/D4/D5 landed), BLOAT-A — and the §6 decision queue signed 2026-08-13.
   §6 decision 1 (warm-start default flip) recorded **CLOSED — OVERTAKEN BY
   EVENTS** per the PERF-A memo (D-9 flipped it, D-10 disarmed the forecast
@@ -1216,7 +1216,7 @@ your branch when done.
   protocol; structural-not-marshal comparison caveat recorded there).
   Landing verified on post-merge main by the successor DEBUG-MGR session:
   `audit_keepers --iso PJM --check` PASS 0/0 and `check_mechanism_matrix.py`
-  fully clean at `00abb60`. Full record: `docs/handoffs/debug-sweep-2026-08.md`
+  fully clean at `00abb60`. Full record: `docs/records/misc/debug-sweep-2026-08.md`
   Addendum §A.1–A.7.
 - 2026-08-16 — **DEBUG-MGR reissue #2 delivered: the sibling-import residue
   is RETIRED — census 0 bare sites / 0 live files** (branch
@@ -1245,7 +1245,7 @@ your branch when done.
   list (B-6R/B-7, DOCS-A, PERF-B) is fully overtaken; PERF-B's prompt was
   already issued at the G1 refresh and awaits owner launch. No DEBUG-C
   continuation is needed: the lane's chartered residue work is complete.
-  Full record: `docs/handoffs/debug-sweep-2026-08.md` Addendum §B.
+  Full record: `docs/records/misc/debug-sweep-2026-08.md` Addendum §B.
   **LANDING-VERIFY on merged main (`f8c93af`, post-history-rewrite, full-data
   working tree): the fast-lane confirmation interrupted mid-flight by the
   rewrite is SUPPLIED — `6,870 passed / 0 failed / 31 skipped / 2 xfailed`
@@ -1268,7 +1268,7 @@ your branch when done.
   GiB** on the runner (mirror basis), 12,482 rewritten commits, 9,067 files at
   tip — byte-identical. **BLOAT-B-8 aftercare delivered in the same-day
   follow-up lane** (`claude/bloat-b8-rewrite-aftercare-q89jcn`):
-  `docs/FINDING-history-rewrite-2026-08-16.md` (the durable record);
+  `docs/records/governance/FINDING-history-rewrite-2026-08-16.md` (the durable record);
   `docs/governance/citation-commit-map.txt` reconstructed and committed (the
   runner's copy and the full filter-repo commit-map were never archived —
   95/95 unique identity matches + 9 self-maps) and wired into
@@ -1288,7 +1288,7 @@ your branch when done.
   artifact upload into the workflow before any future rewrite.
 - 2026-08-16 — **BLOAT-3 decision card drafted and served: the Stage-2
   charter, re-derived over the post-rewrite recovery reality**
-  (`docs/DECISION-CARD-bloat3-stage2-charter-2026-08-16.md`; session BLOAT-3,
+  (`docs/records/governance/DECISION-CARD-bloat3-stage2-charter-2026-08-16.md`; session BLOAT-3,
   docs-only — no untracking, no gitignore edit, no data move). Input basis:
   the B-7 re-measured pool at `04d1cf0` (4,008.7 MiB / 1,487 files; takeable
   residual ≈ 3,311.9 MiB after the §4.2/§4.7 keep-verdicts; full untrack →
@@ -1406,7 +1406,7 @@ your branch when done.
     rewrite. Two prior dispatches of this records lane were never launched.
 - 2026-08-17 — **BLOAT-S2 EXECUTED: the Stage-2 (a)-only untrack, evidence
   passes first** (session BLOAT-S2, the O2 grant's chartered follow-on;
-  evidence: `docs/FINDING-bloat-s2-evidence-passes-2026-08-17.md`; D-ledger:
+  evidence: `docs/records/governance/FINDING-bloat-s2-evidence-passes-2026-08-17.md`; D-ledger:
   bloat plan §9 BLOAT-3 annotated EXECUTED). Six §4.8 evidence passes ran —
   five-leg protocol per corpus (consumer census with absent-behavior
   semantics, golden+holdout overlap incl. the rule-22 vintage question,
@@ -1454,7 +1454,7 @@ your branch when done.
   no new solve-affecting decision), test dtype corrected to int64 with an
   upcast guard; verified on all eight real workbooks + the exact step-5
   command + a full local job replay. Diagnosis:
-  `docs/FINDING-golden-tier-cron-red-2026-08-17.md`. Proof of fix:
+  `docs/records/misc/FINDING-golden-tier-cron-red-2026-08-17.md`. Proof of fix:
   recommend ONE post-merge `workflow_dispatch` (spends an authorized
   dispatch) over leaving the proof mechanism red for a week.
 - 2026-08-17 (owner decision: WS3 paused, program parked at G1) — **OWNER
@@ -1490,7 +1490,7 @@ your branch when done.
     possible.** Its runner validation stands: run **31873178938** (job
     94984802917, 10 m 36 s wall) = `6838 passed, 31 skipped, 2 xfailed, 437
     subtests passed` — skip count **exactly 31**, matching the watch number.
-    Evidence: `docs/handoffs/perfb-stage0-staleness-ledger-2026-08-17.md`
+    Evidence: `docs/records/governance/perfb-stage0-staleness-ledger-2026-08-17.md`
     §"Change (c) status". Hygiene flag carried forward: #3964 also merged
     `.github/workflows/perf-a-ci-probe.yml` to main despite its own
     NOT-FOR-MERGE header — `workflow_dispatch`-only, so it burns nothing, but
@@ -1706,7 +1706,7 @@ your branch when done.
     neiso-97's `a2b5e3d` (#4043) three hours before the cron. Fixed by relabelling
     with the integer `2` (`d4fbf44`), a one-line behaviour delta of crash → works
     as signed, with the unit test corrected to build the real dtype.
-    **Deliverables verified** — `docs/FINDING-golden-tier-cron-red-2026-08-17.md`
+    **Deliverables verified** — `docs/records/misc/FINDING-golden-tier-cron-red-2026-08-17.md`
     §7 records a **full local replay of all four CI job steps, all green** (nine
     datatypes `[ ok ]`×9 → emissions 2023 → pytest tier serial 44 passed / 2
     skipped → loud-failure guard clean, ~13 min wall), plus the standalone step-5
@@ -1986,7 +1986,7 @@ your branch when done.
     **492,516 rows × 25,447,800 columns, 50.3 M nnz**.
   - **CLOSED 2026-08-20 — BLOAT-2 registry/payload parity is GREEN.** Repaired
     by the ws6-parity-repair lane; record
-    `results/calibration/FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md`.
+    `docs/records/nyiso/FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md`.
     The failure count grew 2 → 9 before the lane ran and stood at **8, all
     NYISO**, at `66ae225`: both dirs named in the prior text below **cleared
     themselves** on their lanes' registrations (`ercot221_control_A`;
@@ -2281,7 +2281,7 @@ your branch when done.
     `calibration-complete` entry are both correct; the prose around them lags.
   - **WS5 MOVED OFF ZERO — Job 1 (site factual repair, pre-G3) COMPLETE and
     merged** (#4120 + #4121, commits `5f4a6af` + `cd8293b`; record
-    `docs/FINDING-site-facts-repair-2026-08-19.md`, 321 lines; 19 site files).
+    `docs/records/misc/FINDING-site-facts-repair-2026-08-19.md`, 321 lines; 19 site files).
     Fifteen repairs: **twelve ordinary staleness, THREE GOVERNANCE-GRADE**, every
     number re-derived from `src/`, `scripts/` or committed data. **The worst
     asserted, on `model-validity.html` §4 — the page whose entire subject is
@@ -2533,7 +2533,7 @@ your branch when done.
     un-parked: `golden-data-tier.yml` is the ONLY workflow running
     `regenerate_clean.py`.
   - **🟢 WS5 JOB 1 IS COMPLETE ACROSS BOTH PASSES — pass 2 merged as #4187 +
-    #4191**, record `docs/FINDING-site-facts-repair-2-2026-08-22.md` (373 lines).
+    #4191**, record `docs/records/misc/FINDING-site-facts-repair-2-2026-08-22.md` (373 lines).
     All three owner-reported defects repaired: **(a)** *"Three LP solves per
     year"* → **two**, with the **sequence, animation and aria-labels** all
     re-presented as two passes (`viz-p012-sequence.js` `STEPS` 3 → 2, the P1
@@ -3002,7 +3002,7 @@ your branch when done.
     name"* at this pin. Either the object is merely unfetched in this shallow
     clone (236 commits) **or the 2026-08-16 history rewrite orphaned it** — and
     the captures are dated 2026-08-14 to 2026-08-16, squarely inside that window
-    (`docs/FINDING-history-rewrite-2026-08-16.md`). **The goldens therefore cannot
+    (`docs/records/governance/FINDING-history-rewrite-2026-08-16.md`). **The goldens therefore cannot
     be tied back to the tree they were captured from by anything stronger than
     their own per-file `content_hashes`, which are unaffected and remain the
     verification instrument.** Added to the restart checklist as a step before any
@@ -3151,7 +3151,7 @@ your branch when done.
   - **🟢 THE HEADLINE — THE ENTRY-SIGNAL THREAD IS ADJUDICATED.**
     `entry_lookahead_reprice`, ERCOT `fc` column: **K → O**, on **four LP
     solves** (ERCOT disarm + same-tree control; CAISO dump-production +
-    same-tree control), `docs/FINDING-entry-signal-disarm-2026-08.md`. Recorded
+    same-tree control), `docs/records/misc/FINDING-entry-signal-disarm-2026-08.md`. Recorded
     as what it is — **NEITHER a promotion NOR a rejection.** **The disarm hit
     L-1's storage prediction TO THE MEGAWATT** (iron_air at **exactly 3,000 MW
     in every step**; flow_battery → compressed_air as predicted; **wind enters
@@ -3187,9 +3187,9 @@ your branch when done.
   - **🔴 ERCOT — TWO CARDS SIGNED, A REAL DEFECT FOUND, AND THE REPAIR NOW
     HALF-LANDED.** **(a) Card Y SIGNED (Y-C)**, in-session 2026-08-24 — formal
     closure of the ERCOT 2023 price object
-    (`docs/DECISION-CARD-ercot233-2023-object-closure-2026-08-24.md`). **(b)
+    (`docs/records/ercot/DECISION-CARD-ercot233-2023-object-closure-2026-08-24.md`). **(b)
     Card Z SIGNED (Z-A)**
-    (`docs/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`).
+    (`docs/records/ercot/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`).
     **THE SUBSTANCE IS NOT COMPRESSIBLE TO "a crosswalk fix":** ERCOT defines
     **`NE_LOB` as "North Edinburg – Lobo", a SOUTH TEXAS / Rio Grande Valley
     stability corridor**; **the model read it as "NORTHEAST LOBE"** and on that
@@ -3327,7 +3327,7 @@ your branch when done.
     **decision-1 ack — outstanding EIGHTEEN cycles**, the cheapest item on the
     board and now outlasting every item open when it was raised; (7) **NEW AND
     TIME-CRITICAL — the ercot-225 G-SPUR band-top gate card**
-    (`results/calibration/DECISION-ercot225-gspur-bandtop-gate-2026-08-21.md`),
+    (`docs/records/ercot/DECISION-ercot225-gspur-bandtop-gate-2026-08-21.md`),
     **Option A recommended, AWAITING SIGNATURE SINCE 2026-08-21** with no
     RESOLUTION block recorded at this pin, **scorer-only** (no LP, no re-bundle,
     no verdict of any standing run changes). **It is time-critical rather than
@@ -3355,7 +3355,7 @@ your branch when done.
     **`claude/capx-director-ledger` — a DIFFERENT PROGRAM's director ledger —
     moved and merged**, and a commit-list scan would have shown *"director
     ledger updated"* and passed. **Only asking whether a branch exists for THIS
-    board's prompt separates them.** `docs/handoffs/capx-director-ledger-2026-08.md`
+    board's prompt separates them.** `docs/records/forecast/capx-director-ledger-2026-08.md`
     is not this program's ledger, and **that conflation is part of why the audit
     board went unrefreshed.**
   - **LANE STATE at `99c8cf5`, derived from `git ls-remote` branch tips** (this
@@ -3409,7 +3409,7 @@ your branch when done.
   changed.** The same sitting's cards 6 and 7 (validation-tier freeze lift with
   the layup charter closed with cause; the standing locked-test scheduling
   precondition) are recorded in `docs/governance/rule-history.md` §4 and
-  `docs/FINDING-holdout-governance-2026-08-26.md`, which is also this entry's
+  `docs/records/governance/FINDING-holdout-governance-2026-08-26.md`, which is also this entry's
   execution record.
 - 2026-08-30 — **DIRECTOR RECORDS v14 — the sitting-execution cycle: a new
   director takes the desk, the sitting's rulings are executed or dispatched,
@@ -3454,7 +3454,7 @@ your branch when done.
     run is live) and `docs/codebase-site/js/calibration-status.js` (renders
     both configs) all express two designated configs, and
     **`audit_keepers.py` PASSES on the structure** (re-run at the pin: 0/0).
-    Record: `docs/FINDING-ercot-two-config-keeper-2026-08-26.md`.
+    Record: `docs/records/ercot/FINDING-ercot-two-config-keeper-2026-08-26.md`.
   - **(c) KEEPER MOTIONS NEVER LEDGERED HERE, back-recorded** (each verified
     against its shard at the pin): **caiso-220** —
     `2026-08-26-caiso-220-c1-crosswalk` promoted on **direct owner
@@ -3465,7 +3465,7 @@ your branch when done.
     (armed at nyiso-108, SILENTLY LOST from the lineage) was restored and
     A/B'd, the repair arm registered NOT-YET on a C3a-2025 downgrade, and
     the owner promoted it anyway
-    (`docs/FINDING-nyiso-hydro-truncation-repair-2026-08.md`;
+    (`docs/records/nyiso/FINDING-nyiso-hydro-truncation-repair-2026-08.md`;
     `docs/calibration-log/nyiso.md` 2026-08-25). **miso-188** —
     `2026-08-30-miso-188-rvsscope` registered AND promoted 2026-08-30,
     **NOT-YET on a lone load-bearing FAIL, C3a-2025 −12.3 %** (8/6/1/1;
@@ -3480,7 +3480,7 @@ your branch when done.
     set {NEISO, NYISO, PJM}** — the four-instrument alignment v13 reported
     is broken, by two consecutive owner-decided NYISO promotions (155, 157).
   - **(d) O7 PHASE 0 — ESCALATE, AND THE OWNER RULED.**
-    `docs/FINDING-o7-p0-seam-restoration-2026-08-26.md` (filed 2026-08-30,
+    `docs/records/misc/FINDING-o7-p0-seam-restoration-2026-08-26.md` (filed 2026-08-30,
     `dd669d0`): the ERCOT P0 bit-identity restoration is **UNACHIEVABLE
     without moving the CALIBRATED keeper** — the charter's own stop-rule
     fired. The P0 exposure is **INHERENT, not incidental**: R1 is a
@@ -3499,7 +3499,7 @@ your branch when done.
   - **(e) BENCH FINGERPRINTS — RE-STAMP RULED, AND EXECUTED AT THE PIN.**
     Stale parts **11 → 8** (NEISO 2022–2025 + PJM 2022–2025 remained; three
     cleared incidentally by later registrations;
-    `docs/FINDING-bench-fingerprint-adjudication-2026-08.md`: the parts are
+    `docs/records/misc/FINDING-bench-fingerprint-adjudication-2026-08.md`: the parts are
     UNLABELLED, not wrong). **Owner ruling 2026-08-30: RE-STAMP the 8,
     authorized** — content bytes untouched, **NOT a regeneration**, and CI
     wiring **explicitly DECLINED**. Lane dispatched the same sitting — and
@@ -3618,7 +3618,7 @@ your branch when done.
     FINDING-ercot239 §6 itself (titled "NOT chartered — owner-visible
     queue"). Launch state at this lane's runtime: **LAUNCHED** — branch
     `claude/ercot-240-demand-gap-xbdwn5`, precommit
-    `docs/PRECOMMIT-ercot240-eventhour-demandgap-2026-08-30.md` merged
+    `docs/records/ercot/PRECOMMIT-ercot240-eventhour-demandgap-2026-08-30.md` merged
     **#4341** (`6829f64`, this lane's base); no finding yet.
   - **(c) R-3 EXECUTED — caiso-222 Q1 = TERMINAL REST + MAP (packet §1(c)
     OPTION 3): commit `634927a`.** The CAISO C3a residual (+12.5/+15.5 %
@@ -3727,7 +3727,7 @@ your branch when done.
     stands as a true dated verification of the pre-withdrawal state.
     **#4344/#4345**: the (b)-chartered ercot-240 zero-solve pass
     COMPLETED the same day —
-    `docs/FINDING-ercot240-eventhour-demandgap-2026-08-30.md` ADJUDICATES
+    `docs/records/ercot/FINDING-ercot240-eventhour-demandgap-2026-08-30.md` ADJUDICATES
     the event-hour "demand gap" as the **DC-TIE NET IMPORT IDENTITY,
     exactly and everywhere** (the model's demand input is NOT understating
     real demand — it serves the measured net-generation boundary
@@ -3745,7 +3745,7 @@ your branch when done.
   four-instrument alignment repaired by marker withdrawal rather than by a
   calibration win, and one adverse finding that no gate could have caught.**
   Board refreshed v14 → **v15** at
-  `docs/handoffs/audit-program-director-board-2026-08.md`; this entry is the
+  `docs/records/governance/audit-program-director-board-2026-08.md`; this entry is the
   §8 half of the same refresh. Records lane, **ZERO SOLVES** — every figure
   read from committed bytes at the pin (rule 22 `[R-HOLDOUT]`: nothing solved,
   scored or registered, so no holdout tier was spent in any ISO).
@@ -3993,7 +3993,7 @@ your branch when done.
   - **CARD 2 — T1-H capacity-entry defect: "CHARTER BOTH LEGS NOW" RULED.**
     The storage-entry/backstop leg AND the wind leg (A-7 / v13 item 11,
     homeless three boards) get a charter and a lane this sitting:
-    `docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md`. Phase-0 is zero-solve
+    `docs/records/misc/PRECOMMIT-t1h-capacity-entry-2026-08-30.md`. Phase-0 is zero-solve
     characterization from committed T1-H artifacts; any arming remains an
     owner decision on the A/B record.
   - **CARD 3 — CROSS-LANE RE-GRADE: "RE-VERIFY REQUIRED" RULED (standing
@@ -4062,7 +4062,7 @@ your branch when done.
     **`1cfea72`** resolves **and** `merge-base --is-ancestor` places it inside
     `origin/main`. **WS3 stays PARKED and G2 leg 1 keeps BOTH parks** — the card
     declined the restart, so this is a scoped capture, not a resumption.
-    **Card 2** — charter `docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md` ran
+    **Card 2** — charter `docs/records/misc/PRECOMMIT-t1h-capacity-entry-2026-08-30.md` ran
     end-to-end: Phase-0 (#4369) and Phase-1 Leg A A/B (#4419 + #4426). **Both
     kill-gates PASS** (K1 had nothing to fire on — every addition band identical
     to the digit; K2 not inert — the storage-mix rows differ); the arm
@@ -4242,7 +4242,7 @@ your branch when done.
     `1a8756b` with no lane branch visible; **R-B "Joint charter"** (queue item
     2) — *promote nothing yet*, A/B the dual-based signal object **together
     with** the D11-R volume rule, kill-gates ex ante (#4430,
-    `docs/PRECOMMIT-c1-joint-wind-2026-08-31.md`, based on this board's own pin
+    `docs/records/misc/PRECOMMIT-c1-joint-wind-2026-08-31.md`, based on this board's own pin
     and vindicating the not-additive caution: 8.87 % + 4.91 % naively sums to
     ~13.8 % and the joint arm is the only untested combination); **R-C
     re-verify before promote-or-archive** (queue item 7) — nyiso-162 (#4431)
@@ -4284,7 +4284,7 @@ your branch when done.
   gate readings and both C3c answers all landed inside it.
   - **(a) R-D EXECUTED — the C-1 WIND ENTRY MISS is TERMINAL REST AT THIS
     REPRESENTATION GRAIN + DECISION MAP**, the caiso-222 §1(c) option-3 pattern.
-    On `docs/FINDING-c1-joint-wind-ab-2026-08-31.md` (R-B's chartered A/B; both
+    On `docs/records/misc/FINDING-c1-joint-wind-ab-2026-08-31.md` (R-B's chartered A/B; both
     kill-gates PASS; **`NON_COMPLEMENTARY`**): the joint arm builds wind
     **1.442 GW** — to the megawatt the signal-alone arm's number — closing
     **8.87 %** of the **12.313 GW** miss while **the volume rule contributes
@@ -4308,7 +4308,7 @@ your branch when done.
     registered bundle sits at that posture**, with the R-A cache epoch leaving
     the forecast default key `603c2498bf71d21d` **unmoved** (silent same-key
     collision). Records: **NEW**
-    `docs/DECISION-MAP-ercot-wind-entry-2026-08-31.md` ·
+    `docs/records/ercot/DECISION-MAP-ercot-wind-entry-2026-08-31.md` ·
     `docs/calibration-log/ercot.md` · `docs/calibration-log/governance.md` ·
     R-D stamps appended to the **evidence strings only** of the two joint-wind
     ERCOT cells. **Retires board v16 owner-queue item 2.**
@@ -4317,12 +4317,12 @@ your branch when done.
     REPORTED at this pin.** The dispatch described R-E's execution lane as
     separately dispatched and instructed a dispatch-vs-launch branch check on it.
     **Run at the pin, that check returned *done*, not *launched*:** **Q1 = REAL**
-    (pjm-164, **#4456**, `docs/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`,
+    (pjm-164, **#4456**, `docs/records/pjm/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`,
     zero solve — PJM's reserve-dual channel is **not** the ercot-214 phantom;
     2025 overlap **14 of 32** model tail hours, **13** with a positive reserve
     dual, against published DataMiner2 MCPs; three honest caveats, none
     determination-level) and **Q2 = CONFIRM** (nyiso-164, **#4459**,
-    `docs/FINDING-nyiso164-c3c-product-level-2026-09-01.md`, zero solve — the
+    `docs/records/nyiso/FINDING-nyiso164-c3c-product-level-2026-09-01.md`, zero solve — the
     kill gate fires on **both** clauses: NYCA-tier reserve price never exceeds
     the concurrent LMP in **65/65** tail hours, and the model carries
     **5.08/3.92/2.99 GW** of reserve-carrying headroom against a 2,620 MW NYCA
@@ -4353,7 +4353,7 @@ your branch when done.
     `docs/calibration-log/nyiso.md` + `governance.md`.
   - **(d) R-G EXECUTED — nyiso-160/leg2 CLOSED BY ARCHIVE, retiring the
     promote-or-archive item FOR GOOD.** On
-    `docs/FINDING-nyiso-leg2-reverify-2026-08-31.md` (nyiso-162, **#4431**,
+    `docs/records/nyiso/FINDING-nyiso-leg2-reverify-2026-08-31.md` (nyiso-162, **#4431**,
     R-C's zero-solve re-verification), the owner ruled **archive**. The
     re-verification dissolved its own question: **there is NO candidate** — leg2
     produced a stop with cause at access, not an object — and the object that
@@ -4423,7 +4423,7 @@ your branch when done.
     PRs**, so branch-name-only classification would mis-file half of it.
   - **RECORDS INTEGRITY.** Files touched, and no others: the two program record
     files (this plan's §8, the board → v17), the **new**
-    `docs/DECISION-MAP-ercot-wind-entry-2026-08-31.md`,
+    `docs/records/ercot/DECISION-MAP-ercot-wind-entry-2026-08-31.md`,
     `docs/calibration-log/governance.md` + `ercot.md` + `nyiso.md`, and the
     **evidence strings only** of two cells in
     `docs/codebase-site/data/mechanism-matrix/ERCOT.js`. No `src/`, no
@@ -4441,7 +4441,7 @@ your branch when done.
     INDEPENDENTLY REPLICATED while this entry was being written, and one
     replication found a live defect worth carrying.** NOT re-pinned.
     - **Q1 = REAL, replicated by a DIFFERENT CONSTRUCTION** (pjm-165,
-      `docs/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md`): pjm-164 overlapped
+      `docs/records/pjm/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md`): pjm-164 overlapped
       the model's C3c **tail hours** against the RT LMP tail; this lane overlapped
       the model's **positive-reserve-dual hours** against PJM's **published
       reserve-market record**. Four legs pjm-164 did not carry — the requirement
@@ -4452,7 +4452,7 @@ your branch when done.
       verdict.**
     - **Q2 = CONFIRMED, by a lane that first reached the OPPOSITE answer and
       RETRACTED it** (nyiso-165,
-      `docs/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md`): running blind it
+      `docs/records/nyiso/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md`): running blind it
       measured *"reality WAS NYCA-short"*, found nyiso-164's record afterwards,
       re-derived from the raw CSVs and **reproduced nyiso-164's numbers exactly**
       (NYCA-tier tail-hour mean $306.74 / $254.62 / $393.31; ceiling test **0 of
@@ -4581,7 +4581,7 @@ your branch when done.
   `scripts/probes/_miso171_reserve_product_decomposition.py:205–206` sums
   published `GENREGMCP + GENSPINMCP + GENSUPPMCP` (cascade monotone in
   **100.0000 %** of rows, every year, both markets); re-derived from the
-  committed `results/calibration/_miso171_reserve_product_decomposition.json`,
+  committed `results/phase0/miso/_miso171_reserve_product_decomposition.json`,
   **12 summed cells at `total/reg` 1.22×–2.49×**, with the finding's two quoted
   cells reproducing exactly ($181.40 vs $76.88 = 2.36×; $97.62 vs $46.44 =
   2.10×). Mitigations confirmed: per-product fields recorded alongside and
@@ -5003,7 +5003,7 @@ your branch when done.
   disposition is unchanged at **OPTION A, NOT-YET STANDS**.
 
   **RECORDS INTEGRITY.** Files touched, and no others: the two program record
-  files (`docs/handoffs/audit-program-director-board-2026-08.md`,
+  files (`docs/records/governance/audit-program-director-board-2026-08.md`,
   `docs/model-audit-release-plan-2026-08.md`) and the R-M annotation in
   `frontend/data/forecast/ff-verdicts.json` (**+4 lines, purely additive**).
   **Verified byte-unmoved at the pin:** every keeper shard,
@@ -5529,7 +5529,7 @@ your branch when done.
   on fresher evidence, not retired.** (K-1.)
 
   **(b) 🟢 R-U'S OWN FINDING NEVER CLAIMED THE LEG, AND SAYS SO.**
-  `docs/FINDING-ci-red-repair-2026-09.md` §6: ***"7 of 7 required checks green.
+  `docs/records/misc/FINDING-ci-red-repair-2026-09.md` §6: ***"7 of 7 required checks green.
   The run is not 'fully green' and this finding does not claim it is"***, with
   `Fast test tier` marked **🔴 deferred (memo §3)**. **The defect is the
   dispatch's compression of "7 of 7 *required*" into "the green run", then into a
@@ -5828,7 +5828,7 @@ your branch when done.
   of 30 runs. But **blocker (a) has
   re-reddened from a new direction**: R-X's lint rider landed and the job is red
   anyway, on **5 `ruff check` errors all in per-run capx probe scripts under
-  `docs/handoffs/d37/` and `d45/`**, with 10 files failing the format step behind
+  `docs/records/forecast/d37/` and `d45/`**, with 10 files failing the format step behind
   it. That is a small cleanup plus one policy question (should session probe
   scripts be linted at all), and it is the last thing before the Settings action.
   **Stage-0 has REGRESSED 7-of-7 → 4-of-7** on the same three promotions
@@ -5972,7 +5972,7 @@ your branch when done.
   (`3a3b445a` R-AC pyproject exclude, `b9384baf` ruff format on seven files), no
   PR yet. **G-14's non-launch tally stays at five.** Independent measurement
   agrees with that lane's scoping and records the non-obvious sequencing fact:
-  `ruff check` is **5 errors, all in `docs/handoffs/d37/`+`d45/` probe scripts**,
+  `ruff check` is **5 errors, all in `docs/records/forecast/d37/`+`d45/` probe scripts**,
   so **R-AC clears lint entirely — and thereby UNMASKS the format step, currently
   `skipped` behind the failing lint step**, leaving **7 of the 11 format files**
   (11 at this pin vs v23's 10). **R-AC alone does not green the Ruff job.** Two of
@@ -6140,7 +6140,7 @@ your branch when done.
   green has survived **seven further CI runs and five merged PRs**, so it is a
   standing state, not a single observation; `pyproject.toml` line 67 ff. carries the
   `extend-exclude` entry with its R-AC citation. Cite
-  `docs/FINDING-lint-hygiene-2026-09.md`.
+  `docs/records/misc/FINDING-lint-hygiene-2026-09.md`.
   **board Z-1 RECORDED AS DISPATCHED, AND WIDENED BY ONE.** The flip is the fix; **no
   new mechanism is proposed**. The class is **three** duties, not two — the third
   (E11 keeper-recipe declaration) discovered this cycle — and **all three sit inside
@@ -6200,7 +6200,7 @@ your branch when done.
   as new board item **Z-3: a non-launch classification carries an expiry.**
   **THE DISPATCH'S CLOSING INSTRUCTION IS SUPERSEDED, WITH A RECEIPT.** It states *"your
   PR is docs-only, so ci.yml will not run on it."* Y-4 job 3 enrolled **both** files this
-  lane may touch — `docs/handoffs/audit-program-director-board-2026-08.md`,
+  lane may touch — `docs/records/governance/audit-program-director-board-2026-08.md`,
   `docs/model-audit-release-plan-2026-08.md`, plus `docs/FINDING-*.md`. **CI now runs on
   records PRs**, proved not predicted: run **2385** (`33853215685`, head `78b0eec2`) is
   v25's own two-file records PR and it **ran all ten jobs and concluded `failure`.**
@@ -6517,7 +6517,7 @@ your branch when done.
   unverified; **adjudicated by nobody.**
   **PERF-B s3 LAUNCHED AND COMPLETE — Z-3's fifth inversion** (v27 recorded it not-launched).
   C-2/C-1a/C-1b merged #4745, #4752, #4753, #4755; the finding
-  `docs/FINDING-perfb-s3-adaptive-pass-2026-09.md` is **FILLED, 278 lines**: full byte gate
+  `docs/records/governance/FINDING-perfb-s3-adaptive-pass-2026-09.md` is **FILLED, 278 lines**: full byte gate
   **PASS at `atol=rtol=0`** on ERCOT forward 2023-25, `ERCOT__carveout-2023` and NEISO against
   merge-base controls; ERCOT forward **4859.5 → 3592.3 s (−1267 s, −26 %)**; C-3 skipped, C-4
   refuted, caiso-205 left to a CAISO lane. **X-3 DISCHARGED**: control rows carry `prior_solve`
@@ -6879,7 +6879,7 @@ your branch when done.
   **fired the cross-program Q.2 commissioning notification** on a false premise. Drafts of all
   five edits — the DECLARED block, the Gates amendment, the queue-14 lift, the
   `keepers/README.md` lift paragraph, and **Addendum AW** in
-  `docs/handoffs/ffr-owner-sitting-2026-08-02.md` — were written and **reverted unpushed**
+  `docs/records/forecast/ffr-owner-sitting-2026-08-02.md` — were written and **reverted unpushed**
   (`git checkout origin/main --` over all four files, `git status --porcelain` empty at
   `2a59d269` before this entry was written). **`keepers/README.md` and the FFR sitting document
   are byte-untouched in the landed diff.** **Nothing in the repository would have objected:** no
@@ -6903,7 +6903,7 @@ your branch when done.
   the PERF-B s3 byte gate **PASS** — `regression_gate.py --mode byte` (`atol=rtol=0`),
   `perfb-s3-before` (merge-base `b1964e7`, separate worktree) vs `perfb-s3-after` (`ca4795f`):
   ERCOT 9 files / 34 numeric cols, ERCOT__carveout-2023 5 / 22, NEISO 9 / 32, all PASS, gross
-  reshuffle **0.000 %** (`docs/FINDING-perfb-s3-adaptive-pass-2026-09.md` §4). **Leg 2 SATISFIED
+  reshuffle **0.000 %** (`docs/records/governance/FINDING-perfb-s3-adaptive-pass-2026-09.md` §4). **Leg 2 SATISFIED
   TWICE**, read per job and never off the run-level `conclusion` (which is `failure` on both):
   run **2456** (`33979949551`, head `dd555499`) and run **2463** (`33984897199`, head
   `77a6dafa`), each **six-of-six `success`** with exactly `FR-22 backcast->forecast parity` and
@@ -6980,7 +6980,7 @@ your branch when done.
   `R-AJ` **3**. The four 2s are **exactly the two canonical records** — v29 wrote those labels
   into the board and this plan, and this lane **appends to the same two files and adds no third
   document**. `R-AJ`'s **3** is the sole exception and is **not a records lane's**: the third file
-  is **`docs/handoffs/capx-director-ledger-2026-08.md`** — the capx desk read v28b's block and
+  is **`docs/records/forecast/capx-director-ledger-2026-08.md`** — the capx desk read v28b's block and
   carried R-AH…R-AK into its own r#38 at `f533d6f6`, 19:46:16Z, adopting R-AK there — so
   **v28b's "R-AJ → 2 files" was true at its close and is superseded by propagation**, the record
   working as designed. ⚠️ **One sweep result is a measurement artefact and is reported rather
@@ -6996,7 +6996,7 @@ your branch when done.
   `git status --porcelain` re-verified **empty** after the withdrawn drafts, before this entry was
   written. **Closing diff confined to TWO files** — this plan and the director board —
   **insertions only, zero deletions**. **Verified untouched:** every keeper shard,
-  `frontend/data/backcast/keepers/README.md`, `docs/handoffs/ffr-owner-sitting-2026-08-02.md`,
+  `frontend/data/backcast/keepers/README.md`, `docs/records/forecast/ffr-owner-sitting-2026-08-02.md`,
   every `status/<ISO>.js`, `calibration-complete.json`, `holdout-freeze.json`,
   `program-status.json`, every matrix shard, every workflow, every bundle / sidecar / registry
   file, every golden manifest. **No solve, no score, no registration, no workflow dispatch.**
@@ -7255,7 +7255,7 @@ your branch when done.
   **insertions only, zero deletions**. **Verified untouched:** every keeper shard,
   every `status/<ISO>.js`, `calibration-complete.json`, `holdout-freeze.json`,
   `program-status.json`, every matrix shard, every workflow, every bundle / sidecar /
-  registry file, every golden manifest, `docs/handoffs/ffr-owner-sitting-2026-08-02.md`.
+  registry file, every golden manifest, `docs/records/forecast/ffr-owner-sitting-2026-08-02.md`.
   **No solve, no score, no registration, no workflow dispatch.** ⚠️ **Expect on this
   PR:** overall `failure` on the two chronic non-set jobs, **`Ruff lint + format` red**
   on `gen_caiso252_attestation.py` and `gen_miso220_attestation.py`, and **`Fast test
@@ -7412,7 +7412,7 @@ your branch when done.
   2022 both configs NOT-YET** — C1 `CC_REGULAR` −10.59 / −10.39 TWh, C3b 0.250 /
   0.220, C3c 38 / 64 h vs 196, **C3a PASS**, and C3c does *not* reclassify because
   guard (a) requires it to be the lone failure
-  (`docs/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md`, #4868); **PJM 2022
+  (`docs/records/ercot/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md`, #4868); **PJM 2022
   NOT-YET** (C1 +22.26 TWh, C3b 0.250) and **2021 NOT-YET** (C1, C3a +25.7 %, C3b
   0.355, C3c 145 h vs 23); **NEISO 2022 and 2021 CALIBRATED, 2020 NOT-YET** (lone C3a
   +13.7 %) — `ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md` §2-§3

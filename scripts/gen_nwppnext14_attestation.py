@@ -1,7 +1,7 @@
 """Emit the NWPP-NEXT-14 calibration attestation for the Clark-HR + Bridger-vintage span bundle.
 
 NWPP-NEXT-14 (PRECOMMIT
-``docs/handoffs/PRECOMMIT-nwppnext14-clark-hr-bridger-vintage-2019-2025-2026-09-30.md``) is
+``docs/records/nwpp/PRECOMMIT-nwppnext14-clark-hr-bridger-vintage-2019-2025-2026-09-30.md``) is
 keeper #18's recipe (NWPP-NEXT-13) plus two rule-14 repairs:
 ``eia923_cc_family_heat_rates`` (Clark 2322's CC rows loaded an impossible eGRID 3.007
 MMBtu/MWh; EIA-923 measures the block at 9.0-9.6) and ``campd_unit_fuel_split`` composed with

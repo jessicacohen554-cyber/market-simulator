@@ -11,7 +11,7 @@ demand-weights them to the footprint, and runs the STOP gate that decides
 whether the result may be committed as ``actual_lmp_hourly_NWPP.parquet``.
 
 EVERY rule and EVERY threshold below was fixed in
-``docs/handoffs/PRECOMMIT-nwpp-13-2026-09-13.md`` BEFORE any price, transfer or
+``docs/records/nwpp/PRECOMMIT-nwpp-13-2026-09-13.md`` BEFORE any price, transfer or
 Mid-C value was read. Nothing here reads a model residual — no NWPP model run
 exists (CLAUDE.md rule 1 ``[R-STRUCT]``). The gate can refuse the series; it can
 never promote a run.
@@ -1308,7 +1308,7 @@ def cmd_gate(land: bool) -> None:
     first_served = dt.date.fromisoformat(meta["first_served_day"])
 
     gate = {
-        "precommit": "docs/handoffs/PRECOMMIT-nwpp-13-2026-09-13.md",
+        "precommit": "docs/records/nwpp/PRECOMMIT-nwpp-13-2026-09-13.md",
         "scored_utc": dt.datetime.utcnow().isoformat(timespec="seconds"),
         "D1": gate_d1(hourly, cand, first_served),
         "D2": gate_d2(xfer, demand, cand, bench),

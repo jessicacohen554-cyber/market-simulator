@@ -1,7 +1,7 @@
 """SPP-93 shard self-check: the arm leg == the committed keeper + EXACTLY ``spp_zone_partition='west_east'``.
 
 Run by each SPP-93 shard AFTER its solve and BEFORE it pushes (rule 32(c)(4) hard stops). Zero LP.
-Pre-registered in ``docs/handoffs/PRECOMMIT-spp-93-west-east-2026-09-27.md``. Adapted from
+Pre-registered in ``docs/records/spp/PRECOMMIT-spp-93-west-east-2026-09-27.md``. Adapted from
 ``_spp86_shard_check.py``; the control is the committed keeper ``spp86_arm_span`` (rule 29(b) form 4).
 
 1. **recipe** -- the leg's ``scenario_config`` differs from the keeper's ``run_config_<Y>.json`` by EXACTLY

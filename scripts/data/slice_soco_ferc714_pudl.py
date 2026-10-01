@@ -3,7 +3,7 @@
 
 Reproduces, as a committed instrument, the slice lane SOCO-11 took by hand for
 ``data/raw/zone-specific-demand/SOCO/soco_ferc714_hourly_planning_area_demand_2023-2025.parquet``
-(``docs/handoffs/FINDING-soco-11-2026-09-13.md`` §3; provenance
+(``docs/records/soco/FINDING-soco-11-2026-09-13.md`` §3; provenance
 ``data/raw/zone-specific-demand/SOCO/SOURCES.md``), so any further window —
 the 2019-2022 backcast years first (I-SOCO, 2026-09-24) — is the same
 construction and not a second hand-rolled one.

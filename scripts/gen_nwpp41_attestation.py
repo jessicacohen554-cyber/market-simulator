@@ -463,7 +463,7 @@ def build(bundle: Path = DEFAULT_BUNDLE) -> dict:
             "years sequential inside it (rules 12 / 16 [R-ALLYEARS] / 32(b) [R-SHARD]); the "
             "parent ran no LP (rule 32(a)). The recipe, the zero-LP root-cause analysis, the "
             "confinement measurement and every expected number were fixed in "
-            "docs/handoffs/PRECOMMIT-nwpp-41-2026-09-17.md and pushed BEFORE the shard was "
+            "docs/records/nwpp/PRECOMMIT-nwpp-41-2026-09-17.md and pushed BEFORE the shard was "
             "pinned; the shard was pinned to the immutable SHA "
             "666343a2bf86f204c5ca6c672a680da32150a640, added exactly three commits on top of "
             "it (two per-year evidence pushes and the final bundle at "

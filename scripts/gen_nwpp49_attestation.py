@@ -11,7 +11,7 @@ whose inflow is an upstream release and whose hydraulics the cascade models.
 **ZERO FREE PARAMETERS** (rules 21 / 24): a categorical external classifier and a
 committed registry. Nothing transferred from another ISO (rule 25). Three
 year-isolated shards (rule 36) via ``replay_keeper.py --set``, composed at zero
-LP. Pre-registration ``docs/handoffs/PRECOMMIT-nwpp-49-ror-split-2026-09-24.md``;
+LP. Pre-registration ``docs/records/nwpp/PRECOMMIT-nwpp-49-ror-split-2026-09-24.md``;
 evaluator ``scripts/probes/_nwpp49_gates.py --arm ror_chain_exempt`` (committed
 before any leg launched). Verdict of that evaluator: INERT (I).
 """

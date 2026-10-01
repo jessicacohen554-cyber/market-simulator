@@ -4,7 +4,7 @@
 ``data/raw/_validation-source/actual_as_reserve_NYISO.parquet`` — the measured
 RT reserve-adder reference every NYISO reserve diagnostic validates against. It
 carried two independent defects in every column and every year, both repaired by
-nyiso-166 (``docs/FINDING-nyiso166-as-reference-repair-2026-08-31.md``):
+nyiso-166 (``docs/records/nyiso/FINDING-nyiso166-as-reference-repair-2026-08-31.md``):
 
 * **Cascade summed, not maxed.** NYISO's three posted operating-reserve
   products NEST by duration, so their posted prices are CUMULATIVE:

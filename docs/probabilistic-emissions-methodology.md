@@ -4,8 +4,8 @@
 band, and — just as importantly — what that band does **not** yet cover. It is the
 methodology note for the structural-error prior and convolution
 (`src/market_sim/structural_prior.py`), the third layer of the probability-bounds
-program designed in `docs/handoffs/probability-bounds-plan-2026-07.md` (§3) and
-specified in `docs/handoffs/probability-bounds-prompts-2026-07.md` (PB-3).
+program designed in `docs/records/misc/probability-bounds-plan-2026-07.md` (§3) and
+specified in `docs/records/misc/probability-bounds-prompts-2026-07.md` (PB-3).
 
 **Code is the source of truth.** Where this note and the module disagree, fix the
 note. Every number below is a `constants.py` entry with a citation (rule 5); no
@@ -198,7 +198,7 @@ The six D-7 statmode probes were solved and registered 2026-07-03/04, **before**
 W2-P1 emissions fixes merged (PR #1371, 2026-07-05: `fff2c34` R2 physical-HR CO2
 booking, `968cead` quarantine-row strip). The prior's fit inputs therefore predate the
 current emissions basis, and the W0-P4 design
-(`docs/handoffs/forecast-validation-program-2026-07.md` §0/§3.2) splits the
+(`docs/records/forecast/forecast-validation-program-2026-07.md` §0/§3.2) splits the
 consequence by carbon pricing:
 
 - **Carbon-zero ISOs (ERCOT / PJM / MISO): re-scored, basis-current.** R2 provably
@@ -231,6 +231,6 @@ consequence by carbon pricing:
 
 **ERCOT's prior — the PB-5 input — is basis-current** (bias +0.005, re-score verified).
 
-*Produced for PB-3, 2026-07. Design: `docs/handoffs/probability-bounds-plan-2026-07.md`
+*Produced for PB-3, 2026-07. Design: `docs/records/misc/probability-bounds-plan-2026-07.md`
 §3. Fit inputs: the committed D-7 statmode probes
 (`docs/statistical-mode-results-2026-07.md`).*

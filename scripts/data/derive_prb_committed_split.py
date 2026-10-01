@@ -20,7 +20,7 @@ unit-level source updates, never against a residual.
 Writes:
 - ``data/raw/_processed-legacy/coal_prb_committed_split_<ISO>.csv`` — the
   model artifact (pooled levels, REG and MER legs; the model consumes REG).
-- ``results/calibration/miso112_prb_conduct.csv`` — session record with
+- ``results/phase0/miso/miso112_prb_conduct.csv`` — session record with
   per-year night/day p50s.
 
 Prints the PREREG §5 kill-rule readout (K1 whole-band degenerate / K2
@@ -55,7 +55,7 @@ ONLINE_FRAC = 0.02
 NIGHT_H = range(0, 6)  # h0-5 (PREREG §4)
 DAY_H = range(13, 19)  # h13-18 (PREREG §4)
 OUT_ARTIFACT = REPO / f"data/raw/_processed-legacy/coal_prb_committed_split_{ISO}.csv"
-OUT_RECORD = REPO / "results/calibration/miso112_prb_conduct.csv"
+OUT_RECORD = REPO / "results/phase0/miso/miso112_prb_conduct.csv"
 
 
 def _load_plant_hours() -> dict[int, dict[int, tuple[np.ndarray, np.ndarray]]]:

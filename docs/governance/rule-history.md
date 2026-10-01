@@ -127,7 +127,7 @@ calibration rubric**, which is where the scorer-side definitions live:
   because it is v3.1's disposition (gate not built, measurement kept) applied
   to *prices*, answering the owner call filed by neiso-74 and re-filed by
   xiso-1 on 2026-08-01. The owner selected **option (B)** of
-  `docs/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md` — *"(B) ADD IT
+  `docs/records/governance/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md` — *"(B) ADD IT
   AS REPORTED-ONLY — measured, published, no status, no budget"* — in the
   card's recommended band-free form. *(Per §7.1's provenance convention on the
   word "verbatim": the ruling was a selection among the card's written
@@ -161,7 +161,7 @@ calibration rubric**, which is where the scorer-side definitions live:
 The rule's normative text (the three tiers and their year assignments, the
 touch-once discipline, the crossover window, the standing quarantine clauses and
 the CI/`--holdout-authorized` enforcement) is in `CLAUDE.md`. Its **amendment
-genealogy is owned by** `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)–(f):
+genealogy is owned by** `docs/records/governance/holdout-policy-memo-2026-07.md` §(e)–(f):
 
 - **2026-07-06 — G-17 Option 2** (memo §(e)): the intake-vs-solve/score split.
   Data intake for an out-of-training period became permissible under explicit,
@@ -241,8 +241,8 @@ genealogy is owned by** `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)–(
   becomes spendable. Detail:
   `docs/calibration-determination-rubric.md` §9 (v3.3).
 - **2026-08-17 — the first lane RESTED at `NOT-YET`** (session caiso-201, owner ruling Q1;
-  record `results/calibration/caiso201-owner-ruling-2026-08-17.md`, packet
-  `results/calibration/ASSESSMENT-caiso200-frontier-2026-08-17.md` §5). **No rule text
+  record `docs/records/caiso/caiso201-owner-ruling-2026-08-17.md`, packet
+  `docs/records/caiso/ASSESSMENT-caiso200-frontier-2026-08-17.md` §5). **No rule text
   changed** — this entry records the first time the rule's *designed* negative outcome was
   taken deliberately, so the precedent is citable. CAISO's in-model queue was exhausted **by
   measurement** (caiso-200's last named object returned +0.003 TWh of a ~0.116 TWh bound,
@@ -268,14 +268,14 @@ genealogy is owned by** `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)–(
   `scope.tiers = ["locked_test"]` — 2020–2022 are governed by the `complete` marker +
   `--holdout-authorized` alone, and 2019/H1-2026 (and every fail-closed year such as 2018)
   stay frozen for every ISO, `final` marker or not. The CAMPD economic-layup charter is
-  CLOSED WITH CAUSE in the same ruling (`docs/handoffs/campd-economic-layup-fix-charter-2026-07.md`
+  CLOSED WITH CAUSE in the same ruling (`docs/records/misc/campd-economic-layup-fix-charter-2026-07.md`
   §10), the cause stated honestly: the detector/seam question REMAINS OPEN (post-guard CC
   envelope 14.2–36.7 %, 17/18 ISO-years above the ~10–15 % norm) and is carried explicitly
   as a documented definitional seam every keeper's availability envelope inherits — the lift
   is a decision to proceed WITH a known-open input question on the iterable tier, not a
   finding that it closed. Verified behaviourally on all three enforcement gates (55/55
   invocations, including the locked-test refusal for all six ISOs with and without the
-  flag). Execution record: `docs/FINDING-holdout-governance-2026-08-26.md`.
+  flag). Execution record: `docs/records/governance/FINDING-holdout-governance-2026-08-26.md`.
 - **2026-08-26 — locked-test scheduling gates on the validation ladder** (owner ruling,
   same sitting, card 7 — a STANDING POLICY amendment to the rule's locked-test clause,
   not a schedule and not a grant; verbatim: *"Locked test is scheduled only after an ISO
@@ -293,14 +293,14 @@ genealogy is owned by** `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)–(
   cannot discriminate on C3c); and **NO ISO HAS EVER SPENT A LOCKED-TEST YEAR** — `final`
   carries only its `_note`, and the 2026-08-26 ruling changes no marker. Recorded in
   CLAUDE.md rule 22's locked-test bullet, audit row O6, and
-  `docs/FINDING-holdout-governance-2026-08-26.md`.
+  `docs/records/governance/FINDING-holdout-governance-2026-08-26.md`.
 - **2026-09-06 — R-AZ: the tier marker is re-checked AT REGISTRATION** (owner ruling,
   audit-program director sitting ~00:15Z, card "Marker gate"; verbatim option taken:
   *"Re-check at registration"*). The enforcement leg carried over unchanged since
   2026-07-06 reads the marker exactly **once, at solve LAUNCH**
   (`run_calibration_full.enforce_holdout_year_gate`), so a multi-hour LP can outlive the
   authorization it started under. **The case is Z-6**
-  (`docs/handoffs/holdout-2022-completeness-ercot-nyiso-2026-09-05.md` §1a): a NYISO 2022
+  (`docs/records/governance/holdout-2022-completeness-ercot-nyiso-2026-09-05.md` §1a): a NYISO 2022
   validation-tier solve launched legally under the D56-R `complete` marker, `main`
   withdrew that marker (nyiso-193) while the LP ran, and the run went un-registered at
   merge only because the lane applied its own discipline — nothing in the tooling would
@@ -328,7 +328,7 @@ genealogy is owned by** `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)–(
   marker (fail-closed), while `legitimacy_diagnostics.run_d6_quarantine` reads the marker
   alone. It is inert today — the freeze covers the locked test, and no locked-test year
   has ever been registered — so closing it was left out of scope. Execution record:
-  `docs/handoffs/FINDING-y16-register-marker-recheck-2026-09-06.md`.
+  `docs/records/governance/FINDING-y16-register-marker-recheck-2026-09-06.md`.
 
 ## 5. Rule 27 `[R-PUSH]` — the 2026-07-15 `constants.py` truncation incident
 
@@ -485,9 +485,9 @@ DO-NOT-REDO discipline exists to prevent.
   quoted above is the option text the owner selected — there is no owner
   sentence to quote beyond it. The question as put, including both halves and
   the recommendation, is reproduced in
-  `results/calibration/FINDING-miso163-c3a-lane-closure-2026-08-17.md` §2–§3.)*
+  `docs/records/miso/FINDING-miso163-c3a-lane-closure-2026-08-17.md` §2–§3.)*
   The precedent is **ERCOT C3a-2023 (Q-B)**
-  (`docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`):
+  (`docs/records/ercot/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`):
   *“STOP — ERCOT stands at NOT-YET on C3a-2023 as a model-class limit, and the
   program stops spending on it … this is a **budget decision, not a rubric
   decision**. The determination stays NOT-YET; C3a-2023 stands a MODEL MISS at
@@ -618,7 +618,7 @@ partial bundle deleted**; the keeper is the control.
 
 **Origin.** Owner ruling **R-AV**, audit-program director sitting 2026-09-05 (~23:00Z), on the
 rule-29 / Class-E collision the v31 second coda routed to the owner. Verbatim: *"Delete before
-merge"*. Executed by audit lane **Y-13** (`docs/handoffs/FINDING-y13-ci-plumbing-2026-09-05.md`).
+merge"*. Executed by audit lane **Y-13** (`docs/records/governance/FINDING-y13-ci-plumbing-2026-09-05.md`).
 
 **The collision it resolves** (recorded on the director board by `da99f34b`, the v31 second coda,
 under "THE TWO STRUCTURAL REDS ARE UNREPAIRED … (1) Rule-22 quarantine gates — a GOVERNANCE
@@ -642,11 +642,11 @@ rule 15 states for pruned runs and the Architecture tree states for superseded p
 
 **First execution (Y-13, same day).** Two dirs pruned under the ruling, each after confirming its
 numbers survive in a committed record: `miso220_nonsteamlift_screen2025` (8 tracked files — the
-G-1/G-2/G-3 gate values live in the committed `results/calibration/_miso220_screen_gates.json` and
+G-1/G-2/G-3 gate values live in the committed `results/phase0/miso/_miso220_screen_gates.json` and
 the gate definitions in `PREREG-miso220-nonsteam-offer-lift-2026-09-05.md` Addendum A; the
 PREREG's own text already declared the bundle a throwaway) and `neiso_headctrl_k99` (17 tracked
 files — the NEISO same-HEAD control whose worst-drift table is
-`results/calibration/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md` §4(i)). Parity
+`docs/records/neiso/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md` §4(i)). Parity
 read 2 problems before and OK after; no sidecar, payload, keeper shard or bench part changed.
 
 
@@ -719,7 +719,7 @@ by ~4 TWh, and every registered NYISO run flipped to `NOT-YET`, the keeper inclu
 below weakens that guarantee** — the defect it closes was real and expensive.
 
 **Origin.** Owner ruling **R-AS** (card M, verbatim *"Adopt Proposal A"*), **2026-09-05**,
-on `docs/handoffs/FINDING-y10-bench-stamp-instrument-2026-09-05.md` — the Y-10 audit lane's
+on `docs/records/governance/FINDING-y10-bench-stamp-instrument-2026-09-05.md` — the Y-10 audit lane's
 finding that the instrument's TRIGGER, not its guarantee, is mis-tuned. Executed by audit lane
 Y-12. R-AS is first recorded here; no prior artifact cites it.
 
@@ -894,7 +894,7 @@ sync, so a rubric amendment necessarily touches all six — the same reasoning t
 recorded ("the scorer is ONE instrument and an ISO-scoped verdict rule would be an off-registry
 tuning channel in spirit, rules 24 / 25"). No keeper moved and no marker was re-keyed.
 
-**Record:** `results/calibration/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md` §6.
+**Record:** `docs/records/neiso/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md` §6.
 
 ## 13. Rule 21 `[R-DOF]` — the price-tuned band multiplier is a ledgered free parameter (owner ruling R-AY, 2026-09-06)
 
@@ -939,7 +939,7 @@ reader sees both. The DOF-ledger half of condition (e) is NOT machine-checked: `
 check E8 validates only that residual-sourced ledger rows carry a `root_cause`, and
 `attestation_shape_finding` mirrors the declaration check. Whether a ruling-identified ledger
 row should be a distinct machine check is a calibration-desk / audit-program item, not a rule
-question (`docs/handoffs/FINDING-g3-rdof-price-tuning-xref-2026-09-06.md` §4).
+question (`docs/records/misc/FINDING-g3-rdof-price-tuning-xref-2026-09-06.md` §4).
 
 **The live case at amendment (verified, not adjudicated).** The MISO keeper
 `2026-09-05-miso-220-nonsteam-lift` (promoted `743b3dc0`, bundle
@@ -1082,7 +1082,7 @@ a rule"* — issued in session ercot-255 immediately after the incident below, a
 **The incident.** Session ercot-255 built `ercot_zonal_spread_ep_referenced`, solved four bundles
 (a 2025 screen arm, its same-HEAD zero-delta control, the 2023-2025 full span, and a 2021
 validation re-test), wrote every number into
-`docs/RESULT-ercot255-zonal-spread-ep-reference-2026-09-07.md`, and concluded **on its own
+`docs/records/ercot/RESULT-ercot255-zonal-spread-ep-reference-2026-09-07.md`, and concluded **on its own
 reading** that the mechanism was not a keeper candidate - the stated blocker being the merged
 two-config `meta.json`, which cannot reproduce the 2023 carve-out and so makes rule 16
 `[R-ALLYEARS]` unsatisfiable from that bundle. It then `rm -rf`'d all four bundles, citing rule 29

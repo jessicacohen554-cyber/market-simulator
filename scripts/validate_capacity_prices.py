@@ -5,7 +5,7 @@
 demand curves (``config.constants.MARKET_DESIGN``) against published auction
 outcomes and reports residuals. It never adjusts a curve parameter, never fits a
 multiplier, never writes into the model. It answers the CR-2 question the plan
-poses (``docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md``
+poses (``docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md``
 §3.3 / §2 T3.1):
 
     Do the published-parameter demand curves, evaluated at the auctions' own

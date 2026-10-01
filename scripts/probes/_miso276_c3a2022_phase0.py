@@ -21,7 +21,7 @@ year the band accepts.
 Usage::
 
     uv run python scripts/probes/_miso276_c3a2022_phase0.py --years 2022 2023 \
-        --out results/calibration/_miso276_c3a2022_phase0.json
+        --out results/phase0/miso/_miso276_c3a2022_phase0.json
 """
 
 from __future__ import annotations

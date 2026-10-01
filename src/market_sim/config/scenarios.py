@@ -70,7 +70,7 @@ _CACHE_KEY_RETIRED_FIELDS: dict[str, object] = {
     # Legacy non-CAMPD coal take-or-pay tranche sextet (identical on every
     # registered bundle, reachable on none — split_coal_tranches lived only in
     # build_dispatch_fleet's dead else limb; deleted 2026-08-12, ercot-188 G#3
-    # owner ruling, proof results/calibration/ercot188_g3_unreachability_proof.json).
+    # owner ruling, proof results/phase0/ercot/ercot188_g3_unreachability_proof.json).
     "coal_tranche_1_frac": 0.30,
     "coal_tranche_1_fuel_passthrough": 0.00,
     "coal_tranche_2_frac": 0.25,
@@ -91,7 +91,7 @@ _CACHE_KEY_RETIRED_FIELDS: dict[str, object] = {
     # onto the same constraint would violate rule 19 [R-ONE-MECH], and no
     # citation exists for its rungs that the ladder does not already carry
     # (rule 5 [R-NO-MAGIC]). Adjudication:
-    # docs/handoffs/FINDING-capx-t16-driver-2026-09-01.md.
+    # docs/records/forecast/FINDING-capx-t16-driver-2026-09-01.md.
     "renewable_buildout_pace": "mid",
     # CAISO's single-signed-flow WECC intertie. OFF on the CAISO keeper AND off
     # in these defaults — dead in every shipped configuration — while carrying a
@@ -100,7 +100,7 @@ _CACHE_KEY_RETIRED_FIELDS: dict[str, object] = {
     # names. Its own DOF-ledger row named this exit ("R5-delete the
     # caiso_bidir_intertie mechanism (rule 26)"). Superseded in full by
     # caiso_per_hub_intertie. Deleted 2026-09-02 (caiso-236),
-    # results/calibration/FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md.
+    # docs/records/caiso/FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md.
     "caiso_bidir_intertie": False,
     # NYISO HQ_hydro / Ontario firm (must-flow) import floor
     # (inject_nyiso_firm_imports, NYISO_FIRM_IMPORT_FLOOR_FRAC). An
@@ -108,7 +108,7 @@ _CACHE_KEY_RETIRED_FIELDS: dict[str, object] = {
     # with no published contract driver and an always-on window (rules 13/17);
     # un-armed from the NYISO keeper by NYISO-NEXT-9 and off in every shipped
     # configuration since. Deleted 2026-09-28 (NYISO-NEXT-11, owner ruling
-    # Q-b), docs/RESULT-nyiso-next9-hq-floor-2026-09-28.md §1.
+    # Q-b), docs/records/nyiso/RESULT-nyiso-next9-hq-floor-2026-09-28.md §1.
     "nyiso_firm_imports": False,
 }
 
@@ -1426,7 +1426,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # e027bc248c93c835 -> 1d82ebcc9666278d, orphaning every on-disk cache and
     # reddening `Pinned default cache key` + `Structural refactor guards` on
     # main. Root-cause repair, NOT a re-pin: both literals are restored by this
-    # registration. See docs/FINDING-ci-red-repair-2026-09.md.
+    # registration. See docs/records/misc/FINDING-ci-red-repair-2026-09.md.
     "caiso_offer_surface_measured_ungrounded",
     # caiso-239 measured ST_GAS committed band (default off): dropped from the
     # hash at its default so every pre-existing cached run keeps its key -- the
@@ -2023,7 +2023,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # literal (547053bdfccd4264 -> 72341e34fd261997). This entry RESTORES those
     # keys rather than moving them anywhere new: dropping the field at its
     # frozen False reproduces each record's own recorded literal, verified over
-    # all 200 (docs/handoffs/FINDING-capx-d91-2026-09-09.md section 2). An
+    # all 200 (docs/records/forecast/FINDING-capx-d91-2026-09-09.md section 2). An
     # ARMED run still carries True into the hash and so still keys distinctly.
     # PJM cluster -- end of its run, per HOUSE-3.
     "pjm_seam_neighbour_hourly_ladder",
@@ -2375,6 +2375,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # paths.measured_oil_burn_days_path; no sub-fields. Registered IN THE SAME
     # COMMIT as the field (the nyiso-119 discipline).
     "dual_fuel_measured_oil_burn",
+    # PJM-NEXT-17: plant-conduct placement of the cc_mustrun_per_plant window
+    # (default off). Dropped from the hash at its default so every pre-existing
+    # run -- every ISO's keepers included -- keeps its key; an armed run places
+    # the same-sized window on different hours and so earns a distinct key.
+    # SHARED field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 discipline).
+    "cc_mustrun_conduct_window",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2417,7 +2424,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
 # deeper fix, but it re-keys every config whose default has already moved — a
 # measured, cache-invalidating change that needs solves to validate, which the
 # FFR-3D lane did not run. Recorded as the open follow-up in
-# docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md §4.
+# docs/records/forecast/ffr-3d-instrument-repair-2026-08-03.md §4.
 #
 # MAINTENANCE. Source text, compared after ``ast.unparse`` normalization, so
 # reformatting and comment churn are invisible and any default form (a literal,
@@ -3237,6 +3244,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "eia923_cc_family_heat_rates": "False",
     # Added by soco-96 WITH the field (the nyiso-119 discipline).
     "dual_fuel_measured_oil_burn": "False",
+    # Added by PJM-NEXT-17 WITH the field (the nyiso-119 discipline).
+    "cc_mustrun_conduct_window": "False",
 }
 
 
@@ -3244,9 +3253,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
 # The drop comparison reads the DECLARED default, not the live one (capx D24-R).
 # --------------------------------------------------------------------------- #
 # Owner ruling Q20 (director register r#25) on
-# ``docs/handoffs/FINDING-capx-d24-cache-key-defect-2026-09-01.md`` §7: land
+# ``docs/records/forecast/FINDING-capx-d24-cache-key-defect-2026-09-01.md`` §7: land
 # option **(b′-1)** — the "deeper fix" the ledger comment above already names as
-# its open follow-up (``docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md``
+# its open follow-up (``docs/records/forecast/ffr-3d-instrument-repair-2026-08-03.md``
 # §4). ``cache_key()`` no longer drops a registered field at
 # ``getattr(ScenarioConfig(), name)``, the LIVE default that an owner flip
 # moves; it drops it at the value DECLARED for the field above, which is FROZEN.
@@ -3265,7 +3274,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
 # is a measured NO-OP: 0 forecast and 0 backcast keys move (D24 §7 (b′-1);
 # re-measured at execution over all 170 committed ``run_config.json`` by
 # ``scripts/probes/capxd24r_cache_key_no_op_check.py`` — 0/170 moved, record at
-# ``docs/handoffs/capxd24r-cache-key-no-op-record.json``). This is (b′-1) and
+# ``docs/records/forecast/capxd24r-cache-key-no-op-record.json``). This is (b′-1) and
 # NOT (b′-2): the comparison is re-baselined at TODAY's declarations, never at
 # each field's registration-time default. That variant moves 98/99 forecast and
 # 63/63 backcast keys and was NOT licensed by the ruling.
@@ -3314,7 +3323,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS: tuple[tuple[str, str, str], ...] = (
     # capx D60, executing OWNER RULING Q42 (director sitting r#37, 2026-09-05):
     # the CCS-retrofit capex-scaling + CHP-exclusion construction repair ARMS AS
     # THE DEFAULT POSTURE for all six ISOs, on the D50 / D50-R A/B
-    # (``docs/handoffs/FINDING-capx-d50-2026-09-04.md`` §8). The SECOND entry in
+    # (``docs/records/forecast/FINDING-capx-d50-2026-09-04.md`` §8). The SECOND entry in
     # this ledger.
     #
     # A POSTURE, NOT A TRANSFER (rule 25 [R-ISO-SCOPE] intact). The repair
@@ -3387,7 +3396,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS: tuple[tuple[str, str, str], ...] = (
     # stays ``"False"``, so a post-flip default config no longer equals the drop
     # value: it ENTERS the hash and takes its own key. Measured and
     # PRE-DECLARED before the solve in
-    # ``docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md``; both pins advanced
+    # ``docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md``; both pins advanced
     # with dated cause blocks in ``tests/regression/test_persisted_identity.py``
     # and the cache-epoch ledger entry 2026-09-06 in
     # ``src/market_sim/results/cache.py``. The cost is a one-time cache MISS per
@@ -3410,7 +3419,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS: tuple[tuple[str, str, str], ...] = (
     # capx D76-ARM-B, executing OWNER RULING Q58 (director sitting r#55,
     # 2026-09-07): the MEASURED hindcast capacity-screen PEAK arms as the
     # default posture for every ISO, on the six-ISO zero-LP census
-    # (``docs/handoffs/FINDING-capx-d76-2026-09-06.md``, ``-p2-``, ``-p3-``).
+    # (``docs/records/forecast/FINDING-capx-d76-2026-09-06.md``, ``-p2-``, ``-p3-``).
     # The FOURTH entry in this ledger.
     #
     # A REPAIR, NOT A TRANSFER (rule 25 [R-ISO-SCOPE] intact) and NOT a
@@ -3475,7 +3484,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS: tuple[tuple[str, str, str], ...] = (
     # its natural cadence -- Q57's own "frontier bundles re-solved on their
     # natural cadence rather than a repository-wide sweep"; this lane re-ran
     # nothing. Execution and every pre-declared number:
-    # ``docs/handoffs/PRECOMMIT-capx-d76-arm-b-2026-09-07.md``.
+    # ``docs/records/forecast/PRECOMMIT-capx-d76-arm-b-2026-09-07.md``.
     ("2026-09-07", "capacity_screen_peak_measured_hindcast", "True"),
     #
     # SPP-49, executing OWNER RULING P19 (SPP desk r#13, 2026-09-08): the
@@ -3491,7 +3500,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS: tuple[tuple[str, str, str], ...] = (
     # seam is UNREACHABLE for the whole run — a non-backcast, non-hindcast
     # config, or one with gas_plant_monthly_fuel_pricing off — so a config the
     # screen cannot touch keeps its key. Measured ex ante over all 230
-    # committed run_config.json (docs/handoffs/spp49/key_census.py): 18 keys
+    # committed run_config.json (docs/records/spp/spp49/key_census.py): 18 keys
     # move, EVERY ONE a backcast config that arms per-plant gas pricing (CAISO
     # 2, MISO 1, NEISO 5, NYISO 7, PJM 2, SPP 1 — six of them the designated
     # keepers), ZERO forecast, ZERO hindcast and ZERO ERCOT moves; the pinned
@@ -3501,11 +3510,11 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS: tuple[tuple[str, str, str], ...] = (
     # keys, and each ISO's desk re-solves on its own cadence (SPP-50 for SPP).
     # An explicit False reaches the pre-repair posture and KEEPS the pre-flip
     # key (--set f923_gas_price_plausibility_screen=false until the CLI flag
-    # lands). Execution and every number: docs/handoffs/PRECOMMIT-spp-49-2026-09-08.md.
+    # lands). Execution and every number: docs/records/spp/PRECOMMIT-spp-49-2026-09-08.md.
     ("2026-09-08", "f923_gas_price_plausibility_screen", "True"),
     #
     # F1, executing the OWNER INSTRUCTION of 2026-09-24 (verbatim, in
-    # docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md):
+    # docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md):
     # "every iso ... using EIA 860 and plant specific heat rates for all model
     # run years in the backcast ... it should be default for all ISOs to have
     # correct vintage for all years including holdouts and be using plant heat
@@ -4038,9 +4047,9 @@ def _normalize_cache_key_paths(value, roots: tuple[tuple[str, str], ...]):
 # --------------------------------------------------------------------------- #
 # The value every shipped forecast runner passes for
 # ``ScenarioConfig.forecast_xyear_warmstart`` (signed 2026-08-04, sitting
-# ``docs/handoffs/ffr-owner-sitting-2026-08-02.md`` Addendum K.3, on FFR-3M's
+# ``docs/records/forecast/ffr-owner-sitting-2026-08-02.md`` Addendum K.3, on FFR-3M's
 # measured adjudication of FF-3E part c; implemented by FFR-3T,
-# ``docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md``).
+# ``docs/records/forecast/ffr-3t-warmstart-off-2026-08-04.md``).
 #
 # WHY THIS IS A CONSTANT AND NOT THE FIELD'S DEFAULT. The owner signed
 # "``forecast_xyear_warmstart=False`` **for forecast bundles**", and the field's
@@ -4076,7 +4085,7 @@ def _normalize_cache_key_paths(value, roots: tuple[tuple[str, str], ...]):
 #
 # Cost accepted with the decision, not to be mitigated: the ~2.3x steady-state
 # P0 speedup. Measured at horizon scale on the D-9 A/B (ERCOT 2026-2050, Exp 5
-# of ``docs/handoffs/wallclock-baseline-2026-07.md``): total wall 25.1 -> 51.1
+# of ``docs/records/misc/wallclock-baseline-2026-07.md``): total wall 25.1 -> 51.1
 # min, 2.04x overall and 2.20x on the warm-startable years 2027-2050.
 FORECAST_BUNDLE_XYEAR_WARMSTART = False
 
@@ -4121,8 +4130,8 @@ def crossover_unbridges_year(
     alone closes both for T1-FF, and the 2026 floor closes 2022 for any run
     whose boundary is ever pointed below 2026.
 
-    See ``docs/handoffs/ffr-3u-bridge-seam-2026-08-04.md`` §1 and owner
-    decision D-11 (``docs/handoffs/ffr-owner-sitting-2026-08-02.md``
+    See ``docs/records/forecast/ffr-3u-bridge-seam-2026-08-04.md`` §1 and owner
+    decision D-11 (``docs/records/forecast/ffr-owner-sitting-2026-08-02.md``
     Addendum L).
     """
     if crossover_forward_year is None:
@@ -4194,7 +4203,7 @@ class ScenarioConfig:
     # vintage fleet init, realized per-year demand (no growth scaling) and the
     # 2022 bridge in the harness. Never a backcast overlay. Default-off and
     # cache-neutral; see scripts/run_capacity_hindcast.py and
-    # docs/handoffs/forecast-validation-program-2026-07.md §1.
+    # docs/records/forecast/forecast-validation-program-2026-07.md §1.
     hindcast: bool = False
     hindcast_fuel_variant: str = "realized"  # "realized" | "asknown"
     # Hindcast announced-exit verification (owner directive 2026-08-22, the
@@ -4304,7 +4313,7 @@ class ScenarioConfig:
     # positive increase in every horizon year — the D23 premise inversion
     # (carbon_price=25 REPLACING an escalating $26→$132/t base, i.e. a CUT)
     # is impossible by construction. See
-    # docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md and
+    # docs/records/forecast/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md and
     # FINDING-capx-d26-p1-arm-construction-2026-09-01.md. Default 0.0 is an
     # exact no-op on every path; forecast-only (rule 13 guard in
     # __post_init__ — an additive carbon adder must never become a backcast
@@ -4356,7 +4365,7 @@ class ScenarioConfig:
     # RGGI/CARB schedule once landed), the ISO's fossil emissions are bounded by
     # an inequality row whose dual is the endogenous allowance price
     # (DispatchResult.co2_cap_price). This is a power-sector, no-bank SCENARIO
-    # price (docs/handoffs/emissions-mass-cap-plan-2026-07.md §2, §8) — NOT the
+    # price (docs/records/misc/emissions-mass-cap-plan-2026-07.md §2, §8) — NOT the
     # banked multi-sector RGGI/CARB market price, which enters as the measured/
     # projected adder via resolve_carbon_price. See policy/cap_and_trade.py.
     mass_cap_enabled: bool = False
@@ -4550,8 +4559,8 @@ class ScenarioConfig:
     # untouched in every ISO and keeps reading the scenario ladder, exactly as
     # data.renewables treats wind/solar. Set False to reproduce a pre-FFR-4D
     # CAISO backcast or a pre-FFR-9A hindcast (the flat scalar). See
-    # docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md and
-    # docs/handoffs/ffr-9a-storage-vintage-seed-2026-08-09.md.
+    # docs/records/forecast/ffr-4d-caiso-fleet-vintage-2026-08-04.md and
+    # docs/records/forecast/ffr-9a-storage-vintage-seed-2026-08-09.md.
     storage_measured_base_fleet: bool = True
     retirement_aggressiveness: str = "mid"
     hydro_year: str = "normal"  # "dry" | "normal" | "wet" — forecast wet/dry
@@ -4588,7 +4597,7 @@ class ScenarioConfig:
     # clears below the ceiling; nothing is pinned. Backcast uses the solve
     # year's own measured envelope; a forecast year falls back to the pooled
     # HYDRO_CLIMATOLOGY_YEARS envelope. See
-    # results/calibration/FINDING-caiso72-step0-evening-displacement-2026-07-10.md.
+    # docs/records/caiso/FINDING-caiso72-step0-evening-displacement-2026-07-10.md.
     hydro_budget_period_by_instrument: bool = False  # GATED default off
     # (nyiso-220). Shorten the hydro energy-budget period, PER PLANT, to the
     # period the project's OWN governing instrument (or its measured pondage)
@@ -4832,7 +4841,7 @@ class ScenarioConfig:
     # joining the legacy per-tech eac_price_* scalars and the RPS dual via
     # max() — one certificate per MWh, sold once (house no-stack doctrine,
     # policy/eac.py). Resolved by policy/federal_ces.py; consumer wiring is
-    # W2-A of docs/handoffs/national-ces-eac-premium-plan-2026-07.md (§5),
+    # W2-A of docs/records/forecast/national-ces-eac-premium-plan-2026-07.md (§5),
     # so as of W1-A the block is solver-inert by construction. Default-off
     # keeps behavior and cache keys byte-identical.
     federal_ces_enabled: bool = False  # Master gate (owner ask 2026-07-17,
@@ -5089,7 +5098,7 @@ class ScenarioConfig:
     # credit offset in it, so it is a branch-(i) instrument: INSIDE the
     # gross-receipts base, paying D + §45U(P + D), self-limiting at
     # 0.80 $/$. See model/capacity_evolution/retirements.py's §45U block
-    # and docs/handoffs/f2-45u-composition-2026-08-09.md. ***
+    # and docs/records/misc/f2-45u-composition-2026-08-09.md. ***
     # *** ARMED FOR THE MISO FORECAST LANE — owner decision D-29 (sitting
     # Addendum AK.8, signed 2026-08-11; lane ARM-3-ARM). THE FIELD DEFAULT
     # STAYS False AND MUST: the arming seam is MISO's
@@ -5193,7 +5202,7 @@ class ScenarioConfig:
     # False -> True 2026-09-03 by capx D44, executing OWNER RULING Q30 of the
     # director sitting r#31, 2026-09-02: "ARM AS DEFAULT". Built and measured
     # default-OFF by capx D42 (the D32 R1 posture A/B,
-    # ``docs/handoffs/FINDING-capx-d42-fossil-dates-ab-2026-09-02.md``), which
+    # ``docs/records/forecast/FINDING-capx-d42-fossil-dates-ab-2026-09-02.md``), which
     # armed nothing and put the posture to the owner: MISO T1-H
     # ``retire.unit_recall_gt300`` 5/19 -> 16/19 (PASS), every non-coal exit
     # class the reliability floor held at exactly 0.0 GW opens, ``false_retire``
@@ -5259,7 +5268,7 @@ class ScenarioConfig:
     # push MISO's reserve margin negative in 2023/2024 before the backstop
     # fires) is the additions lane's object, not a reason to hold the exits.
     confirmed_exits_enabled: bool = True  # GATED, default-ON (flipped 2026-07-05,
-    # owner sign-off — docs/handoffs/confirmed-retirement-plan-2026-07.md §7). When
+    # owner sign-off — docs/records/misc/confirmed-retirement-plan-2026-07.md §7). When
     # True and mode == "forecast", the confirmed-retirement channel force-retires (or
     # derates, for plant-binned fleets) each unit bound by an enforceable public
     # instrument in the confirmed-retirements registry
@@ -5290,7 +5299,7 @@ class ScenarioConfig:
     # announced-to-deactivation lag for coal is capacity-weighted / ≥300 MW
     # median = 3 yr, left-censored (66 % of announced coal MW), so a conservative
     # floor on the announcement→deactivation pipeline (D1 Option B,
-    # docs/handoffs/retirement-dof-identification-2026-07-15.md §a.3/§a.4/§d). The
+    # docs/records/misc/retirement-dof-identification-2026-07-15.md §a.3/§a.4/§d). The
     # threshold carries the full decision+lead-time (D+L) deactivation total
     # (rule 19 — the same physical queue must not be counted twice; §a.6).
     # Owner-adopted 2026-07-16.
@@ -5315,7 +5324,7 @@ class ScenarioConfig:
     # would double-count it" — rule 19; RC-0B §a.6;
     # ff-retirement-rule-redesign-2026-07.md §3.3.
     #   THAT REASONING IS SUPERSEDED. Owner decision D-8, signed 2026-08-03
-    # (docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum F.1), ruled that
+    # (docs/records/forecast/ffr-owner-sitting-2026-08-02.md Addendum F.1), ruled that
     # queue LATENCY and queue THROUGHPUT are TWO mechanisms for rule-19
     # purposes, on FFR-3C §1.2's measurement: the execution lag is a rigid
     # time-shift operator, so with only the latency term exit-wave width is
@@ -5328,7 +5337,7 @@ class ScenarioConfig:
     retirement_rule: str = "pipeline"  # "legacy" | "pipeline" (FF-1A, owner
     # D1 = Option B, 2026-07-17 — ff-retirement-rule-redesign-2026-07.md
     # §3.6/§6). DEFAULT FLIPPED "legacy" -> "pipeline" by owner decision D-1,
-    # signed 2026-08-02 (docs/handoffs/ffr-owner-sitting-2026-08-02.md
+    # signed 2026-08-02 (docs/records/forecast/ffr-owner-sitting-2026-08-02.md
     # Addendum C.1), on FFR-2B's met evidence bar (T-R battery + T-R10
     # no-inversion + LOYO within 2023-2025, bands never restated looser —
     # ffr-2b-retirement-entry-evidence-2026-08-02.md). The legacy counter is
@@ -5356,7 +5365,7 @@ class ScenarioConfig:
     # (pipeline rule only). Identification (§5; rule 23 — re-derive only on
     # EIA-860 vintage update, never against a residual): the RC-0B §a.3
     # measured EIA-860 announced-to-deactivation lag medians
-    # (docs/handoffs/retirement-dof-identification-2026-07-15.md).
+    # (docs/records/misc/retirement-dof-identification-2026-07-15.md).
     retirement_execution_lag_coal: int = 3  # §a.3 cap-weighted / ≥300 MW
     # median, left-censored ⇒ conservative floor. Same identification as the
     # adopted legacy D1=3 — a persistent-loss coal cohort's loss→gone total
@@ -5471,7 +5480,7 @@ class ScenarioConfig:
     #
     # RE-DERIVED 2026-09-02 (capx D41) from 25.0. Rule 23: the trigger is a
     # DATA change, never a residual — the G-32 ATB flip
-    # (docs/handoffs/fom-scarcity-defaults-flip-2026-07-07.md) raised the host
+    # (docs/records/misc/fom-scarcity-defaults-flip-2026-07-07.md) raised the host
     # fixed_om_gas_cc 12 → 30 on the ATB 2024 basis and left this
     # "host + capture island" figure at its pre-flip 25, i.e. BELOW its own
     # host. ΔFOM was therefore −$5,000/MW-yr: the CCS retrofit screen
@@ -5479,7 +5488,7 @@ class ScenarioConfig:
     # fixed-cost savings instead of charging it the capture island's O&M, and
     # the retirement screen priced a retrofitted unit's going-forward bar
     # below its unabated self. Adjudicated DEFECT-CANDIDATE by
-    # docs/handoffs/FINDING-capx-d30-45q-pace-2026-09-02.md §5 row 7 / §6
+    # docs/records/forecast/FINDING-capx-d30-45q-pace-2026-09-02.md §5 row 7 / §6
     # item 1; repaired and measured in FINDING-capx-d41-ccs-fixedcost-2026-09-02.md.
     #
     # Cross-source check on the increment (same file the entry-cost envelope
@@ -5520,7 +5529,7 @@ class ScenarioConfig:
     # side PTC offer (compute_dispatch_credits and the default-off
     # wind_ptc_vintage_offers) is a separately-adjudicated surface this field
     # does not touch. Owner decision D-13 (FFR-4C, 2026-08-04); defect
-    # measured in docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §6.2.
+    # measured in docs/records/forecast/ffr-3v-miso-entry-screen-2026-08-04.md §6.2.
     ira_ptc_credit_window_years: int | None = 10
     # §45U zero-emission (existing) nuclear PTC: credited for electricity
     # produced and sold after 2023, terminating for electricity produced
@@ -5558,7 +5567,7 @@ class ScenarioConfig:
     # §48E(e)(2) names "energy storage technology" expressly — which is what
     # places storage in this bucket. Provenance detail:
     # data/raw/policy/ira-credit-parameters/README.md and
-    # docs/handoffs/ffr-pb-atb-statute-intake-2026-07-31.md.
+    # docs/records/forecast/ffr-pb-atb-statute-intake-2026-07-31.md.
     ira_other_clean_last_full_year: int = 2033  # 100% through this year
     ira_other_clean_75pct_year: int = 2034  # 75% step (BOC in this year)
     ira_other_clean_50pct_year: int = 2035  # 50% step (BOC in this year)
@@ -5621,9 +5630,9 @@ class ScenarioConfig:
     # and flue-gas tie-ins, outage tie-in risk. 900 was 59 % of the increment
     # the entry screen charges, the same "~$900/kW makes the capture island
     # look nearly free" defect FF-1E repaired for new-build
-    # (docs/handoffs/ff-1e-entry-cost-atb-wiring-2026-07.md) and explicitly
+    # (docs/records/forecast/ff-1e-entry-cost-atb-wiring-2026-07.md) and explicitly
     # left standing here. Adjudicated by
-    # docs/handoffs/FINDING-capx-d30-45q-pace-2026-09-02.md §5 row 6 / §6
+    # docs/records/forecast/FINDING-capx-d30-45q-pace-2026-09-02.md §5 row 6 / §6
     # item 2; repaired and measured in
     # FINDING-capx-d41-ccs-fixedcost-2026-09-02.md.
     #
@@ -5710,7 +5719,7 @@ class ScenarioConfig:
     # capx D50 (2026-09-04) — the D49 §1.5 construction repair of the retrofit
     # screen. Built GATED default OFF; ARMED AS THE DEFAULT POSTURE FOR ALL SIX
     # ISOs on 2026-09-05 by OWNER RULING Q42 on the D50 / D50-R A/B
-    # (docs/handoffs/FINDING-capx-d50-2026-09-04.md §8; executed by capx D60,
+    # (docs/records/forecast/FINDING-capx-d50-2026-09-04.md §8; executed by capx D60,
     # the (b'-1) declared flip below). THE SEAM
     # (FINDING-capx-d49-2026-09-04.md §1.4): the screen credits §45Q on the
     # HOST's measured CO2 per MWh (captured = 0.9 × er_host) while charging the
@@ -5893,7 +5902,7 @@ class ScenarioConfig:
         True  # F1 2026-09-24: backcast default; coerced off outside a backcast
     )
     # ^ Per-solve-year EIA-860 vintage (backcast overlay, pjm-167 --
-    # results/calibration/FINDING-pjm167-input-clock-2021-2022-2026-09-06.md
+    # docs/records/pjm/FINDING-pjm167-input-clock-2021-2022-2026-09-06.md
     # sec 3; PRECOMMIT-pjm167-fleet-vintage-screen-2026-09-06.md). The field
     # above is a RUN-level scalar while a rule-16 [R-ALLYEARS] bundle spans
     # three years, so it cannot express "each year reads its own annual
@@ -5915,7 +5924,7 @@ class ScenarioConfig:
     # Zero fitted scalars. Off by default; byte-identical off, and off for
     # every ISO until a screen clears its pre-registered structural gates.
     # Mothballed-but-operating re-carry (the Cottonwood lane,
-    # docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md §5/§7). The
+    # docs/records/miso/miso-cc-vintage-undercarry-plan-2026-07.md §5/§7). The
     # canonical snapshot's OP filter drops OA (out-of-service / mothballed)
     # units outright, and the within-window retiree channel cannot see a
     # PARTIAL mothball (it reads the Retired-and-Canceled sheet and emits
@@ -5941,7 +5950,7 @@ class ScenarioConfig:
     # detection primitives now live in scripts/lib/outage_detect.py — it summed
     # a plant's units, hiding single-unit outages and folding
     # daily-cycling combined cycles into phantom summer outages;
-    # results/calibration/FINDING-ercot79-phantom-outage-2026-07.md). The
+    # docs/records/ercot/FINDING-ercot79-phantom-outage-2026-07.md). The
     # per-unit derate (fleet.unit_outage_derate_factors) is now the SOLE CAMPD
     # outage layer for every ISO and always applies under
     # outage_source=="historic", so this flag no longer changes a solve. It is
@@ -5968,7 +5977,7 @@ class ScenarioConfig:
     use_plant_emission_rates: bool = True
     plant_emission_rates_path: str = str(PROCESSED_DIR / "plant_emission_rates.parquet")
 
-    # v2 mode-aware CO2-rate source (docs/handoffs/emissions-co2-rate-plan-2026-07.md):
+    # v2 mode-aware CO2-rate source (docs/records/misc/emissions-co2-rate-plan-2026-07.md):
     # when True, CO2 rates come from the per-(iso, plant, unit, year) v2 artifact
     # via the composition mask — a backcast year books its own measured rate, a
     # forecast year the gen-weighted trailing-average estimator base. The 7-year
@@ -5998,7 +6007,7 @@ class ScenarioConfig:
     # and responds to changed conditions (a retrofit moves it), not a measured
     # outcome fed back to close a residual. Applied per generator by class, so
     # only the turbines of a mixed plant are repriced. See
-    # docs/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md sec 4.
+    # docs/records/nyiso/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md sec 4.
     measured_ct_heat_rates: bool = (
         True  # F1 2026-09-24: backcast default; coerced off outside a backcast
     )
@@ -6041,7 +6050,7 @@ class ScenarioConfig:
     # [R-ISO-SCOPE]: a per-ISO artifact, a strict no-op for an ISO with none.
     # Applied per generator BY CLASS, so a coal site's gas-converted boilers
     # keep the rate their own class assigns. See
-    # docs/handoffs/PRECOMMIT-nwpp-42-2026-09-19.md.
+    # docs/records/nwpp/PRECOMMIT-nwpp-42-2026-09-19.md.
     measured_coal_heat_rates: bool = (
         True  # F1 2026-09-24: backcast default; coerced off outside a backcast
     )
@@ -6087,7 +6096,7 @@ class ScenarioConfig:
     # over the plant's own hours. Rule 25 [R-ISO-SCOPE]: a per-ISO artifact, a
     # strict no-op for an ISO with none. Applied per generator BY CLASS, so a
     # mixed steam site's coal boiler keeps the rate its own class assigns. See
-    # docs/handoffs/PRECOMMIT-soco-53e-2026-09-19.md.
+    # docs/records/soco/PRECOMMIT-soco-53e-2026-09-19.md.
     measured_st_heat_rates: bool = (
         True  # F1 2026-09-24: backcast default; coerced off outside a backcast
     )
@@ -6117,7 +6126,7 @@ class ScenarioConfig:
     # rate (~1.5x too high); those plants are refused, not applied. Rule 25
     # [R-ISO-SCOPE]: a per-ISO artifact, a strict no-op for an ISO with none.
     # Applied per generator BY CLASS, and CC_CHP is deliberately out of scope.
-    # See docs/handoffs/PRECOMMIT-soco-57-2026-09-20.md.
+    # See docs/records/soco/PRECOMMIT-soco-57-2026-09-20.md.
     measured_cc_heat_rates: bool = (
         True  # F1 2026-09-24: backcast default; coerced off outside a backcast
     )
@@ -6142,7 +6151,7 @@ class ScenarioConfig:
     # boiler-first back-pressure cogen's fuel is process fuel, not power fuel.
     # Zero fitted parameters. See
     # scripts/data/derive_chp_power_only_heat_rates.py and
-    # results/calibration/FINDING-miso99-chp-heat-rate-2026-07-28.md.
+    # docs/records/miso/FINDING-miso99-chp-heat-rate-2026-07-28.md.
     measured_chp_heat_rates: bool = (
         True  # F1 2026-09-24: backcast default; coerced off outside a backcast
     )
@@ -6228,7 +6237,7 @@ class ScenarioConfig:
     # per-ISO artifact, a no-op for an ISO with none. NYISO reach at the
     # applied vintage: Bethlehem 2539 (9.665 -> 6.877) and World Generation
     # X 54131 (9.807 -> 6.996). See
-    # results/calibration/PREREG-nyiso189-steam-collapse-identity-ab.md.
+    # docs/records/nyiso/PREREG-nyiso189-steam-collapse-identity-ab.md.
     egrid_steam_collapse_heat_rates: bool = False
 
     # EIA-923 CC-FAMILY heat rates (NWPP-NEXT-14; owner card "EIA-923
@@ -6253,7 +6262,7 @@ class ScenarioConfig:
     # keeps its precedence. Rule 14 misalignment exception; rule 13 (EIA-923
     # regenerates for any year); rule 21: zero free parameters; rule 25:
     # per-ISO artifact, a no-op for an ISO with none. See
-    # docs/handoffs/FINDING-nwppnext14-bridger-and-clark-phase0-2026-09-30.md.
+    # docs/records/nwpp/FINDING-nwppnext14-bridger-and-clark-phase0-2026-09-30.md.
     eia923_cc_family_heat_rates: bool = False
 
     # Combined-cycle STEAM-part capacity repair (miso-126; default OFF,
@@ -6281,7 +6290,7 @@ class ScenarioConfig:
     # regenerate for any forward year and respond to changed conditions (a
     # retirement or re-rate moves them) — not a measured outcome fed back to
     # close a residual. Zero fitted parameters. See
-    # results/calibration/FINDING-miso126-cc-steam-part-capacity-2026-08-04.md.
+    # docs/records/miso/FINDING-miso126-cc-steam-part-capacity-2026-08-04.md.
     cc_steam_part_capacity: bool = False
 
     # Combined-cycle steam-part RE-CLASS (neiso-83; default OFF, byte-identical
@@ -6310,7 +6319,7 @@ class ScenarioConfig:
     # generator's prime mover, unit code, vintage and net-summer capacity are
     # published EIA-860 INPUTS that regenerate for any forward year and respond
     # to changed conditions; no residual is consulted and no share is estimated.
-    # See results/calibration/FINDING-neiso83-stonybrook-ca1-2026-08-05.md.
+    # See docs/records/neiso/FINDING-neiso83-stonybrook-ca1-2026-08-05.md.
     cc_steam_part_reclass: bool = False
 
     # Combined-cycle block rated on ONE row (miso-272; default OFF,
@@ -6341,11 +6350,11 @@ class ScenarioConfig:
     # ``fleet.arrays``): the reconstructed outage-capacity map is built without
     # this reconciliation and would divide by the phantom. Implemented on the
     # EIA-860 parquet path only (the CSV override / clean seam raise). See
-    # docs/PRECOMMIT-miso272-cc-block-summer-rating-2026-09-25.md.
+    # docs/records/miso/PRECOMMIT-miso272-cc-block-summer-rating-2026-09-25.md.
     cc_block_summer_rating: bool = False
 
     # Forward emission-control retrofit channel (Tier 2; default OFF).
-    # docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md
+    # docs/records/misc/emission-control-retrofit-forward-channel-2026-07.md
     # When True AND in forecast mode, an ANNOUNCED EIA-860 environmental-control
     # install (SCR / SNCR / FGD scrubber / DSI) steps the covered unit's forward
     # emission rate down at its committed Inservice Year — the forward step the
@@ -6391,7 +6400,7 @@ class ScenarioConfig:
     # EM-5 / plan §5 R6: when True, the calibration bundle adds a reporting-only
     # startup-CO2 column (model_starts x measured campd startup_co2_kg). Measured
     # bound is 0.015-0.018% of annual CO2, <0.2% even at 10x cycling error
-    # (docs/handoffs/emissions-co2-rate-plan-2026-07.md §3), so it is never in the
+    # (docs/records/misc/emissions-co2-rate-plan-2026-07.md §3), so it is never in the
     # dispatch LP and defaults OFF (no dispatch/level change).
     startup_co2_reporting: bool = False
 
@@ -6585,13 +6594,13 @@ class ScenarioConfig:
     # static requirements the downstate families never bind (NYC holds 2-3x the
     # published MW in the exact hours reality prices >$300), and both the
     # online-proxy and commitment-gated formulations were refuted AT the static
-    # requirement (docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md
+    # requirement (docs/records/nyiso/nyiso-downstate-reserve-incidence-2026-06.md
     # paths A/B). A measured requirement is a market-design INPUT (rule #13
     # admissible: regenerates forward as published-static-base + condition
     # rules applied to forward weather/contingency states, responds to changed
     # conditions); the measured reserve PRICES stay validation-only and are
     # never read. Data seam: data/raw/NYISO-AS/requirements/ (the Ask-B intake,
-    # docs/handoffs/nyiso-data-asks-2026-07.md) via
+    # docs/records/nyiso/nyiso-data-asks-2026-07.md) via
     # data.nyiso_reserve_requirements.load_nyiso_reserve_requirements — the
     # flag HARD-ERRORS when the series is absent (no silent static fallback, so
     # a run_config claiming dynamic requirements cannot quietly solve without
@@ -6633,7 +6642,7 @@ class ScenarioConfig:
     # nyiso_dynamic_reserve_requirements; inert without it (no family carries a
     # measured series to translate to). Default off, byte-identical when off;
     # NYISO-only. Promotion gate: leave-one-year-out within 2023-2025
-    # (rule 22). See docs/handoffs/nyiso-overrun-underrun-2026-07.md §4.
+    # (rule 22). See docs/records/nyiso/nyiso-overrun-underrun-2026-07.md §4.
 
     nyiso_seny_rcpf_increment_step: bool = False  # GATED, default-OFF
     # NYISO SENY 30-minute demand curve as the PUBLISHED TWO TIERS — a $500/MW
@@ -6662,7 +6671,7 @@ class ScenarioConfig:
     # shortfall is charged against the base curve, whose very first rung
     # ($500/8 = $62.50) already sits above the ENTIRE measured SENY envelope.
     # MEASURED ex ante with no solve spent (nyiso-117,
-    # results/calibration/nyiso117_seny_rcpf_curve_screen.json): the isolated
+    # results/phase0/nyiso/nyiso117_seny_rcpf_curve_screen.json): the isolated
     # SENY-only adder on NYISO's OWN posted zonal DA prices caps at
     # $23.92/$30.37/$40.00 in 2023/24/25, with 52 hours of 2025 at EXACTLY
     # $40.00 and ZERO hours above it in any year — the published increment
@@ -6826,7 +6835,7 @@ class ScenarioConfig:
     market_design_retirement_floor: bool = False  # GATED, default-OFF
     # market-design fidelity gate on the RETIREMENT reliability floor
     # (fom-scarcity stage 5 / the capacity-economics successor mechanism,
-    # docs/handoffs/fom-scarcity-joint-protocol-2026-07-06-stage5-energy-only-floor.md
+    # docs/records/misc/fom-scarcity-joint-protocol-2026-07-06-stage5-energy-only-floor.md
     # §1). When on, the floor (_apply_reliability_floor — "un-retire eligible
     # units until the PRM requirement clears") applies ONLY in ISOs whose
     # market design actually procures capacity to an adequacy requirement
@@ -6901,7 +6910,7 @@ class ScenarioConfig:
     # predates the corrected outage envelope — excluded pending re-calibration)
     # are deliberately absent → gate off.
     #   FF-2C default-ON flip (owner sign-off 2026-07-19, per the RC-2B per-ISO
-    # flip memo docs/handoffs/capacity-clearing-flip-memo-2026-07-16.md §4 and
+    # flip memo docs/records/misc/capacity-clearing-flip-memo-2026-07-16.md §4 and
     # the §5 D1=3 re-probe that unblocked it): the CR-1 sloped capacity curve is
     # the resource-adequacy price for PJM/MISO/CAISO/NEISO in forecast mode,
     # replacing the flat net-CONE × UCAP stub. Rows are added one-per-ISO across
@@ -6933,7 +6942,7 @@ class ScenarioConfig:
     # the pre-CR-3.1 flat constants (the capacity-hindcast BASELINE arm and
     # the byte-identity tests) — no curve, no penetration response.
     caiso_nqc_accreditation: bool = False  # GATED default-OFF (FFR-3P
-    # 2026-08-04, docs/handoffs/ffr-3p-caiso-accreditation-2026-08-04.md).
+    # 2026-08-04, docs/records/forecast/ffr-3p-caiso-accreditation-2026-08-04.md).
     # Admits CAISO's OWN published class-average VRE accreditation
     # (constants.RENEWABLE_NQC_CURVES_BY_ISO — the CPUC/CAISO Net Qualifying
     # Capacity report's monthly technology factors, blended onto the model's
@@ -6966,7 +6975,7 @@ class ScenarioConfig:
     # touched. Forecast-lane mechanism: capacity evolution and the CR-1
     # position are forecast-only, so no backcast keeper can move.
     caiso_storage_nqc_accreditation: bool = False  # GATED default-OFF (FFR-4E
-    # 2026-08-09, docs/handoffs/ffr-4e-caiso-storage-elcc-2026-08-09.md).
+    # 2026-08-09, docs/records/forecast/ffr-4e-caiso-storage-elcc-2026-08-09.md).
     # Admits CAISO's OWN published whole-class STORAGE accreditation
     # (constants.STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO — the 2026 Summer
     # Loads and Resources Assessment Table 1.1 battery row's September NQC over
@@ -7001,7 +7010,7 @@ class ScenarioConfig:
     # gate resolves per ISO) — rule 25 [R-ISO-SCOPE]. ERCOT's parallel storage
     # question (FFR-4D D-3) is ERCOT's lane and nothing here transfers to it.
     caiso_ra_mpb_capacity_anchor: bool = False  # GATED default-OFF (FFR-4F
-    # 2026-08-09, docs/handoffs/ffr-4f-caiso-anchor-merits-2026-08-09.md).
+    # 2026-08-09, docs/records/forecast/ffr-4f-caiso-anchor-merits-2026-08-09.md).
     # Replaces CAISO's capacity-price anchor — the CPM SOFT-OFFER CAP
     # (88.08 $/kW-yr) — with the CPUC unified Resource Adequacy Market Price
     # Benchmark (138.36 $/kW-yr), at the ONE shared capacity-price seam
@@ -7125,7 +7134,7 @@ class ScenarioConfig:
     # ``_CACHE_KEY_OPTIONAL_FIELDS`` so its value always enters the key), and
     # the hindcast harness passes it explicitly (its own ``False`` default).
     # Sign-off + evidence:
-    # docs/handoffs/ff-entry-stack-completion-2026-07.md §4.1 (the default-ON
+    # docs/records/forecast/ff-entry-stack-completion-2026-07.md §4.1 (the default-ON
     # recommendation) and docs/hindcast-reports/ercot-g30-entry-lookahead-
     # 2026-07-08.md (G-30 single-term isolation: ERCOT solar entry 0→4 GW,
     # gas_st over-retire 8.83→1.87 GW, intended negative feedback as year Y's
@@ -7158,7 +7167,7 @@ class ScenarioConfig:
     # config/iso_configs.py::_miso_config — this ScenarioConfig default STAYS
     # False, so every other ISO is byte-identical and each is its own separate
     # decision (rule 25 [R-ISO-SCOPE]). Evidence and the four-arm 2x2:
-    # docs/handoffs/ffr-4b-miso-solar-revenue-2026-08-04.md; the asymmetry it
+    # docs/records/forecast/ffr-4b-miso-solar-revenue-2026-08-04.md; the asymmetry it
     # removes is that VRE was the ONLY accredited class denied the payment
     # while thermal entry, thermal retirement and storage entry all took it
     # through the same MarketDesign.capacity_price_per_firm_mw_yr seam.
@@ -7190,7 +7199,7 @@ class ScenarioConfig:
     # other ISO is byte-identical and each is its own separate decision
     # (rule 25 [R-ISO-SCOPE]).
     entry_rate_limits: bool = True  # ARMED by owner decision D-2, signed
-    # 2026-08-02 (docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum C.1:
+    # 2026-08-02 (docs/records/forecast/ffr-owner-sitting-2026-08-02.md Addendum C.1:
     # "ARM BOTH"). Was GATED default-OFF (FF-2A item 2 / BLK-10
     # + term e). The owner signed knowing the bar is only PARTLY met (sitting
     # Addendum A.2): the rate limit RE-PHASES rather than reduces backstop MW
@@ -7217,7 +7226,7 @@ class ScenarioConfig:
     # rule 25 — a missing measurement must not invent a zero that forbids
     # entry). Default off is byte-identical.
     entry_commissioning_lag: bool = True  # ARMED by owner decision D-2, signed
-    # 2026-08-02 (docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum C.1:
+    # 2026-08-02 (docs/records/forecast/ffr-owner-sitting-2026-08-02.md Addendum C.1:
     # "ARM BOTH"). Was GATED default-OFF (FF-2A item 3). Its precondition is
     # landed: FR-13 (commissioned pipeline units invisible to I4 when the lag
     # is armed) was fixed by FFR-1A 2026-07-31, and FFR-2B re-verified that I4
@@ -7356,7 +7365,7 @@ class ScenarioConfig:
     # evolution). Default off is byte-identical.
     capacity_screen_scarcity_restoration: bool = False  # GATED default-OFF
     # (FFR-8A, owner decision D-21(a) re-opened at sitting Addendum AC.1,
-    # 2026-08-07; docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md).
+    # 2026-08-07; docs/records/forecast/ffr-8a-scarcity-restoration-2026-08-08.md).
     # Restores the published-design scarcity content of the capacity-screen
     # lookahead's ORDC tail, which FFR-6A measured at 0.04-4.4 % of the
     # measured-price per-fuel margin (zero pro-forma hours > $100 where the
@@ -7418,7 +7427,7 @@ class ScenarioConfig:
     # prices never see it. Default off is byte-identical.
     entry_forward_expectation_signal: bool = False  # GATED default-OFF
     # (ENTRY-SIGNAL lane; the rung named by
-    # docs/FINDING-entry-signal-disarm-2026-08.md §6: the forward-expectation
+    # docs/records/misc/FINDING-entry-signal-disarm-2026-08.md §6: the forward-expectation
     # object — locational AND forward-looking, the one cell neither measured
     # arm of the disarm probe tested). REPLACES the lookahead signal's
     # zone-flat MC-step OBJECT with the run's own prior-year hourly ZONAL LP
@@ -7464,7 +7473,7 @@ class ScenarioConfig:
     # results/hindcast/ercot-2021-2025-realized-t1h-{control,disarm}.
     entry_dispersion_expectation_signal: bool = False  # GATED default-OFF
     # (capx D43, 2026-09-02 — the first REPAIR measurement on D39's object:
-    # docs/handoffs/FINDING-capx-d39-entry-underbuild-2026-09-02.md §0/§3.1
+    # docs/records/forecast/FINDING-capx-d39-entry-underbuild-2026-09-02.md §0/§3.1
     # measured that the five tail-free ISOs' shared stack re-price hands a
     # new peaker 0-25 % and a new CC 6-92 % of the energy margin the model's
     # own realized surface pays, and that the miss is ONE term — the energy
@@ -7513,7 +7522,7 @@ class ScenarioConfig:
     # follows that hour even when the entering year's net load has moved
     # away from it, and the additive re-level can subtract a pro-forma tail
     # from realized duals (the ERCOT two-scarcity-objects defect,
-    # docs/FINDING-entry-signal-forward-expectation-2026-08-25.md §4); a
+    # docs/records/misc/FINDING-entry-signal-forward-expectation-2026-08-25.md §4); a
     # quantile map has no additive term and cannot. Mutually exclusive with
     # that field (one construction of the screens' price object per run,
     # rule 19) and with entry_margin_exhaustion (the walk's delta
@@ -7527,13 +7536,13 @@ class ScenarioConfig:
     # [R-ISO-SCOPE]): the D43 A/B adjudicates CAISO's cell on CAISO's own
     # dumps and keeper duals; every other ISO's cell stays U until its own
     # lane runs it. Adjudicating A/B (pre-declared before the arm ran,
-    # docs/handoffs/PREDECL-capx-d43-caiso-dispersion-2026-09-02.md): the
+    # docs/records/forecast/PREDECL-capx-d43-caiso-dispersion-2026-09-02.md): the
     # screen-grain replay of this construction on the committed CAISO
     # dumps + keeper duals, then a CAISO T1-H control/arm pair on the D39
     # basis recipe.
     entry_margin_exhaustion: bool = False  # GATED default-OFF (D11-R entry
     # volume rule; chartered by the capx director ledger §0e.3 on
-    # docs/FINDING-entry-signal-forward-expectation-2026-08-25.md §3/§7(b)).
+    # docs/records/misc/FINDING-entry-signal-forward-expectation-2026-08-25.md §3/§7(b)).
     # REPLACES the allocators' bang-bang volume rule — a technology clearing
     # its screen by $1 builds its full cap (new_entry.py allocation loop /
     # storage.py winner-take-share split) — with the one closure the model
@@ -7541,7 +7550,7 @@ class ScenarioConfig:
     # UNTIL THE SCREEN'S OWN REPRICED MARGIN IS EXHAUSTED, bounded by the
     # SAME caps (per-tech queue caps, growth ladder, shared ISO budget;
     # storage annual cap / share cap / ceiling). Measured offline first:
-    # docs/FINDING-entry-signal-l1-2026-08.md §2 (probe
+    # docs/records/misc/FINDING-entry-signal-l1-2026-08.md §2 (probe
     # scripts/probes/entry_signal_l1b_allocator_counterfactual.py) — terminal
     # RM 18.7 % vs the shipped 25.2 %, with the B-2 cobweb SURVIVING (real
     # market dynamics, never the target). Mechanics: capacity is added in
@@ -7566,7 +7575,7 @@ class ScenarioConfig:
     # Zero fitted parameters: every quantity in the exhaustion condition
     # already exists in the screen. Composable with entry_lookahead_reprice
     # in EITHER state since the owner's R-B ruling (2026-08-31,
-    # docs/PRECOMMIT-c1-joint-wind-2026-08-31.md): the repricing instrument
+    # docs/records/misc/PRECOMMIT-c1-joint-wind-2026-08-31.md): the repricing instrument
     # is the lookahead stack, but the walk consumes only its within-year
     # DELTA, so armed WITHOUT the reprice the screens keep the raw prior-year
     # zonal duals as their level and this rule supplies the capacity
@@ -7582,7 +7591,7 @@ class ScenarioConfig:
     # in iso_configs.py; rule 25: no other ISO).
     entry_forward_reserve_leg: bool = False  # GATED default-OFF (D12
     # scarcity-consistent entry reserve leg;
-    # docs/handoffs/FINDING-capx-d12-scarcity-basis-2026-08-30.md — the
+    # docs/records/forecast/FINDING-capx-d12-scarcity-basis-2026-08-30.md — the
     # owner-gated successor rung the D11-R finding §4 named). The shipped
     # thermal ENTRY margin mixes two scarcity objects in one max():
     # sum_t max(S_next(t) - vc, r(t)) prices the energy leg on the ENTERING
@@ -7637,7 +7646,7 @@ class ScenarioConfig:
     # iso_configs.py; rule 25: no other ISO).
     storage_entry_availability_gate: bool = True  # GATED default-ON since the
     # owner ruling R-A of the 2026-08-31 director sitting ("Arm both"), on the
-    # A/B record docs/FINDING-t1h-capentry-phase1-ab-2026-08-30.md §4: both
+    # A/B record docs/records/misc/FINDING-t1h-capentry-phase1-ab-2026-08-30.md §4: both
     # kill-gates PASS (K1 no-fire — every addition-band |err| delta 0.0000;
     # K2 no-fire — the storage mix differs in every row), CO2 -0.49/-0.52/+0.34
     # Mt across 2023-2025, and zero new DOF. Executed by the T1-H arming lane;
@@ -7645,9 +7654,9 @@ class ScenarioConfig:
     # DOES move — measured, not assumed; the coercion note below is corrected
     # there). Shipped default-OFF from #4386 through the A/B. (D-2
     # storage availability-year gate; charter
-    # docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md Phase-1 Leg A, defect
-    # register docs/FINDING-entry-screen-t1h-2026-08.md D-2/L-3, census
-    # docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md §2). The storage
+    # docs/records/misc/PRECOMMIT-t1h-capacity-entry-2026-08-30.md Phase-1 Leg A, defect
+    # register docs/records/misc/FINDING-entry-screen-t1h-2026-08.md D-2/L-3, census
+    # docs/records/misc/FINDING-t1h-capacity-entry-phase0-2026-08-30.md §2). The storage
     # entry screen iterates STORAGE_TECHS unconditionally on BOTH allocation
     # rules — no availability-year gate, while the thermal path gates every
     # emerging tech through _EMERGING_AVAILABLE_YEAR — so a 2023 ERCOT
@@ -7685,7 +7694,7 @@ class ScenarioConfig:
     # Shipped default-OFF from #4386 through the A/B.
     # (D-3 cost-normalized storage tech selection; same charter/defect
     # register as storage_entry_availability_gate above, Phase-0 replay
-    # docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md §3). The storage
+    # docs/records/misc/FINDING-t1h-capacity-entry-phase0-2026-08-30.md §3). The storage
     # screen ranks clearing technologies on ABSOLUTE $/MW-yr margin (the
     # bang-bang sort and the walk's per-tranche pick alike), which is
     # structurally biased toward the most capital-intensive machine — a
@@ -7878,7 +7887,7 @@ class ScenarioConfig:
     # effectively unchanged (0.2666 basis-matched vs the frozen 0.2620), so this
     # adds NO free parameter (rule 21 [R-DOF]). Default off: every existing run
     # and every other ISO stays byte-identical.
-    # Evidence: results/calibration/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md
+    # Evidence: docs/records/nyiso/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md
     reliability_floor_layup_window_mask: bool = False
     # NYISO-NEXT (2026-09-25) — the HOUR-grain companion of the membership
     # correction above, for the case membership cannot express: a unit that is
@@ -8142,7 +8151,7 @@ class ScenarioConfig:
     # they "switch to oil, not vanish". THAT PREMISE IS A CONDITION, NOT A FACT:
     # apply_dual_fuel_pricing sets mc = min(gas, oil), so the switch fires only in
     # hours where delivered gas >= the oil parity. Measured on the NEISO keeper
-    # (neiso-110, docs/FINDING-neiso110-winter-oil-driver-2026-09-16.md): across
+    # (neiso-110, docs/records/neiso/FINDING-neiso110-winter-oil-driver-2026-09-16.md): across
     # Winter Storm Elliott (2022-12-23..27) Algonquin gas ran $12.54-15.08/MMBtu
     # against an oil parity of $20.985 — the switch is $5.9-8.4/MMBtu away from
     # firing — so 6,896 MW (39.3% of NEISO gas capacity) stayed exempt from a
@@ -8331,7 +8340,7 @@ class ScenarioConfig:
     # West Springfield 1642 1 %, Merrimack 2364 45 % -- so the floor asserted a
     # commitment its own driver evidence contradicts (rule 17 [R-FLOOR-WINDOW];
     # the D-4 per-unit conduct rider's test, which this mechanism escaped for want
-    # of a D4_WINDOWS entry). docs/handoffs/neiso119/phase0_fuelsec_<Y>.json.
+    # of a D4_WINDOWS entry). docs/records/neiso/neiso119/phase0_fuelsec_<Y>.json.
     # Armed, a plant stays in the program fleet only if its CEMS BOILER units were
     # online (gross load > 0) in at least
     # constants.WINTER_FUELSEC_CONDUCT_MIN_ONLINE_SHARE of its zone's cold-day
@@ -8596,7 +8605,7 @@ class ScenarioConfig:
     # identities, one published outage state, one definitional percentile
     # (NYISO_SEAM_FLOW_PERCENTILE), and the Gold Book tie landings. Default off;
     # NYISO-only. Pre-registration:
-    # results/calibration/PREREG-nyiso127-addendum2-full-seam-attribution-2026-08-05.md
+    # docs/records/nyiso/PREREG-nyiso127-addendum2-full-seam-attribution-2026-08-05.md
     # LONG ISLAND POSTED-LIMIT SUB-CLIP (NYISO-NEXT-6, GATED default off,
     # NYISO-only, backcast only, ZERO free parameters). Caps the
     # NYISO_external>Long_Island IMPORT bound, hour by hour, at the sum of the
@@ -8608,7 +8617,7 @@ class ScenarioConfig:
     # never raises a cap (rule 19 [R-ONE-MECH]); a physical availability event,
     # the object class of an outage window (rule 13). Applied only when one of
     # the two seam flags above is armed. Export bound untouched; NYC ties out of
-    # scope. PRECOMMIT: docs/PRECOMMIT-nyiso-next5-li-tie-posted-limit-2026-09-27.md
+    # scope. PRECOMMIT: docs/records/nyiso/PRECOMMIT-nyiso-next5-li-tie-posted-limit-2026-09-27.md
     nyiso_li_seam_posted_limit_cap: bool = False
     nyiso_ne_ac_node: bool = False  # NYISO-NEXT-11 (owner ruling Q-a,
     # 2026-09-28): host the NY-New England AC tie (P-32 SCH - NE - NY, landing
@@ -8626,7 +8635,7 @@ class ScenarioConfig:
     # pooled sink stays as it is). Requires priced_interchange and
     # nyiso_seam_par_attribution; backcast-only (measured anchor; the forward
     # anchor is not wired, rule 13). PRECOMMIT:
-    # docs/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md. Default off; NYISO.
+    # docs/records/nyiso/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md. Default off; NYISO.
     nyiso_ne_ac_recon_detach: bool = False  # NYISO-NEXT-13: take the NE AC
     # node out of the monthly EIA-930 net-interchange band
     # (nyiso_import_reconciliation). With the node armed, the band still pinned
@@ -8639,7 +8648,7 @@ class ScenarioConfig:
     # alone to (EIA-930 total - NE AC schedule) — strictly fewer measured
     # outcomes pinned (rule 13); zero free parameters (the same band_frac).
     # Requires nyiso_ne_ac_node and nyiso_import_reconciliation; backcast-only.
-    # PRECOMMIT: docs/PRECOMMIT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md.
+    # PRECOMMIT: docs/records/nyiso/PRECOMMIT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md.
     # Default off; NYISO.
     nyiso_import_landing_band: bool = False  # NYISO-NEXT-15: replace the
     # pooled node's monthly EIA-930 net-interchange band with one monthly band
@@ -8652,7 +8661,7 @@ class ScenarioConfig:
     # the pooled total moves EIA-930 -> P-32 sum (-2..+1 %); zero free
     # parameters (published PAR split, the same band_frac). Requires
     # nyiso_import_reconciliation and nyiso_seam_par_attribution; backcast-only.
-    # PRECOMMIT: docs/PRECOMMIT-nyiso-next15-landing-band-2026-09-30.md.
+    # PRECOMMIT: docs/records/nyiso/PRECOMMIT-nyiso-next15-landing-band-2026-09-30.md.
     # Default off; NYISO.
     nyiso_seam_deliverability_envelope: bool = False  # NYISO external seam
     # deliverability envelope (nyiso-125, data.nyiso_seam_envelope): replace the
@@ -8692,7 +8701,7 @@ class ScenarioConfig:
     # and responds to changed conditions (974->828->975 MW on NYC and
     # 1,012->986->990 on Long_Island across 2023-25, and CHPE enters the same
     # feed in 2026). Evidence: scripts/probes/_nyiso125_seam_envelope.py,
-    # results/calibration/_nyiso125_seam_envelope.json,
+    # results/phase0/nyiso/_nyiso125_seam_envelope.json,
     # PREREG-nyiso125-seam-envelope-2026-08-04.md. Default off
     # (byte-identical); NYISO-only.
     nyiso_scr_edrp: bool = False  # NYISO SCR/EDRP emergency demand response as
@@ -8813,7 +8822,7 @@ class ScenarioConfig:
     # (byte-identical); NYISO-only; requires --energy-reserve-coopt.
     nyiso_incity_commitment_obligation: bool = False  # NYISO in-city (Zone J/K)
     # load-pocket COMMITMENT OBLIGATION — the mechanism of the in-city must-run
-    # lane charter (docs/handoffs/nyiso-incity-mustrun-charter-2026-07.md),
+    # lane charter (docs/records/nyiso/nyiso-incity-mustrun-charter-2026-07.md),
     # armed by the owner's 2026-07-26 adjudication reopening the closed C3a
     # "reserve" lever: it was closed as a *pricing* lever (measured Δ$0.00 on
     # the 2023 trough, nyiso-71) and this is a COMMITMENT driver, a different
@@ -9118,7 +9127,7 @@ class ScenarioConfig:
     # computed WITHIN a year, so every run spanning a year boundary splits into
     # two spurious short ones and p10 absorbs that truncation artifact.
     # Pre-registered before the value was derived
-    # (docs/handoffs/nyiso90-preregistration.md §2); frozen against residuals
+    # (docs/records/nyiso/nyiso90-preregistration.md §2); frozen against residuals
     # (rules 5 / 13 / 23). NOTE the keeper's CC/ST legs use p50_capwtd (21/13 h)
     # — a live convention inconsistency, deliberately NOT reconciled here
     # because doing so would change those legs' floors (a second delta).
@@ -9303,7 +9312,7 @@ class ScenarioConfig:
     pjm_gas_commitment_bridge: bool = False
     # SPP COMMITMENT POSTURE (default off, SPP-gated — lane SPP-102, owner
     # decision card "Build relaxed-UC engine", 2026-09-29;
-    # docs/handoffs/DESIGN-spp-102-cc-commitment-state-2026-09-29.md). The SAME
+    # docs/records/spp/DESIGN-spp-102-cc-commitment-state-2026-09-29.md). The SAME
     # standalone energy-only pooled-linear commitment posture as
     # ercot_commitment_posture (rule 19: one construction, ported not forked —
     # model.reserves.spec._standalone_posture_pools), PLUS the min-up /
@@ -9586,7 +9595,7 @@ class ScenarioConfig:
     # rows). Affects both directions of inject_miso_seam_flow_limit; only
     # bites with miso_seam_flow_limit / miso_seam_export_limit. Default off
     # (replay fidelity for pre-miso-73 bundles); see
-    # docs/handoffs/miso-g23-seam-envelope-composition-design-2026-07.md.
+    # docs/records/miso/miso-g23-seam-envelope-composition-design-2026-07.md.
     miso_seam_envelope_hour_ending_key: bool = False  # MISO seam deliverability
     # envelope HOUR-KEY repair (miso-175, rule 14 [R-ACCURATE]): read the
     # EIA-930 DIBA parquet's `local_time` stamp as hour-ENDING on MISO's local
@@ -9730,7 +9739,7 @@ class ScenarioConfig:
     # --reference-price-interface + --miso-seam-measured-ladder; MISO-only.
     # Default off; byte-identical when off (no Manitoba bands -> the ladder /
     # envelope Manitoba entries are inert, row-driven). See
-    # docs/handoffs/miso-manitoba-seam-design-2026-07.md.
+    # docs/records/miso/miso-manitoba-seam-design-2026-07.md.
     caiso_import_hub_prices: bool = False  # Price the CAISO priced-import node's
     # tranches at the MEASURED hourly WECC neighbor-hub LMP each proxies, instead
     # of the static fitted ladder in IMPORT_TRANCHES["CAISO"]. The PNW blocks
@@ -9789,7 +9798,7 @@ class ScenarioConfig:
     # the coupling exactly as before. Zero new parameters (rule 19 [R-ONE-MECH]:
     # the measured hub is the ONE gas channel for a hub-priced row). Requires
     # caiso_import_gas_coupling; default off (byte-identical); CAISO-only.
-    # docs/handoffs/r-caiso-3/PRECOMMIT-r-caiso-3-2026-09-25.md.
+    # docs/records/caiso/r-caiso-3/PRECOMMIT-r-caiso-3-2026-09-25.md.
     caiso_intertie_gap_fill_measured_gas: bool = False  # R-CAISO-3 (2026-09-25):
     # the measured WECC intertie hub series (Malin / Palo Verde) has a bulk
     # OASIS retention gap (2023-01-01..03-26, 2,040 h) that
@@ -9828,7 +9837,7 @@ class ScenarioConfig:
     # a market state; a formula fill is not). The 552 hours no print covers
     # keep the existing fill. Zero parameters; inert outside 2023 by
     # construction (no other year has a gap). Default off; CAISO-only.
-    # docs/handoffs/r-caiso-4/PRECOMMIT-r-caiso-4-2026-09-26.md.
+    # docs/records/caiso/r-caiso-4/PRECOMMIT-r-caiso-4-2026-09-26.md.
     caiso_intertie_partial_year_measured: bool = False  # R-CAISO-8 (2026-09-27):
     # price each WECC intertie hub at its MEASURED print in every hour it
     # prints, and keep the static ladder only in the hours it does not. Today
@@ -9847,7 +9856,7 @@ class ScenarioConfig:
     # <=25 % (the existing fill path is untouched) and where it prints nothing
     # (2019-20): only 2021 moves. Default off; CAISO-only; backcast-only (the
     # measured overlay never runs in a forecast).
-    # docs/handoffs/r-caiso-8/PRECOMMIT-r-caiso-8-2026-09-27.md.
+    # docs/records/caiso/r-caiso-8/PRECOMMIT-r-caiso-8-2026-09-27.md.
     caiso_intertie_unprinted_year_measured_gas: bool = False  # R-CAISO-18
     # (2026-09-30): price the UNPRINTED hours of a WECC intertie hub whose gap
     # exceeds the 25 % bound -- all of 2019-2020 (OASIS GroupZip's earliest
@@ -9869,7 +9878,7 @@ class ScenarioConfig:
     # still reads the raw measured print only. Inert by construction in
     # 2022-2025 (full print, or a <=25 % gap on the untouched path). Default
     # off; CAISO-only; backcast-only; per-hub topology only.
-    # docs/handoffs/r-caiso-18/PRECOMMIT-r-caiso-18-2026-09-30.md.
+    # docs/records/caiso/r-caiso-18/PRECOMMIT-r-caiso-18-2026-09-30.md.
     cc_eia923_identity_emission_basis: bool = False  # R-CAISO-4 (2026-09-26):
     # a CC_REGULAR plant whose measured heat rate is the EIA-923 identity rate
     # (its CEMS record REFUSED by the CC derive: flag eia923_identity) books
@@ -9936,7 +9945,7 @@ class ScenarioConfig:
     # fitted 4,361 MW aggregate export cap that one CLI flag could re-arm — the
     # re-armable-answer-key shape the rule names. `caiso_per_hub_intertie` below
     # is its documented successor and supersedes it in full.
-    # Record: results/calibration/FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md
+    # Record: docs/records/caiso/FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md
     caiso_per_hub_intertie: bool = False  # Model CAISO's WECC tie as TWO signed
     # corridors — COI/Path-66 at the Malin hub into NP15 (north) and Path-46/WOR
     # at the Palo Verde hub into SP15 (south) — each a single signed flow priced
@@ -10303,7 +10312,7 @@ class ScenarioConfig:
     # RESTATED 2026-09-20 BY caiso-289, AND THE FOOTPRINT IS NOT WHAT IT WAS
     # (rule 23 [R-FROZEN-DERIVE], cited to caiso-288's +85 recovered prints and
     # to no residual; FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-
-    # 2026-09-20.md; results/calibration/_caiso289_postrepair_audit.json).
+    # 2026-09-20.md; results/phase0/caiso/_caiso289_postrepair_audit.json).
     # The holdout above grows 33,216 -> 36,598 withheld days and THE RANKING IS
     # UNCHANGED — the figures quoted are the re-measured ones. Reported against
     # this construction: on p95|e| it is now marginally behind linear interp
@@ -10374,7 +10383,7 @@ class ScenarioConfig:
     # SHARED FIELD, default off, so every existing config in every ISO keeps its
     # cache key. Per-ISO, per-year exposure census (zero LP):
     # scripts/probes/xiso8_left_edge_census.py ->
-    # results/calibration/_xiso8_left_edge_census.json. CAISO arms it (all four
+    # results/phase0/governance/_xiso8_left_edge_census.json. CAISO arms it (all four
     # scored years are package boundaries; 2023 is worth -0.879% of the annual
     # mean at full pass-through). MISO is MEASURED AND NOT ARMED: only 2021 and
     # 2022 are package boundaries there, its keeper reaches the staircase solely
@@ -10465,7 +10474,7 @@ class ScenarioConfig:
     # construction. Requires caiso_dsw_overnight_clean AND
     # caiso_intertie_unprinted_year_measured_gas (the pricing; without it the
     # arm is a no-op). Default off; CAISO-only; backcast-only.
-    # docs/handoffs/r-caiso-20/PRECOMMIT-r-caiso-20-2026-09-30.md.
+    # docs/records/caiso/r-caiso-20/PRECOMMIT-r-caiso-20-2026-09-30.md.
     caiso_dsw_daytime_clean: bool = False  # Carry the MEASURED DAYTIME
     # trigger-OFF (hod 6-21) WEIM clean import depth on the south (Palo Verde /
     # Path-46) corridor (caiso-94; FINDING-caiso94-daytime-wedge-2026-07-17,
@@ -10538,7 +10547,7 @@ class ScenarioConfig:
     caiso_endogenous_wecc_node: bool = False  # Make the WECC_import node a REAL
     # co-optimized WECC-West neighbor ZONE instead of a set of static import
     # tranches (caiso-110; Option A of
-    # docs/handoffs/caiso-endogenous-wecc-node-design-2026-07-21.md). The two
+    # docs/records/caiso/caiso-endogenous-wecc-node-design-2026-07-21.md). The two
     # prior belly-import fixes were killed by derive-first measurement — the
     # belly clean-import DEPTH is not year-stable on any CA PRICE observable
     # (caiso-107) NOR any WEST-WIDE surplus QUANTITY (caiso-109 P1-A): the belly
@@ -10825,7 +10834,7 @@ class ScenarioConfig:
     # Michigan-pocket family.
     miso_midwest_subregional_reserves: bool = False  # MISO: the Midwest
     # sub-regional reserve-holding family (the engagement-depth lane, miso-71;
-    # docs/handoffs/miso-engagement-depth-design-2026-07.md). Appends ONE
+    # docs/records/miso/miso-engagement-depth-design-2026-07.md). Appends ONE
     # locational operating-reserve family over the 5 PHYSICAL Midwest zones
     # (reserve_config.MISO_MIDWEST_ZONES), reserve_class 0 nested inside the
     # market-wide RBDC (a Midwest reserve MW counts toward both — the NYISO
@@ -11016,7 +11025,7 @@ class ScenarioConfig:
     # Default off; GATED CHANGE (alters congestion depth).
     miso_zonal_loss_surface: bool = False  # MISO: marginal transmission-loss
     # physics on the Midwest-internal links (miso-76 M3, charter
-    # docs/handoffs/miso-nc-price-separation-design-2026-07.md §4). Each
+    # docs/records/miso/miso-nc-price-separation-design-2026-07.md §4). Each
     # bidirectional L1-L6 link splits into a one-way pair
     # (transmission.apply_miso_zonal_loss_links) and each direction's
     # receiving-end energy-balance coefficient becomes 1 - eps(month)
@@ -11114,7 +11123,7 @@ class ScenarioConfig:
     # posture U makes holding spin/non-spin cost a real start + min-load ride,
     # the forward-real mechanism by which CAISO's evening reserve procurement
     # commits gas (the measured evening CC deficit, +1.9/+1.2/+0.3 GW
-    # 2023/24/25, docs/handoffs/caiso-belly-commitment-probe-2026-07.md). NOT
+    # 2023/24/25, docs/records/caiso/caiso-belly-commitment-probe-2026-07.md). NOT
     # a floor: forces no exogenous energy (the min-load term binds only
     # capacity the LP itself brings online), carries no min_gen/D-2 mechanism
     # id, and every input is measured (CEMS mlf), published (NREL startup
@@ -11470,7 +11479,7 @@ class ScenarioConfig:
     # RTOFFCAP reserve-supply cap from the FORWARD FORMULA
     # (scarcity.ercot_rtolcap_forward_supply_cap_mw) instead of the measured
     # ercot_<year>_ordc_reserves_hourly.parquet — the WS-A forward analogue of the
-    # last measured AS-path lever (docs/handoffs/ercot-rtolcap-forward-2026-07.md).
+    # last measured AS-path lever (docs/records/ercot/ercot-rtolcap-forward-2026-07.md).
     # The cap is rebuilt from the model's own forecast net-load, the derived per-
     # class on-line headroom-realization shares (ERCOT_RTOLCAP_FWD_ONLINE_SHARE)
     # and the fleet's evolving reserve-eligible capacity, so it REGENERATES for a
@@ -11491,7 +11500,7 @@ class ScenarioConfig:
     # credits off its requirement, so leaving the caps gross lets the family's
     # marginal reserve level reach cap + credits — measured +1.7/+1.0/+2.4 GW
     # above published RTOLCAP in the 2024/2025/2023 published-fired hours
-    # (docs/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md §0-§1). Zero
+    # (docs/records/ercot/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md §0-§1). Zero
     # fitted scalars (rules 13/23: already-armed measured series, arithmetic
     # only; the award series under-state the capability components, so the
     # netting is conservative), one mechanism (rule 19: repairs the armed
@@ -11584,7 +11593,7 @@ class ScenarioConfig:
     # ERCOT-only; GATED.
     ercot_ordc_only_scarcity: bool = False  # ERCOT: pre-RTC+B ORDC-ONLY reserve
     # scarcity pricing — the product-ladder design question filed at ERCOT-57
-    # (docs/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md §4.2;
+    # (docs/records/ercot/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md §4.2;
     # owner-sanctioned 2026-07-11). 2023-25 ERCOT has NO real-time per-product
     # scarcity pricing and SCED withholds nothing beyond the DAM AS plan: RT
     # reserve scarcity prices through the ORDC on the REALIZED total online
@@ -11749,7 +11758,7 @@ class ScenarioConfig:
     pjm_commitment_posture: bool = False  # PJM: the SAME pooled linear
     # commitment-posture lever as miso_commitment_posture (design note
     # docs/multi-iso/miso-scarcity-posture-design-2026-07.md §A; PJM port
-    # docs/handoffs/pjm-commitment-posture-port-2026-07.md), ported not
+    # docs/records/pjm/pjm-commitment-posture-port-2026-07.md), ported not
     # forked — shared _posture_pool_params / dispatch U-SU columns. Per
     # non-fast-start (zone × fuel-class) pergen pool p, adds a continuous
     # online-capacity variable U[p,t] with (i) the joint headroom re-anchored
@@ -11820,7 +11829,7 @@ class ScenarioConfig:
     # the full fleet into the few highest-price hours. Reserves power, not SOC.
     ercot_storage_as_deployment: bool = False  # ERCOT: measured-award energy
     # CO-PARTICIPATION (the storage-cycling-lane fix,
-    # docs/DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md). storage_as_commitment
+    # docs/records/ercot/DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md). storage_as_commitment
     # reserves the measured up-AS award out of the discharge cap in ALL hours and
     # never deploys it back as energy — but the real fleet visibly moves capacity
     # from AS to energy at the net-load ramp (the measured 60-Day DAM storage award
@@ -11938,7 +11947,7 @@ class ScenarioConfig:
     # split's 2.1–2.4× over-hold vs the measured 60-Day DAM award (ercot32 root
     # cause 1). Cleared storage AS still counts under RTOLCAP (the supply cap) and
     # in the reserve balance. Default off (byte-identical); ERCOT multi-product
-    # co-opt only. See docs/handoffs/ercot-storage-as-duration-gate-2026-07.md.
+    # co-opt only. See docs/records/ercot/ercot-storage-as-duration-gate-2026-07.md.
     negative_renewable_offers: bool = False  # Let curtailable wind/solar set a
     # sub-$0 marginal price in oversupply, reproducing CAISO's negative midday
     # LMPs (2024 RT da_pct: p5 -$10, p1 -$24, min -$41). California renewables
@@ -12137,7 +12146,7 @@ class ScenarioConfig:
     # offer_curves.split_coal_tranches in build_dispatch_fleet's dead else
     # limb (every registered bundle of all six ISOs carries
     # use_campd_bins=True; proof:
-    # results/calibration/ercot188_g3_unreachability_proof.json). Their
+    # results/phase0/ercot/ercot188_g3_unreachability_proof.json). Their
     # historical defaults live on hash-only in _CACHE_KEY_RETIRED_FIELDS.
     # This also closes the issue-#1336 / DOF-ledger re-grounding debt for the
     # step sizes: there is nothing left to re-ground.
@@ -12734,7 +12743,7 @@ class ScenarioConfig:
     # class tuple. Identification (SPP, zero free parameters): sum(pmin x frac) =
     # 3,324.5 MW lands at 0.69-1.40x the measured EIA-930 SWPP COL p01 across
     # 2019-2025, median 1.045. Record:
-    # docs/handoffs/PRECOMMIT-spp-71-ensemble-sync-floor-2026-09-22.md.
+    # docs/records/spp/PRECOMMIT-spp-71-ensemble-sync-floor-2026-09-22.md.
     coal_sync_ensemble_level: bool = False
 
     # COAL MUST-RUN REQUIRES A MEASURED ROW (pjm-h14). GATED, default False, so
@@ -12989,12 +12998,12 @@ class ScenarioConfig:
     # fleet's incremental offer floor; with ERCOT-110's measured coal
     # availability restored, 99% of the model's +11.7 TWh coal over-run is
     # economic dispatch INSIDE the real fleet's own committed HSL envelope
-    # (results/calibration/FINDING-ercot111-coal-dispatch-economics-2026-07-24.md).
+    # (docs/records/ercot/FINDING-ercot111-coal-dispatch-economics-2026-07-24.md).
     # Default off (every existing keeper unchanged).
     coal_econ_marginal_hr_bound: bool = False
 
     # PER-PLANT TWO-SIDED MODE of the same measurement (soco-81; owner ruling
-    # 2026-09-27 on docs/handoffs/r-soco/FINDING-soco-75-2026-09-27.md §6).
+    # 2026-09-27 on docs/records/soco/r-soco/FINDING-soco-75-2026-09-27.md §6).
     # The class floor above only RAISES a band; it is inert where a plant's
     # measured incremental rate sits below the band (SOCO: every plant). With
     # this on, a coal tranche set that carries a measured MUST-RUN floor
@@ -13021,7 +13030,7 @@ class ScenarioConfig:
     coal_econ_marginal_hr_two_sided: bool = False
 
     # ROUTE A "REPLACE" -- the COMMITTED band's MEASURED basis (pjm-h6, chartered
-    # by docs/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md §4/§10a and
+    # by docs/records/pjm/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md §4/§10a and
     # the owner ruling 2026-09-14). ONE mechanism with TWO COUPLED HALVES that
     # are never separable (rule 19 [R-ONE-MECH]); arming one without the other
     # is the stacking this field exists to refuse:
@@ -13144,13 +13153,13 @@ class ScenarioConfig:
     # regulated-BIT plants are covered identically; merchant BIT reverts to
     # full-cost committed bids); union scope when stacked, like `_all`.
     # Requires `coal_takeorpay_from_data`. Default off (all existing keepers
-    # byte-identical). See docs/handoffs/miso-coal-conduct-design-2026-07.md.
+    # byte-identical). See docs/records/miso/miso-coal-conduct-design-2026-07.md.
     coal_committed_takeorpay_regulated: bool = False
 
     # Sunk-FIXED treatment of the take-or-pay contract: suppresses the
     # COMMITTED-band discount of the three flags above while leaving the
     # `_mustrun` band's `1 − contract_share` untouched. Driver (miso-96,
-    # results/calibration/FINDING-miso96-coal-prb-offpeak-2026-07.md): a
+    # docs/records/miso/FINDING-miso96-coal-prb-offpeak-2026-07.md): a
     # take-or-pay contract is an obligation over an ACCOUNTING PERIOD (annual
     # / monthly contracted tonnage), not a per-hour price. Over that period it
     # is sunk in aggregate, so it does not enter the marginal cost of an
@@ -13220,7 +13229,7 @@ class ScenarioConfig:
     # (rule 13: year-static plant conduct, same status as
     # coal_takeorpay_share; not an outcome pin — the LP still prices every
     # hour). Scope + kill rules + guards pre-registered BEFORE measurement:
-    # results/calibration/PREREG-miso112-prb-committed-split-2026-07-31.md.
+    # docs/records/miso/PREREG-miso112-prb-committed-split-2026-07-31.md.
     # Default off — every existing keeper byte-identical.
     coal_prb_committed_split: bool = False
 
@@ -13286,11 +13295,11 @@ class ScenarioConfig:
     # min-loads). D-2 id MECH_MISO_COAL_NIGHT_FLOOR; D-4 window declared in
     # scripts/legitimacy_diagnostics.py. Guards + the K1 inertness kill rule
     # pre-registered BEFORE the binding measurement and before any solve:
-    # results/calibration/PREREG-miso113-prb-night-floor-2026-08-01.md.
+    # docs/records/miso/PREREG-miso113-prb-night-floor-2026-08-01.md.
     miso_coal_night_floor: bool = False
 
     # MISO merchant-CC EcoMin online floor (miso-286, owner charter
-    # docs/handoffs/CHARTER-miso285-ecomin-price-taker-2026-09-29.md).
+    # docs/records/miso/CHARTER-miso285-ecomin-price-taker-2026-09-29.md).
     # STRUCTURE (rule 1): a committed non-fast-start MISO unit's EcoMin energy
     # is must-take while it is synchronized — its cost is recovered through
     # no-load / make-whole, not through the incremental energy curve that sets
@@ -13352,7 +13361,7 @@ class ScenarioConfig:
     coal_mustrun_per_plant: bool = False
 
     # Coal MINIMUM ONLINE CONFIGURATION floor (lane ercot128-unit-grain;
-    # docs/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md). ERCOT-scoped
+    # docs/records/ercot/DIAGNOSIS-ercot128-coal-unit-grain-2026-07-28.md). ERCOT-scoped
     # (rule 25 [R-ISO-SCOPE]), default OFF, byte-identical off.
     #
     # WHAT IT IS. A multi-unit coal plant cannot be pushed below the minimum
@@ -13530,7 +13539,7 @@ class ScenarioConfig:
     # --short-windows --emit-screened-set; rule 23: new output, same source,
     # same guard). ZERO free parameters: it reuses wefor_residual, whose value
     # is identified by the caiso-187 residual formula max(0, W - X) on the ISO's
-    # own fleet (docs/PRECOMMIT-miso273-short-screened-coal-wefor-2026-09-25.md).
+    # own fleet (docs/records/miso/PRECOMMIT-miso273-short-screened-coal-wefor-2026-09-25.md).
     # Requires outage_source="historic", wefor_residual set,
     # unit_outage_short_windows and unit_outage_dispatched_bin_denominator
     # (fail-closed in fleet.arrays). Non-ERCOT only.
@@ -13556,7 +13565,7 @@ class ScenarioConfig:
     # re-derive of the SAME curve from the SAME CAMPD source at meteorological-
     # season grain — scripts/data/derive_ercot_stgas_drag_seasonal.py, frozen
     # rule 23). The ERCOT-90 measurement (charter
-    # docs/handoffs/ercot-stgas-shoulder-2026-07.md §3.3) found the pooled
+    # docs/records/ercot/ercot-stgas-shoulder-2026-07.md §3.3) found the pooled
     # net-load axis conflates the winter and summer net-load limbs: at the
     # same net-load, measured DJF overnight steam commitment is far below the
     # pooled curve (season-resolved zero-crossing DJF ~31 GW vs pooled
@@ -13695,7 +13704,7 @@ class ScenarioConfig:
     # error runs both ways, which is what identifies it as an ALLOCATION defect
     # rather than a level one — the curve itself is exonerated, sitting inside
     # the 2023-25 spread at every net-load bin in 2021, a year it was never
-    # fitted on (docs/handoffs/FINDING-ercot259-c8-allocation-2026-09-08.md §2).
+    # fitted on (docs/records/ercot/FINDING-ercot259-c8-allocation-2026-09-08.md §2).
     #
     # When True the SAME hourly mandate — measured as the MW the pro-rata path
     # actually DELIVERS, sum_g min(floor_frac, basis_g) x pmax_g, NOT the nominal
@@ -13816,7 +13825,7 @@ class ScenarioConfig:
     # where the MW removed from the peak were being dispatched economically
     # anyway; that is the mechanism working, and it is scored on rule 20's
     # shape-and-provenance escalation (D-1 cv_ratio toward 1.0), never waived.
-    # Evidence: results/calibration/FINDING-pjm177-st-gas-commitment-persistence-2026-09-09.md
+    # Evidence: docs/records/pjm/FINDING-pjm177-st-gas-commitment-persistence-2026-09-09.md
     netload_drag_min_run_persistence: bool = False
 
     # R-ERCOT-18 PRIOR-YEAR OVERNIGHT-COMMITMENT ALLOCATION of the ST_GAS
@@ -13894,7 +13903,7 @@ class ScenarioConfig:
     # (LP applies max(mc, level), low regime = 0). Forward-native (net-load
     # regenerates from a load+VRE forecast), rule-13-admissible; parameters
     # frozen against residuals (rule 20). See
-    # docs/handoffs/ercot-g22-offer-surface-2026-07.md and
+    # docs/records/ercot/ercot-g22-offer-surface-2026-07.md and
     # data.fleet.apply_ercot_ct_offer_surface.
     ercot_ct_offer_surface: bool = False
 
@@ -13904,7 +13913,7 @@ class ScenarioConfig:
     # posting one p50 level on every CT econ/peak row → overshoot, calibration-log
     # 2026-07-06) and the rejected static ``peak_ladder`` wall (which perturbed the
     # P0→P1 startup-amortization coupling in ALL hours → CT↔ST volume swap,
-    # docs/FINDING-ercot-priceshape-2026-07.md §6). This mechanism posts the MEASURED
+    # docs/records/ercot/FINDING-ercot-priceshape-2026-07.md §6). This mechanism posts the MEASURED
     # peak-band offer DISTRIBUTION (the 60-Day DAM disclosure top-of-curve quantile
     # ladder, per class) but CONDITION-BINNED by net-load percentile, applied to the
     # gas peak-band rungs (CC/CT/ST) in the P1 clearing solve ONLY and ONLY in the
@@ -14080,7 +14089,7 @@ class ScenarioConfig:
     # data/raw/_validation-source/ercot_sced_offer_wall_roombinned.json).
     ercot_offer_surface_cleared_share_rt_room_path: str | None = None
     # ERCOT-88 offline fast-start pool offer (default off; charter §9 of
-    # docs/handoffs/ercot-residual-midband-formation-lane-2026-07.md). The
+    # docs/records/ercot/ercot-residual-midband-formation-lane-2026-07.md). The
     # ERCOT-87 measurement adjudicated that the $150-500 moderate-tightness
     # band prices on the OFFLINE startable CT pool (telemetered OFFQS/OFFNS,
     # ~5x the online spare's in-band offer mass), not on any online-spare or
@@ -14114,10 +14123,10 @@ class ScenarioConfig:
     # pre-repair row-grain branch it selected, once the re-solve existed that
     # no longer referenced it. Deleted rather than defaulted-on: a deprecated
     # parameter that still parses is a re-armable answer key.
-    # (docs/PRECOMMIT-ercot204-rtorpa-gate-and-rule26-successor-2026-08-15.md
+    # (docs/records/ercot/PRECOMMIT-ercot204-rtorpa-gate-and-rule26-successor-2026-08-15.md
     # Part B; the repair itself: owner sitting 2026-08-09 card D3 option (ii).)
     # ERCOT-176 offline-increment re-pricing, SLOW-START tier (default off;
-    # docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md, the
+    # docs/records/ercot/PRECOMMIT-ercot176-offline-increment-2026-08-07.md, the
     # owner-authorized ERCOT-151 §3 design round). The model's availability
     # basis is only-OUT-is-out (correct — startability is physical, rule 13),
     # so every non-outaged unit is offered to the LP at its base/wall-basis
@@ -14155,7 +14164,7 @@ class ScenarioConfig:
     # fast-start pool JSON — the CC block lives in the same file).
     ercot_offline_commit_offer_path: str | None = None
     # ERCOT-89 shoulder online-span anchor (default off; step-2 mechanism of
-    # docs/handoffs/ercot-shoulder-online-envelope-2026-07.md, owner-authorized
+    # docs/records/ercot/ercot-shoulder-online-envelope-2026-07.md, owner-authorized
     # design round 2026-07-19). The charter §8 measurement: the model's
     # availability basis (class-day, only-OUT-is-out, day-flat) hands the LP
     # the FULL non-OUT merchant CC/CT capability as online base/wall-priced
@@ -14189,7 +14198,7 @@ class ScenarioConfig:
     ercot_shoulder_online_span_path: str | None = None
     # ERCOT-159 energy-side online-capability ceiling (default off; queue item
     # 9, the ERCOT-155 named successor, owner-authorized 2026-08-04;
-    # docs/PRECOMMIT-ercot159-energy-online-capability-cap-2026-08-04.md;
+    # docs/records/ercot/PRECOMMIT-ercot159-energy-online-capability-cap-2026-08-04.md;
     # matrix row energy_online_capability_cap). The energy-side analogue of
     # ercot_reserve_supply_cap: the co-opt's fat headroom hands the LP every
     # non-outaged slow-start unit as dispatchable-from-cold at marginal cost
@@ -14244,7 +14253,7 @@ class ScenarioConfig:
     # cleared-share wall, RT/SCED leg, fast-start pool) from STEPPED net-load-
     # percentile bins to CONTINUOUS interpolation over the corpus's own hour
     # nodes — the same statistics, at rank grain, per-hour interpolated
-    # (docs/PRECOMMIT-ercot178-continuous-netload-grain-2026-08-08.md §2). The
+    # (docs/records/ercot/PRECOMMIT-ercot178-continuous-netload-grain-2026-08-08.md §2). The
     # ercot-177 diagnosis measured the stepped top bin pooling 263 hours whose
     # actual prices span 25x under one ladder (the tail is the top 2.07% of the
     # year, ABOVE the p97 edge), a dilution CAUSED by stepping; the continuous
@@ -14442,7 +14451,7 @@ class ScenarioConfig:
 
     # ERCOT gas-CC COMMITMENT BRIDGE (default off, ERCOT-gated): the committed-
     # STATE half of the trough-price-formation circle, promoted from the
-    # ERCOT-62b probe (docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md
+    # ERCOT-62b probe (docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md
     # §5-6; calibration-log 2026-07-12). The low-curve markdown above restores
     # the measured cheap LSL bids but was probe-REFUTED as the circle's carrier
     # alone: in reality those bids coexist with wide daily spreads because the
@@ -14557,7 +14566,7 @@ class ScenarioConfig:
     # (the prior text declared the floor gap-only).
     ercot_gas_bridge_online_hours: bool = False
     # ERCOT COMMITMENT POSTURE (default off, ERCOT-gated — the commitment-
-    # thinness lane, docs/handoffs/ercot-commitment-thinness-2026-07.md): the
+    # thinness lane, docs/records/ercot/ercot-commitment-thinness-2026-07.md): the
     # STANDALONE energy-only port of the pooled-linear commitment-posture lever
     # (design note docs/multi-iso/miso-scarcity-posture-design-2026-07.md §A).
     # MISO/CAISO/PJM ride the pergen RESERVE pool; ERCOT runs a fleet-wide ORDC
@@ -14685,7 +14694,7 @@ class ScenarioConfig:
     # NUCLEAR_MONTHLY_CF / refuel-block scheduling). Zero fitted scalars.
     # See data.outages.nuclear_unit_availability_series and the application
     # in data.fleet.generators_to_fleet_arrays;
-    # docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §8.2.1.
+    # docs/records/pjm/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §8.2.1.
     # PROBE VERDICT (pjm-nuc-1b, 2026-07-16 — diagnosis §8.2.1): the
     # pre-committed build-time provenance gate FAILED (-72 MW net recovery
     # over the 22 summer-2025 tail hours vs the >= 75 MW pre-commitment;
@@ -14723,7 +14732,7 @@ class ScenarioConfig:
     # under-removal case, DAM carries more outage than the >=5-day windows
     # found). The model's own windows remain the within-class shape below the
     # measured level. Motivation (June/Sep-2023 scarcity-formation forensics,
-    # docs/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md): the
+    # docs/records/ercot/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md): the
     # statistical stack ran the gas fleet 13-22 % derated at the summer-evening
     # reserve margin vs the disclosure's measured live ratings. The measured HSL
     # is a published MW capability quantity, never a price (rule 13); forecast
@@ -14804,7 +14813,7 @@ class ScenarioConfig:
     # run anyway, and a unit in economic layup RUNS when prices spike. The
     # detected envelope is therefore a LOWER BOUND on unavailability whose error
     # is largest exactly in scarcity. Measured on PJM (pjm-161 Phase 0,
-    # results/calibration/_pjm161_outage_inversion.json): corr(derated MW, net
+    # results/phase0/pjm/_pjm161_outage_inversion.json): corr(derated MW, net
     # load) = -0.68 .. -0.77 in every year 2022-2025, and the top-1% net-load
     # hours carry only 0.22-0.38x the annual-mean derate — the envelope hands
     # the LP the MOST capacity in the TIGHTEST hours. During Winter Storm
@@ -14825,7 +14834,7 @@ class ScenarioConfig:
     #     structural-zero resurrection that was 66-68% of pjm-145's measured
     #     lift — is unreachable by construction.
     #  3. FLEET grain, not class grain, and the ex-ante measurement is why
-    #     (results/calibration/_pjm161_removeonly_exante.json). PJM publishes
+    #     (results/phase0/pjm/_pjm161_removeonly_exante.json). PJM publishes
     #     ONE fleet number; spreading it into a per-class availability FRACTION
     #     (what `pjm_dam_availability_series` does) degenerates, under a
     #     remove-only rule, into "every class ceilinged at the fleet mean" — it
@@ -14856,7 +14865,7 @@ class ScenarioConfig:
     # BOUND on the correction. It is deliberately NOT closed with a scale
     # factor: a factor tuned to the gap would be a fitted parameter
     # (rules 13/21/24). Measured ex ante in
-    # results/calibration/_pjm161_removeonly_exante.json.
+    # results/phase0/pjm/_pjm161_removeonly_exante.json.
     pjm_measured_outage_event_cap: bool = False
 
     # ERCOT measured class-HOUR thermal availability (default off, ERCOT
@@ -14868,7 +14877,7 @@ class ScenarioConfig:
     # (scripts/data/derive_ercot_thermal_dam_availability.py --hourly-out,
     # data/raw/ercot-thermal-dam-availability-hourly.csv). Owns the hourly
     # ambient-derate shape the day mean discards: the ERCOT-95 diagnosis
-    # (docs/handoffs/ercot95-scarcity-tail-diagnosis-2026-07.md Finding 6)
+    # (docs/records/ercot/ercot95-scarcity-tail-diagnosis-2026-07.md Finding 6)
     # measured the flat block handing the model +216 MW mean (+433 p90, +578
     # max) phantom CC+CT capacity on the 181 actual 2023 RT tail hours — real
     # HSL dips below its day mean exactly in the hod 13-19 afternoon window
@@ -14996,8 +15005,8 @@ class ScenarioConfig:
     # arrays.py, its class scope extended, never a second cap layer (rule 19).
     # The ERCOT-148 coal ruling did NOT transfer by assumption; the gas side
     # was measured on its own conduct (ERCOT-149 Phase 0/1,
-    # docs/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md, committed record
-    # results/calibration/ercot149_gas_outage_phase0.json): the keeper
+    # docs/records/ercot/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md, committed record
+    # results/phase0/ercot/ercot149_gas_outage_phase0.json): the keeper
     # dispatches 4.27 / 5.93 / 4.14 TWh (2023/24/25) of CC_REGULAR + ST_GAS
     # above the measured event-window ceiling. The gas windows are committed
     # >= 5-day EVENT-BASED dead spans (every hour < 2% CF — economic idling is
@@ -15073,7 +15082,7 @@ class ScenarioConfig:
     # unattributed plateau leaves the unit set empty and keeps the product —
     # fail-safe. Takes precedence over the rejected blanket gate above when
     # both are set. Backcast-only by the same construction; forecast untouched.
-    # docs/PRECOMMIT-ercot174-unit-attributed-partial-outage-2026-08-06.md
+    # docs/records/ercot/PRECOMMIT-ercot174-unit-attributed-partial-outage-2026-08-06.md
     ercot_dam_availability_event_cap_unit_scoped: bool = False
 
     # R-ERCOT-7 PER-UNIT event-cap composition (default off, ERCOT backcast).
@@ -15095,7 +15104,7 @@ class ScenarioConfig:
     # an unattributed plateau keeps the product (fail-safe). Mutually exclusive
     # with the unit-scoped min() above (rule 19, enforced at the point of use in
     # fleet/arrays.py). Backcast-only by the same construction; forecast
-    # untouched. docs/handoffs/FINDING-r-ercot-7-per-unit-composition-2026-09-26.md
+    # untouched. docs/records/ercot/FINDING-r-ercot-7-per-unit-composition-2026-09-26.md
     ercot_dam_availability_event_cap_per_unit: bool = False
 
     # ercot-185 FAULT-3 PARTIAL-LAYER CONSTRUCTION REPAIR (default off, ERCOT
@@ -15125,7 +15134,7 @@ class ScenarioConfig:
     # loader reads the flat extract, so the gate degrades to the incumbent.
     # Backcast-only by construction (the extracts are measured CAMPD overlays);
     # forecast untouched.
-    # docs/PRECOMMIT-ercot185-fault3-partial-layer-construction-2026-08-09.md
+    # docs/records/ercot/PRECOMMIT-ercot185-fault3-partial-layer-construction-2026-08-09.md
     ercot_partial_outage_shaped_derate: bool = False
 
     # R-ERCOT-4 day-grain guard on the shaped partial-outage layer (default off,
@@ -15145,8 +15154,8 @@ class ScenarioConfig:
     # replaced for this extract by the day-grain floor property, asserted in the
     # deriver. Falls back to the unguarded shaped extract when the file is
     # absent. Forecast untouched (measured CAMPD overlay).
-    # docs/handoffs/FINDING-r-ercot-4-validation-years-2026-09-25.md;
-    # docs/handoffs/PRECOMMIT-r-ercot-4-day-guard-2026-09-25.md
+    # docs/records/ercot/FINDING-r-ercot-4-validation-years-2026-09-25.md;
+    # docs/records/ercot/PRECOMMIT-r-ercot-4-day-guard-2026-09-25.md
     ercot_partial_outage_day_guard: bool = False
 
     # ERCOT CAMPD-blind per-plant availability (default off, ERCOT backcast-gated
@@ -15173,7 +15182,7 @@ class ScenarioConfig:
     # 2025-12-06), data/raw/ercot-storage-capability.csv, derived by
     # scripts/data/derive_ercot_storage_capability.py (basis decision + frozen
     # contract in its docstring). Motivation (summer-availability audit,
-    # docs/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md §1c-1d): the
+    # docs/records/ercot/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md §1c-1d): the
     # EIA-860 ramp runs ~2 GW below ERCOT's registered capability in BOTH
     # summers (5.8 vs 7.7 GW Aug-2024; 10.6 vs 12.5 GW Jul-2025) — COD-month
     # lag + hybrid-half coverage — so the model's evening scarcity margin sits
@@ -15231,7 +15240,7 @@ class ScenarioConfig:
     # ONLY and ONLY in anticipated-tight hours — P0 run lengths and loose
     # hours stay byte-identical (the ladder is clamped never to lower an
     # offer below the resolved peak height). The G-22 diagnosis
-    # (docs/handoffs/pjm-summer-peak-price-formation-g22-2026-07.md): at the
+    # (docs/records/pjm/pjm-summer-peak-price-formation-g22-2026-07.md): at the
     # top-150 load hours the real fleet's top-of-curve reaches p90 $238 /
     # p99 $514 while the keeper's CC/CT peak bands cap ~$115-130, so the
     # energy dual is set by a deep sub-$35 body and the summer peak never
@@ -15249,9 +15258,9 @@ class ScenarioConfig:
     # FAMILY (both the top-of-curve and the mid-curve surface), default OFF.
     #
     # Authorized by the owner 2026-07-27 with an amendment
-    # (docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md decision
+    # (docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md decision
     # banner; executed by pjm-132, charter
-    # docs/handoffs/pjm-132-midcurve-reconditioning-charter-2026-07.md). The
+    # docs/records/pjm/pjm-132-midcurve-reconditioning-charter-2026-07.md). The
     # owner's term was "keep the current config as default unless seasonal is
     # new keeper", so the within-YEAR surfaces remain live and keep their
     # filenames and this gate stays default-OFF: every existing keeper and
@@ -15731,7 +15740,7 @@ class ScenarioConfig:
     # steps ordinary zero-emission supply clearing above the offer — so the
     # DA market's extra procurement depth at peaks (net cleared DEC − INC ≈
     # +7-11 GW at the July-2024 top hours; the ~9-10 GW gap of
-    # docs/FINDING-pjm-offer-surface-noop-2026-07.md) is carried as real
+    # docs/records/pjm/FINDING-pjm-offer-surface-noop-2026-07.md) is carried as real
     # market structure and the cleared virtual volume stays ENDOGENOUS.
     # Rule-13 admissibility: the surface is built from SUBMITTED ex-ante bid
     # curves (participant inputs exactly like generator energy offers,
@@ -15744,7 +15753,7 @@ class ScenarioConfig:
     # against residuals (rule 20). PJM-only (rule 25).
     pjm_da_virtual_bids: bool = False
     # PJM-NEXT-7 (owner ruling 2026-09-28 "settle financially"; design card A',
-    # docs/DESIGN-pjm-next-7-virtual-settlement-2026-09-28.md). Requires
+    # docs/records/pjm/DESIGN-pjm-next-7-virtual-settlement-2026-09-28.md). Requires
     # ``pjm_da_virtual_bids``. In PJM a cleared INC/DEC is liquidated in RT:
     # RT physical generation serves RT physical load, and virtuals reach RT
     # only through the DA schedule. The model's P0 (commitment discovery) is
@@ -15801,7 +15810,7 @@ class ScenarioConfig:
     # the pjm-121 no-LP pre-check (level CC_LIKE lowers the CC econ bids
     # -8.76 $/MWh MW-weighted and NARROWS the offer spread in every net-load
     # bin — a level-lowering lever cannot close a dispersion gap;
-    # docs/FINDING-pjm121-ccbelt-c3a-close-2026-07.md §5) and kept default-off
+    # docs/records/pjm/FINDING-pjm121-ccbelt-c3a-close-2026-07.md §5) and kept default-off
     # as the correct construction for a fleet whose fitted bands sit BELOW
     # measured. Exercised by scripts/probes/pjm121_level_form_precheck.py;
     # regression contract in tests/test_pjm_offer_midcurve_level_form.py.
@@ -15817,7 +15826,7 @@ class ScenarioConfig:
     # §3) — while the econ rise above min load is PJM's measured one, replacing
     # the residual-identified econ_low/econ_high band on those rows (rule 14).
     # Zero free parameters. P1-only like every mid-curve form. Phase 0:
-    # docs/FINDING-pjm-next-5-phase0-cards-1-2-3b-2026-09-27.md card 1.
+    # docs/records/pjm/FINDING-pjm-next-5-phase0-cards-1-2-3b-2026-09-27.md card 1.
     pjm_offer_midcurve_shape_segments: tuple[str, ...] | None = None
     # PEAK-row scope for the mid-curve surface (default OFF, PJM-gated). The
     # mid-curve targeting excludes the CC/CT ``peak`` rungs by design (only the
@@ -15825,7 +15834,7 @@ class ScenarioConfig:
     # CC_LIKE s0.95-0.99 rungs at 11.1-18.8 x delivered gas ($49-83 at 2025
     # tight-strata gas) — has no row to land on: the model's CC econ tops at
     # ~9.6 x and its CC peak starts at ~31.9 x, leaving the $49-83 region
-    # unowned by ANY row (docs/FINDING-pjm122-marginal-ownership-2026-07.md §3).
+    # unowned by ANY row (docs/records/pjm/FINDING-pjm122-marginal-ownership-2026-07.md §3).
     # A segment listed here extends the targeting to that segment's ``peak*``
     # rungs, priced in LEVEL form (the measured belt REPLACES the fitted band —
     # a floor cannot pull a fitted rung sitting above measured down onto it).
@@ -15920,7 +15929,7 @@ class ScenarioConfig:
     # overnight-offline evidence (rule-12 bug) while leaving the eastern CT
     # under-run essentially untouched (an offer/capture residual, not a
     # commitment-share one). G-20 eastern CC/CT under-run follow-up
-    # (docs/handoffs/pjm-eastern-ccct-underrun-g20-2026-07.md §5/§5b). Off by
+    # (docs/records/pjm/pjm-eastern-ccct-underrun-g20-2026-07.md §5/§5b). Off by
     # default; ablated in the zero-forcing twin (MECH_CC_MUSTRUN_PER_PLANT).
     cc_mustrun_per_plant: bool = False
 
@@ -16042,7 +16051,7 @@ class ScenarioConfig:
     # per-ISO verdict.
     #
     # THE DEFECT, measured on PJM at zero LP (pjm-h15 phase 0,
-    # results/calibration/_pjm_h15_coalwindow_phase0.json). PJM's committed
+    # results/phase0/pjm/_pjm_h15_coalwindow_phase0.json). PJM's committed
     # ``thermal_tranches_PJM.csv`` publishes ONE ``online_frac`` per coal plant,
     # derived on 2023-2025 — identified by re-running that window through the
     # FROZEN deriver and reproducing the committed column EXACTLY (168 rows
@@ -16212,6 +16221,42 @@ class ScenarioConfig:
     # Off by default: every existing keeper is byte-identical.
     mustrun_window_commitment_grain: bool = False
 
+    # PLANT-CONDUCT placement of the cc_mustrun_per_plant window (PJM-NEXT-17,
+    # owner card "Design + build" / "Build + solve anyway"). The SIZE of the
+    # window (``online_frac`` x hours, pooled or per-year), its LEVEL (the
+    # committed tranche), its MEMBERSHIP and the pmax*availability clip are all
+    # UNCHANGED; only the hour SELECTION moves. The incumbent ranks hours by
+    # SYSTEM load, so a plant is floored at the system peak whatever its own
+    # conduct; armed, each CC_REGULAR plant's hours are ranked by its OWN
+    # measured CAMPD online probability in the hour's month x hour-of-day cell
+    # (``data/raw/_processed-legacy/cc_conduct_profile_<ISO>.csv``,
+    # ``scripts/data/derive_cc_conduct_profile.py`` -- the frozen
+    # ``derive_thermal_tranches`` per-unit routing, net and 1 %-of-nameplate
+    # sync test), ties broken by system load.
+    # Rule 17 [R-FLOOR-WINDOW]: driver = the plant's own measured commitment
+    # conduct; window = the cells that conduct says it is on; forward story =
+    # the profile re-derives from CAMPD history like ``online_frac``.
+    # Rule 13 [R-MEASURED]: in a BACKCAST the solved year's own meter is
+    # EXCLUDED (leave-one-year-out over the artifact years), so no same-year
+    # outcome enters the placement; a forecast pools every artifact year.
+    # Rule 21 [R-DOF]: zero free parameters. The month x hour-of-day grain was
+    # chosen ex ante by held-out CONDUCT log-loss (it beats month x day-type x
+    # hour in all seven PJM years, scripts/probes/_pjmnext17_cc_conduct_window.py),
+    # never by a price or volume residual.
+    # Rule 19 [R-ONE-MECH]: the window is REPLACED, never stacked; it is
+    # refused together with ``mustrun_window_commitment_grain`` (the other
+    # placement of the same window) and reaches only the CC_REGULAR leg -- the
+    # ST_GAS leg and the coal synchronization seam keep their own placement.
+    # A plant with no profile row (or a year with no other artifact year) keeps
+    # the incumbent hour ranking. REFUSED FOR PJM at zero LP (owner card
+    # "Refuse; keep built, off", 2026-10-01): on the real fleet the floor in
+    # metered-offline hours ROSE 8-19 % (2019/2021/2023/2025) -- outage windows
+    # already zero most real off-hours, and conduct ranking moves the window into
+    # short non-outage off-runs (§2 of
+    # docs/records/pjm/FINDING-pjm-next-17-coal-response-and-cc-conduct-window-2026-10-01.md).
+    # Off by default: every existing keeper is byte-identical.
+    cc_mustrun_conduct_window: bool = False
+
     # LEVEL-BASIS correction for the st_gas_mustrun_p25_level floor — miso-172.
     # ``p25_cf`` is a percentile of ``net_MW / (nameplate x avail_mult)``, i.e. a
     # fraction of AVAILABLE capacity, and ``thermal_tranche_p25_level``
@@ -16254,7 +16299,7 @@ class ScenarioConfig:
     # that conditions the same percentile family on those hours.
     #
     # Identified, not asserted. The miso-198 zero-solve census
-    # (results/calibration/_miso198_stgas_oom_conduct_phase0.json, rule frozen
+    # (results/phase0/miso/_miso198_stgas_oom_conduct_phase0.json, rule frozen
     # and blob-verified before any adjudicating quantity) partitioned the ST_GAS
     # gap between the measured out-of-merit conduct and the keeper's own armed
     # floor EXACTLY — an identity, not a fit — into population / window / LEVEL:
@@ -16309,7 +16354,7 @@ class ScenarioConfig:
     # per-ISO by construction, so the mechanism self-scopes (rule 25).
     # Independent of st_gas_mustrun_p25_measured_level: when BOTH are on this
     # one wins, because it is the same level slot re-conditioned (never
-    # stacked). Selection record: results/calibration/_miso198_level_selection.json.
+    # stacked). Selection record: results/phase0/miso/_miso198_level_selection.json.
     st_gas_mustrun_oom_level: bool = False
 
     # MEASURED LAY-UP WINDOW MASK for the per-plant must-run floors
@@ -16536,8 +16581,8 @@ class ScenarioConfig:
     # year's EIA-860 and moves when a plant adds or retires duct firing);
     # byte-inert while off. Independent of ``cc_duct_peaking_cap_pct``, which
     # still caps whatever this produces. Evidence:
-    # results/calibration/PREREG-nyiso198-duct-peaking-row-scope-screen.md,
-    # docs/FINDING-nyiso198-duct-peaking-row-scope-2026-09-06.md.
+    # docs/records/nyiso/PREREG-nyiso198-duct-peaking-row-scope-screen.md,
+    # docs/records/nyiso/FINDING-nyiso198-duct-peaking-row-scope-2026-09-06.md.
     cc_duct_peaking_row_scoped: bool = False
 
     # When True, combined-cycle (CC_REGULAR / CC_CHP) plants in the per-plant
@@ -16675,7 +16720,7 @@ class ScenarioConfig:
     # ``results.scarcity`` variance pro-forma. Rule 25 [R-ISO-SCOPE]: the
     # derived value is per-ISO (MISO first: R* = 1.0599 from the MISO MOM
     # record via scripts/probes/_miso160_wefor_shape_instrument.py, owner
-    # provenance decision docs/handoffs/miso-outage-grain-data-ask-2026-07.md
+    # provenance decision docs/records/miso/miso-outage-grain-data-ask-2026-07.md
     # §9); other ISOs keep None → the 0.30 constant, and derive their own
     # from their own records. Rule 23 [R-FROZEN-DERIVE]: re-derive only on a
     # source-data update, never on a residual.
@@ -16950,8 +16995,8 @@ class ScenarioConfig:
     # ZERO fitted scalars and zero free parameters (rule 21 [R-DOF]),
     # rule-13 forward-regenerable (a property of the accumulator, identical
     # for a forecast year's extract), byte-inert while off. Evidence:
-    # docs/FINDING-nyiso196-cc-outage-share-basis-2026-09-05.md,
-    # results/calibration/PREREG-nyiso196-cc-outage-share-basis-screen.md.
+    # docs/records/nyiso/FINDING-nyiso196-cc-outage-share-basis-2026-09-05.md,
+    # docs/records/nyiso/PREREG-nyiso196-cc-outage-share-basis-screen.md.
     unit_outage_extract_basis_share: bool = False
 
     # DERATE DENOMINATOR = THE DISPATCHED BIN'S OWN CAPACITY (miso-266, GATED
@@ -17123,7 +17168,7 @@ class ScenarioConfig:
     # otherwise appears in NO run_config.json and changes NO cache_key(), so
     # two bundles with identical configs could have solved on different grains
     # (rule 24 [R-REGISTRY]). Evidence:
-    # docs/FINDING-nyiso229-phase0-the-outage-window-grain-2026-09-12.md.
+    # docs/records/nyiso/FINDING-nyiso229-phase0-the-outage-window-grain-2026-09-12.md.
     #
     # ERCOT BRANCH (R-ERCOT-5, 2026-09-25). ERCOT routes its windows through its
     # own bin sheet and arms neither per-unit flag, so the predicate above never
@@ -17142,7 +17187,7 @@ class ScenarioConfig:
     # last day (interior 1-2.5 %), e.g. 2019 std 17,577 unit-hours / 2.89 TWh,
     # short-gas 9,525 / 1.39 TWh, short-coal 725 / 0.26 TWh generated inside
     # their own windows. Evidence:
-    # docs/handoffs/FINDING-r-ercot-5-2019-scarcity-2026-09-25.md.
+    # docs/records/ercot/FINDING-r-ercot-5-2019-scarcity-2026-09-25.md.
     unit_outage_window_hour_grain: bool = False
 
     # CAMPD PER-UNIT ATTRIBUTION (nyiso-175b/176, GATED default-off). The two
@@ -17168,7 +17213,7 @@ class ScenarioConfig:
     # regenerate for a forward year (rule 13 [R-MEASURED]). Falls back to the
     # incumbent artifact wherever a companion has not been derived for the ISO,
     # so the off path is byte-inert and no ISO but NYISO is reachable today.
-    # See docs/FINDING-nyiso176-input-artifact-reproducibility-2026-09-02.md.
+    # See docs/records/nyiso/FINDING-nyiso176-input-artifact-reproducibility-2026-09-02.md.
     campd_per_unit_attribution: bool = False
 
     # VINTAGE DENOMINATOR of the per-unit tranche companion (NWPP-NEXT-14,
@@ -17187,7 +17232,7 @@ class ScenarioConfig:
     # window's largest vintage nameplate. ZERO free parameters. Rule 23: the
     # trigger is the denominator defect, never a residual (it is NOT the cause
     # of the keeper-#18 C4 coal 2023 deepening:
-    # docs/handoffs/FINDING-nwppnext14-bridger-c4-decomposition-2026-09-30.md).
+    # docs/records/nwpp/FINDING-nwppnext14-bridger-c4-decomposition-2026-09-30.md).
     # Not combinable with campd_outage_merit_order_guard (no merit-guarded
     # vintage companion exists; the selector raises). Self-scoping: an ISO
     # without the companion falls back to its '-perunit-' artifact.
@@ -17216,7 +17261,7 @@ class ScenarioConfig:
     # Ignored under campd_per_unit_attribution (no fuel-split variant of the
     # per-unit companions exists). Byte-inert off; self-scoping -- only MISO
     # carries the companions, every other ISO falls back to its incumbent.
-    # docs/handoffs/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md.
+    # docs/records/miso/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md.
     campd_unit_fuel_split: bool = False
 
     # ST_GAS SPAN COVERAGE of the fuel-split tranche family (miso-279, GATED
@@ -17239,7 +17284,7 @@ class ScenarioConfig:
     # (own measured online_frac, top system-load hours) and forward story (the
     # same derive over the forward year's CEMS). A plant that retired before a
     # solve year is absent from that year's fleet, so its row is inert there.
-    # docs/FINDING-miso279-stgas-span-coverage-2026-09-27.md.
+    # docs/records/miso/FINDING-miso279-stgas-span-coverage-2026-09-27.md.
     campd_st_gas_span_coverage: bool = False
 
     # CAMPD SPLIT-REMAP COMPANIONS (miso-280, GATED default off; rule 14
@@ -17266,7 +17311,7 @@ class ScenarioConfig:
     # scope: the MISO backcast carries no carbon price, so they do not enter
     # its dispatch. ZERO free parameters (DOF +0). Rule 23 [R-FROZEN-DERIVE]:
     # the trigger is this identity data change, never a residual.
-    # docs/FINDING-miso280-phase0-riverside-vlr-southgas-2026-09-28.md §1.
+    # docs/records/miso/FINDING-miso280-phase0-riverside-vlr-southgas-2026-09-28.md §1.
     campd_split_remap_companions: bool = False
 
     # ECONOMIC-LAY-UP GUARD on the per-unit CAMPD companions (nyiso-177,
@@ -17349,7 +17394,7 @@ class ScenarioConfig:
     # a measured input (rule 13: outage windows regenerate for any year with
     # a CAMPD filing). Byte-inert off: a separate file, never an overwrite,
     # falling back to the standard extract where not derived.
-    # docs/PRECOMMIT-pjm-next-2-card1-outage-membership-2026-09-25.md.
+    # docs/records/pjm/PRECOMMIT-pjm-next-2-card1-outage-membership-2026-09-25.md.
     unit_outage_membership_repair: bool = False
     # PJM-NEXT-3 card 2 (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]) PER-UNIT
     # FUEL ROUTING of the '-memberrepair-' extract. The deriver tags every
@@ -17368,7 +17413,7 @@ class ScenarioConfig:
     # categorical re-tag from a published per-generator field; no row added,
     # dropped, moved or resized. Byte-inert off (a separate file, never an
     # overwrite; falls back to '-memberrepair-' where not derived).
-    # docs/PRECOMMIT-pjm-next-3-card2-unit-fuel-routing-2026-09-26.md.
+    # docs/records/pjm/PRECOMMIT-pjm-next-3-card2-unit-fuel-routing-2026-09-26.md.
     unit_outage_unit_fuel_routing: bool = False
     # PJM-NEXT-5 card 3(a) (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH],
     # rule 23 [R-FROZEN-DERIVE] — a SOURCE/DERIVER change, never a residual)
@@ -17388,7 +17433,7 @@ class ScenarioConfig:
     # read. ZERO free parameters: the deriver's committed constants. Byte-inert
     # off (separate files, never an overwrite; falls back to the incumbent
     # family where not derived).
-    # docs/PRECOMMIT-pjm-next-5-card3a-f2-rederive-2026-09-27.md.
+    # docs/records/pjm/PRECOMMIT-pjm-next-5-card3a-f2-rederive-2026-09-27.md.
     unit_outage_full_rederive: bool = False
     # PJM-NEXT-6 card 1 (owner ruling 2026-09-27, "Split"; rule 14
     # [R-ACCURATE], rule 19 [R-ONE-MECH]) — the F2 re-derive with the listed
@@ -17402,11 +17447,11 @@ class ScenarioConfig:
     # routing; every other F2 correction is kept. Meaningful only WITH
     # unit_outage_full_rederive (it REPLACES that file, rule 19); falls back to
     # '-rederive-unitfuel-' where not derived. Zero free parameters.
-    # docs/PRECOMMIT-pjm-next-6-card1-f2-split-2026-09-27.md.
+    # docs/records/pjm/PRECOMMIT-pjm-next-6-card1-f2-split-2026-09-27.md.
     unit_outage_rederive_peaker_windows: bool = False
     # PJM-NEXT-8 card 2 (owner card "Build + solve", 2026-09-28; rule 14
     # [R-ACCURATE], rule 19 [R-ONE-MECH]) — the EXIT-COHORT repair of the
-    # CAMPD unit-outage layer (docs/FINDING-pjm-next-7-coal-phase0-2026-09-28.md
+    # CAMPD unit-outage layer (docs/records/pjm/FINDING-pjm-next-7-coal-phase0-2026-09-28.md
     # section 3). Three measured corrections, one object:
     # (a) unit capacity from the derive year's OWN EIA-860 vintage (Chalk Point
     #     1571's coal boilers took GT1/GT2's 16/35 MW because the post-retirement
@@ -17442,7 +17487,7 @@ class ScenarioConfig:
     # outage), never a price residual (rule 23). Backcast overlay only (the
     # CAMPD outage layer is historic). Byte-inert off: separate files, never an
     # overwrite, falling back to the incumbent extract where not derived.
-    # docs/handoffs/FINDING-spp-85-coal-outage-basis-2026-09-26.md.
+    # docs/records/spp/FINDING-spp-85-coal-outage-basis-2026-09-26.md.
     unit_outage_netload_mask_repair: bool = False
     # SPP-86 (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH], rule 17
     # [R-FLOOR-WINDOW]) COAL OUTAGE SHARE ON THE EXTRACT'S OWN CAPACITY BASIS.
@@ -17471,7 +17516,7 @@ class ScenarioConfig:
     # the coal denominator; the loader raises). ZERO free parameters (rule 21),
     # rule-13 forward-regenerable (a property of the accumulator on any year's
     # extract), byte-inert off.
-    # docs/handoffs/FINDING-spp-86-coal-floor-conduct-2026-09-26.md.
+    # docs/records/spp/FINDING-spp-86-coal-floor-conduct-2026-09-26.md.
     unit_outage_coal_extract_basis_share: bool = False
     # PJM-NEXT-2 card 3 (rule 19 [R-ONE-MECH], rule 14 [R-ACCURATE]).
     # NUCLEAR_DORMANT_UNTIL zeroes a nuclear unit in every backcast year before
@@ -17485,7 +17530,7 @@ class ScenarioConfig:
     # afterwards). The nuclear monthly-CF derive already excludes the dormant
     # plant's generation AND capacity, so nothing double-counts. ZERO free
     # parameters. PJM 2019 is the only unit-year it reaches in the keeper.
-    # docs/PRECOMMIT-pjm-next-2-card3-tmi-dormancy-2026-09-25.md.
+    # docs/records/pjm/PRECOMMIT-pjm-next-2-card3-tmi-dormancy-2026-09-25.md.
     nuclear_dormancy_defers_to_vintage_exit: bool = False
     # soco-67 (rule 19 [R-ONE-MECH], rule 14 [R-ACCURATE]) PRE-COMMERCIAL
     # WINDOW CLIP on the >= 5-day CAMPD unit-outage overlay. The deriver fills
@@ -17732,7 +17777,7 @@ class ScenarioConfig:
     #
     # *** REFUSED AT CAISO — ARMED BY NO KEEPER, DO NOT ARM WITHOUT READING THIS.
     # *** caiso-186 killed it BEFORE SOLVE on its own pre-registered G-NOCONTRA
-    # bar (results/calibration/FINDING-caiso186-seasonal-capability-2026-08-09.md).
+    # bar (docs/records/caiso/FINDING-caiso186-seasonal-capability-2026-08-09.md).
     # The basis is sound and the arithmetic is exact — but it composes with a
     # SECOND mechanism that the incumbent nameplate basis was silently absorbing.
     # In a historic backcast a CC unit's availability starts at 1 - WEFOR, and on
@@ -17773,7 +17818,7 @@ class ScenarioConfig:
     # gas fleet 2026-07-09): this only brings coal DOWN to its published
     # net-summer rating, which the per-plant CEMS summer maxima confirm the fleet
     # tops out at (Oak Grove 0.937 vs ns 0.952, Major Oak 0.877 vs 0.873, Spruce
-    # 0.893 vs 0.904 — see docs/handoffs/ercot-coal-nameplate-summer-derate-2026-07.md).
+    # 0.893 vs 0.904 — see docs/records/ercot/ercot-coal-nameplate-summer-derate-2026-07.md).
     # A plant whose summer rating meets/exceeds nameplate (Martin Lake 1.03,
     # Coleto 1.05) clamps to 1.0 (no derate). Only reduces capacity, only in
     # summer; can never loosen the fleet. ERCOT-scoped in practice (rule 24), but
@@ -17853,7 +17898,7 @@ class ScenarioConfig:
     # TMAX **flat within the day**: even armed, it reshapes day-to-day and
     # seasonally but carries ZERO hour-of-day signal, so no channel in the
     # availability chain can produce a diurnal capability wave
-    # (results/calibration/FINDING-miso100-stchp-diurnal-2026-07.md §4/§5).
+    # (docs/records/miso/FINDING-miso100-stchp-diurnal-2026-07.md §4/§5).
     # ``temp_derate_hourly_grain`` swaps that input for
     # ``iso_zone_hourly_drybulb`` — the same curated daily TMIN/TMAX
     # reconstructed to hourly by the standard climatological two-piece cosine
@@ -18040,7 +18085,7 @@ class ScenarioConfig:
     # express start/no-load hurdles, competitive reach and the scarcity wall
     # in $ terms (net-revenue targets), not heat-rate multiples. Design +
     # identification table:
-    # docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md.
+    # docs/records/misc/gas-offer-net-revenue-margin-design-2026-07.md.
     # Implemented as a post-assemble_mc adjustment on BOTH passes
     # (data.offer_curves.apply_gas_offer_margin); coal keeps its own gas-keyed
     # supply sigmoid (rule 19), the legacy non-CAMPD tranche path is inert.
@@ -18145,7 +18190,7 @@ class ScenarioConfig:
     # identification points still never stack.
     #
     # WHY IT MATTERS, measured on NYISO before any solve
-    # (docs/FINDING-nyiso230-phase0-the-anchor-slope-2026-09-12.md): the
+    # (docs/records/nyiso/FINDING-nyiso230-phase0-the-anchor-slope-2026-09-12.md): the
     # markup term ``markup_hr x (anchor - fuel)`` is a linear extrapolation
     # with no saturation, and NYISO's delivered gas runs 2.7969 (2024) to
     # 8.4431 (2022) $/MMBtu against a frozen 3.9046 anchor. The C3a price bias
@@ -18265,7 +18310,7 @@ class ScenarioConfig:
     # training-window delivered-coal anchor. At fuel == anchor the resolved
     # bid is EXACTLY ``coal_offer_margin_level`` — the measured RT curve
     # bottom (60-Day SCED ``Submitted TPO-Price1`` cap-wtd p50, 98.8-100 %
-    # coverage; results/calibration/ercot136_coal_headroom_conduct.json
+    # coverage; results/phase0/ercot/ercot136_coal_headroom_conduct.json
     # B1_curve_bottom). The margin is DERIVED, never fitted (rule 13):
     #   margin = level − HR_capwtd × anchor
     # (scripts/data/derive_coal_offer_margin_anchor.py, rule-23 frozen).
@@ -18299,8 +18344,8 @@ class ScenarioConfig:
 
     # CC COMMITTED-BLOCK measured offer level (default off — ERCOT-139, the
     # gas-CC analogue of the coal min-load form above; charter
-    # docs/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md §6, precommit
-    # docs/PRECOMMIT-ercot139-cc-committed-offer-2026-07-30.md). ERCOT-138
+    # docs/records/ercot/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md §6, precommit
+    # docs/records/ercot/PRECOMMIT-ercot139-cc-committed-offer-2026-07-30.md). ERCOT-138
     # measured the defect: against ERCOT's own SCED TPO conduct the model's CC
     # committed/econ bands bid +$2.8-6.6/MWh too DEAR through the crossing band
     # (coal's sit at -1.6..+3.9 and are exonerated), and §2.5 located the
@@ -18365,7 +18410,7 @@ class ScenarioConfig:
     # the model part-loads high-heat-rate CCs through hours they are really off
     # (corr(measured HR, log model/EIA-923) 0.68-0.80 in every year; 60-Day DAM
     # offers heat-rate-flat, DAM ON-share falling with HR —
-    # docs/handoffs/r-ercot/PRECOMMIT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md).
+    # docs/records/ercot/r-ercot/PRECOMMIT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md).
     # When True the ERCOT-139 shift is weighted per hour by the plant's
     # PRIOR-YEAR (Y-1) measured online capacity share q_p(month, hour-of-day):
     #   mc[g, t] += q_p(t) x (level - HR_g x anchor - vom_g)
@@ -18380,7 +18425,7 @@ class ScenarioConfig:
     cc_committed_prior_year_commitment_eligibility: bool = False
 
     # Coal `_peak`-tranche measured offer margin (ERCOT-140,
-    # docs/PRECOMMIT-ercot140-coal-peak-offer-2026-07-30.md — the coal
+    # docs/records/ercot/PRECOMMIT-ercot140-coal-peak-offer-2026-07-30.md — the coal
     # offer-curve UPPER-TAIL successor ERCOT-123 §7.2 chartered). ERCOT-138
     # §5.6 measured the defect: at p90 the model's COAL curve runs
     # $9.6–15.5/MWh UNDER its own fleet's SCED TPO conduct in all four
@@ -18503,7 +18548,7 @@ class ScenarioConfig:
     # precommit's G-BIT bit-identity kill verifies this end-to-end). Zero
     # fitted scalars; the windows are the corpus's own hourly-submission
     # structure under the day-majority stability license
-    # (docs/PRECOMMIT-ercot168-coal-perplant-year-curves-2026-08-05.md §0).
+    # (docs/records/ercot/PRECOMMIT-ercot168-coal-perplant-year-curves-2026-08-05.md §0).
     coal_perplant_offer_yearly: bool = False
     # The resolved year-keyed windowed registry (year -> plant_code ->
     # ((months, hours, ((cum_MW, price), ...)), ...)). None + flag armed is a
@@ -18615,7 +18660,7 @@ class ScenarioConfig:
     # level the steam contract sustains, not just the never-below minimum.
     # The WP-3 statistic (two lenses, one family — see
     # fleet.thermal_tranche_chp_steam_level and
-    # docs/handoffs/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md): CAMPD-
+    # docs/records/caiso/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md): CAMPD-
     # visible cogens derive the loading-when-on construction (on-hour
     # frequency x p50 loading-conditional-on-online — the pre-WP-3
     # p25-of-all-hours mixed offline zeros into the level and under-measured
@@ -18663,7 +18708,7 @@ class ScenarioConfig:
     # when ``on_freq ~ 1``. For a plant online 2-13 % of hours the product
     # turns a cycler into a 24/7 trickle — annual energy approximately
     # conserved, hourly conduct entirely wrong. Measured on the CAISO keeper
-    # (docs/PRECOMMIT-caiso293-chp-steam-duty-window-2026-09-20.md §1): the
+    # (docs/records/caiso/PRECOMMIT-caiso293-chp-steam-duty-window-2026-09-20.md §1): the
     # mechanism is 1,261.879 MW forcing 7.99-9.22 TWh/yr over 41 plants, and
     # FIVE of the thirteen metered floored plants are forced to deliver MORE
     # energy than their own meter recorded for the whole year (Kingsburg
@@ -18769,7 +18814,7 @@ class ScenarioConfig:
     # [R-MEASURED]: a published multi-year GADS rate, regenerated with each
     # biennial LOLE study for a forward year. Rule 14, declared misalignment:
     # the table is fuel x size, not technology. Default off; byte-identical off.
-    # docs/handoffs/DESIGN-spp-104-ct-outage-2026-09-29.md.
+    # docs/records/spp/DESIGN-spp-104-ct-outage-2026-09-29.md.
     spp_ct_lole_efor: bool = False
 
     # SPP gas-family outage from SPP's OWN published hourly gas outage, the
@@ -18791,7 +18836,7 @@ class ScenarioConfig:
     # year has no published series; the statistical stack stands). Data:
     # data/raw/spp-gen-outage (market_sim.data.spp_gas_outage). Mutually
     # exclusive with spp_ct_lole_efor. Default off; byte-identical off.
-    # docs/handoffs/DESIGN-spp-105-gas-family-outage-2026-09-30.md.
+    # docs/records/spp/DESIGN-spp-105-gas-family-outage-2026-09-30.md.
     spp_gas_crow_residual_outage: bool = False
 
     # SPP offer-side unavailability from the SPP MMU's own measured classes
@@ -18812,7 +18857,7 @@ class ScenarioConfig:
     # +$0.4-0.7/MWh in the 2023-25 upper tercile against an $11-15 gap
     # (DESIGN s4-s5). Data: data/raw/spp-mmu-unavailable-capacity
     # (market_sim.data.spp_mmu_unavailability). Default off; byte-identical off.
-    # docs/handoffs/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md.
+    # docs/records/spp/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md.
     spp_mmu_offer_unavailability: bool = False
 
     # Measured ERCOT GTC transfer limits (backcast/calibration overlay). When
@@ -18875,7 +18920,7 @@ class ScenarioConfig:
     pjm_measured_interface_limits: bool = False
 
     # PJM measured EAST interface cut (backcast/calibration overlay,
-    # pjm-cong-1 — docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §10). When
+    # pjm-cong-1 — docs/records/pjm/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §10). When
     # True in backcast mode for PJM, ONE one-sided aggregate interface-group
     # row per hour caps the JOINT EMAAC import flow
     # Flow(Central_PA->EMAAC) + Flow(SWMAAC->EMAAC) at the hour's measured
@@ -18894,7 +18939,7 @@ class ScenarioConfig:
     pjm_east_interface_cut: bool = False
 
     # PJM interface-feed ADMISSIBILITY gate (backcast overlay, pjm-167 --
-    # results/calibration/FINDING-pjm167-input-clock-2021-2022-2026-09-06.md
+    # docs/records/pjm/FINDING-pjm167-input-clock-2021-2022-2026-09-06.md
     # sec 2; PRECOMMIT-pjm167-interface-feed-admissibility-2026-09-06.md).
     # Judges each published limit series against its OWN measured flows before
     # the LP enforces it, and where the posting is not an enforceable security
@@ -18974,7 +19019,7 @@ class ScenarioConfig:
     pjm_apsouth_interface_cut: bool = False
 
     # PJM measured star-node NET-POSITION cut (backcast/calibration overlay,
-    # pjm-135 — results/calibration/FINDING-pjm135-star-node-import-2026-07-28.md).
+    # pjm-135 — docs/records/pjm/FINDING-pjm135-star-node-import-2026-07-28.md).
     # The EXTERNAL-seam twin of pjm_east_interface_cut / pjm_apsouth_interface_cut,
     # and the same construction: ONE one-sided aggregate interface-group row per
     # hour caps the SUMMED injection across all five PJM_external->border links
@@ -19010,7 +19055,7 @@ class ScenarioConfig:
 
     # PJM marginal transmission-LOSS physics on the internal links
     # (backcast/calibration overlay, pjm-136 M2 —
-    # results/calibration/FINDING-pjm136-zonal-dual-structure-2026-07-28.md).
+    # docs/records/pjm/FINDING-pjm136-zonal-dual-structure-2026-07-28.md).
     # Each bidirectional PJM-internal link splits into a one-way pair
     # (transmission.apply_pjm_zonal_loss_links) and each direction's
     # receiving-end energy-balance coefficient becomes 1 - eps(month)
@@ -19194,7 +19239,7 @@ class ScenarioConfig:
     spp_curtail_depth_wind: float = 0.288137
 
     # SPP-93 — the West/East re-partition of the SPP seam
-    # (docs/handoffs/PRECOMMIT-spp-93-west-east-2026-09-27.md, written before any
+    # (docs/records/spp/PRECOMMIT-spp-93-west-east-2026-09-27.md, written before any
     # model output existed). "north_south" (DEFAULT) is the keeper's topology,
     # byte-identical. "west_east" REPLACES it (rule 19 [R-ONE-MECH]: the N<->S
     # link is removed, never stacked on): SPP-West = SPP's own reserve zones
@@ -19246,7 +19291,7 @@ class ScenarioConfig:
     # (panhandle_owner="tie" -> 0.1507/0.1627; "share" -> 0.1354/0.1614).
     # ERCOT-only, both off/"tie" by default; the pooled path is untouched.
     # See scripts/data/derive_ercot_wtx_curtailment_share.py --family and
-    # results/calibration/FINDING-ercot164-wpb-nodal-identification-2026-08-04.md.
+    # docs/records/ercot/FINDING-ercot164-wpb-nodal-identification-2026-08-04.md.
     ercot_wtx_curtail_unpooled: bool = False
     ercot_wtx_panhandle_owner: str = "tie"
 
@@ -19283,9 +19328,9 @@ class ScenarioConfig:
 
     # NWPP-NEXT-15 captive-mine MARGINAL coal price (GATED default-off; owner
     # ruling 2026-09-30 "Build, no threshold"; design
-    # docs/handoffs/DESIGN-nwppnext14-captive-mine-marginal-fuel-2026-09-30.md,
+    # docs/records/nwpp/DESIGN-nwppnext14-captive-mine-marginal-fuel-2026-09-30.md,
     # rule + census + rule-19 map
-    # docs/handoffs/PHASE0-nwppnext15-captive-mine-2026-09-30.md). At a coal
+    # docs/records/nwpp/PHASE0-nwppnext15-captive-mine-2026-09-30.md). At a coal
     # plant whose EIA-923 Page 5 receipts in the solve year are MIXED-source
     # (0 < captive MMBtu share < 1; captive = TC/TR mine-mouth mode, mine state
     # == plant state, not spot; NO minimum share), the ECON and PEAKING
@@ -19418,7 +19463,7 @@ class ScenarioConfig:
     # re-curtails 0.0003-0.0017 % against a measured 9.65 %, wind sits at its
     # bound in ~99.9 % of hours, and the LP can price below zero in 0-7 hours a
     # year against ~1,000 measured. The energy is present; its allocation is not
-    # (docs/handoffs/FINDING-spp-51b-2026-09-09.md §0.4).
+    # (docs/records/spp/FINDING-spp-51b-2026-09-09.md §0.4).
     #
     # THE CONSTRUCTION. Curtailment is availability MEETING NOWHERE TO GO, so
     # the key is OVERSUPPLY, not availability (a wind-shape reallocation was
@@ -19445,7 +19490,7 @@ class ScenarioConfig:
     # Rule 25 [R-ISO-SCOPE]: ISO-agnostic — no per-ISO number exists to
     # transfer, and it fires wherever the reference-rate path already fires.
     # Default off so every existing keeper replays byte-identical.
-    # Pre-registered: docs/handoffs/PRECOMMIT-spp-51c-2026-09-09.md.
+    # Pre-registered: docs/records/spp/PRECOMMIT-spp-51c-2026-09-09.md.
     vre_curtailment_oversupply_allocation: bool = False
 
     # SPP-67 -- WHICH MEASURED RATE the uncurtailed-potential gross-up is built
@@ -19509,7 +19554,7 @@ class ScenarioConfig:
     # has no entry and is untouched even when the flag is armed.
     # Default off, so all seven pre-existing keepers replay byte-identical and
     # keep their cache keys.
-    # Pre-registered: docs/handoffs/PRECOMMIT-spp-67-year-own-rate-2026-09-20.md.
+    # Pre-registered: docs/records/spp/PRECOMMIT-spp-67-year-own-rate-2026-09-20.md.
     vre_reference_rate_year_own: bool = False
 
     # caiso-243 — repair form (c), the ROOT CAUSE of defect D1: the CAMPD-bin
@@ -19541,7 +19586,7 @@ class ScenarioConfig:
     # fuel-group pool is quantity-weighted and hence CC-burn-dominated, so the
     # ~33% of MISO CT capacity without its own filing inherits a ~$2.6 CC
     # price — ~$16–20/MWh below its measured class cost
-    # (docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md §6). Off by default so every
+    # (docs/records/miso/DIAGNOSIS-miso-july2025-lmp-2026-07.md §6). Off by default so every
     # existing keeper replays byte-identical.
     class_aware_fuel_price_fallback: bool = False
 
@@ -19620,7 +19665,7 @@ class ScenarioConfig:
     # therefore overprices every OTHER month and underprices the extreme one:
     # one term, both signs (docs/FINDING-ercot254-2021-offer-level-root-cause-
     # 2026-09-07.md). Measured, ISO by ISO, in
-    # docs/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md §3: MISO
+    # docs/records/governance/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md §3: MISO
     # and SPP carry the generic climatological shape in EVERY year (model
     # monthly CV = 0.094 in all of 2019-2025, the fixed-shape fingerprint),
     # with MISO's Feb-2021 gas 11.245 $/MMBtu below measured (~84 $/MWh at a
@@ -19764,7 +19809,7 @@ class ScenarioConfig:
     # border links, and the G-only ST_GAS reliability-floor limbs). ZERO free
     # parameters; backcast-only (the envelope is a backcast overlay). Off by
     # default so every other ISO, every registered keeper and every forecast
-    # is byte-identical. docs/DESIGN-nyiso-next17-fg-split-2026-09-30.md.
+    # is byte-identical. docs/records/nyiso/DESIGN-nyiso-next17-fg-split-2026-09-30.md.
     nyiso_fg_split: bool = False
 
     # --- NYISO downstate-peaker structural pricing (2026-07, issue #1344 /
@@ -19908,7 +19953,7 @@ class ScenarioConfig:
     # parameters. Forecast-mode inert by construction (the print path is a
     # backcast-only overlay). Off by default (every keeper byte-identical; in
     # _CACHE_KEY_OPTIONAL_FIELDS).
-    # docs/PRECOMMIT-pjm-next-2-card2-basis-scope-2026-09-25.md.
+    # docs/records/pjm/PRECOMMIT-pjm-next-2-card2-basis-scope-2026-09-25.md.
     pjm_zonal_gas_basis_skip_923_priced: bool = False
 
     # PJM-NEXT-13 (owner ruling 2026-09-29, decision card "Hub + transport, joint
@@ -19937,7 +19982,7 @@ class ScenarioConfig:
     # opportunity cost). PJM-only (rule 25, hard error elsewhere). Backcast-only
     # overlay; it fails closed for a year the IMM series does not cover. Off by
     # default (every keeper byte-identical; in _CACHE_KEY_OPTIONAL_FIELDS).
-    # docs/FINDING-pjm-next-13-availability-gas-coalmarginal-2026-09-29.md;
+    # docs/records/pjm/FINDING-pjm-next-13-availability-gas-coalmarginal-2026-09-29.md;
     # market_sim.data.fuel.basis.pjm_replacement.
     pjm_replacement_cost_fuel: bool = False
 
@@ -19954,7 +19999,7 @@ class ScenarioConfig:
     # national HH shape mislocates/understates. Zero fitted scalars (the measured
     # daily series + the published Chicago-zone assignment). Backcast-only (no
     # forward Chicago daily rows). Off by default. See
-    # docs/handoffs/miso-winter-fuel-security-design-2026-07.md and
+    # docs/records/miso/miso-winter-fuel-security-design-2026-07.md and
     # market_sim.data.fuel.apply_miso_winter_citygate_daily.
     miso_winter_citygate_daily: bool = False
 
@@ -20023,7 +20068,7 @@ class ScenarioConfig:
     # already reprices every month). MISO-scoped (rule 25). Backcast-only
     # overlay. Off by default; byte-identical off. See market_sim.data.fuel.
     # basis.miso.apply_miso_winter_gas_daily_delivered and
-    # docs/PRECOMMIT-miso276-winter-gas-daily-delivered-2026-09-26.md.
+    # docs/records/miso/PRECOMMIT-miso276-winter-gas-daily-delivered-2026-09-26.md.
     miso_winter_gas_daily_delivered: bool = False
 
     # MISO seam import ladder anchored on the NEIGHBOUR's own price (miso-225,
@@ -20190,7 +20235,7 @@ class ScenarioConfig:
     # (rules 21/24). LA Basin not floored (owner card). Moves 2019-21 only
     # (2022 has no LCT row; 2023-25 >= 1,436). Inert unless
     # caiso_per_year_import_caps is on. Default off; CAISO-only.
-    # docs/handoffs/r-caiso-9/PRECOMMIT-r-caiso-9-2026-09-27.md.
+    # docs/records/caiso/r-caiso-9/PRECOMMIT-r-caiso-9-2026-09-27.md.
     caiso_import_cap_floor_static: bool = False
     # R-CAISO-11 (owner decision card 2026-09-28, "Fix + solve now"): place the
     # CAISO TAC-area zonal load shares on the model's fixed-PST (UTC-8)
@@ -20204,7 +20249,7 @@ class ScenarioConfig:
     # 21/24). Wired on the backcast calibration path only (scripts/
     # run_calibration*.py), like caiso_demand_clock_realign; the forecast
     # runner's load_demand sites do not read it. CAISO-only; default off.
-    # docs/handoffs/r-caiso-11/RESULT-r-caiso-11-2026-09-28.md sec 4.
+    # docs/records/caiso/r-caiso-11/RESULT-r-caiso-11-2026-09-28.md sec 4.
     caiso_tac_shares_standard_time: bool = False
     # R-CAISO-13 (owner decision card 2026-09-28, "Build + solve now"): repair
     # the EIA-930 CISO extract's published one-hour-LATE stamps at the frame
@@ -20221,11 +20266,11 @@ class ScenarioConfig:
     # is superseded (rule 19). Rule 14 source-clock repair; zero parameters
     # (rules 21/24). Wired on the backcast calibration path only, like
     # caiso_tac_shares_standard_time. CAISO-only; default off.
-    # docs/handoffs/r-caiso-13/RESULT-r-caiso-13-2026-09-28.md.
+    # docs/records/caiso/r-caiso-13/RESULT-r-caiso-13-2026-09-28.md.
     # R-CAISO-17 extends the same flag (rule 19) to the EARLY window: the
     # generation frame is stamped ~1 h early 2019-01 .. 2022-06-13
     # (constants.EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC; Outlook 5-min, EPA CEMS,
-    # solar geometry). docs/handoffs/r-caiso-17/.
+    # solar geometry). docs/records/caiso/r-caiso-17/.
     caiso_eia930_clock_repair: bool = False
 
     # PJM transmission-congestion lever (break the copper-plate). PJM clears as a
@@ -20418,7 +20463,7 @@ class ScenarioConfig:
     # 2022 and -0.08 in 2023, the CT-CC merit-order spread collapses $23.12 ->
     # $4.78, and the model overshoots the eleven non-Uri months by +144% while
     # undershooting Uri by 14.9% — one term, both signs
-    # (docs/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md).
+    # (docs/records/ercot/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md).
     #
     # ON, the SAME series enters at its own native monthly resolution:
     # basis[m] = EP[m]/1.036 - HH[m], applied per hour by calendar month. No new
@@ -20563,7 +20608,7 @@ class ScenarioConfig:
     # already 0 (rule 13 [R-MEASURED]). Every other ISO and every forecast is
     # byte-identical. See market_sim.data.fuel.apply_ercot_zonal_gas_basis and
     # .basis.ercot.ercot_zonal_gas_basis_source_group, and
-    # docs/PRECOMMIT-ercot255-zonal-spread-ep-reference-2026-09-07.md.
+    # docs/records/ercot/PRECOMMIT-ercot255-zonal-spread-ep-reference-2026-09-07.md.
     ercot_zonal_spread_ep_referenced: bool = False
 
     # Tier 3 (calibration) — POOLED South-Texas gas basis (R-ERCOT-17, owner
@@ -20589,7 +20634,7 @@ class ScenarioConfig:
     # every forward solve are byte-identical. No-op unless
     # ercot_zonal_gas_basis is also on and iso == "ERCOT". See
     # market_sim.data.fuel.basis.ercot.pool_ercot_south_texas_basis and
-    # docs/handoffs/PRECOMMIT-r-ercot-17-south-texas-pool-2026-09-29.md.
+    # docs/records/ercot/PRECOMMIT-r-ercot-17-south-texas-pool-2026-09-29.md.
     ercot_south_texas_pooled_basis: bool = False
 
     # Tier 3 (calibration) — delivered-gas floor on the ERCOT zonal basis above.
@@ -20808,7 +20853,7 @@ class ScenarioConfig:
     # day the delivered gas price spikes into a monthly-flat oil cap and the
     # ~16.5 GW of downstate dual-fuel capacity pins there: 120 of the 744
     # Jan-2025 hours clear on that flat cap, so the polar-vortex peak cannot
-    # form (docs/handoffs/nyiso-overrun-underrun-2026-07.md §2/§6). When on,
+    # form (docs/records/nyiso/nyiso-overrun-underrun-2026-07.md §2/§6). When on,
     # data.fuel.oil_daily_shape_factors shapes the monthly series with the
     # measured EIA daily New York Harbor ULSD spot
     # (data/raw/oil-prices/ny_harbor_ulsd_daily.csv,
@@ -20928,7 +20973,7 @@ class ScenarioConfig:
     # ran elsewhere in July but was offline at the Jul 28-29 peak block and is
     # invisible to the >= 5-day detector (the own-fleet temp-capability
     # envelope is FLAT, so the fleet loses discrete units under stress rather
-    # than derating smoothly; docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md).
+    # than derating smoothly; docs/records/miso/DIAGNOSIS-miso-july2025-lmp-2026-07.md).
     # Window: the measured off-window itself, kept only when it survives the
     # derive script's triple identification guard (coal-only detector +
     # unit annual CF >= 0.55 baseload screen + the revealed-availability
@@ -20957,7 +21002,7 @@ class ScenarioConfig:
     # against PJM's own published FORCED series is positive at 0-3 d and 3-7 d
     # and negative at 7-21 d, 21-60 d and > 60 d in ALL FOUR of 2022-2025
     # (8 positive cells, 12 negative, zero exceptions;
-    # results/calibration/_pjm162_split_derivability.json). The boundary is
+    # results/phase0/pjm/_pjm162_split_derivability.json). The boundary is
     # data-identified by that sign flip, NOT swept — no value was chosen to
     # make a criterion pass, and the classification is invariant to any cut
     # placed inside a stratum.
@@ -20998,7 +21043,7 @@ class ScenarioConfig:
     # (unit-capacity share, concurrent units summed, clipped at full derate).
     # DISTINCT from the ERCOT-only PLANT-grain partial-outage path, which the
     # PJM cycling fleet over-fires (~43 TWh/yr — measured, refused as-is;
-    # docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §7 leg B) and which stays
+    # docs/records/pjm/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §7 leg B) and which stays
     # ERCOT-scoped. Default off; GATED CHANGE (alters availability).
     unit_partial_outage_windows: bool = False
 
@@ -21099,7 +21144,7 @@ class ScenarioConfig:
     # 25.1 min (2.04x overall, 2.20x on the warm-startable years 2027-2050).
     # The only residuals are marginal-tie / dual-degeneracy noise: load-weighted
     # price max 2.5e-5 relative, CO2 max 6.6e-6 relative. Recorded as Exp 5 in
-    # docs/handoffs/wallclock-baseline-2026-07.md.
+    # docs/records/misc/wallclock-baseline-2026-07.md.
     #
     # DISARMED ON THE FORECAST LANE 2026-08-04 by owner decision D-10, WITHOUT
     # moving this default: every shipped forecast runner now passes ``False``
@@ -21181,7 +21226,7 @@ class ScenarioConfig:
     # The three-stage structural model of ERCOT's 2023 ECRS artificial-shortage
     # price formation (DECISION-CARD-ercot218b, B-1 SIGNED by dispatch of
     # ERCOT-219 2026-08-18; conventions pinned in
-    # docs/PRECOMMIT-ercot219-option-b-phase1-2026-08-18.md §1). All three are
+    # docs/records/ercot/PRECOMMIT-ercot219-option-b-phase1-2026-08-18.md §1). All three are
     # default-off, ERCOT-gated, zero fitted scalars. Registered in
     # _CACHE_KEY_OPTIONAL_FIELDS in the same commit (nyiso-119 discipline).
     #
@@ -21333,7 +21378,7 @@ class ScenarioConfig:
     # screens. Rule 14 [R-ACCURATE] source-data repair, the high-side twin of
     # nyiso-99's demand_dropout_screen; regenerates for any year EIA-930
     # publishes. data.eia930.demand._screen_demand_balance;
-    # docs/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md.
+    # docs/records/pjm/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md.
     demand_balance_screen: bool = False
     # caiso-205 ADAPTIVE-EXPECTATION storage offer, the CAISO leg of the
     # ercot-221 family (owner order caiso-205 branch 1 over the caiso-204
@@ -21373,7 +21418,7 @@ class ScenarioConfig:
     caiso_adaptive_half_life_days: float = 30.0
     caiso_adaptive_beta: float = 0.5945
     neiso_net_icr_requirement: bool = False  # GATED default-OFF (capx D40
-    # 2026-09-02, docs/handoffs/FINDING-capx-d40-neiso-devintage-2026-09-02.md,
+    # 2026-09-02, docs/records/forecast/FINDING-capx-d40-neiso-devintage-2026-09-02.md,
     # executing FINDING-capx-d33-neiso-position-2026-09-02.md §4 R-A + R-B).
     # Resolves the NEISO adequacy requirement from ISO-NE's PUBLISHED per-CCP
     # Net ICR series (constants.NET_ICR_REQUIREMENT_MW_BY_ISO, FCAs 11-18,
@@ -21580,7 +21625,7 @@ class ScenarioConfig:
     retirement_sector_gate: bool = False  # GATED default-OFF (capx D53
     # 2026-09-05, executing D32 C5 / R3 — FINDING-capx-d32-floor-retention-
     # 2026-09-02.md §4.3–§4.4, §5 C5, §7 R3; design
-    # docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md). WHAT IT
+    # docs/records/forecast/DESIGN-capx-d53-sector-gate-2026-09-05.md). WHAT IT
     # PARTITIONS: which owners face the step-3 economic retirement screen at
     # all. The screen models a MERCHANT decision — attainable energy + reserve
     # + capacity margin vs going-forward FOM — and D32 measured on MISO's
@@ -22436,7 +22481,7 @@ class ScenarioConfig:
         # whose base already carries the projected RGGI escalator ($26.05/t
         # in 2026 → $132.16/t in 2050) is a carbon-price CUT in every horizon
         # year, so the "carbon" arm measured the premise of its own pair
-        # (docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md §2).
+        # (docs/records/forecast/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md §2).
         # A WARNING, never an error: a deliberate below-base study stays
         # legal, it just can no longer be silent. The guard OBSERVES the
         # resolution and never alters it; backcast mode is untouched. Import
@@ -23097,7 +23142,7 @@ class ScenarioConfig:
                 "entry_forward_expectation_signal requires "
                 "entry_lookahead_reprice: the forward-expectation construction "
                 "re-levels the lookahead reprice's own signal object "
-                "(docs/FINDING-entry-signal-disarm-2026-08.md §6); with the "
+                "(docs/records/misc/FINDING-entry-signal-disarm-2026-08.md §6); with the "
                 "reprice disarmed the screens read raw econ_prices and there "
                 "is nothing to re-level."
             )
@@ -23116,7 +23161,7 @@ class ScenarioConfig:
                 "entry_lookahead_reprice: the dispersion-carrying expectation "
                 "indexes the prior year's realized price-duration curves by the "
                 "lookahead instrument's own headroom ranks "
-                "(docs/handoffs/FINDING-capx-d39-entry-underbuild-2026-09-02.md "
+                "(docs/records/forecast/FINDING-capx-d39-entry-underbuild-2026-09-02.md "
                 "§6-§7); with the reprice disarmed there is no instrument."
             )
         # Exactly ONE construction of the capacity screens' price object per
@@ -23150,7 +23195,7 @@ class ScenarioConfig:
 
         # D11-R margin-exhaustion volume rule + entry_lookahead_reprice: the
         # pair is the C-1 JOINT POSTURE and is ADMISSIBLE since the owner's
-        # R-B ruling (2026-08-31; docs/PRECOMMIT-c1-joint-wind-2026-08-31.md
+        # R-B ruling (2026-08-31; docs/records/misc/PRECOMMIT-c1-joint-wind-2026-08-31.md
         # §1.3). It was refused here until then, on the reasoning that with
         # the reprice disarmed "the screens read raw econ_prices — a fixed
         # array with no capacity-response instrument — so exhaustion could
@@ -23184,7 +23229,7 @@ class ScenarioConfig:
                 "entry_forward_reserve_leg requires entry_lookahead_reprice: "
                 "the forward reserve leg is the lookahead instrument's own "
                 "expected-ORDC adder for the entering year "
-                "(docs/handoffs/FINDING-capx-d12-scarcity-basis-2026-08-30.md); "
+                "(docs/records/forecast/FINDING-capx-d12-scarcity-basis-2026-08-30.md); "
                 "with the reprice disarmed the instrument never runs and "
                 "there is no adder to thread."
             )
@@ -23476,6 +23521,12 @@ class ScenarioConfig:
                     "mutually exclusive (rule 19: one mechanism for SPP gas "
                     "commitment state)."
                 )
+        if self.cc_mustrun_conduct_window and self.mustrun_window_commitment_grain:
+            raise ValueError(
+                "cc_mustrun_conduct_window and mustrun_window_commitment_grain "
+                "are two placements of the same cc_mustrun_per_plant window "
+                "(rule 19: one mechanism); arm at most one."
+            )
         if self.pjm_gas_commitment_bridge:
             if str(self.iso) != "PJM":
                 raise ValueError(
@@ -23751,7 +23802,7 @@ class ScenarioConfig:
         # owner flips it and takes the drop with it, so a post-flip config at the
         # new default used to hash exactly as the pre-flip config it supersedes —
         # the same-key collision measured twice in
-        # ``docs/handoffs/FINDING-capx-d24-cache-key-defect-2026-09-01.md`` §4.
+        # ``docs/records/forecast/FINDING-capx-d24-cache-key-defect-2026-09-01.md`` §4.
         # Owner ruling Q20, option (b′-1); the full reasoning and the measured
         # zero-key-move cost are at the ledger's own comment block.
         drop_at = cache_key_drop_defaults()
@@ -24007,7 +24058,7 @@ class ScenarioConfig:
 # Explicitly-set-field tracking (OVERRIDE-FIX 2026-08-13)
 # ---------------------------------------------------------------------------
 # THE DEFECT this closes
-# (docs/handoffs/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md):
+# (docs/records/forecast/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md):
 # ``iso_configs.apply_iso_scenario_defaults`` decided "the caller left this
 # field unset" by comparing the caller's value to the ``ScenarioConfig``
 # default. Every promotable flag defaults ``False``/``None``, so *the OFF value
@@ -24200,7 +24251,7 @@ def resolve_real_discount_rate(config: "ScenarioConfig", tech: str) -> float:
 # "bituminous" / "lignite" / "waste"), plus "prb_follower" for the ERCOT
 # tiered low-must-run load-follower tier of the prb curve.
 #
-# G-26/C-1 disposition (docs/handoffs/scalar-remediation-plan-2026-07.md):
+# G-26/C-1 disposition (docs/records/misc/scalar-remediation-plan-2026-07.md):
 # R6 DOCUMENT-AND-KEEP — the gas-keyed passthrough MECHANISM is owner-
 # sanctioned rule-#1 offer-curve scope (a real take-or-pay/mine-mouth coal
 # contract makes fuel cost mostly fixed, so a plant's bid should track its
@@ -24280,7 +24331,7 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # hand-tuned floor/ceil — the rule-24 wart flagged as #1347 / gap G-26).
     # Rule-23 trigger: the #1803 intake added the EIA Annual Coal Report region
     # f.o.b.-mine price + BLS PPI coal-mining series that a real re-derivation
-    # needs (data/raw/coal-prices/; docs/handoffs/coal-price-data-intake-2026-07.md,
+    # needs (data/raw/coal-prices/; docs/records/misc/coal-price-data-intake-2026-07.md,
     # coal-sigmoid-rederive-2026-07.md). NOT re-tuned to any MISO residual — the
     # honesty gate. Each parameter is grounded (derive-script docstring):
     #   gas_mid  = coal-vs-gas-CC merit crossover = deliv$/MMBtu × HR_coal / HR_cc,

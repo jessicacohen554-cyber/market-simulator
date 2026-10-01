@@ -16,7 +16,7 @@ page (renders §4's comparison table next to live keeper scores).
 > comparable in this memo is current. The stale passages are annotated in place
 > rather than rewritten, so the v2 reasoning stays readable as lineage.
 > Found by the caiso-284 rescore-on-RT audit (2026-09-16),
-> `docs/RESULT-caiso284-rescore-on-rt-audit-2026-09-16.md`.
+> `docs/records/caiso/RESULT-caiso284-rescore-on-rt-audit-2026-09-16.md`.
 
 **Hard constraints honored (unchanged by this memo):** the anti-self-deception
 protections — no measured-outcome feedback (rule 13), keep-accurate-data
@@ -126,7 +126,7 @@ reported D-7 statmode gaps must be re-measured on one criterion denominator
 > The v2 text is kept verbatim for lineage and **must not be read as the current
 > basis** (annotated, not deleted — rule 26 `[R-DELETE]` keeps the record; found
 > and annotated by the caiso-284 rescore-on-RT audit,
-> `docs/RESULT-caiso284-rescore-on-rt-audit-2026-09-16.md` §2 row 21).
+> `docs/records/caiso/RESULT-caiso284-rescore-on-rt-audit-2026-09-16.md` §2 row 21).
 
 Gates the **DA-expressible tail** — the hourly,
 commitment-aware DA market's own count of hours above the threshold, derived

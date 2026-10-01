@@ -118,8 +118,8 @@
     "d65br": {
       "lane": "capx D65-B-R — the coupled arming (Act A + Act B) batch",
       "authority": "owner ruling Q47; r#48 §3(a) gates; r#51 §3(b) adjudication",
-      "precommit": "docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md Addendum C (+D/E/F/G)",
-      "finding": "docs/handoffs/FINDING-capx-d65br-2026-09-06.md",
+      "precommit": "docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md Addendum C (+D/E/F/G)",
+      "finding": "docs/records/forecast/FINDING-capx-d65br-2026-09-06.md",
       "solve_key_matches_predeclaration": true,
       "gates": "ALL CLEAR. G1′ measured 0.9672–1.0456 inside ERCOT's own D64 §2.4 band 0.95–1.05; G2′ capex/k host-invariant to the digit within each year (2029 1,271,849.014; 2030 1,177,983.346 $/MW), the cross-year fall being the learning curve (−7.4 %, ratio 0.9262), not a broken identity; G5′ 0 / 2.764 / 3.000 GW against the 0 / 5.68 / 3.80 GW ceilings, 2030 pinning the cap exactly.",
       "retrofits": [

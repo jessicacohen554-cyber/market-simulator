@@ -248,7 +248,7 @@
         "identification": "measured-physical",
         "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
         "n_scalars": 0,
-        "source": "Composition semantics only \u2014 no new measured series: the (month x hod) EIA-930 deliverability envelope and the MISO_SEAM_LADDER_BY_YEAR Q-Q rungs are byte-unchanged; band k's bound becomes clip(cap - (k-1)*step, 0, step). Root cause and frozen charter: docs/handoffs/miso-g23-seam-envelope-composition-design-2026-07.md (the uniform-derate offline replay reproduces the miso-72 keeper's solved priced-seam net +/-0.12 TWh in all three years)."
+        "source": "Composition semantics only \u2014 no new measured series: the (month x hod) EIA-930 deliverability envelope and the MISO_SEAM_LADDER_BY_YEAR Q-Q rungs are byte-unchanged; band k's bound becomes clip(cap - (k-1)*step, 0, step). Root cause and frozen charter: docs/records/miso/miso-g23-seam-envelope-composition-design-2026-07.md (the uniform-derate offline replay reproduces the miso-72 keeper's solved priced-seam net +/-0.12 TWh in all three years)."
       },
       {
         "name": "miso_manitoba_seam (Manitoba MHEB two-way priced seam)",
@@ -256,7 +256,7 @@
         "identification": "measured-physical",
         "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
         "n_scalars": 0,
-        "source": "Q-Q duration coupling of the measured MISO DA hub LMP with the measured EIA-930 MHEB flow on the fixed 8-band grid, frozen scripts/data/derive_miso_seam_ladders.py; the two-way deliverability envelope is the per-(month x hod) percentile of the measured MHEB flow, both directions. Replaces the import-only firm block (retires its 3 per-year MW values). Frozen charter: docs/handoffs/miso-manitoba-seam-design-2026-07.md (offline P9 reproduces measured MHEB net flow +/-0.02 TWh/yr incl. the 2025 net export).",
+        "source": "Q-Q duration coupling of the measured MISO DA hub LMP with the measured EIA-930 MHEB flow on the fixed 8-band grid, frozen scripts/data/derive_miso_seam_ladders.py; the two-way deliverability envelope is the per-(month x hod) percentile of the measured MHEB flow, both directions. Replaces the import-only firm block (retires its 3 per-year MW values). Frozen charter: docs/records/miso/miso-manitoba-seam-design-2026-07.md (offline P9 reproduces measured MHEB net flow +/-0.02 TWh/yr incl. the 2025 net export).",
         "note": "re-derive trigger is a source-data change only (rule 23), never a residual; representation bound: hourly placement is duration-curve-level (price-decorrelated seam)"
       },
       {
@@ -266,7 +266,7 @@
         "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
         "n_scalars": 0,
         "source": "per-unit EPA CAMPD hourly gross generation (scripts/data/derive_campd_unit_outages.py --short-windows); identification guards: coal-only detector + unit annual CF >= 0.55 (the partial-outage detector's baseload constant) + the revealed-availability in-merit filter (outage_detect.filter_revealed_outages; the full-stop override cannot engage below the 5-day cap)",
-        "note": "the >= 5-day duration floor makes event-coincident short forced outages invisible (MISO Jul 28-29 2025: ~2.8 GW coal offline at the peak block beyond the overlay; docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md); CT/CC event unavailability stays unmodeled pending a max-gen-event registry intake (no identification without it)"
+        "note": "the >= 5-day duration floor makes event-coincident short forced outages invisible (MISO Jul 28-29 2025: ~2.8 GW coal offline at the peak block beyond the overlay; docs/records/miso/DIAGNOSIS-miso-july2025-lmp-2026-07.md); CT/CC event unavailability stays unmodeled pending a max-gen-event registry intake (no identification without it)"
       },
       {
         "name": "class_aware_fuel_price_fallback (same-class F923 donor pools)",
@@ -275,7 +275,7 @@
         "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
         "n_scalars": 0,
         "source": "EIA-923 Schedule-5 delivered fuel costs (the same F923 parquet the fallback already reads), re-pooled by plant class; measured basis: MISO 2024 CT filers $4.13/MMBtu cap-wtd vs CC $2.57 while the quantity-weighted class-blind pool is CC-burn-dominated (~$2.6)",
-        "note": "the class-blind donor priced the ~33% of non-filing CT capacity ~$16-20/MWh below its measured class cost, feeding the 2024 CT_PEAKER economic over-run at PRB's expense and July-2025's too-cheap North margin (docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md \u00a76, lane 1(b))"
+        "note": "the class-blind donor priced the ~33% of non-filing CT capacity ~$16-20/MWh below its measured class cost, feeding the 2024 CT_PEAKER economic over-run at PRB's expense and July-2025's too-cheap North margin (docs/records/miso/DIAGNOSIS-miso-july2025-lmp-2026-07.md \u00a76, lane 1(b))"
       },
       {
         "name": "coal_warm_committed (warm-boiler committed-band exemption)",
@@ -292,7 +292,7 @@
         "identification": "measured-physical",
         "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
         "n_scalars": 0,
-        "source": "MISO SOM Table 7 regulated-utility coal conduct split (regulated self-commit 56%/53% must-run 2023/2024 vs merchant 93%/74% offered economically; som-competitive-conduct/som_competitive_conduct.csv) + EIA-860 Regulatory Status RE set and Schedule-4 ownership x utility Entity Type (eia860_plant.parquet) + EIA-923 Schedule-5 take-or-pay shares (coal_takeorpay_MISO.csv) + CAMPD committed tranches (docs/handoffs/miso-coal-conduct-design-2026-07.md)",
+        "source": "MISO SOM Table 7 regulated-utility coal conduct split (regulated self-commit 56%/53% must-run 2023/2024 vs merchant 93%/74% offered economically; som-competitive-conduct/som_competitive_conduct.csv) + EIA-860 Regulatory Status RE set and Schedule-4 ownership x utility Entity Type (eia860_plant.parquet) + EIA-923 Schedule-5 take-or-pay shares (coal_takeorpay_MISO.csv) + CAMPD committed tranches (docs/records/miso/miso-coal-conduct-design-2026-07.md)",
         "note": "replaces the rank-scoped coal_bit_committed_takeorpay (rule 19 reconcile \u2014 RE-BIT covered identically, NR-BIT merchants revert to the economic offers the SOM measures); re-derives only on a new EIA-860 vintage (RE UNION COS set), a new EIA-923 Schedule-5 vintage (shares), or a new SOM publication (conduct citation) \u2014 never a residual (rule 23)"
       },
       {
@@ -319,7 +319,7 @@
         "identification": "measured-physical",
         "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
         "n_scalars": 0,
-        "source": "EIA-860 year-matched vintage status (vintage_<Y>/eia860_generators.parquet): a unit OA in the 2025ER canonical snapshot is re-carried for solve year Y iff OP in vintage_<Y> (Cottonwood 55358: 4 of 8 units OA, ~572.6 MW vintage_2023 / ~568.7 MW vintage_2024, with CAMPD showing the OA CTs running 88-91% of 2023 hours). Real units at availability bounds \u2014 never a CAMPD-MWh pin or a MW offset (rules 1/11/13). Design: docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md",
+        "source": "EIA-860 year-matched vintage status (vintage_<Y>/eia860_generators.parquet): a unit OA in the 2025ER canonical snapshot is re-carried for solve year Y iff OP in vintage_<Y> (Cottonwood 55358: 4 of 8 units OA, ~572.6 MW vintage_2023 / ~568.7 MW vintage_2024, with CAMPD showing the OA CTs running 88-91% of 2023 hours). Real units at availability bounds \u2014 never a CAMPD-MWh pin or a MW offset (rules 1/11/13). Design: docs/records/miso/miso-cc-vintage-undercarry-plan-2026-07.md",
         "note": "regenerates for any forward vintage (a unit OP in its latest vintage is physically available until a real exit removes it \u2014 rule 12 forward story); the LP dispatches the carried units freely (no outcome pinning)"
       },
       {
@@ -355,7 +355,7 @@
         "classification": "measured registry pair, zero free parameters (armed on rule 1 [R-STRUCT] grounds; miso-121 adjudicated the mechanism INERT at MISO's scored grain and that verdict stands)",
         "value": true,
         "free_parameters_added": 0,
-        "source": "Capability: data.fleet.eia860.dual_fuel_plant_groups over the EIA-860 Multifuel schedule. Parity price: data.fuel.plant_prices.iso_monthly_oil_prices over EIA-923 Schedule 5 Petroleum receipts for MISO's own plants. Measured effect on THIS keeper: max zonal |dLMP| 0.000000 / 1.382669 / 0.000000 $/MWh. The Phase-0 identification record \u2014 the capability census, the F923 month coverage, the binding arithmetic and the CAMPD event-window observability test (including its internal diesel-labelled control) \u2014 is committed in results/calibration/PROBE-miso121-dual-fuel-screen-2026-08-03.txt and _miso121_dual_fuel_screen.json.",
+        "source": "Capability: data.fleet.eia860.dual_fuel_plant_groups over the EIA-860 Multifuel schedule. Parity price: data.fuel.plant_prices.iso_monthly_oil_prices over EIA-923 Schedule 5 Petroleum receipts for MISO's own plants. Measured effect on THIS keeper: max zonal |dLMP| 0.000000 / 1.382669 / 0.000000 $/MWh. The Phase-0 identification record \u2014 the capability census, the F923 month coverage, the binding arithmetic and the CAMPD event-window observability test (including its internal diesel-labelled control) \u2014 is committed in results/phase0/miso/PROBE-miso121-dual-fuel-screen-2026-08-03.txt and _miso121_dual_fuel_screen.json.",
         "why_zero": "Neither leg is chosen, tuned or swept. The capable set is a published EIA-860 boolean field and the parity price is a published EIA-923 receipt; the mechanism is the arithmetic min() of two measured series, with no coefficient between them. Rule 13 [R-MEASURED]: both regenerate for a forward year from forward drivers (a forward oil trajectory and the same capability roster) and respond to changed conditions, so this is an admissible input rather than a backcast overlay. Rule 23 [R-FROZEN-DERIVE]: re-derived only on a source-data change, never because a residual moved \u2014 and expressly NOT re-derived for this re-arm. Rule 19 [R-ONE-MECH]: the two sibling cells that consume this mechanism (dual_fuel_oil_reattribution, dual_fuel_oil_daily_parity) stay OFF, so nothing stacks. n_residual is unchanged."
       },
       {
@@ -364,7 +364,7 @@
         "classification": "published EIA-860 generator roster, zero free parameters (rule 14 [R-ACCURATE] capacity-representation repair)",
         "value": true,
         "free_parameters_added": 0,
-        "source": "EIA-860 operable generator sheet (data/raw/eia-860/eia860_generator_operable.parquet): Prime Mover, Energy Source 1, Unit Code, Operating Year, Summer/Nameplate Capacity. Predicate: data.fleet.eia860.cc_steam_part_generators. ISO gate: config.plant_taxonomy.CC_STEAM_PART_REPAIR_ISOS. Heat rate: the eGRID plant rate already joined onto the block's CT siblings (6.9573 MMBtu/MWh at 55088 under measured_chp_heat_rates). The Phase-0 identification record \u2014 the census, the fleet-presence cross-check against each plant's EIA-860 TOTALS, and the five pre-registered properties \u2014 is committed in results/calibration/_miso126_cc_steam_part_screen.json and scripts/probes/_miso126_cc_steam_part_screen.py.",
+        "source": "EIA-860 operable generator sheet (data/raw/eia-860/eia860_generator_operable.parquet): Prime Mover, Energy Source 1, Unit Code, Operating Year, Summer/Nameplate Capacity. Predicate: data.fleet.eia860.cc_steam_part_generators. ISO gate: config.plant_taxonomy.CC_STEAM_PART_REPAIR_ISOS. Heat rate: the eGRID plant rate already joined onto the block's CT siblings (6.9573 MMBtu/MWh at 55088 under measured_chp_heat_rates). The Phase-0 identification record \u2014 the census, the fleet-presence cross-check against each plant's EIA-860 TOTALS, and the five pre-registered properties \u2014 is committed in results/phase0/miso/_miso126_cc_steam_part_screen.json and scripts/probes/_miso126_cc_steam_part_screen.py.",
         "why_zero": "Nothing is chosen, tuned or swept. Every clause of the predicate is an equality on a published categorical field (Prime Mover == 'CA', Energy Source 1 != 'NG', non-empty Unit Code, a sibling with Prime Mover == 'CT' and Energy Source 1 == 'NG') plus one physical inequality (the steam part is not older than the oldest such sibling \u2014 an HRSG is commissioned with or after the turbines whose exhaust drives it). The restored capacity is the published Summer Capacity and the heat rate is the block's existing one, so the mechanism introduces no new numeric value at all. Rule 13 [R-MEASURED]: a generator's existence, prime mover, unit code, vintage and capacity are INPUTS that regenerate for any forward year and respond to changed conditions (a retirement or re-rate moves them) \u2014 not a measured outcome fed back to close a residual. Rule 23 [R-FROZEN-DERIVE]: the paired CHP artifact re-derive cites the fleet/denominator change and moves ONE descriptive cell (class_capacity_mw 350.0 -> 600.0), leaving every applied rate byte-identical. Rule 19 [R-ONE-MECH]: nothing is stacked on the already-armed measured_chp_heat_rates, which keeps its single plant-grain rate \u2014 this changes the capacity that rate applies to, not the rate. n_residual is unchanged."
       },
       {
@@ -373,7 +373,7 @@
         "classification": "measured CAMPD unit conduct, zero free parameters added (rule 14 [R-ACCURATE] proxy-for-measurand swap)",
         "value": true,
         "free_parameters_added": 0,
-        "source": "data/raw/_processed-legacy/thermal_tranches_MISO.csv, column mustrun_online_pct \u2014 the net MW a unit holds 95 % of its ONLINE time, as a fraction of nameplate, derived from CAMPD unit-level hourly gross load by scripts/data/derive_thermal_tranches.py. Consumed by data/fleet/campd_bins.py (:1645) via the config, and applied in the bin synthesis both orchestrators run. MISO values: capacity-weighted 27.609 % against the incumbent mustrun_pct's 28.886 % over 44 coal plants / 41,770.8 MW. The Phase-0 identification record \u2014 the artifact statistics, the net-vs-gross decomposition and the pre-arm grain-1 firing check \u2014 is committed in results/calibration/PREREG-miso127-takeorpay-period-budget-2026-08-04.md \u00a72 and scripts/probes/_miso127_budget_reshape_precheck.py.",
+        "source": "data/raw/_processed-legacy/thermal_tranches_MISO.csv, column mustrun_online_pct \u2014 the net MW a unit holds 95 % of its ONLINE time, as a fraction of nameplate, derived from CAMPD unit-level hourly gross load by scripts/data/derive_thermal_tranches.py. Consumed by data/fleet/campd_bins.py (:1645) via the config, and applied in the bin synthesis both orchestrators run. MISO values: capacity-weighted 27.609 % against the incumbent mustrun_pct's 28.886 % over 44 coal plants / 41,770.8 MW. The Phase-0 identification record \u2014 the artifact statistics, the net-vs-gross decomposition and the pre-arm grain-1 firing check \u2014 is committed in docs/records/miso/PREREG-miso127-takeorpay-period-budget-2026-08-04.md \u00a72 and scripts/probes/_miso127_budget_reshape_precheck.py.",
         "why_zero": "Nothing is chosen, tuned or swept by this session. The flag is a BOOLEAN SELECTOR between two columns that both already exist in a committed artifact, and it selects the one that measures the quantity the model means: the incumbent mustrun_pct is an all-hours available-CF P5, a BIASED PROXY for the online minimum stable load, while mustrun_online_pct measures that load directly on the hours the unit is actually synchronized. Rule 13 [R-MEASURED]: a unit's online minimum stable load is a physical operating characteristic that regenerates for any forward year from the same CEMS input-output record and responds to changed conditions (a re-rate, a retrofit or a retirement moves it) \u2014 it is not a measured OUTCOME fed back to close a residual, and it is not sized against any price or volume gap. Rule 23 [R-FROZEN-DERIVE]: no re-derive was performed in this session; the column was already committed. The 95 % online-time percentile lives in the frozen derive script and is the incumbent's own convention, not a knob introduced here. Rule 19 [R-ONE-MECH]: this REPLACES a proxy inside the existing coal must-run sizing rather than stacking a new mechanism on the take-or-pay discount's residual; no floor is added and the discount is untouched. n_residual is unchanged."
       },
       {
@@ -382,7 +382,7 @@
         "classification": "measured CAMPD unit conduct, zero free parameters added (rule 14 [R-ACCURATE] proxy-for-measurand swap)",
         "value": 1.005,
         "free_parameters_added": 0,
-        "source": "data/raw/reference/miso_campd_marginal_hr_summary.csv, row CC_REGULAR, column avg_committed_p50 = 1.005 (n = 103 CC units, capacity-weighted, 2023-2025 pooled; base_hr 7.436) \u2014 the min-load block's AVERAGE burn relative to the plant's own base heat rate, derived from CAMPD unit-level hourly load by scripts/data/derive_campd_marginal_hr.py --iso MISO. It replaces the registered CC_REGULAR committed 1.20 and CC_INTERMEDIATE committed 0.92. The measured value was ALREADY committed in the same offer-curve dict as phys_committed, used only as the gas_offer_margin markup basis. Measured effect on THIS keeper, against a same-HEAD zero-delta control: max zonal |dLMP| 2.858511 / 7.110037 / 6.259316 $/MWh. The pre-registration and its pre-check record are committed in results/calibration/PREREG-miso132b-cc-committed-band-regrounding-2026-08-05.md and scripts/probes/_miso132b_cc_committed_precheck.py.",
+        "source": "data/raw/reference/miso_campd_marginal_hr_summary.csv, row CC_REGULAR, column avg_committed_p50 = 1.005 (n = 103 CC units, capacity-weighted, 2023-2025 pooled; base_hr 7.436) \u2014 the min-load block's AVERAGE burn relative to the plant's own base heat rate, derived from CAMPD unit-level hourly load by scripts/data/derive_campd_marginal_hr.py --iso MISO. It replaces the registered CC_REGULAR committed 1.20 and CC_INTERMEDIATE committed 0.92. The measured value was ALREADY committed in the same offer-curve dict as phys_committed, used only as the gas_offer_margin markup basis. Measured effect on THIS keeper, against a same-HEAD zero-delta control: max zonal |dLMP| 2.858511 / 7.110037 / 6.259316 $/MWh. The pre-registration and its pre-check record are committed in docs/records/miso/PREREG-miso132b-cc-committed-band-regrounding-2026-08-05.md and scripts/probes/_miso132b_cc_committed_precheck.py.",
         "why_zero": "Nothing is chosen, tuned or swept by this session. Two registered multipliers are replaced by ONE value read off an artifact that was already committed and that re-derives only when its source data changes (rule 23 [R-FROZEN-DERIVE]; no derive was run here). Rule 13 [R-MEASURED]: a CC's min-load block-average burn is a physical operating characteristic that regenerates for any forward year from the same CEMS input-output record and responds to changed conditions (a re-rate, a retrofit or a retirement moves it) \u2014 it is not a measured OUTCOME fed back to close a residual, and it is sized against no price or volume gap. Both cohorts move TOGETHER precisely so the DIRECTION is not chosen: CC_REGULAR alone would be cheaper (the C7-flattering half) and CC_INTERMEDIATE alone dearer, and the pre-registration declared the net expected direction (UP, the ADVERSE one) in advance and pre-accepted it. Rule 19 [R-ONE-MECH]: this REPLACES an ungrounded multiplier inside the existing CC offer surface rather than stacking a mechanism on a residual; no floor is added and the coal take-or-pay discount that owns C7 is untouched. n_residual is unchanged."
       },
       {
@@ -509,7 +509,7 @@
     "no_fit_to_price_residuals": false,
     "no_pinning_to_actuals": true,
     "outage_filter_exogenous_net_load": true,
-    "attested_by": "miso-275 (2026-09-26) -- keeper 2026-09-25-miso-273-screened-coal recipe with offer_curve_by_group CC_REGULAR/CC_INTERMEDIATE taken out of the x1.10 non-steam lift (owner ruling 2026-09-26, authorized price-tuning channel; PRECOMMIT pinned e5acf0fe). Inherited: miso-273 (2026-09-25) -- keeper 2026-09-25-miso-272-edwardsport-block recipe PLUS wefor_residual_short_screened_coal=true (coal statistical WEFOR capped at the keeper's wefor_residual on the capacity share whose sub-5-day outages the short-coal family measures; zero free parameters; PRECOMMIT pinned 09b152c5). Inherited: miso-272 (2026-09-25) -- keeper 2026-09-25-miso-271-wefor-stack recipe PLUS cc_block_summer_rating=true, v2 non-NG scope (EIA-860 combined-cycle block rated on one row reconciled \u2014 reach 1004 Edwardsport only; zero free parameters; PRECOMMIT \u00a79 pinned 5efb86f3). Inherited: miso-271 (2026-09-25) -- keeper 2026-09-24-rmiso-arm-b-mid recipe PLUS wefor_residual=0.0 scoped to {CC_REGULAR, ST_CHP, ST_GAS} (existing registered fields; zero free parameters; identified by the frozen caiso-187 formula on MISO's own fleet; PRECOMMIT pinned 40d995ba). Inherited: R-MISO ARM B (2026-09-24) -- recipe A (below) PLUS mid_vintage_exit_carry=true (SPP-48 mid-vintage-year exit carry, zero free parameters; PRECOMMIT \u00a79, pinned bef12b51). Recipe A: keeper 2026-09-24-miso-268-coal-yard's recipe replayed UNCHANGED via scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), 2019-2025, with the corrected backcast inputs of AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24 \u00a75.3.3: F1's backcast defaults (eia860_vintage_tracks_solve_year, measured_{coal,st,cc}_heat_rates; ct/chp already armed) plus unit_outage_short_windows_gas=true and unit_partial_outage_windows=true. The offer_curve_by_group multipliers are UNCHANGED (input correction, rule 1(c)); zero free parameters added. Input intake this lane (all measured, zero DOF): MISO 2019 hub LMPs, MISO 2019 BA-to-BA interchange, the 2019 seam Q-Q ladder (frozen derive), EIA-923 2017 coal receipts, maxgen 2021 windows (chunk reader), and the rule-23 re-derive of the MISO coal passthrough sigmoids (source change = F1 eGRID-2024 fleet coal heat rate). Every leg verified by scripts/probes/_rmiso_shard_check.py in the shard and re-verified in the parent; composed by scripts/probes/_rmiso_compose_span.py. Zero LP in the parent. Pre-registered in docs/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md (pinned 6a8d1794). PROMOTED 2026-09-25 on the owner's ruling (verbatim): 'Rebase for merge And promote'.",
+    "attested_by": "miso-275 (2026-09-26) -- keeper 2026-09-25-miso-273-screened-coal recipe with offer_curve_by_group CC_REGULAR/CC_INTERMEDIATE taken out of the x1.10 non-steam lift (owner ruling 2026-09-26, authorized price-tuning channel; PRECOMMIT pinned e5acf0fe). Inherited: miso-273 (2026-09-25) -- keeper 2026-09-25-miso-272-edwardsport-block recipe PLUS wefor_residual_short_screened_coal=true (coal statistical WEFOR capped at the keeper's wefor_residual on the capacity share whose sub-5-day outages the short-coal family measures; zero free parameters; PRECOMMIT pinned 09b152c5). Inherited: miso-272 (2026-09-25) -- keeper 2026-09-25-miso-271-wefor-stack recipe PLUS cc_block_summer_rating=true, v2 non-NG scope (EIA-860 combined-cycle block rated on one row reconciled \u2014 reach 1004 Edwardsport only; zero free parameters; PRECOMMIT \u00a79 pinned 5efb86f3). Inherited: miso-271 (2026-09-25) -- keeper 2026-09-24-rmiso-arm-b-mid recipe PLUS wefor_residual=0.0 scoped to {CC_REGULAR, ST_CHP, ST_GAS} (existing registered fields; zero free parameters; identified by the frozen caiso-187 formula on MISO's own fleet; PRECOMMIT pinned 40d995ba). Inherited: R-MISO ARM B (2026-09-24) -- recipe A (below) PLUS mid_vintage_exit_carry=true (SPP-48 mid-vintage-year exit carry, zero free parameters; PRECOMMIT \u00a79, pinned bef12b51). Recipe A: keeper 2026-09-24-miso-268-coal-yard's recipe replayed UNCHANGED via scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), 2019-2025, with the corrected backcast inputs of AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24 \u00a75.3.3: F1's backcast defaults (eia860_vintage_tracks_solve_year, measured_{coal,st,cc}_heat_rates; ct/chp already armed) plus unit_outage_short_windows_gas=true and unit_partial_outage_windows=true. The offer_curve_by_group multipliers are UNCHANGED (input correction, rule 1(c)); zero free parameters added. Input intake this lane (all measured, zero DOF): MISO 2019 hub LMPs, MISO 2019 BA-to-BA interchange, the 2019 seam Q-Q ladder (frozen derive), EIA-923 2017 coal receipts, maxgen 2021 windows (chunk reader), and the rule-23 re-derive of the MISO coal passthrough sigmoids (source change = F1 eGRID-2024 fleet coal heat rate). Every leg verified by scripts/probes/_rmiso_shard_check.py in the shard and re-verified in the parent; composed by scripts/probes/_rmiso_compose_span.py. Zero LP in the parent. Pre-registered in docs/records/miso/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md (pinned 6a8d1794). PROMOTED 2026-09-25 on the owner's ruling (verbatim): 'Rebase for merge And promote'.",
     "authorized_price_tuning": {
       "channel": "offer_curve_by_group",
       "ruling": "owner ruling 2026-09-05: 'the offer curve multipliers are meant to allow us to tune on price & adjust merit order\u2026 as long as it's the same config across the 3 years'; steam gas scoped to ST_GAS + ST_GAS_INTERMEDIATE by the owner's follow-up answer the same day; CC scope narrowed by owner ruling 2026-09-26 (miso-275): 'Exempt CC from x1.10 (Recommended)' - treat CC_REGULAR + CC_INTERMEDIATE like steam gas, out of the x1.10 on all four bands",
@@ -525,12 +525,12 @@
       ],
       "set_ex_ante": true,
       "not_swept": true,
-      "prereg": "results/calibration/PREREG-miso220-nonsteam-offer-lift-2026-09-05.md @ e1a2eb01; docs/PRECOMMIT-miso275-cc-exempt-offer-lift-2026-09-26.md @ e5acf0fe",
+      "prereg": "docs/records/miso/PREREG-miso220-nonsteam-offer-lift-2026-09-05.md @ e1a2eb01; docs/records/miso/PRECOMMIT-miso275-cc-exempt-offer-lift-2026-09-26.md @ e5acf0fe",
       "merit_order_effect": "intended and measured: _miso220_liveness.json S-3 records 121 non-steam tranches crossing above the steam-gas median at the mid-year probe hour",
       "dof_entry": "offer_curve_by_group non-steam fossil lift (1.10), identified by owner ruling; class scope 11 -> 8 (bare COAL folded by COAL-SUB; CC_REGULAR, CC_INTERMEDIATE exempted) by owner ruling 2026-09-26 (no new parameter)",
       "years_held_basis": "miso-275 (2026-09-26): this run's own solved years 2019-2025, seven single-year legs pinned to e5acf0fe; offer_curve_by_group = docs/miso275-arm-offer-curve-by-group.json (sorted-JSON sha256 prefix 7ca9dd66e70c6d50) byte-identical in all seven legs (composer MUST_AGREE). The value is the pre-miso-220 table (keeper / 1.10 exactly), set ex ante; no alternative solved; not swept (rule 1 (c))."
     },
-    "attested_by_inherited": "miso-267 (2026-09-23) -- keeper 2026-09-22-hydro-5-miso-ror's recipe replayed UNCHANGED via scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), with exactly one registered ScenarioConfig flag added: unit_outage_dispatched_bin_denominator=true. Every leg was verified keeper-recipe-plus-one-flag (per-year overlay included) and hydro-classifier identical by scripts/probes/_miso267_shard_check.py, its resolved_inputs and static shared-input captures byte-identical to the keeper's, and the six legs re-checked by scripts/probes/_miso266_compose_span.py (12 must-agree fields, one solve-surface fingerprint) before composition. Zero LP in the parent. Pre-registered in docs/PRECOMMIT-miso267-dispatched-bin-on-hydro5-2026-09-23.md (pinned 3ea64fa5) before any shard launched; record docs/RESULT-miso267-dispatched-bin-on-hydro5-2026-09-23.md. Promoted on the owner's ruling (2026-09-23): 'Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper.'",
+    "attested_by_inherited": "miso-267 (2026-09-23) -- keeper 2026-09-22-hydro-5-miso-ror's recipe replayed UNCHANGED via scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), with exactly one registered ScenarioConfig flag added: unit_outage_dispatched_bin_denominator=true. Every leg was verified keeper-recipe-plus-one-flag (per-year overlay included) and hydro-classifier identical by scripts/probes/_miso267_shard_check.py, its resolved_inputs and static shared-input captures byte-identical to the keeper's, and the six legs re-checked by scripts/probes/_miso266_compose_span.py (12 must-agree fields, one solve-surface fingerprint) before composition. Zero LP in the parent. Pre-registered in docs/records/miso/PRECOMMIT-miso267-dispatched-bin-on-hydro5-2026-09-23.md (pinned 3ea64fa5) before any shard launched; record docs/records/miso/RESULT-miso267-dispatched-bin-on-hydro5-2026-09-23.md. Promoted on the owner's ruling (2026-09-23): 'Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper.'",
     "mechanism_armed": {
       "field": "coal_fuel_inventory_plant_grain",
       "value": true,
@@ -539,8 +539,8 @@
       "basis": "rule 14 [R-ACCURATE] / rule 1 [R-STRUCT]: the pooled budget let coal at one yard fund burn at another; static yard-level excess on the keeper 2.64 / 11.76 / 19.01 / 2.33 / 0.49 / 9.38 TWh-equiv (2020-2025)",
       "one_mechanism": "rule 19 [R-ONE-MECH]: the plant grain of coal_fuel_inventory; the yard budgets sum to the pooled annual identity; pooled monthly rows unchanged",
       "window": "the solve year (annual rows)",
-      "control": "the committed keeper results/calibration/miso267_dbd_span (rule 29(b) form 4); G-DRIFT docs/PRECOMMIT-miso268-coal-yard-grain-2026-09-24.md section 3 classified every solve-path hunk INERT",
-      "prereg": "docs/PRECOMMIT-miso268-coal-yard-grain-2026-09-24.md, pushed at 49c898c7ef38d3bea8f2c06d4e51d0a1051649a7 BEFORE any shard was launched"
+      "control": "the committed keeper results/calibration/miso267_dbd_span (rule 29(b) form 4); G-DRIFT docs/records/miso/PRECOMMIT-miso268-coal-yard-grain-2026-09-24.md section 3 classified every solve-path hunk INERT",
+      "prereg": "docs/records/miso/PRECOMMIT-miso268-coal-yard-grain-2026-09-24.md, pushed at 49c898c7ef38d3bea8f2c06d4e51d0a1051649a7 BEFORE any shard was launched"
     },
     "mechanism_armed_inherited": {
       "field": "unit_outage_dispatched_bin_denominator",
@@ -550,12 +550,12 @@
       "basis": "rule 14 [R-ACCURATE] / rule 1 [R-STRUCT]: _iso_plant_capacity returned 50,365.4 MW of MISO coal in every year 2020-2025 while the LP's own coal fell 54,238.1 -> 53,391.6 MW; at the contradicted plants denom/cap_LP was 0.414-0.695, so one unit's outage removed up to 2.4x its share",
       "one_mechanism": "rule 19 [R-ONE-MECH]: replaces the denominator of the existing outage derate; mutually exclusive with unit_outage_lp_capacity_basis and unit_outage_extract_basis_share (both refused, not stacked)",
       "window": "every hour a measured outage event covers (the derate's own window)",
-      "control": "the committed keeper results/calibration/hydro5_miso_ror_span (rule 29(b) form 4); G-DRIFT docs/PRECOMMIT-miso267-dispatched-bin-on-hydro5-2026-09-23.md section 3 classified every solve-path hunk INERT",
-      "prereg": "docs/PRECOMMIT-miso267-dispatched-bin-on-hydro5-2026-09-23.md, pushed at 3ea64fa5110254df85b7a40cb6d4521414d08242 BEFORE any shard was launched"
+      "control": "the committed keeper results/calibration/hydro5_miso_ror_span (rule 29(b) form 4); G-DRIFT docs/records/miso/PRECOMMIT-miso267-dispatched-bin-on-hydro5-2026-09-23.md section 3 classified every solve-path hunk INERT",
+      "prereg": "docs/records/miso/PRECOMMIT-miso267-dispatched-bin-on-hydro5-2026-09-23.md, pushed at 3ea64fa5110254df85b7a40cb6d4521414d08242 BEFORE any shard was launched"
     }
   },
   "disclosures": {
-    "note": "(a) Scored on the committed bench; registering this run left all 44 bench parts sha256-identical.\n(b) Moves reported at full magnitude in docs/RESULT-miso268-coal-yard-grain-2026-09-24.md; gates decide nothing (PRECOMMIT section 5).\n(c) NOT FIXED, routed: the C3a overnight price body, the coal trough surplus, C3b 2021 (February gas level) -- docs/FINDING-miso268-coal-yard-grain-and-the-open-objects-2026-09-24.md.\n(d) INHERITED UNCHANGED: D-2 CT_PEAKER forced share over its 15 % cap every year; C8 through rule 18's grounded route."
+    "note": "(a) Scored on the committed bench; registering this run left all 44 bench parts sha256-identical.\n(b) Moves reported at full magnitude in docs/records/miso/RESULT-miso268-coal-yard-grain-2026-09-24.md; gates decide nothing (PRECOMMIT section 5).\n(c) NOT FIXED, routed: the C3a overnight price body, the coal trough surplus, C3b 2021 (February gas level) -- docs/records/miso/FINDING-miso268-coal-yard-grain-and-the-open-objects-2026-09-24.md.\n(d) INHERITED UNCHANGED: D-2 CT_PEAKER forced share over its 15 % cap every year; C8 through rule 18's grounded route."
   },
   "exceptions": [
     {
@@ -564,7 +564,7 @@
       "metric": "C5b storage discharge throughput TWh",
       "magnitude": "+1515.4% (model 2025 BAT+PS discharge 3.95 TWh vs EIA-930 battery-only actual 0.245 TWh; 2023/2024 un-benchmarked - EIA-930 reports no PS breakout)",
       "classification": "ACCEPTED MEASURED-INPUT LIMITATION (benchmark basis mismatch - not a model miss)",
-      "reason": "Carried unchanged from miso-48 through miso-54: EIA-930 MISO reports NO pumped-storage series; the battery-only actual excludes the 2,417 MW EIA-860 PS fleet (Ludington + Taum Sauk) the model correctly dispatches. Full adjudication: results/calibration/FINDING-miso-c5b-storage-benchmark-2026-07.md."
+      "reason": "Carried unchanged from miso-48 through miso-54: EIA-930 MISO reports NO pumped-storage series; the battery-only actual excludes the 2,417 MW EIA-860 PS fleet (Ludington + Taum Sauk) the model correctly dispatches. Full adjudication: docs/records/miso/FINDING-miso-c5b-storage-benchmark-2026-07.md."
     },
     {
       "criterion": "storage_shape",
@@ -572,7 +572,7 @@
       "metric": "C5c monthly storage dispatch shape (pearson r)",
       "magnitude": "r=0.461 (2025 monthly BAT+PS pearson vs EIA-930 battery-only; the actual excludes the ~2,417 MW PS fleet the model dispatches - benchmark-basis mismatch, not a model miss)",
       "classification": "ACCEPTED MEASURED-INPUT LIMITATION (benchmark basis mismatch - not a model miss)",
-      "reason": "The 2025 EIA-930 battery-only monthly vector's 'shape' is the fleet's COD ramp (r=0.934 against cumulative in-service battery MW) while the model side pools BAT + the ~2,417 MW pumped-storage fleet that EIA-930 MISO does not report. Normalized per in-service MW the actual's residual shape is degenerate by the scorer's own CV floor (CV 0.175 < STORAGE_SHAPE_MIN_CV 0.25), so no dispatch-shape skill is measurable on this basis. Full adjudication: results/calibration/FINDING-miso-c5c-storage-shape-basis-2026-07.md (scorer-side BAT-vs-BAT + per-MW fix flagged to the rubric-infrastructure lane)."
+      "reason": "The 2025 EIA-930 battery-only monthly vector's 'shape' is the fleet's COD ramp (r=0.934 against cumulative in-service battery MW) while the model side pools BAT + the ~2,417 MW pumped-storage fleet that EIA-930 MISO does not report. Normalized per in-service MW the actual's residual shape is degenerate by the scorer's own CV floor (CV 0.175 < STORAGE_SHAPE_MIN_CV 0.25), so no dispatch-shape skill is measurable on this basis. Full adjudication: docs/records/miso/FINDING-miso-c5c-storage-shape-basis-2026-07.md (scorer-side BAT-vs-BAT + per-MW fix flagged to the rubric-infrastructure lane)."
     },
     {
       "criterion": "price_tail",
@@ -612,12 +612,12 @@
     }
   ],
   "hydro5": {
-    "result": "docs/RESULT-hydro-5-2026-09-22.md",
+    "result": "docs/records/misc/RESULT-hydro-5-2026-09-22.md",
     "gates": "G1 live in every year; G2 annual hydro energy within 0.1 % in every year; G3 hours-at-0 -> 0, top-decile share and within-month daily CV down in every year; G4 zero PASS->FAIL flips on C1/C2/C3a/C3b. Misses reported at full magnitude in the RESULT (SPP floor 2019 G1 9.3 MW nameplate clip; SPP floor 2025 May G2 +0.276 %)."
   },
   "miso267": {
-    "result": "docs/RESULT-miso267-dispatched-bin-on-hydro5-2026-09-23.md",
-    "finding_step1": "docs/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md",
+    "result": "docs/records/miso/RESULT-miso267-dispatched-bin-on-hydro5-2026-09-23.md",
+    "finding_step1": "docs/records/miso/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md",
     "legs": {
       "2020": "b14d04407995df14db17ea63a6ac2e2eed81747c",
       "2021": "856c2a0828d6632088178c593273e926bbd922d9",
@@ -628,8 +628,8 @@
     }
   },
   "miso268": {
-    "result": "docs/RESULT-miso268-coal-yard-grain-2026-09-24.md",
-    "finding": "docs/FINDING-miso268-coal-yard-grain-and-the-open-objects-2026-09-24.md",
+    "result": "docs/records/miso/RESULT-miso268-coal-yard-grain-2026-09-24.md",
+    "finding": "docs/records/miso/FINDING-miso268-coal-yard-grain-and-the-open-objects-2026-09-24.md",
     "legs": {
       "2020": "a177163310e16526768899ccf9a987247e01a6fd",
       "2021": "ac4ea7d2000aee50521b9e1ae02b856cf15a5106",
@@ -640,8 +640,8 @@
     }
   },
   "rmiso": {
-    "precommit": "docs/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md",
-    "result": "docs/RESULT-rmiso-corrected-inputs-2019-2025-2026-09-24.md",
+    "precommit": "docs/records/miso/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md",
+    "result": "docs/records/miso/RESULT-rmiso-corrected-inputs-2019-2025-2026-09-24.md",
     "pin": "6a8d17947c9fb3da0eac081eaa10408cb581863a",
     "legs": {
       "2019": "1e2c53178d53ec5d08af9283ada6bc919da2d199",
@@ -656,7 +656,7 @@
     "multipliers": "unchanged from the keeper"
   },
   "rmiso_arm_b": {
-    "precommit": "docs/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md \u00a79",
+    "precommit": "docs/records/miso/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md \u00a79",
     "pin": "bef12b510b62c1cc17286058d0371e3f8c7a3996",
     "legs": {
       "2019": "64aea8fae3652d8e1088031196f07f378bb15ed1",
@@ -676,10 +676,10 @@
     }
   },
   "miso271": {
-    "precommit": "docs/PRECOMMIT-miso271-cc-regular-shortfall-wefor-stack-2026-09-25.md",
+    "precommit": "docs/records/miso/PRECOMMIT-miso271-cc-regular-shortfall-wefor-stack-2026-09-25.md",
     "pin": "40d995ba6740bf36e4ed9af6a560666322497bcd",
     "delta": "keeper 2026-09-24-rmiso-arm-b-mid recipe + wefor_residual=0.0, wefor_residual_groups=[CC_REGULAR, ST_CHP, ST_GAS]",
-    "identification": "caiso-187 frozen formula residual_c=max(0,W_c-X_c) on MISO's own fleet, loader-path X, every year 2019-2025 (results/calibration/_miso271_wefor_ident.json); CC_CHP excluded fail-closed (2023 residual 0.0036)",
+    "identification": "caiso-187 frozen formula residual_c=max(0,W_c-X_c) on MISO's own fleet, loader-path X, every year 2019-2025 (results/phase0/miso/_miso271_wefor_ident.json); CC_CHP excluded fail-closed (2023 residual 0.0036)",
     "basis": "rule 19 [R-ONE-MECH]: the measured short-gas windows (R-MISO) now carry the sub-5-day forced outages the statistical WEFOR term represented; retiring it removes a second count",
     "legs": {
       "2019": "11b2c08395e85b8f84d60c9c072307cbba0f670e",
@@ -699,7 +699,7 @@
     }
   },
   "miso272": {
-    "precommit": "docs/PRECOMMIT-miso272-cc-block-summer-rating-2026-09-25.md",
+    "precommit": "docs/records/miso/PRECOMMIT-miso272-cc-block-summer-rating-2026-09-25.md",
     "pin": "5efb86f352c3495b90fe41556d57731b45fc7b6e",
     "delta": "keeper 2026-09-25-miso-271-wefor-stack recipe + cc_block_summer_rating=true (new ScenarioConfig field, default off)",
     "identification": "none needed: zero free parameters; every number is an EIA-860 field of the vintage loaded (CA-row block summer rating allocated across the block's CT/CA rows by nameplate)",
@@ -726,7 +726,7 @@
     }
   },
   "miso273": {
-    "precommit": "docs/PRECOMMIT-miso273-short-screened-coal-wefor-2026-09-25.md",
+    "precommit": "docs/records/miso/PRECOMMIT-miso273-short-screened-coal-wefor-2026-09-25.md",
     "pin": "09b152c5099445b13e717eb0dab22947224d78a4",
     "delta": "keeper 2026-09-25-miso-272-edwardsport-block recipe + wefor_residual_short_screened_coal=true (new ScenarioConfig field, default off) + its declared input pair from one deriver invocation (campd-unit-outages-short-screened-MISO.csv new; campd-unit-outages-short-MISO.csv +30/-0 rows 2019-2022)",
     "identification": "caiso-187 frozen residual max(0, W - X) on MISO's screened coal fleet = 0 in every year 2019-2025 (W 18.7-25.3 TWh vs X 91-135 TWh); reuses the keeper's wefor_residual=0.0; zero free parameters",
@@ -750,7 +750,7 @@
     }
   },
   "miso275": {
-    "precommit": "docs/PRECOMMIT-miso275-cc-exempt-offer-lift-2026-09-26.md",
+    "precommit": "docs/records/miso/PRECOMMIT-miso275-cc-exempt-offer-lift-2026-09-26.md",
     "pin": "e5acf0fe30e707bb7100215a4826d721a0a78e3e",
     "delta": "keeper 2026-09-25-miso-273-screened-coal recipe + offer_curve_by_group replaced by docs/miso275-arm-offer-curve-by-group.json: CC_REGULAR and CC_INTERMEDIATE committed/econ_low/econ_high/peak 1.1055/1.045/1.188/2.475 -> 1.005/0.95/1.08/2.25 (eight cells)",
     "ruling": "owner 2026-09-26: 'Exempt CC from x1.10 (Recommended)'",
@@ -773,7 +773,7 @@
     }
   },
   "miso277": {
-    "precommit": "docs/PRECOMMIT-miso277-d1-as-ruled-2026-09-26.md",
+    "precommit": "docs/records/miso/PRECOMMIT-miso277-d1-as-ruled-2026-09-26.md",
     "pin": "bd0329ed1e6ae134a124acf4c998a0102d5986d2",
     "delta": "keeper 2026-09-26-miso-275-cc-exempt recipe + miso_winter_gas_daily_delivered=true, at a pin whose _miso_zone_hub_kind maps MISO-South to Henry Hub in 2019-2021 (hub table has no South row before 2022); D1 as ruled",
     "ruling": "owner 2026-09-26: D1 'Daily delivered price'; 'Chicago proxy (Recommended)'; miso-277 'Re-solve D1 as ruled (Recommended)'",
@@ -791,10 +791,10 @@
     "measured_inputs": "Chicago Citygate daily (EIA NGWU), Henry Hub daily (EIA), miso-225 frozen per-plant variable transport; MidCon on the Chicago series is a declared rule-14 proxy; MISO-South on Henry Hub"
   },
   "miso278": {
-    "precommit": "docs/PRECOMMIT-miso278-unit-fuel-split-2026-09-27.md",
+    "precommit": "docs/records/miso/PRECOMMIT-miso278-unit-fuel-split-2026-09-27.md",
     "pin": "257d3c6f4d64cafbebb35090c71cd2c6d573c1dd",
     "delta": "keeper 2026-09-26-miso-277-d1-as recipe + campd_unit_fuel_split=true: the four '-fuelsplit-' thermal-tranche companions (mixed coal/gas plants' rows re-derived with each CAMPD unit routed on its own primaryFuelInfo; every other line byte-identical)",
-    "ruling": "owner charter 2026-09-26 (miso-277 'Charter re-derive (Recommended)'), docs/handoffs/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md",
+    "ruling": "owner charter 2026-09-26 (miso-277 'Charter re-derive (Recommended)'), docs/records/miso/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md",
     "legs": {
       "2019": "0602ad4e1d36047125631a6942be23dab085b761",
       "2020": "96a6cd014ab0bc3935333db5dd95b6297584b98f",
@@ -809,7 +809,7 @@
     "measured_inputs": "CAMPD unit-level primaryFuelInfo + grossLoad (2023-2025), EIA-860 vintage fleets; frozen tranche estimator (_tranche_stats_row); keeper's -unitroute- outage basis"
   },
   "miso279": {
-    "precommit": "docs/PRECOMMIT-miso279-stgas-span-coverage-2026-09-27.md",
+    "precommit": "docs/records/miso/PRECOMMIT-miso279-stgas-span-coverage-2026-09-27.md",
     "pin": "47d3f8727fa86f51e5c061273cc1c7c6094d3654",
     "delta": "keeper 2026-09-27-miso-278-fuelsplit recipe + campd_st_gas_span_coverage=true: the four '-fuelsplit-stcov-' thermal-tranche companions (fuel-split bytes + ST_GAS rows derived 2019-2025 from each uncovered plant's own unit-routed gas-steam CEMS; every existing line byte-identical)",
     "ruling": "owner pick 2026-09-27 (miso-279 lever card 'A: add missing gas-steam rows (Recommended)')",
@@ -827,7 +827,7 @@
     "measured_inputs": "CAMPD unit-level primaryFuelInfo/unitType + grossLoad (2019-2025), EIA-860 vintage fleets; shared frozen estimator (_routed_family_rows / _tranche_stats_row); keeper's -unitroute- outage basis"
   },
   "miso280": {
-    "precommit": "docs/PRECOMMIT-miso280-split-remap-2026-09-28.md",
+    "precommit": "docs/records/miso/PRECOMMIT-miso280-split-remap-2026-09-28.md",
     "pin": "8f765fef0ed79c89687b6bf686cb65f611a9fea4",
     "delta": "keeper 2026-09-27-miso-279-stcov recipe + campd_split_remap_companions=true: the seven '-splitremap-' companions (unit-outage std/short-gas/maxgen extracts, measured CC heat rates, four -fuelsplit-stcov- tranche files) re-derived after (55641,'CT-03'/'CT-04')->64020 was added to campd.CAMPD_UNIT_PLANT_REMAP; only 55641/64020 lines differ from the keeper's files",
     "ruling": "owner ruling 2026-09-28 (miso-280 card 'C: Build it (Recommended)')",

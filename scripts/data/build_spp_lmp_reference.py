@@ -55,7 +55,7 @@ The consequence for this script: it cannot fetch until a Marketplace credential
 supplies ``X-SPP-UI-Token`` (or the FTP route is wired). ``--per-hub`` below is
 implemented and unit-tested against a fixture, but has never been run against
 live SPP data. Blocked-URL table and the manual manifest:
-``docs/handoffs/FINDING-spp-12-2026-09-06.md``.
+``docs/records/spp/FINDING-spp-12-2026-09-06.md``.
 
   * System hub = simple mean of ``SPPNORTH_HUB`` and ``SPPSOUTH_HUB`` (the two
     SPP trading hubs), the price the MISO-West border sees from SPP.
@@ -98,7 +98,7 @@ measured demand the model dispatches, an HOUR-MATCHED pairing -- the offset
 landed directly on a load-bearing criterion.
 
 The defect and the sign are established by four clock-independent markers, none
-of them a residual (``docs/handoffs/FINDING-spp-51c-2026-09-09.md`` section 1):
+of them a residual (``docs/records/spp/FINDING-spp-51c-2026-09-09.md`` section 1):
 EIA-930 SPP solar peaks at hour-index 12/13 (solar noon) and load at 17, while
 the emitted sidecar's RT LMP peaked at 22/23 -- a 22:00 local RT peak is not
 physical; SPP's own explicitly ``GMT MKT Interval``-stamped generation-mix file
@@ -127,7 +127,7 @@ Two outputs, from the SAME parsed monthly frames and the SAME 8760 calendar:
     ``--per-hub`` is purely additive and must never move it. Proof that this
     change does not (pre-change vs post-change parser over a fixture, and the
     system series equal to the NaN-skipping mean of the two hub series):
-    ``docs/handoffs/FINDING-spp-12-2026-09-06.md`` §3. A permanent guard test
+    ``docs/records/spp/FINDING-spp-12-2026-09-06.md`` §3. A permanent guard test
     belongs with the lane that owns ``tests/`` — SPP-12 does not.
   * ``--per-hub`` — ``actual_lmp_hourly_zonal_SPP.parquet``,
     ``year``/``hour``/``zone``/``rt``/``da`` with one row per hub per hour, the
@@ -540,7 +540,7 @@ def repair_clock(path: Path) -> pd.DataFrame:
 
     The live fetch is blocked (``portal.spp.org`` returns an empty listing and
     404s on download for an anonymous caller,
-    ``docs/handoffs/FINDING-spp-12-2026-09-06.md``) and the raw monthly exports
+    ``docs/records/spp/FINDING-spp-12-2026-09-06.md``) and the raw monthly exports
     are not committed, so the sidecars emitted under the pre-SPP-51c assumption
     cannot simply be re-fetched. They can, however, be repaired exactly: the
     defect is a labelling error and the fix is a PURE RE-INDEXING of values that

@@ -1,7 +1,7 @@
 """Tests for audit_keepers E11 (keeper-lineage recipe fidelity, full kwarg surface).
 
 The nyiso-108→155 incident class
-(``docs/FINDING-nyiso-hydro-truncation-repair-2026-08.md`` §2): the hydro
+(``docs/records/nyiso/FINDING-nyiso-hydro-truncation-repair-2026-08.md`` §2): the hydro
 repair pair (``hydro_backfill_year`` / ``hydro_eia930_monthly``) are
 ``solve_and_persist`` kwargs, NOT ``ScenarioConfig`` fields, so lineage checks
 that verified "all scenario_config fields identical" were structurally blind

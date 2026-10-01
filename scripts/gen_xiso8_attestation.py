@@ -135,8 +135,8 @@ every month, so the January LEVEL cannot move), and its worst-year exposure is \
 measured magnitude BEFORE any gate was consulted. Stated as a cost: MISO's \
 keeper continues to carry the defect on 2021 and 2022 at those sizes.
 
-Record: docs/PRECOMMIT-xiso8-year-start-left-edge-2026-09-20.md; \
-results/calibration/_xiso8_left_edge_census.json; _xiso8_band.json; \
+Record: docs/records/governance/PRECOMMIT-xiso8-year-start-left-edge-2026-09-20.md; \
+results/phase0/governance/_xiso8_left_edge_census.json; _xiso8_band.json; \
 _xiso8_leg_ab.json."""
 
 NOTE = """\
@@ -146,7 +146,7 @@ carrying the new marginal_emission_rate column; the governance booleans and \
 the DOF ledger are carried forward from the outgoing keeper 2026-09-12-caiso-\
 275-gascoupling because the scenario_config is identical by checked \
 construction, and the exceptions ledger is re-measured from this bundle's own \
-scorer output. See docs/RESULT-caiso287-startup-decommit-split-2026-09-19.md \
+scorer output. See docs/records/caiso/RESULT-caiso287-startup-decommit-split-2026-09-19.md \
 for the session's substantive findings, none of which arm or disarm anything."""
 
 

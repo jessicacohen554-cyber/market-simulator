@@ -3,7 +3,7 @@
 Reads only committed artifacts — the keeper's ``hourly/class_hourly_<year>``
 and ``hourly/class_band_hourly_<year>`` sidecars (rule 15 ``[R-DASHBOARD]``)
 and its EIA-930 benchmark frame — so it reproduces every number in
-``docs/handoffs/FINDING-nwpp-45-c4-is-an-amplitude-defect-2026-09-22.md``
+``docs/records/nwpp/FINDING-nwpp-45-c4-is-an-amplitude-defect-2026-09-22.md``
 without a solve. The benchmark frame lives in the gitignored shared store and
 is recovered first with::
 

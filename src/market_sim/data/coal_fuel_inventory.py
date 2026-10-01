@@ -6,7 +6,7 @@ module the only fuel-inventory mechanism in the codebase was NEISO winter oil
 (:mod:`market_sim.data.winter_fuel_inventory`). So the LP cannot represent *"the
 fleet drew its stockpile down in one year and could only burn what it received
 in the next"* — and that, not a price or an offer curve, is what
-``docs/FINDING-miso256-2022-passthrough-inversion-2026-09-13.md`` §4 identifies
+``docs/records/miso/FINDING-miso256-2022-passthrough-inversion-2026-09-13.md`` §4 identifies
 behind MISO's flat **+4.3 GW coal block in every hour of 2022**.
 
 Rule 19 ``[R-ONE-MECH]`` is clean by inspection: this is a **missing limb**, not
@@ -523,7 +523,7 @@ def build_coal_take_floor(
 
     The LOWER bound of the same annual identity whose upper bound is
     :func:`build_coal_plant_budget` (owner rulings Q1-Q5, 2026-09-27, on
-    ``docs/handoffs/FINDING-nwppnext5-coal-take-obligation-design-2026-09-26.md``
+    ``docs/records/nwpp/FINDING-nwppnext5-coal-take-obligation-design-2026-09-26.md``
     §5: generalise the yard row, annual period, a floor not an equality,
     estimator B net, incumbent per-hour take-or-pay discounts retired)::
 

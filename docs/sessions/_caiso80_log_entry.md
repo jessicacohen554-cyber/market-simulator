@@ -3,7 +3,7 @@
 The caiso-80 lane (caiso-79 plan §4, the C3a/CC body-base decomposition on the
 honest bench) ran its three no-tuning steps and found the root cause upstream
 of every mechanism the lane could have touched
-(`results/calibration/FINDING-caiso80-demand-basis-wedge-2026-07-13.md`):
+(`docs/records/caiso/FINDING-caiso80-demand-basis-wedge-2026-07-13.md`):
 
 - **B1 (belly probe refreshed on caiso-78):** the caiso-65-vintage "belly
   under-commitment" story is dead — the model over-commits CC around the
@@ -103,7 +103,7 @@ effective-flag series so must-run derivation, the persisted
   determination stays NOT-YET (C3a/C3b/C3c).
 - **Registry:** caiso-74 inert-probe pair pruned (top-15 retention).
 - **Owner decision (same session): the local-commitment driver design
-  (`docs/handoffs/caiso-local-commitment-driver-design-2026-07.md`) is
+  (`docs/records/caiso/caiso-local-commitment-driver-design-2026-07.md`) is
   APPROVED as designed** — implementation still waits on the post-caiso-80
   deficit re-measurement per the doc's own sequencing; note the deficit
   GREW (above), so the response-curve sizing must use the caiso-80 payload.

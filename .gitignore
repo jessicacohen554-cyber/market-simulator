@@ -293,7 +293,7 @@ frontend/data/mac/manifest.js
 # SCN-WS0 paired T0 smoke (results/scn-ws0-smoke/): identical class to the
 # ffr-sa-smoke legs above. The slim artifacts ARE committed — each arm's
 # summary + run_config, the matrix bundle, and the delta-report / campaign-rollup
-# tables that are the evidence behind docs/handoffs/FINDING-scn-ws0-2026-09-05.md
+# tables that are the evidence behind docs/records/forecast/FINDING-scn-ws0-2026-09-05.md
 # — while the nested per-ISO LP cache dir each self-contained arm writes is
 # transient and regenerable from config.
 /results/scn-ws0-smoke/*/*/NEISO/
@@ -301,7 +301,7 @@ frontend/data/mac/manifest.js
 # same class as the two smoke trees above. The slim artifacts ARE committed —
 # each T0 arm's summary + run_config, each ladder's matrix bundle, and the
 # scoring / delta-report / campaign-rollup tables that are the evidence behind
-# docs/handoffs/FINDING-scn-ws1b-2026-09-06.md — while the nested per-ISO LP
+# docs/records/forecast/FINDING-scn-ws1b-2026-09-06.md — while the nested per-ISO LP
 # cache each arm and each ladder case writes is transient and regenerable from
 # config. Six ISOs here rather than one, so the pattern is per-ISO.
 /results/scn-ws1-probe/*/*/ERCOT/
@@ -316,7 +316,7 @@ frontend/data/mac/manifest.js
 # class as the three smoke/probe trees above. The slim artifacts ARE committed —
 # each arm's summary + run_config, each ISO's matrix bundle, and the
 # delta-report tables that are the evidence behind
-# docs/handoffs/FINDING-scn-ws4c-2026-09-06.md — while the nested per-ISO LP
+# docs/records/forecast/FINDING-scn-ws4c-2026-09-06.md — while the nested per-ISO LP
 # cache each arm writes is transient and regenerable from config. Six ISOs, so
 # the pattern is per-ISO.
 /results/scn-ws4-probe/*/*/ERCOT/
@@ -350,12 +350,12 @@ frontend/data/mac/manifest.js
 # FFR-7B-2 Arm-2/3 measurement legs (run_full_horizon --out-dir): same class as
 # /results/full-horizon/ — transient full-horizon forecast solves; the
 # registered record is the frontend/data/hindcast sidecar, and the readout
-# lives in docs/handoffs/ffr-7b2-rps-krow-clean-rows-2026-08-06.md.
+# lives in docs/records/forecast/ffr-7b2-rps-krow-clean-rows-2026-08-06.md.
 /results/ffr7b2/
 # FFR-4E CAISO storage-accreditation row-4 A/B (run_full_horizon --out-dir).
 # The heavy per-year DISPATCH PARQUETS only: unlike the transient families
 # above, this pair's SLIM artifacts ARE committed and cited by
-# docs/handoffs/ffr-4e-caiso-storage-elcc-2026-08-09.md — the two
+# docs/records/forecast/ffr-4e-caiso-storage-elcc-2026-08-09.md — the two
 # full_horizon_summary.json + run_config.json (which carry the row-4 numerator/
 # denominator and the armed flag) and the per-year evolution ledgers, which are
 # the accreditation trail §5.2 reads. Only the regenerable ~24 MB of dispatch
@@ -364,7 +364,7 @@ frontend/data/mac/manifest.js
 # FFR-4F CAISO capacity-price-anchor A/B (run_full_horizon --out-dir). Exactly
 # the FFR-4E class above, for the same reason: the heavy per-year DISPATCH
 # PARQUETS only. This pair's SLIM artifacts ARE committed and cited by
-# docs/handoffs/ffr-4f-caiso-anchor-merits-2026-08-09.md — the two
+# docs/records/forecast/ffr-4f-caiso-anchor-merits-2026-08-09.md — the two
 # full_horizon_summary.json + run_config.json (which carry the FC-2 rows, the
 # build composition and the armed flag, so the paired table is auditable
 # without a re-solve) and the per-year evolution ledgers. Only the regenerable
@@ -373,7 +373,7 @@ frontend/data/mac/manifest.js
 # capx-D2 NYISO external-capacity T1-F re-score (run_full_horizon --out-dir;
 # registered run nyiso-2026-2030-extcap-capxd2). Exactly the FFR-4E/FFR-4F
 # class above: the SLIM artifacts ARE committed and cited by
-# docs/handoffs/FINDING-capx-d2-nyiso-extcap-2026-08-25.md §4 — the
+# docs/records/forecast/FINDING-capx-d2-nyiso-extcap-2026-08-25.md §4 — the
 # full_horizon_summary.json + run_config.json (FC-7's requirement), the
 # per-year evolution ledgers (the I7 accredited/requirement trail) and the
 # resolved config.yaml. Only the regenerable per-year dispatch parquets and
@@ -384,7 +384,7 @@ frontend/data/mac/manifest.js
 # (run_full_horizon --out-dir; registered runs neiso-2026-2030-s4hydro and
 # neiso-2026-2030-s4hydro-control). Exactly the FFR-4E/FFR-4F/capx-D2 class:
 # the SLIM artifacts ARE committed and cited by
-# docs/handoffs/FINDING-capx-s4-neiso-hydro-2026-08-30.md §5 — the two
+# docs/records/forecast/FINDING-capx-s4-neiso-hydro-2026-08-30.md §5 — the two
 # full_horizon_summary.json + run_config.json (FC-7's requirement), the
 # per-year evolution ledgers (the I7 accredited/requirement trail) and the
 # resolved config.yaml. Only the regenerable per-year dispatch outputs and
@@ -397,7 +397,7 @@ frontend/data/mac/manifest.js
 
 # capx-S4b NEISO ARA re-vintage control/treatment pair (run ids
 # neiso-2026-2030-s4b-ara / -control, pre-declared in
-# docs/handoffs/FINDING-capx-s4b-neiso-ara-2026-08-30.md §4) — same class
+# docs/records/forecast/FINDING-capx-s4b-neiso-ara-2026-08-30.md §4) — same class
 # and same slim-vs-heavy split as /results/ff-t1f-s4hydro/ above.
 /results/ff-t1f-s4b-ara/*/*/*/*.parquet
 /results/ff-t1f-s4b-ara/*/*/*/*.npz
@@ -405,7 +405,7 @@ frontend/data/mac/manifest.js
 /results/ff-t1f-s4b-ara/*/*/*/year_*_floor_retentions.json
 
 # capx-S123 MISO adequacy-package verification leg
-# (docs/handoffs/FINDING-capx-s123-miso-adequacy-2026-08-30.md §6) — same
+# (docs/records/forecast/FINDING-capx-s123-miso-adequacy-2026-08-30.md §6) — same
 # class and same slim-vs-heavy split as /results/ff-t1f-s4hydro/ above,
 # plus the in-session build/solve logs.
 /results/ff-t1f-s123/*/*/*/*.parquet
@@ -417,7 +417,7 @@ frontend/data/mac/manifest.js
 # capx T3-NEISO-GOLDEN — the program's FIRST §2.1b-authorized full-horizon
 # campaign (owner ruling Q13, r#17 sitting 2026-08-30: NEISO 2026-2050 T3 BAU
 # golden, this campaign only; run id neiso-2026-2050-t3-golden-bau,
-# docs/handoffs/FINDING-capx-t3-neiso-golden-2026-08-30.md). Same class and
+# docs/records/forecast/FINDING-capx-t3-neiso-golden-2026-08-30.md). Same class and
 # same slim-vs-heavy split as /results/ff-t1f-s4hydro/ above (the committed
 # record is config.yaml + evolution_<year>.json + full_horizon_summary +
 # run_config + forecast_verdict), plus the in-session build/solve logs.
@@ -439,7 +439,7 @@ frontend/data/mac/manifest.js
 /results/ff-t3-neiso-golden/*/fc6/_battery_cache_*/
 
 # capx-S6 PJM T1-F ledger run (run id pjm-2026-2030-s6-ledger, pre-declared in
-# docs/handoffs/FINDING-capx-s6-pjm-ledger-2026-08-30.md §3) — same class and
+# docs/records/forecast/FINDING-capx-s6-pjm-ledger-2026-08-30.md §3) — same class and
 # same slim-vs-heavy split as /results/ff-t1f-s4hydro/ above, plus the
 # in-session build/solve logs.
 /results/ff-t1f-s6-pjm/*/*/*/*.parquet
@@ -450,8 +450,8 @@ frontend/data/mac/manifest.js
 
 # capx-D46 batched re-measure — the three Stage-1 T1-F legs at HEAD (run ids
 # ercot-/neiso-/caiso-2026-2030-d46-remeasure, pre-declared in
-# docs/handoffs/PREDECL-capx-d46-remeasure-2026-09-03.md and reported in
-# docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md). Same class and same
+# docs/records/forecast/PREDECL-capx-d46-remeasure-2026-09-03.md and reported in
+# docs/records/forecast/FINDING-capx-d46-remeasure-2026-09-03.md). Same class and same
 # slim-vs-heavy split as /results/ff-t1f-s6-pjm/ above: the committed record is
 # config.yaml + evolution_<year>.json + full_horizon_summary + run_config +
 # forecast_verdict + dof_ledger, and the per-year dispatch parquets, screen
@@ -509,7 +509,7 @@ frontend/data/mac/manifest.js
 # /results/ff-t1f-d50/ and /results/ff-t1f-d60/ above: the committed record is
 # full_horizon_summary.json + run_config.json + the resolved config.yaml + the
 # evolution_<year>.json ledgers (which carry the ccs_retrofits rows every table
-# in docs/handoffs/FINDING-capx-d65-2026-09-05.md is read off, so the finding is
+# in docs/records/forecast/FINDING-capx-d65-2026-09-05.md is read off, so the finding is
 # auditable without a re-solve); the per-year dispatch parquet, npz, hourly
 # sidecars and floor-retention dumps are heavy (~16 MB) and regenerable from the
 # config, per the pack-size rule in CLAUDE.md's Git & Pushing.
@@ -529,7 +529,7 @@ frontend/data/mac/manifest.js
 # D-28 option A step 3). Same class as /results/ffr7b2/ above, of which this is
 # the direct continuation — transient full-horizon forecast solves; the
 # registered record is the frontend/data/hindcast sidecar, and the readout
-# lives in docs/handoffs/arm3-clean-row-horizon-2026-08-09.md.
+# lives in docs/records/misc/arm3-clean-row-horizon-2026-08-09.md.
 /results/arm3/
 # ARM-3-ARM armed-default leg (run_full_horizon --out-dir; owner decision D-29,
 # arming miso_clean_tier_rows as the MISO forecast default). The FFR-4E/FFR-4F
@@ -539,14 +539,14 @@ frontend/data/mac/manifest.js
 # full_horizon_summary.json carry the RESOLVED miso_clean_tier_rows: true and
 # the cache key 9337e00504e1e72a on a leg that passed NO clean-tier flag, which
 # is precisely the claim "the ISO override arms it" reduces to. Readout:
-# docs/handoffs/arm3-arm-miso-clean-tier-2026-08-11.md.
+# docs/records/miso/arm3-arm-miso-clean-tier-2026-08-11.md.
 /results/arm3arm/*/*/*/*.parquet
 /results/arm3arm/*/*/*/*.npz
 /results/arm3arm/*/*/*/hourly/
 # D-9 forecast warm-start A/B arms (scripts/probes/_d9_forecast_warmstart_ab.py
 # --out-dir). Same class as /results/full-horizon/ — it IS a full-horizon
 # forecast solve, one per arm, and nothing here is dashboard-registered. The
-# measured readout lives in docs/handoffs/wallclock-baseline-2026-07.md.
+# measured readout lives in docs/records/misc/wallclock-baseline-2026-07.md.
 /results/d9-ab/
 /results/probe-*/
 /results/verify-*/
@@ -557,7 +557,7 @@ frontend/data/mac/manifest.js
 # run_full_horizon --out-dir caches). Same class as /results/ffr1a/ — a T0
 # regression probe, not dashboard-registered. The measured readout (identical
 # cache key, content-identical year parquets, unchanged invariants) lives in
-# docs/handoffs/ffr-2c-net-cone-currency-2026-08-02.md §6; the paired
+# docs/records/forecast/ffr-2c-net-cone-currency-2026-08-02.md §6; the paired
 # capacity-price validation JSONs it cites ARE committed, under
 # results/capacity-price-validation/.
 /results/ffr2c/
@@ -565,7 +565,7 @@ frontend/data/mac/manifest.js
 # isolated run_full_horizon --out-dir caches). Same class as /results/ffr2c/ —
 # the committed record is the registered sidecar under
 # frontend/data/hindcast/, and the readout lives in
-# docs/handoffs/ffr-2e-shipped-capacity-posture-2026-08-02.md §4.
+# docs/records/forecast/ffr-2e-shipped-capacity-posture-2026-08-02.md §4.
 /results/ffr2e/
 # FFR-SC transmission-expansion gate A/B arms (CAISO 2026-2030, isolated
 # run_full_horizon --out-dir caches). Only the HEAVY regenerable LP output is
@@ -573,7 +573,7 @@ frontend/data/mac/manifest.js
 # evolution_<year>.json / year_<year>_floor_retentions.json ledgers the handoff
 # and the registered sidecar cite — is committed, as under /results/ff2b-after/
 # and /results/ffr1c/. Regenerate the parquets with the two commands in
-# docs/handoffs/ffr-sc-transmission-ab-2026-08-03.md §2.
+# docs/records/forecast/ffr-sc-transmission-ab-2026-08-03.md §2.
 /results/ffrsc/**/year_*.parquet
 /results/ffrsc/**/config.yaml
 # FFR-3P paired CAISO NQC-accreditation A/B arms (CAISO 2026-2030, isolated
@@ -582,7 +582,7 @@ frontend/data/mac/manifest.js
 # cites (full_horizon_summary.json + run_config.json + the evolution_<year>.json
 # / year_<year>_floor_retentions.json ledgers) IS committed. Regenerate the
 # parquets with the two commands in
-# docs/handoffs/ffr-3p-caiso-accreditation-ab-2026-08-04.md §Reproduction.
+# docs/records/forecast/ffr-3p-caiso-accreditation-ab-2026-08-04.md §Reproduction.
 /results/ffr3p/**/year_*.parquet
 /results/ffr3p/**/config.yaml
 # FFR-4D CAISO base-fleet re-vintage A/B (forecast, CAISO 2026-2030, two arms).
@@ -590,7 +590,7 @@ frontend/data/mac/manifest.js
 # output is ignored. The slim per-run record the handoff cites IS committed --
 # full_horizon_summary.json, run_config.json and the evolution_<year>.json
 # ledgers. Regenerate the parquets with the two run_full_horizon commands in
-# docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md §9.
+# docs/records/forecast/ffr-4d-caiso-fleet-vintage-2026-08-04.md §9.
 /results/ffr4d/**/year_*.parquet
 # FFR-3V MISO entry-screen diagnostics solve (MISO 2021-2025 hindcast, isolated
 # run_capacity_hindcast --out-dir cache). Same class as /results/ffr3p/ — only
@@ -599,7 +599,7 @@ frontend/data/mac/manifest.js
 # entry_screen_diagnostics rows, plus year_<year>_floor_retentions.json) IS
 # committed, because those ledgers ARE the deliverable's evidence. Regenerate
 # the parquets with the command in
-# docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §2.
+# docs/records/forecast/ffr-3v-miso-entry-screen-2026-08-04.md §2.
 /results/ffr3v/**/year_*.parquet
 /results/ffr3v/**/config.yaml
 
@@ -610,7 +610,7 @@ frontend/data/mac/manifest.js
 # rows, the year_<year>_floor_retentions.json, and each arm's run_config/meta)
 # IS committed, because those ledgers ARE the deliverable's evidence.
 # Regenerate the parquets with the command in
-# docs/handoffs/ffr-4b-miso-solar-revenue-2026-08-04.md §3 / the arms README.
+# docs/records/forecast/ffr-4b-miso-solar-revenue-2026-08-04.md §3 / the arms README.
 /results/ffr4b/**/year_*.parquet
 /results/ffr4b/**/config.yaml
 /results/*.log
@@ -634,7 +634,7 @@ frontend/data/mac/manifest.js
 # `capture` and read by scripts/diagnostics/bench_highs_parallel.py. Hundreds
 # of MB each (ERCOT 2023 425 MB, MISO 2024 co-opt 817 MB) — regenerable from
 # the capture command, and they would trip the remote's 413 push limit. The
-# measured verdicts live in docs/handoffs/wallclock-baseline-2026-07.md.
+# measured verdicts live in docs/records/misc/wallclock-baseline-2026-07.md.
 /results/bench_capture_*.pkl
 /results/bench-parallel/
 # Persisted year-1 cross-year warm-start basis cache (plan §7 H2). Disposable
@@ -648,7 +648,7 @@ frontend/data/mac/manifest.js
 /results/p0-cache/
 # Outage-gate audit scratch.
 /results/outage_gate_audit/
-# Stage-0 regression goldens (docs/handoffs/orchestrator-unification-plan-2026-07.md
+# Stage-0 regression goldens (docs/records/misc/orchestrator-unification-plan-2026-07.md
 # §7.3): multi-GB re-solved keeper bundles used only for before/after stage
 # comparison. The bundles live in <stage-tag>/<ISO>/ subdirs — ignore those (they
 # trip the remote's 413 push limit); the hashes-only <stage-tag>/manifest.json
@@ -678,7 +678,7 @@ frontend/data/mac/manifest.js
 #   git checkout 887bb239e27e -- results/calibration/caiso288_gasfix_2025
 # (2022 leg: aac324c4b211dd33e028e3a0bd1ba50e2e44d7f7 — its bundle IS registered,
 #  as the stamped rung 2026-09-20-caiso-288-citygate-2022, so it is not ignored.)
-# Full recovery table: docs/RESULT-caiso288-the-prints-were-published-2026-09-20.md §7.
+# Full recovery table: docs/records/caiso/RESULT-caiso288-the-prints-were-published-2026-09-20.md §7.
 results/calibration/caiso288_gasfix_2023/
 results/calibration/caiso288_gasfix_2024/
 results/calibration/caiso288_gasfix_2025/
@@ -693,7 +693,7 @@ results/calibration/caiso288_gasfix_2025/
 # arm C is REFUTED, so committing any of them would be the Class-E parity RED
 # rule 29 [R-SCREEN] (c) forbids.
 #
-# Every number these bundles support is in docs/RESULT-hydro-1-2026-09-22.md —
+# Every number these bundles support is in docs/records/misc/RESULT-hydro-1-2026-09-22.md —
 # that doc is the record, exactly as rule 31 intends. The SHAs below are
 # PROVENANCE (which commit produced which leg), NOT a durability claim: a shard
 # branch is transport and is cut when the lane's PR merges (rule 33
@@ -728,7 +728,7 @@ results/calibration/hydro1_nyiso_pond_2024/
 results/calibration/hydro1_nyiso_pond_2025/
 # hydro-5 (2026-09-22): the 26 per-year arm legs, kept on local disk and out
 # of main until the owner rules on promotion (rule 31 [R-RETAIN]); leg SHAs are
-# recorded in docs/RESULT-hydro-5-2026-09-22.md as provenance only (rule 33(d)).
+# recorded in docs/records/misc/RESULT-hydro-5-2026-09-22.md as provenance only (rule 33(d)).
 results/calibration/hydro5_spp_floor_20*/
 results/calibration/hydro5_spp_ror_20*/
 results/calibration/hydro5_neiso_ror_20*/
@@ -1139,14 +1139,14 @@ docs/handoffs/_foresight_ab_cache/
 # nyiso-124 probe pull cache: public NYISO MIS monthly zonal-LBMP and ATC/TTC
 # zips fetched on demand by scripts/probes/_nyiso124_charter_g0_g1.py. The URLs
 # are in the probe and the committed deliverable is
-# results/calibration/_nyiso124_charter_g0_g1.json — the zips are disposable.
+# results/phase0/nyiso/_nyiso124_charter_g0_g1.json — the zips are disposable.
 .cache/
 docs/handoffs/_battery_cache_*/
 docs/handoffs/_battery_metrics/
 
 # FF-3B CES T1-scale POC: disposable per-year solve cache + logs, and the
 # throwaway driver/registration instrumentation. The committed POC deliverables
-# are docs/handoffs/ff-3b-ces-poc-2026-07.md (with the wall/RSS ledger + report
+# are docs/records/forecast/ff-3b-ces-poc-2026-07.md (with the wall/RSS ledger + report
 # tables) and the kind="ces-poc" sidecars under frontend/data/hindcast/ (which
 # carry meta.per_year_perf for FF-3E).
 /results/ces-poc/
@@ -1244,14 +1244,14 @@ results/calibration/caiso154_slopes_PJM.csv
 # class as /results/ffr3a/, /results/ffr3c/ and /results/ffr3a2/ — forecast
 # legs are registered to frontend/data/forecast/ via
 # scripts/register_forecast_run.py, never as tracked bundles here (CLAUDE.md
-# rule 15). The deliverable is docs/handoffs/ffr-3h-caiso-backstop-2026-08-04.md.
+# rule 15). The deliverable is docs/records/forecast/ffr-3h-caiso-backstop-2026-08-04.md.
 /results/ffr3h/
 
 # FFR-3Q re-cut FH-1 §3.3 gate arms (run_capacity_hindcast --forward-from-base
 # --out-dir caches, base 2021 / vintage 2020, paired pipeline + legacy control).
 # QUARANTINED, NEVER REGISTERED: both arms solved 2022 -- a validation-tier
 # holdout year -- under an ACTIVE freeze, via the _validate_window /
-# runner.is_bridge seam defect (docs/handoffs/ffr-3q-window-recut-2026-08-04.md
+# runner.is_bridge seam defect (docs/records/forecast/ffr-3q-window-recut-2026-08-04.md
 # §2.2). Same class as /results/ffr3l/ — hindcast bundles are registered via
 # frontend/data/hindcast/ sidecars, never as tracked bundles (CLAUDE.md rule 15)
 # — and these must not be registered at all. The evidence (meta.json fields and
@@ -1357,7 +1357,7 @@ data/raw/ercot/SCED/rtcb-format-2026/*.parquet
 
 # --- BLOAT-S2 Stage-2 (a)-only corpus conversions (O2 grant, owner-signed
 # 2026-08-16: DECISION-CARD-bloat3-stage2-charter-2026-08-16.md; per-corpus
-# evidence passes: docs/FINDING-bloat-s2-evidence-passes-2026-08-17.md).
+# evidence passes: docs/records/governance/FINDING-bloat-s2-evidence-passes-2026-08-17.md).
 # Payloads untracked at tip; each corpus README carries the verified source
 # table, the re-fetch command and the MEASURED retention window, and a tracked
 # SHA256SUMS.txt records the removed bytes. Recovery is re-fetch ONLY -- the
@@ -1414,7 +1414,7 @@ results/calibration/ercot227_f3_arm/
 
 # ercot-230 PROBE bundles (same W-2 clause, carried forward by the ercot-230
 # dispatch): the fixed-point control replay + 2023-only arm. Their record is
-# the committed results/calibration/ercot230_probe_fixedpoint.json + the
+# the committed results/phase0/ercot/ercot230_probe_fixedpoint.json + the
 # FINDING (PRECOMMIT-ercot230-adaptive-fixed-point-2026-08-23.md §3/§7). A
 # 3-year bundle, if the arm clears adoption, is registered under its own
 # (non-ignored) name.
@@ -1423,7 +1423,7 @@ results/calibration/ercot230_arm2023/
 
 # ercot-229 PROBE bundles + gates JSON (same W-2 clause / Amendment 3 as the
 # ercot-227 block above): the F1b control and arm single-year solves. Their
-# record is the committed results/calibration/ercot229_probe_f1b.json, which
+# record is the committed results/phase0/ercot/ercot229_probe_f1b.json, which
 # folds in the gates table. F1b did not clear adoption (measured inert on the
 # scored basis), so no 3-year bundle exists to register.
 results/calibration/ercot229_f1b_ctl/
@@ -1432,7 +1432,7 @@ results/calibration/ercot229_f1b_gates.json
 
 # ercot-231 PROBE bundles (same W-2 clause, carried forward by the ercot-231
 # dispatch): the tie-zone control replay + N1a 2023-only arm. Their record is
-# the committed results/calibration/ercot231_phase0.json +
+# the committed results/phase0/ercot/ercot231_phase0.json +
 # ercot231_probe_*.json + ercot231_*_gates.json + the FINDING
 # (PRECOMMIT-ercot231-nonas-tightness-2026-08-23.md §5.9/§7). A 3-year
 # bundle, if an arm clears adoption, is registered under its own name.
@@ -1464,6 +1464,15 @@ data/raw/fleet-egrid/*.parquet
 # anchor source and rebuilt automatically whenever either source's bytes
 # change. Disposable, machine-local, never committed.
 data/raw/fleet-egrid/*.json
+# cleanup-E (2026-10-01): both families are ALLOW-LISTED, the way the EIA-923
+# extracts above are. They are deterministic (content-addressed, so a stale one
+# is simply never read) and small — the full 2018-2024 set a fleet build writes
+# measured 30 files / 5.8 MB — while every fresh solve container otherwise
+# rebuilds them cold (~28 s of openpyxl + the per-vintage repair scan).
+# Allow-listing only makes them `git add`-able; committing them is a separate,
+# owner-decided step (docs/clean-data-profiles.md).
+!data/raw/fleet-egrid/*.????????????????.*.parquet
+!data/raw/fleet-egrid/*.????????????????.*.json
 
 # --- SCN-LOAD: the load-forecast datatype's one oversized payload -----------
 # ERCOT's 2025 Adjusted Long-Term Load Forecast workbook is a 48.4 MB hourly
@@ -1483,7 +1492,7 @@ data/raw/load-forecast/ercot/ErcotAdjustedForecast.xlsb
 # regenerable LP output is ignored; the SLIM per-run record the finding cites
 # IS committed, because those ledgers ARE the evidence: every requirement,
 # census-position, clearing-price and uncleared-count number in
-# docs/handoffs/FINDING-capx-d67arm-2026-09-06.md §4 is read straight off the
+# docs/records/forecast/FINDING-capx-d67arm-2026-09-06.md §4 is read straight off the
 # evolution_<year>.json ledgers (entry_screen_diagnostics rows), and §5's FC
 # table off score.json. The canonical registered record remains the sidecar
 # frontend/data/hindcast/pjm-2021-2025-realized-t1h-d67arm.json (rule 15).
@@ -1513,7 +1522,7 @@ results/calibration/caiso262_repro2023/
 # disposable and policy-free — a cold and a warm build produce byte-identical
 # parquets (proved by scripts/lib/wind_shape.py's own test) — and it lives under
 # data/clean/, which line 229 already ignores; this entry is a signpost, not a
-# second rule. Regenerate with docs/handoffs/spp48/warm_cache.py.
+# second rule. Regenerate with docs/records/spp/spp48/warm_cache.py.
 /data/clean/wind-shape-reanalysis/
 
 # miso-243 screen + full-span bundles. Rule 29 [R-SCREEN] (c): they must not
@@ -1549,7 +1558,7 @@ results/calibration/miso243_sppair_K/*.parquet
 # discharges it in full, the parity gate never sees an unregistered bundle dir,
 # and the solved artifacts stay on local disk until the owner has ruled on
 # promotion. Every number this lane cites lives in
-# docs/handoffs/FINDING-capx-d84-2026-09-07.md and its d84/ instruments.
+# docs/records/forecast/FINDING-capx-d84-2026-09-07.md and its d84/ instruments.
 results/hindcast/pjm-2021-2025-realized-t1h-d84-*/
 
 # ercot-256 screen / full-span / rung bundles for the net-load drag lay-up
@@ -1666,7 +1675,7 @@ results/calibration/_spp52a_heavy/
 # rule 29(b)'s LIVE case when T-REPRO failed. Rule 29(c) keeps a control bundle OUT
 # of `main` (the parity gate only ever sees committed dirs); rule 31 [R-RETAIN]
 # keeps it ON LOCAL DISK until the owner has ruled on promotion. Every number this
-# lane cites from it is in docs/handoffs/FINDING-capx-d90-rescore-2026-09-09.md.
+# lane cites from it is in docs/records/forecast/FINDING-capx-d90-rescore-2026-09-09.md.
 /results/ff-t3-neiso-golden/d90-pre-d88-control/
 # ercot-261 solve bundles (arm + control, per-year shards and the composed span).
 # Rule 31 [R-RETAIN]: these are NEVER deleted from local disk until the owner
@@ -1687,7 +1696,7 @@ results/calibration/ercot261_ctl_*/
 # COMMITTED dirs. Rule 31 [R-RETAIN] FORBIDS deleting any of them from local
 # disk before the OWNER has ruled on promotion; `rm` is not the remedy here.
 # Every number this lane cites lives in
-# docs/PRECOMMIT-pjm-fuelvintage-2026-09-09.md and its RESULT doc.
+# docs/records/pjm/PRECOMMIT-pjm-fuelvintage-2026-09-09.md and its RESULT doc.
 results/screen/pjm_ep_level_2023/
 # ...and the solve-written derived input cache beside it. Same class as
 # results/calibration/_shared/ above (regenerable from data/raw + data/clean,
@@ -1711,7 +1720,7 @@ results/caiso_fuelvintage_T1/
 results/caiso_fuelvintage_T2/
 # caiso-fuelvintage-1 zero-LP probe outputs and A/B scratch (rule 31 [R-RETAIN]:
 # kept on local disk, kept OUT of main; every number they carry is in
-# docs/FINDING-caiso-fuelvintage-1-2026-09-09.md per rule 29 [R-SCREEN] (c)).
+# docs/records/caiso/FINDING-caiso-fuelvintage-1-2026-09-09.md per rule 29 [R-SCREEN] (c)).
 results/calibration/_caiso_fuelvintage_*.json
 results/calibration/_caiso_retiree_*.json
 scripts/probes/_caiso_retiree_ab_tmp/
@@ -1834,14 +1843,14 @@ results/calibration/nyiso222_offer_plus5/
 # delete-before-merge, discharged by gitignore and NOT by `rm` — rule 31
 # [R-RETAIN], the ercot-255 incident). These are throwaway diagnostic probes:
 # never registered, never a keeper, never quoted as a keeper number. Every
-# number they produce lives in docs/PRECOMMIT-caiso268-fossil-offer-8pct-2026-09-09.md
+# number they produce lives in docs/records/caiso/PRECOMMIT-caiso268-fossil-offer-8pct-2026-09-09.md
 # and the per-shard RESULT docs. NEVER `rm -rf` them — they stay on local disk
 # until the owner has ruled on promotion.
 # The SPAN bundle results/calibration/caiso268_fossil92_span/ is deliberately
 # NOT ignored: rule 15 [R-DASHBOARD] requires it registered and committed
 # whatever it says, and it is the ONLY registerable bundle of this session
 # (rule 16 [R-ALLYEARS] + the one-input-snapshot constraint measured at
-# docs/RESULT-caiso-fuelvintage-2026-09-09.md §6a).
+# docs/records/caiso/RESULT-caiso-fuelvintage-2026-09-09.md §6a).
 results/calibration/caiso268_fossil92_y2023/
 results/calibration/caiso268_fossil92_y2024/
 results/calibration/caiso268_fossil92_y2025/
@@ -1851,7 +1860,7 @@ results/calibration/caiso268_fossil92_y2025/
 # IT OUT OF `main`, which gitignore discharges in full — it does NOT mean `rm`
 # (rule 31 [R-RETAIN], the ercot-255 incident). These stay on local disk until
 # the OWNER has ruled on promotion. Every number the session cites lives in
-# docs/PRECOMMIT-pjm-d4-1-stgas-merit-order-2026-09-09.md and the RESULT doc.
+# docs/records/pjm/PRECOMMIT-pjm-d4-1-stgas-merit-order-2026-09-09.md and the RESULT doc.
 # A bundle the owner promotes is force-added (`git add -f`) as a slim set.
 results/screen/pjm_d4_*/
 results/calibration/pjm_d4_*/
@@ -2050,7 +2059,7 @@ results/calibration/pjm_d4_4_y[0-9][0-9][0-9][0-9]/
 #   nyiso228_seamr_span   arm B, a declared DIAGNOSTIC that failed both of its own
 #                         pre-registered promotion legs
 # Every number this session will ever cite from them is carried by
-# docs/RESULT-nyiso228-2026-09-12.md and docs/PRECOMMIT-nyiso228-amplitude-2026-09-12.md,
+# docs/records/nyiso/RESULT-nyiso228-2026-09-12.md and docs/records/nyiso/PRECOMMIT-nyiso228-amplitude-2026-09-12.md,
 # exactly as clause (c) requires. Git history is the record for the bytes.
 results/calibration/nyiso228_tail_span/
 results/calibration/nyiso228_control_span/
@@ -2106,7 +2115,7 @@ results/calibration/spp36_2025/
 # reach `main` (an unregistered bundle dir is a Class-E parity RED), and rule 31
 # says the way to achieve that is .gitignore, NEVER `rm`. Both are solved, on
 # local disk, and every number this lane will ever cite from them is in
-# docs/RESULT-nyiso229-*.md and results/calibration/_nyiso229_screen_gates_2022.json.
+# docs/RESULT-nyiso229-*.md and results/phase0/nyiso/_nyiso229_screen_gates_2022.json.
 # Recoverable with no re-solve:
 #   git checkout b61247cd7b7682f567543c9bc37cdad90475c29f -- results/calibration/nyiso229_ctrl_y2022
 #   git checkout 846ea79095f3c556dc6027d255dc6d4eef5d90ea -- results/calibration/nyiso229_arm_y2022
@@ -2163,7 +2172,7 @@ results/calibration/miso255_promote_*/
 # results/calibration/*/dispatch/ repo-wide, so the push needed `git add -f`, the
 # auto-mode classifier refused it, and that refusal then hardened into a
 # Bash(git add:*) denial in that session. Diagnosis:
-# docs/FINDING-miso255-why-the-dispatch-pushes-failed-2026-09-12.md
+# docs/records/miso/FINDING-miso255-why-the-dispatch-pushes-failed-2026-09-12.md
 #   git checkout 0974481d5da763d86c852e79a6c60458382e52aa -- results/calibration/miso255_promote2022b
 # (17 files incl. dispatch/2022_P1.parquet, 94,946,961 bytes. The original slim-only
 #  2022 leg stays at 74171ce23325f3cdb97b484f43423af51bb2202d and is superseded.)
@@ -2179,7 +2188,7 @@ results/calibration/caiso279_ablate_dswcouple_span/
 # nyiso-231: the on-pin solver-version CONTROL probe. Never registered (rule 29
 # [R-SCREEN] (c) — a control bundle must not reach main), kept on local disk
 # (rule 31 [R-RETAIN]). Every number it produced is in
-# docs/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md; the bytes are
+# docs/records/nyiso/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md; the bytes are
 # recoverable at git checkout 687f299f044ec8ff9df958c5e4121bd35853ade2 --
 # results/calibration/nyiso231_ctl_y2022
 results/calibration/nyiso231_ctl_y2022/
@@ -2216,7 +2225,7 @@ results/calibration/nyiso231_arm_y2022/
 # pjm-h3 SCREEN bundle (2026-09-13). Rule 29 [R-SCREEN] clause (c) DELETE-BEFORE-MERGE means
 # KEEP IT OUT OF `main`, which gitignore discharges in full — it does NOT mean `rm`
 # (rule 31 [R-RETAIN], the ercot-255 incident). Every number the lane cites from it is in
-# docs/RESULT-pjm-h3-reserve-sync-screen-2026-09-13.md. The bundle is RETRIEVABLE without a
+# docs/records/pjm/RESULT-pjm-h3-reserve-sync-screen-2026-09-13.md. The bundle is RETRIEVABLE without a
 # re-solve (rule 34 [R-SHARD-PROMOTABLE]): 17 files incl. dispatch/2022_P1.parquet, at
 #   git checkout 786affd47cf95334aa1fc7579135c230492f1296 -- results/calibration/pjmh3_syncarm_2022
 results/calibration/pjmh3_syncarm_2022/
@@ -2244,7 +2253,7 @@ results/calibration/pjm_h6_screen2023_arm/
 # [R-RETAIN]: the owner has not ruled on promotion). Ignoring it discharges
 # clause (c) in full — check_registry_payload_parity only ever sees COMMITTED
 # dirs, so an ignored bundle sits here without turning the gate red.
-# Every number the lane cites is in docs/RESULT-pjm-h7-gasmid-joint-screen-2026-09-14.md.
+# Every number the lane cites is in docs/records/pjm/RESULT-pjm-h7-gasmid-joint-screen-2026-09-14.md.
 # RECOVERY BY IMMUTABLE SHA (rule 33 [R-SHARD-ARCHIVE] (d)) — 17 files incl. the
 # per-plant dispatch/2023_P1.parquet a registration needs:
 #   git checkout 9be0e032e8f3832779b70472ae93813d63e2229a -- \
@@ -2258,7 +2267,7 @@ results/calibration/pjm_h7_screen2023_arm/
 #   git checkout 750e4a72421e4548a5d82b71ccf13e6254cc3b87 -- results/calibration/nyiso235_gasrepair_2022
 # nyiso235_gasrepair_2022 (the 2022 SCREEN bundle) was removed from local disk 2026-09-16 under
 # rule 31 [R-RETAIN] trigger (i) — the OWNER RULED ON PROMOTION and the span supersedes it. Every
-# number the lane cites from it is in docs/RESULT-nyiso235-gas-repair-screen-2026-09-14.md, and the
+# number the lane cites from it is in docs/records/nyiso/RESULT-nyiso235-gas-repair-screen-2026-09-14.md, and the
 # bytes remain recoverable at the immutable shard sha:
 #   git checkout 750e4a72421e4548a5d82b71ccf13e6254cc3b87 -- results/calibration/nyiso235_gasrepair_2022
 # nyiso235_gasrepair_span is the DESIGNATED KEEPER since 2026-09-16 (session nyiso-235,
@@ -2270,7 +2279,7 @@ results/calibration/pjm_h7_screen2023_arm/
 # and rule 31 [R-RETAIN] keeps it ON LOCAL DISK until the owner rules on promotion —
 # .gitignore, never `rm`, is what discharges both (the ercot-255 incident).
 # Every number the lane cites from them is in
-# docs/handoffs/RESULT-spp-42-commitment-feasibility-2026-09-16.md.
+# docs/records/spp/RESULT-spp-42-commitment-feasibility-2026-09-16.md.
 # RECOVERY BY IMMUTABLE SHA (rule 33(d) — never by branch name):
 #   git checkout 48e6f7a5635e1c909ddbb817bcffdeb89faea0c6 -- results/calibration/spp42_screen_ctl
 #   git checkout 48e6f7a5635e1c909ddbb817bcffdeb89faea0c6 -- results/calibration/spp42_screen_arm
@@ -2303,7 +2312,7 @@ results/calibration/spp42_span_a/
 #   git checkout 71ad0a1a5a476ec767776b5675654463df09c79a -- results/calibration/miso259_screen_arm
 #   git checkout 70ef3071eed52d694254592258f8e3beec00d3b4 -- results/calibration/miso259_screen_control
 # Every number this session cites from either bundle is carried by
-# docs/PRECOMMIT-miso259-coal-fuel-inventory-2026-09-16.md and the RESULT doc,
+# docs/records/miso/PRECOMMIT-miso259-coal-fuel-inventory-2026-09-16.md and the RESULT doc,
 # so the doc is the record exactly as rule 29(c) requires.
 /results/calibration/miso259_screen_arm/
 /results/calibration/miso259_screen_control/
@@ -2377,7 +2386,7 @@ results/calibration/_soco40_screen/
 # `main` would be a Class-E parity RED -- but rule 31 forbids deleting it before
 # the owner has ruled on promotion, and .gitignore (never `rm`) is what
 # discharges the delete-before-merge duty. Every number this lane cites from it
-# is in docs/handoffs/RESULT-spp-43-unit-outage-intake-2026-09-16.md section 5,
+# is in docs/records/spp/RESULT-spp-43-unit-outage-intake-2026-09-16.md section 5,
 # as rule 29(c) requires. Recovery by immutable SHA (rule 33 [R-SHARD-ARCHIVE] (d)):
 #   git checkout 2addbeee3cfc7dc91d64739d606de35345909290 -- results/calibration/spp43_extract_only
 # If that branch is deleted on the environment's own schedule, the leg costs
@@ -2414,7 +2423,7 @@ results/calibration/nyiso238_hydro_2025/
 # CONTROL). Kept OUT of `main` by this .gitignore, which is what discharges rule
 # 29(c) — `rm` never was required and rule 31 [R-RETAIN] forbids it while the
 # promotion is undecided. Every number either bundle carries is in
-# docs/RESULT-miso260-seam-ladder-screen-2026-09-16.md.
+# docs/records/miso/RESULT-miso260-seam-ladder-screen-2026-09-16.md.
 # Recovery by FULL SHA, never branch name (rule 33 [R-SHARD-ARCHIVE] (d)):
 #   git fetch origin cb3049fff5e572ebb12a835d71ade800ce423266
 #   git checkout cb3049fff5e572ebb12a835d71ade800ce423266 -- results/calibration/miso260_screen_arm
@@ -2488,7 +2497,7 @@ results/calibration/caiso285_instr_2024/
 # `git fetch origin <sha>` two days on, and all four legs were checked out again (155 MB,
 # dispatch/ + hourly/unit_hourly_<YR>.parquet present). A NYISO bench re-render therefore
 # costs ZERO LP, which falsifies the ~18 min four-shard re-solve assumed at
-# docs/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md section 7.
+# docs/records/nyiso/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md section 7.
 results/calibration/nyiso239_bench_2022/
 results/calibration/nyiso239_bench_2023/
 results/calibration/nyiso239_bench_2024/
@@ -2568,7 +2577,7 @@ results/calibration/ercot_mer20260919_*/
 #           --legs results/calibration/nyiso_mer_2026-09-19_{2022,2023,2024,2025} \
 #           --out  results/calibration/nyiso_mer_2026-09-19
 # 17 files per leg, verified by `git ls-tree -r <sha>` BEFORE any shard was archived (rule 34
-# [R-SHARD-PROMOTABLE] (d)). Record: docs/RESULT-nyiso240-bench-attribution-promotion-2026-09-19.md
+# [R-SHARD-PROMOTABLE] (d)). Record: docs/records/nyiso/RESULT-nyiso240-bench-attribution-promotion-2026-09-19.md
 # addendum A.
 results/calibration/nyiso_mer_2026-09-19/
 results/calibration/nyiso_mer_2026-09-19_2022/
@@ -2690,7 +2699,7 @@ results/calibration/nwpp_mer_2026-09-19/
 # WHY RETIRING THEM COSTS NOTHING MAIN DOES NOT ALREADY CARRY:
 #   * Rule 31 [R-RETAIN] trigger (i) is satisfied -- the owner RULED on promotion, so
 #     a spent bundle may be removed and "git history plus the RESULT doc remain the
-#     record". The RESULT doc is docs/handoffs/FINDING-nwpp-42-2026-09-20.md and it
+#     record". The RESULT doc is docs/records/nwpp/FINDING-nwpp-42-2026-09-20.md and it
 #     carries every number this lane will ever cite from any of the six legs.
 #   * The KEEPER is registered and on main: results/calibration/nwpp42_coalhr_span
 #     (slim hourly/ shape, rule 15 [R-DASHBOARD]) plus its registry sidecar and its
@@ -2724,7 +2733,7 @@ results/calibration/nwpp42_mer_2025/
 # rule-36 year isolation. Rule 29 [R-SCREEN] (c): a control bundle is never
 # registered and never reaches main, so it is ignored here rather than deleted
 # (rule 31 [R-RETAIN]; `rm` is never required). Every number this lane cites
-# from it is in docs/handoffs/FINDING-nwpp-42-2026-09-20.md, and it recomposes
+# from it is in docs/records/nwpp/FINDING-nwpp-42-2026-09-20.md, and it recomposes
 # for free from the three mer legs above with
 # scripts/probes/_nwpp42_compose_span.py. The ARM composite
 # results/calibration/nwpp42_coalhr_span/ is deliberately NOT ignored: it is the
@@ -2817,7 +2826,7 @@ results/calibration/nyiso241_ctbands_span/
 # are False for 2020-2022 and True for 2023-2025). They are kept, not deleted
 # (rule 31 [R-RETAIN]); they are simply not composable. 2020/2021/2022 are
 # UNAFFECTED — their own per-year flags match the composite base. See
-# docs/ADDENDUM-miso263-replay-keeper-has-no-per-year-dimension-2026-09-19.md.
+# docs/records/miso/ADDENDUM-miso263-replay-keeper-has-no-per-year-dimension-2026-09-19.md.
 # Corrected 2023/2024/2025 shards push to claude/miso263-coalcap-<year>b:
 #
 #   git checkout d2bf6e4bec19a7b8966f310a9dd5a4d332b1ff06 -- results/calibration/miso263_coalcap_2023
@@ -3087,7 +3096,7 @@ results/calibration/pjm_h13_meritalloc_2024/
 results/calibration/pjm_h13_meritalloc_2025/
 
 # SPP-66 R-bd arm bundles (REJECTED candidate, rule 29 [R-SCREEN] (c) — kept OUT of main,
-# NOT deleted, rule 31 [R-RETAIN]). Numbers live in docs/handoffs/RESULT-spp-66-rbd-2026-09-20.md.
+# NOT deleted, rule 31 [R-RETAIN]). Numbers live in docs/records/spp/RESULT-spp-66-rbd-2026-09-20.md.
 # Leg provenance (rule 33(d), provenance NOT a recovery route — cost any recovery as a re-solve):
 #   git checkout d048eacc -- results/calibration/spp66_netwin_2019   (branch claude/spp66-netwin-2019)
 #   git checkout 88d35b0f -- results/calibration/spp66_netwin_2020
@@ -3208,12 +3217,12 @@ results/calibration/nyiso247_fuelinv_2025/
 
 # caiso-293 phase-0 probe artifacts (zero-LP measurements over committed
 # bundles; every number they carry is reproduced in
-# docs/PRECOMMIT-caiso293-chp-steam-duty-window-2026-09-20.md — rule 29
+# docs/records/caiso/PRECOMMIT-caiso293-chp-steam-duty-window-2026-09-20.md — rule 29
 # [R-SCREEN] (c): the doc is the record, the JSON never reaches main).
 results/calibration/_caiso293_*.json
 # caiso-294 phase-0 probe artifacts, same class and same discipline: zero-LP
 # measurements over committed bundles, every number reproduced in
-# docs/PRECOMMIT-caiso294-chp-steam-level-2026-09-20.md and its RESULT.
+# docs/records/caiso/PRECOMMIT-caiso294-chp-steam-level-2026-09-20.md and its RESULT.
 results/calibration/_caiso294_*.json
 # pjm-h14 per-year ARM legs (rule 32(d): the COMPOSITE is what is registered; the legs
 # stay out of main). Recovery by FULL sha (rule 33(d)) — PROVENANCE ONLY, not a durability
@@ -3566,7 +3575,7 @@ results/calibration/nwppnext3_20*/
 results/calibration/nyisonext_202[2-5]/
 # neiso-115 (2026-09-25): neiso-114 arm B single-year legs (rule 36), composed into
 # the keeper bundle results/calibration/neiso114b_span. Leg provenance SHAs are in
-# docs/handoffs/neiso114/RESULT-neiso114-2026-09-25.md section 6 (rule 33(d)).
+# docs/records/neiso/neiso114/RESULT-neiso114-2026-09-25.md section 6 (rule 33(d)).
 results/calibration/neiso114b_20*/
 
 # PJM-NEXT-2 per-year shard legs: composed into pjmnext2_joint_span, kept out of main (rule 32(d)); never deleted before the owner rules (rule 31).
@@ -3575,7 +3584,7 @@ results/calibration/pjmnext2_joint_20[0-9][0-9]/
 results/calibration/pjmnext2_c[123]_20[0-9][0-9]/
 # miso-273 per-year arm legs (rule 32(d): composite only reaches main; bytes provenance in PRECOMMIT §8)
 results/calibration/miso273_arm_*/
-# R-CAISO-3 per-year shard legs: kept out of main (rule 32(d)); provenance SHAs in docs/handoffs/r-caiso-3/RESULT
+# R-CAISO-3 per-year shard legs: kept out of main (rule 32(d)); provenance SHAs in docs/records/caiso/r-caiso-3/RESULT
 results/calibration/rcaiso3_*_20*/
 # soco-69 probe scratch + shard legs: kept out of main (rule 32(d)); composite soco69_span is what registers
 results/calibration/_soco69/
@@ -3627,7 +3636,7 @@ results/calibration/miso275_arm_*/
 # SPP-85 (2026-09-26): per-year control/arm legs and the control composite stay OUT of main
 # (rules 29(c) / 32(d)); kept on local disk until the owner rules on promotion (rule 31).
 # Provenance (not storage, rule 33(d)): claude/spp85-<Y> shard commits listed in
-# docs/handoffs/RESULT-spp-85-netload-mask-repair-2026-09-26.md section 1.
+# docs/records/spp/RESULT-spp-85-netload-mask-repair-2026-09-26.md section 1.
 results/calibration/spp85_ctl_*/
 results/calibration/spp85_arm_20*/
 # PJM-NEXT-3 card 2 per-year shard legs (rule 32(d): only the composite reaches main; rule 31: kept on disk).
@@ -3649,7 +3658,7 @@ results/calibration/spp86_arm_20*/
 # R-CAISO-4 2019-21 keeper touchpoint composite IS committed (it folds into the keeper, rule 30):
 !results/calibration/rcaiso4_tp_2019_2021/
 
-# R-CAISO-5 per-year shard legs (rule 32(d)/33(d)): kept out of main; provenance SHAs in docs/handoffs/r-caiso-5/RESULT.
+# R-CAISO-5 per-year shard legs (rule 32(d)/33(d)): kept out of main; provenance SHAs in docs/records/caiso/r-caiso-5/RESULT.
 results/calibration/rcaiso5_*_20*/
 # PJM-NEXT-4 card 1 per-year legs (parent tree only; composite is what reaches main). Provenance, not recovery (rule 33(d)):
 #   2019 1f3d1da160a5eea27b752885a7e2a975b2e27685 (claude/pjmnext4-c1-2019)
@@ -3686,7 +3695,7 @@ results/calibration/nyisonext3_202[2-5]/
 results/calibration/pjmnext4_c1_20*/
 # soco-73 zero-LP probe outputs (G-DRIFT json/log, coal-retargeted campaign derive; FINDING-soco-73 carries every number)
 results/calibration/_soco73/
-# miso-277 per-year shard legs: parent-local only (rule 32(d)); provenance SHAs in docs/PRECOMMIT-miso277-d1-as-ruled-2026-09-26.md
+# miso-277 per-year shard legs: parent-local only (rule 32(d)); provenance SHAs in docs/records/miso/PRECOMMIT-miso277-d1-as-ruled-2026-09-26.md
 results/calibration/miso277_arm_*/
 
 # NWPP-NEXT-7 per-year take-floor shard legs (kept out of main; the _span composite is registered)
@@ -3706,7 +3715,7 @@ results/calibration/nyisonext6_202[2-5]/
 # R-CAISO-6 per-year shard legs (rule 32(d)/36): kept out of main; the composite rcaiso6_tp_2019_2021 is what registers.
 results/calibration/rcaiso6_O2_20*/**
 !results/calibration/rcaiso6_tp_2019_2021/
-# miso-278 per-year shard legs: parent-local only (rule 32(d)); provenance SHAs in docs/RESULT-miso278-unit-fuel-split-2026-09-27.md
+# miso-278 per-year shard legs: parent-local only (rule 32(d)); provenance SHAs in docs/records/miso/RESULT-miso278-unit-fuel-split-2026-09-27.md
 results/calibration/miso278_arm_*/
 
 # NWPP-NEXT-7 soft-floor per-year shard legs (kept out of main; the _span composite is registered)
@@ -3740,7 +3749,7 @@ results/calibration/rcaiso9_A_20*/**
 
 # SPP-95 per-year shard legs (rule 32(d): kept out of main; composite spp94_arm_span is registered)
 results/calibration/spp94_arm_20*/
-# miso-279 per-year shard legs: parent-local only (rule 32(d)); provenance SHAs in docs/RESULT-miso279-stgas-span-coverage-2026-09-27.md
+# miso-279 per-year shard legs: parent-local only (rule 32(d)); provenance SHAs in docs/records/miso/RESULT-miso279-stgas-span-coverage-2026-09-27.md
 results/calibration/miso279_arm_*/
 
 # soco-83 shard legs: kept out of main (rule 32(d)); composite soco83_span is what registers.
@@ -3822,7 +3831,7 @@ results/calibration/spp100_arm_20*/
 #   2025 ddecb398ff6f585e1398c55ee935470f1c7a5b3f
 results/calibration/soco87_20[12][0-9]/
 
-# NYISO-NEXT-12 per-year arm legs (composed into nyisonext12_span; rules 31/32(d)). Provenance: leg SHAs in docs/RESULT-nyiso-next12-ne-ac-node-2026-09-28.md
+# NYISO-NEXT-12 per-year arm legs (composed into nyisonext12_span; rules 31/32(d)). Provenance: leg SHAs in docs/records/nyiso/RESULT-nyiso-next12-ne-ac-node-2026-09-28.md
 results/calibration/nyisonext12_2022/
 results/calibration/nyisonext12_2023/
 results/calibration/nyisonext12_2024/
@@ -3832,7 +3841,7 @@ results/calibration/r_ercot15_arm_20*/
 # R-CAISO-14 per-year legs (caiso_eia930_clock_repair arm): local only, pushed to shard branches (rule 34(a)); composite span/fold go on main.
 # Provenance SHAs (rule 33(d), provenance only): 2019 33dc5257ce5f2e357232ec96b7e57d7bc1b3d5d2, 2020 0d1e4a3f47f936e3c70d0b79b3fa7844356b27af, 2021 24ba084c1bc5fac06384c7ccb4c553d91020d871, 2022 b177081e945a891cf14031c84d90802830e4a8ed, 2023 d84b3caf82d6050efb2867a32196d1575acf4def, 2024 c335eb69400b7e456411ef30aa29b7f83e080487, 2025 61e5b4755c9270808cee99f59e21c4bd3695cf16.
 results/calibration/rcaiso13_A_20*/**
-# R-CAISO-14 composites: NOT promoted (owner card 2026-09-29 "Complete repair, re-solve"); kept on local disk (rule 31), numbers in docs/handoffs/r-caiso-14/RESULT.
+# R-CAISO-14 composites: NOT promoted (owner card 2026-09-29 "Complete repair, re-solve"); kept on local disk (rule 31), numbers in docs/records/caiso/r-caiso-14/RESULT.
 results/calibration/rcaiso13_A_span/
 results/calibration/rcaiso13_A_tp_2019_2021/
 
@@ -3909,7 +3918,7 @@ results/calibration/soco93_20*/
 
 # NYISO-NEXT-16 per-year legs (rule 32 (d)); bytes composed into nyisonext16_span. Provenance (rule 33 (d)): 2021 70700d0e22ab1fafce3371130ced144065456ccd, 2022 b776d58d1e5fd2457c12da1a060cc9b7c94a1426, 2023 a78d46de16dedf30bdfe67bf9e66a0a640a72057, 2024 7c83b4fdfea151e94310a302c8ff36ef8240a112, 2025 f2fe82ba5a2967b7111a1f2b7ba34ef079c93489
 results/calibration/nyisonext16_202[2-5]/
-# R-CAISO-17 per-year shard legs (transport only; the composites are committed). Leg SHAs in docs/handoffs/r-caiso-17/RESULT.
+# R-CAISO-17 per-year shard legs (transport only; the composites are committed). Leg SHAs in docs/records/caiso/r-caiso-17/RESULT.
 results/calibration/rcaiso17_A_20*/
 
 # NWPP-NEXT-13 per-year shard legs: parent-tree only, never main (rules 31, 32(d)); composite nwppnext13pu_span is committed instead.
@@ -3955,3 +3964,9 @@ results/calibration/nwppnext14_pr6932_span/
 # NWPP-NEXT-15 per-year legs of THIS lane's arm (transport only; composite nwppnext14vd_span is registered).
 results/calibration/nwppnext14vd_20[0-9][0-9]/
 results/calibration/_rcaiso24/
+
+# R-ERCOT-22 per-year legs: kept out of main (rule 29(c)/32(d)); the composite is registered
+results/calibration/r_ercot22_arm_*/
+# NYISO-NEXT-21 per-year legs (rule 32 (d)); composed into nyisonext21_span. Provenance (rule 33 (d)): 2021 83b4652a03e8eb4e6c3c98d3840933fd724f6cb2, 2022 2578b154db0029de0f4fe0e591a9dc8782e9df57, 2023 4c519e1512ed8e3f0851f65041c22e5e0f4e4563, 2024 80cbd1fd52d74ec1f74456083f8ad1ae41c75748, 2025 61b01f799a9cb9458999ea6faf23212c51d96bc7
+results/calibration/nyisonext21_202[2-5]/
+results/calibration/_rcaiso28/

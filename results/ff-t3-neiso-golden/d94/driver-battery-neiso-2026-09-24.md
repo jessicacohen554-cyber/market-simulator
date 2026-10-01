@@ -8,7 +8,7 @@ Single-driver directional & elasticity ladders. Each expectation was **pre-regis
 
 - **ISO:** NEISO
 - **Horizon:** 2026-2050 (sequential years, rule 12)
-- **Fleet / recipe:** the neiso-t3 GOLDEN recipe (run_full_horizon --golden-posture, per-ISO default bins) + both neiso-t3 pins (ccs_retrofit_vom_adder 8.0, ccs_retrofit_fixed_cost_co2_scaling False), solved by capx D94 shards at 924017c8; assembled by docs/handoffs/d94/battery_golden_rung.py (PRECOMMIT-capx-d94-2026-09-24.md)
+- **Fleet / recipe:** the neiso-t3 GOLDEN recipe (run_full_horizon --golden-posture, per-ISO default bins) + both neiso-t3 pins (ccs_retrofit_vom_adder 8.0, ccs_retrofit_fixed_cost_co2_scaling False), solved by capx D94 shards at 924017c8; assembled by docs/records/forecast/d94/battery_golden_rung.py (PRECOMMIT-capx-d94-2026-09-24.md)
 
 ## Scoreboard
 

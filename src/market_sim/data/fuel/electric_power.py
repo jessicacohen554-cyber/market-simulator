@@ -18,7 +18,7 @@ exactly, and ``gas_daily_shape`` normalizes per month. A shape cannot repair
 a level, so a year whose annual mean is contaminated by one extreme month
 overprices every other month of that year and underprices the extreme one —
 one term, both signs
-(``docs/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md``). This
+(``docs/records/ercot/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md``). This
 replaces the LEVEL month by month with the measured one.
 
 **It is the price of the DELIVERED COMMODITY, not the city gate.** N3045 is
@@ -226,7 +226,7 @@ def state_electric_power_monthly_gas_eia923(
     delivered natural-gas ``price_per_mmbtu`` per month. No parameter. Where
     N3045 prints it reproduces it (2018-2025: AZ r = 0.980, mean -0.21
     $/MMBtu, 47 months; OR r = 0.975, +0.47 $/MMBtu, 36 months;
-    ``docs/handoffs/r-caiso-18/PRECOMMIT-r-caiso-18-2026-09-30.md`` §2).
+    ``docs/records/caiso/r-caiso-18/PRECOMMIT-r-caiso-18-2026-09-30.md`` §2).
     A month with no reporting plant is ``NaN``; ``None`` when no month prints.
 
     Args:

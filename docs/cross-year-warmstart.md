@@ -384,10 +384,10 @@ question — warm start reaches the forecast only by tipping a discrete
 retire/keep threshold, so what bounds it is the dual noise measured against each
 unit's distance to its threshold, not the number of years solved. Full record,
 including the margin analysis that would actually bound it:
-`docs/handoffs/wallclock-baseline-2026-07.md` §H3b.
+`docs/records/misc/wallclock-baseline-2026-07.md` §H3b.
 
 Full experiment record, including the wall-clock table and the contention
-caveat: `docs/handoffs/wallclock-baseline-2026-07.md` §H3/Exp 5.
+caveat: `docs/records/misc/wallclock-baseline-2026-07.md` §H3/Exp 5.
 
 **Status update (D-10, 2026-08-04): DISARMED on the forecast lane.** The field
 still exists and still defaults `True`; what changed is that every shipped
@@ -423,20 +423,20 @@ explicit argument, **not** a default flip, because a default flip would have
 left every forecast cache key colliding with its warm predecessor (a registered
 optional field drops at the *live* default) while moving all six backcast keeper
 keys (which carry an explicit `true`). Measured both ways in
-`docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md`; cache epoch 2026-08-04 in
+`docs/records/forecast/ffr-3t-warmstart-off-2026-08-04.md`; cache epoch 2026-08-04 in
 `src/market_sim/results/cache.py`. Decision record: sitting Addendum K.3
-(`docs/handoffs/ffr-owner-sitting-2026-08-02.md`); adjudication:
-`docs/handoffs/ffr-3m-kill-resume-verdict-2026-08-04.md`.
+(`docs/records/forecast/ffr-owner-sitting-2026-08-02.md`); adjudication:
+`docs/records/forecast/ffr-3m-kill-resume-verdict-2026-08-04.md`.
 
 ## Same-year P1 basis seed — the cold-rebuilt P1 seeded from the P0 basis (wallclock item B, 2026-09-06)
 
 **Decision (2026-09-06): calibration-CLI default ON, `--no-p1-basis-seed` to opt
 out, env var `MARKET_SIM_P1_BASIS_SEED` honored; inert under the goldens/replay
 pin and on the forecast path.** Owner memo
-`docs/handoffs/p1-basis-seed-decision-memo-2026-09.md` (the B-0 bench that
+`docs/records/misc/p1-basis-seed-decision-memo-2026-09.md` (the B-0 bench that
 produced the number), signed **(A) FLIP** 2026-09-06 by chat instruction;
 evidence for the shipped surface in
-`docs/handoffs/wallclock-baseline-2026-07.md` §WALLCLOCK B.
+`docs/records/misc/wallclock-baseline-2026-07.md` §WALLCLOCK B.
 
 > **SUPERSEDED TWICE — read this box before the section.**
 >
@@ -450,7 +450,7 @@ evidence for the shipped surface in
 > Rule 36(e) withdrew the neutrality claims for both.
 >
 > **(2) 2026-09-20, PERF-C S1: the seed is no longer nested in the cross-year
-> gate.** `docs/handoffs/FINDING-perfc-s1-p1-seed-2026-09-20.md`. The two knobs
+> gate.** `docs/records/governance/FINDING-perfc-s1-p1-seed-2026-09-20.md`. The two knobs
 > are now independently gateable, so the same-year seed can be defaulted ON
 > while the cross-year one stays OFF — **that is an owner decision and it has
 > not been taken; the default is still OFF.** PERF-C S1 changed the gate and

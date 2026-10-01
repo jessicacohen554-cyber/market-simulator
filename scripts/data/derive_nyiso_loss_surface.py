@@ -2,9 +2,9 @@
 
 The nyiso-159 derive (frozen on filing, CLAUDE.md rule 23 ``[R-FROZEN-DERIVE]``
 — re-derives ONLY when its source data updates), chartered by
-``results/calibration/PREREG-nyiso159-zonal-loss-surface-2026-08-30.md`` §2 on
+``docs/records/nyiso/PREREG-nyiso159-zonal-loss-surface-2026-08-30.md`` §2 on
 the phase-0 MATERIAL verdict
-(``results/calibration/FINDING-nyiso159-loss-surface-phase0-2026-08-30.md``).
+(``docs/records/nyiso/FINDING-nyiso159-loss-surface-phase0-2026-08-30.md``).
 
 Reads the curated NYISO real-time zonal LBMP component record
 (``data/clean/lmp/NYISO/RTM/lmp_<year>.parquet`` — NYISO MIS P-24A 5-minute RT

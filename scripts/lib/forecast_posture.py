@@ -18,7 +18,7 @@ against a production path that runs it curve-OFF — audit FR-14 in a second
 costume, and the same class of divergence FFR-2E measured for the hindcast lane.
 
 The owner signed **SINGLE SOURCE OF TRUTH** on 2026-08-03
-(``docs/handoffs/ffr-owner-sitting-2026-08-02.md`` Addendum D.1): "Every runner
+(``docs/records/forecast/ffr-owner-sitting-2026-08-02.md`` Addendum D.1): "Every runner
 reads the shipped ``ScenarioConfig`` capacity-price posture field directly; the
 parallel ``GOLDEN_CMC_BY_ISO`` constant stops being a second answer. NYISO must
 resolve curve-OFF, matching production." ``GOLDEN_CMC_BY_ISO`` was deleted
@@ -39,7 +39,7 @@ field's dataclass DEFAULT, because that default is also read by a runner-driven
 BACKCAST and flipping it would both collide every forecast cache key with its
 warm predecessor and move all six backcast keeper keys (measured; see the
 constant's own comment block and
-``docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md``).
+``docs/records/forecast/ffr-3t-warmstart-off-2026-08-04.md``).
 """
 
 from __future__ import annotations
@@ -116,7 +116,7 @@ def shipped_forecast_xyear_warmstart() -> bool:
     :data:`market_sim.config.scenarios.FORECAST_BUNDLE_XYEAR_WARMSTART` for the
     measurement showing that a default flip would leave every forecast cache
     key colliding with its warm predecessor AND move all six backcast keeper
-    keys, and ``docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md`` for the
+    keys, and ``docs/records/forecast/ffr-3t-warmstart-off-2026-08-04.md`` for the
     before/after keys on both paths.
 
     Returns:

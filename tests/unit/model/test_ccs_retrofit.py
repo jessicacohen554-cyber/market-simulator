@@ -115,7 +115,7 @@ def _gas_cc(
 # beats-staying-unabated gate — never the cost LEVEL, which is asserted against
 # its source in ``tests/unit/config/test_ccs_retrofit_fixed_cost_basis.py`` and
 # measured for consequence in
-# ``docs/handoffs/FINDING-capx-d41-ccs-fixedcost-2026-09-02.md``.
+# ``docs/records/forecast/FINDING-capx-d41-ccs-fixedcost-2026-09-02.md``.
 _FIXTURE_RETROFIT_CAPEX_KW = 300.0
 
 
@@ -933,7 +933,12 @@ class TestCapexCo2Scaling(unittest.TestCase):
             ScenarioConfig(
                 ccs_retrofit_capex_co2_scaling=False, ccs_retrofit_vom_adder=8.0
             ).cache_key(),
-            "4c6b03ae098b6e3e",
+            # ADVANCED 2026-10-01 (cleanup-D) from "4c6b03ae098b6e3e": the
+            # whole-config key moved under default changes merged after
+            # 2026-09-06 (unrelated to either CCS field); the reachability
+            # property is unchanged — the explicit (False, 8.0) pair still
+            # keys apart from every other config above.
+            "e5cf3cb10057034f",
         )
 
     def test_island_scales_with_captured_co2(self):
@@ -1734,7 +1739,7 @@ class TestUnitIdUniquenessAtConversion(unittest.TestCase):
     build in the same zone gets the SAME id re-minted for it. Measured
     in-horizon on all nine NEISO T3 golden variants and ERCOT ``ff-t1f-d65br``.
 
-    docs/handoffs/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §2
+    docs/records/forecast/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §2
     """
 
     def _legacy_rep(self, zone="Z0", ebin="h_class", online_year=2015):

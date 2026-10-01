@@ -21,7 +21,7 @@ LEVEL is the measured EIA-930 monthly Q05 of ``NG: WAT``; the RoR flat level is
 each plant's own EIA-923 monthly budget over the month's hours, and the RoR
 partition is the categorical ORNL EHA ``Mode`` label. No value is chosen, so
 ``n_residual`` is unchanged. Pre-registration:
-``docs/handoffs/PRECOMMIT-soco-hydro-4-2026-09-22.md``.
+``docs/records/soco/PRECOMMIT-soco-hydro-4-2026-09-22.md``.
 
 Usage::
 
@@ -206,12 +206,12 @@ def main() -> None:
             "booleans. GATE G17: SOCO has no price benchmark; every "
             "offer_curve_by_group band is 1.0, AUTHORIZED PRICE TUNING IS DECLARED "
             "NONE (no authorized_price_tuning key, SOCO convention). Gates were "
-            "pre-registered in docs/handoffs/PRECOMMIT-soco-hydro-4-2026-09-22.md "
+            "pre-registered in docs/records/soco/PRECOMMIT-soco-hydro-4-2026-09-22.md "
             "before any solve; no criterion selects between the two arms (rule 1)."
         ),
     }
     att["disclosures"] = {
-        "precommit": "docs/handoffs/PRECOMMIT-soco-hydro-4-2026-09-22.md",
+        "precommit": "docs/records/soco/PRECOMMIT-soco-hydro-4-2026-09-22.md",
         "probe": True,
         "eia930_wat_gap": "SOCO NG: WAT missing 2024-11-25..12-31 (1,343 h) and 121 h of 2025-01",
         "ps_fold": "SOCO NG: WAT folds PS discharge before 2024-07-15; floor bias <= +11 MW",

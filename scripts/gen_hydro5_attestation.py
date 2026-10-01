@@ -39,8 +39,8 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 CAL = REPO / "results" / "calibration"
-PRECOMMIT = "docs/PRECOMMIT-hydro-5-2026-09-22.md"
-RESULT = "docs/RESULT-hydro-5-2026-09-22.md"
+PRECOMMIT = "docs/records/misc/PRECOMMIT-hydro-5-2026-09-22.md"
+RESULT = "docs/records/misc/RESULT-hydro-5-2026-09-22.md"
 PINNED = "fda9ece3d854d747a263f3078285df96fb4f0fe1"
 
 #: (composite, keeper bundle, keeper run id, flag)

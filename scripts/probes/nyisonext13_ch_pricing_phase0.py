@@ -16,7 +16,7 @@ price. This probe decomposes that gap on the keeper's committed hourlies:
 ``gap_ch = gap_uw + (ce_model - ce_meas)`` exactly, so the node's operand error splits into
 an upstate LEVEL error and a Central-East SPREAD error. Reported on all hours and on the
 hours the node sits at its posted export bound (implied from the model price via the
-node's own bands, the NEXT-11 construction). Record: ``results/calibration/_nyisonext13_phase0.json``.
+node's own bands, the NEXT-11 construction). Record: ``results/phase0/nyiso/_nyisonext13_phase0.json``.
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ from market_sim.data.neighbor_price import SEAM_FLOW_TRANCHES  # noqa: E402
 
 CAL = REPO / "results" / "calibration"
 SNP = REPO / "data" / "raw" / "seam-neighbour-price"
-OUT = CAL / "_nyisonext13_phase0.json"
+OUT = CAL.parent / "phase0" / "nyiso" / "_nyisonext13_phase0.json"
 H = dne.H
 BUNDLE = {
     2021: "nyisonext12_2021",

@@ -3,7 +3,7 @@
 The owner-ordered gating deliverable (2026-07-07): **no holdout solve, score,
 or recorded result for ANY ISO until this register exists and the owner signs
 off per ISO** (method + format:
-`docs/handoffs/holdout-data-equivalency-register-handoff-2026-07.md`). The
+`docs/records/governance/holdout-data-equivalency-register-handoff-2026-07.md`). The
 question, per ISO × holdout window, series by series: is the holdout year's
 input set **EQUIVALENT** to the keeper years' (2023–2025) — same source, same
 series, same granularity, same vintage/derivation recipe — for every input the
@@ -42,7 +42,7 @@ MISSING row carries materiality and a fix (or "accepted").
 > `scripts/data/curate_demand_profile.py::curate_pre_window` (12 partitions, six
 > ISOs × 2019-2020, sourced from the same adapter `load_demand` serves).
 > `data/raw` is untouched. Evidence and the full argument:
-> `results/calibration/FINDING-pjm160-f3-demand-profile-closure-2026-08-06.md`.
+> `docs/records/pjm/FINDING-pjm160-f3-demand-profile-closure-2026-08-06.md`.
 >
 > **Read every row below tagged "F3" / "cross-ISO F3 blocker" / "MISSING
 > 2018-2020" for the demand driver as superseded by this block.** The rows are
@@ -565,7 +565,7 @@ scores it, so its one-shot eligibility is unaffected by this readiness work.
 
 Measured this session against committed artifacts and committed loaders, zero LP minutes, as part
 of the 2020 validation-rung input-readiness audit
-(`docs/handoffs/FINDING-neiso103-2020-input-readiness-2026-09-06.md`). **The rows above are left
+(`docs/records/neiso/FINDING-neiso103-2020-input-readiness-2026-09-06.md`). **The rows above are left
 unedited as the historical record**, per this file's own convention; read them through this block.
 
 | row above | as written (2026-07-13) | measured at HEAD (2026-09-06) |
@@ -1149,7 +1149,7 @@ class a report belongs to decides whether a back year is reachable **at all**:
 
 The only ERCOT-side route past this wall is the credentialed
 `data.ercot.com` / `api.ercot.com` archive, **permanently declined by the repo
-owner** (`docs/handoffs/ercot-as-coopt-plan-2026-07.md` §WS-E). Re-verified
+owner** (`docs/records/ercot/ercot-as-coopt-plan-2026-07.md` §WS-E). Re-verified
 live this session (2026-07-31): `api.ercot.com/api/public-reports/...` returns
 `401 {"message":"Access denied due to missing subscription key..."}`, and
 `mis.ercot.com/misapp/GetReports.do` still fails the TLS/redirect gate.

@@ -35,7 +35,7 @@ def build() -> dict:
         "keeper's modulo the COAL-SUB bare-COAL fold, one solve-surface fingerprint, outage sha 312a11b8). "
         "CONTROL: committed keeper for 2023-2025 (form 4); a control SOLVE at the same pin for 2019-2022, "
         "earned by the LIVE COAL-SUB hunks in the G-DRIFT audit recorded BEFORE any solve in "
-        "docs/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md §3 (+ G1 addendum)."
+        "docs/records/pjm/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md §3 (+ G1 addendum)."
     )
     g["note"] = (
         "YEAR-CORRECT MEMBERSHIP + ZONING on the current keeper (rule 14 basis, never the residual): "

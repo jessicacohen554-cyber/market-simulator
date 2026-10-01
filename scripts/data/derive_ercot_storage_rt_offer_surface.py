@@ -8,7 +8,7 @@ bin, absolute $/MWh, year-scoped. It is the storage analogue of
 population the ercot-161 Phase 0 FINDING attributed the ~100-hour afternoon
 price to: PWRSTR — grid batteries — a class the model prices at a flat
 ``battery_dispatch_adder`` = $10 with no offer instrument (FINDING
-``results/calibration/FINDING-ercot161-afternoon-wall-phase0-2026-08-04.md``
+``docs/records/ercot/FINDING-ercot161-afternoon-wall-phase0-2026-08-04.md``
 §3–§4).
 
 Construction (the ercot-161 ``_ercot161_pwrstr_conduct.json`` probe promoted to
@@ -453,7 +453,7 @@ def _print_year_pair_stability(per_year: dict[str, dict]) -> None:
 
 def _verify() -> None:
     """Reproduce the ercot-161 conduct-census reference numbers on 2023."""
-    phase0 = REPO / "results/calibration/_ercot161_wall_phase0.json"
+    phase0 = REPO / "results/phase0/ercot/_ercot161_wall_phase0.json"
     seg, status_mw = _pwrstr_segments(2023)
     total = sum(status_mw.values()) or 1.0
     shares = {

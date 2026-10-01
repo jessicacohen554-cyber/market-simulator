@@ -61,7 +61,7 @@ EXPECTED: dict[str, tuple] = {
 }
 YEAR_DRIVEN = {"gas_offer_margin_anchor", "gas_price_override", "weather_year", "ordc_mcl_mw", "ordc_voll"}
 INPUT_SHA: dict[str, str] = {
-    # Pinned at the PRECOMMIT (docs/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md §3).
+    # Pinned at the PRECOMMIT (docs/records/miso/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md §3).
     "data/raw/campd-unit-outages-unitroute-MISO.csv": "a91706662b335e34984c567029843bb46e0a8889f02a20792d987b698206873b",
     "data/raw/campd-unit-outages-short-MISO.csv": "becfd7bdd042f97d407decc2d4b737f015bcd948704f73a3bb827749a2093a1a",
     "data/raw/campd-unit-outages-shortgas-MISO.csv": "3bac354606270ee7c1094f5fa19c26bac8e9c2ec45cbc96700adafd440af44bc",

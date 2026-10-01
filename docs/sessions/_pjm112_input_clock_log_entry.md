@@ -9,7 +9,7 @@ Fable diagnostic entry — and delete both stubs.)
 
 ### 2026-07-15 — PJM — pjm-112 (input-clock repair, M-1): the two PJM EIA-930 per-family clock defects fixed at the source — **2023 region family −1 h** (extract hour-beginning/hour-ending mix-up) and **2024 fueltype family +1 h** (EIA-930 source ran 1 h early through 2024), value-preserving; the three PJM DataMiner loaders switched `datetime_beginning_ept` → `datetime_beginning_utc`; pjm-110 recipe re-solved all three years at corrected inputs. **Every scored criterion IDENTICAL to pjm-110 (NOT-YET on C3c), zero flips — within-noise as predicted.** Falsifiable model-lead prediction **REFUTED for 2023**: the lead is +1 in 2024/2025 but 2023 stays 0, so §1c's uniform-lead claim does not hold. Keeper CANDIDATE, keepers.json unchanged (owner promotes)
 
-**Charter:** `docs/DIAGNOSIS-pjm-2025-phase-drift-and-zonal-structure-2026-07.md`
+**Charter:** `docs/records/pjm/DIAGNOSIS-pjm-2025-phase-drift-and-zonal-structure-2026-07.md`
 §6 M-1 (the Opus solve execution of the 2026-07-15 Fable diagnosis, the entry
 directly below). Rule-14 admissible (measured data, placement fix); rule-23
 (source-data action citing the audit, never a residual). 2023–2025 training

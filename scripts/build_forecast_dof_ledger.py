@@ -340,7 +340,7 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
         "identification": "design-decision",
         "source": (
             "Owner decision D-10 (signed 2026-08-04, "
-            "docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum K.3): "
+            "docs/records/forecast/ffr-owner-sitting-2026-08-02.md Addendum K.3): "
             "forecast bundles run cross-year LP warm start OFF so a "
             "killed-and-resumed forecast reproduces from its own cache"
         ),
@@ -348,7 +348,7 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
             "market_sim.config.scenarios.FORECAST_BUNDLE_XYEAR_WARMSTART "
             "(the one registry carrier) read through scripts/lib/"
             "forecast_posture.py::shipped_forecast_xyear_warmstart; "
-            "measurement docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md"
+            "measurement docs/records/forecast/ffr-3t-warmstart-off-2026-08-04.md"
         ),
         "expected": False,
         "provenance": "runner-posture",
@@ -371,9 +371,9 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
         "evidence": (
             "src/market_sim/model/capacity_evolution/ccs.py::"
             "ccs_retrofit_captured_ref_t_per_mwh; "
-            "docs/handoffs/FINDING-capx-d49-2026-09-04.md §1.4-§1.5; "
-            "docs/handoffs/PREDECL-capx-d50-2026-09-04.md §1; "
-            "docs/handoffs/FINDING-capx-d50-2026-09-04.md"
+            "docs/records/forecast/FINDING-capx-d49-2026-09-04.md §1.4-§1.5; "
+            "docs/records/forecast/PREDECL-capx-d50-2026-09-04.md §1; "
+            "docs/records/forecast/FINDING-capx-d50-2026-09-04.md"
         ),
         "expected": True,
         "provenance": "runner-posture",
@@ -383,7 +383,7 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
     # owner ruling Q37 (r#34, rubric section 5 second limb): a follow-up lane may
     # author an attestation iff PRE-DECLARED before authoring, attestation row
     # only, artifact-only re-score. The pre-declaration is
-    # docs/handoffs/PREDECL-capx-d60-2026-09-05.md Addendum D, pushed to main
+    # docs/records/forecast/PREDECL-capx-d60-2026-09-05.md Addendum D, pushed to main
     # before a single row below was written and before any of the three
     # outstanding legs' FC-7 rows had been read.
     #
@@ -414,7 +414,7 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
         "evidence": (
             "src/market_sim/config/iso_configs.py::_nyiso_config "
             "default_scenario_overrides cite block (owner ruling Q41); "
-            "docs/handoffs/FINDING-capx-d52-2026-09-04.md section 8(1); the "
+            "docs/records/forecast/FINDING-capx-d52-2026-09-04.md section 8(1); the "
             "digitized rows in data/raw/demand-curve/nyiso/nyiso.csv, reconciled "
             "to source by test"
         ),
@@ -433,7 +433,7 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
         "evidence": (
             "src/market_sim/config/iso_configs.py::_nyiso_config "
             "default_scenario_overrides cite block (owner ruling Q41); "
-            "docs/handoffs/FINDING-capx-d52-2026-09-04.md section 8(1) (LOYO 3/3 "
+            "docs/records/forecast/FINDING-capx-d52-2026-09-04.md section 8(1) (LOYO 3/3 "
             "with an identical fleet; FC-3 byte-identical at the shipped default)"
         ),
         "requires": "iso-registry",
@@ -452,7 +452,7 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
         "evidence": (
             "src/market_sim/config/iso_configs.py::_miso_config "
             "default_scenario_overrides cite block (owner ruling Q40); "
-            "docs/handoffs/FINDING-capx-d51-2026-09-04.md section 1.3 (the "
+            "docs/records/forecast/FINDING-capx-d51-2026-09-04.md section 1.3 (the "
             "construction, zero free parameters) and section 7 (the four limbs)"
         ),
         "requires": "iso-registry",
@@ -470,8 +470,8 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
             "src/market_sim/config/iso_configs.py::_pjm_config "
             "default_scenario_overrides cite block (owner ruling Q44, in-session "
             "on the capx D57 A/B); docs/handoffs/FINDING-capx-d48-*; "
-            "docs/handoffs/DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md; "
-            "docs/handoffs/FINDING-capx-d57-2026-09-05.md section 8.1"
+            "docs/records/forecast/DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md; "
+            "docs/records/forecast/FINDING-capx-d57-2026-09-05.md section 8.1"
         ),
         "requires": "iso-registry",
     },
@@ -505,9 +505,9 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
         "evidence": (
             "src/market_sim/config/iso_configs.py::_pjm_config "
             "default_scenario_overrides cite block (owner ruling Q44); "
-            "docs/handoffs/DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md "
+            "docs/records/forecast/DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md "
             "section 3.7 (DOF ledger: zero); "
-            "docs/handoffs/FINDING-capx-d57-2026-09-05.md section 8.1"
+            "docs/records/forecast/FINDING-capx-d57-2026-09-05.md section 8.1"
         ),
         "requires": "iso-registry",
     },
@@ -518,7 +518,7 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
     # those six, under the SAME Q37 limb (r#34, rubric section 5 second limb:
     # a follow-up lane may author an attestation iff PRE-DECLARED before
     # authoring, attestation row only, artifact-only re-score). The
-    # pre-declaration is docs/handoffs/PREDECL-capx-d63-2026-09-06.md, pushed
+    # pre-declaration is docs/records/forecast/PREDECL-capx-d63-2026-09-06.md, pushed
     # to main before a single row below was written.
     #
     # SIX, NOT SEVEN. The charter named six fields and added "any other
@@ -557,7 +557,7 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
         "evidence": (
             "src/market_sim/config/iso_configs.py::_miso_config "
             "default_scenario_overrides cite block (owner decision D-2'); "
-            "docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md section 3.3 "
+            "docs/records/forecast/ffr-3v-miso-entry-screen-2026-08-04.md section 3.3 "
             "and section 7 item 1a"
         ),
         "requires": "iso-registry",
@@ -579,7 +579,7 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
         "evidence": (
             "src/market_sim/config/iso_configs.py::_miso_config "
             "default_scenario_overrides cite block (capx D33); "
-            "docs/handoffs/FINDING-capx-d33-miso-additions-repair-2026-09-02.md "
+            "docs/records/forecast/FINDING-capx-d33-miso-additions-repair-2026-09-02.md "
             "section 2"
         ),
         "requires": "iso-registry",
@@ -604,7 +604,7 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
         "evidence": (
             "src/market_sim/config/iso_configs.py::_miso_config "
             "default_scenario_overrides cite block (owner decision D-26); "
-            "docs/handoffs/ffr-7b2-rps-krow-clean-rows-2026-08-06.md "
+            "docs/records/forecast/ffr-7b2-rps-krow-clean-rows-2026-08-06.md "
             "section 3.1; both lane gates proven by "
             "tests/unit/config/test_miso_rps_region_arming.py"
         ),
@@ -629,7 +629,7 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
         "evidence": (
             "src/market_sim/config/iso_configs.py::_miso_config "
             "default_scenario_overrides cite block (owner decision D-29); "
-            "docs/handoffs/arm3-fix-zone-mask-2026-08-09.md section 4 (R1-R5 "
+            "docs/records/misc/arm3-fix-zone-mask-2026-08-09.md section 4 (R1-R5 "
             "on the fixed rows)"
         ),
         "requires": "iso-registry",
@@ -653,7 +653,7 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
         "evidence": (
             "src/market_sim/config/iso_configs.py::_miso_config "
             "default_scenario_overrides retirement_sector_gate cite block; "
-            "docs/handoffs/FINDING-capx-d53-2026-09-05.md section 6 (the four "
+            "docs/records/forecast/FINDING-capx-d53-2026-09-05.md section 6 (the four "
             "limbs) and section 6.1 (the arming and its records-side "
             "consequences); docs/handoffs/DESIGN-capx-d53-sector-gate-"
             "2026-09-05.md"
@@ -684,11 +684,11 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
         "evidence": (
             "src/market_sim/config/iso_configs.py::_pjm_config "
             "default_scenario_overrides retirement_sector_gate cite block "
-            "(owner ruling Q56); docs/handoffs/FINDING-capx-d78r2-2026-09-06.md "
+            "(owner ruling Q56); docs/records/forecast/FINDING-capx-d78r2-2026-09-06.md "
             "sections 3-8 (the identities, W4-prime, the whole-ledger diff, "
-            "the flip condition); docs/handoffs/FINDING-capx-d78r3-2026-09-06.md "
+            "the flip condition); docs/records/forecast/FINDING-capx-d78r3-2026-09-06.md "
             "sections 3-5 (W5-double-prime per delivery year, RECOMMEND ARM); "
-            "docs/handoffs/PRECOMMIT-capx-d78arm-2026-09-06.md"
+            "docs/records/forecast/PRECOMMIT-capx-d78arm-2026-09-06.md"
         ),
         "requires": "iso-registry",
     },

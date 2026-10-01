@@ -3,7 +3,7 @@
 Scores a ``pjm_commitment_posture`` bundle against the MEASURED PJM reserve-
 market series in ``data/raw/PJM-AS/reserve_market_results_<year>.parquet`` (PJM
 Data Miner RT reserve market results). Per the design note and its PJM port
-(``docs/handoffs/pjm-commitment-posture-port-2026-07.md`` §3) the acceptance
+(``docs/records/pjm/pjm-commitment-posture-port-2026-07.md`` §3) the acceptance
 question is whether the modeled ONLINE HEADROOM / cleared-reserve behaviour
 tracks the measured series in LEVEL and EVENT-DAY DIRECTION — the >$150/$200
 price-tail count is NEVER the gate (CLAUDE.md rules 1/13).

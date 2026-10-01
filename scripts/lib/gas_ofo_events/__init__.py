@@ -23,7 +23,7 @@ publisher's format. Adding a second utility to an ISO is one more
 
 Rule 13 ``[R-MEASURED]``: this is an admissible measured *input* (a published
 physical event with a forward analogue), never a fit target. The adjudication
-is ``results/calibration/FINDING-caiso226-ofo-intake-2026-08-31.md`` §4–§5.
+is ``docs/records/caiso/FINDING-caiso226-ofo-intake-2026-08-31.md`` §4–§5.
 """
 
 from __future__ import annotations

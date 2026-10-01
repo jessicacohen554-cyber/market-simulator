@@ -84,7 +84,7 @@ for _p in (REPO, REPO / "src"):
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
 
-OUT = REPO / "results/calibration/_caiso278_hubprice_phase0.json"
+OUT = REPO / "results/phase0/caiso/_caiso278_hubprice_phase0.json"
 YEARS = (2022, 2023, 2024, 2025)
 T = 8760
 _MD = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)

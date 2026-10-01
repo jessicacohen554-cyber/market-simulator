@@ -12,7 +12,7 @@ are reported from.
 Why it is in the repo: EIA-930 CISO ``NG: WAT`` is MISSING (NaN, not zero) from
 2019-10-01 through 2020-08-24, and ``Net generation`` in those hours is the sum
 of the reported fuel cells, so it omits hydro too
-(``docs/handoffs/i-caiso/INTAKE-i-caiso-2019-2021-2026-09-24.md`` §3). This
+(``docs/records/caiso/i-caiso/INTAKE-i-caiso-2019-2021-2026-09-24.md`` §3). This
 series is the measured source that repairs both — see
 :mod:`market_sim.data.eia930.caiso_hydro_backfill`.
 

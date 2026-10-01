@@ -1,7 +1,7 @@
 """SPP-90 (ZERO LP): why does SPP's coal fleet deliver only ~0.83-0.92 of the keeper's available MW
 in the money?
 
-Record: ``docs/handoffs/FINDING-spp-90-coal-inmoney-conduct-2026-09-27.md``.
+Record: ``docs/records/spp/FINDING-spp-90-coal-inmoney-conduct-2026-09-27.md``.
 
 Reads the SPP-89 stage-1 stacks (``_spp89_stack_dump.py``: keeper ``spp86_arm_span`` rebuilt
 ``fleet_only``, no LP) and CAMPD CEMS unit-hourly data. For every keeper coal plant (COAL_PRB +

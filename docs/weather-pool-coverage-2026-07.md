@@ -1,7 +1,7 @@
 # Weather-year pool widening — per-ISO coverage note (2026-07)
 
 **What this is.** The data-intake companion to
-`docs/handoffs/probability-bounds-plan-2026-07.md` §2.1, which flagged the
+`docs/records/misc/probability-bounds-plan-2026-07.md` §2.1, which flagged the
 3-draw `WEATHER_YEAR_POOL` (2023-2025) as "thin" and "intaking more pre-2022
 weather years is a cheap widening — separate data-intake task." This is that
 task: which ISO-years actually landed, which were skipped, and why.
@@ -131,7 +131,7 @@ year and every caller's documented fallback is "leave the fleet unfloored
 (byte-identical)". This does not break a solve; it just means the physical
 cold-snap mechanics (e.g., ERCOT winter gas derates) don't fire for those
 draws specifically. Flagged here per the "honest labels" design constraint in
-`docs/handoffs/probability-bounds-plan-2026-07.md` §0.5 — a future intake pass
+`docs/records/misc/probability-bounds-plan-2026-07.md` §0.5 — a future intake pass
 should extend these CSVs to match if the weather-driven floor mechanics matter
 for the widened years.
 

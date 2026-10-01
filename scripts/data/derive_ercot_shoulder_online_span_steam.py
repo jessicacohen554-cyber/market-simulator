@@ -2,7 +2,7 @@
 
 The ST_GAS analogue of ``scripts/data/derive_ercot_shoulder_online_span.py``
 (ERCOT-89 CC/CT), built for the ERCOT-93 telemetered-status lane
-(``docs/handoffs/ercot-stgas-shoulder-2026-07.md`` §9.4 design question (ii):
+(``docs/records/ercot/ercot-stgas-shoulder-2026-07.md`` §9.4 design question (ii):
 "whether the state weight ALSO moves to the SCED-basis hour-grain
 conditional"). The ERCOT-90/92 measure-first work pinned the open ST_GAS
 shoulder residual as a COMMITMENT-STATE miss: the LP clears the whole
@@ -295,7 +295,7 @@ def main() -> None:
                 "bright line)"
             ),
             "charter": (
-                "docs/handoffs/ercot-stgas-shoulder-2026-07.md §9.4 design (ii) "
+                "docs/records/ercot/ercot-stgas-shoulder-2026-07.md §9.4 design (ii) "
                 "(the SCED-basis hour-grain state conditional for ST_GAS); the "
                 "steam analogue of docs/handoffs/ercot-shoulder-online-"
                 "envelope-2026-07.md (ERCOT-89 CC/CT span)"

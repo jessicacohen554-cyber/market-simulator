@@ -1716,7 +1716,7 @@
        exactly what rule 26 forbids leaving parseable. The live monthly price
        views are drawMonthlyLmpChart() and lmpMonthlyTable() below, both of
        which now lead with the gated RT series.
-       docs/RESULT-caiso284-rescore-on-rt-audit-2026-09-16.md §2 row 17. */
+       docs/records/caiso/RESULT-caiso284-rescore-on-rt-audit-2026-09-16.md §2 row 17. */
 
     function drawMonthlyLmpChart(yr) {
       const container = document.getElementById('monthlyLmpChart');

@@ -42,11 +42,11 @@ DST = ROOT / "results/calibration/neiso110_dualfuel_span/calibration_attestation
 NEISO110 = {
     "session": "neiso-110 (2026-09-16)",
     "incumbent": "2026-09-16-neiso109-gas-repair",
-    "charter": "docs/CHARTER-neiso110-winter-oil-driver-2026-09-16.md",
-    "prereg": "docs/PRECOMMIT-neiso110-coldsnap-dualfuel-2026-09-16.md",
+    "charter": "docs/records/neiso/CHARTER-neiso110-winter-oil-driver-2026-09-16.md",
+    "prereg": "docs/records/neiso/PRECOMMIT-neiso110-coldsnap-dualfuel-2026-09-16.md",
     "lineage": [
-        "docs/FINDING-neiso110-winter-oil-driver-2026-09-16.md",
-        "docs/RESULT-neiso110-coldsnap-dualfuel-screen-2026-09-16.md",
+        "docs/records/neiso/FINDING-neiso110-winter-oil-driver-2026-09-16.md",
+        "docs/records/neiso/RESULT-neiso110-coldsnap-dualfuel-screen-2026-09-16.md",
     ],
     "owner_ruling": (
         "2026-09-16, verbatim: 'Is this a recommended keeper candidate? If so plz promote. "

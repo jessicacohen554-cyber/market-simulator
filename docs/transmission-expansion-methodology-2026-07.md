@@ -1,7 +1,7 @@
 # Transmission-expansion forward channel — methodology & grounding (FF-G1)
 
 **Date:** 2026-07-19 · **Session:** transmission-expansion-grounding (handoff:
-`docs/handoffs/transmission-expansion-grounding-2026-07.md`) · **Status:**
+`docs/records/misc/transmission-expansion-grounding-2026-07.md`) · **Status:**
 landed, GATED default-off (`ScenarioConfig.transmission_expansion_enabled`)
 
 The forecast's network topology was frozen at base-year statics: `ttc` was

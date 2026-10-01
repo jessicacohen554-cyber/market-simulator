@@ -1,6 +1,6 @@
 """Emit the R-NEISO calibration attestation for the corrected-input composite.
 
-R-NEISO (``docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md``
+R-NEISO (``docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md``
 §5.3.4) replays the NEISO keeper ``2026-09-22-hydro-5-neiso-ror``
 (``hydro5_neiso_ror_span``) UNCHANGED except for eight registered
 ``ScenarioConfig`` input-correction flips, one year per shard (rule 36), composed
@@ -30,8 +30,8 @@ CAL = REPO / "results" / "calibration"
 COMPOSITE = "rneiso_span"
 KEEPER = "hydro5_neiso_ror_span"
 KEEPER_ID = "2026-09-22-hydro-5-neiso-ror"
-PRECOMMIT = "docs/handoffs/r-neiso/PRECOMMIT-r-neiso-2026-09-24.md"
-RESULT = "docs/handoffs/r-neiso/RESULT-r-neiso-2026-09-24.md"
+PRECOMMIT = "docs/records/neiso/r-neiso/PRECOMMIT-r-neiso-2026-09-24.md"
+RESULT = "docs/records/neiso/r-neiso/RESULT-r-neiso-2026-09-24.md"
 PINNED = "c265c1c30ce0e51bffa5e0e5f5db76eafe54ae3e"
 FLIPS = (
     "eia860_vintage_tracks_solve_year",
@@ -74,7 +74,7 @@ def main() -> int:
         f"R-NEISO (2026-09-24) -- keeper {KEEPER_ID}'s recipe replayed UNCHANGED via "
         "scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), with eight registered "
         f"input-correction flips: {', '.join(FLIPS)}. Every leg verified by "
-        "docs/handoffs/r-neiso/shard_check.py in its shard and again at composition. Zero LP "
+        "docs/records/neiso/r-neiso/shard_check.py in its shard and again at composition. Zero LP "
         f"in the parent. Pre-registered in {PRECOMMIT} (pinned {PINNED[:8]}) before any shard "
         f"launched; record {RESULT}. Owner instruction 2026-09-24: every backcast year runs on "
         "the year-correct EIA-860 vintage, plant-specific heat rates and granular CAMPD outages."

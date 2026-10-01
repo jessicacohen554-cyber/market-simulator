@@ -17,7 +17,7 @@ These tests pin the four things that make the class safe:
   gap is named at full magnitude on EVERY route, last;
 * the predicate fails CLOSED on an unreadable reference, and no registered run
   carries the block — the durable form of the seven-keeper byte-identity proof
-  in docs/handoffs/FINDING-soco-22-2026-09-13.md.
+  in docs/records/soco/FINDING-soco-22-2026-09-13.md.
 
 Fixtures are borrowed from tests/scoring/test_calibration_verdict.py so the
 no-price run is the SAME clean PJM-scale mix that scores CALIBRATED there,
@@ -324,7 +324,7 @@ class RegisteredRunsTests(unittest.TestCase):
     # every other sidecar belongs to a price-bearing ISO; the class itself is
     # pinned by test_no_block_registered_runs_reach_the_class below (owner
     # ruling R-BE, director board v43, 2026-09-25; proposal
-    # docs/handoffs/FINDING-y29-promotion-provenance-2026-09-24.md §4).
+    # docs/records/governance/FINDING-y29-promotion-provenance-2026-09-24.md §4).
 
     def test_no_registered_run_carries_the_block(self):
         sidecars = sorted(cv.REGISTRY_DIR.glob("*.json"))

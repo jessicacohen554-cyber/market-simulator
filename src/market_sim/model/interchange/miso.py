@@ -620,7 +620,7 @@ def apply_miso_zonal_loss_links(iso_config: ISOConfig) -> ISOConfig:
     """Split each Midwest-internal bidirectional link into a one-way loss pair.
 
     The miso-76 M3 topology transform (charter
-    ``docs/handoffs/miso-nc-price-separation-design-2026-07.md`` §4, gated on
+    ``docs/records/miso/miso-nc-price-separation-design-2026-07.md`` §4, gated on
     ``ScenarioConfig.miso_zonal_loss_surface``): every bidirectional
     Midwest-internal link (L1–L6) becomes TWO one-way links
     (``is_bidirectional=False``, same TTC each way — the RDT pair's
@@ -906,7 +906,7 @@ def inject_miso_seam_flow_limit(
     cheapest-first below the ceiling as this docstring always intended. Given
     monotone rungs this is exactly a shared per-seam-hour ``Σ bands ≤ cap``
     constraint, implemented availability-only (no new LP rows). See
-    ``docs/handoffs/miso-g23-seam-envelope-composition-design-2026-07.md``.
+    ``docs/records/miso/miso-g23-seam-envelope-composition-design-2026-07.md``.
 
     ``hour_ending_key`` (``ScenarioConfig.miso_seam_envelope_hour_ending_key``,
     miso-175) reads the envelope's EIA-930 ``local_time`` stamp as hour-ENDING

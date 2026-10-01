@@ -28,7 +28,7 @@ D. Quantities in the low-load hours: model vs EIA-930 by fuel and interchange,
    model vs CAMPD by keeper class, model dump/slack, wind vs its bound.
 E. Coal band composition in the low-load hours (mustrun / committed / econ).
 
-Output: ``results/calibration/_miso296_lowload_stack.json``.
+Output: ``results/phase0/miso/_miso296_lowload_stack.json``.
 
 Usage (repo root, so ``scripts`` is importable and load_demand finds its data)::
 
@@ -56,7 +56,7 @@ from scripts.probes._miso287_p1_residual import clear_all, run_ratio  # noqa: E4
 
 KEEPER = REPO / "results/calibration/miso280_span"
 ZONAL = REPO / "data/raw/_validation-source/actual_lmp_hourly_zonal_MISO.parquet"
-OUT = REPO / "results/calibration/_miso296_lowload_stack.json"
+OUT = REPO / "results/phase0/miso/_miso296_lowload_stack.json"
 T = 8760
 YEARS = tuple(range(2019, 2026))
 NON_LP = ("wind", "solar", "biomass", "OTHER")

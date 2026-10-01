@@ -91,7 +91,7 @@ def main() -> None:
     rows += [dict(census(p, y), verdict="pass") for p, ys in PASSES.items() for y in ys]
     t = pd.DataFrame(rows)
     print(t.to_string(index=False))
-    with open("docs/handoffs/r-ercot/r_ercot20_d4_gap_census.json", "w") as f:
+    with open("docs/records/ercot/r-ercot/r_ercot20_d4_gap_census.json", "w") as f:
         json.dump(rows, f, indent=1)
 
 

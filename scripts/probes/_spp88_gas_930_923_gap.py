@@ -11,7 +11,7 @@ If 930 sees CHP only at the grid meter, ``b`` falls below 1. Separately, the ann
 attributed to non-CHP station service, the CHP host share, units without CEMS, and the scorer's
 own ``classFull`` transforms (CHP scaling, the OTHER_FOSSIL re-bucket, the reconcile scale).
 
-Reads committed artifacts only. Writes ``results/calibration/_spp88_gas_930_923_gap.json``.
+Reads committed artifacts only. Writes ``results/phase0/spp/_spp88_gas_930_923_gap.json``.
 """
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ sys.path.insert(0, str(REPO / "scripts" / "probes"))
 import _spp87_benchmark_reconcile as s87  # noqa: E402
 import calibration_verdict as cv  # noqa: E402
 
-OUT = REPO / "results/calibration/_spp88_gas_930_923_gap.json"
+OUT = REPO / "results/phase0/spp/_spp88_gas_930_923_gap.json"
 GAS = s87.GAS
 CHP = tuple(k for k in GAS if k.endswith("_CHP"))
 

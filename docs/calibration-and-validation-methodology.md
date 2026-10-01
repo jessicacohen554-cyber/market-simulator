@@ -11,7 +11,7 @@ source of truth** — when this document and code disagree, fix this document.
 Companion documents: `docs/calibration-determination-rubric.md` (the canonical
 criterion-by-criterion rubric spec, RUBRIC VERSION 2.4),
 `model-methodology-spec.md` (the LP/market formulation),
-`docs/handoffs/holdout-policy-memo-2026-07.md` (the three-tier holdout
+`docs/records/governance/holdout-policy-memo-2026-07.md` (the three-tier holdout
 amendment), `docs/model-legitimacy-audit-2026-07.md` (the D-1…D-10 diagnostic
 program and protective rules).
 
@@ -351,7 +351,7 @@ Source: `scripts/run_calibration_full.py:5210-5267`;
 `scripts/audit_keepers.py:181-210`;
 `scripts/legitimacy_diagnostics.py:313-320`; `.github/workflows/ci.yml:82-115`;
 `frontend/data/backcast/calibration-complete.json` (marker + intake_log);
-`docs/handoffs/holdout-policy-memo-2026-07.md`.
+`docs/records/governance/holdout-policy-memo-2026-07.md`.
 
 ### 3.3 Forecast-side validation (separate from the dispatch holdout tiers)
 
@@ -455,7 +455,7 @@ rule-26 residual-fitting.
   carries several GW of cheaper non-fast-start headroom, so no repricing of
   the fast-start band reaches it). Further C3c work needs a new measured
   identification (its own charter); C2 additionally waits on the final 2025
-  EIA-923 vintage. (`docs/handoffs/neiso-limb-b-offer-surface-2026-07.md` §5.)
+  EIA-923 vintage. (`docs/records/neiso/neiso-limb-b-offer-surface-2026-07.md` §5.)
 - **NYISO:** the deep >$300 tail's two candidate reserve levers are chased to
   ground — the largest-contingency requirement formula is already in the model
   as the measured NYCA families, and the ORDC/RCPF stack is verified complete

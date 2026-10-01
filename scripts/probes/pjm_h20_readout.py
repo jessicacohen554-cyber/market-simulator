@@ -1,6 +1,6 @@
 """pjm-h20 (ZERO LP): per-year readout of a Card C leg vs the keeper control.
 
-G1/G2 of docs/PRECOMMIT-pjm-h20-card-c-cc-level-ct-max-2026-09-24.md §6: load-weighted
+G1/G2 of docs/records/pjm/PRECOMMIT-pjm-h20-card-c-cc-level-ct-max-2026-09-24.md §6: load-weighted
 price vs actual, the error by actual-price region (bottom 50 % / p50-p95 / top 5 %),
 the error in the CONTROL's CC-marginal hours (pjm-h18 classification, from the phase-0
 JSON's bundle), and class P1 TWh for the C1 classes.

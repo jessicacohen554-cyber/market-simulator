@@ -13,7 +13,7 @@ hourly profile (bench, the same basis as ``_pjmnext15_cc_commitment.py``):
 * ``pooled_vs_year``   : committed-MW-weighted pooled ``online_frac`` minus the plant's own
                           on-share in that year (> 0 = the floor over-commits this year).
 
-Aggregated by year and actual-CF third. Writes ``results/calibration/_pjmnext15_cc_floor_window.json``.
+Aggregated by year and actual-CF third. Writes ``results/phase0/pjm/_pjmnext15_cc_floor_window.json``.
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ from _pjmnext15_cc_commitment import BENCH, KLASS, ON_FRAC, YEARS, _dec  # noqa:
 
 BUNDLE = REPO / "results/calibration/pjmnext8_xf_span"
 TRANCHES = REPO / "data/raw/_processed-legacy/thermal_tranches_PJM.csv"
-OUT = REPO / "results/calibration/_pjmnext15_cc_floor_window.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext15_cc_floor_window.json"
 
 
 def main() -> None:

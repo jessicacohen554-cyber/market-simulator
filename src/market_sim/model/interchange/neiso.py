@@ -79,7 +79,7 @@ def inject_neiso_gas_coldsnap_derate(
     $12.54-15.08/MMBtu against an oil parity of $20.985, i.e. the switch is
     $5.9-8.4/MMBtu from firing, while 6,896 MW (39.3 % of NEISO gas capacity) sat
     exempt (neiso-110,
-    ``docs/FINDING-neiso110-winter-oil-driver-2026-09-16.md``). Pass a ``(T,)``
+    ``docs/records/neiso/FINDING-neiso110-winter-oil-driver-2026-09-16.md``). Pass a ``(T,)``
     boolean and the exemption applies per-hour where it is ``True`` and the derate
     applies where it is ``False``; pass ``None`` (the default) for the unconditional
     legacy exemption, which is byte-identical. This is a SCOPE correction to this

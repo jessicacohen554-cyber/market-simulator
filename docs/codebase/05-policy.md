@@ -77,8 +77,8 @@ state rows only (REF).
 
 The scenario axis owner ruling **S1** (2026-09-06, card D-3) admitted: a declared,
 forecast-only, publicly-anchored, **default-off** what-if over the ffr-5b null (design
-memo `docs/handoffs/voluntary-clean-demand-design-memo-2026-09-05.md`; build
-`docs/handoffs/FINDING-scn-ws3b-2026-09-06.md`). ONE annual volumetric
+memo `docs/records/misc/voluntary-clean-demand-design-memo-2026-09-05.md`; build
+`docs/records/forecast/FINDING-scn-ws3b-2026-09-06.md`). ONE annual volumetric
 clean-attribute row per ISO-year, appended **last** to the family (region order
 state → federal → voluntary) through `append_voluntary_region` from the runner's one
 resolver `_clean_region_arrays_for_year`, which now takes the year's `zone_demand`:
@@ -281,7 +281,7 @@ mechanism is validated on the trivial binding fixture
 (`tests/test_dispatch.py::TestMassCapConstraint`), not by binding against the real
 cap. No 2022/2026 budget rows are landed (holdout quarantine, rule 22), so those
 years leave the row inert (adder path). Design:
-`docs/handoffs/emissions-mass-cap-plan-2026-07.md`.
+`docs/records/misc/emissions-mass-cap-plan-2026-07.md`.
 
 **The budget schedule (SCN-CAP, owner ruling S12 2026-09-06).** A third, first-ranked
 budget source sits ahead of the scalar: `config.mass_cap_tons_by_year`, a
@@ -299,7 +299,7 @@ is byte-identical. The levels are the owner's (rule 1) and live only in the camp
 `configs/scenario_campaign_matrix.yaml::CAP-STATE-TIGHT` — WS-1a §4.2's linear decline to 20 %
 of the 2025 per-state budget by 2050 on CAISO/NYISO/NEISO, CAISO anchored to the model's own
 REF-2026 CO2 because CARB publishes no power-sector budget. Read-out and binding table:
-`docs/handoffs/FINDING-scn-cap-2026-09-06.md`.
+`docs/records/forecast/FINDING-scn-cap-2026-09-06.md`.
 
 **Row-path boundary (documented limitation).** On the row path the scalar
 wrapper `resolve_carbon_price` returns the trajectory fallback (0 by default) —

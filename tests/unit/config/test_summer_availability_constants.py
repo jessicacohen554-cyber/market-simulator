@@ -62,7 +62,7 @@ GOVERNED_GROUPS = {
     "CT_PEAKER": "gas_ct",
     "CT_CHP": "gas_ct",
 }
-EXEMPT_GROUPS = {"COAL": "coal"}
+EXEMPT_GROUPS = {"COAL_BIT": "coal"}  # bare COAL abolished 2026-09-25; any subclass
 
 _JULY_H = 4400
 

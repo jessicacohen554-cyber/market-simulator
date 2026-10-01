@@ -2,7 +2,7 @@
 
 Charter: SPP-102 (owner card "Charter commitment lane", 2026-09-29). Object: in 2021/22 actual CC ran
 7.3 / 4.8 TWh in hours with actual RT LMP <= $15, the keeper 2.2 / 0.6 TWh
-(`results/calibration/_spp89_coal_cc_swap.json`).
+(`results/phase0/spp/_spp89_coal_cc_swap.json`).
 
 Per SPP CC_REGULAR plant with a CEMS series (bench `campd`, uint8 % of nameplate, model clock) the
 ONLINE state is CF >= 5 % (the SPP-97 convention). The keeper's state is its payload CF >= 1 %.
@@ -22,7 +22,7 @@ Plus, per year: the run-length structure of actual CC online spells that cover L
 L-hours sit inside spells > 48 h — the "kept on through the trough" signature of commitment cost /
 min-down physics), and a fleet-level decomposition of the L-hour online MWh by plant conduct class.
 
-Writes docs/handoffs/spp102/cc_commitment_drivers.json. Usage:
+Writes docs/records/spp/spp102/cc_commitment_drivers.json. Usage:
   uv run python scripts/probes/_spp102_cc_commitment_drivers.py <decoded payload.json>
 """
 
@@ -275,7 +275,7 @@ def main() -> int:
         res["plants"] = per_plant
         out[y] = res
         print(y, {k: v for k, v in res.items() if k != "plants"})
-    p = REPO / "docs/handoffs/spp102"
+    p = REPO / "docs/records/spp/spp102"
     p.mkdir(parents=True, exist_ok=True)
     (p / "cc_commitment_drivers.json").write_text(json.dumps(out, indent=1))
     return 0

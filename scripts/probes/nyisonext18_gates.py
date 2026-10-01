@@ -1,6 +1,6 @@
 """NYISO-NEXT-18 gates G-2 / G-3 / G-4 / G-6 and the reported block (ZERO LP).
 
-``docs/PRECOMMIT-nyiso-next18-retiree-carry-2026-09-30.md`` sec. 3, every value
+``docs/records/nyiso/PRECOMMIT-nyiso-next18-retiree-carry-2026-09-30.md`` sec. 3, every value
 anchored to the keeper (``nyisonext16_2021`` / ``nyisonext16_span``) or to the
 NYISO RT fuel mix:
 
@@ -17,7 +17,7 @@ G-1 is ``nyisonext18_compose_span.py --check-only``; G-5 is the scorer's C6 / C8
 
 Usage::
 
-    python3 scripts/probes/nyisonext18_gates.py --out results/calibration/_nyisonext18_gates.json
+    python3 scripts/probes/nyisonext18_gates.py --out results/phase0/nyiso/_nyisonext18_gates.json
 """
 
 from __future__ import annotations

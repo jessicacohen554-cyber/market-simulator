@@ -1,6 +1,6 @@
 """Tests for the SPP MMU offer-side unavailability carrier (SPP-106, carrier EX).
 
-``spp_mmu_offer_unavailability`` (``docs/handoffs/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md``)
+``spp_mmu_offer_unavailability`` (``docs/records/spp/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md``)
 replaces the flat fossil performance / summer class derates with the SPP MMU's measured bands.
 Trivial cases first per the repo testing pattern: three rows, a full-year index where seasons matter.
 """

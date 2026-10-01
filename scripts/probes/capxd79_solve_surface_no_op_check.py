@@ -2,7 +2,7 @@
 """capx D79 merge gate — prove the solve-surface fingerprint moves ZERO keys.
 
 **What this checks, and why it is the merge gate.** Owner ruling Q54 adopted the
-hybrid (d) of `docs/handoffs/DESIGN-capx-d79-2026-09-06.md` §6 in its
+hybrid (d) of `docs/records/forecast/DESIGN-capx-d79-2026-09-06.md` §6 in its
 **FROZEN-HASH** landing form (card row 2, "frozen-hash, now"): every surface name
 is declared at its LIVE hash, so ``moved_rows(iso) == {}`` for all six ISOs and
 ``SOLVE_EPOCHS`` is empty, so neither ``__solve_surface__`` nor
@@ -35,7 +35,7 @@ committed JSON, and a naive ``==`` leaves them in the hash so no key reproduces.
 Usage::
 
     uv run python scripts/probes/capxd79_solve_surface_no_op_check.py \
-        --out docs/handoffs/capxd79-solve-surface-no-op-record.json
+        --out docs/records/forecast/capxd79-solve-surface-no-op-record.json
 
 Exit code 0 iff every committed config hashes identically under both rules.
 """

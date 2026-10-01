@@ -1,7 +1,7 @@
 """Tests for the golden-manifest per-entry provenance schema and its CI gate.
 
 Covers the two halves of the 2026-09-01 stage-0 provenance repair
-(``docs/FINDING-stage0-provenance-repair-2026-09.md``):
+(``docs/records/misc/FINDING-stage0-provenance-repair-2026-09.md``):
 
 * **the schema** — every entry of the live ``perfb-stage0`` manifest carries its
   OWN provenance and its own keeper snapshot, and the file carries no shared
@@ -12,7 +12,7 @@ Covers the two halves of the 2026-09-01 stage-0 provenance repair
   reintroduces the shared-sha schema.
 
 and, since 2026-09-02, the additive **config-partition** representation
-(``docs/FINDING-golden-partition-carveout-2026-09.md``): an ISO whose keeper
+(``docs/records/misc/FINDING-golden-partition-carveout-2026-09.md``): an ISO whose keeper
 shard designates more than one config (ERCOT — a forward config for
 {2024, 2025} plus a 2023 carve-out) gets one sibling entry per config, keyed
 ``<ISO>__<role>``, and ``live_keeper`` resolves that key through
@@ -23,7 +23,7 @@ byte-identical.
 
 and, since 2026-09-05, **R-AW** (owner ruling, verbatim *"The golden config
 should be the 2024:2025 one not 2023"*;
-``docs/handoffs/FINDING-y14-ercot-golden-forward-2026-09-05.md``): a
+``docs/records/governance/FINDING-y14-ercot-golden-forward-2026-09-05.md``): a
 partitioned ISO's BARE key is its ``forward`` role replayed on that role's
 designated span (never the composed run's whole registered span), a designated
 span is never a superset of the registered span (rule 22, asserted in both
@@ -62,7 +62,7 @@ def _load_script(name: str, path: Path):
     the tier's LP tests in a serial run and 24–79 in whichever xdist worker
     this file lands in — scheduling-dependent, so a latent CI red, and the
     reason a local count of the tier over-reads ``main`` (fast-tier repair,
-    2026-09-02, ``docs/FINDING-fast-tier-repair-2026-09.md`` §4). The
+    2026-09-02, ``docs/records/misc/FINDING-fast-tier-repair-2026-09.md`` §4). The
     environment is snapshotted before ``exec_module`` and restored after it,
     added keys included, so the script's own pin never outlives its import.
     """

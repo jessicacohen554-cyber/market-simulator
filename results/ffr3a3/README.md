@@ -29,7 +29,7 @@ CAUSE* — is honoured; criterion (d) stays the owner's.
 Forecast-family legs are registered to `frontend/data/forecast/` via
 `scripts/register_forecast_run.py`, never as tracked bundles here (CLAUDE.md
 rule 15). The committed record is that registration plus the readout in
-`docs/handoffs/ffr-3a3-battery-close-2026-08-04.md`.
+`docs/records/forecast/ffr-3a3-battery-close-2026-08-04.md`.
 
 Layout (FFR-3C blocker 10 — read this before looking for a ledger):
 

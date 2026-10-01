@@ -39,9 +39,9 @@ KEEPER = CAL / "hydro5_miso_ror_span"
 RUN_ID = "2026-09-23-miso-267-dispatched-bin"
 KEEPER_ID = "2026-09-22-hydro-5-miso-ror"
 FLAG = "unit_outage_dispatched_bin_denominator"
-PRECOMMIT = "docs/PRECOMMIT-miso267-dispatched-bin-on-hydro5-2026-09-23.md"
-RESULT = "docs/RESULT-miso267-dispatched-bin-on-hydro5-2026-09-23.md"
-FINDING = "docs/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md"
+PRECOMMIT = "docs/records/miso/PRECOMMIT-miso267-dispatched-bin-on-hydro5-2026-09-23.md"
+RESULT = "docs/records/miso/RESULT-miso267-dispatched-bin-on-hydro5-2026-09-23.md"
+FINDING = "docs/records/miso/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md"
 PINNED = "3ea64fa5110254df85b7a40cb6d4521414d08242"
 #: The superseded keeper's bundle was pruned at this run's promotion (rule 35);
 #: its committed files are read back from the last main commit that carried them.

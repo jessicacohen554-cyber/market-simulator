@@ -10,7 +10,7 @@ supplying its generation takes the energy out of the requirement twice.
 ``ScenarioConfig.nwpp_grid_carried_wind_served`` (GATED default off) serves
 that leg. This file pins (1) the default path is byte-identical, (2) the arm
 adds back exactly GRID's pool-carried wind, and (3) the measured identity the
-arm rests on. ``docs/handoffs/FINDING-nwpp-47-2026-09-22.md`` §2. Reads the
+arm rests on. ``docs/records/nwpp/FINDING-nwpp-47-2026-09-22.md`` §2. Reads the
 committed extracts; skipped when they are not hydrated.
 """
 

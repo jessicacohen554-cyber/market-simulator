@@ -18,7 +18,7 @@ Reads, all from committed artifacts:
    reference years.
 
 Run: ``python scripts/probes/pjm_h22_carde_phase0.py <dir holding the two pjm-146 .js>``
-Writes ``results/calibration/_pjm_h22_carde_phase0.json``.
+Writes ``results/phase0/pjm/_pjm_h22_carde_phase0.json``.
 """
 
 from __future__ import annotations
@@ -127,7 +127,7 @@ def main(p146: Path) -> None:
         str(y): round(float(per_dollar[y].get(("CC_REGULAR", "EMAAC"), 0.0)), 3)
         for y in per_dollar
     }
-    dst = REPO / "results/calibration/_pjm_h22_carde_phase0.json"
+    dst = REPO / "results/phase0/pjm/_pjm_h22_carde_phase0.json"
     dst.write_text(json.dumps(out, indent=1))
     for y in P.YEARS:
         cc = out["years"][str(y)]["CC_REGULAR"]

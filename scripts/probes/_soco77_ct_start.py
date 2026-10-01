@@ -64,7 +64,7 @@ REFILL = (
     "COAL_WC",
     "OIL",
 )
-OUT = _ROOT / "docs/handoffs/r-soco"
+OUT = _ROOT / "docs/records/soco/r-soco"
 FUEL_REF = 3.34  # $/MMBtu, SOCO-64 §4 CT mean delivered gas 2023-2025 — used ONLY to print $/MW, never in an arm
 
 

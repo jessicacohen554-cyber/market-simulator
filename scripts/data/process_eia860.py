@@ -128,7 +128,7 @@ _GENERATOR_COLUMN_MAP: dict[str, str] = {
 # window and are deliberately omitted. Bump only if the supported window moves.
 #
 # 2023 -> 2019 (session xiso-fuelvintage-1, executing
-# docs/handoffs/fleet-vintage-retiree-window-charter-2026-08.md §3). The
+# docs/records/misc/fleet-vintage-retiree-window-charter-2026-08.md §3). The
 # supported window moved by OWNER AMENDMENT, not by any residual: rule 22
 # ``[R-HOLDOUT]`` as amended 2026-08-06 makes the program's working span
 # 2019-2025 for every ISO, so 2019 is the program floor and therefore the
@@ -534,7 +534,7 @@ def rejoin_heat_rate_in_place(path: Path, vintage: int | None = None) -> dict:
     Every other column and every row survives byte-for-byte, in order.
 
     Rule 23 [R-FROZEN-DERIVE]: the trigger is a SOURCE-COMPLETENESS defect
-    (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md
+    (docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md
     §1 D1/D2), never a residual.
 
     Args:

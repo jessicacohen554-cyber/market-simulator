@@ -163,7 +163,7 @@ def test_field_is_default_off_and_keyed_only_when_armed():
     ("year", "hours_cut", "cut_twh"),
     # PRECOMMIT-nyiso-next5 §4. 2024 is 969 / 0.269 on the model clock: the
     # NEXT-5 probe indexed hours from Jan 1 without dropping Feb 29, which
-    # gives 968 / 0.270 (docs/RESULT-nyiso-next6-li-posted-limit-2026-09-27.md).
+    # gives 968 / 0.270 (docs/records/nyiso/RESULT-nyiso-next6-li-posted-limit-2026-09-27.md).
     [
         (2021, 860, 0.160),
         (2022, 1468, 0.343),

@@ -1,7 +1,7 @@
 """Tests for the D12 scarcity-consistent entry reserve leg.
 
 ``ScenarioConfig.entry_forward_reserve_leg`` (GATED default-OFF;
-``docs/handoffs/FINDING-capx-d12-scarcity-basis-2026-08-30.md``): the thermal
+``docs/records/forecast/FINDING-capx-d12-scarcity-basis-2026-08-30.md``): the thermal
 entry screens' hourly reserve legs read the entering year's OWN expected-ORDC
 adder — the same lookahead-instrument invocation that priced the energy leg —
 instead of the prior solved year's realized post-solve adder. Covered here:

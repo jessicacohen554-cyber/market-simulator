@@ -2,7 +2,7 @@
 
 The apply artifact for ``ScenarioConfig.ercot_shoulder_online_span`` — the
 shoulder-hour online-capability mechanism of
-``docs/handoffs/ercot-shoulder-online-envelope-2026-07.md`` (§6 shape (a),
+``docs/records/ercot/ercot-shoulder-online-envelope-2026-07.md`` (§6 shape (a),
 owner-authorized step-2 design round 2026-07-19). The §8 measurement confirmed
 the model's availability basis hands the LP the full non-OUT merchant
 capability as base/wall-priced ONLINE headroom every hour, while reality ran
@@ -311,7 +311,7 @@ def main() -> None:
                 "means (rule 13 bright line, charter §6)"
             ),
             "charter": (
-                "docs/handoffs/ercot-shoulder-online-envelope-2026-07.md "
+                "docs/records/ercot/ercot-shoulder-online-envelope-2026-07.md "
                 "§6 shape (a) / §8 measurement; ERCOT-89 step 2"
             ),
             "merchant_scope": dict(CLASS_OF_RESTYPE),

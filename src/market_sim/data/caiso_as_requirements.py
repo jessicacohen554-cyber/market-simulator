@@ -21,7 +21,7 @@ CSVs, immutable raw. Key columns ``ANC_REGION`` / ``ANC_TYPE`` (``SR`` spin,
 (``{SP,NS,RU,RD}_REQ_{MIN,MAX}_MW``) / ``MW`` / ``INTERVALSTARTTIME_GMT``
 (one row per region×product×item×hour). Train years 2023-2025 only (rule #22).
 
-Honesty note (``results/calibration/FINDING-caiso71-locational-as-inert-2026-07-10.md``):
+Honesty note (``docs/records/caiso/FINDING-caiso71-locational-as-inert-2026-07-10.md``):
 the SP26 regional minimum (~318 MW in the evening) is ~15× smaller than SoCal's
 own un-postured in-region reserve supply (~4.8 GW), so these families are
 **ex-ante inert** on the split topology — the flag ships default-off and is not

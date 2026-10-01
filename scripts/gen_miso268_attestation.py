@@ -39,9 +39,9 @@ KEEPER = CAL / "miso267_dbd_span"
 RUN_ID = "2026-09-24-miso-268-coal-yard"
 KEEPER_ID = "2026-09-23-miso-268-dispatched-bin"
 FLAG = "coal_fuel_inventory_plant_grain"
-PRECOMMIT = "docs/PRECOMMIT-miso268-coal-yard-grain-2026-09-24.md"
-RESULT = "docs/RESULT-miso268-coal-yard-grain-2026-09-24.md"
-FINDING = "docs/FINDING-miso268-coal-yard-grain-and-the-open-objects-2026-09-24.md"
+PRECOMMIT = "docs/records/miso/PRECOMMIT-miso268-coal-yard-grain-2026-09-24.md"
+RESULT = "docs/records/miso/RESULT-miso268-coal-yard-grain-2026-09-24.md"
+FINDING = "docs/records/miso/FINDING-miso268-coal-yard-grain-and-the-open-objects-2026-09-24.md"
 PINNED = "49c898c7ef38d3bea8f2c06d4e51d0a1051649a7"
 #: The superseded keeper's bundle was pruned at this run's promotion (rule 35);
 #: its committed files are read back from the last main commit that carried them.

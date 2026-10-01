@@ -66,9 +66,9 @@ sys.path.insert(0, str(ROOT / "src"))
 
 ASDIR = ROOT / "data" / "raw" / "MISO-AS"
 ACTUAL = ROOT / "data" / "raw" / "_validation-source" / "actual_lmp_hourly_MISO.parquet"
-M167_JSON = ROOT / "results" / "calibration" / "_miso167_summer_scarcity_instrument.json"
-M171_JSON = ROOT / "results" / "calibration" / "_miso171_reserve_product_decomposition.json"
-OUT = ROOT / "results" / "calibration" / "_xiso1_miso_asm_cascade_check.json"
+M167_JSON = ROOT / "results" / "phase0" / "miso" / "_miso167_summer_scarcity_instrument.json"
+M171_JSON = ROOT / "results" / "phase0" / "miso" / "_miso171_reserve_product_decomposition.json"
+OUT = ROOT / "results" / "phase0" / "governance" / "_xiso1_miso_asm_cascade_check.json"
 
 #: All ASM MCP years committed under data/raw/MISO-AS (2026 is the partial
 #: forward-edge file; stage A/B measure it as a data property only).

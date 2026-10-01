@@ -9,7 +9,7 @@ own zonal demand, which is the measured series ``eia_loader.load_demand``).
 Splits the annual gap Σ d·(model − actual) / Σ d into additive shares by hour
 class (actual-RT level buckets, and hour-of-day windows), by month and by zone,
 and reports the per-bucket mean prices. 2025 and 2022 are run as comparators.
-Solves nothing. Record: docs/handoffs/r-ercot/r_ercot20_phase0.json.
+Solves nothing. Record: docs/records/ercot/r-ercot/r_ercot20_phase0.json.
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ ZONE_TO_LZ = {  # scripts/data/derive_actual_lmp.ERCOT_MODEL_ZONE_TO_LZ
     "West": ("LZ_WEST",),
     "Panhandle": ("LZ_WEST",),
 }
-OUT = "docs/handoffs/r-ercot/r_ercot20_phase0.json"
+OUT = "docs/records/ercot/r-ercot/r_ercot20_phase0.json"
 
 
 def load_year(y: int, zact: pd.DataFrame) -> pd.DataFrame:

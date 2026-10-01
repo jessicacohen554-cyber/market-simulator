@@ -32,14 +32,14 @@ DST_TP = (
 NEISO108 = {
     "session": "neiso-fuelvintage-1 (2026-09-09)",
     "incumbent": "2026-09-06-neiso-106-fossil-offer",
-    "prereg": "docs/PRECOMMIT-neiso-fuelvintage-2026-09-09.md",
+    "prereg": "docs/records/neiso/PRECOMMIT-neiso-fuelvintage-2026-09-09.md",
     "lineage": [
-        "docs/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md",
-        "docs/handoffs/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md",
-        "docs/handoffs/fleet-vintage-retiree-window-charter-2026-08.md",
-        "docs/FINDING-pjm-retiree-window-redistribution-2026-09-09.md",
-        "docs/FINDING-neiso-index-vs-delivered-gas-2026-09-09.md",
-        "docs/RESULT-neiso-fuelvintage-2026-09-09.md",
+        "docs/records/governance/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md",
+        "docs/records/governance/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md",
+        "docs/records/misc/fleet-vintage-retiree-window-charter-2026-08.md",
+        "docs/records/pjm/FINDING-pjm-retiree-window-redistribution-2026-09-09.md",
+        "docs/records/neiso/FINDING-neiso-index-vs-delivered-gas-2026-09-09.md",
+        "docs/records/neiso/RESULT-neiso-fuelvintage-2026-09-09.md",
     ],
     "owner_ruling": (
         "2026-09-09, verbatim: 'these should be promoted as keepers on both 860 and gas shape "
@@ -119,7 +119,7 @@ NEISO108 = {
     ),
     "index_vs_delivered": (
         "The program's one unresolved cross-ISO discrepancy is CLOSED by this session, at zero LP: "
-        "docs/FINDING-neiso-index-vs-delivered-gas-2026-09-09.md. NEISO's 3.24x January-2023 gap "
+        "docs/records/neiso/FINDING-neiso-index-vs-delivered-gas-2026-09-09.md. NEISO's 3.24x January-2023 gap "
         "between the ISO-NE Algonquin index (4.73 $/MMBtu) and the EIA N3045 blend (15.35) is a "
         "respondent-composition artifact in N3045, falsified physically: the index never implies a "
         "marginal heat rate below 7.99 MMBtu/MWh in 84 months, while N3045 implies one below the "

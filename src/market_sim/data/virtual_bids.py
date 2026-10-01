@@ -4,7 +4,7 @@ The real PJM Day-Ahead market clears more volume at peaks than the physical
 load the model serves: submitted DECrement bids (virtual demand) net of
 INCrement offers (virtual supply) deepen the DA procurement by ~7-11 GW at
 the top summer-load hours (measured July-2024; the ~9-10 GW gap of
-docs/FINDING-pjm-offer-surface-noop-2026-07.md). Because the backcast is
+docs/records/pjm/FINDING-pjm-offer-surface-noop-2026-07.md). Because the backcast is
 scored against DA clearing prices, the DA demand side is real market
 structure the LP must carry (CLAUDE.md rule 1) — without it the energy
 dual is read ~9-10 GW too shallow into the offer stack at the peaks.
@@ -21,7 +21,7 @@ NET virtual curve** — the financial net of submitted demand and supply:
 ``net(λ)`` is monotone non-increasing in ``λ`` with a crossing price ``λ0``:
 below ``λ0`` the market holds net virtual DEMAND, above it net virtual
 SUPPLY. The layer renders the WHOLE measured curve — **symmetric net form**
-(pjm-105; docs/FINDING-pjm-midmerit-level-2026-07.md §6 item 1):
+(pjm-105; docs/records/pjm/FINDING-pjm-midmerit-level-2026-07.md §6 item 1):
 
 * the ``net > 0`` region → DEC-form withdrawal rungs (``pmax = 0``, dispatch
   in ``[-MW(t), 0]`` via an hourly ``min_gen`` lower bound): a block priced
@@ -41,7 +41,7 @@ curve is active at any dual — the two sides can never clear against each
 other.
 
 Why this is NOT the condemned pjm-101 gross-INC construction
-(docs/FINDING-pjm-da-depth-midcurve-2026-07.md §5-6). pjm-101 injected the
+(docs/records/pjm/FINDING-pjm-da-depth-midcurve-2026-07.md §5-6). pjm-101 injected the
 GROSS submitted INC curves as physical zero-cost supply — ~56 TWh/yr of
 fuel-type-``import`` generation that displaced real peaker dispatch (C1
 CT_PEAKER −12/−13 TWh) and suppressed mean prices toward actual through a
@@ -475,7 +475,7 @@ def settle_virtuals_financially(config, fleet_arrays):
     """P1 fleet with the virtual pseudo-units' bounds zeroed, or ``None``.
 
     ``ScenarioConfig.pjm_da_virtual_settle_financial`` (PJM-NEXT-7, owner
-    ruling 2026-09-28; ``docs/DESIGN-pjm-next-7-virtual-settlement-2026-09-28.md``).
+    ruling 2026-09-28; ``docs/records/pjm/DESIGN-pjm-next-7-virtual-settlement-2026-09-28.md``).
     A cleared PJM INC/DEC is liquidated in real time: RT physical generation
     serves RT physical load. P0 — the model's commitment-discovery pass — is
     the DA stage and keeps the virtual layer, so virtuals still shape the

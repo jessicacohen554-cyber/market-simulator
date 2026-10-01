@@ -29,7 +29,7 @@
   // saw it because scripts/check_mechanism_matrix.py and the pytest twins go
   // through the PYTHON assembler (scripts/lib/mech_matrix.py), which parses
   // `window.MECH_MATRIX` correctly. Repaired at SPP-21 2026-09-06 (owner
-  // authorization in session; docs/handoffs/FINDING-spp-21-2026-09-06.md §5),
+  // authorization in session; docs/records/spp/FINDING-spp-21-2026-09-06.md §5),
   // tolerating both spellings so a later lane may rename the base to `_BASE`
   // without re-breaking the page. NO data, cell or verdict is touched.
   var B = window.MECH_MATRIX_BASE || window.MECH_MATRIX;

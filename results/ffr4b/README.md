@@ -1,7 +1,7 @@
 # FFR-4B — the four arms behind the MISO solar-revenue lane
 
 Slim per-arm record for
-`docs/handoffs/ffr-4b-miso-solar-revenue-2026-08-04.md`. Each arm keeps its own
+`docs/records/forecast/ffr-4b-miso-solar-revenue-2026-08-04.md`. Each arm keeps its own
 `--out-dir` cache root, so the `evolution_<year>.json` ledgers live at
 `<arm>/MISO/<cache_key>/` — **not** the out-dir root (FFR-3C blocker 10:
 `load_ledgers_for_run` returns `{}` rather than raising, so a wrong path reads

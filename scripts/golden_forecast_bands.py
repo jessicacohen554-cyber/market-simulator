@@ -132,7 +132,7 @@ WEATHER_POSTURE = {
 
 REGEN_POLICY = (
     "Never auto-regenerate on a band exit (this is a finding, not a widening "
-    "target -- see docs/handoffs/forecast-validation-program-2026-07.md §2.3 "
+    "target -- see docs/records/forecast/forecast-validation-program-2026-07.md §2.3 "
     "and CLAUDE.md rule 23's frozen-against-residuals spirit). To "
     "regenerate: run `python scripts/golden_forecast_bands.py seed --force "
     '--reason "<explicit citation of the causal code change>"` and commit '

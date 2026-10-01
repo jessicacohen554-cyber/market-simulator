@@ -259,7 +259,7 @@ def main() -> None:
                     f"{'YES (midcurve)' if r['priced_by_midcurve_in_P1'] else 'NO -- excl'}"
                 )
 
-    dest = REPO / "results/calibration/_pjm_h8_offer_ladder.json"
+    dest = REPO / "results/phase0/pjm/_pjm_h8_offer_ladder.json"
     # MERGE, never overwrite (pjm-h7 §"two repo defects"): a run over a SUBSET of
     # years must not clobber a fuller artifact already at this fixed path.
     if dest.exists():

@@ -1,7 +1,7 @@
 """miso-255 screen gates for ``miso_import_sil_measured_envelope``.
 
 Scores the six STOP-only structural gates fixed in
-``docs/PRECOMMIT-miso255-measured-sil-2026-09-12.md`` §3, differencing an ARM
+``docs/records/miso/PRECOMMIT-miso255-measured-sil-2026-09-12.md`` §3, differencing an ARM
 bundle against the COMMITTED control bundle (rule 29(b) form 4 — no control
 solve). Every gate is structural; **none reads C1 CC_REGULAR, C3a or the gas
 volume**, which are reported under G-6 and gate nothing.

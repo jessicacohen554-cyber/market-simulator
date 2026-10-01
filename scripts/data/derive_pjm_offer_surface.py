@@ -13,7 +13,7 @@ Method (measured, NOT fit to any residual — CLAUDE.md rules 1/13/21)
 --------------------------------------------------------------------
 1. Population: per (unit_code x operating-hour) offer rows with
    ``avg_ecomax`` > 0. Segments are selected by unit PHYSICS, never fuel
-   labels (docs/handoffs/pjm-summer-peak-price-formation-g22-2026-07.md §2):
+   labels (docs/records/pjm/pjm-summer-peak-price-formation-g22-2026-07.md §2):
 
    * ``CT_PEAKER``  <- fast-start units, per-unit median ``min_runtime`` <= 2 h
      (PJM's fast-start eligibility concept: the whole unit is deliverable
@@ -211,7 +211,7 @@ def _netload_pct(years: list[int], conditioning: str = "within-year") -> pd.Data
       * ``"within-season"`` — rank within (year, season) using
         :data:`~market_sim.config.constants.PJM_SEASON_OF_MONTH`. Authorized
         by the owner 2026-07-27
-        (``docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md``). PJM
+        (``docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md``). PJM
         is summer-peaking in absolute net load, so an annual top-percentile
         bin is structurally a summer-only sample and can never classify a
         winter emergency as tight; ranking within season removes that

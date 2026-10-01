@@ -1,7 +1,7 @@
 """miso-155: the OPT-IN P0 commitment sidecar — round-trip and byte-neutrality.
 
 Covers the two traps the sidecar itself introduces
-(``results/calibration/PREREG-miso155-p0-exact-commitment-instrument-2026-08-13.md``
+(``docs/records/miso/PREREG-miso155-p0-exact-commitment-instrument-2026-08-13.md``
 section 9):
 
 * **T-12** — the bit-packing must round-trip EXACTLY, including the final

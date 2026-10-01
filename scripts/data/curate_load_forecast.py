@@ -19,7 +19,7 @@ partition ``data/clean/load-forecast/<ISO>/…parquet`` (``year=None``). Reads o
 Opened 2026-09-06 by lane SCN-LOAD under owner ruling S4 (card D-4), to make the
 model's load-growth, data-centre and electrification constants **derived from a
 tracked series** rather than hand-transcribed into a comment
-(``docs/handoffs/FINDING-scn-load-2026-09-06.md``).
+(``docs/records/forecast/FINDING-scn-load-2026-09-06.md``).
 """
 
 from __future__ import annotations

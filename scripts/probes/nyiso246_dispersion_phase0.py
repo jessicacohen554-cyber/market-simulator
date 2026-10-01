@@ -155,7 +155,7 @@ def main() -> None:
             for p in (0.10, 0.25, 0.50, 0.75, 0.90, 0.95, 0.99)
         }
 
-    dest = REPO / "results" / "calibration" / "_nyiso246_dispersion_phase0.json"
+    dest = REPO / "results" / "phase0" / "nyiso" / "_nyiso246_dispersion_phase0.json"
     dest.write_text(json.dumps(out, indent=2, sort_keys=True) + "\n")
     print(json.dumps(out["years"], indent=1))
     print("Q_mod pooled:", json.dumps(out.get("Q_mod_pooled_summary", {})))

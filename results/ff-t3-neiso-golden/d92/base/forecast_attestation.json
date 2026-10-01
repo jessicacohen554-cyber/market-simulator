@@ -3,7 +3,7 @@
  "bundle": "results/ff-t3-neiso-golden/d92/base",
  "run_id": "neiso-2026-2050-t3-golden3-d92-base",
  "attested_by": "capx D92, 2026-09-10 (owner ruling Q65) \u2014 THE PRODUCING SESSION (rubric \u00a75's default author): this lane solved the bundle it attests, as leg L0, the same-container G-DRIFT control for the FC-5/FC-6 re-base. Assertions are read from committed bytes, not judged at authoring time; an assertion that reads FALSE is recorded FALSE and FC-7 fails on it at full magnitude rather than the attestation being re-scoped to fit (PRECOMMIT-capx-d92-2026-09-10.md \u00a76.3, pushed before this bundle existed).",
- "predeclaration": "docs/handoffs/PRECOMMIT-capx-d92-2026-09-10.md (\u00a73-\u00a76 + Addenda A/B, all pushed before any LP)",
+ "predeclaration": "docs/records/forecast/PRECOMMIT-capx-d92-2026-09-10.md (\u00a73-\u00a76 + Addenda A/B, all pushed before any LP)",
  "assertions": {
   "dof_ledger_complete": {
    "value": false,
@@ -17,7 +17,7 @@
   },
   "honest_unfit_referenced": {
    "value": true,
-   "read_from": "full_horizon_summary.json invariants + docs/handoffs/FINDING-capx-d92-2026-09-10.md",
+   "read_from": "full_horizon_summary.json invariants + docs/records/forecast/FINDING-capx-d92-2026-09-10.md",
    "evidence": "14 invariants carried into the verdict; every failing FC row reported at full magnitude; 13 pre-registered predictions graded with both misses named (the P1 margin prediction was backwards, and the lane's own one-sentence summary is graded HALF WRONG on the only clause carrying information); and the FC-6 P2 row is disclosed on the row itself as one sub-check weaker than the row it replaces."
   },
   "quarantine_attested": {

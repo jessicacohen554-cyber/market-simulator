@@ -5,7 +5,7 @@ the eight SOCO coal plants and prints, per plant-year: contract (C/NC/T) and spo
 delivered $/MMBtu by purchase type, December stock, implied burn (receipts - delta stock), and the
 contract-tons / burn ratio. Also prints the year-on-year delta test (delta contract tons vs delta burn).
 
-Record: docs/handoffs/r-soco/FINDING-soco-74-2026-09-27.md. No LP, no ScenarioConfig field touched.
+Record: docs/records/soco/r-soco/FINDING-soco-74-2026-09-27.md. No LP, no ScenarioConfig field touched.
 """
 
 from __future__ import annotations

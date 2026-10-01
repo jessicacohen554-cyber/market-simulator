@@ -2,7 +2,7 @@
 
 The identification constant of the ``gas_offer_net_revenue_margin`` mechanism
 (``constants.GAS_OFFER_MARGIN_ANCHOR_BY_ISO``; design doc
-``docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md``): the mean of
+``docs/records/misc/gas-offer-net-revenue-margin-design-2026-07.md``): the mean of
 the model's own merit-order delivered-gas series
 (:func:`market_sim.data.fuel.trajectories._gas_series` — measured EIA Henry
 Hub monthly × the ISO's measured hub basis, the exact series the registered

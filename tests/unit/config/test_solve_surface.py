@@ -3,7 +3,7 @@
 **The hazard.** ``ScenarioConfig.cache_key()`` hashes the config and nothing
 else, so re-deriving a registry table changes what a solve produces while every
 key stays put and the pre-change bundle is silently re-served — the SCN-LOAD
-incident, `docs/handoffs/DESIGN-capx-d79-2026-09-06.md` §1.
+incident, `docs/records/forecast/DESIGN-capx-d79-2026-09-06.md` §1.
 
 These tests pin the properties the construction rests on, so none can regress
 silently:

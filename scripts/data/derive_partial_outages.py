@@ -30,7 +30,7 @@ attribution is consumed by the unit-scoped event-cap composition
 to know whether the window and partial layers are measuring the SAME units'
 downtime at an hour (``min()``, the layers double-count) or DIFFERENT units'
 (the product stands). See
-``docs/PRECOMMIT-ercot174-unit-attributed-partial-outage-2026-08-06.md`` §2.
+``docs/records/ercot/PRECOMMIT-ercot174-unit-attributed-partial-outage-2026-08-06.md`` §2.
 """
 
 from __future__ import annotations

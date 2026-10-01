@@ -10,7 +10,7 @@ escalator). No semantics change, no field, no default move — so these tests
 also pin the guard as a pure OBSERVER: the resolver's values must be
 bit-identical with the guard silenced.
 
-See ``docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md`` §2 and
+See ``docs/records/forecast/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md`` §2 and
 ``FINDING-capx-d34-carbonprice-guard-2026-09-01.md``.
 """
 

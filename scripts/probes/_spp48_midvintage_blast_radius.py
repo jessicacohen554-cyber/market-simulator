@@ -1,7 +1,7 @@
 """SPP-48 phase 0: the mid-vintage-year retiree blast radius, at ZERO LP.
 
 Measures the exposure of the ``load_retired_within_window`` mid-vintage-year
-gap (``docs/handoffs/RESULT-spp-47-four-failures-2026-09-18.md`` §2) for EVERY
+gap (``docs/records/spp/RESULT-spp-47-four-failures-2026-09-18.md`` §2) for EVERY
 registered region, not just SPP -- the rule 25 ``[R-ISO-SCOPE]`` charter check
 this lane owes before touching the shared ``data/fleet/eia860.py`` seam.
 

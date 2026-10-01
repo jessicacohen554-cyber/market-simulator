@@ -53,7 +53,7 @@ converted alignment is the right one.
 
 Usage:
     python scripts/probes/nyiso164_nyca_shortage_check.py
-        [--out results/calibration/_nyiso164_nyca_shortage_check.json]
+        [--out results/phase0/nyiso/_nyiso164_nyca_shortage_check.json]
 """
 
 from __future__ import annotations
@@ -285,7 +285,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument(
         "--out",
-        default=str(REPO / "results/calibration/_nyiso164_nyca_shortage_check.json"),
+        default=str(REPO / "results/phase0/nyiso/_nyiso164_nyca_shortage_check.json"),
     )
     args = ap.parse_args()
 

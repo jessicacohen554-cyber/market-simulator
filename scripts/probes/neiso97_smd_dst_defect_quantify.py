@@ -2,7 +2,7 @@
 
 neiso-97, 2026-08-17 -- Phase 1 of the audit row O8 charter
 (``docs/audit/third-party-audit-2026-08.md`` section 8). neiso-96 found
-(``results/calibration/ASSESSMENT-neiso96-h12026-intake-2026-08-15.md``
+(``docs/records/neiso/ASSESSMENT-neiso96-h12026-intake-2026-08-15.md``
 section 1.4) that the 2018-2023 SMD workbook vintage publishes a flat 24 rows
 on every calendar day, so ``derive_actual_lmp._neiso_sheet_series``'s
 positional clock -- correct for the true-23/25-row 2024-2025 vintage --
@@ -54,7 +54,7 @@ import openpyxl  # noqa: E402
 
 from scripts.data import derive_actual_lmp as dal  # noqa: E402
 
-OUT = REPO / "results" / "calibration" / "_neiso97_smd_dst_defect_quantify.json"
+OUT = REPO / "results" / "phase0" / "neiso" / "_neiso97_smd_dst_defect_quantify.json"
 
 #: Old (flat-24) workbook vintage years, per the neiso-96 measurement.
 OLD_VINTAGE = (2018, 2019, 2020, 2021, 2022, 2023)

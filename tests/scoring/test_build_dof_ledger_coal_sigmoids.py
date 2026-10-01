@@ -20,7 +20,7 @@ the ledger's gate is pinned to ``data.fuel.trajectories.coal_sigmoid_params``, t
 resolver the dispatch actually calls, so the attestation cannot drift away from
 what the solve consumes.
 
-Record: ``results/calibration/FINDING-xiso7-prb-follower-dof-undercount-2026-09-02.md``.
+Record: ``docs/records/governance/FINDING-xiso7-prb-follower-dof-undercount-2026-09-02.md``.
 """
 
 from __future__ import annotations

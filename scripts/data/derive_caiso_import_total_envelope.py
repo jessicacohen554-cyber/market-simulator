@@ -410,7 +410,7 @@ def main() -> None:
                 {
                     "session": "caiso-234",
                     "precommit": (
-                        "results/calibration/"
+                        "docs/records/caiso/"
                         "PRECOMMIT-caiso234-import-total-envelope-2026-09-02.md"
                     ),
                     "method": {

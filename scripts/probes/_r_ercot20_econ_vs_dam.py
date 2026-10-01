@@ -140,7 +140,7 @@ def main(args: list[str]) -> None:
                        "by_f_cohort": {f"{k[0]}|{k[1]}": v for k, v in t.to_dict(orient="index").items()},
                        "corr": json.loads(corr.to_json(orient="index")),
                        "model_tranche_at_f": {str(k): v for k, v in trm.items()}}
-    with open("docs/handoffs/r-ercot/r_ercot20_econ_vs_dam.json", "w") as f:
+    with open("docs/records/ercot/r-ercot/r_ercot20_econ_vs_dam.json", "w") as f:
         json.dump(rec, f, indent=1, default=str)
 
 

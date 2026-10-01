@@ -1,7 +1,7 @@
 """R-SPP shard self-check: the leg == the incumbent recipe + EXACTLY the R-SPP arms.
 
 Run by each R-SPP shard AFTER its solve and BEFORE it pushes (rule 32(c)(4) hard stops). Zero LP.
-Pre-registered in ``docs/handoffs/PRECOMMIT-r-spp-2019-2025-inputs-2026-09-24.md``. Adapted from
+Pre-registered in ``docs/records/spp/PRECOMMIT-r-spp-2019-2025-inputs-2026-09-24.md``. Adapted from
 ``_spp78_shard_check.py``.
 
 1. **recipe** — the leg's ``scenario_config`` differs from the incumbent bundle's for the year by

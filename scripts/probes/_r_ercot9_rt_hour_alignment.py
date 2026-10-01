@@ -6,7 +6,7 @@ measured NP6-905 SCED system lambda (``ercot_<y>_ordc_reserves_hourly``) and
 (ii) the keeper's P1 price, at hour shifts -2..+2. Prices clipped at $5,000.
 
 Usage: ``python3 scripts/probes/_r_ercot9_rt_hour_alignment.py``.
-Record: ``docs/handoffs/FINDING-r-ercot-9-2023-scarcity-2026-09-27.md``.
+Record: ``docs/records/ercot/FINDING-r-ercot-9-2023-scarcity-2026-09-27.md``.
 """
 
 import sys

@@ -10,7 +10,7 @@ SPP-44 FINDING §1). Also reports the FLAT-TOP excess: hours with the model >= 9
 < 70 %.
 
 Usage: uv run python scripts/probes/_spp97_cc_commit_reach.py <payload.json>
-Writes docs/handoffs/spp97/cc_commit_reach.json
+Writes docs/records/spp/spp97/cc_commit_reach.json
 """
 import base64, gzip, json, sys
 from pathlib import Path
@@ -71,7 +71,7 @@ def main():
         tot["bridge_share"] = round(tot["bridge_twh"] / tot["miss_twh_minload"], 3) if tot["miss_twh_minload"] else None
         out[y] = tot
         print(y, tot)
-    p = REPO / "docs/handoffs/spp97"
+    p = REPO / "docs/records/spp/spp97"
     p.mkdir(parents=True, exist_ok=True)
     (p / "cc_commit_reach.json").write_text(json.dumps(out, indent=1))
 

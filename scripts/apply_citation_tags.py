@@ -6,7 +6,7 @@ annotated tag per load-bearing commit, so the citation record survives a history
 rewrite: git-filter-repo rewrites tag refs onto the rewritten commits, so a tag
 NAME resolves where a raw SHA does not.  Convention and rationale:
 `docs/governance/citation-tags.md`; empirical verification:
-`docs/FINDING-rewrite-prep-2026-08-11.md` §3.
+`docs/records/governance/FINDING-rewrite-prep-2026-08-11.md` §3.
 
 Two things to know before running it:
 

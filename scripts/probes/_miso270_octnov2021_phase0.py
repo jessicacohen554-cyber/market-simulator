@@ -51,7 +51,7 @@ from scripts.probes._miso269_transport_static_phase0 import (  # noqa: E402
 )
 
 YEAR = 2021
-OUT = REPO / "results/calibration/_miso270_octnov2021_phase0.json"
+OUT = REPO / "results/phase0/miso/_miso270_octnov2021_phase0.json"
 BENCH = REPO / f"frontend/data/backcast/bench/MISO/{YEAR}.json.gz"
 EIA930 = [REPO / f"data/raw/eia-930/EIA930_BALANCE_{YEAR}_{h}.parquet" for h in ("Jan_Jun", "Jul_Dec")]
 MONTH = (pd.Timestamp(f"{YEAR}-01-01") + pd.to_timedelta(np.arange(8760), "h")).month.to_numpy()

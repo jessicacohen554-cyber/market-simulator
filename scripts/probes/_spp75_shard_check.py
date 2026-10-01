@@ -1,7 +1,7 @@
 """SPP-75 shard self-check: control == keeper recipe, arm == control + chp_steam_floor_p25.
 
 Run by each SPP-75 shard AFTER both solves and BEFORE it pushes (rule 32(c)(4) hard stops).
-Zero LP. Pre-registered in ``docs/handoffs/PRECOMMIT-spp-75-gas-low-side-2026-09-23.md`` §5.
+Zero LP. Pre-registered in ``docs/records/spp/PRECOMMIT-spp-75-gas-low-side-2026-09-23.md`` §5.
 
 1. **recipe** — the control's ``scenario_config`` equals the keeper bundle's for the year
    (fields added since the keeper allowed only at their dataclass default); the arm's differs
