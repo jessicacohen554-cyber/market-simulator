@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-10-01-r-21-lostpines-ccid",
+  "run_id": "2026-10-01-r-22-ordc-shift",
   "iso": "ERCOT",
-  "label": "r 21 lostpines ccid",
+  "label": "r 22 ordc shift",
   "target_years": [
     2019,
     2020,
@@ -105,7 +105,7 @@
     "diurnal_amplitude": {
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
-        "2019": "amplitude 135.1% of measured (hod range $157.73 vs $116.77); peak h15 vs h15, trough h02 vs h02 \u2014 phase OK; hod r +0.993; 365 complete days",
+        "2019": "amplitude 112.3% of measured (hod range $131.08 vs $116.77); peak h15 vs h15, trough h02 vs h02 \u2014 phase OK; hod r +0.992; 365 complete days",
         "2020": "amplitude 105.8% of measured (hod range $32.51 vs $30.73); peak h14 vs h14, trough h02 vs h02 \u2014 phase OK; hod r +0.976; 365 complete days",
         "2021": "amplitude 123.6% of measured (hod range $59.05 vs $47.76); peak h18 vs h18, trough h10 vs h11 \u2014 phase OK; hod r +0.697; 365 complete days",
         "2022": "amplitude 70.3% of measured (hod range $55.16 vs $78.44); peak h16 vs h15, trough h03 vs h02 \u2014 phase OK; hod r +0.957; 365 complete days",

@@ -1,6 +1,6 @@
 {
  "schema": "legitimacy-diagnostics/v1",
- "bundle": "/home/user/market-simulator/results/calibration/r_ercot21_span",
+ "bundle": "/home/user/market-simulator/results/calibration/r_ercot22_span",
  "iso": "ERCOT",
  "years": [
   2019,
@@ -7605,31 +7605,31 @@
    "passed": true,
    "rows": [
     {
-     "bundle": "r_ercot21_span",
+     "bundle": "r_ercot22_span",
      "check": "ct_deployment_overlay",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "r_ercot21_span",
+     "bundle": "r_ercot22_span",
      "check": "reliability_deployment_overlay",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "r_ercot21_span",
+     "bundle": "r_ercot22_span",
      "check": "ct_mustrun_per_plant",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "r_ercot21_span",
+     "bundle": "r_ercot22_span",
      "check": "ordc_reliability_deployment_mw",
      "value": null,
      "verdict": "pass"
     },
     {
-     "bundle": "r_ercot21_span",
+     "bundle": "r_ercot22_span",
      "check": "caiso_gas_commitment_floor",
      "value": false,
      "verdict": "pass"

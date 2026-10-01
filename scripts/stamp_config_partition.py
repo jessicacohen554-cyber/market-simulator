@@ -74,12 +74,16 @@ from scripts.replay_keeper import (  # noqa: E402
 #:   2021). ``RESULT-ercot256`` §8a measured this directly: neither is present
 #:   in any ``meta.json``, and the ``run_config`` difference that "looked like
 #:   config drift" is the published year parameter, not a recipe choice.
+#: * ``ordc_lolp_shift_sigma`` — the PUCT 48551 LOLP curve shift by year
+#:   (0.25 sigma in 2019, 0.5 from 2020), the third published order value in
+#:   ``constants.ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR`` (R-ERCOT-22).
 YEAR_DRIVEN_FIELDS = frozenset(
     {
         "weather_year",
         "gas_price_override",
         "ordc_voll",
         "ordc_mcl_mw",
+        "ordc_lolp_shift_sigma",
     }
 )
 

@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-10-01T01:47:33",
+  "timestamp": "2026-10-01T03:19:57",
   "git": {
-    "sha": "bc5069cd",
-    "basis_sha": "bc5069cdbebb179f1331232a2121f008ca9c0088",
-    "branch": "claude/r-ercot21-arm-2019",
+    "sha": "f4d29d72",
+    "basis_sha": "f4d29d72fa9839e49518453ac9dd45f6ea739734",
+    "branch": "claude/r-ercot22-arm-2019",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "R-ERCOT-21 ARM 2019: keeper 2026-09-30-r-20-gt-split recipe unchanged, on the R-ERCOT-21 inputs (Lost Pines 1 non-CHP row; EIA-923 identity CC heat rates for steam_not_metered + gross_below_net rows) - PRECOMMIT-r-ercot-21-lostpines-cc-identity",
+  "model_changes_note": "R-ERCOT-22 ARM 2019: keeper 2026-10-01-r-21-lostpines-ccid recipe unchanged; PUCT 48551 ORDC LOLP shift vintaged (2019 = 0.25 sigma via ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR) - PRECOMMIT-r-ercot-22-ordc-shift-vintage",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "ERCOT",
@@ -351,7 +351,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "bc5069cd"
+    "git_sha": "f4d29d72"
   },
   "scenario_config": {
     "weather_year": 2019,
@@ -573,7 +573,7 @@
     "ordc_mcl_mw": 2000.0,
     "ordc_lolp_sigma_mw": 1400.0,
     "ordc_lolp_mu_mw": 0.0,
-    "ordc_lolp_shift_sigma": 0.5,
+    "ordc_lolp_shift_sigma": 0.25,
     "ordc_multistep_floor": true,
     "ordc_as_plan_mw": 0.0,
     "ordc_lolp_params_path": null,
@@ -701,6 +701,7 @@
     "nyiso_gas_bridge_online_hours": false,
     "nyiso_gas_bridge_state_floor_min_run": false,
     "spp_gas_commitment_bridge": false,
+    "pjm_gas_commitment_bridge": false,
     "spp_commitment_posture": false,
     "soco_gas_st_campaign_commitment": false,
     "nyiso_chp_btm_measured": false,
@@ -1104,6 +1105,7 @@
     "unit_outage_per_unit_clip": false,
     "unit_outage_extract_basis_share": false,
     "unit_outage_dispatched_bin_denominator": false,
+    "unit_outage_dispatched_bin_live_denominator": false,
     "unit_outage_window_hour_grain": true,
     "campd_per_unit_attribution": false,
     "campd_per_unit_vintage_denominator": false,
@@ -16207,6 +16209,7 @@
     "chp_steam_floor_conduct_scope": false,
     "spp_ct_lole_efor": false,
     "spp_gas_crow_residual_outage": false,
+    "spp_mmu_offer_unavailability": false,
     "ercot_gtc_limits_measured": true,
     "pjm_measured_interface_limits": false,
     "pjm_east_interface_cut": false,
@@ -16227,6 +16230,7 @@
     "ercot_wind_zone_shape": false,
     "coal_supply_repricing": true,
     "coal_plant_monthly_pricing": true,
+    "coal_captive_marginal_fuel_price": false,
     "gas_plant_monthly_fuel_pricing": false,
     "gas_basis_differential_measured_by_year": false,
     "nearby_fuel_price_fallback": false,
@@ -16296,6 +16300,7 @@
     "dual_fuel_oil_reattribution": false,
     "dual_fuel_switching": false,
     "dual_fuel_oil_daily_parity": false,
+    "dual_fuel_measured_oil_burn": false,
     "outage_source": "historic",
     "caiso_dam_outages": false,
     "miso_native_outage_source": false,
@@ -16344,10 +16349,11 @@
   "solve_surface": {
     "schema": 1,
     "iso": "ERCOT",
-    "fingerprint": "bdfc68c278f7eff8",
-    "rows": 240,
+    "fingerprint": "4e4acc5b60f2bd20",
+    "rows": 247,
     "moved": {
       "CORRELATED_OUTAGE_CURVE": "57d222be86dd9007",
+      "ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR": "7c4051076503cbf3",
       "GENERIC_BASE_OFFER_CURVE": "bdc2b348ec6144d1",
       "ISO_PLANT_ENTRIES": "0ea953691398af1d",
       "ISO_PLANT_EXITS": "3774f5780d62b262",
@@ -16360,7 +16366,7 @@
       "THERMAL_AVAILABILITY": "34ff308290e18439"
     },
     "epochs": [],
-    "git_sha": "bc5069cd"
+    "git_sha": "f4d29d72"
   },
   "environment": {
     "python_version": "3.11.15",
