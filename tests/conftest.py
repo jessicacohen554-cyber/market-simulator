@@ -38,11 +38,42 @@ _SLOW_NODEID_SUBSTRINGS = (
 )
 
 
+# The fast lane's time budget (cleanup-A, 2026-10-01). These are real behaviour
+# tests that each run a multi-year runner or a full-data loader for 20-85 s on
+# 2 workers; together they were ~1/3 of the fast tier's 10m39s wall at
+# 4471ad31. Listed by exact node id with the measured duration; add a line when
+# a test crosses ~20 s, remove it when the test is made cheap.
+SLOW_NODEIDS = {
+    "tests/scoring/test_crossover_harness.py::TestCrossoverRunnerPath::test_forward_year_demand_not_from_realized_loader",  # 83 s
+    "tests/unit/data/test_retiree_window_extension.py::TestPreserveIsStrictlyAdditive::test_shared_key_keeps_preserved_record_and_new_key_is_added",  # 81 s
+    "tests/unit/pipeline/test_capacity_screen_peak_measured_hindcast.py::TestSeamPeakInertWhereThereIsNoMeasuredLoad::test_crossover_forward_year_keeps_the_growth_path",  # 81 s
+    "tests/test_regional_renewable_cf.py::test_matches_the_egrid_derivation",  # 69 s
+    "tests/unit/pipeline/test_capacity_screen_peak_measured_hindcast.py::TestSeamPeakArmed::test_arming_adds_no_demand_read",  # 55 s
+    "tests/unit/pipeline/test_runner.py::TestRunScenarioIso::test_rerun_skips_all_cached_years",  # 53 s
+    "tests/unit/pipeline/test_capacity_screen_peak_measured_hindcast.py::TestSeamPeakInertWhereThereIsNoMeasuredLoad::test_forecast_run_is_byte_identical_armed_and_unarmed",  # 51 s
+    "tests/curation/test_eia_loader.py::TestWeatherPoolWidening::test_pjm_2019_2020_demand_resolves_from_hourly_extract",  # 48 s
+    "tests/unit/pipeline/test_capacity_screen_peak_measured_hindcast.py::TestSeamPeakArmed::test_armed_hindcast_screens_see_the_measured_peak",  # 48 s
+    "tests/curation/test_eia923_renewable_backfill.py::TestLiveCaiso2025::test_full_year_per_class_benchmark",  # 38 s
+    "tests/unit/data/test_dam_outage_wiring.py::DamOutageWiringTest::test_caiso_per_plant_precedence_and_fallback",  # 35 s
+    "tests/scoring/test_calibration_verdict_price_unscored.py::RegisteredRunsTests::test_no_registered_run_carries_the_block",  # 31 s
+    "tests/curation/test_egrid.py::LoaderTests::test_build_fossil_co2_rates",  # 30 s
+    "tests/unit/pipeline/test_runner.py::TestRunSweep::test_two_configs_create_two_cache_dirs",  # 29 s
+    "tests/unit/pipeline/test_capacity_screen_peak_measured_hindcast.py::TestSeamPeakArmed::test_unarmed_hindcast_screens_see_the_GROWN_weather_peak",  # 27 s
+    "tests/unit/results/test_ensemble_sampler.py::TestExportSamplerEnsemble::test_structural_prior_adds_published_layer",  # 26 s
+    "tests/unit/pipeline/test_runner.py::TestRunScenarioIso::test_three_years_create_three_cache_files",  # 26 s
+    "tests/curation/test_eia_loader.py::TestDemandProfileCleanSeam::test_load_demand_uses_repaired_partition_over_raw_spike",  # 24 s
+    "tests/curation/test_eia_loader.py::TestWeatherPoolWidening::test_pjm_2021_demand_and_renewables_full_year",  # 24 s
+    "tests/iso/caiso/test_caiso_locational_as.py::test_loader_shape_and_keys[2023]",  # 22 s
+}
+
+
 def pytest_collection_modifyitems(config, items):
-    """Tag the measured-slow full-8760 LP test classes with ``slow``."""
+    """Tag the measured-slow tests (classes above, node ids in SLOW_NODEIDS) ``slow``."""
     slow = pytest.mark.slow
     for item in items:
-        if any(sub in item.nodeid for sub in _SLOW_NODEID_SUBSTRINGS):
+        if item.nodeid in SLOW_NODEIDS or any(
+            sub in item.nodeid for sub in _SLOW_NODEID_SUBSTRINGS
+        ):
             item.add_marker(slow)
 
 

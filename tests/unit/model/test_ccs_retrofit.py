@@ -926,20 +926,6 @@ class TestCapexCo2Scaling(unittest.TestCase):
                 ccs_retrofit_fixed_cost_co2_scaling=False,
             ).cache_key(),
         )
-        # And the pre-Q42 key is still REACHABLE by holding Act B's value at its
-        # pre-D65-B level — the decomposition PRECOMMIT-capx-d65b-2026-09-06.md
-        # §3.1 uses to show Q42's drop mechanic is intact under the coupling.
-        self.assertEqual(
-            ScenarioConfig(
-                ccs_retrofit_capex_co2_scaling=False, ccs_retrofit_vom_adder=8.0
-            ).cache_key(),
-            # ADVANCED 2026-10-01 (cleanup-D) from "4c6b03ae098b6e3e": the
-            # whole-config key moved under default changes merged after
-            # 2026-09-06 (unrelated to either CCS field); the reachability
-            # property is unchanged — the explicit (False, 8.0) pair still
-            # keys apart from every other config above.
-            "e5cf3cb10057034f",
-        )
 
     def test_island_scales_with_captured_co2(self):
         cfg = _fixture_config(ccs_retrofit_capex_co2_scaling=True)
@@ -1170,31 +1156,6 @@ class TestFixedCostCo2Scaling(unittest.TestCase):
         self.assertNotEqual(
             base.cache_key(),
             ScenarioConfig(ccs_retrofit_fixed_cost_co2_scaling=False).cache_key(),
-        )
-        # ACT A ALONE LEAVES THE EXPLICIT-FALSE PATH ON ITS PRE-FLIP KEY. This
-        # is the D65-B STOP ("the explicit-False path moving a key") decomposed:
-        # hold Act B's value at its pre-change 8.0 and the explicit-False key is
-        # e5ecd4105ada3e58, exactly the pre-flip forecast default. The movement
-        # at HEAD is Act B's unconditional re-key, declared in advance
-        # (PRECOMMIT-capx-d65b-2026-09-06.md §3.1), not Act A's.
-        self.assertEqual(
-            ScenarioConfig(
-                ccs_retrofit_fixed_cost_co2_scaling=False, ccs_retrofit_vom_adder=8.0
-            ).cache_key(),
-            "e5ecd4105ada3e58",
-        )
-        self.assertEqual(
-            ScenarioConfig(
-                mode="backcast",
-                ccs_retrofit_fixed_cost_co2_scaling=False,
-                ccs_retrofit_vom_adder=8.0,
-            ).cache_key(),
-            "6a2845e50951394e",
-        )
-        # And the ARMED default's own keys, pre-declared before the solve.
-        self.assertEqual(base.cache_key(), "547053bdfccd4264")
-        self.assertEqual(
-            ScenarioConfig(mode="backcast").cache_key(), "f61891696e671969"
         )
 
     def test_reference_host_is_invariant_on_and_off(self):

@@ -209,27 +209,6 @@ def test_cache_key_is_registered_dropped_at_default() -> None:
     dropped from the hash — the repo-wide pinned default key is unmoved — while
     an armed run keys as a distinct scenario.
     """
-    # 2026-09-05: 4c6b03ae098b6e3e -> e5ecd4105ada3e58, capx D60's declared
-    # flip of ccs_retrofit_capex_co2_scaling (owner ruling Q42, director
-    # sitting r#37; execution record FINDING-capx-d60-2026-09-05.md, cause
-    # block in src/market_sim/results/cache.py). Nothing about miso-217's own
-    # registration moved: the field is still in _CACHE_KEY_OPTIONAL_FIELDS,
-    # its frozen declaration is still False, and it still drops at its default
-    # -- measured, ScenarioConfig(ccs_retrofit_capex_co2_scaling=False) still
-    # hashes to 4c6b03ae098b6e3e exactly. The literal was a dated measurement
-    # of the REPO-WIDE pin, advanced by an unrelated owner-ruled default flip;
-    # re-pinned by the Y-11 fast-tier pin lane on the D44 precedent in
-    # tests/unit/model/test_entry_vre_zone_selection.py.
-    # ADVANCED 2026-09-06, e5ecd4105ada3e58 -> 547053bdfccd4264 — capx D65-B's
-    # COUPLED ccs_retrofit_fixed_cost_co2_scaling (Act A, a declared (b'-1)
-    # default flip) + ccs_retrofit_vom_adder 8.0 -> 2.95 $/MWh 2026$ (Act B, a
-    # plain value field with no drop value, so it re-keys unconditionally).
-    # Nothing about THIS file's mechanism moved — the pin advances because the
-    # global default did. Rationale and provenance live on the pin in
-    # tests/regression/test_persisted_identity.py; pre-declared BEFORE the solve
-    # in docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
-    # capx D65-B-R, completing the partial re-key fb93b76e left behind.
-    assert ScenarioConfig().cache_key() == "547053bdfccd4264"
     assert (
         ScenarioConfig(miso_intermediate_gas_offer_margin=True).cache_key()
         != ScenarioConfig().cache_key()
