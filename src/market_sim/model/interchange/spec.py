@@ -1877,7 +1877,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
     # (the SPP-51 ERCOT-tie precedent), and until then the blocks are off.
     #
     # RECONCILED, zero LP, by soco-97 (owner card option d, 2026-10-01;
-    # docs/handoffs/r-soco/FINDING-soco-97-interchange-rule14-phase0-2026-10-01.md
+    # docs/records/soco/r-soco/FINDING-soco-97-interchange-rule14-phase0-2026-10-01.md
     # §2). The values below are UNCHANGED (still inert); what the reconciliation
     # establishes, for whoever arms these blocks:
     #   * DIRECTION — Avg TC is an INTO-SOCO (import) economy capability; the

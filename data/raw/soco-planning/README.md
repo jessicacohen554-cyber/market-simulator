@@ -268,7 +268,7 @@ leave 0.94–3.66 TWh/yr of metered flow refused, all of it TVA. TVA remains an
 open limit-type misalignment (economy capability vs metered firm + loop flow).
 FPLNW is an interchange seam only from the Gulf Power BA exit on 2022-07-13. No
 export capability is published. Record:
-`docs/handoffs/r-soco/FINDING-soco-97-interchange-rule14-phase0-2026-10-01.md`.
+`docs/records/soco/r-soco/FINDING-soco-97-interchange-rule14-phase0-2026-10-01.md`.
 
 ## 5. Alabama Power and Mississippi Power — **NO PUBLIC IRP EXISTS FOR ALABAMA**
 

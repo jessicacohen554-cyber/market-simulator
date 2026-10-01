@@ -2085,4 +2085,4 @@ the wrong structure; do not arm. Owner **"d"** (data-only follow-through): neigh
 REPORTED-ONLY (9 respondents, per-respondent clock verdicts, Dominion SC not shipped); reconciliation recorded inert in
 `INTERFACE_NEIGHBORS["SOCO"]` and soco-planning README §4c. Not done: the per-year `hr_by_year` anchors for the six
 λ-anchorable seams (needs SOCO-33 R-1/R-2; forecast-lane input). Matrix cells priced_interchange /
-historic_outage_overlay stay `U` with evidence. Records: docs/handoffs/r-soco/FINDING-soco-97-{peaker-outage,interchange-rule14}-phase0-2026-10-01.md.
+historic_outage_overlay stay `U` with evidence. Records: docs/records/soco/r-soco/FINDING-soco-97-{peaker-outage,interchange-rule14}-phase0-2026-10-01.md.
