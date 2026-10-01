@@ -57,10 +57,14 @@ def main() -> int:
     gov = att["governance"]
     if "miso298" in att:
         raise SystemExit("already stamped (miso298 block present)")
+    # The keeper's ``mechanism_armed_inherited`` is itself ONE block (the
+    # miso-266 field); nest it and the keeper's own block by field name.
     inherited = dict(gov.get("mechanism_armed_inherited") or {})
+    if "field" in inherited:
+        inherited = {str(inherited["field"]): inherited}
     prev = gov.get("mechanism_armed")
     if prev is not None:
-        inherited["miso280_and_earlier"] = prev
+        inherited[str(prev.get("field", "keeper"))] = prev
     gov["mechanism_armed_inherited"] = inherited
     gov["mechanism_armed"] = {
         "field": "miso_gas_marginal_commodity_pricing + miso_gas_variable_transport",
