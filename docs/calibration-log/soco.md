@@ -2073,3 +2073,16 @@ units excluded, zero DOF), seven year-isolated shards at `d9d382a0` (G-DRIFT mea
 input"** (also the rule-13 ruling: measured oil-burn days are an admissible backcast-only physical input): KEEPER →
 `2026-09-30-soco96-measured-oil-burn`, soco93 pruned (rule 35). Records: docs/records/soco/r-soco/{PRECOMMIT,RESULT}-soco-96-2026-09-30.md,
 RESULT-soco-96-holdout-years-gate-2026-09-30.md.
+
+**soco-97 (2026-10-01).** Zero LP; keeper unchanged (NOT-YET 7/4/0/3/0). Owner card (a/b/c/d) → **"C and d"**, both
+phase 0. (c) Price-independent peaker-outage window: feasible but reach insufficient. The admissible driver (FERC–NERC
+Elliott report, ~2.3 GW Southern) reaches C3a 2022 −11.6 % and C3b 0.252, and the best flat window reaches −10.7 % / 0.228
+before VOLL shedding. Elliott λ is an EEA2 scarcity / emergency-purchase price, and the model already darkens 6.9 GW
+(> FERC's ~4.8 GW Southern). (d) Priced interchange: the rule-14 limit mismatch is root-caused. Avg TC is import-only
+economy capability per region, so matching direction and summing per corridor removes 70–88 % of refused throughput
+with zero DOF; the TVA remainder stays open. SOCO's flows do not follow λ spreads (r −0.44..+0.40), so a priced seam is
+the wrong structure; do not arm. Owner **"d"** (data-only follow-through): neighbour FERC-714 Sch. 6 λ intaken
+REPORTED-ONLY (9 respondents, per-respondent clock verdicts, Dominion SC not shipped); reconciliation recorded inert in
+`INTERFACE_NEIGHBORS["SOCO"]` and soco-planning README §4c. Not done: the per-year `hr_by_year` anchors for the six
+λ-anchorable seams (needs SOCO-33 R-1/R-2; forecast-lane input). Matrix cells priced_interchange /
+historic_outage_overlay stay `U` with evidence. Records: docs/handoffs/r-soco/FINDING-soco-97-{peaker-outage,interchange-rule14}-phase0-2026-10-01.md.
