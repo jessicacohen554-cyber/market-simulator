@@ -519,7 +519,10 @@ way FAILs C6 regardless.
     `DESIGN-miso293-flowgate-stage1-2026-10-01.md` §8: trading-hub series per
     model zone, multi-hub zones averaged, MISO-Plains on the MINN+ILLINOIS
     proxy, × measured zonal load — `ZONAL_LW_SOURCES` in
-    `derive_actual_lmp.py`; no other ISO was ruled on), the system hub series ×
+    `derive_actual_lmp.py`; NYISO since 2026-10-01, owner ruling "Adopt for
+    NYISO now" (NYISO-NEXT-22): per model zone the simple mean of its NYISO
+    internal zones, × measured zonal load; no other ISO was ruled on), the
+    system hub series ×
     system load elsewhere
     (`derive_actual_lmp.py --lw-retrofit`, `src_lw` provenance per ISO-year).
     Rationale: the legacy basis compared a demand-weighted model mean against

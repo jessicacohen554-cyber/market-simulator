@@ -49,6 +49,15 @@ on both sides of the comparison):
   (MISO-South = mean of its four hubs; MISO-Plains = MINN+ILLINOIS mean
   proxy) × measured zonal demand, zone-demand-weighted; registry
   `ZONAL_LW_SOURCES`. Record: `docs/records/miso/RESULT-miso294-zone-resolved-basis-2026-10-01.md`.
+* **NYISO (zone-resolved, since 2026-10-01 — owner ruling, NYISO-NEXT-22):**
+  `actual_lmp_hourly_zonal_NYISO.parquet` (written by
+  `scripts/data/derive_nyiso_zonal_lmp.py` from the public archive staged by
+  `fetch_nyiso_zonal_lmp.py`): each model zone the simple mean of its
+  constituent NYISO internal zones × measured zonal demand, zone-demand-weighted;
+  registry `ZONAL_LW_SOURCES`. The former hub (simple mean of the 11 internal
+  zones) gave upstate A–E 5/11 weight for ~35 % of load and sat $1.3–5.2/MWh
+  below the like-for-like actual every year 2018–2025. Record:
+  `docs/records/nyiso/RESULT-nyiso-next22-zone-resolved-basis-2026-10-01.md`.
 * **Other ISOs (system-level):** the committed hourly system series
   (`actual_lmp_hourly_<ISO>.parquet`) × measured system load. The residual
   zonal-weighting wedge (hub vs load-zone premium) is second-order (ERCOT

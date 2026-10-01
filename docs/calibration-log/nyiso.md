@@ -15101,3 +15101,13 @@ too.
 - Five year-isolated shards (pin `fdc41f36`). G-1..G-5 pass in all years. Astoria TWh 2.08/3.05/2.88/2.40/2.92 -> 0.50/1.48/1.36/1.43/1.83 (CAMPD 0.72/0.89/0.77/0.92/1.35); D-4 rows 11 -> 9.
 - Span CALIBRATED; 2021 C3a +9.2 -> +10.4 % -> NOT-YET. Owner card: 'Promote (override)'. ISO now NOT-YET (rule 30(c)).
 - Pruned the NEXT-18 runs (rule 35). Record: `docs/records/nyiso/RESULT-nyiso-next21-astoria-heat-rate-2026-10-01.md`.
+
+## NYISO-NEXT-22 — 2026-10-01 — C3a/C3b actual made zone-resolved (owner ruling); ISO still NOT-YET
+
+- Zero LP, keeper unchanged. Phase 0: the 2021 C3a +10.4 % was mostly the benchmark basis — NYISO was scored on the
+  11-zone simple-mean hub × system load (upstate A–E 5/11 weight for ~35 % of load).
+- Owner ruling *"Adopt for NYISO now"* (the miso-294 construction): `ZONAL_LW_SOURCES["NYISO"]`, new
+  `actual_lmp_hourly_zonal_NYISO.parquet`, 2018–2025 retrofitted, bench surgically patched (0 STALE).
+- C3a 2021 +2.9 % (PASS), 2022 −2.4, 2023 +1.2, 2024 −4.0, **2025 −11.6 % (FAIL)**. Span NOT-YET; 2021 CALIBRATED;
+  ISO NOT-YET. Residual is spatial (Upstate_West high, Long Island low) plus the 2025 downstate top decile.
+- Record: `docs/records/nyiso/RESULT-nyiso-next22-zone-resolved-basis-2026-10-01.md`.
