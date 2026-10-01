@@ -15502,3 +15502,6 @@ Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/DESIGN
 - `internal_congestion_split` stays **O** pending the go/kill ruling. Probes: `scripts/probes/_miso293_*`.
 
 No frontier.
+
+**Owner rulings (same day):** flowgate program **killed** (`internal_congestion_split` O → G; reopens on RO-1 only);
+zone-resolved C3a/C3b basis **adopted for MISO** (implementation: miso-294); next lane **C3b 2021** (miso-294).

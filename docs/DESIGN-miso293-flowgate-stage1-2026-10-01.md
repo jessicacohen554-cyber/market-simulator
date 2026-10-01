@@ -112,3 +112,11 @@ Cost if ordered: 2 code sessions plus 7 shards (~20 min each), and a re-registra
 ## 7. Where MISO stands
 
 Keeper unchanged. Full span NOT-YET on C1 ST_GAS 2019, C3a 2022 (−18.5 %), C3b 2021 (0.252), C3b 2022 (0.224). Train 2023–25 CALIBRATED (C3c ledgered). No frontier.
+
+## 8. Owner rulings (2026-10-01)
+
+| card | ruling |
+|---|---|
+| Flowgates | **Kill.** `internal_congestion_split` O → **G**. This design is its record. Reopens only on RO-1 (MISO publishes shift factors or zone-aligned limits). §6 PRECOMMIT is void. |
+| Basis | **Adopt the zone-resolved C3a/C3b actual for MISO now** (rubric v2.4 wording). Implemented by miso-294; expected result is §5's table, to be reproduced exactly. |
+| Next lane | **C3b 2021** (fails on both bases). miso-294. |
